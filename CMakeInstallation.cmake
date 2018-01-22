@@ -8,7 +8,7 @@ if (WIN32)
   find_program (NSIS_EXECUTABLE NSIS.exe PATHS "$ENV{ProgramFiles}\\NSIS" "$ENV{ProgramFiles${PF_ENV_EXT}}\\NSIS")
   if(NOT CPACK_WIX_ROOT)
     file(TO_CMAKE_PATH "$ENV{WIX}" CPACK_WIX_ROOT)
-  endif()
+  endif ()
   find_program (WIX_EXECUTABLE candle  PATHS "${CPACK_WIX_ROOT}/bin")
 endif ()
 
@@ -45,7 +45,7 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED)
       FILE ${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-targets.cmake
       NAMESPACE ${HDF4_PACKAGE}::
   )
-endif (NOT HDF4_EXTERNALLY_CONFIGURED)
+endif ()
 
 #-----------------------------------------------------------------------------
 # Set includes needed for build

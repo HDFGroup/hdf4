@@ -25,7 +25,7 @@ Obtaining HDF4 source code
    2. Obtain compressed (*.tar or *.zip) HDF4 source from
         https://www.hdfgroup.org/ftp/HDF/HDF_Current/src/
       and put it in "myhdfstuff".
-      Do not uncompress.
+      Uncompress the file. There should be a hdf-4.2."X" folder.
 
 CMake version
    1. We suggest you obtain the latest CMake from the Kitware web site.
@@ -49,6 +49,9 @@ HDF Group recommends using the ctest script mode to build HDF4.
 The following files referenced below are available at the HDF web site:
     https://www.hdfgroup.org/release4/cmakebuild.html
 
+Single compressed file with all the files needed, including source:
+    hdf-4.2.X-CMake.zip or hdf-4.2.X-CMake.tar.gz
+
 CMake build script:
     CTestScript.cmake
 
@@ -58,10 +61,8 @@ External compression szip and zlib libraries:
     ZLib.tar.gz
 
 Platform configuration files:
-    HDF4Windows64CMake.cmake
-    HDF4Windows32CMake.cmake
-    HDF4LinuxCMake.cmake
-    HDF4MacCMake.cmake
+    HDF4config.cmake
+-----------------------------------------------
 
 To build HDF4 with the SZIP, ZLIB and JPEG external libraries you will need to:
 
@@ -70,20 +71,35 @@ To build HDF4 with the SZIP, ZLIB and JPEG external libraries you will need to:
    2. Download the SZip.tar.gz, ZLib.tar.gz, and JPEG.tar.gz to "myhdfstuff".
       Do not uncompress the files.
 
-  3. Download the CTestScript.cmake file to "myhdfstuff".
+   3. Download the CTestScript.cmake file to "myhdfstuff".
       CTestScript.cmake file should not be modified.
 
-   4. Download a platform configuration file to "myhdfstuff".
-      Do not modify the file unless you want to change default build
-      environment.
+   4. Download the platform configuration file to, HDF4config.cmake,
+      to "myhdfstuff" Do not modify the file unless you want to change
+      default build environment.
 
    5. From the "myhdfstuff" directory execute the CTest Script with the
       following options:
 
-         ctest -S <configuration file> -C Release -VV -O hdf4.log
+      On 32-bit Windows with Visual Studio 2012, execute:
+         ctest -S HDF4config.cmake,BUILD_GENERATOR=VS2012 -C Release -VV -O hdf4.log
+      On 64-bit Windows with Visual Studio 2012, execute:
+         ctest -S HDF4config.cmake,BUILD_GENERATOR=VS201264 -C Release -VV -O hdf4.log
+      On 32-bit Windows with Visual Studio 2013, execute:
+         ctest -S HDF4config.cmake,BUILD_GENERATOR=VS2013 -C Release -VV -O hdf4.log
+      On 64-bit Windows with Visual Studio 2013, execute:
+         ctest -S HDF4config.cmake,BUILD_GENERATOR=VS201364 -C Release -VV -O hdf4.log
+      On Linux and Mac, execute:
+         ctest -S HDF4config.cmake,BUILD_GENERATOR=Unix -C Release -VV -O hdf4.log
 
       The command above will configure, build, test, and create an install
-      package in the myhdfstuff/hdf-4.2/build folder.
+      package in the myhdfstuff folder. It will have the format:
+          HDF5-4.2.NN-<platform>.<zip or tar.gz>
+
+          On Unix, <platform> will be "Linux". A similar .sh file will also be created.
+          On Windows, <platform> will be "win64" or "win32". If you have an
+          installer on your system, you will also see a similar file that ends
+          in either .exe (NSIS) or .msi (WiX).
 
       The -S option uses the script version of ctest.
 
@@ -112,7 +128,7 @@ To build HDF4 with the SZIP, ZLIB and JPEG external libraries you will need to:
 
       On Linux, change to the install destination directory
       (create it if doesn't exist) and execute:
-                <path-to>/myhdfstuff/hdf-4.2/build/HDF-4.2."X"-Linux.sh
+                <path-to>/myhdfstuff/HDF-4.2."X"-Linux.sh
       After accepting the license, the script will prompt:
         By default the HDF4 will be installed in:
         "<current directory>/HDF-4.2."X"-Linux"
@@ -128,7 +144,7 @@ To build HDF4 with the SZIP, ZLIB and JPEG external libraries you will need to:
          ------lib
          ------share
 
-      On Mac you will find HDF-4.2."X"-Darwin.dmg in the build folder. Click
+      On Mac you will find HDF-4.2."X"-Darwin.dmg in the myhdfstuff folder. Click
       on the dmg file to proceed with installation. After accepting the license,
       there will be a folder with the following structure:
          HDF_Group
@@ -140,7 +156,7 @@ To build HDF4 with the SZIP, ZLIB and JPEG external libraries you will need to:
          ------share
 
       By default the installation will create the bin, include, lib and cmake
-      folders in the <install destination directory>/HDF_Group/HDF/4.2.
+      folders in the <install destination directory>/HDF_Group/HDF/4.2."X"
 
 
 ========================================================================
@@ -163,10 +179,10 @@ Notes: This short set of instructions is written for users who want to
       5. Configure the C library, tools and tests with one of the following commands:
 
          On Windows 32 bit
-           cmake -G "Visual Studio 11" -DCMAKE_BUILD_TYPE:STRING=Release -DBUILD_TESTING:BOOL=ON -DHDF4_BUILD_TOOLS:BOOL=ON ..\hdf-4.2."X"
+           cmake -G "Visual Studio 12 2013" -DCMAKE_BUILD_TYPE:STRING=Release -DBUILD_TESTING:BOOL=ON -DHDF4_BUILD_TOOLS:BOOL=ON ..\hdf-4.2."X"
 
          On Windows 64 bit
-           cmake -G "Visual Studio 11 Win64" -DCMAKE_BUILD_TYPE:STRING=Release -DBUILD_TESTING:BOOL=ON -DHDF4_BUILD_TOOLS:BOOL=ON ..\hdf-4.2."X"
+           cmake -G "Visual Studio 12 2013 Win64" -DCMAKE_BUILD_TYPE:STRING=Release -DBUILD_TESTING:BOOL=ON -DHDF4_BUILD_TOOLS:BOOL=ON ..\hdf-4.2."X"
 
          On Linux and Mac
            cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE:STRING=Release -DBUILD_TESTING:BOOL=ON -DHDF4_BUILD_TOOLS:BOOL=ON ../hdf-4.2."X"
@@ -246,13 +262,13 @@ IV. Further considerations
          where "some_location" is the full path to the extlibs folder.
          Note that you can use either JPEG 6b or 8b.
 
-      B. Use source packages from an SVN server by adding the following CMake
+      B. Use source packages from an GIT server by adding the following CMake
          options:
-            HDF4_ALLOW_EXTERNAL_SUPPORT:STRING="SVN"
-            JPEG_SVN_URL:STRING="https://some_location/jpeg/trunk"
-            ZLIB_SVN_URL:STRING="https://some_location/zlib/trunk"
-            SZIP_SVN_URL:STRING="https://some_location/szip/trunk"
-         where "some_location" is the URL to the SVN repository. Also set
+            HDF4_ALLOW_EXTERNAL_SUPPORT:STRING="GIT"
+            JPEG_GIT_URL:STRING="https://some_location/jpeg"
+            ZLIB_GIT_URL:STRING="https://some_location/zlib"
+            SZIP_GIT_URL:STRING="https://some_location/szip"
+         where "some_location" is the URL to the GIT repository. Also set
          CMAKE_BUILD_TYPE to the configuration type.
 
       C. Use source packages from a compressed file by adding the following
@@ -266,15 +282,6 @@ IV. Further considerations
          file and ext is the type of compression file. Also set CMAKE_BUILD_TYPE
          to the configuration type during configuration
 
-      D. Use source packages from a compressed file by adding the following
-         CMake options:
-            HDF4_ALLOW_EXTERNAL_SUPPORT:STRING="GIT"
-            JPEG_GIT_URL:STRING="https://some_location/jpeg/master"
-            ZLIB_GIT_URL:STRING="https://some_location/zlib/master"
-            SZIP_GIT_URL:STRING="https://some_location/szip/master"
-         where "some_location" is the URL to the GIT repository. Also set
-         CMAKE_BUILD_TYPE to the configuration type.
-
    3. If you are building on Apple Darwin platforms, you should add the
       following options:
           Compiler choice - use xcode by setting the ENV variables of CC and CXX
@@ -285,7 +292,7 @@ IV. Further considerations
             CTEST_USE_LAUNCHERS:BOOL=ON
             CMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=OFF
 
-   4. Windows developers should install NSIS to create an install image with CPack.
+   4. Windows developers should install NSIS or WiX to create an install image with CPack.
       Visual Studio Express users will not be able to package HDF4 into
       an install image executable.
 
@@ -293,7 +300,7 @@ IV. Further considerations
       the settings for the developers' environment. Then the only options needed
       on the command line are those options that are different. Example using HDF
       default cache file:
-           cmake -C ../config/cmake/cacheinit.cmake -G "Visual Studio 11" \
+           cmake -C ../config/cmake/cacheinit.cmake -G "Visual Studio 12 2013" \
                -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=OFF -DHDF4_ENABLE_EXAMPLES:BOOL=OFF \
                -DCMAKE_BUILD_TYPE:STRING=Release ..
 
@@ -373,12 +380,12 @@ These five steps are described in detail below.
             * MinGW Makefiles
             * NMake Makefiles
             * Unix Makefiles
-            * Visual Studio 12
-            * Visual Studio 12 Win64
-            * Visual Studio 11
-            * Visual Studio 11 Win64
-            * Visual Studio 10
-            * Visual Studio 10 Win64
+            * Visual Studio 11 2012
+            * Visual Studio 11 2012 Win64
+            * Visual Studio 12 2013
+            * Visual Studio 12 2013 Win64
+            * Visual Studio 14 2015
+            * Visual Studio 14 2015 Win64
 
         <options> is:
             * SZIP_INCLUDE_DIR:PATH=<path to szip includes directory>
@@ -412,11 +419,14 @@ These five steps are described in detail below.
             set (HDF4_DISABLE_COMPILER_WARNINGS OFF CACHE BOOL "Disable compiler warnings" FORCE)
             set (HDF4_PACKAGE_EXTLIBS OFF CACHE BOOL "(WINDOWS)CPACK - include external libraries" FORCE)
             set (HDF4_NO_PACKAGES OFF CACHE BOOL "CPACK - Disable packaging" FORCE)
-            set (HDF4_ALLOW_EXTERNAL_SUPPORT "NO" CACHE STRING "Allow External Library Building (NO GIT SVN TGZ)" FORCE)
-            set_property (CACHE HDF4_ALLOW_EXTERNAL_SUPPORT PROPERTY STRINGS NO GIT SVN TGZ)
+            set (HDF4_ALLOW_EXTERNAL_SUPPORT "NO" CACHE STRING "Allow External Library Building (NO GIT TGZ)" FORCE)
+            set_property (CACHE HDF4_ALLOW_EXTERNAL_SUPPORT PROPERTY STRINGS NO GIT TGZ)
             set (ZLIB_TGZ_NAME "ZLib.tar.gz" CACHE STRING "Use ZLib from compressed file" FORCE)
             set (SZIP_TGZ_NAME "SZip.tar.gz" CACHE STRING "Use SZip from compressed file" FORCE)
             set (JPEG_TGZ_NAME "JPEG8b.tar.gz" CACHE STRING "Use JPEG from compressed file" FORCE)
+            set (ZLIB_PACKAGE_NAME "zlib" CACHE STRING "Name of ZLIB package" FORCE)
+            set (SZIP_PACKAGE_NAME "szip" CACHE STRING "Name of SZIP package" FORCE)
+            set (JPEG_PACKAGE_NAME "jpeg" CACHE STRING "Name of JPEG package" FORCE)
 
    2. Configure the cache settings
 
@@ -440,7 +450,7 @@ These five steps are described in detail below.
 
       2.2  Preferred command line example on Windows in c:\MyHDFstuff\hdf4\build directory:
 
-               cmake -C ../config/cmake/cacheinit.cmake -G "Visual Studio 11" \
+               cmake -C ../config/cmake/cacheinit.cmake -G "Visual Studio 12 2013" \
                -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=OFF -DHDF4_ENABLE_Z_LIB_SUPPORT:BOOL=OFF \
                -DCMAKE_BUILD_TYPE:STRING=Release ..
 
@@ -468,17 +478,17 @@ These five steps are described in detail below.
            file in your build directory. Be sure to select either Debug or
            Release and build the solution.
 
-      3.2.1  The external libraries (zlib, Szip, and jpeg) can be configured
+      3.2.1  The external libraries (zlib, szip, and jpeg) can be configured
            to allow building the libraries by downloading from an SVN repository.
            The option is 'HDF4_ALLOW_EXTERNAL_SUPPORT'; by adding the following
            configuration option:
-               -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING="SVN"
+               -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING="GIT"
 
-           The options to control the SVN URL (config/cmake/cacheinit.cmake file) are:
-               JPEG_SVN_URL:STRING="https://svn.hdfgroup.org/jpeg8b/trunk"
-               ZLIB_SVN_URL:STRING="https://svn.hdfgroup.org/zlib/trunk"
-               SZIP_SVN_URL:STRING="https://svn.hdfgroup.org/szip/trunk"
-           These should be changed to your location. Also define CMAKE_BUILD_TYPE
+           The options to control the GIT URL (config/cmake/cacheinit.cmake file) are:
+               JPEG_GIT_URL:STRING="https://${git_url}/jpeg8b"
+               ZLIB_GIT_URL:STRING="https://${git_url}/zlib"
+               SZIP_GIT_URL:STRING="https://${git_url}/szip"
+           ${git_url} should be changed to your location. Also define CMAKE_BUILD_TYPE
            to be the configuration type.
 
       3.2.2  Or the external libraries (zlib, Szip, and jpeg) can be configured
@@ -498,19 +508,6 @@ These five steps are described in detail below.
             file such as .bz2, .tar, .tar.gz, .tgz, or .zip. Also define
             CMAKE_BUILD_TYPE to be the configuration type.
 
-      3.2.3  The external libraries (zlib, Szip, and jpeg) can be configured
-           to allow building the libraries by downloading from an GIT repository.
-           The option is 'HDF4_ALLOW_EXTERNAL_SUPPORT'; by adding the following
-           configuration option:
-               -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING="GIT"
-
-           The options to control the GIT URL are:
-               JPEG_GIT_URL:STRING="https://git.hdfgroup.org/jpeg8b/master"
-               ZLIB_GIT_URL:STRING="https://git.hdfgroup.org/zlib/master"
-               SZIP_GIT_URL:STRING="https://git.hdfgroup.org/szip/master"
-           These should be changed to your location. Also define CMAKE_BUILD_TYPE
-           to be the configuration type.
-
    4. Test HDF4
 
       To test the build, navigate to your build directory and execute:
@@ -523,7 +520,7 @@ These five steps are described in detail below.
 
    5. Packaging HDF4 (create an install image)
 
-      To package the build into a simple installer using the NullSoft installer NSIS
+      To package the build into a simple installer using WiX toolset or the NullSoft installer NSIS
       on Windows, or into compressed files (.tar.gz, .sh, .zip), use the CPack tool.
 
       To package the build, navigate to your build directory and execute;
@@ -531,8 +528,9 @@ These five steps are described in detail below.
               cpack -C {Debug | Release} CPackConfig.cmake
 
       NOTE: See note 8 of this document for NSIS information.
-            Also, if you are using a Visual Studio Express version or do not
-            want to enable the packaging components, set HDF4_NO_PACKAGES
+            See note 9 of this document for WiX information.
+            Also, if you are using a Visual Studio Express version or
+            want to disable the packaging components, set HDF4_NO_PACKAGES
             to ON (on the command line add -DHDF4_NO_PACKAGES:BOOL=ON)
 
    6. The files that support building HDF4 with CMake are all the files in the
@@ -554,6 +552,9 @@ These five steps are described in detail below.
       "output directory", which is where the program will be installed. These
       options are case-sensitive, so be sure to type them in upper case.
 
+   9. WiX Toolset
+      WiX--the Windows Installer XML toolset--lets developers create installers for
+      Windows Installer, the Windows installation engine. See http://wixtoolset.org.
 
 
 ========================================================================
@@ -562,7 +563,7 @@ VI. CMake Option Defaults for HDF4
 
 In the options listed below, there are three columns of information:
 Option Name, Option Description, and Option Default.
-The config/cmake/cacheinit.cmake file overrides the following values.
+The config/cmake/cacheinit.cmake file can override the following values.
 
 ---------------- General Build Options ---------------------
 BUILD_SHARED_LIBS  "Build Shared Libraries"    OFF
@@ -620,94 +621,305 @@ build and test process.
 VIII. Options for Platform Configuration Files
 ========================================================================
 
-Below is the HDF4LinuxCmake.cmake ctest script with extra comments.
-The example is for a linux machine, but the same scripts can be used on
-a Windows machine by adjusting the CTEST_CMAKE_GENERATOR option in the
-platform configuration script.
+Below is the HDF4config.cmake and HDF5options.cmake ctest scripts.
+Execute:
+       ctest -S HDF4config.cmake,BUILD_GENERATOR=xxx -C Release -VV -O hdf5.log
+The same scripts can be used on Linux, Mac OSX or a Windows machine by
+adding an option (${CTEST_SCRIPT_ARG}) to the platform configuration script.
 
 
+#############################################################################################
+### ${CTEST_SCRIPT_ARG} is of the form OPTION=VALUE                                       ###
+### BUILD_GENERATOR required [Unix, VS2017, VS201764, VS2015, VS201564, VS2013, VS201364] ###
+### ctest -S HDF4config.cmake,BUILD_GENERATOR=VS201764 -C Release -VV -O hdf4.log         ###
+#############################################################################################
+
+cmake_minimum_required (VERSION 3.2.2 FATAL_ERROR)
 ############################################################################
-# Product specific script, HDF4LinuxCmake.cmake, that uses the
-# CTestScript.cmake file. Usage:
-# "ctest -S HDF4LinuxCmake.cmake -C Release -O hdf4shared.log"
-############################################################################
-cmake_minimum_required(VERSION 3.2.2 FATAL_ERROR)
+# Usage:
+#     ctest -S HDF4config.cmake,OPTION=VALUE -C Release -VV -O test.log
+# where valid options for OPTION are:
+#     BUILD_GENERATOR - The cmake build generator:
+#            Unix      * Unix Makefiles
+#            VS2017    * Visual Studio 15 2017
+#            VS201764  * Visual Studio 15 2017 Win64
+#            VS2015    * Visual Studio 14 2015
+#            VS201564  * Visual Studio 14 2015 Win64
+#            VS2013    * Visual Studio 12 2013
+#            VS201364  * Visual Studio 12 2013 Win64
+#
+#     INSTALLDIR  -  root folder where hdf4 is installed
+#     CTEST_CONFIGURATION_TYPE  - Release, Debug, etc
+#     CTEST_SOURCE_NAME  -  source folder
+#     STATIC_ONLY  -  Build/use static libraries
+#     FORTRAN_LIBRARIES -  Build/use fortran libraries
+#     JAVA_LIBRARIES -  Build/use java libraries
+#     NO_MAC_FORTRAN  - Yes to be SHARED on a Mac
+##############################################################################
 
-# this is the location of the source hardcoded to hdf-4.2.11
-set(CTEST_SOURCE_NAME hdf-4.2.11)
-# this is the location of the source with ctest parameter hdf4src
-# "ctest -S HDF4LinuxCmake.cmake,hdf4src -C Release -O hdf4static.log"
-#set(CTEST_SOURCE_NAME ${CTEST_SCRIPT_ARG})
+set (CTEST_SOURCE_VERSION "4.2.13")
+set (CTEST_SOURCE_VERSEXT "")
 
-# this is the location of the build directory
-set(CTEST_BINARY_NAME ${CTEST_SOURCE_NAME}/build)
+##############################################################################
+# handle input parameters to script.
+#BUILD_GENERATOR - which CMake generator to use, required
+#INSTALLDIR - HDF-4.2.13 root folder
+#CTEST_CONFIGURATION_TYPE - Release, Debug, RelWithDebInfo
+#CTEST_SOURCE_NAME - name of source folder; HDF-4.2.13
+#STATIC_ONLY - Default is YES
+#FORTRAN_LIBRARIES - Default is NO
+#JAVA_LIBRARIES - Default is NO
+#NO_MAC_FORTRAN - set to TRUE to allow shared libs on a Mac
+if (DEFINED CTEST_SCRIPT_ARG)
+    # transform ctest script arguments of the form
+    # script.ctest,var1=value1,var2=value2
+    # to variables with the respective names set to the respective values
+    string (REPLACE "," ";" script_args "${CTEST_SCRIPT_ARG}")
+    foreach (current_var ${script_args})
+        if ("${current_var}" MATCHES "^([^=]+)=(.+)$")
+            set ("${CMAKE_MATCH_1}" "${CMAKE_MATCH_2}")
+        endif ()
+    endforeach ()
+endif ()
 
-# this is the directory the script is executed from
-set(CTEST_DASHBOARD_ROOT "${CTEST_SCRIPT_DIRECTORY}")
-
-# this is the full path of the source directory
-set(CTEST_SOURCE_DIRECTORY "${CTEST_DASHBOARD_ROOT}/${CTEST_SOURCE_NAME}")
-
-# this is the  full path of the build directory
-set(CTEST_BINARY_DIRECTORY "${CTEST_DASHBOARD_ROOT}/${CTEST_BINARY_NAME}")
-
+# build generator must be defined
+if (NOT DEFINED BUILD_GENERATOR)
+  message (FATAL_ERROR "BUILD_GENERATOR must be defined - Unix, VS2017, or VS201764, VS2015, VS201564, VS2013, VS201364")
+endif ()
 
 ###################################################################
 ### Following Line is one of [Release, RelWithDebInfo, Debug] #####
-set(CTEST_CONFIGURATION_TYPE "Release")
+set (CTEST_CONFIGURATION_TYPE "$ENV{CMAKE_CONFIG_TYPE}")
 ###################################################################
+
+if (NOT DEFINED INSTALLDIR)
+  if (WIN32)
+    set (INSTALLDIR "C:/Program Files/HDF_Group/HDF/${CTEST_SOURCE_VERSION}")
+  else ()
+    set (INSTALLDIR "${CTEST_SCRIPT_DIRECTORY}/HDF_Group/HDF/${CTEST_SOURCE_VERSION}")
+  endif ()
+endif ()
+if (NOT DEFINED CTEST_CONFIGURATION_TYPE)
+  set (CTEST_CONFIGURATION_TYPE "Release")
+endif ()
+if (NOT DEFINED CTEST_SOURCE_NAME)
+  set (CTEST_SOURCE_NAME "hdf-${CTEST_SOURCE_VERSION}${CTEST_SOURCE_VERSEXT}")
+endif ()
+if (NOT DEFINED STATIC_ONLY)
+  set (STATICONLYLIBRARIES "YES")
+else ()
+  set (STATICONLYLIBRARIES "NO")
+endif ()
+if (NOT DEFINED FORTRAN_LIBRARIES)
+  set (FORTRANLIBRARIES "NO")
+else ()
+  set(FORTRANLIBRARIES "YES")
+endif ()
+if (NOT DEFINED JAVA_LIBRARIES)
+  set (JAVALIBRARIES "NO")
+else ()
+  set (JAVALIBRARIES "YES")
+endif ()
+
+set (CTEST_BINARY_NAME "build")
+set (CTEST_DASHBOARD_ROOT "${CTEST_SCRIPT_DIRECTORY}")
+if (WIN32)
+  set (CTEST_SOURCE_DIRECTORY "${CTEST_DASHBOARD_ROOT}\\${CTEST_SOURCE_NAME}")
+  set (CTEST_BINARY_DIRECTORY "${CTEST_DASHBOARD_ROOT}\\${CTEST_BINARY_NAME}")
+else ()
+  set (CTEST_SOURCE_DIRECTORY "${CTEST_DASHBOARD_ROOT}/${CTEST_SOURCE_NAME}")
+  set (CTEST_BINARY_DIRECTORY "${CTEST_DASHBOARD_ROOT}/${CTEST_BINARY_NAME}")
+endif ()
 
 ###################################################################
 #########       Following describes compiler           ############
-# this is for linux
-set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
-# this is for windows 32 bit
-#set(CTEST_CMAKE_GENERATOR "Visual Studio 11")
-# this is for windows 64 bit
-#set(CTEST_CMAKE_GENERATOR "Visual Studio 11 Win64")
-# Visual Studio 2013 is 12, Visual Studio 2012 is 11,  Visual Studio 2010 is 10
+if (WIN32)
+  set (SITE_OS_NAME "Windows")
+  set (SITE_OS_VERSION "WIN7")
+  if (${BUILD_GENERATOR} STREQUAL "VS201764")
+    set (CTEST_CMAKE_GENERATOR "Visual Studio 15 2017 Win64")
+    set (SITE_OS_BITS "64")
+    set (SITE_COMPILER_NAME "vs2017")
+    set (SITE_COMPILER_VERSION "15")
+  elseif (${BUILD_GENERATOR} STREQUAL "VS2017")
+    set (CTEST_CMAKE_GENERATOR "Visual Studio 15 2017")
+    set (SITE_OS_BITS "32")
+    set (SITE_COMPILER_NAME "vs2017")
+    set (SITE_COMPILER_VERSION "15")
+  elseif (${BUILD_GENERATOR} STREQUAL "VS201564")
+    set (CTEST_CMAKE_GENERATOR "Visual Studio 14 2015 Win64")
+    set (SITE_OS_BITS "64")
+    set (SITE_COMPILER_NAME "vs2015")
+    set (SITE_COMPILER_VERSION "14")
+  elseif (${BUILD_GENERATOR} STREQUAL "VS2015")
+    set (CTEST_CMAKE_GENERATOR "Visual Studio 14 2015")
+    set (SITE_OS_BITS "32")
+    set (SITE_COMPILER_NAME "vs2015")
+    set (SITE_COMPILER_VERSION "14")
+  elseif (${BUILD_GENERATOR} STREQUAL "VS201364")
+    set (CTEST_CMAKE_GENERATOR "Visual Studio 12 2013 Win64")
+    set (SITE_OS_BITS "64")
+    set (SITE_COMPILER_NAME "vs2013")
+    set (SITE_COMPILER_VERSION "12")
+  elseif (${BUILD_GENERATOR} STREQUAL "VS2013")
+    set (CTEST_CMAKE_GENERATOR "Visual Studio 12 2013")
+    set (SITE_OS_BITS "32")
+    set (SITE_COMPILER_NAME "vs2013")
+    set (SITE_COMPILER_VERSION "12")
+  elseif (${BUILD_GENERATOR} STREQUAL "VS201264")
+    set (CTEST_CMAKE_GENERATOR "Visual Studio 11 2012 Win64")
+    set (SITE_OS_BITS "64")
+    set (SITE_COMPILER_NAME "vs2012")
+    set (SITE_COMPILER_VERSION "11")
+  elseif (${BUILD_GENERATOR} STREQUAL "VS2012")
+    set (CTEST_CMAKE_GENERATOR "Visual Studio 11 2012")
+    set (SITE_OS_BITS "32")
+    set (SITE_COMPILER_NAME "vs2012")
+    set (SITE_COMPILER_VERSION "11")
+  else ()
+    message (FATAL_ERROR "Invalid BUILD_GENERATOR must be - Unix, VS2017, or VS201764, VS2015, VS201564, VS2013, VS201364")
+  endif ()
+##  Set the following to unique id your computer  ##
+  set (CTEST_SITE "WIN7${BUILD_GENERATOR}.XXXX")
+else ()
+  set (CTEST_CMAKE_GENERATOR "Unix Makefiles")
+##  Set the following to unique id your computer  ##
+  if (APPLE)
+    set (CTEST_SITE "MAC.XXXX")
+  else ()
+    set (CTEST_SITE "LINUX.XXXX")
+  endif ()
+  if (APPLE)
+    execute_process (COMMAND xcrun --find cc OUTPUT_VARIABLE XCODE_CC OUTPUT_STRIP_TRAILING_WHITESPACE)
+    execute_process (COMMAND xcrun --find c++ OUTPUT_VARIABLE XCODE_CXX OUTPUT_STRIP_TRAILING_WHITESPACE)
+    set (ENV{CC} "${XCODE_CC}")
+    set (ENV{CXX} "${XCODE_CXX}")
+    set (CTEST_USE_LAUNCHERS        1)
+    set (RR_WARNINGS_COMMON "-Wno-format-nonliteral -Wno-cast-align -Wno-unused -Wno-unused-variable -Wno-unused-function -Wno-self-assign -Wno-unused-parameter -Wno-sign-compare")
+    set (RR_WARNINGS_C "${RR_WARNINGS_COMMON} -Wno-deprecated-declarations -Wno-uninitialized")
+    set (RR_WARNINGS_CXX "${RR_WARNINGS_COMMON} -Woverloaded-virtual -Wshadow -Wwrite-strings -Wc++11-compat")
+    set (RR_FLAGS_COMMON "-g -O0 -fstack-protector-all -D_FORTIFY_SOURCE=2")
+    set (RR_FLAGS_C "${RR_FLAGS_COMMON}")
+    set (RR_FLAGS_CXX "${RR_FLAGS_COMMON}")
+    set (ENV{CFLAGS} "${RR_WARNINGS_C} ${RR_FLAGS_C}")
+    set (ENV{CXXFLAGS} "${RR_WARNINGS_CXX} ${RR_FLAGS_CXX}")
+  endif ()
+endif ()
 ###################################################################
 
 ###################################################################
 #########       Following is for submission to CDash   ############
 ###################################################################
-set(MODEL "Experimental")
-#########       Following describes computer           ############
-##  Set the following to unique id your computer  ##
-set(CTEST_SITE "LINUX.XXXX")
-##    following is optional to describe build     ##
-set(SITE_BUILDNAME_SUFFIX "SHARED")
-
-#########   Following controls CDash submission          ##########
-#set(LOCAL_SUBMIT "TRUE")
-#########   Following controls test process              ##########
-#set(LOCAL_SKIP_TEST "TRUE")
-#set(LOCAL_MEMCHECK_TEST "TRUE")
-#set(LOCAL_COVERAGE_TEST "TRUE")
-#########   Following controls cpack command             ##########
-#set(LOCAL_NO_PACKAGE "TRUE")
-#########   Following controls source update             ##########
-#set(LOCAL_UPDATE "TRUE")
-#########   Following controls source repository         ##########
-#set(REPOSITORY_URL "https://svn.hdfgroup.org/hdf4/trunk")
-#comment to use a uncompressed source folder
-set(CTEST_USE_TAR_SOURCE "hdf-4.2.13")
+set (MODEL "Experimental")
 ###################################################################
 
 ###################################################################
-####  Change default configuration of options in config/cmake/cacheinit.cmake file ###
-####  format: set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DXXX:YY=ZZZZ")
+#####       Following controls CDash submission               #####
+#set (LOCAL_SUBMIT "TRUE")
+#####       Following controls test process                   #####
+#set (LOCAL_SKIP_TEST "TRUE")
+#set (LOCAL_MEMCHECK_TEST "TRUE")
+#set (LOCAL_COVERAGE_TEST "TRUE")
+#####       Following controls cpack command                  #####
+#set (LOCAL_NO_PACKAGE "TRUE")
+#####       Following controls source update                  #####
+#set (LOCAL_UPDATE "TRUE")
+set (REPOSITORY_URL "https://git@bitbucket.hdfgroup.org/scm/hdffv/hdf5.git")
+set (REPOSITORY_BRANCH "develop")
 
-### uncomment/comment and change the following lines for configuration options
+#uncomment to use a compressed source file: *.tar on linux or mac *.zip on windows
+#set(CTEST_USE_TAR_SOURCE "${CTEST_SOURCE_VERSION}")
+###################################################################
 
-### uncomment the following line to build static libraries
-#set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DBUILD_SHARED_LIBS:BOOL=OFF")
+###################################################################
+if (${STATICONLYLIBRARIES})
+  set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DBUILD_SHARED_LIBS:BOOL=OFF")
+  #########       Following describes computer           ############
+  ## following is optional to describe build                       ##
+  set (SITE_BUILDNAME_SUFFIX "STATIC")
+endif ()
+###################################################################
+####      fortran       ####
+if (${FORTRANLIBRARIES})
+  set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_FORTRAN:BOOL=ON")
+else ()
+  set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_FORTRAN:BOOL=OFF")
+endif ()
+####      java       ####
+if (${JAVALIBRARIES})
+  set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_JAVA:BOOL=ON")
+else ()
+  set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_JAVA:BOOL=OFF")
+endif ()
 
+### change install prefix
+set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DCMAKE_INSTALL_PREFIX:PATH=${INSTALLDIR}")
+set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DCTEST_CONFIGURATION_TYPE:STRING=$ENV{CMAKE_CONFIG_TYPE}")
+
+###################################################################
+
+if (WIN32)
+  set (BINFILEBASE "HDF-${CTEST_SOURCE_VERSION}${CTEST_SOURCE_VERSEXT}-win${SITE_OS_BITS}")
+  include (${CTEST_SCRIPT_DIRECTORY}\\HDFoptions.cmake)
+  include (${CTEST_SCRIPT_DIRECTORY}\\CTestScript.cmake)
+  if (EXISTS "${CTEST_BINARY_DIRECTORY}\\${BINFILEBASE}.exe")
+    file (COPY "${CTEST_BINARY_DIRECTORY}\\${BINFILEBASE}.exe" DESTINATION ${CTEST_SCRIPT_DIRECTORY})
+  endif ()
+  if (EXISTS "${CTEST_BINARY_DIRECTORY}\\${BINFILEBASE}.msi")
+    file (COPY "${CTEST_BINARY_DIRECTORY}\\${BINFILEBASE}.msi" DESTINATION  ${CTEST_SCRIPT_DIRECTORY})
+  endif ()
+  if (EXISTS "${CTEST_BINARY_DIRECTORY}\\${BINFILEBASE}.zip")
+    file (COPY "${CTEST_BINARY_DIRECTORY}\\${BINFILEBASE}.zip" DESTINATION  ${CTEST_SCRIPT_DIRECTORY})
+  endif ()
+else ()
+  set (BINFILEBASE "HDF5-${CTEST_SOURCE_VERSION}${CTEST_SOURCE_VERSEXT}")
+  include (${CTEST_SCRIPT_DIRECTORY}/HDFoptions.cmake)
+  include (${CTEST_SCRIPT_DIRECTORY}/CTestScript.cmake)
+  if (APPLE)
+    if (EXISTS "${CTEST_BINARY_DIRECTORY}/${BINFILEBASE}-Darwin.dmg")
+      file (COPY "${CTEST_BINARY_DIRECTORY}/${BINFILEBASE}-Darwin.dmg" DESTINATION ${CTEST_SCRIPT_DIRECTORY})
+    endif ()
+    if (EXISTS "${CTEST_BINARY_DIRECTORY}/${BINFILEBASE}-Darwin.tar.gz")
+      file (COPY "${CTEST_BINARY_DIRECTORY}/${BINFILEBASE}-Darwin.tar.gz" DESTINATION  ${CTEST_SCRIPT_DIRECTORY})
+    endif ()
+    if (EXISTS "${CTEST_BINARY_DIRECTORY}/${BINFILEBASE}-Darwin.sh")
+      file (COPY "${CTEST_BINARY_DIRECTORY}/${BINFILEBASE}-Darwin.sh" DESTINATION ${CTEST_SCRIPT_DIRECTORY})
+    endif ()
+  else ()
+    if (CYGWIN)
+      if (EXISTS "${CTEST_BINARY_DIRECTORY}/${BINFILEBASE}-CYGWIN.sh")
+        file (COPY "${CTEST_BINARY_DIRECTORY}/${BINFILEBASE}-CYGWIN.sh" DESTINATION ${CTEST_SCRIPT_DIRECTORY})
+      endif ()
+      if (EXISTS "${CTEST_BINARY_DIRECTORY}/${BINFILEBASE}-CYGWIN.tar.gz")
+        file (COPY "${CTEST_BINARY_DIRECTORY}/${BINFILEBASE}-CYGWIN.tar.gz" DESTINATION  ${CTEST_SCRIPT_DIRECTORY})
+      endif ()
+    else ()
+      if (EXISTS "${CTEST_BINARY_DIRECTORY}/${BINFILEBASE}-Linux.sh")
+        file (COPY "${CTEST_BINARY_DIRECTORY}/${BINFILEBASE}-Linux.sh" DESTINATION ${CTEST_SCRIPT_DIRECTORY})
+      endif ()
+      if (EXISTS "${CTEST_BINARY_DIRECTORY}/${BINFILEBASE}-Linux.tar.gz")
+        file (COPY "${CTEST_BINARY_DIRECTORY}/${BINFILEBASE}-Linux.tar.gz" DESTINATION  ${CTEST_SCRIPT_DIRECTORY})
+      endif ()
+    endif ()
+  endif ()
+endif ()
+
+HDFoptions.cmake:
+#############################################################################################
+####  Change default configuration of options in config/cmake/cacheinit.cmake file        ###
+####  format: set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DXXX:YY=ZZZZ")                 ###
+#############################################################################################
+
+### uncomment/comment and change the following lines for other configuration options
+
+#############################################################################################
+####      alternate toolsets       ####
+#set(CMAKE_GENERATOR_TOOLSET "Intel C++ Compiler 17.0")
+
+#############################################################################################
 ####      ext libraries       ####
 ### ext libs from tgz
 set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING=TGZ -DTGZPATH:PATH=${CTEST_SCRIPT_DIRECTORY}")
-### ext libs from svn
-#set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING=SVN")
 ### ext libs from git
 #set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING=GIT")
 ### ext libs on system
@@ -715,33 +927,20 @@ set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING
 #set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DZLIB_LIBRARY:FILEPATH=some_location/lib/zlib.lib -DZLIB_INCLUDE_DIR:PATH=some_location/include")
 #set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DSZIP_LIBRARY:FILEPATH=some_location/lib/szlib.lib -DSZIP_INCLUDE_DIR:PATH=some_location/include")
 
-####      fortran       ####
-### enable Fortran 2003
-#set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ENABLE_F2003:BOOL=ON")
-### disable Fortran
-#set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_FORTRAN:BOOL=OFF")
-
-### Create install package with external libraries (szip, zlib)
-set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_PACKAGE_EXTLIBS:BOOL=ON")
+#############################################################################################
+### disable test program builds
 
 ### disable test program builds
 #set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DBUILD_TESTING:BOOL=OFF")
 
+#############################################################################################
 ### disable packaging
+
 #set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_NO_PACKAGES:BOOL=ON")
+### Create install package with external libraries (szip, zlib)
+set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_PACKAGE_EXTLIBS:BOOL=ON")
 
-### disable building examples
-#set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_EXAMPLES:BOOL=OFF")
-
-### disable building tests
-#set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DBUILD_TESTING:BOOL=OFF")
-
-### change install prefix
-#set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DCMAKE_INSTALL_PREFIX:PATH=install")
-###################################################################
-
-include(${CTEST_SCRIPT_DIRECTORY}/CTestScript.cmake)
-
+#############################################################################################
 
 ========================================================================
 For further assistance, send email to help@hdfgroup.org
