@@ -73,7 +73,7 @@ foreach (example ${examples})
       LINKER_LANGUAGE Fortran
       Fortran_MODULE_DIRECTORY ${CMAKE_Fortran_MODULE_DIRECTORY}
   )
-  target_link_libraries (f_ex_${example} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
+  target_link_libraries (f_ex_${example} ${HDF4_SRC_FORTRAN_LIB_TARGET})
 endforeach ()
 
 add_executable (f_ex_VG_add_sds_to_vgroup ${HDF4_HDF_FORTRAN_EXAMPLES_SOURCE_DIR}/VG_add_sds_to_vgroup.f)
@@ -83,7 +83,7 @@ set_target_properties (f_ex_VG_add_sds_to_vgroup PROPERTIES
     LINKER_LANGUAGE Fortran
     Fortran_MODULE_DIRECTORY ${CMAKE_Fortran_MODULE_DIRECTORY}
 )
-target_link_libraries (f_ex_VG_add_sds_to_vgroup ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
+target_link_libraries (f_ex_VG_add_sds_to_vgroup ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_SRC_FORTRAN_LIB_TARGET})
 
 foreach (example ${skip_examples})
   add_executable (f_ex_${example} ${HDF4_HDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
@@ -93,7 +93,7 @@ foreach (example ${skip_examples})
       LINKER_LANGUAGE Fortran
       Fortran_MODULE_DIRECTORY ${CMAKE_Fortran_MODULE_DIRECTORY}
   )
-  target_link_libraries (f_ex_${example} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
+  target_link_libraries (f_ex_${example} ${HDF4_SRC_FORTRAN_LIB_TARGET})
 endforeach ()
 
 if (BUILD_TESTING)

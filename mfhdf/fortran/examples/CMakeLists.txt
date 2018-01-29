@@ -53,11 +53,7 @@ foreach (example ${examples})
       LINKER_LANGUAGE Fortran
       Fortran_MODULE_DIRECTORY ${CMAKE_Fortran_MODULE_DIRECTORY}
   )
-  if (HDF4_BUILD_XDR_LIB)
-    target_link_libraries (f_exmf_${example} ${HDF4_MF_FORTRAN_LIB_TARGET}  ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
-  else ()
-    target_link_libraries (f_exmf_${example} ${HDF4_MF_FORTRAN_LIB_TARGET}  ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-  endif ()
+  target_link_libraries (f_exmf_${example} ${HDF4_MF_FORTRAN_LIB_TARGET})
 endforeach ()
 
 foreach (example ${skip_examples})
@@ -68,11 +64,7 @@ foreach (example ${skip_examples})
       LINKER_LANGUAGE Fortran
       Fortran_MODULE_DIRECTORY ${CMAKE_Fortran_MODULE_DIRECTORY}
   )
-  if (HDF4_BUILD_XDR_LIB)
-    target_link_libraries (f_exmf_${example} ${HDF4_MF_FORTRAN_LIB_TARGET}  ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
-  else ()
-    target_link_libraries (f_exmf_${example} ${HDF4_MF_FORTRAN_LIB_TARGET}  ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-  endif ()
+  target_link_libraries (f_exmf_${example} ${HDF4_MF_FORTRAN_LIB_TARGET})
 endforeach ()
 
 if (BUILD_TESTING)

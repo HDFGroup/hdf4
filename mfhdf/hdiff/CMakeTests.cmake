@@ -16,11 +16,7 @@
 
     ADD_EXECUTABLE (hdifftst ${hdifftst_SRCS})
     TARGET_C_PROPERTIES (hdifftst STATIC " " " ")
-    if (HDF4_BUILD_XDR_LIB)
-      target_link_libraries (hdifftst ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
-    else ()
-      target_link_libraries (hdifftst ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-    endif ()
+    target_link_libraries (hdifftst ${HDF4_MF_LIB_TARGET})
 
     # Remove any output file left over from previous test run
     add_test (

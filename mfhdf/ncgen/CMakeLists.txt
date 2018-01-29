@@ -39,11 +39,7 @@ endif ()
 
 add_executable (ncgen ${ncgen_SRCS})
 TARGET_C_PROPERTIES (ncgen STATIC " " " ")
-if (HDF4_BUILD_XDR_LIB)
-  target_link_libraries (ncgen ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET} )
-else ()
-  target_link_libraries (ncgen ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-endif ()
+target_link_libraries (ncgen ${HDF4_MF_LIB_TARGET})
 
 if (BUILD_TESTING)
   include (CMakeTests.cmake)
