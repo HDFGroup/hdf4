@@ -594,14 +594,14 @@ else ()
 endif ()
 
 if (HDF4_BUILD_XDR_LIB)
-  add_subdirectory (${HDF4_SOURCE_DIR}/mfhdf/xdr ${PROJECT_BINARY_DIR}/xdr)
+  add_subdirectory (mfhdf/xdr)
 endif ()
 
 #-----------------------------------------------------------------------------
 # Add the HDF4 Library Target to the build
 #-----------------------------------------------------------------------------
-add_subdirectory (${HDF4_SOURCE_DIR}/hdf/src    ${PROJECT_BINARY_DIR}/hdf/src )
-add_subdirectory (${HDF4_SOURCE_DIR}/mfhdf/libsrc   ${PROJECT_BINARY_DIR}/mfhdf/libsrc)
+add_subdirectory (hdf/src )
+add_subdirectory (mfhdf/libsrc)
 
 if (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "GIT" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
   if (JPEG_FOUND AND JPEG_USE_EXTERNAL)
@@ -647,11 +647,11 @@ if (BUILD_TESTING)
   configure_file (${HDF_RESOURCES_DIR}/CTestCustom.cmake ${HDF4_BINARY_DIR}/CTestCustom.ctest @ONLY)
 
   if (NOT HDF4_EXTERNALLY_CONFIGURED)
-    if (EXISTS "${HDF4_SOURCE_DIR}/hdf/test" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/hdf/test")
-      add_subdirectory (${HDF4_SOURCE_DIR}/hdf/test   ${PROJECT_BINARY_DIR}/hdf/test)
+    if (EXISTS "hdf/test" AND IS_DIRECTORY "hdf/test")
+      add_subdirectory (hdf/test)
     endif ()
-    if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/test" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/test")
-      add_subdirectory (${HDF4_SOURCE_DIR}/mfhdf/test ${PROJECT_BINARY_DIR}/mfhdf/test)
+    if (EXISTS "mfhdf/test" AND IS_DIRECTORY "mfhdf/test")
+      add_subdirectory (mfhdf/test)
     endif ()
   endif ()
 endif ()
@@ -672,8 +672,8 @@ if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/fortran" AND IS_DIRECTORY "${HDF4_SOURCE_DI
       set (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) NAME")
     endif ()
     include (${HDF_RESOURCES_DIR}/HDF4UseFortran.cmake)
-    add_subdirectory (${HDF4_SOURCE_DIR}/mfhdf/fortran ${PROJECT_BINARY_DIR}/mfhdf/fortran)
-    add_subdirectory (${HDF4_SOURCE_DIR}/hdf/fortran ${PROJECT_BINARY_DIR}/hdf/fortran)
+    add_subdirectory (mfhdf/fortran)
+    add_subdirectory (hdf/fortran)
   endif ()
 endif ()
 
@@ -686,8 +686,8 @@ endif ()
 #-----------------------------------------------------------------------------
 # Library utilities
 #-----------------------------------------------------------------------------
-add_subdirectory (${HDF4_SOURCE_DIR}/hdf   ${PROJECT_BINARY_DIR}/hdf)
-add_subdirectory (${HDF4_SOURCE_DIR}/mfhdf ${PROJECT_BINARY_DIR}/mfhdf)
+add_subdirectory (hdf)
+add_subdirectory (mfhdf)
 
 #-----------------------------------------------------------------------------
 # Option to build HDF4 Examples
@@ -696,16 +696,16 @@ if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/examples" AND IS_DIRECTORY "${HDF4_SOURCE_D
   option (HDF4_BUILD_EXAMPLES  "Build HDF4 Examples" OFF)
   if (HDF4_BUILD_EXAMPLES)
     if (HDF4_BUILD_FORTRAN)
-      if (EXISTS "${HDF4_SOURCE_DIR}/hdf/fortran/examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/hdf/fortran/examples")
-        add_subdirectory (${HDF4_SOURCE_DIR}/hdf/fortran/examples     ${PROJECT_BINARY_DIR}/hdf/fortran/examples)
+      if (EXISTS "hdf/fortran/examples" AND IS_DIRECTORY "hdf/fortran/examples")
+        add_subdirectory (hdf/fortran/examples)
       endif ()
-      if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/fortran/examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/fortran/examples")
-        add_subdirectory (${HDF4_SOURCE_DIR}/mfhdf/fortran/examples     ${PROJECT_BINARY_DIR}/mfhdf/fortran/examples)
+      if (EXISTS "mfhdf/fortran/examples" AND IS_DIRECTORY "mfhdf/fortran/examples")
+        add_subdirectory (mfhdf/fortran/examples)
       endif ()
     endif ()
 
-    add_subdirectory (${HDF4_SOURCE_DIR}/hdf/examples    ${PROJECT_BINARY_DIR}/hdf/examples)
-    add_subdirectory (${HDF4_SOURCE_DIR}/mfhdf/examples    ${PROJECT_BINARY_DIR}/mfhdf/examples)
+    add_subdirectory (hdf/examples)
+    add_subdirectory (mfhdf/examples)
   endif ()
 endif ()
 
@@ -715,7 +715,7 @@ endif ()
 if (EXISTS "${HDF4_SOURCE_DIR}/java" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/java")
   option (HDF4_BUILD_JAVA  "Build Java HDF Library" OFF)
   if (HDF4_BUILD_JAVA)
-    add_subdirectory (${HDF4_SOURCE_DIR}/java ${PROJECT_BINARY_DIR}/java)
+    add_subdirectory (java)
   endif ()
 endif ()
 
