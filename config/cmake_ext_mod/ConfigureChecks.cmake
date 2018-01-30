@@ -1,18 +1,18 @@
 #-----------------------------------------------------------------------------
 # Include all the necessary files for macros
 #-----------------------------------------------------------------------------
-include (CheckFunctionExists.cmake)
-include (CheckIncludeFile.cmake)
-include (CheckIncludeFileCXX.cmake)
-include (CheckIncludeFiles.cmake)
-include (CheckLibraryExists.cmake)
-include (CheckSymbolExists.cmake)
-include (CheckTypeSize.cmake)
-include (CheckVariableExists.cmake)
-include (CheckFortranFunctionExists.cmake)
-include (TestBigEndian.cmake)
+include (CheckFunctionExists)
+include (CheckIncludeFile)
+include (CheckIncludeFileCXX)
+include (CheckIncludeFiles)
+include (CheckLibraryExists)
+include (CheckSymbolExists)
+include (CheckTypeSize)
+include (CheckVariableExists)
+include (CheckFortranFunctionExists)
+include (TestBigEndian)
 if (CMAKE_CXX_COMPILER AND CMAKE_CXX_COMPILER_LOADED)
-  include (TestForSTDNamespace.cmake)
+  include (TestForSTDNamespace)
 endif ()
 
 #-----------------------------------------------------------------------------

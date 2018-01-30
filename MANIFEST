@@ -1167,7 +1167,6 @@
 ./config/cmake/UseJavaClassFilelist.cmake
 ./config/cmake/UseJavaSymlinks.cmake
 
-./config/cmake_ext_mod/CheckTypeSize.cmake
 ./config/cmake_ext_mod/ConfigureChecks.cmake
 ./config/cmake_ext_mod/CTestCustom.cmake
 ./config/cmake_ext_mod/FindMPI.cmake      _DO_NOT_DISTRIBUTE_
