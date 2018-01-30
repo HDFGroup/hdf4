@@ -16,15 +16,9 @@
   )
 
   foreach (h4_file ${HDF4_REPACK_TEST_FILES})
-    set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-    #message (STATUS " Copying ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/${h4_file} to ${PROJECT_BINARY_DIR}/")
-    add_custom_command (
-        TARGET     hrepack_check
-        POST_BUILD
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy_if_different ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/${h4_file} ${dest}
-    )
+    HDFTEST_COPY_FILE("${HDF4_MFHDF_HREPACK_SOURCE_DIR}/${h4_file}" "${PROJECT_BINARY_DIR}/${h4_file}" "hrepack_files")
   endforeach ()
+  add_custom_target(hrepack_files ALL COMMENT "Copying files needed by hrepack tests" DEPENDS ${hrepack_files_list})
 
 #-- Adding test for test_hrepack for generating testfiles
   add_executable (test_hrepack ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepacktst.c)

@@ -66,15 +66,9 @@
     tvattr.dat
   )
   foreach (h4_file ${HDF4_REFERENCE_TEST_FILES})
-    set (dest "${PROJECT_BINARY_DIR}/test_files/${h4_file}")
-    #message (STATUS " Copying ${HDF4_HDF_TESTSOURCE_DIR}/test_files/${h4_file} to ${PROJECT_BINARY_DIR}/test_files/")
-    add_custom_command (
-        TARGET     fortestF
-        POST_BUILD
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy_if_different ${HDF4_HDF_TESTSOURCE_DIR}/test_files/${h4_file} ${dest}
-    )
+    HDFTEST_COPY_FILE("${HDF4_HDF_TESTSOURCE_DIR}/test_files/${h4_file}" "${PROJECT_BINARY_DIR}/test_files/${h4_file}" "hdf_fortran_files")
   endforeach ()
+  add_custom_target(hdf_fortran_files ALL COMMENT "Copying files needed by hdf fortran tests" DEPENDS ${hdf_fortran_files_list})
 
 ##############################################################################
 ##############################################################################

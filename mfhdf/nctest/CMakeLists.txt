@@ -44,21 +44,4 @@ add_executable (nctest ${nctest_SRCS})
 TARGET_C_PROPERTIES (nctest STATIC " " " ")
 target_link_libraries (nctest ${HDF4_MF_LIB_TARGET})
 
-set (HDF4_NC_TEST_FILES
-    test_unlim.cdl
-    test_unlim.nc
-)
-
-foreach (h4_file ${HDF4_NC_TEST_FILES})
-  set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-  #message (STATUS " Copying ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/${h4_file} to ${PROJECT_BINARY_DIR}/")
-  add_custom_command (
-      TARGET     nctest
-      POST_BUILD
-      COMMAND    ${CMAKE_COMMAND}
-      ARGS       -E copy_if_different ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/${h4_file} ${dest}
-  )
-
-endforeach ()
-
 include (CMakeTests.cmake)

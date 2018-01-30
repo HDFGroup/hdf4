@@ -23,15 +23,9 @@
       test_nc.nc
     )
     foreach (h4_file ${HDF4_REFERENCE_TEST_FILES})
-      set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-      #message (STATUS " Copying ${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/${h4_file} to ${PROJECT_BINARY_DIR}/")
-      ADD_CUSTOM_COMMAND (
-          TARGET     ftest
-          POST_BUILD
-          COMMAND    ${CMAKE_COMMAND}
-          ARGS       -E copy_if_different ${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/${h4_file} ${dest}
-      )
+      HDFTEST_COPY_FILE("${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/${h4_file}" "${PROJECT_BINARY_DIR}/${h4_file}" "netcdf_files")
     endforeach ()
+    add_custom_target(netcdf_files ALL COMMENT "Copying files needed by netcdf tests" DEPENDS ${netcdf_files_list})
 
     add_test (NAME ftest COMMAND $<TARGET_FILE:ftest>)
   endif ()

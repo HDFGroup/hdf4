@@ -18,48 +18,18 @@ set (HDF4_REFERENCE_TEST_FILES
     Roy-64.nc
 )
 
-foreach (h4_file ${HDF4_REFERENCE_TEST_FILES})
-   set (dest "${PROJECT_BINARY_DIR}/TEST/${h4_file}")
-   add_custom_command (
-       TARGET     hdftest
-       POST_BUILD
-       COMMAND    ${CMAKE_COMMAND}
-       ARGS       -E copy_if_different ${HDF4_MFHDF_TEST_DIR}/${h4_file} ${dest}
-   )
-   if (BUILD_SHARED_LIBS)
-     set (dest "${PROJECT_BINARY_DIR}/TEST-shared/${h4_file}")
-     add_custom_command (
-         TARGET     hdftest-shared
-         POST_BUILD
-         COMMAND    ${CMAKE_COMMAND}
-         ARGS       -E copy_if_different ${HDF4_MFHDF_TEST_DIR}/${h4_file} ${dest}
-   )
-   endif ()
-endforeach ()
-
 #-- Copy all the dat files from the test directory into the source directory
 set (HDF4_REFERENCE2_TEST_FILES
     testout.sav
 )
 
-foreach (h4_file ${HDF4_REFERENCE2_TEST_FILES})
-   set (dest "${PROJECT_BINARY_DIR}/TEST/${h4_file}")
-   add_custom_command (
-       TARGET     cdftest
-       POST_BUILD
-       COMMAND    ${CMAKE_COMMAND}
-       ARGS       -E copy_if_different ${HDF4_MFHDF_TEST_DIR}/${h4_file} ${dest}
-   )
+foreach (h4_file ${HDF4_REFERENCE_TEST_FILES} ${HDF4_REFERENCE2_TEST_FILES})
+   HDFTEST_COPY_FILE("${HDF4_MFHDF_TEST_DIR}/${h4_file}" "${PROJECT_BINARY_DIR}/TEST/${h4_file}" "mfhdf_test_files")
    if (BUILD_SHARED_LIBS)
-     set (dest "${PROJECT_BINARY_DIR}/TEST-shared/${h4_file}")
-     add_custom_command (
-         TARGET     cdftest-shared
-         POST_BUILD
-         COMMAND    ${CMAKE_COMMAND}
-         ARGS       -E copy_if_different ${HDF4_MFHDF_TEST_DIR}/${h4_file} ${dest}
-     )
+     HDFTEST_COPY_FILE("${HDF4_MFHDF_TEST_DIR}/${h4_file}" "${PROJECT_BINARY_DIR}/TEST-shared/${h4_file}" "mfhdf_test_files")
    endif ()
 endforeach ()
+add_custom_target(mfhdf_test_files ALL COMMENT "Copying files needed by mfhdf tests" DEPENDS ${mfhdf_test_files_list})
 
 ##############################################################################
 ##############################################################################
@@ -214,20 +184,11 @@ if (HDF4_BUILD_XDR_LIB)
   target_link_libraries (xdrtest ${HDF4_MF_LIB_TARGET})
 
   if (MSVC_VERSION LESS 1900)
-    add_custom_command (
-        TARGET     xdrtest
-        POST_BUILD
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy_if_different ${HDF4_MFHDF_XDR_DIR}/xdrtest.out ${PROJECT_BINARY_DIR}/TEST/xdrtest.out
-    )
+    HDFTEST_COPY_FILE("${HDF4_MFHDF_XDR_DIR}/xdrtest.out" "${PROJECT_BINARY_DIR}/TEST/xdrtest.out" "xdrtest_files")
   else ()
-    add_custom_command (
-        TARGET     xdrtest
-        POST_BUILD
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy_if_different ${HDF4_MFHDF_XDR_DIR}/xdrtest.cyg ${PROJECT_BINARY_DIR}/TEST/xdrtest.out
-    )
+    HDFTEST_COPY_FILE("${HDF4_MFHDF_XDR_DIR}/xdrtest.cyg" "${PROJECT_BINARY_DIR}/TEST/xdrtest.out" "xdrtest_files")
   endif ()
+  add_custom_target(xdrtest_files ALL COMMENT "Copying files needed by xdrtest tests" DEPENDS ${xdrtest_files_list})
 
   if (HDF4_ENABLE_USING_MEMCHECKER)
     add_test (NAME MFHDF_TEST-xdrtest COMMAND $<TARGET_FILE:xdrtest>)

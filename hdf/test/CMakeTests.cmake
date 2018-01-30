@@ -29,23 +29,13 @@ set (HDF4_REFERENCE_TEST_FILES
 )
 
 foreach (h4_file ${HDF4_REFERENCE_TEST_FILES})
+  HDFTEST_COPY_FILE("${HDF4_HDF_TEST_SOURCE_DIR}/test_file/${h4_file}" "${PROJECT_BINARY_DIR}/TEST/test_files/${h4_file}" "hdf_test_files")
   set (dest "${PROJECT_BINARY_DIR}/TEST/test_files/${h4_file}")
-  add_custom_command (
-      TARGET     testhdf
-      POST_BUILD
-      COMMAND    ${CMAKE_COMMAND}
-      ARGS       -E copy_if_different ${HDF4_HDF_TEST_SOURCE_DIR}/test_files/${h4_file} ${dest}
-  )
   if (BUILD_SHARED_LIBS)
-    set (dest "${PROJECT_BINARY_DIR}/TEST-shared/test_files/${h4_file}")
-    add_custom_command (
-        TARGET     testhdf-shared
-        POST_BUILD
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy_if_different ${HDF4_HDF_TEST_SOURCE_DIR}/test_files/${h4_file} ${dest}
-    )
+    HDFTEST_COPY_FILE("${HDF4_HDF_TEST_SOURCE_DIR}/test_file/${h4_file}" "${PROJECT_BINARY_DIR}/TEST-shared/test_files/${h4_file}" ""hdf_test_files")
   endif ()
 endforeach ()
+add_custom_target(hdf_test_files ALL COMMENT "Copying files needed by hdf tests" DEPENDS ${hdf_test_files_list})
 
 # Remove any output file left over from previous test run
 set (HDF4_TESTHDF_FILES

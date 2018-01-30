@@ -32,13 +32,8 @@
   endif ()
   set (last_test "NCGEN-clearall-objects")
 
-  #message (STATUS " Copying ${HDF4_MFHDF_NCGEN_SOURCE_DIR}/test0.cdl to ${PROJECT_BINARY_DIR}/")
-  ADD_CUSTOM_COMMAND (
-      TARGET     ncgen
-      POST_BUILD
-      COMMAND    ${CMAKE_COMMAND}
-      ARGS       -E copy_if_different ${HDF4_MFHDF_NCGEN_SOURCE_DIR}/test0.cdl ${PROJECT_BINARY_DIR}/test0.cdl
-  )
+  HDFTEST_COPY_FILE("${HDF4_MFHDF_NCGEN_SOURCE_DIR}/test0.cdl" "${PROJECT_BINARY_DIR}/test0.cdl" "ncgen_files")
+  add_custom_target(ncgen_files ALL COMMENT "Copying files needed by ncgen tests" DEPENDS ${ncgen_files_list})
 
 #-- Adding test for ncgen
 add_test (

@@ -26,47 +26,24 @@ if (HDF4_BUILD_TOOLS)
       ristosds.out1
   )
 
-  foreach (h4_file ${HDF4_LS_TEST_FILES})
-    set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-    #message (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/${h4_file} to ${PROJECT_BINARY_DIR}/")
-    ADD_CUSTOM_COMMAND (
-        TARGET     hdfls
-        POST_BUILD
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/${h4_file} ${dest}
-    )
-  endforeach ()
-
-  if (WIN32 AND MSVC_VERSION LESS 1900)
-    ADD_CUSTOM_COMMAND (
-        TARGET     hdfls
-        POST_BUILD
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/hdfed-w.out1 ${PROJECT_BINARY_DIR}/hdfed.out1
-    )
-  else ()
-    ADD_CUSTOM_COMMAND (
-        TARGET     hdfls
-        POST_BUILD
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/hdfed.out1 ${PROJECT_BINARY_DIR}/hdfed.out1
-    )
-  endif ()
-
   #-- Copy all the hdfed data files from the source directory into the test directory
   set (HDF4_HDFED_TEST_FILES
       storm110.hdf
       ntcheck.hdf
   )
+
+  foreach (h4_file ${HDF4_LS_TEST_FILES})
+    HDFTEST_COPY_FILE("${HDF4_HDF_UTIL_SOURCE_DIR}/${h4_file}" "${PROJECT_BINARY_DIR}/${h4_file}" "hdf_util_files")
+  endforeach ()
+
+  if (WIN32 AND MSVC_VERSION LESS 1900)
+    HDFTEST_COPY_FILE("${HDF4_HDF_UTIL_SOURCE_DIR}/hdfed-w.out1" "${PROJECT_BINARY_DIR}/hdfed.out1" "hdf_util_files")
+  else ()
+    HDFTEST_COPY_FILE("${HDF4_HDF_UTIL_SOURCE_DIR}/hdfed.out1" "${PROJECT_BINARY_DIR}/hdfed.out1" "hdf_util_files")
+  endif ()
+
   foreach (h4_file ${HDF4_HDFED_TEST_FILES})
-    set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-    #message (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
-    ADD_CUSTOM_COMMAND (
-        TARGET     hdfed
-        POST_BUILD
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
-    )
+    HDFTEST_COPY_FILE("${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file}" "${PROJECT_BINARY_DIR}/${h4_file}" "hdf_util_files")
   endforeach ()
 endif ()
 
@@ -74,48 +51,18 @@ endif ()
   set (HDF4_HDF2GIF_TEST_FILES
       skull.hdf
   )
-  foreach (h4_file ${HDF4_HDF2GIF_TEST_FILES})
-    set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-    #message (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
-    ADD_CUSTOM_COMMAND (
-        TARGET     hdf2gif
-        POST_BUILD
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
-    )
-  endforeach ()
 
   #-- Copy all the gif2hdf data files from the source directory into the test directory
   set (HDF4_GIF2HDF_TEST_FILES
       SunWheel.gif
       bttrfly.gif
   )
-  foreach (h4_file ${HDF4_GIF2HDF_TEST_FILES})
-    set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-    #message (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
-    ADD_CUSTOM_COMMAND (
-        TARGET     gif2hdf
-        POST_BUILD
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
-    )
-  endforeach ()
 
   #-- Copy all the hdftor8 data files from the source directory into the test directory
   set (HDF4_HDFTOR8_TEST_FILES
       head.r24
       head.r8
   )
-  foreach (h4_file ${HDF4_HDFTOR8_TEST_FILES})
-    set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-    #message (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
-    ADD_CUSTOM_COMMAND (
-        TARGET     hdftor8
-        POST_BUILD
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
-    )
-  endforeach ()
 
   #-- Copy all the ristosds data files from the source directory into the test directory
   set (HDF4_RISTOSDS_TEST_FILES
@@ -123,46 +70,16 @@ endif ()
       storm120.hdf
       storm130.hdf
   )
-  foreach (h4_file ${HDF4_RISTOSDS_TEST_FILES})
-    set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-    #message (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
-    ADD_CUSTOM_COMMAND (
-        TARGET     ristosds
-        POST_BUILD
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
-    )
-  endforeach ()
 
   #-- Copy all the hdfpack data files from the source directory into the test directory
   set (HDF4_HDFPACK_TEST_FILES
       test.hdf
   )
-  foreach (h4_file ${HDF4_HDFPACK_TEST_FILES})
-    set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-    #message (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
-    ADD_CUSTOM_COMMAND (
-        TARGET     hdfpack
-        POST_BUILD
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
-    )
-  endforeach ()
 
   #-- Copy all the paltohdf data files from the source directory into the test directory
   set (HDF4_PALTOHDF_TEST_FILES
       palette.raw
   )
-  foreach (h4_file ${HDF4_PALTOHDF_TEST_FILES})
-    set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-    #message (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
-    ADD_CUSTOM_COMMAND (
-        TARGET     paltohdf
-        POST_BUILD
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
-    )
-  endforeach ()
 
   #-- Copy all the r8tohdf data files from the source directory into the test directory
   set (HDF4_R8TOHDF_TEST_FILES
@@ -171,16 +88,6 @@ endif ()
       storm130.raw
       storm140.raw
   )
-  foreach (h4_file ${HDF4_R8TOHDF_TEST_FILES})
-    set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-    #message (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
-    ADD_CUSTOM_COMMAND (
-        TARGET     r8tohdf
-        POST_BUILD
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
-    )
-  endforeach ()
 
   #-- Copy all the hdfcomp data files from the source directory into the test directory
   set (HDF4_HDFCOMP_TEST_FILES
@@ -188,31 +95,27 @@ endif ()
       storm120.hdf
       storm130.hdf
   )
-  foreach (h4_file ${HDF4_HDFCOMP_TEST_FILES})
-    set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-    #message (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
-    ADD_CUSTOM_COMMAND (
-        TARGET     hdfcomp
-        POST_BUILD
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
-    )
-  endforeach ()
 
   #-- Copy all the jpeg2hdf data files from the source directory into the test directory
   set (HDF4_JPEG2HDF_TEST_FILES
       jpeg_img.jpg
   )
-  foreach (h4_file ${HDF4_JPEG2HDF_TEST_FILES})
-    set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-    #message (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
-    ADD_CUSTOM_COMMAND (
-        TARGET     jpeg2hdf
-        POST_BUILD
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
-    )
+
+  foreach (h4_file
+        ${HDF4_HDF2GIF_TEST_FILES}
+        ${HDF4_GIF2HDF_TEST_FILES}
+        ${HDF4_HDFTOR8_TEST_FILES}
+        ${HDF4_RISTOSDS_TEST_FILES}
+        ${HDF4_HDFPACK_TEST_FILES}
+        ${HDF4_PALTOHDF_TEST_FILES}
+        ${HDF4_R8TOHDF_TEST_FILES}
+        ${HDF4_HDFCOMP_TEST_FILES}
+        ${HDF4_JPEG2HDF_TEST_FILES}
+  )
+    HDFTEST_COPY_FILE("${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file}" "${PROJECT_BINARY_DIR}/${h4_file}" "hdf_util_files")
   endforeach ()
+
+  add_custom_target(hdf_util_files ALL COMMENT "Copying files needed by hdf_util tests" DEPENDS ${hdf_util_files_list})
 
 ##############################################################################
 ##############################################################################

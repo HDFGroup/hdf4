@@ -22,13 +22,8 @@ else ()
 endif ()
 set (last_test "NCDUMP-clearall-objects")
 
-#message (STATUS " Copying ${HDF4_MFHDF_NCDUMP_SOURCE_DIR}/test0.cdl to ${PROJECT_BINARY_DIR}/")
-ADD_CUSTOM_COMMAND (
-    TARGET     ncdump
-    POST_BUILD
-    COMMAND    ${CMAKE_COMMAND}
-    ARGS       -E copy_if_different ${HDF4_MFHDF_NCDUMP_SOURCE_DIR}/test0.cdl ${PROJECT_BINARY_DIR}/test0.cdl
-)
+HDFTEST_COPY_FILE("${HDF4_MFHDF_NCDUMP_SOURCE_DIR}/test0.cdl" "${PROJECT_BINARY_DIR}/test0.cdl" "ncdump_files")
+add_custom_target(ncdump_files ALL COMMENT "Copying files needed by ncdump tests" DEPENDS ${ncdump_files_list})
 
 if (NCGEN_UTILITY)
   add_test (

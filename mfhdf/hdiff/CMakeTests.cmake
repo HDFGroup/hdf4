@@ -95,43 +95,17 @@
       hdiff_15.txt
   )
 
-  foreach (h4_file ${HDF4_REFERENCE_TEST_FILES})
-    set (dest "${PROJECT_BINARY_DIR}/testfiles/${h4_file}")
-    #MESSAGE(STATUS " Copying ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/testfiles/")
-    ADD_CUSTOM_COMMAND (
-        TARGET     hdiff
-        POST_BUILD
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy_if_different ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/${h4_file} ${dest}
-    )
-  endforeach ()
-
-  foreach (out_file ${HDF4_REFERENCE_FILES})
-    set (outdest "${PROJECT_BINARY_DIR}/testfiles/${out_file}")
-    #message (STATUS " Translating ${out_file}")
-    ADD_CUSTOM_COMMAND (
-        TARGET     hdiff
-        POST_BUILD
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy_if_different ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/${out_file} ${outdest}
-    )
+  foreach (h4_file ${HDF4_REFERENCE_TEST_FILES} ${HDF4_REFERENCE_FILES})
+    HDFTEST_COPY_FILE("${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/${h4_file}" "${PROJECT_BINARY_DIR}/testfiles/${h4_file}" "hdiff_files")
   endforeach ()
 
   if (WIN32 AND MSVC_VERSION LESS 1900)
-    ADD_CUSTOM_COMMAND (
-        TARGET     hdiff
-        POST_BUILD
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy_if_different ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/hdiff_06w.txt ${PROJECT_BINARY_DIR}/testfiles/hdiff_06.txt
-    )
+    HDFTEST_COPY_FILE("${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/hdiff_06w.txt" "${PROJECT_BINARY_DIR}/testfiles/hdiff_06.txt" "hdiff_files")
   else ()
-    ADD_CUSTOM_COMMAND (
-        TARGET     hdiff
-        POST_BUILD
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy_if_different ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/hdiff_06.txt ${PROJECT_BINARY_DIR}/testfiles/hdiff_06.txt
-    )
+    HDFTEST_COPY_FILE("${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/hdiff_06.txt" "${PROJECT_BINARY_DIR}/testfiles/hdiff_06.txt" "hdiff_files")
   endif ()
+
+  add_custom_target(hdiff_files ALL COMMENT "Copying files needed by hdiff tests" DEPENDS ${hdiff_files_list})
 
 ##############################################################################
 ##############################################################################

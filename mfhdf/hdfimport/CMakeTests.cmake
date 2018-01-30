@@ -14,34 +14,6 @@
       SDSfloat2.hdf
       SDSfloat3.hdf
   )
-
-  foreach (h4_file ${HDF4_REFERENCE_TEST_FILES})
-      set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-      #message (STATUS " Copying ${HDF4_MFHDF_HDFIMPORT_SOURCE_DIR}/${h4_file} to ${PROJECT_BINARY_DIR}/")
-      add_custom_command (
-          TARGET     hdfimport
-          POST_BUILD
-          COMMAND    ${CMAKE_COMMAND}
-          ARGS       -E copy_if_different ${HDF4_MFHDF_HDFIMPORT_SOURCE_DIR}/${h4_file} ${dest}
-     )
-  endforeach ()
-
-  if (WIN32 AND MSVC_VERSION LESS 1900)
-    add_custom_command (
-        TARGET     hdfimport
-        POST_BUILD
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy_if_different ${HDF4_MFHDF_HDFIMPORT_SOURCE_DIR}/hdfimport-w.out2 ${PROJECT_BINARY_DIR}/hdfimport.out2
-    )
-  else ()
-    add_custom_command (
-        TARGET     hdfimport
-        POST_BUILD
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy_if_different ${HDF4_MFHDF_HDFIMPORT_SOURCE_DIR}/hdfimport.out2 ${PROJECT_BINARY_DIR}/hdfimport.out2
-    )
-  endif ()
-
   #-- Copy all the hdfls tst files from the test directory into the source directory
   set (HDF4_LS_TEST_FILES
       ctxtr2.tst
@@ -62,16 +34,21 @@
       SDSfloat3.tst
   )
 
-  foreach (ls_file ${HDF4_LS_TEST_FILES})
-      set (dest "${PROJECT_BINARY_DIR}/${ls_file}")
-      #message (STATUS " Copying ${HDF4_MFHDF_HDFIMPORT_SOURCE_DIR}/${ls_file} to ${PROJECT_BINARY_DIR}/")
-      ADD_CUSTOM_COMMAND (
-          TARGET     hdfimport
-          POST_BUILD
-          COMMAND    ${CMAKE_COMMAND}
-          ARGS       -E copy_if_different ${HDF4_MFHDF_HDFIMPORT_SOURCE_DIR}/testfiles/${ls_file} ${dest}
-     )
+  foreach (h4_file ${HDF4_REFERENCE_TEST_FILES})
+    HDFTEST_COPY_FILE("${HDF4_MFHDF_HDFIMPORT_SOURCE_DIR}/${h4_file}" "${PROJECT_BINARY_DIR}/${h4_file}" "hdfimport_files")
   endforeach ()
+
+  foreach (h4_file ${HDF4_LS_TEST_FILES})
+    HDFTEST_COPY_FILE("${HDF4_MFHDF_HDFIMPORT_SOURCE_DIR}/testfiles/${h4_file}" "${PROJECT_BINARY_DIR}/${h4_file}" "hdfimport_files")
+  endforeach ()
+
+  if (WIN32 AND MSVC_VERSION LESS 1900)
+    HDFTEST_COPY_FILE("${HDF4_MFHDF_HDFIMPORT_SOURCE_DIR}/hdfimport-w.out2" "${PROJECT_BINARY_DIR}/hdfimport.out2" "hdfimport_files")
+  else ()
+    HDFTEST_COPY_FILE("${HDF4_MFHDF_HDFIMPORT_SOURCE_DIR}/hdfimport.out2" "${PROJECT_BINARY_DIR}/hdfimport.out2" "hdfimport_files")
+  endif ()
+
+  add_custom_target(hdfimport_files ALL COMMENT "Copying files needed by hdfimport tests" DEPENDS ${hdfimport_files_list})
 
   #-- hdfimporttest
   set (hdfimporttest_SRCS
