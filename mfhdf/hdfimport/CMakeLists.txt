@@ -27,12 +27,7 @@ set (hdfimport_SRCS
 
 add_executable (hdfimport ${hdfimport_SRCS})
 TARGET_C_PROPERTIES (hdfimport STATIC " " " ")
-if (HDF4_BUILD_XDR_LIB)
-  target_link_libraries (hdfimport ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
-else ()
-  target_link_libraries (hdfimport ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-endif ()
-TARGET_NAMING (hdfimport STATIC)
+target_link_libraries (hdfimport ${HDF4_MF_LIB_TARGET})
 set_global_variable (HDF4_UTILS_TO_EXPORT "${HDF4_UTILS_TO_EXPORT};hdfimport")
 
 if (BUILD_TESTING)

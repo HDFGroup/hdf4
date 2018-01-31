@@ -36,21 +36,11 @@ set (hrepack_SRCS
 
 add_executable (hrepack ${hrepack_SRCS})
 TARGET_C_PROPERTIES (hrepack STATIC " " " ")
-if (HDF4_BUILD_XDR_LIB)
-  target_link_libraries (hrepack ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
-else ()
-  target_link_libraries (hrepack ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-endif ()
-TARGET_NAMING (hrepack STATIC)
+target_link_libraries (hrepack ${HDF4_MF_LIB_TARGET})
 
 add_executable (hrepack_check ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_check.c)
 TARGET_C_PROPERTIES (hrepack_check STATIC " " " ")
-if (HDF4_BUILD_XDR_LIB)
-  target_link_libraries (hrepack_check ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
-else ()
-  target_link_libraries (hrepack_check ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-endif ()
-TARGET_NAMING (hrepack_check STATIC)
+target_link_libraries (hrepack_check ${HDF4_MF_LIB_TARGET})
 set_global_variable (HDF4_UTILS_TO_EXPORT "${HDF4_UTILS_TO_EXPORT};hrepack")
 
 if (BUILD_TESTING)

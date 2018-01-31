@@ -26,10 +26,6 @@ set (HDF4_ENABLE_NETCDF ON CACHE BOOL "Build HDF4 versions of NetCDF-3 APIS" FOR
 
 set (HDF4_BUILD_XDR_LIB OFF CACHE BOOL "Build HDF4 XDR Library" FORCE)
 
-set (HDF4_ENABLE_PARALLEL OFF CACHE BOOL "Enable parallel build (requires MPI)" FORCE)
-
-set (MPIEXEC_MAX_NUMPROCS "3" CACHE STRING "Minimum number of processes for HDF parallel tests" FORCE)
-
 set (HDF4_ENABLE_JPEG_LIB_SUPPORT ON CACHE BOOL "Enable Jpeg library" FORCE)
 
 set (HDF4_ENABLE_Z_LIB_SUPPORT ON CACHE BOOL "Enable Zlib Filters" FORCE)

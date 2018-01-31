@@ -25,7 +25,7 @@ I. Preconditions
       of 3.2.2.
 
    2. You have installed the HDF4 library built with CMake by executing
-      the HDF Install Utility (the *.exe or *.msi file in the binary package for
+      the HDF Install Utility (the *.msi file in the binary package for
       Windows or the *.sh on Linux). If you are using a Windows platform,
       you can obtain a pre-built Windows binary from The HDF Group's website
       at www.hdfgroup.org.
@@ -58,7 +58,7 @@ Default installation process:
            with the CTEST_CONFIGURATION_TYPE script option. Note that this must
            be the same as the value used with the -C command line option.
        The default build configuration is defined to build and use static libraries.
-           Shared libraries can be used with the STATICLIBRARIES script option set to "NO".
+           Shared libraries can be used with the STATIC_ONLY script option set to "NO".
        Other options can be changed by editing the HDF4_Examples_options.cmake file.
 
        If the defaults are okay, execute from this directory:

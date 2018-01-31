@@ -47,34 +47,24 @@ set (skip_examples
 
 foreach (example ${examples})
   add_executable (f_exmf_${example} ${HDF4_MFHDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
-  TARGET_NAMING (f_exmf_${example} STATIC)
   TARGET_FORTRAN_PROPERTIES (f_exmf_${example} STATIC " " " ")
   target_include_directories (f_exmf_${example} PRIVATE ${CMAKE_Fortran_MODULE_DIRECTORY})
   set_target_properties (f_exmf_${example} PROPERTIES
       LINKER_LANGUAGE Fortran
       Fortran_MODULE_DIRECTORY ${CMAKE_Fortran_MODULE_DIRECTORY}
   )
-  if (HDF4_BUILD_XDR_LIB)
-    target_link_libraries (f_exmf_${example} ${HDF4_MF_FORTRAN_LIB_TARGET}  ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
-  else ()
-    target_link_libraries (f_exmf_${example} ${HDF4_MF_FORTRAN_LIB_TARGET}  ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-  endif ()
+  target_link_libraries (f_exmf_${example} ${HDF4_MF_FORTRAN_LIB_TARGET})
 endforeach ()
 
 foreach (example ${skip_examples})
   add_executable (f_exmf_${example} ${HDF4_MFHDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
-  TARGET_NAMING (f_exmf_${example} STATIC)
   TARGET_FORTRAN_PROPERTIES (f_exmf_${example} STATIC " " " ")
   target_include_directories (f_exmf_${example} PRIVATE ${CMAKE_Fortran_MODULE_DIRECTORY})
   set_target_properties (f_exmf_${example} PROPERTIES
       LINKER_LANGUAGE Fortran
       Fortran_MODULE_DIRECTORY ${CMAKE_Fortran_MODULE_DIRECTORY}
   )
-  if (HDF4_BUILD_XDR_LIB)
-    target_link_libraries (f_exmf_${example} ${HDF4_MF_FORTRAN_LIB_TARGET}  ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
-  else ()
-    target_link_libraries (f_exmf_${example} ${HDF4_MF_FORTRAN_LIB_TARGET}  ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-  endif ()
+  target_link_libraries (f_exmf_${example} ${HDF4_MF_FORTRAN_LIB_TARGET})
 endforeach ()
 
 if (BUILD_TESTING)

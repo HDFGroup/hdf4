@@ -16,25 +16,14 @@
   )
 
   foreach (h4_file ${HDF4_REPACK_TEST_FILES})
-    set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-    #message (STATUS " Copying ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/${h4_file} to ${PROJECT_BINARY_DIR}/")
-    add_custom_command (
-        TARGET     hrepack_check
-        POST_BUILD
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy_if_different ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/${h4_file} ${dest}
-    )
+    HDFTEST_COPY_FILE("${HDF4_MFHDF_HREPACK_SOURCE_DIR}/${h4_file}" "${PROJECT_BINARY_DIR}/${h4_file}" "hrepack_files")
   endforeach ()
+  add_custom_target(hrepack_files ALL COMMENT "Copying files needed by hrepack tests" DEPENDS ${hrepack_files_list})
 
 #-- Adding test for test_hrepack for generating testfiles
   add_executable (test_hrepack ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepacktst.c)
   TARGET_C_PROPERTIES (test_hrepack STATIC " " " ")
-  if (HDF4_BUILD_XDR_LIB)
-    target_link_libraries (test_hrepack ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
-  else ()
-    target_link_libraries (test_hrepack ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-  endif ()
-  TARGET_NAMING (test_hrepack STATIC)
+  target_link_libraries (test_hrepack ${HDF4_MF_LIB_TARGET})
 
   macro (ADD_H4_TEST testname testtype testfile)
     if ("${testtype}" STREQUAL "SKIP")

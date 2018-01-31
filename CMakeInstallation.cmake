@@ -8,7 +8,7 @@ if (WIN32)
   find_program (NSIS_EXECUTABLE NSIS.exe PATHS "$ENV{ProgramFiles}\\NSIS" "$ENV{ProgramFiles${PF_ENV_EXT}}\\NSIS")
   if(NOT CPACK_WIX_ROOT)
     file(TO_CMAKE_PATH "$ENV{WIX}" CPACK_WIX_ROOT)
-  endif()
+  endif ()
   find_program (WIX_EXECUTABLE candle  PATHS "${CPACK_WIX_ROOT}/bin")
 endif ()
 
@@ -29,7 +29,7 @@ endif ()
 if (NOT HDF4_EXTERNALLY_CONFIGURED)
   install (
       EXPORT ${HDF4_EXPORTED_TARGETS}
-      DESTINATION ${HDF4_INSTALL_CMAKE_DIR}
+      DESTINATION ${HDF4_INSTALL_CMAKE_DIR}/hdf4
       FILE ${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-targets.cmake
       NAMESPACE ${HDF4_PACKAGE}::
       COMPONENT configinstall
@@ -45,7 +45,7 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED)
       FILE ${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-targets.cmake
       NAMESPACE ${HDF4_PACKAGE}::
   )
-endif (NOT HDF4_EXTERNALLY_CONFIGURED)
+endif ()
 
 #-----------------------------------------------------------------------------
 # Set includes needed for build
@@ -73,7 +73,7 @@ set (CURRENT_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}" )
 configure_package_config_file (
     ${HDF_RESOURCES_DIR}/hdf4-config.cmake.in
     "${HDF4_BINARY_DIR}/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config.cmake"
-    INSTALL_DESTINATION "${HDF4_INSTALL_CMAKE_DIR}"
+    INSTALL_DESTINATION "${HDF4_INSTALL_CMAKE_DIR}/hdf4"
     PATH_VARS INCLUDE_INSTALL_DIR SHARE_INSTALL_DIR CURRENT_BUILD_DIR
     INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}"
 )
@@ -87,13 +87,13 @@ set (CURRENT_BUILD_DIR "${CMAKE_INSTALL_PREFIX}" )
 configure_package_config_file (
     ${HDF_RESOURCES_DIR}/hdf4-config.cmake.in
     "${HDF4_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config.cmake"
-    INSTALL_DESTINATION "${HDF4_INSTALL_CMAKE_DIR}"
+    INSTALL_DESTINATION "${HDF4_INSTALL_CMAKE_DIR}/hdf4"
     PATH_VARS INCLUDE_INSTALL_DIR SHARE_INSTALL_DIR CURRENT_BUILD_DIR
 )
 if (NOT HDF4_EXTERNALLY_CONFIGURED)
   install (
       FILES ${HDF4_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config.cmake
-      DESTINATION ${HDF4_INSTALL_CMAKE_DIR}
+      DESTINATION ${HDF4_INSTALL_CMAKE_DIR}/hdf4
       COMPONENT configinstall
   )
 endif ()
@@ -108,7 +108,7 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED)
   )
   install (
       FILES ${HDF4_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config-version.cmake
-      DESTINATION ${HDF4_INSTALL_CMAKE_DIR}
+      DESTINATION ${HDF4_INSTALL_CMAKE_DIR}/hdf4
       COMPONENT configinstall
   )
 endif ()

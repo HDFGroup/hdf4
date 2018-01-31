@@ -44,15 +44,9 @@ set (HDF_JAVA_TEST_FILES
 )
 
 foreach (h4_file ${HDF_JAVA_TEST_FILES})
-  set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-  #message (STATUS " Copying ${h4_file}")
-  add_custom_command (
-      TARGET     ${HDF4_JAVA_TEST_LIB_TARGET}
-      POST_BUILD
-      COMMAND    ${CMAKE_COMMAND}
-      ARGS       -E copy_if_different ${PROJECT_SOURCE_DIR}/${h4_file} ${dest}
-  )
+  HDFTEST_COPY_FILE("${PROJECT_SOURCE_DIR}/${h4_file}" "${PROJECT_BINARY_DIR}/${h4_file}" "java_test_files")
 endforeach ()
+add_custom_target(java_test_files ALL COMMENT "Copying files needed by java tests" DEPENDS ${java_test_files_list})
 
 if (WIN32)
   set (CMAKE_JAVA_INCLUDE_FLAG_SEP ";")
@@ -67,14 +61,7 @@ endforeach ()
 set (CMAKE_JAVA_CLASSPATH "${CMAKE_JAVA_CLASSPATH}${CMAKE_JAVA_INCLUDE_FLAG_SEP}${${HDF4_JAVA_TEST_LIB_TARGET}_JAR_FILE}")
 set (testfilter "OK (598 tests)")
 
-if (CMAKE_BUILD_TYPE MATCHES Debug)
-  if (WIN32)
-    set (CMD_ARGS "-Dhdf.hdflib.HDFLibrary.loadLibraryName=hdf_java_D;")
-  else()
-    set (CMD_ARGS "-Dhdf.hdflib.HDFLibrary.loadLibraryName=hdf_java_debug;")
-  endif()
-endif()
-
+set (CMD_ARGS "-Dhdf.hdflib.HDFLibrary.loadLibraryName=$<TARGET_PROPERTY:${HDF4_JAVA_JNI_LIB_TARGET},OUTPUT_NAME$<$<CONFIG:Debug>:_DEBUG>>;")
 add_test (
   NAME JUnit-interface-clearall-objects
   COMMAND    ${CMAKE_COMMAND}

@@ -200,6 +200,8 @@ set (HDF4_JAVA_LOGGING_JAR         ${HDF4_SOURCE_DIR}/java/lib/slf4j-api-1.7.5.j
 set (HDF4_JAVA_LOGGING_NOP_JAR     ${HDF4_SOURCE_DIR}/java/lib/ext/slf4j-nop-1.7.5.jar)
 set (HDF4_JAVA_LOGGING_SIMPLE_JAR  ${HDF4_SOURCE_DIR}/java/lib/ext/slf4j-simple-1.7.5.jar)
 
+set (CMAKE_MODULE_PATH ${HDF_RESOURCES_DIR} ${HDF_RESOURCES_EXT_DIR} ${CMAKE_MODULE_PATH})
+
 if (APPLE)
   option (HDF4_BUILD_FRAMEWORKS "TRUE to build as frameworks libraries, FALSE to build according to BUILD_SHARED_LIBS" FALSE)
 endif ()
@@ -243,9 +245,9 @@ if (NOT HDF4_INSTALL_DATA_DIR)
   endif ()
 endif ()
 
-if(DEFINED ADDITIONAL_CMAKE_PREFIX_PATH AND EXISTS "${ADDITIONAL_CMAKE_PREFIX_PATH}")
+if (DEFINED ADDITIONAL_CMAKE_PREFIX_PATH AND EXISTS "${ADDITIONAL_CMAKE_PREFIX_PATH}")
   set (CMAKE_PREFIX_PATH ${ADDITIONAL_CMAKE_PREFIX_PATH} ${CMAKE_PREFIX_PATH})
-endif()
+endif ()
 
 #-----------------------------------------------------------------------------
 # parse the full version number from hfile.h and include in H4_VERS_INFO
@@ -285,6 +287,8 @@ include (${HDF_RESOURCES_EXT_DIR}/HDFMacros.cmake)
 include (${HDF_RESOURCES_EXT_DIR}/HDFLibMacros.cmake)
 include (${HDF_RESOURCES_DIR}/HDF4Macros.cmake)
 
+SET_HDF_BUILD_TYPE()
+
 #-----------------------------------------------------------------------------
 # Setup output Directories
 #-----------------------------------------------------------------------------
@@ -302,12 +306,12 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED)
       ${PROJECT_BINARY_DIR}/bin/fortran CACHE PATH "Single Directory for all fortran modules."
   )
   if (WIN32)
-    set (CMAKE_TEST_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE})
+    set (CMAKE_TEST_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CTEST_CONFIGURATION_TYPE})
     set (CMAKE_PDB_OUTPUT_DIRECTORY
         ${PROJECT_BINARY_DIR}/bin CACHE PATH "Single Directory for all pdb files."
     )
   else ()
-    set (CMAKE_TEST_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+    set (CMAKE_TEST_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CTEST_CONFIGURATION_TYPE})
   endif ()
 else ()
   # if we are externally configured, but the project uses old cmake scripts
@@ -319,7 +323,7 @@ endif ()
 
 #-----------------------------------------------------------------------------
 # Targets built within this project are exported at Install time for use
-# by other projects using FindHDF4.
+# by other projects
 #-----------------------------------------------------------------------------
 if (NOT HDF4_EXPORTED_TARGETS)
   set (HDF4_EXPORTED_TARGETS "hdf4-targets")
@@ -357,7 +361,6 @@ option (BUILD_SHARED_LIBS "Build Shared Libraries" OFF)
 set (H4_ENABLE_SHARED_LIB NO)
 if (BUILD_SHARED_LIBS)
   set (H4_ENABLE_SHARED_LIB YES)
-  set (LINK_SHARED_LIBS ${LINK_LIBS})
 endif ()
 set (H4_ENABLE_STATIC_LIB YES)
 set (CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -421,11 +424,9 @@ INCLUDE_DIRECTORIES (${HDF4_INCLUDE_DIRECTORIES} )
 set (EXE_EXT "")
 if (WIN32)
   set (EXE_EXT ".exe")
-  if (NOT CYGWIN)
-    add_definitions (-D_BIND_TO_CURRENT_VCLIBS_VERSION=1)
-    add_definitions (-D_CRT_SECURE_NO_WARNINGS)
-    add_definitions (-D_CONSOLE)
-  endif ()
+  add_definitions (-D_BIND_TO_CURRENT_VCLIBS_VERSION=1)
+  add_definitions (-D_CRT_SECURE_NO_WARNINGS)
+  add_definitions (-D_CONSOLE)
 endif ()
 
 if (MSVC)
@@ -447,7 +448,7 @@ endif ()
 #-----------------------------------------------------------------------------
 # Add some definitions for Debug Builds
 #-----------------------------------------------------------------------------
-if (CMAKE_BUILD_TYPE MATCHES Debug)
+if (${HDF_CFG_NAME} MATCHES Debug)
   #-- NMake Makefiles will overwhelm the console with warnings if -Wall is used.
   if (NOT WIN32)
     add_definitions (-Wall)
@@ -458,14 +459,14 @@ endif ()
 # Compiler specific flags : Shouldn't there be compiler tests for these
 #-----------------------------------------------------------------------------
 if (CMAKE_COMPILER_IS_GNUCC)
-  if (CMAKE_BUILD_TYPE MATCHES Debug)
+  if (${HDF_CFG_NAME} MATCHES Debug)
     set (CMAKE_C_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_C_FLAGS} -std=c99 -finline-functions -fno-common")
   else ()
     set (CMAKE_C_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_C_FLAGS} -std=c99 -fomit-frame-pointer -finline-functions -fno-common")
   endif ()
 endif ()
 if (CMAKE_COMPILER_IS_GNUCXX)
-  if (CMAKE_BUILD_TYPE MATCHES Debug)
+  if (${HDF_CFG_NAME} MATCHES Debug)
     set (CMAKE_CXX_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_CXX_FLAGS} -finline-functions -fno-common")
   else ()
     set (CMAKE_CXX_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_CXX_FLAGS} -fomit-frame-pointer -finline-functions -fno-common")
@@ -482,9 +483,9 @@ if (HDF4_DISABLE_COMPILER_WARNINGS)
   if (MSVC)
     set (HDF4_WARNINGS_BLOCKED 1)
     string (REGEX REPLACE "(^| )([/-])W[0-9]( |$)" " " CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
-    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /w")
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W0")
     string (REGEX REPLACE "(^| )([/-])W[0-9]( |$)" " " CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /w")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W0")
   endif ()
   if (WIN32)
     add_definitions (-D_CRT_SECURE_NO_WARNINGS)
@@ -511,36 +512,6 @@ if (CMAKE_COMPILER_IS_GNUCC)
 endif ()
 if (CMAKE_COMPILER_IS_GNUCXX)
   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fmessage-length=0")
-endif ()
-
-#-----------------------------------------------------------------------------
-# Option to Enable MPI Parallel
-#-----------------------------------------------------------------------------
-set (CMAKE_MODULE_PATH ${HDF_RESOURCES_DIR} ${HDF_RESOURCES_EXT_DIR} ${CMAKE_MODULE_PATH})
-option (HDF4_ENABLE_PARALLEL "Enable parallel build (requires MPI)" OFF)
-if (HDF4_ENABLE_PARALLEL)
-  include (FindMPI)
-  INCLUDE_DIRECTORIES (${MPI_C_INCLUDE_PATH})
-  if (MPI_C_FOUND)
-    set (H4_HAVE_PARALLEL 1)
-    # MPI checks, only do these if MPI_C_FOUND is true, otherwise they always fail
-    # and once set, they are cached as false and not regenerated
-    set (CMAKE_REQUIRED_LIBRARIES "${MPI_C_LIBRARIES}" )
-    CHECK_FUNCTION_EXISTS (MPI_File_get_size H4_HAVE_MPI_GET_SIZE)
-    # Used by Fortran + MPI
-    CHECK_SYMBOL_EXISTS (MPI_Comm_c2f "${MPI_C_INCLUDE_PATH}/mpi.h"  H4_HAVE_MPI_MULTI_LANG_Comm)
-    CHECK_SYMBOL_EXISTS (MPI_Info_c2f "${MPI_C_INCLUDE_PATH}/mpi.h"  H4_HAVE_MPI_MULTI_LANG_Info)
-  else ()
-    message (STATUS "Parallel libraries not found")
-  endif ()
-endif ()
-
-# Parallel IO usage requires MPI to be Linked and Included
-if (H4_HAVE_PARALLEL)
-  set (LINK_LIBS ${LINK_LIBS} ${MPI_C_LIBRARIES})
-  if (MPI_C_LINK_FLAGS)
-    set (CMAKE_EXE_LINKER_FLAGS "${MPI_C_LINK_FLAGS} ${CMAKE_EXE_LINKER_FLAGS}")
-  endif ()
 endif ()
 
 #-----------------------------------------------------------------------------
@@ -595,16 +566,16 @@ else ()
 endif ()
 
 if (HDF4_BUILD_XDR_LIB)
-  add_subdirectory (${HDF4_SOURCE_DIR}/mfhdf/xdr ${PROJECT_BINARY_DIR}/xdr)
+  add_subdirectory (mfhdf/xdr)
 endif ()
 
 #-----------------------------------------------------------------------------
 # Add the HDF4 Library Target to the build
 #-----------------------------------------------------------------------------
-add_subdirectory (${HDF4_SOURCE_DIR}/hdf/src    ${PROJECT_BINARY_DIR}/hdf/src )
-add_subdirectory (${HDF4_SOURCE_DIR}/mfhdf/libsrc   ${PROJECT_BINARY_DIR}/mfhdf/libsrc)
+add_subdirectory (hdf/src )
+add_subdirectory (mfhdf/libsrc)
 
-if (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "GIT" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
+if (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "GIT" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
   if (JPEG_FOUND AND JPEG_USE_EXTERNAL)
     add_dependencies (${HDF4_SRC_LIB_TARGET} JPEG)
     if (BUILD_SHARED_LIBS)
@@ -649,10 +620,10 @@ if (BUILD_TESTING)
 
   if (NOT HDF4_EXTERNALLY_CONFIGURED)
     if (EXISTS "${HDF4_SOURCE_DIR}/hdf/test" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/hdf/test")
-      add_subdirectory (${HDF4_SOURCE_DIR}/hdf/test   ${PROJECT_BINARY_DIR}/hdf/test)
+      add_subdirectory (hdf/test)
     endif ()
     if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/test" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/test")
-      add_subdirectory (${HDF4_SOURCE_DIR}/mfhdf/test ${PROJECT_BINARY_DIR}/mfhdf/test)
+      add_subdirectory (mfhdf/test)
     endif ()
   endif ()
 endif ()
@@ -673,8 +644,8 @@ if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/fortran" AND IS_DIRECTORY "${HDF4_SOURCE_DI
       set (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) NAME")
     endif ()
     include (${HDF_RESOURCES_DIR}/HDF4UseFortran.cmake)
-    add_subdirectory (${HDF4_SOURCE_DIR}/mfhdf/fortran ${PROJECT_BINARY_DIR}/mfhdf/fortran)
-    add_subdirectory (${HDF4_SOURCE_DIR}/hdf/fortran ${PROJECT_BINARY_DIR}/hdf/fortran)
+    add_subdirectory (mfhdf/fortran)
+    add_subdirectory (hdf/fortran)
   endif ()
 endif ()
 
@@ -687,8 +658,8 @@ endif ()
 #-----------------------------------------------------------------------------
 # Library utilities
 #-----------------------------------------------------------------------------
-add_subdirectory (${HDF4_SOURCE_DIR}/hdf   ${PROJECT_BINARY_DIR}/hdf)
-add_subdirectory (${HDF4_SOURCE_DIR}/mfhdf ${PROJECT_BINARY_DIR}/mfhdf)
+add_subdirectory (hdf)
+add_subdirectory (mfhdf)
 
 #-----------------------------------------------------------------------------
 # Option to build HDF4 Examples
@@ -698,15 +669,15 @@ if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/examples" AND IS_DIRECTORY "${HDF4_SOURCE_D
   if (HDF4_BUILD_EXAMPLES)
     if (HDF4_BUILD_FORTRAN)
       if (EXISTS "${HDF4_SOURCE_DIR}/hdf/fortran/examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/hdf/fortran/examples")
-        add_subdirectory (${HDF4_SOURCE_DIR}/hdf/fortran/examples     ${PROJECT_BINARY_DIR}/hdf/fortran/examples)
+        add_subdirectory (hdf/fortran/examples)
       endif ()
       if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/fortran/examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/fortran/examples")
-        add_subdirectory (${HDF4_SOURCE_DIR}/mfhdf/fortran/examples     ${PROJECT_BINARY_DIR}/mfhdf/fortran/examples)
+        add_subdirectory (mfhdf/fortran/examples)
       endif ()
     endif ()
 
-    add_subdirectory (${HDF4_SOURCE_DIR}/hdf/examples    ${PROJECT_BINARY_DIR}/hdf/examples)
-    add_subdirectory (${HDF4_SOURCE_DIR}/mfhdf/examples    ${PROJECT_BINARY_DIR}/mfhdf/examples)
+    add_subdirectory (hdf/examples)
+    add_subdirectory (mfhdf/examples)
   endif ()
 endif ()
 
@@ -716,7 +687,7 @@ endif ()
 if (EXISTS "${HDF4_SOURCE_DIR}/java" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/java")
   option (HDF4_BUILD_JAVA  "Build Java HDF Library" OFF)
   if (HDF4_BUILD_JAVA)
-    add_subdirectory (${HDF4_SOURCE_DIR}/java ${PROJECT_BINARY_DIR}/java)
+    add_subdirectory (java)
   endif ()
 endif ()
 

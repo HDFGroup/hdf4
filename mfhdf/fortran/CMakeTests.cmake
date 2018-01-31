@@ -13,14 +13,9 @@
   if (HDF4_ENABLE_NETCDF)
     #-- Adding test for ftest
     add_executable (ftest ${HDF4_BINARY_DIR}/ftest.f ${HDF4_HDF_TESTSOURCE_DIR}/forsupff.f ${HDF4_BINARY_DIR}/netcdf.inc)
-    TARGET_NAMING (ftest STATIC)
     TARGET_FORTRAN_PROPERTIES (ftest STATIC " " " ")
     set_target_properties (ftest PROPERTIES LINKER_LANGUAGE Fortran)
-    if (HDF4_BUILD_XDR_LIB)
-      target_link_libraries (ftest ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_XDR_LIB_TARGET} ${LINK_LIBS})
-    else ()
-      target_link_libraries (ftest ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-    endif ()
+    target_link_libraries (ftest ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_HDF_TEST_FCSTUB_LIB_TARGET})
 
     #-- Copy all the dat files from the test directory into the source directory
     set (HDF4_REFERENCE_TEST_FILES
@@ -28,51 +23,30 @@
       test_nc.nc
     )
     foreach (h4_file ${HDF4_REFERENCE_TEST_FILES})
-      set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-      #message (STATUS " Copying ${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/${h4_file} to ${PROJECT_BINARY_DIR}/")
-      ADD_CUSTOM_COMMAND (
-          TARGET     ftest
-          POST_BUILD
-          COMMAND    ${CMAKE_COMMAND}
-          ARGS       -E copy_if_different ${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/${h4_file} ${dest}
-      )
+      HDFTEST_COPY_FILE("${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/${h4_file}" "${PROJECT_BINARY_DIR}/${h4_file}" "netcdf_files")
     endforeach ()
+    add_custom_target(netcdf_files ALL COMMENT "Copying files needed by netcdf tests" DEPENDS ${netcdf_files_list})
 
     add_test (NAME ftest COMMAND $<TARGET_FILE:ftest>)
   endif ()
 
   #-- Adding test for f_hdftest
   add_executable (f_hdftest hdftest.f)
-  TARGET_NAMING (f_hdftest STATIC)
   TARGET_FORTRAN_PROPERTIES (f_hdftest STATIC " " " ")
   set_target_properties (f_hdftest PROPERTIES LINKER_LANGUAGE Fortran)
-  if (HDF4_BUILD_XDR_LIB)
-    target_link_libraries (f_hdftest ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_XDR_LIB_TARGET} ${LINK_LIBS})
-  else ()
-    target_link_libraries (f_hdftest ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-  endif ()
+  target_link_libraries (f_hdftest ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_SRC_FORTRAN_LIB_TARGET})
 
   #-- Adding test for f_hdftest1
   add_executable (f_hdftest1 hdftest1.f)
-  TARGET_NAMING (f_hdftest1 STATIC)
   TARGET_FORTRAN_PROPERTIES (f_hdftest1 STATIC " " " ")
   set_target_properties (f_hdftest1 PROPERTIES LINKER_LANGUAGE Fortran)
-  if (HDF4_BUILD_XDR_LIB)
-    target_link_libraries (f_hdftest1 ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_MF_XDR_LIB_TARGET} ${LINK_LIBS})
-  else ()
-    target_link_libraries (f_hdftest1 ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${LINK_LIBS})
-  endif ()
+  target_link_libraries (f_hdftest1 ${HDF4_MF_FORTRAN_LIB_TARGET})
 
   #-- Adding test for f_tszip
   add_executable (f_tszip tszip.f)
-  TARGET_NAMING (f_tszip STATIC)
   TARGET_FORTRAN_PROPERTIES (f_tszip STATIC " " " ")
   set_target_properties (f_tszip PROPERTIES LINKER_LANGUAGE Fortran)
-  if (HDF4_BUILD_XDR_LIB)
-    target_link_libraries (f_tszip ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_MF_XDR_LIB_TARGET} ${LINK_LIBS})
-  else ()
-    target_link_libraries (f_tszip ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${LINK_LIBS})
-  endif ()
+  target_link_libraries (f_tszip ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_SRC_FORTRAN_LIB_TARGET})
 
 ##############################################################################
 ##############################################################################

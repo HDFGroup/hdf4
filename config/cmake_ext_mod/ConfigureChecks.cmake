@@ -1,18 +1,18 @@
 #-----------------------------------------------------------------------------
 # Include all the necessary files for macros
 #-----------------------------------------------------------------------------
-include (${CMAKE_ROOT}/Modules/CheckFunctionExists.cmake)
-include (${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake)
-include (${CMAKE_ROOT}/Modules/CheckIncludeFileCXX.cmake)
-include (${CMAKE_ROOT}/Modules/CheckIncludeFiles.cmake)
-include (${CMAKE_ROOT}/Modules/CheckLibraryExists.cmake)
-include (${CMAKE_ROOT}/Modules/CheckSymbolExists.cmake)
-include (${CMAKE_ROOT}/Modules/CheckTypeSize.cmake)
-include (${CMAKE_ROOT}/Modules/CheckVariableExists.cmake)
-include (${CMAKE_ROOT}/Modules/CheckFortranFunctionExists.cmake)
-include (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
+include (CheckFunctionExists)
+include (CheckIncludeFile)
+include (CheckIncludeFileCXX)
+include (CheckIncludeFiles)
+include (CheckLibraryExists)
+include (CheckSymbolExists)
+include (CheckTypeSize)
+include (CheckVariableExists)
+include (CheckFortranFunctionExists)
+include (TestBigEndian)
 if (CMAKE_CXX_COMPILER AND CMAKE_CXX_COMPILER_LOADED)
-  include (${CMAKE_ROOT}/Modules/TestForSTDNamespace.cmake)
+  include (TestForSTDNamespace)
 endif ()
 
 #-----------------------------------------------------------------------------
@@ -130,7 +130,7 @@ endif ()
 
 # For other specific tests, use this MACRO.
 macro (HDF_FUNCTION_TEST OTHER_TEST)
-  if ("${HDF_PREFIX}_${OTHER_TEST}" MATCHES "^${HDF_PREFIX}_${OTHER_TEST}$")
+  if (NOT DEFINED ${HDF_PREFIX}_${OTHER_TEST})
     set (MACRO_CHECK_FUNCTION_DEFINITIONS "-D${OTHER_TEST} ${CMAKE_REQUIRED_FLAGS}")
     set (OTHER_TEST_ADD_LIBRARIES)
     if (CMAKE_REQUIRED_LIBRARIES)

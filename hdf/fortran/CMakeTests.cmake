@@ -16,17 +16,13 @@
     add_definitions (-DDOS_FS)
   endif ()
   TARGET_C_PROPERTIES (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} STATIC " " " ")
-  target_link_libraries (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} ${HDF4_SRC_LIB_TARGET})
+  target_link_libraries (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} PUBLIC ${HDF4_SRC_LIB_TARGET})
   H4_SET_LIB_OPTIONS (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} ${HDF4_HDF_TEST_FCSTUB_LIB_NAME} STATIC)
 
   #-- Adding test for fortest
   add_executable (fortest ${HDF4_HDF_TESTSOURCE_DIR}/fortest.c)
-  TARGET_NAMING (fortest STATIC)
   TARGET_C_PROPERTIES (fortest STATIC " " " ")
   target_link_libraries (fortest ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_LIB_TARGET})
-  if (WIN32)
-    target_link_libraries (fortest "ws2_32.lib")
-  endif ()
   set_target_properties (fortest PROPERTIES LINKER_LANGUAGE C)
 
   #-----------------------------------------------------------------------------
@@ -53,9 +49,8 @@
   )
 
   add_executable (fortestF ${FORTEST_FSRCS} )
-  TARGET_NAMING (fortestF STATIC)
   TARGET_FORTRAN_PROPERTIES (fortestF STATIC " " " ")
-  target_link_libraries (fortestF ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_FCSTUB_LIB_TARGET} ${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} )
+  target_link_libraries (fortestF ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_FCSTUB_LIB_TARGET} ${HDF4_HDF_TEST_FCSTUB_LIB_TARGET})
   set_target_properties (fortestF PROPERTIES LINKER_LANGUAGE Fortran)
 
   #-- Copy all the dat files from the test directory into the source directory
@@ -71,15 +66,9 @@
     tvattr.dat
   )
   foreach (h4_file ${HDF4_REFERENCE_TEST_FILES})
-    set (dest "${PROJECT_BINARY_DIR}/test_files/${h4_file}")
-    #message (STATUS " Copying ${HDF4_HDF_TESTSOURCE_DIR}/test_files/${h4_file} to ${PROJECT_BINARY_DIR}/test_files/")
-    add_custom_command (
-        TARGET     fortestF
-        POST_BUILD
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy_if_different ${HDF4_HDF_TESTSOURCE_DIR}/test_files/${h4_file} ${dest}
-    )
+    HDFTEST_COPY_FILE("${HDF4_HDF_TESTSOURCE_DIR}/test_files/${h4_file}" "${PROJECT_BINARY_DIR}/test_files/${h4_file}" "hdf_fortran_files")
   endforeach ()
+  add_custom_target(hdf_fortran_files ALL COMMENT "Copying files needed by hdf fortran tests" DEPENDS ${hdf_fortran_files_list})
 
 ##############################################################################
 ##############################################################################

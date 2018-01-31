@@ -5,6 +5,16 @@
 ##############################################################################
 ##############################################################################
 
+set (HDF4_NC_TEST_FILES
+    test_unlim.cdl
+    test_unlim.nc
+)
+
+foreach (h4_file ${HDF4_NC_TEST_FILES})
+  HDFTEST_COPY_FILE("${HDF4_MFHDF_NCTEST_SOURCE_DIR}/${h4_file}" "${PROJECT_BINARY_DIR}/${h4_file}" "nc_test_files")
+endforeach ()
+add_custom_target(nc_test_files ALL COMMENT "Copying files needed by nc tests" DEPENDS ${nc_test_files_list})
+
 # Remove any output file left over from previous test run
 add_test (
     NAME NC_TEST-clearall-objects

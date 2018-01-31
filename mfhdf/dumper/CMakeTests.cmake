@@ -129,27 +129,10 @@
       list-9.out
   )
 
-  foreach (h4_file ${HDF4_REFERENCE_TEST_FILES})
-    set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-    #message (STATUS " Copying ${HDF4_MFHDF_DUMPER_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
-    ADD_CUSTOM_COMMAND (
-        TARGET     hdp
-        POST_BUILD
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy_if_different ${HDF4_MFHDF_DUMPER_SOURCE_DIR}/testfiles/${h4_file} ${dest}
-    )
+  foreach (h4_file ${HDF4_REFERENCE_TEST_FILES} ${HDF4_REFERENCE_FILES})
+    HDFTEST_COPY_FILE("${HDF4_MFHDF_DUMPER_SOURCE_DIR}/testfiles/${h4_file}" "${PROJECT_BINARY_DIR}/${h4_file}" "dumper_files")
   endforeach ()
-
-  foreach (out_file ${HDF4_REFERENCE_FILES})
-    set (outdest "${PROJECT_BINARY_DIR}/${out_file}")
-    #message (STATUS " Translating ${out_file}")
-    ADD_CUSTOM_COMMAND (
-        TARGET     hdp
-        POST_BUILD
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy_if_different ${HDF4_MFHDF_DUMPER_SOURCE_DIR}/testfiles/${out_file} ${outdest}
-    )
-  endforeach ()
+  add_custom_target(dumper_files ALL COMMENT "Copying files needed by dumper tests" DEPENDS ${dumper_files_list})
 
 ##############################################################################
 ##############################################################################

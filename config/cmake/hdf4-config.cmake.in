@@ -16,7 +16,6 @@ set (${HDF4_PACKAGE_NAME}_VALID_COMPONENTS
 #-----------------------------------------------------------------------------
 # User Options
 #-----------------------------------------------------------------------------
-set (${HDF4_PACKAGE_NAME}_ENABLE_PARALLEL @HDF4_ENABLE_PARALLEL@)
 set (${HDF4_PACKAGE_NAME}_BUILD_FORTRAN   @HDF4_BUILD_FORTRAN@)
 set (${HDF4_PACKAGE_NAME}_BUILD_JAVA      @HDF4_BUILD_JAVA@)
 set (${HDF4_PACKAGE_NAME}_BUILD_XDR_LIB   @HDF4_BUILD_XDR_LIB@)
@@ -70,9 +69,9 @@ endif ()
 #-----------------------------------------------------------------------------
 # Version Strings
 #-----------------------------------------------------------------------------
-set (HDF4_VERSION_STRING @HDF4_VERSION_STRING@)
-set (HDF4_VERSION_MAJOR  @HDF4_VERSION_MAJOR@)
-set (HDF4_VERSION_MINOR  @HDF4_VERSION_MINOR@)
+set (${HDF4_PACKAGE_NAME}_VERSION_STRING @HDF4_VERSION_STRING@)
+set (${HDF4_PACKAGE_NAME}_VERSION_MAJOR  @HDF4_VERSION_MAJOR@)
+set (${HDF4_PACKAGE_NAME}_VERSION_MINOR  @HDF4_VERSION_MINOR@)
 
 #-----------------------------------------------------------------------------
 # Don't include targets if this file is being picked up by another
@@ -80,15 +79,15 @@ set (HDF4_VERSION_MINOR  @HDF4_VERSION_MINOR@)
 #-----------------------------------------------------------------------------
 if (NOT TARGET "@HDF4_PACKAGE@")
   if (${HDF4_PACKAGE_NAME}_ENABLE_JPEG_LIB_SUPPORT AND ${HDF4_PACKAGE_NAME}_PACKAGE_EXTLIBS AND NOT TARGET "jpeg")
-    include (@PACKAGE_SHARE_INSTALL_DIR@/@JPEG_PACKAGE_NAME@@HDF_PACKAGE_EXT@-targets.cmake)
+    include (@PACKAGE_SHARE_INSTALL_DIR@/@JPEG_PACKAGE_NAME@/@JPEG_PACKAGE_NAME@@HDF_PACKAGE_EXT@-targets.cmake)
   endif ()
   if (${HDF4_PACKAGE_NAME}_ENABLE_Z_LIB_SUPPORT AND ${HDF4_PACKAGE_NAME}_PACKAGE_EXTLIBS AND NOT TARGET "zlib")
-    include (@PACKAGE_SHARE_INSTALL_DIR@/@ZLIB_PACKAGE_NAME@@HDF_PACKAGE_EXT@-targets.cmake)
+    include (@PACKAGE_SHARE_INSTALL_DIR@/@ZLIB_PACKAGE_NAME@/@ZLIB_PACKAGE_NAME@@HDF_PACKAGE_EXT@-targets.cmake)
   endif ()
   if (${HDF4_PACKAGE_NAME}_ENABLE_SZIP_SUPPORT AND ${HDF4_PACKAGE_NAME}_PACKAGE_EXTLIBS AND NOT TARGET "szip")
-    include (@PACKAGE_SHARE_INSTALL_DIR@/@SZIP_PACKAGE_NAME@@HDF_PACKAGE_EXT@-targets.cmake)
+    include (@PACKAGE_SHARE_INSTALL_DIR@/@SZIP_PACKAGE_NAME@/@SZIP_PACKAGE_NAME@@HDF_PACKAGE_EXT@-targets.cmake)
   endif ()
-  include (@PACKAGE_SHARE_INSTALL_DIR@/@HDF4_PACKAGE@@HDF_PACKAGE_EXT@-targets.cmake)
+  include (@PACKAGE_SHARE_INSTALL_DIR@/@HDF4_PACKAGE@/@HDF4_PACKAGE@@HDF_PACKAGE_EXT@-targets.cmake)
 endif ()
 
 # Handle default component(static) :
