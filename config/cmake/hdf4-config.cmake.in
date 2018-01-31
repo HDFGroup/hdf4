@@ -16,7 +16,6 @@ set (${HDF4_PACKAGE_NAME}_VALID_COMPONENTS
 #-----------------------------------------------------------------------------
 # User Options
 #-----------------------------------------------------------------------------
-set (${HDF4_PACKAGE_NAME}_ENABLE_PARALLEL @HDF4_ENABLE_PARALLEL@)
 set (${HDF4_PACKAGE_NAME}_BUILD_FORTRAN   @HDF4_BUILD_FORTRAN@)
 set (${HDF4_PACKAGE_NAME}_BUILD_JAVA      @HDF4_BUILD_JAVA@)
 set (${HDF4_PACKAGE_NAME}_BUILD_XDR_LIB   @HDF4_BUILD_XDR_LIB@)

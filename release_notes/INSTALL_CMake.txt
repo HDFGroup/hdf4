@@ -409,8 +409,6 @@ These five steps are described in detail below.
             set (HDF4_BUILD_UTILS ON CACHE BOOL "Build HDF4 Library Utilities" FORCE)
             set (HDF4_ENABLE_NETCDF ON CACHE BOOL "Build HDF4 versions of NetCDF-3 APIS" FORCE)
             set (HDF4_BUILD_XDR_LIB OFF CACHE BOOL "Build HDF4 XDR Library" FORCE)
-            set (HDF4_ENABLE_PARALLEL OFF CACHE BOOL "Enable parallel build (requires MPI)" FORCE)
-            set (MPIEXEC_MAX_NUMPROCS "3" CACHE STRING "Minimum number of processes for HDF parallel tests" FORCE)
             set (HDF4_ENABLE_JPEG_LIB_SUPPORT ON CACHE BOOL "Enable Jpeg library" FORCE)
             set (HDF4_ENABLE_Z_LIB_SUPPORT ON CACHE BOOL "Enable Zlib Filters" FORCE)
             set (HDF4_ENABLE_SZIP_SUPPORT ON CACHE BOOL "Use SZip Filter" FORCE)
@@ -582,7 +580,6 @@ HDF4_DISABLE_COMPILER_WARNINGS "Disable compiler warnings"                      
 HDF4_ENABLE_COVERAGE           "Enable code coverage for Libraries and Programs"              OFF
 HDF4_ENABLE_DEPRECATED_SYMBOLS "Enable deprecated public API symbols"                         ON
 HDF4_ENABLE_LARGE_FILE         "Enable support for large (64-bit) files on Linux."            ON
-HDF4_ENABLE_PARALLEL           "Enable parallel build (requires MPI)"                         OFF
 HDF4_NO_PACKAGES               "Do not include CPack Packaging"                               OFF
 HDF4_PACKAGE_EXTLIBS           "CPACK - include external libraries"                           OFF
 HDF4_USE_FOLDERS               "Enable folder grouping of projects in IDEs."                  OFF

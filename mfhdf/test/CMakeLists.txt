@@ -14,7 +14,6 @@ if (HDF4_BUILD_XDR_LIB)
   if (WIN32)
     add_definitions (-DNO_SYS_XDR_INC)
   endif ()
-#  INCLUDE_DIRECTORIES (${HDF4_MFHDF_XDR_DIR})
 endif ()
 
 set (hdftest_SRCS

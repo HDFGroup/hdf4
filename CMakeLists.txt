@@ -515,35 +515,6 @@ if (CMAKE_COMPILER_IS_GNUCXX)
 endif ()
 
 #-----------------------------------------------------------------------------
-# Option to Enable MPI Parallel
-#-----------------------------------------------------------------------------
-option (HDF4_ENABLE_PARALLEL "Enable parallel build (requires MPI)" OFF)
-if (HDF4_ENABLE_PARALLEL)
-  find_package(MPI REQUIRED)
-  if (MPI_C_FOUND)
-    set (H4_HAVE_PARALLEL 1)
-    # MPI checks, only do these if MPI_C_FOUND is true, otherwise they always fail
-    # and once set, they are cached as false and not regenerated
-    set (CMAKE_REQUIRED_LIBRARIES "${MPI_C_LIBRARIES}" )
-    CHECK_FUNCTION_EXISTS (MPI_File_get_size H4_HAVE_MPI_GET_SIZE)
-    # Used by Fortran + MPI
-    CHECK_SYMBOL_EXISTS (MPI_Comm_c2f "${MPI_C_INCLUDE_PATH}/mpi.h"  H4_HAVE_MPI_MULTI_LANG_Comm)
-    CHECK_SYMBOL_EXISTS (MPI_Info_c2f "${MPI_C_INCLUDE_PATH}/mpi.h"  H4_HAVE_MPI_MULTI_LANG_Info)
-    INCLUDE_DIRECTORIES (${MPI_C_INCLUDE_DIRS})
-  else ()
-    message (STATUS "Parallel libraries not found")
-  endif ()
-endif ()
-
-# Parallel IO usage requires MPI to be Linked and Included
-if (H4_HAVE_PARALLEL)
-  set (LINK_LIBS ${LINK_LIBS} ${MPI_C_LIBRARIES})
-  if (MPI_C_LINK_FLAGS)
-    set (CMAKE_EXE_LINKER_FLAGS "${MPI_C_LINK_FLAGS} ${CMAKE_EXE_LINKER_FLAGS}")
-  endif ()
-endif ()
-
-#-----------------------------------------------------------------------------
 # Include user macros
 #-----------------------------------------------------------------------------
 include (UserMacros.cmake)
