@@ -323,7 +323,7 @@ endif ()
 
 #-----------------------------------------------------------------------------
 # Targets built within this project are exported at Install time for use
-# by other projects using FindHDF4.
+# by other projects
 #-----------------------------------------------------------------------------
 if (NOT HDF4_EXPORTED_TARGETS)
   set (HDF4_EXPORTED_TARGETS "hdf4-targets")
@@ -483,9 +483,9 @@ if (HDF4_DISABLE_COMPILER_WARNINGS)
   if (MSVC)
     set (HDF4_WARNINGS_BLOCKED 1)
     string (REGEX REPLACE "(^| )([/-])W[0-9]( |$)" " " CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
-    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /w")
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W0")
     string (REGEX REPLACE "(^| )([/-])W[0-9]( |$)" " " CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /w")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W0")
   endif ()
   if (WIN32)
     add_definitions (-D_CRT_SECURE_NO_WARNINGS)

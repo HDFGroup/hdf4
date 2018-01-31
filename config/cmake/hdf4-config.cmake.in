@@ -70,9 +70,9 @@ endif ()
 #-----------------------------------------------------------------------------
 # Version Strings
 #-----------------------------------------------------------------------------
-set (HDF4_VERSION_STRING @HDF4_VERSION_STRING@)
-set (HDF4_VERSION_MAJOR  @HDF4_VERSION_MAJOR@)
-set (HDF4_VERSION_MINOR  @HDF4_VERSION_MINOR@)
+set (${HDF4_PACKAGE_NAME}_VERSION_STRING @HDF4_VERSION_STRING@)
+set (${HDF4_PACKAGE_NAME}_VERSION_MAJOR  @HDF4_VERSION_MAJOR@)
+set (${HDF4_PACKAGE_NAME}_VERSION_MINOR  @HDF4_VERSION_MINOR@)
 
 #-----------------------------------------------------------------------------
 # Don't include targets if this file is being picked up by another
