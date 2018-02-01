@@ -32,6 +32,17 @@ CONTENTS
 
 New features and changes
 ========================
+    - CMake
+
+      Refactor use of CMAKE_BUILD_TYPE for new variable, which understands
+      the type of generator in use.
+
+      Added new configuration macros to use new HDF_BUILD_TYPE variable. This
+      variable is set correctly for the type of generator being used for the build.
+      Changes follow from hdf5.
+
+      (ADB - 2018/01/08, HDFFV-10385, HDFFV-10296)
+
 
 
 Support for new platforms and compilers
@@ -40,6 +51,28 @@ Support for new platforms and compilers
 
 Bugs fixed since HDF 4.2.13
 ===========================
+    - CMake
+
+      Update CMake commands configuration.
+
+      A number of improvements were made to the CMake commands. Most
+      changes simplify usage or eliminate unused constructs. Also,
+      some changes support better cross-platform support. Changes
+      follow from hdf5.
+
+      (ADB - 2018/02/01, HDFFV-10398)
+
+    - CMake
+
+      Correct usage of CMAKE_BUILD_TYPE variable.
+
+      The use of the CMAKE_BUILD_TYPE is incorrect for multi-config
+      generators (Visual Studio and XCode) and is optional for single
+      config generators. Created a new macro to check
+        GLOBAL PROPERTY -> GENERATOR_IS_MULTI_CONFIG
+      Created two new HDF variable, HDF_BUILD_TYPE and HDF_CFG_BUILD_TYPE.
+      Defaults for these variables is "Release". Changes
+      follow from hdf5.
 
 
 Documentation
