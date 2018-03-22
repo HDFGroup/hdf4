@@ -15,8 +15,12 @@ macro (SET_HDF_BUILD_TYPE)
       set(HDF_BUILD_TYPE "Release")
     endif()
   endif()
-  if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Release")
+  if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+    message(STATUS "Setting build type to 'RelWithDebInfo' as none was specified.")
+    set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "Choose the type of build." FORCE)
+    # Set the possible values of build type for cmake-gui
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
+      "MinSizeRel" "RelWithDebInfo")
   endif()
 endmacro ()
 
@@ -275,9 +279,11 @@ macro (HDF_README_PROPERTIES target_fortran)
       elseif (${CMAKE_C_COMPILER_VERSION} MATCHES "^18.*")
         set (BINARY_PLATFORM "${BINARY_PLATFORM}, using VISUAL STUDIO 2013")
       elseif (${CMAKE_C_COMPILER_VERSION} MATCHES "^19.*")
-        set (BINARY_PLATFORM "${BINARY_PLATFORM}, using VISUAL STUDIO 2015")
-      elseif (${CMAKE_C_COMPILER_VERSION} MATCHES "^20.*")
-        set (BINARY_PLATFORM "${BINARY_PLATFORM}, using VISUAL STUDIO 2017")
+        if (${CMAKE_C_COMPILER_VERSION} MATCHES "^19.0.*")
+          set (BINARY_PLATFORM "${BINARY_PLATFORM}, using VISUAL STUDIO 2015")
+        else ()
+          set (BINARY_PLATFORM "${BINARY_PLATFORM}, using VISUAL STUDIO 2017")
+         endif ()
       else ()
         set (BINARY_PLATFORM "${BINARY_PLATFORM}, using VISUAL STUDIO ${CMAKE_C_COMPILER_VERSION}")
       endif ()
@@ -319,3 +325,85 @@ macro (HDFTEST_COPY_FILE src dest target)
     )
     list (APPEND ${target}_list "${dest}")
 endmacro ()
+
+macro (HDF_DIR_PATHS package_prefix)
+  if (APPLE)
+    option (${package_prefix}_BUILD_FRAMEWORKS "TRUE to build as frameworks libraries, FALSE to build according to BUILD_SHARED_LIBS" FALSE)
+  endif ()
+
+  if (NOT ${package_prefix}_INSTALL_BIN_DIR)
+    set (${package_prefix}_INSTALL_BIN_DIR bin)
+  endif ()
+  if (NOT ${package_prefix}_INSTALL_LIB_DIR)
+    if (APPLE)
+      if (${package_prefix}_BUILD_FRAMEWORKS)
+        set (${package_prefix}_INSTALL_JAR_DIR ../Java)
+      else ()
+        set (${package_prefix}_INSTALL_JAR_DIR lib)
+      endif ()
+      set (${package_prefix}_INSTALL_FMWK_DIR ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
+    else ()
+      set (${package_prefix}_INSTALL_JAR_DIR lib)
+    endif ()
+    set (${package_prefix}_INSTALL_LIB_DIR lib)
+  endif ()
+  if (NOT ${package_prefix}_INSTALL_INCLUDE_DIR)
+    set (${package_prefix}_INSTALL_INCLUDE_DIR include)
+  endif ()
+  if (NOT ${package_prefix}_INSTALL_DATA_DIR)
+    if (NOT WIN32)
+      if (APPLE)
+        if (${package_prefix}_BUILD_FRAMEWORKS)
+          set (${package_prefix}_INSTALL_EXTRA_DIR ../SharedSupport)
+        else ()
+          set (${package_prefix}_INSTALL_EXTRA_DIR share)
+        endif ()
+        set (${package_prefix}_INSTALL_FWRK_DIR ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
+      endif ()
+      set (${package_prefix}_INSTALL_DATA_DIR share)
+      set (${package_prefix}_INSTALL_CMAKE_DIR share/cmake)
+    else ()
+      set (${package_prefix}_INSTALL_DATA_DIR ".")
+      set (${package_prefix}_INSTALL_CMAKE_DIR cmake)
+    endif ()
+  endif ()
+
+  if (DEFINED ADDITIONAL_CMAKE_PREFIX_PATH AND EXISTS "${ADDITIONAL_CMAKE_PREFIX_PATH}")
+    set (CMAKE_PREFIX_PATH ${ADDITIONAL_CMAKE_PREFIX_PATH} ${CMAKE_PREFIX_PATH})
+  endif ()
+
+  SET_HDF_BUILD_TYPE()
+
+#-----------------------------------------------------------------------------
+# Setup output Directories
+#-----------------------------------------------------------------------------
+  if (NOT ${package_prefix}_EXTERNALLY_CONFIGURED)
+    set (CMAKE_RUNTIME_OUTPUT_DIRECTORY
+        ${PROJECT_BINARY_DIR}/bin CACHE PATH "Single Directory for all Executables."
+    )
+    set (CMAKE_LIBRARY_OUTPUT_DIRECTORY
+        ${PROJECT_BINARY_DIR}/bin CACHE PATH "Single Directory for all Libraries"
+    )
+    set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY
+        ${PROJECT_BINARY_DIR}/bin CACHE PATH "Single Directory for all static libraries."
+    )
+    set (CMAKE_Fortran_MODULE_DIRECTORY
+        ${PROJECT_BINARY_DIR}/bin CACHE PATH "Single Directory for all fortran modules."
+    )
+    if (WIN32)
+      set (CMAKE_TEST_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CTEST_CONFIGURATION_TYPE})
+      set (CMAKE_PDB_OUTPUT_DIRECTORY
+          ${PROJECT_BINARY_DIR}/bin CACHE PATH "Single Directory for all pdb files."
+      )
+    else ()
+      set (CMAKE_TEST_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CTEST_CONFIGURATION_TYPE})
+    endif ()
+  else ()
+    # if we are externally configured, but the project uses old cmake scripts
+    # this may not be set and utilities like H5detect will fail
+    if (NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
+      set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
+    endif ()
+  endif ()
+endmacro ()
+
