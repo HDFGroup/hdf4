@@ -850,7 +850,16 @@ C     Get all the vgroups in the file
 C     Verify refarray from this vfgvgroups, it should contain:
 C     2  3  4  5  6  7  10  11
 
-      result = (/2, 3, 4, 5, 6, 7, 8, 9, 10, 11/)
+      result(1)  = 2
+      result(2)  = 3
+      result(3)  = 4
+      result(4)  = 5
+      result(5)  = 6
+      result(6)  = 7
+      result(7)  = 8
+      result(8)  = 9
+      result(9)  = 10
+      result(10) = 11
 
       do ii = 1, n_vgs
          if( refarray(ii).ne.result(ii) )then
@@ -878,7 +887,17 @@ C     include the simulated internal vgroups
 C     Verify refarray from this Vgetvgroups, 
 C     it should contain: 7, 8, 9, 10, 11
 
-      result = (/7, 8, 9, 10, 11, 0, 0, 0, 0, 0/)
+      result(1)  = 7
+      result(2)  = 8
+      result(3)  = 9
+      result(4)  = 10
+      result(5)  = 11
+      result(6)  = 0
+      result(7)  = 0
+      result(8)  = 0
+      result(9)  = 0
+      result(10) = 0
+
       do ii = 1, n_vgs
          if( refarray(ii).ne.result(ii) )then
             call MESSAGE(3,'Incorrect vgroup retrieved ')
@@ -962,7 +981,18 @@ C     Test getting all vdatas: fid, start_vd=0, n_vds=0
          call MESSAGE(3,'Wrong number of vdatas status returned ')
          number_failed = number_failed + 1
       endif
-      result = (/12, 13, 14, 15, 16, 17, 18, 19, 0, 0/)
+
+      result(1)  = 12
+      result(2)  = 13
+      result(3)  = 14
+      result(4)  = 15
+      result(5)  = 16
+      result(6)  = 17
+      result(7)  = 18
+      result(8)  = 19
+      result(9)  = 0
+      result(10) = 0
+
       do ii = 1, n_vds
          if( refarray(ii).ne.result(ii) )then
             call MESSAGE(3,'Incorrect vdatas retrieved ')
@@ -985,7 +1015,18 @@ C     Test getting vdatas in vg0: vgroup0_id, start_vd=0, n_vds=0
          call MESSAGE(3,'Wrong number of vdatas status returned ')
          number_failed = number_failed + 1
       endif
-      result = (/13, 14, 0, 0, 0, 0, 0, 0, 0, 0/)
+
+      result(1)  = 13
+      result(2)  = 14
+      result(3)  = 0
+      result(4)  = 0
+      result(5)  = 0
+      result(6)  = 0
+      result(7)  = 0
+      result(8)  = 0
+      result(9)  = 0
+      result(10) = 0
+
       do ii = 1, n_vds
          if( refarray(ii).ne.result(ii) )then
             call MESSAGE(3,'Incorrect vdatas retrieved ')
