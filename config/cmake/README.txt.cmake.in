@@ -1,14 +1,14 @@
 @HDF4_PACKAGE_NAME@ version @HDF4_PACKAGE_VERSION_STRING@
 ------------------------------------------------------------------------------
 
-This directory contains the binary (release) distribution of 
-@HDF4_PACKAGE_NAME@-@HDF4_PACKAGE_VERSION_MAJOR@.@HDF4_PACKAGE_VERSION_MINOR@ that was compiled on; 
-    @BINARY_PLATFORM@. 
- 
-It was built with the following options: 
-	-- @LIB_TYPE@ C/Fortran libraries
-	-- SZIP (encoder enabled), ZLIB, and JPEG
-	-- @LIB_TYPE@ HDF4 tools
+This directory contains the binary (release) distribution of
+@HDF4_PACKAGE_NAME@-@HDF4_PACKAGE_VERSION_MAJOR@.@HDF4_PACKAGE_VERSION_MINOR@ that was compiled on;
+    @BINARY_PLATFORM@.
+
+It was built with the following options:
+    -- @LIB_TYPE@ C/Fortran libraries
+    -- SZIP (encoder enabled), ZLIB, and JPEG
+    -- @LIB_TYPE@ HDF4 tools
 
 The contents of this directory are:
 
@@ -16,8 +16,8 @@ The contents of this directory are:
     README.txt              - This file
     @HDF4_PACKAGE_NAME@-@HDF4_PACKAGE_VERSION@-@BINARY_SYSTEM_NAME@.@BINARY_INSTALL_ENDING@    - HDF4 Install Utility
 
-We provide the JPEG, ZLIB, SZIP libraries within the installation package for convenience.  
-  
+We provide the JPEG, ZLIB, SZIP libraries within the installation package for convenience.
+
 Installation
 ===========================================================================
 1. Execute @HDF4_PACKAGE_NAME@-@HDF4_PACKAGE_VERSION@-@BINARY_SYSTEM_NAME@.@BINARY_INSTALL_ENDING@
@@ -26,10 +26,10 @@ Installation
 
 After Installation
 ===========================================================================
-The examples folder, HDF4Examples, located in the 
+The examples folder, HDF4Examples, located in the
 HDF4 install folder, can be built and tested with CMake and the supplied
 HDF4_Examples.cmake file. The HDF4_Examples.cmake expects HDF4 to have
-been installed in the default location with above compilers. Also, the CMake 
+been installed in the default location with above compilers. Also, the CMake
 utility should be installed.
 
 To test the installation with the examples;
@@ -55,17 +55,14 @@ To test the installation with the examples;
         ctest -S HDF4_Examples.cmake,CTEST_SOURCE_NAME=MyExamples,INSTALLDIR=MyLocation -C Release -V -O test.log
 
 When executed, the ctest script will save the results to the log file, test.log, as
-indicated by the ctest command. If you wish the to see more build and test information, 
+indicated by the ctest command. If you wish the to see more build and test information,
 add "-VV" to the ctest command. The output should show near the end;
       100% tests passed, 0 tests failed out of 49.
 
-For more information see USING_CMake_Examples.txt in the install folder. 
+For more information see USING_CMake_Examples.txt in the install folder.
 ===========================================================================
 
 Documentation for this release can be found at the following URL:
-    http://www.hdfgroup.org/doc.html
-
-See the HDF4 home page for further details:
-    http://hdfgroup.org/products/hdf4/
+    https://portal.hdfgroup.org/display/support
 
 Bugs should be reported to help@hdfgroup.org.

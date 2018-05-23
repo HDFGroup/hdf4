@@ -1,3 +1,15 @@
+#
+# Copyright by The HDF Group.
+# All rights reserved.
+#
+# This file is part of HDF5.  The full HDF5 copyright notice, including
+# terms governing use, modification, and redistribution, is contained in
+# the COPYING file, which can be found at the root of the source code
+# distribution tree, or in https://support.hdfgroup.org/ftp/HDF5/releases.
+# If you do not have access to either file, you may request a copy from
+# help@hdfgroup.org.
+#
+
 #-------------------------------------------------------------------------------
 macro (SET_HDF_BUILD_TYPE)
   get_property(_isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
@@ -207,37 +219,15 @@ macro (HDF_IMPORT_SET_LIB_OPTIONS libtarget libname libtype libversion)
 endmacro ()
 
 #-------------------------------------------------------------------------------
-macro (TARGET_C_PROPERTIES wintarget libtype addcompileflags addlinkflags)
-  if (MSVC)
-    TARGET_MSVC_PROPERTIES (${wintarget} ${libtype} "${addcompileflags} ${WIN_COMPILE_FLAGS}" "${addlinkflags} ${WIN_LINK_FLAGS}")
-  else ()
-    set_target_properties (${wintarget} PROPERTIES COMPILE_FLAGS "${addcompileflags}" LINK_FLAGS "${addlinkflags}")
-  endif ()
-endmacro ()
-
-#-------------------------------------------------------------------------------
-macro (TARGET_MSVC_PROPERTIES wintarget libtype addcompileflags addlinkflags)
-  if (MSVC)
-    set_target_properties (${wintarget} PROPERTIES COMPILE_FLAGS "${addcompileflags}" LINK_FLAGS "${addlinkflags}")
-  endif ()
-endmacro ()
-
-#-------------------------------------------------------------------------------
-macro (TARGET_FORTRAN_PROPERTIES forttarget libtype addcompileflags addlinkflags)
-  if (WIN32)
-    TARGET_FORTRAN_WIN_PROPERTIES (${forttarget} ${libtype} "${addcompileflags} ${WIN_COMPILE_FLAGS}" "${addlinkflags} ${WIN_LINK_FLAGS}")
-  endif ()
-endmacro ()
-
-#-------------------------------------------------------------------------------
-macro (TARGET_FORTRAN_WIN_PROPERTIES forttarget libtype addcompileflags addlinkflags)
-  if (MSVC)
-    if (${libtype} MATCHES "SHARED")
-      set_target_properties (${forttarget} PROPERTIES COMPILE_FLAGS "/dll ${addcompileflags}" LINK_FLAGS "/SUBSYSTEM:CONSOLE ${addlinkflags}")
-    else ()
-      set_target_properties (${forttarget} PROPERTIES COMPILE_FLAGS "${addcompileflags}" LINK_FLAGS "/SUBSYSTEM:CONSOLE ${addlinkflags}")
-    endif ()
-  endif ()
+macro (TARGET_C_PROPERTIES wintarget libtype)
+  target_compile_options(${wintarget} PRIVATE
+      $<$<C_COMPILER_ID:MSVC>:${WIN_COMPILE_FLAGS}>
+      $<$<CXX_COMPILER_ID:MSVC>:${WIN_COMPILE_FLAGS}>
+  )
+  target_link_libraries(${wintarget} INTERFACE
+      $<$<C_COMPILER_ID:MSVC>:${WIN_LINK_FLAGS}>
+      $<$<CXX_COMPILER_ID:MSVC>:${WIN_LINK_FLAGS}>
+  )
 endmacro ()
 
 #-----------------------------------------------------------------------------
