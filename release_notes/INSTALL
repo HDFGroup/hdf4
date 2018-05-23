@@ -83,6 +83,9 @@ Before You Start:
    3)  Extract the source from the hdf-X.Y.Z.tar file and change
        directory to hdf-X.Y.Z.
 
+   4)  Fortran Notes:
+         4.a)  g77 may require compiler flag, FFLAGS, "-fno-second-underscore"
+
 To Configure:
 
    4)  Use the configure command in the top level HDF4 directory hdf-X.Y.Z:
