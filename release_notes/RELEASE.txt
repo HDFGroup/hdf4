@@ -74,6 +74,13 @@ Bugs fixed since HDF 4.2.13
       Defaults for these variables is "Release". Changes
       follow from hdf5.
 
+    - Fortran
+
+      Changed array data constructor to be g77 compatible. Updated
+      INSTALL notes about FFLAGS for g77.
+
+      (MSB - 2018/05/23, HDFFR-1553)
+
 
 Documentation
 =============
