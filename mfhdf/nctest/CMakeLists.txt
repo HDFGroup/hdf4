@@ -42,6 +42,6 @@ set (nctest_SRCS
 
 add_executable (nctest ${nctest_SRCS})
 TARGET_C_PROPERTIES (nctest STATIC " " " ")
-target_link_libraries (nctest ${HDF4_MF_LIB_TARGET})
+target_link_libraries (nctest PRIVATE ${HDF4_MF_LIB_TARGET})
 
 include (CMakeTests.cmake)

@@ -11,7 +11,7 @@ if (HDF4_BUILD_TOOLS)
   #-- Adding tool hdfls
   add_executable (hdfls ${HDF4_HDF_UTIL_SOURCE_DIR}/hdfls.c)
   TARGET_C_PROPERTIES (hdfls STATIC " " " ")
-  target_link_libraries (hdfls ${HDF4_MF_LIB_TARGET})
+  target_link_libraries (hdfls PRIVATE ${HDF4_MF_LIB_TARGET})
 
   #-- Adding utility hdfed
   set (hdfed_SRCS
@@ -23,7 +23,7 @@ if (HDF4_BUILD_TOOLS)
 
   add_executable (hdfed ${hdfed_SRCS})
   TARGET_C_PROPERTIES (hdfed STATIC " " " ")
-  target_link_libraries (hdfed ${HDF4_MF_LIB_TARGET})
+  target_link_libraries (hdfed PRIVATE ${HDF4_MF_LIB_TARGET})
 endif ()
 
 if (HDF4_BUILD_UTILS)
@@ -35,7 +35,7 @@ if (HDF4_BUILD_UTILS)
 
   add_executable (hdf2gif ${hdf2gif_SRCS})
   TARGET_C_PROPERTIES (hdf2gif STATIC " " " ")
-  target_link_libraries (hdf2gif ${HDF4_MF_LIB_TARGET})
+  target_link_libraries (hdf2gif PRIVATE ${HDF4_MF_LIB_TARGET})
 
   #-- Adding utility gif2hdf
   set (gif2hdf_SRCS
@@ -48,77 +48,77 @@ if (HDF4_BUILD_UTILS)
 
   add_executable (gif2hdf ${gif2hdf_SRCS})
   TARGET_C_PROPERTIES (gif2hdf STATIC " " " ")
-  target_link_libraries (gif2hdf ${HDF4_MF_LIB_TARGET})
+  target_link_libraries (gif2hdf PRIVATE ${HDF4_MF_LIB_TARGET})
 
   #-- Adding utility hdf24to8
   add_executable (hdf24to8 ${HDF4_HDF_UTIL_SOURCE_DIR}/hdf24to8.c)
   TARGET_C_PROPERTIES (hdf24to8 STATIC " " " ")
-  target_link_libraries (hdf24to8 ${HDF4_MF_LIB_TARGET})
+  target_link_libraries (hdf24to8 PRIVATE ${HDF4_MF_LIB_TARGET})
 
   #-- Adding utility hdftor8
   add_executable (hdftor8 ${HDF4_HDF_UTIL_SOURCE_DIR}/hdftor8.c)
   TARGET_C_PROPERTIES (hdftor8 STATIC " " " ")
-  target_link_libraries (hdftor8 ${HDF4_MF_LIB_TARGET})
+  target_link_libraries (hdftor8 PRIVATE ${HDF4_MF_LIB_TARGET})
 
   #-- Adding utility ristosds
   add_executable (ristosds ${HDF4_HDF_UTIL_SOURCE_DIR}/ristosds.c)
   TARGET_C_PROPERTIES (ristosds STATIC " " " ")
-  target_link_libraries (ristosds ${HDF4_MF_LIB_TARGET})
+  target_link_libraries (ristosds PRIVATE ${HDF4_MF_LIB_TARGET})
 
   #-- Adding utility hdfpack
   add_executable (hdfpack ${HDF4_HDF_UTIL_SOURCE_DIR}/hdfpack.c)
   TARGET_C_PROPERTIES (hdfpack STATIC " " " ")
-  target_link_libraries (hdfpack ${HDF4_MF_LIB_TARGET})
+  target_link_libraries (hdfpack PRIVATE ${HDF4_MF_LIB_TARGET})
 
   #-- Adding utility paltohdf
   add_executable (paltohdf ${HDF4_HDF_UTIL_SOURCE_DIR}/paltohdf.c)
   TARGET_C_PROPERTIES (paltohdf STATIC " " " ")
-  target_link_libraries (paltohdf ${HDF4_MF_LIB_TARGET})
+  target_link_libraries (paltohdf PRIVATE ${HDF4_MF_LIB_TARGET})
 
   #-- Adding utility hdftopal
   add_executable (hdftopal ${HDF4_HDF_UTIL_SOURCE_DIR}/hdftopal.c)
   TARGET_C_PROPERTIES (hdftopal STATIC " " " ")
-  target_link_libraries (hdftopal ${HDF4_MF_LIB_TARGET})
+  target_link_libraries (hdftopal PRIVATE ${HDF4_MF_LIB_TARGET})
 
   #-- Adding utility r8tohdf
   add_executable (r8tohdf ${HDF4_HDF_UTIL_SOURCE_DIR}/r8tohdf.c)
   TARGET_C_PROPERTIES (r8tohdf STATIC " " " ")
-  target_link_libraries (r8tohdf ${HDF4_MF_LIB_TARGET})
+  target_link_libraries (r8tohdf PRIVATE ${HDF4_MF_LIB_TARGET})
 
   #-- Adding utility hdfcomp
   add_executable (hdfcomp ${HDF4_HDF_UTIL_SOURCE_DIR}/hdfcomp.c)
   TARGET_C_PROPERTIES (hdfcomp STATIC " " " ")
-  target_link_libraries (hdfcomp ${HDF4_MF_LIB_TARGET})
+  target_link_libraries (hdfcomp PRIVATE ${HDF4_MF_LIB_TARGET})
 
   #-- Adding utility jpeg2hdf
   add_executable (jpeg2hdf ${HDF4_HDF_UTIL_SOURCE_DIR}/jpeg2hdf.c)
   TARGET_C_PROPERTIES (jpeg2hdf STATIC " " " ")
-  target_link_libraries (jpeg2hdf ${HDF4_MF_LIB_TARGET})
+  target_link_libraries (jpeg2hdf PRIVATE ${HDF4_MF_LIB_TARGET})
 
   #-- Adding utility hdf2jpeg
   add_executable (hdf2jpeg ${HDF4_HDF_UTIL_SOURCE_DIR}/hdf2jpeg.c)
   TARGET_C_PROPERTIES (hdf2jpeg STATIC " " " ")
-  target_link_libraries (hdf2jpeg ${HDF4_MF_LIB_TARGET})
+  target_link_libraries (hdf2jpeg PRIVATE ${HDF4_MF_LIB_TARGET})
 
   #-- Adding utility hdf8to24
   add_executable (hdf8to24 ${HDF4_HDF_UTIL_SOURCE_DIR}/hdf8to24.c)
   TARGET_C_PROPERTIES (hdf8to24 STATIC " " " ")
-  target_link_libraries (hdf8to24 ${HDF4_MF_LIB_TARGET})
+  target_link_libraries (hdf8to24 PRIVATE ${HDF4_MF_LIB_TARGET})
 
   #-- Adding utility hdfunpac
   add_executable (hdfunpac ${HDF4_HDF_UTIL_SOURCE_DIR}/hdfunpac.c)
   TARGET_C_PROPERTIES (hdfunpac STATIC " " " ")
-  target_link_libraries (hdfunpac ${HDF4_MF_LIB_TARGET})
+  target_link_libraries (hdfunpac PRIVATE ${HDF4_MF_LIB_TARGET})
 
   #-- Adding utility vmake
   add_executable (vmake ${HDF4_HDF_UTIL_SOURCE_DIR}/vmake.c)
   TARGET_C_PROPERTIES (vmake STATIC " " " ")
-  target_link_libraries (vmake ${HDF4_MF_LIB_TARGET})
+  target_link_libraries (vmake PRIVATE ${HDF4_MF_LIB_TARGET})
 
   #-- Adding utility vshow
   add_executable (vshow ${HDF4_HDF_UTIL_SOURCE_DIR}/vshow.c)
   TARGET_C_PROPERTIES (vshow STATIC " " " ")
-  target_link_libraries (vshow ${HDF4_MF_LIB_TARGET})
+  target_link_libraries (vshow PRIVATE ${HDF4_MF_LIB_TARGET})
 endif ()
 
 if (BUILD_TESTING AND HDF4_BUILD_UTILS)

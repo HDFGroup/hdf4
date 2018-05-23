@@ -41,24 +41,24 @@ set (hdftest_SRCS
 #-- Adding test for hdftest
 add_executable (hdftest ${hdftest_SRCS})
 TARGET_C_PROPERTIES (hdftest STATIC " " " ")
-target_link_libraries (hdftest ${HDF4_MF_LIB_TARGET})
+target_link_libraries (hdftest PRIVATE ${HDF4_MF_LIB_TARGET})
 set_target_properties (hdftest PROPERTIES FOLDER test)
 if (BUILD_SHARED_LIBS)
   add_executable (hdftest-shared ${hdftest_SRCS})
   TARGET_C_PROPERTIES (hdftest-shared SHARED " " " ")
-  target_link_libraries (hdftest-shared ${HDF4_MF_LIBSH_TARGET})
+  target_link_libraries (hdftest-shared PRIVATE ${HDF4_MF_LIBSH_TARGET})
   set_target_properties (hdftest-shared PROPERTIES FOLDER test)
 endif ()
 
 #-- Adding test for cdftest
 add_executable (cdftest ${HDF4_MFHDF_TEST_SOURCE_DIR}/cdftest.c)
 TARGET_C_PROPERTIES (cdftest STATIC " " " ")
-target_link_libraries (cdftest ${HDF4_MF_LIB_TARGET})
+target_link_libraries (cdftest PRIVATE ${HDF4_MF_LIB_TARGET})
 set_target_properties (cdftest PROPERTIES FOLDER test)
 if (BUILD_SHARED_LIBS)
   add_executable (cdftest-shared ${HDF4_MFHDF_TEST_SOURCE_DIR}/cdftest.c)
   TARGET_C_PROPERTIES (cdftest-shared SHARED " " " ")
-  target_link_libraries (cdftest-shared ${HDF4_MF_LIBSH_TARGET})
+  target_link_libraries (cdftest-shared PRIVATE ${HDF4_MF_LIBSH_TARGET})
   set_target_properties (cdftest-shared PROPERTIES FOLDER test)
 endif ()
 
@@ -72,12 +72,12 @@ set (hdfnctest_SRCS
 
 add_executable (hdfnctest ${hdfnctest_SRCS})
 TARGET_C_PROPERTIES (hdfnctest STATIC " " " ")
-target_link_libraries (hdfnctest ${HDF4_MF_LIB_TARGET})
+target_link_libraries (hdfnctest PRIVATE ${HDF4_MF_LIB_TARGET})
 set_target_properties (hdfnctest PROPERTIES FOLDER test)
 if (BUILD_SHARED_LIBS)
   add_executable (hdfnctest-shared ${hdfnctest_SRCS})
   TARGET_C_PROPERTIES (hdfnctest-shared SHARED " " " ")
-  target_link_libraries (hdfnctest-shared ${HDF4_MF_LIBSH_TARGET})
+  target_link_libraries (hdfnctest-shared PRIVATE ${HDF4_MF_LIBSH_TARGET})
   set_target_properties (hdfnctest-shared PROPERTIES FOLDER test)
 endif ()
 

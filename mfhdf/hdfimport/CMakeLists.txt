@@ -27,7 +27,7 @@ set (hdfimport_SRCS
 
 add_executable (hdfimport ${hdfimport_SRCS})
 TARGET_C_PROPERTIES (hdfimport STATIC " " " ")
-target_link_libraries (hdfimport ${HDF4_MF_LIB_TARGET})
+target_link_libraries (hdfimport PRIVATE ${HDF4_MF_LIB_TARGET})
 set_global_variable (HDF4_UTILS_TO_EXPORT "${HDF4_UTILS_TO_EXPORT};hdfimport")
 
 if (BUILD_TESTING)

@@ -195,7 +195,7 @@ set (example hdf_example)
 
 add_executable (${example} ${PROJECT_SOURCE_DIR}/${example}.c)
 TARGET_C_PROPERTIES (${example} ${LIB_TYPE} " " " ")
-target_link_libraries (${example} ${LINK_LIBS})
+target_link_libraries (${example} PRIVATE ${LINK_LIBS})
 
 enable_testing ()
 include (CTest)

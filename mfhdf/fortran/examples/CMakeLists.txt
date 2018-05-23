@@ -53,7 +53,7 @@ foreach (example ${examples})
       LINKER_LANGUAGE Fortran
       Fortran_MODULE_DIRECTORY ${CMAKE_Fortran_MODULE_DIRECTORY}
   )
-  target_link_libraries (f_exmf_${example} ${HDF4_MF_FORTRAN_LIB_TARGET})
+  target_link_libraries (f_exmf_${example} PRIVATE ${HDF4_MF_FORTRAN_LIB_TARGET})
 endforeach ()
 
 foreach (example ${skip_examples})
@@ -64,7 +64,7 @@ foreach (example ${skip_examples})
       LINKER_LANGUAGE Fortran
       Fortran_MODULE_DIRECTORY ${CMAKE_Fortran_MODULE_DIRECTORY}
   )
-  target_link_libraries (f_exmf_${example} ${HDF4_MF_FORTRAN_LIB_TARGET})
+  target_link_libraries (f_exmf_${example} PRIVATE ${HDF4_MF_FORTRAN_LIB_TARGET})
 endforeach ()
 
 if (BUILD_TESTING)
