@@ -65,16 +65,16 @@ $HDFLIB_HOME/ext/slf4j-simple-1.7.5.jar
 $top_builddir/java/src/$JARFILE
 "
 LIST_DATA_FILES="
-$HDFTEST_HOME/JUnit-TestH4.txt
-$HDFTEST_HOME/JUnit-TestH4ANparams.txt
-$HDFTEST_HOME/JUnit-TestH4DFparams.txt
-$HDFTEST_HOME/JUnit-TestH4DFPparams.txt
-$HDFTEST_HOME/JUnit-TestH4DFRparams.txt
-$HDFTEST_HOME/JUnit-TestH4GRparams.txt
-$HDFTEST_HOME/JUnit-TestH4HCparams.txt
-$HDFTEST_HOME/JUnit-TestH4SDparams.txt
-$HDFTEST_HOME/JUnit-TestH4Vparams.txt
-$HDFTEST_HOME/JUnit-TestH4VSparams.txt
+$HDFTEST_HOME/testfiles/JUnit-TestH4.txt
+$HDFTEST_HOME/testfiles/JUnit-TestH4ANparams.txt
+$HDFTEST_HOME/testfiles/JUnit-TestH4DFparams.txt
+$HDFTEST_HOME/testfiles/JUnit-TestH4DFPparams.txt
+$HDFTEST_HOME/testfiles/JUnit-TestH4DFRparams.txt
+$HDFTEST_HOME/testfiles/JUnit-TestH4GRparams.txt
+$HDFTEST_HOME/testfiles/JUnit-TestH4HCparams.txt
+$HDFTEST_HOME/testfiles/JUnit-TestH4SDparams.txt
+$HDFTEST_HOME/testfiles/JUnit-TestH4Vparams.txt
+$HDFTEST_HOME/testfiles/JUnit-TestH4VSparams.txt
 "
 
 #
