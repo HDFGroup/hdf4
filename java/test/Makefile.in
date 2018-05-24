@@ -541,8 +541,7 @@ noinst_JAVA = \
 	TestH4HCparams.java \
 	TestH4SDparams.java \
 	TestH4Vparams.java \
-	TestH4VSparams.java \
-	TestAll.java
+	TestH4VSparams.java
 
 noinst_DATA = $(jarfile)
 check_SCRIPTS = junit.sh

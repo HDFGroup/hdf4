@@ -575,8 +575,6 @@
 ./java/test/Makefile.am
 ./java/test/Makefile.in
 ./java/test/junit.sh.in
-./java/test/JUnit-interface.ert
-./java/test/JUnit-interface.txt
 ./java/test/TestAll.java
 ./java/test/TestH4.java
 ./java/test/TestH4ANparams.java
@@ -588,7 +586,16 @@
 ./java/test/TestH4SDparams.java
 ./java/test/TestH4Vparams.java
 ./java/test/TestH4VSparams.java
-
+./java/test/testfiles/JUnit-TestH4.txt
+./java/test/testfiles/JUnit-TestH4ANparams.txt
+./java/test/testfiles/JUnit-TestH4DFparams.txt
+./java/test/testfiles/JUnit-TestH4DFPparams.txt
+./java/test/testfiles/JUnit-TestH4DFRparams.txt
+./java/test/testfiles/JUnit-TestH4GRparams.txt
+./java/test/testfiles/JUnit-TestH4HCparams.txt
+./java/test/testfiles/JUnit-TestH4SDparams.txt
+./java/test/testfiles/JUnit-TestH4Vparams.txt
+./java/test/testfiles/JUnit-TestH4VSparams.txt
 ./man/Makefile.am
 ./man/Makefile.in
 ./man/gr_chunk.3
