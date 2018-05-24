@@ -47,8 +47,17 @@ set (skip_examples
 
 foreach (example ${examples})
   add_executable (f_exmf_${example} ${HDF4_MFHDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
-  TARGET_FORTRAN_PROPERTIES (f_exmf_${example} STATIC " " " ")
-  target_include_directories (f_exmf_${example} PRIVATE ${CMAKE_Fortran_MODULE_DIRECTORY})
+  target_include_directories (f_exmf_${example}
+      PRIVATE
+          "${CMAKE_Fortran_MODULE_DIRECTORY};${HDF4_HDF_BINARY_DIR};${HDF4_HDFSOURCE_DIR}"
+  )
+  target_compile_options(f_exmf_${example}
+      PRIVATE
+          $<$<STREQUAL:"x${CMAKE_Fortran_SIMULATE_ID}","xMSVC">:${WIN_COMPILE_FLAGS}>
+  )
+  if(MSVC)
+    set_property(TARGET f_exmf_${example} PROPERTY LINK_FLAGS "/SUBSYSTEM:CONSOLE ${WIN_LINK_FLAGS}")
+  endif()
   set_target_properties (f_exmf_${example} PROPERTIES
       LINKER_LANGUAGE Fortran
       Fortran_MODULE_DIRECTORY ${CMAKE_Fortran_MODULE_DIRECTORY}
@@ -58,8 +67,17 @@ endforeach ()
 
 foreach (example ${skip_examples})
   add_executable (f_exmf_${example} ${HDF4_MFHDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
-  TARGET_FORTRAN_PROPERTIES (f_exmf_${example} STATIC " " " ")
-  target_include_directories (f_exmf_${example} PRIVATE ${CMAKE_Fortran_MODULE_DIRECTORY})
+  target_include_directories (f_exmf_${example}
+      PRIVATE
+          "${CMAKE_Fortran_MODULE_DIRECTORY};${HDF4_HDF_BINARY_DIR};${HDF4_HDFSOURCE_DIR}"
+  )
+  target_compile_options(f_exmf_${example}
+      PRIVATE
+          $<$<STREQUAL:"x${CMAKE_Fortran_SIMULATE_ID}","xMSVC">:${WIN_COMPILE_FLAGS}>
+  )
+  if(MSVC)
+    set_property(TARGET f_exmf_${example} PROPERTY LINK_FLAGS "/SUBSYSTEM:CONSOLE ${WIN_LINK_FLAGS}")
+  endif()
   set_target_properties (f_exmf_${example} PROPERTIES
       LINKER_LANGUAGE Fortran
       Fortran_MODULE_DIRECTORY ${CMAKE_Fortran_MODULE_DIRECTORY}
