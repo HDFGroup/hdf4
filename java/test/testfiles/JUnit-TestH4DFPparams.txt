@@ -1,0 +1,16 @@
+JUnit version 4.11
+.testDFPaddpalNullPalette
+.testDFPputpalNull
+.testDFPwriterefNull
+.testDFPgetpalNull
+.testDFPputpalNullPalette
+.testDFPgetpalNullPalette
+.testDFPaddpalNull
+.testDFPnpalsNull
+.testDFPreadrefNull
+.testDFPputpalArgNull
+
+Time:  XXXX
+
+OK (10 tests)
+
