@@ -26,7 +26,7 @@ set (ncdump_SRCS
 
 add_executable (ncdump ${ncdump_SRCS})
 TARGET_C_PROPERTIES (ncdump STATIC " " " ")
-target_link_libraries (ncdump ${HDF4_MF_LIB_TARGET})
+target_link_libraries (ncdump PRIVATE ${HDF4_MF_LIB_TARGET})
 
 if (BUILD_TESTING)
   include (CMakeTests.cmake)

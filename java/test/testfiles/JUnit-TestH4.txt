@@ -1,0 +1,13 @@
+JUnit version 4.11
+.testCreateCloseOpen
+.testDFKNTsize
+.testHgetlibversion
+.testJ2C
+.testHnumber
+.testHishdf
+.testHDgetNTdesc
+
+Time:  XXXX
+
+OK (7 tests)
+

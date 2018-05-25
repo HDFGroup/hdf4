@@ -22,7 +22,7 @@
   #-- Adding test for fortest
   add_executable (fortest ${HDF4_HDF_TESTSOURCE_DIR}/fortest.c)
   TARGET_C_PROPERTIES (fortest STATIC " " " ")
-  target_link_libraries (fortest ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_LIB_TARGET})
+  target_link_libraries (fortest PRIVATE ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_LIB_TARGET})
   set_target_properties (fortest PROPERTIES LINKER_LANGUAGE C)
 
   #-----------------------------------------------------------------------------
@@ -49,9 +49,22 @@
   )
 
   add_executable (fortestF ${FORTEST_FSRCS} )
-  TARGET_FORTRAN_PROPERTIES (fortestF STATIC " " " ")
-  target_link_libraries (fortestF ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_FCSTUB_LIB_TARGET} ${HDF4_HDF_TEST_FCSTUB_LIB_TARGET})
-  set_target_properties (fortestF PROPERTIES LINKER_LANGUAGE Fortran)
+  target_include_directories (fortestF
+      PRIVATE
+          "${CMAKE_Fortran_MODULE_DIRECTORY};${HDF4_HDF_BINARY_DIR};${HDF4_HDFSOURCE_DIR}"
+  )
+  target_compile_options(fortestF
+      PRIVATE
+          $<$<STREQUAL:"x${CMAKE_Fortran_SIMULATE_ID}","xMSVC">:${WIN_COMPILE_FLAGS}>
+  )
+  if(MSVC)
+    set_property(TARGET fortestF PROPERTY LINK_FLAGS "/SUBSYSTEM:CONSOLE ${WIN_LINK_FLAGS}")
+  endif()
+  set_target_properties (fortestF PROPERTIES
+      LINKER_LANGUAGE Fortran
+      Fortran_MODULE_DIRECTORY ${CMAKE_Fortran_MODULE_DIRECTORY}
+  )
+  target_link_libraries (fortestF PRIVATE ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_FCSTUB_LIB_TARGET} ${HDF4_HDF_TEST_FCSTUB_LIB_TARGET})
 
   #-- Copy all the dat files from the test directory into the source directory
   set (HDF4_REFERENCE_TEST_FILES

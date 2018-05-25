@@ -39,7 +39,7 @@ endif ()
 
 add_executable (ncgen ${ncgen_SRCS})
 TARGET_C_PROPERTIES (ncgen STATIC " " " ")
-target_link_libraries (ncgen ${HDF4_MF_LIB_TARGET})
+target_link_libraries (ncgen PRIVATE ${HDF4_MF_LIB_TARGET})
 
 if (BUILD_TESTING)
   include (CMakeTests.cmake)

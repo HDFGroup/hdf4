@@ -1,8 +1,9 @@
-#
+
 # This file provides functions for Fortran support.
 #
 #-------------------------------------------------------------------------------
 ENABLE_LANGUAGE (Fortran)
+set (HDF_PREFIX "H4")
 
 #-------------------------------------------------------------------------------
 #  Fix Fortran flags if we are compiling staticly on Windows using
@@ -82,18 +83,18 @@ endmacro ()
 #-----------------------------------------------------------------------------
 
 # Check for Non-standard extension intrinsic function SIZEOF
-set (FORTRAN_HAVE_SIZEOF FALSE)
+set (${HDF_PREFIX}_FORTRAN_HAVE_SIZEOF FALSE)
 CHECK_FORTRAN_FEATURE(sizeof
   "
        PROGRAM main
        i = sizeof(x)
        END PROGRAM
   "
-  FORTRAN_HAVE_SIZEOF
+  ${HDF_PREFIX}_FORTRAN_HAVE_SIZEOF
 )
 
 # Check for F2008 standard intrinsic function C_SIZEOF
-set (FORTRAN_HAVE_C_SIZEOF FALSE)
+set (${HDF_PREFIX}_FORTRAN_HAVE_C_SIZEOF FALSE)
 CHECK_FORTRAN_FEATURE(c_sizeof
   "
        PROGRAM main
@@ -103,7 +104,7 @@ CHECK_FORTRAN_FEATURE(c_sizeof
          result = c_sizeof(a)
        END PROGRAM
   "
-  FORTRAN_HAVE_C_SIZEOF
+  ${HDF_PREFIX}_FORTRAN_HAVE_C_SIZEOF
 )
 
 # Check for F2008 standard intrinsic function STORAGE_SIZE
@@ -115,21 +116,21 @@ CHECK_FORTRAN_FEATURE(storage_size
          result = storage_size(a)
        END PROGRAM
   "
-  FORTRAN_HAVE_STORAGE_SIZE
+  ${HDF_PREFIX}_FORTRAN_HAVE_STORAGE_SIZE
 )
 
 # Check for F2008 standard intrinsic module "ISO_FORTRAN_ENV"
-set (HAVE_ISO_FORTRAN_ENV FALSE)
+set (${HDF_PREFIX}_HAVE_ISO_FORTRAN_ENV FALSE)
 CHECK_FORTRAN_FEATURE(ISO_FORTRAN_ENV
   "
        PROGRAM main
          USE, INTRINSIC :: ISO_FORTRAN_ENV
        END PROGRAM
   "
-  HAVE_ISO_FORTRAN_ENV
+  ${HDF_PREFIX}_HAVE_ISO_FORTRAN_ENV
 )
 
-set (FORTRAN_DEFAULT_REAL_NOT_DOUBLE FALSE)
+set (${HDF_PREFIX}_FORTRAN_DEFAULT_REAL_NOT_DOUBLE FALSE)
 CHECK_FORTRAN_FEATURE(RealIsNotDouble
   "
        MODULE type_mod
@@ -153,13 +154,13 @@ CHECK_FORTRAN_FEATURE(RealIsNotDouble
          CALL h5t(d)
        END PROGRAM main
   "
-  FORTRAN_DEFAULT_REAL_NOT_DOUBLE
+  ${HDF_PREFIX}_FORTRAN_DEFAULT_REAL_NOT_DOUBLE
 )
 
 #-----------------------------------------------------------------------------
 # Checks if the ISO_C_BINDING module meets all the requirements
 #-----------------------------------------------------------------------------
-set (FORTRAN_HAVE_ISO_C_BINDING FALSE)
+set (${HDF_PREFIX}_FORTRAN_HAVE_ISO_C_BINDING FALSE)
 CHECK_FORTRAN_FEATURE(iso_c_binding
   "
        PROGRAM main
@@ -172,7 +173,7 @@ CHECK_FORTRAN_FEATURE(iso_c_binding
             ptr = C_LOC(ichr(1:1))
        END PROGRAM
   "
-  FORTRAN_HAVE_ISO_C_BINDING
+  ${HDF_PREFIX}_FORTRAN_HAVE_ISO_C_BINDING
 )
 
 #-----------------------------------------------------------------------------

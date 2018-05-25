@@ -36,11 +36,11 @@ set (hrepack_SRCS
 
 add_executable (hrepack ${hrepack_SRCS})
 TARGET_C_PROPERTIES (hrepack STATIC " " " ")
-target_link_libraries (hrepack ${HDF4_MF_LIB_TARGET})
+target_link_libraries (hrepack PRIVATE ${HDF4_MF_LIB_TARGET})
 
 add_executable (hrepack_check ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_check.c)
 TARGET_C_PROPERTIES (hrepack_check STATIC " " " ")
-target_link_libraries (hrepack_check ${HDF4_MF_LIB_TARGET})
+target_link_libraries (hrepack_check PRIVATE ${HDF4_MF_LIB_TARGET})
 set_global_variable (HDF4_UTILS_TO_EXPORT "${HDF4_UTILS_TO_EXPORT};hrepack")
 
 if (BUILD_TESTING)

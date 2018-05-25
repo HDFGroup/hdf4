@@ -1,0 +1,23 @@
+JUnit version 4.11
+.testDFR8nimagesNullFilename
+.testDFR8readrefIllegalRef
+.testDFR8getdimsNullPalette
+.testDFR8getpalrefNullPalRef
+.testDFR8setcompressNullCompInfo
+.testDFR8getdimsNullDimensions
+.testDFR8putimageNullFilename
+.testDFR8getimageNullFilename
+.testDFR8writerefNullFilename
+.testDFR8addimageNullImage
+.testDFR8getimageNullImageData
+.testDFR8getpalrefIllegalArgument
+.testDFR8getdimsIllegalArgument
+.testDFR8readrefNullFilename
+.testDFR8putimageNullImage
+.testDFR8addimageNullFilename
+.testDFR8getdimsNullFilename
+
+Time:  XXXX
+
+OK (17 tests)
+

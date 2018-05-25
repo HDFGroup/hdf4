@@ -1,0 +1,21 @@
+JUnit version 4.11
+.testDF24putimageIllegalArgument
+.testDF24putimageNullImage
+.testDF24getdimsIllegalArgument
+.testDF24getdimsNullArguments
+.testDF24readrefIllegalRef
+.testDF24getimageNullImageData
+.testDF24putimageNullFilename
+.testDF24getimageNullFilename
+.testDF24setilIllegalIl
+.testDF24readrefNullFilename
+.testDF24getdimsNullFilename
+.testDF24addimageNullImage
+.testDF24nimagesNullFilename
+.testDF24setcompressNullCompInfo
+.testDF24addimageNullFilename
+
+Time:  XXXX
+
+OK (15 tests)
+

@@ -1,0 +1,31 @@
+JUnit version 4.11
+.testANendIllegalId
+.testANannlistNull
+.testANfileinfoIllegalId
+.testANwriteannIllegalId
+.testANid2tagrefNull
+.testANfileinfoNull
+.testANtagref2idIllegalId
+.testANget_tagrefArgument
+.testANendaccessIllegalId
+.testANget_tagrefIllegalId
+.testANtag2atypeIllegalId
+.testANwriteannNull
+.testANatype2tagIllegalId
+.testANcreatefIllegalId
+.testANcreateIllegalId
+.testANnumannIllegalId
+.testANid2tagrefIllegalId
+.testANstartIllegalId
+.testANfileinfoArgument
+.testANget_tagrefNull
+.testANannlistIllegalId
+.testANreadannIllegalId
+.testANselectIllegalId
+.testANid2tagrefArgument
+.testANannlenIllegalId
+
+Time:  XXXX
+
+OK (25 tests)
+

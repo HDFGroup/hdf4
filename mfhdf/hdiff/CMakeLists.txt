@@ -33,7 +33,7 @@ set (hdiff_SRCS
 
 add_executable(hdiff ${hdiff_SRCS})
 TARGET_C_PROPERTIES (hdiff STATIC " " " ")
-target_link_libraries(hdiff ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET})
+target_link_libraries(hdiff PRIVATE ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET})
 set_global_variable (HDF4_UTILS_TO_EXPORT "${HDF4_UTILS_TO_EXPORT};hdiff")
 
 if (BUILD_TESTING)
