@@ -28,7 +28,7 @@ find_path(XDR_INCLUDE_DIR NAMES rpc/types.h PATHS "/usr/include" "/usr/include/t
             find_library(XDR_INT_LIBRARY ${lib})
 
             if (XDR_INT_LIBRARY)
-                message(STATUS "Found library ${lib} check for symbol.")
+                message(STATUS "Found library ${lib}. Check for symbol.")
                 CHECK_LIBRARY_EXISTS(${XDR_INT_LIBRARY} xdr_int "" XDR_INT_SYMBOL_FOUND)
             endif()
             if (XDR_INT_SYMBOL_FOUND)

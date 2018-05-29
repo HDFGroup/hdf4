@@ -97,6 +97,9 @@ Bugs fixed since HDF 4.2.13
 
       JNI functions called routine with wrong interface.
 
+      GRsetchunk, GRsetchunkcache changed from SD in hdfgrImp.c.
+      SDfileinfo changed from SD in hdfsdsImp.c.
+
       (ADB - 2018/05/29, HDFFR-1565)
 
 
