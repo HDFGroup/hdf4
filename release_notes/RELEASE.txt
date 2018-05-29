@@ -51,7 +51,7 @@ New features and changes
       Most distros still install the headers for backwards compatibility,
       but fedora 28 has now stopped support.
 
-      The preferred library is libtirpc. On fedora 28, instal the
+      The preferred library is libtirpc. On fedora 28, install the
       libtirpc-devel package.
 
       (ADB - 2018/05/29, HDFFR-1568)
@@ -92,6 +92,12 @@ Bugs fixed since HDF 4.2.13
       INSTALL notes about FFLAGS for g77.
 
       (MSB - 2018/05/23, HDFFR-1553)
+
+    - Java
+
+      JNI functions called routine with wrong interface.
+
+      (ADB - 2018/05/29, HDFFR-1565)
 
 
 Documentation

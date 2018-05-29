@@ -843,7 +843,7 @@ Java_hdf_hdflib_HDFLibrary_GRsetchunk
     } /* end if */
     else {
         if (getChunkInfo(env, chunk_def, &c_def)) {
-            rval = SDsetchunk ((int32)sdsid, c_def, (int32)flags);
+            rval = GRsetchunk ((int32)sdsid, c_def, (int32)flags);
 
             if (rval == FAIL) {
                 CALL_ERROR_CHECK();
@@ -863,8 +863,8 @@ Java_hdf_hdflib_HDFLibrary_GRsetchunkcache
 {
     intn rval;
 
-    rval = SDsetchunkcache((int32)sdsid, (int32)maxcache, (int32)flags);
-    if (rval < 0)
+    rval = GRsetchunkcache((int32)sdsid, (int32)maxcache, (int32)flags);
+    if (rval == FAIL)
         CALL_ERROR_CHECK();
 
     return (jint)rval;
