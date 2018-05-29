@@ -232,9 +232,9 @@ public class HDFConstants
     public static final int HDF_CHUNK  = 0x1;
     public static final int HDF_COMP  = 0x3;
     public static final int HDF_NBIT  = 0x5;
-    public static final int MAX_VAR_DIMS =32;
+    public static final int MAX_VAR_DIMS = 32;
 
-    //the names of the Vgroups created by the GR interface
+    // the names of the Vgroups created by the GR interface
     public static final String GR_NAME = "RIG0.0";
     public static final String RI_NAME = "RI0.0";
     public static final String RIGATTRNAME = "RIATTR0.0N";

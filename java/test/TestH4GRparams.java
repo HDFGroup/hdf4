@@ -413,7 +413,7 @@ public class TestH4GRparams {
 
     @Test(expected = HDFException.class)
     public void testGRsetchunkcacheIllegalId() throws Throwable {
-        int maxcache = 0;
+        int maxcache = 1;
         int flags = 0;
         HDFLibrary.GRsetchunkcache(-1, maxcache, flags);
     }

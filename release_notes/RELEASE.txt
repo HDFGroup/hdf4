@@ -43,6 +43,18 @@ New features and changes
 
       (ADB - 2018/01/08, HDFFV-10385, HDFFV-10296)
 
+    - XDR
+
+      glibc stopped installing rpc headers by default back in 2011:
+      versions 2.14 and 2.15 never install them, versions 2.16 and
+      higher require the configuration option --enable-obsolete-rpc.
+      Most distros still install the headers for backwards compatibility,
+      but Fedora 28 has now stopped support.
+
+      The preferred library is libtirpc. On Fedora 28, install the
+      libtirpc-devel package.
+
+      (ADB - 2018/05/29, HDFFR-1568)
 
 
 Support for new platforms and compilers
@@ -80,6 +92,24 @@ Bugs fixed since HDF 4.2.13
       INSTALL notes about FFLAGS for g77.
 
       (MSB - 2018/05/23, HDFFR-1553)
+
+    - Java
+
+      JNI functions called routine with wrong interface.
+
+      GRsetchunk, GRsetchunkcache changed from SD in hdfgrImp.c.
+      SDfileinfo changed from SD in hdfsdsImp.c.
+
+      (ADB - 2018/05/29, HDFFR-1565)
+
+    - Java
+
+      JNI functions used wrong constants.
+
+      MAX_VAR_DIMS and MAX_NC_NAME should have been H4_MAX_VAR_DIMS and H4_MAX_NC_NAME.
+      MAX_VAR_DIMS used in Java source is assigned the H4_MAX_VAR_DIMS value.
+
+      (ADB - 2018/05/29, HDFFR-1563)
 
 
 Documentation

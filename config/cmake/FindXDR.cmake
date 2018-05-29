@@ -23,10 +23,12 @@ find_path(XDR_INCLUDE_DIR NAMES rpc/types.h PATHS "/usr/include" "/usr/include/t
     if (NOT XDR_INT_FOUND)
         foreach(lib nsl rpc tirpc)
             ## Try to find the corresponding lib
+            message(STATUS "Try to find the library ${lib}.")
             set(XDR_INT_LIBRARY)
             find_library(XDR_INT_LIBRARY ${lib})
 
             if (XDR_INT_LIBRARY)
+                message(STATUS "Found library ${lib}. Check for symbol.")
                 CHECK_LIBRARY_EXISTS(${XDR_INT_LIBRARY} xdr_int "" XDR_INT_SYMBOL_FOUND)
             endif()
             if (XDR_INT_SYMBOL_FOUND)
@@ -39,7 +41,7 @@ find_path(XDR_INCLUDE_DIR NAMES rpc/types.h PATHS "/usr/include" "/usr/include/t
     endif()
 
     if(NOT XDR_INT_FOUND)
-        message(SEND_ERROR "Could not locate xdr symbols in libc or libnsl.")
+        message(STATUS "Could not locate xdr symbols.")
     else()
         set(XDR_FOUND TRUE)
     endif()

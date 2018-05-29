@@ -79,15 +79,15 @@ Java_hdf_hdflib_HDFLibrary_SDfileinfo
     int32 id = (int32)sdid;
 
     if (argv == NULL) {
-        h4nullArgument(env, "GRfileinfo:  argv is NULL");
+        h4nullArgument(env, "SDfileinfo:  argv is NULL");
     } /* end if */
     else if (ENVPTR->GetArrayLength(ENVPAR argv) < 2) {
-        h4badArgument(env, "GRfileinfo:  argv input array < order 2");
+        h4badArgument(env, "SDfileinfo:  argv input array < order 2");
     } /* end else if */
     else {
         theArgs = ENVPTR->GetIntArrayElements(ENVPAR argv, &isCopy);
         if (theArgs == NULL) {
-            h4JNIFatalError(env, "GRfileinfo:  argv not pinned");
+            h4JNIFatalError(env, "SDfileinfo:  argv not pinned");
         } /* end if */
         else {
             rval = SDfileinfo(id, (int32 *)&(theArgs[0]), (int32 *)&(theArgs[1]));
@@ -158,7 +158,7 @@ Java_hdf_hdflib_HDFLibrary_SDgetinfo
 
     /* variables of  infomation */
 
-    cname = (char *)HDmalloc(MAX_NC_NAME+1);
+    cname = (char *)HDmalloc(H4_MAX_NC_NAME+1);
     if (cname == NULL) {
         h4outOfMemory(env, "SDgetinfo");
     }
@@ -202,7 +202,7 @@ Java_hdf_hdflib_HDFLibrary_SDgetinfo
                         jobject o;
                         jboolean bb;
 
-                        cname[MAX_NC_NAME] = '\0';
+                        cname[H4_MAX_NC_NAME] = '\0';
 
                         /* convert it to java string */
                         rstring = ENVPTR->NewStringUTF(ENVPAR cname);
@@ -850,7 +850,7 @@ Java_hdf_hdflib_HDFLibrary_SDfindattr
 
     PIN_JAVA_STRING(name, str);
     if (str != NULL) {
-        rval = GRfindattr(id, str);
+        rval = SDfindattr(id, str);
 
         UNPIN_JAVA_STRING(name, str);
         if (rval < 0)

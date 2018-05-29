@@ -29,9 +29,6 @@ extern "C" {
 #include "jni.h"
 #include "h4jni.h"
 
-/* Name changed from MAX_GR_NAME to H4_MAX_GR_NAME in hdf4.2r2 */
-#define MAX_GR_NAME H4_MAX_GR_NAME
-
 extern jboolean makeChunkInfo(JNIEnv *env, jobject chunkobj, int32 flgs, HDF_CHUNK_DEF *cinf);
 extern jboolean getNewCompInfo(JNIEnv *env, jobject ciobj, comp_info *cinf);
 extern jboolean setNewCompInfo(JNIEnv *env, jobject ciobj, comp_coder_t coder, comp_info *cinf);
@@ -205,7 +202,7 @@ Java_hdf_hdflib_HDFLibrary_GRgetiminfo
     char    *str;
     jboolean isCopy;
 
-    str = (char *)HDmalloc(MAX_GR_NAME+1);
+    str = (char *)HDmalloc(H4_MAX_GR_NAME+1);
     if (str == NULL) {
         h4outOfMemory(env, "GRgetiminfo");
     }
@@ -255,7 +252,7 @@ Java_hdf_hdflib_HDFLibrary_GRgetiminfo
 
                         ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, JNI_ABORT);
 
-                        str[MAX_GR_NAME] = '\0';
+                        str[H4_MAX_GR_NAME] = '\0';
                         /* convert it to java string */
                         rstring = ENVPTR->NewStringUTF(ENVPAR str);
 
@@ -522,7 +519,7 @@ Java_hdf_hdflib_HDFLibrary_GRattrinfo
     jboolean bb;
 
     /* check for out of memory error ... */
-    str = (char *)HDmalloc(MAX_GR_NAME+1);
+    str = (char *)HDmalloc(H4_MAX_GR_NAME+1);
     if (str == NULL) {
         h4outOfMemory(env, "GRattrinfo");
     }
@@ -558,7 +555,7 @@ Java_hdf_hdflib_HDFLibrary_GRattrinfo
 
                     ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, 0);
 
-                    str[MAX_GR_NAME] = '\0';
+                    str[H4_MAX_GR_NAME] = '\0';
                     /* convert it to java string */
                     rstring = ENVPTR->NewStringUTF(ENVPAR str);
 
@@ -843,7 +840,7 @@ Java_hdf_hdflib_HDFLibrary_GRsetchunk
     } /* end if */
     else {
         if (getChunkInfo(env, chunk_def, &c_def)) {
-            rval = SDsetchunk ((int32)sdsid, c_def, (int32)flags);
+            rval = GRsetchunk ((int32)sdsid, c_def, (int32)flags);
 
             if (rval == FAIL) {
                 CALL_ERROR_CHECK();
@@ -863,8 +860,8 @@ Java_hdf_hdflib_HDFLibrary_GRsetchunkcache
 {
     intn rval;
 
-    rval = SDsetchunkcache((int32)sdsid, (int32)maxcache, (int32)flags);
-    if (rval < 0)
+    rval = GRsetchunkcache((int32)sdsid, (int32)maxcache, (int32)flags);
+    if (rval == FAIL)
         CALL_ERROR_CHECK();
 
     return (jint)rval;

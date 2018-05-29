@@ -387,7 +387,7 @@ Java_hdf_hdflib_HDFLibrary_VSinquire
             h4outOfMemory(env,  "VSinquire");
         } /* end if */
         else {
-            name = (char *)malloc(MAX_NC_NAME+1);
+            name = (char *)malloc(H4_MAX_NC_NAME+1);
 
             if (name == NULL) {
                 h4outOfMemory(env, "VSinquire");
@@ -403,7 +403,7 @@ Java_hdf_hdflib_HDFLibrary_VSinquire
                             (int32 *)&(theIargs[1]), flds, (int32 *)&(theIargs[2]), name);
 
                     flds[MAX_FIELD_SIZE] = '\0';
-                    name[MAX_NC_NAME] = '\0';
+                    name[H4_MAX_NC_NAME] = '\0';
 
                     if (rval == FAIL) {
                         ENVPTR->ReleaseIntArrayElements(ENVPAR iargs,theIargs,JNI_ABORT);
