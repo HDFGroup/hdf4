@@ -43,6 +43,18 @@ New features and changes
 
       (ADB - 2018/01/08, HDFFV-10385, HDFFV-10296)
 
+    - XDR
+
+      glibc stopped installing rpc headers by default back in 2011:
+      versions 2.14 and 2.15 never install them, versions 2.16 and
+      higher require the configuration option --enable-obsolete-rpc.
+      Most distros still install the headers for backwards compatibility,
+      but fedora 28 has now stopped support.
+
+      The preferred library is libtirpc. On fedora 28, instal the
+      libtirpc-devel package.
+
+      (ADB - 2018/05/29, HDFFR-1568)
 
 
 Support for new platforms and compilers
