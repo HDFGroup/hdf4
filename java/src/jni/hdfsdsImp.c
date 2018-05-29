@@ -158,7 +158,7 @@ Java_hdf_hdflib_HDFLibrary_SDgetinfo
 
     /* variables of  infomation */
 
-    cname = (char *)HDmalloc(MAX_NC_NAME+1);
+    cname = (char *)HDmalloc(H4_MAX_NC_NAME+1);
     if (cname == NULL) {
         h4outOfMemory(env, "SDgetinfo");
     }
@@ -202,7 +202,7 @@ Java_hdf_hdflib_HDFLibrary_SDgetinfo
                         jobject o;
                         jboolean bb;
 
-                        cname[MAX_NC_NAME] = '\0';
+                        cname[H4_MAX_NC_NAME] = '\0';
 
                         /* convert it to java string */
                         rstring = ENVPTR->NewStringUTF(ENVPAR cname);

@@ -410,7 +410,7 @@ getChunkInfo
 
     lens = (jint *)ENVPTR->GetIntArrayElements(ENVPAR (jintArray)larr,&bb);
 
-    for (i = 0; i < MAX_VAR_DIMS; i++) {
+    for (i = 0; i < H4_MAX_VAR_DIMS; i++) {
         cinf->comp.chunk_lengths[i] = (int32)lens[i];
     }
 
@@ -452,7 +452,7 @@ getChunkInfo
 
         lens = (jint *)ENVPTR->GetIntArrayElements(ENVPAR (jintArray)larr,&bb);
 
-        for (i = 0; i < MAX_VAR_DIMS; i++) {
+        for (i = 0; i < H4_MAX_VAR_DIMS; i++) {
             cinf->nbit.chunk_lengths[i] = (int32)lens[i];
         }
 
@@ -502,11 +502,11 @@ makeChunkInfo
     jintArray rarray;
     jobject compinfo;
 
-    rarray = ENVPTR->NewIntArray(ENVPAR MAX_VAR_DIMS);
+    rarray = ENVPTR->NewIntArray(ENVPAR H4_MAX_VAR_DIMS);
     if (rarray == NULL) {
         return JNI_FALSE;
     }
-    ENVPTR->SetIntArrayRegion(ENVPAR rarray,0,MAX_VAR_DIMS,(jint *)cinf->chunk_lengths);
+    ENVPTR->SetIntArrayRegion(ENVPAR rarray,0,H4_MAX_VAR_DIMS,(jint *)cinf->chunk_lengths);
 
         /* release rarray? */
 

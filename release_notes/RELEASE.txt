@@ -102,6 +102,15 @@ Bugs fixed since HDF 4.2.13
 
       (ADB - 2018/05/29, HDFFR-1565)
 
+    - Java
+
+      JNI functions used wrong constants.
+
+      MAX_VAR_DIMS and MAX_NC_NAME should have been H4_MAX_VAR_DIMS and H4_MAX_NC_NAME.
+      MAX_VAR_DIMS used in Java source is assigned the H4_MAX_VAR_DIMS value.
+
+      (ADB - 2018/05/29, HDFFR-1563)
+
 
 Documentation
 =============
