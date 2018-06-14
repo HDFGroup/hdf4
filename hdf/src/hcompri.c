@@ -436,9 +436,7 @@ DESCRIPTION
 intn
 HRPendaccess(accrec_t * access_rec)
 {
-#ifdef LATER
     CONSTR(FUNC, "HRPendaccess");   /* for HERROR */
-#endif /* LATER */
     filerec_t  *file_rec; 	    /* file record */
     intn     ret_value = SUCCEED;
 
@@ -448,6 +446,10 @@ HRPendaccess(accrec_t * access_rec)
     /* shut down dependant access record */
     HRPcloseAID(access_rec);
 
+    /* end access to the tag/ref pair this ddid represents */
+    if (HTPendaccess(access_rec->ddid) == FAIL)
+        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+
     /* free the access record */
     HIrelease_accrec_node(access_rec);
 
@@ -455,9 +457,7 @@ HRPendaccess(accrec_t * access_rec)
     file_rec->attach--;
 
 
-#ifdef LATER
 done:
-#endif /* LATER */
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
       if(access_rec!=NULL)
