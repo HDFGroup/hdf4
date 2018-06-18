@@ -1750,20 +1750,23 @@ HLPendaccess(accrec_t * access_rec)
     filerec_t  *file_rec;           /* file record */
     intn      ret_value = SUCCEED;
 
+    /* validate argument */
+    if (access_rec == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
     /* convert file id to file record */
     file_rec = HAatom_object(access_rec->file_id);
+    if (BADFREC(file_rec))
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* detach the special information record.
        If no more references to that, free the record */
-    HLPcloseAID(access_rec);
+    if (HLPcloseAID(access_rec) == FAIL)
+        HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
 
     /* update file and access records */
     if (HTPendaccess(access_rec->ddid) == FAIL)
-      HGOTO_ERROR(DFE_CANTFLUSH, FAIL);
-
-    /* validate file record */
-    if (BADFREC(file_rec))
-        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+      HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
     /* detach from the file */
     file_rec->attach--;
@@ -1774,7 +1777,8 @@ HLPendaccess(accrec_t * access_rec)
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
-
+      if(access_rec!=NULL)
+          HIrelease_accrec_node(access_rec);
     } /* end if */
 
   /* Normal function cleanup */
