@@ -506,25 +506,25 @@ DESCRIPTION
 intn
 HBPendaccess(accrec_t * access_rec)
 {
-#ifdef LATER
     CONSTR(FUNC, "HBPendaccess");   /* for HERROR */
-#endif /* LATER */
     intn     ret_value = SUCCEED;
 
+    /* validate argument */
+    if (access_rec == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
     /* shut down the memory buffer and dependant access record */
-    HBPcloseAID(access_rec);
+    if (HBPcloseAID(access_rec) == FAIL)
+        HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
 
     /* free the access record */
     HIrelease_accrec_node(access_rec);
 
-#ifdef LATER
 done:
-#endif /* LATER */
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
       if(access_rec!=NULL)
           HIrelease_accrec_node(access_rec);
-
     } /* end if */
 
   /* Normal function cleanup */

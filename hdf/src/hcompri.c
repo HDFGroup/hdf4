@@ -436,17 +436,26 @@ DESCRIPTION
 intn
 HRPendaccess(accrec_t * access_rec)
 {
-#ifdef LATER
     CONSTR(FUNC, "HRPendaccess");   /* for HERROR */
-#endif /* LATER */
     filerec_t  *file_rec; 	    /* file record */
     intn     ret_value = SUCCEED;
 
+    /* validate argument */
+    if (access_rec == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
     /* convert file id to file record */
     file_rec = HAatom_object(access_rec->file_id);
+    if (BADFREC(file_rec))
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* shut down dependant access record */
-    HRPcloseAID(access_rec);
+    if (HRPcloseAID(access_rec) == FAIL)
+        HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
+
+    /* end access to the tag/ref pair this ddid represents */
+    if (HTPendaccess(access_rec->ddid) == FAIL)
+        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
     /* free the access record */
     HIrelease_accrec_node(access_rec);
@@ -455,14 +464,11 @@ HRPendaccess(accrec_t * access_rec)
     file_rec->attach--;
 
 
-#ifdef LATER
 done:
-#endif /* LATER */
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
       if(access_rec!=NULL)
           HIrelease_accrec_node(access_rec);
-
     } /* end if */
 
   /* Normal function cleanup */

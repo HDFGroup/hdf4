@@ -4132,21 +4132,19 @@ HMCPendaccess(accrec_t * access_rec /* IN:  access record to close */)
     filerec_t   *file_rec = NULL;    /* file record */
     intn        ret_value = SUCCEED;
 
-    /* validate arguments first */
+    /* validate argument */
     if (access_rec == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);        
 
     /* get file rec and special info */
     file_rec = HAatom_object(access_rec->file_id);
-
-    /* validate file record */
     if (BADFREC(file_rec))
-        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* detach the special information record.
        If no more references to that, free the record */
     if (HMCPcloseAID(access_rec) == FAIL)
-        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+        HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
 
     /* update file and access records */
     if (HTPendaccess(access_rec->ddid) == FAIL)
@@ -4155,17 +4153,14 @@ HMCPendaccess(accrec_t * access_rec /* IN:  access record to close */)
     /* detach from the file */
     file_rec->attach--;
 
-#ifdef CHK_DEBUG_2
-    fprintf(stderr,"HMCPendaccess: file_rec->attach =%d \n", file_rec->attach);
-            
-#endif
     /* free the access record */
     HIrelease_accrec_node(access_rec);
 
   done:
     if(ret_value == FAIL)   
       { /* Error condition cleanup */
-
+        if(access_rec!=NULL)
+            HIrelease_accrec_node(access_rec);
       } /* end if */
 
     /* Normal function cleanup */
