@@ -23,53 +23,50 @@ release_notes directory.
 JPEG Distribution Release 6b or Later (libjpeg.a(so)). The source code can 
 be downloaded from http://www.ijg.org/.
 
-ZLIB 1.1.4(libz.a) or later. The source code and binaries may be 
-downloaded from http://www.gzip.org/. They are also available on 
-The HDF Group's FTP server at ftp://ftp.hdfgroup.org/lib-external/zlib/.
+ZLIB 1.1.4(libz.a) or later. See: https://zlib.net/ 
 
 
 
 2. Optional Szip Compression Library
    =================================
 
-HDF4 may be configured to use the Szip compression Library. For more 
-information about the Szip library, see https://hdfgroup.org/doc_resource/SZIP/.
+HDF4 may be configured to use the Szip compression library. For more 
+information about the Szip library, see:
 
-The Szip compression library is free for non-commercial use; see 
-https://hdfgroup.org/doc_resource/SZIP/Commercial_szip.html for information 
-regarding commercial use.
+   https://portal.hdfgroup.org/display/HDF5/Szip+Compression+in+HDF+Products 
+
+The Szip compression library is free for non-commercial use. For information 
+regarding commercial use, see: 
+
+   https://portal.hdfgroup.org/display/HDF5/Szip+Copyright+and+License+Statement%2C+as+Distributed+in+the+HDF+Source+Code
 
 
 
 3. HDF4 Source Code and Precompiled Binaries
    =========================================
 
-The HDF Group (THG) provides a "tar source ball" and precompiled binaries 
-from the company's FTP server at these locations: 
+The HDF Group provides source code and pre-compiled binaries from the
+HDF4 download page:
 
-    ftp://ftp.hdfgroup.org/HDF/HDF_Current/src
-    ftp://ftp.hdfgroup.org/HDF/HDF_Current/bin 
+   https://portal.hdfgroup.org/display/support/Download+HDF4 
    
-Starting with the HDF 4.2.6 release, binaries are packed  with the ZLIB, 
-JPEG, and Szip libraries used to build the binaries. 
+As of HDF 4.2.6 binaries are packed with the ZLIB, JPEG, and Szip libraries
+used to build the binaries. 
 
-HDF4 prebuilt utilties come with Szip compression. To use these binaries, 
-you must install the Szip Library on your system. 
+HDF4 pre-built utilities come with Szip compression. To use these binaries, 
+you must install the Szip library on your system. 
 
 To build the Szip library, follow the instructions in the Szip source code
-distribution, which can be obtain from:
+distribution, which can be obtained from:
 
-    ftp://ftp.hdfgroup.org/lib-external/szip/2.1/src
-
-To build the Szip library, follow the instructions in the Szip source code 
-distribution.
+    https://portal.hdfgroup.org/display/HDF5/Szip+Compression+in+HDF+Products
 
 
 
 4. Unix and Mac OSX Configuration and Build
    =======================================
 
-See RELEASE.txt in the release_docs/ directory for the list of platforms 
+See RELEASE.txt in the release_notes/ directory for the list of platforms 
 tested for this release.
 
 Before You Start:
@@ -77,7 +74,7 @@ Before You Start:
    1)  Make sure that the ZLIB and JPEG libraries are installed on your
        system.
 
-   2)  Optional: Install the Szip version 2.1 library (you may use 
+   2)  Optional: Install the Szip version 2.1 library (you may use
        Szip 2.0 binaries). 
 
    3)  Extract the source from the hdf-X.Y.Z.tar file and change
@@ -121,11 +118,11 @@ To Install:
 
        gmake install
 
-   8)  To install C and Fortran examples
+   8)  To install C and Fortran examples:
     
        gmake install-examples
 
-   9)  To test the installation 
+   9)  To test the installation:
 
        gmake installcheck
 
@@ -163,7 +160,7 @@ To Install:
 
 
 6. Windows Configuration and Build
-   =======================================
+   ===============================
 
 See RELEASE.txt in the release_docs/ directory for the list of platforms 
 tested for this release.
@@ -183,8 +180,8 @@ Additional Third-party Software Requirements:
 
    1)  Flex and Bison programs are required to regenerate the ncgen utility input files.
    
-   2)  Recommended is the Win flex-bison project, a port of Flex & Bison tools 
-       to the Windows platform. Download from:
+   2)  The Win flex-bison project, a port of Flex & Bison tools 
+       to the Windows platform, is recommended. Download from:
            http://sourceforge.net/projects/winflexbison
 
    3)  CMake version 2.8.11.1 or higher is needed to use Win flex-bison. 
