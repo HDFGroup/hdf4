@@ -20,10 +20,10 @@ the --disable-fortran configure flag to build the HDF4 C library and
 utilities. For the list of the supported compilers see RELEASE.txt in the 
 release_notes directory.
 
-JPEG Distribution Release 6b or Later (libjpeg.a(so)). The source code can 
+JPEG Distribution Release 6b or later (libjpeg.a(so)). The source code can 
 be downloaded from http://www.ijg.org/.
 
-ZLIB 1.1.4(libz.a) or later. See: https://zlib.net/ 
+ZLIB 1.1.4(libz.a) or later. The software can be downloaded from: https://zlib.net/ 
 
 
 
@@ -50,8 +50,8 @@ HDF4 download page:
 
    https://portal.hdfgroup.org/display/support/Download+HDF4 
    
-As of HDF 4.2.6 binaries are packed with the ZLIB, JPEG, and Szip libraries
-used to build the binaries. 
+As of HDF 4.2.6, binaries are packed with the ZLIB, JPEG, and Szip libraries
+that were used to build the binaries. 
 
 HDF4 pre-built utilities come with Szip compression. To use these binaries, 
 you must install the Szip library on your system. 
@@ -162,7 +162,7 @@ To Install:
 6. Windows Configuration and Build
    ===============================
 
-See RELEASE.txt in the release_docs/ directory for the list of platforms 
+See RELEASE.txt in the release_notes/ directory for the list of platforms 
 tested for this release.
 
 We now recommend that users build, test, and install HDF4 using CMake.

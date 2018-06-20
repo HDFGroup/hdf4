@@ -3,8 +3,8 @@
 ************************************************************************
 
 This file provides instructions to build, test, and install the HDF4
-library on Cygwin. For further information see the INSTALL file. Also see
-the INSTALL_CMake.txt file if building with CMake. 
+library on Cygwin. For further information, see the INSTALL file. Also,
+see the INSTALL_CMake.txt file if building with CMake. 
 
 Preconditions:
 --------------
@@ -75,7 +75,7 @@ Preconditions:
        https://portal.hdfgroup.org/display/HDF5/Szip+Compression+in+HDF+Products   
 
     The SZIP compression library is free for non-commercial use. For more
-    information regarding commercial use see:
+    information regarding commercial use, see:
 
        https://portal.hdfgroup.org/display/HDF5/Szip+Copyright+and+License+Statement%2C+as+Distributed+in+the+HDF+Source+Code
 
@@ -156,5 +156,5 @@ make HDF4 work on Cygwin.
 
 -----------------------------------------------------------------------
 
-For further assistance email help@hdfgroup.org
+For further assistance, email: help@hdfgroup.org
 
