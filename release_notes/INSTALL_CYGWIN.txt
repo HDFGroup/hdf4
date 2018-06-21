@@ -2,10 +2,9 @@
          HDF4 Build and Install Instructions for Cygwin
 ************************************************************************
 
-This document is a instruction on how to build, test and install HDF4 libary on 
-Cygwin.  See detailed information in hdf4/INSTALL. 
-
-NOTE: hdf4 can be built with CMake, see the INSTALL_CMake.txt file for more guidance.
+This file provides instructions to build, test, and install the HDF4
+library on Cygwin. For further information, see the INSTALL file. Also,
+see the INSTALL_CMake.txt file if building with CMake. 
 
 Preconditions:
 --------------
@@ -70,14 +69,15 @@ Preconditions:
     configure flag --enable-hdf4-xdr is specified (see note 3 in the section
     "Build, Test and Install HDF4 on Cygwin").
     
-    HDF4 may be configured to use the SZIP compression Library.
+    HDF4 may be configured to use the SZIP compression library.
     For more information about the SZIP library, see
 
-               https://hdfgroup.org/doc_resource/SZIP/ 
+       https://portal.hdfgroup.org/display/HDF5/Szip+Compression+in+HDF+Products   
 
-    The SZIP compression library is free for non-commercial use; 
-    see https://hdfgroup.org/doc_resource/SZIP/Commercial_szip.html
-    for information regarding commercial use.   
+    The SZIP compression library is free for non-commercial use. For more
+    information regarding commercial use, see:
+
+       https://portal.hdfgroup.org/display/HDF5/Szip+Copyright+and+License+Statement%2C+as+Distributed+in+the+HDF+Source+Code
 
     
     2.3 Additional Utilities
@@ -102,10 +102,10 @@ Build, Test and Install HDF4 on Cygwin
 Notes: Use the configure command in the top level HDF4 directory.
 
 1. HDF4 Source code
-     
-   HDF provides "tar source ball" from the HDF ftp server in the directory:
 
-         ftp://ftp.hdfgroup.org/HDF/HDF_Current/src
+   The HDF4 source code can be obtained from:  
+
+      https://portal.hdfgroup.org/display/support/Download+HDF4
 
    Please note that HDF no longer provides precompiled binaries for Cygwin.
 
@@ -122,7 +122,7 @@ Notes: Use the configure command in the top level HDF4 directory.
                    <--with-szlib=/path_to_SZIP_install_directory>
                    --prefix=/path_to_HDF4_install_directory
 
-       * Please note that when szlib option is not used, SZIP Library will not
+       * Please note that when szlib option is not used, SZIP library will not
          be configured in and SZIP compression will not be enabled.
        * If your system has ZLIB and/or JPEG libraries installed under a
          system library directory (such as /usr/lib), configure will
@@ -151,10 +151,10 @@ Notes: Use the configure command in the top level HDF4 directory.
 
 Acknowledgements:
 -----------------
-HDF group would like to thank Xinmin Hua(NASA/GSFC) for his help to 
+The HDF Group would like to thank Xinmin Hua(NASA/GSFC) for his help to 
 make HDF4 work on Cygwin.  
 
 -----------------------------------------------------------------------
 
-Need Further assistance, email help@hdfgroup.org
+For further assistance, email: help@hdfgroup.org
 
