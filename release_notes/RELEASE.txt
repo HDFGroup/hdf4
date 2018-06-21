@@ -1,11 +1,11 @@
-HDF version 4.2.13-post0 currently under development
+HDF version 4.2.14-pre1 currently under development
 ====================================================
 
 INTRODUCTION
 
-This document describes the differences between HDF 4.2.13 and HDF 4.2.13-post0.
+This document describes the differences between HDF 4.2.13 and HDF 4.2.14-pre1.
 It is written for people who are familiar with previous releases of HDF
-and wish to migrate to HDF 4.2.13-post0.
+and wish to migrate to HDF 4.2.14-pre1.
 
 The HDF 4.2.13 documentation can be found on the The HDF Group's website
 at:

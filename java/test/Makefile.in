@@ -437,11 +437,7 @@ STRIP = @STRIP@
 SZIP_HAS_ENCODER = @SZIP_HAS_ENCODER@
 SZIP_INFO = @SZIP_INFO@
 TBL = @TBL@
-
-#JAVA_JUNIT  = $(JAVA_SRCS)
-#noinst_JAVA = @JAVA_JUNIT@
-#EXTRA_JAVA  = $(JAVA_JUNIT)
-TESTS_JUNIT = AllJunitTests
+TESTS_JUNIT = @TESTS_JUNIT@
 TEST_FORTRAN_NETCDF = @TEST_FORTRAN_NETCDF@
 UNAME_INFO = @UNAME_INFO@
 USE_COMP_SZIP = @USE_COMP_SZIP@
@@ -528,8 +524,8 @@ JAVA_API = yes
 JAVAROOT = .classes
 pkgpath = test
 hdfjarfile = jar$(PACKAGE_TARNAME)-$(PACKAGE_VERSION).jar
-jarfile = jar$(PACKAGE_TARNAME)test.jar
 CLASSPATH_ENV = CLASSPATH=.:$(JAVAROOT):$(top_builddir)/java/src/$(hdfjarfile):$(top_srcdir)/java/lib/junit.jar:$(top_srcdir)/java/lib/hamcrest-core.jar:$(top_srcdir)/java/lib/slf4j-api-1.7.5.jar:$(top_srcdir)/java/lib/ext/slf4j-simple-1.7.5.jar:$$CLASSPATH
+jarfile = jar$(PACKAGE_TARNAME)test.jar
 AM_JAVACFLAGS = $(H4_JAVACFLAGS) -deprecation
 noinst_JAVA = \
 	TestH4.java \
@@ -932,12 +928,6 @@ $(jarfile): classnoinst.stamp classes
 	$(JAR) cvf $@ -C $(JAVAROOT)/ $(pkgpath)
 
 .PHONY: classes
-#EXTRA_TEST  = $(TESTS_JUNIT)
-
-AllJunitTests :
-	echo "#! /bin/sh" > $@
-	echo "exec @JUNIT@ test.TestAll" >> $@
-	chmod +x $@
 
 clean:
 	rm -rf $(JAVAROOT)/*
