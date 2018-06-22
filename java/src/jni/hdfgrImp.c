@@ -250,33 +250,42 @@ Java_hdf_hdflib_HDFLibrary_GRgetiminfo
                         jobject o;
                         jboolean bb;
 
-                        ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, JNI_ABORT);
-
                         str[H4_MAX_GR_NAME] = '\0';
                         /* convert it to java string */
                         rstring = ENVPTR->NewStringUTF(ENVPAR str);
 
                         sjc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
                         if (sjc == NULL) {
+                        	ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, JNI_ABORT);
                             ENVPTR->ReleaseIntArrayElements(ENVPAR dim_sizes, dims, JNI_ABORT);
                             HDfree(str);
+                            CALL_ERROR_CHECK();
                             return JNI_FALSE;
                         }
                         o = ENVPTR->GetObjectArrayElement(ENVPAR gr_name, 0);
                         if (o == NULL) {
+                        	ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, JNI_ABORT);
                             ENVPTR->ReleaseIntArrayElements(ENVPAR dim_sizes, dims, JNI_ABORT);
                             HDfree(str);
+                            CALL_ERROR_CHECK();
                             return JNI_FALSE;
                         }
                         bb = ENVPTR->IsInstanceOf(ENVPAR o, sjc);
-                        if (bb == JNI_TRUE)
-                            ENVPTR->SetObjectArrayElement(ENVPAR gr_name, 0, (jobject)rstring);
+                        if (bb == JNI_FALSE) {
+                        	ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, JNI_ABORT);
+                        	ENVPTR->ReleaseIntArrayElements(ENVPAR dim_sizes, dims, JNI_ABORT);
+                        	HDfree(str);
+                        	CALL_ERROR_CHECK();
+                        	return JNI_FALSE;
+                        }
+
+                        ENVPTR->SetObjectArrayElement(ENVPAR gr_name, 0, (jobject)rstring);
                         ENVPTR->DeleteLocalRef(ENVPAR o);
+                        ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, 0);
                         ENVPTR->ReleaseIntArrayElements(ENVPAR dim_sizes, dims, 0);
                         HDfree(str);
-                        return bb;
-                   }
-                   ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, JNI_ABORT);
+                        return JNI_TRUE;
+                    } /* end else */
                 } /* end else */
                 ENVPTR->ReleaseIntArrayElements(ENVPAR dim_sizes, dims, JNI_ABORT);
             } /* end else */
