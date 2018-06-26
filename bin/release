@@ -53,14 +53,14 @@ Usage: $0 -d <dir> [-h] [--nocheck] [--private] <methods> ...
 This must be run at the top level of the source directory.
 The other command-line options are the names of the programs to use
 for compressing the resulting tar archive (if none are given then
-"tar md5" is assumed):
-    tar        -- use tar and don't do any compressing.
-    gzip    -- use gzip with "-9" and append ".gz" to the output name.
+"tar" is assumed):
+    tar         -- use tar and don't do any compressing.
+    gzip        -- use gzip with "-9" and append ".gz" to the output name.
     cmake-tgz   -- create a tar file using the gzip default level with a
                    build-unix.sh command file and all other CMake files needed
                    to build HDF4 source using CMake on unix machines.
     bzip2       -- use bzip2 with "-9" and append ".bz2" to the output name.
-    zip        -- convert all text files to DOS style and form a zip file for
+    zip         -- convert all text files to DOS style and form a zip file for
                    Windows use.
     cmake-zip   -- convert all text files to DOS style and create a zip file
                    including cmake scripts and .bat files to build HDF4 source
@@ -100,9 +100,9 @@ EOF
 # Modifications
 #
 # Steps:
-# 1. untar the tarball in a temporay directory;
+# 1. untar the tarball in a temporary directory;
 #    Note: do this in a temporary directory to avoid changing
-#    the original source directory which maybe around.
+#    the original source directory which may be around.
 # 2. convert all its text files to DOS (LF-CR) style;
 # 3. form a zip file which is usable by Windows users.
 #
@@ -116,8 +116,8 @@ EOF
 tar2zip()
 {
     if [ $# -ne 3 ]; then
-    echo "usage: tar2zip <tarfilename> <zipfilename>"
-    return 1
+        echo "usage: tar2zip <tarfilename> <zipfilename>"
+        return 1
     fi
     ztmpdir=/tmp/tmpdir$$
     mkdir -p $ztmpdir
@@ -129,10 +129,10 @@ tar2zip()
     (cd $ztmpdir; tar xf -) < $tarfile
     # sanity check
     if [ ! -d $ztmpdir/$version ]; then
-    echo "untar did not create $ztmpdir/$version source dir"
-    # cleanup
-    rm -rf $ztmpdir
-    return 1
+        echo "untar did not create $ztmpdir/$version source dir"
+        # cleanup
+        rm -rf $ztmpdir
+        return 1
     fi
     # step 2: convert text files
     # There maybe a simpler way to do this.
@@ -180,7 +180,7 @@ tar2zip()
 #        HDF4options.cmake      cmake file copied from <hdf4 source code>/config/cmake/scripts
 #        SZip.tar.gz            copied from /mnt/scr1/pre-release/hdf4/CMake
 #        ZLib.tar.gz            copied from /mnt/scr1/pre-release/hdf4/CMake
-#        JPEG8d.tar.gz            copied from /mnt/scr1/pre-release/hdf4/CMake
+#        JPEG8d.tar.gz          copied from /mnt/scr1/pre-release/hdf4/CMake
 
 
 # Parameters:
@@ -191,6 +191,10 @@ tar2zip()
 # Returns 0 if successful; 1 otherwise
 #
 
+# need function to create another temporary directory, extract the
+# $tmpdir/$HDF4_VERS.tar into it, add (create) build-unix.sh,
+# CTestScript.cmake, HDF5config.cmake, SZIP.tar.gz, ZLib.tar.gz,
+# and JPEG8d.tar.gz, and then zip it.
 tar2cmakezip()
 {
     if [ $# -ne 3 ]; then
@@ -388,9 +392,9 @@ while [ -n "$1" ]; do
     esac
 done
 
-# Default methods are tar and md5
+# Default methods is tar and md5
 if [ "X$methods" = "X" ]; then
-    methods="tar md5"
+    methods="tar"
 fi
 
 # Create the temporay work directory.

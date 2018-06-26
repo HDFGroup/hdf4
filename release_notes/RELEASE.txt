@@ -3,18 +3,22 @@ HDF version 4.2.14-pre1 currently under development
 
 INTRODUCTION
 
-This document describes the differences between HDF 4.2.13 and HDF 4.2.14-pre1.
-It is written for people who are familiar with previous releases of HDF
-and wish to migrate to HDF 4.2.14-pre1.
+This document describes the differences between this release and the 
+HDF 4.2.13 release.  It is written for people who are familiar with 
+previous releases of HDF and wish to migrate to this version of HDF.
 
-The HDF 4.2.13 documentation can be found on the The HDF Group's website
-at:
-    https://www.hdfgroup.org/release4/doc/
+Note that the HDF4 documentation will be updated at the time of 
+each final release and can be found on the HDF4 support page at:
 
-First-time HDF users are encouraged to read the HDF FAQ, which can be
-reached from the HDF product home page:
+    https://portal.hdfgroup.org/display/HDF4/HDF4
 
-    https://support.hdfgroup.org/products/hdf4/
+The official HDF4 releases can be obtained from:
+
+    https://portal.hdfgroup.org/display/support/Download+HDF4
+
+If you have any questions or comments, please send them to the HDF Help Desk:
+
+     help@hdfgroup.org
 
 CONTENTS
 
@@ -142,17 +146,21 @@ This version has been tested in the following platforms:
 
    Linux 2.6.32-573.22.1.el6.x86_64  gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-16)
    #1 SMP, x86_64                    GNU Fortran (GCC) 4.4.7 20120313 (Red Hat 4.4.7-16)
-   (mayll/platypus)                  icc (ICC) 15.0.3.187 Build 20150407
-                                     ifort (IFORT) 15.0.3.187 Build 20150407
-                                     pgcc and pgf90 15.7-0 64-bit target on x86-64 Linux -tp nehalem
+   (mayll/platypus)                  icc (ICC) 17.0.0.098 Build 20160721
+                                     ifort (IFORT) 17.0.0.098 Build 20160721
+                                     pgcc and pgf90 17.10-0 64-bit target 
+                                         on x86-64 Linux -tp nehalem
 
    Linux, 3.10.0-327.10.1.el7.x86_64 gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-4)
    #1 SMP x86_64, GNU/Linux          GNU Fortran (GCC) 4.8.5 20150623 (Red Hat 4.8.5-4)
-   (kituo/moohan)                    icc (ICC) 15.0.3.187 Build 20150407
-                                     ifort (IFORT) 15.0.3.187 Build 20150407
+   (jelly/moohan)                    icc (ICC) 17.0.0.098 Build 20160721
+                                     ifort (IFORT) 17.0.0.098 Build 20160721
+                                     pgcc and pgf90 17.10-0 64-bit target
+                                         on x86-64 Linux -tp haswell
 
-   Linux, 2.6.32-573.18.1.el6.ppc64  (1) GNU Fortran (GCC) 4.4.7 20120313 (Red Hat 4.4.7-11)
-   #1 SMP, ppc64 (ostrich)           (2) IBM XL Fortran for Linux, V15.1 (64-bit mode)
+   Linux, 2.6.32-573.18.1.el6.ppc64  gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-18)
+   #1 SMP, ppc64 (ostrich)           (1) GNU Fortran (GCC) 4.4.7 20120313 (Red Hat 4.4.7-11)
+                                     (2) IBM XL Fortran for Linux, V15.1 (64-bit mode)
 
    SunOS 5.11 (32- and 64-bit)       Sun C 5.12 SunOS_sparc 2011/11/16
    11.1, sparc, sun4v (emu)          Sun Fortran 95 8.6 SunOS_sparc 2011/11/16
@@ -173,10 +181,6 @@ This version has been tested in the following platforms:
 
     Windows 10 x64                Visual Studio 2015 w/ Intel Fortran 16 (cmake)
 
-
-   Mac OS X 10.9.5, Darwin, 13.4.0   Apple clang version 6.0 from Xcode 6.2
-   x86_64                            gfortran GNU Fortran (GCC) 4.9.2
-   (wren,quail)                      Intel icc and ifort Version 15.0.3
 
    Mac OS X 10.10.5, Darwin, 14.5.0  Apple clang version 6.1 from Xcode 7.0
    x86_64                            gfortran GNU Fortran (GCC) 4.9.2
@@ -201,13 +205,8 @@ This version has been tested in the following platforms:
                                      GNU Fortran (GCC) 6.1.1 20160621 (Red Hat 6.1.1-3)
                                      (cmake and autotools)
 
-   SUSE Server 12 SP1 3.12.49-1
-   #1 SMP x86_64 GNU/Linux           gcc (SUSE Linux) 4.8.5
-                                     GNU Fortran (SUSE Linux) 4.8.5
-                                     (cmake and autotools)
-
-   Ubuntu 14.04 4.4.0-81-generic
-   #104-Ubuntu SMP x86_64 GNU/Linux  gcc (Ubuntu 5.4.0-6ubuntu16.04.4) 5.4.0
+   Ubuntu 16.04.1 4.4.0-38-generic
+   #57-Ubuntu SMP x86_64 GNU/Linux   gcc (Ubuntu 5.4.0-6ubuntu16.04.4) 5.4.0
                                      GNU Fortran (Ubuntu 5.4.0-6ubuntu16.04.4) 5.4.0
                                      (cmake and autotools)
 
