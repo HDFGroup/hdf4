@@ -10,7 +10,7 @@ of HDF and wish to migrate to this version of HDF.
 Note that the documentation in the links below will be updated at the time of 
 each final release.
 
-Links to the HDF4 documentaion can be found on the HDF4 web page:
+Links to the HDF4 documentation can be found on the HDF4 web page:
 
     https://portal.hdfgroup.org/display/HDF4/HDF4
 
