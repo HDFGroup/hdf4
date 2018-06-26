@@ -7,10 +7,8 @@ This document describes the differences between this release and the previous
 HDF4 release.  It is written for people who are familiar with previous releases 
 of HDF and wish to migrate to this version of HDF.
 
-Note that the documentation in the links below will be updated at the time of 
-each final release.
-
-Links to the HDF4 documentation can be found on the HDF4 web page:
+Note that the HDF4 documentation will be updated at the time of 
+each final release and can be found on the HDF4 support page at:
 
     https://portal.hdfgroup.org/display/HDF4/HDF4
 
