@@ -36,6 +36,9 @@ CONTENTS
 
 New features and changes
 ========================
+
+    Configuration:
+    -------------
     - CMake
 
       Refactor use of CMAKE_BUILD_TYPE for new variable, which understands
@@ -67,6 +70,8 @@ Support for new platforms and compilers
 
 Bugs fixed since HDF 4.2.13
 ===========================
+    Configuration:
+    -------------
     - CMake
 
       Update CMake commands configuration.
@@ -89,6 +94,15 @@ Bugs fixed since HDF 4.2.13
       Created two new HDF variable, HDF_BUILD_TYPE and HDF_CFG_BUILD_TYPE.
       Defaults for these variables is "Release". Changes
       follow from hdf5.
+
+    Library:
+    --------
+    - Removal of a memory leak
+
+      HTPendaccess was missing from HRPendaccess and resulting in a memory
+      leak.  This is now fixed.
+
+      (BMR - 2018/06/18, HDFFR-1560)
 
     - Fortran
 
