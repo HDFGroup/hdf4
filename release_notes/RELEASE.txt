@@ -3,9 +3,9 @@ HDF version 4.2.14-pre1 currently under development
 
 INTRODUCTION
 
-This document describes the differences between this release and the previous 
-HDF4 release.  It is written for people who are familiar with previous releases 
-of HDF and wish to migrate to this version of HDF.
+This document describes the differences between this release and the 
+HDF 4.2.13 release.  It is written for people who are familiar with 
+previous releases of HDF and wish to migrate to this version of HDF.
 
 Note that the HDF4 documentation will be updated at the time of 
 each final release and can be found on the HDF4 support page at:
