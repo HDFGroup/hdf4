@@ -1,4 +1,4 @@
-HDF version 4.2.14-pre1 currently under development
+HDF version 4.2.14 released on 2018-06-26
 ===================================================
 
 Information about HDF
