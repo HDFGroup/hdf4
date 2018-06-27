@@ -1,4 +1,4 @@
-HDF version 4.2.14-pre1 currently under development
+HDF version 4.2.14 currently under development
 ====================================================
 
 INTRODUCTION
@@ -132,7 +132,9 @@ Bugs fixed since HDF 4.2.13
 
 Documentation
 =============
+    - Various minor improvements are made to the User's Guide and Reference Manual.
 
+      (BMR - 2018/06/26)
 
 Platforms tested
 ================
