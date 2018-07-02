@@ -23,6 +23,8 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 echo "Run c examples"
+LD_LIBRARY_PATH=../../../lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH
 if ((cd c; sh ./run-c-ex.sh) && \
    (if test -d fortran; then   
        echo "Run fortran examples" 
