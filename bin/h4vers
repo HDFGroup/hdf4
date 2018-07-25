@@ -192,9 +192,14 @@ die "unable to read file: $file\n" unless -r $file;
 my $HDF4CONFIGCMAKE = $file;
 $HDF4CONFIGCMAKE =~ s/[^\/]*$/..\/..\/config\/cmake\/scripts\/HDF4config.cmake/;
 die "unable to read file: $HDF4CONFIGCMAKE\n" unless -r $file;
+# java/src/hdf/hdflib/HDFLibrary.java
 my $H4_JAVA = $file;
 $H4_JAVA =~ s/[^\/]*$/..\/..\/java\/src\/hdf\/hdflib\/HDFLibrary.java/;
 die "unable to read file: $H4_JAVA\n" unless -r $file;
+# java/test/TestH4.java 
+my $H4_TESTJAVA = $file;
+$H4_TESTJAVA =~ s/[^\/]*$/..\/..\/java\/test\/TestH4.java/;
+die "unable to read file: $H4_TESTJAVA\n" unless -r $file;
 # README.txt
 my $README = $file;
 $README =~ s/[^\/]*$/..\/..\/README.txt/;
@@ -267,6 +272,7 @@ if ($set) {
   $MANHDF1 = "";
   $HDF4CONFIGCMAKE = "";
   $H4_JAVA = "";
+  $H4_TESTJAVA = "";
   @newver = @curver;
 }
 
@@ -330,14 +336,24 @@ if ($HDF4CONFIGCMAKE) {
   write_file($HDF4CONFIGCMAKE, $data);
 }
 
-# Update the java/src/hdf/hdf5lib/HDFLibrary.java file
+# Update the java/src/hdf/hdflib/HDFLibrary.java file
 if ($H4_JAVA) {
   my $data = read_file($H4_JAVA);
   my $version_string = sprintf("%d.%d.%d", @newver[0,1,2]);
 
-  $data =~ s/    public final static String JHI_VERSION = "\d*.\d*.\d*";/    public final static String JHI_VERSION = "$version_string";/;
+  $data =~ s/    private final static String JHI_VERSION = "\d*.\d*.\d*";/    private final static String JHI_VERSION = "$version_string";/;
 
   write_file($H4_JAVA, $data);
+}
+
+# Update the java/test/TestH4.java file
+if ($H4_TESTJAVA) {
+  my $data = read_file($H4_TESTJAVA);
+  my $version_string = sprintf("%d, %d, %d", @newver[0,1,2]);
+
+  $data =~ s/    int LIB_VERSION\[\] = { \d*, \d*, \d* };/    int LIB_VERSION\[\] = { $version_string };/;
+
+  write_file($H4_TESTJAVA, $data);
 }
 
 # Update the README file
