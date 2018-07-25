@@ -1165,6 +1165,8 @@
 ./config/cmake/HDF4UseFortran.cmake
 ./config/cmake/jrunTest.cmake
 ./config/cmake/libhdf4.settings.cmake.in
+./config/cmake/libh4cc.in
+./config/cmake/libhdf4.pc.in
 ./config/cmake/mccacheinit.cmake
 ./config/cmake/NSIS.InstallOptions.ini.in
 ./config/cmake/patch.xml
