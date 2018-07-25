@@ -1,4 +1,4 @@
-HDF version 4.2.14 released on 2018-06-26
+HDF version 4.2.14-post0 currently under development
 ====================================================
 
 INTRODUCTION
@@ -37,32 +37,6 @@ CONTENTS
 New features and changes
 ========================
 
-    Configuration:
-    -------------
-    - CMake
-
-      Refactor use of CMAKE_BUILD_TYPE for new variable, which understands
-      the type of generator in use.
-
-      Added new configuration macros to use new HDF_BUILD_TYPE variable. This
-      variable is set correctly for the type of generator being used for the build.
-      Changes follow from hdf5.
-
-      (ADB - 2018/01/08, HDFFV-10385, HDFFV-10296)
-
-    - XDR
-
-      glibc stopped installing rpc headers by default back in 2011:
-      versions 2.14 and 2.15 never install them, versions 2.16 and
-      higher require the configuration option --enable-obsolete-rpc.
-      Most distros still install the headers for backwards compatibility,
-      but Fedora 28 has now stopped support.
-
-      The preferred library is libtirpc. On Fedora 28, install the
-      libtirpc-devel package.
-
-      (ADB - 2018/05/29, HDFFR-1568)
-
 
 Support for new platforms and compilers
 =======================================
@@ -70,71 +44,11 @@ Support for new platforms and compilers
 
 Bugs fixed since HDF 4.2.13
 ===========================
-    Configuration:
-    -------------
-    - CMake
-
-      Update CMake commands configuration.
-
-      A number of improvements were made to the CMake commands. Most
-      changes simplify usage or eliminate unused constructs. Also,
-      some changes support better cross-platform support. Changes
-      follow from hdf5.
-
-      (ADB - 2018/02/01, HDFFV-10398)
-
-    - CMake
-
-      Correct usage of CMAKE_BUILD_TYPE variable.
-
-      The use of the CMAKE_BUILD_TYPE is incorrect for multi-config
-      generators (Visual Studio and XCode) and is optional for single
-      config generators. Created a new macro to check
-        GLOBAL PROPERTY -> GENERATOR_IS_MULTI_CONFIG
-      Created two new HDF variable, HDF_BUILD_TYPE and HDF_CFG_BUILD_TYPE.
-      Defaults for these variables is "Release". Changes
-      follow from hdf5.
-
-    Library:
-    --------
-    - Removal of a memory leak
-
-      HTPendaccess was missing from HRPendaccess and resulting in a memory
-      leak.  This is now fixed.
-
-      (BMR - 2018/06/18, HDFFR-1560)
-
-    - Fortran
-
-      Changed array data constructor to be g77 compatible. Updated
-      INSTALL notes about FFLAGS for g77.
-
-      (MSB - 2018/05/23, HDFFR-1553)
-
-    - Java
-
-      JNI functions called routine with wrong interface.
-
-      GRsetchunk, GRsetchunkcache changed from SD in hdfgrImp.c.
-      SDfileinfo changed from SD in hdfsdsImp.c.
-
-      (ADB - 2018/05/29, HDFFR-1565)
-
-    - Java
-
-      JNI functions used wrong constants.
-
-      MAX_VAR_DIMS and MAX_NC_NAME should have been H4_MAX_VAR_DIMS and H4_MAX_NC_NAME.
-      MAX_VAR_DIMS used in Java source is assigned the H4_MAX_VAR_DIMS value.
-
-      (ADB - 2018/05/29, HDFFR-1563)
 
 
 Documentation
 =============
-    - Various minor improvements are made to the User's Guide and Reference Manual.
 
-      (BMR - 2018/06/26)
 
 Platforms tested
 ================
