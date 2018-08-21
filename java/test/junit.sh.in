@@ -248,7 +248,6 @@ if $TEST -z "$LD_LIBRARY_PATH" ; then
 fi
 
 case  $os_name in
-    Darwin)
     *)
     LD_LIBRARY_PATH=$BLDLIBDIR:$BLDINSDIR:$LD_LIBRARY_PATH
     ;;
