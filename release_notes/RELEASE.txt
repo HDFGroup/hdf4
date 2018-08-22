@@ -1,10 +1,10 @@
-HDF version 4.2.14-post0 currently under development
+HDF version 4.2.15-snap0 currently under development
 ====================================================
 
 INTRODUCTION
 
 This document describes the differences between this release and the 
-HDF 4.2.13 release.  It is written for people who are familiar with 
+HDF 4.2.14 release.  It is written for people who are familiar with 
 previous releases of HDF and wish to migrate to this version of HDF.
 
 Note that the HDF4 documentation will be updated at the time of 
@@ -42,7 +42,7 @@ Support for new platforms and compilers
 =======================================
 
 
-Bugs fixed since HDF 4.2.13
+Bugs fixed since HDF 4.2.14
 ===========================
 
 

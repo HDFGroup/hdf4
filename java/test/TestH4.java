@@ -95,7 +95,7 @@ public class TestH4 {
      */
     @Test
     public void testHgetlibversion() {
-        int LIB_VERSION[] = { 4, 2, 14 };
+        int LIB_VERSION[] = { 4, 2, 15 };
         int libversion[] = { 0, 0, 0 };
         String version[] = { "" };
 
