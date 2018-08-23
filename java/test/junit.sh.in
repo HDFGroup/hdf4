@@ -37,8 +37,7 @@ myos=`uname -s`
 
 # where the libs exist
 HDFLIB_HOME="$top_srcdir/java/lib"
-BLDLIBDIR="$top_builddir/java/lib"
-BLDINSDIR="$top_builddir/../hdf4/lib"
+BLDLIBDIR="$top_builddir/hdf4/lib"
 BLDDIR="."
 HDFTEST_HOME="$top_srcdir/java/test"
 JARFILE=jar@PACKAGE_TARNAME@-@PACKAGE_VERSION@.jar
@@ -98,9 +97,9 @@ COPY_LIBFILES_TO_BLDLIBDIR()
             # make cp fail
             SDIR=`$DIRNAME $tstfile`
             INODE_SDIR=`$LS -i -d $SDIR | $AWK -F' ' '{print $1}'`
-            INODE_DDIR=`$LS -i -d $BLDINSDIR | $AWK -F' ' '{print $1}'`
+            INODE_DDIR=`$LS -i -d $BLDLIBDIR | $AWK -F' ' '{print $1}'`
             if [ "$INODE_SDIR" != "$INODE_DDIR" ]; then
-                $CP -f $tstfile $BLDINSDIR
+                $CP -f $tstfile $BLDLIBDIR
                 if [ $? -ne 0 ]; then
                     echo "Error: FAILED to copy $tstfile ."
 
@@ -249,15 +248,15 @@ fi
 
 case  $os_name in
     *)
-    LD_LIBRARY_PATH=$BLDLIBDIR:$BLDINSDIR:$LD_LIBRARY_PATH
+    LD_LIBRARY_PATH=$BLDLIBDIR:$LD_LIBRARY_PATH
     ;;
 esac
 
 export LD_LIBRARY_PATH
 
-echo "$JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR:$BLDINSDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4"
+echo "$JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4"
 TESTING JUnit-TestH4
-($RUNSERIAL $JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR:$BLDINSDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4 > JUnit-TestH4.ext)
+($RUNSERIAL $JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4 > JUnit-TestH4.ext)
 
 # Extract file name, line number, version and thread IDs because they may be different
 sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
@@ -274,9 +273,9 @@ else
     nerrors="`expr $nerrors + 1`"
 fi
 
-echo "$JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR:$BLDINSDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4ANparams"
+echo "$JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4ANparams"
 TESTING JUnit-TestH4ANparams
-($RUNSERIAL $JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR:$BLDINSDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4ANparams > JUnit-TestH4ANparams.ext)
+($RUNSERIAL $JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4ANparams > JUnit-TestH4ANparams.ext)
 
 # Extract file name, line number, version and thread IDs because they may be different
 sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
@@ -293,9 +292,9 @@ else
     nerrors="`expr $nerrors + 1`"
 fi
 
-echo "$JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR:$BLDINSDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4DFparams"
+echo "$JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4DFparams"
 TESTING JUnit-TestH4DFparams
-($RUNSERIAL $JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR:$BLDINSDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4DFparams > JUnit-TestH4DFparams.ext)
+($RUNSERIAL $JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4DFparams > JUnit-TestH4DFparams.ext)
 
 # Extract file name, line number, version and thread IDs because they may be different
 sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
@@ -312,9 +311,9 @@ else
     nerrors="`expr $nerrors + 1`"
 fi
 
-echo "$JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR:$BLDINSDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4DFPparams"
+echo "$JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4DFPparams"
 TESTING JUnit-TestH4DFPparams
-($RUNSERIAL $JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR:$BLDINSDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4DFPparams > JUnit-TestH4DFPparams.ext)
+($RUNSERIAL $JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4DFPparams > JUnit-TestH4DFPparams.ext)
 
 # Extract file name, line number, version and thread IDs because they may be different
 sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
@@ -331,9 +330,9 @@ else
     nerrors="`expr $nerrors + 1`"
 fi
 
-echo "$JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR:$BLDINSDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4DFRparams"
+echo "$JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4DFRparams"
 TESTING JUnit-TestH4DFRparams
-($RUNSERIAL $JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR:$BLDINSDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4DFRparams > JUnit-TestH4DFRparams.ext)
+($RUNSERIAL $JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4DFRparams > JUnit-TestH4DFRparams.ext)
 
 # Extract file name, line number, version and thread IDs because they may be different
 sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
@@ -350,9 +349,9 @@ else
     nerrors="`expr $nerrors + 1`"
 fi
 
-echo "$JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR:$BLDINSDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4GRparams"
+echo "$JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4GRparams"
 TESTING JUnit-TestH4GRparams
-($RUNSERIAL $JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR:$BLDINSDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4GRparams > JUnit-TestH4GRparams.ext)
+($RUNSERIAL $JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4GRparams > JUnit-TestH4GRparams.ext)
 
 # Extract file name, line number, version and thread IDs because they may be different
 sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
@@ -369,9 +368,9 @@ else
     nerrors="`expr $nerrors + 1`"
 fi
 
-echo "$JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR:$BLDINSDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4HCparams"
+echo "$JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4HCparams"
 TESTING JUnit-TestH4HCparams
-($RUNSERIAL $JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR:$BLDINSDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4HCparams > JUnit-TestH4HCparams.ext)
+($RUNSERIAL $JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4HCparams > JUnit-TestH4HCparams.ext)
 
 # Extract file name, line number, version and thread IDs because they may be different
 sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
@@ -388,9 +387,9 @@ else
     nerrors="`expr $nerrors + 1`"
 fi
 
-echo "$JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR:$BLDINSDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4SDparams"
+echo "$JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4SDparams"
 TESTING JUnit-TestH4SDparams
-($RUNSERIAL $JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR:$BLDINSDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4SDparams > JUnit-TestH4SDparams.ext)
+($RUNSERIAL $JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4SDparams > JUnit-TestH4SDparams.ext)
 
 # Extract file name, line number, version and thread IDs because they may be different
 sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
@@ -407,9 +406,9 @@ else
     nerrors="`expr $nerrors + 1`"
 fi
 
-echo "$JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR:$BLDINSDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4Vparams"
+echo "$JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4Vparams"
 TESTING JUnit-TestH4Vparams
-($RUNSERIAL $JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR:$BLDINSDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4Vparams > JUnit-TestH4Vparams.ext)
+($RUNSERIAL $JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4Vparams > JUnit-TestH4Vparams.ext)
 
 # Extract file name, line number, version and thread IDs because they may be different
 sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
@@ -426,9 +425,9 @@ else
     nerrors="`expr $nerrors + 1`"
 fi
 
-echo "$JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR:$BLDINSDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4VSparams"
+echo "$JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4VSparams"
 TESTING JUnit-TestH4VSparams
-($RUNSERIAL $JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR:$BLDINSDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4VSparams > JUnit-TestH4VSparams.ext)
+($RUNSERIAL $JAVAEXE $JAVAEXEFLAGS -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=trace -Djava.library.path=$BLDLIBDIR -cp $CLASSPATH -ea org.junit.runner.JUnitCore test.TestH4VSparams > JUnit-TestH4VSparams.ext)
 
 # Extract file name, line number, version and thread IDs because they may be different
 sed -e 's/thread [0-9]*/thread (IDs)/' -e 's/: .*\.c /: (file name) /' \
