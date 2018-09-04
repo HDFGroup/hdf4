@@ -9,6 +9,7 @@ It was built with the following options:
     -- @LIB_TYPE@ C/Fortran libraries
     -- SZIP (encoder enabled), ZLIB, and JPEG
     -- @LIB_TYPE@ HDF4 tools
+    -- Java
 
 The contents of this directory are:
 
