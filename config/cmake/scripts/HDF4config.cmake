@@ -10,13 +10,13 @@ cmake_minimum_required (VERSION 3.2.2 FATAL_ERROR)
 #     ctest -S HDFconfig.cmake,OPTION=VALUE -C Release -VV -O test.log
 # where valid options for OPTION are:
 #     BUILD_GENERATOR - The cmake build generator:
-#            Unix    * Unix Makefiles
+#            Unix      * Unix Makefiles
 #            VS2017    * Visual Studio 15 2017
-#            VS201764 * Visual Studio 15 2017 Win64
+#            VS201764  * Visual Studio 15 2017 Win64
 #            VS2015    * Visual Studio 14 2015
-#            VS201564 * Visual Studio 14 2015 Win64
+#            VS201564  * Visual Studio 14 2015 Win64
 #            VS2013    * Visual Studio 12 2013
-#            VS201364 * Visual Studio 12 2013 Win64
+#            VS201364  * Visual Studio 12 2013 Win64
 #
 #     INSTALLDIR  -  root folder where hdf is installed
 #                 -  windowsdefault: C:/Program Files/HDF_Group/HDF/4.2.13
@@ -73,7 +73,9 @@ if (NOT DEFINED INSTALLDIR)
     set (INSTALLDIR "${CTEST_SCRIPT_DIRECTORY}/HDF_Group/HDF/${CTEST_SOURCE_VERSION}")
   endif ()
 endif ()
-
+if (NOT DEFINED CTEST_CONFIGURATION_TYPE)
+  set (CTEST_CONFIGURATION_TYPE "Release")
+endif ()
 if (NOT DEFINED CTEST_SOURCE_NAME)
   set (CTEST_SOURCE_NAME "hdf-${CTEST_SOURCE_VERSION}${CTEST_SOURCE_VERSEXT}")
 endif ()

@@ -1150,6 +1150,10 @@
 ./CMakeInstallation.cmake
 ./UserMacros.cmake
 
+# CMake-specific Files
+./config/toolchain/GCC.cmake
+./config/toolchain/intel.cmake
+
 ./config/cmake/cacheinit.cmake
 ./config/cmake/CMakeFindJavaCommon.cmake
 ./config/cmake/ConfigureChecks.cmake
