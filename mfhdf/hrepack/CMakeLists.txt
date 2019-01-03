@@ -1,22 +1,7 @@
-cmake_minimum_required (VERSION 3.2.2)
+cmake_minimum_required (VERSION 3.10)
 project (HDF4_MFHDF_HREPACK)
 
-INCLUDE_DIRECTORIES (${HDF4_HDFSOURCE_DIR})
-INCLUDE_DIRECTORIES (${HDF4_MFHDFSOURCE_DIR})
-INCLUDE_DIRECTORIES (${HDF4_SOURCE_DIR}/mfhdf/hdiff)
-
-add_definitions (-DHDF)
-
-if (WIN32)
-  add_definitions (-DDOS_FS)
-endif ()
-
-if (HDF4_BUILD_XDR_LIB)
-  if (WIN32)
-    add_definitions (-DNO_SYS_XDR_INC)
-  endif ()
-  INCLUDE_DIRECTORIES (${HDF4_MFHDF_XDR_DIR})
-endif ()
+#INCLUDE_DIRECTORIES (${HDF4_SOURCE_DIR}/mfhdf/hdiff)
 
 set (hrepack_SRCS
     ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack.c
@@ -35,13 +20,21 @@ set (hrepack_SRCS
 )
 
 add_executable (hrepack ${hrepack_SRCS})
-TARGET_C_PROPERTIES (hrepack STATIC " " " ")
+target_include_directories(hrepack
+    PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};$<$<BOOL:${HDF4_BUILD_XDR_LIB}>:${HDF4_MFHDF_XDR_DIR}>"
+)
+TARGET_C_PROPERTIES (hrepack STATIC)
 target_link_libraries (hrepack PRIVATE ${HDF4_MF_LIB_TARGET})
+set_target_properties (hrepack PROPERTIES COMPILE_DEFINITIONS "HDF")
+set_global_variable (HDF4_UTILS_TO_EXPORT "${HDF4_UTILS_TO_EXPORT};hrepack")
 
 add_executable (hrepack_check ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_check.c)
-TARGET_C_PROPERTIES (hrepack_check STATIC " " " ")
+target_include_directories(hrepack_check
+    PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};$<$<BOOL:${HDF4_BUILD_XDR_LIB}>:${HDF4_MFHDF_XDR_DIR}>"
+)
+TARGET_C_PROPERTIES (hrepack_check STATIC)
 target_link_libraries (hrepack_check PRIVATE ${HDF4_MF_LIB_TARGET})
-set_global_variable (HDF4_UTILS_TO_EXPORT "${HDF4_UTILS_TO_EXPORT};hrepack")
+set_target_properties (hrepack_check PROPERTIES COMPILE_DEFINITIONS "HDF")
 
 if (BUILD_TESTING)
   include (CMakeTests.cmake)

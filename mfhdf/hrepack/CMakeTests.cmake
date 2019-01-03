@@ -22,7 +22,7 @@
 
 #-- Adding test for test_hrepack for generating testfiles
   add_executable (test_hrepack ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepacktst.c)
-  TARGET_C_PROPERTIES (test_hrepack STATIC " " " ")
+  TARGET_C_PROPERTIES (test_hrepack STATIC )
   target_link_libraries (test_hrepack PRIVATE ${HDF4_MF_LIB_TARGET})
 
   macro (ADD_H4_TEST testname testtype testfile)

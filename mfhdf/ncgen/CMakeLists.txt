@@ -1,26 +1,11 @@
-cmake_minimum_required (VERSION 3.2.2)
+cmake_minimum_required (VERSION 3.10)
 project (HDF4_MFHDF_NCGEN)
 
 INCLUDE_DIRECTORIES (
-    ${HDF4_HDFSOURCE_DIR}
-    ${HDF4_MFHDFSOURCE_DIR}
     ${HDF4_MFHDF_NCGEN_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
-
-add_definitions (-DHDF)
-
-if (WIN32)
-  ADD_DEFINITIONS(-DDOS_FS)
-endif ()
-
-if (HDF4_BUILD_XDR_LIB)
-  if (WIN32)
-    add_definitions (-DNO_SYS_XDR_INC)
-  endif ()
-  INCLUDE_DIRECTORIES (${HDF4_MFHDF_XDR_DIR})
-endif ()
 
 set (ncgen_SRCS
     ${HDF4_MFHDF_NCGEN_SOURCE_DIR}/close.c
@@ -38,8 +23,17 @@ if (WIN32)
 endif ()
 
 add_executable (ncgen ${ncgen_SRCS})
-TARGET_C_PROPERTIES (ncgen STATIC " " " ")
+target_include_directories(ncgen
+    PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};$<$<BOOL:${HDF4_BUILD_XDR_LIB}>:${HDF4_MFHDF_XDR_DIR}>"
+)
+TARGET_C_PROPERTIES (ncgen STATIC )
 target_link_libraries (ncgen PRIVATE ${HDF4_MF_LIB_TARGET})
+set_target_properties (ncgen PROPERTIES COMPILE_DEFINITIONS "HDF")
+if (WIN32)
+  if (HDF4_BUILD_XDR_LIB)
+    set_property (TARGET ncgen APPEND PROPERTY COMPILE_DEFINITIONS "NO_SYS_XDR_INC")
+  endif ()
+endif ()
 
 if (BUILD_TESTING)
   include (CMakeTests.cmake)

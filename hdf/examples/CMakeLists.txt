@@ -1,5 +1,5 @@
-cmake_minimum_required (VERSION 3.2.2)
-PROJECT (HDF4_HDF_EXAMPLES C CXX)
+cmake_minimum_required (VERSION 3.10)
+project (HDF4_HDF_EXAMPLES C)
 
 #-----------------------------------------------------------------------------
 # Define Sources
@@ -37,12 +37,12 @@ set (examples
 
 foreach (example ${examples})
   add_executable (hdf_${example} ${HDF4_HDF_EXAMPLES_SOURCE_DIR}/${example}.c)
-  TARGET_C_PROPERTIES (hdf_${example} STATIC " " " ")
+  TARGET_C_PROPERTIES (hdf_${example} STATIC )
   target_link_libraries (hdf_${example} PRIVATE ${HDF4_SRC_LIB_TARGET})
 endforeach ()
 
 add_executable (hdf_VG_add_sds_to_vgroup ${HDF4_HDF_EXAMPLES_SOURCE_DIR}/VG_add_sds_to_vgroup.c)
-TARGET_C_PROPERTIES (hdf_VG_add_sds_to_vgroup STATIC " " " ")
+TARGET_C_PROPERTIES (hdf_VG_add_sds_to_vgroup STATIC )
 target_link_libraries (hdf_VG_add_sds_to_vgroup PRIVATE ${HDF4_MF_LIB_TARGET})
 
 if (BUILD_TESTING)

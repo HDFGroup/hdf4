@@ -15,7 +15,7 @@
     )
 
     ADD_EXECUTABLE (hdifftst ${hdifftst_SRCS})
-    TARGET_C_PROPERTIES (hdifftst STATIC " " " ")
+    TARGET_C_PROPERTIES (hdifftst STATIC )
     target_link_libraries (hdifftst PRIVATE ${HDF4_MF_LIB_TARGET})
 
     # Remove any output file left over from previous test run

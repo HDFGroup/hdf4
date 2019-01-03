@@ -1,18 +1,8 @@
-cmake_minimum_required (VERSION 3.2.2)
+cmake_minimum_required (VERSION 3.10)
 project (HDF4_MFHDF_HDIFF)
-
-INCLUDE_DIRECTORIES (${HDF4_HDFSOURCE_DIR})
-INCLUDE_DIRECTORIES (${HDF4_MFHDFSOURCE_DIR})
 
 if (WIN32)
   set (CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} /NODEFAULTLIB:LIBCMT")
-endif ()
-
-if (HDF4_BUILD_XDR_LIB)
-  if (WIN32)
-    add_definitions (-DNO_SYS_XDR_INC)
-  endif ()
-  INCLUDE_DIRECTORIES (${HDF4_MFHDF_XDR_DIR})
 endif ()
 
 set (hdiff_SRCS
@@ -32,7 +22,10 @@ set (hdiff_SRCS
 )
 
 add_executable(hdiff ${hdiff_SRCS})
-TARGET_C_PROPERTIES (hdiff STATIC " " " ")
+target_include_directories(hdiff
+    PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};$<$<BOOL:${HDF4_BUILD_XDR_LIB}>:${HDF4_MFHDF_XDR_DIR}>"
+)
+TARGET_C_PROPERTIES (hdiff STATIC)
 target_link_libraries(hdiff PRIVATE ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET})
 set_global_variable (HDF4_UTILS_TO_EXPORT "${HDF4_UTILS_TO_EXPORT};hdiff")
 

@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.2.2)
+cmake_minimum_required (VERSION 3.10)
 project (HDF4_JAVA_Examples Java)
 
 set (CMAKE_VERBOSE_MAKEFILE 1)
@@ -14,13 +14,13 @@ set (HDFJNI_EXAMPLES
     HDF4DatasetCreate
 )
 
-set (CMAKE_JAVA_INCLUDE_PATH "${HDF4_JAVA_JARS};${HDF4_JAVA_LOGGING_JAR};${HDF4_JAVA_LOGGING_SIMPLE_JAR}")
-
-if (WIN32 AND NOT CYGWIN)
+if (WIN32)
   set (CMAKE_JAVA_INCLUDE_FLAG_SEP ";")
 else ()
   set (CMAKE_JAVA_INCLUDE_FLAG_SEP ":")
 endif ()
+
+set (CMAKE_JAVA_INCLUDE_PATH "${HDF4_JAVA_JARS}")
 
 set (CMAKE_JAVA_CLASSPATH ".")
 foreach (CMAKE_INCLUDE_PATH ${CMAKE_JAVA_INCLUDE_PATH})
@@ -33,15 +33,24 @@ foreach (HCP_JAR ${CMAKE_JAVA_INCLUDE_PATH})
 endforeach ()
 
 foreach (example ${HDFJNI_EXAMPLES})
-  file (WRITE ${HDF4_JAVA_Examples_BINARY_DIR}/Manifest.txt
+  file (WRITE ${HDF4_JAVA_Examples_BINARY_DIR}/${example}_Manifest.txt
   "Main-Class: examples.${example}
 Class-Path: ${HDFJNI_CLASSJARS}
 "
   )
-  add_jar (${example} MANIFEST ${HDF4_JAVA_Examples_BINARY_DIR}/Manifest.txt ${example}.java)
+  add_jar (${example} MANIFEST ${HDF4_JAVA_Examples_BINARY_DIR}/${example}_Manifest.txt ${example}.java)
   get_target_property (${example}_JAR_FILE ${example} JAR_FILE)
+#  install_jar (${example} ${HJAVA_INSTALL_DATA_DIR}/examples examples)
+  get_target_property (${example}_CLASSPATH ${example} CLASSDIR)
   add_dependencies (${example} ${HDF4_JAVA_HDF_LIB_TARGET})
   set_target_properties (${example} PROPERTIES FOLDER examples/java)
+endforeach ()
+
+set (CMAKE_JAVA_INCLUDE_PATH "${HDF4_JAVA_JARS};${HDF4_JAVA_LOGGING_JAR};${HDF4_JAVA_LOGGING_SIMPLE_JAR}")
+
+set (CMAKE_JAVA_CLASSPATH ".")
+foreach (HDFJAVA_JAR ${CMAKE_JAVA_INCLUDE_PATH})
+  set (CMAKE_JAVA_CLASSPATH "${CMAKE_JAVA_CLASSPATH}${CMAKE_JAVA_INCLUDE_FLAG_SEP}${HDFJAVA_JAR}")
 endforeach ()
 
 if (BUILD_TESTING)
@@ -51,14 +60,14 @@ if (BUILD_TESTING)
         NAME JAVAEX-${resultfile}
         COMMAND "${CMAKE_COMMAND}"
             -D "TEST_TESTER=${CMAKE_Java_RUNTIME};${CMAKE_Java_RUNTIME_FLAGS}"
-            -D "TEST_PROGRAM=examples.${resultfile}"
-            -D "TEST_ARGS:STRING=${CMD_ARGS}${ARGN}"
             -D "TEST_CLASSPATH:STRING=${CMAKE_JAVA_CLASSPATH}${CMAKE_JAVA_INCLUDE_FLAG_SEP}${${resultfile}_JAR_FILE}"
+            -D "TEST_ARGS:STRING=${CMD_ARGS}${ARGN}"
+            -D "TEST_PROGRAM=examples.${resultfile}"
             -D "TEST_LIBRARY_DIRECTORY=${CMAKE_TEST_OUTPUT_DIRECTORY}"
             -D "TEST_FOLDER=${HDF4_JAVA_Examples_BINARY_DIR}"
-            -D "TEST_OUTPUT=${HDF4_JAVA_Examples_BINARY_DIR}/${resultfile}.out"
+            -D "TEST_OUTPUT=${resultfile}.out"
             -D "TEST_EXPECT=${resultcode}"
-            -D "TEST_SKIP_COMPARE=TRUE"
+            -D "TEST_REFERENCE=${resultfile}.txt"
             -P "${HDF_RESOURCES_DIR}/jrunTest.cmake"
     )
     if (NOT "${last_test}" STREQUAL "")

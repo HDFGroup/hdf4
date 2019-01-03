@@ -1,24 +1,8 @@
-cmake_minimum_required (VERSION 3.2.2)
+cmake_minimum_required (VERSION 3.10)
 project (HDF4_MFHDF_HDFIMPORT)
-
-INCLUDE_DIRECTORIES (${HDF4_HDFSOURCE_DIR})
-INCLUDE_DIRECTORIES (${HDF4_MFHDFSOURCE_DIR})
 
 if (WIN32)
   set (CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} /NODEFAULTLIB:LIBCMT")
-endif ()
-
-add_definitions (-DHDF)
-
-if (WIN32)
-  add_definitions (-DDOS_FS)
-endif ()
-
-if (HDF4_BUILD_XDR_LIB)
-  if (WIN32)
-    add_definitions (-DNO_SYS_XDR_INC)
-  endif ()
-  INCLUDE_DIRECTORIES (${HDF4_MFHDF_XDR_DIR})
 endif ()
 
 set (hdfimport_SRCS
@@ -26,8 +10,12 @@ set (hdfimport_SRCS
 )
 
 add_executable (hdfimport ${hdfimport_SRCS})
-TARGET_C_PROPERTIES (hdfimport STATIC " " " ")
+target_include_directories(hdfimport
+    PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};$<$<BOOL:${HDF4_BUILD_XDR_LIB}>:${HDF4_MFHDF_XDR_DIR}>"
+)
+TARGET_C_PROPERTIES (hdfimport STATIC)
 target_link_libraries (hdfimport PRIVATE ${HDF4_MF_LIB_TARGET})
+set_target_properties (hdfimport PROPERTIES COMPILE_DEFINITIONS "HDF")
 set_global_variable (HDF4_UTILS_TO_EXPORT "${HDF4_UTILS_TO_EXPORT};hdfimport")
 
 if (BUILD_TESTING)

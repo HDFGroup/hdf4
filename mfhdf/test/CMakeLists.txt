@@ -1,20 +1,5 @@
-cmake_minimum_required (VERSION 3.2.2)
+cmake_minimum_required (VERSION 3.10)
 project (HDF4_MFHDF_TEST)
-
-INCLUDE_DIRECTORIES (${HDF4_HDFSOURCE_DIR})
-INCLUDE_DIRECTORIES (${HDF4_MFHDFSOURCE_DIR})
-
-add_definitions (-DHDF)
-
-if (WIN32)
-  add_definitions (-DDOS_FS)
-endif ()
-
-if (HDF4_BUILD_XDR_LIB)
-  if (WIN32)
-    add_definitions (-DNO_SYS_XDR_INC)
-  endif ()
-endif ()
 
 set (hdftest_SRCS
     ${HDF4_MFHDF_TEST_SOURCE_DIR}/hdftest.c
@@ -40,26 +25,50 @@ set (hdftest_SRCS
 
 #-- Adding test for hdftest
 add_executable (hdftest ${hdftest_SRCS})
-TARGET_C_PROPERTIES (hdftest STATIC " " " ")
+target_include_directories(hdftest
+    PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR}"
+)
+TARGET_C_PROPERTIES (hdftest STATIC )
 target_link_libraries (hdftest PRIVATE ${HDF4_MF_LIB_TARGET})
-set_target_properties (hdftest PROPERTIES FOLDER test)
+set_target_properties (hdftest PROPERTIES
+    FOLDER test
+    COMPILE_DEFINITIONS "HDF"
+)
 if (BUILD_SHARED_LIBS)
   add_executable (hdftest-shared ${hdftest_SRCS})
-  TARGET_C_PROPERTIES (hdftest-shared SHARED " " " ")
+  target_include_directories(hdftest-shared
+      PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR}"
+  )
+  TARGET_C_PROPERTIES (hdftest-shared SHARED )
   target_link_libraries (hdftest-shared PRIVATE ${HDF4_MF_LIBSH_TARGET})
-  set_target_properties (hdftest-shared PROPERTIES FOLDER test)
+  set_target_properties (hdftest-shared PROPERTIES
+      FOLDER test
+      COMPILE_DEFINITIONS "HDF"
+  )
 endif ()
 
 #-- Adding test for cdftest
 add_executable (cdftest ${HDF4_MFHDF_TEST_SOURCE_DIR}/cdftest.c)
-TARGET_C_PROPERTIES (cdftest STATIC " " " ")
+target_include_directories(cdftest
+    PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR}"
+)
+TARGET_C_PROPERTIES (cdftest STATIC )
 target_link_libraries (cdftest PRIVATE ${HDF4_MF_LIB_TARGET})
-set_target_properties (cdftest PROPERTIES FOLDER test)
+set_target_properties (cdftest PROPERTIES
+    FOLDER test
+    COMPILE_DEFINITIONS "HDF"
+)
 if (BUILD_SHARED_LIBS)
   add_executable (cdftest-shared ${HDF4_MFHDF_TEST_SOURCE_DIR}/cdftest.c)
-  TARGET_C_PROPERTIES (cdftest-shared SHARED " " " ")
+  target_include_directories(cdftest-shared
+      PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR}"
+  )
+  TARGET_C_PROPERTIES (cdftest-shared SHARED )
   target_link_libraries (cdftest-shared PRIVATE ${HDF4_MF_LIBSH_TARGET})
-  set_target_properties (cdftest-shared PROPERTIES FOLDER test)
+  set_target_properties (cdftest-shared PROPERTIES
+      FOLDER test
+      COMPILE_DEFINITIONS "HDF"
+  )
 endif ()
 
 #-- Adding test for hdfnctest
@@ -71,14 +80,26 @@ set (hdfnctest_SRCS
 )
 
 add_executable (hdfnctest ${hdfnctest_SRCS})
-TARGET_C_PROPERTIES (hdfnctest STATIC " " " ")
+target_include_directories(hdfnctest
+    PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR}"
+)
+TARGET_C_PROPERTIES (hdfnctest STATIC )
 target_link_libraries (hdfnctest PRIVATE ${HDF4_MF_LIB_TARGET})
-set_target_properties (hdfnctest PROPERTIES FOLDER test)
+set_target_properties (hdfnctest PROPERTIES
+    FOLDER test
+    COMPILE_DEFINITIONS "HDF"
+)
 if (BUILD_SHARED_LIBS)
   add_executable (hdfnctest-shared ${hdfnctest_SRCS})
-  TARGET_C_PROPERTIES (hdfnctest-shared SHARED " " " ")
+  target_include_directories(hdfnctest-shared
+      PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR}"
+  )
+  TARGET_C_PROPERTIES (hdfnctest-shared SHARED )
   target_link_libraries (hdfnctest-shared PRIVATE ${HDF4_MF_LIBSH_TARGET})
-  set_target_properties (hdfnctest-shared PROPERTIES FOLDER test)
+  set_target_properties (hdfnctest-shared PROPERTIES
+      FOLDER test
+      COMPILE_DEFINITIONS "HDF"
+  )
 endif ()
 
 include (CMakeTests.cmake)

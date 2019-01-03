@@ -1,5 +1,5 @@
-cmake_minimum_required (VERSION 3.2.2)
-PROJECT (HDF4_MFHDF)
+cmake_minimum_required (VERSION 3.10)
+project (HDF4_MFHDF)
 
 #-----------------------------------------------------------------------------
 # Option to build HDF4 Tools

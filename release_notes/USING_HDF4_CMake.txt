@@ -181,7 +181,7 @@ source root. Include the following text in the file:
 
 ##########################################################
 cmake_minimum_required (VERSION 3.10)
-project (HDF4MyApp C CXX)
+project (HDF4MyApp C)
 
 set (LIB_TYPE STATIC) # or SHARED
 string(TOLOWER ${LIB_TYPE} SEARCH_TYPE)
