@@ -1,5 +1,5 @@
-cmake_minimum_required (VERSION 3.2.2)
-PROJECT (HDF4 C CXX)
+cmake_minimum_required (VERSION 3.10)
+project (HDF4 C)
 
 #-----------------------------------------------------------------------------
 # Instructions for use : Normal Build
@@ -388,9 +388,14 @@ endif ()
 #-----------------------------------------------------------------------------
 option (HDF4_ENABLE_COVERAGE "Enable code coverage for Libraries and Programs" OFF)
 if (HDF4_ENABLE_COVERAGE)
-    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
+  set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 --coverage -fprofile-arcs -ftest-coverage")
+  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g --coverage -O0 -fprofile-arcs -ftest-coverage")
+  if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
     set (LDFLAGS "${LDFLAGS} -fprofile-arcs -ftest-coverage")
+    link_libraries (gcov)
+  else ()
+    set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+  endif ()
 endif ()
 
 #-----------------------------------------------------------------------------
@@ -445,74 +450,8 @@ if (MAKE_SYSTEM)
   set (CFG_INIT "")
 endif ()
 
-#-----------------------------------------------------------------------------
-# Add some definitions for Debug Builds
-#-----------------------------------------------------------------------------
-if (${HDF_CFG_NAME} MATCHES Debug)
-  #-- NMake Makefiles will overwhelm the console with warnings if -Wall is used.
-  if (NOT WIN32)
-    add_definitions (-Wall)
-  endif ()
-endif ()
-
-#-----------------------------------------------------------------------------
-# Compiler specific flags : Shouldn't there be compiler tests for these
-#-----------------------------------------------------------------------------
-if (CMAKE_COMPILER_IS_GNUCC)
-  if (${HDF_CFG_NAME} MATCHES Debug)
-    set (CMAKE_C_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_C_FLAGS} -std=c99 -finline-functions -fno-common")
-  else ()
-    set (CMAKE_C_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_C_FLAGS} -std=c99 -fomit-frame-pointer -finline-functions -fno-common")
-  endif ()
-endif ()
-if (CMAKE_COMPILER_IS_GNUCXX)
-  if (${HDF_CFG_NAME} MATCHES Debug)
-    set (CMAKE_CXX_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_CXX_FLAGS} -finline-functions -fno-common")
-  else ()
-    set (CMAKE_CXX_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_CXX_FLAGS} -fomit-frame-pointer -finline-functions -fno-common")
-  endif ()
-endif ()
-
-#-----------------------------------------------------------------------------
-# Option to allow the user to disable compiler warnings
-#-----------------------------------------------------------------------------
-option (HDF4_DISABLE_COMPILER_WARNINGS "Disable compiler warnings" OFF)
-if (HDF4_DISABLE_COMPILER_WARNINGS)
-  # MSVC uses /w to suppress warnings.  It also complains if another
-  # warning level is given, so remove it.
-  if (MSVC)
-    set (HDF4_WARNINGS_BLOCKED 1)
-    string (REGEX REPLACE "(^| )([/-])W[0-9]( |$)" " " CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
-    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W0")
-    string (REGEX REPLACE "(^| )([/-])W[0-9]( |$)" " " CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W0")
-  endif ()
-  if (WIN32)
-    add_definitions (-D_CRT_SECURE_NO_WARNINGS)
-  endif ()
-  # Borland uses -w- to suppress warnings.
-  if (BORLAND)
-    set (HDF4_WARNINGS_BLOCKED 1)
-    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w-")
-  endif ()
-
-  # Most compilers use -w to suppress warnings.
-  if (NOT HDF4_WARNINGS_BLOCKED)
-    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w")
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
-  endif ()
-endif ()
-
-#-----------------------------------------------------------------------------
-# This is in here to help some of the GCC based IDES like Eclipse
-# and code blocks parse the compiler errors and warnings better.
-#-----------------------------------------------------------------------------
-if (CMAKE_COMPILER_IS_GNUCC)
-  set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fmessage-length=0")
-endif ()
-if (CMAKE_COMPILER_IS_GNUCXX)
-  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fmessage-length=0")
-endif ()
+include (${HDF_RESOURCES_DIR}/HDFCompilerFlags.cmake)
+set (CMAKE_MODULE_PATH ${HDF_RESOURCES_DIR} ${HDF_RESOURCES_EXT_DIR} ${CMAKE_MODULE_PATH})
 
 #-----------------------------------------------------------------------------
 # Include user macros

@@ -1,10 +1,5 @@
-cmake_minimum_required (VERSION 3.2.2)
+cmake_minimum_required (VERSION 3.10)
 project (HDF4_MFHDF_DUMPER)
-
-INCLUDE_DIRECTORIES (${HDF4_HDFSOURCE_DIR})
-INCLUDE_DIRECTORIES (${HDF4_MFHDFSOURCE_DIR})
-
-add_definitions (-DHDF)
 
 set (hdp_SRCS
     ${HDF4_MFHDF_DUMPER_SOURCE_DIR}/hdp.c
@@ -20,18 +15,19 @@ set (hdp_SRCS
 )
 
 add_executable (hdp ${hdp_SRCS})
-if (WIN32)
-  add_definitions (-DDOS_FS)
-endif ()
-if (HDF4_BUILD_XDR_LIB)
-  if (WIN32)
-    add_definitions (-DNO_SYS_XDR_INC)
-  endif ()
-endif ()
-TARGET_C_PROPERTIES (hdp STATIC " " " ")
+target_include_directories(hdp
+    PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};$<$<BOOL:${HDF4_BUILD_XDR_LIB}>:${HDF4_MFHDF_XDR_DIR}>"
+)
+TARGET_C_PROPERTIES (hdp STATIC )
 target_link_libraries (hdp PRIVATE ${HDF4_MF_LIB_TARGET})
+set_target_properties (hdp PROPERTIES COMPILE_DEFINITIONS "HDF")
 if (WIN32)
   set_target_properties (hdp PROPERTIES LINK_FLAGS "/STACK:10000000")
+endif ()
+if (WIN32)
+  if (HDF4_BUILD_XDR_LIB)
+    set_property (TARGET hdp APPEND PROPERTY COMPILE_DEFINITIONS "NO_SYS_XDR_INC")
+  endif ()
 endif ()
 set_global_variable (HDF4_UTILS_TO_EXPORT "${HDF4_UTILS_TO_EXPORT};hdp")
 

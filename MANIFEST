@@ -1153,6 +1153,7 @@
 # CMake-specific Files
 ./config/toolchain/GCC.cmake
 ./config/toolchain/intel.cmake
+./config/toolchain/PGI.cmake
 
 ./config/cmake/cacheinit.cmake
 ./config/cmake/CMakeFindJavaCommon.cmake
@@ -1167,6 +1168,7 @@
 ./config/cmake/hdf4-config.cmake.in
 ./config/cmake/HDF4Macros.cmake
 ./config/cmake/HDF4UseFortran.cmake
+./config/cmake/HDF4CompilerFlags.cmake
 ./config/cmake/jrunTest.cmake
 ./config/cmake/libhdf4.settings.cmake.in
 ./config/cmake/libh4cc.in
@@ -1192,6 +1194,7 @@
 ./config/cmake_ext_mod/HDFLibMacros.cmake
 ./config/cmake_ext_mod/HDFMacros.cmake
 ./config/cmake_ext_mod/HDFTests.c
+./config/cmake_ext_mod/HDFUseCXX.cmake
 ./config/cmake_ext_mod/HDFUseFortran.cmake
 ./config/cmake_ext_mod/NSIS.InstallOptions.ini.in
 ./config/cmake_ext_mod/NSIS.template.in

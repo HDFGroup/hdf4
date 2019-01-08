@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.2.2)
+cmake_minimum_required (VERSION 3.10)
 project (HDF4_MFHDF_EXAMPLES)
 
 #-----------------------------------------------------------------------------
@@ -25,7 +25,7 @@ set (examples
 
 foreach (example ${examples})
   add_executable (mf_${example} ${HDF4_MFHDF_EXAMPLES_SOURCE_DIR}/${example}.c)
-  TARGET_C_PROPERTIES (mf_${example} STATIC " " " ")
+  TARGET_C_PROPERTIES (mf_${example} STATIC )
   target_link_libraries (mf_${example} PRIVATE ${HDF4_MF_LIB_TARGET})
 endforeach (example ${examples})
 

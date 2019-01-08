@@ -1,5 +1,5 @@
-cmake_minimum_required (VERSION 3.2.2)
-PROJECT (HDF4_HDF_FORTRAN_EXAMPLES C CXX Fortran)
+cmake_minimum_required (VERSION 3.10)
+project (HDF4_HDF_FORTRAN_EXAMPLES C Fortran)
 # --------------------------------------------------------------------
 # Notes: When creating examples they should be prefixed
 # with "f_ex_". This allows for easier filtering of the examples.
@@ -18,10 +18,6 @@ endif ()
 #-----------------------------------------------------------------------------
 # Setup include Directories
 #-----------------------------------------------------------------------------
-INCLUDE_DIRECTORIES (
-    ${HDF4_HDF_BINARY_DIR}
-    ${HDF4_HDFSOURCE_DIR}
-)
 LINK_DIRECTORIES (
     ${HDF4_HDF_BINARY_DIR}
     ${HDF4_MFHDF_BINARY_DIR}

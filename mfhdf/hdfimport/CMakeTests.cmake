@@ -56,7 +56,7 @@
   )
 
   add_executable (hdfimporttest ${hdfimporttest_SRCS})
-  TARGET_C_PROPERTIES (hdfimporttest STATIC " " " ")
+  TARGET_C_PROPERTIES (hdfimporttest STATIC )
   target_link_libraries (hdfimporttest PRIVATE ${HDF4_MF_LIB_TARGET})
 
   #-- gen_sds_floats
@@ -65,7 +65,7 @@
   )
 
   add_executable (gen_sds_floats ${gen_sds_floats_SRCS})
-  TARGET_C_PROPERTIES (gen_sds_floats STATIC " " " ")
+  TARGET_C_PROPERTIES (gen_sds_floats STATIC )
   target_link_libraries (gen_sds_floats PRIVATE ${HDF4_MF_LIB_TARGET})
 
 ##############################################################################

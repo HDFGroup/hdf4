@@ -1,21 +1,5 @@
-cmake_minimum_required (VERSION 3.2.2)
+cmake_minimum_required (VERSION 3.10)
 project (HDF4_MFHDF_NCTEST)
-
-INCLUDE_DIRECTORIES (${HDF4_HDFSOURCE_DIR})
-INCLUDE_DIRECTORIES (${HDF4_MFHDFSOURCE_DIR})
-
-add_definitions (-DHDF)
-
-if (WIN32)
-  add_definitions (-DDOS_FS)
-endif ()
-
-if (HDF4_BUILD_XDR_LIB)
-  if (WIN32)
-    add_definitions (-DNO_SYS_XDR_INC)
-  endif ()
-  INCLUDE_DIRECTORIES (${HDF4_MFHDF_XDR_DIR})
-endif ()
 
 set (nctest_SRCS
     ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/add.c
@@ -41,7 +25,11 @@ set (nctest_SRCS
 )
 
 add_executable (nctest ${nctest_SRCS})
-TARGET_C_PROPERTIES (nctest STATIC " " " ")
+target_include_directories(nctest
+    PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};$<$<BOOL:${HDF4_BUILD_XDR_LIB}>:${HDF4_MFHDF_XDR_DIR}>"
+)
+TARGET_C_PROPERTIES (nctest STATIC )
 target_link_libraries (nctest PRIVATE ${HDF4_MF_LIB_TARGET})
+set_target_properties (nctest PROPERTIES COMPILE_DEFINITIONS "HDF")
 
 include (CMakeTests.cmake)

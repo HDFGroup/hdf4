@@ -1,17 +1,10 @@
-cmake_minimum_required (VERSION 3.2.2)
+cmake_minimum_required (VERSION 3.10)
+project (HDF4_MFHDF_FORTRAN_EXAMPLES C Fortran)
 # --------------------------------------------------------------------
 # Notes: When creating examples they should be prefixed
 # with "f_ex_". This allows for easier filtering of the examples.
 # --------------------------------------------------------------------
-project (HDF4_MFHDF_FORTRAN_EXAMPLES C CXX Fortran)
 
-#-----------------------------------------------------------------------------
-# Setup include Directories
-#-----------------------------------------------------------------------------
-INCLUDE_DIRECTORIES (
-    ${HDF4_HDF_BINARY_DIR}
-    ${HDF4_HDFSOURCE_DIR}
-)
 LINK_DIRECTORIES (
     ${HDF4_MFHDF_BINARY_DIR}
     ${HDF4_HDF_BINARY_DIR}
@@ -48,12 +41,10 @@ set (skip_examples
 foreach (example ${examples})
   add_executable (f_exmf_${example} ${HDF4_MFHDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
   target_include_directories (f_exmf_${example}
-      PRIVATE
-          "${CMAKE_Fortran_MODULE_DIRECTORY};${HDF4_HDF_BINARY_DIR};${HDF4_HDFSOURCE_DIR}"
+      PRIVATE "${CMAKE_Fortran_MODULE_DIRECTORY};${HDF4_HDF_BINARY_DIR};${HDF4_HDFSOURCE_DIR}"
   )
   target_compile_options(f_exmf_${example}
-      PRIVATE
-          $<$<STREQUAL:"x${CMAKE_Fortran_SIMULATE_ID}","xMSVC">:${WIN_COMPILE_FLAGS}>
+      PRIVATE $<$<STREQUAL:"x${CMAKE_Fortran_SIMULATE_ID}","xMSVC">:${WIN_COMPILE_FLAGS}>
   )
   if(MSVC)
     set_property(TARGET f_exmf_${example} PROPERTY LINK_FLAGS "/SUBSYSTEM:CONSOLE ${WIN_LINK_FLAGS}")
@@ -68,12 +59,10 @@ endforeach ()
 foreach (example ${skip_examples})
   add_executable (f_exmf_${example} ${HDF4_MFHDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
   target_include_directories (f_exmf_${example}
-      PRIVATE
-          "${CMAKE_Fortran_MODULE_DIRECTORY};${HDF4_HDF_BINARY_DIR};${HDF4_HDFSOURCE_DIR}"
+      PRIVATE "${CMAKE_Fortran_MODULE_DIRECTORY};${HDF4_HDF_BINARY_DIR};${HDF4_HDFSOURCE_DIR}"
   )
   target_compile_options(f_exmf_${example}
-      PRIVATE
-          $<$<STREQUAL:"x${CMAKE_Fortran_SIMULATE_ID}","xMSVC">:${WIN_COMPILE_FLAGS}>
+      PRIVATE $<$<STREQUAL:"x${CMAKE_Fortran_SIMULATE_ID}","xMSVC">:${WIN_COMPILE_FLAGS}>
   )
   if(MSVC)
     set_property(TARGET f_exmf_${example} PROPERTY LINK_FLAGS "/SUBSYSTEM:CONSOLE ${WIN_LINK_FLAGS}")

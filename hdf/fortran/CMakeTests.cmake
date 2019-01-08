@@ -12,16 +12,13 @@
   #-----------------------------------------------------------------------------
   add_library (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} STATIC ${HDF4_HDF_TESTSOURCE_DIR}/forsupf.c)
   set_target_properties (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} PROPERTIES LINKER_LANGUAGE C)
-  if (WIN32)
-    add_definitions (-DDOS_FS)
-  endif ()
-  TARGET_C_PROPERTIES (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} STATIC " " " ")
+  TARGET_C_PROPERTIES (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} STATIC )
   target_link_libraries (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} PUBLIC ${HDF4_SRC_LIB_TARGET})
   H4_SET_LIB_OPTIONS (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} ${HDF4_HDF_TEST_FCSTUB_LIB_NAME} STATIC)
 
   #-- Adding test for fortest
   add_executable (fortest ${HDF4_HDF_TESTSOURCE_DIR}/fortest.c)
-  TARGET_C_PROPERTIES (fortest STATIC " " " ")
+  TARGET_C_PROPERTIES (fortest STATIC )
   target_link_libraries (fortest PRIVATE ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_LIB_TARGET})
   set_target_properties (fortest PROPERTIES LINKER_LANGUAGE C)
 

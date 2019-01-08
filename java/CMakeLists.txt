@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.2.2)
-PROJECT ( HDF4_JAVA C Java )
+cmake_minimum_required (VERSION 3.10)
+project (HDF4_JAVA C Java)
 
 find_package (Java)
 #-----------------------------------------------------------------------------
@@ -9,8 +9,9 @@ include (${HDF_RESOURCES_DIR}/UseJava.cmake)
 
 message (STATUS "JAVA: JAVA_HOME=$ENV{JAVA_HOME} JAVA_ROOT=$ENV{JAVA_ROOT}")
 find_package (JNI)
+message ("JNI_LIBRARIES=${JNI_LIBRARIES}")
+message ("JNI_INCLUDE_DIRS=${JNI_INCLUDE_DIRS}")
 
-INCLUDE_DIRECTORIES ( ${JNI_INCLUDE_DIRS} )
 
 if (WIN32)
   set (HDF_JRE_DIRECTORY "C:/Program Files/Java/jre8")
@@ -22,13 +23,14 @@ endif ()
 # Include the main src and config directories
 #-----------------------------------------------------------------------------
 set (HDF4_JAVA_INCLUDE_DIRECTORIES
+    ${JNI_INCLUDE_DIRS}
     ${HDF4_JAVA_JNI_SRC_DIR}
     ${JAVA_INCLUDE_PATH}
     ${JAVA_INCLUDE_PATH2}
 )
-INCLUDE_DIRECTORIES (${HDF4_JAVA_INCLUDE_DIRECTORIES})
-set (CMAKE_JAVA_INCLUDE_PATH "")
+set_directory_properties(PROPERTIES INCLUDE_DIRECTORIES "${HDF4_JAVA_INCLUDE_DIRECTORIES}")
 
+set (CMAKE_JAVA_INCLUDE_PATH "")
 
 #-----------------------------------------------------------------------------
 # Traverse source subdirectory
