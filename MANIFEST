@@ -1168,7 +1168,7 @@
 ./config/cmake/hdf4-config.cmake.in
 ./config/cmake/HDF4Macros.cmake
 ./config/cmake/HDF4UseFortran.cmake
-./config/cmake/HDF4CompilerFlags.cmake
+./config/cmake/HDFCompilerFlags.cmake
 ./config/cmake/jrunTest.cmake
 ./config/cmake/libhdf4.settings.cmake.in
 ./config/cmake/libh4cc.in
