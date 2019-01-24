@@ -38,8 +38,7 @@ import org.slf4j.LoggerFactory;
  *  translations from the 'C' API described in the HDF Reference
  *  Manual.
  *
- *  <center>
- *  <table border=2 cellpadding=4>
+ *  <table border=1>
  *  <caption>
  *  <b>C types to Java types</b>
  *  </caption>
@@ -116,10 +115,7 @@ import org.slf4j.LoggerFactory;
  *  </td>
  *  </tr>
  *  </table>
- *  </center>
- *  <center>
  *  <b>General Rules for Passing Arguments and Results</b>
- *  </center>
  *  <p>
  *  In general, arguments passed <b>IN</b> to Java are the analogous
  *  basic types, as above.
@@ -190,9 +186,7 @@ import org.slf4j.LoggerFactory;
  *  </pre>
  *  and the parameter <i>data</i> can be any multi-dimensional
  *  array of numbers, such as float[][], or int[][][].
- *  <center>
  *  <b>Compression and Chunk Information</b>
- *  </center>
  *  <p>
  *  The HDF library passes the parameters needed by compression
  *  and chunking through  C structures (actually, unions).
