@@ -37,7 +37,11 @@ set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DCTEST_CONFIGURATION_TYPE:STRING=${
 ##################################################################
 
 if(NOT DEFINED INSTALLDIR)
-  set(INSTALLDIR "C:/Program Files/HDF_Group/@HDF4_PACKAGE_NAME@/@HDF4_PACKAGE_VERSION@")
+  if(WIN32)
+    set(INSTALLDIR "C:/Program Files/HDF_Group/@HDF4_PACKAGE_NAME@/@HDF4_PACKAGE_VERSION@")
+  else()
+    set(INSTALLDIR "@CMAKE_INSTALL_PREFIX@")
+  endif()
 endif()
 
 if(NOT DEFINED CTEST_SOURCE_NAME)
@@ -59,7 +63,7 @@ set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DSITE:STRING=${CTEST_SITE} -DBUILDN
 
 #TAR_SOURCE - name of tarfile
 #if(NOT DEFINED TAR_SOURCE)
-#  set(CTEST_USE_TAR_SOURCE "HDF4Examples-0.2.4-Source")
+#  set(CTEST_USE_TAR_SOURCE "HDF4Examples-0.3.7-Source")
 #endif()
 
 ###############################################################################################################
