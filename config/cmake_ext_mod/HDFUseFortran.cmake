@@ -2,7 +2,7 @@
 # This file provides functions for Fortran support.
 #
 #-------------------------------------------------------------------------------
-ENABLE_LANGUAGE (Fortran)
+enable_language (Fortran)
 set (HDF_PREFIX "H4")
 
 #-------------------------------------------------------------------------------
@@ -18,18 +18,19 @@ endif ()
 #-----------------------------------------------------------------------------
 include (FortranCInterface)
 FortranCInterface_HEADER (
-    ${CMAKE_BINARY_DIR}/FCMangle.h
-    MACRO_NAMESPACE "H5_FC_"
-    SYMBOL_NAMESPACE "H5_FC_"
+    ${CMAKE_BINARY_DIR}/F77Mangle.h
+    MACRO_NAMESPACE "H4_F77_"
+    SYMBOL_NAMESPACE "H4_F77_"
+    SYMBOLS mysub mymod:my_sub
 )
 
-file (STRINGS ${CMAKE_BINARY_DIR}/FCMangle.h CONTENTS REGEX "H5_FC_GLOBAL\\(.*,.*\\) +(.*)")
-string (REGEX MATCH "H5_FC_GLOBAL\\(.*,.*\\) +(.*)" RESULT ${CONTENTS})
-set (H5_FC_FUNC "H5_FC_FUNC(name,NAME) ${CMAKE_MATCH_1}")
+file (STRINGS ${CMAKE_BINARY_DIR}/F77Mangle.h CONTENTS REGEX "H4_F77_GLOBAL\\(.*,.*\\) +(.*)")
+string (REGEX MATCH "H4_F77_GLOBAL\\(.*,.*\\) +(.*)" RESULT ${CONTENTS})
+set (H4_F77_FUNC "H4_F77_FUNC(name,NAME) ${CMAKE_MATCH_1}")
 
-file (STRINGS ${CMAKE_BINARY_DIR}/FCMangle.h CONTENTS REGEX "H5_FC_GLOBAL_\\(.*,.*\\) +(.*)")
-string (REGEX MATCH "H5_FC_GLOBAL_\\(.*,.*\\) +(.*)" RESULT ${CONTENTS})
-set (H5_FC_FUNC_ "H5_FC_FUNC_(name,NAME) ${CMAKE_MATCH_1}")
+file (STRINGS ${CMAKE_BINARY_DIR}/F77Mangle.h CONTENTS REGEX "H4_F77_GLOBAL_\\(.*,.*\\) +(.*)")
+string (REGEX MATCH "H4_F77_GLOBAL_\\(.*,.*\\) +(.*)" RESULT ${CONTENTS})
+set (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) ${CMAKE_MATCH_1}")
 
 #-----------------------------------------------------------------------------
 # The provided CMake Fortran macros don't provide a general check function
@@ -44,12 +45,12 @@ macro (CHECK_FORTRAN_FEATURE FUNCTION CODE VARIABLE)
       set (CHECK_FUNCTION_EXISTS_ADD_LIBRARIES)
     endif ()
     file (WRITE
-        ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/testFortranCompiler.f90
+        ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/testFortranCompiler.f
         "${CODE}"
     )
     TRY_COMPILE (RESULT_VAR
         ${CMAKE_BINARY_DIR}
-        ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/testFortranCompiler.f90
+        ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/testFortranCompiler.f
         CMAKE_FLAGS "${CHECK_FUNCTION_EXISTS_ADD_LIBRARIES}"
         OUTPUT_VARIABLE OUTPUT
     )
@@ -134,24 +135,24 @@ set (${HDF_PREFIX}_FORTRAN_DEFAULT_REAL_NOT_DOUBLE FALSE)
 CHECK_FORTRAN_FEATURE(RealIsNotDouble
   "
        MODULE type_mod
-         INTERFACE h5t
-           MODULE PROCEDURE h5t_real
-           MODULE PROCEDURE h5t_dble
+         INTERFACE h4t
+           MODULE PROCEDURE h4t_real
+           MODULE PROCEDURE h4t_dble
          END INTERFACE
        CONTAINS
-         SUBROUTINE h5t_real(r)
+         SUBROUTINE h4t_real(r)
            REAL :: r
-         END SUBROUTINE h5t_real
-         SUBROUTINE h5t_dble(d)
+         END SUBROUTINE h4t_real
+         SUBROUTINE h4t_dble(d)
            DOUBLE PRECISION :: d
-         END SUBROUTINE h5t_dble
+         END SUBROUTINE h4t_dble
        END MODULE type_mod
        PROGRAM main
          USE type_mod
          REAL :: r
          DOUBLE PRECISION :: d
-         CALL h5t(r)
-         CALL h5t(d)
+         CALL h4t(r)
+         CALL h4t(d)
        END PROGRAM main
   "
   ${HDF_PREFIX}_FORTRAN_DEFAULT_REAL_NOT_DOUBLE

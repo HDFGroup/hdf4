@@ -1,7 +1,6 @@
 #-------------------------------------------------------------------------------
 macro (H4_SET_LIB_OPTIONS libtarget libname libtype)
   set (LIB_OUT_NAME "${libname}")
-  # SOVERSION passed in ARGN when shared
   if (${libtype} MATCHES "SHARED")
     set (PACKAGE_SOVERSION ${HDF4_PACKAGE_SOVERSION})
     set (PACKAGE_COMPATIBILITY ${HDF4_SOVERS_INTERFACE}.0.0)
