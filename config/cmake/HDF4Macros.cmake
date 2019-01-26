@@ -1,23 +1,26 @@
 #-------------------------------------------------------------------------------
 macro (H4_SET_LIB_OPTIONS libtarget libname libtype)
   set (LIB_OUT_NAME "${libname}")
-  # SOVERSION passed in ARGN when shared
   if (${libtype} MATCHES "SHARED")
+    set (PACKAGE_SOVERSION ${HDF4_PACKAGE_SOVERSION})
+    set (PACKAGE_COMPATIBILITY ${HDF4_SOVERS_INTERFACE}.0.0)
+    set (PACKAGE_CURRENT ${HDF4_SOVERS_INTERFACE}.${HDF4_SOVERS_MINOR}.0)
     if (WIN32)
       set (LIBHDF_VERSION ${HDF4_PACKAGE_VERSION_MAJOR})
     else ()
-      set (LIBHDF_VERSION ${HDF4_PACKAGE_VERSION})
+      set (LIBHDF_VERSION ${HDF4_PACKAGE_SOVERSION_MAJOR})
     endif ()
-    if (ARGN)
-      set (PACKAGE_SOVERSION ${ARGN})
-    else ()
-      set (PACKAGE_SOVERSION ${LIBHDF_VERSION})
-    endif ()
-    set_target_properties (${libtarget} PROPERTIES VERSION ${LIBHDF_VERSION})
+    set (PACKAGE_SOVERSION ${LIBHDF_VERSION})
+    set_target_properties (${libtarget} PROPERTIES VERSION ${PACKAGE_SOVERSION})
     if (WIN32)
-        set (${LIB_OUT_NAME} "${LIB_OUT_NAME}-${PACKAGE_SOVERSION}")
+        set (${LIB_OUT_NAME} "${LIB_OUT_NAME}-${LIBHDF_VERSION}")
     else ()
-        set_target_properties (${libtarget} PROPERTIES SOVERSION ${PACKAGE_SOVERSION})
+        set_target_properties (${libtarget} PROPERTIES SOVERSION ${LIBHDF_VERSION})
+    endif ()
+    if (CMAKE_C_OSX_CURRENT_VERSION_FLAG)
+      set_property(TARGET ${libtarget} APPEND PROPERTY
+          LINK_FLAGS "${CMAKE_C_OSX_CURRENT_VERSION_FLAG}${PACKAGE_CURRENT} ${CMAKE_C_OSX_COMPATIBILITY_VERSION_FLAG}${PACKAGE_COMPATIBILITY}"
+      )
     endif ()
   endif ()
   HDF_SET_LIB_OPTIONS (${libtarget} ${LIB_OUT_NAME} ${libtype})
@@ -27,7 +30,6 @@ macro (H4_SET_LIB_OPTIONS libtarget libname libtype)
     option (HDF4_BUILD_WITH_INSTALL_NAME "Build with library install_name set to the installation path" OFF)
     if (HDF4_BUILD_WITH_INSTALL_NAME)
       set_target_properties (${libtarget} PROPERTIES
-          LINK_FLAGS "-current_version ${HDF4_PACKAGE_VERSION} -compatibility_version ${HDF4_PACKAGE_VERSION}"
           INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib"
           BUILD_WITH_INSTALL_RPATH ${HDF4_BUILD_WITH_INSTALL_NAME}
       )

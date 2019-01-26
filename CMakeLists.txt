@@ -202,53 +202,6 @@ set (HDF4_JAVA_LOGGING_SIMPLE_JAR  ${HDF4_SOURCE_DIR}/java/lib/ext/slf4j-simple-
 
 set (CMAKE_MODULE_PATH ${HDF_RESOURCES_DIR} ${HDF_RESOURCES_EXT_DIR} ${CMAKE_MODULE_PATH})
 
-if (APPLE)
-  option (HDF4_BUILD_FRAMEWORKS "TRUE to build as frameworks libraries, FALSE to build according to BUILD_SHARED_LIBS" FALSE)
-endif ()
-
-if (NOT HDF4_INSTALL_BIN_DIR)
-  set (HDF4_INSTALL_BIN_DIR bin)
-  set (HDF4_INSTALL_UTILS_BIN_DIR ${HDF4_INSTALL_BIN_DIR})
-  set (HDF4_INSTALL_TOOLS_BIN_DIR ${HDF4_INSTALL_BIN_DIR})
-endif ()
-if (NOT HDF4_INSTALL_LIB_DIR)
-  if (APPLE)
-    if (HDF4_BUILD_FRAMEWORKS)
-      set (HDF4_INSTALL_JAR_DIR ../Java)
-    else ()
-      set (HDF4_INSTALL_JAR_DIR lib)
-    endif ()
-    set (HDF4_INSTALL_FMWK_DIR ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
-  else ()
-    set (HDF4_INSTALL_JAR_DIR lib)
-  endif ()
-  set (HDF4_INSTALL_LIB_DIR lib)
-endif ()
-if (NOT HDF4_INSTALL_INCLUDE_DIR)
-  set (HDF4_INSTALL_INCLUDE_DIR include)
-endif ()
-if (NOT HDF4_INSTALL_DATA_DIR)
-  if (NOT WIN32)
-    if (APPLE)
-      if (HDF4_BUILD_FRAMEWORKS)
-        set (HDF4_INSTALL_EXTRA_DIR ../SharedSupport)
-      else ()
-        set (HDF4_INSTALL_EXTRA_DIR share)
-      endif ()
-      set (HDF4_INSTALL_FWRK_DIR ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
-    endif ()
-    set (HDF4_INSTALL_DATA_DIR share)
-    set (HDF4_INSTALL_CMAKE_DIR share/cmake)
-  else ()
-    set (HDF4_INSTALL_DATA_DIR ".")
-    set (HDF4_INSTALL_CMAKE_DIR cmake)
-  endif ()
-endif ()
-
-if (DEFINED ADDITIONAL_CMAKE_PREFIX_PATH AND EXISTS "${ADDITIONAL_CMAKE_PREFIX_PATH}")
-  set (CMAKE_PREFIX_PATH ${ADDITIONAL_CMAKE_PREFIX_PATH} ${CMAKE_PREFIX_PATH})
-endif ()
-
 #-----------------------------------------------------------------------------
 # parse the full version number from hfile.h and include in H4_VERS_INFO
 #-----------------------------------------------------------------------------
@@ -279,6 +232,8 @@ set (HDF4_PACKAGE_STRING "${HDF4_PACKAGE_NAME} ${HDF4_PACKAGE_VERSION_STRING}")
 set (HDF4_PACKAGE_TARNAME "${HDF4_PACKAGE}${HDF_PACKAGE_EXT}")
 set (HDF4_PACKAGE_URL "http://www.hdfgroup.org")
 set (HDF4_PACKAGE_BUGREPORT "help@hdfgroup.org")
+set (HDF4_PACKAGE_SOVERSION "${H4_VERS_MAJOR}.${H4_VERS_RELEASE}.${H4_VERS_MINOR}")
+set (HDF4_PACKAGE_SOVERSION_MAJOR "${H4_VERS_MAJOR}")
 
 #-----------------------------------------------------------------------------
 # Include some macros for reusable code
@@ -287,39 +242,9 @@ include (${HDF_RESOURCES_EXT_DIR}/HDFMacros.cmake)
 include (${HDF_RESOURCES_EXT_DIR}/HDFLibMacros.cmake)
 include (${HDF_RESOURCES_DIR}/HDF4Macros.cmake)
 
-SET_HDF_BUILD_TYPE()
-
-#-----------------------------------------------------------------------------
-# Setup output Directories
-#-----------------------------------------------------------------------------
-if (NOT HDF4_EXTERNALLY_CONFIGURED)
-  set (CMAKE_RUNTIME_OUTPUT_DIRECTORY
-      ${PROJECT_BINARY_DIR}/bin CACHE PATH "Single Directory for all Executables."
-  )
-  set (CMAKE_LIBRARY_OUTPUT_DIRECTORY
-      ${PROJECT_BINARY_DIR}/bin CACHE PATH "Single Directory for all Libraries"
-  )
-  set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY
-      ${PROJECT_BINARY_DIR}/bin CACHE PATH "Single Directory for all static libraries."
-  )
-  set (CMAKE_Fortran_MODULE_DIRECTORY
-      ${PROJECT_BINARY_DIR}/bin/fortran CACHE PATH "Single Directory for all fortran modules."
-  )
-  if (WIN32)
-    set (CMAKE_TEST_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CTEST_CONFIGURATION_TYPE})
-    set (CMAKE_PDB_OUTPUT_DIRECTORY
-        ${PROJECT_BINARY_DIR}/bin CACHE PATH "Single Directory for all pdb files."
-    )
-  else ()
-    set (CMAKE_TEST_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CTEST_CONFIGURATION_TYPE})
-  endif ()
-else ()
-  # if we are externally configured, but the project uses old cmake scripts
-  # this may not be set and utilities like Hdetect will fail
-  if (NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
-    set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
-  endif ()
-endif ()
+HDF_DIR_PATHS("HDF4")
+set (HDF4_INSTALL_UTILS_BIN_DIR ${HDF4_INSTALL_BIN_DIR})
+set (HDF4_INSTALL_TOOLS_BIN_DIR ${HDF4_INSTALL_BIN_DIR})
 
 #-----------------------------------------------------------------------------
 # Targets built within this project are exported at Install time for use
