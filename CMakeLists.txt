@@ -473,7 +473,7 @@ endif ()
 option (BUILD_TESTING "Build HDF4 Unit Testing" ON)
 if (BUILD_TESTING)
   set (DART_TESTING_TIMEOUT 1200
-      CACHE INTEGER
+      CACHE STRING
       "Timeout in seconds for each test (default 1200=20minutes)"
   )
   enable_testing ()

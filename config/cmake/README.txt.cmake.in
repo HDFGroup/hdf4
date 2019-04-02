@@ -36,9 +36,9 @@ utility should be installed.
 To test the installation with the examples;
     Create a directory to run the examples.
     Copy HDF4Examples folder to this directory.
+    Copy CTestScript.cmake to this directory.
     Copy HDF4_Examples.cmake to this directory.
     Copy HDF4_Examples_options.cmake to this directory.
-    Copy CTestScript.cmake to this directory.
     The default source folder is defined as "HDF4Examples". It can be changed
         with the CTEST_SOURCE_NAME script option.
     The default installation folder is defined as "@CMAKE_INSTALL_PREFIX@".

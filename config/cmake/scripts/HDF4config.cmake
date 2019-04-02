@@ -34,9 +34,9 @@ set (CTEST_SOURCE_VERSEXT "-snap0, currently under development")
 ##############################################################################
 # handle input parameters to script.
 #BUILD_GENERATOR - which CMake generator to use, required
-#INSTALLDIR - HDF-4.2.13 root folder
+#INSTALLDIR - HDF-4.2.15 root folder
 #CTEST_CONFIGURATION_TYPE - Release, Debug, RelWithDebInfo
-#CTEST_SOURCE_NAME - name of source folder; HDF-4.2.13
+#CTEST_SOURCE_NAME - name of source folder; HDF-4.2.15
 #STATIC_ONLY - Default is YES
 #FORTRAN_LIBRARIES - Default is NO
 #NO_MAC_FORTRAN - set to TRUE to allow shared libs on a Mac
@@ -59,6 +59,7 @@ endif ()
 
 ###################################################################
 ### Following Line is one of [Release, RelWithDebInfo, Debug] #####
+###        (default use command line -C value)
 set (CTEST_CONFIGURATION_TYPE "$ENV{CMAKE_CONFIG_TYPE}")
 if (NOT DEFINED CTEST_CONFIGURATION_TYPE)
   set (CTEST_CONFIGURATION_TYPE "Release")
