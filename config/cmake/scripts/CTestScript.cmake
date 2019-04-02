@@ -186,10 +186,10 @@ endforeach ()
 #-----------------------------------------------------------------------------
 # Initialize the CTEST commands
 #------------------------------
-if(CMAKE_GENERATOR_TOOLSET)
-  set(CTEST_CONFIGURE_TOOLSET  "-T${CMAKE_GENERATOR_TOOLSET}")
+if (CMAKE_GENERATOR_TOOLSET)
+  set (CTEST_CONFIGURE_TOOLSET  "-T${CMAKE_GENERATOR_TOOLSET}")
 else ()
-  set(CTEST_CONFIGURE_TOOLSET  "")
+  set (CTEST_CONFIGURE_TOOLSET  "")
 endif()
 if (LOCAL_MEMCHECK_TEST)
   find_program (CTEST_MEMORYCHECK_COMMAND NAMES valgrind)

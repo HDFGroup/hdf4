@@ -10,6 +10,8 @@ set (BUILD_TESTING ON CACHE BOOL "Build HDF4 Unit Testing" FORCE)
 
 set (HDF_PACKAGE_EXT "" CACHE STRING "Name of HDF package extension" FORCE)
 
+set (HDF_PACKAGE_NAMESPACE "hdf4::" CACHE STRING "Name for HDF package namespace" FORCE)
+
 set (HDF4_BUILD_EXAMPLES ON CACHE BOOL "Build HDF4 Library Examples" FORCE)
 
 set (HDF4_BUILD_FORTRAN ON CACHE BOOL "Build FORTRAN support" FORCE)
