@@ -3,11 +3,11 @@ HDF version 4.2.15-snap0 currently under development
 
 INTRODUCTION
 
-This document describes the differences between this release and the 
-HDF 4.2.14 release.  It is written for people who are familiar with 
+This document describes the differences between this release and the
+HDF 4.2.14 release.  It is written for people who are familiar with
 previous releases of HDF and wish to migrate to this version of HDF.
 
-Note that the HDF4 documentation will be updated at the time of 
+Note that the HDF4 documentation will be updated at the time of
 each final release and can be found on the HDF4 support page at:
 
     https://portal.hdfgroup.org/display/HDF4/HDF4
@@ -64,7 +64,7 @@ This version has been tested in the following platforms:
    #1 SMP, x86_64                    GNU Fortran (GCC) 4.4.7 20120313 (Red Hat 4.4.7-16)
    (mayll/platypus)                  icc (ICC) 17.0.0.098 Build 20160721
                                      ifort (IFORT) 17.0.0.098 Build 20160721
-                                     pgcc and pgf90 17.10-0 64-bit target 
+                                     pgcc and pgf90 17.10-0 64-bit target
                                          on x86-64 Linux -tp nehalem
 
    Linux, 3.10.0-327.10.1.el7.x86_64 gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-4)
@@ -129,6 +129,11 @@ This version has been tested in the following platforms:
 
 Known problems
 ==============
+o  CMake files do not behave correctly with paths containing spaces.
+   Do not use spaces in paths because the required escaping for handling spaces
+   results in very complex and fragile build files.
+   ADB - 2019/05/07
+
 o  Several Fortran examples print "^@" when displaying strings (for example,
    names of the attributes). This happens because Fortran application
    doesn't know the length of the strings passed from the C library.
