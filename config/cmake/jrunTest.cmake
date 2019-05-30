@@ -1,4 +1,4 @@
-# runTest.cmake executes a command and captures the output in a file. File is then compared
+# jrunTest.cmake executes a command and captures the output in a file. File is then compared
 # against a reference file. Exit status of command can also be compared.
 cmake_policy(SET CMP0007 NEW)
 
@@ -13,7 +13,7 @@ if (NOT TEST_LIBRARY_DIRECTORY)
   message (STATUS "Require TEST_LIBRARY_DIRECTORY to be defined")
 endif ()
 if (NOT TEST_FOLDER)
-  message ( FATAL_ERROR "Require TEST_FOLDER to be defined")
+  message (FATAL_ERROR "Require TEST_FOLDER to be defined")
 endif ()
 if (NOT TEST_OUTPUT)
   message (FATAL_ERROR "Require TEST_OUTPUT to be defined")
@@ -40,6 +40,8 @@ message (STATUS "COMMAND: ${TEST_TESTER} -Xmx1024M -Dorg.slf4j.simpleLogger.defa
 
 if (WIN32 AND NOT MINGW)
   set (ENV{PATH} "$ENV{PATH}\\;${TEST_LIBRARY_DIRECTORY}")
+else ()
+  set (ENV{LD_LIBRARY_PATH} "$ENV{LD_LIBRARY_PATH}:${TEST_LIBRARY_DIRECTORY}")
 endif ()
 
 # run the test program, capture the stdout/stderr and the result var
@@ -132,7 +134,7 @@ if (NOT TEST_SKIP_COMPARE)
           if (NOT str_act STREQUAL str_ref)
             if (str_act)
               set (TEST_RESULT 1)
-              message ("line = ${line}\n***ACTUAL: ${str_act}\n****REFER: ${str_ref}\n")
+              message (STATUS "line = ${line}\n***ACTUAL: ${str_act}\n****REFER: ${str_ref}\n")
             endif ()
           endif ()
         endforeach ()
@@ -184,7 +186,7 @@ if (NOT TEST_SKIP_COMPARE)
           if (NOT str_act STREQUAL str_ref)
             if (str_act)
               set (TEST_RESULT 1)
-              message ("line = ${line}\n***ACTUAL: ${str_act}\n****REFER: ${str_ref}\n")
+              message (STATUS "line = ${line}\n***ACTUAL: ${str_act}\n****REFER: ${str_ref}\n")
             endif ()
           endif ()
         endforeach ()
@@ -232,5 +234,5 @@ if (TEST_GREP_COMPARE)
 endif ()
 
 # everything went fine...
-message ("${TEST_PROGRAM} Passed")
+message (STATUS "${TEST_PROGRAM} Passed")
 

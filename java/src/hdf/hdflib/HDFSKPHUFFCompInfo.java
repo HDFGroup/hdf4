@@ -15,10 +15,10 @@ package hdf.hdflib;
 
 /**
  * <p>
- *  This class is a generic container for the parameters to the HDF
- *  ``Skipping Huffman'' compression classes.
+ * This class is a generic container for the parameters to the HDF ``Skipping Huffman'' compression
+ * classes.
  * <p>
- *  In this case, the information is the skip size
+ * In this case, the information is the skip size
  */
 public class HDFSKPHUFFCompInfo extends HDFNewCompInfo {
 
@@ -26,7 +26,5 @@ public class HDFSKPHUFFCompInfo extends HDFNewCompInfo {
 
     public HDFSKPHUFFCompInfo() {
         ctype = HDFConstants.COMP_CODE_SKPHUFF;
-    } ;
+    };
 }
-
-

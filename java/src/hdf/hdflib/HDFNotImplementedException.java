@@ -14,19 +14,16 @@
 package hdf.hdflib;
 
 /**
- *  <p>
- *  HDFNotImplementedException indicates a function that is part
- *  of the HDF API, but which cannot or will not be implemented
- *  for Java.
- *  <p>
- *  For instance, C routines which take Unix FILE objects
- *  as parameters are not appropriate for the Java interface
- *  and will not be implemented.  These routines will raise
- *  an HDFNotImplementedException.
+ * <p>
+ * HDFNotImplementedException indicates a function that is part of the HDF API, but which cannot or
+ * will not be implemented for Java.
+ * <p>
+ * For instance, C routines which take Unix FILE objects as parameters are not appropriate for the
+ * Java interface and will not be implemented. These routines will raise an
+ * HDFNotImplementedException.
  */
 
-public class HDFNotImplementedException  extends HDFJavaException 
-{
+public class HDFNotImplementedException extends HDFJavaException {
     String msg;
 
     public HDFNotImplementedException() {
@@ -34,11 +31,11 @@ public class HDFNotImplementedException  extends HDFJavaException
     }
 
     public HDFNotImplementedException(String s) {
-        msg = "HDFJavaException: HDF function not implmented (yet): "+s;
+        msg = "HDFJavaException: HDF function not implmented (yet): " + s;
     }
 
     @Override
-	public String getMessage() {
+    public String getMessage() {
         return msg;
     }
 }

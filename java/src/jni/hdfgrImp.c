@@ -256,7 +256,7 @@ Java_hdf_hdflib_HDFLibrary_GRgetiminfo
 
                         sjc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
                         if (sjc == NULL) {
-                        	ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, JNI_ABORT);
+                            ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, JNI_ABORT);
                             ENVPTR->ReleaseIntArrayElements(ENVPAR dim_sizes, dims, JNI_ABORT);
                             HDfree(str);
                             CALL_ERROR_CHECK();
@@ -264,7 +264,7 @@ Java_hdf_hdflib_HDFLibrary_GRgetiminfo
                         }
                         o = ENVPTR->GetObjectArrayElement(ENVPAR gr_name, 0);
                         if (o == NULL) {
-                        	ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, JNI_ABORT);
+                            ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, JNI_ABORT);
                             ENVPTR->ReleaseIntArrayElements(ENVPAR dim_sizes, dims, JNI_ABORT);
                             HDfree(str);
                             CALL_ERROR_CHECK();
@@ -272,11 +272,11 @@ Java_hdf_hdflib_HDFLibrary_GRgetiminfo
                         }
                         bb = ENVPTR->IsInstanceOf(ENVPAR o, sjc);
                         if (bb == JNI_FALSE) {
-                        	ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, JNI_ABORT);
-                        	ENVPTR->ReleaseIntArrayElements(ENVPAR dim_sizes, dims, JNI_ABORT);
-                        	HDfree(str);
-                        	CALL_ERROR_CHECK();
-                        	return JNI_FALSE;
+                            ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, JNI_ABORT);
+                            ENVPTR->ReleaseIntArrayElements(ENVPAR dim_sizes, dims, JNI_ABORT);
+                            HDfree(str);
+                            CALL_ERROR_CHECK();
+                            return JNI_FALSE;
                         }
 
                         ENVPTR->SetObjectArrayElement(ENVPAR gr_name, 0, (jobject)rstring);

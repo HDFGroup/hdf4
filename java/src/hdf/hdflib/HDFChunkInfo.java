@@ -15,38 +15,36 @@ package hdf.hdflib;
 
 /**
  * <p>
- *   This is a generic class to represent the HDF chunk_info
- *   union, which contains parameters for the different
- *   chunking schemes.
+ * This is a generic class to represent the HDF chunk_info union, which contains parameters for the
+ * different chunking schemes.
  * <p>
- * The variant parameters are expressed as sub-classes of this
- * class.
+ * The variant parameters are expressed as sub-classes of this class.
  */
 
-
 public class HDFChunkInfo {
-	public int ctype;
-	public int[] chunk_lengths = new int[HDFConstants.MAX_VAR_DIMS];
-	public int comp_type = HDFConstants.COMP_CODE_NONE;
-	public HDFCompInfo cinfo = null;
+    public int ctype;
+    public int[] chunk_lengths = new int[HDFConstants.MAX_VAR_DIMS];
+    public int comp_type = HDFConstants.COMP_CODE_NONE;
+    public HDFCompInfo cinfo = null;
 
-	public HDFChunkInfo() {
-		ctype = HDFConstants.HDF_NONE;
-	}
+    public HDFChunkInfo() {
+        ctype = HDFConstants.HDF_NONE;
+    }
 
-	public HDFChunkInfo( int[] cl, int ct, HDFCompInfo ci ) {
-		if (ct == HDFConstants.COMP_CODE_NONE) {
-			ctype = HDFConstants.HDF_CHUNK;
-		} else {
-			ctype = HDFConstants.HDF_COMP | HDFConstants.HDF_CHUNK;
-		}
-		chunk_lengths = cl;
-		comp_type = ct;
-		cinfo = ci;
-	}
+    public HDFChunkInfo(int[] cl, int ct, HDFCompInfo ci) {
+        if (ct == HDFConstants.COMP_CODE_NONE) {
+            ctype = HDFConstants.HDF_CHUNK;
+        }
+        else {
+            ctype = HDFConstants.HDF_COMP | HDFConstants.HDF_CHUNK;
+        }
+        chunk_lengths = cl;
+        comp_type = ct;
+        cinfo = ci;
+    }
 
-	public HDFChunkInfo(int[] cl) {
-		ctype = HDFConstants.HDF_CHUNK;
-		chunk_lengths = cl;
-	}
+    public HDFChunkInfo(int[] cl) {
+        ctype = HDFConstants.HDF_CHUNK;
+        chunk_lengths = cl;
+    }
 }

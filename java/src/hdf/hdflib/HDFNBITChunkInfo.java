@@ -15,13 +15,10 @@ package hdf.hdflib;
 
 /**
  * <p>
- *  This class is a container for the parameters to the HDF
- *  NBIT compressed chunked class.
+ * This class is a container for the parameters to the HDF NBIT compressed chunked class.
  * <p>
- * In this case, the information is the start bit, len, sign extension
- * and fill.
+ * In this case, the information is the start bit, len, sign extension and fill.
  */
-
 
 public class HDFNBITChunkInfo extends HDFChunkInfo {
 
@@ -35,7 +32,7 @@ public class HDFNBITChunkInfo extends HDFChunkInfo {
         ctype = HDFConstants.HDF_NBIT;
     };
 
-    public HDFNBITChunkInfo( int[] cl, int sb, int bl, int se, int fo) {
+    public HDFNBITChunkInfo(int[] cl, int sb, int bl, int se, int fo) {
         ctype = HDFConstants.HDF_NBIT;
         chunk_lengths = cl;
         start_bit = sb;

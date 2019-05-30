@@ -14,15 +14,12 @@
 package hdf.hdflib;
 
 /**
- *  <p>
- *  The class HDFJavaException returns errors from the Java
- *  wrapper of theHDF library.
- *  <p>
- *  These errors include Java configuration errors, security
- *  violations, and resource exhaustion.
+ * <p>
+ * The class HDFJavaException returns errors from the Java wrapper of theHDF library.
+ * <p>
+ * These errors include Java configuration errors, security violations, and resource exhaustion.
  */
-public class HDFJavaException extends HDFException 
-{
+public class HDFJavaException extends HDFException {
     String msg;
 
     public HDFJavaException() {
@@ -30,11 +27,11 @@ public class HDFJavaException extends HDFException
     }
 
     public HDFJavaException(String s) {
-        msg = "HDFLibraryException: "+s;
+        msg = "HDFLibraryException: " + s;
     }
 
     @Override
-	public String getMessage() {
+    public String getMessage() {
         return msg;
     }
 }
