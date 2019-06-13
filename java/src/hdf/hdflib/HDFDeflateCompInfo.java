@@ -15,25 +15,20 @@ package hdf.hdflib;
 
 /**
  * <p>
- *  This class is a container for the parameters to the HDF
- *  DEFLATION compression algorithm.
+ * This class is a container for the parameters to the HDF DEFLATION compression algorithm.
  * <p>
  * In this case, the only parameter is the ``level'' of deflation.
  */
 
-
 public class HDFDeflateCompInfo extends HDFNewCompInfo {
-
     public int level;
 
     public HDFDeflateCompInfo() {
         ctype = HDFConstants.COMP_CODE_DEFLATE;
-    } 
-    
+    }
+
     public HDFDeflateCompInfo(int l) {
         ctype = HDFConstants.COMP_CODE_DEFLATE;
         level = l;
-    } 
+    }
 }
-
-

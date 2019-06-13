@@ -15,15 +15,15 @@ package hdf.hdflib;
 
 /**
  * <p>
- *  This class is a generic container for the parameters to the HDF
- *  RLE compressed classes, with the ``old'' type encoding.
+ * This class is a generic container for the parameters to the HDF RLE compressed classes, with the
+ * ``old'' type encoding.
  * <p>
- *  In this case, there is no auxilliary information.
+ * In this case, there is no auxilliary information.
  */
 
 public class HDFOldRLECompInfo extends HDFOldCompInfo {
 
-    public HDFOldRLECompInfo () {
+    public HDFOldRLECompInfo() {
         ctype = HDFConstants.COMP_RLE;
     }
 

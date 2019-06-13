@@ -15,19 +15,15 @@ package hdf.hdflib;
 
 /**
  * <p>
- *  This class is a container for the parameters to the HDF
- *  comp_info union.
+ * This class is a container for the parameters to the HDF comp_info union.
  * <p>
- * The parameters for different compression schemes are
- *  represented as sub-classes of this class
+ * The parameters for different compression schemes are represented as sub-classes of this class
  */
-
 
 public class HDFCompInfo {
     public int ctype;
+
     public HDFCompInfo() {
         ctype = HDFConstants.COMP_CODE_NONE;
-    } ;
+    };
 }
-
-

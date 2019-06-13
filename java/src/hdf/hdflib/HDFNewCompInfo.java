@@ -15,19 +15,16 @@ package hdf.hdflib;
 
 /**
  * <p>
- *  This class is a generic container for the parameters to the HDF
- *  compressed classes, with the ``new'' encoding.
+ * This class is a generic container for the parameters to the HDF compressed classes, with the
+ * ``new'' encoding.
  * <p>
- *  Compression parameters are expressed as instances of sub-classes
- *  of this type.
+ * Compression parameters are expressed as instances of sub-classes of this type.
  */
 
-
 public class HDFNewCompInfo extends HDFCompInfo {
-    public int ctype;   /* from COMP_CODE_ENUM */
+    public int ctype; /* from COMP_CODE_ENUM */
+
     public HDFNewCompInfo() {
         ctype = HDFConstants.COMP_CODE_NONE;
-    } ;
+    };
 }
-
-

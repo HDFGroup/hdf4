@@ -147,6 +147,8 @@ Java_hdf_hdflib_HDFLibrary_DFPputpal
     else {
         PIN_JAVA_STRING_TWO(filename, f, filemode, m);
         if (f != NULL && m != NULL) {
+            dat = ENVPTR->GetByteArrayElements(ENVPAR palette, &bb);
+
             if (dat == NULL) {
                 h4JNIFatalError(env, "DFPputpal:  palette not pinned");
             } /* end if */

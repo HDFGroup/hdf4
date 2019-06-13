@@ -13,31 +13,25 @@
 
 package hdf.hdflib;
 
-
 /**
- *  <p>
- *  The class HDFException returns errors raised by the HDF
- *  library.
- *  <p>
- *  In principle, this includes any and all errors possible
- *  from the HDF library.  However, most error conditions
- *  are not yet detected in this version of the Java
- *  interface.  This will be added in future releases.
+ * <p>
+ * The class HDFException returns errors raised by the HDF library.
+ * <p>
+ * In principle, this includes any and all errors possible from the HDF library. However, most error
+ * conditions are not yet detected in this version of the Java interface. This will be added in
+ * future releases.
  *
- *  The only HDF library error currently raised are errors
- *  in Hopen, such as ``file not found''.
+ * The only HDF library error currently raised are errors in Hopen, such as ``file not found''.
  */
 
-
-public class HDFLibraryException extends HDFException
-{
+public class HDFLibraryException extends HDFException {
 
     public HDFLibraryException() {
         super();
     }
 
     public HDFLibraryException(String s) {
-        super("HDFLibraryException: "+s);
+        super("HDFLibraryException: " + s);
     }
 
     public HDFLibraryException(int err) {
@@ -55,15 +49,15 @@ public class HDFLibraryException extends HDFException
             s = HDFLibrary.HEstring(HDFerror);
         }
         catch (HDFException e) {
-            s = new String("HDF error number: "+HDFerror+", HEstring failed");
+            s = new String("HDF error number: " + HDFerror + ", HEstring failed");
         }
-        msg = "HDFLibraryException: "+s;
+        msg = "HDFLibraryException: " + s;
         return msg;
     }
 
     /**
-     * Prints this <code>HDFLibraryException</code>, the HDF Library error
-     * stack, and and the Java stack trace to the standard error stream.
+     * Prints this <code>HDFLibraryException</code>, the HDF Library error stack, and and the Java stack
+     * trace to the standard error stream.
      */
     @Override
     public void printStackTrace() {
@@ -73,8 +67,8 @@ public class HDFLibraryException extends HDFException
     }
 
     /**
-     * Prints this <code>HDFLibraryException</code> the HDF Library error
-     * stack, and and the Java stack trace to the specified print stream.
+     * Prints this <code>HDFLibraryException</code> the HDF Library error stack, and and the Java stack
+     * trace to the specified print stream.
      *
      * @param f
      *            the file print stream.
@@ -101,8 +95,7 @@ public class HDFLibraryException extends HDFException
     }
 
     /*
-     * This private method calls the HDF library to extract the error codes
-     * and error stack.
+     * This private method calls the HDF library to extract the error codes and error stack.
      */
     private native void printStackTrace0(String s);
 }

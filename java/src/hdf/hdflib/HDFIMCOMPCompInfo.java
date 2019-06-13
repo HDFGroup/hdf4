@@ -15,14 +15,13 @@ package hdf.hdflib;
 
 /**
  * <p>
- *  This class is a container for the parameters to the HDF
- *  ``Image compression'' compression class.
+ * This class is a container for the parameters to the HDF ``Image compression'' compression class.
  * <p>
  * In this case, no auxilliary information is needed.
  */
 public class HDFIMCOMPCompInfo extends HDFOldCompInfo {
 
-    public HDFIMCOMPCompInfo () {
+    public HDFIMCOMPCompInfo() {
         ctype = HDFConstants.COMP_IMCOMP;
     }
 
