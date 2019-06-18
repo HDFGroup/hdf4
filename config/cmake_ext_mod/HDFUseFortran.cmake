@@ -1,4 +1,3 @@
-
 # This file provides functions for Fortran support.
 #
 #-------------------------------------------------------------------------------
