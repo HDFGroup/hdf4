@@ -1,15 +1,3 @@
-#
-# Copyright by The HDF Group.
-# All rights reserved.
-#
-# This file is part of HDF5.  The full HDF5 copyright notice, including
-# terms governing use, modification, and redistribution, is contained in
-# the COPYING file, which can be found at the root of the source code
-# distribution tree, or in https://support.hdfgroup.org/ftp/HDF5/releases.
-# If you do not have access to either file, you may request a copy from
-# help@hdfgroup.org.
-#
-
 #-------------------------------------------------------------------------------
 macro (SET_HDF_BUILD_TYPE)
   get_property(_isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
@@ -28,7 +16,7 @@ macro (SET_HDF_BUILD_TYPE)
     endif()
   endif()
   if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-    message(STATUS "Setting build type to 'RelWithDebInfo' as none was specified.")
+    message (STATUS "Setting build type to 'RelWithDebInfo' as none was specified.")
     set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "Choose the type of build." FORCE)
     # Set the possible values of build type for cmake-gui
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
@@ -224,10 +212,9 @@ macro (TARGET_C_PROPERTIES wintarget libtype)
       $<$<C_COMPILER_ID:MSVC>:${WIN_COMPILE_FLAGS}>
       $<$<CXX_COMPILER_ID:MSVC>:${WIN_COMPILE_FLAGS}>
   )
-  target_link_libraries(${wintarget} INTERFACE
-      $<$<C_COMPILER_ID:MSVC>:${WIN_LINK_FLAGS}>
-      $<$<CXX_COMPILER_ID:MSVC>:${WIN_LINK_FLAGS}>
-  )
+  if(MSVC)
+    set_property(TARGET ${wintarget} APPEND PROPERTY LINK_FLAGS "${WIN_LINK_FLAGS}")
+  endif()
 endmacro ()
 
 #-----------------------------------------------------------------------------
