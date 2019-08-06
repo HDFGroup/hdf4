@@ -44,7 +44,7 @@ endforeach()
 if(NOT SZIP_LIBRARY)
   find_library(SZIP_LIBRARY_RELEASE NAMES ${szip_names})
   find_library(SZIP_LIBRARY_DEBUG NAMES ${szip_names_debug})
-  include(${CMAKE_CURRENT_LIST_DIR}/SelectLibraryConfigurations.cmake)
+  include(SelectLibraryConfigurations)
   select_library_configurations(SZIP)
   mark_as_advanced(SZIP_LIBRARY_RELEASE SZIP_LIBRARY_DEBUG)
 endif()
@@ -60,7 +60,7 @@ if(SZIP_INCLUDE_DIR AND EXISTS "${SZIP_INCLUDE_DIR}/SZconfig.h")
     unset(szip_version_str)
 endif()
 
-include(${CMAKE_CURRENT_LIST_DIR}/FindPackageHandleStandardArgs.cmake)
+include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(SZIP
   REQUIRED_VARS SZIP_LIBRARY SZIP_INCLUDE_DIR
   VERSION_VAR SZIP_VERSION)

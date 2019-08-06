@@ -10,7 +10,7 @@ project (HDF4 C)
 # set CMAKE_INSTALL_PREFIX to the required install path.
 # Make install can be used to install all components for system-wide use.
 #
-if ("${CMAKE_CURRENT_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_BINARY_DIR}")
+if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
     MESSAGE(FATAL_ERROR "\nERROR! ${PROJECT_NAME} DOES NOT SUPPORT IN SOURCE BUILDS!\n"
       "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}"
       " == CMAKE_CURRENT_BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}\n"
@@ -27,6 +27,12 @@ if ("${CMAKE_CURRENT_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_BINARY_DIR}")
       "        $ cmake [OPTIONS] ..\n"
       )
 endif ()
+
+# CMake version 3.14 added option --ignore-eol to compare files
+#     cmake -E compare_files --ignore-eol file1 file2
+#if(CMAKE_VERSION VERSION_LESS "3.14.0" AND WIN32)
+#    MESSAGE(FATAL_ERROR "Windows builds requires a minimum of CMake 3.14")
+#endif()
 
 #-----------------------------------------------------------------------------
 # Instructions for use : Sub-Project Build
@@ -46,6 +52,9 @@ endif ()
 #   dependencies of the HDF4 libs may be 'incomplete', add additional
 #   dependencies to this variable so that external projects pick them up
 #
+#option (HDF4_EXTERNAL_LIB_PREFIX "Use prefix for custom library naming." "")
+set (HDF4_EXTERNAL_LIB_PREFIX "" CACHE STRING "Use prefix for custom library naming.")
+mark_as_advanced (HDF4_EXTERNAL_LIB_PREFIX)
 # HDF4_EXTERNAL_LIB_PREFIX :
 #   If the parent project needs to install hdf libraries, but avoid
 #   name conflicts with system versions, then a prefix may be added
@@ -173,12 +182,8 @@ set (HDF4_SRC_LIBSH_TARGET          "${HDF4_SRC_LIB_CORENAME}-shared")
 set (HDF4_SRC_FCSTUB_LIBSH_TARGET   "${HDF4_SRC_FCSTUB_LIB_CORENAME}-shared")
 set (HDF4_SRC_FORTRAN_LIBSH_TARGET  "${HDF4_SRC_FORTRAN_LIB_CORENAME}-shared")
 set (HDF4_MF_LIBSH_TARGET           "${HDF4_MF_LIB_CORENAME}-shared")
-set (HDF4_MF_XDR_LIBSH_TARGET       "${HDF4_MF_XDR_LIB_CORENAME}-shared")
-set (HDF4_HDF_TEST_LIBSH_TARGET     "${HDF4_HDF_TEST_LIB_CORENAME}-shared")
-set (HDF4_HDF_TEST_FCSTUB_LIBSH_TARGET     "${HDF4_HDF_TEST_FCSTUB_LIB_CORENAME}-shared")
 set (HDF4_MF_FCSTUB_LIBSH_TARGET    "${HDF4_MF_FCSTUB_LIB_CORENAME}-shared")
 set (HDF4_MF_FORTRAN_LIBSH_TARGET   "${HDF4_MF_FORTRAN_LIB_CORENAME}-shared")
-set (HDF4_MF_TEST_LIBSH_TARGET      "${HDF4_MF_TEST_LIB_CORENAME}-shared")
 set (HDF4_TOOLS_LIBSH_TARGET        "${HDF4_TOOLS_LIB_CORENAME}-shared")
 
 #-----------------------------------------------------------------------------
@@ -239,16 +244,18 @@ set (HDF4_PACKAGE_SOVERSION_MAJOR "${H4_VERS_MAJOR}")
 # Include some macros for reusable code
 #-----------------------------------------------------------------------------
 include (${HDF_RESOURCES_EXT_DIR}/HDFMacros.cmake)
+
+HDF_DIR_PATHS("HDF4")
+
 include (${HDF_RESOURCES_EXT_DIR}/HDFLibMacros.cmake)
 include (${HDF_RESOURCES_DIR}/HDF4Macros.cmake)
 
-HDF_DIR_PATHS("HDF4")
 set (HDF4_INSTALL_UTILS_BIN_DIR ${HDF4_INSTALL_BIN_DIR})
 set (HDF4_INSTALL_TOOLS_BIN_DIR ${HDF4_INSTALL_BIN_DIR})
 
 #-----------------------------------------------------------------------------
 # Targets built within this project are exported at Install time for use
-# by other projects
+# by other projects.
 #-----------------------------------------------------------------------------
 if (NOT HDF4_EXPORTED_TARGETS)
   set (HDF4_EXPORTED_TARGETS "hdf4-targets")
@@ -261,6 +268,7 @@ endif ()
 #-----------------------------------------------------------------------------
 set_global_variable (HDF4_LIBRARIES_TO_EXPORT "")
 set_global_variable (HDF4_UTILS_TO_EXPORT "")
+
 set (EXTERNAL_HEADER_LIST "")
 set (EXTERNAL_LIBRARY_LIST "")
 set (EXTERNAL_LIBRARYDLL_LIST "")
@@ -276,18 +284,23 @@ set (CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE ON)
 # Mac OS X Options
 #-----------------------------------------------------------------------------
 if (HDF4_BUILD_FRAMEWORKS AND NOT BUILD_SHARED_LIBS)
-  set (BUILD_SHARED_LIBS ON CACHE BOOL "Build Shared Libraries")
+  set (BUILD_SHARED_LIBS ON CACHE BOOL "Build Shared Libraries" FORCE)
 endif ()
 
 #-----------------------------------------------------------------------------
-# Option to Build Shared and Static libs, default is static
+# Option to Build Shared and Static libs, default is both
 #-----------------------------------------------------------------------------
-option (BUILD_SHARED_LIBS "Build Shared Libraries" OFF)
+option (ONLY_SHARED_LIBS "Only Build Shared Libraries" OFF)
+set (H4_ENABLE_STATIC_LIB YES)
+if (ONLY_SHARED_LIBS)
+  set (H4_ENABLE_STATIC_LIB NO)
+  set (BUILD_SHARED_LIBS ON CACHE BOOL "Build Shared Libraries")
+endif ()
+option (BUILD_SHARED_LIBS "Build Shared Libraries" ON)
 set (H4_ENABLE_SHARED_LIB NO)
 if (BUILD_SHARED_LIBS)
   set (H4_ENABLE_SHARED_LIB YES)
 endif ()
-set (H4_ENABLE_STATIC_LIB YES)
 set (CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 add_definitions (-DBIG_LONGS -DSWAP)
@@ -352,7 +365,7 @@ INCLUDE_DIRECTORIES (${HDF4_INCLUDE_DIRECTORIES} )
 # and we need to call the executable from inside the CMake configuration
 #-----------------------------------------------------------------------------
 set (EXE_EXT "")
-if (WIN32)
+if (WIN32 OR MINGW)
   set (EXE_EXT ".exe")
   add_definitions (-D_BIND_TO_CURRENT_VCLIBS_VERSION=1)
   add_definitions (-D_CRT_SECURE_NO_WARNINGS)
@@ -413,7 +426,7 @@ endif ()
 # Option to build HDF4 xdr Library
 #-----------------------------------------------------------------------------
 option (HDF4_BUILD_XDR_LIB  "Build HDF4 XDR Library" OFF)
-if (WIN32 AND NOT MINGW)
+if (WIN32 OR MINGW)
   set (HDF4_BUILD_XDR_LIB ON CACHE BOOL "Build HDF4 XDR Library" FORCE)
 else ()
   include (FindXDR)
@@ -441,19 +454,25 @@ add_subdirectory (mfhdf/libsrc)
 
 if (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "GIT" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
   if (JPEG_FOUND AND JPEG_USE_EXTERNAL)
-    add_dependencies (${HDF4_SRC_LIB_TARGET} JPEG)
+    if (NOT ONLY_SHARED_LIBS)
+      add_dependencies (${HDF4_SRC_LIB_TARGET} JPEG)
+    endif ()
     if (BUILD_SHARED_LIBS)
       add_dependencies (${HDF4_SRC_LIBSH_TARGET} JPEG)
     endif ()
   endif ()
   if (ZLIB_FOUND AND ZLIB_USE_EXTERNAL)
-    add_dependencies (${HDF4_SRC_LIB_TARGET} ZLIB)
+    if (NOT ONLY_SHARED_LIBS)
+      add_dependencies (${HDF4_SRC_LIB_TARGET} ZLIB)
+    endif ()
     if (BUILD_SHARED_LIBS)
       add_dependencies (${HDF4_SRC_LIBSH_TARGET} ZLIB)
     endif ()
   endif ()
   if (SZIP_FOUND AND SZIP_USE_EXTERNAL)
-    add_dependencies (${HDF4_SRC_LIB_TARGET} SZIP)
+    if (NOT ONLY_SHARED_LIBS)
+      add_dependencies (${HDF4_SRC_LIB_TARGET} SZIP)
+    endif ()
     if (BUILD_SHARED_LIBS)
       add_dependencies (${HDF4_SRC_LIBSH_TARGET} SZIP)
     endif ()
@@ -461,7 +480,9 @@ if (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "GIT" OR HDF4_ALLOW_EXTERNAL_SUPPORT MAT
 endif ()
 
 if (HDF4_BUILD_XDR_LIB)
-  add_dependencies (${HDF4_MF_LIB_TARGET} ${HDF4_MF_XDR_LIB_TARGET})
+  if (NOT ONLY_SHARED_LIBS)
+    add_dependencies (${HDF4_MF_LIB_TARGET} ${HDF4_MF_XDR_LIB_TARGET})
+  endif ()
   if (BUILD_SHARED_LIBS)
     add_dependencies (${HDF4_MF_LIBSH_TARGET} ${HDF4_MF_XDR_LIBSH_TARGET})
   endif ()

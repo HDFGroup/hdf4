@@ -5,11 +5,16 @@
 ##############################################################################
 ##############################################################################
 
+if (NOT BUILD_SHARED_LIBS)
+  set (tgt_ext "")
+else ()
+  set (tgt_ext "-shared")
+endif ()
+
 # Remove any output file left over from previous test run
 add_test (
     NAME NCDUMP-clearall-objects
-    COMMAND    ${CMAKE_COMMAND}
-        -E remove
+    COMMAND ${CMAKE_COMMAND} -E remove
         test0.nc
         test1.nc
         test1.cdl
@@ -28,7 +33,7 @@ add_custom_target(ncdump_files ALL COMMENT "Copying files needed by ncdump tests
 if (NCGEN_UTILITY)
   add_test (
       NAME NCDUMP-test0.nc
-      COMMAND $<TARGET_FILE:ncgen> -o test0.nc -n test0.cdl
+      COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:ncgen${tgt_ext}> -o test0.nc -n test0.cdl
   )
   set_tests_properties (NCDUMP-test0.nc PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
   set (last_test "NCDUMP-test0.nc")
@@ -36,7 +41,8 @@ if (NCGEN_UTILITY)
   add_test (
       NAME NCDUMP-test1.cdl
       COMMAND "${CMAKE_COMMAND}"
-          -D "TEST_PROGRAM=$<TARGET_FILE:ncdump>"
+          -D "TEST_EMULATOR=${CMAKE_CROSSCOMPILING_EMULATOR}"
+          -D "TEST_PROGRAM=$<TARGET_FILE:ncdump${tgt_ext}>"
           -D "TEST_ARGS:STRING=test0.nc"
           -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
           -D "TEST_OUTPUT=test1.cdl"
@@ -49,7 +55,7 @@ if (NCGEN_UTILITY)
 
   add_test (
       NAME NCDUMP-test1.nc
-      COMMAND $<TARGET_FILE:ncgen> -o test1.nc -n test1.cdl
+      COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:ncgen${tgt_ext}> -o test1.nc -n test1.cdl
   )
   set_tests_properties (NCDUMP-test1.nc PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
   set (last_test "NCDUMP-test1.nc")
@@ -57,7 +63,8 @@ if (NCGEN_UTILITY)
   add_test (
       NAME NCDUMP-test2.cdl
       COMMAND "${CMAKE_COMMAND}"
-          -D "TEST_PROGRAM=$<TARGET_FILE:ncdump>"
+          -D "TEST_EMULATOR=${CMAKE_CROSSCOMPILING_EMULATOR}"
+          -D "TEST_PROGRAM=$<TARGET_FILE:ncdump${tgt_ext}>"
           -D "TEST_ARGS:STRING=-n;test0;test1.nc"
           -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
           -D "TEST_OUTPUT=test2.cdl"

@@ -8,8 +8,7 @@
 # Remove any output file left over from previous test run
 add_test (
     NAME MFHDF_EXAMPLES-clearall-objects
-    COMMAND    ${CMAKE_COMMAND}
-        -E remove
+    COMMAND ${CMAKE_COMMAND} -E remove
         SDS.hdf
         SDSchunked.hdf
         SDScompressed.hdf
@@ -21,7 +20,7 @@ set_tests_properties (MFHDF_EXAMPLES-clearall-objects PROPERTIES LABELS ${PROJEC
 set (last_test "MFHDF_EXAMPLES-clearall-objects")
 
 foreach (example ${examples})
-  add_test (NAME MFHDF_EXAMPLES-${example} COMMAND $<TARGET_FILE:mf_${example}>)
+  add_test (NAME MFHDF_EXAMPLES-${example} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:mf_${example}>)
   if (NOT "${last_test}" STREQUAL "")
     set_tests_properties (MFHDF_EXAMPLES-${example} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
   else ()

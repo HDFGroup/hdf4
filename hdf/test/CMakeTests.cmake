@@ -8,11 +8,6 @@
 file (MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/TEST")
 file (MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/TEST/testdir")
 file (MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/TEST/testfiles")
-if (BUILD_SHARED_LIBS)
-  file (MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/TEST-shared")
-  file (MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/TEST-shared/testdir")
-  file (MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/TEST-shared/testfiles")
-endif ()
 
 #-- Copy all the dat files from the test directory into the source directory
 set (HDF4_REFERENCE_TEST_FILES
@@ -30,10 +25,6 @@ set (HDF4_REFERENCE_TEST_FILES
 
 foreach (h4_file ${HDF4_REFERENCE_TEST_FILES})
   HDFTEST_COPY_FILE("${HDF4_HDF_TEST_SOURCE_DIR}/test_files/${h4_file}" "${PROJECT_BINARY_DIR}/TEST/test_files/${h4_file}" "hdf_test_files")
-  set (dest "${PROJECT_BINARY_DIR}/TEST/test_files/${h4_file}")
-  if (BUILD_SHARED_LIBS)
-    HDFTEST_COPY_FILE("${HDF4_HDF_TEST_SOURCE_DIR}/test_files/${h4_file}" "${PROJECT_BINARY_DIR}/TEST-shared/test_files/${h4_file}" "hdf_test_files")
-  endif ()
 endforeach ()
 add_custom_target(hdf_test_files ALL COMMENT "Copying files needed by hdf tests" DEPENDS ${hdf_test_files_list})
 
@@ -112,13 +103,13 @@ set (HDF4_TESTHDF_FILES
 )
 add_test (
     NAME HDF_TEST-testhdf-clearall-objects
-    COMMAND    ${CMAKE_COMMAND}
-        -E remove
-        ${HDF4_TESTHDF_FILES}
-    WORKING_DIRECTORY
-        ${PROJECT_BINARY_DIR}/TEST
+    COMMAND ${CMAKE_COMMAND} -E remove ${HDF4_TESTHDF_FILES}
+    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/TEST
 )
-set_tests_properties (HDF_TEST-testhdf-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
+set_tests_properties (HDF_TEST-testhdf-clearall-objects PROPERTIES
+    LABELS ${PROJECT_NAME}
+    FIXTURES_SETUP clear_HDF_TEST
+)
 if (NOT "${last_test}" STREQUAL "")
   set_tests_properties (HDF_TEST-testhdf-clearall-objects PROPERTIES DEPENDS ${last_test})
 endif ()
@@ -138,13 +129,13 @@ set (HDF4_TESTHDF_THF0_FILES
 )
 add_test (
     NAME HDF_TEST-testhdf_thf0-clearall-objects
-    COMMAND    ${CMAKE_COMMAND}
-        -E remove
-        ${HDF4_TESTHDF_THF0_FILES}
-    WORKING_DIRECTORY
-        ${PROJECT_BINARY_DIR}/TEST
+    COMMAND ${CMAKE_COMMAND} -E remove ${HDF4_TESTHDF_THF0_FILES}
+    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/TEST
 )
-set_tests_properties (HDF_TEST-testhdf_thf0-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
+set_tests_properties (HDF_TEST-testhdf_thf0-clearall-objects PROPERTIES
+    LABELS ${PROJECT_NAME}
+    FIXTURES_REQUIRED clear_HDF_TEST
+)
 if (NOT "${last_test}" STREQUAL "")
   set_tests_properties (HDF_TEST-testhdf_thf0-clearall-objects PROPERTIES DEPENDS ${last_test})
 endif ()
@@ -161,8 +152,7 @@ set (thf_decade
 foreach (decade ${thf_decade})
   add_test (
       NAME HDF_TEST-testhdf_thf${decade}-clearall-objects
-      COMMAND    ${CMAKE_COMMAND}
-          -E remove
+      COMMAND ${CMAKE_COMMAND} -E remove
           thf${decade}0.hdf
           thf${decade}1.hdf
           thf${decade}2.hdf
@@ -173,17 +163,18 @@ foreach (decade ${thf_decade})
           thf${decade}7.hdf
           thf${decade}8.hdf
           thf${decade}9.hdf
-    WORKING_DIRECTORY
-        ${PROJECT_BINARY_DIR}/TEST
+    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/TEST
   )
-  set_tests_properties (HDF_TEST-testhdf_thf${decade}-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
+  set_tests_properties (HDF_TEST-testhdf_thf${decade}-clearall-objects PROPERTIES
+      LABELS ${PROJECT_NAME}
+  )
   if (NOT "${last_test}" STREQUAL "")
     set_tests_properties (HDF_TEST-testhdf_thf${decade}-clearall-objects PROPERTIES DEPENDS ${last_test})
   endif ()
   set (last_test "HDF_TEST-testhdf_thf${decade}-clearall-objects")
 endforeach (decade ${thf_decade})
 
-add_test (NAME HDF_TEST-testhdf COMMAND $<TARGET_FILE:testhdf>)
+add_test (NAME HDF_TEST-testhdf COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:testhdf>)
 set (passRegex "All tests were successful")
 set_tests_properties (HDF_TEST-testhdf PROPERTIES
     PASS_REGULAR_EXPRESSION "${passRegex}"
@@ -197,7 +188,7 @@ set (last_test "HDF_TEST-testhdf")
 
 #-- Adding test for buffer
 if (NOT WIN32)
-  add_test (NAME HDF_TEST-buffer COMMAND $<TARGET_FILE:buffer>)
+  add_test (NAME HDF_TEST-buffer COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:buffer>)
   set_tests_properties (HDF_TEST-buffer PROPERTIES
       WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/TEST
       LABELS ${PROJECT_NAME}
@@ -206,85 +197,4 @@ if (NOT WIN32)
     set_tests_properties (HDF_TEST-buffer PROPERTIES DEPENDS ${last_test})
   endif ()
   set (last_test "HDF_TEST-buffer")
-endif ()
-
-if (BUILD_SHARED_LIBS)
-  # Remove any output file left over from previous test run
-  add_test (
-      NAME HDF_TEST-testhdf-shared-clearall-objects
-      COMMAND    ${CMAKE_COMMAND}
-          -E remove
-          ${HDF4_TESTHDF_FILES}
-      WORKING_DIRECTORY
-          ${PROJECT_BINARY_DIR}/TEST-shared
-  )
-  set_tests_properties (HDF_TEST-testhdf-shared-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
-  if (NOT "${last_test}" STREQUAL "")
-    set_tests_properties (HDF_TEST-testhdf-shared-clearall-objects PROPERTIES DEPENDS ${last_test})
-  endif ()
-  set (last_test "HDF_TEST-testhdf-shared-clearall-objects")
-
-  add_test (
-      NAME HDF_TEST-testhdf_thf0-shared-clearall-objects
-      COMMAND    ${CMAKE_COMMAND}
-          -E remove
-          ${HDF4_TESTHDF_THF0_FILES}
-      WORKING_DIRECTORY
-          ${PROJECT_BINARY_DIR}/TEST-shared
-  )
-  set_tests_properties (HDF_TEST-testhdf_thf0-shared-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
-  if (NOT "${last_test}" STREQUAL "")
-    set_tests_properties (HDF_TEST-testhdf_thf0-shared-clearall-objects PROPERTIES DEPENDS ${last_test})
-  endif ()
-  set (last_test "HDF_TEST-testhdf_thf0-shared-clearall-objects")
-
-  foreach (decade ${thf_decade})
-    add_test (
-        NAME HDF_TEST-testhdf_thf${decade}-shared-clearall-objects
-        COMMAND    ${CMAKE_COMMAND}
-            -E remove
-            thf${decade}0.hdf
-            thf${decade}1.hdf
-            thf${decade}2.hdf
-            thf${decade}3.hdf
-            thf${decade}4.hdf
-            thf${decade}5.hdf
-            thf${decade}6.hdf
-            thf${decade}7.hdf
-            thf${decade}8.hdf
-            thf${decade}9.hdf
-      WORKING_DIRECTORY
-          ${PROJECT_BINARY_DIR}/TEST-shared
-    )
-    set_tests_properties (HDF_TEST-testhdf_thf${decade}-shared-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
-    if (NOT "${last_test}" STREQUAL "")
-      set_tests_properties (HDF_TEST-testhdf_thf${decade}-shared-clearall-objects PROPERTIES DEPENDS ${last_test})
-    endif ()
-    set (last_test "HDF_TEST-testhdf_thf${decade}-shared-clearall-objects")
-  endforeach ()
-
-  add_test (NAME HDF_TEST-testhdf-shared COMMAND $<TARGET_FILE:testhdf-shared>)
-  set (passRegex "All tests were successful")
-  set_tests_properties (HDF_TEST-testhdf-shared PROPERTIES
-      PASS_REGULAR_EXPRESSION "${passRegex}"
-      WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/TEST-shared
-      LABELS ${PROJECT_NAME}
-  )
-  if (NOT "${last_test}" STREQUAL "")
-    set_tests_properties (HDF_TEST-testhdf-shared PROPERTIES DEPENDS ${last_test})
-  endif ()
-  set (last_test "HDF_TEST-testhdf-shared")
-
-  #-- Adding test for buffer
-  if (NOT WIN32)
-    add_test (NAME HDF_TEST-buffer-shared COMMAND $<TARGET_FILE:buffer-shared>)
-    set_tests_properties (HDF_TEST-buffer-shared PROPERTIES
-        WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/TEST-shared
-        LABELS ${PROJECT_NAME}
-    )
-    if (NOT "${last_test}" STREQUAL "")
-      set_tests_properties (HDF_TEST-buffer-shared PROPERTIES DEPENDS ${last_test})
-    endif ()
-    set (last_test "HDF_TEST-buffer-shared")
-  endif ()
 endif ()

@@ -43,13 +43,14 @@ endforeach ()
 
 add_custom_target(${HDF4_JAVA_TEST_LIB_TARGET}_files ALL COMMENT "Copying files needed by ${HDF4_JAVA_TEST_LIB_TARGET} tests" DEPENDS ${${HDF4_JAVA_TEST_LIB_TARGET}_files_list})
 
-if (WIN32)
+if (WIN32 OR MINGW)
   set (CMAKE_JAVA_INCLUDE_FLAG_SEP ";")
 else ()
   set (CMAKE_JAVA_INCLUDE_FLAG_SEP ":")
 endif ()
 
-set (CMD_ARGS "-Dhdf.hdflib.HDFLibrary.loadLibraryName=$<TARGET_PROPERTY:${HDF4_JAVA_JNI_LIB_TARGET},OUTPUT_NAME$<$<CONFIG:Debug>:_DEBUG>>;")
+get_property (target_name TARGET ${HDF4_JAVA_JNI_LIB_TARGET} PROPERTY OUTPUT_NAME)
+set (CMD_ARGS "-Dhdf.hdflib.HDFLibrary.loadLibraryName=${target_name}$<$<CONFIG:Debug>:${CMAKE_DEBUG_POSTFIX}>;")
 
 foreach (test_file ${HDF4_JAVA_TEST_SOURCES})
 
@@ -61,12 +62,10 @@ foreach (test_file ${HDF4_JAVA_TEST_SOURCES})
 
   add_test (
     NAME JUnit-${test_file}-clearall-objects
-    COMMAND    ${CMAKE_COMMAND}
-        -E remove
+    COMMAND ${CMAKE_COMMAND} -E remove
         JUnit-${test_file}.out
         JUnit-${test_file}.out.err
   )
-
   add_test (
       NAME JUnit-${test_file}
       COMMAND "${CMAKE_COMMAND}"
@@ -85,7 +84,6 @@ foreach (test_file ${HDF4_JAVA_TEST_SOURCES})
           -D "TEST_REFERENCE=JUnit-${test_file}.txt"
           -P "${HDF_RESOURCES_DIR}/jrunTest.cmake"
   )
-
   set_tests_properties (JUnit-${test_file} PROPERTIES
       DEPENDS "JUnit-${test_file}-clearall-objects"
   )

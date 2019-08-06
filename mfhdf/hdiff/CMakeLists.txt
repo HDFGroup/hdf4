@@ -21,13 +21,25 @@ set (hdiff_SRCS
     ${HDF4_SOURCE_DIR}/mfhdf/util/getopt.c
 )
 
-add_executable(hdiff ${hdiff_SRCS})
-target_include_directories(hdiff
-    PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};$<$<BOOL:${HDF4_BUILD_XDR_LIB}>:${HDF4_MFHDF_XDR_DIR}>"
-)
-TARGET_C_PROPERTIES (hdiff STATIC)
-target_link_libraries(hdiff PRIVATE ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET})
-set_global_variable (HDF4_UTILS_TO_EXPORT "${HDF4_UTILS_TO_EXPORT};hdiff")
+if (NOT ONLY_SHARED_LIBS)
+  add_executable(hdiff ${hdiff_SRCS})
+  target_include_directories(hdiff PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};$<$<BOOL:${HDF4_BUILD_XDR_LIB}>:${HDF4_MFHDF_XDR_DIR}>")
+  TARGET_C_PROPERTIES (hdiff STATIC)
+  target_link_libraries(hdiff PRIVATE ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
+  set_global_variable (HDF4_UTILS_TO_EXPORT "${HDF4_UTILS_TO_EXPORT};hdiff")
+
+  set (H4_DEP_EXECUTABLES hdiff)
+endif ()
+
+if (BUILD_SHARED_LIBS)
+  add_executable(hdiff-shared ${hdiff_SRCS})
+  target_include_directories(hdiff-shared PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};$<$<BOOL:${HDF4_BUILD_XDR_LIB}>:${HDF4_MFHDF_XDR_DIR}>")
+  TARGET_C_PROPERTIES (hdiff-shared SHARED)
+  target_link_libraries(hdiff-shared PRIVATE ${HDF4_MF_LIBSH_TARGET} ${HDF4_SRC_LIBSH_TARGET} ${LINK_LIBS})
+  set_global_variable (HDF4_UTILS_TO_EXPORT "${HDF4_UTILS_TO_EXPORT};hdiff-shared")
+
+  set (H4_DEP_EXECUTABLES ${H4_DEP_EXECUTABLES} hdiff-shared)
+endif ()
 
 if (BUILD_TESTING)
   include (CMakeTests.cmake)
@@ -43,11 +55,13 @@ endif ()
 # Rules for Installation of tools using make Install target
 #-----------------------------------------------------------------------------
 
-INSTALL_PROGRAM_PDB (hdiff ${HDF4_INSTALL_TOOLS_BIN_DIR} toolsapplications)
+foreach (exec ${H4_DEP_EXECUTABLES})
+  INSTALL_PROGRAM_PDB (${exec} ${HDF4_INSTALL_TOOLS_BIN_DIR} toolsapplications)
+endforeach ()
 
 install (
     TARGETS
-        hdiff
+        ${H4_DEP_EXECUTABLES}
     EXPORT
         ${HDF4_EXPORTED_TARGETS}
     RUNTIME DESTINATION ${HDF4_INSTALL_TOOLS_BIN_DIR} COMPONENT toolsapplications

@@ -113,19 +113,21 @@ set (HDF4_HDF_SRC_CHDRS
     ${HDF4_HDF_SRC_SOURCE_DIR}/vgint.h
 )
 
-add_library (${HDF4_SRC_LIB_TARGET} STATIC ${HDF4_HDF_SRC_CSRCS} ${HDF4_HDF_SRC_CHDRS} ${HDF4_BINARY_DIR}/h4config.h)
-target_include_directories(${HDF4_SRC_LIB_TARGET}
-    PRIVATE "${HDF4_HDF_BINARY_DIR};${HDF4_HDFSOURCE_DIR}"
-)
-TARGET_C_PROPERTIES (${HDF4_SRC_LIB_TARGET} STATIC)
-target_link_libraries (${HDF4_SRC_LIB_TARGET} PRIVATE ${LINK_LIBS} ${LINK_COMP_LIBS})
-set_global_variable (HDF4_LIBRARIES_TO_EXPORT "${HDF4_LIBRARIES_TO_EXPORT};${HDF4_SRC_LIB_TARGET}")
-H4_SET_LIB_OPTIONS (${HDF4_SRC_LIB_TARGET} ${HDF4_SRC_LIB_NAME} STATIC)
-set_target_properties (${HDF4_SRC_LIB_TARGET} PROPERTIES
-    FOLDER libraries
-    INTERFACE_INCLUDE_DIRECTORIES "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>"
-)
-set (install_targets ${HDF4_SRC_LIB_TARGET})
+if (NOT ONLY_SHARED_LIBS)
+  add_library (${HDF4_SRC_LIB_TARGET} STATIC ${HDF4_HDF_SRC_CSRCS} ${HDF4_HDF_SRC_CHDRS} ${HDF4_BINARY_DIR}/h4config.h)
+  target_include_directories(${HDF4_SRC_LIB_TARGET}
+      PRIVATE "${HDF4_HDF_BINARY_DIR};${HDF4_HDFSOURCE_DIR}"
+  )
+  TARGET_C_PROPERTIES (${HDF4_SRC_LIB_TARGET} STATIC)
+  target_link_libraries (${HDF4_SRC_LIB_TARGET} PRIVATE ${LINK_LIBS} ${LINK_COMP_LIBS})
+  set_global_variable (HDF4_LIBRARIES_TO_EXPORT "${HDF4_LIBRARIES_TO_EXPORT};${HDF4_SRC_LIB_TARGET}")
+  H4_SET_LIB_OPTIONS (${HDF4_SRC_LIB_TARGET} ${HDF4_SRC_LIB_NAME} STATIC)
+  set_target_properties (${HDF4_SRC_LIB_TARGET} PROPERTIES
+      FOLDER libraries
+      INTERFACE_INCLUDE_DIRECTORIES "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>"
+  )
+  set (install_targets ${HDF4_SRC_LIB_TARGET})
+endif ()
 
 if (BUILD_SHARED_LIBS)
   add_library (${HDF4_SRC_LIBSH_TARGET} SHARED ${HDF4_HDF_SRC_CSRCS} ${HDF4_HDF_SRC_CHDRS} ${HDF4_BINARY_DIR}/h4config.h)
@@ -148,7 +150,7 @@ endif ()
 #-----------------------------------------------------------------------------
 # Add file(s) to CMake Install
 #-----------------------------------------------------------------------------
-INSTALL (
+install (
     FILES
         ${HDF4_HDF_SRC_CHDRS}
     DESTINATION
@@ -164,7 +166,9 @@ if (HDF4_EXPORTED_TARGETS)
   if (BUILD_SHARED_LIBS)
     INSTALL_TARGET_PDB (${HDF4_SRC_LIBSH_TARGET} ${HDF4_INSTALL_BIN_DIR} libraries)
   endif ()
-  INSTALL_TARGET_PDB (${HDF4_SRC_LIB_TARGET} ${HDF4_INSTALL_BIN_DIR} libraries)
+  if (NOT ONLY_SHARED_LIBS)
+    INSTALL_TARGET_PDB (${HDF4_SRC_LIB_TARGET} ${HDF4_INSTALL_LIB_DIR} libraries)
+  endif ()
 
   install (
       TARGETS

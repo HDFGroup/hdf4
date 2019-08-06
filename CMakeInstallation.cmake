@@ -123,7 +123,7 @@ else ()
 endif ()
 configure_file (
     ${HDF_RESOURCES_DIR}/libhdf4.settings.cmake.in
-    ${HDF4_BINARY_DIR}/libhdf4.settings @ONLY
+    ${HDF4_BINARY_DIR}/libhdf4.settings ESCAPE_QUOTES @ONLY
 )
 install (
     FILES ${HDF4_BINARY_DIR}/libhdf4.settings
@@ -184,7 +184,7 @@ HDF_README_PROPERTIES(HDF4_BUILD_FORTRAN)
 #-----------------------------------------------------------------------------
 # Configure the COPYING.txt file for the windows binary package
 #-----------------------------------------------------------------------------
-if (WIN32)
+if (WIN32 OR MINGW)
   configure_file (${HDF4_SOURCE_DIR}/COPYING ${HDF4_BINARY_DIR}/COPYING.txt @ONLY)
 endif ()
 
@@ -203,7 +203,7 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED)
         ${HDF4_SOURCE_DIR}/release_notes/USING_HDF4_CMake.txt
         ${HDF4_SOURCE_DIR}/release_notes/RELEASE.txt
     )
-    if (WIN32)
+    if (WIN32 OR MINGW)
       set (release_files
           ${release_files}
           ${HDF4_SOURCE_DIR}/release_notes/USING_HDF4_VS.txt
@@ -216,7 +216,7 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED)
           ${HDF4_SOURCE_DIR}/release_notes/HISTORY.txt
           ${HDF4_SOURCE_DIR}/release_notes/INSTALL
       )
-      if (WIN32)
+      if (WIN32 OR MINGW)
         set (release_files
             ${release_files}
             ${HDF4_SOURCE_DIR}/release_notes/INSTALL_Windows.txt
@@ -278,7 +278,7 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
   set (CPACK_PACKAGE_ICON "${HDF_RESOURCES_EXT_DIR}/hdf.bmp")
 
   set (CPACK_GENERATOR "TGZ")
-  if (WIN32)
+  if (WIN32 OR MINGW)
     set (CPACK_GENERATOR "ZIP")
 
     if (NSIS_EXECUTABLE)
@@ -443,7 +443,7 @@ The HDF data model, file format, API, library, and tools are open and distribute
   if (HDF4_PACKAGE_EXTLIBS)
     if (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "GIT" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
       if (JPEG_FOUND AND JPEG_USE_EXTERNAL)
-        if (WIN32)
+        if (WIN32 OR MINGW)
           set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${JPEG_INCLUDE_DIR_GEN};JPEG;ALL;/")
         else ()
           set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${JPEG_INCLUDE_DIR_GEN};JPEG;libraries;/")
@@ -452,7 +452,7 @@ The HDF data model, file format, API, library, and tools are open and distribute
         endif ()
       endif ()
       if (ZLIB_FOUND AND ZLIB_USE_EXTERNAL)
-        if (WIN32)
+        if (WIN32 OR MINGW)
           set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${ZLIB_INCLUDE_DIR_GEN};ZLIB;ALL;/")
         else ()
           set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${ZLIB_INCLUDE_DIR_GEN};ZLIB;libraries;/")
@@ -461,7 +461,7 @@ The HDF data model, file format, API, library, and tools are open and distribute
         endif ()
       endif ()
       if (SZIP_FOUND AND SZIP_USE_EXTERNAL)
-        if (WIN32)
+        if (WIN32 OR MINGW)
           set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${SZIP_INCLUDE_DIR_GEN};SZIP;ALL;/")
         else ()
           set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${SZIP_INCLUDE_DIR_GEN};SZIP;libraries;/")

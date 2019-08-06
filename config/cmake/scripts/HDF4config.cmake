@@ -41,15 +41,20 @@ set (CTEST_SOURCE_VERSEXT "-snap0, currently under development")
 #FORTRAN_LIBRARIES - Default is NO
 #NO_MAC_FORTRAN - set to TRUE to allow shared libs on a Mac
 if (DEFINED CTEST_SCRIPT_ARG)
-  # transform ctest script arguments of the form
-  # script.ctest,var1=value1,var2=value2
-  # to variables with the respective names set to the respective values
-  string (REPLACE "," ";" script_args "${CTEST_SCRIPT_ARG}")
-  foreach (current_var ${script_args})
-    if ("${current_var}" MATCHES "^([^=]+)=(.+)$")
-      set ("${CMAKE_MATCH_1}" "${CMAKE_MATCH_2}")
-    endif ()
-  endforeach ()
+    # transform ctest script arguments of the form
+    # script.ctest,var1=value1,var2=value2
+    # to variables with the respective names set to the respective values
+    string (REPLACE "," ";" script_args "${CTEST_SCRIPT_ARG}")
+    foreach (current_var ${script_args})
+        if ("${current_var}" MATCHES "^([^=]+)=(.+)$")
+            set ("${CMAKE_MATCH_1}" "${CMAKE_MATCH_2}")
+        endif ()
+    endforeach ()
+endif ()
+
+#HPC - run alternate configurations for HPC machines
+if (DEFINED HPC)
+  set (BUILD_GENERATOR "Unix")
 endif ()
 
 # build generator must be defined
@@ -93,7 +98,7 @@ endif ()
 
 set (CTEST_BINARY_NAME "build")
 set (CTEST_DASHBOARD_ROOT "${CTEST_SCRIPT_DIRECTORY}")
-if (WIN32)
+if (WIN32 AND NOT MINGW)
   set (CTEST_SOURCE_DIRECTORY "${CTEST_DASHBOARD_ROOT}\\${CTEST_SOURCE_NAME}")
   set (CTEST_BINARY_DIRECTORY "${CTEST_DASHBOARD_ROOT}\\${CTEST_BINARY_NAME}")
 else ()
@@ -103,7 +108,7 @@ endif ()
 
 ###################################################################
 #########       Following describes compiler           ############
-if (WIN32)
+if (WIN32 AND NOT MINGW)
   set (SITE_OS_NAME "Windows")
   set (SITE_OS_VERSION "WIN7")
   if (BUILD_GENERATOR STREQUAL "VS201764")
@@ -178,22 +183,15 @@ endif ()
 ###################################################################
 
 ###################################################################
-if (${STATICONLYLIBRARIES})
-  set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DBUILD_SHARED_LIBS:BOOL=OFF")
-  #########       Following describes computer           ############
-  ## following is optional to describe build                       ##
-  set (SITE_BUILDNAME_SUFFIX "STATIC")
-endif ()
+#########       Following is for submission to CDash   ############
 ###################################################################
-####      fortran       ####
-if (${FORTRANLIBRARIES})
-  set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_FORTRAN:BOOL=ON")
-else ()
-  set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_FORTRAN:BOOL=OFF")
+if (NOT DEFINED MODEL)
+  set (MODEL "Experimental")
 endif ()
+
 ###################################################################
 
-if (WIN32)
+if (WIN32 AND NOT MINGW)
   include (${CTEST_SCRIPT_DIRECTORY}\\HDF4options.cmake)
   include (${CTEST_SCRIPT_DIRECTORY}\\CTestScript.cmake)
 else ()
