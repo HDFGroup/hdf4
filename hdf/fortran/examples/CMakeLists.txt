@@ -64,12 +64,10 @@ set (skip_examples
 foreach (example ${examples})
   add_executable (f_ex_${example} ${HDF4_HDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
   target_include_directories (f_ex_${example}
-      PRIVATE
-          "${CMAKE_Fortran_MODULE_DIRECTORY};${HDF4_HDF_BINARY_DIR};${HDF4_HDFSOURCE_DIR}"
+      PRIVATE "${CMAKE_Fortran_MODULE_DIRECTORY};${HDF4_HDF_BINARY_DIR};${HDF4_HDFSOURCE_DIR}"
   )
   target_compile_options(f_ex_${example}
-      PRIVATE
-          $<$<STREQUAL:"x${CMAKE_Fortran_SIMULATE_ID}","xMSVC">:${WIN_COMPILE_FLAGS}>
+      PRIVATE $<$<STREQUAL:"x${CMAKE_Fortran_SIMULATE_ID}","xMSVC">:${WIN_COMPILE_FLAGS}>
   )
   if(MSVC)
     set_property(TARGET f_ex_${example} PROPERTY LINK_FLAGS "/SUBSYSTEM:CONSOLE ${WIN_LINK_FLAGS}")
@@ -78,17 +76,19 @@ foreach (example ${examples})
       LINKER_LANGUAGE Fortran
       Fortran_MODULE_DIRECTORY ${CMAKE_Fortran_MODULE_DIRECTORY}
   )
-  target_link_libraries (f_ex_${example} PRIVATE ${HDF4_SRC_FORTRAN_LIB_TARGET})
+  if (NOT BUILD_SHARED_LIBS)
+    target_link_libraries (f_ex_${example} PRIVATE ${HDF4_SRC_FORTRAN_LIB_TARGET})
+  else ()
+    target_link_libraries (f_ex_${example} PRIVATE ${HDF4_SRC_FORTRAN_LIBSH_TARGET})
+  endif ()
 endforeach ()
 
 add_executable (f_ex_VG_add_sds_to_vgroup ${HDF4_HDF_FORTRAN_EXAMPLES_SOURCE_DIR}/VG_add_sds_to_vgroup.f)
 target_include_directories (f_ex_VG_add_sds_to_vgroup
-    PRIVATE
-        "${CMAKE_Fortran_MODULE_DIRECTORY};${HDF4_HDF_BINARY_DIR};${HDF4_HDFSOURCE_DIR}"
+    PRIVATE "${CMAKE_Fortran_MODULE_DIRECTORY};${HDF4_HDF_BINARY_DIR};${HDF4_HDFSOURCE_DIR}"
 )
 target_compile_options(f_ex_VG_add_sds_to_vgroup
-    PRIVATE
-        $<$<STREQUAL:"x${CMAKE_Fortran_SIMULATE_ID}","xMSVC">:${WIN_COMPILE_FLAGS}>
+    PRIVATE $<$<STREQUAL:"x${CMAKE_Fortran_SIMULATE_ID}","xMSVC">:${WIN_COMPILE_FLAGS}>
 )
 if(MSVC)
   set_property(TARGET f_ex_VG_add_sds_to_vgroup PROPERTY LINK_FLAGS "/SUBSYSTEM:CONSOLE ${WIN_LINK_FLAGS}")
@@ -97,17 +97,19 @@ set_target_properties (f_ex_VG_add_sds_to_vgroup PROPERTIES
     LINKER_LANGUAGE Fortran
     Fortran_MODULE_DIRECTORY ${CMAKE_Fortran_MODULE_DIRECTORY}
 )
-target_link_libraries (f_ex_VG_add_sds_to_vgroup PRIVATE ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_SRC_FORTRAN_LIB_TARGET})
+if (NOT BUILD_SHARED_LIBS)
+  target_link_libraries (f_ex_VG_add_sds_to_vgroup PRIVATE ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_SRC_FORTRAN_LIB_TARGET})
+else ()
+  target_link_libraries (f_ex_VG_add_sds_to_vgroup PRIVATE ${HDF4_MF_FORTRAN_LIBSH_TARGET} ${HDF4_SRC_FORTRAN_LIBSH_TARGET})
+endif ()
 
 foreach (example ${skip_examples})
   add_executable (f_ex_${example} ${HDF4_HDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
   target_include_directories (f_ex_${example}
-      PRIVATE
-          "${CMAKE_Fortran_MODULE_DIRECTORY};${HDF4_HDF_BINARY_DIR};${HDF4_HDFSOURCE_DIR}"
+      PRIVATE "${CMAKE_Fortran_MODULE_DIRECTORY};${HDF4_HDF_BINARY_DIR};${HDF4_HDFSOURCE_DIR}"
   )
   target_compile_options(f_ex_${example}
-      PRIVATE
-          $<$<STREQUAL:"x${CMAKE_Fortran_SIMULATE_ID}","xMSVC">:${WIN_COMPILE_FLAGS}>
+      PRIVATE $<$<STREQUAL:"x${CMAKE_Fortran_SIMULATE_ID}","xMSVC">:${WIN_COMPILE_FLAGS}>
   )
   if(MSVC)
     set_property(TARGET f_ex_${example} PROPERTY LINK_FLAGS "/SUBSYSTEM:CONSOLE ${WIN_LINK_FLAGS}")
@@ -116,7 +118,11 @@ foreach (example ${skip_examples})
       LINKER_LANGUAGE Fortran
       Fortran_MODULE_DIRECTORY ${CMAKE_Fortran_MODULE_DIRECTORY}
   )
-  target_link_libraries (f_ex_${example} PRIVATE ${HDF4_SRC_FORTRAN_LIB_TARGET})
+  if (NOT BUILD_SHARED_LIBS)
+    target_link_libraries (f_ex_${example} PRIVATE ${HDF4_SRC_FORTRAN_LIB_TARGET})
+  else ()
+    target_link_libraries (f_ex_${example} PRIVATE ${HDF4_SRC_FORTRAN_LIBSH_TARGET})
+  endif ()
 endforeach ()
 
 if (BUILD_TESTING)

@@ -25,8 +25,13 @@ set (examples
 
 foreach (example ${examples})
   add_executable (mf_${example} ${HDF4_MFHDF_EXAMPLES_SOURCE_DIR}/${example}.c)
-  TARGET_C_PROPERTIES (mf_${example} STATIC )
-  target_link_libraries (mf_${example} PRIVATE ${HDF4_MF_LIB_TARGET})
+  if (NOT BUILD_SHARED_LIBS)
+    TARGET_C_PROPERTIES (mf_${example} STATIC)
+    target_link_libraries (mf_${example} PRIVATE ${HDF4_MF_LIB_TARGET})
+  else ()
+    TARGET_C_PROPERTIES (mf_${example} SHARED)
+    target_link_libraries (mf_${example} PRIVATE ${HDF4_MF_LIBSH_TARGET})
+  endif ()
 endforeach (example ${examples})
 
 if (BUILD_TESTING)

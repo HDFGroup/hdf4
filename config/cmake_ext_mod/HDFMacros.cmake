@@ -61,12 +61,12 @@ endmacro ()
 
 #-------------------------------------------------------------------------------
 macro (INSTALL_TARGET_PDB libtarget targetdestination targetcomponent)
-  if (WIN32 AND MSVC)
+  if (WIN32 AND MSVC AND NOT DISABLE_PDB_FILES)
     get_target_property (target_type ${libtarget} TYPE)
     if (${libtype} MATCHES "SHARED")
       set (targetfilename $<TARGET_PDB_FILE:${libtarget}>)
     else ()
-      get_property (target_name TARGET ${libtarget} PROPERTY OUTPUT_NAME_RELWITHDEBINFO)
+      get_property (target_name TARGET ${libtarget} PROPERTY $<IF:$<CONFIG:Debug>,OUTPUT_NAME_DEBUG,OUTPUT_NAME_RELWITHDEBINFO>)
       set (targetfilename $<TARGET_FILE_DIR:${libtarget}>/${target_name}.pdb)
     endif ()
     install (
@@ -74,9 +74,10 @@ macro (INSTALL_TARGET_PDB libtarget targetdestination targetcomponent)
           ${targetfilename}
       DESTINATION
           ${targetdestination}
-      CONFIGURATIONS RelWithDebInfo
+      CONFIGURATIONS Debug RelWithDebInfo
       COMPONENT ${targetcomponent}
-  )
+      OPTIONAL
+    )
   endif ()
 endmacro ()
 
@@ -88,29 +89,25 @@ macro (INSTALL_PROGRAM_PDB progtarget targetdestination targetcomponent)
           $<TARGET_PDB_FILE:${progtarget}>
       DESTINATION
           ${targetdestination}
-      CONFIGURATIONS RelWithDebInfo
+      CONFIGURATIONS Debug RelWithDebInfo
       COMPONENT ${targetcomponent}
-  )
+      OPTIONAL
+    )
   endif ()
 endmacro ()
 
 #-------------------------------------------------------------------------------
 macro (HDF_SET_LIB_OPTIONS libtarget libname libtype)
-  if (WIN32)
-    set (LIB_DEBUG_SUFFIX "_D")
-  else ()
-    set (LIB_DEBUG_SUFFIX "_debug")
-  endif ()
   if (${libtype} MATCHES "SHARED")
     set (LIB_RELEASE_NAME "${libname}")
-    set (LIB_DEBUG_NAME "${libname}${LIB_DEBUG_SUFFIX}")
+    set (LIB_DEBUG_NAME "${libname}${CMAKE_DEBUG_POSTFIX}")
   else ()
-    if (WIN32)
+    if (WIN32 AND NOT MINGW)
       set (LIB_RELEASE_NAME "lib${libname}")
-      set (LIB_DEBUG_NAME "lib${libname}${LIB_DEBUG_SUFFIX}")
+      set (LIB_DEBUG_NAME "lib${libname}${CMAKE_DEBUG_POSTFIX}")
     else ()
       set (LIB_RELEASE_NAME "${libname}")
-      set (LIB_DEBUG_NAME "${libname}${LIB_DEBUG_SUFFIX}")
+      set (LIB_DEBUG_NAME "${libname}${CMAKE_DEBUG_POSTFIX}")
     endif ()
   endif ()
 
@@ -118,8 +115,8 @@ macro (HDF_SET_LIB_OPTIONS libtarget libname libtype)
       PROPERTIES
          OUTPUT_NAME
                ${LIB_RELEASE_NAME}
-         OUTPUT_NAME_DEBUG
-               ${LIB_DEBUG_NAME}
+#         OUTPUT_NAME_DEBUG
+#               ${LIB_DEBUG_NAME}
          OUTPUT_NAME_RELEASE
                ${LIB_RELEASE_NAME}
          OUTPUT_NAME_MINSIZEREL
@@ -178,7 +175,12 @@ macro (HDF_IMPORT_SET_LIB_OPTIONS libtarget libname libtype libversion)
         )
       endif ()
     else ()
-      if (CYGWIN)
+      if (MINGW)
+        set_target_properties (${libtarget} PROPERTIES
+            IMPORTED_IMPLIB "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${IMPORT_LIB_NAME}.lib"
+            IMPORTED_LOCATION "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${IMPORT_LIB_NAME}${CMAKE_SHARED_LIBRARY_SUFFIX}"
+        )
+      elseif (CYGWIN)
         set_target_properties (${libtarget} PROPERTIES
             IMPORTED_IMPLIB "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${CMAKE_IMPORT_LIBRARY_PREFIX}${IMPORT_LIB_NAME}${CMAKE_IMPORT_LIBRARY_SUFFIX}"
             IMPORTED_LOCATION "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${CMAKE_IMPORT_LIBRARY_PREFIX}${IMPORT_LIB_NAME}${CMAKE_SHARED_LIBRARY_SUFFIX}"
@@ -281,7 +283,9 @@ macro (HDF_README_PROPERTIES target_fortran)
     set (BINARY_PLATFORM "${BINARY_PLATFORM} / ${CMAKE_Fortran_COMPILER_ID} Fortran")
   endif ()
 
-  if (BUILD_SHARED_LIBS)
+  if (ONLY_SHARED_LIBS)
+    set (LIB_TYPE "Shared")
+  elseif (BUILD_SHARED_LIBS)
     set (LIB_TYPE "Static and Shared")
   else ()
     set (LIB_TYPE "Static")
@@ -362,6 +366,15 @@ macro (HDF_DIR_PATHS package_prefix)
 
   if (DEFINED ADDITIONAL_CMAKE_PREFIX_PATH AND EXISTS "${ADDITIONAL_CMAKE_PREFIX_PATH}")
     set (CMAKE_PREFIX_PATH ${ADDITIONAL_CMAKE_PREFIX_PATH} ${CMAKE_PREFIX_PATH})
+  endif ()
+
+  #set the default debug suffix for all library targets
+    if(NOT CMAKE_DEBUG_POSTFIX)
+      if (WIN32)
+        set (CMAKE_DEBUG_POSTFIX "_D")
+      else ()
+        set (CMAKE_DEBUG_POSTFIX "_debug")
+      endif ()
   endif ()
 
   SET_HDF_BUILD_TYPE()

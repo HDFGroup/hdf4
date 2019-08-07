@@ -20,7 +20,7 @@ set_tests_properties (MFHDF_FORTRAN_EXAMPLES-clearall-objects PROPERTIES LABELS 
 set (last_test "MFHDF_FORTRAN_EXAMPLES-clearall-objects")
 
 foreach (example ${examples})
-  add_test (NAME f_exmftest_${example} COMMAND $<TARGET_FILE:f_exmf_${example}>)
+  add_test (NAME f_exmftest_${example} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:f_exmf_${example}>)
   if (NOT "${last_test}" STREQUAL "")
     set_tests_properties (f_exmftest_${example} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
   else ()

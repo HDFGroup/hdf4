@@ -12,20 +12,36 @@ set (ncdump_SRCS
     ${HDF4_SOURCE_DIR}/mfhdf/util/getopt.c
 )
 
-add_executable (ncdump ${ncdump_SRCS})
-target_include_directories (ncdump
-    PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};$<$<BOOL:${HDF4_BUILD_XDR_LIB}>:${HDF4_MFHDF_XDR_DIR}>"
-)
-TARGET_C_PROPERTIES (ncdump STATIC )
-target_link_libraries (ncdump PRIVATE ${HDF4_MF_LIB_TARGET})
-set_target_properties (ncdump PROPERTIES
-    COMPILE_DEFINITIONS "HDF"
-)
-if (WIN32)
-  set_property (TARGET ncdump APPEND PROPERTY COMPILE_DEFINITIONS "DOS_FS;SWAP")
-  if (HDF4_BUILD_XDR_LIB)
-    set_property (TARGET ncdump APPEND PROPERTY COMPILE_DEFINITIONS "NO_SYS_XDR_INC")
+if (NOT ONLY_SHARED_LIBS)
+  add_executable (ncdump ${ncdump_SRCS})
+  target_include_directories (ncdump PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};$<$<BOOL:${HDF4_BUILD_XDR_LIB}>:${HDF4_MFHDF_XDR_DIR}>")
+  TARGET_C_PROPERTIES (ncdump STATIC)
+  target_link_libraries (ncdump PRIVATE ${HDF4_MF_LIB_TARGET})
+  set_target_properties (ncdump PROPERTIES COMPILE_DEFINITIONS "HDF")
+  if (WIN32 OR MINGW)
+    set_property (TARGET ncdump APPEND PROPERTY COMPILE_DEFINITIONS "DOS_FS;SWAP")
+    if (HDF4_BUILD_XDR_LIB)
+      set_property (TARGET ncdump APPEND PROPERTY COMPILE_DEFINITIONS "NO_SYS_XDR_INC")
+    endif ()
   endif ()
+
+  set (H4_DEP_EXECUTABLES ncdump)
+endif ()
+
+if (BUILD_SHARED_LIBS)
+  add_executable (ncdump-shared ${ncdump_SRCS})
+  target_include_directories (ncdump-shared PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};$<$<BOOL:${HDF4_BUILD_XDR_LIB}>:${HDF4_MFHDF_XDR_DIR}>")
+  TARGET_C_PROPERTIES (ncdump-shared SHARED)
+  target_link_libraries (ncdump-shared PRIVATE ${HDF4_MF_LIBSH_TARGET})
+  set_target_properties (ncdump-shared PROPERTIES COMPILE_DEFINITIONS "HDF")
+  if (WIN32 OR MINGW)
+    set_property (TARGET ncdump-shared APPEND PROPERTY COMPILE_DEFINITIONS "DOS_FS;SWAP")
+    if (HDF4_BUILD_XDR_LIB)
+      set_property (TARGET ncdump-shared APPEND PROPERTY COMPILE_DEFINITIONS "NO_SYS_XDR_INC")
+    endif ()
+  endif ()
+
+  set (H4_DEP_EXECUTABLES ${H4_DEP_EXECUTABLES} ncdump-shared)
 endif ()
 
 if (BUILD_TESTING)
@@ -42,12 +58,12 @@ endif ()
 # Add file(s) to CMake Install
 #-----------------------------------------------------------------------------
 
-INSTALL_PROGRAM_PDB (ncdump ${HDF4_INSTALL_TOOLS_BIN_DIR} toolsapplications)
+foreach (exec ${H4_DEP_EXECUTABLES})
+  INSTALL_PROGRAM_PDB (${exec} ${HDF4_INSTALL_TOOLS_BIN_DIR} toolsapplications)
+endforeach ()
 
-INSTALL (
+install (
     TARGETS
-        ncdump
+        ${H4_DEP_EXECUTABLES}
     RUNTIME DESTINATION ${HDF4_INSTALL_TOOLS_BIN_DIR} COMPONENT toolsapplications
 )
-
-

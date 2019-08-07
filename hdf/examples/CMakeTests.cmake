@@ -8,8 +8,7 @@
 # Remove any output file left over from previous test run
 add_test (
     NAME HDF_EXAMPLES-clearall-objects
-    COMMAND    ${CMAKE_COMMAND}
-        -E remove
+    COMMAND ${CMAKE_COMMAND} -E remove
         General_HDFobjects.hdf
         General_Rimages.hdf
         General_Vdatas.hdf
@@ -27,7 +26,7 @@ endif ()
 set (last_test "HDF_EXAMPLES-clearall-objects")
 
 foreach (example ${examples})
-  add_test (NAME HDF_EXAMPLES-${example} COMMAND $<TARGET_FILE:hdf_${example}>)
+  add_test (NAME HDF_EXAMPLES-${example} COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdf_${example}>)
   if (NOT "${last_test}" STREQUAL "")
     set_tests_properties (HDF_EXAMPLES-${example} PROPERTIES DEPENDS ${last_test} LABELS EXAMPLES)
   else ()
@@ -36,7 +35,7 @@ foreach (example ${examples})
   set (last_test "HDF_EXAMPLES-${example}")
 endforeach ()
 
-add_test (NAME HDF_EXAMPLES-VG_add_sds_to_vgroup COMMAND $<TARGET_FILE:hdf_VG_add_sds_to_vgroup>)
+add_test (NAME HDF_EXAMPLES-VG_add_sds_to_vgroup COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdf_VG_add_sds_to_vgroup>)
 if (NOT "${last_test}" STREQUAL "")
   set_tests_properties (HDF_EXAMPLES-VG_add_sds_to_vgroup PROPERTIES DEPENDS ${last_test} LABELS EXAMPLES)
 else ()

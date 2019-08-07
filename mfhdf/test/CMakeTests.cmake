@@ -5,9 +5,6 @@
 ##############################################################################
 ##############################################################################
 file (MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/TEST")
-if (BUILD_SHARED_LIBS)
-  file (MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/TEST-shared")
-endif ()
 
 #-- Copy all the dat files from the test directory into the source directory
 set (HDF4_REFERENCE_TEST_FILES
@@ -25,9 +22,6 @@ set (HDF4_REFERENCE2_TEST_FILES
 
 foreach (h4_file ${HDF4_REFERENCE_TEST_FILES} ${HDF4_REFERENCE2_TEST_FILES})
    HDFTEST_COPY_FILE("${HDF4_MFHDF_TEST_DIR}/${h4_file}" "${PROJECT_BINARY_DIR}/TEST/${h4_file}" "mfhdf_test_files")
-   if (BUILD_SHARED_LIBS)
-     HDFTEST_COPY_FILE("${HDF4_MFHDF_TEST_DIR}/${h4_file}" "${PROJECT_BINARY_DIR}/TEST-shared/${h4_file}" "mfhdf_test_files")
-   endif ()
 endforeach ()
 add_custom_target(mfhdf_test_files ALL COMMENT "Copying files needed by mfhdf tests" DEPENDS ${mfhdf_test_files_list})
 
@@ -95,93 +89,58 @@ set (HDF4_TESTMFHDF_FILES
 )
 add_test (
     NAME MFHDF_TEST-clearall-objects
-    COMMAND    ${CMAKE_COMMAND}
-        -E remove
-        ${HDF4_TESTMFHDF_FILES}
-    WORKING_DIRECTORY
-        ${PROJECT_BINARY_DIR}/TEST
+    COMMAND ${CMAKE_COMMAND} -E remove ${HDF4_TESTMFHDF_FILES}
+    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/TEST
 )
+set_tests_properties (MFHDF_TEST-clearall-objects PROPERTIES FIXTURES_SETUP clear_MFHDF_TEST)
 
-add_test (NAME MFHDF_TEST-hdftest COMMAND $<TARGET_FILE:hdftest>)
+add_test (NAME MFHDF_TEST-hdftest COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdftest>)
 set (passRegex "HDF-SD test passes")
 set_tests_properties (MFHDF_TEST-hdftest PROPERTIES
     PASS_REGULAR_EXPRESSION "${passRegex}"
-    DEPENDS MFHDF_TEST-clearall-objects
+    FIXTURES_REQUIRED clear_MFHDF_TEST
     WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/TEST
     LABELS ${PROJECT_NAME}
 )
 
-add_test (NAME MFHDF_TEST-cdftest COMMAND "${CMAKE_COMMAND}"
-            -D "TEST_PROGRAM=$<TARGET_FILE:cdftest>"
-            -D "TEST_ARGS:STRING="
-            -D "TEST_FOLDER=${PROJECT_BINARY_DIR}/TEST"
-            -D "TEST_OUTPUT=cdfout.new"
-            -D "TEST_EXPECT=0"
-            -D "TEST_REFERENCE=testout.sav"
-            -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
+add_test (
+    NAME MFHDF_TEST-cdftest
+    COMMAND "${CMAKE_COMMAND}"
+        -D "TEST_EMULATOR=${CMAKE_CROSSCOMPILING_EMULATOR}"
+        -D "TEST_PROGRAM=$<TARGET_FILE:cdftest>"
+        -D "TEST_ARGS:STRING="
+        -D "TEST_FOLDER=${PROJECT_BINARY_DIR}/TEST"
+        -D "TEST_OUTPUT=cdfout.new"
+        -D "TEST_EXPECT=0"
+        -D "TEST_REFERENCE=testout.sav"
+        -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
 )
 set_tests_properties (MFHDF_TEST-cdftest PROPERTIES
+    FIXTURES_REQUIRED clear_MFHDF_TEST
     DEPENDS MFHDF_TEST-hdftest
     WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/TEST
     LABELS ${PROJECT_NAME}
 )
 
-add_test (NAME MFHDF_TEST-hdfnctest COMMAND $<TARGET_FILE:hdfnctest>)
+add_test (NAME MFHDF_TEST-hdfnctest COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:hdfnctest>)
 set (NCpassRegex "HDF-nc test passes")
 set_tests_properties (MFHDF_TEST-hdfnctest PROPERTIES
     PASS_REGULAR_EXPRESSION "${NCpassRegex}"
+    FIXTURES_REQUIRED clear_MFHDF_TEST
     DEPENDS MFHDF_TEST-cdftest
     LABELS ${PROJECT_NAME}
 )
-if (BUILD_SHARED_LIBS)
-  add_test (
-      NAME MFHDF_TEST-shared-clearall-objects
-      COMMAND    ${CMAKE_COMMAND}
-          -E remove
-          ${HDF4_TESTMFHDF_FILES}
-      WORKING_DIRECTORY
-          ${PROJECT_BINARY_DIR}/TEST-shared
-  )
-
-  add_test (NAME MFHDF_TEST-hdftest-shared COMMAND $<TARGET_FILE:hdftest-shared>)
-  set (passRegex "HDF-SD test passes")
-  set_tests_properties (MFHDF_TEST-hdftest-shared PROPERTIES
-      PASS_REGULAR_EXPRESSION "${passRegex}"
-      DEPENDS MFHDF_TEST-shared-clearall-objects
-      WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/TEST-shared
-      LABELS ${PROJECT_NAME}
-  )
-
-  add_test (NAME MFHDF_TEST-cdftest-shared COMMAND "${CMAKE_COMMAND}"
-              -D "TEST_PROGRAM=$<TARGET_FILE:cdftest-shared>"
-              -D "TEST_ARGS:STRING="
-              -D "TEST_FOLDER=${PROJECT_BINARY_DIR}/TEST-shared"
-              -D "TEST_OUTPUT=cdfout.new"
-              -D "TEST_EXPECT=0"
-              -D "TEST_REFERENCE=testout.sav"
-              -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
-  )
-  set_tests_properties (MFHDF_TEST-cdftest-shared PROPERTIES
-      DEPENDS MFHDF_TEST-hdftest-shared
-      WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/TEST-shared
-      LABELS ${PROJECT_NAME}
-  )
-
-  add_test (NAME MFHDF_TEST-hdfnctest-shared COMMAND $<TARGET_FILE:hdfnctest-shared>)
-  set (NCpassRegex "HDF-nc test passes")
-  set_tests_properties (MFHDF_TEST-hdfnctest-shared PROPERTIES
-      PASS_REGULAR_EXPRESSION "${NCpassRegex}"
-      DEPENDS MFHDF_TEST-cdftest-shared
-      WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/TEST-shared
-      LABELS ${PROJECT_NAME}
-  )
-endif ()
 
 #-- Adding test for xdrtest
 if (HDF4_BUILD_XDR_LIB)
   add_executable (xdrtest ${HDF4_MFHDF_XDR_DIR}/xdrtest.c)
-  TARGET_C_PROPERTIES (xdrtest STATIC )
-  target_link_libraries (xdrtest PRIVATE ${HDF4_MF_LIB_TARGET})
+  if (NOT BUILD_SHARED_LIBS)
+    TARGET_C_PROPERTIES (xdrtest STATIC)
+    target_link_libraries (xdrtest PRIVATE ${HDF4_MF_LIB_TARGET})
+  else ()
+    TARGET_C_PROPERTIES (xdrtest SHARED)
+    target_link_libraries (xdrtest PRIVATE ${HDF4_MF_LIBSH_TARGET})
+  endif ()
 
   if (MSVC_VERSION LESS 1900)
     HDFTEST_COPY_FILE("${HDF4_MFHDF_XDR_DIR}/xdrtest.out" "${PROJECT_BINARY_DIR}/TEST/xdrtest.out" "xdrtest_files")
@@ -191,11 +150,12 @@ if (HDF4_BUILD_XDR_LIB)
   add_custom_target(xdrtest_files ALL COMMENT "Copying files needed by xdrtest tests" DEPENDS ${xdrtest_files_list})
 
   if (HDF4_ENABLE_USING_MEMCHECKER)
-    add_test (NAME MFHDF_TEST-xdrtest COMMAND $<TARGET_FILE:xdrtest>)
+    add_test (NAME MFHDF_TEST-xdrtest COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:xdrtest>)
   else ()
     add_test (
         NAME MFHDF_TEST-xdrtest
         COMMAND "${CMAKE_COMMAND}"
+            -D "TEST_EMULATOR=${CMAKE_CROSSCOMPILING_EMULATOR}"
             -D "TEST_PROGRAM=$<TARGET_FILE:xdrtest>"
             -D "TEST_ARGS:STRING="
             -D "TEST_FOLDER=${PROJECT_BINARY_DIR}/TEST"

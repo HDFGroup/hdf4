@@ -25,11 +25,14 @@ set (nctest_SRCS
 )
 
 add_executable (nctest ${nctest_SRCS})
-target_include_directories(nctest
-    PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};$<$<BOOL:${HDF4_BUILD_XDR_LIB}>:${HDF4_MFHDF_XDR_DIR}>"
-)
-TARGET_C_PROPERTIES (nctest STATIC )
-target_link_libraries (nctest PRIVATE ${HDF4_MF_LIB_TARGET})
+target_include_directories(nctest PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};$<$<BOOL:${HDF4_BUILD_XDR_LIB}>:${HDF4_MFHDF_XDR_DIR}>")
+if (NOT BUILD_SHARED_LIBS)
+  TARGET_C_PROPERTIES (nctest STATIC)
+  target_link_libraries (nctest PRIVATE ${HDF4_MF_LIB_TARGET})
+else ()
+  TARGET_C_PROPERTIES (nctest SHARED)
+  target_link_libraries (nctest PRIVATE ${HDF4_MF_LIBSH_TARGET})
+endif ()
 set_target_properties (nctest PROPERTIES COMPILE_DEFINITIONS "HDF")
 
 include (CMakeTests.cmake)
