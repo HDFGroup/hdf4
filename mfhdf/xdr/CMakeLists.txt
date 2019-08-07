@@ -15,7 +15,7 @@ set (HDF4_MFHDF_XDR_HDRS
 
 if (NOT ONLY_SHARED_LIBS)
   add_library (${HDF4_MF_XDR_LIB_TARGET} STATIC ${HDF4_MFHDF_XDR_SRCS} ${HDF4_MFHDF_XDR_HDRS})
-  target_include_directories(${HDF4_MF_XDR_LIB_TARGET} PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDF_XDR_DIR}")
+  target_include_directories(${HDF4_MF_XDR_LIB_TARGET} PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDF_XDR_SOURCE_DIR}")
   if (MSVC OR MINGW)
     target_link_libraries (${HDF4_MF_XDR_LIB_TARGET} PUBLIC "ws2_32.lib")
   endif ()
@@ -35,7 +35,7 @@ endif ()
 
 if (BUILD_SHARED_LIBS)
   add_library (${HDF4_MF_XDR_LIBSH_TARGET} SHARED ${HDF4_MFHDF_XDR_SRCS} ${HDF4_MFHDF_XDR_HDRS})
-  target_include_directories(${HDF4_MF_XDR_LIBSH_TARGET} PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDF_XDR_DIR}")
+  target_include_directories(${HDF4_MF_XDR_LIBSH_TARGET} PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDF_XDR_SOURCE_DIR}")
   if (MSVC OR MINGW)
     target_link_libraries (${HDF4_MF_XDR_LIBSH_TARGET} PUBLIC "ws2_32.lib")
   endif ()
