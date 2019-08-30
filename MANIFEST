@@ -1151,6 +1151,7 @@
 ./UserMacros.cmake
 
 # CMake-specific Files
+./config/toolchain/build32.cmake
 ./config/toolchain/crayle.cmake
 ./config/toolchain/GCC.cmake
 ./config/toolchain/intel.cmake
