@@ -14,7 +14,7 @@ set (HDFJNI_EXAMPLES
     HDF4DatasetCreate
 )
 
-if (WIN32)
+if (WIN32 OR MINGW)
   set (CMAKE_JAVA_INCLUDE_FLAG_SEP ";")
 else ()
   set (CMAKE_JAVA_INCLUDE_FLAG_SEP ":")
@@ -35,7 +35,6 @@ endforeach ()
 foreach (example ${HDFJNI_EXAMPLES})
   file (WRITE ${HDF4_JAVA_Examples_BINARY_DIR}/${example}_Manifest.txt
   "Main-Class: examples.${example}
-Class-Path: ${HDFJNI_CLASSJARS}
 "
   )
   add_jar (${example} MANIFEST ${HDF4_JAVA_Examples_BINARY_DIR}/${example}_Manifest.txt ${example}.java)
@@ -54,15 +53,16 @@ foreach (HDFJAVA_JAR ${CMAKE_JAVA_INCLUDE_PATH})
 endforeach ()
 
 if (BUILD_TESTING)
+  get_property (target_name TARGET ${HDF4_JAVA_JNI_LIB_TARGET} PROPERTY OUTPUT_NAME)
+  set (CMD_ARGS "-Dhdf.hdflib.HDFLibrary.loadLibraryName=${target_name}$<$<CONFIG:Debug>:${CMAKE_DEBUG_POSTFIX}>;")
   macro (ADD_H4_TEST resultfile resultcode)
-    set (CMD_ARGS "-Dhdf.hdflib.HDFLibrary.loadLibraryName=$<TARGET_PROPERTY:${HDF4_JAVA_JNI_LIB_TARGET},OUTPUT_NAME$<$<CONFIG:Debug>:_DEBUG>>;")
     add_test (
         NAME JAVAEX-${resultfile}
         COMMAND "${CMAKE_COMMAND}"
             -D "TEST_TESTER=${CMAKE_Java_RUNTIME};${CMAKE_Java_RUNTIME_FLAGS}"
-            -D "TEST_CLASSPATH:STRING=${CMAKE_JAVA_CLASSPATH}${CMAKE_JAVA_INCLUDE_FLAG_SEP}${${resultfile}_JAR_FILE}"
-            -D "TEST_ARGS:STRING=${CMD_ARGS}${ARGN}"
             -D "TEST_PROGRAM=examples.${resultfile}"
+            -D "TEST_ARGS:STRING=${CMD_ARGS}${ARGN}"
+            -D "TEST_CLASSPATH:STRING=${CMAKE_JAVA_CLASSPATH}${CMAKE_JAVA_INCLUDE_FLAG_SEP}${${resultfile}_JAR_FILE}"
             -D "TEST_LIBRARY_DIRECTORY=${CMAKE_TEST_OUTPUT_DIRECTORY}"
             -D "TEST_FOLDER=${HDF4_JAVA_Examples_BINARY_DIR}"
             -D "TEST_OUTPUT=${resultfile}.out"

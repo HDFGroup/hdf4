@@ -55,9 +55,9 @@ public class HDFArray {
     }
 
     /**
-     * @return the allocated a one-dimensional array of bytes sufficient to store the array.
+     * @return the allocated one-dimensional array of bytes sufficient to store the array.
      * @exception HDFException
-     *                .
+     *         thrown for errors: object is not allocated: HDFJavaException
      */
 
     public byte[] emptyBytes() throws HDFException {
@@ -78,11 +78,11 @@ public class HDFArray {
     }
 
     /**
-     * @return convert of a Java array of numbers to a one-dimensional array of bytes in correct native
-     *         order.
+     * @return conversion of a Java array of numbers to a one-dimensional array of
+     *         bytes in correct native order.
      *
      * @exception hdf.hdflib.HDFException
-     *                thrown for errors: object is not array: HDFJavaException
+     *         thrown for errors: object is not array: HDFJavaException
      */
     public byte[] byteify() throws HDFException {
 
@@ -202,7 +202,6 @@ public class HDFArray {
             byte arow[];
             try {
                 if (ArrayDescriptor.NT == 'J') {
-                    arow = hdf.hdflib.HDFNativeData.longToByte(0, ArrayDescriptor.dimlen[ArrayDescriptor.dims], (long[]) ArrayDescriptor.objs[ArrayDescriptor.dims - 1]);
                     arow = hdf.hdflib.HDFNativeData.longToByte(0, ArrayDescriptor.dimlen[ArrayDescriptor.dims], (long[]) ArrayDescriptor.objs[ArrayDescriptor.dims - 1]);
                 }
                 else if (ArrayDescriptor.NT == 'I') {
