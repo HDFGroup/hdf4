@@ -360,7 +360,7 @@ xdr_NC_dim(xdrs, dpp)
 int NC_xlen_dim(dpp)
 NC_dim **dpp ;
 {
-	int len = 4 ;
+	int len = sizeof(long) ;
 	if(*dpp!=NULL)
 	{
 		len += NC_xlen_string((*dpp)->name) ;

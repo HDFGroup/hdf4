@@ -42,6 +42,11 @@ static int NC_free_xcdf(NC *);
 /* hmm we write the NDG out always for now */
 #define WRITE_NDG 1
 
+/* Work around the ifdef in /usr/include/rpc/xdr */
+#ifdef __LP64__
+#undef __LP64__
+#endif
+
 /* Debugging: define for each function you want debugging printfs */
 /* #define HDF_READ_VARS
 #define HDF_READ_ATTRS
@@ -113,6 +118,7 @@ NC *handle ;
             /* destroy xdr struct */
             xdr_destroy(handle->xdrs);
             Free(handle->xdrs);
+            handle->xdrs = NULL;
 
 #ifdef HDF
             if(handle->file_type == HDF_FILE) 
@@ -133,6 +139,7 @@ NC *handle ;
 #endif /* HDF */
 
             Free(handle);
+            handle = NULL;
         }
 
 done:
@@ -461,9 +468,12 @@ int mode ;
 	  /* copy filename only up to its length instead of FILENAME_MAX as
 	     used to be */
           HDstrncpy(cdf->path, name, strlen(name)+1);
+          cdf->path[strlen(name)] = '\0';
           break;
       case netCDF_FILE:
           /* Nothing */
+          HDstrncpy(cdf->path, name, strlen(name)+1);
+          cdf->path[strlen(name)] = '\0';
           break;
       case CDF_FILE:
 #ifdef DEBUG
@@ -688,7 +698,9 @@ NC_xdr_cdf(xdrs, handlep)
 	NC **handlep;
 {
 
-	u_long	magic;
+	 /* u_long	magic;
+      *  */ 
+	long magic;
 
 	if( xdrs->x_op == XDR_FREE)
       {
@@ -3561,10 +3573,13 @@ done:
 int NC_xlen_cdf(cdf)
 NC *cdf ;
 {
-	int len = 8 ;
+	int len = 0 ;
 
 	if(cdf == NULL)
 		return(0) ;
+
+    len += sizeof(unsigned long);  /* unsigned long magic */
+    len += sizeof(unsigned long);  /* unsigned long numrecs */
 
 	len += NC_xlen_array(cdf->dims) ;
 	len += NC_xlen_array(cdf->attrs) ;
@@ -3678,7 +3693,9 @@ NC_var *vp ;
     case NC_BYTE :
     case NC_CHAR :
         alen /= 4 ;
-        xdr_NC_fnct = xdr_4bytes ;
+         /* xdr_NC_fnct = xdr_4bytes ;
+          *  */ 
+        xdr_NC_fnct = xdr_bytes ;
         break ;
     case NC_SHORT :
         alen /= 4 ;
@@ -3686,10 +3703,10 @@ NC_var *vp ;
         break ;
     case NC_LONG :
         alen /= 4 ;
-#if defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__ 
-        xdr_NC_fnct = xdr_int ;
-#else
+#if (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__ 
         xdr_NC_fnct = xdr_long ;
+#else
+        xdr_NC_fnct = xdr_int ;
 #endif
         break ;	
     case NC_FLOAT :

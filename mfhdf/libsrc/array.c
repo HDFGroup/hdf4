@@ -53,14 +53,15 @@ nc_type	type ;
 	switch(type){
 	case NC_BYTE :
 	case NC_CHAR :
-		return(1) ;
+		return(sizeof(char)) ;
 	case NC_SHORT :
-		return(2) ;
+		return(sizeof(short)) ;
 	case NC_LONG :
+        return(sizeof(nclong)) ;
 	case NC_FLOAT :
-		return(4) ;
+		return(sizeof(float)) ;
 	case NC_DOUBLE : 
-		return(8) ;
+		return(sizeof(double)) ;
 /* private types */
 	case NC_UNSPECIFIED :
 		return(0) ;
@@ -445,12 +446,14 @@ done:
 int NC_xlen_array(array)
 NC_array *array ;
 {
-	int len = 8 ;
+	int len = 0 ;
 	int rem ;
 	int (*xlen_funct)() =NULL;
 	Void *vp ;
 	unsigned ii ;
 
+    len += sizeof(nc_type);  /* nc_type type */
+    len += sizeof(long); /* u_long count */
 	if(array!=NULL)
 	{
 		switch(array->type){
@@ -461,16 +464,18 @@ NC_array *array ;
 				len += 4 - rem ;
 			return(len) ;
 		case NC_SHORT :
-			len += array->count * 2 ;
+			len += array->count * sizeof(short) ;
 			if( (rem = len%4) != 0)
 				len += 4 - rem ;
 			return(len) ;
 		case NC_LONG :
+            len += array->count * sizeof(nclong) ;
+            return(len);
 		case NC_FLOAT :
-			len += array->count * 4 ;
+			len += array->count * sizeof(float) ;
 			return(len) ;
 		case NC_DOUBLE :
-			len += array->count * 8 ;
+			len += array->count * sizeof(double) ;
 			return(len) ;
 	 	case NC_STRING  :
 			xlen_funct = NC_xlen_string ;
@@ -588,15 +593,24 @@ xdr_NC_array(xdrs, app)
 		return (FALSE);
 	}
 #else
-	if (! xdr_int(xdrs, typep)) {
-		NCadvise(NC_EXDR, "xdr_NC_array:xdr_int (enum)") ;
-		return (FALSE);
-	}
+    /* Using static variable seemed to help prevent bad memory accesses */
+    {
+        int temp_type = 0;
+        if (! xdr_int(xdrs, &temp_type)) {
+            NCadvise(NC_EXDR, "xdr_NC_array:xdr_int (enum)") ;
+            return (FALSE);
+        }
+        *typep = (nc_type)temp_type;
+    }
 #endif
-	if (! xdr_u_long(xdrs, countp)) {
-		NCadvise(NC_EXDR, "xdr_NC_array:xdr_u_long") ;
-		return (FALSE);
-	}
+    {
+        u_long temp_count = 0;
+        if (! xdr_u_long(xdrs, &temp_count)) {
+            NCadvise(NC_EXDR, "xdr_NC_array:xdr_u_long") ;
+            return (FALSE);
+        }
+        *countp = temp_count;
+    }
 
 	if( xdrs->x_op == XDR_DECODE )
 	{
@@ -625,7 +639,7 @@ xdr_NC_array(xdrs, app)
 		xdr_NC_fnct = xdr_shorts ;
 		goto func ;
 	case NC_LONG :
-#if defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__ 
+#if (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__ 
 		xdr_NC_fnct = xdr_int ;
 #else
 		xdr_NC_fnct = xdr_long ;

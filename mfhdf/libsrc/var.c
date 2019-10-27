@@ -872,13 +872,27 @@ xdr_NC_var(xdrs, vpp)
 		return (FALSE);
 	}
 #else
-	if (! xdr_int(xdrs, &((*vpp)->type)) ) {
-		return (FALSE);
-	}
+    /* Using static variable seemed to help prevent bad memory accesses */
+    {
+     /* if (! xdr_int(xdrs, &((*vpp)->type)) ) {
+      *  */ 
+        int temp_type = 0;
+        if (! xdr_int(xdrs, &temp_type)) {
+            return (FALSE);
+        }
+        (*vpp)->type = temp_type;
+    }
+
 #endif
-	if (! xdr_u_long(xdrs, &((*vpp)->len)) ) {
-		return (FALSE);
-	}
+    {
+	 /* if (! xdr_u_long(xdrs, &((*vpp)->len)) ) {
+      *  */ 
+        u_long temp_len = 0;
+	    if (! xdr_u_long(xdrs, &temp_len)) {
+		    return (FALSE);
+	    }
+        (*vpp)->len = temp_len;
+    }
 
 	if( xdrs->x_op == XDR_DECODE )
 		(*vpp)->szof = NC_typelen((*vpp)->type) ;

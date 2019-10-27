@@ -271,11 +271,7 @@ static rpc_inline_t *    xdrposix_inline();
 #if ((defined __x86_64__ ) && !(defined __sun && defined _LP64)) || defined __powerpc64__
 static int32_t *    xdrposix_inline();
 #else
-#if (defined __alpha )
-static int *    xdrposix_inline();
-#else
 static netlong *    xdrposix_inline(); 
-#endif
 #endif
 #endif
 #endif
@@ -428,11 +424,7 @@ xdrposix_destroy(xdrs)
 static bool_t
 xdrposix_getlong(xdrs, lp)
     XDR *xdrs;
-#if (defined __alpha) 
-    int *lp;
-#else
     long *lp;
-#endif
 {
     unsigned char *up = (unsigned char *)lp ;
 #if (defined AIX5L64 || defined __powerpc64__ || (defined __hpux && __LP64__))  
@@ -450,11 +442,7 @@ xdrposix_getlong(xdrs, lp)
 static bool_t
 xdrposix_putlong(xdrs, lp)
     XDR *xdrs;
-#if (defined __alpha) 
-    int *lp;
-#else
     long *lp;
-#endif
 {
 
     unsigned char *up = (unsigned char *)lp ;
@@ -475,7 +463,7 @@ static bool_t
 xdrposix_getbytes(xdrs, addr, len)
     XDR *xdrs;
     caddr_t addr;
-#if (defined __alpha) || (defined __hpux && defined __ia64)
+#if (defined __hpux && defined __ia64)
     int len;
 #else
     u_int len;
@@ -492,7 +480,7 @@ static bool_t
 xdrposix_putbytes(xdrs, addr, len)
     XDR *xdrs;
     caddr_t addr;
-#if (defined __alpha) || (defined __hpux && defined __ia64)
+#if (defined __hpux && defined __ia64)
     int len;
 #else
     u_int len;
@@ -553,9 +541,6 @@ static long *
 #if (defined __sun && defined _LP64)
 static rpc_inline_t *
 #else
-#if (defined  __alpha)
-static int* 
-#else
 #if ((defined  __x86_64__) && !(defined __sun && defined _LP64)) || defined __powerpc64__
 static int32_t * 
 #else
@@ -563,16 +548,9 @@ static netlong *
 #endif
 #endif
 #endif
-#endif
 xdrposix_inline(xdrs, len)
     XDR *xdrs;
-#if (defined  __alpha) || (defined __hpux && defined __ia64)
-int 
-#else
-    u_int
-#endif
-          len;
-
+    u_int len;
 {
 
     /*

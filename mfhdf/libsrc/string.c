@@ -221,7 +221,7 @@ xdr_NC_string(xdrs, spp)
 int NC_xlen_string(cdfstr)
 NC_string *cdfstr ;
 {
-	int len = 4 ;
+	int len = sizeof(unsigned);
 	int rem ;
 	if(cdfstr!=NULL)
 	{

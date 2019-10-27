@@ -572,10 +572,10 @@ xdr_NC_attr(xdrs, app)
 int NC_xlen_attr(app)
 NC_attr **app ;
 {
-	int len ;
+	int len = sizeof(*app);
 
 	if(*app == NULL)
-		return(4) ;
+		return(len) ;
 
 	len = NC_xlen_string((*app)->name) ;
 	len += NC_xlen_array((*app)->data) ;

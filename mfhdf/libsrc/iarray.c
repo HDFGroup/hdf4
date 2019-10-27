@@ -84,7 +84,7 @@ xdr_NC_iarray(xdrs, ipp)
 	NC_iarray **ipp;
 {
 	int *ip ;
-	u_long count ;
+	u_long count = 0;
 	bool_t stat = TRUE ;
 
 	switch (xdrs->x_op) {
@@ -100,8 +100,13 @@ xdr_NC_iarray(xdrs, ipp)
 		if((*ipp) == NULL)
 			return(FALSE) ;
 		/* then deal with the array */
-		for( ip = (*ipp)->values ; (count > 0 ) && stat ; count-- )
-			stat = xdr_int(xdrs, ip++ ) ;
+        for( ip = (*ipp)->values ; (count > 0 ) && stat ; count-- )
+        {
+            int temp = 0;
+            stat = xdr_int(xdrs, &temp) ;
+            *ip = temp;
+            ip++;
+        }
 		return(stat) ;
 	case XDR_ENCODE:
 		/* first deal with the length */
