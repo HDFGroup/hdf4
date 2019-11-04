@@ -665,10 +665,12 @@ Void *values ;
 	case NC_SHORT :
 		return( xdr_NCvshort(xdrs, (unsigned)rem/2, (short *)values) ) ;
 	case NC_LONG :
-#if (defined __APPLE__) || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__ 
+#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__ 
+		 /* return( xdr_int(xdrs, (nclong *)values) ) ;
+          *  */ 
 		return( xdr_long(xdrs, (nclong *)values) ) ;
 #else
-		return( xdr_int(xdrs, (int *)values) ) ;
+		return( xdr_long(xdrs, (nclong *)values) ) ;
 #endif
 	case NC_FLOAT :
 		return( xdr_float(xdrs, (float *)values) ) ;
@@ -1976,13 +1978,15 @@ Void *values ;
 		} /* else */
 		return(TRUE) ;
 	case NC_LONG :
-#if (defined __APPLE__) || defined __ia64 || (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__
-        xdr_NC_fnct = xdr_long ;
-		szof = sizeof(nclong) ;
-#else
-        xdr_NC_fnct = xdr_int ;
+#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__
+         /* xdr_NC_fnct = xdr_int ;
 		szof = sizeof(int) ;
+          *  */ 
+        xdr_NC_fnct = xdr_long ;
+#else
+        xdr_NC_fnct = xdr_long ;
 #endif
+		szof = sizeof(nclong) ;
 		break ;
 	case NC_FLOAT :
 		xdr_NC_fnct = xdr_float ;

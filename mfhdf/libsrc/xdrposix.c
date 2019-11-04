@@ -463,7 +463,7 @@ static bool_t
 xdrposix_getbytes(xdrs, addr, len)
     XDR *xdrs;
     caddr_t addr;
-#if (defined __hpux && defined __ia64)
+#if (defined __hpux)
     int len;
 #else
     u_int len;
@@ -480,7 +480,7 @@ static bool_t
 xdrposix_putbytes(xdrs, addr, len)
     XDR *xdrs;
     caddr_t addr;
-#if (defined __hpux && defined __ia64)
+#if (defined __hpux)
     int len;
 #else
     u_int len;

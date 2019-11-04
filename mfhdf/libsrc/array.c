@@ -53,15 +53,14 @@ nc_type	type ;
 	switch(type){
 	case NC_BYTE :
 	case NC_CHAR :
-		return(sizeof(char)) ;
+		return(1) ;
 	case NC_SHORT :
-		return(sizeof(short)) ;
+		return(2) ;
 	case NC_LONG :
-        return(sizeof(nclong)) ;
 	case NC_FLOAT :
-		return(sizeof(float)) ;
+		return(4) ;
 	case NC_DOUBLE : 
-		return(sizeof(double)) ;
+		return(8) ;
 /* private types */
 	case NC_UNSPECIFIED :
 		return(0) ;
@@ -446,14 +445,12 @@ done:
 int NC_xlen_array(array)
 NC_array *array ;
 {
-	int len = 0 ;
+	int len = 8 ;
 	int rem ;
 	int (*xlen_funct)() =NULL;
 	Void *vp ;
 	unsigned ii ;
 
-    len += sizeof(nc_type);  /* nc_type type */
-    len += sizeof(long); /* u_long count */
 	if(array!=NULL)
 	{
 		switch(array->type){
@@ -464,18 +461,16 @@ NC_array *array ;
 				len += 4 - rem ;
 			return(len) ;
 		case NC_SHORT :
-			len += array->count * sizeof(short) ;
+			len += array->count * 2 ;
 			if( (rem = len%4) != 0)
 				len += 4 - rem ;
 			return(len) ;
 		case NC_LONG :
-            len += array->count * sizeof(nclong) ;
-            return(len);
 		case NC_FLOAT :
-			len += array->count * sizeof(float) ;
+			len += array->count * 4 ;
 			return(len) ;
 		case NC_DOUBLE :
-			len += array->count * sizeof(double) ;
+			len += array->count * 8 ;
 			return(len) ;
 	 	case NC_STRING  :
 			xlen_funct = NC_xlen_string ;
@@ -639,8 +634,10 @@ xdr_NC_array(xdrs, app)
 		xdr_NC_fnct = xdr_shorts ;
 		goto func ;
 	case NC_LONG :
-#if (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__ 
-		xdr_NC_fnct = xdr_int ;
+#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__ 
+		xdr_NC_fnct = xdr_long ;
+		 /* xdr_NC_fnct = xdr_int ;
+          *  */ 
 #else
 		xdr_NC_fnct = xdr_long ;
 #endif

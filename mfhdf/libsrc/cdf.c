@@ -42,11 +42,6 @@ static int NC_free_xcdf(NC *);
 /* hmm we write the NDG out always for now */
 #define WRITE_NDG 1
 
-/* Work around the ifdef in /usr/include/rpc/xdr */
-#ifdef __LP64__
-#undef __LP64__
-#endif
-
 /* Debugging: define for each function you want debugging printfs */
 /* #define HDF_READ_VARS
 #define HDF_READ_ATTRS
@@ -698,7 +693,7 @@ NC_xdr_cdf(xdrs, handlep)
 	NC **handlep;
 {
 
-	 /* u_long	magic;
+	/* u_long	magic;
       *  */ 
 	long magic;
 
@@ -3573,13 +3568,10 @@ done:
 int NC_xlen_cdf(cdf)
 NC *cdf ;
 {
-	int len = 0 ;
+	int len = 8 ;
 
 	if(cdf == NULL)
 		return(0) ;
-
-    len += sizeof(unsigned long);  /* unsigned long magic */
-    len += sizeof(unsigned long);  /* unsigned long numrecs */
 
 	len += NC_xlen_array(cdf->dims) ;
 	len += NC_xlen_array(cdf->attrs) ;
@@ -3703,10 +3695,12 @@ NC_var *vp ;
         break ;
     case NC_LONG :
         alen /= 4 ;
-#if (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__ 
+#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__ 
         xdr_NC_fnct = xdr_long ;
+         /* xdr_NC_fnct = xdr_int ;
+          *  */ 
 #else
-        xdr_NC_fnct = xdr_int ;
+        xdr_NC_fnct = xdr_long ;
 #endif
         break ;	
     case NC_FLOAT :
