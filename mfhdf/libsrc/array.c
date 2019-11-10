@@ -634,12 +634,10 @@ xdr_NC_array(xdrs, app)
 		xdr_NC_fnct = xdr_shorts ;
 		goto func ;
 	case NC_LONG :
-#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__ 
-		xdr_NC_fnct = xdr_long ;
-		 /* xdr_NC_fnct = xdr_int ;
-          *  */ 
+#if (defined __APPLE__)
+        xdr_NC_fnct = xdr_long ;
 #else
-		xdr_NC_fnct = xdr_long ;
+        xdr_NC_fnct = xdr_int ;
 #endif
 		goto loop ;
 	case NC_FLOAT :

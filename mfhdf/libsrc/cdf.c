@@ -693,9 +693,7 @@ NC_xdr_cdf(xdrs, handlep)
 	NC **handlep;
 {
 
-	/* u_long	magic;
-      *  */ 
-	long magic;
+	u_long	magic;
 
 	if( xdrs->x_op == XDR_FREE)
       {
@@ -3695,10 +3693,8 @@ NC_var *vp ;
         break ;
     case NC_LONG :
         alen /= 4 ;
-#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__ 
-        xdr_NC_fnct = xdr_long ;
-         /* xdr_NC_fnct = xdr_int ;
-          *  */ 
+#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__
+        xdr_NC_fnct = xdr_int ;
 #else
         xdr_NC_fnct = xdr_long ;
 #endif

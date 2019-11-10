@@ -116,7 +116,11 @@ xdr_NC_iarray(xdrs, ipp)
 		}
 		/* then deal with the array */
 		for(ip = (*ipp)->values  ; (count > 0 ) && stat ; count--)
-			stat = xdr_int(xdrs, ip++ ) ;
+        {
+            int temp = *ip;
+			stat = xdr_int(xdrs, &temp) ;
+            ip++;
+        }
 		return(stat) ;
 	}
 	return(FALSE) ;

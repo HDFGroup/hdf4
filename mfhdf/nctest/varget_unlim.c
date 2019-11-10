@@ -72,8 +72,10 @@ test_ncvarget_unlim(basefile)
         if (srcdir[strlen(srcdir) - 1] != '/')
             strcat(testfile, "/");
     }
-    strcat(testfile, basefile);
+    else
+        strcpy(testfile, "./");
 
+    strcat(testfile, basefile);
     if ((ncid = ncopen(testfile, NC_NOWRITE)) == -1) {
              error("%s: ncopen failed", pname);
              return;

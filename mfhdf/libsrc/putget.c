@@ -666,9 +666,7 @@ Void *values ;
 		return( xdr_NCvshort(xdrs, (unsigned)rem/2, (short *)values) ) ;
 	case NC_LONG :
 #if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__ 
-		 /* return( xdr_int(xdrs, (nclong *)values) ) ;
-          *  */ 
-		return( xdr_long(xdrs, (nclong *)values) ) ;
+		return( xdr_int(xdrs, (nclong *)values) ) ;
 #else
 		return( xdr_long(xdrs, (nclong *)values) ) ;
 #endif
@@ -1978,15 +1976,15 @@ Void *values ;
 		} /* else */
 		return(TRUE) ;
 	case NC_LONG :
-#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__
-         /* xdr_NC_fnct = xdr_int ;
-		szof = sizeof(int) ;
-          *  */ 
+        /* In the portable xdr library, xdr_long resolves to xdrposis_getlong,
+         * which always read 4 bytes; xdr_int will do the same but then cast to
+         * short, thus, mess up the value.  The Mac machines use portable xdr. */
+#if (defined __APPLE__)
         xdr_NC_fnct = xdr_long ;
 #else
-        xdr_NC_fnct = xdr_long ;
+        xdr_NC_fnct = xdr_int ;
 #endif
-		szof = sizeof(nclong) ;
+        szof = sizeof(nclong) ;
 		break ;
 	case NC_FLOAT :
 		xdr_NC_fnct = xdr_float ;
