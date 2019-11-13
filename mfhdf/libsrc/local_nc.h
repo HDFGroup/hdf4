@@ -66,7 +66,7 @@ typedef    unsigned long    u_long;
 #include "hdf4_netcdf.h"
 #endif
 
-/* Contansts for sizes of NC types */
+/* Constants for sizes of NC types */
 #define NC_BYTE_SIZE        1
 #define NC_CHAR_SIZE        1
 #define NC_SHORT_SIZE       2
