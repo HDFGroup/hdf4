@@ -170,6 +170,9 @@ test_netcdf_reading()
     sd_id = SDstart(testfile, DFACC_RDONLY);
     CHECK(sd_id, FAIL, "netCDF Read Test 1. SDstart failed on file test1.nc");
 
+    if (sd_id != FAIL) /* temporary solution to stop hundreds of errors */
+    {
+
     /* Determine the contents of the file. */
     status = SDfileinfo(sd_id, &n_datasets, &n_file_attrs);
     CHECK(status, FAIL, "netCDF Read Test 1. SDfileinfo failed on file test1.nc");
@@ -229,6 +232,8 @@ test_netcdf_reading()
     /* Terminate access to the SD interface and close the file. */
     status = SDend(sd_id);
     CHECK(status, FAIL, "netCDF Read Test 1. SDend failed for file test1.nc");
+
+    } /* SDstart failed */
 
     /* Test reading dimension scale - bugzilla 1644 */
     num_errs = num_errs + test_read_dim();

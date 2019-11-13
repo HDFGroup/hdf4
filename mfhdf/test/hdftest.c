@@ -92,7 +92,7 @@ main(int argc, char *argv[])
     int32   scale[10];
     char    l[80], u[80], fmt[80], c[80];
     int32   count;
-    int32   fillval, readval;
+    int32   fillval=0, readval=0;
     int32   idata[100];
     int32   rdata[100];
     int16   sdata[100], outdata[100];

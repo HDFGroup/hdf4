@@ -23,8 +23,8 @@
    * permission.
    */
 
-#if defined TEST_PC || defined TEST_WIN
 #include <stdio.h>
+#if defined TEST_PC || defined TEST_WIN
 FILE *dbg_file;
 #endif
 
@@ -41,10 +41,7 @@ char *argv[];
 {
     static char testfile[] = "test.nc";
     static char unlim_testfile_name[] = "test_unlim.nc";
-    char *unlim_testfile;
-
-    int name_size;
-    char *srcdir;
+    int status = 0;
 
 #if defined TEST_PC || defined TEST_WIN
     dbg_file=fopen("test.dbg","w+");
@@ -97,24 +94,7 @@ char *argv[];
 
     test_ncvarget(testfile);
 
-    name_size = strlen(unlim_testfile_name) + 1;
-    srcdir = getenv("srcdir");
-
-    if (srcdir)
-        name_size += strlen(srcdir) + 1;
-
-    unlim_testfile = calloc(name_size, 1);
-
-    if (srcdir) {
-        strcpy(unlim_testfile, srcdir);
-
-        if (srcdir[strlen(srcdir) - 1] != '/')
-            strcat(unlim_testfile, "/");
-    }
-
-    strcat(unlim_testfile, unlim_testfile_name);
-    test_ncvarget_unlim(unlim_testfile);
-    free(unlim_testfile);
+    test_ncvarget_unlim(unlim_testfile_name);
 
     test_ncvarputg(testfile);
 
