@@ -3693,6 +3693,12 @@ NC_var *vp ;
         break ;
     case NC_LONG :
         alen /= 4 ;
+        /* In the portable xdr library, xdr_long resolves to xdrposis_getlong,
+         * which always read 4 bytes; xdr_int will do the same but then cast to
+         * short, thus, mess up the value.  The Mac machines use portable xdr.
+         * This is a temporary solution until the memory issue when using the
+         * system xdr is resolved, and the portable xdr library is no longer needed
+         * -BMR, Nov 11, 2019 */
 #if (defined __APPLE__)
         xdr_NC_fnct = xdr_long ;
 #else

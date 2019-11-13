@@ -53,17 +53,17 @@ nc_type	type ;
 	switch(type){
 	case NC_BYTE :
 	case NC_CHAR :
-		return(1) ;
+		return(NC_CHAR_SIZE);
 	case NC_SHORT :
-		return(2) ;
+		return(NC_SHORT_SIZE);
 	case NC_LONG :
 	case NC_FLOAT :
-		return(4) ;
+		return(NC_LONG_SIZE);
 	case NC_DOUBLE : 
-		return(8) ;
+		return(NC_DOUBLE_SIZE);
 /* private types */
 	case NC_UNSPECIFIED :
-		return(0) ;
+		return(NC_UNSPECIFIED_SIZE);
 	case NC_STRING :
 		return(NC_xlen_string((NC_string *)NULL)) ;
 	case NC_DIMENSION :
@@ -456,21 +456,21 @@ NC_array *array ;
 		switch(array->type){
 		case NC_BYTE :
 		case NC_CHAR :
-			len += array->count ;
+			len += array->count * NC_CHAR_SIZE;
 			if( (rem = len%4) != 0)
 				len += 4 - rem ;
 			return(len) ;
 		case NC_SHORT :
-			len += array->count * 2 ;
+			len += array->count * NC_SHORT_SIZE;
 			if( (rem = len%4) != 0)
 				len += 4 - rem ;
 			return(len) ;
 		case NC_LONG :
 		case NC_FLOAT :
-			len += array->count * 4 ;
+			len += array->count * NC_LONG_SIZE;
 			return(len) ;
 		case NC_DOUBLE :
-			len += array->count * 8 ;
+			len += array->count * NC_DOUBLE_SIZE;
 			return(len) ;
 	 	case NC_STRING  :
 			xlen_funct = NC_xlen_string ;
@@ -580,8 +580,7 @@ xdr_NC_array(xdrs, app)
 
 	/* This USE_ENUM may not be necessary after xdr and code cleanup.
 	   See HDFFR-1318, HDFFR-1327, and other Mac/XDR issues for details.
-	   I had tried and xdr_enum worked consistently even though there were
-	   failures in other places. -BMR, 6/14/2016 */
+       -BMR, 6/14/2016 */
 #ifdef USE_ENUM
 	if (! xdr_enum(xdrs, (enum_t *)typep)) {
 		NCadvise(NC_EXDR, "xdr_NC_array:xdr_enum") ;
@@ -634,6 +633,12 @@ xdr_NC_array(xdrs, app)
 		xdr_NC_fnct = xdr_shorts ;
 		goto func ;
 	case NC_LONG :
+        /* In the portable xdr library, xdr_long resolves to xdrposis_getlong,
+         * which always read 4 bytes; xdr_int will do the same but then cast to
+         * short, thus, mess up the value.  The Mac machines use portable xdr.
+         * This is a temporary solution until the memory issue when using the
+         * system xdr is resolved, and the portable xdr library is no longer needed
+         * -BMR, Nov 11, 2019 */
 #if (defined __APPLE__)
         xdr_NC_fnct = xdr_long ;
 #else
