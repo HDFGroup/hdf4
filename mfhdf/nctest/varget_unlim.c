@@ -47,12 +47,13 @@ short b_val[][3][2] = {
  * Test ncvarget for variables with unlimited dimensions (bug #897)
  */
 void
-test_ncvarget_unlim(path)
-     char *path;		/* name of writable netcdf file to open */
+test_ncvarget_unlim(basefile)
+     char *basefile;               /* name of writable netcdf file to open */
 {
     int nerrs = 0;
     static char pname[] = "test_ncvarget_unlim";
-    
+    char testfile[512];
+    char *srcdir = getenv("srcdir");
     int status;
     int ncid;
     int var_id;
@@ -61,10 +62,21 @@ test_ncvarget_unlim(path)
     int time[12];
     short val[12][3][2];
     long start[3], count[3];
+    int name_size = 0;
     int i, j, n;
 
     (void) fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
-	if ((ncid = ncopen(path, NC_NOWRITE)) == -1) {
+
+    if (srcdir) {
+        strcpy(testfile, srcdir);
+        if (srcdir[strlen(srcdir) - 1] != '/')
+            strcat(testfile, "/");
+    }
+    else
+        strcpy(testfile, "./");
+
+    strcat(testfile, basefile);
+    if ((ncid = ncopen(testfile, NC_NOWRITE)) == -1) {
              error("%s: ncopen failed", pname);
              return;
         }
@@ -78,13 +90,12 @@ test_ncvarget_unlim(path)
         count[0] = 12;
         count[1] = 3;
         count[2] = 2;
-	
-        if(status = ncvarget (ncid, var_id, start, count, val) == -1) {
+
+         if((status = ncvarget (ncid, var_id, start, count, val)) == -1) {
            error("%s: ncvarget failed for variable b in ", pname);
            ncclose(ncid);
            return;
         }
-           
         for (n=0; n <12 ; n++) {
          for (i=0; i <3; i++)   {
           for (j=0; j<2 ; j++)   {
@@ -104,13 +115,13 @@ test_ncvarget_unlim(path)
         count[0] = 2;
         count[1] = 3;
 	
-        if(status = ncvarget (ncid, var_id, start, count, a) == -1) {
+         if((status = ncvarget (ncid, var_id, start, count, a)) == -1) {
            error("%s: ncvarget failed for variable a in ", pname);
            ncclose(ncid);
            return;
         }
-           
-         for (i=0; i <2; i++)   {
+
+        for (i=0; i <2; i++)   {
           for (j=0; j<3 ; j++)   {
              if (a[i][j] != a_val[i][j]) {
              nerrs++;
@@ -126,16 +137,16 @@ test_ncvarget_unlim(path)
         start[0] = 0;
         count[0] = 12;
 	
-        if(status = ncvarget (ncid, var_id, start, count, date) == -1) {
+         if((status = ncvarget (ncid, var_id, start, count, date)) == -1) {
            error("%s: ncvarget failed for variable date in ", pname);
            ncclose(ncid);
            return;
         }
-           
+
         for (n=0; n <12 ; n++) {
              if (date[n] != date_val[n]) {
              nerrs++;
-             printf(" Wrong value of variable date at index %d\n", n);
+             printf(" Wrong value of variable date at index %d: %d vs %d\n", n, date[n], date_val[n]);
              }
         }
 
@@ -145,12 +156,12 @@ test_ncvarget_unlim(path)
         start[0] = 0;
         count[0] = 12;
 	
-        if(status = ncvarget (ncid, var_id, start, count, time) == -1) {
+         if((status = ncvarget (ncid, var_id, start, count, time)) == -1) {
            error("%s: ncvarget failed varaible time in ", pname);
            ncclose(ncid);
            return;
         }
-           
+
         for (n=0; n <12 ; n++) {
              if (time[n] != time_val[n]) {
              nerrs++;
@@ -159,7 +170,6 @@ test_ncvarget_unlim(path)
         }
 
 	status = ncclose(ncid);
-
 
     if (nerrs > 0)
       (void) fprintf(stderr,"FAILED! ***\n");

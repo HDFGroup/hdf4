@@ -269,7 +269,7 @@ const char	*path ;	/* file name */
 int mode ;
 {
 	NC *handle ;
-	int id;
+	int cdfid;
 	intn cdfs_size;
 
 	/* Allocate _cdfs, if it is already allocated, nothing will be done */
@@ -282,13 +282,13 @@ int mode ;
 	}
 
 	/* find first available id */
-	for(id = 0 ; id < _ncdf; id++)
-		if( _cdfs[id] == NULL) break ;
+	for(cdfid = 0 ; cdfid < _ncdf; cdfid++)
+		if( _cdfs[cdfid] == NULL) break ;
 
 	/* if application attempts to open more files than the current max
 	   allows, increase the current max to the system limit, if it's 
 	   not at the system limit yet */
-	if(id == _ncdf && _ncdf >= max_NC_open)
+	if(cdfid == _ncdf && _ncdf >= max_NC_open)
 	{
 	    /* if the current max already reaches the system limit, fail */
 	    if (max_NC_open == MAX_AVAIL_OPENFILES)
@@ -326,11 +326,11 @@ int mode ;
       }
 
 	(void) strncpy(handle->path, path, FILENAME_MAX) ;
-	_cdfs[id] = handle ;
-	if(id == _ncdf)
+	_cdfs[cdfid] = handle ;
+	if(cdfid == _ncdf)
 		_ncdf++ ;
 	_curr_opened++;
-	return(id) ;
+	return(cdfid) ;
 }
 
 
@@ -363,14 +363,14 @@ int 		mode ;
 }
 
 
-int ncsync(id)
-int id ;
+int ncsync(cdfid)
+int cdfid ;
 {
 	NC *handle ;
 
 	cdf_routine_name = "ncsync" ;
 
-	handle = NC_check_id(id) ; 
+	handle = NC_check_id(cdfid) ; 
 	if(handle == NULL)
 		return(-1) ;
 

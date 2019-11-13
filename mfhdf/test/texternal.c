@@ -787,6 +787,7 @@ void verify_data(int32 sd_id, int32 sds_ind)
 
     /* Allocate buffer for reading, after establishing the data size */
     outdata = (int32 *) HDmalloc(data_size);
+    CHECK(outdata, NULL, "Allocation failed");
 
     /* Read the entire sds and verify that the data is as the original buffer */
     status = SDreaddata(sds_id, start, NULL, edges, (VOIDP) outdata);
@@ -794,16 +795,19 @@ void verify_data(int32 sd_id, int32 sds_ind)
 
     /* Verify that data is correct comparing against the written data */
     {
-    int ii;
-    int32* out;
-    out = &outdata[0];
+        int ii;
+        int32* out;
+        out = &outdata[0];
 
-    for (ii = 0; ii < num_elems; ii++, ptr++, out++)
-    if (*ptr != *out)
-    {
-        fprintf(stderr, "Data read (%d) is different than written (%d) for SDS #%d, name = %s\n", *out, *ptr, sds_ind, name);
+        for (ii = 0; ii < num_elems; ii++, ptr++, out++)
+            if (*ptr != *out)
+            {
+                fprintf(stderr, "Data read (%d) is different than written (%d) for SDS #%d, name = %s\n", *out, *ptr, sds_ind, name);
+            }
     }
-    }
+
+    /* Release resource */
+    HDfree(outdata);
 
     /* Terminate access to the data set, SD interface, and file. */
     status = SDendaccess (sds_id);

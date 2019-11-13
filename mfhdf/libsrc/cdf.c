@@ -113,6 +113,7 @@ NC *handle ;
             /* destroy xdr struct */
             xdr_destroy(handle->xdrs);
             Free(handle->xdrs);
+            handle->xdrs = NULL;
 
 #ifdef HDF
             if(handle->file_type == HDF_FILE) 
@@ -133,6 +134,7 @@ NC *handle ;
 #endif /* HDF */
 
             Free(handle);
+            handle = NULL;
         }
 
 done:
@@ -461,9 +463,12 @@ int mode ;
 	  /* copy filename only up to its length instead of FILENAME_MAX as
 	     used to be */
           HDstrncpy(cdf->path, name, strlen(name)+1);
+          cdf->path[strlen(name)] = '\0';
           break;
       case netCDF_FILE:
           /* Nothing */
+          HDstrncpy(cdf->path, name, strlen(name)+1);
+          cdf->path[strlen(name)] = '\0';
           break;
       case CDF_FILE:
 #ifdef DEBUG
@@ -3678,7 +3683,9 @@ NC_var *vp ;
     case NC_BYTE :
     case NC_CHAR :
         alen /= 4 ;
-        xdr_NC_fnct = xdr_4bytes ;
+         /* xdr_NC_fnct = xdr_4bytes ;
+          *  */ 
+        xdr_NC_fnct = xdr_bytes ;
         break ;
     case NC_SHORT :
         alen /= 4 ;
@@ -3686,10 +3693,16 @@ NC_var *vp ;
         break ;
     case NC_LONG :
         alen /= 4 ;
-#if defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__ 
-        xdr_NC_fnct = xdr_int ;
-#else
+        /* In the portable xdr library, xdr_long resolves to xdrposis_getlong,
+         * which always read 4 bytes; xdr_int will do the same but then cast to
+         * short, thus, mess up the value.  The Mac machines use portable xdr.
+         * This is a temporary solution until the memory issue when using the
+         * system xdr is resolved, and the portable xdr library is no longer needed
+         * -BMR, Nov 11, 2019 */
+#if (defined __APPLE__)
         xdr_NC_fnct = xdr_long ;
+#else
+        xdr_NC_fnct = xdr_int ;
 #endif
         break ;	
     case NC_FLOAT :
