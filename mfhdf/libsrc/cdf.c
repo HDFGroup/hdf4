@@ -328,14 +328,6 @@ int mode ;
 
 	cdf->flags = mode ;
 
-	cdf->xdrs = (XDR *)HDmalloc(sizeof(XDR)) ;
-	if( cdf->xdrs == NULL)
-      {
-          nc_serror("NC_new_cdf: xdrs") ;
-          ret_value = NULL;
-          goto done;
-      } /* else */
-	
 #ifdef HDF
     /*
      * See what type of file we are looking at.
@@ -364,6 +356,15 @@ int mode ;
               printf("Yow!  found a CDF file\n");
 #endif
       }
+
+    /* Delay allocating xdr struct until it is needed */
+	cdf->xdrs = (XDR *)HDmalloc(sizeof(XDR)) ;
+	if( cdf->xdrs == NULL)
+      {
+          nc_serror("NC_new_cdf: xdrs") ;
+          ret_value = NULL;
+          goto done;
+      } /* else */
 
     /*
      * Set up the XDR functions that some of the netCDF old code uses
@@ -435,7 +436,6 @@ int mode ;
                 if((int) Hishdf(name))
                   { /* Need to free allocated structures.
                        This will happen on failure cleanup. */
-                      xdr_destroy(cdf->xdrs) ; /* destroy xdr struct first */
                       ret_value = NULL;
                       goto done;
                   }
@@ -512,13 +512,16 @@ done:
                  These routines only free up allocted memory. */
                 NC_free_xcdf(cdf); /* no point in catching error here */
                 if (cdf->xdrs != NULL)
+                {
+                    xdr_destroy(cdf->xdrs);
                     Free(cdf->xdrs);
+                }
                 Free(cdf) ;
             }
       }
      /* Normal cleanup */
     return ret_value;
-}
+}   /* NC_new_cdf */
 
 
 /* 

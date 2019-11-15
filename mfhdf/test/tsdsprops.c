@@ -107,7 +107,7 @@ test_SDSnames()
 
     /* Allocate buffer to get its name */
     ds_name = (char *)HDmalloc(name_len+1);
-    CHECK(ds_name, NULL, "HDmalloc");
+    CHECK_ALLOC(ds_name, "ds_name", "test_SDSnames");
 
     /* Get information of the first dataset, and verify its name */
     status = SDgetinfo(dset1, ds_name, &rank, dimsizes, &dtype, &nattrs);
@@ -133,7 +133,7 @@ test_SDSnames()
 
     /* Allocate buffer to get its name */
     ds_name = (char *)HDmalloc(name_len+1);
-    CHECK(ds_name, NULL, "HDmalloc");
+    CHECK_ALLOC(ds_name, "ds_name", "test_SDSnames");
 
     /* Get information of the second dataset, and verify its name */
     status = SDgetinfo(dset2, ds_name, &rank, dimsizes, &dtype, &nattrs);
