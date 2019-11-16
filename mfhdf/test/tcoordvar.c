@@ -156,26 +156,27 @@ static intn test_dim1_SDS1(void)
 
     if (n_vars == 1)
     {
-	/* Get index of dataset VAR1_NAME */
-	index = SDnametoindex(file_id, VAR1_NAME);
-	CHECK(index, FAIL, "SDnametoindex");
+	    /* Get index of dataset VAR1_NAME */
+	    index = SDnametoindex(file_id, VAR1_NAME);
+	    CHECK(index, FAIL, "SDnametoindex");
     }
     else
     {
-	/* Get the list of all variables of named VAR1_NAME */
-	var_list = (hdf_varlist_t *)HDmalloc(n_vars * sizeof(hdf_varlist_t));
-	status = SDnametoindices(file_id, VAR1_NAME, var_list);
+	    /* Get the list of all variables of named VAR1_NAME */
+	    var_list = (hdf_varlist_t *)HDmalloc(n_vars * sizeof(hdf_varlist_t));
+	    status = SDnametoindices(file_id, VAR1_NAME, var_list);
 
-	/* In this case, the first variable is a dataset */
-	for (idx = 0; idx < n_vars; idx++)
-	{
-	    if (var_list[idx].var_type == IS_SDSVAR)
+	    /* In this case, the first variable is a dataset */
+	    for (idx = 0; idx < n_vars; idx++)
 	    {
-		index = var_list[idx].var_index;
-		VERIFY(index, 0, "SDnametoindices");
+	        if (var_list[idx].var_type == IS_SDSVAR)
+	        {
+		        index = var_list[idx].var_index;
+		        VERIFY(index, 0, "SDnametoindices");
+	        }
 	    }
-	}
     }
+    HDfree(var_list);
 
     sds_id = SDselect(file_id, index);
     CHECK(sds_id, FAIL, "SDselect");
@@ -595,12 +596,16 @@ static intn test_named_vars(void)
 
     /* There are 3 variables of name COMMON_NAME */
     status = SDgetnumvars_byname(file_id, COMMON_NAME, &n_vars);
-    CHECK(status, FAIL, "SDfileinfo");
-    VERIFY(n_vars, 3, "SDfileinfo");
+    CHECK(status, FAIL, "SDgetnumvars_byname");
+    VERIFY(n_vars, 3, "SDgetnumvars_byname");
 
     allvars = (hdf_varlist_t *)HDmalloc(n_vars * sizeof(hdf_varlist_t));
     status = SDnametoindices(file_id, COMMON_NAME, allvars);
-    CHECK(status, FAIL, "SDfileinfo");
+    CHECK(status, FAIL, "SDnametoindices");
+    VERIFY(allvars[0].var_type, IS_SDSVAR, "SDnametoindices");
+    VERIFY(allvars[1].var_type, IS_SDSVAR, "SDnametoindices");
+    VERIFY(allvars[2].var_type, IS_CRDVAR, "SDnametoindices");
+    HDfree(allvars);
 
     /* Compare file contents with predefined text to verify */
     for (idx = 0; idx < n_datasets; idx++)

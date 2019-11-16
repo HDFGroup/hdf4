@@ -352,6 +352,8 @@ xdrposix_create(xdrs, fd, fmode, op)
 {
 
     biobuf *biop = new_biobuf(fd, fmode) ;
+   /* fprintf(stderr, "xdrposix_create: biop = %p\n", biop);
+ */ 
 #ifdef XDRDEBUG
 fprintf(stderr,"xdrposix_create(): xdrs=%p, fd=%d, fmode=%d, op=%d\n",xdrs,fd,fmode,(int)op);
 fprintf(stderr,"xdrposix_create(): after new_biobuf(), biop=%p\n",biop);
@@ -412,13 +414,18 @@ xdrposix_destroy(xdrs)
 {
     /* flush */
     biobuf *biop = (biobuf *)xdrs->x_private ;
-    if(biop->isdirty)
+    if(biop != NULL)
     {
-        (void) wrbuf(biop) ;
-    }
-    if(biop->fd != -1) 
+        if(biop->isdirty)
+        {
+            (void) wrbuf(biop) ;
+        }
+        if(biop->fd != -1) 
             (void) close(biop->fd) ;
-    free_biobuf(biop);
+   /* fprintf(stderr, "\nxdrposix_destroy: going to free_biobuf\n");
+ */ 
+        free_biobuf(biop);
+    }
 }
 
 static bool_t
@@ -508,30 +515,34 @@ xdrposix_setpos(xdrs, pos)
     ncpos_t pos;
 { 
     biobuf *biop = (biobuf *)xdrs->x_private ;
-    off_t page ;
-    int index ;
-    int nread ;
-    page = pos / BIOBUFSIZ ;
-    index = pos % BIOBUFSIZ ;
-    if(page != biop->page)
+    if(biop != NULL)
     {
-        if(biop->isdirty)
+        off_t page ;
+        int index ;
+        int nread ;
+        page = pos / BIOBUFSIZ ;
+        index = pos % BIOBUFSIZ ;
+        if(page != biop->page)
         {
-            if( wrbuf(biop) < 0)
+            if(biop->isdirty)
+            {
+                if( wrbuf(biop) < 0)
+                    return FALSE ;
+            }
+            if(page != biop->page +1)
+                biop->nwrote = 0 ; /* force seek in rdbuf */
+
+            biop->page = page ;
+
+            nread = rdbuf(biop) ;
+            if(nread < 0 || ((biop->mode & O_RDONLY) && nread < index))
                 return FALSE ;
         }
-        if(page != biop->page +1)
-            biop->nwrote = 0 ; /* force seek in rdbuf */
-
-        biop->page = page ;
-    
-        nread = rdbuf(biop) ;
-        if(nread < 0
-                || ((biop->mode & O_RDONLY) && nread < index))
-            return FALSE ;
+        biop->ptr = biop->base + index ;
+        return TRUE ;
     }
-    biop->ptr = biop->base + index ;
-    return TRUE ;
+    else
+        return FALSE;
 }
 
 /*ARGSUSED*/

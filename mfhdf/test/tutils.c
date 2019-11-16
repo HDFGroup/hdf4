@@ -32,6 +32,7 @@ intn make_datafilename(char* basename, char* testfile, unsigned int size)
     char *tempfile = NULL;
 
     tempfile = (char *) HDmalloc(sizeof(char *) * (size+1));
+    CHECK_ALLOC(tempfile, "tempfile", "make_datafilename");
     HDmemset(tempfile, '\0', size+1);
 
     /* Generate the correct name for the test file, by prepending the source path */
@@ -62,6 +63,7 @@ intn make_datafilename(char* basename, char* testfile, unsigned int size)
 
     /* File name is generated, return it */
     HDstrcpy(testfile, tempfile);
+    HDfree(tempfile);
     return SUCCEED;
 }
 
@@ -86,7 +88,9 @@ int32 make_SDS(int32 sd_id, char* sds_name, int32 type, int32 rank,
     intn  num_errs = 0;    /* number of errors in compression test so far */
 
     start = (int32*)HDmalloc(sizeof(int32) * rank);
+    CHECK_ALLOC(start, "start", "make_SDS");
     edges = (int32*)HDmalloc(sizeof(int32) * rank);
+    CHECK_ALLOC(edges, "edges", "make_SDS");
 
     /* Create the array with the name defined in SDS_NAME */
     sds_id = SDcreate (sd_id, sds_name, type, rank, dim_sizes);
@@ -150,7 +154,9 @@ int32 make_CompSDS(int32 sd_id, char* sds_name, int32 type, int32 rank,
     intn  num_errs = 0;  /* number of errors in compression test so far */
 
     start = (int32*)HDmalloc(sizeof(int32) * rank);
+    CHECK_ALLOC(start, "start", "make_CompSDS");
     edges = (int32*)HDmalloc(sizeof(int32) * rank);
+    CHECK_ALLOC(edges, "edges", "make_CompSDS");
 
     /* Define dimensions of the array to be created */
      /* dim_sizes[0] = Z_LENGTH;
@@ -221,20 +227,16 @@ int32 make_Ext3D_SDS(int32 sd_id, char* sds_name, int32 type, int32 rank,
     intn  num_errs = 0;    /* number of errors in compression test so far */
 
     start = (int32*)HDmalloc(sizeof(int32) * rank);
+    CHECK_ALLOC(start, "start", "make_Ext3D_SDS");
     edges = (int32*)HDmalloc(sizeof(int32) * rank);
+    CHECK_ALLOC(edges, "edges", "make_Ext3D_SDS");
 
     /* Set the parameters start and edges to write */
     for (ii = 0; ii < rank; ii++)
     {
-    start[ii] = 0;
-    edges[ii] = dim_sizes[ii];
+        start[ii] = 0;
+        edges[ii] = dim_sizes[ii];
     }
-
-    /* Define dimensions of the array to be created. */
-     /* dim_sizes[0] = Z_LENGTH;
-    dim_sizes[1] = Y_LENGTH;
-    dim_sizes[2] = X_LENGTH;
- */
 
     /* Create the array with the name defined in SDS_NAME. */
     sds_id = SDcreate (sd_id, sds_name, type, rank, dim_sizes);
