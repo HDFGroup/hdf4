@@ -67,12 +67,12 @@ test_file_inuse()
     {
         /* Create and open the file and initiate the SD interface. */
         sd_id[i] = SDstart(FILE_NAME, DFACC_CREATE);
-    if (i == 0) {
-        CHECK(sd_id[i], FAIL, "SDstart"); } /* 1st SDstart must pass */
-    else {
-        VERIFY(sd_id[i], FAIL, "SDstart"); }
-    /* subsequent SDstart should fail, which causes the following calls
-    to fail as well */
+        if (i == 0) {
+            CHECK(sd_id[i], FAIL, "SDstart"); } /* 1st SDstart must pass */
+        else {
+            VERIFY(sd_id[i], FAIL, "SDstart"); }
+        /* subsequent SDstart should fail, which causes the following calls
+        to fail as well */
 
         /* Define the rank and dimensions of the data sets to be created. */
         rank = 1;
@@ -82,29 +82,29 @@ test_file_inuse()
 
         /* Create the array data set. */
         sds_id[i] = SDcreate(sd_id[i], names[i], DFNT_INT16, rank, dims);
-    if (i == 0) {
-        CHECK(sds_id[i], FAIL, "SDcreate"); } /* 1st SDcreate must pass */
-    else
-        VERIFY(sds_id[i], FAIL, "SDcreate");
+        if (i == 0) {
+            CHECK(sds_id[i], FAIL, "SDcreate"); } /* 1st SDcreate must pass */
+        else
+            VERIFY(sds_id[i], FAIL, "SDcreate");
 
         /* Fill the stored-data array with values. */
         for (j = 0; j < DIM0; j++) {
-                        array_data[j] = (i + 1)*(j + 1);
+            array_data[j] = (i + 1)*(j + 1);
         }
 
-    /* Write data to the data set */
-    statusn = SDwritedata(sds_id[i], start, NULL, edges, (VOIDP)array_data);
-    if (i == 0) {
-        CHECK(statusn, FAIL, "SDwritedata"); } /* 1st SDwritedata must pass */
-    else
-        VERIFY(statusn, FAIL, "SDwritedata");
+        /* Write data to the data set */
+        statusn = SDwritedata(sds_id[i], start, NULL, edges, (VOIDP)array_data);
+        if (i == 0) {
+            CHECK(statusn, FAIL, "SDwritedata"); } /* 1st SDwritedata must pass */
+        else
+            VERIFY(statusn, FAIL, "SDwritedata");
 
         /* Terminate access to the data sets. */
         statusn = SDendaccess(sds_id[i]);
-    if (i == 0) {
-        CHECK(statusn, FAIL, "SDendaccess"); } /* 1st SDendaccess must pass */
-    else
-        VERIFY(statusn, FAIL, "SDendaccess");
+        if (i == 0) {
+            CHECK(statusn, FAIL, "SDendaccess"); } /* 1st SDendaccess must pass */
+        else
+            VERIFY(statusn, FAIL, "SDendaccess");
 
     } /* for i */
 
@@ -112,10 +112,10 @@ test_file_inuse()
     {
         /* Terminate access to the SD interface and close the file. */
         statusn = SDend (sd_id[i]);
-    if (i == 0) {
-        CHECK(statusn, FAIL, "SDend"); } /* 1st SDend must pass */
-    else
-        VERIFY(statusn, FAIL, "SDend");
+        if (i == 0) {
+            CHECK(statusn, FAIL, "SDend"); } /* 1st SDend must pass */
+        else
+            VERIFY(statusn, FAIL, "SDend");
     }
 
     /* Try to open the file, which should exist */
@@ -196,10 +196,10 @@ static int test_max_open_files()
        all should succeed */
     for (index=0; index < NUM_FILES_LOW; index++)
     {
-    /* Create a file */
-    sprintf(filename[index], "file%i", index);
-    fids[index] = SDstart(filename[index], DFACC_CREATE);
-    CHECK(fids[index], FAIL, "test_maxopenfiles: SDstart");
+        /* Create a file */
+        sprintf(filename[index], "file%i", index);
+        fids[index] = SDstart(filename[index], DFACC_CREATE);
+        CHECK(fids[index], FAIL, "test_maxopenfiles: SDstart");
     }
 
     /* Verify that NUM_FILES_LOW files are opened */
@@ -254,8 +254,8 @@ static int test_max_open_files()
     for (index=NUM_FILES_LOW; index < temp_limit; index++)
     {
         /* Create a file */
-    sprintf(filename[index], "file%i", index);
-    fids[index] = SDstart(filename[index], DFACC_CREATE);
+        sprintf(filename[index], "file%i", index);
+        fids[index] = SDstart(filename[index], DFACC_CREATE);
 
         /* if SDstart fails due to "too many open files," then adjust
            temp_limit so that further failure can be prevented, i.e.
@@ -273,32 +273,32 @@ static int test_max_open_files()
        names, this is to test bugzilla 440 */
     for (index=0; index < temp_limit; index++)
     {
-    status = SDend(fids[index]);
-    CHECK(status, FAIL, "test_maxopenfiles: SDend");
+        status = SDend(fids[index]);
+        CHECK(status, FAIL, "test_maxopenfiles: SDend");
 
-    fids[index] = SDstart(filename[index], DFACC_RDWR);
-    CHECK(fids[index], FAIL, "test_maxopenfiles: SDstart");
+        fids[index] = SDstart(filename[index], DFACC_RDWR);
+        CHECK(fids[index], FAIL, "test_maxopenfiles: SDstart");
     }
 
     /* Verify their names */
     for (index=0; index < temp_limit; index++)
     {
-    status = SDgetfilename(fids[index], readfname);
-    CHECK(status, FAIL, "test_maxopenfiles: SDgetfilename");
+        status = SDgetfilename(fids[index], readfname);
+        CHECK(status, FAIL, "test_maxopenfiles: SDgetfilename");
 
-    /* Verify the file name retrieved against the original */
-    if (HDstrcmp(readfname, filename[index]))
-    {
-        fprintf(stderr, "SDgetfilename: incorrect file being opened - expected <%s>, retrieved <%s>\n", filename[index], readfname);
-    }
+        /* Verify the file name retrieved against the original */
+        if (HDstrcmp(readfname, filename[index]))
+        {
+            fprintf(stderr, "SDgetfilename: incorrect file being opened - expected <%s>, retrieved <%s>\n", filename[index], readfname);
+        }
     }
 
     /* Close then remove all the files */
     for (index=0; index < temp_limit; index++)
     {
-    status = SDend(fids[index]);
-    CHECK(status, FAIL, "test_maxopenfiles: SDend");
-    remove(filename[index]);
+        status = SDend(fids[index]);
+        CHECK(status, FAIL, "test_maxopenfiles: SDend");
+        remove(filename[index]);
     }
     return num_errs;
 }

@@ -25,7 +25,7 @@ CONTENTS
 - New features and changes
   -- Configuration
 - Support for new platforms and compilers
-- Bugs fixed since HDF 4.2.13
+- Bugs fixed since HDF 4.2.14
   -- Configuration
   -- Library
   -- Utilities
@@ -95,6 +95,21 @@ Support for new platforms and compilers
 
 Bugs fixed since HDF 4.2.14
 ===========================
+    - netCDF test failed on Mac
+
+      The netCDF test in the hdf4 library had failed either with segfault or
+      incorrect reading data for several Mac machines.  The segfault occurred when
+      using the system XDR functions.  The workaround at this time is to use
+      the portable XDR library on Mac instead of the system XDR.
+
+      (BMR - 2019/11/15, EED-439)
+
+    - Several memory leaks are fixed
+
+      There were memory leaks caused by the allocated xdr structure not released
+      and several missing to free allocated buffers in tests.  These are now fixed.
+
+      (BMR - 2019/11/15)
 
 
 Documentation

@@ -376,7 +376,7 @@ test_vdatavgroups()
 
     /* Allocate sufficient memory to hold the list of user-created vg refs */
     refarray = (uint16 *)HDmalloc(sizeof(uint16) * num_vgroups);
-    CHECK(refarray, NULL, "HDmalloc: no space");
+    CHECK_ALLOC(refarray, "refarray", "test_vdatavgroups");
 
     /* Now, get the user-created vgroup refs */
     status = Vgetvgroups(fid, 0, num_vgroups, refarray);
@@ -393,18 +393,22 @@ test_vdatavgroups()
 	CHECK(status, FAIL, "Vgetnamelen");
 
 	vg_name = (char *)HDmalloc((sizeof(char) * name_len) + 1);
-	CHECK(vg_name, NULL, "HDmalloc: no space");
+	CHECK_ALLOC(vg_name, "vg_name", "test_vdatavgroups");
 
 	status = Vgetname(vgroup_id, vg_name);
 	CHECK(status, FAIL, "Vgetname");
-
 	VERIFY_CHAR(vg_name, check_vg_names[ii], "");
 
 	if (strncmp(vg_name, check_vg_names[ii], name_len) != 0)
 	    fprintf(stderr, "vg %d: name is %s, should be %s\n", ii, vg_name, check_vg_names[ii]);
+
+    /* Release resource */
+    HDfree(vg_name);
 	status = Vdetach(vgroup_id);
 	CHECK(status, FAIL, "Vdetach");
     }
+    /* Release resource */
+    HDfree(refarray);
 
     /* Get the number of user-created vdatas */
     num_vdatas = VSgetvdatas(fid, 0, 0, NULL);
@@ -413,7 +417,7 @@ test_vdatavgroups()
 
     /* Allocate sufficient memory to hold the list of user-created vd refs */
     refarray = (uint16 *)HDmalloc(sizeof(uint16) * num_vdatas);
-    CHECK(refarray, NULL, "HDmalloc: no space");
+    CHECK_ALLOC(refarray, "refarray", "test_vdatavgroups");
 
     /* Now, get the user-created vdata refs */
     status = VSgetvdatas(fid, 0, num_vdatas, refarray);
@@ -436,6 +440,8 @@ test_vdatavgroups()
 	status = VSdetach(vdata_id);
 	CHECK(status, FAIL, "VSdetach");
     }
+    /* Release resource */
+    HDfree(refarray);
 
     /* Terminate access to the Vxxx interface and close the file */
     status = Vend(fid);

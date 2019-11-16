@@ -306,24 +306,24 @@ int mode ;
 
 	handle = NC_new_cdf(path, mode) ;
 	if( handle == NULL)
-        {
+    {
 	  /* if the failure was due to "too many open files," simply return */
-          if(errno == EMFILE)
-          {
-              nc_serror("maximum number of open files allowed has been reached\"%s\"", path) ;
-              return(-1);
-          }
+        if(errno == EMFILE)
+        {
+            nc_serror("maximum number of open files allowed has been reached\"%s\"", path) ;
+            return(-1);
+        }
 
-          if((mode & 0x0f) == NC_CLOBBER)
-            {
+        if((mode & 0x0f) == NC_CLOBBER)
+        {
 		/* only attempt to remove the file if it's not currently 
 		   in use - bugzilla #376 */
-		if(!HPisfile_in_use(path))
-                    if( remove(path) != 0 )
-                	nc_serror("couldn't remove filename \"%s\"", path) ;
-            }
-          return(-1) ;
-      }
+            if(!HPisfile_in_use(path))
+                if( remove(path) != 0 )
+                    nc_serror("couldn't remove filename \"%s\"", path) ;
+        }
+        return(-1) ;
+    }
 
 	(void) strncpy(handle->path, path, FILENAME_MAX) ;
 	_cdfs[cdfid] = handle ;
@@ -331,7 +331,7 @@ int mode ;
 		_ncdf++ ;
 	_curr_opened++;
 	return(cdfid) ;
-}
+}   /* NC_open */
 
 
 int nccreate(path, cmode)
