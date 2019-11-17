@@ -38,6 +38,14 @@ New features and changes
 ========================
     Configuration:
     -------------
+    - Update CMake for VS2019 support
+
+      CMake added support for VS2019 in version 3.15. Changes to the CMake
+      generator setting required changes to scripts. Also updated version
+      references in CMake files as necessary.
+
+      (ADB - 2019/11/18, HDFFR-1581)
+
     - Update CMake tests to use FIXTURES
 
       CMake test fixtures allow setup/cleanup tests and other dependency
@@ -91,6 +99,8 @@ New features and changes
 
 Support for new platforms and compilers
 =======================================
+
+    - CMake added support for VS2019 in version 3.15. Updated scripts.
 
 
 Bugs fixed since HDF 4.2.14
@@ -147,21 +157,15 @@ This version has been tested in the following platforms:
    SunOS 5.11 (32- and 64-bit)       Sun C 5.12 SunOS_sparc 2011/11/16
    11.1, sparc, sun4v (emu)          Sun Fortran 95 8.6 SunOS_sparc 2011/11/16
 
-    Windows 7                     Visual Studio 2012 w/ Intel Fortran 15 (cmake)
-                                  Visual Studio 2013 w/ Intel Fortran 15 (cmake)
-                                  Visual Studio 2015 w/ Intel Fortran 16 (cmake)
+    Windows 7                        Visual Studio 2015 w/ Intel Fortran 2018 (cmake)
 
-    Windows 7 x64                 Visual Studio 2012 w/ Intel Fortran 15 (cmake)
-                                  Visual Studio 2013 w/ Intel Fortran 15 (cmake)
-                                  Visual Studio 2015 w/ Intel Fortran 16 (cmake)
-                                  Visual Studio 2015 w/ Intel C, Fortran 2017 (cmake)
+    Windows 7 x64                    Visual Studio 2015 w/ Intel C, Fortran 2018 (cmake)
 
-    Windows 10                    Visual Studio 2015 w/ Intel Fortran 16 (cmake)
-                                  Cygwin(CYGWIN_NT-6.1 2.8.0(0.309/5/3)
-                                      gcc and gfortran compilers (GCC 5.4.0)
-                                      (cmake and autotools)
+    Windows 10                       Visual Studio 2015 w/ Intel C, Fortran 2018 (cmake)
 
-    Windows 10 x64                Visual Studio 2015 w/ Intel Fortran 16 (cmake)
+    Windows 10 x64                   Visual Studio 2015 w/ Intel C, Fortran 2018 (cmake)
+                                     Visual Studio 2017 w/ Intel C, Fortran 2019 (cmake)
+                                     Visual Studio 2019 w/ Intel C, Fortran 2019 (cmake)
 
 
    Mac OS X 10.10.5, Darwin, 14.5.0  Apple clang version 6.1 from Xcode 7.0
@@ -176,20 +180,9 @@ This version has been tested in the following platforms:
    16.6.0, x86_64                    gfortran GNU Fortran (GCC) 7.1.0
    (kite)                            Intel icc and ifort version 17.0.2
 
-   Debian 8.6.0 3.16.0-4-amd64
-   #1 SMP Debian 3.16.43-2, x86_64 GNU/Linux
-                                     gcc (Debian 4.9.2-10) 4.9.2
-                                     GNU Fortran (Debian 4.9.2-10) 4.9.2
-                                     (cmake and autotools)
-
-   Fedora24 4.7.2-201.fc24.x86_64
-   #1 SMP x86_64  GNU/Linux          gcc (GCC) 6.1.1 20160621 (Red Hat 6.1.1-3)
-                                     GNU Fortran (GCC) 6.1.1 20160621 (Red Hat 6.1.1-3)
-                                     (cmake and autotools)
-
-   Ubuntu 16.04.1 4.4.0-38-generic
-   #57-Ubuntu SMP x86_64 GNU/Linux   gcc (Ubuntu 5.4.0-6ubuntu16.04.4) 5.4.0
-                                     GNU Fortran (Ubuntu 5.4.0-6ubuntu16.04.4) 5.4.0
+   Fedora30 5.3.11-200.fc30.x86_64
+   #1 SMP x86_64  GNU/Linux          gcc (GCC) 9.2.1 20190827 (Red Hat 9.2.1 20190827)
+                                     GNU Fortran (GCC) 9.2.1 20190827 (Red Hat 9.2.1 20190827)
                                      (cmake and autotools)
 
 

@@ -1,3 +1,4 @@
+# CTestCustom.cmake
 set (CTEST_CUSTOM_MAXIMUM_NUMBER_OF_WARNINGS 1500)
 
 set (CTEST_CUSTOM_WARNING_EXCEPTION
@@ -9,8 +10,8 @@ set (CTEST_CUSTOM_WARNING_EXCEPTION
     "disabling jobserver mode"
     "config.cmake.xlatefile.c"
 )
- 
- 
+
+
 set (CTEST_CUSTOM_MEMCHECK_IGNORE
     ${CTEST_CUSTOM_MEMCHECK_IGNORE}
     hdfpack-clear-refs
@@ -95,7 +96,7 @@ set (CTEST_CUSTOM_MEMCHECK_IGNORE
     HDF_FORTRAN-clearall-objects
     hdfgif-clear-refs
     ncdump-clearall-objects
-    NC_TEST-clearall-objects                            
+    NC_TEST-clearall-objects
     HEDIT-hdfed.input1
     HEDIT-ristosds.input1
 )
