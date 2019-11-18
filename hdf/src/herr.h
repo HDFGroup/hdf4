@@ -60,6 +60,14 @@
 #define HGOTO_ERROR(err, ret_val) {HERROR(err); ret_value = ret_val; \
                                    goto done;}
 
+/* HGOTO_FAIL macro, used to facilitate error reporting.  This one
+   is added in 2019 to tidy the code.  It is similar to HGOTO_ERROR,
+   except it does not call HERROR.  This is to preserve the exact
+   behavior as the original code. */
+
+#define HGOTO_FAIL(ret_val) {ret_value = ret_val; \
+                      goto done;}
+
 /* HCLOSE_RETURN_ERROR macro, used to facilitate error reporting.  Makes
    same assumptions as HRETURN_ERROR.  IN ADDITION, this macro causes
    the file specified by the id "fid" to be closed 
