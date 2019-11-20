@@ -99,3 +99,80 @@ endif ()
 if (CMAKE_COMPILER_IS_GNUCXX AND CMAKE_CXX_COMPILER_LOADED)
   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fmessage-length=0")
 endif ()
+
+#-----------------------------------------------------------------------------
+# Option for --enable-asserts
+# By default, CMake adds NDEBUG to CMAKE_${lang}_FLAGS for Release build types
+# This option will force/override the default setting for all configurations
+#-----------------------------------------------------------------------------
+#option (HDF4_ENABLE_ASSERTS "Determines whether NDEBUG is defined to control assertions." OFF)
+set (HDF4_ENABLE_ASSERTS "OFF" CACHE STRING "Determines whether NDEBUG is defined to control assertions (OFF NO YES)")
+set_property (CACHE HDF4_ENABLE_ASSERTS PROPERTY STRINGS OFF NO YES)
+if (HDF4_ENABLE_ASSERTS MATCHES "YES")
+  add_compile_options ("-UNDEBUG")
+elseif (HDF4_ENABLE_ASSERTS MATCHES "NO")
+  add_compile_options ("-DNDEBUG")
+endif ()
+MARK_AS_ADVANCED (HDF4_ENABLE_ASSERTS)
+
+#-----------------------------------------------------------------------------
+# Option for --enable-symbols
+# This option will force/override the default setting for all configurations
+#-----------------------------------------------------------------------------
+#option (HDF4_ENABLE_SYMBOLS "Add debug symbols to the library independent of the build mode and optimization level." OFF)
+set (HDF4_ENABLE_SYMBOLS "OFF" CACHE STRING "Add debug symbols to the library independent of the build mode and optimization level (OFF NO YES)")
+set_property (CACHE HDF4_ENABLE_SYMBOLS PROPERTY STRINGS OFF NO YES)
+if (HDF4_ENABLE_SYMBOLS MATCHES "YES")
+  if (CMAKE_C_COMPILER_ID STREQUAL "Intel")
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
+  elseif (CMAKE_C_COMPILER_ID STREQUAL "GNU")
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -fno-omit-frame-pointer")
+  endif ()
+  if(CMAKE_CXX_COMPILER_LOADED)
+    if (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+      set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+    elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+      set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+    endif ()
+  endif ()
+elseif (HDF4_ENABLE_SYMBOLS MATCHES "NO")
+  if (CMAKE_C_COMPILER_ID STREQUAL "Intel")
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-s")
+  elseif (CMAKE_C_COMPILER_ID STREQUAL "GNU")
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -s")
+  endif ()
+  if(CMAKE_CXX_COMPILER_LOADED)
+    if (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+      set (CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -Wl,-s")
+    elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+      set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s")
+    endif ()
+  endif ()
+endif ()
+MARK_AS_ADVANCED (HDF4_ENABLE_SYMBOLS)
+
+#-----------------------------------------------------------------------------
+# Option for --enable-profiling
+# This option will force/override the default setting for all configurations
+#-----------------------------------------------------------------------------
+option (HDF4_ENABLE_PROFILING "Enable profiling flags independently from the build mode." OFF)
+if (HDF4_ENABLE_PROFILING)
+  set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${PROFILE_CFLAGS}")
+  if(CMAKE_CXX_COMPILER_LOADED)
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${PROFILE_CXXFLAGS}")
+  endif ()
+endif ()
+MARK_AS_ADVANCED (HDF4_ENABLE_PROFILING)
+
+#-----------------------------------------------------------------------------
+# Option for --enable-optimization
+# This option will force/override the default setting for all configurations
+#-----------------------------------------------------------------------------
+option (HDF4_ENABLE_OPTIMIZATION "Enable optimization flags/settings independently from the build mode" OFF)
+if (HDF4_ENABLE_OPTIMIZATION)
+  set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OPTIMIZE_CFLAGS}")
+  if(CMAKE_CXX_COMPILER_LOADED)
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OPTIMIZE_CXXFLAGS}")
+  endif ()
+endif ()
+MARK_AS_ADVANCED (HDF4_ENABLE_OPTIMIZATION)

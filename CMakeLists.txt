@@ -501,8 +501,10 @@ if (BUILD_TESTING)
   enable_testing ()
   include (CTest)
 
-  include (${HDF4_SOURCE_DIR}/CTestConfig.cmake)
-  configure_file (${HDF_RESOURCES_DIR}/CTestCustom.cmake ${HDF4_BINARY_DIR}/CTestCustom.ctest @ONLY)
+  if (NOT EXISTS "${HDF4_BINARY_DIR}/CTestCustom.ctest")
+    include (${HDF4_SOURCE_DIR}/CTestConfig.cmake)
+    configure_file (${HDF_RESOURCES_DIR}/CTestCustom.cmake ${HDF4_BINARY_DIR}/CTestCustom.ctest @ONLY)
+  endif ()
 
   if (NOT HDF4_EXTERNALLY_CONFIGURED)
     if (EXISTS "${HDF4_SOURCE_DIR}/hdf/test" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/hdf/test")

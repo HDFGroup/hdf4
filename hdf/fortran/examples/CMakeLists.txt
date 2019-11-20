@@ -10,8 +10,8 @@ project (HDF4_HDF_FORTRAN_EXAMPLES C Fortran)
 #-----------------------------------------------------------------------------
 if (CMAKE_Fortran_COMPILER MATCHES ifort)
   if (WIN32)
-    set (CMAKE_Fortran_FLAGS_DEBUG "/debug:full /dbglibs " CACHE "flags" STRING FORCE)
-    set (CMAKE_EXE_LINKER_FLAGS_DEBUG "/DEBUG" CACHE "flags" STRING FORCE)
+    set (CMAKE_Fortran_FLAGS_DEBUG "/debug:full /dbglibs " CACHE STRING "flags" FORCE)
+    set (CMAKE_EXE_LINKER_FLAGS_DEBUG "/DEBUG" CACHE STRING "flags" FORCE)
   endif ()
 endif ()
 
