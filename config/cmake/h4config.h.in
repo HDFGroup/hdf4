@@ -47,6 +47,9 @@
 /* Define if we support HDF NetCDF APIs version 2.3.2 */
 #cmakedefine H4_HAVE_NETCDF @H4_HAVE_NETCDF@
 
+/* Define to 1 if you have the <stddef.h> header file. */
+#cmakedefine H4_HAVE_STDDEF_H @H4_HAVE_STDDEF_H@
+
 /* Define to 1 if you have the <stdint.h> header file. */
 #cmakedefine H4_HAVE_STDINT_H @H4_HAVE_STDINT_H@
 
@@ -64,6 +67,9 @@
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #cmakedefine H4_HAVE_SYS_STAT_H @H4_HAVE_SYS_STAT_H@
+
+/* Define to 1 if you have the <sys/time.h> header file. */
+#cmakedefine H4_HAVE_SYS_TIME_H @H4_HAVE_SYS_TIME_H@
 
 /* Define to 1 if you have the <sys/types.h> header file. */
 #cmakedefine H4_HAVE_SYS_TYPES_H @H4_HAVE_SYS_TYPES_H@
@@ -133,5 +139,31 @@
 
 /* This define is set in the root CMakeLists.txt file to the correct construction. */
 #define @H4_HDSETVBUF@
+
+/* xdr specific defines */
+
+/* Define to 1 if you have the <netinet/in.h> header file. */
+#cmakedefine H4_HAVE_NETINET_H @H4_HAVE_NETINET_H@
+
+/* Define to 1 if you have the <arpa/inet.h> header file. */
+#cmakedefine H4_HAVE_INET_H @H4_HAVE_INET_H@
+
+/* Define to 1 if you have the <sys/param.h> header file. */
+#cmakedefine H4_HAVE_PARAM_H @H4_HAVE_PARAM_H@
+
+/* Define to 1 if you have the `ntohl' function. */
+#cmakedefine H4_HAVE_NTOHL @H4_HAVE_NTOHL@
+
+/* Define to 1 if you have the `htonl' function. */
+#cmakedefine H4_HAVE_HTONL @H4_HAVE_HTONL@
+
+/* Define to 1 if you have the `ntohs' function. */
+#cmakedefine H4_HAVE_NTOHS @H4_HAVE_NTOHS@
+
+/* Define to 1 if you have the `htons' function. */
+#cmakedefine H4_HAVE_HTONS @H4_HAVE_HTONS@
+
+/* Define to 1 if you don't have `vprintf' but do have `_doprnt.' */
+#cmakedefine H4_HAVE_DOPRNT @H4_HAVE_DOPRNT@
 
 #endif

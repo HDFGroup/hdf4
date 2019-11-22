@@ -1,7 +1,9 @@
-/* @(#)xdr_stdio.c  1.1 87/11/04 3.9 RPCSRC */
+/* @(#)xdr_stdio.c    2.1 88/07/29 4.0 RPCSRC */
 #if !defined(lint) && defined(SCCSIDS)
 static char sccsid[] = "@(#)xdr_stdio.c 1.16 87/08/11 Copyr 1984 Sun Micro";
 #endif
+
+#include "H4api_adpt.h"
 
 /*
  * xdr_stdio.c, XDR implementation on standard i/o file.
@@ -14,29 +16,32 @@ static char sccsid[] = "@(#)xdr_stdio.c 1.16 87/08/11 Copyr 1984 Sun Micro";
  */
 
 #include <stdio.h>
-#include "types.h"
-#if !(defined MSDOS || defined WINNT || defined _WIN32 || defined __MINGW32__)
-#        include <netinet/in.h>     /* for htonl() */
-#else
-#     if !(defined WINNT) & !defined _WIN32 & !defined __MINGW32__
-           extern long ntohl(long i_in);
-           extern long htonl(long i_in);
-           extern short ntohs(short i_in);
-           extern short htons(short i_in);
-#      else
-#          include <winsock.h>
-#      endif /* WINNT */
+
+#ifdef H4_HAVE_ARPA_INET_H
+#include <arpa/inet.h>
 #endif
+
+#ifdef H4_HAVE_NETINET_H
+#  include <netinet/in.h>     /* for htonl() */
+#else
+#  ifdef H4_HAVE_WINSOCK2_H
+#    include <winsock2.h>
+#  endif
+#endif
+
+#include "types.h"
 #include "xdr.h"
 
-static bool_t   xdrstdio_getlong(XDR *, long *);
-static bool_t   xdrstdio_putlong(XDR *, long *);
-static bool_t   xdrstdio_getbytes(XDR *, caddr_t, u_int );
-static bool_t   xdrstdio_putbytes(XDR *, caddr_t, u_int );
-static u_long   xdrstdio_getpos(XDR *);
-static bool_t   xdrstdio_setpos(XDR *, u_long);
-static long *   xdrstdio_inline(XDR *, u_int);
-static void xdrstdio_destroy(XDR *);
+#include "byteordr.h"
+
+static bool_t   xdrstdio_getlong();
+static bool_t   xdrstdio_putlong();
+static bool_t   xdrstdio_getbytes();
+static bool_t   xdrstdio_putbytes();
+static u_int    xdrstdio_getpos();
+static bool_t   xdrstdio_setpos();
+static int32_t *xdrstdio_inline();
+static void     xdrstdio_destroy();
 
 /*
  * Ops vector for stdio type XDR
@@ -63,7 +68,6 @@ xdrstdio_create(xdrs, file, op)
     FILE *file;
     enum xdr_op op;
 {
-
     xdrs->x_op = op;
     xdrs->x_ops = &xdrstdio_ops;
     xdrs->x_private = (caddr_t)file;
@@ -89,7 +93,7 @@ xdrstdio_getlong(xdrs, lp)
     register long *lp;
 {
     if (fread((caddr_t)lp, sizeof(long), 1, (FILE *)xdrs->x_private) != 1)
-	return (FALSE);
+    return (FALSE);
 
 #ifndef mc68000
     *lp = ntohl(*lp);
@@ -109,7 +113,7 @@ xdrstdio_putlong(xdrs, lp)
 #endif
 
     if (fwrite((caddr_t)lp, sizeof(long), 1, (FILE *)xdrs->x_private) != 1)
-	return (FALSE);
+    return (FALSE);
 
     return (TRUE);
 }
@@ -138,26 +142,25 @@ xdrstdio_putbytes(xdrs, addr, len)
     return (TRUE);
 }
 
-static u_long
+static u_int
 xdrstdio_getpos(xdrs)
     XDR *xdrs;
 {
 
-    return ((u_long)ftell((FILE *)xdrs->x_private));
+    return ((u_int) ftell((FILE *)xdrs->x_private));
 }
 
 static bool_t
-xdrstdio_setpos(xdrs, pos) 
+xdrstdio_setpos(xdrs, pos)
     XDR *xdrs;
-    u_long pos;
-{ 
+    u_int pos;
+{
 
     return ((fseek((FILE *)xdrs->x_private,(long)pos, 0) < 0) ?
         FALSE : TRUE);
 }
 
-/*ARGSUSED*/
-static long *
+static int32_t *
 xdrstdio_inline(xdrs, len)
     XDR *xdrs;
     u_int len;

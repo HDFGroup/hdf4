@@ -1084,7 +1084,7 @@
 ./mfhdf/xdr/Makefile.in
 ./mfhdf/xdr/NOTICE.h
 ./mfhdf/xdr/README
-./mfhdf/xdr/byteordr.c
+./mfhdf/xdr/byteordr.h
 ./mfhdf/xdr/depend
 ./mfhdf/xdr/htonl.mar
 ./mfhdf/xdr/msoft.mk
