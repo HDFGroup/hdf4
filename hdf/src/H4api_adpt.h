@@ -38,7 +38,7 @@
 
 #if defined(hdf_shared_EXPORTS)
   #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC Compiler Case */
-    #define HDFERRPUBLIC __declspec(dllimport)
+    #define HDFERRPUBLIC extern __declspec(dllimport)
     #define HDFPUBLIC __declspec(dllexport)
     #define HDFLIBAPI extern __declspec(dllexport)
     #define HDFFCLIBAPI extern __declspec(dllimport)
