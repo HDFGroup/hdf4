@@ -37,10 +37,11 @@
 #include <assert.h>
 #endif
 
-#include <types.h>
 #ifndef    NO_SYS_XDR_INC
+#include <types.h>
 #include <xdr.h>
 #else
+#include "types.h"
 #include "xdr.h"
 #endif
 
