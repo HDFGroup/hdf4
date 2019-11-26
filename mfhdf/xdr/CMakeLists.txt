@@ -8,7 +8,6 @@ set (HDF4_MFHDF_XDR_SRCS
     ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdr_array.c
     ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdr_mem.c
     ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdr_reference.c
-    ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdr_intXX_t.c
     ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdr_rec.c
 )
 

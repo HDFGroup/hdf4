@@ -84,212 +84,29 @@ xdr_void(/* xdrs, addr */)
     /* XDR *xdrs; */
     /* caddr_t addr; */
 {
-    return (TRUE);
-}
-
-/*
- * XDR integers
- */
-bool_t
-xdr_int(xdrs, ip)
-    XDR *xdrs;
-    int *ip;
-{
-#ifdef lint
-    (void) (xdr_short(xdrs, (short *)ip));
-    return (xdr_long(xdrs, (long *)ip));
-#else
-    if (sizeof (int) == sizeof (long)) {
-        return (xdr_long(xdrs, (long *)ip));
-    } else {
-        return (xdr_short(xdrs, (short *)ip));
-    }
-#endif
-}
-
-/*
- * XDR unsigned integers
- */
-bool_t
-xdr_u_int(xdrs, up)
-    XDR *xdrs;
-    u_int *up;
-{
-
-#ifdef lint
-    (void) (xdr_u_short(xdrs, (u_short *)up));
-    return (xdr_u_long(xdrs, (u_long *)up));
-#else
-    if (sizeof (u_int) == sizeof (u_long)) {
-        return (xdr_u_long(xdrs, (u_long *)up));
-    } else {
-        return (xdr_u_short(xdrs, (u_short *)up));
-    }
-#endif
-}
-
-/*
- * XDR long integers
- * same as xdr_u_long - open coded to save a proc call!
- */
-bool_t
-xdr_long(xdrs, lp)
-    register XDR *xdrs;
-    long *lp;
-{
-
-    if (xdrs->x_op == XDR_ENCODE)
-        return (XDR_PUTLONG(xdrs, lp));
-
-    if (xdrs->x_op == XDR_DECODE)
-        return (XDR_GETLONG(xdrs, lp));
-
-    if (xdrs->x_op == XDR_FREE)
-        return (TRUE);
-
-    return (FALSE);
-}
-
-/*
- * XDR unsigned long integers
- * same as xdr_long - open coded to save a proc call!
- */
-bool_t
-xdr_u_long(xdrs, ulp)
-    register XDR *xdrs;
-    u_long *ulp;
-{
-
-    if (xdrs->x_op == XDR_DECODE)
-        return (XDR_GETLONG(xdrs, (long *)ulp));
-    if (xdrs->x_op == XDR_ENCODE)
-        return (XDR_PUTLONG(xdrs, (long *)ulp));
-    if (xdrs->x_op == XDR_FREE)
-        return (TRUE);
-    return (FALSE);
-}
-
-/*
- * XDR short integers
- */
-bool_t
-xdr_short(xdrs, sp)
-    register XDR *xdrs;
-    short *sp;
-{
-    long l;
-
-    switch (xdrs->x_op) {
-
-    case XDR_ENCODE:
-        l = (long) *sp;
-        return (XDR_PUTLONG(xdrs, &l));
-
-    case XDR_DECODE:
-        if (!XDR_GETLONG(xdrs, &l)) {
-            return (FALSE);
-        }
-        *sp = (short) l;
-        return (TRUE);
-
-    case XDR_FREE:
-        return (TRUE);
-    }
-    return (FALSE);
-}
-
-/*
- * XDR unsigned short integers
- */
-bool_t
-xdr_u_short(xdrs, usp)
-    register XDR *xdrs;
-    u_short *usp;
-{
-    u_long l;
-
-    switch (xdrs->x_op) {
-
-    case XDR_ENCODE:
-        l = (u_long) *usp;
-        return (XDR_PUTLONG(xdrs, &l));
-
-    case XDR_DECODE:
-        if (!XDR_GETLONG(xdrs, &l)) {
-            return (FALSE);
-        }
-        *usp = (u_short) l;
-        return (TRUE);
-
-    case XDR_FREE:
-        return (TRUE);
-    }
-    return (FALSE);
-}
-
-
-/*
- * XDR a char
- */
-bool_t
-xdr_char(xdrs, cp)
-    XDR *xdrs;
-    char *cp;
-{
-    int i;
-
-    i = (*cp);
-    if (!xdr_int(xdrs, &i)) {
-        return (FALSE);
-    }
-    *cp = i;
-    return (TRUE);
-}
-
-/*
- * XDR an unsigned char
- */
-bool_t
-xdr_u_char(xdrs, cp)
-    XDR *xdrs;
-    u_char *cp;
-{
-    u_int u;
-
-    u = (*cp);
-    if (!xdr_u_int(xdrs, &u)) {
-        return (FALSE);
-    }
-    *cp = u;
-    return (TRUE);
+    return TRUE;
 }
 
 /*
  * XDR booleans
  */
 bool_t
-xdr_bool(xdrs, bp)
-    register XDR *xdrs;
-    bool_t *bp;
+xdr_bool (XDR *xdrs, bool_t *p)
 {
-    long lb;
-
-    switch (xdrs->x_op) {
-    case XDR_ENCODE:
-        lb = *bp ? XDR_TRUE : XDR_FALSE;
-        return (XDR_PUTLONG(xdrs, &lb));
-
-    case XDR_DECODE:
-        if (!XDR_GETLONG(xdrs, &lb)) {
-            return (FALSE);
-        }
-        *bp = (lb == XDR_FALSE) ? FALSE : TRUE;
-        return (TRUE);
-
-    case XDR_FREE:
-        return (TRUE);
-    }
-    return (FALSE);
+  int32_t i;
+  switch (xdrs->x_op) {
+  case XDR_ENCODE:
+    i = *p ? TRUE : FALSE;
+    return xdr_putlong (xdrs, &i);
+  case XDR_DECODE:
+    if (!xdr_getlong (xdrs, &i)) return FALSE;
+    *p = i ? TRUE : FALSE;
+    return TRUE;
+  case XDR_FREE:
+    return TRUE;
+  default:
+    return FALSE;
+  }
 }
 
 /*
@@ -410,6 +227,177 @@ xdr_bytes(xdrs, cpp, sizep, maxsize)
         return (TRUE);
     }
     return (FALSE);
+}
+
+/* XDR 64bit integers */
+bool_t
+xdr_int64_t (XDR *xdrs, int64_t *ip)
+{
+    int32_t t1, t2;
+
+    switch (xdrs->x_op) {
+    case XDR_ENCODE:
+        t1 = (int32_t) ((*ip) >> 32);
+        t2 = (int32_t) (*ip);
+        return (XDR_PUTINT32(xdrs, &t1) && XDR_PUTINT32(xdrs, &t2));
+    case XDR_DECODE:
+        if (!XDR_GETINT32(xdrs, &t1) || !XDR_GETINT32(xdrs, &t2))
+            return FALSE;
+        *ip = ((int64_t) t1) << 32;
+        *ip |= (uint32_t) t2;    /* Avoid sign extension.  */
+        return TRUE;
+    case XDR_FREE:
+        return TRUE;
+    default:
+        return FALSE;
+    }
+}
+
+/* XDR 64bit unsigned integers */
+bool_t
+xdr_uint64_t (XDR *xdrs, uint64_t *uip)
+{
+    uint32_t t1;
+    uint32_t t2;
+
+    switch (xdrs->x_op) {
+    case XDR_ENCODE:
+        t1 = (uint32_t) ((*uip) >> 32);
+        t2 = (uint32_t) (*uip);
+        return (XDR_PUTINT32 (xdrs, (int32_t *) &t1) &&
+                XDR_PUTINT32(xdrs, (int32_t *) &t2));
+    case XDR_DECODE:
+        if (!XDR_GETINT32(xdrs, (int32_t *) &t1) ||
+                !XDR_GETINT32(xdrs, (int32_t *) &t2))
+            return FALSE;
+        *uip = ((uint64_t) t1) << 32;
+        *uip |= t2;
+        return TRUE;
+    case XDR_FREE:
+        return TRUE;
+    default:
+        return FALSE;
+    }
+}
+
+/* XDR 32bit integers */
+bool_t
+xdr_int32_t (XDR *xdrs, int32_t *lp)
+{
+    switch (xdrs->x_op) {
+    case XDR_ENCODE:
+        return XDR_PUTINT32 (xdrs, lp);
+    case XDR_DECODE:
+        return XDR_GETINT32 (xdrs, lp);
+    case XDR_FREE:
+        return TRUE;
+    default:
+        return FALSE;
+    }
+}
+
+/* XDR 32bit unsigned integers */
+bool_t
+xdr_uint32_t (XDR *xdrs, uint32_t *ulp)
+{
+    switch (xdrs->x_op) {
+    case XDR_ENCODE:
+        return XDR_PUTINT32 (xdrs, (int32_t *) ulp);
+    case XDR_DECODE:
+        return XDR_GETINT32 (xdrs, (int32_t *) ulp);
+    case XDR_FREE:
+        return TRUE;
+    default:
+        return FALSE;
+    }
+}
+
+/* XDR 16bit integers */
+bool_t
+xdr_int16_t (XDR *xdrs, int16_t *ip)
+{
+    int32_t t;
+
+    switch (xdrs->x_op) {
+    case XDR_ENCODE:
+        t = (int32_t) *ip;
+        return XDR_PUTINT32 (xdrs, &t);
+    case XDR_DECODE:
+        if (!XDR_GETINT32 (xdrs, &t))
+            return FALSE;
+        *ip = (int16_t) t;
+        return TRUE;
+    case XDR_FREE:
+        return TRUE;
+    default:
+        return FALSE;
+    }
+}
+
+/* XDR 16bit unsigned integers */
+bool_t
+xdr_uint16_t (XDR *xdrs, uint16_t *uip)
+{
+    uint32_t ut;
+
+    switch (xdrs->x_op) {
+    case XDR_ENCODE:
+        ut = (uint32_t) *uip;
+        return XDR_PUTINT32 (xdrs, (int32_t *) &ut);
+    case XDR_DECODE:
+        if (!XDR_GETINT32 (xdrs, (int32_t *) &ut))
+            return FALSE;
+        *uip = (uint16_t) ut;
+        return TRUE;
+    case XDR_FREE:
+        return TRUE;
+    default:
+        return FALSE;
+    }
+}
+
+/* XDR 8bit integers */
+bool_t
+xdr_int8_t (XDR *xdrs, int8_t *ip)
+{
+    uint32_t ut;
+
+    switch (xdrs->x_op) {
+    case XDR_ENCODE:
+        ut = (uint32_t) *ip;
+        return XDR_PUTINT32 (xdrs, (int32_t *) &ut);
+    case XDR_DECODE:
+        if (!XDR_GETINT32 (xdrs, (int32_t *) &ut))
+            return FALSE;
+        *ip = (int8_t) ut;
+        return TRUE;
+    case XDR_FREE:
+        return TRUE;
+    default:
+        return FALSE;
+    }
+}
+
+/* XDR 8bit unsigned integers */
+bool_t
+xdr_uint8_t (XDR *xdrs, uint8_t *uip)
+{
+  long ut;
+
+  switch (xdrs->x_op) {
+    case XDR_ENCODE:
+      ut = (uint32_t) *uip;
+      return XDR_PUTINT32 (xdrs, &ut);
+    case XDR_DECODE:
+      if (!XDR_GETINT32 (xdrs, &ut))
+    return FALSE;
+      *uip = (uint8_t) ut;
+      return TRUE;
+    case XDR_FREE:
+      return TRUE;
+    default:
+      return FALSE;
+    }
 }
 
 /*
