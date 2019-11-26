@@ -17,8 +17,8 @@
 #define FALSE 0
 #endif
 
-#define    bool_t    int
-#define    enum_t    int
+#define    bool_t    int32_t
+#define    enum_t    int32_t
 
 #define __dontcare__    -1
 

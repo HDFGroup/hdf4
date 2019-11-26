@@ -157,6 +157,11 @@ typedef    bool_t (*xdrproc_t)(XDR *, ...);
     if ((xdrs)->x_ops->x_destroy)             \
         (*(xdrs)->x_ops->x_destroy)(xdrs)
 
+#define XDR_PUTINT32(xdrs, int32p)                      \
+        (*(xdrs)->x_ops->x_putlong)(xdrs, int32p)
+#define XDR_GETINT32(xdrs, int32p)                      \
+        (*(xdrs)->x_ops->x_getlong)(xdrs, int32p)
+
 /*
  * Support struct for discriminated unions.
  * You create an array of xdrdiscrim structures, terminated with
@@ -189,20 +194,23 @@ struct xdr_discrim {
  * of external representation.
  */
 
-#define IXDR_GET_LONG(buf)        ((long)ntohl((u_long)*(buf)++))
+#define IXDR_GET_LONG(buf)           ((long)ntohl((u_long)*(buf)++))
 #define IXDR_PUT_LONG(buf, v)        (*(buf)++ = (long)htonl((u_long)v))
 
-#define IXDR_GET_BOOL(buf)        ((bool_t)IXDR_GET_LONG(buf))
+#define IXDR_GET_BOOL(buf)           ((bool_t)IXDR_GET_LONG(buf))
 #define IXDR_GET_ENUM(buf, t)        ((t)IXDR_GET_LONG(buf))
-#define IXDR_GET_U_LONG(buf)        ((u_long)IXDR_GET_LONG(buf))
-#define IXDR_GET_SHORT(buf)        ((short)IXDR_GET_LONG(buf))
+#define IXDR_GET_U_LONG(buf)         ((u_long)IXDR_GET_LONG(buf))
+#define IXDR_GET_SHORT(buf)          ((short)IXDR_GET_LONG(buf))
 #define IXDR_GET_U_SHORT(buf)        ((u_short)IXDR_GET_LONG(buf))
 
 #define IXDR_PUT_BOOL(buf, v)        IXDR_PUT_LONG((buf), ((long)(v)))
 #define IXDR_PUT_ENUM(buf, v)        IXDR_PUT_LONG((buf), ((long)(v)))
-#define IXDR_PUT_U_LONG(buf, v)        IXDR_PUT_LONG((buf), ((long)(v)))
-#define IXDR_PUT_SHORT(buf, v)        IXDR_PUT_LONG((buf), ((long)(v)))
-#define IXDR_PUT_U_SHORT(buf, v)    IXDR_PUT_LONG((buf), ((long)(v)))
+#define IXDR_PUT_U_LONG(buf, v)      IXDR_PUT_LONG((buf), ((long)(v)))
+#define IXDR_PUT_SHORT(buf, v)       IXDR_PUT_LONG((buf), ((long)(v)))
+#define IXDR_PUT_U_SHORT(buf, v)     IXDR_PUT_LONG((buf), ((long)(v)))
+
+#define IXDR_PUT_INT32               IXDR_PUT_LONG
+#define IXDR_GET_INT32               IXDR_GET_LONG
 
 /*
  * These are the "generic" xdr routines.
@@ -210,6 +218,8 @@ struct xdr_discrim {
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+XDRLIBAPI void      xdr_free (xdrproc_t, char *);
 XDRLIBAPI bool_t    xdr_void(void);
 XDRLIBAPI bool_t    xdr_int(XDR *, int *);
 XDRLIBAPI bool_t    xdr_u_int(XDR *, u_int *);
@@ -232,6 +242,9 @@ XDRLIBAPI bool_t    xdr_double(XDR *, double *);
 XDRLIBAPI bool_t    xdr_reference(XDR *, char **, u_int, xdrproc_t);
 XDRLIBAPI bool_t    xdr_pointer(XDR *, char **, u_int, xdrproc_t);
 XDRLIBAPI bool_t    xdr_wrapstring(XDR *, char **);
+XDRLIBAPI bool_t    xdr_uint64_t (XDR *xdrs, uint64_t *uip);
+XDRLIBAPI bool_t    xdr_int64_t (XDR *xdrs, int64_t *uip);
+
 #ifdef __cplusplus
 }
 #endif
@@ -255,6 +268,7 @@ XDRLIBAPI bool_t   xdr_netobj(XDR *,struct netobj *);
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 /* XDR using memory buffers */
 XDRLIBAPI void   xdrmem_create(XDR *, char *, u_int, enum xdr_op);
 
@@ -275,25 +289,9 @@ XDRLIBAPI bool_t xdrrec_skiprecord(XDR *);
 /* true if no more input */
 XDRLIBAPI bool_t xdrrec_eof(XDR *);
 
-/* RWMJ */
-XDRLIBAPI void xdr_free (xdrproc_t, char *);
-XDRLIBAPI bool_t xdr_uint64_t (XDR *xdrs, uint64_t *uip);
-XDRLIBAPI bool_t xdr_int64_t (XDR *xdrs, int64_t *uip);
-
 #ifdef __cplusplus
 }
 #endif
-
-#define xdr_u_quad_t xdr_uint64_t
-#define xdr_quad_t xdr_int64_t
-
-#define IXDR_PUT_INT32 IXDR_PUT_LONG
-#define IXDR_GET_INT32 IXDR_GET_LONG
-
-#define XDR_PUTINT32(xdrs, int32p)                      \
-        (*(xdrs)->x_ops->x_putlong)(xdrs, int32p)
-#define XDR_GETINT32(xdrs, int32p)                      \
-        (*(xdrs)->x_ops->x_getlong)(xdrs, int32p)
 
 #ifdef HDF
 #include "hdf.h"
