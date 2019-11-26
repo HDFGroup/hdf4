@@ -78,17 +78,17 @@ static char sccsid[] = "@(#)xdr_float.c 1.12 87/08/11 Copyr 1984 Sun Micro";
 
 /* What IEEE single precision floating point looks like on a Vax */
 struct    ieee_single {
-    unsigned int    mantissa: 23;
-    unsigned int    exp     : 8;
-    unsigned int    sign    : 1;
+    uint32_t    mantissa: 23;
+    uint32_t    exp     : 8;
+    uint32_t    sign    : 1;
 };
 
 /* Vax single precision floating point */
 struct    vax_single {
-    unsigned int    mantissa1 : 7;
-    unsigned int    exp       : 8;
-    unsigned int    sign      : 1;
-    unsigned int    mantissa2 : 16;
+    uint32_t    mantissa1 : 7;
+    uint32_t    exp       : 8;
+    uint32_t    sign      : 1;
+    uint32_t    mantissa2 : 16;
 };
 
 #define VAX_SNG_BIAS     0x81
@@ -114,13 +114,13 @@ xdr_float(xdrs, fp)
     struct ieee_single is;
     struct vax_single vs, *vsp;
     struct sgl_limits *lim;
-    int i;
+    int32_t i;
 #endif
     switch (xdrs->x_op) {
 
     case XDR_ENCODE:
 #if !defined(vax)
-        return (XDR_PUTLONG(xdrs, (long *)fp));
+        return (XDR_PUTLONG(xdrs, (int32_t *)fp));
 #else
         vs = *((struct vax_single *)fp);
         for (i = 0, lim = sgl_limits;
@@ -137,15 +137,15 @@ xdr_float(xdrs, fp)
         is.mantissa = (vs.mantissa1 << 16) | vs.mantissa2;
     shipit:
         is.sign = vs.sign;
-        return (XDR_PUTLONG(xdrs, (long *)(void *)&is));
+        return (XDR_PUTLONG(xdrs, (int32_t *)(void *)&is));
 #endif
 
     case XDR_DECODE:
 #if !defined(vax)
-        return (XDR_GETLONG(xdrs, (long *)fp));
+        return (XDR_GETLONG(xdrs, (int32_t *)fp));
 #else
         vsp = (struct vax_single *)fp;
-        if (!XDR_GETLONG(xdrs, (long *)(void *)&is))
+        if (!XDR_GETLONG(xdrs, (int32_t *)(void *)&is))
             return (FALSE);
         for (i = 0, lim = sgl_limits;
             i < sizeof(sgl_limits)/sizeof(struct sgl_limits);
@@ -177,20 +177,20 @@ xdr_float(xdrs, fp)
 #ifdef vax
 /* What IEEE double precision floating point looks like on a Vax */
 struct    ieee_double {
-    unsigned int    mantissa1 : 20;
-    unsigned int    exp       : 11;
-    unsigned int    sign      : 1;
-    unsigned int    mantissa2 : 32;
+    uint32_t    mantissa1 : 20;
+    uint32_t    exp       : 11;
+    uint32_t    sign      : 1;
+    uint32_t    mantissa2 : 32;
 };
 
 /* Vax double precision floating point */
 struct  vax_double {
-    unsigned int    mantissa1 : 7;
-    unsigned int    exp       : 8;
-    unsigned int    sign      : 1;
-    unsigned int    mantissa2 : 16;
-    unsigned int    mantissa3 : 16;
-    unsigned int    mantissa4 : 16;
+    uint32_t    mantissa1 : 7;
+    uint32_t    exp       : 8;
+    uint32_t    sign      : 1;
+    uint32_t    mantissa2 : 16;
+    uint32_t    mantissa3 : 16;
+    uint32_t    mantissa4 : 16;
 };
 
 #define VAX_DBL_BIAS    0x81
@@ -220,14 +220,14 @@ xdr_double(xdrs, dp)
     struct    ieee_double id;
     struct    vax_double vd;
     register struct dbl_limits *lim;
-    int i;
+    int32_t i;
 #endif
 
     switch (xdrs->x_op) {
 
     case XDR_ENCODE:
 #if !defined(vax)
-        lp = (long *)dp;
+        lp = (int32_t *)dp;
 #else
         vd = *((struct vax_double *)dp);
         for (i = 0, lim = dbl_limits;
@@ -249,7 +249,7 @@ xdr_double(xdrs, dp)
                 ((vd.mantissa4 >> 3) & MASK(13));
     shipit:
         id.sign = vd.sign;
-        lp = (long *)(void *)&id;
+        lp = (int32_t *)(void *)&id;
 #endif
 #ifndef SWAP_DOUBLES
         return (XDR_PUTLONG(xdrs, lp++) && XDR_PUTLONG(xdrs, lp));
@@ -259,14 +259,14 @@ xdr_double(xdrs, dp)
 
     case XDR_DECODE:
 #if !defined(vax)
-        lp = (long *)dp;
+        lp = (int32_t *)dp;
 #ifndef SWAP_DOUBLES
         return (XDR_GETLONG(xdrs, lp++) && XDR_GETLONG(xdrs, lp));
 #else /* SWAP_DOUBLES */
         return (XDR_GETLONG(xdrs, lp+1) && XDR_GETLONG(xdrs, lp));
 #endif /* SWAP_DOUBLES */
 #else
-        lp = (long *)(void *)&id;
+        lp = (int32_t *)(void *)&id;
         if (!XDR_GETLONG(xdrs, lp++) || !XDR_GETLONG(xdrs, lp))
             return (FALSE);
         for (i = 0, lim = dbl_limits;

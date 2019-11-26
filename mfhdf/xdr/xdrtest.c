@@ -97,31 +97,31 @@ char *av[] ;
     static unsigned char bytes[8] = { 254, 255, 0, 1, 2} ;
     unsigned char *bp , got_ab[8] ;
 
-    static int ints[5] = { 5, 6, 7, 8, 9} ;
-    int *ip , got_ip[5] ;
+    static int32_t ints[5] = { 5, 6, 7, 8, 9} ;
+    int32_t *ip , got_ip[5] ;
 
-    static unsigned int u_ints[5] = {
+    static uint32_t u_ints[5] = {
         ((unsigned)65535),
         ((unsigned)65534),
         ((unsigned)0),
         ((unsigned)1),
         ((unsigned)2)
     } ;
-    int *uip , got_uip[5] ;
+    uint32_t *uip , got_uip[5] ;
 
-    long lnum = 82555 ;
+    int32_t lnum = 82555 ;
 
-    static long longs[5] = { -4, -3, -2, -1, 0} ;
-    long *lp , got_al[5] ;
+    static int32_t longs[5] = { -4, -3, -2, -1, 0} ;
+    int32_t *lp , got_al[5] ;
 
-    static unsigned long u_longs[5] = {
+    static uint32_t u_longs[5] = {
         ((unsigned)65535),
         ((unsigned)65534),
         ((unsigned)0),
         ((unsigned)1),
         ((unsigned)2)
     } ;
-    long *ulp , got_aul[5] ;
+    uint32_t *ulp , got_aul[5] ;
 
     static float floats[5] = { 100.125, 100.25, 100.375, 100.5, 100.625 } ;
     float *fp , got_af[5] ;
@@ -175,14 +175,14 @@ char *av[] ;
     assert( xdr_opaque(xdrs, (caddr_t)bytes, sizeof(bytes))) ;
 
     /* no setpos, just for variety */
-    szof = sizeof(int) ;
-    count = sizeof(ints)/sizeof(int) ;
+    szof = sizeof(int32_t) ;
+    count = sizeof(ints)/sizeof(int32_t) ;
     assert( xdr_vector(xdrs, (char *)ints, count, szof, xdr_int)) ;
     poses[jj++] = xdr_getpos(xdrs) ;
 
     assert( xdr_setpos(xdrs, seeks[jj])) ;
-    szof = sizeof(unsigned int) ;
-    count = sizeof(u_ints)/sizeof(unsigned int) ;
+    szof = sizeof(uint32_t) ;
+    count = sizeof(u_ints)/sizeof(uint32_t) ;
     assert( xdr_vector(xdrs, (char *)u_ints, count, szof, xdr_u_int)) ;
     poses[jj++] = xdr_getpos(xdrs) ;
 
@@ -191,14 +191,14 @@ char *av[] ;
     poses[jj++] = xdr_getpos(xdrs) ;
 
     assert( xdr_setpos(xdrs, seeks[jj])) ;
-    szof = sizeof(long) ;
-    count = sizeof(longs)/sizeof(long) ;
+    szof = sizeof(int32_t) ;
+    count = sizeof(longs)/sizeof(int32_t) ;
     assert( xdr_vector(xdrs, (char *)longs, count, szof, xdr_long)) ;
     poses[jj++] = xdr_getpos(xdrs) ;
 
     assert( xdr_setpos(xdrs, seeks[jj])) ;
-    szof = sizeof(unsigned long) ;
-    count = sizeof(u_longs)/sizeof(unsigned long) ;
+    szof = sizeof(uint32_t) ;
+    count = sizeof(u_longs)/sizeof(uint32_t) ;
     assert( xdr_vector(xdrs, (char *)u_longs, count, szof, xdr_u_long)) ;
     poses[jj++] = xdr_getpos(xdrs) ;
 
@@ -267,8 +267,8 @@ char *av[] ;
     }
     putchar('\n') ;
 
-    szof = sizeof(int) ;
-    count = sizeof(ints)/sizeof(int) ;
+    szof = sizeof(int32_t) ;
+    count = sizeof(ints)/sizeof(int32_t) ;
     assert( xdr_vector(xdrs, (char *)got_ip, count, szof, xdr_int)) ;
     assert( poses[jj++] = xdr_getpos(xdrs) ) ;
     printf("ints: ");
@@ -281,8 +281,8 @@ char *av[] ;
     putchar('\n') ;
 
     assert( xdr_setpos(xdrs, seeks[jj])) ;
-    szof = sizeof(unsigned int) ;
-    count = sizeof(u_ints)/sizeof(unsigned int) ;
+    szof = sizeof(uint32_t) ;
+    count = sizeof(u_ints)/sizeof(uint32_t) ;
     assert( xdr_vector(xdrs, (char *)got_uip, count, szof, xdr_u_int)) ;
     assert( poses[jj++] = xdr_getpos(xdrs) ) ;
     printf("unsigned ints: ");
@@ -300,8 +300,8 @@ char *av[] ;
     printf("LONG: %ld\n", *got_al) ;
 
     assert( xdr_setpos(xdrs, seeks[jj])) ;
-    szof = sizeof(long) ;
-    count = sizeof(longs)/sizeof(long) ;
+    szof = sizeof(int32_t) ;
+    count = sizeof(longs)/sizeof(int32_t) ;
     assert( xdr_vector(xdrs, (char *)got_al, count, szof, xdr_long)) ;
     assert( poses[jj++] = xdr_getpos(xdrs) ) ;
     printf("longs: ");
@@ -314,8 +314,8 @@ char *av[] ;
     putchar('\n') ;
 
     assert( xdr_setpos(xdrs, seeks[jj])) ;
-    szof = sizeof(unsigned long) ;
-    count = sizeof(u_longs)/sizeof(unsigned long) ;
+    szof = sizeof(uint32_t) ;
+    count = sizeof(u_longs)/sizeof(uint32_t) ;
     assert( xdr_vector(xdrs, (char *)got_aul, count, szof, xdr_u_long)) ;
     assert( poses[jj++] = xdr_getpos(xdrs) ) ;
     printf("unsigned longs: ");
