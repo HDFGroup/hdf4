@@ -105,6 +105,14 @@ Support for new platforms and compilers
 
 Bugs fixed since HDF 4.2.14
 ===========================
+    - Updated xdr to 4.9.1
+
+      Using the 4.9.1 portable xdr repo on Github, the internal xdr code was
+      updated. The internal xdr code now supports OSX platforms as well as
+      Windows platforms.
+
+      (ADB - 2019/11/22, HDFFR-1576)
+
     - netCDF test failed on Mac
 
       The netCDF test in the hdf4 library had failed either with segfault or

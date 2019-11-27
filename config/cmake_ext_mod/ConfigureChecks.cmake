@@ -72,9 +72,6 @@ endif ()
 if (WINDOWS)
   set (HDF4_REQUIRED_LIBRARIES "ws2_32.lib;wsock32.lib")
   set (${HDF_PREFIX}_HAVE_WIN32_API 1)
-  set (${HDF_PREFIX}_HAVE_STDDEF_H 1)
-  set (${HDF_PREFIX}_HAVE_SYS_STAT_H 1)
-  set (${HDF_PREFIX}_HAVE_SYS_TYPES_H 1)
   set (${HDF_PREFIX}_HAVE_LIBM 1)
   set (${HDF_PREFIX}_HAVE_STRDUP 1)
   set (${HDF_PREFIX}_HAVE_SYSTEM 1)
@@ -156,6 +153,10 @@ CHECK_INCLUDE_FILE_CONCAT ("inttypes.h"      ${HDF_PREFIX}_HAVE_INTTYPES_H)
 CHECK_INCLUDE_FILE_CONCAT ("netinet/in.h"    ${HDF_PREFIX}_HAVE_NETINET_IN_H)
 # _Bool type support
 CHECK_INCLUDE_FILE_CONCAT (stdbool.h    ${HDF_PREFIX}_HAVE_STDBOOL_H)
+
+CHECK_INCLUDE_FILE_CONCAT ("netinet/in.h"    ${HDF_PREFIX}_HAVE_NETINET_H)
+CHECK_INCLUDE_FILE_CONCAT ("arpa/inet.h"     ${HDF_PREFIX}_HAVE_INET_H)
+CHECK_INCLUDE_FILE_CONCAT ("sys/param.h"     ${HDF_PREFIX}_HAVE_PARAM_H)
 
 ## Check for non-standard extenstion quadmath.h
 
@@ -417,16 +418,7 @@ CHECK_FUNCTION_EXISTS (frexpl            ${HDF_PREFIX}_HAVE_FREXPL)
 
 CHECK_FUNCTION_EXISTS (gethostname       ${HDF_PREFIX}_HAVE_GETHOSTNAME)
 CHECK_FUNCTION_EXISTS (getrusage         ${HDF_PREFIX}_HAVE_GETRUSAGE)
-CHECK_FUNCTION_EXISTS (llround           ${HDF_PREFIX}_HAVE_LLROUND)
-CHECK_FUNCTION_EXISTS (llroundf          ${HDF_PREFIX}_HAVE_LLROUNDF)
-CHECK_FUNCTION_EXISTS (lround            ${HDF_PREFIX}_HAVE_LROUND)
-CHECK_FUNCTION_EXISTS (lroundf           ${HDF_PREFIX}_HAVE_LROUNDF)
-CHECK_FUNCTION_EXISTS (lstat             ${HDF_PREFIX}_HAVE_LSTAT)
 
-CHECK_FUNCTION_EXISTS (rand_r            ${HDF_PREFIX}_HAVE_RAND_R)
-CHECK_FUNCTION_EXISTS (random            ${HDF_PREFIX}_HAVE_RANDOM)
-CHECK_FUNCTION_EXISTS (round             ${HDF_PREFIX}_HAVE_ROUND)
-CHECK_FUNCTION_EXISTS (roundf            ${HDF_PREFIX}_HAVE_ROUNDF)
 CHECK_FUNCTION_EXISTS (setsysinfo        ${HDF_PREFIX}_HAVE_SETSYSINFO)
 
 CHECK_FUNCTION_EXISTS (signal            ${HDF_PREFIX}_HAVE_SIGNAL)
@@ -445,6 +437,19 @@ CHECK_FUNCTION_EXISTS (tmpfile           ${HDF_PREFIX}_HAVE_TMPFILE)
 CHECK_FUNCTION_EXISTS (asprintf          ${HDF_PREFIX}_HAVE_ASPRINTF)
 CHECK_FUNCTION_EXISTS (vasprintf         ${HDF_PREFIX}_HAVE_VASPRINTF)
 CHECK_FUNCTION_EXISTS (waitpid           ${HDF_PREFIX}_HAVE_WAITPID)
+
+if (NOT WINDOWS)
+  CHECK_FUNCTION_EXISTS (ntohl             ${HDF_PREFIX}_HAVE_NTOHL)
+  CHECK_FUNCTION_EXISTS (htonl             ${HDF_PREFIX}_HAVE_HTONL)
+  CHECK_FUNCTION_EXISTS (ntohs             ${HDF_PREFIX}_HAVE_NTOHS)
+  CHECK_FUNCTION_EXISTS (htons             ${HDF_PREFIX}_HAVE_HTONS)
+else ()
+  set (CMAKE_REQUIRED_LIBRARIES "ws2_32")
+  check_symbol_exists (ntohl "winsock2.h" ${HDF_PREFIX}_HAVE_NTOHL)
+  check_symbol_exists (htonl "winsock2.h" ${HDF_PREFIX}_HAVE_HTONL)
+  check_symbol_exists (ntohs "winsock2.h" ${HDF_PREFIX}_HAVE_NTOHS)
+  check_symbol_exists (htons "winsock2.h" ${HDF_PREFIX}_HAVE_HTONS)
+endif ()
 
 #-----------------------------------------------------------------------------
 # Check how to print a Long Long integer
