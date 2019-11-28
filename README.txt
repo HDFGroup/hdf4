@@ -1,4 +1,4 @@
-HDF version 4.2.15-snap0 currently under development
+HDF version 4.2.15 released on 2019-11-28
 ===================================================
 
 Information about HDF
