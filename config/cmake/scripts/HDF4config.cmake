@@ -19,8 +19,8 @@ cmake_minimum_required (VERSION 3.10)
 #            VS201364  * Visual Studio 12 2013 Win64
 #
 #     INSTALLDIR  -  root folder where hdf is installed
-#                 -  windowsdefault: C:/Program Files/HDF_Group/HDF/4.2.13
-#                 -  linux default:  ./HDF_Group/HDF/4.2.13
+#                 -  windowsdefault: C:/Program Files/HDF_Group/HDF/4.2.15
+#                 -  linux default:  ./HDF_Group/HDF/4.2.15
 #     CTEST_CONFIGURATION_TYPE  - Release, Debug, etc - default: Release
 #     CTEST_SOURCE_NAME  -  source folder - default: hdf4
 #     STATIC_ONLY  -  Build/use static libraries
