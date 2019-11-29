@@ -1096,7 +1096,6 @@
 ./mfhdf/xdr/xdr.c
 ./mfhdf/xdr/xdr_array.c
 ./mfhdf/xdr/xdr_float.c
-./mfhdf/xdr/xdr_intXX_t.c
 ./mfhdf/xdr/xdr_mem.c
 ./mfhdf/xdr/xdr_rec.c
 ./mfhdf/xdr/xdr_reference.c

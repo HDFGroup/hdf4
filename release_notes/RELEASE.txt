@@ -1,4 +1,4 @@
-HDF version 4.2.15-snap0 currently under development
+HDF version 4.2.15 released on 2019-11-28
 ====================================================
 
 INTRODUCTION
@@ -102,14 +102,16 @@ Support for new platforms and compilers
 
     - CMake added support for VS2019 in version 3.15. Updated scripts.
 
+    - macOS 10.13.6, Darwin 17.7.0 with Apple clang LLVM version 10.0.0
+
+    - macOS 10.14.6, Darwin 18.7.0 with Apple clang LLVM version 10.0.1
 
 Bugs fixed since HDF 4.2.14
 ===========================
     - Updated xdr to 4.9.1
 
       Using the 4.9.1 portable xdr repo on Github, the internal xdr code was
-      updated. The internal xdr code now supports OSX platforms as well as
-      Windows platforms.
+      updated. 
 
       (ADB - 2019/11/22, HDFFR-1576)
 
@@ -144,14 +146,14 @@ This version has been tested in the following platforms:
 
 
 
-   Linux 2.6.32-573.22.1.el6.x86_64  gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-16)
+   Linux 2.6.32-754.11.1.el6.x86_64  gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-16)
    #1 SMP, x86_64                    GNU Fortran (GCC) 4.4.7 20120313 (Red Hat 4.4.7-16)
    (mayll/platypus)                  icc (ICC) 17.0.0.098 Build 20160721
                                      ifort (IFORT) 17.0.0.098 Build 20160721
                                      pgcc and pgf90 17.10-0 64-bit target
                                          on x86-64 Linux -tp nehalem
 
-   Linux, 3.10.0-327.10.1.el7.x86_64 gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-4)
+   Linux, 3.10.0-327.18.2.el7.x86_64 gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-4)
    #1 SMP x86_64, GNU/Linux          GNU Fortran (GCC) 4.8.5 20150623 (Red Hat 4.8.5-4)
    (jelly/moohan)                    icc (ICC) 17.0.0.098 Build 20160721
                                      ifort (IFORT) 17.0.0.098 Build 20160721
@@ -176,23 +178,31 @@ This version has been tested in the following platforms:
                                      Visual Studio 2019 w/ Intel C, Fortran 2019 (cmake)
 
 
-   Mac OS X 10.10.5, Darwin, 14.5.0  Apple clang version 6.1 from Xcode 7.0
-   x86_64                            gfortran GNU Fortran (GCC) 4.9.2
-   (osx1010dev)                      Intel icc and ifort version 15.0.3
-
    Mac OS X 10.11.5, Darwin, 15.6.0  Apple clang version 7.3 from Xcode 7.3
    x86_64                            gfortran GNU Fortran (GCC) 5.2.0
-   (osx1010dev)                      Intel icc and ifort version 15.0.3
+   (osx1011test)                     Intel icc and ifort version 15.0.3
 
    macOS Sierra 10.12.5, Darwin,     Apple clang version 8.1.0 from Xcode 8.3
    16.6.0, x86_64                    gfortran GNU Fortran (GCC) 7.1.0
    (kite)                            Intel icc and ifort version 17.0.2
+
+   macOS 10.13.6, Darwin,            Apple clang LLVM version 10.0.0
+   17.7.0, x86_64                    gfortran GNU Fortran (GCC) 6.3.0
+   (bear)                            Intel icc and ifort version 19.0.4
+
+   macOS 10.14.6, Darwin,            Apple clang LLVM version 10.0.1
+   18.7.0, x86_64                    gfortran GNU Fortran (GCC) 6.3.0
+   (bobcat)                          Intel icc version 19.0.4
 
    Fedora30 5.3.11-200.fc30.x86_64
    #1 SMP x86_64  GNU/Linux          gcc (GCC) 9.2.1 20190827 (Red Hat 9.2.1 20190827)
                                      GNU Fortran (GCC) 9.2.1 20190827 (Red Hat 9.2.1 20190827)
                                      (cmake and autotools)
 
+   Linux, 4.15.0-1051-aws
+   #53-Ubuntu SMP, x86_64, x86_64    gcc (Ubuntu 7.4.0-1ubuntu18.04.1) 7.4.0
+                                     GNU Fortran (Ubuntu 7.4.0-1ubuntu18.04.1) 7.4.0
+                                     (cmake and autotools)
 
 Known problems
 ==============
