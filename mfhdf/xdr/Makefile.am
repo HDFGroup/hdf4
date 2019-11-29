@@ -13,7 +13,7 @@ AM_CPPFLAGS=-I$(top_srcdir)/hdf/src
 lib_LTLIBRARIES = libxdr.la
 libxdr_la_SOURCES = xdr_array.c xdr_float.c xdr_mem.c xdr_reference.c \
 	xdr.c xdr_rec.c xdr_stdio.c
-include_HEADERS = xdr.h types.h
+include_HEADERS = byteordr.h xdr.h types.h
 
 # Test program. Link using libxdr.la
 check_PROGRAMS = xdrtest

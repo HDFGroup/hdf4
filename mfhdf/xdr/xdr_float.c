@@ -67,6 +67,9 @@ static char sccsid[] = "@(#)xdr_float.c 1.12 87/08/11 Copyr 1984 Sun Micro";
 #if defined _WIN32 | defined WINNT
 # define SWAP_DOUBLES
 #endif
+#ifdef __APPLE__
+# define SWAP_DOUBLES
+#endif
 
 /*
  * NB: Not portable.

@@ -41,19 +41,19 @@ typedef NETLONG     netlong;
 
 #include <string.h>
 #include "local_nc.h" /* prototypes for NCadvis, nc_error */
-		      /* also obtains <stdio.h>, <rpc/types.h>, &
-		       * <rpc/xdr.h> */
-/*EIP #include "netcdf.h" */ 
+            /* also obtains <stdio.h>, <rpc/types.h>, &
+            * <rpc/xdr.h> */
+/*EIP #include "netcdf.h" */
 #include "mfhdf.h"
 
-#if !(defined DOS_FS) 
+#if !(defined DOS_FS)
         typedef u_int ncpos_t ;  /* all unicies */
 #else
       typedef off_t ncpos_t ;
 #endif
 
 typedef struct {
-    int fd;         /* the file descriptor */   
+    int fd;         /* the file descriptor */
     int mode;       /* file access mode, O_RDONLY, etc */
     int isdirty ;
     off_t page ;
@@ -75,7 +75,7 @@ free_biobuf(abuf)
 biobuf *abuf;
 {
     if(abuf != NULL)
-	HDfree((VOIDP)abuf) ;
+    HDfree((VOIDP)abuf) ;
 }
 
 
@@ -136,7 +136,7 @@ biobuf *biop;
 {
 
     if(!((biop->mode & O_WRONLY) || (biop->mode & O_RDWR))
-        || biop->cnt == 0) 
+        || biop->cnt == 0)
     {
         biop->nwrote = 0 ;
     }
@@ -177,7 +177,7 @@ biobuf *biop;
 
 #define CNT(p) ((p)->ptr - (p)->base)
 /* # of unread bytes in buffer */
-#define REM(p) ((p)->cnt - CNT(p)) 
+#define REM(p) ((p)->cnt - CNT(p))
 /* available space for write in buffer */
 #define BREM(p) (BIOBUFSIZ - CNT(p))
 
@@ -188,10 +188,10 @@ unsigned char *ptr;
 int nbytes;
 {
     int ngot = 0 ;
-    size_t rem ; 
+    size_t rem ;
 
     if(nbytes == 0)
-        return 0 ;  
+        return 0 ;
 
     while(nbytes > (rem = REM(biop)))
     {
@@ -254,7 +254,7 @@ int nbytes;
 
 static bool_t   xdrposix_getlong();
 static bool_t   xdrposix_putlong();
-#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__
+#if defined(__APPLE__) || (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__
 static bool_t   xdrposix_getint();
 static bool_t   xdrposix_putint();
 #endif
@@ -268,10 +268,10 @@ static long *    xdrposix_inline();
 #if (defined __sun && defined _LP64)
 static rpc_inline_t *    xdrposix_inline();
 #else
-#if ((defined __x86_64__ ) && !(defined __sun && defined _LP64)) || defined __powerpc64__
+#if ((defined __x86_64__ ) && !(defined __sun && defined _LP64)) || defined(__APPLE__) || defined __powerpc64__
 static int32_t *    xdrposix_inline();
 #else
-static netlong *    xdrposix_inline(); 
+static netlong *    xdrposix_inline();
 #endif
 #endif
 #endif
@@ -294,11 +294,11 @@ static struct xdr_ops   xdrposix_ops = {
     xdrposix_getpos,    /* get offset in the stream */
     xdrposix_setpos,    /* set offset in the stream */
     xdrposix_inline,    /* prime stream for inline macros */
-#if (defined __sun && defined _LP64) || defined __x86_64__ || defined __powerpc64__
+#if (defined __sun && defined _LP64) || defined(__APPLE__) || defined __x86_64__ || defined __powerpc64__
     xdrposix_destroy,   /* destroy stream */
 #if !(defined __x86_64__) && !(defined __powerpc64__) || (defined  __sun && defined _LP64) /* i.e. we are on SUN/Intel in 64-bit mode */
     NULL,               /* no xdr_control function defined */
-#endif 
+#endif
     /* Solaris 64-bit (arch=v9 and arch=amd64) has 64 bits long and 32 bits int. */
     /* It defines the two extra entries for get/put int. here */
     xdrposix_getint,   /* deserialize a 32-bit int */
@@ -326,15 +326,15 @@ hdf_xdrfile_create(xdrs, ncop)
      int ncop;
 {
     biobuf *biop = new_biobuf(-1, 0) ;
-    
+
     if(ncop & NC_CREAT)
         xdrs->x_op = XDR_ENCODE;
     else
         xdrs->x_op = XDR_DECODE;
-        
+
     xdrs->x_ops = &xdrposix_ops;
     xdrs->x_private = (caddr_t) biop;
-    
+
 } /* hdf_xdrfile_create */
 
 
@@ -353,7 +353,7 @@ xdrposix_create(xdrs, fd, fmode, op)
 
     biobuf *biop = new_biobuf(fd, fmode) ;
    /* fprintf(stderr, "xdrposix_create: biop = %p\n", biop);
- */ 
+ */
 #ifdef XDRDEBUG
 fprintf(stderr,"xdrposix_create(): xdrs=%p, fd=%d, fmode=%d, op=%d\n",xdrs,fd,fmode,(int)op);
 fprintf(stderr,"xdrposix_create(): after new_biobuf(), biop=%p\n",biop);
@@ -366,7 +366,7 @@ fprintf(stderr,"xdrposix_create(): after new_biobuf(), biop=%p\n",biop);
     xdrs->x_base = 0;
     if(biop == NULL)
         return -1 ;
-    
+
     /* if write only, or just created (empty), done */
     if((biop->mode & O_WRONLY)
             || (biop->mode & O_CREAT))
@@ -420,10 +420,10 @@ xdrposix_destroy(xdrs)
         {
             (void) wrbuf(biop) ;
         }
-        if(biop->fd != -1) 
+        if(biop->fd != -1)
             (void) close(biop->fd) ;
    /* fprintf(stderr, "\nxdrposix_destroy: going to free_biobuf\n");
- */ 
+ */
         free_biobuf(biop);
     }
 }
@@ -434,7 +434,7 @@ xdrposix_getlong(xdrs, lp)
     long *lp;
 {
     unsigned char *up = (unsigned char *)lp ;
-#if (defined AIX5L64 || defined __powerpc64__ || (defined __hpux && __LP64__))  
+#if (defined AIX5L64 || defined __powerpc64__ || (defined __hpux && __LP64__))
     *lp = 0 ;
     up += (sizeof(long) - 4) ;
 #endif
@@ -510,10 +510,10 @@ xdrposix_getpos(xdrs)
 }
 
 static bool_t
-xdrposix_setpos(xdrs, pos) 
+xdrposix_setpos(xdrs, pos)
     XDR *xdrs;
     ncpos_t pos;
-{ 
+{
     biobuf *biop = (biobuf *)xdrs->x_private ;
     if(biop != NULL)
     {
@@ -552,10 +552,10 @@ static long *
 #if (defined __sun && defined _LP64)
 static rpc_inline_t *
 #else
-#if ((defined  __x86_64__) && !(defined __sun && defined _LP64)) || defined __powerpc64__
-static int32_t * 
+#if ((defined  __x86_64__) && !(defined __sun && defined _LP64)) || defined(__APPLE__) || defined __powerpc64__
+static int32_t *
 #else
-static netlong * 
+static netlong *
 #endif
 #endif
 #endif
@@ -573,7 +573,7 @@ xdrposix_inline(xdrs, len)
     return (NULL);
 }
 
-#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64  || defined __x86_64__ || defined __powerpc64__
+#if defined(__APPLE__) || (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64  || defined __x86_64__ || defined __powerpc64__
 
 static bool_t
 xdrposix_getint(xdrs, lp)
@@ -667,7 +667,7 @@ fprintf(stderr,"NCxdrfile_create(): fmode=%d, fd=%d\n",fmode,fd);
     } else {
         op = XDR_DECODE ;
     }
-    
+
 #ifdef XDRDEBUG
 fprintf(stderr,"NCxdrfile_create(): before xdrposix_create()\n");
 #endif
