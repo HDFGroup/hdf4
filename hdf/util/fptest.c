@@ -14,9 +14,12 @@
 #include <stdio.h>
 #include "hdf.h"
 
-#ifdef _WIN32
-#include <sys/stat.h>
-#include <fcntl.h>
+#ifdef H4_HAVE_SYS_STAT_H
+# include <sys/stat.h>
+#endif
+
+#ifdef H4_HAVE_FCNTL
+# include <fcntl.h>
 #endif
 
 /*
@@ -138,7 +141,7 @@ main(int argc, char * argv[] )
      * text file - rank 2 & 3
      */
 
-/* For WINDOWS platform, file mode should be set explicitly. 
+/* For WINDOWS platform, file mode should be set explicitly.
    For text mode, set it to Text; for binary mode, set it to BINARY. */
 
 #ifdef _WIN32
@@ -187,9 +190,9 @@ main(int argc, char * argv[] )
     /*
      * binary 32-bit file - rank 2 & 3
      */
-#ifdef _WIN32                                                                                       
+#ifdef _WIN32
    _fmode = _O_BINARY;
-#endif 
+#endif
     sp = fopen("cb32r2", "w");
     (void) fwrite(fp32, sizeof(int), 1, sp);
     (void) fwrite((char *) &ione, sizeof(int), 1, sp);

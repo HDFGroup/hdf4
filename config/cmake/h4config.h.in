@@ -23,11 +23,17 @@
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #cmakedefine H4_HAVE_DLFCN_H @H4_HAVE_DLFCN_H@
 
+/* Define to 1 if you have the `fcntl' function. */
+#cmakedefine H4_HAVE_FCNTL @H4_HAVE_FCNTL@
+
 /* Define to 1 if you have the `fork' function. */
 #cmakedefine H4_HAVE_FORK @H4_HAVE_FORK@
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #cmakedefine H4_HAVE_INTTYPES_H @H4_HAVE_INTTYPES_H@
+
+/* Define to 1 if you have the <io.h> header file. */
+#cmakedefine H4_HAVE_IO_H @H4_HAVE_IO_H@
 
 /* Define to 1 if you have the <jpeglib.h> header file. */
 #cmakedefine H4_HAVE_JPEGLIB_H @H4_HAVE_JPEGLIB_H@
@@ -64,6 +70,12 @@
 
 /* Define to 1 if you have the `system' function. */
 #cmakedefine H4_HAVE_SYSTEM @H4_HAVE_SYSTEM@
+
+/* Define to 1 if you have the <sys/file.h> header file. */
+#cmakedefine H4_HAVE_SYS_FILE_H @H4_HAVE_SYS_FILE_H@
+
+/* Define to 1 if you have the <sys/resource.h> header file. */
+#cmakedefine H4_HAVE_SYS_RESOURCE_H @H4_HAVE_SYS_RESOURCE_H@
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #cmakedefine H4_HAVE_SYS_STAT_H @H4_HAVE_SYS_STAT_H@

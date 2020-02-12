@@ -47,7 +47,7 @@ typedef unsigned int UINT;
 
 #include <stdio.h>
 
-#ifdef UNIX
+#ifdef H4_HAVE_SYS_FILE_H
 #include <sys/file.h>
 #endif
 
