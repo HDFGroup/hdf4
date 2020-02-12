@@ -24260,9 +24260,18 @@ if test $ac_cv_sizeof_intp -ge 8; then
     *-ibm-aix*) CPPFLAGS="$CPPFLAGS -DAIX5L64" ;;
     *)          ;;
   esac
-  if test "X$BUILD_XDR" = "Xyes"; then
-    as_fn_error $? "--enable-hdf4-xdr is not supported for 64 bit mode." "$LINENO" 5
-  fi
+
+  ## Only support --enable-hdf4-xdr for 64 bit mode on Macs, because system
+  ## xdr on Macs does not work for 64 bit.
+  case $host_os in
+    darwin*) true
+      # hdf4 xdr works with Macs. -Feb, 2020
+      ;;
+    *)
+      if test "X$BUILD_XDR" = "Xyes"; then
+        as_fn_error $? "--enable-hdf4-xdr is not supported for 64 bit mode." "$LINENO" 5
+      fi
+  esac
 fi
 
 ## ----------------------------------------------------------------------
