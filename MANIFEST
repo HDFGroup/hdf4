@@ -1084,7 +1084,7 @@
 ./mfhdf/xdr/Makefile.in
 ./mfhdf/xdr/NOTICE.h
 ./mfhdf/xdr/README
-./mfhdf/xdr/byteordr.h
+./mfhdf/xdr/byteordr.c
 ./mfhdf/xdr/depend
 ./mfhdf/xdr/htonl.mar
 ./mfhdf/xdr/msoft.mk
@@ -1093,15 +1093,12 @@
 ./mfhdf/xdr/test_xdr.sav
 ./mfhdf/xdr/types.h
 ./mfhdf/xdr/win32xdr.mak
+./mfhdf/xdr/xdrarray.c
 ./mfhdf/xdr/xdr.c
-./mfhdf/xdr/xdr_array.c
-./mfhdf/xdr/xdr_float.c
-./mfhdf/xdr/xdr_mem.c
-./mfhdf/xdr/xdr_rec.c
-./mfhdf/xdr/xdr_reference.c
-./mfhdf/xdr/xdr_stdio.c
+./mfhdf/xdr/xdrfloat.c
 ./mfhdf/xdr/xdr.h
 ./mfhdf/xdr/xdrlib.project.hqx
+./mfhdf/xdr/xdrstdio.c
 ./mfhdf/xdr/xdrtest.c
 ./mfhdf/xdr/xdrtest.cyg
 ./mfhdf/xdr/xdrtest.mak

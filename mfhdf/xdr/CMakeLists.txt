@@ -3,12 +3,9 @@ project (HDF4_MFHDF_XDR C)
 
 set (HDF4_MFHDF_XDR_SRCS
     ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdr.c
-    ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdr_float.c
-    ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdr_stdio.c
-    ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdr_array.c
-    ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdr_mem.c
-    ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdr_reference.c
-    ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdr_rec.c
+    ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdrfloat.c
+    ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdrstdio.c
+    ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdrarray.c
 )
 
 set (HDF4_MFHDF_XDR_HDRS

@@ -665,7 +665,7 @@ Void *values ;
     case NC_SHORT :
         return( xdr_NCvshort(xdrs, (unsigned)rem/2, (short *)values) ) ;
     case NC_LONG :
-#if defined(__APPLE__) || (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__
+#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__ 
         return( xdr_int(xdrs, (nclong *)values) ) ;
 #else
         return( xdr_long(xdrs, (nclong *)values) ) ;

@@ -67,6 +67,8 @@ set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DSITE:STRING=${CTEST_SITE} -DBUILDN
 #endif()
 
 ###############################################################################################################
+#     Adjust the following SET Commands as needed
+###############################################################################################################
 if(WIN32)
   set(SITE_OS_NAME "Windows")
   set(ENV{HDF4_DIR} "${INSTALLDIR}/cmake")

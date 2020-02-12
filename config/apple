@@ -42,7 +42,7 @@ case $CC_BASENAME in
     # Use -O0 for now.
     case "$host_os" in
 	darwin1[1-9].*)	# Lion & Mountain Lion & Mavericks & Yosemeti
-	    xOFLAG="-O0"
+	    xOFLAG="-O2"
 	    ;;
 	*)		# Other OSX versions
 	    xOFLAG="-O2"
@@ -63,7 +63,7 @@ case $CC_BASENAME in
     # Use -O0 for now.
     case "$host_os" in
 	darwin1[1-9].*)	# Lion & Mountain Lion & Mavericks & Yosemite & 5 more
-	    xOFLAG="-O0"
+	    xOFLAG="-O2"
 	    ;;
 	*)		# Other OSX versions
 	    xOFLAG="-O2"
@@ -84,7 +84,7 @@ case $CC_BASENAME in
     # Use -O0 for now.
     case "$host_os" in
 	darwin1[1-9].*)	# Lion & Mountain Lion & Mavericks & Yosemeti & 5 more
-	    xOFLAG="-O0"
+	    xOFLAG="-O2"
 	    ;;
 	*)		# Other OSX versions
 	    xOFLAG="-O2"
@@ -101,7 +101,7 @@ case $CC_BASENAME in
     CFLAGS="$CFLAGS"
     DEBUG_CFLAGS="-g"
     DEBUG_CPPFLAGS=
-    PROD_CFLAGS=${PROD_CFLAGS:-"-O"}
+    PROD_CFLAGS=${PROD_CFLAGS:-"-O2"}
     PROD_CPPFLAGS=
     PROFILE_CFLAGS="-pg"
     PROFILE_CPPFLAGS=
@@ -112,7 +112,7 @@ case $F77_BASENAME in
   gfortran)
     FFLAGS="$FFLAGS"
     DEBUG_FFLAGS="-g"
-    PROD_FFLAGS="-O"
+    PROD_FFLAGS="-O2"
     PROFILE_FFLAGS="-pg"
     ;;
 esac

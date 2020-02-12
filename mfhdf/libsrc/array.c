@@ -587,15 +587,11 @@ xdr_NC_array(xdrs, app)
         return (FALSE);
     }
 #else
-    /* Using static variable seemed to help prevent bad memory accesses */
-    {
-        int temp_type = 0;
-        if (! xdr_int(xdrs, &temp_type)) {
+    if (! xdr_int(xdrs, typep)) {
             NCadvise(NC_EXDR, "xdr_NC_array:xdr_int (enum)") ;
             return (FALSE);
         }
-        *typep = (nc_type)temp_type;
-    }
+
 #endif
     {
         u_long temp_count = 0;
