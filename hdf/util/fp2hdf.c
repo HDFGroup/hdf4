@@ -382,7 +382,7 @@ main(int argc, char *argv[])
     const char *err3 = "No output file given.\n";
     const char *err4 = "Program aborted.\n";
 
-#ifdef _WIN32
+#ifdef _WIN32 | __MINGW32__
     _fmode = _O_BINARY;
 #endif
 
@@ -1125,7 +1125,7 @@ gtype(char *infile, struct Input *in, FILE **strm)
                 goto err;
             }
           if (!HDmemcmp("TEXT", buf, 4) || !HDmemcmp("text", buf, 4)) {
-#ifdef _WIN32
+#ifdef _WIN32 | __MINGW32__
             _fmode = _O_TEXT;
 #endif
               in->is_text = TRUE;

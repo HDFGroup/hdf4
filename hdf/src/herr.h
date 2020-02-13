@@ -70,14 +70,14 @@
 
 /* HCLOSE_RETURN_ERROR macro, used to facilitate error reporting.  Makes
    same assumptions as HRETURN_ERROR.  IN ADDITION, this macro causes
-   the file specified by the id "fid" to be closed 
-   Also , this macro causes a jump to the label 'done' which should 
+   the file specified by the id "fid" to be closed
+   Also , this macro causes a jump to the label 'done' which should
    be in every fucntion. There is an assumption of a variable 'ret_value' */
 
 #define HCLOSE_GOTO_ERROR(hfid, err, ret_val) {HERROR(err); Hclose(hfid); \
                                             ret_value = ret_val; goto done;}
 
-/* HGOTO_DONE macro, used to facilitate the new error reporting model.  
+/* HGOTO_DONE macro, used to facilitate the new error reporting model.
    This macro is just a wrapper to set the return value and jump to the 'done'
    label.  Also assumption of a variable 'ret_value' */
 
@@ -101,7 +101,7 @@
 /* always points to the next available slot; the last error record is in slot (top-1) */
 #if defined(H4_BUILT_AS_DYNAMIC_LIB)
 # ifdef _H_ERR_MASTER_
-#  if defined _WIN32 && defined hdf_shared_EXPORTS
+#  if (defined _WIN32 || defined __MINGW32__) && defined hdf_shared_EXPORTS
 __declspec(dllexport)
 #  endif
 # else
@@ -318,7 +318,7 @@ typedef enum
       DFE_CANTGETATTR,          /* Failed to find or get an attribute */
 
 /* Annotation interface errors */
-      DFE_ANAPIERROR		/* Failed in annotation interface */
+      DFE_ANAPIERROR        /* Failed in annotation interface */
   }
 hdf_err_code_t;
 
@@ -511,7 +511,7 @@ PRIVATE const struct error_messages_t error_messages[] =
     {DFE_CANTGETATTR,   "Cannot find or get an attribute"},
 
 /* Annotation interface errors */
-    {DFE_ANAPIERROR,	"Failed in annotation interface"}
+    {DFE_ANAPIERROR,    "Failed in annotation interface"}
 
 };
 #endif /* _H_ERR_MASTER_ */

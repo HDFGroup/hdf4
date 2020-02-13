@@ -66,7 +66,7 @@
 #include "he.h"
 
 #include <stdio.h>
-#ifndef _WIN32
+#ifdef H4_HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 
@@ -1130,7 +1130,7 @@ quit(int status)
               return HE_FAIL;
       }
     exit(status);
-    return(status);	/* never excuted.  Just to shut up some comilers */
+    return(status);    /* never excuted.  Just to shut up some comilers */
 }
 
 int

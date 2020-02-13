@@ -11,14 +11,14 @@ static char rcsid[] = "$Id$";
  *
  * Based on Sun sources from the portable distribution:
  *
- * @(#)xdr_stdio.c	1.1 87/11/04 3.9 RPCSRC
+ * @(#)xdr_stdio.c    1.1 87/11/04 3.9 RPCSRC
  * @(#)xdr_stdio.c 1.16 87/08/11 Copyr 1984 Sun Micro
  * Copyright (C) 1984, Sun Microsystems, Inc.
  *
  *  UCAR/Unidata modifications for netcdf:
- *  	_destroy closes the stream.
+ *      _destroy closes the stream.
  *      current stream position cached in x_public
- *			 (assumes caddr_t can hold a long)
+ *             (assumes caddr_t can hold a long)
  *      last op cached in x_handy
  */
 
@@ -27,8 +27,10 @@ static char rcsid[] = "$Id$";
 #include "local_nc.h" /* prototypes for NCadvis, nc_error */
             /* also obtains <stdio.h>, <rpc/types.h>, &
             * <rpc/xdr.h> */
-#ifdef DOS_FS
+#ifdef H4_HAVE_FCNTL_H
 #include    <fcntl.h>   /* O_BINARY */
+#endif
+#ifdef DOS_FS
 #define USE_BFLAG
 #endif
 

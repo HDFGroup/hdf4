@@ -565,9 +565,9 @@ typedef long            hdf_pint_t;   /* an integer the same size as a pointer *
 #define DOS386
 #endif /* M_I386 && !DOS386 */
 
-#if defined _WINDOWS || defined _WIN32
+#if defined _WINDOWS || defined _WIN32 || defined __MINGW32__
 #define WIN386
-#endif  /* _WINDOWS | _WIN32 */
+#endif  /* _WINDOWS | _WIN32 | __MINGW32__ */
 
 #if defined WIN386 || defined DOS386 || defined UNIX386
 #define INTEL386
@@ -579,7 +579,7 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
 
-#if defined _WINDOWS || defined _WIN32
+#if defined _WINDOWS || defined _WIN32 || defined __MINGW32__
 #pragma comment( lib, "oldnames" )
 #endif
 

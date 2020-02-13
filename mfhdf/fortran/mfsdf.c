@@ -47,7 +47,7 @@ FRETVAL(intf) nscsnatt();
 FRETVAL(intf) nsfsflmd();
 #endif /* PROTOTYPE */
 
-#if defined _WIN32 && !defined CMAKE_INTDIR
+#if (defined _WIN32 || defined __MINGW32__) && !defined CMAKE_INTDIR
 
 /*-----------------------------------------------------------------------------
  * Name:    scend
@@ -70,7 +70,7 @@ nscend(file_id)
 
 /*-----------------------------------------------------------------------------
  * Name:    scendacc
- * Purpose: Call SDendaccess close to end access on a dataset 
+ * Purpose: Call SDendaccess close to end access on a dataset
  * Inputs:  id: id of the data set
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
@@ -183,9 +183,9 @@ nscgcal(id, cal, cale, ioff, ioffe, nt)
 #endif /* PROTOTYPE */
 {
   int32 nt32, status;
-  
+
   status = SDgetcal((int32) *id, cal, cale, ioff, ioffe, &nt32);
-  
+
   *nt = (intf) nt32;
 
   return (status);
@@ -324,7 +324,7 @@ nscsfill(id, val)
 
 /*----------------------------------------------------------
  * Name:    scgfill
- * Purpose: Call SDgetfillvalue to get the fill value. 
+ * Purpose: Call SDgetfillvalue to get the fill value.
  * Inputs:  id: handle to a dimension
  * Output:  val: the fill value
  * Returns: 0 on success, FAIL on failure with error set
@@ -465,7 +465,7 @@ nscrattr(id, index, buf)
  *          start: start location
  *          stride: stride along each dimension
  *          end: number of values along each dim to read
- *          values: data 
+ *          values: data
  * Remarks: need to flip the dimensions to account for array ordering
  *          differences
  * Returns: 0 on success, -1 on failure with error set
@@ -485,7 +485,7 @@ nscrdata(id, start, stride, end, values)
     int32   i, rank, dims[100], nt, nattrs, status;
     int32   cstart[100], cstride[100], cend[100];
     int     nostride;
-    
+
     status = SDgetinfo(*id, NULL, &rank, dims, &nt, &nattrs);
     if(status == FAIL) return FAIL;
 
@@ -496,7 +496,7 @@ nscrdata(id, start, stride, end, values)
         cend[i]   = end[rank - i - 1];
         if((cstride[i] = stride[rank - i - 1]) != 1) nostride = FALSE;
     }
-    
+
     ret = (intf) SDreaddata(*id, cstart, (nostride? NULL : cstride), cend, values);
     return(ret);
 }
@@ -508,7 +508,7 @@ nscrdata(id, start, stride, end, values)
  *          start: start location
  *          stride: stride along each dimension
  *          end: number of values along each dim to write
- *          values: data 
+ *          values: data
  * Remarks: need to flip the dimensions to account for array ordering
  *          differences
  * Returns: 0 on success, -1 on failure with error set
@@ -528,7 +528,7 @@ nscwdata(id, start, stride, end, values)
     int32   i, rank, dims[100], nt, nattrs, status;
     int32   cstart[100], cstride[100], cend[100];
     intn    nostride;
-    
+
     status = SDgetinfo(*id, NULL, &rank, dims, &nt, &nattrs);
     if(status == FAIL) return FAIL;
 
@@ -551,7 +551,7 @@ nscwdata(id, start, stride, end, values)
  *          start: start location
  *          stride: stride along each dimension
  *          end: number of values along each dim to read
- *          values: data 
+ *          values: data
  * Remarks: need to flip the dimensions to account for array ordering
  *          differences
  * Returns: 0 on success, -1 on failure with error set
@@ -577,7 +577,7 @@ nscrcdata(id, start, stride, end, values)
  *          start: start location
  *          stride: stride along each dimension
  *          end: number of values along each dim to read
- *          values: data 
+ *          values: data
  * Remarks: need to flip the dimensions to account for array ordering
  *          differences
  * Returns: 0 on success, -1 on failure with error set
@@ -617,7 +617,7 @@ nscid2ref(id)
 
 /*-----------------------------------------------------------------------------
  * Name:    scfr2idx
- * Purpose: call SDreftoindex to map a reference number to an index of a 
+ * Purpose: call SDreftoindex to map a reference number to an index of a
  *          dataset
  * Inputs:  id: file id
  *          ref: reference number to look up
@@ -705,14 +705,14 @@ nscsacct(id, type)
 }
 /*-----------------------------------------------------------------------------
  * Name:    scsdmvc
- * Purpose: Call SDsetdimval_comp to set the dim value backward 
+ * Purpose: Call SDsetdimval_comp to set the dim value backward
  *            compatibility type
  * Inputs:  id: dim id
  *          compmode: backward compatibility:
  *                    SD_DIMVAL_BW_COMP -- compatible (in mfhdf.h)
  *                    SD_DIMVAL_BW_INCOMP -- incompatible.
  *
- * Returns: SUCCESS on success, FAIL on failure 
+ * Returns: SUCCESS on success, FAIL on failure
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
 
@@ -730,8 +730,8 @@ nscsdmvc(id, compmode)
 
 /*-----------------------------------------------------------------------------
  * Name:    scisdmvc
- * Purpose: Call SDisdimval_bwcomp to get the dim value backward 
- *            compatibility 
+ * Purpose: Call SDisdimval_bwcomp to get the dim value backward
+ *            compatibility
  * Inputs:  id: dim id
  *
  * Returns: SD_DIMVAL_BW_COMP (1) if dimval is backward compatible;
@@ -753,7 +753,7 @@ nscisdmvc(id)
 
 /*-----------------------------------------------------------------------------
  * Name:    scsflmd
- * Purpose: Call SDsetfillmode to set for the file fill mode 
+ * Purpose: Call SDsetfillmode to set for the file fill mode
  *            as fill or nofill
  * Inputs:  id: file id
  *          fillmode: Desired fill mode for the file,
@@ -761,7 +761,7 @@ nscisdmvc(id)
  *                                 SD_FILL is the default mode.
  *
  * Returns: The current (before the new mode is set) fill mode;
- *          FAIL (-1) for error. 
+ *          FAIL (-1) for error.
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
 
@@ -817,7 +817,7 @@ nscsblsz(id, block_size)
  * Name:    scstart
  * Purpose: call SDstart to open HDF file
  * Inputs:  name: name of file to open
- *          access: access mode - integer with value DFACC_READ etc. 
+ *          access: access mode - integer with value DFACC_READ etc.
  *          namelen: length of name
  * Returns: 0 on success, -1 on failure with error set
  *---------------------------------------------------------------------------*/
@@ -834,9 +834,9 @@ nscstart(name, access, namelen)
 {
     char *fn;
     intf ret;
-    
+
     fn = HDf2cstring(name, *namelen);
-    
+
     ret = (intf) SDstart(fn, *access);
     HDfree((VOIDP)fn);
 
@@ -864,7 +864,7 @@ nsfend(file_id)
 
 /*-----------------------------------------------------------------------------
  * Name:    sdfendacc
- * Purpose: Call SDendaccess close to end access on a dataset 
+ * Purpose: Call SDendaccess close to end access on a dataset
  * Inputs:  id: id of the data set
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
@@ -995,7 +995,7 @@ nscginfo(id, name, rank, dimsizes, nt, nattr, len)
     HDpackFstring(iname,  _fcdtocp(name),  *len);
 
     if(iname)  HDfree((VOIDP)iname);
-  
+
     *rank  = (intf) rank32;
     *nt    = (intf) nt32;
     *nattr = (intf) nattr32;
@@ -1025,9 +1025,9 @@ nsfgcal(id, cal, cale, ioff, ioffe, nt)
 #endif /* PROTOTYPE */
 {
   int32 nt32, status;
-  
+
   status = SDgetcal((int32) *id, cal, cale, ioff, ioffe, &nt32);
-  
+
   *nt = (intf) nt32;
 
   return (status);
@@ -1166,7 +1166,7 @@ nsfsfill(id, val)
 
 /*----------------------------------------------------------
  * Name:    sdfgfill
- * Purpose: Call SDgetfillvalue to get the fill value. 
+ * Purpose: Call SDgetfillvalue to get the fill value.
  * Inputs:  id: handle to a dimension
  * Output:  val: the fill value
  * Returns: 0 on success, FAIL on failure with error set
@@ -1252,7 +1252,7 @@ nscn2index(id, name, namelen)
 {
     char *fn;
     intf ret;
-    
+
     fn = HDf2cstring(name, *namelen);
     ret = (intf) SDnametoindex(*id, fn);
     HDfree((VOIDP)fn);
@@ -1288,7 +1288,7 @@ nsccreate(id, name, nt, rank, dims, namelen)
     char   *fn;
     intf    ret;
     int32 * cdims, i;
-    
+
     fn = HDf2cstring(name, *namelen);
     cdims = (int32 *) HDmalloc(sizeof(int32) * (*rank));
     if(!cdims) return FAIL;
@@ -1327,18 +1327,18 @@ nscsdimstr(id, l, u, f, ll, ul, fl)
     char *ustr;
     char *fstr;
     intf ret;
-    
-    if(ll) 
+
+    if(ll)
         lstr = HDf2cstring(l, *ll);
     else
         lstr = NULL;
 
-    if(ul) 
+    if(ul)
         ustr = HDf2cstring(u, *ul);
     else
         ustr = NULL;
 
-    if(fl) 
+    if(fl)
         fstr = HDf2cstring(f, *fl);
     else
         fstr = NULL;
@@ -1370,8 +1370,8 @@ nscsdimname(id, name, len)
 {
     char *nstr;
     intf ret;
-    
-    if(len) 
+
+    if(len)
         nstr = HDf2cstring(name, *len);
     else
         nstr = NULL;
@@ -1407,23 +1407,23 @@ nscsdatstr(id, l, u, f, c, ll, ul, fl, cl)
     char *fstr;
     char *cstr;
     intf ret;
-    
-    if(ll) 
+
+    if(ll)
         lstr = HDf2cstring(l, *ll);
     else
         lstr = NULL;
 
-    if(ul) 
+    if(ul)
         ustr = HDf2cstring(u, *ul);
     else
         ustr = NULL;
 
-    if(fl) 
+    if(fl)
         fstr = HDf2cstring(f, *fl);
     else
         fstr = NULL;
 
-    if(cl) 
+    if(cl)
         cstr = HDf2cstring(c, *cl);
     else
         cstr = NULL;
@@ -1512,7 +1512,7 @@ nsfrattr(id, index, buf)
  *          start: start location
  *          stride: stride along each dimension
  *          end: number of values along each dim to read
- *          values: data 
+ *          values: data
  * Remarks: need to flip the dimensions to account for array ordering
  *          differences
  * Returns: 0 on success, -1 on failure with error set
@@ -1532,7 +1532,7 @@ nsfrdata(id, start, stride, end, values)
     int32   i, rank, dims[100], nt, nattrs, status;
     int32   cstart[100], cstride[100], cend[100];
     int     nostride;
-    
+
     status = SDgetinfo(*id, NULL, &rank, dims, &nt, &nattrs);
     if(status == FAIL) return FAIL;
 
@@ -1543,7 +1543,7 @@ nsfrdata(id, start, stride, end, values)
         cend[i]   = end[rank - i - 1];
         if((cstride[i] = stride[rank - i - 1]) != 1) nostride = FALSE;
     }
-    
+
     ret = (intf) SDreaddata(*id, cstart, (nostride? NULL : cstride), cend, values);
     return(ret);
 }
@@ -1555,7 +1555,7 @@ nsfrdata(id, start, stride, end, values)
  *          start: start location
  *          stride: stride along each dimension
  *          end: number of values along each dim to write
- *          values: data 
+ *          values: data
  * Remarks: need to flip the dimensions to account for array ordering
  *          differences
  * Returns: 0 on success, -1 on failure with error set
@@ -1575,7 +1575,7 @@ nsfwdata(id, start, stride, end, values)
     int32   i, rank, dims[100], nt, nattrs, status;
     int32   cstart[100], cstride[100], cend[100];
     intn    nostride;
-    
+
     status = SDgetinfo(*id, NULL, &rank, dims, &nt, &nattrs);
     if(status == FAIL) return FAIL;
 
@@ -1639,7 +1639,7 @@ nscgdimstrs(dim, label, unit, format, llabel, lunit, lformat, mlen)
  *          start: start location
  *          stride: stride along each dimension
  *          end: number of values along each dim to read
- *          values: data 
+ *          values: data
  * Remarks: need to flip the dimensions to account for array ordering
  *          differences
  * Returns: 0 on success, -1 on failure with error set
@@ -1665,7 +1665,7 @@ nsfrcdata(id, start, stride, end, values)
  *          start: start location
  *          stride: stride along each dimension
  *          end: number of values along each dim to read
- *          values: data 
+ *          values: data
  * Remarks: need to flip the dimensions to account for array ordering
  *          differences
  * Returns: 0 on success, -1 on failure with error set
@@ -1694,7 +1694,7 @@ nsfwcdata(id, start, stride, end, values)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-nscgdatstrs(intf *id, _fcd label, _fcd unit, _fcd format, _fcd coord, 
+nscgdatstrs(intf *id, _fcd label, _fcd unit, _fcd format, _fcd coord,
            intf *llabel, intf *lunit, intf *lformat, intf *lcoord, intf *len)
 #else
 nscgdatstrs(id, label, unit, format, coord, llabel, lunit, lformat, lcoord, len)
@@ -1767,7 +1767,7 @@ nscgainfo(id, number, name, nt, count, len)
 
     *nt    = (intf) nt32;
     *count = (intf) cnt32;
-  
+
     return((intf)status);
 
 }
@@ -1805,7 +1805,7 @@ nscgdinfo(id, name, sz, nt, nattr, len)
     HDpackFstring(iname,  _fcdtocp(name),  *len);
 
     if(iname)  HDfree((VOIDP)iname);
-  
+
     *nt    = (intf) nt32;
     *sz    = (intf) sz32;
     *nattr = (intf) nattr32;
@@ -1822,7 +1822,7 @@ nscgdinfo(id, name, sz, nt, nattr, len)
  *          count: number of values
  *          data: where the values are
  *          len: length of name
- * Remarks: 
+ * Remarks:
  * Returns: 0 on success, -1 on failure with error set
  *--------------------------------------------------------------------*/
 
@@ -1847,7 +1847,7 @@ nscscatt(id, name, nt, count, data, len)
  * Inputs:  id: id (file or data set)
  *          name: name of attribute
  *          nt: number type
- *          count: number of values 
+ *          count: number of values
  *          data:  where the values are
  *          len: length of name
  * Remarks: This routine and scscattr are used to replace scsattr
@@ -1868,7 +1868,7 @@ nscsnatt(id, name, nt, count, data, len)
 {
     char   *an;
     intf    ret;
-    
+
     an = HDf2cstring(name, *len);
 
     ret = (intf) SDsetattr(*id, an, *nt, *count, data);
@@ -1935,9 +1935,9 @@ nscfattr(id, name, namelen)
 {
     char *fn;
     intf ret;
-    
+
     fn = HDf2cstring(name, *namelen);
-    
+
     ret = (intf) SDfindattr(*id, fn);
     HDfree((VOIDP)fn);
 
@@ -1965,7 +1965,7 @@ nsfid2ref(id)
 
 /*-----------------------------------------------------------------------------
  * Name:    sfref2index
- * Purpose: call SDreftoindex to map a reference number to an index of a 
+ * Purpose: call SDreftoindex to map a reference number to an index of a
  *          dataset
  * Inputs:  id: file id
  *          ref: reference number to look up
@@ -2028,7 +2028,7 @@ nscsextf(id, name, offset, namelen)
 {
     char   *fn;
     intf    ret;
-    
+
     fn = HDf2cstring(name, *namelen);
     if (!fn) return(FAIL);
     ret = (intf) SDsetexternalfile(*id, fn, *offset);
@@ -2060,7 +2060,7 @@ nsfsnbit(id, start_bit, bit_len, sign_ext, fill_one)
 #endif /* PROTOTYPE */
 {
     return((intf)SDsetnbitdataset((int32)*id,(intn)*start_bit,(intn)*bit_len,
-	(intn)*sign_ext,(intn)*fill_one));
+    (intn)*sign_ext,(intn)*fill_one));
 }
 
 /*-----------------------------------------------------------------------------
@@ -2085,14 +2085,14 @@ nsfsacct(id, type)
 }
 /*-----------------------------------------------------------------------------
  * Name:    sfsdmvc
- * Purpose: Call SDsetdimval_comp to set the dim value backward 
+ * Purpose: Call SDsetdimval_comp to set the dim value backward
  *            compatibility type
  * Inputs:  id: dim id
  *          compmode: backward compatibility:
  *                    SD_DIMVAL_BW_COMP -- compatible (in mfhdf.h)
  *                    SD_DIMVAL_BW_INCOMP -- incompatible.
  *
- * Returns: SUCCESS on success, FAIL on failure 
+ * Returns: SUCCESS on success, FAIL on failure
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
 
@@ -2110,8 +2110,8 @@ nsfsdmvc(id, compmode)
 
 /*-----------------------------------------------------------------------------
  * Name:    sfisdmvc
- * Purpose: Call SDisdimval_bwcomp to get the dim value backward 
- *            compatibility 
+ * Purpose: Call SDisdimval_bwcomp to get the dim value backward
+ *            compatibility
  * Inputs:  id: dim id
  *
  * Returns: SD_DIMVAL_BW_COMP (1) if dimval is backward compatible;
@@ -2133,7 +2133,7 @@ nsfisdmvc(id)
 
 /*-----------------------------------------------------------------------------
  * Name:    sfsflmd
- * Purpose: Call SDsetfillmode to set for the file fill mode 
+ * Purpose: Call SDsetfillmode to set for the file fill mode
  *            as fill or nofill
  * Inputs:  id: file id
  *          fillmode: Desired fill mode for the file,
@@ -2141,7 +2141,7 @@ nsfisdmvc(id)
  *                                 SD_FILL is the default mode.
  *
  * Returns: The current (before the new mode is set) fill mode;
- *          FAIL (-1) for error. 
+ *          FAIL (-1) for error.
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
 
@@ -2164,20 +2164,20 @@ nsfsflmd(id, fillmode)
  * Outputs: dim_length: chunk dimensions
  *          flags:            -1 - SDS is nonchunked
  *                             0 - SDS is chunked, no compression
- *                             1 - SDS is chunked and compressed 
- *                                 with RLE, SKPHUFF and GZIP 
- *                             2 - SDS is chunked and compressed with NBIT 
+ *                             1 - SDS is chunked and compressed
+ *                                 with RLE, SKPHUFF and GZIP
+ *                             2 - SDS is chunked and compressed with NBIT
  * Actual parameters are not returned. Will be fixed after HDF41r.2
- *          comp_prm[0] = nbit_sign_ext, 
- *          comp_prm[1] = nbit_fill_one, 
- *          comp_prm[2] = nbit_start_bit, 
- *          comp_prm[3] = nbit_bit_len:     NBIT compression parametes 
+ *          comp_prm[0] = nbit_sign_ext,
+ *          comp_prm[1] = nbit_fill_one,
+ *          comp_prm[2] = nbit_start_bit,
+ *          comp_prm[3] = nbit_bit_len:     NBIT compression parametes
  *
- *          comp_prm[0] = skphuff_skp_size: size of individual elements for 
+ *          comp_prm[0] = skphuff_skp_size: size of individual elements for
  *                            Adaptive Huffman compression algorithm
  *          comp_prm[0] = deflate_level:    GZIP  compression parameter
  * Returns: 0 on success, -1 on failure with error set
- * Users:   HDF Fortran programmers          
+ * Users:   HDF Fortran programmers
  *-------------------------------------------------------------------------*/
 
     FRETVAL (intf)
@@ -2185,7 +2185,7 @@ nsfsflmd(id, fillmode)
       nscgichnk(intf *id, intf *dim_length, intf *flags)
 #else
        nscgichnk( id, dim_length, flags)
-       intf *id;       
+       intf *id;
        intf *dim_length;
        intf *flags;
 #endif /* PROTOTYPE */
@@ -2206,12 +2206,12 @@ sdsid = *id;
        if(status == FAIL) return FAIL;
 
 /* Get SDS info */
-  
+
        status = SDgetchunkinfo(sdsid, &chunk_def, &cflags);
        if(status == FAIL) return FAIL;
 
 
-switch (cflags)  
+switch (cflags)
 
   {
 
@@ -2231,7 +2231,7 @@ switch (cflags)
 
   case (HDF_CHUNK | HDF_COMP):     /* Chunked and compressed SDS
                                       RLE, SKPHUFF or GZIP only */
- 
+
      *flags = 1;
      for (i=0; i < rank; i++)
           dim_length[rank-i-1] =  chunk_def.comp.chunk_lengths[i];
@@ -2239,7 +2239,7 @@ switch (cflags)
      return(ret);
 
   case (HDF_CHUNK | HDF_NBIT):     /* Chunked and NBIT compressed SDS */
- 
+
      *flags = 2;
      for (i=0; i < rank; i++)
           dim_length[rank-i-1] =  chunk_def.nbit.chunk_lengths[i];
@@ -2249,23 +2249,23 @@ switch (cflags)
   default:
 
     return FAIL;
-            
+
   }
 
 
-}   
+}
 /*-----------------------------------------------------------------------------
  * Name:     scrchnk
  * Purpose:  read the specified chunk of NUMERIC data to the buffer
  * Inputs:   id        - data set ID
- *           start     - origin of chunk to read 
+ *           start     - origin of chunk to read
  * Outputs:  num_data  - buffer the data will be read into
  * Calls:    SDreadchunk
  * Remarks:  need to flip the dimensions to account for array ordering
  *           differencies (start --> cstart)
- *           If performance becomes an issue, use static cstart 
+ *           If performance becomes an issue, use static cstart
  * Returns:  0 on success, -1 on failure with error set
- *----------------------------------------------------------------------------*/   
+ *----------------------------------------------------------------------------*/
     FRETVAL (intf)
 #ifdef PROTOTYPE
        nscrchnk(intf *id, intf *start, VOIDP num_data)
@@ -2307,20 +2307,20 @@ switch (cflags)
        HDfree((VOIDP)cstart);
        return(ret);
 
-} 
+}
 
 /*-----------------------------------------------------------------------------
  * Name:     scrcchnk
  * Purpose:  read the specified chunk of CHARACTER data to the buffer
  * Inputs:   id        - data set ID
- *           start     - origin of chunk to read 
+ *           start     - origin of chunk to read
  * Outputs:  char_data  - buffer the data will be read into
- * Calls:    scrchnk 
+ * Calls:    scrchnk
  * Reamrks:  dimensions will be flipped in scrchnk function
  * Returns:  0 on success, -1 on failure with error set
- *----------------------------------------------------------------------------*/   
+ *----------------------------------------------------------------------------*/
     FRETVAL (intf)
-#ifdef PROTOTYPE 
+#ifdef PROTOTYPE
        nscrcchnk(intf *id, intf *start, _fcd char_data)
 #else
        nscrcchnk(id, start, char_data)
@@ -2336,18 +2336,18 @@ switch (cflags)
 
        return(ret);
 
-} 
+}
 
 /*-----------------------------------------------------------------------------
  * Name:     scscchnk
- * Purpose:  set the maximum number of chunks to cache 
+ * Purpose:  set the maximum number of chunks to cache
  * Inputs:   id        - data set ID
  *           maxcache  - max number of chunks to cache
  *           flags     - flags= 0, HDF_CACHEALL
  *                       Currently only 0 can be passed
  * Calls:    SDsetchunkcache
  * Returns:  0 on success, -1 on failure with error set
- *----------------------------------------------------------------------------*/   
+ *----------------------------------------------------------------------------*/
     FRETVAL (intf)
 #ifdef PROTOTYPE
        nscscchnk(intf *id, intf *maxcache, intf *flags)
@@ -2365,7 +2365,7 @@ switch (cflags)
 
        return(ret);
 
-} 
+}
 
 /*-------------------------------------------------------------------------
  * Name:    scschnk
@@ -2379,18 +2379,18 @@ switch (cflags)
  *                              COMP_CODE_SKPHUFF (3)
  *                              COMP_CODE_DEFLATE (4)
  *                              COMP_CODE_INVALID (5)
- *          comp_prm[0] = nbit_sign_ext, 
- *          comp_prm[1] = nbit_fill_one, 
- *          comp_prm[2] = nbit_start_bit, 
- *          comp_prm[3] = nbit_bit_len:     NBIT compression parametes 
+ *          comp_prm[0] = nbit_sign_ext,
+ *          comp_prm[1] = nbit_fill_one,
+ *          comp_prm[2] = nbit_start_bit,
+ *          comp_prm[3] = nbit_bit_len:     NBIT compression parametes
  *
- *          comp_prm[0] = skphuff_skp_size: size of individual elements for 
+ *          comp_prm[0] = skphuff_skp_size: size of individual elements for
  *                            Adaptive Huffman compression algorithm
  *          comp_prm[0] = deflate_level:    GZIP  compression parameter
  *          comp_prm[0] = option_mask:      SZIP option mask parameter
  *          comp_prm[1] = pixels_per_block  SZIP parameter
  * Returns: 0 on success, -1 on failure with error set
- * Users:   HDF Fortran programmers          
+ * Users:   HDF Fortran programmers
  *-------------------------------------------------------------------------*/
 
     FRETVAL (intf)
@@ -2430,9 +2430,9 @@ switch (cflags)
        case 0:       /* No compression */
          cflags = HDF_CHUNK;
          for (i=0; i < rank; i++)
-               chunk_def.chunk_lengths[i] = dim_length[rank-i-1]; 
+               chunk_def.chunk_lengths[i] = dim_length[rank-i-1];
          break;
-    
+
        case 1:       /* RLE compression */
          cflags = HDF_CHUNK | HDF_COMP;
          for (i=0; i < rank; i++)
@@ -2446,40 +2446,40 @@ switch (cflags)
        case 2:      /* N-bit encoding */
          cflags = HDF_CHUNK | HDF_NBIT;
          for (i=0; i < rank; i++)
-                chunk_def.nbit.chunk_lengths[i] = dim_length[rank-i-1]; 
+                chunk_def.nbit.chunk_lengths[i] = dim_length[rank-i-1];
 
-         chunk_def.nbit.sign_ext = comp_prm[0]; 
-         chunk_def.nbit.fill_one = comp_prm[1]; 
+         chunk_def.nbit.sign_ext = comp_prm[0];
+         chunk_def.nbit.fill_one = comp_prm[1];
          chunk_def.nbit.start_bit = comp_prm[2];
-         chunk_def.nbit.bit_len = comp_prm[3]; 
+         chunk_def.nbit.bit_len = comp_prm[3];
 
-         break; 
- 
+         break;
+
        case 3:      /* Skipping Huffman encoding */
          cflags = HDF_CHUNK | HDF_COMP;
           for (i=0; i < rank; i++)
                 chunk_def.comp.chunk_lengths[i] = dim_length[rank-i-1];
 
           chunk_def.comp.comp_type = COMP_CODE_SKPHUFF;
-          chunk_def.comp.cinfo.skphuff.skp_size = comp_prm[0]; 
+          chunk_def.comp.cinfo.skphuff.skp_size = comp_prm[0];
 
           break;
 
-       case 4:      /* GZIP compression */  
+       case 4:      /* GZIP compression */
          cflags = HDF_CHUNK | HDF_COMP;
           for (i=0; i < rank; i++)
                  chunk_def.comp.chunk_lengths[i] = dim_length[rank-i-1];
-           
+
           chunk_def.comp.comp_type = COMP_CODE_DEFLATE;
           chunk_def.comp.cinfo.deflate.level = comp_prm[0];
 
           break;
 
-       case 5:      /* SZIP compression */  
+       case 5:      /* SZIP compression */
          cflags = HDF_CHUNK | HDF_COMP;
           for (i=0; i < rank; i++)
                  chunk_def.comp.chunk_lengths[i] = dim_length[rank-i-1];
-           
+
           chunk_def.comp.comp_type = COMP_CODE_SZIP;
           chunk_def.comp.cinfo.szip.options_mask     = comp_prm[0];
           chunk_def.comp.cinfo.szip.pixels_per_block = comp_prm[1];
@@ -2488,13 +2488,13 @@ switch (cflags)
        default:
 
           return FAIL;
-                    
+
      }
 
     ret = SDsetchunk(sdsid, chunk_def, cflags);
     return(ret);
 
-}   
+}
 /*-----------------------------------------------------------------------------
  * Name:     scwchnk
  * Purpose:  write the specified chunk of NUMERIC data to the SDS
@@ -2504,9 +2504,9 @@ switch (cflags)
  * Calls:    SDwritechunk
  * Remarks:  need to flip the dimensions to account for array ordering
  *           differencies (start --> cstart)
- *           If performance becomes an issue, use static cstart 
+ *           If performance becomes an issue, use static cstart
  * Returns:  0 on success, -1 on failure with error set
- *----------------------------------------------------------------------------*/   
+ *----------------------------------------------------------------------------*/
     FRETVAL (intf)
 #ifdef PROTOTYPE
        nscwchnk(intf *id, intf *start, VOIDP num_data)
@@ -2543,23 +2543,23 @@ switch (cflags)
 
        ret = SDwritechunk(*id, cstart, num_data);
 
-/* Free memory */ 
+/* Free memory */
 
        HDfree((VOIDP)cstart);
 
        return(ret);
 
-} 
+}
 /*-----------------------------------------------------------------------------
  * Name:     scwcchnk
- * Purpose:  write the specified chunk of CHARACTER data to the SDS 
+ * Purpose:  write the specified chunk of CHARACTER data to the SDS
  * Inputs:   id        - data set ID
- *           start     - origin of chunk to read 
+ *           start     - origin of chunk to read
  * Outputs:  char_data  - buffer the data will be read into
- * Calls:    scwchnk 
+ * Calls:    scwchnk
  * Reamrks:  dimensions will be flipped in scrchnk function
  * Returns:  0 on success, -1 on failure with error set
- *----------------------------------------------------------------------------*/   
+ *----------------------------------------------------------------------------*/
     FRETVAL (intf)
 #ifdef PROTOTYPE
        nscwcchnk(intf *id, intf *start, _fcd char_data)
@@ -2577,11 +2577,11 @@ switch (cflags)
 
        return(ret);
 
-} 
+}
 
 /*-------------------------------------------------------------------------
  * Name:    scscompress
- * Puporse: Call SDsetcompress 
+ * Puporse: Call SDsetcompress
  * Inputs:  id: SDS access id
  *          comp_type:  type of compression
  *                      COMP_CODE_NONE = 0
@@ -2589,14 +2589,14 @@ switch (cflags)
  *                      COMP_CODE_SKPHUFF = 3
  *                      COMP_CODE_DEFLATE = 4
  *                      COMP_CODE_SZIP = 5
- *          comp_prm[0] = skphuff_skp_size: size of individual elements for 
+ *          comp_prm[0] = skphuff_skp_size: size of individual elements for
  *                            Adaptive Huffman compression algorithm
  *          comp_prm[0] = deflate_level:    GZIP  compression parameter
  *          SZIP:
- *          comp_prm[0] = options_mask    
- *          comp_prm[1] = pixels_per_block 
+ *          comp_prm[0] = options_mask
+ *          comp_prm[1] = pixels_per_block
  * Returns: 0 on success, -1 on failure with error set
- * Users:   HDF Fortran programmers          
+ * Users:   HDF Fortran programmers
  *-------------------------------------------------------------------------*/
 
     FRETVAL (intf)
@@ -2626,30 +2626,30 @@ switch (cflags)
        case COMP_CODE_NONE:       /* No compression */
          c_type = COMP_CODE_NONE;
          break;
-    
+
        case COMP_CODE_RLE:             /* RLE compression */
          c_type = COMP_CODE_RLE;
          break;
- 
+
        case COMP_CODE_SKPHUFF:      /* Skipping Huffman encoding */
           c_type = COMP_CODE_SKPHUFF;
-          c_info.skphuff.skp_size = comp_prm[0]; 
+          c_info.skphuff.skp_size = comp_prm[0];
           break;
 
-       case COMP_CODE_DEFLATE:      /* GZIP compression */  
+       case COMP_CODE_DEFLATE:      /* GZIP compression */
           c_type = COMP_CODE_DEFLATE;
-          c_info.deflate.level = comp_prm[0]; 
+          c_info.deflate.level = comp_prm[0];
           break;
 
-       case COMP_CODE_SZIP:      /* SZIP compression */  
+       case COMP_CODE_SZIP:      /* SZIP compression */
           c_type = COMP_CODE_SZIP;
-          c_info.szip.options_mask = comp_prm[0]; 
-          c_info.szip.pixels_per_block = comp_prm[1]; 
+          c_info.szip.options_mask = comp_prm[0];
+          c_info.szip.pixels_per_block = comp_prm[1];
           break;
        default:
 
           return FAIL;
-                    
+
                      }
 
     ret = SDsetcompress(sdsid, c_type, &c_info);
@@ -2658,7 +2658,7 @@ switch (cflags)
 }
 /*-------------------------------------------------------------------------
  * Name:    scgcompress
- * Puporse: Call SDgetcompress 
+ * Puporse: Call SDgetcompress
  * Inputs:  id: SDS access id
  * Outputs: comp_type:  type of compression
  *                      COMP_CODE_NONE = 0
@@ -2668,7 +2668,7 @@ switch (cflags)
  *                      COMP_CODE_DEFLATE = 4
  *                      COMP_CODE_SZIP = 5
  *          SKPHUFF:
- *          comp_prm[0] = skphuff_skp_size: size of individual elements for 
+ *          comp_prm[0] = skphuff_skp_size: size of individual elements for
  *                            Adaptive Huffman compression algorithm
  *          GZIP:
  *          comp_prm[0] = deflate_level:    GZIP  compression parameter
@@ -2684,7 +2684,7 @@ switch (cflags)
  *          comp_prm[3] = bits_per_pixel           OUT
  *          comp_prm[4] = pixels                   OUT
  * Returns: 0 on success, -1 on failure with error set
- * Users:   HDF Fortran programmers          
+ * Users:   HDF Fortran programmers
  *-------------------------------------------------------------------------*/
 
     FRETVAL (intf)
@@ -2713,50 +2713,50 @@ switch (cflags)
 
        case COMP_CODE_NONE:       /* No compression */
          *comp_type = 0;
-	  ret = 0;
+    ret = 0;
          break;
-    
+
        case COMP_CODE_RLE:             /* RLE compression */
          *comp_type = 1;
-	  ret = 0;
+    ret = 0;
          break;
 
        case COMP_CODE_NBIT:      /* NBIT encoding */
           *comp_type = 2;
-          comp_prm[0] = (intf)c_info.nbit.sign_ext; 
-          comp_prm[1] = (intf)c_info.nbit.fill_one; 
-          comp_prm[2] = (intf)c_info.nbit.start_bit; 
-          comp_prm[3] = (intf)c_info.nbit.bit_len; 
-	  ret = 0;
+          comp_prm[0] = (intf)c_info.nbit.sign_ext;
+          comp_prm[1] = (intf)c_info.nbit.fill_one;
+          comp_prm[2] = (intf)c_info.nbit.start_bit;
+          comp_prm[3] = (intf)c_info.nbit.bit_len;
+    ret = 0;
           break;
 
- 
+
        case COMP_CODE_SKPHUFF:      /* Skipping Huffman encoding */
           *comp_type = 3;
-          comp_prm[0] = (intf)c_info.skphuff.skp_size; 
-	  ret = 0;
+          comp_prm[0] = (intf)c_info.skphuff.skp_size;
+    ret = 0;
           break;
 
-       case COMP_CODE_DEFLATE:      /* GZIP compression */  
+       case COMP_CODE_DEFLATE:      /* GZIP compression */
           *comp_type = 4;
-          comp_prm[0] = (intf)c_info.deflate.level; 
-	  ret = 0;
+          comp_prm[0] = (intf)c_info.deflate.level;
+    ret = 0;
           break;
 
        case COMP_CODE_SZIP:      /* SZIP encoding */
           *comp_type = 5;
           comp_prm[0] = (intf)c_info.szip.options_mask;
           comp_prm[1] = (intf)c_info.szip.pixels_per_block;
-          comp_prm[2] = (intf)c_info.szip.pixels_per_scanline; 
-          comp_prm[3] = (intf)c_info.szip.bits_per_pixel; 
-          comp_prm[4] = (intf)c_info.szip.pixels; 
-	  ret = 0;
+          comp_prm[2] = (intf)c_info.szip.pixels_per_scanline;
+          comp_prm[3] = (intf)c_info.szip.bits_per_pixel;
+          comp_prm[4] = (intf)c_info.szip.pixels;
+    ret = 0;
           break;
 
        default:
 
           return FAIL;
-                    
+
                      } /*end CASE */
     } /* end if */
     return(ret);
@@ -2802,10 +2802,10 @@ nsfsblsz(id, block_size)
  * Name:    scchempty
  * Purpose: call SDcheckempty
  * Inputs:  id:          sd id
-            flag:        TRUE/FALSE flag 
+            flag:        TRUE/FALSE flag
  * Returns: SUCCEED/FAIL (0/-1)
  *---------------------------------------------------------------------------*/
- 
+
    FRETVAL(intf)
 #ifdef PROTOTYPE
 nscchempty(intf *id, intf *flag)
@@ -2820,14 +2820,14 @@ nscchempty(id, flag)
     status = SDcheckempty(*id, &flag_c);
     *flag = flag_c;
     return(status);
-}   
+}
 /*-----------------------------------------------------------------------------
  * Name:    scgetfname
  * Purpose: Retrieves the name of the file given file identifier
  * Inputs:  file_id: file identifier
- * Outputs: file_name: file name 
+ * Outputs: file_name: file name
  *          namelen: length of file name
- * Returns: real length on success, -1 on failure 
+ * Returns: real length on success, -1 on failure
  *---------------------------------------------------------------------------*/
 
    FRETVAL(intf)
@@ -2843,13 +2843,13 @@ nscgetfname(file_id, name, namelen)
 {
     char *fn;
     intn ret;
-    
+
     fn = NULL;
     if(*namelen) fn = (char *)HDmalloc((uint32)*namelen + 1);
 
     ret = (intn) SDgetfilename(*file_id, fn);
-    HDpackFstring(fn,  _fcdtocp(name),  *namelen);    
-    
+    HDpackFstring(fn,  _fcdtocp(name),  *namelen);
+
     if(fn) HDfree((VOIDP)fn);
     return(ret);
 }
@@ -2859,7 +2859,7 @@ nscgetfname(file_id, name, namelen)
  * Purpose: Retrieves the length of the object name
  * Inputs:  obj_id: object identifier
  * Outputs: namelen: name length
- * Returns: 0 on success, -1 on failure 
+ * Returns: 0 on success, -1 on failure
  *---------------------------------------------------------------------------*/
 
    FRETVAL(intf)
@@ -2874,10 +2874,10 @@ nscgetnamelen(obj_id, namelen)
 {
     intn    ret;
     uint16  c_namelen;
-    
+
     ret = (intn) SDgetnamelen(*obj_id, &c_namelen);
 
-    *namelen = (intf)c_namelen; 
+    *namelen = (intf)c_namelen;
     return(ret);
 }
 /*-----------------------------------------------------------------------------
@@ -2888,7 +2888,7 @@ nscgetnamelen(obj_id, namelen)
  *                                  0 for file
  *                                  1 for data set
  *                                  2 for dimension scale
- * Returns: 0 on success, -1 on failure 
+ * Returns: 0 on success, -1 on failure
  *---------------------------------------------------------------------------*/
 
    FRETVAL(intf)
@@ -2903,10 +2903,10 @@ nscidtype(obj_id, obj_type)
 {
     intn    ret = -1;
     hdf_idtype_t  c_obj_type;;
-    
+
     c_obj_type = SDidtype(*obj_id);
 
-    *obj_type = (intf)c_obj_type; 
+    *obj_type = (intf)c_obj_type;
     if (c_obj_type >= 0) ret = 0;
     return(ret);
 }
@@ -2914,7 +2914,7 @@ nscidtype(obj_id, obj_type)
  * Name:    scrmaxopenf
  * Purpose: Resets the max numebr of files can be opened at the same time
  * Inputs:  req_max: requested max number of files
- * Returns: current max number of opened files on success, -1 on failure 
+ * Returns: current max number of opened files on success, -1 on failure
  *---------------------------------------------------------------------------*/
 
    FRETVAL(intf)
@@ -2927,16 +2927,16 @@ nscrmaxopenf(req_max)
 
 {
     intf    cur_max;
-    
+
     cur_max = (intf) SDreset_maxopenfiles(*req_max);
     return(cur_max);
 }
 /*-----------------------------------------------------------------------------
  * Name:    scgmaxopenf
- * Purpose: Retrieves current and maximum number of open files. 
+ * Purpose: Retrieves current and maximum number of open files.
  * Outputs: cat_max: current max of opened files
  *          sys_limit: system limit on open files
- * Returns: 0 on success, -1 on failure 
+ * Returns: 0 on success, -1 on failure
  *---------------------------------------------------------------------------*/
 
    FRETVAL(intf)
@@ -2951,7 +2951,7 @@ nscgmaxopenf(cur_max, sys_limit)
 {
     intf ret = 0;
     intn c_cur_max, c_sys_limit;
-    
+
     ret = (intf) SDget_maxopenfiles(&c_cur_max, &c_sys_limit);
     if (ret < 0) return(FAIL);
     *cur_max = (intf)c_cur_max;
@@ -2962,7 +2962,7 @@ nscgmaxopenf(cur_max, sys_limit)
  * Name:    scgnumopenf
  * Purpose: Returns the number of files currently being opened
  * Outputs: cur_num: number of files currently being opened
- * Returns: 0 on success, -1 on failure 
+ * Returns: 0 on success, -1 on failure
  *---------------------------------------------------------------------------*/
 
    FRETVAL(intf)
@@ -2976,7 +2976,7 @@ nscgnumopenf(cur_num)
 {
     intf    ret = 0;
     intn    c_cur_num;
-    
+
     c_cur_num = SDget_numopenfiles();
     if (c_cur_num < 1) ret = -1;
     *cur_num = (intf)c_cur_num;
@@ -2984,15 +2984,15 @@ nscgnumopenf(cur_num)
 }
 /*-----------------------------------------------------------------------------
  * Name:    scn2indices
- * Purpose: Retrieves indices of all variables with the same name. 
+ * Purpose: Retrieves indices of all variables with the same name.
  * Inputs:  sd_id: SD interface identifier
  *          sds_name: data set name
  *          namelen:  length of the name
- *          n_vars:   number of variables (sizes of var_list and type_list 
+ *          n_vars:   number of variables (sizes of var_list and type_list
  *                    arrays)
  * Outputs: var_list: list of indices
- *          type_list: list of types         
- * Returns: 0 on success, -1 on failure 
+ *          type_list: list of types
+ * Returns: 0 on success, -1 on failure
  *---------------------------------------------------------------------------*/
 
    FRETVAL(intf)
@@ -3011,21 +3011,21 @@ nscn2indices(sd_id, name, namelen, var_list, type_list, n_vars)
 {
     char   *fn;
     intn    ret;
-    hdf_varlist_t *c_var_list; 
+    hdf_varlist_t *c_var_list;
     int idx;
-    
+
     fn = HDf2cstring(name, *namelen);
     if (!fn) return(FAIL);
     c_var_list = (hdf_varlist_t *)HDmalloc(*n_vars * sizeof(hdf_varlist_t));
     if (!c_var_list) return(FAIL);
 
     ret = (intn) SDnametoindices(*sd_id, fn, c_var_list);
-    
+
     if (ret == 0) {
-	    for (idx = 0; idx < *n_vars; idx++) {
-         	var_list[idx] = (intf)c_var_list[idx].var_index;
-         	type_list[idx] = (intf)c_var_list[idx].var_type;
-    	    }
+        for (idx = 0; idx < *n_vars; idx++) {
+            var_list[idx] = (intf)c_var_list[idx].var_index;
+            type_list[idx] = (intf)c_var_list[idx].var_type;
+            }
     } /*endif*/
     HDfree(c_var_list);
     HDfree((VOIDP)fn);
@@ -3038,7 +3038,7 @@ nscn2indices(sd_id, name, namelen, var_list, type_list, n_vars)
  *          sds_name: data set name
  *          namelen:  length of the name
  * Outputs: n_vars: number of data sets
- * Returns: 0 on success, -1 on failure 
+ * Returns: 0 on success, -1 on failure
  *---------------------------------------------------------------------------*/
 
    FRETVAL(intf)
@@ -3056,7 +3056,7 @@ nscgnvars_byname(sd_id, name, namelen, n_vars)
     char   *fn;
     int32   c_n_vars;
     intn    ret;
-    
+
     fn = HDf2cstring(name, *namelen);
     if (!fn) return(FAIL);
 
