@@ -90,6 +90,12 @@ AC_MSG_RESULT([done])
 
 AC_CANONICAL_HOST
 
+## ----------------------------------------------------------------------
+## Some platforms have broken basename, and/or xargs programs. Check
+## that it actually does what it's supposed to do. Catch this early
+## since configure and scripts relies upon them heavily and there's
+## no use continuing if it's broken.
+##
 AC_MSG_CHECKING([if basename works])
 BASENAME_TEST="`basename /foo/bar/baz/qux/basename_works`"
 if test $BASENAME_TEST != "basename_works"; then
@@ -98,6 +104,7 @@ else
   AC_MSG_RESULT([yes])
 fi
 
+## xargs basename used in configure to get the CC_BASENAME value
 AC_MSG_CHECKING([if xargs works])
 XARGS_TEST="`echo /foo/bar/baz/qux/xargs_works | xargs basename`"
 if test $XARGS_TEST != "xargs_works"; then
@@ -387,8 +394,8 @@ AC_ARG_WITH([zlib],
                             [Use zlib library [default=yes]])],,
             [withval=yes])
 
-case "$withval" in
-  yes)
+case "X-$withval" in
+  X-yes)
     HAVE_ZLIB="yes"
     AC_CHECK_HEADERS([zlib.h], [HAVE_ZLIB_H="yes"], [unset HAVE_ZLIB])
     if test "x$HAVE_ZLIB" = "xyes" -a "x$HAVE_ZLIB_H" = "xyes"; then
@@ -402,7 +409,7 @@ case "$withval" in
       AC_CHECK_FUNC([compress2], [HAVE_COMPRESS2="yes"])
     fi
     ;;
-  no)
+  X-|X-no|X-none)
     HAVE_ZLIB="no"
     AC_MSG_ERROR([zlib library required to build HDF4])
     ;;
@@ -459,8 +466,8 @@ AC_ARG_WITH([jpeg],
                             [Use jpeg library [default=yes]])],,
             [withval=yes])
 
-case "$withval" in
-  yes)
+case "X-$withval" in
+  X-yes)
     HAVE_JPEG="yes"
     AC_CHECK_HEADERS([jpeglib.h], [HAVE_JPEG_H="yes"], [unset HAVE_JPEG])
     if test "x$HAVE_JPEG" = "xyes" -a "x$HAVE_JPEG_H" = "xyes"; then
@@ -471,7 +478,7 @@ case "$withval" in
       AC_MSG_ERROR([couldn't find jpeg library])
     fi
     ;;
-  no)
+  X-|X-no|X-none)
     HAVE_JPEG="no"
     AC_MSG_ERROR([jpeg library required to build HDF4])
     ;;
@@ -528,8 +535,8 @@ AC_ARG_WITH([szlib],
                             [Use szlib library [default=no]])],,
             [withval=no])
 
-case "$withval" in
-  yes)
+case "X-$withval" in
+  X-yes)
     HAVE_SZIP="yes"
     AC_CHECK_HEADERS([szlib.h], [HAVE_SZLIB_H="yes"], [unset HAVE_SZIP])
     if test "x$HAVE_SZLIB" = "xyes" -a "x$HAVE_SZLIB_H" = "xyes"; then
@@ -540,7 +547,7 @@ case "$withval" in
       AC_MSG_ERROR([couldn't find szlib library])
     fi
     ;;
-  no)
+  X-|X-no|X-none)
     HAVE_SZIP="no"
     AC_MSG_CHECKING([for szlib])
     AC_MSG_RESULT([suppressed])
@@ -682,7 +689,7 @@ esac
 case "$host" in
   *-solaris*)
     LIBS="$LIBS -lnsl"  ;;
-  *-pc-cygwin*)
+  *-pc-cygwin* | *-linux*)
     LIBS="$LIBS -ltirpc"
     CPPFLAGS="$CPPFLAGS -I/usr/include/tirpc"  ;;
   *) ;;
@@ -711,9 +718,9 @@ if test "X$BUILD_XDR" != "Xyes"; then
   ## but we need to make sure that it is present on the system. Do that here,
   ## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
   case "$host" in
-    *-pc-cygwin*)
+    *-pc-cygwin* | *-linux*)
       HAVE_RPC="yes"
-      AC_CHECK_HEADER([rpc.h],[:], [unset HAVE_RPC])
+      AC_CHECK_HEADER([rpc/rpc.h],[:], [unset HAVE_RPC])
       AC_CHECK_LIB([tirpc], [xdr_opaque],[:], [unset HAVE_RPC])
       if test -z "$HAVE_RPC"; then
         AC_MSG_ERROR([couldn't find tirpc library])
@@ -723,18 +730,34 @@ if test "X$BUILD_XDR" != "Xyes"; then
 fi
 
 AC_HEADER_STDC
-
+AC_HEADER_RESOLV
 ## ======================================================================
 ## Checks for types
 ## ======================================================================
 
 ## ======================================================================
+## Checks for endianness functions
+## The htons and ntohs functions are available on most systems.
+## These functions convert betweennetwork endiannessand hostendianness.
+## Network endianness is big-endian; because the standard TCP/IP network
+## protocols use big-endian ordering. These functions come in two sizes:
+## htonl and ntohl operate on 4-byte quantities, and
+## htons and ntohs operate on 2-byte quantities.
+## The hton functions convert host endianness to network endianness.
+## The ntoh functions convert network endianness to host endianness
+## ======================================================================
+AC_CHECK_FUNCS([htonl htons ntohl ntohs __builtin_bswap16 __builtin_bswap32 __builtin_bswap64])
+
+## ======================================================================
 ## Checks for structures
 ## ======================================================================
+AC_CHECK_HEADERS([sys/time.h])
 
 ## ======================================================================
 ## Checks for compiler characteristics
 ## ======================================================================
+AC_CHECK_HEADERS([stddef.h])
+AC_CHECK_HEADERS([arpa/inet.h fcntl.h netinet/in.h sys/param.h])
 
 AC_PROG_CC_C_O
 AC_PROG_CXXCPP
