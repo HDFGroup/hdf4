@@ -29,7 +29,7 @@ test_sd()
 {
     int32     fid;
     intn      status;
-#ifdef _WIN32 | __MINGW32__
+#if defined _WIN32 || defined __MINGW32__
     int mode;
 #else
     mode_t mode;
@@ -51,7 +51,7 @@ test_sd()
     /* Close the file */
     status = SDend(fid);
     CHECK(status, FAIL, "SDend");
-#ifdef _WIN32 | __MINGW32__
+#if defined _WIN32 || defined __MINGW32__
     mode = _S_IREAD;
 #else
     mode =  S_IRUSR;
@@ -71,7 +71,7 @@ test_sd()
         HI_CLOSE(ff);
     }
 
-#ifdef _WIN32 | __MINGW32__
+#if defined _WIN32 || defined __MINGW32__
     mode = _S_IWRITE;
 #else
     mode =  S_IWUSR;

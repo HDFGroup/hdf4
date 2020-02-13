@@ -28,7 +28,7 @@
 
 /* obtain the maximum number of open files allowed, at the same time,
    on the current system */
-#ifdef _WIN32 | __MINGW32__
+#if defined _WIN32 || defined __MINGW32__
 #define MAX_SYS_OPENFILES    _getmaxstdio()
 #else
 #include <sys/resource.h>
@@ -573,7 +573,7 @@ const char *proto ;
 /* NO_GETPID defined if the OS lacks the getpid() function */
 #ifndef NO_GETPID
 #    define TN_NDIGITS 4
-#ifdef _WIN32 | __MINGW32__
+#if defined _WIN32 || defined __MINGW32__
     typedef int pid_t;
 #endif
     pid_t getpid(void);
