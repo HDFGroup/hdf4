@@ -23,6 +23,8 @@
 #define _HLIMITS_H
 
 #if defined _WIN32 || defined __MINGW32__
+#define HDsetvbuf(F,S,M,Z) (((Z)>1)?setvbuf(F,S,M,Z):setvbuf(F,S,M,2))
+#else
 #define HDsetvbuf(F,S,M,Z)    setvbuf(F,S,M,Z)
 #endif
 /**************************************************************************

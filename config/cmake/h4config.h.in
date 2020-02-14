@@ -186,9 +186,6 @@
    `char[]'. */
 #cmakedefine H4_YYTEXT_POINTER @H4_YYTEXT_POINTER@
 
-/* This define is set in the root CMakeLists.txt file to the correct construction. */
-#define @H4_HDSETVBUF@
-
 /* Define to 1 if you don't have `vprintf' but do have `_doprnt.' */
 #cmakedefine H4_HAVE_DOPRNT @H4_HAVE_DOPRNT@
 
