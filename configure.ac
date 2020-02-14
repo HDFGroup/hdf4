@@ -812,9 +812,9 @@ if test $ac_cv_sizeof_intp -ge 8; then
     *-ibm-aix*) CPPFLAGS="$CPPFLAGS -DAIX5L64" ;;
     *)          ;;
   esac
-  if test "X$BUILD_XDR" = "Xyes"; then
-    AC_MSG_ERROR([--enable-hdf4-xdr is not supported for 64 bit mode.])
-  fi
+#  if test "X$BUILD_XDR" = "Xyes"; then
+#    AC_MSG_ERROR([--enable-hdf4-xdr is not supported for 64 bit mode.])
+#  fi
 fi
 
 ## ----------------------------------------------------------------------
@@ -835,7 +835,7 @@ AC_SUBST([CONFIG_USER]) CONFIG_USER="`whoami`@`hostname`"
 ## Configuration mode (production, development, etc)
 AC_SUBST([CONFIG_MODE])
 
-AC_C_BIGENDIAN([], [CPPFLAGS="$CPPFLAGS -DSWAP"])
+AC_C_BIGENDIAN([], [])
 
 ## Are we building this in debug or production mode? (Remove the -g flag
 ## in production mode.)
