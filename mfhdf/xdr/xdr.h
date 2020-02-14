@@ -62,17 +62,6 @@ enum xdr_op {
             * BYTES_PER_XDR_UNIT)
 
 /*
- * A xdrproc_t exists for each data type which is to be encoded or decoded.
- *
- * The second argument to the xdrproc_t is a pointer to an opaque pointer.
- * The opaque pointer generally points to a structure of the data type
- * to be decoded.  If this pointer is 0, then the type routines should
- * allocate dynamic storage of the appropriate size and return it.
- * bool_t    (*xdrproc_t)(XDR *, caddr_t *);
- */
-typedef    bool_t (*xdrproc_t)();
-
-/*
  * The XDR handle.
  * Contains operation which is being applied to the stream,
  * an operations vector for the paticular implementation (e.g. see xdr_mem.c),
@@ -100,6 +89,17 @@ typedef struct {
     caddr_t     x_base;      /* private used for position info */
     int         x_handy;     /* extra private word */
 } XDR;
+
+/*
+ * A xdrproc_t exists for each data type which is to be encoded or decoded.
+ *
+ * The second argument to the xdrproc_t is a pointer to an opaque pointer.
+ * The opaque pointer generally points to a structure of the data type
+ * to be decoded.  If this pointer is 0, then the type routines should
+ * allocate dynamic storage of the appropriate size and return it.
+ * bool_t    (*xdrproc_t)(XDR *, caddr_t *);
+ */
+typedef    bool_t (*xdrproc_t)();
 
 /*
  * Operations defined on a XDR handle
@@ -152,6 +152,11 @@ typedef struct {
     if ((xdrs)->x_ops->x_destroy)             \
         (*(xdrs)->x_ops->x_destroy)(xdrs)
 
+#define XDR_PUTINT32(xdrs, int32p)                      \
+        (*(xdrs)->x_ops->x_putlong)(xdrs, int32p)
+#define XDR_GETINT32(xdrs, int32p)                      \
+        (*(xdrs)->x_ops->x_getlong)(xdrs, int32p)
+
 /*
  * Support struct for discriminated unions.
  * You create an array of xdrdiscrim structures, terminated with
@@ -193,11 +198,15 @@ struct xdr_discrim {
 #define IXDR_GET_SHORT(buf)     ((short)IXDR_GET_LONG(buf))
 #define IXDR_GET_U_SHORT(buf)   ((u_short) IXDR_GET_LONG(buf))
 
+#define IXDR_GET_INT32(buf)     ((int32)IXDR_GET_LONG(buf))
+
 #define IXDR_PUT_BOOL(buf,v)    IXDR_PUT_LONG((buf), ((long)(v)))
 #define IXDR_PUT_ENUM(buf,v)    IXDR_PUT_LONG((buf), ((long)(v)))
 #define IXDR_PUT_U_LONG(buf,v)  IXDR_PUT_LONG((buf), ((long)(v)))
 #define IXDR_PUT_SHORT(buf,v)   IXDR_PUT_LONG((buf), ((long)(v)))
 #define IXDR_PUT_U_SHORT(buf,v) IXDR_PUT_LONG((buf), ((long)(v)))
+
+#define IXDR_PUT_INT32(buf,v)   IXDR_PUT_LONG((buf), ((long)(v)))
 
 /*
  * These are the "generic" xdr routines.
@@ -205,8 +214,6 @@ struct xdr_discrim {
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-XDRLIBAPI void      xdr_free (xdrproc_t, char *);
 XDRLIBAPI bool_t    xdr_void(void);
 XDRLIBAPI bool_t    xdr_int(XDR *, int *);
 XDRLIBAPI bool_t    xdr_u_int(XDR *, u_int *);
@@ -231,6 +238,11 @@ XDRLIBAPI bool_t    xdr_double(XDR *, double *);
 XDRLIBAPI bool_t    xdr_reference();
 XDRLIBAPI bool_t    xdr_pointer();
 XDRLIBAPI bool_t    xdr_wrapstring(XDR *, char **);
+XDRLIBAPI void      xdr_free (xdrproc_t, char *);
+/*
+XDRLIBAPI bool_t    xdr_uint64_t (XDR *xdrs, uint64_t *uip);
+XDRLIBAPI bool_t    xdr_int64_t (XDR *xdrs, int64_t *uip);
+*/
 
 /*
  * Common opaque bytes objects used by many rpc protocols;
@@ -251,7 +263,6 @@ XDRLIBAPI bool_t   xdr_netobj(XDR *,struct netobj *);
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 /* XDR using memory buffers */
 XDRLIBAPI void   xdrmem_create();
 

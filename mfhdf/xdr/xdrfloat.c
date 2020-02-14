@@ -20,22 +20,6 @@ static char sccsid[] = "@(#)xdr_float.c 1.12 87/08/11 Copyr 1984 Sun Micro";
 #include "types.h"
 #include "xdr.h"
 
-#if defined(i386) | defined(__i386)
-# define SWAP_DOUBLES
-#endif
-#ifdef MIPSEL
-# define SWAP_DOUBLES
-#endif
-#ifdef MSDOS
-# define SWAP_DOUBLES
-#endif
-#ifdef __FreeBSD__
-# define SWAP_DOUBLES
-#endif
-#if defined _WIN32 || __MINGW32__ || defined WINNT
-# define SWAP_DOUBLES
-#endif
-
 /* from netCDF */
 #define XDRUNIT 4
 
@@ -263,7 +247,7 @@ xdr_double(xdrs, dp)
 
     switch (xdrs->x_op) {
       case XDR_ENCODE:
-#ifdef SWAP
+#ifndef H4_WORDS_BIGENDIAN
         xdrntohdouble((char*)&dbl_val, dp);
 #else
         dbl_val = *dp;
@@ -274,7 +258,7 @@ xdr_double(xdrs, dp)
       case XDR_DECODE:
         /* Pull two units */
         status = xdr_opaque(xdrs, (caddr_t)&dbl_val, (off_t)2*XDRUNIT);
-#ifdef SWAP
+#ifndef H4_WORDS_BIGENDIAN
         xdrntohdouble((char*)&dbl_val, dp);
 #else
         *dp = dbl_val;

@@ -304,7 +304,7 @@ if (BUILD_SHARED_LIBS)
 endif ()
 set (CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-add_definitions (-DBIG_LONGS -DSWAP)
+add_definitions (-DBIG_LONGS)
 add_definitions (-DHAVE_CONFIG_H)
 
 #-----------------------------------------------------------------------------

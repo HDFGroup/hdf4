@@ -10,38 +10,6 @@
 #include <stdint.h>
 #endif
 
-#ifndef TRUE
-#define TRUE 1
-#endif
-#ifndef FALSE
-#define FALSE 0
-#endif
-
-#define    bool_t    int32_t
-#define    enum_t    int32_t
-
-#define __dontcare__    -1
-
-#ifndef NULL
-#    define NULL 0
-#endif
-
-#ifdef H4_HAVE_STDDEF_H
-#include <stddef.h>
-#endif
-#ifdef H4_HAVE_STDLIB_H
-#include <stdlib.h>
-#else
-extern char *malloc();
-#endif
-
-#define mem_alloc(bsize)    malloc(bsize)
-#define mem_free(ptr, bsize)    free(ptr)
-
-#ifdef H4_HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-
 #ifndef u_char
 typedef unsigned char u_char;
 #endif
@@ -62,6 +30,37 @@ typedef int64_t       quad_t;
 #endif
 #ifndef caddr_t
 typedef char *        caddr_t;
+#endif
+
+#ifndef TRUE
+#define TRUE 1
+#endif
+#ifndef FALSE
+#define FALSE 0
+#endif
+
+#define    bool_t    int
+#define    enum_t    int
+#define __dontcare__    -1
+
+#ifndef NULL
+#    define NULL 0
+#endif
+
+#ifdef H4_HAVE_STDDEF_H
+#include <stddef.h>
+#endif
+#ifdef H4_HAVE_STDLIB_H
+#include <stdlib.h>
+#else
+extern char *malloc();
+#endif
+
+#define mem_alloc(bsize)    malloc(bsize)
+#define mem_free(ptr, bsize)    free(ptr)
+
+#ifdef H4_HAVE_SYS_TYPES_H
+#include <sys/types.h>
 #endif
 
 #ifdef __CYGWIN32__

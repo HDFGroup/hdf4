@@ -447,7 +447,7 @@ xdrposix_getlong(xdrs, lp)
 #endif
     if(bioread((biobuf *)xdrs->x_private, up, 4) < 4)
         return (FALSE);
-#ifdef SWAP
+#ifndef H4_WORDS_BIGENDIAN
     *lp =  ntohl(*lp);
 #endif
     return (TRUE);
@@ -460,7 +460,7 @@ xdrposix_putlong(xdrs, lp)
 {
 
     unsigned char *up = (unsigned char *)lp ;
-#ifdef SWAP
+#ifndef H4_WORDS_BIGENDIAN
     netlong mycopy = htonl(*lp);
     up = (unsigned char *)&mycopy;
 #endif
@@ -590,7 +590,7 @@ xdrposix_getint(xdrs, lp)
     unsigned char *up = (unsigned char *)lp ;
     if(bioread((biobuf *)xdrs->x_private, up, 4) < 4)
         return (FALSE);
-#ifdef SWAP
+#ifndef H4_WORDS_BIGENDIAN
     *lp = ntohl(*lp);
 #endif
     return (TRUE);
@@ -603,7 +603,7 @@ xdrposix_putint(xdrs, lp)
 {
 
     unsigned char *up = (unsigned char *)lp ;
-#ifdef SWAP
+#ifndef H4_WORDS_BIGENDIAN
     netlong mycopy = htonl(*lp);
     up = (unsigned char *)&mycopy;
 #endif

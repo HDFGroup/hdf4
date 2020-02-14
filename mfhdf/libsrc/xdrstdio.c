@@ -106,7 +106,7 @@ xdrNCstdio_getlong(xdrs, lp)
         XDRNC_POS(xdrs) = ftell((FILE *)xdrs->x_private);
         return (FALSE);
     }
-#ifdef SWAP
+#ifndef H4_WORDS_BIGENDIAN
     *lp = ntohl(*lp);
 #endif
     XDRNC_POS(xdrs) += sizeof(long) ;
@@ -118,7 +118,7 @@ xdrNCstdio_putlong(xdrs, lp)
     XDR *xdrs;
     long *lp;
 {
-#ifdef SWAP
+#ifndef H4_WORDS_BIGENDIAN
     long mycopy = htonl(*lp);
     lp = &mycopy;
 #endif
