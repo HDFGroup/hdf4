@@ -683,19 +683,75 @@ case "$enableval" in
     ;;
 esac
 
-## For Solaris systems, add the -nsl for XDR support
-##
-## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
-case "$host" in
-  *-solaris*)
-    LIBS="$LIBS -lnsl"  ;;
-  *-pc-cygwin* | *-linux*)
-    LIBS="$LIBS -ltirpc"
-    CPPFLAGS="$CPPFLAGS -I/usr/include/tirpc"  ;;
-  *) ;;
-esac
+
+## Check headers and add libraries for XDR if the HDF4 XDR library is not used.
+if test "X$BUILD_XDR" != "Xyes"; then
+
+  ## ======================================================================
+  ## Checks for header files
+  ## ======================================================================
+  HAVE_RPC="yes"
+  HAVE_TIRPC="yes"
+  SYSLIBS="$LIBS"
+  SYSCPPFLAGS="$CPPFLAGS"
+  case "$host" in
+    *-solaris*)
+      LIBS="$LIBS -lnsl"  ;;
+    *-pc-cygwin* | *-linux*)
+      LIBS="$SYSLIBS -ltirpc"
+      CPPFLAGS="$SYSCPPFLAGS -I/usr/include/tirpc"
+      AC_CHECK_HEADER([rpc/rpc.h],[:], [unset HAVE_TIRPC])
+      if test -z "$HAVE_TIRPC"; then
+        LIBS="$SYSLIBS -lrpc"
+        CPPFLAGS="$SYSCPPFLAGS"
+        AC_CHECK_HEADER([rpc/rpc.h],[:], [unset HAVE_RPC])
+      fi
+      ;;
+    *) ;;
+  esac
+  if test -z "$HAVE_RPC"; then
+    LIBS="$SYSLIBS"
+    CPPFLAGS="$SYSCPPFLAGS"
+    AC_MSG_ERROR([couldn't find rpc headers])
+  fi
+
+  ## ----------------------------------------------------------------------
+  ## We're trying to link against the rpc library when building on Cygwin,
+  ## but we need to make sure that it is present on the system. Do that here,
+  ## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
+  case "$host" in
+    *-pc-cygwin* | *-linux*)
+      if test -z "$HAVE_TIRPC"; then
+        AC_CHECK_LIB([rpc], [xdr_opaque],[:], [unset HAVE_RPC])
+      else
+        AC_CHECK_LIB([tirpc], [xdr_opaque],[:], [unset HAVE_RPC])
+      fi
+      if test -z "$HAVE_RPC"; then
+        AC_MSG_ERROR([couldn't find rpc library])
+      fi
+      ;;
+  esac
+fi
 
 if test "X$BUILD_XDR" != "Xyes"; then
+    ## For Solaris systems, add the -nsl for XDR support
+    ##
+    ## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
+    case "$host" in
+      *-solaris*)
+        LIBS="$LIBS -lnsl"  ;;
+      *-pc-cygwin* | *-linux*)
+        if test -z "$HAVE_TIRPC"; then
+          LIBS="$LIBS -lrpc"
+          CPPFLAGS="$CPPFLAGS -I/usr/include"
+        else
+          LIBS="$LIBS -ltirpc"
+          CPPFLAGS="$CPPFLAGS -I/usr/include/tirpc"
+        fi
+        ;;
+      *) ;;
+    esac
+
     AC_TRY_LINK([
     #include <rpc/types.h>
     #include <rpc/xdr.h>], [xdr_int],
@@ -704,30 +760,6 @@ if test "X$BUILD_XDR" != "Xyes"; then
 fi
 
 AM_CONDITIONAL([HDF_BUILD_XDR], [test "X$BUILD_XDR" = "Xyes"])
-
-
-## Check headers and add libraries for XDR if the HDF4 XDR library is not used.
-if test "X$BUILD_XDR" != "Xyes"; then
-
-  ## ======================================================================
-  ## Checks for header files
-  ## ======================================================================
-
-  ## ----------------------------------------------------------------------
-  ## We're trying to link against the rpc library when building on Cygwin,
-  ## but we need to make sure that it is present on the system. Do that here,
-  ## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
-  case "$host" in
-    *-pc-cygwin* | *-linux*)
-      HAVE_RPC="yes"
-      AC_CHECK_HEADER([rpc/rpc.h],[:], [unset HAVE_RPC])
-      AC_CHECK_LIB([tirpc], [xdr_opaque],[:], [unset HAVE_RPC])
-      if test -z "$HAVE_RPC"; then
-        AC_MSG_ERROR([couldn't find tirpc library])
-      fi
-      ;;
-  esac
-fi
 
 AC_HEADER_STDC
 AC_HEADER_RESOLV

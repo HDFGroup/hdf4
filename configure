@@ -23639,24 +23639,76 @@ $as_echo "using HDF4 XDR" >&6; };
     ;;
 esac
 
-## For Solaris systems, add the -nsl for XDR support
-##
-## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
-case "$host" in
-  *-solaris*)
-    LIBS="$LIBS -lnsl"  ;;
-  *-pc-cygwin* | *-linux*)
-    LIBS="$LIBS -ltirpc"
-    CPPFLAGS="$CPPFLAGS -I/usr/include/tirpc"  ;;
-  *) ;;
-esac
 
+## Check headers and add libraries for XDR if the HDF4 XDR library is not used.
 if test "X$BUILD_XDR" != "Xyes"; then
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+
+  ## ======================================================================
+  ## Checks for header files
+  ## ======================================================================
+  HAVE_RPC="yes"
+  HAVE_TIRPC="yes"
+  SYSLIBS="$LIBS"
+  SYSCPPFLAGS="$CPPFLAGS"
+  case "$host" in
+    *-solaris*)
+      LIBS="$LIBS -lnsl"  ;;
+    *-pc-cygwin* | *-linux*)
+      LIBS="$SYSLIBS -ltirpc"
+      CPPFLAGS="$SYSCPPFLAGS -I/usr/include/tirpc"
+      ac_fn_c_check_header_mongrel "$LINENO" "rpc/rpc.h" "ac_cv_header_rpc_rpc_h" "$ac_includes_default"
+if test "x$ac_cv_header_rpc_rpc_h" = xyes; then :
+  :
+else
+  unset HAVE_TIRPC
+fi
+
+
+      if test -z "$HAVE_TIRPC"; then
+        LIBS="$SYSLIBS -lrpc"
+        CPPFLAGS="$SYSCPPFLAGS"
+        ac_fn_c_check_header_mongrel "$LINENO" "rpc/rpc.h" "ac_cv_header_rpc_rpc_h" "$ac_includes_default"
+if test "x$ac_cv_header_rpc_rpc_h" = xyes; then :
+  :
+else
+  unset HAVE_RPC
+fi
+
+
+      fi
+      ;;
+    *) ;;
+  esac
+  if test -z "$HAVE_RPC"; then
+    LIBS="$SYSLIBS"
+    CPPFLAGS="$SYSCPPFLAGS"
+    as_fn_error $? "couldn't find rpc headers" "$LINENO" 5
+  fi
+
+  ## ----------------------------------------------------------------------
+  ## We're trying to link against the rpc library when building on Cygwin,
+  ## but we need to make sure that it is present on the system. Do that here,
+  ## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
+  case "$host" in
+    *-pc-cygwin* | *-linux*)
+      if test -z "$HAVE_TIRPC"; then
+        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for xdr_opaque in -lrpc" >&5
+$as_echo_n "checking for xdr_opaque in -lrpc... " >&6; }
+if ${ac_cv_lib_rpc_xdr_opaque+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lrpc  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-    #include <rpc/types.h>
-    #include <rpc/xdr.h>
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char xdr_opaque ();
 #ifdef F77_DUMMY_MAIN
 
 #  ifdef __cplusplus
@@ -23668,55 +23720,30 @@ if test "X$BUILD_XDR" != "Xyes"; then
 int
 main ()
 {
-xdr_int
+return xdr_opaque ();
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }; BUILD_XDR="no"
+  ac_cv_lib_rpc_xdr_opaque=yes
 else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }; BUILD_XDR="yes"
+  ac_cv_lib_rpc_xdr_opaque=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
 fi
-
- if test "X$BUILD_XDR" = "Xyes"; then
-  HDF_BUILD_XDR_TRUE=
-  HDF_BUILD_XDR_FALSE='#'
-else
-  HDF_BUILD_XDR_TRUE='#'
-  HDF_BUILD_XDR_FALSE=
-fi
-
-
-
-## Check headers and add libraries for XDR if the HDF4 XDR library is not used.
-if test "X$BUILD_XDR" != "Xyes"; then
-
-  ## ======================================================================
-  ## Checks for header files
-  ## ======================================================================
-
-  ## ----------------------------------------------------------------------
-  ## We're trying to link against the rpc library when building on Cygwin,
-  ## but we need to make sure that it is present on the system. Do that here,
-  ## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
-  case "$host" in
-    *-pc-cygwin* | *-linux*)
-      HAVE_RPC="yes"
-      ac_fn_c_check_header_mongrel "$LINENO" "rpc/rpc.h" "ac_cv_header_rpc_rpc_h" "$ac_includes_default"
-if test "x$ac_cv_header_rpc_rpc_h" = xyes; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_rpc_xdr_opaque" >&5
+$as_echo "$ac_cv_lib_rpc_xdr_opaque" >&6; }
+if test "x$ac_cv_lib_rpc_xdr_opaque" = xyes; then :
   :
 else
   unset HAVE_RPC
 fi
 
-
-      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for xdr_opaque in -ltirpc" >&5
+      else
+        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for xdr_opaque in -ltirpc" >&5
 $as_echo_n "checking for xdr_opaque in -ltirpc... " >&6; }
 if ${ac_cv_lib_tirpc_xdr_opaque+:} false; then :
   $as_echo_n "(cached) " >&6
@@ -23766,12 +23793,73 @@ else
   unset HAVE_RPC
 fi
 
+      fi
       if test -z "$HAVE_RPC"; then
-        as_fn_error $? "couldn't find tirpc library" "$LINENO" 5
+        as_fn_error $? "couldn't find rpc library" "$LINENO" 5
       fi
       ;;
   esac
 fi
+
+if test "X$BUILD_XDR" != "Xyes"; then
+    ## For Solaris systems, add the -nsl for XDR support
+    ##
+    ## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
+    case "$host" in
+      *-solaris*)
+        LIBS="$LIBS -lnsl"  ;;
+      *-pc-cygwin* | *-linux*)
+        if test -z "$HAVE_TIRPC"; then
+          LIBS="$LIBS -lrpc"
+          CPPFLAGS="$CPPFLAGS -I/usr/include"
+        else
+          LIBS="$LIBS -ltirpc"
+          CPPFLAGS="$CPPFLAGS -I/usr/include/tirpc"
+        fi
+        ;;
+      *) ;;
+    esac
+
+    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+    #include <rpc/types.h>
+    #include <rpc/xdr.h>
+#ifdef F77_DUMMY_MAIN
+
+#  ifdef __cplusplus
+     extern "C"
+#  endif
+   int F77_DUMMY_MAIN() { return 1; }
+
+#endif
+int
+main ()
+{
+xdr_int
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }; BUILD_XDR="no"
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }; BUILD_XDR="yes"
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+fi
+
+ if test "X$BUILD_XDR" = "Xyes"; then
+  HDF_BUILD_XDR_TRUE=
+  HDF_BUILD_XDR_FALSE='#'
+else
+  HDF_BUILD_XDR_TRUE='#'
+  HDF_BUILD_XDR_FALSE=
+fi
+
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for ANSI C header files" >&5
 $as_echo_n "checking for ANSI C header files... " >&6; }
