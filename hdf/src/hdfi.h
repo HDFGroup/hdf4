@@ -98,7 +98,7 @@
 /*
  * Meaning of each defined macros (not completed yet)
  *
- * BIG_LONGS--Define when long is not "equal" to int32.  True in cases
+ * H4_BIG_LONGS--Define when long is not "equal" to int32.  True in cases
  *      where (int32 *) is not compatible with (long *).  Should
  *      be renamed as LONGNEINT32.
  */
@@ -406,7 +406,7 @@ typedef long               hdf_pint_t;   /* an integer the same size as a pointe
 #define FILELIB UNIXBUFIO
 /*
 #ifdef IRIX64
-#define BIG_LONGS
+#define H4_BIG_LONGS
 #endif
 */
 

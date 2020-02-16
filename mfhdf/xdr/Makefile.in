@@ -151,6 +151,7 @@ am__v_lt_1 =
 am_xdrtest_OBJECTS = xdrtest.$(OBJEXT)
 xdrtest_OBJECTS = $(am_xdrtest_OBJECTS)
 xdrtest_LDADD = $(LDADD)
+xdrtest_DEPENDENCIES = ./libxdr.la
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -576,12 +577,13 @@ ACLOCAL_AMFLAGS = "-I m4"
 # .chkexe files are used to mark tests that have run successfully.
 # .chklog files are output from those tests.
 CHECK_CLEANFILES = *.chkexe *.chklog
-AM_CPPFLAGS = -I$(top_srcdir)/hdf/src
+AM_CPPFLAGS = -I$(srcdir)
 
 # XDR Library
 lib_LTLIBRARIES = libxdr.la
 libxdr_la_SOURCES = xdr.c xdrfloat.c xdrstdio.c xdrarray.c
 include_HEADERS = xdr.h types.h
+LDADD = ./libxdr.la
 TEST_PROG = xdrtest
 xdrtest_SOURCES = xdrtest.c
 

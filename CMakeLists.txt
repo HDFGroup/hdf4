@@ -304,7 +304,6 @@ if (BUILD_SHARED_LIBS)
 endif ()
 set (CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-add_definitions (-DBIG_LONGS)
 add_definitions (-DHAVE_CONFIG_H)
 
 #-----------------------------------------------------------------------------
@@ -446,6 +445,7 @@ else ()
 endif ()
 
 if (HDF4_BUILD_XDR_LIB)
+  set (H4_NO_SYS_XDR_INC 1)
   add_subdirectory (mfhdf/xdr)
 endif ()
 

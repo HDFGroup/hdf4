@@ -285,8 +285,4 @@ XDRLIBAPI bool_t xdrrec_eof();
 }
 #endif
 
-#ifdef HDF
-#include "hdf.h"
-#endif /* HDF */
-
 #endif /* !__XDR_HEADER__ */

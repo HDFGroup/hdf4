@@ -23647,13 +23647,26 @@ if test "X$BUILD_XDR" != "Xyes"; then
   ## Checks for header files
   ## ======================================================================
   HAVE_RPC="yes"
+  HAVE_OLDRPC="yes"
   HAVE_TIRPC="yes"
+  ## save current settings
   SYSLIBS="$LIBS"
   SYSCPPFLAGS="$CPPFLAGS"
   case "$host" in
     *-solaris*)
-      LIBS="$LIBS -lnsl"  ;;
+      LIBS="$LIBS -lnsl"
+      ;;
     *-pc-cygwin* | *-linux*)
+      LIBS="$SYSLIBS -lrpc"
+      CPPFLAGS="$SYSCPPFLAGS"
+      ac_fn_c_check_header_mongrel "$LINENO" "rpc/rpc.h" "ac_cv_header_rpc_rpc_h" "$ac_includes_default"
+if test "x$ac_cv_header_rpc_rpc_h" = xyes; then :
+  :
+else
+  unset HAVE_OLDRPC
+fi
+
+
       LIBS="$SYSLIBS -ltirpc"
       CPPFLAGS="$SYSCPPFLAGS -I/usr/include/tirpc"
       ac_fn_c_check_header_mongrel "$LINENO" "rpc/rpc.h" "ac_cv_header_rpc_rpc_h" "$ac_includes_default"
@@ -23665,25 +23678,21 @@ fi
 
 
       if test -z "$HAVE_TIRPC"; then
-        LIBS="$SYSLIBS -lrpc"
-        CPPFLAGS="$SYSCPPFLAGS"
-        ac_fn_c_check_header_mongrel "$LINENO" "rpc/rpc.h" "ac_cv_header_rpc_rpc_h" "$ac_includes_default"
-if test "x$ac_cv_header_rpc_rpc_h" = xyes; then :
-  :
-else
-  unset HAVE_RPC
-fi
-
-
+        if test -z "$HAVE_OLDRPC" ; then
+          LIBS="$SYSLIBS"
+          CPPFLAGS="$SYSCPPFLAGS"
+          as_fn_error $? "couldn't find rpc headers" "$LINENO" 5
+        else
+          LIBS="$SYSLIBS -lrpc"
+          CPPFLAGS="$SYSCPPFLAGS"
+        fi
+      else
+        LIBS="$SYSLIBS -ltirpc"
+        CPPFLAGS="$SYSCPPFLAGS -I/usr/include/tirpc"
       fi
       ;;
     *) ;;
   esac
-  if test -z "$HAVE_RPC"; then
-    LIBS="$SYSLIBS"
-    CPPFLAGS="$SYSCPPFLAGS"
-    as_fn_error $? "couldn't find rpc headers" "$LINENO" 5
-  fi
 
   ## ----------------------------------------------------------------------
   ## We're trying to link against the rpc library when building on Cygwin,
@@ -23850,6 +23859,12 @@ $as_echo "no" >&6; }; BUILD_XDR="yes"
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
+fi
+
+if test "X$BUILD_XDR" != "Xno"; then
+
+$as_echo "#define NO_SYS_XDR_INC 1" >>confdefs.h
+
 fi
 
  if test "X$BUILD_XDR" = "Xyes"; then
@@ -24038,12 +24053,13 @@ done
 ## ======================================================================
 ## Checks for structures
 ## ======================================================================
-for ac_header in sys/time.h
+for ac_header in sys/time.h sys/file.h sys/resource.h
 do :
-  ac_fn_c_check_header_mongrel "$LINENO" "sys/time.h" "ac_cv_header_sys_time_h" "$ac_includes_default"
-if test "x$ac_cv_header_sys_time_h" = xyes; then :
+  as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
+ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
+if eval test \"x\$"$as_ac_Header"\" = x"yes"; then :
   cat >>confdefs.h <<_ACEOF
-#define HAVE_SYS_TIME_H 1
+#define `$as_echo "HAVE_$ac_header" | $as_tr_cpp` 1
 _ACEOF
 
 fi
@@ -24066,7 +24082,7 @@ fi
 
 done
 
-for ac_header in arpa/inet.h fcntl.h netinet/in.h sys/param.h
+for ac_header in arpa/inet.h fcntl.h netinet/in.h
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
@@ -24434,16 +24450,19 @@ _ACEOF
 
 
 if test $ac_cv_sizeof_intp -ge 8; then
-  CPPFLAGS="$CPPFLAGS -DBIG_LONGS"
+#  CPPFLAGS="$CPPFLAGS -DBIG_LONGS"
+
+$as_echo "#define BIG_LONGS 1" >>confdefs.h
+
 
   ## Define super secret special flag for AIX machines in 64-bit mode.
   case "${host}" in
     *-ibm-aix*) CPPFLAGS="$CPPFLAGS -DAIX5L64" ;;
     *)          ;;
   esac
-  if test "X$BUILD_XDR" = "Xyes"; then
-    as_fn_error $? "--enable-hdf4-xdr is not supported for 64 bit mode." "$LINENO" 5
-  fi
+#  if test "X$BUILD_XDR" = "Xyes"; then
+#    AC_MSG_ERROR([--enable-hdf4-xdr is not supported for 64 bit mode.])
+#  fi
 fi
 
 ## ----------------------------------------------------------------------
@@ -24725,7 +24744,7 @@ $as_echo "$ac_cv_c_bigendian" >&6; }
      $as_echo "#define WORDS_BIGENDIAN 1" >>confdefs.h
 ;; #(
    no)
-     CPPFLAGS="$CPPFLAGS -DSWAP" ;; #(
+      ;; #(
    universal)
 
 $as_echo "#define AC_APPLE_UNIVERSAL_BUILD 1" >>confdefs.h

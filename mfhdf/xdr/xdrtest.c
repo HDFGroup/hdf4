@@ -37,7 +37,7 @@
 #include <assert.h>
 #endif
 
-#ifndef    NO_SYS_XDR_INC
+#ifndef    H4_NO_SYS_XDR_INC
 #include <types.h>
 #include <xdr.h>
 #else

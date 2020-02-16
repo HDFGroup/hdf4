@@ -27,17 +27,17 @@ file - mfsd.c
 SD interface:
 ------------------
 
-	--- open a file ---
+    --- open a file ---
 fid    = SDstart(file name, access);
 
         --- get number of data sets and number of attributes in the file ---
-status = SDfileinfo(fid, *n_datasets, *n_attrs); 
-        
-	--- select a data set for access ---
+status = SDfileinfo(fid, *n_datasets, *n_attrs);
+
+    --- select a data set for access ---
 sdsid  = SDselect(fid, i, ...);   0 <= i < n_datasets
 
         --- return the name, rank, dimsizes, #of attr, datatype ---
-status = SDgetinfo(sdsid, ...); 
+status = SDgetinfo(sdsid, ...);
 
 status = SDreaddata(sdsid, ...);
 
@@ -47,7 +47,7 @@ status = SDend(fid);
 
 status = SDisdimval_bwcomp(dimid);
 
-	--- check whether a data set is empty
+    --- check whether a data set is empty
 status = SDcheckempty(sdsid, ...);
 
         --- retrieve the compression information of an SDS
@@ -63,23 +63,23 @@ status = SDgetdatasize(sdsid, ...);
         --- or none of the above ---
 id_type = SDidtype(an_id);
 
-	--- reset the maximum number of files can be opened at a time.
+    --- reset the maximum number of files can be opened at a time.
 max_files = SDreset_maxopenfiles(req_max);
 
-	--- retrieve the current number of opened files allowed in HDF and
-	--- the maximum number of opened files allowed on a system.
+    --- retrieve the current number of opened files allowed in HDF and
+    --- the maximum number of opened files allowed on a system.
 status = SDget_maxopenfiles(&curr_max, &sys_limit);
 
-	--- return the number of files currently being opened.
+    --- return the number of files currently being opened.
 num_files = SDget_numopenfiles();
 
-	--- get the number of variables in the file having the given name.
+    --- get the number of variables in the file having the given name.
 status = SDgetnumvars_byname(fid,...);
 
-	--- map a dataset name to an index.
+    --- map a dataset name to an index.
 index = SDnametoindex(int32 fid,...);
 
-	--- retrieve a list of variables having the given name.
+    --- retrieve a list of variables having the given name.
 status = SDnametoindices(fid,...);
 
 NOTE: This file needs to have the comments cleaned up for most of the
@@ -119,7 +119,7 @@ PRIVATE intn library_terminate = FALSE;
 #ifdef MFSD_INTERNAL
 /******************************************************************************
  NAME
-	SDIhandle_from_id -- get the handle from this object
+    SDIhandle_from_id -- get the handle from this object
 
  DESCRIPTION
     Map an ID to the handle for this file
@@ -139,7 +139,7 @@ SDIhandle_from_id(int32 id, /* IN: an object (file, dim, dataset) ID */
     /* check that it is the proper type of id */
     tmp = (id >> 16) & 0x0f;
     if(tmp != typ)
-	HGOTO_ERROR(DFE_ARGS, NULL);
+    HGOTO_ERROR(DFE_ARGS, NULL);
 
     /* get the file from top 12 bits*/
     tmp = (id >> 20) & 0xfff;
@@ -158,7 +158,7 @@ done:
 
 /******************************************************************************
  NAME
-	SDIget_var -- get the variable record
+    SDIget_var -- get the variable record
 
  DESCRIPTION
     Map an ID and a handle to the NC_var object for this dataset
@@ -179,16 +179,16 @@ SDIget_var(NC   *handle, /* IN: the handle for this file */
     /* varid is low 16bits of sdsid */
     varid = sdsid & 0xffff;
 
-    if(handle->vars != NULL 
-       && varid >= 0 
-       && varid < handle->vars->count) 
+    if(handle->vars != NULL
+       && varid >= 0
+       && varid < handle->vars->count)
       {
         ap = (NC_array **)handle->vars->values;
         ap += varid;
-      } 
-    else 
-	HGOTO_ERROR(DFE_ARGS, NULL);
-    
+      }
+    else
+    HGOTO_ERROR(DFE_ARGS, NULL);
+
     ret_value = ((NC_var *)*ap);
 
 done:
@@ -198,13 +198,13 @@ done:
       }
     /* Normal cleanup */
 
-    return ret_value;    
+    return ret_value;
 } /* SDIget_var */
 
 
 /******************************************************************************
  NAME
-	SDIget_dim -- get the dimension record
+    SDIget_dim -- get the dimension record
 
  DESCRIPTION
     Map an ID and a handle to the NC_dim object for this dimension
@@ -225,16 +225,16 @@ SDIget_dim(NC   *handle,/* IN: the handle for this file */
     /* dimindex is low 16bits of id */
     dimindex = id & 0xffff;
 
-    if(handle->dims != NULL 
-       && dimindex >= 0 
-       && dimindex < handle->dims->count) 
+    if(handle->dims != NULL
+       && dimindex >= 0
+       && dimindex < handle->dims->count)
       {
         ap = (NC_array **)handle->dims->values;
         ap += dimindex;
-      } 
-    else 
-	HGOTO_ERROR(DFE_ARGS, NULL);
-    
+      }
+    else
+    HGOTO_ERROR(DFE_ARGS, NULL);
+
     ret_value = ((NC_dim *)*ap);
 
 done:
@@ -244,13 +244,13 @@ done:
       }
     /* Normal cleanup */
 
-    return ret_value;    
+    return ret_value;
 } /* SDIget_dim */
 #endif /* MFSD_INTERNAL */
 
 /******************************************************************************
  NAME
-	SDIstart -- initialize the SD interface
+    SDIstart -- initialize the SD interface
 
  DESCRIPTION
     Register the atexit callback function, etc.
@@ -285,11 +285,11 @@ done:
 
 /******************************************************************************
  NAME
-	SDI_can_clobber -- check permission on the file
+    SDI_can_clobber -- check permission on the file
 
  DESCRIPTION
     Check the file permissions.  If OK to clobber the file, return 1,
-    else return 0. 
+    else return 0.
     Called by SDstart.
 
  RETURNS
@@ -307,7 +307,7 @@ int SDI_can_clobber(const char *name)
 
     if (res < 0) {
         /* no such file, OK to try to create it */
-	return(1);
+    return(1);
     }
 
     ff = HI_OPEN(name, DFACC_RDWR);
@@ -315,8 +315,8 @@ int SDI_can_clobber(const char *name)
     if (ff != NULL) {
         /* OK to open for write, so OK to clobber it */
         HI_CLOSE(ff);
-	return(1);
-    } 
+    return(1);
+    }
 
     /* no permission to write, don't do the create */
     return(0);
@@ -325,7 +325,7 @@ int SDI_can_clobber(const char *name)
 
 /******************************************************************************
  NAME
-	SDstart -- open a file
+    SDstart -- open a file
 
  DESCRIPTION
     Open a file by calling ncopen() or nccreate() and return a
@@ -367,19 +367,19 @@ SDstart(const char *name,   /* IN: file name to open */
     else
         NCmode = NC_NOWRITE;
 
-    if(HDFmode & DFACC_CREATE) 
+    if(HDFmode & DFACC_CREATE)
       { /* create file */
-        if(!SDI_can_clobber(name)) 
+        if(!SDI_can_clobber(name))
             HGOTO_ERROR(DFE_DENIED, FAIL);
         cdfid = nccreate(name, NC_CLOBBER);
-      } 
-    else 
+      }
+    else
       { /* open the file */
         cdfid = ncopen(name, NCmode);
       }
 
     /* check if bad create/open */
-    if(cdfid == -1) 
+    if(cdfid == -1)
     {
         /* catch what's on the stack; this is to catch specific error code,
            when the failure was due to "too many open files" -BMR- 2006/11/1 */
@@ -389,7 +389,7 @@ SDstart(const char *name,   /* IN: file name to open */
 
     /* hmm.....*/
     handle = NC_check_id(cdfid);
-    if(handle == NULL) 
+    if(handle == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* set in 'define' mode? */
@@ -414,7 +414,7 @@ done:
 
 /******************************************************************************
  NAME
-	SDend -- close a file
+    SDend -- close a file
 
  DESCRIPTION
     Close the file
@@ -446,27 +446,27 @@ SDend(int32 id /* IN: file ID of file to close */)
     /* get the handle */
     handle = SDIhandle_from_id(id, CDFTYPE);
     if(handle == NULL)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* make sure we can write to the file */
-    if(handle->flags & NC_RDWR) 
+    if(handle->flags & NC_RDWR)
       {
 
         handle->xdrs->x_op = XDR_ENCODE;
 
         /* see if the meta-data needs to be updated */
-        if(handle->flags & NC_HDIRTY) 
+        if(handle->flags & NC_HDIRTY)
           {
             if(!xdr_cdf(handle->xdrs, &handle))
-	        HGOTO_ERROR(DFE_XDRERROR, FAIL);
+            HGOTO_ERROR(DFE_XDRERROR, FAIL);
 
             handle->flags &= ~(NC_NDIRTY | NC_HDIRTY);
-          } 
-        else 
+          }
+        else
           {
 
             /* see if the numrecs info needs updating */
-              if(handle->flags & NC_NDIRTY) 
+              if(handle->flags & NC_NDIRTY)
                 {
                     if(!xdr_numrecs(handle->xdrs, handle))
                       {
@@ -498,7 +498,7 @@ done:
 
 /******************************************************************************
  NAME
-	SDfileinfo -- get info about an open file
+    SDfileinfo -- get info about an open file
 
  DESCRIPTION
     Return the number of datasets and global attributes in the file.
@@ -530,7 +530,7 @@ SDfileinfo(int32  fid,     /* IN:  file ID */
     handle = SDIhandle_from_id(fid, CDFTYPE);
     if(handle == NULL)
       {
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
 #ifdef SDDEBUG
@@ -556,7 +556,7 @@ done:
 
 /******************************************************************************
  NAME
-	SDselect -- get a dataset ID
+    SDselect -- get a dataset ID
 
  DESCRIPTION
     Return an id for the index-th data set in the file
@@ -564,21 +564,21 @@ done:
     We've got 32bits, the current ID looks like:
 
     sdsID:
-        
+
         32           20       16               0
         ----------------------------------------
         |  fid       | id-type| position index |
         ----------------------------------------
-        
+
     fid is the netCDF based file ID (i.e. from ncopen).  ID type
-    is SDSTYPE defined in mfhdf.h and position index is the 
+    is SDSTYPE defined in mfhdf.h and position index is the
     position in the file of this dataset.
 
     The position index is zero based
 
  RETURNS
    An ID to a dataset else FAIL
-        
+
 ******************************************************************************/
 int32
 SDselect(int32 fid,  /* IN: file ID */
@@ -600,18 +600,18 @@ SDselect(int32 fid,  /* IN: file ID */
     handle = SDIhandle_from_id(fid, CDFTYPE);
     if(handle == NULL)
       {
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* check that a data set with this index exists */
     if(handle->vars == NULL)
       {
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     if((unsigned)index >= handle->vars->count)
       {
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* create SDS id to return */
@@ -632,11 +632,11 @@ done:
 
 /******************************************************************************
  NAME
-	SDgetinfo -- get info about a dataset
+    SDgetinfo -- get info about a dataset
 
  DESCRIPTION
     The user is repsonsible for allocating space to hold
-    the dataset name.  It can be at most H4_MAX_NC_NAME 
+    the dataset name.  It can be at most H4_MAX_NC_NAME
     characters in length.  NULL can be passed for any of
     of the parameters if it is not required.
 
@@ -646,12 +646,12 @@ done:
  RETURNS
         SUCCEED / FAIL
 
-******************************************************************************/ 
+******************************************************************************/
 intn
 SDgetinfo(int32  sdsid,   /* IN:  dataset ID */
           char  *name,    /* OUT: name of the dataset */
           int32 *rank,    /* OUT: rank of the dataset */
-          int32 *dimsizes,/* OUT: array of dimension siszes */ 
+          int32 *dimsizes,/* OUT: array of dimension siszes */
           int32 *nt,      /* OUT: number type of data */
           int32 *nattrs   /* OUT: the number of local attributes */)
 {
@@ -670,18 +670,18 @@ SDgetinfo(int32  sdsid,   /* IN:  dataset ID */
 
     /* obtain the variable structure */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
-    if(handle == NULL) 
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    if(handle == NULL)
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if(handle->vars == NULL)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     var = SDIget_var(handle, sdsid);
     if(var == NULL)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* get sds name if it's requested */
-    if(name != NULL) 
+    if(name != NULL)
       {
           HDmemcpy(name, var->name->values, var->name->len);
           name[var->name->len] = '\0';
@@ -689,34 +689,34 @@ SDgetinfo(int32  sdsid,   /* IN:  dataset ID */
 
     /* get sds' rank if it is requested */
     if(rank != NULL)
-	*rank = var->assoc->count;
+    *rank = var->assoc->count;
 
     /* get sds' number type if it is requested */
     if(nt != NULL)
     {
-	if(!var->HDFtype)
-	    *nt    = hdf_map_type(var->type);
-	else
-	    *nt    = var->HDFtype;
+    if(!var->HDFtype)
+        *nt    = hdf_map_type(var->type);
+    else
+        *nt    = var->HDFtype;
     }
 
     /* get sds' number of attributes if it is requested */
     if(nattrs != NULL)
-	*nattrs = (var->attrs ? var->attrs->count : 0);
+    *nattrs = (var->attrs ? var->attrs->count : 0);
 
     /* get sds' dimension sizes if they are requested */
     if(dimsizes != NULL)
     {
-	for(i = 0; i < var->assoc->count; i++)
-	    dimsizes[i] = (int32) var->shape[i];
+    for(i = 0; i < var->assoc->count; i++)
+        dimsizes[i] = (int32) var->shape[i];
 
-	if(dimsizes[0] == NC_UNLIMITED) 
-	{
-	    if(handle->file_type == HDF_FILE)
-		dimsizes[0] = var->numrecs;
-	    else
-		dimsizes[0] = handle->numrecs;
-	}
+    if(dimsizes[0] == NC_UNLIMITED)
+    {
+        if(handle->file_type == HDF_FILE)
+        dimsizes[0] = var->numrecs;
+        else
+        dimsizes[0] = handle->numrecs;
+    }
     }
 
 done:
@@ -732,14 +732,14 @@ done:
 
 /******************************************************************************
  NAME
-	SDreaddata -- read a hyperslab of data
+    SDreaddata -- read a hyperslab of data
 
  DESCRIPTION
     Read a hyperslab of data from the given variable.
 
  RETURNS
      SUCCEED / FAIL
- 
+
 ******************************************************************************/
 intn
 SDreaddata(int32  sdsid,  /* IN:  dataset ID */
@@ -756,7 +756,7 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
     comp_coder_t comp_type=COMP_CODE_INVALID;
     uint32  comp_config;
     NC_var * var;
-#ifdef BIG_LONGS
+#ifdef H4_BIG_LONGS
     long    Start[H4_MAX_VAR_DIMS];
     long    End[H4_MAX_VAR_DIMS];
     long    Stride[H4_MAX_VAR_DIMS];
@@ -773,28 +773,28 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
 
     /* Clear error stack */
     HEclear();
-    
+
     /* Validate arguments */
     if((start == NULL) || (end == NULL) || (data == NULL))
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Get the NC_dim or NC_var depending on which id is given */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
-    if(handle == NULL) 
+    if(handle == NULL)
       {
           handle = SDIhandle_from_id(sdsid, DIMTYPE);
-          if(handle == NULL) 
-	      HGOTO_ERROR(DFE_ARGS, FAIL);
+          if(handle == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
           dim = SDIget_dim(handle, sdsid);
       }
 
     if(handle->vars == NULL)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     var = SDIget_var(handle, sdsid);
     if(var == NULL)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Dev note: empty SDS should have been checked here and SDreaddata would
        have failed, but since it wasn't, for backward compatibility, we won't
@@ -805,35 +805,35 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
     /* Make sure that the file is an HDF file before checking about compression */
     if(handle->file_type == HDF_FILE) /* bug HDFFR-473 */
     {
-	status = HCPgetcomptype(handle->hdf_file, var->data_tag, var->data_ref,
+    status = HCPgetcomptype(handle->hdf_file, var->data_tag, var->data_ref,
                 &comp_type);
 
-	if (status != FAIL)
-	    if (comp_type != COMP_CODE_NONE && comp_type != COMP_CODE_INVALID)
-	    {
-		/* Must have decoder to read data */
-		HCget_config_info( comp_type , &comp_config);
-		if ((comp_config & COMP_DECODER_ENABLED) == 0)
-		{ /* decoder not present?? */
-		    HGOTO_ERROR(DFE_BADCODER, FAIL);
-		}
-	    }
-	/* The case status=FAIL is not handled, not sure if it's intentional. -BMR */
+    if (status != FAIL)
+        if (comp_type != COMP_CODE_NONE && comp_type != COMP_CODE_INVALID)
+        {
+        /* Must have decoder to read data */
+        HCget_config_info( comp_type , &comp_config);
+        if ((comp_config & COMP_DECODER_ENABLED) == 0)
+        { /* decoder not present?? */
+            HGOTO_ERROR(DFE_BADCODER, FAIL);
+        }
+        }
+    /* The case status=FAIL is not handled, not sure if it's intentional. -BMR */
     } /* file is HDF */
 
     /* Get ready to read */
     handle->xdrs->x_op = XDR_DECODE ;
-   
-    /* 
+
+    /*
      * Figure out the index of the variable to read from,
      * the user might have passed us a dimension, in which
      * case we want to reade from its coordinate variable
      */
-    if(dim) 
+    if(dim)
       {
           varid = SDIgetcoordvar(handle, dim, (int32)(sdsid & 0xffff), (int32) 0);
-      } 
-    else 
+      }
+    else
       {
           /* Derive the variable index from the SDS id, using the formula
              described in SDselect */
@@ -841,17 +841,17 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
       }
 
     /*
-     * In general, (long) == int32 
+     * In general, (long) == int32
      * In cases where it doesn't we need to convert
      */
-#ifdef BIG_LONGS
+#ifdef H4_BIG_LONGS
     {
         int i;
-        for(i = 0; i < var->assoc->count; i++) 
+        for(i = 0; i < var->assoc->count; i++)
           {
             Start[i]  = (long) start[i];
             End[i]    = (long) end[i];
-            if(stride) 
+            if(stride)
                 Stride[i] = (long) stride[i];
           }
     }
@@ -869,25 +869,25 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
     if(stride != NULL)
     {
         int i;
-	int32 dimsize = (int32) var->shape[0];
+    int32 dimsize = (int32) var->shape[0];
 
-	/* Validate stride value of first dimension separately to catch */
-	/* unlimited dimension situation */
-	if (var->shape[0] == NC_UNLIMITED)
-	{
-	    /* get the actual size */
-	    if(handle->file_type == HDF_FILE)
-		dimsize = var->numrecs;
-	    else
-		dimsize = handle->numrecs;
-	}
-	if ((Stride[0]*(End[0]-1)) >= (dimsize-Start[0]))
-	    HGOTO_ERROR(DFE_ARGS, FAIL);
+    /* Validate stride value of first dimension separately to catch */
+    /* unlimited dimension situation */
+    if (var->shape[0] == NC_UNLIMITED)
+    {
+        /* get the actual size */
+        if(handle->file_type == HDF_FILE)
+        dimsize = var->numrecs;
+        else
+        dimsize = handle->numrecs;
+    }
+    if ((Stride[0]*(End[0]-1)) >= (dimsize-Start[0]))
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
-	/* Validate subsequent dimensions if dataset is multi-dim */
-	for(i = 1; i < var->assoc->count; i++)
-	     if ((Stride[i]*(End[i]-1)) >= ((int32)var->shape[i]-Start[i]))
-		HGOTO_ERROR(DFE_ARGS, FAIL);
+    /* Validate subsequent dimensions if dataset is multi-dim */
+    for(i = 1; i < var->assoc->count; i++)
+        if ((Stride[i]*(End[i]-1)) >= ((int32)var->shape[i]-Start[i]))
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     }
 
     /* Call the readg routines if a stride is given */
@@ -913,13 +913,13 @@ done:
 
 /******************************************************************************
  NAME
-	SDnametoindex -- map a dataset name to an index
+    SDnametoindex -- map a dataset name to an index
 
  DESCRIPTION
-    Given a data set name return the index (not ID) of the 
+    Given a data set name return the index (not ID) of the
     first data set whose name matches.
 
-    There can be multiple data sets with the same name.  In 
+    There can be multiple data sets with the same name.  In
     such a case, we only ever return the index of the first
     such dataset.
     Wildcards are not supported
@@ -946,22 +946,22 @@ SDnametoindex(int32 fid,  /* IN: file ID */
 
     /* check that fid is valid */
     handle = SDIhandle_from_id(fid, CDFTYPE);
-    if(handle == NULL) 
+    if(handle == NULL)
       {
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     if(handle->vars == NULL)
       {
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     len = HDstrlen(name) ;
     dp = (NC_var**)handle->vars->values ;
-    for(ii = 0 ; ii < handle->vars->count ; ii++, dp++) 
+    for(ii = 0 ; ii < handle->vars->count ; ii++, dp++)
       {
-        if( len == (*dp)->name->len 
-            && HDstrncmp(name, (*dp)->name->values, HDstrlen(name)) == 0) 
+        if( len == (*dp)->name->len
+            && HDstrncmp(name, (*dp)->name->values, HDstrlen(name)) == 0)
           {
             HGOTO_DONE((int32)ii);
           }
@@ -976,18 +976,18 @@ done:
       }
     /* Normal cleanup */
 
-    return ret_value;    
+    return ret_value;
 } /* SDnametoindex */
 
 
 /******************************************************************************
  NAME
-	SDgetnumvars_byname -- get the number of variables in the file having 
-			the given name.
+    SDgetnumvars_byname -- get the number of variables in the file having
+            the given name.
 
  DESCRIPTION
     Given a data set name, retrieve the number of variables in the file having
-    the same name.  Sometime, more than one SDS are named 'name' or a 
+    the same name.  Sometime, more than one SDS are named 'name' or a
     dimension of the SDS 'name' is also named 'name.'  The user can use
     this function to find out how many of those having the same name.
 
@@ -1000,7 +1000,7 @@ done:
 intn
 SDgetnumvars_byname(int32 fid,  /* IN: file ID */
               const char *name,  /* IN: name of dataset to search for */
-	      int32* n_vars)
+        int32* n_vars)
 {
     CONSTR(FUNC, "SDgetnumvars_byname");    /* for HGOTO_ERROR */
     unsigned ii;
@@ -1019,23 +1019,23 @@ SDgetnumvars_byname(int32 fid,  /* IN: file ID */
 
     /* check that fid is valid */
     handle = SDIhandle_from_id(fid, CDFTYPE);
-    if(handle == NULL) 
+    if(handle == NULL)
       {
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     if(handle->vars == NULL)
       {
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     len = HDstrlen(name) ;
     dp = (NC_var**)handle->vars->values ;
-    for(ii = 0 ; ii < handle->vars->count; ii++, dp++) 
+    for(ii = 0 ; ii < handle->vars->count; ii++, dp++)
       {
-        if( len == (*dp)->name->len 
-            && HDstrncmp(name, (*dp)->name->values, HDstrlen(name)) == 0) 
-	    count++;
+        if( len == (*dp)->name->len
+            && HDstrncmp(name, (*dp)->name->values, HDstrlen(name)) == 0)
+        count++;
       }
     *n_vars = count;
 
@@ -1046,19 +1046,19 @@ done:
       }
     /* Normal cleanup */
 
-    return ret_value;    
+    return ret_value;
 } /* SDgetnumvars_byname */
 
 
 /******************************************************************************
  NAME
-	SDnametoindices -- retrieves a list of variables having the given name.
+    SDnametoindices -- retrieves a list of variables having the given name.
 
  DESCRIPTION
-    Given a data set name, retrieve a list of structures, each of which 
-    contains the index of a variable whose name matches the given name, and 
-    the type of the variable, which is either data set (IS_SDSVAR) or 
-    coordinate variable (IS_CRDVAR,) or (UNKNOWN.)  UNKNOW is for data 
+    Given a data set name, retrieve a list of structures, each of which
+    contains the index of a variable whose name matches the given name, and
+    the type of the variable, which is either data set (IS_SDSVAR) or
+    coordinate variable (IS_CRDVAR,) or (UNKNOWN.)  UNKNOW is for data
     created before the fix of a data corruption bug due to the library's
     inability to distinguish between those two types of variables.  The
     fix was available starting in HDF4.2r2.
@@ -1074,8 +1074,8 @@ done:
 ******************************************************************************/
 intn
 SDnametoindices(int32 fid,  /* IN: file ID */
-		const char *name,  /* IN: name of dataset to search for */
-		hdf_varlist_t* var_list)
+        const char *name,  /* IN: name of dataset to search for */
+        hdf_varlist_t* var_list)
 {
     CONSTR(FUNC, "SDnametoindices");    /* for HGOTO_ERROR */
     unsigned ii;
@@ -1094,28 +1094,28 @@ SDnametoindices(int32 fid,  /* IN: file ID */
 
     /* check that fid is valid */
     handle = SDIhandle_from_id(fid, CDFTYPE);
-    if(handle == NULL) 
+    if(handle == NULL)
       {
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     if(handle->vars == NULL)
       {
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     len = HDstrlen(name) ;
     dp = (NC_var**)handle->vars->values ;
     varlistp = var_list;
-    for(ii = 0 ; ii < handle->vars->count; ii++, dp++) 
+    for(ii = 0 ; ii < handle->vars->count; ii++, dp++)
       {
-        if( len == (*dp)->name->len 
-            && HDstrncmp(name, (*dp)->name->values, HDstrlen(name)) == 0) 
-	  {
-	    varlistp->var_index = (int32)ii;
-	    varlistp->var_type = (*dp)->var_type;
-	    varlistp++;
-	  }
+        if( len == (*dp)->name->len
+            && HDstrncmp(name, (*dp)->name->values, HDstrlen(name)) == 0)
+    {
+        varlistp->var_index = (int32)ii;
+        varlistp->var_type = (*dp)->var_type;
+        varlistp++;
+    }
       }
 
 done:
@@ -1125,24 +1125,24 @@ done:
       }
     /* Normal cleanup */
 
-    return ret_value;    
+    return ret_value;
 } /* SDnametoindices */
 
 
 /******************************************************************************
  NAME
-	SDgetrange -- simulate a call to DFSDgetrange
+    SDgetrange -- simulate a call to DFSDgetrange
 
  DESCRIPTION
-    If a "valid_range" attribute is provided return its 
-    values in pmax and pmin.  Else if both a "valid max" 
+    If a "valid_range" attribute is provided return its
+    values in pmax and pmin.  Else if both a "valid max"
     AND a "vaild min" exist return their values in pmax and pmin.
 
-    Arrgghh, in HDF it was assumed that the max and min values 
-    were of the same data type as the rest of the data.  So 
-    the user would know the amount of storage to send to get 
-    back the max and min values.  This is not the case with 
-    netCDF.  This routine will only work if they are already 
+    Arrgghh, in HDF it was assumed that the max and min values
+    were of the same data type as the rest of the data.  So
+    the user would know the amount of storage to send to get
+    back the max and min values.  This is not the case with
+    netCDF.  This routine will only work if they are already
     the same number types.
 
  RETURNS
@@ -1171,44 +1171,44 @@ SDgetrange(int32 sdsid, /* IN:  dataset ID */
     HEclear();
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
-    if(handle == NULL) 
+    if(handle == NULL)
       {
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     var = SDIget_var(handle, sdsid);
     if(var == NULL)
       {
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_ValidRange);
-    if((attr != NULL) && ((*attr)->data->type == var->type)) 
+    if((attr != NULL) && ((*attr)->data->type == var->type))
       {
         /* BUG: this may be a pointer to a pointer */
         array = (NC_array *) (*attr)->data;
         HDmemcpy(pmin, array->values, array->szof);
         HDmemcpy(pmax, array->values + array->szof, array->szof);
-      } 
-    else 
+      }
+    else
       {
         attr1 = (NC_attr **) NC_findattr(&(var->attrs), "valid_max");
         attr2 = (NC_attr **) NC_findattr(&(var->attrs), "valid_min");
-        
-        if((attr1 == NULL) || (attr2 == NULL)) 
+
+        if((attr1 == NULL) || (attr2 == NULL))
           {
 #ifdef SDDEBUG
             fprintf(stderr, "No dice on range info (missing at least one)\n");
-#endif   
+#endif
             HGOTO_ERROR(DFE_RANGE, FAIL);
           }
 
-        if(((*attr1)->HDFtype != var->HDFtype) 
-           || ((*attr2)->HDFtype != var->HDFtype)) 
+        if(((*attr1)->HDFtype != var->HDFtype)
+           || ((*attr2)->HDFtype != var->HDFtype))
           {
 #ifdef SDDEBUG
             fprintf(stderr, "No dice on range info (wrong types)\n");
-#endif   
+#endif
             HGOTO_ERROR(DFE_RANGE, FAIL);
           }
 
@@ -1255,22 +1255,22 @@ cur_mode = SDsetfillmode(fid, fillmode);
 
         --- set dimval backward compatible  for write
 status  = SDsetdimval_comp(dimid, compt_mode);
- 
+
 */
 
 /******************************************************************************
  NAME
-	SDcreate -- create a new dataset
+    SDcreate -- create a new dataset
 
  DESCRIPTION
-    Simulate a call to ncvardef without having to be in 
+    Simulate a call to ncvardef without having to be in
     define mode.  name can be at most H4_MAX_NC_NAME
     characters.  Rank can be at most H4_MAX_VAR_DIMS
 
-    It looks like for the call to NC_new_var() we need to 
-    have dimension IDs already.  So I guess we should just 
-    create the fake dimensions now and when optional 
-    information comes in (i.e.  name, tying to other 
+    It looks like for the call to NC_new_var() we need to
+    have dimension IDs already.  So I guess we should just
+    create the fake dimensions now and when optional
+    information comes in (i.e.  name, tying to other
     dimensions) we'll go in and modify the structure in place.
     This is gonna be heinous.  Please do not attempt this at home
     See SDselect() for a discussion on how SDS IDs are set up.
@@ -1310,7 +1310,7 @@ SDcreate(int32  fid,      /* IN: file ID */
     handle = SDIhandle_from_id(fid, CDFTYPE);
     if(handle == NULL)
       {
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* fudge the name since its optional */
@@ -1319,50 +1319,50 @@ SDcreate(int32  fid,      /* IN: file ID */
 
     /* check if its a ragged array.
        Why is this code still here? -GV */
-    if((rank > 1) && dimsizes[rank - 1] == SD_RAGGED) 
+    if((rank > 1) && dimsizes[rank - 1] == SD_RAGGED)
       {
 #ifdef DEBUG
         printf("YOW!  We have a ragged array kids: %s\n", name);
 #endif
         rank--;
         is_ragged = TRUE;
-      } 
-    else 
+      }
+    else
       {
-        is_ragged = FALSE;        
+        is_ragged = FALSE;
       }
 
     /* make fake dimensions which may or may not be over-ridden later */
     dims = (intn *) HDmalloc(rank * sizeof(intn));
     if(dims == NULL)
       {
-	HGOTO_ERROR(DFE_NOSPACE, FAIL);
+    HGOTO_ERROR(DFE_NOSPACE, FAIL);
       }
 
     if(rank > H4_MAX_VAR_DIMS)
       {
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
-    for(i = 0; i < rank; i++) 
+    for(i = 0; i < rank; i++)
       {
           num = (handle->dims ? handle->dims->count : 0);
           sprintf(dimname, "fakeDim%d", num);
           newdim = (NC_dim *) NC_new_dim(dimname, dimsizes[i]);
-          if(newdim == NULL) 
+          if(newdim == NULL)
             {
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
             }
 
-          if(handle->dims == NULL) 
+          if(handle->dims == NULL)
             { /* first time */
                 handle->dims = NC_new_array(NC_DIMENSION,(unsigned)1, (Void *)&newdim);
                 if(handle->dims == NULL)
                   {
                       HGOTO_ERROR(DFE_INTERNAL, FAIL);
                   }
-            } 
-          else 
+            }
+          else
             {
                 if( NC_incr_array(handle->dims, (Void *)&newdim) == NULL)
                   {
@@ -1377,29 +1377,29 @@ SDcreate(int32  fid,      /* IN: file ID */
     /* create the actual variable */
     if ((nctype = hdf_unmap_type((int)nt)) == FAIL)
       {
-	  HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    HGOTO_ERROR(DFE_INTERNAL, FAIL);
       }
 
     var = (NC_var *) NC_new_var(name, nctype, (int)rank, dims);
     if(var == NULL)
       {
-	  HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    HGOTO_ERROR(DFE_INTERNAL, FAIL);
       }
-    
+
     /* Set the "newly created" & "set length" flags for use in SDwritedata */
     var->created=TRUE;
     var->set_length=FALSE;
 
-    /* Indicate that this variable is an actual sds, not a coordinate 
-	variable (bugzilla 624) - BMR - 05/14/2007 */
+    /* Indicate that this variable is an actual sds, not a coordinate
+    variable (bugzilla 624) - BMR - 05/14/2007 */
     var->var_type=IS_SDSVAR;
 
     /* NC_new_var strips off "nativeness" add it back in if appropriate */
     var->HDFtype = nt;
     if (FAIL == (var->HDFsize = DFKNTsize(nt)))
       {
-	  HGOTO_ERROR(DFE_INTERNAL, FAIL);
-      } 
+    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+      }
 
     var->cdf     = handle; /* set cdf before calling NC_var_shape */
     /* get a new NDG ref for this sucker */
@@ -1411,43 +1411,43 @@ SDcreate(int32  fid,      /* IN: file ID */
 
     /* set ragged status. Why is this still here -GV */
     var->is_ragged = is_ragged;
-    
+
     /* no ragged array info stored yet */
-    if(var->is_ragged) 
+    if(var->is_ragged)
       {
         var->rag_list = NULL;
         var->rag_fill = 0;
       }
 
     /* add it to the handle */
-    if(handle->vars == NULL) 
+    if(handle->vars == NULL)
       { /* first time */
           handle->vars = NC_new_array(NC_VARIABLE,(unsigned)1, (Void *)&var);
           if(handle->vars == NULL)
             {
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
             }
-      } 
-    else 
+      }
+    else
       {
-          if(handle->vars->count >= H4_MAX_NC_VARS) 
+          if(handle->vars->count >= H4_MAX_NC_VARS)
             {
                 HGOTO_ERROR(DFE_EXCEEDMAX, FAIL);
-            } 
-          else 
+            }
+          else
             {
                 if( NC_incr_array(handle->vars, (Void *)&var) == NULL)
                   {
                       HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                  } 
+                  }
             }
       }
 
     /* compute all of the shape information */
     if(NC_var_shape(var, handle->dims) == -1)
       {
-	  HGOTO_ERROR(DFE_INTERNAL, FAIL);
-      } 
+    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+      }
 
     /* create a handle we can give back to the user */
     sdsid  = (((int32) fid) << 20) + (((int32) SDSTYPE) << 16);
@@ -1475,17 +1475,17 @@ done:
 
 /******************************************************************************
  NAME
-	SDgetdimid -- get a dimension ID
+    SDgetdimid -- get a dimension ID
 
  DESCRIPTION
-    Given an sdsid and a dimension number return a 
+    Given an sdsid and a dimension number return a
     dimid.  Index is a ZERO based quantity
 
-    The dimID looks similar to the sdsID except DIMTYPE 
+    The dimID looks similar to the sdsID except DIMTYPE
     is substituted for SDSTYPE as the id-type:
 
     dimID:
-        
+
         32           20       16               0
         ----------------------------------------
         |  fid       | id-type| position index |
@@ -1493,7 +1493,7 @@ done:
 
  RETURNS
         An ID to the dimension else FAIL
-        
+
 ******************************************************************************/
 int32
 SDgetdimid(int32 sdsid,  /* IN: dataset ID */
@@ -1514,33 +1514,33 @@ SDgetdimid(int32 sdsid,  /* IN: dataset ID */
     HEclear();
 
     /* sanity check args */
-    if(number < 0) 
+    if(number < 0)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* get the handle */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
-    if(handle == NULL) 
+    if(handle == NULL)
       {
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* get the variable */
     var = SDIget_var(handle, sdsid);
     if(var == NULL)
       {
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* check if enough / too many dims */
     if((var->assoc == NULL) || (var->assoc->count < (unsigned)number))
       {
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* get the dim number out of the assoc array */
     if (var->assoc->values == NULL)
       {
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
     dimindex = var->assoc->values[number];
 
@@ -1562,12 +1562,12 @@ done:
 
 /******************************************************************************
  NAME
-	SDsetdimname -- give a name to a dimension
+    SDsetdimname -- give a name to a dimension
 
  DESCRIPTION
-    Set the name of a dimension -- at most H4_MAX_NC_NAME characters.  
-    If this name is already in use we should point to the 
-    existing dimension with that name.  If the sizes are 
+    Set the name of a dimension -- at most H4_MAX_NC_NAME characters.
+    If this name is already in use we should point to the
+    existing dimension with that name.  If the sizes are
     different return an error.  If this dimension already has
     a name throw it out and use the new one.
 
@@ -1599,27 +1599,27 @@ SDsetdimname(int32  id,   /* IN: dataset ID */
 
     /* get the handle */
     handle = SDIhandle_from_id(id, DIMTYPE);
-    if(handle == NULL) 
+    if(handle == NULL)
       {
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* get the dimension structure */
     dim = SDIget_dim(handle, id);
     if(dim == NULL)
       {
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* check for name in use */
     len = HDstrlen(name) ;
     dp = (NC_dim**)handle->dims->values ;
-    for(ii = 0 ; ii < handle->dims->count ; ii++, dp++) 
+    for(ii = 0 ; ii < handle->dims->count ; ii++, dp++)
       {
-          if( len == (*dp)->name->len 
-              && HDstrncmp(name, (*dp)->name->values, HDstrlen(name)) == 0) 
+          if( len == (*dp)->name->len
+              && HDstrncmp(name, (*dp)->name->values, HDstrlen(name)) == 0)
             {
-                if(dim != (*dp)) 
+                if(dim != (*dp))
                   {
                       /* a dimension with this name already exists */
                       /* so change to point to it */
@@ -1637,18 +1637,18 @@ SDsetdimname(int32  id,   /* IN: dataset ID */
                   }
             }
       }
-    
+
     /* throw out the old name if it exists and create a new one */
     old = dim->name;
     new = NC_new_string((unsigned)HDstrlen(name),name);
     if(new == NULL)
       {
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     dim->name = new;
     NC_free_string(old);
-    
+
     /* make sure it gets reflected in the file */
     handle->flags |= NC_HDIRTY;
 
@@ -1665,17 +1665,17 @@ done:
 
 /******************************************************************************
  NAME
-	SDendaccess -- close a sds ID
+    SDendaccess -- close a sds ID
 
  DESCRIPTION
     Close down this access ID to a data object
 
-    Usually, this will do nothing.  However, if the meta-data 
-    has changed and SYNC_ON_EACC is defiend flush it all out 
+    Usually, this will do nothing.  However, if the meta-data
+    has changed and SYNC_ON_EACC is defiend flush it all out
     to disk.
 
  RETURNS
-        SUCCEED / FAIL          
+        SUCCEED / FAIL
 
 ******************************************************************************/
 intn
@@ -1684,7 +1684,7 @@ SDendaccess(int32 id /* IN: dataset ID */)
     CONSTR(FUNC, "SDendaccess");    /* for HGOTO_ERROR */
     NC     *handle;
     int32   ret_value = SUCCEED;
-	
+
 #ifdef SDDEBUG
     fprintf(stderr, "SDendaccess: I've been called\n");
 #endif
@@ -1694,20 +1694,20 @@ SDendaccess(int32 id /* IN: dataset ID */)
 
     /* get the handle */
     handle = SDIhandle_from_id(id, SDSTYPE);
-    if(handle == NULL) 
+    if(handle == NULL)
       {
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
 #ifdef SYNC_ON_EACC
 
     /* make sure we can write to the file */
-    if(handle->flags & NC_RDWR) 
+    if(handle->flags & NC_RDWR)
       {
           handle->xdrs->x_op = XDR_ENCODE;
 
           /* see if the meta-data needs to be updated */
-          if(handle->flags & NC_HDIRTY) 
+          if(handle->flags & NC_HDIRTY)
             {
                 if(!xdr_cdf(handle->xdrs, &handle) )
                   {
@@ -1715,11 +1715,11 @@ SDendaccess(int32 id /* IN: dataset ID */)
                   }
 
                 handle->flags &= ~(NC_NDIRTY | NC_HDIRTY);
-            } 
-          else 
+            }
+          else
             {
                 /* see if the numrecs info needs updating */
-                if(handle->flags & NC_NDIRTY) 
+                if(handle->flags & NC_NDIRTY)
                   {
                       if(!xdr_numrecs(handle->xdrs, handle) )
                         {
@@ -1731,13 +1731,13 @@ SDendaccess(int32 id /* IN: dataset ID */)
             }
       }
 
-#else 
+#else
 
     /* free the AID */
     ret_value = SDIfreevarAID(handle, id & 0xffff);
-     
+
 #endif /* SYNC_ON_EACC */
-  
+
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
@@ -1746,14 +1746,14 @@ done:
     /* Normal cleanup */
 
 
-    return ret_value;    
+    return ret_value;
 } /* SDendaccess */
 
 #ifdef MFSD_INTERNAL
 
 /******************************************************************************
  NAME
-	SDIputattr -- put an attribute in an attribute list
+    SDIputattr -- put an attribute in an attribute list
 
  DESCRIPTION
     Common code for adding an attribute to an attribute list.
@@ -1780,13 +1780,13 @@ SDIputattr(NC_array **ap,   /* IN/OUT: attribute list */
 #ifdef SDDEBUG
     fprintf(stderr, "SDIputattr: I've been called\n");
 #endif
-    
+
     if ((type = hdf_unmap_type((int)nt)) == FAIL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
-    if(*ap == NULL) 
+    if(*ap == NULL)
       { /* first time */
           attr = (NC_attr *) NC_new_attr(name,type,(unsigned)count,data) ;
           if(attr == NULL)
@@ -1803,11 +1803,11 @@ SDIputattr(NC_array **ap,   /* IN/OUT: attribute list */
       }
     else
       {
-          if((atp = NC_findattr(ap, name)) != NULL) 
+          if((atp = NC_findattr(ap, name)) != NULL)
             { /* name in use */
                 old = *atp ;
                 *atp = (NC_attr *) NC_new_attr(name,type,(unsigned)count,data);
-                if(*atp == NULL) 
+                if(*atp == NULL)
                   {
                       *atp = old;
                       HGOTO_ERROR(DFE_INTERNAL, FAIL);
@@ -1815,9 +1815,9 @@ SDIputattr(NC_array **ap,   /* IN/OUT: attribute list */
                 (*atp)->HDFtype = nt; /* Add HDFtype  */
                 NC_free_attr(old);
             }
-          else   
+          else
             {
-                if((*ap)->count >= H4_MAX_NC_ATTRS) 
+                if((*ap)->count >= H4_MAX_NC_ATTRS)
                   {  /* Too many */
                       HGOTO_ERROR(DFE_EXCEEDMAX, FAIL);
                   }
@@ -1836,7 +1836,7 @@ SDIputattr(NC_array **ap,   /* IN/OUT: attribute list */
                   }
             }
       }
-        
+
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
@@ -1844,19 +1844,19 @@ done:
       }
     /* Normal cleanup */
 
-    return ret_value;    
+    return ret_value;
 } /* SDIputattr */
 
 #endif /* MFSD_INTERNAL */
 
 /******************************************************************************
  NAME
-	SDsetrange -- simulate a call to DFSDsetrange
+    SDsetrange -- simulate a call to DFSDsetrange
 
  DESCRIPTION
-    Store range info for this variable in the valid_range 
-    attribute.  If that attribute already exists overwrite 
-    the current values.  It is assumed that the values are 
+    Store range info for this variable in the valid_range
+    attribute.  If that attribute already exists overwrite
+    the current values.  It is assumed that the values are
     the same type as the data set.
 
     It is up to the user to decide what is meant by the
@@ -1886,27 +1886,27 @@ SDsetrange(int32 sdsid, /* IN: dataset ID */
     HEclear();
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
-    if(handle == NULL) 
+    if(handle == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     var = SDIget_var(handle, sdsid);
     if(var == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     if((pmax == NULL) || (pmin == NULL))
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* move data values over */
     if (FAIL == (sz = DFKNTsize(var->HDFtype | DFNT_NATIVE)))
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
-      } 
+    HGOTO_ERROR(DFE_ARGS, FAIL);
+      }
 
     HDmemcpy(data, pmin, sz);
     HDmemcpy(data + sz, pmax, sz);
@@ -1914,10 +1914,10 @@ SDsetrange(int32 sdsid, /* IN: dataset ID */
     /* call common code */
     if(SDIputattr(&var->attrs, _HDF_ValidRange, var->HDFtype, (intn) 2, data) == FAIL)
       {
-	  HGOTO_ERROR(DFE_CANTSETATTR, FAIL);
+    HGOTO_ERROR(DFE_CANTSETATTR, FAIL);
           /* Should propagate error code */
       }
-    
+
     /* make sure it gets reflected in the file */
     handle->flags |= NC_HDIRTY;
 
@@ -1929,16 +1929,16 @@ done:
     /* Normal cleanup */
 
 
-    return ret_value;    
+    return ret_value;
 } /* SDsetrange */
 
 #ifdef MFSD_INTERNAL
 /******************************************************************************
  NAME
-	SDIapfromid -- get the attribute list
+    SDIapfromid -- get the attribute list
 
  DESCRIPTION
-    Given a ID figure out what the handle and attribute 
+    Given a ID figure out what the handle and attribute
     list pointer are for that object.
 
  RETURNS
@@ -1959,8 +1959,8 @@ SDIapfromid(int32       id,      /* IN:  object ID */
 
     /* see if its a variable ID */
     handle = SDIhandle_from_id(id, SDSTYPE);
-    if(handle != NULL) 
-      { 
+    if(handle != NULL)
+      {
           /* find the variable */
           var = SDIget_var(handle, id);
           if(var == NULL)
@@ -1970,21 +1970,21 @@ SDIapfromid(int32       id,      /* IN:  object ID */
 
           (*app) = &(var->attrs);
           (*handlep) = handle;
-	  HGOTO_DONE(SUCCEED);
-      } 
+    HGOTO_DONE(SUCCEED);
+      }
 
     /* see if its a file ID */
     handle = SDIhandle_from_id(id, CDFTYPE);
-    if(handle != NULL) 
+    if(handle != NULL)
       {
           (*app) = &(handle->attrs);
           (*handlep) = handle;
-	  HGOTO_DONE(SUCCEED);
+    HGOTO_DONE(SUCCEED);
       }
 
     /* see if its a dimension ID */
     handle = SDIhandle_from_id(id, DIMTYPE);
-    if(handle != NULL) 
+    if(handle != NULL)
       {
           /* find the dimension */
           dim = SDIget_dim(handle, id);
@@ -2008,7 +2008,7 @@ SDIapfromid(int32       id,      /* IN:  object ID */
 
           (*app) = &(var->attrs);
           (*handlep) = handle;
-	  HGOTO_DONE(SUCCEED);
+    HGOTO_DONE(SUCCEED);
       }
 
     ret_value = FAIL;
@@ -2020,7 +2020,7 @@ done:
       }
     /* Normal cleanup */
 
-    return ret_value;    
+    return ret_value;
 } /* SDIapfromid */
 
 #endif /* MFSD_INTERNAL */
@@ -2030,8 +2030,8 @@ done:
    SDsetattr -- user level function to create and set an attribute
 
  DESCRIPTION
-   Given an ID and an attribute defintion attach the atrribute 
-   to the thing represented by the ID.  For starters, the valid 
+   Given an ID and an attribute defintion attach the atrribute
+   to the thing represented by the ID.  For starters, the valid
    IDs could be variable, file or dimesnion IDs
 
  RETURNS
@@ -2059,55 +2059,55 @@ SDsetattr(int32 id,    /* IN: object ID */
     HEclear();
 
     /* Sanity check args */
-    if(name == NULL) 
+    if(name == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* This release doesn't support native number types for attr  */
-    if (nt & DFNT_NATIVE) 
+    if (nt & DFNT_NATIVE)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* Only positive count is valid (bug HDFFR-989) -BMR */
     if (count <= 0)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* Make sure that count is less than MAX_ORDER(Vdata)
            and total size is less than MAX_FIELD_SIZE(Vdata) */
     if (FAIL == (sz = DFKNTsize(nt)))
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     if ((count > MAX_ORDER) ||
         ((count * sz) > MAX_FIELD_SIZE))
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* determine what type of ID we've been given */
     if(SDIapfromid(id, &handle, &ap) == FAIL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* still no handle ? */
     if(handle == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
-    
+
     /* hand over to SDIputattr */
-         
+
     if(SDIputattr(ap, name, nt, count, data) == FAIL)
       {
-	  HGOTO_ERROR(DFE_CANTSETATTR, FAIL);
+    HGOTO_ERROR(DFE_CANTSETATTR, FAIL);
       }
-    
+
     /* make sure it gets reflected in the file */
     handle->flags |= NC_HDIRTY;
 
@@ -2119,19 +2119,19 @@ done:
     /* Normal cleanup */
 
 
-    return ret_value;        
+    return ret_value;
 } /* SDsetattr */
 
 
 /******************************************************************************
  NAME
-	SDattrinfo -- get info about an attribute
+    SDattrinfo -- get info about an attribute
 
  DESCRIPTION
     Inquire about an attribute.  Attribute indexes are zero based.
 
-    Given the ID of the attribute's parent and the attribute's 
-    index return the number type, name and count of the attribute 
+    Given the ID of the attribute's parent and the attribute's
+    index return the number type, name and count of the attribute
     so the user knows how much space to provide to read it
 
  RETURNS
@@ -2165,27 +2165,27 @@ SDattrinfo(int32  id,    /* IN:  object ID */
     /* determine what type of ID we've been given */
     if(SDIapfromid(id, &handle, &app) == FAIL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     ap = (*app);
     if((ap == NULL) || (index >= ap->count))
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
-    /* 
+    /*
      * ap is the proper attribute list now look up something with this
      *  name
      */
     atp = (NC_attr **) ((char *)ap->values + index * ap->szof);
-    if(*atp == NULL) 
+    if(*atp == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* move the information over */
-    if(name != NULL) 
+    if(name != NULL)
       {
 #if 0
           HDstrncpy(name, (*atp)->name->values, (*atp)->name->len);
@@ -2205,17 +2205,17 @@ done:
     /* Normal cleanup */
 
 
-    return ret_value;    
+    return ret_value;
 } /* SDattrinfo */
 
 
 /******************************************************************************
  NAME
-	SDreadattr -- read an attribute's values
+    SDreadattr -- read an attribute's values
 
  DESCRIPTION
     Read the actual contents of the given attribute
-    Assume that the user has called SDinqattr() and so 
+    Assume that the user has called SDinqattr() and so
     has allocated sufficient space
 
  RETURNS
@@ -2248,23 +2248,23 @@ SDreadattr(int32 id,    /* IN:  object ID */
     /* determine what type of ID we've been given */
     if(SDIapfromid(id, &handle, &app) == FAIL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     ap = (*app);
     if((ap == NULL) || (index >= ap->count))
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
-    /* 
+    /*
      * ap is the proper attribute list now look up something with this
      *  index
      */
     atp = (NC_attr **) ((char *)ap->values + index * ap->szof);
-    if(*atp == NULL) 
+    if(*atp == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* move the information over */
@@ -2278,22 +2278,22 @@ done:
     /* Normal cleanup */
 
 
-    return ret_value;    
+    return ret_value;
 } /* SDreadattr */
 
 
 /******************************************************************************
  NAME
-	SDwritedata -- write a hyperslab of data
+    SDwritedata -- write a hyperslab of data
 
  DESCRIPTION
-    Write out a chunk o data.  Except for the line setting the 
-    XDR op-code this is exactly the same as SDreaddata().  The 
+    Write out a chunk o data.  Except for the line setting the
+    XDR op-code this is exactly the same as SDreaddata().  The
     two routines should really be combined at some point
 
  RETURNS
     SUCCEED / FAIL
- 
+
 ******************************************************************************/
 intn
 SDwritedata(int32  sdsid,  /* IN: dataset ID */
@@ -2310,7 +2310,7 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
     NC_var *var;
     NC     *handle = NULL;
     NC_dim *dim = NULL;
-#ifdef BIG_LONGS
+#ifdef H4_BIG_LONGS
     long    Start[H4_MAX_VAR_DIMS];
     long    End[H4_MAX_VAR_DIMS];
     long    Stride[H4_MAX_VAR_DIMS];
@@ -2337,10 +2337,10 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
-    if(handle == NULL) 
+    if(handle == NULL)
       {
         handle = SDIhandle_from_id(sdsid, DIMTYPE);
-        if(handle == NULL) 
+        if(handle == NULL)
             HGOTO_ERROR(DFE_ARGS, FAIL);
 
         dim = SDIget_dim(handle, sdsid);
@@ -2359,35 +2359,35 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
     /* Make sure that the file is an HDF file before checking about compression */
     if(handle->file_type == HDF_FILE) /* bug HDFFR-473 */
     {
-	status = HCPgetcomptype(handle->hdf_file, var->data_tag, var->data_ref,
+    status = HCPgetcomptype(handle->hdf_file, var->data_tag, var->data_ref,
                 &comp_type);
 
-	if (status != FAIL)
-	    if (comp_type != COMP_CODE_NONE && comp_type != COMP_CODE_INVALID)
-	    {
-		/* Must have encoder to write data */
-		HCget_config_info( comp_type , &comp_config);
-		if ((comp_config & COMP_ENCODER_ENABLED) == 0)
-		{ /* encoder not present?? */
-		    HGOTO_ERROR(DFE_BADCODER, FAIL);
-		}
-	    }
-	/* When HCPgetcomptype returns FAIL, assume no compression */
+    if (status != FAIL)
+        if (comp_type != COMP_CODE_NONE && comp_type != COMP_CODE_INVALID)
+        {
+        /* Must have encoder to write data */
+        HCget_config_info( comp_type , &comp_config);
+        if ((comp_config & COMP_ENCODER_ENABLED) == 0)
+        { /* encoder not present?? */
+            HGOTO_ERROR(DFE_BADCODER, FAIL);
+        }
+        }
+    /* When HCPgetcomptype returns FAIL, assume no compression */
     } /* file is HDF */
 
     /* get ready to write */
     handle->xdrs->x_op = XDR_ENCODE;
-    
-    /* 
+
+    /*
      * figure out the index of the variable to write to
      * the user might have passed us a dimension, in which
      * case we want to write to its coordinate variable
      */
-    if(dim) 
+    if(dim)
       {
         varid = SDIgetcoordvar(handle, dim, (int32)(sdsid & 0xffff), (int32) 0);
-      } 
-    else 
+      }
+    else
       {
         /* oops, how do we know this ? */
         varid = (intn)sdsid & 0xffff;
@@ -2406,18 +2406,18 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
 
         no_strides=1;
         /* if the stride for any dim. is not '1', real stride processing has to occur */
-        for(i = 0; i < var->assoc->count; i++) 
+        for(i = 0; i < var->assoc->count; i++)
           {
-              if(stride[i]!=1)    
+              if(stride[i]!=1)
                   no_strides=0;
           }
       } /* end if */
 
     /*
-     * In general, (long) == int32 
+     * In general, (long) == int32
      * In cases where it doesn't we need to convert
      */
-#ifdef BIG_LONGS
+#ifdef H4_BIG_LONGS
 
     {
         int i;
@@ -2427,12 +2427,12 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
           {
               HGOTO_ERROR(DFE_ARGS, FAIL);
           }
-        
-        for(i = 0; i < var->assoc->count; i++) 
+
+        for(i = 0; i < var->assoc->count; i++)
           {
             Start[i]  = (long) start[i];
             End[i]    = (long) end[i];
-            if(stride) 
+            if(stride)
                 Stride[i] = (long) stride[i];
           }
     }
@@ -2467,7 +2467,7 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
         ret_value = FAIL;
     else
         ret_value = SUCCEED;
-            
+
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
@@ -2476,22 +2476,22 @@ done:
     /* Normal cleanup */
 
 
-    return ret_value;    
+    return ret_value;
 } /* SDwritedata */
 
 
 /******************************************************************************
  NAME
-	SDsetdatastrs -- set "data strings"
+    SDsetdatastrs -- set "data strings"
 
  DESCRIPTION
-    Store information about the 'label', 'units', 'format' and 
-    'cordsys' attributes of a dataset.  All of the values 
-    are optional.  If no string is desired NULL should be passed 
-    in its place.  
+    Store information about the 'label', 'units', 'format' and
+    'cordsys' attributes of a dataset.  All of the values
+    are optional.  If no string is desired NULL should be passed
+    in its place.
 
  RETURNS
-    SUCCEED / FAIL 
+    SUCCEED / FAIL
 
 ******************************************************************************/
 intn
@@ -2509,63 +2509,63 @@ SDsetdatastrs(int32 sdsid, /* IN: dataset ID */
 #ifdef SDDEBUG
     fprintf(stderr, "SDsetdatastrs: I've been called\n");
 #endif
-    
+
     /* clear error stack */
     HEclear();
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
-    if(handle == NULL) 
+    if(handle == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     if(handle->vars == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     var = SDIget_var(handle, sdsid);
     if(var == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
-    if(l && l[0] != '\0') 
+    if(l && l[0] != '\0')
       {
-        if(SDIputattr(&var->attrs, _HDF_LongName, DFNT_CHAR, 
+        if(SDIputattr(&var->attrs, _HDF_LongName, DFNT_CHAR,
                       (intn) HDstrlen(l), l) == FAIL)
           {
               HGOTO_ERROR(DFE_CANTSETATTR, FAIL);
           }
       }
 
-    if(u && u[0] != '\0') 
+    if(u && u[0] != '\0')
       {
-        if(SDIputattr(&var->attrs, _HDF_Units, DFNT_CHAR, 
+        if(SDIputattr(&var->attrs, _HDF_Units, DFNT_CHAR,
                       (intn) HDstrlen(u), u) == FAIL)
           {
               HGOTO_ERROR(DFE_CANTSETATTR, FAIL);
           }
       }
 
-    if(f && f[0] != '\0') 
+    if(f && f[0] != '\0')
       {
-        if(SDIputattr(&var->attrs, _HDF_Format, DFNT_CHAR, 
+        if(SDIputattr(&var->attrs, _HDF_Format, DFNT_CHAR,
                       (intn) HDstrlen(f), f) == FAIL)
           {
               HGOTO_ERROR(DFE_CANTSETATTR, FAIL);
           }
       }
-    
-    if(c && c[0] !='\0') 
+
+    if(c && c[0] !='\0')
       {
-        if(SDIputattr(&var->attrs, _HDF_CoordSys, DFNT_CHAR, 
+        if(SDIputattr(&var->attrs, _HDF_CoordSys, DFNT_CHAR,
                       (intn) HDstrlen(c), c) == FAIL)
           {
               HGOTO_ERROR(DFE_CANTSETATTR, FAIL);
           }
       }
-    
+
     /* make sure it gets reflected in the file */
     if(l || u || f || c)
         handle->flags |= NC_HDIRTY;
@@ -2578,13 +2578,13 @@ done:
     /* Normal cleanup */
 
 
-    return ret_value;    
+    return ret_value;
 } /* SDsetdatastrs */
 
 
 /******************************************************************************
  NAME
-	SDsetcal -- set calibration information
+    SDsetcal -- set calibration information
 
  DESCRIPTION
     Store calibration information.  What is the formula? Good question -GV
@@ -2612,52 +2612,52 @@ SDsetcal(int32   sdsid,/* IN: dataset ID */
 
     /* clear error stack */
     HEclear();
-    
+
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
-    if(handle == NULL) 
+    if(handle == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     if(handle->vars == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     var = SDIget_var(handle, sdsid);
     if(var == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
-    if(SDIputattr(&var->attrs, _HDF_ScaleFactor, DFNT_FLOAT64, 
+    if(SDIputattr(&var->attrs, _HDF_ScaleFactor, DFNT_FLOAT64,
                   (intn) 1, &cal) == FAIL)
       {
-	  HGOTO_ERROR(DFE_CANTSETATTR, FAIL);
+    HGOTO_ERROR(DFE_CANTSETATTR, FAIL);
       }
 
-    if(SDIputattr(&var->attrs, _HDF_ScaleFactorErr, DFNT_FLOAT64, 
+    if(SDIputattr(&var->attrs, _HDF_ScaleFactorErr, DFNT_FLOAT64,
                   (intn) 1, &cale) == FAIL)
       {
-	  HGOTO_ERROR(DFE_CANTSETATTR, FAIL);
+    HGOTO_ERROR(DFE_CANTSETATTR, FAIL);
       }
 
-    if(SDIputattr(&var->attrs, _HDF_AddOffset, DFNT_FLOAT64, 
+    if(SDIputattr(&var->attrs, _HDF_AddOffset, DFNT_FLOAT64,
                   (intn) 1, &ioff) == FAIL)
       {
-	  HGOTO_ERROR(DFE_CANTSETATTR, FAIL);
+    HGOTO_ERROR(DFE_CANTSETATTR, FAIL);
       }
 
-    if(SDIputattr(&var->attrs, _HDF_AddOffsetErr, DFNT_FLOAT64, 
+    if(SDIputattr(&var->attrs, _HDF_AddOffsetErr, DFNT_FLOAT64,
                   (intn) 1, &ioffe) == FAIL)
       {
-	  HGOTO_ERROR(DFE_CANTSETATTR, FAIL);
+    HGOTO_ERROR(DFE_CANTSETATTR, FAIL);
       }
 
-    if(SDIputattr(&var->attrs, _HDF_CalibratedNt, DFNT_INT32, 
+    if(SDIputattr(&var->attrs, _HDF_CalibratedNt, DFNT_INT32,
                   (intn) 1, &nt) == FAIL)
       {
-	  HGOTO_ERROR(DFE_CANTSETATTR, FAIL);
+    HGOTO_ERROR(DFE_CANTSETATTR, FAIL);
       }
 
     /* make sure it gets reflected in the file */
@@ -2671,20 +2671,20 @@ done:
     /* Normal cleanup */
 
 
-    return ret_value;    
+    return ret_value;
 } /* SDsetcal */
 
 
 /******************************************************************************
  NAME
-	SDsetfillvalue -- set the fill value
+    SDsetfillvalue -- set the fill value
 
  DESCRIPTION
-    Set the fill value for this data set.  The fill value 
+    Set the fill value for this data set.  The fill value
     is assumed to have the same number type as the dataset
 
  RETURNS
-    SUCCEED / FAIL 
+    SUCCEED / FAIL
 
 ******************************************************************************/
 intn
@@ -2699,33 +2699,33 @@ SDsetfillvalue(int32 sdsid, /* IN: dataset ID */
 #ifdef SDDEBUG
     fprintf(stderr, "SDsetfillvalue: I've been called\n");
 #endif
-    
+
     /* clear error stack */
     HEclear();
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
-    if(handle == NULL) 
+    if(handle == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     if(handle->vars == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     var = SDIget_var(handle, sdsid);
     if(var == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
-    if(SDIputattr(&var->attrs, _FillValue, var->HDFtype, 
+    if(SDIputattr(&var->attrs, _FillValue, var->HDFtype,
                   (intn) 1, val) == FAIL)
       {
-	  HGOTO_ERROR(DFE_CANTSETATTR, FAIL);
+    HGOTO_ERROR(DFE_CANTSETATTR, FAIL);
       }
-    
+
     /* make sure it gets reflected in the file */
     handle->flags |= NC_HDIRTY;
 
@@ -2737,13 +2737,13 @@ done:
     /* Normal cleanup */
 
 
-    return ret_value;    
+    return ret_value;
 } /* SDsetfillvalue */
 
 
 /******************************************************************************
  NAME
-	SDgetfillvalue -- get the fill value
+    SDgetfillvalue -- get the fill value
 
  DESCRIPTION
     Retreive the fill value for this data set if one has been
@@ -2752,7 +2752,7 @@ done:
 
  RETURNS
     SUCCEED / FAIL
- 
+
 ******************************************************************************/
 intn
 SDgetfillvalue(int32 sdsid, /* IN:  dataset ID */
@@ -2767,7 +2767,7 @@ SDgetfillvalue(int32 sdsid, /* IN:  dataset ID */
 #ifdef SDDEBUG
     fprintf(stderr, "SDgetfillvalue: I've been called\n");
 #endif
-    
+
     /* clear error stack */
     HEclear();
 
@@ -2776,30 +2776,30 @@ SDgetfillvalue(int32 sdsid, /* IN:  dataset ID */
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
-    if(handle == NULL) 
+    if(handle == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     if(handle->vars == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     var = SDIget_var(handle, sdsid);
     if(var == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     attr = (NC_attr **) NC_findattr(&(var->attrs), _FillValue);
     if(attr == NULL)
       {
-	  HGOTO_ERROR(DFE_CANTGETATTR, FAIL);
+    HGOTO_ERROR(DFE_CANTGETATTR, FAIL);
       }
 
-    NC_copy_arrayvals((char *)val, (*attr)->data) ;    
-    
+    NC_copy_arrayvals((char *)val, (*attr)->data) ;
+
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
@@ -2808,23 +2808,23 @@ done:
     /* Normal cleanup */
 
 
-    return ret_value;    
+    return ret_value;
 } /* SDgetfillvalue */
 
 
 /******************************************************************************
  NAME
-	SDgetdatastrs -- get "data strings"
+    SDgetdatastrs -- get "data strings"
 
  DESCRIPTION
-    Read information about the 'label', 'units', 'format' and 
-    'cordsys' attributes of a dataset.  All of the values 
-     are optional.  If no string is desired NULL should be passed 
+    Read information about the 'label', 'units', 'format' and
+    'cordsys' attributes of a dataset.  All of the values
+     are optional.  If no string is desired NULL should be passed
      in its place.  Assume all buffers are len bytes long.
 
  RETURNS
     SUCCEED / FAIL
- 
+
 ******************************************************************************/
 intn
 SDgetdatastrs(int32 sdsid, /* IN:  dataset ID */
@@ -2843,31 +2843,31 @@ SDgetdatastrs(int32 sdsid, /* IN:  dataset ID */
 #ifdef SDDEBUG
     fprintf(stderr, "SDgetdatastrs: I've been called\n");
 #endif
-    
+
     /* clear error stack */
     HEclear();
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
-    if(handle == NULL) 
+    if(handle == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     if(handle->vars == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     var = SDIget_var(handle, sdsid);
     if(var == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
-    if(l) 
+    if(l)
       {
           attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_LongName);
-          if(attr != NULL) 
+          if(attr != NULL)
             {
                 if((*attr)->data->count < (unsigned)len)
                   {
@@ -2876,15 +2876,15 @@ SDgetdatastrs(int32 sdsid, /* IN:  dataset ID */
                   }
                 else
                     HDstrncpy((char *)l, (*attr)->data->values,len );
-            } 
-          else 
+            }
+          else
               l[0] = '\0';
       }
 
-    if(u) 
+    if(u)
       {
           attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_Units);
-          if(attr != NULL) 
+          if(attr != NULL)
             {
                 if((*attr)->data->count < (unsigned)len)
                   {
@@ -2894,15 +2894,15 @@ SDgetdatastrs(int32 sdsid, /* IN:  dataset ID */
                 else
                     HDstrncpy((char *)u, (*attr)->data->values, len);
 
-            } 
-          else 
+            }
+          else
               u[0] = '\0';
       }
 
-    if(f) 
+    if(f)
       {
           attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_Format);
-          if(attr != NULL) 
+          if(attr != NULL)
             {
                 if((*attr)->data->count < (unsigned)len)
                   {
@@ -2911,15 +2911,15 @@ SDgetdatastrs(int32 sdsid, /* IN:  dataset ID */
                   }
                 else
                     HDstrncpy((char *)f, (*attr)->data->values, len);
-            } 
-          else 
+            }
+          else
               f[0] = '\0';
       }
 
-    if(c) 
+    if(c)
       {
           attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_CoordSys);
-          if(attr != NULL) 
+          if(attr != NULL)
             {
                 if((*attr)->data->count < (unsigned)len)
                   {
@@ -2929,11 +2929,11 @@ SDgetdatastrs(int32 sdsid, /* IN:  dataset ID */
                 else
                     HDstrncpy((char *)c, (*attr)->data->values, len);
 
-            } 
-          else 
+            }
+          else
               c[0] = '\0';
       }
-        
+
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
@@ -2942,13 +2942,13 @@ done:
     /* Normal cleanup */
 
 
-    return ret_value;    
+    return ret_value;
 } /* SDgetdatastrs */
 
 
 /******************************************************************************
  NAME
-	SDgetcal -- get calibration information
+    SDgetcal -- get calibration information
 
  DESCRIPTION
     Retreive calibration information.  What is the formula?
@@ -2974,62 +2974,62 @@ SDgetcal(int32    sdsid, /* IN:  dataset ID */
 #ifdef SDDEBUG
     fprintf(stderr, "SDgetcal: I've been called\n");
 #endif
-    
+
     /* clear error stack */
     HEclear();
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
-    if(handle == NULL) 
+    if(handle == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     if(handle->vars == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     var = SDIget_var(handle, sdsid);
     if(var == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_ScaleFactor);
     if(attr == NULL)
       {
-	  HGOTO_ERROR(DFE_CANTGETATTR, FAIL);
+    HGOTO_ERROR(DFE_CANTGETATTR, FAIL);
       }
-    NC_copy_arrayvals((char *)cal, (*attr)->data) ;    
+    NC_copy_arrayvals((char *)cal, (*attr)->data) ;
 
     attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_ScaleFactorErr);
     if(attr == NULL)
       {
-	  HGOTO_ERROR(DFE_CANTGETATTR, FAIL);
+    HGOTO_ERROR(DFE_CANTGETATTR, FAIL);
       }
-    NC_copy_arrayvals((char *)cale, (*attr)->data) ;    
+    NC_copy_arrayvals((char *)cale, (*attr)->data) ;
 
     attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_AddOffset);
     if(attr == NULL)
       {
-	  HGOTO_ERROR(DFE_CANTGETATTR, FAIL);
+    HGOTO_ERROR(DFE_CANTGETATTR, FAIL);
       }
-    NC_copy_arrayvals((char *)ioff, (*attr)->data) ;    
+    NC_copy_arrayvals((char *)ioff, (*attr)->data) ;
 
     attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_AddOffsetErr);
     if(attr == NULL)
       {
-	  HGOTO_ERROR(DFE_CANTGETATTR, FAIL);
+    HGOTO_ERROR(DFE_CANTGETATTR, FAIL);
       }
-    NC_copy_arrayvals((char *)ioffe, (*attr)->data) ;    
+    NC_copy_arrayvals((char *)ioffe, (*attr)->data) ;
 
     attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_CalibratedNt);
     if(attr == NULL)
       {
-	  HGOTO_ERROR(DFE_CANTGETATTR, FAIL);
+    HGOTO_ERROR(DFE_CANTGETATTR, FAIL);
       }
-    NC_copy_arrayvals((char *)nt, (*attr)->data) ;    
-        
+    NC_copy_arrayvals((char *)nt, (*attr)->data) ;
+
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
@@ -3038,34 +3038,34 @@ done:
     /* Normal cleanup */
 
 
-    return ret_value;    
+    return ret_value;
 } /* SDgetcal */
 
 #ifdef MFSD_INTERNAL
 /******************************************************************************
  NAME
-	SDgetcoordvar -- get index of coordinate variable
+    SDgetcoordvar -- get index of coordinate variable
 
  DESCRIPTION
     Given a dimension return the index of its coordinate variable
     creating one if needed.  If we need to create a variable and an nt
     is not supplied (i.e. is equal to zero) use 32bit floats.
-        
+
     If the variable already exists and the existing nt is different
     from the supplied one (and the supplied one is not zero) replace
-    the nt by the new one.  ID is needed so that we can set the 
+    the nt by the new one.  ID is needed so that we can set the
     dimension of the variable correctly if we need to.  Yuck.
 
  RETURNS
      A variable index or FAIL on error
 
-******************************************************************************/ 
+******************************************************************************/
 int32
 SDIgetcoordvar(NC     *handle, /* IN: file handle */
                NC_dim *dim,    /* IN: dimension to find coord var of */
                int32   id,     /* IN: dimension ID */
                int32   nt      /* IN: number type to use if new variable*/)
-{ 
+{
     CONSTR(FUNC, "SDIgetcoordvar");    /* for HGOTO_ERROR */
     unsigned      ii;
     unsigned      len;
@@ -3080,22 +3080,22 @@ SDIgetcoordvar(NC     *handle, /* IN: file handle */
     name = dim->name;
     len = dim->name->len;
     dp = (NC_var**)handle->vars->values ;
-    for(ii = 0 ; ii < handle->vars->count ; ii++, dp++) 
+    for(ii = 0 ; ii < handle->vars->count ; ii++, dp++)
       {
-	/* eliminate vars with rank > 1, coord vars only have rank 1 */
-	if((*dp)->assoc->count == 1) 
-            if( len == (*dp)->name->len 
-              && HDstrncmp(name->values, (*dp)->name->values, (size_t)len) == 0) 
-		/* only proceed if the file is a netCDF file (bugz 1644)
-		   or if this variable is a coordinate var or when
-		   the status is unknown due to its being created prior to
-		   the fix of bugzilla 624 - BMR 05/14/2007 */
-		if ((handle->file_type != HDF_FILE) ||
-		    (*dp)->var_type == IS_CRDVAR || (*dp)->var_type == UNKNOWN)
-		{
-		    /* see if we need to change the number type */
-		    if((nt != 0) && (nt != (*dp)->type)) 
-		    {
+    /* eliminate vars with rank > 1, coord vars only have rank 1 */
+    if((*dp)->assoc->count == 1)
+            if( len == (*dp)->name->len
+              && HDstrncmp(name->values, (*dp)->name->values, (size_t)len) == 0)
+        /* only proceed if the file is a netCDF file (bugz 1644)
+        or if this variable is a coordinate var or when
+        the status is unknown due to its being created prior to
+        the fix of bugzilla 624 - BMR 05/14/2007 */
+        if ((handle->file_type != HDF_FILE) ||
+            (*dp)->var_type == IS_CRDVAR || (*dp)->var_type == UNKNOWN)
+        {
+            /* see if we need to change the number type */
+            if((nt != 0) && (nt != (*dp)->type))
+            {
 #ifdef SDDEBUG
                       fprintf(stderr, "SDIgetcoordvar redefining type\n");
 #endif
@@ -3116,7 +3116,7 @@ SDIgetcoordvar(NC     *handle, /* IN: file handle */
                         {
                             HGOTO_ERROR(DFE_INTERNAL, FAIL);
                         }
-                
+
                       /* recompute all of the shape information */
                       /* BUG: this may be a memory leak ??? */
                       if(NC_var_shape((*dp), handle->dims) == -1)
@@ -3131,25 +3131,25 @@ SDIgetcoordvar(NC     *handle, /* IN: file handle */
       }
 
     /* create a new var with this dim as only coord */
-    if(nt == 0) 
+    if(nt == 0)
         nt = DFNT_FLOAT32;
 
     if ((nctype = hdf_unmap_type((int)nt)) == FAIL)
       {
           /* replace it with NCAdvice or HERROR? */
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     dimindex = (intn)id;
     var = (NC_var *) NC_new_var(name->values, nctype, (unsigned)1, &dimindex);
     if(var == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* Set flag to indicate that this variable is a coordinate variable -
        BMR - 05/14/2007 */
-    var->var_type = IS_CRDVAR; 
+    var->var_type = IS_CRDVAR;
 
     /* BMR: put back hdf type that was set wrong by NC_new_var; please refer
        to the cvs history of bug #172 for reason on this statement - 4/17/01*/
@@ -3165,21 +3165,21 @@ SDIgetcoordvar(NC     *handle, /* IN: file handle */
     /* add it to the handle */
     if(handle->vars->count >= H4_MAX_NC_VARS)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     var->cdf = handle; /* set cdf before calling NC_var_shape */
     /* compute all of the shape information */
     if(NC_var_shape(var, handle->dims) == -1)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     if(NC_incr_array(handle->vars, (Void *)&var) == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
-    
+
     ret_value = handle->vars->count - 1;
 
 done:
@@ -3189,24 +3189,24 @@ done:
       }
     /* Normal cleanup */
 
-    return ret_value;    
+    return ret_value;
 } /* SDIgetcoordvar */
 
 #endif /* MFSD_INTERNAL */
 
 /******************************************************************************
  NAME
-	SDsetdimstrs -- set "dimension strings"
+    SDsetdimstrs -- set "dimension strings"
 
  DESCRIPTION
-    Store information about the 'label', 'units' and 'format' 
-    attributes of a dimension.  All three of the values are optional.  
+    Store information about the 'label', 'units' and 'format'
+    attributes of a dimension.  All three of the values are optional.
     If no string is desired NULL should be passed in its place.
 
  RETURNS
     SUCCEED / FAIL
 
-******************************************************************************/ 
+******************************************************************************/
 intn
 SDsetdimstrs(int32 id, /* IN: dimension ID */
              const char *l,  /* IN: label string ("long_name") */
@@ -3231,14 +3231,14 @@ SDsetdimstrs(int32 id, /* IN: dimension ID */
     handle = SDIhandle_from_id(id, DIMTYPE);
     if(handle == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* get the dimension structure */
     dim = SDIget_dim(handle, id);
     if(dim == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* look for a variable with the same name */
@@ -3294,19 +3294,19 @@ done:
     /* Normal cleanup */
 
 
-    return ret_value;    
+    return ret_value;
 } /* SDsetdimstrs */
 
 #ifdef MFSD_INTERNAL
 /******************************************************************************
  NAME
-	SDIfreevarAID -- free a variables AID
+    SDIfreevarAID -- free a variables AID
 
  DESCRIPTION
     Free the AID of the variable with the given index
 
  RETURNS
-    SUCCEED / FAIL 
+    SUCCEED / FAIL
 
 ******************************************************************************/
 int32
@@ -3320,12 +3320,12 @@ SDIfreevarAID(NC   *handle, /* IN: file handle */
 
     if(handle == NULL || !handle->vars)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     if(index < 0 || index > handle->vars->count)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     ap = (NC_array **)handle->vars->values;
@@ -3350,13 +3350,13 @@ done:
       }
     /* Normal cleanup */
 
-    return ret_value;    
+    return ret_value;
 } /* SDIfreevarAID */
-#endif /* MFSD_INTERNAL */ 
+#endif /* MFSD_INTERNAL */
 
 /******************************************************************************
  NAME
-	SDsetdimscale -- store scale information for the dimension
+    SDsetdimscale -- store scale information for the dimension
 
  DESCRIPTION
     Store information about the 'scales' of a dimension.  Dimensions
@@ -3365,7 +3365,7 @@ done:
  RETURNS
     SUCCEED / FAIL
 
-******************************************************************************/ 
+******************************************************************************/
 intn
 SDsetdimscale(int32 id,    /* IN: dimension ID */
               int32 count, /* IN: number of values */
@@ -3380,7 +3380,7 @@ SDsetdimscale(int32 id,    /* IN: dimension ID */
     long       start[1];
     long       end[1];
     intn       ret_value = SUCCEED;
-	
+
 #ifdef SDDEBUG
     fprintf(stderr, "SDsetdimscales: I've been called\n");
 #endif
@@ -3396,27 +3396,27 @@ SDsetdimscale(int32 id,    /* IN: dimension ID */
     handle = SDIhandle_from_id(id, DIMTYPE);
     if(handle == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* get the dimension structure */
     dim = SDIget_dim(handle, id);
     if(dim == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* sanity check, if not SD_UNLIMITED */
     if( dim->size != 0 && count != dim->size)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* look for a variable with the same name */
     varid = (intn)SDIgetcoordvar(handle, dim, id & 0xffff, nt);
     if(varid == -1)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* store the data */
@@ -3426,14 +3426,14 @@ SDsetdimscale(int32 id,    /* IN: dimension ID */
     status = NCvario(handle, varid, start, end, (Void *)data);
     if(status == FAIL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* free the AID */
     status = SDIfreevarAID(handle, varid);
     if(status == FAIL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* make sure it gets reflected in the file */
@@ -3447,24 +3447,24 @@ done:
     /* Normal cleanup */
 
 
-    return ret_value;    
+    return ret_value;
 } /* SDsetdimscale */
 
 
 /******************************************************************************
  NAME
-	SDgetdimscale -- get scale information for the dimension
+    SDgetdimscale -- get scale information for the dimension
 
  DESCRIPTION
-    Retreive the scale information stored with a dimension.  It is 
-    assumed that the user has called SDdiminfo() and that the data 
+    Retreive the scale information stored with a dimension.  It is
+    assumed that the user has called SDdiminfo() and that the data
     array is long enough to hold the values.
 
  RETURNS
     SUCCEED / FAIL
 
-******************************************************************************/ 
-intn 
+******************************************************************************/
+intn
 SDgetdimscale(int32 id,   /* IN:  dimension ID */
               void * data  /* OUT: scale values */)
 {
@@ -3477,7 +3477,7 @@ SDgetdimscale(int32 id,   /* IN:  dimension ID */
     long       start[1];
     long       end[1];
     intn       ret_value = SUCCEED;
-	
+
 #ifdef SDDEBUG
     fprintf(stderr, "SDgetdimscale: I've been called\n");
 #endif
@@ -3492,21 +3492,21 @@ SDgetdimscale(int32 id,   /* IN:  dimension ID */
     /* sanity check args */
     if(data == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* get the handle */
     handle = SDIhandle_from_id(id, DIMTYPE);
-    if(handle == NULL) 
+    if(handle == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* get the dimension structure */
     dim = SDIget_dim(handle, id);
     if(dim == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* look for a variable with the same name */
@@ -3514,7 +3514,7 @@ SDgetdimscale(int32 id,   /* IN:  dimension ID */
     varid = (intn)SDIgetcoordvar(handle, dim, (int32)(id & 0xffff), (int32)0);
     if(varid == FAIL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* store the data */
@@ -3522,11 +3522,11 @@ SDgetdimscale(int32 id,   /* IN:  dimension ID */
     start[0] = 0;
     if (dim->size != 0)
         end[0] = dim->size;
-    else   
+    else
       {
         if (handle->file_type != HDF_FILE)
             end[0] = handle->numrecs;
-        else   
+        else
           {
             vp = SDIget_var(handle, varid);
             if (vp == NULL)
@@ -3537,7 +3537,7 @@ SDgetdimscale(int32 id,   /* IN:  dimension ID */
             end[0] = vp->numrecs;
           }
       }
-  
+
     status = NCvario(handle, varid, start, end, (Void *)data);
     if(status == FAIL)
       {
@@ -3548,7 +3548,7 @@ SDgetdimscale(int32 id,   /* IN:  dimension ID */
     status = SDIfreevarAID(handle, varid);
     if(status == FAIL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
 done:
@@ -3559,25 +3559,25 @@ done:
     /* Normal cleanup */
 
 
-    return ret_value;    
+    return ret_value;
 } /* SDgetdimscale */
 
 
 /******************************************************************************
  NAME
-	SDdiminfo -- get info about a dimension
+    SDdiminfo -- get info about a dimension
 
  DESCRIPTION
     Return basic information about a dimension (name, sizes, number
-    of attributes, number type, etc...) The user is repsonsible for 
-    allocating space to hold the dataset name.  It can be at most 
-    H4_MAX_NC_NAME characters in length.  NULL can be passed for the 
+    of attributes, number type, etc...) The user is repsonsible for
+    allocating space to hold the dataset name.  It can be at most
+    H4_MAX_NC_NAME characters in length.  NULL can be passed for the
     name if it is not required.
 
  RETURNS
     SUCCEED / FAIL
 
-******************************************************************************/ 
+******************************************************************************/
 intn
 SDdiminfo(int32  id,    /* IN:  dimension ID */
           char  *name,  /* OUT: name of the dimension */
@@ -3605,21 +3605,21 @@ SDdiminfo(int32  id,    /* IN:  dimension ID */
     handle = SDIhandle_from_id(id, DIMTYPE);
     if(handle == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
- 
+
     if(handle->dims == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     dim = SDIget_dim(handle, id);
     if(dim == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
-    if(name != NULL) 
+    if(name != NULL)
       {
 /* GeorgeV switched to use HDmemcpy in r2739.  Trying back to HDstrncpy because
    it should be used to copy a string (emailed with QK 5/27/2016), but tests
@@ -3633,8 +3633,8 @@ SDdiminfo(int32  id,    /* IN:  dimension ID */
 #endif
         HDmemcpy(name, dim->name->values, dim->name->len);
         name[dim->name->len] = '\0';
-      } 
-    else 
+      }
+    else
         name = dim->name->values;
 
     /* Get dimension's size, which is the one application provided at SDcreate.
@@ -3648,40 +3648,40 @@ SDdiminfo(int32  id,    /* IN:  dimension ID */
     /* In HDF files, number type and attribute info are only stored in the
        coordinate var of the dimension; so, if there is no coord var associated
        with the dimension being inquired, these info will not be available. */
-    if(handle->vars) 
+    if(handle->vars)
       {
           len = dim->name->len;
           dp = (NC_var**)handle->vars->values;
-          for(ii = 0 ; ii < handle->vars->count ; ii++, dp++) 
+          for(ii = 0 ; ii < handle->vars->count ; ii++, dp++)
             {
-	      /* eliminate vars with rank > 1, coord vars only have rank 1 */
-	      if((*dp)->assoc->count == 1) 
-	      {
-		 /* check if this variable matches the searched name */
-                 if( len == (*dp)->name->len 
+        /* eliminate vars with rank > 1, coord vars only have rank 1 */
+        if((*dp)->assoc->count == 1)
+        {
+        /* check if this variable matches the searched name */
+                 if( len == (*dp)->name->len
                     && HDstrncmp(name, (*dp)->name->values, (*dp)->name->len) == 0)
-		 {
-		    if (handle->file_type == HDF_FILE) /* HDF file */
-		    {
-			/* only proceed if this variable is a coordinate var or
-			when its status is unknown due to its being created
-			prior to the fix of bugzilla 624 - BMR - 05/14/2007 */
-			if ((*dp)->var_type == IS_CRDVAR ||
-			    (*dp)->var_type == UNKNOWN)
-			{
-			    *nt = ((*dp)->numrecs ? (*dp)->HDFtype : 0);
-			    *nattr = ((*dp)->attrs ? (*dp)->attrs->count : 0);
+        {
+            if (handle->file_type == HDF_FILE) /* HDF file */
+            {
+            /* only proceed if this variable is a coordinate var or
+            when its status is unknown due to its being created
+            prior to the fix of bugzilla 624 - BMR - 05/14/2007 */
+            if ((*dp)->var_type == IS_CRDVAR ||
+                (*dp)->var_type == UNKNOWN)
+            {
+                *nt = ((*dp)->numrecs ? (*dp)->HDFtype : 0);
+                *nattr = ((*dp)->attrs ? (*dp)->attrs->count : 0);
                             HGOTO_DONE(ret_value);
-			}
-		    }
-		    else /* netCDF file */
-		    {
-			*nt = (*dp)->HDFtype;
-			*nattr = ((*dp)->attrs ? (*dp)->attrs->count : 0);
+            }
+            }
+            else /* netCDF file */
+            {
+            *nt = (*dp)->HDFtype;
+            *nattr = ((*dp)->attrs ? (*dp)->attrs->count : 0);
                         HGOTO_DONE(ret_value);
-		    }
-		 } /* name matched */
-	      } /* rank = 1 */
+            }
+        } /* name matched */
+        } /* rank = 1 */
             }
       }
 done:
@@ -3690,23 +3690,23 @@ done:
 
       }
     /* Normal cleanup */
-    return ret_value;    
+    return ret_value;
 } /* SDdiminfo */
 
 
 /******************************************************************************
  NAME
-	SDgetdimstrs -- get "data strings"
+    SDgetdimstrs -- get "data strings"
 
  DESCRIPTION
-    Read as many of the dimension strings as possible.  Assume that 
-    if a pointer is not NULL that we have len bytes that we can use 
+    Read as many of the dimension strings as possible.  Assume that
+    if a pointer is not NULL that we have len bytes that we can use
     to return the values
 
  RETURNS
-     SUCCEED / FAIL 
+     SUCCEED / FAIL
 
-******************************************************************************/ 
+******************************************************************************/
 intn
 SDgetdimstrs(int32 id,  /* IN:  dataset ID */
              char *l,   /* OUT: label string ("long_name") */
@@ -3728,7 +3728,7 @@ SDgetdimstrs(int32 id,  /* IN:  dataset ID */
 #ifdef SDDEBUG
     fprintf(stderr, "SDgetdimstrs: I've been called\n");
 #endif
-    
+
     /* clear error stack */
     HEclear();
 
@@ -3736,45 +3736,45 @@ SDgetdimstrs(int32 id,  /* IN:  dataset ID */
     if(len < 0) HGOTO_ERROR(DFE_ARGS, FAIL);
 
     handle = SDIhandle_from_id(id, DIMTYPE);
-    if(handle == NULL) 
+    if(handle == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     if(handle->vars == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     dim = SDIget_dim(handle, id);
     if(dim == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* need to get a pointer to the var now */
     var = NULL;
-    if(handle->vars) 
+    if(handle->vars)
       {
           name = dim->name->values;
           namelen = HDstrlen(name);
           dp = (NC_var**)handle->vars->values;
-          for(ii = 0 ; ii < handle->vars->count ; ii++, dp++) 
+          for(ii = 0 ; ii < handle->vars->count ; ii++, dp++)
             {
-	      /* eliminate vars with rank > 1, coord vars only have rank 1 */
-	      if((*dp)->assoc->count == 1) 
-                  if( namelen == (*dp)->name->len 
+        /* eliminate vars with rank > 1, coord vars only have rank 1 */
+        if((*dp)->assoc->count == 1)
+                  if( namelen == (*dp)->name->len
                     && HDstrncmp(name, (*dp)->name->values, HDstrlen(name)) == 0)
-	      /* because a dim was given, make sure that this is a coord var */
-		  /* if it is an SDS, the function will fail */
-		  if ((*dp)->var_type == IS_SDSVAR)
-		      HGOTO_ERROR(DFE_ARGS, FAIL)
-	          /* only proceed if this variable is a coordinate var or when
-		      its status is unknown due to its being created prior to
-		      the fix of bugzilla 624 - BMR - 05/14/2007 */
-		  else
-		  /* i.e., (*dp)->var_type == IS_CRDVAR || 
-			   (*dp)->var_type == UNKNOWN) */ 
+        /* because a dim was given, make sure that this is a coord var */
+        /* if it is an SDS, the function will fail */
+        if ((*dp)->var_type == IS_SDSVAR)
+            HGOTO_ERROR(DFE_ARGS, FAIL)
+            /* only proceed if this variable is a coordinate var or when
+            its status is unknown due to its being created prior to
+            the fix of bugzilla 624 - BMR - 05/14/2007 */
+        else
+        /* i.e., (*dp)->var_type == IS_CRDVAR ||
+            (*dp)->var_type == UNKNOWN) */
                   {
                       var = (*dp);
                   }
@@ -3783,48 +3783,48 @@ SDgetdimstrs(int32 id,  /* IN:  dataset ID */
 
     if(var != NULL)
     {
-    if(l) 
+    if(l)
       {
           attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_LongName);
-          if(attr != NULL) 
+          if(attr != NULL)
             {
                 intn minlen;
                 minlen = ((unsigned)len > (*attr)->data->count)? (*attr)->data->count: (unsigned)len;
                 HDstrncpy((char *)l, (*attr)->data->values, minlen);
                 if((*attr)->data->count < (unsigned)len)
                     l[(*attr)->data->count] = '\0';
-            } 
-          else 
+            }
+          else
               l[0] = '\0';
       }
 
-    if(u) 
+    if(u)
       {
           attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_Units);
-          if(attr != NULL) 
+          if(attr != NULL)
             {
                 intn minlen;
                 minlen = (len > (*attr)->data->count)? (*attr)->data->count: (unsigned)len;
                 HDstrncpy((char *)u, (*attr)->data->values, minlen);
                 if((*attr)->data->count < (unsigned)len)
                     u[(*attr)->data->count] = '\0';
-            } 
-          else 
+            }
+          else
               u[0] = '\0';
       }
 
-    if(f) 
+    if(f)
       {
           attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_Format);
-          if(attr != NULL) 
+          if(attr != NULL)
             {
                 intn minlen;
                 minlen = (len > (*attr)->data->count)? (*attr)->data->count: (unsigned)len;
                 HDstrncpy((char *)f, (*attr)->data->values, minlen);
                 if((*attr)->data->count < (unsigned)len)
                     f[(*attr)->data->count] = '\0';
-            } 
-          else 
+            }
+          else
               f[0] = '\0';
       }
     }
@@ -3846,41 +3846,41 @@ done:
 
       }
     /* Normal cleanup */
-    return ret_value;    
+    return ret_value;
 } /* SDgetdimstrs */
 
 
 /******************************************************************************
  NAME
-	SDsetexternalfile -- store info in a separate file
+    SDsetexternalfile -- store info in a separate file
  USAGE
-	int32 SDsetexternalfile(id, filename, offset)
-        int32   id;                  
-        const char  * filename;            
-        int32   offset;              
+    int32 SDsetexternalfile(id, filename, offset)
+        int32   id;
+        const char  * filename;
+        int32   offset;
 
  DESCRIPTION
-    Specify that the actual data for this dataset be stored in a 
+    Specify that the actual data for this dataset be stored in a
     separate file (and "external file" in HDF terms).
 
-    Only the data (as in SDwritedata()) will be stored externally.  
+    Only the data (as in SDwritedata()) will be stored externally.
     Attributes and such will still be in the main file
 
-    IMPORTANT:  It is the user's responsibility to see that the 
+    IMPORTANT:  It is the user's responsibility to see that the
     separate files are transported when the main file is moved.
 
-    IMPORTANT:  This can only be called *once* for a given dataset.  
+    IMPORTANT:  This can only be called *once* for a given dataset.
     The HDF utility 'hdfpack' may be able to undo it.
 
     IMPORTANT:  This will only work on datasets stored in HDF files.
 
-    FORTRAN	- sfsextf
+    FORTRAN    - sfsextf
 
  RETURNS
     SUCCEED/FAIL
 
-******************************************************************************/ 
-intn 
+******************************************************************************/
+intn
 SDsetexternalfile(int32 id,       /* IN: dataset ID */
                   const char *filename, /* IN: name of external file */
                   int32 offset    /* IN: offset in external file */)
@@ -3904,38 +3904,38 @@ SDsetexternalfile(int32 id,       /* IN: dataset ID */
        external file exists and SDsetexternalfile should not have any effect */
     extfname_len = SDgetexternalinfo(id, 0, NULL, NULL, NULL);
     if (extfname_len > 0)
-	HGOTO_DONE(DFE_NONE);
+    HGOTO_DONE(DFE_NONE);
 
     if(NULL == filename || offset < 0)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     handle = SDIhandle_from_id(id, SDSTYPE);
     if(handle == NULL || handle->file_type != HDF_FILE)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     if(handle->vars == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     var = SDIget_var(handle, id);
     if(var == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* already exists */
-    if(var->data_ref) 
+    if(var->data_ref)
       {
           /* no need to give a length since the element already exists */
-          status = (intn)HXcreate(handle->hdf_file, (uint16)DATA_TAG, 
+          status = (intn)HXcreate(handle->hdf_file, (uint16)DATA_TAG,
                          (uint16) var->data_ref, filename, offset, (int32)0);
-      } 
-    else 
+      }
+    else
       {
           int32   length;
 
@@ -3954,10 +3954,10 @@ SDsetexternalfile(int32 id,       /* IN: dataset ID */
             }
 
           /* need to give a length since the element does not exist yet */
-          status = (intn)HXcreate(handle->hdf_file, (uint16)DATA_TAG, 
+          status = (intn)HXcreate(handle->hdf_file, (uint16)DATA_TAG,
                          (uint16) var->data_ref, filename, offset, length);
       }
-    if(status != FAIL) 
+    if(status != FAIL)
       {
           if((var->aid != 0) && (var->aid != FAIL))
             {
@@ -3978,20 +3978,20 @@ done:
 
       }
     /* Normal cleanup */
-    return ret_value;    
+    return ret_value;
 } /* SDsetexternalfile */
 
 
 /******************************************************************************
  NAME
-	SDgetexternalinfo -- retrieves external file and data information
+    SDgetexternalinfo -- retrieves external file and data information
  USAGE
-	int32 SDgetexternalinfo(id, buf_size, filename, offset, length)
-        int32 id;                  
-	intn  buf_size;
-        char  *ext_filename;            
-        int32 *offset;              
-        int32 *length;              
+    int32 SDgetexternalinfo(id, buf_size, filename, offset, length)
+        int32 id;
+    intn  buf_size;
+        char  *ext_filename;
+        int32 *offset;
+        int32 *length;
 
  DESCRIPTION
     SDgetexternalinfo gets the external file's name and the external data's
@@ -4007,7 +4007,7 @@ done:
     but the external file name doesn't exist, SDgetexternalinfo will
     return FAIL.
 
-    IMPORTANT:  It is the user's responsibility to see that the 
+    IMPORTANT:  It is the user's responsibility to see that the
     external files are located in the same directory with the main
     file.  SDgetexternalinfo does not check that.
 
@@ -4015,8 +4015,8 @@ done:
     Returns length of the external file name or FAIL.  If the SDS
     does not have external element, this length will be 0.
 
-******************************************************************************/ 
-intn 
+******************************************************************************/
+intn
 SDgetexternalinfo(int32 id,      /* IN: dataset ID */
               uintn buf_size,    /* IN: size of buffer for external file name */
               char *ext_filename,/* IN: buffer for external file name */
@@ -4040,27 +4040,27 @@ SDgetexternalinfo(int32 id,      /* IN: dataset ID */
     /* Get the var structure of the SDS */
     handle = SDIhandle_from_id(id, SDSTYPE);
     if(handle == NULL || handle->file_type != HDF_FILE)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if(handle->vars == NULL)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     var = SDIget_var(handle, id);
     if(var == NULL)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* SDS exists */
-    if(var->data_ref) 
+    if(var->data_ref)
     {
-	int32 retcode=0;
-	sp_info_block_t info_block;    /* special info block */
-	HDmemset(&info_block, 0, sizeof(sp_info_block_t));
+    int32 retcode=0;
+    sp_info_block_t info_block;    /* special info block */
+    HDmemset(&info_block, 0, sizeof(sp_info_block_t));
 
-	/* Get the access id and then its special info */
-	aid = Hstartread(handle->hdf_file, var->data_tag, var->data_ref);
-	if (aid == FAIL) /* catch FAIL from Hstartread */
-	    HGOTO_ERROR(DFE_ARGS, FAIL);
-	retcode = HDget_special_info(aid, &info_block);
+    /* Get the access id and then its special info */
+    aid = Hstartread(handle->hdf_file, var->data_tag, var->data_ref);
+    if (aid == FAIL) /* catch FAIL from Hstartread */
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+    retcode = HDget_special_info(aid, &info_block);
 
         /* When HDget_special_info returns FAIL, it could be the element is not
            special or some failure occur internally, info_block.key will be
@@ -4075,13 +4075,13 @@ SDgetexternalinfo(int32 id,      /* IN: dataset ID */
                 HGOTO_ERROR(DFE_ARGS, FAIL)
         }
 
-	/* If the SDS has external element, get the external info */
+    /* If the SDS has external element, get the external info */
         else if (info_block.key == SPECIAL_EXT)
         {
-	    /* If the file name is not available, something must be wrong,
-		so we need to report it. */
+        /* If the file name is not available, something must be wrong,
+        so we need to report it. */
             if (info_block.path == NULL || HDstrlen(info_block.path) <= 0)
-		ret_value = FAIL;
+        ret_value = FAIL;
             else
             {
                 intn tmp_len = info_block.length_file_name;
@@ -4096,10 +4096,10 @@ SDgetexternalinfo(int32 id,      /* IN: dataset ID */
                     if (ext_filename == NULL)
                         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-		    /* Compute the length of the name to be returned: if
-		       requested buffer size is smaller, use that value for
-		       name's length, but that means file name could be
-		       truncated! */
+            /* Compute the length of the name to be returned: if
+            requested buffer size is smaller, use that value for
+            name's length, but that means file name could be
+            truncated! */
                     actual_fname_len  = (intn)buf_size < tmp_len ? (intn)buf_size : tmp_len;
 
                     /* Get the name */
@@ -4111,41 +4111,41 @@ SDgetexternalinfo(int32 id,      /* IN: dataset ID */
                     if (length != NULL)
                         *length = info_block.length;
                 } /* buf_size != 0 */
-		ret_value = actual_fname_len ;
+        ret_value = actual_fname_len ;
             }
         }
-	/* Special but not external, so no external file name */
+    /* Special but not external, so no external file name */
         else
             ret_value = 0;
 
-	/* End access to the aid */
-	if (Hendaccess(aid) == FAIL)
-	    HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
-    } 
+    /* End access to the aid */
+    if (Hendaccess(aid) == FAIL)
+        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+    }
     else /* SDS doesn't exist */
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
-	/* End access to the aid if neccessary */
-	if (aid != FAIL)
-	    Hendaccess(aid);
+    /* End access to the aid if neccessary */
+    if (aid != FAIL)
+        Hendaccess(aid);
       }
     /* Normal cleanup */
-    return ret_value;    
+    return ret_value;
 } /* SDgetexternalinfo */
 
 
 /************************** Deprecated ******************************
  NAME
-	SDgetexternalfile -- retrieves external file information
-	(Deprecated)
+    SDgetexternalfile -- retrieves external file information
+    (Deprecated)
  USAGE
-	int32 SDgetexternalfile(id, filename, offset)
-        int32 id;                  
-	intn  buf_size;
-        char  *filename;            
-        int32 *offset;              
+    int32 SDgetexternalfile(id, filename, offset)
+        int32 id;
+    intn  buf_size;
+        char  *filename;
+        int32 *offset;
 
  DESCRIPTION
     SDgetexternalfile uses HDget_special_info to get the external
@@ -4156,10 +4156,10 @@ done:
     0.  If the element is SPECIAL_EXT, but the external file name
     doesn't exist, SDgetexternalfile will fail.
 
-    IMPORTANT:  It is the user's responsibility to see that the 
+    IMPORTANT:  It is the user's responsibility to see that the
     separate files are transported when the main file is moved.
 
-    FORTRAN	N/A
+    FORTRAN    N/A
 
  RETURNS
     Returns length of the external file name or FAIL.  If the SDS
@@ -4168,8 +4168,8 @@ done:
  NOTE: This function is replaced by SDgetexternalinfo because it had
        missed the "length" parameter.
 
-******************************************************************************/ 
-intn 
+******************************************************************************/
+intn
 SDgetexternalfile(int32 id,       /* IN: dataset ID */
                   intn buf_size,   /* IN: name of external file */
                   char *ext_filename, /* IN: name of external file */
@@ -4191,31 +4191,31 @@ SDgetexternalfile(int32 id,       /* IN: dataset ID */
     /* Get the var structure */
     handle = SDIhandle_from_id(id, SDSTYPE);
     if(handle == NULL || handle->file_type != HDF_FILE)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if(handle->vars == NULL)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     var = SDIget_var(handle, id);
     if(var == NULL)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* SDS exists */
-    if(var->data_ref) 
+    if(var->data_ref)
     {
-	int32 aid=-1;
-	int32 retcode=0;
-	sp_info_block_t info_block;    /* special info block */
+    int32 aid=-1;
+    int32 retcode=0;
+    sp_info_block_t info_block;    /* special info block */
 
-	/* Get the access id and then its special info */
-	aid = Hstartread(handle->hdf_file, var->data_tag, var->data_ref);
-	retcode = HDget_special_info(aid, &info_block);
+    /* Get the access id and then its special info */
+    aid = Hstartread(handle->hdf_file, var->data_tag, var->data_ref);
+    retcode = HDget_special_info(aid, &info_block);
 
-	/* If the SDS has external element, return the external file info */
+    /* If the SDS has external element, return the external file info */
         if (info_block.key == SPECIAL_EXT)
         {
-	    /* If the file name is not available, the file is probably
-		corrupted, so we need to report it. */
+        /* If the file name is not available, the file is probably
+        corrupted, so we need to report it. */
             if (info_block.path == NULL || HDstrlen(info_block.path) <= 0)
                 ret_value = FAIL;
             else
@@ -4240,30 +4240,30 @@ SDgetexternalfile(int32 id,       /* IN: dataset ID */
                     if (offset != NULL)
                         *offset = info_block.offset;
                 } /* buf_size != 0 */
-		ret_value = actual_len;
+        ret_value = actual_len;
             }
         }
-	/* Not external */
+    /* Not external */
         else
             ret_value = FAIL;
 
-	/* End access to the aid */
-	if (Hendaccess(aid) == FAIL)
-	    HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
-    } 
+    /* End access to the aid */
+    if (Hendaccess(aid) == FAIL)
+        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+    }
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
 
       }
     /* Normal cleanup */
-    return ret_value;    
+    return ret_value;
 } /* SDgetexternalfile (Deprecated) */
 
 
 /******************************************************************************
  NAME
-	SDsetnbitdataset -- Create/convert a dataset to n-bit representation
+    SDsetnbitdataset -- Create/convert a dataset to n-bit representation
 
 
  DESCRIPTION
@@ -4293,8 +4293,8 @@ done:
  RETURNS
     SUCCEED/FAIL
 
-******************************************************************************/ 
-intn 
+******************************************************************************/
+intn
 SDsetnbitdataset(int32 id,       /* IN: dataset ID */
                  intn start_bit, /* IN: starting bit offset (lowest=0) */
                  intn bit_len,   /* IN: # of bits to write */
@@ -4318,24 +4318,24 @@ SDsetnbitdataset(int32 id,       /* IN: dataset ID */
 
     if(start_bit < 0 || bit_len <= 0)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     handle = SDIhandle_from_id(id, SDSTYPE);
     if(handle == NULL || handle->file_type != HDF_FILE)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     if(handle->vars == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     var = SDIget_var(handle, id);
     if(var == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* set up n-bit parameters */
@@ -4348,7 +4348,7 @@ SDsetnbitdataset(int32 id,       /* IN: dataset ID */
 #ifdef SDDEBUG
     printf("SDsetnbitdata(): nt=%d, sign_ext=%d, fill_one=%d, start_bit=%d, bit_len=%d\n",(intn)c_info.nbit.nt,(intn)c_info.nbit.sign_ext,(intn)c_info.nbit.fill_one,(intn)c_info.nbit.start_bit,(intn)c_info.nbit.bit_len);
 #endif
-    if(!var->data_ref) 
+    if(!var->data_ref)
       {   /* doesn't exist */
 #ifdef SDDEBUG
           printf("SDsetnbitdata(): dataset doesn't exist\n");
@@ -4373,7 +4373,7 @@ SDsetnbitdataset(int32 id,       /* IN: dataset ID */
 #ifdef SDDEBUG
     printf("SDsetnbitdata(): HCcreate() status=%d\n",(intn)status);
 #endif
-    if(status != FAIL) 
+    if(status != FAIL)
       {
           if((var->aid != 0) && (var->aid != FAIL))
             {
@@ -4396,17 +4396,17 @@ done:
     /* Normal cleanup */
 
 
-    return ret_value;    
+    return ret_value;
 } /* SDsetnbitdataset */
 
 #ifdef H4_HAVE_LIBSZ          /* we have the library */
 
 /******************************************************************************
  NAME
-	SDsetup_szip_parms -- check and set parameters for szip compression
+    SDsetup_szip_parms -- check and set parameters for szip compression
               int32 id;            IN: the  varid
               NC *handle;          IN: the SD handle
-              comp_info *c_info;   IN/OUT: the compression settings 
+              comp_info *c_info;   IN/OUT: the compression settings
               int32 *cdims;        IN: the chunk dims, NULL if not chunked
 
  DESCRIPTION
@@ -4416,14 +4416,14 @@ done:
  RETURNS
     SUCCEED/FAIL
 
-******************************************************************************/ 
-intn 
+******************************************************************************/
+intn
 SDsetup_szip_parms( int32 id, NC *handle, comp_info *c_info, int32 *cdims)
 {
     CONSTR(FUNC, "SDsetup_szip_parms");    /* for HGOTO_ERROR */
     NC_dim    *dim;     /* to check if the dimension is unlimited */
     int32      dimindex;/* to obtain the NC_dim record */
-    NC_var    *var; 
+    NC_var    *var;
     int32 ndims;
     int i;
     int32 xdims[H4_MAX_VAR_DIMS];
@@ -4435,33 +4435,33 @@ SDsetup_szip_parms( int32 id, NC *handle, comp_info *c_info, int32 *cdims)
 
     if(handle->vars == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     var = SDIget_var(handle, id);
     if(var == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
-    ndims = var->assoc->count; 
-	for (i = 0; i < ndims; i++) {
-		dimindex = var->assoc->values[i];
-		dim = SDIget_dim(handle, dimindex);
-		xdims[i] = dim->size;
-	}
+    ndims = var->assoc->count;
+    for (i = 0; i < ndims; i++) {
+        dimindex = var->assoc->values[i];
+        dim = SDIget_dim(handle, dimindex);
+        xdims[i] = dim->size;
+    }
 
     nt = var->HDFtype;
-	
+
     ret_value = HCPsetup_szip_parms( c_info, nt, 1, ndims, xdims, cdims);
 
 done:
-	return(ret_value);
+    return(ret_value);
 }
 #endif
 /******************************************************************************
  NAME
-	SDsetcompress -- Create/convert a dataset to compressed representation
+    SDsetcompress -- Create/convert a dataset to compressed representation
 
  DESCRIPTION
     Specify a compression scheme for an SD dataset.
@@ -4474,11 +4474,11 @@ done:
  RETURNS
     SUCCEED/FAIL
 
-******************************************************************************/ 
-intn 
+******************************************************************************/
+intn
 SDsetcompress(int32 id,                /* IN: dataset ID */
-              comp_coder_t comp_type,  /* IN: the type of compression to 
-					  perform on the next image */
+              comp_coder_t comp_type,  /* IN: the type of compression to
+                    perform on the next image */
               comp_info *c_info        /* IN: ptr to compression info struct*/)
 {
     CONSTR(FUNC, "SDsetcompress");    /* for HGOTO_ERROR */
@@ -4501,38 +4501,38 @@ SDsetcompress(int32 id,                /* IN: dataset ID */
 
     if (comp_type < COMP_CODE_NONE || comp_type >= COMP_CODE_INVALID)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* Must have encoder to set compression */
     HCget_config_info(comp_type, &comp_config);
     if ((comp_config & COMP_ENCODER_ENABLED) == 0) {
-	/* encoder not present?? */
-	HGOTO_ERROR(DFE_NOENCODER, FAIL);
+    /* encoder not present?? */
+    HGOTO_ERROR(DFE_NOENCODER, FAIL);
     }
     HDmemcpy(&c_info_x,c_info,sizeof(comp_info));
 
     handle = SDIhandle_from_id(id, SDSTYPE);
     if(handle == NULL || handle->file_type != HDF_FILE)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     if(handle->vars == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     var = SDIget_var(handle, id);
     if(var == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* disallow setting compress for SDS with rank = 0 - BMR, bug #1045 */
     if(var->shape == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* unlimited dimensions don't work with compression */
@@ -4555,23 +4555,23 @@ SDsetcompress(int32 id,                /* IN: dataset ID */
             HGOTO_ERROR(DFE_ARGS, FAIL);
         }
 #ifdef H4_HAVE_LIBSZ          /* we have the library */
-	if (comp_type == COMP_CODE_SZIP) {
-	   if (SDsetup_szip_parms( id, handle, &c_info_x, NULL) == FAIL) {
-		HGOTO_ERROR(DFE_INTERNAL, FAIL);
-	    }
-	}
+    if (comp_type == COMP_CODE_SZIP) {
+    if (SDsetup_szip_parms( id, handle, &c_info_x, NULL) == FAIL) {
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+        }
+    }
 #else
-	/* no SZIP */
+    /* no SZIP */
 /* probably covered by test at start */
-	if (comp_type == COMP_CODE_SZIP) {
-		HGOTO_ERROR(DFE_BADCODER, FAIL);
-	}
+    if (comp_type == COMP_CODE_SZIP) {
+        HGOTO_ERROR(DFE_BADCODER, FAIL);
+    }
 #endif /* H4_HAVE_LIBSZ          */
 
 #ifdef SDDEBUG
     printf("SDsetcompress(): var->data_ref=%d\n",(int)var->data_ref);
 #endif /* SDDEBUG */
-    if(!var->data_ref) 
+    if(!var->data_ref)
       {   /* doesn't exist */
 #ifdef SDDEBUG
           printf("SDsetcompress(): dataset doesn't exist\n");
@@ -4599,7 +4599,7 @@ SDsetcompress(int32 id,                /* IN: dataset ID */
         HEprint(stderr,0);
 #endif /* SDDEBUG */
 
-    if(status != FAIL) 
+    if(status != FAIL)
       {
           if((var->aid != 0) && (var->aid != FAIL))
             {
@@ -4613,7 +4613,7 @@ SDsetcompress(int32 id,                /* IN: dataset ID */
       } /* end if */
 
     /* Insert data tag/ref into the variable's Vgroup */
-    if(var->vgid) 
+    if(var->vgid)
       {
           int32 vg;
 
@@ -4623,13 +4623,13 @@ SDsetcompress(int32 id,                /* IN: dataset ID */
             {
                 HGOTO_ERROR(DFE_ARGS, FAIL);
             }
-        
+
           /* add new Vdata to existing Vgroup */
           if (Vaddtagref(vg, (int32) DATA_TAG, (int32) var->data_ref) == FAIL)
             {
                 HGOTO_ERROR(DFE_ARGS, FAIL);
             }
-        
+
           /* detach from the variable's VGroup --- will no longer need it */
           if (Vdetach(vg) == FAIL)
             {
@@ -4639,7 +4639,7 @@ SDsetcompress(int32 id,                /* IN: dataset ID */
 
     /* added a new object -- make sure we flush the header */
     handle->flags |= NC_HDIRTY;
-            
+
     ret_value = (status != FAIL ? SUCCEED : FAIL);
 
 done:
@@ -4650,14 +4650,14 @@ done:
     /* Normal cleanup */
 
 
-    return ret_value;    
+    return ret_value;
 } /* SDsetcompress */
 
 #ifndef H4_NO_DEPRECATED_SYMBOLS
 
 /******************************************************************************
  NAME
-	SDgetcompress -- Retrieves compression information of a dataset
+    SDgetcompress -- Retrieves compression information of a dataset
 
  DESCRIPTION
     This routine uses HCPgetcompress to retrieve the compression type
@@ -4667,16 +4667,16 @@ done:
     SUCCEED/FAIL
 
  MODIFICATION
-    July 2001: Added to fix bug #307 - BMR 
-    Apr 2005:  This function has incorrect behavior and is replaced by 
-	       SDgetcompinfo.  SDgetcompress will be removed in the future.
+    July 2001: Added to fix bug #307 - BMR
+    Apr 2005:  This function has incorrect behavior and is replaced by
+        SDgetcompinfo.  SDgetcompress will be removed in the future.
 
-******************************************************************************/ 
-intn 
+******************************************************************************/
+intn
 SDgetcompress(int32     id,     /* IN: dataset ID */
               comp_coder_t*    comp_type,   /* OUT: the type of compression */
-              comp_info* c_info)/* OUT: ptr to compression information 
-				structure for storing the retrieved info */
+              comp_info* c_info)/* OUT: ptr to compression information
+                structure for storing the retrieved info */
 {
     CONSTR(FUNC, "SDgetcompress");    /* for HGOTO_ERROR */
     NC        *handle;
@@ -4692,13 +4692,13 @@ SDgetcompress(int32     id,     /* IN: dataset ID */
     HEclear();
 
     if(comp_type == NULL || c_info == NULL)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     handle = SDIhandle_from_id(id, SDSTYPE);
     if(handle == NULL || handle->file_type != HDF_FILE)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
     if(handle->vars == NULL)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     var = SDIget_var(handle, id);
     if(var == NULL) HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -4706,12 +4706,12 @@ SDgetcompress(int32     id,     /* IN: dataset ID */
 #ifdef SDDEBUG
     printf("SDgetcompress(): var->data_ref=%d, var->aid=%d\n",(int)var->data_ref, (int)var->aid);
 #endif /* SDDEBUG */
-    if(!var->data_ref) 
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    if(!var->data_ref)
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* use lower-level routine to get the compression information */
-    status = HCPgetcompress(handle->hdf_file, var->data_tag, var->data_ref, 
-		comp_type, c_info);
+    status = HCPgetcompress(handle->hdf_file, var->data_tag, var->data_ref,
+        comp_type, c_info);
     if(status==FAIL) HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
@@ -4721,14 +4721,14 @@ done:
       }
     /* Normal cleanup */
 
-    return ret_value;    
+    return ret_value;
 } /* SDgetcompress */
 
 #endif /* H4_NO_DEPRECATED_SYMBOLS */
 
 /******************************************************************************
  NAME
-	SDgetcompinfo -- Retrieves compression information of a dataset
+    SDgetcompinfo -- Retrieves compression information of a dataset
 
  DESCRIPTION
     This routine uses HCPgetcompinfo to retrieve the compression type
@@ -4740,17 +4740,17 @@ done:
  MODIFICATION
     July 2001: Added to fix bug #307 - BMR (from SDgetcompress)
     Apr 2005:  This function was actually created at this time, but it is
-	       almost a duplicate of SDgetcompress, which is intended to be 
-	       removed in the future, due to its incorrect behavior.  The
-	       only difference is the call to the low-level routine,
-	       HCPgetcompinfo, instead of HCPgetcompress.
+        almost a duplicate of SDgetcompress, which is intended to be
+        removed in the future, due to its incorrect behavior.  The
+        only difference is the call to the low-level routine,
+        HCPgetcompinfo, instead of HCPgetcompress.
 
-******************************************************************************/ 
-intn 
+******************************************************************************/
+intn
 SDgetcompinfo(int32 sdsid,     /* IN: dataset ID */
               comp_coder_t*    comp_type,   /* OUT: the type of compression */
-              comp_info* c_info)/* OUT: ptr to compression information 
-				structure for storing the retrieved info */
+              comp_info* c_info)/* OUT: ptr to compression information
+                structure for storing the retrieved info */
 {
     CONSTR(FUNC, "SDgetcompinfo");    /* for HGOTO_ERROR */
     NC        *handle;
@@ -4766,13 +4766,13 @@ SDgetcompinfo(int32 sdsid,     /* IN: dataset ID */
     HEclear();
 
     if(comp_type == NULL || c_info == NULL)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL || handle->file_type != HDF_FILE)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
     if(handle->vars == NULL)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     var = SDIget_var(handle, sdsid);
     if(var == NULL) HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -4782,15 +4782,15 @@ SDgetcompinfo(int32 sdsid,     /* IN: dataset ID */
 #endif /* SDDEBUG */
     /* return with SUCCEED if the data set is empty and not compressed; when
        the data set is set compressed, the data has a valid reference number */
-    if(!var->data_ref) 
+    if(!var->data_ref)
     {
-	*comp_type = COMP_CODE_NONE;
-	HGOTO_DONE(SUCCEED);
+    *comp_type = COMP_CODE_NONE;
+    HGOTO_DONE(SUCCEED);
     }
 
     /* use lower-level routine to get the compression information */
-    status = HCPgetcompinfo(handle->hdf_file, var->data_tag, var->data_ref, 
-		comp_type, c_info);
+    status = HCPgetcompinfo(handle->hdf_file, var->data_tag, var->data_ref,
+        comp_type, c_info);
 
     if(status==FAIL) HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
@@ -4801,12 +4801,12 @@ done:
       }
     /* Normal cleanup */
 
-    return ret_value;    
+    return ret_value;
 } /* SDgetcompinfo */
 
 /******************************************************************************
  NAME
-	SDgetcomptype -- Retrieves compression method of a dataset
+    SDgetcomptype -- Retrieves compression method of a dataset
 
  DESCRIPTION
     This routine uses HCPgetcomptype to retrieve the compression type
@@ -4816,15 +4816,15 @@ done:
     SUCCEED/FAIL
 
  MODIFICATION
-    Dec 2007: Added to work around the problem where an external library is 
-	      missing, SDgetcompinfo will fail.  This new API will not need
-	      to get the compression information but only the compression type,
-	      which sometime is the only thing an application needs - BMR
+    Dec 2007: Added to work around the problem where an external library is
+        missing, SDgetcompinfo will fail.  This new API will not need
+        to get the compression information but only the compression type,
+        which sometime is the only thing an application needs - BMR
 
-******************************************************************************/ 
-intn 
-SDgetcomptype(int32 sdsid,		/* IN: dataset ID */
-              comp_coder_t* comp_type	/* OUT: the type of compression */)
+******************************************************************************/
+intn
+SDgetcomptype(int32 sdsid,        /* IN: dataset ID */
+              comp_coder_t* comp_type    /* OUT: the type of compression */)
 {
     CONSTR(FUNC, "SDgetcomptype");    /* for HGOTO_ERROR */
     NC        *handle;
@@ -4840,29 +4840,29 @@ SDgetcomptype(int32 sdsid,		/* IN: dataset ID */
     HEclear();
 
     if(comp_type == NULL)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL || handle->file_type != HDF_FILE)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
     if(handle->vars == NULL)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     var = SDIget_var(handle, sdsid);
     if(var == NULL) HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* return with SUCCEED if the data set is empty and not compressed - when
-       the data set was set to be compressed, the data would have had a 
+       the data set was set to be compressed, the data would have had a
        valid reference number even there was no data written */
-    if(!var->data_ref) 
+    if(!var->data_ref)
     {
-	*comp_type = COMP_CODE_NONE;
-	HGOTO_DONE(SUCCEED);
+    *comp_type = COMP_CODE_NONE;
+    HGOTO_DONE(SUCCEED);
     }
 
     /* use lower-level routine to get the compression method */
-    status = HCPgetcomptype(handle->hdf_file, var->data_tag, var->data_ref, 
-		comp_type);
+    status = HCPgetcomptype(handle->hdf_file, var->data_tag, var->data_ref,
+        comp_type);
 
     if(status==FAIL) HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
@@ -4873,15 +4873,15 @@ done:
       }
     /* Normal cleanup */
 
-    return ret_value;    
+    return ret_value;
 } /* SDgetcomptype */
 
 /******************************************************************************
  NAME
-	SDgetdatasize -- Retrieves the sizes of original and compressed data.
+    SDgetdatasize -- Retrieves the sizes of original and compressed data.
 
  DESCRIPTION
-    This routine uses HCPgetdatasize to retrievethe original data and 
+    This routine uses HCPgetdatasize to retrievethe original data and
     compressed data sizes of the identified dataset.  At least of the OUT
     arguments must be non-null and a null argument will be unchanged.
 
@@ -4890,11 +4890,11 @@ done:
 
  MODIFICATION
 
-******************************************************************************/ 
-intn 
-SDgetdatasize(int32 sdsid,		/* IN: dataset ID */
-              int32* comp_size,		/* OUT: size of compressed data */
-              int32* orig_size)		/* OUT: size of original data */
+******************************************************************************/
+intn
+SDgetdatasize(int32 sdsid,        /* IN: dataset ID */
+              int32* comp_size,        /* OUT: size of compressed data */
+              int32* orig_size)        /* OUT: size of original data */
 
 {
     CONSTR(FUNC, "SDgetdatasize");    /* for HGOTO_ERROR */
@@ -4909,9 +4909,9 @@ SDgetdatasize(int32 sdsid,		/* IN: dataset ID */
 
     /* must have at least one non-null argument */
     if (comp_size == NULL && orig_size == NULL)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* allocate temporary buffers so user's arguments can be kept intact 
+    /* allocate temporary buffers so user's arguments can be kept intact
        until finished */
     if (comp_size != NULL)
         comp_size_tmp = (int32 *) HDmalloc(sizeof(int32));
@@ -4921,27 +4921,27 @@ SDgetdatasize(int32 sdsid,		/* IN: dataset ID */
     /* get NC_var record */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL || handle->file_type != HDF_FILE)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
     if(handle->vars == NULL)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     var = SDIget_var(handle, sdsid);
     if(var == NULL) HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* if the data ref# of the SDS is 0, it indicates that the SDS has 
-	not been written with data because no storage is created 
-	for the SDS data */
+    /* if the data ref# of the SDS is 0, it indicates that the SDS has
+    not been written with data because no storage is created
+    for the SDS data */
     if (var->data_ref == 0)
     {
-	*comp_size_tmp = *orig_size_tmp = 0;
+    *comp_size_tmp = *orig_size_tmp = 0;
     }
     else
     {
-	/* use lower-level routine to get the data sizes */
-	status = HCPgetdatasize(handle->hdf_file, var->data_tag, var->data_ref, 
-		comp_size_tmp, orig_size_tmp);
-	if (status == FAIL)
-	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    /* use lower-level routine to get the data sizes */
+    status = HCPgetdatasize(handle->hdf_file, var->data_tag, var->data_ref,
+        comp_size_tmp, orig_size_tmp);
+    if (status == FAIL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
     }
 
     /* Return the requested sizes */
@@ -4961,23 +4961,23 @@ done:
     if (orig_size_tmp != NULL)
         HDfree(orig_size_tmp);
 
-    return ret_value;    
+    return ret_value;
 } /* SDgetdatasize */
 
 
 /******************************************************************************
  NAME
-	SDfindattr -- find an attribute's index by name
+    SDfindattr -- find an attribute's index by name
 
  DESCRIPTION
-    Given an ID to an object and an attribute name return the index 
+    Given an ID to an object and an attribute name return the index
     of the attribute with that name.  This does not support any
     form of wildcards / regular expressions
 
  RETURNS
      An attribute index or FAIL
 
-******************************************************************************/ 
+******************************************************************************/
 int32
 SDfindattr(int32 id,       /* IN: object ID */
            const char *attrname  /* IN: attribute name */)
@@ -4997,26 +4997,26 @@ SDfindattr(int32 id,       /* IN: object ID */
     /* determine what type of ID we've been given */
     if(SDIapfromid(id, &handle, &app) == FAIL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     ap = (*app);
     if(ap == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
-    /* 
+    /*
      * ap is the proper attribute list now look up something with this
      *  name
      */
 
     attr = (NC_attr **) ap->values;
     len = HDstrlen(attrname);
-    
+
     for(attrid = 0 ; attrid < ap->count ; attrid++, attr++)
       {
-          if( len == (*attr)->name->len 
+          if( len == (*attr)->name->len
               && HDstrncmp(attrname, (*attr)->name->values, HDstrlen(attrname)) == 0)
             {
                 /* found it */
@@ -5032,16 +5032,16 @@ done:
     /* Normal cleanup */
 
 
-    return ret_value;        
+    return ret_value;
 } /* SDfindattr */
 
 
 /******************************************************************************
  NAME
-	SDidtoref -- get a unique reference number for this dataset
+    SDidtoref -- get a unique reference number for this dataset
 
  DESCRIPTION
-    Given an index return the ref of the associated NDG for 
+    Given an index return the ref of the associated NDG for
     inclusion in Vgroups and annotations
 
  RETURNS
@@ -5059,25 +5059,25 @@ SDidtoref(int32 id /* IN: dataset ID */)
 #ifdef SDDEBUG
     fprintf(stderr, "SDidtoref: I've been called\n");
 #endif
-    
+
     /* clear error stack */
     HEclear();
 
     handle = SDIhandle_from_id(id, SDSTYPE);
-    if(handle == NULL || handle->file_type != HDF_FILE) 
+    if(handle == NULL || handle->file_type != HDF_FILE)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     if(handle->vars == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     var = SDIget_var(handle, id);
     if(var == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     ret_value = (int32) var->ndg_ref;
@@ -5090,13 +5090,13 @@ done:
     /* Normal cleanup */
 
 
-    return ret_value;    
+    return ret_value;
 } /* SDidtoref */
 
 
 /******************************************************************************
  NAME
-	SDreftoindex -- map a reference number to a dataset index
+    SDreftoindex -- map a reference number to a dataset index
 
  DESCRIPTION
     Given a ref number return the index of the cooresponding dataset
@@ -5118,19 +5118,19 @@ SDreftoindex(int32 fid, /* IN: file ID */
 #ifdef SDDEBUG
     fprintf(stderr, "SDreftoindex: I've been called\n");
 #endif
-    
+
     /* clear error stack */
     HEclear();
 
     handle = SDIhandle_from_id(fid, CDFTYPE);
-    if(handle == NULL || handle->file_type != HDF_FILE) 
+    if(handle == NULL || handle->file_type != HDF_FILE)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     if(handle->vars == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     dp = (NC_var**) handle->vars->values;
@@ -5138,10 +5138,10 @@ SDreftoindex(int32 fid, /* IN: file ID */
       {
         if((*dp)->ndg_ref == ref)
           {
-	    HGOTO_ERROR(DFE_ARGS, ii);
+        HGOTO_ERROR(DFE_ARGS, ii);
           }
       }
-    
+
     ret_value = FAIL;
 
 done:
@@ -5152,13 +5152,13 @@ done:
     /* Normal cleanup */
 
 
-    return ret_value;    
+    return ret_value;
 } /* SDreftoindex */
 
 
 /******************************************************************************
  NAME
-	SDisrecord -- check is var is a record variable
+    SDisrecord -- check is var is a record variable
 
  DESCRIPTION
     Return TRUE if the dataset in question is a record variable
@@ -5179,7 +5179,7 @@ SDisrecord(int32 id /* IN: dataset ID */)
 #ifdef SDDEBUG
     fprintf(stderr, "SDisrecord: I've been called\n");
 #endif
-    
+
     /* clear error stack */
     HEclear();
 
@@ -5219,13 +5219,13 @@ done:
     /* Normal cleanup */
 
 
-    return ret_value;    
+    return ret_value;
 } /* SDisrecord */
 
 
 /******************************************************************************
  NAME
-	SDiscoordvar -- check is var is a coord var
+    SDiscoordvar -- check is var is a coord var
 
  DESCRIPTION
     Return TRUE if the dataset in question is a coordinate variable
@@ -5247,7 +5247,7 @@ SDiscoordvar(int32 id /* IN: dataset ID */)
 #ifdef SDDEBUG
     fprintf(stderr, "SDiscoordvar: I've been called\n");
 #endif
-    
+
     /* clear error stack */
     HEclear();
 
@@ -5268,7 +5268,7 @@ SDiscoordvar(int32 id /* IN: dataset ID */)
         HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
-    /* check whether this var is an SDS or a coordinate variable, then 
+    /* check whether this var is an SDS or a coordinate variable, then
        return the appropriate value (if and else if) */
     if (var->var_type == IS_SDSVAR)
       {
@@ -5286,25 +5286,25 @@ SDiscoordvar(int32 id /* IN: dataset ID */)
        (see bugzilla 624) - BMR - 05/14/2007 */
     else  /* proceed exactly as before the fix of bugzilla 624 is available */
       {
-	dimindex = var->assoc->values[0];
+    dimindex = var->assoc->values[0];
 
-	dim = SDIget_dim(handle, dimindex);
-	if(dim == NULL)
-	  {
+    dim = SDIget_dim(handle, dimindex);
+    if(dim == NULL)
+    {
             HGOTO_ERROR(DFE_ARGS, FALSE);
-	  }
+    }
 
-	if(var->name->len != dim->name->len)
-	  {
+    if(var->name->len != dim->name->len)
+    {
             HGOTO_ERROR(DFE_ARGS, FALSE);
-	  }
+    }
 
-	if(HDstrcmp(var->name->values, dim->name->values))
-	  {
+    if(HDstrcmp(var->name->values, dim->name->values))
+    {
             HGOTO_ERROR(DFE_ARGS, FALSE);
-	  }
+    }
 
-	ret_value = TRUE;
+    ret_value = TRUE;
       }
 
 done:
@@ -5315,7 +5315,7 @@ done:
     /* Normal cleanup */
 
 
-    return ret_value;    
+    return ret_value;
 } /* SDiscoordvar */
 
 
@@ -5327,7 +5327,7 @@ done:
   basic idea is that all but one of the dimensions is constant.  The
   other dimension can vary over the course of the dataset.  This is
   useful for storing equalarea grids and for making alogrithms much
-  more complex.  
+  more complex.
 
   Ragged arrays can be multi-dimensional and, eventually, record variables
   too.  A 2-dimensional ragged array would look like:
@@ -5340,7 +5340,7 @@ done:
   *********
   *******
 
-  The above ragged array has 7 "lines" the "line length" of the fifth line is 
+  The above ragged array has 7 "lines" the "line length" of the fifth line is
   three.  It is not necessary to set all of the line lengths at the same time
   nor retreive them all at the same time.   However, to specify the line
   length for line X, the length must be specified for all Y < X (is this
@@ -5364,9 +5364,9 @@ done:
 
 ******************************************************************************/
 int32
-SDsetrag(int32 sdsid, 
-         int32 low, 
-         int32 count, 
+SDsetrag(int32 sdsid,
+         int32 low,
+         int32 count,
          int32 *sizes)
 {
     NC       *handle = NULL;
@@ -5376,41 +5376,41 @@ SDsetrag(int32 sdsid,
 #ifdef SDDEBUG
     fprintf(stderr, "SDsetrag: I've been called\n");
 #endif
-    
+
     /* clear error stack */
     HEclear();
 
     /* get the variable */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
-    if(handle == NULL || handle->file_type != HDF_FILE) 
+    if(handle == NULL || handle->file_type != HDF_FILE)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     if(handle->vars == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     var = SDIget_var(handle, sdsid);
     if((var == NULL) || (var->is_ragged == FALSE))
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* verify writing to a valid area */
-    if(var->rag_fill != low) 
+    if(var->rag_fill != low)
       {
-        printf("var->rag_fill %d    low %d\n", var->rag_fill, low); 
+        printf("var->rag_fill %d    low %d\n", var->rag_fill, low);
         HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* allocate some space for the ragged dimension if needed */
     /* BUG: will need to be changed for ragged records */
-    if(var->rag_list == NULL) 
+    if(var->rag_list == NULL)
       {
         var->rag_list = (int32 *) HDmalloc(sizeof(int32) * var->dsizes[0]);
-        if(var->rag_list == NULL) 
+        if(var->rag_list == NULL)
           {
               HGOTO_ERROR(DFE_ARGS, FAIL);
           }
@@ -5418,7 +5418,7 @@ SDsetrag(int32 sdsid,
 
     /* copy over the new values */
     HDmemcpy(&(var->rag_list[low]), sizes, sizeof(int32) * count);
-    
+
     /* update count */
     var->rag_fill += count;
 
@@ -5430,7 +5430,7 @@ done:
     /* Normal cleanup */
 
 
-    return ret_value;    
+    return ret_value;
 } /* SDsetrag */
 
 #endif /* 0 */
@@ -5438,19 +5438,19 @@ done:
 
 /******************************************************************************
  NAME
-	SDsetaccesstype -- set the I/O access type of an SD
+    SDsetaccesstype -- set the I/O access type of an SD
 
  DESCRIPTION
     Set the type of I/O (serial, parallel, ...) for accessing the
-	data of the SD.  Access types can be DFACC_SERIAL, DFACC_PARALLEL,
-	DFACC_DEFAULT.
+    data of the SD.  Access types can be DFACC_SERIAL, DFACC_PARALLEL,
+    DFACC_DEFAULT.
 
  RETURNS
     Return SUCCEED if the SD data can be accessed via accesstype.
-	Otherwise return FAIL.
+    Otherwise return FAIL.
 
-******************************************************************************/	
-intn 
+******************************************************************************/
+intn
 SDsetaccesstype(int32 id,         /* IN: dataset ID */
                 uintn accesstype  /* IN: access type */)
 {
@@ -5479,25 +5479,25 @@ SDsetaccesstype(int32 id,         /* IN: dataset ID */
     handle = SDIhandle_from_id(id, SDSTYPE);
     if(handle == NULL || handle->file_type != HDF_FILE)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     if(handle->vars == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     var = SDIget_var(handle, id);
     if(var == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* if aid is not valid yet, there is no access_rec setup yet. */
     /* Go ahead and try set it up. */
     if(var->aid == FAIL && hdf_get_vp_aid(handle, var) == FAIL)
         ret_value = FAIL;
-    else 
+    else
         ret_value = (intn)Hsetaccesstype(var->aid, accesstype);
 
 done:
@@ -5508,19 +5508,19 @@ done:
     /* Normal cleanup */
 
 
-    return ret_value;    
+    return ret_value;
 } /* SDsetaccesstype */
 
 
 /******************************************************************************
  NAME
-	SDsetblocksize -- set the size of the linked blocks created.
+    SDsetblocksize -- set the size of the linked blocks created.
 
  DESCRIPTION
     Set the size of the blocks used for storing the data for unlimited
-	dimension datasets.  This is used when creating new datasets only,
-	it does not have any affect on existing datasets.  The block_size 
-	should probably be set to a multiple of the "slice" size.
+    dimension datasets.  This is used when creating new datasets only,
+    it does not have any affect on existing datasets.  The block_size
+    should probably be set to a multiple of the "slice" size.
 
  RETURNS
     SUCCEED/FAIL
@@ -5544,16 +5544,16 @@ SDsetblocksize(int32 sdsid,      /* IN: dataset ID */
 
     /* get the handle */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
-    if(handle == NULL) 
+    if(handle == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* get the variable */
     var = SDIget_var(handle, sdsid);
     if(var == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* set the block size */
@@ -5566,17 +5566,17 @@ done:
       }
     /* Normal cleanup */
 
-    return ret_value;    
+    return ret_value;
 } /* SDsetblocksize */
 
 
 /******************************************************************************
  NAME
-	SDgetblocksize -- get the size of the linked blocks.
+    SDgetblocksize -- get the size of the linked blocks.
 
  DESCRIPTION
     Get the size of the blocks to be used for storing data of unlimited
-	dimension datasets.
+    dimension datasets.
 
  RETURNS
     SUCCEED/FAIL
@@ -5602,24 +5602,24 @@ SDgetblocksize(int32 sdsid,      /* IN: dataset ID */
 
     /* get the handle */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
-    if(handle == NULL) 
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    if(handle == NULL)
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* get the variable */
     var = SDIget_var(handle, sdsid);
     if(var == NULL)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Get access id using data tag/ref.  Fail if data ref has not been defined;
        this happens when SDgetblocksize is called when no data has been written
        or no special element has been created. -BMR, 2013/12/17 */
-    temp_aid = var->aid;	/* use temp to avoid messing up var->aid. -BMR */
+    temp_aid = var->aid;    /* use temp to avoid messing up var->aid. -BMR */
     if (temp_aid == FAIL)
     {
-	if (var->data_ref == 0)		/* no data means no linked-block storage */
+    if (var->data_ref == 0)        /* no data means no linked-block storage */
             HGOTO_ERROR(DFE_GENAPP, FAIL);
 
-	/* Start read access on the element to acquire access id */
+    /* Start read access on the element to acquire access id */
         temp_aid = Hstartread(handle->hdf_file, var->data_tag, var->data_ref);
         if(temp_aid == FAIL) /* catch FAIL from Hstartread */
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
@@ -5629,20 +5629,20 @@ SDgetblocksize(int32 sdsid,      /* IN: dataset ID */
     if (HLgetblockinfo(temp_aid, &block_length, NULL) == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
     if (block_length > 0)
-	*block_size = block_length;
+    *block_size = block_length;
 
     /* End access to the temp_aid only when var->aid is -1, so we won't end
        access var->aid if it was valid. */
     if (var->aid == FAIL && temp_aid != FAIL)
-	Hendaccess(temp_aid);
+    Hendaccess(temp_aid);
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
-	if (var->aid == FAIL && temp_aid != FAIL)
-	    Hendaccess(temp_aid);
+    if (var->aid == FAIL && temp_aid != FAIL)
+        Hendaccess(temp_aid);
       }
     /* Normal cleanup */
-    return ret_value;    
+    return ret_value;
 } /* SDgetblocksize */
 
 
@@ -5693,7 +5693,7 @@ done:
     /* Normal cleanup */
 
 
-    return ret_value;    
+    return ret_value;
 } /* SDsetfillmode() */
 
 /******************************************************************************
@@ -5729,18 +5729,18 @@ SDsetdimval_comp(int32 dimid,    /* IN: dimension ID, returned from SDgetdimid *
     handle = SDIhandle_from_id(dimid, DIMTYPE);
     if(handle == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* get the dimension structure */
     dim = SDIget_dim(handle, dimid);
     if(dim == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
-/*    if (dim->size != SD_UNLIMITED  
-        && dim->dim00_compat != comp_mode )  
+/*    if (dim->size != SD_UNLIMITED
+        && dim->dim00_compat != comp_mode )
 */
     if (dim->dim00_compat != comp_mode)
       {
@@ -5758,7 +5758,7 @@ done:
     /* Normal cleanup */
 
 
-    return ret_value;    
+    return ret_value;
 } /* SDsetdimval_comp */
 
 
@@ -5770,7 +5770,7 @@ done:
 
  RETURNS
     SD_DIMVAL_BW_COMP if dimval is backward compatible;
-    SD_DIMVAL_BW_INCOMP for not compatible; FAIL for error. 
+    SD_DIMVAL_BW_INCOMP for not compatible; FAIL for error.
 
 ******************************************************************************/
 intn
@@ -5792,22 +5792,22 @@ SDisdimval_bwcomp(int32 dimid /* IN: dimension ID, returned from SDgetdimid */)
     handle = SDIhandle_from_id(dimid, DIMTYPE);
     if(handle == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* get the dimension structure */
     dim = SDIget_dim(handle, dimid);
     if(dim == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
 /* Default is incompatible. Return dim->dim00_compat.
-    if (dim->size == SD_UNLIMITED) 
+    if (dim->size == SD_UNLIMITED)
         ret_value = SD_DIMVAL_BW_COMP;
-    else 
+    else
 */
-    ret_value = dim->dim00_compat; 
+    ret_value = dim->dim00_compat;
 
 done:
     if (ret_value == FAIL)
@@ -5817,7 +5817,7 @@ done:
     /* Normal cleanup */
 
 
-    return ret_value;    
+    return ret_value;
 } /* SDisdimval_bwcomp */
 
 /*====================== Chunking Routines ================================*/
@@ -5839,11 +5839,11 @@ done:
       {
          int32   chunk_lengths[H4_MAX_VAR_DIMS];  Chunk lengths along each dimension
 
-         struct 
-          {   
+         struct
+          {
             int32     chunk_lengths[H4_MAX_VAR_DIMS]; Chunk lengths along each dimension
-            int32     comp_type;                   Compression type 
-            comp_info cinfo;                       Compression info struct 
+            int32     comp_type;                   Compression type
+            comp_info cinfo;                       Compression info struct
           }comp;
 
       } HDF_CHUNK_DEF
@@ -5851,14 +5851,14 @@ done:
       The variable agruement 'flags' is a bit-or'd value which can currently be
       'HDF_CHUNK' or 'HDF_CHUNK | HDF_COMP'.
 
-      The simplist is the 'chunk_lengths' array specifiying chunk 
-      lengths for each dimension where the 'flags' argument set to 
+      The simplist is the 'chunk_lengths' array specifiying chunk
+      lengths for each dimension where the 'flags' argument set to
       'HDF_CHUNK';
 
       COMPRESSION is set by using the 'HDF_CHUNK_DEF' union to set the
       appropriate compression information along with the required chunk lengths
-      for each dimension. The compression information is the same as 
-      that set in 'SDsetcompress()'. The bit-or'd 'flags' argument' is set to 
+      for each dimension. The compression information is the same as
+      that set in 'SDsetcompress()'. The bit-or'd 'flags' argument' is set to
       'HDF_CHUNK | HDF_COMP'.
 
       See the example in pseudo-C below for further usage.
@@ -5869,49 +5869,49 @@ done:
 
       The performance of the SDxxx interface with chunking is greatly
       affected by the users access pattern over the dataset and by
-      the maximum number of chunks set in the chunk cache. The cache contains 
+      the maximum number of chunks set in the chunk cache. The cache contains
       the Least Recently Used(LRU cache replacment policy) chunks. See the
-      routine SDsetchunkcache() for further info on the chunk cache and how 
-      to set the maximum number of chunks in the chunk cache. A default chunk 
+      routine SDsetchunkcache() for further info on the chunk cache and how
+      to set the maximum number of chunks in the chunk cache. A default chunk
       cache is always created.
 
       The following example shows the organization of chunks for a 2D array.
       e.g. 4x4 array with 2x2 chunks. The array shows the layout of
            chunks in the chunk array.
 
-            4 ---------------------                                           
-              |         |         |                                                 
-        Y     |  (0,1)  |  (1,1)  |                                       
-        ^     |         |         |                                      
-        |   2 ---------------------                                       
-        |     |         |         |                                               
-        |     |  (0,0)  |  (1,0)  |                                      
-        |     |         |         |                                           
-        |     ---------------------                                         
-        |     0         2         4                                       
-        ---------------> X                                                       
+            4 ---------------------
+              |         |         |
+        Y     |  (0,1)  |  (1,1)  |
+        ^     |         |         |
+        |   2 ---------------------
+        |     |         |         |
+        |     |  (0,0)  |  (1,0)  |
+        |     |         |         |
+        |     ---------------------
+        |     0         2         4
+        ---------------> X
 
         --Without compression--:
-        {                                                                    
+        {
         HDF_CHUNK_DEF chunk_def;
-                                                                            
-        .......                                                                    
-        -- Set chunk lengths --                                                    
-        chunk_def.chunk_lengths[0]= 2;                                                     
-        chunk_def.chunk_lengths[1]= 2; 
 
-        -- Set Chunking -- 
-        SDsetchunk(sdsid, chunk_def, HDF_CHUNK);                      
-         ......                                                                  
-        }                                                                           
+        .......
+        -- Set chunk lengths --
+        chunk_def.chunk_lengths[0]= 2;
+        chunk_def.chunk_lengths[1]= 2;
+
+        -- Set Chunking --
+        SDsetchunk(sdsid, chunk_def, HDF_CHUNK);
+         ......
+        }
 
         --With compression--:
-        {                                                                    
+        {
         HDF_CHUNK_DEF chunk_def;
-                                                                            
-        .......                
-        -- Set chunk lengths first --                                                    
-        chunk_def.chunk_lengths[0]= 2;                                                     
+
+        .......
+        -- Set chunk lengths first --
+        chunk_def.chunk_lengths[0]= 2;
         chunk_def.chunk_lengths[1]= 2;
 
         -- Set compression --
@@ -5919,9 +5919,9 @@ done:
         chunk_def.comp.comp_type = COMP_CODE_DEFLATE;
 
         -- Set Chunking with Compression --
-        SDsetchunk(sdsid, chunk_def, HDF_CHUNK | HDF_COMP);                      
-         ......                                                                  
-        }                                                                           
+        SDsetchunk(sdsid, chunk_def, HDF_CHUNK | HDF_COMP);
+         ......
+        }
 
         NOTE:
            This routine directly calls a Special Chunked Element fcn HMCxxx.
@@ -5929,10 +5929,10 @@ done:
  RETURNS
         SUCCEED/FAIL
 
- AUTHOR 
+ AUTHOR
         -GeorgeV
 ******************************************************************************/
-intn 
+intn
 SDsetchunk(int32         sdsid,     /* IN: sds access id */
            HDF_CHUNK_DEF chunk_def, /* IN: chunk definition */
            int32         flags      /* IN: flags */)
@@ -5954,8 +5954,8 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
     int8       platntsubclass;     /* the machine type of the current platform */
     int8       outntsubclass;      /* the data's machine type */
     uintn      convert;            /* whether to convert or not */
-    int32 tBuf_size = 0;	   /* conversion buffer size */
-    void  *tBuf = NULL;		   /* buffer used for conversion */
+    int32 tBuf_size = 0;       /* conversion buffer size */
+    void  *tBuf = NULL;           /* buffer used for conversion */
     intn       i;                  /* loop variable */
     intn       ret_value = SUCCEED;   /* return value */
 
@@ -5970,19 +5970,19 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
      memset(chunk,0,sizeof(chunk[0]));
     /* Check some args */
 
-    /* get file handle and verify it is an HDF file 
+    /* get file handle and verify it is an HDF file
        we only handle dealing with SDS only not coordinate variables */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL || handle->file_type != HDF_FILE || handle->vars == NULL)
       {
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* get variable from id */
     var = SDIget_var(handle, sdsid);
     if(var == NULL)
       {
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* disallow setting chunk for SDS with rank = 0 - BMR, bug #1045 */
@@ -6004,7 +6004,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
           chunk[0].minfo = &minfo; /* dummy */
           break;
       case (HDF_CHUNK | HDF_COMP):
-      /*  EIP 9/11/03 
+      /*  EIP 9/11/03
        *  We have to take special care if SZIP library is not available;
        *  For all other compression types do
        */
@@ -6012,19 +6012,19 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
 
     HCget_config_info( (comp_coder_t)cdef->comp.comp_type , &comp_config);
     if ((comp_config & (COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED)) == 0) {
-	/* coder not present?? */
-	    HGOTO_ERROR(DFE_NOENCODER, FAIL);
+    /* coder not present?? */
+        HGOTO_ERROR(DFE_NOENCODER, FAIL);
     }
     if ((comp_config & COMP_ENCODER_ENABLED) == 0) {
-	/* encoder not present?? */
-	HGOTO_ERROR(DFE_BADCODER, FAIL);
+    /* encoder not present?? */
+    HGOTO_ERROR(DFE_BADCODER, FAIL);
     }
       if ((comp_coder_t)cdef->comp.comp_type != COMP_CODE_SZIP) {
           cdims = cdef->comp.chunk_lengths;
           chunk[0].chunk_flag = SPECIAL_COMP;  /* Compression */
-          chunk[0].comp_type  = (comp_coder_t)cdef->comp.comp_type; 
+          chunk[0].comp_type  = (comp_coder_t)cdef->comp.comp_type;
           chunk[0].model_type = COMP_MODEL_STDIO; /* Default */
-          chunk[0].cinfo = &cdef->comp.cinfo; 
+          chunk[0].cinfo = &cdef->comp.cinfo;
           chunk[0].minfo = &minfo; /* dummy */
        }
        else /* requested compression is SZIP */
@@ -6033,18 +6033,18 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
           {
            cdims = cdef->comp.chunk_lengths;
            chunk[0].chunk_flag = SPECIAL_COMP;  /* Compression */
-           chunk[0].comp_type  = (comp_coder_t)cdef->comp.comp_type; 
+           chunk[0].comp_type  = (comp_coder_t)cdef->comp.comp_type;
            chunk[0].model_type = COMP_MODEL_STDIO; /* Default */
            chunk[0].minfo = &minfo; /* dummy */
-    	   HDmemcpy(&cinfo,&(cdef->comp.cinfo),sizeof(comp_info));
-	   if ( SDsetup_szip_parms( sdsid, handle, &cinfo, cdims) == FAIL ) {
-	       HGOTO_ERROR(DFE_INTERNAL, FAIL);
-	   }
-              chunk[0].cinfo = &cinfo; 
+        HDmemcpy(&cinfo,&(cdef->comp.cinfo),sizeof(comp_info));
+    if ( SDsetup_szip_parms( sdsid, handle, &cinfo, cdims) == FAIL ) {
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    }
+              chunk[0].cinfo = &cinfo;
           }
 #else                         /* we do not have the SZIP library */
           {
-		HGOTO_ERROR(DFE_BADCODER, FAIL);
+        HGOTO_ERROR(DFE_BADCODER, FAIL);
           }
 #endif /* H4_HAVE_LIBSZ */
 
@@ -6061,18 +6061,18 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
           cinfo.nbit.fill_one  = cdef->nbit.fill_one;
           cinfo.nbit.start_bit = cdef->nbit.start_bit;
           cinfo.nbit.bit_len   = cdef->nbit.bit_len;
-          chunk[0].cinfo = &cinfo; 
+          chunk[0].cinfo = &cinfo;
           chunk[0].minfo = &minfo; /* dummy */
           break;
       default:
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
 #ifdef CHK_DEBUG
     fprintf(stderr,"SDsetchunk: does data ref exist?  \n");
 #endif
     /* Does data exist yet */
-    if(!var->data_ref) 
+    if(!var->data_ref)
       {   /* doesn't exist */
 #ifdef CHK_DEBUG
     fprintf(stderr,"SDsetchunk: data ref does not exist  \n");
@@ -6086,10 +6086,10 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
 #endif
               HGOTO_ERROR(DFE_ARGS, FAIL);
             }
-      } 
+      }
     else /* data ref exists, Error since can't convert existing SDS to chunked */
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* Now start setting chunk info */
@@ -6101,7 +6101,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
     /* allocate space for chunk dimensions */
     if ((chunk[0].pdims = (DIM_DEF *)HDmalloc(ndims*sizeof(DIM_DEF))) == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* initialize datset/chunk sizes using CHUNK defintion structure */
@@ -6111,7 +6111,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
 /* Developer's note: should move unlim check to the beginning and clean up this for loop */
     for (i = 0; i < ndims; i++)
       {   /* get dimension length from shape arrays */
-          /* check if dimension in unlimited since we don't 
+          /* check if dimension in unlimited since we don't
              handle that yet */
           if (var->shape[i] != SD_UNLIMITED)
               chunk[0].pdims[i].dim_length = (int32) var->shape[i];
@@ -6142,8 +6142,8 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
 #ifdef CHK_DEBUG
     fprintf(stderr,"SDsetchunk: cdims[%d]=%d \n",i,cdims[i]);
     fflush(stderr);
-#endif          
-          /* Data distribution along dimensions 
+#endif
+          /* Data distribution along dimensions
           *  Check dimension length agains chunk length */
           if (cdims[i] == (int32)var->shape[i])
               chunk[0].pdims[i].distrib_type = 0;     /* NONE */
@@ -6166,7 +6166,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
     fill_val_len = var->HDFsize;
     if ((fill_val = (void *)HDmalloc(fill_val_len)) == NULL)
       {
-	  HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* get fill value if one is set for this Dataset.
@@ -6174,13 +6174,13 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
     fill_attr = (NC_attr **) NC_findattr(&(var->attrs), _FillValue);
     if(fill_attr != NULL)
       {
-          NC_copy_arrayvals((char *)fill_val, (*fill_attr)->data) ;    
+          NC_copy_arrayvals((char *)fill_val, (*fill_attr)->data) ;
       }
     else /* copy standard default fill value for now */
       {
         void *p = fill_val;
 
-        switch(var->HDFtype & 0xff) 
+        switch(var->HDFtype & 0xff)
           {
           case DFNT_CHAR:
           case DFNT_UCHAR:
@@ -6212,9 +6212,9 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
     /* figure out if fill value has to be converted */
     if (FAIL == (platntsubclass = DFKgetPNSC(var->HDFtype, DF_MT)))
       {
-	  HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    HGOTO_ERROR(DFE_INTERNAL, FAIL);
       }
- 
+
     if (DFKisnativeNT(var->HDFtype))
       {
         if (FAIL == (outntsubclass = DFKgetPNSC(var->HDFtype, DF_MT)))
@@ -6226,17 +6226,17 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
       {
           outntsubclass = DFKislitendNT(var->HDFtype) ? DFNTF_PC : DFNTF_HDFDEFAULT;
       }
-            
+
     convert = (uintn)(platntsubclass != outntsubclass);
 
     /* make sure our tmp buffer is big enough to hold fill value */
-    if(convert && tBuf_size < fill_val_len) 
+    if(convert && tBuf_size < fill_val_len)
       {
-          if(tBuf != NULL) 
+          if(tBuf != NULL)
               HDfree(tBuf);
           tBuf_size = fill_val_len;
           tBuf      = HDmalloc(tBuf_size);
-          if(tBuf == NULL) 
+          if(tBuf == NULL)
             {
                 tBuf_size = 0;
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -6252,7 +6252,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
                                 (uint32) (fill_val_len/var->HDFsize), DFACC_WRITE, 0, 0))
             {
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
-            } 
+            }
 
         /* check to see already special.
            Error if already special since doubly special elements are
@@ -6285,7 +6285,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
     fprintf(stderr,"SDsetchunk: ret_value =%d \n", ret_value);
 #endif
     /* check return */
-    if(ret_value != FAIL) 
+    if(ret_value != FAIL)
       { /* close old aid and set new one
          ..hmm......maybe this is for the doubly specail hack since
          this code framework came from SDsetcompress()....*/
@@ -6334,10 +6334,10 @@ done:
      the 'HDF_CHUNK_DEF' union. It does not tell you the type of compression
      or the compression parameters used. You can pass in a NULL for 'chunk_def'
      if don't want the chunk lengths for each dimension.
-     If successfull it will return a bit-or'd value in 'flags' indicating 
-     if the SDS is  chunked(HDF_CHUNK), chunked and compressed(HDF_CHUNK | HDF_COMP) 
+     If successfull it will return a bit-or'd value in 'flags' indicating
+     if the SDS is  chunked(HDF_CHUNK), chunked and compressed(HDF_CHUNK | HDF_COMP)
      or non-chunked(HDF_NONE).
- 
+
      e.g. 4x4 array - Pseudo-C
      {
      HDF_CHUNK_DEF rchunk_def;
@@ -6350,14 +6350,14 @@ done:
  RETURNS
         SUCCEED/FAIL
 
- AUTHOR 
+ AUTHOR
         -GeorgeV
 
  MODIFICATION
-	Jun, 2009: Added compression type and compression parameters.- BMR
+    Jun, 2009: Added compression type and compression parameters.- BMR
 
 ******************************************************************************/
-intn 
+intn
 SDgetchunkinfo(int32          sdsid,      /* IN: sds access id */
                HDF_CHUNK_DEF *chunk_def,  /* IN/OUT: chunk definition */
                int32         *flags       /* IN/OUT: flags */)
@@ -6377,7 +6377,7 @@ SDgetchunkinfo(int32          sdsid,      /* IN: sds access id */
 
     /* Check args */
 
-    /* Get file handle and verify it is an HDF file 
+    /* Get file handle and verify it is an HDF file
        we only handle dealing with SDS only not coordinate variables */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL || handle->file_type != HDF_FILE || handle->vars == NULL)
@@ -6388,13 +6388,13 @@ SDgetchunkinfo(int32          sdsid,      /* IN: sds access id */
     /* Get variable from id */
     var = SDIget_var(handle, sdsid);
     if(var == NULL)
-	 HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* If SDsetchunk had been called for this SDS, data_ref would have been a
        valid one.  This is the case where data set is empty and not special */
     if(var->data_ref == 0)
       {
-	*flags = HDF_NONE; /* regular SDS */
+    *flags = HDF_NONE; /* regular SDS */
         HGOTO_DONE(SUCCEED);
       }
 
@@ -6413,140 +6413,140 @@ SDgetchunkinfo(int32          sdsid,      /* IN: sds access id */
     /* Need to get access id for the subsequent calls */
     if (var->aid == FAIL)
     {
-	var->aid = Hstartread(handle->hdf_file, var->data_tag, var->data_ref);
-	if(var->aid == FAIL) /* catch FAIL from Hstartread */
-	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    var->aid = Hstartread(handle->hdf_file, var->data_tag, var->data_ref);
+    if(var->aid == FAIL) /* catch FAIL from Hstartread */
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
     }
 
     /* Inquire about element's specialness */
     ret_value = Hinquire(var->aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
     if (ret_value == FAIL)
-	HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     /* Make sure it is chunked element */
     if (special == SPECIAL_CHUNKED)
     {   /* Get info about chunked element */
-	if ((ret_value = HDget_special_info(var->aid, &info_block)) != FAIL)
-	{   /* Does user want chunk/comp info back? */
-		/* If no compression, fill in chunk length, otherwise, fill
-		   in chunk length and compression info. */
-	    switch(info_block.comp_type) {
-	      case COMP_CODE_NONE:
-		  *flags = HDF_CHUNK;
+    if ((ret_value = HDget_special_info(var->aid, &info_block)) != FAIL)
+    {   /* Does user want chunk/comp info back? */
+        /* If no compression, fill in chunk length, otherwise, fill
+        in chunk length and compression info. */
+        switch(info_block.comp_type) {
+        case COMP_CODE_NONE:
+        *flags = HDF_CHUNK;
 
                   /* if chunk info is requested */
-		  if (chunk_def != NULL)
-		  {
-		      /* copy chunk lengths over */
+        if (chunk_def != NULL)
+        {
+            /* copy chunk lengths over */
                       for (i = 0; i < info_block.ndims; i++)
                            chunk_def->chunk_lengths[i] = info_block.cdims[i];
-		  }
+        }
                   break;
 
-	      case COMP_CODE_NBIT:
+        case COMP_CODE_NBIT:
                   *flags = (HDF_CHUNK | HDF_NBIT);
 
                   /* if chunk info is requested */
-		  if (chunk_def != NULL)
-		  {
-		      /* copy chunk lengths over */
+        if (chunk_def != NULL)
+        {
+            /* copy chunk lengths over */
                       for (i = 0; i < info_block.ndims; i++)
                           chunk_def->nbit.chunk_lengths[i] = info_block.cdims[i];
-		      /* get the NBIT compression info */
-		      ret_value = HCPgetcompinfo(handle->hdf_file,
-					var->data_tag, var->data_ref,
-					&comp_type, &c_info);
-		      /* For backward compatibility, it will not fail here.
-			 However, the compression information parameters will
-			 be set to -1 to indicate that there are no compression
-			 information retrieved - BMR - 2009/06 */
-		      if (ret_value == FAIL)
-		      {
-			  chunk_def->nbit.start_bit =
-			  chunk_def->nbit.bit_len =
-			  chunk_def->nbit.sign_ext =
-			  chunk_def->nbit.fill_one = -1;
-		      }
-		      else
-		      {
-			  chunk_def->nbit.start_bit = c_info.nbit.start_bit;
-			  chunk_def->nbit.bit_len = c_info.nbit.bit_len;
-			  chunk_def->nbit.sign_ext = c_info.nbit.sign_ext;
-			  chunk_def->nbit.fill_one = c_info.nbit.fill_one;
-		      }
-		  }
+            /* get the NBIT compression info */
+            ret_value = HCPgetcompinfo(handle->hdf_file,
+                    var->data_tag, var->data_ref,
+                    &comp_type, &c_info);
+            /* For backward compatibility, it will not fail here.
+            However, the compression information parameters will
+            be set to -1 to indicate that there are no compression
+            information retrieved - BMR - 2009/06 */
+            if (ret_value == FAIL)
+            {
+            chunk_def->nbit.start_bit =
+            chunk_def->nbit.bit_len =
+            chunk_def->nbit.sign_ext =
+            chunk_def->nbit.fill_one = -1;
+            }
+            else
+            {
+            chunk_def->nbit.start_bit = c_info.nbit.start_bit;
+            chunk_def->nbit.bit_len = c_info.nbit.bit_len;
+            chunk_def->nbit.sign_ext = c_info.nbit.sign_ext;
+            chunk_def->nbit.fill_one = c_info.nbit.fill_one;
+            }
+        }
                   break;
 
-	      default:
+        default:
                   *flags = (HDF_CHUNK | HDF_COMP);
 
                   /* if chunk info is requested */
-		  if (chunk_def != NULL)
-		  {
-		      /* copy chunk lengths over */
+        if (chunk_def != NULL)
+        {
+            /* copy chunk lengths over */
                       for (i = 0; i < info_block.ndims; i++)
                       {
                           chunk_def->comp.chunk_lengths[i] = info_block.cdims[i];
                       }
 
-		      /* get the compression info */
-		      ret_value = HCPgetcompinfo(handle->hdf_file,
-					var->data_tag, var->data_ref,
-					&comp_type, &c_info);
+            /* get the compression info */
+            ret_value = HCPgetcompinfo(handle->hdf_file,
+                    var->data_tag, var->data_ref,
+                    &comp_type, &c_info);
 
-		      /* For backward compatibility, it will not fail here.
-			 However, the compression information parameters will
-			 be set to -1 to indicate that there are no compression
-			 information retrieved - EIP/BMR - 2010/02 */
-		      if (ret_value == FAIL)
-		      {
-			  chunk_def->comp.comp_type = info_block.comp_type;
-			  switch (info_block.comp_type)
-			  {
-			    case COMP_CODE_NBIT:
-				chunk_def->comp.cinfo.nbit.nt =
-				chunk_def->comp.cinfo.nbit.sign_ext =
-				chunk_def->comp.cinfo.nbit.fill_one =
-				chunk_def->comp.cinfo.nbit.start_bit =
-				chunk_def->comp.cinfo.nbit.bit_len = -1;
-				break;
+            /* For backward compatibility, it will not fail here.
+            However, the compression information parameters will
+            be set to -1 to indicate that there are no compression
+            information retrieved - EIP/BMR - 2010/02 */
+            if (ret_value == FAIL)
+            {
+            chunk_def->comp.comp_type = info_block.comp_type;
+            switch (info_block.comp_type)
+            {
+                case COMP_CODE_NBIT:
+                chunk_def->comp.cinfo.nbit.nt =
+                chunk_def->comp.cinfo.nbit.sign_ext =
+                chunk_def->comp.cinfo.nbit.fill_one =
+                chunk_def->comp.cinfo.nbit.start_bit =
+                chunk_def->comp.cinfo.nbit.bit_len = -1;
+                break;
 
-			    case COMP_CODE_SKPHUFF:
-				chunk_def->comp.cinfo.skphuff.skp_size = -1;
-				break;
+                case COMP_CODE_SKPHUFF:
+                chunk_def->comp.cinfo.skphuff.skp_size = -1;
+                break;
 
-			    case COMP_CODE_DEFLATE:
-				chunk_def->comp.cinfo.deflate.level = -1;
-				break;
+                case COMP_CODE_DEFLATE:
+                chunk_def->comp.cinfo.deflate.level = -1;
+                break;
 
-			    case COMP_CODE_SZIP:
-				chunk_def->comp.cinfo.szip.pixels =
-				chunk_def->comp.cinfo.szip.pixels_per_scanline =
-				chunk_def->comp.cinfo.szip.options_mask =
-				chunk_def->comp.cinfo.szip.bits_per_pixel =
-				chunk_def->comp.cinfo.szip.pixels_per_block = -1;
-				break;
+                case COMP_CODE_SZIP:
+                chunk_def->comp.cinfo.szip.pixels =
+                chunk_def->comp.cinfo.szip.pixels_per_scanline =
+                chunk_def->comp.cinfo.szip.options_mask =
+                chunk_def->comp.cinfo.szip.bits_per_pixel =
+                chunk_def->comp.cinfo.szip.pixels_per_block = -1;
+                break;
 
         /* What about JPEG? - BMR */
-			    default:  /* no additional info needed */
-				break;
-			  }  /* end switch */
-		      }
-		      else
-		      {
-			  HDmemcpy(&(chunk_def->comp.cinfo), &c_info, sizeof(comp_info));
-			  chunk_def->comp.comp_type = (int32)comp_type;
-		      }
-		  }  /* chunk_def != NULL */
+                default:  /* no additional info needed */
+                break;
+            }  /* end switch */
+            }
+            else
+            {
+            HDmemcpy(&(chunk_def->comp.cinfo), &c_info, sizeof(comp_info));
+            chunk_def->comp.comp_type = (int32)comp_type;
+            }
+        }  /* chunk_def != NULL */
                   break; /* default */
                 } /* end of switch info_block.comp_type */
             /* Free up info in special info block, allocated by the library */
             HDfree(info_block.cdims);
-	}
+    }
     }
     else /* not special chunked element */
     {
-	    *flags = HDF_NONE; /* regular SDS */
+        *flags = HDF_NONE; /* regular SDS */
     }
 
   done:
@@ -6563,7 +6563,7 @@ SDgetchunkinfo(int32          sdsid,      /* IN: sds access id */
      SDwritechunk   -- write the specified chunk to the SDS
 
  DESCRIPTION
-     This routine writes a whole chunk of data to the chunked SDS 
+     This routine writes a whole chunk of data to the chunked SDS
      specified by chunk 'origin' for the given SDS and can be used
      instead of SDwritedata() when this information is known. This
      routine has less overhead and is much faster than using SDwritedata().
@@ -6581,10 +6581,10 @@ SDgetchunkinfo(int32          sdsid,      /* IN: sds access id */
  RETURNS
         SUCCEED/FAIL
 
- AUTHOR 
+ AUTHOR
        -GeorgeV
 ******************************************************************************/
-intn 
+intn
 SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
              int32      *origin,/* IN: origin of chunk to write */
              const void *datap  /* IN: buffer for data */)
@@ -6603,8 +6603,8 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
     int32 status;
     intn       i;
     sp_info_block_t info_block; /* special info block */
-    uint32 tBuf_size = 0;	/* conversion buffer size */
-    void  *tBuf = NULL;		/* buffer used for conversion */
+    uint32 tBuf_size = 0;    /* conversion buffer size */
+    void  *tBuf = NULL;        /* buffer used for conversion */
     intn       ret_value = SUCCEED;
 
     /* clear error stack */
@@ -6616,7 +6616,7 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
     if (origin == NULL || datap == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* get file handle and verify it is an HDF file 
+    /* get file handle and verify it is an HDF file
        we only handle writinng to SDS only not coordinate variables */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL || handle->file_type != HDF_FILE || handle->vars == NULL)
@@ -6633,7 +6633,7 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
       }
 
     /* Check to see if data aid exists? i.e. may need to create a ref for SDS */
-    if(var->aid == FAIL && hdf_get_vp_aid(handle, var) == FAIL) 
+    if(var->aid == FAIL && hdf_get_vp_aid(handle, var) == FAIL)
       {
         HGOTO_ERROR(DFE_ARGS, FAIL);
       }
@@ -6643,13 +6643,13 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
                 &comp_type);
 
     if (status != FAIL)
-	if (comp_type != COMP_CODE_NONE && comp_type != COMP_CODE_INVALID)
+    if (comp_type != COMP_CODE_NONE && comp_type != COMP_CODE_INVALID)
       {
-	/* Must have encoder to write */
+    /* Must have encoder to write */
         HCget_config_info( comp_type , &comp_config);
         if ((comp_config & COMP_ENCODER_ENABLED) == 0) {
-	    /* encoder not present?? */
-	    HGOTO_ERROR(DFE_BADCODER, FAIL);
+        /* encoder not present?? */
+        HGOTO_ERROR(DFE_BADCODER, FAIL);
           }
       }
 
@@ -6665,7 +6665,7 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
 
                 /* get info about chunked element */
                 if ((ret_value = HDget_special_info(var->aid, &info_block)) != FAIL)
-                  {   
+                  {
                       /* calcualte chunk size  */
                       csize = 1;
                       for (i = 0; i < info_block.ndims; i++)
@@ -6698,13 +6698,13 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
                       convert = (uintn)(platntsubclass != outntsubclass);
 
                       /* make sure our tmp buffer is big enough to hold everything */
-                      if(convert && tBuf_size < byte_count) 
+                      if(convert && tBuf_size < byte_count)
                         {
-                            if(tBuf != NULL) 
+                            if(tBuf != NULL)
                                 HDfree(tBuf);
                             tBuf_size = byte_count;
                             tBuf      = HDmalloc(tBuf_size);
-                            if(tBuf == NULL) 
+                            if(tBuf == NULL)
                               {
                                   tBuf_size = 0;
                                   ret_value    = FAIL;
@@ -6713,7 +6713,7 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
                         } /* end if */
 
                       /* Write chunk out, */
-                      if(convert) 
+                      if(convert)
                         {
 #ifdef CHK_DEBUG
         fprintf(stderr,"SDwritechunk: convert, var->HDFsize=%d, var->HDFtype=%d \n",
@@ -6724,7 +6724,7 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
                                                   (byte_count/var->HDFsize), DFACC_WRITE, 0, 0))
                               {
                                   HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                              } 
+                              }
 
                             /* write it out now */
                             if ((ret_value = HMCwriteChunk(var->aid, origin, tBuf)) != FAIL)
@@ -6735,7 +6735,7 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
                           else
                               HGOTO_ERROR(DFE_WRITEERROR, FAIL);
                         } /* end if */
-                      else 
+                      else
                         {
                           if ((ret_value = HMCwriteChunk(var->aid, origin, datap)) != FAIL)
                             {
@@ -6757,7 +6757,7 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
 
       }
     /* Normal cleanup */
-    /* dont forget to free up info is special info block 
+    /* dont forget to free up info is special info block
        This space was allocated by the library */
     if (info_block.cdims != NULL)
         HDfree(info_block.cdims);
@@ -6791,10 +6791,10 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
  RETURNS
         SUCCEED/FAIL
 
- AUTHOR 
+ AUTHOR
        -GeorgeV
 ******************************************************************************/
-intn 
+intn
 SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
             int32 *origin, /* IN: origin of chunk to write */
             void  *datap   /* IN/OUT: buffer for data */)
@@ -6826,7 +6826,7 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
     if (origin == NULL || datap == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* get file handle and verify it is an HDF file 
+    /* get file handle and verify it is an HDF file
        we only handle reading from SDS only not coordinate variables */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL || handle->file_type != HDF_FILE || handle->vars == NULL)
@@ -6851,7 +6851,7 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
        For more info, see SVN log messages and bug HDFFR-171. -BMR, 2011/10 */
 
     /* Check to see if data aid exists? i.e. may need to create a ref for SDS */
-    if(var->aid == FAIL && hdf_get_vp_aid(handle, var) == FAIL) 
+    if(var->aid == FAIL && hdf_get_vp_aid(handle, var) == FAIL)
       {
         HGOTO_ERROR(DFE_ARGS, FAIL);
       }
@@ -6862,20 +6862,20 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
                 &comp_type);
 
     if (status != FAIL)
-	if (comp_type != COMP_CODE_NONE && comp_type != COMP_CODE_INVALID)
+    if (comp_type != COMP_CODE_NONE && comp_type != COMP_CODE_INVALID)
       {
-	/* Must have decoder to read data */
+    /* Must have decoder to read data */
         HCget_config_info( comp_type , &comp_config);
         if ((comp_config & COMP_DECODER_ENABLED) == 0) {
-	    /* decoder not present?? */
-	    HGOTO_ERROR(DFE_BADCODER, FAIL);
+        /* decoder not present?? */
+        HGOTO_ERROR(DFE_BADCODER, FAIL);
           }
       }
 
     /* Need to get access id for the following calls */
     if (var->aid == FAIL)
     {
-	var->aid = Hstartread(handle->hdf_file, var->data_tag, var->data_ref);
+    var->aid = Hstartread(handle->hdf_file, var->data_tag, var->data_ref);
         if(var->aid == FAIL) /* catch FAIL from Hstartread */
             HGOTO_ERROR(DFE_CANTACCESS, FAIL);
     }
@@ -6891,7 +6891,7 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
 
                 /* get info about chunked element */
                 if ((ret_value = HDget_special_info(var->aid, &info_block)) != FAIL)
-                  {   
+                  {
                       /* calcualte chunk size  */
                       csize = 1;
                       for (i = 0; i < info_block.ndims; i++)
@@ -6923,13 +6923,13 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
                       convert = (uintn)(platntsubclass != outntsubclass);
 
                       /* make sure our tmp buffer is big enough to hold everything */
-                      if(convert && tBuf_size < byte_count) 
+                      if(convert && tBuf_size < byte_count)
                         {
-                            if(tBuf != NULL) 
+                            if(tBuf != NULL)
                                 HDfree(tBuf);
                             tBuf_size = byte_count;
                             tBuf      = HDmalloc(tBuf_size);
-                            if(tBuf == NULL) 
+                            if(tBuf == NULL)
                               {
                                   tBuf_size = 0;
                                   HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -6937,14 +6937,14 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
                         } /* end if */
 
                       /* read chunk in */
-                      if(convert) 
+                      if(convert)
                         {
 #ifdef CHK_DEBUG
         fprintf(stderr,"SDreadchunk: convert, var->HDFsize=%d, var->HDFtype=%d \n",
                 var->HDFsize, var->HDFtype);
 #endif
                             /* read it in */
-                            if ((ret_value = HMCreadChunk(var->aid, origin, tBuf)) 
+                            if ((ret_value = HMCreadChunk(var->aid, origin, tBuf))
                                 != FAIL)
                                 {
                                     /* convert chunk */
@@ -6959,7 +6959,7 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
                             else
                                 HGOTO_ERROR(DFE_READERROR, FAIL);
                         } /* end if */
-                      else 
+                      else
                         {
                           if ((ret_value = HMCreadChunk(var->aid, origin, datap))
                               != FAIL)
@@ -6991,7 +6991,7 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
         }
       }
     /* Normal cleanup */
-    /* dont forget to free up info in special info block 
+    /* dont forget to free up info in special info block
        This space was allocated by the library */
     if (info_block.cdims != NULL)
         HDfree(info_block.cdims);
@@ -7004,24 +7004,24 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
 
 /******************************************************************************
 NAME
-     SDsetchunkcache - maximum number of chunks to cache 
+     SDsetchunkcache - maximum number of chunks to cache
 
 DESCRIPTION
      Set the maximum number of chunks to cache.
 
-     The cache contains the Least Recently Used(LRU cache replacment policy) 
-     chunks. This routine allows the setting of maximum number of chunks that 
+     The cache contains the Least Recently Used(LRU cache replacment policy)
+     chunks. This routine allows the setting of maximum number of chunks that
      can be cached, 'maxcache'.
 
      The performance of the SDxxx interface with chunking is greatly
      affected by the users access pattern over the dataset and by
-     the maximum number of chunks set in the chunk cache. The number chunks 
-     that can be set in the cache is process memory limited. It is a good 
-     idea to always set the maximum number of chunks in the cache as the 
-     default heuristic does not take into account the memory available for 
+     the maximum number of chunks set in the chunk cache. The number chunks
+     that can be set in the cache is process memory limited. It is a good
+     idea to always set the maximum number of chunks in the cache as the
+     default heuristic does not take into account the memory available for
      the application.
 
-     By default when the SDS is promoted to a chunked element the 
+     By default when the SDS is promoted to a chunked element the
      maximum number of chunks in the cache 'maxcache' is set to the number of
      chunks along the last dimension.
 
@@ -7036,20 +7036,20 @@ DESCRIPTION
      new 'maxcache' value only if the new 'maxcache' value is greater than the
      current number of chunks in the cache.
 
-     Use flags argument of 'HDF_CACHEALL' if the whole object is to be cached 
+     Use flags argument of 'HDF_CACHEALL' if the whole object is to be cached
      in memory, otherwise pass in zero(0). Currently you can only
      pass in zero.
 
      See SDsetchunk() for a description of the organization of chunks in an SDS.
-     
+
      NOTE:
           This routine directly calls a Special Chunked Element fcn HMCxxx.
 
 RETURNS
-     Returns the 'maxcache' value for the chunk cache if successful 
+     Returns the 'maxcache' value for the chunk cache if successful
      and FAIL otherwise
 
-AUTHOR 
+AUTHOR
       -GeorgeV
 ******************************************************************************/
 intn
@@ -7077,7 +7077,7 @@ SDsetchunkcache(int32 sdsid,     /* IN: access aid to mess with */
         HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
-    /* get file handle and verify it is an HDF file 
+    /* get file handle and verify it is an HDF file
        we only handle dealing with SDS only not coordinate variables */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL || handle->file_type != HDF_FILE || handle->vars == NULL)
@@ -7093,7 +7093,7 @@ SDsetchunkcache(int32 sdsid,     /* IN: access aid to mess with */
       }
 
     /* Check to see if data aid exists? i.e. may need to create a ref for SDS */
-    if(var->aid == FAIL && hdf_get_vp_aid(handle, var) == FAIL) 
+    if(var->aid == FAIL && hdf_get_vp_aid(handle, var) == FAIL)
       {
         HGOTO_ERROR(DFE_ARGS, FAIL);
       }
@@ -7121,18 +7121,18 @@ SDsetchunkcache(int32 sdsid,     /* IN: access aid to mess with */
 
 /******************************************************************************
  NAME
-	SDcheckempty -- checks whether an SDS is empty
+    SDcheckempty -- checks whether an SDS is empty
 
  DESCRIPTION
-    Given an sdsid, set the second parameter, emptySDS, to TRUE if the 
-    SDS has not been written with data, and FALSE, otherwise. 
+    Given an sdsid, set the second parameter, emptySDS, to TRUE if the
+    SDS has not been written with data, and FALSE, otherwise.
 
  RETURNS
     SUCCEED/FAIL
 
  PROGRAMMER
     bmribler - 9-01-98
-        
+
  MODIFICATION
     bmribler - 9/29/2004
         When the SDS is not a special element, we only need to check
@@ -7144,11 +7144,11 @@ SDsetchunkcache(int32 sdsid,     /* IN: access aid to mess with */
 ******************************************************************************/
 int32
 SDcheckempty(int32 sdsid,  /* IN: dataset ID */
-	     intn  *emptySDS /* TRUE if SDS is empty */)
+        intn  *emptySDS /* TRUE if SDS is empty */)
 {
-    CONSTR(FUNC, "SDcheckempty");	/* for HGOTO_ERROR */
-    NC     *handle = NULL;		/* file record struct */
-    NC_var *var = NULL;			/* variable record struct */
+    CONSTR(FUNC, "SDcheckempty");    /* for HGOTO_ERROR */
+    NC     *handle = NULL;        /* file record struct */
+    NC_var *var = NULL;            /* variable record struct */
     int32   ret_value = SUCCEED;
 
 #ifdef SDDEBUG
@@ -7160,7 +7160,7 @@ SDcheckempty(int32 sdsid,  /* IN: dataset ID */
 
     /* get the handle */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
-    if(handle == NULL) 
+    if(handle == NULL)
       {
         HGOTO_ERROR(DFE_ARGS, FAIL);
       }
@@ -7175,32 +7175,32 @@ SDcheckempty(int32 sdsid,  /* IN: dataset ID */
     /* assume that the SDS is not empty until proving otherwise */
     *emptySDS = FALSE;
 
-    /* if the data ref# of the SDS is 0, it indicates that the SDS has 
-	not been written with data because no storage is created 
-	for the SDS data */
+    /* if the data ref# of the SDS is 0, it indicates that the SDS has
+    not been written with data because no storage is created
+    for the SDS data */
     if (var->data_ref == 0)
     {
         *emptySDS = TRUE;
     }
     else
     { /* data_ref is not 0, so must check on special SDSs to determine if
-	 the SDS is empty */
-	/* check for unlimited dimension, assuming that unlimited dimension is
-	   still not allowed with other specialness, according to GeorgeV */
-	if (var->shape != NULL && var->shape[0] == NC_UNLIMITED)
-	{
-	    /* if data has been written, var->numrecs will show the size 
-	       of the unlimited dimension */
-	    if(var->numrecs <= 0)
-		*emptySDS = TRUE;
-	}
-	/* handle other specialness via lower level functions */
-	else
-	{
-	    ret_value = HDcheck_empty(handle->hdf_file, var->data_tag, 
-				      var->data_ref, emptySDS);
-	    if (ret_value == FAIL) HGOTO_ERROR(DFE_INTERNAL, FAIL);
-	}
+    the SDS is empty */
+    /* check for unlimited dimension, assuming that unlimited dimension is
+    still not allowed with other specialness, according to GeorgeV */
+    if (var->shape != NULL && var->shape[0] == NC_UNLIMITED)
+    {
+        /* if data has been written, var->numrecs will show the size
+        of the unlimited dimension */
+        if(var->numrecs <= 0)
+        *emptySDS = TRUE;
+    }
+    /* handle other specialness via lower level functions */
+    else
+    {
+        ret_value = HDcheck_empty(handle->hdf_file, var->data_tag,
+                    var->data_ref, emptySDS);
+        if (ret_value == FAIL) HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    }
     } /* var->data_ref != 0 */
 
 done:
@@ -7214,7 +7214,7 @@ done:
 
 /******************************************************************************
  NAME
-	SDidtype -- returns the type of an id
+    SDidtype -- returns the type of an id
 
  DESCRIPTION
     Given an id, return its type, which is either an SD id, an SDS id, or
@@ -7226,7 +7226,7 @@ done:
 
  PROGRAMMER
     bmribler - 1-19-2005
-        
+
  MODIFICATION
 
 ******************************************************************************/
@@ -7234,7 +7234,7 @@ hdf_idtype_t
 SDidtype(int32 an_id)
 {
     CONSTR(FUNC, "SDidtype");    /* for HGOTO_ERROR */
-    NC     *handle = NULL;	/* file record struct */
+    NC     *handle = NULL;    /* file record struct */
     hdf_idtype_t ret_value = NOT_SDAPI_ID;
 
 #ifdef SDDEBUG
@@ -7249,26 +7249,26 @@ SDidtype(int32 an_id)
 
     /* If it is, indicate so */
     if(handle != NULL)
-	ret_value = SD_ID;
+    ret_value = SD_ID;
 
     /* otherwise, check further... */
     else
     {
-	/* Assuming that it is an SDS id, get and check the handle */
-	handle = SDIhandle_from_id(an_id, SDSTYPE);
+    /* Assuming that it is an SDS id, get and check the handle */
+    handle = SDIhandle_from_id(an_id, SDSTYPE);
 
-	/* If it is, indicate so */
-	if(handle != NULL)
+    /* If it is, indicate so */
+    if(handle != NULL)
             ret_value = SDS_ID;
 
-	/* otherwise, check if it is a dimension id, or just not valid */
-	else
-	{
+    /* otherwise, check if it is a dimension id, or just not valid */
+    else
+    {
             handle = SDIhandle_from_id(an_id, DIMTYPE);
             if(handle != NULL)
-		ret_value = DIM_ID;
-	    else
-		ret_value = NOT_SDAPI_ID;
+        ret_value = DIM_ID;
+        else
+        ret_value = NOT_SDAPI_ID;
         }
     }
     return ret_value;
@@ -7276,28 +7276,28 @@ SDidtype(int32 an_id)
 
 /******************************************************************************
  NAME
-	SDreset_maxopenfiles -- resets the maximum number of files can be
-				opened at a time.
+    SDreset_maxopenfiles -- resets the maximum number of files can be
+                opened at a time.
 
  DESCRIPTION
-    Uses NC local function NC_reset_maxopenfiles to change the maximum 
-    number of opened files allowed.  This involves re-allocating of the 
+    Uses NC local function NC_reset_maxopenfiles to change the maximum
+    number of opened files allowed.  This involves re-allocating of the
     internal cdf list.
 
  RETURNS
-    The current maximum number of opened files allowed, or FAIL, if 
+    The current maximum number of opened files allowed, or FAIL, if
     unable to reset it.
 
  PROGRAMMER
     bmribler - 9-06-2005
-        
+
  MODIFICATION
 
 ******************************************************************************/
 intn
 SDreset_maxopenfiles(intn req_max)
 {
-    CONSTR(FUNC, "SDreset_maxopenfiles");	/* for HGOTO_ERROR */
+    CONSTR(FUNC, "SDreset_maxopenfiles");    /* for HGOTO_ERROR */
     intn ret_value = SUCCEED;
 
 #ifdef SDDEBUG
@@ -7311,7 +7311,7 @@ SDreset_maxopenfiles(intn req_max)
     ret_value = NC_reset_maxopenfiles(req_max);
 
     if (ret_value == -1)
-	HGOTO_ERROR(DFE_INTERNAL, FAIL);  /* should propagate error code */
+    HGOTO_ERROR(DFE_INTERNAL, FAIL);  /* should propagate error code */
 
 done:
     if (ret_value == FAIL)
@@ -7324,9 +7324,9 @@ done:
 
 /******************************************************************************
  NAME
-	SDget_maxopenfiles -- retrieves the current number of opened files
-			      allowed in HDF and the maximum number of opened 
-			      files allowed on a system.
+    SDget_maxopenfiles -- retrieves the current number of opened files
+                allowed in HDF and the maximum number of opened
+                files allowed on a system.
 
  DESCRIPTION
     Uses NC_get_maxopenfiles.
@@ -7336,16 +7336,16 @@ done:
 
  PROGRAMMER
     bmribler - 9-06-2005
-        
+
  MODIFICATION
 
 ******************************************************************************/
 intn
 SDget_maxopenfiles(intn *curr_max,  /* OUT: current # of open files allowed */
-		   intn *sys_limit) /* OUT: max # of open files allowed on 
-					a system */
+        intn *sys_limit) /* OUT: max # of open files allowed on
+                    a system */
 {
-    CONSTR(FUNC, "SDget_maxopenfiles");	/* for HGOTO_ERROR */
+    CONSTR(FUNC, "SDget_maxopenfiles");    /* for HGOTO_ERROR */
     intn ret_value = SUCCEED;
 
 #ifdef SDDEBUG
@@ -7358,15 +7358,15 @@ SDget_maxopenfiles(intn *curr_max,  /* OUT: current # of open files allowed */
     /* Retrieve the current max and the system limit */
     if (curr_max != NULL)
     {
-	*curr_max = NC_get_maxopenfiles();
-	if (*curr_max == FAIL)
-	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    *curr_max = NC_get_maxopenfiles();
+    if (*curr_max == FAIL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
     }
     if (sys_limit != NULL)
     {
-	*sys_limit = NC_get_systemlimit();
-	if (*sys_limit == FAIL)
-	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    *sys_limit = NC_get_systemlimit();
+    if (*sys_limit == FAIL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
     }
 
 done:
@@ -7380,8 +7380,8 @@ done:
 
 /******************************************************************************
  NAME
-	SDget_numopenfiles -- returns the number of files currently being 
-			      opened.
+    SDget_numopenfiles -- returns the number of files currently being
+                opened.
 
  DESCRIPTION
     Uses NC_get_numopencdfs.
@@ -7391,7 +7391,7 @@ done:
 
  PROGRAMMER
     bmribler - 9-06-2005
-        
+
  MODIFICATION
 
 ******************************************************************************/
@@ -7414,12 +7414,12 @@ SDget_numopenfiles()
 
 /******************************************************************************
  NAME
-	SDgetfilename -- retrieves the name of the file given its ID.
+    SDgetfilename -- retrieves the name of the file given its ID.
 
  DESCRIPTION
     Given an ID to a file, returns its name via parameter 'filename.'
     The user is repsonsible for allocating sufficient space to hold
-    the file name.  It can be at most H4_MAX_NC_NAME characters in 
+    the file name.  It can be at most H4_MAX_NC_NAME characters in
     length.
 
  RETURNS
@@ -7427,10 +7427,10 @@ SDget_numopenfiles()
 
  PROGRAMMER
     bmribler - 9-06-2005
-        
+
  MODIFICATION
 
-******************************************************************************/ 
+******************************************************************************/
 intn
 SDgetfilename(int32 fid,       /* IN:  file ID */
               char  *filename  /* OUT: name of the file */)
@@ -7450,10 +7450,10 @@ SDgetfilename(int32 fid,       /* IN:  file ID */
     /* check that fid is valid */
     handle = SDIhandle_from_id(fid, CDFTYPE);
     if(handle == NULL)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     len = HDstrlen(handle->path);
-    if(filename != NULL) 
+    if(filename != NULL)
     {
         HDmemcpy(filename, handle->path, len);
         filename[len] = '\0';
@@ -7472,8 +7472,8 @@ done:
 
 /******************************************************************************
  NAME
-	SDgetnamelen -- retrieves the length of the name of a file, a dataset,
-			or a dimension.
+    SDgetnamelen -- retrieves the length of the name of a file, a dataset,
+            or a dimension.
 
 DESCRIPTION
     Given an id, retrieves the length of its name.
@@ -7483,13 +7483,13 @@ RETURNS
 
  PROGRAMMER
     bmribler - 9-14-2006
-        
+
  MODIFICATION
 
-******************************************************************************/ 
+******************************************************************************/
 intn
-SDgetnamelen(int32 id,		/* IN:  object ID */
-             uint16 *name_len	/* OUT: buffer for name's length */)
+SDgetnamelen(int32 id,        /* IN:  object ID */
+             uint16 *name_len    /* OUT: buffer for name's length */)
 {
     CONSTR(FUNC, "SDgetnamelen");    /* for HGOTO_ERROR */
     NC     *handle = NULL;
@@ -7509,36 +7509,36 @@ SDgetnamelen(int32 id,		/* IN:  object ID */
 
     /* If it is, obtain the file name's length */
     if(handle != NULL)
-	*name_len = (uint16)HDstrlen(handle->path);
+    *name_len = (uint16)HDstrlen(handle->path);
 
     /* otherwise, check further... */
     else
     {
-	/* Assuming that it is an id of an SDS, get its file handle */
-	handle = SDIhandle_from_id(id, SDSTYPE);
+    /* Assuming that it is an id of an SDS, get its file handle */
+    handle = SDIhandle_from_id(id, SDSTYPE);
 
-	/* If it is, get the NC_var record, and obtain the SDS name's length */
-	if(handle != NULL)
-	{
-	    var = SDIget_var(handle, id);
-	    if(var == NULL)
-		HGOTO_ERROR(DFE_ARGS, FAIL);
-	    *name_len = (uint16)var->name->len;
-	}
+    /* If it is, get the NC_var record, and obtain the SDS name's length */
+    if(handle != NULL)
+    {
+        var = SDIget_var(handle, id);
+        if(var == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+        *name_len = (uint16)var->name->len;
+    }
 
-	/* otherwise, check if it is a dimension id, or just not valid */
-	else
-	{
+    /* otherwise, check if it is a dimension id, or just not valid */
+    else
+    {
             handle = SDIhandle_from_id(id, DIMTYPE);
             if(handle != NULL)
-	    {
-		dim = SDIget_dim(handle, id);
-		if(dim == NULL) 
-		    HGOTO_ERROR(DFE_ARGS, FAIL);
-		*name_len = (uint16)dim->name->len;
-	    }
-	    else	/* invalid id */
-		HGOTO_ERROR(DFE_ARGS, FAIL);
+        {
+        dim = SDIget_dim(handle, id);
+        if(dim == NULL)
+            HGOTO_ERROR(DFE_ARGS, FAIL);
+        *name_len = (uint16)dim->name->len;
+        }
+        else    /* invalid id */
+        HGOTO_ERROR(DFE_ARGS, FAIL);
         }
     }
 

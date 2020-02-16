@@ -691,29 +691,38 @@ if test "X$BUILD_XDR" != "Xyes"; then
   ## Checks for header files
   ## ======================================================================
   HAVE_RPC="yes"
+  HAVE_OLDRPC="yes"
   HAVE_TIRPC="yes"
+  ## save current settings
   SYSLIBS="$LIBS"
   SYSCPPFLAGS="$CPPFLAGS"
   case "$host" in
     *-solaris*)
-      LIBS="$LIBS -lnsl"  ;;
+      LIBS="$LIBS -lnsl"
+      ;;
     *-pc-cygwin* | *-linux*)
+      LIBS="$SYSLIBS -lrpc"
+      CPPFLAGS="$SYSCPPFLAGS"
+      AC_CHECK_HEADER([rpc/rpc.h],[:], [unset HAVE_OLDRPC])
       LIBS="$SYSLIBS -ltirpc"
       CPPFLAGS="$SYSCPPFLAGS -I/usr/include/tirpc"
       AC_CHECK_HEADER([rpc/rpc.h],[:], [unset HAVE_TIRPC])
       if test -z "$HAVE_TIRPC"; then
-        LIBS="$SYSLIBS -lrpc"
-        CPPFLAGS="$SYSCPPFLAGS"
-        AC_CHECK_HEADER([rpc/rpc.h],[:], [unset HAVE_RPC])
+        if test -z "$HAVE_OLDRPC" ; then
+          LIBS="$SYSLIBS"
+          CPPFLAGS="$SYSCPPFLAGS"
+          AC_MSG_ERROR([couldn't find rpc headers])
+        else
+          LIBS="$SYSLIBS -lrpc"
+          CPPFLAGS="$SYSCPPFLAGS"
+        fi
+      else
+        LIBS="$SYSLIBS -ltirpc"
+        CPPFLAGS="$SYSCPPFLAGS -I/usr/include/tirpc"
       fi
       ;;
     *) ;;
   esac
-  if test -z "$HAVE_RPC"; then
-    LIBS="$SYSLIBS"
-    CPPFLAGS="$SYSCPPFLAGS"
-    AC_MSG_ERROR([couldn't find rpc headers])
-  fi
 
   ## ----------------------------------------------------------------------
   ## We're trying to link against the rpc library when building on Cygwin,
@@ -759,6 +768,10 @@ if test "X$BUILD_XDR" != "Xyes"; then
                 [AC_MSG_RESULT([no]); BUILD_XDR="yes"])
 fi
 
+if test "X$BUILD_XDR" != "Xno"; then
+  AC_DEFINE([NO_SYS_XDR_INC], [1], [Not using system xdr])
+fi
+
 AM_CONDITIONAL([HDF_BUILD_XDR], [test "X$BUILD_XDR" = "Xyes"])
 
 AC_HEADER_STDC
@@ -783,13 +796,13 @@ AC_CHECK_FUNCS([htonl htons ntohl ntohs __builtin_bswap16 __builtin_bswap32 __bu
 ## ======================================================================
 ## Checks for structures
 ## ======================================================================
-AC_CHECK_HEADERS([sys/time.h])
+AC_CHECK_HEADERS([sys/time.h sys/file.h sys/resource.h])
 
 ## ======================================================================
 ## Checks for compiler characteristics
 ## ======================================================================
 AC_CHECK_HEADERS([stddef.h])
-AC_CHECK_HEADERS([arpa/inet.h fcntl.h netinet/in.h sys/param.h])
+AC_CHECK_HEADERS([arpa/inet.h fcntl.h netinet/in.h])
 
 AC_PROG_CC_C_O
 AC_PROG_CXXCPP
@@ -805,7 +818,8 @@ fi
 AC_CHECK_SIZEOF([int*])
 
 if test $ac_cv_sizeof_intp -ge 8; then
-  CPPFLAGS="$CPPFLAGS -DBIG_LONGS"
+#  CPPFLAGS="$CPPFLAGS -DBIG_LONGS"
+  AC_DEFINE([BIG_LONGS], [1], [int* greater or equal to 8 bytes])
 
   ## Define super secret special flag for AIX machines in 64-bit mode.
   case "${host}" in

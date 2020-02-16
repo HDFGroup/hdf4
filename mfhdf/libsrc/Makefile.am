@@ -34,7 +34,6 @@ libmfhdf_la_SOURCES = $(CSOURCES)
 endif
 
 if HDF_BUILD_XDR
-XDRLIB = $(top_builddir)/mfhdf/xdr/libxdr.la
 libmfhdf_la_LIBADD = $(XDRLIB)
 endif
 

@@ -3,6 +3,9 @@
 #ifndef H4_CONFIG_H_
 #define H4_CONFIG_H_
 
+/* int* greater or equal to 8 bytes */
+#cmakedefine H4_BIG_LONGS @H4_BIG_LONGS@
+
 /* Define to dummy `main' function (if any) required to link to the Fortran
    libraries. */
 #cmakedefine H4_F77_DUMMY_MAIN @H4_F77_DUMMY_MAIN@
@@ -80,6 +83,9 @@
 /* Define to 1 if you have the <resolv.h> header file. */
 #cmakedefine H4_HAVE_RESOLV_H @H4_HAVE_RESOLV_H@
 
+/* Define to 1 if you have the system XDR library. */
+#cmakedefine H4_HAVE_RPC @H4_HAVE_RPC@
+
 /* Define to 1 if you have the <stddef.h> header file. */
 #cmakedefine H4_HAVE_STDDEF_H @H4_HAVE_STDDEF_H@
 
@@ -147,6 +153,9 @@
 /* Define to 1 if your C compiler doesn't accept -c and -o together. */
 #cmakedefine H4_NO_MINUS_C_MINUS_O @H4_NO_MINUS_C_MINUS_O@
 
+/* Not using system xdr */
+#define H4_NO_SYS_XDR_INC 1
+
 /* Name of package */
 #define H4_PACKAGE "@HDF4_PACKAGE@"
 
@@ -173,7 +182,6 @@
 
 /* Define to 1 if you have the ANSI C header files. */
 #cmakedefine H4_STDC_HEADERS @H4_STDC_HEADERS@
-#cmakedefine STDC_HEADERS @H4_STDC_HEADERS@
 
 /* Version number of package */
 #define H4_VERSION "@HDF4_PACKAGE_VERSION_STRING@"

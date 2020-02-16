@@ -2,6 +2,7 @@ include $(top_srcdir)/config/commence.am
 
 if HDF_BUILD_XDR
 XDR_DIR = xdr
+XDRLIB = $(top_builddir)/mfhdf/xdr/libxdr.la
 else
 XDR_DIR =
 endif
