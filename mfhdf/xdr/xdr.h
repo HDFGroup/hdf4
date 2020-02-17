@@ -188,7 +188,24 @@ struct xdr_discrim {
  * N.B. and frozen for all time: each data type here uses 4 bytes
  * of external representation.
  */
+#define IXDR_GET_LONG(buf)       ((int32_t) ntohl (*((int32_t *)(buf))++))
+#define IXDR_PUT_LONG(buf,v)     ((*((int32_t *)(buf))++) = htonl ((v)))
 
+#define IXDR_GET_BOOL(buf)       ((bool_t) IXDR_GET_LONG ((buf)))
+#define IXDR_GET_ENUM(buf,type)  ((type) IXDR_GET_LONG ((buf)))
+#define IXDR_GET_U_LONG(buf)     ((uint32_t) IXDR_GET_LONG ((buf)))
+#define IXDR_GET_SHORT(buf)      ((int16_t) IXDR_GET_LONG ((buf)))
+#define IXDR_GET_U_SHORT(buf)    ((uint16_t) IXDR_GET_LONG ((buf)))
+#define IXDR_GET_INT32           IXDR_GET_LONG
+
+#define IXDR_PUT_BOOL(buf,v)     IXDR_PUT_LONG((buf), (int32_t) (v))
+#define IXDR_PUT_ENUM(buf,v)     IXDR_PUT_LONG((buf), (int32_t) (v))
+#define IXDR_PUT_U_LONG(buf,v)   IXDR_PUT_LONG((buf), (int32_t) (v))
+#define IXDR_PUT_SHORT(buf,v)    IXDR_PUT_LONG((buf), (int32_t) (v))
+#define IXDR_PUT_U_SHORT(buf,v)  IXDR_PUT_LONG((buf), (int32_t) (v))
+#define IXDR_PUT_INT32           IXDR_PUT_LONG
+
+#if 0
 #define IXDR_GET_LONG(buf)      ((long) ntohl((u_long)*(buf)++))
 #define IXDR_PUT_LONG(buf,v)    (*(buf)++ = (long)htonl((u_long)v))
 
@@ -207,6 +224,7 @@ struct xdr_discrim {
 #define IXDR_PUT_U_SHORT(buf,v) IXDR_PUT_LONG((buf), ((long)(v)))
 
 #define IXDR_PUT_INT32(buf,v)   IXDR_PUT_LONG((buf), ((long)(v)))
+#endif
 
 /*
  * These are the "generic" xdr routines.
@@ -223,15 +241,15 @@ XDRLIBAPI bool_t    xdr_short(XDR *, short *);
 XDRLIBAPI bool_t    xdr_u_short(XDR *, u_short *);
 XDRLIBAPI bool_t    xdr_bool(XDR *, bool_t *);
 XDRLIBAPI bool_t    xdr_enum(XDR *, enum_t *);
-XDRLIBAPI bool_t    xdr_int32(XDR *, int32_t *);
-XDRLIBAPI bool_t    xdr_uint32(XDR *, uint32_t *);
+XDRLIBAPI bool_t    xdr_int32_t(XDR *, int32_t *);
+XDRLIBAPI bool_t    xdr_uint32_t(XDR *, uint32_t *);
 XDRLIBAPI bool_t    xdr_array(XDR *, caddr_t *, u_int *, u_int, u_int, xdrproc_t );
 XDRLIBAPI bool_t    xdr_bytes(XDR *, char **, u_int *, u_int);
 XDRLIBAPI bool_t    xdr_opaque(XDR *, caddr_t , u_int );
 XDRLIBAPI bool_t    xdr_string(XDR *, char **, u_int);
 XDRLIBAPI bool_t    xdr_union(XDR *, enum_t *, char *, struct xdr_discrim *, xdrproc_t );
 XDRLIBAPI bool_t    xdr_char(XDR *, char *);
-XDRLIBAPI bool_t    xdr_u_char(XDR *, char *);
+XDRLIBAPI bool_t    xdr_u_char(XDR *, unsigned char *);
 XDRLIBAPI bool_t    xdr_vector(XDR *, char *, u_int, u_int, xdrproc_t);
 XDRLIBAPI bool_t    xdr_float(XDR *, float *);
 XDRLIBAPI bool_t    xdr_double(XDR *, double *);

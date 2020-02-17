@@ -21,7 +21,7 @@ static char sccsid[] = "@(#)xdr_stdio.c 1.16 87/08/11 Copyr 1984 Sun Micro";
 #include <arpa/inet.h>
 #endif
 
-#ifdef H4_HAVE_NETINET_H
+#ifdef H4_HAVE_NETINET_IN_H
 #  include <netinet/in.h>     /* for htonl() */
 #else
 #  ifdef H4_HAVE_WINSOCK2_H

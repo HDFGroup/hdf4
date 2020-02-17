@@ -577,7 +577,7 @@ ACLOCAL_AMFLAGS = "-I m4"
 # .chkexe files are used to mark tests that have run successfully.
 # .chklog files are output from those tests.
 CHECK_CLEANFILES = *.chkexe *.chklog
-AM_CPPFLAGS = -I$(srcdir)
+AM_CPPFLAGS = -I$(srcdir) -I$(top_srcdir)/hdf/src
 
 # XDR Library
 lib_LTLIBRARIES = libxdr.la

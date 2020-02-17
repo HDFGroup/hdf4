@@ -7,7 +7,7 @@
 include $(top_srcdir)/config/commence.am
 
 ## Setup the different includes and preprocessor #defines we need.
-AM_CPPFLAGS=-I$(srcdir)
+AM_CPPFLAGS=-I$(srcdir) -I$(top_srcdir)/hdf/src
 
 # XDR Library
 lib_LTLIBRARIES = libxdr.la

@@ -686,7 +686,9 @@ esac
 
 ## Check headers and add libraries for XDR if the HDF4 XDR library is not used.
 if test "X$BUILD_XDR" != "Xyes"; then
-
+    ## For Solaris systems, add the -nsl for XDR support
+    ##
+    ## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
   ## ======================================================================
   ## Checks for header files
   ## ======================================================================
@@ -694,31 +696,24 @@ if test "X$BUILD_XDR" != "Xyes"; then
   HAVE_OLDRPC="yes"
   HAVE_TIRPC="yes"
   ## save current settings
-  SYSLIBS="$LIBS"
   SYSCPPFLAGS="$CPPFLAGS"
   case "$host" in
     *-solaris*)
       LIBS="$LIBS -lnsl"
       ;;
     *-pc-cygwin* | *-linux*)
-      LIBS="$SYSLIBS -lrpc"
       CPPFLAGS="$SYSCPPFLAGS"
       AC_CHECK_HEADER([rpc/rpc.h],[:], [unset HAVE_OLDRPC])
-      LIBS="$SYSLIBS -ltirpc"
-      CPPFLAGS="$SYSCPPFLAGS -I/usr/include/tirpc"
-      AC_CHECK_HEADER([rpc/rpc.h],[:], [unset HAVE_TIRPC])
-      if test -z "$HAVE_TIRPC"; then
-        if test -z "$HAVE_OLDRPC" ; then
-          LIBS="$SYSLIBS"
+      if test -z "$HAVE_OLDRPC" ; then
+        LIBS="$LIBS -ltirpc"
+        CPPFLAGS="$SYSCPPFLAGS -I/usr/include/tirpc"
+        AC_CHECK_HEADER([rpc/rpc.h],[:], [unset HAVE_TIRPC])
+        if test -z "$HAVE_TIRPC" ; then
           CPPFLAGS="$SYSCPPFLAGS"
           AC_MSG_ERROR([couldn't find rpc headers])
-        else
-          LIBS="$SYSLIBS -lrpc"
-          CPPFLAGS="$SYSCPPFLAGS"
         fi
       else
-        LIBS="$SYSLIBS -ltirpc"
-        CPPFLAGS="$SYSCPPFLAGS -I/usr/include/tirpc"
+          HAVE_TIRPC=""
       fi
       ;;
     *) ;;
@@ -730,40 +725,18 @@ if test "X$BUILD_XDR" != "Xyes"; then
   ## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
   case "$host" in
     *-pc-cygwin* | *-linux*)
-      if test -z "$HAVE_TIRPC"; then
-        AC_CHECK_LIB([rpc], [xdr_opaque],[:], [unset HAVE_RPC])
-      else
+      if test -n "$HAVE_TIRPC"; then
         AC_CHECK_LIB([tirpc], [xdr_opaque],[:], [unset HAVE_RPC])
-      fi
-      if test -z "$HAVE_RPC"; then
-        AC_MSG_ERROR([couldn't find rpc library])
+        if test -z "$HAVE_RPC"; then
+          AC_MSG_ERROR([couldn't find rpc library])
+        fi
       fi
       ;;
   esac
-fi
 
-if test "X$BUILD_XDR" != "Xyes"; then
-    ## For Solaris systems, add the -nsl for XDR support
-    ##
-    ## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
-    case "$host" in
-      *-solaris*)
-        LIBS="$LIBS -lnsl"  ;;
-      *-pc-cygwin* | *-linux*)
-        if test -z "$HAVE_TIRPC"; then
-          LIBS="$LIBS -lrpc"
-          CPPFLAGS="$CPPFLAGS -I/usr/include"
-        else
-          LIBS="$LIBS -ltirpc"
-          CPPFLAGS="$CPPFLAGS -I/usr/include/tirpc"
-        fi
-        ;;
-      *) ;;
-    esac
-
-    AC_TRY_LINK([
-    #include <rpc/types.h>
-    #include <rpc/xdr.h>], [xdr_int],
+  AC_TRY_LINK([
+  #include <rpc/types.h>
+  #include <rpc/xdr.h>], [xdr_int],
                 [AC_MSG_RESULT([yes]); BUILD_XDR="no"],
                 [AC_MSG_RESULT([no]); BUILD_XDR="yes"])
 fi
@@ -801,7 +774,7 @@ AC_CHECK_HEADERS([sys/time.h sys/file.h sys/resource.h])
 ## ======================================================================
 ## Checks for compiler characteristics
 ## ======================================================================
-AC_CHECK_HEADERS([stddef.h])
+AC_CHECK_HEADERS([stddef.h io.h])
 AC_CHECK_HEADERS([arpa/inet.h fcntl.h netinet/in.h])
 
 AC_PROG_CC_C_O

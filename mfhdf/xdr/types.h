@@ -38,10 +38,10 @@ typedef char *        caddr_t;
 #ifndef FALSE
 #define FALSE 0
 #endif
+typedef int32_t bool_t;
 
-#define    bool_t    int
-#define    enum_t    int
-#define __dontcare__    -1
+/* Define the enumerated type in the wire protocol. */
+typedef int32_t enum_t;
 
 #ifndef NULL
 #    define NULL 0
