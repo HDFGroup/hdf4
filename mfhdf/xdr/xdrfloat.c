@@ -20,6 +20,41 @@ static char sccsid[] = "@(#)xdr_float.c 1.12 87/08/11 Copyr 1984 Sun Micro";
 #include "types.h"
 #include "xdr.h"
 
+/* from netCDF */
+#define XDRUNIT 4
+
+/* from netCDF */
+/* signature: void swapinline32(unsigned int* ip) */
+#define swapinline32(ip)           \
+{                                  \
+    char dst[4];                   \
+    char* src = (char*)(ip);       \
+    dst[0] = src[3];               \
+    dst[1] = src[2];               \
+    dst[2] = src[1];               \
+    dst[3] = src[0];               \
+    *(ip) = *((unsigned int*)dst); \
+}
+
+/* from netCDF */
+/* Double needs special handling */
+void
+xdrntohdouble(char* c8, double* dp)
+{
+    unsigned int ii[2];
+    memcpy(ii,c8,(size_t)2*XDRUNIT);
+    unsigned int tmp;
+
+    swapinline32(&ii[0]);
+    swapinline32(&ii[1]);
+
+    /* interchange ii[0] and ii[1] */
+    tmp = ii[0];
+    ii[0] = ii[1];
+    ii[1] = tmp;
+    if(dp) *dp = *(double*)ii;
+}
+
 
 bool_t
 xdr_float(xdrs, fp)
@@ -46,9 +81,17 @@ xdr_double(xdrs, dp)
     double *dp;
 {
     register long *lp;
+    double dbl_val = 100.0;
+    int status = TRUE;
+
+    if (!dp)
+        return FALSE;
 
     switch (xdrs->x_op) {
       case XDR_ENCODE:
+#ifndef H4_WORDS_BIGENDIAN
+        xdrntohdouble((char*)&dbl_val, dp);
+#endif
         lp = (long *)dp;
         return (XDR_PUTLONG(xdrs, lp++) && XDR_PUTLONG(xdrs, lp));
         break;
@@ -56,12 +99,16 @@ xdr_double(xdrs, dp)
       case XDR_DECODE:
         /* Pull two units */
         lp = (long *)dp;
-        return (XDR_GETLONG(xdrs, lp++) && XDR_GETLONG(xdrs, lp));
+        status = (XDR_GETLONG(xdrs, lp++) && XDR_GETLONG(xdrs, lp));
+#ifndef H4_WORDS_BIGENDIAN
+        xdrntohdouble((char*)&dbl_val, dp);
+#endif
+        return status;
         break;
 
     case XDR_FREE:
-        return (TRUE);
+        return TRUE;
     } /* switch xdrs->x_op */
 
-    return(FALSE);
+    return FALSE;
 }
