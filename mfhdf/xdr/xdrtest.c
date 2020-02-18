@@ -292,7 +292,7 @@ char *av[] ;
             ii < (int)count ; ii++, lp++)
     {
         printf("%d ", (int)*lp) ;
-        xdr_assert( *lp == longs[ii] ) ;
+        xdr_assert( (int)*lp == (int)longs[ii] ) ;
     }
     putchar('\n') ;
 
@@ -334,7 +334,7 @@ char *av[] ;
             ii < (int)count ; ii++, dp++)
     {
         printf("\t% .12e\n", *dp) ;
-        xdr_assert( (*dp < doubles[ii] + EPSILON) && (*dp > doubles[ii] - EPSILON )) ;
+        xdr_assert( (*dp < (doubles[ii] + (double)EPSILON)) && (*dp > (doubles[ii] - (double)EPSILON) )) ;
     }
     putchar('\n') ;
 
