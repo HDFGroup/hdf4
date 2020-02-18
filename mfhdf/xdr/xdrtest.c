@@ -291,7 +291,7 @@ char *av[] ;
     for(ii = 0, lp = got_al ;
             ii < (int)count ; ii++, lp++)
     {
-        printf("%ld ", *lp) ;
+        printf("%d ", (int)*lp) ;
         xdr_assert( *lp == longs[ii] ) ;
     }
     putchar('\n') ;
