@@ -1,6 +1,10 @@
 cmake_minimum_required (VERSION 3.10)
 project (HDF4 C)
 
+if (POLICY CMP0074)
+  cmake_policy (SET CMP0074 NEW)
+endif ()
+
 #-----------------------------------------------------------------------------
 # Instructions for use : Normal Build
 #
@@ -11,7 +15,7 @@ project (HDF4 C)
 # Make install can be used to install all components for system-wide use.
 #
 if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
-    MESSAGE(FATAL_ERROR "\nERROR! ${PROJECT_NAME} DOES NOT SUPPORT IN SOURCE BUILDS!\n"
+    message (FATAL_ERROR "\nERROR! ${PROJECT_NAME} DOES NOT SUPPORT IN SOURCE BUILDS!\n"
       "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}"
       " == CMAKE_CURRENT_BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}\n"
       "NEXT STEPS:\n"
@@ -108,7 +112,7 @@ mark_as_advanced (HDF4_EXTERNAL_LIB_PREFIX)
 #   )
 #
 #-----------------------------------------------------------------------------
-string(TIMESTAMP CONFIG_DATE "%Y-%m-%d")
+string (TIMESTAMP CONFIG_DATE "%Y-%m-%d")
 
 #-----------------------------------------------------------------------------
 # Allow Visual Studio solution directories
@@ -291,17 +295,30 @@ endif ()
 #-----------------------------------------------------------------------------
 # Option to Build Shared and Static libs, default is both
 #-----------------------------------------------------------------------------
+option (BUILD_STATIC_LIBS "Build Static Libraries" ON)
+set (H4_ENABLE_STATIC_LIB NO)
+option (BUILD_SHARED_LIBS "Build Shared Libraries" ON)
+set (H4_ENABLE_SHARED_LIB NO)
 option (ONLY_SHARED_LIBS "Only Build Shared Libraries" OFF)
-set (H4_ENABLE_STATIC_LIB YES)
+mark_as_advanced (ONLY_SHARED_LIBS)
+
+if (BUILD_STATIC_LIBS)
+  set (H4_ENABLE_STATIC_LIB YES)
+endif ()
+if (BUILD_SHARED_LIBS)
+  set (H4_ENABLE_SHARED_LIB YES)
+endif ()
+
+# Force only shared libraries if all OFF
+if (NOT BUILD_STATIC_LIBS AND NOT BUILD_SHARED_LIBS)
+  set (ONLY_SHARED_LIBS ON CACHE BOOL "Only Build Shared Libraries" FORCE)
+endif ()
+
 if (ONLY_SHARED_LIBS)
   set (H4_ENABLE_STATIC_LIB NO)
   set (BUILD_SHARED_LIBS ON CACHE BOOL "Build Shared Libraries")
 endif ()
-option (BUILD_SHARED_LIBS "Build Shared Libraries" ON)
-set (H4_ENABLE_SHARED_LIB NO)
-if (BUILD_SHARED_LIBS)
-  set (H4_ENABLE_SHARED_LIB YES)
-endif ()
+
 set (CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 add_definitions (-DHAVE_CONFIG_H)
@@ -316,9 +333,16 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin" OR CYGWIN)
       CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
       CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
     if (${flag_var} MATCHES "O3")
-      string (REGEX REPLACE "O3" "O0" ${flag_var} "${${flag_var}}")
+      string (REGEX REPLACE "O3" "O2" ${flag_var} "${${flag_var}}")
     endif ()
   endforeach ()
+endif ()
+
+if (HDF4_ENABLE_ANALYZER_TOOLS)
+  include (${HDF4_SOURCE_DIR}/config/sanitizer/tools.cmake)
+endif ()
+if (HDF4_ENABLE_SANITIZERS)
+  include (${HDF4_SOURCE_DIR}/config/sanitizer/sanitizers.cmake)
 endif ()
 
 #-----------------------------------------------------------------------------
@@ -326,13 +350,18 @@ endif ()
 #-----------------------------------------------------------------------------
 option (HDF4_ENABLE_COVERAGE "Enable code coverage for Libraries and Programs" OFF)
 if (HDF4_ENABLE_COVERAGE)
-  set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 --coverage -fprofile-arcs -ftest-coverage")
-  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g --coverage -O0 -fprofile-arcs -ftest-coverage")
-  if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
-    set (LDFLAGS "${LDFLAGS} -fprofile-arcs -ftest-coverage")
-    link_libraries (gcov)
+  include (${HDF4_SOURCE_DIR}/config/sanitizer/code-coverage.cmake)
+  if(CODE_COVERAGE AND CODE_COVERAGE_ADDED)
+    add_code_coverage () # Adds instrumentation to all targets
   else ()
-    set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 --coverage -fprofile-arcs -ftest-coverage")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g --coverage -O0 -fprofile-arcs -ftest-coverage")
+    if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
+      set (LDFLAGS "${LDFLAGS} -fprofile-arcs -ftest-coverage")
+      link_libraries (gcov)
+    else ()
+      set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+    endif ()
   endif ()
 endif ()
 

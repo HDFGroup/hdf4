@@ -1214,6 +1214,13 @@
 ./config/cmake/scripts/HDF4config.cmake
 ./config/cmake/scripts/HDF4options.cmake
 
+# CMake-specific Sanitizer Scripts
+./config/sanitizer/code-coverage.cmake
+./config/sanitizer/sanitizers.cmake
+./config/sanitizer/tools.cmake
+./config/sanitizer/LICENSE
+./config/sanitizer/README.md
+
 ./release_notes/HISTORY.txt
 ./release_notes/RELEASE.txt
 ./release_notes/INSTALL

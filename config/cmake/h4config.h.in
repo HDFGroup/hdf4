@@ -154,7 +154,7 @@
 #cmakedefine H4_NO_MINUS_C_MINUS_O @H4_NO_MINUS_C_MINUS_O@
 
 /* Not using system xdr */
-#define H4_NO_SYS_XDR_INC 1
+#cmakedefine H4_NO_SYS_XDR_INC @H4_NO_SYS_XDR_INC@
 
 /* Name of package */
 #define H4_PACKAGE "@HDF4_PACKAGE@"
