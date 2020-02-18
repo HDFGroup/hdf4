@@ -6,9 +6,9 @@ include $(top_srcdir)/config/commence.am
 
 ## Setup the different includes and preprocessor #defines we need.
 lib_INCLUDES = -I$(top_srcdir)/hdf/src        \
-           -I$(top_srcdir)/mfhdf/libsrc   
+               -I$(top_srcdir)/mfhdf/libsrc
 DEFINES = -DNDEBUG -DHDF
-AM_CPPFLAGS = $(lib_INCLUDES) $(DEFINES)
+AM_CPPFLAGS = $(lib_INCLUDES) $(XDRINC) $(DEFINES)
 
 #############################################################################
 ##                          Library to build                               ##
@@ -33,10 +33,7 @@ else
 libmfhdf_la_SOURCES = $(CSOURCES)
 endif
 
-if HDF_BUILD_XDR
-XDRLIB = $(top_builddir)/mfhdf/xdr/libxdr.la
 libmfhdf_la_LIBADD = $(XDRLIB)
-endif
 
 if HDF_BUILD_NETCDF
 include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h netcdf.h mfhdfi.h mfdatainfo.h

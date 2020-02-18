@@ -576,12 +576,12 @@ ACLOCAL_AMFLAGS = "-I m4"
 #############################################################################
 #############################################################################
 CHECK_CLEANFILES = *.chkexe *.chklog test0.nc nctest0.cdl
-ncdump_INCLUDES = -I$(top_srcdir)/hdf/src        \
-         -I$(top_srcdir)/mfhdf/libsrc   \
+ncdump_INCLUDES = -I$(top_srcdir)/hdf/src   \
+         -I$(top_srcdir)/mfhdf/libsrc     \
          -I$(top_builddir)/mfhdf/libsrc
 
 DEFINES = -DNDEBUG -DHDF
-AM_CPPFLAGS = $(ncdump_INCLUDES) $(DEFINES)
+AM_CPPFLAGS = $(ncdump_INCLUDES) $(XDRINC) $(DEFINES)
 ncdump_LDFLAGS = $(LT_STATIC_EXEC) $(AM_LDFLAGS)
 
 #############################################################################
@@ -590,8 +590,8 @@ TEST_SCRIPT = testncdump.sh
 check_SCRIPTS = testncdump.sh
 man1_MANS = ncdump.1
 ncdump_SOURCES = dumplib.c ncdump.c vardata.c
-ncdump_LDADD = $(LIBMFHDF) $(LIBHDF)
-ncdump_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
+ncdump_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB) $(XDRLIB)
+ncdump_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
 DISTCLEANFILES = 
 
 # Automake needs to be taught how to build lib, progs, and tests targets.

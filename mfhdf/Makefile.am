@@ -2,9 +2,12 @@ include $(top_srcdir)/config/commence.am
 
 if HDF_BUILD_XDR
 XDR_DIR = xdr
-XDRLIB = $(top_builddir)/mfhdf/xdr/libxdr.la
+export XDRLIB = $(abs_top_builddir)/mfhdf/xdr/libxdr.la
+export XDRINC = -I$(top_srcdir)/mfhdf/xdr
 else
 XDR_DIR =
+XDRLIB =
+XDRINC =
 endif
 
 if HDF_BUILD_FORTRAN

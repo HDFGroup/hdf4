@@ -11,11 +11,11 @@ else
 endif
 
 ## Setup the different includes and preprocessor #defines we need.
-ncgen_INCLUDES=-I$(top_srcdir)/hdf/src        \
-         -I$(top_srcdir)/mfhdf/libsrc   \
+ncgen_INCLUDES=-I$(top_srcdir)/hdf/src   \
+         -I$(top_srcdir)/mfhdf/libsrc    \
          -I$(top_builddir)/mfhdf/libsrc
 DEFINES=-DNDEBUG -DHDF
-AM_CPPFLAGS=$(ncgen_INCLUDES) $(DEFINES)
+AM_CPPFLAGS=$(ncgen_INCLUDES) $(XDRINC) $(DEFINES)
 
 ## Add ncgen specific linker flags here
 ncgen_LDFLAGS = $(LT_STATIC_EXEC) $(AM_LDFLAGS)
@@ -39,11 +39,11 @@ endif
 ## Information for building the "ncgen" program
 ncgen_SOURCES = close.c escapes.c generate.c genlib.c getfill.c init.c      \
                 load.c main.c ncgentab.c
-ncgen_LDADD = $(LIBMFHDF) $(LIBHDF)
-ncgen_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
+ncgen_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
+ncgen_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
 
 ctest0_SOURCES=
-ctest0_LDADD = $(LIBMFHDF) $(LIBHDF)
+ctest0_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
 
 ftest0_SOURCES=
 

@@ -588,13 +588,13 @@ ACLOCAL_AMFLAGS = "-I m4"
 #############################################################################
 #############################################################################
 CHECK_CLEANFILES = *.chkexe *.chklog *.hdf
-hrepack_INCLUDES = -I$(top_srcdir)/hdf/src        \
-         -I$(top_srcdir)/mfhdf/hdiff    \
-         -I$(top_srcdir)/mfhdf/libsrc   \
+hrepack_INCLUDES = -I$(top_srcdir)/hdf/src   \
+         -I$(top_srcdir)/mfhdf/hdiff       \
+         -I$(top_srcdir)/mfhdf/libsrc      \
          -I$(top_builddir)/mfhdf/libsrc
 
 DEFINES = -DNDEBUG -DHDF
-AM_CPPFLAGS = $(hrepack_INCLUDES) $(DEFINES)
+AM_CPPFLAGS = $(hrepack_INCLUDES) $(XDRINC) $(DEFINES)
 hrepack_LDFLAGS = $(LT_STATIC_EXEC) $(AM_LDFLAGS)
 hrepack_SOURCES = hrepack.c hrepack_an.c hrepack_gr.c                       \
                   hrepack_list.c hrepack_lsttable.c hrepack_main.c          \
@@ -602,8 +602,8 @@ hrepack_SOURCES = hrepack.c hrepack_an.c hrepack_gr.c                       \
                   hrepack_sds.c hrepack_utils.c                             \
                   hrepack_vg.c hrepack_vs.c hrepack_dim.c
 
-hrepack_LDADD = $(LIBMFHDF) $(LIBHDF)
-hrepack_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
+hrepack_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
+hrepack_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
 
 #############################################################################
 #############################################################################
@@ -611,11 +611,11 @@ TEST_SCRIPT = hrepack.sh
 TEST_PROG = test_hrepack
 check_SCRIPTS = hrepack.sh
 test_hrepack_SOURCES = hrepacktst.c
-test_hrepack_LDADD = $(LIBMFHDF) $(LIBHDF) -lm
-test_hrepack_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
+test_hrepack_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB) -lm
+test_hrepack_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
 hrepack_check_SOURCES = hrepack_check.c
-hrepack_check_LDADD = $(LIBMFHDF) $(LIBHDF)
-hrepack_check_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
+hrepack_check_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
+hrepack_check_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
 DISTCLEANFILES = hrepack.sh
 
 # Automake needs to be taught how to build lib, progs, and tests targets.
