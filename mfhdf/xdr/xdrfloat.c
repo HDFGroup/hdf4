@@ -80,7 +80,6 @@ xdr_double(xdrs, dp)
     register XDR *xdrs;
     double *dp;
 {
-    register long *lp;
     double dbl_val = 100.0;
     int status = TRUE;
 
@@ -88,20 +87,20 @@ xdr_double(xdrs, dp)
         return FALSE;
 
     switch (xdrs->x_op) {
-      case XDR_ENCODE:
+    case XDR_ENCODE:
 #ifndef H4_WORDS_BIGENDIAN
-        xdrntohdouble((char*)&dbl_val, dp);
+        xdrntohdouble((char*)dp, &dbl_val);
+        *dp = dbl_val;
 #endif
-        lp = (long *)dp;
-        return (XDR_PUTLONG(xdrs, lp++) && XDR_PUTLONG(xdrs, lp));
+        return xdr_opaque(xdrs, (caddr_t)dp, (off_t)2*XDRUNIT);
         break;
 
-      case XDR_DECODE:
+    case XDR_DECODE:
         /* Pull two units */
-        lp = (long *)dp;
-        status = (XDR_GETLONG(xdrs, lp++) && XDR_GETLONG(xdrs, lp));
+        status = xdr_opaque(xdrs, (caddr_t)dp, (off_t)2*XDRUNIT);
 #ifndef H4_WORDS_BIGENDIAN
-        xdrntohdouble((char*)&dbl_val, dp);
+        xdrntohdouble((char*)dp, &dbl_val);
+        *dp = dbl_val;
 #endif
         return status;
         break;
