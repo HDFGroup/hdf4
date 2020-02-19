@@ -55,19 +55,18 @@ xdrntohdouble(char* c8, double* dp)
     if(dp) *dp = *(double*)ii;
 }
 
-
 bool_t
 xdr_float(xdrs, fp)
-    register XDR *xdrs;
-    register float *fp;
+    XDR *xdrs;
+    float *fp;
 {
     switch (xdrs->x_op) {
 
     case XDR_ENCODE:
-        return (XDR_PUTLONG(xdrs, (long *)fp));
+        return (XDR_PUTINT32(xdrs, (int32_t *)fp));
 
     case XDR_DECODE:
-        return (XDR_GETLONG(xdrs, (long *)fp));
+        return (XDR_GETINT32(xdrs, (int32_t *)fp));
 
     case XDR_FREE:
         return (TRUE);
@@ -77,32 +76,46 @@ xdr_float(xdrs, fp)
 
 bool_t
 xdr_double(xdrs, dp)
-    register XDR *xdrs;
+    XDR *xdrs;
     double *dp;
 {
-    double dbl_val = 100.0;
-    int status = TRUE;
+    int32_t *i32p;
+    bool_t rv;
 
     if (!dp)
         return FALSE;
 
     switch (xdrs->x_op) {
     case XDR_ENCODE:
-#ifndef H4_WORDS_BIGENDIAN
-        xdrntohdouble((char*)dp, &dbl_val);
-        *dp = dbl_val;
+        i32p = (int32_t *)(void *)dp;
+#ifdef H4_WORDS_BIGENDIAN
+        rv = XDR_PUTINT32(xdrs, i32p);
+        if (!rv)
+            return (rv);
+        rv = XDR_PUTINT32(xdrs, i32p+1);
+#else
+        rv = XDR_PUTINT32(xdrs, i32p+1);
+        if (!rv)
+            return (rv);
+        rv = XDR_PUTINT32(xdrs, i32p);
 #endif
-        return xdr_opaque(xdrs, (caddr_t)dp, (off_t)2*XDRUNIT);
+        return rv;
         break;
 
     case XDR_DECODE:
-        /* Pull two units */
-        status = xdr_opaque(xdrs, (caddr_t)dp, (off_t)2*XDRUNIT);
-#ifndef H4_WORDS_BIGENDIAN
-        xdrntohdouble((char*)dp, &dbl_val);
-        *dp = dbl_val;
+        i32p = (int32_t *)(void *)dp;
+#ifdef H4_WORDS_BIGENDIAN
+        rv = XDR_GETINT32(xdrs, i32p);
+        if (!rv)
+            return (rv);
+        rv = XDR_GETINT32(xdrs, i32p+1);
+#else
+        rv = XDR_GETINT32(xdrs, i32p+1);
+        if (!rv)
+            return (rv);
+        rv = XDR_GETINT32(xdrs, i32p);
 #endif
-        return status;
+        return (rv);
         break;
 
     case XDR_FREE:

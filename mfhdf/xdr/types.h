@@ -56,7 +56,7 @@ typedef int32_t enum_t;
 extern char *malloc();
 #endif
 
-#define mem_alloc(bsize)    malloc(bsize)
+#define mem_alloc(bsize)        calloc(1, bsize)
 #define mem_free(ptr, bsize)    free(ptr)
 
 #ifdef H4_HAVE_SYS_TYPES_H

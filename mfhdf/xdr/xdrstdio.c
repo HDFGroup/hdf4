@@ -32,19 +32,19 @@ static char sccsid[] = "@(#)xdr_stdio.c 1.16 87/08/11 Copyr 1984 Sun Micro";
 #include "types.h"
 #include "xdr.h"
 
-static bool_t   xdrstdio_getlong(XDR *, long *);
-static bool_t   xdrstdio_putlong(XDR *, long *);
-static bool_t   xdrstdio_getbytes(XDR *, caddr_t, u_int );
-static bool_t   xdrstdio_putbytes(XDR *, caddr_t, u_int );
-static u_long   xdrstdio_getpos(XDR *);
-static bool_t   xdrstdio_setpos(XDR *, u_long);
-static long *   xdrstdio_inline(XDR *, u_int);
 static void xdrstdio_destroy(XDR *);
+static bool_t   xdrstdio_getlong(XDR *, long *);
+static bool_t   xdrstdio_putlong(XDR *, const long *);
+static bool_t   xdrstdio_getbytes(XDR *, char *, u_int);
+static bool_t   xdrstdio_putbytes(XDR *, const char *, u_int);
+static u_int    xdrstdio_getpos(XDR *);
+static bool_t   xdrstdio_setpos(XDR *, u_int);
+static int32_t *xdrstdio_inline(XDR *, u_int);
 
 /*
  * Ops vector for stdio type XDR
  */
-static struct xdr_ops   xdrstdio_ops = {
+static const struct xdr_ops   xdrstdio_ops = {
     xdrstdio_getlong,   /* deseraialize a long int */
     xdrstdio_putlong,   /* seraialize a long int */
     xdrstdio_getbytes,  /* deserialize counted bytes */
@@ -62,13 +62,13 @@ static struct xdr_ops   xdrstdio_ops = {
  */
 void
 xdrstdio_create(xdrs, file, op)
-    register XDR *xdrs;
+    XDR *xdrs;
     FILE *file;
     enum xdr_op op;
 {
     xdrs->x_op = op;
     xdrs->x_ops = &xdrstdio_ops;
-    xdrs->x_private = (caddr_t)file;
+    xdrs->x_private = file;
     xdrs->x_handy = 0;
     xdrs->x_base = 0;
 }
@@ -79,7 +79,7 @@ xdrstdio_create(xdrs, file, op)
  */
 static void
 xdrstdio_destroy(xdrs)
-    register XDR *xdrs;
+    XDR *xdrs;
 {
     (void)fflush((FILE *)xdrs->x_private);
     /* xx should we close the file ?? */
@@ -88,78 +88,80 @@ xdrstdio_destroy(xdrs)
 static bool_t
 xdrstdio_getlong(xdrs, lp)
     XDR *xdrs;
-    register long *lp;
+    long *lp;
 {
-    if (fread((caddr_t)lp, sizeof(long), 1, (FILE *)xdrs->x_private) != 1)
-        return (FALSE);
+	int32_t mycopy;
 
-#ifndef mc68000
-    *lp = ntohl(*lp);
-#endif
-    return (TRUE);
+	if (fread(&mycopy, sizeof(int32_t), 1, (FILE *)xdrs->x_private) != 1)
+		return (FALSE);
+
+	*lp = (long)ntohl(mycopy);
+	return (TRUE);
 }
 
 static bool_t
 xdrstdio_putlong(xdrs, lp)
     XDR *xdrs;
-    long *lp;
+    const long *lp;
 {
+	int32_t mycopy;
 
-#ifndef mc68000
-    long mycopy = htonl(*lp);
-    lp = &mycopy;
+#if defined(_LP64)
+	if ((*lp > UINT32_MAX) || (*lp < INT32_MIN))
+		return (FALSE);
 #endif
 
-    if (fwrite((caddr_t)lp, sizeof(long), 1, (FILE *)xdrs->x_private) != 1)
-        return (FALSE);
-
-    return (TRUE);
+	mycopy = (int32_t)htonl((int32_t)*lp);
+	if (fwrite(&mycopy, sizeof(int32_t), 1, (FILE *)xdrs->x_private) != 1)
+		return (FALSE);
+	return (TRUE);
 }
 
 static bool_t
 xdrstdio_getbytes(xdrs, addr, len)
     XDR *xdrs;
-    caddr_t addr;
+    char *addr;
     u_int len;
 {
 
-    if ((len != 0) && (fread(addr, (int)len, 1, (FILE *)xdrs->x_private) != 1))
-        return (FALSE);
-    return (TRUE);
+	if ((len != 0) && (fread(addr, (size_t)len, 1, (FILE *)xdrs->x_private) != 1))
+		return (FALSE);
+	return (TRUE);
 }
 
 static bool_t
 xdrstdio_putbytes(xdrs, addr, len)
     XDR *xdrs;
-    caddr_t addr;
+    const char *addr;
     u_int len;
 {
 
-    if ((len != 0) && (fwrite(addr, (int)len, 1, (FILE *)xdrs->x_private) != 1))
-        return (FALSE);
-    return (TRUE);
+	if ((len != 0) && (fwrite(addr, (size_t)len, 1,
+	    (FILE *)xdrs->x_private) != 1))
+		return (FALSE);
+	return (TRUE);
 }
 
-static u_long
+static u_int
 xdrstdio_getpos(xdrs)
     XDR *xdrs;
 {
 
-    return ((u_long)ftell((FILE *)xdrs->x_private));
+    return ((u_int)ftell((FILE *)xdrs->x_private));
 }
 
 static bool_t
 xdrstdio_setpos(xdrs, pos)
     XDR *xdrs;
-    u_long pos;
+    u_int pos;
 {
 
-    return ((fseek((FILE *)xdrs->x_private,(long)pos, 0) < 0) ?
+    return ((fseek((FILE *)xdrs->x_private, (long)pos, 0) < 0) ?
         FALSE : TRUE);
 }
 
-/*ARGSUSED*/
-static long *
+/* ARGSUSED */
+static int32_t *
 xdrstdio_inline(xdrs, len)
     XDR *xdrs;
     u_int len;

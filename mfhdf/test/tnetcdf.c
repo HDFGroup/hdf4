@@ -82,6 +82,9 @@ static intn test_read_dim()
     fid = SDstart(testfile, DFACC_READ);
     CHECK(fid, FAIL, "SDstart");
 
+    if (fid != FAIL) /* solution to stop hundreds of errors */
+    {
+
     /* Access first dataset to see what it is */
     sds_id = SDselect(fid, 0);
     CHECK(sds_id, FAIL, "SDselect");
@@ -108,6 +111,8 @@ static intn test_read_dim()
     /* Close the file */
     status = SDend(fid);
     CHECK(status, FAIL, "test_dimensions: SDend");
+
+    } /* SDstart failed */
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -143,7 +148,7 @@ test_netcdf_reading()
     char  testfile[512] = "";
 
     /* Output message about test being performed */
-    TESTING("reading of netCDF file using the SDxxx inteface (tnetcdf.c)");
+    TESTING("reading of netCDF file using the SDxxx interface (tnetcdf.c)");
 
     /* Generate the correct name for the test file, by prepending the source path */
     if (srcdir && ((strlen(srcdir) + strlen(basename) + 1) < sizeof(testfile)))
@@ -161,7 +166,7 @@ test_netcdf_reading()
        srcdir option and the test is ran by ./hdftest in the src directory
        hdf4/mfhdf/libsrc instead of by make check.  - BMR 2007/08/09 */
     if (srcdir == NULL)
-    strcpy(testfile, "./");
+        strcpy(testfile, "./");
 #endif /* _WIN32 */
 
     strcat(testfile, basename);
