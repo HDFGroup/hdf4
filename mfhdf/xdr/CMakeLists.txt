@@ -45,6 +45,19 @@ if (BUILD_SHARED_LIBS)
 endif ()
 
 #-----------------------------------------------------------------------------
+# Add file(s) to CMake Install
+#-----------------------------------------------------------------------------
+install (
+    FILES
+        ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdr.h
+        ${HDF4_MFHDF_XDR_SOURCE_DIR}/types.h
+    DESTINATION
+        ${HDF4_INSTALL_INCLUDE_DIR}
+    COMPONENT
+        headers
+)
+
+#-----------------------------------------------------------------------------
 # Add library to CMake Install : Installs lib and cmake config info
 #-----------------------------------------------------------------------------
 if (BUILD_SHARED_LIBS)
