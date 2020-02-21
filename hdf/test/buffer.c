@@ -46,10 +46,10 @@
 
 #define TESTMASTER
 
+#include "hdf.h"
 #ifdef H4_HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
-#include "hdf.h"
 #include "tutils.h"
 #include "hfile.h"
 

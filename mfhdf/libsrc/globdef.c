@@ -22,7 +22,6 @@
  * to allow the creation of SunOS sharable-libraries.
  */
 #include "h4config.h"
-#include "H4api_adpt.h"
 
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h"
@@ -37,14 +36,14 @@ int ncerr = NC_NOERR ;
 
 /*
  * russ's last minute whistles
- *	The error(3) subroutines emit no messages unless NC_VERBOSE bit is on.
- *	The error(3) subroutines call exit() when NC_FATAL bit is on.
+ *    The error(3) subroutines emit no messages unless NC_VERBOSE bit is on.
+ *    The error(3) subroutines call exit() when NC_FATAL bit is on.
  */
 int ncopts = (NC_FATAL | NC_VERBOSE) ;
 
 
 /*
- *	Set to the the name of the current interface routine by the
+ *    Set to the the name of the current interface routine by the
  * interface routine.
  */
 const char *cdf_routine_name = "netcdf";

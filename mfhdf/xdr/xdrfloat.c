@@ -38,7 +38,7 @@
  * xdr.
  */
 
-#include "H4api_adpt.h"
+#include "h4config.h"
 
 #include <stdio.h>
 

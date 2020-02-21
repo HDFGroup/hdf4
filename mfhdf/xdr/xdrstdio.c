@@ -40,7 +40,7 @@
 static char sccsid[] = "@(#)xdr_stdio.c 1.16 87/08/11 Copyr 1984 Sun Micro";
 #endif
 
-#include "H4api_adpt.h"
+#include "h4config.h"
 
 #include <stdio.h>
 
@@ -117,13 +117,13 @@ xdrstdio_getlong(xdrs, lp)
     XDR *xdrs;
     long *lp;
 {
-	int32_t mycopy;
+    int32_t mycopy;
 
-	if (fread(&mycopy, sizeof(int32_t), 1, (FILE *)xdrs->x_private) != 1)
-		return (FALSE);
+    if (fread(&mycopy, sizeof(int32_t), 1, (FILE *)xdrs->x_private) != 1)
+        return (FALSE);
 
-	*lp = (long)ntohl(mycopy);
-	return (TRUE);
+    *lp = (long)ntohl(mycopy);
+    return (TRUE);
 }
 
 static bool_t
@@ -131,17 +131,17 @@ xdrstdio_putlong(xdrs, lp)
     XDR *xdrs;
     const long *lp;
 {
-	int32_t mycopy;
+    int32_t mycopy;
 
 #if defined(_LP64)
-	if ((*lp > UINT32_MAX) || (*lp < INT32_MIN))
-		return (FALSE);
+    if ((*lp > UINT32_MAX) || (*lp < INT32_MIN))
+        return (FALSE);
 #endif
 
-	mycopy = (int32_t)htonl((int32_t)*lp);
-	if (fwrite(&mycopy, sizeof(int32_t), 1, (FILE *)xdrs->x_private) != 1)
-		return (FALSE);
-	return (TRUE);
+    mycopy = (int32_t)htonl((int32_t)*lp);
+    if (fwrite(&mycopy, sizeof(int32_t), 1, (FILE *)xdrs->x_private) != 1)
+        return (FALSE);
+    return (TRUE);
 }
 
 static bool_t
@@ -151,9 +151,9 @@ xdrstdio_getbytes(xdrs, addr, len)
     u_int len;
 {
 
-	if ((len != 0) && (fread(addr, (size_t)len, 1, (FILE *)xdrs->x_private) != 1))
-		return (FALSE);
-	return (TRUE);
+    if ((len != 0) && (fread(addr, (size_t)len, 1, (FILE *)xdrs->x_private) != 1))
+        return (FALSE);
+    return (TRUE);
 }
 
 static bool_t
@@ -163,10 +163,10 @@ xdrstdio_putbytes(xdrs, addr, len)
     u_int len;
 {
 
-	if ((len != 0) && (fwrite(addr, (size_t)len, 1,
-	    (FILE *)xdrs->x_private) != 1))
-		return (FALSE);
-	return (TRUE);
+    if ((len != 0) && (fwrite(addr, (size_t)len, 1,
+        (FILE *)xdrs->x_private) != 1))
+        return (FALSE);
+    return (TRUE);
 }
 
 static u_int

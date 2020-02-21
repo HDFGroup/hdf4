@@ -64,7 +64,7 @@ extern      "C"
 #endif                          /* c_plusplus || __cplusplus */
 
 /* Library-developer functions */
-    extern int32 DFGRIopen
+HDFLIBAPI int32 DFGRIopen
                 (const char *filename, int acc_mode);
 
 #if defined c_plusplus || defined __cplusplus

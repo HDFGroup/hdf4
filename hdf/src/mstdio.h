@@ -37,27 +37,27 @@ extern      "C"
    ** from mstdio.c
  */
 
-    extern int32 HCPmstdio_stread
+HDFLIBAPI int32 HCPmstdio_stread
                 (accrec_t * rec);
 
-    extern int32 HCPmstdio_stwrite
+HDFLIBAPI int32 HCPmstdio_stwrite
                 (accrec_t * rec);
 
-    extern int32 HCPmstdio_seek
+HDFLIBAPI int32 HCPmstdio_seek
                 (accrec_t * access_rec, int32 offset, int origin);
 
-    extern int32 HCPmstdio_inquire
+HDFLIBAPI int32 HCPmstdio_inquire
                 (accrec_t * access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
                int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
                  int16 *pspecial);
 
-    extern int32 HCPmstdio_read
+HDFLIBAPI int32 HCPmstdio_read
                 (accrec_t * access_rec, int32 length, void * data);
 
-    extern int32 HCPmstdio_write
+HDFLIBAPI int32 HCPmstdio_write
                 (accrec_t * access_rec, int32 length, const void * data);
 
-    extern intn HCPmstdio_endaccess
+HDFLIBAPI intn HCPmstdio_endaccess
                 (accrec_t * access_rec);
 
 #if defined c_plusplus || defined __cplusplus

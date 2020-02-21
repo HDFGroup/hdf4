@@ -36,27 +36,27 @@ extern      "C"
    ** from cnbit.c
  */
 
-    extern int32 HCPcnbit_stread
+HDFLIBAPI int32 HCPcnbit_stread
                 (accrec_t * rec);
 
-    extern int32 HCPcnbit_stwrite
+HDFLIBAPI int32 HCPcnbit_stwrite
                 (accrec_t * rec);
 
-    extern int32 HCPcnbit_seek
+HDFLIBAPI int32 HCPcnbit_seek
                 (accrec_t * access_rec, int32 offset, int origin);
 
-    extern int32 HCPcnbit_inquire
+HDFLIBAPI int32 HCPcnbit_inquire
                 (accrec_t * access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
                int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
                  int16 *pspecial);
 
-    extern int32 HCPcnbit_read
+HDFLIBAPI int32 HCPcnbit_read
                 (accrec_t * access_rec, int32 length, void * data);
 
-    extern int32 HCPcnbit_write
+HDFLIBAPI int32 HCPcnbit_write
                 (accrec_t * access_rec, int32 length, const void * data);
 
-    extern intn HCPcnbit_endaccess
+HDFLIBAPI intn HCPcnbit_endaccess
                 (accrec_t * access_rec);
 
 #if defined c_plusplus || defined __cplusplus

@@ -40,7 +40,7 @@
 static char sccsid[] = "@(#)xdr_array.c 1.10 87/08/11 Copyr 1984 Sun Micro";
 #endif
 
-#include "H4api_adpt.h"
+#include "h4config.h"
 
 #include <stdio.h>
 #include <string.h> /* for memset() */

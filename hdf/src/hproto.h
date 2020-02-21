@@ -193,7 +193,7 @@ extern      "C"
     HDFLIBAPI intn Hfidinquire
                 (int32 file_id, char ** fname, intn * acc_mode,
                  intn * attach);
-    
+
     HDFLIBAPI intn Hshutdown(void);
 
     HDFLIBAPI void HPend(void);
@@ -323,7 +323,7 @@ HDFLIBAPI intn Hfind(int32 file_id,       /* IN: file ID to search in */
     -1-> function failed
 
 *******************************************************************************/
-HDFLIBAPI intn 
+HDFLIBAPI intn
 HDcheck_tagref(int32  file_id, /* IN: id of file */
                uint16 tag,     /* IN: Tag to check */
                uint16 ref      /* IN: ref to check */);
@@ -340,7 +340,7 @@ DESCRIPTION
    special elments right now. Used for allowing the data to change
    and move somewhere else in the file for non-special elements.
    Must be carefully if apply to higher-level objects like GR's and SDS
-   that are comprised of other objects. 
+   that are comprised of other objects.
    Usefull when re-writing simple elements whose size changes while
    preserving the original tag/ref of the element since other elements
    might refer to this element by tag/ref e.g. in a Vgroup.
@@ -348,7 +348,7 @@ DESCRIPTION
 RETURNS
    returns SUCCEED (0) if successful, FAIL (-1) otherwise
 ************************************************************************/
-HDFLIBAPI intn 
+HDFLIBAPI intn
 HDreuse_tagref(int32 file_id, /* IN: id of file */
                uint16 tag,    /* IN: tag of data descriptor to reuse */
                uint16 ref     /* IN: ref of data descriptor to reuse */ );
@@ -387,21 +387,21 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (void);
 
 #if defined(MALLOC_CHECK)
-    HDFPUBLIC extern void * HDmalloc
+    HDFPUBLIC void * HDmalloc
                 (uint32 qty);
 
-    HDFPUBLIC extern void * HDrealloc
+    HDFPUBLIC void * HDrealloc
                 (void * where, uint32 qty);
 
-    HDFPUBLIC extern void * HDcalloc
+    HDFPUBLIC void * HDcalloc
                 (uint32 n, uint32 size);
 
-    HDFPUBLIC extern void HDfree
+    HDFPUBLIC void HDfree
                 (void * ptr);
 
 #endif /* defined MALLOC_CHECK */
 
-    HDFPUBLIC extern char *HDstrdup
+    HDFPUBLIC char *HDstrdup
                 (const char *s);
 
     HDFLIBAPI intn HDc2fstr
@@ -437,8 +437,8 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (int32 aid, int32* block_size, int32* num_blocks);
 
     HDFLIBAPI intn HLgetdatainfo
-		(int32 file_id, uint8 *buf, uintn start_block,
-		 uintn info_count, int32 *offsetarray, int32 *lengtharray);
+        (int32 file_id, uint8 *buf, uintn start_block,
+        uintn info_count, int32 *offsetarray, int32 *lengtharray);
 
 
 /*
@@ -463,20 +463,20 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                  comp_coder_t coder_type, comp_info * c_info);
 
     HDFLIBAPI intn HCPgetcompress
-                (int32 file_id, uint16 data_tag, uint16 data_ref, 
-		 comp_coder_t *coder_type, comp_info * c_info);
+                (int32 file_id, uint16 data_tag, uint16 data_ref,
+        comp_coder_t *coder_type, comp_info * c_info);
 
     HDFLIBAPI intn HCPgetcompinfo
-                (int32 file_id, uint16 data_tag, uint16 data_ref, 
-		 comp_coder_t *coder_type, comp_info * c_info);
+                (int32 file_id, uint16 data_tag, uint16 data_ref,
+        comp_coder_t *coder_type, comp_info * c_info);
 
     HDFLIBAPI intn HCPgetcomptype
-                (int32 file_id, uint16 data_tag, uint16 data_ref, 
-		 comp_coder_t *coder_type);
+                (int32 file_id, uint16 data_tag, uint16 data_ref,
+        comp_coder_t *coder_type);
 
     HDFLIBAPI intn HCPgetdatasize
-                (int32 file_id, uint16 data_tag, uint16 data_ref, 
-		 int32* comp_size, int32* orig_size);
+                (int32 file_id, uint16 data_tag, uint16 data_ref,
+        int32* comp_size, int32* orig_size);
 
     HDFPUBLIC intn HCget_config_info ( comp_coder_t coder_type, uint32 *compression_config_info);
 
@@ -529,7 +529,7 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
     HDFLIBAPI void HEPclear
                 (void);
 
- 	HDFLIBAPI intn HEshutdown(void);
+    HDFLIBAPI intn HEshutdown(void);
 
 /*
    ** from hbitio.c
@@ -633,9 +633,9 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 
     HDFLIBAPI intn DFdiwrite
                 (int32 file_id, int32 list, uint16 tag, uint16 ref);
-                
+
     HDFLIBAPI void DFdifree
-    			(int32 groupID);
+                (int32 groupID);
 
 /*
    ** from dfp.c
@@ -1098,17 +1098,17 @@ HDFLIBAPI intn  ANfileinfo(int32 an_id, int32 *n_file_label, int32 *n_file_desc,
 
 HDFLIBAPI int32 ANend(int32 an_id);
 
-HDFLIBAPI int32 ANcreate(int32 an_id, uint16 elem_tag, uint16 elem_ref, 
+HDFLIBAPI int32 ANcreate(int32 an_id, uint16 elem_tag, uint16 elem_ref,
                       ann_type type);
 
 HDFLIBAPI int32 ANcreatef(int32 an_id, ann_type type);
 
 HDFLIBAPI int32 ANselect(int32 an_id, int32 idx, ann_type type);
 
-HDFLIBAPI intn  ANnumann(int32 an_id, ann_type type, uint16 elem_tag, 
+HDFLIBAPI intn  ANnumann(int32 an_id, ann_type type, uint16 elem_tag,
                       uint16 elem_ref);
 
-HDFLIBAPI intn  ANannlist(int32 an_id, ann_type type, uint16 elem_tag, 
+HDFLIBAPI intn  ANannlist(int32 an_id, ann_type type, uint16 elem_tag,
                        uint16 elem_ref, int32 ann_list[]);
 
 HDFLIBAPI int32 ANannlen(int32 ann_id);
@@ -1131,7 +1131,7 @@ HDFLIBAPI uint16 ANatype2tag(ann_type atype);
 HDFLIBAPI ann_type ANtag2atype(uint16 atag);
 
 /* BMR: Removed because this function is meant to be private.
-HDFLIBAPI intn ANdestroy(void); */ 
+HDFLIBAPI intn ANdestroy(void); */
 
 /* Multi-file Raster C-routines found in mfgr.c */
 HDFLIBAPI intn rigcompare(void * k1, void * k2, intn cmparg);
@@ -1209,7 +1209,7 @@ HDFLIBAPI intn GR2bmapped(int32 riid, intn *tobe_mapped, intn *created_byGR);
 
 /*=== HDF_CHUNK_DEF same as in mfhdf.h - moved here  ====*/
 
-/* Bit flags used for SDsetchunk(), SDgetchunkinfo() 
+/* Bit flags used for SDsetchunk(), SDgetchunkinfo()
    GRsetchunk() and GRgetchunkinfo(). Note that GRs do not support NBIT */
 #define HDF_NONE    0x0
 #define HDF_CHUNK   0x1
@@ -1225,7 +1225,7 @@ typedef union hdf_chunk_def_u
     /* Chunk Lengths only */
     int32   chunk_lengths[H4_MAX_VAR_DIMS]; /* chunk lengths along each dimension */
 
-    struct 
+    struct
     {   /* For Compression info */
         int32      chunk_lengths[H4_MAX_VAR_DIMS]; /* chunk lengths along each dimension */
         int32      comp_type;    /* Compression type */
@@ -1233,8 +1233,8 @@ typedef union hdf_chunk_def_u
         comp_info  cinfo;        /* Compression info struct */
         model_info minfo;        /* Compression model info struct */
     }comp;
-        
-    struct 
+
+    struct
     { /* For NBIT, Used by SDS and not by GR */
         int32 chunk_lengths[H4_MAX_VAR_DIMS]; /* chunk lengths along each dimension */
         intn  start_bit; /* offset of the start bit in the data */
@@ -1264,23 +1264,23 @@ typedef union hdf_chunk_def_u
       {
          int32   chunk_lengths[2];  Chunk lengths along each dimension
 
-         struct 
-          {   
+         struct
+          {
             int32     chunk_lengths[2]; Chunk lengths along each dimension
-            int32     comp_type;                   Compression type 
-            comp_info cinfo;                       Compression info struct 
+            int32     comp_type;                   Compression type
+            comp_info cinfo;                       Compression info struct
           }comp;
 
       } HDF_CHUNK_DEF
 
-      The simplist is the 'chunk_lengths' array specifiying chunk 
-      lengths for each dimension where the 'flags' argument set to 
+      The simplist is the 'chunk_lengths' array specifiying chunk
+      lengths for each dimension where the 'flags' argument set to
       'HDF_CHUNK';
 
       COMPRESSION is set by using the 'HDF_CHUNK_DEF' structure to set the
       appropriate compression information along with the required chunk lengths
-      for each dimension. The compression information is the same as 
-      that set in 'SDsetcompress()'. The bit-or'd'flags' argument' is set to 
+      for each dimension. The compression information is the same as
+      that set in 'SDsetcompress()'. The bit-or'd'flags' argument' is set to
       'HDF_CHUNK | HDF_COMP'.
 
       See the example in pseudo-C below for further usage.
@@ -1289,49 +1289,49 @@ typedef union hdf_chunk_def_u
 
       The performance of the GRxxx interface with chunking is greatly
       affected by the users access pattern over the image and by
-      the maximum number of chunks set in the chunk cache. The cache contains 
+      the maximum number of chunks set in the chunk cache. The cache contains
       the Least Recently Used(LRU cache replacment policy) chunks. See the
-      routine GRsetchunkcache() for further info on the chunk cache and how 
-      to set the maximum number of chunks in the chunk cache. A default chunk 
+      routine GRsetchunkcache() for further info on the chunk cache and how
+      to set the maximum number of chunks in the chunk cache. A default chunk
       cache is always created.
 
       The following example shows the organization of chunks for a 2D iamge.
       e.g. 4x4 image with 2x2 chunks. The array shows the layout of
            chunks in the chunk array.
 
-            4 ---------------------                                           
-              |         |         |                                                 
-        Y     |  (0,1)  |  (1,1)  |                                       
-        ^     |         |         |                                      
-        |   2 ---------------------                                       
-        |     |         |         |                                               
-        |     |  (0,0)  |  (1,0)  |                                      
-        |     |         |         |                                           
-        |     ---------------------                                         
-        |     0         2         4                                       
-        ---------------> X                                                       
-                                                                                
-        --Without compression--:
-        {                                                                    
-        HDF_CHUNK_DEF chunk_def;
-                                                                            
-        .......                                                                    
-        -- Set chunk lengths --                                                    
-        chunk_def.chunk_lengths[0]= 2;                                                     
-        chunk_def.chunk_lengths[1]= 2; 
+            4 ---------------------
+              |         |         |
+        Y     |  (0,1)  |  (1,1)  |
+        ^     |         |         |
+        |   2 ---------------------
+        |     |         |         |
+        |     |  (0,0)  |  (1,0)  |
+        |     |         |         |
+        |     ---------------------
+        |     0         2         4
+        ---------------> X
 
-        -- Set Chunking -- 
-        GRsetchunk(riid, chunk_def, HDF_CHUNK);                      
-         ......                                                                  
-        }                                                                           
+        --Without compression--:
+        {
+        HDF_CHUNK_DEF chunk_def;
+
+        .......
+        -- Set chunk lengths --
+        chunk_def.chunk_lengths[0]= 2;
+        chunk_def.chunk_lengths[1]= 2;
+
+        -- Set Chunking --
+        GRsetchunk(riid, chunk_def, HDF_CHUNK);
+         ......
+        }
 
         --With compression--:
-        {                                                                    
+        {
         HDF_CHUNK_DEF chunk_def;
-                                                                            
-        .......                
-        -- Set chunk lengths first --                                                    
-        chunk_def.chunk_lengths[0]= 2;                                                     
+
+        .......
+        -- Set chunk lengths first --
+        chunk_def.chunk_lengths[0]= 2;
         chunk_def.chunk_lengths[1]= 2;
 
         -- Set compression --
@@ -1339,9 +1339,9 @@ typedef union hdf_chunk_def_u
         chunk_def.comp.comp_type = COMP_CODE_DEFLATE;
 
         -- Set Chunking with Compression --
-        GRsetchunk(riid, chunk_def, HDF_CHUNK | HDF_COMP);                      
-         ......                                                                  
-        }                                                                           
+        GRsetchunk(riid, chunk_def, HDF_CHUNK | HDF_COMP);
+         ......
+        }
 
  RETURNS
         SUCCEED/FAIL
@@ -1361,13 +1361,13 @@ HDFLIBAPI intn GRsetchunk
      fill the array of chunk lengths for each dimension as specified in
      the 'HDF_CHUNK_DEF' union. You can pass in a NULL for 'chunk_def'
      if don't want the chunk lengths for each dimension.
-     Additionaly if successfull it will return a bit-or'd value in 'flags' 
+     Additionaly if successfull it will return a bit-or'd value in 'flags'
      indicating if the GR is:
 
      Chunked                  -> flags = HDF_CHUNK
-     Chunked and compressed   -> flags = HDF_CHUNK | HDF_COMP 
+     Chunked and compressed   -> flags = HDF_CHUNK | HDF_COMP
      Non-chunked              -> flags = HDF_NONE
-  
+
      e.g. 4x4 array - Pseudo-C
      {
      int32   rcdims[3];
@@ -1393,7 +1393,7 @@ HDFLIBAPI intn GRgetchunkinfo
      GRwritechunk  -- write the specified chunk to the GR
 
  DESCRIPTION
-     This routine writes a whole chunk of data to the chunked GR 
+     This routine writes a whole chunk of data to the chunked GR
      specified by chunk 'origin' for the given GR and can be used
      instead of GRwriteimage() when this information is known. This
      routine has less overhead and is much faster than using GRwriteimage().
@@ -1441,24 +1441,24 @@ HDFLIBAPI intn GRreadchunk
 
 /******************************************************************************
 NAME
-     GRsetchunkcache -- maximum number of chunks to cache 
+     GRsetchunkcache -- maximum number of chunks to cache
 
 DESCRIPTION
      Set the maximum number of chunks to cache.
 
-     The cache contains the Least Recently Used(LRU cache replacment policy) 
-     chunks. This routine allows the setting of maximum number of chunks that 
+     The cache contains the Least Recently Used(LRU cache replacment policy)
+     chunks. This routine allows the setting of maximum number of chunks that
      can be cached, 'maxcache'.
 
      The performance of the GRxxx interface with chunking is greatly
      affected by the users access pattern over the image and by
-     the maximum number of chunks set in the chunk cache. The number chunks 
-     that can be set in the cache is process memory limited. It is a good 
-     idea to always set the maximum number of chunks in the cache as the 
-     default heuristic does not take into account the memory available for 
+     the maximum number of chunks set in the chunk cache. The number chunks
+     that can be set in the cache is process memory limited. It is a good
+     idea to always set the maximum number of chunks in the cache as the
+     default heuristic does not take into account the memory available for
      the application.
 
-     By default when the GR is promoted to a chunked element the 
+     By default when the GR is promoted to a chunked element the
      maximum number of chunks in the cache 'maxcache' is set to the number of
      chunks along the last dimension.
 
@@ -1473,14 +1473,14 @@ DESCRIPTION
      new 'maxcache' value only if the new 'maxcache' value is greater than the
      current number of chunks in the cache.
 
-     Use flags argument of 'HDF_CACHEALL' if the whole object is to be cached 
+     Use flags argument of 'HDF_CACHEALL' if the whole object is to be cached
      in memory, otherwise pass in zero(0). Currently you can only
      pass in zero.
 
     See GRsetchunk() for a description of the organization of chunks in an GR.
 
 RETURNS
-     Returns the 'maxcache' value for the chunk cache if successful 
+     Returns the 'maxcache' value for the chunk cache if successful
      and FAIL otherwise
 ******************************************************************************/
 HDFLIBAPI intn GRsetchunkcache
@@ -1495,14 +1495,14 @@ NAME
      Hmpset - set pagesize and maximum number of pages to cache on next open/create
 
 DESCRIPTION
-     Set the pagesize and maximum number of pages to cache on the next 
+     Set the pagesize and maximum number of pages to cache on the next
      open/create of a file. A pagesize that is a power of 2 is recommended.
 
      The values set here only affect the next open/creation of a file and
      do not change a particular file's paging behaviour after it has been
      opened or created. This maybe changed in a later release.
 
-     Use flags arguement of 'MP_PAGEALL' if the whole file is to be cached 
+     Use flags arguement of 'MP_PAGEALL' if the whole file is to be cached
      in memory otherwise passs in zero.
 
 RETURNS
@@ -1510,9 +1510,9 @@ RETURNS
 
 NOTE
      This calls the real routine MPset().
-     Currently 'maxcache' has to be greater than 1. Maybe use special 
+     Currently 'maxcache' has to be greater than 1. Maybe use special
      case of 0 to specify you want to turn page buffering off or use
-     the flags arguement. 
+     the flags arguement.
 
 ******************************************************************************/
 HDFLIBAPI int  Hmpset(int pagesize, /* IN: pagesize to use for next open/create */
@@ -1524,7 +1524,7 @@ NAME
      Hmpget - get last pagesize and max number of pages cached for open/create
 
 DESCRIPTION
-     This gets the last pagesize and maximum number of pages cached for 
+     This gets the last pagesize and maximum number of pages cached for
      the last open/create of a file.
 
 RETURNS
@@ -1561,7 +1561,7 @@ HDFLIBAPI int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create
 #define VSQueryname(vs, name) \
         (VSinquire (vs, (int32 *) NULL, (int32*) NULL, (char*) NULL, (int32*) NULL, (char*) name))
 
-/* 
+/*
    ** from vattr.c
  */
    HDFLIBAPI intn Vsetattr
@@ -1576,11 +1576,11 @@ HDFLIBAPI int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create
    HDFLIBAPI intn Vfindattr
                 (int32 vgid, const char *attrname);
    HDFLIBAPI intn Vattrinfo
-                (int32 vgid, intn attrindex, char *name, 
+                (int32 vgid, intn attrindex, char *name,
                  int32 *datatype, int32 *count, int32 *size);
    HDFLIBAPI intn Vattrinfo2 /* copy of Vattrinfo for old attributes */
                 (int32 vgid, intn attrindex, char *name, int32 *datatype,
-		 int32 *count, int32 *size, int32 *nfields, uint16 *refnum);
+        int32 *count, int32 *size, int32 *nfields, uint16 *refnum);
    HDFLIBAPI intn Vgetattr
                 (int32 vgid, intn attrindex, void * values);
    HDFLIBAPI intn Vgetattr2 /* copy of Vgetattr for old attributes */
@@ -1600,7 +1600,7 @@ HDFLIBAPI int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create
                 (int32 vsid, int32 findex, const char *attrname);
    HDFLIBAPI intn VSattrinfo
                 (int32 vsid, int32 findex, intn attrindex,
-                 char *name, int32 *datatype, int32 *count, 
+                 char *name, int32 *datatype, int32 *count,
                  int32 *size);
    HDFLIBAPI intn VSgetattr
                 (int32 vsid, int32 findex, intn attrindex,
@@ -1682,14 +1682,14 @@ HDFLIBAPI int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create
 
     HDFLIBAPI int32 VSfindclass
                 (HFILEID f, const char  * vsclass);
-    
+
     HDFLIBAPI intn VSofclass
                 (int32 id, const char *vsclass, uintn start_vd,
                  uintn array_size, uint16 *refarray);
 
     HDFLIBAPI intn VSgetvdatas
                 (int32 id, uintn start_vd, uintn array_size, uint16 *refarray);
-    
+
     HDFLIBAPI intn VSsetblocksize
                 (int32 vkey, int32 block_size);
 
@@ -1758,7 +1758,7 @@ HDFLIBAPI int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create
                 (int32 vkey, int32  tagarray[], int32  refarray[], int32 n);
 
     HDFLIBAPI int32 Vgetuservgs
-                (int32 id, int32 start_ref, int32 n_vgs, int32 *refarray); 
+                (int32 id, int32 start_ref, int32 n_vgs, int32 *refarray);
 
     HDFLIBAPI intn Vgettagref
                 (int32 vkey, int32 which, int32  * tag, int32  * ref);
@@ -1812,13 +1812,13 @@ HDFLIBAPI int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create
                 (int32 f, int32 ref);
 
     HDFLIBAPI intn Vgisinternal
-		(int32 vkey);
+        (int32 vkey);
 
-    HDFLIBAPI intn Visinternal	/* this function is replaced by Vgisinternal */
-		(const char *classname);
+    HDFLIBAPI intn Visinternal    /* this function is replaced by Vgisinternal */
+        (const char *classname);
 
     HDFLIBAPI intn Vgetvgroups
-		(int32 id, uintn start_vg, uintn n_vgs, uint16 *refarray);
+        (int32 id, uintn start_vg, uintn n_vgs, uint16 *refarray);
 
 
 /*******************************************************************************
@@ -1826,8 +1826,8 @@ NAME
    Vdeletetagref - delete tag/ref pair in Vgroup
 
 DESCRIPTION
-    Deletes the given tag/ref pair from the Vgroup.  If the given tag/ref pair 
-    does not exist in the vgroup the routine will return FAIL. Users should use 
+    Deletes the given tag/ref pair from the Vgroup.  If the given tag/ref pair
+    does not exist in the vgroup the routine will return FAIL. Users should use
     Vinqtagref() to check if the tag/ref pair exists before deleting.
 
 RETURNS
@@ -1836,7 +1836,7 @@ RETURNS
 
 *******************************************************************************/
 HDFLIBAPI intn
-Vdeletetagref(int32 vkey, /* IN: vgroup key */ 
+Vdeletetagref(int32 vkey, /* IN: vgroup key */
               int32 tag,  /* IN: tag to delete in vgroup */
               int32 ref   /* IN: ref to delete in vgroup */);
 
@@ -1889,7 +1889,7 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
 
     HDFLIBAPI int32 VSQueryref
                 (int32 vkey);
- 
+
     HDFLIBAPI int32 VSgetid
                 (HFILEID f, int32 vsref);
 
@@ -1931,18 +1931,18 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
                 (int32 vkey, int32 idx);
 
     HDFLIBAPI intn VSsetexternalfile
-		(int32 vkey, const char *filename, int32 offset);
+        (int32 vkey, const char *filename, int32 offset);
 
     HDFLIBAPI intn VSgetexternalfile
-		 (int32 vkey, uintn name_len, char *filename, int32* offset);
+        (int32 vkey, uintn name_len, char *filename, int32* offset);
 
     HDFLIBAPI intn VSgetexternalinfo
-		 (int32 vkey, uintn name_len, char *filename, int32* offset,
-		 int32* length);
+        (int32 vkey, uintn name_len, char *filename, int32* offset,
+        int32* length);
 
     HDFLIBAPI intn VSfpack
                 (int32 vsid, intn packtype, const char *fields_in_buf,
-                void * buf, intn bufsz, intn n_records, 
+                void * buf, intn bufsz, intn n_records,
                 const char *fields, void * fldbufpt[]);
 
 /*

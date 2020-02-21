@@ -9,7 +9,9 @@
 #define YY_FLEX_MINOR_VERSION 5
 
 #include <stdio.h>
-/* Windows does not have unistd.h */
+
+#include "h4config.h"
+/* Windows may not have unistd.h */
 #ifdef H4_HAVE_UNISTD_H
 #include <unistd.h>
 #endif

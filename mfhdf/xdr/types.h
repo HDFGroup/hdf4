@@ -1,4 +1,4 @@
-/*	$NetBSD: types.h,v 1.13 2000/06/13 01:02:44 thorpej Exp $	*/
+/*    $NetBSD: types.h,v 1.13 2000/06/13 01:02:44 thorpej Exp $    */
 
 /*
  * Copyright (c) 2009, Sun Microsystems, Inc.
@@ -27,8 +27,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- *	from: @(#)types.h 1.18 87/07/24 SMI
- *	from: @(#)types.h	2.3 88/08/15 4.0 RPCSRC
+ *    from: @(#)types.h 1.18 87/07/24 SMI
+ *    from: @(#)types.h    2.3 88/08/15 4.0 RPCSRC
  * $FreeBSD: src/include/rpc/types.h,v 1.10.6.1 2003/12/18 00:59:50 peter Exp $
  */
 /*
@@ -36,6 +36,8 @@
  */
 #ifndef __TYPES_RPC_HEADER__
 #define __TYPES_RPC_HEADER__
+
+#include "h4config.h"
 
 #ifdef H4_HAVE_STDINT_H
 #include <stdint.h>

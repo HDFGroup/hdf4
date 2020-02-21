@@ -3,7 +3,7 @@
  *        Not for Resale. All copies to include this notice.
  */
 
-#include "H4api_adpt.h"
+#include "h4config.h"
 
 /*
  * This program tests only the xdr library functionality required by netCDF.

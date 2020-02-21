@@ -40,7 +40,7 @@
 static char sccsid[] = "@(#)xdr.c 1.35 87/08/12";
 #endif
 
-#include "H4api_adpt.h"
+#include "h4config.h"
 
 #include <stdio.h>
 #include <string.h>

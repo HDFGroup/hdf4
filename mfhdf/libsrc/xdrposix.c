@@ -26,6 +26,11 @@
 typedef NETLONG     netlong;
 #undef  NETLONG
 
+#include <string.h>
+#include "local_nc.h" /* prototypes for NCadvis, nc_error */
+            /* also obtains <stdio.h>, <rpc/types.h>, &
+            * <rpc/xdr.h> */
+
 #ifdef H4_HAVE_STDINT_H
 # include <stdint.h>
 #endif
@@ -46,10 +51,6 @@ typedef NETLONG     netlong;
 # include <sys/types.h>
 #endif
 
-#include <string.h>
-#include "local_nc.h" /* prototypes for NCadvis, nc_error */
-            /* also obtains <stdio.h>, <rpc/types.h>, &
-            * <rpc/xdr.h> */
 /*EIP #include "netcdf.h" */
 #include "mfhdf.h"
 

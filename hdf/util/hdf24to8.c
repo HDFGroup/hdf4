@@ -47,11 +47,11 @@ typedef unsigned int UINT;
 
 #include <stdio.h>
 
+#include "hdf.h"
+
 #ifdef H4_HAVE_SYS_FILE_H
 #include <sys/file.h>
 #endif
-
-#include "hdf.h"
 
 #define USAGE   fprintf (stderr, "usage: hdf24hdf8 hdf24_file hdf8_file\n")
 
