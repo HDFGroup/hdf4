@@ -165,7 +165,11 @@ HCIinit_coder(int16 acc_mode, comp_coder_info_t * cinfo, comp_coder_t coder_type
     CONSTR(FUNC, "HCIinit_coder");  /* for HERROR */
 
     HCget_config_info(coder_type, &comp_info);
-    if ((comp_info & (COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED)) == 0) {
+/* TODO: This construct S.B.
+ *       (comp_info & (COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED))
+ *     but the calling code does not handle it correctly
+ */
+    if ((comp_info & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
     /* coder not present?? */
               HRETURN_ERROR(DFE_BADCODER, FAIL)
     }
