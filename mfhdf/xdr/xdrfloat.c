@@ -1,12 +1,35 @@
-/* @(#)xdr_float.c    1.1 87/11/04 3.9 RPCSRC */
-#if !defined(lint) && defined(SCCSIDS)
-static char sccsid[] = "@(#)xdr_float.c 1.12 87/08/11 Copyr 1984 Sun Micro";
-#endif
-
-#include "H4api_adpt.h"
 
 /*
- * xdr_float.c, Generic XDR routines impelmentation.
+ * Copyright (c) 2009, Sun Microsystems, Inc.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * - Redistributions of source code must retain the above copyright notice,
+ *   this list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+ * - Neither the name of Sun Microsystems, Inc. nor the names of its
+ *   contributors may be used to endorse or promote products derived
+ *   from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+
+
+/*
+ * xdr_float.c, Generic XDR routines implementation.
  *
  * Copyright (C) 1984, Sun Microsystems, Inc.
  *
@@ -15,45 +38,12 @@ static char sccsid[] = "@(#)xdr_float.c 1.12 87/08/11 Copyr 1984 Sun Micro";
  * xdr.
  */
 
+#include "H4api_adpt.h"
+
 #include <stdio.h>
 
 #include "types.h"
 #include "xdr.h"
-
-/* from netCDF */
-#define XDRUNIT 4
-
-/* from netCDF */
-/* signature: void swapinline32(unsigned int* ip) */
-#define swapinline32(ip)           \
-{                                  \
-    char dst[4];                   \
-    char* src = (char*)(ip);       \
-    dst[0] = src[3];               \
-    dst[1] = src[2];               \
-    dst[2] = src[1];               \
-    dst[3] = src[0];               \
-    *(ip) = *((unsigned int*)dst); \
-}
-
-/* from netCDF */
-/* Double needs special handling */
-void
-xdrntohdouble(char* c8, double* dp)
-{
-    unsigned int ii[2];
-    memcpy(ii,c8,(size_t)2*XDRUNIT);
-    unsigned int tmp;
-
-    swapinline32(&ii[0]);
-    swapinline32(&ii[1]);
-
-    /* interchange ii[0] and ii[1] */
-    tmp = ii[0];
-    ii[0] = ii[1];
-    ii[1] = tmp;
-    if(dp) *dp = *(double*)ii;
-}
 
 bool_t
 xdr_float(xdrs, fp)
