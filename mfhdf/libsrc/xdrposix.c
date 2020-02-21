@@ -38,7 +38,7 @@ typedef NETLONG     netlong;
 # include <io.h>
 #endif
 
-#ifdef H4_HAVE_FCNTL
+#ifdef H4_HAVE_FCNTL_H
 # include <fcntl.h>
 #endif
 

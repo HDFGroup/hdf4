@@ -31,7 +31,7 @@
 #ifdef H4_HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-#ifdef H4_HAVE_FCNTL
+#ifdef H4_HAVE_FCNTL_H
 # include <fcntl.h>
 #endif
 #include <math.h>
