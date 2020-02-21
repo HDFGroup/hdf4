@@ -206,24 +206,24 @@ struct xdr_discrim {
  * N.B. and frozen for all time: each data type here uses 4 bytes
  * of external representation.
  */
-#define IXDR_GET_INT32(buf)        ((int32_t)ntohl((u_int32_t)*(buf)++))
-#define IXDR_PUT_INT32(buf, v)        (*(buf)++ =(int32_t)htonl((u_int32_t)v))
-#define IXDR_GET_U_INT32(buf)        ((u_int32_t)IXDR_GET_INT32(buf))
+#define IXDR_GET_INT32(buf)         ((int32_t)ntohl((uint32_t)*(buf)++))
+#define IXDR_PUT_INT32(buf, v)      (*(buf)++ =(int32_t)htonl((uint32_t)v))
+#define IXDR_GET_U_INT32(buf)       ((uint32_t)IXDR_GET_INT32(buf))
 #define IXDR_PUT_U_INT32(buf, v)    IXDR_PUT_INT32((buf), ((int32_t)(v)))
 
-#define IXDR_GET_LONG(buf)        ((long)ntohl((u_int32_t)*(buf)++))
-#define IXDR_PUT_LONG(buf, v)        (*(buf)++ =(int32_t)htonl((u_int32_t)v))
+#define IXDR_GET_LONG(buf)          ((long)ntohl((uint32_t)*(buf)++))
+#define IXDR_PUT_LONG(buf, v)       (*(buf)++ =(int32_t)htonl((uint32_t)v))
 
-#define IXDR_GET_BOOL(buf)        ((bool_t)IXDR_GET_LONG(buf))
-#define IXDR_GET_ENUM(buf, t)        ((t)IXDR_GET_LONG(buf))
+#define IXDR_GET_BOOL(buf)          ((bool_t)IXDR_GET_LONG(buf))
+#define IXDR_GET_ENUM(buf, t)       ((t)IXDR_GET_LONG(buf))
 #define IXDR_GET_U_LONG(buf)        ((u_long)IXDR_GET_LONG(buf))
-#define IXDR_GET_SHORT(buf)        ((short)IXDR_GET_LONG(buf))
-#define IXDR_GET_U_SHORT(buf)        ((u_short)IXDR_GET_LONG(buf))
+#define IXDR_GET_SHORT(buf)         ((short)IXDR_GET_LONG(buf))
+#define IXDR_GET_U_SHORT(buf)       ((u_short)IXDR_GET_LONG(buf))
 
-#define IXDR_PUT_BOOL(buf, v)        IXDR_PUT_LONG((buf), (v))
-#define IXDR_PUT_ENUM(buf, v)        IXDR_PUT_LONG((buf), (v))
-#define IXDR_PUT_U_LONG(buf, v)        IXDR_PUT_LONG((buf), (v))
-#define IXDR_PUT_SHORT(buf, v)        IXDR_PUT_LONG((buf), (v))
+#define IXDR_PUT_BOOL(buf, v)       IXDR_PUT_LONG((buf), (v))
+#define IXDR_PUT_ENUM(buf, v)       IXDR_PUT_LONG((buf), (v))
+#define IXDR_PUT_U_LONG(buf, v)     IXDR_PUT_LONG((buf), (v))
+#define IXDR_PUT_SHORT(buf, v)      IXDR_PUT_LONG((buf), (v))
 #define IXDR_PUT_U_SHORT(buf, v)    IXDR_PUT_LONG((buf), (v))
 
 /*
@@ -240,19 +240,14 @@ XDRLIBAPI bool_t    xdr_u_long(XDR *, u_long *);
 XDRLIBAPI bool_t    xdr_short(XDR *, short *);
 XDRLIBAPI bool_t    xdr_u_short(XDR *, u_short *);
 XDRLIBAPI bool_t    xdr_int8_t(XDR *, int8_t *);
-XDRLIBAPI bool_t    xdr_u_int8_t(XDR *, uint8_t *);
 XDRLIBAPI bool_t    xdr_uint8_t(XDR *, uint8_t *);
 XDRLIBAPI bool_t    xdr_int16_t(XDR *, int16_t *);
-XDRLIBAPI bool_t    xdr_u_int16_t(XDR *, u_int16_t *);
 XDRLIBAPI bool_t    xdr_uint16_t(XDR *, uint16_t *);
 XDRLIBAPI bool_t    xdr_int32_t(XDR *, int32_t *);
-XDRLIBAPI bool_t    xdr_u_int32_t(XDR *, u_int32_t *);
 XDRLIBAPI bool_t    xdr_uint32_t(XDR *, uint32_t *);
 XDRLIBAPI bool_t    xdr_int64_t(XDR *, int64_t *);
-XDRLIBAPI bool_t    xdr_u_int64_t(XDR *, u_int64_t *);
 XDRLIBAPI bool_t    xdr_uint64_t(XDR *, uint64_t *);
 XDRLIBAPI bool_t    xdr_quad_t(XDR *, int64_t *);
-XDRLIBAPI bool_t    xdr_u_quad_t(XDR *, u_int64_t *);
 XDRLIBAPI bool_t    xdr_bool(XDR *, bool_t *);
 XDRLIBAPI bool_t    xdr_enum(XDR *, enum_t *);
 XDRLIBAPI bool_t    xdr_array(XDR *, char **, u_int *, u_int, u_int, xdrproc_t );
