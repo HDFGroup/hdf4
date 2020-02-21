@@ -39,7 +39,7 @@
 #include <unistd.h>
 #endif
 
-#if defined _WIN32 || defined __MINGW32__
+#if defined _WIN32
 #define snprintf sprintf_s
 #define ssize_t int32
 #endif

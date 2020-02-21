@@ -68,7 +68,7 @@ static intn test_read_dim()
        path, so we need to special case here.  It is best to look for the
        testfile in the same path, and the Windows test script will make sure
        to put it there first.  - SJW 2007/09/19 */
-#if !(defined _WIN32 || defined __MINGW32__)
+#if !defined _WIN32
     /* This is to get to the file when the library was built without
        srcdir option and the test is ran by ./hdftest in the src directory
        hdf4/mfhdf/libsrc instead of by make check.  - BMR 2007/08/09 */
@@ -161,7 +161,7 @@ test_netcdf_reading()
        path, so we need to special case here.  It is best to look for the
        testfile in the same path, and the Windows test script will make sure
        to put it there first.  - SJW 2007/09/19 */
-#if !(defined _WIN32 || defined __MINGW32__)
+#if !defined _WIN32
     /* This is to get to the file 'test1.nc' when the library was built without
        srcdir option and the test is ran by ./hdftest in the src directory
        hdf4/mfhdf/libsrc instead of by make check.  - BMR 2007/08/09 */

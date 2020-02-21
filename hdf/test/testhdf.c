@@ -123,7 +123,7 @@ main(int argc, char *argv[])
     setbuf(stderr, NULL);
     setbuf(stdout, NULL);
     /* Tests are generally arranged from least to most complexity... */
-#if !(defined _WIN32 || defined __MINGW32__)
+#if !defined _WIN32
     InitTest("bitvect", test_bitvect, "Bit-Vector routines");
     InitTest("tbbt", test_tbbt, "Threaded Balanced Binary Trees");
 #endif

@@ -47,7 +47,7 @@ FRETVAL(intf) nscsnatt();
 FRETVAL(intf) nsfsflmd();
 #endif /* PROTOTYPE */
 
-#if (defined _WIN32 || defined __MINGW32__) && !defined CMAKE_INTDIR
+#if defined _WIN32 && !defined CMAKE_INTDIR
 
 /*-----------------------------------------------------------------------------
  * Name:    scend
