@@ -1976,7 +1976,7 @@ Void *values ;
         } /* else */
         return(TRUE) ;
     case NC_LONG :
-        xdr_NC_fnct = xdr_long ;
+        xdr_NC_fnct = xdr_int ;
         szof = sizeof(nclong) ;
         break ;
     case NC_FLOAT :
