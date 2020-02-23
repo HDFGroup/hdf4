@@ -102,10 +102,10 @@ if(ret == FAIL) {printf("*** UNEXPECTED RETURN from %s is %ld at line %4d in %s\
 #define MESSAGE(v,a) {if (Verbosity>v) {a}}
 
 /* definitions for command strings */
-#define VERBOSITY_STR	"Verbosity"
-#define SKIP_STR	"Skip"
-#define TEST_STR	"Test"
-#define CLEAN_STR	"Cleanup"
+#define VERBOSITY_STR    "Verbosity"
+#define SKIP_STR    "Skip"
+#define TEST_STR    "Test"
+#define CLEAN_STR    "Cleanup"
 
 /* Output notices */
 #define H4_PASSED()        {puts(" PASSED");fflush(stdout);}
@@ -130,10 +130,10 @@ void print_mismatched(const void *s1, const void *s2, int32 size2cmp);
 intn make_datafilename(char* basename, char* testfile, unsigned int size);
 
 /* System command to use for Cleanup */
-#   ifdef _WIN32
-#   define CLEAN_CMD  "del *.hdf"   
+#   if defined _WIN32
+#   define CLEAN_CMD  "del *.hdf"
 #   else
 /* default is Unix */
-#   define CLEAN_CMD	"rm -f *.hdf"
+#   define CLEAN_CMD    "rm -f *.hdf"
 #   endif  /* _WIN32  */
 #endif /* _TUTILS_H */

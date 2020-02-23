@@ -94,7 +94,7 @@ DYN_VWRITELIST;
 /* If there are too many attrs and performance becomes a problem,
    the vs_attr_t list defined below can be replaced by an
    array of attr lists, each list contains attrs for 1 field.
- */ 
+ */
 typedef struct dyn_vsattr_struct
 {
       int32    findex;     /* which field this attr belongs to */
@@ -138,11 +138,11 @@ struct vgroup_desc
       vg_attr_t  *alist;        /* index of new-style attributes, by Vsetattr */
       int32       noldattrs;    /* number of old-style attributes */
       vg_attr_t  *old_alist;    /* refs of attributes - only used in memory to
-				prevent repeated code in making the list; see
-				Voldnattrs's header for details -BMR 2/4/2011 */
+                prevent repeated code in making the list; see
+                Voldnattrs's header for details -BMR 2/4/2011 */
       vg_attr_t  *all_alist;    /* combined list; previous approach, only keep
-				just in case we come back to that approach; will
-				remove it once we decide not to go back 2/16/11 */
+                just in case we come back to that approach; will
+                remove it once we decide not to go back 2/16/11 */
       int16       version, more; /* version and "more" field */
       struct vgroup_desc *next; /* pointer to next node (for free list only) */
   };
@@ -254,7 +254,7 @@ extern      "C"
     void VSIrelease_vdata_node(VDATA *v);
 
     intn VSIgetvdatas(int32 id, const char *vsclass, const uintn start_vd,
-	const uintn n_vds, uint16 *refarray);
+            const uintn n_vds, uint16 *refarray);
 
     HDFLIBAPI vsinstance_t *VSIget_vsinstance_node(void);
 

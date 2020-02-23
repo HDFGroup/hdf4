@@ -15,9 +15,6 @@
 #include "hdiff_list.h"
 #include "hdiff_mattbl.h"
 
-#include "hdf.h"
-#include "mfhdf.h"
-#include "hdiff.h"
 #include "vgint.h"
 
 static void fmt_print(uint8 *x, int32 type);
@@ -27,7 +24,7 @@ static uint32 vdata_cmp(int32  vs1, int32  vs2, char   *gname, char   *cname, di
 /*-------------------------------------------------------------------------
  * Function: diff_vs
  *
- * Purpose: diff for VS 
+ * Purpose: diff for VS
  *
  * Return: Number of differences found
  *
@@ -40,17 +37,17 @@ static uint32 vdata_cmp(int32  vs1, int32  vs2, char   *gname, char   *cname, di
 
 uint32 diff_vs( int32 file1_id,
                 int32 file2_id,
-                int32 ref1,              
+                int32 ref1,
                 int32 ref2,
-                diff_opt_t * opt)          
+                diff_opt_t * opt)
 {
  int32 vdata1_id,             /* vdata identifier */
        n_records1,            /* number of records */
-       vdata1_size, 
+       vdata1_size,
        interlace1_mode,
        vdata2_id=-1,          /* vdata identifier */
        n_records2,            /* number of records */
-       vdata2_size, 
+       vdata2_size,
        interlace2_mode;
  char  vdata1_name [VSNAMELENMAX];
  char  vdata1_class[VSNAMELENMAX];
@@ -61,7 +58,7 @@ uint32 diff_vs( int32 file1_id,
  uint32 nfound=0;
 
 
- 
+
 /*-------------------------------------------------------------------------
  * object 1
  *-------------------------------------------------------------------------
@@ -84,18 +81,18 @@ uint32 diff_vs( int32 file1_id,
   printf( "Failed to name for VS ref %ld\n", ref1);
   goto out;
  }
- 
- if (VSinquire(vdata1_id, &n_records1, &interlace1_mode, fieldname1_list, 
+
+ if (VSinquire(vdata1_id, &n_records1, &interlace1_mode, fieldname1_list,
   &vdata1_size, vdata1_name) == FAIL) {
   printf( "Failed to get info for VS ref %ld\n", ref1);
   goto out;
  }
- 
+
  if (VFnfields(vdata1_id)== FAIL ){
   printf( "Failed getting fields forVS ref %ld\n", ref1);
   goto out;
  }
- 
+
 
 /*-------------------------------------------------------------------------
  * object 2
@@ -119,13 +116,13 @@ uint32 diff_vs( int32 file1_id,
   printf( "Failed to name for VS ref %ld\n", ref2);
   goto out;
  }
- 
- if (VSinquire(vdata2_id, &n_records2, &interlace2_mode, fieldname2_list, 
+
+ if (VSinquire(vdata2_id, &n_records2, &interlace2_mode, fieldname2_list,
   &vdata2_size, vdata2_name) == FAIL) {
   printf( "Failed to get info for VS ref %ld\n", ref2);
   goto out;
  }
- 
+
  if (VFnfields(vdata2_id)== FAIL ){
   printf( "Failed getting fields forVS ref %ld\n", ref2);
   goto out;
@@ -135,7 +132,7 @@ uint32 diff_vs( int32 file1_id,
  * check for input VSs
  *-------------------------------------------------------------------------
  */
- 
+
  if (opt->nuvars > 0)   /* if specified vdata is selected */
  {
   int imatch = 0, j;
@@ -151,7 +148,7 @@ uint32 diff_vs( int32 file1_id,
   {
    goto do_nothing;
   }
- }   
+ }
 
 
 /*-------------------------------------------------------------------------
@@ -160,7 +157,7 @@ uint32 diff_vs( int32 file1_id,
  */
 
  if (opt->verbose)
-  printf("Comparing <%s>\n",vdata1_name);  
+  printf("Comparing <%s>\n",vdata1_name);
 
  nfound=vdata_cmp(vdata1_id,vdata2_id,vdata1_name,vdata1_class,opt);
 
@@ -179,7 +176,7 @@ do_nothing:
      }
  }
 
- 
+
  return nfound;
 
 out:
@@ -198,10 +195,10 @@ out:
  *-------------------------------------------------------------------------
  */
 
-static uint32 vdata_cmp(int32  vs1, 
-                        int32  vs2, 
-                        char   *gname, 
-                        char   *cname, 
+static uint32 vdata_cmp(int32  vs1,
+                        int32  vs2,
+                        char   *gname,
+                        char   *cname,
                         diff_opt_t * opt)
 {
  int32   i, j, k, iflag;
@@ -218,17 +215,17 @@ static uint32 vdata_cmp(int32  vs1,
  int32   off1[60], off2[60];
  DYN_VWRITELIST *w1, *w2;
  uint32  nfound=0;
- uint32  max_err_cnt = opt->max_err_cnt; 
- 
+ uint32  max_err_cnt = opt->max_err_cnt;
+
  VSinquire(vs1, &nv1, &interlace1, fields1, &vsize1, vsname1);
  VSinquire(vs2, &nv2, &interlace2, fields2, &vsize2, vsname2);
- 
+
  vsotag1 = VSQuerytag(vs1);
  VSgetclass(vs1,vsclass1);
- 
+
  vsotag2 = VSQuerytag(vs2);
  VSgetclass(vs2,vsclass2);
- 
+
  if (vsotag1 != vsotag2 || nv1 != nv2 || interlace1 != interlace2 ||
   strcmp(fields1, fields2) != 0 || strcmp(vsclass1, vsclass2) != 0 ||
   (strcmp(vsclass1, "Attr0.0") != 0 && vsize1 != vsize2))
@@ -242,47 +239,47 @@ static uint32 vdata_cmp(int32  vs1,
    vsotag2, nv2, interlace2, fields2, vsize2, vsclass2);
   return 0;
  }
- 
- 
+
+
  /* compare the data */
- 
+
     buf1 = (uint8 *)HDmalloc((unsigned) (nv1 * vsize1));
     buf2 = (uint8 *)HDmalloc((unsigned) (nv2 * vsize2));
- if (!buf1 || !buf2) 
+ if (!buf1 || !buf2)
  {
   printf("Out of memory!");
   opt->err_stat = 1;
   return 0;
  }
- 
+
  VSsetfields(vs1, fields1);
  VSread(vs1, buf1, nv1, interlace1);
  w1 = (DYN_VWRITELIST*) vswritelist(vs1);
- 
+
  VSsetfields(vs2, fields2);
  VSread(vs2, buf2, nv2, interlace2);
  w2 = (DYN_VWRITELIST*) vswritelist(vs2);
- 
+
  b1 = buf1;
  b2 = buf2;
- 
+
  for (j=0; j < w1->n; j++)
   off1[j] = DFKNTsize(w1->type[j] | DFNT_NATIVE);
- 
+
  for (j=0; j < w2->n; j++)
   off2[j] = DFKNTsize(w2->type[j] | DFNT_NATIVE);
- 
+
  iflag = 0;
- 
+
  err_cnt = 0;
- 
+
  if (vsize1 == vsize2)
  {
   for (i=0; i<nv1; i++)
   {
             if (HDmemcmp(b1, b2, (size_t)vsize1) == 0)
    {
-    b1 += vsize1;   
+    b1 += vsize1;
     b2 += vsize2;
     continue;
    }
@@ -290,11 +287,11 @@ static uint32 vdata_cmp(int32  vs1,
    {
     iflag = 1;         /* there is a difference */
     printf("\n---------------------------\n");
-    printf("Vdata Name: %s (Data record comparison)\n", 
+    printf("Vdata Name: %s (Data record comparison)\n",
      vsname1);
     nfound ++;
    }
-   
+
    printf("> %ld: ", i);
    for (j=0; j<w1->n; j++)
    {
@@ -305,7 +302,7 @@ static uint32 vdata_cmp(int32  vs1,
      if (w1->type[j] != DFNT_CHAR)
       putchar(' ');
     }
-   }        
+   }
    putchar('\n');
    printf("< %ld: ", i);
    for (j=0; j<w2->n; j++)
@@ -317,9 +314,9 @@ static uint32 vdata_cmp(int32  vs1,
      if (w2->type[j] != DFNT_CHAR)
       putchar(' ');
     }
-   }        
+   }
    putchar('\n');
-   
+
    if (max_err_cnt > 0)
    {
     err_cnt++;
@@ -337,7 +334,7 @@ static uint32 vdata_cmp(int32  vs1,
    {
     iflag = 1;         /* there is a difference */
     printf("\n---------------------------\n");
-    printf("Vdata Name: %s (Data record comparison)\n", 
+    printf("Vdata Name: %s (Data record comparison)\n",
      vsname1);
     nfound ++;
    }
@@ -351,7 +348,7 @@ static uint32 vdata_cmp(int32  vs1,
      if (w1->type[j] != DFNT_CHAR)
       putchar(' ');
     }
-   }  
+   }
    putchar('\n');
    printf("< %ld: ", i);
    for (j=0; j<w2->n; j++)
@@ -363,9 +360,9 @@ static uint32 vdata_cmp(int32  vs1,
      if (w2->type[j] != DFNT_CHAR)
       putchar(' ');
     }
-   }  
+   }
    putchar('\n');
-   
+
    if (max_err_cnt > 0)
    {
     err_cnt++;
@@ -373,9 +370,9 @@ static uint32 vdata_cmp(int32  vs1,
      break;
    }
   }
-  
+
  }
- 
+
     if (buf1) HDfree((char *) buf1);
     if (buf2) HDfree((char *) buf2);
 
@@ -398,24 +395,24 @@ fmt_print(uint8 *x, int32 type)
  int32    l = 0;
  float32  f = 0;
  float64  d = 0;
- 
- switch(type) 
+
+ switch(type)
  {
  case DFNT_CHAR:
   putchar(*x);
   break;
-  
+
  case DFNT_UINT8:
  case DFNT_INT8:
   printf("%02x ", *x);
   break;
-  
+
  case DFNT_UINT16:
  case DFNT_INT16:
   HDmemcpy(&s, x, sizeof(int16));
   printf("%d", s);
   break;
-  
+
  case DFNT_UINT32:
   HDmemcpy(&l, x, sizeof(int32));
   printf("%lu", l);
@@ -425,20 +422,20 @@ fmt_print(uint8 *x, int32 type)
   HDmemcpy(&l, x, sizeof(int32));
   printf("%ld", l);
   break;
-  
+
  case DFNT_FLOAT32:
   HDmemcpy(&f, x, sizeof(float32));
   printf("%f", f);
   break;
-  
+
  case DFNT_FLOAT64:
   HDmemcpy(&d, x, sizeof(float64));
   printf("%f", d);
   break;
-  
- default: 
-  fprintf(stderr,"sorry, type [%ld] not supported\n", type); 
+
+ default:
+  fprintf(stderr,"sorry, type [%ld] not supported\n", type);
   break;
-  
+
  }
 }

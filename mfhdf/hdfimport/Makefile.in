@@ -583,17 +583,17 @@ ACLOCAL_AMFLAGS = "-I m4"
 # .chkexe files are used to mark tests that have run successfully.
 # .chklog files are output from those tests.
 CHECK_CLEANFILES = *.chkexe *.chklog
-hdfimport_INCLUDES = -I$(top_srcdir)/hdf/src        \
-         -I$(top_srcdir)/mfhdf/libsrc   \
+hdfimport_INCLUDES = -I$(top_srcdir)/hdf/src   \
+         -I$(top_srcdir)/mfhdf/libsrc        \
          -I$(top_builddir)/mfhdf/libsrc
 
 DEFINES = -DNDEBUG -DHDF
-AM_CPPFLAGS = $(hdfimport_INCLUDES) $(DEFINES)
+AM_CPPFLAGS = $(hdfimport_INCLUDES) $(XDRINC) $(DEFINES)
 hdfimport_LDFLAGS = $(LT_STATIC_EXEC) $(AM_LDFLAGS)
 
 #############################################################################
 #############################################################################
-LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@
+LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB) @LIBS@
 
 #############################################################################
 #############################################################################

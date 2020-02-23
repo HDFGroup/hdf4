@@ -31,16 +31,18 @@
 #ifdef H4_HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-#include <fcntl.h>
+#ifdef H4_HAVE_FCNTL_H
+# include <fcntl.h>
+#endif
 #include <math.h>
 #ifdef H4_HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 
-#ifdef _WIN32
+#if defined _WIN32
 #define snprintf sprintf_s
 #define ssize_t int32
-#endif 
+#endif
 
 #ifndef DATAINFO_TESTER
 #define DATAINFO_TESTER /* to include mfdatainfo.h */
@@ -207,7 +209,7 @@ static intn test_nonspecial_SDSs() {
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "test_nonspecial_SDSs: SDendaccess");
 
-    /* 
+    /*
      * Create a 2-dim 5x8 element SDS, type float32, then write 5x8 values
      * to it
      */
@@ -230,7 +232,7 @@ static intn test_nonspecial_SDSs() {
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "test_nonspecial_SDSs: SDendaccess");
 
-    /* 
+    /*
      * Create a 1-dim 20-element SDS, type char, then write 20 values
      * to it
      */
@@ -571,7 +573,7 @@ static intn test_compressed_SDSs()
             data2[ii][jj] = 500.50 * (ii + jj);
 
 #ifdef H4_HAVE_SZIP_ENCODER
-    /* 
+    /*
      * Create a 2-dim 5x8 element SDS, type float32, set SZIP compression,
      * then write 5x8 values to it
      */
@@ -606,7 +608,7 @@ static intn test_compressed_SDSs()
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "test_compressed_SDSs: SDendaccess 'SZIP-Data'");
 #else /* SZIP lib not available */
-    /* 
+    /*
      * Create a 2-dim 5x8 element SDS, type float32, set SZIP compression,
      * then write 5x8 values to it
      */
@@ -635,7 +637,7 @@ static intn test_compressed_SDSs()
     CHECK(status, FAIL, "test_compressed_SDSs: SDendaccess 'SZIP-Data'");
 #endif /* SZIP lib available */
 
-    /* 
+    /*
      * Create a 1-dim 20-element SDS, type char, set Skipping Huffman
      * compression, then write 20 values to it
      */
@@ -1278,7 +1280,7 @@ static intn test_chunked_partial()
 } /* test_chunked_partial */
 
 /*
- * Test with chunked and compressed SDS.  This routine creates 
+ * Test with chunked and compressed SDS.  This routine creates
  * "Chunked-Deflate-Data" and "Chunked-NoDeflate-Data" SDSs and writes the same
  * data to both.  It will then use SDgetdatainfo to verify the number of
  * data blocks.
@@ -1502,7 +1504,7 @@ static intn test_chkcmp_SDSs()
  * verify the number of data blocks.
  */
 #define EXTEND_FILE     "datainfo_extend.hdf"  /* data file */
-#define BLOCK_SIZE	400
+#define BLOCK_SIZE    400
 static intn test_extend_SDSs()
 {
     int32 sd_id, sds_id, sds_index;

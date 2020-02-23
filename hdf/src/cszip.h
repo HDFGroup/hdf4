@@ -47,31 +47,31 @@ extern      "C"
     ** from cszip.c
   */
 
-     extern int32 HCPcszip_stread
+HDFLIBAPI int32 HCPcszip_stread
                  (accrec_t * rec);
 
-     extern int32 HCPcszip_stwrite
+HDFLIBAPI int32 HCPcszip_stwrite
                  (accrec_t * rec);
 
-     extern int32 HCPcszip_seek
+HDFLIBAPI int32 HCPcszip_seek
                  (accrec_t * access_rec, int32 offset, int origin);
 
-     extern int32 HCPcszip_inquire
-                 (accrec_t * access_rec, int32 *pfile_id, uint16 *ptag, 
+HDFLIBAPI int32 HCPcszip_inquire
+                 (accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
 uint16 *pref,
                 int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
                   int16 *pspecial);
 
-     extern int32 HCPcszip_read
+HDFLIBAPI int32 HCPcszip_read
                  (accrec_t * access_rec, int32 length, void * data);
 
-     extern int32 HCPcszip_write
+HDFLIBAPI int32 HCPcszip_write
                  (accrec_t * access_rec, int32 length, const void * data);
 
-     extern intn HCPcszip_endaccess
+HDFLIBAPI intn HCPcszip_endaccess
                  (accrec_t * access_rec);
 
-     extern intn HCPsetup_szip_parms
+HDFLIBAPI intn HCPsetup_szip_parms
                  ( comp_info *c_info, int32 nt, int32 ncomp, int32 ndims, int32 *dims, int32 *cdims);
 
 #if defined c_plusplus || defined __cplusplus
@@ -103,7 +103,7 @@ comp_coder_szip_info_t;
 #define SZ_H4_REV_2 0x10000   /* special bit to signal revised format */
 
 #ifndef CSZIP_MASTER
-extern funclist_t cszip_funcs;   /* functions to perform szip encoding */
+HDFLIBAPI funclist_t cszip_funcs;   /* functions to perform szip encoding */
 #else
 funclist_t  cszip_funcs =
 {                               /* functions to perform szip encoding */

@@ -29,10 +29,10 @@
 
    Description:
         The fix to detect a dimension scale/coordinate variable in HDF file
-	caused incorrect result when attempting to retrieve the dimension
-	scale's number type from a netCDF file (bugzilla #1644.)
-	This test verifies that the number type of dimension scale is
-	retrieved correctly after the fix.
+    caused incorrect result when attempting to retrieve the dimension
+    scale's number type from a netCDF file (bugzilla #1644.)
+    This test verifies that the number type of dimension scale is
+    retrieved correctly after the fix.
 
    Return value:
         The number of errors occurred in this routine.
@@ -49,7 +49,7 @@
 static intn test_read_dim()
 {
     int32 fid, sds_id, status, dim1_id;
-    int32 dim_sizes[H4_MAX_VAR_DIMS];		/* read dimensions */
+    int32 dim_sizes[H4_MAX_VAR_DIMS];        /* read dimensions */
     intn  ii;
     int32 array_rank, num_type, attributes;
     char  dim_name[H4_MAX_NC_NAME], name[H4_MAX_NC_NAME];
@@ -58,7 +58,7 @@ static intn test_read_dim()
     intn  num_errs = 0;    /* number of errors so far */
 
     /* Generate the correct name for the test file, by prepending the source path */
-    if (srcdir && ((strlen(srcdir) + strlen(NC_FILE) + 1) < sizeof(testfile))) 
+    if (srcdir && ((strlen(srcdir) + strlen(NC_FILE) + 1) < sizeof(testfile)))
     {
         strcpy(testfile, srcdir);
         strcat(testfile, "/");
@@ -68,12 +68,12 @@ static intn test_read_dim()
        path, so we need to special case here.  It is best to look for the
        testfile in the same path, and the Windows test script will make sure
        to put it there first.  - SJW 2007/09/19 */
-#ifndef _WIN32
+#if !defined _WIN32
     /* This is to get to the file when the library was built without
        srcdir option and the test is ran by ./hdftest in the src directory
        hdf4/mfhdf/libsrc instead of by make check.  - BMR 2007/08/09 */
     if (srcdir == NULL)
-	strcpy(testfile, "./");
+    strcpy(testfile, "./");
 #endif /* _WIN32 */
 
     strcat(testfile, NC_FILE);
@@ -82,11 +82,14 @@ static intn test_read_dim()
     fid = SDstart(testfile, DFACC_READ);
     CHECK(fid, FAIL, "SDstart");
 
+    if (fid != FAIL) /* solution to stop hundreds of errors */
+    {
+
     /* Access first dataset to see what it is */
     sds_id = SDselect(fid, 0);
     CHECK(sds_id, FAIL, "SDselect");
 
-    /* Get info of the dataset and verify them: it is a LENGTH0 x LENGTH1 
+    /* Get info of the dataset and verify them: it is a LENGTH0 x LENGTH1
        array of type DFNT_INT16 and is named by DS0_NAME */
     status = SDgetinfo(sds_id, name, &array_rank, dim_sizes, &num_type, &attributes);
     CHECK(status, FAIL, "SDgetinfo");
@@ -109,12 +112,14 @@ static intn test_read_dim()
     status = SDend(fid);
     CHECK(status, FAIL, "test_dimensions: SDend");
 
+    } /* SDstart failed */
+
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
 
 } /* test_read_dim */
 
-static int16  netcdf_u16[2][3] = {{1, 2, 3}, 
+static int16  netcdf_u16[2][3] = {{1, 2, 3},
                                    {4, 5, 6}};
 
 /* Tests reading of netCDF file 'test1.nc' using the SDxxx inteface.
@@ -143,10 +148,10 @@ test_netcdf_reading()
     char  testfile[512] = "";
 
     /* Output message about test being performed */
-    TESTING("reading of netCDF file using the SDxxx inteface (tnetcdf.c)");
+    TESTING("reading of netCDF file using the SDxxx interface (tnetcdf.c)");
 
     /* Generate the correct name for the test file, by prepending the source path */
-    if (srcdir && ((strlen(srcdir) + strlen(basename) + 1) < sizeof(testfile))) 
+    if (srcdir && ((strlen(srcdir) + strlen(basename) + 1) < sizeof(testfile)))
     {
         strcpy(testfile, srcdir);
         strcat(testfile, "/");
@@ -156,12 +161,12 @@ test_netcdf_reading()
        path, so we need to special case here.  It is best to look for the
        testfile in the same path, and the Windows test script will make sure
        to put it there first.  - SJW 2007/09/19 */
-#ifndef _WIN32
+#if !defined _WIN32
     /* This is to get to the file 'test1.nc' when the library was built without
        srcdir option and the test is ran by ./hdftest in the src directory
        hdf4/mfhdf/libsrc instead of by make check.  - BMR 2007/08/09 */
     if (srcdir == NULL)
-	strcpy(testfile, "./");
+        strcpy(testfile, "./");
 #endif /* _WIN32 */
 
     strcat(testfile, basename);
@@ -190,10 +195,10 @@ test_netcdf_reading()
           num_errs++;
       }
 
-    /* Access and find the 2-dim dataset of data-type shorts(DFNT_INT16). 
-       in the file while querying every data set in the file. 
+    /* Access and find the 2-dim dataset of data-type shorts(DFNT_INT16).
+       in the file while querying every data set in the file.
        There should only be one dataset that matches and is named 'order'.*/
-    for (index = 0; index < n_datasets; index++) 
+    for (index = 0; index < n_datasets; index++)
       {
           sds_id = SDselect(sd_id, index);
           CHECK(sds_id, FAIL, "netCDF Read Test 1. SDselect failed for dataset in  file test1.nc");
@@ -204,7 +209,7 @@ test_netcdf_reading()
           /* look for the dataset 'order' based on rank and number type */
           if (rank == 2 && num_type == (int32)DFNT_INT16)
             { /* should only be one of these */
-                start[0] =  start[1] = 0; 
+                start[0] =  start[1] = 0;
                 edges [0] = dim_sizes[0];
                 edges [1] = dim_sizes[1];
                 status = SDreaddata (sds_id, start, NULL, edges, (VOIDP) array_data);

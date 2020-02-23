@@ -371,6 +371,8 @@ ACLOCAL_AMFLAGS = "-I m4"
 CHECK_CLEANFILES = *.chkexe *.chklog
 @HDF_BUILD_XDR_FALSE@XDR_DIR = 
 @HDF_BUILD_XDR_TRUE@XDR_DIR = xdr
+@HDF_BUILD_XDR_FALSE@XDRLIB = 
+@HDF_BUILD_XDR_FALSE@XDRINC = 
 @HDF_BUILD_FORTRAN_FALSE@FORTRAN_DIR = 
 @HDF_BUILD_FORTRAN_TRUE@FORTRAN_DIR = fortran
 
@@ -689,6 +691,8 @@ uninstall-am:
 	mostlyclean-libtool pdf pdf-am ps ps-am tags tags-am uninstall \
 	uninstall-am
 
+@HDF_BUILD_XDR_TRUE@export XDRLIB = $(abs_top_builddir)/mfhdf/xdr/libxdr.la
+@HDF_BUILD_XDR_TRUE@export XDRINC = -I$(top_srcdir)/mfhdf/xdr
 
 installcheck-local:
 	@(cd examples && $(MAKE) $(AM_MAKEFLAGS) $@) || exit 1;

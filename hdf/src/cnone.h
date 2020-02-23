@@ -37,27 +37,27 @@ extern      "C"
    ** from cnone.c
  */
 
-    extern int32 HCPcnone_stread
+HDFLIBAPI int32 HCPcnone_stread
                 (accrec_t * rec);
 
-    extern int32 HCPcnone_stwrite
+HDFLIBAPI int32 HCPcnone_stwrite
                 (accrec_t * rec);
 
-    extern int32 HCPcnone_seek
+HDFLIBAPI int32 HCPcnone_seek
                 (accrec_t * access_rec, int32 offset, int origin);
 
-    extern int32 HCPcnone_inquire
+HDFLIBAPI int32 HCPcnone_inquire
                 (accrec_t * access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
                int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
                  int16 *pspecial);
 
-    extern int32 HCPcnone_read
+HDFLIBAPI int32 HCPcnone_read
                 (accrec_t * access_rec, int32 length, void * data);
 
-    extern int32 HCPcnone_write
+HDFLIBAPI int32 HCPcnone_write
                 (accrec_t * access_rec, int32 length, const void * data);
 
-    extern intn HCPcnone_endaccess
+HDFLIBAPI intn HCPcnone_endaccess
                 (accrec_t * access_rec);
 
 #if defined c_plusplus || defined __cplusplus

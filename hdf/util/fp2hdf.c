@@ -173,9 +173,12 @@
 #include <string.h>
 #include <ctype.h>
 
-#ifdef _WIN32
-#include <sys/stat.h>
-#include <fcntl.h>
+#ifdef H4_HAVE_SYS_STAT_H
+# include <sys/stat.h>
+#endif
+
+#ifdef H4_HAVE_FCNTL_H
+# include <fcntl.h>
 #endif
 
 /*
@@ -373,14 +376,14 @@ main(int argc, char *argv[])
     int         token;
     int         state = 0;
 
-    
+
     const char *err1 = "Invalid number of arguments:  %d.\n";
     const char *err2 = "Error in state table.\n";
     const char *err3 = "No output file given.\n";
     const char *err4 = "Program aborted.\n";
 
-#ifdef _WIN32
-	_fmode = _O_BINARY;
+#if defined _WIN32
+    _fmode = _O_BINARY;
 #endif
 
     /*
@@ -401,8 +404,8 @@ main(int argc, char *argv[])
 
     opt.to_image = FALSE;   /* default: no image */
     opt.to_float = FALSE;   /* default: make float if no image */
-			    /* Set FALSE here.  Will be set TRUE */
-			    /* after confirming image option is not set.  */
+                /* Set FALSE here.  Will be set TRUE */
+                /* after confirming image option is not set.  */
     opt.ctm = EXPAND;   /* default: pixel replication */
     opt.hres = 0;   /* default: no expansion values */
     opt.vres = 0;
@@ -732,7 +735,7 @@ gfloat(char *infile, FILE * strm, float32 *fp32, struct Input *in)
     if (in->is_text == TRUE)
       {
 
-		if (fscanf(strm, "%e", fp32) != 1)
+        if (fscanf(strm, "%e", fp32) != 1)
             {
                 (void) fprintf(stderr, err1, infile);
                 goto err;
@@ -740,7 +743,7 @@ gfloat(char *infile, FILE * strm, float32 *fp32, struct Input *in)
       }
     else if (in->is_fp32 == TRUE)
       {
-		
+
           if (fread((char *) fp32, sizeof(float32), 1, strm) != 1)
             {
                 (void) fprintf(stderr, err1, infile);
@@ -1122,11 +1125,11 @@ gtype(char *infile, struct Input *in, FILE **strm)
                 goto err;
             }
           if (!HDmemcmp("TEXT", buf, 4) || !HDmemcmp("text", buf, 4)) {
-#ifdef _WIN32
-			  _fmode = _O_TEXT;
+#if defined _WIN32
+            _fmode = _O_TEXT;
 #endif
               in->is_text = TRUE;
-		  }
+        }
           else
             {
                 rewind(*strm);
@@ -1145,7 +1148,7 @@ gtype(char *infile, struct Input *in, FILE **strm)
                       (void) fprintf(stderr, err3, infile);
                       goto err;
                   }
-		
+
             }
       }
 

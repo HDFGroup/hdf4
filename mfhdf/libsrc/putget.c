@@ -14,11 +14,11 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/*	$Id$ */
+/*    $Id$ */
 
-#include	<string.h>
-#include	"local_nc.h"
-#include	"alloc.h"
+#include    <string.h>
+#include    "local_nc.h"
+#include    "alloc.h"
 #ifdef HDF
 #include    "hfile.h"    /* Ugh!  We need the defs for HI_READ and HI_SEEK */
 
@@ -66,11 +66,11 @@ const char *label ;
 unsigned count ;
 const long array[] ;
 {
-	fprintf(stderr, "%s", label) ;
-	fputc('\t',stderr) ;	
-	for(; count > 0 ; count--, array++)
-		fprintf(stderr," %ld", *array) ;
-	fputc('\n',stderr) ;	
+    fprintf(stderr, "%s", label) ;
+    fputc('\t',stderr) ;
+    for(; count > 0 ; count--, array++)
+        fprintf(stderr," %ld", *array) ;
+    fputc('\n',stderr) ;
 }
 #endif /* VDEBUG */
 
@@ -97,20 +97,20 @@ XDR *xdrs ;
 NC_var **vpp ;
 unsigned numvars ;
 {
-	unsigned ii ;
+    unsigned ii ;
 
-	for(ii = 0 ; ii < numvars ; ii++, vpp++)
-	{
-		if( !IS_RECVAR(*vpp) )
-		{
-			continue ;	/* skip non-record variables */
-		}
+    for(ii = 0 ; ii < numvars ; ii++, vpp++)
+    {
+        if( !IS_RECVAR(*vpp) )
+        {
+            continue ;    /* skip non-record variables */
+        }
 
-		/* compute sub size */
-		if( !xdr_NC_fill(xdrs, *vpp) )
-			return(FALSE) ;
-	}
-	return(TRUE) ;
+        /* compute sub size */
+        if( !xdr_NC_fill(xdrs, *vpp) )
+            return(FALSE) ;
+    }
+    return(TRUE) ;
 }
 
 
@@ -118,11 +118,11 @@ unsigned numvars ;
  * Check whether coords are valid for the variable.
  * For 'record' variables:
  *    + if the accessing is writing, add and fill records out with
- *	user-provided fill values or predefined fill values to the
- *	requested recno == coords[0], as a side effect.
+ *    user-provided fill values or predefined fill values to the
+ *    requested recno == coords[0], as a side effect.
  *    + if the accessing is reading, fill records with fill values up
- *	to the requested recno when an nc API (ie. ncvarget) leads to
- *	this, and flag as an error when an SD API (ie. SDreaddata) does.
+ *    to the requested recno when an nc API (ie. ncvarget) leads to
+ *    this, and flag as an error when an SD API (ie. SDreaddata) does.
  *    + update NC_var.numrecs to reflect the filled records
  *    + update NC.numrecs to NC_var.numrecs if NC_var.numrecs is larger
  * -BMR, 12/09/2008
@@ -130,54 +130,54 @@ unsigned numvars ;
 bool_t
 NCcoordck(handle, vp, coords)
 NC *handle ;
-NC_var *vp ; 
+NC_var *vp ;
 const long *coords ;
 {
-	const long *ip ;
-	unsigned long *up ;
-	const long *boundary ;
-	long unfilled ;	/* number of records that need to be filled */
+    const long *ip ;
+    unsigned long *up ;
+    const long *boundary ;
+    long unfilled ;    /* number of records that need to be filled */
 
-	boundary = NULL;	/* assuming no boundary check is needed */
-	if( IS_RECVAR(vp) )
+    boundary = NULL;    /* assuming no boundary check is needed */
+    if( IS_RECVAR(vp) )
       {
-      /* For the variable with unlimited dimension we need to check that 
+      /* For the variable with unlimited dimension we need to check that
          the size of the first dimension is non-negative, there is no
-         upper bound for it; the sizes of the rest of the dimensions are 
-         checked as for the regular fixed size variable (see the "for" loop 
-         further down) 
+         upper bound for it; the sizes of the rest of the dimensions are
+         checked as for the regular fixed size variable (see the "for" loop
+         further down)
                                                     EIP 01/13/09    */
 
-	/* Check that first dimension is non-negative */
+    /* Check that first dimension is non-negative */
           if(*coords < 0)
               goto bad ;
 
         /* Set up boundary to check the rest of the dims if there are more than one dim */
         if (vp->assoc->count > 1)
-	    boundary = coords + 1 ;
+        boundary = coords + 1 ;
 
       } else
-          boundary = coords ;	/* no unlimited, boundary starts at first dim */
-	
+          boundary = coords ;    /* no unlimited, boundary starts at first dim */
+
     if (boundary != NULL) /* no unlimited dim or unlimited dim and more than one dim */
     {
-	up = vp->shape + vp->assoc->count - 1 ;	/* pointer for dimension sizes */
-	ip = coords + vp->assoc->count - 1 ;	/* pointer for start coords */
+    up = vp->shape + vp->assoc->count - 1 ;    /* pointer for dimension sizes */
+    ip = coords + vp->assoc->count - 1 ;    /* pointer for start coords */
 
 #ifdef CDEBUG
-	fprintf(stderr,"	NCcoordck: coords %p, *coords %ld, count %ld, ip %p, boundary %p, *ip %ld\n",
+    fprintf(stderr,"    NCcoordck: coords %p, *coords %ld, count %ld, ip %p, boundary %p, *ip %ld\n",
             coords, *coords, vp->assoc->count, ip , boundary, *ip) ;
 #endif /* CDEBUG */
-	/* for each dimension, check if starting coord is within dim size */
-	for( ; ip >= boundary ; ip--, up--)
-	{
+    /* for each dimension, check if starting coord is within dim size */
+    for( ; ip >= boundary ; ip--, up--)
+    {
 #ifdef CDEBUG
-          fprintf(stderr,"	NCcoordck: ip %p, *ip %ld, up %p, *up %lu\n",
+          fprintf(stderr,"    NCcoordck: ip %p, *ip %ld, up %p, *up %lu\n",
                   ip, *ip, up, *up ) ;
 #endif /* CDEBUG */
           if( *ip < 0 || *ip >= (long)*up )
               goto bad ;
-	}
+    }
     } /* more than one dim */
 
     /* Reset ip to coords for subsequent use */
@@ -189,23 +189,23 @@ const long *coords ;
 
 #ifdef HDF
     /* If file is an HDF file (ie., not netCDF, created with HDF API or
-	HDF/nc API) and the variable has unlimited dimension */
-    if(handle->file_type == HDF_FILE && IS_RECVAR(vp)) 
+    HDF/nc API) and the variable has unlimited dimension */
+    if(handle->file_type == HDF_FILE && IS_RECVAR(vp))
       {
           void     *strg = NULL;
           void     *strg1 = NULL;
           NC_attr **attr = NULL;
           int count, byte_count;
           int len;
-            
+
         /* Determine if fill values need to be written.  For example, if
            vp's numrecs is 5, and the accessed index is 8 (*ip), then recs
            #5,6,7 will be filled with fill value.  Note: maybe '<' should be
-	   "<=", but adding it alone caused ill-effects so a through study
-	   is needed, plus '<' doesn't really cause problem, it just meant
-	   when unfilled = 0, we'll fill 0 record below. -BMR, 12/8/2008*/
-          if((unfilled = *ip - vp->numrecs) < 0) 
-              return TRUE;   
+    "<=", but adding it alone caused ill-effects so a through study
+    is needed, plus '<' doesn't really cause problem, it just meant
+    when unfilled = 0, we'll fill 0 record below. -BMR, 12/8/2008*/
+          if((unfilled = *ip - vp->numrecs) < 0)
+              return TRUE;
 
 #ifdef CDEBUG
 fprintf(stderr, "NCcoordck: check 3.6, unfilled=%d\n",unfilled);
@@ -219,37 +219,37 @@ fprintf(stderr, "NCcoordck: check 3.6, unfilled=%d\n",unfilled);
 
           /* check to see if we are trying to read beyond the end */
           if(handle->xdrs->x_op != XDR_ENCODE)
-	  {
-	     if (!nc_API(cdf_routine_name)) /* from an SD API call */
+    {
+        if (!nc_API(cdf_routine_name)) /* from an SD API call */
                   goto bad ; /* cannot read beyond the end of var */
-	     else	/* from an nc API call */
-		if (*ip >= handle->numrecs)
+        else    /* from an nc API call */
+        if (*ip >= handle->numrecs)
                   goto bad ; /* only fail if reading pass max numrecs in file */
-	  }
+    }
 
           /* If NOFILL is not requested, proceed to write fill values */
-          if ((handle->flags & NC_NOFILL) == 0) 
+          if ((handle->flags & NC_NOFILL) == 0)
             {
                 /* make sure we can write to this variable */
-                if(vp->aid == FAIL && hdf_get_vp_aid(handle, vp) == FAIL) 
+                if(vp->aid == FAIL && hdf_get_vp_aid(handle, vp) == FAIL)
                     return(FALSE);
-            
-		/* strg and strg1 are to hold fill value and its conversion */
+
+        /* strg and strg1 are to hold fill value and its conversion */
                 len = (vp->len / vp->HDFsize) * vp->szof;
                 strg = (Void *) HDmalloc(len);
                 strg1 = (Void *) HDmalloc(len);
                 if (NULL == strg || NULL == strg1)
                     return FALSE;
 
-		/* Find the attribute _FillValue to get the user's fill value */
+        /* Find the attribute _FillValue to get the user's fill value */
                 attr = NC_findattr(&vp->attrs, _FillValue);
 
-		/* If the attribute is found, fill strg with the fill value */
+        /* If the attribute is found, fill strg with the fill value */
                 if(attr != NULL)
                     HDmemfill(strg,(*attr)->data->values,vp->szof,(vp->len/vp->HDFsize));
-		/* otherwise, fill strg with predefined fill values such as
+        /* otherwise, fill strg with predefined fill values such as
                 FILL_SHORT, FILL_BYTE,... */
-                else 
+                else
                     NC_arrayfill(strg, len, vp->type);
 
 #ifdef DEBUG
@@ -271,9 +271,9 @@ fprintf(stderr, "NCcoordck: check 3.6, unfilled=%d\n",unfilled);
                     return FALSE;
 
 #ifdef DEBUG
-                fprintf(stderr,"Filling %d bytes starting at %d\n", 
+                fprintf(stderr,"Filling %d bytes starting at %d\n",
                        byte_count * unfilled, (vp->numrecs) * byte_count);
-#endif  
+#endif
 
                 /*
                  * Write out the values
@@ -281,7 +281,7 @@ fprintf(stderr, "NCcoordck: check 3.6, unfilled=%d\n",unfilled);
                 if (FAIL == DFKconvert(strg, strg1, vp->HDFtype, count, DFACC_WRITE, 0, 0))
                     return FALSE;
 
-		/* Write fill value to each record for all "unfilled" records */
+        /* Write fill value to each record for all "unfilled" records */
                 for(; unfilled >= 0; unfilled--, vp->numrecs++)
                   {
                       if (FAIL == Hwrite(vp->aid, byte_count, (uint8 *) strg1))
@@ -301,7 +301,7 @@ fprintf(stderr, "NCcoordck: check 3.6, unfilled=%d\n",unfilled);
 #ifdef CDEBUG
 fprintf(stderr, "NCcoordck: check 10.0, vp->numrecs=%d\n",vp->numrecs);
 #endif /* CDEBUG */
-        if((*ip + 1) > (long)(handle->numrecs)) 
+        if((*ip + 1) > (long)(handle->numrecs))
           {
               handle->numrecs = *ip + 1;
               handle->flags |= NC_NDIRTY;
@@ -356,24 +356,24 @@ fprintf(stderr, "NCcoordck: check 10.0, vp->numrecs=%d\n",vp->numrecs);
             }
       }
 
-	return(TRUE) ;
+    return(TRUE) ;
 bad:
 #ifdef VDEBUG
-	arrayp("\t\tcoords", vp->assoc->count, coords) ;
-	arrayp("\t\tmax", vp->assoc->count, vp->shape) ;
+    arrayp("\t\tcoords", vp->assoc->count, coords) ;
+    arrayp("\t\tmax", vp->assoc->count, vp->shape) ;
 #endif /* VDEBUG */
-	NCadvise(NC_EINVALCOORDS, "%s: Invalid Coordinates", vp->name->values) ;
-	return(FALSE) ;
+    NCadvise(NC_EINVALCOORDS, "%s: Invalid Coordinates", vp->name->values) ;
+    return(FALSE) ;
 }
 
 
-/* 
+/*
  * Translate the (variable, coords) pair into a seek index
  */
 static u_long
 NC_varoffset(handle, vp, coords)
 NC *handle ;
-NC_var *vp ; 
+NC_var *vp ;
 const long *coords ;
 {
     u_long offset ;
@@ -384,24 +384,24 @@ const long *coords ;
     vix_t * vix;
     intn    i;
 #endif
-    
+
     if(vp->assoc->count == 0) /* 'scaler' variable */
         return(vp->begin) ;
-    
+
     if( IS_RECVAR(vp) )
         boundary = coords + 1 ;
     else
         boundary = coords ;
-    
+
     up = vp->dsizes + vp->assoc->count - 1 ;
     ip = coords + vp->assoc->count - 1 ;
     for(offset = 0 ; ip >= boundary ; ip--, up--)
         offset += *up * *ip ;
-    
-    if( IS_RECVAR(vp) ) 
+
+    if( IS_RECVAR(vp) )
       {
 #ifdef HDF
-          switch(handle->file_type) 
+          switch(handle->file_type)
             {
             case HDF_FILE:
                 return( vp->dsizes[0] * *coords + offset) ;
@@ -416,11 +416,11 @@ const long *coords ;
 #else /* !HDF */
           return( vp->begin + handle->recsize * *coords + offset) ;
 #endif /* !HDF */
-      } 
-    else 
+      }
+    else
       {
 #ifdef HDF
-          switch(handle->file_type) 
+          switch(handle->file_type)
             {
             case HDF_FILE:
                 return (offset);
@@ -429,8 +429,8 @@ const long *coords ;
             case CDF_FILE:
                 if((vix = vp->vixHead) == NULL)
                     return (-1);
-            
-                /* 
+
+                /*
                  * Record data is stored in chunks.  the firstRec and lastRec
                  *  fields give the indicies of the first and last records
                  *  stored in a given chunk and the offset gives the offset in
@@ -440,9 +440,9 @@ const long *coords ;
                  *  we need to find the correct chunk and then get our offset
                  *  within that chunk
                  */
-                while(vix) 
+                while(vix)
                   {
-                      for(i = 0; i < vix->nUsed; i++) 
+                      for(i = 0; i < vix->nUsed; i++)
                         {
                             if((vix->firstRec[i] <= *coords) && (vix->lastRec[i] >= *coords)) {
                                 /* found the record we want */
@@ -457,10 +457,10 @@ const long *coords ;
           return (vp->begin + offset);
 #endif /* !HDF */
       }
-    
+
     /* should never get to here */
     return (0);
-    
+
 } /* NC_varoffset */
 
 
@@ -475,11 +475,11 @@ unsigned rem ;
 unsigned count ;
 char *values ;
 {
-	char buf[4] ;
-	u_long origin=0 ;
+    char buf[4] ;
+    u_long origin=0 ;
     enum xdr_op  x_op = xdrs->x_op ; /* save state */
 
-	if(x_op == XDR_ENCODE)
+    if(x_op == XDR_ENCODE)
       {
           /*
            * Since we only read/write multiples of four bytes,
@@ -490,9 +490,9 @@ char *values ;
           /*
            * N.B. : "a file positioning function must be called between
            * a write and a read or vice versa"
-           *		- limitations of stdio, open for update
+           *        - limitations of stdio, open for update
            */
-          if( !xdr_setpos(xdrs, origin) ) 
+          if( !xdr_setpos(xdrs, origin) )
               return(FALSE) ;
 #endif /* XDRSTDIO */
           /* next op is a get */
@@ -531,18 +531,18 @@ char *values ;
     if(x_op == XDR_ENCODE) /* back to encode */
         xdrs->x_op = x_op ;
 
-	while(count-- != 0)
+    while(count-- != 0)
       {
           if(x_op == XDR_ENCODE)
               buf[rem] = *values ;
           else
               *values = buf[rem] ;
-	
+
           rem++ ;
           values++ ;
       }
 
-	if(x_op == XDR_ENCODE)
+    if(x_op == XDR_ENCODE)
       {
           if( !xdr_setpos(xdrs, origin) )
               return(FALSE) ;
@@ -550,7 +550,7 @@ char *values ;
               return(FALSE) ;
       }
 
-	return(TRUE) ;
+    return(TRUE) ;
 }
 
 
@@ -606,7 +606,7 @@ short *values ;
 
     if(x_op == XDR_ENCODE) /* back to encode */
         xdrs->x_op = x_op ;
- 
+
     if(which != 0) which = 2 ;
 
     if(xdrs->x_op == XDR_ENCODE)
@@ -635,71 +635,71 @@ short *values ;
 /*
  * xdr a single datum of type 'type' at 'where'
  */
-static bool_t 
+static bool_t
 xdr_NCv1data(xdrs, where, type, values)
 XDR *xdrs ;
 u_long where ;
 nc_type type ;
 Void *values ;
 {
-	u_long rem=0 ;
+    u_long rem=0 ;
 
-	switch(type){
-	case NC_BYTE :
-	case NC_CHAR :
-	case NC_SHORT :
-		rem = where%4 ;
-		where -= rem ; /* round down to nearest word */
-		break ;
+    switch(type){
+    case NC_BYTE :
+    case NC_CHAR :
+    case NC_SHORT :
+        rem = where%4 ;
+        where -= rem ; /* round down to nearest word */
+        break ;
     default:
         break;
-	}
-	if( !xdr_NCsetpos(xdrs, where) )
-		return(FALSE) ;
+    }
+    if( !xdr_NCsetpos(xdrs, where) )
+        return(FALSE) ;
 
-	switch(type){
-	case NC_BYTE :
-	case NC_CHAR :
-		return( xdr_NCvbyte(xdrs, (unsigned)rem, (unsigned)1,
+    switch(type){
+    case NC_BYTE :
+    case NC_CHAR :
+        return( xdr_NCvbyte(xdrs, (unsigned)rem, (unsigned)1,
                             (char *)values) ) ;
-	case NC_SHORT :
-		return( xdr_NCvshort(xdrs, (unsigned)rem/2, (short *)values) ) ;
-	case NC_LONG :
+    case NC_SHORT :
+        return( xdr_NCvshort(xdrs, (unsigned)rem/2, (short *)values) ) ;
+    case NC_LONG :
 #if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__ 
-		return( xdr_int(xdrs, (nclong *)values) ) ;
+        return( xdr_int(xdrs, (nclong *)values) ) ;
 #else
-		return( xdr_long(xdrs, (nclong *)values) ) ;
+        return( xdr_long(xdrs, (nclong *)values) ) ;
 #endif
-	case NC_FLOAT :
-		return( xdr_float(xdrs, (float *)values) ) ;
-	case NC_DOUBLE : 
-		return( xdr_double(xdrs, (double *)values) ) ;
+    case NC_FLOAT :
+        return( xdr_float(xdrs, (float *)values) ) ;
+    case NC_DOUBLE :
+        return( xdr_double(xdrs, (double *)values) ) ;
     default:
         break;
-	}
-	return(FALSE) ;
+    }
+    return(FALSE) ;
 }
 
 /*****************************************************************************
-* 
-*			NCSA HDF / netCDF Project
-*			       May, 1993
 *
-* NCSA HDF / netCDF source code and documentation are in the public domain.  
+*            NCSA HDF / netCDF Project
+*                   May, 1993
+*
+* NCSA HDF / netCDF source code and documentation are in the public domain.
 * Specifically, we give to the public domain all rights for future
 * licensing of the source code, all resale rights, and all publishing rights.
-* 
+*
 * We ask, but do not require, that the following message be included in all
 * derived works:
-* 
+*
 * Portions developed at the National Center for Supercomputing Applications at
-* the University of Illinois at Urbana-Champaign.  Funding for this project 
+* the University of Illinois at Urbana-Champaign.  Funding for this project
 * has come primarily from the National Science Foundation.
-* 
+*
 * THE UNIVERSITY OF ILLINOIS GIVES NO WARRANTY, EXPRESSED OR IMPLIED, FOR THE
 * SOFTWARE AND/OR DOCUMENTATION PROVIDED, INCLUDING, WITHOUT LIMITATION,
 * WARRANTY OF MERCHANTABILITY AND WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE
-* 
+*
 ******************************************************************************
 *
 * Please report all bugs / comments to hdfhelp@ncsa.uiuc.edu
@@ -715,9 +715,9 @@ PRIVATE int8  *tValues = NULL;
 
 /* ------------------------------ SDPfreebuf ------------------------------ */
 /*
-    Throw away the temporary buffer we've allocated 
+    Throw away the temporary buffer we've allocated
 */
-intn 
+intn
 SDPfreebuf()
 {
     int ret_value = SUCCEED;
@@ -752,7 +752,7 @@ done:
 /*
     Resize a temporary buffer to the proper size
 */
-static intn 
+static intn
 SDIresizebuf(void * *buf,int32 *buf_size,int32 size_wanted)
 {
     intn ret_value = SUCCEED;
@@ -763,7 +763,7 @@ SDIresizebuf(void * *buf,int32 *buf_size,int32 size_wanted)
             HDfree(*buf);
         *buf_size = size_wanted;
         *buf = HDmalloc(size_wanted);
-        if (*buf == NULL) 
+        if (*buf == NULL)
           {
             *buf_size=0;
             ret_value = FAIL;
@@ -791,9 +791,9 @@ done:
  *          exist yet <- not any more
  *
  * NEW WAY: we delay filling until data is  written out -QAK
- * 
+ *
  */
-intn 
+intn
 hdf_get_data(handle, vp)
 NC *handle;
 NC_var *vp;
@@ -802,24 +802,24 @@ NC_var *vp;
     int32     vsid = DFREF_NONE;
     int32     tag, t, n;
     int       ret_value = DFREF_NONE;
-    
-#ifdef DEBUG 
+
+#ifdef DEBUG
     fprintf(stderr, "hdf_get_data I've been called\n");
 #endif
-    
-    if(NULL == handle) 
+
+    if(NULL == handle)
       {
           ret_value = DFREF_NONE;
           goto done;
       }
 
-    if(NULL == vp) 
+    if(NULL == vp)
       {
           ret_value = DFREF_NONE;
           goto done;
       }
 
-    /* 
+    /*
      * if it is stored as NDGs we can't do any better than what was
      *    originally stored in vp->data_ref
      */
@@ -828,8 +828,8 @@ NC_var *vp;
           ret_value = vp->data_ref;
           goto done;
       }
-    
-    if(vp->vgid) 
+
+    if(vp->vgid)
       {
           /* attach to the variable's Vgroup */
           vg = Vattach(handle->hdf_file, vp->vgid, "r");
@@ -838,7 +838,7 @@ NC_var *vp;
                 ret_value = DFREF_NONE;
                 goto done;
             }
-        
+
           /* loop through looking for a data storage object */
           n = Vntagrefs(vg);
           if(FAIL == n)
@@ -847,7 +847,7 @@ NC_var *vp;
                 goto done;
             }
 
-          for(t = 0; t < n; t++) 
+          for(t = 0; t < n; t++)
             {
                 if (FAIL == Vgettagref(vg, t, &tag, &vsid))
                   {
@@ -855,7 +855,7 @@ NC_var *vp;
                       goto done;
                   }
 
-                if(tag == DATA_TAG) 
+                if(tag == DATA_TAG)
                   {   /* detach */
                       if (FAIL == Vdetach(vg))
                         {
@@ -873,27 +873,27 @@ NC_var *vp;
                 goto done;
             }
       }
-    
+
     /* are we only in read-only mode? */
     if(handle->hdf_mode == DFACC_RDONLY)
       { /* yes, not good */
           ret_value = DFREF_NONE;
           goto done;
       }
-  
-    /* 
+
+    /*
      * create a new data storage object
      */
 #ifdef DEBUG
     fprintf(stderr, "--- Creating new data storage (len = %d) --- \n", vp->len);
     fprintf(stderr, "shape[0]= %d shape[1]= %d\n", vp->shape[0], vp->shape[1]);
     fprintf(stderr, "dsize[0]= %d dsize[1]= %d\n", vp->dsizes[0], vp->dsizes[1]);
-#endif  
-    
-    
+#endif
+
+
     /* --------------------------------------
      *
-     * allocate new data storage 
+     * allocate new data storage
      *
      * --------------------------------------
      */
@@ -906,10 +906,10 @@ NC_var *vp;
 #ifdef DEBUG
     fprintf(stderr, "--- Allocating new data storage szof=%d, to_do=%d\n",(int)vp->szof, (int)to_do);
     fprintf(stderr, "byte_count=%d\n", (int)byte_count);
-#endif  
+#endif
 
     /* if it is a record var might as well make it linked blocks now */
-    if(IS_RECVAR(vp)) 
+    if(IS_RECVAR(vp))
       {
           int32 block_size; /* the size of the linked blocks to use */
 
@@ -926,11 +926,11 @@ NC_var *vp;
           /* some of the past problems... -QAK */
           if(vp->block_size != (-1)) /* use value the user provided, if available */
               block_size = vp->block_size;
-          else 
+          else
             { /* try figuring out a good value using some heuristics */
-		/* User's suggested fix for bug #602 - Apr, 2005 */
+        /* User's suggested fix for bug #602 - Apr, 2005 */
                 /* This check avoids overflowing the int32 block_size */
-                /* if the user has a huge value for vp->len */ 
+                /* if the user has a huge value for vp->len */
                 if(vp->len > MAX_BLOCK_SIZE)
                     block_size = MAX_BLOCK_SIZE;
                 else
@@ -943,20 +943,20 @@ NC_var *vp;
 
           vp->aid = HLcreate(handle->hdf_file, DATA_TAG, vsid, block_size,
                              BLOCK_COUNT);
-          if(vp->aid == FAIL) 
+          if(vp->aid == FAIL)
             {
                 ret_value = DFREF_NONE;
                 goto done;
             }
 
-          if(Hendaccess(vp->aid) == FAIL) 
+          if(Hendaccess(vp->aid) == FAIL)
             {
                 ret_value = DFREF_NONE;
                 goto done;
             }
       }
 
-    if(vp->vgid) 
+    if(vp->vgid)
       {
           /* attach to the variable's Vgroup */
           vg = Vattach(handle->hdf_file, vp->vgid, "w");
@@ -965,7 +965,7 @@ NC_var *vp;
                 ret_value = DFREF_NONE;
                 goto done;
             }
-        
+
           /* add new Vdata to existing Vgroup */
           if (FAIL == Vaddtagref(vg, (int32) DATA_TAG, (int32) vsid))
             {
@@ -973,7 +973,7 @@ NC_var *vp;
                 goto done;
             }
 
-        
+
           /* detach from the variable's VGroup --- will no longer need it */
           if (FAIL == Vdetach(vg))
             {
@@ -981,8 +981,8 @@ NC_var *vp;
                 goto done;
             }
       }
-        
-#ifdef DEBUG 
+
+#ifdef DEBUG
     fprintf(stderr, "Done with the DATA Vdata returning id %d\n", vsid);
 #endif
 
@@ -990,14 +990,14 @@ NC_var *vp;
 
     /* added a new object -- make sure we flush the header */
     handle->flags |= NC_HDIRTY;
-            
+
     ret_value = vsid;
 
 done:
     if (ret_value == DFREF_NONE)
       { /* Failure cleanup */
           if (vg != FAIL)
-            {                
+            {
                 Vdetach(vg); /* no point in catch error here if we fail */
             }
       }
@@ -1027,7 +1027,7 @@ NC_var    * vp;
     /*
      * Fail if there is no data
      */
-    if(vp->data_ref == DFREF_NONE) 
+    if(vp->data_ref == DFREF_NONE)
       {
           ret_value = FAIL;
           goto done;
@@ -1051,7 +1051,7 @@ NC_var    * vp;
           vp->aid = Hstartaccess(handle->hdf_file, vp->data_tag, vp->data_ref, DFACC_WRITE|DFACC_APPENDABLE);
 #endif /* OLD_WAY */
       }
-    
+
     ret_value = vp->aid;
 
 done:
@@ -1063,7 +1063,7 @@ done:
     return ret_value;
 } /* hdf_get_vp_aid */
 
- 
+
 /* --------------------------- hdf_xdr_NCvdata ---------------------------- */
 /*
  *  Read / write 'count' items of contiguous data of type 'type' at 'where'
@@ -1076,61 +1076,61 @@ done:
  * The calling routine is responsible for calling DFKsetNT() as required.
  */
 static intn
-hdf_xdr_NCvdata(NC *handle, 
-                NC_var *vp, 
-                u_long where, 
-                nc_type type, 
-                uint32 count, 
+hdf_xdr_NCvdata(NC *handle,
+                NC_var *vp,
+                u_long where,
+                nc_type type,
+                uint32 count,
                 void * values)
 {
     NC_attr **attr = NULL;  /* pointer to the fill-value attribute */
     int32  status;
-    int32  byte_count;	/* total # of bytes of data to be processed */
+    int32  byte_count;    /* total # of bytes of data to be processed */
     int32  elements_left=0;/* number of elements still left to be processed */
-    int32  data_size;	/* size of data block being processed in bytes */
-    int32  new_count;	/* computed by dividing number of elements 'count' by 2 since 'count' is too big to allocate temporary buffer */
+    int32  data_size;    /* size of data block being processed in bytes */
+    int32  new_count;    /* computed by dividing number of elements 'count' by 2 since 'count' is too big to allocate temporary buffer */
     int32  bytes_left;
-    int32  elem_length;	/* length of the element pointed to */
+    int32  elem_length;    /* length of the element pointed to */
     int8   platntsubclass;  /* the machine type of the current platform */
     int8   outntsubclass;   /* the data's machine type */
     uintn  convert;         /* whether to convert or not */
-    uint8 *pvalues;	    /* pointer to traverse user's buffer "values" */
+    uint8 *pvalues;        /* pointer to traverse user's buffer "values" */
     int16  isspecial;
     intn   ret_value = SUCCEED;
-    int32 alloc_status = FAIL;	/* no successful allocation yet */
+    int32 alloc_status = FAIL;    /* no successful allocation yet */
 
 #ifdef DEBUG
     fprintf(stderr, "hdf_xdr_NCvdata I've been called : %s\n", vp->name->values);
 #endif
 
-#ifdef DEBUG 
+#ifdef DEBUG
     fprintf(stderr, "Where = %d  count = %d\n", where, count);
 #endif
-    
 
-    if(vp->aid == FAIL 
-       && hdf_get_vp_aid(handle, vp) == FAIL) 
+
+    if(vp->aid == FAIL
+       && hdf_get_vp_aid(handle, vp) == FAIL)
       {
           /*
            * Fail if there is no data *AND* we were trying to read...
            * Otherwise, we should fill with the fillvalue
            */
-          if(vp->data_ref == 0) 
+          if(vp->data_ref == 0)
             {
-                if(handle->hdf_mode == DFACC_RDONLY) 
+                if(handle->hdf_mode == DFACC_RDONLY)
                   {
-                      if(vp->data_tag == DATA_TAG || vp->data_tag == DFTAG_SDS) 
+                      if(vp->data_tag == DATA_TAG || vp->data_tag == DFTAG_SDS)
                         {
                             if((attr = NC_findattr(&vp->attrs, _FillValue))!= NULL)
                                 HDmemfill(values,(*attr)->data->values,vp->szof,count);
-                            else 
+                            else
                                 NC_arrayfill(values, count * vp->szof, vp->type);
                         }
 
                       ret_value = SUCCEED;
                       goto done;
-                  } 
-                else 
+                  }
+                else
                   {
                       ret_value =  FAIL;
                       goto done;
@@ -1138,7 +1138,7 @@ hdf_xdr_NCvdata(NC *handle,
             }
       }
 
-    /* 
+    /*
        Figure out if the tag/ref is a compressed special-element with no data.
        This "template" tag/ref is treated as if the tag/ref doesn't exist at
        all:  reading from it fills a memory buffer and returns it to the user
@@ -1150,8 +1150,8 @@ hdf_xdr_NCvdata(NC *handle,
           goto done;
       }
 
-#ifdef DEBUG 
-    fprintf(stderr, "vp->aid=%d, length=%ld, byte_count=%ld\n", 
+#ifdef DEBUG
+    fprintf(stderr, "vp->aid=%d, length=%ld, byte_count=%ld\n",
             (int)vp->aid, (long)elem_length, (long)byte_count);
 #endif
     /* Check for zero-length compressed special element, i.e. a template */
@@ -1160,11 +1160,11 @@ hdf_xdr_NCvdata(NC *handle,
           attr = NC_findattr(&vp->attrs, _FillValue);
 
           /* Check for reading from template & fill memory buffer with fill-value */
-          if(handle->xdrs->x_op == XDR_DECODE) 
+          if(handle->xdrs->x_op == XDR_DECODE)
             {
                 if(attr != NULL)
                     HDmemfill(values,(*attr)->data->values,vp->szof,count);
-                else 
+                else
                     NC_arrayfill(values, count * vp->szof, vp->type);
 
                 ret_value = SUCCEED; /* we are done */
@@ -1176,9 +1176,9 @@ hdf_xdr_NCvdata(NC *handle,
     byte_count = count * vp->HDFsize;
 
 #if 0 /* old way */
-    platntsubclass = DFKgetPNSC(vp->HDFtype, DF_MT); 
+    platntsubclass = DFKgetPNSC(vp->HDFtype, DF_MT);
     outntsubclass = DFKisnativeNT(vp->HDFtype) ? DFKgetPNSC(vp->HDFtype, DF_MT)
-	    : (DFKislitendNT(vp->HDFtype) ? DFNTF_PC : DFNTF_HDFDEFAULT);
+        : (DFKislitendNT(vp->HDFtype) ? DFNTF_PC : DFNTF_HDFDEFAULT);
 #else /* new way */
     if (FAIL == (platntsubclass = DFKgetPNSC(vp->HDFtype, DF_MT)))
       {
@@ -1211,9 +1211,9 @@ this routine */
     fprintf(stderr, "hdf_xdr_NCvdata: tBuf_size=%d, tBuf=%p\n",(int)tBuf_size,tBuf);
 #endif
 
-    /* 
+    /*
      * It may be the case that the current does NOT begin at the start of the
-     *   data-object which is storing it.  In that case compute the correct 
+     *   data-object which is storing it.  In that case compute the correct
      *   location.
      * QAK: This shouldn't be an issue for compressed template objects.
      */
@@ -1221,53 +1221,53 @@ this routine */
     fprintf(stderr, "hdf_xdr_NCvdata: vp->data_offset=%d, where=%d\n",(int)vp->data_offset,(int)where);
 #endif
 
-    if(vp->data_offset > 0) 
+    if(vp->data_offset > 0)
       {
           where += vp->data_offset;
           /* if the dataset doesn't exist yet, we need to fill in the dimension scale info */
           if(elem_length <= 0 && (handle->flags & NC_NOFILL) == 0)
           {
-	  /* BMR: work around for the low memory problem by repeatedly 
+    /* BMR: work around for the low memory problem by repeatedly
              processing smaller amount blocks of data */
 
              /* compute the data block size and the # of elements*/
-             data_size = MAX( byte_count, where ); 
-             new_count = vp->data_offset/vp->HDFsize; 
+             data_size = MAX( byte_count, where );
+             new_count = vp->data_offset/vp->HDFsize;
 
-	     /* attempt to allocate the entire amount needed first, data_size bytes */
-	     alloc_status = SDIresizebuf((void **)&tBuf, &tBuf_size, data_size );
+        /* attempt to allocate the entire amount needed first, data_size bytes */
+        alloc_status = SDIresizebuf((void **)&tBuf, &tBuf_size, data_size );
 
-	     /* if fail to allocate, repeatedly calculate a new amount
-	     and allocate until success or until no more memory available */
-	     while( alloc_status == FAIL )
-		{
-		   new_count = new_count / 2;	/* try smaller number of elements */
+        /* if fail to allocate, repeatedly calculate a new amount
+        and allocate until success or until no more memory available */
+        while( alloc_status == FAIL )
+        {
+        new_count = new_count / 2;    /* try smaller number of elements */
                    if( new_count <= 0 )  /* unable to allocate any memory */
                    {
                       ret_value = FAIL;
                       goto done;
                    }
-		  /* re-calculate the size of the data block using smaller # of elements */
-		   data_size = new_count * vp->szof;
-		   alloc_status = SDIresizebuf((void **)&tBuf,&tBuf_size, data_size);
-		} /* while trying to allocate */
+        /* re-calculate the size of the data block using smaller # of elements */
+        data_size = new_count * vp->szof;
+        alloc_status = SDIresizebuf((void **)&tBuf,&tBuf_size, data_size);
+        } /* while trying to allocate */
 
                 /* assume that all elements are to be processed */
-		elements_left = vp->data_offset/vp->HDFsize;
+        elements_left = vp->data_offset/vp->HDFsize;
 
-		/* repeatedly read, convert, and store blocks of data_size 
-                   bytes of data into the user's buffer until no more elements 
+        /* repeatedly read, convert, and store blocks of data_size
+                   bytes of data into the user's buffer until no more elements
                    left */
-		while( elements_left > 0 )
-		{
+        while( elements_left > 0 )
+        {
                    /* Fill the temporary buffer with the fill-value */
                    if(attr != NULL)
                       HDmemfill(tBuf,(*attr)->data->values,vp->szof, new_count);
-                   else 
+                   else
                       NC_arrayfill(tBuf, data_size, vp->type);
 
                    /* convert the fill-values, if necessary */
-                   if(convert) 
+                   if(convert)
                    {
                       if (FAIL == DFKconvert(tBuf, tBuf, vp->HDFtype, (uint32)new_count, DFACC_WRITE, 0, 0))
                         {
@@ -1284,23 +1284,23 @@ this routine */
                       goto done;
                    }
 
-		   /* compute the number of elements left to be processed */
-		   elements_left = elements_left - new_count;
+        /* compute the number of elements left to be processed */
+        elements_left = elements_left - new_count;
 
-		   /* adjust the # of elements in the final block and
-		      compute that block's size if necessary */
-		   if( elements_left > 0 && elements_left < new_count )
-		   {
-		      new_count = elements_left; 
-		      data_size = new_count * vp->szof;
-		   }
-	        } /* while more elements left to be processed */
+        /* adjust the # of elements in the final block and
+            compute that block's size if necessary */
+        if( elements_left > 0 && elements_left < new_count )
+        {
+            new_count = elements_left;
+            data_size = new_count * vp->szof;
+        }
+            } /* while more elements left to be processed */
 
-	        SDPfreebuf();  /* free tBuf and tValues if any exists */
-	       /* end of BMR part */
+            SDPfreebuf();  /* free tBuf and tValues if any exists */
+        /* end of BMR part */
             } /* end if */
       } /* end if */
-    
+
 #ifdef DEBUG
     fprintf(stderr, "hdf_xdr_NCvdata vp->aid=%d, where=%d\n",
             (int)vp->aid,(int)where);
@@ -1312,68 +1312,68 @@ this routine */
             {
                 int32 buf_size = where;
                 int32 chunk_size;
-		int32 tempbuf_size;	/* size to allocate buffer tBuf */
+        int32 tempbuf_size;    /* size to allocate buffer tBuf */
                 uint8 *write_buf = NULL;
-                uint32 fill_count;	/* number of fill values */
+                uint32 fill_count;    /* number of fill values */
 
-		/* this block is to work around the failure caused by
-		   allocating a large chunk for the temporary buffers.
-		   First, try to allocate the desired chunk for both
-		   buffers; if any allocation fails, reduce the chunk size
-		   in half and try again until both buffers are
-		   successfully allocated - BMR */ 
+        /* this block is to work around the failure caused by
+        allocating a large chunk for the temporary buffers.
+        First, try to allocate the desired chunk for both
+        buffers; if any allocation fails, reduce the chunk size
+        in half and try again until both buffers are
+        successfully allocated - BMR */
 
-		chunk_size = MIN(buf_size, MAX_SIZE);   /* initial chunk size */
-		alloc_status = FAIL;
+        chunk_size = MIN(buf_size, MAX_SIZE);   /* initial chunk size */
+        alloc_status = FAIL;
 
                 /* while any allocation fails */
-		while( alloc_status == FAIL )
-		{
-		/* try to allocate the buffer to hold the fill values after conversion */
-		   alloc_status = SDIresizebuf((void * *)&tValues,&tValues_size,chunk_size);
-		   /* then, if successful, try to allocate the temporary
-		   buffer that holds the fill values before conversion */
+        while( alloc_status == FAIL )
+        {
+        /* try to allocate the buffer to hold the fill values after conversion */
+        alloc_status = SDIresizebuf((void * *)&tValues,&tValues_size,chunk_size);
+        /* then, if successful, try to allocate the temporary
+        buffer that holds the fill values before conversion */
                    if( alloc_status != FAIL)
-		   {
-		      /* calculate the size needed to allocate tBuf by
-		         first calculating the number of fill values that
-		         cover the chunk in buffer tValues after conversion... */
-		      fill_count = chunk_size/vp->HDFsize;
+        {
+            /* calculate the size needed to allocate tBuf by
+                first calculating the number of fill values that
+                cover the chunk in buffer tValues after conversion... */
+            fill_count = chunk_size/vp->HDFsize;
 
-		      /* then use that number to compute the size of
-		         the buffer to hold fill_count fill values of type
-		         vp->szof, i.e., before conversion */
-		      tempbuf_size = fill_count * vp->szof;
-		      alloc_status = SDIresizebuf((void **)&tBuf,&tBuf_size, tempbuf_size);
-		   } /* if first allocation successes */
-					
-		   if( alloc_status == FAIL )      /* if any allocations fail */
-		      chunk_size = chunk_size / 2;  /* try smaller chunk size */
+            /* then use that number to compute the size of
+                the buffer to hold fill_count fill values of type
+                vp->szof, i.e., before conversion */
+            tempbuf_size = fill_count * vp->szof;
+            alloc_status = SDIresizebuf((void **)&tBuf,&tBuf_size, tempbuf_size);
+        } /* if first allocation successes */
+
+        if( alloc_status == FAIL )      /* if any allocations fail */
+            chunk_size = chunk_size / 2;  /* try smaller chunk size */
 
                    if( chunk_size <= 0 )  /* unable to allocate any memory */
                    {
                       ret_value = FAIL;
                       goto done;
                    }
-		} /* while any allocation fails */
+        } /* while any allocation fails */
 
-		/* Fill the temporary buffer tBuf with the fill-value
-		  specified in the attribute if one exists, otherwise,
-		  with the default value */ 
+        /* Fill the temporary buffer tBuf with the fill-value
+        specified in the attribute if one exists, otherwise,
+        with the default value */
                 if(attr != NULL)
                     HDmemfill(tBuf,(*attr)->data->values, vp->szof, fill_count);
-                else 
+                else
                     NC_arrayfill(tBuf, tempbuf_size, vp->type);
 
-		/* convert the fill-values, if necessary, and store
-		them in the buffer tValues */
+        /* convert the fill-values, if necessary, and store
+        them in the buffer tValues */
                 if(convert)
                 {
                    if (FAIL == DFKconvert(tBuf, tValues, vp->HDFtype, fill_count, DFACC_WRITE, 0, 0))
                      {
                          ret_value = FAIL;
                          goto done;
-                     }    
+                     }
                    write_buf=(uint8 *)tValues;
                 } /* end if */
                 else
@@ -1386,13 +1386,13 @@ this routine */
                       {
                           ret_value = FAIL;
                           goto done;
-                      }    
+                      }
 
                     /* reduce the bytes to be written */
                     buf_size -= chunk_size;
 
-		    /* to take care of the last piece of data */
-		    chunk_size = MIN( chunk_size, buf_size );
+            /* to take care of the last piece of data */
+            chunk_size = MIN( chunk_size, buf_size );
                 } while (buf_size > 0);
             } /* end if */
           else
@@ -1401,7 +1401,7 @@ this routine */
                   {
                       ret_value = FAIL;
                       goto done;
-                  }    
+                  }
             } /* end else */
       } /* end if */
     else
@@ -1416,13 +1416,13 @@ this routine */
                   {
                       ret_value = FAIL;
                       goto done;
-                  }    
+                  }
             }
-    
+
 #ifdef DEBUG
     fprintf(stderr, "hdf_xdr_NCvdata after Hseek(), byte_count=%d\n",(int)byte_count);
 #endif
-    
+
       } /* end else */
 
     /* Read or write the data into / from values */
@@ -1436,8 +1436,8 @@ this routine */
           /* attempt to allocate the entire amount needed first */
           alloc_status = SDIresizebuf((void **)&tBuf,&tBuf_size, data_size );
 
-	  /* if fail to allocate, repeatedly calculate a new amount and
-	     allocate until success or until no memory available */
+    /* if fail to allocate, repeatedly calculate a new amount and
+        allocate until success or until no memory available */
           while( alloc_status == FAIL )
           {
              new_count = new_count / 2;  /* try smaller number of elements */
@@ -1452,25 +1452,25 @@ this routine */
              alloc_status = SDIresizebuf((void **)&tBuf,&tBuf_size, data_size);
           }
 
-	  /* repeatedly read, convert, and store blocks of data_size
-	     bytes of data into the user's buffer until no more elements
-	     left */
+    /* repeatedly read, convert, and store blocks of data_size
+        bytes of data into the user's buffer until no more elements
+        left */
 
-	    /* number of elements left to be processed */
+        /* number of elements left to be processed */
             elements_left = count;
 
-	    /* put a ptr at the beginning of the user buffer for read data */
-	    pvalues = values;
+        /* put a ptr at the beginning of the user buffer for read data */
+        pvalues = values;
 
-	    while( elements_left > 0 )
+        while( elements_left > 0 )
              {
                 status = Hread(vp->aid, data_size, tBuf);
                 if(status != data_size)  /* amount read != amount specified */
                   {
                       ret_value = FAIL;
                       goto done;
-                  }    
-                /* convert and store new_count elements in tBuf into 
+                  }
+                /* convert and store new_count elements in tBuf into
                    the buffer values, pointed to by pvalues */
                 if (FAIL == DFKconvert(tBuf, pvalues, vp->HDFtype, (uint32) new_count, DFACC_READ, 0, 0))
                   {
@@ -1478,19 +1478,19 @@ this routine */
                       goto done;
                   }
 
-		/* compute the number of elements left to be processed */
+        /* compute the number of elements left to be processed */
                 elements_left = elements_left - new_count;
 
-		/* adjust the # of elements in the final block and
+        /* adjust the # of elements in the final block and
                    compute that block's size if necessary */
                 if( elements_left > 0 && elements_left < new_count )
                 {
-                   new_count = elements_left; 
+                   new_count = elements_left;
                    data_size = new_count * vp->szof;
                 }
 
-		/* advance pvalues on buffer "values" for next batch of data */
-		pvalues = pvalues + data_size;
+        /* advance pvalues on buffer "values" for next batch of data */
+        pvalues = pvalues + data_size;
               } /* while more elements left to be processed */
 
               SDPfreebuf();  /* free tBuf and tValues if any exist */
@@ -1502,10 +1502,10 @@ this routine */
                   {
                       ret_value = FAIL;
                       goto done;
-                  }    
+                  }
             } /* end else */
       } /* end if XDR_DECODE */
-    else 
+    else
       {/* XDR_ENCODE */
           if(convert) /* if data need to be converted for this platform */
           {
@@ -1515,7 +1515,7 @@ this routine */
              /* attempt to allocate the entire amount needed first */
              alloc_status = SDIresizebuf((void **)&tBuf,&tBuf_size, data_size);
 
-             /* if fail to allocate, repeatedly calculate a new amount and 
+             /* if fail to allocate, repeatedly calculate a new amount and
                 allocate until success or no more memory left */
              while( alloc_status == FAIL )
              {
@@ -1526,62 +1526,62 @@ this routine */
                    goto done;
                 }
 
-                /* re-calculate the size of the data block */ 
+                /* re-calculate the size of the data block */
                 data_size = new_count * vp->HDFsize;
                 alloc_status = SDIresizebuf((void **)&tBuf,&tBuf_size, data_size);
              }
 
             /* repeatedly convert, store blocks of data_size bytes of data
-               from the user's buffer into the temporary buffer, and write 
+               from the user's buffer into the temporary buffer, and write
                out the temporary buffer until no more bytes left */
 
-	    /* number of elements left to be processed */
+        /* number of elements left to be processed */
             elements_left = count;
 
-	     /* put a ptr at the beginning of the user buffer for read data */
-	    pvalues = values;
+        /* put a ptr at the beginning of the user buffer for read data */
+        pvalues = values;
 
             while( elements_left > 0 )
             {
-               /* convert new_count elements in the user's buffer values and 
+               /* convert new_count elements in the user's buffer values and
                   write them into the temporary buffer */
                if (FAIL == DFKconvert(pvalues, tBuf, vp->HDFtype, (uint32) new_count, DFACC_WRITE, 0, 0))
                {
                    ret_value = FAIL;
                    goto done;
-               }    
+               }
                status = Hwrite(vp->aid, data_size, tBuf);
-               if(status != data_size) 
+               if(status != data_size)
                {
                    ret_value = FAIL;
                    goto done;
-               }    
-		/* compute the number of elements left to be processed */
+               }
+        /* compute the number of elements left to be processed */
                 elements_left = elements_left - new_count;
 
-		/* adjust the # of elements in the final block and
+        /* adjust the # of elements in the final block and
                    compute that block's size if necessary */
                 if( elements_left > 0 && elements_left < new_count )
                 {
-                   new_count = elements_left; 
+                   new_count = elements_left;
                    data_size = new_count * vp->szof;
                 }
 
-		/* advance pvalues on buffer "values" for next batch of data */
-		pvalues = pvalues + data_size;
+        /* advance pvalues on buffer "values" for next batch of data */
+        pvalues = pvalues + data_size;
               } /* while more elements left to be processed */
 
             SDPfreebuf();  /* free tBuf and tValues if any exist */
             } /* end if convert */
-          else 
+          else
           { /* no convert, write directly from the user's buffer */
               status = Hwrite(vp->aid, byte_count, values);
 
-	      if(status != byte_count) 
-	      {
-		ret_value = FAIL;
-		goto done;
-	      }
+        if(status != byte_count)
+        {
+        ret_value = FAIL;
+        goto done;
+        }
           } /* no convert */
       } /* XDR_ENCODE */
 
@@ -1600,38 +1600,38 @@ this routine */
              uint8 *write_buf = NULL;
              uint32 fill_count;     /* number of fill values */
 
-	     /* this block is to work around the failure caused by
-	        allocating a large chunk for the temporary buffers.
-	        First, try to allocate the desired chunk for both buffers;
-	        if any allocation fails, reduce the chunk size in half and
-	        try again until both buffers are successfully allocated - BMR */
+        /* this block is to work around the failure caused by
+            allocating a large chunk for the temporary buffers.
+            First, try to allocate the desired chunk for both buffers;
+            if any allocation fails, reduce the chunk size in half and
+            try again until both buffers are successfully allocated - BMR */
 
-		chunk_size = MIN(buf_size, MAX_SIZE); /* initial chunk size */
+        chunk_size = MIN(buf_size, MAX_SIZE); /* initial chunk size */
 
-		/* while any allocation fails */ 
-		alloc_status = FAIL;
-                while( alloc_status == FAIL ) 
+        /* while any allocation fails */
+        alloc_status = FAIL;
+                while( alloc_status == FAIL )
                 {
-                   /* first, try to allocate the buffer to hold the fill 
+                   /* first, try to allocate the buffer to hold the fill
                       values after conversion */
                    alloc_status = SDIresizebuf((void * *)&tValues,&tValues_size,chunk_size);
 
-		   /* then, if successful, try to allocate the temporary
-		      buffer that holds the fill values before conversion */
-		      if( alloc_status != FAIL)
+        /* then, if successful, try to allocate the temporary
+            buffer that holds the fill values before conversion */
+            if( alloc_status != FAIL)
                    {
-		      /* calculate the size needed to allocate tBuf
-		         by first calculating the number of fill values that
-			 cover the chunk in buffer tValues after conversion...*/
-		      fill_count = chunk_size/vp->HDFsize;
+            /* calculate the size needed to allocate tBuf
+                by first calculating the number of fill values that
+            cover the chunk in buffer tValues after conversion...*/
+            fill_count = chunk_size/vp->HDFsize;
 
-                      /* then use that number to compute the size of the 
-                         buffer to hold fill_count fill values of type 
-			 vp->szof, i.e., before conversion */
+                      /* then use that number to compute the size of the
+                         buffer to hold fill_count fill values of type
+            vp->szof, i.e., before conversion */
                       tempbuf_size = fill_count * vp->szof;
                       alloc_status = SDIresizebuf((void **)&tBuf,&tBuf_size, tempbuf_size);
                    } /* if first allocation successes */
-                                        
+
                    if( alloc_status == FAIL ) /* if any allocations fail */
                       chunk_size = chunk_size / 2; /* try smaller chunk size */
 
@@ -1646,17 +1646,17 @@ this routine */
                 /* Fill the temporary buffer tBuf with the fill-value specified                    in the attribute if one exists, otherwise, with the default value */
                 if(attr != NULL)
                     HDmemfill(tBuf,(*attr)->data->values, vp->szof, fill_count);
-                else 
+                else
                     NC_arrayfill(tBuf, tempbuf_size, vp->type);
 
                 /* convert the fill-values, if necessary, and store them in the buffer tValues */
-                if(convert) 
+                if(convert)
                   {
                       if (FAIL == DFKconvert(tBuf, tValues, vp->HDFtype, fill_count, DFACC_WRITE, 0, 0))
                         {
                             ret_value = FAIL;
                             goto done;
-                        }    
+                        }
                       write_buf=(uint8 *)tValues;
                   } /* end if */
                 else
@@ -1669,7 +1669,7 @@ this routine */
                       {
                           ret_value = FAIL;
                           goto done;
-                      }    
+                      }
 
                     /* reduce the bytes still to be written */
                     buf_size -= chunk_size;
@@ -1712,14 +1712,14 @@ void *values;
 
     intn ret_value = SUCCEED;
 
-    
+
     if (FAIL == DFKsetNT(vp->HDFtype))
       {
           ret_value = FAIL;
           goto done;
       }
 
-    ret_value = hdf_xdr_NCvdata(handle, vp, where, type, 1, values); 
+    ret_value = hdf_xdr_NCvdata(handle, vp, where, type, 1, values);
 
 done:
     if (ret_value == FAIL)
@@ -1737,15 +1737,15 @@ done:
  *
  * The calling routine is responsible for calling DFKsetNT() as required.
  *
- * NOTE: Do we really care about CDF anymore since we don't support 
+ * NOTE: Do we really care about CDF anymore since we don't support
  *       it 100 percent -GV
  */
 static bool_t
-nssdc_xdr_NCvdata(NC *handle, 
-                  NC_var *vp, 
-                  u_long where, 
-                  nc_type type, 
-                  uint32 count, 
+nssdc_xdr_NCvdata(NC *handle,
+                  NC_var *vp,
+                  u_long where,
+                  nc_type type,
+                  uint32 count,
                   void * values)
 {
     int32 status;
@@ -1754,7 +1754,7 @@ nssdc_xdr_NCvdata(NC *handle,
 #ifdef DEBUG
     fprintf(stderr, "nssdc_xdr_NCvdata I've been called : %s\n", vp->name->values);
     fprintf(stderr, "Where = %d  count = %d\n", where, count);
-    fprintf(stderr, "nssdc_xdr_NCvdata I've been called : %s reading %d from %d\n", 
+    fprintf(stderr, "nssdc_xdr_NCvdata I've been called : %s reading %d from %d\n",
             vp->name->values, count, where);
 #endif
 
@@ -1762,7 +1762,7 @@ nssdc_xdr_NCvdata(NC *handle,
     status = HI_SEEK((hdf_file_t) handle->cdf_fp, where);
     if(status == FAIL)
         return(FALSE);
-    
+
     /* make sure our tmp buffer is big enough to hold everything */
     byte_count = count * vp->HDFsize;
     if(SDIresizebuf((void * *)&tBuf,&tBuf_size,byte_count)==FAIL)
@@ -1775,9 +1775,9 @@ nssdc_xdr_NCvdata(NC *handle,
 #ifdef DEBUG
     fprintf(stderr, " * * * Done with call to nssdc_xdr_NCvdata * * *\n");
 #endif
-    
+
     return(TRUE);
-    
+
 } /* nssdc_xdr_NCvdata */
 
 
@@ -1791,25 +1791,25 @@ int varid ;
 const long *coords ;
 Void *value ;
 {
-	NC_var *vp ;
-	u_long offset ;
+    NC_var *vp ;
+    u_long offset ;
 
-	if(handle->flags & NC_INDEF )
-		return(-1) ;
-	if(handle->vars == NULL)
-		return(-1) ;
+    if(handle->flags & NC_INDEF )
+        return(-1) ;
+    if(handle->vars == NULL)
+        return(-1) ;
 
-	vp = NC_hlookupvar( handle, varid ) ;
-	if(vp == NULL)
-		return(-1) ;
+    vp = NC_hlookupvar( handle, varid ) ;
+    if(vp == NULL)
+        return(-1) ;
 
-	if(vp->assoc->count == 0) /* 'scaler' variable */
+    if(vp->assoc->count == 0) /* 'scaler' variable */
       {
 #ifdef HDF
-          switch(handle->file_type) 
+          switch(handle->file_type)
             {
             case HDF_FILE:
-           
+
                 if (FAIL == hdf_xdr_NCv1data(handle, vp, vp->begin, vp->type, value))
                     return -1;
                 else
@@ -1825,18 +1825,18 @@ Void *value ;
 #endif /* !HDF */
       }
 
-	if( !NCcoordck(handle, vp, coords) )
-		return(-1) ;
+    if( !NCcoordck(handle, vp, coords) )
+        return(-1) ;
 
-	offset = NC_varoffset(handle, vp, coords) ;
-		
+    offset = NC_varoffset(handle, vp, coords) ;
+
 #ifdef VDEBUG
-	NCadvise(NC_NOERR, "%s offset %d, numrecs %d",
+    NCadvise(NC_NOERR, "%s offset %d, numrecs %d",
              vp->name->values, offset, vp->numrecs) ;
-	arrayp("shape", vp->assoc->count, vp->shape) ;
-	arrayp("coords", vp->assoc->count, coords) ;
+    arrayp("shape", vp->assoc->count, vp->shape) ;
+    arrayp("coords", vp->assoc->count, coords) ;
 #endif /* VDEBUG */
-        
+
 #ifdef HDF
     switch(handle->file_type) {
     case HDF_FILE:
@@ -1852,8 +1852,8 @@ Void *value ;
     if( !xdr_NCv1data(handle->xdrs, offset, vp->type, value))
         return(-1) ;
 #endif /* !HDF */
-        
-	return(0) ;
+
+    return(0) ;
 }
 
 
@@ -1863,22 +1863,22 @@ int varid ;
 const long *coords ;
 const ncvoid *value ;
 {
-	NC *handle ;
+    NC *handle ;
 
-	cdf_routine_name = "ncvarput1" ;
+    cdf_routine_name = "ncvarput1" ;
 
-	handle = NC_check_id(cdfid) ;
-	if(handle == NULL)
-		return(-1) ;
+    handle = NC_check_id(cdfid) ;
+    if(handle == NULL)
+        return(-1) ;
 
     if(!(handle->flags & NC_RDWR))
       {
           NCadvise(NC_EPERM, "%s: NC_NOWRITE", handle->path) ;
           return(-1) ;
       }
-	handle->xdrs->x_op = XDR_ENCODE ;
+    handle->xdrs->x_op = XDR_ENCODE ;
 
-	return( NCvar1io(handle, varid, coords, value) ) ;
+    return( NCvar1io(handle, varid, coords, value) ) ;
 }
 
 int ncvarget1(cdfid, varid, coords, value)
@@ -1887,24 +1887,24 @@ int varid ;
 const long *coords ;
 ncvoid *value ;
 {
-	NC *handle ;
+    NC *handle ;
 
-	cdf_routine_name = "ncvarget1" ;
+    cdf_routine_name = "ncvarget1" ;
 
-	handle = NC_check_id(cdfid) ;
-	if(handle == NULL)
-		return(-1) ;
+    handle = NC_check_id(cdfid) ;
+    if(handle == NULL)
+        return(-1) ;
 
-	handle->xdrs->x_op = XDR_DECODE ;
+    handle->xdrs->x_op = XDR_DECODE ;
 
-	return( NCvar1io(handle, varid, coords, (Void *)value) ) ;
+    return( NCvar1io(handle, varid, coords, (Void *)value) ) ;
 }
 
 
 /*
  * xdr 'count' items of contiguous data of type 'type' at 'where'
  */
-static bool_t 
+static bool_t
 xdr_NCvdata(xdrs, where, type, count, values)
 XDR *xdrs ;
 u_long where ;
@@ -1912,100 +1912,90 @@ nc_type type ;
 unsigned count ;
 Void *values ;
 {
-	u_long rem = 0 ;
-	bool_t (*xdr_NC_fnct)() ;
-	bool_t stat ;
-	size_t szof ;
+    u_long rem = 0 ;
+    bool_t (*xdr_NC_fnct)() ;
+    bool_t stat ;
+    size_t szof ;
 
-	switch(type){
-	case NC_BYTE :
-	case NC_CHAR :
-	case NC_SHORT :
-		rem = where%4 ;
-		where -= rem ; /* round down to nearest word */
-		break ;
+    switch(type){
+    case NC_BYTE :
+    case NC_CHAR :
+    case NC_SHORT :
+        rem = where%4 ;
+        where -= rem ; /* round down to nearest word */
+        break ;
     default:
         break;
-	}
-	if( !xdr_NCsetpos(xdrs, where) )
-		return(FALSE) ;
+    }
+    if( !xdr_NCsetpos(xdrs, where) )
+        return(FALSE) ;
 
-	switch(type){
-	case NC_BYTE :
-	case NC_CHAR :
-		if(rem != 0)
-		{
-			unsigned vcount = MIN(count, 4 - rem) ;
-			if(!xdr_NCvbyte(xdrs, (unsigned)rem, vcount, values) )
-				return(FALSE) ;
-			values += vcount ;
-			count -= vcount ;
-		}
+    switch(type){
+    case NC_BYTE :
+    case NC_CHAR :
+        if(rem != 0)
+        {
+            unsigned vcount = MIN(count, 4 - rem) ;
+            if(!xdr_NCvbyte(xdrs, (unsigned)rem, vcount, values) )
+                return(FALSE) ;
+            values += vcount ;
+            count -= vcount ;
+        }
 
-		rem = count%4 ; /* tail remainder */
-		count -= rem ;
-		if(!xdr_opaque(xdrs, values, count))
-			return(FALSE) ;
+        rem = count%4 ; /* tail remainder */
+        count -= rem ;
+        if(!xdr_opaque(xdrs, values, count))
+            return(FALSE) ;
 
-		if(rem != 0)
-		{
-			values += count ;
-			if( !xdr_NCvbyte(xdrs, (unsigned)0, (unsigned)rem ,
-				values) )
-				return(FALSE) ;
-		 	return(TRUE) ;	
-		} /* else */
-		return(TRUE) ;
-	case NC_SHORT :
-		if(rem != 0)
-		{
-			if(!xdr_NCvshort(xdrs, (unsigned)1, (short *)values) )
-				return(FALSE) ;
-			values += sizeof(short) ;
-			count -= 1 ;
-		}
-		rem = count%2 ; /* tail remainder */
-		count -= rem ;
-		if(!xdr_shorts(xdrs, (short *)values, count))
-			return(FALSE) ;
-		if(rem != 0)
-		{
-			values += (count * sizeof(short)) ;
-			return( xdr_NCvshort(xdrs, (unsigned)0,
-				(short *)values) ) ;
-		} /* else */
-		return(TRUE) ;
-	case NC_LONG :
-        /* In the portable xdr library, xdr_long resolves to xdrposis_getlong,
-         * which always read 4 bytes; xdr_int will do the same but then cast to
-         * short, thus, mess up the value.  The Mac machines use portable xdr.
-         * This is a temporary solution until the memory issue when using the
-         * system xdr is resolved, and the portable xdr library is no longer needed
-         * -BMR, Nov 11, 2019 */
-#if (defined __APPLE__)
-        xdr_NC_fnct = xdr_long ;
-#else
+        if(rem != 0)
+        {
+            values += count ;
+            if( !xdr_NCvbyte(xdrs, (unsigned)0, (unsigned)rem ,
+                values) )
+                return(FALSE) ;
+            return(TRUE) ;
+        } /* else */
+        return(TRUE) ;
+    case NC_SHORT :
+        if(rem != 0)
+        {
+            if(!xdr_NCvshort(xdrs, (unsigned)1, (short *)values) )
+                return(FALSE) ;
+            values += sizeof(short) ;
+            count -= 1 ;
+        }
+        rem = count%2 ; /* tail remainder */
+        count -= rem ;
+        if(!xdr_shorts(xdrs, (short *)values, count))
+            return(FALSE) ;
+        if(rem != 0)
+        {
+            values += (count * sizeof(short)) ;
+            return( xdr_NCvshort(xdrs, (unsigned)0,
+                (short *)values) ) ;
+        } /* else */
+        return(TRUE) ;
+    case NC_LONG :
         xdr_NC_fnct = xdr_int ;
-#endif
         szof = sizeof(nclong) ;
-		break ;
-	case NC_FLOAT :
-		xdr_NC_fnct = xdr_float ;
-		szof = sizeof(float) ;
-		break ;
-	case NC_DOUBLE : 
-		xdr_NC_fnct = xdr_double ;
-		szof = sizeof(double) ;
-		break ;
-	default :
-		return(FALSE) ;
-	}
-	for(stat = TRUE ; stat && (count > 0) ; count--)
-	{
-		stat = (*xdr_NC_fnct)(xdrs,values) ;	
-		values += szof ;
-	}
-	return(stat) ;
+        break ;
+    case NC_FLOAT :
+        xdr_NC_fnct = xdr_float ;
+        szof = sizeof(float) ;
+        break ;
+    case NC_DOUBLE :
+        xdr_NC_fnct = xdr_double ;
+        szof = sizeof(double) ;
+        break ;
+    default :
+        return(FALSE) ;
+    }
+    for(stat = TRUE ; stat && (count > 0) ; count--)
+    {
+        stat = (*xdr_NC_fnct)(xdrs,values) ;
+        values += szof ;
+    }
+    return(stat) ;
 }
 
 
@@ -2019,63 +2009,63 @@ NC_var *vp ;
 const long *origin ;
 const long *edges ;
 {
-	const long *edp, *orp ;
-	unsigned long *boundary, *shp ;
-	int partial=0;
+    const long *edp, *orp ;
+    unsigned long *boundary, *shp ;
+    int partial=0;
 
-	if( IS_RECVAR(vp) )
-	{
-		/*     one dimensional   &&  the only 'record' variable  */
-		if(vp->assoc->count == 1 && handle->recsize <= vp->len)
-		{
-				return(edges) ;
-		} /* else */
-		boundary = vp->shape +1 ;
-	}
-	else
-		boundary = vp->shape ;
+    if( IS_RECVAR(vp) )
+    {
+        /*     one dimensional   &&  the only 'record' variable  */
+        if(vp->assoc->count == 1 && handle->recsize <= vp->len)
+        {
+                return(edges) ;
+        } /* else */
+        boundary = vp->shape +1 ;
+    }
+    else
+        boundary = vp->shape ;
 
-	/* find max contiguous */
-	shp = vp->shape + vp->assoc->count - 1 ; /* points to last dimension */
-	edp = edges + vp->assoc->count - 1 ;     /* points to last edge */
-	orp = origin + vp->assoc->count - 1 ;
+    /* find max contiguous */
+    shp = vp->shape + vp->assoc->count - 1 ; /* points to last dimension */
+    edp = edges + vp->assoc->count - 1 ;     /* points to last edge */
+    orp = origin + vp->assoc->count - 1 ;
 
-	/* Traverse shp back to the begining of boundary while checking that
-	   each edge is within limit between start coord and max of dimension */
-	for( ; shp >= boundary ; shp--,edp--,orp--)
-	{
-	    if(*edp > *shp - *orp || *edp < 0 )
-	    {
-		NCadvise(NC_EINVAL, "Invalid edge length %d", *edp) ;
-		return(NULL) ;
-	    }
-	    /* Mark that the writing is partial when any edge is smaller than the
+    /* Traverse shp back to the begining of boundary while checking that
+    each edge is within limit between start coord and max of dimension */
+    for( ; shp >= boundary ; shp--,edp--,orp--)
+    {
+        if(*edp > *shp - *orp || *edp < 0 )
+        {
+        NCadvise(NC_EINVAL, "Invalid edge length %d", *edp) ;
+        return(NULL) ;
+        }
+        /* Mark that the writing is partial when any edge is smaller than the
                matching dimension */
-	    if(*edp < *shp )
-	    {
-		partial=1;
-		break ;
-		/* Why do we want to break here?  What if the later edge is out
-		   of limit and we break out as soon as a smaller edge is reached? -BMR */
-	    }
-	}
-	/* When all dimensions have been checked and shp has passed the first element
-	   in boundary and into undefined location, so did edp in edges, move edp
-	   forward once to point to the first element in edges.  -BMR, 4/15/2013 */
-	if(shp < boundary) /* made it all the way */
-		edp++ ;
+        if(*edp < *shp )
+        {
+        partial=1;
+        break ;
+        /* Why do we want to break here?  What if the later edge is out
+        of limit and we break out as soon as a smaller edge is reached? -BMR */
+        }
+    }
+    /* When all dimensions have been checked and shp has passed the first element
+    in boundary and into undefined location, so did edp in edges, move edp
+    forward once to point to the first element in edges.  -BMR, 4/15/2013 */
+    if(shp < boundary) /* made it all the way */
+        edp++ ;
 
     /*
      *   This little check makes certain that if complete "slices" of the
      *  regular dimensions of an unlimited dimension dataset are being written
      *  out, it's ok to write out a "block" of all those slices at once. -QAK
      */
-/*	if( IS_RECVAR(vp) && (edp-1==edges) && !partial)
+/*    if( IS_RECVAR(vp) && (edp-1==edges) && !partial)
         edp=edges;
 */
 
-	/* shp, edp reference last index s.t. shape[ii] == edge[ii] */
-	return(edp) ;
+    /* shp, edp reference last index s.t. shape[ii] == edge[ii] */
+    return(edp) ;
 }
 
 
@@ -2087,13 +2077,13 @@ const long *start ;
 const long *edges ;
 Void *values ;
 {
-	long offset ;
-	long newrecs ;
+    long offset ;
+    long newrecs ;
 
-	/* 'start' should be verified as valid upon prior to entry to this
-	 * routine
-	 */
-	if(*edges <= 0)
+    /* 'start' should be verified as valid upon prior to entry to this
+    * routine
+    */
+    if(*edges <= 0)
       {
           NCadvise(NC_EINVALCOORDS, "%s: Invalid edge length %ld",
                    vp->name->values, *edges) ;
@@ -2105,64 +2095,64 @@ Void *values ;
            with "vp->numrecs" to fix bug 525, ie. writing two unlimited
            1D datasets without closing the file in between the two writes
            caused the second dataset to contain garbage. */
-	/* After fixing HDFFR-1385, need to reassess this issue. -BMR */
-	newrecs = (*start + *edges) - vp->numrecs ;
-	if(handle->xdrs->x_op != XDR_ENCODE && newrecs > 0)
+    /* After fixing HDFFR-1385, need to reassess this issue. -BMR */
+    newrecs = (*start + *edges) - vp->numrecs ;
+    if(handle->xdrs->x_op != XDR_ENCODE && newrecs > 0)
       {
           NCadvise(NC_EINVALCOORDS, "%s: Invalid Coordinates",
                    vp->name->values) ;
           return -1 ;
       }
 
-	offset = NC_varoffset(handle, vp, start) ;
+    offset = NC_varoffset(handle, vp, start) ;
 #ifdef VDEBUG
-	fprintf(stderr, "\t\t %s offset %ld, *edges %lu\n",
+    fprintf(stderr, "\t\t %s offset %ld, *edges %lu\n",
             vp->name->values, offset, *edges ) ;
-	arrayp("\t\t coords", vp->assoc->count, start) ;
+    arrayp("\t\t coords", vp->assoc->count, start) ;
 #endif
 
-	if(newrecs > 0)
-		handle->flags |= NC_NDIRTY ;
+    if(newrecs > 0)
+        handle->flags |= NC_NDIRTY ;
 
 #ifdef HDF
-    switch(handle->file_type) 
+    switch(handle->file_type)
       {
       case HDF_FILE:
           DFKsetNT(vp->HDFtype);
           if(FAIL == hdf_xdr_NCvdata(handle, vp,
-                                     offset, vp->type, 
+                                     offset, vp->type,
                                      (uint32)*edges, values))
               return(-1) ;
           break;
       case CDF_FILE:
           DFKsetNT(vp->HDFtype);
           if(!nssdc_xdr_NCvdata(handle, vp,
-                                offset, vp->type, 
+                                offset, vp->type,
                                 (uint32)*edges, values))
               return(-1) ;
           break;
       case netCDF_FILE:
           if(!xdr_NCvdata(handle->xdrs,
-                          offset, vp->type, 
+                          offset, vp->type,
                           (unsigned)*edges, values))
               return(-1) ;
           break;
       }
 #else /* !HDF */
     if(!xdr_NCvdata(handle->xdrs,
-                    offset, vp->type, 
+                    offset, vp->type,
                     (unsigned)*edges, values))
         return(-1) ;
 #endif /* !HDF */
-        
+
 #ifdef HDF
-	if(newrecs > 0)
+    if(newrecs > 0)
       {
-	/* Update var's numrecs first and then handle->numrecs if the first
-	   exceeds the latter (part of bugzilla 1378, i.e., JIRA HDFFR-167)
-	   - BMR, 12/30/2008 */
-	  vp->numrecs += newrecs;
-	  handle->numrecs = MAX(vp->numrecs, handle->numrecs);
+    /* Update var's numrecs first and then handle->numrecs if the first
+    exceeds the latter (part of bugzilla 1378, i.e., JIRA HDFFR-167)
+    - BMR, 12/30/2008 */
+    vp->numrecs += newrecs;
+    handle->numrecs = MAX(vp->numrecs, handle->numrecs);
           if(handle->flags & NC_NSYNC) /* write out header->numrecs NOW */
             {
                 if(!xdr_numrecs(handle->xdrs, handle) )
@@ -2171,7 +2161,7 @@ Void *values ;
             }
       }
 #endif
-	return(0) ;
+    return(0) ;
 }
 
 
@@ -2187,24 +2177,24 @@ const long *edges ;
 void *values ;
 {
 
-	NC_var *vp ;
-	const long *edp0, *edp ;
-	unsigned long iocount ;
+    NC_var *vp ;
+    const long *edp0, *edp ;
+    unsigned long iocount ;
 
-	if(handle->flags & NC_INDEF)
-		return(-1) ;
+    if(handle->flags & NC_INDEF)
+        return(-1) ;
 
-	/* find the variable */
-	if(handle->vars == NULL)
-		return(-1) ;
-	vp = NC_hlookupvar( handle, varid ) ;
-	if(vp == NULL)
-		return(-1) ;
+    /* find the variable */
+    if(handle->vars == NULL)
+        return(-1) ;
+    vp = NC_hlookupvar( handle, varid ) ;
+    if(vp == NULL)
+        return(-1) ;
 
 #ifdef VDEBUG
-	fprintf(stderr, "Entering NCvario, variable %s\n", vp->name->values ) ;
-	arrayp("start", vp->assoc->count, start) ;
-	arrayp("edges", vp->assoc->count, edges) ;
+    fprintf(stderr, "Entering NCvario, variable %s\n", vp->name->values ) ;
+    arrayp("start", vp->assoc->count, start) ;
+    arrayp("edges", vp->assoc->count, edges) ;
 #endif /* VDEBUG */
 
 #ifdef HDF
@@ -2215,10 +2205,10 @@ void *values ;
       }
 #endif
 
-	if(vp->assoc->count == 0) /* 'scaler' variable */
+    if(vp->assoc->count == 0) /* 'scaler' variable */
       {
 #ifdef HDF
-          switch(handle->file_type) 
+          switch(handle->file_type)
             {
             case HDF_FILE:
                 if (FAIL == hdf_xdr_NCv1data(handle, vp, vp->begin, vp->type, values))
@@ -2235,33 +2225,33 @@ void *values ;
 #endif /* !HDF */
       }
 
-	if( !NCcoordck(handle, vp, start) )
-		return(-1) ;
+    if( !NCcoordck(handle, vp, start) )
+        return(-1) ;
 
-	if( IS_RECVAR(vp) 
-		&& vp->assoc->count == 1
-		&& handle->recsize <= vp->len)
+    if( IS_RECVAR(vp)
+        && vp->assoc->count == 1
+        && handle->recsize <= vp->len)
       {
           /* one dimensional   &&  the only 'record' variable  */
           return(NCsimplerecio(handle, vp, start, edges, values)) ;
       }
 
-	/* find max contiguous, check sanity of edges */
-	edp0 = NCvcmaxcontig(handle, vp, start, edges) ;
-	if(edp0 == NULL)
-		return(-1) ;
+    /* find max contiguous, check sanity of edges */
+    edp0 = NCvcmaxcontig(handle, vp, start, edges) ;
+    if(edp0 == NULL)
+        return(-1) ;
 #ifdef VDEBUG
-	fprintf(stderr, "edp0\t%ld\n", (unsigned long)edp0 - (unsigned long)edges) ;
+    fprintf(stderr, "edp0\t%ld\n", (unsigned long)edp0 - (unsigned long)edges) ;
 #endif /* VDEBUG */
 
-	/* now accumulate max count for a single io operation */
-	edp = edges + vp->assoc->count - 1 ; /* count is > 0 at this point */
-	iocount = 1 ;
-	for( ; edp >= edp0 ; edp--)
-		iocount *= *edp ;
-	/* now edp = edp0 - 1 */
+    /* now accumulate max count for a single io operation */
+    edp = edges + vp->assoc->count - 1 ; /* count is > 0 at this point */
+    iocount = 1 ;
+    for( ; edp >= edp0 ; edp--)
+        iocount *= *edp ;
+    /* now edp = edp0 - 1 */
 
-	{ /* inline */
+    { /* inline */
         long  coords[H4_MAX_VAR_DIMS], upper[H4_MAX_VAR_DIMS];
         long  *cc ;
         const long *mm ;
@@ -2315,34 +2305,34 @@ void *values ;
 #endif
 
 #ifdef HDF
-                          switch(handle->file_type) 
+                          switch(handle->file_type)
                             {
                             case HDF_FILE:
                                 if(FAIL == hdf_xdr_NCvdata(handle, vp,
-                                                           offset, vp->type, 
+                                                           offset, vp->type,
                                                            (uint32)iocount, values))
                                     return(-1) ;
                                 break;
                             case CDF_FILE:
                                 if(!nssdc_xdr_NCvdata(handle, vp,
-                                                      offset, vp->type, 
+                                                      offset, vp->type,
                                                       (uint32)iocount, values))
                                     return(-1) ;
                                 break;
                             case netCDF_FILE:
                                 if(!xdr_NCvdata(handle->xdrs,
-                                                offset, vp->type, 
+                                                offset, vp->type,
                                                 (unsigned)iocount, values))
                                     return(-1) ;
                                 break;
                             }
 #else /* !HDF */
                           if(!xdr_NCvdata(handle->xdrs,
-                                          offset, vp->type, 
+                                          offset, vp->type,
                                           (unsigned)iocount, values))
                               return(-1) ;
 #endif /* !HDF */
-                                
+
                           values = (void *)((const uint8 *)values + iocount * szof);
                           (*cc) += (edp0 == edges ? iocount : 1) ;
 #ifdef VDEBUG
@@ -2390,7 +2380,7 @@ void *values ;
          */
         if(upper[0] > vp->numrecs)
             vp->numrecs=upper[0];
-	} /* end inline */
+    } /* end inline */
 
 #ifdef NOTNOW
     /* Albert and I agree that this check below makes perfect sense, but it
@@ -2399,14 +2389,14 @@ void *values ;
      * Perhaps it is only true for netCDF files. -BMR (2013-06-24)
      */
 /* HDFFR-1385: the fix for this bug may fix this problem too.-BMR */
-	if (handle->numrecs < vp->numrecs)
-	    handle->numrecs = vp->numrecs;
+    if (handle->numrecs < vp->numrecs)
+        handle->numrecs = vp->numrecs;
 #endif /* NOTNOW */
 
 #ifdef VDEBUG
-	fprintf(stderr, "Exiting NCvario\n") ;
+    fprintf(stderr, "Exiting NCvario\n") ;
 #endif /* VDEBUG */
-	return(0) ;
+    return(0) ;
 }
 
 
@@ -2417,22 +2407,22 @@ const long *start ;
 const long *edges ;
 ncvoid *values ;
 {
-	NC *handle ;
+    NC *handle ;
 
-	cdf_routine_name = "ncvarput" ;
+    cdf_routine_name = "ncvarput" ;
 
-	handle = NC_check_id(cdfid) ;
-	if(handle == NULL)
-		return(-1) ;
+    handle = NC_check_id(cdfid) ;
+    if(handle == NULL)
+        return(-1) ;
 
     if(!(handle->flags & NC_RDWR))
       {
           NCadvise(NC_EPERM, "%s: NC_NOWRITE", handle->path) ;
           return(-1) ;
       }
-	handle->xdrs->x_op = XDR_ENCODE ;
+    handle->xdrs->x_op = XDR_ENCODE ;
 
-	return( NCvario(handle, varid, start, edges, values) ) ;
+    return( NCvario(handle, varid, start, edges, values) ) ;
 }
 
 
@@ -2444,10 +2434,10 @@ ncvoid *values ;
  *  -BMR, 2013/8/29
  */
 int NC_fill_buffer(handle, varid, edges, values)
-NC *handle;		/* file structure */
-int varid;		/* var number in handle->vars list */
-const long *edges;	/* size of the array's edges */
-void *values;		/* buffer to be filled */
+NC *handle;        /* file structure */
+int varid;        /* var number in handle->vars list */
+const long *edges;    /* size of the array's edges */
+void *values;        /* buffer to be filled */
 {
     NC_var *vp ;
     NC_attr **attr;
@@ -2456,24 +2446,24 @@ void *values;		/* buffer to be filled */
 
     /* Find the variable structure */
     if(handle->vars == NULL)
-	return(-1);
+    return(-1);
     vp = NC_hlookupvar(handle, varid);
     if(vp == NULL)
-	return(-1);
+    return(-1);
 
     /* Compute the size of the buffer using the edges */
     buf_size = 1;
     for (ii = 0; ii < vp->assoc->count; ii++)
-	buf_size = buf_size * edges[ii];
+    buf_size = buf_size * edges[ii];
 
     /* Find user-defined fill-value and fill the buffer with it */
     attr = NC_findattr(&vp->attrs, _FillValue);
     if(attr != NULL)
-	if (HDmemfill(values,(*attr)->data->values,vp->szof,buf_size) == NULL)
-	    return(-1);
+    if (HDmemfill(values,(*attr)->data->values,vp->szof,buf_size) == NULL)
+        return(-1);
     /* If no user-defined fill-value, fill the buffer with default fill-value */
     else
-	NC_arrayfill(values, buf_size * vp->szof, vp->type);
+    NC_arrayfill(values, buf_size * vp->szof, vp->type);
     return 0;
 }
 
@@ -2482,7 +2472,7 @@ void *values;		/* buffer to be filled */
 /*
  *  Reads data from the variable 'varid'.  The starting position and size
  *  of the data are specified by parameters 'start' and 'edges'.
- *  
+ *
  *  If the requested size exceeds the boundary of the actual data, ncvarget
  *  will fill the provided buffer with user-defined fill values or the
  *  default fill values (via NC_fill_buffer.)
@@ -2499,26 +2489,26 @@ const long *start ;
 const long *edges ;
 ncvoid *values ;
 {
-	NC *handle;
-	NC_var *vp;
-	int  status = 0;
+    NC *handle;
+    NC_var *vp;
+    int  status = 0;
 
-	cdf_routine_name = "ncvarget";
+    cdf_routine_name = "ncvarget";
 
-	/* Get the file handle */
-	handle = NC_check_id(cdfid);
-	if(handle == NULL)
-		return(-1);
+    /* Get the file handle */
+    handle = NC_check_id(cdfid);
+    if(handle == NULL)
+        return(-1);
 
-	/* Fill the buffer with fill-values before passing it into NCvario to
-	   read the requested data */
-	status = NC_fill_buffer(handle, varid, edges, values);
-	if (status == FAIL)
+    /* Fill the buffer with fill-values before passing it into NCvario to
+    read the requested data */
+    status = NC_fill_buffer(handle, varid, edges, values);
+    if (status == FAIL)
             return(-1);
 
-	handle->xdrs->x_op = XDR_DECODE ;
+    handle->xdrs->x_op = XDR_DECODE ;
 
-	return(NCvario(handle, varid, start, edges, (Void *)values));
+    return(NCvario(handle, varid, start, edges, (Void *)values));
 }
 
 /* This is the original ncvarget.  Keep for a while just in case. -BMR
@@ -2529,19 +2519,19 @@ const long *start ;
 const long *edges ;
 ncvoid *values ;
 {
-	NC *handle ;
+    NC *handle ;
 
-	cdf_routine_name = "ncvarget" ;
+    cdf_routine_name = "ncvarget" ;
 
-	handle = NC_check_id(cdfid) ;
-	if(handle == NULL)
-		return(-1) ;
+    handle = NC_check_id(cdfid) ;
+    if(handle == NULL)
+        return(-1) ;
 
-	handle->xdrs->x_op = XDR_DECODE ;
+    handle->xdrs->x_op = XDR_DECODE ;
 
-	return( NCvario(handle, varid, start, edges, (Void *)values) ) ;
+    return( NCvario(handle, varid, start, edges, (Void *)values) ) ;
 }
- */ 
+ */
 
 /* Begin recio */
 
@@ -2555,28 +2545,28 @@ static int
 NCnumrecvars(handle, vpp, recvarids)
      NC *handle;
      NC_var **vpp;
-	 int *recvarids;
+    int *recvarids;
 {
-	NC_var **dp ;
-	int ii ;
-	int nrecvars = 0;
+    NC_var **dp ;
+    int ii ;
+    int nrecvars = 0;
 
-	if(handle->vars == NULL)
-		return -1 ;
+    if(handle->vars == NULL)
+        return -1 ;
 
-	dp = (NC_var**)handle->vars->values ;
-	for(ii = 0 ; ii < handle->vars->count ; ii++, dp++)
-	{
-		if(IS_RECVAR((*dp)))
-		{
-			if(vpp != NULL)
-				vpp[nrecvars] = *dp ;
-			if(recvarids != NULL)
-				recvarids[nrecvars] = ii ;
-			nrecvars++ ;
-		}
-	}
-	return nrecvars ;
+    dp = (NC_var**)handle->vars->values ;
+    for(ii = 0 ; ii < handle->vars->count ; ii++, dp++)
+    {
+        if(IS_RECVAR((*dp)))
+        {
+            if(vpp != NULL)
+                vpp[nrecvars] = *dp ;
+            if(recvarids != NULL)
+                recvarids[nrecvars] = ii ;
+            nrecvars++ ;
+        }
+    }
+    return nrecvars ;
 }
 
 
@@ -2584,11 +2574,11 @@ static long
 NCelemsPerRec(vp)
 NC_var *vp ;
 {
-	long nelems = 1 ;
-	int jj ;
-	for(jj = 1 ; jj < vp->assoc->count ; jj++)	
-		nelems *= vp->shape[jj] ;
-	return nelems ;
+    long nelems = 1 ;
+    int jj ;
+    for(jj = 1 ; jj < vp->assoc->count ; jj++)
+        nelems *= vp->shape[jj] ;
+    return nelems ;
 }
 
 
@@ -2604,32 +2594,32 @@ int *nrecvars ;
 int *recvarids ;
 long *recsizes ;
 {
-	NC *handle ;
-	int nrvars ;
-	NC_var *rvp[H4_MAX_NC_VARS] ; 
+    NC *handle ;
+    int nrvars ;
+    NC_var *rvp[H4_MAX_NC_VARS] ;
 
-	cdf_routine_name = "ncrecinq" ;
+    cdf_routine_name = "ncrecinq" ;
 
-	handle = NC_check_id(cdfid) ;
-	if(handle == NULL)
-		return(-1) ;
-	
-	nrvars = NCnumrecvars(handle, rvp, recvarids) ;
-	if(nrvars == -1)
-		return -1 ;
+    handle = NC_check_id(cdfid) ;
+    if(handle == NULL)
+        return(-1) ;
 
-	if(nrecvars != NULL)
-		*nrecvars = nrvars;
-	
-	if(recsizes != NULL)
-	{
-		int ii ;
-		for(ii = 0 ; ii < nrvars ; ii++)
-		{
-			recsizes[ii] = nctypelen(rvp[ii]->type) * NCelemsPerRec(rvp[ii]) ;
-		}
-	}
-	return nrvars ;
+    nrvars = NCnumrecvars(handle, rvp, recvarids) ;
+    if(nrvars == -1)
+        return -1 ;
+
+    if(nrecvars != NULL)
+        *nrecvars = nrvars;
+
+    if(recsizes != NULL)
+    {
+        int ii ;
+        for(ii = 0 ; ii < nrvars ; ii++)
+        {
+            recsizes[ii] = nctypelen(rvp[ii]->type) * NCelemsPerRec(rvp[ii]) ;
+        }
+    }
+    return nrvars ;
 }
 
 
@@ -2639,20 +2629,20 @@ NC *handle ;
 long recnum ;
 Void **datap ;
 {
-	int nrvars ;
-	NC_var *rvp[H4_MAX_NC_VARS] ; 
-	int ii ;
-	long coords[H4_MAX_VAR_DIMS];
-	u_long offset ;
-	unsigned iocount ;
+    int nrvars ;
+    NC_var *rvp[H4_MAX_NC_VARS] ;
+    int ii ;
+    long coords[H4_MAX_VAR_DIMS];
+    u_long offset ;
+    unsigned iocount ;
 
-	nrvars = NCnumrecvars(handle, rvp, (int*) NULL) ;
-	if(nrvars == -1)
-		return -1 ; /* TODO: what error message ?*/
+    nrvars = NCnumrecvars(handle, rvp, (int*) NULL) ;
+    if(nrvars == -1)
+        return -1 ; /* TODO: what error message ?*/
 
-	memset(coords, 0, sizeof(coords)) ;
-	coords[0] = recnum ;
-	for(ii = 0 ; ii < nrvars ; ii++)
+    memset(coords, 0, sizeof(coords)) ;
+    coords[0] = recnum ;
+    for(ii = 0 ; ii < nrvars ; ii++)
       {
           if(datap[ii] == NULL)
               continue ;
@@ -2661,38 +2651,38 @@ Void **datap ;
           iocount = NCelemsPerRec(rvp[ii]) ;
 
 #ifdef HDF
-          switch(handle->file_type) 
+          switch(handle->file_type)
             {
             case HDF_FILE:
                 DFKsetNT(rvp[ii]->HDFtype);
                 if(FAIL == hdf_xdr_NCvdata(handle, rvp[ii],
-                                           offset, rvp[ii]->type, 
+                                           offset, rvp[ii]->type,
                                            (uint32)iocount, datap[ii]))
                     return(-1) ;
                 break;
             case CDF_FILE:
                 DFKsetNT(rvp[ii]->HDFtype);
                 if(!nssdc_xdr_NCvdata(handle, rvp[ii],
-                                      offset, rvp[ii]->type, 
+                                      offset, rvp[ii]->type,
                                       (uint32)iocount, datap[ii]))
                     return(-1) ;
                 break;
             case netCDF_FILE:
                 if(!xdr_NCvdata(handle->xdrs,
-                                offset, rvp[ii]->type, 
+                                offset, rvp[ii]->type,
                                 iocount, datap[ii]))
                     return(-1) ;
                 break;
             }
 #else /* !HDF */
           if(!xdr_NCvdata(handle->xdrs,
-                          offset, rvp[ii]->type, 
+                          offset, rvp[ii]->type,
                           iocount, datap[ii]))
               return(-1) ;
 #endif /* !HDF */
 
       }
-	return 0 ;
+    return 0 ;
 }
 
 
@@ -2706,55 +2696,55 @@ int cdfid ;
 long recnum ;
 ncvoid * *datap ;
 {
-	NC *handle ;
-	long unfilled ;
+    NC *handle ;
+    long unfilled ;
 
-	cdf_routine_name = "ncrecput" ;
+    cdf_routine_name = "ncrecput" ;
 
-	handle = NC_check_id(cdfid) ;
-	if(handle == NULL)
-		return(-1) ;
-	if(handle->flags & NC_INDEF )
-		return(-1) ;
+    handle = NC_check_id(cdfid) ;
+    if(handle == NULL)
+        return(-1) ;
+    if(handle->flags & NC_INDEF )
+        return(-1) ;
 
-	if((unfilled = recnum - handle->numrecs) >= 0)
-	{
-		handle->flags |= NC_NDIRTY ;
-		if( handle->flags & NC_NOFILL )
-		{
-			/* Go directly to jail, do not pass go */
-			handle->numrecs = recnum + 1 ;
-		}
-		else
-		{
-			/* fill out new records */
-			if( !xdr_NCsetpos(handle->xdrs,
-					handle->begin_rec + handle->recsize*handle->numrecs) )
-			{
-				nc_serror("seek, rec %ld", handle->numrecs) ;
-				return(FALSE) ;
-			}
-			for( ; unfilled >= 0 ; unfilled--, handle->numrecs++)
-			{
-				if( !NCfillrecord(handle->xdrs,
-						(NC_var **)handle->vars->values, handle->vars->count) )
-				{
-					nc_serror("NCfillrec, rec %ld", handle->numrecs) ;
-					return(FALSE) ;
-				}
-			}
-		}
-		if(handle->flags & NC_NSYNC) /* write out header->numrecs NOW */
-		{
-			if(!xdr_numrecs(handle->xdrs, handle) )
-				return(FALSE) ;
-			handle->flags &= ~NC_NDIRTY ;
-		}
-	}
+    if((unfilled = recnum - handle->numrecs) >= 0)
+    {
+        handle->flags |= NC_NDIRTY ;
+        if( handle->flags & NC_NOFILL )
+        {
+            /* Go directly to jail, do not pass go */
+            handle->numrecs = recnum + 1 ;
+        }
+        else
+        {
+            /* fill out new records */
+            if( !xdr_NCsetpos(handle->xdrs,
+                    handle->begin_rec + handle->recsize*handle->numrecs) )
+            {
+                nc_serror("seek, rec %ld", handle->numrecs) ;
+                return(FALSE) ;
+            }
+            for( ; unfilled >= 0 ; unfilled--, handle->numrecs++)
+            {
+                if( !NCfillrecord(handle->xdrs,
+                        (NC_var **)handle->vars->values, handle->vars->count) )
+                {
+                    nc_serror("NCfillrec, rec %ld", handle->numrecs) ;
+                    return(FALSE) ;
+                }
+            }
+        }
+        if(handle->flags & NC_NSYNC) /* write out header->numrecs NOW */
+        {
+            if(!xdr_numrecs(handle->xdrs, handle) )
+                return(FALSE) ;
+            handle->flags &= ~NC_NDIRTY ;
+        }
+    }
 
-	handle->xdrs->x_op = XDR_ENCODE ;
+    handle->xdrs->x_op = XDR_ENCODE ;
 
-	return( NCrecio(handle, recnum, (Void **)datap) ) ;
+    return( NCrecio(handle, recnum, (Void **)datap) ) ;
 }
 
 
@@ -2768,17 +2758,17 @@ int cdfid ;
 long recnum ;
 ncvoid **datap ;
 {
-	NC *handle ;
+    NC *handle ;
 
-	cdf_routine_name = "ncrecget" ;
+    cdf_routine_name = "ncrecget" ;
 
-	handle = NC_check_id(cdfid) ;
-	if(handle == NULL)
-		return(-1) ;
-	if(handle->flags & NC_INDEF )
-		return(-1) ;
+    handle = NC_check_id(cdfid) ;
+    if(handle == NULL)
+        return(-1) ;
+    if(handle->flags & NC_INDEF )
+        return(-1) ;
 
-	handle->xdrs->x_op = XDR_DECODE ;
+    handle->xdrs->x_op = XDR_DECODE ;
 
-	return( NCrecio(handle, recnum, (Void **)datap) ) ;
+    return( NCrecio(handle, recnum, (Void **)datap) ) ;
 }

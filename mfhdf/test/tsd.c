@@ -22,14 +22,14 @@
 #include "hdftest.h"
 #include "hfile.h"
 
-#define FILE_NAME     "sdtest.hdf"	/* data file to test ID types */
+#define FILE_NAME     "sdtest.hdf"    /* data file to test ID types */
 
 extern int
 test_sd()
 {
     int32     fid;
     intn      status;
-#ifdef _WIN32
+#if defined _WIN32
     int mode;
 #else
     mode_t mode;
@@ -51,7 +51,7 @@ test_sd()
     /* Close the file */
     status = SDend(fid);
     CHECK(status, FAIL, "SDend");
-#ifdef _WIN32
+#if defined _WIN32
     mode = _S_IREAD;
 #else
     mode =  S_IRUSR;
@@ -66,12 +66,12 @@ test_sd()
 
     ff = HI_OPEN(FILE_NAME, DFACC_READ);
     CHECK(ff, NULL, "fopen");
-    
+
     if (ff != NULL) {
-	    HI_CLOSE(ff);
+        HI_CLOSE(ff);
     }
 
-#ifdef _WIN32
+#if defined _WIN32
     mode = _S_IWRITE;
 #else
     mode =  S_IWUSR;

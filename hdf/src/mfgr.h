@@ -16,11 +16,11 @@
 /*-----------------------------------------------------------------------------
  * File:    mfgr.h
  * Purpose: header file for multi-file general raster information
- * Dependencies: 
+ * Dependencies:
  * Invokes:
  * Contents:
- * Structure definitions: 
- * Constant definitions: 
+ * Structure definitions:
+ * Constant definitions:
  *---------------------------------------------------------------------------*/
 
 /* avoid re-inclusion */
@@ -31,9 +31,9 @@
 
 /* Interlace types available */
 typedef int16 gr_interlace_t;
-#define MFGR_INTERLACE_PIXEL		0    /* pixel interlacing scheme */
-#define MFGR_INTERLACE_LINE		    1    /* line interlacing scheme */
-#define MFGR_INTERLACE_COMPONENT 	2    /* component interlacing scheme */
+#define MFGR_INTERLACE_PIXEL        0    /* pixel interlacing scheme */
+#define MFGR_INTERLACE_LINE            1    /* line interlacing scheme */
+#define MFGR_INTERLACE_COMPONENT     2    /* component interlacing scheme */
 
 #if defined MFGR_MASTER | defined MFGR_TESTER
 
@@ -48,7 +48,7 @@ typedef int16 gr_interlace_t;
 #define ATTR_TAG    DFTAG_VH    /* Current GR attributes are stored in VDatas */
 
 /* The default threshhold for attributes which will be cached */
-#define GR_ATTR_THRESHHOLD  2048    
+#define GR_ATTR_THRESHHOLD  2048
 
 #define VALIDRIINDEX(i,gp) ((i)>=0 && (i)<(gp)->gr_count)
 
@@ -136,11 +136,11 @@ typedef struct ri_info {
 HDFLIBAPI intn GRIil_convert(const void * inbuf,gr_interlace_t inil,void * outbuf,
         gr_interlace_t outil,int32 dims[2],int32 ncomp,int32 nt);
 
-extern VOID GRIgrdestroynode(void * n);
+HDFLIBAPI VOID GRIgrdestroynode(void * n);
 
-extern VOID GRIattrdestroynode(void * n);
+HDFLIBAPI VOID GRIattrdestroynode(void * n);
 
-extern VOID GRIridestroynode(void * n);
+HDFLIBAPI VOID GRIridestroynode(void * n);
 
 #endif /* MFGR_MASTER | MFGR_TESTER */
 

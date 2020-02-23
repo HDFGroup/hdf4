@@ -123,7 +123,7 @@ main(int argc, char *argv[])
     setbuf(stderr, NULL);
     setbuf(stdout, NULL);
     /* Tests are generally arranged from least to most complexity... */
-#if !(defined _WIN32)
+#if !defined _WIN32
     InitTest("bitvect", test_bitvect, "Bit-Vector routines");
     InitTest("tbbt", test_tbbt, "Threaded Balanced Binary Trees");
 #endif
@@ -245,7 +245,7 @@ main(int argc, char *argv[])
       }     /* end for */
 
     if(Cache) /* turn on caching, unless we were instucted not to */
-	Hcache(CACHE_ALL_FILES,TRUE);
+        Hcache(CACHE_ALL_FILES,TRUE);
 
     for (Loop = 0; Loop < Index; Loop++)
       {

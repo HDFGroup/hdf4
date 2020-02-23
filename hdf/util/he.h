@@ -28,7 +28,7 @@
 #if defined (IBM6000) || defined (SUN)
 #include <unistd.h>
 #endif /* Unix std libs */
-#if defined HAVE_UNISTD_H
+#if defined H4_HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 

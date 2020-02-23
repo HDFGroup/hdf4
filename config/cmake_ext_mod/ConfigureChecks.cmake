@@ -82,6 +82,9 @@ if (WINDOWS)
   endif ()
   if (NOT UNIX AND NOT CYGWIN)
     set (${HDF_PREFIX}_HAVE_GETCONSOLESCREENBUFFERINFO 1)
+    set (${HDF_PREFIX}_GETTIMEOFDAY_GIVES_TZ 1)
+    set (${HDF_PREFIX}_HAVE_TIMEZONE 1)
+    set (${HDF_PREFIX}_HAVE_GETTIMEOFDAY 1)
     set (${HDF_PREFIX}_HAVE_LIBWS2_32 1)
     set (${HDF_PREFIX}_HAVE_LIBWSOCK32 1)
   endif ()
@@ -154,7 +157,6 @@ CHECK_INCLUDE_FILE_CONCAT ("netinet/in.h"    ${HDF_PREFIX}_HAVE_NETINET_IN_H)
 # _Bool type support
 CHECK_INCLUDE_FILE_CONCAT (stdbool.h    ${HDF_PREFIX}_HAVE_STDBOOL_H)
 
-CHECK_INCLUDE_FILE_CONCAT ("netinet/in.h"    ${HDF_PREFIX}_HAVE_NETINET_H)
 CHECK_INCLUDE_FILE_CONCAT ("arpa/inet.h"     ${HDF_PREFIX}_HAVE_INET_H)
 CHECK_INCLUDE_FILE_CONCAT ("sys/param.h"     ${HDF_PREFIX}_HAVE_PARAM_H)
 
@@ -384,6 +386,7 @@ HDF_CHECK_TYPE_SIZE (off64_t        ${HDF_PREFIX}_SIZEOF_OFF64_T)
 if (NOT ${HDF_PREFIX}_SIZEOF_OFF64_T)
   set (${HDF_PREFIX}_SIZEOF_OFF64_T 0)
 endif ()
+HDF_CHECK_TYPE_SIZE (time_t          ${HDF_PREFIX}_SIZEOF_TIME_T)
 
 #-----------------------------------------------------------------------------
 # Extra C99 types

@@ -142,8 +142,7 @@ am__uninstall_files_from_dir = { \
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libxdr_la_LIBADD =
-am_libxdr_la_OBJECTS = xdr_array.lo xdr_float.lo xdr_mem.lo \
-	xdr_reference.lo xdr.lo xdr_rec.lo xdr_stdio.lo
+am_libxdr_la_OBJECTS = xdr.lo xdrfloat.lo xdrstdio.lo xdrarray.lo
 libxdr_la_OBJECTS = $(am_libxdr_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -152,6 +151,7 @@ am__v_lt_1 =
 am_xdrtest_OBJECTS = xdrtest.$(OBJEXT)
 xdrtest_OBJECTS = $(am_xdrtest_OBJECTS)
 xdrtest_LDADD = $(LDADD)
+xdrtest_DEPENDENCIES = ./libxdr.la
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -577,14 +577,13 @@ ACLOCAL_AMFLAGS = "-I m4"
 # .chkexe files are used to mark tests that have run successfully.
 # .chklog files are output from those tests.
 CHECK_CLEANFILES = *.chkexe *.chklog
-AM_CPPFLAGS = -I$(top_srcdir)/hdf/src
+AM_CPPFLAGS = -I$(srcdir) -I$(top_srcdir)/hdf/src
 
 # XDR Library
 lib_LTLIBRARIES = libxdr.la
-libxdr_la_SOURCES = xdr_array.c xdr_float.c xdr_mem.c xdr_reference.c \
-	xdr.c xdr_rec.c xdr_stdio.c
-
+libxdr_la_SOURCES = xdr.c xdrfloat.c xdrstdio.c xdrarray.c
 include_HEADERS = xdr.h types.h
+LDADD = ./libxdr.la
 TEST_PROG = xdrtest
 xdrtest_SOURCES = xdrtest.c
 
@@ -699,12 +698,9 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdr.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdr_array.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdr_float.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdr_mem.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdr_rec.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdr_reference.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdr_stdio.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdrarray.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdrfloat.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdrstdio.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdrtest.Po@am__quote@
 
 .c.o:

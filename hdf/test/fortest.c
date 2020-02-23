@@ -38,16 +38,16 @@ InitTest(const char *TheName, const char *TheCall, const char *TheDescr)
     static int  Index = 0;
 
     if (Index >= NUMOFTESTS){
-	printf("*** Too many tests.  Need to increase NUMOFTESTS (%d).\n",
-		NUMOFTESTS);
-	printf("\tRequest (%s) ignored.\n", TheName);
+    printf("*** Too many tests.  Need to increase NUMOFTESTS (%d).\n",
+        NUMOFTESTS);
+    printf("\tRequest (%s) ignored.\n", TheName);
     } else {
-	HDstrcpy(Test[Index].Description, TheDescr);
-	HDstrcpy(Test[Index].Name, TheName);
-	HDstrcpy(Test[Index].Call, TheCall);
-	Test[Index].NumErrors = -1;
-	Test[Index].SkipFlag = 0;
-	Index++;
+    HDstrcpy(Test[Index].Description, TheDescr);
+    HDstrcpy(Test[Index].Name, TheName);
+    HDstrcpy(Test[Index].Call, TheCall);
+    Test[Index].NumErrors = -1;
+    Test[Index].SkipFlag = 0;
+    Index++;
     }
     return(Index);
 }
@@ -60,8 +60,8 @@ main(int argc, char *argv[])
     int         Summary = 0;
     int         CleanUp = 1;
     int         num_tests=0;
-    FILE	*cmdfile;
-    const char	*cmdfilename="fortest.arg";
+    FILE    *cmdfile;
+    const char    *cmdfilename="fortest.arg";
 
 
     printf(" ===========================================\n");
@@ -88,7 +88,7 @@ main(int argc, char *argv[])
 /* The test is skipped when size of fortran integer is smaller than
    the size of C pointer; this happens on the 64-bit DEC Alpha, Solaris, Altix
    AIX and Mac Intel. We need a better fix; see HDFFR-191.
-*/ 
+*/
 #if defined DEC_ALPHA || defined _WIN32 || (defined SUN && defined _LP64) || defined __ia64  || defined __x86_64  || defined AIX5L64 || (__APPLE__ && __LP64__)
     printf("   Skipping stubs\n");
 #else
@@ -96,8 +96,8 @@ main(int argc, char *argv[])
 #endif
 
     if ((cmdfile = fopen(cmdfilename, "w")) == NULL){
-	printf("***Can't write to cmdfile(%s)***\n", cmdfilename);
-	return(-1);
+    printf("***Can't write to cmdfile(%s)***\n", cmdfilename);
+    return(-1);
     }
 
     /* Default setting */
@@ -118,7 +118,7 @@ main(int argc, char *argv[])
                     Verbosity = 9;
                 else
                     Verbosity = atoi(argv[CLLoop + 1]);
-		fprintf(cmdfile, "%s %d\n", VERBOSITY_STR, Verbosity);
+        fprintf(cmdfile, "%s %d\n", VERBOSITY_STR, Verbosity);
             }
           if ((argc > CLLoop) && ((HDstrcmp(argv[CLLoop], "-summary") == 0) ||
                                   (HDstrcmp(argv[CLLoop], "-s") == 0)))
@@ -155,7 +155,7 @@ main(int argc, char *argv[])
                                   (HDstrcmp(argv[CLLoop], "-c") == 0)))
             {
                 CleanUp = 0;
-		fprintf(cmdfile, "%s %s\n", CLEAN_STR, "No");
+        fprintf(cmdfile, "%s %s\n", CLEAN_STR, "No");
             }
           if ((argc > CLLoop + 1) && ((HDstrcmp(argv[CLLoop], "-exclude") == 0) ||
                                       (HDstrcmp(argv[CLLoop], "-x") == 0)))
@@ -211,11 +211,11 @@ main(int argc, char *argv[])
       {
           if (Test[Loop].SkipFlag)
             {
-		fprintf(cmdfile, "%s %s\n", SKIP_STR, Test[Loop].Name);
+        fprintf(cmdfile, "%s %s\n", SKIP_STR, Test[Loop].Name);
             }
           else
             {
-		fprintf(cmdfile, "%s %s\n", TEST_STR, Test[Loop].Name);
+        fprintf(cmdfile, "%s %s\n", TEST_STR, Test[Loop].Name);
             }
       }
 

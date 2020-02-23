@@ -3520,6 +3520,12 @@ case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
 
 
+## ----------------------------------------------------------------------
+## Some platforms have broken basename, and/or xargs programs. Check
+## that it actually does what it's supposed to do. Catch this early
+## since configure and scripts relies upon them heavily and there's
+## no use continuing if it's broken.
+##
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking if basename works" >&5
 $as_echo_n "checking if basename works... " >&6; }
 BASENAME_TEST="`basename /foo/bar/baz/qux/basename_works`"
@@ -3530,6 +3536,7 @@ else
 $as_echo "yes" >&6; }
 fi
 
+## xargs basename used in configure to get the CC_BASENAME value
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking if xargs works" >&5
 $as_echo_n "checking if xargs works... " >&6; }
 XARGS_TEST="`echo /foo/bar/baz/qux/xargs_works | xargs basename`"
@@ -6318,7 +6325,7 @@ else
 JAVA_TEST=Test.java
 CLASS_TEST=Test.class
 cat << \EOF > $JAVA_TEST
-/* #line 6321 "configure" */
+/* #line 6328 "configure" */
 public class Test {
 }
 EOF
@@ -6493,7 +6500,7 @@ EOF
 if $UUDECODE Test.uue; then
         ac_cv_prog_uudecode_base64=yes
 else
-        echo "configure: 6496: uudecode had trouble decoding base 64 file 'Test.uue'" >&5
+        echo "configure: 6503: uudecode had trouble decoding base 64 file 'Test.uue'" >&5
         echo "configure: failed file was:" >&5
         cat Test.uue >&5
         ac_cv_prog_uudecode_base64=no
@@ -6610,7 +6617,7 @@ else
 JAVA_TEST=Test.java
 CLASS_TEST=Test.class
 cat << \EOF > $JAVA_TEST
-/* #line 6613 "configure" */
+/* #line 6620 "configure" */
 public class Test {
 }
 EOF
@@ -6645,7 +6652,7 @@ JAVA_TEST=Test.java
 CLASS_TEST=Test.class
 TEST=Test
 cat << \EOF > $JAVA_TEST
-/* [#]line 6648 "configure" */
+/* [#]line 6655 "configure" */
 public class Test {
 public static void main (String args[]) {
         System.exit (0);
@@ -7075,7 +7082,7 @@ EOF
                 if $UUDECODE Test.uue; then
                         :
                 else
-                        echo "configure: 7078: uudecode had trouble decoding base 64 file 'Test.uue'" >&5
+                        echo "configure: 7085: uudecode had trouble decoding base 64 file 'Test.uue'" >&5
                         echo "configure: failed file was:" >&5
                         cat Test.uue >&5
                         ac_cv_prog_uudecode_base64=no
@@ -7095,7 +7102,7 @@ EOF
 else
 
 cat << \EOF > Test.java
-/* #line 7098 "configure" */
+/* #line 7105 "configure" */
 import junit.textui.TestRunner;
 public class Test {
 
@@ -22890,8 +22897,8 @@ else
 fi
 
 
-case "$withval" in
-  yes)
+case "X-$withval" in
+  X-yes)
     HAVE_ZLIB="yes"
     for ac_header in zlib.h
 do :
@@ -22976,7 +22983,7 @@ fi
 
     fi
     ;;
-  no)
+  X-|X-no|X-none)
     HAVE_ZLIB="no"
     as_fn_error $? "zlib library required to build HDF4" "$LINENO" 5
     ;;
@@ -23108,8 +23115,8 @@ else
 fi
 
 
-case "$withval" in
-  yes)
+case "X-$withval" in
+  X-yes)
     HAVE_JPEG="yes"
     for ac_header in jpeglib.h
 do :
@@ -23187,7 +23194,7 @@ fi
       as_fn_error $? "couldn't find jpeg library" "$LINENO" 5
     fi
     ;;
-  no)
+  X-|X-no|X-none)
     HAVE_JPEG="no"
     as_fn_error $? "jpeg library required to build HDF4" "$LINENO" 5
     ;;
@@ -23315,8 +23322,8 @@ else
 fi
 
 
-case "$withval" in
-  yes)
+case "X-$withval" in
+  X-yes)
     HAVE_SZIP="yes"
     for ac_header in szlib.h
 do :
@@ -23394,7 +23401,7 @@ fi
       as_fn_error $? "couldn't find szlib library" "$LINENO" 5
     fi
     ;;
-  no)
+  X-|X-no|X-none)
     HAVE_SZIP="no"
     { $as_echo "$as_me:${as_lineno-$LINENO}: checking for szlib" >&5
 $as_echo_n "checking for szlib... " >&6; }
@@ -23632,84 +23639,64 @@ $as_echo "using HDF4 XDR" >&6; };
     ;;
 esac
 
-## For Solaris systems, add the -nsl for XDR support
-##
-## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
-case "$host" in
-  *-solaris*)
-    LIBS="$LIBS -lnsl"  ;;
-  *-pc-cygwin*)
-    LIBS="$LIBS -ltirpc"
-    CPPFLAGS="$CPPFLAGS -I/usr/include/tirpc"  ;;
-  *) ;;
-esac
-
-if test "X$BUILD_XDR" != "Xyes"; then
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-    #include <rpc/types.h>
-    #include <rpc/xdr.h>
-#ifdef F77_DUMMY_MAIN
-
-#  ifdef __cplusplus
-     extern "C"
-#  endif
-   int F77_DUMMY_MAIN() { return 1; }
-
-#endif
-int
-main ()
-{
-xdr_int
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }; BUILD_XDR="no"
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }; BUILD_XDR="yes"
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-fi
-
- if test "X$BUILD_XDR" = "Xyes"; then
-  HDF_BUILD_XDR_TRUE=
-  HDF_BUILD_XDR_FALSE='#'
-else
-  HDF_BUILD_XDR_TRUE='#'
-  HDF_BUILD_XDR_FALSE=
-fi
-
-
 
 ## Check headers and add libraries for XDR if the HDF4 XDR library is not used.
 if test "X$BUILD_XDR" != "Xyes"; then
-
+    ## For Solaris systems, add the -nsl for XDR support
+    ##
+    ## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
   ## ======================================================================
   ## Checks for header files
   ## ======================================================================
+  HAVE_RPC="yes"
+  HAVE_OLDRPC="yes"
+  HAVE_TIRPC="yes"
+  ## save current settings
+  SYSCPPFLAGS="$CPPFLAGS"
+  case "$host" in
+    *-solaris*)
+      LIBS="$LIBS -lnsl"
+      ;;
+    *-pc-cygwin* | *-linux*)
+      CPPFLAGS="$SYSCPPFLAGS"
+      ac_fn_c_check_header_mongrel "$LINENO" "rpc/rpc.h" "ac_cv_header_rpc_rpc_h" "$ac_includes_default"
+if test "x$ac_cv_header_rpc_rpc_h" = xyes; then :
+  :
+else
+  unset HAVE_OLDRPC
+fi
+
+
+      if test -z "$HAVE_OLDRPC" ; then
+        LIBS="$LIBS -ltirpc"
+        CPPFLAGS="$SYSCPPFLAGS -I/usr/include/tirpc"
+        ac_fn_c_check_header_mongrel "$LINENO" "rpc/rpc.h" "ac_cv_header_rpc_rpc_h" "$ac_includes_default"
+if test "x$ac_cv_header_rpc_rpc_h" = xyes; then :
+  :
+else
+  unset HAVE_TIRPC
+fi
+
+
+        if test -z "$HAVE_TIRPC" ; then
+          CPPFLAGS="$SYSCPPFLAGS"
+          as_fn_error $? "couldn't find rpc headers" "$LINENO" 5
+        fi
+      else
+          HAVE_TIRPC=""
+      fi
+      ;;
+    *) ;;
+  esac
 
   ## ----------------------------------------------------------------------
   ## We're trying to link against the rpc library when building on Cygwin,
   ## but we need to make sure that it is present on the system. Do that here,
   ## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
   case "$host" in
-    *-pc-cygwin*)
-      HAVE_RPC="yes"
-      ac_fn_c_check_header_mongrel "$LINENO" "rpc.h" "ac_cv_header_rpc_h" "$ac_includes_default"
-if test "x$ac_cv_header_rpc_h" = xyes; then :
-  :
-else
-  unset HAVE_RPC
-fi
-
-
-      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for xdr_opaque in -ltirpc" >&5
+    *-pc-cygwin* | *-linux*)
+      if test -n "$HAVE_TIRPC"; then
+        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for xdr_opaque in -ltirpc" >&5
 $as_echo_n "checking for xdr_opaque in -ltirpc... " >&6; }
 if ${ac_cv_lib_tirpc_xdr_opaque+:} false; then :
   $as_echo_n "(cached) " >&6
@@ -23759,12 +23746,59 @@ else
   unset HAVE_RPC
 fi
 
-      if test -z "$HAVE_RPC"; then
-        as_fn_error $? "couldn't find tirpc library" "$LINENO" 5
+        if test -z "$HAVE_RPC"; then
+          as_fn_error $? "couldn't find rpc library" "$LINENO" 5
+        fi
       fi
       ;;
   esac
+
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+  #include <rpc/types.h>
+  #include <rpc/xdr.h>
+#ifdef F77_DUMMY_MAIN
+
+#  ifdef __cplusplus
+     extern "C"
+#  endif
+   int F77_DUMMY_MAIN() { return 1; }
+
+#endif
+int
+main ()
+{
+xdr_int
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }; BUILD_XDR="no"
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }; BUILD_XDR="yes"
 fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+fi
+
+if test "X$BUILD_XDR" != "Xno"; then
+
+$as_echo "#define NO_SYS_XDR_INC 1" >>confdefs.h
+
+fi
+
+ if test "X$BUILD_XDR" = "Xyes"; then
+  HDF_BUILD_XDR_TRUE=
+  HDF_BUILD_XDR_FALSE='#'
+else
+  HDF_BUILD_XDR_TRUE='#'
+  HDF_BUILD_XDR_FALSE=
+fi
+
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for ANSI C header files" >&5
 $as_echo_n "checking for ANSI C header files... " >&6; }
@@ -23886,18 +23920,106 @@ $as_echo "#define STDC_HEADERS 1" >>confdefs.h
 
 fi
 
+for ac_header in sys/types.h netinet/in.h arpa/nameser.h netdb.h resolv.h
+do :
+  as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
+ac_fn_c_check_header_compile "$LINENO" "$ac_header" "$as_ac_Header" "#ifdef HAVE_SYS_TYPES_H
+#  include <sys/types.h>
+#endif
+#ifdef HAVE_NETINET_IN_H
+#  include <netinet/in.h>   /* inet_ functions / structs */
+#endif
+#ifdef HAVE_ARPA_NAMESER_H
+#  include <arpa/nameser.h> /* DNS HEADER struct */
+#endif
+#ifdef HAVE_NETDB_H
+#  include <netdb.h>
+#endif
+"
+if eval test \"x\$"$as_ac_Header"\" = x"yes"; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_header" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+
+done
+
 
 ## ======================================================================
 ## Checks for types
 ## ======================================================================
 
 ## ======================================================================
+## Checks for endianness functions
+## The htons and ntohs functions are available on most systems.
+## These functions convert betweennetwork endiannessand hostendianness.
+## Network endianness is big-endian; because the standard TCP/IP network
+## protocols use big-endian ordering. These functions come in two sizes:
+## htonl and ntohl operate on 4-byte quantities, and
+## htons and ntohs operate on 2-byte quantities.
+## The hton functions convert host endianness to network endianness.
+## The ntoh functions convert network endianness to host endianness
+## ======================================================================
+for ac_func in htonl htons ntohl ntohs __builtin_bswap16 __builtin_bswap32 __builtin_bswap64
+do :
+  as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
+if eval test \"x\$"$as_ac_var"\" = x"yes"; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+done
+
+
+## ======================================================================
 ## Checks for structures
 ## ======================================================================
+for ac_header in sys/time.h sys/file.h sys/resource.h
+do :
+  as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
+ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
+if eval test \"x\$"$as_ac_Header"\" = x"yes"; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_header" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+
+done
+
 
 ## ======================================================================
 ## Checks for compiler characteristics
 ## ======================================================================
+for ac_header in stddef.h io.h
+do :
+  as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
+ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
+if eval test \"x\$"$as_ac_Header"\" = x"yes"; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_header" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+
+done
+
+for ac_header in arpa/inet.h fcntl.h netinet/in.h
+do :
+  as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
+ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
+if eval test \"x\$"$as_ac_Header"\" = x"yes"; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_header" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+
+done
+
 
 if test "x$CC" != xcc; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether $CC and cc understand -c and -o together" >&5
@@ -24253,16 +24375,19 @@ _ACEOF
 
 
 if test $ac_cv_sizeof_intp -ge 8; then
-  CPPFLAGS="$CPPFLAGS -DBIG_LONGS"
+#  CPPFLAGS="$CPPFLAGS -DBIG_LONGS"
+
+$as_echo "#define BIG_LONGS 1" >>confdefs.h
+
 
   ## Define super secret special flag for AIX machines in 64-bit mode.
   case "${host}" in
     *-ibm-aix*) CPPFLAGS="$CPPFLAGS -DAIX5L64" ;;
     *)          ;;
   esac
-  if test "X$BUILD_XDR" = "Xyes"; then
-    as_fn_error $? "--enable-hdf4-xdr is not supported for 64 bit mode." "$LINENO" 5
-  fi
+#  if test "X$BUILD_XDR" = "Xyes"; then
+#    AC_MSG_ERROR([--enable-hdf4-xdr is not supported for 64 bit mode.])
+#  fi
 fi
 
 ## ----------------------------------------------------------------------
@@ -24544,7 +24669,7 @@ $as_echo "$ac_cv_c_bigendian" >&6; }
      $as_echo "#define WORDS_BIGENDIAN 1" >>confdefs.h
 ;; #(
    no)
-     CPPFLAGS="$CPPFLAGS -DSWAP" ;; #(
+      ;; #(
    universal)
 
 $as_echo "#define AC_APPLE_UNIVERSAL_BUILD 1" >>confdefs.h

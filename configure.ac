@@ -90,6 +90,12 @@ AC_MSG_RESULT([done])
 
 AC_CANONICAL_HOST
 
+## ----------------------------------------------------------------------
+## Some platforms have broken basename, and/or xargs programs. Check
+## that it actually does what it's supposed to do. Catch this early
+## since configure and scripts relies upon them heavily and there's
+## no use continuing if it's broken.
+##
 AC_MSG_CHECKING([if basename works])
 BASENAME_TEST="`basename /foo/bar/baz/qux/basename_works`"
 if test $BASENAME_TEST != "basename_works"; then
@@ -98,6 +104,7 @@ else
   AC_MSG_RESULT([yes])
 fi
 
+## xargs basename used in configure to get the CC_BASENAME value
 AC_MSG_CHECKING([if xargs works])
 XARGS_TEST="`echo /foo/bar/baz/qux/xargs_works | xargs basename`"
 if test $XARGS_TEST != "xargs_works"; then
@@ -387,8 +394,8 @@ AC_ARG_WITH([zlib],
                             [Use zlib library [default=yes]])],,
             [withval=yes])
 
-case "$withval" in
-  yes)
+case "X-$withval" in
+  X-yes)
     HAVE_ZLIB="yes"
     AC_CHECK_HEADERS([zlib.h], [HAVE_ZLIB_H="yes"], [unset HAVE_ZLIB])
     if test "x$HAVE_ZLIB" = "xyes" -a "x$HAVE_ZLIB_H" = "xyes"; then
@@ -402,7 +409,7 @@ case "$withval" in
       AC_CHECK_FUNC([compress2], [HAVE_COMPRESS2="yes"])
     fi
     ;;
-  no)
+  X-|X-no|X-none)
     HAVE_ZLIB="no"
     AC_MSG_ERROR([zlib library required to build HDF4])
     ;;
@@ -459,8 +466,8 @@ AC_ARG_WITH([jpeg],
                             [Use jpeg library [default=yes]])],,
             [withval=yes])
 
-case "$withval" in
-  yes)
+case "X-$withval" in
+  X-yes)
     HAVE_JPEG="yes"
     AC_CHECK_HEADERS([jpeglib.h], [HAVE_JPEG_H="yes"], [unset HAVE_JPEG])
     if test "x$HAVE_JPEG" = "xyes" -a "x$HAVE_JPEG_H" = "xyes"; then
@@ -471,7 +478,7 @@ case "$withval" in
       AC_MSG_ERROR([couldn't find jpeg library])
     fi
     ;;
-  no)
+  X-|X-no|X-none)
     HAVE_JPEG="no"
     AC_MSG_ERROR([jpeg library required to build HDF4])
     ;;
@@ -528,8 +535,8 @@ AC_ARG_WITH([szlib],
                             [Use szlib library [default=no]])],,
             [withval=no])
 
-case "$withval" in
-  yes)
+case "X-$withval" in
+  X-yes)
     HAVE_SZIP="yes"
     AC_CHECK_HEADERS([szlib.h], [HAVE_SZLIB_H="yes"], [unset HAVE_SZIP])
     if test "x$HAVE_SZLIB" = "xyes" -a "x$HAVE_SZLIB_H" = "xyes"; then
@@ -540,7 +547,7 @@ case "$withval" in
       AC_MSG_ERROR([couldn't find szlib library])
     fi
     ;;
-  no)
+  X-|X-no|X-none)
     HAVE_SZIP="no"
     AC_MSG_CHECKING([for szlib])
     AC_MSG_RESULT([suppressed])
@@ -676,65 +683,99 @@ case "$enableval" in
     ;;
 esac
 
-## For Solaris systems, add the -nsl for XDR support
-##
-## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
-case "$host" in
-  *-solaris*)
-    LIBS="$LIBS -lnsl"  ;;
-  *-pc-cygwin*)
-    LIBS="$LIBS -ltirpc"
-    CPPFLAGS="$CPPFLAGS -I/usr/include/tirpc"  ;;
-  *) ;;
-esac
-
-if test "X$BUILD_XDR" != "Xyes"; then
-    AC_TRY_LINK([
-    #include <rpc/types.h>
-    #include <rpc/xdr.h>], [xdr_int],
-                [AC_MSG_RESULT([yes]); BUILD_XDR="no"],
-                [AC_MSG_RESULT([no]); BUILD_XDR="yes"])
-fi
-
-AM_CONDITIONAL([HDF_BUILD_XDR], [test "X$BUILD_XDR" = "Xyes"])
-
 
 ## Check headers and add libraries for XDR if the HDF4 XDR library is not used.
 if test "X$BUILD_XDR" != "Xyes"; then
-
+    ## For Solaris systems, add the -nsl for XDR support
+    ##
+    ## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
   ## ======================================================================
   ## Checks for header files
   ## ======================================================================
+  HAVE_RPC="yes"
+  HAVE_OLDRPC="yes"
+  HAVE_TIRPC="yes"
+  ## save current settings
+  SYSCPPFLAGS="$CPPFLAGS"
+  case "$host" in
+    *-solaris*)
+      LIBS="$LIBS -lnsl"
+      ;;
+    *-pc-cygwin* | *-linux*)
+      CPPFLAGS="$SYSCPPFLAGS"
+      AC_CHECK_HEADER([rpc/rpc.h],[:], [unset HAVE_OLDRPC])
+      if test -z "$HAVE_OLDRPC" ; then
+        LIBS="$LIBS -ltirpc"
+        CPPFLAGS="$SYSCPPFLAGS -I/usr/include/tirpc"
+        AC_CHECK_HEADER([rpc/rpc.h],[:], [unset HAVE_TIRPC])
+        if test -z "$HAVE_TIRPC" ; then
+          CPPFLAGS="$SYSCPPFLAGS"
+          AC_MSG_ERROR([couldn't find rpc headers])
+        fi
+      else
+          HAVE_TIRPC=""
+      fi
+      ;;
+    *) ;;
+  esac
 
   ## ----------------------------------------------------------------------
   ## We're trying to link against the rpc library when building on Cygwin,
   ## but we need to make sure that it is present on the system. Do that here,
   ## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
   case "$host" in
-    *-pc-cygwin*)
-      HAVE_RPC="yes"
-      AC_CHECK_HEADER([rpc.h],[:], [unset HAVE_RPC])
-      AC_CHECK_LIB([tirpc], [xdr_opaque],[:], [unset HAVE_RPC])
-      if test -z "$HAVE_RPC"; then
-        AC_MSG_ERROR([couldn't find tirpc library])
+    *-pc-cygwin* | *-linux*)
+      if test -n "$HAVE_TIRPC"; then
+        AC_CHECK_LIB([tirpc], [xdr_opaque],[:], [unset HAVE_RPC])
+        if test -z "$HAVE_RPC"; then
+          AC_MSG_ERROR([couldn't find rpc library])
+        fi
       fi
       ;;
   esac
+
+  AC_TRY_LINK([
+  #include <rpc/types.h>
+  #include <rpc/xdr.h>], [xdr_int],
+                [AC_MSG_RESULT([yes]); BUILD_XDR="no"],
+                [AC_MSG_RESULT([no]); BUILD_XDR="yes"])
 fi
 
-AC_HEADER_STDC
+if test "X$BUILD_XDR" != "Xno"; then
+  AC_DEFINE([NO_SYS_XDR_INC], [1], [Not using system xdr])
+fi
 
+AM_CONDITIONAL([HDF_BUILD_XDR], [test "X$BUILD_XDR" = "Xyes"])
+
+AC_HEADER_STDC
+AC_HEADER_RESOLV
 ## ======================================================================
 ## Checks for types
 ## ======================================================================
 
 ## ======================================================================
+## Checks for endianness functions
+## The htons and ntohs functions are available on most systems.
+## These functions convert betweennetwork endiannessand hostendianness.
+## Network endianness is big-endian; because the standard TCP/IP network
+## protocols use big-endian ordering. These functions come in two sizes:
+## htonl and ntohl operate on 4-byte quantities, and
+## htons and ntohs operate on 2-byte quantities.
+## The hton functions convert host endianness to network endianness.
+## The ntoh functions convert network endianness to host endianness
+## ======================================================================
+AC_CHECK_FUNCS([htonl htons ntohl ntohs __builtin_bswap16 __builtin_bswap32 __builtin_bswap64])
+
+## ======================================================================
 ## Checks for structures
 ## ======================================================================
+AC_CHECK_HEADERS([sys/time.h sys/file.h sys/resource.h])
 
 ## ======================================================================
 ## Checks for compiler characteristics
 ## ======================================================================
+AC_CHECK_HEADERS([stddef.h io.h])
+AC_CHECK_HEADERS([arpa/inet.h fcntl.h netinet/in.h])
 
 AC_PROG_CC_C_O
 AC_PROG_CXXCPP
@@ -750,16 +791,17 @@ fi
 AC_CHECK_SIZEOF([int*])
 
 if test $ac_cv_sizeof_intp -ge 8; then
-  CPPFLAGS="$CPPFLAGS -DBIG_LONGS"
+#  CPPFLAGS="$CPPFLAGS -DBIG_LONGS"
+  AC_DEFINE([BIG_LONGS], [1], [int* greater or equal to 8 bytes])
 
   ## Define super secret special flag for AIX machines in 64-bit mode.
   case "${host}" in
     *-ibm-aix*) CPPFLAGS="$CPPFLAGS -DAIX5L64" ;;
     *)          ;;
   esac
-  if test "X$BUILD_XDR" = "Xyes"; then
-    AC_MSG_ERROR([--enable-hdf4-xdr is not supported for 64 bit mode.])
-  fi
+#  if test "X$BUILD_XDR" = "Xyes"; then
+#    AC_MSG_ERROR([--enable-hdf4-xdr is not supported for 64 bit mode.])
+#  fi
 fi
 
 ## ----------------------------------------------------------------------
@@ -780,7 +822,7 @@ AC_SUBST([CONFIG_USER]) CONFIG_USER="`whoami`@`hostname`"
 ## Configuration mode (production, development, etc)
 AC_SUBST([CONFIG_MODE])
 
-AC_C_BIGENDIAN([], [CPPFLAGS="$CPPFLAGS -DSWAP"])
+AC_C_BIGENDIAN([], [])
 
 ## Are we building this in debug or production mode? (Remove the -g flag
 ## in production mode.)

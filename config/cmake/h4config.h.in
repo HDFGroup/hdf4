@@ -3,6 +3,9 @@
 #ifndef H4_CONFIG_H_
 #define H4_CONFIG_H_
 
+/* int* greater or equal to 8 bytes */
+#cmakedefine H4_BIG_LONGS @H4_BIG_LONGS@
+
 /* Define to dummy `main' function (if any) required to link to the Fortran
    libraries. */
 #cmakedefine H4_F77_DUMMY_MAIN @H4_F77_DUMMY_MAIN@
@@ -20,14 +23,32 @@
 /* Define if F77 and FC dummy `main' functions are identical. */
 #cmakedefine H4_FC_DUMMY_MAIN_EQ_F77 @H4_FC_DUMMY_MAIN_EQ_F77@
 
+/* Define to 1 if you have the <arpa/inet.h> header file. */
+#cmakedefine H4_HAVE_ARPA_INET_H @H4_HAVE_ARPA_INET_H@
+
+/* Define to 1 if you have the <arpa/nameser.h> header file. */
+#cmakedefine H4_HAVE_ARPA_NAMESER_H @H4_HAVE_ARPA_NAMESER_H@
+
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #cmakedefine H4_HAVE_DLFCN_H @H4_HAVE_DLFCN_H@
+
+/* Define to 1 if you have the <fcntl.h> header file. */
+#cmakedefine H4_HAVE_FCNTL_H @H4_HAVE_FCNTL_H@
 
 /* Define to 1 if you have the `fork' function. */
 #cmakedefine H4_HAVE_FORK @H4_HAVE_FORK@
 
+/* Define to 1 if you have the `htonl' function. */
+#cmakedefine H4_HAVE_HTONL @H4_HAVE_HTONL@
+
+/* Define to 1 if you have the `htons' function. */
+#cmakedefine H4_HAVE_HTONS @H4_HAVE_HTONS@
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #cmakedefine H4_HAVE_INTTYPES_H @H4_HAVE_INTTYPES_H@
+
+/* Define to 1 if you have the <io.h> header file. */
+#cmakedefine H4_HAVE_IO_H @H4_HAVE_IO_H@
 
 /* Define to 1 if you have the <jpeglib.h> header file. */
 #cmakedefine H4_HAVE_JPEGLIB_H @H4_HAVE_JPEGLIB_H@
@@ -47,6 +68,24 @@
 /* Define if we support HDF NetCDF APIs version 2.3.2 */
 #cmakedefine H4_HAVE_NETCDF @H4_HAVE_NETCDF@
 
+/* Define to 1 if you have the <netdb.h> header file. */
+#cmakedefine H4_HAVE_NETDB_H @H4_HAVE_NETDB_H@
+
+/* Define to 1 if you have the <netinet/in.h> header file. */
+#cmakedefine H4_HAVE_NETINET_IN_H @H4_HAVE_NETINET_IN_H@
+
+/* Define to 1 if you have the `ntohl' function. */
+#cmakedefine H4_HAVE_NTOHL @H4_HAVE_NTOHL@
+
+/* Define to 1 if you have the `ntohs' function. */
+#cmakedefine H4_HAVE_NTOHS @H4_HAVE_NTOHS@
+
+/* Define to 1 if you have the <resolv.h> header file. */
+#cmakedefine H4_HAVE_RESOLV_H @H4_HAVE_RESOLV_H@
+
+/* Define to 1 if you have the system XDR library. */
+#cmakedefine H4_HAVE_RPC @H4_HAVE_RPC@
+
 /* Define to 1 if you have the <stddef.h> header file. */
 #cmakedefine H4_HAVE_STDDEF_H @H4_HAVE_STDDEF_H@
 
@@ -64,6 +103,12 @@
 
 /* Define to 1 if you have the `system' function. */
 #cmakedefine H4_HAVE_SYSTEM @H4_HAVE_SYSTEM@
+
+/* Define to 1 if you have the <sys/file.h> header file. */
+#cmakedefine H4_HAVE_SYS_FILE_H @H4_HAVE_SYS_FILE_H@
+
+/* Define to 1 if you have the <sys/resource.h> header file. */
+#cmakedefine H4_HAVE_SYS_RESOURCE_H @H4_HAVE_SYS_RESOURCE_H@
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #cmakedefine H4_HAVE_SYS_STAT_H @H4_HAVE_SYS_STAT_H@
@@ -92,12 +137,24 @@
 /* Define to 1 if you have the <zlib.h> header file. */
 #cmakedefine H4_HAVE_ZLIB_H @H4_HAVE_ZLIB_H@
 
+/* Define to 1 if you have the `__builtin_bswap16' function. */
+#cmakedefine H4_HAVE___BUILTIN_BSWAP16 @H4_HAVE___BUILTIN_BSWAP16@
+
+/* Define to 1 if you have the `__builtin_bswap32' function. */
+#cmakedefine H4_HAVE___BUILTIN_BSWAP32 @H4_HAVE___BUILTIN_BSWAP32@
+
+/* Define to 1 if you have the `__builtin_bswap64' function. */
+#cmakedefine H4_HAVE___BUILTIN_BSWAP64 @H4_HAVE___BUILTIN_BSWAP64@
+
 /* Define to the sub-directory in which libtool stores uninstalled libraries.
    */
 #define H4_LT_OBJDIR "@HDF4_LT_OBJDIR@"
 
 /* Define to 1 if your C compiler doesn't accept -c and -o together. */
 #cmakedefine H4_NO_MINUS_C_MINUS_O @H4_NO_MINUS_C_MINUS_O@
+
+/* Not using system xdr */
+#cmakedefine H4_NO_SYS_XDR_INC @H4_NO_SYS_XDR_INC@
 
 /* Name of package */
 #define H4_PACKAGE "@HDF4_PACKAGE@"
@@ -136,32 +193,6 @@
 /* Define to 1 if `lex' declares `yytext' as a `char *' by default, not a
    `char[]'. */
 #cmakedefine H4_YYTEXT_POINTER @H4_YYTEXT_POINTER@
-
-/* This define is set in the root CMakeLists.txt file to the correct construction. */
-#define @H4_HDSETVBUF@
-
-/* xdr specific defines */
-
-/* Define to 1 if you have the <netinet/in.h> header file. */
-#cmakedefine H4_HAVE_NETINET_H @H4_HAVE_NETINET_H@
-
-/* Define to 1 if you have the <arpa/inet.h> header file. */
-#cmakedefine H4_HAVE_INET_H @H4_HAVE_INET_H@
-
-/* Define to 1 if you have the <sys/param.h> header file. */
-#cmakedefine H4_HAVE_PARAM_H @H4_HAVE_PARAM_H@
-
-/* Define to 1 if you have the `ntohl' function. */
-#cmakedefine H4_HAVE_NTOHL @H4_HAVE_NTOHL@
-
-/* Define to 1 if you have the `htonl' function. */
-#cmakedefine H4_HAVE_HTONL @H4_HAVE_HTONL@
-
-/* Define to 1 if you have the `ntohs' function. */
-#cmakedefine H4_HAVE_NTOHS @H4_HAVE_NTOHS@
-
-/* Define to 1 if you have the `htons' function. */
-#cmakedefine H4_HAVE_HTONS @H4_HAVE_HTONS@
 
 /* Define to 1 if you don't have `vprintf' but do have `_doprnt.' */
 #cmakedefine H4_HAVE_DOPRNT @H4_HAVE_DOPRNT@

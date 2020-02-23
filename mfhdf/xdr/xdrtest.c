@@ -3,14 +3,14 @@
  *        Not for Resale. All copies to include this notice.
  */
 
-#include "H4api_adpt.h"
+#include "h4config.h"
 
 /*
  * This program tests only the xdr library functionality required by netCDF.
  *  'xdr_vector' is not used by the netCDF, it is used here for convenience.
  */
 
-#ifdef H4_HAVE_NETINET_H
+#ifdef H4_HAVE_NETINET_IN_H
 #  include <netinet/in.h>     /* for htonl() */
 #else
 #  ifdef H4_HAVE_WINSOCK2_H
@@ -18,26 +18,9 @@
 #  endif
 #endif
 
-/*
- * The following is necessary because the assert() macro *must* be defined
- * for the proper operation of this program.
- */
-#undef NDEBUG
+# define xdr_assert(ex)    {if (!(ex)){(void)fprintf(stderr,"Assertion failed: file \"%s\", line %d\n", __FILE__, __LINE__);}}
 
-#if 0
-#define NDEBUG
-# ifndef NDEBUG
-# define _assert(ex)    {if (!(ex)){(void)fprintf(stderr,"Assertion failed: file \"%s\", line %d\n", __FILE__, __LINE__);exit(1);}}
-# define assert(ex)    _assert(ex)
-# else
-# define _assert(ex)    ex
-# define assert(ex)    ex
-# endif
-#else
-#include <assert.h>
-#endif
-
-#ifndef    NO_SYS_XDR_INC
+#ifndef    H4_NO_SYS_XDR_INC
 #include <types.h>
 #include <xdr.h>
 #else
@@ -63,7 +46,7 @@ char *av[] ;
     const char *fname ;
     FILE *F ;
     XDR xdrs[1] ;
-    u_int count ;
+    size_t count ;
     u_int szof ;
 
     /* some random numbers, divisible by 4 and less than 32k */
@@ -97,31 +80,31 @@ char *av[] ;
     static unsigned char bytes[8] = { 254, 255, 0, 1, 2} ;
     unsigned char *bp , got_ab[8] ;
 
-    static int32_t ints[5] = { 5, 6, 7, 8, 9} ;
-    int32_t *ip , got_ip[5] ;
+    static int ints[5] = { 5, 6, 7, 8, 9} ;
+    int *ip , got_ip[5] ;
 
-    static uint32_t u_ints[5] = {
+    static unsigned int u_ints[5] = {
         ((unsigned)65535),
         ((unsigned)65534),
         ((unsigned)0),
         ((unsigned)1),
         ((unsigned)2)
     } ;
-    uint32_t *uip , got_uip[5] ;
+    unsigned int *uip , got_uip[5] ;
 
-    int32_t lnum = 82555 ;
+    long lnum = 82555 ;
 
-    static int32_t longs[5] = { -4, -3, -2, -1, 0} ;
-    int32_t *lp , got_al[5] ;
+    static long longs[5] = { -4, -3, -2, -1, 0} ;
+    long *lp , got_al[5] ;
 
-    static uint32_t u_longs[5] = {
+    static unsigned long u_longs[5] = {
         ((unsigned)65535),
         ((unsigned)65534),
         ((unsigned)0),
         ((unsigned)1),
         ((unsigned)2)
     } ;
-    uint32_t *ulp , got_aul[5] ;
+    unsigned long *ulp , got_aul[5] ;
 
     static float floats[5] = { 100.125, 100.25, 100.375, 100.5, 100.625 } ;
     float *fp , got_af[5] ;
@@ -162,62 +145,62 @@ char *av[] ;
     /* fill the file so seeks will work even on non-virtual machines */
     for(ii=0 ; ii< 28227 ; ii++)
     {
-        assert( putc(0, F) != EOF ) ;
+        xdr_assert( putc(0, F) != EOF ) ;
     }
 
     xdrstdio_create(xdrs, F, XDR_ENCODE) ;
 
-    assert( xdr_setpos(xdrs, seeks[jj])) ;
-    assert( xdr_opaque(xdrs, text, sizeof(text))) ;
+    xdr_assert( xdr_setpos(xdrs, seeks[jj])) ;
+    xdr_assert( xdr_opaque(xdrs, text, sizeof(text))) ;
     poses[jj++] = xdr_getpos(xdrs) ;
 
-    assert( xdr_setpos(xdrs, seeks[jj])) ;
-    assert( xdr_opaque(xdrs, (caddr_t)bytes, sizeof(bytes))) ;
+    xdr_assert( xdr_setpos(xdrs, seeks[jj])) ;
+    xdr_assert( xdr_opaque(xdrs, (caddr_t)bytes, sizeof(bytes))) ;
 
     /* no setpos, just for variety */
-    szof = sizeof(int32_t) ;
-    count = sizeof(ints)/sizeof(int32_t) ;
-    assert( xdr_vector(xdrs, (char *)ints, count, szof, xdr_int)) ;
+    szof = sizeof(int) ;
+    count = sizeof(ints)/sizeof(int) ;
+    xdr_assert( xdr_vector(xdrs, (char *)ints, count, szof, xdr_int)) ;
     poses[jj++] = xdr_getpos(xdrs) ;
 
-    assert( xdr_setpos(xdrs, seeks[jj])) ;
-    szof = sizeof(uint32_t) ;
-    count = sizeof(u_ints)/sizeof(uint32_t) ;
-    assert( xdr_vector(xdrs, (char *)u_ints, count, szof, xdr_u_int)) ;
+    xdr_assert( xdr_setpos(xdrs, seeks[jj])) ;
+    szof = sizeof(unsigned int) ;
+    count = sizeof(u_ints)/sizeof(unsigned int) ;
+    xdr_assert( xdr_vector(xdrs, (char *)u_ints, count, szof, xdr_u_int)) ;
     poses[jj++] = xdr_getpos(xdrs) ;
 
-    assert( xdr_setpos(xdrs, seeks[jj])) ;
-    assert( xdr_long(xdrs, &lnum)) ;
+    xdr_assert( xdr_setpos(xdrs, seeks[jj])) ;
+    xdr_assert( xdr_long(xdrs, &lnum)) ;
     poses[jj++] = xdr_getpos(xdrs) ;
 
-    assert( xdr_setpos(xdrs, seeks[jj])) ;
-    szof = sizeof(int32_t) ;
-    count = sizeof(longs)/sizeof(int32_t) ;
-    assert( xdr_vector(xdrs, (char *)longs, count, szof, xdr_long)) ;
+    xdr_assert( xdr_setpos(xdrs, seeks[jj])) ;
+    szof = sizeof(long) ;
+    count = sizeof(longs)/sizeof(long) ;
+    xdr_assert( xdr_vector(xdrs, (char *)longs, count, szof, xdr_long)) ;
     poses[jj++] = xdr_getpos(xdrs) ;
 
-    assert( xdr_setpos(xdrs, seeks[jj])) ;
-    szof = sizeof(uint32_t) ;
-    count = sizeof(u_longs)/sizeof(uint32_t) ;
-    assert( xdr_vector(xdrs, (char *)u_longs, count, szof, xdr_u_long)) ;
+    xdr_assert( xdr_setpos(xdrs, seeks[jj])) ;
+    szof = sizeof(unsigned long) ;
+    count = sizeof(u_longs)/sizeof(unsigned long) ;
+    xdr_assert( xdr_vector(xdrs, (char *)u_longs, count, szof, xdr_u_long)) ;
     poses[jj++] = xdr_getpos(xdrs) ;
 
-    assert( xdr_setpos(xdrs, seeks[jj])) ;
+    xdr_assert( xdr_setpos(xdrs, seeks[jj])) ;
     szof = sizeof(float) ;
     count = sizeof(floats)/sizeof(float) ;
-    assert( xdr_vector(xdrs, (char *)floats, count, szof, xdr_float)) ;
+    xdr_assert( xdr_vector(xdrs, (char *)floats, count, szof, xdr_float)) ;
     poses[jj++] = xdr_getpos(xdrs) ;
 
-    assert( xdr_setpos(xdrs, seeks[jj])) ;
+    xdr_assert( xdr_setpos(xdrs, seeks[jj])) ;
     szof = sizeof(double) ;
     count = sizeof(doubles)/sizeof(double) ;
-    assert( xdr_vector(xdrs, (char *)doubles, count, szof, xdr_double)) ;
+    xdr_assert( xdr_vector(xdrs, (char *)doubles, count, szof, xdr_double)) ;
     poses[jj++] = xdr_getpos(xdrs) ;
 
     /* again no setpos  */
     szof = sizeof(encount) ;
     count = sizeof(encounts)/sizeof(encount) ;
-    assert( xdr_vector(xdrs, (char *)encounts, count, szof, xdr_enum)) ;
+    xdr_assert( xdr_vector(xdrs, (char *)encounts, count, szof, xdr_enum)) ;
     poses[jj++] = xdr_getpos(xdrs) ;
 
 #if 0
@@ -225,15 +208,15 @@ char *av[] ;
     count = 8192 ;
     for( lnum = 0 ; lnum < count ; lnum++)
     {
-        assert( xdr_long(xdrs, &lnum) ) ;
+        xdr_assert( xdr_long(xdrs, &lnum) ) ;
     }
 #endif
 
 /* flush, rewind  and reopen */
 
-    assert(fflush((FILE *)xdrs->x_private) != EOF) ; /* xdr_destroy(xdrs) */
+    xdr_assert(fflush((FILE *)xdrs->x_private) != EOF) ; /* xdr_destroy(xdrs) */
 
-    assert(fclose(F) != EOF) ;
+    xdr_assert(fclose(F) != EOF) ;
 #endif /* CREATE */
 #ifdef __STDC__
     F = fopen(fname,"rb") ;
@@ -251,130 +234,130 @@ char *av[] ;
 
 /* check contents */
 
-    assert( xdr_setpos(xdrs, seeks[jj])) ;
-    assert( xdr_opaque(xdrs, got_s, sizeof(text))) ;
-    assert( poses[jj++] = xdr_getpos(xdrs) ) ;
+    xdr_assert( xdr_setpos(xdrs, seeks[jj])) ;
+    xdr_assert( xdr_opaque(xdrs, got_s, sizeof(text))) ;
+    xdr_assert( poses[jj++] = xdr_getpos(xdrs) ) ;
     printf("string: %s\n", got_s) ;
 
-    assert( xdr_setpos(xdrs, seeks[jj])) ;
-    assert( xdr_opaque(xdrs, (caddr_t)got_ab, sizeof(bytes))) ;
+    xdr_assert( xdr_setpos(xdrs, seeks[jj])) ;
+    xdr_assert( xdr_opaque(xdrs, (caddr_t)got_ab, sizeof(bytes))) ;
     printf("unsigned bytes: ");
     for(ii = 0, bp = got_ab ;
-            ii < sizeof(bytes) ; ii++, bp++)
+            ii < (int)sizeof(bytes) ; ii++, bp++)
     {
         printf("%u ", *bp) ;
-        assert( *bp == bytes[ii] ) ;
+        xdr_assert( *bp == bytes[ii] ) ;
     }
     putchar('\n') ;
 
-    szof = sizeof(int32_t) ;
-    count = sizeof(ints)/sizeof(int32_t) ;
-    assert( xdr_vector(xdrs, (char *)got_ip, count, szof, xdr_int)) ;
-    assert( poses[jj++] = xdr_getpos(xdrs) ) ;
+    szof = sizeof(int) ;
+    count = sizeof(ints)/sizeof(int) ;
+    xdr_assert( xdr_vector(xdrs, (char *)got_ip, count, szof, xdr_int)) ;
+    xdr_assert( poses[jj++] = xdr_getpos(xdrs) ) ;
     printf("ints: ");
     for(ii = 0, ip = got_ip ;
             ii < (int)count ; ii++, ip++)
     {
         printf("%d ", *ip) ;
-        assert( *ip == ints[ii] ) ;
+        xdr_assert( *ip == ints[ii] ) ;
     }
     putchar('\n') ;
 
-    assert( xdr_setpos(xdrs, seeks[jj])) ;
-    szof = sizeof(uint32_t) ;
-    count = sizeof(u_ints)/sizeof(uint32_t) ;
-    assert( xdr_vector(xdrs, (char *)got_uip, count, szof, xdr_u_int)) ;
-    assert( poses[jj++] = xdr_getpos(xdrs) ) ;
+    xdr_assert( xdr_setpos(xdrs, seeks[jj])) ;
+    szof = sizeof(unsigned int) ;
+    count = sizeof(u_ints)/sizeof(unsigned int) ;
+    xdr_assert( xdr_vector(xdrs, (char *)got_uip, count, szof, xdr_u_int)) ;
+    xdr_assert( poses[jj++] = xdr_getpos(xdrs) ) ;
     printf("unsigned ints: ");
     for(ii = 0, uip = got_uip ;
             ii < (int)count ; ii++, uip++)
     {
         printf("%u ", *uip) ;
-        assert( *uip == u_ints[ii] ) ;
+        xdr_assert( *uip == u_ints[ii] ) ;
     }
     putchar('\n') ;
 
-    assert( xdr_setpos(xdrs, seeks[jj])) ;
-    assert( xdr_long(xdrs, got_al)) ;
-    assert( poses[jj++] = xdr_getpos(xdrs) ) ;
+    xdr_assert( xdr_setpos(xdrs, seeks[jj])) ;
+    xdr_assert( xdr_long(xdrs, got_al)) ;
+    xdr_assert( poses[jj++] = xdr_getpos(xdrs) ) ;
     printf("LONG: %ld\n", *got_al) ;
 
-    assert( xdr_setpos(xdrs, seeks[jj])) ;
-    szof = sizeof(int32_t) ;
-    count = sizeof(longs)/sizeof(int32_t) ;
-    assert( xdr_vector(xdrs, (char *)got_al, count, szof, xdr_long)) ;
-    assert( poses[jj++] = xdr_getpos(xdrs) ) ;
+    xdr_assert( xdr_setpos(xdrs, seeks[jj])) ;
+    szof = sizeof(long) ;
+    count = sizeof(longs)/sizeof(long) ;
+    xdr_assert( xdr_vector(xdrs, (char *)got_al, count, szof, xdr_long)) ;
+    xdr_assert( poses[jj++] = xdr_getpos(xdrs) ) ;
     printf("longs: ");
     for(ii = 0, lp = got_al ;
             ii < (int)count ; ii++, lp++)
     {
-        printf("%ld ", got_al[ii]) ;
-        assert( got_al[ii] == longs[ii] ) ;
+        printf("%d ", (int)*lp) ;
+        xdr_assert( (int)*lp == (int)longs[ii] ) ;
     }
     putchar('\n') ;
 
-    assert( xdr_setpos(xdrs, seeks[jj])) ;
-    szof = sizeof(uint32_t) ;
-    count = sizeof(u_longs)/sizeof(uint32_t) ;
-    assert( xdr_vector(xdrs, (char *)got_aul, count, szof, xdr_u_long)) ;
-    assert( poses[jj++] = xdr_getpos(xdrs) ) ;
+    xdr_assert( xdr_setpos(xdrs, seeks[jj])) ;
+    szof = sizeof(unsigned long) ;
+    count = sizeof(u_longs)/sizeof(unsigned long) ;
+    xdr_assert( xdr_vector(xdrs, (char *)got_aul, count, szof, xdr_u_long)) ;
+    xdr_assert( poses[jj++] = xdr_getpos(xdrs) ) ;
     printf("unsigned longs: ");
     for(ii = 0, ulp = got_aul ;
             ii < (int)count ; ii++, ulp++)
     {
         printf("%lu ", *ulp) ;
-        assert( *ulp == u_longs[ii] ) ;
+        xdr_assert( *ulp == u_longs[ii] ) ;
     }
     putchar('\n') ;
 
-    assert( xdr_setpos(xdrs, seeks[jj])) ;
+    xdr_assert( xdr_setpos(xdrs, seeks[jj])) ;
     szof = sizeof(float) ;
     count = sizeof(floats)/sizeof(float) ;
-    assert( xdr_vector(xdrs, (char *)got_af, count, szof, xdr_float)) ;
-    assert( poses[jj++] = xdr_getpos(xdrs) ) ;
+    xdr_assert( xdr_vector(xdrs, (char *)got_af, count, szof, xdr_float)) ;
+    xdr_assert( poses[jj++] = xdr_getpos(xdrs) ) ;
     printf("floats:\n");
     for(ii = 0, fp = got_af ;
             ii < (int)count ; ii++, fp++)
     {
         printf("\t% .6e\n", *fp) ;
-        assert( *fp < floats[ii] + EPSILON &&  *fp > floats[ii] - EPSILON ) ;
+        xdr_assert( *fp < floats[ii] + EPSILON &&  *fp > floats[ii] - EPSILON ) ;
     }
     putchar('\n') ;
 
-    assert( xdr_setpos(xdrs, seeks[jj])) ;
+    xdr_assert( xdr_setpos(xdrs, seeks[jj])) ;
     szof = sizeof(double) ;
     count = sizeof(doubles)/sizeof(double) ;
-    assert( xdr_vector(xdrs, (char *)got_ad, count, szof, xdr_double)) ;
-    assert( poses[jj++] = xdr_getpos(xdrs) ) ;
+    xdr_assert( xdr_vector(xdrs, (char *)got_ad, count, szof, xdr_double)) ;
+    xdr_assert( poses[jj++] = xdr_getpos(xdrs) ) ;
     printf("doubles:\n");
     for(ii = 0, dp = got_ad ;
             ii < (int)count ; ii++, dp++)
     {
         printf("\t% .12e\n", *dp) ;
-        assert( (*dp < doubles[ii] + EPSILON) && (*dp > doubles[ii] - EPSILON )) ;
+        xdr_assert( (*dp < (doubles[ii] + (double)EPSILON)) && (*dp > (doubles[ii] - (double)EPSILON) )) ;
     }
     putchar('\n') ;
 
     szof = sizeof(encount) ;
     count = sizeof(encounts)/sizeof(encount) ;
-    assert( xdr_vector(xdrs, (char *)got_ep, count, szof, xdr_enum)) ;
+    xdr_assert( xdr_vector(xdrs, (char *)got_ep, count, szof, xdr_enum)) ;
     printf("enums: ");
     for(ii = 0, ep = got_ep ;
             ii < (int)count ; ii++, ep++)
     {
         printf("%d ", (int)*ep) ;
-        assert( *ep == encounts[ii] ) ;
+        xdr_assert( *ep == encounts[ii] ) ;
     }
     putchar('\n') ;
-    assert( poses[jj++] = xdr_getpos(xdrs) ) ;
+    xdr_assert( poses[jj++] = xdr_getpos(xdrs) ) ;
 
 #if 0
     /* stdio performance check */
     count = 8192 ;
     for( ii = 0 ; ii < count ; ii++)
     {
-        assert( xdr_long(xdrs, got_al) ) ;
-        assert( *got_al == ii ) ;
+        xdr_assert( xdr_long(xdrs, got_al) ) ;
+        xdr_assert( *got_al == ii ) ;
     }
 #endif
     exit(0) ;

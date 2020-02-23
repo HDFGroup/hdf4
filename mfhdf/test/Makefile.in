@@ -111,7 +111,7 @@ CONFIG_CLEAN_FILES = testmfhdf.sh
 CONFIG_CLEAN_VPATH_FILES =
 am_cdftest_OBJECTS = cdftest.$(OBJEXT)
 cdftest_OBJECTS = $(am_cdftest_OBJECTS)
-cdftest_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
+cdftest_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
@@ -119,7 +119,7 @@ am__v_lt_1 =
 am_hdfnctest_OBJECTS = hdfnctest.$(OBJEXT) tutils.$(OBJEXT) \
 	tncvargetfill.$(OBJEXT) tunlim.$(OBJEXT) tncunlim.$(OBJEXT)
 hdfnctest_OBJECTS = $(am_hdfnctest_OBJECTS)
-hdfnctest_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
+hdfnctest_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
 am_hdftest_OBJECTS = hdftest.$(OBJEXT) tutils.$(OBJEXT) \
 	tchunk.$(OBJEXT) tcomp.$(OBJEXT) tcoordvar.$(OBJEXT) \
 	tdim.$(OBJEXT) temptySDSs.$(OBJEXT) tattributes.$(OBJEXT) \
@@ -128,7 +128,7 @@ am_hdftest_OBJECTS = hdftest.$(OBJEXT) tutils.$(OBJEXT) \
 	tsdsprops.$(OBJEXT) tszip.$(OBJEXT) tattdatainfo.$(OBJEXT) \
 	tdatainfo.$(OBJEXT) tdatasizes.$(OBJEXT)
 hdftest_OBJECTS = $(am_hdftest_OBJECTS)
-hdftest_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
+hdftest_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -586,12 +586,13 @@ ACLOCAL_AMFLAGS = "-I m4"
 CHECK_CLEANFILES = *.chkexe *.chklog *.new *.hdf *.cdf *.cdl netcdf.h \
 	This* onedimmultivars.nc onedimonevar.nc multidimvar.nc \
 	SD_externals
-test_INCLUDES = -I$(top_srcdir)/hdf/src        \
-         -I$(top_srcdir)/mfhdf/libsrc	\
-	 -I$(top_builddir)/mfhdf/libsrc
+test_INCLUDES = -I$(top_srcdir)/hdf/src         \
+              -I$(top_srcdir)/mfhdf/libsrc    \
+              -I$(top_builddir)/mfhdf/libsrc
 
 DEFINES = -DNDEBUG -DHDF
-AM_CPPFLAGS = $(test_INCLUDES) $(DEFINES)
+AM_CPPFLAGS = $(test_INCLUDES) $(XDRINC) $(DEFINES)
+@HDF_BUILD_XDR_TRUE@XDRLIB = $(top_builddir)/mfhdf/xdr/libxdr.la
 
 #############################################################################
 #############################################################################
@@ -599,17 +600,17 @@ TEST_PROG = cdftest hdfnctest hdftest
 TEST_SCRIPT = testmfhdf.sh
 check_SCRIPTS = testmfhdf.sh
 cdftest_SOURCES = cdftest.c
-cdftest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@ $(XDRLIB)
+cdftest_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB) @LIBS@
 hdfnctest_SOURCES = hdfnctest.c tutils.c tncvargetfill.c tunlim.c	\
 		    tncunlim.c
 
-hdfnctest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@ $(XDRLIB)
+hdfnctest_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB) @LIBS@
 hdftest_SOURCES = hdftest.c tutils.c tchunk.c tcomp.c tcoordvar.c	\
 		  tdim.c temptySDSs.c tattributes.c texternal.c tfile.c	\
 		  tmixed_apis.c tnetcdf.c trank0.c tsd.c tsdsprops.c	\
 		  tszip.c tattdatainfo.c tdatainfo.c tdatasizes.c
 
-hdftest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@ $(XDRLIB)
+hdftest_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB) @LIBS@
 DISTCLEANFILES = 
 
 # Automake needs to be taught how to build lib, progs, and tests targets.

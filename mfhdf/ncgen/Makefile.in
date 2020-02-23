@@ -597,20 +597,20 @@ CHECK_CLEANFILES = *.chkexe *.chklog ctest1.cdl ftest1.cdl test0.nc \
 	test1.cdl test1.nc test2.cdl
 @HDF_BUILD_SHARED_FALSE@SHLIBLOC = $(top_builddir)/mfhdf/libsrc/.libs/libmfhdf.a $(top_builddir)/hdf/src/.libs/libdf.a
 @HDF_BUILD_SHARED_TRUE@SHLIBLOC = $(top_builddir)/mfhdf/libsrc/.libs/libmfhdf.$(SHARED_EXTENSION) $(top_builddir)/hdf/src/.libs/libdf.$(SHARED_EXTENSION)
-ncgen_INCLUDES = -I$(top_srcdir)/hdf/src        \
-         -I$(top_srcdir)/mfhdf/libsrc   \
+ncgen_INCLUDES = -I$(top_srcdir)/hdf/src   \
+         -I$(top_srcdir)/mfhdf/libsrc    \
          -I$(top_builddir)/mfhdf/libsrc
 
 DEFINES = -DNDEBUG -DHDF
-AM_CPPFLAGS = $(ncgen_INCLUDES) $(DEFINES)
+AM_CPPFLAGS = $(ncgen_INCLUDES) $(XDRINC) $(DEFINES)
 ncgen_LDFLAGS = $(LT_STATIC_EXEC) $(AM_LDFLAGS)
 ncgen_SOURCES = close.c escapes.c generate.c genlib.c getfill.c init.c      \
                 load.c main.c ncgentab.c
 
-ncgen_LDADD = $(LIBMFHDF) $(LIBHDF)
-ncgen_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
+ncgen_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
+ncgen_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
 ctest0_SOURCES = 
-ctest0_LDADD = $(LIBMFHDF) $(LIBHDF)
+ctest0_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
 ftest0_SOURCES = 
 
 #############################################################################

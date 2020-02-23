@@ -3,12 +3,9 @@ project (HDF4_MFHDF_XDR C)
 
 set (HDF4_MFHDF_XDR_SRCS
     ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdr.c
-    ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdr_float.c
-    ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdr_stdio.c
-    ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdr_array.c
-    ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdr_mem.c
-    ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdr_reference.c
-    ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdr_rec.c
+    ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdrfloat.c
+    ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdrstdio.c
+    ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdrarray.c
 )
 
 set (HDF4_MFHDF_XDR_HDRS
@@ -28,7 +25,6 @@ if (NOT ONLY_SHARED_LIBS)
       COMPILE_DEFINITIONS "HDF"
       INTERFACE_INCLUDE_DIRECTORIES "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>"
   )
-  set_property (TARGET ${HDF4_MF_XDR_LIB_TARGET} APPEND PROPERTY COMPILE_DEFINITIONS "NO_SYS_XDR_INC")
   set (install_targets ${HDF4_MF_XDR_LIB_TARGET})
 endif ()
 
@@ -45,9 +41,21 @@ if (BUILD_SHARED_LIBS)
       INTERFACE_INCLUDE_DIRECTORIES "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>"
       INTERFACE_COMPILE_DEFINITIONS H4_BUILT_AS_DYNAMIC_LIB=1
   )
-  set_property (TARGET ${HDF4_MF_XDR_LIBSH_TARGET} APPEND PROPERTY COMPILE_DEFINITIONS "NO_SYS_XDR_INC")
   set (install_targets ${install_targets} ${HDF4_MF_XDR_LIBSH_TARGET})
 endif ()
+
+#-----------------------------------------------------------------------------
+# Add file(s) to CMake Install
+#-----------------------------------------------------------------------------
+install (
+    FILES
+        ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdr.h
+        ${HDF4_MFHDF_XDR_SOURCE_DIR}/types.h
+    DESTINATION
+        ${HDF4_INSTALL_INCLUDE_DIR}
+    COMPONENT
+        headers
+)
 
 #-----------------------------------------------------------------------------
 # Add library to CMake Install : Installs lib and cmake config info
