@@ -38,6 +38,16 @@ New features and changes
 ========================
     Configuration:
     -------------
+    - Updated configuration for both build systems
+
+      Synchronized configuration variables between build systems to create
+      the same variables in h4config.h. Replaced the defines used in #ifdef
+      blocks with the appropriate H4_XXX defines. Updated the internal xdr
+      code to handle the different size of integers across platforms. Also
+      removed the restriction on building 64-bit platforms.
+
+      (ADB - 2020/02/21)
+
     - Update CMake for VS2019 support
 
       CMake added support for VS2019 in version 3.15. Changes to the CMake
