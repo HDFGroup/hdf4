@@ -87,9 +87,18 @@ To Configure:
 
    4)  Use the configure command in the top level HDF4 directory hdf-X.Y.Z:
 
+       Note: On macOS platforms version 10.13 or newer, XDR functions from the 
+       system libraries do not work with HDF4.  It is therefore necessary
+       to build the internal HDF4 XDR library, using --enable-hdf4-xdr for 
+       autotools configure, or adding the corresponding CMake option:
+       set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_XDR_LIB:BOOL=ON")
+       to HDF4options.cmake.  The options may also be used but are not required
+       on Linux platforms. 
+
        ./configure --with-zlib=/path_to_ZLIB_install_directory 
                    --with-jpeg=/path_to_JPEG_install_directory 
-                   <--with-szlib=/path_to_SZIP_install_directory>
+                   [--with-szlib=/path_to_SZIP_install_directory]
+                   [--enable-hdf4-xdr]
                    --prefix=/path_to_HDF4_install_directory
 
        * Please note that when the szlib option is not used, the Szip 

@@ -200,6 +200,10 @@ This version has been tested in the following platforms:
 
 Known problems
 ==============
+o  Builds with the autotools option --enable-hdf4-xdr fail on Solaris and
+   on IBM ppc64 with the xlc compiler.  The option should not be used on 
+   those platforms.
+   
 o  CMake files do not behave correctly with paths containing spaces.
    Do not use spaces in paths because the required escaping for handling spaces
    results in very complex and fragile build files.
