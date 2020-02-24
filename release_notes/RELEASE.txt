@@ -170,11 +170,7 @@ This version has been tested in the following platforms:
    SunOS 5.11 (32- and 64-bit)       Sun C 5.12 SunOS_sparc 2011/11/16
    11.1, sparc, sun4v (emu)          Sun Fortran 95 8.6 SunOS_sparc 2011/11/16
 
-    Windows 7                        Visual Studio 2015 w/ Intel Fortran 2018 (cmake)
-
     Windows 7 x64                    Visual Studio 2015 w/ Intel C, Fortran 2018 (cmake)
-
-    Windows 10                       Visual Studio 2015 w/ Intel C, Fortran 2018 (cmake)
 
     Windows 10 x64                   Visual Studio 2015 w/ Intel C, Fortran 2018 (cmake)
                                      Visual Studio 2017 w/ Intel C, Fortran 2019 (cmake)
