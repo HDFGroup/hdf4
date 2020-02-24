@@ -146,16 +146,17 @@ This version has been tested in the following platforms:
                                      pgcc and pgf90 17.10-0 64-bit target
                                          on x86-64 Linux -tp nehalem
 
-   Linux, 3.10.0-327.18.2.el7.x86_64 gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-4)
-   #1 SMP x86_64, GNU/Linux          GNU Fortran (GCC) 4.8.5 20150623 (Red Hat 4.8.5-4)
-   (jelly/moohan)                    icc (ICC) 17.0.0.098 Build 20160721
-                                     ifort (IFORT) 17.0.0.098 Build 20160721
+   Linux, 3.10.0-327.18.2.el7.x86_64 GNU C (gcc) and Fortran (gfortran) compilers:
+   #1 SMP x86_64, GNU/Linux             Version 4.8.5 20150623 (Red Hat 4.8.5-4)  
+   jelly/moohan)                        Version 4.9.3, 5.3.0, 6.2.0, 7.1.0, 8.3.0
+                                     Intel(R) C (icc) and Fortran (ifort) compilers: 
+                                        Version 17.0.0.098 Build 20160721
                                      pgcc and pgf90 17.10-0 64-bit target
                                          on x86-64 Linux -tp haswell
 
-   Linux, 2.6.32-573.18.1.el6.ppc64  gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-18)
-   #1 SMP, ppc64 (ostrich)           (1) GNU Fortran (GCC) 4.4.7 20120313 (Red Hat 4.4.7-11)
-                                     (2) IBM XL Fortran for Linux, V15.1 (64-bit mode)
+   Linux, 2.6.32-573.18.1.el6.ppc64  GNU C (gcc) and Fortran (gfortran) compilers: 
+   #1 SMP, ppc64 (ostrich)             Version 4.4.7 20120313 (Red Hat 4.4.7-18)
+                                     Fortran (xlf)  for Linux Version 15.1 
 
    SunOS 5.11 (32- and 64-bit)       Sun C 5.12 SunOS_sparc 2011/11/16
    11.1, sparc, sun4v (emu)          Sun Fortran 95 8.6 SunOS_sparc 2011/11/16
@@ -176,7 +177,7 @@ This version has been tested in the following platforms:
    (osx1011test)                     Intel icc and ifort version 15.0.3
 
    macOS Sierra 10.12.5, Darwin,     Apple clang version 8.1.0 from Xcode 8.3
-   16.6.0, x86_64                    gfortran GNU Fortran (GCC) 7.1.0
+   16.6.0, x86_64                    gfortran GNU Fortran (GCC) 7.4.0
    (kite)                            Intel icc and ifort version 17.0.2
 
    macOS 10.13.6, Darwin,            Apple clang LLVM version 10.0.0
