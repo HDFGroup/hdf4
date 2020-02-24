@@ -38,6 +38,21 @@ New features and changes
 ========================
     Configuration:
     -------------
+    - Updated configuration for both build systems
+
+      Synchronized configuration variables between build systems to create
+      the same variables in h4config.h. Replaced the defines used in #ifdef
+      blocks with the appropriate H4_XXX defines. Updated the internal xdr
+      code to handle the different size of integers across platforms.
+      Also removed the restriction on building 64-bit platforms. Users on
+      macOS platforms (10.13 and newer) must build with the hdf4 xdr by
+      adding the following options during configuration:
+        autotools add "--enable-hdf4-xdr"
+        CMake add "HDF4_BUILD_XDR_LIB:BOOL=ON"
+      See INSTALL file for details on configure options.
+
+      (ADB - 2020/02/21)
+
     - Update CMake for VS2019 support
 
       CMake added support for VS2019 in version 3.15. Changes to the CMake
@@ -160,11 +175,7 @@ This version has been tested in the following platforms:
    SunOS 5.11 (32- and 64-bit)       Sun C 5.12 SunOS_sparc 2011/11/16
    11.1, sparc, sun4v (emu)          Sun Fortran 95 8.6 SunOS_sparc 2011/11/16
 
-    Windows 7                        Visual Studio 2015 w/ Intel Fortran 2018 (cmake)
-
     Windows 7 x64                    Visual Studio 2015 w/ Intel C, Fortran 2018 (cmake)
-
-    Windows 10                       Visual Studio 2015 w/ Intel C, Fortran 2018 (cmake)
 
     Windows 10 x64                   Visual Studio 2015 w/ Intel C, Fortran 2018 (cmake)
                                      Visual Studio 2017 w/ Intel C, Fortran 2019 (cmake)
