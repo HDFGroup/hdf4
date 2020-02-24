@@ -48,7 +48,7 @@ New features and changes
       macOS platforms (10.13 and newer) must build with the hdf4 xdr by
       adding the following options during configuration:
         autotools add "--enable-hdf4-xdr"
-        CMake add "HDF$_BUILD_XDR_LIB:BOOL=ON"
+        CMake add "HDF4_BUILD_XDR_LIB:BOOL=ON"
       See INSTALL file for details on configure options.
 
       (ADB - 2020/02/21)
