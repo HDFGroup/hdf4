@@ -45,7 +45,7 @@ New features and changes
       blocks with the appropriate H4_XXX defines. Updated the internal xdr
       code to handle the different size of integers across platforms.
       Also removed the restriction on building 64-bit platforms. Users on
-      macOS platforms (10.13 and newer must build with the hdf4 xdr by
+      macOS platforms (10.13 and newer) must build with the hdf4 xdr by
       adding the following options during configuration:
         autotools add "--enable-hdf4-xdr"
         CMake add "HDF$_BUILD_XDR_LIB:BOOL=ON"
