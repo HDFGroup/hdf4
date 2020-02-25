@@ -121,8 +121,23 @@ Support for new platforms and compilers
 
     - macOS 10.14.6, Darwin 18.7.0 with Apple clang LLVM version 10.0.1
 
+
 Bugs fixed since HDF 4.2.14
 ===========================
+
+    - netCDF test failed on multiple Mac
+
+      The netCDF test in the hdf4 library had failed either with segfault
+      or incorrect reading data on multiple versions of Mac machines, when
+      compiling with -O2.  The segfault appeared to happen during the use
+      of various system XDR functions.  In previous releases, -O0 level
+      optimization was used to avoid this problem.  In this release, the
+      hdf4's internal xdr library has been updated to handle the different
+      size of integers across platforms, based on the newer tirpc library
+      code and netCDF xdr code.
+
+      (ADB/BMR/LRK - 2020/02/15, EED-439)
+
     - Several memory leaks are fixed
 
       There were memory leaks caused by the allocated xdr structure not released
@@ -235,6 +250,7 @@ o  For Mac OS X 10.7 Lion, 10.8 Mountain Lion, 10.9 Mavericks, 10.10 Yosemite,
    memory corruption.  This happened for GCC, Intel and Clang compilers.
    Currently, -O0 level optimization is used to avoid this problem.
    (HDFFR-1318,1327,1358,1425) EIP - 2013/02/05, BMR - 2016/06/24
+   Update: This issue has been addressed in 4.2.15. BMR - 2020/02/24
 
 o  On IBM PowerPC 64, hdftest fails when gcc 4.4.6 is used with -O3 optimization
    level.
