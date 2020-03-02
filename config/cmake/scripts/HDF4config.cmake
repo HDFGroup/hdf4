@@ -174,15 +174,6 @@ else ()
 endif ()
 ###################################################################
 
-###################################################################
-#########       Following is for submission to CDash   ############
-###################################################################
-if (NOT DEFINED MODEL)
-  set (MODEL "Experimental")
-endif ()
-
-###################################################################
-
 if (WIN32 AND NOT MINGW)
   include (${CTEST_SCRIPT_DIRECTORY}\\HDF4options.cmake)
   include (${CTEST_SCRIPT_DIRECTORY}\\CTestScript.cmake)
