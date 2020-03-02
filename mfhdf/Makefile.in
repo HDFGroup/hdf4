@@ -692,7 +692,7 @@ uninstall-am:
 	uninstall-am
 
 @HDF_BUILD_XDR_TRUE@export XDRLIB = $(abs_top_builddir)/mfhdf/xdr/libxdr.la
-@HDF_BUILD_XDR_TRUE@export XDRINC = -I$(top_srcdir)/mfhdf/xdr
+@HDF_BUILD_XDR_TRUE@export XDRINC = -I$(abs_top_srcdir)/mfhdf/xdr
 
 installcheck-local:
 	@(cd examples && $(MAKE) $(AM_MAKEFLAGS) $@) || exit 1;
