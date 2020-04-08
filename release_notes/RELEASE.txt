@@ -1,4 +1,4 @@
-HDF version 4.2.15 released on 2020-02-12
+HDF version 4.2.15-post0 currently under development
 ====================================================
 
 INTRODUCTION
@@ -38,112 +38,14 @@ New features and changes
 ========================
     Configuration:
     -------------
-    - Updated configuration for both build systems
-
-      Synchronized configuration variables between build systems to create
-      the same variables in h4config.h. Replaced the defines used in #ifdef
-      blocks with the appropriate H4_XXX defines. Updated the internal xdr
-      code to handle the different size of integers across platforms.
-      Also removed the restriction on building 64-bit platforms. Users on
-      macOS platforms (10.13 and newer) must build with the hdf4 xdr by
-      adding the following options during configuration:
-        autotools add "--enable-hdf4-xdr"
-        CMake add "HDF4_BUILD_XDR_LIB:BOOL=ON"
-      See INSTALL file for details on configure options.
-
-      (ADB - 2020/02/21)
-
-    - Update CMake for VS2019 support
-
-      CMake added support for VS2019 in version 3.15. Changes to the CMake
-      generator setting required changes to scripts. Also updated version
-      references in CMake files as necessary.
-
-      (ADB - 2019/11/18, HDFFR-1581)
-
-    - Update CMake tests to use FIXTURES
-
-      CMake test fixtures allow setup/cleanup tests and other dependency
-      requirements as properties for tests. This is more flexible for
-      modern CMake code.
-
-      (ADB - 2019/07/23, HDFFV-10529)
-
-    - Windows PDB files are always installed
-
-      There are build configuration or flag settings for Windows that may not
-      generate PDB files. If those files are not generated then the install
-      utility will fail because those PDB files are not found. An optional
-      variable, DISABLE_PDB_FILES, was added to not install PDB files.
-
-      (ADB - 2019/07/17, HDFFV-10424)
-
-    - Add mingw CMake support with a toolchain file
-
-      There has been a number of mingw issues that has been linked under
-      HDFFV-10845. It has been decided to implement the CMake cross-compiling
-      technique of toolchain files. We will use a linux platform with the mingw
-      compiler stack for testing. Only the C language is fully supported, and
-      the error tests are skipped. The C++ language works for static but shared
-      builds has a shared library issue with the mingw Standard Exception Handling
-      library, which is not available on Windows. Fortran has a common cross-compile
-      problem with the fortran configure tests.
-
-      (ADB - 2019/07/12, HDFFV-10845, HDFFV-10595)
-
-    - Windows PDB files are installed incorrectly
-
-      For static builds, the PDB files for windows should be installed next
-      to the static libraries in the lib folder. Also the debug versions of
-      libraries and PDB files are now correctly built using the default
-      CMAKE_DEBUG_POSTFIX setting.
-
-      (ADB - 2019/07/09, HDFFV-10581)
-
-    - Add option to build only shared libs
-
-      A request was made to prevent building static libraries and only build
-      shared.  A new option was added to CMake, ONLY_SHARED_LIBS, which will
-      skip building static libraries. Certain utility functions will build with
-      static libs but are not published. Tests are adjusted to use the correct
-      libraries depending on SHARED/STATIC settings.
-
-      (ADB - 2019/06/12, HDFFV-10805)
-
 
 
 Support for new platforms and compilers
 =======================================
 
-    - CMake added support for VS2019 in version 3.15. Updated scripts.
-
-    - macOS 10.13.6, Darwin 17.7.0 with Apple clang LLVM version 10.0.0
-
-    - macOS 10.14.6, Darwin 18.7.0 with Apple clang LLVM version 10.0.1
-
 
 Bugs fixed since HDF 4.2.14
 ===========================
-
-    - netCDF test failed on multiple Mac
-
-      The netCDF test in the hdf4 library had failed either with segfault
-      or incorrect reading data on multiple versions of Mac machines, when
-      compiling with -O2.  The segfault appeared to happen during the use
-      of various system XDR functions.  In previous releases, -O0 level
-      optimization was used to avoid this problem.  In this release, the
-      hdf4's internal xdr library has been updated to handle the different
-      size of integers across platforms, based on the newer tirpc library
-      code and netCDF xdr code.
-
-      (ADB/BMR/LRK - 2020/02/15, EED-439)
-
-    - Several memory leaks are fixed
-
-      There were memory leaks caused by the allocated xdr structure not released
-      and several missing to free allocated buffers in tests.  These are now fixed.
-
-      (BMR - 2019/11/15)
 
 
 Documentation

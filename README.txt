@@ -1,4 +1,4 @@
-HDF version 4.2.15 released on 2020-02-12
+HDF version 4.2.15-post0 currently under development
 ===================================================
 
 Information about HDF

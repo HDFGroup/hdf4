@@ -121,7 +121,6 @@ am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
 PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
 am_ctest0_OBJECTS =
 ctest0_OBJECTS = $(am_ctest0_OBJECTS)
-ctest0_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
@@ -611,6 +610,7 @@ ncgen_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
 ncgen_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
 ctest0_SOURCES = 
 ctest0_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
+ctest0_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
 ftest0_SOURCES = 
 
 #############################################################################
