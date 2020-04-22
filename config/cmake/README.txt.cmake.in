@@ -9,7 +9,7 @@ It was built with the following options:
     -- @LIB_TYPE@ C/Fortran libraries
     -- SZIP (encoder enabled), ZLIB, and JPEG
     -- @LIB_TYPE@ HDF4 tools
-    -- Java
+    -- Java @Java_VERSION@
 
 The contents of this directory are:
 
@@ -30,7 +30,8 @@ After Installation
 The examples folder, HDF4Examples, located in the
 HDF4 install folder, can be built and tested with CMake and the supplied
 HDF4_Examples.cmake file. The HDF4_Examples.cmake expects HDF4 to have
-been installed in the default location with above compilers. Also, the CMake
+been installed in the default location with above compilers (see the
+libhdf5.settings file in the lib install folder). Also, the CMake
 utility should be installed.
 
 To test the installation with the examples;
