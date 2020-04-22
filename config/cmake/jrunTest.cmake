@@ -64,7 +64,7 @@ message (STATUS "COMMAND Result: ${TEST_RESULT}")
 # if the .err file exists and ERRROR_APPEND is enabled
 if (EXISTS "${TEST_FOLDER}/${TEST_OUTPUT}.err")
   file (READ ${TEST_FOLDER}/${TEST_OUTPUT}.err TEST_STREAM)
-  list(LENGTH TEST_STREAM test_len)
+  list (LENGTH TEST_STREAM test_len)
   if (test_len GREATER 0)
     if (TEST_MASK_FILE)
       STRING(REGEX REPLACE "CurrentDir is [^\n]+\n" "CurrentDir is (dir name)\n" TEST_STREAM "${TEST_STREAM}")
@@ -116,7 +116,7 @@ set (TEST_COMPARE_RESULT 0)
 if (NOT TEST_SKIP_COMPARE)
   if (EXISTS "${TEST_FOLDER}/${TEST_REFERENCE}")
     file (READ ${TEST_FOLDER}/${TEST_REFERENCE} TEST_STREAM)
-    list(LENGTH TEST_STREAM test_len)
+    list (LENGTH TEST_STREAM test_len)
     if (test_len GREATER 0)
       if (WIN32 OR MINGW)
         configure_file(${TEST_FOLDER}/${TEST_REFERENCE} ${TEST_FOLDER}/${TEST_REFERENCE}.tmp NEWLINE_STYLE CRLF)
@@ -187,7 +187,7 @@ if (NOT TEST_SKIP_COMPARE)
   set (TEST_ERRREF_RESULT 0)
   if (TEST_ERRREF)
     file (READ ${TEST_FOLDER}/${TEST_ERRREF} TEST_STREAM)
-    list(LENGTH TEST_STREAM test_len)
+    list (LENGTH TEST_STREAM test_len)
     if (test_len GREATER 0)
       if (WIN32 OR MINGW)
         configure_file(${TEST_FOLDER}/${TEST_ERRREF} ${TEST_FOLDER}/${TEST_ERRREF}.tmp NEWLINE_STYLE CRLF)
@@ -249,7 +249,7 @@ set (TEST_GREP_RESULT 0)
 if (TEST_GREP_COMPARE)
   # now grep the output with the reference
   file (READ ${TEST_FOLDER}/${TEST_OUTPUT} TEST_STREAM)
-  list(LENGTH TEST_STREAM test_len)
+  list (LENGTH TEST_STREAM test_len)
   if (test_len GREATER 0)
     # TEST_REFERENCE should always be matched
     string (REGEX MATCH "${TEST_REFERENCE}" TEST_MATCH ${TEST_STREAM})
@@ -271,11 +271,13 @@ endif ()
 
 # dump the output unless nodisplay option is set
 if (TEST_SKIP_COMPARE AND NOT TEST_NO_DISPLAY)
-  file (READ ${TEST_FOLDER}/${TEST_OUTPUT} TEST_STREAM)
-  execute_process (
-      COMMAND ${CMAKE_COMMAND} -E echo ${TEST_STREAM}
-      RESULT_VARIABLE TEST_RESULT
-  )
+  if (EXISTS "${TEST_FOLDER}/${TEST_OUTPUT}")
+    file (READ ${TEST_FOLDER}/${TEST_OUTPUT} TEST_STREAM)
+    execute_process (
+        COMMAND ${CMAKE_COMMAND} -E echo ${TEST_STREAM}
+        RESULT_VARIABLE TEST_RESULT
+    )
+  endif ()
 endif ()
 
 # everything went fine...
