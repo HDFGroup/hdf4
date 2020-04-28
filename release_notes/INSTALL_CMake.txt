@@ -28,8 +28,9 @@ Obtaining HDF4 source code
 
 CMake version
    1. We suggest you obtain the latest CMake from the Kitware web site.
-      The HDF 4.2."X" product requires a minimum CMake version 3.10,
-      where "X" is the current HDF4 release version.
+      The HDF 4.2."X" product requires a minimum CMake version 3.12,
+      where "X" is the current HDF4 release version. If you are using
+      VS2019, the minimum version is 3.15.
 
 Note:
    To change the install prefix from the platform defaults initialize
@@ -57,6 +58,7 @@ CMake build script:
 
 External compression szip and zlib libraries:
     JPEG8b.tar.gz
+    LIBAEC.tar.gz
     SZip.tar.gz
     ZLib.tar.gz
 
@@ -268,7 +270,7 @@ IV. Further considerations
 ========================================================================
 
    1. We suggest you obtain the latest CMake for windows from the Kitware
-      web site. The HDF 4.2."X" product requires a minimum CMake version 3.10.
+      web site. The HDF 4.2."X" product requires a minimum CMake version 3.12.
       If you are using VS2019, the CMake minimum is 3.15.
 
    2. HDF4 requires Zlib and JPEG. Szip is optional:
@@ -325,6 +327,34 @@ IV. Further considerations
            cmake -C ../config/cmake/cacheinit.cmake -G "Visual Studio 12 2013" \
                -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=OFF -DHDF4_ENABLE_EXAMPLES:BOOL=OFF \
                -DCMAKE_BUILD_TYPE:STRING=Release ..
+
+   6. CMake uses a toolchain of utilities to compile, link libraries and
+      create archives, and other tasks to drive the build. The toolchain
+      utilities available are determined by the languages enabled. In normal
+      builds, CMake automatically determines the toolchain for host builds
+      based on system introspection and defaults. In cross-compiling
+      scenarios, a toolchain file may be specified with information about
+      compiler and utility paths.
+                Variables and Properties
+      Several variables relate to the language components of a toolchain which
+      are enabled. CMAKE_<LANG>_COMPILER is the full path to the compiler used
+      for <LANG>. CMAKE_<LANG>_COMPILER_ID is the identifier used by CMake for
+      the compiler and CMAKE_<LANG>_COMPILER_VERSION is the version of the compiler.
+
+      The CMAKE_<LANG>_FLAGS variables and the configuration-specific equivalents
+      contain flags that will be added to the compile command when compiling a
+      file of a particular language.
+
+      As the linker is invoked by the compiler driver, CMake needs a way to
+      determine which compiler to use to invoke the linker. This is calculated
+      by the LANGUAGE of source files in the target, and in the case of static
+      libraries, the language of the dependent libraries. The choice CMake makes
+      may be overridden with the LINKER_LANGUAGE target property.
+
+      See the CMake help for more information on using toolchain files.
+
+      To use a toolchain file with the supplied cmake scripts, see the
+      HDF5options.cmake file under the toolchain section.
 
 Notes: CMake and HDF4
 
@@ -413,12 +443,11 @@ These five steps are described in detail below.
             * MinGW Makefiles
             * NMake Makefiles
             * Unix Makefiles
-            * Visual Studio 11 2012
-            * Visual Studio 11 2012 Win64
-            * Visual Studio 12 2013
-            * Visual Studio 12 2013 Win64
             * Visual Studio 14 2015
             * Visual Studio 14 2015 Win64
+            * Visual Studio 15 2017
+            * Visual Studio 15 2017 Win64
+            * Visual Studio 16 2019
 
         <options> is:
             * SZIP_INCLUDE_DIR:PATH=<path to szip includes directory>
@@ -454,6 +483,8 @@ These five steps are described in detail below.
             set_property (CACHE HDF4_ALLOW_EXTERNAL_SUPPORT PROPERTY STRINGS NO GIT TGZ)
             set (ZLIB_TGZ_NAME "ZLib.tar.gz" CACHE STRING "Use ZLib from compressed file" FORCE)
             set (SZIP_TGZ_NAME "SZip.tar.gz" CACHE STRING "Use SZip from compressed file" FORCE)
+            set (SZAEC_TGZ_NAME "LIBAEC.tar.gz" CACHE STRING "Use SZip AEC from compressed file" FORCE)
+            set (USE_LIBAEC ON CACHE BOOL "Use libaec szip replacement" FORCE)
             set (JPEG_TGZ_NAME "JPEG8b.tar.gz" CACHE STRING "Use JPEG from compressed file" FORCE)
             set (ZLIB_PACKAGE_NAME "zlib" CACHE STRING "Name of ZLIB package" FORCE)
             set (SZIP_PACKAGE_NAME "szip" CACHE STRING "Name of SZIP package" FORCE)
@@ -533,11 +564,16 @@ These five steps are described in detail below.
                JPEG_TGZ_NAME:STRING="jpeg_src.ext"
                ZLIB_TGZ_NAME:STRING="zlib_src.ext"
                SZIP_TGZ_NAME:STRING="szip_src.ext"
+               LIBAEC_TGZ_NAME:STRING="liaec_src.ext"
                TGZPATH:STRING="some_location"
             where "some_location/xxxx_src.ext" is the URL or full path to
             the compressed file and where ext is the type of the compression
             file such as .bz2, .tar, .tar.gz, .tgz, or .zip. Also define
             CMAKE_BUILD_TYPE to be the configuration type.
+
+           NOTE: the USE_LIBAEC option will use the file named by LIBAEC_TGZ_NAME
+            to build SZIP instead of the file named by SZIP_TGZ_NAME. This option
+            is also used to account for the different headers and library names.
 
    4. Test HDF4
 
@@ -630,8 +666,8 @@ JPEG_USE_EXTERNAL            "Use External Library Building for JPEG" 0
 SZIP_USE_EXTERNAL            "Use External Library Building for SZIP" 0
 ZLIB_USE_EXTERNAL            "Use External Library Building for ZLIB" 0
 if (HDF4_ENABLE_SZIP_SUPPORT)
-    HDF4_ENABLE_SZIP_ENCODING "Use SZip Encoding"      OFF
-
+    HDF4_ENABLE_SZIP_ENCODING "Use SZip Encoding"                     OFF
+    USE_LIBAEC                "Use libaec szip replacement"           OFF
 
 
 ========================================================================

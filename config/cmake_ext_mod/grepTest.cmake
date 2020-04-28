@@ -99,7 +99,7 @@ if (TEST_ERRREF)
         if (NOT TEST_SORT_COMPARE)
           # now compare the output with the reference
           execute_process (
-              COMMAND ${CMAKE_COMMAND} -E compare_files ${TEST_FOLDER}/${TEST_OUTPUT} ${TEST_FOLDER}/${TEST_REFERENCE}
+              COMMAND ${CMAKE_COMMAND} -E compare_files ${CMAKE_IGNORE_EOL} ${TEST_FOLDER}/${TEST_OUTPUT} ${TEST_FOLDER}/${TEST_REFERENCE}
               RESULT_VARIABLE TEST_COMPARE_RESULT
           )
         else ()
