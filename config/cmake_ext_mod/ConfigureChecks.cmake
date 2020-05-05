@@ -9,6 +9,7 @@ include (CheckSymbolExists)
 include (CheckTypeSize)
 include (CheckVariableExists)
 include (TestBigEndian)
+include (CheckStructHasMember)
 
 #-----------------------------------------------------------------------------
 # APPLE/Darwin setup
@@ -269,7 +270,7 @@ if (MINGW OR NOT WINDOWS)
 
   # Need to add this so that O_DIRECT is visible for the direct
   # VFD on Linux systems.
-  set (HDF_EXTRA_C_FLAGS -D_GNU_SOURCE)
+  set (HDF_EXTRA_C_FLAGS ${HDF_EXTRA_C_FLAGS} -D_GNU_SOURCE)
 
   option (HDF_ENABLE_LARGE_FILE "Enable support for large (64-bit) files on Linux." ON)
   if (HDF_ENABLE_LARGE_FILE AND NOT DEFINED TEST_LFS_WORKS_RUN)

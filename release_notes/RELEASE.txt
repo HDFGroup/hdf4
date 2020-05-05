@@ -38,6 +38,16 @@ New features and changes
 ========================
     Configuration:
     -------------
+    - CMake option to use AEC (open source SZip) library instead of SZip
+
+      The open source AEC library is a replacement library for SZip. In
+      order to use it for hdf5 the libaec CMake source was changed to add
+      "-fPIC" and exclude test files. Autotools does not build the
+      compression libraries within hdf5 builds. New option USE_LIBAEC is
+      required to compensate for the different files produced by AEC build.
+
+      (ADB - 2020/04/22, OESS-65)
+
 
 
 Support for new platforms and compilers
@@ -70,16 +80,16 @@ This version has been tested in the following platforms:
                                          on x86-64 Linux -tp nehalem
 
    Linux, 3.10.0-327.18.2.el7.x86_64 GNU C (gcc) and Fortran (gfortran) compilers:
-   #1 SMP x86_64, GNU/Linux             Version 4.8.5 20150623 (Red Hat 4.8.5-4)  
+   #1 SMP x86_64, GNU/Linux             Version 4.8.5 20150623 (Red Hat 4.8.5-4)
    jelly/moohan)                        Version 4.9.3, 5.3.0, 6.2.0, 7.1.0, 8.3.0
-                                     Intel(R) C (icc) and Fortran (ifort) compilers: 
+                                     Intel(R) C (icc) and Fortran (ifort) compilers:
                                         Version 17.0.0.098 Build 20160721
                                      pgcc and pgf90 17.10-0 64-bit target
                                          on x86-64 Linux -tp haswell
 
-   Linux, 2.6.32-573.18.1.el6.ppc64  GNU C (gcc) and Fortran (gfortran) compilers: 
+   Linux, 2.6.32-573.18.1.el6.ppc64  GNU C (gcc) and Fortran (gfortran) compilers:
    #1 SMP, ppc64 (ostrich)             Version 4.4.7 20120313 (Red Hat 4.4.7-18)
-                                     Fortran (xlf)  for Linux Version 15.1 
+                                     Fortran (xlf)  for Linux Version 15.1
 
    SunOS 5.11 (32- and 64-bit)       Sun C 5.12 SunOS_sparc 2011/11/16
    11.1, sparc, sun4v (emu)          Sun Fortran 95 8.6 SunOS_sparc 2011/11/16
@@ -120,9 +130,9 @@ This version has been tested in the following platforms:
 Known problems
 ==============
 o  Builds with the autotools option --enable-hdf4-xdr fail on Solaris and
-   on IBM ppc64 with the xlc compiler.  The option should not be used on 
+   on IBM ppc64 with the xlc compiler.  The option should not be used on
    those platforms.
-   
+
 o  CMake files do not behave correctly with paths containing spaces.
    Do not use spaces in paths because the required escaping for handling spaces
    results in very complex and fragile build files.
