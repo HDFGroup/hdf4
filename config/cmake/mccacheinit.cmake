@@ -60,7 +60,7 @@ set (CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build Debug" FORCE)
 set (JPEG_TGZ_NAME "JPEG8d.tar.gz" CACHE STRING "Use JPEG from compressed file" FORCE)
 
 set (ZLIB_PACKAGE_NAME "zlib" CACHE STRING "Name of ZLIB package" FORCE)
-
+set (LIBAEC_PACKAGE_NAME "libaec" CACHE STRING "Name of AEC SZIP package" FORCE)
 set (SZIP_PACKAGE_NAME "szip" CACHE STRING "Name of SZIP package" FORCE)
 
 set (JPEG_PACKAGE_NAME "jpeg" CACHE STRING "Name of JPEG package" FORCE)
