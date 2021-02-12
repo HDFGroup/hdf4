@@ -56,5 +56,6 @@ void        test_buffer(void);
 void        test_datainfo(void);
 void        test_datainfo(void);
 void        test_attdatainfo(void);
+void        test_mgr_szip(void);
 
 #endif /* _TPROTO_H */
