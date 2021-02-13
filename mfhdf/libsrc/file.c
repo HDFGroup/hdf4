@@ -20,6 +20,10 @@
 #include <assert.h>
 #endif /* DEBUG */
 
+#ifdef H4_HAVE_UNISTD_H
+#include <unistd.h> /* access(), F_OK */
+#endif
+
 #include    <string.h>
 #include    <errno.h>
 #include    "local_nc.h"

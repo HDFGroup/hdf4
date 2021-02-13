@@ -7,7 +7,7 @@
 set (CTEST_PROJECT_NAME "HDF4")
 set (CTEST_NIGHTLY_START_TIME "18:00:00 CST")
 
-set (CTEST_DROP_METHOD "http")
+set (CTEST_DROP_METHOD "https")
 if (CDASH_LOCAL)
   set (CTEST_DROP_SITE "cdash-internal.hdfgroup.org")
   set (CTEST_DROP_LOCATION "/submit.php?project=HDF4")
