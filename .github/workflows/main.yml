@@ -59,7 +59,7 @@ jobs:
             os: ubuntu-latest
             build_type: "Release"
             netcdf: enable
-            fortran: disable
+            fortran: enable
             xdr: enable
             toolchain: ""
             generator: "autogen"
@@ -100,7 +100,7 @@ jobs:
         sh ./bin/chkmanifest
         mkdir "${{ runner.workspace }}/build"
         cd "${{ runner.workspace }}/build"
-        $GITHUB_WORKSPACE/configure --enable-shared --enable-java --${{ matrix.xdr }}-hdf4-xdr --${{ matrix.netcdf }}-netcdf --${{ matrix.fortran }}-fortran
+        $GITHUB_WORKSPACE/configure --disable-shared --enable-java --${{ matrix.xdr }}-hdf4-xdr --${{ matrix.netcdf }}-netcdf --${{ matrix.fortran }}-fortran
       shell: bash
 
     - name: Configure
