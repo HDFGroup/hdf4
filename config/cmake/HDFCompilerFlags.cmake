@@ -18,6 +18,8 @@ if (CMAKE_COMPILER_IS_GNUCC)
       set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fstdarg-opt")
     endif ()
   endif ()
+  # C99 disable compile warning-error
+  set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-error=implicit-function-declaration")
 endif ()
 if (CMAKE_COMPILER_IS_GNUCXX AND CMAKE_CXX_COMPILER_LOADED)
   set (CMAKE_CXX_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_CXX_FLAGS}")
@@ -30,6 +32,8 @@ if (CMAKE_COMPILER_IS_GNUCXX AND CMAKE_CXX_COMPILER_LOADED)
       set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstdarg-opt")
     endif ()
   endif ()
+  # C99 disable compile warning-error
+  set (CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -Wno-error=implicit-function-declaration")
 endif ()
 
 #-----------------------------------------------------------------------------

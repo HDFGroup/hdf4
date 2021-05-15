@@ -644,6 +644,7 @@ HDF4_BUILD_TOOLS    "Build HDF4 Tools"                     OFF
 HDF4_BUILD_UTILS    "Build HDF4 Utilities"                 OFF
 HDF4_BUILD_XDR_LIB  "Build HDF4 XDR Library"               OFF
 HDF4_ENABLE_NETCDF  "Build HDF4 versions of NetCDF-3 APIS" ON
+HDF4_BUILD_JAVA     "Build Java HDF Library"               OFF
 
 ---------------- HDF4 Advanced Options ---------------------
 HDF4_DISABLE_COMPILER_WARNINGS "Disable compiler warnings"                                    OFF
