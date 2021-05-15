@@ -16,7 +16,8 @@ jobs:
     strategy:
 #      fail-fast: false
       matrix:
-        name: ["Windows Latest MSVC", "Ubuntu Latest GCC", "Ubuntu Debug GCC", "macOS Latest Clang", "Ubuntu Autotools GCC"]
+#        name: ["Windows Latest MSVC", "Ubuntu Latest GCC", "Ubuntu Debug GCC", "macOS Latest Clang", "Ubuntu Autotools GCC"]
+        name: ["Windows Latest MSVC", "Ubuntu Latest GCC", "Ubuntu Debug GCC", "Ubuntu Autotools GCC"]
         include:
           - name: "Windows Latest MSVC"
             artifact: "Windows-MSVC.tar.xz"
