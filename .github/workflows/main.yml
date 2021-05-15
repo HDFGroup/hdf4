@@ -39,16 +39,16 @@ jobs:
             ts: OFF
             toolchain: "config/toolchain/GCC.cmake"
             generator: "-G Ninja"
-          - name: "macOS Latest Clang"
-            artifact: "macOS.tar.xz"
-            os: macos-latest
-            build_type: "Release"
-            netcdf: ON
-            java: ON
-            fortran: OFF
-            xdr: ON
-            toolchain: "config/toolchain/clang.cmake"
-            generator: "-G Ninja"
+#          - name: "macOS Latest Clang"
+#            artifact: "macOS.tar.xz"
+#            os: macos-latest
+#            build_type: "Release"
+#            netcdf: ON
+#            java: ON
+#            fortran: OFF
+#            xdr: ON
+#            toolchain: "config/toolchain/clang.cmake"
+#            generator: "-G Ninja"
           - name: "Ubuntu Debug GCC"
             artifact: "LinuxDBG.tar.xz"
             os: ubuntu-latest
