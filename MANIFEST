@@ -32,6 +32,9 @@
 ./configure.ac
 ./libhdf4.settings.in
 ./move-if-change
+./.github/CODEOWNERS  _DO_NOT_DISTRIBUTE_
+./.github/workflows/main.yml  _DO_NOT_DISTRIBUTE_
+./.github/workflows/pr-check.yml  _DO_NOT_DISTRIBUTE_
 
 ./m4/ax_check_class.m4
 ./m4/ax_check_classpath.m4
