@@ -24,6 +24,9 @@
 ### disable JAVA builds
 #set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF_BUILD_JAVA:BOOL=OFF")
 
+#############################################################################################
+### match the hdf45 library namespace
+set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_NAMESPACE:STRING=hdf4::")
 
 #############################################################################################
 ### disable test program builds, requires reference files in testfiles subdirectory
