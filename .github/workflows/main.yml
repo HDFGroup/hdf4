@@ -19,16 +19,16 @@ jobs:
 #        name: ["Windows Latest MSVC", "Ubuntu Latest GCC", "Ubuntu Debug GCC", "macOS Latest Clang", "Ubuntu Autotools GCC"]
         name: ["Windows Latest MSVC", "Ubuntu Latest GCC", "Ubuntu Debug GCC", "Ubuntu Autotools GCC"]
         include:
-          - name: "Windows Latest MSVC"
-            artifact: "Windows-MSVC.tar.xz"
-            os: windows-latest
-            build_type: "Release"
-            toolchain: ""
-            netcdf: ON
-            java: ON
-            fortran: OFF
-            xdr: ON
-            generator: "-G \"Visual Studio 16 2019\" -A x64"
+#          - name: "Windows Latest MSVC"
+#            artifact: "Windows-MSVC.tar.xz"
+#            os: windows-latest
+#            build_type: "Release"
+#            toolchain: ""
+#            netcdf: ON
+#            java: ON
+#            fortran: OFF
+#            xdr: ON
+#            generator: "-G \"Visual Studio 16 2019\" -A x64"
           - name: "Ubuntu Latest GCC"
             artifact: "Linux.tar.xz"
             os: ubuntu-latest
