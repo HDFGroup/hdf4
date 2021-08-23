@@ -38,7 +38,7 @@ endif ()
 
 message (STATUS "COMMAND: ${TEST_TESTER} -Xmx1024M -Dorg.slf4j.simpleLogger.defaultLog=${LOG_LEVEL} -Djava.library.path=\"${TEST_LIBRARY_DIRECTORY}\" -cp \"${TEST_CLASSPATH}\" ${TEST_ARGS} ${TEST_PROGRAM} ${ARGN}")
 
-if (WIN32 OR MINGW)
+if (WIN32)
   set (ENV{PATH} "$ENV{PATH}\\;${TEST_LIBRARY_DIRECTORY}")
 else ()
   set (ENV{LD_LIBRARY_PATH} "$ENV{LD_LIBRARY_PATH}:${TEST_LIBRARY_DIRECTORY}")
@@ -118,7 +118,7 @@ if (NOT TEST_SKIP_COMPARE)
     file (READ ${TEST_FOLDER}/${TEST_REFERENCE} TEST_STREAM)
     list (LENGTH TEST_STREAM test_len)
     if (test_len GREATER 0)
-      if (WIN32 OR MINGW)
+      if (WIN32)
         configure_file(${TEST_FOLDER}/${TEST_REFERENCE} ${TEST_FOLDER}/${TEST_REFERENCE}.tmp NEWLINE_STYLE CRLF)
         if (EXISTS "${TEST_FOLDER}/${TEST_REFERENCE}.tmp")
           file(RENAME ${TEST_FOLDER}/${TEST_REFERENCE}.tmp ${TEST_FOLDER}/${TEST_REFERENCE})
@@ -130,7 +130,7 @@ if (NOT TEST_SKIP_COMPARE)
       if (NOT TEST_SORT_COMPARE)
         # now compare the output with the reference
         execute_process (
-            COMMAND ${CMAKE_COMMAND} -E compare_files ${TEST_FOLDER}/${TEST_OUTPUT} ${TEST_FOLDER}/${TEST_REFERENCE}
+            COMMAND ${CMAKE_COMMAND} -E compare_files ${CMAKE_IGNORE_EOL} ${TEST_FOLDER}/${TEST_OUTPUT} ${TEST_FOLDER}/${TEST_REFERENCE}
             RESULT_VARIABLE TEST_COMPARE_RESULT
         )
       else ()
@@ -189,7 +189,7 @@ if (NOT TEST_SKIP_COMPARE)
     file (READ ${TEST_FOLDER}/${TEST_ERRREF} TEST_STREAM)
     list (LENGTH TEST_STREAM test_len)
     if (test_len GREATER 0)
-      if (WIN32 OR MINGW)
+      if (WIN32)
         configure_file(${TEST_FOLDER}/${TEST_ERRREF} ${TEST_FOLDER}/${TEST_ERRREF}.tmp NEWLINE_STYLE CRLF)
         if (EXISTS "${TEST_FOLDER}/${TEST_ERRREF}.tmp")
           file(RENAME ${TEST_FOLDER}/${TEST_ERRREF}.tmp ${TEST_FOLDER}/${TEST_ERRREF})
@@ -200,7 +200,7 @@ if (NOT TEST_SKIP_COMPARE)
 
       # now compare the error output with the error reference
       execute_process (
-          COMMAND ${CMAKE_COMMAND} -E compare_files ${TEST_FOLDER}/${TEST_OUTPUT}.err ${TEST_FOLDER}/${TEST_ERRREF}
+          COMMAND ${CMAKE_COMMAND} -E compare_files ${CMAKE_IGNORE_EOL} ${TEST_FOLDER}/${TEST_OUTPUT}.err ${TEST_FOLDER}/${TEST_ERRREF}
           RESULT_VARIABLE TEST_ERRREF_RESULT
       )
       if (TEST_ERRREF_RESULT)
