@@ -84,8 +84,9 @@ jobs:
       run: sudo apt-get install automake autoconf libtool libtool-bin
       if: matrix.generator == 'autogen'
     - name: Install Dependencies (Windows)
-      run: choco install ninja
-      run: choco install libjpeg-turbo
+      run: |
+         choco install ninja
+         choco install libjpeg-turbo
       if: matrix.os == 'windows-latest'
     - name: Install Dependencies (macOS)
       run: brew install ninja
