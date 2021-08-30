@@ -24,18 +24,20 @@ package hdf.hdflib;
  */
 
 public class HDFNotImplementedException extends HDFJavaException {
-    String msg;
 
+    /** */
     public HDFNotImplementedException() {
-        HDFerror = 0;
+        super();
     }
 
+    /**
+     * Constructs an <code>HDFException</code> with the specified unimplemented
+     * message.
+     *
+     * @param s
+     *            the additional message detail.
+     */
     public HDFNotImplementedException(String s) {
-        msg = "HDFJavaException: HDF function not implmented (yet): " + s;
-    }
-
-    @Override
-    public String getMessage() {
-        return msg;
+        super("HDFJavaException: HDF function not implmented (yet): " + s);
     }
 }

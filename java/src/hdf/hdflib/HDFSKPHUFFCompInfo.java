@@ -22,8 +22,10 @@ package hdf.hdflib;
  */
 public class HDFSKPHUFFCompInfo extends HDFNewCompInfo {
 
+    /** */
     public int skp_size;
 
+    /** */
     public HDFSKPHUFFCompInfo() {
         ctype = HDFConstants.COMP_CODE_SKPHUFF;
     };

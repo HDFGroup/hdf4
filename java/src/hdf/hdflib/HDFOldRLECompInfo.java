@@ -23,6 +23,7 @@ package hdf.hdflib;
 
 public class HDFOldRLECompInfo extends HDFOldCompInfo {
 
+    /** */
     public HDFOldRLECompInfo() {
         ctype = HDFConstants.COMP_RLE;
     }

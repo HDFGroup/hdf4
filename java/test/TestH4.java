@@ -101,6 +101,8 @@ public class TestH4 {
 
         try {
             HDFLibrary.Hgetlibversion(libversion, version);
+            System.err.println("HDFLibrary.Hgetlibversion: " + libversion[0] + ": " + libversion[1] + ": " + libversion[2]);
+            System.err.println("HDFLibrary.Hgetlibversion: " + version[0]);
         }
         catch (Throwable err) {
             fail("HDFLibrary.Hgetlibversion: " + err);

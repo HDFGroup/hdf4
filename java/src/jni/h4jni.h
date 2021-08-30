@@ -1,176 +1,327 @@
-/*****************************************************************************
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Copyright by The HDF Group.                                               *
  * Copyright by the Board of Trustees of the University of Illinois.         *
  * All rights reserved.                                                      *
  *                                                                           *
- * This file is part of the HDF Java Products distribution.                  *
- * The full copyright notice, including terms governing use, modification,   *
- * and redistribution, is contained in the file, COPYING.                    *
- * COPYING can be found at the root of the source code distribution tree.    *
- * If you do not have access to this file, you may request a copy from       *
+ * This file is part of HDF.  The full HDF copyright notice, including     *
+ * terms governing use, modification, and redistribution, is contained in    *
+ * the COPYING file, which can be found at the root of the source code       *
+ * distribution tree, or in https://www.hdfgroup.org/licenses.               *
+ * If you do not have access to either file, you may request a copy from     *
  * help@hdfgroup.org.                                                        *
- ****************************************************************************/
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /*
  *  For details of the HDF libraries, see the HDF Documentation at:
- *    https://support.hdfgroup.org/documentation/
+ *    https://portal.hdfgroup.org/display/HDF4/HDF4
  *
  */
 
 #include <jni.h>
+#include <string.h>
 
-#ifndef _Included_h4jni
-#define _Included_h4jni
+#ifndef Included_h4jni
+#define Included_h4jni
 
 #ifdef __cplusplus
   #define ENVPTR (env)
-  #define ENVPAR
   #define ENVONLY
 #else /* __cplusplus */
   #define ENVPTR (*env)
-  #define ENVPAR env,
   #define ENVONLY env
 #endif /* __cplusplus */
 
+/*
+ * Used to silence compiler when a particular
+ * function parameter is not used.
+ */
+#define UNUSED(o) (void)o
+
+/*
+ * Macro to check for a JNI exception after a JNI method is called.
+ * If an exception occurred, the value of 'clearException' will determine
+ * whether or not the exception will be cleared in order for the native
+ * method to do its own error handling.
+ *
+ * If the exception does not get cleared, this macro will skip to the
+ * cleanup+return section of the native method, since at that point
+ * cleaning up and returning is the only safe thing that can be done.
+ */
+#define CHECK_JNI_EXCEPTION(envptr, clearException)                                                          \
+    do {                                                                                                     \
+        if (JNI_TRUE == (*envptr)->ExceptionCheck(envptr)) {                                                 \
+            if (JNI_TRUE == clearException)                                                                  \
+                (*envptr)->ExceptionClear(envptr);                                                           \
+            else                                                                                             \
+                goto done;                                                                                   \
+        }                                                                                                    \
+    } while (0)
+
 /* Macros for class access */
 /* Calling code must define ret_obj as jobject */
-#define CALL_CONSTRUCTOR(classname,classsig,args) {                              \
-    jclass     cls;                                                              \
-    jmethodID  constructor;                                                      \
-    cls = ENVPTR->FindClass(ENVPAR (classname));                                 \
-    if (cls == 0) {                                                              \
-        h4JNIFatalError(env, "JNI error: GetObjectClass\n");                     \
-        ret_obj = NULL;                                                          \
-    }                                                                            \
-    constructor = ENVPTR->GetMethodID(ENVPAR cls, "<init>", (classsig));         \
-    if (constructor == 0) {                                                      \
-        h4JNIFatalError(env, "JNI error: GetMethodID failed\n");                 \
-        ret_obj = NULL;                                                          \
-    }                                                                            \
-    ret_obj = ENVPTR->NewObjectA(ENVPAR cls, constructor, (args));               \
-}
+#define CALL_CONSTRUCTOR(envptr, classname, classsig, args, ret_obj)                                         \
+    do {                                                                                                     \
+        jmethodID constructor;                                                                               \
+        jclass    cls;                                                                                       \
+                                                                                                             \
+        if (NULL == (cls = (*envptr)->FindClass(envptr, (classname)))) {                                     \
+            CHECK_JNI_EXCEPTION(envptr, JNI_TRUE);                                                           \
+            H5_JNI_FATAL_ERROR(envptr, "JNI error: GetObjectClass");                                         \
+        }                                                                                                    \
+        if (NULL == (constructor = (*envptr)->GetMethodID(envptr, cls, "<init>", (classsig)))) {             \
+            CHECK_JNI_EXCEPTION(envptr, JNI_TRUE);                                                           \
+            H5_JNI_FATAL_ERROR(envptr, "JNI error: GetMethodID failed");                                     \
+        }                                                                                                    \
+        if (NULL == (ret_obj = (*envptr)->NewObjectA(envptr, cls, constructor, (args)))) {                   \
+            printf("FATAL ERROR: %s: Creation failed\n", classname);                                       \
+            CHECK_JNI_EXCEPTION(envptr, JNI_FALSE);                                                          \
+        }                                                                                                    \
+    } while (0)
 
-/* Macros for error check */
-/* for now:  use top of exception stack:  fix this to do whole stack */
-#define CALL_ERROR_CHECK() {                                                     \
-    int16 errval;                                                                \
-    jclass jc;                                                                   \
-    errval = HEvalue((int32)1);                                                  \
-    if (errval != DFE_NONE) {                                                    \
-        h4buildException(env, errval);                                           \
-        jc = ENVPTR->FindClass(ENVPAR  "hdf/hdflib/HDFLibraryException");        \
-        if (jc != NULL)                                                          \
-            ENVPTR->ThrowNew(ENVPAR jc,HEstring((hdf_err_code_t)errval));        \
-    }                                                                            \
-}
+/*
+ * Macros for pinning/unpinning objects.
+ */
+#define PIN_BYTE_ARRAY(envptr, arrayToPin, outBuf, isCopy, failErrMsg)                                       \
+    do {                                                                                                     \
+        if (NULL == (outBuf = (*envptr)->GetByteArrayElements(envptr, arrayToPin, isCopy))) {                \
+            CHECK_JNI_EXCEPTION(envptr, JNI_TRUE);                                                           \
+            H4_JNI_FATAL_ERROR(envptr, failErrMsg);                                                          \
+        }                                                                                                    \
+    } while (0)
 
+#define PIN_BYTE_ARRAY_CRITICAL(envptr, arrayToPin, outBuf, isCopy, failErrMsg)                              \
+    do {                                                                                                     \
+        if (NULL == (outBuf = (jbyte *)(*envptr)->GetPrimitiveArrayCritical(envptr, arrayToPin, isCopy))) {  \
+            CHECK_JNI_EXCEPTION(envptr, JNI_TRUE);                                                           \
+            H4_JNI_FATAL_ERROR(envptr, failErrMsg);                                                          \
+        }                                                                                                    \
+    } while (0)
+
+#define UNPIN_BYTE_ARRAY(envptr, pinnedArray, bufToRelease, freeMode)                                        \
+    do {                                                                                                     \
+        (*envptr)->ReleaseByteArrayElements(envptr, pinnedArray, (jbyte *)bufToRelease, freeMode);           \
+    } while (0)
+
+#define PIN_SHORT_ARRAY(envptr, arrayToPin, outBuf, isCopy, failErrMsg)                                      \
+    do {                                                                                                     \
+        if (NULL == (outBuf = (*envptr)->GetShortArrayElements(envptr, arrayToPin, isCopy))) {               \
+            CHECK_JNI_EXCEPTION(envptr, JNI_TRUE);                                                           \
+            H4_JNI_FATAL_ERROR(envptr, failErrMsg);                                                          \
+        }                                                                                                    \
+    } while (0)
+
+#define PIN_SHORT_ARRAY_CRITICAL(envptr, arrayToPin, outBuf, isCopy, failErrMsg)                             \
+    do {                                                                                                     \
+        if (NULL == (outBuf = (jshort *)(*envptr)->GetPrimitiveArrayCritical(envptr, arrayToPin, isCopy))) { \
+            CHECK_JNI_EXCEPTION(envptr, JNI_TRUE);                                                           \
+            H4_JNI_FATAL_ERROR(envptr, failErrMsg);                                                          \
+        }                                                                                                    \
+    } while (0)
+
+#define UNPIN_SHORT_ARRAY(envptr, pinnedArray, bufToRelease, freeMode)                                       \
+    do {                                                                                                     \
+        (*envptr)->ReleaseShortArrayElements(envptr, pinnedArray, (jshort *)bufToRelease, freeMode);         \
+    } while (0)
+
+#define PIN_INT_ARRAY(envptr, arrayToPin, outBuf, isCopy, failErrMsg)                                        \
+    do {                                                                                                     \
+        if (NULL == (outBuf = (*envptr)->GetIntArrayElements(envptr, arrayToPin, isCopy))) {                 \
+            CHECK_JNI_EXCEPTION(envptr, JNI_TRUE);                                                           \
+            H4_JNI_FATAL_ERROR(envptr, failErrMsg);                                                          \
+        }                                                                                                    \
+    } while (0)
+
+#define PIN_INT_ARRAY_CRITICAL(envptr, arrayToPin, outBuf, isCopy, failErrMsg)                               \
+    do {                                                                                                     \
+        if (NULL == (outBuf = (jint *)(*envptr)->GetPrimitiveArrayCritical(envptr, arrayToPin, isCopy))) {   \
+            CHECK_JNI_EXCEPTION(envptr, JNI_TRUE);                                                           \
+            H4_JNI_FATAL_ERROR(envptr, failErrMsg);                                                          \
+        }                                                                                                    \
+    } while (0)
+
+#define UNPIN_INT_ARRAY(envptr, pinnedArray, bufToRelease, freeMode)                                         \
+    do {                                                                                                     \
+        (*envptr)->ReleaseIntArrayElements(envptr, pinnedArray, (jint *)bufToRelease, freeMode);             \
+    } while (0)
+
+#define PIN_LONG_ARRAY(envptr, arrayToPin, outBuf, isCopy, failErrMsg)                                       \
+    do {                                                                                                     \
+        if (NULL == (outBuf = (*envptr)->GetLongArrayElements(envptr, arrayToPin, isCopy))) {                \
+            CHECK_JNI_EXCEPTION(envptr, JNI_TRUE);                                                           \
+            H4_JNI_FATAL_ERROR(envptr, failErrMsg);                                                          \
+        }                                                                                                    \
+    } while (0)
+
+#define PIN_LONG_ARRAY_CRITICAL(envptr, arrayToPin, outBuf, isCopy, failErrMsg)                              \
+    do {                                                                                                     \
+        if (NULL == (outBuf = (jlong *)(*envptr)->GetPrimitiveArrayCritical(envptr, arrayToPin, isCopy))) {  \
+            CHECK_JNI_EXCEPTION(envptr, JNI_TRUE);                                                           \
+            H4_JNI_FATAL_ERROR(envptr, failErrMsg);                                                          \
+        }                                                                                                    \
+    } while (0)
+
+#define UNPIN_LONG_ARRAY(envptr, pinnedArray, bufToRelease, freeMode)                                        \
+    do {                                                                                                     \
+        (*envptr)->ReleaseLongArrayElements(envptr, pinnedArray, (jlong *)bufToRelease, freeMode);           \
+    } while (0)
+
+#define PIN_FLOAT_ARRAY(envptr, arrayToPin, outBuf, isCopy, failErrMsg)                                      \
+    do {                                                                                                     \
+        if (NULL == (outBuf = (*envptr)->GetFloatArrayElements(envptr, arrayToPin, isCopy))) {               \
+            CHECK_JNI_EXCEPTION(envptr, JNI_TRUE);                                                           \
+            H4_JNI_FATAL_ERROR(envptr, failErrMsg);                                                          \
+        }                                                                                                    \
+    } while (0)
+
+#define PIN_FLOAT_ARRAY_CRITICAL(envptr, arrayToPin, outBuf, isCopy, failErrMsg)                             \
+    do {                                                                                                     \
+        if (NULL == (outBuf = (jfloat *)(*envptr)->GetPrimitiveArrayCritical(envptr, arrayToPin, isCopy))) { \
+            CHECK_JNI_EXCEPTION(envptr, JNI_TRUE);                                                           \
+            H4_JNI_FATAL_ERROR(envptr, failErrMsg);                                                          \
+        }                                                                                                    \
+    } while (0)
+
+#define UNPIN_FLOAT_ARRAY(envptr, pinnedArray, bufToRelease, freeMode)                                       \
+    do {                                                                                                     \
+        (*envptr)->ReleaseFloatArrayElements(envptr, pinnedArray, (jfloat *)bufToRelease, freeMode);         \
+    } while (0)
+
+#define PIN_DOUBLE_ARRAY(envptr, arrayToPin, outBuf, isCopy, failErrMsg)                                     \
+    do {                                                                                                     \
+        if (NULL == (outBuf = (*envptr)->GetDoubleArrayElements(envptr, arrayToPin, isCopy))) {              \
+            CHECK_JNI_EXCEPTION(envptr, JNI_TRUE);                                                           \
+            H4_JNI_FATAL_ERROR(envptr, failErrMsg);                                                          \
+        }                                                                                                    \
+    } while (0)
+
+#define PIN_DOUBLE_ARRAY_CRITICAL(envptr, arrayToPin, outBuf, isCopy, failErrMsg)                            \
+    do {                                                                                                     \
+        if (NULL ==                                                                                          \
+            (outBuf = (jdouble *)(*envptr)->GetPrimitiveArrayCritical(envptr, arrayToPin, isCopy))) {        \
+            CHECK_JNI_EXCEPTION(envptr, JNI_TRUE);                                                           \
+            H4_JNI_FATAL_ERROR(envptr, failErrMsg);                                                          \
+        }                                                                                                    \
+    } while (0)
+
+#define UNPIN_DOUBLE_ARRAY(envptr, pinnedArray, bufToRelease, freeMode)                                      \
+    do {                                                                                                     \
+        (*envptr)->ReleaseDoubleArrayElements(envptr, pinnedArray, (jdouble *)bufToRelease, freeMode);       \
+    } while (0)
+
+#define PIN_BOOL_ARRAY(envptr, arrayToPin, outBuf, isCopy, failErrMsg)                                       \
+    do {                                                                                                     \
+        if (NULL == (outBuf = (*envptr)->GetBooleanArrayElements(envptr, arrayToPin, isCopy))) {             \
+            CHECK_JNI_EXCEPTION(envptr, JNI_TRUE);                                                           \
+            H4_JNI_FATAL_ERROR(envptr, failErrMsg);                                                          \
+        }                                                                                                    \
+    } while (0)
+
+#define PIN_BOOL_ARRAY_CRITICAL(envptr, arrayToPin, outBuf, isCopy, failErrMsg)                              \
+    do {                                                                                                     \
+        if (NULL ==                                                                                          \
+            (outBuf = (jboolean *)(*envptr)->GetPrimitiveArrayCritical(envptr, arrayToPin, isCopy))) {       \
+            CHECK_JNI_EXCEPTION(envptr, JNI_TRUE);                                                           \
+            H4_JNI_FATAL_ERROR(envptr, failErrMsg);                                                          \
+        }                                                                                                    \
+    } while (0)
+
+#define UNPIN_BOOL_ARRAY(envptr, pinnedArray, bufToRelease, freeMode)                                        \
+    do {                                                                                                     \
+        (*envptr)->ReleaseBooleanArrayElements(envptr, pinnedArray, (jboolean *)bufToRelease, freeMode);     \
+    } while (0)
+
+#define UNPIN_ARRAY_CRITICAL(envptr, pinnedArray, bufToRelease, freeMode)                                    \
+    do {                                                                                                     \
+        (*envptr)->ReleasePrimitiveArrayCritical(envptr, pinnedArray, bufToRelease, freeMode);               \
+    } while (0)
 
 /* Macros for string access */
-#define PIN_JAVA_STRING(javastr,localstr) {                                      \
-    jboolean isCopy;                                                             \
-    (localstr) = NULL;                                                           \
-    if ((javastr) == NULL) {                                                     \
-        h4nullArgument(env, "java string is NULL");                              \
-    }                                                                            \
-    else {                                                                       \
-        (localstr) = ENVPTR->GetStringUTFChars(ENVPAR (javastr), &isCopy);       \
-        if ((localstr) == NULL) {                                                \
-            h4JNIFatalError(env, "local c string is not pinned");                \
-        }                                                                        \
-    }                                                                            \
-}
+#define PIN_JAVA_STRING(envptr, stringToPin, outString, isCopy, failErrMsg)                                  \
+    do {                                                                                                     \
+        if (NULL == (outString = (*envptr)->GetStringUTFChars(envptr, stringToPin, isCopy))) {               \
+            CHECK_JNI_EXCEPTION(envptr, JNI_TRUE);                                                           \
+            H4_JNI_FATAL_ERROR(envptr, failErrMsg);                                                          \
+        }                                                                                                    \
+    } while (0)
 
-#define UNPIN_JAVA_STRING(javastr,localstr) {                                    \
-     ENVPTR->ReleaseStringUTFChars(ENVPAR (javastr), (localstr));                \
-}
-
-#define PIN_JAVA_STRING_TWO(javastr,localstr,java2str,local2str) {               \
-    jboolean isCopy;                                                             \
-    (localstr) = NULL;                                                           \
-    (local2str) = NULL;                                                          \
-    if ((javastr) == NULL) {                                                     \
-        h4nullArgument(env, "java string is NULL");                              \
-    }                                                                            \
-    else if ((java2str) == NULL) {                                               \
-        h4nullArgument(env, "second java string is NULL");                       \
-    }                                                                            \
-    else {                                                                       \
-        (localstr) = ENVPTR->GetStringUTFChars(ENVPAR (javastr), &isCopy);       \
-        if ((localstr) == NULL) {                                                \
-            h4JNIFatalError(env, "local c string is not pinned");                \
-        }                                                                        \
-        else {                                                                   \
-            (local2str) = ENVPTR->GetStringUTFChars(ENVPAR (java2str), &isCopy); \
-            if ((local2str) == NULL) {                                           \
-                ENVPTR->ReleaseStringUTFChars(ENVPAR (javastr), (localstr));     \
-                h4JNIFatalError(env, "second local c string is not pinned");     \
-            }                                                                    \
-        }                                                                        \
-    }                                                                            \
-}
-
-#define UNPIN_JAVA_STRING_TWO(javastr,localstr,java2str,local2str) {             \
-     ENVPTR->ReleaseStringUTFChars(ENVPAR (javastr), (localstr));                \
-     ENVPTR->ReleaseStringUTFChars(ENVPAR (java2str), (local2str));              \
-}
-
-#define PIN_JAVA_STRING_THREE(javastr,localstr,java2str,local2str,java3str,local3str) {       \
-    jboolean isCopy;                                                             \
-    (localstr) = NULL;                                                           \
-    (local2str) = NULL;                                                          \
-    (local3str) = NULL;                                                          \
-    if ((javastr) == NULL) {                                                     \
-        h4nullArgument(env, "java string is NULL");                              \
-    }                                                                            \
-    else if ((java2str) == NULL) {                                               \
-        h4nullArgument(env, "second java string is NULL");                       \
-    }                                                                            \
-    else if ((java3str) == NULL) {                                               \
-        h4nullArgument(env, "third java string is NULL");                        \
-    }                                                                            \
-    else {                                                                       \
-        (localstr) = ENVPTR->GetStringUTFChars(ENVPAR (javastr), &isCopy);       \
-        if ((localstr) == NULL) {                                                \
-            h4JNIFatalError(env, "local c string is not pinned");                \
-        }                                                                        \
-        else {                                                                   \
-            (local2str) = ENVPTR->GetStringUTFChars(ENVPAR (java2str), &isCopy); \
-            if ((local2str) == NULL) {                                           \
-                ENVPTR->ReleaseStringUTFChars(ENVPAR (javastr), (localstr));     \
-                h4JNIFatalError(env, "second local c string is not pinned");     \
-            }                                                                    \
-            else {                                                               \
-                (local3str) = ENVPTR->GetStringUTFChars(ENVPAR (java3str), &isCopy);   \
-                if ((local3str) == NULL) {                                       \
-                    ENVPTR->ReleaseStringUTFChars(ENVPAR (javastr), (localstr)); \
-                    ENVPTR->ReleaseStringUTFChars(ENVPAR (java2str), (local2str));     \
-                    h4JNIFatalError(env, "third local c string is not pinned");  \
-                }                                                                \
-            }                                                                    \
-        }                                                                        \
-    }                                                                            \
-}
-
-#define UNPIN_JAVA_STRING_THREE(javastr,localstr,java2str,local2str,java3str,local3str) {        \
-     ENVPTR->ReleaseStringUTFChars(ENVPAR (javastr), (localstr));                \
-     ENVPTR->ReleaseStringUTFChars(ENVPAR (java2str), (local2str));              \
-     ENVPTR->ReleaseStringUTFChars(ENVPAR (java3str), (local3str));              \
-}
+#define UNPIN_JAVA_STRING(envptr, pinnedString, stringToRelease)                                             \
+    do {                                                                                                     \
+        (*envptr)->ReleaseStringUTFChars(envptr, pinnedString, stringToRelease);                             \
+    } while (0)
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
 extern jboolean h4JNIFatalError(JNIEnv *, const char *);
-extern jboolean h4buildException(JNIEnv *, jint);
-extern jboolean h4badArgument (JNIEnv *, const char *);
 extern jboolean h4nullArgument(JNIEnv *, const char *);
+extern jboolean h4badArgument(JNIEnv *, const char *);
+extern jboolean h4outOfMemory(JNIEnv *, const char *);
+extern jboolean h4assertion(JNIEnv *env, const char *);
 extern jboolean h4NotImplemented (JNIEnv *, const char *);
-extern jboolean h4outOfMemory (JNIEnv *, const char *);
+extern jboolean h4libraryError(JNIEnv *env);
 extern jboolean h4raiseException(JNIEnv *, const char *);
+
+/*
+ * The following macros are to facilitate immediate cleanup+return
+ * from a native JNI method when an exception is to be thrown.
+ * Since, in general, the "cleanup" methods are the only safe JNI
+ * methods to call once an exception has occurred, we want to immediately
+ * cleanup and return instead of letting the native method continue.
+ *
+ * Note that a native method can clear the exception when one occurs and
+ * then do its own error handling, but we instead opt to immediately return.
+ */
+#define H4_JNI_FATAL_ERROR(env, message)                                                                     \
+    do {                                                                                                     \
+        h4JNIFatalError(env, message);                                                                       \
+        goto done;                                                                                           \
+    } while (0)
+
+#define H4_NULL_ARGUMENT_ERROR(env, message)                                                                 \
+    do {                                                                                                     \
+        h4nullArgument(env, message);                                                                        \
+        goto done;                                                                                           \
+    } while (0)
+
+#define H4_BAD_ARGUMENT_ERROR(env, message)                                                                  \
+    do {                                                                                                     \
+        h4badArgument(env, message);                                                                         \
+        goto done;                                                                                           \
+    } while (0)
+
+#define H4_OUT_OF_MEMORY_ERROR(env, message)                                                                 \
+    do {                                                                                                     \
+        h4outOfMemory(env, message);                                                                         \
+        goto done;                                                                                           \
+    } while (0)
+
+#define H4_ASSERTION_ERROR(env, message)                                                                     \
+    do {                                                                                                     \
+        h4assertion(env, message);                                                                           \
+        goto done;                                                                                           \
+    } while (0)
+
+#define H4_UNIMPLEMENTED(env, message)                                                                       \
+    do {                                                                                                     \
+        h4NotImplemented(env, message);                                                                       \
+        goto done;                                                                                           \
+    } while (0)
+
+#define H4_LIBRARY_ERROR(env)                                                                                \
+    do {                                                                                                     \
+        h4libraryError(env);                                                                                 \
+        goto done;                                                                                           \
+    } while (0)
+
+#define H4_RAISE_EXCEPTION(env, message)                                                                     \
+    do {                                                                                                     \
+        h4raiseException(env, message);                                                                      \
+        goto done;                                                                                           \
+    } while (0)
 
 #ifdef __cplusplus
 } /* end extern "C" */
 #endif /* __cplusplus */
 
-#endif /* _Included_h4jni */
+#endif /* Included_h4jni */

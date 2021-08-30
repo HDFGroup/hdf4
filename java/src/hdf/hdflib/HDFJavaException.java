@@ -20,18 +20,22 @@ package hdf.hdflib;
  * These errors include Java configuration errors, security violations, and resource exhaustion.
  */
 public class HDFJavaException extends HDFException {
-    String msg;
-
+    /**
+     * Constructs an <code>HDFJavaException</code> with no specified detail
+     * message.
+     */
     public HDFJavaException() {
-        HDFerror = 0;
+        super();
     }
 
+    /**
+     * Constructs an <code>HDFJavaException</code> with the specified detail
+     * message.
+     *
+     * @param s
+     *            the detail message.
+     */
     public HDFJavaException(String s) {
-        msg = "HDFLibraryException: " + s;
-    }
-
-    @Override
-    public String getMessage() {
-        return msg;
+        super(s);
     }
 }
