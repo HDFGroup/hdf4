@@ -23,16 +23,23 @@ package hdf.hdflib;
 
 public class HDFNBITCompInfo extends HDFNewCompInfo {
 
-    public int nt; /* number type of the data to encode */
-    public int sign_ext; /* whether to sign extend or not */
-    public int fill_one; /* whether to fill with 1's or 0's */
-    public int start_bit; /* offset of the start bit in the data */
-    public int bit_len; /* number of bits to store */
+    /** number type of the data to encode */
+    public int nt;
+    /** whether to sign extend or not */
+    public int sign_ext;
+    /** whether to fill with 1's or 0's */
+    public int fill_one;
+    /** offset of the start bit in the data */
+    public int start_bit;
+    /** number of bits to store  */
+    public int bit_len;
 
+    /** */
     public HDFNBITCompInfo() {
         ctype = HDFConstants.COMP_CODE_NBIT;
     }
 
+    /** */
     public HDFNBITCompInfo(int Nt, int Sign_ext, int Fill_one, int Start_bit, int Bit_len) {
         ctype = HDFConstants.COMP_CODE_NBIT;
     }

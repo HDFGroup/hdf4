@@ -22,16 +22,23 @@ package hdf.hdflib;
 
 public class HDFSZIPCompInfo extends HDFNewCompInfo {
 
+    /** */
     public int bits_per_pixel;
+    /** */
     public int options_mask;
+    /** */
     public int pixels;
+    /** */
     public int pixels_per_block;
+    /** */
     public int pixels_per_scanline;
 
+    /** */
     public HDFSZIPCompInfo() {
         ctype = HDFConstants.COMP_CODE_SZIP;
     }
 
+    /** */
     public HDFSZIPCompInfo(int bits_per_pixel_in, int options_mask_in, int pixels_in, int pixels_per_block_in, int pixels_per_scanline_in) {
         ctype = HDFConstants.COMP_CODE_SZIP;
         bits_per_pixel = bits_per_pixel_in;

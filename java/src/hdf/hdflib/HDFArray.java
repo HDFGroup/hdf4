@@ -1,46 +1,64 @@
-/****************************************************************************
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Copyright by The HDF Group.                                               *
  * Copyright by the Board of Trustees of the University of Illinois.         *
  * All rights reserved.                                                      *
  *                                                                           *
- * This file is part of HDF Java Products. The full HDF Java copyright       *
- * notice, including terms governing use, modification, and redistribution,  *
- * is contained in the file, COPYING.  COPYING can be found at the root of   *
- * the source code distribution tree. You can also access it online  at      *
- * http://www.hdfgroup.org/products/licenses.html.  If you do not have       *
- * access to the file, you may request a copy from help@hdfgroup.org.        *
- ****************************************************************************/
+ * This file is part of HDF.  The full HDF copyright notice, including     *
+ * terms governing use, modification, and redistribution, is contained in    *
+ * the COPYING file, which can be found at the root of the source code       *
+ * distribution tree, or in https://www.hdfgroup.org/licenses.               *
+ * If you do not have access to either file, you may request a copy from     *
+ * help@hdfgroup.org.                                                        *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 package hdf.hdflib;
+
+import hdf.hdflib.HDFException;
+import hdf.hdflib.HDFJavaException;
+import java.util.Arrays;
 
 /**
  * This is a class for handling multidimensional arrays for HDF.
  * <p>
- * The purpose is to allow the storage and retrieval of arbitrary array types containing scientific
- * data.
+ * The purpose is to allow the storage and retrieval of arbitrary array types containing scientific data.
  * <p>
- * The methods support the conversion of an array to and from Java to a one-dimensional array of
- * bytes suitable for I/O by the C library.
+ * The methods support the conversion of an array to and from Java to a one-dimensional array of bytes suitable for I/O
+ * by the C library.
  * <p>
- * This class heavily uses the <a href="./hdf.hdflib.HDFNativeData.html">HDFNativeData</a> class to
- * convert between Java and C representations.
+ * This class heavily uses the <a href="./hdf.hdflib.HDFNativeData.html">HDFNativeData</a> class to convert between
+ * Java and C representations.
  */
 
 public class HDFArray {
-
     private Object _theArray = null;
     private ArrayDescriptor _desc = null;
     private byte[] _barray = null;
 
-    public HDFArray(Object anArray) throws HDFException {
+    // public HDFArray() {}
+
+    /**
+     * The input must be a Java Array (possibly multidimensional) of primitive numbers or sub-classes of Number.
+     * <p>
+     * The input is analysed to determine the number of dimensions and size of each dimension, as well as the type of
+     * the elements.
+     * <p>
+     * The description is saved in private variables, and used to convert data.
+     *
+     * @param anArray
+     *                The array object.
+     * @exception hdf.hdflib.HDFJavaException
+     *                object is not an array.
+     */
+    public HDFArray(Object anArray) throws HDFJavaException
+    {
         if (anArray == null) {
-            HDFException ex = new HDFJavaException("HDFArray: array is null?: ");
+            HDFJavaException ex = new HDFJavaException("HDFArray: array is null?: ");
             ex.printStackTrace();
         }
         Class tc = anArray.getClass();
         if (tc.isArray() == false) {
             /* exception: not an array */
-            HDFException ex = new HDFJavaException("HDFArray: not an array?: ");
+            HDFJavaException ex = new HDFJavaException("HDFArray: not an array?: ");
             ex.printStackTrace();
             throw (ex);
         }
@@ -49,19 +67,24 @@ public class HDFArray {
 
         /* extra error checking -- probably not needed */
         if (_desc == null) {
-            HDFException ex = new HDFJavaException("HDFArray: internal error: array description failed?: ");
+            HDFJavaException ex = new HDFJavaException("HDFArray: internal error: array description failed?: ");
             throw (ex);
         }
     }
 
     /**
-     * @return the allocated one-dimensional array of bytes sufficient to store the array.
-     * @exception HDFException
-     *         thrown for errors: object is not allocated: HDFJavaException
+     * Allocate a one-dimensional array of bytes sufficient to store the array.
+     *
+     * @return A one-D array of bytes, filled with zeroes. The bytes are sufficient to hold the data of the Array passed
+     *         to the constructor.
+     * @exception hdf.hdflib.HDFJavaException
+     *                Allocation failed.
      */
 
-    public byte[] emptyBytes() throws HDFException {
+    public byte[] emptyBytes() throws HDFJavaException
+    {
         byte[] b = null;
+
         if ((ArrayDescriptor.dims == 1) && (ArrayDescriptor.NT == 'B')) {
             b = (byte[]) _theArray;
         }
@@ -69,29 +92,28 @@ public class HDFArray {
             b = new byte[ArrayDescriptor.totalSize];
         }
         if (b == null) {
-            System.out.println("Error:  HDFArray can't allocate bytes for array");
-            HDFException ex = new HDFJavaException("HDFArray: emptyBytes: allocation failed");
+            HDFJavaException ex = new HDFJavaException("HDFArray: emptyBytes: allocation failed");
             throw (ex);
         }
         return (b);
-        // return (new byte[ArrayDescriptor.totalSize]);
     }
 
     /**
-     * @return conversion of a Java array of numbers to a one-dimensional array of
-     *         bytes in correct native order.
+     * Given a Java array of numbers, convert it to a one-dimensional array of bytes in correct native order.
      *
-     * @exception hdf.hdflib.HDFException
-     *         thrown for errors: object is not array: HDFJavaException
+     * @return A one-D array of bytes, constructed from the Array passed to the constructor.
+     * @exception hdf.hdflib.HDFJavaException
+     *                the object not an array or other internal error.
      */
-    public byte[] byteify() throws HDFException {
-
+    public byte[] byteify() throws HDFJavaException
+    {
         if (_barray != null) {
             return _barray;
         }
+
         if (_theArray == null) {
             /* exception: not an array */
-            HDFException ex = new HDFJavaException("HDFArray: byteify not an array?: ");
+            HDFJavaException ex = new HDFJavaException("HDFArray: byteify not an array?: ");
             throw (ex);
         }
 
@@ -108,19 +130,19 @@ public class HDFArray {
 
                     byte[] therow;
                     if (ArrayDescriptor.NT == 'I') {
-                        therow = hdf.hdflib.HDFNativeData.intToByte(0, ArrayDescriptor.dimlen[1], (int[]) _theArray);
+                        therow = HDFNativeData.intToByte(0, ArrayDescriptor.dimlen[1], (int[]) _theArray);
                     }
                     else if (ArrayDescriptor.NT == 'S') {
-                        therow = hdf.hdflib.HDFNativeData.shortToByte(0, ArrayDescriptor.dimlen[1], (short[]) _theArray);
+                        therow = HDFNativeData.shortToByte(0, ArrayDescriptor.dimlen[1], (short[]) _theArray);
                     }
                     else if (ArrayDescriptor.NT == 'F') {
-                        therow = hdf.hdflib.HDFNativeData.floatToByte(0, ArrayDescriptor.dimlen[1], (float[]) _theArray);
+                        therow = HDFNativeData.floatToByte(0, ArrayDescriptor.dimlen[1], (float[]) _theArray);
                     }
                     else if (ArrayDescriptor.NT == 'J') {
-                        therow = hdf.hdflib.HDFNativeData.longToByte(0, ArrayDescriptor.dimlen[1], (long[]) _theArray);
+                        therow = HDFNativeData.longToByte(0, ArrayDescriptor.dimlen[1], (long[]) _theArray);
                     }
                     else if (ArrayDescriptor.NT == 'D') {
-                        therow = hdf.hdflib.HDFNativeData.doubleToByte(0, ArrayDescriptor.dimlen[1], (double[]) _theArray);
+                        therow = HDFNativeData.doubleToByte(0, ArrayDescriptor.dimlen[1], (double[]) _theArray);
                     }
                     else if (ArrayDescriptor.NT == 'L') {
                         if (ArrayDescriptor.className.equals("java.lang.Byte")) {
@@ -189,8 +211,7 @@ public class HDFArray {
                 else {
                     /* check range of index */
                     if (index > (ArrayDescriptor.dimlen[i] - 1)) {
-                        System.out.println("out of bounds?");
-                        return null;
+                        throw new java.lang.IndexOutOfBoundsException("HDFArray: byteify index OOB?");
                     }
                     oo = java.lang.reflect.Array.get(oo, index);
                     ArrayDescriptor.currentindex[i] = index;
@@ -202,24 +223,29 @@ public class HDFArray {
             byte arow[];
             try {
                 if (ArrayDescriptor.NT == 'J') {
-                    arow = hdf.hdflib.HDFNativeData.longToByte(0, ArrayDescriptor.dimlen[ArrayDescriptor.dims], (long[]) ArrayDescriptor.objs[ArrayDescriptor.dims - 1]);
+                    arow = HDFNativeData.longToByte(0, ArrayDescriptor.dimlen[ArrayDescriptor.dims],
+                            (long[]) ArrayDescriptor.objs[ArrayDescriptor.dims - 1]);
                 }
                 else if (ArrayDescriptor.NT == 'I') {
-                    arow = hdf.hdflib.HDFNativeData.intToByte(0, ArrayDescriptor.dimlen[ArrayDescriptor.dims], (int[]) ArrayDescriptor.objs[ArrayDescriptor.dims - 1]);
+                    arow = HDFNativeData.intToByte(0, ArrayDescriptor.dimlen[ArrayDescriptor.dims],
+                            (int[]) ArrayDescriptor.objs[ArrayDescriptor.dims - 1]);
                 }
                 else if (ArrayDescriptor.NT == 'S') {
-                    arow = hdf.hdflib.HDFNativeData.shortToByte(0, ArrayDescriptor.dimlen[ArrayDescriptor.dims], (short[]) ArrayDescriptor.objs[ArrayDescriptor.dims - 1]);
+                    arow = HDFNativeData.shortToByte(0, ArrayDescriptor.dimlen[ArrayDescriptor.dims],
+                            (short[]) ArrayDescriptor.objs[ArrayDescriptor.dims - 1]);
                 }
                 else if (ArrayDescriptor.NT == 'B') {
                     arow = (byte[]) ArrayDescriptor.objs[ArrayDescriptor.dims - 1];
                 }
                 else if (ArrayDescriptor.NT == 'F') {
                     /* 32 bit float */
-                    arow = hdf.hdflib.HDFNativeData.floatToByte(0, ArrayDescriptor.dimlen[ArrayDescriptor.dims], (float[]) ArrayDescriptor.objs[ArrayDescriptor.dims - 1]);
+                    arow = HDFNativeData.floatToByte(0, ArrayDescriptor.dimlen[ArrayDescriptor.dims],
+                            (float[]) ArrayDescriptor.objs[ArrayDescriptor.dims - 1]);
                 }
                 else if (ArrayDescriptor.NT == 'D') {
                     /* 64 bit float */
-                    arow = hdf.hdflib.HDFNativeData.doubleToByte(0, ArrayDescriptor.dimlen[ArrayDescriptor.dims], (double[]) ArrayDescriptor.objs[ArrayDescriptor.dims - 1]);
+                    arow = HDFNativeData.doubleToByte(0, ArrayDescriptor.dimlen[ArrayDescriptor.dims],
+                            (double[]) ArrayDescriptor.objs[ArrayDescriptor.dims - 1]);
                 }
                 else if (ArrayDescriptor.NT == 'L') {
                     if (ArrayDescriptor.className.equals("java.lang.Byte")) {
@@ -246,10 +272,11 @@ public class HDFArray {
                     }
                 }
                 else {
-                    HDFJavaException ex = new HDFJavaException("HDFArray: byteify Object type not implemented?");
+                    HDFJavaException ex = new HDFJavaException("HDFArray: byteify unknown type not implemented?");
                     throw (ex);
                 }
-                System.arraycopy(arow, 0, _barray, n, (ArrayDescriptor.dimlen[ArrayDescriptor.dims] * ArrayDescriptor.NTsize));
+                System.arraycopy(arow, 0, _barray, n,
+                        (ArrayDescriptor.dimlen[ArrayDescriptor.dims] * ArrayDescriptor.NTsize));
                 n += ArrayDescriptor.bytetoindex[ArrayDescriptor.dims - 1];
             }
             catch (OutOfMemoryError err) {
@@ -259,67 +286,72 @@ public class HDFArray {
             }
         }
         /* assert: the whole array is completed--currentindex should == len - 1 */
-
         /* error checks */
-
         if (n < ArrayDescriptor.totalSize) {
-            throw new java.lang.InternalError(new String("HDFArray:::byteify: Panic didn't complete all input data: n=  " + n + " size = " + ArrayDescriptor.totalSize));
+            throw new java.lang.InternalError(new String("HDFArray::byteify: Panic didn't complete all input data: n=  "
+                    + n + " size = " + ArrayDescriptor.totalSize));
         }
         for (i = 0; i < ArrayDescriptor.dims; i++) {
             if (ArrayDescriptor.currentindex[i] != ArrayDescriptor.dimlen[i] - 1) {
                 throw new java.lang.InternalError(new String(
-                        "Panic didn't complete all data: currentindex[" + i + "] = " + ArrayDescriptor.currentindex[i] + " (should be " + (ArrayDescriptor.dimlen[i] - 1) + " ?)"));
+                        "Panic didn't complete all data: currentindex[" + i + "] = " + ArrayDescriptor.currentindex[i]
+                                + " (should be " + (ArrayDescriptor.dimlen[i] - 1) + " ?)"));
             }
         }
         return _barray;
     }
 
     /**
-     * @param bytes
-     *            a one-dimensional array of numbers
-     * @return convert it to a java array of the shape and size passed to the constructor.
+     * Given a one-dimensional array of bytes representing numbers, convert it to a java array of the shape and size
+     * passed to the constructor.
      *
-     * @exception hdf.hdflib.HDFException
-     *                thrown for errors: object not an array: HDFJavaException
+     * @param bytes
+     *              The bytes to construct the Array.
+     * @return
+     *              An Array (possibly multidimensional) of primitive or number objects.
+     * @exception
+     *              hdf.hdflib.HDFJavaException the object not an array or other internal error.
      */
-    public Object arrayify(byte[] bytes) throws HDFException {
+    public Object arrayify(byte[] bytes) throws HDFJavaException {
         if (_theArray == null) {
             /* exception: not an array */
-            HDFException ex = new HDFJavaException("arrayify: not an array?: ");
+            HDFJavaException ex = new HDFJavaException("arrayify: not an array?: ");
             throw (ex);
         }
 
         if (java.lang.reflect.Array.getLength(bytes) != ArrayDescriptor.totalSize) {
             /* exception: array not right size */
-            HDFException ex = new HDFJavaException("arrayify: array is wrong size?: ");
+            HDFJavaException ex = new HDFJavaException("arrayify: array is wrong size?: ");
+            throw (ex);
         }
         _barray = bytes; /* hope that the bytes are correct.... */
+
         if (ArrayDescriptor.dims == 1) {
             /* special case */
             /* 2 data copies here! */
             try {
                 if (ArrayDescriptor.NT == 'I') {
-                    int[] x = hdf.hdflib.HDFNativeData.byteToInt(_barray);
+                    int[] x = HDFNativeData.byteToInt(_barray);
                     System.arraycopy(x, 0, _theArray, 0, ArrayDescriptor.dimlen[1]);
                     return _theArray;
                 }
                 else if (ArrayDescriptor.NT == 'S') {
-                    short[] x = hdf.hdflib.HDFNativeData.byteToShort(_barray);
+                    short[] x = HDFNativeData.byteToShort(_barray);
                     System.arraycopy(x, 0, _theArray, 0, ArrayDescriptor.dimlen[1]);
                     return _theArray;
                 }
                 else if (ArrayDescriptor.NT == 'F') {
-                    float x[] = hdf.hdflib.HDFNativeData.byteToFloat(_barray);
+                    float x[] = HDFNativeData.byteToFloat(_barray);
                     System.arraycopy(x, 0, _theArray, 0, ArrayDescriptor.dimlen[1]);
                     return _theArray;
                 }
                 else if (ArrayDescriptor.NT == 'J') {
-                    long x[] = hdf.hdflib.HDFNativeData.byteToLong(_barray);
+                    long x[] = HDFNativeData.byteToLong(_barray);
                     System.arraycopy(x, 0, _theArray, 0, ArrayDescriptor.dimlen[1]);
                     return _theArray;
                 }
                 else if (ArrayDescriptor.NT == 'D') {
-                    double x[] = hdf.hdflib.HDFNativeData.byteToDouble(_barray);
+                    double x[] = HDFNativeData.byteToDouble(_barray);
                     System.arraycopy(x, 0, _theArray, 0, ArrayDescriptor.dimlen[1]);
                     return _theArray;
                 }
@@ -364,12 +396,12 @@ public class HDFArray {
                     }
                 }
                 else {
-                    HDFJavaException ex = new HDFJavaException("arrayify:  Object type not implemented yet...");
+                    HDFJavaException ex = new HDFJavaException("arrayify:  unknown type not implemented yet...");
                     throw (ex);
                 }
             }
             catch (OutOfMemoryError err) {
-                HDFException ex = new HDFJavaException("HDFArray: arrayify array too big?");
+                HDFJavaException ex = new HDFJavaException("HDFArray: arrayify array too big?");
                 ex.printStackTrace();
                 throw (ex);
             }
@@ -378,8 +410,54 @@ public class HDFArray {
 
         Object oo = _theArray;
         int n = 0; /* the current byte */
+        int m = 0; /* the current array index */
         int index = 0;
         int i;
+        Object flattenedArray = null;
+
+        switch (ArrayDescriptor.NT) {
+        case 'J':
+            flattenedArray = (Object) HDFNativeData.byteToLong(_barray);
+            break;
+        case 'S':
+            flattenedArray = (Object) HDFNativeData.byteToShort(_barray);
+            break;
+        case 'I':
+            flattenedArray = (Object) HDFNativeData.byteToInt(_barray);
+            break;
+        case 'F':
+            flattenedArray = (Object) HDFNativeData.byteToFloat(_barray);
+            break;
+        case 'D':
+            flattenedArray = (Object) HDFNativeData.byteToDouble(_barray);
+            break;
+        case 'B':
+            flattenedArray = (Object) _barray;
+            break;
+        case 'L':
+            {
+                if (ArrayDescriptor.className.equals("java.lang.Byte"))
+                    flattenedArray = (Object) ByteToByteObj(_barray);
+                else if (ArrayDescriptor.className.equals("java.lang.Short"))
+                    flattenedArray = (Object) ByteToShort(_barray);
+                else if (ArrayDescriptor.className.equals("java.lang.Integer"))
+                    flattenedArray = (Object) ByteToInteger(_barray);
+                else if (ArrayDescriptor.className.equals("java.lang.Long"))
+                    flattenedArray = (Object) ByteToLongObj(_barray);
+                else if (ArrayDescriptor.className.equals("java.lang.Float"))
+                    flattenedArray = (Object) ByteToFloatObj(_barray);
+                else if (ArrayDescriptor.className.equals("java.lang.Double"))
+                    flattenedArray = (Object) ByteToDoubleObj(_barray);
+                else {
+                    HDFJavaException ex = new HDFJavaException("HDFArray: unsupported Object type: " + ArrayDescriptor.NT);
+                    throw (ex);
+                }
+            } // end of statement for arrays of boxed objects
+        default:
+            HDFJavaException ex = new HDFJavaException("HDFArray: unknown or unsupported type: " + ArrayDescriptor.NT);
+            throw (ex);
+        } // end of switch statement for arrays of primitives
+
         while (n < ArrayDescriptor.totalSize) {
             oo = ArrayDescriptor.objs[0];
             index = n / ArrayDescriptor.bytetoindex[0];
@@ -398,7 +476,7 @@ public class HDFArray {
                         System.out.println("out of bounds?");
                         return null;
                     }
-                    oo = java.lang.reflect.Array.get((Object) oo, index);
+                    oo = java.lang.reflect.Array.get(oo, index);
                     ArrayDescriptor.currentindex[i] = index;
                     ArrayDescriptor.objs[i] = oo;
                 }
@@ -406,116 +484,73 @@ public class HDFArray {
 
             /* array-ify */
             try {
-                if (ArrayDescriptor.NT == 'J') {
-                    long[] arow = hdf.hdflib.HDFNativeData.byteToLong(n, ArrayDescriptor.dimlen[ArrayDescriptor.dims], _barray);
-                    java.lang.reflect.Array.set(ArrayDescriptor.objs[ArrayDescriptor.dims - 2], (ArrayDescriptor.currentindex[ArrayDescriptor.dims - 1]), (Object) arow);
-                    n += ArrayDescriptor.bytetoindex[ArrayDescriptor.dims - 1];
-                    ArrayDescriptor.currentindex[ArrayDescriptor.dims - 1]++;
-                }
-                else if (ArrayDescriptor.NT == 'I') {
-                    int[] arow = hdf.hdflib.HDFNativeData.byteToInt(n, ArrayDescriptor.dimlen[ArrayDescriptor.dims], _barray);
-                    java.lang.reflect.Array.set(ArrayDescriptor.objs[ArrayDescriptor.dims - 2], (ArrayDescriptor.currentindex[ArrayDescriptor.dims - 1]), (Object) arow);
+                Object arow = null;
+                int mm = m + ArrayDescriptor.dimlen[ArrayDescriptor.dims];
+                switch (ArrayDescriptor.NT) {
+                case 'B':
+                    arow = (Object) Arrays.copyOfRange((byte[]) flattenedArray, m, mm);
+                    break;
+                case 'S':
+                    arow = (Object) Arrays.copyOfRange((short[]) flattenedArray, m, mm);
+                    break;
+                case 'I':
+                    arow = (Object) Arrays.copyOfRange((int[]) flattenedArray, m, mm);
+                    break;
+                case 'J':
+                    arow = (Object) Arrays.copyOfRange((long[]) flattenedArray, m, mm);
+                    break;
+                case 'F':
+                    arow = (Object) Arrays.copyOfRange((float[]) flattenedArray, m, mm);
+                    break;
+                case 'D':
+                    arow = (Object) Arrays.copyOfRange((double[]) flattenedArray, m, mm);
+                    break;
+                case 'L':
+                    {
+                        if (ArrayDescriptor.className.equals("java.lang.Byte"))
+                            arow = (Object) Arrays.copyOfRange((Byte[]) flattenedArray, m, mm);
+                        else if (ArrayDescriptor.className.equals("java.lang.Short"))
+                            arow = (Object) Arrays.copyOfRange((Short[]) flattenedArray, m, mm);
+                        else if (ArrayDescriptor.className.equals("java.lang.Integer"))
+                            arow = (Object) Arrays.copyOfRange((Integer[]) flattenedArray, m, mm);
+                        else if (ArrayDescriptor.className.equals("java.lang.Long"))
+                            arow = (Object) Arrays.copyOfRange((Long[]) flattenedArray, m, mm);
+                        else if (ArrayDescriptor.className.equals("java.lang.Float"))
+                            arow = (Object) Arrays.copyOfRange((Float[]) flattenedArray, m, mm);
+                        else if (ArrayDescriptor.className.equals("java.lang.Double"))
+                            arow = (Object) Arrays.copyOfRange((Double[]) flattenedArray, m, mm);
+                        else {
+                            HDFJavaException ex = new HDFJavaException("HDFArray: unsupported Object type: " + ArrayDescriptor.NT);
+                            throw (ex);
+                        }
+                    } // end of statement for arrays of boxed numerics
+                } // end of switch statement for arrays of primitives
 
-                    n += ArrayDescriptor.bytetoindex[ArrayDescriptor.dims - 1];
-                    ArrayDescriptor.currentindex[ArrayDescriptor.dims - 1]++;
-                }
-                else if (ArrayDescriptor.NT == 'S') {
-                    short[] arow = hdf.hdflib.HDFNativeData.byteToShort(n, ArrayDescriptor.dimlen[ArrayDescriptor.dims], _barray);
-                    java.lang.reflect.Array.set(ArrayDescriptor.objs[ArrayDescriptor.dims - 2], (ArrayDescriptor.currentindex[ArrayDescriptor.dims - 1]), (Object) arow);
-
-                    n += ArrayDescriptor.bytetoindex[ArrayDescriptor.dims - 1];
-                    ArrayDescriptor.currentindex[ArrayDescriptor.dims - 1]++;
-                }
-                else if (ArrayDescriptor.NT == 'B') {
-                    System.arraycopy(_barray, n, ArrayDescriptor.objs[ArrayDescriptor.dims - 1], 0, ArrayDescriptor.dimlen[ArrayDescriptor.dims]);
-                    n += ArrayDescriptor.bytetoindex[ArrayDescriptor.dims - 1];
-                }
-                else if (ArrayDescriptor.NT == 'F') {
-                    float arow[] = hdf.hdflib.HDFNativeData.byteToFloat(n, ArrayDescriptor.dimlen[ArrayDescriptor.dims], _barray);
-                    java.lang.reflect.Array.set(ArrayDescriptor.objs[ArrayDescriptor.dims - 2], (ArrayDescriptor.currentindex[ArrayDescriptor.dims - 1]), (Object) arow);
-
-                    n += ArrayDescriptor.bytetoindex[ArrayDescriptor.dims - 1];
-                    ArrayDescriptor.currentindex[ArrayDescriptor.dims - 1]++;
-                }
-                else if (ArrayDescriptor.NT == 'D') {
-                    double[] arow = hdf.hdflib.HDFNativeData.byteToDouble(n, ArrayDescriptor.dimlen[ArrayDescriptor.dims], _barray);
-                    java.lang.reflect.Array.set(ArrayDescriptor.objs[ArrayDescriptor.dims - 2], (ArrayDescriptor.currentindex[ArrayDescriptor.dims - 1]), (Object) arow);
-
-                    n += ArrayDescriptor.bytetoindex[ArrayDescriptor.dims - 1];
-                    ArrayDescriptor.currentindex[ArrayDescriptor.dims - 1]++;
-                }
-                else if (ArrayDescriptor.NT == 'L') {
-                    if (ArrayDescriptor.className.equals("java.lang.Byte")) {
-                        Byte I[] = ByteToByteObj(n, ArrayDescriptor.dimlen[ArrayDescriptor.dims], _barray);
-                        java.lang.reflect.Array.set(ArrayDescriptor.objs[ArrayDescriptor.dims - 2], (ArrayDescriptor.currentindex[ArrayDescriptor.dims - 1]), (Object) I);
-
-                        n += ArrayDescriptor.bytetoindex[ArrayDescriptor.dims - 1];
-                        ArrayDescriptor.currentindex[ArrayDescriptor.dims - 1]++;
-                    }
-                    else if (ArrayDescriptor.className.equals("java.lang.Integer")) {
-                        Integer I[] = ByteToInteger(n, ArrayDescriptor.dimlen[ArrayDescriptor.dims], _barray);
-                        java.lang.reflect.Array.set(ArrayDescriptor.objs[ArrayDescriptor.dims - 2], (ArrayDescriptor.currentindex[ArrayDescriptor.dims - 1]), (Object) I);
-
-                        n += ArrayDescriptor.bytetoindex[ArrayDescriptor.dims - 1];
-                        ArrayDescriptor.currentindex[ArrayDescriptor.dims - 1]++;
-                    }
-                    else if (ArrayDescriptor.className.equals("java.lang.Short")) {
-                        Short I[] = ByteToShort(n, ArrayDescriptor.dimlen[ArrayDescriptor.dims], _barray);
-                        java.lang.reflect.Array.set(ArrayDescriptor.objs[ArrayDescriptor.dims - 2], (ArrayDescriptor.currentindex[ArrayDescriptor.dims - 1]), (Object) I);
-
-                        n += ArrayDescriptor.bytetoindex[ArrayDescriptor.dims - 1];
-                        ArrayDescriptor.currentindex[ArrayDescriptor.dims - 1]++;
-                    }
-                    else if (ArrayDescriptor.className.equals("java.lang.Float")) {
-                        Float I[] = ByteToFloatObj(n, ArrayDescriptor.dimlen[ArrayDescriptor.dims], _barray);
-                        java.lang.reflect.Array.set(ArrayDescriptor.objs[ArrayDescriptor.dims - 2], (ArrayDescriptor.currentindex[ArrayDescriptor.dims - 1]), (Object) I);
-
-                        n += ArrayDescriptor.bytetoindex[ArrayDescriptor.dims - 1];
-                        ArrayDescriptor.currentindex[ArrayDescriptor.dims - 1]++;
-                    }
-                    else if (ArrayDescriptor.className.equals("java.lang.Double")) {
-                        Double I[] = ByteToDoubleObj(n, ArrayDescriptor.dimlen[ArrayDescriptor.dims], _barray);
-                        java.lang.reflect.Array.set(ArrayDescriptor.objs[ArrayDescriptor.dims - 2], (ArrayDescriptor.currentindex[ArrayDescriptor.dims - 1]), (Object) I);
-
-                        n += ArrayDescriptor.bytetoindex[ArrayDescriptor.dims - 1];
-                        ArrayDescriptor.currentindex[ArrayDescriptor.dims - 1]++;
-                    }
-                    else if (ArrayDescriptor.className.equals("java.lang.Long")) {
-                        Long I[] = ByteToLongObj(n, ArrayDescriptor.dimlen[ArrayDescriptor.dims], _barray);
-                        java.lang.reflect.Array.set(ArrayDescriptor.objs[ArrayDescriptor.dims - 2], (ArrayDescriptor.currentindex[ArrayDescriptor.dims - 1]), (Object) I);
-
-                        n += ArrayDescriptor.bytetoindex[ArrayDescriptor.dims - 1];
-                        ArrayDescriptor.currentindex[ArrayDescriptor.dims - 1]++;
-                    }
-                    else {
-                        HDFJavaException ex = new HDFJavaException("HDFArray: unsupported Object type: " + ArrayDescriptor.NT);
-                        throw (ex);
-                    }
-                }
-                else {
-                    HDFJavaException ex = new HDFJavaException("HDFArray: unsupported Object type: " + ArrayDescriptor.NT);
-                    throw (ex);
-                }
+                java.lang.reflect.Array.set(ArrayDescriptor.objs[ArrayDescriptor.dims - 2],
+                        (ArrayDescriptor.currentindex[ArrayDescriptor.dims - 1]), arow);
+                n += ArrayDescriptor.bytetoindex[ArrayDescriptor.dims - 1];
+                ArrayDescriptor.currentindex[ArrayDescriptor.dims - 1]++;
+                m = mm;
             }
             catch (OutOfMemoryError err) {
-                HDFException ex = (HDFException) new HDFJavaException("HDFArray: arrayify array too big?");
+                HDFJavaException ex = new HDFJavaException("HDFArray: arrayify array too big?");
                 ex.printStackTrace();
                 throw (ex);
             }
-
         }
 
         /* assert: the whole array is completed--currentindex should == len - 1 */
-
         /* error checks */
-
         if (n < ArrayDescriptor.totalSize) {
-            throw new java.lang.InternalError(new String("HDFArray::arrayify Panic didn't complete all input data: n=  " + n + " size = " + ArrayDescriptor.totalSize));
+            throw new java.lang.InternalError(new String("HDFArray::arrayify Panic didn't complete all input data: n=  "
+                    + n + " size = " + ArrayDescriptor.totalSize));
         }
         for (i = 0; i <= ArrayDescriptor.dims - 2; i++) {
             if (ArrayDescriptor.currentindex[i] != ArrayDescriptor.dimlen[i] - 1) {
-                throw new java.lang.InternalError(new String("HDFArray::arrayify Panic didn't complete all data: currentindex[" + i + "] = " + ArrayDescriptor.currentindex[i]
-                        + " (should be " + (ArrayDescriptor.dimlen[i] - 1) + "?"));
+                throw new java.lang.InternalError(
+                        new String("HDFArray::arrayify Panic didn't complete all data: currentindex[" + i + "] = "
+                                + ArrayDescriptor.currentindex[i] + " (should be " + (ArrayDescriptor.dimlen[i] - 1)
+                                + "?"));
             }
         }
         if (ArrayDescriptor.NT != 'B') {
@@ -534,8 +569,9 @@ public class HDFArray {
         return _theArray;
     }
 
-    private byte[] IntegerToByte(Integer in[]) {
-        int nelems = java.lang.reflect.Array.getLength((Object) in);
+    private byte[] IntegerToByte(Integer in[])
+    {
+        int nelems = java.lang.reflect.Array.getLength(in);
         int[] out = new int[nelems];
 
         for (int i = 0; i < nelems; i++) {
@@ -544,30 +580,33 @@ public class HDFArray {
         return HDFNativeData.intToByte(0, nelems, out);
     }
 
-    private Integer[] ByteToInteger(byte[] bin) {
-        int in[] = (int[]) HDFNativeData.byteToInt(bin);
-        int nelems = java.lang.reflect.Array.getLength((Object) in);
+    private Integer[] ByteToInteger(byte[] bin)
+    {
+        int in[] = HDFNativeData.byteToInt(bin);
+        int nelems = java.lang.reflect.Array.getLength(in);
         Integer[] out = new Integer[nelems];
 
         for (int i = 0; i < nelems; i++) {
-            out[i] = new Integer(in[i]);
+            out[i] = Integer.valueOf(in[i]);
         }
         return out;
     }
 
-    private Integer[] ByteToInteger(int start, int len, byte[] bin) {
-        int in[] = (int[]) HDFNativeData.byteToInt(start, len, bin);
-        int nelems = java.lang.reflect.Array.getLength((Object) in);
+    private Integer[] ByteToInteger(int start, int len, byte[] bin)
+    {
+        int in[] = HDFNativeData.byteToInt(start, len, bin);
+        int nelems = java.lang.reflect.Array.getLength(in);
         Integer[] out = new Integer[nelems];
 
         for (int i = 0; i < nelems; i++) {
-            out[i] = new Integer(in[i]);
+            out[i] = Integer.valueOf(in[i]);
         }
         return out;
     }
 
-    private byte[] ShortToByte(Short in[]) {
-        int nelems = java.lang.reflect.Array.getLength((Object) in);
+    private byte[] ShortToByte(Short in[])
+    {
+        int nelems = java.lang.reflect.Array.getLength(in);
         short[] out = new short[nelems];
 
         for (int i = 0; i < nelems; i++) {
@@ -576,29 +615,32 @@ public class HDFArray {
         return HDFNativeData.shortToByte(0, nelems, out);
     }
 
-    private Short[] ByteToShort(byte[] bin) {
-        short in[] = (short[]) HDFNativeData.byteToShort(bin);
+    private Short[] ByteToShort(byte[] bin)
+    {
+        short in[] = HDFNativeData.byteToShort(bin);
         int nelems = java.lang.reflect.Array.getLength((Object) in);
         Short[] out = new Short[nelems];
 
         for (int i = 0; i < nelems; i++) {
-            out[i] = new Short(in[i]);
+            out[i] = Short.valueOf(in[i]);
         }
         return out;
     }
 
-    private Short[] ByteToShort(int start, int len, byte[] bin) {
+    private Short[] ByteToShort(int start, int len, byte[] bin)
+    {
         short in[] = (short[]) HDFNativeData.byteToShort(start, len, bin);
         int nelems = java.lang.reflect.Array.getLength((Object) in);
         Short[] out = new Short[nelems];
 
         for (int i = 0; i < nelems; i++) {
-            out[i] = new Short(in[i]);
+            out[i] = Short.valueOf(in[i]);
         }
         return out;
     }
 
-    private byte[] ByteObjToByte(Byte in[]) {
+    private byte[] ByteObjToByte(Byte in[])
+    {
         int nelems = java.lang.reflect.Array.getLength((Object) in);
         byte[] out = new byte[nelems];
 
@@ -608,26 +650,29 @@ public class HDFArray {
         return out;
     }
 
-    private Byte[] ByteToByteObj(byte[] bin) {
+    private Byte[] ByteToByteObj(byte[] bin)
+    {
         int nelems = java.lang.reflect.Array.getLength((Object) bin);
         Byte[] out = new Byte[nelems];
 
         for (int i = 0; i < nelems; i++) {
-            out[i] = new Byte(bin[i]);
+            out[i] = Byte.valueOf(bin[i]);
         }
         return out;
     }
 
-    private Byte[] ByteToByteObj(int start, int len, byte[] bin) {
+    private Byte[] ByteToByteObj(int start, int len, byte[] bin)
+    {
         Byte[] out = new Byte[len];
 
         for (int i = 0; i < len; i++) {
-            out[i] = new Byte(bin[i]);
+            out[i] = Byte.valueOf(bin[i]);
         }
         return out;
     }
 
-    private byte[] FloatObjToByte(Float in[]) {
+    private byte[] FloatObjToByte(Float in[])
+    {
         int nelems = java.lang.reflect.Array.getLength((Object) in);
         float[] out = new float[nelems];
 
@@ -637,29 +682,32 @@ public class HDFArray {
         return HDFNativeData.floatToByte(0, nelems, out);
     }
 
-    private Float[] ByteToFloatObj(byte[] bin) {
+    private Float[] ByteToFloatObj(byte[] bin)
+    {
         float in[] = (float[]) HDFNativeData.byteToFloat(bin);
         int nelems = java.lang.reflect.Array.getLength((Object) in);
         Float[] out = new Float[nelems];
 
         for (int i = 0; i < nelems; i++) {
-            out[i] = new Float(in[i]);
+            out[i] = Float.valueOf(in[i]);
         }
         return out;
     }
 
-    private Float[] ByteToFloatObj(int start, int len, byte[] bin) {
+    private Float[] ByteToFloatObj(int start, int len, byte[] bin)
+    {
         float in[] = (float[]) HDFNativeData.byteToFloat(start, len, bin);
         int nelems = java.lang.reflect.Array.getLength((Object) in);
         Float[] out = new Float[nelems];
 
         for (int i = 0; i < nelems; i++) {
-            out[i] = new Float(in[i]);
+            out[i] = Float.valueOf(in[i]);
         }
         return out;
     }
 
-    private byte[] DoubleObjToByte(Double in[]) {
+    private byte[] DoubleObjToByte(Double in[])
+    {
         int nelems = java.lang.reflect.Array.getLength((Object) in);
         double[] out = new double[nelems];
 
@@ -669,29 +717,32 @@ public class HDFArray {
         return HDFNativeData.doubleToByte(0, nelems, out);
     }
 
-    private Double[] ByteToDoubleObj(byte[] bin) {
+    private Double[] ByteToDoubleObj(byte[] bin)
+    {
         double in[] = (double[]) HDFNativeData.byteToDouble(bin);
         int nelems = java.lang.reflect.Array.getLength((Object) in);
         Double[] out = new Double[nelems];
 
         for (int i = 0; i < nelems; i++) {
-            out[i] = new Double(in[i]);
+            out[i] = Double.valueOf(in[i]);
         }
         return out;
     }
 
-    private Double[] ByteToDoubleObj(int start, int len, byte[] bin) {
+    private Double[] ByteToDoubleObj(int start, int len, byte[] bin)
+    {
         double in[] = (double[]) HDFNativeData.byteToDouble(start, len, bin);
         int nelems = java.lang.reflect.Array.getLength((Object) in);
         Double[] out = new Double[nelems];
 
         for (int i = 0; i < nelems; i++) {
-            out[i] = new Double(in[i]);
+            out[i] = Double.valueOf(in[i]);
         }
         return out;
     }
 
-    private byte[] LongObjToByte(Long in[]) {
+    private byte[] LongObjToByte(Long in[])
+    {
         int nelems = java.lang.reflect.Array.getLength((Object) in);
         long[] out = new long[nelems];
 
@@ -701,34 +752,36 @@ public class HDFArray {
         return HDFNativeData.longToByte(0, nelems, out);
     }
 
-    private Long[] ByteToLongObj(byte[] bin) {
+    private Long[] ByteToLongObj(byte[] bin)
+    {
         long in[] = (long[]) HDFNativeData.byteToLong(bin);
         int nelems = java.lang.reflect.Array.getLength((Object) in);
         Long[] out = new Long[nelems];
 
         for (int i = 0; i < nelems; i++) {
-            out[i] = new Long(in[i]);
+            out[i] = Long.valueOf(in[i]);
         }
         return out;
     }
 
-    private Long[] ByteToLongObj(int start, int len, byte[] bin) {
+    private Long[] ByteToLongObj(int start, int len, byte[] bin)
+    {
         long in[] = (long[]) HDFNativeData.byteToLong(start, len, bin);
         int nelems = java.lang.reflect.Array.getLength((Object) in);
         Long[] out = new Long[nelems];
 
         for (int i = 0; i < nelems; i++) {
-            out[i] = new Long(in[i]);
+            out[i] = Long.valueOf(in[i]);
         }
         return out;
     }
-
 }
 
 /**
- * This class is used by HDFArray to discover the shape and type of an arbitrary array.
+ * This private class is used by HDFArray to discover the shape and type of an arbitrary array.
+ * <p>
+ * We use java.lang.reflection here.
  */
-
 class ArrayDescriptor {
     static String theType = "";
     static Class theClass = null;
@@ -737,17 +790,19 @@ class ArrayDescriptor {
     static int[] currentindex = null;
     static int[] bytetoindex = null;
     static int totalSize = 0;
+    static int totalElements = 0;
     static Object[] objs = null;
     static char NT = ' '; /* must be B,S,I,L,F,D, else error */
     static int NTsize = 0;
     static int dims = 0;
     static String className;
 
-    public ArrayDescriptor(Object anArray) throws HDFException {
+    public ArrayDescriptor(Object anArray) throws HDFJavaException
+    {
         Class tc = anArray.getClass();
         if (tc.isArray() == false) {
             /* exception: not an array */
-            HDFException ex = (HDFException) new HDFJavaException("ArrayDescriptor: not an array?: ");
+            HDFJavaException ex = new HDFJavaException("ArrayDescriptor: not an array?: ");
             throw (ex);
         }
 
@@ -772,7 +827,7 @@ class ArrayDescriptor {
         String css = ss.substring(ss.lastIndexOf('[') + 1);
         Class compC = tc.getComponentType();
         String cs = compC.toString();
-        NT = c;
+        NT = c; /* must be B,S,I,L,F,D, else error */
         if (NT == 'B') {
             NTsize = 1;
         }
@@ -816,11 +871,17 @@ class ArrayDescriptor {
             NTsize = 8;
         }
         else if (css.startsWith("Ljava.lang.String")) {
-            throw new HDFJavaException(new String("ArrayDesciptor: Error:  String array not supported yet"));
+            NT = 'L';
+            className = "java.lang.String";
+            NTsize = 1;
+            throw new HDFJavaException(new String("ArrayDesciptor: Warning:  String array not fully supported yet"));
         }
         else {
-            /* exception: not a numeric type */
-            throw new HDFJavaException(new String("Error:  array is not numeric? (type is " + css + ")"));
+            /*
+             * exception: not a numeric type
+             */
+            throw new HDFJavaException(
+                    new String("ArrayDesciptor: Error:  array is not numeric (type is " + css + ") ?"));
         }
 
         /* fill in the table */
@@ -835,6 +896,7 @@ class ArrayDescriptor {
         dimlen[0] = 1;
         dimstart[0] = 0;
         currentindex[0] = 0;
+        int elements = 1;
         int i;
         for (i = 1; i <= dims; i++) {
             dimlen[i] = java.lang.reflect.Array.getLength((Object) o);
@@ -842,7 +904,9 @@ class ArrayDescriptor {
             objs[i] = o;
             dimstart[i] = 0;
             currentindex[i] = 0;
+            elements *= dimlen[i];
         }
+        totalElements = elements;
 
         int j;
         int dd;
@@ -858,17 +922,22 @@ class ArrayDescriptor {
         totalSize = bytetoindex[0];
     }
 
-    public void dumpInfo() {
+    /**
+     * Debug dump
+     */
+    public void dumpInfo()
+    {
         System.out.println("Type: " + theType);
         System.out.println("Class: " + theClass);
         System.out.println("NT: " + NT + " NTsize: " + NTsize);
-        System.out.println("Array has " + dims + " dimensions (" + totalSize + " bytes)");
+        System.out.println("Array has " + dims + " dimensions (" + totalSize
+                + " bytes, " + totalElements + " elements)");
         int i;
         for (i = 0; i <= dims; i++) {
             Class tc = objs[i].getClass();
             String ss = tc.toString();
-            System.out.println(i + ":  start " + dimstart[i] + ": len " + dimlen[i] + " current " + currentindex[i] + " bytetoindex " + bytetoindex[i] + " object " + objs[i]
-                    + " otype " + ss);
+            System.out.println(i + ":  start " + dimstart[i] + ": len " + dimlen[i] + " current " + currentindex[i]
+                    + " bytetoindex " + bytetoindex[i] + " object " + objs[i] + " otype " + ss);
         }
     }
 }

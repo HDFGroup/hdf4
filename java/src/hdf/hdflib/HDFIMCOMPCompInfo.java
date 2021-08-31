@@ -21,6 +21,7 @@ package hdf.hdflib;
  */
 public class HDFIMCOMPCompInfo extends HDFOldCompInfo {
 
+    /** */
     public HDFIMCOMPCompInfo() {
         ctype = HDFConstants.COMP_IMCOMP;
     }

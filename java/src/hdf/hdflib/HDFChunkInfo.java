@@ -22,15 +22,21 @@ package hdf.hdflib;
  */
 
 public class HDFChunkInfo {
+    /** */
     public int ctype;
+    /** */
     public int[] chunk_lengths = new int[HDFConstants.MAX_VAR_DIMS];
+    /** */
     public int comp_type = HDFConstants.COMP_CODE_NONE;
+    /** */
     public HDFCompInfo cinfo = null;
 
+    /** */
     public HDFChunkInfo() {
         ctype = HDFConstants.HDF_NONE;
     }
 
+    /** */
     public HDFChunkInfo(int[] cl, int ct, HDFCompInfo ci) {
         if (ct == HDFConstants.COMP_CODE_NONE) {
             ctype = HDFConstants.HDF_CHUNK;
@@ -43,6 +49,7 @@ public class HDFChunkInfo {
         cinfo = ci;
     }
 
+    /** */
     public HDFChunkInfo(int[] cl) {
         ctype = HDFConstants.HDF_CHUNK;
         chunk_lengths = cl;

@@ -1,16 +1,16 @@
-
-/****************************************************************************
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Copyright by The HDF Group.                                               *
  * Copyright by the Board of Trustees of the University of Illinois.         *
  * All rights reserved.                                                      *
  *                                                                           *
- * This file is part of HDF Java Products. The full HDF Java copyright       *
- * notice, including terms governing use, modification, and redistribution,  *
- * is contained in the file, COPYING.  COPYING can be found at the root of   *
- * the source code distribution tree. You can also access it online  at      *
- * http://support.hdfgroup.org/products/licenses.html.  If you do not have   *
- * access to the file, you may request a copy from help@hdfgroup.org.        *
- ****************************************************************************/
+ * This file is part of HDF.  The full HDF copyright notice, including     *
+ * terms governing use, modification, and redistribution, is contained in    *
+ * the COPYING file, which can be found at the root of the source code       *
+ * distribution tree, or in https://www.hdfgroup.org/licenses.               *
+ * If you do not have access to either file, you may request a copy from     *
+ * help@hdfgroup.org.                                                        *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 /*
  *  This code is the C-interface called by Java programs to access the
  *  HDF 4 library.
@@ -19,906 +19,790 @@
  *  analogous arguments and return codes.
  *
  */
+
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif /* __cplusplus */
 
+#include <jni.h>
 #include "hdf.h"
-#include "jni.h"
 #include "h4jni.h"
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_Vstart
-(JNIEnv *env, jclass clss, jlong fid)
+Java_hdf_hdflib_HDFLibrary_Vstart(JNIEnv *env, jclass clss, jlong fid)
 {
-    intn rval;
+    intn rval = FAIL;
 
-    rval = Vstart((int32)fid);
+    UNUSED(clss);
 
-    if (rval == FAIL) {
-        CALL_ERROR_CHECK();
-        return JNI_FALSE;
-    }
+    if ((rval = Vstart((int32)fid)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
 
+done:
     return JNI_TRUE;
 }
 
 
 JNIEXPORT jlong JNICALL
-Java_hdf_hdflib_HDFLibrary_Vattach
-(JNIEnv *env, jclass clss, jlong fid, jint vgroup_ref, jstring accessmode)
+Java_hdf_hdflib_HDFLibrary_Vattach(JNIEnv *env, jclass clss, jlong fid, jint vgroup_ref, jstring accessmode)
 {
-    int   retVal = -1;
-    const char  *access;
-    HFILEID        id = (HFILEID)fid;
+    int         rval = FAIL;
+    const char *access = NULL;
+    HFILEID     id = (HFILEID)fid;
 
-    PIN_JAVA_STRING(accessmode, access);
+    UNUSED(clss);
 
-    if (access != NULL) {
-        /* open HDF file specified by hdf_HDF_file */
-        retVal = Vattach(id, (int32)vgroup_ref, access);
+    if (accessmode == NULL)
+        H4_NULL_ARGUMENT_ERROR(ENVONLY, "Vattach:  accessmode is null");
 
-        UNPIN_JAVA_STRING(accessmode, access);
+    PIN_JAVA_STRING(ENVONLY, accessmode, access, NULL, "Vattach:  accessmode not pinned");
 
-        if (retVal == FAIL)
-            CALL_ERROR_CHECK();
-    }
+    /* open HDF file specified by hdf_HDF_file */
+    if ((rval = Vattach(id, (int32)vgroup_ref, access)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
 
-    return (jlong)retVal;
-}
-
-JNIEXPORT void JNICALL
-Java_hdf_hdflib_HDFLibrary_Vdetach
-(JNIEnv *env, jclass clss, jlong vgroup_id)
-{
-    int32 rval;
-
-    rval = Vdetach((int32)vgroup_id);
-    if (rval == FAIL)
-        CALL_ERROR_CHECK();
-}
-
-JNIEXPORT void JNICALL
-Java_hdf_hdflib_HDFLibrary_Vend
-(JNIEnv *env, jclass clss, jlong fid)
-{
-    HFILEID        id = (HFILEID)fid;
-    Vend(id);
-}
-
-
-JNIEXPORT jlong JNICALL
-Java_hdf_hdflib_HDFLibrary_Vgetid
-(JNIEnv *env, jclass clss, jlong fid, jint vgroup_ref)
-{
-    int32 rval;
-
-    rval = Vgetid((int32)fid, (int32)vgroup_ref);
-    if (rval == FAIL)
-        CALL_ERROR_CHECK();
+done:
+    if (access)
+        UNPIN_JAVA_STRING(ENVONLY, accessmode, access);
 
     return (jlong)rval;
 }
 
 JNIEXPORT void JNICALL
-Java_hdf_hdflib_HDFLibrary_Vgetclass
-(JNIEnv *env, jclass clss, jlong vgroup_id, jobjectArray hdfclassname)
+Java_hdf_hdflib_HDFLibrary_Vdetach(JNIEnv *env, jclass clss, jlong vgroup_id)
 {
-    char *className;
+    int32 rval = FAIL;
 
-    if (hdfclassname == NULL) {
-        h4nullArgument(env, "Vgetclass: hdfclassname is NULL");
-    } /* end if */
-    else if (ENVPTR->GetArrayLength(ENVPAR hdfclassname) < 1) {
-        h4badArgument(env, "Vgetclass: output array hdfclassname < order 1");
-    } /* end else if */
-    else {
-        className = (char *)HDmalloc(H4_MAX_NC_CLASS+1);
+    UNUSED(clss);
 
-        if (className == NULL) {
-            h4outOfMemory(env,  "Vgetclass");
-        } /* end if */
-        else {
-            /* get the class name of the vgroup */
-            if (Vgetclass((int32)vgroup_id, className) < 0) {
-                /* exception -- failed */
-                CALL_ERROR_CHECK();
-            } /* end if */
-            else {
-                jstring rstring;
-                jclass sjc;
-                jobject o;
-                jboolean bb;
+    if ((rval = Vdetach((int32)vgroup_id)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
 
-                className[H4_MAX_NC_CLASS] = '\0';
+done:
+    return;
+}
 
-                /* convert it to java string */
-                rstring = ENVPTR->NewStringUTF(ENVPAR className);
+JNIEXPORT void JNICALL
+Java_hdf_hdflib_HDFLibrary_Vend(JNIEnv *env, jclass clss, jlong fid)
+{
+    intn    rval = FAIL;
+    HFILEID id = (HFILEID)fid;
 
-                /*  create a Java String object in the calling environment... */
-                sjc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
-                if (sjc == NULL) {
-                    HDfree(className);
-                    return; /* exception is raised */
-                }
+    UNUSED(clss);
 
-                o = ENVPTR->GetObjectArrayElement(ENVPAR hdfclassname, 0);
-                if (o == NULL) {
-                    HDfree(className);
-                    return;
-                }
-                bb = ENVPTR->IsInstanceOf(ENVPAR o, sjc);
-                if (bb == JNI_FALSE) {
-                    HDfree(className);
-                    return;
-                }
-                ENVPTR->SetObjectArrayElement(ENVPAR hdfclassname, 0, (jobject)rstring);
-                ENVPTR->DeleteLocalRef(ENVPAR o);
-            } /* end else */
+    if ((rval = Vend(id)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
 
-            HDfree(className);
-        } /* end else */
-    } /* end else */
+done:
+    return;
+}
+
+
+JNIEXPORT jlong JNICALL
+Java_hdf_hdflib_HDFLibrary_Vgetid(JNIEnv *env, jclass clss, jlong fid, jint vgroup_ref)
+{
+    int32 rval = FAIL;
+
+    UNUSED(clss);
+
+    if ((rval = Vgetid((int32)fid, (int32)vgroup_ref)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    return (jlong)rval;
+}
+
+JNIEXPORT void JNICALL
+Java_hdf_hdflib_HDFLibrary_Vgetclass(JNIEnv *env, jclass clss, jlong vgroup_id, jobjectArray hdfclassname)
+{
+    int32    rval = FAIL;
+    char    *data = NULL;
+    jstring  rstring;
+
+    UNUSED(clss);
+
+    if ((data = (char *)HDmalloc(H4_MAX_NC_CLASS+1)) == NULL)
+        H4_OUT_OF_MEMORY_ERROR(ENVONLY, "Vgetclass: failed to allocate data buffer");
+
+    if (hdfclassname == NULL)
+        H4_NULL_ARGUMENT_ERROR(ENVONLY, "Vgetclass: hdfclassname is NULL");
+
+    if (ENVPTR->GetArrayLength(ENVONLY, hdfclassname) < 1)
+        H4_BAD_ARGUMENT_ERROR(ENVONLY, "Vgetclass: output array hdfclassname < order 1");
+
+    /* get the class name of the vgroup */
+    if ((rval = Vgetclass((int32)vgroup_id, data)) < 0)
+         H4_LIBRARY_ERROR(ENVONLY);
+
+    data[H4_MAX_NC_CLASS] = '\0';
+    /* convert it to java string */
+    if (NULL == (rstring = ENVPTR->NewStringUTF(ENVONLY, data)))
+        CHECK_JNI_EXCEPTION(ENVONLY, JNI_FALSE);
+
+    ENVPTR->SetObjectArrayElement(ENVONLY, hdfclassname, 0, rstring);
+    CHECK_JNI_EXCEPTION(ENVONLY, JNI_FALSE);
+
+    ENVPTR->DeleteLocalRef(ENVONLY, rstring);
+
+done:
+    if (data)
+        HDfree(data);
 
     return;
 }
 
 JNIEXPORT void JNICALL
-Java_hdf_hdflib_HDFLibrary_Vgetname
-(JNIEnv *env, jclass clss, jlong vgroup_id, jobjectArray hdfname)
+Java_hdf_hdflib_HDFLibrary_Vgetname(JNIEnv *env, jclass clss, jlong vgroup_id, jobjectArray hdfname)
 {
-    char *name;
+    int32    rval = FAIL;
+    char    *data = NULL;
+    jstring  rstring;
 
-    if (hdfname == NULL) {
-        h4nullArgument(env, "Vgetname: hdfname is NULL");
-    } /* end if */
-    else if (ENVPTR->GetArrayLength(ENVPAR hdfname) < 1) {
-        h4badArgument(env, "Vgetname: array hdfname < order 1");
-    } /* end else if */
-    else {
-        name = (char *)HDmalloc(H4_MAX_NC_NAME+1);
-        if (name == NULL) {
-            h4outOfMemory(env,  "Vgetname");
-        } /* end if */
-        else {
-            if (Vgetname((int32)vgroup_id, name) == FAIL) {
-                CALL_ERROR_CHECK();
-            } /* end if */
-            else {
-                jstring rstring;
-                jclass sjc;
-                jobject o;
-                jboolean bb;
+    UNUSED(clss);
 
-                name[H4_MAX_NC_NAME] = '\0';
+    if ((data = (char *)HDmalloc(H4_MAX_GR_NAME+1)) == NULL)
+        H4_OUT_OF_MEMORY_ERROR(ENVONLY, "Vgetname: failed to allocate data buffer");
 
-                /* convert it to java string */
-                rstring = ENVPTR->NewStringUTF(ENVPAR name);
+    if (hdfname == NULL)
+        H4_NULL_ARGUMENT_ERROR(ENVONLY, "Vgetname: hdfname is NULL");
 
-                sjc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
-                if (sjc == NULL) {
-                    HDfree(name);
-                    return; /* exception is raised */
-                }
-                o = ENVPTR->GetObjectArrayElement(ENVPAR hdfname, 0);
-                if (o == NULL) {
-                    HDfree(name);
-                    return;
-                }
-                bb = ENVPTR->IsInstanceOf(ENVPAR o, sjc);
-                if (bb == JNI_FALSE) {
-                    HDfree(name);
-                    return;
-                }
-                ENVPTR->SetObjectArrayElement(ENVPAR hdfname, 0, (jobject)rstring);
-                ENVPTR->DeleteLocalRef(ENVPAR o);
-            } /* end else */
+    if (ENVPTR->GetArrayLength(ENVONLY, hdfname) < 1)
+        H4_BAD_ARGUMENT_ERROR(ENVONLY, "Vgetname: array hdfname < order 1");
 
-            HDfree(name);
-        } /* end else */
-    } /* end else */
+    if ((rval = Vgetname((int32)vgroup_id, data)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+    data[H4_MAX_GR_NAME] = '\0';
+    /* convert it to java string */
+    if (NULL == (rstring = ENVPTR->NewStringUTF(ENVONLY, data)))
+        CHECK_JNI_EXCEPTION(ENVONLY, JNI_FALSE);
+
+    ENVPTR->SetObjectArrayElement(ENVONLY, hdfname, 0, rstring);
+    CHECK_JNI_EXCEPTION(ENVONLY, JNI_FALSE);
+
+    ENVPTR->DeleteLocalRef(ENVONLY, rstring);
+
+done:
+    if (data)
+        HDfree(data);
 
     return;
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_Visvg
-(JNIEnv *env, jclass clss, jlong vgroup_id, jint vgroup_ref)
+Java_hdf_hdflib_HDFLibrary_Visvg(JNIEnv *env, jclass clss, jlong vgroup_id, jint vgroup_ref)
 {
-    intn rval;
+    intn rval = FALSE;
 
-    rval = Visvg((int32)vgroup_id, vgroup_ref);
+    UNUSED(clss);
 
-    if (rval == FALSE) {
-        CALL_ERROR_CHECK();
-        return JNI_FALSE;
-    }
+    if ((rval = Visvg((int32)vgroup_id, vgroup_ref)) == FALSE)
+        H4_LIBRARY_ERROR(ENVONLY);
 
+done:
     return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_Visvs
-(JNIEnv *env, jclass clss, jlong vgroup_id, jint vdata_ref)
+Java_hdf_hdflib_HDFLibrary_Visvs(JNIEnv *env, jclass clss, jlong vgroup_id, jint vdata_ref)
 {
-    intn rval;
+    intn rval = FALSE;
 
-    rval = Visvs((int32)vgroup_id, vdata_ref);
+    UNUSED(clss);
 
-    if (rval == FALSE) {
-        CALL_ERROR_CHECK();
-        return JNI_FALSE;
-    }
+    if ((rval = Visvs((int32)vgroup_id, vdata_ref)) == FALSE)
+        H4_LIBRARY_ERROR(ENVONLY);
 
+done:
     return JNI_TRUE;
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_Vgettagrefs
-(JNIEnv *env, jclass clss, jlong vgroup_id, jintArray tags, jintArray refs, jint size)
+Java_hdf_hdflib_HDFLibrary_Vgettagrefs(JNIEnv *env, jclass clss, jlong vgroup_id, jintArray tags, jintArray refs, jint size)
 {
-    jint *tagVal;
-    jint *refVal;
-    int32 retVal = -1;
-    int copyMode = JNI_ABORT;
-
-    jboolean iscopy;
-
-    if (tags == NULL) {
-        h4nullArgument(env, "Vgettagrefs: tags is NULL");
-    } /* end if */
-    else if (refs == NULL) {
-        h4nullArgument(env, "Vgettagrefs: refs is NULL");
-    } /* end else if */
-    else if (ENVPTR->GetArrayLength(ENVPAR tags) < size) {
-        h4badArgument(env, "Vgettagrefs: output array tags < order 'size'");
-    } /* end else if */
-    else if (ENVPTR->GetArrayLength(ENVPAR refs) < size) {
-        h4badArgument(env, "Vgettagrefs: output array refs < order 'size'");
-    } /* end else if */
-    else {
-        tagVal = ENVPTR->GetIntArrayElements(ENVPAR tags,&iscopy);
-
-        if (tagVal == NULL) {
-            h4JNIFatalError(env, "Vgettagrefs: tags not pinned");
-        } /* end if */
-        else {
-            refVal = ENVPTR->GetIntArrayElements(ENVPAR refs,&iscopy);
-
-            if (refVal == NULL) {
-                h4JNIFatalError(env, "Vgettagrefs: refs not pinned");
-            } /* end if */
-            else {
-                /* get the tag/ref pairs number in the vgroup */
-                retVal = Vgettagrefs((int32)vgroup_id, (int32 *)tagVal, (int32 *)refVal, size);
-
-                if (retVal == FAIL) {
-                    CALL_ERROR_CHECK();
-                }
-                else {
-                    copyMode = 0;
-                }
-
-                ENVPTR->ReleaseIntArrayElements(ENVPAR refs,refVal,copyMode);
-            } /* end else */
-
-            ENVPTR->ReleaseIntArrayElements(ENVPAR tags,tagVal,copyMode);
-        } /* end else */
-    } /* end else */
-
-    return (jint)retVal;
-}
-
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_Vgettagref
-(JNIEnv *env, jclass clss, jlong vgroup_id, jint index, jintArray tagref)
-{
-    intn retVal;
-    jint * theArgs;
-    jboolean bb;
-
-    if (tagref == NULL) {
-        h4nullArgument(env, "Vgettagref: tagref is NULL");
-    } /* end if */
-    else if (ENVPTR->GetArrayLength(ENVPAR tagref) < 2) {
-        h4badArgument(env, "Vgettagref: output array tagref < order 2");
-    } /* end else if */
-    else {
-        theArgs = ENVPTR->GetIntArrayElements(ENVPAR tagref, &bb);
-
-        if (theArgs == NULL) {
-            h4JNIFatalError(env, "Vgettagref: tagref not pinned");
-        } /* end if */
-        else {
-            /* get the tag/ref pairs number in the vgroup */
-            retVal = Vgettagref((int32)vgroup_id, index, (int32 *)&(theArgs[0]),
-                    (int32 *)&(theArgs[1]));
-
-            if (retVal == FAIL) {
-                ENVPTR->ReleaseIntArrayElements(ENVPAR tagref, theArgs, JNI_ABORT);
-                CALL_ERROR_CHECK();
-                return JNI_FALSE;
-            }
-            else {
-                ENVPTR->ReleaseIntArrayElements(ENVPAR tagref, theArgs, 0);
-            }
-        } /* end else */
-    } /* end else */
-
-    return JNI_TRUE;
-}
-
-JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_Vntagrefs
-(JNIEnv *env, jclass clss, jlong vgroup_id)
-{
-    int32 rval;
-
-    rval = Vntagrefs((int32)vgroup_id);
-    if (rval == FAIL)
-        CALL_ERROR_CHECK();
-
-    return (jint)rval;
-}
-
-JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_Vinqtagref
-(JNIEnv *env, jclass clss, jlong vgroup_id, jint tag, jint ref)
-{
-    int32 rval;
-
-    rval = Vinqtagref((int32)vgroup_id, (int32)tag, (int32)ref);
-    if (rval == FAIL)
-        CALL_ERROR_CHECK();
-
-    return (jint)rval;
-}
-
-JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_Vlone
-(JNIEnv *env, jclass clss, jlong fid, jintArray ref_array, jint arraysize)
-{
-    int retVal = -1;
-    jint * arr;
-    jboolean bb;
-
-    if (ref_array == NULL) {
-        h4nullArgument(env, "Vlone: ref_array is NULL");
-    } /* end if */
-    else if (ENVPTR->GetArrayLength(ENVPAR ref_array) < arraysize) {
-        h4badArgument(env, "Vlone: output array ref_array < order 'arraysize'");
-    } /* end else if */
-    else {
-        arr = ENVPTR->GetIntArrayElements(ENVPAR ref_array, &bb);
-
-        if (arr == NULL) {
-            h4JNIFatalError(env, "Vlone: ref_array not pinned");
-        } /* end if */
-        else {
-            /* get the lone group reference number in the vgroup */
-            retVal = Vlone((int32)fid, (int32 *)arr, arraysize);
-
-            if (retVal == FAIL)
-                CALL_ERROR_CHECK();
-
-            ENVPTR->ReleaseIntArrayElements(ENVPAR ref_array, arr, 0);
-        } /* end else */
-    } /* end else */
-
-    return retVal;
-}
-
-JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_Vaddtagref
-(JNIEnv *env, jclass clss, jlong vgroup_id, jint tag, jint ref)
-{
-    intn rval;
-
-    rval = Vaddtagref((int32) vgroup_id, (int32) tag, (int32) ref);
-    if (rval == FAIL)
-        CALL_ERROR_CHECK();
-
-    return (jint)rval;
-}
-
-JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_Vdeletetagref
-(JNIEnv *env, jclass clss, jlong vgroup_id, jint tag, jint ref)
-{
-    intn rval;
-
-    rval = Vdeletetagref((int32) vgroup_id, (int32) tag, (int32) ref);
-    if (rval == FAIL)
-        CALL_ERROR_CHECK();
-
-    return (jint)rval;
-}
-
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_Vclose_I
-(JNIEnv *env, jclass clss, jlong file_id)
-{
-    intn rval;
-
-    rval =  Vclose((int32) file_id);
-    if (rval == FAIL) {
-        CALL_ERROR_CHECK();
-        return JNI_FALSE;
-    }
-
-    return JNI_TRUE;
-}
-
-JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_Vfind
-(JNIEnv *env, jclass clss, jlong file_id, jstring vgname)
-{
-    int32 rval = -1;
-    const char * vgn;
-
-    PIN_JAVA_STRING(vgname, vgn);
-
-    if (vgn != NULL) {
-        rval = Vfind((int32)file_id, (char *)vgn);
-
-        UNPIN_JAVA_STRING(vgname, vgn);
-
-        if (rval == FAIL)
-            CALL_ERROR_CHECK();
-    }
-
-    return rval;
-}
-
-
-JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_Vfindclass
-(JNIEnv *env, jclass clss, jlong file_id, jstring vgclassname)
-{
-    int32 rval = -1;
-    const char * vgcn;
-
-    PIN_JAVA_STRING(vgclassname, vgcn);
-
-    if (vgcn != NULL) {
-        rval = Vfindclass((int32)file_id, (char *)vgcn);
-
-        UNPIN_JAVA_STRING(vgclassname, vgcn);
-
-        if (rval == FAIL)
-            CALL_ERROR_CHECK();
-    }
-
-    return rval;
-}
-
-JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_Vflocate
-(JNIEnv *env, jclass clss, jint key, jstring field)
-{
-    int32 rval = -1;
-    const char * fld;
-
-    PIN_JAVA_STRING(field, fld);
-
-    if (fld != NULL) {
-        rval = Vflocate((int32)key, (char *)fld);
-
-        UNPIN_JAVA_STRING(field, fld);
-
-        if (rval == FAIL)
-            CALL_ERROR_CHECK();
-    }
-
-    return rval;
-}
-
-JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_Vgetnext
-(JNIEnv *env, jclass clss, jint vkey, jint elem_ref)
-{
-    int32 rval;
-
-    rval = Vgetnext((int32)vkey, (int32)elem_ref);
-    if (rval == FAIL)
-        CALL_ERROR_CHECK();
-
-    return (jint)rval;
-}
-
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_Vinquire
-(JNIEnv *env, jclass clss, jlong vgroup_id, jintArray n_entries, jobjectArray vgroup_name)
-{
-    intn rval;
-    char *name;
-    jint *theArg;
+    int32    rval = FAIL;
+    jint    *tagVal = NULL;
+    jint    *refVal = NULL;
     jboolean isCopy;
 
-    if (n_entries == NULL) {
-        h4nullArgument(env, "Vinquire: n_entries is NULL");
-    } /* end if */
-    else if (vgroup_name == NULL) {
-        h4nullArgument(env, "Vinquire: vgroup_name is NULL");
-    } /* end else if */
-    else if (ENVPTR->GetArrayLength(ENVPAR n_entries) < 1) {
-        h4badArgument(env, "Vinquire: output array n_entries < order 1");
-    } /* end else if */
-    else if (ENVPTR->GetArrayLength(ENVPAR vgroup_name) < 1) {
-        h4badArgument(env, "Vinquire: output array vgroup_name < order 1");
-    } /* end else if */
-    else {
-        name = (char *)HDmalloc(H4_MAX_NC_NAME+1);
+    UNUSED(clss);
 
-        if (name == NULL) {
-            h4outOfMemory(env,  "Vinquire");
-        } /* end if */
-        else {
-            theArg = ENVPTR->GetIntArrayElements(ENVPAR n_entries, &isCopy);
+    if (tags == NULL)
+        H4_NULL_ARGUMENT_ERROR(ENVONLY, "Vgettagrefs: tags is NULL");
 
-            if (theArg == NULL) {
-                h4JNIFatalError(env, "Vinquire: n_entries not pinned");
-            } /* end if */
-            else {
-                rval = Vinquire((int32) vgroup_id, (int32 *)&(theArg[0]), name);
+    if (refs == NULL)
+        H4_NULL_ARGUMENT_ERROR(ENVONLY, "Vgettagrefs: refs is NULL");
 
-                name[H4_MAX_NC_NAME] = '\0';
+    if (ENVPTR->GetArrayLength(ENVONLY, tags) < size)
+        H4_BAD_ARGUMENT_ERROR(ENVONLY, "Vgettagrefs: output array tags < order 'size'");
 
-                if (rval == FAIL) {
-                    ENVPTR->ReleaseIntArrayElements(ENVPAR n_entries, theArg, JNI_ABORT);
-                    HDfree(name);
-                    CALL_ERROR_CHECK();
-                    return JNI_FALSE;
-                }
-                else {
-                    jclass sjc;
-                    jstring rstring;
-                    jobject o;
-                    jboolean bb;
+    if (ENVPTR->GetArrayLength(ENVONLY, refs) < size)
+        H4_BAD_ARGUMENT_ERROR(ENVONLY, "Vgettagrefs: output array refs < order 'size'");
 
-                    ENVPTR->ReleaseIntArrayElements(ENVPAR n_entries, theArg, 0);
+    PIN_INT_ARRAY(ENVONLY, tags, tagVal, &isCopy, "Vgettagrefs: tags not pinned");
+    PIN_INT_ARRAY(ENVONLY, refs, refVal, &isCopy, "Vgettagrefs: refs not pinned");
 
-                    /* convert it to java string */
-                    rstring = ENVPTR->NewStringUTF(ENVPAR name);
+    /* get the tag/ref pairs number in the vgroup */
+    if ((rval = Vgettagrefs((int32)vgroup_id, (int32 *)tagVal, (int32 *)refVal, size)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
 
-                    sjc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
-                    if (sjc == NULL) {
-                        HDfree(name);
-                        return JNI_FALSE;
-                    }
-                    o = ENVPTR->GetObjectArrayElement(ENVPAR vgroup_name, 0);
-                    if (o == NULL) {
-                        HDfree(name);
-                        return JNI_FALSE;
-                    }
-                    bb = ENVPTR->IsInstanceOf(ENVPAR o, sjc);
-                    if (bb == JNI_TRUE)
-                        ENVPTR->SetObjectArrayElement(ENVPAR vgroup_name, 0, (jobject)rstring);
-                    ENVPTR->DeleteLocalRef(ENVPAR o);
-
-                    HDfree(name);
-                    return bb;
-                } /* end else */
-            } /* end else */
-
-            HDfree(name);
-        } /* end else */
-    } /* end else */
-
-    return JNI_TRUE;
-}
-
-JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_Vinsert
-(JNIEnv *env, jclass clss, jlong vgroup_id, jint v_id)
-{
-    int32 rval;
-
-    rval = Vinsert((int32) vgroup_id, (int32) v_id);
-    if (rval == FAIL)
-        CALL_ERROR_CHECK();
-
-    return (jint)rval;
-}
-
-JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_Vnrefs
-(JNIEnv *env, jclass clss, jint vkey, jint tag)
-{
-    int32 rval;
-
-    rval = Vnrefs((int32) vkey, (int32) tag);
-    if (rval == FAIL)
-        CALL_ERROR_CHECK();
-
-    return (jint)rval;
-}
-
-
-JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_Vopen
-(JNIEnv *env, jclass clss, jstring filename, jint access, jshort ndds)
-{
-    intn rval = -1;
-    const char * str;
-
-    PIN_JAVA_STRING(filename, str);
-
-    if (str != NULL) {
-        rval = Vopen((char *)str, (intn) access, (int16) ndds);
-
-        UNPIN_JAVA_STRING(filename, str);
-
-        if (rval == FAIL)
-            CALL_ERROR_CHECK();
-    }
+done:
+    if (refVal)
+        UNPIN_INT_ARRAY(ENVONLY, refs, refVal, (rval == FAIL) ? JNI_ABORT : 0);
+    if (tagVal)
+        UNPIN_INT_ARRAY(ENVONLY, tags, tagVal, (rval == FAIL) ? JNI_ABORT : 0);
 
     return (jint)rval;
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_Vsetclass
-(JNIEnv *env, jclass clss, jlong vgroup_id, jstring hdfclassname)
+Java_hdf_hdflib_HDFLibrary_Vgettagref(JNIEnv *env, jclass clss, jlong vgroup_id, jint index, jintArray tagref)
 {
-    intn rval;
-    const char * str;
-
-    PIN_JAVA_STRING(hdfclassname, str);
-
-    if (str != NULL) {
-        rval = Vsetclass((int32)vgroup_id, (char *)str);
-
-        UNPIN_JAVA_STRING(hdfclassname, str);
-
-        if (rval == FAIL) {
-            CALL_ERROR_CHECK();
-            return JNI_FALSE;
-        }
-    }
-
-    return JNI_TRUE;
-}
-
-
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_Vsetname
-(JNIEnv *env, jclass clss, jlong vgroup_id, jstring name)
-{
-    intn rval;
-    const char *str;
-
-    PIN_JAVA_STRING(name, str);
-
-    if (str != NULL) {
-        rval = Vsetname((int32)vgroup_id, (char *)str);
-
-        UNPIN_JAVA_STRING(name, str);
-
-        if (rval == FAIL) {
-            CALL_ERROR_CHECK();
-            return JNI_FALSE;
-        }
-    }
-
-    return JNI_TRUE;
-}
-
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_Vattrinfo
-(JNIEnv *env, jclass clss, jlong id, jint index, jobjectArray name, jintArray argv)
-{
-    int32 retVal;
-    jint *theArgs;
-    char  nam[256];  /* what is the correct constant??? */
+    intn     rval = FAIL;
+    jint    *theArgs = NULL;
     jboolean isCopy;
 
-    if (name == NULL) {
-        h4nullArgument(env, "Vattrinfo: name is NULL");
-    } /* end if */
-    else if (argv == NULL) {
-        h4nullArgument(env, "Vattrinfo: argv is NULL");
-    } /* end else if */
-    else if (ENVPTR->GetArrayLength(ENVPAR name) < 1) {
-        h4badArgument(env, "Vattrinfo: output array name < order 1");
-    } /* end else if */
-    else if (ENVPTR->GetArrayLength(ENVPAR argv) < 5) {
-        h4badArgument(env, "Vattrinfo: output array argv < order 5");
-    } /* end else if */
-    else {
-        theArgs = ENVPTR->GetIntArrayElements(ENVPAR argv,&isCopy);
+    UNUSED(clss);
 
-        if (theArgs == NULL) {
-            h4JNIFatalError(env, "Vattrinfo: argv not pinned");
-        } /* end if */
-        else {
-            retVal = Vattrinfo2((int32)id, (int32)index, nam,
-                    (int32 *)&(theArgs[0]), (int32 *)&(theArgs[1]),
-                    (int32 *)&(theArgs[2]), (int32 *)&(theArgs[3]), (uint16 *)&(theArgs[4]));
+    if (tagref == NULL)
+        H4_NULL_ARGUMENT_ERROR(ENVONLY, "Vgettagref: tagref is NULL");
 
-            nam[255] = '\0';
+    if (ENVPTR->GetArrayLength(ENVONLY, tagref) < 2)
+        H4_BAD_ARGUMENT_ERROR(ENVONLY, "Vgettagref: output array tagref < order 2");
 
-            if (retVal == FAIL) {
-                ENVPTR->ReleaseIntArrayElements(ENVPAR argv,theArgs,JNI_ABORT);
-                CALL_ERROR_CHECK();
-                return JNI_FALSE;
-            }
-            else {
-                jstring rstring;
-                jclass sjc;
-                jobject o;
-                jboolean bb;
+    PIN_INT_ARRAY(ENVONLY, tagref, theArgs, &isCopy, "Vgettagref: tagref not pinned");
 
-                /* convert it to java string */
-                rstring = ENVPTR->NewStringUTF(ENVPAR nam);
+    /* get the tag/ref pairs number in the vgroup */
+    if ((rval = Vgettagref((int32)vgroup_id, index, (int32 *)&(theArgs[0]),
+                (int32 *)&(theArgs[1]))) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
 
-                ENVPTR->ReleaseIntArrayElements(ENVPAR argv,theArgs,0);
-
-                sjc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
-                if (sjc == NULL) {
-                    return JNI_FALSE;
-                }
-                o = ENVPTR->GetObjectArrayElement(ENVPAR name, 0);
-                if (o == NULL) {
-                    return JNI_FALSE;
-                }
-                bb = ENVPTR->IsInstanceOf(ENVPAR o, sjc);
-                if (bb == JNI_TRUE)
-                    ENVPTR->SetObjectArrayElement(ENVPAR name, 0, (jobject)rstring);
-                ENVPTR->DeleteLocalRef(ENVPAR o);
-                return bb;
-            }
-        } /* end else */
-    } /* end else */
+done:
+    if (theArgs)
+        UNPIN_INT_ARRAY(ENVONLY, tagref, theArgs, (rval == FAIL) ? JNI_ABORT : 0);
 
     return JNI_TRUE;
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_Vfindattr
-(JNIEnv *env, jclass clss, jlong id, jstring name)
+Java_hdf_hdflib_HDFLibrary_Vntagrefs(JNIEnv *env, jclass clss, jlong vgroup_id)
 {
-    int32 retVal = -1;
-    const char  *cname;
+    int32 rval = FAIL;
 
-    PIN_JAVA_STRING(name, cname);
+    UNUSED(clss);
 
-    if (cname != NULL) {
-        retVal = Vfindattr((int32)id, cname);
+    if ((rval = Vntagrefs((int32)vgroup_id)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
 
-        UNPIN_JAVA_STRING(name, cname);
-
-        if (retVal == FAIL)
-            CALL_ERROR_CHECK();
-    }
-
-    return retVal;
+done:
+    return (jint)rval;
 }
 
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_Vgetattr
-(JNIEnv *env, jclass clss, jlong gr_id, jint attr_index, jbyteArray values)
+JNIEXPORT jint JNICALLJava_hdf_hdflib_HDFLibrary_Vinqtagref(JNIEnv *env, jclass clss, jlong vgroup_id, jint tag, jint ref)
 {
-    intn rval;
-    jbyte *arr;
-    jboolean bb;
+    int32 rval = FAIL;
 
-    if (values == NULL) {
-        h4nullArgument(env, "Vgetattr: values is NULL");
-    } /* end if */
-    else {
-        arr = ENVPTR->GetByteArrayElements(ENVPAR values,&bb);
+    UNUSED(clss);
 
-        if (arr == NULL) {
-            h4JNIFatalError(env, "Vgetattr: values not pinned");
-        } /* end if */
-        else {
-            rval = Vgetattr2((int32) gr_id, (int32) attr_index,  (VOIDP) arr);
+    if ((rval = Vinqtagref((int32)vgroup_id, (int32)tag, (int32)ref)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
 
-            if (rval == FAIL) {
-                ENVPTR->ReleaseByteArrayElements(ENVPAR values, arr, JNI_ABORT);
-                CALL_ERROR_CHECK();
-                return JNI_FALSE;
-            } /* end if */
-            else {
-                ENVPTR->ReleaseByteArrayElements(ENVPAR values, arr, 0);
-            } /* end else */
-        } /* end else */
-    } /* end else */
-
-    return JNI_TRUE;
-}
-
-JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_Vgetversion
-(JNIEnv *env, jclass clss, jlong id)
-{
-    int32 rval;
-
-    rval = Vgetversion((int32) id);
-    if (rval == FAIL)
-        CALL_ERROR_CHECK();
-
+done:
     return (jint)rval;
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_Vnattrs
-(JNIEnv *env, jclass clss, jlong id)
+Java_hdf_hdflib_HDFLibrary_Vlone(JNIEnv *env, jclass clss, jlong fid, jintArray ref_array, jint arraysize)
 {
-    int32 rval;
+    int      rval = FAIL;
+    jint    *arr = NULL;
+    jboolean isCopy;
 
-    rval = Vnattrs2((int32) id);
-    if (rval == FAIL)
-        CALL_ERROR_CHECK();
+    UNUSED(clss);
+
+    if (ref_array == NULL)
+        H4_NULL_ARGUMENT_ERROR(ENVONLY, "Vlone: ref_array is NULL");
+
+    if (ENVPTR->GetArrayLength(ENVONLY, ref_array) < arraysize)
+        H4_BAD_ARGUMENT_ERROR(ENVONLY, "Vlone: output array ref_array < order 'arraysize'");
+
+    PIN_INT_ARRAY(ENVONLY, ref_array, arr, &isCopy, "Vlone:  ref_array not pinned");
+
+    /* get the lone group reference number in the vgroup */
+    if ((rval = Vlone((int32)fid, (int32 *)arr, arraysize)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    if (arr)
+        UNPIN_INT_ARRAY(ENVONLY, ref_array, arr, (rval == FAIL) ? JNI_ABORT : 0);
+
+    return rval;
+}
+
+JNIEXPORT jint JNICALL
+Java_hdf_hdflib_HDFLibrary_Vaddtagref(JNIEnv *env, jclass clss, jlong vgroup_id, jint tag, jint ref)
+{
+    intn rval = FAIL;
+
+    UNUSED(clss);
+
+    if ((rval = Vaddtagref((int32) vgroup_id, (int32) tag, (int32) ref)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    return (jint)rval;
+}
+
+JNIEXPORT jint JNICALL
+Java_hdf_hdflib_HDFLibrary_Vdeletetagref(JNIEnv *env, jclass clss, jlong vgroup_id, jint tag, jint ref)
+{
+    intn rval = FAIL;
+
+    UNUSED(clss);
+
+    if ((rval = Vdeletetagref((int32) vgroup_id, (int32) tag, (int32) ref)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    return (jint)rval;
+}
+
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFLibrary_Vclose_I(JNIEnv *env, jclass clss, jlong file_id)
+{
+    intn rval = FAIL;
+
+    UNUSED(clss);
+
+    if ((rval =  Vclose((int32) file_id)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    return JNI_TRUE;
+}
+
+JNIEXPORT jint JNICALL
+Java_hdf_hdflib_HDFLibrary_Vfind(JNIEnv *env, jclass clss, jlong file_id, jstring vgname)
+{
+    int32       rval = FAIL;
+    const char *str = NULL;
+
+    UNUSED(clss);
+
+    if (vgname == NULL)
+        H4_NULL_ARGUMENT_ERROR(ENVONLY, "Vfind:  vgname is null");
+
+    PIN_JAVA_STRING(ENVONLY, vgname, str, NULL, "Vfind:  vgname not pinned");
+
+    if ((rval = Vfind((int32)file_id, (char *)str)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    if (str)
+        UNPIN_JAVA_STRING(ENVONLY, vgname, str);
+
+    return rval;
+}
+
+
+JNIEXPORT jint JNICALL
+Java_hdf_hdflib_HDFLibrary_Vfindclass(JNIEnv *env, jclass clss, jlong file_id, jstring vgclassname)
+{
+    int32       rval = FAIL;
+    const char *str = NULL;
+
+    UNUSED(clss);
+
+    if (vgclassname == NULL)
+        H4_NULL_ARGUMENT_ERROR(ENVONLY, "Vfindclass:  vgclassname is null");
+
+    PIN_JAVA_STRING(ENVONLY, vgclassname, str, NULL, "Vfindclass:  vgclassname not pinned");
+
+    if ((rval = Vfindclass((int32)file_id, (char *)str)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    if (str)
+        UNPIN_JAVA_STRING(ENVONLY, vgclassname, str);
+
+    return rval;
+}
+
+JNIEXPORT jint JNICALL
+Java_hdf_hdflib_HDFLibrary_Vflocate(JNIEnv *env, jclass clss, jint key, jstring field)
+{
+    int32       rval = FAIL;
+    const char *str = NULL;
+
+    UNUSED(clss);
+
+    if (field == NULL)
+        H4_NULL_ARGUMENT_ERROR(ENVONLY, "Vflocate:  field is null");
+
+    PIN_JAVA_STRING(ENVONLY, field, str, NULL, "Vflocate:  field not pinned");
+
+    if ((rval = Vflocate((int32)key, (char *)str)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    if (str)
+        UNPIN_JAVA_STRING(ENVONLY, field, str);
+
+    return rval;
+}
+
+JNIEXPORT jint JNICALL
+Java_hdf_hdflib_HDFLibrary_Vgetnext(JNIEnv *env, jclass clss, jint vkey, jint elem_ref)
+{
+    int32 rval = FAIL;
+
+    UNUSED(clss);
+
+    if ((rval = Vgetnext((int32)vkey, (int32)elem_ref)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    return (jint)rval;
+}
+
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFLibrary_Vinquire(JNIEnv *env, jclass clss, jlong vgroup_id, jintArray n_entries, jobjectArray vgroup_name)
+{
+    intn     rval = FAIL;
+    jint    *theArg = NULL;
+    char    *data = NULL;
+    jstring  rstring;
+    jboolean isCopy;
+
+    UNUSED(clss);
+
+    if ((data = (char *)HDmalloc(H4_MAX_NC_NAME+1)) == NULL)
+        H4_OUT_OF_MEMORY_ERROR(ENVONLY, "Vinquire: failed to allocate data buffer");
+
+    if (n_entries == NULL)
+        H4_NULL_ARGUMENT_ERROR(ENVONLY, "Vinquire: n_entries is NULL");
+
+    if (vgroup_name == NULL)
+        H4_NULL_ARGUMENT_ERROR(ENVONLY, "Vinquire: vgroup_name is NULL");
+
+    if (ENVPTR->GetArrayLength(ENVONLY, n_entries) < 1)
+        H4_BAD_ARGUMENT_ERROR(ENVONLY, "Vinquire: output array n_entries < order 1");
+
+    if (ENVPTR->GetArrayLength(ENVONLY, vgroup_name) < 1)
+        H4_BAD_ARGUMENT_ERROR(ENVONLY, "Vinquire: output array vgroup_name < order 1");
+
+    PIN_INT_ARRAY(ENVONLY, n_entries, theArg, &isCopy, "Vinquire:  n_entries not pinned");
+
+    if ((rval = Vinquire((int32) vgroup_id, (int32 *)&(theArg[0]), data)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+    data[H4_MAX_NC_NAME] = '\0';
+    /* convert it to java string */
+    if (NULL == (rstring = ENVPTR->NewStringUTF(ENVONLY, data)))
+        CHECK_JNI_EXCEPTION(ENVONLY, JNI_FALSE);
+
+    ENVPTR->SetObjectArrayElement(ENVONLY, vgroup_name, 0, rstring);
+    CHECK_JNI_EXCEPTION(ENVONLY, JNI_FALSE);
+
+    ENVPTR->DeleteLocalRef(ENVONLY, rstring);
+
+done:
+    if (data)
+        HDfree(data);
+    if (theArg)
+        UNPIN_INT_ARRAY(ENVONLY, n_entries, theArg, (rval == FAIL) ? JNI_ABORT : 0);
+
+    return JNI_TRUE;
+}
+
+JNIEXPORT jint JNICALL
+Java_hdf_hdflib_HDFLibrary_Vinsert(JNIEnv *env, jclass clss, jlong vgroup_id, jint v_id)
+{
+    int32 rval = FAIL;
+
+    UNUSED(clss);
+
+    if ((rval = Vinsert((int32) vgroup_id, (int32) v_id)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    return (jint)rval;
+}
+
+JNIEXPORT jint JNICALL
+Java_hdf_hdflib_HDFLibrary_Vnrefs(JNIEnv *env, jclass clss, jint vkey, jint tag)
+{
+    int32 rval = FAIL;
+
+    UNUSED(clss);
+
+    if ((rval = Vnrefs((int32) vkey, (int32) tag)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    return (jint)rval;
+}
+
+
+JNIEXPORT jint JNICALL
+Java_hdf_hdflib_HDFLibrary_Vopen(JNIEnv *env, jclass clss, jstring filename, jint access, jshort ndds)
+{
+    intn        rval = FAIL;
+    const char *str = NULL;
+
+    UNUSED(clss);
+
+    if (filename == NULL)
+        H4_NULL_ARGUMENT_ERROR(ENVONLY, "Vopen:  filename is null");
+
+    PIN_JAVA_STRING(ENVONLY, filename, str, NULL, "Vopen:  filename not pinned");
+
+    if ((rval = Vopen((char *)str, (intn) access, (int16) ndds)) == FAIL)
+            H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    if (str)
+        UNPIN_JAVA_STRING(ENVONLY, filename, str);
 
     return (jint)rval;
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_Vsetattr__JLjava_lang_String_2JILjava_lang_String_2
-(JNIEnv *env, jclass clss, jlong gr_id, jstring attr_name, jlong data_type, jint count, jstring values)
+Java_hdf_hdflib_HDFLibrary_Vsetclass(JNIEnv *env, jclass clss, jlong vgroup_id, jstring hdfclassname)
 {
-    intn rval;
-    const char *str;
-    const char *val;
+    intn        rval = FAIL;
+    const char *str = NULL;
 
-    PIN_JAVA_STRING_TWO(attr_name, str, values, val);
+    UNUSED(clss);
 
-    if (str != NULL && val != NULL) {
-        rval = Vsetattr((int32) gr_id, (char *)str, (int32) data_type,
-                (int32) count, (VOIDP) val);
-        UNPIN_JAVA_STRING_TWO(attr_name, str, values, val);
+    if (hdfclassname == NULL)
+        H4_NULL_ARGUMENT_ERROR(ENVONLY, "Vsetclass:  hdfclassname is null");
 
-        if (rval == FAIL) {
-            CALL_ERROR_CHECK();
-            return JNI_FALSE;
-        }
-    }
+    PIN_JAVA_STRING(ENVONLY, hdfclassname, str, NULL, "Vsetclass:  hdfclassname not pinned");
+
+    if ((rval = Vsetclass((int32)vgroup_id, (char *)str)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    if (str)
+        UNPIN_JAVA_STRING(ENVONLY, hdfclassname, str);
+
+    return JNI_TRUE;
+}
+
+
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFLibrary_Vsetname(JNIEnv *env, jclass clss, jlong vgroup_id, jstring name)
+{
+    intn        rval = FAIL;
+    const char *str = NULL;
+
+    UNUSED(clss);
+
+    if (name == NULL)
+        H4_NULL_ARGUMENT_ERROR(ENVONLY, "Vsetname: name is null");
+
+    PIN_JAVA_STRING(ENVONLY, name, str, NULL, "Vsetname:  name not pinned");
+
+    if ((rval = Vsetname((int32)vgroup_id, (char *)str)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    if (str)
+        UNPIN_JAVA_STRING(ENVONLY, name, str);
 
     return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_Vsetattr__JLjava_lang_String_2JI_3B
-(JNIEnv *env, jclass clss, jlong id, jstring attr_name, jlong data_type, jint count, jbyteArray values)
+Java_hdf_hdflib_HDFLibrary_Vattrinfo(JNIEnv *env, jclass clss, jlong id, jint index, jobjectArray name, jintArray argv)
 {
-    intn rval;
-    jbyte *arr;
-    const char *str;
-    jboolean bb;
+    int32    rval = FAIL;
+    jint    *theArgs = NULL;
+    char    *data = NULL;
+    jstring  rstring;
+    jboolean isCopy;
 
-    if (values == NULL) {
-        h4nullArgument(env, "Vsetattr: values is null");
-    } /* end if */
-    else {
-        arr = ENVPTR->GetByteArrayElements(ENVPAR values,&bb);
+    UNUSED(clss);
 
-        if (arr == NULL) {
-            h4JNIFatalError(env, "Vsetattr: values not pinned");
-        } /* end if */
-        else {
-            PIN_JAVA_STRING(attr_name, str);
+    if ((data = (char *)HDmalloc(256)) == NULL)
+        H4_OUT_OF_MEMORY_ERROR(ENVONLY, "Vattrinfo2: failed to allocate data buffer");
 
-            if (str != NULL) {
-                rval = Vsetattr((int32) id, (char *)str, (int32) data_type,
-                        (int32) count, (VOIDP) arr);
+    if (name == NULL)
+        H4_NULL_ARGUMENT_ERROR(ENVONLY, "Vattrinfo2: name is NULL");
 
-                UNPIN_JAVA_STRING(attr_name, str);
+    if (argv == NULL)
+        H4_NULL_ARGUMENT_ERROR(ENVONLY, "Vattrinfo2: argv is NULL");
 
-                if (rval == FAIL) {
-                    CALL_ERROR_CHECK();
-                    ENVPTR->ReleaseByteArrayElements(ENVPAR values, arr, JNI_ABORT);
-                    return JNI_FALSE;
-                }
-            }
+    if (ENVPTR->GetArrayLength(ENVONLY, name) < 1)
+        H4_BAD_ARGUMENT_ERROR(ENVONLY, "Vattrinfo2: output array name < order 1");
 
-            ENVPTR->ReleaseByteArrayElements(ENVPAR values, arr, JNI_ABORT);
-        } /* end else */
-    } /* end else */
+    if (ENVPTR->GetArrayLength(ENVONLY, argv) < 5)
+        H4_BAD_ARGUMENT_ERROR(ENVONLY, "Vattrinfo2: output array argv < order 5");
+
+    PIN_INT_ARRAY(ENVONLY, argv, theArgs, &isCopy, "Vattrinfo2:  argv not pinned");
+
+    if ((rval = Vattrinfo2((int32)id, (int32)index, data,
+                (int32 *)&(theArgs[0]), (int32 *)&(theArgs[1]),
+                (int32 *)&(theArgs[2]), (int32 *)&(theArgs[3]), (uint16 *)&(theArgs[4]))) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+    data[255] = '\0';
+    /* convert it to java string */
+    if (NULL == (rstring = ENVPTR->NewStringUTF(ENVONLY, data)))
+        CHECK_JNI_EXCEPTION(ENVONLY, JNI_FALSE);
+
+    ENVPTR->SetObjectArrayElement(ENVONLY, name, 0, rstring);
+    CHECK_JNI_EXCEPTION(ENVONLY, JNI_FALSE);
+
+    ENVPTR->DeleteLocalRef(ENVONLY, rstring);
+
+done:
+    if (data)
+        HDfree(data);
+    if (theArgs)
+        UNPIN_INT_ARRAY(ENVONLY, argv, theArgs, (rval == FAIL) ? JNI_ABORT : 0);
+
+    return JNI_TRUE;
+}
+
+JNIEXPORT jint JNICALL
+Java_hdf_hdflib_HDFLibrary_Vfindattr(JNIEnv *env, jclass clss, jlong id, jstring name)
+{
+    int32       rval = FAIL;
+    const char *cname = NULL;
+
+    UNUSED(clss);
+
+    if (name == NULL)
+        H4_NULL_ARGUMENT_ERROR(ENVONLY, "Vfindattr: name is null");
+
+    PIN_JAVA_STRING(ENVONLY, name, cname, NULL, "Vfindattr:  name not pinned");
+
+    if ((rval = Vfindattr((int32)id, cname)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    if (cname)
+        UNPIN_JAVA_STRING(ENVONLY, name, cname);
+
+    return rval;
+}
+
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFLibrary_Vgetattr(JNIEnv *env, jclass clss, jlong gr_id, jint attr_index, jbyteArray values)
+{
+    intn     rval = FAIL;
+    jbyte   *arr = NULL;
+    jboolean isCopy;
+
+    UNUSED(clss);
+
+    if (values == NULL)
+        H4_NULL_ARGUMENT_ERROR(ENVONLY, "Vgetattr: values is NULL");
+
+    PIN_BYTE_ARRAY(ENVONLY, values, arr, &isCopy, "Vgetattr:  values not pinned");
+
+    if ((rval = Vgetattr2((int32) gr_id, (int32) attr_index,  (VOIDP) arr)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    if (arr)
+        UNPIN_BYTE_ARRAY(ENVONLY, values, arr, (rval == FAIL) ? JNI_ABORT : 0);
+
+    return JNI_TRUE;
+}
+
+JNIEXPORT jint JNICALL
+Java_hdf_hdflib_HDFLibrary_Vgetversion(JNIEnv *env, jclass clss, jlong id)
+{
+    int32 rval = FAIL;
+
+    UNUSED(clss);
+
+    if ((rval = Vgetversion((int32) id)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    return (jint)rval;
+}
+
+JNIEXPORT jint JNICALLJava_hdf_hdflib_HDFLibrary_Vnattrs(JNIEnv *env, jclass clss, jlong id)
+{
+    int32 rval = FAIL;
+
+    UNUSED(clss);
+
+    if ((rval = Vnattrs2((int32) id)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    return (jint)rval;
+}
+
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFLibrary_Vsetattr__JLjava_lang_String_2JILjava_lang_String_2(JNIEnv *env, jclass clss, jlong gr_id, jstring attr_name, jlong data_type, jint count, jstring values)
+{
+    intn        rval = FAIL;
+    const char *str = NULL;
+    const char *val = NULL;
+
+    UNUSED(clss);
+
+    if (attr_name == NULL)
+        H4_NULL_ARGUMENT_ERROR(ENVONLY, "Vsetattr: attr_name is null");
+
+    if (values == NULL)
+        H4_NULL_ARGUMENT_ERROR(ENVONLY, "Vsetattr: values is null");
+
+    PIN_JAVA_STRING(ENVONLY, attr_name, str, NULL, "Vsetattr:  attr_name not pinned");
+    PIN_JAVA_STRING(ENVONLY, values, val, NULL, "Vsetattr:  values not pinned");
+
+    if ((rval = Vsetattr((int32) gr_id, (char *)str, (int32) data_type,
+                (int32) count, (VOIDP) val)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    if (val)
+        UNPIN_JAVA_STRING(ENVONLY, values, val);
+    if (str)
+        UNPIN_JAVA_STRING(ENVONLY, attr_name, str);
+
+    return JNI_TRUE;
+}
+
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFLibrary_Vsetattr__JLjava_lang_String_2JI_3B(JNIEnv *env, jclass clss, jlong id, jstring attr_name, jlong data_type, jint count, jbyteArray values)
+{
+    intn        rval = FAIL;
+    jbyte      *arr = NULL;
+    const char *str = NULL;
+    jboolean    isCopy;
+
+    UNUSED(clss);
+
+    if (attr_name == NULL)
+        H4_NULL_ARGUMENT_ERROR(ENVONLY, "Vsetattr: attr_name is null");
+
+    if (values == NULL)
+        H4_NULL_ARGUMENT_ERROR(ENVONLY, "Vsetattr: values is null");
+
+    PIN_JAVA_STRING(ENVONLY, attr_name, str, NULL, "Vsetattr:  attr_name not pinned");
+    PIN_BYTE_ARRAY(ENVONLY, values, arr, &isCopy, "Vsetattr:  values not pinned");
+
+    if ((rval = Vsetattr((int32) id, (char *)str, (int32) data_type,
+                        (int32) count, (VOIDP) arr)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    if (arr)
+        UNPIN_BYTE_ARRAY(ENVONLY, values, arr, (rval == FAIL) ? JNI_ABORT : 0);
+    if (str)
+        UNPIN_JAVA_STRING(ENVONLY, attr_name, str);
 
     return JNI_TRUE;
 }
 
 #ifdef __cplusplus
-}
-#endif
+} /* end extern "C" */
+#endif /* __cplusplus */
