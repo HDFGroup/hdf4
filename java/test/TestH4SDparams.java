@@ -138,7 +138,7 @@ public class TestH4SDparams {
         HDFLibrary.SDcheckempty(0, null);
     }
 
-    @Test(expected = HDFException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testSDreaddataIllegalId() throws Throwable {
         int[] start = {0, 0};
         int[] stride = {0, 0};
@@ -171,7 +171,7 @@ public class TestH4SDparams {
         HDFLibrary.SDreaddata(0, start, stride, null, data);
     }
 
-    @Test(expected = HDFException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testSDreaddata_shortIllegalId() throws Throwable {
         int[] start = {0, 0};
         int[] stride = {0, 0};
@@ -180,7 +180,7 @@ public class TestH4SDparams {
         HDFLibrary.SDreaddata_short(-1, start, stride, count, data);
     }
 
-    @Test(expected = HDFException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testSDreaddata_intIllegalId() throws Throwable {
         int[] start = {0, 0};
         int[] stride = {0, 0};
@@ -189,7 +189,7 @@ public class TestH4SDparams {
         HDFLibrary.SDreaddata_int(-1, start, stride, count, data);
     }
 
-    @Test(expected = HDFException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testSDreaddata_longIllegalId() throws Throwable {
         int[] start = {0, 0};
         int[] stride = {0, 0};
@@ -198,7 +198,7 @@ public class TestH4SDparams {
         HDFLibrary.SDreaddata_long(-1, start, stride, count, data);
     }
 
-    @Test(expected = HDFException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testSDreaddata_floatIllegalId() throws Throwable {
         int[] start = {0, 0};
         int[] stride = {0, 0};
@@ -207,7 +207,7 @@ public class TestH4SDparams {
         HDFLibrary.SDreaddata_float(-1, start, stride, count, data);
     }
 
-    @Test(expected = HDFException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testSDreaddata_doubleIllegalId() throws Throwable {
         int[] start = {0, 0};
         int[] stride = {0, 0};
@@ -584,7 +584,7 @@ public class TestH4SDparams {
         HDFLibrary.SDsetrange(0, max, min);
     }
 
-    @Test(expected = HDFException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testSDwritedataIllegalId() throws Throwable {
         int[] start = {0, 0};
         int[] stride = {0, 0};

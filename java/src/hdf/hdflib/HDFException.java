@@ -23,38 +23,63 @@ package hdf.hdflib;
  * <li>HDFJavaException -- errors raised the HDF Java wrapper code
  * </ol>
  * <p>
- * These exceptions will be sub-classed to represent specific error conditions, as needed.
+ * These exceptions are sub-classed to represent specific error conditions, as needed.
  * <p>
  * The only specific exception currently defined is HDFNotImplementedException, indicating a
  * function that is part of the HDF API, but which cannot or will not be implemented for Java.
  */
-public class HDFException extends Exception {
+public class HDFException extends RuntimeException {
     static public final String OutOfMemoryMessage = "ERROR: HDF Library: Out of memory";
     static public final String HDFExceptionMessage = "ERROR: HDF Library Error";
     static public final String HDFMessage = "ERROR: Unknown HDF Error";
 
+    /**
+     *  the specified error number of this exception
+     */
     protected int HDFerror;
-    protected String msg;
+    /**
+     *  the specified detail message of this exception
+     */
+    protected String detailMessage;
 
     public HDFException() {
         super();
         HDFerror = 0;
-        msg = null;
+        detailMessage = null;
     }
 
-    public HDFException(String s) {
+    /**
+     * Constructs an <code>HDFException</code> with the specified detail
+     * message.
+     *
+     * @param message
+     *            the detail message.
+     */
+    public HDFException(String message) {
         super();
-        msg = s;
+        detailMessage = message;
     }
 
+    /**
+     * Constructs an <code>HDFException</code> with the specified error number.
+     *
+     * @param err
+     *            the error number.
+     */
     public HDFException(int err) {
         super();
         HDFerror = err;
-        msg = null;
+        detailMessage = null;
     }
 
+    /**
+     * Returns the detail message of this exception
+     *
+     * @return the detail message or <code>null</code> if this object does not
+     *         have a detail message.
+     */
     @Override
     public String getMessage() {
-        return msg;
+        return detailMessage;
     }
 }

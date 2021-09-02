@@ -38,6 +38,9 @@
 /* Define to 1 if you have the `fork' function. */
 #cmakedefine H4_HAVE_FORK @H4_HAVE_FORK@
 
+/* Define to 1 if you have the <winsock2.h> header file. */
+#cmakedefine H4_HAVE_WINSOCK2_H @H4_HAVE_WINSOCK2_H@
+
 /* Define to 1 if you have the `htonl' function. */
 #cmakedefine H4_HAVE_HTONL @H4_HAVE_HTONL@
 

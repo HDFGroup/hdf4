@@ -296,7 +296,7 @@ public class HDFLibrary implements java.io.Serializable {
      *            <b>OUT</b>: String[1], the version string
      *
      * @exception hdf.hdflib.HDFException
-     *                should be thrown for errors in the HDF library call, but is not yet implemented.
+     *                thrown for errors in the HDF library call.
      *
      * @return the major, minor, and release number are returned in the array of ints, and a string is
      *         returned in the string.
@@ -314,7 +314,7 @@ public class HDFLibrary implements java.io.Serializable {
      *         returned in the string.
      *
      * @exception hdf.hdflib.HDFException
-     *                should be thrown for errors in the HDF library call, but is not yet implemented.
+     *                thrown for errors in the HDF library call.
      */
     public static native boolean Hgetlibversion(int[] vers, String[] string) throws HDFException;
 
@@ -1430,52 +1430,52 @@ public class HDFLibrary implements java.io.Serializable {
             NT -= HDFConstants.DFNT_LITEND;
         }
         if ((NT == HDFConstants.DFNT_INT8) || (NT == HDFConstants.DFNT_CHAR8) || (NT == HDFConstants.DFNT_CHAR)) {
-            theFillValue[0] = new Byte(d1[0]);
+            theFillValue[0] = Byte.valueOf(d1[0]);
         }
         else if ((NT == HDFConstants.DFNT_UINT8) || (NT == HDFConstants.DFNT_UCHAR8) || (NT == HDFConstants.DFNT_UCHAR8)) {
-            Byte f = new Byte(d1[0]);
+            Byte f = Byte.valueOf(d1[0]);
             if (f.shortValue() < 0) {
-                theFillValue[0] = new Short((short) (f.intValue() + 256));
+                theFillValue[0] = Short.valueOf((short) (f.intValue() + 256));
             }
             else {
-                theFillValue[0] = new Short(f.shortValue());
+                theFillValue[0] = Short.valueOf(f.shortValue());
             }
         }
         else if ((NT == HDFConstants.DFNT_INT16) || (NT == HDFConstants.DFNT_CHAR16)) {
             short[] fx = HDFNativeData.byteToShort(0, 1, d1);
-            theFillValue[0] = new Short(fx[0]);
+            theFillValue[0] = Short.valueOf(fx[0]);
         }
         else if ((NT == HDFConstants.DFNT_UINT16) || (NT == HDFConstants.DFNT_UCHAR16)) {
             short[] fmx = HDFNativeData.byteToShort(0, 1, d1);
-            Short f = new Short(fmx[0]);
+            Short f = Short.valueOf(fmx[0]);
             if (f.intValue() < 0) {
-                theFillValue[0] = new Integer(f.intValue() + 65536);
+                theFillValue[0] = Integer.valueOf(f.intValue() + 65536);
             }
             else {
-                theFillValue[0] = new Integer(f.intValue());
+                theFillValue[0] = Integer.valueOf(f.intValue());
             }
         }
         else if ((NT == HDFConstants.DFNT_INT32)) {
             int[] fx = HDFNativeData.byteToInt(0, 1, d1);
-            theFillValue[0] = new Integer(fx[0]);
+            theFillValue[0] = Integer.valueOf(fx[0]);
         }
         else if ((NT == HDFConstants.DFNT_UINT32)) {
             int[] fmx = HDFNativeData.byteToInt(0, 1, d1);
-            Integer i = new Integer(fmx[0]);
+            Integer i = Integer.valueOf(fmx[0]);
             if (i.floatValue() < 0) {
-                theFillValue[0] = new Float((float) (i.floatValue() + 4294967296.0));
+                theFillValue[0] = Float.valueOf((float) (i.floatValue() + 4294967296.0));
             }
             else {
-                theFillValue[0] = new Float(i.floatValue());
+                theFillValue[0] = Float.valueOf(i.floatValue());
             }
         }
         else if (NT == HDFConstants.DFNT_FLOAT32) {
             float[] fx = HDFNativeData.byteToFloat(0, 1, d1);
-            theFillValue[0] = new Float(fx[0]);
+            theFillValue[0] = Float.valueOf(fx[0]);
         }
         else if (NT == HDFConstants.DFNT_FLOAT64) {
             double[] fx = HDFNativeData.byteToDouble(0, 1, d1);
-            theFillValue[0] = new Double(fx[0]);
+            theFillValue[0] = Double.valueOf(fx[0]);
         }
         else {
             System.out.println("Error: SDgetfillvalue not converting, type " + NT);
@@ -1537,97 +1537,97 @@ public class HDFLibrary implements java.io.Serializable {
             NT -= HDFConstants.DFNT_LITEND;
         }
         if ((NT == HDFConstants.DFNT_INT8) || (NT == HDFConstants.DFNT_CHAR8) || (NT == HDFConstants.DFNT_CHAR)) {
-            Byte f = new Byte(max[0]);
+            Byte f = Byte.valueOf(max[0]);
             maxmin[0] = (f.doubleValue());
-            f = new Byte(min[0]);
+            f = Byte.valueOf(min[0]);
             maxmin[1] = (f.doubleValue());
         }
         else if ((NT == HDFConstants.DFNT_UINT8) || (NT == HDFConstants.DFNT_UCHAR8) || (NT == HDFConstants.DFNT_UCHAR8)) {
-            Byte f = new Byte(max[0]);
+            Byte f = Byte.valueOf(max[0]);
             Short fmx;
             if (f.shortValue() < 0) {
-                fmx = new Short((short) (f.intValue() + 256));
+                fmx = Short.valueOf((short) (f.intValue() + 256));
             }
             else {
-                fmx = new Short(f.shortValue());
+                fmx = Short.valueOf(f.shortValue());
             }
             maxmin[0] = (fmx.doubleValue());
-            f = new Byte(min[0]);
-            fmx = new Short(f.shortValue());
+            f = Byte.valueOf(min[0]);
+            fmx = Short.valueOf(f.shortValue());
             maxmin[1] = (fmx.doubleValue());
         }
         else if ((NT == HDFConstants.DFNT_INT16) || (NT == HDFConstants.DFNT_CHAR16)) {
             short[] fmx = HDFNativeData.byteToShort(0, 1, max);
             short[] fmn = HDFNativeData.byteToShort(0, 1, min);
-            Short f = new Short(fmx[0]);
+            Short f = Short.valueOf(fmx[0]);
             maxmin[0] = (f.doubleValue());
-            f = new Short(fmn[0]);
+            f = Short.valueOf(fmn[0]);
             maxmin[1] = (f.doubleValue());
         }
         else if ((NT == HDFConstants.DFNT_UINT16) || (NT == HDFConstants.DFNT_UINT16)) {
             short[] fmx = HDFNativeData.byteToShort(0, 1, max);
-            Short f = new Short(fmx[0]);
+            Short f = Short.valueOf(fmx[0]);
             Integer i;
             if (f.intValue() < 0) {
-                i = new Integer(f.intValue() + 65536);
+                i = Integer.valueOf(f.intValue() + 65536);
             }
             else {
-                i = new Integer(f.intValue());
+                i = Integer.valueOf(f.intValue());
             }
             maxmin[0] = (i.doubleValue());
             fmx = HDFNativeData.byteToShort(0, 1, min);
-            f = new Short(fmx[0]);
+            f = Short.valueOf(fmx[0]);
             if (f.intValue() < 0) {
-                i = new Integer(f.intValue() + 65536);
+                i = Integer.valueOf(f.intValue() + 65536);
             }
             else {
-                i = new Integer(f.intValue());
+                i = Integer.valueOf(f.intValue());
             }
             maxmin[1] = (i.doubleValue());
         }
         else if ((NT == HDFConstants.DFNT_INT32)) {
             int[] fmx = HDFNativeData.byteToInt(0, 1, max);
             int[] fmn = HDFNativeData.byteToInt(0, 1, min);
-            Integer f = new Integer(fmx[0]);
+            Integer f = Integer.valueOf(fmx[0]);
             maxmin[0] = (f.doubleValue());
-            f = new Integer(fmn[0]);
+            f = Integer.valueOf(fmn[0]);
             maxmin[1] = (f.doubleValue());
         }
         else if ((NT == HDFConstants.DFNT_UINT32)) {
             int[] fmx = HDFNativeData.byteToInt(0, 1, max);
-            Integer i = new Integer(fmx[0]);
+            Integer i = Integer.valueOf(fmx[0]);
             Float f;
             if (i.floatValue() < 0) {
-                f = new Float((float) (i.floatValue() + 4294967296.0));
+                f = Float.valueOf((float) (i.floatValue() + 4294967296.0));
             }
             else {
-                f = new Float(i.floatValue());
+                f = Float.valueOf(i.floatValue());
             }
             maxmin[0] = (f.doubleValue());
             fmx = HDFNativeData.byteToInt(0, 1, max);
-            i = new Integer(fmx[0]);
+            i = Integer.valueOf(fmx[0]);
             if (i.floatValue() < 0) {
-                f = new Float((float) (i.floatValue() + 4294967296.0));
+                f = Float.valueOf((float) (i.floatValue() + 4294967296.0));
             }
             else {
-                f = new Float(i.floatValue());
+                f = Float.valueOf(i.floatValue());
             }
             maxmin[1] = (f.doubleValue());
         }
         else if (NT == HDFConstants.DFNT_FLOAT32) {
             float[] fmx = HDFNativeData.byteToFloat(0, 1, max);
             float[] fmn = HDFNativeData.byteToFloat(0, 1, min);
-            Float f = new Float(fmx[0]);
+            Float f = Float.valueOf(fmx[0]);
             maxmin[0] = (f.doubleValue());
-            f = new Float(fmn[0]);
+            f = Float.valueOf(fmn[0]);
             maxmin[1] = (f.doubleValue());
         }
         else if (NT == HDFConstants.DFNT_FLOAT64) {
             double[] fmx = HDFNativeData.byteToDouble(0, 1, max);
             double[] fmn = HDFNativeData.byteToDouble(0, 1, min);
-            Double f = new Double(fmx[0]);
+            Double f = Double.valueOf(fmx[0]);
             maxmin[0] = (f.doubleValue());
-            f = new Double(fmn[0]);
+            f = Double.valueOf(fmn[0]);
             maxmin[1] = (f.doubleValue());
 
         }
@@ -1864,7 +1864,6 @@ public class HDFLibrary implements java.io.Serializable {
     public static native boolean SDsetcompress(long id, int type, HDFCompInfo cinfo) throws HDFException;
 
     /**
-     * @deprecated As of HDF 4.2.9, replaced by {@link #SDgetcompinfo(long, HDFCompInfo)}
      * @param id
      *            <b>IN</b>: the SD identifier returned by SDselect
      * @param cinfo
@@ -1879,7 +1878,6 @@ public class HDFLibrary implements java.io.Serializable {
      *
      * @return true on success
      */
-
     public static native boolean SDgetcompinfo(long id, HDFCompInfo cinfo) throws HDFException;
 
     public static native boolean SDsetaccesstype(long id, int accesstype) throws HDFException;
@@ -2326,7 +2324,7 @@ public class HDFLibrary implements java.io.Serializable {
      *
      *
      * @exception hdf.hdflib.HDFException
-     *                should be thrown for errors in the HDF library call, but is not yet implemented.
+     *                thrown for errors in the HDF library call.
      *
      *
      * @return name[0] = name, argv[0] = data_type, argv[1] = count, argv[2] = size, argv[3] = nfields,
@@ -3345,7 +3343,7 @@ public class HDFLibrary implements java.io.Serializable {
      *            comp_coder_t enum for determining which type of encoding is being done
      *
      * @exception hdf.hdflib.HDFException
-     *                should be thrown for errors in the HDF library call, but is not yet implemented.
+     *                thrown for errors in the HDF library call.
      *
      *
      * @return the compression config info value

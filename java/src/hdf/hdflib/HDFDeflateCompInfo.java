@@ -21,12 +21,15 @@ package hdf.hdflib;
  */
 
 public class HDFDeflateCompInfo extends HDFNewCompInfo {
+    /** */
     public int level;
 
+    /** */
     public HDFDeflateCompInfo() {
         ctype = HDFConstants.COMP_CODE_DEFLATE;
     }
 
+    /** */
     public HDFDeflateCompInfo(int l) {
         ctype = HDFConstants.COMP_CODE_DEFLATE;
         level = l;

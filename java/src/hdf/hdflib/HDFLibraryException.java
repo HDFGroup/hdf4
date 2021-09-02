@@ -26,22 +26,41 @@ package hdf.hdflib;
 
 public class HDFLibraryException extends HDFException {
 
+    /**
+     * Constructs an <code>HDFLibraryException</code> with no specified detail
+     * message.
+     */
     public HDFLibraryException() {
         super();
     }
 
+    /**
+     * Constructs an <code>HDFLibraryException</code> with the specified detail
+     * message.
+     *
+     * @param s
+     *            the detail message.
+     */
     public HDFLibraryException(String s) {
         super("HDFLibraryException: " + s);
     }
 
+    /**
+     * Constructs an <code>HDFLibraryException</code> with the specified detail
+     * error number.
+     *
+     * @param err
+     *            the detail error number.
+     */
     public HDFLibraryException(int err) {
         super(err);
     }
 
+    /** */
     @Override
     public String getMessage() {
-        if (msg != null) {
-            return msg;
+        if (detailMessage != null) {
+            return detailMessage;
         }
 
         String s;
@@ -51,8 +70,8 @@ public class HDFLibraryException extends HDFException {
         catch (HDFException e) {
             s = new String("HDF error number: " + HDFerror + ", HEstring failed");
         }
-        msg = "HDFLibraryException: " + s;
-        return msg;
+        detailMessage = "HDFLibraryException: " + s;
+        return detailMessage;
     }
 
     /**
@@ -98,4 +117,5 @@ public class HDFLibraryException extends HDFException {
      * This private method calls the HDF library to extract the error codes and error stack.
      */
     private native void printStackTrace0(String s);
+
 }

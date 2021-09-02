@@ -1,16 +1,16 @@
-
-/****************************************************************************
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Copyright by The HDF Group.                                               *
  * Copyright by the Board of Trustees of the University of Illinois.         *
  * All rights reserved.                                                      *
  *                                                                           *
- * This file is part of HDF Java Products. The full HDF Java copyright       *
- * notice, including terms governing use, modification, and redistribution,  *
- * is contained in the file, COPYING.  COPYING can be found at the root of   *
- * the source code distribution tree. You can also access it online  at      *
- * http://support.hdfgroup.org/products/licenses.html.  If you do not have   *
- * access to the file, you may request a copy from help@hdfgroup.org.        *
- ****************************************************************************/
+ * This file is part of HDF.  The full HDF copyright notice, including     *
+ * terms governing use, modification, and redistribution, is contained in    *
+ * the COPYING file, which can be found at the root of the source code       *
+ * distribution tree, or in https://www.hdfgroup.org/licenses.               *
+ * If you do not have access to either file, you may request a copy from     *
+ * help@hdfgroup.org.                                                        *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 /*
  *  This code is the C-interface called by Java programs to access the
  *  HDF 4.2 library.
@@ -22,383 +22,340 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif /* __cplusplus */
 
+#include <jni.h>
+#include <stdlib.h>
+#include <string.h>
 #include "hdf.h"
-#include "jni.h"
 #include "h4jni.h"
 
 JNIEXPORT jlong JNICALL
-Java_hdf_hdflib_HDFLibrary_ANstart
-(JNIEnv *env, jclass clss, jlong file_id)
+Java_hdf_hdflib_HDFLibrary_ANstart(JNIEnv *env, jclass clss, jlong file_id)
 {
-    int32       retVal = -1;
+    int32 rval = -1;
 
-    retVal = ANstart((int32)file_id);
-    if (retVal < 0)
-        CALL_ERROR_CHECK();
+    UNUSED(clss);
 
-    return (jlong)retVal;
+    if ((rval = ANstart((int32)file_id)) < 0)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    return (jlong)rval;
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_ANend
-(JNIEnv *env, jclass clss, jlong anid)
+Java_hdf_hdflib_HDFLibrary_ANend(JNIEnv *env, jclass clss, jlong anid)
 {
-    int32 retVal;
+    int32 rval = FAIL;
 
-    retVal = ANend((int32)anid);
+    UNUSED(clss);
 
-    if (retVal == FAIL) {
-        CALL_ERROR_CHECK();
-        return JNI_FALSE;
-    }
+    if ((rval = ANend((int32)anid)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
 
+done:
     return JNI_TRUE;
 }
 
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_ANfileinfo
-(JNIEnv *env, jclass clss, jlong anid, jintArray info)
+Java_hdf_hdflib_HDFLibrary_ANfileinfo(JNIEnv *env, jclass clss, jlong anid, jintArray info)
 {
-    intn retVal;
-    jint *theArgs;
+    intn     rval = FAIL;
+    jint    *theArgs = NULL;
     jboolean isCopy;
 
-    if (info == NULL) {
-        h4nullArgument(env, "ANfileinfo:  info is NULL");
-    } /* end if */
-    else if (ENVPTR->GetArrayLength(ENVPAR info) < 4) {
-        h4badArgument(env, "ANfileinfo:  info input array < order 4");
-    } /* end else if */
-    else {
-        theArgs = ENVPTR->GetIntArrayElements(ENVPAR info, &isCopy);
-        if (theArgs == NULL) {
-            h4JNIFatalError(env, "ANfileinfo:  info not pinned");
-        } /* end if */
-        else {
-            retVal = ANfileinfo((int32)anid, (int32 *)&(theArgs[0]),
-                (int32 *)&(theArgs[1]), (int32 *)&(theArgs[2]),
-                (int32 *)&(theArgs[3]));
+    UNUSED(clss);
 
-            if (retVal == FAIL) {
-                ENVPTR->ReleaseIntArrayElements(ENVPAR info, theArgs, JNI_ABORT);
-                CALL_ERROR_CHECK();
-                return JNI_FALSE;
-            } /* end if */
-            else {
-                ENVPTR->ReleaseIntArrayElements(ENVPAR info, theArgs, 0);
-            } /* end else */
-        } /* end else */
-    } /* end else */
+    if (info == NULL)
+        H4_NULL_ARGUMENT_ERROR(ENVONLY, "ANfileinfo:  info is NULL");
+
+    if (ENVPTR->GetArrayLength(ENVONLY, info) < 4)
+        H4_BAD_ARGUMENT_ERROR(ENVONLY, "ANfileinfo:  info input array < order 4");
+
+    PIN_INT_ARRAY(ENVONLY, info, theArgs, &isCopy, "ANfileinfo: info input array not pinned");
+
+    if ((rval = ANfileinfo((int32)anid, (int32 *)&(theArgs[0]),
+            (int32 *)&(theArgs[1]), (int32 *)&(theArgs[2]),
+            (int32 *)&(theArgs[3]))) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    if (theArgs)
+        UNPIN_INT_ARRAY(ENVONLY, info, theArgs, (rval == FAIL) ? JNI_ABORT : 0);
+
     return JNI_TRUE;
 }
 
 
 JNIEXPORT jlong JNICALL
-Java_hdf_hdflib_HDFLibrary_ANselect
-(JNIEnv *env, jclass clss, jlong anid, jint index, jint anntype)
+Java_hdf_hdflib_HDFLibrary_ANselect(JNIEnv *env, jclass clss, jlong anid, jint index, jint anntype)
 {
-    int32 retVal;
+    int32 rval = -1;
 
-    retVal = ANselect((int32)anid, (int32)index, (ann_type)anntype);
-    if (retVal < 0)
-        CALL_ERROR_CHECK();
+    UNUSED(clss);
 
-    return (jlong)retVal;
+    if ((rval = ANselect((int32)anid, (int32)index, (ann_type)anntype)) < 0)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    return (jlong)rval;
 }
 
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_ANendaccess
-(JNIEnv *env, jclass clss, jlong ann_id)
+Java_hdf_hdflib_HDFLibrary_ANendaccess(JNIEnv *env, jclass clss, jlong ann_id)
 {
-    intn retVal;
+    intn rval = FAIL;
 
-    retVal = ANendaccess((int32)ann_id);
-    if (retVal == FAIL) {
-        CALL_ERROR_CHECK();
-        return JNI_FALSE;
-    }
+    UNUSED(clss);
 
+    if ((rval = ANendaccess((int32)ann_id)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
     return JNI_TRUE;
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_ANnumann
-(JNIEnv *env, jclass clss, jlong an_id, jint anntype, jshort tag, jshort ref)
+Java_hdf_hdflib_HDFLibrary_ANnumann(JNIEnv *env, jclass clss, jlong an_id, jint anntype, jshort tag, jshort ref)
 {
-    int32 retVal;
+    int32 rval = -1;
 
-    retVal = ANnumann((int32)an_id, (ann_type)anntype, (uint16)tag, (uint16)ref);
-    if (retVal < 0)
-        CALL_ERROR_CHECK();
+    UNUSED(clss);
 
-    return (jint)retVal;
+    if ((rval = ANnumann((int32)an_id, (ann_type)anntype, (uint16)tag, (uint16)ref)) < 0)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    return (jint)rval;
 }
 
 JNIEXPORT jshort JNICALL
-Java_hdf_hdflib_HDFLibrary_ANatype2tag
-(JNIEnv *env, jclass clss, jint antype)
+Java_hdf_hdflib_HDFLibrary_ANatype2tag(JNIEnv *env, jclass clss, jint antype)
 {
-    uint16 retVal;
+    uint16 rval = -1;
 
-    retVal = ANatype2tag((ann_type)antype);
-    if (retVal < 0)
-        CALL_ERROR_CHECK();
+    UNUSED(clss);
 
-    return (jshort)retVal;
+    if ((rval = ANatype2tag((ann_type)antype)) < 0)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    return (jshort)rval;
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_ANtag2atype
-(JNIEnv *env, jclass clss, jint antag)
+Java_hdf_hdflib_HDFLibrary_ANtag2atype(JNIEnv *env, jclass clss, jint antag)
 {
-    int32 retVal;
+    int32 rval = -1;
 
-    retVal = ANtag2atype((uint16)antag);
-    if (retVal < 0)
-        CALL_ERROR_CHECK();
+    UNUSED(clss);
 
-    return (jint)retVal;
+    if ((rval = ANtag2atype((uint16)antag)) < 0)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    return (jint)rval;
 }
 
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_ANannlist
-(JNIEnv *env, jclass clss, jlong an_id, jint anntype, jshort tag, jshort ref, jintArray annlist)
+Java_hdf_hdflib_HDFLibrary_ANannlist(JNIEnv *env, jclass clss, jlong an_id, jint anntype, jshort tag, jshort ref, jintArray annlist)
 {
-    intn retVal = -1;
-    jint *iarr;
+    intn     rval = FAIL;
+    jint    *iarr = NULL;
     jboolean isCopy;
 
-    if (annlist == NULL) {
-        h4nullArgument(env, "ANannlist:  annlist is NULL");
-    } /* end if */
-    else {
-        iarr = ENVPTR->GetIntArrayElements(ENVPAR annlist, &isCopy);
-        if (iarr == NULL) {
-            h4JNIFatalError(env, "ANannlist:  annlist not pinned");
-        } /* end if */
-        else {
-            retVal = ANannlist((int32)an_id, (ann_type)anntype, (uint16)tag,(uint16)ref,(int32 *)iarr);
+    UNUSED(clss);
 
-            if (retVal == FAIL) {
-                ENVPTR->ReleaseIntArrayElements(ENVPAR annlist, iarr, JNI_ABORT);
-                CALL_ERROR_CHECK();
-            } /* end if */
-            else {
-                ENVPTR->ReleaseIntArrayElements(ENVPAR annlist, iarr, 0);
-            } /* end else */
-        } /* end else */
-    } /* end else */
-    return (jint)retVal;
+    if (annlist == NULL)
+        H4_NULL_ARGUMENT_ERROR(ENVONLY, "ANannlist:  annlist is NULL");
+
+    PIN_INT_ARRAY(ENVONLY, annlist, iarr, &isCopy, "ANannlist:  annlist not pinned");
+
+    if ((rval = ANannlist((int32)an_id, (ann_type)anntype, (uint16)tag,(uint16)ref,(int32 *)iarr)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    if (iarr)
+        UNPIN_INT_ARRAY(ENVONLY, annlist, iarr, (rval == FAIL) ? JNI_ABORT : 0);
+
+    return (jint)rval;
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_ANannlen
-(JNIEnv *env, jclass clss, jlong ann_id)
+Java_hdf_hdflib_HDFLibrary_ANannlen(JNIEnv *env, jclass clss, jlong ann_id)
 {
-    int32 retVal;
+    int32 rval = -1;
 
-    retVal = ANannlen((int32)ann_id);
-    if (retVal < 0)
-        CALL_ERROR_CHECK();
+    UNUSED(clss);
 
-    return (jint)retVal;
+    if ((rval = ANannlen((int32)ann_id)) < 0)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    return (jint)rval;
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_ANreadann
-(JNIEnv *env, jclass clss, jlong ann_id, jobjectArray annbuf, jint maxlen)
+Java_hdf_hdflib_HDFLibrary_ANreadann(JNIEnv *env, jclass clss, jlong ann_id, jobjectArray annbuf, jint maxlen)
 {
-    int32 retVal;
-    char  *data;
+    int32    rval = FAIL;
+    char    *data = NULL;
+    jstring  rstring;
 
-    data = (char *)HDmalloc((maxlen+1)*sizeof(char));
-    if (data == NULL) {
-        /* Exception */
-        h4outOfMemory(env, "ANreadan");
-    }
-    else {
-        /* read annotation from HDF */
-        retVal = ANreadann((int32)ann_id, data, (int32)maxlen);
+    UNUSED(clss);
 
-        if (retVal == FAIL) {
-            HDfree((char *)data);
-            CALL_ERROR_CHECK();
-            return JNI_FALSE;
-        }
-        else {
-            jstring rstring;
-            jclass sjc;
-            jobject o;
-            jboolean bb;
+    if (NULL == (data = (char *)HDmalloc(sizeof(char) * (size_t)maxlen + 1)))
+        H4_OUT_OF_MEMORY_ERROR(ENVONLY, "ANreadan: failed to allocate data buffer");
 
-            data[maxlen] = '\0';
-            /* convert it to java string */
-            rstring = ENVPTR->NewStringUTF(ENVPAR data);
+    if (annbuf == NULL)
+        H4_NULL_ARGUMENT_ERROR(ENVONLY, "ANreadan:  annbuf is NULL");
 
-            sjc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
-            if (sjc == NULL) {
-                HDfree((char *)data);
-                return JNI_FALSE;
-            }
-            o = ENVPTR->GetObjectArrayElement(ENVPAR annbuf, 0);
-            if (o == NULL) {
-                HDfree((char *)data);
-                return JNI_FALSE;
-            }
-            bb = ENVPTR->IsInstanceOf(ENVPAR o, sjc);
-            if (bb == JNI_TRUE)
-                ENVPTR->SetObjectArrayElement(ENVPAR annbuf, 0, (jobject)rstring);
-            ENVPTR->DeleteLocalRef(ENVPAR o);
-            HDfree((char *)data);
-            return bb;
-        }
-        HDfree((char *)data);
-    } /* end else */
+    /* read annotation from HDF */
+    if ((rval = ANreadann((int32)ann_id, data, (int32)maxlen)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+    data[maxlen] = '\0';
+    /* convert it to java string */
+    if (NULL == (rstring = ENVPTR->NewStringUTF(ENVONLY, data)))
+        CHECK_JNI_EXCEPTION(ENVONLY, JNI_FALSE);
+
+    ENVPTR->SetObjectArrayElement(ENVONLY, annbuf, 0, rstring);
+    CHECK_JNI_EXCEPTION(ENVONLY, JNI_FALSE);
+
+    ENVPTR->DeleteLocalRef(ENVONLY, rstring);
+
+done:
+    if (data)
+        HDfree(data);
+
     return JNI_TRUE;
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_ANcreate
-(JNIEnv *env, jclass clss, jlong an_id, jshort tag, jshort ref, jint type)
+Java_hdf_hdflib_HDFLibrary_ANcreate(JNIEnv *env, jclass clss, jlong an_id, jshort tag, jshort ref, jint type)
 {
-    int32 retVal;
+    int32 rval = -1;
 
-    retVal = ANcreate((int32) an_id, (uint16) tag, (uint16) ref, (ann_type) type);
-    if (retVal < 0)
-        CALL_ERROR_CHECK();
+    UNUSED(clss);
 
-    return (jint)retVal;
+    if ((rval = ANcreate((int32) an_id, (uint16) tag, (uint16) ref, (ann_type) type)) < 0)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    return (jint)rval;
 }
 
 JNIEXPORT jlong JNICALL
-Java_hdf_hdflib_HDFLibrary_ANcreatef
-(JNIEnv *env, jclass clss, jlong an_id, jint type)
+Java_hdf_hdflib_HDFLibrary_ANcreatef(JNIEnv *env, jclass clss, jlong an_id, jint type)
 {
-    int32 retVal;
+    int32 rval = -1;
 
-    retVal = ANcreatef((int32) an_id, (ann_type) type);
-    if (retVal < 0)
-        CALL_ERROR_CHECK();
+    UNUSED(clss);
 
-    return (jlong)retVal;
+    if ((rval = ANcreatef((int32) an_id, (ann_type) type)) < 0)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    return (jlong)rval;
 }
 
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_ANget_1tagref
-(JNIEnv *env, jclass clss, jlong an_id, jint index, jint type, jshortArray tagref)
+Java_hdf_hdflib_HDFLibrary_ANget_1tagref(JNIEnv *env, jclass clss, jlong an_id, jint index, jint type, jshortArray tagref)
 {
-    int32 rval = -1;
-    short *theArgs;
+    int32    rval = FAIL;
+    short   *theArgs = NULL;
     jboolean isCopy;
 
-    if (tagref == NULL) {
-        h4nullArgument(env, "ANget_tagref:  tagref is NULL");
-    } /* end if */
-    else if (ENVPTR->GetArrayLength(ENVPAR tagref) < 2) {
-        h4badArgument(env, "ANget_tagref:  tagref input array < order 2");
-    } /* end else if */
-    else {
-        theArgs = ENVPTR->GetShortArrayElements(ENVPAR tagref, &isCopy);
-        if (theArgs == NULL) {
-            h4JNIFatalError(env, "ANget_tagref:  tagref not pinned");
-        } /* end if */
-        else {
-            rval = ANget_tagref((int32)an_id, (int32)index, (ann_type)type, (uint16 *)&(theArgs[0]), (uint16 *)&(theArgs[1]));
+    UNUSED(clss);
 
-            if (rval == FAIL) {
-                ENVPTR->ReleaseShortArrayElements(ENVPAR tagref, theArgs, JNI_ABORT);
-                CALL_ERROR_CHECK();
-            } /* end if */
-            else {
-                ENVPTR->ReleaseShortArrayElements(ENVPAR tagref, theArgs, 0);
-            } /* end else */
-        } /* end else */
-    } /* end else */
+    if (tagref == NULL)
+        H4_NULL_ARGUMENT_ERROR(ENVONLY, "ANget_tagref:  tagref is NULL");
+
+    if (ENVPTR->GetArrayLength(ENVONLY, tagref) < 2)
+        H4_BAD_ARGUMENT_ERROR(ENVONLY, "ANget_tagref:  tagref input array < order 2");
+
+    PIN_SHORT_ARRAY(ENVONLY, tagref, theArgs, &isCopy, "ANget_tagref:  tagref not pinned");
+
+    if ((rval = ANget_tagref((int32)an_id, (int32)index, (ann_type)type, (uint16 *)&(theArgs[0]), (uint16 *)&(theArgs[1]))) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    if (theArgs)
+        UNPIN_SHORT_ARRAY(ENVONLY, tagref, theArgs, (rval == FAIL) ? JNI_ABORT : 0);
 
     return rval;
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_ANid2tagref
-(JNIEnv *env, jclass clss, jlong an_id, jshortArray tagref)
+Java_hdf_hdflib_HDFLibrary_ANid2tagref(JNIEnv *env, jclass clss, jlong an_id, jshortArray tagref)
 {
-    int32 rval;
-    short *theArgs;
+    int32    rval = FAIL;
+    short   *theArgs = NULL;
     jboolean isCopy;
 
-    if (tagref == NULL) {
-        h4nullArgument(env, "ANid2tagref:  tagref is NULL");
-    } /* end if */
-    else if (ENVPTR->GetArrayLength(ENVPAR tagref) < 2) {
-        h4badArgument(env, "ANid2tagref:  tagref input array < order 2");
-    } /* end else if */
-    else {
-        theArgs = ENVPTR->GetShortArrayElements(ENVPAR tagref, &isCopy);
-        if (theArgs == NULL) {
-            h4JNIFatalError(env, "ANid2tagref:  tagref not pinned");
-        } /* end if */
-        else {
-            rval = ANid2tagref((int32)an_id, (uint16 *)&(theArgs[0]), (uint16 *)&(theArgs[1]));
+    UNUSED(clss);
 
-            if (rval == FAIL) {
-                ENVPTR->ReleaseShortArrayElements(ENVPAR tagref, theArgs, JNI_ABORT);
-                CALL_ERROR_CHECK();
-                return JNI_FALSE;
-            }
-            else {
-                ENVPTR->ReleaseShortArrayElements(ENVPAR tagref, theArgs, 0);
-            } /* end else */
-        } /* end else */
-    } /* end else */
+    if (tagref == NULL)
+        H4_NULL_ARGUMENT_ERROR(ENVONLY, "ANid2tagref:  tagref is NULL");
+
+    if (ENVPTR->GetArrayLength(ENVONLY, tagref) < 2)
+        H4_BAD_ARGUMENT_ERROR(ENVONLY, "ANid2tagref:  tagref input array < order 2");
+
+    PIN_SHORT_ARRAY(ENVONLY, tagref, theArgs, &isCopy, "ANid2tagref:  tagref not pinned");
+
+    if ((rval = ANid2tagref((int32)an_id, (uint16 *)&(theArgs[0]), (uint16 *)&(theArgs[1]))) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    if (theArgs)
+        UNPIN_SHORT_ARRAY(ENVONLY, tagref, theArgs, (rval == FAIL) ? JNI_ABORT : 0);
+
     return JNI_TRUE;
 }
 
 JNIEXPORT jlong JNICALL
-Java_hdf_hdflib_HDFLibrary_ANtagref2id
-(JNIEnv *env, jclass clss, jlong an_id, jshort tag, jshort ref)
+Java_hdf_hdflib_HDFLibrary_ANtagref2id(JNIEnv *env, jclass clss, jlong an_id, jshort tag, jshort ref)
 {
-    int32 retVal;
+    int32 rval = -1;
 
-    retVal = ANtagref2id((int32)an_id, (uint16)tag, (uint16)ref);
-    if (retVal < 0)
-        CALL_ERROR_CHECK();
+    UNUSED(clss);
 
-    return (jlong)retVal;
+    if ((rval = ANtagref2id((int32)an_id, (uint16)tag, (uint16)ref)) < 0)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    return (jlong)rval;
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_ANwriteann
-(JNIEnv *env, jclass clss, jlong ann_id, jstring label, jint ann_length)
+Java_hdf_hdflib_HDFLibrary_ANwriteann(JNIEnv *env, jclass clss, jlong ann_id, jstring label, jint ann_length)
 {
+    intn        rval = FAIL;
+    const char *str = NULL;
 
-    intn         rval;
-    const char *str;
+    UNUSED(clss);
 
-    PIN_JAVA_STRING(label, str);
+    if (label == NULL)
+        H4_NULL_ARGUMENT_ERROR(ENVONLY, "ANwriteann: label is NULL");
 
-    if (str != NULL) {
-        /* should check that str is as long as ann_length.... */
+    PIN_JAVA_STRING(ENVONLY, label, str, NULL, "ANwriteann:  label not pinned");
 
-        rval = ANwriteann((int32)ann_id, str, (int32)ann_length);
+    if ((rval = ANwriteann((int32)ann_id, str, (int32)ann_length)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
 
-        UNPIN_JAVA_STRING(label, str);
-
-        if (rval == FAIL) {
-            CALL_ERROR_CHECK();
-            return JNI_FALSE;
-        }
-    }
+done:
+    if (str)
+        UNPIN_JAVA_STRING(ENVONLY, label, str);
 
     return JNI_TRUE;
 }
 
 
 #ifdef __cplusplus
-}
-#endif
+} /* end extern "C" */
+#endif /* __cplusplus */

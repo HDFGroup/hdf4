@@ -22,8 +22,10 @@ package hdf.hdflib;
  */
 
 public class HDFNewCompInfo extends HDFCompInfo {
-    public int ctype; /* from COMP_CODE_ENUM */
+    /** from COMP_CODE_ENUM */
+    public int ctype;
 
+    /** */
     public HDFNewCompInfo() {
         ctype = HDFConstants.COMP_CODE_NONE;
     };

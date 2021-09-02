@@ -1,17 +1,17 @@
-
-/****************************************************************************
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Copyright by The HDF Group.                                               *
  * Copyright by the Board of Trustees of the University of Illinois.         *
  * All rights reserved.                                                      *
  *                                                                           *
- * This file is part of HDF Java Products. The full HDF Java copyright       *
- * notice, including terms governing use, modification, and redistribution,  *
- * is contained in the file, COPYING.  COPYING can be found at the root of   *
- * the source code distribution tree. You can also access it online  at      *
- * http://support.hdfgroup.org/products/licenses.html.  If you do not have   *
- * access to the file, you may request a copy from help@hdfgroup.org.        *
- ****************************************************************************/
- /*
+ * This file is part of HDF.  The full HDF copyright notice, including     *
+ * terms governing use, modification, and redistribution, is contained in    *
+ * the COPYING file, which can be found at the root of the source code       *
+ * distribution tree, or in https://www.hdfgroup.org/licenses.               *
+ * If you do not have access to either file, you may request a copy from     *
+ * help@hdfgroup.org.                                                        *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+/*
  *  This code is the C-interface called by Java programs to access the
  *  HDF 4 library.
  *
@@ -19,97 +19,105 @@
  *  analogous arguments and return codes.
  *
  */
+
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif /* __cplusplus */
 
-
+#include <jni.h>
 #include "hdf.h"
-#include "jni.h"
 #include "h4jni.h"
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_VFfieldesize
-(JNIEnv *env, jclass clss, jlong vdata_id, int field_index)
+Java_hdf_hdflib_HDFLibrary_VFfieldesize(JNIEnv *env, jclass clss, jlong vdata_id, int field_index)
 {
-    int32   retVal;
+    int32 rval = FAIL;
 
-    retVal = VFfieldesize((int32)vdata_id, (int32)field_index);
-    if (retVal == FAIL)
-        CALL_ERROR_CHECK();
+    UNUSED(clss);
 
-    return (jint)retVal;
+    if((rval = VFfieldesize((int32)vdata_id, (int32)field_index)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    return (jint)rval;
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_VFfieldisize
-(JNIEnv *env, jclass clss, jlong vdata_id, int field_index)
+Java_hdf_hdflib_HDFLibrary_VFfieldisize(JNIEnv *env, jclass clss, jlong vdata_id, int field_index)
 {
-    int32   retVal;
+    int32 rval = FAIL;
 
-    retVal = VFfieldisize((int32)vdata_id, (int32)field_index);
-    if (retVal == FAIL)
-        CALL_ERROR_CHECK();
+    UNUSED(clss);
 
-    return (jint)retVal;
+    if((rval = VFfieldisize((int32)vdata_id, (int32)field_index)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    return (jint)rval;
 }
 
 JNIEXPORT jstring JNICALL
-Java_hdf_hdflib_HDFLibrary_VFfieldname
-(JNIEnv *env, jclass clss, jlong vdata_id, int field_index)
+Java_hdf_hdflib_HDFLibrary_VFfieldname(JNIEnv *env, jclass clss, jlong vdata_id, int field_index)
 {
-    jstring rstring;
-    char * str;
+    jstring rstring = NULL;
+    char   *str;
 
-    str = VFfieldname((int32) vdata_id,  (int32) field_index);
+    UNUSED(clss);
 
-    /* check for error */
+    if((str = VFfieldname((int32) vdata_id,  (int32) field_index)) == NULL)
+        H4_LIBRARY_ERROR(ENVONLY);
 
     /* convert it to java string */
-    rstring = ENVPTR->NewStringUTF(ENVPAR str);
+    rstring = ENVPTR->NewStringUTF(ENVONLY, str);
 
+done:
     return rstring;
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_VFfieldorder
-(JNIEnv *env, jclass clss, jlong vdata_id, int field_index)
+Java_hdf_hdflib_HDFLibrary_VFfieldorder(JNIEnv *env, jclass clss, jlong vdata_id, int field_index)
 {
-    int32   retVal;
+    int32 rval = FAIL;
 
-    retVal = VFfieldorder((int32)vdata_id, (int32)field_index);
-    if (retVal == FAIL)
-        CALL_ERROR_CHECK();
+    UNUSED(clss);
 
-    return (jint)retVal;
+    if((rval = VFfieldorder((int32)vdata_id, (int32)field_index)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    return (jint)rval;
 }
 
 JNIEXPORT jlong JNICALL
 Java_hdf_hdflib_HDFLibrary_VFfieldtype
 (JNIEnv *env, jclass clss, jlong vdata_id, int field_index)
 {
-    int32   retVal;
+    int32 rval = FAIL;
 
-    retVal = VFfieldtype((int32)vdata_id, (int32)field_index);
-    if (retVal == FAIL)
-        CALL_ERROR_CHECK();
+    UNUSED(clss);
 
-    return (jlong)retVal;
+    if((rval = VFfieldtype((int32)vdata_id, (int32)field_index)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    return (jlong)rval;
 }
 
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_VFnfields
 (JNIEnv *env, jclass clss, jlong key)
 {
-    int32   retVal;
+    int32 rval = FAIL;
 
-    retVal = VFnfields((int32)key);
-    if (retVal == FAIL)
-        CALL_ERROR_CHECK();
+    UNUSED(clss);
 
-    return (jint)retVal;
+    if((rval = VFnfields((int32)key)) == FAIL)
+        H4_LIBRARY_ERROR(ENVONLY);
+
+done:
+    return (jint)rval;
 }
 
 #ifdef __cplusplus
-}
-#endif
+} /* end extern "C" */
+#endif /* __cplusplus */
