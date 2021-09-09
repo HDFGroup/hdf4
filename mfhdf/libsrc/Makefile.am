@@ -33,7 +33,7 @@ else
 libmfhdf_la_SOURCES = $(CSOURCES)
 endif
 
-libmfhdf_la_LIBADD = $(XDRLIB)
+libmfhdf_la_LIBADD = $(XDRLIB) $(top_builddir)/hdf/src/libdf.la
 
 if HDF_BUILD_NETCDF
 include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h netcdf.h mfhdfi.h mfdatainfo.h

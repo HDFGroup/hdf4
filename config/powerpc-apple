@@ -40,16 +40,16 @@ else
             RM='rm -f'
             tmpfile=/tmp/cmpver.$$
             $F77 -V >$tmpfile
-            if test -s "$tmpfile"; then 
+            if test -s "$tmpfile"; then
             #Absoft compiler f95 doesn't recognize -V flag; we will use
             #the error message it produces to identify the compiler
             #    if( grep -s 'Absoft' $tmpfile > /dev/null) then
                 if( grep -s 'ERROR: No input files' $tmpfile > /dev/null) then
                     F77_BASENAME=f95
-                fi 
+                fi
                 if( grep -s 'IBM XL' $tmpfile > /dev/null) then
                     F77_BASENAME=xlf
-                fi 
+                fi
             fi
             $RM $tmpfile
             ;;
@@ -72,7 +72,7 @@ fi
 #   DEBUG_CXXFLAGS
 #   DEBUG_CPPFLAGS  - Flags to pass to the compiler to create a
 #                     library suitable for use with debugging
-#			          tools. Usually this list will exclude
+#                      tools. Usually this list will exclude
 #                     optimization switches (like `-O') and include
 #                     switches that turn on symbolic debugging support
 #                     (like `-g').
@@ -93,7 +93,7 @@ fi
 #                     library suitable for performance testing (like
 #                     `-pg').  This may or may not include debugging or
 #                     production flags.
-#			
+#
 #   FFLAGS
 #   CFLAGS          - Flags can be added to these variable which
 #                     might already be partially initialized. These
@@ -120,7 +120,7 @@ fi
 
 case $CC_BASENAME in
   gcc)
-    CFLAGS="$CFLAGS"
+    CFLAGS="$CFLAGS -Wno-error=implicit-function-declaration"
     DEBUG_CFLAGS="-g -ansi -Wall -pedantic "
     DEBUG_CPPFLAGS=
     PROD_CFLAGS="-ansi -Wall -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Wconversion -Wmissing-prototypes -Wnested-externs -pedantic -O2"
@@ -140,7 +140,7 @@ case $CC_BASENAME in
     ;;
 esac
 
-case $F77_BASENAME in 
+case $F77_BASENAME in
   xlf)
     FFLAGS="$FFLAGS"
     DEBUG_FFLAGS="-g"

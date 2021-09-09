@@ -23652,12 +23652,14 @@ if test "X$BUILD_XDR" != "Xyes"; then
   HAVE_OLDRPC="yes"
   HAVE_TIRPC="yes"
   ## save current settings
+  SYSCFLAGS="$CFLAGS"
   SYSCPPFLAGS="$CPPFLAGS"
   case "$host" in
     *-solaris*)
       LIBS="$LIBS -lnsl"
       ;;
     *-pc-cygwin* | *-linux*)
+      CFLAGS="$SYSCFLAGS"
       CPPFLAGS="$SYSCPPFLAGS"
       ac_fn_c_check_header_mongrel "$LINENO" "rpc/rpc.h" "ac_cv_header_rpc_rpc_h" "$ac_includes_default"
 if test "x$ac_cv_header_rpc_rpc_h" = xyes; then :
@@ -23665,20 +23667,22 @@ if test "x$ac_cv_header_rpc_rpc_h" = xyes; then :
 else
   unset HAVE_OLDRPC
 fi
-
-
-      if test -z "$HAVE_OLDRPC" ; then
-        LIBS="$LIBS -ltirpc"
-        CPPFLAGS="$SYSCPPFLAGS -I/usr/include/tirpc"
-        ac_fn_c_check_header_mongrel "$LINENO" "rpc/rpc.h" "ac_cv_header_rpc_rpc_h" "$ac_includes_default"
-if test "x$ac_cv_header_rpc_rpc_h" = xyes; then :
+        ac_fn_c_check_header_mongrel "$LINENO" "tirpc/netconfig.h" "ac_cv_header_tirpc_netconfig_h" "$ac_includes_default"
+if test "x$ac_cv_header_tirpc_netconfig_h" = xyes; then :
   :
 else
   unset HAVE_TIRPC
 fi
 
 
+      if test -z "$HAVE_OLDRPC" ; then
+        LIBS="$LIBS -ltirpc"
+        CFLAGS="$SYSCFLAGS -I/usr/include/tirpc"
+        CPPFLAGS="$SYSCPPFLAGS -I/usr/include/tirpc"
+
+
         if test -z "$HAVE_TIRPC" ; then
+          CFLAGS="$SYSCFLAGS"
           CPPFLAGS="$SYSCPPFLAGS"
           as_fn_error $? "couldn't find rpc headers" "$LINENO" 5
         fi

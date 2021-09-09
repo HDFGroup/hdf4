@@ -550,7 +550,7 @@ typedef long            hdf_pint_t;   /* an integer the same size as a pointer *
 
 
 /* Metrowerks Mac compiler defines some PC stuff so need to exclude this on the Mac */
-#if !(defined (__APPLE__))
+#if !(defined (__APPLE__)) && !(defined(__CYGWIN__))
 
 #if defined _M_ALPHA || defined _M_X64 || defined _M_IA64 || defined _M_IX86 || defined INTEL86 || defined M_I86 || defined M_I386 || defined DOS386 || defined __i386 || defined UNIX386 || defined i386
 #ifndef INTEL86
@@ -971,8 +971,8 @@ typedef long              hdf_pint_t;   /* an integer the same size as a pointer
 /*-----------------------------------------------------*/
 #endif /*power PC 5 64 */
 /* Linux 64 */
-#if defined(__linux__) && defined __x86_64__  && !(defined  SUN)  /* i.e. 64-bit Linux  but not SunOS on Intel */
-
+#if (defined(__linux__) && defined __x86_64__  && !(defined  SUN)) || defined(__CYGWIN__)  /* i.e. 64-bit Linux  but not SunOS on Intel */
+                                                                                           /* it should work also for Cygwin 32 & 64 bit */
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
 Please check your Makefile.

@@ -139,7 +139,7 @@ endif ()
 #-----------------------------------------------------------------------------
 if (${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
   list (APPEND HDF4_CMAKE_C_FLAGS "-erroff=%none -DBSD_COMP")
-  list (APPEND HDF5_CMAKE_CXX_FLAGS "-erroff=%none -DBSD_COMP")
+  list (APPEND HDF4_CMAKE_CXX_FLAGS "-erroff=%none -DBSD_COMP")
 else ()
   # General flags
   #

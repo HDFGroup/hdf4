@@ -72,7 +72,7 @@ esac
 #   DEBUG_CXXFLAGS
 #   DEBUG_CPPFLAGS  - Flags to pass to the compiler to create a
 #                     library suitable for use with debugging
-#			          tools. Usually this list will exclude
+#                      tools. Usually this list will exclude
 #                     optimization switches (like `-O') and include
 #                     switches that turn on symbolic debugging support
 #                     (like `-g').
@@ -93,7 +93,7 @@ esac
 #                     library suitable for performance testing (like
 #                     `-pg').  This may or may not include debugging or
 #                     production flags.
-#			
+#
 #   FFLAGS
 #   CFLAGS          - Flags can be added to these variable which
 #                     might already be partially initialized. These
@@ -120,7 +120,7 @@ esac
 
 case $CC_BASENAME in
   gcc)
-    CFLAGS="$CFLAGS"
+    CFLAGS="$CFLAGS -Wno-error=implicit-function-declaration"
     DEBUG_CFLAGS="-g -fverbose-asm"
     DEBUG_CPPFLAGS=
     PROD_CFLAGS="-O2 -fomit-frame-pointer"
@@ -140,9 +140,9 @@ case $CC_BASENAME in
     ;;
 esac
 
-case $F77_BASENAME in 
+case $F77_BASENAME in
   gfortran)
-    FFLAGS="$FFLAGS"
+    FFLAGS="$FFLAGS -fallow-argument-mismatch"
     DEBUG_FFLAGS="-g"
     PROD_FFLAGS="-O"
     PROFILE_FFLAGS="-pg"

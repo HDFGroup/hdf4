@@ -34,19 +34,19 @@ fi
 
 case $CC_BASENAME in
   clang)
-    CFLAGS="$CFLAGS"
+    CFLAGS="$CFLAGS -Wno-error=implicit-function-declaration"
     DEBUG_CFLAGS="-g -ansi -Wall -pedantic "
     DEBUG_CPPFLAGS=
     # There is a bug somewhere in mfhdf/libsrc that is exposed by compiling
     # with any optimization in $CC in Lion (Darwin 11) & up
     # Use -O0 for now.
     case "$host_os" in
-	darwin1[1-9].*)	# Lion & Mountain Lion & Mavericks & Yosemeti
-	    xOFLAG="-O2"
-	    ;;
-	*)		# Other OSX versions
-	    xOFLAG="-O2"
-	    ;;
+    darwin1[1-9].*)    # Lion & Mountain Lion & Mavericks & Yosemeti
+        xOFLAG="-O2"
+        ;;
+    *)        # Other OSX versions
+        xOFLAG="-O2"
+        ;;
     esac
     PROD_CFLAGS=${PROD_CFLAGS:-"$xOFLAG"}
     PROD_CPPFLAGS=
@@ -62,12 +62,12 @@ case $CC_BASENAME in
     # with any optimization in $CC in Lion, Mountain Lion, Mavericks and Yosemeti systems.
     # Use -O0 for now.
     case "$host_os" in
-	darwin1[1-9].*)	# Lion & Mountain Lion & Mavericks & Yosemite & 5 more
-	    xOFLAG="-O2"
-	    ;;
-	*)		# Other OSX versions
-	    xOFLAG="-O2"
-	    ;;
+    darwin1[1-9].*)    # Lion & Mountain Lion & Mavericks & Yosemite & 5 more
+        xOFLAG="-O2"
+        ;;
+    *)        # Other OSX versions
+        xOFLAG="-O2"
+        ;;
     esac
     PROD_CFLAGS=${PROD_CFLAGS:-"$xOFLAG"}
     PROD_CPPFLAGS=
@@ -76,19 +76,19 @@ case $CC_BASENAME in
     ;;
 
   gcc)
-    CFLAGS="$CFLAGS"
+    CFLAGS="$CFLAGS -Wno-error=implicit-function-declaration"
     DEBUG_CFLAGS="-g -ansi -Wall -pedantic "
     DEBUG_CPPFLAGS=
     # There is a bug somewhere in mfhdf/libsrc that is exposed by compiling
     # with any optimization in $CC in Lion, Mountain Lion, Mavericks and Yosemeti systems.
     # Use -O0 for now.
     case "$host_os" in
-	darwin1[1-9].*)	# Lion & Mountain Lion & Mavericks & Yosemeti & 5 more
-	    xOFLAG="-O2"
-	    ;;
-	*)		# Other OSX versions
-	    xOFLAG="-O2"
-	    ;;
+    darwin1[1-9].*)    # Lion & Mountain Lion & Mavericks & Yosemeti & 5 more
+        xOFLAG="-O2"
+        ;;
+    *)        # Other OSX versions
+        xOFLAG="-O2"
+        ;;
     esac
     PROD_CFLAGS=${PROD_CFLAGS:-"-ansi  -Wall -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Wconversion -Wmissing-prototypes -Wnested-externs -pedantic $xOFLAG"}
     PROD_CFLAGS=${PROD_CFLAGS:-"-ansi  -Wall -pedantic $xOFLAG"}
@@ -108,9 +108,9 @@ case $CC_BASENAME in
     ;;
 esac
 
-case $F77_BASENAME in 
+case $F77_BASENAME in
   gfortran)
-    FFLAGS="$FFLAGS"
+    FFLAGS="$FFLAGS -fallow-argument-mismatch"
     DEBUG_FFLAGS="-g"
     PROD_FFLAGS="-O2"
     PROFILE_FFLAGS="-pg"
