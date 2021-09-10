@@ -702,13 +702,16 @@ if test "X$BUILD_XDR" != "Xyes"; then
       LIBS="$LIBS -lnsl"
       ;;
     *-pc-cygwin* | *-linux*)
+      CFLAGS="$SYSCFLAGS"
       CPPFLAGS="$SYSCPPFLAGS"
       AC_CHECK_HEADER([rpc/rpc.h],[:], [unset HAVE_OLDRPC])
+      AC_CHECK_HEADER([tirpc/netconfig.h],[:], [unset HAVE_TIRPC])
       if test -z "$HAVE_OLDRPC" ; then
         LIBS="$LIBS -ltirpc"
+        CFLAGS="$SYSCFLAGS -I/usr/include/tirpc"
         CPPFLAGS="$SYSCPPFLAGS -I/usr/include/tirpc"
-        AC_CHECK_HEADER([rpc/rpc.h],[:], [unset HAVE_TIRPC])
         if test -z "$HAVE_TIRPC" ; then
+          CFLAGS="$SYSCFLAGS"
           CPPFLAGS="$SYSCPPFLAGS"
           AC_MSG_ERROR([couldn't find rpc headers])
         fi
@@ -1067,6 +1070,28 @@ if test -n "$java_version_info"; then
   JAVA_VERSION="$JAVA_VERSION ($java_version_info)"
 fi
 AM_CONDITIONAL([BUILD_JAVA_CONDITIONAL], [test "X$HDF_JAVA" = "Xyes"])
+
+## ----------------------------------------------------------------------
+## Some platforms require that all symbols are resolved when a library
+## is linked. We can use the -no-undefined flag to tell libtool that
+## it will be able to build shared libraries on these architectures,
+## as it will not do so by default.
+##
+if test "X${enable_shared}" = "Xyes"; then
+  AC_MSG_CHECKING([if libtool needs -no-undefined flag to build shared libraries])
+  case "`uname`" in
+    CYGWIN*|MINGW*|AIX*)
+      ## Add in the -no-undefined flag to LDFLAGS for libtool.
+      AC_MSG_RESULT([yes])
+      LDFLAGS="$LDFLAGS -no-undefined"
+      ;;
+    *)
+      ## Don't add in anything.
+      AC_MSG_RESULT([no])
+      ;;
+  esac
+fi
+
 
 ## ----------------------------------------------------------------------
 ## Enable deprecated public API symbols
