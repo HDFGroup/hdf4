@@ -61,7 +61,7 @@ jobs:
             build_type: "Release"
             netcdf: enable
             java: disable
-            fortran: enable
+            fortran: disable
             xdr: enable
             toolchain: ""
             generator: "autogen"
