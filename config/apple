@@ -76,7 +76,11 @@ case $CC_BASENAME in
     ;;
 
   gcc)
-    CFLAGS="$CFLAGS -Wno-error=implicit-function-declaration"
+    if test $cc_vers_major -ge 10; then
+        CFLAGS="$CFLAGS -Wno-error=implicit-function-declaration"
+    else
+        CFLAGS="$CFLAGS"
+    fi
     DEBUG_CFLAGS="-g -ansi -Wall -pedantic "
     DEBUG_CPPFLAGS=
     # There is a bug somewhere in mfhdf/libsrc that is exposed by compiling
@@ -110,7 +114,11 @@ esac
 
 case $F77_BASENAME in
   gfortran)
-    FFLAGS="$FFLAGS -fallow-argument-mismatch"
+    if test $fc_vers_major -ge 10; then
+        FFLAGS="$FFLAGS -fallow-argument-mismatch"
+    else
+        FFLAGS="$FFLAGS"
+    fi
     DEBUG_FFLAGS="-g"
     PROD_FFLAGS="-O2"
     PROFILE_FFLAGS="-pg"

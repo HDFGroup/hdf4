@@ -120,7 +120,11 @@ fi
 
 case $CC_BASENAME in
   gcc)
-    CFLAGS="$CFLAGS -Wno-error=implicit-function-declaration"
+    if test $cc_vers_major -ge 10; then
+        CFLAGS="$CFLAGS -Wno-error=implicit-function-declaration"
+    else
+        CFLAGS="$CFLAGS"
+    fi
     DEBUG_CFLAGS="-g -ansi -Wall -pedantic "
     DEBUG_CPPFLAGS=
     PROD_CFLAGS="-ansi -Wall -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Wconversion -Wmissing-prototypes -Wnested-externs -pedantic -O2"
