@@ -120,7 +120,11 @@ esac
 
 case $CC_BASENAME in
   gcc)
-    CFLAGS="$CFLAGS -Wno-error=implicit-function-declaration"
+    if test $cc_vers_major -ge 10; then
+        CFLAGS="$CFLAGS -Wno-error=implicit-function-declaration"
+    else
+        CFLAGS="$CFLAGS"
+    fi
     DEBUG_CFLAGS="-g -fverbose-asm"
     DEBUG_CPPFLAGS=
     PROD_CFLAGS="-O2 -fomit-frame-pointer"
@@ -142,7 +146,11 @@ esac
 
 case $F77_BASENAME in
   gfortran)
-    FFLAGS="$FFLAGS -fallow-argument-mismatch"
+    if test $fc_vers_major -ge 10; then
+        FFLAGS="$FFLAGS -fallow-argument-mismatch"
+    else
+        FFLAGS="$FFLAGS"
+    fi
     DEBUG_FFLAGS="-g"
     PROD_FFLAGS="-O"
     PROFILE_FFLAGS="-pg"
