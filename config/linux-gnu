@@ -147,7 +147,6 @@ if test X != "X$fc_version"; then
     # Get the compiler version numbers
     fc_vers_major=`echo $fc_version | cut -f1 -d.`
 fi
-test -n "$fc_vers_major" || fc_vers_major=0
 
 
 # C, Fortran, and C++ Compiler and Preprocessor Flags
@@ -244,7 +243,6 @@ case $F77_BASENAME in
     else
         FFLAGS="$FFLAGS"
     fi
-    FFLAGS="$FFLAGS -fallow-argument-mismatch"
     DEBUG_FFLAGS="-g"
     PROD_FFLAGS="-O"
     PROFILE_FFLAGS="-pg"
