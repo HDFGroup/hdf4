@@ -42,8 +42,8 @@ New features and changes
 
       The install path for cmake find_package files had been changed to use
         "share/cmake"
-      for all platforms. However the trailing "hdf5" directory was not removed.
-      This "hdf5" additional directory has been removed.
+      for all platforms. However the trailing "hdf4" directory was not removed.
+      This "hdf4" additional directory has been removed.
 
       (ADB - 2021/09/27)
 
