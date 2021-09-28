@@ -17,7 +17,16 @@ The contents of this directory are:
     README.txt              - This file
     @HDF4_PACKAGE_NAME@-@HDF4_PACKAGE_VERSION@-@BINARY_SYSTEM_NAME@.@BINARY_INSTALL_ENDING@    - HDF4 Install Utility
 
-We provide the JPEG, ZLIB, SZIP libraries within the installation package for convenience.
+This binary was built with the ZLIB and SZIP/Libaec external libraries and are
+included for convenience.  Libaec is an unrestricted open-source replacement for SZIP
+(Encoder ENABLED).
+
+The official ZLIB and SZIP/Libaec pages are at:
+
+    ZLIB: https://git.savannah.gnu.org/cgit/gzip.git/
+        https://git.savannah.gnu.org/cgit/gzip.git/tree/COPYING
+    SZIP/Libaec: https://gitlab.dkrz.de/k202009/libaec
+        https://gitlab.dkrz.de/k202009/libaec/-/blob/master/Copyright.txt
 
 Installation
 ===========================================================================
@@ -58,7 +67,7 @@ To test the installation with the examples;
 
 When executed, the ctest script will save the results to the log file, test.log, as
 indicated by the ctest command. If you wish the to see more build and test information,
-add "-VV" to the ctest command. The output should show near the end;
+add "-VV" to the ctest command. The output should show;
       100% tests passed, 0 tests failed out of 49.
 
 For more information see USING_CMake_Examples.txt in the install folder.
