@@ -38,6 +38,25 @@ New features and changes
 ========================
     Configuration:
     -------------
+    - Corrected path searched by CMake find_package command
+
+      The install path for cmake find_package files had been changed to use
+        "share/cmake"
+      on all platforms. However, the trailing "hdf4" directory was not removed
+      at that time. This "hdf4" additional directory has been removed from all
+      the install paths.
+
+      (ADB - 2021/09/27)
+
+    - Corrected pkg-config compile script
+
+      It was discovered that the position of the "$@" argument for the command
+      in the compile script may fail on some platforms and configurations. The
+      position of the "$@"command argument was moved to a position before the
+      pkg-config sub command.
+
+      (ADB - 2021/08/30)
+
     - CMake option to use AEC (open source SZip) library instead of SZip
 
       The open source AEC library is a replacement library for SZip. In
