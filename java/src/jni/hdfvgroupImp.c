@@ -298,7 +298,8 @@ done:
     return (jint)rval;
 }
 
-JNIEXPORT jint JNICALLJava_hdf_hdflib_HDFLibrary_Vinqtagref(JNIEnv *env, jclass clss, jlong vgroup_id, jint tag, jint ref)
+JNIEXPORT jint
+Java_hdf_hdflib_HDFLibrary_Vinqtagref(JNIEnv *env, jclass clss, jlong vgroup_id, jint tag, jint ref)
 {
     int32 rval = FAIL;
 
@@ -727,7 +728,8 @@ done:
     return (jint)rval;
 }
 
-JNIEXPORT jint JNICALLJava_hdf_hdflib_HDFLibrary_Vnattrs(JNIEnv *env, jclass clss, jlong id)
+JNIEXPORT jint
+Java_hdf_hdflib_HDFLibrary_Vnattrs(JNIEnv *env, jclass clss, jlong id)
 {
     int32 rval = FAIL;
 
