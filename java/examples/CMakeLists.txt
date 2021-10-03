@@ -12,6 +12,8 @@ set (HDFJNI_EXAMPLES
     HDF4FileCreate
     HDF4GroupCreate
     HDF4DatasetCreate
+    VDWriteToVdata
+    VDReadFromVdata
 )
 
 if (WIN32 OR MINGW)

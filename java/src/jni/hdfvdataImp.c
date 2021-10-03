@@ -460,7 +460,7 @@ Java_hdf_hdflib_HDFLibrary_VSread(JNIEnv *env, jclass clss, jlong vdata_id, jbyt
 
 done:
     if (dat)
-        UNPIN_BYTE_ARRAY(ENVONLY, databuf, dat, (rval == FAIL) ? JNI_ABORT : 0);
+        UNPIN_ARRAY_CRITICAL(ENVONLY, databuf, dat, (rval == FAIL) ? JNI_ABORT : 0);
 
     return rval;
 }

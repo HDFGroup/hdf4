@@ -1344,7 +1344,7 @@ done:
     if (strt)
         UNPIN_INT_ARRAY(ENVONLY, start, strt, (rval == FAIL) ? JNI_ABORT : 0);
     if (d)
-        UNPIN_BYTE_ARRAY(ENVONLY, data, d, (rval == FAIL) ? JNI_ABORT : 0);
+        UNPIN_ARRAY_CRITICAL(ENVONLY, data, d, (rval == FAIL) ? JNI_ABORT : 0);
 
     return JNI_TRUE;
 }
