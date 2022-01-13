@@ -73,12 +73,12 @@ java/examples/HDF4FileCreate.java -text
 java/examples/HDF4GroupCreate.java -text
 java/examples/Makefile.am -text
 java/examples/Makefile.in -text
-java/lib/ext/slf4j-nop-1.7.25.jar -text svneol=unset#application/zip
-java/lib/ext/slf4j-simple-1.7.25.jar -text svneol=unset#application/zip
+java/lib/ext/slf4j-nop-1.7.33.jar -text svneol=unset#application/zip
+java/lib/ext/slf4j-simple-1.7.33.jar -text svneol=unset#application/zip
 java/lib/hamcrest-core.jar -text svneol=unset#application/java-archive
 java/lib/junit.jar -text svneol=unset#application/java-archive
 java/lib/simplelogger.properties -text
-java/lib/slf4j-api-1.7.25.jar -text svneol=unset#application/zip
+java/lib/slf4j-api-1.7.33.jar -text svneol=unset#application/zip
 java/src/CMakeLists.txt -text
 java/src/Makefile.am -text
 java/src/Makefile.in -text
