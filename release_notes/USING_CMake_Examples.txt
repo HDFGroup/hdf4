@@ -20,15 +20,14 @@ Notes: This short instruction is written for users who want to quickly
 I. Preconditions
 ========================================================================
 
-   1. We suggest you obtain the latest CMake for windows from the Kitware
-      web site. The HDF 4.2.x product requires a minimum CMake version
-      of 3.2.2.
+   1. We suggest you obtain the latest CMake for your platform from the Kitware
+      web site. The HDF5 1.13.x product requires a minimum CMake version
+      of 3.12. If you are using VS2019, the minimum version is 3.15.
 
-   2. You have installed the HDF4 library built with CMake by executing
+   2. You have installed the HDF4 library built with CMake, by executing
       the HDF Install Utility (the *.msi file in the binary package for
-      Windows or the *.sh on Linux). If you are using a Windows platform,
-      you can obtain a pre-built Windows binary from The HDF Group's website
-      at www.hdfgroup.org.
+      Windows or the *.sh on Linux). You can obtain pre-built binaries
+      from The HDF Group's website at www.hdfgroup.org.
 
 
 
@@ -38,16 +37,16 @@ II. Building HDF4 Examples with CMake
 
 Files in the HDF4 install directory:
        HDF4Examples folder
+       CTestScript.cmake
        HDF4_Examples.cmake
        HDF4_Examples_options.cmake
-       CTestScript.cmake
 
 Default installation process:
        Create a directory to run the examples, i.e. \test_hdf4.
        Copy HDF4Examples folder to this directory.
+       Copy CTestScript.cmake to this directory.
        Copy HDF4_Examples.cmake to this directory.
        Copy HDF4_Examples_options.cmake to this directory.
-       Copy CTestScript.cmake to this directory.
        The default source folder is defined as "HDF4Examples". It can be changed
            with the CTEST_SOURCE_NAME script option.
        The default installation folder is defined for the platform.
@@ -59,17 +58,19 @@ Default installation process:
            be the same as the value used with the -C command line option.
        The default build configuration is defined to build and use static libraries.
            Shared libraries can be used with the STATIC_ONLY script option set to "NO".
-       Other options can be changed by editing the HDF4_Examples_options.cmake file.
+
+       Other options can be changed by editing the 
+           HDF4_Examples_options.cmake file.
 
        If the defaults are okay, execute from this directory:
            ctest -S HDF4_Examples.cmake -C Release -V -O test.log
        If the defaults need change, execute from this directory:
            ctest -S HDF4_Examples.cmake,CTEST_SOURCE_NAME=MyExamples,INSTALLDIR=MyLocation -C Release -V -O test.log
 
-When executed, the ctest script will save the results to the log file, test.log, as
-indicated by the ctest command. If you wish the to see more build and test information,
-add "-VV" to the ctest command. The output should show near the end;
-      100% tests passed, 0 tests failed out of 49.
+    When executed, the ctest script will save the results to the log file, test.log, as
+    indicated by the ctest command. If you wish the to see more build and test information,
+    add "-VV" to the ctest command. The output should show;
+          100% tests passed, 0 tests failed out of 49.
 
 
 ========================================================================
@@ -91,8 +92,8 @@ note that the following options will not be changed.
     HDF_BUILD_C           ON      CACHE BOOL   "Build C support"
     HDF_BUILD_FORTRAN     ON      CACHE BOOL   "Build FORTRAN support"
     HDF_BUILD_JAVA        ON      CACHE BOOL   "Build Java support"
-    BUILD_TESTING         ON      CACHE BOOL   "Build HDF5 Unit Testing"
-    COMPARE_TESTING       ON      CACHE BOOL   "Compare HDF5 Unit Testing to Reference"
+    BUILD_TESTING         ON      CACHE BOOL   "Build HDF4 Unit Testing"
+    COMPARE_TESTING       ON      CACHE BOOL   "Compare HDF4 Unit Testing to Reference"
     HDF4_PACKAGE_NAME     "hdf4"  CACHE STRING "Name of HDF4 package"
     PACK_EXAMPLE_SOURCE   ON      CACHE BOOL   "Package the source"
     CPACK_PACKAGE_VERSION "0.3.9" CACHE STRING "Version of HDF4 source package"

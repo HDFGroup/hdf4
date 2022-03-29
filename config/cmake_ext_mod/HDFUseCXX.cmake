@@ -30,3 +30,6 @@ if (${HDF_PREFIX}_HAVE_STDINT_H AND CMAKE_CXX_COMPILER_LOADED)
     set (USE_INCLUDES ${USE_INCLUDES} "stdint.h")
   endif ()
 endif ()
+
+#Always define
+set (${HDF_PREFIX}_CXX_HAVE_OFFSETOF 1)

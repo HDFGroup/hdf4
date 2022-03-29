@@ -53,6 +53,8 @@ The following files referenced below are available at the HDF web site:
 Single compressed file with all the files needed, including source:
     CMake-hdf-4.2.X.zip or CMake-hdf-4.2.X.tar.gz
 
+Individual files included in the above mentioned compressed files
+-----------------------------------------------
 CMake build script:
     CTestScript.cmake
 
@@ -304,7 +306,8 @@ IV. Further considerations
             TGZPATH:STRING="some_location"
          where "some_location" is the URL or full path to the compressed
          file and ext is the type of compression file. Also set CMAKE_BUILD_TYPE
-         to the configuration type during configuration
+         to the configuration type during configuration. See the settings in the
+         config/cmake/cacheinit.cmake file HDF uses for testing.
 
    3. If you are building on Apple Darwin platforms, you should add the
       following options:
@@ -459,7 +462,7 @@ These five steps are described in detail below.
             * <HDF4OPTION>:BOOL=[ON | OFF]
 
         <cacheinit.cmake> is:
-            # This is the CMakeCache file.
+            # This is the CMakeCache file used by HDF Group for daily tests.
             ########################
             # EXTERNAL cache entries
             ########################
@@ -554,18 +557,18 @@ These five steps are described in detail below.
            ${git_url} should be changed to your location. Also define CMAKE_BUILD_TYPE
            to be the configuration type.
 
-      3.2.2  Or the external libraries (zlib, Szip, and jpeg) can be configured
+      3.2.2  Or the external libraries (zlib, szip, and jpeg) can be configured
            to allow building the libraries by using a compressed file.
            The option is 'HDF4_ALLOW_EXTERNAL_SUPPORT' and is enabled by
            adding the following configuration option:
                -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING="TGZ"
 
-           The options to control the SVN URL (config/cmake/cacheinit.cmake
+           The options to control the TGZ URL (config/cmake/cacheinit.cmake
            file) are:
                JPEG_TGZ_NAME:STRING="jpeg_src.ext"
                ZLIB_TGZ_NAME:STRING="zlib_src.ext"
                SZIP_TGZ_NAME:STRING="szip_src.ext"
-               LIBAEC_TGZ_NAME:STRING="liaec_src.ext"
+               LIBAEC_TGZ_NAME:STRING="libaec_src.ext"
                TGZPATH:STRING="some_location"
             where "some_location/xxxx_src.ext" is the URL or full path to
             the compressed file and where ext is the type of the compression
