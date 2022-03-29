@@ -70,16 +70,13 @@ set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DSITE:STRING=${CTEST_SITE} -DBUILDN
 #endif()
 
 ###############################################################################################################
-#     Adjust the following SET Commands as needed
-###############################################################################################################
+set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ROOT:PATH=${INSTALLDIR}")
 if(WIN32)
   set(SITE_OS_NAME "Windows")
-  set(ENV{HDF4_DIR} "${INSTALLDIR}/share/cmake")
   set(CTEST_BINARY_NAME ${CTEST_SOURCE_NAME}\\build)
   set(CTEST_SOURCE_DIRECTORY "${CTEST_DASHBOARD_ROOT}\\${CTEST_SOURCE_NAME}")
   set(CTEST_BINARY_DIRECTORY "${CTEST_DASHBOARD_ROOT}\\${CTEST_BINARY_NAME}")
 else()
-  set(ENV{HDF4_DIR} "${INSTALLDIR}/share/cmake")
   set(ENV{LD_LIBRARY_PATH} "${INSTALLDIR}/lib")
   set(CTEST_BINARY_NAME ${CTEST_SOURCE_NAME}/build)
   set(CTEST_SOURCE_DIRECTORY "${CTEST_DASHBOARD_ROOT}/${CTEST_SOURCE_NAME}")
