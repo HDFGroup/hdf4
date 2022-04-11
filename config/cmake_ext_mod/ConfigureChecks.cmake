@@ -147,7 +147,7 @@ CHECK_INCLUDE_FILE_CONCAT (stdbool.h    ${HDF_PREFIX}_HAVE_STDBOOL_H)
 CHECK_INCLUDE_FILE_CONCAT ("arpa/inet.h"     ${HDF_PREFIX}_HAVE_INET_H)
 CHECK_INCLUDE_FILE_CONCAT ("sys/param.h"     ${HDF_PREFIX}_HAVE_PARAM_H)
 
-## Check for non-standard extenstion quadmath.h
+## Check for non-standard extension quadmath.h
 
 CHECK_INCLUDE_FILES(quadmath.h C_HAVE_QUADMATH)
 if (${C_HAVE_QUADMATH})
