@@ -359,10 +359,10 @@ public class TestH4Vparams {
 //        HDFLibrary.Vgetversion(-1);
 //    }
 
-//    @Test(expected = HDFException.class)
-//    public void testVnattrsIllegalId() throws Throwable {
-//        HDFLibrary.Vnattrs(-1);
-//    }
+    @Test(expected = HDFException.class)
+    public void testVnattrsIllegalId() throws Throwable {
+        HDFLibrary.Vnattrs(-1);
+    }
 
     @Test(expected = NullPointerException.class)
     public void testVsetattrNullName() throws Throwable {

@@ -3,6 +3,7 @@ JUnit version 4.11
 .testVisvsIllegalId
 .testVsetattrNullName2
 .testVinquireIllegalNEntriesArgument
+.testVnattrsIllegalId
 .testVgetnameIllegalArgument
 .testVfindclassNullClassName
 .testVattrinfoNullArgv
@@ -50,5 +51,5 @@ JUnit version 4.11
 
 Time:  XXXX
 
-OK (48 tests)
+OK (49 tests)
 
