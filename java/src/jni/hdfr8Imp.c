@@ -119,7 +119,7 @@ done:
     if (pal)
         UNPIN_BYTE_ARRAY(ENVONLY, palette, pal, (rval == FAIL) ? JNI_ABORT : 0);
     if (dat)
-        UNPIN_BYTE_ARRAY(ENVONLY, image, dat, (rval == FAIL) ? JNI_ABORT : 0);
+        UNPIN_ARRAY_CRITICAL(ENVONLY, image, dat, (rval == FAIL) ? JNI_ABORT : 0);
 
     return JNI_TRUE;
 }
