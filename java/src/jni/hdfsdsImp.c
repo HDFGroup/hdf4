@@ -1333,7 +1333,7 @@ Java_hdf_hdflib_HDFLibrary_SDwritedata(JNIEnv *env, jclass clss, jlong sdsid, ji
     if (stride != NULL)
         PIN_INT_ARRAY(ENVONLY, stride, strd, &isCopy, "SDwritedata:  stride not pinned");
 
-    if ((rval = SDwritedata(id, strt, strd, e, d)) == FAIL)
+    if ((rval = SDwritedata(id, strt, strd, e, (VOIDP)d)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:

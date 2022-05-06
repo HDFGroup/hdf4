@@ -34,9 +34,13 @@ endif ()
 
 # CMake version 3.14 added option --ignore-eol to compare files
 #     cmake -E compare_files --ignore-eol file1 file2
-#if(CMAKE_VERSION VERSION_LESS "3.14.0" AND WIN32)
-#    MESSAGE(FATAL_ERROR "Windows builds requires a minimum of CMake 3.14")
-#endif()
+set (CMAKE_IGNORE_EOL "--ignore-eol")
+if (CMAKE_VERSION VERSION_LESS "3.14.0")
+  set (CMAKE_IGNORE_EOL "")
+#  if (WIN32)
+#    message (FATAL_ERROR "Windows builds require a minimum of CMake 3.14")
+#  endif()
+endif ()
 
 #-----------------------------------------------------------------------------
 # Instructions for use : Sub-Project Build
@@ -393,12 +397,11 @@ INCLUDE_DIRECTORIES (${HDF4_INCLUDE_DIRECTORIES} )
 # Certain systems may add /Debug or /Release to output paths
 # and we need to call the executable from inside the CMake configuration
 #-----------------------------------------------------------------------------
-set (EXE_EXT "")
-if (WIN32 OR MINGW)
-  set (EXE_EXT ".exe")
-  add_definitions (-D_BIND_TO_CURRENT_VCLIBS_VERSION=1)
-  add_definitions (-D_CRT_SECURE_NO_WARNINGS)
-  add_definitions (-D_CONSOLE)
+if (WIN32)
+  add_compile_definitions (_CRT_SECURE_NO_WARNINGS)
+  if (MSVC)
+    add_compile_definitions (_BIND_TO_CURRENT_VCLIBS_VERSION=1 _CONSOLE)
+  endif ()
 endif ()
 
 if (MSVC)
@@ -408,7 +411,7 @@ if (MSVC)
 endif ()
 
 set (MAKE_SYSTEM)
-if (CMAKE_BUILD_TOOL MATCHES "make")
+if (CMAKE_MAKE_PROGRAM MATCHES "make")
   set (MAKE_SYSTEM 1)
 endif ()
 
