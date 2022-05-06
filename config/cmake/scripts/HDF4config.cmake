@@ -4,7 +4,7 @@
 ### ctest -S HDFconfig.cmake,BUILD_GENERATOR=VS201764 -C Release -VV -O hdf.log           ###
 #############################################################################################
 
-cmake_minimum_required (VERSION 3.10)
+cmake_minimum_required (VERSION 3.12)
 ############################################################################
 # Usage:
 #     ctest -S HDFconfig.cmake,OPTION=VALUE -C Release -VV -O test.log

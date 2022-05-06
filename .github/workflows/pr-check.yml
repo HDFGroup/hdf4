@@ -12,12 +12,22 @@ jobs:
     strategy:
 #      fail-fast: false
       matrix:
-#        name: ["Windows Latest MSVC", "Ubuntu Latest GCC", "Ubuntu Debug GCC", "macOS Latest Clang", "Ubuntu Autotools GCC"]
+#        name: ["Windows Latest MSVC", "Windows Previous MSVC", "Ubuntu Latest GCC", "Ubuntu Debug GCC", "macOS Latest Clang", "Ubuntu Autotools GCC"]
         name: ["Ubuntu Latest GCC", "Ubuntu Debug GCC", "Ubuntu Autotools GCC"]
         include:
 #          - name: "Windows Latest MSVC"
 #            artifact: "Windows-MSVC.tar.xz"
-#            os: windows-latest
+#            os: windows-2022
+#            build_type: "Release"
+#            toolchain: ""
+#            netcdf: ON
+#            java: ON
+#            fortran: OFF
+#            xdr: ON
+#            generator: "-G \"Visual Studio 17 2022\" -A x64"
+#          - name: "Windows Previous MSVC"
+#            artifact: "Windows-MSVC.tar.xz"
+#            os: windows-2019
 #            build_type: "Release"
 #            toolchain: ""
 #            netcdf: ON

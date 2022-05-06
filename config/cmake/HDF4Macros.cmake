@@ -46,5 +46,4 @@ macro (H4_SET_LIB_OPTIONS libtarget libname libtype)
       endif ()
     endif ()
   endif ()
-
 endmacro ()

@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.10)
+cmake_minimum_required (VERSION 3.12)
 project (HDF4_MFHDF_HREPACK)
 
 #INCLUDE_DIRECTORIES (${HDF4_SOURCE_DIR}/mfhdf/hdiff)

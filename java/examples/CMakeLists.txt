@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.10)
+cmake_minimum_required (VERSION 3.12)
 project (HDF4_JAVA_Examples Java)
 
 set (CMAKE_VERBOSE_MAKEFILE 1)
@@ -12,6 +12,8 @@ set (HDFJNI_EXAMPLES
     HDF4FileCreate
     HDF4GroupCreate
     HDF4DatasetCreate
+    VDWriteToVdata
+    VDReadFromVdata
 )
 
 if (WIN32 OR MINGW)
