@@ -50,7 +50,6 @@ static intn test_read_dim()
 {
     int32 fid, sds_id, status, dim1_id;
     int32 dim_sizes[H4_MAX_VAR_DIMS];        /* read dimensions */
-    intn  ii;
     int32 array_rank, num_type, attributes;
     char  dim_name[H4_MAX_NC_NAME], name[H4_MAX_NC_NAME];
     int32 size, dim_data_type, dim_num_attrs;
@@ -110,7 +109,7 @@ static intn test_read_dim()
 
     /* Close the file */
     status = SDend(fid);
-    CHECK(status, FAIL, "test_dimensions: SDend");
+    CHECK(status, FAIL, "SDend");
 
     } /* SDstart failed */
 

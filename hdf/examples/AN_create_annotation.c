@@ -11,9 +11,7 @@ int main( )
 {
    /************************* Variable declaration **************************/
 
-   intn   status_n;     /* returned status for functions returning an intn  */
-   int32  status_32,    /* returned status for functions returning an int32 */
-          file_id,      /* HDF file identifier */
+   int32  file_id,      /* HDF file identifier */
           an_id,        /* AN interface identifier */
           file_label_id,  /* file label identifier */
           file_desc_id,   /* file description identifier */
@@ -42,7 +40,7 @@ int main( )
    /*
    * Write the annotations to the file label.
    */
-   status_32 = ANwriteann (file_label_id, FILE_LABEL_TXT, 
+   ANwriteann (file_label_id, FILE_LABEL_TXT,
                           strlen (FILE_LABEL_TXT));
 
    /*
@@ -51,28 +49,28 @@ int main( )
    file_desc_id = ANcreatef (an_id, AN_FILE_DESC);
 
    /*
-   * Write the annotation to the file description.  
+   * Write the annotation to the file description.
    */
-   status_32 = ANwriteann (file_desc_id, FILE_DESC_TXT, 
+   ANwriteann (file_desc_id, FILE_DESC_TXT,
                           strlen (FILE_DESC_TXT));
 
    /*
-   * Create a vgroup in the V interface.  Note that the vgroup's ref number 
+   * Create a vgroup in the V interface.  Note that the vgroup's ref number
    * is set to -1 for creating and the access mode is "w" for writing.
    */
-   status_n = Vstart (file_id);
+   Vstart (file_id);
    vgroup_id = Vattach (file_id, -1, "w");
-   status_32 = Vsetname (vgroup_id, VG_NAME);
+   Vsetname (vgroup_id, VG_NAME);
 
    /*
    * Obtain the tag and ref number of the vgroup for subsequent
-   * references.  
+   * references.
    */
    vgroup_tag = (uint16) VQuerytag (vgroup_id);
    vgroup_ref = (uint16) VQueryref (vgroup_id);
 
    /*
-   * Create the data label for the vgroup identified by its tag 
+   * Create the data label for the vgroup identified by its tag
    * and ref number.
    */
    data_label_id = ANcreate (an_id, vgroup_tag, vgroup_ref, AN_DATA_LABEL);
@@ -80,11 +78,11 @@ int main( )
    /*
    * Write the annotation text to the data label.
    */
-   status_32 = ANwriteann (data_label_id, DATA_LABEL_TXT, 
+   ANwriteann (data_label_id, DATA_LABEL_TXT,
                           strlen (DATA_LABEL_TXT));
 
    /*
-   * Create the data description for the vgroup identified by its tag 
+   * Create the data description for the vgroup identified by its tag
    * and ref number.
    */
    data_desc_id = ANcreate (an_id, vgroup_tag, vgroup_ref, AN_DATA_DESC);
@@ -92,26 +90,26 @@ int main( )
    /*
    * Write the annotation text to the data description.
    */
-   status_32 = ANwriteann (data_desc_id, DATA_DESC_TXT, strlen (DATA_DESC_TXT));
+   ANwriteann (data_desc_id, DATA_DESC_TXT, strlen (DATA_DESC_TXT));
 
    /*
    * Teminate access to the vgroup and to the V interface.
    */
-   status_32 = Vdetach (vgroup_id);
-   status_n = Vend (file_id);
+   Vdetach (vgroup_id);
+   Vend (file_id);
 
    /*
    * Terminate access to each annotation explicitly.
    */
-   status_n = ANendaccess (file_label_id);
-   status_n = ANendaccess (file_desc_id);
-   status_n = ANendaccess (data_label_id);
-   status_n = ANendaccess (data_desc_id);
+   ANendaccess (file_label_id);
+   ANendaccess (file_desc_id);
+   ANendaccess (data_label_id);
+   ANendaccess (data_desc_id);
 
    /*
    * Terminate access to the AN interface and close the HDF file.
    */
-   status_32 = ANend (an_id);
-   status_n = Hclose (file_id);
+   ANend (an_id);
+   Hclose (file_id);
    return 0;
 }

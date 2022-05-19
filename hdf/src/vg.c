@@ -13,7 +13,7 @@
 
 
 /*
-FILE  
+FILE
      vg.c
      HDF vdata routines and some vgroup routines
 
@@ -39,15 +39,15 @@ EXPORTED ROUTINES
      VSisinternal   -- determines if a class name is for internal use only
      VSlone         -- returns an array of refs of all lone vdatas in the file
      Vlone          -- returns an array of refs of all lone vgroups in the file
-     Vfind          -- looks in the file for a vgroup with a given name 
+     Vfind          -- looks in the file for a vgroup with a given name
      VSfind         -- looks in the file for a vdata with a given name
-     Vfindclass     -- looks in the file and returns the ref of 
+     Vfindclass     -- looks in the file and returns the ref of
                        the vgroup with the specified class
-     VSfindclass    -- looks in the file and returns the ref of the vdata 
+     VSfindclass    -- looks in the file and returns the ref of the vdata
                        with specified class
      VSsetblocksize -- sets the block size of the linked-block element.
      VSsetnumblocks -- sets the number of blocks for a linked-block element.
-     VSgetblockinfo -- retrieves the block size and the number of blocks 
+     VSgetblockinfo -- retrieves the block size and the number of blocks
 		       of a linked-block element.
      Vsetzap        -- maintaind for back compatibility
 
@@ -80,16 +80,16 @@ PRIVATE int32 matchnocase
 #ifdef VDATA_FIELDS_ALL_UPPER
 /*-----------------------------------------------------------------
 NAME
-   matchnocase -  (PRIVATE) compares 2 strings, ignoring case 
+   matchnocase -  (PRIVATE) compares 2 strings, ignoring case
 
 DESCRIPTION
-   Private routine. 
+   Private routine.
 
 RETURNS
-   if strings match return TRUE, 
+   if strings match return TRUE,
    else FALSE
 --------------------------------------------------------------------*/
-PRIVATE int32 
+PRIVATE int32
 matchnocase(char *strx, /* IN: first string to be compared */
             char *stry  /* IN: second string to be compared */)
 {
@@ -120,10 +120,10 @@ DESCRIPTION
    Gets the number of elements in the specified vdata
 
 RETURNS
-   On success returns the number of elements in the VDATA vkey; 
+   On success returns the number of elements in the VDATA vkey;
    returns FAIL  on error.
 --------------------------------------------------------------------- */
-int32 
+int32
 VSelts(int32 vkey /* IN: vdata key */)
 {
     vsinstance_t *w = NULL;
@@ -148,7 +148,7 @@ VSelts(int32 vkey /* IN: vdata key */)
     ret_value = (vs->nvertices);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -165,10 +165,10 @@ DESCRIPTION
    Gets the interlace scheme for the specified vdata.
 
 RETURNS
-   On success returns the interlace scheme used in the fil) of the 
+   On success returns the interlace scheme used in the fil) of the
    specified vdata vkey.   returns FAIL on error.
 ----------------------------------------------------------------------- */
-int32 
+int32
 VSgetinterlace(int32 vkey /* IN: vdata key */)
 {
     vsinstance_t *w = NULL;
@@ -193,7 +193,7 @@ VSgetinterlace(int32 vkey /* IN: vdata key */)
     ret_value = ((int32) (vs->interlace));
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -213,7 +213,7 @@ DESCRIPTION
 RETURNS
    SUCCEED/FAIL
 --------------------------------------------------------------------*/
-intn 
+intn
 VSsetinterlace(int32 vkey,     /* IN: vdata key */
                int32 interlace /* IN: interlace for storing records */ )
 {
@@ -254,7 +254,7 @@ VSsetinterlace(int32 vkey,     /* IN: vdata key */
         ret_value = FAIL;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -272,10 +272,10 @@ DESCRIPTION
    the argument 'fields'. (e.g., "PX,PY").
 
 RETURNS
-   Returns FAIL on error, 
+   Returns FAIL on error,
    else the number of fields in the vdata.
 ----------------------------------------------------------------------*/
-int32 
+int32
 VSgetfields(int32 vkey,   /* IN: vdata key */
             char *fields  /* OUT: comman seperated field name list */)
 {
@@ -317,7 +317,7 @@ VSgetfields(int32 vkey,   /* IN: vdata key */
     ret_value = ((int32) vs->wlist.n);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -331,14 +331,14 @@ NAME
    VSfexist -- tests for existence of 1 or more fields in a vdata.
 
 DESCRIPTION
-   The argument 'fields' is a string of comma-separated fieldnames 
+   The argument 'fields' is a string of comma-separated fieldnames
    (e.g. "PX,PY,PZ") to check for in vdata.
 
-RETURNS 
-   Returns SUCCEED if all fields exist 
+RETURNS
+   Returns SUCCEED if all fields exist
    else otherwise FAIL is returned.
 --------------------------------------------------------------------*/
-intn 
+intn
 VSfexist(int32 vkey,  /* IN: vdata key */
          char *fields /* IN: names of fields to check for */)
 {
@@ -365,8 +365,8 @@ VSfexist(int32 vkey,  /* IN: vdata key */
     if (scanattrs(fields, &ac, &av) < 0)
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
 
-    /* get vdata itself and check it 
-       check also that more than one field in 'fields' */    
+    /* get vdata itself and check it
+       check also that more than one field in 'fields' */
     vs = wi->vs;
     if ((vs == NULL) || (ac < 1))
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -401,7 +401,7 @@ VSfexist(int32 vkey,  /* IN: vdata key */
     ret_value = TRUE;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -418,10 +418,10 @@ DESCRIPTION
    The size is the actual size for the local architecture
 
 RETURNS
-   The byte size of the field(s), positive integer, on success; 
+   The byte size of the field(s), positive integer, on success;
    otherwise, returns FAIL.
 ----------------------------------------------------------------- */
-int32 
+int32
 VSsizeof(int32 vkey,   /* IN vdata key */
          char *fields  /* IN: Name(s) of the fields to check size of */ )
 {
@@ -451,9 +451,9 @@ VSsizeof(int32 vkey,   /* IN vdata key */
     totalsize = 0;
     if (fields == NULL) /* default case? */
       {   /* count all field sizes in vdata */
-        for (j = 0; j < vs->wlist.n; j++)	
+        for (j = 0; j < vs->wlist.n; j++)
             totalsize += vs->wlist.esize[j];
-      }		
+      }
     else
       {  /* parse field string */
         if ((scanattrs(fields, &ac, &av) < 0) || (ac < 1))
@@ -461,7 +461,7 @@ VSsizeof(int32 vkey,   /* IN vdata key */
 
         for (i = 0; i < ac; i++)
           {   /* check fields in vs */
-            for (found = 0, j = 0; j < vs->wlist.n; j++)	
+            for (found = 0, j = 0; j < vs->wlist.n; j++)
                 if (!HDstrcmp(av[i], vs->wlist.name[j]))
                   {
                     totalsize += vs->wlist.esize[j];
@@ -478,7 +478,7 @@ VSsizeof(int32 vkey,   /* IN vdata key */
     ret_value = totalsize;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -487,17 +487,17 @@ done:
   return ret_value;
 }   /* VSsizeof */
 
-/*----------------------------------------------------------------- 
+/*-----------------------------------------------------------------
 NAME
-   VSdump - prints contents of a vdata (for debugging) 
+   VSdump - prints contents of a vdata (for debugging)
 
 DESCRIPTION
-    Prints contents of a vdata (for debugging) 
+    Prints contents of a vdata (for debugging)
 
 RETURNS
    No return codes.
 -------------------------------------------------------------------*/
-VOID 
+VOID
 VSdump(int32 vkey /* IN: vdata key */)
 {
     vkey = vkey;    /* suppress warning */
@@ -511,12 +511,12 @@ DESCRIPTION
    Truncates name to max length of VSNAMELENMAX
    If new name is longer than the current name set new_h_sz,
       so that VSdetach will delete the original vdata header
-      and write a new header. 
+      and write a new header.
 
 RETURNS
    SUCCEED/FAIL
 ----------------------------------------------------------*/
-int32 
+int32
 VSsetname(int32 vkey,        /* IN: Vdata key */
           const char *vsname /* IN: name to set for vdata*/)
 {
@@ -559,11 +559,11 @@ VSsetname(int32 vkey,        /* IN: Vdata key */
 
     vs->marked = TRUE; /* mark vdata as being modified */
 
-    if (curr_len < slen) 
+    if (curr_len < slen)
         vs->new_h_sz = TRUE; /* mark vdata header size being changed */
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -585,7 +585,7 @@ DESCRIPTION
 RETURNS
    SUCCEED/FAIL
 ----------------------------------------------------------*/
-int32 
+int32
 VSsetclass(int32 vkey,         /* IN: vdata key */
            const char *vsclass /* IN: class name to set for vdata */)
 {
@@ -631,7 +631,7 @@ VSsetclass(int32 vkey,         /* IN: vdata key */
         vs->new_h_sz = TRUE; /* mark vdata header size being changed */
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -640,9 +640,9 @@ done:
   return ret_value;
 }   /* VSsetclass */
 
-/*------------------------------------------------------ 
+/*------------------------------------------------------
 NAME
-   VSgetname - gets the vdata's name. 
+   VSgetname - gets the vdata's name.
 
 DESCRIPTION
    Get vdata's name and comy it to 'vsname'. Space for
@@ -651,7 +651,7 @@ DESCRIPTION
 RETURNS
    SUCCEED/FAIL
 ----------------------------------------------------------*/
-int32 
+int32
 VSgetname(int32 vkey,   /* IN: vdata key */
           char *vsname  /* OUT: vdata name (allocated by user)*/)
 {
@@ -681,7 +681,7 @@ VSgetname(int32 vkey,   /* IN: vdata key */
     HDstrcpy(vsname, vs->vsname);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -690,7 +690,7 @@ done:
   return ret_value;
 }   /* VSgetname */
 
-/*------------------------------------------------------ 
+/*------------------------------------------------------
 NAME
    VSgetclass - gets the vdata's class name.
 
@@ -701,7 +701,7 @@ DESCRIPTION
 RETURNS
    SUCCEED/FAIL
 ---------------------------------------------------------- */
-int32 
+int32
 VSgetclass(int32 vkey,    /* IN: vdata key */
            char *vsclass  /* OUT: class name for vdata (allocated by user) */ )
 {
@@ -731,7 +731,7 @@ VSgetclass(int32 vkey,    /* IN: vdata key */
     HDstrcpy(vsclass, vs->vsclass);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -740,7 +740,7 @@ done:
   return ret_value;
 }   /* VSgetclass */
 
-/* ------------------------------------------------------------------ 
+/* ------------------------------------------------------------------
 NAME
    VSinquire - gets info about a vdata vkey:
 
@@ -752,7 +752,7 @@ RETURNS
    SUCCEED/FAIL
 
 ------------------------------------------------------------------------*/
-intn 
+intn
 VSinquire(int32 vkey,       /* IN: vdata key */
           int32 *nelt,      /* OUT: number of elements in vdata */
           int32 *interlace, /* OUT: interlace scheme of vdata */
@@ -816,10 +816,10 @@ DESCRIPTION
    to 'asize' worth of refs.
 
 RETURNS
-   Returns FAIL if error else returns the total number of lone 
+   Returns FAIL if error else returns the total number of lone
    vdatas in the file.
 ---------------------------------------------------------------------*/
-int32 
+int32
 VSlone(HFILEID f,     /* IN: file id */
        int32 *idarray,/* OUT: array to return refs of lone vdatas? */
        int32 asize    /* IN: size of 'idarray' */)
@@ -864,7 +864,7 @@ VSlone(HFILEID f,     /* IN: file id */
       {
         if (lonevdata[i])
           { /* insert into idarray up till asize */
-            if (nlone < asize)  
+            if (nlone < asize)
                 idarray[nlone] = i; /* insert ref of vdata into idarray */
             nlone++;
           }
@@ -876,7 +876,7 @@ VSlone(HFILEID f,     /* IN: file id */
     ret_value = nlone; /* return the TOTAL # of lone vdatas */
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -885,7 +885,7 @@ done:
   return ret_value;
 }   /* VSlone */
 
-/*----------------------------------------------------------------- 
+/*-----------------------------------------------------------------
 NAME
    Vlone  - returns an array of refs of all lone vgroups in the file.
 
@@ -897,7 +897,7 @@ RETURNS
    Returns FAIL if error else returns the total number of lone
    vgroups in the file
 ---------------------------------------------------------------------*/
-int32 
+int32
 Vlone(HFILEID f,      /* IN: file id */
       int32 *idarray, /* OUT: array to return refs of lone vgroups? */
       int32 asize     /* IN: size of 'idarray' */)
@@ -943,7 +943,7 @@ Vlone(HFILEID f,      /* IN: file id */
       {
         if (lonevg[i])
           { /* insert into idarray up till asize */
-            if (nlone < asize)  
+            if (nlone < asize)
                 idarray[nlone] = i; /* insert ref of vgroup into idarray */
             nlone++;
           }
@@ -955,7 +955,7 @@ Vlone(HFILEID f,      /* IN: file id */
     ret_value = nlone; /* return the TOTAL # of lone vgroups */
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -964,20 +964,20 @@ done:
   return ret_value;
 }   /* Vlone */
 
-/* ----------------------------------------------------------------- 
+/* -----------------------------------------------------------------
 NAME
-   Vfind -- looks in the file and returns the ref of 
-            the vgroup with name vgname 
+   Vfind -- looks in the file and returns the ref of
+            the vgroup with name vgname
 
 DESCRIPTION
    Finds the vgroup with the specified name and returns the ref of
    the vgroup if successful.
 
 RETURNS
-   Returns 0 if not found or on error. Otherwise, returns the 
+   Returns 0 if not found or on error. Otherwise, returns the
    vgroup's ref (a positive integer).
 -----------------------------------------------------------------------*/
-int32 
+int32
 Vfind(HFILEID f,          /* IN: file id */
       const char *vgname  /* IN: name of vgroup to find */)
 {
@@ -1004,12 +1004,12 @@ Vfind(HFILEID f,          /* IN: file id */
 
         /* compare vgroup name to 'vgname' if it had been set */
 	if (vg->vgname != NULL)
-            if (!HDstrcmp(vgname, vg->vgname)) 
+            if (!HDstrcmp(vgname, vg->vgname))
                 HGOTO_DONE((int32)(vg->oref));  /* found the vgroup */
       }
 
 done:
-  if(ret_value == 0)   
+  if(ret_value == 0)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1020,18 +1020,18 @@ done:
 
 /*------------------------------------------------------------------
 NAME
-   VSfind -- looks in the file and returns the ref of the vdata 
-             with name vsname 
+   VSfind -- looks in the file and returns the ref of the vdata
+             with name vsname
 
 DESCRIPTION
    Finds the vdata with the specified name and returns the ref of
    the vdata if successfull.
 
 RETURNS
-   Returns 0 if not found, or on error. Otherwise, returns the vdata's 
+   Returns 0 if not found, or on error. Otherwise, returns the vdata's
    ref (a positive integer).
 ---------------------------------------------------------------------*/
-int32 
+int32
 VSfind(HFILEID f,          /* IN: file id */
        const char *vsname  /* IN: name of vdata to find */)
 {
@@ -1057,12 +1057,12 @@ VSfind(HFILEID f,          /* IN: file id */
             HGOTO_DONE(0);
 
         /* compare vdata name to 'vsname' if it had been set */
-        if (!HDstrcmp(vsname, vs->vsname)) 
+        if (!HDstrcmp(vsname, vs->vsname))
             HGOTO_DONE((int32)(vs->oref));  /* found the vdata */
       }
 
 done:
-  if(ret_value == 0)   
+  if(ret_value == 0)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1071,20 +1071,20 @@ done:
   return ret_value;
 }   /* VSfind */
 
-/* ----------------------------------------------------------------- 
+/* -----------------------------------------------------------------
 NAME
-   Vfindclass -- looks in the file and returns the ref of 
-                 the vgroup with class vgclass 
+   Vfindclass -- looks in the file and returns the ref of
+                 the vgroup with class vgclass
 
 DESCRIPTION
    Finds the vgroup with the specified class and returns the ref
    of the vgroup if successful.
 
 RETURNS
-   Returns 0 if not found, or error. Otherwise, returns the 
+   Returns 0 if not found, or error. Otherwise, returns the
    vgroup's ref (a positive integer).
 -----------------------------------------------------------------------*/
-int32 
+int32
 Vfindclass(HFILEID f,           /* IN: file id */
            const char *vgclass  /* IN: class of vgroup to find */)
 {
@@ -1113,34 +1113,34 @@ Vfindclass(HFILEID f,           /* IN: file id */
 
         /* compare vgroup class to 'vgclass' if it had been set */
 	if (vg->vgclass != NULL)
-	    if (!HDstrcmp(vgclass, vg->vgclass)) 
+	    if (!HDstrcmp(vgclass, vg->vgclass))
 		HGOTO_DONE((int32)(vg->oref));  /* found the vgroup */
       }
 
 done:
-  if(ret_value == 0)   
+  if(ret_value == 0)
     { /* Error condition cleanup */
 
     } /* end if */
 
   /* Normal function cleanup */
-  return ret_value;    
+  return ret_value;
 }	/* Vfindclass */
 
 /*------------------------------------------------------------------
 NAME
-   VSfindclass -- looks in the file and returns the ref of the vdata 
-                  with class vsclass 
+   VSfindclass -- looks in the file and returns the ref of the vdata
+                  with class vsclass
 
 DESCRIPTION
-   Finds the vdata with the specified class and returns the ref of 
+   Finds the vdata with the specified class and returns the ref of
    the vdata if successful.
 
 RETURNS
-   Returns 0 if not found, or error. Otherwise, returns the vdata's 
+   Returns 0 if not found, or error. Otherwise, returns the vdata's
    ref (a positive integer).
 ---------------------------------------------------------------------*/
-int32 
+int32
 VSfindclass(HFILEID f,           /* IN: file id */
             const char *vsclass  /* IN: class of vdata to find */)
 {
@@ -1166,12 +1166,12 @@ VSfindclass(HFILEID f,           /* IN: file id */
             HGOTO_DONE(0);
 
         /* compare vdata class to 'vsclass' if it had been set */
-        if (!HDstrcmp(vsclass, vs->vsclass)) 
+        if (!HDstrcmp(vsclass, vs->vsclass))
             HGOTO_DONE((int32)(vs->oref));  /* found the vdata */
       }
 
 done:
-  if(ret_value == 0)   
+  if(ret_value == 0)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1180,14 +1180,14 @@ done:
   return ret_value;
 }   /* VSfindclass */
 
-/* ----------------------------------------------------------------- 
+/* -----------------------------------------------------------------
 NAME
    VSsetblocksize -- sets the block size of the linked-block element.
 
 DESCRIPTION
-   Sets the size of the blocks, that are after the first block, of a 
-   linked-block element used for storing a vdata.  This routine is 
-   to be called before the first write to the vdata to change the block 
+   Sets the size of the blocks, that are after the first block, of a
+   linked-block element used for storing a vdata.  This routine is
+   to be called before the first write to the vdata to change the block
    size from the default value HDF_APPENDABLE_BLOCK_LEN (4096).  Once the
    linked-block element is created, the block size cannot be changed.
 
@@ -1237,7 +1237,7 @@ done:
   return ret_value;
 }       /* VSsetblocksize */
 
-/* ----------------------------------------------------------------- 
+/* -----------------------------------------------------------------
 NAME
    VSsetnumblocks -- sets the number of blocks for a linked-block element.
 
@@ -1294,9 +1294,9 @@ done:
   return ret_value;
 }       /* VSsetnumblocks */
 
-/* ----------------------------------------------------------------- 
+/* -----------------------------------------------------------------
 NAME
-   VSgetblockinfo -- retrieves the block size and the number of blocks 
+   VSgetblockinfo -- retrieves the block size and the number of blocks
 		     of a linked-block element.
 
 DESCRIPTION
@@ -1402,7 +1402,7 @@ DESCRIPTION
     When refarray argument is NULL, VSofclass will return the actual number
     of vdatas that meet the search criteria without further processing.  This
     allows application to find out the size of the array for proper allocation.
-   
+
 RETURNS
     Returns
 	- 0 if none is found, or
@@ -1558,7 +1558,7 @@ DESCRIPTION
     When refarray argument is NULL, VSIgetvdatas will return the actual number
     of user-created vdatas without further processing.  This allows application
     to find out the size of the array for proper allocation.
-   
+
 RETURNS
     The number of user-created vdatas if successful and FAIL, otherwise.
     BMR - 2010/07/10
@@ -1591,109 +1591,98 @@ VSIgetvdatas(int32 id,		 /* IN: file id or vgroup id */
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* If given id is a file id */
-    if (id_type == FIDGROUP)
-    {
+    if (id_type == FIDGROUP) {
         /* get vdata file record */
         if (NULL == (vf = Get_vfile(id)))
             HGOTO_ERROR(DFE_FNF, FAIL);
 
-	/* Look through all vdatas, searching for user-created vdatas until
-	   no more vdatas in the file or the number of vdatas to be
-	   retrieved is reached */
-	nactual_vds = 0;/* number of user-created vdatas to be retrieved */
-	nfound_vds = 0;	/* number of user-created vdatas */
-	vs_ref = VSgetid(id, -1);  /* get ref number of first vd in the file */
-	while ((vs_ref != FAIL)	   /* there are more vdatas */
-		&& ((nactual_vds < n_vds) || (n_vds == 0))
-		&& (nactual_vds <= nfound_vds))
-	{
-	    intn found = FALSE;
+        /* Look through all vdatas, searching for user-created vdatas until
+         no more vdatas in the file or the number of vdatas to be
+         retrieved is reached */
+        nactual_vds = 0;/* number of user-created vdatas to be retrieved */
+        nfound_vds = 0; /* number of user-created vdatas */
+        vs_ref = VSgetid(id, -1); /* get ref number of first vd in the file */
+        while ((vs_ref != FAIL) /* there are more vdatas */
+        && ((nactual_vds < n_vds) || (n_vds == 0)) && (nactual_vds <= nfound_vds)) {
+            intn found = FALSE;
 
-	    /* Check if the vdata either has the specified class (when vsclass
-	       is !NULL) or is a user-created vdata (when vsclass is NULL) */
-	    found = vscheckclass(id, (uint16)vs_ref, vsclass);
+            /* Check if the vdata either has the specified class (when vsclass
+             is !NULL) or is a user-created vdata (when vsclass is NULL) */
+            found = vscheckclass(id, (uint16) vs_ref, vsclass);
 
             /* If this vs met the search criteria, record its ref# according to
-               caller's specifying of where to start and how many to retrieve */
-            if (found)
-            {
+             caller's specifying of where to start and how many to retrieve */
+            if (found) {
                 /* make sure to count only from vdata number start_vd */
                 if (nfound_vds >= start_vd)
                     /* if caller requests for reference numbers */
-                    if (refarray != NULL)
-                    {
-                        refarray[nactual_vds] = (uint16)vs_ref;
+                    if (refarray != NULL) {
+                        refarray[nactual_vds] = (uint16) vs_ref;
 
                         /* increment the actual number of user-created vds
-                           to be retrieved */
+                         to be retrieved */
                         nactual_vds++;
                     }
-                    /* increment the number of user-created vds */
-                    nfound_vds++;
-                }
-	    /* Move forward to the next vdata in the file */
-	    vs_ref = VSgetid(id, vs_ref);
-	} /* while more vdatas in file */
+                /* increment the number of user-created vds */
+                nfound_vds++;
+            }
+            /* Move forward to the next vdata in the file */
+            vs_ref = VSgetid(id, vs_ref);
+        } /* while more vdatas in file */
     } /* file id is given */
 
     /* check if given id is a vgroup id */
-    else if (id_type == VGIDGROUP)
-    { /* vgroup id is given */
+    else if (id_type == VGIDGROUP) { /* vgroup id is given */
 
-	/* get the number of sub-vdatas belong to this vgroup */
-	int32 n_elements = Vntagrefs(id);
-	if (n_elements == FAIL)
-	    HGOTO_ERROR(DFE_GENAPP, FAIL);
+        /* get the number of sub-vdatas belong to this vgroup */
+        int32 n_elements = Vntagrefs(id);
+        if (n_elements == FAIL)
+            HGOTO_ERROR(DFE_GENAPP, FAIL);
 
-	/* get instance of vgroup */
-	if (NULL == (vg_inst = (vginstance_t *) HAatom_object(id)))
-	    HGOTO_ERROR(DFE_NOVS, FAIL);
+        /* get instance of vgroup */
+        if (NULL == (vg_inst = (vginstance_t*) HAatom_object(id)))
+            HGOTO_ERROR(DFE_NOVS, FAIL);
 
-	/* get vgroup itself and check */
-	vg = vg_inst->vg;
-	if (vg == NULL)
-	    HGOTO_ERROR(DFE_BADPTR, FAIL);
+        /* get vgroup itself and check */
+        vg = vg_inst->vg;
+        if (vg == NULL)
+            HGOTO_ERROR(DFE_BADPTR, FAIL);
 
         /* get vdata file record */
         if (NULL == (vf = Get_vfile(vg->f)))
             HGOTO_ERROR(DFE_FNF, FAIL);
 
-	/* Go through the tag list vg->tag and find user-created vdatas, until
-	   no more sub-vdatas or the number of vdatas to be retrieved is
-	   reached */
-	nactual_vds = 0;/* number of user-created vdatas to be retrieved */
-	nfound_vds = 0;	/* number of user-created vdatas */
-        for (ii = 0; ii < n_elements && ((nactual_vds < n_vds) || (n_vds == 0))
-			&& nactual_vds <= nfound_vds; ii++)
-        {
-	    /* If an element is a vdata, then get access to it */
-            if (vg->tag[ii] == DFTAG_VH)
-	    {
-	        intn found = FALSE;
+        /* Go through the tag list vg->tag and find user-created vdatas, until
+         no more sub-vdatas or the number of vdatas to be retrieved is
+         reached */
+        nactual_vds = 0;/* number of user-created vdatas to be retrieved */
+        nfound_vds = 0; /* number of user-created vdatas */
+        for (ii = 0; ii < n_elements && ((nactual_vds < n_vds) || (n_vds == 0)) && nactual_vds <= nfound_vds; ii++) {
+            /* If an element is a vdata, then get access to it */
+            if (vg->tag[ii] == DFTAG_VH) {
+                intn found = FALSE;
 
-	        found = vscheckclass((int32)vg->f, vg->ref[ii], vsclass);
+                found = vscheckclass((int32) vg->f, vg->ref[ii], vsclass);
 
                 /* If this vdata met the search criteria, record its ref#
-                   according to caller's specification of where to start and
-                   how many to retrieve */
-                if (found)
-		{
-		    /* Make sure to count only from vdata number start_vd */
-		    if (nfound_vds >= start_vd)
-			/* If caller requests for reference numbers */
-			if (refarray != NULL)
-			{
-			    refarray[nactual_vds] = (uint16)vg->ref[ii];
+                 according to caller's specification of where to start and
+                 how many to retrieve */
+                if (found) {
+                    /* Make sure to count only from vdata number start_vd */
+                    if (nfound_vds >= start_vd)
+                        /* If caller requests for reference numbers */
+                        if (refarray != NULL) {
+                            refarray[nactual_vds] = (uint16) vg->ref[ii];
 
-			    /* Increment the actual number of vdatas to be
-			       retrieved */
-			    nactual_vds++;
-			}
+                            /* Increment the actual number of vdatas to be
+                             retrieved */
+                            nactual_vds++;
+                        }
 
-		    /* Increment number of vds that meet the search criteria */
-		    nfound_vds++;
-		}
-	    } /* this sub element is a vdata */
+                    /* Increment number of vds that meet the search criteria */
+                    nfound_vds++;
+                }
+            } /* this sub element is a vdata */
         } /* for */
     } /* vgroup id is given */
 
@@ -1702,12 +1691,12 @@ VSIgetvdatas(int32 id,		 /* IN: file id or vgroup id */
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* If caller is asking for the number of vdatas only, return the
-	number of user-created vdatas, otherwise, return the number of
-	vdatas that are actually stored in refarray */
+     number of user-created vdatas, otherwise, return the number of
+     vdatas that are actually stored in refarray */
     if (refarray == NULL)
-	ret_value = nfound_vds - start_vd;
+        ret_value = nfound_vds - start_vd;
     else
-	ret_value = nactual_vds;
+        ret_value = nactual_vds;
 
 done:
   if(ret_value == FAIL)
@@ -1744,7 +1733,7 @@ DESCRIPTION
     When refarray argument is NULL, VSgetvdatas will return the actual number
     of user-created vdatas without further processing.  This allows application
     to find out the size of the array for proper allocation.
-   
+
 RETURNS
     The number of user-created vdatas if successful and FAIL, otherwise.
     -BMR - 2010/07/10
@@ -1786,7 +1775,7 @@ done:
 /*
  * Vsetzap: Useless now. Maintained for back compatibility.
  */
-VOID 
+VOID
 Vsetzap(void)
 {
 }

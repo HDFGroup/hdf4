@@ -3,7 +3,7 @@
 #define  FILE_NAME       "General_RImages.hdf"
 #define  RI_ATTR_NAME    "Image Attribute 2"
 
-int main( ) 
+int main( )
 {
    /************************* Variable declaration **************************/
 
@@ -17,7 +17,7 @@ int main( )
           n_rimages,       /* number of raster images in the file */
           n_file_attrs;    /* number of file attributes */
    char   attr_name[H4_MAX_GR_NAME];  /* buffer to hold the attribute name     */
-   VOIDP  data_buf;                /* buffer to hold the attribute values   */
+   VOIDP  data_buf = NULL;            /* buffer to hold the attribute values   */
    int16 *int_ptr;      /* int16 pointer to point to a void data buffer     */
    char8 *char_ptr;     /* char8 pointer to point to a void data buffer     */
 
@@ -44,14 +44,14 @@ int main( )
          /*
          * Get information about the current file attribute.
          */
-         status = GRattrinfo (gr_id, f_att_index, attr_name, &data_type, 
+         status = GRattrinfo (gr_id, f_att_index, attr_name, &data_type,
                               &n_values);
 
          /*
          * Allocate a buffer to hold the file attribute data.  In this example,
-         * knowledge about the data type is assumed to be available from 
+         * knowledge about the data type is assumed to be available from
          * the previous example for simplicity.  In reality, the size
-         * of the type must be determined based on the machine where the 
+         * of the type must be determined based on the machine where the
          * program resides.
          */
          if (data_type == DFNT_CHAR8)
@@ -107,7 +107,7 @@ int main( )
    /*
    * Allocate a buffer to hold the file attribute data.  As mentioned above,
    * knowledge about the data type is assumed to be available from
-   * the previous example for simplicity.  In reality, the size of the 
+   * the previous example for simplicity.  In reality, the size of the
    * type must be determined based on the machine where the program resides.
    */
    if (data_type == DFNT_INT16)

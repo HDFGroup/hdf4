@@ -6,9 +6,7 @@ int main( )
 {
    /************************* Variable declaration **************************/
 
-   intn  status_n;      /* returned status for functions returning an intn  */
-   int32 status_32,     /* returned status for functions returning an int32 */
-         file_id,       /* HDF file identifier */
+   int32 file_id,       /* HDF file identifier */
          an_id,         /* AN interface identifier */
          ann_id,        /* an annotation identifier */
          index,         /* position of an annotation in all of the same type*/
@@ -32,7 +30,7 @@ int main( )
    * Get the annotation information, e.g., the numbers of file labels, file
    * descriptions, data labels, and data descriptions.
    */
-   status_n = ANfileinfo (an_id, &n_file_labels, &n_file_descs,
+   ANfileinfo (an_id, &n_file_labels, &n_file_descs,
                         &n_data_labels, &n_data_descs);
 
    /*
@@ -64,18 +62,18 @@ int main( )
       * Read and display the data label.  Note that the size of the buffer,
       * i.e., the third parameter, is 1 character more than the length of
       * the data label; that is for the null character.  It is not the case
-      * when a description is retrieved because the description does not 
+      * when a description is retrieved because the description does not
       * necessarily end with a null character.
-      * 
+      *
       */
-      status_32 = ANreadann (ann_id, ann_buf, ann_length+1);
+      ANreadann (ann_id, ann_buf, ann_length+1);
       printf ("Data label index: %d\n", index);
       printf ("Data label contents: %s\n", ann_buf);
 
       /*
       * Terminate access to the current data label.
       */
-      status_n = ANendaccess (ann_id);
+      ANendaccess (ann_id);
 
       /*
       * Free the space allocated for the annotation buffer.
@@ -86,7 +84,7 @@ int main( )
    /*
    * Terminate access to the AN interface and close the HDF file.
    */
-   status_32 = ANend (an_id);
-   status_n = Hclose (file_id);
+   ANend (an_id);
+   Hclose (file_id);
    return 0;
 }

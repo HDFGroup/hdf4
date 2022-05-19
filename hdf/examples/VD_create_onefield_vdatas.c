@@ -1,4 +1,4 @@
-#include "hdf.h" 
+#include "hdf.h"
 
 #define  FILE_NAME      "General_Vdatas.hdf"
 #define  CLASS1_NAME    "5x1 Array"
@@ -16,9 +16,7 @@ int main( )
 {
    /************************* Variable declaration **************************/
 
-   intn  status_n;      /* returned status for functions returning an intn  */
-   int32 status_32;     /* returned status for functions returning an int32 */
-   int32 file_id, vdata1_ref, vdata2_ref; 
+   int32 file_id;
 
    /*
    * Define an array to buffer the data of the first vdata.
@@ -42,27 +40,27 @@ int main( )
    /*
    * Initialize the VS interface.
    */
-   status_n = Vstart (file_id);
-    
+   Vstart (file_id);
+
    /*
-   * Create the first vdata and populate it with data from the vdata1_buf 
-   * array. Note that the buffer vdata1_buf is cast to (uint8 *) for the 
+   * Create the first vdata and populate it with data from the vdata1_buf
+   * array. Note that the buffer vdata1_buf is cast to (uint8 *) for the
    * benefit of generic data type.
    */
-   vdata1_ref = VHstoredata (file_id, FIELD1_NAME, (uint8 *)vdata1_buf, 
-                       N_RECORDS_1, DFNT_CHAR8, VDATA1_NAME, CLASS1_NAME); 
+   VHstoredata (file_id, FIELD1_NAME, (uint8 *)vdata1_buf,
+                       N_RECORDS_1, DFNT_CHAR8, VDATA1_NAME, CLASS1_NAME);
 
-   /* 
-   * Create the second vdata and populate it with data from the vdata2_buf 
-   * array. 
+   /*
+   * Create the second vdata and populate it with data from the vdata2_buf
+   * array.
    */
-   vdata2_ref = VHstoredatam (file_id, FIELD2_NAME, (uint8 *)vdata2_buf, 
-               N_RECORDS_2, DFNT_INT32, VDATA2_NAME, CLASS2_NAME, ORDER_2); 
+   VHstoredatam (file_id, FIELD2_NAME, (uint8 *)vdata2_buf,
+               N_RECORDS_2, DFNT_INT32, VDATA2_NAME, CLASS2_NAME, ORDER_2);
 
-   /* 
+   /*
    * Terminate access to the VS interface and close the HDF file.
    */
-   status_n = Vend (file_id);
-   status_32 = Hclose (file_id);
+   Vend (file_id);
+   Hclose (file_id);
    return 0;
 }

@@ -9,7 +9,6 @@ int main()
    /************************* Variable declaration **************************/
 
    int32 sd_id, sds_id, sds_index;
-   intn  status;
    int32 start[2], edges[2];
    int32 data[Y_LENGTH][X_LENGTH];
    int   i, j;
@@ -31,11 +30,11 @@ int main()
 
    /*
    * Attach to the first data set.
-   */ 
+   */
    sds_index = 0;
    sds_id = SDselect (sd_id, sds_index);
 
-   /* 
+   /*
    * Define the location and size of the data to be written to the data set.
    */
    start[0] = 0;
@@ -47,19 +46,19 @@ int main()
    * Write the stored data to the data set. The third argument is set to NULL
    * to specify contiguous data elements. The last argument must
    * be explicitly cast to a generic pointer since SDwritedata is designed
-   * to write generic data. 
+   * to write generic data.
    */
-   status = SDwritedata (sds_id, start, NULL, edges, (VOIDP)data);
+   SDwritedata (sds_id, start, NULL, edges, (VOIDP)data);
 
    /*
    * Terminate access to the data set.
    */
-   status = SDendaccess (sds_id);
+   SDendaccess (sds_id);
 
    /*
    * Terminate access to the SD interface and close the file.
    */
-   status = SDend (sd_id);
+   SDend (sd_id);
 
    return 0;
 }

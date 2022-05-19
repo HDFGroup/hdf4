@@ -119,7 +119,7 @@ vg_info_t* free_node_vg_info_t(
 }  /* end of free_node_vg_info_t */
 
 /* free_struct_list use HDfree to free the list of vgroup info structs */
-vg_info_t ** free_vginfo_list( 
+vg_info_t ** free_vginfo_list(
 		vg_info_t **nodelist,
 		int32 num_items )
 {
@@ -141,7 +141,7 @@ vg_info_t ** free_vginfo_list(
 }  /* end of free_vginfo_list */
 
 /* free_struct_list use HDfree to free the list of vgroup info structs */
-obj_chosen_t ** free_node_obj_chosen_t( 
+obj_chosen_t ** free_node_obj_chosen_t(
 		obj_chosen_t *aNode)
 {
    if( aNode != NULL )
@@ -161,7 +161,7 @@ obj_chosen_t ** free_node_obj_chosen_t(
 }  /* end of free_node_obj_chosen_t */
 
 /* free_struct_list use HDfree to free the list of vgroup info structs */
-void free_obj_chosen_t_list( 
+void free_obj_chosen_t_list(
 		obj_chosen_t **nodelist,
 		int32 num_items )
 {
@@ -211,7 +211,7 @@ int32* free_num_list( int32 *num_list )
    return( NULL );
 }  /* end of free_num_list */
 
-void 
+void
 free_file_list(filelist_t * f_list)
 {
     intn        i;
@@ -367,7 +367,7 @@ get_next_group(groupinfo_t * g_list, intn advance)
     return (&g_list->dd_arr[g_list->curr_dd]);
 }	/* end get_next_group() */
 
-int32 
+int32
 get_group_max(groupinfo_t * g_list)
 {
     if (g_list != NULL)
@@ -375,13 +375,13 @@ get_group_max(groupinfo_t * g_list)
     return (FAIL);
 }	/* end get_group_max() */
 
-void 
+void
 free_group_list(groupinfo_t * g_list)
 {
    if( g_list != NULL )
    {
       if( g_list->dd_arr != NULL )
-         HDfree(g_list->dd_arr); 
+         HDfree(g_list->dd_arr);
       HDfree(g_list);
    }
 }	/* end free_group_list() */
@@ -430,7 +430,7 @@ make_obj_list(int32 fid, uint32 options)
    HDmemset(obj_ret->raw_obj_arr, 0, sizeof(objinfo_t) * nobj);
 
    /*
-    * Read all the tag/ref's in the file into an array 
+    * Read all the tag/ref's in the file into an array
    */
    /* start the reading of an access element */
    aid = Hstartread(fid, DFTAG_WILDCARD, DFREF_WILDCARD);
@@ -459,7 +459,7 @@ make_obj_list(int32 fid, uint32 options)
                         }	/* end if */
             else
             {	/* copy over special information we found */
-               obj_ret->raw_obj_arr[n].spec_info = (sp_info_block_t *) HDmalloc(sizeof(sp_info_block_t)); 
+               obj_ret->raw_obj_arr[n].spec_info = (sp_info_block_t *) HDmalloc(sizeof(sp_info_block_t));
                if( obj_ret->raw_obj_arr[n].spec_info == NULL)
                {
                    fprintf(stderr, "make_obj_list: space allocation failed\n");
@@ -516,7 +516,7 @@ make_obj_list(int32 fid, uint32 options)
 /*
                HDfree(obj_ret->raw_obj_arr);
                HDfree(obj_ret);
-               return (NULL); 
+               return (NULL);
 */
             }	/* end if */
          }		/* end if */
@@ -557,7 +557,7 @@ objinfo_t* get_next_obj(
    return( o_list->srt_obj_arr[o_list->curr_obj] );
 }	/* end get_next_obj() */
 
-objinfo_t* goto_nth_obj( 
+objinfo_t* goto_nth_obj(
 		objlist_t * o_list, intn n )
 {
    if( n >= 0 && n < o_list->max_obj )
@@ -565,14 +565,14 @@ objinfo_t* goto_nth_obj(
    return( o_list->srt_obj_arr[o_list->curr_obj] );
 }  /* end goto_nth_obj() */
 
-void reset_obj_list( 
+void reset_obj_list(
 		objlist_t * o_list )
 {
    if( o_list != NULL )
       o_list->curr_obj = 0;
 }  /* end reset_obj_list() */
 
-void free_obj_list( 
+void free_obj_list(
 		objlist_t * o_list )
 {
    intn        i;	/* local counting variable */
@@ -580,12 +580,12 @@ void free_obj_list(
 
    /* BMR: verify that o_list is not nil before accessing */
    if( o_list != NULL )
-   { 
-      for (i = 0, obj_ptr = o_list->raw_obj_arr; i < o_list->max_obj; 
+   {
+      for (i = 0, obj_ptr = o_list->raw_obj_arr; i < o_list->max_obj;
 							i++, obj_ptr++)
       {
-         /* group_info can be NULL while is_group is set, how to handle 
-	    this one??? BMR 8/1/2000 
+         /* group_info can be NULL while is_group is set, how to handle
+	    this one??? BMR 8/1/2000
 	    if( obj_ptr->is_group && obj_ptr->group_info != NULL ) */
          if( obj_ptr->is_group )
             free_group_list( obj_ptr->group_info );
@@ -616,7 +616,7 @@ int sort_obj_list_by_tag(const void *p1, const void *p2)
    return (0);
 }	/* end sort_obj_info_by_tag() */
 
-#if 0 /* No longer possible since objects can have more than one label 
+#if 0 /* No longer possible since objects can have more than one label
        * -GV 6/12/97 */
 int sort_obj_list_by_name(const void *p1, const void *p2)
 {
@@ -645,7 +645,7 @@ void sort_obj_list(objlist_t * o_list, sort_t sort_type)
 {
    switch (sort_type)
    {
-#if 0 /* No longer possible since objects can have more than one label 
+#if 0 /* No longer possible since objects can have more than one label
        * -GV 6/12/97 */
       case ONAME:	/* sort by name order */
           qsort(o_list->srt_obj_arr, o_list->max_obj, sizeof(objinfo_t *), sort_obj_list_by_name);
@@ -681,7 +681,7 @@ void sort(int32 *chosen, int32 choices)
 }
 
 /* resetBuff frees the passed-in pointer and resets it to NULL,
-   if it is not NULL.  Its purpose is to make cleaning up simpler 
+   if it is not NULL.  Its purpose is to make cleaning up simpler
    throughout the entire dumper */
 void resetBuff( VOIDP *ptr )
 {
@@ -692,14 +692,14 @@ void resetBuff( VOIDP *ptr )
    }
 }
 
-/* parse_number_opts take a list of numbers separated by commas then 
+/* parse_number_opts take a list of numbers separated by commas then
    retrieves the numbers and stores them in the structure provided by
    the caller.  This routine is used by all the routines
    parse_dumpxx_opts to parse the index or ref list that accompanies
    option -i or -r */
 void
 parse_number_opts( char *argv[],
-                   int *curr_arg, 
+                   int *curr_arg,
                    number_filter_t *filter)
 {
    int32 numItems = 0, i;
@@ -707,7 +707,7 @@ parse_number_opts( char *argv[],
    char *ptr = NULL;
    int32 *newlist;
 
-   /* put a temp ptr at the beginning of the given list of numbers, 
+   /* put a temp ptr at the beginning of the given list of numbers,
       separated by commas, for example, 1,2,3 */
    ptr = argv[*curr_arg];
 
@@ -772,14 +772,14 @@ parse_number_opts( char *argv[],
    filter->num_items = numItems;   /* save the number of items */
 }  /* parse_number_opts */
 
-/* parse_string_opts take a list of strings separated by commas then 
+/* parse_string_opts take a list of strings separated by commas then
    retrieves the strings and stores them in the structure provided by
-   the caller.  This routine is used by all the routines 
+   the caller.  This routine is used by all the routines
    parse_dumpxx_opts to parse the name or class list that accompanies
    option -n or -c */
 void
 parse_string_opts( char *argv[],
-                   int *curr_arg, 
+                   int *curr_arg,
                    char_filter_t *filter)
 {
    int32 numItems = 0, i;
@@ -841,7 +841,7 @@ void init_obj_chosen_node(obj_chosen_t *aNode)
 }
 
 void parse_value_opts( char *argv[],
-                   int *curr_arg, 
+                   int *curr_arg,
                    dump_info_t **dump_opts,
 		   info_type_t info_type)
 {
@@ -850,7 +850,7 @@ void parse_value_opts( char *argv[],
    char *ptr = NULL;
    obj_chosen_t *newlist;
 
-   /* put a temp ptr at the beginning of the given list of numbers, 
+   /* put a temp ptr at the beginning of the given list of numbers,
       separated by commas, for example, 1,2,3 */
    ptr = argv[*curr_arg];
 
@@ -874,7 +874,7 @@ void parse_value_opts( char *argv[],
    {
 	/* Update number of chosen SDSs so far */
 	numItems = numItems + (*dump_opts)->num_chosen;
- 
+
         /* Allocate a new list */
         newlist = (obj_chosen_t *) HDmalloc(sizeof(obj_chosen_t) * numItems);
 	CHECK_ALLOC(newlist, "newlist", "parse_value_opts" );
@@ -939,7 +939,7 @@ void parse_value_opts( char *argv[],
 
 	  default:
 	  /* shouldn't be anything else */
-	    fprintf(stderr, "Calling function passed in incorrect info_type_t: %%d\n", info_type);
+	    fprintf(stderr, "Calling function passed in incorrect info_type_t: %d\n", info_type);
 	    exit(1);
 	    break;
 	} /* end of switch */
@@ -953,7 +953,7 @@ void parse_value_opts( char *argv[],
 /* validate_pos makes sure that number is > 0 so we are not going to
    allocate 0 elements
    This routine is replaced by the macro called CHECK_POS just because
-   the error checkings are being done that way! 7/27/00 
+   the error checkings are being done that way! 7/27/00
 */
 
 /* if there are any specific datasets requested, alloc_index_list

@@ -10,9 +10,7 @@ int main()
 {
    /************************* Variable declaration **************************/
 
-   intn   status_n;     /* returned status for functions returning an intn  */
-   int32  status_32,    /* returned status for functions returning an int32 */
-          sd_id,        /* SD interface identifier */
+   int32  sd_id,        /* SD interface identifier */
           sds_id,       /* data set identifier */
           sds_ref,      /* reference number of the data set */
           dim_sizes[1], /* dimension of the data set - only one */
@@ -30,7 +28,7 @@ int main()
    /*
    * Initialize the V interface.
    */
-   status_n = Vstart (file_id);
+   Vstart (file_id);
 
    /*
    * Initialize the SD interface.
@@ -51,8 +49,8 @@ int main()
    * Create a vgroup and set its name and class.
    */
    vgroup_id = Vattach (file_id, -1, "w");
-   status_32 = Vsetname (vgroup_id, VG_NAME);
-   status_32 = Vsetclass (vgroup_id, VG_CLASS);
+   Vsetname (vgroup_id, VG_NAME);
+   Vsetclass (vgroup_id, VG_CLASS);
 
    /*
    * Obtain the reference number of the SDS using its identifier.
@@ -63,20 +61,20 @@ int main()
    * Add the SDS to the vgroup.  Note: the tag DFTAG_NDG is used
    * when adding an SDS.  Refer to Appendix A for the entire list of tags.
    */
-   status_32 = Vaddtagref (vgroup_id, DFTAG_NDG, sds_ref);
+   Vaddtagref (vgroup_id, DFTAG_NDG, sds_ref);
 
    /*
    * Terminate access to the SDS and to the SD interface.
    */
-   status_n = SDendaccess (sds_id);
-   status_n = SDend (sd_id);
+   SDendaccess (sds_id);
+   SDend (sd_id);
 
    /*
-   * Terminate access to the vgroup and to the V interface, and 
+   * Terminate access to the vgroup and to the V interface, and
    * close the HDF file.
    */
-   status_32 = Vdetach (vgroup_id);
-   status_n = Vend (file_id);
-   status_n = Hclose (file_id);
+   Vdetach (vgroup_id);
+   Vend (file_id);
+   Hclose (file_id);
    return 0;
 }

@@ -97,7 +97,9 @@ funclist_t  cdeflate_funcs =
     HCPcdeflate_inquire,
     HCPcdeflate_read,
     HCPcdeflate_write,
-    HCPcdeflate_endaccess
+    HCPcdeflate_endaccess,
+    NULL,
+    NULL
 };
 #endif
 

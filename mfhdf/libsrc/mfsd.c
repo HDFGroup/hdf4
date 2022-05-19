@@ -3588,11 +3588,9 @@ SDdiminfo(int32  id,    /* IN:  dimension ID */
     CONSTR(FUNC, "SDdiminfo");    /* for HGOTO_ERROR */
     NC      *handle = NULL;
     NC_dim  *dim = NULL;
-    NC_var   *var = NULL;
     NC_var **dp = NULL;
     intn     ii;
     intn     len;
-    int32    varid;
     int      ret_value = SUCCEED;
 
 #ifdef SDDEBUG
@@ -3737,56 +3735,61 @@ SDgetdimstrs(int32 id,  /* IN:  dataset ID */
 
     handle = SDIhandle_from_id(id, DIMTYPE);
     if(handle == NULL)
-      {
-    HGOTO_ERROR(DFE_ARGS, FAIL);
-      }
+    {
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+    }
 
     if(handle->vars == NULL)
-      {
-    HGOTO_ERROR(DFE_ARGS, FAIL);
-      }
+    {
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+    }
 
     dim = SDIget_dim(handle, id);
     if(dim == NULL)
-      {
-    HGOTO_ERROR(DFE_ARGS, FAIL);
-      }
+    {
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+    }
 
     /* need to get a pointer to the var now */
     var = NULL;
     if(handle->vars)
-      {
-          name = dim->name->values;
-          namelen = HDstrlen(name);
-          dp = (NC_var**)handle->vars->values;
-          for(ii = 0 ; ii < handle->vars->count ; ii++, dp++)
+    {
+        name = dim->name->values;
+        namelen = HDstrlen(name);
+        dp = (NC_var**)handle->vars->values;
+        for(ii = 0 ; ii < handle->vars->count ; ii++, dp++)
+        {
+            /* eliminate vars with rank > 1, coord vars only have rank 1 */
+            if((*dp)->assoc->count == 1)
             {
-        /* eliminate vars with rank > 1, coord vars only have rank 1 */
-        if((*dp)->assoc->count == 1)
-                  if( namelen == (*dp)->name->len
-                    && HDstrncmp(name, (*dp)->name->values, HDstrlen(name)) == 0)
-        /* because a dim was given, make sure that this is a coord var */
-        /* if it is an SDS, the function will fail */
-        if ((*dp)->var_type == IS_SDSVAR)
-            HGOTO_ERROR(DFE_ARGS, FAIL)
-            /* only proceed if this variable is a coordinate var or when
+                if( namelen == (*dp)->name->len
+                        && HDstrncmp(name, (*dp)->name->values, HDstrlen(name)) == 0)
+                {
+                    /* because a dim was given, make sure that this is a coord var */
+                    /* if it is an SDS, the function will fail */
+                    if ((*dp)->var_type == IS_SDSVAR)
+                    {
+                        HGOTO_ERROR(DFE_ARGS, FAIL)
+                        /* only proceed if this variable is a coordinate var or when
             its status is unknown due to its being created prior to
             the fix of bugzilla 624 - BMR - 05/14/2007 */
-        else
-        /* i.e., (*dp)->var_type == IS_CRDVAR ||
-            (*dp)->var_type == UNKNOWN) */
-                  {
-                      var = (*dp);
-                  }
+                    }
+                    else
+                        /* i.e., (*dp)->var_type == IS_CRDVAR || (*dp)->var_type == UNKNOWN) */
+                    {
+                        var = (*dp);
+                    }
+                }
             }
-      }
+        }
+    }
 
     if(var != NULL)
     {
-    if(l)
-      {
-          attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_LongName);
-          if(attr != NULL)
+        if(l)
+        {
+            attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_LongName);
+            if(attr != NULL)
             {
                 intn minlen;
                 minlen = ((unsigned)len > (*attr)->data->count)? (*attr)->data->count: (unsigned)len;
@@ -3794,14 +3797,14 @@ SDgetdimstrs(int32 id,  /* IN:  dataset ID */
                 if((*attr)->data->count < (unsigned)len)
                     l[(*attr)->data->count] = '\0';
             }
-          else
-              l[0] = '\0';
-      }
+            else
+                l[0] = '\0';
+        }
 
-    if(u)
-      {
-          attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_Units);
-          if(attr != NULL)
+        if(u)
+        {
+            attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_Units);
+            if(attr != NULL)
             {
                 intn minlen;
                 minlen = (len > (*attr)->data->count)? (*attr)->data->count: (unsigned)len;
@@ -3809,14 +3812,14 @@ SDgetdimstrs(int32 id,  /* IN:  dataset ID */
                 if((*attr)->data->count < (unsigned)len)
                     u[(*attr)->data->count] = '\0';
             }
-          else
-              u[0] = '\0';
-      }
+            else
+                u[0] = '\0';
+        }
 
-    if(f)
-      {
-          attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_Format);
-          if(attr != NULL)
+        if(f)
+        {
+            attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_Format);
+            if(attr != NULL)
             {
                 intn minlen;
                 minlen = (len > (*attr)->data->count)? (*attr)->data->count: (unsigned)len;
@@ -3824,20 +3827,20 @@ SDgetdimstrs(int32 id,  /* IN:  dataset ID */
                 if((*attr)->data->count < (unsigned)len)
                     f[(*attr)->data->count] = '\0';
             }
-          else
-              f[0] = '\0';
-      }
+            else
+                f[0] = '\0';
+        }
     }
     /* the given dimension is not a coordinate variable, that means it
        doesn't have attribute attached to it, because if it did, then it
        would have been promoted to be a coordinate variable. */
     else
     {
-      if(l) l[0] = '\0';
+        if(l) l[0] = '\0';
 
-      if(u) u[0] = '\0';
+        if(u) u[0] = '\0';
 
-      if(f) f[0] = '\0';
+        if(f) f[0] = '\0';
     }
 
 done:
@@ -4191,30 +4194,32 @@ SDgetexternalfile(int32 id,       /* IN: dataset ID */
     /* Get the var structure */
     handle = SDIhandle_from_id(id, SDSTYPE);
     if(handle == NULL || handle->file_type != HDF_FILE)
-    HGOTO_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if(handle->vars == NULL)
-    HGOTO_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     var = SDIget_var(handle, id);
     if(var == NULL)
-    HGOTO_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* SDS exists */
     if(var->data_ref)
     {
-    int32 aid=-1;
-    int32 retcode=0;
-    sp_info_block_t info_block;    /* special info block */
+        int32 aid=-1;
+        sp_info_block_t info_block;    /* special info block */
 
-    /* Get the access id and then its special info */
-    aid = Hstartread(handle->hdf_file, var->data_tag, var->data_ref);
-    retcode = HDget_special_info(aid, &info_block);
+        /* Get the access id and then its special info */
+        aid = Hstartread(handle->hdf_file, var->data_tag, var->data_ref);
+        HDget_special_info(aid, &info_block);
+        /* When HDget_special_info returns FAIL, it could be the element is not
+           special or some failure occur internally, info_block.key will be
+           FAIL in the former case */
 
-    /* If the SDS has external element, return the external file info */
+        /* If the SDS has external element, return the external file info */
         if (info_block.key == SPECIAL_EXT)
         {
-        /* If the file name is not available, the file is probably
+            /* If the file name is not available, the file is probably
         corrupted, so we need to report it. */
             if (info_block.path == NULL || HDstrlen(info_block.path) <= 0)
                 ret_value = FAIL;
@@ -4240,16 +4245,16 @@ SDgetexternalfile(int32 id,       /* IN: dataset ID */
                     if (offset != NULL)
                         *offset = info_block.offset;
                 } /* buf_size != 0 */
-        ret_value = actual_len;
+                ret_value = actual_len;
             }
         }
-    /* Not external */
+        /* Not external */
         else
             ret_value = FAIL;
 
-    /* End access to the aid */
-    if (Hendaccess(aid) == FAIL)
-        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+        /* End access to the aid */
+        if (Hendaccess(aid) == FAIL)
+            HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
     }
 done:
     if (ret_value == FAIL)

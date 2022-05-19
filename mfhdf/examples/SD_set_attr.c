@@ -10,15 +10,14 @@ int main()
    /************************* Variable declaration **************************/
 
    int32   sd_id, sds_id, sds_index;
-   intn    status;
    int32   dim_id, dim_index;
    int32   n_values;                /* number of values of the file, SDS or
                                        dimension attribute         */
-   char8   file_values[] = "Storm_track_data"; 
+   char8   file_values[] = "Storm_track_data";
                                    /* values of the file attribute */
    float32 sds_values[2] = {2., 10.};
                                    /* values of the SDS attribute  */
-   char8   dim_values[]  = "Seconds"; 
+   char8   dim_values[]  = "Seconds";
                                   /* values of the dimension attribute */
 
    /********************* End of variable declaration ***********************/
@@ -32,7 +31,7 @@ int main()
    * Set an attribute that describes the file contents.
    */
    n_values = 16;
-   status = SDsetattr (sd_id, FILE_ATTR_NAME, DFNT_CHAR, n_values, 
+   SDsetattr (sd_id, FILE_ATTR_NAME, DFNT_CHAR, n_values,
                        (VOIDP)file_values);
 
    /*
@@ -41,12 +40,12 @@ int main()
    sds_index = 0;
    sds_id = SDselect (sd_id, sds_index);
 
-   /* 
+   /*
    * Assign attribute to the first SDS. Note that attribute values
    * may have different data type than SDS data.
    */
    n_values  = 2;
-   status = SDsetattr (sds_id, SDS_ATTR_NAME, DFNT_FLOAT32, n_values, 
+   SDsetattr (sds_id, SDS_ATTR_NAME, DFNT_FLOAT32, n_values,
                        (VOIDP)sds_values);
 
    /*
@@ -59,18 +58,18 @@ int main()
    * Set an attribute of the dimension that specifies the dimension metric.
    */
    n_values = 7;
-   status = SDsetattr (dim_id, DIM_ATTR_NAME, DFNT_CHAR, n_values, 
+   SDsetattr (dim_id, DIM_ATTR_NAME, DFNT_CHAR, n_values,
                        (VOIDP)dim_values);
 
    /*
    * Terminate access to the data set.
    */
-   status = SDendaccess (sds_id);
+   SDendaccess (sds_id);
 
    /*
    * Terminate access to the SD interface and close the file.
    */
-   status = SDend (sd_id);
+   SDend (sd_id);
 
    return 0;
 }

@@ -7,11 +7,9 @@ int main( )
 {
    /************************* Variable declaration **************************/
 
-   intn   status_n;      /* returned status for functions returning an intn */
-   int32  status_32,     /* returned status for functions returning an int32*/
-          file_id, an_id, ann_id, 
+   int32  file_id, an_id,
           n_annots,      /* number of annotations */
-         *ann_list,      /* list of annotation identifiers */
+         *ann_list = NULL,      /* list of annotation identifiers */
           vgroup_ref,    /* reference number of the vgroup */
           index;         /* index of an annotation in the annotation list */
           ann_type annot_type = AN_DATA_DESC;   /* annotation to be obtained*/
@@ -28,7 +26,7 @@ int main( )
    /*
    * Initialize the V interface.
    */
-   status_n = Vstart (file_id);
+   Vstart (file_id);
 
    /*
    * Get the vgroup named VG_NAME.
@@ -55,25 +53,25 @@ int main( )
       ann_list = malloc (n_annots * sizeof (int32));
 
       /*
-      * Get the list of identifiers of the annotations attached to the 
+      * Get the list of identifiers of the annotations attached to the
       * vgroup and of type annot_type.
       */
-      n_annots = ANannlist (an_id, annot_type, vgroup_tag, (uint16)vgroup_ref, 
+      n_annots = ANannlist (an_id, annot_type, vgroup_tag, (uint16)vgroup_ref,
                             ann_list);
 
       /*
-      * Get each annotation identifier from the list then display the 
+      * Get each annotation identifier from the list then display the
       * tag/ref number pair of the corresponding annotation.
       */
       printf ("List of annotations of type AN_DATA_DESC:\n");
       for (index = 0; index < n_annots; index++)
       {
         /*
-         * Get and display the ref number of the annotation from 
+         * Get and display the ref number of the annotation from
          * its identifier.
          */
-         status_32 = ANid2tagref (ann_list[index], &ann_tag, &ann_ref);
-         printf ("Annotation index %d: tag = %s\nreference number= %d\n", 
+         ANid2tagref (ann_list[index], &ann_tag, &ann_ref);
+         printf ("Annotation index %d: tag = %s\nreference number= %d\n",
            index, ann_tag == DFTAG_DIA ? "DFTAG_DIA (data description)":
            "Incorrect", ann_ref);
       } /* for */
@@ -83,21 +81,21 @@ int main( )
    * Get and display an annotation type from an annotation tag.
    */
    annot_type = ANtag2atype (DFTAG_FID);
-   printf ("\nAnnotation type of DFTAG_FID (file label) is %s\n", 
+   printf ("\nAnnotation type of DFTAG_FID (file label) is %s\n",
               annot_type == AN_FILE_LABEL ? "AN_FILE_LABEL":"Incorrect");
 
    /*
    * Get and display an annotation tag from an annotation type.
    */
    ann_tag = ANatype2tag (AN_DATA_LABEL);
-   printf ("\nAnnotation tag of AN_DATA_LABEL is %s\n", 
+   printf ("\nAnnotation tag of AN_DATA_LABEL is %s\n",
               ann_tag == DFTAG_DIL ? "DFTAG_DIL (data label)":"Incorrect");
 
    /*
    * Terminate access to the AN interface and close the HDF file.
    */
-   status_32 = ANend (an_id);
-   status_n = Hclose (file_id);
+   ANend (an_id);
+   Hclose (file_id);
 
    /*
    * Free the space allocated for the annotation identifier list.

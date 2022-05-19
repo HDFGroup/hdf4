@@ -82,7 +82,9 @@ funclist_t  cnone_funcs =
     HCPcnone_inquire,
     HCPcnone_read,
     HCPcnone_write,
-    HCPcnone_endaccess
+    HCPcnone_endaccess,
+    NULL,
+    NULL
 };
 #endif
 

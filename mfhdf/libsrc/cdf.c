@@ -211,7 +211,6 @@ const char *filename;
     else
         ret_value = FALSE;
 
-done:
     if (ret_value == FALSE)
       { /* Failure cleanup */
       }
@@ -241,7 +240,6 @@ const char *filename;
     else
         ret_value = FALSE;
 
-done:
     if (ret_value == FALSE)
       { /* FALSE cleanup */
       }
@@ -271,7 +269,6 @@ const char *filename;
     else
         ret_value = FALSE;
 
-done:
     if (ret_value == FALSE)
       { /* FALSE cleanup */
       }
@@ -853,6 +850,8 @@ NC_dim *dim;
   long  dsize;
   int   ret_value = FAIL;
 
+  (void)xdrs;
+
 #if DEBUG
   fprintf(stderr, "hdf_create_dim_vdata I've been called\n");
   fprintf(stderr, "handle->hdf_file = %d\n", handle->hdf_file);
@@ -934,6 +933,8 @@ hdf_create_compat_dim_vdata(XDR *xdrs,
     int32 *val = NULL;
     int    ret_value = FAIL;
 
+    (void)xdrs;
+
 #ifdef DEBUG
     fprintf(stderr, "hdf_create_compat_dim_vdata I've been called\n");
     fprintf(stderr, "handle->hdf_file = %d\n", handle->hdf_file);
@@ -1012,6 +1013,8 @@ NC_attr **attr;
     int type;
     int order;
     int ret_value = SUCCEED;
+
+    (void)xdrs;
 
     name = (*attr)->name->values;
     values = (*attr)->data->values;
@@ -1695,6 +1698,8 @@ hdf_read_dims(XDR *xdrs, NC *handle, int32 vg)
     int32    vs;
     intn      ret_value = SUCCEED;
 
+    (void)xdrs;
+
     found = FALSE;
     count = 0;
     id = -1;
@@ -1981,6 +1986,8 @@ hdf_read_attrs(XDR *xdrs, NC *handle, int32 vg)
     NC_attr **attributes = NULL;
     NC_array *Array = NULL;
     NC_array *ret_value = NULL;
+
+    (void)xdrs;
 
     count = 0;
     id = -1;

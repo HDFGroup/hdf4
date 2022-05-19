@@ -34,7 +34,21 @@ Java_hdf_hdflib_HDFLibrary_DFUfptoimage
         jfloat max, jfloat min, jfloatArray hscale, jfloatArray vscale, jfloatArray data,
         jbyteArray palette, jstring outfile, jint ct_method, jint hres, jint vres, jint compress)
 {
-    H4_UNIMPLEMENTED(ENVONLY, "DFUfptoimage (windows)");
+    UNUSED(clss);
+    UNUSED(hdim);
+    UNUSED(vdim);
+    UNUSED(max);
+    UNUSED(min);
+    UNUSED(hscale);
+    UNUSED(vscale);
+    UNUSED(data);
+    UNUSED(palette);
+    UNUSED(outfile);
+    UNUSED(ct_method);
+    UNUSED(hres);
+    UNUSED(vres);
+    UNUSED(compress);
+   H4_UNIMPLEMENTED(ENVONLY, "DFUfptoimage (windows)");
 
 done:
     return JNI_TRUE;

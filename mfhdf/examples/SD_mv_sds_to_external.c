@@ -10,7 +10,6 @@ int main()
    /************************* Variable declaration **************************/
 
    int32 sd_id, sds_id, sds_index;
-   intn  status;
 
    /********************* End of variable declaration ***********************/
 
@@ -22,20 +21,20 @@ int main()
    /*
    * Select the first data set.
    */
-   sds_index = 0;   
+   sds_index = 0;
    sds_id = SDselect (sd_id, sds_index);
 
    /*
    * Create a file with the name EXT_FILE_NAME and move the data set
    * values into it, starting at byte location OFFSET.
    */
-   status = SDsetexternalfile (sds_id, EXT_FILE_NAME, OFFSET);
+   SDsetexternalfile (sds_id, EXT_FILE_NAME, OFFSET);
 
    /*
    * Terminate access to the data set, SD interface, and file.
    */
-   status = SDendaccess (sds_id);
-   status = SDend (sd_id);
+   SDendaccess (sds_id);
+   SDend (sd_id);
 
    return 0;
 }

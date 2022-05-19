@@ -16,12 +16,12 @@
  *		 name, dimensions, type, size,...
  * Structure of the file:
  *    test_SDSprops - test driver
- *	  test_SDSnames    - tests that an SDS name can be more than 
+ *	  test_SDSnames    - tests that an SDS name can be more than
  *		previously hardcoded at 64 characters; now length is variable.
  *	  test_unlim_dim - tests that writing two unlimited 1D datasets,
  *		without closing the file between writes, will not cause the
  *		second dataset to contain garbage anymore. (bug 525)
- *	  test_unlim_inloop - tests that appending unlimited data to more 
+ *	  test_unlim_inloop - tests that appending unlimited data to more
  *		than one dataset within a loop stores data correctly. (bug 801)
  *	  test_valid_args - tests that when some invalid argments were passed
  *		into an API, they can be caught and handled properly.
@@ -35,7 +35,7 @@
 #include "hdftest.h"
 
 /***************************************************************************
-   Name: test_SDSnames() - tests that SDS name is no longer restricted to 
+   Name: test_SDSnames() - tests that SDS name is no longer restricted to
 			   64 characters only. (bugzilla 516)
    Description:
 	The main contents include:
@@ -157,8 +157,8 @@ test_SDSnames()
 
 /***************************************************************************
    Name: test_unlim_dim() - tests that writing two unlimited 1D datasets,
-			    without closing the file between writes, will 
-			    not cause the second dataset to contain garbage 
+			    without closing the file between writes, will
+			    not cause the second dataset to contain garbage
 			    anymore. (bug 525)
    Description:
 	The main contents include:
@@ -307,7 +307,7 @@ test_unlim_dim()
 			    correctly. (bug 801)
    Description:
 	The main contents include:
-	- create two data sets 
+	- create two data sets
 	- write to the data sets in a loop
 	- close the file, then reopen it
 	- in another loop, read the data sets and verify their data
@@ -319,9 +319,9 @@ test_unlim_dim()
 ****************************************************************************/
 
 #define UDIL_FILE_NAME  "Unlim_inloop.hdf" /* file to test unlim dims in loop */
-#define SIZE 5 
-#define N_DSETS 2 
-#define RANK1 1 
+#define SIZE 5
+#define N_DSETS 2
+#define RANK1 1
 
 static intn
 test_unlim_inloop()
@@ -356,7 +356,7 @@ test_unlim_inloop()
     /* Making up data to write */
     for (i = 0; i < SIZE; i++) {
 	array_data[i] = i + 1;
-    } 
+    }
 
     /* write and append to the data sets */
     n_writes = 0;
@@ -366,7 +366,7 @@ test_unlim_inloop()
 	/* i.e, start at 0 first time and at SIZE second time*/
 	start[0] = SIZE * n_writes;
 
-	for (i = 0; i < N_DSETS; i++) 
+	for (i = 0; i < N_DSETS; i++)
 	{
 	    sds_id[i] = SDselect(fid, i);
 	    CHECK(sds_id[i], FAIL, "SDselect");
@@ -433,14 +433,14 @@ test_unlim_inloop()
 
 /***************************************************************************
    Name: test_valid_args() - tests that when some invalid argments were passed
-			    into an API, they can be caught and handled 
+			    into an API, they can be caught and handled
 			    properly. (bugzilla 150)
    Description:
 	The main contents include:
 	- create a data set of size X_LENGTH x Y_LENGTH
 	- write to the data set
 	- close the file, then reopen it
-	- read the dataset giving a stride value, that goes beyong the 
+	- read the dataset giving a stride value, that goes beyong the
 	  dimension size
 	- when SDreaddata failed, try to check for error code DFE_ARGS and
 	  handle the failure properly
@@ -525,13 +525,13 @@ test_valid_args()
     strides[0] = X_LENGTH;	/* simulate a mistake here, should have -1 */
     strides[1] = Y_LENGTH-1;
 
-    /* Attempt to read first dataset, it should fail with invalid an 
+    /* Attempt to read first dataset, it should fail with invalid an
 	argument error */
     status = SDreaddata(dset1, start, strides, edges, (VOIDP) outdata);
     VERIFY(status, FAIL, "SDreaddata");
     VERIFY(HEvalue(1), DFE_ARGS, "SDreaddata");
 
-    /* Show that the error was also caught for the dataset with unlimited 
+    /* Show that the error was also caught for the dataset with unlimited
 	dimension */
     status = SDreaddata(dset2, start, strides, edges, (VOIDP) outdata);
     VERIFY(status, FAIL, "SDreaddata");
@@ -556,7 +556,7 @@ test_valid_args()
 /*******************************************************************
    Name: test_valid_args2() - tests that when some invalid argments were passed
 			    into SDreaddata, causing the function to attempt
-			    to read beyond the dimension size, can be caught 
+			    to read beyond the dimension size, can be caught
 			    and handled properly. (more for bugzilla 150)
    Description:
 	The main contents include:
@@ -573,7 +573,7 @@ test_valid_args()
 	  + "data2" - attempts to read with count[1]=3 (correct: 2)
 	  + "data3" - attempts to read with incorrect combination of stride and count
 	  + "data3" - reads again with all arguments in bounds
-                                                                 
+
 ********************************************************************/
 #define D1_X 1
 #define D2_X 202
@@ -583,8 +583,8 @@ test_valid_args()
 #define D3_Z 2
 
 /* Helper function to test_valid_args2 creates and writes to a dataset */
-static intn makeSDS(int32 sd_id, char* name, int32 dtype, int32 rank, 
-	     int32* dimsizes, int32* start, int32* strides, 
+static intn makeSDS(int32 sd_id, char* name, int32 dtype, int32 rank,
+	     int32* dimsizes, int32* start, int32* strides,
 	     int32* count, void* data)
 {
     int32 sds_id;
@@ -596,7 +596,7 @@ static intn makeSDS(int32 sd_id, char* name, int32 dtype, int32 rank,
     CHECK(sds_id, FAIL, "SDcreate");
 
     /* Write to it */
-    status = SDwritedata(sds_id, start, strides, count, data); 
+    status = SDwritedata(sds_id, start, strides, count, data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the array. */
@@ -696,7 +696,7 @@ test_valid_args2()
 
     /* Read second dataset with out of bound stride */
     sds_id = SDselect(sd_id, 1);
-    d2start[0] = d2start[0] = 0;
+    d2start[0] = d2start[1] = 0;
     d2stride[0] = 1;
     d2stride[1] = D2_Y;  /* should be D2_Y - 1 */
     d2count[0] = D2_X;

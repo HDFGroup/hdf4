@@ -7,7 +7,6 @@ int main()
    /************************* Variable declaration **************************/
 
    int32 sd_id, sds_id;
-   intn  status;
    int32 n_datasets, n_file_attrs, index;
    int32 dim_sizes[H4_MAX_VAR_DIMS];
    int32 rank, data_type, n_attrs;
@@ -23,25 +22,25 @@ int main()
 
    /*
    * Determine the number of data sets in the file and the number
-   * of file attributes. 
+   * of file attributes.
    */
-   status = SDfileinfo (sd_id, &n_datasets, &n_file_attrs);
+   SDfileinfo (sd_id, &n_datasets, &n_file_attrs);
 
-   /*  
+   /*
    * Access every data set and print its name, rank, dimension sizes,
-   * data type, and number of attributes. 
+   * data type, and number of attributes.
    * The following information should be displayed:
    *
    *               name = SDStemplate
    *               rank = 2
-   *               dimension sizes are : 16  5  
+   *               dimension sizes are : 16  5
    *               data type is  24
    *               number of attributes is  0
    */
    for (index = 0; index < n_datasets; index++)
    {
        sds_id = SDselect (sd_id, index);
-       status = SDgetinfo (sds_id, name, &rank, dim_sizes, 
+       SDgetinfo (sds_id, name, &rank, dim_sizes,
                            &data_type, &n_attrs);
 
        printf ("name = %s\n", name);
@@ -55,13 +54,13 @@ int main()
        /*
        * Terminate access to the data set.
        */
-       status = SDendaccess (sds_id);
+       SDendaccess (sds_id);
    }
 
    /*
    * Terminate access to the SD interface and close the file.
    */
-   status = SDend (sd_id);
+   SDend (sd_id);
 
    return 0;
 }

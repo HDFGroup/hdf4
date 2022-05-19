@@ -11,7 +11,6 @@ int main()
    /************************* Variable declaration **************************/
 
    int32 sd_id, sds_id, sds_index;
-   intn  status;
    int32 start[2], edges[2];
    int32 data[Y_LENGTH][X_LENGTH];
    int   j;
@@ -25,22 +24,22 @@ int main()
 
    /*
    * Find index of the data set with the name specified in WRONG_NAME.
-   * Error condition occurs, since the data set with that name does not exist 
+   * Error condition occurs, since the data set with that name does not exist
    * in the file.
-   */ 
+   */
    sds_index = SDnametoindex (sd_id, WRONG_NAME);
    if (sds_index == FAIL)
-   printf ("Data set with the name \"WrongName\" does not exist\n"); 
+   printf ("Data set with the name \"WrongName\" does not exist\n");
 
    /*
-   * Find index of the data set with the name specified in SDS_NAME and use 
+   * Find index of the data set with the name specified in SDS_NAME and use
    * the index to select the data set.
-   */ 
+   */
    sds_index = SDnametoindex (sd_id, SDS_NAME);
    sds_id = SDselect (sd_id, sds_index);
 
-   /* 
-   * Set elements of the array start to 0, elements of the array edges to 
+   /*
+   * Set elements of the array start to 0, elements of the array edges to
    * SDS dimensions, and use NULL for stride argument in SDreaddata to read
    * the entire data.
    */
@@ -52,9 +51,9 @@ int main()
    /*
    * Read the entire data into the buffer named data.
    */
-   status = SDreaddata (sds_id, start, NULL, edges, (VOIDP)data);
+   SDreaddata (sds_id, start, NULL, edges, (VOIDP)data);
 
-   /* 
+   /*
    * Print 10th row; the following numbers should be displayed:
    *
    *             10 1000 12 13 14
@@ -65,12 +64,12 @@ int main()
    /*
    * Terminate access to the data set.
    */
-   status = SDendaccess (sds_id);
+   SDendaccess (sds_id);
 
    /*
    * Terminate access to the SD interface and close the file.
    */
-   status = SDend (sd_id);
+   SDend (sd_id);
 
    return 0;
 }

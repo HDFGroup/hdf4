@@ -1,9 +1,9 @@
 #include "hdf.h"
 
 #define  FILE_NAME    "General_RImages.hdf"
-#define  X1_LENGTH    5     /* number of columns in the first image 
+#define  X1_LENGTH    5     /* number of columns in the first image
                               being modified */
-#define  Y1_LENGTH    2     /* number of rows in the first image 
+#define  Y1_LENGTH    2     /* number of rows in the first image
                               being modified */
 #define  N1_COMPS     2     /* number of components in the first image */
 #define  IMAGE1_NAME  "Image Array 1"
@@ -12,11 +12,10 @@
 #define  Y2_LENGTH    4     /* number of rows in the second image */
 #define  N2_COMPS     3     /* number of components in the second image */
 
-int main( ) 
+int main( )
 {
    /************************* Variable declaration **************************/
 
-   intn  status;         /* status for functions returning an intn */
    int32 file_id,        /* HDF file identifier */
          gr_id,          /* GR interface identifier */
          ri1_id,         /* raster image identifier */
@@ -25,7 +24,7 @@ int main( )
                            each dimension */
          ri2_id,         /* raster image identifier */
          start2[2],      /* start position to write for each dimension */
-         edges2[2],      /* number of elements to be written along 
+         edges2[2],      /* number of elements to be written along
                            each dimension */
          dims_sizes[2],  /* sizes of the two dimensions of the image array */
          data_type,      /* data type of the image data */
@@ -58,8 +57,8 @@ int main( )
    {
       for (j = 0; j < X1_LENGTH; j++)
       {
-         image1_buf[i][j][0] = 0;  /* first component */ 
-         image1_buf[i][j][1] = 0;  /* second component */ 
+         image1_buf[i][j][0] = 0;  /* first component */
+         image1_buf[i][j][1] = 0;  /* second component */
       }
     }
 
@@ -74,7 +73,7 @@ int main( )
    /*
    * Write the data in the buffer into the image array.
    */
-   status = GRwriteimage (ri1_id, start1, NULL, edges1, (VOIDP)image1_buf);
+   GRwriteimage (ri1_id, start1, NULL, edges1, (VOIDP)image1_buf);
 
 
    /*
@@ -98,7 +97,7 @@ int main( )
    {
       for (j = 0; j < X2_LENGTH; j++)
       {
-         image2_buf[i][j][0] = 'A';     /* first component */ 
+         image2_buf[i][j][0] = 'A';     /* first component */
          image2_buf[i][j][1] = 'B';     /* second component */
          image2_buf[i][j][2] = 'C';     /* third component */
       }
@@ -116,15 +115,15 @@ int main( )
    /*
    * Write the data in the buffer into the second image array.
    */
-   status = GRwriteimage (ri2_id, start2, NULL, edges2, (VOIDP)image2_buf);
+   GRwriteimage (ri2_id, start2, NULL, edges2, (VOIDP)image2_buf);
 
    /*
    * Terminate access to the raster images and to the GR interface, and
    * close the HDF file.
    */
-   status = GRendaccess (ri1_id);
-   status = GRendaccess (ri2_id);
-   status = GRend (gr_id);
-   status = Hclose (file_id);
+   GRendaccess (ri1_id);
+   GRendaccess (ri2_id);
+   GRend (gr_id);
+   Hclose (file_id);
    return 0;
 }

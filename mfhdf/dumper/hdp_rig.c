@@ -22,10 +22,12 @@
 
 #define IMAGE 1
 
-static void 
-dumprig_usage(intn argc, 
+static void
+dumprig_usage(intn argc,
               char *argv[])
 {
+    (void)argc;
+
     printf("Usage:\n");
 #ifdef LATER
     printf("%s dumprig [-a|-i <indices>|-n <names>|-r <refs>] [-dhvc] [-o <filename> [-bx]] <filelist>\n", argv[0]);
@@ -48,7 +50,7 @@ dumprig_usage(intn argc,
     printf("\t<filelist>\tList of hdf file names, separated by spaces\n");
 }	/* end list_usage() */
 
-static void 
+static void
 init_dumprig_opts(dump_info_t * dumprig_opts)
 {
     dumprig_opts->filter = DALL;	/* default dump all RIGs */
@@ -68,12 +70,12 @@ init_dumprig_opts(dump_info_t * dumprig_opts)
     dumprig_opts->clean_output = FALSE;
 
     /* print data starting at column 5 unless reset otherwise */
-    dumprig_opts->firstln_indent = 5;  /* Note: only for dump_rig, so 
+    dumprig_opts->firstln_indent = 5;  /* Note: only for dump_rig, so
 					testfiles won't need to be changed */
 
     /* print data on a continuous line starting at column 5 unless
        reset otherwise */
-    dumprig_opts->contln_indent = 5;  /* Note: only for dump_rig, so 
+    dumprig_opts->contln_indent = 5;  /* Note: only for dump_rig, so
 					testfiles won't need to be changed */
 
     /* GR only, print data using interlace at creation */
@@ -88,11 +90,11 @@ init_dumprig_opts(dump_info_t * dumprig_opts)
     HDstrcpy(dumprig_opts->file_name, "\0");
 }	/* end init_list_opts() */
 
-static intn 
-parse_dumprig_opts(dump_info_t *dumprig_opts, 
+static intn
+parse_dumprig_opts(dump_info_t *dumprig_opts,
                    intn        *curr_arg,
-                   intn         argc, 
-                   char        *argv[], 
+                   intn         argc,
+                   char        *argv[],
                    int         *model)
 {
     int32  i;
@@ -188,7 +190,7 @@ parse_dumprig_opts(dump_info_t *dumprig_opts,
             case 'c':   /* do not add carriage returns to output data lines */
                 dumprig_opts->as_stream = TRUE;
                 (*curr_arg)++;
-                break;    
+                break;
 
             case 'o':   /* specify output file */
                 dumprig_opts->dump_to_file = TRUE;
@@ -218,11 +220,11 @@ parse_dumprig_opts(dump_info_t *dumprig_opts,
 }	/* end parse_dumprig_opts */
 
 
-static intn 
-drig(dump_info_t *dumprig_opts, 
-     intn         curr_arg, 
+static intn
+drig(dump_info_t *dumprig_opts,
+     intn         curr_arg,
      intn         argc,
-     char        *argv[], 
+     char        *argv[],
      int          model)
 {
     int32      *rig_chosen = NULL;
@@ -264,7 +266,7 @@ drig(dump_info_t *dumprig_opts,
             {
                 for (i = 0; i < dumprig_opts->num_chosen; i++)
                     rig_chosen[i] = dumprig_opts->filter_num[i];
-                sort(rig_chosen, num_rig_chosen);  /* DREFNUM doesn't need this */ 
+                sort(rig_chosen, num_rig_chosen);  /* DREFNUM doesn't need this */
             }	/* end if */
 
           /* ASCII or Binary? */
@@ -319,8 +321,8 @@ drig(dump_info_t *dumprig_opts,
                 x = 0;	/* Used as the index of the array of "rig_chosen[x]". */
 
                 /* can only check index range here */
-                for(i=0; 
-                    i < dumprig_opts->num_chosen && dumprig_opts->filter == DINDEX; 
+                for(i=0;
+                    i < dumprig_opts->num_chosen && dumprig_opts->filter == DINDEX;
                     i++)
                   {
                       if((dumprig_opts->filter_num[i] > ndsets)
@@ -333,8 +335,8 @@ drig(dump_info_t *dumprig_opts,
                         }
                   }
 
-                for (i = 0; 
-                     i < ndsets && (dumpall!=0 || x < dumprig_opts->num_chosen); 
+                for (i = 0;
+                     i < ndsets && (dumpall!=0 || x < dumprig_opts->num_chosen);
                      i++)
                   {	/* Examine all RIGs. */
                       int     compressed;
@@ -373,10 +375,10 @@ drig(dump_info_t *dumprig_opts,
 
                       rig_ref = DFGRIlastref();	/* Determine the reference of the image just read. */
 
-                      /* If the user has specificed the reference option, then 
-                         something has to be done. 
-                         Note: the reason why the following part was not done  
-                         inside the above "switch" statement is that the reference 
+                      /* If the user has specificed the reference option, then
+                         something has to be done.
+                         Note: the reason why the following part was not done
+                         inside the above "switch" statement is that the reference
                          number of a raster image cannot be appropriately retrieved
                          before actually reading in a raster image. */
                       if (dumprig_opts->filter == DREFNUM)
@@ -400,11 +402,11 @@ drig(dump_info_t *dumprig_opts,
                         }
 
                       /* If not all images are to be dumped out and the current image
-                         is not what the user wants or if the user has specified a 
+                         is not what the user wants or if the user has specified a
                          model and the model of the current image is not that one, then
                          skip the current image. */
-                      if (((dumprig_opts->filter == DINDEX) 
-                           && (i != rig_chosen[x])) 
+                      if (((dumprig_opts->filter == DINDEX)
+                           && (i != rig_chosen[x]))
                           || (((ncomps * 8) != model) && (model != 0)))
                         {
                             HDfree((VOIDP) image);
@@ -529,7 +531,7 @@ drig(dump_info_t *dumprig_opts,
 
                 /* can only check index range here */
                 for(i=0; i < dumprig_opts->num_chosen && dumprig_opts->filter == DINDEX; i++)
-                  { 
+                  {
                       if((rig_chosen[i] > ndsets)||(rig_chosen[i]<0))
                         {
                             fprintf(stderr,"\nThe index %d is out of range\n",(int)rig_chosen[i]);
@@ -538,8 +540,8 @@ drig(dump_info_t *dumprig_opts,
                         }
                   }
 
-                for (i = 0; 
-                     i < ndsets && (dumpall!=0 || x<dumprig_opts->num_chosen); 
+                for (i = 0;
+                     i < ndsets && (dumpall!=0 || x<dumprig_opts->num_chosen);
                      i++)
                   {	/* Examine all RIGs. */
                       int    compressed;
@@ -576,10 +578,10 @@ drig(dump_info_t *dumprig_opts,
 
                       rig_ref = DFGRIlastref();	/* Determine the reference of the image just read. */
 
-                      /* If the user has specificed the reference option, then 
-                         something has to be done. 
-                         Note: the reason why the following part was not done  
-                         inside the above "switch" statement is that the reference 
+                      /* If the user has specificed the reference option, then
+                         something has to be done.
+                         Note: the reason why the following part was not done
+                         inside the above "switch" statement is that the reference
                          number of a raster image cannot be appropriately retrieved
                          before actually reading in a raster image. */
                       if (dumprig_opts->filter == DREFNUM)
@@ -603,10 +605,10 @@ drig(dump_info_t *dumprig_opts,
                         }
 
                       /* If not all images are to be dumped out and the current image
-                         is not what the user wants or if the user has specified a 
+                         is not what the user wants or if the user has specified a
                          model and the model of the current image is not that one, then
                          skip the current image. */
-                      if (((dumprig_opts->filter == DINDEX) && (i != rig_chosen[x])) || 
+                      if (((dumprig_opts->filter == DINDEX) && (i != rig_chosen[x])) ||
                           (((ncomps * 8) != model) && (model != 0)))
                         {
                             HDfree((VOIDP) image);
@@ -614,7 +616,7 @@ drig(dump_info_t *dumprig_opts,
                             continue;
                         }
 
-                                 
+
                       if (FAIL == dumpfull(DFNT_UINT8, dumprig_opts, read_nelts*ncomps, image, fp, 5, 5))
                         {
                             fprintf(stderr,"dumpfull: failed to dump %d'th image data for file %s",
@@ -624,7 +626,7 @@ drig(dump_info_t *dumprig_opts,
                         }
                       HDfree((VOIDP) image);
                       image = NULL; /* reset */
-                 
+
                       if(dumpall!=1 && i == rig_chosen[x])
                           x++;
                   }	/* for every image in file  */
@@ -659,10 +661,10 @@ done:
     return ret_value;
 }	/* drig */
 
-intn 
-do_dumprig(intn  curr_arg, 
-           intn  argc, 
-           char *argv[], 
+intn
+do_dumprig(intn  curr_arg,
+           intn  argc,
+           char *argv[],
            intn  help)
 {
     dump_info_t dumprig_opts;	/* dumprig options */

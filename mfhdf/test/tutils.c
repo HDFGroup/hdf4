@@ -84,7 +84,7 @@ int32 make_SDS(int32 sd_id, char* sds_name, int32 type, int32 rank,
     int32 sds_id;
     int32 *start, *edges;
     int32 sds_size = 0, count = 0;
-    intn  status, ii;
+    intn  status = 0, ii;
     intn  num_errs = 0;    /* number of errors in compression test so far */
 
     start = (int32*)HDmalloc(sizeof(int32) * rank);
@@ -150,7 +150,7 @@ int32 make_CompSDS(int32 sd_id, char* sds_name, int32 type, int32 rank,
     comp_coder_t comp_type;    /* Compression flag */
     comp_info c_info;          /* Compression structure */
     int32 sds_size = 0, count = 0;
-    intn  status, ii;
+    intn  status = 0, ii;
     intn  num_errs = 0;  /* number of errors in compression test so far */
 
     start = (int32*)HDmalloc(sizeof(int32) * rank);
@@ -223,7 +223,7 @@ int32 make_Ext3D_SDS(int32 sd_id, char* sds_name, int32 type, int32 rank,
     int32 sds_id;
     int32 *start, *edges;
     int32 sds_size = 0, count;
-    intn  status, ii;
+    intn  status = 0, ii;
     intn  num_errs = 0;    /* number of errors in compression test so far */
 
     start = (int32*)HDmalloc(sizeof(int32) * rank);
@@ -279,7 +279,6 @@ int32 make_Ext3D_SDS(int32 sd_id, char* sds_name, int32 type, int32 rank,
 int32 get_SDSbyName(int32 sd_id, char* sds_name)
 {
     int32 sds_id, sds_index;
-    intn  status;
     intn  num_errs = 0;    /* number of errors in compression test so far */
 
     sds_index = SDnametoindex(sd_id, sds_name);
@@ -306,11 +305,11 @@ int32 get_SDSbyName(int32 sd_id, char* sds_name)
 *********************************************************************/
 int32 append_Data2SDS(int32 sd_id, char* sds_name, int32* start, int32* edges, void* ap_data)
 {
-    int32 sds_id, sds_index;
+    int32 sds_id;
     int32 sds_size, ntype;
     int32 comp_size=0, uncomp_size=0;
-char name[80];
-    intn  status;
+    char  name[80];
+    intn  status = 0;
     intn  num_errs = 0;    /* number of errors in compression test so far */
 
 
@@ -354,7 +353,7 @@ void verify_datasize(int32 sds_id, int32 data_size, char* sds_name)
 {
     int32 comp_size=0, uncomp_size=0;
     char  msg[80];
-    intn  status;
+    intn  status = 0;
     intn  num_errs = 0;    /* number of errors in compression test so far */
 
     /* Get the size of data set's data */
