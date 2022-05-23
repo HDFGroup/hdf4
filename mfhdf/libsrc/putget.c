@@ -2459,8 +2459,11 @@ void *values;        /* buffer to be filled */
 
     /* Compute the size of the buffer using the edges */
     buf_size = 1;
-    for (ii = 0; ii < vp->assoc->count; ii++)
+    for (ii = 0; ii < vp->assoc->count; ii++) {
+        if (edges[ii] < 0)
+            return(-1);
         buf_size = buf_size * edges[ii];
+    }
 
     /* Find user-defined fill-value and fill the buffer with it */
     attr = NC_findattr(&vp->attrs, _FillValue);
