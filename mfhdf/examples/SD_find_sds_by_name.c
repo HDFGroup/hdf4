@@ -1,5 +1,11 @@
 #include "mfhdf.h"
 
+/* Used to make certain a return value _is_not_ a value.  If not ture, */
+/* print error messages, increment num_err and return. */
+#define CHECK(ret, val, where) \
+do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
+} while(0)
+
 #define FILE_NAME     "SDS.hdf"
 #define SDS_NAME      "SDStemplate"
 #define WRONG_NAME    "WrongName"
@@ -11,6 +17,7 @@ int main()
    /************************* Variable declaration **************************/
 
    int32 sd_id, sds_id, sds_index;
+   intn  status;
    int32 start[2], edges[2];
    int32 data[Y_LENGTH][X_LENGTH];
    int   j;
@@ -51,7 +58,8 @@ int main()
    /*
    * Read the entire data into the buffer named data.
    */
-   SDreaddata (sds_id, start, NULL, edges, (VOIDP)data);
+   status = SDreaddata (sds_id, start, NULL, edges, (VOIDP)data);
+   CHECK(status, FAIL, "SDreaddata");
 
    /*
    * Print 10th row; the following numbers should be displayed:
@@ -64,12 +72,14 @@ int main()
    /*
    * Terminate access to the data set.
    */
-   SDendaccess (sds_id);
+   status = SDendaccess (sds_id);
+   CHECK(status, FAIL, "SDendaccess");
 
    /*
    * Terminate access to the SD interface and close the file.
    */
-   SDend (sd_id);
+   status = SDend (sd_id);
+   CHECK(status, FAIL, "SDend");
 
    return 0;
 }

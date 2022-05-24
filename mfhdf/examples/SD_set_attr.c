@@ -1,5 +1,11 @@
 #include "mfhdf.h"
 
+/* Used to make certain a return value _is_not_ a value.  If not ture, */
+/* print error messages, increment num_err and return. */
+#define CHECK(ret, val, where) \
+do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
+} while(0)
+
 #define FILE_NAME      "SDS.hdf"
 #define FILE_ATTR_NAME "File_contents"
 #define SDS_ATTR_NAME  "Valid_range"
@@ -10,6 +16,7 @@ int main()
    /************************* Variable declaration **************************/
 
    int32   sd_id, sds_id, sds_index;
+   intn    status;
    int32   dim_id, dim_index;
    int32   n_values;                /* number of values of the file, SDS or
                                        dimension attribute         */
@@ -31,8 +38,9 @@ int main()
    * Set an attribute that describes the file contents.
    */
    n_values = 16;
-   SDsetattr (sd_id, FILE_ATTR_NAME, DFNT_CHAR, n_values,
+   status = SDsetattr (sd_id, FILE_ATTR_NAME, DFNT_CHAR, n_values,
                        (VOIDP)file_values);
+   CHECK(status, FAIL, "SDsetattr");
 
    /*
    * Select the first data set.
@@ -45,8 +53,9 @@ int main()
    * may have different data type than SDS data.
    */
    n_values  = 2;
-   SDsetattr (sds_id, SDS_ATTR_NAME, DFNT_FLOAT32, n_values,
+   status = SDsetattr (sds_id, SDS_ATTR_NAME, DFNT_FLOAT32, n_values,
                        (VOIDP)sds_values);
+   CHECK(status, FAIL, "SDsetattr");
 
    /*
    * Get the the second dimension identifier of the SDS.
@@ -58,18 +67,21 @@ int main()
    * Set an attribute of the dimension that specifies the dimension metric.
    */
    n_values = 7;
-   SDsetattr (dim_id, DIM_ATTR_NAME, DFNT_CHAR, n_values,
+   status = SDsetattr (dim_id, DIM_ATTR_NAME, DFNT_CHAR, n_values,
                        (VOIDP)dim_values);
+   CHECK(status, FAIL, "SDsetattr");
 
    /*
    * Terminate access to the data set.
    */
-   SDendaccess (sds_id);
+   status = SDendaccess (sds_id);
+   CHECK(status, FAIL, "SDendaccess");
 
    /*
    * Terminate access to the SD interface and close the file.
    */
-   SDend (sd_id);
+   status = SDend (sd_id);
+   CHECK(status, FAIL, "SDend");
 
    return 0;
 }

@@ -1,5 +1,11 @@
 #include "hdf.h"
 
+/* Used to make certain a return value _is_not_ a value.  If not ture, */
+/* print error messages, increment num_err and return. */
+#define CHECK(ret, val, where) \
+do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
+} while(0)
+
 #define  FILE_NAME      "General_Vdatas.hdf"
 #define  FIELD_SIZE     80         /* maximum length of all the field names */
 
@@ -7,7 +13,9 @@ int main( )
 {
    /************************* Variable declaration **************************/
 
-   int32 n_records,     /* to retrieve the number of records in the vdata   */
+   intn  status_n;      /* returned status for functions returning an intn  */
+   int32 status_32,     /* returned status for functions returning an int32 */
+         n_records,     /* to retrieve the number of records in the vdata   */
          interlace_mode,/* to retrieve the interlace mode of the vdata      */
          vdata_size,    /* to retrieve the size of all specified fields     */
          file_id, vdata_ref, vdata_id;
@@ -24,7 +32,8 @@ int main( )
    /*
    * Initialize the VS interface.
    */
-   Vstart (file_id);
+   status_n = Vstart (file_id);
+   CHECK(status_n, FAIL, "Vstart");
 
    /*
    * Set vdata_ref to -1 to start the search from the beginning of file.
@@ -49,8 +58,9 @@ int main( )
       */
       if( VSisattr (vdata_id) != TRUE )
       {
-         VSinquire (vdata_id, &n_records, &interlace_mode,
+         status_n = VSinquire (vdata_id, &n_records, &interlace_mode,
                             fieldname_list, &vdata_size, vdata_name);
+         CHECK(status_n, FAIL, "VSinquire");
          printf ("Vdata %s: - contains %d records\n\tInterlace mode: %s \
                  \n\tFields: %s - %d bytes\n\t\n", vdata_name, n_records,
                  interlace_mode == FULL_INTERLACE ? "FULL" : "NONE",
@@ -60,13 +70,17 @@ int main( )
       /*
       * Detach from the current vdata.
       */
-      VSdetach (vdata_id);
+      status_32 = VSdetach (vdata_id);
+      CHECK(status_32, FAIL, "VSdetach");
    } /* while */
 
    /*
    * Terminate access to the VS interface and close the HDF file.
    */
-   Vend (file_id);
-   Hclose (file_id);
+   status_n = Vend (file_id);
+   CHECK(status_n, FAIL, "Vend");
+   status_32 = Hclose (file_id);
+   CHECK(status_32, FAIL, "Hclose");
+
    return 0;
 }

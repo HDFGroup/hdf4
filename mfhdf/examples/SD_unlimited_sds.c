@@ -1,5 +1,11 @@
 #include "mfhdf.h"
 
+/* Used to make certain a return value _is_not_ a value.  If not ture, */
+/* print error messages, increment num_err and return. */
+#define CHECK(ret, val, where) \
+do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
+} while(0)
+
 #define FILE_NAME     "SDSUNLIMITED.hdf"
 #define SDS_NAME      "AppendableData"
 #define X_LENGTH      10
@@ -11,6 +17,7 @@ int main()
    /************************* Variable declaration **************************/
 
    int32 sd_id, sds_id, sds_index;
+   intn  status;
    int32 dim_sizes[2];
    int32 data[Y_LENGTH][X_LENGTH], append_data[X_LENGTH];
    int32 start[2], edges[2];
@@ -55,14 +62,17 @@ int main()
    /*
    * Write the data.
    */
-   SDwritedata (sds_id, start, NULL, edges, (VOIDP)data);
+   status = SDwritedata (sds_id, start, NULL, edges, (VOIDP)data);
+   CHECK(status, FAIL, "SDwritedata");
 
    /*
    * Terminate access to the array data set, terminate access
    * to the SD interface, and close the file.
    */
-   SDendaccess (sds_id);
-   SDend (sd_id);
+   status = SDendaccess (sds_id);
+   CHECK(status, FAIL, "SDendaccess");
+   status = SDend (sd_id);
+   CHECK(status, FAIL, "SDend");
 
    /*
    * Store the array values to be appended to the data set.
@@ -101,18 +111,21 @@ int main()
    /*
    * Append data to the data set.
    */
-   SDwritedata (sds_id, start, NULL, edges, (VOIDP)append_data);
+   status = SDwritedata (sds_id, start, NULL, edges, (VOIDP)append_data);
+   CHECK(status, FAIL, "SDwritedata");
    }
 
    /*
    * Terminate access to the data set.
    */
-   SDendaccess (sds_id);
+   status = SDendaccess (sds_id);
+   CHECK(status, FAIL, "SDendaccess");
 
    /*
    * Terminate access to the SD interface and close the file.
    */
-   SDend (sd_id);
+   status = SDend (sd_id);
+   CHECK(status, FAIL, "SDend");
 
    return 0;
 }

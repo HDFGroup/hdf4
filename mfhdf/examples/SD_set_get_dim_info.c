@@ -1,5 +1,10 @@
 #include "mfhdf.h"
 
+/* Used to make certain a return value _is_not_ a value.  If not ture, */
+/* print error messages, increment num_err and return. */
+#define CHECK(ret, val, where) \
+do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
+} while(0)
 
 #define FILE_NAME     "SDS.hdf"
 #define SDS_NAME      "SDStemplate"
@@ -15,6 +20,7 @@ int main()
    /************************* Variable declaration **************************/
 
    int32   sd_id, sds_id, sds_index;
+   intn    status;
    int32   dim_index, dim_id;
    int32   n_values, data_type, n_attrs;
    int16   data_X[X_LENGTH];    /* X dimension dimension scale */
@@ -65,12 +71,14 @@ int main()
         */
        switch (dim_index)
        {
-       case 0: SDsetdimname (dim_id, DIM_NAME_Y);
+       case 0: status = SDsetdimname (dim_id, DIM_NAME_Y);
+               CHECK(status, FAIL, "SDsetdimname");
                n_values = Y_LENGTH;
                SDsetdimscale (dim_id,n_values,DFNT_FLOAT64, \
                        (VOIDP)data_Y);
                break;
-       case 1: SDsetdimname (dim_id, DIM_NAME_X);
+       case 1: status = SDsetdimname (dim_id, DIM_NAME_X);
+               CHECK(status, FAIL, "SDsetdimname");
                n_values = X_LENGTH;
                SDsetdimscale (dim_id,n_values,DFNT_INT16, \
                (VOIDP)data_X);
@@ -104,7 +112,8 @@ int main()
         *               0  1  2  3  4
         */
 
-       SDdiminfo (dim_id, dim_name, &n_values, &data_type, &n_attrs);
+       status = SDdiminfo (dim_id, dim_name, &n_values, &data_type, &n_attrs);
+       CHECK(status, FAIL, "SDdiminfo");
        printf ("Information about %d dimension:\n", dim_index+1);
        printf ("dimension name is %s\n", dim_name);
        printf ("number of scale values is %d\n", n_values);
@@ -117,7 +126,8 @@ int main()
        printf ("Scale values are :\n");
        switch (dim_index)
        {
-       case 0: SDgetdimscale (dim_id, (VOIDP)data_Y_out);
+       case 0: status = SDgetdimscale (dim_id, (VOIDP)data_Y_out);
+               CHECK(status, FAIL, "SDgetdimscale");
                nrow = 4;
                for (i=0; i<n_values/nrow; i++ )
                {
@@ -126,7 +136,8 @@ int main()
                    printf ("\n");
                }
                break;
-       case 1: SDgetdimscale (dim_id, (VOIDP)data_X_out);
+       case 1: status = SDgetdimscale (dim_id, (VOIDP)data_X_out);
+               CHECK(status, FAIL, "SDgetdimscale");
                for (i=0; i<n_values; i++)
                    printf ("  %d", data_X_out[i]);
                break;
@@ -139,11 +150,13 @@ int main()
     * Terminate access to the data set.
     */
    SDendaccess (sds_id);
+   CHECK(status, FAIL, "SDendaccess");
 
    /*
     * Terminate access to the SD interface and close the file.
     */
    SDend (sd_id);
+   CHECK(status, FAIL, "SDend");
 
    return 0;
 }

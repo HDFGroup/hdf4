@@ -1,5 +1,11 @@
 #include "mfhdf.h"
 
+/* Used to make certain a return value _is_not_ a value.  If not ture, */
+/* print error messages, increment num_err and return. */
+#define CHECK(ret, val, where) \
+do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
+} while(0)
+
 #define FILE_NAME     "SDS.hdf"
 #define SUB1_LENGTH   5
 #define SUB2_LENGTH   4
@@ -11,6 +17,7 @@ int main()
    /************************* Variable declaration **************************/
 
    int32 sd_id, sds_id, sds_index;
+   intn  status;
    int32 start[2], edges[2], stride[2];
    int32 sub1_data[SUB1_LENGTH];
    int32 sub2_data[SUB2_LENGTH];
@@ -45,7 +52,8 @@ int main()
    /*
    * Read the data from the file into sub1_data array.
    */
-   SDreaddata (sds_id, start, stride, edges, (VOIDP)sub1_data);
+   status = SDreaddata (sds_id, start, stride, edges, (VOIDP)sub1_data);
+   CHECK(status, FAIL, "SDreaddata");
 
    /*
    * Print what we have just read; the following numbers should be displayed:
@@ -70,7 +78,8 @@ int main()
    * Read data from the file into sub2_data array. Note that the third
    * parameter is set to NULL for contiguous reading.
    */
-   SDreaddata (sds_id, start, NULL, edges, (VOIDP)sub2_data);
+   status = SDreaddata (sds_id, start, NULL, edges, (VOIDP)sub2_data);
+   CHECK(status, FAIL, "SDreaddata");
 
    /*
    * Print what we have just read; the following numbers should be displayed:
@@ -99,7 +108,8 @@ int main()
    /*
    * Read the data from the file into sub3_data array.
    */
-   SDreaddata (sds_id, start, stride, edges, (VOIDP)sub3_data);
+   status = SDreaddata (sds_id, start, stride, edges, (VOIDP)sub3_data);
+   CHECK(status, FAIL, "SDreaddata");
 
    /*
    * Print what we have just read; the following numbers should be displayed:
@@ -115,12 +125,14 @@ int main()
    /*
    * Terminate access to the data set.
    */
-   SDendaccess (sds_id);
+   status = SDendaccess (sds_id);
+   CHECK(status, FAIL, "SDendaccess");
 
    /*
    * Terminate access to the SD interface and close the file.
    */
-   SDend (sd_id);
+   status = SDend (sd_id);
+   CHECK(status, FAIL, "SDend");
 
    return 0;
 }

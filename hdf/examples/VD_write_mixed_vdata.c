@@ -1,5 +1,11 @@
 #include "hdf.h"
 
+/* Used to make certain a return value _is_not_ a value.  If not ture, */
+/* print error messages, increment num_err and return. */
+#define CHECK(ret, val, where) \
+do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
+} while(0)
+
 #define  FILE_NAME        "Packed_Vdata.hdf"
 #define  VDATA_NAME       "Mixed Data Vdata"
 #define  CLASS_NAME       "General Data Class"
@@ -20,7 +26,9 @@ int main( )
 {
    /************************* Variable declaration **************************/
 
-   int32 file_id, vdata_id,
+   intn  status_n;      /* returned status for functions returning an intn  */
+   int32 status_32,     /* returned status for functions returning an int32 */
+         file_id, vdata_id,
          vdata_ref = -1;   /* vdata's reference number, set to -1 to create */
    float32 temp[N_RECORDS];       /* buffer to hold values of first field   */
    int16   height[N_RECORDS];     /* buffer to hold values of second field  */
@@ -40,7 +48,8 @@ int main( )
    /*
    * Initialize the VS interface.
    */
-   Vstart (file_id);
+   status_n = Vstart (file_id);
+   CHECK(status_n, FAIL, "Vstart");
 
    /*
    * Create a new vdata.
@@ -50,22 +59,29 @@ int main( )
    /*
    * Set name and class name of the vdata.
    */
-   VSsetname (vdata_id, VDATA_NAME);
-   VSsetclass (vdata_id, CLASS_NAME);
+   status_32 = VSsetname (vdata_id, VDATA_NAME);
+   CHECK(status_32, FAIL, "VSsetname");
+   status_32 = VSsetclass (vdata_id, CLASS_NAME);
+   CHECK(status_32, FAIL, "VSsetclass");
 
    /*
    * Introduce each field's name, data type, and order.  This is the first
    * part in defining a vdata field.
    */
-   VSfdefine (vdata_id, FIELD1_NAME, DFNT_FLOAT32, ORDER);
-   VSfdefine (vdata_id, FIELD2_NAME, DFNT_INT16, ORDER);
-   VSfdefine (vdata_id, FIELD3_NAME, DFNT_FLOAT32, ORDER);
-   VSfdefine (vdata_id, FIELD4_NAME, DFNT_CHAR8, ORDER);
+   status_n = VSfdefine (vdata_id, FIELD1_NAME, DFNT_FLOAT32, ORDER);
+   CHECK(status_n, FAIL, "VSfdefine");
+   status_n = VSfdefine (vdata_id, FIELD2_NAME, DFNT_INT16, ORDER);
+   CHECK(status_n, FAIL, "VSfdefine");
+   status_n = VSfdefine (vdata_id, FIELD3_NAME, DFNT_FLOAT32, ORDER);
+   CHECK(status_n, FAIL, "VSfdefine");
+   status_n = VSfdefine (vdata_id, FIELD4_NAME, DFNT_CHAR8, ORDER);
+   CHECK(status_n, FAIL, "VSfdefine");
 
    /*
    * Finalize the definition of the fields of the vdata.
    */
-   VSsetfields (vdata_id, FIELDNAME_LIST);
+   status_n = VSsetfields (vdata_id, FIELDNAME_LIST);
+   CHECK(status_n, FAIL, "VSsetfields");
 
    /*
    * Enter data values into the field buffers by the records.
@@ -92,8 +108,9 @@ int main( )
    * pointers fldbufptrs, and store the packed data into the buffer
    * databuf.  Note that the second parameter is _HDF_VSPACK for packing.
    */
-   VSfpack (vdata_id,_HDF_VSPACK, NULL, (VOIDP)databuf,
+   status_n = VSfpack (vdata_id,_HDF_VSPACK, NULL, (VOIDP)databuf,
            BUF_SIZE, N_RECORDS, NULL, (VOIDP)fldbufptrs);
+   CHECK(status_n, FAIL, "VSfpack");
 
    /*
    * Write all records of the packed data to the vdata.
@@ -105,8 +122,12 @@ int main( )
    * Terminate access to the vdata and the VS interface, then close
    * the HDF file.
    */
-   VSdetach (vdata_id);
-   Vend (file_id);
-   Hclose (file_id);
+   status_32 = VSdetach (vdata_id);
+   CHECK(status_32, FAIL, "VSdetach");
+   status_n = Vend (file_id);
+   CHECK(status_n, FAIL, "Vend");
+   status_32 = Hclose (file_id);
+   CHECK(status_32, FAIL, "Hclose");
+
    return 0;
 }

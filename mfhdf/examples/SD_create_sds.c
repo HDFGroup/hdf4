@@ -1,5 +1,11 @@
 #include "mfhdf.h"
 
+/* Used to make certain a return value _is_not_ a value.  If not ture, */
+/* print error messages, increment num_err and return. */
+#define CHECK(ret, val, where) \
+do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
+} while(0)
+
 #define FILE_NAME     "SDS.hdf"
 #define SDS_NAME      "SDStemplate"
 #define X_LENGTH      5
@@ -12,6 +18,8 @@ int main()
 
    int32 sd_id, sds_id;     /* SD interface and data set identifiers */
    int32 dim_sizes[2];      /* sizes of the SDS dimensions */
+   intn  status;            /* status returned by some routines; has value
+                               SUCCEED or FAIL */
 
    /********************* End of variable declaration ***********************/
 
@@ -37,12 +45,14 @@ int main()
    /*
    * Terminate access to the data set.
    */
-   SDendaccess (sds_id);
+   status = SDendaccess (sds_id);
+   CHECK(status, FAIL, "SDendaccess");
 
    /*
    * Terminate access to the SD interface and close the file.
    */
-   SDend (sd_id);
+   status = SDend (sd_id);
+   CHECK(status, FAIL, "SDend");
 
    return 0;
 }

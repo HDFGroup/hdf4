@@ -1,5 +1,11 @@
 #include "mfhdf.h"
 
+/* Used to make certain a return value _is_not_ a value.  If not ture, */
+/* print error messages, increment num_err and return. */
+#define CHECK(ret, val, where) \
+do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
+} while(0)
+
 #define FILE_NAME     "SDS.hdf"
 
 int main()
@@ -7,6 +13,7 @@ int main()
    /************************* Variable declaration **************************/
 
    int32 sd_id, sds_id;
+   intn  status;
    int32 n_datasets, n_file_attrs, index;
    int32 dim_sizes[H4_MAX_VAR_DIMS];
    int32 rank, data_type, n_attrs;
@@ -24,7 +31,8 @@ int main()
    * Determine the number of data sets in the file and the number
    * of file attributes.
    */
-   SDfileinfo (sd_id, &n_datasets, &n_file_attrs);
+   status = SDfileinfo (sd_id, &n_datasets, &n_file_attrs);
+   CHECK(status, FAIL, "SDfileinfo");
 
    /*
    * Access every data set and print its name, rank, dimension sizes,
@@ -40,8 +48,9 @@ int main()
    for (index = 0; index < n_datasets; index++)
    {
        sds_id = SDselect (sd_id, index);
-       SDgetinfo (sds_id, name, &rank, dim_sizes,
+       status = SDgetinfo (sds_id, name, &rank, dim_sizes,
                            &data_type, &n_attrs);
+       CHECK(status, FAIL, "SDgetinfo");
 
        printf ("name = %s\n", name);
        printf ("rank = %d\n", rank);
@@ -54,13 +63,15 @@ int main()
        /*
        * Terminate access to the data set.
        */
-       SDendaccess (sds_id);
+       status = SDendaccess (sds_id);
+       CHECK(status, FAIL, "SDendaccess");
    }
 
    /*
    * Terminate access to the SD interface and close the file.
    */
-   SDend (sd_id);
+   status = SDend (sd_id);
+   CHECK(status, FAIL, "SDend");
 
    return 0;
 }

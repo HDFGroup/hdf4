@@ -1,5 +1,11 @@
 #include "hdf.h"
 
+/* Used to make certain a return value _is_not_ a value.  If not ture, */
+/* print error messages, increment num_err and return. */
+#define CHECK(ret, val, where) \
+do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
+} while(0)
+
 #define  FILE_NAME       "General_Vdatas.hdf"
 #define  VDATA_NAME      "Solid Particle"
 #define  N_RECORDS       5    /* number of records the vdata contains */
@@ -14,7 +20,9 @@ int main( )
 {
    /************************* Variable declaration **************************/
 
-   int32 file_id, vdata_id,
+   intn  status_n;      /* returned status for functions returning an intn  */
+   int32 status_32,     /* returned status for functions returning an int32 */
+         file_id, vdata_id,
          vdata_ref,     /* vdata's reference number */
          num_of_records; /* number of records actually written to the vdata */
    int16    rec_num;    /* current record number in the vdata */
@@ -30,7 +38,8 @@ int main( )
    /*
    * Initialize the VS interface.
    */
-   Vstart (file_id);
+   status_n = Vstart (file_id);
+   CHECK(status_n, FAIL, "Vstart");
 
    /*
    * Get the reference number of the vdata, whose name is specified in
@@ -48,7 +57,8 @@ int main( )
    /*
    * Specify the fields that will be read.
    */
-   VSsetfields (vdata_id, FIELDNAME_LIST);
+   status_n = VSsetfields (vdata_id, FIELDNAME_LIST);
+   CHECK(status_n, FAIL, "VSsetfields");
 
    /*
    * Place the current point to the position specified in RECORD_INDEX.
@@ -78,8 +88,12 @@ int main( )
    * Terminate access to the vdata and to the VS interface, then close
    * the HDF file.
    */
-   VSdetach (vdata_id);
-   Vend (file_id);
-   Hclose (file_id);
+   status_32 = VSdetach (vdata_id);
+   CHECK(status_32, FAIL, "VSdetach");
+   status_n = Vend (file_id);
+   CHECK(status_n, FAIL, "Vend");
+   status_32 = Hclose (file_id);
+   CHECK(status_32, FAIL, "Hclose");
+
    return 0;
 }

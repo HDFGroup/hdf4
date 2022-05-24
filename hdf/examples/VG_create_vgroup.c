@@ -1,12 +1,20 @@
 #include "hdf.h"
 
+/* Used to make certain a return value _is_not_ a value.  If not ture, */
+/* print error messages, increment num_err and return. */
+#define CHECK(ret, val, where) \
+do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
+} while(0)
+
 #define  FILE_NAME    "Two_Vgroups.hdf"
 
 int main()
 {
    /************************* Variable declaration **************************/
 
-   int32 vgroup_ref = -1,
+   intn  status_n;      /* returned status for functions returning an intn  */
+   int32 status_32,     /* returned status for functions returning an int32 */
+         vgroup_ref = -1,
          vgroup1_id, vgroup2_id, file_id;
 
    /********************** End of variable declaration **********************/
@@ -19,7 +27,8 @@ int main()
    /*
    * Initialize the V interface.
    */
-   Vstart (file_id);
+   status_n = Vstart (file_id);
+   CHECK(status_n, FAIL, "Vstart");
 
    /*
    * Create the first vgroup.  Note that the vgroup reference number is set
@@ -39,17 +48,22 @@ int main()
    /*
    * Terminate access to the first vgroup.
    */
-   Vdetach (vgroup1_id);
+   status_32 = Vdetach (vgroup1_id);
+   CHECK(status_32, FAIL, "Vdetach");
 
    /*
    * Terminate access to the second vgroup.
    */
-   Vdetach (vgroup2_id);
+   status_32 = Vdetach (vgroup2_id);
+   CHECK(status_32, FAIL, "Vdetach");
 
    /*
    * Terminate access to the V interface and close the HDF file.
    */
-   Vend (file_id);
-   Hclose (file_id);
+   status_n = Vend (file_id);
+   CHECK(status_n, FAIL, "Vend");
+   status_n = Hclose (file_id);
+   CHECK(status_n, FAIL, "Hclose");
+
    return 0;
 }

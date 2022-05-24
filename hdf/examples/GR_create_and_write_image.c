@@ -1,5 +1,11 @@
 #include "hdf.h"
 
+/* Used to make certain a return value _is_not_ a value.  If not ture, */
+/* print error messages, increment num_err and return. */
+#define CHECK(ret, val, where) \
+do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
+} while(0)
+
 #define  FILE_NAME     "General_RImages.hdf"
 #define  IMAGE_NAME    "Image Array 1"
 #define  X_LENGTH      10    /* number of columns in the image */
@@ -10,6 +16,7 @@ int main( )
 {
    /************************* Variable declaration **************************/
 
+   intn  status;         /* status for functions returning an intn */
    int32 file_id,        /* HDF file identifier */
          gr_id,          /* GR interface identifier */
          ri_id,          /* raster image identifier */
@@ -28,11 +35,13 @@ int main( )
     * Create and open the file.
     */
    file_id = Hopen (FILE_NAME, DFACC_CREATE, 0);
+   CHECK(file_id, FAIL, "Hopen");
 
    /*
     * Initialize the GR interface.
     */
    gr_id = GRstart (file_id);
+   CHECK(gr_id, FAIL, "GRstart");
 
    /*
     * Set the data type, interlace mode, and dimensions of the image.
@@ -47,6 +56,7 @@ int main( )
     */
    ri_id = GRcreate (gr_id, IMAGE_NAME, N_COMPS, data_type,
            interlace_mode, dim_sizes);
+   CHECK(ri_id, FAIL, "GRcreate");
 
    /*
     * Fill the image data buffer with values.
@@ -71,14 +81,19 @@ int main( )
    /*
     * Write the data in the buffer into the image array.
     */
-   GRwriteimage(ri_id, start, NULL, edges, (VOIDP)image_buf);
+   status = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)image_buf);
+   CHECK(status, FAIL, "GRwriteimage");
 
    /*
     * Terminate access to the raster image and to the GR interface and,
     * close the HDF file.
     */
-   GRendaccess (ri_id);
-   GRend (gr_id);
-   Hclose (file_id);
+   status = GRendaccess (ri_id);
+   CHECK(status, FAIL, "GRendaccess");
+   status = GRend (gr_id);
+   CHECK(status, FAIL, "GRend");
+   status = Hclose (file_id);
+   CHECK(status, FAIL, "Hclose");
+
    return 0;
 }

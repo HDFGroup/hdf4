@@ -1,5 +1,11 @@
 #include "hdf.h"
 
+/* Used to make certain a return value _is_not_ a value.  If not ture, */
+/* print error messages, increment num_err and return. */
+#define CHECK(ret, val, where) \
+do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
+} while(0)
+
 #define  FILE_NAME    "General_RImages.hdf"
 #define  X1_LENGTH    5     /* number of columns in the first image
                               being modified */
@@ -16,6 +22,7 @@ int main( )
 {
    /************************* Variable declaration **************************/
 
+   intn  status;         /* status for functions returning an intn */
    int32 file_id,        /* HDF file identifier */
          gr_id,          /* GR interface identifier */
          ri1_id,         /* raster image identifier */
@@ -73,8 +80,8 @@ int main( )
    /*
    * Write the data in the buffer into the image array.
    */
-   GRwriteimage (ri1_id, start1, NULL, edges1, (VOIDP)image1_buf);
-
+   status = GRwriteimage (ri1_id, start1, NULL, edges1, (VOIDP)image1_buf);
+   CHECK(status, FAIL, "GRwriteimage");
 
    /*
    * Set the interlace mode and dimensions of the second image.
@@ -115,15 +122,21 @@ int main( )
    /*
    * Write the data in the buffer into the second image array.
    */
-   GRwriteimage (ri2_id, start2, NULL, edges2, (VOIDP)image2_buf);
+   status = GRwriteimage (ri2_id, start2, NULL, edges2, (VOIDP)image2_buf);
+   CHECK(status, FAIL, "GRwriteimage");
 
    /*
    * Terminate access to the raster images and to the GR interface, and
    * close the HDF file.
    */
-   GRendaccess (ri1_id);
-   GRendaccess (ri2_id);
-   GRend (gr_id);
-   Hclose (file_id);
+   status = GRendaccess (ri1_id);
+   CHECK(status, FAIL, "GRendaccess");
+   status = GRendaccess (ri2_id);
+   CHECK(status, FAIL, "GRendaccess");
+   status = GRend (gr_id);
+   CHECK(status, FAIL, "GRend");
+   status = Hclose (file_id);
+   CHECK(status, FAIL, "Hclose");
+
    return 0;
 }

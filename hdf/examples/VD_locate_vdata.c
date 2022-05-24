@@ -1,5 +1,11 @@
 #include "hdf.h"
 
+/* Used to make certain a return value _is_not_ a value.  If not ture, */
+/* print error messages, increment num_err and return. */
+#define CHECK(ret, val, where) \
+do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
+} while(0)
+
 #define  FILE_NAME         "General_Vdatas.hdf"
 #define  SEARCHED_FIELDS   "Position,Temperature"
 
@@ -7,7 +13,9 @@ int main( )
 {
    /************************* Variable declaration **************************/
 
-   int32 file_id, vdata_id, vdata_ref,
+   intn  status_n;      /* returned status for functions returning an intn  */
+   int32 status_32,     /* returned status for functions returning an int32 */
+         file_id, vdata_id, vdata_ref,
          index = 0;     /* index of the vdata in the file - manually kept   */
    int8  found_fields;  /* TRUE if the specified fields exist in the vdata  */
 
@@ -21,7 +29,8 @@ int main( )
    /*
    * Initialize the VS interface.
    */
-   Vstart (file_id);
+   status_n = Vstart (file_id);
+   CHECK(status_n, FAIL, "Vstart");
 
    /*
    * Set the reference number to -1 to start the search from
@@ -52,7 +61,8 @@ int main( )
       /*
       * Detach from the current vdata before continuing searching.
       */
-      VSdetach (vdata_id);
+      status_32 = VSdetach (vdata_id);
+      CHECK(status_32, FAIL, "VSdetach");
 
       index++;		/* advance the index by 1 for the next vdata */
    }
@@ -67,13 +77,17 @@ int main( )
    {
       printf ("Fields Position and Temperature found in the vdata at position %d\n",
        index);
-      VSdetach (vdata_id);
+      status_32 = VSdetach (vdata_id);
+      CHECK(status_32, FAIL, "VSdetach");
    }
 
    /*
    * Terminate access to the VS interface and close the HDF file.
    */
-   Vend (file_id);
-   Hclose (file_id);
+   status_n = Vend (file_id);
+   CHECK(status_n, FAIL, "Vend");
+   status_32 = Hclose (file_id);
+   CHECK(status_32, FAIL, "Hclose");
+
    return 0;
 }

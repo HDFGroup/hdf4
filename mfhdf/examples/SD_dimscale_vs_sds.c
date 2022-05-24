@@ -1,5 +1,11 @@
 #include "mfhdf.h"
 
+/* Used to make certain a return value _is_not_ a value.  If not ture, */
+/* print error messages, increment num_err and return. */
+#define CHECK(ret, val, where) \
+do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
+} while(0)
+
 #define FILE_NAME     "SDS.hdf"
 
 int main()
@@ -7,6 +13,7 @@ int main()
    /************************* Variable declaration **************************/
 
    int32 sd_id, sds_id, sds_index;
+   intn  status;
    int32 rank, data_type, dim_sizes[H4_MAX_VAR_DIMS];
    int32 n_datasets, n_file_attr, n_attrs;
    char  sds_name[H4_MAX_NC_NAME];
@@ -21,7 +28,8 @@ int main()
    /*
    * Obtain information about the file.
    */
-   SDfileinfo(sd_id, &n_datasets, &n_file_attr);
+   status =  SDfileinfo(sd_id, &n_datasets, &n_file_attr);
+   CHECK(status, FAIL, "SDfileinfo");
 
    /* Get information about each SDS in the file.
    *  Check whether it is a coordinate variable, then display retrieved
@@ -36,7 +44,8 @@ int main()
    for (sds_index=0; sds_index< n_datasets; sds_index++)
    {
        sds_id = SDselect (sd_id, sds_index);
-       SDgetinfo(sds_id, sds_name, &rank, dim_sizes, &data_type, &n_attrs);
+       status = SDgetinfo(sds_id, sds_name, &rank, dim_sizes, &data_type, &n_attrs);
+       CHECK(status, FAIL, "SDgetinfo");
        if (SDiscoordvar(sds_id))
           printf(" Coordinate variable with the name %s\n", sds_name);
        else
@@ -45,14 +54,15 @@ int main()
    /*
    * Terminate access to the selected data set.
    */
-   SDendaccess(sds_id);
-
+   status = SDendaccess(sds_id);
+   CHECK(status, FAIL, "SDendaccess");
    }
 
    /*
    * Terminate access to the SD interface and close the file.
    */
-   SDend(sd_id);
+   status = SDend(sd_id);
+   CHECK(status, FAIL, "SDend");
 
    return 0;
 }

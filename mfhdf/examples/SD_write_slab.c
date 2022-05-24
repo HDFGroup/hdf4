@@ -1,5 +1,11 @@
 #include "mfhdf.h"
 
+/* Used to make certain a return value _is_not_ a value.  If not ture, */
+/* print error messages, increment num_err and return. */
+#define CHECK(ret, val, where) \
+do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
+} while(0)
+
 #define FILE_NAME     "SLABS.hdf"
 #define SDS_NAME      "FilledBySlabs"
 #define X_LENGTH      4
@@ -12,6 +18,7 @@ int main()
    /************************* Variable declaration **************************/
 
    int32 sd_id, sds_id;
+   intn  status;
    int32 dim_sizes[3], start[3], edges[3];
    int32 data[Z_LENGTH][Y_LENGTH][X_LENGTH];
    int32 zx_data[Z_LENGTH][X_LENGTH];
@@ -76,18 +83,21 @@ int main()
        * Note that the 3rd parameter is NULL which indicates that consecutive
        * slabs in the Y direction are written.
        */
-       SDwritedata (sds_id, start, NULL, edges, (VOIDP)zx_data);
+       status = SDwritedata (sds_id, start, NULL, edges, (VOIDP)zx_data);
+       CHECK(status, FAIL, "SDwritedata");
    }
 
    /*
    * Terminate access to the data set.
    */
-   SDendaccess (sds_id);
+   status = SDendaccess (sds_id);
+   CHECK(status, FAIL, "SDendaccess");
 
    /*
    * Terminate access to the SD interface and close the file.
    */
-   SDend (sd_id);
+   status = SDend (sd_id);
+   CHECK(status, FAIL, "SDend");
 
    return 0;
 }

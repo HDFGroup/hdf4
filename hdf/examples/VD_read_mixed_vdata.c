@@ -1,5 +1,11 @@
 #include "hdf.h"
 
+/* Used to make certain a return value _is_not_ a value.  If not ture, */
+/* print error messages, increment num_err and return. */
+#define CHECK(ret, val, where) \
+do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
+} while(0)
+
 #define  N_RECORDS       20      /* number of records to be read */
 #define  N_FIELDS        2       /* number of fields to be read */
 #define  FILE_NAME       "Packed_Vdata.hdf"
@@ -13,7 +19,9 @@ int main ()
 {
    /************************* Variable declaration **************************/
 
-   int32 file_id, vdata_id,
+   intn  status_n;      /* returned status for functions returning an intn  */
+   int32 status_32,     /* returned status for functions returning an int32 */
+         file_id, vdata_id,
          num_of_records,        /* number of records actually read */
          vdata_ref;             /* reference number of the vdata to be read */
    float32 itemp[N_RECORDS];    /* buffer to hold values of first field     */
@@ -32,7 +40,8 @@ int main ()
    /*
    * Initialize the VS interface.
    */
-   Vstart (file_id);
+   status_n = Vstart (file_id);
+   CHECK(status_n, FAIL, "Vstart");
 
    /*
    * Get the reference number of the vdata, whose name is specified in
@@ -48,7 +57,8 @@ int main ()
    /*
    * Specify the fields that will be read.
    */
-   VSsetfields(vdata_id, FIELDNAME_LIST);
+   status_n = VSsetfields(vdata_id, FIELDNAME_LIST);
+   CHECK(status_n, FAIL, "VSsetfields");
 
    /*
    * Read N_RECORDS records of the vdata and store the values into the
@@ -70,8 +80,9 @@ int main ()
    * Note that the second parameter is _HDF_VSUNPACK for unpacking and the
    * number of records is the one returned by VSread.
    */
-   VSfpack (vdata_id, _HDF_VSUNPACK, FIELDNAME_LIST, (VOIDP)databuf,
+   status_n = VSfpack (vdata_id, _HDF_VSUNPACK, FIELDNAME_LIST, (VOIDP)databuf,
                BUFFER_SIZE, num_of_records, NULL, (VOIDP)fldbufptrs);
+   CHECK(status_n, FAIL, "VSfpack");
 
    /*
    * Display the read data being stored in the field buffers.
@@ -84,8 +95,12 @@ int main ()
    * Terminate access to the vdata and the VS interface, then close
    * the HDF file.
    */
-   VSdetach (vdata_id);
-   Vend (file_id);
-   Hclose (file_id);
+   status_32 = VSdetach (vdata_id);
+   CHECK(status_32, FAIL, "VSdetach");
+   status_n = Vend (file_id);
+   CHECK(status_n, FAIL, "Vend");
+   status_32 = Hclose (file_id);
+   CHECK(status_32, FAIL, "Hclose");
+
    return 0;
 }

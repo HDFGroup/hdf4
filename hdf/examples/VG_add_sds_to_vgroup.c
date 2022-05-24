@@ -1,6 +1,12 @@
 #include   "hdf.h"      /* Note: in this example, hdf.h can be omitted...*/
 #include   "mfhdf.h"    /* ...since mfhdf.h already includes hdf.h */
 
+/* Used to make certain a return value _is_not_ a value.  If not ture, */
+/* print error messages, increment num_err and return. */
+#define CHECK(ret, val, where) \
+do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
+} while(0)
+
 #define  FILE_NAME    "General_Vgroups.hdf"
 #define  SDS_NAME     "Test SD"
 #define  VG_NAME      "SD Vgroup"
@@ -10,7 +16,9 @@ int main()
 {
    /************************* Variable declaration **************************/
 
-   int32  sd_id,        /* SD interface identifier */
+   intn   status_n;     /* returned status for functions returning an intn  */
+   int32  status_32,    /* returned status for functions returning an int32 */
+          sd_id,        /* SD interface identifier */
           sds_id,       /* data set identifier */
           sds_ref,      /* reference number of the data set */
           dim_sizes[1], /* dimension of the data set - only one */
@@ -28,7 +36,8 @@ int main()
    /*
    * Initialize the V interface.
    */
-   Vstart (file_id);
+   status_n = Vstart (file_id);
+   CHECK(status_n, FAIL, "Vstart");
 
    /*
    * Initialize the SD interface.
@@ -49,8 +58,10 @@ int main()
    * Create a vgroup and set its name and class.
    */
    vgroup_id = Vattach (file_id, -1, "w");
-   Vsetname (vgroup_id, VG_NAME);
-   Vsetclass (vgroup_id, VG_CLASS);
+   status_32 = Vsetname (vgroup_id, VG_NAME);
+   CHECK(status_32, FAIL, "Vsetname");
+   status_32 = Vsetclass (vgroup_id, VG_CLASS);
+   CHECK(status_32, FAIL, "Vsetclass");
 
    /*
    * Obtain the reference number of the SDS using its identifier.
@@ -61,20 +72,27 @@ int main()
    * Add the SDS to the vgroup.  Note: the tag DFTAG_NDG is used
    * when adding an SDS.  Refer to Appendix A for the entire list of tags.
    */
-   Vaddtagref (vgroup_id, DFTAG_NDG, sds_ref);
+   status_32 = Vaddtagref (vgroup_id, DFTAG_NDG, sds_ref);
+   CHECK(status_32, FAIL, "Vaddtagref");
 
    /*
    * Terminate access to the SDS and to the SD interface.
    */
-   SDendaccess (sds_id);
-   SDend (sd_id);
+   status_n = SDendaccess (sds_id);
+   CHECK(status_n, FAIL, "SDendaccess");
+   status_n = SDend (sd_id);
+   CHECK(status_n, FAIL, "SDend");
 
    /*
    * Terminate access to the vgroup and to the V interface, and
    * close the HDF file.
    */
-   Vdetach (vgroup_id);
-   Vend (file_id);
-   Hclose (file_id);
+   status_32 = Vdetach (vgroup_id);
+   CHECK(status_32, FAIL, "Vdetach");
+   status_n = Vend (file_id);
+   CHECK(status_n, FAIL, "Vend");
+   status_n = Hclose (file_id);
+   CHECK(status_n, FAIL, "Hclose");
+
    return 0;
 }

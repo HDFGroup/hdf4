@@ -1,5 +1,11 @@
 #include "hdf.h"
 
+/* Used to make certain a return value _is_not_ a value.  If not ture, */
+/* print error messages, increment num_err and return. */
+#define CHECK(ret, val, where) \
+do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
+} while(0)
+
 #define  FILE_NAME     "Image_Chunked.hdf"
 #define  IMAGE_NAME    "Image with Chunks"
 #define  X_LENGTH      10    /* number of rows in the image */
@@ -10,6 +16,7 @@ int main( )
 {
    /************************* Variable declaration **************************/
 
+   intn  status;         /* status for functions returning an intn */
    int32 file_id,        /* HDF file identifier */
          gr_id,          /* GR interface identifier */
          ri_id,          /* raster image identifier */
@@ -58,36 +65,44 @@ int main( )
    chunk_def.comp.cinfo.deflate.level = 6;
    chunk_def.comp.chunk_lengths[0] = 3;
    chunk_def.comp.chunk_lengths[1] = 2;
-   GRsetchunk (ri_id, chunk_def, HDF_CHUNK | HDF_COMP);
+   status = GRsetchunk (ri_id, chunk_def, HDF_CHUNK | HDF_COMP);
+   CHECK(status, FAIL, "GRsetchunk");
 
    /*
    * Write first chunk(0,0).
    */
    origin[0] = 0;
    origin[1] = 0;
-   GRwritechunk (ri_id, origin, (VOIDP)chunk00);
+   status = GRwritechunk (ri_id, origin, (VOIDP)chunk00);
+   CHECK(status, FAIL, "GRwritechunk");
 
    /*
    * Write second chunk(0,1).
    */
    origin[0] = 0;
    origin[1] = 1;
-   GRwritechunk (ri_id, origin, (VOIDP)chunk01);
+   status = GRwritechunk (ri_id, origin, (VOIDP)chunk01);
+   CHECK(status, FAIL, "GRwritechunk");
 
    /*
    * Write third chunk(1,4).
    */
    origin[0] = 1;
    origin[1] = 4;
-   GRwritechunk (ri_id, origin, (VOIDP)chunk14);
+   status = GRwritechunk (ri_id, origin, (VOIDP)chunk14);
+   CHECK(status, FAIL, "GRwritechunk");
 
    /*
    * Terminate access to the raster image and to the GR interface and,
    * close the HDF file.
    */
-   GRendaccess (ri_id);
-   GRend (gr_id);
-   Hclose (file_id);
+   status = GRendaccess (ri_id);
+   CHECK(status, FAIL, "GRendaccess");
+   status = GRend (gr_id);
+   CHECK(status, FAIL, "GRend");
+   status = Hclose (file_id);
+   CHECK(status, FAIL, "Hclose");
+
    return 0;
 }
 

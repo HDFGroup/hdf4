@@ -1,12 +1,20 @@
 #include "hdf.h"
 
+/* Used to make certain a return value _is_not_ a value.  If not ture, */
+/* print error messages, increment num_err and return. */
+#define CHECK(ret, val, where) \
+do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
+} while(0)
+
 #define   FILE_NAME        "General_Vgroups.hdf"
 
 int main( )
 {
    /************************* Variable declaration **************************/
 
-   int32  file_id, vgroup_id, vgroup_ref,
+   intn   status_n;     /* returned status for functions returning an intn  */
+   int32  status_32,    /* returned status for functions returning an int32 */
+          file_id, vgroup_id, vgroup_ref,
           obj_index,    /* index of an object within a vgroup */
           num_of_pairs, /* number of tag/ref number pairs, i.e., objects */
           obj_tag, obj_ref,     /* tag/ref number of an HDF object */
@@ -22,7 +30,8 @@ int main( )
    /*
    * Initialize the V interface.
    */
-   Vstart (file_id);
+   status_n = Vstart (file_id);
+   CHECK(status_n, FAIL, "Vstart");
 
    /*
    * Obtain each vgroup in the file by its reference number, get the
@@ -63,7 +72,8 @@ int main( )
             * Get the tag/ref number pair of the object specified
             * by its index, obj_index, and display them.
             */
-            Vgettagref (vgroup_id, obj_index, &obj_tag, &obj_ref);
+            status_n = Vgettagref (vgroup_id, obj_index, &obj_tag, &obj_ref);
+            CHECK(status_n, FAIL, "Vgettagref");
             printf ("tag = %d, ref = %d", obj_tag, obj_ref);
 
             /*
@@ -85,7 +95,8 @@ int main( )
       /*
       * Terminate access to the current vgroup.
       */
-      Vdetach (vgroup_id);
+      status_32 = Vdetach (vgroup_id);
+      CHECK(status_32, FAIL, "Vdetach");
 
       /*
       * Move to the next vgroup position.
@@ -96,7 +107,10 @@ int main( )
    /*
    * Terminate access to the V interface and close the file.
    */
-   Vend (file_id);
-   Hclose (file_id);
+   status_n = Vend (file_id);
+   CHECK(status_n, FAIL, "Vend");
+   status_n = Hclose (file_id);
+   CHECK(status_n, FAIL, "Hclose");
+
    return 0;
 }

@@ -1,5 +1,11 @@
 #include "mfhdf.h"
 
+/* Used to make certain a return value _is_not_ a value.  If not ture, */
+/* print error messages, increment num_err and return. */
+#define CHECK(ret, val, where) \
+do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
+} while(0)
+
 #define FILE_NAME      "SDScompressed.hdf"
 #define SDS_NAME       "SDSgzip"
 #define X_LENGTH       5
@@ -11,6 +17,7 @@ int main()
    /************************* Variable declaration **************************/
 
    int32     sd_id, sds_id;
+   intn      status;
    int32     comp_type;    /* Compression flag */
    comp_info c_info;   /* Compression structure */
    int32     start[2], edges[2], dim_sizes[2];
@@ -54,7 +61,8 @@ int main()
    */
    comp_type = COMP_CODE_DEFLATE;
    c_info.deflate.level = 6;
-   SDsetcompress (sds_id, comp_type, &c_info);
+   status = SDsetcompress (sds_id, comp_type, &c_info);
+   CHECK(status, FAIL, "SDsetcompress");
 
    /*
    * Define the location and size of the data set
@@ -70,17 +78,20 @@ int main()
    * must be explicitly cast to a generic pointer since SDwritedata
    * is designed to write generic data.
    */
-   SDwritedata (sds_id, start, NULL, edges, (VOIDP)data);
+   status = SDwritedata (sds_id, start, NULL, edges, (VOIDP)data);
+   CHECK(status, FAIL, "SDwritedata");
 
    /*
    * Terminate access to the data set.
    */
-   SDendaccess (sds_id);
+   status = SDendaccess (sds_id);
+   CHECK(status, FAIL, "SDendaccess");
 
    /*
    * Terminate access to the SD interface and close the file.
    */
-   SDend (sd_id);
+   status = SDend (sd_id);
+   CHECK(status, FAIL, "SDend");
 
    return 0;
 }

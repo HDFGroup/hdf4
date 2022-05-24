@@ -1,5 +1,11 @@
 #include "hdf.h"
 
+/* Used to make certain a return value _is_not_ a value.  If not ture, */
+/* print error messages, increment num_err and return. */
+#define CHECK(ret, val, where) \
+do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
+} while(0)
+
 #define  FILE_NAME          "General_RImages.hdf"
 #define  IMAGE_NAME         "Image Array 2"
 #define  F_ATT1_NAME        "File Attribute 1"
@@ -18,6 +24,7 @@ int main( )
 {
    /************************* Variable declaration **************************/
 
+   intn  status;         /* status for functions returning an intn */
    int32 gr_id, ri_id, file_id,
          ri_index;
    int16 ri_attr_2[RI_ATT2_N_VALUES] = {1, 2, 3, 4, 5, 6};
@@ -38,11 +45,13 @@ int main( )
    * Set two file attributes to the file with names, data types, numbers of
    * values, and values of the attributes specified.
    */
-   GRsetattr (gr_id, F_ATT1_NAME, DFNT_CHAR8, F_ATT1_N_VALUES,
+   status = GRsetattr (gr_id, F_ATT1_NAME, DFNT_CHAR8, F_ATT1_N_VALUES,
                        (VOIDP)F_ATT1_VAL);
+   CHECK(status, FAIL, "GRsetattr");
 
-   GRsetattr (gr_id, F_ATT2_NAME, DFNT_CHAR8, F_ATT2_N_VALUES,
+   status = GRsetattr (gr_id, F_ATT2_NAME, DFNT_CHAR8, F_ATT2_N_VALUES,
                        (VOIDP)F_ATT2_VAL);
+   CHECK(status, FAIL, "GRsetattr");
 
    /*
    * Obtain the index of the image named IMAGE_NAME.
@@ -58,18 +67,24 @@ int main( )
    * Set two attributes to the image with names, data types, numbers of
    * values, and values of the attributes specified.
    */
-   GRsetattr (ri_id, RI_ATT1_NAME, DFNT_CHAR8, RI_ATT1_N_VALUES,
+   status = GRsetattr (ri_id, RI_ATT1_NAME, DFNT_CHAR8, RI_ATT1_N_VALUES,
                        (VOIDP)RI_ATT1_VAL);
+   CHECK(status, FAIL, "GRsetattr");
 
-   GRsetattr (ri_id, RI_ATT2_NAME, DFNT_INT16, RI_ATT2_N_VALUES,
+   status = GRsetattr (ri_id, RI_ATT2_NAME, DFNT_INT16, RI_ATT2_N_VALUES,
                        (VOIDP)ri_attr_2);
+   CHECK(status, FAIL, "GRsetattr");
 
    /*
    * Terminate access to the image and to the GR interface, and close the
    * HDF file.
    */
-   GRendaccess (ri_id);
-   GRend (gr_id);
-   Hclose (file_id);
+   status = GRendaccess (ri_id);
+   CHECK(status, FAIL, "GRendaccess");
+   status = GRend (gr_id);
+   CHECK(status, FAIL, "GRend");
+   status = Hclose (file_id);
+   CHECK(status, FAIL, "Hclose");
+
    return 0;
 }
