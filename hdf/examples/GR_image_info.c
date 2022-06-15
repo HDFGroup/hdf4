@@ -1,11 +1,5 @@
 #include "hdf.h"
 
-/* Used to make certain a return value _is_not_ a value.  If not ture, */
-/* print error messages, increment num_err and return. */
-#define CHECK(ret, val, where) \
-do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
-} while(0)
-
 #define  FILE_NAME    "General_RImages.hdf"
 
 int main( )
@@ -42,7 +36,7 @@ int main( )
    * Determine the contents of the file.
    */
    status = GRfileinfo (gr_id, &n_rimages, &n_file_attrs);
-   CHECK(status, FAIL, "GRfileinfo");
+   CHECK_NOT_VAL(status, FAIL, "GRfileinfo");
 
    /*
    * For each image in the file, get and display the image information.
@@ -54,7 +48,7 @@ int main( )
       ri_id = GRselect (gr_id, ri_index);
       status = GRgetiminfo (ri_id, name, &n_comps, &data_type,
                           &interlace_mode, dim_sizes, &n_attrs);
-      CHECK(status, FAIL, "GRgetiminfo");
+      CHECK_NOT_VAL(status, FAIL, "GRgetiminfo");
       /*
       * Map the number type and interlace mode into text strings for output
       * readability.  Note that, in this example, only two possible types
@@ -97,16 +91,16 @@ int main( )
       * Terminate access to the current raster image.
       */
       status = GRendaccess (ri_id);
-      CHECK(status, FAIL, "GRendaccess");
+      CHECK_NOT_VAL(status, FAIL, "GRendaccess");
    }
 
    /*
    * Terminate access to the GR interface and close the HDF file.
    */
    status = GRend (gr_id);
-   CHECK(status, FAIL, "GRend");
+   CHECK_NOT_VAL(status, FAIL, "GRend");
    status = Hclose (file_id);
-   CHECK(status, FAIL, "Hclose");
+   CHECK_NOT_VAL(status, FAIL, "Hclose");
 
    return 0;
 }

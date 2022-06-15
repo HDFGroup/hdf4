@@ -1,11 +1,5 @@
 #include "hdf.h"
 
-/* Used to make certain a return value _is_not_ a value.  If not ture, */
-/* print error messages, increment num_err and return. */
-#define CHECK(ret, val, where) \
-do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
-} while(0)
-
 #define  FILE_NAME          "General_RImages.hdf"
 #define  IMAGE_NAME         "Image Array 2"
 #define  F_ATT1_NAME        "File Attribute 1"
@@ -47,11 +41,11 @@ int main( )
    */
    status = GRsetattr (gr_id, F_ATT1_NAME, DFNT_CHAR8, F_ATT1_N_VALUES,
                        (VOIDP)F_ATT1_VAL);
-   CHECK(status, FAIL, "GRsetattr");
+   CHECK_NOT_VAL(status, FAIL, "GRsetattr");
 
    status = GRsetattr (gr_id, F_ATT2_NAME, DFNT_CHAR8, F_ATT2_N_VALUES,
                        (VOIDP)F_ATT2_VAL);
-   CHECK(status, FAIL, "GRsetattr");
+   CHECK_NOT_VAL(status, FAIL, "GRsetattr");
 
    /*
    * Obtain the index of the image named IMAGE_NAME.
@@ -69,22 +63,22 @@ int main( )
    */
    status = GRsetattr (ri_id, RI_ATT1_NAME, DFNT_CHAR8, RI_ATT1_N_VALUES,
                        (VOIDP)RI_ATT1_VAL);
-   CHECK(status, FAIL, "GRsetattr");
+   CHECK_NOT_VAL(status, FAIL, "GRsetattr");
 
    status = GRsetattr (ri_id, RI_ATT2_NAME, DFNT_INT16, RI_ATT2_N_VALUES,
                        (VOIDP)ri_attr_2);
-   CHECK(status, FAIL, "GRsetattr");
+   CHECK_NOT_VAL(status, FAIL, "GRsetattr");
 
    /*
    * Terminate access to the image and to the GR interface, and close the
    * HDF file.
    */
    status = GRendaccess (ri_id);
-   CHECK(status, FAIL, "GRendaccess");
+   CHECK_NOT_VAL(status, FAIL, "GRendaccess");
    status = GRend (gr_id);
-   CHECK(status, FAIL, "GRend");
+   CHECK_NOT_VAL(status, FAIL, "GRend");
    status = Hclose (file_id);
-   CHECK(status, FAIL, "Hclose");
+   CHECK_NOT_VAL(status, FAIL, "Hclose");
 
    return 0;
 }

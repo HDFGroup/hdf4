@@ -1,11 +1,5 @@
 #include "mfhdf.h"
 
-/* Used to make certain a return value _is_not_ a value.  If not ture, */
-/* print error messages, increment num_err and return. */
-#define CHECK(ret, val, where) \
-do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
-} while(0)
-
 #define FILE_NAME      "SDS.hdf"
 #define FILE_ATTR_NAME "File_contents"
 #define SDS_ATTR_NAME  "Valid_range"
@@ -40,7 +34,7 @@ int main()
    n_values = 16;
    status = SDsetattr (sd_id, FILE_ATTR_NAME, DFNT_CHAR, n_values,
                        (VOIDP)file_values);
-   CHECK(status, FAIL, "SDsetattr");
+   CHECK_NOT_VAL(status, FAIL, "SDsetattr");
 
    /*
    * Select the first data set.
@@ -55,7 +49,7 @@ int main()
    n_values  = 2;
    status = SDsetattr (sds_id, SDS_ATTR_NAME, DFNT_FLOAT32, n_values,
                        (VOIDP)sds_values);
-   CHECK(status, FAIL, "SDsetattr");
+   CHECK_NOT_VAL(status, FAIL, "SDsetattr");
 
    /*
    * Get the the second dimension identifier of the SDS.
@@ -69,19 +63,19 @@ int main()
    n_values = 7;
    status = SDsetattr (dim_id, DIM_ATTR_NAME, DFNT_CHAR, n_values,
                        (VOIDP)dim_values);
-   CHECK(status, FAIL, "SDsetattr");
+   CHECK_NOT_VAL(status, FAIL, "SDsetattr");
 
    /*
    * Terminate access to the data set.
    */
    status = SDendaccess (sds_id);
-   CHECK(status, FAIL, "SDendaccess");
+   CHECK_NOT_VAL(status, FAIL, "SDendaccess");
 
    /*
    * Terminate access to the SD interface and close the file.
    */
    status = SDend (sd_id);
-   CHECK(status, FAIL, "SDend");
+   CHECK_NOT_VAL(status, FAIL, "SDend");
 
    return 0;
 }

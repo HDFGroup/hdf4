@@ -1,11 +1,5 @@
 #include "hdf.h"
 
-/* Used to make certain a return value _is_not_ a value.  If not ture, */
-/* print error messages, increment num_err and return. */
-#define CHECK(ret, val, where) \
-do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
-} while(0)
-
 #define  FILE_NAME       "General_RImages.hdf"
 #define  RI_ATTR_NAME    "Image Attribute 2"
 
@@ -43,7 +37,7 @@ int main( )
    * Determine the number of attributes in the file.
    */
    status = GRfileinfo (gr_id, &n_rimages, &n_file_attrs);
-   CHECK(status, FAIL, "GRfileinfo");
+   CHECK_NOT_VAL(status, FAIL, "GRfileinfo");
    if (status != FAIL && n_file_attrs > 0)
    {
       for (f_att_index = 0; f_att_index < n_file_attrs; f_att_index++)
@@ -53,7 +47,7 @@ int main( )
          */
          status = GRattrinfo (gr_id, f_att_index, attr_name, &data_type,
                               &n_values);
-         CHECK(status, FAIL, "GRattrinfo");
+         CHECK_NOT_VAL(status, FAIL, "GRattrinfo");
 
          /*
          * Allocate a buffer to hold the file attribute data.  In this example,
@@ -81,7 +75,7 @@ int main( )
          * Read and display the attribute values.
          */
          status = GRgetattr (gr_id, f_att_index, (VOIDP)data_buf);
-         CHECK(status, FAIL, "GRgetattr");
+         CHECK_NOT_VAL(status, FAIL, "GRgetattr");
 
          char_ptr = (char8 *) data_buf;
          printf ("Attribute %s: ", attr_name);
@@ -112,7 +106,7 @@ int main( )
    * Get information about the attribute.
    */
    status = GRattrinfo (ri_id, ri_att_index, attr_name, &data_type, &n_values);
-   CHECK(status, FAIL, "GRattrinfo");
+   CHECK_NOT_VAL(status, FAIL, "GRattrinfo");
 
    /*
    * Allocate a buffer to hold the file attribute data.  As mentioned above,
@@ -127,7 +121,7 @@ int main( )
    * Read and display the attribute values.
    */
    status = GRgetattr (ri_id, ri_att_index, (VOIDP)data_buf);
-   CHECK(status, FAIL, "GRgetattr");
+   CHECK_NOT_VAL(status, FAIL, "GRgetattr");
 
    printf ("\nAttribute %s: ", RI_ATTR_NAME);
    int_ptr = (int16 *)data_buf;
@@ -146,11 +140,11 @@ int main( )
    */
 
    status = GRendaccess (ri_id);
-   CHECK(status, FAIL, "GRendaccess");
+   CHECK_NOT_VAL(status, FAIL, "GRendaccess");
    status = GRend (gr_id);
-   CHECK(status, FAIL, "GRend");
+   CHECK_NOT_VAL(status, FAIL, "GRend");
    status = Hclose (file_id);
-   CHECK(status, FAIL, "Hclose");
+   CHECK_NOT_VAL(status, FAIL, "Hclose");
 
    return 0;
 }

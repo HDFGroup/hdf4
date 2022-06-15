@@ -1,11 +1,5 @@
 #include "hdf.h"
 
-/* Used to make certain a return value _is_not_ a value.  If not ture, */
-/* print error messages, increment num_err and return. */
-#define CHECK(ret, val, where) \
-do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
-} while(0)
-
 #define  FILE_NAME        "General_Vdatas.hdf"
 #define  N_RECORDS        10        /* number of records the vdata contains */
 #define  ORDER_1          3         /* order of first field */
@@ -43,7 +37,7 @@ int main( )
    * Initialize the VS interface.
    */
    status_n = Vstart (file_id);
-   CHECK(status_n, FAIL, "Vstart");
+   CHECK_NOT_VAL(status_n, FAIL, "Vstart");
 
    /*
    * Create a new vdata.
@@ -54,26 +48,26 @@ int main( )
    * Set name and class name of the vdata.
    */
    status_32 = VSsetname (vdata_id, VDATA_NAME);
-   CHECK(status_32, FAIL, "VSsetname");
+   CHECK_NOT_VAL(status_32, FAIL, "VSsetname");
    status_32 = VSsetclass (vdata_id, CLASS_NAME);
-   CHECK(status_32, FAIL, "VSsetclass");
+   CHECK_NOT_VAL(status_32, FAIL, "VSsetclass");
 
    /*
    * Introduce each field's name, data type, and order.  This is the first
    * part in defining a field.
    */
    status_n = VSfdefine (vdata_id, FIELD1_NAME, DFNT_FLOAT32, ORDER_1 );
-   CHECK(status_n, FAIL, "VSfdefine");
+   CHECK_NOT_VAL(status_n, FAIL, "VSfdefine");
    status_n = VSfdefine (vdata_id, FIELD2_NAME, DFNT_FLOAT32, ORDER_2 );
-   CHECK(status_n, FAIL, "VSfdefine");
+   CHECK_NOT_VAL(status_n, FAIL, "VSfdefine");
    status_n = VSfdefine (vdata_id, FIELD3_NAME, DFNT_FLOAT32, ORDER_3 );
-   CHECK(status_n, FAIL, "VSfdefine");
+   CHECK_NOT_VAL(status_n, FAIL, "VSfdefine");
 
    /*
    * Finalize the definition of the fields.
    */
    status_n = VSsetfields (vdata_id, FIELDNAME_LIST);
-   CHECK(status_n, FAIL, "VSsetfields");
+   CHECK_NOT_VAL(status_n, FAIL, "VSsetfields");
 
    /*
    * Buffer the data by the record for fully interlaced mode.  Note that the
@@ -102,11 +96,11 @@ int main( )
    * the HDF file.
    */
    status_32 = VSdetach (vdata_id);
-   CHECK(status_32, FAIL, "VSdetach");
+   CHECK_NOT_VAL(status_32, FAIL, "VSdetach");
    status_n  = Vend (file_id);
-   CHECK(status_n, FAIL, "Vend");
+   CHECK_NOT_VAL(status_n, FAIL, "Vend");
    status_32 = Hclose (file_id);
-   CHECK(status_32, FAIL, "Hclose");
+   CHECK_NOT_VAL(status_32, FAIL, "Hclose");
 
    return 0;
 }

@@ -1,11 +1,5 @@
 #include "hdf.h"
 
-/* Used to make certain a return value _is_not_ a value.  If not ture, */
-/* print error messages, increment num_err and return. */
-#define CHECK(ret, val, where) \
-do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
-} while(0)
-
 #define  FILE_NAME       "General_RImages.hdf"
 #define  N_COMPS         2
 #define  X_LENGTH        10   /* number of columns of the entire image */
@@ -64,7 +58,7 @@ int main( )
    * Read the data from the raster image array.
    */
    status = GRreadimage (ri_id, start, NULL, edges, (VOIDP)entire_image);
-   CHECK(status, FAIL, "GRreadimage");
+   CHECK_NOT_VAL(status, FAIL, "GRreadimage");
 
    /*
    * Display only the first component of the image since the two components
@@ -90,7 +84,7 @@ int main( )
    * Read a subset of the raster image array.
    */
    status = GRreadimage (ri_id, start, NULL, edges, (VOIDP)partial_image);
-   CHECK(status, FAIL, "GRreadimage");
+   CHECK_NOT_VAL(status, FAIL, "GRreadimage");
 
    /*
    * Display the first component of the read sample.
@@ -117,7 +111,7 @@ int main( )
    * Read all the odd rows and even columns of the image.
    */
    status = GRreadimage (ri_id, start, stride, edges, (VOIDP)skipped_image);
-   CHECK(status, FAIL, "GRreadimage");
+   CHECK_NOT_VAL(status, FAIL, "GRreadimage");
 
    /*
    * Display the first component of the read sample.
@@ -135,11 +129,11 @@ int main( )
    * close the HDF file.
    */
    status = GRendaccess (ri_id);
-   CHECK(status, FAIL, "GRendaccess");
+   CHECK_NOT_VAL(status, FAIL, "GRendaccess");
    status = GRend (gr_id);
-   CHECK(status, FAIL, "GRend");
+   CHECK_NOT_VAL(status, FAIL, "GRend");
    status = Hclose (file_id);
-   CHECK(status, FAIL, "Hclose");
+   CHECK_NOT_VAL(status, FAIL, "Hclose");
 
    return 0;
 }

@@ -1,11 +1,5 @@
 #include "hdf.h"
 
-/* Used to make certain a return value _is_not_ a value.  If not ture, */
-/* print error messages, increment num_err and return. */
-#define CHECK(ret, val, where) \
-do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
-} while(0)
-
 #define  FILE_NAME         "General_Vgroups.hdf"
 #define  N_RECORDS         30       /* number of records in the vdatas */
 #define  ORDER             3        /* order of field FIELD_VD2 */
@@ -60,7 +54,7 @@ int main( )
    * Initialize the V interface.
    */
    status_n = Vstart (file_id);
-   CHECK(status_n, FAIL, "Vstart");
+   CHECK_NOT_VAL(status_n, FAIL, "Vstart");
 
    /*
    * Buffer the data for the second and third vdatas.
@@ -79,9 +73,9 @@ int main( )
    */
    vgroup_id = Vattach (file_id, -1, "w");
    status_32 = Vsetname (vgroup_id, VG_NAME);
-   CHECK(status_32, FAIL, "Vsetname");
+   CHECK_NOT_VAL(status_32, FAIL, "Vsetname");
    status_32 = Vsetclass (vgroup_id, VG_CLASS);
-   CHECK(status_32, FAIL, "Vsetclass");
+   CHECK_NOT_VAL(status_32, FAIL, "Vsetclass");
 
    /*
    * Create the first vdata then set its name and class. Note that the vdata's
@@ -90,19 +84,19 @@ int main( )
    */
    vdata1_id = VSattach (file_id, -1, "w");
    status_32 = VSsetname (vdata1_id, VD1_NAME);
-   CHECK(status_32, FAIL, "VSsetname");
+   CHECK_NOT_VAL(status_32, FAIL, "VSsetname");
    status_32 = VSsetclass (vdata1_id, VD1_CLASS);
-   CHECK(status_32, FAIL, "VSsetclass");
+   CHECK_NOT_VAL(status_32, FAIL, "VSsetclass");
 
    /*
    * Introduce and define the fields of the first vdata.
    */
    status_n = VSfdefine (vdata1_id, FIELD1_VD1, DFNT_FLOAT32, 1);
-   CHECK(status_n, FAIL, "VSfdefine");
+   CHECK_NOT_VAL(status_n, FAIL, "VSfdefine");
    status_n = VSfdefine (vdata1_id, FIELD2_VD1, DFNT_FLOAT32, 1);
-   CHECK(status_n, FAIL, "VSfdefine");
+   CHECK_NOT_VAL(status_n, FAIL, "VSfdefine");
    status_n = VSsetfields (vdata1_id, FIELDNAME_LIST);
-   CHECK(status_n, FAIL, "VSsetfields");
+   CHECK_NOT_VAL(status_n, FAIL, "VSsetfields");
 
    /*
    * Write the buffered data into the first vdata with full interlace mode.
@@ -118,7 +112,7 @@ int main( )
    * Detach from the first vdata.
    */
    status_32 = VSdetach (vdata1_id);
-   CHECK(status_32, FAIL, "VSdetach");
+   CHECK_NOT_VAL(status_32, FAIL, "VSdetach");
 
    /*
    * Create, write, and insert the second vdata to the vgroup using
@@ -126,17 +120,17 @@ int main( )
    */
    vdata2_id = VSattach (file_id, -1, "w");
    status_32 = VSsetname (vdata2_id, VD2_NAME);
-   CHECK(status_32, FAIL, "VSsetname");
+   CHECK_NOT_VAL(status_32, FAIL, "VSsetname");
    status_32 = VSsetclass (vdata2_id, VD2_CLASS);
-   CHECK(status_32, FAIL, "VSsetclass");
+   CHECK_NOT_VAL(status_32, FAIL, "VSsetclass");
    status_n = VSfdefine (vdata2_id, FIELD_VD2, DFNT_FLOAT32, 1);
-   CHECK(status_n, FAIL, "VSfdefine");
+   CHECK_NOT_VAL(status_n, FAIL, "VSfdefine");
    status_n = VSsetfields (vdata2_id, FIELD_VD2);
-   CHECK(status_n, FAIL, "VSsetfields");
+   CHECK_NOT_VAL(status_n, FAIL, "VSsetfields");
    VSwrite (vdata2_id, (uint8 *)tmp, N_RECORDS, FULL_INTERLACE);
    Vinsert (vgroup_id, vdata2_id);
    status_32 = VSdetach (vdata2_id);
-   CHECK(status_32, FAIL, "VSdetach");
+   CHECK_NOT_VAL(status_32, FAIL, "VSdetach");
 
    /*
    * Create, write, and insert the third vdata to the vgroup using
@@ -144,31 +138,31 @@ int main( )
    */
    vdata3_id = VSattach (file_id, -1, "w");
    status_32 = VSsetname (vdata3_id, VD3_NAME);
-   CHECK(status_32, FAIL, "VSsetname");
+   CHECK_NOT_VAL(status_32, FAIL, "VSsetname");
    status_32 = VSsetclass (vdata3_id, VD3_CLASS);
-   CHECK(status_32, FAIL, "VSsetclass");
+   CHECK_NOT_VAL(status_32, FAIL, "VSsetclass");
    status_n = VSfdefine (vdata3_id, FIELD_VD3, DFNT_INT16, 3);
-   CHECK(status_n, FAIL, "VSfdefine");
+   CHECK_NOT_VAL(status_n, FAIL, "VSfdefine");
    status_n = VSsetfields (vdata3_id, FIELD_VD3);
-   CHECK(status_n, FAIL, "VSsetfields");
+   CHECK_NOT_VAL(status_n, FAIL, "VSsetfields");
    VSwrite (vdata3_id, (uint8 *)plist, N_RECORDS, FULL_INTERLACE);
    Vinsert (vgroup_id, vdata3_id);
    status_32 = VSdetach (vdata3_id);
-   CHECK(status_32, FAIL, "VSdetach");
+   CHECK_NOT_VAL(status_32, FAIL, "VSdetach");
 
    /*
    * Terminate access to the vgroup "Vertices".
    */
    status_32 = Vdetach (vgroup_id);
-   CHECK(status_32, FAIL, "Vdetach");
+   CHECK_NOT_VAL(status_32, FAIL, "Vdetach");
 
    /*
    * Terminate access to the V interface and close the HDF file.
    */
    status_n = Vend (file_id);
-   CHECK(status_n, FAIL, "Vend");
+   CHECK_NOT_VAL(status_n, FAIL, "Vend");
    status_n = Hclose (file_id);
-   CHECK(status_n, FAIL, "Hclose");
+   CHECK_NOT_VAL(status_n, FAIL, "Hclose");
 
    return 0;
 }

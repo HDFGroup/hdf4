@@ -1,11 +1,5 @@
 #include "mfhdf.h"
 
-/* Used to make certain a return value _is_not_ a value.  If not ture, */
-/* print error messages, increment num_err and return. */
-#define CHECK(ret, val, where) \
-do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
-} while(0)
-
 #define FILE_NAME     "SDSchunked.hdf"
 #define SDS_NAME      "ChunkedData"
 #define RANK          2
@@ -82,7 +76,7 @@ int main()
     * Fill the SDS array with the fill value.
     */
     status = SDsetfillvalue (sds_id, (VOIDP)&fill_value);
-    CHECK(status, FAIL, "SDsetfillvalue");
+    CHECK_NOT_VAL(status, FAIL, "SDsetfillvalue");
 
     /*
     * Create chunked SDS.
@@ -119,7 +113,7 @@ int main()
     */
     comp_flag = HDF_CHUNK;
     status = SDsetchunk (sds_id, c_def, comp_flag);
-    CHECK(status, FAIL, "SDsetchunk");
+    CHECK_NOT_VAL(status, FAIL, "SDsetchunk");
 
     /*
     * Set chunk cache to hold maximum of 3 chunks.
@@ -139,7 +133,7 @@ int main()
     origin[0] = 0;
     origin[1] = 0;
     status = SDwritechunk (sds_id, origin, (VOIDP) chunk1);
-    CHECK(status, FAIL, "SDwritechunk");
+    CHECK_NOT_VAL(status, FAIL, "SDwritechunk");
 
     /*
     * Write the chunk with the coordinates (1,0).
@@ -147,7 +141,7 @@ int main()
     origin[0] = 1;
     origin[1] = 0;
     status = SDwritechunk (sds_id, origin, (VOIDP) chunk3);
-    CHECK(status, FAIL, "SDwritechunk");
+    CHECK_NOT_VAL(status, FAIL, "SDwritechunk");
 
     /*
     * Write the chunk with the coordinates (0,1).
@@ -155,7 +149,7 @@ int main()
     origin[0] = 0;
     origin[1] = 1;
     status = SDwritechunk (sds_id, origin, (VOIDP) chunk2);
-    CHECK(status, FAIL, "SDwritechunk");
+    CHECK_NOT_VAL(status, FAIL, "SDwritechunk");
 
     /*
     * Write chunk with the coordinates (1,2) using
@@ -165,8 +159,8 @@ int main()
     start[1] = 2;
     edges[0] = 3;
     edges[1] = 2;
-    status = SDwritedata (sds_id, start, NULL, edges, (VOIDP) chunk6); 
-    CHECK(status, FAIL, "SDwritedata");
+    status = SDwritedata (sds_id, start, NULL, edges, (VOIDP) chunk6);
+    CHECK_NOT_VAL(status, FAIL, "SDwritedata");
 
     /*
     * Fill second column in the chunk with the coordinates (1,1)
@@ -177,7 +171,7 @@ int main()
     edges[0] = 3;
     edges[1] = 1;
     status = SDwritedata (sds_id, start, NULL, edges, (VOIDP) column);
-    CHECK(status, FAIL, "SDwritedata");
+    CHECK_NOT_VAL(status, FAIL, "SDwritedata");
 
     /*
     * Fill second row in the chunk with the coordinates (0,2)
@@ -188,19 +182,19 @@ int main()
     edges[0] = 1;
     edges[1] = 2;
     status = SDwritedata (sds_id, start, NULL, edges, (VOIDP) row);
-    CHECK(status, FAIL, "SDwritedata");
+    CHECK_NOT_VAL(status, FAIL, "SDwritedata");
 
     /*
     * Terminate access to the data set.
     */
     status = SDendaccess (sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    CHECK_NOT_VAL(status, FAIL, "SDendaccess");
 
     /*
     * Terminate access to the SD interface and close the file.
     */
     status = SDend (sd_id);
-    CHECK(status, FAIL, "SDend");
+    CHECK_NOT_VAL(status, FAIL, "SDend");
 
     /*
     * Reopen the file and access the first data set.
@@ -215,7 +209,7 @@ int main()
     * NBIT, Skipping Huffman, or GZIP compression is used.
     */
     status = SDgetchunkinfo (sds_id, &c_def_out, &c_flags);
-    CHECK(status, FAIL, "SDgetchunkinfo");
+    CHECK_NOT_VAL(status, FAIL, "SDgetchunkinfo");
     if (c_flags == HDF_CHUNK )
        printf(" SDS is chunked\nChunk's dimensions %dx%d\n",
               c_def_out.chunk_lengths[0],
@@ -237,7 +231,7 @@ int main()
     edges[0] = 9;
     edges[1] = 4;
     status = SDreaddata (sds_id, start, NULL, edges, (VOIDP)all_data);
-    CHECK(status, FAIL, "SDreaddata");
+    CHECK_NOT_VAL(status, FAIL, "SDreaddata");
 
     /*
     * Print out what we have read.
@@ -267,7 +261,7 @@ int main()
     origin[0] = 2;
     origin[1] = 0;
     status = SDreadchunk (sds_id, origin, chunk_out);
-    CHECK(status, FAIL, "SDreadchunk");
+    CHECK_NOT_VAL(status, FAIL, "SDreadchunk");
     printf (" Chunk (2,0) \n");
     for (j=0; j<3; j++)
     {
@@ -281,7 +275,7 @@ int main()
     origin[0] = 1;
     origin[1] = 1;
     status = SDreadchunk (sds_id, origin, chunk_out);
-    CHECK(status, FAIL, "SDreadchunk");
+    CHECK_NOT_VAL(status, FAIL, "SDreadchunk");
     printf (" Chunk (1,1) \n");
     for (j=0; j<3; j++)
     {
@@ -305,13 +299,13 @@ int main()
     * Terminate access to the data set.
     */
     status = SDendaccess (sds_id);
-    CHECK(status, FAIL, "SDendaccess");
+    CHECK_NOT_VAL(status, FAIL, "SDendaccess");
 
     /*
     * Terminate access to the SD interface and close the file.
     */
     status = SDend (sd_id);
-    CHECK(status, FAIL, "SDend");
+    CHECK_NOT_VAL(status, FAIL, "SDend");
 
     return 0;
 }

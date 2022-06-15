@@ -1,11 +1,5 @@
 #include "hdf.h"
 
-/* Used to make certain a return value _is_not_ a value.  If not ture, */
-/* print error messages, increment num_err and return. */
-#define CHECK(ret, val, where) \
-do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
-} while(0)
-
 #define  FILE_NAME         "Image_with_Palette.hdf"
 #define  NEW_IMAGE_NAME    "Image with Palette"
 #define  N_COMPS_IMG       2       /* number of image components */
@@ -77,7 +71,7 @@ int main( )
    * Write the data in the buffer into the image array.
    */
    status = GRwriteimage (ri_id, start, NULL, edges, (VOIDP)image_buf);
-   CHECK(status, FAIL, "GRwriteimage");
+   CHECK_NOT_VAL(status, FAIL, "GRwriteimage");
 
    /*
    * Initialize the palette to grayscale.
@@ -103,18 +97,18 @@ int main( )
    */
    status = GRwritelut (pal_id, N_COMPS_PAL, DFNT_UINT8, interlace_mode,
                         N_ENTRIES, (VOIDP)palette_buf);
-   CHECK(status, FAIL, "GRwritelut");
+   CHECK_NOT_VAL(status, FAIL, "GRwritelut");
 
    /*
    * Terminate access to the image and to the GR interface, and
    * close the HDF file.
    */
    status = GRendaccess (ri_id);
-   CHECK(status, FAIL, "GRendaccess");
+   CHECK_NOT_VAL(status, FAIL, "GRendaccess");
    status = GRend (gr_id);
-   CHECK(status, FAIL, "GRend");
+   CHECK_NOT_VAL(status, FAIL, "GRend");
    status = Hclose (file_id);
-   CHECK(status, FAIL, "Hclose");
+   CHECK_NOT_VAL(status, FAIL, "Hclose");
 
    return 0;
 }

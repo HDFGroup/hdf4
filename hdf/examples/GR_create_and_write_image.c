@@ -1,11 +1,5 @@
 #include "hdf.h"
 
-/* Used to make certain a return value _is_not_ a value.  If not ture, */
-/* print error messages, increment num_err and return. */
-#define CHECK(ret, val, where) \
-do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
-} while(0)
-
 #define  FILE_NAME     "General_RImages.hdf"
 #define  IMAGE_NAME    "Image Array 1"
 #define  X_LENGTH      10    /* number of columns in the image */
@@ -35,13 +29,13 @@ int main( )
     * Create and open the file.
     */
    file_id = Hopen (FILE_NAME, DFACC_CREATE, 0);
-   CHECK(file_id, FAIL, "Hopen");
+   CHECK_NOT_VAL(file_id, FAIL, "Hopen");
 
    /*
     * Initialize the GR interface.
     */
    gr_id = GRstart (file_id);
-   CHECK(gr_id, FAIL, "GRstart");
+   CHECK_NOT_VAL(gr_id, FAIL, "GRstart");
 
    /*
     * Set the data type, interlace mode, and dimensions of the image.
@@ -56,7 +50,7 @@ int main( )
     */
    ri_id = GRcreate (gr_id, IMAGE_NAME, N_COMPS, data_type,
            interlace_mode, dim_sizes);
-   CHECK(ri_id, FAIL, "GRcreate");
+   CHECK_NOT_VAL(ri_id, FAIL, "GRcreate");
 
    /*
     * Fill the image data buffer with values.
@@ -82,18 +76,18 @@ int main( )
     * Write the data in the buffer into the image array.
     */
    status = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)image_buf);
-   CHECK(status, FAIL, "GRwriteimage");
+   CHECK_NOT_VAL(status, FAIL, "GRwriteimage");
 
    /*
     * Terminate access to the raster image and to the GR interface and,
     * close the HDF file.
     */
    status = GRendaccess (ri_id);
-   CHECK(status, FAIL, "GRendaccess");
+   CHECK_NOT_VAL(status, FAIL, "GRendaccess");
    status = GRend (gr_id);
-   CHECK(status, FAIL, "GRend");
+   CHECK_NOT_VAL(status, FAIL, "GRend");
    status = Hclose (file_id);
-   CHECK(status, FAIL, "Hclose");
+   CHECK_NOT_VAL(status, FAIL, "Hclose");
 
    return 0;
 }

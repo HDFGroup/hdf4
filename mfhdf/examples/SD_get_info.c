@@ -1,11 +1,5 @@
 #include "mfhdf.h"
 
-/* Used to make certain a return value _is_not_ a value.  If not ture, */
-/* print error messages, increment num_err and return. */
-#define CHECK(ret, val, where) \
-do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
-} while(0)
-
 #define FILE_NAME     "SDS.hdf"
 
 int main()
@@ -32,7 +26,7 @@ int main()
    * of file attributes.
    */
    status = SDfileinfo (sd_id, &n_datasets, &n_file_attrs);
-   CHECK(status, FAIL, "SDfileinfo");
+   CHECK_NOT_VAL(status, FAIL, "SDfileinfo");
 
    /*
    * Access every data set and print its name, rank, dimension sizes,
@@ -50,7 +44,7 @@ int main()
        sds_id = SDselect (sd_id, index);
        status = SDgetinfo (sds_id, name, &rank, dim_sizes,
                            &data_type, &n_attrs);
-       CHECK(status, FAIL, "SDgetinfo");
+       CHECK_NOT_VAL(status, FAIL, "SDgetinfo");
 
        printf ("name = %s\n", name);
        printf ("rank = %d\n", rank);
@@ -64,14 +58,14 @@ int main()
        * Terminate access to the data set.
        */
        status = SDendaccess (sds_id);
-       CHECK(status, FAIL, "SDendaccess");
+       CHECK_NOT_VAL(status, FAIL, "SDendaccess");
    }
 
    /*
    * Terminate access to the SD interface and close the file.
    */
    status = SDend (sd_id);
-   CHECK(status, FAIL, "SDend");
+   CHECK_NOT_VAL(status, FAIL, "SDend");
 
    return 0;
 }

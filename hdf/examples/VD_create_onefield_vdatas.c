@@ -1,11 +1,5 @@
 #include "hdf.h"
 
-/* Used to make certain a return value _is_not_ a value.  If not ture, */
-/* print error messages, increment num_err and return. */
-#define CHECK(ret, val, where) \
-do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
-} while(0)
-
 #define  FILE_NAME      "General_Vdatas.hdf"
 #define  CLASS1_NAME    "5x1 Array"
 #define  CLASS2_NAME    "6x4 Array"
@@ -49,7 +43,7 @@ int main( )
    * Initialize the VS interface.
    */
    status_n = Vstart (file_id);
-   CHECK(status_n, FAIL, "Vstart");
+   CHECK_NOT_VAL(status_n, FAIL, "Vstart");
 
    /*
    * Create the first vdata and populate it with data from the vdata1_buf
@@ -70,9 +64,9 @@ int main( )
    * Terminate access to the VS interface and close the HDF file.
    */
    status_n = Vend (file_id);
-   CHECK(status_n, FAIL, "Vend");
+   CHECK_NOT_VAL(status_n, FAIL, "Vend");
    status_32 = Hclose (file_id);
-   CHECK(status_32, FAIL, "Hclose");
+   CHECK_NOT_VAL(status_32, FAIL, "Hclose");
 
    return 0;
 }

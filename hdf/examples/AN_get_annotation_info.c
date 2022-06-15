@@ -1,11 +1,5 @@
 #include "hdf.h"
 
-/* Used to make certain a return value _is_not_ a value.  If not ture, */
-/* print error messages, increment num_err and return. */
-#define CHECK(ret, val, where) \
-do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
-} while(0)
-
 #define  FILE_NAME   "General_HDFobjects.hdf"
 #define  VG_NAME     "AN Vgroup"
 
@@ -35,19 +29,19 @@ int main( )
    * Initialize the V interface.
    */
    status_n = Vstart (file_id);
-   CHECK(status_n, FAIL, "Vstart");
+   CHECK_NOT_VAL(status_n, FAIL, "Vstart");
 
    /*
    * Get the vgroup named VG_NAME.
    */
    vgroup_ref = Vfind (file_id, VG_NAME);
-   CHECK(vgroup_ref, FAIL, "Vfind");
+   CHECK_NOT_VAL(vgroup_ref, FAIL, "Vfind");
 
    /*
    * Initialize the AN interface and obtain an interface id.
    */
    an_id = ANstart (file_id);
-   CHECK(an_id, FAIL, "ANstart");
+   CHECK_NOT_VAL(an_id, FAIL, "ANstart");
 
    /*
    * Get the number of object descriptions.  Note that, since ANnumann takes
@@ -82,7 +76,7 @@ int main( )
          * its identifier.
          */
          status_32 = ANid2tagref (ann_list[index], &ann_tag, &ann_ref);
-         CHECK(status_32, FAIL, "ANid2tagref");
+         CHECK_NOT_VAL(status_32, FAIL, "ANid2tagref");
          printf ("Annotation index %d: tag = %s\nreference number= %d\n",
            index, ann_tag == DFTAG_DIA ? "DFTAG_DIA (data description)":
            "Incorrect", ann_ref);
@@ -107,14 +101,14 @@ int main( )
    * Terminate access to the AN interface and close the HDF file.
    */
    status_32 = ANend (an_id);
-   CHECK(status_32, FAIL, "ANend");
+   CHECK_NOT_VAL(status_32, FAIL, "ANend");
    status_n = Hclose (file_id);
-   CHECK(status_n, FAIL, "Hclose");
+   CHECK_NOT_VAL(status_n, FAIL, "Hclose");
 
    /*
    * Free the space allocated for the annotation identifier list.
    */
    free (ann_list);
-   
+
    return 0;
 }

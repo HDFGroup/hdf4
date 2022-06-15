@@ -1,11 +1,5 @@
 #include "hdf.h"
 
-/* Used to make certain a return value _is_not_ a value.  If not ture, */
-/* print error messages, increment num_err and return. */
-#define CHECK(ret, val, where) \
-do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
-} while(0)
-
 #define  FILE_NAME      "Image_with_Palette.hdf"
 #define  IMAGE_NAME     "Image with Palette"
 #define  N_ENTRIES      256     /* number of elements of each color */
@@ -52,14 +46,14 @@ int main( )
    */
    status = GRgetlutinfo (pal_id, &n_comps, &data_type, &interlace_mode,
                           &n_entries);
-   CHECK(status, FAIL, "GRgetlutinfo");
+   CHECK_NOT_VAL(status, FAIL, "GRgetlutinfo");
    printf ("Palette: %d components; %d entries\n", n_comps, n_entries);
 
    /*
    * Read the palette data.
    */
    status = GRreadlut (pal_id, (VOIDP)palette_data);
-   CHECK(status, FAIL, "GRreadlut");
+   CHECK_NOT_VAL(status, FAIL, "GRreadlut");
 
    /*
    * Display the palette data.  Recall that HDF supports only 256 colors.
@@ -83,11 +77,11 @@ int main( )
    * close the HDF file.
    */
    status = GRendaccess (ri_id);
-   CHECK(status, FAIL, "GRendaccess");
+   CHECK_NOT_VAL(status, FAIL, "GRendaccess");
    status = GRend (gr_id);
-   CHECK(status, FAIL, "GRend");
+   CHECK_NOT_VAL(status, FAIL, "GRend");
    status = Hclose (file_id);
-   CHECK(status, FAIL, "Hclose");
+   CHECK_NOT_VAL(status, FAIL, "Hclose");
 
    return 0;
 }

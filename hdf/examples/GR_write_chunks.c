@@ -1,11 +1,5 @@
 #include "hdf.h"
 
-/* Used to make certain a return value _is_not_ a value.  If not ture, */
-/* print error messages, increment num_err and return. */
-#define CHECK(ret, val, where) \
-do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
-} while(0)
-
 #define  FILE_NAME     "Image_Chunked.hdf"
 #define  IMAGE_NAME    "Image with Chunks"
 #define  X_LENGTH      10    /* number of rows in the image */
@@ -66,7 +60,7 @@ int main( )
    chunk_def.comp.chunk_lengths[0] = 3;
    chunk_def.comp.chunk_lengths[1] = 2;
    status = GRsetchunk (ri_id, chunk_def, HDF_CHUNK | HDF_COMP);
-   CHECK(status, FAIL, "GRsetchunk");
+   CHECK_NOT_VAL(status, FAIL, "GRsetchunk");
 
    /*
    * Write first chunk(0,0).
@@ -74,7 +68,7 @@ int main( )
    origin[0] = 0;
    origin[1] = 0;
    status = GRwritechunk (ri_id, origin, (VOIDP)chunk00);
-   CHECK(status, FAIL, "GRwritechunk");
+   CHECK_NOT_VAL(status, FAIL, "GRwritechunk");
 
    /*
    * Write second chunk(0,1).
@@ -82,7 +76,7 @@ int main( )
    origin[0] = 0;
    origin[1] = 1;
    status = GRwritechunk (ri_id, origin, (VOIDP)chunk01);
-   CHECK(status, FAIL, "GRwritechunk");
+   CHECK_NOT_VAL(status, FAIL, "GRwritechunk");
 
    /*
    * Write third chunk(1,4).
@@ -90,18 +84,18 @@ int main( )
    origin[0] = 1;
    origin[1] = 4;
    status = GRwritechunk (ri_id, origin, (VOIDP)chunk14);
-   CHECK(status, FAIL, "GRwritechunk");
+   CHECK_NOT_VAL(status, FAIL, "GRwritechunk");
 
    /*
    * Terminate access to the raster image and to the GR interface and,
    * close the HDF file.
    */
    status = GRendaccess (ri_id);
-   CHECK(status, FAIL, "GRendaccess");
+   CHECK_NOT_VAL(status, FAIL, "GRendaccess");
    status = GRend (gr_id);
-   CHECK(status, FAIL, "GRend");
+   CHECK_NOT_VAL(status, FAIL, "GRend");
    status = Hclose (file_id);
-   CHECK(status, FAIL, "Hclose");
+   CHECK_NOT_VAL(status, FAIL, "Hclose");
 
    return 0;
 }

@@ -1,11 +1,5 @@
 #include "hdf.h"
 
-/* Used to make certain a return value _is_not_ a value.  If not ture, */
-/* print error messages, increment num_err and return. */
-#define CHECK(ret, val, where) \
-do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
-} while(0)
-
 #define  FILE_NAME      "General_Vgroups.hdf"
 #define  VGROUP_NAME    "SD Vgroup"
 #define  VGATTR_NAME    "First Attribute"
@@ -35,7 +29,7 @@ int main( )
    * Initialize the V interface.
    */
    status_n = Vstart (file_id);
-   CHECK(status_n, FAIL, "Vstart");
+   CHECK_NOT_VAL(status_n, FAIL, "Vstart");
 
    /*
    * Get the reference number of the vgroup named VGROUP_NAME.
@@ -70,9 +64,9 @@ int main( )
    /*
    * Add the attribute named VGATTR_NAME to the vgroup.
    */
-   status_n = Vsetattr (vgroup_id, VGATTR_NAME, DFNT_CHAR, N_ATT_VALUES, 
+   status_n = Vsetattr (vgroup_id, VGATTR_NAME, DFNT_CHAR, N_ATT_VALUES,
                         vg_attr);
-   CHECK(status_n, FAIL, "Vsetattr");
+   CHECK_NOT_VAL(status_n, FAIL, "Vsetattr");
 
    /*
    * Get and display the number of attributes attached to this vgroup.
@@ -89,7 +83,7 @@ int main( )
    {
       status_n = Vattrinfo (vgroup_id, attr_index, attr_name, NULL,
                             &n_values, NULL);
-      CHECK(status_n, FAIL, "Vattrinfo");
+      CHECK_NOT_VAL(status_n, FAIL, "Vattrinfo");
       printf ("\nAttribute #%d is named %s and has %d values: ",
                             attr_index+1, attr_name, n_values);
 
@@ -97,7 +91,7 @@ int main( )
       * Get and display the attribute values.
       */
       status_n = Vgetattr (vgroup_id, attr_index, vgattr_buf);
-      CHECK(status_n, FAIL, "Vgetattr");
+      CHECK_NOT_VAL(status_n, FAIL, "Vgetattr");
       for (i = 0; i < n_values; i++)
          printf ("%c ", vgattr_buf[i]);
       printf ("\n");
@@ -109,11 +103,11 @@ int main( )
    * the HDF file.
    */
    status_32 = Vdetach (vgroup_id);
-   CHECK(status_32, FAIL, "Vdetach");
+   CHECK_NOT_VAL(status_32, FAIL, "Vdetach");
    status_n = Vend (file_id);
-   CHECK(status_n, FAIL, "Vend");
+   CHECK_NOT_VAL(status_n, FAIL, "Vend");
    status_n = Hclose (file_id);
-   CHECK(status_n, FAIL, "Hclose");
+   CHECK_NOT_VAL(status_n, FAIL, "Hclose");
 
    return 0;
 }

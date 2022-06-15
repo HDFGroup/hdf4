@@ -1,11 +1,5 @@
 #include "hdf.h"
 
-/* Used to make certain a return value _is_not_ a value.  If not ture, */
-/* print error messages, increment num_err and return. */
-#define CHECK(ret, val, where) \
-do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
-} while(0)
-
 #define  FILE_NAME   "General_HDFobjects.hdf"
 
 int main( )
@@ -28,13 +22,13 @@ int main( )
    * Open the HDF file.
    */
    file_id = Hopen (FILE_NAME, DFACC_READ, 0);
-   CHECK(file_id, FAIL, "Hopen");
+   CHECK_NOT_VAL(file_id, FAIL, "Hopen");
 
    /*
    * Initialize the AN interface.
    */
    an_id = ANstart (file_id);
-   CHECK(an_id, FAIL, "ANstart");
+   CHECK_NOT_VAL(an_id, FAIL, "ANstart");
 
    /*
    * Get the annotation information, e.g., the numbers of file labels, file
@@ -42,7 +36,7 @@ int main( )
    */
    status_n = ANfileinfo (an_id, &n_file_labels, &n_file_descs,
                         &n_data_labels, &n_data_descs);
-   CHECK(status_n, FAIL, "ANfileinfo");
+   CHECK_NOT_VAL(status_n, FAIL, "ANfileinfo");
 
    /*
    * Get the data labels.  Note that this for loop can be used to
@@ -58,7 +52,7 @@ int main( )
       * Get the identifier of the current data label.
       */
       ann_id = ANselect (an_id, index, AN_DATA_LABEL);
-      CHECK(ann_id, FAIL, "ANselect");
+      CHECK_NOT_VAL(ann_id, FAIL, "ANselect");
 
       /*
       * Get the length of the data label.
@@ -79,7 +73,7 @@ int main( )
       *
       */
       status_32 = ANreadann (ann_id, ann_buf, ann_length+1);
-      CHECK(status_32, FAIL, "ANreadann");
+      CHECK_NOT_VAL(status_32, FAIL, "ANreadann");
       printf ("Data label index: %d\n", index);
       printf ("Data label contents: %s\n", ann_buf);
 
@@ -87,7 +81,7 @@ int main( )
       * Terminate access to the current data label.
       */
       status_n = ANendaccess (ann_id);
-      CHECK(status_n, FAIL, "ANendaccess");
+      CHECK_NOT_VAL(status_n, FAIL, "ANendaccess");
 
       /*
       * Free the space allocated for the annotation buffer.
@@ -99,9 +93,9 @@ int main( )
    * Terminate access to the AN interface and close the HDF file.
    */
    status_32 = ANend (an_id);
-   CHECK(status_32, FAIL, "ANend");
+   CHECK_NOT_VAL(status_32, FAIL, "ANend");
    status_n = Hclose (file_id);
-   CHECK(status_n, FAIL, "Hclose");
+   CHECK_NOT_VAL(status_n, FAIL, "Hclose");
 
    return 0;
 }

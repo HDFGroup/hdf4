@@ -1,11 +1,5 @@
 #include "hdf.h"
 
-/* Used to make certain a return value _is_not_ a value.  If not ture, */
-/* print error messages, increment num_err and return. */
-#define CHECK(ret, val, where) \
-do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
-} while(0)
-
 #define  FILE_NAME        "General_Vdatas.hdf"
 #define  VDATA_NAME       "Solid Particle"
 #define  FIELD_NAME       "Mass"
@@ -48,7 +42,7 @@ int main( )
    * Initialize the VS interface.
    */
    status_n = Vstart (file_id);
-   CHECK(status_n, FAIL, "Vstart");
+   CHECK_NOT_VAL(status_n, FAIL, "Vstart");
 
    /*
    * Get the reference number of the vdata named VDATA_NAME.
@@ -65,20 +59,20 @@ int main( )
    */
    status_n = VSsetattr (vdata_id, _HDF_VDATA, VATTR_NAME, DFNT_CHAR,
                                                    VATTR_N_VALUES, vd_attr);
-   CHECK(status_n, FAIL, "VSsetattr");
+   CHECK_NOT_VAL(status_n, FAIL, "VSsetattr");
 
    /*
    * Get the index of the field FIELD_NAME within the vdata.
    */
    status_n = VSfindex (vdata_id, FIELD_NAME, &field_index);
-   CHECK(status_n, FAIL, "VSfindex");
+   CHECK_NOT_VAL(status_n, FAIL, "VSfindex");
 
    /*
    * Attach an attribute to the field field_index.
    */
-   status_n = VSsetattr (vdata_id, field_index, FATTR_NAME, DFNT_INT32, 
+   status_n = VSsetattr (vdata_id, field_index, FATTR_NAME, DFNT_INT32,
                                                    FATTR_N_VALUES, fld_attr);
-   CHECK(status_n, FAIL, "VSsetattr");
+   CHECK_NOT_VAL(status_n, FAIL, "VSsetattr");
 
    /*
    * Get the number of attributes attached to the vdata's first
@@ -106,23 +100,23 @@ int main( )
    * Get information about the vdata's first attribute, indicated
    * by the third parameter which is the index of the attribute.
    */
-   status_n = VSattrinfo (vdata_id, _HDF_VDATA, 0, vattr_name, 
+   status_n = VSattrinfo (vdata_id, _HDF_VDATA, 0, vattr_name,
                           &vdata_type, &vdata_n_values, &vdata_size);
-   CHECK(status_n, FAIL, "VSattrinfo");
+   CHECK_NOT_VAL(status_n, FAIL, "VSattrinfo");
 
    /*
    * Get information about the first attribute of the field specified by
    * field_index.
    */
-   status_n = VSattrinfo (vdata_id, field_index, 0, fattr_name, &field_type, 
+   status_n = VSattrinfo (vdata_id, field_index, 0, fattr_name, &field_type,
                           &field_n_values, &field_size);
-   CHECK(status_n, FAIL, "VSattrinfo");
+   CHECK_NOT_VAL(status_n, FAIL, "VSattrinfo");
 
    /*
    * Get the vdata's first attribute.
    */
    status_n = VSgetattr (vdata_id, _HDF_VDATA, 0, vattr_buf);
-   CHECK(status_n, FAIL, "VSgetattr");
+   CHECK_NOT_VAL(status_n, FAIL, "VSgetattr");
    printf("Values of the vdata attribute = %c %c %c\n", vattr_buf[0],
                           vattr_buf[1], vattr_buf[2]);
 
@@ -130,7 +124,7 @@ int main( )
    * Get the first attribute of the field specified by field_index.
    */
    status_n = VSgetattr (vdata_id, field_index, 0, fattr_buf);
-   CHECK(status_n, FAIL, "VSgetattr");
+   CHECK_NOT_VAL(status_n, FAIL, "VSgetattr");
    printf("Values of the field attribute = %d %d %d %d\n", fattr_buf[0],
                           fattr_buf[1], fattr_buf[2], fattr_buf[3]);
 
@@ -139,11 +133,11 @@ int main( )
    * the HDF file.
    */
    status_32 = VSdetach (vdata_id);
-   CHECK(status_32, FAIL, "VSdetach");
+   CHECK_NOT_VAL(status_32, FAIL, "VSdetach");
    status_n  = Vend (file_id);
-   CHECK(status_n, FAIL, "Vend");
+   CHECK_NOT_VAL(status_n, FAIL, "Vend");
    status_32 = Hclose (file_id);
-   CHECK(status_32, FAIL, "Hclose");
+   CHECK_NOT_VAL(status_32, FAIL, "Hclose");
 
    return 0;
 }

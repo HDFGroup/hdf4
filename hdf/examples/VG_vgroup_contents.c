@@ -1,11 +1,5 @@
 #include "hdf.h"
 
-/* Used to make certain a return value _is_not_ a value.  If not ture, */
-/* print error messages, increment num_err and return. */
-#define CHECK(ret, val, where) \
-do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
-} while(0)
-
 #define   FILE_NAME        "General_Vgroups.hdf"
 
 int main( )
@@ -31,7 +25,7 @@ int main( )
    * Initialize the V interface.
    */
    status_n = Vstart (file_id);
-   CHECK(status_n, FAIL, "Vstart");
+   CHECK_NOT_VAL(status_n, FAIL, "Vstart");
 
    /*
    * Obtain each vgroup in the file by its reference number, get the
@@ -73,7 +67,7 @@ int main( )
             * by its index, obj_index, and display them.
             */
             status_n = Vgettagref (vgroup_id, obj_index, &obj_tag, &obj_ref);
-            CHECK(status_n, FAIL, "Vgettagref");
+            CHECK_NOT_VAL(status_n, FAIL, "Vgettagref");
             printf ("tag = %d, ref = %d", obj_tag, obj_ref);
 
             /*
@@ -96,7 +90,7 @@ int main( )
       * Terminate access to the current vgroup.
       */
       status_32 = Vdetach (vgroup_id);
-      CHECK(status_32, FAIL, "Vdetach");
+      CHECK_NOT_VAL(status_32, FAIL, "Vdetach");
 
       /*
       * Move to the next vgroup position.
@@ -108,9 +102,9 @@ int main( )
    * Terminate access to the V interface and close the file.
    */
    status_n = Vend (file_id);
-   CHECK(status_n, FAIL, "Vend");
+   CHECK_NOT_VAL(status_n, FAIL, "Vend");
    status_n = Hclose (file_id);
-   CHECK(status_n, FAIL, "Hclose");
+   CHECK_NOT_VAL(status_n, FAIL, "Hclose");
 
    return 0;
 }

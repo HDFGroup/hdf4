@@ -1,11 +1,5 @@
 #include "mfhdf.h"
 
-/* Used to make certain a return value _is_not_ a value.  If not ture, */
-/* print error messages, increment num_err and return. */
-#define CHECK(ret, val, where) \
-do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
-} while(0)
-
 #define FILE_NAME     "SDS.hdf"
 #define EXT_FILE_NAME "ExternalSDS"
 #define OFFSET        24
@@ -36,15 +30,15 @@ int main()
    * values into it, starting at byte location OFFSET.
    */
    status = SDsetexternalfile (sds_id, EXT_FILE_NAME, OFFSET);
-   CHECK(status, FAIL, "SDsetexternalfile");
+   CHECK_NOT_VAL(status, FAIL, "SDsetexternalfile");
 
    /*
    * Terminate access to the data set, SD interface, and file.
    */
    status = SDendaccess (sds_id);
-   CHECK(status, FAIL, "SDendaccess");
+   CHECK_NOT_VAL(status, FAIL, "SDendaccess");
    status = SDend (sd_id);
-   CHECK(status, FAIL, "SDend");
+   CHECK_NOT_VAL(status, FAIL, "SDend");
 
    return 0;
 }

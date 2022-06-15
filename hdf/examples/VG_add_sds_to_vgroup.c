@@ -1,12 +1,6 @@
 #include   "hdf.h"      /* Note: in this example, hdf.h can be omitted...*/
 #include   "mfhdf.h"    /* ...since mfhdf.h already includes hdf.h */
 
-/* Used to make certain a return value _is_not_ a value.  If not ture, */
-/* print error messages, increment num_err and return. */
-#define CHECK(ret, val, where) \
-do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
-} while(0)
-
 #define  FILE_NAME    "General_Vgroups.hdf"
 #define  SDS_NAME     "Test SD"
 #define  VG_NAME      "SD Vgroup"
@@ -37,7 +31,7 @@ int main()
    * Initialize the V interface.
    */
    status_n = Vstart (file_id);
-   CHECK(status_n, FAIL, "Vstart");
+   CHECK_NOT_VAL(status_n, FAIL, "Vstart");
 
    /*
    * Initialize the SD interface.
@@ -59,9 +53,9 @@ int main()
    */
    vgroup_id = Vattach (file_id, -1, "w");
    status_32 = Vsetname (vgroup_id, VG_NAME);
-   CHECK(status_32, FAIL, "Vsetname");
+   CHECK_NOT_VAL(status_32, FAIL, "Vsetname");
    status_32 = Vsetclass (vgroup_id, VG_CLASS);
-   CHECK(status_32, FAIL, "Vsetclass");
+   CHECK_NOT_VAL(status_32, FAIL, "Vsetclass");
 
    /*
    * Obtain the reference number of the SDS using its identifier.
@@ -73,26 +67,26 @@ int main()
    * when adding an SDS.  Refer to Appendix A for the entire list of tags.
    */
    status_32 = Vaddtagref (vgroup_id, DFTAG_NDG, sds_ref);
-   CHECK(status_32, FAIL, "Vaddtagref");
+   CHECK_NOT_VAL(status_32, FAIL, "Vaddtagref");
 
    /*
    * Terminate access to the SDS and to the SD interface.
    */
    status_n = SDendaccess (sds_id);
-   CHECK(status_n, FAIL, "SDendaccess");
+   CHECK_NOT_VAL(status_n, FAIL, "SDendaccess");
    status_n = SDend (sd_id);
-   CHECK(status_n, FAIL, "SDend");
+   CHECK_NOT_VAL(status_n, FAIL, "SDend");
 
    /*
    * Terminate access to the vgroup and to the V interface, and
    * close the HDF file.
    */
    status_32 = Vdetach (vgroup_id);
-   CHECK(status_32, FAIL, "Vdetach");
+   CHECK_NOT_VAL(status_32, FAIL, "Vdetach");
    status_n = Vend (file_id);
-   CHECK(status_n, FAIL, "Vend");
+   CHECK_NOT_VAL(status_n, FAIL, "Vend");
    status_n = Hclose (file_id);
-   CHECK(status_n, FAIL, "Hclose");
+   CHECK_NOT_VAL(status_n, FAIL, "Hclose");
 
    return 0;
 }

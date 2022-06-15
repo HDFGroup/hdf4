@@ -1,11 +1,5 @@
 #include "mfhdf.h"
 
-/* Used to make certain a return value _is_not_ a value.  If not ture, */
-/* print error messages, increment num_err and return. */
-#define CHECK(ret, val, where) \
-do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
-} while(0)
-
 #define FILE_NAME      "SDS.hdf"
 #define FILE_ATTR_NAME "File_contents"
 #define SDS_ATTR_NAME  "Valid_range"
@@ -38,7 +32,7 @@ int main()
    * parameter is an SD interface identifier.
    */
    status = SDattrinfo (sd_id, attr_index, attr_name, &data_type, &n_values);
-   CHECK(status, FAIL, "SDattrinfo");
+   CHECK_NOT_VAL(status, FAIL, "SDattrinfo");
 
    /* The data type should be DFNT_CHAR, from SD_set_attr.c */
    if (data_type == DFNT_CHAR)
@@ -54,7 +48,7 @@ int main()
       * Read the file attribute data.
       */
       status = SDreadattr (sd_id, attr_index, fileattr_data);
-      CHECK(status, FAIL, "SDreadattr");
+      CHECK_NOT_VAL(status, FAIL, "SDreadattr");
 
       /*
       * Print out file attribute value and free buffer.
@@ -78,7 +72,7 @@ int main()
    * Get information about the data set attribute.
    */
    status = SDattrinfo (sds_id, attr_index, attr_name, &data_type, &n_values);
-   CHECK(status, FAIL, "SDattrinfo");
+   CHECK_NOT_VAL(status, FAIL, "SDattrinfo");
 
    /*
    * The data type should be DFNT_FLOAT32, from SD_set_attr.c.
@@ -96,7 +90,7 @@ int main()
       * Read the SDS attribute data.
       */
       status = SDreadattr (sds_id, attr_index, sds_data);
-      CHECK(status, FAIL, "SDreadattr");
+      CHECK_NOT_VAL(status, FAIL, "SDreadattr");
 
       /*
       * Print out SDS attribute data type and values and free buffer.
@@ -122,7 +116,7 @@ int main()
    * Get information about the dimension attribute.
    */
    status = SDattrinfo (dim_id, attr_index, attr_name, &data_type, &n_values);
-   CHECK(status, FAIL, "SDattrinfo");
+   CHECK_NOT_VAL(status, FAIL, "SDattrinfo");
 
    /*
    * The data type should be DFNT_CHAR, from SD_set_attr.c.
@@ -140,7 +134,7 @@ int main()
       * Read the dimension attribute data.
       */
       status = SDreadattr (dim_id, attr_index, dimattr_data);
-      CHECK(status, FAIL, "SDreadattr");
+      CHECK_NOT_VAL(status, FAIL, "SDreadattr");
       dimattr_data[n_values-1] = '\0';
 
       /*
@@ -155,9 +149,9 @@ int main()
    * close the file.
    */
    status = SDendaccess (sds_id);
-   CHECK(status, FAIL, "SDendaccess");
+   CHECK_NOT_VAL(status, FAIL, "SDendaccess");
    status = SDend (sd_id);
-   CHECK(status, FAIL, "SDend");
+   CHECK_NOT_VAL(status, FAIL, "SDend");
 
    /*   Output of this program is :
    *

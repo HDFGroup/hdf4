@@ -1,11 +1,5 @@
 #include "hdf.h"
 
-/* Used to make certain a return value _is_not_ a value.  If not ture, */
-/* print error messages, increment num_err and return. */
-#define CHECK(ret, val, where) \
-do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
-} while(0)
-
 #define  FILE_NAME    "Two_Vgroups.hdf"
 
 int main()
@@ -28,7 +22,7 @@ int main()
    * Initialize the V interface.
    */
    status_n = Vstart (file_id);
-   CHECK(status_n, FAIL, "Vstart");
+   CHECK_NOT_VAL(status_n, FAIL, "Vstart");
 
    /*
    * Create the first vgroup.  Note that the vgroup reference number is set
@@ -49,21 +43,21 @@ int main()
    * Terminate access to the first vgroup.
    */
    status_32 = Vdetach (vgroup1_id);
-   CHECK(status_32, FAIL, "Vdetach");
+   CHECK_NOT_VAL(status_32, FAIL, "Vdetach");
 
    /*
    * Terminate access to the second vgroup.
    */
    status_32 = Vdetach (vgroup2_id);
-   CHECK(status_32, FAIL, "Vdetach");
+   CHECK_NOT_VAL(status_32, FAIL, "Vdetach");
 
    /*
    * Terminate access to the V interface and close the HDF file.
    */
    status_n = Vend (file_id);
-   CHECK(status_n, FAIL, "Vend");
+   CHECK_NOT_VAL(status_n, FAIL, "Vend");
    status_n = Hclose (file_id);
-   CHECK(status_n, FAIL, "Hclose");
+   CHECK_NOT_VAL(status_n, FAIL, "Hclose");
 
    return 0;
 }

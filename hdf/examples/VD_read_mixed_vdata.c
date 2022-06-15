@@ -1,11 +1,5 @@
 #include "hdf.h"
 
-/* Used to make certain a return value _is_not_ a value.  If not ture, */
-/* print error messages, increment num_err and return. */
-#define CHECK(ret, val, where) \
-do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
-} while(0)
-
 #define  N_RECORDS       20      /* number of records to be read */
 #define  N_FIELDS        2       /* number of fields to be read */
 #define  FILE_NAME       "Packed_Vdata.hdf"
@@ -41,7 +35,7 @@ int main ()
    * Initialize the VS interface.
    */
    status_n = Vstart (file_id);
-   CHECK(status_n, FAIL, "Vstart");
+   CHECK_NOT_VAL(status_n, FAIL, "Vstart");
 
    /*
    * Get the reference number of the vdata, whose name is specified in
@@ -58,7 +52,7 @@ int main ()
    * Specify the fields that will be read.
    */
    status_n = VSsetfields(vdata_id, FIELDNAME_LIST);
-   CHECK(status_n, FAIL, "VSsetfields");
+   CHECK_NOT_VAL(status_n, FAIL, "VSsetfields");
 
    /*
    * Read N_RECORDS records of the vdata and store the values into the
@@ -82,7 +76,7 @@ int main ()
    */
    status_n = VSfpack (vdata_id, _HDF_VSUNPACK, FIELDNAME_LIST, (VOIDP)databuf,
                BUFFER_SIZE, num_of_records, NULL, (VOIDP)fldbufptrs);
-   CHECK(status_n, FAIL, "VSfpack");
+   CHECK_NOT_VAL(status_n, FAIL, "VSfpack");
 
    /*
    * Display the read data being stored in the field buffers.
@@ -96,11 +90,11 @@ int main ()
    * the HDF file.
    */
    status_32 = VSdetach (vdata_id);
-   CHECK(status_32, FAIL, "VSdetach");
+   CHECK_NOT_VAL(status_32, FAIL, "VSdetach");
    status_n = Vend (file_id);
-   CHECK(status_n, FAIL, "Vend");
+   CHECK_NOT_VAL(status_n, FAIL, "Vend");
    status_32 = Hclose (file_id);
-   CHECK(status_32, FAIL, "Hclose");
+   CHECK_NOT_VAL(status_32, FAIL, "Hclose");
 
    return 0;
 }
