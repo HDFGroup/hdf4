@@ -24,9 +24,10 @@ int main( )
    * Initialize the VS interface.
    */
    status_n = Vstart (file_id);
+   CHECK_NOT_VAL(status_n, FAIL, "Vstart");
 
    /*
-   * Set the reference number to -1 to start the search from 
+   * Set the reference number to -1 to start the search from
    * the beginning of file.
    */
    vdata_ref = -1;
@@ -35,17 +36,17 @@ int main( )
    * Assume that the specified fields are not found in the current vdata.
    */
    found_fields = FALSE;
-   
+
    /*
    * Use VSgetid to obtain each vdata by its reference number then
    * attach to the vdata and search for the fields.  The loop
    * terminates when the last vdata is reached or when a vdata which
-   * contains the fields listed in SEARCHED_FIELDS is found.  
+   * contains the fields listed in SEARCHED_FIELDS is found.
    */
    while ((vdata_ref = VSgetid (file_id, vdata_ref)) != FAIL)
    {
       vdata_id = VSattach (file_id, vdata_ref, "r");
-      if ((status_n = VSfexist (vdata_id, SEARCHED_FIELDS)) != FAIL)
+      if (VSfexist (vdata_id, SEARCHED_FIELDS) != FAIL)
       {
          found_fields = TRUE;
          break;
@@ -55,28 +56,32 @@ int main( )
       * Detach from the current vdata before continuing searching.
       */
       status_32 = VSdetach (vdata_id);
+      CHECK_NOT_VAL(status_32, FAIL, "VSdetach");
 
       index++;		/* advance the index by 1 for the next vdata */
    }
-   
+
    /*
-   * Print the index of the vdata containing the fields or a "not found" 
+   * Print the index of the vdata containing the fields or a "not found"
    * message if no such vdata is found.  Also detach from the vdata found.
    */
-   if (!found_fields) 
+   if (!found_fields)
       printf ("Fields Position and Temperature were not found.\n");
-   else 
+   else
    {
-      printf
-     ("Fields Position and Temperature found in the vdata at position %d\n", 
+      printf ("Fields Position and Temperature found in the vdata at position %d\n",
        index);
       status_32 = VSdetach (vdata_id);
+      CHECK_NOT_VAL(status_32, FAIL, "VSdetach");
    }
 
    /*
    * Terminate access to the VS interface and close the HDF file.
    */
    status_n = Vend (file_id);
+   CHECK_NOT_VAL(status_n, FAIL, "Vend");
    status_32 = Hclose (file_id);
+   CHECK_NOT_VAL(status_32, FAIL, "Hclose");
+
    return 0;
 }

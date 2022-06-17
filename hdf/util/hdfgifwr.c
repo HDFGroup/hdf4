@@ -11,15 +11,15 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
- 
+
 /*
- * hdfgifwr.c  - handles writing of GIF files.  
- * 
- * Contains: 
+ * hdfgifwr.c  - handles writing of GIF files.
+ *
+ * Contains:
  *   hdfWriteGIF(fp, pic, ptype, w, h, rmap, gmap, bmap, numcols, colorstyle,
  *            comment)
  *
- * Note: slightly brain-damaged, in that it'll only write non-interlaced 
+ * Note: slightly brain-damaged, in that it'll only write non-interlaced
  *       GIF files (in the interests of speed, or something)
  *
  */
@@ -41,13 +41,14 @@
  * Based on: compress.c - File compression ala IEEE Computer, June 1984.
  *
  *	Spencer W. Thomas       (decvax!harpo!utah-cs!utah-gr!thomas)
- *	Jim McKie               (decvax!mcvax!jim)
+ *	Jim McKie               (decvax!mcvax!jim)  int   w,h;
+ *
  *	Steve Davies            (decvax!vax135!petsd!peora!srd)
  *	Ken Turkowski           (decvax!decwrl!turtlevax!ken)
  *	James A. Woods          (decvax!ihnp4!ames!jaw)
  *	Joe Orost               (decvax!vax135!petsd!joe)
  *****************************************************************/
- 
+
 
 #include <stdio.h>
 #include "gif.h"
@@ -75,7 +76,6 @@ typedef long int	count_int;
 /* MONO returns total intensity of r,g,b components */
 #define MONO(rd,gn,bl) (((rd)*11 + (gn)*16 + (bl)*5) >> 5)  /*.33R+ .5G+ .17B*/
 
-static int  Width, Height;
 static int  curx, cury;
 static long CountDown;
 static int  Interlace;
@@ -112,29 +112,24 @@ int hdfWriteGIF(fp, pic, ptype, w, h, rmap, gmap, bmap, pc2ncmap,  numcols, colo
     int   numcols, colorstyle;
     int	  BitsPerPixel;
 {
-  int   RWidth, RHeight;
-  int   LeftOfs, TopOfs;
-  int   ColorMapSize, InitCodeSize, Background;
+  int   InitCodeSize;
   int   i;
   byte *pic8;
   pic8 = pic;
-  
+
+  (void)ptype;
+  (void)numcols;
+  (void)colorstyle;
+
   Interlace = 0;
-  Background = 0;
-  
-  for (i=0; i<256; i++) { 
+
+  for (i=0; i<256; i++) {
 	  pc2nc[i] = pc2ncmap[i];
 	  r1[i] = rmap[i];
 	  g1[i] = gmap[i];
 	  b1[i] = bmap[i];
   }
 
-  ColorMapSize = 1 << BitsPerPixel;
-	
-  RWidth  = Width  = w;
-  RHeight = Height = h;
-  LeftOfs = TopOfs = 0;
-	
   CountDown = w * h;    /* # of pixels we'll be doing */
 
   if (BitsPerPixel <= 1) InitCodeSize = 2;
@@ -155,17 +150,15 @@ int hdfWriteGIF(fp, pic, ptype, w, h, rmap, gmap, bmap, pc2ncmap,  numcols, colo
 }
 
 
-
-
 /******************************/
 static void putword(w, fp)
 int w;
 FILE *fp;
 {
   /* writes a 16-bit integer in GIF order (LSB first) */
-  
+
   fputc(w &0xff, fp);
-    
+
   fputc((w>>8)&0xff,fp);
 }
 
@@ -222,7 +215,7 @@ static long int out_count = 0;           /* # of codes output (for debugging) */
 /*
  * compress stdin to stdout
  *
- * Algorithm:  use open addressing double hashing (no chaining) on the 
+ * Algorithm:  use open addressing double hashing (no chaining) on the
  * prefix code / next character combination.  We do a variant of Knuth's
  * algorithm D (vol. 3, sec. 6.4) along with G. Knott's relatively-prime
  * secondary probe.  Here, the modular division first probe is gives way
@@ -301,7 +294,7 @@ int   len;
   cl_hash( (count_int) hsize_reg);            /* clear hash table */
 
   output(ClearCode);
-    
+
   while (len) {
     c = pc2nc[*data++];  len--;
     in_count++;
@@ -330,7 +323,7 @@ probe:
       continue;
     }
 
-    if ( (long)HashTabOf (i) >= 0 ) 
+    if ( (long)HashTabOf (i) >= 0 )
       goto probe;
 
 nomatch:
@@ -385,7 +378,7 @@ int code;
     cur_accum |= ((long)code << cur_bits);
   else
     cur_accum = code;
-	
+
   cur_bits += n_bits;
 
   while( cur_bits >= 8 ) {
@@ -413,7 +406,7 @@ int code;
 	maxcode = MAXCODE(n_bits);
     }
   }
-	
+
   if( code == EOFCode ) {
     /* At EOF, write the rest of the buffer */
     while( cur_bits > 0 ) {
@@ -423,11 +416,11 @@ int code;
     }
 
     flush_char();
-	
+
     fflush( g_outfile );
 
 #ifdef FOO
-    if( ferror( g_outfile ) ) 
+    if( ferror( g_outfile ) )
       FatalError("unable to write GIF file");
 #endif
   }
@@ -513,7 +506,7 @@ static void char_out(c)
 int c;
 {
   accum[ a_count++ ] = c;
-  if( a_count >= 254 ) 
+  if( a_count >= 254 )
     flush_char();
 }
 
@@ -527,7 +520,7 @@ static void flush_char()
     fwrite( accum, 1, a_count, g_outfile );
     a_count = 0;
   }
-}	
+}
 
 
 

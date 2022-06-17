@@ -224,8 +224,7 @@ SDgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
     int32   ntype=0,  /* need these because SDattrinfo doesn't... */
             count=0;  /* ...take NULL pointers for not needed arguments */
     int     ii;
-    intn    status,  /* returned value */
-    found,  /* TRUE when attribute is found */
+    intn    found,  /* TRUE when attribute is found */
     ret_value = SUCCEED;
 
     /* Clear error stack */
@@ -242,7 +241,7 @@ SDgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Get the attribute's name */
-    status = SDattrinfo(id, attrindex, attrname, &ntype, &count);
+    SDattrinfo(id, attrindex, attrname, &ntype, &count);
 
     /* Check if the id given is a file id, or SDS id, or dimension id, and get
        appropriate info structure */
@@ -329,7 +328,7 @@ SDgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
 
     /* Get access to the vgroup and get the number of elements belong to it */
     vg_id = Vattach(handle->hdf_file, vg_ref, "r");
-    if(vg_id == FAIL) 
+    if(vg_id == FAIL)
         HGOTO_ERROR(DFE_CANTATTACH, FAIL);
     n_elements = Vntagrefs(vg_id);
     if (n_elements == FAIL)
@@ -340,7 +339,7 @@ SDgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
        matches, use VSgetdatainfo to get offset and length of the attribute's
        data, then set flag to terminate the search */
     found = FALSE;
-    for (ii = 0; ii < n_elements && !found; ii++) 
+    for (ii = 0; ii < n_elements && !found; ii++)
     {
         int32 elem_tag, elem_ref;
 
@@ -349,10 +348,10 @@ SDgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
         /* current element is a vdata */
-        if(elem_tag == DFTAG_VH) 
+        if(elem_tag == DFTAG_VH)
         {
             vs_id = VSattach(handle->hdf_file, elem_ref, "r");
-            if(vs_id == FAIL) 
+            if(vs_id == FAIL)
                 HGOTO_ERROR(DFE_CANTATTACH, FAIL);
 
             /* get the vdata's class */
@@ -360,7 +359,7 @@ SDgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
             /* current vdata represents an attribute */
-            if(!HDstrcmp(vsclass, _HDF_ATTRIBUTE)) 
+            if(!HDstrcmp(vsclass, _HDF_ATTRIBUTE))
             {
                 /* get the vdata's name */
                 if (VSgetname(vs_id, vsname) == FAIL)
@@ -431,7 +430,7 @@ SDgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
     application can use tag/ref to read the attribute string.
 
  ******************************************************************************/
-PRIVATE intn 
+PRIVATE intn
 get_attr_tag(char *attr_name, uint16* attr_tag)
 {
     intn ret_value = SUCCEED;
@@ -457,7 +456,7 @@ get_attr_tag(char *attr_name, uint16* attr_tag)
             || (HDstrcmp(_HDF_AddOffsetErr, attr_name) == 0))
         *attr_tag = DFTAG_CAL;
     /* We need to decide how to handle this attribute when we see it...
-    else 
+    else
             case DFTAG_SDLNK:
      */
     else
@@ -742,14 +741,13 @@ intn SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32* offse
             an_id=FAIL,
             ann_id=FAIL;
     NC     *handle = NULL;  /* file structure */
-    NC_var *var = NULL;    /* variable structure of sds, to get NDG ref */
     int32  *dannots = NULL,  /* list of data annotation IDs */
             n_flabels = 0,  /* number of file labels */
             n_fdescs = 0,  /* number of file descriptions */
             n_dlabels = 0,  /* number of object labels */
             n_ddescs = 0;  /* number of file descriptions */
     uint16  elem_tag, elem_ref; /* tag/ref of dataset's NDG */
-    intn    num_annots,    /* number of annotation of requested type */
+    intn    num_annots = 0,    /* number of annotation of requested type */
     ii,
     ret_value = 0;
 

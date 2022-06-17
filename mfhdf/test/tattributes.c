@@ -48,11 +48,11 @@
 
 	- create a one-dim SDS, named VAR1_NAME
 	- name its dimension VAR1_NAME
-	- get file information and verify that there is only 1 variable, 
+	- get file information and verify that there is only 1 variable,
 	  dataset VAR1_NAME
 	- set attribute to dimension "Variable 1" (SDsetattr)
 	- set attribute to SDS "Variable 1" (SDsetattr)
-	- get file information and verify that there are 2 variable, 
+	- get file information and verify that there are 2 variable,
 	  dataset VAR1_NAME and coordinate variable VAR1_NAME
 	- write data to the SDS
 	- close all and reopen the file
@@ -87,16 +87,12 @@ static intn test_count(void)
 {
     char  sds_name[20], dim_name[20];
     float32 sds1_data[] = {0.1, 2.3, 4.5, 6.7, 8.9};
-    float32 out_data[5];
     int32 dimsize[1], size;
     int32 sds_id, file_id, dim_id, index;
     int32 start=0, stride=1;
-    int32 attr_data [5] = {101,102,103,104,105}, scale1_out[5];
     int32 ntype, rank, count;
-    int32 n_datasets=0, n_file_attrs=0, nattrs=0;
+    int32 nattrs=0;
     intn  status =0;
-    hdf_varlist_t* var_list;
-    intn  is_coord = FALSE;
     char  attr_name[H4_MAX_NC_NAME], attr_values[80];
     intn  num_errs = 0;         /* number of errors so far */
 
@@ -124,7 +120,7 @@ static intn test_count(void)
     /* Close dataset and file. */
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "SDendaccess");
-    status = SDend(file_id); 
+    status = SDend(file_id);
     CHECK(status, FAIL, "SDend");
 
     /* Open the file again to check attributes */
@@ -164,7 +160,7 @@ static intn test_count(void)
     /* Close dataset and file. */
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "SDendaccess");
-    status = SDend(file_id); 
+    status = SDend(file_id);
     CHECK(status, FAIL, "SDend");
 
     /* Open the file again to check attributes */
@@ -201,7 +197,7 @@ static intn test_count(void)
     /* Close dataset and file. */
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "SDendaccess");
-    status = SDend(file_id); 
+    status = SDend(file_id);
     CHECK(status, FAIL, "SDend");
 
     /* Open the file again to check attributes */
@@ -263,7 +259,7 @@ static intn test_count(void)
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "SDendaccess");
 
-    status = SDend(file_id); 
+    status = SDend(file_id);
     CHECK(status, FAIL, "SDend");
 
     /* Return the number of errors that's been kept track of so far */

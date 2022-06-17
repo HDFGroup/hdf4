@@ -19,13 +19,11 @@ int main( )
    /************************* Variable declaration **************************/
 
    intn  status;        /* status for functions returning an intn */
-   int32 index;
    int32 file_id, gr_id, ri_id,
          start[2],      /* start position to write for each dimension */
-         edges[2],      /* number of elements to bewritten along 
+         edges[2],      /* number of elements to bewritten along
                            each dimension */
-         stride[2],     /* number of elements to skip on each dimension */
-         dim_sizes[2];  /* dimension sizes of the image array */
+         stride[2];     /* number of elements to skip on each dimension */
    int16 entire_image[Y_LENGTH][X_LENGTH][N_COMPS],
          partial_image[PART_ROWS][PART_COLS][N_COMPS],
          skipped_image[SKIP_ROWS][SKIP_COLS][N_COMPS];
@@ -49,7 +47,7 @@ int main( )
    ri_id = GRselect (gr_id, 0);
 
    /*
-   * Define the size of the data to be read, i.e., start from the origin 
+   * Define the size of the data to be read, i.e., start from the origin
    * and go as long as the length of each dimension.
    */
    start[0] = start[1] = 0;
@@ -60,9 +58,10 @@ int main( )
    * Read the data from the raster image array.
    */
    status = GRreadimage (ri_id, start, NULL, edges, (VOIDP)entire_image);
+   CHECK_NOT_VAL(status, FAIL, "GRreadimage");
 
    /*
-   * Display only the first component of the image since the two components 
+   * Display only the first component of the image since the two components
    * have the same data in this example.
    */
    printf ("First component of the entire image:\n");
@@ -85,6 +84,7 @@ int main( )
    * Read a subset of the raster image array.
    */
    status = GRreadimage (ri_id, start, NULL, edges, (VOIDP)partial_image);
+   CHECK_NOT_VAL(status, FAIL, "GRreadimage");
 
    /*
    * Display the first component of the read sample.
@@ -111,6 +111,7 @@ int main( )
    * Read all the odd rows and even columns of the image.
    */
    status = GRreadimage (ri_id, start, stride, edges, (VOIDP)skipped_image);
+   CHECK_NOT_VAL(status, FAIL, "GRreadimage");
 
    /*
    * Display the first component of the read sample.
@@ -128,7 +129,11 @@ int main( )
    * close the HDF file.
    */
    status = GRendaccess (ri_id);
+   CHECK_NOT_VAL(status, FAIL, "GRendaccess");
    status = GRend (gr_id);
+   CHECK_NOT_VAL(status, FAIL, "GRend");
    status = Hclose (file_id);
+   CHECK_NOT_VAL(status, FAIL, "Hclose");
+
    return 0;
 }

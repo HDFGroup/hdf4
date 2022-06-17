@@ -120,7 +120,9 @@ funclist_t  crle_funcs =
     HCPcrle_inquire,
     HCPcrle_read,
     HCPcrle_write,
-    HCPcrle_endaccess
+    HCPcrle_endaccess,
+    NULL,
+    NULL
 };
 #endif
 

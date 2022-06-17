@@ -68,7 +68,6 @@ static int test_1dim_multivars()
     int32 start[1],		/* where to start writing */
 	  edges[1];		/* length of data to be read/written */
     int32 rank = 1;		/* rank of the 1-D data sets */
-    int16 outdata[DIM0];	/* data read back */
     int16 fillval1 = -1;	/* fill value for the variable */
     int16 fillval2 = -2;	/* fill value for the variable */
     intn  status = 0;		/* returned by called functions */
@@ -229,7 +228,7 @@ static int test_1dim_multivars()
         - write 4x1x1 elements to VAR3D, starting at index {0,0,0}
 	- write 4 elements to VAR1D starting at index 2
 	- close and reopen the file
-        - append 1x3x2 elements along the unlimited dimension starting at 
+        - append 1x3x2 elements along the unlimited dimension starting at
 	  index {7,0,0}, i.e., slabs at indices 4, 5 and 6 will be written with
 	  fill-value
 	- create another 1-D variable, named VARDOZEN, and write 12 values
@@ -276,8 +275,16 @@ static int test_multidims()
     intn  num_errs = 0;		/* number of errors so far */
 
     /* result data to compare against read data */
-    int16 result3D[DIM00][DIM1][DIM2] = {300,-3,-3,-3,-3,-3,301,-3,-3,-3,-3,-3,302,-3,-3,-3,-3,-3,303,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,800,801,802,803,804,805};
-    int16 ncresult1D[] = {-1,-1,300,301,302,303,-1,-1,-1};
+    int16 result3D[DIM00][DIM1][DIM2] = {
+            {{300,-3},{-3,-3},{-3,-3}},
+            {{301,-3},{-3,-3},{-3,-3}},
+            {{302,-3},{-3,-3},{-3,-3}},
+            {{303,-3},{-3,-3},{-3,-3}},
+            {{-3,-3},{-3,-3},{-3,-3}},
+            {{-3,-3},{-3,-3},{-3,-3}},
+            {{-3,-3},{-3,-3},{-3,-3}},
+            {{-3,-3},{-3,-3},{-3,-3}},
+            {{800,801},{802,803},{804,805}}};
     int16 sdresult1D[] = {-1,-1,300,301,302,303};
 
     /* Create a new file */
@@ -371,7 +378,7 @@ static int test_multidims()
 	start[1] = start[2] = 0; /* writing at {7,0,0} */
 	edges[0] = 1;
 	edges[1] = DIM1;
-	edges[2] = DIM2; 
+	edges[2] = DIM2;
 
 	/* Write 1 slab starting at index 7 */
 	status = SDwritedata(dset1, start, NULL, edges, (VOIDP)data);
@@ -473,10 +480,22 @@ static int test_multidims()
 	/* After the fourth data set (VARDOZEN) was added, the maximum number
 	   of records became 12.  Thus, the results must be changed to reflect
 	   the behavior in nc API. */
-    int16 result3D[DIM0][DIM1][DIM2] = {300,-3,-3,-3,-3,-3,301,-3,-3,-3,-3,-3,302,-3,-3,-3,-3,-3,303,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,800,801,802,803,804,805, -3,-3,-3,-3,-3,-3, -3,-3,-3,-3,-3,-3, -3,-3,-3,-3,-3,-3, -3,-3,-3,-3,-3,-3};
+    int16 result3D[DIM0][DIM1][DIM2] = {
+            {{300,-3},{-3,-3},{-3,-3}},
+            {{301,-3},{-3,-3},{-3,-3}},
+            {{302,-3},{-3,-3},{-3,-3}},
+            {{303,-3},{-3,-3},{-3,-3}},
+            {{-3,-3},{-3,-3},{-3,-3}},
+            {{-3,-3},{-3,-3},{-3,-3}},
+            {{-3,-3},{-3,-3},{-3,-3}},
+            {{-3,-3},{-3,-3},{-3,-3}},
+            {{800,801},{802,803},{804,805}},
+            {{-3,-3},{-3,-3},{-3,-3}},
+            {{-3,-3},{-3,-3},{-3,-3}},
+            {{-3,-3},{-3,-3},{-3,-3}},
+            {{-3,-3},{-3,-3},{-3,-3}}};
     int16 ncresult1D[] = {-1,-1,300,301,302,303,-1,-1,-1,-1,-1,-1};
     int16 ncresult1Ddozen[] = {-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10};
-    int16 sdresult1D[] = {-1,-1,300,301,302,303};
 
 	/* Open the file with nc API */
 	ncid = ncopen(FILENAME2, NC_RDWR);
@@ -590,28 +609,27 @@ static int test_multidims()
 static int test_readings(long max_numrecs)
 {
     int   ncid;                 /* file id */
-    int   var1id, var2id, var3id; /* variable ids */
+    int   var1id, var2id; /* variable ids */
     long  start[3];
     long  edges[3];
     long  dims[3];              /* dimension size buffer */
     int   rh_ndims;             /* number of dims */
     int   rh_dims[H4_MAX_VAR_DIMS];     /* variable shape */
     char  varname[H4_MAX_NC_NAME];	/* variable name */
-    int   ii, jj, kk;
+    int   ii;
     int16 outdata3D[DIM0][DIM1][DIM2];	/* 3-D data read back */
     int16 outdata1D[DIM0];	/* 1-D data read back */
     int32 dimsizes3D[3];		/* dimension size buffer for first SDS */
-    int32 dimsize1D[1];		/* dimension size buffer for second SDS */
     intn  status = 0;		/* returned by called functions */
     intn  num_errs = 0;		/* number of errors so far */
 
     /* result data to compare against read data */
 
     /* data resulted from reading at start=[4,0,0] for edges=[6,1,1] */
-    int16 result3D_start400_edge611[DIM0][DIM1][DIM2] = {-3,-3,-3,800,-3,-3};
+    int16 result3D_start400_edge611[DIM0][DIM1][DIM2] = {{{-3,-3},{-3,800},{-3,-3}}};
 
     /* data resulted from reading at start=[4] for edges=[6] */
-    int16 result1D_start4_edge6[] = {302,303,-1,-1,-1,-1};
+    /* int16 result1D_start4_edge6[] = {302,303,-1,-1,-1,-1}; */
 
     /* Open the file for reading and writing with nc API */
     ncid = ncopen(FILENAME2, NC_RDWR);

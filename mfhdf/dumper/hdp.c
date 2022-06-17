@@ -18,9 +18,11 @@
 #include "local_nc.h"	/* to use some definitions */
 
 /* Print the usage message about this utility */
-static void 
+static void
 usage(intn argc, char *argv[])
 {
+    (void)argc;
+
     printf("%s, %s\n\n", argv[0], LIBVER_STRING );
     printf("Usage: hdp [-H] command [command options] <filelist>\n");
     printf("\t -H  Display usage information about the specified command.\n");
@@ -67,7 +69,7 @@ init_dump_opts(dump_info_t * dump_opts)
     /* print data starting at column 16 unless reset otherwise */
     dump_opts->firstln_indent = 16;
 
-    /* print data on a continuous line starting at column 16 unless 
+    /* print data on a continuous line starting at column 16 unless
        reset otherwise */
     dump_opts->contln_indent = 16;
 
@@ -84,7 +86,7 @@ init_dump_opts(dump_info_t * dump_opts)
 }       /* end init_dump_opts() */
 
 
-int 
+int
 main(int argc, char *argv[])
 {
     command_t   cmd;			/* command to perform */
@@ -149,7 +151,7 @@ main(int argc, char *argv[])
 
       case DUMPRIG:
 	  /* BMR: retire dumprig, have dumpgr do the work */
-          if (FAIL == do_dumprig(curr_arg, argc, argv, glob_opts.help)) 
+          if (FAIL == do_dumprig(curr_arg, argc, argv, glob_opts.help))
 /*
 	  fprintf( stderr, ">>> Please make a note that dumprig is no longer available.\n");
 	  fprintf( stderr, "    The command dumpgr is and should be used in its place.\n" );
@@ -197,10 +199,10 @@ DESCRIPTION
    instead of (struct vdata_desc).wlist.esize as VSsizeof.
 
 RETURNS
-   The byte size of the field(s), positive integer, on success; 
+   The byte size of the field(s), positive integer, on success;
    otherwise, returns FAIL.
 ----------------------------------------------------------------- */
-int32 
+int32
 VShdfsize(int32 vkey,   /* IN vdata key */
          char *fields  /* IN: Name(s) of the fields to check size of */ )
 {
@@ -230,9 +232,9 @@ VShdfsize(int32 vkey,   /* IN vdata key */
     totalsize = 0;
     if (fields == NULL) /* default case? */
       {   /* count all field sizes in vdata */
-        for (j = 0; j < vs->wlist.n; j++)	
+        for (j = 0; j < vs->wlist.n; j++)
             totalsize += vs->wlist.isize[j];
-      }		
+      }
     else if (fields[0] != '\0')  /* implies: return 0 for empty 'fields' */
       {  /* parse field string */
         if ((scanattrs(fields, &ac, &av) < 0) || (ac < 1))
@@ -240,7 +242,7 @@ VShdfsize(int32 vkey,   /* IN vdata key */
 
         for (i = 0; i < ac; i++)
           {   /* check fields in vs */
-            for (found = 0, j = 0; j < vs->wlist.n; j++)	
+            for (found = 0, j = 0; j < vs->wlist.n; j++)
                 if (!HDstrcmp(av[i], vs->wlist.name[j]))
                   {
                     totalsize += vs->wlist.isize[j];
@@ -257,7 +259,7 @@ VShdfsize(int32 vkey,   /* IN vdata key */
     ret_value = totalsize;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -274,7 +276,7 @@ USAGE
       intn VSattrhdfsize(int32 vsid, int32 findex, intn attrindex, int32 *size);
       int32 vsid;      IN: vdata id
       int32 findex;    IN: field index. _HDF_VDATA (-1) for the vdata
-      intn attrindex;  IN: which attr of the field/vdata 
+      intn attrindex;  IN: which attr of the field/vdata
                            attrindex is 0-based
       int32 *size;     OUT: size of the attr values in hdf files.
 RETURNS
@@ -312,10 +314,10 @@ intn VSattrhdfsize(int32 vsid, int32 findex, intn attrindex, int32 *size)
           /* no attrs or bad attr list */
             HGOTO_ERROR(DFE_ARGS, FAIL);
     found = 0;
-    a_index = -1; 
+    a_index = -1;
     for (i=0; i<nattrs; i++)  {
         if (vs_alist->findex == findex)  {
-           a_index++; 
+           a_index++;
            if (a_index == attrindex) {
               found = 1;
               break;
@@ -342,7 +344,7 @@ intn VSattrhdfsize(int32 vsid, int32 findex, intn attrindex, int32 *size)
     /* This vdata should have only 1 field */
      /* if (w->n != 1 || HDstrcmp(w->name[0], ATTR_FIELD_NAME)) <- commented out
 	Note: ATTR_FIELD_NAME cannot be used here because hdfeos sets fieldname
-	to "AttrValues", not ATTR_FIELD_NAME. -BMR, 2014/12/01 */ 
+	to "AttrValues", not ATTR_FIELD_NAME. -BMR, 2014/12/01 */
     if (w->n != 1)
         HGOTO_ERROR(DFE_BADATTR, FAIL);
     if (size)
@@ -446,7 +448,7 @@ intn Vattrhdfsize(int32 vgid, intn attrindex, int32 *size)
     /* This vdata should have only 1 field */
      /* if (w->n != 1 || HDstrcmp(w->name[0], ATTR_FIELD_NAME)) <- commented out
 	Note: ATTR_FIELD_NAME cannot be used here because hdfeos sets fieldname
-	to "AttrValues", not ATTR_FIELD_NAME. -BMR, 2014/12/01 */ 
+	to "AttrValues", not ATTR_FIELD_NAME. -BMR, 2014/12/01 */
     if (w->n != 1 )
         HGOTO_ERROR(DFE_BADATTR, FAIL);
     if (size)

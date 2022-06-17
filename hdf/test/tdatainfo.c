@@ -210,7 +210,7 @@ test_simple_vs()
     status_n = VSsetfields (vsid, FIELD_NAME_LIST);
     CHECK_VOID(status_n, FAIL, "VSsetfields");
 
-    /* 
+    /*
      * Buffer the data by the record for fully interlaced mode.  Note that the
      * first three elements contain the three values of the first field, the
      * fourth element contains the value of the second field, and the last two
@@ -230,7 +230,7 @@ test_simple_vs()
         data_buf1[rec_num][3] = 10 + rec_num;
         data_buf1[rec_num][4] = 10;
         data_buf1[rec_num][5] = 65;
- */ 
+ */
     }
 
     /* Set the block size and the number of blocks */
@@ -260,7 +260,7 @@ test_simple_vs()
     /* Create and write to another simple vdata, named 'Characters Only', in
 	class CONTCLASS_NAME */
     vs_ref = VHstoredata(fid, "Only field", (const uint8 *)data_buf2,
-		 N_RECORDS, DFNT_CHAR, "Characters Only", CONTCLASS_NAME); 
+		 N_RECORDS, DFNT_CHAR, "Characters Only", CONTCLASS_NAME);
     CHECK_VOID(vs_ref, FAIL, "VHstoredata");
 
 
@@ -377,7 +377,7 @@ test_append_vs()
     status_n = VSsetfields (apvsid, FIELD_NAME_LIST);
     CHECK_VOID(status_n, FAIL, "VSsetfields");
 
-    /* 
+    /*
      * Buffer the data by the record for fully interlaced mode.  Note that the
      * first three elements contain the three values of the first field, the
      * fourth element contains the value of the second field, and the last two
@@ -398,7 +398,7 @@ test_append_vs()
         data_buf1[rec_num][3] = 10 + rec_num;
         data_buf1[rec_num][4] = 10;
         data_buf1[rec_num][5] = 65;
- */ 
+ */
     }
 
     /* Set the block size and the number of blocks the first vdata */
@@ -428,15 +428,11 @@ test_append_vs()
     CHECK_VOID(vs1_ref, FAIL, "VSQueryref");
 
     /* Make another simple vdata to cause linked-blocks */
-    {
-	int32 vd2_ref;
+    for (rec_num = 0; rec_num < N_RECORDS; rec_num++)
+        data_buf0[rec_num][0] = 10 + rec_num;
 
-	for (rec_num = 0; rec_num < N_RECORDS; rec_num++)
-	    data_buf0[rec_num][0] = 10 + rec_num;
-
-	/* Create and write to another very simple vdata */
-	vd2_ref = VHstoredata(fid, "Field 1", (const uint8 *)data_buf0, N_RECORDS, DFNT_INT32, "Another One Field One Order", "Very Simple Vdata");
-    }
+    /* Create and write to another very simple vdata */
+    VHstoredata(fid, "Field 1", (const uint8 *)data_buf0, N_RECORDS, DFNT_INT32, "Another One Field One Order", "Very Simple Vdata");
 
     /* Make up the second batch of data for the appendable vdata */
     for (rec_num = 0; rec_num < N_RECORDS; rec_num++)
@@ -575,7 +571,7 @@ intn readnoHDF_char(const char *filename, const int32 offset, const int32 length
 	an annotation
 
   Description:
-	get_annot_datainfo gets access to each annotation, then attempts to 
+	get_annot_datainfo gets access to each annotation, then attempts to
 	get the offset/length of its data.  If successful, increment the
 	data info count and eventually returns that number to caller.  If
 	failure occurs, simply return FAIL and all the previous data info
@@ -589,7 +585,7 @@ intn readnoHDF_char(const char *filename, const int32 offset, const int32 length
 				    the last parameter become arrays of strings
 	t_ann_info_t *ann_info	OUT: structure that holds ann data info
 	intn ann_info_num	IN: indicates where in ann_info to start
-				    storing info 
+				    storing info
 	char* ann_text		IN: text of the annotation (this will be changed
 				    to array of strings when time permits)
 
@@ -810,7 +806,7 @@ test_annotation()
 
 	for (ann_index = 0; ann_index < ann_info_num; ann_index++)
 	{
-	    /* Open the file with fopen, read data at the offset obtained and 
+	    /* Open the file with fopen, read data at the offset obtained and
 	       verify the values */
 	    status_n = readnoHDF_char(ANNOT_FILE, ann_info[ann_index].offset,
 		    ann_info[ann_index].length, ann_info[ann_index].anntext);
@@ -850,7 +846,7 @@ test_annotation()
 
 /* Convenient function to create and write to an image, used by
    test_oneblock_ri */
-static intn make_comp_image( 
+static intn make_comp_image(
 	int32 grid,
 	char* img_name,
 	char start_char,  /* first value in the image, for variety of data */
@@ -961,7 +957,7 @@ test_oneblock_ri()
     /* Create and write the JPEG compressed image to this file, starting the
        data values with the letter 'j' - more work to be done for JPEG */
      /* status = make_comp_image(grid, JPEG_IMAGE, 'j', COMP_CODE_JPEG, &cinfo);
- */ 
+ */
 
     /* Terminate access to the GR interface and close the file */
     status = GRend(grid);
@@ -1131,7 +1127,7 @@ test_dfr8_24()
 /* So, coding is wrong but this function is not used at all.*/
 /* So, screen it out for now. -AKC 2013/01/18 */
  /* intn check_dds(char *fname, char *msg)
- */ 
+ */
 intn check_dds(int32 grid, char *msg)
 {
     intn n_pals = 0;
@@ -1179,7 +1175,7 @@ test_getpalinfo()
 {
     int32 fid, grid,	/* file ID and GR interface ID */
 	      riid, palid,  /* raster image ID and palette ID */
-          interlace_mode, 
+          interlace_mode,
           start[2],     /* where to start to write for each dimension  */
           edges[2],     /* specifies how long to write for each dimension */
           dim_sizes[2];  /* sizes of the two dimensions of the image array */
@@ -1197,12 +1193,12 @@ test_getpalinfo()
 
     /* Initialize the 8-bit image array */
     static uint8 raster_data[WIDTH][LENGTH] =
-	{ 1, 2, 3, 4, 5,
-	  5, 4, 3, 2, 1,
-	  1, 2, 3, 4, 5,
-	  5, 4, 3, 2, 1,
-	  6, 4, 2, 0, 2 };
-     
+	{ {1, 2, 3, 4, 5},
+	  {5, 4, 3, 2, 1},
+	  {1, 2, 3, 4, 5},
+	  {5, 4, 3, 2, 1},
+	  {6, 4, 2, 0, 2} };
+
     /* Palettes are added in the following means and order:
 	paletteA (DFPputpal)
 	paletteB (DFPputpal)
@@ -1216,11 +1212,11 @@ test_getpalinfo()
 	palette_buf2 (GRwritelut) for image named IMAGE2_WITH_PAL
 	paletteD (DFPputpal)
     */
-    /* Add two palettes with DFP API. */ 
-    status = DFPputpal(IMAGE_DFPAL_FILE, paletteA, 0, "w"); 
+    /* Add two palettes with DFP API. */
+    status = DFPputpal(IMAGE_DFPAL_FILE, paletteA, 0, "w");
     CHECK_VOID(status, FAIL, "DFPputpal");
 
-    status = DFPputpal(IMAGE_DFPAL_FILE, paletteB, 0, "a"); 
+    status = DFPputpal(IMAGE_DFPAL_FILE, paletteB, 0, "a");
     CHECK_VOID(status, FAIL, "DFPputpal");
 
     n_pals = DFPnpals(IMAGE_DFPAL_FILE);
@@ -1270,7 +1266,7 @@ test_getpalinfo()
     interlace_mode = MFGR_INTERLACE_PIXEL;
 
     /* Create an image named IMAGE_WITH_PAL */
-    riid = GRcreate (grid, IMAGE_WITH_PAL, N_COMPS_IMG, DFNT_UINT8, 
+    riid = GRcreate (grid, IMAGE_WITH_PAL, N_COMPS_IMG, DFNT_UINT8,
                      interlace_mode, dim_sizes);
 
     /* Fill the image data buffer with values */
@@ -1314,7 +1310,7 @@ test_getpalinfo()
     status = GRendaccess (riid);
 
     /* Create another image named IMAGE2_WITH_PAL */
-    riid = GRcreate (grid, IMAGE2_WITH_PAL, N_COMPS_IMG, DFNT_UINT8, 
+    riid = GRcreate (grid, IMAGE2_WITH_PAL, N_COMPS_IMG, DFNT_UINT8,
                      interlace_mode, dim_sizes);
 
     /* Write the data in the buffer into the image array */
@@ -1344,7 +1340,7 @@ test_getpalinfo()
     CHECK_VOID(status, FAIL, "GRendaccess");
 
     /* Create another image named LASTIMAGE_NOPAL */
-    riid = GRcreate (grid, LASTIMAGE_NOPAL, N_COMPS_IMG, DFNT_UINT8, 
+    riid = GRcreate (grid, LASTIMAGE_NOPAL, N_COMPS_IMG, DFNT_UINT8,
                      interlace_mode, dim_sizes);
     CHECK_VOID(riid, FAIL, "GRcreate");
 
@@ -1369,17 +1365,17 @@ test_getpalinfo()
     CHECK_VOID(n_pals, FAIL, "DFPnpals");
     VERIFY_VOID(n_pals, 6, "DFPputpal");
 
-    status = DFPputpal(IMAGE_DFPAL_FILE, paletteD, 0, "a"); 
+    status = DFPputpal(IMAGE_DFPAL_FILE, paletteD, 0, "a");
     CHECK_VOID(status, FAIL, "DFPputpal");
 
     n_pals = DFPnpals(IMAGE_DFPAL_FILE);
     CHECK_VOID(n_pals, FAIL, "DFPnpals");
     VERIFY_VOID(n_pals, 7, "DFPnpals");
 
-    status = DFPputpal(IMAGE_DFPAL_FILE, paletteB, 0, "a"); 
+    status = DFPputpal(IMAGE_DFPAL_FILE, paletteB, 0, "a");
     CHECK_VOID(status, FAIL, "DFPputpal");
 
-    status = DFPputpal(IMAGE_DFPAL_FILE, paletteD, 0, "a"); 
+    status = DFPputpal(IMAGE_DFPAL_FILE, paletteD, 0, "a");
     CHECK_VOID(status, FAIL, "DFPputpal");
 
     n_pals = DFPnpals(IMAGE_DFPAL_FILE);
@@ -1387,7 +1383,7 @@ test_getpalinfo()
     VERIFY_VOID(n_pals, 9, "DFPputpal");
 
     /* Create another image named ANO_IMAGE_NAME. */
-    riid = GRcreate (grid, ANO_IMAGE_NAME, N_COMPS_IMG, DFNT_UINT8, 
+    riid = GRcreate (grid, ANO_IMAGE_NAME, N_COMPS_IMG, DFNT_UINT8,
                       interlace_mode, dim_sizes);
     CHECK_VOID(riid, FAIL, "GRcreate");
 
@@ -1409,7 +1405,7 @@ test_getpalinfo()
 
    status = GRendaccess (riid);
 
-    status = DFPputpal(IMAGE_DFPAL_FILE, paletteD, 0, "a"); 
+    status = DFPputpal(IMAGE_DFPAL_FILE, paletteD, 0, "a");
     CHECK_VOID(status, FAIL, "DFPputpal");
 
     n_pals = DFPnpals(IMAGE_DFPAL_FILE);
@@ -1442,7 +1438,7 @@ test_getpalinfo()
     /* Read some palettes */
     {
 
-    /* Call GRgetpalinfo the first time, passing in NULL for the palette array, 
+    /* Call GRgetpalinfo the first time, passing in NULL for the palette array,
        to get the number of palettes in the file */
     n_pals = 0;
     n_pals = GRgetpalinfo(grid, 0, NULL);
@@ -1457,7 +1453,7 @@ test_getpalinfo()
     /* Read and verify data of the first palette which is pointed to by both
        data identifiers 201/ref and 301/ref */
      /* inbuf = (uint8 *) HDmalloc(palinfo_array[0].length * sizeof(uint8));
- */ 
+ */
     inbuf = (uint8 *) HDmalloc(palinfo_array[0].length);
     CHECK_ALLOC(inbuf, "inbuf", "test_getpalinfo");
     status = Hgetelement(fid, palinfo_array[0].tag, palinfo_array[0].ref, inbuf);
@@ -1471,7 +1467,7 @@ test_getpalinfo()
        201/4 is associated with a different offset */
 
      /* inbuf = (uint8 *) HDmalloc(palinfo_array[7].length * sizeof(uint8));
- */ 
+ */
     inbuf = (uint8 *) HDmalloc(palinfo_array[7].length);
     CHECK_ALLOC(inbuf, "inbuf", "test_getpalinfo");
     status = Hgetelement(fid, palinfo_array[7].tag, palinfo_array[7].ref, inbuf);
@@ -1508,36 +1504,36 @@ test_getntinfo()
     CHECK_VOID(status, FAIL, "Hgetntinfo DFNT_UINT8");
     VERIFY_CHAR_VOID(nt_info.type_name, "uint8", "Hgetntinfo DFNT_UINT8");
     VERIFY_CHAR_VOID(nt_info.byte_order, "bigEndian", "Hgetntinfo DFNT_UINT8");
-    
+
     status = Hgetntinfo(DFNT_CHAR16, &nt_info);
     CHECK_VOID(status, FAIL, "Hgetntinfo DFNT_CHAR16");
     VERIFY_CHAR_VOID(nt_info.type_name, "char16", "Hgetntinfo DFNT_CHAR16");
     VERIFY_CHAR_VOID(nt_info.byte_order, "bigEndian", "Hgetntinfo DFNT_CHAR16");
-    
+
     /* Native */
     status = Hgetntinfo(DFNT_NFLOAT32, &nt_info);
     CHECK_VOID(status, FAIL, "Hgetntinfo DFNT_NFLOAT32");
     VERIFY_CHAR_VOID(nt_info.type_name, "float32", "Hgetntinfo DFNT_NFLOAT32");
     VERIFY_CHAR_VOID(nt_info.byte_order, "bigEndian", "Hgetntinfo DFNT_NFLOAT32");
-    
+
     /* Little endian */
     status = Hgetntinfo(DFNT_LFLOAT32, &nt_info);
     CHECK_VOID(status, FAIL, "Hgetntinfo DFNT_LFLOAT32");
     VERIFY_CHAR_VOID(nt_info.type_name, "float32", "Hgetntinfo DFNT_LFLOAT32");
     VERIFY_CHAR_VOID(nt_info.byte_order, "littleEndian", "Hgetntinfo DFNT_LFLOAT32");
-    
+
     /* Little endian backward compatible */
     status = Hgetntinfo(DFNT_LCHAR, &nt_info);
     CHECK_VOID(status, FAIL, "Hgetntinfo DFNT_LCHAR");
     VERIFY_CHAR_VOID(nt_info.type_name, "char8", "Hgetntinfo DFNT_LCHAR");
     VERIFY_CHAR_VOID(nt_info.byte_order, "littleEndian", "Hgetntinfo DFNT_LCHAR");
-    
+
     /* Backward compatible */
     status = Hgetntinfo(DFNT_DOUBLE, &nt_info);
     CHECK_VOID(status, FAIL, "Hgetntinfo DFNT_DOUBLE");
     VERIFY_CHAR_VOID(nt_info.type_name, "float64", "Hgetntinfo DFNT_DOUBLE");
     VERIFY_CHAR_VOID(nt_info.byte_order, "bigEndian", "Hgetntinfo DFNT_DOUBLE");
-    
+
     /* Native backward compatible */
     status = Hgetntinfo(DFNT_NUCHAR, &nt_info);
     CHECK_VOID(status, FAIL, "Hgetntinfo DFNT_NUCHAR");

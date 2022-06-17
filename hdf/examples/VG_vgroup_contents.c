@@ -25,6 +25,7 @@ int main( )
    * Initialize the V interface.
    */
    status_n = Vstart (file_id);
+   CHECK_NOT_VAL(status_n, FAIL, "Vstart");
 
    /*
    * Obtain each vgroup in the file by its reference number, get the
@@ -44,7 +45,7 @@ int main( )
       * are found.
       */
       if (vgroup_ref == -1) break;
-      vgroup_id = Vattach (file_id, vgroup_ref, "r"); 
+      vgroup_id = Vattach (file_id, vgroup_ref, "r");
 
       /*
       * Get the total number of objects in the vgroup.
@@ -52,7 +53,7 @@ int main( )
       num_of_pairs = Vntagrefs (vgroup_id);
 
       /*
-      * If the vgroup contains any object, print the tag/ref number 
+      * If the vgroup contains any object, print the tag/ref number
       * pair of each object in the vgroup, in the order they appear in the
       * file, and indicate whether the object is a vdata, vgroup, or neither.
       */
@@ -62,10 +63,11 @@ int main( )
          for (obj_index = 0; obj_index < num_of_pairs; obj_index++)
          {
             /*
-            * Get the tag/ref number pair of the object specified 
+            * Get the tag/ref number pair of the object specified
             * by its index, obj_index, and display them.
             */
             status_n = Vgettagref (vgroup_id, obj_index, &obj_tag, &obj_ref);
+            CHECK_NOT_VAL(status_n, FAIL, "Vgettagref");
             printf ("tag = %d, ref = %d", obj_tag, obj_ref);
 
             /*
@@ -88,6 +90,7 @@ int main( )
       * Terminate access to the current vgroup.
       */
       status_32 = Vdetach (vgroup_id);
+      CHECK_NOT_VAL(status_32, FAIL, "Vdetach");
 
       /*
       * Move to the next vgroup position.
@@ -99,6 +102,9 @@ int main( )
    * Terminate access to the V interface and close the file.
    */
    status_n = Vend (file_id);
+   CHECK_NOT_VAL(status_n, FAIL, "Vend");
    status_n = Hclose (file_id);
+   CHECK_NOT_VAL(status_n, FAIL, "Hclose");
+
    return 0;
 }

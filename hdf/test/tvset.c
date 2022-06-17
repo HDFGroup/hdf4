@@ -15,7 +15,7 @@
 
 /*
  *
- * Vset tests 
+ * Vset tests
  *
  *
  * This file needs another pass at making sure all the return
@@ -236,7 +236,7 @@ write_vset_stuff(void)
     status = Vdetach(vg2);
     CHECK(status,FAIL,"Vdetach:vg2");
 
-    MESSAGE(5, printf("created Vgroup %s with %d elements\n", "Second Vgroup", 
+    MESSAGE(5, printf("created Vgroup %s with %d elements\n", "Second Vgroup",
                       (int) num););
 
     /*
@@ -282,7 +282,7 @@ write_vset_stuff(void)
     /* Test VSgetexternalfile on a vdata without external element */
     /*  status = VSgetexternalfile(vs1, 0, NULL, NULL);
     VERIFY_VOID(status, FAIL, "VSgetexternalfile");
- */ 
+ */
 
     /* Test VSgetexternalinfo on a vdata without external element */
     status = VSgetexternalinfo(vs1, 0, NULL, NULL, NULL);
@@ -290,7 +290,7 @@ write_vset_stuff(void)
 
     status = VSdetach(vs1);
     CHECK(status,FAIL,"VSdetach:vs1");
-    
+
     MESSAGE(5, printf("created VDATA %s with %d elements\n", name, (int) count););
 
     /* Int32 Vdata */
@@ -332,7 +332,7 @@ write_vset_stuff(void)
     status = VSdetach(vs1);
     CHECK(status,FAIL,"VSdetach:vs1");
 
-    MESSAGE(5, printf("created VDATA %s with %d elements\n", 
+    MESSAGE(5, printf("created VDATA %s with %d elements\n",
                       name, (int) count); );
 
     /* Int32 and Float32 Vdata */
@@ -377,7 +377,7 @@ write_vset_stuff(void)
     status = VSdetach(vs1);
     CHECK(status,FAIL,"VSdetach:vs1");
 
-    MESSAGE(5, printf("created VDATA %s with %d elements\n", 
+    MESSAGE(5, printf("created VDATA %s with %d elements\n",
                       name, (int) count););
 
     /* mixed order Vdata */
@@ -441,7 +441,7 @@ write_vset_stuff(void)
     status = VSdetach(vs1);
     CHECK(status,FAIL,"VSdetach:vs1");
 
-    MESSAGE(5, printf("created VDATA %s with %d elements\n", 
+    MESSAGE(5, printf("created VDATA %s with %d elements\n",
                       name, (int) count););
 
     /* test MAX_ORDER and MAX_FIELD_SIZE */
@@ -472,7 +472,7 @@ write_vset_stuff(void)
     status = VSdetach(vs1);
     CHECK(status,FAIL,"VSdetach:vs1");
 
-    MESSAGE(5, printf("created VDATA %s with %d order\n", 
+    MESSAGE(5, printf("created VDATA %s with %d order\n",
                       name, (int)MAX_ORDER););
 
     vs1 = VSattach(fid, -1, "w");
@@ -492,10 +492,10 @@ write_vset_stuff(void)
           num_errs++;
           printf(">>> Vsetfields failed for %s\n", name);
       }
-    
+
     /* create some bogus data */
     for (i = 0; i < max_order; i++)
-         gbuf2[i] = (float32)i * (float32)0.11; 
+         gbuf2[i] = (float32)i * (float32)0.11;
 
     status = VSwrite(vs1, (unsigned char *) gbuf2, 1, FULL_INTERLACE);
     CHECK(status,FAIL,"VSwrite:vs1");
@@ -503,7 +503,7 @@ write_vset_stuff(void)
     status = VSdetach(vs1);
     CHECK(status,FAIL,"VSdetach:vs1");
 
-    MESSAGE(5, printf("created VDATA %s with %d order\n", 
+    MESSAGE(5, printf("created VDATA %s with %d order\n",
                       name, (int)max_order););
 
     /* create vdata exceeding MAX_FIELD_SIZE, should fail */
@@ -638,7 +638,7 @@ read_vset_stuff(void)
 
     vgname = (char *) HDmalloc(sizeof(char *) * (name_len+1));
     CHECK_ALLOC(vgname, "vgname", "read_vset_stuff");
-    
+
     status = Vgetname(vg1, vgname);
     CHECK(status,FAIL,"Vgetname:vg1");
 
@@ -647,7 +647,7 @@ read_vset_stuff(void)
 
     vgclass = (char *) HDmalloc(sizeof(char *) * (name_len+1));
     CHECK_ALLOC(vgclass, "vgclass", "read_vset_stuff");
-    
+
     status = Vgetclass(vg1, vgclass);
     CHECK(status,FAIL,"Vgetclass:vg1");
 
@@ -896,11 +896,11 @@ read_vset_stuff(void)
     status = VSdetach(vs1);
     CHECK(status,FAIL,"VSdetach:vs1");
 
-#ifndef HAVE_FMPOOL 
-/* Commented out this test when using the file caching.This is beacause this 
+#ifndef HAVE_FMPOOL
+/* Commented out this test when using the file caching.This is beacause this
    test opens the external file directly without using HDF calls. As a result
-   the file memory pool buffer that was created for this external file will 
-   not be shared with this low-level call as the low-level file cache open 
+   the file memory pool buffer that was created for this external file will
+   not be shared with this low-level call as the low-level file cache open
    creates a unique pool for every call. It is upto the programmer
    then to share the file pool. -GeorgeV
  */
@@ -935,7 +935,7 @@ read_vset_stuff(void)
                           ival = ival<<8 | (0xff & gbuf[j++]);
                           ival = ival<<8 | (0xff & gbuf[j++]);
                           ival = ival<<8 | (0xff & gbuf[j++]);
-                          
+
                           if (ival != i)
                             {
                                 num_errs++;
@@ -1332,7 +1332,7 @@ test_vsdelete(void)
     /* Create a new vdata. */
     vdata_id = VSattach(fid, -1, "w");
     CHECK_VOID(vdata_id,FAIL,"VSattach:vdata_id");
-          
+
     /* Define the field data name, type and order. */
     status = VSfdefine(vdata_id, FIELD_NAME, DFNT_INT16, ORDER);
     CHECK_VOID(status,FAIL,"VSfdefine:vdata_id");
@@ -1342,7 +1342,7 @@ test_vsdelete(void)
     CHECK_VOID(status,FAIL,"VSsetfields:vdata_id");
 
     /* Generate the Vset data. */
-    for (i = 0; i < NUMBER_OF_ROWS * ORDER; i+=ORDER) 
+    for (i = 0; i < NUMBER_OF_ROWS * ORDER; i+=ORDER)
       {
           vdata_buf[i] = i;
           vdata_buf[i + 1] = i + 1;
@@ -1350,7 +1350,7 @@ test_vsdelete(void)
       }
 
     /* Write the data to the Vset. */
-    num_of_elements = VSwrite(vdata_id, (const uint8 *)vdata_buf, 
+    num_of_elements = VSwrite(vdata_id, (const uint8 *)vdata_buf,
                               NUMBER_OF_ROWS, FULL_INTERLACE);
     CHECK_VOID(num_of_elements,FAIL,"VSwrite:");
 
@@ -1439,7 +1439,7 @@ test_vsdelete(void)
 
 } /* test_vsdelete */
 
-/* Testing Vdelete for vgroups. */ 
+/* Testing Vdelete for vgroups. */
 static void
 test_vdelete(void)
 {
@@ -1459,7 +1459,7 @@ test_vdelete(void)
     /* Create a new vgroup. */
     vgroup_id = Vattach(fid, -1, "w");
     CHECK_VOID(vgroup_id,FAIL,"Vattach:vgroup_id");
-          
+
     /* Set the name and class. */
     status = Vsetname(vgroup_id, "Vgroup should have been deleted");
     CHECK_VOID(status,FAIL,"Vsetname:vgroup_id");
@@ -1474,7 +1474,7 @@ test_vdelete(void)
     /* Terminate access to the vgroup. */
     status = Vdetach(vgroup_id);
     CHECK_VOID(status,FAIL,"Vdetach:vgroup_id");
-    
+
     /* Terminate access to the Vxxx interface and close the file. */
     status = Vend(fid);
     CHECK_VOID(status,FAIL,"Vend:fid");
@@ -1537,7 +1537,7 @@ test_vdelete(void)
 
 } /* test_vdelete */
 
-/* Testing Vdeletetagref() for vgroups. */ 
+/* Testing Vdeletetagref() for vgroups. */
 static void
 test_vdeletetagref(void)
 {
@@ -1557,7 +1557,7 @@ test_vdeletetagref(void)
     /* Create a new vgroup. */
     vgroup_id = Vattach(fid, -1, "w");
     CHECK_VOID(vgroup_id,FAIL,"Vattach:vgroup_id");
-          
+
     /* Set the name and class. */
     status = Vsetname(vgroup_id, "Vgroup to delete elements from");
     CHECK_VOID(status,FAIL,"Vsetname:vgroup_id");
@@ -1572,7 +1572,7 @@ test_vdeletetagref(void)
     CHECK_VOID(status,FAIL,"Vaddtagref");
 
 #ifndef NO_DUPLICATES
-    /* duplicate tag/ref pairs allowed. 
+    /* duplicate tag/ref pairs allowed.
        So add a duplicate */
     status = Vaddtagref(vgroup_id, 1000, 12346);
     CHECK_VOID(status,FAIL,"Vaddtagref");
@@ -1600,7 +1600,7 @@ test_vdeletetagref(void)
     /* Terminate access to the vgroup. */
     status = Vdetach(vgroup_id);
     CHECK_VOID(status,FAIL,"Vdetach:vgroup_id");
-    
+
     /* Terminate access to the Vxxx interface and close the file. */
     status = Vend(fid);
     CHECK_VOID(status,FAIL,"Vend:fid");
@@ -1629,7 +1629,7 @@ test_vdeletetagref(void)
     if (6 != Vntagrefs(vgroup_id))
       {
           num_errs++;
-          printf(">>> Vntagrefs returned %d was expecting %d\n", 
+          printf(">>> Vntagrefs returned %d was expecting %d\n",
                  (int)Vntagrefs(vgroup_id),6);
       }
 
@@ -1642,7 +1642,7 @@ test_vdeletetagref(void)
     if (5 != Vntagrefs(vgroup_id))
       {
           num_errs++;
-          printf(">>> Vntagrefs returned %d was expecting %d\n", 
+          printf(">>> Vntagrefs returned %d was expecting %d\n",
                  (int)Vntagrefs(vgroup_id),5);
       }
 #endif /* NO_DUPLICATES */
@@ -1687,7 +1687,7 @@ test_vdeletetagref(void)
     if (3 != Vntagrefs(vgroup_id))
       {
           num_errs++;
-          printf(">>> Vntagrefs returned %d was expecting %d\n", 
+          printf(">>> Vntagrefs returned %d was expecting %d\n",
                  (int)Vntagrefs(vgroup_id), 3);
       }
 
@@ -1743,7 +1743,7 @@ test_emptyvdata(void)
 
     status = VSdetach(vs1);
     CHECK_VOID(status,FAIL,"Vdetach");
-    
+
     status = Vend(fid);
     CHECK_VOID(status,FAIL,"Vend");
 
@@ -1780,7 +1780,7 @@ test_emptyvdata(void)
     VERIFY_VOID(status,0,"VFnfields");
 
     /* Verify that VSgetfields will return FAIL when passing in a NULL
-       for field name list (from bug #554), although this might never 
+       for field name list (from bug #554), although this might never
        happen - BMR 5/17/01 */
     status = VSgetfields(vs1, NULL);
     VERIFY_VOID(status, FAIL, "VSgetfields");
@@ -1796,7 +1796,7 @@ test_emptyvdata(void)
 
     status = VSdetach(vs1);
     CHECK_VOID(status,FAIL,"Vdetach");
-    
+
     status = Vend(fid);
     CHECK_VOID(status,FAIL,"Vend");
 
@@ -1836,7 +1836,7 @@ test_emptyvdata(void)
 
     status = VSdetach(vs1);
     CHECK_VOID(status,FAIL,"Vdetach");
-    
+
     status = Vend(fid);
     CHECK_VOID(status,FAIL,"Vend");
 
@@ -1874,7 +1874,7 @@ test_emptyvdata(void)
 
     status = VSdetach(vs1);
     CHECK_VOID(status,FAIL,"Vdetach");
-    
+
     status = Vend(fid);
     CHECK_VOID(status,FAIL,"Vend");
 
@@ -1913,7 +1913,7 @@ test_vglongnames(void)
 
     status = Vdetach(vg1);
     CHECK_VOID(status,FAIL,"Vdetach");
-    
+
     /* Create another vgroup of the same class. */
     vg1 = Vattach(fid, -1, "w");
     CHECK_VOID(vg1,FAIL,"VSattach");
@@ -1926,7 +1926,7 @@ test_vglongnames(void)
 
     status = Vdetach(vg1);
     CHECK_VOID(status,FAIL,"Vdetach");
-    
+
     status = Vend(fid);
     CHECK_VOID(status,FAIL,"Vend");
 
@@ -1986,7 +1986,7 @@ test_vglongnames(void)
 
     status = Vdetach(vg1);
     CHECK_VOID(status,FAIL,"Vdetach");
-    
+
     /* Find the vgroup VGROUP1. */
     ref=Vfind(fid,VGROUP1);
     CHECK_VOID(ref,FAIL,"VSfind");
@@ -2032,7 +2032,7 @@ test_vglongnames(void)
 
     status = Vdetach(vg1);
     CHECK_VOID(status,FAIL,"Vdetach");
-    
+
     status = Vend(fid);
     CHECK_VOID(status,FAIL,"Vend");
 
@@ -2146,7 +2146,7 @@ test_getvgroups(void)
     VERIFY_VOID(n_vgs, NUM_VGROUPS, "Vgetvgroups fid");
 
     /* Verify refarray from this Vgetvgroups, it should contain:
-	2  3  4  5  6  7  8  9  10  11 */ 
+	2  3  4  5  6  7  8  9  10  11 */
     {
         uint16 result[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
         for (ii = 0; ii < n_vgs; ii++)
@@ -2178,7 +2178,7 @@ test_getvgroups(void)
     CHECK_VOID(n_vgs, FAIL, "Vgetvgroups vgroup0_id");
     VERIFY_VOID(n_vgs, 2, "Vgetvgroups vgroup0_id");
 
-    /* Verify refarray from this Vgetvgroups, it should contain: 3  4 */ 
+    /* Verify refarray from this Vgetvgroups, it should contain: 3  4 */
     {
         uint16 result[] = {3, 4};
         for (ii = 0; ii < n_vgs; ii++)
@@ -2196,7 +2196,7 @@ test_getvgroups(void)
     CHECK_VOID(n_vgs, FAIL, "Vgetvgroups vgroup1_id");
     VERIFY_VOID(n_vgs, 3, "Vgetvgroups vgroup1_id");
 
-    /* Verify refarray from this Vgetvgroups, it should contain: 5  6  7 */ 
+    /* Verify refarray from this Vgetvgroups, it should contain: 5  6  7 */
     {
         uint16 result[] = {5, 6, 7};
         for (ii = 0; ii < n_vgs; ii++)
@@ -2253,7 +2253,7 @@ test_getvgroups(void)
     VERIFY_VOID(n_vgs, 8, "Vgetvgroups fid");
 
     /* Verify refarray from this Vgetvgroups, it should contain:
-	2  3  4  5  6  7  10  11 */ 
+	2  3  4  5  6  7  10  11 */
     {
         uint16 result[] = { 2, 3, 4, 5, 6, 7, 10, 11 };
         for (ii = 0; ii < n_vgs; ii++)
@@ -2267,7 +2267,7 @@ test_getvgroups(void)
     CHECK_VOID(n_vgs, FAIL, "Vgetvgroups fid");
     VERIFY_VOID(n_vgs, 3, "Vgetvgroups fid");
 
-    /* Verify refarray from this Vgetvgroups, it should contain: 7  10  11 */ 
+    /* Verify refarray from this Vgetvgroups, it should contain: 7  10  11 */
     {
         uint16 result[] = { 7, 10, 11 };
         for (ii = 0; ii < n_vgs; ii++)
@@ -2284,7 +2284,7 @@ test_getvgroups(void)
     CHECK_VOID(n_vgs, FAIL, "Vgetvgroups vgroup0_id");
     VERIFY_VOID(n_vgs, 2, "Vgetvgroups vgroup0_id");
 
-    /* Verify refarray from this Vgetvgroups, it should contain: 3  4 */ 
+    /* Verify refarray from this Vgetvgroups, it should contain: 3  4 */
     {
         uint16 result[] = { 3, 4 };
         for (ii = 0; ii < n_vgs; ii++)
@@ -2298,7 +2298,7 @@ test_getvgroups(void)
     CHECK_VOID(n_vgs, FAIL, "Vgetvgroups vgroup1_id");
     VERIFY_VOID(n_vgs, 1, "Vgetvgroups vgroup1_id");
 
-    /* Verify refarray from this Vgetvgroups, it should contain: 7 */ 
+    /* Verify refarray from this Vgetvgroups, it should contain: 7 */
     {
         uint16 result[] = { 7 };
         for (ii = 0; ii < n_vgs; ii++)
@@ -2407,7 +2407,7 @@ intn check_vds(int32 id,
 
     if (refarray != NULL)
         HDfree(refarray);
-    
+
     return ret_value;
 }
 
@@ -2590,18 +2590,18 @@ test_getvdatas(void)
 
     /**************************************************************
 	The vgroup structure should look like this:
-	       vg0	            vg1 
+	       vg0	            vg1
                 |                    |
 	   +--+-+-----+            / | \
            |          |           /  |  \
           /\         / \        vg4 vg6 vd7
          /  \       /   \            |
-        vd1 vd2   vg7  vg9          / \  
-                        |          /   \     
-                      / | \       /     \     
-                     /  |  \     vd6   vg2   
+        vd1 vd2   vg7  vg9          / \
+                        |          /   \
+                      / | \       /     \
+                     /  |  \     vd6   vg2
                   vd3  vd4  vd5
-                  
+
 
     Calling Vgetvgroups on the file should return all NUM_VGROUPS vgroups
     Calling VSgetvdatas on the file should return all NUM_VDATAS vdatas
@@ -2755,7 +2755,7 @@ Tables_External_File.
 #define NROWS		5	/* number of records to be written to the
 				   vdatas at every write */
 static void
-test_extfile(void) 
+test_extfile(void)
 {
     int32   fid, vdata1_id,
 	    vdata_ref = -1;  /* ref number of a vdata, set to -1 to create  */
@@ -2764,19 +2764,18 @@ test_extfile(void)
     char    hibuf[2] = "hi";
     char    byebuf[3] = "bye";
     char   *extfile_name;
-    void*   columnPtrs[3]; 
+    void*   columnPtrs[3];
     int	    bufsize;
     void*   databuf;
-    void*   databuf2;
     intn    name_len = 0;
     intn    status_n;	/* returned status for functions returning an intn  */
     int32   status;	/* returned status for functions returning an int32 */
-    char8   col1buf[NROWS][2] = { {'A', 'B'}, 
+    char8   col1buf[NROWS][2] = { {'A', 'B'},
 				      {'B', 'C'},
 				      {'C', 'D'},
 				      {'D', 'E'},
 				      {'E', 'F'} };
-    uint16  col2buf[NROWS] = {1, 2, 3, 4, 5};	
+    uint16  col2buf[NROWS] = {1, 2, 3, 4, 5};
     float32 col3buf[NROWS][2] = { {.01, .1},
 				    {.02, .2},
 				    {.03, .3},
@@ -2885,7 +2884,7 @@ test_extfile(void)
 
     extfile_name = (char *) HDmalloc(sizeof(char *) * (name_len+1));
     CHECK_ALLOC(extfile_name, "extfile_name", "test_extfile");
-    
+
     /* Old function: Get the external file name - VSgetexternalfile
        is deprecated as of 4.2.7 */
     name_len = VSgetexternalfile(vdata1_id, name_len+1, extfile_name, &offset);
@@ -2900,7 +2899,7 @@ test_extfile(void)
 
     extfile_name = (char *) HDmalloc(sizeof(char *) * (name_len+1));
     CHECK_ALLOC(extfile_name, "extfile_name", "test_extfile");
-    
+
     /* Get the external file name */
     name_len = VSgetexternalinfo(vdata1_id, name_len+1, extfile_name, &offset, &length);
     VERIFY_VOID(name_len, (intn)HDstrlen(EXTERNAL_FILE), "VSgetexternalinfo");
@@ -2959,7 +2958,7 @@ test_extfile(void)
 	- Create and write 5 records to the second vdata, "Another Vdata".  The
   	  purpose of this second vdata is to cause the subsequent write to the
   	  first vdata to promote the first vdata's storage to a linked-block element.
-	- Append 5 records to the first vdata. 
+	- Append 5 records to the first vdata.
 	- Verify that the block size is changed to BLOCK_SIZE1 and number of
   	  blocks to NUM_BLOCKS
 	- Close both vdatas and the file.
@@ -2980,20 +2979,17 @@ test_extfile(void)
 #define	NUM_BLOCKS	8	/* arbitrary number for number of blocks */
 
 static void
-test_blockinfo_oneLB(void) 
+test_blockinfo_oneLB(void)
 {
     intn  status_n;	/* returned status for functions returning an intn  */
     int32 status;	/* returned status for functions returning an int32 */
     int16 rec_num;	/* current record number */
-    int32 record_pos;
     int32 fid, vdata1_id, vdata2_id,
 	  vdata_ref = -1,  /* ref number of a vdata, set to -1 to create  */
    	  num_of_records,  /* number of records actually written to vdata */
           data_buf1[N_RECORDS][N_VALS_PER_REC_1], /* for first vdata's data */
 	  data_buf2[N_RECORDS][N_VALS_PER_REC_2], /* for second vdata's data */
 	  block_size, num_blocks; /* retrieved by VSgetblockinfo */
-    intn  n_vds = 0;
-    uint16 *refarray = NULL;
 
     /* Create the HDF file for data used in this test routine */
     fid = Hopen (LKBLK_FILE, DFACC_CREATE, 0);
@@ -3026,7 +3022,7 @@ test_blockinfo_oneLB(void)
     status_n = VSsetfields (vdata1_id, FIELD_NAME_LIST);
     CHECK_VOID(status_n, FAIL, "VSsetfields");
 
-    /* 
+    /*
      * Buffer the data by the record for fully interlaced mode.  Note that the
      * first three elements contain the three values of the first field, the
      * fourth element contains the value of the second field, and the last two
@@ -3098,7 +3094,7 @@ test_blockinfo_oneLB(void)
     CHECK_VOID(status_n, FAIL, "VSsetnumblocks");
 
     /* Write the data from data_buf1 to the vdata with full interlacing mode. */
-    num_of_records = VSwrite(vdata1_id, (uint8 *)data_buf1, N_RECORDS, 
+    num_of_records = VSwrite(vdata1_id, (uint8 *)data_buf1, N_RECORDS,
 				FULL_INTERLACE);
     VERIFY_VOID(num_of_records, N_RECORDS, "VSwrite:vdata1_id");
 
@@ -3110,9 +3106,9 @@ test_blockinfo_oneLB(void)
     /******************************************************************
      * Creates and writes another vdata right after APPENDABLE_VDATA.
      * This will cause the storage of APPENDABLE_VDATA to be promoted to a
-     * linked-block element if a subsequent write to APPENDABLE_VDATA occurs. 
+     * linked-block element if a subsequent write to APPENDABLE_VDATA occurs.
      ******************************************************************/
- 
+
     /* Create another vdata. */
     vdata_ref = -1;
     vdata2_id = VSattach(fid, vdata_ref, "w");
@@ -3136,9 +3132,9 @@ test_blockinfo_oneLB(void)
         data_buf2[rec_num][0] = 100 + rec_num;
     }
 
-    /* Write the data from data_buf2 to the second vdata with full 
+    /* Write the data from data_buf2 to the second vdata with full
        interlacing mode. */
-    num_of_records = VSwrite(vdata2_id, (uint8 *)data_buf2, N_RECORDS, 
+    num_of_records = VSwrite(vdata2_id, (uint8 *)data_buf2, N_RECORDS,
 				FULL_INTERLACE);
     VERIFY_VOID(num_of_records, N_RECORDS, "VSwrite:vdata2_id");
 
@@ -3158,19 +3154,19 @@ test_blockinfo_oneLB(void)
     }
 
     /* Append the data to the first vdata. */
-    record_pos = VSseek(vdata1_id, N_RECORDS);
-    num_of_records = VSwrite(vdata1_id, (uint8 *)data_buf1, N_RECORDS, 
-				FULL_INTERLACE); 
+    VSseek(vdata1_id, N_RECORDS);
+    num_of_records = VSwrite(vdata1_id, (uint8 *)data_buf1, N_RECORDS,
+				FULL_INTERLACE);
     VERIFY_VOID(num_of_records, N_RECORDS, "VSwrite:vdata1_id");
 
-    /* Retrieve the first vdata's block size and number of blocks and 
+    /* Retrieve the first vdata's block size and number of blocks and
        verify them */
     status_n = VSgetblockinfo (vdata1_id, &block_size, &num_blocks);
     CHECK_VOID(status_n, FAIL, "VSgetblockinfo");
     VERIFY_VOID(block_size, BLOCK_SIZE1, "VSgetblockinfo");
     VERIFY_VOID(num_blocks, NUM_BLOCKS, "VSgetblockinfo");
 
-    /* Terminate access to the vdatas and to the VS interface, then 
+    /* Terminate access to the vdatas and to the VS interface, then
        close the HDF file. */
     status = VSdetach (vdata1_id);
     CHECK_VOID(status, FAIL, "Vdetach");
@@ -3209,20 +3205,16 @@ test_blockinfo_oneLB(void)
    BMR - Jan 2014
  ****************************************************************************/
 static void
-test_blockinfo_multLBs(void) 
+test_blockinfo_multLBs(void)
 {
     intn  status_n;	/* returned status for functions returning an intn  */
     int32 status;	/* returned status for functions returning an int32 */
     int16 rec_num;	/* current record number */
-    int32 record_pos;
     int32 fid, vdata1_id, vdata2_id,
 	  vdata_ref = -1,  /* ref number of a vdata, set to -1 to create  */
    	  num_of_records,  /* number of records actually written to vdata */
-          data_buf1[N_RECORDS][N_VALS_PER_REC_1], /* for first vdata's data */
 	  data_buf2[N_RECORDS][N_VALS_PER_REC_2], /* for second vdata's data */
 	  block_size, num_blocks; /* retrieved by VSgetblockinfo */
-    intn  n_vds = 0;
-    uint16 *refarray = NULL;
 
     /******************************************************************
      * Reopen the file, and the vdata APPENDABLE_VDATA, then append more
@@ -3244,7 +3236,7 @@ test_blockinfo_multLBs(void)
     vdata1_id = VSattach(fid, vdata_ref, "w");
     CHECK_VOID(vdata1_id, FAIL, "VSattach");
 
-    /* Retrieve the first vdata's block size and number of blocks and 
+    /* Retrieve the first vdata's block size and number of blocks and
        verify them again.  This used to return the old value. (HDFFR-1357) */
     status_n = VSgetblockinfo (vdata1_id, &block_size, &num_blocks);
     CHECK_VOID(status_n, FAIL, "VSsetfields");
@@ -3299,12 +3291,12 @@ test_blockinfo_multLBs(void)
     }
 
     /* Write the data from data_buf2 to the vdata with full interlacing mode. */
-    record_pos = VSseek(vdata2_id, N_RECORDS);
-    num_of_records = VSwrite(vdata2_id, (uint8 *)data_buf2, N_RECORDS, 
+    VSseek(vdata2_id, N_RECORDS);
+    num_of_records = VSwrite(vdata2_id, (uint8 *)data_buf2, N_RECORDS,
 				FULL_INTERLACE);
     VERIFY_VOID(num_of_records, N_RECORDS, "VSwrite:vdata2_id");
 
-    /* Retrieve the first vdata's block size and number of blocks and 
+    /* Retrieve the first vdata's block size and number of blocks and
        verify them */
     status_n = VSgetblockinfo (vdata2_id, &block_size, &num_blocks);
     CHECK_VOID(status_n, FAIL, "VSsetfields");
@@ -3381,14 +3373,7 @@ test_VSofclass()
 {
     intn  status_n;	/* returned status for functions returning an intn  */
     int32 status;	/* returned status for functions returning an int32 */
-    int16 rec_num;	/* current record number */
-    int32 record_pos;
-    int32 fid, vdata1_id, vdata2_id,
-	  vdata_ref = -1,  /* ref number of a vdata, set to -1 to create  */
-   	  num_of_records,  /* number of records actually written to vdata */
-          data_buf1[N_RECORDS][N_VALS_PER_REC_1], /* for first vdata's data */
-	  data_buf2[N_RECORDS][N_VALS_PER_REC_2], /* for second vdata's data */
-	  block_size, num_blocks; /* retrieved by VSgetblockinfo */
+    int32 fid;
     intn  n_vds = 0;
     uint16 *refarray = NULL;
 
@@ -3461,8 +3446,6 @@ test_VSofclass()
 void
 test_blockinfo(void)
 {
-    int32 status;
-
     /* test the case of setting block size doesn't have effect until linked-
        block element is created */
     test_blockinfo_oneLB();
@@ -3495,7 +3478,7 @@ test_vsets(void)
 
     /* test Vdelete() */
     test_vdelete();
-   
+
     /* test Vdeletetagref() */
     test_vdeletetagref();
 

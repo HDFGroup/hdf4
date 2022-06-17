@@ -105,7 +105,9 @@ funclist_t  cnbit_funcs =
     HCPcnbit_inquire,
     HCPcnbit_read,
     HCPcnbit_write,
-    HCPcnbit_endaccess
+    HCPcnbit_endaccess,
+    NULL,
+    NULL
 };
 #endif
 

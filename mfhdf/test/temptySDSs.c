@@ -85,7 +85,7 @@ static void check_getchunkinfo(
 {
     int32 sds_id, sds_index;
     HDF_CHUNK_DEF c_def_out; /* Chunking definitions */
-    int32 comp_flag, c_flags;
+    int32 c_flags;
     intn status;
     int num_errs = 0;
     char mesg[80];
@@ -116,7 +116,7 @@ static void check_getchunkinfo(
 /* Test non-special SDSs.  This routine creates non-special SDSs, writes
  * data to one of the SDSs, and checks for emptiness on each without closing
  * the file. */
-static intn 
+static intn
 test_nonspecial_SDSs(int32 fid)
 {
     int32 sds_id;
@@ -218,7 +218,7 @@ test_compressed_SDSs(int32 fid)
     /* Write the stored data to the dataset */
     status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)data);
     CHECK(status, FAIL, "In test_compressed_SDSs: SDwritedata");
- 
+
      /* Close the SDSs */
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "In test_compressed_SDSs: SDendaccess 'CompressedData'");
@@ -249,28 +249,24 @@ test_chunked_SDSs(int32 fid)
     int32         sds_id, esds_id, sds_index;
     int32         flag, maxcache, new_maxcache;
     int32         dim_sizes[RANK], origin[RANK];
-    HDF_CHUNK_DEF c_def; /* Chunking definitions */ 
+    HDF_CHUNK_DEF c_def; /* Chunking definitions */
     int32         comp_flag;
     int16         fill_value = 0;   /* Fill value */
     intn          status;
     int           num_errs = 0;   /* number of errors so far */
 
     /* Declare chunks data type and initialize some of them. */
-    int16 chunk1[3][2] = { 1, 1,
-                           1, 1,
-                           1, 1 }; 
+    int16 chunk1[3][2] = { {1, 1},
+                           {1, 1},
+                           {1, 1} };
 
-    int16 chunk2[3][2] = { 2, 2,
-                           2, 2,
-                           2, 2 }; 
+    int16 chunk2[3][2] = { {2, 2},
+                           {2, 2},
+                           {2, 2} };
 
-    int16 chunk3[3][2] = { 3, 3,
-                           3, 3,
-                           3, 3 }; 
-
-    int16 chunk6[3][2] = { 6, 6,
-                           6, 6,
-                           6, 6 };
+    int16 chunk3[3][2] = { {3, 3},
+                           {3, 3},
+                           {3, 3} };
 
 
     c_def.chunk_lengths[0] = 3;
@@ -294,7 +290,7 @@ test_chunked_SDSs(int32 fid)
     /* Check that this SDS is empty */
     check_empty_SDS(fid, "Chunked-No-Data", TRUE, &num_errs);
 
-    /* Create another Y_CHUNKED_LENGTH x X_CHUNKED_LENGTH SDS but this 
+    /* Create another Y_CHUNKED_LENGTH x X_CHUNKED_LENGTH SDS but this
        one will be written with chunks */
     sds_id = SDcreate(fid, "ChunkedData", DFNT_INT16, RANK, dim_sizes);
     CHECK(sds_id, FAIL, "In test_chunked_SDSs: SDcreate 'ChunkedData'");
@@ -314,7 +310,7 @@ test_chunked_SDSs(int32 fid)
     new_maxcache = SDsetchunkcache(sds_id, maxcache, flag);
     CHECK(new_maxcache, FAIL, "In test_chunked_SDSs: SDsetchunkcache");
 
-    /* Terminate access to the dataset then check if it's empty - and it 
+    /* Terminate access to the dataset then check if it's empty - and it
        should be, before writing data to it. */
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "In test_chunked_SDSs: SDendaccess");
@@ -322,7 +318,7 @@ test_chunked_SDSs(int32 fid)
     /* Check that this SDS is still empty after the call to SDsetchunk */
     check_empty_SDS(fid, "ChunkedData", TRUE, &num_errs);
 
-    /* Re-select the "ChunkedData" SDS, then write chunks using SDwritechunk 
+    /* Re-select the "ChunkedData" SDS, then write chunks using SDwritechunk
        function */
 
     /* Get index of dataset using its name */
@@ -362,8 +358,8 @@ test_chunked_SDSs(int32 fid)
     return num_errs;
 } /* test_chunked_SDSs */
 
-/* Test unlimited dimension SDSs.  This routine creates unlimited 
- * dimension SDSs, writes data to one of the SDSs, and checks for 
+/* Test unlimited dimension SDSs.  This routine creates unlimited
+ * dimension SDSs, writes data to one of the SDSs, and checks for
  * emptiness on each without closing the file. */
 static intn
 test_unlimited_SDSs(int32 fid)
@@ -377,13 +373,13 @@ test_unlimited_SDSs(int32 fid)
     int   num_errs = 0;   /* number of errors so far */
 
     /* Data initialization */
-    for (j = 0; j < Y_LENGTH; j++) 
+    for (j = 0; j < Y_LENGTH; j++)
     {
         for (i = 0; i < X_LENGTH; i++)
            data[j][i] = (i + 1) + (j + 1);
     }
 
-    /* Define dimensions of the array. Make the first dimension 
+    /* Define dimensions of the array. Make the first dimension
        appendable by defining its length to be unlimited */
     dim_sizes[0] = SD_UNLIMITED;
     dim_sizes[1] = X_LENGTH;
@@ -398,7 +394,7 @@ test_unlimited_SDSs(int32 fid)
     /* Terminate access to the dataset "Appendable-No-Data" */
     status = SDendaccess(esds_id);
 
-    /* Define the location and the size of the data to be written 
+    /* Define the location and the size of the data to be written
        to the second dataset  */
     start[0] = start[1] = 0;
     edges[0] = Y_LENGTH;
@@ -427,11 +423,11 @@ test_unlimited_SDSs(int32 fid)
     sds_id = SDselect(fid, sds_index);
     CHECK(sds_id, FAIL, "In test_unlimited_SDSs: SDselect 'AppendableData'");
 
-    /* Check if selected SDS is unlimited. If it is not, then terminate 
+    /* Check if selected SDS is unlimited. If it is not, then terminate
        access to the SDS */
-    if (SDisrecord(sds_id)) 
+    if (SDisrecord(sds_id))
     {
-        /* Define the location of the append to start at the first column 
+        /* Define the location of the append to start at the first column
          * of the 11th row of the dataset and to stop at the end of the
          * eleventh row.  */
         start[0] = Y_LENGTH;
@@ -461,7 +457,7 @@ test_unlimited_SDSs(int32 fid)
 /* This function checks which of the SDSs in the file are empty/written,
  * just as in the previous individual tests.  The difference is these
  * SDSs are read back in after the file is closed and reopened. */
-static intn 
+static intn
 test_with_existing_file()
 {
     int32 fid;
@@ -505,7 +501,7 @@ test_with_existing_file()
    the file as read-only, then calls SDgetchunkinfo on some empty SDS's.
    SDgetchunkinfo should not fail and should return HDF_NONE for the flag.
    -BMR 2011/10/20. */
-static intn 
+static intn
 test_getchunkinfo()
 {
     int32 fid;

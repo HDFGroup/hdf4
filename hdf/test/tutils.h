@@ -82,14 +82,14 @@ if(x != val) {printf("*** UNEXPECTED VALUE from %s is %ld at line %4d in %s\n", 
 
 /* Same as VERIFY except that the value has type char* */
 #define VERIFY_CHAR(x, val, where) \
-do {if (Verbosity>9) printf("   Call to HDF routine: %15s at line %4d in %s had value %s \n",where,(int)__LINE__,__FILE__,(long)x);\
-if(HDstrcmp(x, val) != 0) {printf("*** UNEXPECTED VALUE from %s is %s at line %4d in %s\n", where, (long)x,(int)__LINE__,__FILE__); num_errs++; return(num_errs);} \
+do {if (Verbosity>9) printf("   Call to HDF routine: %15s at line %4d in %s had value %ld \n",where,(int)__LINE__,__FILE__,(long)x);\
+if(HDstrcmp(x, val) != 0) {printf("*** UNEXPECTED VALUE from %s is %ld at line %4d in %s\n", where, (long)x,(int)__LINE__,__FILE__); num_errs++; return(num_errs);} \
 } while(0)
 
 /* Same as VERIFY_CHAR except return without a value. */
 #define VERIFY_CHAR_VOID(x, val, where) \
-do {if (Verbosity>9) printf("   Call to HDF routine: %15s at line %4d in %s had value %s \n",where,(int)__LINE__,__FILE__,(long)x);\
-if(HDstrncmp(x, val, HDstrlen(val)) != 0) {printf("*** UNEXPECTED VALUE from %s is %s at line %4d in %s\n", where, (long)x,(int)__LINE__,__FILE__); num_errs++; return;} \
+do {if (Verbosity>9) printf("   Call to HDF routine: %15s at line %4d in %s had value %ld \n",where,(int)__LINE__,__FILE__,(long)x);\
+if(HDstrncmp(x, val, HDstrlen(val)) != 0) {printf("*** UNEXPECTED VALUE from %s is %ld at line %4d in %s\n", where, (long)x,(int)__LINE__,__FILE__); num_errs++; return;} \
 } while(0)
 
 #define RESULT(a) \

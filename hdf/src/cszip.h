@@ -113,7 +113,9 @@ funclist_t  cszip_funcs =
      HCPcszip_inquire,
      HCPcszip_read,
      HCPcszip_write,
-     HCPcszip_endaccess
+     HCPcszip_endaccess,
+     NULL,
+     NULL
 };
 #endif
 

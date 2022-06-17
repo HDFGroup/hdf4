@@ -23,7 +23,7 @@ int main()
    /*
    * Buffer array data and define array dimensions.
    */
-   for (j = 0; j < Y_LENGTH; j++) 
+   for (j = 0; j < Y_LENGTH; j++)
    {
 	for (i = 0; i < X_LENGTH; i++)
 		data[j][i] = (i + j) + 1;
@@ -37,8 +37,8 @@ int main()
    sd_id = SDstart (FILE_NAME, DFACC_CREATE);
 
    /*
-   * Create the data set with the name defined in SDS_NAME. 
-   */ 
+   * Create the data set with the name defined in SDS_NAME.
+   */
    sds_id = SDcreate (sd_id, SDS_NAME, DFNT_INT32, RANK, dim_sizes);
 
    /*
@@ -55,9 +55,10 @@ int main()
    */
    comp_type = COMP_CODE_DEFLATE;
    c_info.deflate.level = 6;
-   status = SDsetcompress (sds_id, comp_type, &c_info); 
+   status = SDsetcompress (sds_id, comp_type, &c_info);
+   CHECK_NOT_VAL(status, FAIL, "SDsetcompress");
 
-   /* 
+   /*
    * Define the location and size of the data set
    * to be written to the file.
    */
@@ -67,21 +68,24 @@ int main()
    edges[1] = X_LENGTH;
 
    /*
-   * Write the stored data to the data set. The last argument 
+   * Write the stored data to the data set. The last argument
    * must be explicitly cast to a generic pointer since SDwritedata
-   * is designed to write generic data. 
+   * is designed to write generic data.
    */
    status = SDwritedata (sds_id, start, NULL, edges, (VOIDP)data);
+   CHECK_NOT_VAL(status, FAIL, "SDwritedata");
 
    /*
    * Terminate access to the data set.
    */
    status = SDendaccess (sds_id);
+   CHECK_NOT_VAL(status, FAIL, "SDendaccess");
 
    /*
    * Terminate access to the SD interface and close the file.
    */
    status = SDend (sd_id);
+   CHECK_NOT_VAL(status, FAIL, "SDend");
 
    return 0;
 }

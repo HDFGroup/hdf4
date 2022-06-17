@@ -637,7 +637,7 @@ Java_hdf_hdflib_HDFLibrary_GRsetcompress(JNIEnv *env, jclass clss, jlong ri_id, 
     if (c_info == NULL)
         H4_NULL_ARGUMENT_ERROR(ENVONLY, "GRsetcompress:  c_info is NULL");
 
-    if (!getNewCompInfo(env, c_info, &cinf))
+    if (getNewCompInfo(env, c_info, &cinf) == JNI_FALSE)
         H4_JNI_FATAL_ERROR(ENVONLY, "GRsetcompress:  c_info not initialized");
 
     if ((rval = GRsetcompress((int32)ri_id, (comp_coder_t)comp_type, (comp_info *)&cinf)) == FAIL)

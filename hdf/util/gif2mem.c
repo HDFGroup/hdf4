@@ -11,7 +11,7 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
- 
+
 /*
 ** This file contains snippets of code from James Murray's original file
 ** to display the GIF header information, but most of it has been modified to
@@ -58,7 +58,7 @@ BYTE *MemGif;
     GIFGRAPHICCONTROL **gifGraphicControl; /* Graphic Control Extension strct */
 
 	GIFTOMEM GifMemoryStruct;
-	
+
 
 
     register WORD i;        /* Loop counter                                 */
@@ -87,7 +87,7 @@ BYTE *MemGif;
 		printf("Could not allocate memory for gifHead\n");
 		exit(-1);
 	}
-	
+
 	/*
 	** The next three have to grow dynamically so we leave them
 	** for now and let realloc handle it later on.
@@ -100,7 +100,7 @@ BYTE *MemGif;
 
 	/******************************/
 	/* Memory allocation complete */
-    
+
 
 	/* Carry out Endian Testing and set Endian Order */
 	w = 0x0001;
@@ -109,7 +109,7 @@ BYTE *MemGif;
 
     /* Read the GIF image file header information */
     ReadGifHeader(gifHead, &MemGif);
-	
+
     /* Check for FILE stream error */
 	/*
     if (ferror(fpGif))
@@ -131,7 +131,7 @@ BYTE *MemGif;
     for (;;)
     {
         Identifier = *MemGif++;
-		
+
         switch (Identifier)
 		{
 		case 0x3B:  /* Trailer */
@@ -151,17 +151,17 @@ BYTE *MemGif;
 			GifMemoryStruct.GifApplicationExtension = gifApplication;
 			GifMemoryStruct.GifCommentExtension = gifComment;
 			GifMemoryStruct.GifGraphicControlExtension = gifGraphicControl;
-			
+
 			/* return the struct */
 			return GifMemoryStruct;
-			
-			
-			
+
+
+
 		case 0x2C:  /* Image Descriptor */
 			/* If there was no image descriptor before this increase image count.
-			** If an imagedescriptor was present, reset GCEflag 
+			** If an imagedescriptor was present, reset GCEflag
 			*/
-			if (GCEflag == 0) 
+			if (GCEflag == 0)
 				ImageCount++;
 			else
 				GCEflag = 0;
@@ -191,18 +191,18 @@ BYTE *MemGif;
 				printf("Out of memory!");
 				exit(-1);
 			}
-			
+
 
 			if (ReadGifImageDesc(gifImageDesc[ImageCount-1], &MemGif) == -1)
 				fputs("Error reading Image Descriptor information\n", stderr);
-		
+
 			/*
 			** Decompress the Image
 			*/
 			gifImageDesc[ImageCount-1]->Image = Decompress(gifImageDesc[ImageCount-1] , gifHead);
             HDfree(gifImageDesc[ImageCount-1]->GIFImage);
 
-			/* 
+			/*
 			** Convert the local palette into an HDF compatible palette
 			** In case the local color table is present, it is written out as the HDFPalette
 			** If it is absent the global table is written as the HDFPalette.
@@ -222,14 +222,14 @@ BYTE *MemGif;
 			}
 
 			break;
-			
-		case 0x21:  /* Extension Block */  
+
+		case 0x21:  /* Extension Block */
 			Label = *MemGif++;
 			switch (Label)
 			{
 			case 0x01:  /* Plain Text Extension */
 				puts("Plain Text Extension\n");
-				
+
 				PlainTextCount++;
 				if (PlainTextCount > PlainTextArray)
 					PlainTextArray = (PlainTextArray << 1) + 1;
@@ -239,21 +239,21 @@ BYTE *MemGif;
 					printf("Out of memory!");
 					exit(-1);
 				}
-				
+
 				if(!(gifPlainText[PlainTextCount - 1] = (GIFPLAINTEXT*)malloc(sizeof(GIFPLAINTEXT))))
 				{
 					printf("Out of memory!");
 					exit(-1);
 				}
-				
+
 
 
 				if (ReadGifPlainText(gifPlainText[PlainTextCount - 1], &MemGif))
 					fprintf(stderr,
 					"Error reading Plain Text Extension information.\n");
-				
+
 				break;
-				
+
 			case 0xFE:  /* Comment Extension */
 				CommentCount++;
 				if (CommentCount > CommentArray)
@@ -264,19 +264,19 @@ BYTE *MemGif;
 					printf("Out of memory!");
 					exit(-1);
 				}
-				
+
 				if(!(gifComment[CommentCount - 1] = (GIFCOMMENT *)malloc(sizeof(GIFCOMMENT))))
 				{
 					printf("Out of memory!");
 					exit(-1);
 				}
-				
+
 
 				if (ReadGifComment(gifComment[CommentCount - 1], &MemGif))
 					fprintf(stderr,
 					"Error reading Comment Extension information\n");
 				break;
-				
+
 			case 0xF9:  /* Graphic Control Extension */
 				if (GCEflag == 0 )
 					ImageCount++;
@@ -301,49 +301,49 @@ BYTE *MemGif;
 						gifImageDesc[j]      = NULL;
 					}
 				}
-				
+
 				if(!(gifGraphicControl[ImageCount-1] = (GIFGRAPHICCONTROL*)malloc(sizeof(GIFGRAPHICCONTROL))))
 				{
 					printf("Out of memory!");
 					exit(-1);
 				}
-				
-				
+
+
 				if (ReadGifGraphicControl(gifGraphicControl[ImageCount-1], &MemGif))
 					fprintf(stderr,
 					"Error reading Graphic Control Extension information\n");
-				
-				if (!*MemGif++ == 0)
+
+				if ((!*MemGif++) == 0)
 					fprintf(stderr,
 					"Error reading Graphic Control Extension\n");
 
 				break;
-				
+
 			case 0xFF:  /* Application Extension */
 				ApplicationCount++;
 				if (ApplicationCount > ApplicationArray)
 					ApplicationArray = (ApplicationArray << 1) + 1;
-				
+
 				if (!(gifApplication = (GIFAPPLICATION **)realloc(gifApplication , sizeof(GIFAPPLICATION *) * ApplicationArray)))
 				{
 					printf("Out of memory!");
 					exit(-1);
 				}
-				
+
 				if(!(gifApplication[ApplicationCount - 1] = (GIFAPPLICATION *)malloc(sizeof(GIFAPPLICATION))))
 				{
 					printf("Out of memory!");
 					exit(-1);
 				}
 
-				
+
 				if (ReadGifApplication(gifApplication[ApplicationCount - 1], &MemGif))
 					fprintf(stderr,
-					"Error reading Application Extension information\n");		
+					"Error reading Application Extension information\n");
 				break;
-				
+
 			default:
-				
+
 				printf("Unknown Extension Label: 0x%02x\n", Label);
 				break;
 			}
@@ -353,6 +353,6 @@ BYTE *MemGif;
 					Identifier);
         }
 	}
-	
-	
+
+
 }

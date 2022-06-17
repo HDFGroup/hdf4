@@ -34,12 +34,10 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED)
       NAMESPACE ${HDF_PACKAGE_NAMESPACE}
       COMPONENT configinstall
   )
-endif ()
 
-#-----------------------------------------------------------------------------
-# Export all exported targets to the build tree for use by parent project
-#-----------------------------------------------------------------------------
-if (NOT HDF4_EXTERNALLY_CONFIGURED)
+  #-----------------------------------------------------------------------------
+  # Export all exported targets to the build tree for use by parent project
+  #-----------------------------------------------------------------------------
   export (
       TARGETS ${HDF4_LIBRARIES_TO_EXPORT} ${HDF4_LIB_DEPENDENCIES} ${HDF4_UTILS_TO_EXPORT}
       FILE ${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-targets.cmake
@@ -184,7 +182,7 @@ HDF_README_PROPERTIES(HDF4_BUILD_FORTRAN)
 #-----------------------------------------------------------------------------
 # Configure the COPYING.txt file for the windows binary package
 #-----------------------------------------------------------------------------
-if (WIN32 OR MINGW)
+if (WIN32)
   configure_file (${HDF4_SOURCE_DIR}/COPYING ${HDF4_BINARY_DIR}/COPYING.txt @ONLY)
 endif ()
 
@@ -193,8 +191,7 @@ endif ()
 #-----------------------------------------------------------------------------
 if (NOT HDF4_EXTERNALLY_CONFIGURED)
   install (
-      FILES
-          ${HDF4_SOURCE_DIR}/COPYING
+      FILES ${HDF4_SOURCE_DIR}/COPYING
       DESTINATION ${HDF4_INSTALL_DATA_DIR}
       COMPONENT hdfdocuments
   )
@@ -203,7 +200,7 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED)
         ${HDF4_SOURCE_DIR}/release_notes/USING_HDF4_CMake.txt
         ${HDF4_SOURCE_DIR}/release_notes/RELEASE.txt
     )
-    if (WIN32 OR MINGW)
+    if (WIN32)
       set (release_files
           ${release_files}
           ${HDF4_SOURCE_DIR}/release_notes/USING_HDF4_VS.txt
@@ -216,7 +213,7 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED)
           ${HDF4_SOURCE_DIR}/release_notes/HISTORY.txt
           ${HDF4_SOURCE_DIR}/release_notes/INSTALL
       )
-      if (WIN32 OR MINGW)
+      if (WIN32)
         set (release_files
             ${release_files}
             ${HDF4_SOURCE_DIR}/release_notes/INSTALL_Windows.txt

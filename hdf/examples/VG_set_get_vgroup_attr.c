@@ -14,7 +14,7 @@ int main( )
    int32  status_32,    /* returned status for functions returning an int32 */
           file_id, vgroup_ref, vgroup_id,
           attr_index, i, vg_version,
-          data_type, n_values, size;
+          n_values;
    char   vg_attr[N_ATT_VALUES] = {'v','g','r','o','u','p','\0'};
    char   vgattr_buf[N_ATT_VALUES], attr_name[30];
 
@@ -29,6 +29,7 @@ int main( )
    * Initialize the V interface.
    */
    status_n = Vstart (file_id);
+   CHECK_NOT_VAL(status_n, FAIL, "Vstart");
 
    /*
    * Get the reference number of the vgroup named VGROUP_NAME.
@@ -46,11 +47,11 @@ int main( )
    vg_version = Vgetversion (vgroup_id);
    switch (vg_version) {
         case VSET_NEW_VERSION:
-              printf ("\nVgroup %s is of the newest version, version 4\n", 
+              printf ("\nVgroup %s is of the newest version, version 4\n",
                    VGROUP_NAME);
            break;
         case VSET_VERSION:
-              printf ("Vgroup %s is of a version between 3.2 and 4.0r2\n", 
+              printf ("Vgroup %s is of a version between 3.2 and 4.0r2\n",
                    VGROUP_NAME);
            break;
         case VSET_OLD_VERSION:
@@ -63,8 +64,9 @@ int main( )
    /*
    * Add the attribute named VGATTR_NAME to the vgroup.
    */
-   status_n = Vsetattr (vgroup_id, VGATTR_NAME, DFNT_CHAR, N_ATT_VALUES, 
+   status_n = Vsetattr (vgroup_id, VGATTR_NAME, DFNT_CHAR, N_ATT_VALUES,
                         vg_attr);
+   CHECK_NOT_VAL(status_n, FAIL, "Vsetattr");
 
    /*
    * Get and display the number of attributes attached to this vgroup.
@@ -74,13 +76,14 @@ int main( )
 
    /*
    * Get and display the name and the number of values of each attribute.
-   * Note that the fourth and last parameters are set to NULL because the type 
+   * Note that the fourth and last parameters are set to NULL because the type
    * and the size of the attribute are not desired.
    */
    for (attr_index = 0; attr_index < n_attrs; attr_index++)
    {
-      status_n = Vattrinfo (vgroup_id, attr_index, attr_name, NULL, 
+      status_n = Vattrinfo (vgroup_id, attr_index, attr_name, NULL,
                             &n_values, NULL);
+      CHECK_NOT_VAL(status_n, FAIL, "Vattrinfo");
       printf ("\nAttribute #%d is named %s and has %d values: ",
                             attr_index+1, attr_name, n_values);
 
@@ -88,6 +91,7 @@ int main( )
       * Get and display the attribute values.
       */
       status_n = Vgetattr (vgroup_id, attr_index, vgattr_buf);
+      CHECK_NOT_VAL(status_n, FAIL, "Vgetattr");
       for (i = 0; i < n_values; i++)
          printf ("%c ", vgattr_buf[i]);
       printf ("\n");
@@ -95,12 +99,16 @@ int main( )
 
 
    /*
-   * Terminate access to the vgroup and to the V interface, and close 
+   * Terminate access to the vgroup and to the V interface, and close
    * the HDF file.
    */
    status_32 = Vdetach (vgroup_id);
+   CHECK_NOT_VAL(status_32, FAIL, "Vdetach");
    status_n = Vend (file_id);
+   CHECK_NOT_VAL(status_n, FAIL, "Vend");
    status_n = Hclose (file_id);
+   CHECK_NOT_VAL(status_n, FAIL, "Hclose");
+
    return 0;
 }
 

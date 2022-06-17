@@ -16,7 +16,7 @@
  * Structure of the file:
  *    test_attdatainfo - test driver
  *	test_vvsattrs     - tests attributes on vgroups and vdatas
- *	test_vgmixedattrs - tests handling vgroup attributes created with and 
+ *	test_vgmixedattrs - tests handling vgroup attributes created with and
  *			    without Vsetattr
  *	test_grattrs      - tests attributes on GR file and raster images
  * -BMR, Aug 2010
@@ -209,7 +209,7 @@ test_vvsattrs()
 
     /* Change values of existing attribute */
      /* Vsetattr(vgid, ATTNAME1, DFNT_UINT32, 2, &attr1[2]))
- */ 
+ */
     /* Terminate access to any opened elements */
     status_32 = Vdetach(vgroup0_id);
     CHECK_VOID(status_32, FAIL, "Vdetach vgroup0_id");
@@ -307,18 +307,13 @@ test_vgmixedattrs()
     int32 fid;          /* File ID */
     int32 vgroup_id, vgroup_ref;
     int32 n_attrs;
-    int32 ref_list[NUM_VGROUPS], vdref_list[NUM_VDATAS];
     int32 offsets[10], lengths[10];  /* offsets and lengths of attrs' data */
     /* Note: each array element is associated with an individual attribute, not
        a data element block; data of an attribute only has one pair of off/len*/
-    char vgclass[20];
     int ii;
     int32 attr_ref;
     intn  status;	/* returned status */
     intn  status_32;	/* returned status for functions returning an int32! */
-
-    /* Attribute names to be checked against */
-    char aname_check[5][20] = {ATTNAME1, ATTNAME2, ATTNAME5, ATTNAME6, ATTNAME7};
 
     /* Attributes to be set for various elements */
     uint32 attr1[4] = {4, 5, 6, 7}; /* copied from test_vvsattrs, only to
@@ -416,56 +411,56 @@ test_vgmixedattrs()
     /* Test Vattrinfo2 and Vgetattr2 on each attribute */
     for (ii = 0; ii < n_attrs; ii++)
     {
-	char aname[20], values[100];
-	int32 atype, acount, asize, n_fields;
-	uint16 refnum;
-	int jj;
-	char cvalues[20];
-	int32 ivalues[10];
-	char *check_attr_names[5] = {"Attribute 6", "Attribute 7", "Attribute 1"
-					, "Attribute 2", "Attribute 5"};
-	char *check_attr_values[5] = {"VG0 oldattr0", "VG0 oldattr1",
-			"", /* int values, added by test_vvsattrs with attr1 */
-			"Vgroup0", /* added by test_vvsattrs with attr2 */
-			"VG0 newattr"};
+        char aname[20];
+        int32 atype, acount, asize, n_fields;
+        uint16 refnum;
+        int jj;
+        char cvalues[20];
+        int32 ivalues[10];
+        char *check_attr_names[5] = {"Attribute 6", "Attribute 7", "Attribute 1"
+                        , "Attribute 2", "Attribute 5"};
+        char *check_attr_values[5] = {"VG0 oldattr0", "VG0 oldattr1",
+                "", /* int values, added by test_vvsattrs with attr1 */
+                "Vgroup0", /* added by test_vvsattrs with attr2 */
+                "VG0 newattr"};
 
-	/* Get attribute information and verify its name and number of fields,
-	   which should be 1 */
-	status = Vattrinfo2(vgroup_id, ii, aname, &atype, &acount, &asize,
-			&n_fields, &refnum);
-	VERIFY_CHAR_VOID(aname, check_attr_names[ii], "Vattrinfo2");
-	VERIFY_VOID(n_fields, 1, "Vattrinfo2");
+        /* Get attribute information and verify its name and number of fields,
+           which should be 1 */
+        status = Vattrinfo2(vgroup_id, ii, aname, &atype, &acount, &asize,
+                &n_fields, &refnum);
+        VERIFY_CHAR_VOID(aname, check_attr_names[ii], "Vattrinfo2");
+        VERIFY_VOID(n_fields, 1, "Vattrinfo2");
 
-	/* Test Vgetattr2 to make sure it works with mixed attributes */
-	switch (atype)
-	{
-	  case DFNT_CHAR:
-	    /* Get and verify values of a char attribute */
-	    status = Vgetattr2(vgroup_id, ii, (void *)cvalues);
-	    VERIFY_CHAR_VOID(cvalues, check_attr_values[ii], "Vgetattr2 char");
+        /* Test Vgetattr2 to make sure it works with mixed attributes */
+        switch (atype)
+        {
+          case DFNT_CHAR:
+            /* Get and verify values of a char attribute */
+            status = Vgetattr2(vgroup_id, ii, (void *)cvalues);
+            VERIFY_CHAR_VOID(cvalues, check_attr_values[ii], "Vgetattr2 char");
 
-	    /* Add an extra test for Vgetattdatainfo */
+            /* Add an extra test for Vgetattdatainfo */
 
-	    /* Get data info and verify number of data block */
-	    status = Vgetattdatainfo(vgroup_id, ii, &offsets[ii], &lengths[ii]);
-	    CHECK_VOID(status, FAIL, "Vgetattdatainfo");
-	    VERIFY_VOID(status, 1, "Vgetattdatainfo");
+            /* Get data info and verify number of data block */
+            status = Vgetattdatainfo(vgroup_id, ii, &offsets[ii], &lengths[ii]);
+            CHECK_VOID(status, FAIL, "Vgetattdatainfo");
+            VERIFY_VOID(status, 1, "Vgetattdatainfo");
 
-	    /* Read and verify data of an attr without using HDF4 library */
-	    status = readnoHDF_char(ATTRFILE, offsets[ii], lengths[ii], check_attr_values[ii]);
-	    CHECK_STATUS(status, FAIL, "Verifying data without HDF4 library failed");
+            /* Read and verify data of an attr without using HDF4 library */
+            status = readnoHDF_char(ATTRFILE, offsets[ii], lengths[ii], check_attr_values[ii]);
+            CHECK_STATUS(status, FAIL, "Verifying data without HDF4 library failed");
 
-	    break;
-	  case DFNT_UINT32:
-	    /* Get and verify values of an int attribute */
-	    status = Vgetattr2(vgroup_id, ii, (void *)ivalues);
-	    for (jj = 0; jj < acount; jj++)
-		VERIFY_VOID(ivalues[jj], attr1[jj], "Vgetattr2 int");
-	    break;
-	  default:
-	    fprintf(stderr, "type %d is not handled!\n", atype);
-	    break;
-	}
+            break;
+          case DFNT_UINT32:
+            /* Get and verify values of an int attribute */
+            status = Vgetattr2(vgroup_id, ii, (void *)ivalues);
+            for (jj = 0; jj < acount; jj++)
+            VERIFY_VOID(ivalues[jj], attr1[jj], "Vgetattr2 int");
+            break;
+          default:
+            fprintf(stderr, "type %d is not handled!\n", atype);
+            break;
+        }
     }
 
     /* Terminate access to the vgroup */
@@ -520,7 +515,6 @@ test_grattrs()
     int32 file_id,	/* HDF file identifier */
 	  gr_id,	/* GR interface identifier */
 	  ri_id,	/* raster image identifier */
-	  num_type,	/* number type of the image values */
           start[2],	/* where to start to write for each dimension  */
           edges[2],	/* how long to write for each dimension */
 	  dimsizes[2],	/* sizes of the two dimensions of the image array   */
@@ -549,7 +543,7 @@ test_grattrs()
     dimsizes[1] = Y_LENGTH;
 
     /* Create a raster image array. */
-    ri_id = GRcreate(gr_id, IMAGE_NAME, N_COMPS, DFNT_INT8, 
+    ri_id = GRcreate(gr_id, IMAGE_NAME, N_COMPS, DFNT_INT8,
    				interlace_mode, dimsizes);
     CHECK_VOID(ri_id, FAIL, "GRcreate");
 
@@ -574,9 +568,9 @@ test_grattrs()
     status = GRendaccess(ri_id);
     CHECK_VOID(status, FAIL, "GRendaccess");
 
-    /* Set two file attributes to the file with names, data types, numbers of 
+    /* Set two file attributes to the file with names, data types, numbers of
     * values, and values of the attributes specified. */
-    status = GRsetattr(gr_id, F_ATT1_NAME, DFNT_CHAR8, F_ATT1_COUNT, F_ATT1_VAL); 
+    status = GRsetattr(gr_id, F_ATT1_NAME, DFNT_CHAR8, F_ATT1_COUNT, F_ATT1_VAL);
     CHECK_VOID(status, FAIL, "GRsetattr F_ATT1_NAME");
 
     status = GRsetattr(gr_id, F_ATT2_NAME, DFNT_CHAR8, F_ATT2_COUNT, F_ATT2_VAL);
@@ -586,7 +580,7 @@ test_grattrs()
     ri_id = GRselect(gr_id, 0);
     CHECK_VOID(ri_id, FAIL, "GRselect index 0");
 
-    /* Set two attribute to the image with names, data types, numbers of 
+    /* Set two attribute to the image with names, data types, numbers of
     * values, and values of the attributes specified. */
     status = GRsetattr(ri_id, RI_ATT1_NAME, DFNT_CHAR8, RI_ATT1_COUNT, RI_ATT1_VAL);
     CHECK_VOID(status, FAIL, "GRsetattr RI_ATT1_NAME");
@@ -594,7 +588,7 @@ test_grattrs()
     status = GRsetattr(ri_id, RI_ATT2_NAME, DFNT_INT16, RI_ATT2_COUNT, (VOIDP)ri_att2_val);
     CHECK_VOID(status, FAIL, "GRsetattr RI_ATT2_NAME");
 
-    /* Terminate access to the raster image and to the GR interface and 
+    /* Terminate access to the raster image and to the GR interface and
     * close the HDF file. */
     status = GRendaccess (ri_id);
     CHECK_VOID(status, FAIL, "GRendaccess");
@@ -660,7 +654,7 @@ test_grattrs()
     /* Note: readnoHDF_char is defined in tdatainfo.c */
 } /* test_grattrs() */
 
-/* Test driver for testing the public functions VSgetattdatainfo, 
+/* Test driver for testing the public functions VSgetattdatainfo,
    Vgetattdatainfo, and GRgetattdatainfo. */
 void
 test_attdatainfo()

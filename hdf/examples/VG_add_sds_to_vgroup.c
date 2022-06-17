@@ -31,6 +31,7 @@ int main()
    * Initialize the V interface.
    */
    status_n = Vstart (file_id);
+   CHECK_NOT_VAL(status_n, FAIL, "Vstart");
 
    /*
    * Initialize the SD interface.
@@ -52,7 +53,9 @@ int main()
    */
    vgroup_id = Vattach (file_id, -1, "w");
    status_32 = Vsetname (vgroup_id, VG_NAME);
+   CHECK_NOT_VAL(status_32, FAIL, "Vsetname");
    status_32 = Vsetclass (vgroup_id, VG_CLASS);
+   CHECK_NOT_VAL(status_32, FAIL, "Vsetclass");
 
    /*
    * Obtain the reference number of the SDS using its identifier.
@@ -64,19 +67,26 @@ int main()
    * when adding an SDS.  Refer to Appendix A for the entire list of tags.
    */
    status_32 = Vaddtagref (vgroup_id, DFTAG_NDG, sds_ref);
+   CHECK_NOT_VAL(status_32, FAIL, "Vaddtagref");
 
    /*
    * Terminate access to the SDS and to the SD interface.
    */
    status_n = SDendaccess (sds_id);
+   CHECK_NOT_VAL(status_n, FAIL, "SDendaccess");
    status_n = SDend (sd_id);
+   CHECK_NOT_VAL(status_n, FAIL, "SDend");
 
    /*
-   * Terminate access to the vgroup and to the V interface, and 
+   * Terminate access to the vgroup and to the V interface, and
    * close the HDF file.
    */
    status_32 = Vdetach (vgroup_id);
+   CHECK_NOT_VAL(status_32, FAIL, "Vdetach");
    status_n = Vend (file_id);
+   CHECK_NOT_VAL(status_n, FAIL, "Vend");
    status_n = Hclose (file_id);
+   CHECK_NOT_VAL(status_n, FAIL, "Hclose");
+
    return 0;
 }

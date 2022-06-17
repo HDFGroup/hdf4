@@ -98,7 +98,9 @@ funclist_t  cskphuff_funcs =
     HCPcskphuff_inquire,
     HCPcskphuff_read,
     HCPcskphuff_write,
-    HCPcskphuff_endaccess
+    HCPcskphuff_endaccess,
+    NULL,
+    NULL
 };
 #endif
 

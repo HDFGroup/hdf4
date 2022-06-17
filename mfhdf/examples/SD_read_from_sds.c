@@ -23,12 +23,12 @@ int main()
 
    /*
    * Select the first data set.
-   */ 
+   */
    sds_index = 0;
    sds_id = SDselect (sd_id, sds_index);
 
-   /* 
-   * Set elements of array start to 0, elements of array edges 
+   /*
+   * Set elements of array start to 0, elements of array edges
    * to SDS dimensions,and use NULL for the argument stride in SDreaddata
    * to read the entire data.
    */
@@ -41,8 +41,9 @@ int main()
    * Read entire data into data array.
    */
    status = SDreaddata (sds_id, start, NULL, edges, (VOIDP)data);
+   CHECK_NOT_VAL(status, FAIL, "SDreaddata");
 
-   /* 
+   /*
    * Print 10th row; the following numbers should be displayed.
    *
    *         10 1000 12 13 14
@@ -54,11 +55,13 @@ int main()
    * Terminate access to the data set.
    */
    status = SDendaccess (sds_id);
+   CHECK_NOT_VAL(status, FAIL, "SDendaccess");
 
    /*
    * Terminate access to the SD interface and close the file.
    */
    status = SDend (sd_id);
+   CHECK_NOT_VAL(status, FAIL, "SDend");
 
    return 0;
 }

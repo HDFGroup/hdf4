@@ -19,7 +19,7 @@
  *		+ data added immediately after last record
  *		+ data added skipping one or more records
  *		+ data overridden existing data
- *		+ data read pass the end of that variable but not the max in 
+ *		+ data read pass the end of that variable but not the max in
  *		  all the variables in the file (on going)
  *
  * Structure of the file:
@@ -175,7 +175,7 @@ static int test_1dim_singlevar()
 	status = ncvarget(ncid, varid, start, edges, outdata);
 	CHECK(status, -1, "ncvarget");
 
-	/* verify data, should be "320,301,301,302,99,99,30,31" where 99 is 
+	/* verify data, should be "320,301,301,302,99,99,30,31" where 99 is
 	   fillvalue */
 	for (ii = 0; ii < edges[0]; ii++) {
 	    if (outdata[ii] != result[ii])
@@ -458,8 +458,8 @@ static int test_1dim_multivars()
     { /* Read variables */
 	long start[] = {0};
 	long edges[] = {0};
-	/* Current data of Variable 2 should look like this, because of the 
-	   extension with fill value to match the max number of records in 
+	/* Current data of Variable 2 should look like this, because of the
+	   extension with fill value to match the max number of records in
 	   the file */
 	short tempresult[] = {102,104,-2,-2,-2,-2};
 
@@ -584,10 +584,10 @@ edges[0] = 2;
     } /* end read data */
 
 #if NOTRUN
-/* The following test is to verify that attempting to read pass the maximum 
+/* The following test is to verify that attempting to read pass the maximum
    number of records in the file will fail.  However, because ncvarget leads
-   to the internal function NCcoordck which uses NCadvise to display the 
-   error and exit() so the test is disabled but the code should remain here 
+   to the internal function NCcoordck which uses NCadvise to display the
+   error and exit() so the test is disabled but the code should remain here
    for future testing. -BMR, Dec 30, 2008 */
     { /* Read both variables pass the end by 2 records, should fail */
 	long start[] = {0};
@@ -623,8 +623,8 @@ edges[0] = 2;
         The main contents include:
 	- create a 3-D variable with 1 unlimited dimension and the others 3x2
         - write 4x1x1 elements starting at index {0,0,0}
-        - append 2x1x1 elements along the unlimited dimension starting at 
-	  index 6, that is slabs at indices 4 and 5 will be written with fill 
+        - append 2x1x1 elements along the unlimited dimension starting at
+	  index 6, that is slabs at indices 4 and 5 will be written with fill
 	  value
         - append 1x3x2 elements immediately at the end of the data
 
@@ -659,7 +659,16 @@ static int test_multidim_singlevar()
 
     /* result data to compare against read data; the first two elements will
 	be changed to "1,2" later for the last test. */
-    short result[DIM0][DIM1][DIM2] = {300,-3,-3,-3,-3,-3,301,-3,-3,-3,-3,-3,302,-3,-3,-3,-3,-3,303,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,400,-3,-3,-3,-3,-3,401,-3,-3,-3,-3,-3,800,801,802,803,804,805};
+    short result[DIM0][DIM1][DIM2] = {
+            {{300,-3},{-3,-3},{-3,-3}},
+            {{301,-3},{-3,-3},{-3,-3}},
+            {{302,-3},{-3,-3},{-3,-3}},
+            {{303,-3},{-3,-3},{-3,-3}},
+            {{-3,-3},{-3,-3},{-3,-3}},
+            {{-3,-3},{-3,-3},{-3,-3}},
+            {{400,-3},{-3,-3},{-3,-3}},
+            {{401,-3},{-3,-3},{-3,-3}},
+            {{800,801},{802,803},{804,805}}};
 
     /* Enter define mode */
     ncid = nccreate(FILENAME3, NC_CLOBBER);
@@ -752,7 +761,7 @@ static int test_multidim_singlevar()
 		(-3 is fill value)
 	*/
 
-	for (ii = 0; ii < edges[0]; ii++) 
+	for (ii = 0; ii < edges[0]; ii++)
 	for (jj = 0; jj < DIM1; jj++)
 	for (kk = 0; kk < DIM2; kk++)
 	    if (outdata[ii][jj][kk] != result[ii][jj][kk])
@@ -795,7 +804,7 @@ static int test_multidim_singlevar()
 		unlimited dimension ---->
 		(-3 is fill value)
 	*/
-	for (ii = 0; ii < edges[0]; ii++) 
+	for (ii = 0; ii < edges[0]; ii++)
 	for (jj = 0; jj < DIM1; jj++)
 	for (kk = 0; kk < DIM2; kk++)
 	    if (outdata[ii][jj][kk] != result[ii][jj][kk])
@@ -839,7 +848,7 @@ static int test_multidim_singlevar()
 		unlimited dimension ---->
 		(-3 is fill value)
 	*/
-	for (ii = 0; ii < edges[0]; ii++) 
+	for (ii = 0; ii < edges[0]; ii++)
 	for (jj = 0; jj < DIM1; jj++)
 	for (kk = 0; kk < DIM2; kk++)
 	    if (outdata[ii][jj][kk] != result[ii][jj][kk])
@@ -854,7 +863,7 @@ static int test_multidim_singlevar()
 }
 
 
-/* Test driver for testing reading/writing variables with unlimited dimension 
+/* Test driver for testing reading/writing variables with unlimited dimension
    using nc API. */
 extern int test_ncunlim()
 {

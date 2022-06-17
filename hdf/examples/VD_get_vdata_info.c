@@ -19,14 +19,15 @@ int main( )
    /********************** End of variable declaration **********************/
 
    /*
-   * Open the HDF file for reading. 
+   * Open the HDF file for reading.
    */
    file_id = Hopen (FILE_NAME, DFACC_READ, 0);
 
    /*
-   * Initialize the VS interface. 
+   * Initialize the VS interface.
    */
    status_n = Vstart (file_id);
+   CHECK_NOT_VAL(status_n, FAIL, "Vstart");
 
    /*
    * Set vdata_ref to -1 to start the search from the beginning of file.
@@ -34,8 +35,8 @@ int main( )
    vdata_ref = -1;
 
    /*
-   * Use VSgetid to obtain each vdata by its reference number then attach 
-   * to the vdata and get its information.  The loop terminates when 
+   * Use VSgetid to obtain each vdata by its reference number then attach
+   * to the vdata and get its information.  The loop terminates when
    * the last vdata is reached.
    */
    while ((vdata_ref = VSgetid (file_id, vdata_ref)) != FAIL)
@@ -51,11 +52,12 @@ int main( )
       */
       if( VSisattr (vdata_id) != TRUE )
       {
-         status_n = VSinquire (vdata_id, &n_records, &interlace_mode, 
+         status_n = VSinquire (vdata_id, &n_records, &interlace_mode,
                             fieldname_list, &vdata_size, vdata_name);
+         CHECK_NOT_VAL(status_n, FAIL, "VSinquire");
          printf ("Vdata %s: - contains %d records\n\tInterlace mode: %s \
                  \n\tFields: %s - %d bytes\n\t\n", vdata_name, n_records,
-                 interlace_mode == FULL_INTERLACE ? "FULL" : "NONE", 
+                 interlace_mode == FULL_INTERLACE ? "FULL" : "NONE",
                  fieldname_list, vdata_size );
       }
 
@@ -63,12 +65,16 @@ int main( )
       * Detach from the current vdata.
       */
       status_32 = VSdetach (vdata_id);
+      CHECK_NOT_VAL(status_32, FAIL, "VSdetach");
    } /* while */
 
    /*
-   * Terminate access to the VS interface and close the HDF file. 
+   * Terminate access to the VS interface and close the HDF file.
    */
    status_n = Vend (file_id);
+   CHECK_NOT_VAL(status_n, FAIL, "Vend");
    status_32 = Hclose (file_id);
+   CHECK_NOT_VAL(status_32, FAIL, "Hclose");
+
    return 0;
 }

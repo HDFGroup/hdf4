@@ -14,11 +14,11 @@ int main()
    int32   dim_id, dim_index;
    int32   n_values;                /* number of values of the file, SDS or
                                        dimension attribute         */
-   char8   file_values[] = "Storm_track_data"; 
+   char8   file_values[] = "Storm_track_data";
                                    /* values of the file attribute */
    float32 sds_values[2] = {2., 10.};
                                    /* values of the SDS attribute  */
-   char8   dim_values[]  = "Seconds"; 
+   char8   dim_values[]  = "Seconds";
                                   /* values of the dimension attribute */
 
    /********************* End of variable declaration ***********************/
@@ -32,8 +32,9 @@ int main()
    * Set an attribute that describes the file contents.
    */
    n_values = 16;
-   status = SDsetattr (sd_id, FILE_ATTR_NAME, DFNT_CHAR, n_values, 
+   status = SDsetattr (sd_id, FILE_ATTR_NAME, DFNT_CHAR, n_values,
                        (VOIDP)file_values);
+   CHECK_NOT_VAL(status, FAIL, "SDsetattr");
 
    /*
    * Select the first data set.
@@ -41,13 +42,14 @@ int main()
    sds_index = 0;
    sds_id = SDselect (sd_id, sds_index);
 
-   /* 
+   /*
    * Assign attribute to the first SDS. Note that attribute values
    * may have different data type than SDS data.
    */
    n_values  = 2;
-   status = SDsetattr (sds_id, SDS_ATTR_NAME, DFNT_FLOAT32, n_values, 
+   status = SDsetattr (sds_id, SDS_ATTR_NAME, DFNT_FLOAT32, n_values,
                        (VOIDP)sds_values);
+   CHECK_NOT_VAL(status, FAIL, "SDsetattr");
 
    /*
    * Get the the second dimension identifier of the SDS.
@@ -59,18 +61,21 @@ int main()
    * Set an attribute of the dimension that specifies the dimension metric.
    */
    n_values = 7;
-   status = SDsetattr (dim_id, DIM_ATTR_NAME, DFNT_CHAR, n_values, 
+   status = SDsetattr (dim_id, DIM_ATTR_NAME, DFNT_CHAR, n_values,
                        (VOIDP)dim_values);
+   CHECK_NOT_VAL(status, FAIL, "SDsetattr");
 
    /*
    * Terminate access to the data set.
    */
    status = SDendaccess (sds_id);
+   CHECK_NOT_VAL(status, FAIL, "SDendaccess");
 
    /*
    * Terminate access to the SD interface and close the file.
    */
    status = SDend (sd_id);
+   CHECK_NOT_VAL(status, FAIL, "SDend");
 
    return 0;
 }

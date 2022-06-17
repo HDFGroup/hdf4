@@ -14,8 +14,8 @@ int main( )
 
    intn  status,         /* status for functions returning an intn */
          i, j;
-   int32 file_id, gr_id, ri_id, pal_id, 
-         interlace_mode, 
+   int32 file_id, gr_id, ri_id, pal_id,
+         interlace_mode,
          start[2],     /* holds where to start to write for each dimension  */
          edges[2],     /* holds how long to write for each dimension */
          dim_sizes[2];  /* sizes of the two dimensions of the image array   */
@@ -24,27 +24,27 @@ int main( )
 
    /********************** End of variable declaration **********************/
 
-   /* 
+   /*
    * Open the HDF file.
    */
    file_id = Hopen (FILE_NAME, DFACC_CREATE, 0);
 
-   /* 
+   /*
    * Initialize the GR interface.
    */
    gr_id = GRstart (file_id);
 
-   /* 
-   * Define the dimensions and interlace mode of the image. 
+   /*
+   * Define the dimensions and interlace mode of the image.
    */
    dim_sizes[0] = X_LENGTH;
    dim_sizes[1] = Y_LENGTH;
    interlace_mode = MFGR_INTERLACE_PIXEL;
 
-   /* 
+   /*
    * Create the image named NEW_IMAGE_NAME.
    */
-   ri_id = GRcreate (gr_id, NEW_IMAGE_NAME, N_COMPS_IMG, DFNT_UINT8, 
+   ri_id = GRcreate (gr_id, NEW_IMAGE_NAME, N_COMPS_IMG, DFNT_UINT8,
                      interlace_mode, dim_sizes);
 
    /*
@@ -71,9 +71,10 @@ int main( )
    * Write the data in the buffer into the image array.
    */
    status = GRwriteimage (ri_id, start, NULL, edges, (VOIDP)image_buf);
+   CHECK_NOT_VAL(status, FAIL, "GRwriteimage");
 
-   /* 
-   * Initialize the palette to grayscale. 
+   /*
+   * Initialize the palette to grayscale.
    */
    for (i = 0; i < N_ENTRIES; i++) {
       palette_buf[i][0] = i;
@@ -86,7 +87,7 @@ int main( )
    */
    interlace_mode = MFGR_INTERLACE_PIXEL;
 
-   /* 
+   /*
    * Get the identifier of the palette attached to the image NEW_IMAGE_NAME.
    */
    pal_id = GRgetlutid (ri_id, 0);
@@ -96,13 +97,18 @@ int main( )
    */
    status = GRwritelut (pal_id, N_COMPS_PAL, DFNT_UINT8, interlace_mode,
                         N_ENTRIES, (VOIDP)palette_buf);
+   CHECK_NOT_VAL(status, FAIL, "GRwritelut");
 
-   /* 
-   * Terminate access to the image and to the GR interface, and 
-   * close the HDF file. 
+   /*
+   * Terminate access to the image and to the GR interface, and
+   * close the HDF file.
    */
    status = GRendaccess (ri_id);
+   CHECK_NOT_VAL(status, FAIL, "GRendaccess");
    status = GRend (gr_id);
+   CHECK_NOT_VAL(status, FAIL, "GRend");
    status = Hclose (file_id);
+   CHECK_NOT_VAL(status, FAIL, "Hclose");
+
    return 0;
 }

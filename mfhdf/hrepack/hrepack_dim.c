@@ -24,7 +24,7 @@
 typedef struct match_dim_name_t {
     int32 ref;                       /* reference */
     char  dim_name[H4_MAX_NC_NAME];  /* name */
-    int   flags[2];                  /* name exists 1, no 0 */  
+    int   flags[2];                  /* name exists 1, no 0 */
 } match_dim_name_t;
 
 /* table for match_dim_name_t */
@@ -51,9 +51,9 @@ static int gen_dim(char* name, int32 ref, int32 sd_in, int32 sd_out, options_t *
 /*-------------------------------------------------------------------------
  * Function: match_dim
  *
- * Purpose: generate "lone" dimensions. 
- *  Find common dimension names; the algorithm used for this search is the 
- *  cosequential match algorithm and is described in 
+ * Purpose: generate "lone" dimensions.
+ *  Find common dimension names; the algorithm used for this search is the
+ *  cosequential match algorithm and is described in
  *  Folk, Michael; Zoellick, Bill. (1992). File Structures. Addison-Wesley.
  *
  * Return: void
@@ -76,9 +76,9 @@ void match_dim(int32 sd_in,
     int   curr2=0;
     /*build a common list */
     match_dim_table_t *mattbl=NULL;
-    unsigned inlist[2]; 
+    unsigned inlist[2];
     int      i;
-    
+
 #if defined (HREPACK_DEBUG)
     for (i = 0; i < dt1->nobjs; i++) {
         printf("%s\n", dt1->objs[i].dim_name);
@@ -87,14 +87,14 @@ void match_dim(int32 sd_in,
         printf("%s\n", dt2->objs[i].dim_name);
     }
 #endif
-    
-    
+
+
    /*-------------------------------------------------------------------------
     * build the list
     *-------------------------------------------------------------------------
     */
     match_dim_table_init( &mattbl );
-    
+
     while ( more_names_exist )
     {
         cmp = strcmp( dt1->objs[curr1].dim_name, dt2->objs[curr2].dim_name );
@@ -104,7 +104,7 @@ void match_dim(int32 sd_in,
             match_dim_table_add(mattbl,inlist,
                 dt1->objs[curr1].dim_name,
                 dt1->objs[curr1].ref);
-            
+
             curr1++;
             curr2++;
         }
@@ -116,7 +116,7 @@ void match_dim(int32 sd_in,
                 dt1->objs[curr1].ref);
             curr1++;
         }
-        else 
+        else
         {
             inlist[0]=0; inlist[1]=1;
             match_dim_table_add(mattbl,inlist,
@@ -124,12 +124,12 @@ void match_dim(int32 sd_in,
                 dt2->objs[curr2].ref);
             curr2++;
         }
-        
+
         more_names_exist = (curr1<dt1->nobjs && curr2<dt1->nobjs) ? 1 : 0;
-        
-        
+
+
     } /* end while */
-    
+
     /* dt1 did not end */
     if (curr1<dt1->nobjs)
     {
@@ -142,7 +142,7 @@ void match_dim(int32 sd_in,
             curr1++;
         }
     }
-    
+
     /* dt2 did not end */
     if (curr2<dt2->nobjs)
     {
@@ -155,7 +155,7 @@ void match_dim(int32 sd_in,
             curr2++;
         }
     }
-    
+
    /*-------------------------------------------------------------------------
     * print the list
     *-------------------------------------------------------------------------
@@ -177,13 +177,13 @@ void match_dim(int32 sd_in,
         }
     }
 #endif
-    
-    
+
+
    /*-------------------------------------------------------------------------
     * get objects from list1 not in list2
     *-------------------------------------------------------------------------
     */
-    
+
     for (i = 0; i < mattbl->nobjs; i++)
     {
         if ( mattbl->objs[i].flags[0] && ( ! mattbl->objs[i].flags[1] ) )
@@ -193,11 +193,11 @@ void match_dim(int32 sd_in,
                 sd_in,
                 sd_out,
                 options);
-            
+
         }
     }
-    
-    
+
+
     /* free table */
     match_dim_table_free(mattbl);
 }
@@ -206,7 +206,7 @@ void match_dim(int32 sd_in,
 /*-------------------------------------------------------------------------
  * Function: gen_dim
  *
- * Purpose: generate "lone" dimensions. 
+ * Purpose: generate "lone" dimensions.
  *
  * Return: -1 error, 1 ok
  *
@@ -235,7 +235,7 @@ static int gen_dim(char* name,              /* name of SDS */
         numtype,                     /* number type */
         eltsz,                       /* element size */
         nelms;                       /* number of elements */
-    char             sds_name[H4_MAX_NC_NAME]; 
+    char             sds_name[H4_MAX_NC_NAME];
     VOIDP            buf=NULL;
     int              i, j, ret=1;
     int              info;           /* temporary int compression information */
@@ -245,41 +245,41 @@ static int gen_dim(char* name,              /* name of SDS */
     comp_info        c_info_in;      /* compression information original  */
     HDF_CHUNK_DEF    chunk_def;      /* chunk definition */
     HDF_CHUNK_DEF    chunk_def_in;   /* chunk definition original */
-    int32            chunk_flags;    /* chunk flags */ 
-    int32            chunk_flags_in; /* chunk flags original*/ 
+    int32            chunk_flags;    /* chunk flags */
+    int32            chunk_flags_in; /* chunk flags original*/
     int              szip_mode;      /* szip mode, EC, NN */
     intn             empty_sds;
     int              have_info=0;
-    
+
     sds_index = SDreftoindex(sd_in,ref);
     sds_id    = SDselect(sd_in,sds_index);
-    
+
     /*obtain name,rank,dimsizes,datatype and num of attributes of sds */
     if (SDgetinfo(sds_id,sds_name,&rank,dimsizes,&dtype,&nattrs)==FAIL){
         printf( "Could not get information for SDS\n");
         SDendaccess(sds_id);
         return -1;
     }
-    
+
    /*-------------------------------------------------------------------------
     * check if the input SDS is empty. if so , avoid some operations (mainly read, write)
     *-------------------------------------------------------------------------
-    */ 
+    */
     if (SDcheckempty( sds_id, &empty_sds ) == FAIL) {
         printf( "Failed to check empty SDS <%s>\n", sds_name);
         ret=-1;
         goto out;
     }
-    
+
    /*-------------------------------------------------------------------------
     * element size and number of elements
     *-------------------------------------------------------------------------
     */
-    
+
     /* compute the number of the bytes for each value */
     numtype = dtype & DFNT_MASK;
     eltsz = DFKNTsize(numtype | DFNT_NATIVE);
-    
+
     /* set edges of SDS */
     nelms=1;
     for (j = 0; j < rank; j++) {
@@ -287,23 +287,23 @@ static int gen_dim(char* name,              /* name of SDS */
         edges[j] = dimsizes[j];
         start[j] = 0;
     }
-    
+
    /*-------------------------------------------------------------------------
-    * get the original compression/chunk information from the object 
+    * get the original compression/chunk information from the object
     *-------------------------------------------------------------------------
     */
-    
+
     if (empty_sds==0 )
     {
         comp_type_in = COMP_CODE_NONE;  /* reset variables before retrieving information */
         HDmemset(&c_info_in, 0, sizeof(comp_info)) ;
-        if ( SDgetcompinfo(sds_id, &comp_type_in, &c_info_in) == FAIL ) 
+        if ( SDgetcompinfo(sds_id, &comp_type_in, &c_info_in) == FAIL )
         {
             printf( "Could not get compression information for SDS <%s>\n",sds_name);
             SDendaccess(sds_id);
             return -1;
         }
-        
+
         /* get chunk lengths */
         if ( SDgetchunkinfo(sds_id, &chunk_def_in, &chunk_flags_in) == FAIL )
         {
@@ -311,7 +311,7 @@ static int gen_dim(char* name,              /* name of SDS */
             SDendaccess(sds_id);
             return -1;
         }
-        
+
         /* retrieve the compress information if so */
         if ( (HDF_CHUNK | HDF_COMP) == chunk_flags_in )
         {
@@ -343,19 +343,19 @@ static int gen_dim(char* name,              /* name of SDS */
                 printf("Error: Unrecognized compression code in %d <%s>\n",comp_type_in,sds_name);
             };
         }
-        
+
        /*-------------------------------------------------------------------------
         * set the default values to the ones read from the object
         *-------------------------------------------------------------------------
         */
-        
+
        /*-------------------------------------------------------------------------
         * compression
         *-------------------------------------------------------------------------
         */
-        
+
         comp_type   = comp_type_in;
-        
+
         switch (comp_type_in)
         {
         case COMP_CODE_NBIT:
@@ -387,17 +387,17 @@ static int gen_dim(char* name,              /* name of SDS */
             printf("Error: Unrecognized compression code in %d <%s>\n",comp_type,sds_name);
             break;
         };
-        
+
        /*-------------------------------------------------------------------------
         * chunking
         *-------------------------------------------------------------------------
         */
-        
+
         chunk_flags = chunk_flags_in;
-        
+
         if ( (HDF_CHUNK) == chunk_flags )
         {
-            for (i = 0; i < rank; i++) 
+            for (i = 0; i < rank; i++)
                 chunk_def.chunk_lengths[i]      = chunk_def_in.chunk_lengths[i];
         }
         else if ( (HDF_CHUNK | HDF_COMP) == chunk_flags )
@@ -432,18 +432,18 @@ static int gen_dim(char* name,              /* name of SDS */
                 printf("Error: Unrecognized compression code in %d <%s>\n",comp_type_in,sds_name);
             };
         }
-        
+
        /*-------------------------------------------------------------------------
         * get the compression/chunk information of this object from the table
         * translate to usable information
-        * this is done ONLY for the second trip inspection 
+        * this is done ONLY for the second trip inspection
         *-------------------------------------------------------------------------
         */
-        
+
         /* check inspection mode */
-        if ( options->trip>0 ) 
+        if ( options->trip>0 )
         {
-            have_info = 
+            have_info =
                 options_get_info(options,      /* global options */
                 &chunk_flags, /* chunk flags OUT */
                 &chunk_def,   /* chunk definition OUT */
@@ -459,13 +459,13 @@ static int gen_dim(char* name,              /* name of SDS */
             if (have_info==FAIL)
                 goto out;
         } /* check inspection mode */
-        
-        
+
+
        /*-------------------------------------------------------------------------
         * check for maximum number of chunks treshold
         *-------------------------------------------------------------------------
         */
-        if ( options->trip>0 ) 
+        if ( options->trip>0 )
         {
             int count=1, nchunks;
             int maxchunk=INT_MAX;
@@ -482,8 +482,8 @@ static int gen_dim(char* name,              /* name of SDS */
                 }
             }
         }
-        
-        
+
+
         /*-------------------------------------------------------------------------
         * check for objects too small
         *-------------------------------------------------------------------------
@@ -498,25 +498,25 @@ static int gen_dim(char* name,              /* name of SDS */
                     options->threshold,sds_name);
             }
         }
-        
-        
+
+
  } /* empty_sds */
- 
+
   /*-------------------------------------------------------------------------
    * print the PATH, COMP and CHUNK information
    *-------------------------------------------------------------------------
-   */ 
-   
+   */
+
    if (options->verbose)
    {
        int pr_comp_type=0;
        int pr_chunk_flags;
-       
+
        if ( options->trip==0 )
            pr_chunk_flags=chunk_flags_in;
        else
            pr_chunk_flags=chunk_flags;
-       
+
        if (comp_type>0)
        {
            pr_comp_type=comp_type;
@@ -531,18 +531,18 @@ static int gen_dim(char* name,              /* name of SDS */
        printf(PFORMAT,
            (pr_chunk_flags>0)?"chunk":"",                 /*chunk information */
            (pr_comp_type>0)?get_scomp(pr_comp_type):"",   /*compression information */
-           "",                                            /*compression ratio */                     
+           "",                                            /*compression ratio */
            name);                                         /*name*/
    }
-   
+
   /*-------------------------------------------------------------------------
    * check if the requested compression is valid
    * SDSs do not support JPEG
    *-------------------------------------------------------------------------
    */
-   
+
    /* check inspection mode */
-   if ( options->trip>0 && empty_sds==0) 
+   if ( options->trip>0 && empty_sds==0)
    {
        switch(comp_type)
        {
@@ -564,48 +564,48 @@ static int gen_dim(char* name,              /* name of SDS */
            goto out;
        }
    } /* check inspection mode */
-   
-   
+
+
   /*-------------------------------------------------------------------------
    * create new SDS
    *-------------------------------------------------------------------------
    */
-   
+
    if ((sds_out = SDcreate(sd_out,sds_name,dtype,rank,dimsizes)) == FAIL) {
        printf( "Failed to create new SDS <%s>\n", sds_name);
        ret=-1;
        goto out;
    }
-   
+
    /*-------------------------------------------------------------------------
    * make it a "dimension"
    *-------------------------------------------------------------------------
    */
-   
+
    if ((dim_id = SDgetdimid(sds_out, 0)) == FAIL) {
        printf( "Failed to get dimension ID for SDS <%s>\n", sds_name);
        ret=-1;
        goto out;
    }
-   
+
    if (SDsetdimname(dim_id, sds_name) == FAIL) {
        printf( "Failed to set dimension name for SDS <%s>\n", sds_name);
        ret=-1;
        goto out;
    }
-   
+
   /*-------------------------------------------------------------------------
-   * set chunk 
+   * set chunk
    *
    * Chunked                  -> flags = HDF_CHUNK
-   * Chunked and compressed   -> flags = HDF_CHUNK | HDF_COMP 
+   * Chunked and compressed   -> flags = HDF_CHUNK | HDF_COMP
    * Non-chunked              -> flags = HDF_NONE
    *-------------------------------------------------------------------------
    */
-   
+
    if (empty_sds==0 )
    {
-       
+
        /* set chunk */
        if ( (chunk_flags == HDF_CHUNK) || (chunk_flags == (HDF_CHUNK | HDF_COMP)) )
        {
@@ -615,9 +615,9 @@ static int gen_dim(char* name,              /* name of SDS */
                ret=-1;
                goto out;
            }
-           
+
        }
-       
+
       /*-------------------------------------------------------------------------
        * set compression
        *
@@ -626,9 +626,9 @@ static int gen_dim(char* name,              /* name of SDS */
        * COMP_CODE_DEFLATE   -> gzip 'deflate' encoding
        *-------------------------------------------------------------------------
        */
-       
+
        /* use compress without chunk-in */
-       else if ( chunk_flags==HDF_NONE && comp_type>COMP_CODE_NONE)  
+       else if ( chunk_flags==HDF_NONE && comp_type>COMP_CODE_NONE)
        {
            if ( nelms*eltsz<options->threshold )
            {
@@ -637,11 +637,11 @@ static int gen_dim(char* name,              /* name of SDS */
                if (options->verbose) {
                    printf("Warning: object size smaller than %d bytes. Not compressing <%s>\n",
                        options->threshold,sds_name);
-               } 
+               }
            } else  {
-               
+
                /* setup compression factors */
-               switch(comp_type) 
+               switch(comp_type)
                {
                case COMP_CODE_SZIP:
                    if (set_szip (info,szip_mode,&c_info)==FAIL)
@@ -649,9 +649,9 @@ static int gen_dim(char* name,              /* name of SDS */
                        comp_type=COMP_CODE_NONE;
                    }
                    break;
-               case COMP_CODE_RLE:         
+               case COMP_CODE_RLE:
                    break;
-               case COMP_CODE_SKPHUFF:     
+               case COMP_CODE_SKPHUFF:
                    c_info.skphuff.skp_size = info;
                    break;
                case COMP_CODE_DEFLATE:
@@ -663,7 +663,7 @@ static int gen_dim(char* name,              /* name of SDS */
                default:
                    printf( "Error: Unrecognized compression code %d\n", comp_type);
                }
-               
+
                if (SDsetcompress (sds_out, comp_type, &c_info)==FAIL)
                {
                    printf( "Error: Failed to set compression for <%s>\n", sds_name);
@@ -672,48 +672,48 @@ static int gen_dim(char* name,              /* name of SDS */
                }
            }
        }
-            
+
       /*-------------------------------------------------------------------------
        * read sds and write new one
        *-------------------------------------------------------------------------
        */
-       
+
        /* alloc */
        if ((buf = (VOIDP) HDmalloc(nelms * eltsz)) == NULL) {
-           printf( "Failed to allocate %ld elements of size %ld\n", nelms, eltsz);
+           printf( "Failed to allocate %d elements of size %d\n", nelms, eltsz);
            ret=-1;
            goto out;
        }
-       
+
        /* read data */
        if (SDreaddata (sds_id, start, NULL, edges, buf) == FAIL) {
            printf( "Could not read SDS <%s>\n", sds_name);
            ret=-1;
            goto out;
        }
-       
+
        /* write the data */
        if (SDwritedata(sds_out, start, NULL, edges, buf) == FAIL) {
            printf( "Failed to write to new SDS <%s>\n", sds_name);
            ret=-1;
            goto out;
        }
-       
-       
+
+
    } /* empty_sds */
-   
+
     /*-------------------------------------------------------------------------
      * copy attributes
      *-------------------------------------------------------------------------
-     */ 
-     
+     */
+
      if( copy_sds_attrs(sds_id,sds_out,nattrs,options)==FAIL) {
          ret=-1;
          goto out;
      }
-     
-     
-     
+
+
+
 out:
      /* terminate access to the SDSs */
      if (SDendaccess(sds_id)== FAIL )
@@ -722,12 +722,12 @@ out:
          if (SDendaccess (sds_out)== FAIL )
              printf( "Failed to close SDS <%s>\n", sds_name);
      }
-     
+
      if (buf)
         HDfree(buf);
 
      return ret;
-     
+
 }
 
 
@@ -736,7 +736,7 @@ out:
 /*-------------------------------------------------------------------------
  * Function: match_dim_table_add
  *
- * Purpose: add an entry from a list of dimension names into the match table 
+ * Purpose: add an entry from a list of dimension names into the match table
  *
  * Programmer: Pedro Vicente, pvn@hdfgroup.org
  *
@@ -745,15 +745,15 @@ out:
  *-------------------------------------------------------------------------
  */
 
-static void match_dim_table_add (match_dim_table_t *mdim_tbl, 
-                                 unsigned *flags, 
-                                 char* dim_name, 
+static void match_dim_table_add (match_dim_table_t *mdim_tbl,
+                                 unsigned *flags,
+                                 char* dim_name,
                                  int32 ref)
 {
     int i;
-    
+
     /* check if name already on match table */
-    for (i = 0; i < mdim_tbl->nobjs; i++) 
+    for (i = 0; i < mdim_tbl->nobjs; i++)
     {
         /* insert information at position i */
         if ( strcmp(dim_name, mdim_tbl->objs[i].dim_name)==0 )
@@ -765,8 +765,8 @@ static void match_dim_table_add (match_dim_table_t *mdim_tbl,
             return;
         }
     }
-    
-    
+
+
     if (mdim_tbl->nobjs == mdim_tbl->size) {
         mdim_tbl->size *= 2;
         mdim_tbl->objs = (match_dim_name_t*)HDrealloc(mdim_tbl->objs, mdim_tbl->size * sizeof(match_dim_name_t));
@@ -776,7 +776,7 @@ static void match_dim_table_add (match_dim_table_t *mdim_tbl,
             mdim_tbl->objs[i].flags[0] = mdim_tbl->objs[i].flags[1] = -1;
         }
     }
-    
+
     i = mdim_tbl->nobjs++;
     mdim_tbl->objs[i].ref = ref;
     HDstrcpy(mdim_tbl->objs[i].dim_name,dim_name);
@@ -812,7 +812,7 @@ static void match_dim_table_init( match_dim_table_t **tbl )
         mdim_tbl->objs[i].ref = -1;
         mdim_tbl->objs[i].flags[0] = mdim_tbl->objs[i].flags[1] = -1;
     }
-    
+
     *tbl = mdim_tbl;
 }
 
@@ -821,7 +821,7 @@ static void match_dim_table_init( match_dim_table_t **tbl )
 /*-------------------------------------------------------------------------
  * Function: match_dim_table_free
  *
- * Purpose: free match table 
+ * Purpose: free match table
  *
  * Return: void
  *
@@ -857,7 +857,7 @@ static void match_dim_table_free( match_dim_table_t *mdim_tbl )
 void dim_table_add(dim_table_t *dim_tbl, int ref, char* name)
 {
     int i;
-    
+
     if (dim_tbl->nobjs == dim_tbl->size) {
         dim_tbl->size *= 2;
         dim_tbl->objs = (dim_name_t*)HDrealloc(dim_tbl->objs, dim_tbl->size * sizeof(dim_name_t));
@@ -866,7 +866,7 @@ void dim_table_add(dim_table_t *dim_tbl, int ref, char* name)
             dim_tbl->objs[i].ref = -1;
         }
     }
-    
+
     i = dim_tbl->nobjs++;
     dim_tbl->objs[i].ref = ref;
     HDstrcpy(dim_tbl->objs[i].dim_name,name);
@@ -900,14 +900,14 @@ void dim_table_init( dim_table_t **tbl )
     for (i = 0; i < dim_tbl->size; i++) {
         dim_tbl->objs[i].ref = -1;
     }
-    
+
     *tbl = dim_tbl;
 }
 
 /*-------------------------------------------------------------------------
  * Function: dim_table_free
  *
- * Purpose: free dimension table 
+ * Purpose: free dimension table
  *
  * Return: void
  *

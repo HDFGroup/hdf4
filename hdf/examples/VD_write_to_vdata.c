@@ -15,55 +15,61 @@
 /* number of values per record */
 #define  N_VALS_PER_REC   (ORDER_1 + ORDER_2 + ORDER_3)
 
-int main( ) 
+int main( )
 {
    /************************* Variable declaration **************************/
 
    intn   status_n;     /* returned status for functions returning an intn  */
    int32  status_32,    /* returned status for functions returning an int32 */
           file_id, vdata_id,
-          vdata_ref = -1,    /* ref number of a vdata, set to -1 to create  */
-          num_of_records;    /* number of records actually written to vdata */
+          vdata_ref = -1;    /* ref number of a vdata, set to -1 to create  */
    int16  rec_num;           /* current record number */
    float32  data_buf[N_RECORDS][N_VALS_PER_REC]; /* buffer for vdata values */
 
    /********************** End of variable declaration **********************/
 
-   /* 
+   /*
    * Open the HDF file for writing.
    */
    file_id = Hopen (FILE_NAME, DFACC_WRITE, 0);
 
-   /* 
+   /*
    * Initialize the VS interface.
    */
    status_n = Vstart (file_id);
+   CHECK_NOT_VAL(status_n, FAIL, "Vstart");
 
-   /* 
+   /*
    * Create a new vdata.
    */
    vdata_id = VSattach (file_id, vdata_ref, "w");
 
-   /* 
+   /*
    * Set name and class name of the vdata.
    */
    status_32 = VSsetname (vdata_id, VDATA_NAME);
+   CHECK_NOT_VAL(status_32, FAIL, "VSsetname");
    status_32 = VSsetclass (vdata_id, CLASS_NAME);
+   CHECK_NOT_VAL(status_32, FAIL, "VSsetclass");
 
-   /* 
+   /*
    * Introduce each field's name, data type, and order.  This is the first
    * part in defining a field.
    */
    status_n = VSfdefine (vdata_id, FIELD1_NAME, DFNT_FLOAT32, ORDER_1 );
+   CHECK_NOT_VAL(status_n, FAIL, "VSfdefine");
    status_n = VSfdefine (vdata_id, FIELD2_NAME, DFNT_FLOAT32, ORDER_2 );
+   CHECK_NOT_VAL(status_n, FAIL, "VSfdefine");
    status_n = VSfdefine (vdata_id, FIELD3_NAME, DFNT_FLOAT32, ORDER_3 );
+   CHECK_NOT_VAL(status_n, FAIL, "VSfdefine");
 
-   /* 
+   /*
    * Finalize the definition of the fields.
    */
    status_n = VSsetfields (vdata_id, FIELDNAME_LIST);
+   CHECK_NOT_VAL(status_n, FAIL, "VSsetfields");
 
-   /* 
+   /*
    * Buffer the data by the record for fully interlaced mode.  Note that the
    * first three elements contain the three values of the first field, the
    * fourth element contains the value of the second field, and the last two
@@ -79,18 +85,22 @@ int main( )
       data_buf[rec_num][5] = 65.0;
    }
 
-   /* 
+   /*
    * Write the data from data_buf to the vdata with full interlacing mode.
    */
-   num_of_records = VSwrite (vdata_id, (uint8 *)data_buf, N_RECORDS, 
+   VSwrite (vdata_id, (uint8 *)data_buf, N_RECORDS,
                              FULL_INTERLACE);
 
-   /* 
-   * Terminate access to the vdata and to the VS interface, then close 
+   /*
+   * Terminate access to the vdata and to the VS interface, then close
    * the HDF file.
    */
    status_32 = VSdetach (vdata_id);
+   CHECK_NOT_VAL(status_32, FAIL, "VSdetach");
    status_n  = Vend (file_id);
+   CHECK_NOT_VAL(status_n, FAIL, "Vend");
    status_32 = Hclose (file_id);
+   CHECK_NOT_VAL(status_32, FAIL, "Hclose");
+
    return 0;
 }

@@ -22,7 +22,7 @@ int main()
    /*
    * Select the first data set.
    */
-   sds_index = 0;   
+   sds_index = 0;
    sds_id = SDselect (sd_id, sds_index);
 
    /*
@@ -30,12 +30,15 @@ int main()
    * values into it, starting at byte location OFFSET.
    */
    status = SDsetexternalfile (sds_id, EXT_FILE_NAME, OFFSET);
+   CHECK_NOT_VAL(status, FAIL, "SDsetexternalfile");
 
    /*
    * Terminate access to the data set, SD interface, and file.
    */
    status = SDendaccess (sds_id);
+   CHECK_NOT_VAL(status, FAIL, "SDendaccess");
    status = SDend (sd_id);
+   CHECK_NOT_VAL(status, FAIL, "SDend");
 
    return 0;
 }
