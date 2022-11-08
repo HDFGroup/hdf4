@@ -30,7 +30,8 @@ CMake version
    1. We suggest you obtain the latest CMake from the Kitware web site.
       The HDF 4.2."X" product requires a minimum CMake version 3.12,
       where "X" is the current HDF4 release version. If you are using
-      VS2019, the minimum version is 3.15.
+      VS2019, the minimum version is 3.15. For VS2022, the minimum
+      version is 3.21.
 
 Note:
    To change the install prefix from the platform defaults initialize
@@ -129,7 +130,7 @@ To build HDF4 with the SZIP, ZLIB and JPEG external libraries you will need to:
 
    6. To install, "X" is the current release version
 
-      On Windows, execute:
+      On Windows (with WiX installed), execute:
                 HDF-4.2."X"-win32.exe or HDF-4.2."X"-win64.exe
       By default this program will install the hdf4 library into the
       "C:\Program Files" directory and will create the following
@@ -648,6 +649,28 @@ HDF4_BUILD_UTILS    "Build HDF4 Utilities"                 OFF
 HDF4_BUILD_XDR_LIB  "Build HDF4 XDR Library"               OFF
 HDF4_ENABLE_NETCDF  "Build HDF4 versions of NetCDF-3 APIS" ON
 HDF4_BUILD_JAVA     "Build Java HDF Library"               OFF
+
+---------------- HDF4 Folder Build Options ---------------------
+Defaults relative to $<INSTALL_PREFIX>
+HDF4_INSTALL_BIN_DIR      "bin"
+HDF4_INSTALL_LIB_DIR      "lib"
+HDF4_INSTALL_INCLUDE_DIR  "include"
+HDF4_INSTALL_MODULE_DIR   "mod"
+HDF4_INSTALL_CMAKE_DIR    "cmake"
+if (MSVC)
+  HDF4_INSTALL_DATA_DIR   "."
+else ()
+  HDF4_INSTALL_DATA_DIR   "share"
+HDF4_INSTALL_DOC_DIR      "HDF4_INSTALL_DATA_DIR"
+
+Defaults as defined by the `GNU Coding Standards`
+HDF4_INSTALL_BIN_DIR      "bin"
+HDF4_INSTALL_LIB_DIR      "lib"
+HDF4_INSTALL_INCLUDE_DIR  "include"
+HDF4_INSTALL_MODULE_DIR   "HDF4_INSTALL_INCLUDE_DIR/mod"
+HDF4_INSTALL_CMAKE_DIR    "HDF4_INSTALL_LIB_DIR/cmake"
+HDF4_INSTALL_DATA_DIR     "share"
+HDF4_INSTALL_DOC_DIR      "HDF4_INSTALL_DATA_DIR/doc/hdf"
 
 ---------------- HDF4 Advanced Options ---------------------
 HDF4_DISABLE_COMPILER_WARNINGS "Disable compiler warnings"                                    OFF
