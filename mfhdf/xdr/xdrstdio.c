@@ -44,6 +44,10 @@ static char sccsid[] = "@(#)xdr_stdio.c 1.16 87/08/11 Copyr 1984 Sun Micro";
 
 #include <stdio.h>
 
+#ifdef _MSC_VER
+#include <Winsock2.h>
+#endif
+
 #ifdef H4_HAVE_ARPA_INET_H
 #include <arpa/inet.h>
 #endif
