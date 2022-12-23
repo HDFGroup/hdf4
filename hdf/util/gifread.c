@@ -79,8 +79,8 @@ BYTE *MemGif;
 **  Global Color Table (if any) from a GIF image file.  The information
 **  is stored in a GIFHEAD structure.
 **
-**  Returns: -1 if a FILE stream error occured during the read,
-**           otherwise 0 if no error occured.
+**  Returns: -1 if a FILE stream error occurred during the read,
+**           otherwise 0 if no error occurred.
 */
 int
 ReadGifHeader(GifHead, MemGif2)
@@ -133,7 +133,7 @@ BYTE    **MemGif2;       /* GIF image file input FILE stream */
         return(-1);
 	*/
 
-    return(0);          /* No FILE stream error occured */
+    return(0);          /* No FILE stream error occurred */
 }
 
 
@@ -147,8 +147,8 @@ BYTE    **MemGif2;       /* GIF image file input FILE stream */
 **  Note that the ImageSeparator field value in the GIFIMAGEDESC
 **  structure is assigned by the function calling ReadGifImageDesc().
 **
-**  Returns: -1 if a FILE stream error occured during the read,
-**           otherwise 0 if no error occured.
+**  Returns: -1 if a FILE stream error occurred during the read,
+**           otherwise 0 if no error occurred.
 */
 int
 ReadGifImageDesc(GifImageDesc, MemGif2)
@@ -230,7 +230,7 @@ BYTE         **MemGif2;     /* GIF image file input FILE stream           */
 	while (ch1);
 
 
-    return(0);          /* No FILE stream error occured */
+    return(0);          /* No FILE stream error occurred */
 }
 
 
@@ -240,8 +240,8 @@ BYTE         **MemGif2;     /* GIF image file input FILE stream           */
 **  Note that the Introducer and Label field values in the GIFGRAPHICCONTROL
 **  structure are assigned by the function calling ReadGifGraphicControl().
 **
-**  Returns: -1 if a FILE stream error occured during the read,
-**           otherwise 0 if no error occured.
+**  Returns: -1 if a FILE stream error occurred during the read,
+**           otherwise 0 if no error occurred.
 */
 int
 ReadGifGraphicControl(GifGraphicControl, MemGif2)
@@ -254,7 +254,7 @@ BYTE              **MemGif2;          /* GIF image file input FILE stream  */
 		GifGraphicControl->GCEDump[i] = *(*MemGif2)++;
 	}
 
-    return(0);          /* No FILE stream error occured */
+    return(0);          /* No FILE stream error occurred */
 }
 
 
@@ -264,8 +264,8 @@ BYTE              **MemGif2;          /* GIF image file input FILE stream  */
 **  Note that the Introducer and Label field values in the GIFLPLAINTEXT
 **  structure are assigned by the function calling ReadGifPlainText().
 **
-**  Returns: -1 if a FILE stream error occured during the read,
-**           otherwise 0 if no error occured.
+**  Returns: -1 if a FILE stream error occurred during the read,
+**           otherwise 0 if no error occurred.
 */
 int
 ReadGifPlainText(GifPlainText, MemGif2)
@@ -290,7 +290,7 @@ BYTE         **MemGif2;       /* GIF image file input FILE stream          */
         return(-1);
 	*/
 
-    return(0);          /* No FILE stream error occured */
+    return(0);          /* No FILE stream error occurred */
 }
 
 
@@ -300,8 +300,8 @@ BYTE         **MemGif2;       /* GIF image file input FILE stream          */
 **  Note that the Introducer and Label field values in the GIFAPPLICATION
 **  structure are assigned by the function calling ReadGifApplication().
 **
-**  Returns: -1 if a FILE stream error occured during the read,
-**           otherwise 0 if no error occured.
+**  Returns: -1 if a FILE stream error occurred during the read,
+**           otherwise 0 if no error occurred.
 */
 int
 ReadGifApplication(GifApplication, MemGif2)
@@ -325,7 +325,7 @@ BYTE           **MemGif2;          /* GIF image file input FILE stream          
         return(-1);
 	*/
 
-    return(0);          /* No FILE stream error occured */
+    return(0);          /* No FILE stream error occurred */
 }
 
 
@@ -335,8 +335,8 @@ BYTE           **MemGif2;          /* GIF image file input FILE stream          
 **  Note that the Introducer and Label field values in the GIFCOMMENT
 **  structure are assigned by the function calling ReadGifComment().
 **
-**  Returns: -1 if a FILE stream error occured during the read,
-**           otherwise 0 if no error occured.
+**  Returns: -1 if a FILE stream error occurred during the read,
+**           otherwise 0 if no error occurred.
 */
 int
 ReadGifComment(GifComment, MemGif2)
@@ -350,7 +350,7 @@ BYTE       **MemGif2;      /* GIF image file input FILE stream           */
 
     GifComment->Terminator = 0;
 
-    return(0);          /* No FILE stream error occured */
+    return(0);          /* No FILE stream error occurred */
 }
 
 
@@ -361,8 +361,8 @@ BYTE       **MemGif2;      /* GIF image file input FILE stream           */
 **  A GIF "sub-block" is a single count byte followed by 1 to 255
 **  additional data bytes.
 **
-**  Returns: A NULL pointer if a memory allocation error occured,
-**           otherwise a valid pointer if no error occured.
+**  Returns: A NULL pointer if a memory allocation error occurred,
+**           otherwise a valid pointer if no error occurred.
 */
 BYTE *
 ReadDataSubBlocks(MemGif2 , DSize)

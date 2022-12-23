@@ -53,7 +53,7 @@ int main(int argc, char **argv)
 static
 int sds_get_compck(char *fname, char *sds_name)
 {
- HDF_CHUNK_DEF chunk_def;    /* chunk defintion read */
+ HDF_CHUNK_DEF chunk_def;    /* chunk definition read */
  comp_coder_t  comp_type;    /* to retrieve compression type into */
  comp_info     comp_info;    /* compression structure */
  int32         chunk_flags;  /* chunking flag */

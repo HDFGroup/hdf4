@@ -433,7 +433,7 @@ const long *coords ;
 
                 /*
                  * Record data is stored in chunks.  the firstRec and lastRec
-                 *  fields give the indicies of the first and last records
+                 *  fields give the indices of the first and last records
                  *  stored in a given chunk and the offset gives the offset in
                  *  the file of where that chunk starts.  The local variable
                  *  'offset' gives the offset into the entire variable space

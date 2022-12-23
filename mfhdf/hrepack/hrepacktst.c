@@ -534,7 +534,7 @@ int sds_verifiy_comp(const char *sds_name,
     if (in_comp_info) {
         if ( comp_info.skphuff.skp_size != in_comp_info )
         {
-            printf("Error: compresion information does not match ");
+            printf("Error: compression information does not match ");
             SDendaccess (sds_id);
             SDend (sd_id);
             return -1;
@@ -683,7 +683,7 @@ int sds_verifiy_comp_all(comp_coder_t in_comp_type,
 
                         if ( info != in_comp_info )
                         {
-                            printf("Error: compresion information does not match for <%s>",name);
+                            printf("Error: compression information does not match for <%s>",name);
                             SDendaccess (sds_id);
                             SDend (sd_id);
                             return -1;
@@ -724,7 +724,7 @@ int sds_verifiy_chunk(const char *sds_name,
                       int rank,
                       int32 *in_chunk_lengths)
 {
-    HDF_CHUNK_DEF chunk_def;    /* chunk defintion read */
+    HDF_CHUNK_DEF chunk_def;    /* chunk definition read */
     int32         chunk_flags;  /* chunking flag */
     int32         sd_id,
         sds_id,
@@ -792,7 +792,7 @@ int sds_verifiy_chunk_all(int32 in_chunk_flags,
                           int32 *in_chunk_lengths,
                           const char *sds_exclude)
 {
-    HDF_CHUNK_DEF chunk_def;    /* chunk defintion read */
+    HDF_CHUNK_DEF chunk_def;    /* chunk definition read */
     int32         chunk_flags;  /* chunking flag */
     int32         sd_id,
         sds_id,

@@ -165,7 +165,7 @@ VOIDP HDGLremove_from_beginning(Generic_list list /*IN: list */);
     This function will remove the last object from the end of the list and
     return it.  If the list is empty, NULL is returned.
  RETURNS
-    Last element if successfull and NULL otherwise
+    Last element if successful and NULL otherwise
 *******************************************************************************/
 VOIDP HDGLremove_from_end(Generic_list list /*IN: list */);
 

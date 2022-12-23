@@ -626,7 +626,7 @@ C     Purpose:  Retrieves the name of the file given file identifier
 C     Inputs:   file_id: file identifier
 C     Input/Outputs: filename: character variable to hold 
 C                    the name of the file
-C     Returns:  the length of the name if successfull, -1 if fails
+C     Returns:  the length of the name if successful, -1 if fails
 C     Calls:    scgetfname
 C     Users:    Fortran stub routine
 C----------------------------------------------------------------------

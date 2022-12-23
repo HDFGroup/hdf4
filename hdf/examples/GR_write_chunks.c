@@ -16,7 +16,7 @@ int main( )
          ri_id,          /* raster image identifier */
          dims[2],        /* dimension sizes of the image array */
          origin[2];      /* origin position to write each chunk */
-   HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */
+   HDF_CHUNK_DEF chunk_def;     /* Chunk definition set */
    int32 chunk00[] = {1, 2, 3, 4, 5, 6,
                       7, 8, 9, 10, 11, 12,
                       13, 14, 15, 16, 17, 18 };

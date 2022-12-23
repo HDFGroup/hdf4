@@ -116,7 +116,7 @@ VSseek(int32 vkey,   /* IN: vdata key */
     if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
-    /* get vdata itself and check it. Check element postion also. */
+    /* get vdata itself and check it. Check element position also. */
     vs = w->vs;
     if ((vs == NULL) || (eltpos < 0))
         HGOTO_ERROR(DFE_ARGS, FAIL);

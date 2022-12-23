@@ -39,8 +39,8 @@
  *         They are AN_FILE_LABEL, AN_FILE_DESC, AN_DATA_LABEL, AN_DATA_DESC
  *         The tag/ref refers to data tag/ref
  *
- *  ANIinit      - Intialize the annotation interface
- *  ANIdestroy   - Un-intialize the annotation interface
+ *  ANIinit      - Initialize the annotation interface
+ *  ANIdestroy   - Un-initialize the annotation interface
  *
  *  ANIanncmp    - compare two annotation handles(ann_id's) 
  *                  (used in annotation TBBTtree)
@@ -313,7 +313,7 @@ ANIaddentry(int32 an_id,    /* IN: annotation interface id */
                                    AN_DATA_LABEL for data labels, 
                                    AN_DATA_DESC for data descriptions,
                                    AN_FILE_LABEL for file labels,
-                                   AN_FILE_DESC for file descritpions.*/ 
+                                   AN_FILE_DESC for file descriptions.*/ 
             uint16 ann_ref, /* IN: ref of annotation */
             uint16 elmtag,  /* IN: tag of item of which this is annotation */
             uint16 elmref,  /* IN: ref of item of which this is annotation */
@@ -452,7 +452,7 @@ ANIcreate_ann_tree(int32    an_id,/* IN: annotation interface id */
                    ann_type type  /* IN: AN_DATA_LABEL for data labels, 
                                          AN_DATA_DESC for data descriptions,
                                          AN_FILE_LABEL for file labels,
-                                         AN_FILE_DESC for file descritpions.*/)
+                                         AN_FILE_DESC for file descriptions.*/)
 {
     CONSTR(FUNC, "ANIcreate_ann_tree");
     filerec_t  *file_rec = NULL;		/* file record pointer */
@@ -650,7 +650,7 @@ ANIfind(int32    an_id, /* IN: annotation interface id */
         ann_type type,  /* IN: AN_DATA_LABEL for data labels, 
                                AN_DATA_DESC for data descriptions,
                                AN_FILE_LABEL for file labels,
-                               AN_FILE_DESC for file descritpions.*/ 
+                               AN_FILE_DESC for file descriptions.*/ 
         uint16   ann_ref /* IN: ref of annotation */)
 {
     CONSTR(FUNC, "ANIfind");
@@ -677,7 +677,7 @@ ANIfind(int32    an_id, /* IN: annotation interface id */
               HE_REPORT_GOTO("failed to create annotation tree", FAIL);
             }
 
-          file_rec->an_num[type] = 0; /* intialize after allocation */
+          file_rec->an_num[type] = 0; /* initialize after allocation */
       }
 
     /* Create key from type/ref pair 
@@ -730,7 +730,7 @@ ANInumann(int32    an_id,   /* IN: annotation interface id */
           ann_type type,    /* IN: AN_DATA_LABEL for data labels, 
                                    AN_DATA_DESC for data descriptions,
                                    AN_FILE_LABEL for file labels,
-                                   AN_FILE_DESC for file descritpions.*/
+                                   AN_FILE_DESC for file descriptions.*/
           uint16   elem_tag, /* IN: tag of item of which this is annotation */
           uint16   elem_ref  /* IN: ref of item of which this is annotation */)
 {
@@ -802,7 +802,7 @@ ANIannlist(int32    an_id,    /* IN: annotation interface id */
            ann_type type,     /* IN: AN_DATA_LABEL for data labels, 
                                      AN_DATA_DESC for data descriptions,
                                      AN_FILE_LABEL for file labels,
-                                     AN_FILE_DESC for file descritpions.*/
+                                     AN_FILE_DESC for file descriptions.*/
            uint16   elem_tag, /* IN: tag of item of which this is annotation*/
            uint16   elem_ref, /* IN: ref of item of which this is annotation */
            int32    ann_list[]/* OUT: array of ann_id's that match criteria. */)
@@ -1258,7 +1258,7 @@ ANIcreate(int32    file_id,  /* IN: file ID */
           ann_type type      /* IN: AN_DATA_LABEL for data labels, 
                                     AN_DATA_DESC for data descriptions,
                                     AN_FILE_LABEL for file labels,
-                                    AN_FILE_DESC for file descritpions.*/)
+                                    AN_FILE_DESC for file descriptions.*/)
 {
     CONSTR(FUNC, "ANIcreate");    /* for HERROR */
     int32   ann_id = FAIL;
@@ -1568,7 +1568,7 @@ ANend(int32 an_id /* IN: Annotation ID of file to close */)
           tbbtdfree(file_rec->an_tree[AN_DATA_DESC], ANfreedata, ANfreekey);  
       }
 
-    /* re-initalize everything in file record for annotations so
+    /* re-initialize everything in file record for annotations so
        the a ANstart() works. */
     file_rec->an_tree[AN_DATA_LABEL] = NULL;
     file_rec->an_tree[AN_DATA_DESC]  = NULL;
@@ -1639,7 +1639,7 @@ ANcreate(int32    an_id,    /* IN: annotation interface ID */
 EXPORT int32
 ANcreatef(int32    an_id,/* IN: annotation interface ID */
           ann_type type  /* IN:  AN_FILE_LABEL for file labels,
-                                 AN_FILE_DESC for file descritpions.*/)
+                                 AN_FILE_DESC for file descriptions.*/)
 {
 #ifdef LATER
     CONSTR(FUNC, "ANcreatef");    /* for HERROR */
@@ -1653,7 +1653,7 @@ ANcreatef(int32    an_id,/* IN: annotation interface ID */
       {
       case AN_FILE_LABEL:
           ann_tag = DFTAG_FID;
-          ann_ref = 0; /* initalize with invalid ref, 
+          ann_ref = 0; /* initialize with invalid ref, 
                           will be replaced in ANIcreate() */
           break;
       case AN_FILE_DESC:
@@ -1697,7 +1697,7 @@ ANselect(int32    an_id, /* IN: annotation interface ID */
          ann_type type   /* IN: AN_DATA_LABEL for data labels, 
                                 AN_DATA_DESC for data descriptions,
                                 AN_FILE_LABEL for file labels,
-                                AN_FILE_DESC for file descritpions.*/)
+                                AN_FILE_DESC for file descriptions.*/)
 {
     CONSTR(FUNC, "ANselect");    /* for HERROR */
     filerec_t *file_rec = NULL;  /* file record pointer */
@@ -1767,7 +1767,7 @@ ANnumann(int32    an_id,    /* IN: annotation interface id */
          ann_type type,     /* IN: AN_DATA_LABEL for data labels, 
                                    AN_DATA_DESC for data descriptions,
                                    AN_FILE_LABEL for file labels,
-                                   AN_FILE_DESC for file descritpions.*/
+                                   AN_FILE_DESC for file descriptions.*/
          uint16   elem_tag, /* IN: tag of item of which this is annotation */
          uint16   elem_ref  /* IN: ref of item of which this is annotation */ )
 {
@@ -1813,7 +1813,7 @@ ANannlist(int32    an_id,      /* IN: annotation interface id */
           ann_type type,       /* IN: AN_DATA_LABEL for data labels, 
                                       AN_DATA_DESC for data descriptions,
                                       AN_FILE_LABEL for file labels,
-                                      AN_FILE_DESC for file descritpions.*/
+                                      AN_FILE_DESC for file descriptions.*/
           uint16   elem_tag,   /* IN: tag of item of which this is annotation */
           uint16   elem_ref,   /* IN: ref of item of which this is annotation */
           int32    ann_list[]  /* OUT: array of ann_id's that match criteria. */)
@@ -1971,7 +1971,7 @@ ANget_tagref(int32    an_id, /* IN: annotation interface ID */
              ann_type type,  /* IN: AN_DATA_LABEL for data labels, 
                                     AN_DATA_DESC for data descriptions,
                                     AN_FILE_LABEL for file labels,
-                                    AN_FILE_DESC for file descritpions.*/
+                                    AN_FILE_DESC for file descriptions.*/
              uint16  *tag,   /* OUT: Tag for annotation */
              uint16  *ref    /* OUT: ref for annotation */)
 {

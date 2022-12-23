@@ -91,7 +91,7 @@ typedef struct {   /* selection for comparison  */
      */
 
     int    err_stat;  
-    /* an error ocurred (1, error, 0, no error) */
+    /* an error occurred (1, error, 0, no error) */
 
 } diff_opt_t;
 

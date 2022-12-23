@@ -635,7 +635,7 @@ done:
     SDgetinfo -- get info about a dataset
 
  DESCRIPTION
-    The user is repsonsible for allocating space to hold
+    The user is responsible for allocating space to hold
     the dataset name.  It can be at most H4_MAX_NC_NAME
     characters in length.  NULL can be passed for any of
     of the parameters if it is not required.
@@ -2030,7 +2030,7 @@ done:
    SDsetattr -- user level function to create and set an attribute
 
  DESCRIPTION
-   Given an ID and an attribute defintion attach the atrribute
+   Given an ID and an attribute definition attach the atrribute
    to the thing represented by the ID.  For starters, the valid
    IDs could be variable, file or dimesnion IDs
 
@@ -3569,7 +3569,7 @@ done:
 
  DESCRIPTION
     Return basic information about a dimension (name, sizes, number
-    of attributes, number type, etc...) The user is repsonsible for
+    of attributes, number type, etc...) The user is responsible for
     allocating space to hold the dataset name.  It can be at most
     H4_MAX_NC_NAME characters in length.  NULL can be passed for the
     name if it is not required.
@@ -5838,7 +5838,7 @@ done:
       The dataset currently cannot be special already.  i.e. NBIT,
       COMPRESSED, or EXTERNAL. This is an Error.
 
-      The defintion of the HDF_CHUNK_DEF union with relvant fields is:
+      The definition of the HDF_CHUNK_DEF union with relvant fields is:
 
       typedef union hdf_chunk_def_u
       {
@@ -5946,7 +5946,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
     NC        *handle = NULL;      /* file handle */
     NC_var    *var    = NULL;      /* SDS variable */
     NC_attr  **fill_attr = NULL;   /* fill value attribute */
-    HCHUNK_DEF chunk[1];           /* H-level chunk defintion */
+    HCHUNK_DEF chunk[1];           /* H-level chunk definition */
     HDF_CHUNK_DEF *cdef   = NULL;  /* SD Chunk definition */
     model_info minfo;              /* dummy model info struct */
     comp_info  cinfo;              /* compression info - NBIT */
@@ -5996,7 +5996,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
         HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
-    /* Decide type of defintion passed in  */
+    /* Decide type of definition passed in  */
     switch (flags)
       {
       case HDF_CHUNK: /* case where chunk_def only has chunk lengths */
@@ -6109,7 +6109,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
     HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
-    /* initialize datset/chunk sizes using CHUNK defintion structure */
+    /* initialize datset/chunk sizes using CHUNK definition structure */
     chunk[0].chunk_size = 1;
     chunk[0].num_dims = ndims;
 
@@ -6339,7 +6339,7 @@ done:
      the 'HDF_CHUNK_DEF' union. It does not tell you the type of compression
      or the compression parameters used. You can pass in a NULL for 'chunk_def'
      if don't want the chunk lengths for each dimension.
-     If successfull it will return a bit-or'd value in 'flags' indicating
+     If successful it will return a bit-or'd value in 'flags' indicating
      if the SDS is  chunked(HDF_CHUNK), chunked and compressed(HDF_CHUNK | HDF_COMP)
      or non-chunked(HDF_NONE).
 
@@ -7423,7 +7423,7 @@ SDget_numopenfiles()
 
  DESCRIPTION
     Given an ID to a file, returns its name via parameter 'filename.'
-    The user is repsonsible for allocating sufficient space to hold
+    The user is responsible for allocating sufficient space to hold
     the file name.  It can be at most H4_MAX_NC_NAME characters in
     length.
 

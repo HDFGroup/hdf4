@@ -168,7 +168,7 @@ HDFLIBAPI int32 ANcreate(int32 an_id,     /* IN: annotation interface ID */
     Creates a file annotation, returns an 'an_id' to work with the new 
     file annotation which can either be a label or description.
     Valid annotation types are AN_FILE_LABEL for file labels and
-    AN_FILE_DESC for file descritpions.
+    AN_FILE_DESC for file descriptions.
 
  RETURNS
         An ID to an annotation which can either be a file label or description

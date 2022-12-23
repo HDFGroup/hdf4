@@ -6746,7 +6746,7 @@ follow the instructions listed in:
      the "make" in some old systems does not support the 
      creation commands.)
    . A bug was found in the "mfhdf.h" file late in the testing
-     stage. The error occured in the CM5 parallel I/O 
+     stage. The error occurred in the CM5 parallel I/O 
      extension only. The fix is not included in the source
      release, but it is avalable in the binary release for 
      the CM5 version.  Please retrieve the fix there. 

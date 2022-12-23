@@ -1175,7 +1175,7 @@ HCIstaccess(accrec_t * access_rec, int16 acc_mode)
     if (BADFREC(file_rec) || !(file_rec->access & acc_mode))
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
-    /* intialize the access record */
+    /* initialize the access record */
     access_rec->special = SPECIAL_COMP;
     access_rec->posn = 0;
     access_rec->access = (uint32)(acc_mode|DFACC_READ);
@@ -1674,7 +1674,7 @@ USAGE
 RETURNS
    SUCCEED / FAIL
 DESCRIPTION
-   Return information about the given compresion method.
+   Return information about the given compression method.
 
    Currently, reports if encoding and/or decoding are available. SZIP
    is the only method that varies in the current versions.

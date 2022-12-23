@@ -5460,7 +5460,7 @@ intn GRPshutdown(void)
       The image currently cannot be special already.  i.e. NBIT,
       COMPRESSED, or EXTERNAL. This is an Error.
 
-      The defintion of the HDF_CHUNK_DEF union with relvant fields is:
+      The definition of the HDF_CHUNK_DEF union with relvant fields is:
 
       typedef union hdf_chunk_def_u
       {
@@ -5564,7 +5564,7 @@ GRsetchunk(int32 riid,              /* IN: raster access id */
 {
     CONSTR(FUNC, "GRsetchunk");
     ri_info_t     *ri_ptr = NULL;    /* ptr to the image to work with */
-    HCHUNK_DEF     chunk[1];         /* H-level chunk defintion */
+    HCHUNK_DEF     chunk[1];         /* H-level chunk definition */
     HDF_CHUNK_DEF *cdef   = NULL;    /* GR Chunk definition */
     model_info minfo;                /* dummy model info struct */
     comp_info  cinfo;                /* compression info - NBIT */
@@ -5618,7 +5618,7 @@ GRsetchunk(int32 riid,              /* IN: raster access id */
     fprintf(stderr,"GRsetchunk: ri_ptr->img_aid=%d  \n",ri_ptr->img_aid);
 #endif
 
-    /* Decide type of defintion passed in  */
+    /* Decide type of definition passed in  */
     switch (flags)
       {
       case HDF_CHUNK: /* case where chunk_def only has chunk lengths */
@@ -5684,7 +5684,7 @@ GRsetchunk(int32 riid,              /* IN: raster access id */
     if ((chunk[0].pdims = (DIM_DEF *)HDmalloc(ndims*sizeof(DIM_DEF))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE,FAIL);
 
-    /* initialize image/chunk sizes using CHUNK defintion structure */
+    /* initialize image/chunk sizes using CHUNK definition structure */
     chunk[0].chunk_size = 1;
     chunk[0].num_dims = ndims;
     for (i = 0; i < ndims; i++)
@@ -5839,7 +5839,7 @@ done:
      fill the array of chunk lengths for each dimension as specified in
      the 'HDF_CHUNK_DEF' union. You can pass in a NULL for 'chunk_def'
      if don't want the chunk lengths for each dimension.
-     If successfull it will return a bit-or'd value in 'flags' indicating
+     If successful it will return a bit-or'd value in 'flags' indicating
      if the GR is  chunked(HDF_CHUNK), chunked and compressed(HDF_CHUNK | HDF_COMP)
      or non-chunked(HDF_NONE).
 
