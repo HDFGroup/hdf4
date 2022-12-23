@@ -106,10 +106,10 @@ hdf_fill_input_buffer(struct jpeg_decompress_struct *cinfo_ptr)
 
             src->pub.bytes_in_buffer = (size_t)num_read;
           } /* end if */
-        else 
+        else
           {
             int32 num_read2=0;     /* number of bytes read */
-                
+
             if((num_read=Hread(src->aid,INPUT_BUF_SIZE,src->buffer))==FAIL)
                 ERREXIT(cinfo_ptr, JERR_FILE_READ);
             if(num_read<INPUT_BUF_SIZE)
@@ -165,7 +165,7 @@ hdf_skip_input_data(struct jpeg_decompress_struct *cinfo_ptr,long num_bytes)
 {
     hdf_src_ptr src=(hdf_src_ptr)cinfo_ptr->src;
 
-    /* Just a dumb implementation for now.  Not clear that being smart 
+    /* Just a dumb implementation for now.  Not clear that being smart
     * is worth any trouble anyway --- large skips are infrequent.
     */
     if (num_bytes > 0) {

@@ -16,7 +16,7 @@
 
 /*	$Id$ */
 
-#include	<string.h> 
+#include	<string.h>
 #include	"local_nc.h"
 #include	"alloc.h"
 
@@ -54,7 +54,7 @@ alloc_err :
 /*
  * Free attr
  *
- * NOTE: Changed return value to return 'int' 
+ * NOTE: Changed return value to return 'int'
  *       If successful returns SUCCEED else FAIL -GV 9/19/97
  */
 int
@@ -70,7 +70,7 @@ NC_attr *attr ;
                 ret_value = FAIL;
                 goto done;
             }
-              
+
           if (NC_free_array(attr->data) == FAIL)
             {
                 ret_value = FAIL;
@@ -158,17 +158,17 @@ const char *name ;
     NC_attr **attr ;
     unsigned attrid ;
     size_t len ;
-    
+
     if(*ap == NULL)
         return(NULL) ;
-    
+
     attr = (NC_attr **) (*ap)->values ;
-    
+
     len = strlen(name) ;
-    
+
     for(attrid = 0 ; attrid < (*ap)->count ; attrid++, attr++)
 	{
-            if( len == (*attr)->name->len && 
+            if( len == (*attr)->name->len &&
                strncmp(name, (*attr)->name->values, len) == 0)
                 {
                     return(attr) ; /* Normal return */
@@ -182,7 +182,7 @@ const char *name ;
  * Look up by cdfid, varid and name, return NULL if not found
  */
 static NC_attr **
-NC_lookupattr( cdfid, varid, name, verbose)  
+NC_lookupattr( cdfid, varid, name, verbose)
 int cdfid ;
 int varid ;
 const char *name ; /* attribute name */
@@ -251,9 +251,9 @@ const void *values ;
 			}
 			NC_free_attr(old) ;
 			return((*ap)->count -1) ;
-		} 
+		}
 		/* else */
-		if( NC_re_array((*atp)->data, datatype,count,values) == NULL) 
+		if( NC_re_array((*atp)->data, datatype,count,values) == NULL)
 		{
 		NCadvise(NC_ENOTINDEFINE, "Can't increase size unless in define mode") ;
 			return(-1) ;
@@ -271,7 +271,7 @@ const void *values ;
 		} else
 			handle->flags |= NC_HDIRTY ;
 		return((*ap)->count -1) ;
-	} 
+	}
 	/* else */
 	if((*ap)->count >= H4_MAX_NC_ATTRS)
 	{
@@ -358,7 +358,7 @@ char *name ;
 }
 
 
-int ncattinq( cdfid, varid, name, datatypep, countp)  
+int ncattinq( cdfid, varid, name, datatypep, countp)
 int cdfid ;
 int varid ;
 const char *name ; /* input, attribute name */
@@ -383,11 +383,11 @@ int *countp ;
 
 int ncattrename(cdfid, varid, name, newname)
 int cdfid ;
-int varid ; 
+int varid ;
 const char *name ;
 const char *newname ;
 {
-	
+
 	NC *handle ;
 	NC_attr **attr ;
 	NC_string *new, *old ;
@@ -448,7 +448,7 @@ int outname ;
 	attr = NC_lookupattr(incdf,invar,name,TRUE) ;
 	if(attr == NULL)
 		return(-1) ;
-	
+
 	ap = NC_attrarray(outcdf, outname) ;
 	if(ap == NULL)
 		return(-1) ;
@@ -461,10 +461,10 @@ int outname ;
 
 int ncattdel(cdfid, varid, name)
 int cdfid ;
-int varid ; 
+int varid ;
 const char *name ;
 {
-	
+
 	NC_array **ap ;
 	NC_attr **attr ;
 	NC_attr *old = NULL ;
@@ -514,11 +514,11 @@ const char *name ;
 
 int ncattget(cdfid, varid, name, values)
 int cdfid ;
-int varid ; 
+int varid ;
 const char *name ;
 ncvoid *values ;
 {
-	
+
 	NC_attr **attr ;
 
 	cdf_routine_name = "ncattget" ;

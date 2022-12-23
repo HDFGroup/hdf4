@@ -35,11 +35,11 @@ C
       integer numberfailed, ISFIRST, NOTFIRST, MAXLENLAB
       integer MAXLEN_DESC, ROWS, COLS, REPS
 
-      parameter ( ISFIRST =        1, 
-     *            NOTFIRST =       0, 
+      parameter ( ISFIRST =        1,
+     *            NOTFIRST =       0,
      *            MAXLENLAB =    30,
      *            MAXLEN_DESC =  500,
-     *            ROWS =          10, 
+     *            ROWS =          10,
      *            COLS =          10,
      *            REPS =           2 )
 
@@ -49,7 +49,7 @@ C
       integer j, dimsizes(2)
       integer fhandle, anhandle, ahandle
 
-      character*30 labsds, labsds2 
+      character*30 labsds, labsds2
       character*30 labris, labris2
       character*500 descsds, descsds2
       character*500 descris, descris2
@@ -81,10 +81,10 @@ C *** set up object labels and descriptions ***
       labsds2 = 'Object label #1: sds2'
       labris  = 'Object label #2: image'
       labris2 = 'Object label #2: image2'
-      descsds = 'Object Descr #1: 1  2  3  4  5  6  7  8  9 10 11 12 ' 
+      descsds = 'Object Descr #1: 1  2  3  4  5  6  7  8  9 10 11 12 '
      *          // CR // '                13 14 15 16 17 18 19 20 '
      *          // ' **END SDS DESCR**'
-      descsds2 = 'Object Descr #1: 1  2  3  4  5  6  7  8  9 10 11 12 ' 
+      descsds2 = 'Object Descr #1: 1  2  3  4  5  6  7  8  9 10 11 12 '
      *          // CR // '                13 14 15 16 17 18 19 20 '
      *          // ' **END SDS2 DESCR**'
       descris = 'Object Descr #2: A B C D E F G H I J K L '
@@ -93,9 +93,9 @@ C *** set up object labels and descriptions ***
      *          // CR // '                M N O **END IMAGE2 DESCR **'
 
 C  *** generate float array and image ***
- 
+
       rank = 2
-      dimsizes(1)=ROWS 
+      dimsizes(1)=ROWS
       dimsizes(2)=COLS
 
       call gen2Dfloat(ROWS, COLS, data)
@@ -151,12 +151,12 @@ C  ***  Write data labels and descriptions ***
      +    '***  Writing labels & descriptions with SDS and RIS ***')
 
       do 100 j=1,REPS
-C  ***  write out scientific data set 
+C  ***  write out scientific data set
          ret = dsadata(TESTFILE, rank,dimsizes, data)
          call VRFY(ret, 'dsadata', number_failed)
 
-C ****    write out annotations for 2 out of every 3 
-         if (mod(j,3) .ne. 0) then 
+C ****    write out annotations for 2 out of every 3
+         if (mod(j,3) .ne. 0) then
             refnum = dslref()
 
 C ********** Write out 2 labels for each SDS *****************
@@ -251,12 +251,12 @@ C********  Read data labels and descriptions *********
           call VRFY(ret, 'dsgdims', number_failed)
           refnum = dslref()
 
-C ******  read in annotations for 2 out of every 3 
+C ******  read in annotations for 2 out of every 3
           if (mod(j,3) .ne. 0) then
-              call man_check_lab_desc(TESTFILE, DFTAG_SDG, refnum, 
+              call man_check_lab_desc(TESTFILE, DFTAG_SDG, refnum,
      *                            labsds, descsds, numberfailed)
 
-              call man_check_lab_desc(TESTFILE, DFTAG_SDG, refnum, 
+              call man_check_lab_desc(TESTFILE, DFTAG_SDG, refnum,
      *                            labsds2, descsds2, numberfailed)
           endif
 
@@ -264,12 +264,12 @@ C ****    read annotations for images
           ret = d8gimg(TESTFILE, newimage, COLS, ROWS, pal)
           call VRFY(ret, 'd8gimg', number_failed)
           refnum = DFR8lastref()
-          call man_check_lab_desc(TESTFILE, DFTAG_RIG, refnum, 
+          call man_check_lab_desc(TESTFILE, DFTAG_RIG, refnum,
      *                        labris, descris, numberfailed)
 
-          call man_check_lab_desc(TESTFILE, DFTAG_RIG, refnum, 
+          call man_check_lab_desc(TESTFILE, DFTAG_RIG, refnum,
      *                        labris2, descris2, numberfailed)
-      
+
   200 continue
 
 C ****** Check file labels/descriptions *******
@@ -296,7 +296,7 @@ C  man_check_lab_desc:  read and compare label and description
 C                   with expected ones
 C
 C**************************************************************
-      subroutine man_check_lab_desc(fname, tag, ref, label, desc, 
+      subroutine man_check_lab_desc(fname, tag, ref, label, desc,
      *                          num_failed)
       implicit none
       include 'fortest.inc'
@@ -344,7 +344,7 @@ C
 1111  continue
 C
 C     Call hishdff with  file not being an hdf file. Call should return
-C     0 
+C     0
 C
       ret = hishdff('manf.f')
       if (ret .ne. 0) then
@@ -415,7 +415,7 @@ C ****** Check if we found label in list *****
          num_failed = num_failed + 1
       endif
 
-C ***** look for description in list 
+C ***** look for description in list
       found = 0
       fannlen = 0
       fanndesc = ' '
@@ -437,17 +437,17 @@ C ***** look for description in list
   400 continue
 
       if (indesclen .ne. len(desc)) then
-          print *,'   >>>BAD DESCRIPTION LENGTH.' 
-          print *,'                        IS: ', indesclen 
-          print *,'                 SHOULD BE: ', len(desc) 
-          num_failed = num_failed + 1 
+          print *,'   >>>BAD DESCRIPTION LENGTH.'
+          print *,'                        IS: ', indesclen
+          print *,'                 SHOULD BE: ', len(desc)
+          num_failed = num_failed + 1
        endif
 
        if (fanndesc .ne. desc) then
-          print *,'   >>>BAD DESCRIPTION.' 
-          print *,'                        IS: ', fanndesc 
-          print *,'                 SHOULD BE: ', desc 
-          num_failed = num_failed + 1 
+          print *,'   >>>BAD DESCRIPTION.'
+          print *,'                        IS: ', fanndesc
+          print *,'                 SHOULD BE: ', desc
+          num_failed = num_failed + 1
        endif
 
 C ****** close file *******
@@ -536,17 +536,17 @@ C **** Read file description *****
       call VRFY(ret, 'afendaccess', num_failed)
 
       if (fannlen .ne. len(desc)) then
-          print *,'   >>>BAD DESCRIPTION LENGTH.' 
-          print *,'                        IS: ', fannlen 
-          print *,'                 SHOULD BE: ', len(desc) 
-          num_failed = num_failed + 1 
+          print *,'   >>>BAD DESCRIPTION LENGTH.'
+          print *,'                        IS: ', fannlen
+          print *,'                 SHOULD BE: ', len(desc)
+          num_failed = num_failed + 1
        endif
 
        if (fdesc .ne. desc) then
-          print *,'   >>>BAD DESCRIPTION.' 
-          print *,'                        IS: ', fdesc 
-          print *,'                 SHOULD BE: ', desc 
-          num_failed = num_failed + 1 
+          print *,'   >>>BAD DESCRIPTION.'
+          print *,'                        IS: ', fdesc
+          print *,'                 SHOULD BE: ', desc
+          num_failed = num_failed + 1
        endif
 
 C ****** close file *******

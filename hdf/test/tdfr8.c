@@ -35,7 +35,7 @@
 	+ Name image10 with RLE compression and with palette
 	+ Name image11 with RLE compression and with palette
 	All have same data in rasters and in palette (when used)
-	Note: This part of the test was adopted from Ruth's test program.  
+	Note: This part of the test was adopted from Ruth's test program.
 
 	The function GRgetcomptype will be call on each image and the returned
 	compression type will be verified against the list of compressions used.
@@ -78,8 +78,8 @@ test_GRgetcomptype()
             raster[row][col] = row*10 + col;
         }
     }
-        
-    /* 
+
+    /*
      * Initialize the palette array (256 entries of RGB components)
      * We want our test case to be easy to see, so only turn
      * on colors for values we have in raster image.
@@ -94,17 +94,17 @@ test_GRgetcomptype()
                 temp_pal[entry][0] = 255;    /* Red */
                 temp_pal[entry][1] = 0;      /* Green */
                 temp_pal[entry][2] = 0;      /* Blue */
-            } else if (( 10 <= entry ) && ( entry <= 17)) 
+            } else if (( 10 <= entry ) && ( entry <= 17))
 	    {   /* values in second row of raster */
                 temp_pal[entry][0] = 0;       /* Red */
                 temp_pal[entry][1] = 255;     /* Green */
                 temp_pal[entry][2] = 0;       /* Blue */
-            } else if (( 20 <= entry ) && ( entry <= 27)) 
+            } else if (( 20 <= entry ) && ( entry <= 27))
 	    {   /* values in third row of raster */
                 temp_pal[entry][0] = 0;       /* Red */
                 temp_pal[entry][1] = 0;       /* Green */
                 temp_pal[entry][2] = 255;     /* Blue */
-            } else 
+            } else
 	    {   /* all else (don't expect) will be black */
                 temp_pal[entry][0] = 0;       /* Red */
                 temp_pal[entry][1] = 0;       /* Green */

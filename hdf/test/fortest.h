@@ -24,7 +24,7 @@
 
 #  define ngetverb      H4_F77_FUNC(getverb, GETVERB)
 #  define nhisystem     H4_F77_FUNC(hisystem, HISYSTEM)
-#  define nfixnamec     H4_F77_FUNC(fixnamec, FIXNAMEC) 
+#  define nfixnamec     H4_F77_FUNC(fixnamec, FIXNAMEC)
 
 /* FORTRAN support C-stubs for FORTRAN interface tests */
 

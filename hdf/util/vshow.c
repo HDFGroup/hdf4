@@ -196,7 +196,7 @@ main(int ac, char **av)
                       /* dump attributes */
                       full = fulldump && (vsno == 0 || vsno == vsoref);
                       dumpattr(vs, full, 1);
-                                         
+
                       VSdetach(vs);
                   }
                 else if (vstag == DFTAG_VG)
@@ -393,7 +393,7 @@ fmtdouble(char *x)
 static int32
 vsdumpfull(int32 vs)
 {
-    char        fields[VSFIELDMAX*FIELDNAMELENMAX]; 
+    char        fields[VSFIELDMAX*FIELDNAMELENMAX];
     char        vsname[100];
     int32       j, i, t, interlace, nv, vsize;
     uint8      *bb, *b;
@@ -568,7 +568,7 @@ static intn dumpattr(int32 vid, intn full, intn isvs)
          printf(">>>dumpattr:failed in getting vdata instance.\n");
          ret_val = FAIL;
          goto done;
-      } 
+      }
       vs = vs_inst->vs;
       if (vs == NULL)  {
          printf(">>>dumpattr:Failed in getting vs. \n");
@@ -597,7 +597,7 @@ static intn dumpattr(int32 vid, intn full, intn isvs)
          goto done;
       }
       printf("%d attributes:\n", nattrs);
-      for (j=-1; j<vs->wlist.n; j++)  
+      for (j=-1; j<vs->wlist.n; j++)
       {	  int32 temp;
 
 	  temp = (j == -1) ? (int)_HDF_VDATA : j;
@@ -626,7 +626,7 @@ static intn dumpattr(int32 vid, intn full, intn isvs)
                      continue;
                   }
               }
-              else 
+              else
               {
                  if ( FAIL==VSgetattr(vid, temp, i, attrbuf)) {
                      printf(">>>dympattr: failed in VSgetattr.\n");
@@ -680,7 +680,7 @@ static intn dumpattr(int32 vid, intn full, intn isvs)
               }
               if (cn) putchar('\n');
               if (alloc_flag) {
-                 if ( buf != NULL) 
+                 if ( buf != NULL)
                     HDfree(buf);
                  alloc_flag = 0;
               }
@@ -694,7 +694,7 @@ static intn dumpattr(int32 vid, intn full, intn isvs)
          printf(">>>dumpattr:failed in getting vgroup instance.\n");
          ret_val = FAIL;
          goto done;
-      } 
+      }
       vg = v->vg;
       if (vg == NULL)  {
          printf(">>>dumpattr:Failed in getting vg. \n");
@@ -737,7 +737,7 @@ static intn dumpattr(int32 vid, intn full, intn isvs)
                  continue;
               }
           }
-          else 
+          else
           {
              if ( FAIL == Vgetattr(vid, i, attrbuf)) {
                  printf(">>>dympattr: failed in Vgetattr.\n");
@@ -791,16 +791,16 @@ static intn dumpattr(int32 vid, intn full, intn isvs)
           }
           if (cn) putchar('\n');
           if (alloc_flag) {
-             if ( buf != NULL) 
+             if ( buf != NULL)
                 HDfree(buf);
              alloc_flag = 0;
           }
       }  /*  attr */
    }  /* vgroup */
-   
+
    ret_val = SUCCEED;
 
 done:
    return ret_val;
-}                   
+}
 /* ------------------------------------- */

@@ -24,7 +24,7 @@ C
 C**** Variable declaration *******************************************
 C
       integer sd_id, sds_id, sds_index, status
-      integer dim_id, dim_index 
+      integer dim_id, dim_index
       integer n_values
       character*16 file_values
       real         sds_values(2)
@@ -37,17 +37,17 @@ C
 C**** End of variable declaration ************************************
 C
 C
-C     Open the file and initialize the SD interface. 
+C     Open the file and initialize the SD interface.
 C
       sd_id = sfstart(FILE_NAME, DFACC_WRITE)
 C
-C     Set an attribute that describes the file contents. 
+C     Set an attribute that describes the file contents.
 C
       n_values = 16
-      status = sfscatt(sd_id, FILE_ATTR_NAME, DFNT_CHAR8, n_values, 
+      status = sfscatt(sd_id, FILE_ATTR_NAME, DFNT_CHAR8, n_values,
      +                 file_values)
 C
-C     Select the first data set. 
+C     Select the first data set.
 C
       sds_index = 0
       sds_id = sfselect(sd_id, sds_index)
@@ -56,22 +56,22 @@ C     Assign attribute to the first SDS. Note that attribute values
 C     may have different data type than SDS data.
 C
       n_values = 2
-      status = sfsnatt(sds_id, SDS_ATTR_NAME, DFNT_FLOAT32, n_values, 
+      status = sfsnatt(sds_id, SDS_ATTR_NAME, DFNT_FLOAT32, n_values,
      +                 sds_values)
 C
-C     Get the identifier for the first dimension. 
+C     Get the identifier for the first dimension.
 C
-      dim_index = 0 
+      dim_index = 0
       dim_id = sfdimid(sds_id, dim_index)
 C
 C     Set an attribute to the dimension that specifies the
-C     dimension metric. 
+C     dimension metric.
 C
       n_values = 7
-      status = sfscatt(dim_id, DIM_ATTR_NAME, DFNT_CHAR8, n_values, 
+      status = sfscatt(dim_id, DIM_ATTR_NAME, DFNT_CHAR8, n_values,
      +                 dim_values)
 C
-C     Terminate access to the data set. 
+C     Terminate access to the data set.
 C
       status = sfendacc(sds_id)
 C

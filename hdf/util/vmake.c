@@ -67,7 +67,7 @@ int32       separate
 int         show_help_msg
             (void);
 
-void showfmttypes 
+void showfmttypes
             (void);
 
 /*

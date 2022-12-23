@@ -22,7 +22,7 @@ C
 C     Function declaration
 C
       integer hopen, hclose
-      integer mgstart, mgcreat, mgwrimg, mgendac, mgend 
+      integer mgstart, mgcreat, mgwrimg, mgendac, mgend
 
 C
 C**** Variable declaration *******************************************
@@ -32,7 +32,7 @@ C
       integer gr_id, ri_id, num_type, interlace_mode
       integer start(2), stride(2), edges(2), dimsizes(2)
       integer i, j, k
-      integer*2  image_buf(N_COMPS, X_LENGTH, Y_LENGTH) 
+      integer*2  image_buf(N_COMPS, X_LENGTH, Y_LENGTH)
 C
 C**** End of variable declaration ************************************
 C
@@ -45,19 +45,19 @@ C     Initialize the GR interface.
 C
       gr_id = mgstart(file_id)
 C
-C     Set the number type, interlace mode, and dimensions of the image.  
+C     Set the number type, interlace mode, and dimensions of the image.
 C
       num_type = DFNT_INT16
       interlace_mode = MFGR_INTERLACE_PIXEL
       dimsizes(1) = X_LENGTH
       dimsizes(2) = Y_lENGTH
 C
-C     Create the raster image array. 
+C     Create the raster image array.
 C
       ri_id = mgcreat(gr_id, IMAGE_NAME, N_COMPS, num_type,
      +                interlace_mode, dimsizes)
 C
-C     Fill the image data buffer with values. 
+C     Fill the image data buffer with values.
 C
       do 30 i = 1, Y_LENGTH
          do 20 j = 1, X_LENGTH
@@ -67,7 +67,7 @@ C
 20       continue
 30    continue
 
-C     
+C
 C     Define the size of the data to be written, i.e., start from the origin
 C     and go as long as the length of each dimension.
 C
@@ -83,7 +83,7 @@ C
       status = mgwrimg(ri_id, start, stride, edges, image_buf)
 
 C
-C     Terminate access to the raster image and to the GR interface, 
+C     Terminate access to the raster image and to the GR interface,
 C     and close the HDF file.
 C
       status = mgendac(ri_id)

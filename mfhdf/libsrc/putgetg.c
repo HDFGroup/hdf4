@@ -17,8 +17,8 @@
  *
  *	This file supports netCDF variable I/O for generalized hyperslabs.
  *	A generalized hyperslab is one in which the locations of the
- *	memory-resident data values may be arbitrary, though they are 
- *	constrained to have a regular structure.  In addition, the values 
+ *	memory-resident data values may be arbitrary, though they are
+ *	constrained to have a regular structure.  In addition, the values
  *	of the netCDF variable may be accessed using non-unity strides.
  *
  *	$Id$
@@ -32,7 +32,7 @@
  * implementation is dependent upon caching in the lower layers.
  */
 #ifndef HDF
-    static 
+    static
 #endif
 int
 NCgenio(handle, varid, start, count, stride, imap, values)
@@ -54,7 +54,7 @@ NCgenio(handle, varid, start, count, stride, imap, values)
 
     if (maxidim < 0) {
 	/*
-	 * The variable is a scalar; consequently, there's only one thing 
+	 * The variable is a scalar; consequently, there's only one thing
 	 * to get and only one place to put it.  (Why was I called?)
 	 */
 	return NCvario(handle, varid, start, count, values);
@@ -95,10 +95,10 @@ NCgenio(handle, varid, start, count, stride, imap, values)
 				    : idim == 0 && IS_RECVAR(vp)
 					? handle->numrecs - mystart[idim]
 					: vp->shape[idim] - mystart[idim];
-	    mystride[idim]	= stride != NULL 
+	    mystride[idim]	= stride != NULL
 				    ? stride[idim]
 				    : 1;
-	    myimap[idim]	= imap != NULL 
+	    myimap[idim]	= imap != NULL
 				    ? imap[idim]
 				    : idim == maxidim
 					? vp->szof
@@ -110,7 +110,7 @@ NCgenio(handle, varid, start, count, stride, imap, values)
 	}
 
 	/*
-	 * As an optimization, adjust I/O parameters when the fastest 
+	 * As an optimization, adjust I/O parameters when the fastest
 	 * dimension has unity stride both externally and internally.
 	 * In this case, the user could have called a simpler routine
 	 * (i.e. ncvarget() or ncvarput()).
@@ -125,7 +125,7 @@ NCgenio(handle, varid, start, count, stride, imap, values)
 	 * Perform I/O.  Exit when done.
 	 */
 	for (;;) {
-	    int		iostat	= NCvario(handle, varid, mystart, iocount, 
+	    int		iostat	= NCvario(handle, varid, mystart, iocount,
 					  (Void*)valp);
 
 	    if (iostat != 0)
@@ -133,7 +133,7 @@ NCgenio(handle, varid, start, count, stride, imap, values)
 
 	    /*
 	     * The following code permutes through the variable's external
-	     * start-index space and it's internal address space.  At the 
+	     * start-index space and it's internal address space.  At the
 	     * UPC, this algorithm is commonly called `odometer code'.
 	     */
 	    idim = maxidim;
@@ -207,7 +207,7 @@ ncvoid *values ;
 
 	handle->xdrs->x_op = XDR_DECODE ;
 
-	return NCgenio(handle, varid, start, count, 
+	return NCgenio(handle, varid, start, count,
 		       stride, imap, (Void*)values);
 }
 
@@ -265,6 +265,6 @@ ncvoid *values ;
 
 	handle->xdrs->x_op = XDR_DECODE ;
 
-	return NCgenio(handle, varid, start, count, 
+	return NCgenio(handle, varid, start, count,
 		       stride, (long*)0, (Void*)values);
 }

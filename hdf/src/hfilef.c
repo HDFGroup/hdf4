@@ -133,10 +133,10 @@ nhxiscdir(_fcd dir, intf * dirlen)
 /*-----------------------------------------------------------------------------
  * Name:    hddontatexit
  * Purpose: Call HDdont_atexit
- * Inputs:  
+ * Inputs:
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
- * Invokes: HDdont_atexit 
+ * Invokes: HDdont_atexit
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
@@ -147,15 +147,15 @@ nhddontatexit(void)
 /*-----------------------------------------------------------------------------
  * Name: hglibverc
  * Purpose:  Calls Hgetlibversion
- * 
+ *
  * Outputs: major_v - major version number
  *          minor_v - minor version number
  *          release - release number
  *          string  - version number text string
  * Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
  *----------------------------------------------------------------------------*/
- 
- 
+
+
  FRETVAL(intf)
 #ifdef PROTOTYPE
 nhglibverc(intf *major_v, intf *minor_v, intf *release, _fcd string, intf *len)
@@ -173,11 +173,11 @@ nhglibverc(major_v, minor_v, release, string, len)
    uint32 cminor_v;
    uint32 crelease;
    intn   status;
-   
+
    cstring = NULL;
    if (*len) cstring = (char *) HDmalloc((uint32)*len + 1);
    status = Hgetlibversion(&cmajor_v, &cminor_v, &crelease, cstring);
- 
+
    HDpackFstring(cstring,  _fcdtocp(string),  *len);
 
    if(cstring)  HDfree((VOIDP)cstring);
@@ -192,22 +192,22 @@ nhglibverc(major_v, minor_v, release, string, len)
 /*-----------------------------------------------------------------------------
  * Name: hgfilverc
  * Purpose:  Calls Hgetfileversion
- * Inputs:  file_id - file identifier 
+ * Inputs:  file_id - file identifier
  * Outputs: major_v - major version number
  *          minor_v - minor version number
  *          release - release number
  *          string  - version number text string
  * Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
  *----------------------------------------------------------------------------*/
- 
- 
+
+
  FRETVAL(intf)
 #ifdef PROTOTYPE
 nhgfilverc(intf *file_id, intf *major_v, intf *minor_v, intf *release,
             _fcd string, intf *len)
 #else
 nhgfilverc(file_id, major_v, minor_v, release, string, len)
-           intf *file_id; 
+           intf *file_id;
            intf *major_v;
            intf *minor_v;
            intf *release;
@@ -220,12 +220,12 @@ nhgfilverc(file_id, major_v, minor_v, release, string, len)
    uint32 cminor_v;
    uint32 crelease;
    intn   status;
-   
+
    cstring = NULL;
    if (*len) cstring = (char *) HDmalloc((uint32)*len + 1);
    status = Hgetfileversion((int32) *file_id, &cmajor_v, &cminor_v, &crelease,
                             cstring);
- 
+
    HDpackFstring(cstring,  _fcdtocp(string),  *len);
 
    if(cstring)  HDfree((VOIDP)cstring);
@@ -240,7 +240,7 @@ nhgfilverc(file_id, major_v, minor_v, release, string, len)
 /*-----------------------------------------------------------------------------
  * Name:    hiishdf
  * Purpose: call Hishdf function
- * Inputs:  name: Name of the file 
+ * Inputs:  name: Name of the file
  *          namelen: length of name
  * Returns: TRUE(1) on success, FALSE (-1) on failure
  * Users:   HDF Fortran programmers
@@ -282,6 +282,6 @@ nhconfinfc (intf *coder_type,  intf * info)
     status = HCget_config_info(coder_type_c, &info_c);
     if (status == FAIL)
 	return(FAIL);
-    *info = (intf) info_c; 
+    *info = (intf) info_c;
     return (status);
 }

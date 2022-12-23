@@ -39,7 +39,7 @@ typedef struct {
 
 /* chunk lengths along each dimension and rank */
 typedef struct {
- int32   chunk_lengths[H4_MAX_VAR_DIMS]; 
+ int32   chunk_lengths[H4_MAX_VAR_DIMS];
  int     rank;
 } chunk_info_t;
 

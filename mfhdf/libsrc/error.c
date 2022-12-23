@@ -17,7 +17,7 @@
 /* $Id: error.c,v 1.14 90/02/23 16:08:55 davis Exp */
 
 
-/* 
+/*
  *   Utility Functions to implement consistant error logging
  * mechanisms for netcdf
  */
@@ -62,7 +62,7 @@ int errnum ;
 
 
 #ifdef USE_doprnt_FOR_vfprintf
-/* 
+/*
  * kludge for ze ancienne regieme
  */
 vfprintf(stream, fmt, va_alist)
@@ -98,7 +98,7 @@ nc_serror(fmt, va_alist)
      va_dcl
 #endif /* !NO_STDARG */
 {
-    
+
     if( ncopts & NC_VERBOSE ) {
     	va_list args ;
         static const char unknown[] = "Unknown Error";
@@ -114,7 +114,7 @@ nc_serror(fmt, va_alist)
         (void) fprintf(stderr,"%s: ", cdf_routine_name);
         (void) vfprintf(stderr,fmt,args) ;
         va_end(args) ;
-        
+
         switch(errnum) {
 	case 0 :
             ncerr = NC_NOERR ;
@@ -130,7 +130,7 @@ nc_serror(fmt, va_alist)
         (void) fflush(stderr);	/* to ensure log files are current */
         errno = 0 ; /* ??? */
     } /* NC_VERBOSE */
-    
+
     if( ncopts & NC_FATAL ) {
 	exit(ncopts) ;
     }

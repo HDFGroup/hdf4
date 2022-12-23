@@ -65,7 +65,7 @@ load_netcdf(rec_start)	/* write out record from in-memory structure */
 	coords[idim] = 0;
 	edges[idim] = dims[vars[varnum].dims[idim]].size;
     }
-    
+
     switch (vars[varnum].type) {
       case NC_CHAR:
       case NC_BYTE:
@@ -103,7 +103,7 @@ load_netcdf(rec_start)	/* write out record from in-memory structure */
 char *ss;			/* returned string representing dd */
 {
     char *cp, *ep;
-    
+
     cp = ss;
     if (*cp == '-')
         cp++;
@@ -163,7 +163,7 @@ gen_load_c(rec_start)
 	    strcat(stmnt, s2);
 	}
 	cline(stmnt);
-	
+
 	/* initialize edge lengths from upper left corner */
 	sprintf(stmnt, "    static long %s_edges[] = {", vars[varnum].name);
 	if (vars[varnum].dims[0] == rec_dim)
@@ -182,12 +182,12 @@ gen_load_c(rec_start)
 	    strcat(stmnt, s2);
 	}
 	cline(stmnt);
-	
+
 	/* load variable with data values using static initialization */
 	sprintf(stmnt, "    static %s %s[] = {",
 		ncctype(vars[varnum].type),
 		vars[varnum].name);
-	
+
 	stmnt_len = strlen(stmnt);
 	switch (vars[varnum].type) {
 	  case NC_CHAR:
@@ -294,7 +294,7 @@ gen_load_c(rec_start)
 	sprintf(stmnt, "    static %s %s = {",
 		ncctype(vars[varnum].type),
 		vars[varnum].name);
-	
+
 	switch (vars[varnum].type) {
 	  case NC_CHAR:
 	    val_string = cstrstr((char *) rec_start, var_len);
@@ -477,7 +477,7 @@ gen_load_fortran(rec_start)  /* make Fortran to put record */
 	}
 	fstrcat(stmnt, "/", &stmnt_len);
 	fline(stmnt);
-	
+
 	sprintf(stmnt, "call ncvpt(ncid, %sid, corner, edges, %s, iret)",
 		vars[varnum].name, vars[varnum].name);
     } else {			/* for strings, call ncvptc() */
@@ -493,7 +493,7 @@ gen_load_fortran(rec_start)  /* make Fortran to put record */
 	  dimprod *= dims[vars[varnum].dims[idim]].size;
 	if (vars[varnum].dims[0] != rec_dim)
 	  dimprod *= dims[vars[varnum].dims[0]].size;
-	
+
 	sprintf(stmnt, "call ncvptc(ncid, %sid, corner, edges, %s, %d, iret)",
 		vars[varnum].name, vars[varnum].name, dimprod);
     }

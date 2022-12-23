@@ -31,7 +31,7 @@
  *-------------------------------------------------------------------------
  */
 
-uint32 gattr_diff(int32 sdid1, 
+uint32 gattr_diff(int32 sdid1,
                   int32 sdid2,
                   diff_opt_t *opt)
 {
@@ -43,10 +43,10 @@ uint32 gattr_diff(int32 sdid1,
  uint32  nfound=0;
 
  SDfileinfo(sdid1, &nvars1, &ngatts1);
- 
+
  /* get global attributes */
- 
- for (ia = 0; ia < ngatts1; ia++) 
+
+ for (ia = 0; ia < ngatts1; ia++)
  {
   SDattrinfo(sdid1, ia, att1.name, &att1.type, &att1.len);
   ib = SDfindattr(sdid2, att1.name);
@@ -60,27 +60,27 @@ uint32 gattr_diff(int32 sdid1,
   }
   iret2 = SDattrinfo(sdid2, ib, att2.name, &att2.type, &att2.len);
   att1.val = (void *) malloc((unsigned) (att1.len*DFKNTsize(att1.type | DFNT_NATIVE)));
-  if (!att1.val) 
+  if (!att1.val)
   {
    fprintf(stderr,"Out of memory!\n");
    goto out;
   }
   att2.val = (void *) malloc((unsigned) (att2.len*DFKNTsize(att2.type | DFNT_NATIVE)));
-  if (!att2.val) 
+  if (!att2.val)
   {
    fprintf(stderr,"Out of memory!\n");
    goto out;
   }
   SDreadattr(sdid1, ia, att1.val);
   iret2 = SDreadattr(sdid2, ib, att2.val);
-  
+
   iret2 = 0;
-  if (att1.type != att2.type || att1.len != att2.len) 
+  if (att1.type != att2.type || att1.len != att2.len)
    iret2 = 1;
   if (iret2 == 0)       /* compare the data */
-   iret2 = memcmp((void *) att1.val, att2.val, 
+   iret2 = memcmp((void *) att1.val, att2.val,
    att1.len*DFKNTsize(att1.type | DFNT_NATIVE));
-  
+
   if (iret2 != 0)
   {
    printf("\n---------------------------\n");
@@ -90,19 +90,19 @@ uint32 gattr_diff(int32 sdid1,
    printf("\n> ");
    pr_att_vals((nc_type)att2.type, att2.len, att2.val);
    printf("\n");
-   
+
    nfound ++;
   }
-  
+
   free ((char *) att1.val);
   free ((char *) att2.val);
  }
- 
+
  /* check any global attributes in file2 but not in file1 */
- 
+
  iret2 =  SDfileinfo(sdid2, &nvars2, &ngatts2);
- 
- for (ib = 0; ib < ngatts2; ib++) 
+
+ for (ib = 0; ib < ngatts2; ib++)
  {
   iret2 = SDattrinfo(sdid2, ib, att2.name, &att2.type, &att2.len);
   ia = SDfindattr(sdid1, att2.name);
@@ -111,11 +111,11 @@ uint32 gattr_diff(int32 sdid1,
    printf("\n---------------------------\n");
    printf("< '%s' does not exist in file1\n", att2.name);
    printf("> %s\n", att2.name);
-   
+
    nfound ++;
   }
  }
- 
+
  return nfound;
 
 

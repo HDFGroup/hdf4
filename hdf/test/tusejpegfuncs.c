@@ -34,7 +34,7 @@ intn comp_using_jpeglib(
     int row_stride;		/* physical row width in image buffer */
 
     /* JPEG object for JPEG compression parameters and pointers to working space
-       (which is allocated as needed by the JPEG library). */ 
+       (which is allocated as needed by the JPEG library). */
     struct jpeg_compress_struct cinfo;
 
     /* This struct represents a JPEG error handler.  It is declared separately
@@ -46,19 +46,19 @@ intn comp_using_jpeglib(
      * struct, to avoid dangling-pointer problems.
      */
     struct jpeg_error_mgr jerr;
-  
+
     /* Initialize JPEG compression object */
-  
+
     /* We have to set up the error handler first, in case the initialization
      * step fails.  (Unlikely, but it could happen if you are out of memory.)
      * This routine fills in the contents of struct jerr, and returns jerr's
      * address which we place into the link field in cinfo.
      */
     cinfo.err = jpeg_std_error(&jerr);
-  
+
     /* Initialize the JPEG compression object. */
     jpeg_create_compress(&cinfo);
-  
+
     /* Open the output file to write binary data */
     if ((outfile = fopen(filename, "ab")) == NULL)
     {
@@ -75,9 +75,9 @@ intn comp_using_jpeglib(
 
     /* Specify output file */
     jpeg_stdio_dest(&cinfo, outfile);
-  
+
     /* Set parameters for compression */
-  
+
     /* Supply a description of the input image.
      * Four fields of the cinfo struct must be filled in:
      */
@@ -85,7 +85,7 @@ intn comp_using_jpeglib(
     cinfo.image_height = im_height;
     cinfo.input_components = im_ncomps;/* # of color components per pixel */
     cinfo.in_color_space = JCS_RGB; 	/* colorspace of input image */
-  
+
     /* Set default compression parameters.  At least cinfo.in_color_space must
        be set before calling jpeg_set_defaults, since the defaults depend on the
        source color space */
@@ -215,7 +215,7 @@ intn decomp_using_jpeglib(
 	(void) jpeg_read_scanlines(&cinfo, buffer, 1);
 
 	/* Saved read line to the local buffer */
-	memcpy(ptr, buffer[0], row_stride); 
+	memcpy(ptr, buffer[0], row_stride);
 	ptr = ptr + row_stride;
     }
 

@@ -96,7 +96,7 @@ hdf_init_destination(struct jpeg_compress_struct *cinfo_ptr)
  * Returns: none.
  * Users:   JPEG library
  * Invokes: HDF low-level I/O functions
- * Remarks: 
+ * Remarks:
  *---------------------------------------------------------------------------*/
 boolean
 hdf_empty_output_buffer(struct jpeg_compress_struct *cinfo_ptr)
@@ -253,7 +253,7 @@ DFCIjpeg(int32 file_id, uint16 tag, uint16 ref, int32 xdim, int32 ydim,
     if (jpeg_message_handler != NULL)
     {
         jerr_ptr->output_message = jpeg_message_handler;
-    } 
+    }
 
     /* Initialize the JPEG compression stuff */
     jpeg_create_compress(cinfo_ptr);

@@ -21,8 +21,8 @@ C
 C     Function declaration
 C
       integer hopen, hclose
-      integer mgstart, mgn2ndx, mgselct, mggltid, mgglinf, 
-     +        mgrclut, mgendac, mgend 
+      integer mgstart, mgn2ndx, mgselct, mggltid, mgglinf,
+     +        mgrclut, mgendac, mgend
 C
 C**** Variable declaration *******************************************
 C
@@ -61,7 +61,7 @@ C     Obtain information about the palette.
 C
       status = mgglinf(pal_id, n_comps, data_type, interlace_mode,
      +                 n_entries_out)
-      write(*,*) ' Palette: ', n_comps, ' components;  ', 
+      write(*,*) ' Palette: ', n_comps, ' components;  ',
      +           n_entries_out, ' entries'
 C
 C     Read the palette.
@@ -73,7 +73,7 @@ C
       write(*,*) "Palette data"
       do 10 i = 1, n_entries_out
          write(*,*) (ichar(palette_data(j,i)), j = 1, n_comps)
-10    continue  
+10    continue
 C
 C     Terminate access to the raster image and to the GR interface,
 C     and close the HDF file.

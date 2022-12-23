@@ -135,7 +135,7 @@ DFPgetpal(const char *filename, void * palette)
   ret_value = Hclose(file_id);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -206,10 +206,10 @@ DFPputpal(const char *filename, const void * palette, intn overwrite, const char
   if(Hexist(file_id,DFTAG_LUT,Lastref)==FAIL)
     Hdupdd(file_id, DFTAG_LUT, Lastref, DFTAG_IP8, Lastref);
 
-  ret_value = (Hclose(file_id)); 
+  ret_value = (Hclose(file_id));
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -350,7 +350,7 @@ DFPnpals(const char *filename)
   ret_value = npals;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -406,7 +406,7 @@ DFPreadref(const char *filename, uint16 ref)
   ret_value = (Hclose(file_id));
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -554,7 +554,7 @@ DFPIopen(const char *filename, intn acc_mode)
   ret_value = (file_id);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */

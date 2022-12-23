@@ -26,7 +26,7 @@
 #include "hdf.h"
 #include "hproto_fortran.h"
 
-/* ----------------- vsfcfdx ---------------------- 
+/* ----------------- vsfcfdx ----------------------
  *  get field index
  *  VSfindex -- vsfcfdx -- vsffidx
  */
@@ -66,11 +66,11 @@ nvsfcsat(intf *vsid, intf *findex, _fcd attrnm, intf *dtype,
               (int32) *dtype, (int32) *count, (VOIDP) values);
     HDfree(attrname);
     return(ret);
-} 
+}
 
 /* ----------------------------------------------------
  * vsfcsca -- set char attr for vdata or its field
- * 
+ *
  * VSsetattr -- vsfcsca -- vsfscat
  */
 
@@ -81,7 +81,7 @@ nvsfcsca(intf *vsid, intf *findex, _fcd attrnm, intf *dtype,
     intf ret;
     char *attrname;
     int32 cfindex;
- 
+
     attrname = HDf2cstring(attrnm, (intn) *attrnmlen);
     if (!attrname) return(FAIL);
     cfindex = *findex;
@@ -102,7 +102,7 @@ nvsfnats(intf *vsid)
 {
    intf ret;
 
-   ret = (intf) VSnattrs((int32) *vsid); 
+   ret = (intf) VSnattrs((int32) *vsid);
    return(ret);
 }
 
@@ -114,7 +114,7 @@ nvsfnats(intf *vsid)
 
 FRETVAL(intf)
 nvsffnas(intf *vsid, intf *findex)
-{ 
+{
     intf ret;
     int32 cfindex;
 
@@ -139,7 +139,7 @@ nvsfcfda(intf *vsid, intf *findex, _fcd attrnm, intf *attrnmlen)
     attrname = HDf2cstring(attrnm, (intn) *attrnmlen);
     if (!attrname) return(FAIL);
     cfindex = *findex;
-    
+
     ret = (intf) VSfindattr((int32) *vsid, (int32) cfindex, attrname);
     HDfree(attrname);
     return(ret);
@@ -183,7 +183,7 @@ nvsfcain(intf *vsid, intf *findex, intf *aindex, _fcd attrname,
 
 
 /* ---------------------------------------------------------
- * vsfgnat -- get values of a numeric attribute 
+ * vsfgnat -- get values of a numeric attribute
  * VSgetattr -- vsfgnat
  */
 
@@ -200,7 +200,7 @@ nvsfgnat(intf *vsid, intf *findex, intf *aindex, intf *values)
 }
 
 /* --------------------------------------------------------
- * vsfgcat -- get values of a char type attribute 
+ * vsfgcat -- get values of a char type attribute
  * VSgetattr -- vsfgcat
  */
 
@@ -243,35 +243,35 @@ nvfcsatt(intf *vgid, _fcd attrnm, intf *dtype,
 
     attrname = HDf2cstring(attrnm, (intn) *attrnmlen);
     if (!attrname) return(FAIL);
-    ret = (intf) Vsetattr((int32) *vgid, attrname, (int32) *dtype, 
+    ret = (intf) Vsetattr((int32) *vgid, attrname, (int32) *dtype,
                    (int32) *count, (VOIDP) values);
     HDfree(attrname);
     return(ret);
-} 
+}
 
 /* ----------------------------------------------------
  * vfcscat -- set char attr for vgroup
- * 
+ *
  * Vsetattr -- vfcscat -- vfscatt
  */
 
 FRETVAL(intf)
-nvfcscat(intf *vgid, _fcd attrnm, intf *dtype, intf *count, 
+nvfcscat(intf *vgid, _fcd attrnm, intf *dtype, intf *count,
          _fcd values, intf *attrnmlen)
 {
     intf ret;
     char *attrname;
- 
+
     attrname = HDf2cstring(attrnm, (intn) *attrnmlen);
     if (!attrname) return(FAIL);
-    ret = (intf) Vsetattr((int32) *vgid, attrname, (int32) *dtype, 
+    ret = (intf) Vsetattr((int32) *vgid, attrname, (int32) *dtype,
            (int32) *count, (VOIDP) _fcdtocp(values));
     HDfree(attrname);
     return(ret);
 }
 
 /* -------------------------------------------------------
- * vfnatts -- get number of attributes of a vgroup 
+ * vfnatts -- get number of attributes of a vgroup
  * Vnattrs -- vfnatts
  */
 
@@ -280,7 +280,7 @@ nvfnatts(intf *vgid)
 {
    intf ret;
 
-   ret = (intf) Vnattrs((int32) *vgid); 
+   ret = (intf) Vnattrs((int32) *vgid);
    return(ret);
 }
 
@@ -313,13 +313,13 @@ nvfainfo(intf *vgid, intf *aindex, _fcd attrname,
 {
     intf ret;
     ret = (intf) Vattrinfo((int32) *vgid, (int32) *aindex,
-          _fcdtocp(attrname), (int32 *) dtype, (int32 *) count, 
+          _fcdtocp(attrname), (int32 *) dtype, (int32 *) count,
           (int32 *) size);
     return(ret);
 }
 
 /* ---------------------------------------------------------
- * vfgnatt -- get values of a numeric attribute 
+ * vfgnatt -- get values of a numeric attribute
  * Vgetattr -- vfgnatt
  */
 
@@ -333,7 +333,7 @@ nvfgnatt(intf *vgid, intf *aindex, intf *values)
 }
 
 /* --------------------------------------------------------
- * vfgcatt -- get values of a char type attribute 
+ * vfgcatt -- get values of a char type attribute
  * Vgetattr -- vfgcatt
  */
 

@@ -14,7 +14,7 @@
 /* $Id$ */
 
 /*
- * These is a first pass at rewriting how these tests for exteranl 
+ * These is a first pass at rewriting how these tests for exteranl
  * elements were done -GV
  */
 #include "tproto.h"
@@ -105,7 +105,7 @@ test_hextelt(void)
     aid1 = HXcreate(fid, 1000, 2, "t3.hdf", (int32) 0, (int32) 0);
     CHECK_VOID(aid1, FAIL, "HXcreate");
 
-    MESSAGE(5, printf("Writing string '%s'(%lu bytes) to file #3\n", 
+    MESSAGE(5, printf("Writing string '%s'(%lu bytes) to file #3\n",
                       STRING, (unsigned long)HDstrlen(STRING));
         );
     ret = Hwrite(aid1, (int32)HDstrlen(STRING) + 1, STRING);
@@ -234,7 +234,7 @@ test_hextelt(void)
           if (inbuf[i] != outbuf[i])
             {
                 errflag = 1;
-                MESSAGE(8, printf("Wrong data at %d, out %d in %d\n", 
+                MESSAGE(8, printf("Wrong data at %d, out %d in %d\n",
                                   i, outbuf[i], inbuf[i]);
                         );
                 errors++;
@@ -363,7 +363,7 @@ test_hextelt(void)
           if (inbuf[i] != outbuf[i])
             {
                 errflag = 1;
-                MESSAGE(8, printf("Wrong data at %d, out %d in %d\n", 
+                MESSAGE(8, printf("Wrong data at %d, out %d in %d\n",
                                   i, outbuf[i], inbuf[i]);
                         );
                 errors++;
@@ -423,7 +423,7 @@ test_hextelt(void)
 
     ret = HXsetcreatedir("testdir");
     CHECK_VOID(ret, FAIL, "HXsetcreatedir");
-   
+
     MESSAGE(5, printf("Creating an external element in file testdir/t5.hdf\n");
         );
     aid1 = HXcreate(fid, 1000, 5, "t5.hdf", (int32) 0, (int32) 0);
@@ -434,7 +434,7 @@ test_hextelt(void)
     ret = Hwrite(aid1, 2000, outbuf);
     CHECK_VOID(ret, FAIL, "Hwrite");
 
-    MESSAGE(5, printf("Ending access to element and closing header file %s\n", 
+    MESSAGE(5, printf("Ending access to element and closing header file %s\n",
                       TESTFILE_NAME1);
         );
     ret = Hendaccess(aid1);

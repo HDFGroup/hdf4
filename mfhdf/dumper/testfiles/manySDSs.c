@@ -4,7 +4,7 @@
 #define Y_LENGTH 10
 #define NUM_DSETS 40
 
-main( ) 
+main( )
 {
     int32 sd_id, sds_id, istat, sds_idx;
     int32 sds_list[NUM_DSETS];
@@ -35,7 +35,7 @@ main( )
 	fprintf(stderr, "manySDSs: SDsetattr returns status: %d\n", istat);
 	exit(-1);
     }
- 
+
     /* Define the rank and dimensions of the data set to be created. */
     rank = 2;
     dims[0] = SD_UNLIMITED;

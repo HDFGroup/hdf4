@@ -37,16 +37,16 @@
  *-------------------------------------------------------------------------
  */
 
-void match_table_add (match_table_t *table, 
-                      unsigned *flags, 
-                      char* path, 
-                      int32 tag1, 
+void match_table_add (match_table_t *table,
+                      unsigned *flags,
+                      char* path,
+                      int32 tag1,
                       int32 ref1,
-                      int32 tag2, 
+                      int32 tag2,
                       int32 ref2 )
 {
     uint32 i;
-    
+
     if (table->nobjs == table->size) {
         table->size *= 2;
         table->objs = (match_info_t*)HDrealloc(table->objs, table->size * sizeof(match_info_t));
@@ -57,7 +57,7 @@ void match_table_add (match_table_t *table,
             table->objs[i].flags[0] = table->objs[i].flags[1] = -1;
         }
     }
-    
+
     i = table->nobjs++;
     table->objs[i].tag1 = tag1;
     table->objs[i].ref1 = ref1;
@@ -97,7 +97,7 @@ void match_table_init( match_table_t **tbl )
         table->objs[i].tag2 = table->objs[i].ref2 = -1;
         table->objs[i].flags[0] = table->objs[i].flags[1] = -1;
     }
-    
+
     *tbl = table;
 }
 

@@ -40,50 +40,50 @@ int main(int argc, char **argv)
     options_t   options;            /*the global options */
     int         i;
     int         ret;
-    
-    
+
+
     /* initialize options  */
     hrepack_init (&options,0);
-    
-    for ( i = 1; i < argc; i++) 
+
+    for ( i = 1; i < argc; i++)
     {
         if (strcmp(argv[i], "-i") == 0) {
             infile = argv[++i];
         }
-        else if (strcmp(argv[i], "-o") == 0) {       
-            outfile = argv[++i]; 
+        else if (strcmp(argv[i], "-o") == 0) {
+            outfile = argv[++i];
         }
-        else if (strcmp(argv[i], "-h") == 0) {       
+        else if (strcmp(argv[i], "-h") == 0) {
 	    goto out;
         }
-        else if (strcmp(argv[i], "-v") == 0) {       
+        else if (strcmp(argv[i], "-v") == 0) {
             options.verbose = 1;
         }
-        else if (strcmp(argv[i], "-V") == 0) {       
+        else if (strcmp(argv[i], "-V") == 0) {
             printf("%s, %s\n\n", argv[0], LIBVER_STRING );
             exit(0);
         }
-        else if (strcmp(argv[i], "-t") == 0) {  
-            
+        else if (strcmp(argv[i], "-t") == 0) {
+
             /* add the -t option */
             if (hrepack_addcomp(argv[i+1],&options)<0)
                 goto out;
-            
+
             /* jump to next */
             ++i;
         }
-        else if (strcmp(argv[i], "-c") == 0) {       
-            
+        else if (strcmp(argv[i], "-c") == 0) {
+
             /* parse the -c option */
             if (hrepack_addchunk(argv[i+1],&options)<0)
                 goto out;
-            
+
             /* jump to next */
             ++i;
         }
-        
-        else if (strcmp(argv[i], "-m") == 0) {       
-            
+
+        else if (strcmp(argv[i], "-m") == 0) {
+
             options.threshold = parse_number(argv[i+1]);
             if (options.threshold==-1) {
                 printf("Error: Invalid treshold size <%s>\n",argv[i+1]);
@@ -91,41 +91,41 @@ int main(int argc, char **argv)
             }
             ++i;
         }
-        
-        else if (strcmp(argv[i], "-f") == 0) {       
+
+        else if (strcmp(argv[i], "-f") == 0) {
             if (read_info(argv[++i],&options)<0)
                 goto out;
         }
-        
+
         else if (argv[i][0] == '-') {
             goto out;
         }
     }
-    
-    if (infile == NULL || outfile == NULL) 
+
+    if (infile == NULL || outfile == NULL)
         goto out;
-    
+
     /* zip it */
     ret=hrepack_main(infile,outfile,&options);
-    
+
     /* free tables */
     hrepack_end(&options);
-    
+
     /* unix error return code */
     if (ret==-1)
         return 1;
     else
         return 0;
-    
+
 out:
 
     usage();
-    
+
     /* free tables */
     hrepack_end(&options);
     return 0;
-    
-    
+
+
 }
 
 
@@ -139,7 +139,7 @@ out:
  *-------------------------------------------------------------------------
  */
 
-static 
+static
 void usage(void)
 {
 

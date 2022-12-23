@@ -20,7 +20,7 @@
  *
  * Description:
  *      This program creates binary and text input files that can be
- *      used to test the hdfimport program.  
+ *      used to test the hdfimport program.
  *
  *      June 1, 1990
  *      Bob Weaver, baw@inel.gov
@@ -46,25 +46,25 @@ main(int argc, char * argv[] )
     float32     rowo4 = (float32)11.0e0, colo4 = (float32)21.0e0, plno4 = (float32)51.0e0;
     float32     rowi4 = (float32)1.0e0, coli4 = (float32)2.0e0, plni4 = (float32)5.0e0;
     float32     ezero = (float32)0.0e0;
-    
-    int32     b32i2[3][4], b32i3[5][3][4];          
+
+    int32     b32i2[3][4], b32i3[5][3][4];
     int32     row4i[3], col4i[4], pln4i[5];
     int32     rowo4i = (int32)11 , colo4i = (int32)21 , plno4i = (int32)51 ;
     int32     rowi4i = (int32)1 , coli4i = (int32)2 , plni4i = (int32)5 ;
     int32 	  ezeroi = (int32)0;
-    	
-    int16     b16i2[3][4], b16i3[5][3][4];          
+
+    int16     b16i2[3][4], b16i3[5][3][4];
     int16     row4i16[3], col4i16[4], pln4i16[5];
     int16     rowo4i16 = (int16)11 , colo4i16 = (int16)21 , plno4i16 = (int16)51 ;
     int16     rowi4i16 = (int16)1 , coli4i16 = (int16)2 , plni4i16 = (int16)5 ;
     int16 	  ezeroi16 = (int16)0;
-    
-    int8     b8i2[3][4], b8i3[5][3][4];          
+
+    int8     b8i2[3][4], b8i3[5][3][4];
     int8     row4i8[3], col4i8[4], pln4i8[5];
     int8     rowo4i8 = (int8)11 , colo4i8 = (int8)21 , plno4i8 = (int8)51 ;
     int8     rowi4i8 = (int8)1 , coli4i8 = (int8)2 , plni4i8 = (int8)5 ;
     int8 	  ezeroi8 = (int8)0;
-    
+
     float64     b64r2[3][4], b64r3[5][3][4];
     float64     row8[3], col8[4], pln8[5];
     float64     rowo8 = 11.0e0, colo8 = 21.0e0, plno8 = 51.0e0;
@@ -76,7 +76,7 @@ main(int argc, char * argv[] )
     const char *fp64 = "FP64";
     const char *in32 = "IN32";
     const char *in16 = "IN16";
-    const char *in8  = "IN08";	
+    const char *in8  = "IN08";
 
     /* shut compiler up */
     argv=argv; argc=argc;
@@ -92,25 +92,25 @@ main(int argc, char * argv[] )
     row4[0] = rowo4;
     col4[0] = colo4;
     pln4[0] = plno4;
-    
+
     row8[0] = rowo8;
     col8[0] = colo8;
     pln8[0] = plno8;
-    
+
     row4i[0] = rowo4i;
     col4i[0] = colo4i;
     pln4i[0] = plno4i;
-    
+
     row4i16[0] = rowo4i16;
     col4i16[0] = colo4i16;
     pln4i16[0] = plno4i16;
-    
+
     row4i8[0] = rowo4i8;
     col4i8[0] = colo4i8;
     pln4i8[0] = plno4i8;
-    
-    
-    
+
+
+
 
     for (i = 1; i < nrow; i++)
       {
@@ -118,15 +118,15 @@ main(int argc, char * argv[] )
           row8[i] = row8[i - 1] + rowi8;
 	    row4i[i] = row4i[i - 1] + rowi4i;
 	    row4i16[i] = row4i16[i - 1] + rowi4i16;
-	    row4i8[i] = row4i8[i - 1] + rowi4i8;      
+	    row4i8[i] = row4i8[i - 1] + rowi4i8;
 	}
-	    
+
     for (j = 1; j < ncol; j++)
       {
           col4[j] = col4[j - 1] + coli4;
           col8[j] = col8[j - 1] + coli8;
 	    col4i[j] = col4i[j - 1] + coli4i;
-	    col4i16[j] = col4i16[j - 1] + coli4i16;	    
+	    col4i16[j] = col4i16[j - 1] + coli4i16;
 	    col4i8[j] = col4i8[j - 1] + coli4i8;
       }
     for (k = 1; k < npln; k++)
@@ -134,9 +134,9 @@ main(int argc, char * argv[] )
           pln4[k] = pln4[k - 1] + plni4;
           pln8[k] = pln8[k - 1] + plni8;
 	    pln4i[k] = pln4i[k - 1] + plni4i;
-	    pln4i16[k] = pln4i16[k - 1] + plni4i16;	    
+	    pln4i16[k] = pln4i16[k - 1] + plni4i16;
 	    pln4i8[k] = pln4i8[k - 1] + plni4i8;
-	    	    
+
       }
 
     /*
@@ -151,9 +151,9 @@ main(int argc, char * argv[] )
             {
                 b32r2[i][j] = row4[i] + col4[j];
                 b64r2[i][j] = row8[i] + col8[j];
-		    b32i2[i][j] = row4i[i] + col4i[j];  
-		    b16i2[i][j] = row4i16[i] + col4i16[j]; 
-		    b8i2[i][j] = row4i8[i] + col4i8[j]; 
+		    b32i2[i][j] = row4i[i] + col4i[j];
+		    b16i2[i][j] = row4i16[i] + col4i16[j];
+		    b8i2[i][j] = row4i8[i] + col4i8[j];
             }
       }
 
@@ -199,7 +199,7 @@ main(int argc, char * argv[] )
           (void) fprintf(sp, "\n");
       }
     (void) fclose(sp);
-    
+
      sp = fopen("ctxti2", "w");
     (void) fprintf(sp, "%s\n", text);
     (void) fprintf(sp, "%10d%10d%10d\n", ione, nrow, ncol);
@@ -235,7 +235,7 @@ main(int argc, char * argv[] )
           (void) fprintf(sp, "\n");
       }
     (void) fclose(sp);
-    
+
     sp = fopen("ctxti82", "w");
     (void) fprintf(sp, "%s\n", text);
     (void) fprintf(sp, "%10d%10d%10d\n", ione, nrow, ncol);
@@ -253,7 +253,7 @@ main(int argc, char * argv[] )
           (void) fprintf(sp, "\n");
       }
     (void) fclose(sp);
-    
+
     sp = fopen("ctxtr3", "w");
     (void) fprintf(sp, "%s\n", text);
     (void) fprintf(sp, "%10d%10d%10d\n", npln, nrow, ncol);
@@ -330,7 +330,7 @@ main(int argc, char * argv[] )
             (void) fwrite((char *) &b16i2[i][j], sizeof(int16), 1,
                           sp);
     (void) fclose(sp);
-    
+
      sp = fopen("cb8i2", "w");
     (void) fwrite(in8, strlen(in8), 1, sp);
     (void) fwrite((char *) &ione, sizeof(int), 1, sp);
@@ -367,7 +367,7 @@ main(int argc, char * argv[] )
                 (void) fwrite((char *) &b32r3[k][i][j],
                               sizeof(float32), 1, sp);
     (void) fclose(sp);
-    
+
      sp = fopen("cb32i3", "w");
     (void) fwrite(in32, strlen(in32), 1, sp);
     (void) fwrite((char *) &npln, sizeof(int), 1, sp);
@@ -387,7 +387,7 @@ main(int argc, char * argv[] )
             (void) fwrite((char *) &b32i3[k][i][j], sizeof(int32), 1,
                           sp);
     (void) fclose(sp);
-    
+
      sp = fopen("cb16i3", "w");
     (void) fwrite(in16, strlen(in16), 1, sp);
     (void) fwrite((char *) &npln, sizeof(int), 1, sp);
@@ -407,7 +407,7 @@ main(int argc, char * argv[] )
             (void) fwrite((char *) &b16i3[k][i][j], sizeof(int16), 1,
                           sp);
     (void) fclose(sp);
-    
+
      sp = fopen("cb8i3", "w");
     (void) fwrite(in8, strlen(in8), 1, sp);
     (void) fwrite((char *) &npln, sizeof(int), 1, sp);
@@ -427,7 +427,7 @@ main(int argc, char * argv[] )
             (void) fwrite((char *) &b8i3[k][i][j], sizeof(int8), 1,
                           sp);
     (void) fclose(sp);
-  
+
     /*
      * binary 64-bit file - rank 2 & 3
      */

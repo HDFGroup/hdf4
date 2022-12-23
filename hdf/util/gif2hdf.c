@@ -19,7 +19,7 @@ main(argv , argc)
 int argv;
 char *argc[];
 {
-	
+
 	GIFTOMEM GifMemoryStruct;
 	GIFIMAGEDESC gifImageDesc;
 
@@ -40,15 +40,15 @@ char *argc[];
 	GifMemoryStruct.GifPlainTextExtension      = NULL;
 	GifMemoryStruct.GifApplicationExtension    = NULL;
 	GifMemoryStruct.GifCommentExtension        = NULL;
-	
-	
+
+
 	if (argv<3)
 	{
 		printf("\n\nWrong Usage. Use:\ngif2hdf <GIFFILE> <HDFFILE>\n\n");
 		return(-1);
 	}
-	
-	
+
+
 
     HDstrncpy(GIFFileName , argc[1] , VSNAMELENMAX - 1);
     HDstrncpy(HDFFileName , argc[2] , VSNAMELENMAX - 1);
@@ -79,7 +79,7 @@ char *argc[];
 
 	/*
 	** Call Gif2Mem and break the whole file into parts.
-	** Gif2Mem also calls decompresses the images so we don't 
+	** Gif2Mem also calls decompresses the images so we don't
 	** have to worry about that
 	*/
 	GifMemoryStruct = Gif2Mem(MemGif);
@@ -88,13 +88,13 @@ char *argc[];
 		exit(-1);
 	}
 	fclose(fpGif);
-	
-	/* Call WriteHDF from here. Go ahead and change WriteHDF to write 
+
+	/* Call WriteHDF from here. Go ahead and change WriteHDF to write
 	** whatever format you want
 	*/
 	if (WriteHDF(GifMemoryStruct , argc[2] , argc[1]))
 		printf("HDF Write Error\n\n");
-	
+
 	/* Free all buffers */
 	ImageCount = (int32)(GifMemoryStruct.GifHeader)->ImageCount;
 
@@ -103,15 +103,15 @@ char *argc[];
 		gifImageDesc = *(GifMemoryStruct.GifImageDesc[i]);
 		if (gifImageDesc.Image != NULL)
             HDfree(gifImageDesc.Image);
-	
+
 		if (GifMemoryStruct.GifGraphicControlExtension[i] != NULL)
             HDfree(GifMemoryStruct.GifGraphicControlExtension[i]);
-		
+
 	}
     HDfree(StartPos);
 
     HDfree (GifMemoryStruct.GifHeader);
-	
+
 	if (GifMemoryStruct.GifApplicationExtension != NULL)
         HDfree (GifMemoryStruct.GifApplicationExtension);
 

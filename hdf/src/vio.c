@@ -33,13 +33,13 @@ LIBRARY PRIVATE ROUTINES
  VSPhshutdown  --  shutdown the Vset interface
 
 EXPORTED ROUTINES
- vinst         -- Looks thru vstab for vsid and return the addr of the vdata 
+ vinst         -- Looks thru vstab for vsid and return the addr of the vdata
                    instance where vsid is found.
  vexistvs      -- Tests if a vdata with id vsid is in the file's vstab.
- vpackvs       -- Packs a VDATA structure into a compact form suitable for 
+ vpackvs       -- Packs a VDATA structure into a compact form suitable for
                    storing in the HDF file.
  vunpackvs     -- Convert a packed form(from HDF file) to a VDATA structure.
-                   This routine will also initalize the VDATA structure as 
+                   This routine will also initalize the VDATA structure as
                    much as it can.
  vsdestroynode -- Frees B-Tree nodes.
  VSPgetinfo    -- Read in the "header" information about the Vdata.
@@ -51,8 +51,8 @@ EXPORTED ROUTINES
  VSQueryref    -- Return the ref of the given Vdata.
  vswritelist   -- Return the writelist of a Vdata.
  VSgetversion  -- Return the version number of a Vdata.
- VSdelete      -- Remove a Vdata from its file.  This function will both 
-                   remove the Vdata from the internal Vset data structures 
+ VSdelete      -- Remove a Vdata from its file.  This function will both
+                   remove the Vdata from the internal Vset data structures
                    as well as from the file.
 
  NOTE: Another pass needs to made through this file to update some of
@@ -102,7 +102,7 @@ VSIget_vdata_node(void)
       {
         ret_value       = vdata_free_list;
         vdata_free_list = vdata_free_list->next;
-      } 
+      }
     else /* allocate a new node */
       {
         if((ret_value=(VDATA *)HDmalloc(sizeof(VDATA)))==NULL)
@@ -113,7 +113,7 @@ VSIget_vdata_node(void)
     HDmemset(ret_value,0,sizeof(VDATA));
 
 done:
-  if(ret_value == NULL)   
+  if(ret_value == NULL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -134,7 +134,7 @@ done:
     No return value
 
 *******************************************************************************/
-void 
+void
 VSIrelease_vdata_node(VDATA *vs /* IN: vdata to release */)
 {
 #ifdef LATER
@@ -171,7 +171,7 @@ VSIget_vsinstance_node(void)
       {
         ret_value            = vsinstance_free_list;
         vsinstance_free_list = vsinstance_free_list->next;
-      }  
+      }
     else /* allocate a new vsinstance record */
       {
         if((ret_value=(vsinstance_t *)HDmalloc(sizeof(vsinstance_t)))==NULL)
@@ -182,7 +182,7 @@ VSIget_vsinstance_node(void)
     HDmemset(ret_value,0,sizeof(vsinstance_t));
 
 done:
-  if(ret_value == NULL)   
+  if(ret_value == NULL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -203,7 +203,7 @@ done:
     No return value
 
 *******************************************************************************/
-void 
+void
 VSIrelease_vsinstance_node(vsinstance_t *vs /* IN: vinstance node to release */)
 {
 #ifdef LATER
@@ -218,7 +218,7 @@ VSIrelease_vsinstance_node(vsinstance_t *vs /* IN: vinstance node to release */)
 
 /*******************************************************************************
  NAME
-    VSPhshutdown  -  shutdown the Vset interface 
+    VSPhshutdown  -  shutdown the Vset interface
 
  DESCRIPTION
     For completeness, when the VSet interface is shut-down, free the Vhbuf.
@@ -229,7 +229,7 @@ VSIrelease_vsinstance_node(vsinstance_t *vs /* IN: vinstance node to release */)
  COMMENTS, BUGS, ASSUMPTIONS
     Should only ever be called by the "atexit" function HDFend
 *******************************************************************************/
-intn 
+intn
 VSPhshutdown(void)
 {
     intn  ret_value = SUCCEED;
@@ -243,7 +243,7 @@ VSPhshutdown(void)
           {
             v               = vdata_free_list;
             vdata_free_list = vdata_free_list->next;
-            v->next = NULL; 
+            v->next = NULL;
             HDfree(v);
           } /* end while */
       } /* end if */
@@ -255,7 +255,7 @@ VSPhshutdown(void)
           {
             vs                   = vsinstance_free_list;
             vsinstance_free_list = vsinstance_free_list->next;
-            vs->next = NULL; 
+            vs->next = NULL;
             HDfree(vs);
           } /* end while */
       } /* end if */
@@ -285,7 +285,7 @@ DESCRIPTION
 RETURNS
   RETURNS NULL if error or not found.
   RETURNS vsinstance_t pointer if ok.
-   
+
 *******************************************************************************/
 vsinstance_t *
 vsinst(HFILEID f,  /* IN: File handle */
@@ -310,10 +310,10 @@ vsinst(HFILEID f,  /* IN: File handle */
         HGOTO_ERROR(DFE_NOMATCH,NULL);
 
     /* return the actual vsinstance_t ptr */
-    ret_value = ((vsinstance_t *) * t);  
+    ret_value = ((vsinstance_t *) * t);
 
 done:
-  if(ret_value == NULL)   
+  if(ret_value == NULL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -431,7 +431,7 @@ vpackvs(VDATA * vs,  /* IN/OUT: */
 
     /* Skip over all the "wheel-spinning" for 0-field vdatas */
     if(vs->wlist.n>0)
-      { 
+      {
         for (i = 0; i < vs->wlist.n; i++)   /* save the type */
             INT16ENCODE(bb, vs->wlist.type[i]);
 
@@ -480,22 +480,22 @@ vpackvs(VDATA * vs,  /* IN/OUT: */
     /* save the 'more' field - NONE now */
     INT16ENCODE(bb, vs->more);
 
-    if (vs->flags != 0)   
+    if (vs->flags != 0)
       {  /* save the flags and update version # */
        UINT32ENCODE(bb, vs->flags);
 
-       if (vs->flags & VS_ATTR_SET) 
+       if (vs->flags & VS_ATTR_SET)
          { /* save attributes */
           INT32ENCODE(bb, vs->nattrs);
 
-          for (i = 0; i < vs->nattrs; i++)  
+          for (i = 0; i < vs->nattrs; i++)
             {
               INT32ENCODE(bb, vs->alist[i].findex);
               UINT16ENCODE(bb, vs->alist[i].atag);
               UINT16ENCODE(bb, vs->alist[i].aref);
             }   /* for */
-         }  /* attr set */ 
-      }     /* flags set */   
+         }  /* attr set */
+      }     /* flags set */
 
    /* duplicate 'version' and 'more' - for new version of libraries */
    /* see the documentation in vattr.c */
@@ -533,7 +533,7 @@ RETURNS
 *******************************************************************************/
 PRIVATE     intn
 vunpackvs(VDATA * vs, /* IN/OUT: */
-          uint8 buf[],/* IN: */ 
+          uint8 buf[],/* IN: */
           int32 len   /* IN: */)
 {
     uint8      *bb = NULL;
@@ -561,8 +561,8 @@ vunpackvs(VDATA * vs, /* IN/OUT: */
     vs->more = (int16)uint16var;
     bb = &buf[0];
 
-    if (vs->version <= 4)   
-      { 
+    if (vs->version <= 4)
+      {
           /* retrieve interlace */
           INT16DECODE(bb, vs->interlace);
 
@@ -617,7 +617,7 @@ vunpackvs(VDATA * vs, /* IN/OUT: */
               if(NULL==(vs->wlist.name = HDmalloc(sizeof(char *)*(size_t)vs->wlist.n)))
                   HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-              for (i = 0; i < vs->wlist.n; i++) 
+              for (i = 0; i < vs->wlist.n; i++)
                 {
                     INT16DECODE(bb, int16var);    /* this gives the length */
                     if(NULL==(vs->wlist.name[i] = HDmalloc((int16var+1)*sizeof(char))))
@@ -647,29 +647,29 @@ vunpackvs(VDATA * vs, /* IN/OUT: */
 
           /* retrieve the middle version field */
           INT16DECODE(bb, temp);
-          if (temp != vs->version) 
+          if (temp != vs->version)
               HGOTO_ERROR(DFE_BADVH, FAIL);
 
           /* retrieve the 'more' field */
           INT16DECODE(bb, temp);
-          if (temp != vs->more) 
+          if (temp != vs->more)
               HGOTO_ERROR(DFE_BADVH, FAIL);
 
-          if (vs->version == VSET_NEW_VERSION) 
+          if (vs->version == VSET_NEW_VERSION)
             { /* new features exist */
                 UINT32DECODE(bb, vs->flags);
-                if (vs->flags & VS_ATTR_SET)  
+                if (vs->flags & VS_ATTR_SET)
                   {    /* get attr info */
                       INT32DECODE(bb, vs->nattrs);
 
                       if (NULL == (vs->alist = (vs_attr_t *)HDmalloc(vs->nattrs*sizeof(vs_attr_t))))
                           HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-                      for (i=0; i<vs->nattrs; i++)  
+                      for (i=0; i<vs->nattrs; i++)
                         {
                             INT32DECODE(bb, vs->alist[i].findex);
-                            UINT16DECODE(bb, vs->alist[i].atag); 
-                            UINT16DECODE(bb, vs->alist[i].aref); 
+                            UINT16DECODE(bb, vs->alist[i].atag);
+                            UINT16DECODE(bb, vs->alist[i].aref);
                         }  /* for */
                   }     /* attr set */
             }   /* new version */
@@ -770,11 +770,11 @@ VSPgetinfo(HFILEID f, /* IN: file handle */
 
     /* clear error stack */
     HEclear();
- 
+
     /* get a free Vdata node? */
     if ((vs = VSIget_vdata_node()) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, NULL);
- 
+
     /* need to fetch length of vdata from file */
     if ((vh_length = Hlength(f,DFTAG_VH,ref)) == FAIL)
         HGOTO_ERROR(DFE_BADLEN, NULL);
@@ -793,20 +793,20 @@ VSPgetinfo(HFILEID f, /* IN: file handle */
     /* get Vdata header from file */
     if (Hgetelement(f,DFTAG_VH,ref,Vhbuf) == FAIL)
         HGOTO_ERROR(DFE_NOVS, NULL);
- 
-    /* init all other fields in vdata 
+
+    /* init all other fields in vdata
        and then unpack the vdata */
     vs->otag    = DFTAG_VH;
     vs->oref    = ref;
     vs->f       = f;
     if (FAIL == vunpackvs (vs,Vhbuf, vh_length))
         HGOTO_ERROR(DFE_INTERNAL, NULL);
- 
+
     /* return vdata */
     ret_value = (vs);
 
 done:
-  if(ret_value == NULL)   
+  if(ret_value == NULL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -874,7 +874,7 @@ RETURNS
 
 
 *******************************************************************************/
-int32 
+int32
 VSattach(HFILEID f,             /* IN: file handle */
          int32 vsid,            /* IN: vdata id i.e. ref */
          const char *accesstype /* IN: access type */)
@@ -907,7 +907,7 @@ VSattach(HFILEID f,             /* IN: file handle */
 
     /*      */
     if (vsid == -1)
-      {  /* ---------- VSID IS -1 ----------------------- 
+      {  /* ---------- VSID IS -1 -----------------------
             if "r" access return error.
             if "w" access
             create a new vs in vg and attach it.
@@ -946,12 +946,12 @@ VSattach(HFILEID f,             /* IN: file handle */
           w->nvertices = 0;
 
           /* insert the vs instance in B-tree */
-          tbbtdins(vf->vstree, w, NULL);    
+          tbbtdins(vf->vstree, w, NULL);
 
           vs->instance = w;
       }     /* end of case where vsid is -1 */
     else
-      { /*  --------  VSID IS NON_NEGATIVE ------------- 
+      { /*  --------  VSID IS NON_NEGATIVE -------------
             if "r" access => look in vsdir
             if not found,
             fetch  vs from file, add to vsdir,
@@ -1034,7 +1034,7 @@ VSattach(HFILEID f,             /* IN: file handle */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1068,7 +1068,7 @@ RETURNS
    SUCCEED / FAIL
 
 *******************************************************************************/
-int32 
+int32
 VSdetach(int32 vkey /* IN: vdata key? */)
 {
     int32       i;
@@ -1124,9 +1124,9 @@ VSdetach(int32 vkey /* IN: vdata key? */)
             {	/* if marked , write out vdata's VSDESC to file */
                 size_t need;
 
-                need = sizeof(VWRITELIST) + 
+                need = sizeof(VWRITELIST) +
                        (size_t)vs->nattrs*sizeof(vs_attr_t) + sizeof(VDATA) + 1;
-        
+
                 if(need > Vhbufsize)
                   {
                       Vhbufsize = need;
@@ -1144,7 +1144,7 @@ VSdetach(int32 vkey /* IN: vdata key? */)
                  * for new header. This will cause the pointer to the
                  * original vdata header to be lost but this is okay.  */
                 if (vs->new_h_sz)
-                  { 
+                  {
                       /* check if tag/ref exists in DD list already */
                       switch(HDcheck_tagref(vs->f, DFTAG_VH, vs->oref))
                         {
@@ -1192,7 +1192,7 @@ VSdetach(int32 vkey /* IN: vdata key? */)
       } /* end of 'write' case */
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1207,11 +1207,11 @@ done:
 
  DESCRIPTION
     Make it possible to append unlimitedly to an existing VData
- 
-  RETURNS   
+
+  RETURNS
       SUCCEED, or FAIL for error
-*******************************************************************************/ 
-int32 
+*******************************************************************************/
+int32
 VSappendable(int32 vkey, /* IN: vdata key */
              int32 blk   /* IN: */)
 {
@@ -1245,7 +1245,7 @@ VSappendable(int32 vkey, /* IN: vdata key */
         ret_value = Happendable(vs->aid);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1292,7 +1292,7 @@ VSgetid(HFILEID f,  /* IN: file handle */
     if (vsid == -1)
       { /* vsid '-1' case */
 
-        if (vf->vstree==NULL) 
+        if (vf->vstree==NULL)
             HGOTO_DONE(FAIL);
 
         if ((t = (void **)tbbtfirst((TBBT_NODE *) * (vf->vstree))) == NULL)
@@ -1302,7 +1302,7 @@ VSgetid(HFILEID f,  /* IN: file handle */
         w = (vsinstance_t *) * t; /* get actual pointer to the vsinstance_t */
         HGOTO_DONE((int32)w->ref);/* rets 1st vdata's ref */
       }
-    else /* vsid >= 0 */ 
+    else /* vsid >= 0 */
       {
           /* tbbtdfind returns a pointer to the vsinstance_t pointer */
           key = (int32)vsid;
@@ -1320,7 +1320,7 @@ VSgetid(HFILEID f,  /* IN: file handle */
       }
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1369,7 +1369,7 @@ VSQuerytag(int32 vkey /* IN: vdata key */)
     ret_value = ((int32) vs->otag);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1419,7 +1419,7 @@ VSQueryref(int32 vkey /* IN: vdata key */)
     ret_value = ((int32) vs->oref);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1468,7 +1468,7 @@ vswritelist(int32 vkey /* IN: vdata key */)
     ret_value = (&(vs->wlist));
 
 done:
-  if(ret_value == NULL)   
+  if(ret_value == NULL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1517,7 +1517,7 @@ VSgetversion(int32 vkey /* IN: vdata key */)
     ret_value = (int32)vs->version;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1584,7 +1584,7 @@ VSdelete(int32 f,    /* IN: file handle */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */

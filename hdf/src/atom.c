@@ -126,7 +126,7 @@ assert(sizeof(hdf_pint_t)==sizeof(void *));
     grp_ptr->count++;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
         if(grp_ptr!=NULL)
           {
@@ -190,7 +190,7 @@ intn HAdestroy_group(group_t grp       /* IN: Group to destroy */
       } /* end if */
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -257,7 +257,7 @@ atom_t HAregister_atom(group_t grp,     /* IN: Group to register the object in *
     ret_value=atm_id;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -269,7 +269,7 @@ done:
 
 /******************************************************************************
  NAME
-     HAatom_object - Returns to the object ptr for the atom 
+     HAatom_object - Returns to the object ptr for the atom
 
  DESCRIPTION
     Retrieves the object ptr which is associated with the atom.
@@ -328,7 +328,7 @@ VOIDP HAatom_object(atom_t atm   /* IN: Atom to retrieve object for */
         ret_value=atm_ptr->obj_ptr;
 
 done:
-  if(ret_value == NULL)   
+  if(ret_value == NULL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -340,7 +340,7 @@ done:
 
 /******************************************************************************
  NAME
-     HAatom_group - Returns to the group for the atom 
+     HAatom_group - Returns to the group for the atom
 
  DESCRIPTION
     Retrieves the group which is associated with the atom.
@@ -361,7 +361,7 @@ group_t HAatom_group(atom_t atm   /* IN: Atom to retrieve group for */
         HGOTO_ERROR(DFE_ARGS, BADGROUP);
 
 done:
-  if(ret_value == BADGROUP)   
+  if(ret_value == BADGROUP)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -431,7 +431,7 @@ VOIDP HAremove_atom(atom_t atm   /* IN: Atom to remove */
       } /* end if */
     else    /* couldn't find the atom in the proper place */
         HGOTO_ERROR(DFE_INTERNAL, NULL);
-    
+
 #ifdef ATOMS_ARE_CACHED
     /* Delete object from cache */
     for(i=0; i<ATOM_CACHE_SIZE; i++)
@@ -447,7 +447,7 @@ VOIDP HAremove_atom(atom_t atm   /* IN: Atom to remove */
     (grp_ptr->atoms)--;
 
 done:
-  if(ret_value == NULL)   
+  if(ret_value == NULL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -567,7 +567,7 @@ static atom_info_t *HAIfind_atom(atom_t atm   /* IN: Atom to retrieve atom for *
     ret_value=atm_ptr;
 
 done:
-  if(ret_value == NULL)   
+  if(ret_value == NULL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -607,7 +607,7 @@ static atom_info_t *HAIget_atom_node(void)
       } /* end else */
 
 done:
-  if(ret_value == NULL)   
+  if(ret_value == NULL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -656,7 +656,7 @@ static void HAIrelease_atom_node(atom_info_t *atm)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn 
+intn
 HAshutdown(void)
 {
     atom_info_t *curr;

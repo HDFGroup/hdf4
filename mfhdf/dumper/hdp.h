@@ -41,10 +41,10 @@ intn        vinit_done
 #define CONDENSE 1
 #define NO_SPECIFIC -1     /* no specific datasets are requested */
 #define	ATTR_INDENT	0	/* # of spaces in front of attribute data */
-#define ATTR_CONT_INDENT  25	/* # of spaces in front of attribute data 
+#define ATTR_CONT_INDENT  25	/* # of spaces in front of attribute data
 					on a continuous line */
 #define	DATA_INDENT	16	/* # of spaces in front of dataset data */
-#define DATA_CONT_INDENT  16	/* # of spaces in front of dataset data 
+#define DATA_CONT_INDENT  16	/* # of spaces in front of dataset data
 					on a continuous line */
 
 /* Free a char pointer if it's not NULL, then set it to NULL */
@@ -54,7 +54,7 @@ intn        vinit_done
 	  ptr = NULL; }}
 
 /* ERROR_GOTO_n macros are used to facilitate error printing.  Each
-   macro prints the given message to the stderr, then uses the HDF 
+   macro prints the given message to the stderr, then uses the HDF
    library macro HGOTO_DONE to set the variable ret_value to FAIL
    and jump to label "done"
 	ERROR_GOTO_0 is used for fprintf with no parameters.
@@ -103,7 +103,7 @@ intn        vinit_done
 /* ERROR_CONT_n macros are used to facilitate error printing.  Each
    macro prints the given message to the stderr, then "continue"s.
    Note: at this time, set ret_value to FAIL, but if it turns out
-   that there are cases where ret_value should be SUCCEED, then 
+   that there are cases where ret_value should be SUCCEED, then
    add another argument 'ret' (=FAIL/SUCCEED) to set ret_value to
    appropriate value.
    Note: having extra \n after Continued. separates the following
@@ -199,7 +199,7 @@ intn        vinit_done
 	ret_value = ret; \
 	break; }
 
-/* ERROR_NOTIFY macros are used to display a failure but does not do 
+/* ERROR_NOTIFY macros are used to display a failure but does not do
    anything else except setting ret_value to FAIL so that the failure
    can be traced back to the caller.
 */
@@ -305,7 +305,7 @@ list_info_t;
 /* BMR: added defined values to fix exclusive problem - 1/23/99 */
 typedef enum
   {
-	  DALL=0, DINDEX=1, DREFNUM=2, DNAME=4, DCLASS=8, DFIELDS=16 
+	  DALL=0, DINDEX=1, DREFNUM=2, DNAME=4, DCLASS=8, DFIELDS=16
   }
 filter_t;
 
@@ -340,7 +340,7 @@ typedef struct
 }
 number_filter_t;
 
-/* BMR: character filter structure; used to hold a list of names or class names 
+/* BMR: character filter structure; used to hold a list of names or class names
    and the number of names or class names given - 1/23/99 */
 typedef struct
 {
@@ -383,10 +383,10 @@ typedef struct
    intn        dump_to_file;	/* whether to dump to a file */
    file_format_t file_format;	/* Is data written in ASCII or binary */
    intn	       as_stream;	/* whether carriage return added to output data lines */
-   intn	       clean_output;	/* whether to print space characters as they 
+   intn	       clean_output;	/* whether to print space characters as they
 				   are or to print in \digit format */
-   intn	       firstln_indent;	/* col# where data starts on the first line*/ 
-   intn	       contln_indent;	/* col# where data continues on the next line*/ 
+   intn	       firstln_indent;	/* col# where data starts on the first line*/
+   intn	       contln_indent;	/* col# where data continues on the next line*/
    char        file_name[MAXFNLEN];/* Name of file to dump into */
    char        ifile_name[MAXFNLEN];/* Name of input file being processed */
 
@@ -449,7 +449,7 @@ objlist_t;
 
 /* hdp_vd.c */
 
-/* Vdata information: used to hold various information of a vdata to 
+/* Vdata information: used to hold various information of a vdata to
    facilitate parameter passing */
 typedef struct
   {
@@ -468,7 +468,7 @@ vd_info_t;
 
 #define NUM_VGS 20;
 
-typedef struct 
+typedef struct
 {
 	int32  index;
 	int32  displayed;
@@ -548,8 +548,8 @@ extern intn dumpclean(int32 nt, dump_info_t * dump_opts, int32 cnt, VOIDP databu
 extern int32 dumpGR_SDattr(int32 nt, dump_info_t * dump_opts, int32 cnt, VOIDP databuf, FILE * ofp);
 
 /* show.c */
-extern int32 dumpvd(int32 vd, file_format_t ft, int data_only, FILE *fp, 
-                    char separater[2],int32 flds_indices[VSFIELDMAX], 
+extern int32 dumpvd(int32 vd, file_format_t ft, int data_only, FILE *fp,
+                    char separater[2],int32 flds_indices[VSFIELDMAX],
                     int dumpallfields);
 extern intn dumpattr(int32 vid, int32 findex, intn isvs, file_format_t ft, FILE *fp);
 

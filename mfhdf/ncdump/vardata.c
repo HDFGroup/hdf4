@@ -33,7 +33,7 @@ static void annotate
 
 /*
  * Print a row of variable values.  Makes sure output lines aren't too long
- * by judiciously inserting newlines. 
+ * by judiciously inserting newlines.
  */
 static void
 pr_vals(vp, len, fmt, more, lastrow, vals)
@@ -245,7 +245,7 @@ annotate(vp, fsp, cor, iel)
 {
     int vrank = vp->ndims;
     int id;
-    
+
     /* print indices according to data_lang */
     (void) printf("  // %s(", vp->name);
     switch (fsp->data_lang) {
@@ -528,7 +528,7 @@ vardata(vp, vdims, ncid, varid, fsp)
 	  add[vrank-2] = 1;
     }
     nrows = nels/ncols;		/* number of "rows" */
-    
+
     for (ir = 0; ir < nrows; ir++) {
 	/*
 	 * rather than just printing a whole row at once (which might exceed

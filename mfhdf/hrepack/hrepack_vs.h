@@ -37,8 +37,8 @@ int  copy_vs( int32 infile_id,
               list_table_t *list_tbl,
               int   is_lone);
 
-int copy_vgroup_attrs(int32 vg_in, 
-                      int32 vg_out, 
+int copy_vgroup_attrs(int32 vg_in,
+                      int32 vg_out,
                       char *path,
                       options_t *options);
 

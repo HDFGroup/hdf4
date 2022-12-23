@@ -21,12 +21,12 @@
 /* ------------------------------------------------ */
 
 int32
-dumpvd(int32       vd, 
-       file_format_t ff, 
-       int         data_only, 
-       FILE       *fp, 
+dumpvd(int32       vd,
+       file_format_t ff,
+       int         data_only,
+       FILE       *fp,
        char        separater[2],
-       int32       flds_indices[VSFIELDMAX], 
+       int32       flds_indices[VSFIELDMAX],
        int         dumpallfields)
 {
     char        vdname[VSNAMELENMAX+1];
@@ -41,7 +41,7 @@ dumpvd(int32       vd,
     int32       bufsize;		/* size of the buffer we are using */
     int32       chunk;			/* number of rows that will fit in the buffer */
     int32       done;			/* number of rows we have done */
-    int32       count;          /* number of rows to do this time through 
+    int32       count;          /* number of rows to do this time through
                                            the loop */
     int32       nf; 	       	/* number of fields in this Vdata */
     int32       x, display;
@@ -63,7 +63,7 @@ dumpvd(int32       vd,
           goto done;
       }
 
-    if (nv * vsize > BUFFER)	/* If the number of records in the vdata is 
+    if (nv * vsize > BUFFER)	/* If the number of records in the vdata is
                                    bigger than the buffer size, then divide
                                    the records into chunks. */
       {
@@ -81,7 +81,7 @@ dumpvd(int32       vd,
     /* Allocate space for the buffer and terminate hdp if allocation fails. */
     bb = (uint8 *) HDmalloc(bufsize);
     CHECK_ALLOC( fields, "fields", "dumpvd" );
-    
+
     if (FAIL == VSsetfields(vd, fields))
       {
           fprintf(stderr,"dumpvd: VSsetfields failed for vd = %d \n",(int)vd);
@@ -92,7 +92,7 @@ dumpvd(int32       vd,
     w = vswritelist(vd);
 
     nf = w->n;
-    x = 0;	/* Used for accessing the array storing the indices of the 
+    x = 0;	/* Used for accessing the array storing the indices of the
                    selected fields. */
     for (i = 0; i < nf; i++)	/* Read in data of all the fields. */
       {
@@ -111,7 +111,7 @@ dumpvd(int32       vd,
           /* Display the header of a vdata if the user didn't specify the
              data-only option. */
           if (!data_only)
-          { 
+          {
              if(ff==DASCII)
              {
                 if ((dumpallfields) || (flds_indices[x] == i))
@@ -121,7 +121,7 @@ dumpvd(int32       vd,
                    x++;
                 }
              }
-             /* display attributes - BMR moved this block inside if(!data_only) 
+             /* display attributes - BMR moved this block inside if(!data_only)
 		to keep the attributes from being printed - bug #231*/
              if (FAIL == dumpattr(vd, i, 1, ff, fp))
              {
@@ -132,7 +132,7 @@ dumpvd(int32       vd,
 
           }	/* if !data_only */
 
-          /* Choose a function for displaying a piece of data of a 
+          /* Choose a function for displaying a piece of data of a
              particular type. */
           switch (w->type[i] & 0xff)
             {
@@ -183,12 +183,12 @@ dumpvd(int32       vd,
 
     cn = 0;
     done = count = 0;
-    
+
     if(ff==DASCII)
-      { 
+      {
 
           /* If not just the data will be dumped out, then put an address-type
-             column on the left so that the user can recognize which record 
+             column on the left so that the user can recognize which record
              he/she is looking at. */
           if (!data_only)
             {
@@ -206,7 +206,7 @@ dumpvd(int32       vd,
                     fprintf(fp, " ");
                 fprintf(fp, "     Data\n");
 
-                /* The address of the first record is 0. Also, fill in the extra 
+                /* The address of the first record is 0. Also, fill in the extra
                    space on the left with 0's. */
                 while (num_digits <= addr_width)
                   {
@@ -272,7 +272,7 @@ dumpvd(int32       vd,
                 b = bb;
 
                 /* Display the data. */
-                for (j = 0; j < count; j++)	/* each iteration causes one record 
+                for (j = 0; j < count; j++)	/* each iteration causes one record
                                                to be printed */
                   {
                       cnt1++;
@@ -307,11 +307,11 @@ dumpvd(int32       vd,
                               }
                         }		/* for i to nf-1 */
 
-	   
+
                       if (cnt2 > 0)
                         {
                             address++;
-                            /* "separator" is the symbol used for separating 
+                            /* "separator" is the symbol used for separating
                                different records. */
                             fprintf(fp, "%s ", separater);
                         }
@@ -379,7 +379,7 @@ dumpvd(int32       vd,
             }
 
           cnt1 = 0;
-          cnt2 = 0; 
+          cnt2 = 0;
           while (done != nv)
             {
                 /* Determine the amount of data to be read this time. */
@@ -414,7 +414,7 @@ dumpvd(int32       vd,
                 b = bb;
 
                 /* Display the data. */
-                for (j = 0; j < count; j++)	/* each iteration causes one record 
+                for (j = 0; j < count; j++)	/* each iteration causes one record
                                                to be printed */
                   {
                       cnt1++;
@@ -436,18 +436,18 @@ dumpvd(int32       vd,
                                   b += off[i];
                                   if (display)
                                     {
-                           
+
                                         cn++;
                                         cnt2++;
                                     }
                               }
                             if (display)
                               {
-                           
+
                                   cn++;
                                   cnt2++;
                               }
-                        }		/* for i to nf-1 */      
+                        }		/* for i to nf-1 */
                       if (cnt2 > 0)
                         {
                             address++;
@@ -460,7 +460,7 @@ dumpvd(int32       vd,
 
           /* ============================================ */
 
-          HDfree((VOIDP) bb);     
+          HDfree((VOIDP) bb);
           bb = NULL;
       }   /* binary file */
 
@@ -471,19 +471,19 @@ done:
               HDfree((VOIDP)bb);
       }
     /* Normal cleanup */
-    
+
     return ret_value;
 }	/* dumpvd */
 
 
-/* 
+/*
  * dumps attributes of vdata for vgroup
  */
-intn 
-dumpattr(int32 vid, 
-         int32 findex, 
+intn
+dumpattr(int32 vid,
+         int32 findex,
          intn isvs,
-         file_format_t ff, 
+         file_format_t ff,
          FILE *fp)
 {
     intn          i, k;
@@ -503,7 +503,7 @@ dumpattr(int32 vid,
     uint8         attrbuf[BUFFER];
 
     /* vdata or vgroup? */
-    if (isvs) 
+    if (isvs)
         nattrs = VSfnattrs(vid, findex);
     else
          /* nattrs = Vnattrs(vid); <- replaced with Vnattrs2 to catch all attributes;
@@ -520,7 +520,7 @@ dumpattr(int32 vid,
     fprintf(fp, "   number of attributes = %d \n", nattrs);
 
     /* loop for number of attributes to process */
-    for (i = 0; i < nattrs; i++) 
+    for (i = 0; i < nattrs; i++)
       {
           /* get attribute infor of vdata/vgroup */
           if (isvs)
@@ -529,7 +529,7 @@ dumpattr(int32 vid,
 	      /* Changed to use updated func of Vattrinfo - BMR, 1/7/2013 */
               status = Vattrinfo2(vid, i, name, &i_type,&i_count, &e_size, NULL, NULL);
 
-          if (status == FAIL) 
+          if (status == FAIL)
             {
                 fprintf(stderr,">>>dumpattr: failed in getting %d'th attr info.\n",i);
                 ret_value = FAIL;
@@ -542,7 +542,7 @@ dumpattr(int32 vid,
           else
               status = Vattrhdfsize(vid, i, &i_size);
 
-          if (status == FAIL) 
+          if (status == FAIL)
             {
                 fprintf(stderr,">>>dumpattr: failed in getting %d'th attr hdfsize.\n",i);
                 ret_value = FAIL;
@@ -553,9 +553,9 @@ dumpattr(int32 vid,
                   i, name, (int)i_type, (int)i_count, (int)i_size);
 
           /* we have two buffer sizes? */
-          if (e_size > BUFFER) 
+          if (e_size > BUFFER)
             {
-                if (NULL == (buf = HDmalloc(e_size)))  
+                if (NULL == (buf = HDmalloc(e_size)))
                   {
                       fprintf(stderr,">>>dumpattr:can't allocate buf for %d'th attribute.\n",i);
                       ret_value = FAIL;
@@ -565,13 +565,13 @@ dumpattr(int32 vid,
                 alloc_flag = 1;
 
                 /* get attribute itself */
-                if (isvs) 
+                if (isvs)
                     status = VSgetattr(vid, findex, i, (VOIDP)buf);
                 else
 		    /* Changed to use updated func of Vgetattr - BMR, 1/7/2013 */
                     status = Vgetattr2(vid, i, (VOIDP)buf);
 
-                if (status == FAIL) 
+                if (status == FAIL)
                   {
                       fprintf(stderr,">>>dympattr: failed in getting %d'th attr .\n",i);
                       ret_value = FAIL;
@@ -581,13 +581,13 @@ dumpattr(int32 vid,
           else
             {
                 /* get attribute itself */
-                if (isvs) 
+                if (isvs)
                     status = VSgetattr(vid, findex, i, (VOIDP)attrbuf);
                 else
 		    /* Changed to use updated func of Vgetattr - BMR, 1/7/2013 */
                     status = Vgetattr2(vid, i, (VOIDP)attrbuf);
 
-                if (status == FAIL) 
+                if (status == FAIL)
                   {
                       fprintf(stderr,">>>dympattr: failed in getting %d'th attr.\n",i);
                       ret_value = FAIL;
@@ -596,7 +596,7 @@ dumpattr(int32 vid,
             }
 
           /* format output */
-          switch (i_type & 0xff)  
+          switch (i_type & 0xff)
             {
             case DFNT_CHAR:
             case DFNT_UCHAR:
@@ -641,13 +641,13 @@ dumpattr(int32 vid,
 
           putchar('\t');
           cn = 0;
-          for (k = 0; k < i_count; k++)  
+          for (k = 0; k < i_count; k++)
             {
                 cn += vfmtfn((uint8 *)ptr, ff, fp);
                 ptr += off;
                 putchar(' ');
                 cn++;
-                if (cn > 55)  
+                if (cn > 55)
                   {
                       putchar('\n');
                       putchar('\t');
@@ -655,11 +655,11 @@ dumpattr(int32 vid,
                   }
             }
 
-          if (cn) 
+          if (cn)
               putchar('\n');
 
           /* free allocated space if any */
-          if (alloc_flag) 
+          if (alloc_flag)
             {
                 if ( buf != NULL)
                     HDfree(buf);

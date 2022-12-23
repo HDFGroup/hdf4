@@ -16,8 +16,8 @@ C
 C------------------------------------------------------------------------------
 C File:     hfileFf.f
 C Purpose:  Fortran stubs for Palette Fortran routines
-C Invokes:  hfileF.c 
-C Contents: 
+C Invokes:  hfileF.c
+C Contents:
 C   hopen:          Call hiopen to open file
 C hnumber:          Call hnumber
 C Remarks: none
@@ -94,7 +94,7 @@ C-----------------------------------------------------------------------------*/
 
       integer major_v, minor_v, release
       character*(*) string
-      integer hglibverc 
+      integer hglibverc
 
       hglibver = hglibverc(major_v, minor_v, release, string,
      .                     len(string))
@@ -116,7 +116,7 @@ C-----------------------------------------------------------------------------*/
 
       integer file_id, major_v, minor_v, release
       character*(*) string
-      integer hgfilverc 
+      integer hgfilverc
 
       hgfilver = hgfilverc(file_id, major_v, minor_v, release, string,
      .                     len(string))
@@ -124,7 +124,7 @@ C-----------------------------------------------------------------------------*/
       end
 C------------------------------------------------------------------------------
 C Name: hishdff
-C Purpose:  Identifies if the file "file_name" is an HDF file. 
+C Purpose:  Identifies if the file "file_name" is an HDF file.
 C Inputs:   file_name:  File name
 C Returns: TRUE (1) if successful, FALSE (0) otherwise.
 C Invokes: hiopen
@@ -140,17 +140,17 @@ C----------------------------------------------------------------------------*/
       end
 C-----------------------------------------------------------------------------
 C Name: hestringf
-C Purpose: retrieves the error message associated with the specified error code 
-C Inputs:  error_code 
-C Outputs: error_message - string associated with the error code 
+C Purpose: retrieves the error message associated with the specified error code
+C Inputs:  error_code
+C Outputs: error_message - string associated with the error code
 C Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
 C-----------------------------------------------------------------------------*/
 
       integer function hestringf(error_code, error_message)
 
-      integer error_code 
-      character*(*) error_message 
-      integer hestringc 
+      integer error_code
+      character*(*) error_message
+      integer hestringc
 
       hestringf = hestringc(error_code, error_message,
      .                      len(error_message))
@@ -158,19 +158,19 @@ C-----------------------------------------------------------------------------*/
       end
 C-----------------------------------------------------------------------------
 C Name: heprntf
-C Purpose: prints values from the error stack 
+C Purpose: prints values from the error stack
 C Inputs:  filename - name of the output file; if length of the
-C          filename is 0, then output goes to stdout.  
-C          print_levels - number of levels to print 
+C          filename is 0, then output goes to stdout.
+C          print_levels - number of levels to print
 C Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
 C
 C Remarks: This routine always prints to the standard output.
 C-----------------------------------------------------------------------------*/
 
       integer function heprntf(filename, print_levels)
-      integer print_levels 
+      integer print_levels
       character*(*) filename
-      
+
       integer heprntc
       heprntf = heprntc(filename, print_levels,len(filename))
       return
@@ -178,14 +178,14 @@ C-----------------------------------------------------------------------------*/
 C-----------------------------------------------------------------------------
 C Name: hconfinf
 C Purpose: return info about configuration of a compression method
-C Inputs:  coder_type -  the compression type queried  
+C Inputs:  coder_type -  the compression type queried
 C          info       -  flag to indicate compression status
 C                         0 - no compression found
 C                         1 - decoder only found
-C                         3 - both decoder and encoder found 
+C                         3 - both decoder and encoder found
 C Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
 C
-C Currently this routine is used with SZIP compression only 
+C Currently this routine is used with SZIP compression only
 C-----------------------------------------------------------------------------*/
 
       integer function hconfinf(coder_type, info)

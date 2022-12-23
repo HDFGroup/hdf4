@@ -624,7 +624,7 @@ DFANIclear(void)
   Lastref = 0; /* 0 is invalid ref */
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -718,7 +718,7 @@ DFANIopen(const char *filename, intn acc_mode)
   ret_value = file_id;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -789,7 +789,7 @@ DFANIlocate(int32 file_id, int type, uint16 tag, uint16 ref)
         HGOTO_ERROR(DFE_NOSPACE, 0);
       DFANdir[type]->entries = (DFANdirentry *)
         HDmalloc( (size_t)nanns * sizeof(DFANdirentry));
-      if (DFANdir[type]->entries == NULL) 
+      if (DFANdir[type]->entries == NULL)
         HGOTO_ERROR(DFE_NOSPACE, 0);
 
       DFANdir[type]->next = NULL;
@@ -837,7 +837,7 @@ DFANIlocate(int32 file_id, int type, uint16 tag, uint16 ref)
   HERROR(DFE_NOMATCH);
 
 done:
-  if(ret_value == 0)   
+  if(ret_value == 0)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -919,7 +919,7 @@ DFANIaddentry(int type, uint16 annref, uint16 datatag, uint16 dataref)
     q->entries[i].annref = 0;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -987,7 +987,7 @@ DFANIgetannlen(const char *filename, uint16 tag, uint16 ref, int type)
   ret_value = annlength;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1016,7 +1016,7 @@ done:
  GLOBAL VARIABLES
        Lastref.
  COMMENTS, BUGS, ASSUMPTIONS
-       BUG 1640: Added isfortran flag to avoid termination of the string with 
+       BUG 1640: Added isfortran flag to avoid termination of the string with
        the null character when the routine is call from FORTRAN.
  EXAMPLES
  REVISION LOG
@@ -1062,8 +1062,8 @@ DFANIgetann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
   if (aid == FAIL)
       HCLOSE_GOTO_ERROR(file_id,DFE_BADAID,FAIL);
 
-  if (FAIL == Hinquire(aid, (int32 *) NULL, (uint16 *) NULL, (uint16 *) NULL, 
-                       &annlen, (int32 *) NULL, (int32 *) NULL, (int16 *) NULL, 
+  if (FAIL == Hinquire(aid, (int32 *) NULL, (uint16 *) NULL, (uint16 *) NULL,
+                       &annlen, (int32 *) NULL, (int32 *) NULL, (int16 *) NULL,
                        (int16 *) NULL))
     {
       Hendaccess(aid);
@@ -1089,7 +1089,7 @@ DFANIgetann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
 	if (annlen > maxlen)
 	  annlen = maxlen;
       }
-  
+
   /* read annotation */
   if ((int32) FAIL == Hread(aid, (int32) 4, datadi))
     {     /* go past tag/ref */
@@ -1111,7 +1111,7 @@ DFANIgetann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
   ret_value = (Hclose(file_id));
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1236,7 +1236,7 @@ DFANIputann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
   ret_value = (Hclose(file_id));
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1403,7 +1403,7 @@ DFANIlablist(const char *filename, uint16 tag, uint16 reflist[],
     ret_value = nrefs;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1462,7 +1462,7 @@ DFANIaddfann(int32 file_id, char *ann, int32 annlen, int type)
   Lastref = annref;   /* remember ref last accessed */
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1542,7 +1542,7 @@ DFANIgetfannlen(int32 file_id, int type, int isfirst)
     HGOTO_ERROR(DFE_NOMATCH,FAIL);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1656,7 +1656,7 @@ DFANIgetfann(int32 file_id, char *ann, int32 maxlen, int type,
   Hendaccess(aid);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1697,7 +1697,7 @@ PRIVATE intn DFANIstart(void)
       HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */

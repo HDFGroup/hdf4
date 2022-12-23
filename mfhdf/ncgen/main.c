@@ -11,7 +11,7 @@
 #ifdef __hpux
 #include <locale.h>
 #endif
-    
+
 #include "ncgen.h"
 #include "genlib.h"
 
@@ -57,7 +57,7 @@ char *argv[];
 #ifdef __hpux
     setlocale(LC_CTYPE,"");
 #endif
-    
+
 #ifdef MDEBUG
 	malloc_debug(2) ;	/* helps find malloc/free errors on Sun */
 #endif /* MDEBUG */

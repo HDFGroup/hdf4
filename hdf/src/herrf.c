@@ -62,7 +62,7 @@ nheprntc(_fcd filename, intf * print_levels, intf *namelen)
 #else
 nheprntc(filename, print_levels, namelen)
            _fcd  filename;
-           intf *print_levels; 
+           intf *print_levels;
            intf  *namelen;
 #endif /* PROTOTYPE */
 
@@ -84,7 +84,7 @@ nheprntc(filename, print_levels, namelen)
     HEprint(err_file, *print_levels);
     fclose(err_file);
     return(ret);
-    
+
 }
 /*-----------------------------------------------------------------------------
  * Name: hestringc
@@ -93,8 +93,8 @@ nheprntc(filename, print_levels, namelen)
  * Outputs: error_message - error message assocoated with the error code
  * Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
  *----------------------------------------------------------------------------*/
- 
- 
+
+
  FRETVAL(intf)
 #ifdef PROTOTYPE
 nhestringc(intf *error_code,
@@ -108,14 +108,14 @@ nhestringc(error_code, error_message, len)
 {
    char *cstring = NULL;
    intn   status;
- 
+
    status = -1;
    cstring = (char *)HEstring((hdf_err_code_t) *error_code);
    if (cstring) {
                 status = 0;
                 HDpackFstring(cstring,  _fcdtocp(error_message),  *len);
-   }  
+   }
    return status;
- 
- 
+
+
 }

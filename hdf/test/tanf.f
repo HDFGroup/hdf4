@@ -18,20 +18,20 @@ C
 C
 C  Test program: stores annotations in a file.
 C                Writes several SDSs and corresponding RISs to a file.
-C                Writes labels and descriptions for all but the first 
+C                Writes labels and descriptions for all but the first
 C                   three SDSs.
 C                Writes labels and descriptions for all RISs.
 C
 C  Input file:  none
 C  Output files: tdfanF.hdf
 C
-C  Possible bug:  When reading in a label, we have to give it a 
+C  Possible bug:  When reading in a label, we have to give it a
 C                 length that is one greater than MAXLEN_LAB. This
 C                 may be due to a bug in dfan.c in DFANIgetann().
 C
-C                 This was addressed in BUG 1640: Added isfortran 
-C                 flag to DFANIgetann to avoid termination 
-C                 of the string with the null character when the routine 
+C                 This was addressed in BUG 1640: Added isfortran
+C                 flag to DFANIgetann to avoid termination
+C                 of the string with the null character when the routine
 C                 is call from FORTRAN, hence no longer need to add one.
 C
 
@@ -45,11 +45,11 @@ C
       integer ISFIRST, NOTFIRST, MAXLEN_LAB
       integer MAXLEN_DESC, ROWS, COLS, REPS
 
-      parameter ( ISFIRST =        1, 
-     *            NOTFIRST =       0, 
+      parameter ( ISFIRST =        1,
+     *            NOTFIRST =       0,
      *            MAXLEN_LAB =    30,
      *            MAXLEN_DESC =  500,
-     *            ROWS =          10, 
+     *            ROWS =          10,
      *            COLS =          10,
      *            REPS =           2 )
 
@@ -77,16 +77,16 @@ C *** set up object labels and descriptions ***
 
       labsds = 'Object label #1: sds'
       labris = 'Object label #2: image'
-      descsds = 'Object Descr #1: 1  2  3  4  5  6  7  8  9 10 11 12 ' 
+      descsds = 'Object Descr #1: 1  2  3  4  5  6  7  8  9 10 11 12 '
      *          // CR // '                13 14 15 16 17 18 19 20 '
      *          // ' **END SDS DESCR**'
       descris = 'Object Descr #2: A B C D E F G H I J K L '
      *          // CR // '                M N O **END IMAGE DESCR **'
 
 C  *** generate float array and image ***
- 
+
       rank = 2
-      dimsizes(1)=ROWS 
+      dimsizes(1)=ROWS
       dimsizes(2)=COLS
 
       call gen2Dfloat(ROWS, COLS, data)
@@ -101,16 +101,16 @@ C  ***  Write labels and descriptions ***
      +        '***  Writing labels & descriptions with SDS and RIS ***')
 
       do 100 j=1,REPS
-C         write out scientific data set 
+C         write out scientific data set
           ret = dsadata(TESTFILE, rank,dimsizes, data)
           call VRFY(ret, 'dsadata', number_failed)
 
-C         write out annotations for 2 out of every 3 
-          if (mod(j,3) .ne. 0) then 
+C         write out annotations for 2 out of every 3
+          if (mod(j,3) .ne. 0) then
               refnum = dslref()
               ret = daplab(TESTFILE, DFTAG_SDG, refnum, labsds)
               call VRFY(ret, 'daplab', number_failed)
-              ret = dapdesc(TESTFILE, DFTAG_SDG, refnum, 
+              ret = dapdesc(TESTFILE, DFTAG_SDG, refnum,
      *                                     descsds, len(descsds))
               call VRFY(ret, 'dapdesc', number_failed)
           endif
@@ -120,7 +120,7 @@ C         write out annotations for 2 out of every 3
           refnum = DFR8lastref()
           ret = daplab(TESTFILE, DFTAG_RIG, refnum, labris)
           call VRFY(ret, 'daplab', number_failed)
-          ret = dapdesc(TESTFILE,DFTAG_RIG,refnum, descris, 
+          ret = dapdesc(TESTFILE,DFTAG_RIG,refnum, descris,
      *                                                 len(descris))
           call VRFY(ret, 'dapdesc', number_failed)
   100 continue
@@ -137,18 +137,18 @@ C********  Read labels and descriptions *********
           call VRFY(ret, 'dsgdims', number_failed)
           refnum = dslref()
 
-C         read in annotations for 2 out of every 3 
+C         read in annotations for 2 out of every 3
           if (mod(j,3) .ne. 0) then
-              call an_check_lab_desc(TESTFILE, DFTAG_SDG, refnum, 
+              call an_check_lab_desc(TESTFILE, DFTAG_SDG, refnum,
      *                                  labsds, descsds, number_failed)
           endif
 
           ret = d8gimg(TESTFILE, newimage, COLS, ROWS, pal)
           call VRFY(ret, 'd8gimg', number_failed)
           refnum = DFR8lastref()
-          call an_check_lab_desc(TESTFILE, DFTAG_RIG, refnum, 
+          call an_check_lab_desc(TESTFILE, DFTAG_RIG, refnum,
      *                                labris, descris, number_failed)
-      
+
   200 continue
 
       if ( number_failed .eq. 0 ) then
@@ -168,7 +168,7 @@ C  an_check_lab_desc:  read and compare label and description
 C                   with expected ones
 C
 C**************************************************************
-      subroutine an_check_lab_desc(filename, tag, ref, label, desc, 
+      subroutine an_check_lab_desc(filename, tag, ref, label, desc,
      *                                                   number_failed)
       implicit none
       include 'fortest.inc'
@@ -206,18 +206,18 @@ C**************************************************************
       indesclen = dagdlen(filename, tag, ref)
       call VRFY(indesclen, 'dagdlen', number_failed)
       if (indesclen .ne. len(desc)) then
-          print *,'   >>>BAD DESCRIPTION LENGTH.' 
-          print *,'                        IS: ', indesclen 
-          print *,'                 SHOULD BE: ', len(desc) 
-          number_failed = number_failed + 1 
-      else 
+          print *,'   >>>BAD DESCRIPTION LENGTH.'
+          print *,'                        IS: ', indesclen
+          print *,'                 SHOULD BE: ', len(desc)
+          number_failed = number_failed + 1
+      else
           ret = dagdesc(filename, tag, ref, indesc, MAXLEN_DESC)
           call VRFY(ret, 'dagdesc', number_failed)
           if (indesc .ne. desc) then
-              print *,'   >>>BAD DESCRIPTION.' 
-              print *,'                        IS: ', indesc 
-              print *,'                 SHOULD BE: ', desc 
-              number_failed = number_failed + 1 
+              print *,'   >>>BAD DESCRIPTION.'
+              print *,'                        IS: ', indesc
+              print *,'                 SHOULD BE: ', desc
+              number_failed = number_failed + 1
           endif
       endif
 

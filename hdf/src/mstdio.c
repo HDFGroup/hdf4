@@ -31,11 +31,11 @@ EXPORTED ROUTINES
     HCPmstdio_stread    -- start read access for compressed file
     HCPmstdio_stwrite   -- start write access for compressed file
     HCPmstdio_seek      -- Seek to offset within the data element
-    HCPmstdio_read      -- Read in a portion of data from a compressed 
+    HCPmstdio_read      -- Read in a portion of data from a compressed
                             data element.
-    HCPmstdio_write     -- Write out a portion of data from a compressed 
+    HCPmstdio_write     -- Write out a portion of data from a compressed
                             data element.
-    HCPmstdio_inquire   -- Inquire information about the access record 
+    HCPmstdio_inquire   -- Inquire information about the access record
                             and data element.
     HCPmstdio_endaccess -- Close the compressed data element
 

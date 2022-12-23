@@ -27,8 +27,8 @@ C
 C     Function declaration
 C
       integer hopen, hclose
-      integer mgstart, mgcreat, mgwcimg, mggltid, mgwclut, 
-     +        mgendac, mgend 
+      integer mgstart, mgcreat, mgwcimg, mggltid, mgwclut,
+     +        mgendac, mgend
 C
 C**** Variable declaration *******************************************
 C
@@ -37,7 +37,7 @@ C
       integer    start(2), stride(2), edges(2), dim_sizes(2)
       integer    status
       integer    i, j
-      character  image_buf(N_COMPS_IMG, X_LENGTH, Y_LENGTH) 
+      character  image_buf(N_COMPS_IMG, X_LENGTH, Y_LENGTH)
       character  palette_buf(N_COMPS_PAL, N_ENTRIES)
 C
 C**** End of variable declaration ************************************
@@ -51,27 +51,27 @@ C     Initialize the GR interface.
 C
       gr_id = mgstart(file_id)
 C
-C     Define interlace mode and dimensions of the image.  
+C     Define interlace mode and dimensions of the image.
 C
       interlace_mode = MFGR_INTERLACE_PIXEL
       dim_sizes(1) = X_LENGTH
       dim_sizes(2) = Y_lENGTH
 C
-C     Create the raster image array. 
+C     Create the raster image array.
 C
       ri_id = mgcreat(gr_id, NEW_IMAGE_NAME, N_COMPS_IMG, DFNT_CHAR8,
      +                interlace_mode, dim_sizes)
 C
-C     Fill the image data buffer with values. 
+C     Fill the image data buffer with values.
 C
       do 20 i = 1, Y_LENGTH
          do 10 j = 1, X_LENGTH
                image_buf(1,j,i) = char(i + j - 1 )
-               image_buf(2,j,i) = char(i + j) 
+               image_buf(2,j,i) = char(i + j)
 10       continue
 20    continue
 
-C     
+C
 C     Define the size of the data to be written, i.e., start from the origin
 C     and go as long as the length of each dimension.
 C
@@ -92,7 +92,7 @@ C
           do 30 j = 1, N_COMPS_PAL
              palette_buf(j,i) = char(i)
 30        continue
-40    continue 
+40    continue
 C
 C     Get the identifier of the palette attached to the image NEW_IMAGE_NAME.
 C

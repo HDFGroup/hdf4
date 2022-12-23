@@ -171,7 +171,7 @@ test_ref_limits(void)
           Hclose(fid);
 
         MESSAGE(7, printf("Verifying data\n"););
-        
+
         /* Check the data written earlier */
         fid=Hopen(TESTREF_NAME, DFACC_READ, 0);
         CHECK_VOID(fid, FAIL, "Hopen");

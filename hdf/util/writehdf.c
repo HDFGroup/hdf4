@@ -25,14 +25,14 @@ char     *GIFFileName;
 	GIFHEAD            gifHead;           /* GIF Header structure            */
     GIFIMAGEDESC	   gifImageDesc;      /* Logical Image Descriptor struct */
 
-	
+
 	intn  status;       /* status for functions returning an intn */
 	int32 file_id,      /* HDF file identifier */
 		gr_id,          /* GR interface identifier */
 		ri_id,
 		vgroup_id,		/* VGroup interface identifier */
 		pal_id,
-		start[2],       /* start position to write for each dimension */			
+		start[2],       /* start position to write for each dimension */
 		edges[2],       /* number of elements to be written along each dimension */
 		dim_sizes[2],   /* dimension sizes of the image array */
 		interlace_mode, /* interlace mode of the image */
@@ -52,7 +52,7 @@ char     *GIFFileName;
 	char CommentName[256];
 	char ApplicationName[256];
 	char PlainTextName[256];
-	
+
 	/* reference variables */
 	uint32 gr_ref;		/* GR reference for the VGroup */
 
@@ -88,12 +88,12 @@ char     *GIFFileName;
 	}
 
 	vgroup_id = Vattach(file_id , -1 , "w");
-	
+
 	status = Vsetname(vgroup_id , GIFFileName);
-	
+
 	status = Vsetclass(vgroup_id , "GIF");
-	
-	
+
+
 	/* Put the global palette in as an attribute to the vgroup */
 	if (gifHead.PackedField & 0x80) {
 		status = Vsetattr (vgroup_id, "Global Palette" , DFNT_UINT8, 3 * gifHead.TableSize , (VOIDP)gifHead.HDFPalette);
@@ -108,7 +108,7 @@ char     *GIFFileName;
         HDfree(GifMemoryStruct.GifCommentExtension[i]);
 	}
     HDfree(GifMemoryStruct.GifCommentExtension);
-	
+
 	for (i = 0 ; i < ApplicationCount ; i++) {
 		sprintf(ApplicationName , "Application Extension Data %d", (int)i);
 		status = Vsetattr (vgroup_id , ApplicationName , DFNT_CHAR8 , (int32)(GifMemoryStruct.GifApplicationExtension[i])->DataSize , (VOIDP)(GifMemoryStruct.GifApplicationExtension[i])->ApplicationData);
@@ -127,16 +127,16 @@ char     *GIFFileName;
 	/* Add GR images into VGroup */
 	for(i = 0 ; i < ImageCount ; i++)
 	{
-		
+
 		gifImageDesc = *(GifMemoryStruct.GifImageDesc[i]);
-		
+
 		dim_sizes[0] = gifImageDesc.ImageWidth;
 		dim_sizes[1] = gifImageDesc.ImageHeight;
-		
+
 		start[0] = start[1] = 0;
 		edges[0] = gifImageDesc.ImageWidth;
 		edges[1] = gifImageDesc.ImageHeight;
-		
+
 		/* Create GR Image */
 		sprintf(ImageName,"Image%d",(int)i);
 		ri_id = GRcreate (gr_id, ImageName, 1, data_type, interlace_mode, dim_sizes);
@@ -163,25 +163,25 @@ char     *GIFFileName;
 			printf("%s\n", HEstring(HEvalue(1)));
 			exit(-1);
 		}
-		
+
 		/* Put both image and palette in VGroup */
 		gr_ref = GRidtoref(ri_id);
-		
+
 		if ((status = GRendaccess(ri_id)) == -1) {
 			printf("Could not terminate GR access\n");
 			printf("%s\n", HEstring(HEvalue(1)));
 			exit(-1);
 		}
 
-		
-		
+
+
 		/* Adding GR to vgroup */
 		if((status = Vaddtagref(vgroup_id,(int32)1965,gr_ref))==-1) {
 			printf("Could not add tag to Vgroup");
 			printf("%s\n", HEstring(HEvalue(1)));
 		}
 
-		
+
 	}
 
 	/* Terminate GR access */
@@ -190,7 +190,7 @@ char     *GIFFileName;
 		printf("%s\n", HEstring(HEvalue(1)));
 		printf("Trying to continue (file may be corrupt)...\n");
 	}
-	
+
 	/* Terminate access to the VGroup */
 	if ((status = Vdetach(vgroup_id))==-1) {
 		printf("Could not detach Vgroup\n");

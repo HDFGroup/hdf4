@@ -26,7 +26,7 @@ C
       integer hopen, hclose
       integer afstart, afnumann, afannlist, afidtagref, aftagatype,
      +        afatypetag, afend
-      integer vfstart, vfind 
+      integer vfstart, vfind
 
 C
 C**** Variable declaration *******************************************
@@ -34,7 +34,7 @@ C
       integer status
       integer file_id, an_id
       integer n_annots, ann_index, annot_type, ann_tag, ann_ref
-      integer ann_list(10) 
+      integer ann_list(10)
       integer vgroup_tag, vgroup_ref
 C
 C**** End of variable declaration ************************************
@@ -59,9 +59,9 @@ C
       an_id = afstart(file_id)
 
 C
-C     Get the number of object descriptions. 
+C     Get the number of object descriptions.
 C
-      if (vgroup_ref .eq. -1) goto 100 
+      if (vgroup_ref .eq. -1) goto 100
       n_annots = afnumann(an_id, annot_type, vgroup_tag, vgroup_ref)
 C
 C     Get the list of identifiers of the annotations attached to the
@@ -81,7 +81,7 @@ C
 C     Get and display the ref number of the annotation from its
 C     identifier.
 C
-      status = afidtagref(ann_list(ann_index+1), ann_tag, ann_ref) 
+      status = afidtagref(ann_list(ann_index+1), ann_tag, ann_ref)
       write(*,*) 'Annotation index: ', ann_index
       if (ann_tag .eq. DFTAG_DIA) then
           write(*,*) 'tag = DFTAG_DIA (data description)'
@@ -100,7 +100,7 @@ C
       else
          write(*,*) 'Annotation type of DFTAG_FID (file label) is ',
      +               'Incorrect'
-      endif   
+      endif
 C
 C     Get and display an annotation tag from an annotation type.
 C
@@ -111,7 +111,7 @@ C
       else
          write(*,*) 'Annotation type of DFTAG_FID (file label) is ',
      +               'Incorrect'
-      endif   
+      endif
 C
 C     Terminate access to the AN interface and close the HDF file.
 C

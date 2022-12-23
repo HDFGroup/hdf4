@@ -33,18 +33,18 @@ void options_table_init( options_table_t **tbl )
 {
     int i;
     options_table_t* op_tbl = (options_table_t*)HDmalloc(sizeof(options_table_t));
-    
+
     op_tbl->size   = 3;
     op_tbl->nelems = 0;
     op_tbl->objs   = (pack_info_t*)HDmalloc(op_tbl->size * sizeof(pack_info_t));
-    
+
     for (i = 0; i < op_tbl->size; i++) {
         HDstrcpy(op_tbl->objs[i].objpath,"\0");
         op_tbl->objs[i].comp.info  = -1;
         op_tbl->objs[i].comp.type  = COMP_CODE_NONE;
         op_tbl->objs[i].chunk.rank = -1;
     }
-    
+
     *tbl = op_tbl;
 }
 
@@ -83,7 +83,7 @@ int options_add_chunk(obj_list_t *obj_list,
                       options_table_t *op_tbl )
 {
     int i, j, k, I, added=0, found=0;
-    
+
     if (op_tbl->nelems+n_objs >= op_tbl->size) {
         op_tbl->size += n_objs;
         op_tbl->objs = (pack_info_t*)HDrealloc(op_tbl->objs, op_tbl->size * sizeof(pack_info_t));
@@ -94,15 +94,15 @@ int options_add_chunk(obj_list_t *obj_list,
             op_tbl->objs[i].chunk.rank = -1;
         }
     }
-    
+
     /* search if this object is already in the table; "path" is the key */
     if (op_tbl->nelems>0)
     {
         /* go tru the supplied list of names */
-        for (j = 0; j < n_objs; j++) 
+        for (j = 0; j < n_objs; j++)
         {
             /* linear table search */
-            for (i = 0; i < op_tbl->nelems; i++) 
+            for (i = 0; i < op_tbl->nelems; i++)
             {
                 /*already on the table */
                 if (HDstrcmp(obj_list[j].obj,op_tbl->objs[i].objpath)==0)
@@ -117,44 +117,44 @@ int options_add_chunk(obj_list_t *obj_list,
                     else
                     {
                         op_tbl->objs[i].chunk.rank = chunk_rank;
-                        for (k = 0; k < chunk_rank; k++) 
+                        for (k = 0; k < chunk_rank; k++)
                             op_tbl->objs[i].chunk.chunk_lengths[k] = chunk_lengths[k];
                         found=1;
                         break;
                     }
                 } /* if */
             } /* i */
-            
+
             if (found==0)
             {
                 /* keep the grow in a temp var */
-                I = op_tbl->nelems + added;  
+                I = op_tbl->nelems + added;
                 added++;
                 HDstrcpy(op_tbl->objs[I].objpath,obj_list[j].obj);
                 op_tbl->objs[I].chunk.rank = chunk_rank;
-                for (k = 0; k < chunk_rank; k++) 
+                for (k = 0; k < chunk_rank; k++)
                     op_tbl->objs[I].chunk.chunk_lengths[k] = chunk_lengths[k];
             }
-        } /* j */ 
+        } /* j */
     }
-    
+
     /* first time insertion */
     else
     {
         /* go tru the supplied list of names */
-        for (j = 0; j < n_objs; j++) 
+        for (j = 0; j < n_objs; j++)
         {
-            I = op_tbl->nelems + added;  
+            I = op_tbl->nelems + added;
             added++;
             HDstrcpy(op_tbl->objs[I].objpath,obj_list[j].obj);
             op_tbl->objs[I].chunk.rank = chunk_rank;
-            for (k = 0; k < chunk_rank; k++) 
+            for (k = 0; k < chunk_rank; k++)
                 op_tbl->objs[I].chunk.chunk_lengths[k] = chunk_lengths[k];
         }
     }
-    
+
     op_tbl->nelems+= added;
-    
+
     return SUCCEED;
 }
 
@@ -176,7 +176,7 @@ int options_add_comp(obj_list_t *obj_list,
                      options_table_t *op_tbl )
 {
     int i, j, I, added=0, found=0;
-    
+
     if (op_tbl->nelems+n_objs >= op_tbl->size) {
         op_tbl->size += n_objs;
         op_tbl->objs = (pack_info_t*)HDrealloc(op_tbl->objs, op_tbl->size * sizeof(pack_info_t));
@@ -187,15 +187,15 @@ int options_add_comp(obj_list_t *obj_list,
             op_tbl->objs[i].chunk.rank = -1;
         }
     }
-    
+
     /* search if this object is already in the table; "path" is the key */
     if (op_tbl->nelems>0)
     {
         /* go tru the supplied list of names */
-        for (j = 0; j < n_objs; j++) 
+        for (j = 0; j < n_objs; j++)
         {
             /* linear table search */
-            for (i = 0; i < op_tbl->nelems; i++) 
+            for (i = 0; i < op_tbl->nelems; i++)
             {
                 /*already on the table */
                 if (HDstrcmp(obj_list[j].obj,op_tbl->objs[i].objpath)==0)
@@ -215,33 +215,33 @@ int options_add_comp(obj_list_t *obj_list,
                     }
                 } /* if */
             } /* i */
-            
+
             if (found==0)
             {
                 /* keep the grow in a temp var */
-                I = op_tbl->nelems + added;  
+                I = op_tbl->nelems + added;
                 added++;
                 HDstrcpy(op_tbl->objs[I].objpath,obj_list[j].obj);
                 op_tbl->objs[I].comp = comp;
             }
-        } /* j */ 
+        } /* j */
     }
-    
+
     /* first time insertion */
     else
     {
         /* go tru the supplied list of names */
-        for (j = 0; j < n_objs; j++) 
+        for (j = 0; j < n_objs; j++)
         {
-            I = op_tbl->nelems + added;  
+            I = op_tbl->nelems + added;
             added++;
             HDstrcpy(op_tbl->objs[I].objpath,obj_list[j].obj);
             op_tbl->objs[I].comp = comp;
         }
     }
-    
+
     op_tbl->nelems+= added;
-    
+
     return 0;
 }
 
@@ -259,8 +259,8 @@ pack_info_t* options_get_object(char *path,
                                 options_table_t *op_tbl)
 {
     int i;
-    
-    for ( i = 0; i < op_tbl->nelems; i++) 
+
+    for ( i = 0; i < op_tbl->nelems; i++)
     {
         /* found it */
         if (HDstrcmp(op_tbl->objs[i].objpath,path)==0)
@@ -268,7 +268,7 @@ pack_info_t* options_get_object(char *path,
             return (&op_tbl->objs[i]);
         }
     }
-    
+
     return NULL;
 }
 

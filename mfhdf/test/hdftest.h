@@ -37,7 +37,7 @@
 #define VERIFY(item, value, test_name) {if(item != value) { \
     fprintf(stderr, "*** UNEXPECTED VALUE from %s is %ld at line %4d in %s\n", test_name, (long)item,(int)__LINE__,__FILE__); num_errs++;}}
 
-/* Verify that a value of type char* is as expected and, if not, print 
+/* Verify that a value of type char* is as expected and, if not, print
    error message */
 #define VERIFY_CHAR(item, value, test_name) {if(HDstrcmp(item, value) != 0) { \
     fprintf(stderr, "*** UNEXPECTED VALUE from %s is <%s> at line %4d in %s\n", test_name, item,(int)__LINE__,__FILE__); num_errs++;}}

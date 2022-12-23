@@ -45,8 +45,8 @@ usage()
 }
 
 
-/* 
- * convert pathname of netcdf file into name for cdl unit, by taking 
+/*
+ * convert pathname of netcdf file into name for cdl unit, by taking
  * last component of path and stripping off any extension.
  */
 static char *
@@ -57,7 +57,7 @@ name_path(path)
 
 #ifdef MSDOS
 #define FILE_DELIMITER '\\'
-#endif    
+#endif
 #ifndef FILE_DELIMITER /* default to unix */
 #define FILE_DELIMITER '/'
 #endif
@@ -110,7 +110,7 @@ tztrim(ss)
      char *ss;			/* returned string representing dd */
 {
     char *cp, *ep;
-    
+
     cp = ss;
     if (*cp == '-')
         cp++;
@@ -129,7 +129,7 @@ tztrim(ss)
     *cp = '\0';
     return;
 }
- 
+
 /*
  * Print list of attribute values.  Attribute values must be printed with
  * explicit type tags, because their types are not declared.
@@ -253,7 +253,7 @@ pr_att_vals(type, len, vals)
  */
 char *fixstr(char *str, bool fix_str)
 {
-#ifndef __GNUC__ 
+#ifndef __GNUC__
     char *strdup(const char *);
 #endif  /* linux */
 	char *new_str, *ptr;
@@ -304,7 +304,7 @@ do_ncdump(char *path, struct fspec* specp)
 	/* don't crash on error */
 	ncopts = 0;
 
-	if (ncid == -1) { 
+	if (ncid == -1) {
 		error("ncopen failed on %s", path);
 		return;
 	}
@@ -381,7 +381,7 @@ do_ncdump(char *path, struct fspec* specp)
 			Printf ("(");
 
 		for (id = 0; id < var.ndims; id++) {
-			char *fixed_dim = fixstr(dims[var.dims[id]].name, 
+			char *fixed_dim = fixstr(dims[var.dims[id]].name,
 						 specp->fix_str);
 
 			if (!fixed_dim && dims[var.dims[id]].name) {
@@ -510,7 +510,7 @@ do_ncdump(char *path, struct fspec* specp)
 				NC *handle ;
 				NC_var *vp;
 #ifdef OLD_WAY
-				NC_var *NC_hlookupvar() ;          
+				NC_var *NC_hlookupvar() ;
 #endif /* OLD_WAY */
 
 				isempty = 0;
@@ -524,8 +524,8 @@ do_ncdump(char *path, struct fspec* specp)
 					/* has yet been added. */
 					if ((vp->data_tag == DFTAG_SDS ||
 						vp->data_tag == DFTAG_SD) &&
-						(vp->data_ref == 0))  
-						isempty = 1;  
+						(vp->data_ref == 0))
+						isempty = 1;
 				}
 			}
 
@@ -540,8 +540,8 @@ do_ncdump(char *path, struct fspec* specp)
 				for (id = 0; id < var.ndims; id++)
 					vdims[id] = dims[var.dims[id]].size;
 
-				 /* if (vardata(&var, vdims, ncid, varid, specp) == -1) 
- */ 
+				 /* if (vardata(&var, vdims, ncid, varid, specp) == -1)
+ */
 				ret = vardata(&var, vdims, ncid, varid, specp);
 				/* Keep the original failure detection until further improvement */
 				if (ret == -1) {
@@ -591,7 +591,7 @@ make_lvars(optarg, fspecp)
     for (cp = strtok(optarg, ",");
 	 cp != NULL;
 	 cp = strtok((char *) NULL, ",")) {
-	
+
 	*cpp = (char *) malloc(strlen(cp) + 1);
 	if (!*cpp) {
 	    error("out of memory");
@@ -666,7 +666,7 @@ char *argv[];
 
     opterr = 1;
     progname = argv[0];
-    
+
     if (1 == argc)             /* if no arguments given, print help and exit */
       usage();
 
@@ -742,12 +742,12 @@ char *argv[];
       }
 
     set_max_len(max_len);
-    
+
     argc -= optind;
     argv += optind;
 
     i = 0;
-    do {		
+    do {
 	if (argc > 0)
 	  do_ncdump(argv[i], &fspec);
     } while (++i < argc);

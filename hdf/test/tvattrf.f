@@ -17,11 +17,11 @@ C
 C **************************************************
 C *
 C * tvattrf.f
-C * test Vset attribute Fortran API 
+C * test Vset attribute Fortran API
 C *
 C *************************************************
        subroutine tvattrf (number_failed)
-C       program tvattrf 
+C       program tvattrf
 C Test Program:
 C   Tests the vdata and vgroup attribute interface
 C Input file: test_files/tvattr.dat
@@ -56,7 +56,7 @@ C iattrg, GATTR1 are for float64 values
       double precision geps, GATTR1, dabs
       character*10  iattrc
       character*20 iattrnm
-     
+
       integer VSET_VERSION, VSET_NEW_VERSION
 
       parameter (VSET_VERSION = 3,
@@ -72,7 +72,7 @@ C iattrg, GATTR1 are for float64 values
 
       call ptestban('Testing', myname)
 C      number_failed = 0
-C Open the file 
+C Open the file
       len_in = len(ifn_out)
       ret = fixname(ifn, ifn_out, len_in)
       fid1 = hopen(ifn_out(1:len_in), DFACC_READ, 0)
@@ -108,10 +108,10 @@ C Open the file
          call MESSAGE(1, 'Wrong number of attrs for vsname1')
          number_failed = number_failed + 1
       endif
-C get the 0th attr 
+C get the 0th attr
       aindex = 0
       findex = HDF_VDATA
-      ret = vsffdat(vsid, findex, 'attname3') 
+      ret = vsffdat(vsid, findex, 'attname3')
       call VRFY(ret, 'vsffdat', number_failed)
       ret = vsfainf(vsid, findex, aindex, iattrnm,
      + itype, icount, imsize)
@@ -123,7 +123,7 @@ C get the 0th attr
       iattrc = '          '
       ret = vsfgcat(vsid, findex, aindex, iattrc)
       call VRFY(ret, 'vsfgcat', number_failed)
-C      if ((iattrc(1) .ne. 'm') .or. (iattrc(2) .ne. 'N') 
+C      if ((iattrc(1) .ne. 'm') .or. (iattrc(2) .ne. 'N')
 C    +    .or. (iattrc(3) .ne. 'p'))  then
       if (iattrc .ne. 'mNp') then
          call MESSAGE(1,'Wrong values of char attr for vsname1')
@@ -141,7 +141,7 @@ C get the 1st attr of fld 0
 C
       ret = vsfgnat(vsid, findex, aindex, iattrg)
       call VRFY(ret, 'vsfgnatt1', number_failed)
-      if (dabs(iattrg(1)-GATTR1) .gt. dabs(geps * GATTR1)) 
+      if (dabs(iattrg(1)-GATTR1) .gt. dabs(geps * GATTR1))
      +          then
          call MESSAGE(1, 'Wrong double attr for vsname1')
          number_failed = number_failed + 1
@@ -149,7 +149,7 @@ C
       endif
       ret = vsfdtch(vsid)
       call VRFY(ret, 'vsfdtch', number_failed)
-C get next vdata and test vsfisat 
+C get next vdata and test vsfisat
       vsref = vsffnd(fid1, 'attname1')
       vsid = vsfatch(fid1, vsref, 'r')
       call VRFY(ret, 'vsfatch', number_failed)
@@ -225,10 +225,10 @@ C vdata attrs
       ret = vsfscat(vsid, HDF_VDATA, 'vscattr0', DFNT_CHAR, 3,
      +              'at2')
       call VRFY(ret, 'vfscatt', number_failed)
-      ret = vsfsnat(vsid, 0, 'vsattr1', DFNT_FLOAT32, 1, 
+      ret = vsfsnat(vsid, 0, 'vsattr1', DFNT_FLOAT32, 1,
      +             RATTR1)
       call VRFY(ret, 'vsfsnat', number_failed)
-      ret = vsfdtch(vsid) 
+      ret = vsfdtch(vsid)
       call VRFY(ret, 'vsfdtch', number_failed)
       ret = vfend(fid1)
       call VRFY(ret, 'vfend',number_failed)
@@ -255,7 +255,7 @@ C     +     .or. iattrc(3) .ne. '0') then
       endif
       ret = vfgnatt(vgid, 1, iattrr)
       call VRFY(ret, 'vfgnatt', number_failed)
-      if (abs(iattrr(1)-RATTR1) .gt. abs(RATTR1*feps)) 
+      if (abs(iattrr(1)-RATTR1) .gt. abs(RATTR1*feps))
      +          then
          call MESSAGE(1, 'Wrong values of real attr for vg')
          number_failed = number_failed + 1
@@ -279,7 +279,7 @@ C     +     .or. iattrc(3) .ne. '2') then
       endif
       ret = vsfgnat(vsid, 0, 0, iattrr)
       call VRFY(ret, 'vsfgnatt2', number_failed)
-      if (abs(iattrr(1)-RATTR1) .gt. abs(RATTR1*feps)) 
+      if (abs(iattrr(1)-RATTR1) .gt. abs(RATTR1*feps))
      +          then
          call MESSAGE(1, 'Wrong values of real attr for vs')
          number_failed = number_failed + 1
@@ -301,8 +301,8 @@ C     +     .or. iattrc(3) .ne. '2') then
 
 
 
-       
 
-     
-        
-     
+
+
+
+

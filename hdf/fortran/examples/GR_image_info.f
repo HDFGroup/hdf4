@@ -12,7 +12,7 @@ C
 C     Function declaration
 C
       integer hopen, hclose
-      integer mgstart, mgselct, mgfinfo, mggiinf, mgendac, mgend 
+      integer mgstart, mgselct, mgfinfo, mggiinf, mgendac, mgend
 
 C
 C**** Variable declaration *******************************************
@@ -72,13 +72,13 @@ C
 C     Display the image information for the current image.
 C
       write(*,*) 'Image index: ', ri_index
-      write(*,*) 'Image name: ', name 
+      write(*,*) 'Image name: ', name
       write(*,*) 'Number of components: ', n_comps
-      write(*,*) 'Number type: ', type_string 
+      write(*,*) 'Number type: ', type_string
       write(*,*) 'Interlace mode: ', interlace_string
       write(*,*) 'Dimnesions: ', dim_sizes(1), dim_sizes(2)
       write(*,*) 'Number of image attributes: ', n_attrs
-      write(*,*) 
+      write(*,*)
 C
 C     Terminate access to the current raster image.
 C

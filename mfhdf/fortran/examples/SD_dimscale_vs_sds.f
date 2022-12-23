@@ -1,4 +1,4 @@
-      program  sds_vrs_coordvar 
+      program  sds_vrs_coordvar
       implicit none
 C
 C     Parameter declaration.
@@ -12,7 +12,7 @@ C
       parameter   (MAX_VAR_DIMS = 32)
 C
 C     Function declaration.
-C 
+C
       integer sfstart, sfselect, sfiscvar, sffinfo, sfginfo
       integer sfendacc, sfend
 C
@@ -32,14 +32,14 @@ C
       sd_id = sfstart(FILE_NAME, DFACC_READ)
 C
 C     Obtain information about the file.
-C 
-      status = sffinfo(sd_id, n_datasets, n_file_attrs) 
+C
+      status = sffinfo(sd_id, n_datasets, n_file_attrs)
 C
 C     Get information about each SDS in the file.
-C     Check whether it is a coordinate variable, then display retrieved 
-C     information. 
+C     Check whether it is a coordinate variable, then display retrieved
+C     information.
 C     Output displayed:
-C 
+C
 C           SDS array with the name SDStemplate
 C           Coordinate variable with the name X_Axis
 C           Coordinate variable with the name Y_Axis
@@ -51,10 +51,10 @@ C
          status = sfiscvar(sds_id)
          if (status .eq. 1) then
              write(*,*) "Coordinate variable with the name ",
-     +       sds_name(1:6) 
+     +       sds_name(1:6)
          else
-             write(*,*) "SDS array with the name ", 
-     +       sds_name(1:11) 
+             write(*,*) "SDS array with the name ",
+     +       sds_name(1:11)
          endif
 C
 C        Terminate access to the data set.

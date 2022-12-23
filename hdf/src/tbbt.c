@@ -34,7 +34,7 @@ VOID        tbbt1dump
 extern VOID tbbt_printNode(TBBT_NODE * node, VOID(*key_dump)(VOID *,VOID *));
 extern VOID tbbt_dumpNode(TBBT_NODE *node, VOID (*key_dump)(VOID *,VOID *),
                           intn method);
-extern VOID tbbt_dump(TBBT_TREE *ptree, VOID (*key_dump)(VOID *,VOID *), 
+extern VOID tbbt_dump(TBBT_TREE *ptree, VOID (*key_dump)(VOID *,VOID *),
                       intn method);
 
 static TBBT_NODE *tbbt_get_node(void);
@@ -234,7 +234,7 @@ tbbtless(TBBT_NODE * root, VOIDP key,
 	/* didn't find an exact match, search back up the tree until a node */
 	/* is found with a key less than the key searched for */
       {
-	while((ptr=ptr->Parent)!=NULL) 
+	while((ptr=ptr->Parent)!=NULL)
 	  {
               cmp = KEYcmp(key, ptr->key, arg);
 	      if(cmp<0) /* found a node which is less than the search for one */
@@ -263,8 +263,8 @@ tbbtdless(TBBT_TREE * tree, VOIDP key, TBBT_NODE ** pp)
 /* tbbtindx -- Look up the Nth node (in key order) */
 /* Returns a pointer to the `indx'th node (or NULL) */
 /* Bugs(fixed):
-   Added NULL check for 'ptr' in while loop to 
-     prevent endless loop condition. 
+   Added NULL check for 'ptr' in while loop to
+     prevent endless loop condition.
    Fixed bug where we subtracted children count from the wrong side of the
     tree. */
 TBBT_NODE  *
@@ -289,7 +289,7 @@ tbbtindx(TBBT_NODE * root, int32 indx)
       else if (HasChild(ptr, RIGHT))
         { /* subtract children count from leftchild plus current node when
              we descend into a right branch */
-          indx -= (int32)(LeftCnt(ptr) + 1);  
+          indx -= (int32)(LeftCnt(ptr) + 1);
           ptr = ptr->Rchild;
         }
       else
@@ -1014,7 +1014,7 @@ static void tbbt_release_node(TBBT_NODE *nod)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn 
+intn
 tbbt_shutdown(void)
 {
     TBBT_NODE *curr;

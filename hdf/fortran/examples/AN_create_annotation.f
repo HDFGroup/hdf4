@@ -14,9 +14,9 @@ C
      +           VG_NAME        = 'AN Vgroup',
      +           FILE_LABEL_TXT = 'General HDF objects',
      +           DATA_LABEL_TXT = 'Common AN Vgroup',
-     +           FILE_DESC_TXT  = 
+     +           FILE_DESC_TXT  =
      + 'This is an HDF file that contains general HDF objects',
-     +           DATA_DESC_TXT  = 
+     +           DATA_DESC_TXT  =
      + 'This is a vgroup that is used to test data annotations')
       integer DFACC_CREATE
       parameter (DFACC_CREATE = 4)
@@ -34,7 +34,7 @@ C
       integer vfstart, vfatch, vfsnam, vqref, vqtag, vfdtch, vfend
 
 C
-C**** Variable declaration ******************************************* 
+C**** Variable declaration *******************************************
 C
       integer status
       integer file_id, an_id
@@ -60,7 +60,7 @@ C
 C     Write the annotation to the file label.
 C
       status = afwriteann(file_label_id, FILE_LABEL_TXT,
-     +                    len(FILE_LABEL_TXT))       
+     +                    len(FILE_LABEL_TXT))
 C
 C     Create file description.
 C
@@ -76,7 +76,7 @@ C     set to -1 for creating and the access mode is 'w' for writing.
 C
       status    = vfstart(file_id)
       vgroup_id = vfatch(file_id, -1, 'w')
-      status    = vfsnam(vgroup_id, VG_NAME)      
+      status    = vfsnam(vgroup_id, VG_NAME)
 C
 C     Obtain the tag and reference number of the vgroup for subsequent
 C     references.
@@ -84,7 +84,7 @@ C
       vgroup_ref = vqref(vgroup_id)
       vgroup_tag = vqtag(vgroup_id)
 C
-C     Create the data label for the vgroup identified by its tag and ref 
+C     Create the data label for the vgroup identified by its tag and ref
 C     number.
 C
       data_label_id = afcreate(an_id, vgroup_tag, vgroup_ref,
@@ -92,20 +92,20 @@ C
 C
 C     Write the annotation text to the data label.
 C
-      status = afwriteann(data_label_id, DATA_LABEL_TXT, 
+      status = afwriteann(data_label_id, DATA_LABEL_TXT,
      +                    len(DATA_LABEL_TXT))
-      
+
 C
 C     Create the data description for the vgroup identified by its tag and ref.
 C
-      data_desc_id = afcreate(an_id, vgroup_tag, vgroup_ref, 
+      data_desc_id = afcreate(an_id, vgroup_tag, vgroup_ref,
      +                        AN_DATA_DESC)
 C
 C     Write the annotation text to the data description.
 C
       status = afwriteann(data_desc_id, DATA_DESC_TXT,
-     +                    len(DATA_DESC_TXT))       
-C      
+     +                    len(DATA_DESC_TXT))
+C
 C     Terminate access to the vgroup and to the V interface.
 C
       status = vfdtch(vgroup_id)
@@ -122,4 +122,4 @@ C     Terminate access to the AN interface and close the HDF file.
 C
       status = afend(an_id)
       status = hclose(file_id)
-      end 
+      end

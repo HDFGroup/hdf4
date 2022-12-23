@@ -665,12 +665,12 @@ extern      "C"
 /*
    ** from hfilef.c
 */
-/* 
+/*
  *  Not all HDF4 Fortran functions are real Fortran functions, they are C wrappers called from a
  *  Fortran program. Since on Windows we have to have a real Fortran function, additional C wrappers
- *  were added at the time when Windows port was done for multi-file interfaces: for example, 
+ *  were added at the time when Windows port was done for multi-file interfaces: for example,
  *  hclose is a C wrapper on UNIX, while on Windows we have two functions: Fortran function hclose
- *  and C wrapper function hiclose called by hclose   
+ *  and C wrapper function hiclose called by hclose
  *                                                                                    EIP 2007-09-14
  */
 #   define nhiopen       H4_F77_FUNC(hiopen, HIOPEN)
@@ -698,11 +698,11 @@ extern      "C"
 
     HDFFCLIBAPI	FRETVAL(intf) nhxiscdir
 		(_fcd dir, intf * dirlen);
- 
+
     HDFFCLIBAPI      FRETVAL(intf)
                 nhddontatexit(void);
 
-    HDFFCLIBAPI      FRETVAL(intf)   
+    HDFFCLIBAPI      FRETVAL(intf)
                 nhglibverc(intf *major_v, intf *minor_v, intf *release,
                 _fcd string, intf *len);
 
@@ -715,10 +715,10 @@ extern      "C"
 
     HDFFCLIBAPI FRETVAL(intf) nhiclose
                (intf  * file_id);
-               
+
     HDFFCLIBAPI	FRETVAL(intf) nhinumbr
                (int32 file_id, uint16 tag);
-    
+
     HDFFCLIBAPI	FRETVAL(intf) nhconfinfc
                (intf *coder_type, intf *info);
 /*
@@ -741,12 +741,12 @@ extern      "C"
 
 /* for Multi-file fortran Annotation inteface */
 
-/* 
+/*
  *  Not all HDF4 Fortran functions are real Fortran functions, they are C wrappers called from a
  *  Fortran program. Since on Windows we have to have a real Fortran function, additional C wrappers
- *  were added at the time when Windows port was done for multi-file interfaces: for example, 
+ *  were added at the time when Windows port was done for multi-file interfaces: for example,
  *  hclose is a C wrapper on UNIX, while on Windows we have two functions: Fortran function hclose
- *  and C wrapper function hiclose called by hclose   
+ *  and C wrapper function hiclose called by hclose
  *                                                                                    EIP 2007-09-14
  */
 #  define nafstart      H4_F77_FUNC(afstart, AFSTART)
@@ -887,17 +887,17 @@ HDFLIBAPI intn  ANfileinfo(int32 an_id, int32 *n_file_label, int32 *n_file_desc,
 
 HDFLIBAPI int32 ANend(int32 an_id);
 
-HDFLIBAPI int32 ANcreate(int32 an_id, uint16 elem_tag, uint16 elem_ref, 
+HDFLIBAPI int32 ANcreate(int32 an_id, uint16 elem_tag, uint16 elem_ref,
                       ann_type type);
 
 HDFLIBAPI int32 ANcreatef(int32 an_id, ann_type type);
 
 HDFLIBAPI int32 ANselect(int32 an_id, int32 idx, ann_type type);
 
-HDFLIBAPI intn  ANnumann(int32 an_id, ann_type type, uint16 elem_tag, 
+HDFLIBAPI intn  ANnumann(int32 an_id, ann_type type, uint16 elem_tag,
                       uint16 elem_ref);
 
-HDFLIBAPI intn  ANannlist(int32 an_id, ann_type type, uint16 elem_tag, 
+HDFLIBAPI intn  ANannlist(int32 an_id, ann_type type, uint16 elem_tag,
                        uint16 elem_ref, int32 ann_list[]);
 
 HDFLIBAPI int32 ANannlen(int32 ann_id);
@@ -923,12 +923,12 @@ HDFLIBAPI ann_type ANtag2atype(uint16 atag);
 HDFLIBAPI intn ANdestroy(void); */
 
 /* for Multi-file fortran GR interface */
-/* 
+/*
  *  Not all HDF4 Fortran functions are real Fortran functions, they are C wrappers called from a
  *  Fortran program. Since on Windows we have to have a real Fortran function, additional C wrappers
- *  were added at the time when Windows port was done for multi-file interfaces: for example, 
+ *  were added at the time when Windows port was done for multi-file interfaces: for example,
  *  hclose is a C wrapper on UNIX, while on Windows we have two functions: Fortran function hclose
- *  and C wrapper function hiclose called by hclose   
+ *  and C wrapper function hiclose called by hclose
  *                                                                                    EIP 2007-09-14
  */
 #  define nmgstart         H4_F77_FUNC(mgstart, MGSTART)
@@ -1115,12 +1115,12 @@ nmgifndat(intf * riid, _fcd name, intf *nlen);
 /*
    ** from vgF.c
  */
-/* 
+/*
  *  Not all HDF4 Fortran functions are real Fortran functions, they are C wrappers called from a
  *  Fortran program. Since on Windows we have to have a real Fortran function, additional C wrappers
- *  were added at the time when Windows port was done for multi-file interfaces: for example, 
+ *  were added at the time when Windows port was done for multi-file interfaces: for example,
  *  hclose is a C wrapper on UNIX, while on Windows we have two functions: Fortran function hclose
- *  and C wrapper function hiclose called by hclose   
+ *  and C wrapper function hiclose called by hclose
  *                                                                                    EIP 2007-09-14
  */
 #   define  ndfivopn       H4_F77_FUNC(dfivopn, DFIVOPN)
@@ -1272,7 +1272,7 @@ nmgifndat(intf * riid, _fcd name, intf *nlen);
 
     HDFFCLIBAPI      FRETVAL(intf) nvsqtag
                 (intf  * vkey);
-  
+
 
     HDFFCLIBAPI      FRETVAL(intf) nvsgver
                 (intf  * vkey);
@@ -1395,26 +1395,26 @@ nmgifndat(intf * riid, _fcd name, intf *nlen);
                 (intf  * f, _fcd vgclass, intf  * classlen);
 
     HDFFCLIBAPI      FRETVAL(intf) nvhscdc
-                (intf  * f, _fcd field, _fcd  cbuf, intf  * n, 
-                 intf  * datatype, _fcd vsname, _fcd vsclass, 
+                (intf  * f, _fcd field, _fcd  cbuf, intf  * n,
+                 intf  * datatype, _fcd vsname, _fcd vsclass,
                  intf  * fieldlen, intf  * vsnamelen,
                  intf  * vsclasslen);
 
     HDFFCLIBAPI      FRETVAL(intf) nvhsdc
-                (intf  * f, _fcd field, uint8  * buf, intf  * n, 
-                 intf  * datatype, _fcd vsname, _fcd vsclass, 
+                (intf  * f, _fcd field, uint8  * buf, intf  * n,
+                 intf  * datatype, _fcd vsname, _fcd vsclass,
                  intf  * fieldlen, intf  * vsnamelen,
                  intf  * vsclasslen);
 
     HDFFCLIBAPI      FRETVAL(intf) nvhscdmc
                 (intf  * f, _fcd field, _fcd  cbuf, intf  * n,
-                 intf  * datatype, _fcd vsname, _fcd vsclass, 
+                 intf  * datatype, _fcd vsname, _fcd vsclass,
                  intf  * order, intf  * fieldlen, intf * vsnamelen,
                  intf  * vsclasslen);
 
     HDFFCLIBAPI      FRETVAL(intf) nvhsdmc
                 (intf  * f, _fcd field, uint8  * buf, intf  * n,
-                 intf  * datatype, _fcd vsname, _fcd vsclass, 
+                 intf  * datatype, _fcd vsname, _fcd vsclass,
                  intf  * order, intf  * fieldlen, intf * vsnamelen,
                  intf  * vsclasslen);
 
@@ -1464,7 +1464,7 @@ nmgifndat(intf * riid, _fcd name, intf *nlen);
     HDFFCLIBAPI      FRETVAL(intf) nvsqfvsiz
                 (intf * vkey, intf * size);
 
-    HDFFCLIBAPI      FRETVAL(intf) nvsqnamec  
+    HDFFCLIBAPI      FRETVAL(intf) nvsqnamec
                 (intf * vkey, _fcd name, intf *namelen);
 
     HDFFCLIBAPI      FRETVAL(intf) nvsfccpk
@@ -1504,7 +1504,7 @@ nmgifndat(intf * riid, _fcd name, intf *nlen);
 
      HDFFCLIBAPI FRETVAL(intf) nvsiqtag
                 (intf  * vkey);
-  
+
      HDFFCLIBAPI FRETVAL(intf) nvsigver
                 (intf  * vkey);
 
@@ -1561,15 +1561,15 @@ nmgifndat(intf * riid, _fcd name, intf *nlen);
      HDFFCLIBAPI FRETVAL(intf) nvsiqvsz
                 (intf * vkey, intf *ret_size);
 
- /* 
+ /*
   ** from vattrf.c
   */
-/* 
+/*
  *  Not all HDF4 Fortran functions are real Fortran functions, they are C wrappers called from a
  *  Fortran program. Since on Windows we have to have a real Fortran function, additional C wrappers
- *  were added at the time when Windows port was done for multi-file interfaces: for example, 
+ *  were added at the time when Windows port was done for multi-file interfaces: for example,
  *  hclose is a C wrapper on UNIX, while on Windows we have two functions: Fortran function hclose
- *  and C wrapper function hiclose called by hclose   
+ *  and C wrapper function hiclose called by hclose
  *                                                                                    EIP 2007-09-14
  */
 #  define nvsfcfdx   H4_F77_FUNC(vsfcfdx, VSFCFDX)
@@ -1638,13 +1638,13 @@ nmgifndat(intf * riid, _fcd name, intf *nlen);
    HDFFCLIBAPI FRETVAL(intf) nvsfainf
             (intf *vsid, intf *findex, intf *aindex, _fcd attrname,
              intf *dtype, intf *count, intf *size);
-  
+
    HDFFCLIBAPI FRETVAL(intf) nvsfcnats
             (intf *vsid);
 
    HDFFCLIBAPI FRETVAL(intf) nvsfcfnas
             (intf *vsid, intf *findex);
-   
+
    HDFFCLIBAPI FRETVAL(intf) nvsfcainf
             (intf *vsid, intf *findex, intf *aindex, _fcd attrname,
              intf *dtype, intf *count, intf *size);
@@ -1676,7 +1676,7 @@ nmgifndat(intf * riid, _fcd name, intf *nlen);
 /* End of windows */
 
 
-/* 
+/*
   ** from dfufp2i.c
  */
 

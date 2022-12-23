@@ -33,7 +33,7 @@ EXPORTED ROUTINES
    Hendbitaccess  - close off access to a bitfile dataset
 LOCAL ROUTINES
    HIbitflush         - flush the bits out to a writable bitfile
-   HIget_bitfile_rec  - get a free bitfile record 
+   HIget_bitfile_rec  - get a free bitfile record
    HIread2write       - switch from reading bits to writing them
    HIwrite2read       - switch from writing bits to reading them
 AUTHOR
@@ -734,7 +734,7 @@ Hendbitaccess(int32 bitfile_id, intn flushbit)
             HRETURN_ERROR(DFE_WRITEERROR,FAIL);
     HDfree((VOIDP) bitfile_rec->bytea);    /* free the space for the buffer */
 
-    if(HAremove_atom(bitfile_id)==NULL) 
+    if(HAremove_atom(bitfile_id)==NULL)
         HRETURN_ERROR(DFE_WRITEERROR,FAIL);
     if(Hendaccess(bitfile_rec->acc_id)==FAIL)
         HRETURN_ERROR(DFE_CANTENDACCESS,FAIL);
@@ -772,7 +772,7 @@ PRIVATE intn HIbitstart(void)
       HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -835,7 +835,7 @@ HIbitflush(bitrec_t * bitfile_rec, intn flushbit, intn writeout)
 
                 bitfile_rec->bytep++;
                 bitfile_rec->byte_offset++;
-                
+
                 /* Update the offset in the buffer */
                 if (bitfile_rec->byte_offset > bitfile_rec->max_offset)
                     bitfile_rec->max_offset = bitfile_rec->byte_offset;
@@ -856,7 +856,7 @@ HIbitflush(bitrec_t * bitfile_rec, intn flushbit, intn writeout)
 }   /* HIbitflush */
 
 /*--------------------------------------------------------------------------
- HIget_bitfile_rec - get a new bitfile record 
+ HIget_bitfile_rec - get a new bitfile record
 --------------------------------------------------------------------------*/
 PRIVATE bitrec_t *
 HIget_bitfile_rec(void)

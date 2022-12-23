@@ -272,7 +272,7 @@ unsigned char pal_rgb[256*3] = {0,0,0,
 131,0,0,
 127,0,0
 };
- 
+
 #endif
 
 

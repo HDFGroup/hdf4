@@ -22,8 +22,8 @@ C
      +           FIELD2_NAME = 'Multi-component Field')
       parameter (N_RECORDS_1 = 5,
      +           N_RECORDS_2 = 6,
-     +           ORDER_2     = 4)               
-   
+     +           ORDER_2     = 4)
+
       integer DFACC_WRITE, DFNT_CHAR8, DFNT_INT32
       parameter (DFACC_WRITE = 2,
      +           DFNT_CHAR8  = 4,
@@ -32,14 +32,14 @@ C
 C     Function declaration
 C
       integer hopen, hclose
-      integer vfstart, vhfscd, vhfsdm, vfend 
+      integer vfstart, vhfscd, vhfsdm, vfend
 
 C
 C**** Variable declaration *******************************************
 C
       integer   status
       integer   file_id
-      integer   vdata1_ref, vdata2_ref 
+      integer   vdata1_ref, vdata2_ref
       character vdata1_buf(N_RECORDS_1)
       integer   vdata2_buf(ORDER_2, N_RECORDS_2)
       data vdata1_buf /'V','D','A','T','A'/
@@ -59,15 +59,15 @@ C
 C
 C     Initialize the VS interface.
 C
-      status = vfstart(file_id) 
+      status = vfstart(file_id)
 C
 C     Create the first vdata and populate it with data from vdata1_buf array.
-C     
+C
       vdata1_ref = vhfscd(file_id, FIELD1_NAME, vdata1_buf, N_RECORDS_1,
      +                    DFNT_CHAR8, VDATA1_NAME, CLASS1_NAME)
 C
 C     Create the second vdata and populate it with data from vdata2_buf array.
-C     
+C
       vdata2_ref = vhfsdm(file_id, FIELD2_NAME, vdata2_buf, N_RECORDS_2,
      +                    DFNT_INT32, VDATA2_NAME, CLASS2_NAME,
      +                    ORDER_2)

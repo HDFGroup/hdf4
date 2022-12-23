@@ -17,7 +17,7 @@ C------------------------------------------------------------------------------
 C File:     DFUfptoimFf.f
 C Purpose:  Fortran stub for DFUfptoimage()
 C Invokes:  DFUfptoimage.c
-C Contents: 
+C Contents:
 C   duf2im:       call duif2i_ to invoke DFUfptoimage()
 C   dfufptoimage: call duif2i_ to invoke DFUfptoimage()
 C -----------------------------------------------------------------------------
@@ -25,7 +25,7 @@ C -----------------------------------------------------------------------------
 C------------------------------------------------------------------------------
 C Name:     duf2im
 C Purpose:   call duif2i_ to invoke DFUfptoimage()
-C Inputs:   
+C Inputs:
 C      hdim, vdim: horizontal and vertical dimensions of input data
 C      max, min:   maximum and minimum values in the data
 C      hscale,vscale: optional horizontal and vertical scales
@@ -52,7 +52,7 @@ C----------------------------------------------------------------------------
       integer       ctmethod, hres, vres, compress, duif2i
 
       duf2im = duif2i(hdim,vdim,max,min,hscale,vscale,data,palette,
-     *              outfile,ctmethod,hres,vres,compress, len(outfile))        
+     *              outfile,ctmethod,hres,vres,compress, len(outfile))
       return
       end
 
@@ -61,7 +61,7 @@ CEND7MAX
 C------------------------------------------------------------------------------
 C Name:     dfufptoimage
 C Purpose:   call duif2i_ to invoke DFUfptoimage()
-C Inputs:   
+C Inputs:
 C      hdim, vdim: horizontal and vertical dimensions of input data
 C      max, min:   maximum and minimum values in the data
 C      hscale,vscale: optional horizontal and vertical scales
@@ -87,9 +87,9 @@ C----------------------------------------------------------------------------
       character*(*) outfile
       integer       ctmethod, hres, vres, compress, duif2i
 
-      dfufptoimage = 
+      dfufptoimage =
      *             duif2i(hdim,vdim,max,min,hscale,vscale,data,palette,
-     *              outfile,ctmethod,hres,vres,compress, len(outfile))        
+     *              outfile,ctmethod,hres,vres,compress, len(outfile))
       return
       end
 

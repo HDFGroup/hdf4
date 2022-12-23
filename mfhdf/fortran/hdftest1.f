@@ -36,7 +36,7 @@ C
          print*,' '
       endif
       end
-          
+
 C=============================================================
 C
 C This new subroutine tests the following SD Fortran functions
@@ -48,11 +48,11 @@ C       sfrmaxopenf
 C
 C=============================================================
       subroutine test_file(err)
-      
+
       implicit none
-      
+
       include 'mffunc.inc'
-      
+
       integer      DFACC_CREATE
       parameter   (DFACC_CREATE = 4)
       integer      err,status
@@ -64,7 +64,7 @@ C=============================================================
       integer NUM_FILES_LOW
       parameter (NUM_FILES_LOW=35)
       integer fids(NUM_FILES_LOW)
-      integer H4_MAX_NC_OPEN 
+      integer H4_MAX_NC_OPEN
       parameter (H4_MAX_NC_OPEN=32)
       integer flen_out
       character*2 ichr2
@@ -85,9 +85,9 @@ C Get the current max and system limit
          print*,'sfgmaxopenf failed: Incorrect max number of open files'
          err = err + 1
       endif
-           
+
 C Reset current max to an arbitrary number and check
-      
+
       curr_max = sfrmaxopenf(40)
       if( status .ne. 0 ) then
          print*,'sfrmaxopenf failed'
@@ -118,7 +118,7 @@ C verify that NUM_FILES_LOW files are opened
       endif
 
 C Close all the files
-      
+
       do i = 1, NUM_FILES_LOW
          status = sfend(fids(i))
          if( status .ne. 0 ) then
@@ -135,7 +135,7 @@ C
          err = err + 1
          goto 1000
       endif
-      status = sfgetnamelen(sd_id, flen) 
+      status = sfgetnamelen(sd_id, flen)
       if( status .ne. 0 .or. flen .ne. 13) then
          print*, 'sfgetnamelen failed'
          err = err + 1
@@ -165,11 +165,11 @@ C       sfn2indices
 C
 C=============================================================
       subroutine test_vars(err)
-      
+
       implicit none
-      
+
       include 'mffunc.inc'
-      
+
       integer      dset1, dset2, dim_id
       integer      err,status
       integer      sd_id, id_type
@@ -198,7 +198,7 @@ C=============================================================
 C
 C  Data type parameters
 C
-C 
+C
       integer   DFNT_CHAR,
      .             DFNT_INT16,
      .             DFNT_INT32,
@@ -222,18 +222,18 @@ C--------------------End of declarations------------------------------
       ATTR2_VAL = "This is not a coord var"
       ATTR1_LEN = 21
       ATTR2_LEN = 15
-      
+
       start(1) = 0
       start(2) = 0
       stride(1) = 1
       stride(2) = 1
-      
+
       do i = 1, X_LENGTH
          do j = 1, Y_LENGTH
             sds1_data(j,i) = j*i
          enddo
       enddo
-C     
+C
 C  Initialize SD interfaces
 C
       sd_id = sfstart (file, DFACC_CREATE)
@@ -247,7 +247,7 @@ C   Create an X_LENGTH by Y_LENGTH dataset, called DataSet_1
 
       dimsize(1) = X_LENGTH
       dimsize(2) = Y_LENGTH
-      
+
       dset1 = sfcreate(sd_id,VAR1_NAME,DFNT_FLOAT64,RANK,dimsize)
       if(dset1.eq.-1) then
          print*, 'sfcreate returned bad ID', dset1
@@ -307,7 +307,7 @@ C Write data to the SDS
          err = err + 1
       endif
 
-C Close the datasets          
+C Close the datasets
 
       status = sfendacc(dset1)
       if(status.eq.-1)then
@@ -328,7 +328,7 @@ C Close the file
          print*, 'sfend failed ', status
          err = err + 1
       endif
-      
+
 C Re-open the file to test SDidtype more */
       sd_id = sfstart (file, DFACC_READ)
       if( sd_id .le. 0 ) then
@@ -345,7 +345,7 @@ C Get the number of variables of name VAR1_NAME
          print*, 'sfgnvars_byname failed'
          err = err + 1
       endif
-      
+
       if(n_vars.eq. 1)then
 C        Get index of dataset VAR1_NAME
          status = sfn2index(sd_id, VAR1_NAME)
@@ -388,7 +388,7 @@ C Get access to the first dataset and test SDidtype on the SDS id
          print*, 'sfselect failed for', 0, ' -th dataset'
          err = err + 1
       endif
-      
+
       status = sfidtype(dset1,id_type)
       if(status.eq.-1)then
          print*,  'sfidtype returned error code', status
@@ -399,13 +399,13 @@ C Get access to the first dataset and test SDidtype on the SDS id
       endif
 
 C Get access to the second dataset and test SDidtype on the SDS id
-        
+
       dset2 = sfselect(sd_id, 1);
       if( dset2 .eq. -1 ) then
          print*, 'sfselect failed for', 1, ' -th dataset'
          err = err + 1
       endif
-      
+
       status = sfidtype(dset2,id_type)
       if(status.eq.-1)then
          print*,'sfidtype returned error code', status
@@ -423,7 +423,7 @@ C SDidtype on the dimension id
          print*,'sfgetdimid returned error code', status
          err = err + 1
       endif
-      
+
       status = sfidtype(dim_id,id_type)
       if(status.eq.-1)then
          print*,'sfidtype returned error code', status

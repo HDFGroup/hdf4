@@ -53,7 +53,7 @@ typedef struct GL_struct {
 #define Generic_stack Generic_list
 #define Generic_queue Generic_list
 
-/* Function declarations 
+/* Function declarations
    Descriptions for the General List routines can be found in 'glist.c'
    while the stack and queue routines are found below
  */
@@ -91,7 +91,7 @@ intn HDGLinitialize_list(Generic_list *list /* IN: list */);
  RETURNS
      SUCEED/FAIL
 *******************************************************************************/
-intn HDGLinitialize_sorted_list(Generic_list *list/*IN: list */, 
+intn HDGLinitialize_sorted_list(Generic_list *list/*IN: list */,
                                 intn (*lt)(VOIDP a, VOIDP b)/*IN:sort fcn */);
 
 /******************************************************************************
@@ -475,8 +475,8 @@ void HDGLremove_all_such_that(Generic_list list, /*IN: list */
 
 
 /****************************************************************************/
-/* 
- * Stack operations 
+/*
+ * Stack operations
  */
 
 /******************************************************************************
@@ -492,7 +492,7 @@ void HDGLremove_all_such_that(Generic_list list, /*IN: list */
 
 /******************************************************************************
  NAME
-     HDGSdestroy_stack     
+     HDGSdestroy_stack
  DESCRIPTION
     When a stack is no longer needed, it should be destroyed.  This process
     will automatically remove all remaining objects from the stack.
@@ -566,8 +566,8 @@ void HDGLremove_all_such_that(Generic_list list, /*IN: list */
 
 
 /****************************************************************************/
-/* 
- * Queue operations 
+/*
+ * Queue operations
  */
 
 /******************************************************************************
@@ -600,7 +600,7 @@ void HDGLremove_all_such_that(Generic_list list, /*IN: list */
 
 /******************************************************************************
  NAME
-     HDGQenqueue     
+     HDGQenqueue
  DESCRIPTION
     This function will add the specified object to the tail of the queue.
     The pointer must not be NULL.
