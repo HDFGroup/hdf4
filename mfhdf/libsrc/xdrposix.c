@@ -12,7 +12,6 @@
  *
  * -glenn
  */
-/* $Id$ */
 
 /*
  * 32-bit integer on the host architecture (on the CRAY, this is actually 64

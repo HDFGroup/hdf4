@@ -1,5 +1,4 @@
 #if !defined(lint)
-static char rcsid[] = "$Id$";
 #endif
 
 /*

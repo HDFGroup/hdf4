@@ -14,7 +14,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
 #ifndef _LOCAL_NC_
 #define _LOCAL_NC_
 
