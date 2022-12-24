@@ -113,6 +113,8 @@
    HIread_version       -- reads a version tag from a file
    + */
 
+#include <string.h>
+
 #define HMASTER
 #include "hdf.h"
 #undef HMASTER
@@ -3421,9 +3423,10 @@ PRIVATE int
 HIread_version(int32 file_id)
 {
   filerec_t  *file_rec;
-  uint8       fversion[LIBVER_LEN];
   CONSTR(FUNC, "Hread_version");
   int         ret_value = SUCCEED;
+  uint8       fversion[LIBVER_LEN];
+  memset(fversion, 0, sizeof(fversion));
 
   HEclear();
 
