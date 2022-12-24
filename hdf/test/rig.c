@@ -860,9 +860,9 @@ static VOID check_im_pal(int32 oldx, int32 oldy, int32 newx, int32 newy,
 /* These two functions are in tusejpegfuncs.c.  They use JPEG functions directly
    to compress and decompress the same data as in test_r24_jpeg, to verify that
    the DFR24 API work correctly regardless which JPEG library is used */
-intn comp_using_jpeglib(char *filename, long *file_offset, int im_height,
-        int im_width, int im_ncomps, int quality, uint8 *written_buffer);
-intn decomp_using_jpeglib(char *filename, long file_offset, int im_height,
+intn comp_using_jpeglib(const char *filename, long *file_offset, int im_height,
+        int im_width, int im_ncomps, int quality, const uint8 *written_buffer);
+intn decomp_using_jpeglib(const char *filename, long file_offset, int im_height,
         int im_width, int im_ncomps, uint8 *read_buffer);
 void test_r24_jpeg(void);
 
