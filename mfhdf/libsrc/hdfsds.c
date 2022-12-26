@@ -534,7 +534,7 @@ hdf_get_desc_annot(NC* handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr,
     intn   num_ddescs;
     char   hremark[30] = ""; /* should be big enough for new attribute */
 
-    /* start Annotation inteface */
+    /* start Annotation interface */
     if ((an_handle = ANstart(handle->hdf_file)) == FAIL)
     {
         HGOTO_ERROR(DFE_ANAPIERROR, DFE_ANAPIERROR);
@@ -653,7 +653,7 @@ hdf_get_label_annot(NC *handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr
     intn   num_dlabels;
     char   hlabel[30] = ""; /* should be big enough for new attribute */
 
-    /* start Annotation inteface */
+    /* start Annotation interface */
     if ((an_handle = ANstart(handle->hdf_file)) == FAIL)
     {
         HGOTO_ERROR(DFE_ANAPIERROR, DFE_ANAPIERROR);

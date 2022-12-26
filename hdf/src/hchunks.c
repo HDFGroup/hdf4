@@ -230,7 +230,7 @@ LOCAL ROUTINES
    ------------------------
    create_dim_recs           -- create the appropriate arrays in memory
    update_chunk_indices_seek -- translate seek pos to chunk and pos in chunk
-   compute_chunk_to_seek     -- translate chunk coordiantes to seek postion
+   compute_chunk_to_seek     -- translate chunk coordinates to seek postion
    update_chunk_indices      -- not used
    compute_array_to_chunk    -- not used
    calculate_num_to_chunk    -- not used

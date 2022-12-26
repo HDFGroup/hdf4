@@ -769,7 +769,7 @@ intn SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32* offse
     /* It is a file id, process its annotations appropriately */
     if (handle != NULL)
     {
-        /* Open file to start Annotation inteface */
+        /* Open file to start Annotation interface */
         if ((file_id = Hopen(handle->path, DFACC_READ, 0)) == FAIL)
             HGOTO_ERROR(DFE_BADOPEN, FAIL);
         if ((an_id = ANstart(file_id)) == FAIL)
@@ -841,7 +841,7 @@ intn SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32* offse
             if (elem_ref <= 0)
                 HGOTO_ERROR(DFE_ARGS, FAIL);
 
-            /* Open file to start Annotation inteface */
+            /* Open file to start Annotation interface */
             if ((file_id = Hopen(handle->path, DFACC_READ, 0)) == FAIL)
                 HGOTO_ERROR(DFE_BADOPEN, FAIL);
             if ((an_id = ANstart(file_id)) == FAIL)

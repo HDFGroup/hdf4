@@ -746,7 +746,7 @@ ndsinum(_fcd filename, intf * len)
 *           ispre32: set to TRUE if the SDG/ref was written by old library;
 *                        to FALSE otherwise.
 *           len:     length of filename
-* Retruns:  0 on success, -1 on failure
+* Returns:  0 on success, -1 on failure
 * Users:    HDF Fortran programmers
 *------------------------------------------------------------------------------*/
 

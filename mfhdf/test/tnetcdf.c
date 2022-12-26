@@ -121,7 +121,7 @@ static intn test_read_dim()
 static int16  netcdf_u16[2][3] = {{1, 2, 3},
                                    {4, 5, 6}};
 
-/* Tests reading of netCDF file 'test1.nc' using the SDxxx inteface.
+/* Tests reading of netCDF file 'test1.nc' using the SDxxx interface.
    Note not all features of reading SDS from netCDF files are tested here.
    Hopefully more tests will be added over time as needed/required. */
 extern intn

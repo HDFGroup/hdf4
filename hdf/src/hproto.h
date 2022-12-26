@@ -1290,7 +1290,7 @@ typedef union hdf_chunk_def_u
       The performance of the GRxxx interface with chunking is greatly
       affected by the users access pattern over the image and by
       the maximum number of chunks set in the chunk cache. The cache contains
-      the Least Recently Used(LRU cache replacment policy) chunks. See the
+      the Least Recently Used(LRU cache replacement policy) chunks. See the
       routine GRsetchunkcache() for further info on the chunk cache and how
       to set the maximum number of chunks in the chunk cache. A default chunk
       cache is always created.
@@ -1398,7 +1398,7 @@ HDFLIBAPI intn GRgetchunkinfo
      instead of GRwriteimage() when this information is known. This
      routine has less overhead and is much faster than using GRwriteimage().
 
-     Origin specifies the co-ordinates of the chunk according to the chunk
+     Origin specifies the coordinates of the chunk according to the chunk
      position in the overall chunk array.
 
      'datap' must point to a whole chunk of data.
@@ -1423,7 +1423,7 @@ HDFLIBAPI intn GRwritechunk
      instead of GRreadimage() when this information is known. This
      routine has less overhead and is much faster than using GRreadimage().
 
-     Origin specifies the co-ordinates of the chunk according to the chunk
+     Origin specifies the coordinates of the chunk according to the chunk
      position in the overall chunk array.
 
      'datap' must point to a whole chunk of data.
@@ -1446,7 +1446,7 @@ NAME
 DESCRIPTION
      Set the maximum number of chunks to cache.
 
-     The cache contains the Least Recently Used(LRU cache replacment policy)
+     The cache contains the Least Recently Used(LRU cache replacement policy)
      chunks. This routine allows the setting of maximum number of chunks that
      can be cached, 'maxcache'.
 

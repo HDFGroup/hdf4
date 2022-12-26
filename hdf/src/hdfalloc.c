@@ -24,10 +24,10 @@ LOCAL ROUTINES
 EXPORTED ROUTINES
   HDmemfill    -- copy a chunk of memory repetitively into another chunk
   HIstrncpy    -- string copy with termination
-  HDmalloc     -- dynamicly allocates memory
-  HDrealloc    -- dynamicly resize (reallocate) memory
-  HDfree       -- free dynamicly allocated memory
-  HDcalloc     -- dynamicly allocates memory and clears it to zero
+  HDmalloc     -- dynamically allocates memory
+  HDrealloc    -- dynamically resize (reallocate) memory
+  HDfree       -- free dynamically allocated memory
+  HDcalloc     -- dynamically allocates memory and clears it to zero
   HDstrdup     -- in-library replacement for non-ANSI strdup()
 */
 
@@ -136,7 +136,7 @@ HIstrncpy(char *dest, const char *source, intn len)
 #ifdef MALLOC_CHECK
 /*--------------------------------------------------------------------------
  NAME
-    HDmalloc -- dynamicly allocates memory
+    HDmalloc -- dynamically allocates memory
  USAGE
     void * HDmalloc(qty)
         uint32 qty;         IN: the (minimum) number of bytes to allocate in
@@ -144,7 +144,7 @@ HIstrncpy(char *dest, const char *source, intn len)
  RETURNS
     Pointer to the memory allocated on success, NULL on failure.
  DESCRIPTION
-    Dynamicly allocates a block of memory and returns a pointer to it.
+    Dynamically allocates a block of memory and returns a pointer to it.
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
     Acts like malloc().
@@ -166,7 +166,7 @@ void * HDmalloc(uint32 qty)
 
 /*--------------------------------------------------------------------------
  NAME
-    HDrealloc -- dynamicly resize (reallocate) memory
+    HDrealloc -- dynamically resize (reallocate) memory
  USAGE
     void * HDrealloc(vfp,qty)
         void * vfp;          IN: pointer to the memory block to resize.
@@ -175,7 +175,7 @@ void * HDmalloc(uint32 qty)
  RETURNS
     Pointer to the memory allocated on success, NULL on failure.
  DESCRIPTION
-    Dynamicly re-allocates a block of memory and returns a pointer to it.
+    Dynamically re-allocates a block of memory and returns a pointer to it.
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
     Acts like realloc().
@@ -197,14 +197,14 @@ void * HDrealloc(void * where, uint32 qty)
 
 /*--------------------------------------------------------------------------
  NAME
-    HDfree -- free dynamicly allocated memory
+    HDfree -- free dynamically allocated memory
  USAGE
     void HDfree(vfp)
         void * vfp;          IN: pointer to the memory block to free.
  RETURNS
     NULL?
  DESCRIPTION
-    Free dynamicly allocated blocks of memory.
+    Free dynamically allocated blocks of memory.
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
     Acts like free().
@@ -219,7 +219,7 @@ void HDfree(void * ptr)
 
 /*--------------------------------------------------------------------------
  NAME
-    HDcalloc -- dynamicly allocates memory and clears it to zero
+    HDcalloc -- dynamically allocates memory and clears it to zero
  USAGE
     void * HDcalloc(n,size)
         uint32 n;         IN: the number of blocks to allocate
@@ -227,7 +227,7 @@ void HDfree(void * ptr)
  RETURNS
     Pointer to the memory allocated on success, NULL on failure.
  DESCRIPTION
-    Dynamicly allocates a block of memory and returns a pointer to it
+    Dynamically allocates a block of memory and returns a pointer to it
     after setting it to zero.
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS

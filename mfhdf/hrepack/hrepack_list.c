@@ -431,7 +431,7 @@ int list_vg(int32 infile_id,
 	    /* Get vgroup's name */
             if (Vgetnamelen(vg_id, &name_len)==FAIL)
             {
-                printf("Error: Could not get name lenght for group with ref <%d>\n", ref);
+                printf("Error: Could not get name length for group with ref <%d>\n", ref);
                 goto out;
             }
             vg_name = (char *) HDmalloc(sizeof(char) * (name_len+1));
@@ -446,7 +446,7 @@ int list_vg(int32 infile_id,
 	    /* Get vgroup's class name */
             if (Vgetclassnamelen(vg_id, &name_len)==FAIL)
             {
-                printf("Error: Could not get name lenght for group with ref <%d>\n", ref);
+                printf("Error: Could not get name length for group with ref <%d>\n", ref);
                 goto out;
             }
 
@@ -691,7 +691,7 @@ int vgroup_insert(int32 infile_id,
 	    /* Get vgroup's name */
             if (Vgetnamelen(vg_id, &name_len)==FAIL)
             {
-                printf("Error: Could not get name lenght for group with ref <%d>\n", ref);
+                printf("Error: Could not get name length for group with ref <%d>\n", ref);
                 goto out;
             }
             vg_name = (char *) HDmalloc(sizeof(char) * (name_len+1));
@@ -705,7 +705,7 @@ int vgroup_insert(int32 infile_id,
 	    /* Get vgroup's class name */
             if (Vgetclassnamelen(vg_id, &name_len)==FAIL)
             {
-                printf("Error: Could not get name lenght for group with ref <%d>\n", ref);
+                printf("Error: Could not get name length for group with ref <%d>\n", ref);
                 goto out;
             }
 

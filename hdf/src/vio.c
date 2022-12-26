@@ -723,7 +723,7 @@ vsdestroynode(void * n /* IN: Node in TBBT-tree */)
           vs = ((vsinstance_t *) n)->vs;
           if (vs != NULL)
             {
-                /* Free the dynamicly allocated VData fields */
+                /* Free the dynamically allocated VData fields */
                 for(i=0; i<vs->wlist.n; i++)
                     HDfree(vs->wlist.name[i]);
 
