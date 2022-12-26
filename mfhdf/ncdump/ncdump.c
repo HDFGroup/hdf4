@@ -509,9 +509,6 @@ do_ncdump(char *path, struct fspec* specp)
 			{
 				NC *handle ;
 				NC_var *vp;
-#ifdef OLD_WAY
-				NC_var *NC_hlookupvar() ;          
-#endif /* OLD_WAY */
 
 				isempty = 0;
 				handle = NC_check_id(ncid);
@@ -730,11 +727,7 @@ char *argv[];
 	  make_lvars (optarg, &fspec);
 	  break;
 	case 'd':		/* specify precision for floats */
-#ifdef OLD_WAY
-	  set_sigdigs(optarg, &fspec);
-#else /* OLD_WAY */
 	  set_sigdigs(optarg);
-#endif /* OLD_WAY */
 	  break;
 	case '?':
 	  usage();

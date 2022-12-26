@@ -138,13 +138,8 @@ static atom_info_t *atom_free_list=NULL;
 
 #ifdef ATOMS_ARE_CACHED
 /* Array of pointers to atomic groups */
-#ifdef OLD_WAY
-static atom_t atom_id_cache[ATOM_CACHE_SIZE]={-1,-1,-1,-1};
-static VOIDP atom_obj_cache[ATOM_CACHE_SIZE]={NULL};
-#else /* OLD_WAY */
 HDFPUBLIC atom_t atom_id_cache[ATOM_CACHE_SIZE]={-1,-1,-1,-1};
 HDFPUBLIC VOIDP atom_obj_cache[ATOM_CACHE_SIZE]={NULL};
-#endif /* OLD_WAY */
 #endif /* ATOMS_ARE_CACHED */
 #endif /* ATOM_MASTER */
 

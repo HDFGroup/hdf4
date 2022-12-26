@@ -1791,7 +1791,6 @@ static intn HTIfind_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
               } /* end if */
             else if(look_ref==DFREF_WILDCARD)
               { /* ref is wildcard */
-#ifndef OLD_WAY
                 if(special_tag==DFTAG_NULL)
                   {
 /* Change this to lookup the next used ref # in the bitvector or dynarray -QAK */
@@ -1839,33 +1838,6 @@ static intn HTIfind_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
                         idx = 0;
                       }	/* end for */
                   } /* end else */
-#else /* OLD_WAY */
-/* Hmm, not working yet?... -QAK */
-                tag_info **tip_ptr;   /* ptr to the ptr to the info for a tag */
-                tag_info *tinfo_ptr;  /* pointer to the info for a tag */
-                dd_t *dd_ptr;         /* ptr to the DD info for a tag/ref */
-                uint16 base_tag=BASETAG(look_tag);    /* corresponding base tag (if the tag is special) */
-                int32 last_ref;       /* the last ref # found */
-                uint16 found_ref;     /* next ref # found */
-
-                /* Try to find the regular tag in the tag info tree */
-                if((tip_ptr=(tag_info **)tbbtdfind(file_rec->tag_tree,(VOIDP)&base_tag,NULL))==NULL)
-                    HGOTO_ERROR(DFE_BADTAG, FAIL);
-
-                tinfo_ptr=*tip_ptr; /* get the pointer to the tag info */
-                if(*pdd==NULL) /* check if we are searching from the beginning */
-                    last_ref=-1;
-                else
-                    last_ref=block->ddlist[idx].ref;
-                if((found_ref=bv_find(tinfo_ptr->b,last_ref,1))==(uint16)FAIL)
-                  HGOTO_ERROR(DFE_BVFIND, FAIL);
-
-                if((dd_ptr=DAget_elem(tinfo_ptr->d,found_ref))==NULL)
-                  HGOTO_ERROR(DFE_BADREF, FAIL);
-
-                *pdd=dd_ptr;
-                HGOTO_DONE(SUCCEED);
-#endif /* OLD_WAY */
               } /* end if */
             else
               { /* Both tag & ref are not wildcards */

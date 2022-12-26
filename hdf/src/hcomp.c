@@ -86,11 +86,7 @@ MODIFICATION HISTORY
 
 /* Local defines */
 #define COMP_HEADER_VERSION 0
-#ifdef OLD_WAY
-#define COMP_START_BLOCK    1
-#else /* OLD_WAY */
 #define COMP_START_BLOCK    0
-#endif /* OLD_WAY */
 
 /* declaration of the functions provided in this module */
 PRIVATE int32 HCIstaccess
@@ -649,56 +645,6 @@ HCIwrite_header(atom_t file_id, compinfo_t * info, uint16 special_tag, uint16 re
     UINT16ENCODE(p, COMP_HEADER_VERSION);   /* specify header version */
     INT32ENCODE(p, info->length);   /* write length of un-comp. data */
     UINT16ENCODE(p, (uint16) info->comp_ref);   /* specify ref # of comp. data */
-#ifdef OLD_WAY
-    UINT16ENCODE(p, (uint16) info->minfo.model_type);   /* specify model type */
-    UINT16ENCODE(p, (uint16) info->cinfo.coder_type);   /* specify coder type */
-
-    /* write any additional information needed for modeling type */
-    switch (info->minfo.model_type)
-      {
-          default:      /* no additional information needed */
-              break;
-      }     /* end switch */
-
-    /* write any additional information needed for coding type */
-    switch (info->cinfo.coder_type)
-      {
-          case COMP_CODE_NBIT:      /* N-bit coding needs info */
-              /* specify number-type of N-bit data */
-              INT32ENCODE(p, info->cinfo.coder_info.nbit_info.nt);
-              /* next is the flag to indicate whether to sign extend */
-              UINT16ENCODE(p, (uint16) info->cinfo.coder_info.nbit_info.sign_ext);
-              /* flag to fill with 1's or 0's */
-              UINT16ENCODE(p, (uint16) info->cinfo.coder_info.nbit_info.fill_one);
-              /* the offset of the bits extracted */
-              INT32ENCODE(p, (int32) info->cinfo.coder_info.nbit_info.mask_off);
-              /* the number of bits extracted */
-              INT32ENCODE(p, (int32) info->cinfo.coder_info.nbit_info.mask_len);
-              break;
-
-          case COMP_CODE_SKPHUFF:   /* Skipping Huffman coding needs info */
-              /* specify skipping unit size */
-              UINT32ENCODE(p, (uint32) info->cinfo.coder_info.skphuff_info.skip_size);
-              /* specify # of bytes compressed (not used currently) */
-              UINT32ENCODE(p, (uint32) info->cinfo.coder_info.skphuff_info.skip_size);
-              break;
-
-          case COMP_CODE_SZIP:
-              INT32ENCODE(p, (int32) c_info->szip.pixels);
-              INT32ENCODE(p, (int32) c_info->szip.pixels_per_scanline);
-              INT32ENCODE(p, (int32) c_info->szip.options_mask);
-              INT32ENCODE(p, (int32) c_info->szip.bits_per_pixel);
-              INT32ENCODE(p, (int32) c_info->szip.pixels_per_block);
-              break;
-
-          case COMP_CODE_IMCOMP: /* IMCOMP is no longer supported, can only be inquired */
-              HRETURN_ERROR(DFE_BADCODER, FAIL);
-              break;
-
-          default:      /* no additional information needed */
-              break;
-      }     /* end switch */
-#else /* OLD_WAY */
     if((header_len=HCPquery_encode_header(info->minfo.model_type,
             m_info,info->cinfo.coder_type,c_info))==FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
@@ -706,7 +652,6 @@ HCIwrite_header(atom_t file_id, compinfo_t * info, uint16 special_tag, uint16 re
             info->cinfo.coder_type,c_info)==FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
     p+=header_len;
-#endif /* OLD_WAY */
 
     /* write the special info structure to fill */
     if((dd_aid=Hstartaccess(file_id,special_tag,ref,DFACC_ALL))==FAIL)

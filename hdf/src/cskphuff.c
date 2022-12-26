@@ -309,15 +309,10 @@ HCIcskphuff_encode(compinfo_t * info, int32 length, const uint8 *buf)
     comp_coder_skphuff_info_t *skphuff_info;    /* ptr to skipping Huffman info */
     int32       orig_length;    /* original length to write */
     intn        stack_ptr;      /* pointer to the position on the stack */
-#ifdef OLD_WAY
-    intn        stack[SKPHUFF_MAX_CHAR]; /* stack to store the bits generated */
-    uintn       a;              /* variable to record the position in the tree */
-#else /* OLD_WAY */
     uintn       a, last_node;   /* variables to record the current & last position in the tree */
     uint32      output_bits[(SKPHUFF_MAX_CHAR/4)+1],    /* bits to write out */
                 bit_count[(SKPHUFF_MAX_CHAR/4)+1],      /* # of bits stored in each stack location */
                 bit_mask;       /* bit-mask for accumulating bits to output */
-#endif /* OLD_WAY */
 
     skphuff_info = &(info->cinfo.coder_info.skphuff_info);
 
@@ -325,24 +320,6 @@ HCIcskphuff_encode(compinfo_t * info, int32 length, const uint8 *buf)
     while (length > 0)
       {     /* encode until we stored all the bytes */
           a = (uintn)*buf + SUCCMAX;   /* find position in the up array */
-#ifdef OLD_WAY
-          do
-            {   /* walk up the tree, pushing bits */
-                stack[stack_ptr] = (skphuff_info->right[skphuff_info->skip_pos][skphuff_info->up[skphuff_info->skip_pos][a]] == a);     /* push a 1 is this is the right node */
-                stack_ptr++;
-                a = skphuff_info->up[skphuff_info->skip_pos][a];
-            }
-          while (a != ROOT);
-
-          do
-            {   /* output the bits we have */
-                stack_ptr--;
-                if (Hputbit(info->aid, stack[stack_ptr]) == FAIL)
-                    HRETURN_ERROR(DFE_CENCODE, FAIL);
-            }
-          while (stack_ptr != 0);
-#else /* OLD_WAY */
-/* This way is _much_ faster... */
           stack_ptr=0;
           bit_mask=1;   /* initialize to the lowest bit */
           output_bits[0]=0;
@@ -373,7 +350,6 @@ HCIcskphuff_encode(compinfo_t * info, int32 length, const uint8 *buf)
                   } /* end if */
                 stack_ptr--;
             } while (stack_ptr >= 0);
-#endif /* OLD_WAY */
           HCIcskphuff_splay(skphuff_info, *buf);    /* semi-splay the tree around this node */
           skphuff_info->skip_pos = (skphuff_info->skip_pos + 1) % skphuff_info->skip_size;
           buf++;
@@ -470,16 +446,11 @@ HCIcskphuff_staccess(accrec_t * access_rec, int16 acc_mode)
         info->aid = Hstartbitread(access_rec->file_id, DFTAG_COMPRESSED,
                                   info->comp_ref);
     else
-#ifdef OLD_WAY
-        info->aid = Hstartbitwrite(access_rec->file_id, DFTAG_COMPRESSED,
-                                   info->comp_ref, info->length);
-#else /* OLD_WAY */
       {
         info->aid = Hstartbitwrite(access_rec->file_id, DFTAG_COMPRESSED,
                                    info->comp_ref, 0);
         Hbitappendable(info->aid);
       } /* end else */
-#endif /* OLD_WAY */
 
 #ifdef TESTING
     printf("HCIcskphuff_staccess(): after bitio calls\n");

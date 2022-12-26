@@ -325,16 +325,6 @@ HCIcdeflate_staccess(accrec_t * access_rec, int16 acc_mode)
 
     /* need to check for not writing, as opposed to read access */
     /* because of the way the access works */
-#ifdef OLD_WAY
-    if (!(acc_mode&DFACC_WRITE))
-        info->aid = Hstartread(access_rec->file_id, DFTAG_COMPRESSED,
-                                  info->comp_ref);
-    else
-        info->aid = Hstartwrite(access_rec->file_id, DFTAG_COMPRESSED,
-                                   info->comp_ref, info->length);
-    if (info->aid == FAIL)
-        HRETURN_ERROR(DFE_DENIED, FAIL);
-#else /* OLD_WAY */
     if (!(acc_mode&DFACC_WRITE)) {
         info->aid = Hstartread(access_rec->file_id, DFTAG_COMPRESSED,
                                   info->comp_ref);
@@ -345,7 +335,6 @@ HCIcdeflate_staccess(accrec_t * access_rec, int16 acc_mode)
       } /* end else */
     if (info->aid == FAIL)
         HRETURN_ERROR(DFE_DENIED, FAIL);
-#endif /* OLD_WAY */
 
     /* Make certain we can append to the data when writing */
     if ((acc_mode&DFACC_WRITE) && Happendable(info->aid) == FAIL)
@@ -531,11 +520,6 @@ HCPcdeflate_seek(accrec_t * access_rec, int32 offset, int origin)
 
     if (offset < deflate_info->offset)
       {     /* need to seek from the beginning */
-#ifdef OLD_WAY
-          /* Reset the decompression buffer */
-          if (deflateReset(&(deflate_info->deflate_context))!=Z_OK)
-              HRETURN_ERROR(DFE_CINIT, FAIL);
-#else /* OLD_WAY */
         /* Terminate the previous method of access */
         if (HCIcdeflate_term(info, deflate_info->acc_mode) == FAIL)
             HRETURN_ERROR(DFE_CTERM, FAIL);
@@ -545,40 +529,25 @@ HCPcdeflate_seek(accrec_t * access_rec, int32 offset, int origin)
         if (HCIcdeflate_staccess2(access_rec, DFACC_READ) == FAIL)
             HRETURN_ERROR(DFE_CINIT, FAIL);
 
-#endif /* OLD_WAY */
-
           /* Go back to the beginning of the data-stream */
           if(Hseek(info->aid,0,0)==FAIL)
               HRETURN_ERROR(DFE_SEEKERROR, FAIL);
       }     /* end if */
 
-#ifdef OLD_WAY
-    if ((tmp_buf = (uint8 *) HDmalloc(DEFLATE_TMP_BUF_SIZE)) == NULL)     /* get tmp buffer */
-        HRETURN_ERROR(DFE_NOSPACE, FAIL);
-#endif /* OLD_WAY */
 
     while (deflate_info->offset + DEFLATE_TMP_BUF_SIZE < offset) {    /* grab chunks */
         if (HCIcdeflate_decode(info, DEFLATE_TMP_BUF_SIZE, tmp_buf) == FAIL)
           {
-#ifdef OLD_WAY
-              HDfree(tmp_buf);
-#endif /* OLD_WAY */
               HRETURN_ERROR(DFE_CDECODE, FAIL)
           }     /* end if */
       }     /* end if */
     if (deflate_info->offset < offset) {  /* grab the last chunk */
         if (HCIcdeflate_decode(info, offset - deflate_info->offset, tmp_buf) == FAIL)
           {
-#ifdef OLD_WAY
-              HDfree(tmp_buf);
-#endif /* OLD_WAY */
               HRETURN_ERROR(DFE_CDECODE, FAIL)
           }     /* end if */
       }     /* end if */
 
-#ifdef OLD_WAY
-    HDfree(tmp_buf);
-#endif /* OLD_WAY */
     return (SUCCEED);
 }   /* HCPcdeflate_seek() */
 

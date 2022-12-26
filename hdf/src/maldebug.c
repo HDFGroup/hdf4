@@ -631,26 +631,9 @@ mem_list_delete(MEMHDR * p)
 static void
 mem_tag_err(void *p, int type, char *func, char *fil, int lin)
 {
-    FILE       *fp;
-
-    /* shut compiler up */
-    fp = fp;
-
-#ifdef OLD_WAY
-    fprintf(stdaux, "Malloc tag error #%d, in %s : %p - %s(%d)\n", type, func, p, fil, lin);
-    if ((fp = fopen("impro.err", "wt+")) != NULL)
-      {     /* open impro.err to output the error file */
-          fprintf(fp, "Malloc tag error - %p - %s(%d)\n", p, fil, lin);
-#if defined(MEM_LIST)
-          Mem_Display(fp);
-#endif
-          fclose(fp);
-      }     /* end if */
-#else
     fprintf(stdaux, "Malloc tag error #%d, in %s : %p - %s(%d)\n", type, func, p, fil, lin);
     getch();
 #if defined(MEM_LIST)
     Mem_Display(stdaux);
-#endif
 #endif
 }   /* end mem_tag_err() */
