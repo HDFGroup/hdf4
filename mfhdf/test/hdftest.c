@@ -97,7 +97,7 @@ main(int argc, char *argv[])
     int32   ndg_saved_ref;  /* used to save a ref of an SDS in one of the test */
     uint8   iuval;
     float data[1000], max, min, imax, imin;
-    float64 cal, cale, ioff, ioffe;
+    double cal, cale, ioff, ioffe;
     int     num_errs = 0;    /* number of errors so far */
 
     (void)argc;

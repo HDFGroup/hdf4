@@ -123,7 +123,7 @@ pr_att_vals(nc_type type, int len, void *vals)
         int16 *sp;
         int32 *lp;
         float *fp;
-        float64 *dp;
+        double *dp;
     } gp;
     char *sp;
     unsigned char uc;
@@ -206,7 +206,7 @@ pr_att_vals(nc_type type, int len, void *vals)
                 }
                 break;
             case DFNT_DOUBLE:
-                gp.dp = (float64 *) vals;
+                gp.dp = (double *) vals;
                 for (iel = 0; iel < len; iel++) {
                     (void) sprintf(gps, d_fmt, *gp.dp++);
                     tztrim(gps); /* trim trailing 0's after '.' */

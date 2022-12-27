@@ -1505,7 +1505,7 @@ int add_sd(const char *fname,       /* file name */
            bits_per_pixel=32;
     float sds_values[2] = {2., 10.}; /* values of the SDS attribute  */
     int16   data_X[X_DIM];             /* X dimension dimension scale */
-    float64 data_Y[Y_DIM];             /* Y dimension dimension scale */
+    double data_Y[Y_DIM];             /* Y dimension dimension scale */
     int     i, j;
     HDF_CHUNK_DEF chunk_def;           /* Chunking definitions */
 

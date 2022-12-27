@@ -334,7 +334,7 @@ test_unlim_inloop()
     int     i, n_writes; /* number of times writing to the data sets */
     /*int32   n,m, mm;*/
     intn    status;
-    float64 array_data[SIZE];
+    double array_data[SIZE];
     intn    num_errs = 0;         /* number of errors so far */
 
     /* Create a file */
@@ -390,7 +390,7 @@ test_unlim_inloop()
 
     for (i = 0; i < N_DSETS; i++)
     {
-	float64 outdata[SIZE*2];
+	double outdata[SIZE*2];
 
 	/* Get access to the datasets */
 	sds_id[i] = SDselect(fid, i);

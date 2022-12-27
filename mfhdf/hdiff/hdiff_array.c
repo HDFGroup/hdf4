@@ -35,14 +35,14 @@
 #define MYMIN(A,B) (((A) < (B)) ? (A) : (B))
 #define PRINT_FSTATS(T) {\
  printf("Type: %s  Npts: %u  Ndiff: %u (%f%%)\n", \
- T, tot_cnt, n_diff, 100.*(float64)n_diff/(float64)tot_cnt); \
+ T, tot_cnt, n_diff, 100.*(double)n_diff/(double)tot_cnt); \
  printf("Avg Diff: %.3e  Max Diff: %.3e\n",  \
  d_avg_diff/n_stats, d_max_diff); \
  printf("Range File1: %f/%f  File2: %f/%f\n", \
 d_min_val1, d_max_val1, d_min_val2, d_max_val2); }
 #define PRINT_ISTATS(T) {\
  printf("Type: %s  Npts: %u  Ndiff: %u (%f%%)\n", \
- T, tot_cnt,n_diff, 100.*(float64)n_diff/(float64)tot_cnt); \
+ T, tot_cnt,n_diff, 100.*(double)n_diff/(double)tot_cnt); \
  printf("Avg Diff: %e   Max. Diff: %d\n",  \
  (d_avg_diff / n_stats), i4_max_diff); \
  printf("Range File1: %d/%d  File2: %d/%d\n", \
@@ -135,12 +135,12 @@ uint32 array_diff(void *buf1,
  int16   *i2ptr1, *i2ptr2;
  int32   *i4ptr1, *i4ptr2;
  float *fptr1, *fptr2;
- float64 *dptr1, *dptr2;
- float64 d_diff, d_avg_diff = 0., d_max_diff = 0.;
- float64 d_max_val1=0, d_min_val1=0, d_max_val2=0, d_min_val2=0;
- float64 d_val1, d_val2;
- float64 d_sumx = 0., d_sumy = 0., d_sumx2 = 0., d_sumy2 = 0., d_sumxy=0.;
- float64 slope, intercept, correlation;
+ double *dptr1, *dptr2;
+ double d_diff, d_avg_diff = 0., d_max_diff = 0.;
+ double d_max_val1=0, d_min_val1=0, d_max_val2=0, d_min_val2=0;
+ double d_val1, d_val2;
+ double d_sumx = 0., d_sumy = 0., d_sumx2 = 0., d_sumy2 = 0., d_sumxy=0.;
+ double slope, intercept, correlation;
  float f_diff;
  int32   i4_diff, i4_max_diff = 0;
  int32   i4_max_val1=0, i4_min_val1=0, i4_max_val2=0, i4_min_val2=0;
@@ -247,10 +247,10 @@ uint32 array_diff(void *buf1,
    is_fill1 = fill1 && (*i1ptr1 == *((int8 *)fill1));
    is_fill2 = fill2 && (*i1ptr2 == *((int8 *)fill2));
    if (!is_fill1 && !is_fill2) {
-    d_avg_diff += (float64)c_diff;
+    d_avg_diff += (double)c_diff;
     i4_max_diff = MYMAX(i4_max_diff, c_diff);
-    d_val2 = (float64)(*i1ptr2);
-    d_val1 = (float64)(*i1ptr1);
+    d_val2 = (double)(*i1ptr2);
+    d_val1 = (double)(*i1ptr1);
     d_sumx += d_val1;
     d_sumy += d_val2;
     d_sumx2 += d_val1 * d_val1;
@@ -336,14 +336,14 @@ uint32 array_diff(void *buf1,
     fprintf(fp, "%d %d %d %d\n", is_fill1, is_fill2, (int32)(*i2ptr1), (int32)(*i2ptr2));
    }
    if (!is_fill1 && !is_fill2) {
-    d_val1 = (float64)(*i2ptr1);
-    d_val2 = (float64)(*i2ptr2);
+    d_val1 = (double)(*i2ptr1);
+    d_val2 = (double)(*i2ptr2);
     d_sumx += d_val1;
     d_sumy += d_val2;
     d_sumx2 += d_val1 * d_val1;
     d_sumy2 += d_val2 * d_val2;
     d_sumxy += d_val1 * d_val2;
-    d_avg_diff += (float64)i2_diff;
+    d_avg_diff += (double)i2_diff;
     i4_max_diff = MYMAX(i4_max_diff, i2_diff);
     n_stats++;
    }
@@ -423,15 +423,15 @@ uint32 array_diff(void *buf1,
    is_fill1 = fill1 && (*i4ptr1 == *((int32 *)fill1));
    is_fill2 = fill2 && (*i4ptr2 == *((int32 *)fill2));
    if (!is_fill1 && !is_fill2) {
-    d_avg_diff += (float64)i4_diff;
-    d_val1 = (float64)(*i4ptr1);
-    d_val2 = (float64)(*i4ptr2);
+    d_avg_diff += (double)i4_diff;
+    d_val1 = (double)(*i4ptr1);
+    d_val2 = (double)(*i4ptr2);
     d_sumx += d_val1;
     d_sumy += d_val2;
     d_sumx2 += d_val1 * d_val1;
     d_sumy2 += d_val2 * d_val2;
     d_sumxy += d_val1 * d_val2;
-    i4_max_diff = (int32)MYMAX(i4_max_diff, (float64)(i4_diff));
+    i4_max_diff = (int32)MYMAX(i4_max_diff, (double)(i4_diff));
     n_stats++;
    }
    if (! is_fill1) {
@@ -512,24 +512,24 @@ uint32 array_diff(void *buf1,
     fprintf(fp, "%d %d %f %f\n", is_fill1, is_fill2, *fptr1, *fptr2);
    }
    if (!is_fill1 && !is_fill2) {
-    d_avg_diff += (float64)f_diff;
-    d_val1 = (float64)(*fptr1);
-    d_val2 = (float64)(*fptr2);
+    d_avg_diff += (double)f_diff;
+    d_val1 = (double)(*fptr1);
+    d_val2 = (double)(*fptr2);
     d_sumx += d_val1;
     d_sumy += d_val2;
     d_sumx2 += d_val1 * d_val1;
     d_sumy2 += d_val2 * d_val2;
     d_sumxy += d_val1 * d_val2;
-    d_max_diff = MYMAX(d_max_diff, (float64)(f_diff));
+    d_max_diff = MYMAX(d_max_diff, (double)(f_diff));
     n_stats++;
    }
    if (!is_fill1) {
-    d_max_val1 = MYMAX(d_max_val1, (float64)(*fptr1));
-    d_min_val1 = MYMIN(d_min_val1, (float64)(*fptr1));
+    d_max_val1 = MYMAX(d_max_val1, (double)(*fptr1));
+    d_min_val1 = MYMIN(d_min_val1, (double)(*fptr1));
    }
    if (!is_fill2) {
-    d_max_val2 = MYMAX(d_max_val2, (float64)(*fptr2));
-    d_min_val2 = MYMIN(d_min_val2, (float64)(*fptr2));
+    d_max_val2 = MYMAX(d_max_val2, (double)(*fptr2));
+    d_min_val2 = MYMIN(d_min_val2, (double)(*fptr2));
    }
 
 
@@ -589,17 +589,17 @@ uint32 array_diff(void *buf1,
  */
 
  case DFNT_DOUBLE:
-  dptr1 = (float64 *) buf1;
-  dptr2 = (float64 *) buf2;
+  dptr1 = (double *) buf1;
+  dptr2 = (double *) buf2;
   for (i=0; i<tot_cnt; i++)
   {
    d_diff = fabs(*dptr1 - *dptr2);
-   is_fill1 = fill1 && (*dptr1 == *((float64 *)fill1));
-   is_fill2 = fill2 && (*dptr2 == *((float64 *)fill2));
+   is_fill1 = fill1 && (*dptr1 == *((double *)fill1));
+   is_fill2 = fill2 && (*dptr2 == *((double *)fill2));
    if (!is_fill1 && !is_fill2) {
     d_avg_diff += d_diff;
-    d_val1 = (float64)(*dptr1);
-    d_val2 = (float64)(*dptr2);
+    d_val1 = (double)(*dptr1);
+    d_val2 = (double)(*dptr2);
     d_sumx += d_val1;
     d_sumy += d_val2;
     d_sumx2 += d_val1 * d_val1;
@@ -652,7 +652,7 @@ uint32 array_diff(void *buf1,
    }
 
 
-   else if (d_diff > (float64) err_limit)
+   else if (d_diff > (double) err_limit)
    {
     n_diff++;
     if (n_diff <= max_err_cnt) {
@@ -672,13 +672,13 @@ uint32 array_diff(void *buf1,
   printf(" bad type - %d\n", type);
   }
   if (statistics) {
-   float64 sqrt_arg;
-   if ((float64)n_stats * d_sumx2 - d_sumx * d_sumx != 0.0) {
-    slope = ((float64)n_stats * d_sumxy - d_sumx * d_sumy) /
-     ((float64)n_stats * d_sumx2 - d_sumx * d_sumx);
-    intercept = (d_sumy - slope * d_sumx) / (float64)n_stats;
-    sqrt_arg = ((float64)n_stats*d_sumx2 - d_sumx*d_sumx) /
-     ((float64)n_stats * d_sumy2 - d_sumy * d_sumy);
+   double sqrt_arg;
+   if ((double)n_stats * d_sumx2 - d_sumx * d_sumx != 0.0) {
+    slope = ((double)n_stats * d_sumxy - d_sumx * d_sumy) /
+     ((double)n_stats * d_sumx2 - d_sumx * d_sumx);
+    intercept = (d_sumy - slope * d_sumx) / (double)n_stats;
+    sqrt_arg = ((double)n_stats*d_sumx2 - d_sumx*d_sumx) /
+     ((double)n_stats * d_sumy2 - d_sumy * d_sumy);
     correlation = slope * sqrt(sqrt_arg);
     printf("Regression  N: %d  Slope: %e  Intercept: %e  R: %e\n",
      n_stats, slope, intercept, correlation);

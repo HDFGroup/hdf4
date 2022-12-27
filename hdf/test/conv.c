@@ -77,7 +77,7 @@ static const char *test_name[] =
 
 /* for those machines with imprecise IEEE<-> conversions, this should be */
 /* close enough */
-#define EPS64          ((float64)1.0E-14)
+#define EPS64          ((double)1.0E-14)
 #define EPS32          ((float)1.0E-7)
 void
 test_conv(void)
@@ -104,9 +104,9 @@ test_conv(void)
     float *src_float,
 	  *dst_float,
 	  *dst2_float;
-    float64 *src_float64,
-	  *dst_float64,
-	  *dst2_float64;
+    double *src_double,
+	  *dst_double,
+	  *dst2_double;
     intn i,r;
     intn t;
     int32 ret;
@@ -625,85 +625,85 @@ test_conv(void)
         HDfree((VOIDP)dst_float);
         HDfree((VOIDP)dst2_float);
 
-        MESSAGE(6,printf("seeding %s float64 array\n",test_name[t]););
-        src_float64=(float64 *)HDmalloc(TEST_SIZE*sizeof(float64));
-        if(src_float64==NULL) {
-            CHECK_VOID(src_float64,NULL,"HDmalloc");
+        MESSAGE(6,printf("seeding %s double array\n",test_name[t]););
+        src_double=(double *)HDmalloc(TEST_SIZE*sizeof(double));
+        if(src_double==NULL) {
+            CHECK_VOID(src_double,NULL,"HDmalloc");
             return;
           } /* end if */
-        dst_float64=(float64 *)HDmalloc(TEST_SIZE*sizeof(float64));
-        if(dst_float64==NULL) {
-            CHECK_VOID(dst_float64,NULL,"HDmalloc");
+        dst_double=(double *)HDmalloc(TEST_SIZE*sizeof(double));
+        if(dst_double==NULL) {
+            CHECK_VOID(dst_double,NULL,"HDmalloc");
             return;
           } /* end if */
-        dst2_float64=(float64 *)HDmalloc(TEST_SIZE*sizeof(float64));
-        if(dst2_float64==NULL) {
-            CHECK_VOID(dst2_float64,NULL,"HDmalloc");
+        dst2_double=(double *)HDmalloc(TEST_SIZE*sizeof(double));
+        if(dst2_double==NULL) {
+            CHECK_VOID(dst2_double,NULL,"HDmalloc");
             return;
           } /* end if */
 
         /* Seed arrays with random values */
         for(i=0; i<TEST_SIZE; i++) {
-            src_float64[i]=(float64)(RAND()-RAND_MAX/2);
+            src_double[i]=(double)(RAND()-RAND_MAX/2);
             while((r=RAND())==0) /* don't divide by zero */
                 r=RAND();
-            src_float64[i]/=(float64)r;
+            src_double[i]/=(double)r;
           } /* end for */
 
-        MESSAGE(6,printf("converting %s float64 array\n",test_name[t]););
+        MESSAGE(6,printf("converting %s double array\n",test_name[t]););
         c1=clock();
-        ret=DFKconvert((VOIDP)src_float64,(VOIDP)dst_float64,test_type[t]|DFNT_FLOAT64,TEST_SIZE,DFACC_WRITE,0,0);
+        ret=DFKconvert((VOIDP)src_double,(VOIDP)dst_double,test_type[t]|DFNT_FLOAT64,TEST_SIZE,DFACC_WRITE,0,0);
         c2=clock();
         RESULT("DFKconvert");
-        MESSAGE(6,printf("%d/%d seconds to convert %d %s float64 values\n",(int)(c2-c1),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t]););
+        MESSAGE(6,printf("%d/%d seconds to convert %d %s double values\n",(int)(c2-c1),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t]););
 
-        MESSAGE(6,printf("re-converting %s float64 array\n",test_name[t]););
+        MESSAGE(6,printf("re-converting %s double array\n",test_name[t]););
         c3=clock();
-        ret=DFKconvert((VOIDP)dst_float64,(VOIDP)dst2_float64,test_type[t]|DFNT_FLOAT64,TEST_SIZE,DFACC_READ,0,0);
+        ret=DFKconvert((VOIDP)dst_double,(VOIDP)dst2_double,test_type[t]|DFNT_FLOAT64,TEST_SIZE,DFACC_READ,0,0);
         c4=clock();
         RESULT("DFKconvert");
-        MESSAGE(6,printf("%d/%d seconds to convert %d %s float64 values\n",(int)(c4-c3),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t]););
+        MESSAGE(6,printf("%d/%d seconds to convert %d %s double values\n",(int)(c4-c3),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t]););
 
-        if(HDmemcmp(src_float64,dst2_float64,TEST_SIZE*sizeof(float64))) {
-            printf("Error converting %s float64 values!\n",test_name[t]);
+        if(HDmemcmp(src_double,dst2_double,TEST_SIZE*sizeof(double))) {
+            printf("Error converting %s double values!\n",test_name[t]);
             HEprint(stdout,0);
             num_errs++;
           } /* end if */
 
         /* clear arrays for next test */
-        HDmemset(src_float64,0xae,TEST_SIZE*sizeof(float64));
-        HDmemset(dst_float64,0xae,TEST_SIZE*sizeof(float64));
-        HDmemset(dst2_float64,0xae,TEST_SIZE*sizeof(float64));
+        HDmemset(src_double,0xae,TEST_SIZE*sizeof(double));
+        HDmemset(dst_double,0xae,TEST_SIZE*sizeof(double));
+        HDmemset(dst2_double,0xae,TEST_SIZE*sizeof(double));
         /* Seed arrays with random values */
         for(i=0; i<TEST_SIZE; i+=SOURCE_STRIDE) {
-            src_float64[i]=(float64)(RAND()-RAND_MAX/2);
+            src_double[i]=(double)(RAND()-RAND_MAX/2);
             while((r=RAND())==0) /* don't divide by zero */
                 r=RAND();
-            src_float64[i]/=(float64)r;
+            src_double[i]/=(double)r;
           } /* end for */
 
-        MESSAGE(6,printf("converting %s float64 array with %d/%d stride\n",test_name[t],SOURCE_STRIDE,DEST_STRIDE););
+        MESSAGE(6,printf("converting %s double array with %d/%d stride\n",test_name[t],SOURCE_STRIDE,DEST_STRIDE););
         c1=clock();
-        ret=DFKconvert((VOIDP)src_float64,(VOIDP)dst_float64,test_type[t]|DFNT_FLOAT64,TEST_SIZE/4,DFACC_WRITE,SOURCE_STRIDE*sizeof(float64),DEST_STRIDE*sizeof(float64));
+        ret=DFKconvert((VOIDP)src_double,(VOIDP)dst_double,test_type[t]|DFNT_FLOAT64,TEST_SIZE/4,DFACC_WRITE,SOURCE_STRIDE*sizeof(double),DEST_STRIDE*sizeof(double));
         c2=clock();
         RESULT("DFKconvert");
-        MESSAGE(6,printf("%d/%d seconds to convert %d %s float64 values with %d/%d stride\n",(int)(c2-c1),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t],SOURCE_STRIDE,DEST_STRIDE););
+        MESSAGE(6,printf("%d/%d seconds to convert %d %s double values with %d/%d stride\n",(int)(c2-c1),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t],SOURCE_STRIDE,DEST_STRIDE););
 
-        MESSAGE(6,printf("re-converting %s float64 array with %d/%d stride\n",test_name[t],DEST_STRIDE,SOURCE_STRIDE););
+        MESSAGE(6,printf("re-converting %s double array with %d/%d stride\n",test_name[t],DEST_STRIDE,SOURCE_STRIDE););
         c3=clock();
-        ret=DFKconvert((VOIDP)dst_float64,(VOIDP)dst2_float64,test_type[t]|DFNT_FLOAT64,TEST_SIZE/4,DFACC_READ,DEST_STRIDE*sizeof(float64),SOURCE_STRIDE*sizeof(float64));
+        ret=DFKconvert((VOIDP)dst_double,(VOIDP)dst2_double,test_type[t]|DFNT_FLOAT64,TEST_SIZE/4,DFACC_READ,DEST_STRIDE*sizeof(double),SOURCE_STRIDE*sizeof(double));
         c4=clock();
         RESULT("DFKconvert");
-        MESSAGE(6,printf("%d/%d seconds to convert %d %s float64 values with %d/%d stride\n",(int)(c4-c3),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t],DEST_STRIDE,SOURCE_STRIDE););
-        if(HDmemcmp(src_float64,dst2_float64,(TEST_SIZE/2)*sizeof(float64))) {
-            printf("Error converting %s float64 values with strides!\n",test_name[t]);
+        MESSAGE(6,printf("%d/%d seconds to convert %d %s double values with %d/%d stride\n",(int)(c4-c3),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t],DEST_STRIDE,SOURCE_STRIDE););
+        if(HDmemcmp(src_double,dst2_double,(TEST_SIZE/2)*sizeof(double))) {
+            printf("Error converting %s double values with strides!\n",test_name[t]);
             HEprint(stdout,0);
             num_errs++;
           } /* end if */
 
-        HDfree((VOIDP)src_float64);
-        HDfree((VOIDP)dst_float64);
-        HDfree((VOIDP)dst2_float64);
+        HDfree((VOIDP)src_double);
+        HDfree((VOIDP)dst_double);
+        HDfree((VOIDP)dst2_double);
       } /* end for */
 
 }   /* end test_conv() */

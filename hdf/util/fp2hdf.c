@@ -728,7 +728,7 @@ gdimen(char *infile, struct Input *inp, FILE *strm)
 static int
 gfloat(char *infile, FILE * strm, float *fp32, struct Input *in)
 {
-    float64     fp64=0.0;
+    double     fp64=0.0;
 
     const char *err1 = "Unable to get 'float' value from file: %s.\n";
 
@@ -752,7 +752,7 @@ gfloat(char *infile, FILE * strm, float *fp32, struct Input *in)
       }
     else
       {
-          if (fread((char *) &fp64, sizeof(float64), 1, strm) != 1)
+          if (fread((char *) &fp64, sizeof(double), 1, strm) != 1)
             {
                 (void) fprintf(stderr, err1, infile);
                 goto err;

@@ -61,7 +61,7 @@
 #define ATTNAME8   "attname8"
 #define ATTNAME9   "attname9"
 #define ATTNAME10  "attname10"
-#define EPS64     (float64)1.0E-14
+#define EPS64     (double)1.0E-14
 #define EPS32     (float)1.0E-7
 #define MAX_HDF4_NAME_LENGTH 256
 
@@ -71,7 +71,7 @@ uint16 attr2[2] = {16, 32}, iattr2[2];
 uint32 attr1[4] = {100, 132, 10032, 10064}, iattr1[2];
 char   attr3[6] = {'m','N','p', 'S', 't', '\0'}, iattr3[6];
 float attr4[2] = {(float)32.001, (float)-34.002}, iattr4[2];
-float64 attr5[2] = {64.12345, -64.12345}, iattr5[2];
+double attr5[2] = {64.12345, -64.12345}, iattr5[2];
 
 static intn create_vset_stuff(void);
 static intn write_vattrs(void);

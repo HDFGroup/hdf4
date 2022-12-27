@@ -392,12 +392,12 @@ extern      "C"
              intf * lunit, intf * lformat, intf * lcoord);
 
     HDFFCLIBAPI      FRETVAL(intf) ndsscal
-                (float64 * cal, float64 * cal_err, float64 * ioff,
-                 float64 * ioff_err, intf * cal_type);
+                (double * cal, double * cal_err, double * ioff,
+                 double * ioff_err, intf * cal_type);
 
     HDFFCLIBAPI      FRETVAL(intf) ndsgcal
-                (float64 * cal, float64 * cal_err, float64 * ioff,
-                 float64 * ioff_err, intf * cal_type);
+                (double * cal, double * cal_err, double * ioff,
+                 double * ioff_err, intf * cal_type);
 
     HDFFCLIBAPI      FRETVAL(intf) ndswref
                 (_fcd filename, intf * fnlen, intf * ref);

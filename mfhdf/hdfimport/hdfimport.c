@@ -278,11 +278,11 @@ struct int32set /* variables for an INT 32 data set */
 
 struct fp64set /* variables for a FLOAT 64 data set */
 {
-    float64 max;
-    float64 min;
-    float64 *hscale;
-    float64 *vscale;
-    float64 *dscale;
+    double max;
+    double min;
+    double *hscale;
+    double *vscale;
+    double *dscale;
 };
 
 struct int8set /* variables for an INT 8 data set */
@@ -479,7 +479,7 @@ void        usage(char *);
 /*
  * Additional functions defined to incorporate the revisions (pkamat)
  */
-static int  gfloat64(char *infile, FILE * strm, float64 *fp64, struct Input *in);
+static int  gfloat64(char *infile, FILE * strm, double *fp64, struct Input *in);
 static int  gint32(char *infile, FILE * strm, int32 *ival, struct Input *in);
 static int  gint16(char *infile, FILE * strm, int16 *ival, struct Input *in);
 static int  gint8(char *infile, FILE * strm, int8 *ival, struct Input *in);
@@ -680,7 +680,7 @@ gdata(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_ma
     float    *fp32;
     int32    *in32;
     int16    *in16;
-    float64    *fp64;
+    double    *fp64;
     int8    *in8;
     int32    hdfdims[3], start[3];     /* order: ZYX or YX */
     int32    sd_id, sds_id, sd_index;
@@ -846,7 +846,7 @@ gdata(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_ma
 
         if (in->outtype == FP_64)
         {
-        for (k = 0, fp64 = (float64 *) in->data; k < in->dims[2]; k++)
+        for (k = 0, fp64 = (double *) in->data; k < in->dims[2]; k++)
         {
             for (j = 0; j < in->dims[1]; j++)
             {
@@ -862,13 +862,13 @@ gdata(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_ma
         }
         if (*is_maxmin == FALSE)
         {
-            in->fp64s.min = in->fp64s.max = *(float64*) in->data;
+            in->fp64s.min = in->fp64s.max = *(double*) in->data;
             for (i = 1; i< len; i++)
             {
-            if (((float64 *) in->data)[i] > in->fp64s.max)
-            in->fp64s.max = ((float64*) in->data)[i];
-            if (((float64*) in->data)[i] < in->fp64s.min)
-            in->fp64s.min = ((float64*) in->data)[i];
+            if (((double *) in->data)[i] > in->fp64s.max)
+            in->fp64s.max = ((double*) in->data)[i];
+            if (((double*) in->data)[i] < in->fp64s.min)
+            in->fp64s.min = ((double*) in->data)[i];
             }
             *is_maxmin = TRUE;
         }
@@ -1064,7 +1064,7 @@ gdimen(struct infilesformat infile_info, struct Input *in, FILE *strm)
 static int
 gfloat(char *infile, FILE * strm, float *fp32, struct Input *in)
 {
-    float64     fp64=0.0;
+    double     fp64=0.0;
 
     const char *err1 = "Unable to get 'float' value from file: %s.\n";
 
@@ -1086,7 +1086,7 @@ gfloat(char *infile, FILE * strm, float *fp32, struct Input *in)
       }
     else
       {
-    if (fread((char *) &fp64, sizeof(float64), 1, strm) != 1)
+    if (fread((char *) &fp64, sizeof(double), 1, strm) != 1)
     {
         (void) fprintf(stderr, err1, infile);
         goto err;
@@ -1111,7 +1111,7 @@ gfloat(char *infile, FILE * strm, float *fp32, struct Input *in)
  */
 
 static int
-gfloat64(char *infile, FILE * strm, float64 *fp64, struct Input *in)
+gfloat64(char *infile, FILE * strm, double *fp64, struct Input *in)
 {
     const char *err1 = "Unable to get 'float' value from file: %s.\n";
 
@@ -1125,7 +1125,7 @@ gfloat64(char *infile, FILE * strm, float64 *fp64, struct Input *in)
       }
     else
       {
-    if (fread((char *) fp64, sizeof(float64), 1, strm) != 1)
+    if (fread((char *) fp64, sizeof(double), 1, strm) != 1)
     {
         (void) fprintf(stderr, err1, infile);
         goto err;
@@ -2845,7 +2845,7 @@ alloc_data(VOIDP *data, int32 len, int outtype)
         }
         break;
     case 1: /* 64-bit float */
-        if ((*data = (VOIDP) HDmalloc((size_t) len * sizeof(float64))) == NULL)
+        if ((*data = (VOIDP) HDmalloc((size_t) len * sizeof(double))) == NULL)
         {
         (void) fprintf(stderr, "%s", alloc_err);
         return FAIL;
@@ -3535,22 +3535,22 @@ static int init_scales(struct Input * in)
 
     case 1: /* 64-bit float */
 
-      if ((in->fp64s.hscale = (float64 *) HDmalloc((size_t)
-                        (in->dims[0] + 1) * sizeof(float64))) == NULL)
+      if ((in->fp64s.hscale = (double *) HDmalloc((size_t)
+                        (in->dims[0] + 1) * sizeof(double))) == NULL)
     {
         (void) fprintf(stderr, "%s", err1);
         goto err;
     }
-      if ((in->fp64s.vscale = (float64 *) HDmalloc((size_t)
-                        (in->dims[1] + 1) * sizeof(float64))) == NULL)
+      if ((in->fp64s.vscale = (double *) HDmalloc((size_t)
+                        (in->dims[1] + 1) * sizeof(double))) == NULL)
     {
     (void) fprintf(stderr, "%s", err1);
     goto err;
     }
       if (in->rank == 3)
     {
-    if ((in->fp64s.dscale = (float64 *) HDmalloc((size_t)
-                        (in->dims[2] + 1) * sizeof(float64))) == NULL)
+    if ((in->fp64s.dscale = (double *) HDmalloc((size_t)
+                        (in->dims[2] + 1) * sizeof(double))) == NULL)
         {
         (void) fprintf(stderr, "%s", err1);
         goto err;

@@ -60,11 +60,11 @@ main(int argc, char * argv[] )
     float     rowi4 = (float)1.0e0, coli4 = (float)2.0e0, plni4 = (float)5.0e0;
     float     ezero = (float)0.0e0;
 
-    float64     b64r2[3][4], b64r3[5][3][4];
-    float64     row8[3], col8[4], pln8[5];
-    float64     rowo8 = 11.0e0, colo8 = 21.0e0, plno8 = 51.0e0;
-    float64     rowi8 = 1.0e0, coli8 = 2.0e0, plni8 = 5.0e0;
-    float64     dzero = 0.0e0;
+    double     b64r2[3][4], b64r3[5][3][4];
+    double     row8[3], col8[4], pln8[5];
+    double     rowo8 = 11.0e0, colo8 = 21.0e0, plno8 = 51.0e0;
+    double     rowi8 = 1.0e0, coli8 = 2.0e0, plni8 = 5.0e0;
+    double     dzero = 0.0e0;
 
     const char *text = "TEXT";
     const char *fp32 = "FP32";
@@ -239,15 +239,15 @@ main(int argc, char * argv[] )
     (void) fwrite((char *) &ione, sizeof(int), 1, sp);
     (void) fwrite((char *) &nrow, sizeof(int), 1, sp);
     (void) fwrite((char *) &ncol, sizeof(int), 1, sp);
-    (void) fwrite((char *) &dzero, sizeof(float64), 1, sp);
-    (void) fwrite((char *) &dzero, sizeof(float64), 1, sp);
+    (void) fwrite((char *) &dzero, sizeof(double), 1, sp);
+    (void) fwrite((char *) &dzero, sizeof(double), 1, sp);
     for (i = 0; i < nrow; i++)
-        (void) fwrite((char *) &row8[i], sizeof(float64), 1, sp);
+        (void) fwrite((char *) &row8[i], sizeof(double), 1, sp);
     for (j = 0; j < ncol; j++)
-        (void) fwrite((char *) &col8[j], sizeof(float64), 1, sp);
+        (void) fwrite((char *) &col8[j], sizeof(double), 1, sp);
     for (i = 0; i < nrow; i++)
         for (j = 0; j < ncol; j++)
-            (void) fwrite((char *) &b64r2[i][j], sizeof(float64), 1,
+            (void) fwrite((char *) &b64r2[i][j], sizeof(double), 1,
                           sp);
     (void) fclose(sp);
 
@@ -256,19 +256,19 @@ main(int argc, char * argv[] )
     (void) fwrite((char *) &npln, sizeof(int), 1, sp);
     (void) fwrite((char *) &nrow, sizeof(int), 1, sp);
     (void) fwrite((char *) &ncol, sizeof(int), 1, sp);
-    (void) fwrite((char *) &dzero, sizeof(float64), 1, sp);
-    (void) fwrite((char *) &dzero, sizeof(float64), 1, sp);
+    (void) fwrite((char *) &dzero, sizeof(double), 1, sp);
+    (void) fwrite((char *) &dzero, sizeof(double), 1, sp);
     for (k = 0; k < npln; k++)
-        (void) fwrite((char *) &pln8[k], sizeof(float64), 1, sp);
+        (void) fwrite((char *) &pln8[k], sizeof(double), 1, sp);
     for (i = 0; i < nrow; i++)
-        (void) fwrite((char *) &row8[i], sizeof(float64), 1, sp);
+        (void) fwrite((char *) &row8[i], sizeof(double), 1, sp);
     for (j = 0; j < ncol; j++)
-        (void) fwrite((char *) &col8[j], sizeof(float64), 1, sp);
+        (void) fwrite((char *) &col8[j], sizeof(double), 1, sp);
     for (k = 0; k < npln; k++)
         for (i = 0; i < nrow; i++)
             for (j = 0; j < ncol; j++)
                 (void) fwrite((char *) &b64r3[k][i][j],
-                              sizeof(float64), 1, sp);
+                              sizeof(double), 1, sp);
     (void) fclose(sp);
     return (0);
 }

@@ -117,7 +117,7 @@ PRIVATE DFSsdg Readsdg =        /* struct for reading */
     {NULL, NULL, NULL}, NULL,
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     (int32) DFNT_NONE, DFNTF_NONE, (int32) -1, (int32) 0, (int32) 0,
-    (float64) 1.0, (float64) 0.0, (float64) 0.0, (float64) 0.0,
+    (double) 1.0, (double) 0.0, (double) 0.0, (double) 0.0,
     (int32) -1,
     {0}, 0
 };
@@ -129,7 +129,7 @@ PRIVATE DFSsdg Writesdg =       /* struct for writing */
     {NULL, NULL, NULL}, NULL,
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     (int32) DFNT_NONE, DFNTF_NONE, (int32) -1, (int32) 0, (int32) 0,
-    (float64) 1.0, (float64) 0.0, (float64) 0.0, (float64) 0.0,
+    (double) 1.0, (double) 0.0, (double) 0.0, (double) 0.0,
     (int32) -1,
     {0}, 0
 };
@@ -2906,10 +2906,10 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
                     }
 
                   /* move 'em over */
-                  sdg->ioff = (float64) buf2[0];
-                  sdg->ioff_err = (float64) buf2[1];
-                  sdg->cal = (float64) buf2[2];
-                  sdg->cal_err = (float64) buf2[3];
+                  sdg->ioff = (double) buf2[0];
+                  sdg->ioff_err = (double) buf2[1];
+                  sdg->cal = (double) buf2[2];
+                  sdg->cal_err = (double) buf2[3];
                   sdg->cal_type = DFNT_INT16;
 
                 }
@@ -2964,10 +2964,10 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
                              DFACC_READ, 0, 0);
 
                   /* move 'em over */
-                  sdg->ioff = (float64) buf2[0];
-                  sdg->ioff_err = (float64) buf2[1];
-                  sdg->cal = (float64) buf2[2];
-                  sdg->cal_err = (float64) buf2[3];
+                  sdg->ioff = (double) buf2[0];
+                  sdg->ioff_err = (double) buf2[1];
+                  sdg->cal = (double) buf2[2];
+                  sdg->cal_err = (double) buf2[3];
                   sdg->cal_type = DFNT_INT16;
 
                 }
@@ -3380,7 +3380,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
       else
         {
           /* allocate buffer */
-          uint8       buf2[4 * sizeof(float64) + sizeof(int32)];
+          uint8       buf2[4 * sizeof(double) + sizeof(int32)];
 
           /* convert doubles */
           DFKconvert((VOIDP) &sdg->cal, (VOIDP) buf2,
@@ -4713,10 +4713,10 @@ done:
        DFSDgetcal
  USAGE
        int DFSDgetcal(pcal, pcal_err, pioff, pioff_err, cal_nt)
-       float64 *pcal;       OUT: calibration factor
-       float64 *pcal_err;   OUT: calibration error value
-       float64 *pioff;      OUT: uncalibrated offset value
-       float64 *pioff_err;  OUT: uncalibrated offset error value
+       double *pcal;       OUT: calibration factor
+       double *pcal_err;   OUT: calibration error value
+       double *pioff;      OUT: uncalibrated offset value
+       double *pioff_err;  OUT: uncalibrated offset error value
        int32   *cal_nt;     OUT: Nunber type of uncalibrated data
 
  RETURNS
@@ -4746,8 +4746,8 @@ done:
 
 ----------------------------------------------------------------------------*/
 intn
-DFSDgetcal(float64 *pcal, float64 *pcal_err, float64 *pioff,
-           float64 *pioff_err, int32 *cal_nt)
+DFSDgetcal(double *pcal, double *pcal_err, double *pioff,
+           double *pioff_err, int32 *cal_nt)
 {
   intn      ret_value = SUCCEED;
   CONSTR(FUNC, "DFSDgetcal");
@@ -4789,10 +4789,10 @@ done:
        DFSDsetcal
  USAGE
        intn DFSDsetcal(cal, cal_err, ioff, ioff_err, cal_nt)
-       float64 cal;         IN: calibration factor
-       float64 cal_err;     IN: calibration error
-       float64 ioff;        IN: uncalibrated offset
-       float64 ioff_err;    IN: uncalibrated offset error
+       double cal;         IN: calibration factor
+       double cal_err;     IN: calibration error
+       double ioff;        IN: uncalibrated offset
+       double ioff_err;    IN: uncalibrated offset error
        int32   cal_nt;      IN: number type of uncalibrated data
  RETURNS
        Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
@@ -4823,7 +4823,7 @@ done:
        must be called anew for each data set that is to be written.
 ----------------------------------------------------------------------------*/
 intn
-DFSDsetcal(float64 cal, float64 cal_err, float64 ioff, float64 ioff_err,
+DFSDsetcal(double cal, double cal_err, double ioff, double ioff_err,
            int32 cal_nt)
 {
     CONSTR(FUNC, "DFSDsetcal");
@@ -4836,10 +4836,10 @@ DFSDsetcal(float64 cal, float64 cal_err, float64 ioff, float64 ioff_err,
         if(DFSDIstart()==FAIL)
             HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
-  Writesdg.cal = (float64) cal;
-  Writesdg.cal_err = (float64) cal_err;
-  Writesdg.ioff = (float64) ioff;
-  Writesdg.ioff_err = (float64) ioff_err;
+  Writesdg.cal = (double) cal;
+  Writesdg.cal_err = (double) cal_err;
+  Writesdg.ioff = (double) ioff;
+  Writesdg.ioff_err = (double) ioff_err;
   Writesdg.cal_type = (int32) cal_nt;
 
   Ref.cal = 0;

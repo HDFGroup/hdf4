@@ -127,7 +127,7 @@ const uint16 image3[23][21][4]={
 {{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 }},
 {{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 },{0 ,0 ,0 ,0 }}
 };
-const float64 image4[19][17][2]={
+const double image4[19][17][2]={
 {{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0}},
 {{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0}},
 {{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{6.0,6.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0}},
@@ -466,9 +466,9 @@ static void test_mgr_image_b1b(int flag)
         int32 dims[2]={5,7};    /* dimensions for the empty image */
         uint16 ref;     /* RI ref #. */
         int32 index;    /* RI index # */
-        float64 image[7][5][4]; /* space for the image data */
-        float64 fill_pixel[4]={1.3,-2.4,1000.3,.25};   /* pixel with fill values */
-        float64 image0[7][5][4]; /* space for the image data */
+        double image[7][5][4]; /* space for the image data */
+        double fill_pixel[4]={1.3,-2.4,1000.3,.25};   /* pixel with fill values */
+        double image0[7][5][4]; /* space for the image data */
         int32 start[2]; /* start of image data to grab */
         int32 stride[2];/* stride of image data to grab */
 
@@ -477,7 +477,7 @@ static void test_mgr_image_b1b(int flag)
         CHECK_VOID(riid,FAIL,"GRcreate");
 
         /* Set the fill-value */
-        ret=GRsetattr(riid,FILL_ATTR,DFNT_FLOAT64,sizeof(fill_pixel)/sizeof(float64),fill_pixel);
+        ret=GRsetattr(riid,FILL_ATTR,DFNT_FLOAT64,sizeof(fill_pixel)/sizeof(double),fill_pixel);
         CHECK_VOID(ret,FAIL,"GRsetattr");
 
         /* Check if creating chunked GR */
@@ -507,7 +507,7 @@ static void test_mgr_image_b1b(int flag)
         riid=GRselect(grid,index);
         CHECK_VOID(riid,FAIL,"GRselect");
 
-        HDmemset(image,0,(size_t)(dims[0]*dims[1]*4)*sizeof(float64));
+        HDmemset(image,0,(size_t)(dims[0]*dims[1]*4)*sizeof(double));
         /* fill the memory-only with the default pixel fill-value */
         HDmemfill(image0,fill_pixel,sizeof(fill_pixel),sizeof(image0)/sizeof(fill_pixel));
 

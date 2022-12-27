@@ -15,10 +15,10 @@
 
 #include "tproto.h"
 
-static float64  f64[10][10],  tf64[10][10];
-static float64  f64scale[10],  tf64scale[10];
-static float64 f64max = (float64) 40.0, f64min = (float64) 0.0;
-static float64 tf64max, tf64min;
+static double  f64[10][10],  tf64[10][10];
+static double  f64scale[10],  tf64scale[10];
+static double f64max = (double) 40.0, f64min = (double) 0.0;
+static double tf64max, tf64min;
 
 static float  f32[10][10],  tf32[10][10];
 static float  f32scale[10],  tf32scale[10];
@@ -74,7 +74,7 @@ test_sdnmms(void)
           for (j = 0; j < 10; j++)
             {
 
-                f64[i][j] = (float64)((i * 40) + j);   /* range: 0 ~ 4-billion */
+                f64[i][j] = (double)((i * 40) + j);   /* range: 0 ~ 4-billion */
 
                 f32[i][j] = (float)((i * 40) + j);   /* range: 0 ~ 4-billion */
 
@@ -88,7 +88,7 @@ test_sdnmms(void)
                 ui32[i][j] = (uint32) ((i * 40) + j);   /* range: 0 ~ 4-billion */
             }
 
-          f64scale[i] = (float64)((i * 40) + j);   /* range: 0 ~ 4-billion */
+          f64scale[i] = (double)((i * 40) + j);   /* range: 0 ~ 4-billion */
 
           f32scale[i] = (float) ((i * 40) + j);   /* range: 0 ~ 4-billion */
 

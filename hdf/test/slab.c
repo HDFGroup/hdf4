@@ -26,9 +26,9 @@
 /* Internal variables */
 static int32  rank = 3;
 
-static float64  maxf64 = 123.0;
-static float64  minf64 = -1.0;
-static float64  fillf64 = 1.0;
+static double  maxf64 = 123.0;
+static double  minf64 = -1.0;
+static double  fillf64 = 1.0;
 
 static float  maxf32 = (float) 123.0;
 static float  minf32 = (float) -1.0;
@@ -88,11 +88,11 @@ static const char  *ucol = "Cm";
 static const char  *fcol = "Int32";
 
 /* scales for planes, rows, and cols */
-static float64  scplnf64[2] =
+static double  scplnf64[2] =
 {0.0, 100.0};
-static float64  scrowf64[3] =
+static double  scrowf64[3] =
 {0.0, 10.0, 20.0};
-static float64  sccolf64[4] =
+static double  sccolf64[4] =
 {0.0, 1.0, 2.0, 3.0};
 
 static float  scplnf32[2] =
@@ -189,26 +189,26 @@ static float  slabw5[2][3][1] =
         {(float) 113.0},
         {(float) 123.0}}};
 
-static float64  slabw1f64[1][1][3] =
+static double  slabw1f64[1][1][3] =
 {
     {
         {110.0, 111.0, 112.0}}};
-static float64  slabw2f64[2][1][3] =
+static double  slabw2f64[2][1][3] =
 {
     {
         {20.0, 21.0, 22.0}},
     {
         {120.0, 121.0, 122.0}}};
-static float64  slabw3f64[1][2][3] =
+static double  slabw3f64[1][2][3] =
 {
     {
         {0.0, 1.0, 2.0},
         {10.0, 11.0, 12.0}}};
-static float64  slabw4f64[1][1][3] =
+static double  slabw4f64[1][1][3] =
 {
     {
         {100.0, 101.0, 102.0}}};
-static float64  slabw5f64[2][3][1] =
+static double  slabw5f64[2][3][1] =
 {
     {
         {3.0},
@@ -567,7 +567,7 @@ static float  fdata[2][3][4] =
         {(float) 100.0, (float) 101.0, (float) 102.0, (float) 103.0},
         {(float) 110.0, (float) 111.0, (float) 112.0, (float) 113.0},
      {(float) 120.0, (float) 121.0, (float) 122.0, (float) 123.0}}};
-static float64  f64data[2][3][4] =
+static double  f64data[2][3][4] =
 {
     {
         {0.0, 1.0, 2.0, 3.0},
@@ -850,8 +850,8 @@ slabwf64(void)
     int32       i, j, k;
     int32       ret = 0;
     int32       num_err = 0;
-    float64     sdata[2][3][4]; /* Data array read from from file */
-    float64     lfill=(float64)0.0;
+    double     sdata[2][3][4]; /* Data array read from from file */
+    double     lfill=(double)0.0;
 
     MESSAGE(10, printf("\n slabwf64:  Writing 5 slabs to slabwf64.hdf \n");
         );

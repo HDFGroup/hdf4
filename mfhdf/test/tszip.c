@@ -537,11 +537,11 @@ static intn test_szip_SDSfl64bit()
     char	name[H4_MAX_NC_NAME];
     comp_info	c_info;
     int32       start[2], edges[2];
-    float64     fill_value = 0;   /* Fill value */
+    double     fill_value = 0;   /* Fill value */
     int         i,j;
     int		num_errs = 0;    /* number of errors so far */
-    float64	out_data[LENGTH][WIDTH];
-    float64	in_data[LENGTH][WIDTH]={
+    double	out_data[LENGTH][WIDTH];
+    double	in_data[LENGTH][WIDTH]={
              {100.0,100.0,200.0,200.0,300.0,400.0},
              {100.0,100.0,200.0,200.0,300.0,400.0},
              {100.0,100.0,200.0,200.0,300.0,400.0},

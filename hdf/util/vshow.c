@@ -381,7 +381,7 @@ static int32
 fmtdouble(char *x)
 {
     double      d = 0.0;
-    HDmemcpy(&d, x, sizeof(float64));
+    HDmemcpy(&d, x, sizeof(double));
     cn += printf("%f", d);
     return (1);
 }

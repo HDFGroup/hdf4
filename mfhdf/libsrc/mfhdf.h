@@ -133,8 +133,8 @@ HDFLIBAPI intn SDsetdatastrs
     (int32 sdsid, const char *l, const char *u, const char *f, const char *c);
 
 HDFLIBAPI intn SDsetcal
-    (int32 sdsid, float64 cal, float64 cale, float64 ioff,
-               float64 ioffe, int32 nt);
+    (int32 sdsid, double cal, double cale, double ioff,
+               double ioffe, int32 nt);
 
 HDFLIBAPI intn SDsetfillvalue
     (int32 sdsid, void * val);
@@ -149,8 +149,8 @@ HDFLIBAPI intn SDgetdatastrs
     (int32 sdsid, char *l, char *u, char *f, char *c, intn len);
 
 HDFLIBAPI intn SDgetcal
-    (int32 sdsid, float64 *cal, float64 *cale, float64 *ioff, 
-               float64 *ioffe, int32 *nt);
+    (int32 sdsid, double *cal, double *cale, double *ioff, 
+               double *ioffe, int32 *nt);
 
 HDFLIBAPI intn SDsetdimstrs
     (int32 id, const char *l, const char *u, const char *f);

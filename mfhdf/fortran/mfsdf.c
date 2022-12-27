@@ -174,11 +174,11 @@ nscdimid(id, index)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-nscgcal(intf *id, float64 *cal, float64 *cale, float64 *ioff, float64 *ioffe, intf *nt)
+nscgcal(intf *id, double *cal, double *cale, double *ioff, double *ioffe, intf *nt)
 #else
 nscgcal(id, cal, cale, ioff, ioffe, nt)
      intf *id;
-     float64 *cal, *cale, *ioff, *ioffe;
+     double *cal, *cale, *ioff, *ioffe;
      intf *nt;
 #endif /* PROTOTYPE */
 {
@@ -203,11 +203,11 @@ nscgcal(id, cal, cale, ioff, ioffe, nt)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-nscscal(intf *id, float64 *cal, float64 *cale, float64 *ioff, float64 *ioffe, intf *nt)
+nscscal(intf *id, double *cal, double *cale, double *ioff, double *ioffe, intf *nt)
 #else
 nscscal(id, cal, cale, ioff, ioffe, nt)
      intf *id;
-     float64 *cal, *cale, *ioff, *ioffe;
+     double *cal, *cale, *ioff, *ioffe;
      intf *nt;
 #endif /* PROTOTYPE */
 {
@@ -1016,11 +1016,11 @@ nscginfo(id, name, rank, dimsizes, nt, nattr, len)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-nsfgcal(intf *id, float64 *cal, float64 *cale, float64 *ioff, float64 *ioffe, intf *nt)
+nsfgcal(intf *id, double *cal, double *cale, double *ioff, double *ioffe, intf *nt)
 #else
 nsfgcal(id, cal, cale, ioff, ioffe, nt)
      intf *id;
-     float64 *cal, *cale, *ioff, *ioffe;
+     double *cal, *cale, *ioff, *ioffe;
      intf *nt;
 #endif /* PROTOTYPE */
 {
@@ -1045,11 +1045,11 @@ nsfgcal(id, cal, cale, ioff, ioffe, nt)
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-nsfscal(intf *id, float64 *cal, float64 *cale, float64 *ioff, float64 *ioffe, intf *nt)
+nsfscal(intf *id, double *cal, double *cale, double *ioff, double *ioffe, intf *nt)
 #else
 nsfscal(id, cal, cale, ioff, ioffe, nt)
      intf *id;
-     float64 *cal, *cale, *ioff, *ioffe;
+     double *cal, *cale, *ioff, *ioffe;
      intf *nt;
 #endif /* PROTOTYPE */
 {

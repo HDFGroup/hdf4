@@ -50,8 +50,8 @@ typedef struct DFSsdg
       int32       aid;          /* access id     */
       int32       compression;  /* 0 -- not compressed  */
       int32       isndg;        /* 0 -- pure sdg, written by 3.1 else ndg */
-      float64     cal, cal_err; /* calibration multiplier stuff          */
-      float64     ioff, ioff_err;   /* calibration offset stuff              */
+      double     cal, cal_err; /* calibration multiplier stuff          */
+      double     ioff, ioff_err;   /* calibration offset stuff              */
       int32       cal_type;     /* number type of data after calibration */
       uint8       fill_value[DFSD_MAXFILL_LEN];     /* fill value if any specified  */
       intn        fill_fixed;   /* whether ther fill value is a fixed value, or it can change */

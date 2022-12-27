@@ -234,15 +234,15 @@ fmtshort(VOIDP       x,
         return(fwrite(&s, sizeof(short), 1, ofp));
 }
 
-#define FLOAT64_EPSILON ((float64)1.0e-20)
+#define FLOAT64_EPSILON ((double)1.0e-20)
 intn
 fmtfloat64(VOIDP       x,
            file_format_t ff,
            FILE       *ofp)
 {
-    float64     d;
+    double     d;
 
-    HDmemcpy(&d, x, sizeof(float64));
+    HDmemcpy(&d, x, sizeof(double));
 
     if(ff == DASCII)
       {
@@ -253,7 +253,7 @@ fmtfloat64(VOIDP       x,
       }
     else
       {
-          return(fwrite(&d, sizeof(float64), 1, ofp));
+          return(fwrite(&d, sizeof(double), 1, ofp));
       }
 }
 

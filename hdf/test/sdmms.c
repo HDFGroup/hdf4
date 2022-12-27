@@ -50,10 +50,10 @@ static uint32  ui32scale[10],  tui32scale[10];
 static uint32 ui32max = 999999999, ui32min = 0;
 static uint32 tui32max, tui32min;
 
-static float64 cal1, cal2, cal3, cal4;
+static double cal1, cal2, cal3, cal4;
 static int32 cal5;
 
-static float64 ical1, ical2, ical3, ical4;
+static double ical1, ical2, ical3, ical4;
 static int32 ical5;
 
 void
@@ -99,10 +99,10 @@ test_sdmms(void)
           ui32scale[i] = (uint32) ((i * 400000000U) + j);    /* range: 0 ~ 4-billion */
       }
 
-    cal1 = (float64) 10.0;
-    cal2 = (float64) 0.0;
-    cal3 = (float64) 27.0;
-    cal4 = (float64) 1.5;
+    cal1 = (double) 10.0;
+    cal2 = (double) 0.0;
+    cal3 = (double) 27.0;
+    cal4 = (double) 1.5;
     cal5 = (int32) DFNT_INT16;
 
     ret = DFSDsetdims(rank, dims);
