@@ -97,10 +97,10 @@ int type;
     case CDF_INT4        :
     case CDF_UINT4       :
         return NC_LONG;
-    case CDF_REAL4       :
+    case CDF_REAL4       : 
     case CDF_FLOAT       :
-        return NC_FLOAT;
-    case CDF_REAL8       :
+        return NC_FLOAT; 
+    case CDF_REAL8       : 
     case CDF_DOUBLE      :
     case CDF_EPOCH       :
         return NC_DOUBLE;
@@ -136,8 +136,6 @@ nssdc_read_cdf(xdrs, handlep)
     NC_var * var = NULL;    /* shorthand for vars[current_var] */
     vix_t  * end;
 
-    (void)xdrs;
-
     /* interesting stuff in CDR record */
     int32   gdrOffset, vers, release, encoding, flags, inc;
 
@@ -163,12 +161,12 @@ nssdc_read_cdf(xdrs, handlep)
     fp = handle->cdf_fp;
     current_var = 0;
 
-    /*
-     * pull in the CDR and see what we want out of it
+    /* 
+     * pull in the CDR and see what we want out of it 
      */
     if (HI_SEEK(fp, V2_CDR_OFFSET) == FAIL)
         HRETURN_ERROR(DFE_SEEKERROR,FALSE);
-
+    
     if (HI_READ(fp, buffer, 12 * sizeof(int32)) == FAIL)
        HRETURN_ERROR(DFE_READERROR,FALSE);
 
@@ -198,22 +196,22 @@ nssdc_read_cdf(xdrs, handlep)
 
     /* Check the encoding */
     if((encoding != NETWORK_ENCODING) &&
-       (encoding != SUN_ENCODING)     &&
-       (encoding != SGi_ENCODING)     &&
-       (encoding != IBMRS_ENCODING)   &&
+       (encoding != SUN_ENCODING)     && 
+       (encoding != SGi_ENCODING)     &&      
+       (encoding != IBMRS_ENCODING)   && 
        (encoding != HP_ENCODING)) {
 #ifdef DEBUG
         fprintf(stderr, "We are only able to handle IEEE encoded files.  Sorry.\n");
 #endif
         return (FALSE);
     }
-
-    /*
-     * pull in the GDR and see what we want out of it
+       
+    /* 
+     * pull in the GDR and see what we want out of it 
      */
     if (HI_SEEK(fp, gdrOffset) == FAIL)
         HRETURN_ERROR(DFE_SEEKERROR,FALSE);
-
+    
     if (HI_READ(fp, buffer, 15 * sizeof(int32)) == FAIL)
        HRETURN_ERROR(DFE_READERROR,FALSE);
 
@@ -234,8 +232,8 @@ nssdc_read_cdf(xdrs, handlep)
     INT32DECODE(b, dummy);      /* rfuD */
     INT32DECODE(b, dummy);      /* rfuE */
 
-    /*
-     * dimension sizes are here
+    /* 
+     * dimension sizes are here 
      */
     if(numDims > H4_MAX_VAR_DIMS)
         return FALSE;
@@ -265,7 +263,7 @@ nssdc_read_cdf(xdrs, handlep)
 #endif
     }
 
-    /*
+    /* 
      * Loop over Rvariables and read them in
      */
     while(varNext != 0) {
@@ -283,10 +281,10 @@ nssdc_read_cdf(xdrs, handlep)
         b = buffer;
         INT32DECODE(b, dummy);      /* record size */
         dummy -= 4;
-
+            
         if (HI_READ(fp, buffer, dummy) == FAIL)
             HRETURN_ERROR(DFE_READERROR,FALSE);
-
+        
         b = buffer;
         INT32DECODE(b, dummy);      /* record type */
         INT32DECODE(b, varNext);    /* start of next R variable */
@@ -322,7 +320,7 @@ nssdc_read_cdf(xdrs, handlep)
          *  Figure out which dimensions are meaningful
          *  If we vary in the record dimension it is reflected in the variable's
          *    flags
-         *  Variance in the other dimensions is specified singly as int32
+         *  Variance in the other dimensions is specified singly as int32 
          *    quantities in the file
          *  Only define the variable in terms of dimensions in which it varies
          */
@@ -341,10 +339,10 @@ nssdc_read_cdf(xdrs, handlep)
 
             dims[rank++] = current_dim++;
         }
-
+        
         for(j = 0; j < numDims; j++) {
             INT32DECODE(b, dummy);
-            if(dummy)
+            if(dummy) 
                 dims[rank++] = j;
         }
 
@@ -359,13 +357,13 @@ nssdc_read_cdf(xdrs, handlep)
 #ifdef DEBUG
         fprintf(stderr,"Was able to call NC_new_var()\n");
 #endif
-
+        
         /* if it is unsigned at least set the HDFtype to reflect it */
         switch(nt) {
         case CDF_UINT1:
             var->HDFtype = DFNT_UINT8;    break;
         case CDF_UINT2:
-            var->HDFtype = DFNT_UINT16;   break;
+            var->HDFtype = DFNT_UINT16;   break;  
         case CDF_UINT4:
             var->HDFtype = DFNT_UINT32;   break;
         default:
@@ -379,7 +377,7 @@ nssdc_read_cdf(xdrs, handlep)
             /* need to pull the pad value out of the file at current location */
             /* make into _Fillvalue attribute */
         }
-
+        
         /*
          *  Mess with setting up VXR records
          */
@@ -389,9 +387,9 @@ nssdc_read_cdf(xdrs, handlep)
             vix_t * vix;
 
             vix = (vix_t *)HDmalloc(sizeof(vix_t));
-            if(vix == NULL)
+            if(vix == NULL) 
                 HRETURN_ERROR(DFE_NOSPACE,FALSE);
-
+            
             /* stick vix at the end of our list and update end pointer */
             if(end == NULL)
                 var->vixHead = end = vix;
@@ -404,21 +402,21 @@ nssdc_read_cdf(xdrs, handlep)
             fprintf(stderr, "Reading a VXR record at %d\n", (int)vxrNext);
 #endif
             /*
-             * Read the next record out of the file
+             * Read the next record out of the file 
              */
             if (HI_SEEK(fp, vxrNext) == FAIL)
                 HRETURN_ERROR(DFE_SEEKERROR,FALSE);
-
+            
             if (HI_READ(fp, buffer, 4) == FAIL)
             HRETURN_ERROR(DFE_READERROR,FALSE);
-
+            
             b = buffer;
             INT32DECODE(b, dummy);      /* record size */
             dummy -= 4;
-
+            
             if (HI_READ(fp, buffer, dummy) == FAIL)
                 HRETURN_ERROR(DFE_READERROR,FALSE);
-
+            
             b = buffer;
             INT32DECODE(b, dummy);         /* record type */
             INT32DECODE(b, vxrNext);       /* next VXR record */
@@ -444,7 +442,7 @@ nssdc_read_cdf(xdrs, handlep)
 
     }
 
-    /*
+    /* 
      * Loop over Zvariables and read them in
      */
     while(zVarNext != 0) {
@@ -462,10 +460,10 @@ nssdc_read_cdf(xdrs, handlep)
         b = buffer;
         INT32DECODE(b, dummy);      /* record size */
         dummy -= 4;
-
+            
         if (HI_READ(fp, buffer, dummy) == FAIL)
             HRETURN_ERROR(DFE_READERROR,FALSE);
-
+        
         b = buffer;
         INT32DECODE(b, dummy);      /* record type */
         INT32DECODE(b, zVarNext);    /* start of next R variable */
@@ -500,12 +498,12 @@ nssdc_read_cdf(xdrs, handlep)
         /*
          * Get the number of dimensions defined with this dataset
          * This is not necessarily the rank since we may not vary in
-         *   some of them.  In that case, do not create dimension
+         *   some of them.  In that case, do not create dimension 
          *   objects for them.
          */
         INT32DECODE(b, numDims);        /* number of dimensions */
 
-        /*
+        /* 
          * read dimension sizes
          * figure out which ones are actually used
          * create dimension objects for the dimensions that are used
@@ -535,18 +533,18 @@ nssdc_read_cdf(xdrs, handlep)
         var = vars[current_var] = NC_new_var((char *) name, nctype, (int) rank, dims);
         if(var == NULL)
             return (FALSE);
-
+        
         /* if it is unsigned at least set the HDFtype to reflect it */
         switch(nt) {
         case CDF_UINT1:
             var->HDFtype = DFNT_UINT8;            break;
         case CDF_UINT2:
-            var->HDFtype = DFNT_UINT16;           break;
+            var->HDFtype = DFNT_UINT16;           break;  
         case CDF_UINT4:
             var->HDFtype = DFNT_UINT32;           break;
         default:
             break;
-        }
+        } 
 
 
         /* what's up with PadValues ??? */
@@ -560,9 +558,9 @@ nssdc_read_cdf(xdrs, handlep)
             vix_t * vix;
 
             vix = (vix_t *)HDmalloc(sizeof(vix_t));
-            if(vix == NULL)
+            if(vix == NULL) 
                 HRETURN_ERROR(DFE_NOSPACE,FALSE);
-
+            
             /* stick vix at the end of our list and update end pointer */
             if(end == NULL)
                 var->vixHead = end = vix;
@@ -575,21 +573,21 @@ nssdc_read_cdf(xdrs, handlep)
             fprintf(stderr, "Reading a VXR record at %d\n", (int)vxrNext);
 #endif
             /*
-             * Read the next record out of the file
+             * Read the next record out of the file 
              */
             if (HI_SEEK(fp, vxrNext) == FAIL)
                 HRETURN_ERROR(DFE_SEEKERROR,FALSE);
-
+            
             if (HI_READ(fp, buffer, 4) == FAIL)
             HRETURN_ERROR(DFE_READERROR,FALSE);
-
+            
             b = buffer;
             INT32DECODE(b, dummy);      /* record size */
             dummy -= 4;
-
+            
             if (HI_READ(fp, buffer, dummy) == FAIL)
                 HRETURN_ERROR(DFE_READERROR,FALSE);
-
+            
             b = buffer;
             INT32DECODE(b, dummy);         /* record type */
             INT32DECODE(b, vxrNext);       /* next VXR record */
@@ -615,7 +613,7 @@ nssdc_read_cdf(xdrs, handlep)
 
     } /* loop over zVariabes */
 
-    /*
+    /* 
      * Loop over Attributes and read them in
      */
     for(i = 0; i < numAttrs; i++) {
@@ -623,7 +621,7 @@ nssdc_read_cdf(xdrs, handlep)
 #ifdef DEBUG
         fprintf(stderr,"Attribute %d seeking to %d\n", i, (int)adrNext);
 #endif
-
+        
         if (HI_SEEK(fp, adrNext) == FAIL)
             HRETURN_ERROR(DFE_SEEKERROR,FALSE);
 
@@ -633,7 +631,7 @@ nssdc_read_cdf(xdrs, handlep)
         b = buffer;
         INT32DECODE(b, dummy);      /* record size */
         dummy -= 4;
-
+            
         if (HI_READ(fp, buffer, dummy) == FAIL)
             HRETURN_ERROR(DFE_READERROR,FALSE);
 
@@ -657,7 +655,7 @@ nssdc_read_cdf(xdrs, handlep)
 #ifdef DEBUG
         fprintf(stderr,"\tname %s (%s) data at %d\n", name, (scope == 1 ? "global" : "local"), (int)aedrNext);
         fprintf(stderr,"\taedrNext %d    aedzNext %d\n", (int)aedrNext, (int)aedzNext);
-
+        
 #endif
 
         /*
@@ -671,14 +669,14 @@ nssdc_read_cdf(xdrs, handlep)
 
             if (HI_SEEK(fp, aedrNext) == FAIL)
                 HRETURN_ERROR(DFE_SEEKERROR,FALSE);
-
+            
             if (HI_READ(fp, buffer, 4) == FAIL)
                 HRETURN_ERROR(DFE_READERROR,FALSE);
-
+            
             b = buffer;
             INT32DECODE(b, dummy);      /* record size */
             dummy -= 4;
-
+            
             if (HI_READ(fp, buffer, dummy) == FAIL)
                 HRETURN_ERROR(DFE_READERROR,FALSE);
 
@@ -724,7 +722,7 @@ nssdc_read_cdf(xdrs, handlep)
             }
 
             /* add the attribute to the list */
-            if(*ap == NULL) {
+            if(*ap == NULL) { 
                 /* first time */
                 (*ap) = NC_new_array(NC_ATTRIBUTE,(unsigned)1, (Void*)attr);
                 if((*ap) == NULL)
@@ -737,7 +735,7 @@ nssdc_read_cdf(xdrs, handlep)
 
         /*
          * Read in the AEDZ records now and add them to the appropriate object
-         * It is not clear to me how these are different from aedr records
+         * It is not clear to me how these are different from aedr records 
          *   except for that they are for Zvariables rather than Rvariables.
          *   Any other reasons?????
          */
@@ -753,14 +751,14 @@ nssdc_read_cdf(xdrs, handlep)
 
             if (HI_SEEK(fp, aedzNext) == FAIL)
                 HRETURN_ERROR(DFE_SEEKERROR,FALSE);
-
+            
             if (HI_READ(fp, buffer, 4) == FAIL)
                 HRETURN_ERROR(DFE_READERROR,FALSE);
-
+            
             b = buffer;
             INT32DECODE(b, dummy);      /* record size */
             dummy -= 4;
-
+            
             if (HI_READ(fp, buffer, dummy) == FAIL)
                 HRETURN_ERROR(DFE_READERROR,FALSE);
 
@@ -806,7 +804,7 @@ nssdc_read_cdf(xdrs, handlep)
             }
 
             /* add the attribute to the list */
-            if(*ap == NULL) {
+            if(*ap == NULL) { 
                 /* first time */
                 (*ap) = NC_new_array(NC_ATTRIBUTE,(unsigned)1, (Void*)attr);
                 if((*ap) == NULL)
@@ -828,8 +826,8 @@ nssdc_read_cdf(xdrs, handlep)
     else
         handle->dims = NULL;
 
-    /*
-     * Set up the variable list define the variables
+    /* 
+     * Set up the variable list define the variables 
      */
     if(current_var)
         handle->vars = NC_new_array(NC_VARIABLE, current_var, (Void *) vars);
@@ -837,7 +835,7 @@ nssdc_read_cdf(xdrs, handlep)
         handle->vars = NULL;
 
     return (TRUE);
-
+        
 } /* nssdc_read_cdf */
 
 
@@ -850,10 +848,6 @@ nssdc_write_cdf(xdrs, handlep)
      XDR *  xdrs;
      NC  ** handlep;
 {
-
-    (void)xdrs;
-    (void)handlep;
-
 #if DEBUG
     fprintf(stderr, "nssdc_write_cdf i've been called\n");
 #endif
@@ -865,7 +859,7 @@ nssdc_write_cdf(xdrs, handlep)
 #endif
 
     return (FALSE);
-
+        
 } /* nssdc_write_cdf */
 
 
@@ -885,7 +879,7 @@ nssdc_xdr_cdf(xdrs, handlep)
 #if DEBUG
     fprintf(stderr, "nssdc_xdr_cdf i've been called op = %d \n", xdrs->x_op);
 #endif
-
+    
     switch(xdrs->x_op) {
     case XDR_ENCODE :
         status = nssdc_write_cdf(xdrs, handlep);
@@ -900,9 +894,9 @@ nssdc_xdr_cdf(xdrs, handlep)
     default:
         status = TRUE;
     }
-
+    
     return (status);
-
+  
 } /* nssdc_xdr_cdf */
 
 #endif /* HDF */

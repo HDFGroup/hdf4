@@ -26,7 +26,7 @@
 /*-------------------------------------------------------------------------
  * Function: copy_gr
  *
- * Purpose: copy a GR from input file to output file and compress it
+ * Purpose: copy a GR from input file to output file and compress it 
  *  using options
  *
  * Return: 0 ok, -1 not ok
@@ -50,22 +50,22 @@ int  copy_gr(int32 infile_id,
              list_table_t *list_tbl)
 {
     int32         ri_id,         /* raster image identifier */
-                  ri_out,        /* raster image identifier */
-                  ri_index,      /* index of a image */
-                  dimsizes[2],   /* dimensions of an image */
-                  n_comps,       /* number of components an image contains */
-                  interlace_mode,/* interlace mode of an image */
-                  dtype,         /* number type of an image */
-                  n_attrs,       /* number of attributes belong to an image */
-                  gr_ref,        /* reference number of the output data set */
-                  pal_id,        /* palette identifier */
-                  pal_out,       /* palette identifier */
-                  pal_ref,
-                  r_num_entries,
-                  r_data_type,
-                  r_ncomp,
-                  r_interlace_mode;
-    char          gr_name[H4_MAX_GR_NAME];
+        ri_out,        /* raster image identifier */
+        ri_index,      /* index of a image */
+        dimsizes[2],   /* dimensions of an image */
+        n_comps,       /* number of components an image contains */
+        interlace_mode,/* interlace mode of an image */ 
+        dtype,         /* number type of an image */
+        n_attrs,       /* number of attributes belong to an image */
+        gr_ref,        /* reference number of the output data set */
+        pal_id,        /* palette identifier */
+        pal_out,       /* palette identifier */
+        pal_ref,
+        r_num_entries, 
+        r_data_type, 
+        r_ncomp, 
+        r_interlace_mode; 
+    char          gr_name[H4_MAX_GR_NAME]; 
     char          *path=NULL;
     int           info;           /* temporary int compression information */
     int           szip_mode;      /* szip mode, EC, NN */
@@ -75,41 +75,41 @@ int  copy_gr(int32 infile_id,
     comp_info     c_info_in;      /* compression information original  */
     HDF_CHUNK_DEF chunk_def;      /* chunk definition */
     HDF_CHUNK_DEF chunk_def_in;   /* chunk definition original */
-    int32         chunk_flags;    /* chunk flags */
-    int32         chunk_flags_in; /* chunk flags original*/
+    int32         chunk_flags;    /* chunk flags */ 
+    int32         chunk_flags_in; /* chunk flags original*/ 
     int           i, j, ret=0, rank=2, have_info,stat;
     int           has_pal = 0;
     int32         start[2],       /* read start */
-                  edges[2],       /* read edges */
-                  numtype,        /* number type */
-                  eltsz,          /* element size */
-                  nelms,          /* number of elements */
-                  data_size;
+        edges[2],       /* read edges */
+        numtype,        /* number type */
+        eltsz,          /* element size */
+        nelms,          /* number of elements */
+        data_size;
     VOIDP         buf=NULL;
     uint8         pal_data[256*3];
     int           can_compress=1; /* flag to tell if a compression is supported */
     char          *pal_path="palette";
-
+    
     ri_index = GRreftoindex(gr_in,(uint16)ref);
     ri_id    = GRselect(gr_in,ri_index);
-
+    
     if (GRgetiminfo(ri_id,gr_name,&n_comps,&dtype,&interlace_mode,dimsizes,&n_attrs)==FAIL){
         printf( "Could not information for GR\n");
         GRendaccess(ri_id);
-        return -1;
+        return-1;
     }
-
+    
     /* initialize path */
     path=get_path(path_name,gr_name);
-
+    
     /* add object to table */
     list_table_add(list_tbl,tag,ref,path);
-
+    
     /*-------------------------------------------------------------------------
-    * get the original compression/chunk information from the object
+    * get the original compression/chunk information from the object 
     *-------------------------------------------------------------------------
     */
-
+    
     comp_type_in = COMP_CODE_NONE;  /* reset variables before retrieving information */
     HDmemset(&c_info_in, 0, sizeof(comp_info)) ;
     stat=GRgetcompinfo(ri_id, &comp_type_in, &c_info_in);
@@ -118,14 +118,14 @@ int  copy_gr(int32 infile_id,
         GRendaccess(ri_id);
         return-1;
     }
-
+    
     /* get chunk lengths */
     if (GRgetchunkinfo(ri_id, &chunk_def_in, &chunk_flags_in)==FAIL){
         printf( "Could not get chunk information for GR <%s>\n",path);
         GRendaccess(ri_id);
         return-1;
     }
-
+    
     /* retrieve the compress information if so */
     if ( (HDF_CHUNK | HDF_COMP) == chunk_flags_in )
     {
@@ -162,19 +162,19 @@ int  copy_gr(int32 infile_id,
             break;
         };
     }
-
+    
     /*-------------------------------------------------------------------------
     * set the default values to the ones read from the object
     *-------------------------------------------------------------------------
     */
-
+    
     /*-------------------------------------------------------------------------
     * compression
     *-------------------------------------------------------------------------
     */
-
+    
     comp_type   = comp_type_in;
-
+    
     switch (comp_type_in)
     {
     default:
@@ -209,17 +209,17 @@ int  copy_gr(int32 infile_id,
 	c_info_in.jpeg.quality = 75;
         break;
     };
-
+    
     /*-------------------------------------------------------------------------
     * chunking
     *-------------------------------------------------------------------------
     */
-
+    
     chunk_flags = chunk_flags_in;
-
+    
     if ( (HDF_CHUNK) == chunk_flags )
     {
-        for (i = 0; i < rank; i++)
+        for (i = 0; i < rank; i++) 
             chunk_def.chunk_lengths[i]      = chunk_def_in.chunk_lengths[i];
     }
     else if ( (HDF_CHUNK | HDF_COMP) == chunk_flags )
@@ -261,20 +261,20 @@ int  copy_gr(int32 infile_id,
             break;
         };
     }
-
-
+    
+    
     /*-------------------------------------------------------------------------
     * get the compression/chunk information of this object from the table
     * translate to usable information
-    * this is done ONLY for the second trip inspection
+    * this is done ONLY for the second trip inspection 
     *-------------------------------------------------------------------------
     */
-
+    
     /* check inspection mode */
     have_info = 0;
-    if ( options->trip>0 )
+    if ( options->trip>0 ) 
     {
-        have_info =
+        have_info = 
             options_get_info(options,      /* global options */
             &chunk_flags, /* chunk flags OUT */
             &chunk_def,   /* chunk definition OUT */
@@ -290,17 +290,17 @@ int  copy_gr(int32 infile_id,
         if (have_info==FAIL)
             goto out;
     } /* check inspection mode */
-
-
+    
+    
       /*-------------------------------------------------------------------------
       * check for data size before printing
       *-------------------------------------------------------------------------
     */
-
+    
     /* compute the number of the bytes for each value. */
     numtype = dtype & DFNT_MASK;
     eltsz = DFKNTsize(numtype | DFNT_NATIVE);
-
+    
     /* set edges of GR */
     nelms=1;
     for (j = 0; j < rank; j++) {
@@ -308,9 +308,9 @@ int  copy_gr(int32 infile_id,
         edges[j] = dimsizes[j];
         start[j] = 0;
     }
-
+    
     data_size = dimsizes[0]*dimsizes[1]*n_comps*eltsz;
-
+    
     /*-------------------------------------------------------------------------
     * check for objects too small
     *-------------------------------------------------------------------------
@@ -325,22 +325,22 @@ int  copy_gr(int32 infile_id,
                 options->threshold,path);
         }
     }
-
+    
     /*-------------------------------------------------------------------------
     * print the PATH, COMP and CHUNK information
     *-------------------------------------------------------------------------
-    */
-
+    */ 
+    
     if (options->verbose)
     {
         int pr_comp_type=0;
         int pr_chunk_flags;
-
+        
         if ( options->trip==0 )
             pr_chunk_flags=chunk_flags_in;
         else
             pr_chunk_flags=chunk_flags;
-
+        
         if (comp_type>0)
         {
             pr_comp_type=comp_type;
@@ -355,15 +355,15 @@ int  copy_gr(int32 infile_id,
         printf(PFORMAT,
             (pr_chunk_flags>0)?"chunk":"",                 /*chunk information*/
             (pr_comp_type>0)?get_scomp(pr_comp_type):"",   /*compression information*/
-            "",                                            /*compression ratio */
+            "",                                            /*compression ratio */                     
             path);                                         /*name*/
     }
-
+    
     /*-------------------------------------------------------------------------
     * if we are in first trip inspection mode, exit, after printing the information
     *-------------------------------------------------------------------------
-    */
-
+    */ 
+    
     /* check inspection mode */
     if ( options->trip==0 ) {
         if (path) HDfree(path);
@@ -377,16 +377,16 @@ int  copy_gr(int32 infile_id,
     * read gr and create new one
     *-------------------------------------------------------------------------
     */
-
+    
     /* alloc */
     if ((buf = (VOIDP) HDmalloc(data_size)) == NULL) {
-        printf( "Failed to allocate %d elements of size %d\n", nelms, eltsz);
+        printf( "Failed to allocate %ld elements of size %ld\n", nelms, eltsz);
         GRendaccess(ri_id);
         if (path) HDfree(path);
         return-1;
     }
-
-
+    
+    
     /* set the interlace for reading  */
     if ( GRreqimageil(ri_id, interlace_mode) == FAIL ){
         printf( "Could not set interlace for GR <%s>\n", path);
@@ -394,7 +394,7 @@ int  copy_gr(int32 infile_id,
         if (path) HDfree(path);
         return-1;
     }
-
+    
     /* read data */
     if (GRreadimage (ri_id, start, NULL, edges, buf) == FAIL) {
         printf( "Could not read GR <%s>\n", path);
@@ -402,23 +402,23 @@ int  copy_gr(int32 infile_id,
         if (path) HDfree(path);
         return-1;
     }
-
+    
     /* create output GR */
     if ((ri_out = GRcreate(gr_out,gr_name,n_comps,dtype,interlace_mode,dimsizes)) == FAIL) {
         printf( "Failed to create new GR <%s>\n", path);
         ret=-1;
         goto out;
     }
-
+    
     /*-------------------------------------------------------------------------
-    * set chunk
+    * set chunk 
     *
     * Chunked                  -> flags = HDF_CHUNK
-    * Chunked and compressed   -> flags = HDF_CHUNK | HDF_COMP
+    * Chunked and compressed   -> flags = HDF_CHUNK | HDF_COMP 
     * Non-chunked              -> flags = HDF_NONE
     *-------------------------------------------------------------------------
     */
-
+    
     /* set chunk */
     if ( (chunk_flags == HDF_CHUNK) || (chunk_flags == (HDF_CHUNK | HDF_COMP)) )
     {
@@ -429,7 +429,7 @@ int  copy_gr(int32 infile_id,
             goto out;
         }
     }
-
+    
     /*-------------------------------------------------------------------------
     * set compression
     *
@@ -438,9 +438,9 @@ int  copy_gr(int32 infile_id,
     * COMP_CODE_DEFLATE   -> gzip 'deflate' encoding
     *-------------------------------------------------------------------------
     */
-
+    
     /* use compress without chunk-in */
-    else if ( chunk_flags==HDF_NONE && comp_type>COMP_CODE_NONE)
+    else if ( chunk_flags==HDF_NONE && comp_type>COMP_CODE_NONE)  
     {
         if ( have_info && options->trip>0  && nelms*eltsz<options->threshold )
         {
@@ -452,7 +452,7 @@ int  copy_gr(int32 infile_id,
             }
         } else {
             /* setup compression factors */
-            switch(comp_type)
+            switch(comp_type) 
             {
             case COMP_CODE_SZIP:
 #ifdef H4_GR_SZIP
@@ -465,9 +465,9 @@ int  copy_gr(int32 infile_id,
                 printf("Warning: SZIP not supported for GR\n");
                 can_compress=0;
                 break;
-            case COMP_CODE_RLE:
+            case COMP_CODE_RLE:         
                 break;
-            case COMP_CODE_SKPHUFF:
+            case COMP_CODE_SKPHUFF:     
                 c_info.skphuff.skp_size    = info;
                 break;
             case COMP_CODE_DEFLATE:
@@ -481,8 +481,8 @@ int  copy_gr(int32 infile_id,
                 printf( "Error: Unrecognized compression code %d\n", comp_type);
                 can_compress=0;
             }
-
-            if (can_compress)
+            
+            if (can_compress) 
             {
                 if (GRsetcompress (ri_out, comp_type, &c_info)==FAIL)
                 {
@@ -493,85 +493,85 @@ int  copy_gr(int32 infile_id,
             } /* can_compress */
         }
     }
-
+    
     /* write the data */
     if (GRwriteimage(ri_out, start, NULL, edges, buf) == FAIL) {
         printf( "Failed to write to new GR <%s>\n", path);
         ret=-1;
         goto out;
     }
-
+    
     /*-------------------------------------------------------------------------
     * copy attributes
     *-------------------------------------------------------------------------
-    */
-
+    */ 
+    
     if( copy_gr_attrs(ri_id,ri_out,n_attrs,options)==FAIL) {
         ret=-1;
         goto out;
     }
-
+    
     /*-------------------------------------------------------------------------
     * check for palette
     *-------------------------------------------------------------------------
-    */
-
+    */ 
+    
     pal_id = GRgetlutid(ri_id, 0);
     GRgetlutinfo(pal_id,&r_ncomp,&r_data_type,&r_interlace_mode,&r_num_entries);
-
+    
     /*check if there is palette data */
     has_pal=((r_ncomp == 0) || (r_interlace_mode < 0) || (r_num_entries == 0))?0:1;
-
+    
     if ( has_pal==1 )
     {
-        GRreqlutil(ri_id, r_interlace_mode);
+        GRreqlutil(ri_id, r_interlace_mode);    
         if (GRreadlut(pal_id, pal_data)==FAIL) {
             printf( "Failed to get palette data for <%s>\n", path);
         }
-
+        
         if ((pal_ref=GRluttoref(pal_id))== FAIL) {
             printf( "Failed to get palette ref for <%s>\n", path);
         }
         /* add palette to table; we want to later check for lone palettes */
         list_table_add(list_tbl,DFTAG_IP8,pal_ref,pal_path);
-
+        
         /* Get the id for the new palette */
         if ((pal_out = GRgetlutid(ri_out, 0)) == FAIL) {
             printf( "Failed to get palette ID for <%s>\n", path);
         }
-
+        
         /* Write the palette to file. */
-        if (GRwritelut(pal_out,r_ncomp,r_data_type,r_interlace_mode,r_num_entries,
+        if (GRwritelut(pal_out,r_ncomp,r_data_type,r_interlace_mode,r_num_entries, 
             (VOIDP)pal_data)== FAIL) {
             printf( "Failed to write palette for <%s>\n", path);
         }
     } /* has_pal==1 */
-
-
+    
+    
     /* obtain the reference number of the new SDS using its identifier */
     if ((gr_ref = GRidtoref (ri_out)) == FAIL) {
         printf( "Failed to get new GR reference in <%s>\n", path);
     }
-
+    
     /*-------------------------------------------------------------------------
     * add GR to group, if needed
     *-------------------------------------------------------------------------
-    */
-    if (vgroup_id_out_par)
+    */ 
+    if (vgroup_id_out_par) 
     {
         /* add the GR to the vgroup. the tag DFTAG_RIG is used */
         if (Vaddtagref (vgroup_id_out_par, TAG_GRP_IMAGE, gr_ref)==FAIL) {
             printf( "Failed to add new GR to group <%s>\n", path);
         }
     }
-
+    
     /*-------------------------------------------------------------------------
     * copy ANs
     *-------------------------------------------------------------------------
-    */
-
+    */ 
+    
     if (copy_an(infile_id,outfile_id,
-        ref,DFTAG_RIG,gr_ref,DFTAG_RIG,
+        ref,DFTAG_RIG,gr_ref,DFTAG_RIG, 
         path,options)<0) {
         ret=-1;
         goto out;
@@ -582,31 +582,31 @@ int  copy_gr(int32 infile_id,
         ret=-1;
         goto out;
     }
-
+    
 out:
-
+    
     /* terminate access to the GRs */
     if (GRendaccess(ri_id)== FAIL )
         printf( "Failed to close SDS <%s>\n", path);
     if (GRendaccess(ri_out)== FAIL )
         printf( "Failed to close SDS <%s>\n", path);
-
+    
     if (path)
         HDfree(path);
     if (buf)
         HDfree(buf);
-
+    
     return ret;
-
+    
 }
 
 
 /*-------------------------------------------------------------------------
  * Function: copy_gr_attrs
  *
- * Purpose: copy GR attributes from input file to output file
+ * Purpose: copy GR attributes from input file to output file 
  *
- * Return: 1, for success, -1 for error
+ * Return: 1, for success, -1 for error 
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -617,7 +617,7 @@ out:
 
 int copy_gr_attrs(int32 ri_id,
                   int32 ri_out,
-                  int32 nattrs,
+                  int32 nattrs,          
                   options_t *options)
 {
     int32 dtype,                 /* SDS data type */
@@ -627,11 +627,9 @@ int copy_gr_attrs(int32 ri_id,
     char  attr_name[H4_MAX_NC_NAME];
     VOIDP attr_buf=NULL;
     int   i;
-
-    (void)options;
-
+    
     /* loop through attributes in input GR */
-    for (i = 0; i < nattrs; i++)
+    for (i = 0; i < nattrs; i++) 
     {
         if (GRattrinfo (ri_id, i, attr_name, &dtype, &nelms) == FAIL) {
             printf( "Cannot get information for attribute number %d\n", i);
@@ -641,7 +639,7 @@ int copy_gr_attrs(int32 ri_id,
         numtype = dtype & DFNT_MASK;
         eltsz   = DFKNTsize(numtype | DFNT_NATIVE);
         if ((attr_buf = (VOIDP) HDmalloc(nelms * eltsz)) == NULL) {
-            printf( "Error allocating %d values of size %d for attribute %s",
+            printf( "Error allocating %ld values of size %ld for attribute %s",
                 nelms, numtype, attr_name);
             return-1;
         }
@@ -655,11 +653,11 @@ int copy_gr_attrs(int32 ri_id,
             printf( "Cannot write attribute %s\n", attr_name);
             return-1;
         }
-
+        
         if (attr_buf)
             HDfree(attr_buf);
     }
-
+    
     return 1;
 }
 

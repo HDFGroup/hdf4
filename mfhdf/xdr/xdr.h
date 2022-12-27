@@ -115,7 +115,6 @@ typedef struct {
         int32_t * (*x_inline)   (/*XDR *, size_t */);
         /* Free the stream. */
         void      (*x_destroy)  (/*XDR * */);
-        bool_t    (*x_control)  (/*XDR *, int, void * */);
     } *x_ops;
     char *     x_public;    /* users' data */
     void *     x_private;   /* pointer to private data */
@@ -207,11 +206,6 @@ xdr_putint32(XDR *xdrs, int32_t *ip)
 #define    xdr_destroy(xdrs)                \
     if ((xdrs)->x_ops->x_destroy)             \
         (*(xdrs)->x_ops->x_destroy)(xdrs)
-
-#define XDR_CONTROL(xdrs, req, op)          \
-    if ((xdrs)->x_ops->x_control)           \
-        (*(xdrs)->x_ops->x_control)(xdrs, req, op)
-#define xdr_control(xdrs, req, op) XDR_CONTROL(xdrs, req, op)
 
 /*
  * Support struct for discriminated unions.
