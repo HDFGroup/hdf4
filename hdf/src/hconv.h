@@ -151,7 +151,7 @@ union fpx
 
 union float_uint_uchar
   {
-      float32     f;
+      float     f;
       int32       i;
       unsigned char c[4];
   };

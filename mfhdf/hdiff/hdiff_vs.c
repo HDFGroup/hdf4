@@ -424,7 +424,7 @@ fmt_print(uint8 *x, int32 type)
   break;
 
  case DFNT_FLOAT32:
-  HDmemcpy(&f, x, sizeof(float32));
+  HDmemcpy(&f, x, sizeof(float));
   printf("%f", f);
   break;
 

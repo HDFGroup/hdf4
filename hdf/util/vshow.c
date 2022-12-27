@@ -345,7 +345,7 @@ static int32
 fmtfloat(char *x)
 {
     float       f = (float)0.0;
-    HDmemcpy(&f, x, sizeof(float32));
+    HDmemcpy(&f, x, sizeof(float));
     cn += printf("%f", f);
     return (1);
 }

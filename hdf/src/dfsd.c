@@ -2895,7 +2895,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
               else
                 {
                   /* element is old float based type */
-                  float32     buf2[4];
+                  float     buf2[4];
 
                    /* allocate input buffer */
                   if (Hgetelement(file_id, elmt.tag, elmt.ref,
@@ -2957,7 +2957,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
               else
                 {
                   /* element is old float based type */
-                  float32     buf2[4];
+                  float     buf2[4];
 
                   /* convert calibration factors */
                   DFKconvert((VOIDP) buf, (VOIDP) buf2, DFNT_FLOAT32, 4,

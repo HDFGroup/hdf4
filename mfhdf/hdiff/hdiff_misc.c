@@ -122,7 +122,7 @@ pr_att_vals(nc_type type, int len, void *vals)
         char *cp;
         int16 *sp;
         int32 *lp;
-        float32 *fp;
+        float *fp;
         float64 *dp;
     } gp;
     char *sp;
@@ -193,7 +193,7 @@ pr_att_vals(nc_type type, int len, void *vals)
                     Printf ("%d%s",*gp.lp++,iel<len-1 ? ", " : "");
                 break;
             case DFNT_FLOAT:
-                gp.fp = (float32 *) vals;
+                gp.fp = (float *) vals;
                 for (iel = 0; iel < len; iel++) {
                     int ll;
                     (void) sprintf(gps, f_fmt, * gp.fp++);

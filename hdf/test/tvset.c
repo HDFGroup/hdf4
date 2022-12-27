@@ -79,14 +79,14 @@ write_vset_stuff(void)
     int32       vs1;
     int32       count, i, j, num, max_order;
     int32       ibuf[2000];     /* integer buffer */
-    float32     fbuf[2000];     /* floating point buffer */
+    float     fbuf[2000];     /* floating point buffer */
     char        gbuf[2000];     /* generic buffer */
     uint8       *gbuf1 = NULL;   /* buffer for uint8 */
-    float32     *gbuf2 = NULL;   /* buffer for float32 */
+    float     *gbuf2 = NULL;   /* buffer for float */
     const char *name;
     char       *p;
     char8       c;
-    float32     f;
+    float     f;
 
     /* allocate these buffers dynamically and not off the stack
        as they were previously handled */
@@ -97,7 +97,7 @@ write_vset_stuff(void)
 
     if (gbuf2 == NULL)
      {
-       gbuf2 = (float32 *)HDmalloc(sizeof(float32)*20000);
+       gbuf2 = (float *)HDmalloc(sizeof(float)*20000);
      }
 
 
@@ -245,7 +245,7 @@ write_vset_stuff(void)
      *
      */
 
-    /* Float32 Vdata */
+    /* Float Vdata */
     vs1 = VSattach(fid, -1, "w");
     CHECK(vs1,FAIL,"VSattach");
 
@@ -273,7 +273,7 @@ write_vset_stuff(void)
 
     /* create some bogus data */
     for (i = 0, count = 100; i < count; i++)
-        fbuf[i] = (float32) i;
+        fbuf[i] = (float) i;
 
     /* store it */
     status = VSwrite(vs1, (unsigned char *) fbuf, count, FULL_INTERLACE);
@@ -335,7 +335,7 @@ write_vset_stuff(void)
     MESSAGE(5, printf("created VDATA %s with %d elements\n",
                       name, (int) count); );
 
-    /* Int32 and Float32 Vdata */
+    /* Int32 and Float Vdata */
     vs1 = VSattach(fid, -1, "w");
     CHECK(vs1,FAIL,"VSattach:vs1");
 
@@ -363,9 +363,9 @@ write_vset_stuff(void)
     p = gbuf;
     for (i = 0, count = 100; i < count; i++)
       {
-          float32     tf = (float32) (i * 2);
-          HDmemcpy(p, &tf, sizeof(float32));
-          p += sizeof(float32);
+          float     tf = (float) (i * 2);
+          HDmemcpy(p, &tf, sizeof(float));
+          p += sizeof(float);
           HDmemcpy(p, &i, sizeof(int32));
           p += sizeof(int32);
       }
@@ -411,7 +411,7 @@ write_vset_stuff(void)
     p = gbuf;
     c = 'a';
     j = 0;
-    f = (float32) 15.5;
+    f = (float) 15.5;
     for (i = 0, count = 10; i < count; i++)
       {
           HDmemcpy(p, &c, sizeof(char8));
@@ -429,9 +429,9 @@ write_vset_stuff(void)
           HDmemcpy(p, &j, sizeof(int32));
           p += sizeof(int32);
           j++;
-          HDmemcpy(p, &f, sizeof(float32));
-          p += sizeof(float32);
-          f += (float32) 0.5;
+          HDmemcpy(p, &f, sizeof(float));
+          p += sizeof(float);
+          f += (float) 0.5;
       }
 
     /* store it */
@@ -495,7 +495,7 @@ write_vset_stuff(void)
 
     /* create some bogus data */
     for (i = 0; i < max_order; i++)
-         gbuf2[i] = (float32)i * (float32)0.11;
+         gbuf2[i] = (float)i * (float)0.11;
 
     status = VSwrite(vs1, (unsigned char *) gbuf2, 1, FULL_INTERLACE);
     CHECK(status,FAIL,"VSwrite:vs1");
@@ -586,7 +586,7 @@ static int32
 read_vset_stuff(void)
 {
     int32       ibuf[2000];     /* integer buffer */
-    float32     fbuf[2000];     /* floating point buffer */
+    float     fbuf[2000];     /* floating point buffer */
     char        gbuf[2000];     /* generic buffer */
     int32       list[50];
     int32       tags[100], refs[100], tag, ref;
@@ -597,7 +597,7 @@ read_vset_stuff(void)
     int32       vg1;
     int32       vs1;
     int32       status, num, i, count, intr, sz;
-    float32     fl_expected;
+    float     fl_expected;
     int32       in_expected;
     char8       c_expected;
     uint16	name_len;
@@ -769,10 +769,10 @@ read_vset_stuff(void)
           printf(">>> Got wrong count %d expecting 100\n", (int) count);
       }
 
-    if ((size_t)sz != sizeof(float32))
+    if ((size_t)sz != sizeof(float))
       {
           num_errs++;
-          printf(">>> Got wrong data size %d should be sizeof(float32)\n", (int) sz);
+          printf(">>> Got wrong data size %d should be sizeof(float)\n", (int) sz);
       }
 
 #ifndef VDATA_FIELDS_ALL_UPPER
@@ -794,7 +794,7 @@ read_vset_stuff(void)
     CHECK(status,FAIL,"VSsetfields:vs1");
 
     for (i = 0; i < count; i++)
-        fbuf[i] = (float32)0.0;
+        fbuf[i] = (float)0.0;
 
     status = VSread(vs1, (unsigned char *) fbuf, count, FULL_INTERLACE);
     CHECK(status,FAIL,"VSread:vs1");
@@ -802,7 +802,7 @@ read_vset_stuff(void)
     /* verify */
     for (i = 0; i < count; i++)
       {
-          if (fbuf[i] != (float32) i)
+          if (fbuf[i] != (float) i)
             {
                 num_errs++;
                 printf(">>> Float value %d was expecting %d got %f\n", (int) i, (int) i, fbuf[i]);
@@ -999,10 +999,10 @@ read_vset_stuff(void)
           printf(">>> Got wrong count %d expecting 100\n", (int) count);
       }
 
-    if ((size_t)sz != sizeof(int32) + sizeof(float32))
+    if ((size_t)sz != sizeof(int32) + sizeof(float))
       {
           num_errs++;
-          printf(">>> Got wrong data size %d should be sizeof(int32) + sizeof(float32)\n", (int) sz);
+          printf(">>> Got wrong data size %d should be sizeof(int32) + sizeof(float)\n", (int) sz);
       }
 
     if (HDstrcmp(fields, "A,B"))
@@ -1025,11 +1025,11 @@ read_vset_stuff(void)
     p = gbuf;
     for (i = 0; i < count; i++)
       {
-          float32     fl=(float32)0.0;
+          float     fl=(float)0.0;
           int32       in=(int32)0;
 
-          HDmemcpy(&fl, p, sizeof(float32));
-          p += sizeof(float32);
+          HDmemcpy(&fl, p, sizeof(float));
+          p += sizeof(float);
           HDmemcpy(&in, p, sizeof(int32));
           p += sizeof(int32);
 
@@ -1039,7 +1039,7 @@ read_vset_stuff(void)
                 printf(">>> Mixed int value %d was expecting %d got %d\n", (int) i, (int) i, (int) in);
             }
 
-          if (fl != (float32) (i * 2))
+          if (fl != (float) (i * 2))
             {
                 num_errs++;
                 printf(">>> Mixed float value %d was expecting %d got %f\n", (int) i, (int) i, fl);
@@ -1113,13 +1113,13 @@ read_vset_stuff(void)
     CHECK(status,FAIL,"VSread:vs1");
 
     p = gbuf;
-    fl_expected = (float32) 15.5;
+    fl_expected = (float) 15.5;
     in_expected = 0;
     c_expected = 'a';
 
     for (i = 0; i < count; i++)
       {
-          float32     fl=(float32)0.0;
+          float     fl=(float)0.0;
           int32       in=(int32)0;
           char8       c=(char8)0;
 
@@ -1174,15 +1174,15 @@ read_vset_stuff(void)
           in_expected++;
 
           /* read and verify floating point value */
-          HDmemcpy(&fl, p, sizeof(float32));
-          p += sizeof(float32);
+          HDmemcpy(&fl, p, sizeof(float));
+          p += sizeof(float);
 
           if (fl != fl_expected)
             {
                 num_errs++;
                 printf(">>> Multi-order float value %d was expecting %f got %f\n", (int) i, fl_expected, fl);
             }
-          fl_expected += (float32) 0.5;
+          fl_expected += (float) 0.5;
 
       }
 
@@ -2776,7 +2776,7 @@ test_extfile(void)
 				      {'D', 'E'},
 				      {'E', 'F'} };
     uint16  col2buf[NROWS] = {1, 2, 3, 4, 5};
-    float32 col3buf[NROWS][2] = { {.01, .1},
+    float col3buf[NROWS][2] = { {.01, .1},
 				    {.02, .2},
 				    {.03, .3},
 				    {.04, .4},
@@ -2795,7 +2795,7 @@ test_extfile(void)
      * Compute the buffer size that will be needed to hold the data for the
      * mixed-data columns.   Allocate the buffers.
      */
-    bufsize = (2*sizeof(char8) + sizeof(uint16) + 2*sizeof(float32)) * NROWS;
+    bufsize = (2*sizeof(char8) + sizeof(uint16) + 2*sizeof(float)) * NROWS;
     databuf = malloc( (unsigned)bufsize );
 
     /* Initialize the pointers to the column data. */

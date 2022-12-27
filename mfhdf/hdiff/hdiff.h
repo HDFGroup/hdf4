@@ -66,7 +66,7 @@ typedef struct {   /* selection for comparison  */
     uint32 max_err_cnt;         /*
                                  * max. no of difference to be printed
                                  */
-    float32 err_limit;  /*
+    float err_limit;  /*
      * limit of difference for the comparison
      */
     int nlvars;   /*
@@ -86,7 +86,7 @@ typedef struct {   /* selection for comparison  */
      * option on command line
      */
     int statistics;
-    float32 err_rel;  /*
+    float err_rel;  /*
      * relative diff for the comparison
      */
 
@@ -135,8 +135,8 @@ uint32 array_diff(void *buf1,
                   int rank,
                   int32 *dims,
                   int32 type, 
-                  float32 err_limit, 
-                  float32 err_rel,
+                  float err_limit, 
+                  float err_rel,
                   uint32 max_err_cnt, 
                   int32 statistics,
                   void *fill1, 

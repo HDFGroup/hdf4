@@ -26,17 +26,17 @@
 #define FILENAME    "tvpack.hdf"
 struct {
     char         ident;
-    float32      temp;
+    float      temp;
     int16        speed;
-    float32      height;
+    float      height;
 } source[NRECORDS];
 
 int32      file_id, vdata_id, istat, msize = 0;
 uint8      *databuf, *pntr;
 VOIDP	   databufptr[10];	/* make sure its size can hold all fields */
 
-float32    tempdata[NRECORDS], itemp[NRECORDS];
-float32    heightdata[NRECORDS], iheight[NRECORDS];
+float    tempdata[NRECORDS], itemp[NRECORDS];
+float    heightdata[NRECORDS], iheight[NRECORDS];
 int16      speeddata[NRECORDS], ispeed[NRECORDS];
 char       identdata[NRECORDS], iident[NRECORDS];
 int        i, j, rec_size;
@@ -71,16 +71,16 @@ fpack(void)
 
     /* Set the field names. */
     istat = VSsetfields(vdata_id, FIELD_NAMES);
-    rec_size = 2*sizeof(float32) + sizeof(int16) + sizeof(char);
+    rec_size = 2*sizeof(float) + sizeof(int16) + sizeof(char);
 
-    databuf = (uint8 *) HDmalloc(((2 * sizeof(float32))
+    databuf = (uint8 *) HDmalloc(((2 * sizeof(float))
                 + sizeof(int16) + sizeof(char)) * NRECORDS);
 
     pntr = databuf;
     /* pack a record at a time */
     for (i = 0; i < NRECORDS; i++) {
-        source[i].temp = (float32)1.11 * (float32)(i+1);
-        source[i].height = (float32)2.22 * (float32)(i+1);
+        source[i].temp = (float)1.11 * (float)(i+1);
+        source[i].height = (float)2.22 * (float)(i+1);
         source[i].speed = (int16)i;
         source[i].ident = (char)('A' + i);
          /* test error checks  */ 
@@ -134,8 +134,8 @@ fpack(void)
     /* pack a field at a time */
     pntr = databuf;
     for (i = 0; i < NRECORDS; i++) {
-        source[i].temp = (float32)3.33 * (float32)(i+1);
-        source[i].height = (float32)4.44 * (float32)(i+1);
+        source[i].temp = (float)3.33 * (float)(i+1);
+        source[i].height = (float)4.44 * (float)(i+1);
         source[i].speed = (int16)(2*i);
         source[i].ident = (char)('a' + i);
 	databufptr[0] = &source[i].speed;
@@ -230,8 +230,8 @@ funpack(void)
     }
 
     for (i=0; i<NRECORDS; i++)  
-         if ((iident[i] != (char)('A'+i)) || (fabs((double)(itemp[i] - (float32)1.11*(float32)(i+1))) > EPS) ||
-            (ispeed[i] != i) || (fabs((double)(iheight[i] - (float32)2.22*(float32)(i+1))) > EPS))  {
+         if ((iident[i] != (char)('A'+i)) || (fabs((double)(itemp[i] - (float)1.11*(float)(i+1))) > EPS) ||
+            (ispeed[i] != i) || (fabs((double)(iheight[i] - (float)2.22*(float)(i+1))) > EPS))  {
             num_errs++;
             printf(">>> Wrong data1 after VSfpack.\n");
         }
@@ -258,8 +258,8 @@ funpack(void)
     }
  
     for (i=0; i<NRECORDS; i++)  
-         if ((iident[i] != (char)('a'+i)) || (fabs((double)(itemp[i] - (float32)3.33*(float32)(i+1))) > EPS) ||
-            (ispeed[i] != 2*i) || (fabs((double)(iheight[i] - (float32)4.44*(float32)(i+1))) > EPS))  {
+         if ((iident[i] != (char)('a'+i)) || (fabs((double)(itemp[i] - (float)3.33*(float)(i+1))) > EPS) ||
+            (ispeed[i] != 2*i) || (fabs((double)(iheight[i] - (float)4.44*(float)(i+1))) > EPS))  {
             num_errs++;
             printf(">>> Wrong data2 after VSfpack.\n");
         }
@@ -292,7 +292,7 @@ funpack(void)
     }
     for (i=0; i<NRECORDS; i++)
          if ((iident[i] != 'A'+i) || (ispeed[i] != i) || 
-              (fabs((double)(iheight[i] - (float32)2.22*(float32)(i+1))) > EPS))  {
+              (fabs((double)(iheight[i] - (float)2.22*(float)(i+1))) > EPS))  {
             num_errs++;
             printf(">>> Wrong subset data1 after VSfpack.\n");
         }
@@ -311,7 +311,7 @@ funpack(void)
     }
     for (i=0; i<NRECORDS; i++)
          if ((iident[i] != (char)('a'+i)) || (ispeed[i] != 2*i) || 
-              (fabs((double)(iheight[i] - (float32)4.44*(float32)(i+1))) > EPS)) {
+              (fabs((double)(iheight[i] - (float)4.44*(float)(i+1))) > EPS)) {
             num_errs++;
             printf(">>> Wrong subset data2 after VSfpack.\n");
         }

@@ -166,15 +166,15 @@ fmtint(VOIDP       x, /* assumption: int is same as 'intn' */
         return(fwrite(&i, sizeof(intn), 1, ofp));
 }
 
-#define FLOAT32_EPSILON ((float32)1.0e-20)
+#define FLOAT32_EPSILON ((float)1.0e-20)
 intn
-fmtfloat32(VOIDP       x,
+fmtfloat(VOIDP       x,
            file_format_t ff,
            FILE       *ofp)
 {
-    float32     fdata;
+    float     fdata;
 
-    HDmemcpy(&fdata, x, sizeof(float32));
+    HDmemcpy(&fdata, x, sizeof(float));
 
     if(ff == DASCII)
       {
@@ -185,7 +185,7 @@ fmtfloat32(VOIDP       x,
       }
     else
       {
-          return(fwrite(&fdata, sizeof(float32), 1, ofp));
+          return(fwrite(&fdata, sizeof(float), 1, ofp));
       }
 }
 

@@ -20,7 +20,7 @@ int main( )
          vdata_ref,     /* vdata's reference number */
          num_of_records; /* number of records actually written to the vdata */
    int16    rec_num;    /* current record number in the vdata */
-   float32 databuf[N_RECORDS][N_VALS_PER_REC];   /* buffer for vdata values */
+   float databuf[N_RECORDS][N_VALS_PER_REC];   /* buffer for vdata values */
 
    /********************** End of variable declaration **********************/
 

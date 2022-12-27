@@ -613,7 +613,7 @@ test_valid_args2()
     int32 dim[1], dims2[2], dims3[3], d1start[1], d2start[2], d3start[3];
     int32 d1count[1], d2count[2], d3count[3];
     int32 d1stride[1], d2stride[2], d3stride[3];
-    float32 data1=32.0, outdata1;
+    float data1=32.0, outdata1;
     int32 data2[D2_X][D2_Y], outdata2[D2_X][D2_Y];
     int16 data3[D3_X][D3_Y][D3_Z], outdata3[D3_X][D3_Y][D3_Z];
     intn i, j, k, status;

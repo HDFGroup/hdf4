@@ -34,7 +34,7 @@ individual arrays as in Example 4.  */
 
 /* RECORD_SIZE is the number of bytes of all the field values combined and
    BUFFER_SIZE is the number of bytes of data to be written */
-#define  RECORD_SIZE      (2 * sizeof(float32) + sizeof(int16) + sizeof(char))
+#define  RECORD_SIZE      (2 * sizeof(float) + sizeof(int16) + sizeof(char))
 #define  BUFFER_SIZE      (RECORD_SIZE * N_RECORDS)
 
 int main( )
@@ -49,9 +49,9 @@ int main( )
    int16 rec_num;        /* current record number */
 
    struct {
-      float32      temp;   /* to hold value of the first field of the vdata */
+      float      temp;   /* to hold value of the first field of the vdata */
       int16        height;/* to hold value of the second field of the vdata */
-      float32      speed;  /* to hold value of the third field of the vdata */
+      float      speed;  /* to hold value of the third field of the vdata */
       char         ident; /* to hold value of the fourth field of the vdata */
    } source[N_RECORDS];
 

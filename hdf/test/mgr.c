@@ -347,8 +347,8 @@ static void test_mgr_image_b1a(int flag)
         int32 dims[2]={4,5};    /* dimensions for the empty image */
         uint16 ref;     /* RI ref #. */
         int32 index;    /* RI index # */
-        float32 image[5][4][3]; /* space for the image data */
-        float32 image0[5][4][3]; /* space for the image data */
+        float image[5][4][3]; /* space for the image data */
+        float image0[5][4][3]; /* space for the image data */
         int32 start[2]; /* start of image data to grab */
         int32 stride[2];/* stride of image data to grab */
 
@@ -387,9 +387,9 @@ static void test_mgr_image_b1a(int flag)
         riid=GRselect(grid,index);
         CHECK_VOID(riid,FAIL,"GRselect");
 
-        HDmemset(image,255,(size_t)(dims[0]*dims[1]*3)*sizeof(float32));
+        HDmemset(image,255,(size_t)(dims[0]*dims[1]*3)*sizeof(float));
         /* '0' is the default fill value */
-        HDmemset(image0,0,(size_t)(dims[0]*dims[1]*3)*sizeof(float32));
+        HDmemset(image0,0,(size_t)(dims[0]*dims[1]*3)*sizeof(float));
 
         start[0]=start[1]=0;
         stride[0]=stride[1]=1;
@@ -1448,7 +1448,7 @@ static void test_mgr_image_b2a2bb(int flag)
 #ifdef TEST_VARTYPE
 #undef TEST_VARTYPE
 #endif /* TEST_VARTYPE */
-#define TEST_VARTYPE float32
+#define TEST_VARTYPE float
 #ifdef TEST_NT
 #undef TEST_NT
 #endif /* TEST_NT */

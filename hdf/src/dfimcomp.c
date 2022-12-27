@@ -49,7 +49,7 @@ struct rgb
 
 struct box
   {
-      float32     bnd[3][2];
+      float     bnd[3][2];
       int        *pts;
       int         nmbr_pts;
       int         nmbr_distinct;
@@ -207,24 +207,24 @@ DFCIimcomp(int32 xdim, int32 ydim, const uint8 *in, uint8 out[],
 PRIVATE     VOID
 compress(unsigned char raster[], int block)
 {
-    float32     y[16], y_av;
+    float     y[16], y_av;
     int         i, j, k, l;
     uint8       bit;
     int         high, hi, lo;
     int         c_hi[3], c_lo[3];
 
     /* calculate luminance */
-    y_av = (float32) 0.0;
+    y_av = (float) 0.0;
     for (i = 0; i < 16; i++)
       {
           j = 3 * i;
-          y[i] = (float32) 0.3 *(float32) raster[j] +
-                      (float32) 0.59 *(float32) raster[j + 1] +
-                      (float32) 0.11 *(float32) raster[j + 2];
+          y[i] = (float) 0.3 *(float) raster[j] +
+                      (float) 0.59 *(float) raster[j + 1] +
+                      (float) 0.11 *(float) raster[j + 2];
           /*    printf("compress: y[%d] is %f\n",i,y[i]); */
           y_av = y_av + y[i];
       }
-    y_av /= (float32) 16.0;
+    y_av /= (float) 16.0;
     /*  printf("y_av is %f\n",y_av); */
 
     /* initialize c_hi and c_lo */
@@ -682,8 +682,8 @@ init(int blocks, int distinct, struct rgb *my_color_pt)
     first = (struct box *) HDmalloc(sizeof(struct box));
     for (i = RED; i <= BLUE; i++)
       {
-          first->bnd[i][LO] = (float32) 999.9;
-          first->bnd[i][HI] = (float32) -999.9;
+          first->bnd[i][LO] = (float) 999.9;
+          first->bnd[i][HI] = (float) -999.9;
 
           for (j = 0; j < distinct; j++)
             {
@@ -694,8 +694,8 @@ init(int blocks, int distinct, struct rgb *my_color_pt)
                     first->bnd[i][HI] = (float) distinct_pt[j].c[i];
             }   /* end of for j */
 
-          first->bnd[i][LO] = first->bnd[i][LO] - (float32) EPSILON;
-          first->bnd[i][HI] = first->bnd[i][HI] + (float32) EPSILON;
+          first->bnd[i][LO] = first->bnd[i][LO] - (float) EPSILON;
+          first->bnd[i][HI] = first->bnd[i][HI] + (float) EPSILON;
       }     /* end of for i */
 
     first->pts = (int *) HDmalloc((unsigned) distinct * sizeof(int));
@@ -999,7 +999,7 @@ find_med(struct box *ptr, int dim)
 {
     int         i, j, count, next, prev;
     int        *rank;
-    float32     median;
+    float     median;
 
     rank = (int *) HDmalloc((unsigned) ptr->nmbr_distinct * sizeof(int));
     for (i = 0; i < ptr->nmbr_distinct; i++)
@@ -1026,10 +1026,10 @@ find_med(struct box *ptr, int dim)
     if (prev == 0)
       {
           /* the first distinct point overshot the median */
-          median = (float32) distinct_pt[rank[prev]].c[dim] + (float32) EPSILON;
+          median = (float) distinct_pt[rank[prev]].c[dim] + (float) EPSILON;
       }
     else
-        median = (float32) distinct_pt[rank[prev - 1]].c[dim] + (float32) EPSILON;
+        median = (float) distinct_pt[rank[prev - 1]].c[dim] + (float) EPSILON;
 
     HDfree((VOIDP) rank);
     return median;

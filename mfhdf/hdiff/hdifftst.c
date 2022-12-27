@@ -78,8 +78,8 @@ int main(void)
  /* global attributes */
  char8 bufga1[] = "Storm_track_data1"; 
  char8 bufga2[] = "Storm_track_data2"; 
- float32 bufa1[2] = {1., 1.};
- float32 bufa2[2] = {1., 2.};
+ float bufa1[2] = {1., 1.};
+ float bufa2[2] = {1., 2.};
 
  /*vdata*/
  int32 file1_id; 
@@ -90,8 +90,8 @@ int main(void)
  char8 vdata1_buf2 [N_RECORDS_1] = {'X', 'D', 'A', 'T', 'A'};
  int32 vdata2_buf1  [N_RECORDS_2][ORDER_2] = {{1, 2, 3, 4}, {5, 6, 7, 8}};
  int32 vdata2_buf2  [N_RECORDS_2][ORDER_2] = {{1, 1, 1, 1}, {5, 6, 7, 8}};
- float32 vdata3_buf1[N_RECORDS_2][N_VALS_PER_REC]={{1,2,3,4,5,6},{7,8,9,10,11,12}}; 
- float32 vdata3_buf2[N_RECORDS_2][N_VALS_PER_REC]={{1,1,1,1,1,1},{7,8,9,10,11,12}}; 
+ float vdata3_buf1[N_RECORDS_2][N_VALS_PER_REC]={{1,2,3,4,5,6},{7,8,9,10,11,12}}; 
+ float vdata3_buf2[N_RECORDS_2][N_VALS_PER_REC]={{1,1,1,1,1,1},{7,8,9,10,11,12}}; 
  
 /* Define the location and size of the data to be written to the data set*/
  start[0] = 0;

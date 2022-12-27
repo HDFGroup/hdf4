@@ -32,7 +32,7 @@ static int16  cdata_i16[CDIM_Y][CDIM_X];
 static uint16  cdata_u16[CDIM_Y][CDIM_X];
 static int32  cdata_i32[CDIM_Y][CDIM_X];
 static uint32  cdata_u32[CDIM_Y][CDIM_X];
-static float32  cdata_f32[CDIM_Y][CDIM_X];
+static float  cdata_f32[CDIM_Y][CDIM_X];
 static float64  cdata_f64[CDIM_Y][CDIM_X];
 
 static VOID init_cdata(void);
@@ -54,7 +54,7 @@ init_cdata(void)
               cdata_u16[i][j] = (uint16) (i * 10 + j);
               cdata_i32[i][j] = (int32) (i * 10 + j);
               cdata_u32[i][j] = (uint32) (i * 10 + j);
-              cdata_f32[i][j] = (float32) (i * 10 + j);
+              cdata_f32[i][j] = (float) (i * 10 + j);
               cdata_f64[i][j] = (float64) (i * 10 + j);
           }     /* end for */
 }   /* end init_cdata() */
@@ -76,7 +76,7 @@ test_little_read(void)
     uint16 *data_u16;
     int32 *data_i32;
     uint32 *data_u32;
-    float32 *data_f32;
+    float *data_f32;
     float64 *data_f64;
     int ret;
 
@@ -260,28 +260,28 @@ test_little_read(void)
           } /* end else */
       } /* end else */
 
-    MESSAGE(10,printf("Testing Little-Endian FLOAT32 Reading Routines\n"););
+    MESSAGE(10,printf("Testing Little-Endian FLOAT Reading Routines\n"););
 
     ret=DFSDgetdims(filename,&rank,dimsizes,2);
     RESULT("DFSDgetdims");
     if(dimsizes[0]!=CDIM_Y || dimsizes[1]!=CDIM_X) {
-        fprintf(stderr, "Dimensions for FLOAT32 data were incorrect\n");
+        fprintf(stderr, "Dimensions for FLOAT data were incorrect\n");
         num_errs++;
       } /* end if */
     else {
         ret=DFSDgetNT(&numbertype);
         RESULT("DFSDgetNT");
         if(numbertype!=DFNT_LFLOAT32) {
-            fprintf(stderr, "Numbertype for FLOAT32 data were incorrect\n");
+            fprintf(stderr, "Numbertype for FLOAT data were incorrect\n");
             num_errs++;
           } /* end if */
         else {
-            data_f32=(float32 *)HDmalloc((size_t)(dimsizes[0]*dimsizes[1])*sizeof(float32));
+            data_f32=(float *)HDmalloc((size_t)(dimsizes[0]*dimsizes[1])*sizeof(float));
             ret=DFSDgetdata(filename,rank,dimsizes,(VOIDP)data_f32);
             RESULT("DFSDgetdata");
 
-            if(HDmemcmp(cdata_f32,data_f32,CDIM_X*CDIM_Y*sizeof(float32))) {
-                fprintf(stderr,"FLOAT32 data was incorrect\n");
+            if(HDmemcmp(cdata_f32,data_f32,CDIM_X*CDIM_Y*sizeof(float))) {
+                fprintf(stderr,"FLOAT data was incorrect\n");
                 num_errs++;
               } /* end if */
             HDfree((VOIDP)data_f32);
@@ -376,7 +376,7 @@ test_little_write(void)
     uint16     *data_u16;
     int32      *data_i32;
     uint32     *data_u32;
-    float32    *data_f32;
+    float    *data_f32;
     float64    *data_f64;
     int         ret;
 
@@ -447,7 +447,7 @@ test_little_write(void)
     ret = DFSDadddata(TMPFILE, rank, dimsizes, (VOIDP) cdata_u32);
     RESULT("DFSDadddata");
 
-    MESSAGE(10, printf("Testing Little-Endian FLOAT32 Writing Routines\n");
+    MESSAGE(10, printf("Testing Little-Endian FLOAT Writing Routines\n");
         );
 
     ret = DFSDsetdims(2, dimsizes);
@@ -660,7 +660,7 @@ test_little_write(void)
     RESULT("DFSDgetdims");
     if (dimsizes[0] != CDIM_Y || dimsizes[1] != CDIM_X)
       {
-          fprintf(stderr, "Dimensions for FLOAT32 data were incorrect\n");
+          fprintf(stderr, "Dimensions for FLOAT data were incorrect\n");
           num_errs++;
       }     /* end if */
     else
@@ -669,18 +669,18 @@ test_little_write(void)
           RESULT("DFSDgetNT");
           if (numbertype != DFNT_LFLOAT32)
             {
-                fprintf(stderr, "Numbertype for FLOAT32 data were incorrect\n");
+                fprintf(stderr, "Numbertype for FLOAT data were incorrect\n");
                 num_errs++;
             }   /* end if */
           else
             {
-                data_f32 = (float32 *) HDmalloc((size_t)(dimsizes[0] * dimsizes[1]) * sizeof(float32));
+                data_f32 = (float *) HDmalloc((size_t)(dimsizes[0] * dimsizes[1]) * sizeof(float));
                 ret = DFSDgetdata(TMPFILE, rank, dimsizes, (VOIDP) data_f32);
                 RESULT("DFSDgetdata");
 
-                if (HDmemcmp(cdata_f32, data_f32, CDIM_X * CDIM_Y * sizeof(float32)))
+                if (HDmemcmp(cdata_f32, data_f32, CDIM_X * CDIM_Y * sizeof(float)))
                   {
-                      fprintf(stderr, "FLOAT32 data was incorrect\n");
+                      fprintf(stderr, "FLOAT data was incorrect\n");
                       num_errs++;
                   }     /* end if */
                 HDfree((VOIDP) data_f32);

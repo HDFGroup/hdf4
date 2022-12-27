@@ -85,8 +85,8 @@
 
 static intn test_dim1_SDS1(void)
 {
-    float32 sds1_data[] = {0.1, 2.3, 4.5, 6.7, 8.9};
-    float32 out_data[5];
+    float sds1_data[] = {0.1, 2.3, 4.5, 6.7, 8.9};
+    float out_data[5];
     int32 dimsize[1];
     int32 sds_id, file_id, dim_id, index;
     int32 start=0, stride=1;
@@ -286,14 +286,14 @@ static intn test_dim1_SDS1(void)
 static intn test_dim1_SDS2(void)
 {
     char  sds_name[20];
-    float32 sds2_data[2][3] = {{0.1, 2.3, 4.5}, {4.5, 6.7, 8.9}};
+    float sds2_data[2][3] = {{0.1, 2.3, 4.5}, {4.5, 6.7, 8.9}};
     int32 dimsize[1], dimsize2[2];
     int32 sds1_id, sds2_id, file_id, dim_id, index;
     int32 start2[2]={0,0}, stride2[2]={1,1};
     int32 scale1 [5] = {101,102,103,104,105}, scale1_out[5];
     int32 num_type, array_rank;
     int32 n_datasets, n_file_attrs, n_local_attrs;
-    float32 out_data2[2][3];
+    float out_data2[2][3];
     intn  status = 0, idx, idx1, idx2;
     intn  num_errs = 0;         /* number of errors so far */
 

@@ -41,7 +41,7 @@
 #define	RI_ATT2_N_VALUES	6
 
 /* Pixel with fill values */
-static float32 fill_pixel[RI_ATT_N_VALUES]={1.3,-2.4,1000.3,.25};
+static float fill_pixel[RI_ATT_N_VALUES]={1.3,-2.4,1000.3,.25};
 static uint8 file_attr_2[F_ATT2_N_VALUES] = {1, 2, 3, 4, 5};
 
 /********************************************************************
@@ -64,9 +64,9 @@ static int test_mgr_fillvalues()
     int32 dims[2]={5,7};    /* dimensions used on all images */
     uint16 ref;		/* RI reference number */
     int32 ri_index;	/* RI index */
-    float32 image[7][5][N_COMPS]; /* space for the image data */
+    float image[7][5][N_COMPS]; /* space for the image data */
     VOIDP read_fill_vals=NULL;   /* space for fill values read from attr */
-    float32 image0[7][5][N_COMPS]; /* space for the image data */
+    float image0[7][5][N_COMPS]; /* space for the image data */
     int32 start[2];	/* start of image data to grab */
     int32 stride[2];	/* stride of image data to grab */
     char attr_name[H4_MAX_GR_NAME];
@@ -110,7 +110,7 @@ static int test_mgr_fillvalues()
         CHECK(riid, FAIL, "GRselect");
 
         /* Buffer to read image's data in */
-        HDmemset(image, 0, (size_t)(dims[0]*dims[1]* N_COMPS)*sizeof(float32));
+        HDmemset(image, 0, (size_t)(dims[0]*dims[1]* N_COMPS)*sizeof(float));
 
         /* Fill the memory-only with the default pixel fill-value */
         HDmemfill(image0, fill_pixel, sizeof(fill_pixel), sizeof(image0) / sizeof(fill_pixel));
@@ -139,7 +139,7 @@ static int test_mgr_fillvalues()
         VERIFY_CHAR(attr_name, FILL_ATTR, "GRattrinfo");
 
         /* Allocate a buffer to hold the attribute data. */
-        read_fill_vals = HDmalloc (n_values * sizeof (float32));
+        read_fill_vals = HDmalloc (n_values * sizeof (float));
         if (read_fill_vals == NULL) {
             fprintf(stderr, "Unable to allocate space for attribute data.\n");
             exit(1);
@@ -373,10 +373,10 @@ static int test_mgr_userattr()
 	     * part of the test where the correspondent GRsetattr was called. */
 	    switch (ntype) {
 	      case DFNT_FLOAT32:
-		data_buf = malloc (n_values * sizeof (float32));
+		data_buf = malloc (n_values * sizeof (float));
 		if (data_buf == NULL)
 		{
-		    fprintf(stderr, "test_mgr_userattr: Failed to allocate memory for data buffer for float32.\n");
+		    fprintf(stderr, "test_mgr_userattr: Failed to allocate memory for data buffer for float.\n");
 		    exit (1);
 		}
 		break;

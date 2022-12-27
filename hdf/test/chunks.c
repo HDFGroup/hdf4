@@ -61,7 +61,7 @@
  *       total data size 48 bytes 
  *
  *    8. Now create 3-D chunked element with no partial chunks.
- *       Set dimension to 2x3x4 array with 6 chunks. Numbertype is float32 
+ *       Set dimension to 2x3x4 array with 6 chunks. Numbertype is float 
  *       where each chunk is 1x1x4= 4x4(nt_size) = 16 bytes , 
  *       total data size 96 bytes .
  *    
@@ -148,16 +148,16 @@ static uint8  chunk6[4] = { 120, 121, 122, 123};
 
 /* datay layout of arrays in memory */
 /* for comparison in Test 8 */
-static float32  f32_data[2][3][4] =
+static float  f32_data[2][3][4] =
 {
     {
-        {(float32) 0.0, (float32) 1.0, (float32) 2.0, (float32) 3.0},
-        {(float32) 10.0, (float32) 11.0, (float32) 12.0, (float32) 13.0},
-        {(float32) 20.0, (float32) 21.0, (float32) 22.0, (float32) 23.0}},
+        {(float) 0.0, (float) 1.0, (float) 2.0, (float) 3.0},
+        {(float) 10.0, (float) 11.0, (float) 12.0, (float) 13.0},
+        {(float) 20.0, (float) 21.0, (float) 22.0, (float) 23.0}},
     {
-        {(float32) 100.0, (float32) 101.0, (float32) 102.0, (float32) 103.0},
-        {(float32) 110.0, (float32) 111.0, (float32) 112.0, (float32) 113.0},
-        {(float32) 120.0, (float32) 121.0, (float32) 122.0, (float32) 123.0}}};
+        {(float) 100.0, (float) 101.0, (float) 102.0, (float) 103.0},
+        {(float) 110.0, (float) 111.0, (float) 112.0, (float) 113.0},
+        {(float) 120.0, (float) 121.0, (float) 122.0, (float) 123.0}}};
 
 /* for comparison in Test 7 */
 static uint16  u16_data[2][3][4] =
@@ -207,10 +207,10 @@ test_chunks(void)
     int32      fill_val_len = 1;
     uint8      fill_val_u8 = 0;      /* test 6 */
     uint16     fill_val_u16 = 0;     /* test 7 */
-    float32    fill_val_f32 = (float32)0.0; /* test 8 */
+    float    fill_val_f32 = (float)0.0; /* test 8 */
     uint8      inbuf_u8[2][3][4];
     uint16     inbuf_u16[2][3][4];   /* input data buffer */
-    float32    inbuf_f32[2][3][4];   /* input data buffer */
+    float    inbuf_f32[2][3][4];   /* input data buffer */
     sp_info_block_t info_block;      /* special info block */
     comp_info  cinfo;
     model_info minfo;
@@ -1512,13 +1512,13 @@ test_chunks(void)
 
     /* 
        8. Now create 3-D chunked element with no partial chunks.
-       Set dimension to 2x3x4 array with 6 chunks. Numbertype is float32 
+       Set dimension to 2x3x4 array with 6 chunks. Numbertype is float 
        where each chunk is 1x1x4= 4x4(nt_size) = 16 bytes , 
        total data size 96 bytes 
        */
     chunk[0].num_dims   = 3;
     chunk[0].chunk_size = 4; /* 1x1x4 bytes, logical */
-    chunk[0].nt_size    = 4; /* number type size, float32 */
+    chunk[0].nt_size    = 4; /* number type size, float */
     chunk[0].chunk_flag = 0; /* nothing set */
     chunk[0].comp_type = COMP_CODE_NONE; /* nothing set */
     chunk[0].model_type = COMP_MODEL_STDIO; /* nothing set */
@@ -1545,13 +1545,13 @@ test_chunks(void)
     chunk[0].pdims[2].distrib_type = 0; /* NONE */
 
     fill_val_len = 4;
-    fill_val_f32 = (float32)0.0;
+    fill_val_f32 = (float)0.0;
 
     /* Open file for writing last odd size chunks now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
     CHECK_VOID(fid, FAIL, "Hopen");
 
-    MESSAGE(5, printf("Test 8. Create another new element as a 3-D, float32 chunked element(96 bytes)\n"););
+    MESSAGE(5, printf("Test 8. Create another new element as a 3-D, float chunked element(96 bytes)\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
                       0,(int)chunk[0].pdims[0].dim_length, 
                       0,(int)chunk[0].pdims[0].chunk_length););
@@ -1583,7 +1583,7 @@ test_chunks(void)
           goto done;
       }
 
-    MESSAGE(5, printf("Wrote 96 bytes to 3-D, float32 chunked element \n"); );
+    MESSAGE(5, printf("Wrote 96 bytes to 3-D, float chunked element \n"); );
 
     /* end access */
     ret = Hendaccess(aid1);
@@ -1594,7 +1594,7 @@ test_chunks(void)
     ret = Hclose(fid);
     CHECK_VOID(ret, FAIL, "Hclose");
 
-    MESSAGE(5, printf("Open 3-D, float32 chunked element again for reading\n"); );
+    MESSAGE(5, printf("Open 3-D, float chunked element again for reading\n"); );
     /* Open file for reading now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
     CHECK_VOID(fid, FAIL, "Hopen");

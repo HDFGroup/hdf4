@@ -110,8 +110,8 @@
  *----------------------------------------------------------------------------*/
 
 int
-DFUfptoimage(int32 hdim, int32 vdim, float32 max, float32 min,
-             float32 *hscale, float32 *vscale, float32 *data, uint8 *palette,
+DFUfptoimage(int32 hdim, int32 vdim, float max, float min,
+             float *hscale, float *vscale, float *data, uint8 *palette,
          char *outfile, int ct_method, int32 hres, int32 vres, int compress)
 {
     Input       in;
@@ -177,9 +177,9 @@ process(Input * in, Output * out)
        *  allocate buffers for output and scales
      */
     if (!in->is_hscale)
-        in->hscale = (float32 *) HDmalloc((uint32) (1 + in->hdim) * sizeof(float32));
+        in->hscale = (float *) HDmalloc((uint32) (1 + in->hdim) * sizeof(float));
     if (!in->is_vscale)
-        in->vscale = (float32 *) HDmalloc((uint32) (1 + in->vdim) * sizeof(float32));
+        in->vscale = (float *) HDmalloc((uint32) (1 + in->vdim) * sizeof(float));
     out->hres = (out->hres <= in->hdim) ? in->hdim : out->hres;
     out->vres = (out->vres <= in->vdim) ? in->vdim : out->vres;
     out->image = (uint8 *) HDmalloc((size_t) out->hres * (size_t)out->vres);
@@ -236,12 +236,12 @@ process(Input * in, Output * out)
  *---------------------------------------------------------------------------*/
 
 int
-generate_scale(int32 dim, float32 *scale)
+generate_scale(int32 dim, float *scale)
 {
     int32       i;
 
     for (i = 0; i <= dim; i++)
-        *scale++ = (float32) i;
+        *scale++ = (float) i;
     return 0;
 }
 
@@ -352,7 +352,7 @@ int
 convert_interp(Input * in, Output * out)
 {
     int j, theval;
-    float32    *f, *dxs, *dys, *xv, *yv, *lim, delx, dely, pt, xrange, yrange,
+    float    *f, *dxs, *dys, *xv, *yv, *lim, delx, dely, pt, xrange, yrange,
                 range, zy, *z1, *z2, *z3, *z4, z;
     uint8 *p;
     uint8      *xinc;
@@ -363,29 +363,29 @@ convert_interp(Input * in, Output * out)
     range = in->max - in->min;
     xrange = *(in->hscale + in->hdim - 1) - *in->hscale;
     yrange = *(in->vscale + in->vdim - 1) - *in->vscale;
-    delx = xrange / (float32)out->hres;  /* x axis increment in image */
-    dely = yrange / (float32)out->vres;  /* y axis increment in image */
+    delx = xrange / (float)out->hres;  /* x axis increment in image */
+    dely = yrange / (float)out->vres;  /* y axis increment in image */
 
-    dxs = (float32 *) HDmalloc(sizeof(float32) * (size_t)out->hres);
+    dxs = (float *) HDmalloc(sizeof(float) * (size_t)out->hres);
     /* temp space for dx's */
-    dys = (float32 *) HDmalloc(sizeof(float32) * (size_t)out->vres);
+    dys = (float *) HDmalloc(sizeof(float) * (size_t)out->vres);
     /* temp space for dy's */
     xinc = (uint8 *) HDmalloc((size_t) out->hres);
     yoffs = (int32 *) HDmalloc((size_t) (out->vres + 1) * sizeof(int32));
     yoffs[0] = 0;
 
-    if (range < (float32)0.0)
+    if (range < (float)0.0)
         range = -range;     /* max must be > min */
 
     f = dys;    /* beginning of dys to fill in */
     yv = in->vscale;    /* beginning and end of yvals */
     lim = in->vscale + in->vdim - 2;
 
-    if (yrange > (float32)0.0)
+    if (yrange > (float)0.0)
       {
           for (i = 0; i < out->vres; i++)
             {   /* fill in dy's */
-                pt = dely * (float32) i + *in->vscale;  /* scaled pos in new image */
+                pt = dely * (float) i + *in->vscale;  /* scaled pos in new image */
 
                 while (*(yv + 1) < pt && yv < lim)
                   {     /* move y pointer */
@@ -403,7 +403,7 @@ convert_interp(Input * in, Output * out)
 
           for (i = 0; i < out->vres; i++)
             {   /* fill in dy's */
-                pt = dely * (float32) i + *in->vscale;
+                pt = dely * (float) i + *in->vscale;
 
                 while (*(yv + 1) > pt && yv < lim)
                   {     /* move y pointer */
@@ -420,11 +420,11 @@ convert_interp(Input * in, Output * out)
     xv = in->hscale;    /* beginning and end of xvals */
     lim = in->hscale + in->hdim - 2;
 
-    if (xrange > (float32)0.0)
+    if (xrange > (float)0.0)
       {
           for (i = 0; i < out->hres; i++)
             {   /* fill in dx's */
-                pt = delx * (float32) i + *in->hscale;
+                pt = delx * (float) i + *in->hscale;
                 xinc[i] = 0;
 
                 while (*(xv + 1) < pt && xv < lim)
@@ -441,7 +441,7 @@ convert_interp(Input * in, Output * out)
 
           for (i = 0; i < out->hres; i++)
             {   /* fill in dx's */
-                pt = delx * (float32) i + *in->hscale;
+                pt = delx * (float) i + *in->hscale;
                 xinc[i] = 0;
 
                 while (*(xv + 1) > pt && xv < lim)
@@ -482,7 +482,7 @@ convert_interp(Input * in, Output * out)
                 z = (*z1 - *z3 - *z2 + *z4) * (*xv) * zy +  /* weighted sum */
                     (*z3 - *z4) * (*xv) + (*z2 - *z4) * zy + *z4;
 
-                theval = (int) ((float32)1.0 + (float32)237.9 * (z - in->min) / range);   /* scaled value  */
+                theval = (int) ((float)1.0 + (float)237.9 * (z - in->min) / range);   /* scaled value  */
                 if (theval >= 240 || theval < 1)
                     *p++ = 0;
                 else
@@ -535,7 +535,7 @@ pixrep_scaled(Input * in, Output * out)
     image = (uint8 *) out->image;   /* space for image */
 
     range = in->max - in->min;
-    if (range < (float32)0.0)
+    if (range < (float)0.0)
         range = -range;     /* max must be > min */
 
     hoffsets = (int32 *) HDmalloc((uint32) (out->hres + 1) * sizeof(int32));
@@ -545,7 +545,7 @@ pixrep_scaled(Input * in, Output * out)
     compute_offsets(in->vscale, in->vdim, voffsets, out->vres);
 
     prevoffset = voffsets[0] - 1;
-    ratio = (float32) 237.9 / range;
+    ratio = (float) 237.9 / range;
 
     for (i = 0; i < out->vres; i++)
       {     /* for each row, store pixel vals */
@@ -555,7 +555,7 @@ pixrep_scaled(Input * in, Output * out)
 
                 for (j = 0; j < in->hdim; j++)
                   {     /* compute vals for each data point */
-                      theval = (int) ((float32)1.5 + ratio * (*data++ - in->min));
+                      theval = (int) ((float)1.5 + ratio * (*data++ - in->min));
                       if (theval >= 240 || theval < 1)
                           theval = 0;
                       pixvals[j] = (uint8) theval;
@@ -600,21 +600,21 @@ pixrep_scaled(Input * in, Output * out)
  *---------------------------------------------------------------------------*/
 
 int
-compute_offsets(float32 *scale, int32 dim, int32 *offsets, int32 res)
+compute_offsets(float *scale, int32 dim, int32 *offsets, int32 res)
 {
     int32       i, j;
-    float32    *midpt, pt, delta;
+    float    *midpt, pt, delta;
 
-    midpt = (float32 *) HDmalloc(sizeof(float32) * (size_t)dim);
+    midpt = (float *) HDmalloc(sizeof(float) * (size_t)dim);
 
     for (i = 0; i < dim - 1; i++)
       {     /* compute all midpoints */
-          midpt[i] = (scale[i] + scale[i + 1]) / (float32) 2.0;
+          midpt[i] = (scale[i] + scale[i + 1]) / (float) 2.0;
 /*        printf("midpt[%d]=%8.1f\tscale[%d]=%8.1f\n",i,midpt[i],i,scale[i]); */
       }
     midpt[i] = scale[i] + scale[i] - midpt[i - 1];  /* tack one onto end */
 
-    delta = (*(scale + dim - 1) - *scale) / (float32)(res - 1);  /* amt of change along scale */
+    delta = (*(scale + dim - 1) - *scale) / (float)(res - 1);  /* amt of change along scale */
     /* per pixel position */
     offsets[0] = 0;
     pt = *scale;    /* base point has value of 1st scale item */
@@ -653,15 +653,15 @@ pixrep_simple(Input * in, Output * out)
     int32       i, j;
     uint8       raster_val;
     uint8 *image, *row_buf;
-    float32    *in_row_ptr, *in_buf;
-    float32     ratio, delh, delv, hblockend, vblockend;
+    float    *in_row_ptr, *in_buf;
+    float     ratio, delh, delv, hblockend, vblockend;
 
-    ratio = (float32) 237.9 / (in->max - in->min);
+    ratio = (float) 237.9 / (in->max - in->min);
     image = (uint8 *) out->image;
     in_buf = in->data;
 
-    delh = ((float32) out->hres) / (float32)in->hdim;    /* horiz block size */
-    delv = ((float32) out->vres) / (float32)in->vdim;    /* vert block size  */
+    delh = ((float) out->hres) / (float)in->hdim;    /* horiz block size */
+    delv = ((float) out->vres) / (float)in->vdim;    /* vert block size  */
 
 /*
    * Compute expanded image
@@ -680,7 +680,7 @@ pixrep_simple(Input * in, Output * out)
             {
 
                 raster_val = (uint8)
-                    ((float32)1.5 + ratio * (float32) (*in_row_ptr++ - in->min));
+                    ((float)1.5 + ratio * (float) (*in_row_ptr++ - in->min));
                 *image++ = raster_val;
 
                 for (; j < (int32) hblockend - 1; j++)  /* store vals for this blk of this row */

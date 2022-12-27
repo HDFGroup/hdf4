@@ -570,8 +570,8 @@ test_szip_RIfl32bit()
     uint32 comp_config;
 
     comp_coder_t comp_type;
-    float32 out_data[LENGTH][WIDTH][N_COMPS];
-    float32 in_data[LENGTH][WIDTH][N_COMPS]    = {
+    float out_data[LENGTH][WIDTH][N_COMPS];
+    float in_data[LENGTH][WIDTH][N_COMPS]    = {
            {{10.0, 11.0, 12.0}, {13.0, 14.0, 15.0}, {40.0, 41.0, 42.0}, {43.0, 44.0, 45.0},  {0.0,  0.0,  0.0},
              {0.0,  0.0,  0.0},  {0.0,  0.0,  0.0},  {0.0,  0.0,  0.0},  {0.0,  0.0,  0.0},  {0.0,  0.0,  0.0}},
            {{20.0, 21.0, 22.0}, {23.0, 24.0, 25.0}, {50.0, 51.0, 52.0}, {53.0, 54.0, 55.0},  {0.0,  0.0,  0.0},

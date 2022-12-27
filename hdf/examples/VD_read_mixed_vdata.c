@@ -7,7 +7,7 @@
 #define  FIELDNAME_LIST  "Temp,Ident"
 
 /* number of bytes of the data to be read */
-#define  BUFFER_SIZE     ( sizeof(float32) + sizeof(char)) * N_RECORDS
+#define  BUFFER_SIZE     ( sizeof(float) + sizeof(char)) * N_RECORDS
 
 int main ()
 {
@@ -18,7 +18,7 @@ int main ()
          file_id, vdata_id,
          num_of_records,        /* number of records actually read */
          vdata_ref;             /* reference number of the vdata to be read */
-   float32 itemp[N_RECORDS];    /* buffer to hold values of first field     */
+   float itemp[N_RECORDS];    /* buffer to hold values of first field     */
    char  idents[N_RECORDS];     /* buffer to hold values of fourth field    */
    uint8 databuf[BUFFER_SIZE];  /* buffer to hold read data, still packed   */
    VOIDP fldbufptrs[N_FIELDS];/*pointers to be pointing to the field buffers*/

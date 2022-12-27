@@ -66,11 +66,11 @@ PRIVATE comp_info CompInfo;     /* Params for compression to perform */
 PRIVATE char Lastfile[DF_MAXFNLEN];     /* last file opened */
 PRIVATE DFRrig Readrig =
 {                               /* information about RIG being read */
-    NULL, 0, 0, (float32) 0.0, (float32) 0.0,
-    {(float32) 0.0, (float32) 0.0, (float32) 0.0},
-    {(float32) 0.0, (float32) 0.0, (float32) 0.0},
-    {(float32) 0.0, (float32) 0.0, (float32) 0.0},
-    {(float32) 0.0, (float32) 0.0, (float32) 0.0},
+    NULL, 0, 0, (float) 0.0, (float) 0.0,
+    {(float) 0.0, (float) 0.0, (float) 0.0},
+    {(float) 0.0, (float) 0.0, (float) 0.0},
+    {(float) 0.0, (float) 0.0, (float) 0.0},
+    {(float) 0.0, (float) 0.0, (float) 0.0},
     {0, 0},
     {0, 0, 0, 0,
      {0, 0},
@@ -86,11 +86,11 @@ PRIVATE DFRrig Readrig =
 };
 PRIVATE DFRrig Writerig =
 {                               /* information about RIG being written */
-    NULL, 0, 0, (float32) 0.0, (float32) 0.0,
-    {(float32) 0.0, (float32) 0.0, (float32) 0.0},
-    {(float32) 0.0, (float32) 0.0, (float32) 0.0},
-    {(float32) 0.0, (float32) 0.0, (float32) 0.0},
-    {(float32) 0.0, (float32) 0.0, (float32) 0.0},
+    NULL, 0, 0, (float) 0.0, (float) 0.0,
+    {(float) 0.0, (float) 0.0, (float) 0.0},
+    {(float) 0.0, (float) 0.0, (float) 0.0},
+    {(float) 0.0, (float) 0.0, (float) 0.0},
+    {(float) 0.0, (float) 0.0, (float) 0.0},
     {0, 0},
     {0, 0, 0, 0,
      {0, 0},
@@ -107,11 +107,11 @@ PRIVATE DFRrig Writerig =
 PRIVATE DFRrig Zrig =
 {                               /* empty RIG for initialization */
     NULL,
-    0, 0, (float32) 0.0, (float32) 0.0,
-    {(float32) 0.0, (float32) 0.0, (float32) 0.0},
-    {(float32) 0.0, (float32) 0.0, (float32) 0.0},
-    {(float32) 0.0, (float32) 0.0, (float32) 0.0},
-    {(float32) 0.0, (float32) 0.0, (float32) 0.0},
+    0, 0, (float) 0.0, (float) 0.0,
+    {(float) 0.0, (float) 0.0, (float) 0.0},
+    {(float) 0.0, (float) 0.0, (float) 0.0},
+    {(float) 0.0, (float) 0.0, (float) 0.0},
+    {(float) 0.0, (float) 0.0, (float) 0.0},
     {0, 0},
     {0, 0, 0, 0,
      {0, 0},
@@ -558,7 +558,7 @@ DFR8Iputimage(const char *filename, const void * image, int32 xdim, int32 ydim,
     }     /* end else */
   Writerig.image.ref = Writeref;
   Writerig.descimage.ncomponents = 1;
-  Writerig.aspectratio = (float32) 1.0;
+  Writerig.aspectratio = (float) 1.0;
 
     /* Write out Raster-8 tags for those who want it */
     if (CompType != DFTAG_GREYJPEG5)

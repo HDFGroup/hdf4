@@ -81,10 +81,10 @@ static const char *descris[2] =
 
 /* fcn Prototypes */
 static VOID 
-genimage (int height, int width, float32 *data, uint8 *image);
+genimage (int height, int width, float *data, uint8 *image);
 
 static VOID 
-gen2Dfloat (int height, int width, float32 *data);
+gen2Dfloat (int height, int width, float *data);
 
 static int32
 check_fann(const char *fname);
@@ -99,16 +99,16 @@ check_lab_desc (const char *fname, uint16 tag, uint16 ref,const char* label[],
 **
 ****************************************************************/
 static      VOID
-gen2Dfloat(int height, int width, float32 *data)
+gen2Dfloat(int height, int width, float *data)
 {
     int    i, j;
-    float32  *pdata = NULL;
+    float  *pdata = NULL;
 
     /* store one value per row, increasing by one for each row */
     pdata = data;
     for (i = 0; i < height; i++)
         for (j = 0; j < width; j++)
-            *pdata++ = (float32) (i + 1);
+            *pdata++ = (float) (i + 1);
 
 } /* gen2Dfloat() */
 
@@ -118,11 +118,11 @@ gen2Dfloat(int height, int width, float32 *data)
 **
 ****************************************************************/
 static      VOID
-genimage(int height, int width, float32 *data, uint8 *image)
+genimage(int height, int width, float *data, uint8 *image)
 {
     int    i, limit;
-    float32  *pdata = NULL;
-    float32  max, min, multiplier;
+    float  *pdata = NULL;
+    float  max, min, multiplier;
 
     limit = height * width;
     pdata = data;
@@ -135,7 +135,7 @@ genimage(int height, int width, float32 *data, uint8 *image)
 
     /* store one value per row, increasing by one for each row */
     pdata  = data;
-    multiplier = (float32) 255.0 / (max - min);
+    multiplier = (float) 255.0 / (max - min);
     for (i = 0; i < limit; i++)
         *image++ = (uint8) (((*pdata++) - min) * multiplier);
 } /* geniamge() */
@@ -766,13 +766,13 @@ test_man(void)
     intn   rank;
     int    i,j;
     int32  dimsizes[2];
-    float32  *data = NULL;
+    float  *data = NULL;
     int32   file_handle; /* file handle */
     int32   an_handle;  /* annotation interface handle */
     int32   ann_handle;  /* annotation handle */
 
     /***** generate float array and image *****/
-    if ((data     = (float32 *) HDmalloc(ROWS * COLS * sizeof(float32))) == NULL)
+    if ((data     = (float *) HDmalloc(ROWS * COLS * sizeof(float))) == NULL)
       {
           fprintf(stderr,"Error: unable to allocate space\n");
           return;

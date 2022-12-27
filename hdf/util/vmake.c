@@ -426,7 +426,7 @@ inpfloat(VOIDP x)
     float       val;
 
     ret = scanf("%f ", &val);
-    *(float32 *)x = (float32) val;
+    *(float *)x = (float) val;
     return (ret);
 }
 

@@ -292,7 +292,7 @@ static intn test_dim_scales()
     uint8  scale0 [] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,255};
     int16  scale1 [] = {0,1,2,3,4,5,6,7,8,9};
     char8  scale2 [] = {'d','i','m','2'}, scale2_out[4];
-    float32 scalef[] = {1., 2., 3., 4.};
+    float scalef[] = {1., 2., 3., 4.};
     int32  size, dim_data_type, dim_num_attrs;
     int    num_errs = 0;    /* number of errors so far */
 

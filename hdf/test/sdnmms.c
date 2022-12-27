@@ -20,10 +20,10 @@ static float64  f64scale[10],  tf64scale[10];
 static float64 f64max = (float64) 40.0, f64min = (float64) 0.0;
 static float64 tf64max, tf64min;
 
-static float32  f32[10][10],  tf32[10][10];
-static float32  f32scale[10],  tf32scale[10];
-static float32 f32max = (float32) 40.0, f32min = (float32) 0.0;
-static float32 tf32max, tf32min;
+static float  f32[10][10],  tf32[10][10];
+static float  f32scale[10],  tf32scale[10];
+static float f32max = (float) 40.0, f32min = (float) 0.0;
+static float tf32max, tf32min;
 
 static int8  i8[10][10],  ti8[10][10];
 static int8  i8scale[10],  ti8scale[10];
@@ -76,7 +76,7 @@ test_sdnmms(void)
 
                 f64[i][j] = (float64)((i * 40) + j);   /* range: 0 ~ 4-billion */
 
-                f32[i][j] = (float32)((i * 40) + j);   /* range: 0 ~ 4-billion */
+                f32[i][j] = (float)((i * 40) + j);   /* range: 0 ~ 4-billion */
 
                 i8[i][j] = (int8) ((i * 10) + j);   /* range: 0 ~ 100 */
                 ui8[i][j] = (uint8) ((i * 20) + j);     /* range: 0 ~ 200 */
@@ -90,7 +90,7 @@ test_sdnmms(void)
 
           f64scale[i] = (float64)((i * 40) + j);   /* range: 0 ~ 4-billion */
 
-          f32scale[i] = (float32) ((i * 40) + j);   /* range: 0 ~ 4-billion */
+          f32scale[i] = (float) ((i * 40) + j);   /* range: 0 ~ 4-billion */
 
           i8scale[i] = (int8) ((i * 10) + j);   /* range: 0 ~ 100 */
           ui8scale[i] = (uint8) ((i * 20) + j);     /* range: 0 ~ 200 */
@@ -286,17 +286,17 @@ test_sdnmms(void)
 
     num_errs += err + err1 + err2;
     MESSAGE(5, if (err == 1)
-            printf(">>> Test failed for float32 array.\n");
+            printf(">>> Test failed for float array.\n");
             else
-            printf("Test passed for float32 array.\n");) ;
+            printf("Test passed for float array.\n");) ;
     MESSAGE(5, if (err2 == 1)
-            printf(">>> Test failed for float32 scales.\n");
+            printf(">>> Test failed for float scales.\n");
             else
-            printf("Test passed for float32 scales.\n");) ;
+            printf("Test passed for float scales.\n");) ;
     MESSAGE(5, if (err1 == 1)
-            printf(">>> Test failed for float32 max/min.\n");
+            printf(">>> Test failed for float max/min.\n");
             else
-            printf("Test passed for float32 max/min.\n");) ;
+            printf("Test passed for float max/min.\n");) ;
 
     err = 0;
     err1 = 0;

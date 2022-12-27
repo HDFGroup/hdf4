@@ -15,10 +15,10 @@
 
 #include "tproto.h"
 
-static float32  f32[10][10],  tf32[10][10];
-static float32  f32scale[10],  tf32scale[10];
-static float32 f32max = (float32) 40.0, f32min = (float32) 0.0;
-static float32 tf32max, tf32min;
+static float  f32[10][10],  tf32[10][10];
+static float  f32scale[10],  tf32scale[10];
+static float f32max = (float) 40.0, f32min = (float) 0.0;
+static float tf32max, tf32min;
 
 static int8  i8[10][10],  ti8[10][10];
 static int8  i8scale[10],  ti8scale[10];
@@ -75,7 +75,7 @@ test_sdmms(void)
       {
           for (j = 0; j < 10; j++)
             {
-                f32[i][j] = (float32)((i * 40) + j);   /* range: 0 ~ 4-billion */
+                f32[i][j] = (float)((i * 40) + j);   /* range: 0 ~ 4-billion */
 
                 i8[i][j] = (int8) ((i * 20) - 100 + j);     /* range: 0 ~ 100 */
                 ui8[i][j] = (uint8) ((i * 20) + j);     /* range: 0 ~ 200 */
@@ -87,7 +87,7 @@ test_sdmms(void)
                 ui32[i][j] = (uint32) ((i * 400000000U) + j);    /* range: 0 ~ 4-billion */
             }
 
-          f32scale[i] = (float32) ((i * 40) + j);   /* range: 0 ~ 4-billion */
+          f32scale[i] = (float) ((i * 40) + j);   /* range: 0 ~ 4-billion */
 
           i8scale[i] = (int8) ((i * 20) - 100 + j);     /* range: 0 ~ 100 */
           ui8scale[i] = (uint8) ((i * 20) + j);     /* range: 0 ~ 200 */
@@ -255,19 +255,19 @@ test_sdmms(void)
     MESSAGE(5,
             {
             if (err == 1)
-            printf(">>> Test failed for float32 array.\n");
+            printf(">>> Test failed for float array.\n");
             else
-            printf("Test passed for float32 array.\n");
+            printf("Test passed for float array.\n");
             }
     ) ;
     MESSAGE(5, if (err2 == 1)
-            printf(">>> Test failed for float32 scales.\n");
+            printf(">>> Test failed for float scales.\n");
             else
-            printf("Test passed for float32 scales.\n");) ;
+            printf("Test passed for float scales.\n");) ;
     MESSAGE(5, if (err1 == 1)
-            printf(">>> Test failed for float32 max/min.\n");
+            printf(">>> Test failed for float max/min.\n");
             else
-            printf("Test passed for float32 max/min.\n");) ;
+            printf("Test passed for float max/min.\n");) ;
 
     if ((cal1 != ical1) ||
         (cal2 != ical2) ||
@@ -275,7 +275,7 @@ test_sdmms(void)
         (cal4 != ical4) ||
         (cal5 != ical5))
       {
-          MESSAGE(5, printf(">>> Test failed for float32 calibration.\n");
+          MESSAGE(5, printf(">>> Test failed for float calibration.\n");
               );
           MESSAGE(5, printf(" Is %f %f %f %f %d\n", ical1, ical2, ical3, ical4, (int) ical5);
               );
@@ -283,7 +283,7 @@ test_sdmms(void)
               );
       }
     else
-        MESSAGE(5, printf("Test passed for float32 calibration.\n");
+        MESSAGE(5, printf("Test passed for float calibration.\n");
         );
 
     err = 0;

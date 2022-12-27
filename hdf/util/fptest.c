@@ -54,11 +54,11 @@ main(int argc, char * argv[] )
     int         i, j, k;
     FILE       *sp;
 
-    float32     b32r2[3][4], b32r3[5][3][4];
-    float32     row4[3], col4[4], pln4[5];
-    float32     rowo4 = (float32)11.0e0, colo4 = (float32)21.0e0, plno4 = (float32)51.0e0;
-    float32     rowi4 = (float32)1.0e0, coli4 = (float32)2.0e0, plni4 = (float32)5.0e0;
-    float32     ezero = (float32)0.0e0;
+    float     b32r2[3][4], b32r3[5][3][4];
+    float     row4[3], col4[4], pln4[5];
+    float     rowo4 = (float)11.0e0, colo4 = (float)21.0e0, plno4 = (float)51.0e0;
+    float     rowi4 = (float)1.0e0, coli4 = (float)2.0e0, plni4 = (float)5.0e0;
+    float     ezero = (float)0.0e0;
 
     float64     b64r2[3][4], b64r3[5][3][4];
     float64     row8[3], col8[4], pln8[5];
@@ -198,15 +198,15 @@ main(int argc, char * argv[] )
     (void) fwrite((char *) &ione, sizeof(int), 1, sp);
     (void) fwrite((char *) &nrow, sizeof(int), 1, sp);
     (void) fwrite((char *) &ncol, sizeof(int), 1, sp);
-    (void) fwrite((char *) &ezero, sizeof(float32), 1, sp);
-    (void) fwrite((char *) &ezero, sizeof(float32), 1, sp);
+    (void) fwrite((char *) &ezero, sizeof(float), 1, sp);
+    (void) fwrite((char *) &ezero, sizeof(float), 1, sp);
     for (i = 0; i < nrow; i++)
-        (void) fwrite((char *) &row4[i], sizeof(float32), 1, sp);
+        (void) fwrite((char *) &row4[i], sizeof(float), 1, sp);
     for (j = 0; j < ncol; j++)
-        (void) fwrite((char *) &col4[j], sizeof(float32), 1, sp);
+        (void) fwrite((char *) &col4[j], sizeof(float), 1, sp);
     for (i = 0; i < nrow; i++)
         for (j = 0; j < ncol; j++)
-            (void) fwrite((char *) &b32r2[i][j], sizeof(float32), 1,
+            (void) fwrite((char *) &b32r2[i][j], sizeof(float), 1,
                           sp);
     (void) fclose(sp);
 
@@ -215,19 +215,19 @@ main(int argc, char * argv[] )
     (void) fwrite((char *) &npln, sizeof(int), 1, sp);
     (void) fwrite((char *) &nrow, sizeof(int), 1, sp);
     (void) fwrite((char *) &ncol, sizeof(int), 1, sp);
-    (void) fwrite((char *) &ezero, sizeof(float32), 1, sp);
-    (void) fwrite((char *) &ezero, sizeof(float32), 1, sp);
+    (void) fwrite((char *) &ezero, sizeof(float), 1, sp);
+    (void) fwrite((char *) &ezero, sizeof(float), 1, sp);
     for (k = 0; k < npln; k++)
-        (void) fwrite((char *) &pln4[k], sizeof(float32), 1, sp);
+        (void) fwrite((char *) &pln4[k], sizeof(float), 1, sp);
     for (i = 0; i < nrow; i++)
-        (void) fwrite((char *) &row4[i], sizeof(float32), 1, sp);
+        (void) fwrite((char *) &row4[i], sizeof(float), 1, sp);
     for (j = 0; j < ncol; j++)
-        (void) fwrite((char *) &col4[j], sizeof(float32), 1, sp);
+        (void) fwrite((char *) &col4[j], sizeof(float), 1, sp);
     for (k = 0; k < npln; k++)
         for (i = 0; i < nrow; i++)
             for (j = 0; j < ncol; j++)
                 (void) fwrite((char *) &b32r3[k][i][j],
-                              sizeof(float32), 1, sp);
+                              sizeof(float), 1, sp);
     (void) fclose(sp);
 
     /*

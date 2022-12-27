@@ -47,12 +47,12 @@ typedef struct
       char       *cf;           /* color format */
       int32       xpos;         /* X position of image on screen */
       int32       ypos;         /* Y position of image on screen */
-      float32     aspectratio;  /* ratio of pixel height to width */
-      float32     ccngamma;     /* gamma color correction parameters */
-      float32     ccnred[3];    /* red color correction parameters */
-      float32     ccngrren[3];  /* green color correction parameters */
-      float32     ccnblue[3];   /* blue color correction parameters */
-      float32     ccnwhite[3];  /* white color correction parameters */
+      float     aspectratio;  /* ratio of pixel height to width */
+      float     ccngamma;     /* gamma color correction parameters */
+      float     ccnred[3];    /* red color correction parameters */
+      float     ccngrren[3];  /* green color correction parameters */
+      float     ccnblue[3];   /* blue color correction parameters */
+      float     ccnwhite[3];  /* white color correction parameters */
       DFdi        image;        /* image */
       DFRdr       descimage;    /* image data description */
       DFdi        lut;          /* color look-up table (palette) */

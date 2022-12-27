@@ -6204,7 +6204,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
               *((int32 *)p) = FILL_LONG;
               break;
           case DFNT_FLOAT32:
-              *((float32 *)p) = FILL_FLOAT;
+              *((float *)p) = FILL_FLOAT;
               break;
           case DFNT_FLOAT64:
               *((float64 *)p) = FILL_DOUBLE;

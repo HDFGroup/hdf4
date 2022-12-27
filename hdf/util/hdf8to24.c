@@ -195,7 +195,7 @@ main(int argc, char *argv[])
     intn        do_jpeg = FALSE;    /* flag to indicate JPEG compression */
     intn        jpeg_qual = 75; /* JPEG quality factor */
     intn        do_scale = FALSE;   /* flag to indicate whether to scale images */
-    float32     img_scale = (float32) 1.0;  /* scaling factor */
+    float     img_scale = (float) 1.0;  /* scaling factor */
     int32       xdim, ydim;     /* dimensions of the image to convert */
     intn        ispal;          /* whether there's a palette with the image */
     uint8      *img_buf;        /* buffer to store the image in */
@@ -217,7 +217,7 @@ main(int argc, char *argv[])
                 switch (argv[file][1])
                   {
                       case 's':
-                          if ((img_scale = (float32) atof(&argv[file][2])) <= (float32)0.0)
+                          if ((img_scale = (float) atof(&argv[file][2])) <= (float)0.0)
                             {   /* check for valid scale */
                                 printf("Bad scale, must be greater than 0\n");
                                 return (1);
@@ -280,8 +280,8 @@ main(int argc, char *argv[])
           uint8      *scaled_image;     /* storage for the scaled image */
           int32       new_xdim, new_ydim;   /* the new image's x and y dim. */
 
-          new_xdim = (int32) (img_scale * (float32)xdim);    /* calc. new image's dimensions */
-          new_ydim = (int32) (img_scale * (float32)ydim);
+          new_xdim = (int32) (img_scale * (float)xdim);    /* calc. new image's dimensions */
+          new_ydim = (int32) (img_scale * (float)ydim);
           if ((scaled_image = (uint8 *) HDmalloc((size_t)(new_xdim * new_ydim))) == NULL)
             {
                 printf("Error, cannot allocate space for %dx%d scaled image\n", (int)new_xdim, (int)new_ydim);

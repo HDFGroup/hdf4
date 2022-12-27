@@ -36,7 +36,7 @@ main()
 	    size, data_type, 	/* dimension's size and data type */
 	    nattrs;		/* number of attributes */
     char    dim_name[20];
-    float32 in2_data[X_LENGTH][Y_LENGTH]={ /* input for 2-dim SDS */
+    float in2_data[X_LENGTH][Y_LENGTH]={ /* input for 2-dim SDS */
                                  100.0,100.0,200.0,200.0,300.0,400.0,
                                  100.0,100.0,200.0,200.0,300.0,400.0,
                                  100.0,100.0,200.0,200.0,300.0,400.0,
@@ -46,7 +46,7 @@ main()
                                    0.0,  0.0,600.0,600.0,300.0,400.0,
                                  500.0,500.0,600.0,600.0,300.0,400.0,
                                    0.0,  0.0,600.0,600.0,300.0,400.0};
-    float32 in3_data[X_LENGTH][Y_LENGTH][Z_LENGTH]={ /* input for 3-dim SDS */
+    float in3_data[X_LENGTH][Y_LENGTH][Z_LENGTH]={ /* input for 3-dim SDS */
                                  100.0,100.0,200.0,200.0,300.0,400.0,
                                  100.0,100.0,200.0,200.0,300.0,400.0,
                                  100.0,100.0,200.0,200.0,300.0,400.0,

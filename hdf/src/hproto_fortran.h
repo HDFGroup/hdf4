@@ -727,15 +727,15 @@ extern      "C"
 #   define nduif2i       H4_F77_FUNC(duif2i, DUIF2I)
 
     HDFFCLIBAPI      FRETVAL(int) nduif2i
-                (int32  * hdim, int32  * vdim, float32  * max,
-        float32  * min, float32  hscale[], float32  vscale[],
-                 float32  data[], _fcd palette, _fcd outfile,
+                (int32  * hdim, int32  * vdim, float  * max,
+        float  * min, float  hscale[], float  vscale[],
+                 float  data[], _fcd palette, _fcd outfile,
               int  * ct_method, int32  * hres, int32  * vres,
                  int  * compress, int  * lenfn);
 
     HDFFCLIBAPI int  DFUfptoimage
-                (int32 hdim, int32 vdim, float32 max, float32 min,
-       float32  * hscale, float32  * vscale, float32  * data,
+                (int32 hdim, int32 vdim, float max, float min,
+       float  * hscale, float  * vscale, float  * data,
                  uint8  * palette, char  * outfile, int ct_method,
                  int32 hres, int32 vres, int compress);
 
@@ -1683,8 +1683,8 @@ nmgifndat(intf * riid, _fcd name, intf *nlen);
 #   define nduif2i       H4_F77_FUNC(duif2i, DUIF2I)
 
     HDFFCLIBAPI   FRETVAL(int) nduif2i
-             (int32 *hdim, int32 *vdim, float32 *max, float32 *min, float32 hscale[],
-              float32 vscale[], float32 data[], _fcd palette, _fcd outfile,
+             (int32 *hdim, int32 *vdim, float *max, float *min, float hscale[],
+              float vscale[], float data[], _fcd palette, _fcd outfile,
               int *ct_method, int32 *hres, int32 *vres, int *compress, int *lenfn);
 
 

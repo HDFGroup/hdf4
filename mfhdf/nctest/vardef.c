@@ -28,7 +28,7 @@
 #define LEN_OF(array) ((sizeof array) / (sizeof array[0]))
 #ifdef HDF
 #define  EPS64          ((float64)1.0E-14)
-#define  EPS32          ((float32)1.0E-7)
+#define  EPS32          ((float)1.0E-7)
 #endif
 
 /*

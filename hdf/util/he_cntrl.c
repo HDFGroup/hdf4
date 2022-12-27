@@ -539,8 +539,8 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
 
           case 'f':
               {
-                  float32 *fdata;
-                  fdata = (float32 *) HDmalloc(length / 4 * sizeof(float32));
+                  float *fdata;
+                  fdata = (float *) HDmalloc(length / 4 * sizeof(float));
 
                   DFKconvert((VOIDP) (data + offset), (VOIDP) fdata, DFNT_FLOAT32 | raw_flag,
                              length / 4, DFACC_READ, 0, 0);

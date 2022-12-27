@@ -96,7 +96,7 @@ main(int argc, char *argv[])
     int16   sdata[100], outdata[100];
     int32   ndg_saved_ref;  /* used to save a ref of an SDS in one of the test */
     uint8   iuval;
-    float32 data[1000], max, min, imax, imin;
+    float data[1000], max, min, imax, imin;
     float64 cal, cale, ioff, ioffe;
     int     num_errs = 0;    /* number of errors so far */
 
@@ -242,7 +242,7 @@ main(int argc, char *argv[])
       }
 
     /* hmm...lets store an attribute here for the dimension */
-    max = (float32)3.1415;
+    max = (float)3.1415;
     status = SDsetattr(dimid, "DimAttr", DFNT_FLOAT32, 1, (VOIDP) &max);
     CHECK(status, FAIL, "SDsetattr");
 
@@ -381,7 +381,7 @@ main(int argc, char *argv[])
 
     /* initialize array to write out */
     for(i = 0; i < 10; i++)
-        data[i] = (float32) i;
+        data[i] = (float) i;
 
     /* write out (1,1)->(3,3) array out */
     start[0] = start[1] = 1;
@@ -390,8 +390,8 @@ main(int argc, char *argv[])
     CHECK(status, FAIL, "SDwritedata");
 
     /* set the range for data set 'DataSetAlpha' */
-    max = (float32)10.0;
-    min = (float32)4.6;
+    max = (float)10.0;
+    min = (float)4.6;
     status = SDsetrange(newsds, (VOIDP) &max, (VOIDP) &min);
     CHECK(status, FAIL, "SDsetrange");
 

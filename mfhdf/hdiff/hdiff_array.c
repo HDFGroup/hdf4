@@ -121,8 +121,8 @@ uint32 array_diff(void *buf1,
                   int rank,
                   int32 *dims,
                   int32 type,
-                  float32 err_limit,
-                  float32 err_rel,
+                  float err_limit,
+                  float err_rel,
                   uint32 max_err_cnt,
                   int32 statistics,
                   void *fill1,
@@ -134,14 +134,14 @@ uint32 array_diff(void *buf1,
  int8    *i1ptr1, *i1ptr2;
  int16   *i2ptr1, *i2ptr2;
  int32   *i4ptr1, *i4ptr2;
- float32 *fptr1, *fptr2;
+ float *fptr1, *fptr2;
  float64 *dptr1, *dptr2;
  float64 d_diff, d_avg_diff = 0., d_max_diff = 0.;
  float64 d_max_val1=0, d_min_val1=0, d_max_val2=0, d_min_val2=0;
  float64 d_val1, d_val2;
  float64 d_sumx = 0., d_sumy = 0., d_sumx2 = 0., d_sumy2 = 0., d_sumxy=0.;
  float64 slope, intercept, correlation;
- float32 f_diff;
+ float f_diff;
  int32   i4_diff, i4_max_diff = 0;
  int32   i4_max_val1=0, i4_min_val1=0, i4_max_val2=0, i4_min_val2=0;
  int16   i2_diff;
@@ -501,13 +501,13 @@ uint32 array_diff(void *buf1,
 
 
  case DFNT_FLOAT:
-  fptr1 = (float32 *) buf1;
-  fptr2 = (float32 *) buf2;
+  fptr1 = (float *) buf1;
+  fptr2 = (float *) buf2;
   for (i=0; i<tot_cnt; i++)
   {
-   f_diff = (float32)fabs(*fptr1 - *fptr2);
-   is_fill1 = fill1 && (*fptr1 == *((float32 *)fill1));
-   is_fill2 = fill2 && (*fptr2 == *((float32 *)fill2));
+   f_diff = (float)fabs(*fptr1 - *fptr2);
+   is_fill1 = fill1 && (*fptr1 == *((float *)fill1));
+   is_fill2 = fill2 && (*fptr2 == *((float *)fill2));
    if (debug) {
     fprintf(fp, "%d %d %f %f\n", is_fill1, is_fill2, *fptr1, *fptr2);
    }

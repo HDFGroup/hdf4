@@ -409,8 +409,8 @@ static intn test_nonspecial_SDSs() {
         }
 
         /* Allocate buffers for SDS' data */
-        readfbuf = (float32 *) HDmalloc(sds2_info.n_values * sizeof(float32));
-        readfbuf_swapped = (float32 *) HDmalloc(sds2_info.n_values * sizeof(float32));
+        readfbuf = (float *) HDmalloc(sds2_info.n_values * sizeof(float));
+        readfbuf_swapped = (float *) HDmalloc(sds2_info.n_values * sizeof(float));
         /* Read in this block of data */
         readlen = read(fd, (VOIDP) readfbuf, (size_t) sds2_info.lengths[0]);
         CHECK(readlen, FAIL, "DFKconvert");
