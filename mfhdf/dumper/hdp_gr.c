@@ -24,7 +24,7 @@
 #define  N_ENTRIES      256     /* number of elements of each color */
 
 void dumpgr_usage(intn  argc, char *argv[]);
-int32 get_RIindex_list(int32 gr_id, dump_info_t *dumpgr_opts,
+int32 get_RIindex_list(int32 gr_id, dump_info_t *dumpgr_opts, 
 			int32 **gr_chosen, intn *index_error);
 intn print_PaletteInfo(int32 ri_id, int32 num_pals, FILE *fp);
 intn print_Palette(int32 ri_id, int32 num_pals, FILE *fp, dump_info_t *dumpgr_opts);
@@ -40,8 +40,6 @@ intn dgr(dump_info_t *dumpgr_opts, intn curr_arg, intn argc, char *argv[]);
 
 void dumpgr_usage(intn  argc, char *argv[])
 {
-    (void)argc;
-
     printf("Usage:\n");
     printf("%s dumpgr [-a|-i <indices>|-r <refs>|-n <names>] [-m <interlace>] [-dhvcs] [-p|-pd] [-o <filename>] [-bx] <filelist>\n", argv[0]);
     printf("\t-a\tDump all RIs in the file (default)\n");
@@ -53,8 +51,8 @@ void dumpgr_usage(intn  argc, char *argv[])
     printf("\t-h\tDump header only, no data - exclusive with -p and -pd\n");
     printf("\t-v\tDump everything including all annotations (default)\n");
     printf("\t-c\tPrint space characters as they are, not \\digit\n");
-    printf("\t-g\tDo not print data of file (global) attributes\n");
-    printf("\t-l\tDo not print data of local attributes\n");
+    printf("\t-g\tDo not print data of file (global) attributes\n"); 
+    printf("\t-l\tDo not print data of local attributes\n"); 
     printf("\t-s\tDo not add carriage return to a long line - dump it as a stream\n");
     printf("\t-p\tDump palette's information and data - exclusive with -h\n");
     printf("\t-pd\tDump palette's data only - exclusive with -h\n");
@@ -63,10 +61,10 @@ void dumpgr_usage(intn  argc, char *argv[])
     printf("\t-x\tAscii text format of output (default)\n");
     printf("\t<filelist>\tList of hdf file names, separated by spaces\n");
 }       /* end list_usage() */
-intn
-parse_dumpgr_opts(dump_info_t *dumpgr_opts,
-                  intn        *curr_arg,
-                  intn         argc,
+intn 
+parse_dumpgr_opts(dump_info_t *dumpgr_opts, 
+                  intn        *curr_arg, 
+                  intn         argc, 
                   char        *argv[] )
 {
    gr_interlace_t user_interlace; /* temporary store user's interlace mode */
@@ -89,7 +87,7 @@ parse_dumpgr_opts(dump_info_t *dumpgr_opts,
              dumpgr_opts->num_chosen = NO_SPECIFIC;
              (*curr_arg)++;
              break;
-
+            
          case 'i':	/* dump by index */
              dumpgr_opts->filter |= DINDEX;  /* set bit DINDEX */
              (*curr_arg)++;
@@ -120,8 +118,8 @@ parse_dumpgr_opts(dump_info_t *dumpgr_opts,
          case 'm':	/* dump data in different interlace than at creation */
              (*curr_arg)++;  /* move forward to interlace option input */
              user_interlace = atoi( argv[*curr_arg] );
-	     if( user_interlace == MFGR_INTERLACE_PIXEL ||
-		 user_interlace == MFGR_INTERLACE_LINE ||
+	     if( user_interlace == MFGR_INTERLACE_PIXEL || 
+		 user_interlace == MFGR_INTERLACE_LINE || 
 		 user_interlace == MFGR_INTERLACE_COMPONENT )
 		dumpgr_opts->interlace = user_interlace; /* store interlace */
 	     else
@@ -154,12 +152,12 @@ parse_dumpgr_opts(dump_info_t *dumpgr_opts,
          case 's':      /* do not add carriage returns to output data lines */
              dumpgr_opts->as_stream = TRUE;
              (*curr_arg)++;
-             break;
+             break; 
 
          case 'c':      /* print space characters as they are, not \\digit */
              dumpgr_opts->clean_output = TRUE;
              (*curr_arg)++;
-             break;
+             break; 
 
          case 'g':      /* suppress file (global) attr data, print its header */
                 dumpgr_opts->no_gattr_data = TRUE;
@@ -211,7 +209,7 @@ parse_dumpgr_opts(dump_info_t *dumpgr_opts,
 	     HGOTO_DONE( FAIL );
          }   /* end switch */
       }	 /* end while */
-
+   
    /* add the number of images requested by index, by ref#, and by name
       to have a total number of requested images */
    dumpgr_opts->num_chosen = dumpgr_opts->by_index.num_items +
@@ -231,12 +229,12 @@ done:
    return ret_value;
 }	/* end parse_dumpgr_opts */
 
-intn grdumpfull(int32        ri_id,
+intn grdumpfull(int32        ri_id, 
            dump_info_t  *dumpgr_opts,
-           int32        ncomps,	/* "ncomps" is the number of components
+           int32        ncomps,	/* "ncomps" is the number of components 
                                    in each element of the data set */
            int32        dimsizes[], /*  size of dimension "i". */
-           int32        nt,
+           int32        nt, 
            FILE        *fp)
 {
    VOIDP  buf = NULL;
@@ -251,10 +249,10 @@ intn grdumpfull(int32        ri_id,
    /* Compute the number of the bytes for each value. */
    numtype = nt & DFNT_MASK;
    eltsz = DFKNTsize(numtype | DFNT_NATIVE)*ncomps;
-
+    
    read_nelts = dimsizes[0]*dimsizes[1];
 
-   /* make sure we are not allocating 0 elements, ie. number of
+   /* make sure we are not allocating 0 elements, ie. number of 
       elements is positive */
    CHECK_POS( read_nelts, "read_nelts", "grdumpfull" );
    CHECK_POS( eltsz, "eltsz", "grdumpfull" );
@@ -277,9 +275,9 @@ intn grdumpfull(int32        ri_id,
    edge[1]=dimsizes[1];
    stride[0]=1;
    stride[1]=1;
-
-   /* if the user requests that the data is printed in a different
-      interlace mode from that at the creation of the image, set the
+ 
+   /* if the user requests that the data is printed in a different 
+      interlace mode from that at the creation of the image, set the 
       interlace mode of the image to be stored in memory when read */
    if( dumpgr_opts->interlace != NO_SPECIFIC )
    {
@@ -297,7 +295,7 @@ intn grdumpfull(int32        ri_id,
    /* if printing data only, print with no indentation */
    if( dumpgr_opts->contents == DDATA )
       status = dumpfull( nt, dumpgr_opts, read_nelts*ncomps, buf, fp, 0, 0);
-   else
+   else 
       status = dumpfull( nt, dumpgr_opts, read_nelts*ncomps, buf, fp,
 				DATA_INDENT, DATA_CONT_INDENT );
    if( status == FAIL )
@@ -330,7 +328,7 @@ done:
    If there are any errors, the parameter index_error will return TRUE */
 int32 get_RIindex_list(
 	int32 gr_id,
-	dump_info_t *dumpgr_opts,
+	dump_info_t *dumpgr_opts, 
 	int32 **gr_chosen,/* array of indices of RIs to be processed */
 	intn *index_error )
 {
@@ -338,15 +336,15 @@ int32 get_RIindex_list(
             ri_count = 0;  /* number of RIs to be processed */
    filter_t filter = dumpgr_opts->filter; /* temporary name */
    int32    num_ri_chosen = dumpgr_opts->num_chosen;
-   intn     i,
+   intn     i, 
             ret_value = 0;
 
-   /* if no specific images are requested, return the image count as
+   /* if no specific images are requested, return the image count as 
       NO_SPECIFIC (-1) to indicate that all images are to be dumped */
    if( filter == DALL )
       HGOTO_DONE( NO_SPECIFIC );
 
-   /* if specific images were requested, allocate space for the array
+   /* if specific images were requested, allocate space for the array 
       of indices */
    if (num_ri_chosen > 0)
       alloc_index_list( gr_chosen, num_ri_chosen );
@@ -361,7 +359,7 @@ int32 get_RIindex_list(
    if( filter & DINDEX )
       for (i = 0; i < dumpgr_opts->by_index.num_items; i++)
       {
-         /* Note: Don't replace this with HDmemcpy unless you change the
+         /* Note: Don't replace this with HDmemcpy unless you change the 
             sizes of the objects correctly -QAK */
          (*gr_chosen)[ri_count] = dumpgr_opts->by_index.num_list[i];
          ri_count++;
@@ -369,23 +367,23 @@ int32 get_RIindex_list(
 
    /* if there are some images requested by ref#, convert the ref#s
       to indices and store them in the array gr_chosen */
-   if( filter & DREFNUM )
+   if( filter & DREFNUM ) 
       for (i = 0; i < dumpgr_opts->by_ref.num_items; i++)
       {
          index = GRreftoindex(gr_id, (uint16)dumpgr_opts->by_ref.num_list[i]);
-
+                
          if (index == FAIL)
          {
-            printf("Image with reference number %d: not found\n",
+            printf("Image with reference number %d: not found\n", 
 				(int)dumpgr_opts->by_ref.num_list[i]);
-            *index_error = TRUE;
+            *index_error = TRUE;     
          }
          else
          {
             (*gr_chosen)[ri_count] = index;
             ri_count++;
          }
-      }
+      }             
 
    /* if there are some images requested by name, convert the names to
       indices and store them in the array gr_chosen */
@@ -418,7 +416,7 @@ done:
 
 /* prints all GR file attributes in the current file */
 intn
-print_GRattrs(
+print_GRattrs( 
 	int32 gr_id,
 	int32 n_file_attrs,
 	FILE *fp,
@@ -441,13 +439,13 @@ print_GRattrs(
       /* get the current attr's name, number type, and number of values */
       status = GRattrinfo(gr_id, attr_index, attr_name, &attr_nt, &attr_count);
       if (FAIL == status ) /* to the next attribute */
-         ERROR_CONT_2( "in %s: GRattrinfo failed for %d'th attribute",
+         ERROR_CONT_2( "in %s: GRattrinfo failed for %d'th attribute", 
 			"print_GRattrs", (int)attr_index );
 
       /* get number type description of the attribute */
       attr_nt_desc = HDgetNTdesc(attr_nt);
       if (NULL == attr_nt_desc)
-         ERROR_CONT_2( "in %s: HDgetNTdesc failed for %d'th attribute",
+         ERROR_CONT_2( "in %s: HDgetNTdesc failed for %d'th attribute", 
 		"print_GRattr", (int)attr_index );
 
       /* print a title line for file attributes if it's not printed
@@ -460,9 +458,9 @@ print_GRattrs(
 
       /* display the attribute's information then free buffer */
       fprintf(fp, "\t Attr%d: Name = %s\n", (int) attr_index, attr_name);
-      fprintf(fp, "\t\t Type = %s \n\t\t Count= %d\n",
+      fprintf(fp, "\t\t Type = %s \n\t\t Count= %d\n", 
 			attr_nt_desc, (int) attr_count);
-      resetBuff(( VOIDP *) &attr_nt_desc );
+      resetBuff(( VOIDP *) &attr_nt_desc ); 
 
       /* display the attribute's values unless user chose to suppress them */
       if( dumpgr_opts->no_gattr_data == FALSE )
@@ -485,7 +483,7 @@ print_GRattrs(
          /* read the values of the attribute into the buffer */
          status = GRgetattr( gr_id, attr_index, attr_buf );
          if (status == FAIL)
-            ERROR_CONT_2( "in %s: GRgetattr failed for %d'th attribute",
+            ERROR_CONT_2( "in %s: GRgetattr failed for %d'th attribute", 
 		"print_GRattr", (int)attr_index );
 
          /* display the attribute's values */
@@ -518,7 +516,7 @@ print_GRattrs(
 } /* end of print_GRattrs */
 
 intn
-print_RIattrs(
+print_RIattrs( 
 	int32 ri_id,
 	intn ri_index,
 	int32 nattrs,
@@ -541,13 +539,13 @@ print_RIattrs(
       /* get the current attr's name, number type, and number of values */
       status = GRattrinfo(ri_id, attr_index, attr_name, &attr_nt, &attr_count);
       if (FAIL == status) /* go to next attribute */
-         ERROR_CONT_3( "in %s: GRattrinfo failed for %d'th attribute of %d'th RI",
+         ERROR_CONT_3( "in %s: GRattrinfo failed for %d'th attribute of %d'th RI", 
 			"print_RIattrs", (int)attr_index, (int)ri_index );
 
       /* get number type description of the attribute */
       attr_nt_desc = HDgetNTdesc(attr_nt);
       if (NULL == attr_nt_desc)  /* go to the next attribute */
-         ERROR_CONT_3( "in %s: HDgetNTdesc failed for %d'th attribute of %d'th RI",
+         ERROR_CONT_3( "in %s: HDgetNTdesc failed for %d'th attribute of %d'th RI", 
 			"print_RIattrs", (int)attr_index, (int)ri_index );
 
       /* display the attribute's information then free buffer */
@@ -564,7 +562,7 @@ print_RIattrs(
             have to break the current loop and continue to the next item */
          resetBuff( &attr_buf );
 
-         /* calculate the buffer size of the attribute using the number of
+         /* calculate the buffer size of the attribute using the number of 
             values in the attribute and its value size */
          attr_buf_size = DFKNTsize(attr_nt) * attr_count;
 
@@ -578,7 +576,7 @@ print_RIattrs(
          /* read the values of the attribute into buffer attr_buf */
          status = GRgetattr( ri_id, attr_index, attr_buf );
          if (status == FAIL)  /* go to the next attribute */
-            ERROR_CONT_3( "in %s: GRgetattr failed for %d'th attribute of %d'th RI",
+            ERROR_CONT_3( "in %s: GRgetattr failed for %d'th attribute of %d'th RI", 
 			"print_RIattrs", (int)attr_index, (int)ri_index );
 
          /* display the attribute's values then free buffer */
@@ -591,7 +589,7 @@ print_RIattrs(
          {
             status = dumpclean(attr_nt, dumpgr_opts, attr_count, attr_buf, fp);
             if( status == FAIL )
-               ERROR_CONT_3( "in %s: dumpclean failed for %d'th attribute of %d'th RI",
+               ERROR_CONT_3( "in %s: dumpclean failed for %d'th attribute of %d'th RI", 
 			"print_RIattrs", (int)attr_index, (int)ri_index );
          }
          else  /* show tab, lf, null char... in octal as \011, \012, \000... */
@@ -599,7 +597,7 @@ print_RIattrs(
             status = dumpfull(attr_nt, dumpgr_opts, attr_count, attr_buf, fp,
 			ATTR_INDENT, ATTR_CONT_INDENT );
             if( status == FAIL )
-               ERROR_CONT_3( "in %s: dumpfull failed for %d'th attribute of %d'th RI",
+               ERROR_CONT_3( "in %s: dumpfull failed for %d'th attribute of %d'th RI", 
 			"print_RIattrs", (int)attr_index, (int)ri_index );
          }
       }  /* end of if no local attributes */
@@ -676,7 +674,7 @@ done:
    if more values or colors are added to the model, these parameters
    must be checked to allocate sufficient space when reading a palette */
 intn print_Palette(
-	int32 ri_id,
+	int32 ri_id, 
 	int32 num_pals, /* number of palettes, currently only 1 */
 	FILE *fp,
 	dump_info_t *dumpgr_opts )
@@ -703,7 +701,7 @@ intn print_Palette(
       header-only and verbose (data+header) */
    if(num_pals==0) {
       if( dumpgr_opts->contents != DDATA )
-         fprintf( fp, "\n\t Raster Image Ref. = %d\n\t No palette data\n",
+         fprintf( fp, "\n\t Raster Image Ref. = %d\n\t No palette data\n", 
 			  (int)ri_ref);
    } /* end if */
    else {
@@ -723,13 +721,13 @@ intn print_Palette(
                             "print_Palette", (int)pal_index); }
 
          /* Obtain and display information about the palette. */
-         status = GRgetlutinfo (pal_id, &n_comps, &data_type,
+         status = GRgetlutinfo (pal_id, &n_comps, &data_type, 
 				&interlace_mode, &n_entries);
          if( status == FAIL ) /* continue to the next palette */
              ERROR_CONT_2( "in %s: GRgetlutinfo failed for palette #%d",
                            "print_Palette", (int)pal_index);
 
-         /* if there are palette data, print header info when not
+         /* if there are palette data, print header info when not 
              data-only and print palette data when not header-only */
 	 switch (dumpgr_opts->contents)
 	 {
@@ -737,22 +735,22 @@ intn print_Palette(
 	       is not allowed with -p or -pd */
 	    case DVERBOSE:
 		 fprintf (fp, "\n\t Raster Image Ref. = %d\n", (int)ri_ref);
-		 fprintf (fp, "\t Palette: %d components; %d entries\n",
+		 fprintf (fp, "\t Palette: %d components; %d entries\n", 
                          (int)n_comps, (int)n_entries);
 
-		 /* display the palette data with the title line and
+		 /* display the palette data with the title line and 
 		    indent the data with DATA_INDENT and DATA_CONT_INDENT */
 		 fprintf (fp, "\t Palette Data: \n");
 		 status = dumpfull(data_type, dumpgr_opts, n_entries*n_comps,
 		    	  palette_data, fp, DATA_INDENT, DATA_CONT_INDENT );
                  if( status == FAIL )
-                    ERROR_GOTO_2( "in %s: dumpfull failed for palette #%d",
+                    ERROR_GOTO_2( "in %s: dumpfull failed for palette #%d", 
 			     "print_Palette", (int)pal_index);
 		 break;
 
 	    case DDATA:
 		 /* print palette data with no title and indentation */
-		 status = dumpfull(data_type, dumpgr_opts,
+		 status = dumpfull(data_type, dumpgr_opts, 
 			  n_entries*n_comps, palette_data, fp, 0, 0 );
                  if( status == FAIL )
                     ERROR_GOTO_2( "in %s: dumpfull failed for palette #%d",
@@ -780,7 +778,7 @@ const char* Il_mode_text( gr_interlace_t interlace_mode )
 	   return("PIXEL");
 	case MFGR_INTERLACE_LINE:
 	   return("LINE");
-	case MFGR_INTERLACE_COMPONENT:
+	case MFGR_INTERLACE_COMPONENT: 
            return("COMPONENT");
 	default:
 	   return("INVALID");
@@ -800,13 +798,14 @@ intn print_grcomp_info(
 {
     comp_info c_info;                /* Compression structure */
     comp_coder_t comp_type = COMP_CODE_NONE;
+    int32 comp_size=0, orig_size=0;  /* compressed and original sizes */
     intn status = FAIL;	    /* returned status from a called function */
 
     /* Get compression info */
     HDmemset(&c_info, 0, sizeof(c_info));
     status = GRgetcompinfo(ri_id, &comp_type, &c_info);
 
-   /* if getting comp info succeeds, proceed to print out appropriate
+   /* if getting comp info succeeds, proceed to print out appropriate 
       compression information */
    if (status != FAIL)
    {
@@ -852,7 +851,7 @@ intn print_grcomp_info(
     return(status);
 } /* print_grcomp_info */
 
-intn printGR_ASCII(
+intn printGR_ASCII( 
 	int32 gr_id,
 	dump_info_t *dumpgr_opts,
 	int32 ndsets,        /* number of images in the file */
@@ -885,8 +884,8 @@ intn printGR_ASCII(
    else
       sort(gr_chosen, num_ri_chosen); /* otherwise, sort the list */
 
-   /* for each valid index, if the user requests to dump all images or
-      if there are more requested images to be processed, process the
+   /* for each valid index, if the user requests to dump all images or 
+      if there are more requested images to be processed, process the 
       indexed image */
    ri_count = 0;    /* no images has been processed yet */
    for (ri_index = 0; ri_index < ndsets /* validate index */
@@ -906,7 +905,7 @@ intn printGR_ASCII(
       /* get access to the current image */
       ri_id = GRselect(gr_id, ri_index);
       if (ri_id == FAIL) /* to the next image */
-         ERROR_CONT_2( "in %s: GRselect failed for %d'th RI",
+         ERROR_CONT_2( "in %s: GRselect failed for %d'th RI", 
 			"printGR_ASCII", (int)ri_index );
 
       /* get image's information */
@@ -952,7 +951,7 @@ intn printGR_ASCII(
                fprintf(fp, "\n\t Image  Name = %s\n\t Index = ", name);
                fprintf(fp, "%d\n\t Type= %s\n", (int)ri_index, nt_desc);
 
-               resetBuff(( VOIDP *) &nt_desc );
+               resetBuff(( VOIDP *) &nt_desc ); 
 
                /* get the image's ref# from its id */
                if ((ri_ref = GRidtoref(ri_id)) == FAIL)
@@ -965,7 +964,7 @@ intn printGR_ASCII(
                fprintf(fp, "\t ncomps = %d\n\t Interlace mode= %s\n",
 			(int) ncomps, Il_mode_text((gr_interlace_t)il) );
 
-	       /* print the palette info now so it won't be lost after the
+	       /* print the palette info now so it won't be lost after the 
 	          image data; currently, only 1 palette per image (2nd arg.) */
 	       status = print_PaletteInfo( ri_id, 1, fp );
                if( status == FAIL )
@@ -1008,14 +1007,14 @@ intn printGR_ASCII(
       } /* end if when neither -p nor -pd given */
 
       /* end access to the current image */
-      if (FAIL == GRendaccess(ri_id))
+      if (FAIL == GRendaccess(ri_id))    
          fprintf(stderr,"in %s: GRendaccess failed for %d'th RI",
 			"printGR_ASCII", (int)ri_index );
       ri_id = FAIL;  /* reset image id */
    }	/* for ndsets  */
 
    /* Normal cleanup */
-   resetBuff(( VOIDP *) &nt_desc );
+   resetBuff(( VOIDP *) &nt_desc ); 
 
    return ret_value; /* status of calls */
 } /* end of printGR_ASCII */
@@ -1076,7 +1075,7 @@ intn printGR_BINARY(
       /* get access to the current image */
       ri_id = GRselect(gr_id, ri_index);
       if (ri_id == FAIL) /* to the next image */
-         ERROR_CONT_2( "in %s: GRselect failed for %d'th RI",
+         ERROR_CONT_2( "in %s: GRselect failed for %d'th RI", 
 			"printGR_BINARY", (int)ri_index );
 
       /* get image's information */
@@ -1087,7 +1086,7 @@ intn printGR_BINARY(
 			"printGR_BINARY", (int)ri_index );
 
 	 /* end access to the current image before going to the next one */
-         if( GRendaccess(ri_id) == FAIL )
+         if( GRendaccess(ri_id) == FAIL )    
             fprintf( stderr, "in %s: GRendaccess failed for %d'th RI",
 			"printGR_BINARY", (int)ri_index );
          ri_id = FAIL;  /* reset image id */
@@ -1128,7 +1127,7 @@ intn printGR_BINARY(
    of numbers, and resetting all ids after validating the ids first.
    When either GRend or Hclose fails, closeGR prints an informative
    message then resetting the ids as normal since these failures are
-   highly unlikely and since the files are opened as read-only, it's
+   highly unlikely and since the files are opened as read-only, it's 
    safe to go on. */
 void closeGR(int32 *file_id,     /* will be returned as a FAIL */
 	     int32 *gr_id,       /* will be returned as a FAIL */
@@ -1156,9 +1155,9 @@ void closeGR(int32 *file_id,     /* will be returned as a FAIL */
 
 } /* end of closeGR */
 
-intn dgr(dump_info_t *dumpgr_opts,
-	 intn         curr_arg,
-	 intn         argc,
+intn dgr(dump_info_t *dumpgr_opts, 
+	 intn         curr_arg, 
+	 intn         argc, 
 	 char        *argv[] )
 {
     int32 file_id = FAIL,	/* current hdf file id */
@@ -1190,10 +1189,10 @@ intn dgr(dump_info_t *dumpgr_opts,
 
       /* ensure that file_id, gr_id, and gr_chosen are all reset before
          using because sometimes we have to break out a cycle; this'll
-         help avoiding the chore at every one of those instances */
-      closeGR( &file_id, &gr_id, &gr_chosen );
+         help avoiding the chore at every one of those instances */ 
+      closeGR( &file_id, &gr_id, &gr_chosen ); 
 
-      /* Print an informative message and skip this file if it is not
+      /* Print an informative message and skip this file if it is not 
          an HDF file */
       isHDF = Hishdf(file_name);
       if (isHDF == FALSE)
@@ -1230,12 +1229,12 @@ intn dgr(dump_info_t *dumpgr_opts,
 
       /* if there are errors with the given indices, ref#s, or names of
          the requested images, and yields no valid images, then close the
-         interface and the input file, and move on to the next file */
+         interface and the input file, and move on to the next file */ 
       if (index_error && num_ri_chosen==0)
          continue;	/* to the next file */
 
       /* obtain number of images in the file and number of file attributes,
-         ndsets will be used to process the images, nglb_attrs will be
+         ndsets will be used to process the images, nglb_attrs will be 
          used to print file attributes */
       status = GRfileinfo(gr_id, &ndsets, &nglb_attrs);
       if (status == FAIL) /* to the next file */
@@ -1253,33 +1252,33 @@ intn dgr(dump_info_t *dumpgr_opts,
                fp = fopen( dumpgr_opts->file_name, "w");
                if( fp == NULL )
                {
-                  fprintf( stderr, "Unable to open output file %s\n",
+                  fprintf( stderr, "Unable to open output file %s\n", 
                            dumpgr_opts->file_name );
                   exit(1);          /* terminate hdp */
                }
             }
-            /* display the name and global attributes of the current file if
+            /* display the name and global attributes of the current file if 
                data only option is not selected */
             if (dumpgr_opts->contents != DDATA)
             {
                fprintf(fp, "File name: %s \n", file_name );
-
+         
                /* print GR file attributes */
                if( nglb_attrs > 0 )  /* save overhead */
-               {
+               { 
                   status = print_GRattrs( gr_id, nglb_attrs, fp, dumpgr_opts );
                   if( status == FAIL )
                      ERROR_BREAK_1( "in dgr: print_GRattrs failed for file %s",
                               file_name, FAIL );
-               }
+               } 
             }
             /* print RIs'data and information as requested */
             if( ndsets > 0 )
             {
-               status = printGR_ASCII( gr_id, dumpgr_opts, ndsets,
+               status = printGR_ASCII( gr_id, dumpgr_opts, ndsets, 
                                        gr_chosen, num_ri_chosen, fp );
                if( status == FAIL ) /* to the next file */
-                  ERROR_BREAK_1( "in dgr: printGR_ASCII failed for file %s",
+                  ERROR_BREAK_1( "in dgr: printGR_ASCII failed for file %s", 
                                     file_name, FAIL );
             }
             else
@@ -1295,25 +1294,25 @@ intn dgr(dump_info_t *dumpgr_opts,
                fp = fopen(dumpgr_opts->file_name, "wb");
                if( fp == NULL )
                {
-                  fprintf( stderr, "Unable to open output file %s\n",
+                  fprintf( stderr, "Unable to open output file %s\n", 
                            dumpgr_opts->file_name );
                   exit(1);          /* terminate hdp */
                }
             }
 
-            status = printGR_BINARY( gr_id, dumpgr_opts, num_ri_chosen, ndsets,
+            status = printGR_BINARY( gr_id, dumpgr_opts, num_ri_chosen, ndsets, 
                                gr_chosen, fp );
             if( status == FAIL )
-               ERROR_BREAK_1( "in dgr: printGR_BINARY failed for file %s",
+               ERROR_BREAK_1( "in dgr: printGR_BINARY failed for file %s", 
                                  file_name, FAIL );
             break; /* BINARY */
 
          default:
             printf("Output file type must be either ascii or binary only\n" );
          } /* switch for output format */
-
+                       
       /* cleaning up before going on to the next file */
-      closeGR( &file_id, &gr_id, &gr_chosen );
+      closeGR( &file_id, &gr_id, &gr_chosen ); 
    }  /* while more files to process */
 
    /* close output file only if option -o is given */
@@ -1330,9 +1329,9 @@ done:
     return ret_value;
 }	/* dgr */
 
-intn do_dumpgr(intn  curr_arg,
-               intn  argc,
-               char *argv[],
+intn do_dumpgr(intn  curr_arg, 
+               intn  argc, 
+               char *argv[], 
                intn  help)
 {
    dump_info_t dumpgr_opts;	/* dumpgr options */

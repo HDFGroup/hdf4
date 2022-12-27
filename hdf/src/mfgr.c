@@ -148,7 +148,7 @@ Chunking Functions:
      GRgetchunkinfo -- get Info on GR
      GRwritechunk   -- write the specified chunk to the GR
      GRreadchunk    -- read the specified chunk to the GR
-     GRsetchunkcache -- maximum number of chunks to cache
+     GRsetchunkcache -- maximum number of chunks to cache 
 
 LOCAL ROUTINES
 intn GRIil_convert(const void * inbuf,gr_interlace_t inil,void * outbuf,
@@ -286,7 +286,7 @@ VOID GRIattrdestroynode(void * n)
 
     HDfree(at_ptr);
 }   /* GRIattrdestroynode */
-
+       
 /*--------------------------------------------------------------------------
  NAME
     GRIridestroynode
@@ -322,7 +322,7 @@ VOID GRIridestroynode(void * n)
 
     HDfree(ri_ptr);
 }   /* GRIridestroynode */
-
+       
 /* -------------------------- Get_grfile ------------------------ */
 /*
    Looks in the TBBT gr_tree for the file ID of a file.
@@ -359,7 +359,7 @@ Get_grfile(HFILEID f)
   SPECIAL_COMPRAS
     or 0 if the element is not special element.
  DESCRIPTION
-    Called internally by the GRIget_image_list to allow a chunked or
+    Called internally by the GRIget_image_list to allow a chunked or 
     linked-block element to proceed eventhough its offset is 0.
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
@@ -428,7 +428,7 @@ PRIVATE gr_info_t *
 New_grfile(HFILEID f)
 {
     gr_info_t *g;
-
+    
     /* Allocate the gr_info_t structure */
     if (NULL == (g = (gr_info_t *) HDcalloc(1,sizeof(gr_info_t))))
       return(NULL);
@@ -633,12 +633,12 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
             int32 grp_tag,grp_ref;  /* a tag/ref in the Vgroup */
             int32 img_tag,img_ref;  /* image tag/ref in the Vgroup */
             char textbuf[VGNAMELENMAX + 1];    /* buffer to store the name in */
-
+                
             for(i=0; i<nobjs; i++)
             {
                 if(Vgettagref(gr_key,i,&grp_tag,&grp_ref)==FAIL)
                     continue;
-
+                      
                 switch(grp_tag)
                 {
                     case DFTAG_VG:  /* should be an image */
@@ -723,8 +723,8 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                                 } /* end if */
                                 HDstrcpy(new_attr->name,fname);
                             } /* end else */
-
-                            /* insert the attr instance in B-tree */
+                                                
+                            /* insert the attr instance in B-tree */ 
                             tbbtdins(gr_ptr->gattree, new_attr, NULL);
 
                             VSdetach(at_key);
@@ -757,7 +757,7 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
           while (DFdiget(group_id, &elt_tag, &elt_ref)!=FAIL)
             {   /* get next tag/ref */
                 if (elt_tag == DFTAG_CI || elt_tag == DFTAG_RI)
-                  {
+                  {   
                       if (elt_tag != DFTAG_NULL && elt_ref != DFREF_NONE) /* make certain we found an image */
                         {     /* store the information about the image */
                             Store_imginfo(&img_info[curr_image], DFTAG_RIG, find_ref, elt_tag, elt_ref);
@@ -977,8 +977,9 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                             case DFTAG_ID:    /* Image description info */
                             {
                                 uint8 *p = GRtbuf;
+                                at_info_t *new_attr;  /* attr to add to the local attr set */
                                 if (Hgetelement(file_id, (uint16)img_tag, (uint16)img_ref, GRtbuf) != FAIL)
-                                    Decode_diminfo(p, &(new_image->img_dim));
+				    Decode_diminfo(p, &(new_image->img_dim));
                                 else
                                     HGOTO_ERROR(DFE_READERROR, FAIL);
 
@@ -1057,8 +1058,8 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                                         } /* end if */
                                         HDstrcpy(new_attr->name,fname);
                                     } /* end else */
-
-                                    tbbtdins(new_image->lattree, new_attr, NULL);    /* insert the attr instance in B-tree */
+                                                
+                                    tbbtdins(new_image->lattree, new_attr, NULL);    /* insert the attr instance in B-tree */ 
 
                                     VSdetach(at_key);
                                 } /* end if */
@@ -1075,7 +1076,7 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
 
                       new_image->index=gr_ptr->gr_count;
                       new_image->gr_ptr=gr_ptr; /* point up the tree */
-                      tbbtdins(gr_ptr->grtree, new_image, NULL);    /* insert the new image into B-tree */
+                      tbbtdins(gr_ptr->grtree, new_image, NULL);    /* insert the new image into B-tree */ 
                       gr_ptr->gr_count++;
                       Vdetach(img_key);
                   } /* end if */
@@ -1172,7 +1173,7 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                             /* check for any valid NT */
                             if (ntstring[1] == DFNT_NONE)
                                 break;
-
+                                              
                             /* set NT info */
                             new_image->lut_dim.dim_ref = elt_ref;
                             new_image->lut_dim.nt = (int32)ntstring[1];
@@ -1235,7 +1236,7 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                   } /* end while */
                   new_image->index=gr_ptr->gr_count;
                   new_image->gr_ptr=gr_ptr; /* point up the tree */
-                  tbbtdins(gr_ptr->grtree, new_image, NULL);    /* insert the new image into B-tree */
+                  tbbtdins(gr_ptr->grtree, new_image, NULL);    /* insert the new image into B-tree */ 
                   gr_ptr->gr_count++;
               } /* end case DFTAG_RIG */
               break;
@@ -1309,7 +1310,7 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
 
                   new_image->index=gr_ptr->gr_count;
                   new_image->gr_ptr=gr_ptr; /* point up the tree */
-                  tbbtdins(gr_ptr->grtree, new_image, NULL);    /* insert the new image into B-tree */
+                  tbbtdins(gr_ptr->grtree, new_image, NULL);    /* insert the new image into B-tree */ 
                   gr_ptr->gr_count++;
               } /* end case DFTAG_NULL */
               break;
@@ -1323,7 +1324,7 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
     HDfree(img_info);   /* free image info structures */
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1494,7 +1495,7 @@ intn GRIil_convert(const void * inbuf,gr_interlace_t inil,void * outbuf,
       } /* end else */
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1606,7 +1607,7 @@ int32 GRstart(int32 hdf_file_id)
 
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1648,7 +1649,7 @@ intn GRfileinfo(int32 grid,int32 *n_datasets,int32 *n_attrs)
     /* check the validity of the GR ID */
     if (HAatom_group(grid)!=GRIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-
+    
     /* locate GR's object in hash table */
     if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(grid)))
         HGOTO_ERROR(DFE_GRNOTFOUND, FAIL);
@@ -1658,10 +1659,10 @@ intn GRfileinfo(int32 grid,int32 *n_datasets,int32 *n_attrs)
         *n_datasets=gr_ptr->gr_count;
     if(n_attrs!=NULL)
         *n_attrs=gr_ptr->gattr_count;
-
+        
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1711,7 +1712,7 @@ PRIVATE intn GRIupdatemeta(int32 hdf_file_id,ri_info_t *img_ptr)
         img_ptr->img_dim.nt_tag=DFTAG_NT;
     if(img_ptr->img_dim.nt_ref==DFREF_WILDCARD)
         img_ptr->img_dim.nt_ref=Htagnewref(hdf_file_id,img_ptr->img_dim.nt_tag);
-
+    
     /* Write out the raster image's number-type record */
     ntstring[0] = DFNT_VERSION;     /* version */
     ntstring[1] = (uint8)img_ptr->img_dim.nt;       /* type */
@@ -1720,7 +1721,7 @@ PRIVATE intn GRIupdatemeta(int32 hdf_file_id,ri_info_t *img_ptr)
     if (Hputelement(hdf_file_id, img_ptr->img_dim.nt_tag,
             img_ptr->img_dim.nt_ref, ntstring, (int32) 4) == FAIL)
         HGOTO_ERROR(DFE_PUTELEM, FAIL);
-
+    
     /* Check for a palette with this image */
     if(img_ptr->lut_ref!=DFREF_WILDCARD)
       {
@@ -1783,7 +1784,7 @@ PRIVATE intn GRIupdatemeta(int32 hdf_file_id,ri_info_t *img_ptr)
         HGOTO_ERROR(DFE_PUTELEM, FAIL);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1869,7 +1870,7 @@ PRIVATE intn GRIupdateRIG(int32 hdf_file_id,ri_info_t *img_ptr)
         HGOTO_ERROR(DFE_GROUPWRITE, FAIL);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1984,7 +1985,7 @@ PRIVATE intn GRIupdateRI(int32 hdf_file_id,ri_info_t *img_ptr)
         HGOTO_ERROR(DFE_CANTDETACH, FAIL);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2053,7 +2054,7 @@ PRIVATE intn GRIup_attr_data(int32 hdf_file_id,at_info_t *attr_ptr)
       } /* end else */
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2101,7 +2102,7 @@ intn GRend(int32 grid)
     /* check the validity of the GR ID */
     if (HAatom_group(grid)!=GRIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-
+    
     /* locate GR's object in hash table */
     if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(grid)))
         HGOTO_ERROR(DFE_GRNOTFOUND, FAIL);
@@ -2298,7 +2299,7 @@ intn GRend(int32 grid)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2343,7 +2344,7 @@ int32 GRselect(int32 grid,int32 index)
     /* check the validity of the GR ID */
     if (HAatom_group(grid)!=GRIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-
+    
     /* locate GR's object in hash table */
     if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(grid)))
         HGOTO_ERROR(DFE_GRNOTFOUND, FAIL);
@@ -2361,7 +2362,7 @@ int32 GRselect(int32 grid,int32 index)
     ret_value=HAregister_atom(RIIDGROUP,ri_ptr);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2414,11 +2415,11 @@ int32 GRcreate(int32 grid,const char *name,int32 ncomp,int32 nt,int32 il,int32 d
 
     /* check the validity of the args */
     if (HAatom_group(grid)!=GRIDGROUP || name==NULL || ncomp<1
-            || (il!=MFGR_INTERLACE_PIXEL && il!=MFGR_INTERLACE_LINE
-            && il!=MFGR_INTERLACE_COMPONENT) || dimsizes==NULL
+            || (il!=MFGR_INTERLACE_PIXEL && il!=MFGR_INTERLACE_LINE 
+            && il!=MFGR_INTERLACE_COMPONENT) || dimsizes==NULL 
             || dimsizes[0]<=0 || dimsizes[1]<=0)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-
+    
     /* locate GR's object in hash table */
     if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(grid)))
         HGOTO_ERROR(DFE_GRNOTFOUND, FAIL);
@@ -2427,7 +2428,7 @@ int32 GRcreate(int32 grid,const char *name,int32 ncomp,int32 nt,int32 il,int32 d
     if((ri_ptr=(ri_info_t *)HDmalloc(sizeof(ri_info_t)))==NULL)
         HGOTO_ERROR(DFE_NOSPACE,FAIL);
     HDmemset(ri_ptr,0,sizeof(ri_info_t));
-
+    
     /* Allocate space for the name and copy it */
     if((ri_ptr->name=(char *)HDmalloc(HDstrlen(name)+1))==NULL)
         HGOTO_ERROR(DFE_NOSPACE,FAIL);
@@ -2484,7 +2485,7 @@ int32 GRcreate(int32 grid,const char *name,int32 ncomp,int32 nt,int32 il,int32 d
     ri_ptr->access++;
 
     /* insert the new image in the global image tree */
-    tbbtdins(gr_ptr->grtree, ri_ptr, NULL);    /* insert the new image into B-tree */
+    tbbtdins(gr_ptr->grtree, ri_ptr, NULL);    /* insert the new image into B-tree */ 
 
     /* indicate that the GR info has changed */
     gr_ptr->gr_modified=TRUE;
@@ -2493,7 +2494,7 @@ int32 GRcreate(int32 grid,const char *name,int32 ncomp,int32 nt,int32 il,int32 d
     ret_value=HAregister_atom(RIIDGROUP,ri_ptr);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2537,7 +2538,7 @@ int32 GRnametoindex(int32 grid,const char *name)
     /* check the validity of the GR ID */
     if (HAatom_group(grid)!=GRIDGROUP || name==NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-
+    
     /* locate GR's object in hash table */
     if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(grid)))
         HGOTO_ERROR(DFE_GRNOTFOUND, FAIL);
@@ -2553,7 +2554,7 @@ int32 GRnametoindex(int32 grid,const char *name)
     ret_value = (FAIL);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2605,7 +2606,7 @@ intn GRgetiminfo(int32 riid,char *name,int32 *ncomp,int32 *nt,int32 *il,
     /* check the validity of the RI ID */
     if (HAatom_group(riid)!=RIIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-
+    
     /* locate RI's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
         HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
@@ -2632,7 +2633,7 @@ intn GRgetiminfo(int32 riid,char *name,int32 *ncomp,int32 *nt,int32 *il,
         *n_attr=ri_ptr->lattr_count;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2677,7 +2678,7 @@ intn GRgetnluts(int32 riid)
     /* check the validity of the RI ID */
     if (HAatom_group(riid)!=RIIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-
+    
     /* locate LUT's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
         HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
@@ -2688,7 +2689,7 @@ intn GRgetnluts(int32 riid)
         ret_value=1;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2736,6 +2737,7 @@ done:
 intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],void * data)
 {
     CONSTR(FUNC, "GRwriteimage");   /* for HERROR */
+    int32 hdf_file_id;          /* HDF file ID */
     int32 stride[2];            /* pointer to the stride array */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
@@ -2746,7 +2748,7 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],vo
         pixel_disk_size;        /* size of a pixel on disk */
     uint16 scheme;  /* compression scheme used for JPEG images */
     uint32     comp_config;
-    comp_coder_t comp_type;
+    comp_coder_t comp_type; 
     comp_info cinfo;
     intn status=FAIL;
     intn convert=FALSE;         /* true if machine NT != NT to be written */
@@ -2762,7 +2764,7 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],vo
     if (HAatom_group(riid)!=RIIDGROUP || start==NULL /* || in_stride==NULL */ || count==NULL
             || data==NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-
+    
     /* Get the correct parameters into the stride array */
     if(in_stride==NULL)
           stride[XDIM]=stride[YDIM]=1;
@@ -2781,6 +2783,7 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],vo
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
         HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
     gr_ptr=ri_ptr->gr_ptr;
+    hdf_file_id=gr_ptr->hdf_file_id;
 
     comp_type = COMP_CODE_NONE;
     scheme = ri_ptr->img_dim.comp_tag;
@@ -2810,11 +2813,11 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],vo
         HCget_config_info(comp_type, &comp_config);
         if ((comp_config & (COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED)) == 0) {
             /* coder not present?? */
-             HGOTO_ERROR(DFE_BADCODER,FAIL);
+             HGOTO_ERROR(DFE_BADCODER,FAIL); 
         }
         if ((comp_config & COMP_ENCODER_ENABLED) == 0) {
             /* encoder not present?? */
-             HGOTO_ERROR(DFE_NOENCODER,FAIL);
+             HGOTO_ERROR(DFE_NOENCODER,FAIL); 
         }
     }
 
@@ -2887,6 +2890,16 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],vo
 
     if(whole_image==TRUE)
       { /* write the whole image out */
+#ifdef OLD_WAY
+        if(new_image==TRUE)
+          { /* Create the tag/ref for the new image */
+              ri_ptr->img_tag=DFTAG_RI;
+              ri_ptr->img_ref=Htagnewref(hdf_file_id,ri_ptr->img_tag);
+          } /* end if */
+        if(Hputelement(hdf_file_id,ri_ptr->img_tag,ri_ptr->img_ref,
+                (uint8 *)img_data,(int32)pixel_disk_size*count[XDIM]*count[YDIM])==FAIL)
+            HGOTO_ERROR(DFE_PUTELEM,FAIL);
+#else /* OLD_WAY */
         /* Make certain we are at the beginning */
         if(Hseek(ri_ptr->img_aid,0,DF_START)==FAIL)
             HGOTO_ERROR(DFE_SEEKERROR,FAIL);
@@ -2895,6 +2908,7 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],vo
         if(Hwrite(ri_ptr->img_aid,(int32)pixel_disk_size*count[XDIM]*count[YDIM],
                 (uint8 *)img_data)==FAIL)
             HGOTO_ERROR(DFE_WRITEERROR,FAIL);
+#endif /* OLD_WAY */
       } /* end if */
     else
       { /* write only part of the image out */
@@ -2974,7 +2988,7 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],vo
                 intn i;           /* temporary loop variable */
 
                 pix_len=(int32)pixel_disk_size*count[XDIM];
-
+                  
                 if(fill_image==TRUE)
                   {   /* surround the block to write with fill values */
                       /* write out lines "below" the block */
@@ -3005,7 +3019,7 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],vo
                                     HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                             tmp_data=(void *)((char *)tmp_data+pix_len);
                         } /* end for */
-
+                        
                       /* Finish the last chunk of high side fill values */
                       if(fill_hi_size>0)
                           if(Hwrite(ri_ptr->img_aid,fill_hi_size,fill_line)==FAIL)
@@ -3138,7 +3152,7 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],vo
                         } /* end for */
                   } /* end else */
             } /* end else */
-
+            
           if(fill_line!=NULL)     /* free the fill-value pixels if we used 'em */
               HDfree(fill_line);
 
@@ -3154,7 +3168,7 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],vo
     gr_ptr->gr_modified=TRUE;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3215,7 +3229,7 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],voi
     uint8 platnumsubclass;      /* class of this NT for this platform */
     uint16 scheme;  /* compression scheme used for JPEG images */
     uint32     comp_config;
-    comp_coder_t comp_type;
+    comp_coder_t comp_type; 
     comp_info cinfo;
     intn status=FAIL;
     intn  ret_value = SUCCEED;
@@ -3227,7 +3241,7 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],voi
     if (HAatom_group(riid)!=RIIDGROUP || start==NULL /* || in_stride==NULL */ || count==NULL
             || data==NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-
+    
     /* Get the correct parameters into the stride array */
     if(in_stride==NULL)
           stride[XDIM]=stride[YDIM]=1;
@@ -3278,11 +3292,11 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],voi
 	HCget_config_info(comp_type, &comp_config);
 	if ((comp_config & (COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED)) == 0)
 	{ /* coder not present?? */
-	    HGOTO_ERROR(DFE_BADCODER,FAIL);
+	    HGOTO_ERROR(DFE_BADCODER,FAIL); 
 	}
 	if ((comp_config & COMP_DECODER_ENABLED) == 0)
 	{ /* decoder not present?? */
-	    HGOTO_ERROR(DFE_NOENCODER,FAIL);
+	    HGOTO_ERROR(DFE_NOENCODER,FAIL); 
 	}
     }
     if(stride[XDIM]==1 && stride[YDIM]==1)
@@ -3388,7 +3402,7 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],voi
                       intn i;           /* temporary loop variable */
 
                       pix_len=(int32)pixel_disk_size*count[XDIM];
-
+                        
                       /* read in the block */
                       for(i=0; i<count[YDIM]; i++)
                         {
@@ -3426,7 +3440,7 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],voi
                         } /* end for */
                   } /* end else */
             } /* end else */
-
+                  
           if(convert)
             { /* convert the pixel data into the HDF disk format */
               DFKconvert(img_data,data,ri_ptr->img_dim.nt,
@@ -3456,7 +3470,7 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],voi
         } /* end if */
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3500,7 +3514,7 @@ intn GRendaccess(int32 riid)
     /* check the validity of the RI ID */
     if (HAatom_group(riid)!=RIIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-
+    
     /* locate RI's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
         HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
@@ -3536,7 +3550,7 @@ intn GRendaccess(int32 riid)
         HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3579,7 +3593,7 @@ uint16 GRidtoref(int32 riid)
     /* check the validity of the RI ID */
     if (HAatom_group(riid)!=RIIDGROUP)
         HGOTO_ERROR(DFE_ARGS, 0);
-
+    
     /* locate RI's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
         HGOTO_ERROR(DFE_RINOTFOUND, 0);
@@ -3649,7 +3663,7 @@ int32 GRreftoindex(int32 grid,uint16 ref)
     /* check the validity of the RI ID */
     if (HAatom_group(grid)!=GRIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-
+    
     /* locate GR's object in hash table */
     if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(grid)))
         HGOTO_ERROR(DFE_GRNOTFOUND, FAIL);
@@ -3665,7 +3679,7 @@ int32 GRreftoindex(int32 grid,uint16 ref)
     ret_value = (FAIL);
 
 done:
-  if(ret_value == 0)
+  if(ret_value == 0)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3685,7 +3699,7 @@ done:
     intn GRreqlutil(riid,il)
         int32 riid;         IN: RI ID from GRselect/GRcreate
         intn il;            IN: interlace for next LUT.  From the following
-                                values (found in mfgr.h):
+                                values (found in mfgr.h): 
                       MFGR_INTERLACE_PIXEL      - pixel interlacing
                       MFGR_INTERLACE_LINE       - line interlacing
                       MFGR_INTERLACE_COMPONENT  - component/plane interlacing
@@ -3714,16 +3728,16 @@ intn GRreqlutil(int32 riid,intn il)
     if (HAatom_group(riid)!=RIIDGROUP || il<(intn)MFGR_INTERLACE_PIXEL ||
             il>(intn)MFGR_INTERLACE_COMPONENT)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-
+    
     /* locate RI's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
         HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
 
     /* Assign interlacing scheme */
-    ri_ptr->lut_il=(gr_interlace_t)il;
+    ri_ptr->lut_il=(gr_interlace_t)il;   
 
 done:
-  if(ret_value == 0)
+  if(ret_value == 0)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3743,7 +3757,7 @@ done:
     intn GRreqimageil(riid,il)
         int32 riid;         IN: RI ID from GRselect/GRcreate
         intn il;            IN: interlace for next RI.  From the following
-                                values (found in mfgr.h):
+                                values (found in mfgr.h): 
                       MFGR_INTERLACE_PIXEL      - pixel interlacing
                       MFGR_INTERLACE_LINE       - line interlacing
                       MFGR_INTERLACE_COMPONENT  - component/plane interlacing
@@ -3772,16 +3786,16 @@ intn GRreqimageil(int32 riid,intn il)
     if (HAatom_group(riid)!=RIIDGROUP || il<(intn)MFGR_INTERLACE_PIXEL ||
             il>(intn)MFGR_INTERLACE_COMPONENT)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-
+    
     /* locate RI's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
         HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
 
     /* Assign interlacing scheme */
-    ri_ptr->im_il=(gr_interlace_t)il;
+    ri_ptr->im_il=(gr_interlace_t)il;   
 
 done:
-  if(ret_value == 0)
+  if(ret_value == 0)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3826,11 +3840,11 @@ int32 GRgetlutid(int32 riid,int32 lut_index)
     /* check the validity of the RI ID */
     if (HAatom_group(riid)!=RIIDGROUP || lut_index!=0)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-
+    
     ret_value =(riid);
 
 done:
-  if(ret_value == 0)
+  if(ret_value == 0)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3875,7 +3889,7 @@ uint16 GRluttoref(int32 lutid)
     /* check the validity of the RI ID */
     if (HAatom_group(lutid)!=RIIDGROUP)
         HGOTO_ERROR(DFE_ARGS, 0);  /* return 0 for invalid ref # - BMR */
-
+    
     /* locate LUT's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(lutid)))
         HGOTO_ERROR(DFE_LUTNOTFOUND, 0); /* return 0 for invalid ref # - BMR */
@@ -3883,7 +3897,7 @@ uint16 GRluttoref(int32 lutid)
     ret_value=ri_ptr->lut_ref;
 
 done:
-  if(ret_value == 0)
+  if(ret_value == 0)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3930,7 +3944,7 @@ intn GRgetlutinfo(int32 lutid,int32 *ncomp,int32 *nt,int32 *il,int32 *nentries)
     /* check the validity of the RI ID */
     if (HAatom_group(lutid)!=RIIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-
+    
     /* locate LUT's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(lutid)))
         HGOTO_ERROR(DFE_LUTNOTFOUND, FAIL);
@@ -3958,7 +3972,7 @@ intn GRgetlutinfo(int32 lutid,int32 *ncomp,int32 *nt,int32 *il,int32 *nentries)
       } /* end else */
 
 done:
-  if(ret_value == 0)
+  if(ret_value == 0)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -4008,14 +4022,14 @@ intn GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,void *
     if (HAatom_group(lutid)!=RIIDGROUP || ncomps<1 || (DFKNTsize(nt)==FAIL)
             || nentries<1 || data==NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-
+    
     /* locate LUT's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(lutid)))
         HGOTO_ERROR(DFE_LUTNOTFOUND, FAIL);
     hdf_file_id=ri_ptr->gr_ptr->hdf_file_id;
 
     /* Check if this is compatible with older-style palettes */
-    if(ncomps==3 && (nt==DFNT_UINT8 ||nt==DFNT_UCHAR8) &&
+    if(ncomps==3 && (nt==DFNT_UINT8 ||nt==DFNT_UCHAR8) && 
         il==MFGR_INTERLACE_PIXEL && nentries==256)
       {
           /* Check if LUT exists already */
@@ -4054,7 +4068,7 @@ intn GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,void *
       } /* end else */
 
 done:
-  if(ret_value == 0)
+  if(ret_value == 0)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -4099,7 +4113,7 @@ intn GRreadlut(int32 lutid,void * data)
     /* check the validity of the RI ID */
     if (HAatom_group(lutid)!=RIIDGROUP || data==NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-
+    
     /* locate LUT's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(lutid)))
         HGOTO_ERROR(DFE_LUTNOTFOUND, FAIL);
@@ -4110,7 +4124,7 @@ intn GRreadlut(int32 lutid,void * data)
           if(Hgetelement(hdf_file_id,ri_ptr->lut_tag,ri_ptr->lut_ref,data)==FAIL)
               HGOTO_ERROR(DFE_GETELEM,FAIL);
       } /* end if */
-
+    
     /* Re-format the palette into the user's requested interlacing */
     if(ri_ptr->lut_il!=MFGR_INTERLACE_PIXEL)
       {
@@ -4135,7 +4149,7 @@ intn GRreadlut(int32 lutid,void * data)
       } /* end if */
 
 done:
-  if(ret_value == 0)
+  if(ret_value == 0)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -4181,7 +4195,7 @@ intn GRsetexternalfile(int32 riid,const char *filename,int32 offset)
     /* check the validity of the RI ID */
     if (HAatom_group(riid)!=RIIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-
+    
     /* locate RI's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
         HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
@@ -4217,7 +4231,7 @@ intn GRsetexternalfile(int32 riid,const char *filename,int32 offset)
         HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
 done:
-  if(ret_value == 0)
+  if(ret_value == 0)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -4265,7 +4279,7 @@ intn GRsetaccesstype(int32 riid,uintn accesstype)
     if (HAatom_group(riid)!=RIIDGROUP || (accesstype!=DFACC_DEFAULT && accesstype!=DFACC_SERIAL
             && accesstype!=DFACC_PARALLEL))
         HGOTO_ERROR(DFE_ARGS, FAIL);
-
+    
     /* locate RI's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
         HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
@@ -4275,7 +4289,7 @@ intn GRsetaccesstype(int32 riid,uintn accesstype)
     ri_ptr->acc_type=accesstype;
 
 done:
-  if(ret_value == 0)
+  if(ret_value == 0)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -4295,8 +4309,8 @@ done:
 
  USAGE
     intn GRsetaccesstype( ri_info_t *ri_ptr, comp_info *c_info, int32 *cdims)
-    ri_info_t *ri_ptr;  IN: the RI object
-    comp_info *c_info;  IN/OUT: the compression info (szip)
+    ri_info_t *ri_ptr;  IN: the RI object 
+    comp_info *c_info;  IN/OUT: the compression info (szip) 
     int32 *cdims;       IN: chunk dims if chunked, else NULL
 
  RETURNS
@@ -4310,7 +4324,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+intn 
 GRsetup_szip_parms( ri_info_t *ri_ptr, comp_info *c_info, int32 *cdims)
 {
     int32 nt;
@@ -4318,17 +4332,18 @@ GRsetup_szip_parms( ri_info_t *ri_ptr, comp_info *c_info, int32 *cdims)
     int32 ncomp;
     int32 xdims[H4_MAX_VAR_DIMS];
     intn  ret_value = SUCCEED;
-
-
+    
+    
     ndims = 2;
     xdims[0] = ri_ptr->img_dim.xdim;
     xdims[1] = ri_ptr->img_dim.ydim;
-
+    
     nt = ri_ptr->img_dim.nt;
     ncomp = ri_ptr->img_dim.ncomps;
-
+    
     ret_value = HCPsetup_szip_parms( c_info, nt, ncomp, ndims, xdims, cdims);
-
+    
+done:
     return(ret_value);
 }
 #endif
@@ -4373,9 +4388,9 @@ intn GRsetcompress(int32 riid,comp_coder_t comp_type,comp_info *cinfo)
     /* check the validity of the RI ID */
     if (HAatom_group(riid)!=RIIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-
+    
     /* Check the validity of the compression type */
-    if ((comp_type < COMP_CODE_NONE || comp_type >= COMP_CODE_INVALID)
+    if ((comp_type < COMP_CODE_NONE || comp_type >= COMP_CODE_INVALID) 
   && comp_type!=COMP_CODE_JPEG)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -4395,12 +4410,12 @@ intn GRsetcompress(int32 riid,comp_coder_t comp_type,comp_info *cinfo)
     }
     if ((comp_config & COMP_ENCODER_ENABLED) != COMP_ENCODER_ENABLED) {
      /* if ((comp_config & COMP_ENCODER_ENABLED) == 0) {
- */
+ */ 
   /* encoder not present?? */
       HGOTO_ERROR(DFE_NOENCODER, FAIL);
     }
 
-    if (comp_type==COMP_CODE_SZIP)
+    if (comp_type==COMP_CODE_SZIP) 
 #ifndef H4_HAVE_LIBSZ
         HGOTO_ERROR(DFE_NOSZLIB, FAIL);
 #else
@@ -4442,7 +4457,7 @@ intn GRsetcompress(int32 riid,comp_coder_t comp_type,comp_info *cinfo)
         HGOTO_ERROR(DFE_INTERNAL,FAIL);
 
 done:
-  if(ret_value == 0)
+  if(ret_value == 0)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -4474,9 +4489,9 @@ done:
 
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
-    JPEG information is currently not retrievable because the JPEG
-    parameters, 'quality' and 'force_baseline', are irreversibly
-    mapped to a quantization table.  Thus, only the correct compression
+    JPEG information is currently not retrievable because the JPEG 
+    parameters, 'quality' and 'force_baseline', are irreversibly 
+    mapped to a quantization table.  Thus, only the correct compression 
     type will be returned; cinfo will only contain 0s.
 
  EXAMPLES
@@ -4511,7 +4526,7 @@ intn GRgetcompress(int32 riid, comp_coder_t* comp_type, comp_info* cinfo)
     file_id = ri_ptr->gr_ptr->hdf_file_id;  /* temporary use */
 
     /* If the compression scheme used was JPEG, return the compression type
-       and 0 for the 'quality' and 'force_baseline' parameters, because
+       and 0 for the 'quality' and 'force_baseline' parameters, because 
        these parameters are currently not possible to be retrieved. */
     scheme = ri_ptr->img_dim.comp_tag;
     if (scheme == DFTAG_JPEG5 || scheme == DFTAG_GREYJPEG5
@@ -4674,9 +4689,9 @@ done:
 
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
-    JPEG information is currently not retrievable because the JPEG
-    parameters, 'quality' and 'force_baseline', are irreversibly
-    mapped to a quantization table.  Thus, only the correct compression
+    JPEG information is currently not retrievable because the JPEG 
+    parameters, 'quality' and 'force_baseline', are irreversibly 
+    mapped to a quantization table.  Thus, only the correct compression 
     type will be returned; cinfo will only contain 0s.
 
  EXAMPLES
@@ -4715,7 +4730,7 @@ intn GRgetcompinfo(int32 riid, comp_coder_t* comp_type, comp_info* cinfo)
     file_id = ri_ptr->gr_ptr->hdf_file_id;  /* temporary use */
 
     /* If the compression scheme used was JPEG, return the compression type
-       and 0 for the 'quality' and 'force_baseline' parameters, because
+       and 0 for the 'quality' and 'force_baseline' parameters, because 
        these parameters are currently not possible to be retrieved. */
     scheme = ri_ptr->img_dim.comp_tag;
     if (scheme == DFTAG_JPEG5 || scheme == DFTAG_GREYJPEG5
@@ -4806,7 +4821,7 @@ intn GRsetattr(int32 id,const char *name,int32 attr_nt,int32 count,const void * 
     if ((HAatom_group(id)!=RIIDGROUP && HAatom_group(id)!=GRIDGROUP) || data==NULL || name==NULL
             || count<=0 || DFKNTsize(attr_nt)==FAIL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-
+    
     if (HAatom_group(id)==GRIDGROUP)
       {
           /* locate GR's object in hash table */
@@ -4953,7 +4968,7 @@ intn GRsetattr(int32 id,const char *name,int32 attr_nt,int32 count,const void * 
       } /* end else */
 
     /* set this flag also, if we set local attributes */
-    if(is_riid==TRUE)
+    if(is_riid==TRUE) 
       {
         if(found==FALSE)    /* when adding new attributes, make certain the RI gets updated */
             ri_ptr->meta_modified=TRUE;
@@ -4961,7 +4976,7 @@ intn GRsetattr(int32 id,const char *name,int32 attr_nt,int32 count,const void * 
       } /* end if */
 
 done:
-  if(ret_value == 0)
+  if(ret_value == 0)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -5012,7 +5027,7 @@ intn GRattrinfo(int32 id,int32 index,char *name,int32 *attr_nt,int32 *count)
     /* check the validity of the ID, the index is checked below */
     if (HAatom_group(id)!=RIIDGROUP && HAatom_group(id)!=GRIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-
+    
     if (HAatom_group(id)==GRIDGROUP)
       {
           /* locate GR's object in hash table */
@@ -5031,7 +5046,7 @@ intn GRattrinfo(int32 id,int32 index,char *name,int32 *attr_nt,int32 *count)
               HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
 
           if(index<0 || index>=ri_ptr->lattr_count)
-              HGOTO_ERROR(DFE_ARGS, FAIL);
+              HGOTO_ERROR(DFE_ARGS, FAIL); 
           search_tree=ri_ptr->lattree;
       } /* end if */
     else    /* shouldn't get here, but what the heck... */
@@ -5049,7 +5064,7 @@ intn GRattrinfo(int32 id,int32 index,char *name,int32 *attr_nt,int32 *count)
         *count=at_ptr->len;
 
 done:
-  if(ret_value == 0)
+  if(ret_value == 0)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -5100,7 +5115,7 @@ intn GRgetattr(int32 id,int32 index,void * data)
     /* check the validity of the ID & data ptr, the index is checked below */
     if ((HAatom_group(id)!=RIIDGROUP && HAatom_group(id)!=GRIDGROUP) || data==NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-
+    
     if (HAatom_group(id)==GRIDGROUP)
       {
           /* locate GR's object in hash table */
@@ -5143,7 +5158,7 @@ intn GRgetattr(int32 id,int32 index,void * data)
         /* Grab some memory for the attribute data */
         if((at_ptr->data=HDmalloc(at_size))==NULL)
             HGOTO_ERROR(DFE_NOSPACE,FAIL);
-
+            
         if((AttrID=VSattach(hdf_file_id,(int32)at_ptr->ref,"r"))==FAIL)
             HGOTO_ERROR(DFE_CANTATTACH,FAIL);
         if(VSsetfields(AttrID,at_ptr->name)==FAIL)
@@ -5168,7 +5183,7 @@ intn GRgetattr(int32 id,int32 index,void * data)
         HDfreenclear(at_ptr->data);
 
 done:
-  if(ret_value == 0)
+  if(ret_value == 0)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -5216,7 +5231,7 @@ int32 GRfindattr(int32 id,const char *name)
     /* check the validity of the RI ID */
     if (HAatom_group(id)!=RIIDGROUP && HAatom_group(id)!=GRIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-
+    
     if (HAatom_group(id)==GRIDGROUP)
       {
           /* locate GR's object in hash table */
@@ -5247,7 +5262,7 @@ int32 GRfindattr(int32 id,const char *name)
     ret_value = (FAIL);
 
 done:
-  if(ret_value == 0)
+  if(ret_value == 0)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -5285,7 +5300,7 @@ PRIVATE intn GRIstart(void)
       HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -5397,7 +5412,7 @@ PRIVATE intn GRIgetaid(ri_info_t *ri_ptr, intn acc_perm)
       } /* end if */
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
         ri_ptr->img_aid=0;
     } /* end if */
@@ -5466,11 +5481,11 @@ intn GRPshutdown(void)
       {
          int32   chunk_lengths[2];  Chunk lengths along each dimension
 
-         struct
-          {
+         struct 
+          {   
             int32     chunk_lengths[2]; Chunk lengths along each dimension
-            int32     comp_type;                   Compression type
-            comp_info cinfo;                       Compression info struct
+            int32     comp_type;                   Compression type 
+            comp_info cinfo;                       Compression info struct 
           }comp;
 
       } HDF_CHUNK_DEF
@@ -5478,14 +5493,14 @@ intn GRPshutdown(void)
       The variable agruement 'flags' is a bit-or'd value which can currently be
       'HDF_CHUNK' or 'HDF_CHUNK | HDF_COMP'.
 
-      The simplist is the 'chunk_lengths' array specifiying chunk
-      lengths for each dimension where the 'flags' argument set to
+      The simplist is the 'chunk_lengths' array specifiying chunk 
+      lengths for each dimension where the 'flags' argument set to 
       'HDF_CHUNK';
 
       COMPRESSION is set by using the 'HDF_CHUNK_DEF' union to set the
       appropriate compression information along with the required chunk lengths
-      for each dimension. The compression information is the same as
-      that set in 'GRsetcompress()'. The bit-or'd 'flags' argument' is set to
+      for each dimension. The compression information is the same as 
+      that set in 'GRsetcompress()'. The bit-or'd 'flags' argument' is set to 
       'HDF_CHUNK | HDF_COMP'.
 
       See the example in pseudo-C below for further usage.
@@ -5494,49 +5509,49 @@ intn GRPshutdown(void)
 
       The performance of the GRxxx interface with chunking is greatly
       affected by the users access pattern over the image and by
-      the maximum number of chunks set in the chunk cache. The cache contains
+      the maximum number of chunks set in the chunk cache. The cache contains 
       the Least Recently Used(LRU cache replacment policy) chunks. See the
-      routine GRsetchunkcache() for further info on the chunk cache and how
-      to set the maximum number of chunks in the chunk cache. A default chunk
+      routine GRsetchunkcache() for further info on the chunk cache and how 
+      to set the maximum number of chunks in the chunk cache. A default chunk 
       cache is always created.
 
       The following example shows the organization of chunks for a 2D array.
       e.g. 4x4 array with 2x2 chunks. The array shows the layout of
            chunks in the chunk array.
 
-            4 ---------------------
-              |         |         |
-        Y     |  (0,1)  |  (1,1)  |
-        ^     |         |         |
-        |   2 ---------------------
-        |     |         |         |
-        |     |  (0,0)  |  (1,0)  |
-        |     |         |         |
-        |     ---------------------
-        |     0         2         4
-        ---------------> X
+            4 ---------------------                                           
+              |         |         |                                                 
+        Y     |  (0,1)  |  (1,1)  |                                       
+        ^     |         |         |                                      
+        |   2 ---------------------                                       
+        |     |         |         |                                               
+        |     |  (0,0)  |  (1,0)  |                                      
+        |     |         |         |                                           
+        |     ---------------------                                         
+        |     0         2         4                                       
+        ---------------> X                                                       
 
         --Without compression--:
-        {
+        {                                                                    
         HDF_CHUNK_DEF chunk_def;
+                                                                            
+        .......                                                                    
+        -- Set chunk lengths --                                                    
+        chunk_def.chunk_lengths[0]= 2;                                                     
+        chunk_def.chunk_lengths[1]= 2; 
 
-        .......
-        -- Set chunk lengths --
-        chunk_def.chunk_lengths[0]= 2;
-        chunk_def.chunk_lengths[1]= 2;
-
-        -- Set Chunking --
-        GRsetchunk(riid, chunk_def, HDF_CHUNK);
-         ......
-        }
+        -- Set Chunking -- 
+        GRsetchunk(riid, chunk_def, HDF_CHUNK);                      
+         ......                                                                  
+        }                                                                           
 
         --With compression--:
-        {
+        {                                                                    
         HDF_CHUNK_DEF chunk_def;
-
-        .......
-        -- Set chunk lengths first --
-        chunk_def.chunk_lengths[0]= 2;
+                                                                            
+        .......                
+        -- Set chunk lengths first --                                                    
+        chunk_def.chunk_lengths[0]= 2;                                                     
         chunk_def.chunk_lengths[1]= 2;
 
         -- Set compression --
@@ -5544,9 +5559,9 @@ intn GRPshutdown(void)
         chunk_def.comp.comp_type = COMP_CODE_DEFLATE;
 
         -- Set Chunking with Compression --
-        GRsetchunk(riid, chunk_def, HDF_CHUNK | HDF_COMP);
-         ......
-        }
+        GRsetchunk(riid, chunk_def, HDF_CHUNK | HDF_COMP);                      
+         ......                                                                  
+        }                                                                           
 
         NOTE:
            This routine directly calls a Special Chunked Element fcn HMCxxx.
@@ -5554,10 +5569,10 @@ intn GRPshutdown(void)
  RETURNS
         SUCCEED/FAIL
 
- AUTHOR
+ AUTHOR 
         -GeorgeV
 ******************************************************************************/
-intn
+intn 
 GRsetchunk(int32 riid,              /* IN: raster access id */
            HDF_CHUNK_DEF chunk_def, /* IN: chunk definition */
            int32 flags              /* IN: flags */)
@@ -5603,7 +5618,7 @@ GRsetchunk(int32 riid,              /* IN: raster access id */
     gr_ptr = ri_ptr->gr_ptr;
     hdf_file_id = gr_ptr->hdf_file_id;
 
-    /* Test if the tag/ref pair has been assigned yet
+    /* Test if the tag/ref pair has been assigned yet 
        Note that HMCcreate() needs to do the Hstartaccess on
        the special tag/ref pair that is created. If another
        GRxx routine does it then the special element cannot be
@@ -5631,7 +5646,7 @@ GRsetchunk(int32 riid,              /* IN: raster access id */
           chunk[0].minfo = &minfo; /* dummy */
           break;
       case (HDF_CHUNK | HDF_COMP):
-    /*  EIP 9/12/03
+    /*  EIP 9/12/03 
      *  We have to take special care if SZIP library is not available;
      *  Fow all other compression types do
      */
@@ -5641,28 +5656,28 @@ GRsetchunk(int32 riid,              /* IN: raster access id */
     HCget_config_info((comp_coder_t )(cdef->comp.comp_type), &comp_config);
     if ((comp_config & (COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED)) == 0) {
     /* coder not present?? */
-              HGOTO_ERROR(DFE_BADCODER,FAIL);
+              HGOTO_ERROR(DFE_BADCODER,FAIL); 
     }
     if ((comp_config & COMP_ENCODER_ENABLED) == 0) {
     /* encoder not present?? */
-              HGOTO_ERROR(DFE_NOENCODER,FAIL);
+              HGOTO_ERROR(DFE_NOENCODER,FAIL); 
     }
           cdims = cdef->comp.chunk_lengths;
           chunk[0].chunk_flag = SPECIAL_COMP;  /* Compression */
-          chunk[0].comp_type  = (comp_coder_t)cdef->comp.comp_type;
+          chunk[0].comp_type  = (comp_coder_t)cdef->comp.comp_type; 
           chunk[0].model_type = COMP_MODEL_STDIO; /* Default */
           chunk[0].minfo = &minfo; /* dummy */
 
     if ((comp_coder_t)cdef->comp.comp_type != COMP_CODE_SZIP) {
-              chunk[0].cinfo = &cdef->comp.cinfo;
+              chunk[0].cinfo = &cdef->comp.cinfo; 
     }
     else
 #ifdef H4_HAVE_LIBSZ          /* we have the library */
           {
             HDmemcpy(&cinfo,&(cdef->comp.cinfo),sizeof(comp_info));
-        if (GRsetup_szip_parms(ri_ptr, &cinfo, cdims) == FAIL)
-                  HGOTO_ERROR(DFE_INTERNAL,FAIL);
-              chunk[0].cinfo = &cinfo;
+        if (GRsetup_szip_parms(ri_ptr, &cinfo, cdims) == FAIL) 
+                  HGOTO_ERROR(DFE_INTERNAL,FAIL); 
+              chunk[0].cinfo = &cinfo; 
     }
 #else                         /* we do not have the SZIP library */
           {
@@ -5677,7 +5692,7 @@ GRsetchunk(int32 riid,              /* IN: raster access id */
       } /* end switch */
 
     /* Now start setting chunk info */
-    ndims = 2; /* set number of dims i.e. rank
+    ndims = 2; /* set number of dims i.e. rank 
                   for Rasters it is 2 */
 
     /* allocate space for chunk dimensions */
@@ -5705,8 +5720,8 @@ GRsetchunk(int32 riid,              /* IN: raster access id */
 #ifdef CHK_DEBUG
     fprintf(stderr,"GRsetchunk: cdims[%d]=%d \n",i,cdims[i]);
     fflush(stderr);
-#endif
-          /* Data distribution along dimensions
+#endif          
+          /* Data distribution along dimensions 
           *  Check dimension length agains chunk length */
           if (i == 0) /* X */
             {
@@ -5731,7 +5746,7 @@ GRsetchunk(int32 riid,              /* IN: raster access id */
     pixel_mem_size  = (uintn)(ri_ptr->img_dim.ncomps*DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND)));
     pixel_disk_size = (uintn)(ri_ptr->img_dim.ncomps*DFKNTsize(ri_ptr->img_dim.nt));
 
-    /* Set number type size i.e. size of data type
+    /* Set number type size i.e. size of data type 
        number of components times the number type */
     chunk[0].nt_size = ri_ptr->img_dim.ncomps*DFKNTsize(ri_ptr->img_dim.nt);
 
@@ -5751,7 +5766,7 @@ GRsetchunk(int32 riid,              /* IN: raster access id */
           if (FAIL == DFKconvert(ri_ptr->fill_value,fill_pixel,
                                  ri_ptr->img_dim.nt,ri_ptr->img_dim.ncomps,
                                  DFACC_WRITE,0,0))
-              HGOTO_ERROR(DFE_INTERNAL,FAIL);
+              HGOTO_ERROR(DFE_INTERNAL,FAIL); 
       } /* end if */
     else  /* create default pixel fill value of all zero components */
       {
@@ -5794,7 +5809,7 @@ GRsetchunk(int32 riid,              /* IN: raster access id */
 #endif
 
     /* check return */
-    if(ret_value != FAIL)
+    if(ret_value != FAIL) 
       { /* close old aid and set new one
          ..hmm......this is for the doubly special hack */
           if((ri_ptr->img_aid != 0) && (ri_ptr->img_aid != FAIL))
@@ -5839,10 +5854,10 @@ done:
      fill the array of chunk lengths for each dimension as specified in
      the 'HDF_CHUNK_DEF' union. You can pass in a NULL for 'chunk_def'
      if don't want the chunk lengths for each dimension.
-     If successfull it will return a bit-or'd value in 'flags' indicating
-     if the GR is  chunked(HDF_CHUNK), chunked and compressed(HDF_CHUNK | HDF_COMP)
+     If successfull it will return a bit-or'd value in 'flags' indicating 
+     if the GR is  chunked(HDF_CHUNK), chunked and compressed(HDF_CHUNK | HDF_COMP) 
      or non-chunked(HDF_NONE).
-
+ 
      e.g. 4x4 array - Pseudo-C
      {
      HDF_CHUNK_DEF rchunk_def;
@@ -5855,10 +5870,10 @@ done:
  RETURNS
         SUCCEED/FAIL
 
- AUTHOR
+ AUTHOR 
         -GeorgeV
 ******************************************************************************/
-intn
+intn 
 GRgetchunkinfo(int32 riid,               /* IN: sds access id */
                HDF_CHUNK_DEF *chunk_def, /* IN/OUT: chunk definition */
                int32 *flags              /* IN/OUT: flags */)
@@ -5915,7 +5930,7 @@ GRgetchunkinfo(int32 riid,               /* IN: sds access id */
                                chunk_def->chunk_lengths[i] = info_block.cdims[i];
                            }
                      }
-                   /* dont forget to free up info is special info block
+                   /* dont forget to free up info is special info block 
                       This space was allocated by the library */
                    HDfree(info_block.cdims);
 
@@ -5925,8 +5940,8 @@ GRgetchunkinfo(int32 riid,               /* IN: sds access id */
                      case COMP_CODE_NONE:
                          *flags = HDF_CHUNK;
                          break;
-                     case COMP_CODE_NBIT:
-                         /* is this an error?
+                     case COMP_CODE_NBIT: 
+                         /* is this an error? 
                             NBIT can't be set in GRsetchunk(). */
                          *flags = (HDF_CHUNK | HDF_NBIT);
                          break;
@@ -5957,7 +5972,7 @@ GRgetchunkinfo(int32 riid,               /* IN: sds access id */
      GRwritechunk   -- write the specified chunk to the GR
 
  DESCRIPTION
-     This routine writes a whole chunk of data to the chunked GR
+     This routine writes a whole chunk of data to the chunked GR 
      specified by chunk 'origin' for the given GR and can be used
      instead of GRwriteimage() when this information is known. This
      routine has less overhead and is much faster than using GRwriteimage().
@@ -5975,10 +5990,10 @@ GRgetchunkinfo(int32 riid,               /* IN: sds access id */
  RETURNS
         SUCCEED/FAIL
 
- AUTHOR
+ AUTHOR 
        -GeorgeV
 ******************************************************************************/
-intn
+intn 
 GRwritechunk(int32 riid,       /* IN: access aid to GR */
              int32 *origin,    /* IN: origin of chunk to write */
              const VOID *datap /* IN: buffer for data */)
@@ -5991,12 +6006,13 @@ GRwritechunk(int32 riid,       /* IN: access aid to GR */
     int16      special;         /* Special code */
     int32      csize;           /* phsical chunk size */
     sp_info_block_t info_block; /* special info block */
+    uint32     byte_count;      /* bytes to write */
     int8       platnumsubclass; /* the machine type of the current platform */
     uintn      convert;         /* whether to convert or not */
     intn       i;
     uint16 scheme;  /* compression scheme used for JPEG images */
     uint32     comp_config;
-    comp_coder_t comp_type;
+    comp_coder_t comp_type; 
     comp_info cinfo;
     intn       status=FAIL;
     intn       switch_interlace = FALSE;/* whether the memory interlace needs to be switched around */
@@ -6064,11 +6080,11 @@ GRwritechunk(int32 riid,       /* IN: access aid to GR */
         HCget_config_info(comp_type, &comp_config);
         if ((comp_config & (COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED)) == 0) {
             /* coder not present?? */
-             HGOTO_ERROR(DFE_BADCODER,FAIL);
+             HGOTO_ERROR(DFE_BADCODER,FAIL); 
         }
         if ((comp_config & COMP_ENCODER_ENABLED) == 0) {
             /* encoder not present?? */
-             HGOTO_ERROR(DFE_NOENCODER,FAIL);
+             HGOTO_ERROR(DFE_NOENCODER,FAIL); 
         }
     }
 
@@ -6081,7 +6097,7 @@ GRwritechunk(int32 riid,       /* IN: access aid to GR */
 
                 /* get info about chunked element */
                 if ((ret_value = HDget_special_info(ri_ptr->img_aid, &info_block)) != FAIL)
-                  {
+                  {   
                       /* calculate chunk size  */
                       csize = 1;
                       for (i = 0; i < info_block.ndims; i++)
@@ -6090,6 +6106,10 @@ GRwritechunk(int32 riid,       /* IN: access aid to GR */
                       /* Get the size of the pixels in memory and on disk */
                       pixel_mem_size  =(uintn)(ri_ptr->img_dim.ncomps*DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND)));
                       pixel_disk_size =(uintn)(ri_ptr->img_dim.ncomps*DFKNTsize(ri_ptr->img_dim.nt));
+
+                      /* adjust for data type size */
+                      /* csize *= pixel_mem_size; */
+                      byte_count = csize * pixel_mem_size;
 
                       /* figure out if data needs to be converted */
                       /* Get number-type and conversion information */
@@ -6103,7 +6123,7 @@ GRwritechunk(int32 riid,       /* IN: access aid to GR */
                           switch_interlace=TRUE;
 
                       /* convert if necessary */
-                      if(convert || switch_interlace == TRUE)
+                      if(convert || switch_interlace == TRUE) 
                         {
                             /* Allocate space for the conversion buffer */
                             if((img_data = HDmalloc(pixel_disk_size*csize)) == NULL)
@@ -6120,12 +6140,12 @@ GRwritechunk(int32 riid,       /* IN: access aid to GR */
                                   if (FAIL == GRIil_convert((VOID *)datap,ri_ptr->img_dim.il,pixel_buf,MFGR_INTERLACE_PIXEL,
                                                             info_block.cdims,ri_ptr->img_dim.ncomps,ri_ptr->img_dim.nt))
                                       HGOTO_ERROR(DFE_INTERNAL,FAIL);
-
+                                  
                                   /* convert the pixel data into the HDF disk format */
                                   if (FAIL == DFKconvert(pixel_buf,img_data,ri_ptr->img_dim.nt,
                                                          ri_ptr->img_dim.ncomps*csize,DFACC_WRITE,0,0))
                                       HGOTO_ERROR(DFE_INTERNAL,FAIL);
-
+                                  
                                   HDfree(pixel_buf);
                               } /* end if */
                             else /* convert the pixel data into the HDF disk format */
@@ -6155,7 +6175,7 @@ GRwritechunk(int32 riid,       /* IN: access aid to GR */
 
       }
     /* Normal cleanup */
-    /* dont forget to free up info is special info block
+    /* dont forget to free up info is special info block 
        This space was allocated by the library */
     if (info_block.cdims != NULL)
         HDfree(info_block.cdims);
@@ -6190,10 +6210,10 @@ GRwritechunk(int32 riid,       /* IN: access aid to GR */
  RETURNS
         SUCCEED/FAIL
 
- AUTHOR
+ AUTHOR 
        -GeorgeV
 ******************************************************************************/
-intn
+intn 
 GRreadchunk(int32 riid,    /* IN: access aid to GR */
             int32 *origin, /* IN: origin of chunk to write */
             VOID *datap    /* IN/OUT: buffer for data */)
@@ -6206,14 +6226,16 @@ GRreadchunk(int32 riid,    /* IN: access aid to GR */
     int16      special;         /* Special code */
     int32      csize;           /* phsical chunk size */
     sp_info_block_t info_block; /* special info block */
+    uint32     byte_count;      /* bytes to read */
     int8       platnumsubclass; /* the machine type of the current platform */
     uintn      convert;         /* whether to convert or not */
     intn       i;
     uint16 scheme;  /* compression scheme used for JPEG images */
     uint32     comp_config;
-    comp_coder_t comp_type;
+    comp_coder_t comp_type; 
     comp_info cinfo;
     intn       status=FAIL;
+    intn       switch_interlace = FALSE;/* whether the memory interlace needs to be switched around */
     intn       ret_value = SUCCEED;
 
 
@@ -6284,12 +6306,12 @@ GRreadchunk(int32 riid,    /* IN: access aid to GR */
 	HCget_config_info(comp_type, &comp_config);
 	if ((comp_config & (COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED)) == 0) {
     /* coder not present?? */
-         HGOTO_ERROR(DFE_BADCODER,FAIL);
+         HGOTO_ERROR(DFE_BADCODER,FAIL); 
       }
       if ((comp_config & COMP_DECODER_ENABLED) == 0) {
     /* decoder not present?? */
-         HGOTO_ERROR(DFE_NOENCODER,FAIL);
-      }
+         HGOTO_ERROR(DFE_NOENCODER,FAIL); 
+      } 
     }
     /* inquire about element */
     ret_value = Hinquire(ri_ptr->img_aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
@@ -6300,7 +6322,7 @@ GRreadchunk(int32 riid,    /* IN: access aid to GR */
 
                 /* get info about chunked element */
                 if ((ret_value = HDget_special_info(ri_ptr->img_aid, &info_block)) != FAIL)
-                  {
+                  {   
                       /* calcualte chunk size  */
                       csize = 1;
                       for (i = 0; i < info_block.ndims; i++)
@@ -6310,22 +6332,30 @@ GRreadchunk(int32 riid,    /* IN: access aid to GR */
                       pixel_mem_size  =(uintn)(ri_ptr->img_dim.ncomps*DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND)));
                       pixel_disk_size =(uintn)(ri_ptr->img_dim.ncomps*DFKNTsize(ri_ptr->img_dim.nt));
 
+                      /* adjust for number type size */
+                      /* csize *= pixel_mem_size; */
+                      byte_count = csize * pixel_mem_size;
+
                       /* figure out if data needs to be converted */
                       /* Get number-type and conversion information */
                       if (FAIL ==(platnumsubclass = DFKgetPNSC(ri_ptr->img_dim.nt & (~DFNT_LITEND), DF_MT)))
                           HGOTO_ERROR(DFE_INTERNAL,FAIL);
-                       convert = (ri_ptr->img_dim.file_nt_subclass != platnumsubclass)
+                       convert = (ri_ptr->img_dim.file_nt_subclass != platnumsubclass) 
                                  ||  (pixel_mem_size != pixel_disk_size);  /* is conversion necessary? */
 
+                      /* check interlace */
+                      if(ri_ptr->img_dim.il != MFGR_INTERLACE_PIXEL)
+                          switch_interlace=TRUE;
+
                       /* read chunk in */
-                      if(convert)
+                      if(convert) 
                         {
                             /* Allocate space for the conversion buffer */
                             if((img_data = HDmalloc(pixel_disk_size*csize)) == NULL)
                                 HGOTO_ERROR(DFE_NOSPACE,FAIL);
 
                             /* read it in */
-                            if ((ret_value = HMCreadChunk(ri_ptr->img_aid, origin, img_data))
+                            if ((ret_value = HMCreadChunk(ri_ptr->img_aid, origin, img_data)) 
                                 != FAIL)
                                 {
                                     if (FAIL == DFKconvert(img_data,datap,ri_ptr->img_dim.nt,
@@ -6335,7 +6365,7 @@ GRreadchunk(int32 riid,    /* IN: access aid to GR */
                                     ret_value = SUCCEED;
                                 }
                         } /* end if */
-                      else
+                      else 
                         {
                           if ((ret_value = HMCreadChunk(ri_ptr->img_aid, origin, datap))
                               != FAIL)
@@ -6376,7 +6406,7 @@ GRreadchunk(int32 riid,    /* IN: access aid to GR */
 
       }
     /* Normal cleanup */
-    /* dont forget to free up info is special info block
+    /* dont forget to free up info is special info block 
        This space was allocated by the library */
     if (info_block.cdims != NULL)
         HDfree(info_block.cdims);
@@ -6391,24 +6421,24 @@ GRreadchunk(int32 riid,    /* IN: access aid to GR */
 
 /******************************************************************************
 NAME
-     GRsetchunkcache - maximum number of chunks to cache
+     GRsetchunkcache - maximum number of chunks to cache 
 
 DESCRIPTION
      Set the maximum number of chunks to cache.
 
-     The cache contains the Least Recently Used(LRU cache replacment policy)
-     chunks. This routine allows the setting of maximum number of chunks that
+     The cache contains the Least Recently Used(LRU cache replacment policy) 
+     chunks. This routine allows the setting of maximum number of chunks that 
      can be cached, 'maxcache'.
 
      The performance of the GRxxx interface with chunking is greatly
      affected by the users access pattern over the image and by
-     the maximum number of chunks set in the chunk cache. The number chunks
-     that can be set in the cache is process memory limited. It is a good
-     idea to always set the maximum number of chunks in the cache as the
-     default heuristic does not take into account the memory available for
+     the maximum number of chunks set in the chunk cache. The number chunks 
+     that can be set in the cache is process memory limited. It is a good 
+     idea to always set the maximum number of chunks in the cache as the 
+     default heuristic does not take into account the memory available for 
      the application.
 
-     By default when the GR is promoted to a chunked element the
+     By default when the GR is promoted to a chunked element the 
      maximum number of chunks in the cache 'maxcache' is set to the number of
      chunks along the last dimension.
 
@@ -6423,20 +6453,20 @@ DESCRIPTION
      new 'maxcache' value only if the new 'maxcache' value is greater than the
      current number of chunks in the cache.
 
-     Use flags argument of 'HDF_CACHEALL' if the whole object is to be cached
+     Use flags argument of 'HDF_CACHEALL' if the whole object is to be cached 
      in memory, otherwise pass in zero(0). Currently you can only
      pass in zero.
 
      See GRsetchunk() for a description of the organization of chunks in an GR.
-
+     
      NOTE:
           This routine directly calls a Special Chunked Element fcn HMCxxx.
 
 RETURNS
-     Returns the 'maxcache' value for the chunk cache if successful
+     Returns the 'maxcache' value for the chunk cache if successful 
      and FAIL otherwise
 
-AUTHOR
+AUTHOR 
       -GeorgeV
 ******************************************************************************/
 intn
@@ -6493,7 +6523,7 @@ GRsetchunkcache(int32 riid,     /* IN: access aid to mess with */
     if (ret_value != FAIL)
       {
           if (special == SPECIAL_CHUNKED) /* set cache*/
-              ret_value = HMCsetMaxcache(ri_ptr->img_aid, maxcache, flags);
+              ret_value = HMCsetMaxcache(ri_ptr->img_aid, maxcache, flags); 
           else
               ret_value = FAIL;
       }
@@ -6552,6 +6582,7 @@ GR2bmapped(int32 riid, intn *tobe_mapped, intn *name_generated)
     int32  ritype;    /* image's type */
     intn   special_type=0;  /* specialness of the image data */
     int32  file_id;    /* shortcut file id */
+    intn   status;
     intn   ret_value = SUCCEED;
 
     /* Clear error stack */
@@ -6572,42 +6603,42 @@ GR2bmapped(int32 riid, intn *tobe_mapped, intn *name_generated)
     file_id = ri_ptr->gr_ptr->hdf_file_id;
 
     /* If the image has old image tag, then make sure it is either non-special
-       or compressed with RLE only */
+       or compressed with RLE only */ 
     if (img_tag == DFTAG_RI8 || img_tag == DFTAG_CI8)
     {
-        if (ri_ptr->img_dim.comp_tag == DFTAG_RLE ||
-            ri_ptr->img_dim.comp_tag == DFTAG_NULL)
-            should_map = TRUE;
+	if (ri_ptr->img_dim.comp_tag == DFTAG_RLE ||
+	    ri_ptr->img_dim.comp_tag == DFTAG_NULL)
+	    should_map = TRUE;
     }
     /* If the image has new image tag, then make sure that it has 8-bit data
        and has no special storage except RLE compression before determining
        that it is mapped-able */
     else if (img_tag == DFTAG_RI || img_tag == DFTAG_CI)
     {
-        /* Get the image data's type */
-        GRgetiminfo(riid, NULL, NULL, &ritype, NULL, NULL, NULL);
+	/* Get the image data's type */
+	status = GRgetiminfo(riid, NULL, NULL, &ritype, NULL, NULL, NULL);
 
-        /* If it is 8-bit, set flag to check further for special storage */
-        if (ritype == DFNT_UCHAR8 || ritype == DFNT_CHAR8 ||
-            ritype == DFNT_UINT8 || ritype == DFNT_INT8)
-        {
-            /* Also make sure it only has one component */
-            if (ri_ptr->img_dim.ncomps ==1)
-            {
-                /* Make sure no specialness or only with RLE compression */
-                comp_coder_t comp_type=COMP_CODE_NONE;
-                GRgetcomptype(riid, &comp_type);
-                if (comp_type == COMP_CODE_RLE || comp_type == COMP_CODE_NONE)
-                {
-                    special_type = GRIisspecial_type(file_id, img_tag, img_ref);
-                    /* In some cases, special_type = 0 for old image with RLE,
-                    although the image has newer image tag.  Added the check
-                    for 0 here, but this should be investigated more. -BMR*/
-                    if (special_type == SPECIAL_COMP || special_type == 0)
-                    should_map = TRUE;
-                }
-            }
-        }
+	/* If it is 8-bit, set flag to check further for special storage */
+	if (ritype == DFNT_UCHAR8 || ritype == DFNT_CHAR8 ||
+	    ritype == DFNT_UINT8 || ritype == DFNT_INT8)
+	{
+	    /* Also make sure it only has one component */
+	    if (ri_ptr->img_dim.ncomps ==1)
+	    {
+		/* Make sure no specialness or only with RLE compression */
+		comp_coder_t comp_type=COMP_CODE_NONE;
+		status = GRgetcomptype(riid, &comp_type);
+		if (comp_type == COMP_CODE_RLE || comp_type == COMP_CODE_NONE)
+		{
+		    special_type = GRIisspecial_type(file_id, img_tag, img_ref);
+		    /* In some cases, special_type = 0 for old image with RLE,
+		    although the image has newer image tag.  Added the check
+		    for 0 here, but this should be investigated more. -BMR*/
+		    if (special_type == SPECIAL_COMP || special_type == 0)
+			should_map = TRUE;
+		}
+	    }
+	}
     }
     /* Set flag to return */
     *tobe_mapped = should_map;

@@ -82,9 +82,7 @@ funclist_t  mstdio_funcs =
     HCPmstdio_inquire,
     HCPmstdio_read,
     HCPmstdio_write,
-    HCPmstdio_endaccess,
-    NULL,
-    NULL
+    HCPmstdio_endaccess
 };
 #endif
 

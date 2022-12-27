@@ -26,11 +26,11 @@ EXPORTED ROUTINES
                  Truncates each field to max length of FIELDNAMELENMAX.
  VSfdefine    -- Defines a (one) new field within the vdata.
  VFnfields    -- Return the number of fields in this Vdata.
- VFfieldname  -- Return the name of the given field in this Vdata.
+ VFfieldname  -- Return the name of the given field in this Vdata. 
  VFfieldtype  -- Return the type of the given field in this Vdata.
- VFfieldisize -- Return the internal (HDF) size of the given
-                  field in this Vdata.
- VFfieldesize -- Return the external (local machine) size of the given
+ VFfieldisize -- Return the internal (HDF) size of the given 
+                  field in this Vdata. 
+ VFfieldesize -- Return the external (local machine) size of the given 
                   field in this Vdata.
  VFfieldorder -- Return the order of the given field in this Vdata.
  VSfpack      -- pack into or unpack from a buf the values of fully
@@ -72,7 +72,7 @@ static const SYMDEF rstab[] =
    ** RETURNS FAIL if error, and SUCCEED if ok.
    ** truncates each field to max length of  FIELDNAMELENMAX.
  */
-intn
+intn 
 VSsetfields(int32 vkey, const char *fields)
 {
     char      **av;
@@ -151,7 +151,7 @@ VSsetfields(int32 vkey, const char *fields)
                             if (!HDstrcmp(av[i], vs->usym[j].name))
                               {
                                   found = TRUE;
-
+                                
                                   if((wlist->name[wlist->n]=HDstrdup(vs->usym[j].name))==NULL)
                                    {
                                       HDfree(wlist->name);
@@ -262,7 +262,7 @@ VSsetfields(int32 vkey, const char *fields)
       }     /* setting read list */
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -277,7 +277,7 @@ done:
    ** return FAIL if error
    ** return SUCCEED if success
  */
-intn
+intn 
 VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
 {
     char      **av;
@@ -369,7 +369,7 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
         vs->nusym++;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -405,7 +405,7 @@ VFnfields(int32 vkey)
     ret_value = ((int32) vs->wlist.n);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -447,7 +447,7 @@ VFfieldname(int32 vkey, int32 index)
     ret_value = ((char *) vs->wlist.name[index]);
 
 done:
-  if(ret_value == NULL)
+  if(ret_value == NULL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -487,7 +487,7 @@ VFfieldtype(int32 vkey, int32 index)
     ret_value = ((int32) vs->wlist.type[index]);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -499,7 +499,7 @@ done:
 /* ----------------------------- VFfieldisize ------------------------------ */
 /*
    Return the internal size of the given field in this Vdata.
-   (internal to HDF file, see VWRITELIST in vg.h. 4/3/96)
+   (internal to HDF file, see VWRITELIST in vg.h. 4/3/96) 
 
    Return FAIL on failure
  */
@@ -528,7 +528,7 @@ VFfieldisize(int32 vkey, int32 index)
     ret_value = ((int32) vs->wlist.isize[index]);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -540,7 +540,7 @@ done:
 /* ----------------------------- VFfieldesize ------------------------------ */
 /*
    Return the external size of the given field in this Vdata.
-   (external to HDF file, see VWRITELIST in vg.h. 4/3/96)
+   (external to HDF file, see VWRITELIST in vg.h. 4/3/96) 
 
    Return FAIL on failure
  */
@@ -569,7 +569,7 @@ VFfieldesize(int32 vkey, int32 index)
     ret_value = ((int32) vs->wlist.esize[index]);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -610,7 +610,7 @@ VFfieldorder(int32 vkey, int32 index)
     ret_value = ((int32) vs->wlist.order[index]);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -633,13 +633,13 @@ done:
         Return SUCCEED or FAIL
 
  DESCRIPTION
-        Specify that the actual data for this Vdata be stored in a
+        Specify that the actual data for this Vdata be stored in a 
         separate file (an "external file" in HDF terms).
 
-        Only the data (as in VSwrite()) will be stored externally.
+        Only the data (as in VSwrite()) will be stored externally.  
         Attributes and such will still be in the main file
 
-        IMPORTANT:  It is the user's responsibility to see that the
+        IMPORTANT:  It is the user's responsibility to see that the 
         separate files are transported with the main file.
 FORTRAN
 	vsfsextf
@@ -716,7 +716,7 @@ done:
 	does not have external element, the length will be 0.
 
  DESCRIPTION
-        IMPORTANT:  It is the user's responsibility to see that the
+        IMPORTANT:  It is the user's responsibility to see that the 
         separate files are transported with the main file.
  FORTRAN
 	N/A
@@ -827,7 +827,7 @@ done:
 	the element is SPECIAL_EXT, but the external file name doesn't exist,
 	VSgetexternalinfo will return FAIL.
 
-        IMPORTANT:  It is the user's responsibility to see that the
+        IMPORTANT:  It is the user's responsibility to see that the 
         separate files are transported with the main file.
  FORTRAN
 	N/A
@@ -929,7 +929,7 @@ done:
     return ret_value;
 } /* VSgetexternalinfo */
 
-/*-----------------------------------------------------------------
+/*----------------------------------------------------------------- 
 NAME
     VSfpack -- pack into or unpack from a buf the values of fully
               interlaced fields.
@@ -937,29 +937,29 @@ USAGE
     intn VSfpack(int32 vsid, intn packtype, char *fields_in_buf,
          void * buf, intn bufsz, intn n_records, char *fields, void * fldbufpt[])
     int32 vsid; IN: vdata id.
-    intn packtype; IN:
+    intn packtype; IN: 
          _HDF_VSPACK(0) -- pack field values into vdata buf;
          _HDF_VSUNPACK(1) -- unpack vdata value into filed bufs.
-    char *fields_in_buf; IN:
-         fields in buf to write to or read from vdata. NULL
+    char *fields_in_buf; IN: 
+         fields in buf to write to or read from vdata. NULL 
          stands for all fields in the vdata.
     void * buf; IN: buffer for vdata values.
     intn bufsz; IN: buf size in byte.
     intn n_records; IN: number of records to pack or unpack.
-    char *fields; IN:
-         names of the fields to be pack/unpack. It may be a
-         subset of the fields_in_buf. NULL stands for all
-         fields in buf.
+    char *fields; IN: 
+         names of the fields to be pack/unpack. It may be a 
+         subset of the fields_in_buf. NULL stands for all 
+         fields in buf. 
     void * fldbufpt[]; IN: array of pointers to field buffers.
 RETURNS
     SUCCEED(0) on success; FIAL(-1) otherwise.
 DESCRIPTION
-    1. This pack/unpack routine is convenient for users. It also
-       serves for FORTRAN programs to pack/unpack numeric and
+    1. This pack/unpack routine is convenient for users. It also 
+       serves for FORTRAN programs to pack/unpack numeric and 
        non-numeric fields.
-    2. The caller should supply correct number of field buffers,
-       which should agree with the number of fields to be
-       packed/unpacked.
+    2. The caller should supply correct number of field buffers, 
+       which should agree with the number of fields to be 
+       packed/unpacked. 
     3. For packtype = _HDF_VSPACK, the calling sequence should be:
           VSsetfields,  VSfpack, and VSwrite;
        For packtype = _HDF_VSUNPACK, the calling sequence should be:
@@ -977,7 +977,7 @@ intn VSfpack(int32 vsid, intn packtype, const char *fields_in_buf,
     char **av, *s;
     uint8 *bufp = (uint8 *)buf;
     uint8 **fbufps=NULL;
-    int32 b_rec_size, *fmsizes=NULL, *foffs=NULL;
+    int32 b_rec_size, *fmsizes=NULL, *foffs=NULL; 
     intn i, j, found, ret_value = SUCCEED;
     vsinstance_t *wi;
     VDATA *vs;
@@ -987,8 +987,6 @@ intn VSfpack(int32 vsid, intn packtype, const char *fields_in_buf,
        int32 *idx;  /* index of buf fields in vdata */
        int32 *offs; /* offset of buf fields in buf */
     }  blist;
-    blist.idx = NULL;
-    blist.offs = NULL;
 
     if (HAatom_group(vsid)!=VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -996,18 +994,18 @@ intn VSfpack(int32 vsid, intn packtype, const char *fields_in_buf,
     if (NULL == (wi = (vsinstance_t *) HAatom_object(vsid)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
     vs = wi->vs;
-    if (vs == NULL)
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+    if (vs == NULL) 
+        HGOTO_ERROR(DFE_NOVS, FAIL); 
     w = &vs->wlist;
          /* build blist based on info in w */
-    if (fields_in_buf == NULL)
+    if (fields_in_buf == NULL)   
          ac = w->n;
     else    {           /* build our own blist */
        if (scanattrs(fields_in_buf, &ac, &av) == FAIL)
            HGOTO_ERROR(DFE_BADFIELDS, FAIL);
        if ((av == NULL) || (ac < 1))
             HGOTO_ERROR(DFE_ARGS, FAIL);
-    }
+    } 
     blist.n = ac;
     blist.idx = (int32 *)HDmalloc((size_t)ac * sizeof(int32));
     blist.offs = (int32 *)HDmalloc((size_t)ac * sizeof(int32));
@@ -1016,7 +1014,7 @@ intn VSfpack(int32 vsid, intn packtype, const char *fields_in_buf,
       /* fill arrays blist.msizes and blist.offs; calculate
            buf record size */
     b_rec_size = 0;
-    if (fields_in_buf != NULL)
+    if (fields_in_buf != NULL) 
         /* a subset of vdata fields are contained in buf */
         for (i=0; i<ac; i++) {
            /* look for the field in vdata fields */
@@ -1052,7 +1050,7 @@ intn VSfpack(int32 vsid, intn packtype, const char *fields_in_buf,
                 (i==0? 0 : blist.offs[i-1] + w->esize[i-1]);
            b_rec_size += w->esize[i];
        }
-
+ 
        /* check bufsz */
     if (bufsz < b_rec_size * n_records)
         HGOTO_ERROR(DFE_NOTENOUGH, FAIL);
@@ -1062,14 +1060,14 @@ intn VSfpack(int32 vsid, intn packtype, const char *fields_in_buf,
         if ((av == NULL) || (ac < 1))
             HGOTO_ERROR(DFE_ARGS, FAIL);
     }
-    else
+    else 
         ac = blist.n;
        /* fill array of fmsizes, foffs, fbufps */
-    if ((fmsizes=(int32 *)HDmalloc((size_t)ac*sizeof(int32))) == NULL)
+    if ((fmsizes=(int32 *)HDmalloc((size_t)ac*sizeof(int32))) == NULL) 
          HGOTO_ERROR(DFE_NOSPACE, FAIL);
-    if ((foffs = (int32 *)HDmalloc((size_t)ac*sizeof(int32))) == NULL)
+    if ((foffs = (int32 *)HDmalloc((size_t)ac*sizeof(int32))) == NULL) 
          HGOTO_ERROR(DFE_NOSPACE, FAIL);
-    if ((fbufps=(uint8 **)HDmalloc((size_t)ac*sizeof(uint8 *))) == NULL)
+    if ((fbufps=(uint8 **)HDmalloc((size_t)ac*sizeof(uint8 *))) == NULL) 
          HGOTO_ERROR(DFE_NOSPACE, FAIL);
     if (fields != NULL)  { /* a subset of buf fields */
         for (i=0; i<ac; i++) {
@@ -1092,12 +1090,12 @@ intn VSfpack(int32 vsid, intn packtype, const char *fields_in_buf,
 #endif /* VDATA_FIELDS_ALL_UPPER */
             }     /* for */
             if (!found)
-                HGOTO_ERROR(DFE_BADFIELDS, FAIL);
+                HGOTO_ERROR(DFE_BADFIELDS, FAIL); 
             fmsizes[i] = (int32)w->esize[blist.idx[j]];
             foffs[i] = blist.offs[j];
 	    fbufps[i] = fldbufpt[i];
-            if (fbufps[i] == NULL)
-                HGOTO_ERROR(DFE_BADPTR,FAIL);
+            if (fbufps[i] == NULL)  
+                HGOTO_ERROR(DFE_BADPTR,FAIL);  
         }
     }
     else
@@ -1106,12 +1104,12 @@ intn VSfpack(int32 vsid, intn packtype, const char *fields_in_buf,
             fmsizes[i] = (int32)w->esize[blist.idx[i]];
             foffs[i] = blist.offs[i];
 	    fbufps[i] = fldbufpt[i];
-            if (fbufps[i] == NULL)
-                HGOTO_ERROR(DFE_BADPTR,FAIL);
+            if (fbufps[i] == NULL)  
+                HGOTO_ERROR(DFE_BADPTR,FAIL); 
         }
      }
     if (packtype == _HDF_VSPACK ) {
-        /* memory copy fields data to vdata buf */
+        /* memory copy fields data to vdata buf */    
         for (i=0; i<n_records; i++)   {
             for (j=0; j<ac; j++)       {
                 HDmemcpy(bufp + foffs[j], fbufps[j], fmsizes[j]);

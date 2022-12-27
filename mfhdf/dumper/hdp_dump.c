@@ -28,17 +28,17 @@
 typedef intn (*fmtfunct_t) (VOIDP, file_format_t, FILE *);
 fmtfunct_t select_func(int32 nt);
 
-/*
- * printing functions copied from vshow.c and used by sdsdumpfull().
+/* 
+ * printing functions copied from vshow.c and used by sdsdumpfull(). 
  *
  * Please pay attention to the data types used in the print/output routines.
  * Make sure the data type being dumped matches arguments in 'fwrite()' .etc.
  *
  */
 
-intn
+intn 
 fmtbyte(unsigned char *x, /* assumption: byte is the same as unsigned char */
-        file_format_t    ff,
+        file_format_t    ff, 
         FILE          *ofp)
 {
     unsigned char s;
@@ -46,15 +46,15 @@ fmtbyte(unsigned char *x, /* assumption: byte is the same as unsigned char */
     if(ff == DASCII)
       return (fprintf(ofp, "%02x ", (unsigned) *x));
     else
-      {
+      { 
           s = (unsigned char) *x;
           return(fwrite(&s, sizeof(unsigned char),1,ofp));
       }
 }
 
-intn
+intn 
 fmtint8(VOIDP       x,  /* assumption: int8 is same as signed char */
-        file_format_t ff,
+        file_format_t ff, 
         FILE       *ofp)
 {
     int8 s;
@@ -68,9 +68,9 @@ fmtint8(VOIDP       x,  /* assumption: int8 is same as signed char */
       }
 }
 
-intn
+intn 
 fmtuint8(VOIDP       x, /* assumption: uint8 is same as unsigned char */
-         file_format_t ff,
+         file_format_t ff, 
          FILE       *ofp)
 {
     uint8 s;
@@ -78,15 +78,15 @@ fmtuint8(VOIDP       x, /* assumption: uint8 is same as unsigned char */
     if(ff == DASCII)
         return (fprintf(ofp, "%u", (unsigned) *((unsigned char *) x)));
     else
-      {
+      { 
           s = (uint8) *((unsigned char *) x);
           return(fwrite(&s, sizeof(uint8), 1, ofp));
-      }
+      } 
 }
 
-intn
-fmtint16(VOIDP       x,
-         file_format_t ff,
+intn 
+fmtint16(VOIDP       x, 
+         file_format_t ff, 
          FILE       *ofp)
 {
     int16 s;
@@ -99,9 +99,9 @@ fmtint16(VOIDP       x,
         return(fwrite(&s, sizeof(int16), 1, ofp));
 }
 
-intn
-fmtuint16(VOIDP       x,
-          file_format_t ff,
+intn 
+fmtuint16(VOIDP       x, 
+          file_format_t ff, 
           FILE       *ofp)
 {
     uint16      s;
@@ -114,13 +114,11 @@ fmtuint16(VOIDP       x,
         return(fwrite(&s, sizeof(uint16), 1, ofp));
 }
 
-intn
-fmtchar(VOIDP       x,
-        file_format_t ff,
+intn 
+fmtchar(VOIDP       x, 
+        file_format_t ff, 
         FILE       *ofp)
 {
-    (void)ff;
-
    if (isprint(*(unsigned char *) x))
    {
       putc(*((char *) x), ofp);
@@ -130,46 +128,46 @@ fmtchar(VOIDP       x,
    {
       putc('\\', ofp);
       return (1 + fprintf(ofp, "%03o", *((uchar8 *) x)));
-   }
+   }		
 }
 
-intn
+intn 
 fmtuchar8(VOIDP       x, /* assumption: uchar8 is same as unsigned char */
-          file_format_t ff,
+          file_format_t ff, 
           FILE       *ofp)
-{
+{   
     uchar8 s;
 
-    if(ff == DASCII)
+    if(ff == DASCII) 
 	/* replace %o with %d by Elena's suggestion: it doesn't make
 	   sense to print in octal - BMR 06/23/00 */
         return (fprintf(ofp, "%d", *((uchar8 *) x)));
     else
-      {
+      { 
           s = (uchar8) *((unsigned char *)x);
           return(fwrite(&s, sizeof(uchar8),1, ofp));
       }
 }
 
-intn
+intn 
 fmtint(VOIDP       x, /* assumption: int is same as 'intn' */
-       file_format_t ff,
+       file_format_t ff, 
        FILE       *ofp)
 {
     intn        i;
 
     HDmemcpy(&i, x, sizeof(intn));
 
-    if(ff == DASCII)
+    if(ff == DASCII) 
         return (fprintf(ofp, "%d", (int) i));
     else
         return(fwrite(&i, sizeof(intn), 1, ofp));
 }
 
 #define FLOAT32_EPSILON ((float32)1.0e-20)
-intn
-fmtfloat32(VOIDP       x,
-           file_format_t ff,
+intn 
+fmtfloat32(VOIDP       x, 
+           file_format_t ff, 
            FILE       *ofp)
 {
     float32     fdata;
@@ -189,9 +187,9 @@ fmtfloat32(VOIDP       x,
       }
 }
 
-intn
-fmtint32(VOIDP       x,
-         file_format_t ff,
+intn 
+fmtint32(VOIDP       x, 
+         file_format_t ff, 
          FILE       *ofp)
 {
     int32       l;
@@ -204,9 +202,9 @@ fmtint32(VOIDP       x,
         return(fwrite(&l, sizeof(int32), 1, ofp));
 }
 
-intn
-fmtuint32(VOIDP       x,
-          file_format_t ff,
+intn 
+fmtuint32(VOIDP       x, 
+          file_format_t ff, 
           FILE       *ofp)
 {
     uint32      l;
@@ -219,9 +217,9 @@ fmtuint32(VOIDP       x,
         return(fwrite(&l, sizeof(uint32), 1, ofp));
 }
 
-intn
-fmtshort(VOIDP       x,
-         file_format_t ff,
+intn 
+fmtshort(VOIDP       x, 
+         file_format_t ff, 
          FILE       *ofp)
 {
     short s;
@@ -235,9 +233,9 @@ fmtshort(VOIDP       x,
 }
 
 #define FLOAT64_EPSILON ((float64)1.0e-20)
-intn
-fmtfloat64(VOIDP       x,
-           file_format_t ff,
+intn 
+fmtfloat64(VOIDP       x, 
+           file_format_t ff, 
            FILE       *ofp)
 {
     float64     d;
@@ -298,11 +296,11 @@ fmtfunct_t select_func(
    }		/* end switch */
 }  /* select_func */
 
-intn
-dumpfull(int32       nt,
+intn 
+dumpfull(int32       nt, 
 	 dump_info_t* dump_opts,
          int32       cnt,     /* number of items in 'databuf' ? */
-         VOIDP       databuf,
+         VOIDP       databuf, 
          FILE       *ofp,
 	 intn	indent,		/* indentation on the first line */
 	 intn	cont_indent )	/* indentation on the continuous lines */
@@ -320,7 +318,7 @@ dumpfull(int32       nt,
       ERROR_GOTO_1( "in %s: Data buffer to be dumped is NULL", "dumpfull" );
    if( NULL == ofp )
       ERROR_GOTO_1( "in %s: Output file pointer is NULL", "dumpfull" );
-
+    
    /* select the appropriate function to print data elements depending
       on the data number type */
    fmtfunct = select_func( nt );
@@ -329,7 +327,7 @@ dumpfull(int32       nt,
    bufptr = databuf;
    off = DFKNTsize(nt | DFNT_NATIVE); /* what is offset for data type */
    if (off == FAIL)
-      ERROR_GOTO_2("in %s: Failed to find native size of type [%d]",
+      ERROR_GOTO_2("in %s: Failed to find native size of type [%d]", 
 			"dumpfull", (int)nt );
 
    cn = cont_indent; /* current column number, cont_indent because that's
@@ -363,7 +361,7 @@ dumpfull(int32       nt,
                       putc(' ', ofp);
                }	/* end if */
          }	 /* end for every item in buffer */
-      }
+      }		
       else /* DFNT_CHAR */
       {
          for (i = 0; i < cnt && bufptr != NULL; i++)
@@ -404,11 +402,11 @@ done:
     return ret_value;
 } /* dumpfull */
 
-intn
-dumpclean(int32       nt,
+intn 
+dumpclean(int32       nt, 
 	 dump_info_t* dump_opts,
          int32       cnt,     /* number of items in 'databuf' ? */
-         VOIDP       databuf,
+         VOIDP       databuf, 
          FILE       *ofp)
 {
    intn    i;
@@ -420,19 +418,17 @@ dumpclean(int32       nt,
    char* tempptr;	/* used in finding CR or LF in data buffer */
    intn    ret_value = SUCCEED;
 
-   (void)dump_opts;
-
    /* check inputs */
    if( NULL == databuf )
       ERROR_GOTO_1( "in %s: Data buffer to be dumped is NULL", "dumpclean" );
    if( NULL == ofp )
       ERROR_GOTO_1( "in %s: Output file pointer is NULL", "dumpclean" );
-
+    
    /* assign to variables used in loop below (?)*/
    bufptr = databuf;
    off = DFKNTsize(nt | DFNT_NATIVE); /* what is offset for data type */
    if (off == FAIL)
-      ERROR_GOTO_2("in %s: Failed to find native size of type [%d]",
+      ERROR_GOTO_2("in %s: Failed to find native size of type [%d]", 
 			"dumpclean", (int)nt );
 
    /* set char counter to the col. #, where the first attr value will be
@@ -443,20 +439,20 @@ dumpclean(int32       nt,
 
    /***********************************************************************
     * Requirement for printing attribute data (BMR - Oct 5, 2000):
-    * if the attribute is large, print all data at the left most column;
-    * otherwise (small attribute), print the first line of the data
-    * next to the title, i.e. "Value = ", and indent the succeeding lines
+    * if the attribute is large, print all data at the left most column; 
+    * otherwise (small attribute), print the first line of the data 
+    * next to the title, i.e. "Value = ", and indent the succeeding lines 
     * ATTR_CONT_INDENT spaces.
-    * Large attribute: buffer size is >= MAXPERLINE and the buffer
+    * Large attribute: buffer size is >= MAXPERLINE and the buffer 
     * contains at least one \n (LF) or \r (CR).
     * Small attribute: buffer size is < MAXPERLINE or the buffer doesn't
-    * contain any \n (LF) or \r (CR) among the data.
+    * contain any \n (LF) or \r (CR) among the data. 
     ***********************************************************************/
 
    /* Setting variables to prepare for the printing */
 
    /* check the size of the buffer first, if it's shorter than MAXPERLINE
-      then set flag small_attr.  If the buffer size is larger, then
+      then set flag small_attr.  If the buffer size is larger, then 
       proceed to the next segment which determines whether the attribute
       is small or large using the space char. criteria. */
 
@@ -528,9 +524,9 @@ dumpclean(int32       nt,
          /* when either LF or CR exists in the data buffer, character
             counter, cn, is no longer needed since we don't need to keep
             track of the number of chars being printed on a line anymore.
-            Yet, for logical purpose, reset it here just as a new line
+            Yet, for logical purpose, reset it here just as a new line 
 	    of data starts */
-         if( *(unsigned char *) bufptr == CARRIAGE_RETURN
+         if( *(unsigned char *) bufptr == CARRIAGE_RETURN 
             || *(unsigned char *) bufptr == LINE_FEED )
 	 {
             putc('\n', ofp); /* print \n for both CR and LF, otherwise, CR=^M*/
@@ -549,14 +545,14 @@ dumpclean(int32       nt,
          {
             putc('\\', ofp);
             cn = cn + fprintf(ofp, "%03o", *((uchar8 *) bufptr));
-         }
+         }		
       }
       else
       {
 /* this should be printed as binary intstead of \digits */
          putc('\\', ofp);
          cn = cn + fprintf(ofp, "%03o", *((uchar8 *) bufptr));
-      }
+      }		
 
       /* advance the buffer pointer */
       bufptr = (char *) bufptr + off;

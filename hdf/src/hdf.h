@@ -30,8 +30,8 @@ DFdi;
 
 /* For annotations */
 /* enumerated types of the varous annotation types */
-typedef enum
-{
+typedef enum 
+{ 
     AN_UNDEF = -1,
     AN_DATA_LABEL = 0, /* Data label */
     AN_DATA_DESC,      /* Data description */
@@ -142,16 +142,6 @@ hdf_ntinfo_t;
 typedef int32 HFILEID;
 
 typedef intn (*hdf_termfunc_t)(void);   /* termination function typedef */
-
-/* .................................................................. */
-
-/* Publically useful macros for tests/examples.  */
-
-/* Used to make certain a checked value _is_not_ a specific value.
- * If the checked value matches the specific value, print an error message. */
-#define CHECK_NOT_VAL(ret, val, where) \
-do {if(ret == val) {printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__);} \
-} while(0)
 
 /* .................................................................. */
 

@@ -78,14 +78,17 @@ intn readnoHDF_char(const char *filename, const int32 offset, const int32 length
 static intn test_attrs()
 {
     int32 sd_id, sds_id, dim_id, dim_idx, att_idx;
-    int32 dimsizes[2], starts[2], edges[2];
+    int32 dimsizes[2], starts[2], edges[2], rank=0;
     int32 data1[LENGTH1_X];
     float data2[LENGTH2_X][LENGTH2_Y];
+    char  data3[LENGTH3_X], outdata3[LENGTH3_X];
     char  sds_name[20];
+    uintn info_count = 0;
     int32 n_values, nattrs;
     int32 offset=0, length=0;
    char8   file_values[] = "Storm_track_data";
    float32 sds_values[2] = {2., 10.};
+   float32 sds_values_out[2];
    char8   dim_values[]  = "Seconds";
     intn  status;
     int   ii, jj;
@@ -138,7 +141,7 @@ static intn test_attrs()
                        (VOIDP)dim_values);
     CHECK(status, FAIL, "SDsetattr")
 
-    /*
+    /* 
      * Create a 2-dim 5x8 element SDS, type float32, then write 5x8 values
      * to it
      */
@@ -511,7 +514,7 @@ intn add_sdfile_annotations()
 **
 **  add_sdsNDG_annotations: Adds data labels and descriptions with
 **	DFAN API, then reads them back and verifies that they are
-**	written correctly.  The data object in this function is
+**	written correctly.  The data object in this function is 
 **	DFTAG_NDG.
 **
 ****************************************************************/
@@ -585,19 +588,22 @@ intn add_sdsNDG_annotations()
 **
 **  add_sdsSDG_annotations: Adds data labels and descriptions with
 **	DFAN API, then reads them back and verifies that they are
-**	written correctly.  The data object in this function is
+**	written correctly.  The data object in this function is 
 **	DFTAG_SDG.
 **
 ****************************************************************/
 intn add_sdsSDG_annotations()
 {
-    char        labsds[MAXLEN_LAB], descsds[MAXLEN_DESC],
+    char        labsds[MAXLEN_LAB], labris[MAXLEN_LAB], descsds[MAXLEN_DESC],
                 descris[MAXLEN_DESC];
+    uint8       pal[768];
     uint16      refnum;
+    int32       ret;
     intn        rank;
     int         j;
     int32       dimsizes[2];
     float      *data;
+    intn num_errs=0;
 
 /* set up object labels and descriptions */
 
@@ -616,19 +622,19 @@ intn add_sdsSDG_annotations()
 
     gen2Dfloat(ROWS, COLS, data);
 
-    DFSDsetdims(2, dimsizes);
+    ret = DFSDsetdims(2, dimsizes);
 
 /********  Write labels and descriptions *********/
     for (j = 0; j < REPS; j++)
       {
 
           /* write out scientific data set */
-          DFSDadddata(DFAN_SDG_FILE, 2, dimsizes, (VOIDP) data);
+          ret = DFSDadddata(DFAN_SDG_FILE, 2, dimsizes, (VOIDP) data);
 
             {   /* write out annotations for 2 out of every 3 */
                 refnum = DFSDlastref();
-                DFANputlabel(DFAN_SDG_FILE, DFTAG_SDG, refnum, labsds);
-                DFANputdesc(DFAN_SDG_FILE, DFTAG_SDG, refnum,
+                ret = DFANputlabel(DFAN_SDG_FILE, DFTAG_SDG, refnum, labsds);
+                ret = DFANputdesc(DFAN_SDG_FILE, DFTAG_SDG, refnum,
                                   descsds, (int32)HDstrlen(descsds));
             }
       }
@@ -637,11 +643,11 @@ intn add_sdsSDG_annotations()
 
     for (j = 0; j < REPS; j++)
       {
-          DFSDgetdims(DFAN_SDG_FILE, &rank, dimsizes, 3);
+          ret = DFSDgetdims(DFAN_SDG_FILE, &rank, dimsizes, 3);
           refnum = DFSDlastref();
 
           if ((j % 3) != 0)     /* read in annotations for 2 out of every 3 */
-              check_lab_desc(DFAN_SDG_FILE, DFTAG_SDG, refnum, labsds, descsds);
+              num_errs = check_lab_desc(DFAN_SDG_FILE, DFTAG_SDG, refnum, labsds, descsds);
       }
 
     HDfree((VOIDP) data);
@@ -703,9 +709,12 @@ intn get_ann_datainfo(
 static int test_dfannots(void)
 {
     int32 sd_id, sds_id, sds_index;
-    intn  status;
-    int32 n_datasets, n_file_attr;
+    intn  ii, status, num_annots;
+    int32 n_datasets, n_file_attr, n_attrs; 
+    int32 *offsetarray=NULL, *lengtharray=NULL;
     int32 chk_offsets[10], chk_lengths[10];
+    int32 num_labels = 0,      /* number of file or object labels */
+          num_descs = 0;       /* number of file or object descriptions */
     intn  num_errs = 0;
 
     /* Add file annotations */
@@ -750,12 +759,12 @@ static int test_dfannots(void)
     if (status > 0)
         fprintf(stderr, "test_dfannots: errors while verifying annotations\n");
 
-    /* Obtain information about the file. */
+    /* Obtain information about the file. */ 
     status = SDfileinfo(sd_id, &n_datasets, &n_file_attr);
     CHECK(status, FAIL, "test_dfannots: SDfileinfo");
 
     /* Get annotation information of each SDS in the file. */
-    for (sds_index=0; sds_index< n_datasets; sds_index++)
+    for (sds_index=0; sds_index< n_datasets; sds_index++) 
     {
 	sds_id = SDselect (sd_id, sds_index);
         CHECK(sds_id, FAIL, "test_dfannots: SDselect");
@@ -775,7 +784,7 @@ static int test_dfannots(void)
                 chk_offsets[0] = 1729; /* verified with UNIX */
 		chk_lengths[0] = 101; /* command "od --format=a" */
 	    }
-
+					
             status = get_ann_datainfo(sds_id, AN_DATA_DESC, chk_offsets, chk_lengths);
 	    if (status > 0)
 	        fprintf(stderr, "test_dfannots: errors while verifying annotations\n");
@@ -845,7 +854,7 @@ static intn test_dfsdattrs()
 {
     int         i, j, ret;
     intn        rank;
-    int32       dims[2];
+    int32       dims[2], num_datasets;
     float32     f32[XX][YY], tf32[XX][YY];
     intn info_count=0;
     int32 offset=0, length=0;
@@ -864,7 +873,7 @@ static intn test_dfsdattrs()
     float32  scrowf32[YY] = {(float32) 0.0, (float32) 10.0, (float32) 20.0,
 			(float32) 1.0, (float32) 11.0, (float32) 21.0};
     uncomment these when the calls to DFSDsetdimscale are uncommented.
-    */
+    */ 
 
     rank = 2;
     dims[0] = XX;
@@ -918,7 +927,7 @@ static intn test_dfsdattrs()
 
     ret = DFSDsetdimscale(2, dims[1], (VOIDP) scrowf32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
-    */
+    */ 
 
     /* Write/Read data to/from SDS */
     ret = DFSDputdata(OLDATTFILE, rank, dims, (VOIDP) f32);
@@ -1076,6 +1085,7 @@ intn readnoHDF_char(const char *filename, const int32 offset, const int32 length
    SDgetoldattdatainfo(), and SDgetanndatainfo() */
 extern int test_att_ann_datainfo()
 {
+    intn status;
     int num_errs = 0;
 
     /* Output message about test being performed */
@@ -1089,7 +1099,7 @@ extern int test_att_ann_datainfo()
 
     /* Test getting data info of annotations added by AN API */
      /* num_errs = num_errs + test_mfannots(); not needed right now
- */
+ */ 
 
     /* Test getting data info of old attributes added by DFSD API */
     num_errs += test_dfsdattrs();

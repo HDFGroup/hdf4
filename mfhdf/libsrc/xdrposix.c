@@ -262,12 +262,28 @@ int nbytes;
 
 static bool_t   xdrposix_getlong();
 static bool_t   xdrposix_putlong();
+#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__
+static bool_t   xdrposix_getint();
+static bool_t   xdrposix_putint();
+#endif
 static bool_t   xdrposix_getbytes();
 static bool_t   xdrposix_putbytes();
 static ncpos_t  xdrposix_getpos();
 static bool_t   xdrposix_setpos();
-static int32_t *xdrposix_inline();
-static void     xdrposix_destroy();
+#if (_MIPS_SZLONG == 64)
+static long *    xdrposix_inline();
+#else
+#if (defined __sun && defined _LP64)
+static rpc_inline_t *    xdrposix_inline();
+#else
+#if ((defined __x86_64__ ) && !(defined __sun && defined _LP64)) || defined __powerpc64__
+static int32_t *    xdrposix_inline();
+#else
+static netlong *    xdrposix_inline();
+#endif
+#endif
+#endif
+static void xdrposix_destroy();
 
 /*
  * Ops vector for posix type XDR
@@ -275,13 +291,37 @@ static void     xdrposix_destroy();
 static struct xdr_ops   xdrposix_ops = {
     xdrposix_getlong,   /* deserialize a 32-bit int */
     xdrposix_putlong,   /* serialize a 32-bit int */
+#if (_MIPS_SZLONG == 64)
+    /* IRIX64 has 64 bits long and 32 bits int. */
+    /* It defines two extra entries for get/put int. */
+    xdrposix_getint,   /* deserialize a 32-bit int */
+    xdrposix_putint,   /* serialize a 32-bit int */
+#endif
     xdrposix_getbytes,  /* deserialize counted bytes */
     xdrposix_putbytes,  /* serialize counted bytes */
     xdrposix_getpos,    /* get offset in the stream */
     xdrposix_setpos,    /* set offset in the stream */
     xdrposix_inline,    /* prime stream for inline macros */
+#if (defined __sun && defined _LP64) || defined __x86_64__ || defined __powerpc64__
     xdrposix_destroy,   /* destroy stream */
+#if !(defined __x86_64__) && !(defined __powerpc64__) || (defined  __sun && defined _LP64) /* i.e. we are on SUN/Intel in 64-bit mode */
     NULL,               /* no xdr_control function defined */
+#endif
+    /* Solaris 64-bit (arch=v9 and arch=amd64) has 64 bits long and 32 bits int. */
+    /* It defines the two extra entries for get/put int. here */
+    xdrposix_getint,   /* deserialize a 32-bit int */
+    xdrposix_putint    /* serialize a 32-bit int */
+#else
+#ifdef AIX5L64
+    xdrposix_destroy,
+    NULL,
+    NULL,
+    xdrposix_getint,
+    xdrposix_putint
+#else /*AIX5L64 */
+    xdrposix_destroy    /* destroy stream */
+#endif /*AIX5L64 */
+#endif
 };
 
 
@@ -531,9 +571,6 @@ xdrposix_inline(xdrs, len)
     XDR *xdrs;
     u_int len;
 {
-
-        (void)xdrs;
-        (void)len;
 
     /*
      * Must do some work to implement this: must insure

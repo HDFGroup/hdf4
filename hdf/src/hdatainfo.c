@@ -34,8 +34,8 @@ EXPORTED ROUTINES
   VSgetdatainfo    -- retrieves offset(s) and length(s) of a vdata's data
   GRgetdatainfo    -- retrieves offset(s) and length(s) of an image's data
   VSgetattdatainfo -- retrieves offset and length of a vdata attribute's data
-  Vgetattdatainfo  -- retrieves offset and length of a vgroup attribute's data
-  GRgetattdatainfo -- retrieves offset and length of an image attribute's data
+  Vgetattdatainfo  -- retrieves offset and length of a vgroup attribute's data 
+  GRgetattdatainfo -- retrieves offset and length of an image attribute's data 
   ANgetdatainfo    -- retrieves offset and length of an annotation's data
 
 LOW-LEVEL ROUTINES
@@ -62,13 +62,13 @@ LOW-LEVEL ROUTINES
 #endif
 
 
-/*-----------------------------------------------------------------------------
+/*----------------------------------------------------------------------------- 
  NAME
     HDgetdatainfo -- Retrieves offset(s) and length(s) of the data in a
 		     data element.
  USAGE
     intn HDgetdatainfo(file_id, tag, ref, start_block, info_count,
-			 *offsetarray, *lengtharray)
+			 *offsetarray, *lengtharray)	
 	int32  file_id		IN: file id
 	uint16 tag		IN: tag of the element
 	uint16 ref		IN: ref of element
@@ -162,7 +162,7 @@ HDgetdatainfo(int32 file_id, uint16 tag, uint16 ref, int32 *chk_coord,
 	    HGOTO_DONE(0);
 	}
 
-	/* If the element is not special, that means dataset's tag/ref
+	/* If the element is not special, that means dataset's tag/ref 
 	   specifies the actual data that was written to the dataset, get
 	   the offset and length of the data if they were requested */
 	if (HTPis_special(data_id)==FALSE)
@@ -275,7 +275,7 @@ HDgetdatainfo(int32 file_id, uint16 tag, uint16 ref, int32 *chk_coord,
 
 			    /* Pass the header info to the linked-block API
 			       to get the data info if they are requested or the
-			       info count only, otherwise */
+			       info count only, otherwise */ 
 			    p = &lbuf[0];
 			    if (offsetarray != NULL && lengtharray != NULL)
 			        count = HLgetdatainfo(file_id, p, start_block,
@@ -316,7 +316,7 @@ HDgetdatainfo(int32 file_id, uint16 tag, uint16 ref, int32 *chk_coord,
 		    HGOTO_ERROR(DFE_READERROR, FAIL);
 
 		/* Pass the header info to the linked-block API to get the data
-		   info if they are requested or the info count only */
+		   info if they are requested or the info count only */ 
 		p = &lbuf[0];
 		if (offsetarray != NULL && lengtharray != NULL)
 		    count = HLgetdatainfo(file_id, p, start_block, info_count,
@@ -337,7 +337,7 @@ HDgetdatainfo(int32 file_id, uint16 tag, uint16 ref, int32 *chk_coord,
     /* Return the number of data blocks */
     ret_value = count;
 done:
-    if(ret_value == FAIL)
+    if(ret_value == FAIL)   
     { /* Error condition cleanup */
     } /* end if */
 
@@ -346,11 +346,11 @@ done:
 } /* HDgetdatainfo */
 
 
-/*------------------------------------------------------
+/*------------------------------------------------------ 
  NAME
     VSgetdatainfo - Gets the offset/length of a vdata's data
  USAGE
-    intn VSgetdatainfo(vsid, start_block, info_count, offsetarray, lengtharray)
+    intn VSgetdatainfo(vsid, start_block, info_count, offsetarray, lengtharray)	
 	int32  vsid		IN: vdata id
 	uintn  start_block	IN: data block to start at, 0 base
 	uintn  info_count	IN: number of blocks to be retrieved
@@ -360,7 +360,7 @@ done:
     The number of data blocks retrieved, if successful and FAIL, otherwise.
 
  DESCRIPTION
-    This function uses the low-level function HDgetdatainfo to
+    This function uses the low-level function HDgetdatainfo to 
     get the data info when the vdata is stored in linked-blocks.
 
  TODO
@@ -368,7 +368,7 @@ done:
  NOTES
     Aug 17, 2010: Tested some in hdf/test/tdatainfo.c -BMR
 ----------------------------------------------------------*/
-intn
+intn 
 VSgetdatainfo(int32 vsid, uintn start_block, uintn info_count,
 	int32 *offsetarray, int32 *lengtharray)
 {
@@ -450,7 +450,7 @@ VSgetdatainfo(int32 vsid, uintn start_block, uintn info_count,
     ret_value = count;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
     } /* end if */
   /* Normal function cleanup */
@@ -458,11 +458,11 @@ done:
 }   /* VSgetdatainfo */
 
 
-/*-----------------------------------------------------------------------------
+/*----------------------------------------------------------------------------- 
  NAME
     Vgetattdatainfo - Gets the offset/length of the data of a vgroup's attribute
  USAGE
-    intn Vgetattdatainfo(vgid, attrindex, *offset, *length)
+    intn Vgetattdatainfo(vgid, attrindex, *offset, *length)	
 	int32  vgid		IN: vgroup id
 	intn   attrindex	IN: attribute index
 	int32 *offset		OUT: buffer for offset
@@ -502,7 +502,7 @@ done:
     info of the attribute's data.
     -BMR 2011/3/19
 ----------------------------------------------------------*/
-intn
+intn 
 Vgetattdatainfo(int32 vgid, intn attrindex, int32 *offset, int32 *length)
 {
     CONSTR(FUNC, "Vgetattdatainfo");
@@ -572,7 +572,7 @@ Vgetattdatainfo(int32 vgid, intn attrindex, int32 *offset, int32 *length)
     /* Return the number of data blocks, which should be 1 */
     ret_value = status;
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -582,12 +582,12 @@ done:
 }   /* Vgetattdatainfo */
 
 
-/*------------------------------------------------------
+/*------------------------------------------------------ 
  NAME
     VSgetattdatainfo - Gets the offset/length of the data
 		      of a vdata's or vdata field's attribute
  USAGE
-    intn VSgetattdatainfo(vsid, findex, attrindex, *offset, *length)
+    intn VSgetattdatainfo(vsid, findex, attrindex, *offset, *length)	
 	int32  vsid		IN: vdata id
 	int32  findex		IN: vdata's field index or _HDF_VDATA
 	intn   attrindex	IN: attribute index
@@ -610,7 +610,7 @@ done:
     the attribute.
     -BMR 2011/3/19
 ----------------------------------------------------------*/
-intn
+intn 
 VSgetattdatainfo(int32 vsid, int32 findex, intn attrindex, int32 *offset, int32 *length)
 {
     CONSTR(FUNC, "VSgetattdatainfo");
@@ -689,7 +689,7 @@ VSgetattdatainfo(int32 vsid, int32 findex, intn attrindex, int32 *offset, int32 
     ret_value = status;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -699,7 +699,7 @@ done:
 }   /* VSgetattdatainfo */
 
 
-/*------------------------------------------------------------
+/*------------------------------------------------------------ 
  NAME
     GRgetattdatainfo - Gets the offset/length of the data of a
 			GR file's or an image's attribute
@@ -722,7 +722,7 @@ done:
         project, it makes sense to just provide the attribute index. -BMR
 
 --------------------------------------------------------------*/
-intn
+intn 
 GRgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
 {
     CONSTR(FUNC, "GRgetattdatainfo");
@@ -735,7 +735,7 @@ GRgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
     void     **aentry;		/* temp. ptr to the image found */
     TBBT_TREE *search_tree;	/* attribute tree to search through */
     int        found = FALSE;	/* TRUE when the searched attribute is found */
-    intn       status = 0;
+    intn       status = 0; 
     intn       ret_value = SUCCEED;
 
     /* Clear error stack */
@@ -753,7 +753,7 @@ GRgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
     id_group = HAatom_group(id);
     if (id_group != RIIDGROUP && id_group != GRIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-
+    
     /* Get attribute info and validate index */
 
     /* When file ID is given, check index against file's attribute count */
@@ -780,7 +780,7 @@ GRgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
 
 	  /* Check index against image's attribute count */
           if(attrindex >= ri_ptr->lattr_count)
-              HGOTO_ERROR(DFE_ARGS, FAIL);
+              HGOTO_ERROR(DFE_ARGS, FAIL); 
           search_tree = ri_ptr->lattree;
 	  hdf_file_id = ri_ptr->gr_ptr->hdf_file_id;
       } /* end if */
@@ -795,7 +795,7 @@ GRgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
 	at_ptr = (at_info_t *)*aentry;
 	if (at_ptr == NULL)
 	{
-	    HGOTO_ERROR(DFE_ARGS, FAIL);
+	    HGOTO_ERROR(DFE_ARGS, FAIL); 
 	}
 
 	/* If index is found, set flag */
@@ -828,7 +828,7 @@ GRgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
     ret_value = status; /* should be 1 */
 
 done:
-  if(ret_value == 0)
+  if(ret_value == 0)   
     { /* Error condition cleanup */
     } /* end if */
   /* Normal function cleanup */
@@ -836,7 +836,7 @@ done:
 }   /* GRgetattdatainfo */
 
 
-/*---------------------------------------------------------------
+/*--------------------------------------------------------------- 
 NAME
     GRgetdatainfo - Gets the offsets/lengths of the data of an image
 USAGE
@@ -850,14 +850,14 @@ RETURNS
     The number of data blocks retrieved, if successful and FAIL, otherwise.
 
 DESCRIPTION
-    This function uses the low-level function HDgetdatainfo to
+    This function uses the low-level function HDgetdatainfo to 
     get the data info of an image.
 
 TODO
     - not tested with linked-block element yet
     - need more documentation
 ----------------------------------------------------------------*/
-intn
+intn 
 GRgetdatainfo(int32 riid, uintn start_block, uintn info_count,
 	int32 *offsetarray, int32 *lengtharray)
 {
@@ -934,7 +934,7 @@ GRgetdatainfo(int32 riid, uintn start_block, uintn info_count,
     ret_value = count;
 
 done:
-  if(ret_value == 0)
+  if(ret_value == 0)   
     { /* Error condition cleanup */
     } /* end if */
   /* Normal function cleanup */
@@ -942,7 +942,7 @@ done:
 }   /* GRgetdatainfo */
 
 
-/*---------------------------------------------------------------
+/*--------------------------------------------------------------- 
 NAME
     GRgetpalinfo - Gets the palette data descriptors (DDs) in the
 		   file (i.e., palette tags, refs, offsets, and lengths)
@@ -967,14 +967,16 @@ DESCRIPTION
 
     -BMR 2012/6/19
 ----------------------------------------------------------------*/
-intn
+intn 
 GRgetpalinfo(int32 gr_id, uintn pal_count, hdf_ddinfo_t *palinfo_array)
 {
     CONSTR(FUNC, "GRgetpalinfo");
     gr_info_t *gr_ptr;
     int32 file_id;
+    int32 nbytes = 0;
     int32 aid = FAIL;
     intn  idx;
+    uintn count;
     intn  ret_value = SUCCEED;
 
     /* Clear error stack */
@@ -1004,7 +1006,7 @@ GRgetpalinfo(int32 gr_id, uintn pal_count, hdf_ddinfo_t *palinfo_array)
 	n_LUTs = Hnumber(file_id, DFTAG_LUT);
 	if (n_IP8s == FAIL || n_LUTs == FAIL)
 	{   HGOTO_ERROR(DFE_INTERNAL, FAIL); }
-	else
+	else 
 	    return(n_IP8s + n_LUTs);
     }
 
@@ -1049,7 +1051,7 @@ GRgetpalinfo(int32 gr_id, uintn pal_count, hdf_ddinfo_t *palinfo_array)
     ret_value = idx;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
       if (aid != FAIL)
           Hendaccess(aid);
@@ -1064,7 +1066,7 @@ NAME
     ANgetdatainfo -- Gets the offset(s) and length(s) locating the data of
 		      the annotation.
 USAGE
-    int32 ANgetdatainfo(ann_id, *offset, *length)
+    int32 ANgetdatainfo(ann_id, *offset, *length)	
 	int32  ann_id	IN: annotation ID
 	int32 *offset	OUT: buffer for offset
 	int32 *length	OUT: buffer for length
@@ -1074,7 +1076,7 @@ RETURNS
 DESCRIPTION
     Annotations have contiguous data, so ANgetdatainfo only needs to use
     Hoffset/Hlength to get the data info of an annotation.
-
+    
 NOTES
     Aug 25, 2010: Tested in tdatainfo.c/test_annotation -BMR
 --------------------------------------------------------------------------*/
@@ -1176,7 +1178,7 @@ ANgetdatainfo(int32 ann_id,    /* IN: annotation id */
     }
 
   done:
-    if(ret_value == FAIL)
+    if(ret_value == FAIL)   
       { /* Error condition cleanup */
       } /* end if */
     /* Normal function cleanup */
