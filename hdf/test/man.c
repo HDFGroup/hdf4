@@ -135,7 +135,7 @@ genimage(int height, int width, float *data, uint8 *image)
 
     /* store one value per row, increasing by one for each row */
     pdata  = data;
-    multiplier = (float) 255.0 / (max - min);
+    multiplier = 255.0f / (max - min);
     for (i = 0; i < limit; i++)
         *image++ = (uint8) (((*pdata++) - min) * multiplier);
 } /* geniamge() */

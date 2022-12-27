@@ -2229,7 +2229,7 @@ indexes(float *scale, int dim, int *idx, int res)
           goto err;
       }
     for (i = 0; i < dim - 1; i++)
-        midpt[i] = (scale[i] + scale[i + 1]) * (float)0.5;
+        midpt[i] = (scale[i] + scale[i + 1]) * 0.5f;
     midpt[dim - 1] = scale[dim - 1] + (scale[dim - 1] - midpt[dim - 2]);
 
     /*
@@ -2295,8 +2295,8 @@ interp(struct Input *in, struct Raster *im)
     float     loc;
     float     range;
     float     ratio;
-    float     hrange, vrange, drange = (float)0.0;
-    float     hdelta, vdelta, ddelta = (float)0.0;
+    float     hrange, vrange, drange = 0.0f;
+    float     hdelta, vdelta, ddelta = 0.0f;
     float     t1, t2, t3, t4, t5, t6;
     float    *hratio, *vratio, *dratio = NULL;
     float    *pt[8];
@@ -2308,7 +2308,7 @@ interp(struct Input *in, struct Raster *im)
      * determine the range of pixel locations
      */
     range = in->max - in->min;
-    ratio = (float)237.9 / range;
+    ratio = 237.9f / range;
     hrange = in->hscale[in->dims[0] - 1] - in->hscale[0];
     vrange = in->vscale[in->dims[1] - 1] - in->vscale[0];
     if (in->rank == 3)
@@ -2380,7 +2380,7 @@ interp(struct Input *in, struct Raster *im)
       {
           loc = hdelta * (float) i + in->hscale[0];
           hinc[i] = 0;
-          while ((j < (in->dims[0] - 2)) && ((hrange > (float)0.0) ?
+          while ((j < (in->dims[0] - 2)) && ((hrange > 0.0f) ?
                      (in->hscale[j + 1] < loc) : (in->hscale[j + 1] > loc)))
             {
                 hinc[i] += 1;
@@ -2391,7 +2391,7 @@ interp(struct Input *in, struct Raster *im)
     for (i = 0, j = 0, voff[0] = 0; i < im->vres; i++)
       {
           loc = vdelta * (float) i + in->vscale[0];
-          while ((j < (in->dims[1] - 2)) && ((vrange > (float)0.0) ?
+          while ((j < (in->dims[1] - 2)) && ((vrange > 0.0f) ?
                      (in->vscale[j + 1] < loc) : (in->vscale[j + 1] > loc)))
             {
                 voff[i] += 1;
@@ -2405,7 +2405,7 @@ interp(struct Input *in, struct Raster *im)
           for (i = 0, j = 0, doff[0] = 0; i < im->dres; i++)
             {
                 loc = ddelta * (float) i + in->dscale[0];
-                while ((j < (in->dims[2] - 2)) && ((drange > (float)0.0) ?
+                while ((j < (in->dims[2] - 2)) && ((drange > 0.0f) ?
                      (in->dscale[j + 1] < loc) : (in->dscale[j + 1] > loc)))
                   {
                       doff[i] += 1;
@@ -2441,7 +2441,7 @@ interp(struct Input *in, struct Raster *im)
                           pix = in->max;    /* clip (bug fix) */
                       if (pix < in->min)
                           pix = in->min;    /* ditto */
-                      *ip++ = (unsigned char)((ratio * (pix - in->min)) + (float)1.5);
+                      *ip++ = (unsigned char)((ratio * (pix - in->min)) + 1.5f);
                   }
             }
       }
@@ -2479,7 +2479,7 @@ interp(struct Input *in, struct Raster *im)
                                 pix = in->max;  /* clip (bug fix) */
                             if (pix < in->min)
                                 pix = in->min;  /* ditto */
-                            *ip++ = (unsigned char)((ratio * (pix - in->min)) + (float)1.5);
+                            *ip++ = (unsigned char)((ratio * (pix - in->min)) + 1.5f);
                         }
                   }
             }
@@ -2672,7 +2672,7 @@ pixrep(struct Input *in, struct Raster *im)
     dp = (float *) in->data;
     ip = im->image;
     range = in->max - in->min;
-    ratio = (float)237.9 / range;
+    ratio = 237.9f / range;
 
     /*
      * determine the scale indexes of the horizontal pixel locations
@@ -2741,7 +2741,7 @@ pixrep(struct Input *in, struct Raster *im)
                       if (vidx[j] > ovidx)
                         {
                             for (i = 0; i < in->dims[0]; i++)
-                                pix[i] = (unsigned char )((ratio * (*dp++ - in->min)) + (float)1.5);
+                                pix[i] = (unsigned char )((ratio * (*dp++ - in->min)) + 1.5f);
                             for (i = 0; i < im->hres; i++)
                                 *ip++ = pix[hidx[i]];
                             /*

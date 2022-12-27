@@ -56,9 +56,9 @@ main(int argc, char * argv[] )
 
     float     b32r2[3][4], b32r3[5][3][4];
     float     row4[3], col4[4], pln4[5];
-    float     rowo4 = (float)11.0e0, colo4 = (float)21.0e0, plno4 = (float)51.0e0;
-    float     rowi4 = (float)1.0e0, coli4 = (float)2.0e0, plni4 = (float)5.0e0;
-    float     ezero = (float)0.0e0;
+    float     rowo4 = 11.0e0f, colo4 = 21.0e0f, plno4 = 51.0e0f;
+    float     rowi4 = 1.0e0f, coli4 = 2.0e0f, plni4 = 5.0e0f;
+    float     ezero = 0.0e0f;
 
     double     b64r2[3][4], b64r3[5][3][4];
     double     row8[3], col8[4], pln8[5];

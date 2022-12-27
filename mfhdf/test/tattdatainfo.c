@@ -859,10 +859,10 @@ static intn test_dfsdattrs()
     const char  *dimlabels[2], *dimunits[2], *dimfmts[2];
     char        in_dimlabels[2][256], in_dimunits[2][256], in_dimfmts[2][256];
     /*
-    float  scplnf32[XX] = {(float) 0.0, (float) 100.0, (float) 0.1,
-			(float) 101.0, (float) 0.2, (float) 102.0};
-    float  scrowf32[YY] = {(float) 0.0, (float) 10.0, (float) 20.0,
-			(float) 1.0, (float) 11.0, (float) 21.0};
+    float  scplnf32[XX] = {0.0f, 100.0f, 0.1f,
+			   101.0f, 0.2f, 102.0f};
+    float  scrowf32[YY] = {0.0f, 10.0f, 20.0,
+			1.0f, 11.0f, 21.0f};
     uncomment these when the calls to DFSDsetdimscale are uncommented.
     */
 

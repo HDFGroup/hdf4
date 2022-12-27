@@ -105,7 +105,7 @@ val_fill_zero(type, len, vals)
       case NC_FLOAT:
 	gp.fp = (float *) vals;
 	for (iel = 0; iel < len; iel++)
-	  *gp.fp++ = (float) 0;
+	  *gp.fp++ = 0.0f;
 	break;
       case NC_DOUBLE:
 	gp.dp = (double *) vals;

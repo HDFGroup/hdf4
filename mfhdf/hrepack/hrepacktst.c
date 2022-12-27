@@ -2020,10 +2020,10 @@ int add_vs(const char* vs_name,
     */
     for (i = 0; i < N_RECORDS; i++)
     {
-        data_buf[i][0] = (float)1.0 * i;
-        data_buf[i][1] = (float)2.0 * i;
-        data_buf[i][2] = (float)3.0 * i;
-        data_buf[i][3] = (float)0.1 + i;
+        data_buf[i][0] = 1.0f * i;
+        data_buf[i][1] = 2.0f * i;
+        data_buf[i][2] = 3.0f * i;
+        data_buf[i][3] = 0.1f + i;
         data_buf[i][4] = 0.0;
         data_buf[i][5] = 65.0;
     }

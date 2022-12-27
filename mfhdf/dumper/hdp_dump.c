@@ -166,7 +166,7 @@ fmtint(VOIDP       x, /* assumption: int is same as 'intn' */
         return(fwrite(&i, sizeof(intn), 1, ofp));
 }
 
-#define FLOAT32_EPSILON ((float)1.0e-20)
+#define FLOAT32_EPSILON (1.0e-20f)
 intn
 fmtfloat(VOIDP       x,
            file_format_t ff,

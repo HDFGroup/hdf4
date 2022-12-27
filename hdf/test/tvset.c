@@ -411,7 +411,7 @@ write_vset_stuff(void)
     p = gbuf;
     c = 'a';
     j = 0;
-    f = (float) 15.5;
+    f = 15.5f;
     for (i = 0, count = 10; i < count; i++)
       {
           HDmemcpy(p, &c, sizeof(char8));
@@ -431,7 +431,7 @@ write_vset_stuff(void)
           j++;
           HDmemcpy(p, &f, sizeof(float));
           p += sizeof(float);
-          f += (float) 0.5;
+          f += 0.5f;
       }
 
     /* store it */
@@ -495,7 +495,7 @@ write_vset_stuff(void)
 
     /* create some bogus data */
     for (i = 0; i < max_order; i++)
-         gbuf2[i] = (float)i * (float)0.11;
+         gbuf2[i] = (float)i * 0.11f;
 
     status = VSwrite(vs1, (unsigned char *) gbuf2, 1, FULL_INTERLACE);
     CHECK(status,FAIL,"VSwrite:vs1");
@@ -794,7 +794,7 @@ read_vset_stuff(void)
     CHECK(status,FAIL,"VSsetfields:vs1");
 
     for (i = 0; i < count; i++)
-        fbuf[i] = (float)0.0;
+        fbuf[i] = 0.0f;
 
     status = VSread(vs1, (unsigned char *) fbuf, count, FULL_INTERLACE);
     CHECK(status,FAIL,"VSread:vs1");
@@ -1025,7 +1025,7 @@ read_vset_stuff(void)
     p = gbuf;
     for (i = 0; i < count; i++)
       {
-          float     fl=(float)0.0;
+          float     fl= 0.0f;
           int32       in=(int32)0;
 
           HDmemcpy(&fl, p, sizeof(float));
@@ -1113,13 +1113,13 @@ read_vset_stuff(void)
     CHECK(status,FAIL,"VSread:vs1");
 
     p = gbuf;
-    fl_expected = (float) 15.5;
+    fl_expected = 15.5f;
     in_expected = 0;
     c_expected = 'a';
 
     for (i = 0; i < count; i++)
       {
-          float     fl=(float)0.0;
+          float     fl = 0.0f;
           int32       in=(int32)0;
           char8       c=(char8)0;
 
@@ -1182,7 +1182,7 @@ read_vset_stuff(void)
                 num_errs++;
                 printf(">>> Multi-order float value %d was expecting %f got %f\n", (int) i, fl_expected, fl);
             }
-          fl_expected += (float) 0.5;
+          fl_expected += 0.5f;
 
       }
 

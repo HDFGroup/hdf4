@@ -30,22 +30,22 @@ static int32  cdims[3]      = {1, 2, 3};  /* chunk lengths */
 /* float32 arrays */
 #ifdef NOT_USED
 static float  chunk1_f32[4] =
-        {(float) 0.0, (float) 1.0, (float) 2.0, (float) 3.0};
+        {0.0f, 1.0f, 2.0f, f3.0};
 
 static float  chunk2_f32[4] =
-        {(float) 10.0, (float) 11.0, (float) 12.0, (float) 13.0};
+        {10.0f, 11.0f, 12.0f, 13.0f};
 
 static float  chunk3_f32[4] =
-        {(float) 20.0, (float) 21.0, (float) 22.0, (float) 23.0};
+        {20.0f, 21.0f, 22.0f, 23.0f};
 
 static float  chunk4_f32[4] =
-        {(float) 100.0, (float) 101.0, (float) 102.0, (float) 103.0};
+        {100.0f, 101.0f, 102.0f, 103.0f};
 
 static float  chunk5_f32[4] =
-        {(float) 110.0, (float) 111.0, (float) 112.0, (float) 113.0};
+        {110.0f, 111.0f, 112.0f, 113.0f};
 
 static float  chunk6_f32[4] =
-        {(float) 120.0, (float) 121.0, (float) 122.0, (float) 123.0};
+        {120.0f, 121.0f, 122.0f, 123.0f};
 
 /* uint16 arrays */
 static uint16  chunk1_u16[4] =        { 0, 1, 2, 3};
@@ -128,13 +128,13 @@ static uint8  chunk6_u8[4] = { 120, 121, 122, 123};
 static float  f32_data[2][3][4] =
 {
     {
-        {(float) 0.0, (float) 1.0, (float) 2.0, (float) 3.0},
-        {(float) 10.0, (float) 11.0, (float) 12.0, (float) 13.0},
-        {(float) 20.0, (float) 21.0, (float) 22.0, (float) 23.0}},
+        {0.0f, 1.0f, 2.0f, 3.0f},
+        {10.0f, 11.0f, 12.0f, 13.0f},
+        {20.0f, 21.0f, 22.0f, 23.0f}},
     {
-        {(float) 100.0, (float) 101.0, (float) 102.0, (float) 103.0},
-        {(float) 110.0, (float) 111.0, (float) 112.0, (float) 113.0},
-        {(float) 120.0, (float) 121.0, (float) 122.0, (float) 123.0}}};
+        {100.0f, 101.0f, 102.0f, 103.0f},
+        {110.0f, 111.0f, 112.0f, 113.0f},
+        {120.0f, 121.0f, 122.0f, 123.0f}}};
 
 static uint16  u16_data[2][3][4] =
 {

@@ -30,9 +30,9 @@ static double  maxf64 = 123.0;
 static double  minf64 = -1.0;
 static double  fillf64 = 1.0;
 
-static float  maxf32 = (float) 123.0;
-static float  minf32 = (float) -1.0;
-static float  fillf32 = (float) 1.0;
+static float  maxf32 = 123.0f;
+static float  minf32 = -1.0f;
+static float  fillf32 = 1.0f;
 
 static int32  maxin = 123;
 static int32  minin = -1;
@@ -95,12 +95,9 @@ static double  scrowf64[3] =
 static double  sccolf64[4] =
 {0.0, 1.0, 2.0, 3.0};
 
-static float  scplnf32[2] =
-{(float) 0.0, (float) 100.0};
-static float  scrowf32[3] =
-{(float) 0.0, (float) 10.0, (float) 20.0};
-static float  sccolf32[4] =
-{(float) 0.0, (float) 1.0, (float) 2.0, (float) 3.0};
+static float  scplnf32[2] = {0.0f, 100.0f};
+static float  scrowf32[3] = {0.0f, 10.0f, 20.0f};
+static float  sccolf32[4] = {0.0f, 1.0f, 2.0f, 3.0f};
 
 static int32  scplnin[2] =
 {0, 100};
@@ -162,32 +159,32 @@ static uint8  sccolui8[4] =
 static float  slabw1[1][1][3] =
 {
     {
-        {(float) 110.0, (float) 111.0, (float) 112.0}}};
+        {110.0f, 111.0f, 112.0f}}};
 static float  slabw2[2][1][3] =
 {
     {
-        {(float) 20.0, (float) 21.0, (float) 22.0}},
+        {20.0f, 21.0f, 22.0f}},
     {
-        {(float) 120.0, (float) 121.0, (float) 122.0}}};
+        {120.0f, 121.0f, 122.0f}}};
 static float  slabw3[1][2][3] =
 {
     {
-        {(float) 0.0, (float) 1.0, (float) 2.0},
-        {(float) 10.0, (float) 11.0, (float) 12.0}}};
+        {0.0f, 1.0f, 2.0f},
+        {10.0f, 11.0f, 12.0f}}};
 static float  slabw4[1][1][3] =
 {
     {
-        {(float) 100.0, (float) 101.0, (float) 102.0}}};
+        {100.0f, 101.0f, 102.0f}}};
 static float  slabw5[2][3][1] =
 {
     {
-        {(float) 3.0},
-        {(float) 13.0},
-        {(float) 23.0}},
+        {3.0f},
+        {13.0f},
+        {23.0f}},
     {
-        {(float) 103.0},
-        {(float) 113.0},
-        {(float) 123.0}}};
+        {103.0f},
+        {113.0f},
+        {123.0f}}};
 
 static double  slabw1f64[1][1][3] =
 {
@@ -462,111 +459,111 @@ static uint8  slabw5ui8[2][3][1] =
 static float  slab1[1][1][1] =
 {
     {
-        {(float) 0.0}}};
+        {0.0f}}};
 static float  slab2[1][1][1] =
 {
     {
-        {(float) 1.0}}};
+        {1.0f}}};
 static float  slab3[1][1][1] =
 {
     {
-        {(float) 2.0}}};
+        {2.0f}}};
 static float  slab4[1][1][1] =
 {
     {
-        {(float) 3.0}}};
+        {3.0f}}};
 static float  slab5[1][1][1] =
 {
     {
-        {(float) 10.0}}};
+        {10.0f}}};
 static float  slab6[1][1][1] =
 {
     {
-        {(float) 11.0}}};
+        {11.0f}}};
 static float  slab7[1][1][1] =
 {
     {
-        {(float) 12.0}}};
+        {12.0f}}};
 static float  slab8[1][1][1] =
 {
     {
-        {(float) 13.0}}};
+        {13.0f}}};
 static float  slab9[1][1][1] =
 {
     {
-        {(float) 20.0}}};
+        {20.0f}}};
 static float  slab10[1][1][1] =
 {
     {
-        {(float) 21.0}}};
+        {21.0f}}};
 static float  slab11[1][1][1] =
 {
     {
-        {(float) 22.0}}};
+        {22.0f}}};
 static float  slab12[1][1][1] =
 {
     {
-        {(float) 23.0}}};
+        {23.0f}}};
 static float  slab13[1][1][1] =
 {
     {
-        {(float) 100.0}}};
+        {100.0f}}};
 static float  slab14[1][1][1] =
 {
     {
-        {(float) 101.0}}};
+        {101.0f}}};
 static float  slab15[1][1][1] =
 {
     {
-        {(float) 102.0}}};
+        {102.0f}}};
 static float  slab16[1][1][1] =
 {
     {
-        {(float) 103.0}}};
+        {103.0f}}};
 static float  slab17[1][1][1] =
 {
     {
-        {(float) 110.0}}};
+        {f110.0}}};
 static float  slab18[1][1][1] =
 {
     {
-        {(float) 111.0}}};
+        {111.0f}}};
 static float  slab19[1][1][1] =
 {
     {
-        {(float) 112.0}}};
+        {112.0f}}};
 static float  slab20[1][1][1] =
 {
     {
-        {(float) 113.0}}};
+        {113.0f}}};
 static float  slab21[1][1][1] =
 {
     {
-        {(float) 120.0}}};
+        {120.0f}}};
 static float  slab22[1][1][1] =
 {
     {
-        {(float) 121.0}}};
+        {(121.0f}}};
 static float  slab23[1][1][1] =
 {
     {
-        {(float) 122.0}}};
+        {122.0f}}};
 static float  slab24[1][1][1] =
 {
     {
-        {(float) 123.0}}};
+        {123.0f}}};
 
 /* data array in memory  */
 static float  fdata[2][3][4] =
 {
     {
-        {(float) 0.0, (float) 1.0, (float) 2.0, (float) 3.0},
-        {(float) 10.0, (float) 11.0, (float) 12.0, (float) 13.0},
-        {(float) 20.0, (float) 21.0, (float) 22.0, (float) 23.0}},
+        {0.0f,  1.0f,  2.0f,  3.0f},
+        {10.0f, 11.0f, 12.0f, 13.0f},
+        {20.0f, 21.0f, 22.0f, 23.0f}},
     {
-        {(float) 100.0, (float) 101.0, (float) 102.0, (float) 103.0},
-        {(float) 110.0, (float) 111.0, (float) 112.0, (float) 113.0},
-     {(float) 120.0, (float) 121.0, (float) 122.0, (float) 123.0}}};
+        {100.0f, 101.0f, 102.0f, 103.0f},
+        {110.0f, 111.0f, 112.0f, 113.0f},
+     {120.0f, 121.0f, 122.0f, 123.0f}}};
 static double  f64data[2][3][4] =
 {
     {
@@ -697,7 +694,7 @@ slabwf32(void)
     int32       ret = 0;
     int32       num_err = 0;
     float     sdata[2][3][4]; /* Data array read from from file */
-    float     lfill=(float)0.0;
+    float     lfill = 0.0f;
 
     MESSAGE(10, printf("\n slabwf32:  Writing 5 slabs to slabwf32.hdf \n");
         );
@@ -2355,7 +2352,7 @@ slab2w(void)
     int32       ret = 0;
     int32       num_err = 0;
     float     sdata[2][3][4]; /* Data array read from from file */
-    float     lfill=(float)0.0;
+    float     lfill = 0.0f;
     intn        trank;
 
     MESSAGE(10, printf("\n slab2w:  Writing the last 2 of 5 slabs to slab1w.hdf \n");

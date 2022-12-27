@@ -242,7 +242,7 @@ main(int argc, char *argv[])
       }
 
     /* hmm...lets store an attribute here for the dimension */
-    max = (float)3.1415;
+    max = 3.1415f;
     status = SDsetattr(dimid, "DimAttr", DFNT_FLOAT32, 1, (VOIDP) &max);
     CHECK(status, FAIL, "SDsetattr");
 
@@ -390,8 +390,8 @@ main(int argc, char *argv[])
     CHECK(status, FAIL, "SDwritedata");
 
     /* set the range for data set 'DataSetAlpha' */
-    max = (float)10.0;
-    min = (float)4.6;
+    max = 10.0f;
+    min = 4.6f;
     status = SDsetrange(newsds, (VOIDP) &max, (VOIDP) &min);
     CHECK(status, FAIL, "SDsetrange");
 

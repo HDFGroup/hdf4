@@ -74,11 +74,11 @@ Ref =
 };
 PRIVATE DFGRrig Grread =
 {                               /* information about RIG being read */
-    NULL, 0, 0, (float) 0.0, (float) 0.0,
-    {(float) 0.0, (float) 0.0, (float) 0.0},
-    {(float) 0.0, (float) 0.0, (float) 0.0},
-    {(float) 0.0, (float) 0.0, (float) 0.0},
-    {(float) 0.0, (float) 0.0, (float) 0.0},
+    NULL, 0, 0, 0.0f, 0.0f,
+    {0.0f, 0.0f, 0.0f},
+    {0.0f, 0.0f, 0.0f},
+    {0.0f, 0.0f, 0.0f},
+    {0.0f, 0.0f, 0.0f},
     {
         {0, 0},
         {0, 0},
@@ -96,11 +96,11 @@ PRIVATE DFGRrig Grread =
 };
 PRIVATE DFGRrig Grwrite =
 {                               /* information about RIG being written */
-    NULL, 0, 0, (float) 0.0, (float) 0.0,
-    {(float) 0.0, (float) 0.0, (float) 0.0},
-    {(float) 0.0, (float) 0.0, (float) 0.0},
-    {(float) 0.0, (float) 0.0, (float) 0.0},
-    {(float) 0.0, (float) 0.0, (float) 0.0},
+    NULL, 0, 0, 0.0f, 0.0f,
+    {0.0f, 0.0f, 0.0f},
+    {0.0f, 0.0f, 0.0f},
+    {0.0f, 0.0f, 0.0f},
+    {0.0f, 0.0f, 0.0f},
     {
         {0, 0},
         {0, 0},
@@ -118,11 +118,11 @@ PRIVATE DFGRrig Grwrite =
 };
 PRIVATE DFGRrig Grzrig =
 {                               /* empty RIG for initialization */
-    NULL, 0, 0, (float) 0.0, (float) 0.0,
-    {(float) 0.0, (float) 0.0, (float) 0.0},
-    {(float) 0.0, (float) 0.0, (float) 0.0},
-    {(float) 0.0, (float) 0.0, (float) 0.0},
-    {(float) 0.0, (float) 0.0, (float) 0.0},
+    NULL, 0, 0, 0.0f, 0.0f,
+    {0.0f, 0.0f, 0.0f},
+    {0.0f, 0.0f, 0.0f},
+    {0.0f, 0.0f, 0.0f},
+    {0.0f, 0.0f, 0.0f},
     {
         {0, 0},
         {0, 0},
@@ -1494,7 +1494,7 @@ DFGRIaddimlut(const char *filename, const void * imlut, int32 xdim, int32 ydim,
               HGOTO_ERROR(DFE_PUTELEM, FAIL);
       }
     Grwrite.data[type].ref = wref;
-    Grwrite.aspectratio = (float) 1.0;
+    Grwrite.aspectratio = 1.0f;
 
     /* Write out Raster-8 tags for those who want it */
     if (is8bit)

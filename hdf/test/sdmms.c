@@ -17,7 +17,7 @@
 
 static float  f32[10][10],  tf32[10][10];
 static float  f32scale[10],  tf32scale[10];
-static float f32max = (float) 40.0, f32min = (float) 0.0;
+static float f32max = 40.0f, f32min = 0.0f;
 static float tf32max, tf32min;
 
 static int8  i8[10][10],  ti8[10][10];

@@ -151,13 +151,13 @@ static uint8  chunk6[4] = { 120, 121, 122, 123};
 static float  f32_data[2][3][4] =
 {
     {
-        {(float) 0.0, (float) 1.0, (float) 2.0, (float) 3.0},
-        {(float) 10.0, (float) 11.0, (float) 12.0, (float) 13.0},
-        {(float) 20.0, (float) 21.0, (float) 22.0, (float) 23.0}},
+        {0.0f,  1.0f,  2.0f,  3.0f},
+        {10.0f, 11.0f, 12.0f, 13.0f},
+        {20.0f, 21.0f, 22.0f, 23.0f}},
     {
-        {(float) 100.0, (float) 101.0, (float) 102.0, (float) 103.0},
-        {(float) 110.0, (float) 111.0, (float) 112.0, (float) 113.0},
-        {(float) 120.0, (float) 121.0, (float) 122.0, (float) 123.0}}};
+        {100.0f, 101.0f, 102.0f, 103.0f},
+        {110.0f, 111.0f, 112.0f, 113.0f},
+        {120.0f, 121.0f, 122.0f, 123.0f}}};
 
 /* for comparison in Test 7 */
 static uint16  u16_data[2][3][4] =
@@ -207,7 +207,7 @@ test_chunks(void)
     int32      fill_val_len = 1;
     uint8      fill_val_u8 = 0;      /* test 6 */
     uint16     fill_val_u16 = 0;     /* test 7 */
-    float    fill_val_f32 = (float)0.0; /* test 8 */
+    float    fill_val_f32 = 0.0f; /* test 8 */
     uint8      inbuf_u8[2][3][4];
     uint16     inbuf_u16[2][3][4];   /* input data buffer */
     float    inbuf_f32[2][3][4];   /* input data buffer */
@@ -1545,7 +1545,7 @@ test_chunks(void)
     chunk[0].pdims[2].distrib_type = 0; /* NONE */
 
     fill_val_len = 4;
-    fill_val_f32 = (float)0.0;
+    fill_val_f32 = 0.0f;
 
     /* Open file for writing last odd size chunks now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);

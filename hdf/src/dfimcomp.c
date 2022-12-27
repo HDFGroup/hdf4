@@ -214,17 +214,17 @@ compress(unsigned char raster[], int block)
     int         c_hi[3], c_lo[3];
 
     /* calculate luminance */
-    y_av = (float) 0.0;
+    y_av = 0.0f;
     for (i = 0; i < 16; i++)
       {
           j = 3 * i;
-          y[i] = (float) 0.3 *(float) raster[j] +
-                      (float) 0.59 *(float) raster[j + 1] +
-                      (float) 0.11 *(float) raster[j + 2];
+          y[i] = 0.3f *(float) raster[j] +
+                      0.59f *(float) raster[j + 1] +
+                      0.11f *(float) raster[j + 2];
           /*    printf("compress: y[%d] is %f\n",i,y[i]); */
           y_av = y_av + y[i];
       }
-    y_av /= (float) 16.0;
+    y_av /= 16.0f;
     /*  printf("y_av is %f\n",y_av); */
 
     /* initialize c_hi and c_lo */
@@ -682,8 +682,8 @@ init(int blocks, int distinct, struct rgb *my_color_pt)
     first = (struct box *) HDmalloc(sizeof(struct box));
     for (i = RED; i <= BLUE; i++)
       {
-          first->bnd[i][LO] = (float) 999.9;
-          first->bnd[i][HI] = (float) -999.9;
+          first->bnd[i][LO] = 999.9f;
+          first->bnd[i][HI] = -999.9f;
 
           for (j = 0; j < distinct; j++)
             {

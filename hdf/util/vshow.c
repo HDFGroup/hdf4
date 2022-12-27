@@ -344,7 +344,7 @@ fmtint(char *x)
 static int32
 fmtfloat(char *x)
 {
-    float       f = (float)0.0;
+    float       f = 0.0f;
     HDmemcpy(&f, x, sizeof(float));
     cn += printf("%f", f);
     return (1);
