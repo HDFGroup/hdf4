@@ -69,7 +69,7 @@ jobs:
             generator: "-G Ninja"
           - name: "Ubuntu Autotools GCC"
             artifact: "LinuxA.tar.xz"
-            os: ubuntu-latest
+            os: ubuntu-20.04
             build_type: "Release"
             netcdf: enable
             java: disable
@@ -89,7 +89,7 @@ jobs:
       run: sudo apt-get install -y ninja-build libtirpc-dev
       if: matrix.os == 'ubuntu-latest'
     - name: Install Autotools Dependencies (Linux)
-      run: sudo apt-get install -y automake autoconf libtool libtool-bin libtirpc-dev
+      run: sudo apt-get install -y automake autoconf libtool libtool-bin
       if: matrix.generator == 'autogen'
     - name: Install Dependencies (Windows)
       run: |
