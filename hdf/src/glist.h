@@ -15,17 +15,12 @@
   Credits:
          Original code is part of the public domain 'Generic List Library'
          by Keith Pomakis(kppomaki@jeeves.uwaterloo.ca)-Spring, 1994
-         It has been modifed to adhere to HDF coding standards.
-
-  1996/05/29 - George V.
  ************************************************************************/
-
-/* $Id$ */
 
 #ifndef GLIST_H
 #define GLIST_H
 
-#include "hdf.h" /* needed for data types */
+#include "hdfi.h"
 
 /* Structure for each element in the list */
 typedef struct GLE_struct {
@@ -40,8 +35,8 @@ typedef struct GLI_struct {
     Generic_list_element   pre_element;            /* pre element */
     Generic_list_element   post_element;           /* post element */
     Generic_list_element   deleted_element;        /* deleted element */
-    intn                  (*lt)(VOIDP a, VOIDP b); /* sort fcn */
-    uint32                 num_of_elements;        /* number of elements */
+    int                  (*lt)(VOIDP a, VOIDP b); /* sort fcn */
+    int                    num_of_elements;        /* number of elements */
 } Generic_list_info;
 
 /* Top most List structure, handle to the list */
@@ -53,7 +48,7 @@ typedef struct GL_struct {
 #define Generic_stack Generic_list
 #define Generic_queue Generic_list
 
-/* Function declarations 
+/* Function declarations
    Descriptions for the General List routines can be found in 'glist.c'
    while the stack and queue routines are found below
  */
@@ -67,7 +62,8 @@ typedef struct GL_struct {
  RETURNS
      SUCCEED/FAIL
 *******************************************************************************/
-intn HDGLinitialize_list(Generic_list *list /* IN: list */);
+// Keep
+int HDGLinitialize_list(Generic_list *list /* IN: list */);
 
 /******************************************************************************
  NAME
@@ -89,11 +85,12 @@ intn HDGLinitialize_list(Generic_list *list /* IN: list */);
     less-than function.  The only time it is valid to re-initialize a list
     is after it has been destroyed.
  RETURNS
-     SUCEED/FAIL
+     SUCCEED/FAIL
 *******************************************************************************/
-intn HDGLinitialize_sorted_list(Generic_list *list/*IN: list */, 
-                                intn (*lt)(VOIDP a, VOIDP b)/*IN:sort fcn */);
-
+#if 0
+int HDGLinitialize_sorted_list(Generic_list *list/*IN: list */,
+                                int (*lt)(VOIDP a, VOIDP b)/*IN:sort fcn */);
+#endif
 /******************************************************************************
  NAME
      destory_list
@@ -120,7 +117,7 @@ void HDGLdestroy_list(Generic_list *list /*IN: list */);
  RETURNS
     SUCCEED/FAIL
 *******************************************************************************/
-intn HDGLadd_to_beginning(Generic_list list, /*IN: list */
+int HDGLadd_to_beginning(Generic_list list, /*IN: list */
                           VOIDP pointer /*IN: data element */ );
 
 /******************************************************************************
@@ -132,7 +129,7 @@ intn HDGLadd_to_beginning(Generic_list list, /*IN: list */
  RETURNS
     SUCCEED/FAIL
 *******************************************************************************/
-intn HDGLadd_to_end(Generic_list list, /*IN: list */
+int HDGLadd_to_end(Generic_list list, /*IN: list */
                     VOIDP pointer /*IN: data element */);
 
 /******************************************************************************
@@ -144,7 +141,8 @@ intn HDGLadd_to_end(Generic_list list, /*IN: list */
  RETURNS
      SUCCEED/FAIL
 *******************************************************************************/
-intn HDGLadd_to_list(Generic_list list, /*IN: list */
+// Keep
+int HDGLadd_to_list(Generic_list list, /*IN: list */
                      VOIDP pointer /*IN: data element */);
 
 /******************************************************************************
@@ -165,7 +163,7 @@ VOIDP HDGLremove_from_beginning(Generic_list list /*IN: list */);
     This function will remove the last object from the end of the list and
     return it.  If the list is empty, NULL is returned.
  RETURNS
-    Last element if successfull and NULL otherwise
+    Last element if successful and NULL otherwise
 *******************************************************************************/
 VOIDP HDGLremove_from_end(Generic_list list /*IN: list */);
 
@@ -241,6 +239,7 @@ VOIDP HDGLpeek_at_end(Generic_list list /*IN: list */);
  RETURNS
     First element in list if non-empty, otherwise NULL.
 *******************************************************************************/
+// Keep
 VOIDP HDGLfirst_in_list(Generic_list list /*IN: list */);
 
 /******************************************************************************
@@ -278,6 +277,7 @@ VOIDP HDGLlast_in_list(Generic_list list /*IN: list */);
  RETURNS
     Next element in list if non-empty, otherwise NULL.
 *******************************************************************************/
+// KEEP
 VOIDP HDGLnext_in_list(Generic_list list /*IN: list */);
 
 /******************************************************************************
@@ -324,7 +324,7 @@ void HDGLreset_to_end(Generic_list list /*IN: list */);
  RETURNS
     Number of objects in list
 *******************************************************************************/
-intn HDGLnum_of_objects(Generic_list list /*IN: list */);
+int HDGLnum_of_objects(Generic_list list /*IN: list */);
 
 /******************************************************************************
  NAME
@@ -335,18 +335,18 @@ intn HDGLnum_of_objects(Generic_list list /*IN: list */);
     This function will return TRUE (1) if the list is empty, and FALSE (0)
     otherwise.
 *******************************************************************************/
-intn HDGLis_empty(Generic_list list /*IN: list */);
+int HDGLis_empty(Generic_list list /*IN: list */);
 
 /******************************************************************************
  NAME
      HDGLis_in_list
  DESCRIPTION
-     Detemines if the object is in the list.
+     Determines if the object is in the list.
  RETURNS
     This function will return TRUE (1) if the specified object is a member
     of the list, and FALSE (0) otherwise.
 *******************************************************************************/
-intn HDGLis_in_list(Generic_list list, /*IN: list */
+int HDGLis_in_list(Generic_list list, /*IN: list */
                VOIDP pointer /*IN: data element */);
 
 /******************************************************************************
@@ -357,9 +357,11 @@ intn HDGLis_in_list(Generic_list list, /*IN: list */
     are not copied; only new references to them are made.  The new list
     loses its concept of the current object.
  RETURNS
-    A copy of the orginal list.
+    A copy of the original list.
 *******************************************************************************/
+#if 0
 Generic_list HDGLcopy_list(Generic_list list /*IN: list */);
+#endif
 
 /******************************************************************************
  NAME
@@ -387,7 +389,7 @@ void HDGLperform_on_list(Generic_list list, /*IN: list */
      Element if successful and NULL otherwise.
 *******************************************************************************/
 VOIDP HDGLfirst_that(Generic_list list, /*IN: list */
-                     intn (*fn)(VOIDP pointer, VOIDP args), /* IN: iterator fcn */
+                     int (*fn)(VOIDP pointer, VOIDP args), /* IN: iterator fcn */
                      VOIDP args /*IN: args to iterator fcn */);
 
 /******************************************************************************
@@ -404,7 +406,7 @@ VOIDP HDGLfirst_that(Generic_list list, /*IN: list */
      Element if successful and NULL otherwise.
 *******************************************************************************/
 VOIDP HDGLnext_that(Generic_list list, /*IN: list */
-                    intn (*fn)(VOIDP pointer, VOIDP args), /* IN: iterator fcn */
+                    int (*fn)(VOIDP pointer, VOIDP args), /* IN: iterator fcn */
                     VOIDP args /*IN: args to iterator fcn */);
 
 /******************************************************************************
@@ -421,7 +423,7 @@ VOIDP HDGLnext_that(Generic_list list, /*IN: list */
      Element if successful and NULL otherwise.
 *******************************************************************************/
 VOIDP HDGLprevious_that(Generic_list list, /*IN: list */
-                        intn (*fn)(VOIDP pointer, VOIDP args), /* IN: iterator fcn */
+                        int (*fn)(VOIDP pointer, VOIDP args), /* IN: iterator fcn */
                         VOIDP args /*IN: args to iterator fcn */);
 
 /******************************************************************************
@@ -437,7 +439,7 @@ VOIDP HDGLprevious_that(Generic_list list, /*IN: list */
      Element if successful and NULL otherwise.
 *******************************************************************************/
 VOIDP HDGLlast_that(Generic_list list, /*IN: list */
-                    intn (*fn)(VOIDP pointer, VOIDP args), /* IN: iterator fcn */
+                    int (*fn)(VOIDP pointer, VOIDP args), /* IN: iterator fcn */
                     VOIDP args /*IN: args to iterator fcn */);
 
 /******************************************************************************
@@ -452,9 +454,11 @@ VOIDP HDGLlast_that(Generic_list list, /*IN: list */
  RETURNS
     New list if successful and empty if not.
 *******************************************************************************/
+#if 0
 Generic_list HDGLall_such_that(Generic_list list, /*IN: list */
-                               intn (*fn)(VOIDP pointer, VOIDP args), /* IN: iterator fcn */
+                               int (*fn)(VOIDP pointer, VOIDP args), /* IN: iterator fcn */
                                VOIDP args /*IN: args to iterator fcn */);
+#endif
 
 /******************************************************************************
  NAME
@@ -469,14 +473,16 @@ Generic_list HDGLall_such_that(Generic_list list, /*IN: list */
  RETURNS
      Nothing
 *******************************************************************************/
+#if 0
 void HDGLremove_all_such_that(Generic_list list, /*IN: list */
-                              intn (*fn)(VOIDP pointer, VOIDP args), /* IN: iterator fcn */
+                              int (*fn)(VOIDP pointer, VOIDP args), /* IN: iterator fcn */
                               VOIDP args /*IN: args to iterator fcn */);
+#endif
 
 
 /****************************************************************************/
-/* 
- * Stack operations 
+/*
+ * Stack operations
  */
 
 /******************************************************************************
@@ -492,7 +498,7 @@ void HDGLremove_all_such_that(Generic_list list, /*IN: list */
 
 /******************************************************************************
  NAME
-     HDGSdestroy_stack     
+     HDGSdestroy_stack
  DESCRIPTION
     When a stack is no longer needed, it should be destroyed.  This process
     will automatically remove all remaining objects from the stack.
@@ -505,6 +511,7 @@ void HDGLremove_all_such_that(Generic_list list, /*IN: list */
  RETURNS
      Nothing
 *******************************************************************************/
+// Keep
 #define HDGSdestroy_stack    HDGLdestroy_list
 
 /******************************************************************************
@@ -566,8 +573,8 @@ void HDGLremove_all_such_that(Generic_list list, /*IN: list */
 
 
 /****************************************************************************/
-/* 
- * Queue operations 
+/*
+ * Queue operations
  */
 
 /******************************************************************************
@@ -600,7 +607,7 @@ void HDGLremove_all_such_that(Generic_list list, /*IN: list */
 
 /******************************************************************************
  NAME
-     HDGQenqueue     
+     HDGQenqueue
  DESCRIPTION
     This function will add the specified object to the tail of the queue.
     The pointer must not be NULL.
