@@ -64,6 +64,15 @@ typedef enum
 extern "C" {
 #endif
 
+HDFLIBAPI intn HDiscdf
+    (const char *filename);
+
+HDFLIBAPI intn HDisnetcdf
+    (const char *filename);
+
+HDFLIBAPI intn HDisnetcdf64
+    (const char *filename);
+
 HDFLIBAPI int32 SDstart
     (const char *name, int32 accs);
 

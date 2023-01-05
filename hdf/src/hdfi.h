@@ -88,6 +88,10 @@
 #include <limits.h>
 #include <string.h>
 
+/* Temporarily eliminate implicit declaration of funcion 'yyerror' */
+int yylex(void);
+void yyerror(char* s);
+
 #include "H4api_adpt.h"
 
 

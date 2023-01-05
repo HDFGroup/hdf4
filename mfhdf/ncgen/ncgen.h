@@ -15,7 +15,8 @@
 
 /* Why is STREQ re-defined in multiple places? (hdf.h, then here, msoftyy.c,
    and vms_yy.c) -> compiler warnings. -BMR, Jul 17, 2012 */
-#define STREQ(a, b)     (*(a) == *(b) && strcmp((a), (b)) == 0)
+ /* #define STREQ(a, b)     (*(a) == *(b) && strcmp((a), (b)) == 0)
+ */ 
 
 extern struct dims {			/* dimensions */
     long size;

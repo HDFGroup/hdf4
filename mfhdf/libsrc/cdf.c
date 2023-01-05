@@ -3384,7 +3384,11 @@ NC_var *vp ;
         break ;
     case NC_LONG :
         alen /= 4 ;
+#if (_MIPS_SZLONG == 64) || defined __APPLE__ || (defined __sun && defined _LP64) || defined __x86_64__ || defined __powerpc64__ 
         xdr_NC_fnct = xdr_int ;
+#else
+        xdr_NC_fnct = xdr_long ;
+#endif
         break ;
     case NC_FLOAT :
         alen /= 4 ;

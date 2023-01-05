@@ -11,7 +11,7 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id: hproto.h 5400 2010-04-22 03:45:32Z bmribler $ */
+/* $Id: hdatainfo.h 5400 2010-04-22 03:45:32Z bmribler $ */
 
 #ifndef _HDATAINFO_H
 #define _HDATAINFO_H

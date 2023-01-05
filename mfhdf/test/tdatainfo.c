@@ -44,10 +44,6 @@
 #define ssize_t int32
 #endif
 
-#ifndef DATAINFO_TESTER
-#define DATAINFO_TESTER /* to include mfdatainfo.h */
-#endif
-
 #ifdef H4_HAVE_LIBSZ
 #include "szlib.h"
 #endif

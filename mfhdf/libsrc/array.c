@@ -172,7 +172,9 @@ nclong xdr_f_infinity = 0x7f800000;
 #ifdef H4_WORDS_BIGENDIAN
 nclong xdr_d_infinity[2] = {0x7ff00000,0x00000000};
 #else
-nclong xdr_d_infinity[2] = {0x00000000,0x7ff00000};
+nclong xdr_d_infinity[2] = {0x00000000,0x0000f07f};
+ /* nclong xdr_d_infinity[2] = {0x00000000,0x7ff00000};
+ */ 
 #endif /* H4_WORDS_BIGENDIAN */
 #endif /* USE_D_LONG_PUN */
 
@@ -629,7 +631,11 @@ xdr_NC_array(xdrs, app)
         xdr_NC_fnct = xdr_shorts ;
         goto func ;
     case NC_LONG :
+#if (_MIPS_SZLONG == 64) || defined __APPLE__ || (defined __sun && defined _LP64) || defined __x86_64__ || defined __powerpc64__ 
         xdr_NC_fnct = xdr_int ;
+#else
+        xdr_NC_fnct = xdr_long ;
+#endif
         goto loop ;
     case NC_FLOAT :
         xdr_NC_fnct = xdr_float ;

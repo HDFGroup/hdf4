@@ -22,6 +22,7 @@
 
 #ifdef H4_HAVE_UNISTD_H
 #include <unistd.h> /* access(), F_OK */
+int access(const char *main_arg, int n);
 #endif
 
 #include    <string.h>

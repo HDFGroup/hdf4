@@ -24,6 +24,7 @@ long vdims[H4_MAX_NC_DIMS];	/* dimension sizes for a single variable */
 static void
 usage()
 {
+/* should convert to printing each line, string literal exceeds max length -BMR */
 #define USAGE   "\
   [-V]             Display version of the HDF4 library and exit\n\
   [-c]             Coordinate variable data and header information\n\
@@ -256,7 +257,8 @@ char *fixstr(char *str, bool fix_str)
 #ifndef __GNUC__ 
     char *strdup(const char *);
 #endif  /* linux */
-	char *new_str, *ptr;
+    char *new_str = NULL;
+    char *ptr = NULL;
 
 	if (!str)
 		return NULL;
@@ -335,13 +337,16 @@ do_ncdump(char *path, struct fspec* specp)
 		Printf ("dimensions:\n");
 
 		for (dimid = 0; dimid < ndims; dimid++) {
-			char *fixed_str;
+			char *fixed_str = NULL;
+
+            /* initialize the field "name" to null string */
+            memset(dims[dimid].name, 0, H4_MAX_NC_NAME);
 
 			(void)ncdiminq(ncid, dimid, dims[dimid].name,
 				       &dims[dimid].size);
 			fixed_str = fixstr(dims[dimid].name, specp->fix_str);
 
-			if (!fixed_str && dims[dimid].name) {
+			if (!fixed_str && dims[dimid].name[0] != '\0') {
 				/* strdup(3) failed */
 				(void) ncclose(ncid);
 				return;
@@ -355,7 +360,7 @@ do_ncdump(char *path, struct fspec* specp)
 				Printf ("\t%s = %ld ;\n",
 					fixed_str, dims[dimid].size);
 
-			free(fixed_str);
+			HDfreenclear(fixed_str);
 		}
 	}
 
@@ -363,13 +368,16 @@ do_ncdump(char *path, struct fspec* specp)
 
 	/* get variable info, with variable attributes */
 	for (varid = 0; varid < nvars; varid++) {
-		char *fixed_var;
+		char *fixed_var = NULL;
+
+        /* initialize the field "name" to null string */
+        memset(var.name, 0, H4_MAX_NC_NAME);
 
 		(void) ncvarinq(ncid, varid, var.name, &var.type, &var.ndims,
 				var.dims, &var.natts);
 		fixed_var = fixstr(var.name, specp->fix_str);
 
-		if (!fixed_var && var.name) {
+		if (!fixed_var && var.name[0] != '\0') {
 			/* strdup(3) failed */
 			(void) ncclose(ncid);
 			return;
@@ -384,30 +392,33 @@ do_ncdump(char *path, struct fspec* specp)
 			char *fixed_dim = fixstr(dims[var.dims[id]].name, 
 						 specp->fix_str);
 
-			if (!fixed_dim && dims[var.dims[id]].name) {
+			if (!fixed_dim && dims[var.dims[id]].name[0] != '\0') {
 				/* strdup(3) failed */
 			 	(void) ncclose(ncid);
-				free(fixed_var);
+				HDfreenclear(fixed_var);
 				return;
 			}
 
 			Printf ("%s%s", fixed_dim,
 				id < var.ndims - 1 ? ", " : ")");
-			free(fixed_dim);
+			HDfreenclear(fixed_dim);
 		}
 
 		Printf (" ;\n");
 
 		/* get variable attributes */
 		for (ia = 0; ia < var.natts; ia++) {
-			char *fixed_att;
+			char *fixed_att = NULL;
+
+            /* initialize the field "name" to null string */
+            memset(att.name, 0, H4_MAX_NC_NAME);
 
 			(void) ncattname(ncid, varid, ia, att.name);
 			fixed_att = fixstr(att.name, specp->fix_str);
 
 			if (!fixed_att) {
 				(void) ncclose(ncid);
-				free(fixed_var);
+				HDfreenclear(fixed_var);
 				return;
 			}
 
@@ -419,19 +430,19 @@ do_ncdump(char *path, struct fspec* specp)
 			if (!att.val) {
 				error("Out of memory!");
 				(void) ncclose(ncid);
-				free(fixed_att);
-				free(fixed_var);
+				HDfreenclear(fixed_att);
+				HDfreenclear(fixed_var);
 				return;
 			}
 
 			(void) ncattget(ncid, varid, att.name, att.val);
 			pr_att_vals(att.type, att.len, att.val);
 			Printf (" ;\n");
-			free(att.val);
-			free(fixed_att);
+			HDfreenclear(att.val);
+			HDfreenclear(fixed_att);
 		}
 
-		free(fixed_var);
+		HDfreenclear(fixed_var);
 	}
 
 	/* get global attributes */
@@ -439,7 +450,10 @@ do_ncdump(char *path, struct fspec* specp)
 		Printf ("\n// global attributes:\n");
 
 	for (ia = 0; ia < ngatts; ia++) {
-		char *fixed_att;
+		char *fixed_att = NULL;
+
+        /* initialize the field "name" to null string */
+        memset(att.name, 0, H4_MAX_NC_NAME);
 
 		(void) ncattname(ncid, NC_GLOBAL, ia, att.name);
 		fixed_att = fixstr(att.name, specp->fix_str);
@@ -458,15 +472,15 @@ do_ncdump(char *path, struct fspec* specp)
 		if (!att.val) {
 			error("Out of memory!");
 			(void) ncclose(ncid);
-			free(fixed_att);
+			HDfreenclear(fixed_att);
 			return;
 		}
 
 		(void) ncattget(ncid, NC_GLOBAL, att.name, att.val);
 		pr_att_vals(att.type, att.len, att.val);
 		Printf (" ;\n");
-		free(att.val);
-		free(fixed_att);
+		HDfreenclear(att.val);
+		HDfreenclear(fixed_att);
 	}
 
 	if (! specp->header_only) {

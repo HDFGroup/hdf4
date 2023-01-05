@@ -15,6 +15,8 @@
  * tsd.c - tests SDstart for file with no write permission
 ****************************************************************************/
 
+ /* #include <unistd.h>
+ */ 
 #include "mfhdf.h"
 
 #ifdef HDF

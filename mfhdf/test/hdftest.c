@@ -52,14 +52,14 @@ extern int test_netcdf_reading();
 extern int test_szip_compression();
 extern int test_checkempty();
 extern int test_idtest();
-/* extern int test_sd(); - removed temporarily, see note in main(...) */
+extern int test_sd();
 extern int test_mixed_apis();
 extern int test_files();
 extern int test_SDSprops();
 extern int test_coordvar();
 extern int test_chunk();
 extern int test_compression();
-extern int test_dimension();
+extern int test_dimensions();
 extern int test_attributes();
 extern int test_datasizes();
 extern int test_datainfo();

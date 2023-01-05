@@ -682,7 +682,7 @@ const:         CHAR_CONST
 
 void derror();
 
-yyerror(s)	/* called for yacc syntax error */
+void yyerror(s)	/* called for yacc syntax error */
      char *s;
 {
 	derror(s);

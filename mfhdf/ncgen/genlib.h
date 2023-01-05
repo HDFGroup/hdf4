@@ -55,13 +55,12 @@ extern int      yyparse         PROTO((
 extern void     put_variable    PROTO((
                                        void *
                                        ));
-#ifdef OLD_WAY
+
 extern int      getopt          PROTO((
                                        int  argc,
                                        char **argv,
                                        char *opts
-                                       ))
-#endif
+                                       ));
 
 /* generate.c */
 void cline(const char *stmnt);

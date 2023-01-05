@@ -54,11 +54,7 @@ typedef NETLONG     netlong;
 /*EIP #include "netcdf.h" */
 #include "mfhdf.h"
 
-#if !(defined DOS_FS)
-        typedef u_int ncpos_t ;  /* all unicies */
-#else
-      typedef off_t ncpos_t ;
-#endif
+typedef off_t ncpos_t ;
 
 typedef struct {
     int fd;         /* the file descriptor */
@@ -262,7 +258,7 @@ int nbytes;
 
 static bool_t   xdrposix_getlong();
 static bool_t   xdrposix_putlong();
-#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__
+#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined __x86_64__ || defined __powerpc64__
 static bool_t   xdrposix_getint();
 static bool_t   xdrposix_putint();
 #endif
@@ -312,15 +308,7 @@ static struct xdr_ops   xdrposix_ops = {
     xdrposix_getint,   /* deserialize a 32-bit int */
     xdrposix_putint    /* serialize a 32-bit int */
 #else
-#ifdef AIX5L64
-    xdrposix_destroy,
-    NULL,
-    NULL,
-    xdrposix_getint,
-    xdrposix_putint
-#else /*AIX5L64 */
     xdrposix_destroy    /* destroy stream */
-#endif /*AIX5L64 */
 #endif
 };
 
@@ -430,8 +418,6 @@ xdrposix_destroy(xdrs)
         }
         if(biop->fd != -1)
             (void) close(biop->fd) ;
-   /* fprintf(stderr, "\nxdrposix_destroy: going to free_biobuf\n");
- */
         free_biobuf(biop);
     }
 }
@@ -442,14 +428,14 @@ xdrposix_getlong(xdrs, lp)
     long *lp;
 {
     unsigned char *up = (unsigned char *)lp ;
-#if (defined AIX5L64 || defined __powerpc64__ || (defined __hpux && __LP64__))
+#if (defined __powerpc64__ || (defined __hpux && __LP64__))
     *lp = 0 ;
     up += (sizeof(long) - 4) ;
 #endif
     if(bioread((biobuf *)xdrs->x_private, up, 4) < 4)
         return (FALSE);
 #ifndef H4_WORDS_BIGENDIAN
-    *lp =  ntohl(*lp);
+       *lp =  ntohl(*lp);
 #endif
     return (TRUE);
 }
@@ -465,7 +451,7 @@ xdrposix_putlong(xdrs, lp)
     netlong mycopy = htonl(*lp);
     up = (unsigned char *)&mycopy;
 #endif
-#if (defined AIX5L64  || defined __powerpc64__ || (defined __hpux && __LP64__))
+#if (defined __powerpc64__ || (defined __hpux && __LP64__))
     up += (sizeof(long) - 4) ;
 #endif
 
@@ -581,7 +567,7 @@ xdrposix_inline(xdrs, len)
     return (NULL);
 }
 
-#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64  || defined __x86_64__ || defined __powerpc64__
+#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined __x86_64__ || defined __powerpc64__
 
 static bool_t
 xdrposix_getint(xdrs, lp)
@@ -592,7 +578,7 @@ xdrposix_getint(xdrs, lp)
     if(bioread((biobuf *)xdrs->x_private, up, 4) < 4)
         return (FALSE);
 #ifndef H4_WORDS_BIGENDIAN
-    *lp = ntohl(*lp);
+        *lp = ntohl(*lp);
 #endif
     return (TRUE);
 }
@@ -651,14 +637,6 @@ fprintf(stderr,"NCxdrfile_create(): XDR=%p, path=%s, ncmode=%d\n",xdrs,path,ncmo
         NCadvise(NC_EINVAL, "Bad flag %0x", ncmode & 0x0f) ;
         return(-1) ;
     }
-#ifdef DOS_FS
-    /*
-     * set default mode to binary to suppress the expansion of
-     * 0x0f into CRLF
-     */
-    if(_fmode != O_BINARY)
-        _fmode = O_BINARY ;
-#endif
     fd = open(path, fmode, 0666) ;
 #ifdef XDRDEBUG
 fprintf(stderr,"NCxdrfile_create(): fmode=%d, fd=%d\n",fmode,fd);

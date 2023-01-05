@@ -122,6 +122,7 @@ typedef    unsigned long    u_long;
 #endif /* MAX_VXR_ENTRIES */
 
 #ifdef HDF
+
 /* VIX record for CDF variable data storage */
 typedef struct vix_t_def {
     int32              nEntries;                    /* number of entries in this vix */
@@ -825,15 +826,6 @@ HDFLIBAPI bool_t nssdc_write_cdf
 
 HDFLIBAPI bool_t nssdc_xdr_cdf
     PROTO((XDR *xdrs, NC **handlep));
-
-HDFLIBAPI intn HDiscdf
-    (const char *filename);
-
-HDFLIBAPI intn HDisnetcdf
-    (const char *filename);
-
-HDFLIBAPI intn HDisnetcdf64
-    (const char *filename);
 
 #endif /* HDF */
 

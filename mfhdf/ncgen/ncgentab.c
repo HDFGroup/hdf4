@@ -112,10 +112,10 @@
 
 
 /* Copy the first part of user declarations.  */
-#line 9 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 9 "ncgen.y"
 
 #ifndef lint
-static char SccsId[] = "$Id: ncgen.y 4928 2007-09-06 21:48:49Z epourmal $";
+static char SccsId[] = "$Id$";
 #endif
 #include        <string.h>
 #include	<stdlib.h>
@@ -257,7 +257,7 @@ typedef short int yytype_int16;
 #define YYSIZE_MAXIMUM ((YYSIZE_T) -1)
 
 #ifndef YY_
-# if YYENABLE_NLS
+# if defined YYENABLE_NLS && YYENABLE_NLS
 #  if ENABLE_NLS
 #   include <libintl.h> /* INFRINGES ON USER NAME SPACE */
 #   define YY_(msgid) dgettext ("bison-runtime", msgid)
@@ -753,7 +753,7 @@ while (YYID (0))
    we won't break user code: when these are the locations we know.  */
 
 #ifndef YY_LOCATION_PRINT
-# if YYLTYPE_IS_TRIVIAL
+# if defined YYLTYPE_IS_TRIVIAL && YYLTYPE_IS_TRIVIAL
 #  define YY_LOCATION_PRINT(File, Loc)			\
      fprintf (File, "%d.%d-%d.%d",			\
 	      (Loc).first_line, (Loc).first_column,	\
@@ -1494,12 +1494,12 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 103 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 103 "ncgen.y"
     { init_netcdf(); }
     break;
 
   case 3:
-#line 105 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 105 "ncgen.y"
     {
                        if (ndims > H4_MAX_NC_DIMS)
                          derror("Too many dimensions");
@@ -1507,7 +1507,7 @@ yyreduce:
     break;
 
   case 4:
-#line 110 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 110 "ncgen.y"
     {
 		       if (derror_count == 0)
 			 define_netcdf(netcdfname);
@@ -1515,7 +1515,7 @@ yyreduce:
     break;
 
   case 5:
-#line 116 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 116 "ncgen.y"
     {
 		       if (derror_count == 0)
 			 close_netcdf();
@@ -1523,7 +1523,7 @@ yyreduce:
     break;
 
   case 12:
-#line 131 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 131 "ncgen.y"
     { if (long_val <= 0)
 			 derror("negative dimension size");
 		     dims[ndims].size = long_val;
@@ -1532,7 +1532,7 @@ yyreduce:
     break;
 
   case 13:
-#line 137 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 137 "ncgen.y"
     {  if (rec_dim != -1)
 			 derror("only one NC_UNLIMITED dimension allowed");
 		     rec_dim = ndims; /* the unlimited (record) dimension */
@@ -1542,7 +1542,7 @@ yyreduce:
     break;
 
   case 14:
-#line 145 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 145 "ncgen.y"
     { if ((yyvsp[(1) - (1)])->is_dim == 1) {
 		        derror( "duplicate dimension declaration for %s",
 		                (yyvsp[(1) - (1)])->name);
@@ -1555,37 +1555,37 @@ yyreduce:
     break;
 
   case 23:
-#line 167 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 167 "ncgen.y"
     { type_code = NC_BYTE; }
     break;
 
   case 24:
-#line 168 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 168 "ncgen.y"
     { type_code = NC_CHAR; }
     break;
 
   case 25:
-#line 169 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 169 "ncgen.y"
     { type_code = NC_SHORT; }
     break;
 
   case 26:
-#line 170 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 170 "ncgen.y"
     { type_code = NC_LONG; }
     break;
 
   case 27:
-#line 171 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 171 "ncgen.y"
     { type_code = NC_FLOAT; }
     break;
 
   case 28:
-#line 172 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 172 "ncgen.y"
     { type_code = NC_DOUBLE; }
     break;
 
   case 31:
-#line 178 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 178 "ncgen.y"
     {
 		    if (nvars >= H4_MAX_NC_VARS)
 		       derror("too many variables");
@@ -1608,7 +1608,7 @@ yyreduce:
     break;
 
   case 32:
-#line 198 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 198 "ncgen.y"
     {
 		    vars[nvars].ndims = nvdims;
 		    nvars++;
@@ -1616,7 +1616,7 @@ yyreduce:
     break;
 
   case 38:
-#line 212 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 212 "ncgen.y"
     {
 		    if (nvdims >= H4_MAX_VAR_DIMS) {
 		       derror("%s has too many dimensions",vars[nvars].name);
@@ -1637,7 +1637,7 @@ yyreduce:
     break;
 
   case 39:
-#line 231 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 231 "ncgen.y"
     {
 		       valnum = 0;
 		       valtype = NC_UNSPECIFIED;
@@ -1654,7 +1654,7 @@ yyreduce:
     break;
 
   case 40:
-#line 245 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 245 "ncgen.y"
     {
 		       if (natts >= H4_MAX_NC_ATTRS)
 			 derror("too many attributes");
@@ -1674,14 +1674,14 @@ yyreduce:
     break;
 
   case 42:
-#line 264 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 264 "ncgen.y"
     {
 		    varnum = -1;  /* handle of "global" attribute */
 		   }
     break;
 
   case 43:
-#line 270 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 270 "ncgen.y"
     { if ((yyvsp[(1) - (1)])->is_var == 1)
 		       varnum = (yyvsp[(1) - (1)])->vnum;
 		    else {
@@ -1693,7 +1693,7 @@ yyreduce:
     break;
 
   case 44:
-#line 280 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 280 "ncgen.y"
     {
 		       atts[natts].name = (char *) emalloc(strlen((yyvsp[(1) - (1)])->name)+1);
 		       (void) strcpy(atts[natts].name,(yyvsp[(1) - (1)])->name);
@@ -1701,7 +1701,7 @@ yyreduce:
     break;
 
   case 47:
-#line 289 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 289 "ncgen.y"
     {
 		    if (valtype == NC_UNSPECIFIED)
 		      valtype = atype_code;
@@ -1711,7 +1711,7 @@ yyreduce:
     break;
 
   case 48:
-#line 298 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 298 "ncgen.y"
     {
 		       atype_code = NC_CHAR;
 		       *char_valp++ = char_val;
@@ -1720,7 +1720,7 @@ yyreduce:
     break;
 
   case 49:
-#line 304 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 304 "ncgen.y"
     {
 		       atype_code = NC_CHAR;
 		       {
@@ -1734,7 +1734,7 @@ yyreduce:
     break;
 
   case 50:
-#line 315 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 315 "ncgen.y"
     {
 		       atype_code = NC_BYTE;
 		       *byte_valp++ = byte_val;
@@ -1743,7 +1743,7 @@ yyreduce:
     break;
 
   case 51:
-#line 321 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 321 "ncgen.y"
     {
 		       atype_code = NC_SHORT;
 		       *short_valp++ = short_val;
@@ -1752,7 +1752,7 @@ yyreduce:
     break;
 
   case 52:
-#line 327 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 327 "ncgen.y"
     {
 		       atype_code = NC_LONG;
 		       *long_valp++ = long_val;
@@ -1761,7 +1761,7 @@ yyreduce:
     break;
 
   case 53:
-#line 333 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 333 "ncgen.y"
     {
 		       atype_code = NC_FLOAT;
 		       *float_valp++ = float_val;
@@ -1770,7 +1770,7 @@ yyreduce:
     break;
 
   case 54:
-#line 339 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 339 "ncgen.y"
     {
 		       atype_code = NC_DOUBLE;
 		       *double_valp++ = double_val;
@@ -1779,7 +1779,7 @@ yyreduce:
     break;
 
   case 59:
-#line 354 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 354 "ncgen.y"
     {
 		       valtype = vars[varnum].type; /* variable type */
 		       valnum = 0;	/* values accumulated for variable */
@@ -1831,7 +1831,7 @@ yyreduce:
     break;
 
   case 60:
-#line 403 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 403 "ncgen.y"
     {
 		       if (valnum > 0 && valnum < var_len) { /* leftovers */
 			   nc_fill(valtype,
@@ -1847,7 +1847,7 @@ yyreduce:
     break;
 
   case 63:
-#line 420 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 420 "ncgen.y"
     {
 		       if(valnum >= var_len) {
 			   derror("too many values for this variable");
@@ -1858,7 +1858,7 @@ yyreduce:
     break;
 
   case 64:
-#line 428 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 428 "ncgen.y"
     {
 		       if (not_a_string) {
 			   switch (valtype) {
@@ -1918,7 +1918,7 @@ yyreduce:
     break;
 
   case 65:
-#line 487 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 487 "ncgen.y"
     {
 		       atype_code = NC_CHAR;
 		       switch (valtype) {
@@ -1946,7 +1946,7 @@ yyreduce:
     break;
 
   case 66:
-#line 512 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 512 "ncgen.y"
     {
 		       not_a_string = 0;
 		       atype_code = NC_CHAR;
@@ -1982,7 +1982,7 @@ yyreduce:
     break;
 
   case 67:
-#line 545 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 545 "ncgen.y"
     {
 		       atype_code = NC_BYTE;
 		       switch (valtype) {
@@ -2010,7 +2010,7 @@ yyreduce:
     break;
 
   case 68:
-#line 570 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 570 "ncgen.y"
     {
 		       atype_code = NC_SHORT;
 		       switch (valtype) {
@@ -2038,7 +2038,7 @@ yyreduce:
     break;
 
   case 69:
-#line 595 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 595 "ncgen.y"
     {
 		       atype_code = NC_LONG;
 		       switch (valtype) {
@@ -2066,7 +2066,7 @@ yyreduce:
     break;
 
   case 70:
-#line 620 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 620 "ncgen.y"
     {
 		       atype_code = NC_FLOAT;
 		       switch (valtype) {
@@ -2094,7 +2094,7 @@ yyreduce:
     break;
 
   case 71:
-#line 645 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 645 "ncgen.y"
     {
 		       atype_code = NC_DOUBLE;
 		       switch (valtype) {
@@ -2340,7 +2340,7 @@ yyreturn:
 }
 
 
-#line 676 "../../../hdf4/mfhdf/ncgen/ncgen.y"
+#line 676 "ncgen.y"
 
 
 /* PROGRAMS */
@@ -2350,7 +2350,7 @@ yyreturn:
 
 void derror();
 
-yyerror(s)	/* called for yacc syntax error */
+void yyerror(s)	/* called for yacc syntax error */
      char *s;
 {
 	derror(s);
