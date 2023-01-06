@@ -74,8 +74,8 @@ if (CMAKE_COMPILER_IS_GNUCC)
       #
       # This should NOT be on by default as it can cause process issues.
       #-----------------------------------------------------------------------------
-      option (HDF5_ENABLE_BUILD_DIAGS "Enable color and URL extended diagnostic messages" OFF)
-      if (HDF5_ENABLE_BUILD_DIAGS)
+      option (HDF4_ENABLE_BUILD_DIAGS "Enable color and URL extended diagnostic messages" OFF)
+      if (HDF4_ENABLE_BUILD_DIAGS)
         message (STATUS "... default color and URL extended diagnostic messages enabled")
       else ()
         message (STATUS "... disable color and URL extended diagnostic messages")

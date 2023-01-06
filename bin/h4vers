@@ -441,7 +441,7 @@ if ($MANHDF1) {
 
 # helper function to read the file for updating
 # config/cmake/scripts/HDF4Config.cmake and
-# java/src/hdf/hdf5lib/HDFLibrary.java files.
+# java/src/hdf/hdflib/HDFLibrary.java files.
 # The version string in those files is not at the top, so the string replacement
 # is not for the first line, and reading/writing the entire file as one string
 # facilitates the substring replacement.
@@ -458,7 +458,7 @@ sub read_file {
 
 # helper function to write the file for updating
 # config/cmake/scripts/HDF4config.cmake and
-# java/src/hdf/hdf5lib/HDFLibrary.java files.
+# java/src/hdf/hdflib/HDFLibrary.java files.
 sub write_file {
     my ($filename, $content) = @_;
 

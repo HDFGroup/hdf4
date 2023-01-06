@@ -60,7 +60,7 @@ CMake build script:
     CTestScript.cmake
 
 External compression szip and zlib libraries:
-    JPEG8b.tar.gz
+    JPEG9e.tar.gz
     LIBAEC.tar.gz
     SZip.tar.gz
     ZLib.tar.gz
@@ -92,6 +92,10 @@ To build HDF4 with the SZIP, ZLIB and JPEG external libraries you will need to:
    5. From the "myhdfstuff" directory execute the CTest Script with the
       following options:
 
+      On 32-bit Windows with Visual Studio 2022, execute:
+         ctest -S HDF4config.cmake,BUILD_GENERATOR=VS2022 -C Release -VV -O hdf4.log
+      On 64-bit Windows with Visual Studio 2022, execute:
+         ctest -S HDF4config.cmake,BUILD_GENERATOR=VS202264 -C Release -VV -O hdf4.log
       On 32-bit Windows with Visual Studio 2019, execute:
          ctest -S HDF4config.cmake,BUILD_GENERATOR=VS2019 -C Release -VV -O hdf4.log
       On 64-bit Windows with Visual Studio 2019, execute:
@@ -287,7 +291,10 @@ IV. Further considerations
             -DSZIP_LIBRARY:FILEPATH=some_location/lib/szlib.lib
             -DSZIP_INCLUDE_DIR:PATH=some_location/include
          where "some_location" is the full path to the extlibs folder.
-         Note that you can use either JPEG 6b or 8b.
+         Also the appropriate environment variable must be set;
+            set(ENV{JPEG_ROOT} "some_location")
+            set(ENV{ZLIB_ROOT} "some_location")
+            set(ENV{SZIP_ROOT} "some_location")
 
       B. Use source packages from an GIT server by adding the following CMake
          options:
@@ -358,7 +365,7 @@ IV. Further considerations
       See the CMake help for more information on using toolchain files.
 
       To use a toolchain file with the supplied cmake scripts, see the
-      HDF5options.cmake file under the toolchain section.
+      HDF4options.cmake file under the toolchain section.
 
 Notes: CMake and HDF4
 
@@ -452,6 +459,7 @@ These five steps are described in detail below.
             * Visual Studio 15 2017
             * Visual Studio 15 2017 Win64
             * Visual Studio 16 2019
+            * Visual Studio 16 2022
 
         <options> is:
             * SZIP_INCLUDE_DIR:PATH=<path to szip includes directory>
@@ -489,7 +497,7 @@ These five steps are described in detail below.
             set (SZIP_TGZ_NAME "SZip.tar.gz" CACHE STRING "Use SZip from compressed file" FORCE)
             set (SZAEC_TGZ_NAME "LIBAEC.tar.gz" CACHE STRING "Use SZip AEC from compressed file" FORCE)
             set (USE_LIBAEC ON CACHE BOOL "Use libaec szip replacement" FORCE)
-            set (JPEG_TGZ_NAME "JPEG8b.tar.gz" CACHE STRING "Use JPEG from compressed file" FORCE)
+            set (JPEG_TGZ_NAME "JPEG9e.tar.gz" CACHE STRING "Use JPEG from compressed file" FORCE)
             set (ZLIB_PACKAGE_NAME "zlib" CACHE STRING "Name of ZLIB package" FORCE)
             set (LIBAEC_PACKAGE_NAME "libaec" CACHE STRING "Name of AEC SZIP package" FORCE)
             set (SZIP_PACKAGE_NAME "szip" CACHE STRING "Name of SZIP package" FORCE)
@@ -546,13 +554,13 @@ These five steps are described in detail below.
            Release and build the solution.
 
       3.2.1  The external libraries (zlib, szip, and jpeg) can be configured
-           to allow building the libraries by downloading from an SVN repository.
+           to allow building the libraries by downloading from an GIT repository.
            The option is 'HDF4_ALLOW_EXTERNAL_SUPPORT'; by adding the following
            configuration option:
                -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING="GIT"
 
            The options to control the GIT URL (config/cmake/cacheinit.cmake file) are:
-               JPEG_GIT_URL:STRING="https://${git_url}/jpeg8b"
+               JPEG_GIT_URL:STRING="https://${git_url}/jpeg9e"
                ZLIB_GIT_URL:STRING="https://${git_url}/zlib"
                SZIP_GIT_URL:STRING="https://${git_url}/szip"
            ${git_url} should be changed to your location. Also define CMAKE_BUILD_TYPE
@@ -673,6 +681,8 @@ HDF4_INSTALL_DATA_DIR     "share"
 HDF4_INSTALL_DOC_DIR      "HDF4_INSTALL_DATA_DIR/doc/hdf"
 
 ---------------- HDF4 Advanced Options ---------------------
+HDF4_USE_GNU_DIRS              "TRUE to use GNU Coding Standard install directory variables,
+                                FALSE to use historical settings"                             FALSE
 HDF4_DISABLE_COMPILER_WARNINGS "Disable compiler warnings"                                    OFF
 HDF4_ENABLE_COVERAGE           "Enable code coverage for Libraries and Programs"              OFF
 HDF4_ENABLE_DEPRECATED_SYMBOLS "Enable deprecated public API symbols"                         ON
@@ -697,6 +707,10 @@ if (HDF4_ENABLE_SZIP_SUPPORT)
     HDF4_ENABLE_SZIP_ENCODING "Use SZip Encoding"                     OFF
     USE_LIBAEC                "Use libaec szip replacement"           OFF
 
+
+NOTE:
+  The HDF4_USE_GNU_DIRS option is usually recommended for linux platforms, but may
+  be useful on other platforms. See the CMake documentation for more details.
 
 ========================================================================
 VII. User Defined Options for HDF4 Libraries with CMake
