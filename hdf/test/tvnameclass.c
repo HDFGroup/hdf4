@@ -26,6 +26,7 @@
 #define VG_LONGCLASS "Very long class name to classify all Vgroups with more than 64 characters in name"
 
 static void test_vglongnames(void);
+static void test_novgclass(void);
 
 static void
 test_vglongnames(void)
@@ -58,7 +59,7 @@ test_vglongnames(void)
 
     status = Vdetach(vg1);
     CHECK_VOID(status,FAIL,"Vdetach");
-
+    
     /* Create another vgroup of the same class. */
     vg1 = Vattach(file_id, -1, "w");
     CHECK_VOID(vg1,FAIL,"VSattach");
@@ -71,7 +72,7 @@ test_vglongnames(void)
 
     status = Vdetach(vg1);
     CHECK_VOID(status,FAIL,"Vdetach");
-
+    
     status = Vend(file_id);
     CHECK_VOID(status,FAIL,"Vend");
 
@@ -97,7 +98,7 @@ test_vglongnames(void)
     is_internal = Vgisinternal(vg1);
     CHECK_VOID(is_internal, FAIL, "Vgisinternal");
     VERIFY_VOID(is_internal, FALSE, "Vgisinternal");
-
+    
     /* get the vgroup's name */
     status = Vgetnamelen(vg1, &name_len);
     CHECK_VOID(status,FAIL,"Vgetnamelen");
@@ -128,7 +129,7 @@ test_vglongnames(void)
 
     status = Vdetach(vg1);
     CHECK_VOID(status,FAIL,"Vdetach");
-
+    
     /* Find the vgroup VGROUP1. */
     ref=Vfind(file_id,VGROUP1);
     CHECK_VOID(ref,FAIL,"VSfind");
@@ -174,7 +175,7 @@ test_vglongnames(void)
 
     status = Vdetach(vg1);
     CHECK_VOID(status,FAIL,"Vdetach");
-
+    
     status = Vend(file_id);
     CHECK_VOID(status,FAIL,"Vend");
 
@@ -212,7 +213,7 @@ test_undefined(void)
 
     status = Vdetach(vg1);
     CHECK_VOID(status,FAIL,"Vdetach");
-
+    
     /* Create another vgroup which will have class but not name */
     vg1 = Vattach(file_id, -1, "w");
     CHECK_VOID(vg1,FAIL,"VSattach");
@@ -222,7 +223,7 @@ test_undefined(void)
 
     status = Vdetach(vg1);
     CHECK_VOID(status,FAIL,"Vdetach");
-
+    
     status = Vend(file_id);
     CHECK_VOID(status,FAIL,"Vend");
 
@@ -248,7 +249,7 @@ test_undefined(void)
     is_internal = Vgisinternal(vg1);
     CHECK_VOID(is_internal, FAIL, "Vgisinternal");
     VERIFY_VOID(is_internal, FALSE, "Vgisinternal");
-
+    
     /* Try getting the vgroup's class without calling first Vgetclassnamelen.
        This shows that bug HDFFR-1288 is fixed. */
     status=Vgetclass(vg1, vgclass);
@@ -262,7 +263,7 @@ test_undefined(void)
 
     status = Vdetach(vg1);
     CHECK_VOID(status,FAIL,"Vdetach");
-
+    
     /* Find the vgroup with class VG_LONGCLASS.  This vgroup doesn't have a name */
     ref=Vfindclass(file_id, VG_LONGCLASS);
     CHECK_VOID(ref,FAIL,"VSfindclass");
@@ -283,7 +284,7 @@ test_undefined(void)
 
     status = Vdetach(vg1);
     CHECK_VOID(status,FAIL,"Vdetach");
-
+    
     status = Vend(file_id);
     CHECK_VOID(status,FAIL,"Vend");
 
@@ -358,6 +359,8 @@ test_vgisinternal()
 void
 test_vnameclass(void)
 {
+    int32       status;
+
     /* test Vgroups with name and class that have more than 64 characters */
     test_vglongnames();
 

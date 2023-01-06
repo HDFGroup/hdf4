@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
 
 /*------------------------------------------------------------------
  File:  dfkswap.c
@@ -36,7 +35,7 @@
 /*                                                                           */
 /*    All the routines in this file marked as PRIVATE have been marked so    */
 /*  for a reason.  *ANY* of these routines may or may nor be supported in    */
-/*  the next version of HDF (4.00).  Furthurmore, the names, paramters, or   */
+/*  the next version of HDF (4.00).  Furthurmore, the names, parameters, or   */
 /*  functionality is *NOT* guaranteed to remain the same.                    */
 /*    The *ONLY* guarantee possible is that DFKnumin(), and DFKnumout()      */
 /*  will not change.  They are *NOT* guaranteed to be implemented in the     */

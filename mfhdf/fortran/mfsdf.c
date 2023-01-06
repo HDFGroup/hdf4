@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
 
 /*
 
@@ -2171,7 +2170,7 @@ nsfsflmd(id, fillmode)
  *          comp_prm[0] = nbit_sign_ext,
  *          comp_prm[1] = nbit_fill_one,
  *          comp_prm[2] = nbit_start_bit,
- *          comp_prm[3] = nbit_bit_len:     NBIT compression parametes
+ *          comp_prm[3] = nbit_bit_len:     NBIT compression parameters
  *
  *          comp_prm[0] = skphuff_skp_size: size of individual elements for
  *                            Adaptive Huffman compression algorithm
@@ -2382,7 +2381,7 @@ switch (cflags)
  *          comp_prm[0] = nbit_sign_ext,
  *          comp_prm[1] = nbit_fill_one,
  *          comp_prm[2] = nbit_start_bit,
- *          comp_prm[3] = nbit_bit_len:     NBIT compression parametes
+ *          comp_prm[3] = nbit_bit_len:     NBIT compression parameters
  *
  *          comp_prm[0] = skphuff_skp_size: size of individual elements for
  *                            Adaptive Huffman compression algorithm

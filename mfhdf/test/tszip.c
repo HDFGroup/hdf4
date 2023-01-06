@@ -44,17 +44,18 @@ static intn test_szip_SDS8bit()
    int          i,j;
    int    	num_errs = 0;   /* number of errors so far */
    comp_coder_t comp_type;      /* to retrieve compression type into */
+   comp_info    cinfo;          /* compression information structure */
    int8         out_data[LENGTH][WIDTH];
    int8         in_data[LENGTH][WIDTH]={
-                     {1,1,2,2,3,4},
-                     {1,1,2,2,3,4},
-                     {1,1,2,2,3,4},
-                     {3,3,0,4,3,4},
-                     {3,3,0,4,3,4},
-                     {3,3,0,4,3,4},
-                     {0,0,6,6,3,4},
-                     {5,5,6,6,3,4},
-                     {0,0,6,6,3,4}};
+	   			 1,1,2,2,3,4,
+	   			 1,1,2,2,3,4,
+				 1,1,2,2,3,4,
+				 3,3,0,4,3,4,
+				 3,3,0,4,3,4,
+				 3,3,0,4,3,4,
+				 0,0,6,6,3,4,
+				 5,5,6,6,3,4,
+				 0,0,6,6,3,4};
 
     /********************* End of variable declaration ***********************/
 
@@ -176,15 +177,15 @@ static intn test_szip_SDS16bit()
     int		num_errs = 0;    /* number of errors so far */
     int16	out_data[LENGTH][WIDTH];
     int16	in_data[LENGTH][WIDTH]={
-             {100,100,200,200,300,400},
-             {100,100,200,200,300,400},
-             {100,100,200,200,300,400},
-             {300,300,  0,400,300,400},
-             {300,300,  0,400,300,400},
-             {300,300,  0,400,300,400},
-             {  0,  0,600,600,300,400},
-             {500,500,600,600,300,400},
-             {  0,  0,600,600,300,400}};
+	   			 100,100,200,200,300,400,
+	   			 100,100,200,200,300,400,
+				 100,100,200,200,300,400,
+				 300,300,  0,400,300,400,
+				 300,300,  0,400,300,400,
+				 300,300,  0,400,300,400,
+				   0,  0,600,600,300,400,
+				 500,500,600,600,300,400,
+				   0,  0,600,600,300,400};
 
     /********************* End of variable declaration ***********************/
 
@@ -298,15 +299,15 @@ static intn test_szip_SDS32bit()
     int		num_errs = 0;    /* number of errors so far */
     int32	out_data[LENGTH][WIDTH];
     int32	in_data[LENGTH][WIDTH]={
-             {100,100,200,200,300,400},
-             {100,100,200,200,300,400},
-             {100,100,200,200,300,400},
-             {300,300,  0,400,300,400},
-             {300,300,  0,400,300,400},
-             {300,300,  0,400,300,400},
-             {  0,  0,600,600,300,400},
-             {500,500,600,600,300,400},
-             {  0,  0,600,600,300,400}};
+	   			 100,100,200,200,300,400,
+	   			 100,100,200,200,300,400,
+				 100,100,200,200,300,400,
+				 300,300,  0,400,300,400,
+				 300,300,  0,400,300,400,
+				 300,300,  0,400,300,400,
+				   0,  0,600,600,300,400,
+				 500,500,600,600,300,400,
+				   0,  0,600,600,300,400};
 
     /********************* End of variable declaration ***********************/
 
@@ -420,15 +421,15 @@ static intn test_szip_SDSfl32bit()
     int		num_errs = 0;    /* number of errors so far */
     float	out_data[LENGTH][WIDTH];
     float	in_data[LENGTH][WIDTH]={
-             {100.0,100.0,200.0,200.0,300.0,400.0},
-             {100.0,100.0,200.0,200.0,300.0,400.0},
-             {100.0,100.0,200.0,200.0,300.0,400.0},
-             {300.0,300.0,  0.0,400.0,300.0,400.0},
-             {300.0,300.0,  0.0,400.0,300.0,400.0},
-             {300.0,300.0,  0.0,400.0,300.0,400.0},
-             {  0.0,  0.0,600.0,600.0,300.0,400.0},
-             {500.0,500.0,600.0,600.0,300.0,400.0},
-             {  0.0,  0.0,600.0,600.0,300.0,400.0}};
+	   			 100.0,100.0,200.0,200.0,300.0,400.0,
+	   			 100.0,100.0,200.0,200.0,300.0,400.0,
+				 100.0,100.0,200.0,200.0,300.0,400.0,
+				 300.0,300.0,  0.0,400.0,300.0,400.0,
+				 300.0,300.0,  0.0,400.0,300.0,400.0,
+				 300.0,300.0,  0.0,400.0,300.0,400.0,
+				   0.0,  0.0,600.0,600.0,300.0,400.0,
+				 500.0,500.0,600.0,600.0,300.0,400.0,
+				   0.0,  0.0,600.0,600.0,300.0,400.0};
 
     /********************* End of variable declaration ***********************/
 
@@ -542,15 +543,15 @@ static intn test_szip_SDSfl64bit()
     int		num_errs = 0;    /* number of errors so far */
     float64	out_data[LENGTH][WIDTH];
     float64	in_data[LENGTH][WIDTH]={
-             {100.0,100.0,200.0,200.0,300.0,400.0},
-             {100.0,100.0,200.0,200.0,300.0,400.0},
-             {100.0,100.0,200.0,200.0,300.0,400.0},
-             {300.0,300.0,  0.0,400.0,300.0,400.0},
-             {300.0,300.0,  0.0,400.0,300.0,400.0},
-             {300.0,300.0,  0.0,400.0,300.0,400.0},
-             {  0.0,  0.0,600.0,600.0,300.0,400.0},
-             {500.0,500.0,600.0,600.0,300.0,400.0},
-             {  0.0,  0.0,600.0,600.0,300.0,400.0}};
+	   			 100.0,100.0,200.0,200.0,300.0,400.0,
+	   			 100.0,100.0,200.0,200.0,300.0,400.0,
+				 100.0,100.0,200.0,200.0,300.0,400.0,
+				 300.0,300.0,  0.0,400.0,300.0,400.0,
+				 300.0,300.0,  0.0,400.0,300.0,400.0,
+				 300.0,300.0,  0.0,400.0,300.0,400.0,
+				   0.0,  0.0,600.0,600.0,300.0,400.0,
+				 500.0,500.0,600.0,600.0,300.0,400.0,
+				   0.0,  0.0,600.0,600.0,300.0,400.0};
 
     /********************* End of variable declaration ***********************/
 
@@ -686,29 +687,29 @@ static intn test_szip_chunk()
    * only to verify the read data.  The 'row' and 'column' are used
    * to write in the place of these chunks.
    */
-          int32 chunk1[CLENGTH][CWIDTH] = { {1, 1},
-                                            {1, 1},
-                                            {1, 1} };
+          int32 chunk1[CLENGTH][CWIDTH] = { 1, 1,
+                                            1, 1,
+                                            1, 1 };
 
-          int32 chunk2[CLENGTH][CWIDTH] = { {2, 2},
-                                            {2, 2},
-                                            {2, 2} };
+          int32 chunk2[CLENGTH][CWIDTH] = { 2, 2,
+                                            2, 2,
+                                            2, 2 };
 
-          int32 chunk3[CLENGTH][CWIDTH] = { {3, 3},
-                                            {3, 3},
-                                            {3, 3} };
+          int32 chunk3[CLENGTH][CWIDTH] = { 3, 3,
+                                            3, 3,
+                                            3, 3 };
 
-          int32 chunk4[CLENGTH][CWIDTH] = { {0, 4},
-                                            {0, 4},
-                                            {0, 4} };
+          int32 chunk4[CLENGTH][CWIDTH] = { 0, 4,
+                                            0, 4,
+                                            0, 4 };
 
-          int32 chunk5[CLENGTH][CWIDTH] = { {0, 0},
-                                            {5, 5},
-                                            {0, 0} };
+          int32 chunk5[CLENGTH][CWIDTH] = { 0, 0,
+                                            5, 5,
+                                            0, 0 };
 
-          int32 chunk6[CLENGTH][CWIDTH] = { {6, 6},
-                                            {6, 6},
-                                            {6, 6} };
+          int32 chunk6[CLENGTH][CWIDTH] = { 6, 6,
+                                            6, 6,
+                                            6, 6 };
 
 
     /* Initialize chunk lengths. */
@@ -870,7 +871,7 @@ static intn test_szip_chunk()
 	{
 	    if (chunk_out[j][i] != chunk4[j][i])
 	    {
-		fprintf(stderr,"Bogus val in loc [%d][%d] in chunk #4, want %d got %d\n", j, i, chunk4[j][i], chunk_out[j][i]);
+		fprintf(stderr,"Bogus val in loc [%d][%d] in chunk #4, want %ld got %ld\n", j, i, chunk4[j][i], chunk_out[j][i]);
 		num_errs++;
 	    }
 	}
@@ -889,7 +890,7 @@ static intn test_szip_chunk()
 	for (i=0; i<CWIDTH; i++)
 	    if (chunk_out[j][i] != chunk5[j][i])
 	    {
-		fprintf(stderr,"Bogus val in loc [%d][%d] in chunk #5, want %d got %d\n", j, i, chunk5[j][i], chunk_out[j][i]);
+		fprintf(stderr,"Bogus val in loc [%d][%d] in chunk #5, want %ld got %ld\n", j, i, chunk5[j][i], chunk_out[j][i]);
 		num_errs++;
 	    }
     }
@@ -1059,7 +1060,7 @@ static intn test_szip_chunk_3d()
 	    for (k = 0; k < SDS_DIM2; k++) {
 	    if (out_data[i][j][k] != all_data[i][j][k])
 	    {
-		fprintf(stderr,"Bogus val in loc [%d][%d][%d] want %d got %d\n", i, j,k, out_data[i][j][k], all_data[i][j][k]);
+		fprintf(stderr,"Bogus val in loc [%d][%d][%d] want %ld got %ld\n", i, j,k, out_data[i][j][k], all_data[i][j][k]);
 		num_errs++;
 	    }
 	    }
@@ -1100,15 +1101,15 @@ static intn test_szip_unlimited()
     int		num_errs = 0;    /* number of errors so far */
     int32	out_data[LENGTH][WIDTH];
     int32	in_data[LENGTH][WIDTH]={
-             {100,100,200,200,300,400},
-             {100,100,200,200,300,400},
-             {100,100,200,200,300,400},
-             {300,300,  0,400,300,400},
-             {300,300,  0,400,300,400},
-             {300,300,  0,400,300,400},
-             {  0,  0,600,600,300,400},
-             {500,500,600,600,300,400},
-             {  0,  0,600,600,300,400}};
+	   			 100,100,200,200,300,400,
+	   			 100,100,200,200,300,400,
+				 100,100,200,200,300,400,
+				 300,300,  0,400,300,400,
+				 300,300,  0,400,300,400,
+				 300,300,  0,400,300,400,
+				   0,  0,600,600,300,400,
+				 500,500,600,600,300,400,
+				   0,  0,600,600,300,400};
 
     /********************* End of variable declaration ***********************/
 
@@ -1252,10 +1253,15 @@ static intn test_getszipinfo()
     intn 	status;
     int32	dim_sizes[2], array_rank, num_type, attributes;
     char	name[H4_MAX_NC_NAME];
+    comp_info	c_info;
+    int32       start[2], edges[2];
     comp_coder_t comp_type;
     int32	comp_size, uncomp_size, orig_size;
+    int16       fill_value = 0;   /* Fill value */
+    int         i,j;
     int		num_errs = 0;    /* number of errors so far */
     char	testfile[512] = "";
+    int32      *out_data = NULL;
     char *basename = "sds_szipped.dat";
 
     /********************* End of variable declaration ***********************/
@@ -1346,31 +1352,33 @@ static intn test_getszipdata()
     intn 	status;
     int32	dim_sizes[2], array_rank, num_type, attributes;
     char	name[H4_MAX_NC_NAME];
+    comp_info	c_info;
     int32       start[2], edges[2];
+    int16       fill_value = 0;   /* Fill value */
     int         i,j;
-    int         num_errs = 0;    /* number of errors so far */
+    int		num_errs = 0;    /* number of errors so far */
     int32       out_data[SZ_LENGTH][SZ_WIDTH];
-    char        testfile[512] = "";
+    char	testfile[512] = "";
     char       *basename = "sds_szipped.dat";
 
     /* data to compare against read data from sds_szipped.dat */
     int32	in_data[SZ_LENGTH][SZ_WIDTH]={
-                            {100,100,200,200,300},
-                            {  0,  0,  0,  0,  0},
-                            {100,100,200,200,300},
-                            {400,300,200,100,  0},
-                            {300,300,  0,400,300},
-                            {300,300,  0,400,300},
-                            {300,300,  0,400,300},
-                            {  0,  0,600,600,300},
-                            {500,500,600,600,300},
-                            {  0,  0,600,600,300},
-                            {  0,  0,600,600,300},
-                            {  0,  0,600,600,300},
-                            {  0,  0,600,600,300},
-                            {500,500,600,600,300},
-                            {500,500,600,600,300},
-                            {500,500,600,600,300} };
+                                100,100,200,200,300,
+                                0, 0, 0, 0, 0,
+                                100,100,200,200,300,
+                                400,300,200,100,0,
+                                300,300,  0,400,300,
+                                300,300,  0,400,300,
+                                300,300,  0,400,300,
+                                0,  0,600,600,300,
+                                500,500,600,600,300,
+                                0,  0,600,600,300,
+                                0,  0,600,600,300,
+                                0,  0,600,600,300,
+                                0,  0,600,600,300,
+                                500,500,600,600,300,
+                                500,500,600,600,300,
+                                500,500,600,600,300 };
 
     /********************* End of variable declaration ***********************/
 

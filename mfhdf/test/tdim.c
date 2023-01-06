@@ -26,7 +26,7 @@
    day, the main program can be shortened and some of its
    dimension-related tests can be moved into this test routine.
 
-   - 07/28/09
+   - 07/28/09 
    Moved tests in test_dimensions into smaller subtests and added test
    for SDgetdimstrs.  The structure of this file becomes:
 	test_dimensions
@@ -38,11 +38,11 @@
 /********************************************************************
    Name: test_dim_basics()
 
-   Description:
+   Description: 
 	This test routine is used to test various dimension operations.
 	The main contents include:
 	- creates SDS #1 of size LENGTH0xLENGTH1, and sets values to its dims
-	- creates SDS #2 of size LENGTH2xLENGTH3, and sets values to its
+	- creates SDS #2 of size LENGTH2xLENGTH3, and sets values to its 
 		first dimension
 
 	The followings are included in this test routine:
@@ -72,11 +72,15 @@ static intn test_basic_dim()
     int32  fid, sds_id, status, dim0_id, dim1_id, sds_idx;
     int32  dims[2], start[2], edges[2], rank;
     int16  array1_data[LENGTH0][LENGTH1];	/* data for first SDS */
+    uint32 array2_data[LENGTH2][LENGTH3];	/* data for second SDS */
     int32  dim_sizes[H4_MAX_VAR_DIMS];		/* read dimensions */
     intn   i, j;
     int32  array_rank, num_type, attributes;
     char   dim_name[H4_MAX_NC_NAME], name[H4_MAX_NC_NAME];
     uint8  scale0 [] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,255};
+    int16  scale1 [] = {0,1,2,3,4,5,6,7,8,9};
+    char8  scale2 [] = {'d','i','m','2'}, scale2_out[4];
+    float32 scalef[] = {1., 2., 3., 4.};
     int32  size, dim_data_type, dim_num_attrs;
     int    num_errs = 0;    /* number of errors so far */
 
@@ -86,7 +90,7 @@ static intn test_basic_dim()
 
     /*
      * Add a LENGTH0 x LENGTH1 array, which is named by DS0_NAME and of
-     * type 16-bit signed integer, to the file...
+     * type 16-bit signed integer, to the file... 
      */
 
     /* Define the rank and dimensions of the data set. */
@@ -124,7 +128,7 @@ static intn test_basic_dim()
     VERIFY(dim_data_type, DFNT_UINT8, "SDdiminfo"); /* bug #172 is fixed! */
     VERIFY(dim_num_attrs, 0, "SDdiminfo");
 
-    /*
+    /* 
      * Write the data to the dataset...
      */
 
@@ -138,7 +142,7 @@ static intn test_basic_dim()
         start[i] = 0;
         edges[i] = dims[i];
     }
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)array1_data);
+    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)array1_data); 
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the array. */
@@ -161,7 +165,7 @@ static intn test_basic_dim()
     sds_id = SDselect(fid, sds_idx);
     CHECK(sds_id, FAIL, "SDselect");
 
-    /* Get info of the dataset and verify them: it is a LENGTH0 x LENGTH1
+    /* Get info of the dataset and verify them: it is a LENGTH0 x LENGTH1 
        array of type DFNT_INT16 and is named by DS0_NAME */
     status = SDgetinfo(sds_id, name, &array_rank, dim_sizes, &num_type, &attributes);
     CHECK(status, FAIL, "SDgetinfo");
@@ -255,22 +259,22 @@ static intn test_basic_dim()
 /********************************************************************
    Name: test_dim_scales()
 
-   Description:
+   Description: 
 	This test routine is used to test dimension scale operations.
 	The main contents include:
 	- creates SDS #1 of size LENGTH0xLENGTH1, and sets values to its dims
-	- creates SDS #2 of size LENGTH2xLENGTH3, and sets values to its
+	- creates SDS #2 of size LENGTH2xLENGTH3, and sets values to its 
 		first dimension
 
 	The followings are included in this test routine:
 	- SDgetdimscale
         - SDsetdimscale with the following situations:  (NOT all done yet)
-        	+ not called before SDdiminfo
+        	+ not called before SDdiminfo 
 		+ called with number type=0 -> type is then set to DFNT_FLOAT32
         	+ called with an unsigned number type
- 		+ called with the dataset's number type
+ 		+ called with the dataset's number type 
  		+ called before writing data to dataset
- 		+ called after closing dataset and file, and then
+ 		+ called after closing dataset and file, and then 
 		  reopening
 
    Return value:
@@ -302,7 +306,7 @@ static intn test_dim_scales()
 
     /*
      * Add a LENGTH0 x LENGTH1 array, which is named by DS0_NAME and of
-     * type 16-bit signed integer, to the file...
+     * type 16-bit signed integer, to the file... 
      */
 
     /* Define the rank and dimensions of the data set. */
@@ -326,7 +330,7 @@ static intn test_dim_scales()
     status = SDsetdimscale(dim0_id, dims[0], DFNT_UINT8, scale0);
     CHECK(status, FAIL, "SDsetdimscale");
 
-    /*
+    /* 
      * Write the data to the dataset...
      */
 
@@ -340,7 +344,7 @@ static intn test_dim_scales()
         start[i] = 0;
         edges[i] = dims[i];
     }
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)array1_data);
+    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)array1_data); 
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the array. */
@@ -429,7 +433,7 @@ static intn test_dim_scales()
     }
 
     /* Write the data stored in the array 'array2_data' to the dataset */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)array2_data);
+    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)array2_data); 
     CHECK(status, FAIL, "SDwritedata");
 
     /* Get info of the dataset and verify its type */
@@ -455,7 +459,7 @@ static intn test_dim_scales()
     CHECK(status, FAIL, "SDsetdimname");
 
     /* Pass 0 into SDsetdimscale for number type */
-    status = SDsetdimscale(dim0_id, dims[0], 0, scalef);
+    status = SDsetdimscale(dim0_id, dims[0], 0, scalef); 
     CHECK(status, FAIL, "SDsetdimscale");
 
     status = SDdiminfo(dim0_id, dim_name, &size, &dim_data_type, &dim_num_attrs);
@@ -463,16 +467,16 @@ static intn test_dim_scales()
     VERIFY(strcmp(dim_name, DIM2_NAME), 0, "SDdiminfo");
     VERIFY(dim_data_type, DFNT_FLOAT32, "SDdiminfo");
 
-    /*
+    /* 
      * Now, set dimension scale for that first dimension again, but this
-     * time, to 8-bit signed char; then verify the type and the scale values
+     * time, to 8-bit signed char; then verify the type and the scale values 
      */
 
     /* Set scale of type 8-bit signed char for this dimension */
     status = SDsetdimscale(dim0_id, dims[0], DFNT_CHAR, scale2);
     CHECK(status, FAIL, "SDsetdimscale");
 
-    /* Read the info of this dimension and verify its new number type */
+    /* Read the info of this dimension and verify its new number type */ 
     status = SDdiminfo(dim0_id, dim_name, &size, &dim_data_type, &dim_num_attrs);
     CHECK(status, FAIL, "SDdiminfo");
     VERIFY(dim_data_type, DFNT_CHAR, "SDdiminfo");
@@ -499,7 +503,7 @@ static intn test_dim_scales()
 /********************************************************************
    Name: test_dim_strs()
 
-   Description:
+   Description: 
 	This test routine is used to test SDsetdimstrs and SDgetdimstrs.i
 	It uses BASIC_FILE.
 	The main contents include:
@@ -538,7 +542,10 @@ static intn test_dim_strs()
     intn   i, j;
     int32  array_rank, num_type, attributes;
     char   dim_name[H4_MAX_NC_NAME], name[H4_MAX_NC_NAME];
-    char8  scale2 [] = {'d','i','m','2'};
+    uint8  scale0 [] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,255};
+    int16  scale1 [] = {0,1,2,3,4,5,6,7,8,9};
+    char8  scale2 [] = {'d','i','m','2'}, scale2_out[4];
+    float32 scalef[] = {1., 2., 3., 4.};
     int32  size, dim_data_type, dim_num_attrs;
     char   label[DIMSTRS_LEN], unit[DIMSTRS_LEN], format[DIMSTRS_LEN];
     int    num_errs = 0;    /* number of errors so far */
@@ -549,7 +556,7 @@ static intn test_dim_strs()
 
     /*
      * Add a LENGTH0 x LENGTH1 array, which is named by DS2_NAME and of
-     * type 16-bit signed integer, to the file...
+     * type 16-bit signed integer, to the file... 
      */
 
     /* Define the rank and dimensions of the data set. */
@@ -580,7 +587,7 @@ static intn test_dim_strs()
     VERIFY(dim_data_type, DFNT_NONE, "SDdiminfo"); /* number type not set */
     VERIFY(dim_num_attrs, 3, "SDdiminfo");
 
-    /*
+    /* 
      * Write the data stored in the array 'array1_data' to the dataset...
      */
 
@@ -596,7 +603,7 @@ static intn test_dim_strs()
         edges[i] = dims[i];
     }
 
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)array1_data);
+    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)array1_data); 
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the array. */
@@ -637,14 +644,14 @@ static intn test_dim_strs()
 
     /*
      * Verify that the second dimension of SDS DS2_NAME does not have
-     * predefined attributes
+     * predefined attributes 
      */
 
     /* Get the second dimension id */
     dim1_id = SDgetdimid(sds_id, 1);
     CHECK(dim1_id, FAIL, "SDgetdimid");
 
-    /* Get and verify that predefined attributes label, unit, and format
+    /* Get and verify that predefined attributes label, unit, and format 
        are not assigned to this dimension */
     HDmemset(label, 0, DIMSTRS_LEN);
     HDmemset(unit, 0, DIMSTRS_LEN);
@@ -700,7 +707,7 @@ static intn test_dim_strs()
     }
 
     /* Write the data stored in the array 'array2_data' to the dataset */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)array2_data);
+    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)array2_data); 
     CHECK(status, FAIL, "SDwritedata");
 
     /* Get the first dimension id */
@@ -727,7 +734,7 @@ static intn test_dim_strs()
     coord_var_id = SDselect(fid, sds_idx);
     CHECK(coord_var_id, FAIL, "SDselect");
 
-    /* Get info of the coord var and verify them: it is a LENGTH4 x LENGTH5
+    /* Get info of the coord var and verify them: it is a LENGTH4 x LENGTH5 
        array of type DFNT_CHAR and is named by DIM3_NAME */
     status = SDgetinfo(coord_var_id, name, &array_rank, dim_sizes, &num_type, &attributes);
     CHECK(status, FAIL, "SDgetinfo");
@@ -740,7 +747,7 @@ static intn test_dim_strs()
     status = SDendaccess(coord_var_id);
     CHECK(status, FAIL, "SDendaccess");
 
-    /* Get and verify that predefined attributes label, unit, and format
+    /* Get and verify that predefined attributes label, unit, and format 
        are not assigned to this dimension */
     HDmemset(label, 0, DIMSTRS_LEN);
     HDmemset(unit, 0, DIMSTRS_LEN);
@@ -780,5 +787,5 @@ extern int test_dimensions()
     if (num_errs == 0) PASSED();
     return num_errs;
 }
-
+    
 #endif /* HDF */

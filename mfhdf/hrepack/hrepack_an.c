@@ -190,7 +190,7 @@ int copy_an_data(int32 infile_id,
             continue;
         }
         if((ann_length = ANannlen(ann_id))==FAIL) {
-            printf( "Failed to get AN %d lenght of <%s>\n", i, path);
+            printf( "Failed to get AN %d length of <%s>\n", i, path);
             continue;
         }
         

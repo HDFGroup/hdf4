@@ -17,7 +17,8 @@ int main ()
    int32 status_32,     /* returned status for functions returning an int32 */
          file_id, vdata_id,
          num_of_records,        /* number of records actually read */
-         vdata_ref;             /* reference number of the vdata to be read */
+         vdata_ref,             /* reference number of the vdata to be read */
+         buffer_size;           /* number of bytes the vdata can hold       */
    float itemp[N_RECORDS];    /* buffer to hold values of first field     */
    char  idents[N_RECORDS];     /* buffer to hold values of fourth field    */
    uint8 databuf[BUFFER_SIZE];  /* buffer to hold read data, still packed   */
@@ -35,7 +36,6 @@ int main ()
    * Initialize the VS interface.
    */
    status_n = Vstart (file_id);
-   CHECK_NOT_VAL(status_n, FAIL, "Vstart");
 
    /*
    * Get the reference number of the vdata, whose name is specified in
@@ -52,7 +52,6 @@ int main ()
    * Specify the fields that will be read.
    */
    status_n = VSsetfields(vdata_id, FIELDNAME_LIST);
-   CHECK_NOT_VAL(status_n, FAIL, "VSsetfields");
 
    /*
    * Read N_RECORDS records of the vdata and store the values into the
@@ -76,7 +75,6 @@ int main ()
    */
    status_n = VSfpack (vdata_id, _HDF_VSUNPACK, FIELDNAME_LIST, (VOIDP)databuf,
                BUFFER_SIZE, num_of_records, NULL, (VOIDP)fldbufptrs);
-   CHECK_NOT_VAL(status_n, FAIL, "VSfpack");
 
    /*
    * Display the read data being stored in the field buffers.
@@ -90,11 +88,7 @@ int main ()
    * the HDF file.
    */
    status_32 = VSdetach (vdata_id);
-   CHECK_NOT_VAL(status_32, FAIL, "VSdetach");
    status_n = Vend (file_id);
-   CHECK_NOT_VAL(status_n, FAIL, "Vend");
    status_32 = Hclose (file_id);
-   CHECK_NOT_VAL(status_32, FAIL, "Hclose");
-
    return 0;
 }

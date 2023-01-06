@@ -2773,7 +2773,7 @@ New features and changes
      + SDgetattdatainfo gives offset/length of data set attribute's data
      + SDgetoldattdatainfo gives offset/length of a pre-defined attribute in
        old format
-     + SDgetanndatainfo gives offset/lenth of an annotation belonging to an SDS
+     + SDgetanndatainfo gives offset/length of an annotation belonging to an SDS
      + Vgetvgroups gives a list of user-created vgroups
      + VSgetvdatas gives a list of user-created vdatas
      + VSofclass gives a list of vdatas of a specific class
@@ -6746,7 +6746,7 @@ follow the instructions listed in:
      the "make" in some old systems does not support the 
      creation commands.)
    . A bug was found in the "mfhdf.h" file late in the testing
-     stage. The error occured in the CM5 parallel I/O 
+     stage. The error occurred in the CM5 parallel I/O 
      extension only. The fix is not included in the source
      release, but it is avalable in the binary release for 
      the CM5 version.  Please retrieve the fix there. 

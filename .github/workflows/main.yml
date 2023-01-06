@@ -4,10 +4,10 @@ name: hdf4 dev CI
 on:
   workflow_dispatch:
   push:
-    branches: [ master ]
     paths-ignore:
-    - '.github/**'
     - 'release_notes/**'
+  pull_request:
+    branches: [ master ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -71,7 +71,7 @@ jobs:
             generator: "-G Ninja"
           - name: "Ubuntu Autotools GCC"
             artifact: "LinuxA.tar.xz"
-            os: ubuntu-latest
+            os: ubuntu-20.04
             build_type: "Release"
             netcdf: enable
             java: disable
@@ -88,10 +88,10 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     - name: Install Dependencies (Linux)
-      run: sudo apt-get install ninja-build
+      run: sudo apt-get install -y ninja-build libtirpc-dev
       if: matrix.os == 'ubuntu-latest'
     - name: Install Autotools Dependencies (Linux)
-      run: sudo apt-get install automake autoconf libtool libtool-bin
+      run: sudo apt-get install -y automake autoconf libtool libtool-bin
       if: matrix.generator == 'autogen'
     - name: Install Dependencies (Windows)
       run: |
@@ -110,7 +110,7 @@ jobs:
     
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name: Get Sources
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Autotools Configure 
       if: matrix.generator == 'autogen'

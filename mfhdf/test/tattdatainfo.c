@@ -78,15 +78,18 @@ intn readnoHDF_char(const char *filename, const int32 offset, const int32 length
 static intn test_attrs()
 {
     int32 sd_id, sds_id, dim_id, dim_idx, att_idx;
-    int32 dimsizes[2], starts[2], edges[2];
+    int32 dimsizes[2], starts[2], edges[2], rank=0;
     int32 data1[LENGTH1_X];
     float data2[LENGTH2_X][LENGTH2_Y];
+    char  data3[LENGTH3_X], outdata3[LENGTH3_X];
     char  sds_name[20];
+    uintn info_count = 0;
     int32 n_values, nattrs;
     int32 offset=0, length=0;
-   char8   file_values[] = "Storm_track_data";
-   float sds_values[2] = {2., 10.};
-   char8   dim_values[]  = "Seconds";
+    char8   file_values[] = "Storm_track_data";
+    float sds_values[2] = {2., 10.};
+    float sds_values_out[2];
+    char8   dim_values[]  = "Seconds";
     intn  status;
     int   ii, jj;
     intn  num_errs = 0;		/* number of errors so far */
@@ -591,13 +594,16 @@ intn add_sdsNDG_annotations()
 ****************************************************************/
 intn add_sdsSDG_annotations()
 {
-    char        labsds[MAXLEN_LAB], descsds[MAXLEN_DESC],
+    char        labsds[MAXLEN_LAB], labris[MAXLEN_LAB], descsds[MAXLEN_DESC],
                 descris[MAXLEN_DESC];
+    uint8       pal[768];
     uint16      refnum;
+    int32       ret;
     intn        rank;
     int         j;
     int32       dimsizes[2];
     float      *data;
+    intn num_errs=0;
 
 /* set up object labels and descriptions */
 
@@ -616,19 +622,19 @@ intn add_sdsSDG_annotations()
 
     gen2Dfloat(ROWS, COLS, data);
 
-    DFSDsetdims(2, dimsizes);
+    ret = DFSDsetdims(2, dimsizes);
 
 /********  Write labels and descriptions *********/
     for (j = 0; j < REPS; j++)
       {
 
           /* write out scientific data set */
-          DFSDadddata(DFAN_SDG_FILE, 2, dimsizes, (VOIDP) data);
+          ret = DFSDadddata(DFAN_SDG_FILE, 2, dimsizes, (VOIDP) data);
 
             {   /* write out annotations for 2 out of every 3 */
                 refnum = DFSDlastref();
-                DFANputlabel(DFAN_SDG_FILE, DFTAG_SDG, refnum, labsds);
-                DFANputdesc(DFAN_SDG_FILE, DFTAG_SDG, refnum,
+                ret = DFANputlabel(DFAN_SDG_FILE, DFTAG_SDG, refnum, labsds);
+                ret = DFANputdesc(DFAN_SDG_FILE, DFTAG_SDG, refnum,
                                   descsds, (int32)HDstrlen(descsds));
             }
       }
@@ -637,11 +643,11 @@ intn add_sdsSDG_annotations()
 
     for (j = 0; j < REPS; j++)
       {
-          DFSDgetdims(DFAN_SDG_FILE, &rank, dimsizes, 3);
+          ret = DFSDgetdims(DFAN_SDG_FILE, &rank, dimsizes, 3);
           refnum = DFSDlastref();
 
           if ((j % 3) != 0)     /* read in annotations for 2 out of every 3 */
-              check_lab_desc(DFAN_SDG_FILE, DFTAG_SDG, refnum, labsds, descsds);
+              num_errs = check_lab_desc(DFAN_SDG_FILE, DFTAG_SDG, refnum, labsds, descsds);
       }
 
     HDfree((VOIDP) data);
@@ -703,9 +709,12 @@ intn get_ann_datainfo(
 static int test_dfannots(void)
 {
     int32 sd_id, sds_id, sds_index;
-    intn  status;
-    int32 n_datasets, n_file_attr;
+    intn  ii, status, num_annots;
+    int32 n_datasets, n_file_attr, n_attrs;
+    int32 *offsetarray=NULL, *lengtharray=NULL;
     int32 chk_offsets[10], chk_lengths[10];
+    int32 num_labels = 0,      /* number of file or object labels */
+          num_descs = 0;       /* number of file or object descriptions */
     intn  num_errs = 0;
 
     /* Add file annotations */
@@ -845,8 +854,8 @@ static intn test_dfsdattrs()
 {
     int         i, j, ret;
     intn        rank;
-    int32       dims[2];
-    float     f32[XX][YY], tf32[XX][YY];
+    int32       dims[2], num_datasets;
+    float       f32[XX][YY], tf32[XX][YY];
     intn info_count=0;
     int32 offset=0, length=0;
     int32 fid=-1, sdsid=-1, dimid=-1;
@@ -1076,6 +1085,7 @@ intn readnoHDF_char(const char *filename, const int32 offset, const int32 length
    SDgetoldattdatainfo(), and SDgetanndatainfo() */
 extern int test_att_ann_datainfo()
 {
+    intn status;
     int num_errs = 0;
 
     /* Output message about test being performed */

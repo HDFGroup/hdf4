@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
 
 /*-----------------------------------------------------------------------------
  * File:    cnone.h
@@ -82,9 +81,7 @@ funclist_t  cnone_funcs =
     HCPcnone_inquire,
     HCPcnone_read,
     HCPcnone_write,
-    HCPcnone_endaccess,
-    NULL,
-    NULL
+    HCPcnone_endaccess
 };
 #endif
 

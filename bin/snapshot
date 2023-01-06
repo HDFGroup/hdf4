@@ -451,7 +451,7 @@ if [ "$cmd" = "all" -o -n "$cmdrel" ]; then
     # Replace the previous version with the current version.
     # Should check if the errcode of the release process but there
     # are other failures after release was done (e.g. h4vers or svn failures)
-    # that should allow the replacement to occure.
+    # that should allow the replacement to occur.
     rm -rf ${PREVIOUS}
     mv ${CURRENT} ${PREVIOUS}
 fi #Release snapshot

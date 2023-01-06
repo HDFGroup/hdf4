@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
 
 #include <stdio.h>
 #include "mfhdf.h"
@@ -119,8 +118,6 @@ fmtchar(VOIDP       x,
         file_format_t ff,
         FILE       *ofp)
 {
-    (void)ff;
-
    if (isprint(*(unsigned char *) x))
    {
       putc(*((char *) x), ofp);
@@ -168,7 +165,7 @@ fmtint(VOIDP       x, /* assumption: int is same as 'intn' */
 
 #define FLOAT32_EPSILON ((float)1.0e-20)
 intn
-fmtfloat(VOIDP       x,
+fmtfloat32(VOIDP       x,
            file_format_t ff,
            FILE       *ofp)
 {
@@ -419,8 +416,6 @@ dumpclean(int32       nt,
    intn    is_null;	/* TRUE if current character is a null  */
    char* tempptr;	/* used in finding CR or LF in data buffer */
    intn    ret_value = SUCCEED;
-
-   (void)dump_opts;
 
    /* check inputs */
    if( NULL == databuf )

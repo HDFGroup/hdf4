@@ -1,7 +1,6 @@
 /*********************************************************************
  *   Copyright 1993, UCAR/Unidata
  *   See netcdf/COPYRIGHT file for copying and redistribution conditions.
- *   $Id$
  *********************************************************************/
 
 #include "h4config.h"
@@ -41,9 +40,7 @@ char *argv[];
 {
     static char testfile[] = "test.nc";
     static char unlim_testfile_name[] = "test_unlim.nc";
-
-    (void)argc;
-    (void)argv;
+    int status = 0;
 
 #if defined TEST_PC || defined TEST_WIN
     dbg_file=fopen("test.dbg","w+");

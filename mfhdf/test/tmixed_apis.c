@@ -191,7 +191,7 @@ test_nonSDAPI_ids ()
     CHECK(gr_id, FAIL, "GRstart");
 
     /* Create an empty image with default fill value */
-    ri_id = GRcreate(gr_id, "Empty Image", 3, DFNT_FLOAT32,
+    ri_id = GRcreate(gr_id, "Empty Image", 3, DFNT_FLOAT32, 
 		MFGR_INTERLACE_PIXEL, dims);
     CHECK(ri_id, FAIL, "GRcreate");
 
@@ -248,8 +248,7 @@ static intn
 test_vdatavgroups()
 {
     int32   fid, dset1, dset2, dset3, dimid, vgroup_id, vdata_id;
-    int32   num_allvdatas;
-    /* int32   num_allvgroups; keep for debugging only */
+    int32   num_allvgroups, num_allvdatas;
     intn    num_vgroups, num_vdatas;
     int32   dimsize[RANK];
     float att1_values[2] = {2., 10.};
@@ -312,7 +311,7 @@ test_vdatavgroups()
 
     /*   num_allvgroups = Hnumber(fid, DFTAG_VG);
     CHECK(num_allvgroups, FAIL, "Hnumber");
-    keep for debugging only */
+    keep for debugging only */ 
 
     /* Get the number of user-created vgroups */
     num_vgroups = Vgetvgroups(fid, 0, 0, NULL);
@@ -543,7 +542,7 @@ test_vgisinternal()
 }   /* test_vgisinternal */
 
 
-/* Test driver for testing the API functions SDidtype, Vgetvgroups,
+/* Test driver for testing the API functions SDidtype, Vgetvgroups, 
    VSgetvdatas, and Vgisinternal. */
 extern int
 test_mixed_apis()

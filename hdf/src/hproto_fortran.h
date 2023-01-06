@@ -739,7 +739,7 @@ extern      "C"
                  uint8  * palette, char  * outfile, int ct_method,
                  int32 hres, int32 vres, int compress);
 
-/* for Multi-file fortran Annotation inteface */
+/* for Multi-file fortran Annotation interface */
 
 /* 
  *  Not all HDF4 Fortran functions are real Fortran functions, they are C wrappers called from a

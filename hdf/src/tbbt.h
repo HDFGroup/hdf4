@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
 
 /* "tbbt.h" -- Data types/routines for threaded, balanced, binary trees. */
 /* Extended from Knuth 6.2.3, Algorithm A */

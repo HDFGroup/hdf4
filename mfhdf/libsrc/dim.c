@@ -14,7 +14,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/*    $Id$ */
 
 #include    <string.h>
 #include    "local_nc.h"
@@ -349,8 +348,8 @@ xdr_NC_dim(xdrs, dpp)
 #endif
 
     if( !xdr_NC_string(xdrs, &((*dpp)->name)))
-        return(FALSE);
-    return( xdr_long(xdrs, &((*dpp)->size)) );
+        return(FALSE) ;
+	return( xdr_long(xdrs, &((*dpp)->size)) ) ;
 }
 
 

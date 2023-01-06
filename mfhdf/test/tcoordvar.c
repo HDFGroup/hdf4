@@ -85,15 +85,17 @@
 
 static intn test_dim1_SDS1(void)
 {
+    char  sds_name[20];
     float sds1_data[] = {0.1, 2.3, 4.5, 6.7, 8.9};
     float out_data[5];
     int32 dimsize[1];
     int32 sds_id, file_id, dim_id, index;
     int32 start=0, stride=1;
-    int32 num_type, count;
-    int32 n_datasets, n_file_attrs, n_vars = 0;
-    intn  status = 0, idx, idx1;
-    hdf_varlist_t* var_list = NULL;
+    int32 scale1 [5] = {101,102,103,104,105}, scale1_out[5];
+    int32 num_type, array_rank, count;
+    int32 n_datasets, n_file_attrs, n_local_attrs, n_vars = 0;
+    intn  datanum, ranknum, status =0, i, idx, idx1, idx2;
+    hdf_varlist_t* var_list;
     intn  is_coord = FALSE;
     char  attr_name[H4_MAX_NC_NAME], attr_values[80];
     intn  num_errs = 0;         /* number of errors so far */
@@ -286,15 +288,17 @@ static intn test_dim1_SDS1(void)
 static intn test_dim1_SDS2(void)
 {
     char  sds_name[20];
+    float sds1_data[] = {0.1, 2.3, 4.5, 6.7, 8.9};
     float sds2_data[2][3] = {{0.1, 2.3, 4.5}, {4.5, 6.7, 8.9}};
     int32 dimsize[1], dimsize2[2];
     int32 sds1_id, sds2_id, file_id, dim_id, index;
+    int32 start=0, stride=1, stat;
     int32 start2[2]={0,0}, stride2[2]={1,1};
     int32 scale1 [5] = {101,102,103,104,105}, scale1_out[5];
-    int32 num_type, array_rank;
+    int32 num_type, array_rank, attributes;
     int32 n_datasets, n_file_attrs, n_local_attrs;
     float out_data2[2][3];
-    intn  status = 0, idx, idx1, idx2;
+    intn  datanum, ranknum, status =0, i, idx, idx1, idx2;
     intn  num_errs = 0;         /* number of errors so far */
 
     file_id = SDstart(FILE2, DFACC_CREATE);
@@ -323,7 +327,7 @@ static intn test_dim1_SDS2(void)
     sds2_id = SDcreate(file_id, VAR2_NAME, DFNT_FLOAT32, 2, dimsize2);
     CHECK(sds2_id, FAIL, "SDcreate");
 
-    status = SDwritedata(sds2_id, start2, stride2, dimsize2, sds2_data);
+    stat = SDwritedata(sds2_id, start2, stride2, dimsize2, sds2_data);
     CHECK(status, FAIL, "SDwritedata");
 
     status = SDendaccess(sds2_id);
@@ -492,15 +496,20 @@ static intn test_dim1_SDS2(void)
 static intn test_named_vars(void)
 {
     char  sds_name[20];
+    float32 sds1_data[] = {0.1, 2.3, 4.5, 6.7, 8.9};
+    float32 sds2_data[2][3] = {{0.1, 2.3, 4.5}, {4.5, 6.7, 8.9}};
     int32 dimsize[1], dimsize2[2];
     int32 sds_id, sds1_id, sds2_id, sds3_id, sds4_id, sds5_id;
-    int32 file_id, dim_id;
-    int32 scale1 [5] = {101,102,103,104,105};
+    int32 file_id, dim_id, index;
+    int32 start=0, stride=1, stat;
+    int32 start2[2]={0,0}, stride2[2]={1,1};
+    int32 scale1 [5] = {101,102,103,104,105}, scale1_out[5];
     int32 array_rank;
-    int32 n_datasets, n_file_attrs, n_vars=0;
-    intn  status = 0, idx;
+    int32 n_datasets, n_file_attrs, n_local_attrs, n_vars=0;
+    float32 out_data2[2][3];
+    intn  datanum, ranknum, status =0, idx, idx1, idx2;
     intn  is_coordvar=FALSE;
-    hdf_varlist_t *allvars;
+    hdf_varlist_t *allvars, *varlistp;
     intn  num_errs = 0;         /* number of errors so far */
     char  line[40];
     char  contents[7][40]={

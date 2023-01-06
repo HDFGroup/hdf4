@@ -1,7 +1,6 @@
 /*********************************************************************
  *   Copyright 1993, UCAR/Unidata
  *   See netcdf/COPYRIGHT file for copying and redistribution conditions.
- *   $Id$
  *********************************************************************/
 
 #include "local_nc.h"
@@ -15,9 +14,7 @@
 
 /* Why is STREQ re-defined in multiple places? (hdf.h, then here, msoftyy.c,
    and vms_yy.c) -> compiler warnings. -BMR, Jul 17, 2012 */
-#ifndef STREQ
 #define STREQ(a, b)     (*(a) == *(b) && strcmp((a), (b)) == 0)
-#endif
 
 extern struct dims {			/* dimensions */
     long size;
