@@ -176,7 +176,7 @@ C ********** Write out 2 labels for each SDS *****************
             ret = afendaccess(anhandle)
             call VRFY(ret, 'afendaccess', number_failed)
 
-C *********** Write out 2 descritptions for each SDS ***********
+C *********** Write out 2 descriptions for each SDS ***********
             anhandle = afcreate(ahandle,DFTAG_SDG,refnum,AN_DATA_DESC)
             ret = anhandle
             call VRFY(ret, 'afcreate', number_failed)
@@ -216,7 +216,7 @@ C ********** Write out 2 labels for each Image *****************
           ret = afendaccess(anhandle)
           call VRFY(ret, 'afendaccess', number_failed)
 
-C *********** Write out 2 descritptions for each Image ***********
+C *********** Write out 2 descriptions for each Image ***********
           anhandle = afcreate(ahandle, DFTAG_RIG, refnum, AN_DATA_DESC)
           ret = anhandle
           call VRFY(ret, 'afcreate', number_failed)

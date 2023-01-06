@@ -1136,7 +1136,7 @@ done:
 
 /* ----------------------------------------------------------------
 ** Write out a group representing a variable
-** If successfull, return the id of the created Vgroup else
+** If successful, return the id of the created Vgroup else
 **  return NULL
 */
 int32

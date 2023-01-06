@@ -45,7 +45,7 @@
 #define COLS          10    /* column size of dataset/image */
 #define REPS           3    /* number of images/data sets to write to file */
 
-/* File labels/desriptions to write */
+/* File labels/descriptions to write */
 static const char *file_lab[3] =
 {"File label #1: aaa", 
  "File label #2: bbbbbb",
@@ -741,7 +741,7 @@ check_lab_desc(const char *fname, uint16 tag, uint16 ref, const char *label[],
 **  4. Write file labels and descriptions.
 **  5. For 'REPs' count do
 **     A. create/write SDS(DFSDxxx) to file.
-**     B. Write 2 labels and 2 descriptons for SDS.
+**     B. Write 2 labels and 2 descriptions for SDS.
 **     C. Write image(DFR8xxx) to file
 **     D. Write 2 labels and 2 descriptions for RI.
 **  6. Close annotation inteface 

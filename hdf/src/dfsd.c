@@ -435,7 +435,7 @@ done:
        int *lcoordsys;  OUT: length of coordsys string
 
  RETURN
-       Returns SUCCED(0) if succesful and FAIL(-1) otherwise
+       Returns SUCCED(0) if successful and FAIL(-1) otherwise
  DESCRIPTION
        Gets actual length of label, unit, format and coordinate system
        strings. The space allocated for the label, unit, format and
@@ -683,7 +683,7 @@ done:
       VOIDP data;        OUT: Array for holding the data
 
  RETURN
-       Returns SUCCEED(0) if succesful and FAIL(-1) otherwise.
+       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
  DESCRIPTION
        Reads the next data set in the file. If you do no know the values of
        "rank" or "dimsizes", you must call "DFSDgetdims" to get them and
@@ -4896,7 +4896,7 @@ DFSDwriteref(const char *filename, uint16 ref)
     }
 
   /*
-   ** Probably need to call DFSDgetndg to intialize Writesdg struct
+   ** Probably need to call DFSDgetndg to initialize Writesdg struct
    ** This is so that we use the information of an SDG that has
    ** already been written out. Once a SDG has been written out,
    ** a user should not be able to change attributes such as
@@ -5157,7 +5157,7 @@ DFSDstartslab(const char *filename)
     HGOTO_ERROR(DFE_BADREF, FAIL);
   Writesdg.data.ref = Writeref;
 
-  /* Intialize a few local variables */
+  /* Initialize a few local variables */
   localNTsize = DFKNTsize((Writesdg.numbertype | DFNT_NATIVE) & (~DFNT_LITEND));
   fileNTsize = DFKNTsize(Writesdg.numbertype);
 
@@ -5200,14 +5200,14 @@ DFSDstartslab(const char *filename)
           DFKconvert((VOIDP)&Writesdg.fill_value, (VOIDP) buf2,
                      Writesdg.numbertype, 1, DFACC_WRITE, 0, 0);
 
-          /* Intialize buffer to fill value */
+          /* Initialize buffer to fill value */
           for (i = 0; i < fill_bufsize; i = i + localNTsize)
               HDmemcpy(&(fill_buf[i]), buf2, localNTsize);
 
         }
       else /* no conversion */
         {
-            /* Intialize buffer to fill value */
+            /* Initialize buffer to fill value */
             for (i = 0; i < fill_bufsize; i = i + localNTsize)
                 HDmemcpy(&(fill_buf[i]), Writesdg.fill_value, localNTsize);
         }
@@ -5349,7 +5349,7 @@ DFSDwriteslab(int32 start[], int32 stride[],
           HCLOSE_GOTO_ERROR(Sfile_id,DFE_BADDIM, FAIL);
     }
 
-  /* Intialize a few local variables */
+  /* Initialize a few local variables */
   numtype = Writesdg.numbertype;
   platnumsubclass = (uint8)DFKgetPNSC(numtype & (~DFNT_LITEND), DF_MT);
   localNTsize = DFKNTsize((numtype | DFNT_NATIVE) & (~DFNT_LITEND));

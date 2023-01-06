@@ -143,14 +143,14 @@ char     *GIFFileName;
 
 		/* GRSetCompress */
 		if ((status = GRsetcompress(ri_id, comp_type, &c_info)) == -1) {
-			printf("Error occured while setting compression\n");
+			printf("Error occurred while setting compression\n");
 			printf("%s\n", HEstring(HEvalue(1)));
 			exit(-1);
 		}
 
 		/* Write the GR Image */
 		if ((status = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)gifImageDesc.Image)) == -1) {
-			printf("Error occured while trying to write GR image\n");
+			printf("Error occurred while trying to write GR image\n");
 			printf("%s\n", HEstring(HEvalue(1)));
 			exit(-1);
 		}

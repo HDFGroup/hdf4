@@ -1257,7 +1257,7 @@ typedef union hdf_chunk_def_u
       The image currently cannot be special already.  i.e. NBIT,
       COMPRESSED, or EXTERNAL. This is an Error.
 
-      The defintion of the HDF_CHUNK_DEF union with relvant fields is:
+      The definition of the HDF_CHUNK_DEF union with relvant fields is:
 
       typedef union hdf_chunk_def_u
       {
@@ -1360,7 +1360,7 @@ HDFLIBAPI intn GRsetchunk
      fill the array of chunk lengths for each dimension as specified in
      the 'HDF_CHUNK_DEF' union. You can pass in a NULL for 'chunk_def'
      if don't want the chunk lengths for each dimension.
-     Additionaly if successfull it will return a bit-or'd value in 'flags'
+     Additionaly if successful it will return a bit-or'd value in 'flags'
      indicating if the GR is:
 
      Chunked                  -> flags = HDF_CHUNK

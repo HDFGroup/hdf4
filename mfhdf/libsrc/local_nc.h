@@ -194,7 +194,7 @@ typedef struct {
     char path[FILENAME_MAX + 1] ;
     unsigned flags ;
     XDR *xdrs ;
-    long begin_rec ; /* (off_t) postion of the first 'record' */
+    long begin_rec ; /* (off_t) position of the first 'record' */
     unsigned long recsize ; /* length of 'record' */
     int redefid ;
     /* below gets xdr'd */

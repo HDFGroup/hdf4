@@ -287,7 +287,7 @@ alloc_err :
 
 
 /*
- * Recyle a NC_array, if possible.
+ * Recycle a NC_array, if possible.
  * EG, if there is enough space, use it, else return NULL
  * If values is non-NULL, copy them in.
  */

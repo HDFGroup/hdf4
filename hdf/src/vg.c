@@ -1025,7 +1025,7 @@ NAME
 
 DESCRIPTION
    Finds the vdata with the specified name and returns the ref of
-   the vdata if successfull.
+   the vdata if successful.
 
 RETURNS
    Returns 0 if not found, or on error. Otherwise, returns the vdata's 

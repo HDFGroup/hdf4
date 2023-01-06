@@ -486,7 +486,7 @@ HXIstaccess(accrec_t * access_rec, int16 acc_mode)
     if (BADFREC(file_rec) || !(file_rec->access & acc_mode))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* intialize the access record */
+    /* initialize the access record */
     access_rec->special = SPECIAL_EXT;
     access_rec->posn = 0;
     access_rec->access = (uint32)(acc_mode|DFACC_READ);

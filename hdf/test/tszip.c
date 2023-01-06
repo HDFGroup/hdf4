@@ -118,7 +118,7 @@ test_szip_RI8bit()
     edges[0] = WIDTH;
     edges[1] = LENGTH;
 
-    /* Initializate for SZIP */
+    /* Initialize for SZIP */
     comp_type = COMP_CODE_SZIP;
     cinfo.szip.pixels_per_block = 2;
     cinfo.szip.options_mask = SZ_EC_OPTION_MASK;
@@ -285,7 +285,7 @@ test_szip_RI16bit()
     edges[0] = WIDTH;
     edges[1] = LENGTH;
 
-    /* Initializate for SZIP */
+    /* Initialize for SZIP */
     comp_type = COMP_CODE_SZIP;
     cinfo.szip.pixels_per_block = 2;
     cinfo.szip.options_mask = SZ_EC_OPTION_MASK;
@@ -452,7 +452,7 @@ test_szip_RI32bit()
     edges[0] = WIDTH;
     edges[1] = LENGTH;
 
-    /* Initializate for SZIP */
+    /* Initialize for SZIP */
     comp_type = COMP_CODE_SZIP;
     cinfo.szip.pixels_per_block = 2;
     cinfo.szip.options_mask = SZ_EC_OPTION_MASK;
@@ -620,7 +620,7 @@ test_szip_RIfl32bit()
     edges[0] = WIDTH;
     edges[1] = LENGTH;
 
-    /* Initializate for SZIP */
+    /* Initialize for SZIP */
     comp_type = COMP_CODE_SZIP;
     cinfo.szip.pixels_per_block = 2;
 
@@ -788,8 +788,8 @@ test_szip_RIfl64bit()
     start[0] = start[1] = 0;
     edges[0] = WIDTH;
     edges[1] = LENGTH;
- 
-    /* Initializate for SZIP */
+
+    /* Initialize for SZIP */
     comp_type = COMP_CODE_SZIP;
     cinfo.szip.pixels_per_block = 2;
  

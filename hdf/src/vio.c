@@ -38,7 +38,7 @@ EXPORTED ROUTINES
  vpackvs       -- Packs a VDATA structure into a compact form suitable for 
                    storing in the HDF file.
  vunpackvs     -- Convert a packed form(from HDF file) to a VDATA structure.
-                   This routine will also initalize the VDATA structure as 
+                   This routine will also initialize the VDATA structure as 
                    much as it can.
  vsdestroynode -- Frees B-Tree nodes.
  VSPgetinfo    -- Read in the "header" information about the Vdata.
@@ -524,7 +524,7 @@ NAME
 
 DESCRIPTION
    Convert a packed form(from HDF file)  to a VDATA structure.
-   This routine will also initalize the VDATA structure as much as it can.
+   This routine will also initialize the VDATA structure as much as it can.
 
 RETURNS
    SUCCEED / FAIL
