@@ -2,7 +2,7 @@
 
 #define  FILE_NAME    "General_RImages.hdf"
 
-int main( )
+int main( ) 
 {
    /************************* Variable declaration **************************/
 
@@ -13,7 +13,7 @@ int main( )
          ri_index,          /* index of a image */
          dim_sizes[2],      /* dimensions of an image */
          n_comps,           /* number of components an image contains */
-         interlace_mode,    /* interlace mode of an image */
+         interlace_mode,    /* interlace mode of an image */ 
          data_type,         /* number type of an image */
          n_attrs;           /* number of attributes belong to an image */
    char  name[H4_MAX_GR_NAME], /* name of an image */
@@ -36,7 +36,6 @@ int main( )
    * Determine the contents of the file.
    */
    status = GRfileinfo (gr_id, &n_rimages, &n_file_attrs);
-   CHECK_NOT_VAL(status, FAIL, "GRfileinfo");
 
    /*
    * For each image in the file, get and display the image information.
@@ -46,13 +45,12 @@ int main( )
    for (ri_index = 0; ri_index < n_rimages; ri_index++)
    {
       ri_id = GRselect (gr_id, ri_index);
-      status = GRgetiminfo (ri_id, name, &n_comps, &data_type,
+      status = GRgetiminfo (ri_id, name, &n_comps, &data_type, 
                           &interlace_mode, dim_sizes, &n_attrs);
-      CHECK_NOT_VAL(status, FAIL, "GRgetiminfo");
       /*
-      * Map the number type and interlace mode into text strings for output
-      * readability.  Note that, in this example, only two possible types
-      * are considered because of the simplicity of the example.  For real
+      * Map the number type and interlace mode into text strings for output 
+      * readability.  Note that, in this example, only two possible types 
+      * are considered because of the simplicity of the example.  For real 
       * problems, all possible types should be checked and, if reading the
       * data is desired, the size of the type must be determined based on the
       * machine where the program resides.
@@ -79,11 +77,11 @@ int main( )
             interlace_string = "Unknown";
             break;
       } /* switch */
-
+ 
       /*
       * Display the image information for the current raster image.
       */
-          printf ("%d  %s       %d      %s   %s     %2d,%2d         %d\n",
+          printf ("%d  %s       %d      %s   %s     %2d,%2d         %d\n", 
                  ri_index, name, n_comps, type_string, interlace_string,
                  dim_sizes[0], dim_sizes[1], n_attrs);
 
@@ -91,16 +89,12 @@ int main( )
       * Terminate access to the current raster image.
       */
       status = GRendaccess (ri_id);
-      CHECK_NOT_VAL(status, FAIL, "GRendaccess");
    }
 
    /*
    * Terminate access to the GR interface and close the HDF file.
    */
    status = GRend (gr_id);
-   CHECK_NOT_VAL(status, FAIL, "GRend");
    status = Hclose (file_id);
-   CHECK_NOT_VAL(status, FAIL, "Hclose");
-
    return 0;
 }

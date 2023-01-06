@@ -27,19 +27,17 @@
 #define LABEL_FIELD_WIDTH 15
 #define DESC_FIELD_WIDTH 15
 
-static intn parse_list_opts(list_info_t * list_opts, intn curr_arg,
+static intn parse_list_opts(list_info_t * list_opts, intn curr_arg, 
                 intn argc, char *argv[]);
-intn print_annots_by_object(const char *fname, int32 an_id,
+intn print_annots_by_object(const char *fname, int32 an_id, 
 		ann_type annot_type, uint16 tag, uint16 ref);
 intn print_annots_in_file(int32 an_id, const char* fname,
 		int32 n_annotations, ann_type annot_type);
 
 static void
-list_usage(intn argc,
+list_usage(intn argc, 
            char *argv[])
 {
-    (void)argc;
-
     printf("Usage:\n");
     printf("%s list [-acensldg] [-o<f|g|t|n>] [-t tag] <filelist>\n", argv[0]);
     printf("\t-a\tPrint annotations of items (sets long output)\n");
@@ -55,7 +53,7 @@ list_usage(intn argc,
     printf("\t-of\tPrint items in the order found in the file\n");
     printf("\t-og\tPrint items in group order\n");
     printf("\t-ot\tPrint items in tag order (default)\n");
-#if 0 /* No longer possible since objects can have more than one label
+#if 0 /* No longer possible since objects can have more than one label 
        * -GV 6/12/97 */
     printf("\t-on\tPrint items in name or label order\n");
 #endif
@@ -77,9 +75,9 @@ init_list_opts(list_info_t * list_opts)
 }	/* end init_list_opts() */
 
 static intn
-parse_list_opts(list_info_t * list_opts,
-		intn curr_arg,
-		intn argc,
+parse_list_opts(list_info_t * list_opts, 
+		intn curr_arg, 
+		intn argc, 
 		char *argv[])
 {
     intn ret = SUCCEED;
@@ -177,7 +175,7 @@ parse_list_opts(list_info_t * list_opts,
                             list_opts->order = OFILE;	/* ordering is by file */
                             break;
 
-#if 0 /* No longer possible since objects can have more than one label
+#if 0 /* No longer possible since objects can have more than one label 
        * -GV 6/12/97 */
                         case 'n':
                             list_opts->order = ONAME;	/* ordering is by name */
@@ -235,9 +233,9 @@ print_list_header(list_info_t * list_opts)
    for common code */
 intn
 print_annots_by_object(const char *fname,
-                       int32 an_id,
+                       int32 an_id, 
                        ann_type annot_type,
-                       uint16 tag,
+                       uint16 tag, 
                        uint16 ref)
 {
    intn  i;
@@ -253,7 +251,7 @@ print_annots_by_object(const char *fname,
 
    /* stores the current values tag, ref, and file name in error_item,
 	just to simplify the error printing statement */
-   sprintf( error_item, "object tag=%d, ref=%d, in file %s", tag, ref, fname );
+   sprintf( error_item, "object tag=%d, ref=%d, in file %s", tag, ref, fname ); 
 
    /* validate annotation type before processing */
    if( annot_type == AN_DATA_LABEL )
@@ -277,7 +275,7 @@ print_annots_by_object(const char *fname,
       ann_list = HDmalloc(ann_num*sizeof(int32));
       CHECK_ALLOC( ann_list, "ann_list", func_name );
 
-      /* retrieve all the data objects label/description handles and
+      /* retrieve all the data objects label/description handles and 
 	 store them in the buffer ann_list */
       if (FAIL == ANannlist( an_id, annot_type, tag, ref, ann_list ))
          ERROR_GOTO_2("%s: ANannlist failed for %s\n",
@@ -290,7 +288,7 @@ print_annots_by_object(const char *fname,
 
          ann_length =  ANannlen(ann_id); /* get annotation length */
          if (FAIL == ann_length)
-	    ERROR_GOTO_4( "%s: ANannlen failed for\n               %d'th data %s for %s\n",
+	    ERROR_GOTO_4( "%s: ANannlen failed for\n               %d'th data %s for %s\n", 
 		func_name, i, annot_type_text, error_item );
 
 	 /* allocate space for the data annotation */
@@ -318,7 +316,7 @@ print_annots_by_object(const char *fname,
          HDfree(buf);
          buf = NULL;
       } /* end for every data label/description */
-
+        
       /* cleanup */
       HDfree(ann_list);
       ann_list = NULL;
@@ -328,7 +326,7 @@ print_annots_by_object(const char *fname,
     if (ret_value == FAIL)
       { /* Failure cleanup */
           if (ann_id != FAIL)
-              ANendaccess(ann_id);
+              ANendaccess(ann_id);        
           if (buf != NULL)
               HDfree(buf);
       }
@@ -340,8 +338,8 @@ print_annots_by_object(const char *fname,
 /* print all data labels for object with tag/ref */
 intn
 print_data_labels(const char *fname,
-                  int32 an_id,
-                  uint16 tag,
+                  int32 an_id, 
+                  uint16 tag, 
                   uint16 ref)
 {
    intn ret_value = SUCCEED;
@@ -362,8 +360,8 @@ print_data_labels(const char *fname,
 /* print all data descriptions for object with tag/ref */
 intn
 print_data_descs(const char *fname,
-                 int32 an_id,
-                 uint16 tag,
+                 int32 an_id, 
+                 uint16 tag, 
                  uint16 ref)
 {
    intn ret_value = SUCCEED;
@@ -382,7 +380,7 @@ print_data_descs(const char *fname,
 } /* end print_data_descs */
 
 /* Prints all annotations in the file.
-   This routine is used by print_all_data_labels, print_all_data_descs,
+   This routine is used by print_all_data_labels, print_all_data_descs, 
 print_all_file_labels, and print_all_file_descs for the common code. */
 intn
 print_annots_in_file(int32 an_id,
@@ -412,8 +410,8 @@ print_annots_in_file(int32 an_id,
 		  				func_name, fname );
 
    /* for all annot_type annotations in the file */
-   for(i = 0; i< n_annotations; i++)
-   {
+   for(i = 0; i< n_annotations; i++) 
+   {  
       /* select i'th annotation */
       ann_id = ANselect(an_id, i, annot_type );
       if (FAIL == ann_id)
@@ -434,19 +432,19 @@ print_annots_in_file(int32 an_id,
       if(ANreadann(ann_id, annotation, len+1)!= FAIL)
           printf("%s #%ld: %s\n", annot_type_text, (long)i, annotation);
       else
-         ERROR_GOTO_4("%s: ANreadann failed on the %d'th %s for file %s\n",
+         ERROR_GOTO_4("%s: ANreadann failed on the %d'th %s for file %s\n", 
 			func_name, i, annot_type_text, fname);
 
       /* end access */
       if (FAIL == ANendaccess(ann_id))
-         ERROR_GOTO_4("%s: ANendaccess failed on the %d'th %s for file %s\n",
+         ERROR_GOTO_4("%s: ANendaccess failed on the %d'th %s for file %s\n", 
 			func_name, i, annot_type_text, fname);
 
       /* reset id and free space for annotation */
       ann_id = FAIL;
       HDfree(annotation);
       annotation = NULL;
-   } /* end for every annotation in file */
+   } /* end for every annotation in file */ 
 
   done:
     if (ret_value == FAIL)
@@ -457,14 +455,14 @@ print_annots_in_file(int32 an_id,
               HDfree(annotation);
       }
     /* Normal cleanup */
-
+    
     return ret_value;
 } /* end print_annots_in_file */
 
 /* Exported
  * Prints all data labels in file */
 intn
-print_all_data_labels(const char *fname,
+print_all_data_labels(const char *fname, 
                       int32 an_id)
 {
    int32 n_file_label;
@@ -474,7 +472,7 @@ print_all_data_labels(const char *fname,
    intn  ret_value = SUCCEED;
 
    /* find out how many file labels/descs and data labels/descs in file */
-   if (FAIL == ANfileinfo(an_id, &n_file_label, &n_file_desc, &n_data_label,
+   if (FAIL == ANfileinfo(an_id, &n_file_label, &n_file_desc, &n_data_label, 
                           &n_data_desc))
       ERROR_GOTO_1("print_all_data_labels: ANfileinfo failed for file %s\n",
 					fname);
@@ -496,7 +494,7 @@ print_all_data_labels(const char *fname,
 /* Exported
  * Prints all data descriptions in file */
 intn
-print_all_data_descs(const char *fname,
+print_all_data_descs(const char *fname, 
                      int32 an_id)
 {
     int32 len;
@@ -510,7 +508,7 @@ print_all_data_descs(const char *fname,
     intn  ret_value = SUCCEED;
 
     /* find out how many file labels/descs and data labels/descs in file */
-    if (FAIL == ANfileinfo(an_id, &n_file_label, &n_file_desc, &n_data_label,
+    if (FAIL == ANfileinfo(an_id, &n_file_label, &n_file_desc, &n_data_label, 
                            &n_data_desc))
       {
           fprintf(stderr,"ANfileinfo failed for file %s\n", fname);
@@ -519,8 +517,8 @@ print_all_data_descs(const char *fname,
       }
 
     /* for all data descs */
-    for(i = 0; i< n_data_desc; i++)
-      {
+    for(i = 0; i< n_data_desc; i++) 
+      {  
           /* select i'th data desc */
           ann_id = ANselect(an_id, i, AN_DATA_DESC);
           if (FAIL == ann_id)
@@ -565,7 +563,7 @@ print_all_data_descs(const char *fname,
           ann_id = FAIL;
           HDfree(desc);
           desc = NULL;
-      } /* end for every data desc */
+      } /* end for every data desc */ 
 
   done:
     if (ret_value == FAIL)
@@ -573,7 +571,7 @@ print_all_data_descs(const char *fname,
       }
     /* Normal cleanup */
     if (ann_id != FAIL)
-        ANendaccess(ann_id);
+        ANendaccess(ann_id);        
     if (desc != NULL)
         HDfree(desc);
 
@@ -581,7 +579,7 @@ print_all_data_descs(const char *fname,
 } /* print_all_data_descs() */
 
 intn
-print_all_file_labels(const char *fname,
+print_all_file_labels(const char *fname, 
                       int32 an_id)
 {
     int32 len;
@@ -595,7 +593,7 @@ print_all_file_labels(const char *fname,
     intn  ret_value = SUCCEED;
 
     /* find out how many file labels/descs and data labels/descs in file */
-    if (FAIL == ANfileinfo(an_id, &n_file_label, &n_file_desc, &n_data_label,
+    if (FAIL == ANfileinfo(an_id, &n_file_label, &n_file_desc, &n_data_label, 
                       &n_data_desc))
       {
           fprintf(stderr,"ANfileinfo failed for file %s\n", fname);
@@ -604,8 +602,8 @@ print_all_file_labels(const char *fname,
       }
 
     /* for all file labels */
-    for(i = 0; i< n_file_label; i++)
-      {
+    for(i = 0; i< n_file_label; i++) 
+      {  
           /* select i'th file label */
           ann_id = ANselect(an_id, i, AN_FILE_LABEL);
           if (FAIL == ann_id)
@@ -625,7 +623,7 @@ print_all_file_labels(const char *fname,
             }
 
           /* allocate room for the file label */
-          label = (char *) HDcalloc(len + 1,1);
+          label = (char *) HDcalloc(len + 1,1); 
           CHECK_ALLOC( label, "label", "print_all_data_labels" );
 
           /* read in file label and print it */
@@ -650,7 +648,7 @@ print_all_file_labels(const char *fname,
           ann_id = FAIL;
           HDfree(label);
           label = NULL;
-      } /* end for every file label */
+      } /* end for every file label */ 
 
   done:
     if (ret_value == FAIL)
@@ -658,7 +656,7 @@ print_all_file_labels(const char *fname,
       }
     /* Normal cleanup */
     if (ann_id != FAIL)
-        ANendaccess(ann_id);
+        ANendaccess(ann_id);        
     if (label != NULL)
         HDfree(label);
 
@@ -666,12 +664,12 @@ print_all_file_labels(const char *fname,
 }	/* end print_all_file_labels() */
 
 intn
-print_all_file_descs(const char *fname,
+print_all_file_descs(const char *fname, 
                      list_info_t* list_opts, /* for print_SDattrs */
                      int32 an_id)
 {
     /* file desc */
-    int32       len;
+    int32       len; 
     char       *desc = NULL;
     int32       ann_id = FAIL;
     intn       i;
@@ -686,10 +684,8 @@ print_all_file_descs(const char *fname,
     VOIDP       attr_buf = NULL;
     intn        ret_value = SUCCEED;
 
-    (void)list_opts;
-
     /* find out how many file labels/descs and data labels/descs in file */
-    if (FAIL == ANfileinfo(an_id, &n_file_label, &n_file_desc, &n_data_label,
+    if (FAIL == ANfileinfo(an_id, &n_file_label, &n_file_desc, &n_data_label, 
                            &n_data_desc))
       {
           fprintf(stderr,"ANfileinfo failed for file %s \n",fname);
@@ -698,8 +694,8 @@ print_all_file_descs(const char *fname,
       }
 
     /* for all file descs */
-    for(i = 0; i< n_file_desc; i++)
-      {
+    for(i = 0; i< n_file_desc; i++) 
+      {  
           /* select i'th file desc */
           ann_id = ANselect(an_id, i, AN_FILE_DESC);
           if (FAIL == ann_id)
@@ -744,7 +740,7 @@ print_all_file_descs(const char *fname,
           ann_id = FAIL;
           HDfree(desc);
           desc = NULL;
-      } /* end for every file desc */
+      } /* end for every file desc */ 
 
     /* all SDS global attributes are considered file descriptions */
     if ((sd_fid = SDstart(fname, DFACC_READ)) != FAIL)
@@ -753,7 +749,7 @@ print_all_file_descs(const char *fname,
 	  init_dump_opts( &dump_opts );
           if (SDfileinfo(sd_fid, &ndsets, &nattrs) != FAIL)
 	  {
-	     /* BMR: installed input file name to opts for dumpfull
+	     /* BMR: installed input file name to opts for dumpfull 
                 in print_SDattrs to use - 6/16/2000 */
              print_SDattrs( sd_fid, stdout, nattrs, &dump_opts );
                /* temporary use stdout until fixing hdp_list to print
@@ -775,7 +771,7 @@ fname);
     if (ret_value == FAIL)
       { /* Failure cleanup */
           if (ann_id != FAIL)
-              ANendaccess(ann_id);
+              ANendaccess(ann_id);        
           if (desc != NULL)
               HDfree(desc);
           if (attr_nt_desc != NULL)
@@ -792,12 +788,12 @@ fname);
    the file annotations because print_all_file_descs also prints SD
    file attributes.  Probably will separate SD file attributes when
    adding GR file attributes */
-intn
+intn 
 print_file_descs(const char *f_name,
-                 int32 an_id )
+                 int32 an_id ) 
 {
     /* file desc */
-    int32       len;
+    int32       len; 
     char       *desc = NULL;
     int32       ann_id = FAIL;
     intn       i;
@@ -808,7 +804,7 @@ print_file_descs(const char *f_name,
     intn        ret_value = SUCCEED;
 
     /* find out how many file labels/descs and data labels/descs in file */
-    if (FAIL == ANfileinfo(an_id, &n_file_label, &n_file_desc, &n_data_label,
+    if (FAIL == ANfileinfo(an_id, &n_file_label, &n_file_desc, &n_data_label, 
                            &n_data_desc))
       {
           fprintf(stderr,"ANfileinfo failed for file %s \n",f_name);
@@ -817,8 +813,8 @@ print_file_descs(const char *f_name,
       }
 
     /* for all file descs */
-    for(i = 0; i< n_file_desc; i++)
-      {
+    for(i = 0; i< n_file_desc; i++) 
+      {  
           /* select i'th file desc */
           ann_id = ANselect(an_id, i, AN_FILE_DESC);
           if (FAIL == ann_id)
@@ -863,13 +859,13 @@ print_file_descs(const char *f_name,
           ann_id = FAIL;
           HDfree(desc);
           desc = NULL;
-      } /* end for every file desc */
+      } /* end for every file desc */ 
 
   done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
           if (ann_id != FAIL)
-              ANendaccess(ann_id);
+              ANendaccess(ann_id);        
           if (desc != NULL)
               HDfree(desc);
       }
@@ -882,9 +878,9 @@ print_file_descs(const char *f_name,
    including annotations */
 static intn
 print_list_obj(const char *fname,
-               list_info_t *l_opts,
-               objinfo_t * o_info,
-               intn o_num,
+               list_info_t *l_opts, 
+               objinfo_t * o_info, 
+               intn o_num, 
                int32 an_id)
 {
     int32  i;
@@ -1020,7 +1016,7 @@ print_list_obj(const char *fname,
 
 
 /* print the library version of the file */
-static void
+static void 
 printfilever(int32 file_id)
 {
     uint32 major, minor, release;
@@ -1037,9 +1033,9 @@ printfilever(int32 file_id)
 
 /* low level object listing routine for HDF file */
 intn
-do_list(intn curr_arg,
-	intn argc,
-	char *argv[],
+do_list(intn curr_arg, 
+	intn argc, 
+	char *argv[], 
 	intn  help )
 {
    list_info_t list_opts;	/* list options */
@@ -1143,7 +1139,7 @@ do_list(intn curr_arg,
                o_info = get_next_obj(o_list, 0);  /* get first DD object */
                while (o_info != NULL)
                {
-                  if( (list_opts.limit == LGROUP || list_opts.limit == LNONE)
+                  if( (list_opts.limit == LGROUP || list_opts.limit == LNONE) 
                       || list_opts.limit_tag == o_info->tag)
                   {
                      if (o_info->tag != last_tag)
@@ -1152,7 +1148,7 @@ do_list(intn curr_arg,
                         if( s == NULL )
                            s = HDstrdup("Unknown");
 
-                        printf("%s%-*s: (tag %d)\n",
+                        printf("%s%-*s: (tag %d)\n", 
 				(last_tag == 0 ? "" : "\n"),
                                 TAGNAME_FIELD_WIDTH, s, o_info->tag);
                         last_tag = o_info->tag;
@@ -1180,7 +1176,7 @@ do_list(intn curr_arg,
                       default:
                       case LNONE:
                       case LGROUP:
-                          if (FAIL == print_list_obj(f_name, &list_opts,
+                          if (FAIL == print_list_obj(f_name, &list_opts, 
 						o_info, obj_num,an_id))
                              ERROR_GOTO_0("in do_list\n");
                           break;
@@ -1188,7 +1184,7 @@ do_list(intn curr_arg,
                        case LTAGNUM:
                        case LTAGNAME:
                            if (list_opts.limit_tag == o_info->tag)
-                              if (FAIL == print_list_obj(f_name, &list_opts,
+                              if (FAIL == print_list_obj(f_name, &list_opts, 
 						o_info, obj_num, an_id))
                            	 ERROR_GOTO_0("in do_list\n");
                            break;

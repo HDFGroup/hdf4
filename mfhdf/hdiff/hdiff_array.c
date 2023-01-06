@@ -34,18 +34,18 @@
 #define MYMAX(A,B) (((A) > (B)) ? (A) : (B))
 #define MYMIN(A,B) (((A) < (B)) ? (A) : (B))
 #define PRINT_FSTATS(T) {\
- printf("Type: %s  Npts: %u  Ndiff: %u (%f%%)\n", \
+ printf("Type: %s  Npts: %lu  Ndiff: %lu (%f%%)\n", \
  T, tot_cnt, n_diff, 100.*(float64)n_diff/(float64)tot_cnt); \
  printf("Avg Diff: %.3e  Max Diff: %.3e\n",  \
  d_avg_diff/n_stats, d_max_diff); \
  printf("Range File1: %f/%f  File2: %f/%f\n", \
 d_min_val1, d_max_val1, d_min_val2, d_max_val2); }
 #define PRINT_ISTATS(T) {\
- printf("Type: %s  Npts: %u  Ndiff: %u (%f%%)\n", \
+ printf("Type: %s  Npts: %lu  Ndiff: %lu (%f%%)\n", \
  T, tot_cnt,n_diff, 100.*(float64)n_diff/(float64)tot_cnt); \
- printf("Avg Diff: %e   Max. Diff: %d\n",  \
+ printf("Avg Diff: %e   Max. Diff: %ld\n",  \
  (d_avg_diff / n_stats), i4_max_diff); \
- printf("Range File1: %d/%d  File2: %d/%d\n", \
+ printf("Range File1: %ld/%ld  File2: %ld/%ld\n", \
 i4_min_val1, i4_max_val1, i4_min_val2, i4_max_val2); }
 
 
@@ -60,8 +60,8 @@ i4_min_val1, i4_max_val1, i4_min_val2, i4_max_val2); }
 #define I8FORMATP  "%-15d %-15d %.0f%%\n"
 #define I16FORMAT  "%-15d %-15d %-15d\n"
 #define I16FORMATP "%-15d %-15d %.0f%%\n"
-#define IFORMAT    "%-15d %-15d %-15d\n"
-#define IFORMATP   "%-15d %-15d %.0f%%\n"
+#define IFORMAT    "%-15ld %-15ld %-15ld\n"
+#define IFORMATP   "%-15ld %-15ld %.0f%%\n"
 #define CFORMAT    "%-16c %-17c\n"
 #define SFORMAT    "%-16s %-17s\n"
 #define UIFORMAT   "%-15lu %-15lu %-15lu\n"
@@ -71,7 +71,7 @@ i4_min_val1, i4_max_val1, i4_min_val2, i4_max_val2); }
 
 #define I16FORMATP_NOTCOMP "%-15d %-15d not comparable\n"
 #define I8FORMATP_NOTCOMP  "%-15d %-15d not comparable\n"
-#define IFORMATP_NOTCOMP   "%-15d %-15d not comparable\n"
+#define IFORMATP_NOTCOMP   "%-15ld %-15ld not comparable\n"
 #define FFORMATP_NOTCOMP   "%-15f %-15f not comparable\n"
 
 
@@ -95,12 +95,12 @@ i4_min_val1, i4_max_val1, i4_min_val2, i4_max_val2); }
  * local prototypes
  *-------------------------------------------------------------------------
  */
-static void print_pos( int        *ph,
-                       uint32     curr_pos,
-                       int32      *acc,
-                       int32      *pos,
-                       int        rank,
-                       const char *obj1,
+static void print_pos( int        *ph, 
+                       uint32     curr_pos, 
+                       int32      *acc, 
+                       int32      *pos, 
+                       int        rank, 
+                       const char *obj1, 
                        const char *obj2 );
 
 
@@ -113,19 +113,19 @@ static void print_pos( int        *ph,
  *-------------------------------------------------------------------------
  */
 
-uint32 array_diff(void *buf1,
-                  void *buf2,
-                  uint32 tot_cnt,
+uint32 array_diff(void *buf1, 
+                  void *buf2, 
+                  uint32 tot_cnt, 
                   const char *name1,
                   const char *name2,
                   int rank,
                   int32 *dims,
-                  int32 type,
-                  float32 err_limit,
+                  int32 type, 
+                  float32 err_limit, 
                   float32 err_rel,
-                  uint32 max_err_cnt,
+                  uint32 max_err_cnt, 
                   int32 statistics,
-                  void *fill1,
+                  void *fill1, 
                   void *fill2)
 
 
@@ -173,7 +173,7 @@ uint32 array_diff(void *buf1,
  if (debug) {
   fp = fopen("hdiff.debug", "w");
  }
-
+ 
  switch(type) {
  case DFNT_INT8:
  case DFNT_CHAR8:
@@ -226,7 +226,7 @@ uint32 array_diff(void *buf1,
   d_min_val2 = DBL_MAX;
   break;
  default:
-  printf(" bad type - %d\n", type);
+  printf(" bad type - %ld\n", type);
  }
  switch(type)
  {
@@ -275,9 +275,9 @@ uint32 array_diff(void *buf1,
 
    if (err_rel)
    {
-
+       
        PER(*i1ptr1,*i1ptr2);
-
+       
        if (not_comparable && !both_zero) /* not comparable */
        {
            print_pos(&ph,i,acc,pos,rank,name1,name2);
@@ -285,20 +285,20 @@ uint32 array_diff(void *buf1,
            printf(I8FORMATP_NOTCOMP,*i1ptr1,*i1ptr2);
            n_diff++;
        }
-
+       
        else
-
+           
            if (per > err_rel)
            {
                n_diff++;
-               if (n_diff <= max_err_cnt)
+               if (n_diff <= max_err_cnt) 
                {
                    print_pos(&ph,i,acc,pos,rank,name1,name2);
                    printf(SPACES);
                    printf(I8FORMATP,*i1ptr1,*i1ptr2,per*100);
                }
-           }
-
+           }  
+           
    }
 
    else if (c_diff > (int32) err_limit)
@@ -309,20 +309,20 @@ uint32 array_diff(void *buf1,
      printf(SPACES);
      printf(I8FORMAT,*i1ptr1,*i1ptr2,abs(*i1ptr1-*i1ptr2));
     }
-   }
+   }                                               
    i1ptr1++;  i1ptr2++;
   }
   if (statistics) {
    PRINT_ISTATS("Byte");
   }
-
+  
   break;
 
 /*-------------------------------------------------------------------------
  * DFNT_INT16, DFNT_UINT16
  *-------------------------------------------------------------------------
  */
-
+  
  case DFNT_INT16:
  case DFNT_UINT16:
   i2ptr1 = (int16 *) buf1;
@@ -333,7 +333,7 @@ uint32 array_diff(void *buf1,
    is_fill1 = fill1 && (*i2ptr1 == *((int16 *)fill1));
    is_fill2 = fill2 && (*i2ptr2 == *((int16 *)fill2));
    if (debug) {
-    fprintf(fp, "%d %d %d %d\n", is_fill1, is_fill2, (int32)(*i2ptr1), (int32)(*i2ptr2));
+    fprintf(fp, "%d %d %ld %ld\n", is_fill1, is_fill2, (int32)(*i2ptr1), (int32)(*i2ptr2));
    }
    if (!is_fill1 && !is_fill2) {
     d_val1 = (float64)(*i2ptr1);
@@ -364,9 +364,9 @@ uint32 array_diff(void *buf1,
 
    if (err_rel)
    {
-
+       
        PER(*i2ptr1,*i2ptr2);
-
+       
        if (not_comparable && !both_zero) /* not comparable */
        {
            print_pos(&ph,i,acc,pos,rank,name1,name2);
@@ -374,20 +374,20 @@ uint32 array_diff(void *buf1,
            printf(I16FORMATP_NOTCOMP,*i2ptr1,*i2ptr2);
            n_diff++;
        }
-
+       
        else
-
+           
            if (per > err_rel)
            {
                n_diff++;
-               if (n_diff <= max_err_cnt)
+               if (n_diff <= max_err_cnt) 
                {
                    print_pos(&ph,i,acc,pos,rank,name1,name2);
                    printf(SPACES);
                    printf(I16FORMATP,*i2ptr1,*i2ptr2,per*100);
                }
-           }
-
+           }  
+           
    }
 
 
@@ -399,7 +399,7 @@ uint32 array_diff(void *buf1,
      printf(SPACES);
      printf(I16FORMAT,*i2ptr1,*i2ptr2,abs(*i2ptr1-*i2ptr2));
     }
-   }
+   }                                               
    i2ptr1++;  i2ptr2++;
   }
   if (statistics) {
@@ -411,8 +411,8 @@ uint32 array_diff(void *buf1,
  * DFNT_INT32, DFNT_UINT32
  *-------------------------------------------------------------------------
  */
-
-
+  
+  
  case DFNT_INT32:
  case DFNT_UINT32:
   i4ptr1 = (int32 *) buf1;
@@ -451,9 +451,9 @@ uint32 array_diff(void *buf1,
 
     if (err_rel)
     {
-
+        
         PER(*i4ptr1,*i4ptr2);
-
+        
         if (not_comparable && !both_zero) /* not comparable */
         {
             print_pos(&ph,i,acc,pos,rank,name1,name2);
@@ -461,20 +461,20 @@ uint32 array_diff(void *buf1,
             printf(IFORMATP_NOTCOMP,*i4ptr1,*i4ptr2);
             n_diff++;
         }
-
+        
         else
-
+            
             if (per > err_rel)
             {
                 n_diff++;
-                if (n_diff <= max_err_cnt)
+                if (n_diff <= max_err_cnt) 
                 {
                     print_pos(&ph,i,acc,pos,rank,name1,name2);
                     printf(SPACES);
                     printf(IFORMATP,*i4ptr1,*i4ptr2,per*100);
                 }
-            }
-
+            }  
+            
     }
 
    else if (i4_diff > (int32) err_limit)
@@ -485,21 +485,21 @@ uint32 array_diff(void *buf1,
      printf(SPACES);
      printf(IFORMAT,*i4ptr1,*i4ptr2,i4_diff);
     }
-   }
+   }                                               
    i4ptr1++;  i4ptr2++;
   }
   if (statistics) {
    PRINT_ISTATS("Integer4");
   }
-
+  
   break;
 
 /*-------------------------------------------------------------------------
  * DFNT_FLOAT
  *-------------------------------------------------------------------------
  */
-
-
+  
+  
  case DFNT_FLOAT:
   fptr1 = (float32 *) buf1;
   fptr2 = (float32 *) buf2;
@@ -540,9 +540,9 @@ uint32 array_diff(void *buf1,
 
    if (err_rel)
    {
-
+       
        PER(*fptr1,*fptr2);
-
+       
        if (not_comparable && !both_zero) /* not comparable */
        {
            print_pos(&ph,i,acc,pos,rank,name1,name2);
@@ -550,20 +550,20 @@ uint32 array_diff(void *buf1,
            printf(FFORMATP_NOTCOMP,*fptr1,*fptr2);
            n_diff++;
        }
-
+       
        else
-
+           
            if (per > err_rel)
            {
                n_diff++;
-               if (n_diff <= max_err_cnt)
+               if (n_diff <= max_err_cnt) 
                {
                    print_pos(&ph,i,acc,pos,rank,name1,name2);
                    printf(SPACES);
                    printf(FFORMATP,*fptr1,*fptr2,per*100);
                }
-           }
-
+           }  
+           
    }
 
    else if (f_diff > err_limit)
@@ -574,7 +574,7 @@ uint32 array_diff(void *buf1,
      printf(SPACES);
      printf(FFORMAT,*fptr1,*fptr2,fabs(*fptr1-*fptr2));
     }
-   }
+   }                                               
    fptr1++;  fptr2++;
   }
   if (statistics) {
@@ -587,7 +587,7 @@ uint32 array_diff(void *buf1,
  * DFNT_DOUBLE
  *-------------------------------------------------------------------------
  */
-
+  
  case DFNT_DOUBLE:
   dptr1 = (float64 *) buf1;
   dptr2 = (float64 *) buf2;
@@ -625,9 +625,9 @@ uint32 array_diff(void *buf1,
 
    if (err_rel)
    {
-
+       
        PER(*dptr1,*dptr2);
-
+       
        if (not_comparable && !both_zero) /* not comparable */
        {
            print_pos(&ph,i,acc,pos,rank,name1,name2);
@@ -635,20 +635,20 @@ uint32 array_diff(void *buf1,
            printf(FFORMATP_NOTCOMP,*dptr1,*dptr2);
            n_diff++;
        }
-
+       
        else
-
+           
            if (per > err_rel)
            {
                n_diff++;
-               if (n_diff <= max_err_cnt)
+               if (n_diff <= max_err_cnt) 
                {
                    print_pos(&ph,i,acc,pos,rank,name1,name2);
                    printf(SPACES);
                    printf(FFORMATP,*dptr1,*dptr2,per*100);
                }
-           }
-
+           }  
+           
    }
 
 
@@ -667,14 +667,14 @@ uint32 array_diff(void *buf1,
    PRINT_FSTATS("Double");
   }
   break;
-
+  
  default:
-  printf(" bad type - %d\n", type);
+  printf(" bad type - %ld\n", type);
   }
   if (statistics) {
    float64 sqrt_arg;
    if ((float64)n_stats * d_sumx2 - d_sumx * d_sumx != 0.0) {
-    slope = ((float64)n_stats * d_sumxy - d_sumx * d_sumy) /
+    slope = ((float64)n_stats * d_sumxy - d_sumx * d_sumy) / 
      ((float64)n_stats * d_sumx2 - d_sumx * d_sumx);
     intercept = (d_sumy - slope * d_sumx) / (float64)n_stats;
     sqrt_arg = ((float64)n_stats*d_sumx2 - d_sumx*d_sumx) /
@@ -690,7 +690,7 @@ uint32 array_diff(void *buf1,
   if (debug) {
    fclose(fp);
   }
-
+ 
   return n_diff;
 }
 
@@ -708,12 +708,12 @@ uint32 array_diff(void *buf1,
  *
  *-------------------------------------------------------------------------
  */
-static void print_pos( int        *ph,
-                       uint32     curr_pos,
-                       int32      *acc,
-                       int32      *pos,
-                       int        rank,
-                       const char *obj1,
+static void print_pos( int        *ph, 
+                       uint32     curr_pos, 
+                       int32      *acc, 
+                       int32      *pos, 
+                       int        rank, 
+                       const char *obj1, 
                        const char *obj2 )
 {
  int i;
@@ -722,9 +722,9 @@ static void print_pos( int        *ph,
  if ( *ph==1 )
  {
   *ph=0;
-  printf("%-15s %-15s %-15s %-20s\n",
-   "position",
-   (obj1!=NULL) ? obj1 : " ",
+  printf("%-15s %-15s %-15s %-20s\n", 
+   "position", 
+   (obj1!=NULL) ? obj1 : " ", 
    (obj2!=NULL) ? obj2 : " ",
    "difference");
   printf("------------------------------------------------------------\n");
@@ -737,10 +737,10 @@ static void print_pos( int        *ph,
  }
  assert( curr_pos == 0 );
 
- printf("[ " );
+ printf("[ " );  
  for ( i = 0; i < rank; i++)
  {
-  fprintf(stdout,"%d ", pos[i]  );
+  fprintf(stdout,"%ld ", pos[i]  );
  }
  printf("]" );
 }

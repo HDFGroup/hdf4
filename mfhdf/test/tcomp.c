@@ -60,7 +60,7 @@ test_various_comps()
 {
     /************************* Variable declaration **************************/
 
-    int32     sd_id, sds_id;
+    int32     sd_id, sds_id, sds_index;
     intn      status;
     int32     comp_type;    /* Compression flag */
     comp_info c_info;   /* Compression structure */
@@ -73,7 +73,7 @@ test_various_comps()
     /********************* End of variable declaration ***********************/
 
     /* Buffer array data and define array dimensions. */
-    for (j = 0; j < Y_LENGTH; j++)
+    for (j = 0; j < Y_LENGTH; j++) 
     {
 	for (i = 0; i < X_LENGTH; i++)
 		data[j][i] = (i + j) + 1;
@@ -91,7 +91,7 @@ test_various_comps()
     edges[0] = Y_LENGTH;
     edges[1] = X_LENGTH;
 
-    /* Create 1st data set for GZIP compression. */
+    /* Create 1st data set for GZIP compression. */ 
     sds_id = SDcreate (sd_id, SDS1_NAME, DFNT_INT32, RANK, dim_sizes);
     CHECK(sds_id, FAIL, "SDcreate");
 
@@ -99,7 +99,7 @@ test_various_comps()
     HDmemset(&c_info, 0, sizeof(c_info));
     comp_type = COMP_CODE_DEFLATE;
     c_info.deflate.level = 6;
-    status = SDsetcompress (sds_id, comp_type, &c_info);
+    status = SDsetcompress (sds_id, comp_type, &c_info); 
     CHECK(status, FAIL, "SDsetcompress");
 
     /* Write the stored data to the 1st data set. */
@@ -118,9 +118,9 @@ test_various_comps()
     HDmemset(&c_info, 0, sizeof(c_info));
     comp_type = COMP_CODE_SKPHUFF;
     c_info.skphuff.skp_size = 4;
-    status = SDsetcompress (sds_id, comp_type, &c_info);
+    status = SDsetcompress (sds_id, comp_type, &c_info); 
     CHECK(status, FAIL, "SDsetcompress");
-
+ 
     /* Write the stored data to the 2nd data set. */
     status = SDwritedata (sds_id, start, NULL, edges, (VOIDP)data);
     CHECK(status, FAIL, "SDwritedata");
@@ -147,7 +147,7 @@ test_various_comps()
     c_info.szip.options_mask = SZ_EC_OPTION_MASK;
     c_info.szip.options_mask |= SZ_RAW_OPTION_MASK;
     c_info.szip.bits_per_pixel = 64;
-    status = SDsetcompress (sds_id, comp_type, &c_info);
+    status = SDsetcompress (sds_id, comp_type, &c_info); 
     CHECK(status, FAIL, "SDsetcompress");
 
     /* Write the stored data to the 3rd data set. */
@@ -439,7 +439,7 @@ test_compressed_data()
     CHECK(status, FAIL, "SDend");
 
     /*
-     * Creating 4th compressed dataset, compressed template read, then
+     * Creating 4th compressed dataset, compressed template read, then 
      * partial write & skipping huffman
      */
     fcomp = SDstart(COMPFILE4, DFACC_CREATE);

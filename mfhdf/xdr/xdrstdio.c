@@ -79,8 +79,7 @@ static const struct xdr_ops   xdrstdio_ops = {
     xdrstdio_getpos,    /* get offset in the stream */
     xdrstdio_setpos,    /* set offset in the stream */
     xdrstdio_inline,    /* prime stream for inline macros */
-    xdrstdio_destroy,   /* destroy stream */
-    NULL,               /* no xdr_control function defined */
+    xdrstdio_destroy    /* destroy stream */
 };
 
 /*

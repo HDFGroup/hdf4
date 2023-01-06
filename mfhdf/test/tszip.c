@@ -28,7 +28,7 @@
 #define WIDTH		6
 #define LENGTH		9
 
-#ifdef H4_HAVE_SZIP_ENCODER /* only compile all these test functions when
+#ifdef H4_HAVE_SZIP_ENCODER /* only compile all these test functions when 
 				encoder is available */
 static intn test_szip_SDS8bit()
 {
@@ -44,17 +44,18 @@ static intn test_szip_SDS8bit()
    int          i,j;
    int    	num_errs = 0;   /* number of errors so far */
    comp_coder_t comp_type;      /* to retrieve compression type into */
+   comp_info    cinfo;          /* compression information structure */
    int8         out_data[LENGTH][WIDTH];
    int8         in_data[LENGTH][WIDTH]={
-                     {1,1,2,2,3,4},
-                     {1,1,2,2,3,4},
-                     {1,1,2,2,3,4},
-                     {3,3,0,4,3,4},
-                     {3,3,0,4,3,4},
-                     {3,3,0,4,3,4},
-                     {0,0,6,6,3,4},
-                     {5,5,6,6,3,4},
-                     {0,0,6,6,3,4}};
+	   			 1,1,2,2,3,4,
+	   			 1,1,2,2,3,4,
+				 1,1,2,2,3,4,
+				 3,3,0,4,3,4,
+				 3,3,0,4,3,4,
+				 3,3,0,4,3,4,
+				 0,0,6,6,3,4,
+				 5,5,6,6,3,4,
+				 0,0,6,6,3,4};
 
     /********************* End of variable declaration ***********************/
 
@@ -99,7 +100,7 @@ static intn test_szip_SDS8bit()
     status = SDendaccess (sds_id);
     CHECK(status, FAIL, "SDendaccess");
 
-    /* Terminate access to the SD interface and close the file to
+    /* Terminate access to the SD interface and close the file to 
        flush the compressed info to the file */
     status = SDend (sd_id);
     CHECK(status, FAIL, "SDend");
@@ -139,7 +140,7 @@ static intn test_szip_SDS8bit()
     CHECK(status, FAIL, "SDreaddata");
 
     /* Compare read data against input data */
-    for (j=0; j<LENGTH; j++)
+    for (j=0; j<LENGTH; j++) 
     {
         for (i=0; i<WIDTH; i++)
 	    if (out_data[j][i] != in_data[j][i])
@@ -176,15 +177,15 @@ static intn test_szip_SDS16bit()
     int		num_errs = 0;    /* number of errors so far */
     int16	out_data[LENGTH][WIDTH];
     int16	in_data[LENGTH][WIDTH]={
-             {100,100,200,200,300,400},
-             {100,100,200,200,300,400},
-             {100,100,200,200,300,400},
-             {300,300,  0,400,300,400},
-             {300,300,  0,400,300,400},
-             {300,300,  0,400,300,400},
-             {  0,  0,600,600,300,400},
-             {500,500,600,600,300,400},
-             {  0,  0,600,600,300,400}};
+	   			 100,100,200,200,300,400,
+	   			 100,100,200,200,300,400,
+				 100,100,200,200,300,400,
+				 300,300,  0,400,300,400,
+				 300,300,  0,400,300,400,
+				 300,300,  0,400,300,400,
+				   0,  0,600,600,300,400,
+				 500,500,600,600,300,400,
+				   0,  0,600,600,300,400};
 
     /********************* End of variable declaration ***********************/
 
@@ -229,7 +230,7 @@ static intn test_szip_SDS16bit()
     status = SDendaccess (sds_id);
     CHECK(status, FAIL, "SDendaccess");
 
-    /* Terminate access to the SD interface and close the file to
+    /* Terminate access to the SD interface and close the file to 
        flush the compressed info to the file */
     status = SDend (sd_id);
     CHECK(status, FAIL, "SDend");
@@ -261,7 +262,7 @@ static intn test_szip_SDS16bit()
     CHECK(status, FAIL, "SDreaddata");
 
     /* Compare read data against input data */
-    for (j=0; j<LENGTH; j++)
+    for (j=0; j<LENGTH; j++) 
     {
         for (i=0; i<WIDTH; i++)
 	    if (out_data[j][i] != in_data[j][i])
@@ -298,15 +299,15 @@ static intn test_szip_SDS32bit()
     int		num_errs = 0;    /* number of errors so far */
     int32	out_data[LENGTH][WIDTH];
     int32	in_data[LENGTH][WIDTH]={
-             {100,100,200,200,300,400},
-             {100,100,200,200,300,400},
-             {100,100,200,200,300,400},
-             {300,300,  0,400,300,400},
-             {300,300,  0,400,300,400},
-             {300,300,  0,400,300,400},
-             {  0,  0,600,600,300,400},
-             {500,500,600,600,300,400},
-             {  0,  0,600,600,300,400}};
+	   			 100,100,200,200,300,400,
+	   			 100,100,200,200,300,400,
+				 100,100,200,200,300,400,
+				 300,300,  0,400,300,400,
+				 300,300,  0,400,300,400,
+				 300,300,  0,400,300,400,
+				   0,  0,600,600,300,400,
+				 500,500,600,600,300,400,
+				   0,  0,600,600,300,400};
 
     /********************* End of variable declaration ***********************/
 
@@ -351,7 +352,7 @@ static intn test_szip_SDS32bit()
     status = SDendaccess (sds_id);
     CHECK(status, FAIL, "SDendaccess");
 
-    /* Terminate access to the SD interface and close the file to
+    /* Terminate access to the SD interface and close the file to 
        flush the compressed info to the file */
     status = SDend (sd_id);
     CHECK(status, FAIL, "SDend");
@@ -383,7 +384,7 @@ static intn test_szip_SDS32bit()
     CHECK(status, FAIL, "SDreaddata");
 
     /* Compare read data against input data */
-    for (j=0; j<LENGTH; j++)
+    for (j=0; j<LENGTH; j++) 
     {
         for (i=0; i<WIDTH; i++)
 	    if (out_data[j][i] != in_data[j][i])
@@ -420,15 +421,15 @@ static intn test_szip_SDSfl32bit()
     int		num_errs = 0;    /* number of errors so far */
     float32	out_data[LENGTH][WIDTH];
     float32	in_data[LENGTH][WIDTH]={
-             {100.0,100.0,200.0,200.0,300.0,400.0},
-             {100.0,100.0,200.0,200.0,300.0,400.0},
-             {100.0,100.0,200.0,200.0,300.0,400.0},
-             {300.0,300.0,  0.0,400.0,300.0,400.0},
-             {300.0,300.0,  0.0,400.0,300.0,400.0},
-             {300.0,300.0,  0.0,400.0,300.0,400.0},
-             {  0.0,  0.0,600.0,600.0,300.0,400.0},
-             {500.0,500.0,600.0,600.0,300.0,400.0},
-             {  0.0,  0.0,600.0,600.0,300.0,400.0}};
+	   			 100.0,100.0,200.0,200.0,300.0,400.0,
+	   			 100.0,100.0,200.0,200.0,300.0,400.0,
+				 100.0,100.0,200.0,200.0,300.0,400.0,
+				 300.0,300.0,  0.0,400.0,300.0,400.0,
+				 300.0,300.0,  0.0,400.0,300.0,400.0,
+				 300.0,300.0,  0.0,400.0,300.0,400.0,
+				   0.0,  0.0,600.0,600.0,300.0,400.0,
+				 500.0,500.0,600.0,600.0,300.0,400.0,
+				   0.0,  0.0,600.0,600.0,300.0,400.0};
 
     /********************* End of variable declaration ***********************/
 
@@ -473,7 +474,7 @@ static intn test_szip_SDSfl32bit()
     status = SDendaccess (sds_id);
     CHECK(status, FAIL, "SDendaccess");
 
-    /* Terminate access to the SD interface and close the file to
+    /* Terminate access to the SD interface and close the file to 
        flush the compressed info to the file */
     status = SDend (sd_id);
     CHECK(status, FAIL, "SDend");
@@ -505,7 +506,7 @@ static intn test_szip_SDSfl32bit()
     CHECK(status, FAIL, "SDreaddata");
 
     /* Compare read data against input data */
-    for (j=0; j<LENGTH; j++)
+    for (j=0; j<LENGTH; j++) 
     {
         for (i=0; i<WIDTH; i++)
 	    if (out_data[j][i] != in_data[j][i])
@@ -542,15 +543,15 @@ static intn test_szip_SDSfl64bit()
     int		num_errs = 0;    /* number of errors so far */
     float64	out_data[LENGTH][WIDTH];
     float64	in_data[LENGTH][WIDTH]={
-             {100.0,100.0,200.0,200.0,300.0,400.0},
-             {100.0,100.0,200.0,200.0,300.0,400.0},
-             {100.0,100.0,200.0,200.0,300.0,400.0},
-             {300.0,300.0,  0.0,400.0,300.0,400.0},
-             {300.0,300.0,  0.0,400.0,300.0,400.0},
-             {300.0,300.0,  0.0,400.0,300.0,400.0},
-             {  0.0,  0.0,600.0,600.0,300.0,400.0},
-             {500.0,500.0,600.0,600.0,300.0,400.0},
-             {  0.0,  0.0,600.0,600.0,300.0,400.0}};
+	   			 100.0,100.0,200.0,200.0,300.0,400.0,
+	   			 100.0,100.0,200.0,200.0,300.0,400.0,
+				 100.0,100.0,200.0,200.0,300.0,400.0,
+				 300.0,300.0,  0.0,400.0,300.0,400.0,
+				 300.0,300.0,  0.0,400.0,300.0,400.0,
+				 300.0,300.0,  0.0,400.0,300.0,400.0,
+				   0.0,  0.0,600.0,600.0,300.0,400.0,
+				 500.0,500.0,600.0,600.0,300.0,400.0,
+				   0.0,  0.0,600.0,600.0,300.0,400.0};
 
     /********************* End of variable declaration ***********************/
 
@@ -595,7 +596,7 @@ static intn test_szip_SDSfl64bit()
     status = SDendaccess (sds_id);
     CHECK(status, FAIL, "SDendaccess");
 
-    /* Terminate access to the SD interface and close the file to
+    /* Terminate access to the SD interface and close the file to 
        flush the compressed info to the file */
     status = SDend (sd_id);
     CHECK(status, FAIL, "SDend");
@@ -627,7 +628,7 @@ static intn test_szip_SDSfl64bit()
     CHECK(status, FAIL, "SDreaddata");
 
     /* Compare read data against input data */
-    for (j=0; j<LENGTH; j++)
+    for (j=0; j<LENGTH; j++) 
     {
         for (i=0; i<WIDTH; i++)
 	    if (out_data[j][i] != in_data[j][i])
@@ -666,8 +667,8 @@ static intn test_szip_chunk()
    intn          status;
    int32         flag, maxcache, new_maxcache;
    int32         dim_sizes[2], origin[2];
-   HDF_CHUNK_DEF c_def; /* Chunking definitions */
-   HDF_CHUNK_DEF c_def_out; /* Chunking definitions */
+   HDF_CHUNK_DEF c_def; /* Chunking definitions */ 
+   HDF_CHUNK_DEF c_def_out; /* Chunking definitions */ 
    int32         c_flags, c_flags_out;
    int32         all_data[LENGTH_CH][WIDTH_CH];
    int32         start[2], edges[2];
@@ -686,29 +687,29 @@ static intn test_szip_chunk()
    * only to verify the read data.  The 'row' and 'column' are used
    * to write in the place of these chunks.
    */
-          int32 chunk1[CLENGTH][CWIDTH] = { {1, 1},
-                                            {1, 1},
-                                            {1, 1} };
+          int32 chunk1[CLENGTH][CWIDTH] = { 1, 1,
+                                            1, 1,
+                                            1, 1 }; 
 
-          int32 chunk2[CLENGTH][CWIDTH] = { {2, 2},
-                                            {2, 2},
-                                            {2, 2} };
+          int32 chunk2[CLENGTH][CWIDTH] = { 2, 2,
+                                            2, 2,
+                                            2, 2 }; 
 
-          int32 chunk3[CLENGTH][CWIDTH] = { {3, 3},
-                                            {3, 3},
-                                            {3, 3} };
+          int32 chunk3[CLENGTH][CWIDTH] = { 3, 3,
+                                            3, 3,
+                                            3, 3 }; 
 
-          int32 chunk4[CLENGTH][CWIDTH] = { {0, 4},
-                                            {0, 4},
-                                            {0, 4} };
+          int32 chunk4[CLENGTH][CWIDTH] = { 0, 4,
+                                            0, 4,
+                                            0, 4 }; 
 
-          int32 chunk5[CLENGTH][CWIDTH] = { {0, 0},
-                                            {5, 5},
-                                            {0, 0} };
+          int32 chunk5[CLENGTH][CWIDTH] = { 0, 0,
+                                            5, 5,
+                                            0, 0 }; 
 
-          int32 chunk6[CLENGTH][CWIDTH] = { {6, 6},
-                                            {6, 6},
-                                            {6, 6} };
+          int32 chunk6[CLENGTH][CWIDTH] = { 6, 6,
+                                            6, 6,
+                                            6, 6 };
 
 
     /* Initialize chunk lengths. */
@@ -755,9 +756,9 @@ static intn test_szip_chunk()
     VERIFY(c_flags_out, c_flags, "SDgetchunkinfo");
     VERIFY(c_def_out.comp.comp_type, COMP_CODE_SZIP, "SDgetchunkinfo");
 
-    /*
-     * Write chunks using SDwritechunk function.  Chunks can be written
-     * in any order.
+    /* 
+     * Write chunks using SDwritechunk function.  Chunks can be written 
+     * in any order. 
      */
 
     /* Write the chunk with the coordinates (0,0). */
@@ -783,27 +784,27 @@ static intn test_szip_chunk()
     start[1] = 2;
     edges[0] = 3;
     edges[1] = 2;
-    status = SDwritedata (sds_id, start, NULL, edges, (VOIDP) chunk6);
+    status = SDwritedata (sds_id, start, NULL, edges, (VOIDP) chunk6); 
     CHECK(status, FAIL, "SDwritedata");
 
-    /* Fill second column in the chunk with the coordinates (1,1) using
+    /* Fill second column in the chunk with the coordinates (1,1) using 
      * SDwritedata function. */
     start[0] = 3;
     start[1] = 3;
     edges[0] = 3;
     edges[1] = 1;
-    status = SDwritedata (sds_id, start, NULL, edges, (VOIDP) column);
+    status = SDwritedata (sds_id, start, NULL, edges, (VOIDP) column); 
     CHECK(status, FAIL, "SDwritedata");
 
-    /* Fill second row in the chunk with the coordinates (0,2) using
+    /* Fill second row in the chunk with the coordinates (0,2) using 
      * SDwritedata function. */
     start[0] = 7;
     start[1] = 0;
     edges[0] = 1;
     edges[1] = 2;
-    status = SDwritedata (sds_id, start, NULL, edges, (VOIDP) row);
+    status = SDwritedata (sds_id, start, NULL, edges, (VOIDP) row); 
     CHECK(status, FAIL, "SDwritedata");
-
+           
     /* Terminate access to the data set. */
     status = SDendaccess (sds_id);
     CHECK(status, FAIL, "SDendaccess");
@@ -844,7 +845,7 @@ static intn test_szip_chunk()
     status = SDreaddata (sds_id, start, NULL, edges, (VOIDP)all_data);
     CHECK(status, FAIL, "SDreaddata");
 
-    /*
+    /* 
     * This is how the entire array should look like:
     *
     *          1 1 2 2
@@ -860,36 +861,36 @@ static intn test_szip_chunk()
 
     /* Read chunk #4 with the coordinates (1,1) and verify it. */
     origin[0] = 1;
-    origin[1] = 1;
+    origin[1] = 1;    	
     status = SDreadchunk (sds_id, origin, chunk_out);
     CHECK(status, FAIL, "SDreadchunk");
 
-    for (j=0; j<CLENGTH; j++)
+    for (j=0; j<CLENGTH; j++) 
     {
-	for (i=0; i<CWIDTH; i++)
+	for (i=0; i<CWIDTH; i++) 
 	{
 	    if (chunk_out[j][i] != chunk4[j][i])
 	    {
-		fprintf(stderr,"Bogus val in loc [%d][%d] in chunk #4, want %d got %d\n", j, i, chunk4[j][i], chunk_out[j][i]);
+		fprintf(stderr,"Bogus val in loc [%d][%d] in chunk #4, want %ld got %ld\n", j, i, chunk4[j][i], chunk_out[j][i]);
 		num_errs++;
 	    }
 	}
     }
 
-    /*
+    /* 
     * Read chunk #5 with the coordinates (2,0) and verify it.
     */
     origin[0] = 2;
-    origin[1] = 0;
+    origin[1] = 0;    	
     status = SDreadchunk (sds_id, origin, chunk_out);
     CHECK(status, FAIL, "SDreadchunk");
 
-    for (j=0; j<CLENGTH; j++)
+    for (j=0; j<CLENGTH; j++) 
     {
-	for (i=0; i<CWIDTH; i++)
+	for (i=0; i<CWIDTH; i++) 
 	    if (chunk_out[j][i] != chunk5[j][i])
 	    {
-		fprintf(stderr,"Bogus val in loc [%d][%d] in chunk #5, want %d got %d\n", j, i, chunk5[j][i], chunk_out[j][i]);
+		fprintf(stderr,"Bogus val in loc [%d][%d] in chunk #5, want %ld got %ld\n", j, i, chunk5[j][i], chunk_out[j][i]);
 		num_errs++;
 	    }
     }
@@ -908,7 +909,7 @@ static intn test_szip_chunk()
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
-}   /* test_szip_chunk */
+}   /* test_szip_chunk */ 
 
 
 #define FILE_NAME_3D	"SDSchunkedsziped3d.hdf"
@@ -932,8 +933,8 @@ static intn test_szip_chunk_3d()
     int32         sd_id, sds_id0, sds_id, sds_index;
     intn          status;
     int32         dim_sizes[3];
-    HDF_CHUNK_DEF c_def; /* Chunking definitions */
-    HDF_CHUNK_DEF c_def_out; /* Chunking definitions */
+    HDF_CHUNK_DEF c_def; /* Chunking definitions */ 
+    HDF_CHUNK_DEF c_def_out; /* Chunking definitions */ 
     int32         c_flags, c_flags_out;
     int32         start[3], edges[3];
     int16         fill_value = 0;   /* Fill value */
@@ -964,7 +965,7 @@ static intn test_szip_chunk_3d()
     sds_id = SDcreate (sd_id, SDS_NAME_CH3D, DFNT_INT16, RANK_CH3, dim_sizes);
     CHECK(sds_id, FAIL, "SDcreate:Failed to create a data set for chunking/szip compression testing");
 
-    /* Create a similar SDS and will make it chunked, but will not
+    /* Create a similar SDS and will make it chunked, but will not 
        write data to it */
     sds_id0 = SDcreate (sd_id, SDS_NAME_CH0, DFNT_INT16, RANK_CH3, dim_sizes);
     CHECK(sds_id0, FAIL, "SDcreate:Failed to create a data set for chunking/szip compression testing");
@@ -993,7 +994,7 @@ static intn test_szip_chunk_3d()
     edges[0] = SDS_DIM0;
     edges[1] = SDS_DIM1;
     edges[2] = SDS_DIM2;
-    status = SDwritedata (sds_id, start, NULL, edges, (VOIDP) out_data);
+    status = SDwritedata (sds_id, start, NULL, edges, (VOIDP) out_data); 
     CHECK(status, FAIL, "SDwritedata");
 
     HDmemset(&c_def_out, 0, sizeof(HDF_CHUNK_DEF));
@@ -1059,7 +1060,7 @@ static intn test_szip_chunk_3d()
 	    for (k = 0; k < SDS_DIM2; k++) {
 	    if (out_data[i][j][k] != all_data[i][j][k])
 	    {
-		fprintf(stderr,"Bogus val in loc [%d][%d][%d] want %d got %d\n", i, j,k, out_data[i][j][k], all_data[i][j][k]);
+		fprintf(stderr,"Bogus val in loc [%d][%d][%d] want %ld got %ld\n", i, j,k, out_data[i][j][k], all_data[i][j][k]);
 		num_errs++;
 	    }
 	    }
@@ -1076,11 +1077,11 @@ static intn test_szip_chunk_3d()
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
-}   /* test_szip_chunk_3D */
+}   /* test_szip_chunk_3D */ 
 
-/*
+/* 
  * At this time, the use of SZIP compression with unlimited dimension SDSs
- * is unavailable.  This test program is to verify that the feature is
+ * is unavailable.  This test program is to verify that the feature is 
  * correctly disabled.
  */
 #define FILE_NAME_UNLIM	"SDSunlimitedsziped.hdf"
@@ -1100,15 +1101,15 @@ static intn test_szip_unlimited()
     int		num_errs = 0;    /* number of errors so far */
     int32	out_data[LENGTH][WIDTH];
     int32	in_data[LENGTH][WIDTH]={
-             {100,100,200,200,300,400},
-             {100,100,200,200,300,400},
-             {100,100,200,200,300,400},
-             {300,300,  0,400,300,400},
-             {300,300,  0,400,300,400},
-             {300,300,  0,400,300,400},
-             {  0,  0,600,600,300,400},
-             {500,500,600,600,300,400},
-             {  0,  0,600,600,300,400}};
+	   			 100,100,200,200,300,400,
+	   			 100,100,200,200,300,400,
+				 100,100,200,200,300,400,
+				 300,300,  0,400,300,400,
+				 300,300,  0,400,300,400,
+				 300,300,  0,400,300,400,
+				   0,  0,600,600,300,400,
+				 500,500,600,600,300,400,
+				   0,  0,600,600,300,400};
 
     /********************* End of variable declaration ***********************/
 
@@ -1142,7 +1143,7 @@ static intn test_szip_unlimited()
     c_info.szip.pixels = 0;
     c_info.szip.pixels_per_scanline = 0;
 
-    /* Attempting to set SZIP compression will fail because SZIP is
+    /* Attempting to set SZIP compression will fail because SZIP is 
      * not available with unlimited dimension yet */
     status = SDsetcompress (sds_id, COMP_CODE_SZIP, &c_info);
     VERIFY(status, FAIL, "SDsetcompress");
@@ -1155,7 +1156,7 @@ static intn test_szip_unlimited()
     status = SDendaccess (sds_id);
     CHECK(status, FAIL, "SDendaccess");
 
-    /* Terminate access to the SD interface and close the file to
+    /* Terminate access to the SD interface and close the file to 
        flush the compressed info to the file */
     status = SDend (sd_id);
     CHECK(status, FAIL, "SDend");
@@ -1187,7 +1188,7 @@ static intn test_szip_unlimited()
     CHECK(status, FAIL, "SDreaddata");
 
     /* Compare read data against input data */
-    for (j=0; j<LENGTH; j++)
+    for (j=0; j<LENGTH; j++) 
     {
         for (i=0; i<WIDTH; i++)
 	    if (out_data[j][i] != in_data[j][i])
@@ -1213,20 +1214,20 @@ static intn test_szip_unlimited()
 
 
 /********************************************************************
-   Name: test_getszipinfo() - verifies that some functions will not
-		fail even though SZIP library is not present or only
+   Name: test_getszipinfo() - verifies that some functions will not 
+		fail even though SZIP library is not present or only 
 		decoder is available.
 
    Description:
 	In the past, some SD APIs will fail if szlib was not present.  These
-	functions have been revised so that they are no longer depending on
+	functions have been revised so that they are no longer depending on 
 	SZIP library.  New APIs are designed to function correctly as well.
 	The functions below are being tested here:
 	- SDgetcomptype
 	- SDgetdatasize
 
-	This test function opens an existing file containing datasets with
-	SZIP compression and verifies that the above APIs will work with or
+	This test function opens an existing file containing datasets with 
+	SZIP compression and verifies that the above APIs will work with or 
 	without SZIP library.
 
 	The input file, sds_szipped.dat, is generated by the program
@@ -1252,10 +1253,15 @@ static intn test_getszipinfo()
     intn 	status;
     int32	dim_sizes[2], array_rank, num_type, attributes;
     char	name[H4_MAX_NC_NAME];
+    comp_info	c_info;
+    int32       start[2], edges[2];
     comp_coder_t comp_type;
     int32	comp_size, uncomp_size, orig_size;
+    int16       fill_value = 0;   /* Fill value */
+    int         i,j;
     int		num_errs = 0;    /* number of errors so far */
     char	testfile[512] = "";
+    int32      *out_data = NULL;
     char *basename = "sds_szipped.dat";
 
     /********************* End of variable declaration ***********************/
@@ -1323,8 +1329,8 @@ static intn test_getszipinfo()
 		when either SZIP library encoder or only decoder is present
 
    Description:
-	This test function opens the existing file "sds_szipped.dat" that
-	contains a dataset with SZIP compression and verifies that the SZIP
+	This test function opens the existing file "sds_szipped.dat" that 
+	contains a dataset with SZIP compression and verifies that the SZIP 
 	compressed data can be read with or without the encoder as long as
 	the szlib is available.
 
@@ -1346,31 +1352,33 @@ static intn test_getszipdata()
     intn 	status;
     int32	dim_sizes[2], array_rank, num_type, attributes;
     char	name[H4_MAX_NC_NAME];
+    comp_info	c_info;
     int32       start[2], edges[2];
+    int16       fill_value = 0;   /* Fill value */
     int         i,j;
-    int         num_errs = 0;    /* number of errors so far */
+    int		num_errs = 0;    /* number of errors so far */
     int32       out_data[SZ_LENGTH][SZ_WIDTH];
-    char        testfile[512] = "";
+    char	testfile[512] = "";
     char       *basename = "sds_szipped.dat";
 
     /* data to compare against read data from sds_szipped.dat */
     int32	in_data[SZ_LENGTH][SZ_WIDTH]={
-                            {100,100,200,200,300},
-                            {  0,  0,  0,  0,  0},
-                            {100,100,200,200,300},
-                            {400,300,200,100,  0},
-                            {300,300,  0,400,300},
-                            {300,300,  0,400,300},
-                            {300,300,  0,400,300},
-                            {  0,  0,600,600,300},
-                            {500,500,600,600,300},
-                            {  0,  0,600,600,300},
-                            {  0,  0,600,600,300},
-                            {  0,  0,600,600,300},
-                            {  0,  0,600,600,300},
-                            {500,500,600,600,300},
-                            {500,500,600,600,300},
-                            {500,500,600,600,300} };
+                                100,100,200,200,300,
+                                0, 0, 0, 0, 0,
+                                100,100,200,200,300,
+                                400,300,200,100,0,
+                                300,300,  0,400,300,
+                                300,300,  0,400,300,
+                                300,300,  0,400,300,
+                                0,  0,600,600,300,
+                                500,500,600,600,300,
+                                0,  0,600,600,300,
+                                0,  0,600,600,300,
+                                0,  0,600,600,300,
+                                0,  0,600,600,300,
+                                500,500,600,600,300,
+                                500,500,600,600,300,
+                                500,500,600,600,300 };
 
     /********************* End of variable declaration ***********************/
 
@@ -1403,7 +1411,7 @@ static intn test_getszipdata()
     CHECK(status, FAIL, "SDreaddata");
 
     /* Compare read data against input data */
-    for (j=0; j<SZ_LENGTH; j++)
+    for (j=0; j<SZ_LENGTH; j++) 
     {
         for (i=0; i<SZ_WIDTH; i++)
 	     if (out_data[j][i] != in_data[j][i])
@@ -1426,10 +1434,10 @@ static intn test_getszipdata()
 }  /* test_getszipdata */
 #endif /* ifdef H4_HAVE_LIBSZ */
 
-/*
- * Test drive for testing the szip compression feature with SD interface
+/* 
+ * Test drive for testing the szip compression feature with SD interface 
  */
-extern int
+extern int 
 test_szip_compression ()
 {
     int num_errs = 0;
@@ -1460,7 +1468,7 @@ test_szip_compression ()
     /* printf("Test reading SZIP compressed data \tSKIPPED\n"); */
 #endif
 
-    /* Test reading szip compression information and should pass with or
+    /* Test reading szip compression information and should pass with or 
 	without SZIP library */
     num_errs = num_errs + test_getszipinfo();
 

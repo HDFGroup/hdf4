@@ -358,7 +358,7 @@ HCIcdeflate_staccess(accrec_t * access_rec, int16 acc_mode)
     /* Allocate compression I/O buffer */
     if ((deflate_info->io_buf= HDmalloc(DEFLATE_BUF_SIZE)) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
-
+    
     return (SUCCEED);
 }   /* end HCIcdeflate_staccess() */
 
@@ -413,7 +413,7 @@ HCIcdeflate_staccess2(accrec_t * access_rec, int16 acc_mode)
 
         /* set access mode */
         deflate_info->acc_mode=DFACC_READ;
-
+        
         /* force I/O with the file at first */
         deflate_info->deflate_context.avail_in=0;
       } /* end else */
@@ -609,6 +609,7 @@ HCPcdeflate_read(accrec_t * access_rec, int32 length, void * data)
     CONSTR(FUNC, "HCPcdeflate_read");
     compinfo_t *info;           /* special element information */
     comp_coder_deflate_info_t *deflate_info;    /* ptr to gzip 'deflate' info */
+    uintn uninit;               /* Whether the interface was initialized */
 
     info = (compinfo_t *) access_rec->special_info;
     deflate_info = &(info->cinfo.coder_info.deflate_info);
@@ -616,6 +617,9 @@ HCPcdeflate_read(accrec_t * access_rec, int32 length, void * data)
     /* Check if second stage of initialization has been performed */
     if(deflate_info->acc_init!=DFACC_READ)
       {
+        /* preserve the initialized state for later */
+        uninit=(deflate_info->acc_init!=0);
+
         /* Terminate the previous method of access */
         if (HCIcdeflate_term(info, deflate_info->acc_mode) == FAIL)
             HRETURN_ERROR(DFE_CTERM, FAIL);

@@ -1,7 +1,7 @@
 #include "mfhdf.h"
 
-#define FILE_NAME     "SDS.hdf"
-#define SDS_NAME      "SDStemplate"
+#define FILE_NAME     "SDS.hdf" 
+#define SDS_NAME      "SDStemplate" 
 #define X_LENGTH      5
 #define Y_LENGTH      16
 #define RANK          2  /* Number of dimensions of the SDS */
@@ -29,10 +29,10 @@ int main()
    dim_sizes[1] = X_LENGTH;
 
    /*
-   * Create the data set with the name defined in SDS_NAME. Note that
+   * Create the data set with the name defined in SDS_NAME. Note that 
    * DFNT_INT32 indicates that the SDS data is of type int32. Refer to
    * Table 2F, "Standard HDF Data Types and Flags," for definitions of
-   * other types.
+   * other types. 
    */
    sds_id = SDcreate (sd_id, SDS_NAME, DFNT_INT32, RANK, dim_sizes);
 
@@ -40,13 +40,11 @@ int main()
    * Terminate access to the data set.
    */
    status = SDendaccess (sds_id);
-   CHECK_NOT_VAL(status, FAIL, "SDendaccess");
 
    /*
    * Terminate access to the SD interface and close the file.
    */
    status = SDend (sd_id);
-   CHECK_NOT_VAL(status, FAIL, "SDend");
 
    return 0;
 }

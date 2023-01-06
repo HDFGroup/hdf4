@@ -37,7 +37,7 @@ jobs:
 #            generator: "-G \"Visual Studio 16 2019\" -A x64"
           - name: "Ubuntu Latest GCC"
             artifact: "Linux.tar.xz"
-            os: ubuntu-latest
+            os: ubuntu-20.04
             build_type: "Release"
             netcdf: ON
             java: ON
@@ -57,7 +57,7 @@ jobs:
 #            generator: "-G Ninja"
           - name: "Ubuntu Debug GCC"
             artifact: "LinuxDBG.tar.xz"
-            os: ubuntu-latest
+            os: ubuntu-20.04
             build_type: "Debug"
             netcdf: ON
             java: ON
@@ -67,7 +67,7 @@ jobs:
             generator: "-G Ninja"
           - name: "Ubuntu Autotools GCC"
             artifact: "LinuxA.tar.xz"
-            os: ubuntu-latest
+            os: ubuntu-20.04
             build_type: "Release"
             netcdf: enable
             java: disable
@@ -85,7 +85,7 @@ jobs:
     steps:
     - name: Install Dependencies (Linux)
       run: sudo apt-get install ninja-build
-      if: matrix.os == 'ubuntu-latest'
+      if: matrix.os == 'ubuntu-20.04'
     - name: Install Autotools Dependencies (Linux)
       run: sudo apt-get install automake autoconf libtool libtool-bin
       if: matrix.generator == 'autogen'

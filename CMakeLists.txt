@@ -5,10 +5,6 @@ if (POLICY CMP0074)
   cmake_policy (SET CMP0074 NEW)
 endif ()
 
-if (POLICY CMP0083)
-  cmake_policy (SET CMP0083 NEW)
-endif ()
-
 #-----------------------------------------------------------------------------
 # Instructions for use : Normal Build
 #
@@ -401,9 +397,7 @@ INCLUDE_DIRECTORIES (${HDF4_INCLUDE_DIRECTORIES} )
 # Certain systems may add /Debug or /Release to output paths
 # and we need to call the executable from inside the CMake configuration
 #-----------------------------------------------------------------------------
-set (EXE_EXT "")
 if (WIN32)
-  set (EXE_EXT ".exe")
   add_compile_definitions (_CRT_SECURE_NO_WARNINGS)
   if (MSVC)
     add_compile_definitions (_BIND_TO_CURRENT_VCLIBS_VERSION=1 _CONSOLE)

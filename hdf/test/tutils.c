@@ -35,7 +35,7 @@ intn fuzzy_memcmp(const void *s1, const void *s2, int32 len, intn fuzz_factor)
 
 void print_mismatched(const void *s1, const void *s2, int32 size2cmp)
 {
-    int ii;
+    int ii, jj, nn=0, kk;
     const uint8 *t1 = (const uint8 *) s1;
     const uint8 *t2 = (const uint8 *) s2;
 
