@@ -54,7 +54,7 @@ long  val;                              /* value to store */
         nclong lp[1];
         float  fp[1];
         double dp[1];
-    } *gp;
+    } * gp;
 
     gp = (union gp *)v;
     switch (type) {
@@ -107,11 +107,11 @@ long  val;                              /* value to store */
      * returns 0 if equal, 1 if not equal
      */
 
-    static int  val_diff(type, v, ii, val) /* v[ii] != val */
-        nc_type type;                      /* netcdf type of v, NC_BYTE, ..., NC_DOUBLE */
-    void       *v;                         /* array of specified type */
-    int         ii;                        /* it's v[ii] we want to compare */
-    long        val;                       /* value to compare with */
+    static int val_diff(type, v, ii, val) /* v[ii] != val */
+    nc_type    type;                      /* netcdf type of v, NC_BYTE, ..., NC_DOUBLE */
+    void      *v;                         /* array of specified type */
+    int        ii;                        /* it's v[ii] we want to compare */
+    long       val;                       /* value to compare with */
     {
         static char pname[] = "val_diff";
 #ifdef WRONG_for_PGCC /* This way caused a lot of problems for PGI CC compiler                               \
@@ -122,7 +122,7 @@ long  val;                              /* value to store */
             nclong lp[1];
             float  fp[1];
             double dp[1];
-        } *gp;
+        } * gp;
 
         gp = (union gp *)v;
         switch (type) {
@@ -169,7 +169,8 @@ long  val;                              /* value to store */
          * the written values.
          */
 
-        int test_slabs(cdfid) int cdfid; /* handle of netcdf open and in data mode */
+        int test_slabs(cdfid)
+        int cdfid; /* handle of netcdf open and in data mode */
         {
             int                  nerrs       = 0;
             static char          pname[]     = "test_slabs";

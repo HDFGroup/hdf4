@@ -124,7 +124,7 @@ typedef struct Symbol { /* symbol table entry */
     unsigned       is_att : 1; /* appears as netCDF attribute */
     int            dnum;       /* handle as a dimension */
     int            vnum;       /* handle as a variable */
-} *YYSTYPE1;
+} * YYSTYPE1;
 
 #define YYSTYPE YYSTYPE1
 YYSTYPE install(), lookup();
@@ -2112,8 +2112,8 @@ yywrap() /* returns 1 on EOF if no more input */
 /* Symbol table operations for ncgen tool */
 
 YYSTYPE
-      lookup(sname) /* find sname in symbol table (linear search) */
-char *sname;
+lookup(sname) /* find sname in symbol table (linear search) */
+    char *sname;
 {
     YYSTYPE sp;
     for (sp = symlist; sp != (YYSTYPE)0; sp = sp->next)
@@ -2124,8 +2124,8 @@ char *sname;
 }
 
 YYSTYPE
-      install(sname) /* install sname in symbol table */
-char *sname;
+install(sname) /* install sname in symbol table */
+    char *sname;
 {
     YYSTYPE sp;
 

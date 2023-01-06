@@ -330,7 +330,7 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
                 /* Testing stdio buffered i/o */
                 if (HDsetvbuf(file_rec->file, my_stdio_buf, _IOFBF, MY_STDIO_BUF_SIZE) != 0)
                     HGOTO_ERROR(DFE_BADOPEN, FAIL);
-#endif          /* STDIO_BUF */
+#endif /* STDIO_BUF */
                 /* Open existing file successfully. */
                 file_rec->access = acc_mode | DFACC_READ;
 
@@ -370,7 +370,7 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
             /* Testing stdio buffered i/o */
             if (HDsetvbuf(file_rec->file, my_stdio_buf, _IOFBF, MY_STDIO_BUF_SIZE) != 0)
                 HGOTO_ERROR(DFE_BADOPEN, FAIL);
-#endif      /* STDIO_BUF */
+#endif /* STDIO_BUF */
             /* set up the newly created (and empty) file with
                the magic cookie and initial data descriptor records */
             if (HP_write(file_rec, HDFMAGIC, MAGICLEN) == FAIL)
