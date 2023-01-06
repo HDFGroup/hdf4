@@ -33,12 +33,12 @@ ZLIB 1.1.4(libz.a) or later. The software can be downloaded from: https://zlib.n
 HDF4 may be configured to use the Szip compression library. For more 
 information about the Szip library, see:
 
-   https://portal.hdfgroup.org/display/HDF5/Szip+Compression+in+HDF+Products 
+   https://portal.hdfgroup.org/display/HDF4/Szip+Compression+in+HDF+Products 
 
 The Szip compression library is free for non-commercial use. For information 
 regarding commercial use, see: 
 
-   https://portal.hdfgroup.org/display/HDF5/Szip+Copyright+and+License+Statement%2C+as+Distributed+in+the+HDF+Source+Code
+   https://portal.hdfgroup.org/display/HDF4/Szip+Copyright+and+License+Statement%2C+as+Distributed+in+the+HDF+Source+Code
 
 
 
@@ -59,7 +59,7 @@ you must install the Szip library on your system.
 To build the Szip library, follow the instructions in the Szip source code
 distribution, which can be obtained from:
 
-    https://portal.hdfgroup.org/display/HDF5/Szip+Compression+in+HDF+Products
+    https://portal.hdfgroup.org/display/HDF4/Szip+Compression+in+HDF+Products
 
 
 
