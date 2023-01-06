@@ -6,6 +6,8 @@ on:
   push:
     paths-ignore:
     - 'release_notes/**'
+  pull_request:
+    branches: [ master ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -69,7 +71,7 @@ jobs:
             generator: "-G Ninja"
           - name: "Ubuntu Autotools GCC"
             artifact: "LinuxA.tar.xz"
-            os: ubuntu-20.04
+            os: ubuntu-latest
             build_type: "Release"
             netcdf: enable
             java: disable
