@@ -5508,10 +5508,10 @@ intn GRPshutdown(void)
 
       The performance of the GRxxx interface with chunking is greatly
       affected by the users access pattern over the image and by
-      the maximum number of chunks set in the chunk cache. The cache contains 
-      the Least Recently Used(LRU cache replacment policy) chunks. See the
-      routine GRsetchunkcache() for further info on the chunk cache and how 
-      to set the maximum number of chunks in the chunk cache. A default chunk 
+      the maximum number of chunks set in the chunk cache. The cache contains
+      the Least Recently Used(LRU cache replacement policy) chunks. See the
+      routine GRsetchunkcache() for further info on the chunk cache and how
+      to set the maximum number of chunks in the chunk cache. A default chunk
       cache is always created.
 
       The following example shows the organization of chunks for a 2D array.
@@ -5976,7 +5976,7 @@ GRgetchunkinfo(int32 riid,               /* IN: sds access id */
      instead of GRwriteimage() when this information is known. This
      routine has less overhead and is much faster than using GRwriteimage().
 
-     Origin specifies the co-ordinates of the chunk according to the chunk
+     Origin specifies the coordinates of the chunk according to the chunk
      position in the overall chunk array.
 
      'datap' must point to a whole chunk of data.
@@ -6196,7 +6196,7 @@ GRwritechunk(int32 riid,       /* IN: access aid to GR */
      instead of GRreaddata() when this information is known. This
      routine has less overhead and is much faster than using GRreaddata().
 
-     Origin specifies the co-ordinates of the chunk according to the chunk
+     Origin specifies the coordinates of the chunk according to the chunk
      position in the overall chunk array.
 
      'datap' must point to a whole chunk of data.
@@ -6425,8 +6425,8 @@ NAME
 DESCRIPTION
      Set the maximum number of chunks to cache.
 
-     The cache contains the Least Recently Used(LRU cache replacment policy) 
-     chunks. This routine allows the setting of maximum number of chunks that 
+     The cache contains the Least Recently Used(LRU cache replacement policy)
+     chunks. This routine allows the setting of maximum number of chunks that
      can be cached, 'maxcache'.
 
      The performance of the GRxxx interface with chunking is greatly

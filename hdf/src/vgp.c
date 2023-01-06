@@ -896,7 +896,7 @@ DESCRIPTION
    Extracts fields from a VGROUP struct vg and packs the fields
    into array buf in preparation for storage in the HDF file.
 
-RETRUNS   
+RETURNS
    NO RETURN VALUES.
 
 *******************************************************************************/
@@ -1206,7 +1206,7 @@ DESCRIPTION
    
        In any case, set marked flag to 0.
 
-RETRUNS
+RETURNS
      SUCCEED/FAIL
 
 *******************************************************************************/

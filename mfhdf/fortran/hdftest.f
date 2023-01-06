@@ -1308,7 +1308,7 @@ C         integer   DATA_TYPE
      .             DFNT_FLOAT32 = 5,
      .             DFNT_FLOAT64 = 6)
 C
-C  Compression parametes
+C  Compression parameters
 C
          integer   COMP_CODE_NONE,
      .             COMP_CODE_RLE,
@@ -1869,7 +1869,7 @@ C         integer   DATA_TYPE
      .             DFNT_FLOAT32 = 5,
      .             DFNT_FLOAT64 = 6)
 C
-C  Compression parametes
+C  Compression parameters
 C
          integer   COMP_CODE_NONE,
      .             COMP_CODE_RLE,
@@ -2362,7 +2362,7 @@ C         integer   DATA_TYPE
      .             DFNT_FLOAT32 = 5,
      .             DFNT_FLOAT64 = 6)
 C
-C  Compression parametes
+C  Compression parameters
 C
          integer   COMP_CODE_NONE,
      .             COMP_CODE_RLE,

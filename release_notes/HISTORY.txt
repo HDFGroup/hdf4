@@ -2773,7 +2773,7 @@ New features and changes
      + SDgetattdatainfo gives offset/length of data set attribute's data
      + SDgetoldattdatainfo gives offset/length of a pre-defined attribute in
        old format
-     + SDgetanndatainfo gives offset/lenth of an annotation belonging to an SDS
+     + SDgetanndatainfo gives offset/length of an annotation belonging to an SDS
      + Vgetvgroups gives a list of user-created vgroups
      + VSgetvdatas gives a list of user-created vdatas
      + VSofclass gives a list of vdatas of a specific class

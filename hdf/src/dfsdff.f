@@ -270,7 +270,7 @@ C Input:    filename: name of HDF file
 C           ref: the ref number of the SDG
 C           ispre32: set to TRUE if the SDG/ref was written by old library;
 C                        to FALSE otherwise.
-C Retruns:  0 on success, -1 on failure
+C Returns:  0 on success, -1 on failure
 C Users:    HDF Fortran programmers
 C------------------------------------------------------------------------------
 

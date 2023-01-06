@@ -108,7 +108,7 @@ The maximum number of Chunks in an HDF file is 65,535.
 The performance of the GRxxx interface with chunking is greatly
 affected by the users access pattern over the image and by
 the maximum number of chunks set in the chunk cache. The cache contains 
-the Least Recently Used(LRU cache replacment policy) chunks. See the
+the Least Recently Used(LRU cache replacement policy) chunks. See the
 routine GRsetchunkcache() for further info on the chunk cache and how 
 to set the maximum number of chunks in the chunk cache. A default chunk 
 cache is always created.
@@ -192,7 +192,7 @@ e.g. 4x4 array - Pseudo-C
 .SS "GRsetchunkcache"
 Set the maximum number of chunks to cache.
 
-The cache contains the Least Recently Used(LRU cache replacment policy)
+The cache contains the Least Recently Used(LRU cache replacement policy)
 chunks. This routine allows the setting of maximum number of chunks that
 can be cached, "maxcache".
 

@@ -92,7 +92,7 @@ C
      .              DFNT_FLOAT32 = 5,
      .              DFNT_FLOAT64 = 6)
 C
-C  Compression parametes
+C  Compression parameters
 C
          integer   COMP_CODE_SZIP,
      .             SZ_EC_OPTION_MASK,

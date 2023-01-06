@@ -294,7 +294,7 @@ HDFLIBAPI intn SDgetnamelen
       The performance of the SDxxx interface with chunking is greatly
       affected by the users access pattern over the dataset and by
       the maximum number of chunks set in the chunk cache. The cache contains 
-      the Least Recently Used(LRU cache replacment policy) chunks. See the
+      the Least Recently Used(LRU cache replacement policy) chunks. See the
       routine SDsetchunkcache() for further info on the chunk cache and how 
       to set the maximum number of chunks in the chunk cache. A default chunk 
       cache is always created.
@@ -402,7 +402,7 @@ HDFLIBAPI intn SDgetchunkinfo
      instead of SDwritedata() when this information is known. This
      routine has less overhead and is much faster than using SDwritedata().
 
-     Origin specifies the co-ordinates of the chunk according to the chunk
+     Origin specifies the coordinates of the chunk according to the chunk
      position in the overall chunk array.
 
      'datap' must point to a whole chunk of data.
@@ -427,7 +427,7 @@ HDFLIBAPI intn SDwritechunk
      instead of SDreaddata() when this information is known. This
      routine has less overhead and is much faster than using SDreaddata().
 
-     Origin specifies the co-ordinates of the chunk according to the chunk
+     Origin specifies the coordinates of the chunk according to the chunk
      position in the overall chunk array.
 
      'datap' must point to a whole chunk of data.
@@ -449,7 +449,7 @@ NAME
 DESCRIPTION
      Set the maximum number of chunks to cache.
 
-     The cache contains the Least Recently Used(LRU cache replacment policy) 
+     The cache contains the Least Recently Used(LRU cache replacement policy) 
      chunks. This routine allows the setting of maximum number of chunks that 
      can be cached, 'maxcache'.
 

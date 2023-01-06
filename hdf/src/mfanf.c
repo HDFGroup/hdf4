@@ -165,7 +165,7 @@ nafcreate(intf *an_id, intf *etag, intf *eref, intf *atype)
 /*-----------------------------------------------------------------------------
  * Name:    affcreate
  * Purpose: Create a new file annotation and return an annotation handle
- * Inputs:  an_id: annottion inteface handle
+ * Inputs:  an_id: annottion interface handle
  *          atype:   annotation type AN_FILE_LABEL, AN_DATA_DESC
  * Returns: see ANcreatef()
  * Users:   Fortran Users
@@ -233,7 +233,7 @@ nafnumann(intf *an_id, intf *atype, intf *etag, intf *eref)
 /*-----------------------------------------------------------------------------
  * Name:    afannlist
  * Purpose: Return list of handles that match TYPE/tag/ref
- * Inputs:  IN an_id: annotation inteface handle
+ * Inputs:  IN an_id: annotation interface handle
  *          IN atype:   annotation type AN_DATA_LABEL, AN_DATA_DESC
  *          IN etag:    data tag to match
  *          IN eref:    data ref to match

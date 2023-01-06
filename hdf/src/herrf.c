@@ -90,7 +90,7 @@ nheprntc(filename, print_levels, namelen)
  * Purpose:  Calls HEstring
  * Inputs:   error_code - HDF error code
  * Outputs: error_message - error message assocoated with the error code
- * Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
+ * Returns: SUCCEED (0) if successful and FAIL(-1) otherwise
  *----------------------------------------------------------------------------*/
  
  

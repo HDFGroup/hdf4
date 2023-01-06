@@ -5074,10 +5074,10 @@ done:
        ignored. To extract a slab of lower dimension than that of the data
        set, enter 1 in the "slab_size[] array for each ommitted dimension.
        For example, to extract a 2D slab from a 3D data set, specify the
-       beginning coordiantes in 3 dimensions in "start[]" and enter a 1 for
+       beginning coordinates in 3 dimensions in "start[]" and enter a 1 for
        the for the missing dimension in the array "slab_size[]". More
        specifically, to extract a 3x4 slab containing the elements (6,7,8)
-       through (8.7,11) specify the begining coordiantes as {6,7,8} and
+       through (8.7,11) specify the beginning coordinates as {6,7,8} and
        the slab size as {3,1,4}.
 -----------------------------------------------------------------------------*/
 intn
