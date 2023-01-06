@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
 /*
 FILE
    mstdio.c
@@ -30,11 +29,11 @@ EXPORTED ROUTINES
     HCPmstdio_stread    -- start read access for compressed file
     HCPmstdio_stwrite   -- start write access for compressed file
     HCPmstdio_seek      -- Seek to offset within the data element
-    HCPmstdio_read      -- Read in a portion of data from a compressed 
+    HCPmstdio_read      -- Read in a portion of data from a compressed
                             data element.
-    HCPmstdio_write     -- Write out a portion of data from a compressed 
+    HCPmstdio_write     -- Write out a portion of data from a compressed
                             data element.
-    HCPmstdio_inquire   -- Inquire information about the access record 
+    HCPmstdio_inquire   -- Inquire information about the access record
                             and data element.
     HCPmstdio_endaccess -- Close the compressed data element
 
@@ -53,7 +52,7 @@ MODIFICATION HISTORY
 #define MSTDIO_MASTER
 #define MODEL_CLIENT
 /* HDF compression includes */
-#include "hcompi.h"     /* Internal definitions for compression */
+#include "hcompi.h" /* Internal definitions for compression */
 
 /* #define TESTING */
 
@@ -78,23 +77,23 @@ MODIFICATION HISTORY
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPmstdio_stread(accrec_t * access_rec)
+HCPmstdio_stread(accrec_t *access_rec)
 {
     CONSTR(FUNC, "HCPmstdio_stread");
-    compinfo_t *info;           /* information on the special element */
+    compinfo_t *info; /* information on the special element */
 
-    info = (compinfo_t *) access_rec->special_info;
+    info = (compinfo_t *)access_rec->special_info;
 
     /* set the offset */
     info->minfo.model_info.stdio_info.pos = 0;
 
 #ifdef TESTING
-printf("%s(): info=%p\n", FUNC, info);
+    printf("%s(): info=%p\n", FUNC, info);
 #endif
-    if ((*(info->cinfo.coder_funcs.stread)) (access_rec) == FAIL)
+    if ((*(info->cinfo.coder_funcs.stread))(access_rec) == FAIL)
         HRETURN_ERROR(DFE_CODER, FAIL);
     return (SUCCEED);
-}   /* HCPmstdio_stread() */
+} /* HCPmstdio_stread() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -117,29 +116,29 @@ printf("%s(): info=%p\n", FUNC, info);
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPmstdio_stwrite(accrec_t * access_rec)
+HCPmstdio_stwrite(accrec_t *access_rec)
 {
     CONSTR(FUNC, "HCPmstdio_stwrite");
-    compinfo_t *info;           /* information on the special element */
+    compinfo_t *info; /* information on the special element */
 
-    info = (compinfo_t *) access_rec->special_info;
+    info = (compinfo_t *)access_rec->special_info;
 
 #ifdef TESTING
-printf("%s(): info=%p\n", FUNC, info);
+    printf("%s(): info=%p\n", FUNC, info);
 #endif
     /* set the offset */
     info->minfo.model_info.stdio_info.pos = 0;
 
 #ifdef TESTING
-printf("%s(): before coder_funcs.write=%p\n", FUNC, info->cinfo.coder_funcs.write);
+    printf("%s(): before coder_funcs.write=%p\n", FUNC, info->cinfo.coder_funcs.write);
 #endif
-    if ((*(info->cinfo.coder_funcs.stwrite)) (access_rec) == FAIL)
+    if ((*(info->cinfo.coder_funcs.stwrite))(access_rec) == FAIL)
         HRETURN_ERROR(DFE_CODER, FAIL);
 #ifdef TESTING
-printf("%s(): after coder_funcs.write=%p\n", FUNC, info->cinfo.coder_funcs.write);
+    printf("%s(): after coder_funcs.write=%p\n", FUNC, info->cinfo.coder_funcs.write);
 #endif
     return (SUCCEED);
-}   /* HCPmstdio_stwrite() */
+} /* HCPmstdio_stwrite() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -166,21 +165,21 @@ printf("%s(): after coder_funcs.write=%p\n", FUNC, info->cinfo.coder_funcs.write
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPmstdio_seek(accrec_t * access_rec, int32 offset, int origin)
+HCPmstdio_seek(accrec_t *access_rec, int32 offset, int origin)
 {
     CONSTR(FUNC, "HCPmstdio_seek");
-    compinfo_t *info;           /* information on the special element */
+    compinfo_t *info; /* information on the special element */
     int32       ret;
 
-    info = (compinfo_t *) access_rec->special_info;
+    info = (compinfo_t *)access_rec->special_info;
 
     /* set the offset */
     info->minfo.model_info.stdio_info.pos = offset;
 
-    if ((ret = (*(info->cinfo.coder_funcs.seek)) (access_rec, offset, origin)) == FAIL)
+    if ((ret = (*(info->cinfo.coder_funcs.seek))(access_rec, offset, origin)) == FAIL)
         HRETURN_ERROR(DFE_CODER, FAIL);
     return (ret);
-}   /* HCPmstdio_seek() */
+} /* HCPmstdio_seek() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -205,21 +204,21 @@ HCPmstdio_seek(accrec_t * access_rec, int32 offset, int origin)
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPmstdio_read(accrec_t * access_rec, int32 length, void * data)
+HCPmstdio_read(accrec_t *access_rec, int32 length, void *data)
 {
     CONSTR(FUNC, "HCPmstdio_read");
-    compinfo_t *info;           /* information on the special element */
+    compinfo_t *info; /* information on the special element */
     int32       ret;
 
-    info = (compinfo_t *) access_rec->special_info;
+    info = (compinfo_t *)access_rec->special_info;
 
     /* adjust model position */
     info->minfo.model_info.stdio_info.pos += length;
 
-    if ((ret = (*(info->cinfo.coder_funcs.read)) (access_rec, length, data)) == FAIL)
+    if ((ret = (*(info->cinfo.coder_funcs.read))(access_rec, length, data)) == FAIL)
         HRETURN_ERROR(DFE_CODER, FAIL);
     return (ret);
-}   /* HCPmstdio_read() */
+} /* HCPmstdio_read() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -243,27 +242,27 @@ HCPmstdio_read(accrec_t * access_rec, int32 length, void * data)
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPmstdio_write(accrec_t * access_rec, int32 length, const void * data)
+HCPmstdio_write(accrec_t *access_rec, int32 length, const void *data)
 {
     CONSTR(FUNC, "HCPmstdio_write");
-    compinfo_t *info;           /* information on the special element */
+    compinfo_t *info; /* information on the special element */
     int32       ret;
 
-    info = (compinfo_t *) access_rec->special_info;
+    info = (compinfo_t *)access_rec->special_info;
 
     /* adjust model position */
     info->minfo.model_info.stdio_info.pos += length;
 
 #ifdef TESTING
-printf("%s(): before function ptr call func_ptr=%p\n", FUNC, info->cinfo.coder_funcs.write);
+    printf("%s(): before function ptr call func_ptr=%p\n", FUNC, info->cinfo.coder_funcs.write);
 #endif
-    if ((ret = (*(info->cinfo.coder_funcs.write)) (access_rec, length, data)) == FAIL)
+    if ((ret = (*(info->cinfo.coder_funcs.write))(access_rec, length, data)) == FAIL)
         HRETURN_ERROR(DFE_CODER, FAIL);
 #ifdef TESTING
-printf("%s(): after function ptr call, ret=%d\n",FUNC,(int)ret);
+    printf("%s(): after function ptr call, ret=%d\n", FUNC, (int)ret);
 #endif
     return (ret);
-}   /* HCPmstdio_write() */
+} /* HCPmstdio_write() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -295,20 +294,19 @@ printf("%s(): after function ptr call, ret=%d\n",FUNC,(int)ret);
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPmstdio_inquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
- uint16 *pref, int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
-                  int16 *pspecial)
+HCPmstdio_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength,
+                  int32 *poffset, int32 *pposn, int16 *paccess, int16 *pspecial)
 {
     CONSTR(FUNC, "HCPmstdio_inquire");
-    compinfo_t *info;           /* information on the special element */
+    compinfo_t *info; /* information on the special element */
     int32       ret;
 
-    info = (compinfo_t *) access_rec->special_info;
-    if ((ret = (*(info->cinfo.coder_funcs.inquire)) (access_rec, pfile_id, ptag, pref,
-                       plength, poffset, pposn, paccess, pspecial)) == FAIL)
+    info = (compinfo_t *)access_rec->special_info;
+    if ((ret = (*(info->cinfo.coder_funcs.inquire))(access_rec, pfile_id, ptag, pref, plength, poffset, pposn,
+                                                    paccess, pspecial)) == FAIL)
         HRETURN_ERROR(DFE_CODER, FAIL);
     return (ret);
-}   /* HCPmstdio_inquire() */
+} /* HCPmstdio_inquire() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -330,14 +328,14 @@ HCPmstdio_inquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
  REVISION LOG
 --------------------------------------------------------------------------*/
 intn
-HCPmstdio_endaccess(accrec_t * access_rec)
+HCPmstdio_endaccess(accrec_t *access_rec)
 {
     CONSTR(FUNC, "HCPmstdio_endaccess");
-    compinfo_t *info;           /* information on the special element */
+    compinfo_t *info; /* information on the special element */
     intn        ret;
 
-    info = (compinfo_t *) access_rec->special_info;
-    if ((ret = (*(info->cinfo.coder_funcs.endaccess)) (access_rec)) == FAIL)
+    info = (compinfo_t *)access_rec->special_info;
+    if ((ret = (*(info->cinfo.coder_funcs.endaccess))(access_rec)) == FAIL)
         HRETURN_ERROR(DFE_CODER, FAIL);
     return (ret);
-}   /* HCPmstdio_endaccess() */
+} /* HCPmstdio_endaccess() */

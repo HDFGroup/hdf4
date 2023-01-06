@@ -38,11 +38,12 @@ import hdf.hdflib.HDFLibrary;
 public class HDF4GroupCreate {
     private static String fname = "HDF4GroupCreate.hdf";
 
-    public static void main(String args[]) throws Exception {
-        long file_id = -1;
+    public static void main(String args[]) throws Exception
+    {
+        long file_id      = -1;
         long subvgroup_id = -1;
-        long vgroup_id1 = -1;
-        long vgroup_id2 = -1;
+        long vgroup_id1   = -1;
+        long vgroup_id2   = -1;
 
         // Create a new file using default properties.
         try {
@@ -61,18 +62,17 @@ public class HDF4GroupCreate {
             // Create the vgroup.  Note that the vgroup reference number is set
             // to -1 for creating and the access mode is "w" for writing.
             if (file_id >= 0) {
-                vgroup_id1 = HDFLibrary.VSattach (file_id, -1, "w");
+                vgroup_id1 = HDFLibrary.VSattach(file_id, -1, "w");
                 if (vgroup_id1 >= 0) {
                     HDFLibrary.VSsetname(vgroup_id1, "g1");
-                    HDFLibrary.VSsetclass (vgroup_id1, "Empty Vdatas");
+                    HDFLibrary.VSsetclass(vgroup_id1, "Empty Vdatas");
                 }
-                vgroup_id2 = HDFLibrary.VSattach (file_id, -1, "w");
+                vgroup_id2 = HDFLibrary.VSattach(file_id, -1, "w");
                 if (vgroup_id2 >= 0) {
                     HDFLibrary.VSsetname(vgroup_id2, "g2");
-                    HDFLibrary.VSsetclass (vgroup_id2, "Empty Vdatas");
+                    HDFLibrary.VSsetclass(vgroup_id2, "Empty Vdatas");
                 }
             }
-
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -97,7 +97,7 @@ public class HDF4GroupCreate {
         // Close the file.
         try {
             if (file_id >= 0) {
-                HDFLibrary.Vend (file_id);
+                HDFLibrary.Vend(file_id);
                 HDFLibrary.Hclose(file_id);
             }
         }

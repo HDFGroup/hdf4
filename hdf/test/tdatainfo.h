@@ -16,14 +16,12 @@
 #ifndef _TDATAINFO_H
 #define _TDATAINFO_H
 
-typedef struct
-  {
-        int32 numtype;  /* number type of data */
-        int32 n_values; /* number of values in an SDS, a vdata, or an RI image*/
-        int32* offsets; /* offset(s) of data block(s) */
-        int32* lengths; /* length(s) of data block(s) */
-  }
-t_hdf_datainfo_t;
+typedef struct {
+    int32  numtype;  /* number type of data */
+    int32  n_values; /* number of values in an SDS, a vdata, or an RI image*/
+    int32 *offsets;  /* offset(s) of data block(s) */
+    int32 *lengths;  /* length(s) of data block(s) */
+} t_hdf_datainfo_t;
 
 /* Utility functions to allocate and deallocate hdf_datainfo_t's members*/
 intn alloc_info(t_hdf_datainfo_t *info, uintn info_count);

@@ -11,15 +11,14 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
 /*-----------------------------------------------------------------------------
  * File:    dynarray.h
  * Purpose: header file for dynamic array API
- * Dependencies: 
+ * Dependencies:
  * Invokes:
  * Contents:
- * Structure definitions: 
- * Constant definitions: 
+ * Structure definitions:
+ * Constant definitions:
  *---------------------------------------------------------------------------*/
 
 /* avoid re-inclusion */
@@ -35,19 +34,17 @@
 typedef struct dynarray_tag *dynarr_p;
 
 #if defined DYNARRAY_MASTER | defined DYNARRAY_TESTER
-typedef struct dynarray_tag 
-  {
-      intn num_elems;       /* Number of elements in the array currently */
-      intn incr_mult;       /* Multiple to increment the array size by */
-      VOIDP *arr;           /* Pointer to the actual array of void *'s */
-  }dynarr_t;
+typedef struct dynarray_tag {
+    intn   num_elems; /* Number of elements in the array currently */
+    intn   incr_mult; /* Multiple to increment the array size by */
+    VOIDP *arr;       /* Pointer to the actual array of void *'s */
+} dynarr_t;
 
 #endif /* DYNARRAY_MASTER | DYNARRAY_TESTER */
 
 #if defined c_plusplus || defined __cplusplus
-extern      "C"
-{
-#endif                          /* c_plusplus || __cplusplus */
+extern "C" {
+#endif /* c_plusplus || __cplusplus */
 
 /******************************************************************************
  NAME
@@ -61,8 +58,8 @@ extern      "C"
     Returns pointer to the dynarray created if successful and NULL otherwise
 
 *******************************************************************************/
-dynarr_p DAcreate_array(intn start_size,      /* IN: Initial array size */
-    intn incr_mult                  /* IN: multiple to create additional elements in */
+dynarr_p DAcreate_array(intn start_size, /* IN: Initial array size */
+                        intn incr_mult   /* IN: multiple to create additional elements in */
 );
 
 /******************************************************************************
@@ -77,8 +74,8 @@ dynarr_p DAcreate_array(intn start_size,      /* IN: Initial array size */
     Returns SUCCEED if successful and FAIL otherwise
 
 *******************************************************************************/
-intn DAdestroy_array(dynarr_p arr,  /* IN: Array to destroy */
-        intn free_elem              /* IN: whether to free each element */
+intn DAdestroy_array(dynarr_p arr,      /* IN: Array to destroy */
+                     intn     free_elem /* IN: whether to free each element */
 );
 
 /******************************************************************************
@@ -92,7 +89,7 @@ intn DAdestroy_array(dynarr_p arr,  /* IN: Array to destroy */
     Returns # of dynarray elements if successful and FAIL otherwise
 
 *******************************************************************************/
-intn DAsize_array(dynarr_p arr   /* IN: Array to get size of */
+intn DAsize_array(dynarr_p arr /* IN: Array to get size of */
 );
 
 /******************************************************************************
@@ -109,7 +106,7 @@ intn DAsize_array(dynarr_p arr   /* IN: Array to get size of */
 
 *******************************************************************************/
 VOIDP DAget_elem(dynarr_p arr_ptr, /* IN: Array to access */
-    intn elem                       /* IN: Array element to retrieve */
+                 intn     elem     /* IN: Array element to retrieve */
 );
 
 /******************************************************************************
@@ -126,9 +123,9 @@ VOIDP DAget_elem(dynarr_p arr_ptr, /* IN: Array to access */
     Returns SUCCEED if successful and NULL otherwise
 
 *******************************************************************************/
-intn DAset_elem(dynarr_p arr_ptr,  /* IN: Array to access */
-    intn elem,                      /* IN: Array element to set */
-    VOIDP obj                       /* IN: Pointer to the object to store */
+intn DAset_elem(dynarr_p arr_ptr, /* IN: Array to access */
+                intn     elem,    /* IN: Array element to set */
+                VOIDP    obj      /* IN: Pointer to the object to store */
 );
 
 /*****************************************************************************
@@ -145,12 +142,11 @@ intn DAset_elem(dynarr_p arr_ptr,  /* IN: Array to access */
 
 *******************************************************************************/
 VOIDP DAdel_elem(dynarr_p arr_ptr, /* IN: Array to access */
-    intn elem                       /* IN: Array element to retrieve */
+                 intn     elem     /* IN: Array element to retrieve */
 );
 
 #if defined c_plusplus || defined __cplusplus
 }
-#endif                          /* c_plusplus || __cplusplus */
+#endif /* c_plusplus || __cplusplus */
 
 #endif /* __DYNARRAY_H */
-

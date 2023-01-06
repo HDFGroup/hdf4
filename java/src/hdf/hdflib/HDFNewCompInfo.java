@@ -26,7 +26,5 @@ public class HDFNewCompInfo extends HDFCompInfo {
     public int ctype;
 
     /** */
-    public HDFNewCompInfo() {
-        ctype = HDFConstants.COMP_CODE_NONE;
-    };
+    public HDFNewCompInfo() { ctype = HDFConstants.COMP_CODE_NONE; };
 }

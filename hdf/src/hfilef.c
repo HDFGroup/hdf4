@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
 /*-----------------------------------------------------------------------------
  * File:    hfilef.c
  * Purpose: C stubs for Fortran low level routines
@@ -38,15 +37,15 @@
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-nhiopen(_fcd name, intf * acc_mode, intf * defdds, intf * namelen)
+nhiopen(_fcd name, intf *acc_mode, intf *defdds, intf *namelen)
 {
-    char       *fn;
-    intf        ret;
+    char *fn;
+    intf  ret;
 
-    fn = HDf2cstring(name, (intn) *namelen);
+    fn = HDf2cstring(name, (intn)*namelen);
     if (!fn)
-	return(FAIL);
-    ret = (intf) Hopen(fn, (intn) *acc_mode, (int16) *defdds);
+        return (FAIL);
+    ret = (intf)Hopen(fn, (intn)*acc_mode, (int16)*defdds);
     HDfree(fn);
     return (ret);
 }
@@ -61,7 +60,7 @@ nhiopen(_fcd name, intf * acc_mode, intf * defdds, intf * namelen)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-nhclose(intf * file_id)
+nhclose(intf *file_id)
 {
     return (Hclose(*file_id));
 }
@@ -76,9 +75,9 @@ nhclose(intf * file_id)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-nhnumber(intf * file_id, intf *tag)
+nhnumber(intf *file_id, intf *tag)
 {
-    return (Hnumber((int32) *file_id, (uint16) *tag));
+    return (Hnumber((int32)*file_id, (uint16)*tag));
 }
 
 /*-----------------------------------------------------------------------------
@@ -92,15 +91,15 @@ nhnumber(intf * file_id, intf *tag)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-nhxisdir(_fcd dir, intf * dirlen)
+nhxisdir(_fcd dir, intf *dirlen)
 {
-    char       *fn;
-    intf        ret;
+    char *fn;
+    intf  ret;
 
-    fn = HDf2cstring(dir, (intn) *dirlen);
+    fn = HDf2cstring(dir, (intn)*dirlen);
     if (!fn)
-	return(FAIL);
-    ret = (intf) HXsetdir(fn);
+        return (FAIL);
+    ret = (intf)HXsetdir(fn);
     HDfree(fn);
     return (ret);
 }
@@ -116,15 +115,15 @@ nhxisdir(_fcd dir, intf * dirlen)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-nhxiscdir(_fcd dir, intf * dirlen)
+nhxiscdir(_fcd dir, intf *dirlen)
 {
-    char       *fn;
-    intf        ret;
+    char *fn;
+    intf  ret;
 
-    fn = HDf2cstring(dir, (intn) *dirlen);
+    fn = HDf2cstring(dir, (intn)*dirlen);
     if (!fn)
-	return(FAIL);
-    ret = (intf) HXsetcreatedir(fn);
+        return (FAIL);
+    ret = (intf)HXsetcreatedir(fn);
     HDfree(fn);
     return (ret);
 }
@@ -132,114 +131,110 @@ nhxiscdir(_fcd dir, intf * dirlen)
 /*-----------------------------------------------------------------------------
  * Name:    hddontatexit
  * Purpose: Call HDdont_atexit
- * Inputs:  
+ * Inputs:
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF Fortran programmers
- * Invokes: HDdont_atexit 
+ * Invokes: HDdont_atexit
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
 nhddontatexit(void)
 {
-   return((intf)(HDdont_atexit()));
+    return ((intf)(HDdont_atexit()));
 }
 /*-----------------------------------------------------------------------------
  * Name: hglibverc
  * Purpose:  Calls Hgetlibversion
- * 
+ *
  * Outputs: major_v - major version number
  *          minor_v - minor version number
  *          release - release number
  *          string  - version number text string
  * Returns: SUCCEED (0) if successful and FAIL(-1) otherwise
  *----------------------------------------------------------------------------*/
- 
- 
- FRETVAL(intf)
+
+FRETVAL(intf)
 #ifdef PROTOTYPE
 nhglibverc(intf *major_v, intf *minor_v, intf *release, _fcd string, intf *len)
 #else
-nhglibverc(major_v, minor_v, release, string, len)
-           intf *major_v;
-           intf *minor_v;
-           intf *release;
-           _fcd  string;
-           intf  *len;
+nhglibverc(major_v, minor_v, release, string, len) intf *major_v;
+intf *minor_v;
+intf *release;
+_fcd  string;
+intf *len;
 #endif /* PROTOTYPE */
 {
-   char *cstring;
-   uint32 cmajor_v;
-   uint32 cminor_v;
-   uint32 crelease;
-   intn   status;
-   
-   cstring = NULL;
-   if (*len) cstring = (char *) HDmalloc((uint32)*len + 1);
-   status = Hgetlibversion(&cmajor_v, &cminor_v, &crelease, cstring);
- 
-   HDpackFstring(cstring,  _fcdtocp(string),  *len);
+    char  *cstring;
+    uint32 cmajor_v;
+    uint32 cminor_v;
+    uint32 crelease;
+    intn   status;
 
-   if(cstring)  HDfree((VOIDP)cstring);
+    cstring = NULL;
+    if (*len)
+        cstring = (char *)HDmalloc((uint32)*len + 1);
+    status = Hgetlibversion(&cmajor_v, &cminor_v, &crelease, cstring);
 
-   *major_v = (intf) cmajor_v;
-   *minor_v = (intf) cminor_v;
-   *release = (intf) crelease;
+    HDpackFstring(cstring, _fcdtocp(string), *len);
 
-   return((intf)status);
+    if (cstring)
+        HDfree((VOIDP)cstring);
 
+    *major_v = (intf)cmajor_v;
+    *minor_v = (intf)cminor_v;
+    *release = (intf)crelease;
+
+    return ((intf)status);
 }
 /*-----------------------------------------------------------------------------
  * Name: hgfilverc
  * Purpose:  Calls Hgetfileversion
- * Inputs:  file_id - file identifier 
+ * Inputs:  file_id - file identifier
  * Outputs: major_v - major version number
  *          minor_v - minor version number
  *          release - release number
  *          string  - version number text string
  * Returns: SUCCEED (0) if successful and FAIL(-1) otherwise
  *----------------------------------------------------------------------------*/
- 
- 
- FRETVAL(intf)
+
+FRETVAL(intf)
 #ifdef PROTOTYPE
-nhgfilverc(intf *file_id, intf *major_v, intf *minor_v, intf *release,
-            _fcd string, intf *len)
+nhgfilverc(intf *file_id, intf *major_v, intf *minor_v, intf *release, _fcd string, intf *len)
 #else
-nhgfilverc(file_id, major_v, minor_v, release, string, len)
-           intf *file_id; 
-           intf *major_v;
-           intf *minor_v;
-           intf *release;
-           _fcd  string;
-           intf  *len;
+nhgfilverc(file_id, major_v, minor_v, release, string, len) intf *file_id;
+intf *major_v;
+intf *minor_v;
+intf *release;
+_fcd  string;
+intf *len;
 #endif /* PROTOTYPE */
 {
-   char *cstring;
-   uint32 cmajor_v;
-   uint32 cminor_v;
-   uint32 crelease;
-   intn   status;
-   
-   cstring = NULL;
-   if (*len) cstring = (char *) HDmalloc((uint32)*len + 1);
-   status = Hgetfileversion((int32) *file_id, &cmajor_v, &cminor_v, &crelease,
-                            cstring);
- 
-   HDpackFstring(cstring,  _fcdtocp(string),  *len);
+    char  *cstring;
+    uint32 cmajor_v;
+    uint32 cminor_v;
+    uint32 crelease;
+    intn   status;
 
-   if(cstring)  HDfree((VOIDP)cstring);
+    cstring = NULL;
+    if (*len)
+        cstring = (char *)HDmalloc((uint32)*len + 1);
+    status = Hgetfileversion((int32)*file_id, &cmajor_v, &cminor_v, &crelease, cstring);
 
-   *major_v = (intf) cmajor_v;
-   *minor_v = (intf) cminor_v;
-   *release = (intf) crelease;
+    HDpackFstring(cstring, _fcdtocp(string), *len);
 
-   return((intf)status);
+    if (cstring)
+        HDfree((VOIDP)cstring);
 
+    *major_v = (intf)cmajor_v;
+    *minor_v = (intf)cminor_v;
+    *release = (intf)crelease;
+
+    return ((intf)status);
 }
 /*-----------------------------------------------------------------------------
  * Name:    hiishdf
  * Purpose: call Hishdf function
- * Inputs:  name: Name of the file 
+ * Inputs:  name: Name of the file
  *          namelen: length of name
  * Returns: TRUE(1) on success, FALSE (-1) on failure
  * Users:   HDF Fortran programmers
@@ -247,15 +242,15 @@ nhgfilverc(file_id, major_v, minor_v, release, string, len)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-nhiishdf(_fcd name,  intf * namelen)
+nhiishdf(_fcd name, intf *namelen)
 {
-    char       *fn;
-    intf        ret;
+    char *fn;
+    intf  ret;
 
-    fn = HDf2cstring(name, (intn) *namelen);
+    fn = HDf2cstring(name, (intn)*namelen);
     if (!fn)
-	return(FAIL);
-    ret = (intf) Hishdf(fn);
+        return (FAIL);
+    ret = (intf)Hishdf(fn);
     HDfree(fn);
     return (ret);
 }
@@ -271,16 +266,16 @@ nhiishdf(_fcd name,  intf * namelen)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-nhconfinfc (intf *coder_type,  intf * info)
+nhconfinfc(intf *coder_type, intf *info)
 {
     comp_coder_t coder_type_c;
     uint32       info_c;
     intn         status;
 
-    coder_type_c = (comp_coder_t) *coder_type;
-    status = HCget_config_info(coder_type_c, &info_c);
+    coder_type_c = (comp_coder_t)*coder_type;
+    status       = HCget_config_info(coder_type_c, &info_c);
     if (status == FAIL)
-	return(FAIL);
-    *info = (intf) info_c; 
+        return (FAIL);
+    *info = (intf)info_c;
     return (status);
 }

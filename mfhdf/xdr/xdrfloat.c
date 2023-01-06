@@ -27,7 +27,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 /*
  * xdr_float.c, Generic XDR routines implementation.
  *
@@ -46,70 +45,70 @@
 #include "xdr.h"
 
 bool_t
-xdr_float(xdrs, fp)
-    XDR *xdrs;
-    float *fp;
+       xdr_float(xdrs, fp)
+XDR   *xdrs;
+float *fp;
 {
     switch (xdrs->x_op) {
 
-    case XDR_ENCODE:
-        return (XDR_PUTINT32(xdrs, (int32_t *)fp));
+        case XDR_ENCODE:
+            return (XDR_PUTINT32(xdrs, (int32_t *)fp));
 
-    case XDR_DECODE:
-        return (XDR_GETINT32(xdrs, (int32_t *)fp));
+        case XDR_DECODE:
+            return (XDR_GETINT32(xdrs, (int32_t *)fp));
 
-    case XDR_FREE:
-        return (TRUE);
+        case XDR_FREE:
+            return (TRUE);
     }
     return (FALSE);
 }
 
 bool_t
-xdr_double(xdrs, dp)
-    XDR *xdrs;
-    double *dp;
+        xdr_double(xdrs, dp)
+XDR    *xdrs;
+double *dp;
 {
     int32_t *i32p;
-    bool_t rv;
+    bool_t   rv;
 
     if (!dp)
         return FALSE;
 
     switch (xdrs->x_op) {
-    case XDR_ENCODE:
-        i32p = (int32_t *)(void *)dp;
+        case XDR_ENCODE:
+            i32p = (int32_t *)(void *)dp;
 #ifdef H4_WORDS_BIGENDIAN
-        rv = XDR_PUTINT32(xdrs, i32p);
-        if (!rv)
-            return (rv);
-        rv = XDR_PUTINT32(xdrs, i32p+1);
+            rv = XDR_PUTINT32(xdrs, i32p);
+            if (!rv)
+                return (rv);
+            rv = XDR_PUTINT32(xdrs, i32p + 1);
 #else
-        rv = XDR_PUTINT32(xdrs, i32p+1);
-        if (!rv)
-            return (rv);
-        rv = XDR_PUTINT32(xdrs, i32p);
+            rv = XDR_PUTINT32(xdrs, i32p + 1);
+            if (!rv)
+                return (rv);
+            rv = XDR_PUTINT32(xdrs, i32p);
 #endif
-        return rv;
-        break;
+            return rv;
+            break;
 
-    case XDR_DECODE:
-        i32p = (int32_t *)(void *)dp;
+        case XDR_DECODE:
+            i32p = (int32_t *)(void *)dp;
 #ifdef H4_WORDS_BIGENDIAN
-        rv = XDR_GETINT32(xdrs, i32p);
-        if (!rv)
-            return (rv);
-        rv = XDR_GETINT32(xdrs, i32p+1);
+            rv = XDR_GETINT32(xdrs, i32p);
+            if (!rv)
+                return (rv);
+            rv = XDR_GETINT32(xdrs, i32p + 1);
 #else
-        rv = XDR_GETINT32(xdrs, i32p+1);
-        if (!rv)
-            return (rv);
-        rv = XDR_GETINT32(xdrs, i32p);
+            rv = XDR_GETINT32(xdrs, i32p + 1);
+            if (!rv)
+                return (rv);
+            rv = XDR_GETINT32(xdrs, i32p);
 #endif
-        return (rv);
-        break;
+            return (rv);
+            break;
 
-    case XDR_FREE:
-        return TRUE;
+        case XDR_FREE:
+            return TRUE;
     } /* switch xdrs->x_op */
 
     return FALSE;

@@ -52,37 +52,27 @@ EXPORTED ROUTINES
 
 /* extinfo_t -- external elt information structure */
 
-typedef struct
-  {
-      intn        attached;     /* number of access records attached
-                                   to this information structure */
-      intn        modified;     /* has the buffered element been modified? */
-      int32       length;       /* length of this element */
-      uint8      *buf;          /* pointer to the buffered data */
-      int32       buf_aid;      /* AID for buffered access record (below) */
-      accrec_t   *buf_access_rec;   /* "Real" access record for buffered data */
-  }
-bufinfo_t;
+typedef struct {
+    intn attached;            /* number of access records attached
+                                 to this information structure */
+    intn      modified;       /* has the buffered element been modified? */
+    int32     length;         /* length of this element */
+    uint8    *buf;            /* pointer to the buffered data */
+    int32     buf_aid;        /* AID for buffered access record (below) */
+    accrec_t *buf_access_rec; /* "Real" access record for buffered data */
+} bufinfo_t;
 
 /* forward declaration of the functions provided in this module */
 
 /* buf_funcs -- table of the accessing functions of the buffered
    data element function modules.  The position of each function in
    the table is standard */
-funclist_t  buf_funcs =
-{
-    HBPstread,
-    HBPstwrite,
-    HBPseek,
-    HBPinquire,
-    HBPread,
-    HBPwrite,
-    HBPendaccess,
-    HBPinfo,
-    NULL         /* no routine registered */
+funclist_t buf_funcs = {
+    HBPstread, HBPstwrite,   HBPseek, HBPinquire, HBPread,
+    HBPwrite,  HBPendaccess, HBPinfo, NULL /* no routine registered */
 };
 
-/*------------------------------------------------------------------------ 
+/*------------------------------------------------------------------------
 NAME
    HBconvert -- cause an existing AID to be buffered.
 USAGE
@@ -107,62 +97,61 @@ FORTRAN
 intn
 HBconvert(int32 aid)
 {
-    CONSTR(FUNC, "HBconvert");   /* for HERROR */
-    accrec_t   *access_rec=NULL;/* access element record */
-    accrec_t   *new_access_rec; /* newly created access record */
-    accrec_t   *tmp_access_rec; /* temp. access record */
-    bufinfo_t  *info;           /* information for the buffered element */
-    uint16 data_tag,data_ref;   /* tag/ref of the data we are checking */
-    int32       data_off;		/* offset of the data we are checking */
-    int32       data_len;		/* length of the data we are checking */
-    intn        ret_value = SUCCEED;
+    CONSTR(FUNC, "HBconvert");     /* for HERROR */
+    accrec_t  *access_rec = NULL;  /* access element record */
+    accrec_t  *new_access_rec;     /* newly created access record */
+    accrec_t  *tmp_access_rec;     /* temp. access record */
+    bufinfo_t *info;               /* information for the buffered element */
+    uint16     data_tag, data_ref; /* tag/ref of the data we are checking */
+    int32      data_off;           /* offset of the data we are checking */
+    int32      data_len;           /* length of the data we are checking */
+    intn       ret_value = SUCCEED;
 
     HEclear();
-    if ((access_rec = HAatom_object(aid)) == NULL)	/* get the access_rec pointer */
+    if ((access_rec = HAatom_object(aid)) == NULL) /* get the access_rec pointer */
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* get the info for the dataset */
-    if (HTPis_special(access_rec->ddid) || access_rec->special!=0) {
-        if((*access_rec->special_func->inquire) (access_rec, NULL,
-                           &data_tag, &data_ref, &data_len, &data_off, NULL, NULL, NULL)==FAIL)
+    if (HTPis_special(access_rec->ddid) || access_rec->special != 0) {
+        if ((*access_rec->special_func->inquire)(access_rec, NULL, &data_tag, &data_ref, &data_len, &data_off,
+                                                 NULL, NULL, NULL) == FAIL)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
     } /* end if */
-    else
-        if(HTPinquire(access_rec->ddid,&data_tag,&data_ref,&data_off,&data_len)==FAIL)
-            HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    else if (HTPinquire(access_rec->ddid, &data_tag, &data_ref, &data_off, &data_len) == FAIL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     /* is data defined but does not exist in the file? */
-    if(data_off==INVALID_OFFSET && data_len==INVALID_LENGTH)
-      { /* catch the case where the data doesn't exist yet */
+    if (data_off == INVALID_OFFSET &&
+        data_len == INVALID_LENGTH) { /* catch the case where the data doesn't exist yet */
 
-          /* set length to zero */
-        if(Hsetlength(aid,0)==FAIL)
+        /* set length to zero */
+        if (Hsetlength(aid, 0) == FAIL)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
         /* get back new offset and length */
-        if(HTPinquire(access_rec->ddid,&data_tag,&data_ref,&data_off,&data_len)==FAIL)
+        if (HTPinquire(access_rec->ddid, &data_tag, &data_ref, &data_off, &data_len) == FAIL)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
-      } /* end if */
-      
+    } /* end if */
+
     /* allocate special info struct for buffered element */
-    if ((info = HDmalloc((uint32) sizeof(bufinfo_t)))==NULL)
+    if ((info = HDmalloc((uint32)sizeof(bufinfo_t))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* fill in special info struct */
-    info->attached     = 1;
-    info->modified     = 0;         /* Data starts out not modified */
-    info->length       = data_len;  /* initial buffer size */
+    info->attached = 1;
+    info->modified = 0;        /* Data starts out not modified */
+    info->length   = data_len; /* initial buffer size */
 
     /* Get space for buffer */
-    if(data_len>0) {
-        if((info->buf = HDmalloc((uint32) data_len))==NULL)
+    if (data_len > 0) {
+        if ((info->buf = HDmalloc((uint32)data_len)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
-      } /* end if */
+    } /* end if */
     else
-        info->buf=NULL;
+        info->buf = NULL;
 
     /* Read in existing data into buffer */
-    if(data_len>0) {
+    if (data_len > 0) {
         if (Hseek(aid, 0, DF_START) == FAIL)
             HGOTO_ERROR(DFE_SEEKERROR, FAIL);
         if (Hread(aid, data_len, info->buf) == FAIL)
@@ -181,15 +170,15 @@ HBconvert(int32 aid)
      * We "inherit" the appendable flag if it's set and ALLOW_BUFFER_GROW is
      * defined to support it.
      */
-    tmp_access_rec=new_access_rec->next;    /* preserve free list pointer */
-    HDmemcpy(new_access_rec,access_rec,sizeof(accrec_t));
-    new_access_rec->next=tmp_access_rec;    /* restore free list pointer */
+    tmp_access_rec = new_access_rec->next; /* preserve free list pointer */
+    HDmemcpy(new_access_rec, access_rec, sizeof(accrec_t));
+    new_access_rec->next = tmp_access_rec; /* restore free list pointer */
 
     /* Preserve the actual access record for the buffered element */
-    info->buf_access_rec = new_access_rec;  /* Access record of actual data on disk */
+    info->buf_access_rec = new_access_rec; /* Access record of actual data on disk */
 
     /* Create AID for actual access record */
-    info->buf_aid = HAregister_atom(AIDGROUP,new_access_rec);
+    info->buf_aid = HAregister_atom(AIDGROUP, new_access_rec);
 
     /* Modify access record to point to buffered element functions */
     access_rec->special_info = (void *)info;
@@ -197,11 +186,10 @@ HBconvert(int32 aid)
     access_rec->special      = SPECIAL_BUFFERED;
 
 done:
-  if(ret_value == FAIL)   
-    { /* Error condition cleanup */
-    } /* end if */
+    if (ret_value == FAIL) { /* Error condition cleanup */
+    }                        /* end if */
 
-  return ret_value;
+    return ret_value;
 } /* HBconvert */
 
 /* ------------------------------ HBPstread ------------------------------- */
@@ -218,14 +206,14 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------*/
 int32
-HBPstread(accrec_t * rec)
+HBPstread(accrec_t *rec)
 {
     /* shut compilers up*/
-    rec=rec;
+    rec = rec;
 
-assert(0 && "Should never be called");
-  return (FAIL);
-}   /* HBPstread */
+    assert(0 && "Should never be called");
+    return (FAIL);
+} /* HBPstread */
 
 /* ------------------------------ HBPstwrite ------------------------------- */
 /*
@@ -241,14 +229,14 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------*/
 int32
-HBPstwrite(accrec_t * rec)
+HBPstwrite(accrec_t *rec)
 {
     /* shut compilers up*/
-    rec=rec;
+    rec = rec;
 
-assert(0 && "Should never be called");
-  return (FAIL);
-}   /* HBPstwrite */
+    assert(0 && "Should never be called");
+    return (FAIL);
+} /* HBPstwrite */
 
 /* ------------------------------ HBPseek ------------------------------- */
 /*
@@ -266,16 +254,16 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------*/
 int32
-HBPseek(accrec_t * access_rec, int32 offset, int origin)
+HBPseek(accrec_t *access_rec, int32 offset, int origin)
 {
-    int32     ret_value = SUCCEED;
-    CONSTR(FUNC, "HBPseek");    /* for HERROR */
+    int32 ret_value = SUCCEED;
+    CONSTR(FUNC, "HBPseek"); /* for HERROR */
 
     /* Adjust offset according to origin.  There is no upper bound to posn */
     if (origin == DF_CURRENT)
         offset += access_rec->posn;
     if (origin == DF_END)
-        offset += ((bufinfo_t *) (access_rec->special_info))->length;
+        offset += ((bufinfo_t *)(access_rec->special_info))->length;
     if (offset < 0)
         HGOTO_ERROR(DFE_RANGE, FAIL);
 
@@ -283,15 +271,14 @@ HBPseek(accrec_t * access_rec, int32 offset, int origin)
     access_rec->posn = offset;
 
 done:
-  if(ret_value == FAIL)   
-    { /* Error condition cleanup */
+    if (ret_value == FAIL) { /* Error condition cleanup */
 
     } /* end if */
 
-  /* Normal function cleanup */
+    /* Normal function cleanup */
 
-  return ret_value;
-}   /* HBPseek */
+    return ret_value;
+} /* HBPseek */
 
 /* ------------------------------ HBPread ------------------------------- */
 /*
@@ -311,12 +298,12 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------*/
 int32
-HBPread(accrec_t * access_rec, int32 length, void * data)
+HBPread(accrec_t *access_rec, int32 length, void *data)
 {
-    CONSTR(FUNC, "HBPread");    /* for HERROR */
-    bufinfo_t  *info =          /* information on the special element */
-        (bufinfo_t *) access_rec->special_info;
-    int32    ret_value = SUCCEED;
+    CONSTR(FUNC, "HBPread"); /* for HERROR */
+    bufinfo_t *info =        /* information on the special element */
+        (bufinfo_t *)access_rec->special_info;
+    int32 ret_value = SUCCEED;
 
     /* validate length */
     if (length < 0)
@@ -329,7 +316,7 @@ HBPread(accrec_t * access_rec, int32 length, void * data)
         HGOTO_ERROR(DFE_RANGE, FAIL);
 
     /* Copy data from buffer */
-    HDmemcpy(data,info->buf+access_rec->posn,length);
+    HDmemcpy(data, info->buf + access_rec->posn, length);
 
     /* adjust access position */
     access_rec->posn += length;
@@ -337,15 +324,14 @@ HBPread(accrec_t * access_rec, int32 length, void * data)
     ret_value = length;
 
 done:
-  if(ret_value == FAIL)   
-    { /* Error condition cleanup */
+    if (ret_value == FAIL) { /* Error condition cleanup */
 
     } /* end if */
 
-  /* Normal function cleanup */
+    /* Normal function cleanup */
 
-  return(ret_value);
-}	/* HBPread */
+    return (ret_value);
+} /* HBPread */
 
 /* ------------------------------ HBPwrite ------------------------------- */
 /*
@@ -363,63 +349,62 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------*/
 int32
-HBPwrite(accrec_t * access_rec, int32 length, const void * data)
+HBPwrite(accrec_t *access_rec, int32 length, const void *data)
 {
-    CONSTR(FUNC, "HBPwrite");   /* for HERROR */
-    bufinfo_t  *info =          /* information on the special element */
-                    (bufinfo_t *) (access_rec->special_info);
-    int32 new_len;              /* new length of object */
-    int32      ret_value = SUCCEED;
+    CONSTR(FUNC, "HBPwrite"); /* for HERROR */
+    bufinfo_t *info =         /* information on the special element */
+        (bufinfo_t *)(access_rec->special_info);
+    int32 new_len; /* new length of object */
+    int32 ret_value = SUCCEED;
 
     /* validate length */
     if (length < 0)
         HGOTO_ERROR(DFE_RANGE, FAIL);
 
     /* Check if the data to write will overrun the buffer and realloc it if so */
-    if(access_rec->posn+length>info->length) {
+    if (access_rec->posn + length > info->length) {
         /* Calc. the new size of the object */
-        new_len=access_rec->posn+length;
+        new_len = access_rec->posn + length;
 
         /* Resize buffer in safe manner */
         /* Realloc should handle this, but the Sun is whining about it... -QAK */
-        if(info->buf==NULL) {
-            if((info->buf = HDmalloc((uint32)new_len))==NULL)
+        if (info->buf == NULL) {
+            if ((info->buf = HDmalloc((uint32)new_len)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
         }
         else {
-            uint8 *temp_buf=info->buf;  /* temporary buffer pointer in case realloc fails */
+            uint8 *temp_buf = info->buf; /* temporary buffer pointer in case realloc fails */
 
-            if((info->buf = HDrealloc(info->buf, (uint32)new_len))==NULL) {
-                info->buf=temp_buf;
+            if ((info->buf = HDrealloc(info->buf, (uint32)new_len)) == NULL) {
+                info->buf = temp_buf;
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
             } /* end if */
         }
 
         /* update length */
-        info->length=new_len;
+        info->length = new_len;
     } /* end if */
-    
+
     /* Copy data to buffer */
-    HDmemcpy(info->buf+access_rec->posn,data,length);
+    HDmemcpy(info->buf + access_rec->posn, data, length);
 
     /* Mark the buffer as modified */
-    info->modified=TRUE;
+    info->modified = TRUE;
 
     /* update access record */
     access_rec->posn += length;
 
-    ret_value = length;    /* return length of bytes written */
+    ret_value = length; /* return length of bytes written */
 
 done:
-  if(ret_value == FAIL)   
-    { /* Error condition cleanup */
+    if (ret_value == FAIL) { /* Error condition cleanup */
 
     } /* end if */
 
-  /* Normal function cleanup */
+    /* Normal function cleanup */
 
-  return(ret_value);
-}	/* HBPwrite */
+    return (ret_value);
+} /* HBPwrite */
 
 /* ------------------------------ HBPinquire ------------------------------ */
 /*
@@ -445,19 +430,18 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------*/
 int32
-HBPinquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
-           uint16 *pref, int32 *plength, int32 *poffset,
+HBPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength, int32 *poffset,
            int32 *pposn, int16 *paccess, int16 *pspecial)
 {
-    CONSTR(FUNC, "HBPinquire");   /* for HERROR */
-    bufinfo_t  *info =          /* special information record */
-        (bufinfo_t *) access_rec->special_info;
-    uint16 data_tag,data_ref;   /* tag/ref of the data we are checking */
-    int32       data_off;		/* offset of the data we are checking */
-    int32    ret_value = SUCCEED;
+    CONSTR(FUNC, "HBPinquire"); /* for HERROR */
+    bufinfo_t *info =           /* special information record */
+        (bufinfo_t *)access_rec->special_info;
+    uint16 data_tag, data_ref; /* tag/ref of the data we are checking */
+    int32  data_off;           /* offset of the data we are checking */
+    int32  ret_value = SUCCEED;
 
     /* Get the data's offset & length */
-    if(HTPinquire(info->buf_access_rec->ddid,&data_tag,&data_ref,&data_off,NULL)==FAIL)
+    if (HTPinquire(info->buf_access_rec->ddid, &data_tag, &data_ref, &data_off, NULL) == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     /* fill in the variables if they are present */
@@ -468,7 +452,7 @@ HBPinquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
     if (pref)
         *pref = data_ref;
     if (plength)
-        *plength = info->length;    /* pass along our value, which might be different from that on disk */
+        *plength = info->length; /* pass along our value, which might be different from that on disk */
     if (poffset)
         *poffset = data_off;
     if (pposn)
@@ -479,15 +463,14 @@ HBPinquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
         *pspecial = (int16)access_rec->special;
 
 done:
-  if(ret_value == FAIL)   
-    { /* Error condition cleanup */
+    if (ret_value == FAIL) { /* Error condition cleanup */
 
     } /* end if */
 
-  /* Normal function cleanup */
+    /* Normal function cleanup */
 
     return ret_value;
-}	/* HBPinquire */
+} /* HBPinquire */
 
 /* ----------------------------- HBPendaccess ----------------------------- */
 /*
@@ -503,10 +486,10 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------*/
 intn
-HBPendaccess(accrec_t * access_rec)
+HBPendaccess(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HBPendaccess");   /* for HERROR */
-    intn     ret_value = SUCCEED;
+    CONSTR(FUNC, "HBPendaccess"); /* for HERROR */
+    intn ret_value = SUCCEED;
 
     /* validate argument */
     if (access_rec == NULL)
@@ -520,16 +503,15 @@ HBPendaccess(accrec_t * access_rec)
     HIrelease_accrec_node(access_rec);
 
 done:
-  if(ret_value == FAIL)   
-    { /* Error condition cleanup */
-      if(access_rec!=NULL)
-          HIrelease_accrec_node(access_rec);
+    if (ret_value == FAIL) { /* Error condition cleanup */
+        if (access_rec != NULL)
+            HIrelease_accrec_node(access_rec);
     } /* end if */
 
-  /* Normal function cleanup */
+    /* Normal function cleanup */
 
-  return ret_value; 
-}	/* HBPendaccess */
+    return ret_value;
+} /* HBPendaccess */
 
 /* ----------------------------- HBPcloseAID ------------------------------ */
 /*
@@ -551,23 +533,22 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------*/
 int32
-HBPcloseAID(accrec_t * access_rec)
+HBPcloseAID(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HBPcloseAID");    /* for HERROR */
-    bufinfo_t  *info =          /* special information record */
-        (bufinfo_t *) access_rec->special_info;
-    int32      ret_value = SUCCEED;
+    CONSTR(FUNC, "HBPcloseAID"); /* for HERROR */
+    bufinfo_t *info =            /* special information record */
+        (bufinfo_t *)access_rec->special_info;
+    int32 ret_value = SUCCEED;
 
     /* detach the special information record.
        If no more references to that, free the record */
 
-    if (--(info->attached) == 0)
-      {
+    if (--(info->attached) == 0) {
         /* Flush the data if it's been modified */
-        if(info->modified) {
+        if (info->modified) {
             if (Hwrite(info->buf_aid, info->length, info->buf) == FAIL)
                 HGOTO_ERROR(DFE_WRITEERROR, FAIL);
-          } /* end if */
+        } /* end if */
 
         /* Free the memory buffer */
         HDfree(info->buf);
@@ -577,18 +558,17 @@ HBPcloseAID(accrec_t * access_rec)
 
         HDfree(info);
         access_rec->special_info = NULL;
-      }
+    }
 
 done:
-  if(ret_value == FAIL)   
-    { /* Error condition cleanup */
+    if (ret_value == FAIL) { /* Error condition cleanup */
 
     } /* end if */
 
-  /* Normal function cleanup */
+    /* Normal function cleanup */
 
-    return(ret_value);
-}   /* HBPcloseAID */
+    return (ret_value);
+} /* HBPcloseAID */
 
 /* ------------------------------- HBPinfo -------------------------------- */
 /*
@@ -597,21 +577,21 @@ NAME
 USAGE
    int32 HBPinfo(access_rec, info_block)
        accrec_t        * access_rec; IN: access record of element
-       sp_info_block_t * info_block; OUT: information about the special element 
+       sp_info_block_t * info_block; OUT: information about the special element
 RETURNS
    SUCCEED / FAIL
 DESCRIPTION
    Return information about the given external element.  Info_block is
-   assumed to be non-NULL.  
+   assumed to be non-NULL.
 
    --------------------------------------------------------------------------- */
 int32
-HBPinfo(accrec_t * access_rec, sp_info_block_t * info_block)
+HBPinfo(accrec_t *access_rec, sp_info_block_t *info_block)
 {
-    CONSTR(FUNC, "HBPinfo");    /* for HERROR */
-    bufinfo_t  *info =          /* special information record */
-        (bufinfo_t *) access_rec->special_info;
-    int32      ret_value = SUCCEED;
+    CONSTR(FUNC, "HBPinfo"); /* for HERROR */
+    bufinfo_t *info =        /* special information record */
+        (bufinfo_t *)access_rec->special_info;
+    int32 ret_value = SUCCEED;
 
     /* validate access record */
     if (access_rec->special != SPECIAL_BUFFERED)
@@ -623,13 +603,11 @@ HBPinfo(accrec_t * access_rec, sp_info_block_t * info_block)
     info_block->buf_aid = info->buf_aid;
 
 done:
-  if(ret_value == FAIL)   
-    { /* Error condition cleanup */
+    if (ret_value == FAIL) { /* Error condition cleanup */
 
     } /* end if */
 
-  /* Normal function cleanup */
+    /* Normal function cleanup */
 
-  return(ret_value);
-}   /* HBPinfo */
-
+    return (ret_value);
+} /* HBPinfo */

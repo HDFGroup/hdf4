@@ -34,8 +34,6 @@ extern jboolean getNewCompInfo(JNIEnv *env, jobject ciobj, comp_info *cinf);
 extern jboolean setNewCompInfo(JNIEnv *env, jobject ciobj, comp_coder_t coder, comp_info *cinf);
 extern jboolean getChunkInfo(JNIEnv *env, jobject chunkobj, HDF_CHUNK_DEF *cinf);
 
-
-
 JNIEXPORT jlong JNICALL
 Java_hdf_hdflib_HDFLibrary_GRstart(JNIEnv *env, jclass clss, jlong file_id)
 {
@@ -57,7 +55,7 @@ Java_hdf_hdflib_HDFLibrary_GRend(JNIEnv *env, jclass clss, jlong gr_id)
 
     UNUSED(clss);
 
-    if ((rval = GRend((int32) gr_id)) == FAIL)
+    if ((rval = GRend((int32)gr_id)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -71,7 +69,7 @@ Java_hdf_hdflib_HDFLibrary_GRendaccess(JNIEnv *env, jclass clss, jlong gr_id)
 
     UNUSED(clss);
 
-    if ((rval =  GRendaccess((int32) gr_id)) == FAIL)
+    if ((rval = GRendaccess((int32)gr_id)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -81,7 +79,7 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_GRfileinfo(JNIEnv *env, jclass clss, jlong gr_id, jintArray argv)
 {
-    intn     rval = FAIL;
+    intn     rval    = FAIL;
     jint    *theArgs = NULL;
     jboolean isCopy; /*  dummy */
 
@@ -111,7 +109,7 @@ Java_hdf_hdflib_HDFLibrary_GRselect(JNIEnv *env, jclass clss, jlong gr_id, jint 
 
     UNUSED(clss);
 
-    if ((rval = GRselect((int32)gr_id, (int32) index)) < 0)
+    if ((rval = GRselect((int32)gr_id, (int32)index)) < 0)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -122,7 +120,7 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_GRnametoindex(JNIEnv *env, jclass clss, jlong gr_id, jstring gr_name)
 {
     int32       rval = -1;
-    const char *str = NULL;
+    const char *str  = NULL;
 
     UNUSED(clss);
 
@@ -142,7 +140,8 @@ done:
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRgetchunkinfo(JNIEnv *env, jclass clss, jlong grsid, jobject chunk_def, jintArray cflags)
+Java_hdf_hdflib_HDFLibrary_GRgetchunkinfo(JNIEnv *env, jclass clss, jlong grsid, jobject chunk_def,
+                                          jintArray cflags)
 {
     int32         rval = FAIL;
     HDF_CHUNK_DEF cdef;
@@ -157,7 +156,7 @@ Java_hdf_hdflib_HDFLibrary_GRgetchunkinfo(JNIEnv *env, jclass clss, jlong grsid,
 
     PIN_INT_ARRAY(ENVONLY, cflags, flgs, &isCopy, "GRgetchunkinfo:  cflags not pinned");
 
-    if ((rval = GRgetchunkinfo( (int32)grsid, &cdef, (int32 *)&(flgs[0]))) == FAIL)
+    if ((rval = GRgetchunkinfo((int32)grsid, &cdef, (int32 *)&(flgs[0]))) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
     stat = JNI_TRUE;
@@ -170,22 +169,23 @@ done:
     if (flgs)
         UNPIN_INT_ARRAY(ENVONLY, cflags, flgs, (rval = FAIL) ? JNI_ABORT : 0);
 
-    return stat/*JNI_TRUE*/;
+    return stat /*JNI_TRUE*/;
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRgetiminfo(JNIEnv *env, jclass clss, jlong ri_id, jobjectArray gr_name, jintArray argv, jintArray dim_sizes)
+Java_hdf_hdflib_HDFLibrary_GRgetiminfo(JNIEnv *env, jclass clss, jlong ri_id, jobjectArray gr_name,
+                                       jintArray argv, jintArray dim_sizes)
 {
-    intn     rval = FAIL;
-    jint    *dims = NULL;
+    intn     rval    = FAIL;
+    jint    *dims    = NULL;
     jint    *theArgs = NULL;
-    char    *data = NULL;
+    char    *data    = NULL;
     jstring  rstring;
     jboolean isCopy;
 
     UNUSED(clss);
 
-    if ((data = (char *)HDmalloc(H4_MAX_GR_NAME+1)) == NULL)
+    if ((data = (char *)HDmalloc(H4_MAX_GR_NAME + 1)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "GRgetiminfo: failed to allocate data buffer");
 
     if (gr_name == NULL)
@@ -206,9 +206,8 @@ Java_hdf_hdflib_HDFLibrary_GRgetiminfo(JNIEnv *env, jclass clss, jlong ri_id, jo
     PIN_INT_ARRAY(ENVONLY, dim_sizes, dims, &isCopy, "GRgetiminfo:  dim_sizes not pinned");
     PIN_INT_ARRAY(ENVONLY, argv, theArgs, &isCopy, "GRgetiminfo:  argv not pinned");
 
-    if ((rval = GRgetiminfo((int32) ri_id, (char *)data, (int32 *)&(theArgs[0]),
-            (int32 *)&(theArgs[1]), (int32 *)&(theArgs[2]), (int32 *)dims,
-            (int32 *)&(theArgs[3]))) == FAIL)
+    if ((rval = GRgetiminfo((int32)ri_id, (char *)data, (int32 *)&(theArgs[0]), (int32 *)&(theArgs[1]),
+                            (int32 *)&(theArgs[2]), (int32 *)dims, (int32 *)&(theArgs[3]))) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
     data[H4_MAX_GR_NAME] = '\0';
@@ -232,15 +231,15 @@ done:
     return JNI_TRUE;
 }
 
-
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRreadimage(JNIEnv *env, jclass clss, jlong ri_id, jintArray start, jintArray stride, jintArray edge, jbyteArray data)
+Java_hdf_hdflib_HDFLibrary_GRreadimage(JNIEnv *env, jclass clss, jlong ri_id, jintArray start,
+                                       jintArray stride, jintArray edge, jbyteArray data)
 {
     intn     rval = FAIL;
-    jbyte   *arr = NULL;
+    jbyte   *arr  = NULL;
     jint    *strt = NULL;
     jint    *strd = NULL;
-    jint    *edg = NULL;
+    jint    *edg  = NULL;
     jboolean isCopy;
 
     UNUSED(clss);
@@ -265,8 +264,7 @@ Java_hdf_hdflib_HDFLibrary_GRreadimage(JNIEnv *env, jclass clss, jlong ri_id, ji
     else
         PIN_INT_ARRAY(ENVONLY, stride, strd, &isCopy, "GRreadimage:  stride not pinned");
 
-    if ((rval = GRreadimage((int32)ri_id, (int32 *)strt, (int32 *)strd,
-            (int32 *)edg, (VOIDP)arr)) == FAIL)
+    if ((rval = GRreadimage((int32)ri_id, (int32 *)strt, (int32 *)strd, (int32 *)edg, (VOIDP)arr)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -289,7 +287,7 @@ Java_hdf_hdflib_HDFLibrary_GRidtoref(JNIEnv *env, jclass clss, jlong gr_id)
 
     UNUSED(clss);
 
-    if ((rval = GRidtoref((int32) gr_id)) <= 0)
+    if ((rval = GRidtoref((int32)gr_id)) <= 0)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -303,7 +301,7 @@ Java_hdf_hdflib_HDFLibrary_GRreftoindex(JNIEnv *env, jclass clss, jlong gr_id, j
 
     UNUSED(clss);
 
-    if ((rval = GRreftoindex((int32) gr_id, (uint16)ref)) < 0)
+    if ((rval = GRreftoindex((int32)gr_id, (uint16)ref)) < 0)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -317,7 +315,7 @@ Java_hdf_hdflib_HDFLibrary_GRreqlutil(JNIEnv *env, jclass clss, jlong gr_id, jin
 
     UNUSED(clss);
 
-    if ((rval = GRreqlutil((int32) gr_id, (intn)interlace_mode)) == FAIL)
+    if ((rval = GRreqlutil((int32)gr_id, (intn)interlace_mode)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -331,7 +329,7 @@ Java_hdf_hdflib_HDFLibrary_GRreqimageil(JNIEnv *env, jclass clss, jlong gr_id, j
 
     UNUSED(clss);
 
-    if ((rval = GRreqimageil((int32) gr_id, (intn)interlace_mode)) == FAIL)
+    if ((rval = GRreqimageil((int32)gr_id, (intn)interlace_mode)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -345,7 +343,7 @@ Java_hdf_hdflib_HDFLibrary_GRgetlutid(JNIEnv *env, jclass clss, jlong gr_id, jin
 
     UNUSED(clss);
 
-    if ((rval = GRgetlutid((int32) gr_id, (int32)index)) < 0)
+    if ((rval = GRgetlutid((int32)gr_id, (int32)index)) < 0)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -359,7 +357,7 @@ Java_hdf_hdflib_HDFLibrary_GRgetnluts(JNIEnv *env, jclass clss, jlong gr_id)
 
     UNUSED(clss);
 
-    if ((rval = GRgetnluts((int32) gr_id)) < 0)
+    if ((rval = GRgetnluts((int32)gr_id)) < 0)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -369,7 +367,7 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_GRgetlutinfo(JNIEnv *env, jclass clss, jlong ri_id, jintArray argv)
 {
-    intn     rval = FAIL;
+    intn     rval    = FAIL;
     jint    *theArgs = NULL;
     jboolean isCopy;
 
@@ -382,9 +380,8 @@ Java_hdf_hdflib_HDFLibrary_GRgetlutinfo(JNIEnv *env, jclass clss, jlong ri_id, j
 
     PIN_INT_ARRAY(ENVONLY, argv, theArgs, &isCopy, "GRgetlutinfo:  argv not pinned");
 
-    if ((rval = GRgetlutinfo((int32)ri_id, (int32 *)&(theArgs[0]),
-                (int32 *)&(theArgs[1]), (int32 *)&(theArgs[2]),
-                (int32 *)&(theArgs[3]))) == FAIL)
+    if ((rval = GRgetlutinfo((int32)ri_id, (int32 *)&(theArgs[0]), (int32 *)&(theArgs[1]),
+                             (int32 *)&(theArgs[2]), (int32 *)&(theArgs[3]))) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -398,7 +395,7 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_GRreadlut(JNIEnv *env, jclass clss, jlong pal_id, jbyteArray pal_data)
 {
     intn     rval = FAIL;
-    jbyte   *arr = NULL;
+    jbyte   *arr  = NULL;
     jboolean isCopy;
 
     UNUSED(clss);
@@ -408,7 +405,7 @@ Java_hdf_hdflib_HDFLibrary_GRreadlut(JNIEnv *env, jclass clss, jlong pal_id, jby
 
     PIN_BYTE_ARRAY(ENVONLY, pal_data, arr, &isCopy, "GRreadlut:  pal_data not pinned");
 
-    if ((rval = GRreadlut((int32) pal_id, (VOIDP)arr)) == FAIL)
+    if ((rval = GRreadlut((int32)pal_id, (VOIDP)arr)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -419,10 +416,11 @@ done:
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRattrinfo(JNIEnv *env, jclass clss, jlong gr_id, jint attr_index, jobjectArray name, jintArray argv)
+Java_hdf_hdflib_HDFLibrary_GRattrinfo(JNIEnv *env, jclass clss, jlong gr_id, jint attr_index,
+                                      jobjectArray name, jintArray argv)
 {
-    int32    rval = FAIL;
-    char    *data = NULL;
+    int32    rval    = FAIL;
+    char    *data    = NULL;
     jint    *theArgs = NULL;
     jstring  rstring;
     jboolean isCopy;
@@ -430,7 +428,7 @@ Java_hdf_hdflib_HDFLibrary_GRattrinfo(JNIEnv *env, jclass clss, jlong gr_id, jin
     UNUSED(clss);
 
     /* check for out of memory error ... */
-    if ((data = (char *)HDmalloc(H4_MAX_GR_NAME+1)) == NULL)
+    if ((data = (char *)HDmalloc(H4_MAX_GR_NAME + 1)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "GRattrinfo: failed to allocate data buffer");
 
     if (name == NULL)
@@ -444,8 +442,8 @@ Java_hdf_hdflib_HDFLibrary_GRattrinfo(JNIEnv *env, jclass clss, jlong gr_id, jin
 
     PIN_INT_ARRAY(ENVONLY, argv, theArgs, &isCopy, "GRattrinfo:  argv not pinned");
 
-    if ((rval = GRattrinfo((int32)gr_id, (int32)attr_index,
-            (char *)data, (int32 *)&(theArgs[0]), (int32 *)&(theArgs[1]))) == FAIL)
+    if ((rval = GRattrinfo((int32)gr_id, (int32)attr_index, (char *)data, (int32 *)&(theArgs[0]),
+                           (int32 *)&(theArgs[1]))) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
     data[H4_MAX_GR_NAME] = '\0';
@@ -468,10 +466,11 @@ done:
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRgetattr(JNIEnv *env, jclass clss, jlong gr_id, jint attr_index, jbyteArray values)
+Java_hdf_hdflib_HDFLibrary_GRgetattr(JNIEnv *env, jclass clss, jlong gr_id, jint attr_index,
+                                     jbyteArray values)
 {
     intn     rval = FAIL;
-    jbyte   *arr = NULL;
+    jbyte   *arr  = NULL;
     jboolean isCopy;
 
     UNUSED(clss);
@@ -481,7 +480,7 @@ Java_hdf_hdflib_HDFLibrary_GRgetattr(JNIEnv *env, jclass clss, jlong gr_id, jint
 
     PIN_BYTE_ARRAY(ENVONLY, values, arr, &isCopy, "GRgetattr:  values not pinned");
 
-    if ((rval = GRgetattr((int32)gr_id, (int32)attr_index,  (VOIDP)arr)) == FAIL)
+    if ((rval = GRgetattr((int32)gr_id, (int32)attr_index, (VOIDP)arr)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -495,7 +494,7 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_GRfindattr(JNIEnv *env, jclass clss, jlong gr_id, jstring attr_name)
 {
     int32       rval = -1;
-    const char *str = NULL;
+    const char *str  = NULL;
 
     UNUSED(clss);
 
@@ -515,11 +514,12 @@ done:
 }
 
 JNIEXPORT jlong JNICALL
-Java_hdf_hdflib_HDFLibrary_GRcreate(JNIEnv *env, jclass clss, jlong gr_id, jstring name, jint ncomp, jlong data_type, jint interlace_mode, jintArray dim_sizes)
+Java_hdf_hdflib_HDFLibrary_GRcreate(JNIEnv *env, jclass clss, jlong gr_id, jstring name, jint ncomp,
+                                    jlong data_type, jint interlace_mode, jintArray dim_sizes)
 {
     int32       rval = -1;
     jint       *dims = NULL;
-    const char *str = NULL;
+    const char *str  = NULL;
     jboolean    isCopy;
 
     UNUSED(clss);
@@ -535,8 +535,8 @@ Java_hdf_hdflib_HDFLibrary_GRcreate(JNIEnv *env, jclass clss, jlong gr_id, jstri
     PIN_JAVA_STRING(ENVONLY, name, str, NULL, "GRcreate:  name not pinned");
     PIN_INT_ARRAY(ENVONLY, dim_sizes, dims, &isCopy, "GRcreate:  dim_sizes not pinned");
 
-    if ((rval = GRcreate( (int32)gr_id, str, (int32)ncomp,
-            (int32)data_type, (int32)interlace_mode, (int32 *)dims)) < 0)
+    if ((rval = GRcreate((int32)gr_id, str, (int32)ncomp, (int32)data_type, (int32)interlace_mode,
+                         (int32 *)dims)) < 0)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -548,7 +548,6 @@ done:
     return (jlong)rval;
 }
 
-
 JNIEXPORT jshort JNICALL
 Java_hdf_hdflib_HDFLibrary_GRluttoref(JNIEnv *env, jclass clss, jlong pal_id)
 {
@@ -556,20 +555,20 @@ Java_hdf_hdflib_HDFLibrary_GRluttoref(JNIEnv *env, jclass clss, jlong pal_id)
 
     UNUSED(clss);
 
-    if ((rval = GRluttoref((int32) pal_id)) <= 0)
+    if ((rval = GRluttoref((int32)pal_id)) <= 0)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
     return (jshort)rval;
 }
 
-
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRsetattr__JLjava_lang_String_2JILjava_lang_String_2(JNIEnv *env, jclass clss, jlong gr_id, jstring attr_name, jlong data_type, jint count, jstring values)
+Java_hdf_hdflib_HDFLibrary_GRsetattr__JLjava_lang_String_2JILjava_lang_String_2(
+    JNIEnv *env, jclass clss, jlong gr_id, jstring attr_name, jlong data_type, jint count, jstring values)
 {
     intn        rval = FAIL;
-    const char *str = NULL;
-    const char *val = NULL;
+    const char *str  = NULL;
+    const char *val  = NULL;
 
     UNUSED(clss);
 
@@ -595,11 +594,13 @@ done:
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRsetattr__JLjava_lang_String_2JI_3B(JNIEnv *env, jclass clss, jlong gr_id, jstring attr_name, jlong data_type, jint count, jbyteArray values)
+Java_hdf_hdflib_HDFLibrary_GRsetattr__JLjava_lang_String_2JI_3B(JNIEnv *env, jclass clss, jlong gr_id,
+                                                                jstring attr_name, jlong data_type,
+                                                                jint count, jbyteArray values)
 {
     intn        rval = FAIL;
-    jbyte      *arr = NULL;
-    const char *str = NULL;
+    jbyte      *arr  = NULL;
+    const char *str  = NULL;
     jboolean    isCopy;
 
     UNUSED(clss);
@@ -625,9 +626,9 @@ done:
     return JNI_TRUE;
 }
 
-
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRsetcompress(JNIEnv *env, jclass clss, jlong ri_id, jint comp_type, jobject c_info)
+Java_hdf_hdflib_HDFLibrary_GRsetcompress(JNIEnv *env, jclass clss, jlong ri_id, jint comp_type,
+                                         jobject c_info)
 {
     intn      rval = FAIL;
     comp_info cinf;
@@ -705,7 +706,7 @@ Java_hdf_hdflib_HDFLibrary_GRsetchunk(JNIEnv *env, jclass clss, jlong sdsid, job
     if (!getChunkInfo(env, chunk_def, &c_def))
         H4_JNI_FATAL_ERROR(ENVONLY, "GRsetchunk:  chunk_def not initialized");
 
-    if ((rval = GRsetchunk ((int32)sdsid, c_def, (int32)flags)) == FAIL)
+    if ((rval = GRsetchunk((int32)sdsid, c_def, (int32)flags)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -727,10 +728,11 @@ done:
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRsetexternalfile(JNIEnv *env, jclass clss, jlong ri_id, jstring filename, jint offset)
+Java_hdf_hdflib_HDFLibrary_GRsetexternalfile(JNIEnv *env, jclass clss, jlong ri_id, jstring filename,
+                                             jint offset)
 {
     intn        rval = FAIL;
-    const char *str = NULL;
+    const char *str  = NULL;
 
     UNUSED(clss);
 
@@ -740,7 +742,7 @@ Java_hdf_hdflib_HDFLibrary_GRsetexternalfile(JNIEnv *env, jclass clss, jlong ri_
     PIN_JAVA_STRING(ENVONLY, filename, str, NULL, "GRsetexternalfile:  filename not pinned");
 
     if ((rval = GRsetexternalfile((int32)ri_id, str, (int32)offset)) == FAIL)
-            H4_LIBRARY_ERROR(ENVONLY);
+        H4_LIBRARY_ERROR(ENVONLY);
 
 done:
     if (str)
@@ -750,14 +752,14 @@ done:
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRwriteimage(JNIEnv *env, jclass clss, jlong ri_id,
-        jintArray start, jintArray stride, jintArray edge, jbyteArray data)
+Java_hdf_hdflib_HDFLibrary_GRwriteimage(JNIEnv *env, jclass clss, jlong ri_id, jintArray start,
+                                        jintArray stride, jintArray edge, jbyteArray data)
 {
     intn     rval = FAIL;
-    jbyte   *arr = NULL;
+    jbyte   *arr  = NULL;
     jint    *strt = NULL;
     jint    *strd = NULL;
-    jint    *edg = NULL;
+    jint    *edg  = NULL;
     jboolean isCopy;
 
     UNUSED(clss);
@@ -782,8 +784,7 @@ Java_hdf_hdflib_HDFLibrary_GRwriteimage(JNIEnv *env, jclass clss, jlong ri_id,
     else
         PIN_INT_ARRAY(ENVONLY, stride, strd, &isCopy, "GRwriteimage:  stride not pinned");
 
-    if ((rval = GRwriteimage((int32)ri_id, (int32 *)strt, (int32 *)strd,
-            (int32 *)edg, (VOIDP)arr)) == FAIL)
+    if ((rval = GRwriteimage((int32)ri_id, (int32 *)strt, (int32 *)strd, (int32 *)edg, (VOIDP)arr)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -800,10 +801,11 @@ done:
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRwritelut(JNIEnv *env, jclass clss, jlong pal_id, jint ncomp, jint data_type, jint interlace, jint num_entries, jbyteArray pal_data)
+Java_hdf_hdflib_HDFLibrary_GRwritelut(JNIEnv *env, jclass clss, jlong pal_id, jint ncomp, jint data_type,
+                                      jint interlace, jint num_entries, jbyteArray pal_data)
 {
     intn     rval = FAIL;
-    jbyte   *arr = NULL;
+    jbyte   *arr  = NULL;
     jboolean isCopy;
 
     UNUSED(clss);
@@ -813,8 +815,8 @@ Java_hdf_hdflib_HDFLibrary_GRwritelut(JNIEnv *env, jclass clss, jlong pal_id, ji
 
     PIN_BYTE_ARRAY(ENVONLY, pal_data, arr, &isCopy, "GRwritelut:  pal_data not pinned");
 
-    if ((rval = GRwritelut((int32)pal_id, (int32)ncomp, (int32)data_type,
-            (int32)interlace, (int32)num_entries, (VOIDP)arr)) == FAIL)
+    if ((rval = GRwritelut((int32)pal_id, (int32)ncomp, (int32)data_type, (int32)interlace,
+                           (int32)num_entries, (VOIDP)arr)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -828,8 +830,8 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_GRreadchunk(JNIEnv *env, jclass clss, jlong grid, jintArray origin, jbyteArray dat)
 {
     int32    rval = FAIL;
-    jbyte   *arr = NULL;
-    jint    *org = NULL;
+    jbyte   *arr  = NULL;
+    jint    *org  = NULL;
     jboolean isCopy;
 
     UNUSED(clss);
@@ -845,7 +847,7 @@ Java_hdf_hdflib_HDFLibrary_GRreadchunk(JNIEnv *env, jclass clss, jlong grid, jin
     PIN_INT_ARRAY(ENVONLY, origin, org, &isCopy, "GRreadchunk:  origin not pinned");
 
     if ((rval = GRreadchunk((int32)grid, (int32 *)org, arr)) == FAIL)
-            H4_LIBRARY_ERROR(ENVONLY);
+        H4_LIBRARY_ERROR(ENVONLY);
 
 done:
     if (org)
@@ -857,11 +859,12 @@ done:
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRwritechunk(JNIEnv *env, jclass clss, jlong grid, jintArray origin, jbyteArray dat)
+Java_hdf_hdflib_HDFLibrary_GRwritechunk(JNIEnv *env, jclass clss, jlong grid, jintArray origin,
+                                        jbyteArray dat)
 {
     int32    rval = FAIL;
-    jbyte   *arr = NULL;
-    jint    *org = NULL;
+    jbyte   *arr  = NULL;
+    jint    *org  = NULL;
     jboolean isCopy;
 
     UNUSED(clss);

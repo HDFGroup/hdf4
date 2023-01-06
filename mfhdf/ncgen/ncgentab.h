@@ -35,61 +35,57 @@
 
 /* Tokens.  */
 #ifndef YYTOKENTYPE
-# define YYTOKENTYPE
-   /* Put the tokens into the symbol table, so that GDB and other debuggers
-      know about them.  */
-   enum yytokentype {
-     NC_UNLIMITED_K = 258,
-     BYTE_K = 259,
-     CHAR_K = 260,
-     SHORT_K = 261,
-     LONG_K = 262,
-     FLOAT_K = 263,
-     DOUBLE_K = 264,
-     IDENT = 265,
-     TERMSTRING = 266,
-     BYTE_CONST = 267,
-     CHAR_CONST = 268,
-     SHORT_CONST = 269,
-     LONG_CONST = 270,
-     FLOAT_CONST = 271,
-     DOUBLE_CONST = 272,
-     DIMENSIONS = 273,
-     VARIABLES = 274,
-     NETCDF = 275,
-     DATA = 276
-   };
+#define YYTOKENTYPE
+/* Put the tokens into the symbol table, so that GDB and other debuggers
+   know about them.  */
+enum yytokentype {
+    NC_UNLIMITED_K = 258,
+    BYTE_K         = 259,
+    CHAR_K         = 260,
+    SHORT_K        = 261,
+    LONG_K         = 262,
+    FLOAT_K        = 263,
+    DOUBLE_K       = 264,
+    IDENT          = 265,
+    TERMSTRING     = 266,
+    BYTE_CONST     = 267,
+    CHAR_CONST     = 268,
+    SHORT_CONST    = 269,
+    LONG_CONST     = 270,
+    FLOAT_CONST    = 271,
+    DOUBLE_CONST   = 272,
+    DIMENSIONS     = 273,
+    VARIABLES      = 274,
+    NETCDF         = 275,
+    DATA           = 276
+};
 #endif
 /* Tokens.  */
 #define NC_UNLIMITED_K 258
-#define BYTE_K 259
-#define CHAR_K 260
-#define SHORT_K 261
-#define LONG_K 262
-#define FLOAT_K 263
-#define DOUBLE_K 264
-#define IDENT 265
-#define TERMSTRING 266
-#define BYTE_CONST 267
-#define CHAR_CONST 268
-#define SHORT_CONST 269
-#define LONG_CONST 270
-#define FLOAT_CONST 271
-#define DOUBLE_CONST 272
-#define DIMENSIONS 273
-#define VARIABLES 274
-#define NETCDF 275
-#define DATA 276
+#define BYTE_K         259
+#define CHAR_K         260
+#define SHORT_K        261
+#define LONG_K         262
+#define FLOAT_K        263
+#define DOUBLE_K       264
+#define IDENT          265
+#define TERMSTRING     266
+#define BYTE_CONST     267
+#define CHAR_CONST     268
+#define SHORT_CONST    269
+#define LONG_CONST     270
+#define FLOAT_CONST    271
+#define DOUBLE_CONST   272
+#define DIMENSIONS     273
+#define VARIABLES      274
+#define NETCDF         275
+#define DATA           276
 
-
-
-
-#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
-# define yystype YYSTYPE /* obsolescent; will be withdrawn */
-# define YYSTYPE_IS_DECLARED 1
-# define YYSTYPE_IS_TRIVIAL 1
+#if !defined YYSTYPE && !defined YYSTYPE_IS_DECLARED
+typedef int                      YYSTYPE;
+#define yystype             YYSTYPE /* obsolescent; will be withdrawn */
+#define YYSTYPE_IS_DECLARED 1
+#define YYSTYPE_IS_TRIVIAL  1
 #endif
 
 extern YYSTYPE yylval;
-

@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
 #include <ctype.h>
 #include "hkit.h"
 
@@ -46,16 +45,16 @@ DESCRIPTION
    and the string is padded with spaces
 
 ---------------------------------------------------------------------------*/
-intn 
+intn
 HDc2fstr(char *str, intn len)
 {
-    int         i;
+    int i;
 
-    i=(int)HDstrlen(str);
+    i = (int)HDstrlen(str);
     for (; i < len; i++)
         str[i] = ' ';
     return SUCCEED;
-}   /* HDc2fstr */
+} /* HDc2fstr */
 
 /* ----------------------------- HDf2cstring ------------------------------ */
 /*
@@ -76,21 +75,21 @@ DESCRIPTION
 char *
 HDf2cstring(_fcd fdesc, intn len)
 {
-    CONSTR(FUNC, "HDf2cstring");  /* for HERROR */
-    char       *cstr, *str;
-    int         i;
+    CONSTR(FUNC, "HDf2cstring"); /* for HERROR */
+    char *cstr, *str;
+    int   i;
 
     str = _fcdtocp(fdesc);
     /* This should be equivalent to the above test -QAK */
-    for(i=len-1; i>=0 && !isgraph((int)str[i]); i--)
+    for (i = len - 1; i >= 0 && !isgraph((int)str[i]); i--)
         /*EMPTY*/;
-    cstr = (char *) HDmalloc((uint32) (i + 2));
+    cstr = (char *)HDmalloc((uint32)(i + 2));
     if (!cstr)
-	HRETURN_ERROR(DFE_NOSPACE, NULL);
+        HRETURN_ERROR(DFE_NOSPACE, NULL);
     cstr[i + 1] = '\0';
-    HDmemcpy(cstr,str,i+1);
+    HDmemcpy(cstr, str, i + 1);
     return cstr;
-}   /* HDf2cstring */
+} /* HDf2cstring */
 /* ---------------------------- HDpackFstring ----------------------------- */
 /*
 NAME
@@ -111,10 +110,10 @@ DESCRIPTION
    support one of these.
 
 ---------------------------------------------------------------------------*/
-intn 
+intn
 HDpackFstring(char *src, char *dest, intn len)
 {
-    intn        sofar;
+    intn sofar;
 
     for (sofar = 0; (sofar < len) && (*src != '\0'); sofar++)
         *dest++ = *src++;
@@ -123,7 +122,7 @@ HDpackFstring(char *src, char *dest, intn len)
         *dest++ = ' ';
 
     return SUCCEED;
-}	/* HDpackFstring */
+} /* HDpackFstring */
 
 /* ------------------------------- HDflush -------------------------------- */
 /*
@@ -144,12 +143,12 @@ DESCRIPTION
    really doing anything.
 
 ---------------------------------------------------------------------------*/
-intn 
+intn
 HDflush(int32 file_id)
 {
-    CONSTR(FUNC, "HDflush");    /* for HERROR */
+    CONSTR(FUNC, "HDflush"); /* for HERROR */
 
-    filerec_t  *file_rec;
+    filerec_t *file_rec;
 
     file_rec = HAatom_object(file_id);
     if (BADFREC(file_rec))
@@ -158,7 +157,7 @@ HDflush(int32 file_id)
     HI_FLUSH(file_rec->file);
 
     return SUCCEED;
-}	/* HDflush */
+} /* HDflush */
 
 /* ----------------------------- HDgettagdesc ----------------------------- */
 /*
@@ -176,7 +175,7 @@ DESCRIPTION
 const char *
 HDgettagdesc(uint16 tag)
 {
-    intn        i;
+    intn i;
 
     for (i = 0; i < (intn)(sizeof(tag_descriptions) / sizeof(tag_descript_t)); i++)
         if (tag_descriptions[i].tag == tag)
@@ -201,37 +200,33 @@ DESCRIPTION
 char *
 HDgettagsname(uint16 tag)
 {
-    CONSTR(FUNC, "HDgettagsname");  /* for HERROR */
-    char       *ret = NULL;
-    intn        i;
+    CONSTR(FUNC, "HDgettagsname"); /* for HERROR */
+    char *ret = NULL;
+    intn  i;
 
     if (SPECIALTAG(tag))
-        ret = (char *) HDstrdup("Special ");
+        ret = (char *)HDstrdup("Special ");
     tag = BASETAG(tag);
     for (i = 0; i < (intn)(sizeof(tag_descriptions) / sizeof(tag_descript_t)); i++)
-        if (tag_descriptions[i].tag == tag)
-          {
-              if (ret == NULL)
-                  ret = (char *) HDstrdup(tag_descriptions[i].name);
-              else
-                {
-                    char       *t;
+        if (tag_descriptions[i].tag == tag) {
+            if (ret == NULL)
+                ret = (char *)HDstrdup(tag_descriptions[i].name);
+            else {
+                char *t;
 
-                    t = (char *) HDmalloc(HDstrlen(ret) +
-                                    HDstrlen(tag_descriptions[i].name) + 2);
-                    if (t == NULL)
-                      {
-                          HDfree(ret);
-                          HRETURN_ERROR(DFE_NOSPACE, NULL)
-                      }     /* end if */
-                    HDstrcpy(t, ret);
-                    HDstrcat(t, tag_descriptions[i].name);
+                t = (char *)HDmalloc(HDstrlen(ret) + HDstrlen(tag_descriptions[i].name) + 2);
+                if (t == NULL) {
                     HDfree(ret);
-                    ret = t;
-                }   /* end else */
-          }     /* end if */
+                    HRETURN_ERROR(DFE_NOSPACE, NULL)
+                } /* end if */
+                HDstrcpy(t, ret);
+                HDstrcat(t, tag_descriptions[i].name);
+                HDfree(ret);
+                ret = t;
+            } /* end else */
+        }     /* end if */
     return (ret);
-}  /* HDgettagsname */
+} /* HDgettagsname */
 
 /* ----------------------------- HDgettagnum ------------------------------ */
 /*
@@ -246,10 +241,10 @@ DESCRIPTION
    Map a tag name to a statically allocated tag number for it.
 
 ---------------------------------------------------------------------------*/
-intn 
+intn
 HDgettagnum(const char *tag_name)
 {
-    intn        i;
+    intn i;
 
     for (i = 0; i < (intn)(sizeof(tag_descriptions) / sizeof(tag_descript_t)); i++)
         if (0 == HDstrcmp(tag_descriptions[i].name, tag_name))
@@ -273,45 +268,41 @@ DESCRIPTION
 char *
 HDgetNTdesc(int32 nt)
 {
-    CONSTR(FUNC, "HDgetNTdesc");    /* for HERROR */
-    intn        i;
-    char       *ret_desc = NULL;
+    CONSTR(FUNC, "HDgetNTdesc"); /* for HERROR */
+    intn  i;
+    char *ret_desc = NULL;
 
     /* evil hard-coded values */
     if (nt & DFNT_NATIVE)
-        ret_desc = (char *) HDstrdup(nt_descriptions[0].desc);
+        ret_desc = (char *)HDstrdup(nt_descriptions[0].desc);
     else if (nt & DFNT_CUSTOM)
-        ret_desc = (char *) HDstrdup(nt_descriptions[1].desc);
+        ret_desc = (char *)HDstrdup(nt_descriptions[1].desc);
     else if (nt & DFNT_LITEND)
-        ret_desc = (char *) HDstrdup(nt_descriptions[2].desc);
+        ret_desc = (char *)HDstrdup(nt_descriptions[2].desc);
 
-    nt &= DFNT_MASK;    /* mask off unusual format types */
+    nt &= DFNT_MASK; /* mask off unusual format types */
     for (i = 3; i < (intn)(sizeof(nt_descriptions) / sizeof(nt_descript_t)); i++)
-        if (nt_descriptions[i].nt == nt)
-          {
-              if (ret_desc == NULL)
-                  ret_desc = (char *) HDstrdup(nt_descriptions[i].desc);
-              else
-                {
-                    char       *t;
+        if (nt_descriptions[i].nt == nt) {
+            if (ret_desc == NULL)
+                ret_desc = (char *)HDstrdup(nt_descriptions[i].desc);
+            else {
+                char *t;
 
-                    t = (char *) HDmalloc(HDstrlen(ret_desc) +
-                                     HDstrlen(nt_descriptions[i].desc) + 2);
-                    if (t == NULL)
-                      {
-                          HDfree(ret_desc);
-                          HRETURN_ERROR(DFE_NOSPACE, NULL)
-                      }     /* end if */
-                    HDstrcpy(t, ret_desc);
-                    HDstrcat(t, " ");
-                    HDstrcat(t, nt_descriptions[i].desc);
+                t = (char *)HDmalloc(HDstrlen(ret_desc) + HDstrlen(nt_descriptions[i].desc) + 2);
+                if (t == NULL) {
                     HDfree(ret_desc);
-                    ret_desc = t;
-                }   /* end else */
-              return (ret_desc);
-          }     /* end if */
+                    HRETURN_ERROR(DFE_NOSPACE, NULL)
+                } /* end if */
+                HDstrcpy(t, ret_desc);
+                HDstrcat(t, " ");
+                HDstrcat(t, nt_descriptions[i].desc);
+                HDfree(ret_desc);
+                ret_desc = t;
+            } /* end else */
+            return (ret_desc);
+        } /* end if */
     return (NULL);
-}   /* end HDgetNTdesc() */
+} /* end HDgetNTdesc() */
 
 /* ------------------------------- HDfidtoname ------------------------------ */
 /*
@@ -323,7 +314,7 @@ USAGE
 RETURNS
    SUCCEED - pointer to filename / FAIL - NULL
 DESCRIPTION
-   Map a file ID to the filename used to get it.  This is useful for 
+   Map a file ID to the filename used to get it.  This is useful for
    mixing old style single-file interfaces (which take filenames) and
    newer interfaces which use file IDs.
 
@@ -331,12 +322,11 @@ DESCRIPTION
 const char *
 HDfidtoname(int32 file_id)
 {
-    CONSTR(FUNC, "HDfidtoname");    /* for HERROR */
-    filerec_t  *file_rec;
+    CONSTR(FUNC, "HDfidtoname"); /* for HERROR */
+    filerec_t *file_rec;
 
     if ((file_rec = HAatom_object(file_id)) == NULL)
         HRETURN_ERROR(DFE_ARGS, NULL);
 
     return (file_rec->path);
-}   /* HDfidtoname */
-
+} /* HDfidtoname */

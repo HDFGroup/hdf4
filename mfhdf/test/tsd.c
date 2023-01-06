@@ -13,7 +13,7 @@
 
 /****************************************************************************
  * tsd.c - tests SDstart for file with no write permission
-****************************************************************************/
+ ****************************************************************************/
 
 #include "mfhdf.h"
 
@@ -22,13 +22,13 @@
 #include "hdftest.h"
 #include "hfile.h"
 
-#define FILE_NAME     "sdtest.hdf"    /* data file to test ID types */
+#define FILE_NAME "sdtest.hdf" /* data file to test ID types */
 
 extern int
 test_sd()
 {
-    int32     fid;
-    intn      status;
+    int32 fid;
+    intn  status;
 #if defined _WIN32
     int mode;
 #else
@@ -36,7 +36,7 @@ test_sd()
 #endif
 
     FILE *ff;
-    intn      num_errs = 0;         /* number of errors so far */
+    intn  num_errs = 0; /* number of errors so far */
 
     /* Output message about test being performed */
     TESTING("SDstart for file with no write permission (tsd.c)");
@@ -54,7 +54,7 @@ test_sd()
 #if defined _WIN32
     mode = _S_IREAD;
 #else
-    mode =  S_IRUSR;
+    mode = S_IRUSR;
 #endif
 
     status = chmod(FILE_NAME, mode);
@@ -74,13 +74,14 @@ test_sd()
 #if defined _WIN32
     mode = _S_IWRITE;
 #else
-    mode =  S_IWUSR;
+    mode = S_IWUSR;
 #endif
 
     status = chmod(FILE_NAME, mode);
     CHECK(status, FAIL, "chmod");
 
-    if (num_errs == 0) PASSED();
+    if (num_errs == 0)
+        PASSED();
     return num_errs;
-}   /* test_SDAPI_ids */
+} /* test_SDAPI_ids */
 #endif /* HDF */

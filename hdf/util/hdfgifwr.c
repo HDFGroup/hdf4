@@ -11,20 +11,17 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
- 
 /*
- * hdfgifwr.c  - handles writing of GIF files.  
- * 
- * Contains: 
+ * hdfgifwr.c  - handles writing of GIF files.
+ *
+ * Contains:
  *   hdfWriteGIF(fp, pic, ptype, w, h, rmap, gmap, bmap, numcols, colorstyle,
  *            comment)
  *
- * Note: slightly brain-damaged, in that it'll only write non-interlaced 
+ * Note: slightly brain-damaged, in that it'll only write non-interlaced
  *       GIF files (in the interests of speed, or something)
  *
  */
-
-
 
 /*****************************************************************
  * Portions of this code Copyright (C) 1989 by Michael Mauldin.
@@ -47,15 +44,14 @@
  *	James A. Woods          (decvax!ihnp4!ames!jaw)
  *	Joe Orost               (decvax!vax135!petsd!joe)
  *****************************************************************/
- 
 
 #include <stdio.h>
 #include "gif.h"
 #include <stdlib.h>
 #include <string.h>
 
-typedef BYTE		byte;
-typedef long int	count_int;
+typedef BYTE     byte;
+typedef long int count_int;
 
 /* indices into conv24MB */
 #define CONV24_8BIT  0
@@ -73,7 +69,7 @@ typedef long int	count_int;
 #define PIC24 CONV24_24BIT
 
 /* MONO returns total intensity of r,g,b components */
-#define MONO(rd,gn,bl) (((rd)*11 + (gn)*16 + (bl)*5) >> 5)  /*.33R+ .5G+ .17B*/
+#define MONO(rd, gn, bl) (((rd)*11 + (gn)*16 + (bl)*5) >> 5) /*.33R+ .5G+ .17B*/
 
 static int  Width, Height;
 static int  curx, cury;
@@ -94,106 +90,102 @@ static void putword(), compress(), output(), cl_block(), cl_hash();
 static void char_init(), char_out(), flush_char();
 #endif
 
-static byte pc2nc[256],r1[256],g1[256],b1[256];
+static byte pc2nc[256], r1[256], g1[256], b1[256];
 
-void xvbzero(s, len)
-     char *s;
-     int   len;
+void xvbzero(s, len) char *s;
+int  len;
 {
-  for ( ; len>0; len--) *s++ = 0;
+    for (; len > 0; len--)
+        *s++ = 0;
 }
 
 /*************************************************************/
-int hdfWriteGIF(fp, pic, ptype, w, h, rmap, gmap, bmap, pc2ncmap,  numcols, colorstyle, BitsPerPixel)
-    FILE *fp;
-    byte *pic;
-    int   ptype, w,h;
-    byte *rmap, *gmap, *bmap , *pc2ncmap;
-    int   numcols, colorstyle;
-    int	  BitsPerPixel;
+int
+      hdfWriteGIF(fp, pic, ptype, w, h, rmap, gmap, bmap, pc2ncmap, numcols, colorstyle, BitsPerPixel)
+FILE *fp;
+byte *pic;
+int   ptype, w, h;
+byte *rmap, *gmap, *bmap, *pc2ncmap;
+int   numcols, colorstyle;
+int   BitsPerPixel;
 {
-  int   RWidth, RHeight;
-  int   LeftOfs, TopOfs;
-  int   ColorMapSize, InitCodeSize, Background;
-  int   i;
-  byte *pic8;
-  pic8 = pic;
-  
-  Interlace = 0;
-  Background = 0;
-  
-  for (i=0; i<256; i++) { 
-	  pc2nc[i] = pc2ncmap[i];
-	  r1[i] = rmap[i];
-	  g1[i] = gmap[i];
-	  b1[i] = bmap[i];
-  }
+    int   RWidth, RHeight;
+    int   LeftOfs, TopOfs;
+    int   ColorMapSize, InitCodeSize, Background;
+    int   i;
+    byte *pic8;
+    pic8 = pic;
 
-  ColorMapSize = 1 << BitsPerPixel;
-	
-  RWidth  = Width  = w;
-  RHeight = Height = h;
-  LeftOfs = TopOfs = 0;
-	
-  CountDown = w * h;    /* # of pixels we'll be doing */
+    Interlace  = 0;
+    Background = 0;
 
-  if (BitsPerPixel <= 1) InitCodeSize = 2;
-     else InitCodeSize = BitsPerPixel;
+    for (i = 0; i < 256; i++) {
+        pc2nc[i] = pc2ncmap[i];
+        r1[i]    = rmap[i];
+        g1[i]    = gmap[i];
+        b1[i]    = bmap[i];
+    }
 
-  curx = cury = 0;
+    ColorMapSize = 1 << BitsPerPixel;
 
-  if (!fp) {
-    fprintf(stderr,  "WriteGIF: file not open for writing\n" );
-    return (1);
-  }
+    RWidth = Width = w;
+    RHeight = Height = h;
+    LeftOfs = TopOfs = 0;
 
-  compress(InitCodeSize+1, fp, pic8, w*h);
+    CountDown = w * h; /* # of pixels we'll be doing */
 
+    if (BitsPerPixel <= 1)
+        InitCodeSize = 2;
+    else
+        InitCodeSize = BitsPerPixel;
 
-  if (ferror(fp)) return -1;
-  return (0);
+    curx = cury = 0;
+
+    if (!fp) {
+        fprintf(stderr, "WriteGIF: file not open for writing\n");
+        return (1);
+    }
+
+    compress(InitCodeSize + 1, fp, pic8, w * h);
+
+    if (ferror(fp))
+        return -1;
+    return (0);
 }
-
-
-
 
 /******************************/
-static void putword(w, fp)
-int w;
-FILE *fp;
+static void putword(w, fp) int w;
+FILE       *fp;
 {
-  /* writes a 16-bit integer in GIF order (LSB first) */
-  
-  fputc(w &0xff, fp);
-    
-  fputc((w>>8)&0xff,fp);
+    /* writes a 16-bit integer in GIF order (LSB first) */
+
+    fputc(w & 0xff, fp);
+
+    fputc((w >> 8) & 0xff, fp);
 }
-
-
-
 
 /***********************************************************************/
 static unsigned long cur_accum = 0;
-static int           cur_bits = 0;
+static int           cur_bits  = 0;
 
-#define MAXCODE(n_bits)     ( (1 << (n_bits)) - 1)
-#define min(a,b)        ((a>b) ? b : a)
-#define XV_BITS	12    /* BITS was already defined on some systems */
-#define MSDOS	1
-#define HSIZE  5003            /* 80% occupancy */
+#define MAXCODE(n_bits) ((1 << (n_bits)) - 1)
+#define min(a, b)       ((a > b) ? b : a)
+#define XV_BITS         12 /* BITS was already defined on some systems */
+#define MSDOS           1
+#define HSIZE           5003 /* 80% occupancy */
 
-typedef unsigned char   char_type;
-static int n_bits;                    /* number of bits/code */
-static int maxbits = XV_BITS;         /* user settable max # bits/code */
-static int maxcode;                   /* maximum code, given n_bits */
-static int maxmaxcode = 1 << XV_BITS; /* NEVER generate this */
+typedef unsigned char char_type;
+static int            n_bits;                    /* number of bits/code */
+static int            maxbits = XV_BITS;         /* user settable max # bits/code */
+static int            maxcode;                   /* maximum code, given n_bits */
+static int            maxmaxcode = 1 << XV_BITS; /* NEVER generate this */
 
-static  count_int      htab [HSIZE];
-static  unsigned short codetab [HSIZE];
-#define HashTabOf(i)   htab[i]
-#define CodeTabOf(i)   codetab[i]
+static count_int      htab[HSIZE];
+static unsigned short codetab[HSIZE];
+#define HashTabOf(i) htab[i]
+#define CodeTabOf(i) codetab[i]
 
-static int hsize = HSIZE;            /* for dynamic table sizing */
+static int hsize = HSIZE; /* for dynamic table sizing */
 
 /*
  * To save much memory, we overlay the table used by compress() with those
@@ -205,10 +197,10 @@ static int hsize = HSIZE;            /* for dynamic table sizing */
  */
 
 #define tab_prefixof(i) CodeTabOf(i)
-#define tab_suffixof(i)        ((char_type *)(htab))[i]
-#define de_stack               ((char_type *)&tab_suffixof(1<<XV_BITS))
+#define tab_suffixof(i) ((char_type *)(htab))[i]
+#define de_stack        ((char_type *)&tab_suffixof(1 << XV_BITS))
 
-static int free_ent = 0;                  /* first unused entry */
+static int free_ent = 0; /* first unused entry */
 
 /*
  * block compression parameters -- after all codes are used up,
@@ -216,13 +208,13 @@ static int free_ent = 0;                  /* first unused entry */
  */
 static int clear_flg = 0;
 
-static long int in_count = 1;            /* length of input */
-static long int out_count = 0;           /* # of codes output (for debugging) */
+static long int in_count  = 1; /* length of input */
+static long int out_count = 0; /* # of codes output (for debugging) */
 
 /*
  * compress stdin to stdout
  *
- * Algorithm:  use open addressing double hashing (no chaining) on the 
+ * Algorithm:  use open addressing double hashing (no chaining) on the
  * prefix code / next character combination.  We do a variant of Knuth's
  * algorithm D (vol. 3, sec. 6.4) along with G. Knott's relatively-prime
  * secondary probe.  Here, the modular division first probe is gives way
@@ -235,123 +227,122 @@ static long int out_count = 0;           /* # of codes output (for debugging) */
  * questions about this implementation to ames!jaw.
  */
 
-static int g_init_bits;
+static int   g_init_bits;
 static FILE *g_outfile;
 
 static int ClearCode;
 static int EOFCode;
 
 /********************************************************/
-static void compress(init_bits, outfile, data, len)
-int   init_bits;
-FILE *outfile;
-byte *data;
-int   len;
+static void compress(init_bits, outfile, data, len) int init_bits;
+FILE       *outfile;
+byte       *data;
+int         len;
 {
-  register long fcode;
-  register int i = 0;
-  register int c;
-  register int ent;
-  register int disp;
-  register int hsize_reg;
-  register int hshift;
+    register long fcode;
+    register int  i = 0;
+    register int  c;
+    register int  ent;
+    register int  disp;
+    register int  hsize_reg;
+    register int  hshift;
 
-  /*
-   * Set up the globals:  g_init_bits - initial number of bits
-   *                      g_outfile   - pointer to output file
-   */
-  g_init_bits = init_bits;
-  g_outfile   = outfile;
+    /*
+     * Set up the globals:  g_init_bits - initial number of bits
+     *                      g_outfile   - pointer to output file
+     */
+    g_init_bits = init_bits;
+    g_outfile   = outfile;
 
-  /* initialize 'compress' globals */
-  maxbits = XV_BITS;
-  maxmaxcode = 1<<XV_BITS;
-  xvbzero((char *) htab,    sizeof(htab));
-  xvbzero((char *) codetab, sizeof(codetab));
-  hsize = HSIZE;
-  free_ent = 0;
-  clear_flg = 0;
-  in_count = 1;
-  out_count = 0;
-  cur_accum = 0;
-  cur_bits = 0;
+    /* initialize 'compress' globals */
+    maxbits    = XV_BITS;
+    maxmaxcode = 1 << XV_BITS;
+    xvbzero((char *)htab, sizeof(htab));
+    xvbzero((char *)codetab, sizeof(codetab));
+    hsize     = HSIZE;
+    free_ent  = 0;
+    clear_flg = 0;
+    in_count  = 1;
+    out_count = 0;
+    cur_accum = 0;
+    cur_bits  = 0;
 
+    /*
+     * Set up the necessary values
+     */
+    out_count = 0;
+    clear_flg = 0;
+    in_count  = 1;
+    maxcode   = MAXCODE(n_bits = g_init_bits);
 
-  /*
-   * Set up the necessary values
-   */
-  out_count = 0;
-  clear_flg = 0;
-  in_count = 1;
-  maxcode = MAXCODE(n_bits = g_init_bits);
+    ClearCode = (1 << (init_bits - 1));
+    EOFCode   = ClearCode + 1;
+    free_ent  = ClearCode + 2;
 
-  ClearCode = (1 << (init_bits - 1));
-  EOFCode = ClearCode + 1;
-  free_ent = ClearCode + 2;
+    char_init();
+    ent = pc2nc[*data++];
+    len--;
 
-  char_init();
-  ent = pc2nc[*data++];  len--;
+    hshift = 0;
+    for (fcode = (long)hsize; fcode < 65536L; fcode *= 2L)
+        hshift++;
+    hshift = 8 - hshift; /* set hash code range bound */
 
-  hshift = 0;
-  for ( fcode = (long) hsize;  fcode < 65536L; fcode *= 2L )
-    hshift++;
-  hshift = 8 - hshift;                /* set hash code range bound */
+    hsize_reg = hsize;
+    cl_hash((count_int)hsize_reg); /* clear hash table */
 
-  hsize_reg = hsize;
-  cl_hash( (count_int) hsize_reg);            /* clear hash table */
+    output(ClearCode);
 
-  output(ClearCode);
-    
-  while (len) {
-    c = pc2nc[*data++];  len--;
-    in_count++;
+    while (len) {
+        c = pc2nc[*data++];
+        len--;
+        in_count++;
 
-    fcode = (long) ( ( (long) c << maxbits) + ent);
-    i = (((int) c << hshift) ^ ent);    /* xor hashing */
+        fcode = (long)(((long)c << maxbits) + ent);
+        i     = (((int)c << hshift) ^ ent); /* xor hashing */
 
-    if ( HashTabOf (i) == fcode ) {
-      ent = CodeTabOf (i);
-      continue;
-    }
+        if (HashTabOf(i) == fcode) {
+            ent = CodeTabOf(i);
+            continue;
+        }
 
-    else if ( (long)HashTabOf (i) < 0 )      /* empty slot */
-      goto nomatch;
+        else if ((long)HashTabOf(i) < 0) /* empty slot */
+            goto nomatch;
 
-    disp = hsize_reg - i;           /* secondary hash (after G. Knott) */
-    if ( i == 0 )
-      disp = 1;
+        disp = hsize_reg - i; /* secondary hash (after G. Knott) */
+        if (i == 0)
+            disp = 1;
 
 probe:
-    if ( (i -= disp) < 0 )
-      i += hsize_reg;
+        if ((i -= disp) < 0)
+            i += hsize_reg;
 
-    if ( HashTabOf (i) == fcode ) {
-      ent = CodeTabOf (i);
-      continue;
-    }
+        if (HashTabOf(i) == fcode) {
+            ent = CodeTabOf(i);
+            continue;
+        }
 
-    if ( (long)HashTabOf (i) >= 0 ) 
-      goto probe;
+        if ((long)HashTabOf(i) >= 0)
+            goto probe;
 
 nomatch:
+        output(ent);
+        out_count++;
+        ent = c;
+
+        if (free_ent < maxmaxcode) {
+            CodeTabOf(i) = free_ent++; /* code -> hashtable */
+            HashTabOf(i) = fcode;
+        }
+        else
+            cl_block();
+    }
+
+    /* Put out the final code */
     output(ent);
     out_count++;
-    ent = c;
-
-    if ( free_ent < maxmaxcode ) {
-      CodeTabOf (i) = free_ent++; /* code -> hashtable */
-      HashTabOf (i) = fcode;
-    }
-    else
-      cl_block();
-  }
-
-  /* Put out the final code */
-  output(ent);
-  out_count++;
-  output(EOFCode);
+    output(EOFCode);
 }
-
 
 /*****************************************************************
  * TAG( output )
@@ -370,116 +361,110 @@ nomatch:
  * code in turn.  When the buffer fills up empty it and start over.
  */
 
-static
-unsigned long masks[] = { 0x0000, 0x0001, 0x0003, 0x0007, 0x000F,
-                                  0x001F, 0x003F, 0x007F, 0x00FF,
-                                  0x01FF, 0x03FF, 0x07FF, 0x0FFF,
-                                  0x1FFF, 0x3FFF, 0x7FFF, 0xFFFF };
+static unsigned long masks[] = {0x0000, 0x0001, 0x0003, 0x0007, 0x000F, 0x001F, 0x003F, 0x007F, 0x00FF,
+                                0x01FF, 0x03FF, 0x07FF, 0x0FFF, 0x1FFF, 0x3FFF, 0x7FFF, 0xFFFF};
 
-static void output(code)
-int code;
+static void output(code) int code;
 {
-  cur_accum &= masks[cur_bits];
+    cur_accum &= masks[cur_bits];
 
-  if (cur_bits > 0)
-    cur_accum |= ((long)code << cur_bits);
-  else
-    cur_accum = code;
-	
-  cur_bits += n_bits;
+    if (cur_bits > 0)
+        cur_accum |= ((long)code << cur_bits);
+    else
+        cur_accum = code;
 
-  while( cur_bits >= 8 ) {
-    char_out( (unsigned int) (cur_accum & 0xff) );
-    cur_accum >>= 8;
-    cur_bits -= 8;
-  }
+    cur_bits += n_bits;
 
-  /*
-   * If the next entry is going to be too big for the code size,
-   * then increase it, if possible.
-   */
-
-  if (free_ent > maxcode || clear_flg) {
-
-    if( clear_flg ) {
-      maxcode = MAXCODE (n_bits = g_init_bits);
-      clear_flg = 0;
-    }
-    else {
-      n_bits++;
-      if ( n_bits == maxbits )
-	maxcode = maxmaxcode;
-      else
-	maxcode = MAXCODE(n_bits);
-    }
-  }
-	
-  if( code == EOFCode ) {
-    /* At EOF, write the rest of the buffer */
-    while( cur_bits > 0 ) {
-      char_out( (unsigned int)(cur_accum & 0xff) );
-      cur_accum >>= 8;
-      cur_bits -= 8;
+    while (cur_bits >= 8) {
+        char_out((unsigned int)(cur_accum & 0xff));
+        cur_accum >>= 8;
+        cur_bits -= 8;
     }
 
-    flush_char();
-	
-    fflush( g_outfile );
+    /*
+     * If the next entry is going to be too big for the code size,
+     * then increase it, if possible.
+     */
+
+    if (free_ent > maxcode || clear_flg) {
+
+        if (clear_flg) {
+            maxcode   = MAXCODE(n_bits = g_init_bits);
+            clear_flg = 0;
+        }
+        else {
+            n_bits++;
+            if (n_bits == maxbits)
+                maxcode = maxmaxcode;
+            else
+                maxcode = MAXCODE(n_bits);
+        }
+    }
+
+    if (code == EOFCode) {
+        /* At EOF, write the rest of the buffer */
+        while (cur_bits > 0) {
+            char_out((unsigned int)(cur_accum & 0xff));
+            cur_accum >>= 8;
+            cur_bits -= 8;
+        }
+
+        flush_char();
+
+        fflush(g_outfile);
 
 #ifdef FOO
-    if( ferror( g_outfile ) ) 
-      FatalError("unable to write GIF file");
+        if (ferror(g_outfile))
+            FatalError("unable to write GIF file");
 #endif
-  }
+    }
 }
-
 
 /********************************/
-static void cl_block ()             /* table clear for block compress */
+static void
+cl_block() /* table clear for block compress */
 {
-  /* Clear out the hash table */
+    /* Clear out the hash table */
 
-  cl_hash ( (count_int) hsize );
-  free_ent = ClearCode + 2;
-  clear_flg = 1;
+    cl_hash((count_int)hsize);
+    free_ent  = ClearCode + 2;
+    clear_flg = 1;
 
-  output(ClearCode);
+    output(ClearCode);
 }
-
 
 /********************************/
-static void cl_hash(hsize)          /* reset code table */
-register count_int hsize;
+static void cl_hash(hsize) /* reset code table */
+    register count_int hsize;
 {
-  register count_int *htab_p = htab+hsize;
-  register long i;
-  register long m1 = -1;
+    register count_int *htab_p = htab + hsize;
+    register long       i;
+    register long       m1 = -1;
 
-  i = hsize - 16;
-  do {                            /* might use Sys V memset(3) here */
-    *(htab_p-16) = m1;
-    *(htab_p-15) = m1;
-    *(htab_p-14) = m1;
-    *(htab_p-13) = m1;
-    *(htab_p-12) = m1;
-    *(htab_p-11) = m1;
-    *(htab_p-10) = m1;
-    *(htab_p-9) = m1;
-    *(htab_p-8) = m1;
-    *(htab_p-7) = m1;
-    *(htab_p-6) = m1;
-    *(htab_p-5) = m1;
-    *(htab_p-4) = m1;
-    *(htab_p-3) = m1;
-    *(htab_p-2) = m1;
-    *(htab_p-1) = m1;
-    htab_p -= 16;
-  } while ((i -= 16) >= 0);
+    i = hsize - 16;
+    do { /* might use Sys V memset(3) here */
+        *(htab_p - 16) = m1;
+        *(htab_p - 15) = m1;
+        *(htab_p - 14) = m1;
+        *(htab_p - 13) = m1;
+        *(htab_p - 12) = m1;
+        *(htab_p - 11) = m1;
+        *(htab_p - 10) = m1;
+        *(htab_p - 9)  = m1;
+        *(htab_p - 8)  = m1;
+        *(htab_p - 7)  = m1;
+        *(htab_p - 6)  = m1;
+        *(htab_p - 5)  = m1;
+        *(htab_p - 4)  = m1;
+        *(htab_p - 3)  = m1;
+        *(htab_p - 2)  = m1;
+        *(htab_p - 1)  = m1;
+        htab_p -= 16;
+    } while ((i -= 16) >= 0);
 
-  for ( i += 16; i > 0; i-- )
-    *--htab_p = m1;
+    for (i += 16; i > 0; i--)
+        *--htab_p = m1;
 }
-
 
 /******************************************************************************
  *
@@ -495,39 +480,37 @@ static int a_count;
 /*
  * Set up the 'byte output' routine
  */
-static void char_init()
+static void
+char_init()
 {
-	a_count = 0;
+    a_count = 0;
 }
 
 /*
  * Define the storage for the packet accumulator
  */
-static char accum[ 256 ];
+static char accum[256];
 
 /*
  * Add a character to the end of the current packet, and if it is 254
  * characters, flush the packet to disk.
  */
-static void char_out(c)
-int c;
+static void char_out(c) int c;
 {
-  accum[ a_count++ ] = c;
-  if( a_count >= 254 ) 
-    flush_char();
+    accum[a_count++] = c;
+    if (a_count >= 254)
+        flush_char();
 }
 
 /*
  * Flush the packet to disk, and reset the accumulator
  */
-static void flush_char()
+static void
+flush_char()
 {
-  if( a_count > 0 ) {
-    fputc( a_count, g_outfile );
-    fwrite( accum, 1, a_count, g_outfile );
-    a_count = 0;
-  }
-}	
-
-
-
+    if (a_count > 0) {
+        fputc(a_count, g_outfile);
+        fwrite(accum, 1, a_count, g_outfile);
+        a_count = 0;
+    }
+}

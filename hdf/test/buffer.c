@@ -42,7 +42,6 @@
 
  */
 
-
 #define TESTMASTER
 
 #include "hdf.h"
@@ -53,7 +52,7 @@
 #include "hfile.h"
 
 #define TESTFILE_NAME "tbuffer.hdf"
-#define EXTFILE_NAME "tbuffer.dat"
+#define EXTFILE_NAME  "tbuffer.dat"
 
 /* Size of data elements to create */
 #ifdef __CRAY_XT3__
@@ -66,14 +65,14 @@
 #endif
 
 /* define aliases for random number generation */
-#define RAND rand
+#define RAND    rand
 #define SEED(a) srand((unsigned)(a))
 
 /* Tag to use for creating the test elements */
 #define BUFF_TAG 1000
 
 /* Number of tests */
-#define NUM_TESTS       4
+#define NUM_TESTS 4
 
 /* Factor for converting seconds to microseconds */
 #define FACTOR 1000000
@@ -84,44 +83,43 @@
 /* 2 - read/write entire buffer one byte at a time every other byte forwards */
 /* 3 - read/write entire buffer one byte at a time backwards */
 /* 4 - read/write entire buffer one byte at a time every other byte backwards */
-#define NUM_TIMINGS     5
-long read_time[NUM_TESTS][2];    /* 0 is unbuffered, 1 is buffered */
-long write_time[NUM_TESTS][2];   /* 0 is unbuffered, 1 is buffered */
+#define NUM_TIMINGS 5
+long read_time[NUM_TESTS][2];  /* 0 is unbuffered, 1 is buffered */
+long write_time[NUM_TESTS][2]; /* 0 is unbuffered, 1 is buffered */
 
-int32 elemsize;    /* Actual number of elements in buffer */
+int32 elemsize; /* Actual number of elements in buffer */
 
 /* I/O buffers */
-uint8 *out_buf;    /* Buffer for writing data */
-uint8 *in_buf;     /* Buffer for reading data */
+uint8 *out_buf; /* Buffer for writing data */
+uint8 *in_buf;  /* Buffer for reading data */
 
 /* local function prototypes */
-static void init_buffer(void);
-static void usage(void);
+static void  init_buffer(void);
+static void  usage(void);
 static char *fixname(const char *base_name, char *fullname, size_t size);
-static long read_test(int32 aid);
-static long write_test(int32 aid,intn num_timings);
+static long  read_test(int32 aid);
+static long  write_test(int32 aid, intn num_timings);
 
 /* Initialize output buffer */
 static void
 init_buffer(void)
 {
-    intn        j;
+    intn j;
 
     SEED(time(NULL));
-    for (j = 0; j < elemsize; j++)
-      {
-          out_buf[j] = (uint8) RAND();
-      }     /* end for */
-}   /* init_buffers() */
+    for (j = 0; j < elemsize; j++) {
+        out_buf[j] = (uint8)RAND();
+    } /* end for */
+} /* init_buffers() */
 
 static void
 usage(void)
 {
     printf("\nUsage: buffer [elemsize] \n\n");
-    printf("where elemsize is the number of elements in buffer (default: 1000 in Cray, 16384 in other platforms)\n");
+    printf("where elemsize is the number of elements in buffer (default: 1000 in Cray, 16384 in other "
+           "platforms)\n");
     printf("\n");
-}   /* end usage() */
-
+} /* end usage() */
 
 /*
    Creates a file name from a file base name like 'test' and return it through
@@ -131,13 +129,14 @@ usage(void)
    FULLNAME is the null pointer or if FULLNAME isn't large enough for the
    result.
 */
-static char *fixname(const char *base_name, char *fullname, size_t size)
+static char *
+fixname(const char *base_name, char *fullname, size_t size)
 {
-    const char  *prefix = NULL;
-    char        *ptr, last = '\0';
+    const char *prefix = NULL;
+    char       *ptr, last = '\0';
     size_t      i, j;
 
-    if (!base_name || !fullname || size<1)
+    if (!base_name || !fullname || size < 1)
         return NULL;
 
     memset(fullname, 0, size);
@@ -152,7 +151,7 @@ static char *fixname(const char *base_name, char *fullname, size_t size)
 
     /* Prepend the prefix value to the base name */
     if (prefix && *prefix) {
-        if (snprintf(fullname, size, "%s/%s", prefix, base_name)==(int)size)
+        if (snprintf(fullname, size, "%s/%s", prefix, base_name) == (int)size)
             /* Buffer is too small */
             return NULL;
     } /* end if */
@@ -174,296 +173,291 @@ static char *fixname(const char *base_name, char *fullname, size_t size)
 
 } /* end fixname() */
 
-
 static long
 read_test(int32 aid)
 {
-    struct timeval start_time, end_time;     /* timing counts */
-    long acc_time;
-    int32       ret;
-    intn i;             /* local counting index */
-    intn timing;       /* Which timing test we are on */
-    intn err_count;     /* number of incorrect array positions */
+    struct timeval start_time, end_time; /* timing counts */
+    long           acc_time;
+    int32          ret;
+    intn           i;         /* local counting index */
+    intn           timing;    /* Which timing test we are on */
+    intn           err_count; /* number of incorrect array positions */
 
-    acc_time=0;
-    for(timing=0; timing<NUM_TIMINGS; timing++) {
+    acc_time = 0;
+    for (timing = 0; timing < NUM_TIMINGS; timing++) {
 
         /* Seek to beginning of element */
-        ret=Hseek(aid,0,DF_START);
+        ret = Hseek(aid, 0, DF_START);
         CHECK(ret, FAIL, "Hseek");
 
-        switch(timing) {
-            case 0:     /* Read entire buffer in one I/O operation */
-                gettimeofday(&start_time,(struct timezone*)0);
-                ret=Hread(aid,elemsize,in_buf);
+        switch (timing) {
+            case 0: /* Read entire buffer in one I/O operation */
+                gettimeofday(&start_time, (struct timezone *)0);
+                ret = Hread(aid, elemsize, in_buf);
                 VERIFY(ret, elemsize, "Hread");
-                gettimeofday(&end_time,(struct timezone*)0);
+                gettimeofday(&end_time, (struct timezone *)0);
                 break;
 
-            case 1:     /* Read entire buffer one byte at a time forwards */
-                gettimeofday(&start_time,(struct timezone*)0);
-                for(i=0; i<elemsize; i++) {
+            case 1: /* Read entire buffer one byte at a time forwards */
+                gettimeofday(&start_time, (struct timezone *)0);
+                for (i = 0; i < elemsize; i++) {
                     /* Seek to correct location within element */
-                    ret=Hseek(aid,i,DF_START);
+                    ret = Hseek(aid, i, DF_START);
                     CHECK(ret, FAIL, "Hseek");
 
-                    ret=Hread(aid,1,&in_buf[i]);
+                    ret = Hread(aid, 1, &in_buf[i]);
                     VERIFY(ret, 1, "Hread");
                 } /* end for */
-                gettimeofday(&end_time,(struct timezone*)0);
+                gettimeofday(&end_time, (struct timezone *)0);
                 break;
 
-            case 2:     /* Read entire buffer one byte at a time every one byte forwards */
-                gettimeofday(&start_time,(struct timezone*)0);
-                for(i=0; i<elemsize; i+=2) {
+            case 2: /* Read entire buffer one byte at a time every one byte forwards */
+                gettimeofday(&start_time, (struct timezone *)0);
+                for (i = 0; i < elemsize; i += 2) {
                     /* Seek to correct location within element */
-                    ret=Hseek(aid,i,DF_START);
+                    ret = Hseek(aid, i, DF_START);
                     CHECK(ret, FAIL, "Hseek");
 
-                    ret=Hread(aid,1,&in_buf[i]);
+                    ret = Hread(aid, 1, &in_buf[i]);
                     VERIFY(ret, 1, "Hread");
                 } /* end for */
-                for(i=1; i<elemsize; i+=2) {
+                for (i = 1; i < elemsize; i += 2) {
                     /* Seek to correct location within element */
-                    ret=Hseek(aid,i,DF_START);
+                    ret = Hseek(aid, i, DF_START);
                     CHECK(ret, FAIL, "Hseek");
 
-                    ret=Hread(aid,1,&in_buf[i]);
+                    ret = Hread(aid, 1, &in_buf[i]);
                     VERIFY(ret, 1, "Hread");
                 } /* end for */
-                gettimeofday(&end_time,(struct timezone*)0);
+                gettimeofday(&end_time, (struct timezone *)0);
                 break;
 
-            case 3:     /* Read entire buffer one byte at a time backwards */
-                gettimeofday(&start_time,(struct timezone*)0);
-                for(i=elemsize-1; i>=0; i--) {
+            case 3: /* Read entire buffer one byte at a time backwards */
+                gettimeofday(&start_time, (struct timezone *)0);
+                for (i = elemsize - 1; i >= 0; i--) {
                     /* Seek to correct location within element */
-                    ret=Hseek(aid,i,DF_START);
+                    ret = Hseek(aid, i, DF_START);
                     CHECK(ret, FAIL, "Hseek");
 
-                    ret=Hread(aid,1,&in_buf[i]);
+                    ret = Hread(aid, 1, &in_buf[i]);
                     VERIFY(ret, 1, "Hread");
                 } /* end for */
-                gettimeofday(&end_time,(struct timezone*)0);
+                gettimeofday(&end_time, (struct timezone *)0);
                 break;
 
-            case 4:     /* Read entire buffer one byte at a time every one byte backwards */
-                gettimeofday(&start_time,(struct timezone*)0);
-                for(i=elemsize-1; i>=0; i-=2) {
+            case 4: /* Read entire buffer one byte at a time every one byte backwards */
+                gettimeofday(&start_time, (struct timezone *)0);
+                for (i = elemsize - 1; i >= 0; i -= 2) {
                     /* Seek to correct location within element */
-                    ret=Hseek(aid,i,DF_START);
+                    ret = Hseek(aid, i, DF_START);
                     CHECK(ret, FAIL, "Hseek");
 
-                    ret=Hread(aid,1,&in_buf[i]);
+                    ret = Hread(aid, 1, &in_buf[i]);
                     VERIFY(ret, 1, "Hread");
                 } /* end for */
-                for(i=elemsize-2; i>=0; i-=2) {
+                for (i = elemsize - 2; i >= 0; i -= 2) {
                     /* Seek to correct location within element */
-                    ret=Hseek(aid,i,DF_START);
+                    ret = Hseek(aid, i, DF_START);
                     CHECK(ret, FAIL, "Hseek");
 
-                    ret=Hread(aid,1,&in_buf[i]);
+                    ret = Hread(aid, 1, &in_buf[i]);
                     VERIFY(ret, 1, "Hread");
                 } /* end for */
-                gettimeofday(&end_time,(struct timezone*)0);
+                gettimeofday(&end_time, (struct timezone *)0);
                 break;
         } /* end switch */
 
         /* Verify buffer contents */
-        for(err_count=0,i=0; i<elemsize; i++) {
-            if(out_buf[i]!=in_buf[i]) {
-                printf("Position (%d) read in is (%d), should be (%d)\n",i,(int)in_buf[i],(int)out_buf[i]);
+        for (err_count = 0, i = 0; i < elemsize; i++) {
+            if (out_buf[i] != in_buf[i]) {
+                printf("Position (%d) read in is (%d), should be (%d)\n", i, (int)in_buf[i], (int)out_buf[i]);
                 num_errs++;
                 err_count++;
-                if(err_count>10)
+                if (err_count > 10)
                     break;
             } /* end if */
-        } /* end for */
+        }     /* end for */
 
         /* Clear input buffer */
-        HDmemset(in_buf,0,elemsize);
+        HDmemset(in_buf, 0, elemsize);
 
         /* Increment the total I/O time */
-        acc_time+=(end_time.tv_sec-start_time.tv_sec)*FACTOR+
-                  (end_time.tv_usec-start_time.tv_usec);
+        acc_time += (end_time.tv_sec - start_time.tv_sec) * FACTOR + (end_time.tv_usec - start_time.tv_usec);
     } /* end for */
 
-    return(acc_time);
-}   /* end read_test() */
+    return (acc_time);
+} /* end read_test() */
 
 static long
-write_test(int32 aid,intn num_timings)
+write_test(int32 aid, intn num_timings)
 {
-    struct timeval start_time, end_time;     /* timing counts */
-    long acc_time;
-    int32       ret;
-    intn i;             /* local counting index */
-    intn timing;       /* Which timing test we are on */
+    struct timeval start_time, end_time; /* timing counts */
+    long           acc_time;
+    int32          ret;
+    intn           i;      /* local counting index */
+    intn           timing; /* Which timing test we are on */
 
-    acc_time=0;
-    for(timing=0; timing<num_timings; timing++) {
+    acc_time = 0;
+    for (timing = 0; timing < num_timings; timing++) {
 
         /* Refresh output buffer with new values */
         init_buffer();
 
         /* Seek to beginning of element */
-        ret=Hseek(aid,0,DF_START);
+        ret = Hseek(aid, 0, DF_START);
         CHECK(ret, FAIL, "Hseek");
 
-        switch(timing) {
-            case 0:     /* Write entire buffer in one I/O operation */
-                gettimeofday(&start_time,(struct timezone*)0);
-                ret=Hwrite(aid,elemsize,out_buf);
+        switch (timing) {
+            case 0: /* Write entire buffer in one I/O operation */
+                gettimeofday(&start_time, (struct timezone *)0);
+                ret = Hwrite(aid, elemsize, out_buf);
                 VERIFY(ret, elemsize, "Hwrite");
-                gettimeofday(&end_time,(struct timezone*)0);
+                gettimeofday(&end_time, (struct timezone *)0);
                 break;
 
-            case 1:     /* Write entire buffer one byte at a time forwards */
-                gettimeofday(&start_time,(struct timezone*)0);
-                for(i=0; i<elemsize; i++) {
+            case 1: /* Write entire buffer one byte at a time forwards */
+                gettimeofday(&start_time, (struct timezone *)0);
+                for (i = 0; i < elemsize; i++) {
                     /* Seek to correct location within element */
-                    ret=Hseek(aid,i,DF_START);
+                    ret = Hseek(aid, i, DF_START);
                     CHECK(ret, FAIL, "Hseek");
 
-                    ret=Hwrite(aid,1,&out_buf[i]);
+                    ret = Hwrite(aid, 1, &out_buf[i]);
                     VERIFY(ret, 1, "Hwrite");
                 } /* end for */
-                gettimeofday(&end_time,(struct timezone*)0);
+                gettimeofday(&end_time, (struct timezone *)0);
                 break;
 
-            case 2:     /* Write entire buffer one byte at a time every one byte forwards */
-                gettimeofday(&start_time,(struct timezone*)0);
-                for(i=0; i<elemsize; i+=2) {
+            case 2: /* Write entire buffer one byte at a time every one byte forwards */
+                gettimeofday(&start_time, (struct timezone *)0);
+                for (i = 0; i < elemsize; i += 2) {
                     /* Seek to correct location within element */
-                    ret=Hseek(aid,i,DF_START);
+                    ret = Hseek(aid, i, DF_START);
                     CHECK(ret, FAIL, "Hseek");
 
-                    ret=Hwrite(aid,1,&out_buf[i]);
+                    ret = Hwrite(aid, 1, &out_buf[i]);
                     VERIFY(ret, 1, "Hwrite");
                 } /* end for */
-                for(i=1; i<elemsize; i+=2) {
+                for (i = 1; i < elemsize; i += 2) {
                     /* Seek to correct location within element */
-                    ret=Hseek(aid,i,DF_START);
+                    ret = Hseek(aid, i, DF_START);
                     CHECK(ret, FAIL, "Hseek");
 
-                    ret=Hwrite(aid,1,&out_buf[i]);
+                    ret = Hwrite(aid, 1, &out_buf[i]);
                     VERIFY(ret, 1, "Hwrite");
                 } /* end for */
-                gettimeofday(&end_time,(struct timezone*)0);
+                gettimeofday(&end_time, (struct timezone *)0);
                 break;
 
-            case 3:     /* Write entire buffer one byte at a time backwards */
-                gettimeofday(&start_time,(struct timezone*)0);
-                for(i=elemsize-1; i>=0; i--) {
+            case 3: /* Write entire buffer one byte at a time backwards */
+                gettimeofday(&start_time, (struct timezone *)0);
+                for (i = elemsize - 1; i >= 0; i--) {
                     /* Seek to correct location within element */
-                    ret=Hseek(aid,i,DF_START);
+                    ret = Hseek(aid, i, DF_START);
                     CHECK(ret, FAIL, "Hseek");
 
-                    ret=Hwrite(aid,1,&out_buf[i]);
+                    ret = Hwrite(aid, 1, &out_buf[i]);
                     VERIFY(ret, 1, "Hwrite");
                 } /* end for */
-                gettimeofday(&end_time,(struct timezone*)0);
+                gettimeofday(&end_time, (struct timezone *)0);
                 break;
 
-            case 4:     /* Write entire buffer one byte at a time every one byte backwards */
-                gettimeofday(&start_time,(struct timezone*)0);
-                for(i=elemsize-1; i>=0; i-=2) {
+            case 4: /* Write entire buffer one byte at a time every one byte backwards */
+                gettimeofday(&start_time, (struct timezone *)0);
+                for (i = elemsize - 1; i >= 0; i -= 2) {
                     /* Seek to correct location within element */
-                    ret=Hseek(aid,i,DF_START);
+                    ret = Hseek(aid, i, DF_START);
                     CHECK(ret, FAIL, "Hseek");
 
-                    ret=Hwrite(aid,1,&out_buf[i]);
+                    ret = Hwrite(aid, 1, &out_buf[i]);
                     VERIFY(ret, 1, "Hwrite");
                 } /* end for */
-                for(i=elemsize-2; i>=0; i-=2) {
+                for (i = elemsize - 2; i >= 0; i -= 2) {
                     /* Seek to correct location within element */
-                    ret=Hseek(aid,i,DF_START);
+                    ret = Hseek(aid, i, DF_START);
                     CHECK(ret, FAIL, "Hseek");
 
-                    ret=Hwrite(aid,1,&out_buf[i]);
+                    ret = Hwrite(aid, 1, &out_buf[i]);
                     VERIFY(ret, 1, "Hwrite");
                 } /* end for */
-                gettimeofday(&end_time,(struct timezone*)0);
+                gettimeofday(&end_time, (struct timezone *)0);
                 break;
         } /* end switch */
 
         /* Seek to beginning of element */
-        ret=Hseek(aid,0,DF_START);
+        ret = Hseek(aid, 0, DF_START);
         CHECK(ret, FAIL, "Hseek");
 
         /* Read buffer contents */
-        ret=Hread(aid,elemsize,in_buf);
+        ret = Hread(aid, elemsize, in_buf);
         VERIFY(ret, elemsize, "Hread");
 
         /* Verify buffer contents */
-        for(i=0; i<elemsize; i++) {
-            if(out_buf[i]!=in_buf[i]) {
-                printf("Position (%d) read in is (%d), should be (%d)\n",i,(int)in_buf[i],(int)out_buf[i]);
+        for (i = 0; i < elemsize; i++) {
+            if (out_buf[i] != in_buf[i]) {
+                printf("Position (%d) read in is (%d), should be (%d)\n", i, (int)in_buf[i], (int)out_buf[i]);
                 num_errs++;
                 break;
             } /* end if */
-        } /* end for */
-
+        }     /* end for */
 
         /* Clear input buffer */
-        HDmemset(in_buf,0,elemsize);
+        HDmemset(in_buf, 0, elemsize);
 
         /* Increment the total I/O time */
-        acc_time+=(end_time.tv_sec-start_time.tv_sec)*FACTOR+
-                  (end_time.tv_usec-start_time.tv_usec);
+        acc_time += (end_time.tv_sec - start_time.tv_sec) * FACTOR + (end_time.tv_usec - start_time.tv_usec);
     } /* end for */
 
-    return(acc_time);
-}   /* end read_test() */
+    return (acc_time);
+} /* end read_test() */
 
 int
 main(int argc, char *argv[])
 {
-    model_info  m_info;
-    comp_info   c_info;
-    uint16      ref_num;        /* reference number of the data written out */
-    int32       fid;            /* file ID of HDF file for testing */
-    int32       aid;            /* AID of element to test */
-    intn        test_num;
-    int32       ret;
-    char    hfilename[32];
-    char    extfilename[32];
+    model_info m_info;
+    comp_info  c_info;
+    uint16     ref_num; /* reference number of the data written out */
+    int32      fid;     /* file ID of HDF file for testing */
+    int32      aid;     /* AID of element to test */
+    intn       test_num;
+    int32      ret;
+    char       hfilename[32];
+    char       extfilename[32];
     int        CleanUp = 1;
-    int        Cache = 1;
-    uint32      lmajor, lminor, lrelease;
-    char    lstring[81];
+    int        Cache   = 1;
+    uint32     lmajor, lminor, lrelease;
+    char       lstring[81];
 
     /* Un-buffer the stdout and stderr */
     setbuf(stderr, NULL);
     setbuf(stdout, NULL);
 
-    if (argc>2) {
+    if (argc > 2) {
         usage();
         exit(1);
     }
     else
-        elemsize = (argc==2)? (int32)atol(argv[1]):(int32)ELEMSIZE;
+        elemsize = (argc == 2) ? (int32)atol(argv[1]) : (int32)ELEMSIZE;
 
-    if (elemsize<=0) {
+    if (elemsize <= 0) {
         usage();
         exit(1);
     }
 
     out_buf = HDmalloc(elemsize * sizeof(uint8));
-    in_buf = HDmalloc(elemsize * sizeof(uint8));
+    in_buf  = HDmalloc(elemsize * sizeof(uint8));
 
-    Verbosity = 4;  /* Default Verbosity is Low */
+    Verbosity = 4; /* Default Verbosity is Low */
 
     Hgetlibversion(&lmajor, &lminor, &lrelease, lstring);
 
-    printf("Built with HDF Library Version: %u.%u.%u, %s\n\n", (unsigned) lmajor,
-           (unsigned) lminor, (unsigned) lrelease, lstring);
+    printf("Built with HDF Library Version: %u.%u.%u, %s\n\n", (unsigned)lmajor, (unsigned)lminor,
+           (unsigned)lrelease, lstring);
 
-    MESSAGE(6, printf("Starting buffered element test (elemsize=%d)\n", elemsize);
-        )
+    MESSAGE(6, printf("Starting buffered element test (elemsize=%d)\n", elemsize);)
 
-    if(Cache) /* turn on caching, unless we were instucted not to */
-        Hcache(CACHE_ALL_FILES,TRUE);
+    if (Cache) /* turn on caching, unless we were instucted not to */
+        Hcache(CACHE_ALL_FILES, TRUE);
 
     /* fill the buffer with interesting data to compress */
     init_buffer();
@@ -477,72 +471,70 @@ main(int argc, char *argv[])
     /* Cycle through the different testing element types */
     /* Performing timings on each type of buffer and record results for output */
     /* if verbosity level is high enough */
-    for (test_num = 0; test_num < NUM_TESTS; test_num++)
-      {
+    for (test_num = 0; test_num < NUM_TESTS; test_num++) {
         /* Get a new reference number */
-        ref_num=Htagnewref(fid,BUFF_TAG);
+        ref_num = Htagnewref(fid, BUFF_TAG);
         CHECK(ref_num, 0, "Htagnewref");
 
         /* Create the data element to perform the tests on */
-        switch(test_num) {
-            case 0:     /* create plain data element */
-                aid=Hstartaccess(fid,BUFF_TAG,ref_num,DFACC_RDWR);
+        switch (test_num) {
+            case 0: /* create plain data element */
+                aid = Hstartaccess(fid, BUFF_TAG, ref_num, DFACC_RDWR);
                 CHECK(aid, FAIL, "Hstartaccess");
                 break;
 
-            case 1:     /* create external data element */
-        fixname(EXTFILE_NAME, extfilename, sizeof extfilename);
-                aid=HXcreate(fid,BUFF_TAG,ref_num,extfilename,0,elemsize);
+            case 1: /* create external data element */
+                fixname(EXTFILE_NAME, extfilename, sizeof extfilename);
+                aid = HXcreate(fid, BUFF_TAG, ref_num, extfilename, 0, elemsize);
                 CHECK(aid, FAIL, "HXcreate");
                 break;
 
-            case 2:     /* create compressed data element */
-                c_info.deflate.level=9;
-                aid=HCcreate(fid,BUFF_TAG,ref_num,COMP_MODEL_STDIO,&m_info,COMP_CODE_DEFLATE,&c_info);
+            case 2: /* create compressed data element */
+                c_info.deflate.level = 9;
+                aid = HCcreate(fid, BUFF_TAG, ref_num, COMP_MODEL_STDIO, &m_info, COMP_CODE_DEFLATE, &c_info);
                 CHECK(aid, FAIL, "HCcreate");
                 break;
 
-            case 3:     /* create linked-block data element */
-                aid=HLcreate(fid,BUFF_TAG,ref_num,HDF_APPENDABLE_BLOCK_LEN,HDF_APPENDABLE_BLOCK_NUM);
+            case 3: /* create linked-block data element */
+                aid = HLcreate(fid, BUFF_TAG, ref_num, HDF_APPENDABLE_BLOCK_LEN, HDF_APPENDABLE_BLOCK_NUM);
                 CHECK(aid, FAIL, "HLcreate");
                 break;
 
         } /* end switch */
 
         /* Write the initial data to the data element */
-        ret=Hwrite(aid,elemsize,out_buf);
+        ret = Hwrite(aid, elemsize, out_buf);
         VERIFY(ret, elemsize, "Hwrite");
 
         /* Perform read timing tests on un-buffered data element */
-        read_time[test_num][0]=read_test(aid);
+        read_time[test_num][0] = read_test(aid);
 
         /* Perform write timing tests on un-buffered data element */
         /* Just write un-buffered compressed data in one block */
-        write_time[test_num][0]=write_test(aid,(test_num==2 ? 1 : NUM_TIMINGS));
+        write_time[test_num][0] = write_test(aid, (test_num == 2 ? 1 : NUM_TIMINGS));
 
         /* Convert element to a buffered element */
-        ret=HBconvert(aid);
+        ret = HBconvert(aid);
         CHECK(ret, FAIL, "HBconvert");
 
         /* Perform read timing tests on buffered data element */
-        read_time[test_num][1]=read_test(aid);
+        read_time[test_num][1] = read_test(aid);
 
         /* Perform write timing tests on un-buffered data element */
-        write_time[test_num][1]=write_test(aid,NUM_TIMINGS);
+        write_time[test_num][1] = write_test(aid, NUM_TIMINGS);
 
         /* Close data element */
-        ret=Hendaccess(aid);
+        ret = Hendaccess(aid);
         CHECK(ret, FAIL, "Hendaccess");
 
         MESSAGE(3, {
-            printf("Unbuffered read time=%f seconds\n",((float)read_time[test_num][0]/FACTOR));
-            printf("Unbuffered write time=%f seconds\n",((float)write_time[test_num][0]/FACTOR));
-            printf("Buffered read time=%f seconds\n",((float)read_time[test_num][1]/FACTOR));
-            printf("Buffered write time=%f seconds\n",((float)write_time[test_num][1]/FACTOR));
-        }
-            )
+            printf("Unbuffered read time=%f seconds\n", ((float)read_time[test_num][0] / FACTOR));
+            printf("Unbuffered write time=%f seconds\n", ((float)write_time[test_num][0] / FACTOR));
+            printf("Buffered read time=%f seconds\n", ((float)read_time[test_num][1] / FACTOR));
+            printf("Buffered write time=%f seconds\n", ((float)write_time[test_num][1] / FACTOR));
+        })
 
-    }     /* end for */
+    } /* end for */
 
     /* close the HDF file */
     ret = Hclose(fid);
@@ -557,8 +549,7 @@ main(int argc, char *argv[])
     HDfree(out_buf);
     HDfree(in_buf);
 
-    MESSAGE(6, printf("Finished buffered element test\n");
-        )
+    MESSAGE(6, printf("Finished buffered element test\n");)
     exit(num_errs);
     return num_errs;
-}   /* end main() */
+} /* end main() */

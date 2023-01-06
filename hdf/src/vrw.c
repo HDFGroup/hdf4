@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
 /***********************************************************************
 *
 * vrw.c
@@ -27,7 +26,7 @@ EXPORTED ROUTINES
  VSread  -- Reads a specified number of elements' worth of data from a vdata.
              Data will be returned to you interlaced in the way you specified.
  VSwrite -- Writes a specified number of elements' worth of data to a vdata.
-	     You must specify how your data in your buffer is interlaced.
+             You must specify how your data in your buffer is interlaced.
              Creates an aid, and writes it out if this is the first time.
 
  NOTE: Another pass needs to made through this file to update some of
@@ -39,11 +38,11 @@ EXPORTED ROUTINES
 #include "hdf.h"
 
 #ifndef MIN
-#define MIN(a,b)     ((a) < (b) ? (a) : (b))
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
 #endif /* MIN */
 
 PRIVATE uint32 Vtbufsize = 0;
-PRIVATE uint8 *Vtbuf = NULL;
+PRIVATE uint8 *Vtbuf     = NULL;
 
 /*******************************************************************************
  NAME
@@ -58,23 +57,22 @@ PRIVATE uint8 *Vtbuf = NULL;
     Returns SUCCEED/FAIL
 
 *******************************************************************************/
-intn 
+intn
 VSPshutdown(void)
 {
-  intn  ret_value = SUCCEED;
+    intn ret_value = SUCCEED;
 
-  /* free global buffers */
-  if(Vtbuf != NULL)
-    {
-      HDfree(Vtbuf);
-      Vtbuf = NULL;
-      Vtbufsize = 0;
+    /* free global buffers */
+    if (Vtbuf != NULL) {
+        HDfree(Vtbuf);
+        Vtbuf     = NULL;
+        Vtbufsize = 0;
     } /* end if */
 
-  /* Clear the local buffers in vio.c */
-  ret_value = VSPhshutdown();
+    /* Clear the local buffers in vio.c */
+    ret_value = VSPhshutdown();
 
-  return ret_value;
+    return ret_value;
 } /* end VSPshutdown() */
 
 /*******************************************************************************
@@ -94,25 +92,25 @@ RETURNS
 
 *******************************************************************************/
 int32
-VSseek(int32 vkey,   /* IN: vdata key */
-       int32 eltpos  /* IN: element position in vdata */)
+VSseek(int32 vkey, /* IN: vdata key */
+       int32 eltpos /* IN: element position in vdata */)
 {
-    int32        ret;
-    int32        offset;
-    vsinstance_t *w = NULL;
-    VDATA        *vs = NULL;
-    int32        ret_value = SUCCEED;
+    int32         ret;
+    int32         offset;
+    vsinstance_t *w         = NULL;
+    VDATA        *vs        = NULL;
+    int32         ret_value = SUCCEED;
     CONSTR(FUNC, "VSseek");
 
     /* clear error stack */
     HEclear();
 
     /* check if vdata is part of vdata group */
-    if (HAatom_group(vkey)!=VSIDGROUP)
+    if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* get vdata instance */
-    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
+    if (NULL == (w = (vsinstance_t *)HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     /* get vdata itself and check it. Check element position also. */
@@ -121,27 +119,26 @@ VSseek(int32 vkey,   /* IN: vdata key */
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Don't allow seeks in 0-field vdatas */
-    if (vs->wlist.n<=0)
+    if (vs->wlist.n <= 0)
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
 
     /* calculate offset of element in vdata */
     offset = eltpos * vs->wlist.ivsize;
 
     /* seek to element */
-    if (( ret = Hseek(vs->aid, offset, DF_START)) == FAIL)
+    if ((ret = Hseek(vs->aid, offset, DF_START)) == FAIL)
         HGOTO_ERROR(DFE_BADSEEK, FAIL);
 
     ret_value = (eltpos);
 
 done:
-  if(ret_value == FAIL)   
-    { /* Error condition cleanup */
+    if (ret_value == FAIL) { /* Error condition cleanup */
 
     } /* end if */
 
-  /* Normal function cleanup */
-  return ret_value;
-}	/* VSseek */
+    /* Normal function cleanup */
+    return ret_value;
+} /* VSseek */
 
 /*******************************************************************************
 NAME
@@ -156,34 +153,34 @@ RETURNS
    RETURNS the number of elements read (0 or a +ve integer).
 
 *******************************************************************************/
-int32 
-VSread(int32 vkey,       /* IN: vdata key */
-       uint8 buf[],      /* IN/OUT: space to put elements in */
-       int32 nelt,       /* IN: number of elements to read */
-       int32 interlace   /* IN: interlace to return elements in 'buf' */)
+int32
+VSread(int32 vkey,  /* IN: vdata key */
+       uint8 buf[], /* IN/OUT: space to put elements in */
+       int32 nelt,  /* IN: number of elements to read */
+       int32 interlace /* IN: interlace to return elements in 'buf' */)
 {
-    intn isize = 0;
-    intn order = 0;
-    intn index = 0;
-    intn esize = 0;
-    intn hsize = 0;
-    uint8 *Src;
-    uint8 *b1 = NULL;
-    uint8 *b2 = NULL;
-    int32  i, j;
-    int32  nv;
-    int32  offset;
-    int32  type;
-    int32  uvsize;         /* size of "element" as NEEDED by user */
-    int32  total_bytes;     /* total number of bytes that need to be read in */
-    int32  bytes;           /* number of elements / bytes to read next time */
-    int32  chunk;           /* number of records in a buffer */
-    int32  done;            /* number of records to do / done */
-    DYN_VWRITELIST *w = NULL;
-    DYN_VREADLIST  *r = NULL;
-    vsinstance_t   *wi = NULL;
-    VDATA          *vs = NULL;
-    int32      ret_value = SUCCEED;
+    intn            isize = 0;
+    intn            order = 0;
+    intn            index = 0;
+    intn            esize = 0;
+    intn            hsize = 0;
+    uint8          *Src;
+    uint8          *b1 = NULL;
+    uint8          *b2 = NULL;
+    int32           i, j;
+    int32           nv;
+    int32           offset;
+    int32           type;
+    int32           uvsize;      /* size of "element" as NEEDED by user */
+    int32           total_bytes; /* total number of bytes that need to be read in */
+    int32           bytes;       /* number of elements / bytes to read next time */
+    int32           chunk;       /* number of records in a buffer */
+    int32           done;        /* number of records to do / done */
+    DYN_VWRITELIST *w         = NULL;
+    DYN_VREADLIST  *r         = NULL;
+    vsinstance_t   *wi        = NULL;
+    VDATA          *vs        = NULL;
+    int32           ret_value = SUCCEED;
     CONSTR(FUNC, "VSread");
 
     /* clear error stack */
@@ -194,7 +191,7 @@ VSread(int32 vkey,       /* IN: vdata key */
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* get vdata instance */
-    if (NULL == (wi = (vsinstance_t *) HAatom_object(vkey)))
+    if (NULL == (wi = (vsinstance_t *)HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     /* get vdata itself and check it */
@@ -207,7 +204,7 @@ VSread(int32 vkey,       /* IN: vdata key */
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Don't allow reads in 0-field vdatas */
-    if (vs->wlist.n<=0)
+    if (vs->wlist.n <= 0)
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
 
     /* check if vdata exists in file */
@@ -219,9 +216,9 @@ VSread(int32 vkey,       /* IN: vdata key */
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* read/write lists */
-    w = &(vs->wlist);
-    r = &(vs->rlist);
-    hsize = (intn)vs->wlist.ivsize;   /* size as stored in HDF */
+    w           = &(vs->wlist);
+    r           = &(vs->rlist);
+    hsize       = (intn)vs->wlist.ivsize; /* size as stored in HDF */
     total_bytes = hsize * nelt;
 
     /*
@@ -253,215 +250,193 @@ VSread(int32 vkey,       /* IN: vdata key */
 
     /* ----------------------------------------------------------------- */
     /* CASE  (E + C): Easy to unroll case */
-    if ((w->n == 1) || (interlace == FULL_INTERLACE && vs->interlace == FULL_INTERLACE))
-      {
-          /*
-           * figure out how many elements we can move at a time and
-           * make sure our buffer is big enough
-           */
+    if ((w->n == 1) || (interlace == FULL_INTERLACE && vs->interlace == FULL_INTERLACE)) {
+        /*
+         * figure out how many elements we can move at a time and
+         * make sure our buffer is big enough
+         */
 
-          if ((uint32) total_bytes < Vtbufsize)
-            {
-                chunk = nelt;
-            }
-          else
-            {
-                int32       buf_size;
+        if ((uint32)total_bytes < Vtbufsize) {
+            chunk = nelt;
+        }
+        else {
+            int32 buf_size;
 
-                /* we are bounded above by VDATA_BUFFER_MAX */
-                buf_size = MIN(total_bytes, VDATA_BUFFER_MAX);
+            /* we are bounded above by VDATA_BUFFER_MAX */
+            buf_size = MIN(total_bytes, VDATA_BUFFER_MAX);
 
-                /* make sure there is at least room for one record in our buffer */
-                chunk = buf_size / hsize + 1;
+            /* make sure there is at least room for one record in our buffer */
+            chunk = buf_size / hsize + 1;
 
-                /* get a buffer big enough to hold the values */
-                Vtbufsize = (size_t)chunk * (size_t)hsize;
-                if (Vtbuf)
-                    HDfree(Vtbuf);
-                if ((Vtbuf = (uint8 *) HDmalloc(Vtbufsize)) == NULL)
-                    HGOTO_ERROR(DFE_NOSPACE, FAIL);
-            }
+            /* get a buffer big enough to hold the values */
+            Vtbufsize = (size_t)chunk * (size_t)hsize;
+            if (Vtbuf)
+                HDfree(Vtbuf);
+            if ((Vtbuf = (uint8 *)HDmalloc(Vtbufsize)) == NULL)
+                HGOTO_ERROR(DFE_NOSPACE, FAIL);
+        }
 
-          done = 0;
+        done = 0;
 
-          /* set loop invariant parameters */
-          Src = buf;
-          bytes = hsize * chunk;
+        /* set loop invariant parameters */
+        Src   = buf;
+        bytes = hsize * chunk;
 
-          for (uvsize = 0, j = 0; j < r->n; j++)
-              uvsize += w->esize[r->item[j]];
+        for (uvsize = 0, j = 0; j < r->n; j++)
+            uvsize += w->esize[r->item[j]];
 
-          while (done < nelt)
-            {
+        while (done < nelt) {
 
             /* chunk has changed so update the byte counts */
-            if (nelt - done < chunk)
-              {
-                  chunk = nelt - done;
-                  bytes = hsize * chunk;
-              }
+            if (nelt - done < chunk) {
+                chunk = nelt - done;
+                bytes = hsize * chunk;
+            }
 
             /* ================ start reading ============================== */
-            if ((nv = Hread(vs->aid, bytes, (uint8 *) Vtbuf)) != bytes)
-              {
-                  HERROR(DFE_READERROR);
-                  HEreport("Tried to read %d, only read %d", bytes, nv);
-                  HGOTO_DONE(FAIL);
-              }
+            if ((nv = Hread(vs->aid, bytes, (uint8 *)Vtbuf)) != bytes) {
+                HERROR(DFE_READERROR);
+                HEreport("Tried to read %d, only read %d", bytes, nv);
+                HGOTO_DONE(FAIL);
+            }
 
             /* CASE  (E): Only a single field in the Vdata */
-            if (w->n == 1)
-              {
-                  DFKconvert(Vtbuf,Src,w->type[0], (uint32) w->order[0] * (uint32)chunk, DFACC_READ, 0, 0);
-              }     /* case (e) */
+            if (w->n == 1) {
+                DFKconvert(Vtbuf, Src, w->type[0], (uint32)w->order[0] * (uint32)chunk, DFACC_READ, 0, 0);
+            } /* case (e) */
             /* ----------------------------------------------------------------- */
             /* CASE  (C):  iu=full, iv=full */
-            else
-              {
-                  offset = 0;
-                  for (j = 0; j < r->n; j++)
-                    {
-                        i = r->item[j];
-                        b1 = Src + offset;
-                        b2 = Vtbuf + (size_t)w->off[i];
-                        type = (int32)w->type[r->item[j]];
-                        esize = (intn)w->esize[i];
-                        isize = (intn)w->isize[i];
-                        order = (intn)w->order[i];
+            else {
+                offset = 0;
+                for (j = 0; j < r->n; j++) {
+                    i     = r->item[j];
+                    b1    = Src + offset;
+                    b2    = Vtbuf + (size_t)w->off[i];
+                    type  = (int32)w->type[r->item[j]];
+                    esize = (intn)w->esize[i];
+                    isize = (intn)w->isize[i];
+                    order = (intn)w->order[i];
 
-                        for (index = 0; index < order; index++)
-                          {
-                              DFKconvert(b2, b1, type, (uint32) chunk, DFACC_READ, (uint32) hsize, (uint32) uvsize);
-                              b1 += (int) esize / order;
-                              b2 += (int) isize / order;
-                          }
-                        offset += esize;
+                    for (index = 0; index < order; index++) {
+                        DFKconvert(b2, b1, type, (uint32)chunk, DFACC_READ, (uint32)hsize, (uint32)uvsize);
+                        b1 += (int)esize / order;
+                        b2 += (int)isize / order;
                     }
-                } /* case (E) */
+                    offset += esize;
+                }
+            } /* case (E) */
 
-                /* record what we've done and move to next group */
-                done += chunk;
-                Src += chunk * uvsize;
-            } /* end while */
-          }     /* case (C + E) */
+            /* record what we've done and move to next group */
+            done += chunk;
+            Src += chunk * uvsize;
+        } /* end while */
+    }     /* case (C + E) */
     else {
-	  /* 
-	   * Handle the other cases now.
-	   * These cases are less frequent so don't bother unrolling
-	   *   the loops for now.  As a result, we may get into memory
-	   *   problems since we may end up allocating a huge buffer
-	   */
+        /*
+         * Handle the other cases now.
+         * These cases are less frequent so don't bother unrolling
+         *   the loops for now.  As a result, we may get into memory
+         *   problems since we may end up allocating a huge buffer
+         */
 
         /* alloc space (Vtbuf) for reading in the raw data from vdata */
-        if (Vtbufsize < (size_t)nelt * (size_t) hsize)
-          {
-              Vtbufsize = (size_t)nelt * (size_t) hsize;
-              if (Vtbuf)
-                  HDfree(Vtbuf);
-              if ((Vtbuf = (uint8 *) HDmalloc(Vtbufsize)) == NULL)
-                  HGOTO_ERROR(DFE_NOSPACE, FAIL);
-          }
+        if (Vtbufsize < (size_t)nelt * (size_t)hsize) {
+            Vtbufsize = (size_t)nelt * (size_t)hsize;
+            if (Vtbuf)
+                HDfree(Vtbuf);
+            if ((Vtbuf = (uint8 *)HDmalloc(Vtbufsize)) == NULL)
+                HGOTO_ERROR(DFE_NOSPACE, FAIL);
+        }
 
         /* ================ start reading ============================== */
 
-        nv = Hread(vs->aid, nelt * hsize, (uint8 *) Vtbuf);
+        nv = Hread(vs->aid, nelt * hsize, (uint8 *)Vtbuf);
 
-        if (nv != nelt * hsize)
-          {
-              HERROR(DFE_READERROR);
-              HEreport("Tried to read %d, only read %d", nelt * hsize, nv);
-              HGOTO_DONE(FAIL);
-          }
+        if (nv != nelt * hsize) {
+            HERROR(DFE_READERROR);
+            HEreport("Tried to read %d, only read %d", nelt * hsize, nv);
+            HGOTO_DONE(FAIL);
+        }
 
         /* ----------------------------------------------------------------- */
         /* CASE  (A):  user=none, vdata=full */
-        if (interlace == NO_INTERLACE && vs->interlace == FULL_INTERLACE)
-          {
-              b1 = buf;
-              for (j = 0; j < r->n; j++)
-                {
-                    i = r->item[j];
-                    b2 = Vtbuf + (size_t)w->off[i];
-                    type = (int32)w->type[i];
-                    isize = (intn)w->isize[i];
-                    esize = (intn)w->esize[i];
-                    order = (intn)w->order[i];
+        if (interlace == NO_INTERLACE && vs->interlace == FULL_INTERLACE) {
+            b1 = buf;
+            for (j = 0; j < r->n; j++) {
+                i     = r->item[j];
+                b2    = Vtbuf + (size_t)w->off[i];
+                type  = (int32)w->type[i];
+                isize = (intn)w->isize[i];
+                esize = (intn)w->esize[i];
+                order = (intn)w->order[i];
 
-                    for (index = 0; index < order; index++)
-                      {
-                          DFKconvert(b2, b1, type, (uint32) nelt, DFACC_READ, (uint32) hsize, (uint32) esize);
-                          b2 += isize / order;
-                          b1 += esize / order;
-                      }
-                    b1 += ((nelt - 1) * esize);
+                for (index = 0; index < order; index++) {
+                    DFKconvert(b2, b1, type, (uint32)nelt, DFACC_READ, (uint32)hsize, (uint32)esize);
+                    b2 += isize / order;
+                    b1 += esize / order;
                 }
-          }     /* case (a) */
+                b1 += ((nelt - 1) * esize);
+            }
+        } /* case (a) */
 
         /* ----------------------------------------------------------------- */
         /* CASE  (B):  user=none, vdata=none */
-        else if (interlace == NO_INTERLACE && vs->interlace == NO_INTERLACE)
-          {
-              b1 = buf;
-              for (j = 0; j < r->n; j++)
-                {
-                    i = r->item[j];
-                    b2 = Vtbuf + (size_t)w->off[i] * (size_t)nelt;
-                    type = (int32)w->type[i];
-                    esize = (intn)w->esize[i];
-                    isize = (intn)w->isize[i];
-                    order = (intn)w->order[i];
+        else if (interlace == NO_INTERLACE && vs->interlace == NO_INTERLACE) {
+            b1 = buf;
+            for (j = 0; j < r->n; j++) {
+                i     = r->item[j];
+                b2    = Vtbuf + (size_t)w->off[i] * (size_t)nelt;
+                type  = (int32)w->type[i];
+                esize = (intn)w->esize[i];
+                isize = (intn)w->isize[i];
+                order = (intn)w->order[i];
 
-                    for (index = 0; index < order; index++)
-                      {
-                          DFKconvert(b2, b1, type, (uint32) nelt, DFACC_READ, (uint32) isize, (uint32) esize);
-                          b1 += esize / order;
-                          b2 += isize / order;
-                      }
-                    b1 += ((nelt - 1) * esize);
+                for (index = 0; index < order; index++) {
+                    DFKconvert(b2, b1, type, (uint32)nelt, DFACC_READ, (uint32)isize, (uint32)esize);
+                    b1 += esize / order;
+                    b2 += isize / order;
                 }
-          }     /* case (b) */
+                b1 += ((nelt - 1) * esize);
+            }
+        } /* case (b) */
 
         /* ----------------------------------------------------------------- */
         /* CASE  (D):  user=full, vdata=none */
-        else if (interlace == FULL_INTERLACE && vs->interlace == NO_INTERLACE)
-          {
+        else if (interlace == FULL_INTERLACE && vs->interlace == NO_INTERLACE) {
 
-              for (uvsize = 0, j = 0; j < r->n; j++)
-                  uvsize += w->esize[r->item[j]];
+            for (uvsize = 0, j = 0; j < r->n; j++)
+                uvsize += w->esize[r->item[j]];
 
-              offset = 0;
-              for (j = 0; j < r->n; j++)
-                {
-                    i = r->item[j];
-                    b1 = buf + offset;
-                    b2 = Vtbuf + (size_t)w->off[i] * (size_t)nelt;
-                    type = (int32)w->type[i];
-                    isize = (intn)w->isize[i];
-                    esize = (intn)w->esize[i];
-                    order = (intn)w->order[i];
+            offset = 0;
+            for (j = 0; j < r->n; j++) {
+                i     = r->item[j];
+                b1    = buf + offset;
+                b2    = Vtbuf + (size_t)w->off[i] * (size_t)nelt;
+                type  = (int32)w->type[i];
+                isize = (intn)w->isize[i];
+                esize = (intn)w->esize[i];
+                order = (intn)w->order[i];
 
-                    for (index = 0; index < order; index++)
-                      {
-                          DFKconvert(b2, b1, type, (uint32) nelt, DFACC_READ, (uint32) isize, (uint32) uvsize);
-                          b1 += esize / order;
-                          b2 += isize / order;
-                      }
-                    offset += isize;
+                for (index = 0; index < order; index++) {
+                    DFKconvert(b2, b1, type, (uint32)nelt, DFACC_READ, (uint32)isize, (uint32)uvsize);
+                    b1 += esize / order;
+                    b2 += isize / order;
                 }
-          }     /* case (d) */
-      } /* end else, cases a, b, and d */
+                offset += isize;
+            }
+        } /* case (d) */
+    }     /* end else, cases a, b, and d */
 
     ret_value = (nelt);
 
 done:
-  if(ret_value == FAIL)   
-    { /* Error condition cleanup */
+    if (ret_value == FAIL) { /* Error condition cleanup */
 
     } /* end if */
 
-  /* Normal function cleanup */
-  return ret_value;
-}   /* VSread */
+    /* Normal function cleanup */
+    return ret_value;
+} /* VSread */
 
 /*******************************************************************************
 NAME
@@ -480,34 +455,34 @@ RETURNS
    RETURNS the number of elements written (0 or a +ve integer).
 
 *******************************************************************************/
-int32 
-VSwrite(int32 vkey,         /* IN: vdata key */
-        const uint8 buf[],  /* IN: elements to write to vdata */
-        int32 nelt,         /* IN: number of elements */
-        int32 interlace     /* IN: interlace of elements 'buf' */)
+int32
+VSwrite(int32       vkey,  /* IN: vdata key */
+        const uint8 buf[], /* IN: elements to write to vdata */
+        int32       nelt,  /* IN: number of elements */
+        int32       interlace /* IN: interlace of elements 'buf' */)
 {
-    intn isize = 0;
-    intn order = 0;
-    intn index = 0;
-    intn esize = 0;
-    uint8 *dest = NULL;
-    const uint8 *src, *Src;
-    int32       j;
-    int32       type;
-    int32       offset;
-    int32       position = 0;
-    int32       new_size;
-    int32       status;
-    int32       total_bytes;    /* total number of bytes that need to be written out */
+    intn            isize = 0;
+    intn            order = 0;
+    intn            index = 0;
+    intn            esize = 0;
+    uint8          *dest  = NULL;
+    const uint8    *src, *Src;
+    int32           j;
+    int32           type;
+    int32           offset;
+    int32           position = 0;
+    int32           new_size;
+    int32           status;
+    int32           total_bytes; /* total number of bytes that need to be written out */
     DYN_VWRITELIST *w = NULL;
-    int32       int_size;       /* size of "element" as needed by user in memory */
-    intn        hdf_size = 0;   /* size of record in HDF file */
-    vsinstance_t *wi = NULL;
-    VDATA        *vs = NULL;
-    int32       bytes;          /* number of elements / bytes to write next time */
-    int32       chunk;
-    int32       done;    /* number of records to do / done */
-    int32       ret_value = SUCCEED;
+    int32           int_size;     /* size of "element" as needed by user in memory */
+    intn            hdf_size = 0; /* size of record in HDF file */
+    vsinstance_t   *wi       = NULL;
+    VDATA          *vs       = NULL;
+    int32           bytes; /* number of elements / bytes to write next time */
+    int32           chunk;
+    int32           done; /* number of records to do / done */
+    int32           ret_value = SUCCEED;
     CONSTR(FUNC, "VSwrite");
 
     /* clear error stack */
@@ -518,7 +493,7 @@ VSwrite(int32 vkey,         /* IN: vdata key */
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* get vdata instance */
-    if (NULL == (wi = (vsinstance_t *) HAatom_object(vkey)))
+    if (NULL == (wi = (vsinstance_t *)HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     /* get vdata itself and check it. Also check number of elements */
@@ -535,32 +510,30 @@ VSwrite(int32 vkey,         /* IN: vdata key */
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     /* get write list */
-    w = & vs->wlist;
-    if (w->n == 0)
-      {
-          HERROR(DFE_NOVS);
-          HEreport("No fields set for writing");
-          HGOTO_DONE(FAIL);
-      }
+    w = &vs->wlist;
+    if (w->n == 0) {
+        HERROR(DFE_NOVS);
+        HEreport("No fields set for writing");
+        HGOTO_DONE(FAIL);
+    }
 
     /* check interlace of input buffer */
     if (interlace != NO_INTERLACE && interlace != FULL_INTERLACE)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    hdf_size = (intn)w->ivsize;   /* as stored in HDF file */
+    hdf_size    = (intn)w->ivsize; /* as stored in HDF file */
     total_bytes = hdf_size * nelt;
 
     /* make sure we have a valid AID */
-    if (vs->aid == 0)
-      {
+    if (vs->aid == 0) {
 #ifdef OLD_WAY
-          vs->aid = Hstartwrite(vs->f, DFTAG_VS, vs->oref, total_bytes);
-          if (vs->aid == FAIL)
-              HGOTO_ERROR(DFE_BADAID, FAIL);
-#else /* OLD_WAY */
-          HGOTO_ERROR(DFE_BADAID, FAIL);
+        vs->aid = Hstartwrite(vs->f, DFTAG_VS, vs->oref, total_bytes);
+        if (vs->aid == FAIL)
+            HGOTO_ERROR(DFE_BADAID, FAIL);
+#else  /* OLD_WAY */
+        HGOTO_ERROR(DFE_BADAID, FAIL);
 #endif /* OLD_WAY */
-      }
+    }
 
     /*
      * promote to link-block if vdata exists and is not already one
@@ -600,183 +573,172 @@ VSwrite(int32 vkey,         /* IN: vdata key */
 
        --------------------------------------------------------------------- */
     /* CASE  (E + C): Easy to unroll case */
-    if ((w->n == 1) || (interlace == FULL_INTERLACE && vs->interlace == FULL_INTERLACE))
-      {
+    if ((w->n == 1) || (interlace == FULL_INTERLACE && vs->interlace == FULL_INTERLACE)) {
 
-          /*
-           * figure out how many elements we can move at a time and
-           * make sure our buffer is big enough
-           */
+        /*
+         * figure out how many elements we can move at a time and
+         * make sure our buffer is big enough
+         */
 
-          if ((uint32) total_bytes < Vtbufsize)
-            {
-                chunk = nelt;
+        if ((uint32)total_bytes < Vtbufsize) {
+            chunk = nelt;
+        }
+        else {
+            int32 buf_size;
+
+            /* we are bounded above by VDATA_BUFFER_MAX */
+            buf_size = MIN(total_bytes, VDATA_BUFFER_MAX);
+
+            /* make sure there is at least room for one record in our buffer */
+            chunk = buf_size / hdf_size + 1;
+
+            /* get a buffer big enough to hold the values */
+            Vtbufsize = (size_t)chunk * (size_t)hdf_size;
+            if (Vtbuf)
+                HDfree(Vtbuf);
+            if ((Vtbuf = (uint8 *)HDmalloc(Vtbufsize)) == NULL)
+                HGOTO_ERROR(DFE_NOSPACE, FAIL);
+        }
+
+        done = 0;
+
+        /* set loop invariant parameters */
+        Src   = buf;
+        dest  = Vtbuf;
+        bytes = hdf_size * chunk;
+
+        while (done < nelt) {
+
+            /* chunk has changed so update the byte counts */
+            if (nelt - done < chunk) {
+                chunk = nelt - done;
+                bytes = hdf_size * chunk;
             }
-          else
-            {
-                int32       buf_size;
+            /*
+               printf("Case E/C: [%d,%d] writing %d (elems) %d bytes\n", done, nelt, chunk, bytes);
+             */
 
-                /* we are bounded above by VDATA_BUFFER_MAX */
-                buf_size = MIN(total_bytes, VDATA_BUFFER_MAX);
+            offset = 0;
+            for (j = 0; j < w->n; j++) {
+                src   = Src + offset;
+                dest  = Vtbuf + (size_t)w->off[j];
+                type  = (int32)w->type[j];
+                esize = (intn)w->esize[j];
+                isize = (intn)w->isize[j];
+                order = (intn)w->order[j];
 
-                /* make sure there is at least room for one record in our buffer */
-                chunk = buf_size / hdf_size + 1;
-
-                /* get a buffer big enough to hold the values */
-                Vtbufsize = (size_t)chunk * (size_t)hdf_size;
-                if (Vtbuf)
-                    HDfree(Vtbuf);
-                if ((Vtbuf = (uint8 *) HDmalloc(Vtbufsize)) == NULL)
-                    HGOTO_ERROR(DFE_NOSPACE, FAIL);
-            }
-
-          done = 0;
-
-          /* set loop invariant parameters */
-          Src = buf;
-          dest = Vtbuf;
-          bytes = hdf_size * chunk;
-
-          while (done < nelt)
-            {
-
-                /* chunk has changed so update the byte counts */
-                if (nelt - done < chunk)
-                  {
-                      chunk = nelt - done;
-                      bytes = hdf_size * chunk;
-                  }
-/*
-   printf("Case E/C: [%d,%d] writing %d (elems) %d bytes\n", done, nelt, chunk, bytes);
- */
-
-                offset = 0;
-                for (j = 0; j < w->n; j++)
-                  {
-                      src = Src + offset;
-                      dest = Vtbuf + (size_t)w->off[j];
-                      type = (int32)w->type[j];
-                      esize = (intn)w->esize[j];
-                      isize = (intn)w->isize[j];
-                      order = (intn)w->order[j];
-
-                      for (index = 0; index < order; index++)
-                        {
-                            DFKconvert((VOIDP)src, dest, type, (uint32) chunk, DFACC_WRITE, (uint32) int_size, (uint32) hdf_size);
-                            dest += isize / order;
-                            src += esize / order;
-                        }
-                      offset += esize;
-                  }
-
-                /* write the converted data to the file */
-                status = Hwrite(vs->aid, bytes, (uint8 *) Vtbuf);
-                if (status != bytes)
-                    HGOTO_ERROR(DFE_WRITEERROR, FAIL);
-
-                /* record what we've done and move to next group */
-                done += chunk;
-                Src += chunk * int_size;
+                for (index = 0; index < order; index++) {
+                    DFKconvert((VOIDP)src, dest, type, (uint32)chunk, DFACC_WRITE, (uint32)int_size,
+                               (uint32)hdf_size);
+                    dest += isize / order;
+                    src += esize / order;
+                }
+                offset += esize;
             }
 
-      }     /* case (C + E) */
+            /* write the converted data to the file */
+            status = Hwrite(vs->aid, bytes, (uint8 *)Vtbuf);
+            if (status != bytes)
+                HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
-    else
-      {
+            /* record what we've done and move to next group */
+            done += chunk;
+            Src += chunk * int_size;
+        }
 
-	  /* 
-	   * Handle the other cases now.
-	   * These cases are less frequent so don't bother unrolling
-	   *   the loops for now.  As a result, we may get into memory
-	   *   problems since we may end up allocating a huge buffer
-	   */
+    } /* case (C + E) */
 
-	  /* alloc space (Vtbuf) for writing out the data */
-	  if (Vtbufsize < (uint32) total_bytes)
-	    {
-          Vtbufsize = (uint32)total_bytes;
-          if (Vtbuf)
-              HDfree(Vtbuf);
-          if ((Vtbuf = (uint8 *) HDmalloc(Vtbufsize)) == NULL)
-              HGOTO_ERROR(DFE_NOSPACE, FAIL);
-	    }
+    else {
 
-	  /* ----------------------------------------------------------------- */
-	  /* CASE  (A):  user=none, vdata=full */
-	  if (interlace == NO_INTERLACE && vs->interlace == FULL_INTERLACE)
-	    {
+        /*
+         * Handle the other cases now.
+         * These cases are less frequent so don't bother unrolling
+         *   the loops for now.  As a result, we may get into memory
+         *   problems since we may end up allocating a huge buffer
+         */
 
-		src = buf;
-		for (j = 0; j < w->n; j++)
-		  {
-		      dest = Vtbuf + (size_t)w->off[j];
-		      type = (int32)w->type[j];
-		      esize = (intn)w->esize[j];
-		      isize = (intn)w->isize[j];
-		      order = (intn)w->order[j];
+        /* alloc space (Vtbuf) for writing out the data */
+        if (Vtbufsize < (uint32)total_bytes) {
+            Vtbufsize = (uint32)total_bytes;
+            if (Vtbuf)
+                HDfree(Vtbuf);
+            if ((Vtbuf = (uint8 *)HDmalloc(Vtbufsize)) == NULL)
+                HGOTO_ERROR(DFE_NOSPACE, FAIL);
+        }
 
-		      for (index = 0; index < order; index++) {
-			    DFKconvert((VOIDP)src, dest, type, (uint32) nelt, DFACC_WRITE, (uint32) esize, (uint32) hdf_size);
-			    src += esize / order;
-			    dest += isize / order;
-			  }
-		      src += ((nelt - 1) * esize);
-		  }
+        /* ----------------------------------------------------------------- */
+        /* CASE  (A):  user=none, vdata=full */
+        if (interlace == NO_INTERLACE && vs->interlace == FULL_INTERLACE) {
 
-	    }	/* case (a) */
+            src = buf;
+            for (j = 0; j < w->n; j++) {
+                dest  = Vtbuf + (size_t)w->off[j];
+                type  = (int32)w->type[j];
+                esize = (intn)w->esize[j];
+                isize = (intn)w->isize[j];
+                order = (intn)w->order[j];
 
-	  /* --------------------------------------------------------------------- */
-	  /* CASE  (B):  user=none, vdata=none */
-	  else if (interlace == NO_INTERLACE && vs->interlace == NO_INTERLACE)
-	    {
+                for (index = 0; index < order; index++) {
+                    DFKconvert((VOIDP)src, dest, type, (uint32)nelt, DFACC_WRITE, (uint32)esize,
+                               (uint32)hdf_size);
+                    src += esize / order;
+                    dest += isize / order;
+                }
+                src += ((nelt - 1) * esize);
+            }
 
-		src = buf;
-		for (j = 0; j < w->n; j++)
-		  {
-		      dest = Vtbuf + w->off[j] * nelt;
-		      type = (int32)w->type[j];
-		      esize = (intn)w->esize[j];
-		      isize = (intn)w->isize[j];
-		      order = (intn)w->order[j];
+        } /* case (a) */
 
-		      for (index = 0; index < order; index++) {
-			    DFKconvert((VOIDP)src, dest, type, (uint32) nelt, DFACC_WRITE, (uint32) esize, (uint32) isize);
-			    dest += isize / order;
-			    src += esize / order;
-			  }
-		      src += ((nelt - 1) * esize);
-		  }
+        /* --------------------------------------------------------------------- */
+        /* CASE  (B):  user=none, vdata=none */
+        else if (interlace == NO_INTERLACE && vs->interlace == NO_INTERLACE) {
 
-	    }	/* case (b) */
+            src = buf;
+            for (j = 0; j < w->n; j++) {
+                dest  = Vtbuf + w->off[j] * nelt;
+                type  = (int32)w->type[j];
+                esize = (intn)w->esize[j];
+                isize = (intn)w->isize[j];
+                order = (intn)w->order[j];
 
-	  /* ----------------------------------------------------------------- */
-	  /* CASE  (D):  user=full, vdata=none */
-	  else if (interlace == FULL_INTERLACE && vs->interlace == NO_INTERLACE)
-	    {
-		offset = 0;
-		for (j = 0; j < w->n; j++)
-		  {
-		      src = buf + offset;
-		      dest = Vtbuf + w->off[j] * nelt;
-		      type = (int32)w->type[j];
-		      isize = (intn)w->isize[j];
-		      esize = (intn)w->esize[j];
-		      order = (intn)w->order[j];
+                for (index = 0; index < order; index++) {
+                    DFKconvert((VOIDP)src, dest, type, (uint32)nelt, DFACC_WRITE, (uint32)esize,
+                               (uint32)isize);
+                    dest += isize / order;
+                    src += esize / order;
+                }
+                src += ((nelt - 1) * esize);
+            }
 
-		      for (index = 0; index < order; index++) {
-			    DFKconvert((VOIDP)src, dest, type, (uint32) nelt, DFACC_WRITE, (uint32) int_size, (uint32) isize);
-			    dest += isize / order;
-			    src += esize / order;
-  			  }
-		      offset += esize;
-		  }
-	    }	/* case (d) */
+        } /* case (b) */
 
-	  status = Hwrite(vs->aid, total_bytes, (uint8 *) Vtbuf);
-	  if (status != total_bytes)
-	      HGOTO_ERROR(DFE_WRITEERROR, FAIL);
+        /* ----------------------------------------------------------------- */
+        /* CASE  (D):  user=full, vdata=none */
+        else if (interlace == FULL_INTERLACE && vs->interlace == NO_INTERLACE) {
+            offset = 0;
+            for (j = 0; j < w->n; j++) {
+                src   = buf + offset;
+                dest  = Vtbuf + w->off[j] * nelt;
+                type  = (int32)w->type[j];
+                isize = (intn)w->isize[j];
+                esize = (intn)w->esize[j];
+                order = (intn)w->order[j];
 
-      }     /* cases a, b, and d */
+                for (index = 0; index < order; index++) {
+                    DFKconvert((VOIDP)src, dest, type, (uint32)nelt, DFACC_WRITE, (uint32)int_size,
+                               (uint32)isize);
+                    dest += isize / order;
+                    src += esize / order;
+                }
+                offset += esize;
+            }
+        } /* case (d) */
+
+        status = Hwrite(vs->aid, total_bytes, (uint8 *)Vtbuf);
+        if (status != total_bytes)
+            HGOTO_ERROR(DFE_WRITEERROR, FAIL);
+
+    } /* cases a, b, and d */
 
     /* update the internal structure to reflect write */
     if (new_size > vs->nvertices)
@@ -786,12 +748,10 @@ VSwrite(int32 vkey,         /* IN: vdata key */
     ret_value = (nelt);
 
 done:
-  if(ret_value == FAIL)   
-    { /* Error condition cleanup */
+    if (ret_value == FAIL) { /* Error condition cleanup */
 
     } /* end if */
 
-  /* Normal function cleanup */
-  return ret_value;
-}	/* VSwrite */
-
+    /* Normal function cleanup */
+    return ret_value;
+} /* VSwrite */

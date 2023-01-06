@@ -31,7 +31,7 @@ extern "C" {
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_VSQuerycount(JNIEnv *env, jclass clss, jlong vdata_id, jintArray n_records)
 {
-    intn     rval = FAIL;
+    intn     rval   = FAIL;
     jint    *theArg = NULL;
     jboolean isCopy;
 
@@ -45,7 +45,7 @@ Java_hdf_hdflib_HDFLibrary_VSQuerycount(JNIEnv *env, jclass clss, jlong vdata_id
 
     PIN_INT_ARRAY(ENVONLY, n_records, theArg, &isCopy, "VSQuerycount:  n_records not pinned");
 
-    if ((rval = VSQuerycount((int32) vdata_id, (int32 *)&(theArg[0]))) == FAIL)
+    if ((rval = VSQuerycount((int32)vdata_id, (int32 *)&(theArg[0]))) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -58,9 +58,9 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_VSQueryfields(JNIEnv *env, jclass clss, jlong vdata_id, jobjectArray fields)
 {
-    intn     rval = FAIL;
-    char    *data = NULL;
-    jstring  rstring;
+    intn    rval = FAIL;
+    char   *data = NULL;
+    jstring rstring;
 
     UNUSED(clss);
 
@@ -73,7 +73,7 @@ Java_hdf_hdflib_HDFLibrary_VSQueryfields(JNIEnv *env, jclass clss, jlong vdata_i
     if (ENVPTR->GetArrayLength(ENVONLY, fields) < 1)
         H4_BAD_ARGUMENT_ERROR(ENVONLY, "VSQueryfields: output array fields < order 1");
 
-    if ((rval = VSQueryfields((int32) vdata_id, (char *)data)) == FAIL)
+    if ((rval = VSQueryfields((int32)vdata_id, (char *)data)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
     data[4095] = '\0';
@@ -96,7 +96,7 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_VSQueryinterlace(JNIEnv *env, jclass clss, jlong vdata_id, jintArray interlace)
 {
-    intn     rval = FAIL;
+    intn     rval   = FAIL;
     jint    *theArg = NULL;
     jboolean isCopy;
 
@@ -110,7 +110,7 @@ Java_hdf_hdflib_HDFLibrary_VSQueryinterlace(JNIEnv *env, jclass clss, jlong vdat
 
     PIN_INT_ARRAY(ENVONLY, interlace, theArg, &isCopy, "VSQueryinterlace:  interlace not pinned");
 
-    if ((rval = VSQueryinterlace((int32) vdata_id, (int32 *)&(theArg[0]))) == FAIL)
+    if ((rval = VSQueryinterlace((int32)vdata_id, (int32 *)&(theArg[0]))) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -123,13 +123,13 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_VSQueryname(JNIEnv *env, jclass clss, jlong vdata_id, jobjectArray vdata_name)
 {
-    intn     rval = FAIL;
-    char    *data = NULL;
-    jstring  rstring;
+    intn    rval = FAIL;
+    char   *data = NULL;
+    jstring rstring;
 
     UNUSED(clss);
 
-    if ((data = (char *)HDmalloc(VSNAMELENMAX+1)) == NULL)
+    if ((data = (char *)HDmalloc(VSNAMELENMAX + 1)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "VSQueryname: failed to allocate data buffer");
 
     if (vdata_name == NULL)
@@ -138,7 +138,7 @@ Java_hdf_hdflib_HDFLibrary_VSQueryname(JNIEnv *env, jclass clss, jlong vdata_id,
     if (ENVPTR->GetArrayLength(ENVONLY, vdata_name) < 1)
         H4_BAD_ARGUMENT_ERROR(ENVONLY, "VSQueryname: output array vdata_name < order 1");
 
-    if ((rval = VSQueryname((int32) vdata_id, (char *)data)) == FAIL)
+    if ((rval = VSQueryname((int32)vdata_id, (char *)data)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
     data[VSNAMELENMAX] = '\0';
@@ -189,7 +189,7 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_VSQueryvsize(JNIEnv *env, jclass clss, jlong vdata_id, jintArray vdata_size)
 {
-    intn     rval = FAIL;
+    intn     rval   = FAIL;
     jint    *theArg = NULL;
     jboolean isCopy;
 
@@ -203,7 +203,7 @@ Java_hdf_hdflib_HDFLibrary_VSQueryvsize(JNIEnv *env, jclass clss, jlong vdata_id
 
     PIN_INT_ARRAY(ENVONLY, vdata_size, theArg, &isCopy, "VSQuerysize: vdata_size not pinned");
 
-    if ((rval = VSQueryvsize((int32) vdata_id, (int32 *)&(theArg[0]))) == FAIL)
+    if ((rval = VSQueryvsize((int32)vdata_id, (int32 *)&(theArg[0]))) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:

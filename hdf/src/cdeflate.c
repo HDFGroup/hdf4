@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
 /*
    FILE
    cdeflate.c
@@ -38,7 +37,7 @@
 #define CDEFLATE_MASTER
 #define CODER_CLIENT
 /* HDF compression includes */
-#include "hcompi.h"     /* Internal definitions for compression */
+#include "hcompi.h" /* Internal definitions for compression */
 
 /* Internal Defines */
 /* #define TESTING */
@@ -69,26 +68,26 @@ PRIVATE int32
 HCIcdeflate_init(compinfo_t *info)
 {
     CONSTR(FUNC, "HCIcdeflate_init");
-    comp_coder_deflate_info_t *deflate_info;    /* ptr to deflate info */
+    comp_coder_deflate_info_t *deflate_info; /* ptr to deflate info */
 
-    if (Hseek(info->aid, 0, 0) == FAIL)  /* seek to beginning of element */
+    if (Hseek(info->aid, 0, 0) == FAIL) /* seek to beginning of element */
         HRETURN_ERROR(DFE_SEEKERROR, FAIL);
 
     deflate_info = &(info->cinfo.coder_info.deflate_info);
 
     /* Initialize deflation state information */
-    deflate_info->offset = 0;   /* start at the beginning of the data */
+    deflate_info->offset   = 0; /* start at the beginning of the data */
     deflate_info->acc_init = 0; /* second stage of initializing not performed */
     deflate_info->acc_mode = 0; /* init access mode to illegal value */
 
     /* initialize compression context */
-    deflate_info->deflate_context.zalloc=(alloc_func)Z_NULL;
-    deflate_info->deflate_context.zfree=(free_func)Z_NULL;
-    deflate_info->deflate_context.opaque=NULL;
-    deflate_info->deflate_context.data_type=Z_BINARY;
+    deflate_info->deflate_context.zalloc    = (alloc_func)Z_NULL;
+    deflate_info->deflate_context.zfree     = (free_func)Z_NULL;
+    deflate_info->deflate_context.opaque    = NULL;
+    deflate_info->deflate_context.data_type = Z_BINARY;
 
     return (SUCCEED);
-}   /* end HCIcdeflate_init() */
+} /* end HCIcdeflate_init() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -112,53 +111,50 @@ HCIcdeflate_init(compinfo_t *info)
  REVISION LOG
 --------------------------------------------------------------------------*/
 PRIVATE int32
-HCIcdeflate_decode(compinfo_t * info, int32 length, uint8 *buf)
+HCIcdeflate_decode(compinfo_t *info, int32 length, uint8 *buf)
 {
     CONSTR(FUNC, "HCIcdeflate_decode");
-    comp_coder_deflate_info_t *deflate_info;    /* ptr to deflate info */
-    int zstat;              /* inflate status */
-    int32 bytes_read;
+    comp_coder_deflate_info_t *deflate_info; /* ptr to deflate info */
+    int                        zstat;        /* inflate status */
+    int32                      bytes_read;
 
     deflate_info = &(info->cinfo.coder_info.deflate_info);
 
     /* Set up the deflation buffers to point to the user's buffer to fill */
-    deflate_info->deflate_context.next_out=buf;
-    deflate_info->deflate_context.avail_out=(uInt)length;
-    while(deflate_info->deflate_context.avail_out>0)
-      {
-          /* Get more bytes from the file, if we've run out */
-          if(deflate_info->deflate_context.avail_in==0)
-            {
-                int32 file_bytes;
+    deflate_info->deflate_context.next_out  = buf;
+    deflate_info->deflate_context.avail_out = (uInt)length;
+    while (deflate_info->deflate_context.avail_out > 0) {
+        /* Get more bytes from the file, if we've run out */
+        if (deflate_info->deflate_context.avail_in == 0) {
+            int32 file_bytes;
 
-                deflate_info->deflate_context.next_in=deflate_info->io_buf;
-                if((file_bytes=Hread(info->aid,DEFLATE_BUF_SIZE,deflate_info->deflate_context.next_in))==FAIL)
-                    HRETURN_ERROR(DFE_READERROR,FAIL);
-                deflate_info->deflate_context.avail_in=(uInt)file_bytes;
-            } /* end if */
+            deflate_info->deflate_context.next_in = deflate_info->io_buf;
+            if ((file_bytes = Hread(info->aid, DEFLATE_BUF_SIZE, deflate_info->deflate_context.next_in)) ==
+                FAIL)
+                HRETURN_ERROR(DFE_READERROR, FAIL);
+            deflate_info->deflate_context.avail_in = (uInt)file_bytes;
+        } /* end if */
 
-          /* Read compressed data */
-          zstat=inflate(&(deflate_info->deflate_context),Z_NO_FLUSH);
+        /* Read compressed data */
+        zstat = inflate(&(deflate_info->deflate_context), Z_NO_FLUSH);
 
-          /* break out if we've reached the end of the compressed data */
-          if (zstat == Z_STREAM_END)
-              break;
+        /* break out if we've reached the end of the compressed data */
+        if (zstat == Z_STREAM_END)
+            break;
 
-          /* break out if "inflate" returns reading errors */
-          else if (zstat == Z_VERSION_ERROR)
-          {
-              HRETURN_ERROR(DFE_COMPVERSION,FAIL);
-          }
-          else if (zstat <= Z_ERRNO && zstat > Z_VERSION_ERROR)
-          {
-              HRETURN_ERROR(DFE_READCOMP,FAIL);
-          }
-      } /* end while */
-    bytes_read=(int32)length-(int32)deflate_info->deflate_context.avail_out;
-    deflate_info->offset+=bytes_read;
+        /* break out if "inflate" returns reading errors */
+        else if (zstat == Z_VERSION_ERROR) {
+            HRETURN_ERROR(DFE_COMPVERSION, FAIL);
+        }
+        else if (zstat <= Z_ERRNO && zstat > Z_VERSION_ERROR) {
+            HRETURN_ERROR(DFE_READCOMP, FAIL);
+        }
+    } /* end while */
+    bytes_read = (int32)length - (int32)deflate_info->deflate_context.avail_out;
+    deflate_info->offset += bytes_read;
 
-    return(bytes_read);
-}   /* end HCIcdeflate_decode() */
+    return (bytes_read);
+} /* end HCIcdeflate_decode() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -183,39 +179,36 @@ HCIcdeflate_decode(compinfo_t * info, int32 length, uint8 *buf)
  REVISION LOG
 --------------------------------------------------------------------------*/
 PRIVATE int32
-HCIcdeflate_encode(compinfo_t * info, int32 length, void * buf)
+HCIcdeflate_encode(compinfo_t *info, int32 length, void *buf)
 {
     CONSTR(FUNC, "HCIcdeflate_encode");
-    comp_coder_deflate_info_t *deflate_info;    /* ptr to skipping Huffman info */
+    comp_coder_deflate_info_t *deflate_info; /* ptr to skipping Huffman info */
 
     deflate_info = &(info->cinfo.coder_info.deflate_info);
 
     /* Set up the deflation buffers to point to the user's buffer to empty */
-    deflate_info->deflate_context.next_in=buf;
-    deflate_info->deflate_context.avail_in=(uInt)length;
-    while(deflate_info->deflate_context.avail_in>0 || deflate_info->deflate_context.avail_out==0)
-      {
-          /* Write more bytes from the file, if we've filled our buffer */
-          if(deflate_info->deflate_context.avail_out==0)
-            {
-                if(deflate_info->deflate_context.next_out!=NULL)
-{
-                    if(Hwrite(info->aid,DEFLATE_BUF_SIZE,deflate_info->io_buf)==FAIL)
-                        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-}
-                deflate_info->deflate_context.next_out=deflate_info->io_buf;
-                deflate_info->deflate_context.avail_out=DEFLATE_BUF_SIZE;
-            } /* end if */
+    deflate_info->deflate_context.next_in  = buf;
+    deflate_info->deflate_context.avail_in = (uInt)length;
+    while (deflate_info->deflate_context.avail_in > 0 || deflate_info->deflate_context.avail_out == 0) {
+        /* Write more bytes from the file, if we've filled our buffer */
+        if (deflate_info->deflate_context.avail_out == 0) {
+            if (deflate_info->deflate_context.next_out != NULL) {
+                if (Hwrite(info->aid, DEFLATE_BUF_SIZE, deflate_info->io_buf) == FAIL)
+                    HRETURN_ERROR(DFE_WRITEERROR, FAIL);
+            }
+            deflate_info->deflate_context.next_out  = deflate_info->io_buf;
+            deflate_info->deflate_context.avail_out = DEFLATE_BUF_SIZE;
+        } /* end if */
 
-          /* break out if we've reached the end of the compressed data somehow */
-          if(deflate(&(deflate_info->deflate_context),Z_NO_FLUSH)!=Z_OK) {
-              HRETURN_ERROR(DFE_CENCODE,FAIL);
-          }
-      } /* end while */
-    deflate_info->offset += length;    /* incr. abs. offset into the file */
+        /* break out if we've reached the end of the compressed data somehow */
+        if (deflate(&(deflate_info->deflate_context), Z_NO_FLUSH) != Z_OK) {
+            HRETURN_ERROR(DFE_CENCODE, FAIL);
+        }
+    }                               /* end while */
+    deflate_info->offset += length; /* incr. abs. offset into the file */
 
     return (length);
-}   /* end HCIcdeflate_encode() */
+} /* end HCIcdeflate_encode() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -238,59 +231,55 @@ HCIcdeflate_encode(compinfo_t * info, int32 length, void * buf)
  REVISION LOG
 --------------------------------------------------------------------------*/
 PRIVATE int32
-HCIcdeflate_term(compinfo_t * info,uint32 acc_mode)
+HCIcdeflate_term(compinfo_t *info, uint32 acc_mode)
 {
     CONSTR(FUNC, "HCIcdeflate_term");
-    comp_coder_deflate_info_t *deflate_info;    /* ptr to deflation info */
+    comp_coder_deflate_info_t *deflate_info; /* ptr to deflation info */
 
     deflate_info = &(info->cinfo.coder_info.deflate_info);
 
     /* set flag to indicate second stage of initialization is finished */
 
-    if(deflate_info->acc_init!=0)
-      {
-        if(acc_mode&DFACC_WRITE)
-          { /* flush the "deflated" data to the file */
-              intn status;
+    if (deflate_info->acc_init != 0) {
+        if (acc_mode & DFACC_WRITE) { /* flush the "deflated" data to the file */
+            intn status;
 
-              do
-                {
-                  /* Write more bytes from the file, if we've filled our buffer */
-                  if(deflate_info->deflate_context.avail_out==0)
-                    {
-                        if(Hwrite(info->aid,DEFLATE_BUF_SIZE,deflate_info->io_buf)==FAIL)
-                            HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-                        deflate_info->deflate_context.next_out=deflate_info->io_buf;
-                        deflate_info->deflate_context.avail_out=DEFLATE_BUF_SIZE;
-                    } /* end if */
+            do {
+                /* Write more bytes from the file, if we've filled our buffer */
+                if (deflate_info->deflate_context.avail_out == 0) {
+                    if (Hwrite(info->aid, DEFLATE_BUF_SIZE, deflate_info->io_buf) == FAIL)
+                        HRETURN_ERROR(DFE_WRITEERROR, FAIL);
+                    deflate_info->deflate_context.next_out  = deflate_info->io_buf;
+                    deflate_info->deflate_context.avail_out = DEFLATE_BUF_SIZE;
+                } /* end if */
 
-                    status=deflate(&(deflate_info->deflate_context),Z_FINISH);
-                } while(status==Z_OK || deflate_info->deflate_context.avail_out==0);
-              if(status!=Z_STREAM_END)
-                  HRETURN_ERROR(DFE_CENCODE,FAIL);
-              if(deflate_info->deflate_context.avail_out<DEFLATE_BUF_SIZE)
-                  if(Hwrite(info->aid,(int32)(DEFLATE_BUF_SIZE-deflate_info->deflate_context.avail_out),deflate_info->io_buf)==FAIL)
-                      HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                status = deflate(&(deflate_info->deflate_context), Z_FINISH);
+            } while (status == Z_OK || deflate_info->deflate_context.avail_out == 0);
+            if (status != Z_STREAM_END)
+                HRETURN_ERROR(DFE_CENCODE, FAIL);
+            if (deflate_info->deflate_context.avail_out < DEFLATE_BUF_SIZE)
+                if (Hwrite(info->aid, (int32)(DEFLATE_BUF_SIZE - deflate_info->deflate_context.avail_out),
+                           deflate_info->io_buf) == FAIL)
+                    HRETURN_ERROR(DFE_WRITEERROR, FAIL);
 
-              /* Close down the deflation buffer */
-              if(deflateEnd(&(deflate_info->deflate_context))!=Z_OK)
-                  HRETURN_ERROR(DFE_CTERM,FAIL);
-          } /* end if */
-        else
-          { /* finish up any inflated data */
-              /* Close down the inflation buffer */
-              if(inflateEnd(&(deflate_info->deflate_context))!=Z_OK)
-                  HRETURN_ERROR(DFE_CTERM,FAIL);
-          } /* end else */
-      } /* end if */
+            /* Close down the deflation buffer */
+            if (deflateEnd(&(deflate_info->deflate_context)) != Z_OK)
+                HRETURN_ERROR(DFE_CTERM, FAIL);
+        }      /* end if */
+        else { /* finish up any inflated data */
+            /* Close down the inflation buffer */
+            if (inflateEnd(&(deflate_info->deflate_context)) != Z_OK)
+                HRETURN_ERROR(DFE_CTERM, FAIL);
+        } /* end else */
+    }     /* end if */
 
     /* Reset parameters */
-    deflate_info->offset = 0;   /* start at the beginning of the data */
+    deflate_info->offset   = 0; /* start at the beginning of the data */
     deflate_info->acc_init = 0; /* second stage of initializing not performed */
     deflate_info->acc_mode = 0; /* init access mode to illegal value */
 
     return (SUCCEED);
-}   /* end HCIcdeflate_term() */
+} /* end HCIcdeflate_term() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -313,53 +302,50 @@ HCIcdeflate_term(compinfo_t * info,uint32 acc_mode)
  REVISION LOG
 --------------------------------------------------------------------------*/
 PRIVATE int32
-HCIcdeflate_staccess(accrec_t * access_rec, int16 acc_mode)
+HCIcdeflate_staccess(accrec_t *access_rec, int16 acc_mode)
 {
     CONSTR(FUNC, "HCIcdeflate_staccess");
-    compinfo_t *info;           /* special element information */
-    comp_coder_deflate_info_t *deflate_info;    /* ptr to deflate info */
+    compinfo_t                *info;         /* special element information */
+    comp_coder_deflate_info_t *deflate_info; /* ptr to deflate info */
 
-    info = (compinfo_t *) access_rec->special_info;
+    info         = (compinfo_t *)access_rec->special_info;
     deflate_info = &(info->cinfo.coder_info.deflate_info);
 
     /* need to check for not writing, as opposed to read access */
     /* because of the way the access works */
 #ifdef OLD_WAY
-    if (!(acc_mode&DFACC_WRITE))
-        info->aid = Hstartread(access_rec->file_id, DFTAG_COMPRESSED,
-                                  info->comp_ref);
+    if (!(acc_mode & DFACC_WRITE))
+        info->aid = Hstartread(access_rec->file_id, DFTAG_COMPRESSED, info->comp_ref);
     else
-        info->aid = Hstartwrite(access_rec->file_id, DFTAG_COMPRESSED,
-                                   info->comp_ref, info->length);
+        info->aid = Hstartwrite(access_rec->file_id, DFTAG_COMPRESSED, info->comp_ref, info->length);
     if (info->aid == FAIL)
         HRETURN_ERROR(DFE_DENIED, FAIL);
-#else /* OLD_WAY */
-    if (!(acc_mode&DFACC_WRITE)) {
-        info->aid = Hstartread(access_rec->file_id, DFTAG_COMPRESSED,
-                                  info->comp_ref);
-      } /* end if */
+#else  /* OLD_WAY */
+    if (!(acc_mode & DFACC_WRITE)) {
+        info->aid = Hstartread(access_rec->file_id, DFTAG_COMPRESSED, info->comp_ref);
+    } /* end if */
     else {
-        info->aid = Hstartaccess(access_rec->file_id, DFTAG_COMPRESSED,
-                                   info->comp_ref, DFACC_RDWR|DFACC_APPENDABLE);
-      } /* end else */
+        info->aid = Hstartaccess(access_rec->file_id, DFTAG_COMPRESSED, info->comp_ref,
+                                 DFACC_RDWR | DFACC_APPENDABLE);
+    } /* end else */
     if (info->aid == FAIL)
         HRETURN_ERROR(DFE_DENIED, FAIL);
 #endif /* OLD_WAY */
 
     /* Make certain we can append to the data when writing */
-    if ((acc_mode&DFACC_WRITE) && Happendable(info->aid) == FAIL)
+    if ((acc_mode & DFACC_WRITE) && Happendable(info->aid) == FAIL)
         HRETURN_ERROR(DFE_DENIED, FAIL);
 
     /* initialize the common deflate coding info */
-    if(HCIcdeflate_init(info)==FAIL)
-        HRETURN_ERROR(DFE_CODER,FAIL);
+    if (HCIcdeflate_init(info) == FAIL)
+        HRETURN_ERROR(DFE_CODER, FAIL);
 
     /* Allocate compression I/O buffer */
-    if ((deflate_info->io_buf= HDmalloc(DEFLATE_BUF_SIZE)) == NULL)
+    if ((deflate_info->io_buf = HDmalloc(DEFLATE_BUF_SIZE)) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
-    
+
     return (SUCCEED);
-}   /* end HCIcdeflate_staccess() */
+} /* end HCIcdeflate_staccess() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -383,45 +369,43 @@ HCIcdeflate_staccess(accrec_t * access_rec, int16 acc_mode)
  REVISION LOG
 --------------------------------------------------------------------------*/
 PRIVATE int32
-HCIcdeflate_staccess2(accrec_t * access_rec, int16 acc_mode)
+HCIcdeflate_staccess2(accrec_t *access_rec, int16 acc_mode)
 {
     CONSTR(FUNC, "HCIcdeflate_staccess2");
-    compinfo_t *info;           /* special element information */
-    comp_coder_deflate_info_t *deflate_info;    /* ptr to deflate info */
+    compinfo_t                *info;         /* special element information */
+    comp_coder_deflate_info_t *deflate_info; /* ptr to deflate info */
 
-    info = (compinfo_t *) access_rec->special_info;
+    info         = (compinfo_t *)access_rec->special_info;
     deflate_info = &(info->cinfo.coder_info.deflate_info);
 
     /* Initialize the gzip library */
-    if(acc_mode&DFACC_WRITE)
-      {
-        if(deflateInit(&(deflate_info->deflate_context),deflate_info->deflate_level)!=Z_OK)
+    if (acc_mode & DFACC_WRITE) {
+        if (deflateInit(&(deflate_info->deflate_context), deflate_info->deflate_level) != Z_OK)
             HRETURN_ERROR(DFE_CINIT, FAIL);
 
         /* set access mode */
-        deflate_info->acc_mode=DFACC_WRITE;
+        deflate_info->acc_mode = DFACC_WRITE;
 
         /* force I/O with the file at first */
-        deflate_info->deflate_context.next_out=NULL;
-        deflate_info->deflate_context.avail_out=0;
-      } /* end if */
-    else
-      {
-        if(inflateInit(&(deflate_info->deflate_context))!=Z_OK)
+        deflate_info->deflate_context.next_out  = NULL;
+        deflate_info->deflate_context.avail_out = 0;
+    } /* end if */
+    else {
+        if (inflateInit(&(deflate_info->deflate_context)) != Z_OK)
             HRETURN_ERROR(DFE_CINIT, FAIL);
 
         /* set access mode */
-        deflate_info->acc_mode=DFACC_READ;
-        
+        deflate_info->acc_mode = DFACC_READ;
+
         /* force I/O with the file at first */
-        deflate_info->deflate_context.avail_in=0;
-      } /* end else */
+        deflate_info->deflate_context.avail_in = 0;
+    } /* end else */
 
     /* set flag to indicate second stage of initialization is finished */
-    deflate_info->acc_init=acc_mode;
+    deflate_info->acc_init = acc_mode;
 
     return (SUCCEED);
-}   /* end HCIcdeflate_staccess2() */
+} /* end HCIcdeflate_staccess2() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -443,7 +427,7 @@ HCIcdeflate_staccess2(accrec_t * access_rec, int16 acc_mode)
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPcdeflate_stread(accrec_t * access_rec)
+HCPcdeflate_stread(accrec_t *access_rec)
 {
     CONSTR(FUNC, "HCPcdeflate_stread");
 
@@ -451,7 +435,7 @@ HCPcdeflate_stread(accrec_t * access_rec)
         HRETURN_ERROR(DFE_CINIT, FAIL);
 
     return (SUCCEED);
-}   /* HCPcdeflate_stread() */
+} /* HCPcdeflate_stread() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -473,7 +457,7 @@ HCPcdeflate_stread(accrec_t * access_rec)
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPcdeflate_stwrite(accrec_t * access_rec)
+HCPcdeflate_stwrite(accrec_t *access_rec)
 {
     CONSTR(FUNC, "HCPcdeflate_stwrite");
 
@@ -481,7 +465,7 @@ HCPcdeflate_stwrite(accrec_t * access_rec)
         HRETURN_ERROR(DFE_CINIT, FAIL);
 
     return (SUCCEED);
-}   /* HCPcdeflate_stwrite() */
+} /* HCPcdeflate_stwrite() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -508,32 +492,30 @@ HCPcdeflate_stwrite(accrec_t * access_rec)
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPcdeflate_seek(accrec_t * access_rec, int32 offset, int origin)
+HCPcdeflate_seek(accrec_t *access_rec, int32 offset, int origin)
 {
     CONSTR(FUNC, "HCPcdeflate_seek");
-    compinfo_t *info;           /* special element information */
-    comp_coder_deflate_info_t *deflate_info;    /* ptr to gzip 'deflate' info */
-    uint8      tmp_buf[DEFLATE_TMP_BUF_SIZE];   /* temporary buffer */
+    compinfo_t                *info;                          /* special element information */
+    comp_coder_deflate_info_t *deflate_info;                  /* ptr to gzip 'deflate' info */
+    uint8                      tmp_buf[DEFLATE_TMP_BUF_SIZE]; /* temporary buffer */
 
     /* shut compiler up */
     origin = origin;
 
-    info = (compinfo_t *) access_rec->special_info;
+    info         = (compinfo_t *)access_rec->special_info;
     deflate_info = &(info->cinfo.coder_info.deflate_info);
 
     /* Check if second stage of initialization has been performed */
-    if(deflate_info->acc_init==0)
-      {
+    if (deflate_info->acc_init == 0) {
         if (HCIcdeflate_staccess2(access_rec, DFACC_READ) == FAIL)
             HRETURN_ERROR(DFE_CINIT, FAIL);
-      } /* end if */
+    } /* end if */
 
-    if (offset < deflate_info->offset)
-      {     /* need to seek from the beginning */
+    if (offset < deflate_info->offset) { /* need to seek from the beginning */
 #ifdef OLD_WAY
-          /* Reset the decompression buffer */
-          if (deflateReset(&(deflate_info->deflate_context))!=Z_OK)
-              HRETURN_ERROR(DFE_CINIT, FAIL);
+        /* Reset the decompression buffer */
+        if (deflateReset(&(deflate_info->deflate_context)) != Z_OK)
+            HRETURN_ERROR(DFE_CINIT, FAIL);
 #else /* OLD_WAY */
         /* Terminate the previous method of access */
         if (HCIcdeflate_term(info, deflate_info->acc_mode) == FAIL)
@@ -546,40 +528,38 @@ HCPcdeflate_seek(accrec_t * access_rec, int32 offset, int origin)
 
 #endif /* OLD_WAY */
 
-          /* Go back to the beginning of the data-stream */
-          if(Hseek(info->aid,0,0)==FAIL)
-              HRETURN_ERROR(DFE_SEEKERROR, FAIL);
-      }     /* end if */
+        /* Go back to the beginning of the data-stream */
+        if (Hseek(info->aid, 0, 0) == FAIL)
+            HRETURN_ERROR(DFE_SEEKERROR, FAIL);
+    } /* end if */
 
 #ifdef OLD_WAY
-    if ((tmp_buf = (uint8 *) HDmalloc(DEFLATE_TMP_BUF_SIZE)) == NULL)     /* get tmp buffer */
+    if ((tmp_buf = (uint8 *)HDmalloc(DEFLATE_TMP_BUF_SIZE)) == NULL) /* get tmp buffer */
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 #endif /* OLD_WAY */
 
-    while (deflate_info->offset + DEFLATE_TMP_BUF_SIZE < offset) {    /* grab chunks */
-        if (HCIcdeflate_decode(info, DEFLATE_TMP_BUF_SIZE, tmp_buf) == FAIL)
-          {
+    while (deflate_info->offset + DEFLATE_TMP_BUF_SIZE < offset) { /* grab chunks */
+        if (HCIcdeflate_decode(info, DEFLATE_TMP_BUF_SIZE, tmp_buf) == FAIL) {
 #ifdef OLD_WAY
-              HDfree(tmp_buf);
+            HDfree(tmp_buf);
 #endif /* OLD_WAY */
-              HRETURN_ERROR(DFE_CDECODE, FAIL)
-          }     /* end if */
-      }     /* end if */
-    if (deflate_info->offset < offset) {  /* grab the last chunk */
-        if (HCIcdeflate_decode(info, offset - deflate_info->offset, tmp_buf) == FAIL)
-          {
+            HRETURN_ERROR(DFE_CDECODE, FAIL)
+        }                                /* end if */
+    }                                    /* end if */
+    if (deflate_info->offset < offset) { /* grab the last chunk */
+        if (HCIcdeflate_decode(info, offset - deflate_info->offset, tmp_buf) == FAIL) {
 #ifdef OLD_WAY
-              HDfree(tmp_buf);
+            HDfree(tmp_buf);
 #endif /* OLD_WAY */
-              HRETURN_ERROR(DFE_CDECODE, FAIL)
-          }     /* end if */
-      }     /* end if */
+            HRETURN_ERROR(DFE_CDECODE, FAIL)
+        } /* end if */
+    }     /* end if */
 
 #ifdef OLD_WAY
     HDfree(tmp_buf);
 #endif /* OLD_WAY */
     return (SUCCEED);
-}   /* HCPcdeflate_seek() */
+} /* HCPcdeflate_seek() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -603,21 +583,20 @@ HCPcdeflate_seek(accrec_t * access_rec, int32 offset, int origin)
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPcdeflate_read(accrec_t * access_rec, int32 length, void * data)
+HCPcdeflate_read(accrec_t *access_rec, int32 length, void *data)
 {
     CONSTR(FUNC, "HCPcdeflate_read");
-    compinfo_t *info;           /* special element information */
-    comp_coder_deflate_info_t *deflate_info;    /* ptr to gzip 'deflate' info */
-    uintn uninit;               /* Whether the interface was initialized */
+    compinfo_t                *info;         /* special element information */
+    comp_coder_deflate_info_t *deflate_info; /* ptr to gzip 'deflate' info */
+    uintn                      uninit;       /* Whether the interface was initialized */
 
-    info = (compinfo_t *) access_rec->special_info;
+    info         = (compinfo_t *)access_rec->special_info;
     deflate_info = &(info->cinfo.coder_info.deflate_info);
 
     /* Check if second stage of initialization has been performed */
-    if(deflate_info->acc_init!=DFACC_READ)
-      {
+    if (deflate_info->acc_init != DFACC_READ) {
         /* preserve the initialized state for later */
-        uninit=(deflate_info->acc_init!=0);
+        uninit = (deflate_info->acc_init != 0);
 
         /* Terminate the previous method of access */
         if (HCIcdeflate_term(info, deflate_info->acc_mode) == FAIL)
@@ -628,15 +607,15 @@ HCPcdeflate_read(accrec_t * access_rec, int32 length, void * data)
             HRETURN_ERROR(DFE_CINIT, FAIL);
 
         /* Go back to the beginning of the data-stream */
-        if(Hseek(info->aid,0,0)==FAIL)
+        if (Hseek(info->aid, 0, 0) == FAIL)
             HRETURN_ERROR(DFE_SEEKERROR, FAIL);
-      } /* end if */
+    } /* end if */
 
-    if ((length=HCIcdeflate_decode(info, length, data)) == FAIL)
+    if ((length = HCIcdeflate_decode(info, length, data)) == FAIL)
         HRETURN_ERROR(DFE_CDECODE, FAIL);
 
     return (length);
-}   /* HCPcdeflate_read() */
+} /* HCPcdeflate_read() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -660,25 +639,23 @@ HCPcdeflate_read(accrec_t * access_rec, int32 length, void * data)
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPcdeflate_write(accrec_t * access_rec, int32 length, const void * data)
+HCPcdeflate_write(accrec_t *access_rec, int32 length, const void *data)
 {
     CONSTR(FUNC, "HCPcdeflate_write");
-    compinfo_t *info;           /* special element information */
-    comp_coder_deflate_info_t *deflate_info;    /* ptr to skipping Huffman info */
+    compinfo_t                *info;         /* special element information */
+    comp_coder_deflate_info_t *deflate_info; /* ptr to skipping Huffman info */
 
-    info = (compinfo_t *) access_rec->special_info;
+    info         = (compinfo_t *)access_rec->special_info;
     deflate_info = &(info->cinfo.coder_info.deflate_info);
 
     /* Don't allow random write in a dataset unless: */
     /*  1 - append onto the end */
     /*  2 - start at the beginning and rewrite (at least) the whole dataset */
-    if ((info->length != deflate_info->offset)
-        && (deflate_info->offset != 0 || length < info->length))
+    if ((info->length != deflate_info->offset) && (deflate_info->offset != 0 || length < info->length))
         HRETURN_ERROR(DFE_UNSUPPORTED, FAIL);
 
     /* Check if second stage of initialization has been performed */
-    if(deflate_info->acc_init!=DFACC_WRITE)
-      {
+    if (deflate_info->acc_init != DFACC_WRITE) {
         /* Terminate the previous method of access */
         if (HCIcdeflate_term(info, deflate_info->acc_init) == FAIL)
             HRETURN_ERROR(DFE_CTERM, FAIL);
@@ -688,15 +665,15 @@ HCPcdeflate_write(accrec_t * access_rec, int32 length, const void * data)
             HRETURN_ERROR(DFE_CINIT, FAIL);
 
         /* Go back to the beginning of the data-stream */
-        if(Hseek(info->aid,0,0)==FAIL)
+        if (Hseek(info->aid, 0, 0) == FAIL)
             HRETURN_ERROR(DFE_SEEKERROR, FAIL);
-      } /* end if */
+    } /* end if */
 
-    if ((length=HCIcdeflate_encode(info, length, (void *)data)) == FAIL)
+    if ((length = HCIcdeflate_encode(info, length, (void *)data)) == FAIL)
         HRETURN_ERROR(DFE_CENCODE, FAIL);
 
     return (length);
-}   /* HCPcdeflate_write() */
+} /* HCPcdeflate_write() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -728,23 +705,22 @@ HCPcdeflate_write(accrec_t * access_rec, int32 length, const void * data)
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPcdeflate_inquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
-                    uint16 *pref, int32 *plength, int32 *poffset,
-                    int32 *pposn, int16 *paccess, int16 *pspecial)
+HCPcdeflate_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength,
+                    int32 *poffset, int32 *pposn, int16 *paccess, int16 *pspecial)
 {
     /* shut compiler up */
     access_rec = access_rec;
-    pfile_id = pfile_id;
-    ptag = ptag;
-    pref = pref;
-    plength = plength;
-    poffset = poffset;
-    pposn = pposn;
-    paccess = paccess;
-    pspecial = pspecial;
+    pfile_id   = pfile_id;
+    ptag       = ptag;
+    pref       = pref;
+    plength    = plength;
+    poffset    = poffset;
+    pposn      = pposn;
+    paccess    = paccess;
+    pspecial   = pspecial;
 
     return (SUCCEED);
-}   /* HCPcdeflate_inquire() */
+} /* HCPcdeflate_inquire() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -766,17 +742,17 @@ HCPcdeflate_inquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
  REVISION LOG
 --------------------------------------------------------------------------*/
 intn
-HCPcdeflate_endaccess(accrec_t * access_rec)
+HCPcdeflate_endaccess(accrec_t *access_rec)
 {
     CONSTR(FUNC, "HCPcdeflate_endaccess");
-    compinfo_t *info;           /* special element information */
-    comp_coder_deflate_info_t *deflate_info;    /* ptr to gzip 'deflate' info */
+    compinfo_t                *info;         /* special element information */
+    comp_coder_deflate_info_t *deflate_info; /* ptr to gzip 'deflate' info */
 
-    info = (compinfo_t *) access_rec->special_info;
+    info         = (compinfo_t *)access_rec->special_info;
     deflate_info = &(info->cinfo.coder_info.deflate_info);
 
     /* flush out buffer */
-    if (HCIcdeflate_term(info,deflate_info->acc_mode) == FAIL)
+    if (HCIcdeflate_term(info, deflate_info->acc_mode) == FAIL)
         HRETURN_ERROR(DFE_CTERM, FAIL);
 
     /* Get rid of the I/O buffer */
@@ -787,5 +763,4 @@ HCPcdeflate_endaccess(accrec_t * access_rec)
         HRETURN_ERROR(DFE_CANTCLOSE, FAIL);
 
     return (SUCCEED);
-}   /* HCPcdeflate_endaccess() */
-
+} /* HCPcdeflate_endaccess() */

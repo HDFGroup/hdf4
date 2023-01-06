@@ -47,7 +47,7 @@ Java_hdf_hdflib_HDFLibrary_Hopen(JNIEnv *env, jclass clss, jstring hdfFile, jint
 
     PIN_JAVA_STRING(ENVONLY, hdfFile, file, NULL, "Hopen:  hdfFile is not pinned");
 
-        /* open HDF file specified by hdf_HDF_file */
+    /* open HDF file specified by hdf_HDF_file */
     if ((rval = Hopen(file, (intn)access, (int16)ndds)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
@@ -109,7 +109,7 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_Hishdf(JNIEnv *env, jclass clss, jstring hdfFile)
 {
     const char *hfile = NULL;
-    intn        rval = FALSE;
+    intn        rval  = FALSE;
 
     UNUSED(clss);
 
@@ -137,7 +137,7 @@ done:
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_Hnumber(JNIEnv *env, jclass clss, jlong fid, jint tagtype)
 {
-    int32  rval = FAIL;
+    int32 rval = FAIL;
 
     UNUSED(clss);
 
@@ -156,7 +156,7 @@ done:
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_DFKNTsize(JNIEnv *env, jclass clss, jlong numbertype)
 {
-    int  rval = FAIL;
+    int rval = FAIL;
 
     UNUSED(clss);
 
@@ -193,17 +193,18 @@ done:
  * Signature: (J[I[Ljava/lang/String;)Z
  */
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_Hgetfileversion(JNIEnv *env, jclass clss, jlong file_id, jintArray vers, jobjectArray fvstring)
+Java_hdf_hdflib_HDFLibrary_Hgetfileversion(JNIEnv *env, jclass clss, jlong file_id, jintArray vers,
+                                           jobjectArray fvstring)
 {
-    intn     rval = FAIL;
+    intn     rval    = FAIL;
     jint    *theArgs = NULL;
-    char    *data = NULL;
+    char    *data    = NULL;
     jstring  rstring;
     jboolean isCopy;
 
     UNUSED(clss);
 
-    if ((data = (char *)HDmalloc(LIBVSTR_LEN+1)) == NULL)
+    if ((data = (char *)HDmalloc(LIBVSTR_LEN + 1)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "Hgetfileversion: failed to allocate data buffer");
 
     if (fvstring == NULL)
@@ -211,8 +212,8 @@ Java_hdf_hdflib_HDFLibrary_Hgetfileversion(JNIEnv *env, jclass clss, jlong file_
 
     PIN_INT_ARRAY(ENVONLY, vers, theArgs, &isCopy, "Hgetfileversion:  vers not pinned");
 
-    if ((rval = Hgetfileversion((int32) file_id, (uint32 *)&(theArgs[0]),
-            (uint32 *)&(theArgs[1]), (uint32 *)&(theArgs[2]), data)) == FAIL)
+    if ((rval = Hgetfileversion((int32)file_id, (uint32 *)&(theArgs[0]), (uint32 *)&(theArgs[1]),
+                                (uint32 *)&(theArgs[2]), data)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
     data[LIBVSTR_LEN] = '\0';
@@ -242,15 +243,15 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_Hgetlibversion(JNIEnv *env, jclass clss, jintArray vers, jobjectArray lvstring)
 {
-    intn     rval = FAIL;
+    intn     rval    = FAIL;
     jint    *theArgs = NULL;
-    char    *data = NULL;
+    char    *data    = NULL;
     jstring  rstring;
     jboolean isCopy;
 
     UNUSED(clss);
 
-    if ((data = (char *)HDmalloc(LIBVSTR_LEN+1)) == NULL)
+    if ((data = (char *)HDmalloc(LIBVSTR_LEN + 1)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "Hgetlibversion: failed to allocate data buffer");
 
     if (lvstring == NULL)
@@ -264,11 +265,11 @@ Java_hdf_hdflib_HDFLibrary_Hgetlibversion(JNIEnv *env, jclass clss, jintArray ve
 
     PIN_INT_ARRAY(ENVONLY, vers, theArgs, &isCopy, "Hgetlibversion:  vers not pinned");
 
-    if ((rval = Hgetlibversion((uint32 *)&(theArgs[0]),
-            (uint32 *)&(theArgs[1]), (uint32 *)&(theArgs[2]), data)) == FAIL)
+    if ((rval = Hgetlibversion((uint32 *)&(theArgs[0]), (uint32 *)&(theArgs[1]), (uint32 *)&(theArgs[2]),
+                               data)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
-fprintf(stderr, "theArgs= %d:%d:%d\n", theArgs[0], theArgs[1], theArgs[2]);
-fprintf(stderr, "data= %s\n", data);
+    fprintf(stderr, "theArgs= %d:%d:%d\n", theArgs[0], theArgs[1], theArgs[2]);
+    fprintf(stderr, "data= %s\n", data);
     data[LIBVSTR_LEN] = '\0';
     /* convert it to java string */
     if (NULL == (rstring = ENVPTR->NewStringUTF(ENVONLY, data)))
@@ -288,14 +289,13 @@ done:
     return JNI_TRUE;
 }
 
-
 /*
  * Class:     hdf_hdflib_HDFLibrary
  * Method:    Hsetaccesstype
  * Signature: (JI)Z
  */
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_Hsetaccesstype(JNIEnv *env, jclass clss, jlong h_id, jint  access_type)
+Java_hdf_hdflib_HDFLibrary_Hsetaccesstype(JNIEnv *env, jclass clss, jlong h_id, jint access_type)
 {
     intn rval = FAIL;
 
@@ -346,7 +346,6 @@ done:
     return JNI_TRUE;
 }
 
-
 /*
  * Class:     hdf_hdflib_HDFLibrary
  * Method:    HDFopen
@@ -356,7 +355,7 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_HDFopen(JNIEnv *env, jclass clss, jstring filename, jint access, jshort n_dds)
 {
     int32       rval = FAIL;
-    const char *str = NULL;
+    const char *str  = NULL;
 
     UNUSED(clss);
 
@@ -373,7 +372,6 @@ done:
 
     return rval;
 }
-
 
 #ifdef not_yet_implemented
 /*
@@ -404,7 +402,7 @@ done:
 JNIEXPORT jstring JNICALL
 Java_hdf_hdflib_HDFLibrary_HDgetNTdesc(JNIEnv *env, jclass clss, jint nt)
 {
-    char   *rval = NULL;
+    char   *rval    = NULL;
     jstring rstring = NULL;
 
     UNUSED(clss);
@@ -412,7 +410,7 @@ Java_hdf_hdflib_HDFLibrary_HDgetNTdesc(JNIEnv *env, jclass clss, jint nt)
     if ((rval = HDgetNTdesc((int32)nt)) == NULL)
         H4_LIBRARY_ERROR(ENVONLY);
 
-    rstring = ENVPTR->NewStringUTF(ENVONLY,  rval);
+    rstring = ENVPTR->NewStringUTF(ENVONLY, rval);
 
 done:
     if (rval)

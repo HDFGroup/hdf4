@@ -12,14 +12,14 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /*
-   * File
-   *       vhi.c
-   *       HDF Vset high-level access routines VHxxxx
-   *       Feb 92 - update to use H-routines
-   * Routines
-   *       VHstoredata  -- stores data in a field of a vdata in an HDF file
-   *       VHstoredatam -- stores data in a aggregated-typed field of a vdata
-   *       VHmakegroup  -- makes a vgroup from tag/ref pairs
+ * File
+ *       vhi.c
+ *       HDF Vset high-level access routines VHxxxx
+ *       Feb 92 - update to use H-routines
+ * Routines
+ *       VHstoredata  -- stores data in a field of a vdata in an HDF file
+ *       VHstoredatam -- stores data in a aggregated-typed field of a vdata
+ *       VHmakegroup  -- makes a vgroup from tag/ref pairs
  */
 
 #define VSET_INTERFACE
@@ -50,15 +50,15 @@
    ------------------------------------------------------------------------- */
 
 int32
-VHstoredata(HFILEID f, const char *field, const uint8 *buf, int32 n, int32 datatype,
-            const char *vsname, const char *vsclass)
+VHstoredata(HFILEID f, const char *field, const uint8 *buf, int32 n, int32 datatype, const char *vsname,
+            const char *vsclass)
 
 {
 #ifdef LATER
     CONSTR(FUNC, "VHstoredata");
 #endif
-    int32       order = 1;
-    int32       ret_value;
+    int32 order = 1;
+    int32 ret_value;
 
     ret_value = ((int32)VHstoredatam(f, field, buf, n, datatype, vsname, vsclass, order));
 
@@ -91,47 +91,46 @@ VHstoredata(HFILEID f, const char *field, const uint8 *buf, int32 n, int32 datat
    --------------------------------------------------------------------------- */
 
 int32
-VHstoredatam(HFILEID f, const char *field, const uint8 *buf, int32 n, int32 datatype, const char *vsname, const char *vsclass, int32 order)
+VHstoredatam(HFILEID f, const char *field, const uint8 *buf, int32 n, int32 datatype, const char *vsname,
+             const char *vsclass, int32 order)
 {
     CONSTR(FUNC, "VHstoredatam");
-    int32       ref;
-    int32       vs;
-    int32       ret_value = SUCCEED;
-
+    int32 ref;
+    int32 vs;
+    int32 ret_value = SUCCEED;
 
     if ((vs = VSattach(f, -1, "w")) == FAIL)
-        HGOTO_ERROR(DFE_CANTATTACH,FAIL);
+        HGOTO_ERROR(DFE_CANTATTACH, FAIL);
 
-    if ( VSfdefine(vs, field, datatype, order) == FAIL)
-        HGOTO_ERROR(DFE_BADFIELDS,FAIL);
+    if (VSfdefine(vs, field, datatype, order) == FAIL)
+        HGOTO_ERROR(DFE_BADFIELDS, FAIL);
 
-    if ( VSsetfields(vs, field) == FAIL)
-        HGOTO_ERROR(DFE_BADFIELDS,FAIL);
+    if (VSsetfields(vs, field) == FAIL)
+        HGOTO_ERROR(DFE_BADFIELDS, FAIL);
 
     if (n != VSwrite(vs, buf, n, FULL_INTERLACE))
-        HGOTO_ERROR(DFE_BADATTACH,FAIL);
+        HGOTO_ERROR(DFE_BADATTACH, FAIL);
 
-    if(VSsetname(vs, vsname)==FAIL)
-        HGOTO_ERROR(DFE_BADVSNAME,FAIL);
+    if (VSsetname(vs, vsname) == FAIL)
+        HGOTO_ERROR(DFE_BADVSNAME, FAIL);
 
-    if(VSsetclass(vs, vsclass)==FAIL)
-        HGOTO_ERROR(DFE_BADVSCLASS,FAIL);
+    if (VSsetclass(vs, vsclass) == FAIL)
+        HGOTO_ERROR(DFE_BADVSCLASS, FAIL);
 
     ref = VSQueryref(vs);
-    if(VSdetach(vs)==FAIL)
-        HGOTO_ERROR(DFE_CANTDETACH,FAIL);
+    if (VSdetach(vs) == FAIL)
+        HGOTO_ERROR(DFE_CANTDETACH, FAIL);
 
-    ret_value = ((int32) ref);
+    ret_value = ((int32)ref);
 
 done:
-  if(ret_value == FAIL)   
-    { /* Error condition cleanup */
+    if (ret_value == FAIL) { /* Error condition cleanup */
 
     } /* end if */
 
-  /* Normal function cleanup */
-  return ret_value;
-}   /* VHstoredatam */
+    /* Normal function cleanup */
+    return ret_value;
+} /* VHstoredatam */
 
 /* ------------------------ VHmakegroup ------------------------------- */
 /*
@@ -163,44 +162,41 @@ done:
 int32
 VHmakegroup(HFILEID f, int32 tagarray[], int32 refarray[], int32 n, const char *vgname, const char *vgclass)
 {
-    int32       ref, i;
-    int32       vg;
-    int32       ret_value = SUCCEED;
+    int32 ref, i;
+    int32 vg;
+    int32 ret_value = SUCCEED;
     CONSTR(FUNC, "VHmakegroup");
 
+    if ((vg = Vattach(f, -1, "w")) == FAIL)
+        HGOTO_ERROR(DFE_CANTATTACH, FAIL);
 
-    if (( vg = Vattach(f, -1, "w"))== FAIL)
-        HGOTO_ERROR(DFE_CANTATTACH,FAIL);
+    if (vgname != NULL)
+        if (Vsetname(vg, vgname) == FAIL)
+            HGOTO_ERROR(DFE_BADVGNAME, FAIL);
 
-    if(vgname!=NULL)
-        if(Vsetname(vg, vgname)==FAIL)
-            HGOTO_ERROR(DFE_BADVGNAME,FAIL);
+    if (vgclass != NULL)
+        if (Vsetclass(vg, vgclass) == FAIL)
+            HGOTO_ERROR(DFE_BADVGCLASS, FAIL);
 
-    if(vgclass!=NULL)
-        if(Vsetclass(vg, vgclass)==FAIL)
-            HGOTO_ERROR(DFE_BADVGCLASS,FAIL);
-
-    for (i = 0; i < n; i++)
-      {
-          if ( Vaddtagref(vg, tagarray[i], refarray[i]) == FAIL)
-              HGOTO_ERROR(DFE_CANTADDELEM,FAIL);
-      }
+    for (i = 0; i < n; i++) {
+        if (Vaddtagref(vg, tagarray[i], refarray[i]) == FAIL)
+            HGOTO_ERROR(DFE_CANTADDELEM, FAIL);
+    }
 
     ref = VQueryref(vg);
-    if(Vdetach(vg)==FAIL)
-        HGOTO_ERROR(DFE_CANTDETACH,FAIL);
+    if (Vdetach(vg) == FAIL)
+        HGOTO_ERROR(DFE_CANTDETACH, FAIL);
 
     ret_value = (ref);
 
 done:
-  if(ret_value == FAIL)   
-    { /* Error condition cleanup */
+    if (ret_value == FAIL) { /* Error condition cleanup */
 
     } /* end if */
 
-  /* Normal function cleanup */
+    /* Normal function cleanup */
 
-  return ret_value;
-}   /* VHmakegroup */
+    return ret_value;
+} /* VHmakegroup */
 
 /* ------------------------------------------------------------------ */

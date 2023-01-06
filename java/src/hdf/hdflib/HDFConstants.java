@@ -444,7 +444,8 @@ public class HDFConstants {
      *            the number representing the data type
      * @return the string representing the data type
      */
-    public static String getType(int type) {
+    public static String getType(int type)
+    {
         if (type == HDFConstants.DFNT_UCHAR8) {
             return HDFConstants.UCHAR8;
         }
@@ -508,7 +509,8 @@ public class HDFConstants {
      *            the string representing the data type
      * @return the integer representing the data type
      */
-    public static int getType(String type) {
+    public static int getType(String type)
+    {
         if (type.equalsIgnoreCase(HDFConstants.UCHAR8)) {
             return HDFConstants.DFNT_UCHAR8;
         }
@@ -572,37 +574,37 @@ public class HDFConstants {
      *            the number representing the data type
      * @return the size of the data type
      */
-    public static int getTypeSize(int type) {
+    public static int getTypeSize(int type)
+    {
         int size = 0;
 
         switch (type) {
-            case HDFConstants.DFNT_UCHAR16:
-            case HDFConstants.DFNT_CHAR16:
-            case HDFConstants.DFNT_INT16:
-            case HDFConstants.DFNT_UINT16:
-                size = 2;
-                break;
-            case HDFConstants.DFNT_FLOAT32:
-            case HDFConstants.DFNT_INT32:
-            case HDFConstants.DFNT_UINT32:
-                size = 4;
-                break;
-            case HDFConstants.DFNT_FLOAT64:
-            case HDFConstants.DFNT_INT64:
-            case HDFConstants.DFNT_UINT64:
-                size = 8;
-                break;
-            case HDFConstants.DFNT_FLOAT128:
-            case HDFConstants.DFNT_INT128:
-            case HDFConstants.DFNT_UINT128:
-                size = 16;
-                break;
-            default:
-                size = 1;
-                break;
+        case HDFConstants.DFNT_UCHAR16:
+        case HDFConstants.DFNT_CHAR16:
+        case HDFConstants.DFNT_INT16:
+        case HDFConstants.DFNT_UINT16:
+            size = 2;
+            break;
+        case HDFConstants.DFNT_FLOAT32:
+        case HDFConstants.DFNT_INT32:
+        case HDFConstants.DFNT_UINT32:
+            size = 4;
+            break;
+        case HDFConstants.DFNT_FLOAT64:
+        case HDFConstants.DFNT_INT64:
+        case HDFConstants.DFNT_UINT64:
+            size = 8;
+            break;
+        case HDFConstants.DFNT_FLOAT128:
+        case HDFConstants.DFNT_INT128:
+        case HDFConstants.DFNT_UINT128:
+            size = 16;
+            break;
+        default:
+            size = 1;
+            break;
         }
 
         return size;
     }
-
 }
