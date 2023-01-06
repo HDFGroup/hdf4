@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
 
 /*
 FILE
@@ -21,7 +20,7 @@ PURPOSE
     Provide an API for dynamicly-sized bit-vectors or "bit-sets"
 
 REMARKS
-    These function manipulate ordered sets of "bits".  They are designed
+    These function manipulate ordered sets of "bits".  They are designed 
     to closely resemble the functions which one can perform in C with the
     "bit-wise" algebraic functions, with some additional pizzaz thrown in.
 
@@ -30,7 +29,7 @@ DESIGN
     inside the HDF library and out.
         They will use the HDF typedefs & Standard C library macros, but do
     not explicitly depend on being inside the library itself.
-        Each bit-vector is stored in memory as an array of unsigned 8-bit
+        Each bit-vector is stored in memory as an array of unsigned 8-bit 
     integers (uint8's in HDF types), which can grow as additional bits are
     flagged in the bit-vector.
         Each bit-vector is stored with the lowest bits in location 0 in the
@@ -59,7 +58,7 @@ intn bv_clear(bv_ptr b, bv_bool value)
     - Clears an entire bit-vector to a given boolean value.
 
 int32 bv_size(bv_ptr b)
-    - Reports the number of bits used in a bit-vector.
+    - Reports the number of bits used in a bit-vector.  
 
 uint32 bv_flags(bv_ptr b)
     - Returns the flags used when creating the bit-vector
@@ -141,7 +140,7 @@ bv_ptr bv_new(int32 num_bits, uint32 flags)
 
     if((b=(bv_ptr)HDmalloc(sizeof(bv_struct)))==NULL)
         return(NULL);
-
+    
     b->bits_used=(uint32)num_bits;
     b->array_size=(uint32)(((base_elements/BV_CHUNK_SIZE)+1)*BV_CHUNK_SIZE);
     b->flags=flags;
@@ -150,7 +149,7 @@ bv_ptr bv_new(int32 num_bits, uint32 flags)
           HDfree(b);
           return(NULL);
       } /* end if */
-
+    
     /* Check the initial bit settings */
     if(flags&BV_INIT_TO_ONE)
       {
@@ -190,7 +189,7 @@ intn bv_delete(bv_ptr b)
     /* Error checking */
     if(b==NULL || b->buffer==NULL)
         return(FAIL);
-
+    
     /* Free the space used */
     HDfree(b->buffer);
     HDfree(b);
@@ -227,7 +226,7 @@ intn bv_set(bv_ptr b, int32 bit_num, bv_bool value)
     /* Error checking */
     if(b==NULL || bit_num<0)
         return(FAIL);
-
+    
     base_elem=bit_num/(int32)BV_BASE_BITS;
     bit_elem=bit_num%(int32)BV_BASE_BITS;
 
@@ -245,7 +244,7 @@ intn bv_set(bv_ptr b, int32 bit_num, bv_bool value)
                 {   /* allocate more space for bits */
                     bv_base *old_buf=b->buffer;   /* ptr to the old buffer */
                     int32 num_chunks;               /* number of chunks to grab */
-
+                    
                     num_chunks=(int32)(((((uint32)bit_num/BV_BASE_BITS)+1)-b->array_size)/BV_CHUNK_SIZE)+1;
                     if((b->buffer=(bv_base *)HDrealloc(b->buffer,b->array_size+(uint32)num_chunks*BV_CHUNK_SIZE))==NULL)
                       {
@@ -306,7 +305,7 @@ intn bv_get(bv_ptr b, int32 bit_num)
     /* Error checking */
     if(b==NULL || b->buffer==NULL || bit_num<0)
         return(FAIL);
-
+    
     /* Check for asking for a bit off of the end of the vector */
     if((uint32)bit_num>=b->bits_used)
         return((b->flags&BV_INIT_TO_ONE) ? BV_TRUE : BV_FALSE);
@@ -450,6 +449,7 @@ int32 bv_find(bv_ptr b,int32 last_find,bv_bool value)
           if(last_find>=0)
             {   /* if the last bit found option is used, look for more bits in that same byte */
               intn bit_off;
+int unused;
 
               first_byte=(uint32)last_find/BV_BASE_BITS;
               bit_off=(intn)(((uint32)last_find-(first_byte*BV_BASE_BITS))+1);
@@ -457,7 +457,7 @@ int32 bv_find(bv_ptr b,int32 last_find,bv_bool value)
               if(slush_bits!=0)
                   return((int32)(first_byte*BV_BASE_BITS)+bv_first_zero[(~slush_bits)]);
                    /* return((int32)(first_byte*BV_BASE_BITS)+bv_first_zero[(bv_base)(~slush_bits)]);
- */
+ */ 
               first_byte++;
             } /* end if */
 
@@ -522,7 +522,7 @@ int32 bv_find(bv_ptr b,int32 last_find,bv_bool value)
     old_bits_used=b->bits_used;
     if(bv_set(b, (int32)b->bits_used, (bv_bool)((b->flags&BV_INIT_TO_ONE) ? BV_TRUE : BV_FALSE))==FAIL)
         return(FAIL);
-
+    
     return((int32)old_bits_used);
 }   /* bv_find() */
 

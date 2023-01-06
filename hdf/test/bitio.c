@@ -31,7 +31,6 @@
    10/19/93 - Started coding.
  */
 
-/* $Id$ */
 
 #include "tproto.h"
 #include <time.h>

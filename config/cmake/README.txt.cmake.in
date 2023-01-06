@@ -19,7 +19,7 @@ The contents of this directory are:
 
 This binary was built with the ZLIB and SZIP/Libaec external libraries and are
 included for convenience.  Libaec is an unrestricted open-source replacement for SZIP
-(version 1.0.4, Encoder ENABLED).
+(Encoder ENABLED).
 
 The official ZLIB and SZIP/Libaec pages are at:
 
@@ -41,7 +41,7 @@ The examples folder, HDF4Examples, located in the
 HDF4 install folder, can be built and tested with CMake and the supplied
 HDF4_Examples.cmake file. The HDF4_Examples.cmake expects HDF4 to have
 been installed in the default location with above compilers (see the
-libhdf5.settings file in the lib install folder). Also, the CMake
+libhdf4.settings file in the lib install folder). Also, the CMake
 utility should be installed.
 
 To test the installation with the examples;

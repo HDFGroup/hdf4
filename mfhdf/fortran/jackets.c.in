@@ -946,8 +946,6 @@ nncvp1c(cdfid, varid, indices, chval, rcode, chvallen)
     long nindices[MAX_VAR_DIMS];
     int dimid[MAX_VAR_DIMS];
 
-    (void)chvallen;
-
     if (ncvarinq (*cdfid, *varid - 1, (char *) 0,
         (nc_type *) & datatype, &ndims, dimid, &natts) == -1) {
     *rcode = ncerr;
@@ -1074,8 +1072,6 @@ nncvptc(cdfid, varid, start, count, string, lenstr, rcode, stringlen)
 {
     long ncount[MAX_VAR_DIMS], nstart[MAX_VAR_DIMS], i;
     int ndims, datatype, dimarray[MAX_VAR_DIMS], natts;
-
-    (void)stringlen;
 
     if (ncvarinq (*cdfid, *varid - 1, (char *) 0,
         (nc_type *) & datatype, &ndims, dimarray, &natts) == -1) {
@@ -1252,8 +1248,6 @@ nncvpgc(cdfid, varid, start, count, stride, basis, string, rcode, stringlen)
     long tmpbasis;
     int ndims, datatype, dimarray[MAX_VAR_DIMS], natts;
 
-    (void)stringlen;
-
     if (ncvarinq (*cdfid, *varid - 1, (char *) 0, (nc_type *) & datatype,
         &ndims, dimarray, &natts) == -1) {
     *rcode = ncerr;
@@ -1379,8 +1373,6 @@ nncvg1c(cdfid, varid, indices, chval, rcode, chvallen)
 {
     long nindices[MAX_VAR_DIMS];
     int i, datatype, ndims, dimarray[MAX_VAR_DIMS], natts;
-
-    (void)chvallen;
 
     if (ncvarinq (*cdfid, *varid - 1, (char *) 0,
         (nc_type *) & datatype, &ndims, dimarray, &natts) == -1) {
@@ -1548,8 +1540,6 @@ nncvgtc(cdfid, varid, start, count, string, lenstr, rcode, stringlen)
     long ncount[MAX_VAR_DIMS], nstart[MAX_VAR_DIMS];
     int i, ndims, datatype, dimarray[MAX_VAR_DIMS], natts;
     int prod = 1;
-
-    (void)stringlen;
 
     if (ncvarinq (*cdfid, *varid - 1, (char *) 0,
         (nc_type *) & datatype, &ndims, dimarray, &natts) == -1) {
@@ -1755,8 +1745,6 @@ nncvggc(cdfid, varid, start, count, stride, basis, string, rcode, stringlen)
     long tmpbasis;
     int i, ndims, datatype, dimarray[MAX_VAR_DIMS], natts;
 
-    (void)stringlen;
-
     if (ncvarinq (*cdfid, *varid - 1, (char *) 0, (nc_type *) & datatype,
         &ndims, dimarray, &natts) == -1) {
     *rcode = ncerr;
@@ -1912,8 +1900,6 @@ nncaptc(cdfid, varid, attname, datatype, lenstr, string, rcode, attnamelen, stri
 {
     char name[MAX_NC_NAME + 1];
     char *value;
-
-    (void)stringlen;
 
     nstrncpy (name, attname, attnamelen);
     if (((value = malloc ((unsigned) *lenstr + 1)) == NULL) || (*lenstr == 0)) {
@@ -2094,8 +2080,6 @@ nncagtc(cdfid, varid, attname, string, lenstr, rcode, attnamelen, stringlen)
     int datatype;
     int attlen;
     int i;
-
-    (void)stringlen;
 
     nstrncpy (name, attname, attnamelen);
     *rcode = 0;

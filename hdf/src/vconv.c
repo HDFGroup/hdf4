@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
 
 /* obsolete code for HDF 3.2. 26/march/92 jason ng */
 /* except for the following routines:
@@ -80,7 +79,7 @@ PRIVATE int16 local_sizetab[] =
     LOCAL_DOUBLESIZE
 };
 
-#define LOCALSIZETAB_SIZE (sizeof(local_sizetab)/(sizeof(int)))
+#define LOCALSIZETAB_SIZE sizeof(local_sizetab)/sizeof(int)
 
 /*
  ** returns the machine size of a field type
@@ -226,7 +225,7 @@ vimakecompat(HFILEID f)
           oldunpackvg(vg, buf, &bsize);
           /* add new items */
           vg->vgclass = NULL;
-          /* vg->vgclass[0] = '\0'; */
+          /* vg->vgclass[0] = '\0'; */ 
           vg->extag = 0;
           vg->exref = 0;
           vg->version = 2;  /* version 2 */

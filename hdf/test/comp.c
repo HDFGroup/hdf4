@@ -30,7 +30,6 @@
        10/19/93 - Through this header in.
  */
 
-/* $Id$ */
 
 #include <time.h>
 #include "tproto.h"

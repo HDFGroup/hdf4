@@ -17,14 +17,14 @@
  *    test_coordvar - test driver
  *	  test_dim1_SDS1 - tests that data is not corrupted when the
  *		dimension of SDS #1 is named the same as that of SDS #1.
- *		(previous bug: writing to the dimension would corrupt the SDS)
+ *		(previous bug: writing to the dimension would corrupt the SDS) 
  *
  *	  test_dim1_SDS2 - tests that data is not corrupted when the
  *		dimension of SDS #1 is named the same as that of SDS #2.
- *		(previous bug: writing to the SDS #2 would corrupt the
+ *		(previous bug: writing to the SDS #2 would corrupt the 
  *		 dimension)
  *
- *	  test_named_vars - tests that all variables of a given name are
+ *	  test_named_vars - tests that all variables of a given name are 
  *		account for.
  *		(problem: SDnametoindex only returns the first SDS of the
  *		inquired name.  Two new APIs provide number of all variables
@@ -39,25 +39,25 @@
 #include "hdftest.h"
 
 /********************************************************************
-   Name: test_dim1_SDS1() - tests that data is not corrupted when a
+   Name: test_dim1_SDS1() - tests that data is not corrupted when a 
 			dimension is named the same as its SDS.
 
    Description:
 	In the past, naming a dimension the same as its SD and writing
-	dimension scale to it will corrupt the SDS' data.  This routine
+	dimension scale to it will corrupt the SDS' data.  This routine 
 	tests the provided fix (bugzilla 624) for this situation.
 
         The main contents are listed below.  Note that when a function name
-	appears in the parentheses, it indicates that the associate step
+	appears in the parentheses, it indicates that the associate step 
 	specificly tests the changes made to that function.
 
 	- create a one-dim SDS, named VAR1_NAME
 	- name its dimension VAR1_NAME
-	- get file information and verify that there is only 1 variable,
+	- get file information and verify that there is only 1 variable, 
 	  dataset VAR1_NAME
 	- set attribute to dimension "Variable 1" (SDsetattr)
 	- set attribute to SDS "Variable 1" (SDsetattr)
-	- get file information and verify that there are 2 variable,
+	- get file information and verify that there are 2 variable, 
 	  dataset VAR1_NAME and coordinate variable VAR1_NAME
 	- write data to the SDS
 	- close all and reopen the file
@@ -85,15 +85,17 @@
 
 static intn test_dim1_SDS1(void)
 {
+    char  sds_name[20];
     float32 sds1_data[] = {0.1, 2.3, 4.5, 6.7, 8.9};
     float32 out_data[5];
     int32 dimsize[1];
     int32 sds_id, file_id, dim_id, index;
     int32 start=0, stride=1;
-    int32 num_type, count;
-    int32 n_datasets, n_file_attrs, n_vars = 0;
-    intn  status = 0, idx, idx1;
-    hdf_varlist_t* var_list = NULL;
+    int32 scale1 [5] = {101,102,103,104,105}, scale1_out[5];
+    int32 num_type, array_rank, count;
+    int32 n_datasets, n_file_attrs, n_local_attrs, n_vars = 0;
+    intn  datanum, ranknum, status =0, i, idx, idx1, idx2;
+    hdf_varlist_t* var_list;
     intn  is_coord = FALSE;
     char  attr_name[H4_MAX_NC_NAME], attr_values[80];
     intn  num_errs = 0;         /* number of errors so far */
@@ -111,7 +113,7 @@ static intn test_dim1_SDS1(void)
     CHECK(dim_id, FAIL, "SDgetdimid");
     status = SDsetdimname(dim_id, VAR1_NAME);
      /* status = SDsetdimname(dim_id, VAR1_NAME);
- */
+ */ 
     CHECK(status, FAIL, "SDsetdimname");
 
     /* Get file info and verify that there is 1 dataset in the file. */
@@ -140,7 +142,7 @@ static intn test_dim1_SDS1(void)
     /* Close dataset and file. */
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "SDendaccess");
-    status = SDend(file_id);
+    status = SDend(file_id); 
     CHECK(status, FAIL, "SDend");
 
     /* Open the file again to check its data */
@@ -241,7 +243,7 @@ static intn test_dim1_SDS1(void)
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "SDendaccess");
 
-    status = SDend(file_id);
+    status = SDend(file_id); 
     CHECK(status, FAIL, "SDend");
 
     /* Return the number of errors that's been kept track of so far */
@@ -250,16 +252,16 @@ static intn test_dim1_SDS1(void)
 
 
 /********************************************************************
-   Name: test_dim1_SDS2() - tests that data is not corrupted when a
+   Name: test_dim1_SDS2() - tests that data is not corrupted when a 
 			dimension is named the same as that of another SDS.
 
    Description:
 	In the past, naming a dimension the same as an SDS and writing
-	dimension scale to it will corrupt the SDS' data.  This routine
+	dimension scale to it will corrupt the SDS' data.  This routine 
 	tests the provided fix (bugzilla 624) for this situation.
 
         The main contents are listed below.  Note that when a function name
-	appears in the parentheses, it indicates that the associate step
+	appears in the parentheses, it indicates that the associate step 
 	specificly tests the changes made to that function.
 
 	- create a one-dim SDS, named "Variable 1"
@@ -286,15 +288,17 @@ static intn test_dim1_SDS1(void)
 static intn test_dim1_SDS2(void)
 {
     char  sds_name[20];
+    float32 sds1_data[] = {0.1, 2.3, 4.5, 6.7, 8.9};
     float32 sds2_data[2][3] = {{0.1, 2.3, 4.5}, {4.5, 6.7, 8.9}};
     int32 dimsize[1], dimsize2[2];
     int32 sds1_id, sds2_id, file_id, dim_id, index;
+    int32 start=0, stride=1, stat;
     int32 start2[2]={0,0}, stride2[2]={1,1};
     int32 scale1 [5] = {101,102,103,104,105}, scale1_out[5];
-    int32 num_type, array_rank;
+    int32 num_type, array_rank, attributes;
     int32 n_datasets, n_file_attrs, n_local_attrs;
     float32 out_data2[2][3];
-    intn  status = 0, idx, idx1, idx2;
+    intn  datanum, ranknum, status =0, i, idx, idx1, idx2;
     intn  num_errs = 0;         /* number of errors so far */
 
     file_id = SDstart(FILE2, DFACC_CREATE);
@@ -306,7 +310,7 @@ static intn test_dim1_SDS2(void)
     sds1_id = SDcreate(file_id, VAR1_NAME, DFNT_FLOAT32, 1, dimsize);
     CHECK(sds1_id, FAIL, "SDcreate");
 
-    /* Set the dimension name to be the same as the next dataset (not
+    /* Set the dimension name to be the same as the next dataset (not 
        created yet) */
     dim_id = SDgetdimid(sds1_id, 0);
     CHECK(dim_id, FAIL, "SDgetdimid");
@@ -323,7 +327,7 @@ static intn test_dim1_SDS2(void)
     sds2_id = SDcreate(file_id, VAR2_NAME, DFNT_FLOAT32, 2, dimsize2);
     CHECK(sds2_id, FAIL, "SDcreate");
 
-    status = SDwritedata(sds2_id, start2, stride2, dimsize2, sds2_data);
+    stat = SDwritedata(sds2_id, start2, stride2, dimsize2, sds2_data);
     CHECK(status, FAIL, "SDwritedata");
 
     status = SDendaccess(sds2_id);
@@ -347,7 +351,7 @@ static intn test_dim1_SDS2(void)
     /* Close dataset and file */
     status = SDendaccess(sds1_id);
     CHECK(status, FAIL, "SDendaccess");
-    status = SDend(file_id);
+    status = SDend(file_id); 
     CHECK(status, FAIL, "SDend");
 
     /* Open the file again to check its data */
@@ -421,7 +425,7 @@ static intn test_dim1_SDS2(void)
     status = SDendaccess(sds2_id);
     CHECK(status, FAIL, "SDendaccess");
 
-    status = SDend(file_id);
+    status = SDend(file_id); 
     CHECK(status, FAIL, "SDend");
 
     /* Return the number of errors that's been kept track of so far */
@@ -430,15 +434,15 @@ static intn test_dim1_SDS2(void)
 
 
 /********************************************************************
-   Name: test_named_vars() - tests that data is not corrupted when a
+   Name: test_named_vars() - tests that data is not corrupted when a 
 			dimension is named the same as that of another SDS.
 
    Description:
 	In the past, SDnametoindex returns the index of the first variable
 	of the inquired name although there might be more than one variable
 	having such name.  After the fix of bugzilla 624, SDnametoindex was
-	modified to return the first SDS variable of the given name if the
-	name is not unique.  Two new APIs, SDgetnumvars_byname and
+	modified to return the first SDS variable of the given name if the 
+	name is not unique.  Two new APIs, SDgetnumvars_byname and 
 	SDnametoindices, will provide the number of variables of a given
 	name, and a list of indices for those variables.  This test will
 	concentrate on these new APIs.
@@ -492,15 +496,20 @@ static intn test_dim1_SDS2(void)
 static intn test_named_vars(void)
 {
     char  sds_name[20];
+    float32 sds1_data[] = {0.1, 2.3, 4.5, 6.7, 8.9};
+    float32 sds2_data[2][3] = {{0.1, 2.3, 4.5}, {4.5, 6.7, 8.9}};
     int32 dimsize[1], dimsize2[2];
     int32 sds_id, sds1_id, sds2_id, sds3_id, sds4_id, sds5_id;
-    int32 file_id, dim_id;
-    int32 scale1 [5] = {101,102,103,104,105};
+    int32 file_id, dim_id, index;
+    int32 start=0, stride=1, stat;
+    int32 start2[2]={0,0}, stride2[2]={1,1};
+    int32 scale1 [5] = {101,102,103,104,105}, scale1_out[5];
     int32 array_rank;
-    int32 n_datasets, n_file_attrs, n_vars=0;
-    intn  status = 0, idx;
+    int32 n_datasets, n_file_attrs, n_local_attrs, n_vars=0;
+    float32 out_data2[2][3];
+    intn  datanum, ranknum, status =0, idx, idx1, idx2;
     intn  is_coordvar=FALSE;
-    hdf_varlist_t *allvars;
+    hdf_varlist_t *allvars, *varlistp;
     intn  num_errs = 0;         /* number of errors so far */
     char  line[40];
     char  contents[7][40]={
@@ -608,10 +617,10 @@ static intn test_named_vars(void)
 	CHECK(status, FAIL, "SDgetinfo");
 	is_coordvar = SDiscoordvar(sds_id);
 	if (is_coordvar)
-	    sprintf(line,"#%d Coordinate %d-dim '%s'\n", idx, array_rank,
+	    sprintf(line,"#%d Coordinate %d-dim '%s'\n", idx, array_rank, 
 								sds_name);
 	else
-	    sprintf(line,"#%d SDS        %d-dim '%s'\n", idx, array_rank,
+	    sprintf(line,"#%d SDS        %d-dim '%s'\n", idx, array_rank, 
 								sds_name);
 
 	if (strncmp(contents[idx], line, strlen(contents[idx])) != 0)
@@ -620,7 +629,7 @@ static intn test_named_vars(void)
 	}
     }
 
-    status = SDend(file_id);
+    status = SDend(file_id); 
     CHECK(status, FAIL, "SDend");
 
     /* Return the number of errors that's been kept track of so far */

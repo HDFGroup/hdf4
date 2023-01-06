@@ -14,7 +14,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/*    $Id$ */
 
 #include    <string.h>
 #include    "local_nc.h"
@@ -86,7 +85,6 @@ const char *caller;
     nc_api = strstr(caller, "nc");
     if (nc_api == caller)
         return TRUE;
-    return FALSE;
 }
 
 /*
@@ -666,7 +664,7 @@ Void *values ;
     case NC_SHORT :
         return( xdr_NCvshort(xdrs, (unsigned)rem/2, (short *)values) ) ;
     case NC_LONG :
-#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__
+#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__ 
         return( xdr_int(xdrs, (nclong *)values) ) ;
 #else
         return( xdr_long(xdrs, (nclong *)values) ) ;
@@ -1099,8 +1097,6 @@ hdf_xdr_NCvdata(NC *handle,
     int16  isspecial;
     intn   ret_value = SUCCEED;
     int32 alloc_status = FAIL;    /* no successful allocation yet */
-
-    (void)type;
 
 #ifdef DEBUG
     fprintf(stderr, "hdf_xdr_NCvdata I've been called : %s\n", vp->name->values);
@@ -1754,9 +1750,6 @@ nssdc_xdr_NCvdata(NC *handle,
     int32 status;
     int32 byte_count;
 
-    (void)type;
-    (void)values;
-
 #ifdef DEBUG
     fprintf(stderr, "nssdc_xdr_NCvdata I've been called : %s\n", vp->name->values);
     fprintf(stderr, "Where = %d  count = %d\n", where, count);
@@ -2017,7 +2010,7 @@ const long *edges ;
 {
     const long *edp, *orp ;
     unsigned long *boundary, *shp ;
-    /* int partial=0; */
+    int partial=0;
 
     if( IS_RECVAR(vp) )
     {
@@ -2049,7 +2042,7 @@ const long *edges ;
                matching dimension */
         if(*edp < *shp )
         {
-            /* partial=1; */
+        partial=1;
         break ;
         /* Why do we want to break here?  What if the later edge is out
         of limit and we break out as soon as a smaller edge is reached? -BMR */
@@ -2452,28 +2445,24 @@ void *values;        /* buffer to be filled */
 
     /* Find the variable structure */
     if(handle->vars == NULL)
-        return(-1);
+    return(-1);
     vp = NC_hlookupvar(handle, varid);
     if(vp == NULL)
-        return(-1);
+    return(-1);
 
     /* Compute the size of the buffer using the edges */
     buf_size = 1;
-    for (ii = 0; ii < vp->assoc->count; ii++) {
-        if (edges[ii] < 0)
-            return(-1);
-        buf_size = buf_size * edges[ii];
-    }
+    for (ii = 0; ii < vp->assoc->count; ii++)
+    buf_size = buf_size * edges[ii];
 
     /* Find user-defined fill-value and fill the buffer with it */
     attr = NC_findattr(&vp->attrs, _FillValue);
-    if(attr != NULL) {
-        if (HDmemfill(values,(*attr)->data->values,vp->szof,buf_size) == NULL)
-            return(-1);
-    }
+    if(attr != NULL)
+    if (HDmemfill(values,(*attr)->data->values,vp->szof,buf_size) == NULL)
+        return(-1);
     /* If no user-defined fill-value, fill the buffer with default fill-value */
     else
-        NC_arrayfill(values, buf_size * vp->szof, vp->type);
+    NC_arrayfill(values, buf_size * vp->szof, vp->type);
     return 0;
 }
 
@@ -2500,6 +2489,7 @@ const long *edges ;
 ncvoid *values ;
 {
     NC *handle;
+    NC_var *vp;
     int  status = 0;
 
     cdf_routine_name = "ncvarget";

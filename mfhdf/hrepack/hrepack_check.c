@@ -31,7 +31,7 @@ int main(int argc, char **argv)
   usage();
   return 1;
  }
-
+ 
  return 0;
 }
 
@@ -55,10 +55,10 @@ int sds_get_compck(char *fname, char *sds_name)
 {
  HDF_CHUNK_DEF chunk_def;    /* chunk definition read */
  comp_coder_t  comp_type;    /* to retrieve compression type into */
- comp_info     comp_info;    /* compression structure */
- int32         chunk_flags;  /* chunking flag */
+ comp_info     comp_info;    /* compression structure */ 
+ int32         chunk_flags;  /* chunking flag */ 
  int32         sd_id,
-               sds_id,
+               sds_id, 
                sds_index,
                dimsizes[H4_MAX_VAR_DIMS],/* dimensional size of SDS */
                nattrs,                /* number of SDS attributes */
@@ -85,11 +85,11 @@ int sds_get_compck(char *fname, char *sds_name)
  * print the dimensions
  *-------------------------------------------------------------------------
  */
-
+ 
  printf("dimensions:  [");
  for (i = 0; i < rank; i++)
  {
-  printf("%d ", dimsizes[i]);
+  printf("%ld ", dimsizes[i]);
  }
  printf("]\n");
 
@@ -104,7 +104,7 @@ int sds_get_compck(char *fname, char *sds_name)
   printf("chunk dimension:  [");
   for (i = 0; i < rank; i++)
   {
-   printf("%d ", chunk_def.chunk_lengths[i]);
+   printf("%ld ", chunk_def.chunk_lengths[i]);
   }
   printf("]\n");
  }
@@ -114,11 +114,11 @@ int sds_get_compck(char *fname, char *sds_name)
  * retrieve the compression info
  *-------------------------------------------------------------------------
  */
-
+ 
  comp_type = COMP_CODE_NONE;  /* reset variables before retrieving info */
  HDmemset(&comp_info, 0, sizeof(comp_info)) ;
  SDgetcompinfo(sds_id, &comp_type, &comp_info);
-
+ 
  printf("compression type:  %s \n", get_scomp(comp_type));
  if (COMP_CODE_NONE != comp_type )
  {
@@ -138,19 +138,19 @@ int sds_get_compck(char *fname, char *sds_name)
    printf("quality factor:  %d \n", comp_info.jpeg.quality);
    break;
   case COMP_CODE_SZIP:
-   printf("pixels per block:  %d \n", comp_info.szip.pixels_per_block);
+   printf("pixels per block:  %ld \n", comp_info.szip.pixels_per_block);
    break;
   };
  }
 
  /* terminate access to the sds */
  SDendaccess (sds_id);
-
+ 
  /* terminate access to the sd interface */
  SDend (sd_id);
-
+ 
  return 0;
-
+ 
 }
 
 /*-------------------------------------------------------------------------
@@ -171,7 +171,7 @@ static
 int sds_get_all(char *fname)
 {
  int32         sd_id,
-               sds_id,
+               sds_id, 
                sds_index,
                n_datasets,   /* number of datasets in the file */
                n_file_attrs, /* number of file attributes */
@@ -186,19 +186,19 @@ int sds_get_all(char *fname)
   printf("Error: cannot open file <%s>\n", fname);
   return -1;
  }
-
+ 
  /* determine the number of data sets in the file */
  if (SDfileinfo (sd_id, &n_datasets, &n_file_attrs)==FAIL) {
   printf("Error: Cannot get file information\n");
   SDend (sd_id);
   return -1;
  }
-
+ 
  printf("List of sds:\n");
  for (sds_index = 0; sds_index < n_datasets; sds_index++)
  {
   sds_id   = SDselect (sd_id, sds_index);
-
+  
   /* skip dimension scales */
   if ( SDiscoordvar(sds_id) ) {
    SDendaccess(sds_id);
@@ -206,16 +206,16 @@ int sds_get_all(char *fname)
   }
 
   SDgetinfo(sds_id, name, &rrank, dim_sizes, &data_type, &n_attrs);
-
+ 
   printf("    %s\n", name);
-
+ 
   /* terminate access to the current dataset */
   SDendaccess (sds_id);
  }
-
+ 
  /* terminate access to the sd interface */
  SDend (sd_id);
-
+ 
  return 0;
 }
 
@@ -249,7 +249,7 @@ const char* get_scomp(comp_coder_t code)
  }
  /* not reached */
  return NULL;
-}
+} 
 
 
 /*-------------------------------------------------------------------------
@@ -275,7 +275,7 @@ const char* get_schunk(int32 flags)
   return "HDF_NONE";
  else
   return "Invalid chunk flags";
-}
+} 
 
 
 /*-------------------------------------------------------------------------
@@ -288,7 +288,7 @@ const char* get_schunk(int32 flags)
  *-------------------------------------------------------------------------
  */
 
-static
+static 
 void usage(void)
 {
  printf("hrepack_check file_name <sds_name>\n");
