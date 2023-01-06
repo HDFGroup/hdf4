@@ -143,7 +143,7 @@ if (BUILD_SHARED_LIBS)
       INTERFACE "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>;$<BUILD_INTERFACE:${HDF4_HDF_BINARY_DIR}>"
   )
   target_compile_options(${HDF4_SRC_LIBSH_TARGET} PRIVATE "${HDF4_CMAKE_C_FLAGS}")
-  target_compile_definitions(${HDF4_SRCSH_LIB_TARGET}
+  target_compile_definitions(${HDF4_SRC_LIBSH_TARGET}
       PUBLIC
           ${HDF_EXTRA_C_FLAGS}
           ${HDF_EXTRA_FLAGS}
