@@ -309,6 +309,50 @@ test_little_read(void)
             RESULT("DFSDgetdata");
 
 #if defined CONVEXNATIVE
+#ifdef OLD_WAY
+        if(Verbocity>9) {
+            intn i;
+            uint8 *u8_s=(uint8 *)cdata_f64,
+	        *u8_d2=(uint8 *)data_f64;
+
+            printf("cdata_f64:  ");
+            for(i=0; i<80; i++)
+              printf("%.2x ",u8_s[i]);
+            printf("\ndata_f64: ");
+            for(i=0; i<80; i++)
+              printf("%.2x ",u8_d2[i]);
+            printf("\n");
+        }
+#else /* OLD_WAY */
+{
+	intn i;
+	float64 *cd_f64=(float64 *)cdata_f64,
+		*d_f64=(float64 *)data_f64;
+
+	for(i=0; i<CDIM_X*CDIM_Y; i++) {
+	    if(d_f64[i]<(cd_f64[i]-FLOAT64_FUDGE)
+		|| d_f64[i]>(cd_f64[i]+FLOAT64_FUDGE)) {
+            fprintf(stderr,"FLOAT64 data was incorrect\n");
+printf("cd_f64[%d]=%lf, d_f64[%d]=%lf\n",i,cd_f64[i],i,d_f64[i]);
+{
+            intn j;
+            uint8 *u8_s=(uint8 *)&cd_f64[i],
+	        *u8_d2=(uint8 *)&d_f64[i];
+
+            printf("cdata_f64:  ");
+            for(j=0; j<sizeof(float64); j++)
+              printf("%.2x ",u8_s[j]);
+            printf("\ndata_f64: ");
+            for(j=0; j<sizeof(float64); j++)
+              printf("%.2x ",u8_d2[j]);
+            printf("\n");
+}
+              HEprint(stdout,0);
+              num_errs++;
+            } /* end if */
+	  } /* end for */
+}
+#endif /* OLD_WAY */
 #else
             if(HDmemcmp(cdata_f64,data_f64,CDIM_X*CDIM_Y*sizeof(float64))) {
                 fprintf(stderr,"FLOAT64 data was incorrect\n");
