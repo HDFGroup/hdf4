@@ -21,6 +21,7 @@
 
 ./.gitattributes       _DO_NOT_DISTRIBUTE_
 ./.gitignore           _DO_NOT_DISTRIBUTE_
+./.clang-format
 ./MANIFEST
 ./COPYING
 ./Makefile.am
@@ -28,7 +29,6 @@
 ./Makefile.dist
 ./README.txt
 ./aclocal.m4
-./clang-format
 ./configure
 ./configure.ac
 ./libhdf4.settings.in
@@ -70,6 +70,7 @@
 ./bin/config.sub
 ./bin/depcomp
 ./bin/deploy
+./bin/format_source
 ./bin/h4_release_check.sh
 ./bin/install-sh
 ./bin/locate_sw
