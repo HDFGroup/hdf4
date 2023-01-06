@@ -44,6 +44,10 @@ static char sccsid[] = "@(#)xdr_stdio.c 1.16 87/08/11 Copyr 1984 Sun Micro";
 
 #include <stdio.h>
 
+#ifdef _MSC_VER
+#include <Winsock2.h>
+#endif
+
 #ifdef H4_HAVE_ARPA_INET_H
 #include <arpa/inet.h>
 #endif
@@ -79,8 +83,7 @@ static const struct xdr_ops   xdrstdio_ops = {
     xdrstdio_getpos,    /* get offset in the stream */
     xdrstdio_setpos,    /* set offset in the stream */
     xdrstdio_inline,    /* prime stream for inline macros */
-    xdrstdio_destroy,   /* destroy stream */
-    NULL,               /* no xdr_control function defined */
+    xdrstdio_destroy    /* destroy stream */
 };
 
 /*

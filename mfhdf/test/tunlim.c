@@ -19,7 +19,7 @@
  *		+ data added immediately after last record
  *		+ data added skipping one or more records
  *		+ data overridden existing data
- *		+ data read pass the end of that variable but not the max in
+ *		+ data read pass the end of that variable but not the max in 
  *		  all the variables in the file
  *
  * Structure of the file:
@@ -50,9 +50,9 @@
 	  that is the max number of records in the file
 	- HDmemcmp to verify that the read buffer is as expected
 
-	It is used by only test_1dim_singlevar, test_1dim_multivars, and
+	It is used by only test_1dim_singlevar, test_1dim_multivars, and 
 	test_1dim_multivars_addon because it only handles 1-dim dataset and
-	number type int16.  It can be revised for multi-dim datasets or
+	number type int16.  It can be revised for multi-dim datasets or 
 	any number types, if desired.
 
    Return value:
@@ -380,8 +380,8 @@ static int test_1dim_multivars()
         The main contents include:
 	- create a 3-D variable with 1 unlimited dimension and the others 3x2
         - write 4x1x1 elements starting at index {0,0,0}
-        - append 2x1x1 elements along the unlimited dimension starting at
-	  index 6, that is slabs at indices 4 and 5 will be written with fill
+        - append 2x1x1 elements along the unlimited dimension starting at 
+	  index 6, that is slabs at indices 4 and 5 will be written with fill 
 	  value
         - append 1x3x2 elements immediately at the end of the data
 
@@ -409,17 +409,7 @@ static int test_multidim_singlevar()
     intn  num_errs = 0;		/* number of errors so far */
 
     /* result data to compare against read data */
-    int16 result[DIM00][DIM1][DIM2] = {
-            {{300,-3},{-3,-3},{-3,-3}},
-            {{301,-3},{-3,-3},{-3,-3}},
-            {{302,-3},{-3,-3},{-3,-3}},
-            {{303,-3},{-3,-3},{-3,-3}},
-            {{-3,-3},{-3,-3},{-3,-3}},
-            {{-3,-3},{-3,-3},{-3,-3}},
-            {{400,-3},{-3,-3},{-3,-3}},
-            {{401,-3},{-3,-3},{-3,-3}},
-            {{800,801},{802,803},{804,805}}};
-
+    int16 result[DIM00][DIM1][DIM2] = {300,-3,-3,-3,-3,-3,301,-3,-3,-3,-3,-3,302,-3,-3,-3,-3,-3,303,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,-3,400,-3,-3,-3,-3,-3,401,-3,-3,-3,-3,-3,800,801,802,803,804,805};
 
     /* result data to compare against read data; the first two elements will
 	be changed to "1,2" later for the last test. */
@@ -492,7 +482,7 @@ static int test_multidim_singlevar()
 	startw[0] = 6;	/* the end is at 3 */
 	startw[1] = startw[2] = 0; /* writing at {6,0,0} */
 	edgesw[0] = 2;	/* two slabs */
-	edgesw[1] = edgesw[2] = 1;
+	edgesw[1] = edgesw[2] = 1; 
 
 	/* Write 2 slabs starting at index 6 */
 	status = SDwritedata(dset1, startw, NULL, edgesw, (VOIDP)data);
@@ -521,7 +511,7 @@ static int test_multidim_singlevar()
 	startw[1] = startw[2] = 0; /* writing at {8,0,0} */
 	edgesw[0] = 1;	/* 1 slab */
 	edgesw[1] = DIM1;
-	edgesw[2] = DIM2;
+	edgesw[2] = DIM2; 
 
 	/* Write 2 slabs starting at index 8 */
 	status = SDwritedata(dset1, startw, NULL, edgesw, (VOIDP)data);
@@ -577,7 +567,7 @@ static int test_multidim_singlevar()
 	- close the file, then reopen it
 	- open the previous dataset and create another one
         - write 4 elements to first and 3 to second, starting at index 0
-        - append 2 elements to first dataset, starting at index 6, that
+        - append 2 elements to first dataset, starting at index 6, that 
 	  is passed the end
         - append 3 elements to first dataset, immediately at the end of
 	  the data
@@ -734,7 +724,7 @@ static int test_1dim_multivars_addon()
 } /* test_1dim_multivars_addon */
 
 
-/* Test driver for testing reading/writing variables with unlimited dimension
+/* Test driver for testing reading/writing variables with unlimited dimension 
    using SD API. */
 extern int test_unlim()
 {

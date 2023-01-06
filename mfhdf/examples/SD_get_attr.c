@@ -11,10 +11,10 @@ int main()
 
    int32   sd_id, sds_id, dim_id;
    intn    status;
-   int32   attr_index, data_type, n_values;
+   int32   attr_index, data_type, n_values; 
    char    attr_name[H4_MAX_NC_NAME];
    int     i;
-
+   
    /********************* End of variable declaration ***********************/
 
    /*
@@ -32,7 +32,6 @@ int main()
    * parameter is an SD interface identifier.
    */
    status = SDattrinfo (sd_id, attr_index, attr_name, &data_type, &n_values);
-   CHECK_NOT_VAL(status, FAIL, "SDattrinfo");
 
    /* The data type should be DFNT_CHAR, from SD_set_attr.c */
    if (data_type == DFNT_CHAR)
@@ -48,10 +47,9 @@ int main()
       * Read the file attribute data.
       */
       status = SDreadattr (sd_id, attr_index, fileattr_data);
-      CHECK_NOT_VAL(status, FAIL, "SDreadattr");
 
       /*
-      * Print out file attribute value and free buffer.
+      * Print out file attribute value and free buffer. 
       */
       printf ("File attribute value is : %s\n", fileattr_data);
       free (fileattr_data);
@@ -72,7 +70,6 @@ int main()
    * Get information about the data set attribute.
    */
    status = SDattrinfo (sds_id, attr_index, attr_name, &data_type, &n_values);
-   CHECK_NOT_VAL(status, FAIL, "SDattrinfo");
 
    /*
    * The data type should be DFNT_FLOAT32, from SD_set_attr.c.
@@ -90,19 +87,18 @@ int main()
       * Read the SDS attribute data.
       */
       status = SDreadattr (sds_id, attr_index, sds_data);
-      CHECK_NOT_VAL(status, FAIL, "SDreadattr");
 
       /*
-      * Print out SDS attribute data type and values and free buffer.
+      * Print out SDS attribute data type and values and free buffer. 
       */
       printf ("SDS attribute data type is : float32\n");
       printf ("SDS attribute values are :  ");
       for (i=0; i<n_values; i++) printf (" %f", sds_data[i]);
-      printf ("\n");
+      printf ("\n"); 
       free (sds_data);
    }
 
-   /*
+   /*    
    * Get the identifier for the second dimension of the SDS.
    */
    dim_id = SDgetdimid (sds_id, 1);
@@ -116,7 +112,6 @@ int main()
    * Get information about the dimension attribute.
    */
    status = SDattrinfo (dim_id, attr_index, attr_name, &data_type, &n_values);
-   CHECK_NOT_VAL(status, FAIL, "SDattrinfo");
 
    /*
    * The data type should be DFNT_CHAR, from SD_set_attr.c.
@@ -134,24 +129,21 @@ int main()
       * Read the dimension attribute data.
       */
       status = SDreadattr (dim_id, attr_index, dimattr_data);
-      CHECK_NOT_VAL(status, FAIL, "SDreadattr");
       dimattr_data[n_values-1] = '\0';
 
       /*
-      * Print out dimension attribute value and free buffer.
+      * Print out dimension attribute value and free buffer. 
       */
       printf ("Dimensional attribute values is : %s\n", dimattr_data);
       free (dimattr_data);
    }
 
    /*
-   * Terminate access to the data set and to the SD interface and
+   * Terminate access to the data set and to the SD interface and 
    * close the file.
    */
    status = SDendaccess (sds_id);
-   CHECK_NOT_VAL(status, FAIL, "SDendaccess");
    status = SDend (sd_id);
-   CHECK_NOT_VAL(status, FAIL, "SDend");
 
    /*   Output of this program is :
    *

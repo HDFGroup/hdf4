@@ -457,19 +457,19 @@ C    one file.
 C
        file = 'GRchunked1.hdf'
 C
-C   No compresion
+C   No compression
 C
       name(1) = 'Nocomp_data'    
       comp_type(1) = COMP_CODE_NONE
       comp_type_out(1) = 0
 C
-C   RLE compresion
+C   RLE compression
 C
       name(2) = 'Rlcomp_data'    
       comp_type(2) = COMP_CODE_RLE
       comp_type_out(2) = 1 
 C
-C   Adaptive Huffman compresion
+C   Adaptive Huffman compression
 C
       name(3) = 'Hucomp_data'    
       comp_type(3) = COMP_CODE_SKPHUFF
@@ -835,17 +835,17 @@ C---We will write/read to four different files corresponding to the
 C   different compression types.
       file = 'GRcompressed.hdf'
 C
-C   No compresion
+C   No compression
 C
       name(1) = 'Nocomp_data'    
       comp_type(1) = COMP_CODE_NONE
 C
-C   RLE compresion
+C   RLE compression
 C
       name(2) = 'Rlcomp_data'    
       comp_type(2) = COMP_CODE_RLE
 C
-C   Adaptive Huffman compresion
+C   Adaptive Huffman compression
 C
       name(3) = 'Hucomp_data'    
       comp_type(3) = COMP_CODE_SKPHUFF
@@ -1219,19 +1219,19 @@ C   different compression types.
 C
 C   We will try to write to one file GRchunked2.hdf
        file = 'GRchunked2.hdf'
-C   No compresion
+C   No compression
 C
       name(1) = 'Nocomp_data'    
       comp_type(1) = COMP_CODE_NONE
       comp_type_out(1) = 0
 C
-C   RLE compresion
+C   RLE compression
 C
       name(2) = 'Rlcomp_data'    
       comp_type(2) = COMP_CODE_RLE
       comp_type_out(2) = 1 
 C
-C   Adaptive Huffman compresion
+C   Adaptive Huffman compression
 C
       name(3) = 'Hucomp_data'    
       comp_type(3) = COMP_CODE_SKPHUFF

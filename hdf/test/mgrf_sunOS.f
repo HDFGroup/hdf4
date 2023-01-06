@@ -492,21 +492,21 @@ C
 C---We will write/read to four different files corresponding to the
 C   different compression types.
 C
-C   No compresion
+C   No compression
 C
       file(1) = 'grch_no.hdf'
       name(1) = 'Nocomp_data'    
       comp_type(1) = COMP_CODE_NONE
       comp_type_out(1) = 0
 C
-C   RLE compresion
+C   RLE compression
 C
       file(2) = 'grch_rl.hdf'
       name(2) = 'Rlcomp_data'    
       comp_type(2) = COMP_CODE_RLE
       comp_type_out(2) = 1 
 C
-C   Adaptive Huffman compresion
+C   Adaptive Huffman compression
 C
       file(3) = 'grch_sk.hdf'
       name(3) = 'Hucomp_data'    
@@ -816,19 +816,19 @@ C
 C---We will write/read to four different files corresponding to the
 C   different compression types.
 C
-C   No compresion
+C   No compression
 C
       file(1) = 'gr_no.hdf'
       name(1) = 'Nocomp_data'    
       comp_type(1) = COMP_CODE_NONE
 C
-C   RLE compresion
+C   RLE compression
 C
       file(2) = 'gr_rl.hdf'
       name(2) = 'Rlcomp_data'    
       comp_type(2) = COMP_CODE_RLE
 C
-C   Adaptive Huffman compresion
+C   Adaptive Huffman compression
 C
       file(3) = 'gr_sk.hdf'
       name(3) = 'Hucomp_data'    
@@ -1156,21 +1156,21 @@ C
 C---We will write/read to four different files corresponding to the
 C   different compression types.
 C
-C   No compresion
+C   No compression
 C
       file(1) = 'grchwr_no.hdf'
       name(1) = 'Nocomp_data'    
       comp_type(1) = COMP_CODE_NONE
       comp_type_out(1) = 0
 C
-C   RLE compresion
+C   RLE compression
 C
       file(2) = 'grchwr_rl.hdf'
       name(2) = 'Rlcomp_data'    
       comp_type(2) = COMP_CODE_RLE
       comp_type_out(2) = 1 
 C
-C   Adaptive Huffman compresion
+C   Adaptive Huffman compression
 C
       file(3) = 'grchwr_sk.hdf'
       name(3) = 'Hucomp_data'    

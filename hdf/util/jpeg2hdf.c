@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
 #include "hdf.h"
 #ifndef I860
 #include <stdlib.h>
@@ -114,10 +113,11 @@ get_sof(FILE * f)
 /* Process a SOFn marker */
 {
     short       ci;
+    int         data_precision;
 
     (VOID) get_2bytes(f);
 
-    jgetc(f);
+    data_precision = jgetc(f);
     image_height = get_2bytes(f);
     image_width = get_2bytes(f);
     num_components = jgetc(f);

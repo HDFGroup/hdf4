@@ -2,7 +2,7 @@
  * This tests uses HDF NetCDF APIs to read the NetCDF file test_unlim.nc
  * generated with the NetCDF Library v3.5 from test_unlim.cdl
  */
-
+    
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -18,12 +18,12 @@
 #include "tests.h"
 #include "alloc.h"
 #include "emalloc.h"
-#ifdef HDF
-#include "hdf.h"
-#endif
+#ifdef HDF  
+#include "hdf.h" 
+#endif  
 
 float a_val[2][3] = {
-                      {1.0, 2.0, 3.0},
+                      {1.0, 2.0, 3.0}, 
                       {4.0, 5.0, 6.0}
                     };
 int   date_val[12] = {840116, 840214, 840316, 840415, 840516, 840615, 840716, 840816,
@@ -62,6 +62,7 @@ test_ncvarget_unlim(basefile)
     int time[12];
     short val[12][3][2];
     long start[3], count[3];
+    int name_size = 0;
     int i, j, n;
 
     (void) fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
@@ -113,7 +114,7 @@ test_ncvarget_unlim(basefile)
         start[1] = 0;
         count[0] = 2;
         count[1] = 3;
-
+	
          if((status = ncvarget (ncid, var_id, start, count, a)) == -1) {
            error("%s: ncvarget failed for variable a in ", pname);
            ncclose(ncid);
@@ -128,14 +129,14 @@ test_ncvarget_unlim(basefile)
              }
           }
          }
-
+        
 
 /* Reading 1D array with unlimited dimension */
 
 	var_id = ncvarid( ncid, "date");
         start[0] = 0;
         count[0] = 12;
-
+	
          if((status = ncvarget (ncid, var_id, start, count, date)) == -1) {
            error("%s: ncvarget failed for variable date in ", pname);
            ncclose(ncid);
@@ -154,7 +155,7 @@ test_ncvarget_unlim(basefile)
 	var_id = ncvarid( ncid, "time");
         start[0] = 0;
         count[0] = 12;
-
+	
          if((status = ncvarget (ncid, var_id, start, count, time)) == -1) {
            error("%s: ncvarget failed varaible time in ", pname);
            ncclose(ncid);

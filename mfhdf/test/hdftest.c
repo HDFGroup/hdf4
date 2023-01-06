@@ -36,16 +36,16 @@
 #define CNBITFILE "chknbit.hdf"   /* Chunking w/ NBIT compression */
 
 /* Which tests to run? */
-#define EXTERNAL_TEST
-#define NBIT_TEST
-#define COMP_TEST
+#define EXTERNAL_TEST 
+#define NBIT_TEST 
+#define COMP_TEST 
 #define CHUNK_TEST
 /*  commented out for now because of 'long' handling on 64-bit
-    machines by this version of the netCDF library is broken.
-    The new version of the netCDF library(2.4.3?) has fixed
+    machines by this version of the netCDF library is broken. 
+    The new version of the netCDF library(2.4.3?) has fixed 
     this I think. To fix it here requires merging in those fixes.*/
 
-#define NETCDF_READ_TEST
+#define NETCDF_READ_TEST 
 
 /* all test functions to be called in main */
 extern int test_netcdf_reading();
@@ -59,24 +59,26 @@ extern int test_SDSprops();
 extern int test_coordvar();
 extern int test_chunk();
 extern int test_compression();
-extern int test_dimensions();
+extern int test_dimension();
 extern int test_attributes();
 extern int test_datasizes();
 extern int test_datainfo();
 extern int test_external();
 extern int test_att_ann_datainfo();
 
-int
+int 
 main(int argc, char *argv[])
 {
-    int32 f1, f2, fnbit; /* File handles */
+    int32 f1, f2, fext, fnbit; /* File handles */
     int32 nt;                /* Number type */
     int32 dimsize[10];       /* dimension sizes */
     int32 newsds, newsds2, newsds3; /* SDS handles */
     int32 sdsid;                 /* SDS handle */
+    int32 noextsds;              /* no external SDS id */
     int32 dimid, dimid1, dimid2; /* Dimension handles */
     int32 num_sds;               /* number of SDS in file */
     int32 num_gattr;             /* Number of global attributes */
+    int32 offset;                /* offset for ? */
     int32 index;       /* Index of dataset in file */
     int32 ival;
     int32 sdid;        /* another SDS handle */
@@ -99,9 +101,6 @@ main(int argc, char *argv[])
     float32 data[1000], max, min, imax, imin;
     float64 cal, cale, ioff, ioffe;
     int     num_errs = 0;    /* number of errors so far */
-
-    (void)argc;
-    (void)argv;
 
     ncopts = NC_VERBOSE;
 
@@ -137,7 +136,7 @@ main(int argc, char *argv[])
     status = SDfileinfo(f1, &num_sds, &num_gattr);
     CHECK(status, FAIL, "SDfileinfo");
 
-    if(num_gattr != 0)
+    if(num_gattr != 0) 
       {
           fprintf(stderr, "File %s still has stuff in it\n", FILE1);
           num_errs++;
@@ -161,7 +160,7 @@ main(int argc, char *argv[])
     status = SDfileinfo(f1, &num_sds, &num_gattr);
     CHECK(status, FAIL, "SDfileinfo");
 
-    if(num_sds != 2)
+    if(num_sds != 2) 
       {
         fprintf(stderr, "Wrong number of datasets in file 1\n");
         num_errs++;
@@ -178,10 +177,10 @@ main(int argc, char *argv[])
     /* Set dimension attribute to 'TRUE' */
     status = SDsetattr(dimid, "DimensionAttribute", DFNT_CHAR8, 4, "TRUE");
     CHECK(status, FAIL, "SDsetattr: Failed to set Dimension attribute");
-
+    
     /* hmm. look it back up again. */
     status = SDfindattr(dimid, "DimensionAttribute");
-    if(status != 0)
+    if(status != 0) 
       {
         fprintf(stderr, "SDfindattr: Bad index for finding 'DimensionAttribute' %d\n",
                 status);
@@ -195,9 +194,9 @@ main(int argc, char *argv[])
     /* read first attribute in, assume CHAR here. */
     status = SDreadattr(dimid, 0, text);
     CHECK(status, FAIL, "SDreadattr");
-
+    
     /* Compare value reterieved to what was written */
-    if(HDstrncmp(text, "TRUE", count))
+    if(HDstrncmp(text, "TRUE", count)) 
       {
         fprintf(stderr, "SDreadattr: Invalid dimension attribute read <%s>\n", text);
         num_errs++;
@@ -231,11 +230,11 @@ main(int argc, char *argv[])
     CHECK(status, FAIL, "SDreaddata");
 
     /* compare retrieved values for scale */
-    for(i = 0; i < 4; i++)
+    for(i = 0; i < 4; i++) 
       {
-        if(idata[i] != scale[i])
+        if(idata[i] != scale[i]) 
           {
-              fprintf(stderr, "SDreaddata() returned %ld not %ld in location %d\n",
+              fprintf(stderr, "SDreaddata() returned %ld not %ld in location %d\n", 
                       (long)idata[i], (long)scale[i], i);
               num_errs++;
           }
@@ -250,19 +249,19 @@ main(int argc, char *argv[])
     status = SDattrinfo(dimid, 3, name, &nt, &count);
     CHECK(status, FAIL, "SDattrinfo");
 
-    if(nt != DFNT_FLOAT32)
+    if(nt != DFNT_FLOAT32) 
       {
         fprintf(stderr, "Wrong number type for SDattrinfo(dim)\n");
         num_errs++;
       }
 
-    if(count != 1)
+    if(count != 1) 
       {
         fprintf(stderr, "Wrong count for SDattrinfo(dim)\n");
         num_errs++;
       }
 
-    if(strcmp(name, "DimAttr"))
+    if(strcmp(name, "DimAttr")) 
       {
         fprintf(stderr, "Wrong name for SDattrinfo(dim)\n");
         num_errs++;
@@ -272,7 +271,7 @@ main(int argc, char *argv[])
     dimid2 = SDgetdimid(newsds, 1);
     CHECK(dimid2, FAIL, "SDgetdimid: Failed to get second dimension id");
 
-    /* lets store an attribute for the dimension without explicitly
+    /* lets store an attribute for the dimension without explicitly 
        creating the coord var first */
     ival = -256;
     status = SDsetattr(dimid2, "Integer", DFNT_INT32, 1, (VOIDP) &ival);
@@ -282,19 +281,19 @@ main(int argc, char *argv[])
     status = SDattrinfo(dimid2, 0, name, &nt, &count);
     CHECK(status, FAIL, "SDattrinfo");
 
-    if(nt != DFNT_INT32)
+    if(nt != DFNT_INT32) 
       {
         fprintf(stderr, "Wrong number type for SDattrinfo(dim)\n");
         num_errs++;
       }
 
-    if(count != 1)
+    if(count != 1) 
       {
         fprintf(stderr, "Wrong count for SDattrinfo(dim)\n");
         num_errs++;
       }
 
-    if(strcmp(name, "Integer"))
+    if(strcmp(name, "Integer")) 
       {
         fprintf(stderr, "Wrong name for SDattrinfo(dim)\n");
         num_errs++;
@@ -304,8 +303,8 @@ main(int argc, char *argv[])
     ival = 0;
     status = SDreadattr(dimid2, 0, (VOIDP) &ival);
     CHECK(status, FAIL, "SDreatattr");
-
-    if(ival != -256)
+    
+    if(ival != -256) 
       {
         fprintf(stderr, "Wrong value for SDreadattr(dim)\n");
         num_errs++;
@@ -320,19 +319,19 @@ main(int argc, char *argv[])
     status = SDattrinfo(dimid2, 1, name, &nt, &count);
     CHECK(status, FAIL, "SDattrinfo");
 
-    if(nt != DFNT_UINT8)
+    if(nt != DFNT_UINT8) 
       {
         fprintf(stderr, "Wrong number type for SDattrinfo(dim)\n");
         num_errs++;
       }
 
-    if(count != 1)
+    if(count != 1) 
       {
         fprintf(stderr, "Wrong count for SDattrinfo(dim)\n");
         num_errs++;
       }
 
-    if(strcmp(name, "UnsignedInteger"))
+    if(strcmp(name, "UnsignedInteger")) 
       {
         fprintf(stderr, "Wrong name for SDattrinfo(dim)\n");
         num_errs++;
@@ -342,8 +341,8 @@ main(int argc, char *argv[])
     iuval = 0;
     status = SDreadattr(dimid2, 1, (VOIDP) &iuval);
     CHECK(status, FAIL, "SDreatattr");
-
-    if(iuval != 253)
+    
+    if(iuval != 253) 
       {
         fprintf(stderr, "Wrong value for SDreadattr(dim)\n");
         num_errs++;
@@ -351,7 +350,7 @@ main(int argc, char *argv[])
 
     /* Find index of data set 'DataSetAlpha' in file test1.hdf */
     status = SDnametoindex(f1, "DataSetAlpha");
-    if(status != 0)
+    if(status != 0) 
       {
         fprintf(stderr, "Couldn't find data set in file 1\n");
         num_errs++;
@@ -359,7 +358,7 @@ main(int argc, char *argv[])
 
     /* Try finding data set in test2.hdf, should fail? */
     status = SDnametoindex(f2, "DataSetAlpha");
-    if(status != FAIL)
+    if(status != FAIL) 
       {
         fprintf(stderr, "Found data set in wrong file 2\n");
         num_errs++;
@@ -367,7 +366,7 @@ main(int argc, char *argv[])
 
     /* Try finding non-existent dataset in file, should fail */
     status = SDnametoindex(f1, "BogusDataSet");
-    if(status != FAIL)
+    if(status != FAIL) 
       {
         fprintf(stderr, "Found bogus data set in file 1\n");
         num_errs++;
@@ -383,7 +382,7 @@ main(int argc, char *argv[])
     for(i = 0; i < 10; i++)
         data[i] = (float32) i;
 
-    /* write out (1,1)->(3,3) array out */
+    /* write out (1,1)->(3,3) array out */ 
     start[0] = start[1] = 1;
     end[0]   = end[1]   = 3;
     status = SDwritedata(newsds, start, NULL, end, (VOIDP) data);
@@ -411,22 +410,22 @@ main(int argc, char *argv[])
     status = SDgetdatastrs(newsds, l, u, fmt, c, 80);
     CHECK(status, FAIL, "SDgetdatastrs");
 
-    if(HDstrcmp(l, "TheLabel"))
+    if(HDstrcmp(l, "TheLabel")) 
       {
         fprintf(stderr, "Bogus label returned (%s)\n", l);
         num_errs++;
       }
-    if(HDstrcmp(u, "TheUnits"))
+    if(HDstrcmp(u, "TheUnits")) 
       {
         fprintf(stderr, "Bogus units returned (%s)\n", u);
         num_errs++;
       }
-    if(HDstrcmp(fmt, ""))
+    if(HDstrcmp(fmt, "")) 
       {
         fprintf(stderr, "Bogus format returned\n");
         num_errs++;
       }
-    if(HDstrcmp(c, "TheCordsys"))
+    if(HDstrcmp(c, "TheCordsys")) 
       {
         fprintf(stderr, "Bogus cordsys returned\n");
         num_errs++;
@@ -434,16 +433,16 @@ main(int argc, char *argv[])
 
     /* retrieve CHAR attribute for 'DataSetAlpha' */
     status = SDfindattr(newsds, "spam");
-    if(status != 2)
+    if(status != 2) 
       {
         fprintf(stderr, "Bad index for SDfindattr\n");
         num_errs++;
       }
 
-    /* retrieve non-existent CHAR attribute for 'DataSetAlpha'.
+    /* retrieve non-existent CHAR attribute for 'DataSetAlpha'. 
        Should fail. */
     status = SDfindattr(newsds, "blarf");
-    if(status != FAIL)
+    if(status != FAIL) 
       {
         fprintf(stderr, "SDfindattr found non-existant attribute\n");
         num_errs++;
@@ -460,8 +459,8 @@ main(int argc, char *argv[])
     /* read this global attribute back in ....*/
     status = SDreadattr(f1, 0, text);
     CHECK(status, FAIL, "SDreadattr");
-
-    if(HDstrncmp(text, "globulator", count))
+    
+    if(HDstrncmp(text, "globulator", count)) 
       {
         fprintf(stderr, "Invalid global attribute read <%s>\n", text);
         num_errs++;
@@ -470,7 +469,7 @@ main(int argc, char *argv[])
     /* Get number of SDS and global attributes in file 'test2.hdf'.
        It should be empty...*/
     status = SDfileinfo(f2, &num_sds, &num_gattr);
-    if(num_sds != 0)
+    if(num_sds != 0) 
       {
         fprintf(stderr, "File2 still has stuff in it\n");
         num_errs++;
@@ -494,7 +493,7 @@ main(int argc, char *argv[])
     /* get info on number of SDSs and global attributes in file 'test2.hdf'
        There should be only 1 SDS */
     status = SDfileinfo(f2, &num_sds, &num_gattr);
-    if(num_sds != 1)
+    if(num_sds != 1) 
       {
         fprintf(stderr, "Wrong number of datasets in file 2\n");
         num_errs++;
@@ -511,7 +510,7 @@ main(int argc, char *argv[])
     status = SDwritedata(newsds2, start, NULL, end, (VOIDP) sdata);
     CHECK(status, FAIL, "SDwritedata");
 
-    /* Now read part of an earlier dataset,'DataSetAlpha',
+    /* Now read part of an earlier dataset,'DataSetAlpha', 
        back in from file 'test1.hdf' */
     start[0] = start[1] = 0;
     end[0]   = end[1]   = 3;
@@ -519,27 +518,27 @@ main(int argc, char *argv[])
     CHECK(status, FAIL, "SDreaddata");
 
     /* verify the data values retrieved from 'DataSetAlpha' */
-    if(data[0] != -17.5)
+    if(data[0] != -17.5) 
       {
         fprintf(stderr, "Wrong value returned loc 0: %f\n",(float)data[0]);
         num_errs++;
       }
-    if(data[3] != -17.5)
+    if(data[3] != -17.5) 
       {
         fprintf(stderr, "Wrong value returned loc 3: %f\n",(float)data[3]);
         num_errs++;
       }
-    if(data[5] != 1.0)
+    if(data[5] != 1.0) 
       {
         fprintf(stderr, "Wrong value returned loc 5: %f\n",(float)data[5]);
         num_errs++;
       }
-    if(data[6] != -17.5)
+    if(data[6] != -17.5) 
       {
         fprintf(stderr, "Wrong value returned loc 6: %f\n",(float)data[6]);
         num_errs++;
       }
-    if(data[8] != 4.0)
+    if(data[8] != 4.0) 
       {
         fprintf(stderr, "Wrong value returned loc 8: %f\n",(float)data[8]);
         num_errs++;
@@ -575,7 +574,7 @@ main(int argc, char *argv[])
   }
     }
 
-    /* why do we set calibration info and then use SDgetcal()
+    /* why do we set calibration info and then use SDgetcal() 
        on dataset 'DataSetGamma' ? */
     cal   = 1.0;
     cale  = 5.0;
@@ -586,31 +585,31 @@ main(int argc, char *argv[])
     CHECK(status, FAIL, "SDgetcal");
 
     /* Verify calibration data for data set 'DataSetGamma' */
-    if(cal != 1.0)
+    if(cal != 1.0) 
       {
         fprintf(stderr, "Wrong calibration info\n");
         num_errs++;
       }
 
-    if(cale != 5.0)
+    if(cale != 5.0) 
       {
         fprintf(stderr, "Wrong calibration info\n");
         num_errs++;
       }
 
-    if(ioff != 3.0)
+    if(ioff != 3.0) 
       {
         fprintf(stderr, "Wrong calibration info\n");
         num_errs++;
       }
 
-    if(ioffe != 2.5)
+    if(ioffe != 2.5) 
       {
         fprintf(stderr, "Wrong calibration info\n");
         num_errs++;
       }
 
-    if(nt != DFNT_INT8)
+    if(nt != DFNT_INT8) 
       {
         fprintf(stderr, "Wrong calibration info\n");
         num_errs++;
@@ -706,7 +705,7 @@ main(int argc, char *argv[])
     status = SDwritedata(sdid, start, NULL, end, (VOIDP)idata);
     CHECK(status, FAIL, "SDwritedata: (SD_FILL)");
 
-    /* Test get compression info when the data set is not empty and
+    /* Test get compression info when the data set is not empty and 
        compressed */
     {
   comp_coder_t comp_type;  /* type of compression */
@@ -816,20 +815,20 @@ main(int argc, char *argv[])
     CHECK(status, FAIL, "SDreaddata(FIXED)");
 
     /* verify the data */
-    for (i=12; i<18; i++)
+    for (i=12; i<18; i++)  
       {
         if ((idata[i] != 100 + (i-12)) ||
-            (idata[i+12] != 100 + (i-12)))
+            (idata[i+12] != 100 + (i-12))) 
           {
            fprintf(stderr, "line %d, wrong value: should be %d, got %d %d\n",
                            __LINE__,100 + i-12, (int)idata[i], (int)idata[i+12]);
            num_errs++;
           }
       }
-
-    for (i=18; i<24; i++)
+    
+    for (i=18; i<24; i++)  
       {
-        if (idata[i] ==fillval)
+        if (idata[i] ==fillval) 
           {
            fprintf(stderr, "line %d, wrong value: should not be %d, got %d\n",
                            __LINE__,(int)fillval, (int)idata[i]);
@@ -860,9 +859,9 @@ main(int argc, char *argv[])
     CHECK(status, FAIL, "SDreaddata(FIXED)");
 
     /* verify the data */
-    for (i=12; i<18; i++)
+    for (i=12; i<18; i++)  
       {
-        if (idata[i] != (100 + (i-12)))
+        if (idata[i] != (100 + (i-12)))  
           {
            fprintf(stderr, "line %d, wrong value: should be %d, got %d \n",
                            __LINE__, 100 + i-12, (int)idata[i]);
@@ -870,9 +869,9 @@ main(int argc, char *argv[])
           }
       }
 
-    for (i=18; i<24; i++)
+    for (i=18; i<24; i++)  
       {
-        if (idata[i] != fillval)
+        if (idata[i] != fillval) 
           {
            fprintf(stderr, "line %d, wrong value: should be %d, got %d\n",
                            __LINE__, (int)fillval, (int)idata[i]);
@@ -888,8 +887,8 @@ main(int argc, char *argv[])
     status = SDend(f1);
     CHECK(status, FAIL, "SDend");
 
-   /*
-    * test UNLIMITED size SDS
+   /* 
+    * test UNLIMITED size SDS   
     */
 
     /* open file 'test1.hdf' */
@@ -988,9 +987,9 @@ main(int argc, char *argv[])
     CHECK(status, FAIL, "SDwritedata(NO_FILL)");
 
     /* verify the data */
-    for (i=12; i<18; i++)
+    for (i=12; i<18; i++)  
       {
-        if ((idata[i] != (i-12)) || (idata[i+12] != (i-12)))
+        if ((idata[i] != (i-12)) || (idata[i+12] != (i-12))) 
           {
            fprintf(stderr, "line %d, wrong value for %d: should be %d, got %d\n",
                            __LINE__, i-12, (int)idata[i], (int)idata[i+12]);
@@ -998,9 +997,9 @@ main(int argc, char *argv[])
           }
       }
 
-    for (i=18; i<24; i++)
+    for (i=18; i<24; i++)  
       {
-        if (idata[i] !=fillval)
+        if (idata[i] !=fillval) 
           {
            fprintf(stderr, "line %d, wrong value: should be %d, got %d\n",
                            __LINE__, (int)fillval, (int)idata[i]);
@@ -1016,8 +1015,8 @@ main(int argc, char *argv[])
     status = SDend(f1);
     CHECK(status, FAIL, "SDend");
 
-   /*
-    * test SDsetdimval_incomp()
+   /* 
+    * test SDsetdimval_incomp() 
     */
 
     /* open file 'test1.hdf' */
@@ -1089,7 +1088,7 @@ main(int argc, char *argv[])
     CHECK(status, FAIL, "SDgetinfo");
 
     /* verify correctness of information */
-    if (rank!=2 || dimsize[0]!=4 || dimsize[1]!=6 || nt!=DFNT_INT32)
+    if (rank!=2 || dimsize[0]!=4 || dimsize[1]!=6 || nt!=DFNT_INT32) 
       {
         fprintf(stderr, "SDgetinfo returned wrong values\n");
           num_errs++;
@@ -1104,7 +1103,7 @@ main(int argc, char *argv[])
     CHECK(status, FAIL, "SDdiminfo");
 
     /* verify correctness of information */
-    if (dimsize[0]!=SD_UNLIMITED || nt!= 0 )
+    if (dimsize[0]!=SD_UNLIMITED || nt!= 0 )  
       {
           fprintf(stderr, "SDdiminfo returned wrong values\n");
           num_errs++;
@@ -1112,7 +1111,7 @@ main(int argc, char *argv[])
     /* is it backward non-compatible? */
     status = SDisdimval_bwcomp(dimid);
     if (status != SD_DIMVAL_BW_INCOMP)
-       {
+       { 
            fprintf(stderr, "SDisdimvalcomp returned wrong value for dimension.\n");
             num_errs++;
        }
@@ -1129,7 +1128,7 @@ main(int argc, char *argv[])
     CHECK(status, FAIL, "SDdiminfo");
 
     /* verify correctness of information */
-    if (dimsize[1]!=6 || nt!= DFNT_INT32 )
+    if (dimsize[1]!=6 || nt!= DFNT_INT32 )  
       {
           fprintf(stderr, "Failed on SDgetinfo call\n");
           num_errs++;
@@ -1140,9 +1139,9 @@ main(int argc, char *argv[])
     CHECK(status, FAIL, "SDwritedata");
 
     /* verify data */
-    for (i=0; i<24; i++)
+    for (i=0; i<24; i++)  
       {
-        if (idata[i] != i)
+        if (idata[i] != i) 
           {
            fprintf(stderr, "line %d, wrong value: should be %d, got %d\n",
                            __LINE__, i, (int)idata[i]);
@@ -1150,10 +1149,10 @@ main(int argc, char *argv[])
           }
       }
 
-    /* see if second dimension is backward compatible.
+    /* see if second dimension is backward compatible. 
        should be compatible */
     status = SDisdimval_bwcomp(dimid1);
-    if (status != SD_DIMVAL_BW_COMP)
+    if (status != SD_DIMVAL_BW_COMP)  
       {
           fprintf(stderr, "SDisdimvalcomp returned wrong value for dimension\n");
           num_errs++;
@@ -1191,7 +1190,7 @@ main(int argc, char *argv[])
     CHECK(status, FAIL, "SDgetinfo");
 
     /* verify correctness of information */
-    if (rank!=2 || dimsize[0]!=4 || dimsize[1]!=6 || nt!=DFNT_INT32)
+    if (rank!=2 || dimsize[0]!=4 || dimsize[1]!=6 || nt!=DFNT_INT32) 
       {
         fprintf(stderr, "SDgetinfo returned wrong values\n");
           num_errs++;
@@ -1206,16 +1205,16 @@ main(int argc, char *argv[])
     CHECK(status, FAIL, "SDdiminfo");
 
     /* verify correctness of information */
-    if (dimsize[1]!=6 || nt!= DFNT_INT32 )
+    if (dimsize[1]!=6 || nt!= DFNT_INT32 )  
       {
           fprintf(stderr, "Failed on SDgetinfo call\n");
           num_errs++;
       }
 
-    /* see if second dimensionis backward compatible.
+    /* see if second dimensionis backward compatible. 
        should be backward non-compatible */
     status = SDisdimval_bwcomp(dimid1);
-    if (status != SD_DIMVAL_BW_INCOMP)
+    if (status != SD_DIMVAL_BW_INCOMP)  
       {
           fprintf(stderr, "SDisdimvalcomp returned wrong value\n");
           num_errs++;
@@ -1230,7 +1229,7 @@ main(int argc, char *argv[])
     /*
      * used saved ref at the begining to retrieve the data set
      */
-
+    
     /* get the index of the data set to which this 'ref' belongs to */
     index = SDreftoindex(f1, ndg_saved_ref);
     CHECK(index,FAIL,"SDreftoindex: failed to get index for 'ndg_saved_ref'");
@@ -1240,13 +1239,13 @@ main(int argc, char *argv[])
     CHECK(sdsid,FAIL,"SDselect: Failed to get handle for data set 'DataSetAlpha' ");
 
     /* check if ref of this is the same as the one saved earlier */
-    if(ndg_saved_ref != SDidtoref(sdsid))
+    if(ndg_saved_ref != SDidtoref(sdsid)) 
       {
         fprintf(stderr, "Saved NDG ref != to SDindextoref of same\n");
         num_errs++;
       }
 
-    /* end access to data set 'DataSetAlpha' in file 'test1.hdf' */
+    /* end access to data set 'DataSetAlpha' in file 'test1.hdf' */    
     status = SDendaccess(sdsid);
     CHECK(status, FAIL, "SDendaccess");
 
@@ -1316,7 +1315,7 @@ main(int argc, char *argv[])
     /* verify the data */
     for(i = 0; i < 25; i++)
       {
-        if((idata[i]&0x7f) != rdata[i])
+        if((idata[i]&0x7f) != rdata[i]) 
           {
             fprintf(stderr,"Bogus val in loc %d in n-bit dset want %ld got %ld\n",
         i, (long)idata[i], (long)rdata[i]);
@@ -1376,12 +1375,12 @@ main(int argc, char *argv[])
     status = test_attributes();
     num_errs = num_errs + status;
 
-    /* BMR: Added a test routine dedicated for testing SDgetdatasize (in
+    /* BMR: Added a test routine dedicated for testing SDgetdatasize (in 
        tdatasizes.c) - 09/17/08 */
     status = test_datasizes();
     num_errs = num_errs + status;
 
-    /* BMR: Added a test routine dedicated for testing SDgetdatainfo (in
+    /* BMR: Added a test routine dedicated for testing SDgetdatainfo (in 
        tdatainfo.c) - 03/20/10 */
     status = test_datainfo();
     num_errs = num_errs + status;
@@ -1397,7 +1396,7 @@ main(int argc, char *argv[])
     status = test_mixed_apis();
     num_errs = num_errs + status;
 
-    /* BMR: Added a test routine dedicated for testing miscellaneous
+    /* BMR: Added a test routine dedicated for testing miscellaneous 
        file-related APIs (in tfiles.c) - 10/12/05 */
     status = test_files();
     num_errs = num_errs + status;
@@ -1409,22 +1408,22 @@ main(int argc, char *argv[])
     status = test_rank0();
     num_errs = num_errs + status; */
 
-    /* BMR: Added a test routine dedicated for testing functionality
+    /* BMR: Added a test routine dedicated for testing functionality 
        related to SDS' properties (in tsdsprops.c) - 09/12/06 */
     status = test_SDSprops();
     num_errs = num_errs + status;
 
-    /* BMR: Added a test routine dedicated for testing functionality
+    /* BMR: Added a test routine dedicated for testing functionality 
        related to coordinate variables (in tcoordvar.c) - 05/21/07 */
     status = test_coordvar();
     num_errs = num_errs + status;
 
-    /* BMR: Added a test routine dedicated for testing functionality
+    /* BMR: Added a test routine dedicated for testing functionality 
        related to external data (in textdata.c) - 10/29/15 */
     status = test_external();
     num_errs = num_errs + status;
 
-    /* BMR: Verifies that some functions will not fail even though SZIP
+    /* BMR: Verifies that some functions will not fail even though SZIP 
        library is not present or only decoder is available. */
     status = test_szip_compression();  /* in tszip.c */
     num_errs = num_errs + status;

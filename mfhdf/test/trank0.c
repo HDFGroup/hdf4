@@ -12,7 +12,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /****************************************************************************
- * trank0.c - tests that several APIs behave "correctly" when an SDS has
+ * trank0.c - tests that several APIs behave "correctly" when an SDS has 
  * 		rank = 0.
  * Structure of the file:
  *    test_rank0 - test routine, called in hdftest.c
@@ -40,7 +40,7 @@ test_rank0()
     comp_info c_info;		/* compression information structure */
     int32     comp_flag;	/* compression flag */
     HDF_CHUNK_DEF c_def;	/* Chunking definitions */
-    int32     buf[Y_LENGTH][X_LENGTH];/* , buf_dup[Y_LENGTH][X_LENGTH];*/
+    int32     buf[Y_LENGTH][X_LENGTH], buf_dup[Y_LENGTH][X_LENGTH];
     intn      i, j, status;
     int32     status_32;
     intn      num_errs = 0;	/* number of errors so far */
@@ -75,7 +75,7 @@ test_rank0()
     /* Attempt to set chunk but should fail */
     HDmemset(&c_def, 0, sizeof(HDF_CHUNK_DEF));
     comp_flag = HDF_CHUNK;
-    status = SDsetchunk(sds2_id, c_def, comp_flag);
+    status = SDsetchunk(sds_id, c_def, comp_flag);
     VERIFY(status, FAIL, "test_rank0: SDsetchunk");
 
      /* Close the SDSs */
@@ -93,7 +93,7 @@ test_rank0()
         for (i=0; i<X_LENGTH; i++)
 	{
 	    buf[j][i] = i;
-	    /* buf_dup[j][i] = i; */
+	    buf_dup[j][i] = i;
 	}
     }
     /* Select the first dataset */
@@ -114,7 +114,7 @@ test_rank0()
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "test_rank0: SDendaccess");
 
-    /**** Verify that SDreaddata doesn't corrupt user's buffer, when dataset
+    /**** Verify that SDreaddata doesn't corrupt user's buffer, when dataset 
 	  has rank 0; at this time, it does (buf[0][0] changed), but EP said
     	  to just document it for now 2/8/05 - BMR ****/
 

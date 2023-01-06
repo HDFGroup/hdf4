@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
 
 /******************************************************************************
 file - mfsd.c
@@ -635,7 +634,7 @@ done:
     SDgetinfo -- get info about a dataset
 
  DESCRIPTION
-    The user is repsonsible for allocating space to hold
+    The user is responsible for allocating space to hold
     the dataset name.  It can be at most H4_MAX_NC_NAME
     characters in length.  NULL can be passed for any of
     of the parameters if it is not required.
@@ -2030,7 +2029,7 @@ done:
    SDsetattr -- user level function to create and set an attribute
 
  DESCRIPTION
-   Given an ID and an attribute defintion attach the atrribute
+   Given an ID and an attribute definition attach the atrribute
    to the thing represented by the ID.  For starters, the valid
    IDs could be variable, file or dimesnion IDs
 
@@ -3569,7 +3568,7 @@ done:
 
  DESCRIPTION
     Return basic information about a dimension (name, sizes, number
-    of attributes, number type, etc...) The user is repsonsible for
+    of attributes, number type, etc...) The user is responsible for
     allocating space to hold the dataset name.  It can be at most
     H4_MAX_NC_NAME characters in length.  NULL can be passed for the
     name if it is not required.
@@ -3588,9 +3587,11 @@ SDdiminfo(int32  id,    /* IN:  dimension ID */
     CONSTR(FUNC, "SDdiminfo");    /* for HGOTO_ERROR */
     NC      *handle = NULL;
     NC_dim  *dim = NULL;
+    NC_var   *var = NULL;
     NC_var **dp = NULL;
     intn     ii;
     intn     len;
+    int32    varid;
     int      ret_value = SUCCEED;
 
 #ifdef SDDEBUG
@@ -3735,61 +3736,56 @@ SDgetdimstrs(int32 id,  /* IN:  dataset ID */
 
     handle = SDIhandle_from_id(id, DIMTYPE);
     if(handle == NULL)
-    {
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-    }
+      {
+    HGOTO_ERROR(DFE_ARGS, FAIL);
+      }
 
     if(handle->vars == NULL)
-    {
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-    }
+      {
+    HGOTO_ERROR(DFE_ARGS, FAIL);
+      }
 
     dim = SDIget_dim(handle, id);
     if(dim == NULL)
-    {
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-    }
+      {
+    HGOTO_ERROR(DFE_ARGS, FAIL);
+      }
 
     /* need to get a pointer to the var now */
     var = NULL;
     if(handle->vars)
-    {
-        name = dim->name->values;
-        namelen = HDstrlen(name);
-        dp = (NC_var**)handle->vars->values;
-        for(ii = 0 ; ii < handle->vars->count ; ii++, dp++)
-        {
-            /* eliminate vars with rank > 1, coord vars only have rank 1 */
-            if((*dp)->assoc->count == 1)
+      {
+          name = dim->name->values;
+          namelen = HDstrlen(name);
+          dp = (NC_var**)handle->vars->values;
+          for(ii = 0 ; ii < handle->vars->count ; ii++, dp++)
             {
-                if( namelen == (*dp)->name->len
-                        && HDstrncmp(name, (*dp)->name->values, HDstrlen(name)) == 0)
-                {
-                    /* because a dim was given, make sure that this is a coord var */
-                    /* if it is an SDS, the function will fail */
-                    if ((*dp)->var_type == IS_SDSVAR)
-                    {
-                        HGOTO_ERROR(DFE_ARGS, FAIL)
-                        /* only proceed if this variable is a coordinate var or when
+        /* eliminate vars with rank > 1, coord vars only have rank 1 */
+        if((*dp)->assoc->count == 1)
+                  if( namelen == (*dp)->name->len
+                    && HDstrncmp(name, (*dp)->name->values, HDstrlen(name)) == 0)
+        /* because a dim was given, make sure that this is a coord var */
+        /* if it is an SDS, the function will fail */
+        if ((*dp)->var_type == IS_SDSVAR)
+            HGOTO_ERROR(DFE_ARGS, FAIL)
+            /* only proceed if this variable is a coordinate var or when
             its status is unknown due to its being created prior to
             the fix of bugzilla 624 - BMR - 05/14/2007 */
-                    }
-                    else
-                        /* i.e., (*dp)->var_type == IS_CRDVAR || (*dp)->var_type == UNKNOWN) */
-                    {
-                        var = (*dp);
-                    }
-                }
+        else
+        /* i.e., (*dp)->var_type == IS_CRDVAR ||
+            (*dp)->var_type == UNKNOWN) */
+                  {
+                      var = (*dp);
+                  }
             }
-        }
-    }
+      }
 
     if(var != NULL)
     {
-        if(l)
-        {
-            attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_LongName);
-            if(attr != NULL)
+    if(l)
+      {
+          attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_LongName);
+          if(attr != NULL)
             {
                 intn minlen;
                 minlen = ((unsigned)len > (*attr)->data->count)? (*attr)->data->count: (unsigned)len;
@@ -3797,14 +3793,14 @@ SDgetdimstrs(int32 id,  /* IN:  dataset ID */
                 if((*attr)->data->count < (unsigned)len)
                     l[(*attr)->data->count] = '\0';
             }
-            else
-                l[0] = '\0';
-        }
+          else
+              l[0] = '\0';
+      }
 
-        if(u)
-        {
-            attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_Units);
-            if(attr != NULL)
+    if(u)
+      {
+          attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_Units);
+          if(attr != NULL)
             {
                 intn minlen;
                 minlen = (len > (*attr)->data->count)? (*attr)->data->count: (unsigned)len;
@@ -3812,14 +3808,14 @@ SDgetdimstrs(int32 id,  /* IN:  dataset ID */
                 if((*attr)->data->count < (unsigned)len)
                     u[(*attr)->data->count] = '\0';
             }
-            else
-                u[0] = '\0';
-        }
+          else
+              u[0] = '\0';
+      }
 
-        if(f)
-        {
-            attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_Format);
-            if(attr != NULL)
+    if(f)
+      {
+          attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_Format);
+          if(attr != NULL)
             {
                 intn minlen;
                 minlen = (len > (*attr)->data->count)? (*attr)->data->count: (unsigned)len;
@@ -3827,20 +3823,20 @@ SDgetdimstrs(int32 id,  /* IN:  dataset ID */
                 if((*attr)->data->count < (unsigned)len)
                     f[(*attr)->data->count] = '\0';
             }
-            else
-                f[0] = '\0';
-        }
+          else
+              f[0] = '\0';
+      }
     }
     /* the given dimension is not a coordinate variable, that means it
        doesn't have attribute attached to it, because if it did, then it
        would have been promoted to be a coordinate variable. */
     else
     {
-        if(l) l[0] = '\0';
+      if(l) l[0] = '\0';
 
-        if(u) u[0] = '\0';
+      if(u) u[0] = '\0';
 
-        if(f) f[0] = '\0';
+      if(f) f[0] = '\0';
     }
 
 done:
@@ -4194,32 +4190,30 @@ SDgetexternalfile(int32 id,       /* IN: dataset ID */
     /* Get the var structure */
     handle = SDIhandle_from_id(id, SDSTYPE);
     if(handle == NULL || handle->file_type != HDF_FILE)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if(handle->vars == NULL)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     var = SDIget_var(handle, id);
     if(var == NULL)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* SDS exists */
     if(var->data_ref)
     {
-        int32 aid=-1;
-        sp_info_block_t info_block;    /* special info block */
+    int32 aid=-1;
+    int32 retcode=0;
+    sp_info_block_t info_block;    /* special info block */
 
-        /* Get the access id and then its special info */
-        aid = Hstartread(handle->hdf_file, var->data_tag, var->data_ref);
-        HDget_special_info(aid, &info_block);
-        /* When HDget_special_info returns FAIL, it could be the element is not
-           special or some failure occur internally, info_block.key will be
-           FAIL in the former case */
+    /* Get the access id and then its special info */
+    aid = Hstartread(handle->hdf_file, var->data_tag, var->data_ref);
+    retcode = HDget_special_info(aid, &info_block);
 
-        /* If the SDS has external element, return the external file info */
+    /* If the SDS has external element, return the external file info */
         if (info_block.key == SPECIAL_EXT)
         {
-            /* If the file name is not available, the file is probably
+        /* If the file name is not available, the file is probably
         corrupted, so we need to report it. */
             if (info_block.path == NULL || HDstrlen(info_block.path) <= 0)
                 ret_value = FAIL;
@@ -4245,16 +4239,16 @@ SDgetexternalfile(int32 id,       /* IN: dataset ID */
                     if (offset != NULL)
                         *offset = info_block.offset;
                 } /* buf_size != 0 */
-                ret_value = actual_len;
+        ret_value = actual_len;
             }
         }
-        /* Not external */
+    /* Not external */
         else
             ret_value = FAIL;
 
-        /* End access to the aid */
-        if (Hendaccess(aid) == FAIL)
-            HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+    /* End access to the aid */
+    if (Hendaccess(aid) == FAIL)
+        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
     }
 done:
     if (ret_value == FAIL)
@@ -5838,7 +5832,7 @@ done:
       The dataset currently cannot be special already.  i.e. NBIT,
       COMPRESSED, or EXTERNAL. This is an Error.
 
-      The defintion of the HDF_CHUNK_DEF union with relvant fields is:
+      The definition of the HDF_CHUNK_DEF union with relvant fields is:
 
       typedef union hdf_chunk_def_u
       {
@@ -5946,7 +5940,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
     NC        *handle = NULL;      /* file handle */
     NC_var    *var    = NULL;      /* SDS variable */
     NC_attr  **fill_attr = NULL;   /* fill value attribute */
-    HCHUNK_DEF chunk[1];           /* H-level chunk defintion */
+    HCHUNK_DEF chunk[1];           /* H-level chunk definition */
     HDF_CHUNK_DEF *cdef   = NULL;  /* SD Chunk definition */
     model_info minfo;              /* dummy model info struct */
     comp_info  cinfo;              /* compression info - NBIT */
@@ -5996,7 +5990,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
         HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
-    /* Decide type of defintion passed in  */
+    /* Decide type of definition passed in  */
     switch (flags)
       {
       case HDF_CHUNK: /* case where chunk_def only has chunk lengths */
@@ -6109,7 +6103,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
     HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
-    /* initialize datset/chunk sizes using CHUNK defintion structure */
+    /* initialize datset/chunk sizes using CHUNK definition structure */
     chunk[0].chunk_size = 1;
     chunk[0].num_dims = ndims;
 
@@ -6339,7 +6333,7 @@ done:
      the 'HDF_CHUNK_DEF' union. It does not tell you the type of compression
      or the compression parameters used. You can pass in a NULL for 'chunk_def'
      if don't want the chunk lengths for each dimension.
-     If successfull it will return a bit-or'd value in 'flags' indicating
+     If successful it will return a bit-or'd value in 'flags' indicating
      if the SDS is  chunked(HDF_CHUNK), chunked and compressed(HDF_CHUNK | HDF_COMP)
      or non-chunked(HDF_NONE).
 
@@ -7423,7 +7417,7 @@ SDget_numopenfiles()
 
  DESCRIPTION
     Given an ID to a file, returns its name via parameter 'filename.'
-    The user is repsonsible for allocating sufficient space to hold
+    The user is responsible for allocating sufficient space to hold
     the file name.  It can be at most H4_MAX_NC_NAME characters in
     length.
 

@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
 /*****************************************************************************
 
  file - vgp.c
@@ -29,7 +28,7 @@ LOCAL ROUTINES
  Get_vfile    -- get vgroup file record
  New_vfile    -- create new vgroup file record
  Load_vfile   -- loads vgtab table with info of all vgroups in file.
- Remove_vfile -- removes the file ptr from the vfile[] table.
+ Remove_vfile -- removes the file ptr from the vfile[] table. 
 
  VPgetinfo  --  Read in the "header" information about the Vgroup.
  VIstart    --  V-level initialization routine
@@ -47,26 +46,26 @@ EXPORTED ROUTINES
  Vinitialize  -- initialize Vxxx interface
  Vfinish      -- end Vxxx access to file
 
- vginstance   -- Looks thru vgtab for vgid and return the addr of the vg
-                  instance where vgid is found.
+ vginstance   -- Looks thru vgtab for vgid and return the addr of the vg 
+                  instance where vgid is found. 
  vexistvg     -- Tests if a vgroup with id "vgid" is in the file's vgtab.
- vpackvg      -- Extracts fields from a VGROUP struct "vg" and packs the
-                  fields into array buf in preparation for storage in the
+ vpackvg      -- Extracts fields from a VGROUP struct "vg" and packs the 
+                  fields into array buf in preparation for storage in the 
                   HDF file.
- vunpackvg    -- Unpacks the fields from a buf (ie a DFTAG_VG data object
+ vunpackvg    -- Unpacks the fields from a buf (ie a DFTAG_VG data object 
                   just read in from the HDF file), into a VGROUP structure vg.
 
  Vattach      -- Attaches to an existing vgroup or creates a new vgroup.
- Vdetach      -- Detaches access to vg.
- Vinsert      -- Inserts a velt (vs or vg) into a vg
- Vflocate     -- Checks to see if the given field exists in a vdata
+ Vdetach      -- Detaches access to vg.    
+ Vinsert      -- Inserts a velt (vs or vg) into a vg 
+ Vflocate     -- Checks to see if the given field exists in a vdata 
                   belonging to this vgroup.
- Vinqtagref   -- Checks whether the given tag/ref pair already exists
+ Vinqtagref   -- Checks whether the given tag/ref pair already exists 
                   in the vgroup.
- Vntagrefs    -- Returns the number (0 or +ve integer) of tag/ref pairs
+ Vntagrefs    -- Returns the number (0 or +ve integer) of tag/ref pairs 
                   in a vgroup.
  Vnrefs       --
- Vgettagrefs  -- Returns n tag/ref pairs from the vgroup into the
+ Vgettagrefs  -- Returns n tag/ref pairs from the vgroup into the 
                   caller-supplied arrays(tagrarray and refarray).
  Vgettagref   -- Returns a specified tag/ref pair from the vgroup.
  VQuerytag    -- Return the tag of this Vgroup.
@@ -79,21 +78,21 @@ EXPORTED ROUTINES
  Visvg        -- Tests if the given entry in the vgroup vg is a VGROUP.
  Visvs        -- Checks if an id in a vgroup refers to a VDATA.
  Vgetid       -- Given a vgroup's id, returns the next vgroup's id in the file.
- Vgetnext     -- Given the id of an entry from a vgroup vg, looks in vg
+ Vgetnext     -- Given the id of an entry from a vgroup vg, looks in vg 
                   for the next entry after it, and returns its id.
  Vgetnamelen  -- Retrieves the length of the vgroup's name.
  Vgetclassnamelen  -- Retrieves the length of the vgroup's classname.
  Vgetname     -- Returns the vgroup's name.
  Vgetclass    -- Returns the vgroup's class name .
  Vgetvgroups  -- Gets user-created vgroups in a file or in a vgroup
- Vinquire     -- General inquiry routine for VGROUP.
- Vopen        -- This routine opens the HDF file and initializes it for
+ Vinquire     -- General inquiry routine for VGROUP. 
+ Vopen        -- This routine opens the HDF file and initializes it for 
                   Vset operations.(i.e." Hopen(); Vinitialize(f)").
- Vclose       -- This routine closes the HDF file, after it has freed
+ Vclose       -- This routine closes the HDF file, after it has freed 
                   all memory and updated the file.
                   (i.e." Vfinish(f); Hclose(f);").
- Vdelete      -- Remove a Vgroup from its file.  This function will both
-                  remove the Vgoup from the internal Vset data structures
+ Vdelete      -- Remove a Vgroup from its file.  This function will both 
+                  remove the Vgoup from the internal Vset data structures 
                   as well as from the file.
  Vdeletetagref - delete tag/ref pair in Vgroup
 
@@ -187,7 +186,7 @@ VIget_vgroup_node(void)
     HDmemset(ret_value,0,sizeof(VGROUP));
 
 done:
-  if(ret_value == NULL)
+  if(ret_value == NULL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -255,7 +254,7 @@ VIget_vginstance_node(void)
     HDmemset(ret_value,0,sizeof(vginstance_t));
 
 done:
-  if(ret_value == NULL)
+  if(ret_value == NULL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -276,7 +275,7 @@ done:
     No return value
 
 *******************************************************************************/
-void
+void 
 VIrelease_vginstance_node(vginstance_t *vg /* IN: vgroup instance to release */)
 {
 #ifdef LATER
@@ -312,7 +311,7 @@ Get_vfile(HFILEID f /* IN: file handle */)
     return((vfile_t *)(t==NULL ? NULL : *t));
 } /* end Get_vfile() */
 
-
+        
 /*******************************************************************************
 NAME
    New_vfile  -- create new vgroup file record
@@ -328,7 +327,7 @@ PRIVATE vfile_t *
 New_vfile(HFILEID f /* IN: file handle */)
 {
     vfile_t *v = NULL;
-
+    
     /* Allocate the vfile_t structure */
     if (NULL == (v = (vfile_t *) HDcalloc(1,sizeof(vfile_t))))
       return(NULL);
@@ -337,10 +336,10 @@ New_vfile(HFILEID f /* IN: file handle */)
     v->f = f;
 
     /* insert the vg instance in B-tree */
-    tbbtdins(vtree, (VOIDP) v, NULL);
+    tbbtdins(vtree, (VOIDP) v, NULL);    
 
     /* return vfile_t struct */
-    return(v);
+    return(v); 
 } /* end New_vfile() */
 
 /*******************************************************************************
@@ -401,7 +400,7 @@ Load_vfile(HFILEID f /* IN: file handle */)
         HGOTO_DONE(SUCCEED);
 
     /* load all the vg's  tag/refs from file */
-    vf->vgtabn = 0; /* intialize to number of current entries to zero */
+    vf->vgtabn = 0; /* initialize to number of current entries to zero */
     vf->vgtree = tbbtdmake(vcompare, sizeof(int32), TBBT_FAST_INT32_COMPARE);
     if (vf->vgtree == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -425,12 +424,12 @@ Load_vfile(HFILEID f /* IN: file handle */)
           v->ref = (uintn) ref;
 
           /* get the header information */
-          v->vg = VPgetinfo(f,ref);
+          v->vg = VPgetinfo(f,ref);  
           if (v->vg == NULL)
               HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
           /* insert the vg instance in B-tree */
-          tbbtdins(vf->vgtree, (VOIDP) v, NULL);
+          tbbtdins(vf->vgtree, (VOIDP) v, NULL); 
 
           /* get next vgroup */
           ret = Hnextread(aid, DFTAG_VG, DFREF_WILDCARD, DF_CURRENT);
@@ -472,7 +471,7 @@ Load_vfile(HFILEID f /* IN: file handle */)
           w->ref = (uintn)ref;
 
           /* get the header information */
-          w->vs = VSPgetinfo(f,ref);
+          w->vs = VSPgetinfo(f,ref);  
           if (w->vs == NULL)
               HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
@@ -480,7 +479,7 @@ Load_vfile(HFILEID f /* IN: file handle */)
           w->nvertices = 0;
 
           /* insert the vg instance in B-tree */
-          tbbtdins(vf->vstree, (VOIDP) w, NULL);
+          tbbtdins(vf->vstree, (VOIDP) w, NULL);    
 
           /* get next vdata */
           ret = Hnextread(aid, VSDESCTAG, DFREF_WILDCARD, DF_CURRENT);
@@ -508,7 +507,7 @@ Load_vfile(HFILEID f /* IN: file handle */)
       }
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -520,7 +519,7 @@ done:
 
 /******************************************************************************
 NAME
-   Remove_vfile -- removes the file ptr from the vfile[] table.
+   Remove_vfile -- removes the file ptr from the vfile[] table. 
 
 DESCRIPTION
    removes the file ptr from the vfile[] table.
@@ -548,7 +547,7 @@ Remove_vfile(HFILEID f /* IN: file handle */)
     if ((vf = Get_vfile(f)) == NULL)
         HGOTO_ERROR(DFE_FNF, FAIL);
 
-    /* If someone still has an active pointer to this file
+    /* If someone still has an active pointer to this file 
        we don't remove it. */
     if (--vf->access)
         HGOTO_DONE(SUCCEED);
@@ -566,7 +565,7 @@ Remove_vfile(HFILEID f /* IN: file handle */)
     HDfree(vf);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -614,7 +613,7 @@ RETURNS
 VOID
 vprint(VOIDP k1 /* IN: key to print */)
 {
-    printf("Ptr=%p, key=%d, ref=%d\n",
+    printf("Ptr=%p, key=%d, ref=%d\n", 
            k1, (int) ((vginstance_t *) k1)->key, (int) ((vginstance_t *) k1)->ref);
 }   /* vprint */
 
@@ -744,7 +743,7 @@ Vinitialize(HFILEID f /* IN: file handle */)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -779,7 +778,7 @@ Vfinish(HFILEID f /* IN: file handle */)
       HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -799,7 +798,7 @@ DESCRIPTION
 RETURNS
    RETURNS NULL if error or not found.
    RETURNS vginstance_t pointer if ok.
-
+   
 *******************************************************************************/
 vginstance_t *
 vginst(HFILEID f,   /* IN: file handle */
@@ -831,7 +830,7 @@ vginst(HFILEID f,   /* IN: file handle */
     HGOTO_ERROR(DFE_NOMATCH, NULL);
 
 done:
-  if(ret_value == NULL)
+  if(ret_value == NULL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -866,7 +865,7 @@ vexistvg(HFILEID f,   /* IN: file handle */
         ret_value = (FAIL);
     else
         ret_value =  (TRUE);
-
+  
   return ret_value;
 }   /* vexistvg */
 
@@ -881,7 +880,7 @@ vexistvg(HFILEID f,   /* IN: file handle */
    *            char*           vgclass
    *            int16           tag[1..nvelt]
    *            int16           ref[1..nvelt]
-   *    (fields for version 4)
+   *    (fields for version 4) 
    *            uint32   flags
    *    (if bit0 of flags is set, the vg has attributes )
    *            int32    nattrs
@@ -956,25 +955,25 @@ vpackvg(VGROUP * vg, /* IN: */
     UINT16ENCODE(bb, vg->extag);    /* the vg's expansion tag */
     UINT16ENCODE(bb, vg->exref);    /* the vg's expansion ref */
 
-    if (vg->flags)
+    if (vg->flags)  
       {   /* save the flag and update version num */
-          if (vg->version < VSET_NEW_VERSION)
+          if (vg->version < VSET_NEW_VERSION)   
               vg->version = VSET_NEW_VERSION;
 
           UINT32ENCODE(bb, vg->flags);
 
-          if (vg->flags & VG_ATTR_SET)
+          if (vg->flags & VG_ATTR_SET)  
             {   /* save the attrs */
                 INT32ENCODE(bb, vg->nattrs);
 
-                for (i=0; i<(uintn)vg->nattrs; i++)
+                for (i=0; i<(uintn)vg->nattrs; i++)  
                   {
                       UINT16ENCODE(bb, vg->alist[i].atag);
                       UINT16ENCODE(bb, vg->alist[i].aref);
                   }
             }
       }
-
+       
     /*  save the vg's version field */
     UINT16ENCODE(bb, vg->version);
 
@@ -982,7 +981,7 @@ vpackvg(VGROUP * vg, /* IN: */
     UINT16ENCODE(bb, vg->more);
 
     /* returns the size of total fields saved */
-    *size = (int32) (bb - buf) + 1;
+    *size = (int32) (bb - buf) + 1;     
     *bb = 0;       /* NOTE: the '+1' part shouldn't be there */
     /* but since files have been created with */
     /* it there (and the size calc. wrong) it */
@@ -1010,13 +1009,13 @@ DESCRIPTION
    Will first zero out vg, unpack fields, then inits as much of
    vg as it can.
 
-RETURNS
+RETURNS   
    NO RETURN VALUES
 
 *******************************************************************************/
 PRIVATE intn
 vunpackvg(VGROUP * vg, /* IN/OUT: */
-          uint8 buf[], /* IN: */
+          uint8 buf[], /* IN: */ 
           intn len     /* IN: */)
 {
     uint8 *bb = NULL;
@@ -1051,7 +1050,7 @@ vunpackvg(VGROUP * vg, /* IN/OUT: */
           vg->msize = ((uintn)vg->nvelt > (uintn)MAXNVELT ? vg->nvelt : MAXNVELT);
           vg->tag = (uint16 *) HDmalloc(vg->msize * sizeof(uint16));
           vg->ref = (uint16 *) HDmalloc(vg->msize * sizeof(uint16));
-
+    
           if ((vg->tag == NULL) || (vg->ref == NULL))
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
@@ -1088,18 +1087,18 @@ vunpackvg(VGROUP * vg, /* IN/OUT: */
           UINT16DECODE(bb, vg->extag);  /* retrieve the vg's expansion tag */
           UINT16DECODE(bb, vg->exref);  /* retrieve the vg's expansion ref */
 
-          if (vg->version == VSET_NEW_VERSION)
+          if (vg->version == VSET_NEW_VERSION) 
             {
                 UINT32DECODE(bb, vg->flags);  /* retrieve new features in
                                                version 4, or higher */
-                if (vg->flags & VG_ATTR_SET)
+                if (vg->flags & VG_ATTR_SET)   
                   {   /* the vg has attrs */
-                      INT32DECODE(bb, vg->nattrs);
+                      INT32DECODE(bb, vg->nattrs); 
 
                       if (NULL == (vg->alist = HDmalloc(vg->nattrs * sizeof(vg_attr_t))))
                           HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-                      for (i = 0; i < vg->nattrs; i++)
+                      for (i = 0; i < vg->nattrs; i++) 
                         {
                             UINT16DECODE(bb, vg->alist[i].atag);
                             UINT16DECODE(bb, vg->alist[i].aref);
@@ -1107,7 +1106,7 @@ vunpackvg(VGROUP * vg, /* IN/OUT: */
                   }  /* attributes set */
             }  /* new version */
       }     /* end if */
-done:
+done: 
     if (ret_value == FAIL)
     { /* Error condition cleanup */
 
@@ -1146,7 +1145,7 @@ VPgetinfo(HFILEID f,  /* IN: file handle */
     /* Find out how long the VGroup information is */
     if (( len = Hlength(f, DFTAG_VG, (uint16) ref)) == FAIL)
         HGOTO_ERROR(DFE_INTERNAL,NULL);
-
+ 
     if(len > Vgbufsize)
       {
         Vgbufsize = len;
@@ -1159,13 +1158,13 @@ VPgetinfo(HFILEID f,  /* IN: file handle */
       } /* end if */
 
     /* Get the raw Vgroup info */
-    if (Hgetelement(f, DFTAG_VG, (uint16)ref, Vgbuf) == (int32)FAIL)
+    if (Hgetelement(f, DFTAG_VG, (uint16)ref, Vgbuf) == (int32)FAIL) 
         HGOTO_ERROR(DFE_NOMATCH,NULL);
-
+       
     /* allocate space for vg */
     if (NULL == (vg =VIget_vgroup_node()))
         HGOTO_ERROR(DFE_NOSPACE,NULL);
-
+       
     /* unpack vgpack into structure vg, and init  */
     vg->f             = f;
     vg->oref          = ref;
@@ -1177,7 +1176,7 @@ VPgetinfo(HFILEID f,  /* IN: file handle */
     ret_value = vg;
 
 done:
-  if(ret_value == NULL)
+  if(ret_value == NULL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1204,7 +1203,7 @@ DESCRIPTION
         look in vgdir to see if already attached,
          if yes, incr nattach
          if not, fetch from file. attach, set nattach=1, netries= val from file
-
+   
        In any case, set marked flag to 0.
 
 RETURNS
@@ -1334,7 +1333,7 @@ Vattach(HFILEID f,             /* IN: file handle */
       }
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1349,14 +1348,14 @@ NAME
 
 DESCRIPTION
    Detaches access to vg.
-
+   
      if marked flag is 1, write out vg to file.
        if vg still has velts attached to it, cannot detach vg.
        decr  nattach. if (nattach is 0), free vg from vg instance.
        (check that no velts are still attached to vg before freeing)
-
+   
      if attached with read access, just return.
-
+   
     after detach, set marked flag to 0.
 
 RETURNS
@@ -1438,7 +1437,7 @@ Vdetach(int32 vkey /* IN: vgroup key */)
                       HGOTO_ERROR(DFE_INTERNAL, FAIL);
                   default: /* should never get here */
                       HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                  }
+                  } 
             }
 
           /* write out vgroup */
@@ -1460,7 +1459,7 @@ Vdetach(int32 vkey /* IN: vgroup key */)
     v->nattach--;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1475,7 +1474,7 @@ NAME
 
 DESCRIPTION
    inserts a velt (vs or vg)  into a vg
-
+   
    checks and prevents duplicate links.
 
    Since multiple files are now possible, check that both vg and velt
@@ -1572,7 +1571,7 @@ Vinsert(int32 vkey,      /* IN: vgroup key */
     ret_value = (vg->nvelt - 1);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1645,7 +1644,7 @@ Vflocate(int32 vkey,  /* IN: vdata key */
     ret_value = (FAIL);  /* field not found */
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1669,9 +1668,9 @@ RETURNS
 
 *******************************************************************************/
 intn
-Vinqtagref(int32 vkey, /* IN: vgroup key */
+Vinqtagref(int32 vkey, /* IN: vgroup key */ 
            int32 tag,  /* IN: tag to check in vgroup */
-           int32 ref   /* IN: ref to check in vgroup */)
+           int32 ref   /* IN: ref to check in vgroup */) 
 {
     uintn u;
     uint16 ttag;
@@ -1707,7 +1706,7 @@ Vinqtagref(int32 vkey, /* IN: vgroup key */
       }
 
 done:
-  if(ret_value == FALSE)
+  if(ret_value == FALSE)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1721,8 +1720,8 @@ done:
    Vdeletetagref - delete tag/ref pair in Vgroup
 
  DESCRIPTION
-    Deletes the given tag/ref pair from the Vgroup.  If the given tag/ref pair
-    does not exist in the vgroup the routine will return FAIL. Users should use
+    Deletes the given tag/ref pair from the Vgroup.  If the given tag/ref pair 
+    does not exist in the vgroup the routine will return FAIL. Users should use 
     Vinqtagref() to check if the tag/ref pair exists before deleting.
 
  RETURNS
@@ -1732,9 +1731,9 @@ done:
  Author -GeorgeV 10/10/97
 *******************************************************************************/
 intn
-Vdeletetagref(int32 vkey, /* IN: vgroup key */
+Vdeletetagref(int32 vkey, /* IN: vgroup key */ 
               int32 tag,  /* IN: tag to delete in vgroup */
-              int32 ref   /* IN: ref to delete in vgroup */)
+              int32 ref   /* IN: ref to delete in vgroup */) 
 {
     uintn         i,j;       /* loop indices */
     uint16        ttag;      /* tag for comparison */
@@ -1748,7 +1747,7 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
             fcn when the issue with duplicate tag/refs is decided.
 
     If duplicate tag/ref pairs exist, then it deletes the first occurence.
-    If the case of duplicate tag/ref pairs the user can call Vinqtagref()
+    If the case of duplicate tag/ref pairs the user can call Vinqtagref() 
     to see if there are more occurences and then delete them. */
 
     /* clear error stack */
@@ -1775,15 +1774,15 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
     for (i = 0; i < (uintn)vg->nvelt; i++)
       { /* see if element tag/ref matches search tag/ref */
           if ((ttag == vg->tag[i]) && (rref == vg->ref[i]))
-            { /* found tag/ref pair to delete.
-                 If duplicate tag/ref pairs exist, then it deletes
-                 the first occurence. If the case of duplicate tag/ref
-                 pairs the user can call Vinqtagref() to see if there
+            { /* found tag/ref pair to delete. 
+                 If duplicate tag/ref pairs exist, then it deletes 
+                 the first occurence. If the case of duplicate tag/ref 
+                 pairs the user can call Vinqtagref() to see if there 
                  are more occurences and then delete them.*/
 
                 /* check if element found is last one in vgroup */
                 if ( i != ((uintn)vg->nvelt - 1))
-                  { /* Basically shifts the contents of the array down by one.
+                  { /* Basically shifts the contents of the array down by one. 
                        This method will preserve the order without using
                        extra memory for storage etc. If speed/performance
                        is an issue you can use memove()/memcpy(). */
@@ -1801,7 +1800,7 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
 #endif
 
                   }
-                /* else if last one , do nothing and allow the
+                /* else if last one , do nothing and allow the 
                    number of elements to be decrementd. */
 
                 /* reset last ones, just to be sure  */
@@ -1809,7 +1808,7 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
                 vg->ref[(uintn)vg->nvelt - 1] = 0; /* invalid ref */
 
                 vg->nvelt--; /* decrement number of elements in vgroup */
-                vg->marked = TRUE; /* mark vgroup as changed.
+                vg->marked = TRUE; /* mark vgroup as changed. 
                                       forces re-writing of new vgroup. */
                 ret_value = SUCCEED;
                 goto done; /* we are done */
@@ -1817,12 +1816,12 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
       } /* for all items in vgroup */
 
     /* reaching here means tag/ref pair not found. The user
-       should have used Vinqtagref() before calling this fcn.
+       should have used Vinqtagref() before calling this fcn. 
        Oh well...*/
     ret_value = FAIL;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1870,7 +1869,7 @@ Vntagrefs(int32 vkey /* IN: vgroup key */)
     ret_value = ((vg->otag == DFTAG_VG) ? (int32) vg->nvelt : FAIL);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1925,7 +1924,7 @@ Vnrefs(int32 vkey, /* IN: vgroup key */
       }
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1944,12 +1943,12 @@ DESCRIPTION
     tagrarray and refarray.
     n can be any +ve number, but arrays must be this big.
     28-MAR-91 Jason Ng NCSA.
-
+   
     NOTE: Do not confuse with Vgettagref().
 
 RETURNS
     The total number of (0 or +ve #)  tag/ref pairs returned.
-
+   
 *******************************************************************************/
 int32
 Vgettagrefs(int32 vkey,       /* IN: vgroup key */
@@ -1991,7 +1990,7 @@ Vgettagrefs(int32 vkey,       /* IN: vgroup key */
     ret_value = (n);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2050,7 +2049,7 @@ Vgettagref(int32 vkey,   /* IN: vgroup key */
     *ref = (int32) vg->ref[which];
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2097,7 +2096,7 @@ VQuerytag(int32 vkey /* IN: vgroup key */)
     ret_value = ((int32) vg->otag);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2144,7 +2143,7 @@ VQueryref(int32 vkey /* IN: vgroup id */)
     ret_value = ((int32) vg->oref);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2213,7 +2212,7 @@ Vaddtagref(int32 vkey, /* IN: vgroup key */
     ret_value = vinsertpair(vg, (uint16) tag, (uint16) ref);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2264,7 +2263,7 @@ vinsertpair(VGROUP * vg, /* IN: vgroup struct */
     ret_value = ((int32) vg->nvelt);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2312,7 +2311,7 @@ Ventries(HFILEID f,  /* IN: file handle */
         ret_value = FAIL;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2331,11 +2330,11 @@ DESCRIPTION
 
 RETURNS
     RETURN VALUES: SUCCEED for success, FAIL for failure (big suprise, eh?)
-
+   
 *******************************************************************************/
 int32
 Vsetname(int32 vkey,         /* IN: vgroup key */
-         const char *vgname  /* IN: name to set for vgroup */)
+         const char *vgname  /* IN: name to set for vgroup */) 
 {
     CONSTR(FUNC, "Vsetname");
     vginstance_t *v = NULL;
@@ -2378,7 +2377,7 @@ Vsetname(int32 vkey,         /* IN: vgroup key */
     vg->marked = TRUE;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2393,13 +2392,13 @@ NAME
 
 DESCRIPTION
     Assigns a class name to the VGROUP vg.
-
+   
 RETURNS
     RETURN VALUES: SUCCEED for success, FAIL for failure
 
 MODIFICATION
     2010/01/26 No longer truncates classname to max length of VGNAMELENMAX.
-
+   
 *******************************************************************************/
 int32
 Vsetclass(int32 vkey,          /* IN: vgroup key */
@@ -2452,7 +2451,7 @@ Vsetclass(int32 vkey,          /* IN: vgroup key */
     vg->marked = TRUE;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2468,11 +2467,11 @@ NAME
 
 DESCRIPTION
    Tests if an entry in the vgroup vg is a VGROUP, given the entry's id.
-
+   
 RETURNS
     RETURNS TRUE if so
     RETURNS FALSE if not, or if error
-
+   
 *******************************************************************************/
 intn
 Visvg(int32 vkey, /* IN: vgroup key */
@@ -2513,7 +2512,7 @@ Visvg(int32 vkey, /* IN: vgroup key */
       }
 
 done:
-  if(ret_value == FALSE)
+  if(ret_value == FALSE)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2569,7 +2568,7 @@ Visvs(int32 vkey, /* IN: vgroup key */
       }
 
 done:
-  if(ret_value == FALSE)
+  if(ret_value == FALSE)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2592,7 +2591,7 @@ DESCRIPTION
 RETURNS
    RETURNS -1 if error
    RETURNS the next vgroup's id (0 or +ve integer).
-
+   
 *******************************************************************************/
 int32
 Vgetid(HFILEID f,  /* IN: file handle */
@@ -2628,7 +2627,7 @@ Vgetid(HFILEID f,  /* IN: file handle */
           /* t is assumed to valid at this point */
           v = (vginstance_t *) * t;   /* get actual pointer to the vginstance_t */
           HGOTO_DONE((int32)v->ref); /* rets 1st vgroup's ref */
-      }
+      }     
     else /* vgid >= 0 */
       {
           /* look in vgtab for vgid */
@@ -2637,9 +2636,9 @@ Vgetid(HFILEID f,  /* IN: file handle */
           t = (VOIDP *) tbbtdfind(vf->vgtree, (VOIDP) &key, NULL);
 
           if (t == NULL ||
-              t == (VOIDP *) tbbtlast((TBBT_NODE *) * (vf->vgtree)))
+              t == (VOIDP *) tbbtlast((TBBT_NODE *) * (vf->vgtree)))  
             { /* couldn't find the old vgid or at the end */
-              ret_value = (FAIL);
+              ret_value = (FAIL);  
             }
           else if (NULL == (t = (VOIDP *) tbbtnext((TBBT_NODE *) t))) /* get the next node in the tree */
               ret_value = (FAIL);
@@ -2650,7 +2649,7 @@ Vgetid(HFILEID f,  /* IN: file handle */
             }     /* end else */
       }
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2673,12 +2672,12 @@ DESCRIPTION
    To look at all links in a vgroup, use Vgettagrefs instead.
 
   This id is actually the "ref" of the entry's "tag/ref".
-
+   
 RETURNS
    RETURNS -1 if error
    RETURNS the id of the next entry( 0 or +ve integer)  in the vgroup.
-
-
+   
+   
 *******************************************************************************/
 int32
 Vgetnext(int32 vkey, /* IN: vgroup key */
@@ -2710,7 +2709,7 @@ Vgetnext(int32 vkey, /* IN: vgroup key */
     if (vg->nvelt == 0)
         HGOTO_DONE(FAIL);
 
-    /* if id is '-1' then the first entry in the vgroup is returned
+    /* if id is '-1' then the first entry in the vgroup is returned 
        if it is a vgroup ? */
     if (id == -1)
       {
@@ -2745,7 +2744,7 @@ Vgetnext(int32 vkey, /* IN: vgroup key */
       }
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2765,7 +2764,7 @@ DESCRIPTION
 RETURNS
    Returns SUCCEED/FAIL
    BMR - 2006/09/10
-
+   
 *******************************************************************************/
 int32
 Vgetnamelen(int32 vkey,   /* IN: vgroup key */
@@ -2813,7 +2812,7 @@ Vgetnamelen(int32 vkey,   /* IN: vgroup key */
     }
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2831,7 +2830,7 @@ DESCRIPTION
 RETURNS
    Returns SUCCEED/FAIL
    BMR - 2006/09/10
-
+   
 *******************************************************************************/
 int32
 Vgetclassnamelen(int32 vkey,   /* IN: vgroup key */
@@ -2839,6 +2838,7 @@ Vgetclassnamelen(int32 vkey,   /* IN: vgroup key */
 {
     vginstance_t *v = NULL;
     VGROUP       *vg = NULL;
+    size_t       temp_len;
     int32        ret_value = SUCCEED;
     CONSTR(FUNC, "Vgetclassnamelen");
 
@@ -2875,7 +2875,7 @@ Vgetclassnamelen(int32 vkey,   /* IN: vgroup key */
     }
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2896,7 +2896,7 @@ DESCRIPTION
 
 RETURNS
    SUCCEED / FAIL
-
+   
 *******************************************************************************/
 int32
 Vgetname(int32 vkey,   /* IN: vgroup key */
@@ -2931,7 +2931,7 @@ Vgetname(int32 vkey,   /* IN: vgroup key */
 	vgname[0] = '\0';
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2987,7 +2987,7 @@ Vgetclass(int32 vkey,    /* IN: vgroup key */
 	vgclass[0] = '\0';
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3006,7 +3006,7 @@ DESCRIPTION
    output parameters:
          nentries - no of entries in the vgroup
          vgname  - the vgroup's name
-
+   
 RETURNS
    RETURNS FAIL if error
    RETURNS SUCCEED if ok
@@ -3052,7 +3052,7 @@ Vinquire(int32 vkey,        /* IN: vgroup key */
         *nentries = (int32)vg->nvelt;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3070,9 +3070,9 @@ NAME
 DESCRIPTION
    This routine will replace the code segment " Hopen(); Vinitialize(f)".
    Thus, if Vopen is used, do not call Vinitialize after that.
-
+   
    Similar to Hopen().
-
+   
    This routine opens the HDF file and initializes it for Vset operations.
 
    See also Vclose().
@@ -3083,7 +3083,7 @@ RETURNS
     RETURN VALUE:
     if error:  -1 (FAIL).
     if successful: the id of the file (>0).
-
+   
 *******************************************************************************/
 HFILEID
 Vopen(char *path,     /* IN: file name */
@@ -3105,7 +3105,7 @@ Vopen(char *path,     /* IN: file name */
       HGOTO_ERROR(DFE_CANTINIT,FAIL);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3122,15 +3122,15 @@ NAME
 DESCRIPTION
    This routine will replace the code segment " Vfinish(f); Hclose(f);".
    Thus, if Vclose is used, do not call Vfinish before that.
-
+   
    This routine closes the HDF file, after it has freed all memory and
    updated the file.
-
+   
    See also Vopen().
 
 RETURNS
    RETURN VALUE:  intn status - result of Hopen().
-
+   
 *******************************************************************************/
 intn
 Vclose(HFILEID f /* IN: file handle */)
@@ -3209,7 +3209,7 @@ Vdelete(int32 f,     /* IN: file handle */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3230,7 +3230,7 @@ done:
  RETURNS
     Returns SUCCEED/FAIL
 *******************************************************************************/
-PRIVATE intn
+PRIVATE intn 
 VIstart(void)
 {
     intn        ret_value = SUCCEED;
@@ -3248,7 +3248,7 @@ VIstart(void)
       HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3269,7 +3269,7 @@ done:
     Returns SUCCEED/FAIL
 
 *******************************************************************************/
-intn
+intn 
 VPshutdown(void)
 {
     VGROUP       *v  = NULL;
@@ -3325,7 +3325,7 @@ VPshutdown(void)
 
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3406,7 +3406,7 @@ Vgisinternal(int32 vkey /* vgroup's identifier */)
     ret_value = is_internal;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
     } /* end if */
 
@@ -3590,7 +3590,7 @@ Vgetvgroups(int32 id,		/* IN: file id or vgroup id */
 		vginstance_t *subv_inst = NULL;
 		VGROUP       *subvg = NULL;
 
-                /* Get instance of vgroup; if it's not found, continue to
+                /* Get instance of vgroup; if it's not found, continue to 
 		   other vgroups */
                 if((subv_inst = vginst(vg->f, (uint16)vg->ref[ii])) == NULL)
                     continue;
@@ -3645,7 +3645,7 @@ Vgetvgroups(int32 id,		/* IN: file id or vgroup id */
         HGOTO_ERROR(DFE_ARGS, FAIL);
     }
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */

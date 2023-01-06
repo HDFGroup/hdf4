@@ -16,7 +16,6 @@
 
 /*
  *
- * $Id$
  *
  * This file initializes all global variables.  It's a separate file in order
  * to allow the creation of SunOS sharable-libraries.

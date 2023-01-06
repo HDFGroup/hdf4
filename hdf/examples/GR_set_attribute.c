@@ -14,10 +14,10 @@
 #define  RI_ATT1_N_VALUES   35
 #define  RI_ATT2_N_VALUES   6
 
-int main( )
+int main( ) 
 {
    /************************* Variable declaration **************************/
-
+   
    intn  status;         /* status for functions returning an intn */
    int32 gr_id, ri_id, file_id,
          ri_index;
@@ -36,16 +36,14 @@ int main( )
    gr_id = GRstart (file_id);
 
    /*
-   * Set two file attributes to the file with names, data types, numbers of
+   * Set two file attributes to the file with names, data types, numbers of 
    * values, and values of the attributes specified.
    */
-   status = GRsetattr (gr_id, F_ATT1_NAME, DFNT_CHAR8, F_ATT1_N_VALUES,
-                       (VOIDP)F_ATT1_VAL);
-   CHECK_NOT_VAL(status, FAIL, "GRsetattr");
+   status = GRsetattr (gr_id, F_ATT1_NAME, DFNT_CHAR8, F_ATT1_N_VALUES, 
+                       (VOIDP)F_ATT1_VAL); 
 
-   status = GRsetattr (gr_id, F_ATT2_NAME, DFNT_CHAR8, F_ATT2_N_VALUES,
+   status = GRsetattr (gr_id, F_ATT2_NAME, DFNT_CHAR8, F_ATT2_N_VALUES, 
                        (VOIDP)F_ATT2_VAL);
-   CHECK_NOT_VAL(status, FAIL, "GRsetattr");
 
    /*
    * Obtain the index of the image named IMAGE_NAME.
@@ -58,27 +56,21 @@ int main( )
    ri_id = GRselect (gr_id, ri_index);
 
    /*
-   * Set two attributes to the image with names, data types, numbers of
+   * Set two attributes to the image with names, data types, numbers of 
    * values, and values of the attributes specified.
    */
-   status = GRsetattr (ri_id, RI_ATT1_NAME, DFNT_CHAR8, RI_ATT1_N_VALUES,
+   status = GRsetattr (ri_id, RI_ATT1_NAME, DFNT_CHAR8, RI_ATT1_N_VALUES, 
                        (VOIDP)RI_ATT1_VAL);
-   CHECK_NOT_VAL(status, FAIL, "GRsetattr");
 
-   status = GRsetattr (ri_id, RI_ATT2_NAME, DFNT_INT16, RI_ATT2_N_VALUES,
+   status = GRsetattr (ri_id, RI_ATT2_NAME, DFNT_INT16, RI_ATT2_N_VALUES, 
                        (VOIDP)ri_attr_2);
-   CHECK_NOT_VAL(status, FAIL, "GRsetattr");
 
    /*
    * Terminate access to the image and to the GR interface, and close the
    * HDF file.
    */
    status = GRendaccess (ri_id);
-   CHECK_NOT_VAL(status, FAIL, "GRendaccess");
    status = GRend (gr_id);
-   CHECK_NOT_VAL(status, FAIL, "GRend");
    status = Hclose (file_id);
-   CHECK_NOT_VAL(status, FAIL, "Hclose");
-
    return 0;
 }

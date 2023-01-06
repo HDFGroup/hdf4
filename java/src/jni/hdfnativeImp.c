@@ -186,7 +186,7 @@ done:
         UNPIN_BYTE_ARRAY(ENVONLY, bdata, barr, JNI_ABORT);
 
     return rarray;
-} /* end Java_hdf_hdf5lib_HDFNativeData_byteToShort___3B */
+} /* end Java_hdf_hdflib_HDFNativeData_byteToShort___3B */
 
 /* returns long [] */
 JNIEXPORT jlongArray JNICALL

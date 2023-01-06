@@ -154,7 +154,7 @@ C
          d_dims(1) = n
          d_dims(2) = m
 C        
-C   Initilize original array
+C   Initialize original array
 C
          
          do 20 j = 1, m 
