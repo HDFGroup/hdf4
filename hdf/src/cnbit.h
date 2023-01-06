@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
- /* $Id$ */
 
  /*-----------------------------------------------------------------------------
  * File:    cnbit.h
@@ -105,9 +104,7 @@ funclist_t  cnbit_funcs =
     HCPcnbit_inquire,
     HCPcnbit_read,
     HCPcnbit_write,
-    HCPcnbit_endaccess,
-    NULL,
-    NULL
+    HCPcnbit_endaccess
 };
 #endif
 

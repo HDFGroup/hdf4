@@ -1,7 +1,6 @@
 /*********************************************************************
  *   Copyright 1993, University Corporation for Atmospheric Research
  *   See netcdf/COPYRIGHT file for copying and redistribution conditions.
- *   $Id$
  *********************************************************************/
 
 extern char *progname;		/* for error messages */

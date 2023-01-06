@@ -21,7 +21,6 @@
  *	constrained to have a regular structure.  In addition, the values
  *	of the netCDF variable may be accessed using non-unity strides.
  *
- *	$Id$
  */
 
 #include	"local_nc.h"

@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
 
 /* "tbbt.c" -- Routines for using threaded, balanced, binary trees. */
 /* Extended from (added threads to) Knuth 6.2.3, Algorithm A (AVL trees) */

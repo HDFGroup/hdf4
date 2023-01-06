@@ -87,7 +87,7 @@ C Outputs: major_v - major version number
 C          minor_v - minor version number
 C          release - release number
 C          string  - version number test string
-C Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
+C Returns: SUCCEED (0) if successful and FAIL(-1) otherwise
 C-----------------------------------------------------------------------------*/
 
       integer function hglibver(major_v, minor_v, release, string)
@@ -108,7 +108,7 @@ C Outputs: major_v - major version number
 C          minor_v - minor version number
 C          release - release number
 C          string  - version number test string
-C Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
+C Returns: SUCCEED (0) if successful and FAIL(-1) otherwise
 C-----------------------------------------------------------------------------*/
 
       integer function hgfilver(file_id, major_v, minor_v, release,
@@ -143,7 +143,7 @@ C Name: hestringf
 C Purpose: retrieves the error message associated with the specified error code
 C Inputs:  error_code
 C Outputs: error_message - string associated with the error code
-C Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
+C Returns: SUCCEED (0) if successful and FAIL(-1) otherwise
 C-----------------------------------------------------------------------------*/
 
       integer function hestringf(error_code, error_message)
@@ -162,7 +162,7 @@ C Purpose: prints values from the error stack
 C Inputs:  filename - name of the output file; if length of the
 C          filename is 0, then output goes to stdout.
 C          print_levels - number of levels to print
-C Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
+C Returns: SUCCEED (0) if successful and FAIL(-1) otherwise
 C
 C Remarks: This routine always prints to the standard output.
 C-----------------------------------------------------------------------------*/
@@ -183,7 +183,7 @@ C          info       -  flag to indicate compression status
 C                         0 - no compression found
 C                         1 - decoder only found
 C                         3 - both decoder and encoder found
-C Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
+C Returns: SUCCEED (0) if successful and FAIL(-1) otherwise
 C
 C Currently this routine is used with SZIP compression only
 C-----------------------------------------------------------------------------*/

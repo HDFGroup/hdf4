@@ -39,7 +39,6 @@
  * AUTHOR - George V.- 1996/08/22
  *****************************************************************************/
 
-/* $Id$ */
 
 /*
  *  NOTE:
@@ -347,7 +346,7 @@ DESCRIPTION
     All returned pages are pinned.
 
 RETURNS
-    Returns the new page if successfull and NULL otherwise
+    Returns the new page if successful and NULL otherwise
 
 NOTE:
     This is not used currently.
@@ -664,7 +663,7 @@ DESCRIPTION
     appropriately i.e. MCACHE_DIRTY
 
 RETURNS
-    RET_SUCCESS if succesful and RET_ERROR otherwise
+    RET_SUCCESS if successful and RET_ERROR otherwise
 ******************************************************************************/
 intn
 mcache_put(
@@ -734,7 +733,7 @@ DESCRIPTION
    Does not sync the buffer pool.
 
 RETURNS
-   RET_SUCCESS if succesful and RET_ERROR otherwise
+   RET_SUCCESS if successful and RET_ERROR otherwise
 ******************************************************************************/
 intn
 mcache_close(
@@ -796,7 +795,7 @@ DESCRIPTION
    Sync the pool to disk. Does NOT Free the buffer pool.
 
 RETURNS
-   RET_SUCCESS if succesful and RET_ERROR otherwise
+   RET_SUCCESS if successful and RET_ERROR otherwise
 ******************************************************************************/
 intn
 mcache_sync(
@@ -844,7 +843,7 @@ DESCRIPTION
    If the page is not cached return an error.
 
 RETURNS
-   RET_SUCCESS if succesful and RET_ERROR otherwise
+   RET_SUCCESS if successful and RET_ERROR otherwise
 
 NOTE: No longer used.
       This was mainly used in the case where we extend the object.
@@ -1060,7 +1059,7 @@ DESCRIPTION
    Private routine. Write a page to disk given it's bucket handle.
 
 RETURNS
-   RET_SUCCESS if succesful and RET_ERROR otherwise
+   RET_SUCCESS if successful and RET_ERROR otherwise
 ******************************************************************************/
 static int
 mcache_write(
@@ -1154,7 +1153,7 @@ DESCRIPTION
    Private routine. Lookup a page in the cache and return pointer to it.
 
 RETURNS
-   Page if successfull and NULL othewise.
+   Page if successful and NULL othewise.
 ******************************************************************************/
 static BKT *
 mcache_look(

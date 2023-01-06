@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
 
 /*-----------------------------------------------------------------------------
  * File:    mstdio.h
@@ -67,7 +66,7 @@ HDFLIBAPI intn HCPmstdio_endaccess
 /* model information about stdio model */
 typedef struct
 {
-    int32      pos;            /* postion ? */
+    int32      pos;            /* position ? */
 }
 comp_model_stdio_info_t;
 
@@ -82,9 +81,7 @@ funclist_t  mstdio_funcs =
     HCPmstdio_inquire,
     HCPmstdio_read,
     HCPmstdio_write,
-    HCPmstdio_endaccess,
-    NULL,
-    NULL
+    HCPmstdio_endaccess
 };
 #endif
 

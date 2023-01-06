@@ -174,9 +174,9 @@ test_chunk()
     uint8   ru8_data[4];         /* chunk input buffer */
     int32   *rcdims;             /* for SDgetchunkinfo() */
     uint16  fill_u16 = 0;        /* fill value */
-    HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */
-    HDF_CHUNK_DEF chunk_def_out; /* Chunk defintion set */
-    HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */
+    HDF_CHUNK_DEF chunk_def;     /* Chunk definition set */
+    HDF_CHUNK_DEF chunk_def_out; /* Chunk definition set */
+    HDF_CHUNK_DEF rchunk_def;    /* Chunk definition read */
     comp_coder_t comp_type;      /* to retrieve compression type into */
     comp_info cinfo;             /* compression information structure */
     int32   cflags;              /* chunk flags */

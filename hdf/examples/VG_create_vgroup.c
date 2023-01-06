@@ -22,7 +22,6 @@ int main()
    * Initialize the V interface.
    */
    status_n = Vstart (file_id);
-   CHECK_NOT_VAL(status_n, FAIL, "Vstart");
 
    /*
    * Create the first vgroup.  Note that the vgroup reference number is set
@@ -31,7 +30,7 @@ int main()
    vgroup1_id = Vattach (file_id, vgroup_ref, "w");
 
    /*
-   * Create the second vgroup.
+   * Create the second vgroup. 
    */
    vgroup2_id = Vattach (file_id, vgroup_ref, "w");
 
@@ -43,21 +42,16 @@ int main()
    * Terminate access to the first vgroup.
    */
    status_32 = Vdetach (vgroup1_id);
-   CHECK_NOT_VAL(status_32, FAIL, "Vdetach");
 
    /*
    * Terminate access to the second vgroup.
    */
    status_32 = Vdetach (vgroup2_id);
-   CHECK_NOT_VAL(status_32, FAIL, "Vdetach");
 
    /*
    * Terminate access to the V interface and close the HDF file.
    */
    status_n = Vend (file_id);
-   CHECK_NOT_VAL(status_n, FAIL, "Vend");
    status_n = Hclose (file_id);
-   CHECK_NOT_VAL(status_n, FAIL, "Hclose");
-
    return 0;
 }

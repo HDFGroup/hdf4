@@ -1308,7 +1308,7 @@ C         integer   DATA_TYPE
      .             DFNT_FLOAT32 = 5,
      .             DFNT_FLOAT64 = 6)
 C
-C  Compression parametes
+C  Compression parameters
 C
          integer   COMP_CODE_NONE,
      .             COMP_CODE_RLE,
@@ -1393,7 +1393,7 @@ C
          if (mod1 .eq. 0) n_nc_a = n_nc - 1
          if (mod2 .eq. 0) n_mc_a = n_mc - 1
 C
-C   Initilize original array
+C   Initialize original array
 C
 
          do 20 j = 1, m
@@ -1869,7 +1869,7 @@ C         integer   DATA_TYPE
      .             DFNT_FLOAT32 = 5,
      .             DFNT_FLOAT64 = 6)
 C
-C  Compression parametes
+C  Compression parameters
 C
          integer   COMP_CODE_NONE,
      .             COMP_CODE_RLE,
@@ -1954,7 +1954,7 @@ C
          if (mod1 .eq. 0) n_nc_a = n_nc - 1
          if (mod2 .eq. 0) n_mc_a = n_mc - 1
 C
-C   Initilize original array
+C   Initialize original array
 C
 
          do 20 j = 1, m
@@ -2362,7 +2362,7 @@ C         integer   DATA_TYPE
      .             DFNT_FLOAT32 = 5,
      .             DFNT_FLOAT64 = 6)
 C
-C  Compression parametes
+C  Compression parameters
 C
          integer   COMP_CODE_NONE,
      .             COMP_CODE_RLE,
@@ -2415,7 +2415,7 @@ C
          d_dims(1) = n
          d_dims(2) = m
 C
-C   Initilize original array
+C   Initialize original array
 C
 
          do 20 j = 1, m

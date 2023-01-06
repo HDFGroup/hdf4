@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
 
 /**************************************************************************
 * hdf24hdf8 Quantizes a HDF RGB 24 bit "pixel" image into a 8 bit image

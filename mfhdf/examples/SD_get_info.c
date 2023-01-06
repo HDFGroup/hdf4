@@ -23,28 +23,26 @@ int main()
 
    /*
    * Determine the number of data sets in the file and the number
-   * of file attributes.
+   * of file attributes. 
    */
    status = SDfileinfo (sd_id, &n_datasets, &n_file_attrs);
-   CHECK_NOT_VAL(status, FAIL, "SDfileinfo");
 
-   /*
+   /*  
    * Access every data set and print its name, rank, dimension sizes,
-   * data type, and number of attributes.
+   * data type, and number of attributes. 
    * The following information should be displayed:
    *
    *               name = SDStemplate
    *               rank = 2
-   *               dimension sizes are : 16  5
+   *               dimension sizes are : 16  5  
    *               data type is  24
    *               number of attributes is  0
    */
    for (index = 0; index < n_datasets; index++)
    {
        sds_id = SDselect (sd_id, index);
-       status = SDgetinfo (sds_id, name, &rank, dim_sizes,
+       status = SDgetinfo (sds_id, name, &rank, dim_sizes, 
                            &data_type, &n_attrs);
-       CHECK_NOT_VAL(status, FAIL, "SDgetinfo");
 
        printf ("name = %s\n", name);
        printf ("rank = %d\n", rank);
@@ -58,14 +56,12 @@ int main()
        * Terminate access to the data set.
        */
        status = SDendaccess (sds_id);
-       CHECK_NOT_VAL(status, FAIL, "SDendaccess");
    }
 
    /*
    * Terminate access to the SD interface and close the file.
    */
    status = SDend (sd_id);
-   CHECK_NOT_VAL(status, FAIL, "SDend");
 
    return 0;
 }

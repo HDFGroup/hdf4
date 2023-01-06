@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
 
 /*
 FILE
@@ -324,7 +323,7 @@ intn HTPinit(filerec_t *file_rec,       /* IN: File record to store info in */
 )
 {
     CONSTR(FUNC, "HTPinit");    /* for HERROR */
-    ddblock_t  *block;          /* dd block to intialize */
+    ddblock_t  *block;          /* dd block to initialize */
     uint8       ddhead[NDDS_SZ+OFFSET_SZ];   /* storage for the DD header */
     uint8      *tbuf=NULL;      /* temporary buffer */
     uint8      *p;              /* temp buffer ptr */
@@ -435,7 +434,7 @@ intn HTPsync(filerec_t *file_rec       /* IN:  File record to store info in */
 )
 {
     CONSTR(FUNC, "HTPsync");	/* for HERROR */
-    ddblock_t  *block;		/* dd block to intialize */
+    ddblock_t  *block;		/* dd block to initialize */
     uint8       ddhead[NDDS_SZ+OFFSET_SZ];   /* storage for the DD header */
     uint8      *tbuf=NULL;  /* temporary buffer */
     uintn       tbuf_size=0;    /* temporary buffer size */
@@ -599,7 +598,7 @@ atom_t HTPcreate(filerec_t *file_rec,   /* IN: File record to store info in */
     /* Insert DD information into the DD list in memory */
     dd_ptr->tag=tag;
     dd_ptr->ref=ref;
-    /* the following assures object defintion in DD list
+    /* the following assures object definition in DD list 
        without data written for object. */
     dd_ptr->offset=INVALID_OFFSET;
     dd_ptr->length=INVALID_LENGTH;

@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
 
 /*-----------------------------------------------------------------------------
  * File:         hchunks.h
@@ -148,11 +147,11 @@ typedef struct chunkinfo_t
     model_info  *minfo;               /* Compression model info struct */
 
     /* additional memory resident data structures to be used */
-    int32       *seek_chunk_indices; /* chunk array indicies relative
+    int32       *seek_chunk_indices; /* chunk array indices relative
                                         to the other chunks */
-    int32       *seek_pos_chunk;     /* postion within the current chunk */
-    int32       *seek_user_indices;  /* user postion within the element  */
-    TBBT_TREE   *chk_tree;    /* TBBT tree of all accessed table entries
+    int32       *seek_pos_chunk;     /* position within the current chunk */
+    int32       *seek_user_indices;  /* user position within the element  */
+    TBBT_TREE   *chk_tree;    /* TBBT tree of all accessed table entries 
                                  i.e. CHUNK_REC's read/written/modified */
     MCACHE      *chk_cache;   /* chunk cache */
     int32       num_recs;     /* number of Table(Vdata) records */

@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
 
 /*-----------------------------------------------------------------------------
  * File:    hfilef.c
@@ -152,7 +151,7 @@ nhddontatexit(void)
  *          minor_v - minor version number
  *          release - release number
  *          string  - version number text string
- * Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
+ * Returns: SUCCEED (0) if successful and FAIL(-1) otherwise
  *----------------------------------------------------------------------------*/
 
 
@@ -197,7 +196,7 @@ nhglibverc(major_v, minor_v, release, string, len)
  *          minor_v - minor version number
  *          release - release number
  *          string  - version number text string
- * Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
+ * Returns: SUCCEED (0) if successful and FAIL(-1) otherwise
  *----------------------------------------------------------------------------*/
 
 

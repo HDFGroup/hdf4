@@ -92,7 +92,7 @@ C
      .              DFNT_FLOAT32 = 5,
      .              DFNT_FLOAT64 = 6)
 C
-C  Compression parametes
+C  Compression parameters
 C
          integer   COMP_CODE_SZIP,
      .             SZ_EC_OPTION_MASK,
@@ -154,7 +154,7 @@ C
          d_dims(1) = n
          d_dims(2) = m
 C
-C   Initilize original array
+C   Initialize original array
 C
 
          do 20 j = 1, m

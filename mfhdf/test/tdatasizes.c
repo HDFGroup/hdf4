@@ -20,7 +20,7 @@
  *	  test_chunked_partial - tests on chunked and partially written SDS
  *	  test_chkcmp_SDSs     - tests chunked/compressed SDSs
  *	  test_extend_SDSs     - tests SDSs with unlimited dimensions
- *    check_datasizes - utility routine that calls SDgetdatasize and verifies
+ *    check_datasizes - utility routine that calls SDgetdatasize and verifies 
  *		the retrieved data sizes.
  * NOTE: At this time, SDgetdatasize will not return the correct compressed
  *	size unless SDreaddata or SDendaccess is called between SDwritedata
@@ -62,7 +62,7 @@ static void check_datasizes(
     sds_id = SDselect(fid, sds_index);
     CHECK(sds_id, FAIL, "check_datasizes: SDselect");
 
-    /* The retrieved values from SDgetdatasize are verified against
+    /* The retrieved values from SDgetdatasize are verified against 
        'comp_size_check' and 'uncomp_size_check' */
     status = SDgetdatasize(sds_id, &comp_size, &uncomp_size);
     sprintf(mesg, "SDgetdatasize: SDS named (%s)", sds_name);
@@ -184,11 +184,11 @@ static intn test_compressed_SDSs(int32 fid)
     /* Write the stored data to the compressed dataset */
     status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)data);
     CHECK(status, FAIL, "test_compressed_SDSs: SDwritedata");
-
+ 
     /* Write the stored data to the dataset non-compressed dataset */
     status = SDwritedata(usds_id, start, NULL, edges, (VOIDP)data);
     CHECK(status, FAIL, "test_compressed_SDSs: SDwritedata");
-
+ 
      /* Close the SDSs */
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "test_compressed_SDSs: SDendaccess 'CompressedData'");
@@ -226,7 +226,7 @@ static intn test_empty_SDSs(int32 fid)
 {
     int32         ch_sds_id, chcp_sds_id;
     int32         dim_sizes[RANK];
-    HDF_CHUNK_DEF c_def; /* Chunking definitions */
+    HDF_CHUNK_DEF c_def; /* Chunking definitions */ 
     int32         flag;
     intn          status;
     int           num_errs = 0;   /* number of errors so far */
@@ -271,15 +271,15 @@ static intn test_empty_SDSs(int32 fid)
     return num_errs;
 } /* test_empty_SDSs */
 
-/* Test with chunked and partially written SDS.  This routine creates a
+/* Test with chunked and partially written SDS.  This routine creates a 
  * "Chunked Not Empty" SDS and writes some chunks but not all to it.  It will
  * then call SDgetdatasize to verify the sizes.
  */
 static intn test_chunked_partial(int32 fid)
 {
-    int32         sds_id;
+    int32         sds_id, sds_index;
     int32         dim_sizes[RANK], origin[RANK];
-    HDF_CHUNK_DEF c_def; /* Chunking definitions */
+    HDF_CHUNK_DEF c_def; /* Chunking definitions */ 
     int32         flag; /* Chunking flag */
     int16         fill_value = 0;   /* Fill value */
     intn          status;
@@ -288,11 +288,11 @@ static intn test_chunked_partial(int32 fid)
     /* Declare chunks data type and initialize some of them. */
     int16 chunk1[CHK_X][CHK_Y] = { {1, 1},
                            {1, 1},
-                           {1, 1} };
+                           {1, 1} }; 
 
     int16 chunk3[CHK_X][CHK_Y] = { {3, 3},
                            {3, 3},
-                           {3, 3} };
+                           {3, 3} }; 
 
     /* Initialize chunk size */
     HDmemset(&c_def, 0, sizeof(c_def)) ;
@@ -341,7 +341,7 @@ static intn test_chunked_partial(int32 fid)
     return num_errs;
 } /* test_chunked_partial */
 
-/* Test with chunked and compressed SDS.  This routine creates
+/* Test with chunked and compressed SDS.  This routine creates 
  * "ChunkedDeflateData" and "ChunkedNoDeflateData" SDSs and writes the same
  * data to both.  It will then use SDgetdatasize to verify the sizes.
  */
@@ -351,7 +351,7 @@ static intn test_chkcmp_SDSs(int32 fid)
     int32         cmpsds_id, cmpsds_index;
     int32         flag, maxcache, new_maxcache;
     int32         dim_sizes[RANK], origin[RANK];
-    HDF_CHUNK_DEF c_def; /* Chunking definitions */
+    HDF_CHUNK_DEF c_def; /* Chunking definitions */ 
     int32         fill_value = 0;   /* Fill value */
     int32	  comp_size1=0, uncomp_size1=0;
     int32	  comp_size2=0, uncomp_size2=0;
@@ -361,15 +361,15 @@ static intn test_chkcmp_SDSs(int32 fid)
     /* Declare chunks data type and initialize some of them. */
     int16 chunk1[CHK_X][CHK_Y] = { {1, 1},
                            {1, 1},
-                           {1, 1} };
+                           {1, 1} }; 
 
     int16 chunk3[CHK_X][CHK_Y] = { {3, 3},
                            {3, 3},
-                           {3, 3} };
+                           {3, 3} }; 
 
     int32 chunk2[CHK_X][CHK_Y] = { {2, 2},
                            {2, 2},
-                           {2, 2} };
+                           {2, 2} }; 
 
     /* Initialize chunk size */
     HDmemset(&c_def, 0, sizeof(c_def)) ;
@@ -516,14 +516,14 @@ static intn test_chkcmp_SDSs(int32 fid)
 } /* test_chkcmp_SDSs */
 
 /* Test SDSs with unlimited dimensions.  This routine creates SDSs with
-   unlimited dimensions, writes data to it, and checks the sizes returned
+   unlimited dimensions, writes data to it, and checks the sizes returned 
    by SDgetdatasize
  */
 static intn test_extend_SDSs(int32 fid)
 {
-    int32 sds_id;
+    int32 sds_id, sds_index;
     int32 dimsize[2], start[2], edges[2];
-    int32 start1[1], edges1[1];
+    int32 dimsize1[1], start1[1], edges1[1];
     int32 data[Y_LENGTH][X_LENGTH];
     float fdata[Y_LENGTH];
     int32 output[Y_LENGTH][X_LENGTH];

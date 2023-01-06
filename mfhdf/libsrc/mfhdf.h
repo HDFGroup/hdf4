@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
 
 #ifndef _MFSD_H_
 #define _MFSD_H_
@@ -247,8 +246,8 @@ HDFLIBAPI intn SDgetnamelen
 
 /*====================== Chunking Routines ================================*/
 
-/* For defintion of HDF_CHUNK_DEF union see hproto.h since
-   this defintion is also used by GRs. */
+/* For definition of HDF_CHUNK_DEF union see hproto.h since
+   this definition is also used by GRs. */
 
 /******************************************************************************
  NAME
@@ -261,7 +260,7 @@ HDFLIBAPI intn SDgetnamelen
       The dataset currently cannot be special already.  i.e. NBIT,
       COMPRESSED, or EXTERNAL. This is an Error.
 
-      The defintion of the HDF_CHUNK_DEF union with relvant fields is:
+      The definition of the HDF_CHUNK_DEF union with relvant fields is:
 
       typedef union hdf_chunk_def_u
       {
@@ -295,7 +294,7 @@ HDFLIBAPI intn SDgetnamelen
       The performance of the SDxxx interface with chunking is greatly
       affected by the users access pattern over the dataset and by
       the maximum number of chunks set in the chunk cache. The cache contains
-      the Least Recently Used(LRU cache replacment policy) chunks. See the
+      the Least Recently Used(LRU cache replacement policy) chunks. See the
       routine SDsetchunkcache() for further info on the chunk cache and how
       to set the maximum number of chunks in the chunk cache. A default chunk
       cache is always created.
@@ -367,7 +366,7 @@ HDFLIBAPI intn SDsetchunk
      the 'HDF_CHUNK_DEF' union. It does not tell you the type of compression
      used or the compression parameters. You can pass in a NULL for 'chunk_def'
      if don't want the chunk lengths for each dimension.
-     Additionaly if successfull it will return a bit-or'd value in 'flags'
+     Additionaly if successful it will return a bit-or'd value in 'flags'
      indicating if the SDS is:
 
      Chunked                  -> flags = HDF_CHUNK
@@ -403,7 +402,7 @@ HDFLIBAPI intn SDgetchunkinfo
      instead of SDwritedata() when this information is known. This
      routine has less overhead and is much faster than using SDwritedata().
 
-     Origin specifies the co-ordinates of the chunk according to the chunk
+     Origin specifies the coordinates of the chunk according to the chunk
      position in the overall chunk array.
 
      'datap' must point to a whole chunk of data.
@@ -428,7 +427,7 @@ HDFLIBAPI intn SDwritechunk
      instead of SDreaddata() when this information is known. This
      routine has less overhead and is much faster than using SDreaddata().
 
-     Origin specifies the co-ordinates of the chunk according to the chunk
+     Origin specifies the coordinates of the chunk according to the chunk
      position in the overall chunk array.
 
      'datap' must point to a whole chunk of data.
@@ -450,7 +449,7 @@ NAME
 DESCRIPTION
      Set the maximum number of chunks to cache.
 
-     The cache contains the Least Recently Used(LRU cache replacment policy)
+     The cache contains the Least Recently Used(LRU cache replacement policy)
      chunks. This routine allows the setting of maximum number of chunks that
      can be cached, 'maxcache'.
 

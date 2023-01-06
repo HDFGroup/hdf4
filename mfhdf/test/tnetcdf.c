@@ -50,6 +50,7 @@ static intn test_read_dim()
 {
     int32 fid, sds_id, status, dim1_id;
     int32 dim_sizes[H4_MAX_VAR_DIMS];        /* read dimensions */
+    intn  ii;
     int32 array_rank, num_type, attributes;
     char  dim_name[H4_MAX_NC_NAME], name[H4_MAX_NC_NAME];
     int32 size, dim_data_type, dim_num_attrs;
@@ -109,7 +110,7 @@ static intn test_read_dim()
 
     /* Close the file */
     status = SDend(fid);
-    CHECK(status, FAIL, "SDend");
+    CHECK(status, FAIL, "test_dimensions: SDend");
 
     } /* SDstart failed */
 
@@ -121,7 +122,7 @@ static intn test_read_dim()
 static int16  netcdf_u16[2][3] = {{1, 2, 3},
                                    {4, 5, 6}};
 
-/* Tests reading of netCDF file 'test1.nc' using the SDxxx inteface.
+/* Tests reading of netCDF file 'test1.nc' using the SDxxx interface.
    Note not all features of reading SDS from netCDF files are tested here.
    Hopefully more tests will be added over time as needed/required. */
 extern intn

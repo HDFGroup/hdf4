@@ -220,30 +220,30 @@ int count ;
 
 	for(ii = 0 ; ii < count ; ii++, vp++ )
 	{
-		assert(ncvardef(id, vp->mnem, vp->type, vp->ndims, vp->dims) == ii ) ;
+		assert(ncvardef(id, vp->mnem, vp->type, vp->ndims, vp->dims) == ii ) ; 
 
 	 	assert(
 			ncattput(id,ii,reqattr[0],NC_CHAR,strlen(vp->units), vp->units)
-			== 0) ;
+			== 0) ; 
 	 	assert(
 			ncattput(id,ii,reqattr[1],NC_DOUBLE,1,
 				(ncvoid*)&(vp->validmin))
-			== 1) ;
+			== 1) ; 
 	 	assert(
 			ncattput(id,ii,reqattr[2],NC_DOUBLE,1,
 				(ncvoid*)&(vp->validmax))
-			== 2) ;
+			== 2) ; 
 	 	assert(
 			ncattput(id,ii,reqattr[3],NC_DOUBLE,1,
 				(ncvoid*)&(vp->scalemin))
-			== 3) ;
+			== 3) ; 
 	 	assert(
 			ncattput(id,ii,reqattr[4],NC_DOUBLE,1,
 				(ncvoid*)&(vp->scalemax))
-			== 4) ;
+			== 4) ; 
 	 	assert(
 			ncattput(id,ii,reqattr[5],NC_CHAR,strlen(vp->fieldnam), vp->fieldnam)
-			== 5) ;
+			== 5) ; 
 	}
 }
 
@@ -254,7 +254,7 @@ unsigned count ;
 long array[] ;
 {
 	fprintf(stdout, "%s", label) ;
-	fputc('\t',stdout) ;
+	fputc('\t',stdout) ;	
 	for(; count > 0 ; count--, array++)
 		fprintf(stdout," %d", (int)*array) ;
 }
@@ -273,7 +273,7 @@ int id ;
 
 	cc = vindices;
 	while (cc <= &vindices[num_dims-1])
-		*cc++ = 0;
+		*cc++ = 0; 
 
 	/* ripple counter */
 	cc = vindices;
@@ -318,7 +318,7 @@ int id ;
 	sizes[0] = NUM_RECS ;
 	cc = vindices;
 	while (cc <= &vindices[num_dims-1])
-		*cc++ = 0;
+		*cc++ = 0; 
 
 	/* ripple counter */
 	cc = vindices;
@@ -329,7 +329,7 @@ int id ;
 	    {
 		if (mm == &sizes[num_dims - 1])
 		{
-	if(ncvarget1(id, Float_id, vindices, (ncvoid*)&got) == -1)
+	if(ncvarget1(id, Float_id, vindices, (ncvoid*)&got) == -1) 
 		goto bad_ret ;
 	val = ii ;
 	if(val != got.fl[0])
@@ -403,9 +403,6 @@ char *argv[];
 	struct tcdfvar *tvp = testvars ;
 	union getret got ;
 
-    (void)argc;
-    (void)argv;
-
 #if defined TEST_PC || defined TEST_WIN
     dbg_file=fopen("test.dbg","w+");
 #endif
@@ -421,13 +418,13 @@ char *argv[];
 		fprintf(stderr, "trying again\n") ;
 		id = nccreate(fname,NC_CLOBBER) ;
 	}
-	if( id == -1 )
+	if( id == -1 ) 
 		exit(errno) ;
 
 #ifdef NOBUF
 	assert( ncnobuf(id) != 1 ) ;
 #endif /* NOBUF */
-
+	
 	assert( ncattput(id, NC_GLOBAL,
 		"TITLE", NC_CHAR, 12, "another name") != -1) ;
 	assert( ncattget(id, NC_GLOBAL,
@@ -446,7 +443,7 @@ char *argv[];
 	createtestdims(id, NUM_DIMS, sizes, dim_names) ;
 	testdims(id, NUM_DIMS, sizes, dim_names) ;
 
-	createtestvars(id, testvars, NUM_TESTVARS) ;
+	createtestvars(id, testvars, NUM_TESTVARS) ; 
 
  	{
  	long lfill = -1 ; double dfill = -9999 ;
@@ -458,7 +455,7 @@ char *argv[];
 
 #ifdef REDEF
 	assert( ncendef(id) != -1 ) ;
-	assert( ncvarput1(id, Long_id, indices[3], (ncvoid *)&birthday)
+	assert( ncvarput1(id, Long_id, indices[3], (ncvoid *)&birthday) 
 		!= -1 ) ;
 	fill_seq(id) ;
 	assert( ncredef(id) != -1 ) ;
@@ -522,18 +519,18 @@ char *argv[];
 	assert( ncnobuf(id) != 1 ) ;
 #endif /* NOBUF */
 
-	/*	NC	*/
+	/*	NC	*/ 
 	printf("NC ") ;
 	assert( ncinquire(id, &(cdesc->num_dims), &(cdesc->num_vars),
 		&(cdesc->num_attrs), &(cdesc->xtendim) ) == id) ;
 	if(cdesc->num_dims != num_dims )
 	{
-		printf(" num_dims  : %d != %d\n", (int)cdesc->num_dims, (int)num_dims ) ;
+		printf(" num_dims  : %d != %d\n", (int)cdesc->num_dims, (int)num_dims ) ; 
 		exit(1) ;
 	}
 	assert(cdesc->num_vars == NUM_TESTVARS) ;
 	printf("done\n") ;
-
+	
 	/*	GATTR	*/
 	printf("GATTR ") ;
 	assert(cdesc->num_attrs == 2) ;
@@ -562,7 +559,7 @@ char *argv[];
 	printf("VAR ") ;
 	assert( cdesc->num_vars == NUM_TESTVARS ) ;
 
-	for(ii = 0 ; ii < cdesc->num_vars ; ii++, tvp++ )
+	for(ii = 0 ; ii < cdesc->num_vars ; ii++, tvp++ ) 
 	{
 		int jj ;
 		assert( ncvarinq(id, ii,
@@ -596,7 +593,7 @@ char *argv[];
 
 		/* VATTR */
 		printf("VATTR\n") ;
-		for(jj=0 ; jj<vdesc->num_attrs ; jj++ )
+		for(jj=0 ; jj<vdesc->num_attrs ; jj++ ) 
 		{
 			assert( ncattname(id, ii, jj, adesc->mnem) == jj) ;
 			if( strcmp(adesc->mnem, reqattr[jj]) != 0 )
@@ -611,7 +608,7 @@ char *argv[];
 			!= -1) {
 		assert( adesc->type == NC_CHAR ) ;
 		assert( adesc->len == strlen(tvp->units) ) ;
-	 	assert( ncattget(id,ii,reqattr[0],(ncvoid *)new) != -1) ;
+	 	assert( ncattget(id,ii,reqattr[0],(ncvoid *)new) != -1) ; 
 		new[adesc->len] = 0 ;
 		assert( strcmp(tvp->units, new) == 0) ;
 		}
@@ -622,7 +619,7 @@ char *argv[];
 		{
 		assert( adesc->type == NC_DOUBLE ) ;
 		assert( adesc->len == 1 ) ;
-	 	assert( ncattget(id,ii,reqattr[1],(ncvoid *)&got) != -1) ;
+	 	assert( ncattget(id,ii,reqattr[1],(ncvoid *)&got) != -1) ; 
 		chkgot(adesc->type, got, tvp->validmin) ;
 		}
 
@@ -632,7 +629,7 @@ char *argv[];
 		{
 		assert( adesc->type == NC_DOUBLE ) ;
 		assert( adesc->len == 1 ) ;
-	 	assert( ncattget(id,ii,reqattr[2],(ncvoid *)&got) != -1) ;
+	 	assert( ncattget(id,ii,reqattr[2],(ncvoid *)&got) != -1) ; 
 		chkgot(adesc->type, got, tvp->validmax) ;
 		}
 
@@ -642,7 +639,7 @@ char *argv[];
 		{
 		assert( adesc->type == NC_DOUBLE ) ;
 		assert( adesc->len ==1 ) ;
-	 	assert( ncattget(id,ii,reqattr[3],(ncvoid *)&got) != -1) ;
+	 	assert( ncattget(id,ii,reqattr[3],(ncvoid *)&got) != -1) ; 
 		chkgot(adesc->type, got, tvp->scalemin) ;
 		}
 
@@ -652,7 +649,7 @@ char *argv[];
 		{
 		assert( adesc->type == NC_DOUBLE ) ;
 		assert( adesc->len == 1 ) ;
-	 	assert( ncattget(id,ii,reqattr[4],(ncvoid *)&got) != -1) ;
+	 	assert( ncattget(id,ii,reqattr[4],(ncvoid *)&got) != -1) ; 
 		chkgot(adesc->type, got, tvp->scalemax) ;
 		}
 
@@ -660,7 +657,7 @@ char *argv[];
 		{
 		assert( adesc->type == NC_CHAR ) ;
 		assert( adesc->len == strlen(tvp->fieldnam) ) ;
-	 	assert( ncattget(id,ii,reqattr[5],(ncvoid *)new) != -1) ;
+	 	assert( ncattget(id,ii,reqattr[5],(ncvoid *)new) != -1) ; 
 		new[adesc->len] = 0 ;
 		assert( strcmp(tvp->fieldnam, new) == 0) ;
 		}

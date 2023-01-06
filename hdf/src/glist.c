@@ -215,7 +215,7 @@ HDGLinitialize_list(Generic_list *list)
     CONSTR(FUNC, "HDGLinitialize_list");	/* for HERROR */
     intn  ret_value = SUCCEED;
 
-    /* Allocate an intialize info struct */
+    /* Allocate an initialize info struct */
     list->info = (Generic_list_info *)HDmalloc(sizeof(Generic_list_info));
 
     if (list->info != NULL)
@@ -562,7 +562,7 @@ return ret_value;
     This function will remove the last object from the end of the list and
     return it.  If the list is empty, NULL is returned.
  RETURNS
-    Last element if successfull and NULL otherwise
+    Last element if successful and NULL otherwise
 *******************************************************************************/
 VOIDP
 HDGLremove_from_end(Generic_list list)
@@ -889,7 +889,7 @@ HDGLcopy_list(Generic_list list)
     Generic_list_element *element;
     intn  ret_value = SUCCEED;
 
-    list_copy.info = NULL; /* intialize info to NULL */
+    list_copy.info = NULL; /* initialize info to NULL */
 
     /* initialize new list */
     if (HDGLinitialize_sorted_list(&list_copy, list.info->lt) == FAIL)

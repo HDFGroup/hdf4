@@ -20,14 +20,14 @@
    Apr 11, 2011 -BMR
 *************************************************************************/
 intn comp_using_jpeglib(
-	char *filename,		/* file to write compressed data in */
+	const char *filename,	/* file to write compressed data in */
 	long *file_offset,	/* end offset of previous data and indicating where
 				   to start writing data in this round */
 	int im_height,		/* image's height */
 	int im_width,		/* image's width */
 	int im_ncomps,		/* image's number of components */
 	int quality,		/* JPEG quality value */
-	uint8 *written_buffer)	/* data to be compressed */
+	const uint8 *written_buffer)	/* data to be compressed */
 {
     FILE * outfile;		/* target file */
     JSAMPROW row_pointer[1];	/* pointer to JSAMPLE row[s] */
@@ -141,7 +141,7 @@ intn comp_using_jpeglib(
    Apr 11, 2011 -BMR
 ****************************************************************************/
 intn decomp_using_jpeglib(
-	char *filename,		/* file to read compressed data from */
+	const char *filename,	/* file to read compressed data from */
 	long file_offset,	/* offset in the file to start reading */
 	int im_height,		/* image's height */
 	int im_width,		/* image's width */
