@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
 
 /* This program converts a series raster image hdf files into   */
 /* a single 3D sds hdf file. Each ris hdf file contains one     */

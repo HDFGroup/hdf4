@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
 
 /* obsolete code for HDF 3.2. 26/march/92 jason ng */
 /* except for the following routines:

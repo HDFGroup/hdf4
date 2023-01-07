@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
 
 /*
  * This file tests the Special Chunking Element(HMCxxx) layer of the HDF library.
@@ -216,7 +215,7 @@ test_chunks(void)
     model_info minfo;
     intn       errors = 0;
 
-    /* intialize out buffer */
+    /* initialize out buffer */
     for (i = 0; i < BUFSIZE; i++)
         outbuf[i] = (char) (i % 256);
 
@@ -1941,7 +1940,7 @@ test_chunks(void)
     x = 1000;
     y = 1000;
     nseek = (12000 * y) + x;
-    printf("seek to initial byte postion = %d \n",nseek);
+    printf("seek to initial byte position = %d \n",nseek);
     /* seek to next buffer  */
     ret = Hseek(aid1, nseek, 0);
     VERIFY_VOID(ret, 0, "Hseek");
@@ -1969,7 +1968,7 @@ test_chunks(void)
           x = x + 100;
           y = y + 1000;
           nseek = (12000 * y) + x;
-          printf("seek to next byte postion = %d\n",nseek);
+          printf("seek to next byte position = %d\n",nseek);
           /* seek to next buffer  */
           ret = Hseek(aid1, nseek, 0);
           VERIFY_VOID(ret, 0, "Hseek");

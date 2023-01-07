@@ -42,7 +42,6 @@
 
  */
 
-/* $Id$ */
 
 #define TESTMASTER
 

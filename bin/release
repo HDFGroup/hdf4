@@ -7,7 +7,7 @@
 # This file is part of HDF.  The full HDF copyright notice, including
 # terms governing use, modification, and redistribution, is contained in
 # the COPYING file, which can be found at the root of the source code
-# distribution tree, or in https://support.hdfgroup.org/ftp/HDF/releases/.
+# distribution tree, or in https://www.hdfgroup.org/licenses.
 # If you do not have access to either file, you may request a copy from
 # help@hdfgroup.org.
 #
@@ -46,21 +46,21 @@ A sha256 checksum is produced for each archive created and stored in the sha256 
 Examples:
 
     $ bin/release -d /tmp
-    /tmp/hdf-4.2.11-RELEASE.txt
-    /tmp/hdf-4.2.11.md5
-    /tmp/hdf-4.2.11.tar
+    /tmp/hdf-4.2.15-RELEASE.txt
+    /tmp/hdf-4.2.15.sha256
+    /tmp/hdf-4.2.15.tar
 
     $ bin/release -d /tmp gzip
-    /tmp/hdf-4.2.11-RELEASE.txt
-    /tmp/hdf-4.2.11.md5
-    /tmp/hdf-4.2.11.tar.gz
+    /tmp/hdf-4.2.15-RELEASE.txt
+    /tmp/hdf-4.2.15.sha256
+    /tmp/hdf-4.2.15.tar.gz
 
     $ bin/release -d /tmp tar gzip zip
-    /tmp/hdf-4.2.11-RELEASE.txt
-    /tmp/hdf-4.2.11.md5
-    /tmp/hdf-4.2.11.tar
-    /tmp/hdf-4.2.11.tar.gz
-    /tmp/hdf-4.2.11.zip
+    /tmp/hdf-4.2.15-RELEASE.txt
+    /tmp/hdf-4.2.15.sha256
+    /tmp/hdf-4.2.15.tar
+    /tmp/hdf-4.2.15.tar.gz
+    /tmp/hdf-4.2.15.zip
 
 EOF
 
@@ -136,16 +136,16 @@ tar2zip()
 #    Note: do this in a temporary directory to avoid changing
 #    the original source directory which may be around.
 # 2. add build-unix.sh script.
-# 3. add SZIP.tar.gz, ZLib.tar.gz and cmake files to top level directory.
+# 3. add LIBAEC.tar.gz, ZLib.tar.gz and cmake files to top level directory.
 # 4. create gzipped tar file with these contents:
 #        build-unix.sh          script
 #        hdf4-<version>         source code directory extracted from tar file
 #        CTestScript.cmake      cmake file copied from <hdf4 source code>/config/cmake/scripts
 #        HDF4config.cmake       cmake file copied from <hdf4 source code>/config/cmake/scripts
 #        HDF4options.cmake      cmake file copied from <hdf4 source code>/config/cmake/scripts
-#        SZIP.tar.gz            copied from /mnt/scr1/pre-release/hdf4/CMake
+#        LIBAEC.tar.gz          copied from /mnt/scr1/pre-release/hdf4/CMake
 #        ZLib.tar.gz            copied from /mnt/scr1/pre-release/hdf4/CMake
-#        JPEG8d.tar.gz          copied from /mnt/scr1/pre-release/hdf4/CMake
+#        JPEG9e.tar.gz          copied from /mnt/scr1/pre-release/hdf4/CMake
 
 
 # Parameters:
@@ -157,9 +157,9 @@ tar2zip()
 #
 
 # need function to create another temporary directory, extract the
-# $tmpdir/$HDF4_VERS.tar into it, add (create) build-unix.sh,
-# CTestScript.cmake, HDF5config.cmake, SZIP.tar.gz, ZLib.tar.gz,
-# and JPEG8d.tar.gz, and then zip it.
+# $tmpdir/$HDF4_VERS.tar into it, create build-VS*.bat files,
+# add CTestScript.cmake, HDF4config.cmake, LIBAEC.tar.gz, ZLib.tar.gz,
+# and JPEG9e.tar.gz, HDF4 examples and then zip it.
 tar2cmakezip()
 {
     if [ $# -ne 3 ]; then
@@ -183,20 +183,21 @@ tar2cmakezip()
         return 1
     fi
 
-    # step 2: add batch file for building CMake on window
-    (cd $cmziptmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=VS2013 -C Release -V -O hdf4.log" > build-VS2013-32.bat; chmod 755 build-VS2013-32.bat)
-    (cd $cmziptmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=VS201364 -C Release -V -O hdf4.log" > build-VS2013-64.bat; chmod 755 build-VS2013-64.bat)
+    # step 2: add batch file for building CMake on Windows
     (cd $cmziptmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=VS2015 -C Release -V -O hdf4.log" > build-VS2015-32.bat; chmod 755 build-VS2015-32.bat)
     (cd $cmziptmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=VS201564 -C Release -V -O hdf4.log" > build-VS2015-64.bat; chmod 755 build-VS2015-32.bat)
     (cd $cmziptmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=VS2017 -C Release -V -O hdf4.log" > build-VS2017-32.bat; chmod 755 build-VS2017-32.bat)
     (cd $cmziptmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=VS201764 -C Release -V -O hdf4.log" > build-VS2017-64.bat; chmod 755 build-VS2017-64.bat)
     (cd $cmziptmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=VS2019 -C Release -V -O hdf4.log" > build-VS2019-32.bat; chmod 755 build-VS2019-32.bat)
     (cd $cmziptmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=VS201964 -C Release -V -O hdf4.log" > build-VS2019-64.bat; chmod 755 build-VS2019-64.bat)
+    (cd $cmziptmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=VS2022 -C Release -V -O hdf4.log" > build-VS2022-32.bat; chmod 755 build-VS2022-32.bat)
+    (cd $cmziptmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=VS202264 -C Release -V -O hdf4.log" > build-VS2022-64.bat; chmod 755 build-VS2022-32.bat)
 
-    # step 3: add SZIP.tar.gz, ZLib.tar.gz and cmake files
-    cp /mnt/scr1/pre-release/hdf4/CMake/SZip.tar.gz $cmziptmpsubdir
+    # step 3: add LIBAEC.tar.gz, ZLib.tar.gz and cmake files
+    cp /mnt/scr1/pre-release/hdf4/CMake/LIBAEC.tar.gz $cmziptmpsubdir
     cp /mnt/scr1/pre-release/hdf4/CMake/ZLib.tar.gz $cmziptmpsubdir
-    cp /mnt/scr1/pre-release/hdf4/CMake/JPEG8d.tar.gz $cmziptmpsubdir
+    cp /mnt/scr1/pre-release/hdf4/CMake/JPEG9e.tar.gz $cmziptmpsubdir
+    cp /mnt/scr1/pre-release/hdf4/CMake/HDF4Examples-0.3.10-Source.zip $cmziptmpsubdir
     cp $cmziptmpsubdir/$version/config/cmake/scripts/CTestScript.cmake $cmziptmpsubdir
     cp $cmziptmpsubdir/$version/config/cmake/scripts/HDF4config.cmake $cmziptmpsubdir
     cp $cmziptmpsubdir/$version/config/cmake/scripts/HDF4options.cmake $cmziptmpsubdir
@@ -235,14 +236,14 @@ tar2cmakezip()
 #    Note: do this in a temporary directory to avoid changing
 #    the original source directory which may be around.
 # 2. add build-unix.sh script.
-# 3. add SZIP.tar.gz, ZLib.tar.gz and cmake files to top level directory.
+# 3. add LIBAEC.tar.gz, ZLib.tar.gz and cmake files to top level directory.
 # 4. create gzipped tar file with these contents:
 #        build-unix.sh          script
 #        hdf4-<version>         source code directory extracted from tar file
 #        CTestScript.cmake      cmake file copied from <hdf4 source code>/config/cmake/scripts
 #        HDF4config.cmake       cmake file copied from <hdf4 source code>/config/cmake/scripts
 #        HDF4options.cmake      cmake file copied from <hdf4 source code>/config/cmake/scripts
-#        SZip.tar.gz            copied from /mnt/scr1/pre-release/hdf4/CMake
+#        LIBAEC.tar.gz          copied from /mnt/scr1/pre-release/hdf4/CMake
 #        ZLib.tar.gz            copied from /mnt/scr1/pre-release/hdf4/CMake
 #        JPEG8d.tar.gz          copied from /mnt/scr1/pre-release/hdf4/CMake
 
@@ -254,7 +255,10 @@ tar2cmakezip()
 #
 # Returns 0 if successful; 1 otherwise
 #
-
+ # need function to create another temporary directory, extract the
+            # $tmpdir/$HDF4_VERS.tar into it, create build-unix.sh,
+            # add CTestScript.cmake, HDF4config.cmake, LIBAEC.tar.gz
+            # ZLib.tar.gz, JPEG9e.tar.gz, HDF4 examples and then tar.gz it.
 tar2cmaketgz()
 {
     if [ $# -ne 3 ]; then
@@ -282,10 +286,11 @@ tar2cmaketgz()
     # step 2: add build-unix.sh script
     (cd $cmgztmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=Unix -C Release -V -O hdf4.log" > build-unix.sh; chmod 755 build-unix.sh)
 
-    # step 3: add SZIP.tar.gz, ZLib.tar.gz and cmake files
-    cp /mnt/scr1/pre-release/hdf4/CMake/SZip.tar.gz $cmgztmpsubdir
+    # step 3: add LIBAEC.tar.gz, ZLib.tar.gz and cmake files
+    cp /mnt/scr1/pre-release/hdf4/CMake/LIBAEC.tar.gz $cmgztmpsubdir
     cp /mnt/scr1/pre-release/hdf4/CMake/ZLib.tar.gz $cmgztmpsubdir
-    cp /mnt/scr1/pre-release/hdf4/CMake/JPEG8d.tar.gz $cmgztmpsubdir
+    cp /mnt/scr1/pre-release/hdf4/CMake/JPEG9e.tar.gz $cmgztmpsubdir
+    cp /mnt/scr1/pre-release/hdf4/CMake/HDF4Examples-0.3.10-Source.tar.gz $cmgztmpsubdir
     cp $cmgztmpsubdir/$version/config/cmake/scripts/CTestScript.cmake $cmgztmpsubdir
     cp $cmgztmpsubdir/$version/config/cmake/scripts/HDF4config.cmake $cmgztmpsubdir
     cp $cmgztmpsubdir/$version/config/cmake/scripts/HDF4options.cmake $cmgztmpsubdir
@@ -376,10 +381,11 @@ if [ X$pmode = Xyes ]; then
     # (h4vers does not correctly handle just m.n.r-$today.)
     VERS=`echo $VERS | sed -e s/-.*//`-of$today
     echo Private release of $VERS
+else
     bin/h4vers -s $VERS
 fi
 
-# Store hdf4-$VERS ("hdf-4.2.11", e.g.) to a variable to avoid typos
+# Store hdf4-$VERS ("hdf-4.2.15", e.g.) to a variable to avoid typos
 HDF4_VERS=hdf-$VERS
 
 test "$verbose" && echo "Releasing $HDF4_VERS to $DEST" 1>&2

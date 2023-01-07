@@ -1,23 +1,22 @@
-#include "hdf.h" 
+#include "hdf.h"
 
-#define  FILE_NAME     "Image_Chunked.hdf" 
-#define  IMAGE_NAME    "Image with Chunks" 
-#define  X_LENGTH      10    /* number of rows in the image */ 
-#define  Y_LENGTH      6     /* number of columns in the image */ 
-#define  NCOMPS        3     /* number of components in the image */ 
+#define  FILE_NAME     "Image_Chunked.hdf"
+#define  IMAGE_NAME    "Image with Chunks"
+#define  X_LENGTH      10    /* number of rows in the image */
+#define  Y_LENGTH      6     /* number of columns in the image */
+#define  NCOMPS        3     /* number of components in the image */
 
-int main( )  
-{ 
-   /************************* Variable declaration **************************/ 
+int main( )
+{
+   /************************* Variable declaration **************************/
 
-   intn  status;         /* status for functions returning an intn */ 
-   int32 file_id,        /* HDF file identifier */ 
-         gr_id,          /* GR interface identifier */ 
-         ri_id,          /* raster image identifier */ 
-         dims[2],        /* dimension sizes of the image array */ 
-         origin[2],      /* origin position to write each chunk */ 
-         interlace_mode; /* interlace mode of the image */ 
-   HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
+   intn  status;         /* status for functions returning an intn */
+   int32 file_id,        /* HDF file identifier */
+         gr_id,          /* GR interface identifier */
+         ri_id,          /* raster image identifier */
+         dims[2],        /* dimension sizes of the image array */
+         origin[2];      /* origin position to write each chunk */
+   HDF_CHUNK_DEF chunk_def;     /* Chunk definition set */
    int32 chunk00[] = {1, 2, 3, 4, 5, 6,
                       7, 8, 9, 10, 11, 12,
                       13, 14, 15, 16, 17, 18 };

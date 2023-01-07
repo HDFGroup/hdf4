@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
 
 /***********************************************************
 *
@@ -324,8 +323,8 @@ static void test_mgr_image_b1a(int flag)
     int32 ret;              /* generic return value */
     int32   cdims[2] = {1,1};    /* chunk dims */
     int32   *rcdims;             /* for SDgetchunkinfo() */
-    HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
-    HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
+    HDF_CHUNK_DEF chunk_def;     /* Chunk definition set */
+    HDF_CHUNK_DEF rchunk_def;    /* Chunk definition read */
     int32     cflags;            /* chunk flags */
 
 /* B1a - Read/Write images - with no Data - Default Fill Value */
@@ -443,8 +442,8 @@ static void test_mgr_image_b1b(int flag)
     int32 ret;              /* generic return value */
     int32   cdims[2] = {1,1};    /* chunk dims */
     int32   *rcdims;             /* for SDgetchunkinfo() */
-    HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
-    HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
+    HDF_CHUNK_DEF chunk_def;     /* Chunk definition set */
+    HDF_CHUNK_DEF rchunk_def;    /* Chunk definition read */
     int32     cflags;            /* chunk flags */
 
 /* B1b - Read/Write images - with no Data - User-defined Fill Value */
@@ -563,8 +562,8 @@ static void test_mgr_image_b2a1aa(int flag)
     int32 ret;              /* generic return value */
     int32   cdims[2] = {1,1};    /* chunk dims */
     int32   *rcdims;             /* for SDgetchunkinfo() */
-    HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
-    HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
+    HDF_CHUNK_DEF chunk_def;     /* Chunk definition set */
+    HDF_CHUNK_DEF rchunk_def;    /* Chunk definition read */
     int32     cflags;            /* chunk flags */
 
 /* B2a1aa - Read/Write images - with real Data - New Image - with Default Fill Value - Whole Image */
@@ -716,8 +715,8 @@ static void test_mgr_image_b2a1bb1(int flag)
     int32 ret;              /* generic return value */
     int32   cdims[2] = {1,1};    /* chunk dims */
     int32   *rcdims;             /* for SDgetchunkinfo() */
-    HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
-    HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
+    HDF_CHUNK_DEF chunk_def;     /* Chunk definition set */
+    HDF_CHUNK_DEF rchunk_def;    /* Chunk definition read */
     int32     cflags;            /* chunk flags */
 
 /* B2a1bb - Read/Write images - with real Data - New Image - with Default Fill Value - Sub-setted Image */
@@ -894,8 +893,8 @@ static void test_mgr_image_b2a1bb2(int flag)
     int32 ret;              /* generic return value */
     int32   cdims[2] = {1,1};    /* chunk dims */
     int32   *rcdims;             /* for SDgetchunkinfo() */
-    HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
-    HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
+    HDF_CHUNK_DEF chunk_def;     /* Chunk definition set */
+    HDF_CHUNK_DEF rchunk_def;    /* Chunk definition read */
     int32     cflags;            /* chunk flags */
 
     MESSAGE(8, printf("Check out I/O on new image with real data, with Default fill-value, Reading Sub-setted Image\n"););
@@ -1068,8 +1067,8 @@ static void test_mgr_image_b2a1cc1(int flag)
     int32 ret;              /* generic return value */
     int32   cdims[2] = {1,1};    /* chunk dims */
     int32   *rcdims;             /* for SDgetchunkinfo() */
-    HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
-    HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
+    HDF_CHUNK_DEF chunk_def;     /* Chunk definition set */
+    HDF_CHUNK_DEF rchunk_def;    /* Chunk definition read */
     int32     cflags;            /* chunk flags */
 
 /* B2a1cc - Read/Write images - with real Data - New Image - with Default Fill Value - Sub-sampled Image */
@@ -1245,8 +1244,8 @@ static void test_mgr_image_b2a1cc2(int flag)
     int32 ret;              /* generic return value */
     int32   cdims[2] = {1,1};    /* chunk dims */
     int32   *rcdims;             /* for SDgetchunkinfo() */
-    HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
-    HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
+    HDF_CHUNK_DEF chunk_def;     /* Chunk definition set */
+    HDF_CHUNK_DEF rchunk_def;    /* Chunk definition read */
     int32     cflags;            /* chunk flags */
 
     MESSAGE(8, printf("Check out I/O on new image with real data, with Default fill-value, Reading Sub-sampled Image\n"););
@@ -1414,8 +1413,8 @@ static void test_mgr_image_b2a2bb(int flag)
     int32 ret;              /* generic return value */
     int32   cdims[2] = {1,1};    /* chunk dims */
     int32   *rcdims;             /* for SDgetchunkinfo() */
-    HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
-    HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
+    HDF_CHUNK_DEF chunk_def;     /* Chunk definition set */
+    HDF_CHUNK_DEF rchunk_def;    /* Chunk definition read */
     int32     cflags;            /* chunk flags */
 
 /* B2a2bb - Read/Write images - with real Data - New Image - with User-Defined Fill Value - Sub-setted Image */
@@ -1598,8 +1597,8 @@ static void test_mgr_image_b2a2cc(int flag)
     int32 ret;              /* generic return value */
     int32   cdims[2] = {1,1};    /* chunk dims */
     int32   *rcdims;             /* for SDgetchunkinfo() */
-    HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
-    HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
+    HDF_CHUNK_DEF chunk_def;     /* Chunk definition set */
+    HDF_CHUNK_DEF rchunk_def;    /* Chunk definition read */
     int32     cflags;            /* chunk flags */
 
 /* B2a2cc - Read/Write images - with real Data - New Image - with User-Defined Fill Value - Sub-sampled Image */
@@ -1958,8 +1957,8 @@ static void test_mgr_image_chunk(int flag)
 {
     int32   cdims[2] = {1,1};    /* chunk dims */
     int32   *rcdims;             /* for SDgetchunkinfo() */
-    HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
-    HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
+    HDF_CHUNK_DEF chunk_def;     /* Chunk definition set */
+    HDF_CHUNK_DEF rchunk_def;    /* Chunk definition read */
     int32     cflags;            /* chunk flags */
     int32 fid;              /* HDF file ID */
     int32 grid;             /* GRID for the interface */

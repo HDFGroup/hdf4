@@ -14,7 +14,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/*    $Id$ */
 
 #ifdef DEBUG
 #include <assert.h>

@@ -73,8 +73,8 @@
  *-------------------------------------------------------------------------
  */ 
 
-static int            g_lenght_x;
-static int            g_lenght_y;
+static int            g_length_x;
+static int            g_length_y;
 static int            g_ncomps;
 static unsigned char *g_image_data = NULL;   
 
@@ -122,9 +122,9 @@ int read_data(const char* fname)
     
     /* globals */
     g_ncomps=color_planes;
-    g_lenght_y=h;
-    g_lenght_x=w;
-    
+    g_length_y=h;
+    g_length_x=w;
+
     if ( g_image_data != NULL )
     {
         HDfree( g_image_data );
@@ -534,7 +534,7 @@ int sds_verifiy_comp(const char *sds_name,
     if (in_comp_info) {
         if ( comp_info.skphuff.skp_size != in_comp_info )
         {
-            printf("Error: compresion information does not match ");
+            printf("Error: compression information does not match ");
             SDendaccess (sds_id);
             SDend (sd_id);
             return -1;
@@ -683,7 +683,7 @@ int sds_verifiy_comp_all(comp_coder_t in_comp_type,
                         
                         if ( info != in_comp_info )
                         {
-                            printf("Error: compresion information does not match for <%s>",name);
+                            printf("Error: compression information does not match for <%s>",name);
                             SDendaccess (sds_id);
                             SDend (sd_id);
                             return -1;
@@ -724,8 +724,8 @@ int sds_verifiy_chunk(const char *sds_name,
                       int rank, 
                       int32 *in_chunk_lengths)
 {
-    HDF_CHUNK_DEF chunk_def;    /* chunk defintion read */ 
-    int32         chunk_flags;  /* chunking flag */ 
+    HDF_CHUNK_DEF chunk_def;    /* chunk definition read */
+    int32         chunk_flags;  /* chunking flag */
     int32         sd_id,
         sds_id, 
         sds_index;   
@@ -792,8 +792,8 @@ int sds_verifiy_chunk_all(int32 in_chunk_flags,
                           int32 *in_chunk_lengths,
                           const char *sds_exclude)
 {
-    HDF_CHUNK_DEF chunk_def;    /* chunk defintion read */ 
-    int32         chunk_flags;  /* chunking flag */ 
+    HDF_CHUNK_DEF chunk_def;    /* chunk definition read */
+    int32         chunk_flags;  /* chunking flag */
     int32         sd_id,
         sds_id, 
         sds_index,
@@ -991,9 +991,9 @@ int add_gr_ffile(const char* name_file,
     {
         /* set the data type, interlace mode, and dimensions of the image */
         data_type = DFNT_UINT8;
-        dim_gr[0] = g_lenght_x;
-        dim_gr[1] = g_lenght_y;
-        
+        dim_gr[0] = g_length_x;
+        dim_gr[1] = g_length_y;
+
         /* create the raster image array */
         if ((ri_id = GRcreate (gr_id, gr_name, g_ncomps, data_type, interlace_mode, dim_gr))== FAIL)
         {
@@ -1003,10 +1003,9 @@ int add_gr_ffile(const char* name_file,
         
         /* define the size of the data to be written */
         start[0] = start[1] = 0;
-        edges[0] = g_lenght_x;
-        edges[1] = g_lenght_y;
-        
-        
+        edges[0] = g_length_x;
+        edges[1] = g_length_y;
+
         /* write the data in the buffer into the image array */
         if (GRwriteimage(ri_id, start, NULL, edges, (VOIDP)g_image_data)==FAIL)
         {
@@ -1350,7 +1349,7 @@ int add_r8(const char* image_file,
         }
         
         /* write the image */
-        if (DFR8addimage(fname, g_image_data, g_lenght_x, g_lenght_y, (uint16)0)==FAIL){
+        if (DFR8addimage(fname, g_image_data, g_length_x, g_length_y, (uint16)0)==FAIL){
             printf( "Could not write palette for image\n");
             return FAIL;
         }
@@ -1425,7 +1424,7 @@ int add_r24(const char* image_file,
         }
         
         /* write the image */
-        if (DF24addimage(fname, g_image_data, g_lenght_x, g_lenght_y)==FAIL){
+        if (DF24addimage(fname, g_image_data, g_length_x, g_length_y)==FAIL){
             printf( "Could not write image\n");
             return FAIL;
         }

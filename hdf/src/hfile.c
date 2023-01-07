@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
 
 /*LINTLIBRARY */
 /*+
@@ -112,6 +111,8 @@
    HIupdate_version     -- determine whether new version tag should be written
    HIread_version       -- reads a version tag from a file
    + */
+
+#include <string.h>
 
 #define HMASTER
 #include "hdf.h"
@@ -2094,7 +2095,7 @@ USAGE
    intn HIsync(file_rec)
    filerec_t *file_rec;            IN: file record of file
 RETURNS
-   returns SUCCEED (0) if sucessful, FAIL (-1) otherwise
+   returns SUCCEED (0) if successful, FAIL (-1) otherwise
 DESCRIPTION
     HIsync() performs the actual sync'ing of the file in memory & on disk.
 NOTE
@@ -2139,7 +2140,7 @@ USAGE
    intn Hsync(file_id)
    int32 file_id;            IN: id of file
 RETURNS
-   returns SUCCEED (0) if sucessful, FAIL (-1) otherwise
+   returns SUCCEED (0) if successful, FAIL (-1) otherwise
 DESCRIPTION
    Currently, the on-disk and in-memory representations are always
    the same.  Thus there is no real use for Hsync().  In the future,
@@ -2183,7 +2184,7 @@ USAGE
 	   int32 file_id;            IN: id of file
 	   intn cache_on;            IN: whether to cache or not
 RETURNS
-   returns SUCCEED (0) if sucessful, FAIL (-1) otherwise
+   returns SUCCEED (0) if successful, FAIL (-1) otherwise
 DESCRIPTION
    Set/reset the caching in an HDF file.
    If file_id is set to CACHE_ALL_FILES, then the value of cache_on is
@@ -3421,9 +3422,10 @@ PRIVATE int
 HIread_version(int32 file_id)
 {
   filerec_t  *file_rec;
-  uint8       fversion[LIBVER_LEN];
   CONSTR(FUNC, "Hread_version");
   int         ret_value = SUCCEED;
+  uint8       fversion[LIBVER_LEN];
+  memset(fversion, 0, sizeof(fversion));
 
   HEclear();
 

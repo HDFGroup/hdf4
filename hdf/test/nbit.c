@@ -33,7 +33,6 @@
    1/19/94 - Started coding
  */
 
-/* $Id$ */
 
 #include "tproto.h"
 #define TESTFILE_NAME "tnbit.hdf"
