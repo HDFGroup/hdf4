@@ -11,14 +11,13 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
 
 /*
 FILE
     bitvect.c
 
 PURPOSE
-    Provide an API for dynamicly-sized bit-vectors or "bit-sets"
+    Provide an API for dynamically-sized bit-vectors or "bit-sets"
 
 REMARKS
     These function manipulate ordered sets of "bits".  They are designed 
@@ -178,7 +177,7 @@ bv_ptr bv_new(int32 num_bits, uint32 flags)
     Returns SUCCEED/FAIL
  DESCRIPTION
     Disposes of a bit-vector created by bv_new.  This routine is responsible
-    for completely cleaning up the bit-vector and disposing of all dynamicly
+    for completely cleaning up the bit-vector and disposing of all dynamically
     allocated space.
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS

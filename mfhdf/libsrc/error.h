@@ -14,7 +14,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
 #ifndef _NC_ERROR_
 #define _NC_ERROR_
 

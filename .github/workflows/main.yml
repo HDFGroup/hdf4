@@ -4,10 +4,10 @@ name: hdf4 dev CI
 on:
   workflow_dispatch:
   push:
-    branches: [ master ]
     paths-ignore:
-    - '.github/**'
     - 'release_notes/**'
+  pull_request:
+    branches: [ master ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -41,7 +41,7 @@ jobs:
 #            generator: "-G \"Visual Studio 16 2019\" -A x64"
           - name: "Ubuntu Latest GCC"
             artifact: "Linux.tar.xz"
-            os: ubuntu-20.04
+            os: ubuntu-latest
             build_type: "Release"
             netcdf: ON
             java: ON
@@ -61,7 +61,7 @@ jobs:
 #            generator: "-G Ninja"
           - name: "Ubuntu Debug GCC"
             artifact: "LinuxDBG.tar.xz"
-            os: ubuntu-20.04
+            os: ubuntu-latest
             build_type: "Debug"
             netcdf: ON
             java: ON
@@ -88,10 +88,10 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     - name: Install Dependencies (Linux)
-      run: sudo apt-get install ninja-build
-      if: matrix.os == 'ubuntu-20.04'
+      run: sudo apt-get install -y ninja-build libtirpc-dev
+      if: matrix.os == 'ubuntu-latest'
     - name: Install Autotools Dependencies (Linux)
-      run: sudo apt-get install automake autoconf libtool libtool-bin
+      run: sudo apt-get install -y automake autoconf libtool libtool-bin
       if: matrix.generator == 'autogen'
     - name: Install Dependencies (Windows)
       run: |
@@ -110,7 +110,7 @@ jobs:
     
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name: Get Sources
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Autotools Configure 
       if: matrix.generator == 'autogen'

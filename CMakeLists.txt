@@ -37,9 +37,9 @@ endif ()
 set (CMAKE_IGNORE_EOL "--ignore-eol")
 if (CMAKE_VERSION VERSION_LESS "3.14.0")
   set (CMAKE_IGNORE_EOL "")
-#  if (WIN32)
-#    message (FATAL_ERROR "Windows builds require a minimum of CMake 3.14")
-#  endif()
+  if (WIN32)
+    message (FATAL_ERROR "Windows builds require a minimum of CMake 3.14")
+  endif()
 endif ()
 
 #-----------------------------------------------------------------------------
@@ -403,6 +403,8 @@ if (WIN32)
     add_compile_definitions (_BIND_TO_CURRENT_VCLIBS_VERSION=1 _CONSOLE)
   endif ()
 endif ()
+
+option (HDF4_MINGW_STATIC_GCC_LIBS "Statically link libgcc/libstdc++" OFF)
 
 if (MSVC)
   set (CMAKE_MFC_FLAG 0)

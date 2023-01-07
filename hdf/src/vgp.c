@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
 /*****************************************************************************
 
  file - vgp.c
@@ -401,7 +400,7 @@ Load_vfile(HFILEID f /* IN: file handle */)
         HGOTO_DONE(SUCCEED);
 
     /* load all the vg's  tag/refs from file */
-    vf->vgtabn = 0; /* intialize to number of current entries to zero */
+    vf->vgtabn = 0; /* initialize to number of current entries to zero */
     vf->vgtree = tbbtdmake(vcompare, sizeof(int32), TBBT_FAST_INT32_COMPARE);
     if (vf->vgtree == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -897,7 +896,7 @@ DESCRIPTION
    Extracts fields from a VGROUP struct vg and packs the fields
    into array buf in preparation for storage in the HDF file.
 
-RETRUNS   
+RETURNS
    NO RETURN VALUES.
 
 *******************************************************************************/
@@ -1207,7 +1206,7 @@ DESCRIPTION
    
        In any case, set marked flag to 0.
 
-RETRUNS
+RETURNS
      SUCCEED/FAIL
 
 *******************************************************************************/

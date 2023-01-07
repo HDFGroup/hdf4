@@ -12,7 +12,6 @@
  *
  * -glenn
  */
-/* $Id$ */
 
 /*
  * 32-bit integer on the host architecture (on the CRAY, this is actually 64
@@ -65,7 +64,7 @@ typedef struct {
     int mode;       /* file access mode, O_RDONLY, etc */
     int isdirty ;
     off_t page ;
-    int nread ;     /* number of bytes succesfully read */
+    int nread ;     /* number of bytes successfully read */
     int nwrote ;    /* number of bytes last write */
     int cnt ;       /* number of valid bytes in buffer */
     unsigned char *ptr;         /* next byte */

@@ -679,7 +679,7 @@ public class HDFLibrary implements java.io.Serializable {
      * @exception hdf.hdflib.HDFException
      *                should be thrown for errors.
      *
-     * @return the name, type, and lenght of the attribute: name[0] = name, argv[0] = data_type, argv[1]
+     * @return the name, type, and length of the attribute: name[0] = name, argv[0] = data_type, argv[1]
      *         = length
      */
     public static native boolean GRattrinfo(long id, int index, String[] name, int[] argv) throws HDFException;
@@ -743,7 +743,7 @@ public class HDFLibrary implements java.io.Serializable {
      * @param data_type
      *            <b>IN</b>: the number type of the data (should be DFNT_CHAR)
      * @param count
-     *            <b>IN</b>: the length the data (lenght of 'values')
+     *            <b>IN</b>: the length the data (length of 'values')
      * @param values
      *            <b>IN</b>: the the attribute to write -- A String
      *
@@ -766,7 +766,7 @@ public class HDFLibrary implements java.io.Serializable {
      * @param data_type
      *            <b>IN</b>: the number type of the data
      * @param count
-     *            <b>IN</b>: the length the data (lenght of 'values')
+     *            <b>IN</b>: the length the data (length of 'values')
      * @param values
      *            <b>IN</b>: the the attribute to write -- in an array of bytes
      *
@@ -790,7 +790,7 @@ public class HDFLibrary implements java.io.Serializable {
      * @param data_type
      *            <b>IN</b>: the number type of the data
      * @param count
-     *            <b>IN</b>: the length the data (lenght of 'values')
+     *            <b>IN</b>: the length the data (length of 'values')
      * @param theData
      *            <b>IN</b>: Object -- the value to be written, a Java array of numbers.
      *

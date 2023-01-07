@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id$ */
 
 /*-----------------------------------------------------------------------------
  * File:    mstdio.h
@@ -67,7 +66,7 @@ HDFLIBAPI intn HCPmstdio_endaccess
 /* model information about stdio model */
 typedef struct
 {
-    int32      pos;            /* postion ? */
+    int32      pos;            /* position ? */
 }
 comp_model_stdio_info_t;
 

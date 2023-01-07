@@ -1314,8 +1314,8 @@ INSTRUCTIONS FOR OPTION I, TEST AND UTILITY INSTALLATION, NO FORTRAN
        header files, and the lib directory will contain:
                jpeg.lib     - JPEG Library
                jpegd.lib    - JPEG Library with DEBUG option
-               libsrc.lib   - multi-file SDS Inteface routines
-               libsrcd.lib  - multi-file SDS Inteface routines with DEBUG option
+               libsrc.lib   - multi-file SDS Interface routines
+               libsrcd.lib  - multi-file SDS Interface routines with DEBUG option
                src.lib      - multi-file Vdata Interface
                                          Vgroup Interface
                                          AN Interface
@@ -1375,8 +1375,8 @@ INSTRUCTIONS FOR OPTION II, FULL INSTALLATION WITH FORTRAN
        header files, and the lib directory will contain:
                jpeg.lib     - JPEG Library
                jpegd.lib    - JPEG Library with DEBUG option
-               libsrc.lib   - multi-file SDS Inteface routines
-               libsrcd.lib  - multi-file SDS Inteface routines with DEBUG option               src.lib      - multi-file Vdata Interface
+               libsrc.lib   - multi-file SDS Interface routines
+               libsrcd.lib  - multi-file SDS Interface routines with DEBUG option               src.lib      - multi-file Vdata Interface
                                          Vgroup Interface
                                          AN Interface
                                          GR Interface routines
@@ -1511,7 +1511,7 @@ NOTES:
   AN_FILE_DESC  = 3  /* File description */ 
 
 In C-code you need to declare the annotation type using the 
-enumerated type defintion.
+enumerated type definition.
 
 e.g. C-code fragment to write a File label
 
@@ -1526,7 +1526,7 @@ int32   an_id;   /* annotation interface id */
 int32   ann_id;  /* annotation id */
 ann_type myanntype;  /* annotation type */
 
-/* Start Annotation inteface and create file */
+/* Start Annotation interface and create file */
 file_id = Hopen(fname, DFACC_CREATE,0);
 an_id = ANstart(file_id);
 
@@ -1657,7 +1657,7 @@ Fortran: afcreate(an_id, tag, ref, type)
 	int32 ANcreatef(an_id, type )
         int32 an_id;    IN: annotation interface ID
         ann_type  type: IN:  AN_FILE_LABEL for file labels,
-                             AN_FILE_DESC for file descritpions.
+                             AN_FILE_DESC for file descriptions.
  RETURNS
         An ID to an annotation which can either be a file label or description
  DESCRIPTION
@@ -1677,7 +1677,7 @@ Fortran: afcreatef(an_id, type)
         ann_type  type: IN: AN_DATA_LABEL for data labels, 
                             AN_DATA_DESC for data descriptions,
                             AN_FILE_LABEL for file labels,
-                            AN_FILE_DESC for file descritpions.
+                            AN_FILE_DESC for file descriptions.
  RETURNS
         An ID to an annotation type which can either be a label or description 
  DESCRIPTION
@@ -1696,7 +1696,7 @@ Fortran: afselect(an_id, index, type)
        int    type:      IN: AN_DATA_LABEL for data labels, 
                              AN_DATA_DESC for data descriptions,
                              AN_FILE_LABEL for file labels,
-                             AN_FILE_DESC for file descritpions.
+                             AN_FILE_DESC for file descriptions.
        uint16 elem_tag,: IN: tag of item of which this is annotation
        uint16 elem_ref;  IN: ref of item of which this is annotation
  RETURNS
@@ -1720,7 +1720,7 @@ Fortran: afnumann(an_id, type, tag, ref)
        ann_type  type:   IN: AN_DATA_LABEL for data labels, 
                              AN_DATA_DESC for data descriptions,
                              AN_FILE_LABEL for file labels,
-                             AN_FILE_DESC for file descritpions.
+                             AN_FILE_DESC for file descriptions.
        uint16 elem_tag,: IN: tag of element of which this is annotation
        uint16 elem_ref;  IN: ref of element of which this is annotation
        int32  ann_list[]; OUT: array of ann_id's that match criteria.
@@ -2979,8 +2979,8 @@ int main(int argc, char *argv[])
    uint16  inbuf_2u16[5][2];    /* Data array read for Example 1 */
    uint16  ru16_3data[4];       /* whole chunk input buffer */
    uint16  fill_u16 = 0;        /* fill value */
-   HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
-   HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
+   HDF_CHUNK_DEF chunk_def;     /* Chunk definition set */ 
+   HDF_CHUNK_DEF rchunk_def;    /* Chunk definition read */ 
    int32   cflags;              /* chunk flags */
    comp_info cinfo;             /* compression info */
    intn status;

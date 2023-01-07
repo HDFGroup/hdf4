@@ -14,7 +14,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/*  $Id$ */
 
 #include    "local_nc.h"
 #include    "alloc.h"
@@ -1137,7 +1136,7 @@ done:
 
 /* ----------------------------------------------------------------
 ** Write out a group representing a variable
-** If successfull, return the id of the created Vgroup else
+** If successful, return the id of the created Vgroup else
 **  return NULL
 */
 int32

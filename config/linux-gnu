@@ -174,7 +174,7 @@ fi
 #   PROD_CXXFLAGS
 #   PROD_CPPFLAGS   - Flags to pass to the compiler to create a
 #                     production version of the library. These
-#                     usualy exclude symbolic debugging switches (like
+#                     usually exclude symbolic debugging switches (like
 #                     `-g') and include optimization switches (like
 #                     `-O').
 #

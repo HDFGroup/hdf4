@@ -87,5 +87,6 @@ intn make_datafilename(char* basename, char* testfile, unsigned int size)
 
     /* File name is generated, return it */
     HDstrcpy(testfile, tempfile);
+    HDfree(tempfile);
     return SUCCEED;
 }

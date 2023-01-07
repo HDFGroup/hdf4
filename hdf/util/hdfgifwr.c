@@ -57,7 +57,7 @@
 typedef BYTE		byte;
 typedef long int	count_int;
 
-/* indicies into conv24MB */
+/* indices into conv24MB */
 #define CONV24_8BIT  0
 #define CONV24_24BIT 1
 #define CONV24_SEP1  2
