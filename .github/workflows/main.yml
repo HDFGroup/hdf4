@@ -115,7 +115,7 @@ jobs:
     - name: Autotools Configure 
       if: matrix.generator == 'autogen'
       run: |
-        sh ./bin/chkmanifest
+        sh ./autogen.sh
         mkdir "${{ runner.workspace }}/build"
         cd "${{ runner.workspace }}/build"
         $GITHUB_WORKSPACE/configure --disable-shared --${{ matrix.xdr }}-hdf4-xdr --${{ matrix.netcdf }}-netcdf --${{ matrix.java }}-java --${{ matrix.fortran }}-fortran
