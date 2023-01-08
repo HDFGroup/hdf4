@@ -425,7 +425,7 @@ int list_vg(int32 infile_id,
             */
             if ((vg_id = Vattach (infile_id, ref, "r"))==FAIL)
             {
-                printf("Error: Could not attach group with ref <%ld>\n", ref);
+                printf("Error: Could not attach group with ref <%d>\n", ref);
                 goto out;
             }
 

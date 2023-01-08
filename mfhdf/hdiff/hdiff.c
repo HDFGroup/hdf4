@@ -482,7 +482,7 @@ uint32 diff( int32 file1_id,
         break;
         
     default:
-        printf("Tag <%ld> and Tag <%ld>: Comparison not supported for <%s> and <%s> \n", 
+        printf("Tag <%d> and Tag <%d>: Comparison not supported for <%s> and <%s> \n", 
             tag1, tag2, obj1_name, obj2_name);
         break;
     } 

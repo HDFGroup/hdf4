@@ -939,7 +939,7 @@ void parse_value_opts( char *argv[],
 
 	  default:
 	  /* shouldn't be anything else */
-	    fprintf(stderr, "Calling function passed in incorrect info_type_t: %%d\n", info_type);
+	    fprintf(stderr, "Calling function passed in incorrect info_type_t: %d\n", (int)info_type);
 	    exit(1);
 	    break;
 	} /* end of switch */

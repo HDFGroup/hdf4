@@ -34,18 +34,18 @@
 #define MYMAX(A,B) (((A) > (B)) ? (A) : (B))
 #define MYMIN(A,B) (((A) < (B)) ? (A) : (B))
 #define PRINT_FSTATS(T) {\
- printf("Type: %s  Npts: %lu  Ndiff: %lu (%f%%)\n", \
+ printf("Type: %s  Npts: %u  Ndiff: %u (%f%%)\n", \
  T, tot_cnt, n_diff, 100.*(float64)n_diff/(float64)tot_cnt); \
  printf("Avg Diff: %.3e  Max Diff: %.3e\n",  \
  d_avg_diff/n_stats, d_max_diff); \
  printf("Range File1: %f/%f  File2: %f/%f\n", \
 d_min_val1, d_max_val1, d_min_val2, d_max_val2); }
 #define PRINT_ISTATS(T) {\
- printf("Type: %s  Npts: %lu  Ndiff: %lu (%f%%)\n", \
+ printf("Type: %s  Npts: %u  Ndiff: %u (%f%%)\n", \
  T, tot_cnt,n_diff, 100.*(float64)n_diff/(float64)tot_cnt); \
- printf("Avg Diff: %e   Max. Diff: %ld\n",  \
+ printf("Avg Diff: %e   Max. Diff: %d\n",  \
  (d_avg_diff / n_stats), i4_max_diff); \
- printf("Range File1: %ld/%ld  File2: %ld/%ld\n", \
+ printf("Range File1: %d/%d  File2: %d/%d\n", \
 i4_min_val1, i4_max_val1, i4_min_val2, i4_max_val2); }
 
 
@@ -60,18 +60,18 @@ i4_min_val1, i4_max_val1, i4_min_val2, i4_max_val2); }
 #define I8FORMATP  "%-15d %-15d %.0f%%\n"
 #define I16FORMAT  "%-15d %-15d %-15d\n"
 #define I16FORMATP "%-15d %-15d %.0f%%\n"
-#define IFORMAT    "%-15ld %-15ld %-15ld\n"
-#define IFORMATP   "%-15ld %-15ld %.0f%%\n"
+#define IFORMAT    "%-15d %-15d %-15d\n"
+#define IFORMATP   "%-15d %-15d %.0f%%\n"
 #define CFORMAT    "%-16c %-17c\n"
 #define SFORMAT    "%-16s %-17s\n"
-#define UIFORMAT   "%-15lu %-15lu %-15lu\n"
+#define UIFORMAT   "%-15u %-15u %-15u\n"
 #define LIFORMAT   "%-15ld %-15ld %-15ld\n"
 #define ULIFORMAT  "%-15lu %-15lu %-15lu\n"
 
 
 #define I16FORMATP_NOTCOMP "%-15d %-15d not comparable\n"
 #define I8FORMATP_NOTCOMP  "%-15d %-15d not comparable\n"
-#define IFORMATP_NOTCOMP   "%-15ld %-15ld not comparable\n"
+#define IFORMATP_NOTCOMP   "%-15d %-15d not comparable\n"
 #define FFORMATP_NOTCOMP   "%-15f %-15f not comparable\n"
 
 
@@ -226,7 +226,7 @@ uint32 array_diff(void *buf1,
   d_min_val2 = DBL_MAX;
   break;
  default:
-  printf(" bad type - %ld\n", type);
+  printf(" bad type - %d\n", type);
  }
  switch(type)
  {
@@ -333,7 +333,7 @@ uint32 array_diff(void *buf1,
    is_fill1 = fill1 && (*i2ptr1 == *((int16 *)fill1));
    is_fill2 = fill2 && (*i2ptr2 == *((int16 *)fill2));
    if (debug) {
-    fprintf(fp, "%d %d %ld %ld\n", is_fill1, is_fill2, (int32)(*i2ptr1), (int32)(*i2ptr2));
+    fprintf(fp, "%d %d %d %d\n", is_fill1, is_fill2, (int32)(*i2ptr1), (int32)(*i2ptr2));
    }
    if (!is_fill1 && !is_fill2) {
     d_val1 = (float64)(*i2ptr1);
@@ -669,7 +669,7 @@ uint32 array_diff(void *buf1,
   break;
   
  default:
-  printf(" bad type - %ld\n", type);
+  printf(" bad type - %d\n", type);
   }
   if (statistics) {
    float64 sqrt_arg;
@@ -740,7 +740,7 @@ static void print_pos( int        *ph,
  printf("[ " );  
  for ( i = 0; i < rank; i++)
  {
-  fprintf(stdout,"%ld ", pos[i]  );
+  fprintf(stdout,"%d ", pos[i]  );
  }
  printf("]" );
 }
