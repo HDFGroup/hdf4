@@ -79,7 +79,7 @@ uint32 diff_gr( int32 gr1_id,
    
  /*obtain name,rank,dimsizes,datatype and num of attributes of gr */
  if (GRgetiminfo(ri1_id,gr1_name,&ncomps1,&dtype1,&interlace_mode1,dimsizes1,&nattrs1)==FAIL) {
-   printf( "Failed to get info for SDS ref <%ld>\n",ref1);
+   printf( "Failed to get info for SDS ref <%d>\n",ref1);
    goto out;
   }
 
@@ -94,7 +94,7 @@ uint32 diff_gr( int32 gr1_id,
    
  /*obtain name,rank,dimsizes,datatype and num of attributes of gr */
  if (GRgetiminfo(ri2_id,gr2_name,&ncomps2,&dtype2,&interlace_mode2,dimsizes2,&nattrs2)==FAIL) {
-   printf( "Failed to get info for SDS ref <%ld>\n",ref2);
+   printf( "Failed to get info for SDS ref <%d>\n",ref2);
    goto out;
   }
 
@@ -111,7 +111,7 @@ uint32 diff_gr( int32 gr1_id,
  if (dtype1 != dtype2) 
  {
   printf("Comparison not supported\n");
-  printf("<%s> has datatype %ld, <%s> has datatype %ld ",gr1_name,dtype1,gr2_name,dtype2);
+  printf("<%s> has datatype %d, <%s> has datatype %d ",gr1_name,dtype1,gr2_name,dtype2);
   compare = 0;
  }
 
@@ -123,9 +123,9 @@ uint32 diff_gr( int32 gr1_id,
  if ( ncomps1 != ncomps2 )
  {
   printf("Comparison not supported\n");
-  printf("<%s> has %ld components\n", gr1_name, ncomps1);
+  printf("<%s> has %d components\n", gr1_name, ncomps1);
   printf("\n" );
-  printf("<%s> has %ld components\n", gr2_name, ncomps2);
+  printf("<%s> has %d components\n", gr2_name, ncomps2);
   compare = 0;
  }
 
@@ -167,7 +167,7 @@ uint32 diff_gr( int32 gr1_id,
  if ( interlace_mode1 != interlace_mode2 )
  {
   if (opt->verbose)
-  printf("Warning: different interlace mode: <%ld> and <%ld>\n", 
+  printf("Warning: different interlace mode: <%d> and <%d>\n", 
    interlace_mode1,interlace_mode2);
   interlace_mode1=interlace_mode2;
  }
@@ -202,7 +202,7 @@ uint32 diff_gr( int32 gr1_id,
      
      /* alloc */
      if ((buf1 = (VOIDP) HDmalloc(data_size)) == NULL) {
-         printf( "Failed to allocate %lu elements of size %ld\n", nelms, eltsz);
+         printf( "Failed to allocate %u elements of size %d\n", nelms, eltsz);
          goto out;
      }
      
@@ -225,7 +225,7 @@ uint32 diff_gr( int32 gr1_id,
      
      /* alloc */
      if ((buf2 = (VOIDP) HDmalloc(data_size)) == NULL) {
-         printf( "Failed to allocate %lu elements of size %ld\n", nelms, eltsz);
+         printf( "Failed to allocate %u elements of size %d\n", nelms, eltsz);
          goto out;
      }
      

@@ -67,15 +67,15 @@ int copy_vs( int32 infile_id,
     */ 
     
     if ((vdata_id  = VSattach (infile_id, ref, "r")) == FAIL ){
-        printf( "Failed to attach vdata ref %ld\n", ref);
+        printf( "Failed to attach vdata ref %d\n", ref);
         return-1;
     }
     if (VSgetname  (vdata_id, vdata_name)==FAIL){
-        printf( "Failed to name for vdata ref %ld\n", ref);
+        printf( "Failed to name for vdata ref %d\n", ref);
         return-1;
     }
     if (VSgetclass (vdata_id, vdata_class)==FAIL){
-        printf( "Failed to name for vdata ref %ld\n", ref);
+        printf( "Failed to name for vdata ref %d\n", ref);
         return-1;
     }
     
@@ -115,7 +115,7 @@ int copy_vs( int32 infile_id,
     
     if (VSinquire(vdata_id, &n_records, &interlace_mode, fieldname_list, 
         &vdata_size, vdata_name) == FAIL) {
-        printf( "Failed to get info for vdata ref %ld\n", ref);
+        printf( "Failed to get info for vdata ref %d\n", ref);
         if (path) HDfree(path);
         return-1;
     }
@@ -309,7 +309,7 @@ int copy_vdata_attribute(int32 in, int32 out, int32 findex, intn attrindex)
     
     /* Allocate space for attribute values */
     if ((values = (VOIDP)HDmalloc((size_t)(attr_size * n_values))) == NULL) {
-        printf( "Cannot allocate %ld values of size %ld for attribute %s",
+        printf( "Cannot allocate %d values of size %d for attribute %s",
             n_values, attr_size, attr_name);
         return-1;
     }

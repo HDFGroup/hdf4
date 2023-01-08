@@ -772,7 +772,7 @@ int copy_sds(int32 sd_in,
            eltsz = DFKNTsize(numtype | DFNT_NATIVE);
            
            if ((dim_buf = (VOIDP) HDmalloc(dimsizes[i] * eltsz)) == NULL) {
-               printf( "Failed to alloc %ld for dimension scale\n", dimsizes[i]);
+               printf( "Failed to alloc %d for dimension scale\n", dimsizes[i]);
                goto out;
            }
            if ((okdim=SDgetdimscale(dim_id, dim_buf)) == FAIL) {
@@ -921,7 +921,7 @@ int copy_sds_attrs(int32 id_in,
         numtype = dtype & DFNT_MASK;
         eltsz   = DFKNTsize(numtype | DFNT_NATIVE);
         if ((attr_buf = (VOIDP) HDmalloc(nelms * eltsz)) == NULL) {
-            printf( "Error allocating %ld values of size %ld for attribute %s",
+            printf( "Error allocating %d values of size %d for attribute %s",
                 nelms, numtype, attr_name);
             goto out;
         }
