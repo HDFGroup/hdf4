@@ -483,16 +483,6 @@ int unused;
               u=(uint32)b->last_zero;
           else
               u=0;
-#ifdef OLD_WAY
-          for(; u<bytes_used; u++)
-            {
-                if(b->buffer[u]!=255)
-                  {
-                    b->last_zero=u;
-                    return((u*BV_BASE_BITS)+bv_first_zero[b->buffer[u]]);
-                  } /* end if */
-            } /* end for */
-#else /* OLD_WAY */
           tmp_buf=&b->buffer[u];
           while(u<bytes_used && *tmp_buf==255)
             {
@@ -504,7 +494,6 @@ int unused;
               b->last_zero=(int32)u;
               return((int32)(u*BV_BASE_BITS)+bv_first_zero[*tmp_buf]);
             } /* end if */
-#endif /* OLD_WAY */
 
           /* Any extra bits left over? */
           if((bytes_used*BV_BASE_BITS)<b->bits_used)

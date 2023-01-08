@@ -553,13 +553,7 @@ VSwrite(int32 vkey,         /* IN: vdata key */
     /* make sure we have a valid AID */
     if (vs->aid == 0)
       {
-#ifdef OLD_WAY
-          vs->aid = Hstartwrite(vs->f, DFTAG_VS, vs->oref, total_bytes);
-          if (vs->aid == FAIL)
-              HGOTO_ERROR(DFE_BADAID, FAIL);
-#else /* OLD_WAY */
           HGOTO_ERROR(DFE_BADAID, FAIL);
-#endif /* OLD_WAY */
       }
 
     /*

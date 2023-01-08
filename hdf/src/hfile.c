@@ -129,11 +129,7 @@ PRIVATE intn default_cache = TRUE;
 
 /* Whether we've installed the library termination function yet for this interface */
 PRIVATE intn library_terminate = FALSE;
-#ifdef OLD_WAY
-PRIVATE list_head_t *cleanup_list = NULL;
-#else
 PRIVATE Generic_list *cleanup_list = NULL;
-#endif
 
 /* Whether to install the atexit routine */
 PRIVATE intn install_atexit = TRUE;
@@ -1707,10 +1703,6 @@ Hendaccess(int32 access_id)
         HGOTO_ERROR(DFE_CANTFLUSH, FAIL);
 
     file_rec->attach--;
-#ifdef OLD_WAY
-    if(HAremove_atom(access_id)==NULL)
-        HGOTO_ERROR(DFE_INTERNAL, FAIL);
-#endif /* OLD_WAY */
     HIrelease_accrec_node(access_rec);
 
 done:
@@ -2408,10 +2400,6 @@ PRIVATE intn HIstart(void)
     if(HAinit_group(AIDGROUP,256)==FAIL)
       HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-#ifdef OLD_WAY
-    if((cleanup_list=HULcreate_list(NULL))==NULL)
-      HGOTO_ERROR(DFE_INTERNAL, FAIL);
-#else
     if(cleanup_list == NULL)
       {
           /* allocate list to hold terminateion fcns */
@@ -2422,7 +2410,6 @@ PRIVATE intn HIstart(void)
           if (HDGLinitialize_list(cleanup_list) == FAIL)
               HGOTO_ERROR(DFE_INTERNAL, FAIL);
       }
-#endif
 
 done:
   if(ret_value == FAIL)
@@ -2462,13 +2449,8 @@ intn HPregister_term_func(hdf_termfunc_t term_func)
         if(HIstart()==FAIL)
             HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
-#ifdef OLD_WAY
-    if(HULadd_node(cleanup_list,(void *)term_func)==FAIL)
-      HGOTO_ERROR(DFE_INTERNAL, FAIL);
-#else
     if(HDGLadd_to_list(*cleanup_list,(void *)term_func)==FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
-#endif
 
 done:
   if(ret_value == FAIL)
@@ -2531,9 +2513,6 @@ void HPend(void)
     Hshutdown();
     HEshutdown();
     HAshutdown();
-#ifdef OLD_WAY
-    HULshutdown();
-#endif
     tbbt_shutdown();
 } /* end HPend() */
 

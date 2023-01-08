@@ -20,11 +20,10 @@
 USAGE()
 {
 cat << EOF
-Usage: $0 -d <dir> [-h] [--nocheck] [--private] <methods> ...
-   -d <dir>    The name of the directory where the releas(es) should be
+Usage: $0 -d <dir> [-h] [--private] <methods> ...
+   -d DIR       The name of the directory where the release(s) should be
                 placed.
    -h           print the help page.
-   --nocheck    Ignore errors in MANIFEST file.
    --private    Make a private release with today's date in version information.
 
 This must be run at the top level of the source directory.
@@ -35,14 +34,12 @@ for compressing the resulting tar archive (if none are given then
     tar         -- use tar and don't do any compressing.
     gzip        -- use gzip with "-9" and append ".gz" to the output name.
     bzip2       -- use bzip2 with "-9" and append ".bz2" to the output name.
-    zip         -- convert all text files to DOS style and form a zip file for
-                   Windows use.
-    cmake-tgz   -- create a tar file using the gzip default level with a
-                   build-unix.sh command file and all other CMake files needed
-                   to build HDF4 source using CMake on unix machines.
-    cmake-zip   -- convert all text files to DOS style and create a zip file
-                   including cmake scripts and .bat files to build HDF4 source
-                   using CMake on Windows.
+    zip         -- convert all text files to DOS style and form a zip file for Windows use.
+    cmake-tgz   -- create a tar file using the gzip default level with a build-unix.sh
+                   command file and all other CMake files needed to build HDF4 source
+                   using CMake on unix machines.
+    cmake-zip   -- convert all text files to DOS style and create a zip file including cmake
+                   scripts and .bat files to build HDF4 source using CMake on Windows.
 
 A sha256 checksum is produced for each archive created and stored in the sha256 file.
 
@@ -186,7 +183,7 @@ tar2cmakezip()
         return 1
     fi
 
-    # step 2: add batch file for building CMake on window
+    # step 2: add batch file for building CMake on Windows
     (cd $cmziptmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=VS2015 -C Release -V -O hdf4.log" > build-VS2015-32.bat; chmod 755 build-VS2015-32.bat)
     (cd $cmziptmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=VS201564 -C Release -V -O hdf4.log" > build-VS2015-64.bat; chmod 755 build-VS2015-32.bat)
     (cd $cmziptmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=VS2017 -C Release -V -O hdf4.log" > build-VS2017-32.bat; chmod 755 build-VS2017-32.bat)
@@ -248,7 +245,7 @@ tar2cmakezip()
 #        HDF4options.cmake      cmake file copied from <hdf4 source code>/config/cmake/scripts
 #        LIBAEC.tar.gz          copied from /mnt/scr1/pre-release/hdf4/CMake
 #        ZLib.tar.gz            copied from /mnt/scr1/pre-release/hdf4/CMake
-#        JPEG9e.tar.gz          copied from /mnt/scr1/pre-release/hdf4/CMake
+#        JPEG8d.tar.gz          copied from /mnt/scr1/pre-release/hdf4/CMake
 
 
 # Parameters:
@@ -339,28 +336,25 @@ while [ -n "$1" ]; do
     arg=$1
     shift
     case "$arg" in
-    -d)
-        DEST=$1
-        shift
-        ;;
-    --nocheck)
-        check=no
-        ;;
-    -h)
-        USAGE
-        exit 0
-        ;;
-    --private)
-        pmode=yes
-        ;;
-    -*)
-        echo "Unknown switch: $arg" 1>&2
-        USAGE
-        exit 1
-        ;;
-    *)
-        methods="$methods $arg"
-        ;;
+        -d)
+            DEST=$1
+            shift
+            ;;
+        -h)
+            USAGE
+            exit 0
+            ;;
+        --private)
+            pmode=yes
+            ;;
+        -*)
+            echo "Unknown switch: $arg" 1>&2
+            USAGE
+            exit 1
+            ;;
+        *)
+            methods="$methods $arg"
+            ;;
     esac
 done
 
@@ -400,22 +394,10 @@ if [ ! -d $DEST ]; then
     exit 1
 fi
 
-# Check the validity of the MANIFEST file.
-bin/chkmanifest || fail=yes
-if [ "X$fail" = "Xyes" ]; then
-    if [ $check = yes ]; then
-        exit 1
-    else
-    echo "Continuing anyway..."
-    fi
-fi
-
-# Create a manifest that contains only files for distribution.
-MANIFEST=$tmpdir/H4_MANIFEST
-grep '^\.' MANIFEST | grep -v _DO_NOT_DISTRIBUTE_ >$MANIFEST
-
-# Prepare the source tree for a release.
+# Create a symlink to the source so files in the tarball have the prefix
+# we want (gnu's --transform isn't portable)
 ln -s `pwd` $tmpdir/$HDF4_VERS || exit 1
+
 # Save a backup copy of Makefile if exists.
 test -f Makefile && mv Makefile $tmpdir/Makefile.x
 cp -p Makefile.dist Makefile
@@ -432,50 +414,46 @@ done
 
 # Create the tar file
 test "$verbose" && echo "   Running tar..." 1>&2
-( \
-    cd $tmpdir; \
-    tar cf $HDF4_VERS.tar $HDF4_VERS/Makefile \
-    `sed 's/^\.\//hdf-'$VERS'\//' $MANIFEST` || exit 1 \
-)
+(cd "$tmpdir" && exec tar -ch --exclude-vcs -f "$HDF4_VERS.tar" "./$HDF4_VERS" || exit 1 )
 
 # Compress
 SHA256=$HDF4_VERS.sha256
 cp /dev/null $DEST/$SHA256
 for comp in $methods; do
     case $comp in
-    tar)
-        cp -p $tmpdir/$HDF4_VERS.tar $DEST/$HDF4_VERS.tar
+        tar)
+            cp -p $tmpdir/$HDF4_VERS.tar $DEST/$HDF4_VERS.tar
             (cd $DEST; sha256sum $HDF4_VERS.tar >> $SHA256)
-        ;;
-    gzip)
-        test "$verbose" && echo "   Running gzip..." 1>&2
-        gzip -9 <$tmpdir/$HDF4_VERS.tar >$DEST/$HDF4_VERS.tar.gz
+            ;;
+        gzip)
+            test "$verbose" && echo "   Running gzip..." 1>&2
+            gzip -9 <$tmpdir/$HDF4_VERS.tar >$DEST/$HDF4_VERS.tar.gz
             (cd $DEST; sha256sum $HDF4_VERS.tar.gz >> $SHA256)
-        ;;
+            ;;
         cmake-tgz)
             test "$verbose" && echo "   Creating CMake tar.gz file..." 1>&2
             tar2cmaketgz $HDF4_VERS $tmpdir/$HDF4_VERS.tar $DEST/CMake-$HDF4_VERS.tar.gz 1>&2
             (cd $DEST; sha256sum CMake-$HDF4_VERS.tar.gz >> $SHA256)
             ;;
-    bzip2)
-        test "$verbose" && echo "   Running bzip2..." 1>&2
-        bzip2 -9 <$tmpdir/$HDF4_VERS.tar >$DEST/$HDF4_VERS.tar.bz2
+        bzip2)
+            test "$verbose" && echo "   Running bzip2..." 1>&2
+            bzip2 -9 <$tmpdir/$HDF4_VERS.tar >$DEST/$HDF4_VERS.tar.bz2
             (cd $DEST; sha256sum $HDF4_VERS.tar.bz2 >> $SHA256)
-        ;;
-    zip)
-        test "$verbose" && echo "   Creating zip ball..." 1>&2
-        tar2zip $HDF4_VERS $tmpdir/$HDF4_VERS.tar $DEST/$HDF4_VERS.zip 1>&2
+            ;;
+        zip)
+            test "$verbose" && echo "   Creating zip ball..." 1>&2
+            tar2zip $HDF4_VERS $tmpdir/$HDF4_VERS.tar $DEST/$HDF4_VERS.zip 1>&2
             (cd $DEST; sha256sum $HDF4_VERS.zip >> $SHA256)
-        ;;
+            ;;
         cmake-zip)
             test "$verbose" && echo "   Creating CMake-zip ball..." 1>&2
             tar2cmakezip $HDF4_VERS $tmpdir/$HDF4_VERS.tar $DEST/CMake-$HDF4_VERS.zip 1>&2
             (cd $DEST; sha256sum CMake-$HDF4_VERS.zip >> $SHA256)
             ;;
-    *)
-        echo "***Error*** Unknown method $comp"
-        exit 1
-        ;;
+        *)
+            echo "***Error*** Unknown method $comp"
+            exit 1
+            ;;
     esac
 done
 

@@ -238,11 +238,7 @@ read_file_header(FILE * f)
           case M_SOF0:      /* ok, now we know the correct number of bytes to grab */
           case M_SOF1:
           case M_SOF9:
-#ifdef OLD_WAY
-              return (num_bytes - 2);
-#else
               return (num_bytes);
-#endif
 
           default:
               return (0);
@@ -265,13 +261,7 @@ read_file_header(FILE * f)
 static intn
 DFJPEGaddrig(int32 file_id, uint16 ref, uint16 ctag)
 {
-#ifdef OLD_WAY
-    char       *FUNC = "DFJPEGaddrig";
-#endif
     uint8       ntstring[4];
-#ifdef OLD_WAY
-    int32       lutsize;
-#endif
     int32       GroupID;
     uint8      *p;
 
@@ -282,13 +272,7 @@ DFJPEGaddrig(int32 file_id, uint16 ref, uint16 ctag)
     if (Hputelement(file_id, DFTAG_NT, ref,
                     (uint8 *) ntstring, (int32) 4) == FAIL)
         return FAIL;
-#ifdef OLD_WAY
-    rig->datadesc[IMAGE].nt.tag = DFTAG_NT;
-    rig->datadesc[IMAGE].nt.ref = ref;
 
-    if (Ref.dims[IMAGE] == 0)
-      {
-#endif
           p = file_buf;
           INT32ENCODE(p, image_width);  /* width */
           INT32ENCODE(p, image_height);     /* height */
@@ -302,45 +286,6 @@ DFJPEGaddrig(int32 file_id, uint16 ref, uint16 ctag)
                           file_buf, (int32) (p - file_buf)) == FAIL)
               return FAIL;
 
-#ifdef OLD_WAY
-          Ref.dims[IMAGE] = ref;
-      }
-    if (!Ref.lut)
-      {     /* associated lut not written to this file */
-          if (Grlutdata == NULL)
-            {   /* no lut associated */
-                HERROR(DFE_ARGS);
-                return FAIL;
-            }
-          lutsize = Grwrite.datadesc[LUT].xdim * Grwrite.datadesc[LUT].ydim *
-              Grwrite.datadesc[LUT].ncomponents;
-          if (Hputelement(file_id, DFTAG_LUT, ref,
-                          Grlutdata, (int32) lutsize) == FAIL)
-              return FAIL;
-          rig->data[LUT].tag = DFTAG_LUT;
-          rig->data[LUT].ref = ref;
-          Ref.lut = ref;
-      }
-
-    if (Ref.dims[LUT] == 0)
-      {
-          uint8      *p;
-          p = GRtbuf;
-          INT32ENCODE(p, rig->datadesc[LUT].xdim);
-          INT32ENCODE(p, rig->datadesc[LUT].ydim);
-          UINT16ENCODE(p, rig->datadesc[LUT].nt.tag);
-          UINT16ENCODE(p, rig->datadesc[LUT].nt.ref);
-          INT16ENCODE(p, rig->datadesc[LUT].ncomponents);
-          INT16ENCODE(p, rig->datadesc[LUT].interlace);
-          UINT16ENCODE(p, rig->datadesc[LUT].compr.tag);
-          UINT16ENCODE(p, rig->datadesc[LUT].compr.ref);
-          if (Hputelement(file_id, DFTAG_LD, ref,
-                          GRtbuf, (int32) (p - GRtbuf)) == FAIL)
-              return FAIL;
-          Ref.dims[LUT] = ref;
-      }
-#endif
-
     /* prepare to start writing rig */
     /* ### NOTE: the parameter to this call may go away */
     if ((GroupID = DFdisetup(10)) == FAIL)
@@ -351,16 +296,6 @@ DFJPEGaddrig(int32 file_id, uint16 ref, uint16 ctag)
 
     if (DFdiput(GroupID, DFTAG_CI, ref) == FAIL)
         return FAIL;
-
-#ifdef OLD_WAY
-    if ((Ref.dims[LUT] > 0)
-        && (DFdiput(GroupID, DFTAG_LD, (uint16) Ref.dims[LUT]) == FAIL))
-        return FAIL;
-
-    if ((Ref.lut > 0)
-      && (DFdiput(GroupID, rig->data[LUT].tag, rig->data[LUT].ref) == FAIL))
-        return FAIL;
-#endif
 
     /* write out RIG */
     return (DFdiwrite(file_id, GroupID, DFTAG_RIG, ref));
@@ -380,9 +315,6 @@ main(int argc, char *argv[])
 {
     int32       off_image;      /* offset of the JPEG image in the JFIF file */
     int32       file_len;       /* total length of the JPEG file */
-#ifdef OLD_WAY
-    int32       image_len;      /* length of the image in the JPEG file (in bytes) */
-#endif /* OLD_WAY */
     FILE       *jfif_file;      /* file handle of the JFIF image */
     int32       file_id;        /* HDF file ID of the file to write */
     uint16      wtag;           /* tag number to use for the image */
@@ -414,9 +346,6 @@ main(int argc, char *argv[])
     if (!fseek(jfif_file, 0, SEEK_END))
       {
           file_len = (int32)ftell(jfif_file);
-#ifdef OLD_WAY
-          image_len = file_len - off_image;
-#endif /* OLD_WAY */
           fseek(jfif_file, 0, SEEK_SET);    /* go back to beginning of JFIF file */
       }     /* end if */
     else
@@ -435,17 +364,10 @@ main(int argc, char *argv[])
                 exit(1);
             }   /* end if */
           wtag = DFTAG_CI;  /* yes, this is a compressed image */
-#ifdef OLD_WAY
-          if (num_components == 1)
-              ctag = DFTAG_GREYJPEG;
-          else if (num_components == 3)
-              ctag = DFTAG_JPEG;
-#else /* OLD_WAY */
           if (num_components == 1)
               ctag = DFTAG_GREYJPEG5;
           else if (num_components == 3)
               ctag = DFTAG_JPEG5;
-#endif /* OLD_WAY */
           else
             {
                 printf("Error, cannot support JPEG file containing %d components\n",
@@ -453,59 +375,6 @@ main(int argc, char *argv[])
                 Hclose(file_id);
                 exit(1);
             }   /* end else */
-#ifdef OLD_WAY
-          if (fread(file_buf, sizeof(uint8), (size_t) off_image, jfif_file)
-              !=          (size_t) off_image)
-            {
-                printf("Error reading JFIF header from %s\n", argv[1]);
-                exit(1);
-            }   /* end if */
-          if (Hputelement(file_id, ctag, wref, file_buf, off_image) == FAIL)
-            {
-                printf("Error writing JPEG header to HDF file: %s\n", argv[2]);
-                exit(1);
-            }   /* end if */
-          if ((aid = Hstartwrite(file_id, wtag, wref, image_len)) == FAIL)
-            {
-                printf("Error from Hstartwrite() for JPEG image data\n");
-                exit(1);
-            }   /* end if */
-          while (image_len > MAX_FILE_BUF)
-            {
-                if (fread(file_buf, sizeof(uint8), MAX_FILE_BUF, jfif_file) !=
-                    MAX_FILE_BUF)
-                  {
-                      printf("Error reading JFIF image data from %s\n", argv[1]);
-                      exit(1);
-                  }     /* end if */
-                if (Hwrite(aid, MAX_FILE_BUF, file_buf) != (int32) (MAX_FILE_BUF))
-                  {
-                      printf("Error writing JPEG image data to HDF file\n");
-                      exit(1);
-                  }     /* end if */
-                image_len -= MAX_FILE_BUF;
-            }   /* end while */
-          if (image_len > 0)
-            {
-                if (fread(file_buf, sizeof(uint8), (size_t) image_len, jfif_file)
-                    !=          (size_t) image_len)
-                  {
-                      printf("Error reading JFIF image data from %s\n", argv[1]);
-                      exit(1);
-                  }     /* end if */
-                if (Hwrite(aid, image_len, file_buf) != (int32) (image_len))
-                  {
-                      printf("Error writing last of JPEG image data to HDF file\n");
-                      exit(1);
-                  }     /* end if */
-            }   /* end if */
-          Hendaccess(aid);  /* done with JPEG data, create RIG */
-          if (DFJPEGaddrig(file_id, wref, ctag) == FAIL)
-            {
-                printf("Error writing JPEG RIG information\n");
-                exit(1);
-            }   /* end if */
-#else /* OLD_WAY */
           if ((aid=Hstartwrite(file_id, ctag, wref, 0)) == FAIL)
             {
                 printf("Error writing JPEG header to HDF file: %s\n", argv[2]);
@@ -552,7 +421,6 @@ main(int argc, char *argv[])
                 printf("Error writing JPEG RIG information\n");
                 exit(1);
             }   /* end if */
-#endif /* OLD_WAY */
           Hclose(file_id);
       }     /* end if */
     else

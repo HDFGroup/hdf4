@@ -2435,9 +2435,6 @@ int32 GRcreate(int32 grid,const char *name,int32 ncomp,int32 nt,int32 il,int32 d
 
     /* Assign image information */
     ri_ptr->index=gr_ptr->gr_count;
-#ifdef OLD_WAY
-    ri_ptr->ri_ref=DFREF_WILDCARD;
-#else /* OLD_WAY */
     if ((GroupID = Vattach(gr_ptr->hdf_file_id,-1,"w")) == FAIL)
         HGOTO_ERROR(DFE_CANTATTACH, FAIL);
     /* due to uint16 type of ref, check return value of VQueryref
@@ -2448,7 +2445,6 @@ int32 GRcreate(int32 grid,const char *name,int32 ncomp,int32 nt,int32 il,int32 d
     ri_ptr->ri_ref = (uint16)temp_ref;
     if(Vdetach(GroupID)==FAIL)
         HGOTO_ERROR(DFE_CANTDETACH, FAIL);
-#endif /* OLD_WAY */
     ri_ptr->rig_ref=DFREF_WILDCARD;
     ri_ptr->gr_ptr=gr_ptr;
     ri_ptr->img_dim.dim_ref=DFREF_WILDCARD;
@@ -3369,11 +3365,6 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],voi
 
           if(whole_image==TRUE)
             { /* read the whole image in */
-#ifdef OLD_WAY
-                if(Hgetelement(hdf_file_id,ri_ptr->img_tag,ri_ptr->img_ref,
-                        (uint8 *)img_data)==FAIL)
-                    HGOTO_ERROR(DFE_GETELEM,FAIL);
-#else /* OLD_WAY */
             /* Make certain we are at the beginning */
             if(Hseek(ri_ptr->img_aid,0,DF_START)==FAIL)
                 HGOTO_ERROR(DFE_SEEKERROR,FAIL);
@@ -3385,7 +3376,6 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],voi
             if(Hread(ri_ptr->img_aid,(int32)pixel_disk_size*count[XDIM]*count[YDIM],
                     (uint8 *)img_data)==FAIL)
                 HGOTO_ERROR(DFE_READERROR,FAIL);
-#endif /* OLD_WAY */
             } /* end if */
           else
             { /* read only part of the image in */
@@ -3597,9 +3587,6 @@ uint16 GRidtoref(int32 riid)
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
         HGOTO_ERROR(DFE_RINOTFOUND, 0);
 
-#ifdef OLD_WAY
-    ret_value = (ri_ptr->ri_ref!=DFREF_WILDCARD ? ri_ptr->ri_ref : ri_ptr->rig_ref);
-#else /* OLD_WAY */
 /* Changed to handle case when ri_ptr->rig_ref is DFREF_WILDCARD */
     if(ri_ptr->ri_ref!=DFREF_WILDCARD)
         ret_value=ri_ptr->ri_ref;
@@ -3613,7 +3600,6 @@ uint16 GRidtoref(int32 riid)
         else
             ret_value=ri_ptr->rig_ref;
       } /* end else */
-#endif /* OLD_WAY */
 
 done:
   if(ret_value == 0)   /* 0 is invalid ref */

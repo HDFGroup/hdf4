@@ -29,9 +29,6 @@
 #else
 #include "hdf4_netcdf.h"
 #endif
-#ifdef OLD_WAY
-#include "local_nc.h"
-#endif /* OLD_WAY */
 
 #include "mfhdfi.h"
 #include "mfdatainfo.h"

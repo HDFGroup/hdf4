@@ -389,19 +389,6 @@ HCIcrle_staccess(accrec_t * access_rec, int16 acc_mode)
 
     info = (compinfo_t *) access_rec->special_info;
 
-#ifdef OLD_WAY
-    if (acc_mode == DFACC_READ)
-        info->aid = Hstartread(access_rec->file_id, DFTAG_COMPRESSED,
-                               info->comp_ref);
-    else
-        info->aid = Hstartwrite(access_rec->file_id, DFTAG_COMPRESSED,
-                                info->comp_ref, info->length);
-
-    if (info->aid == FAIL)
-        HRETURN_ERROR(DFE_DENIED, FAIL);
-    if ((acc_mode&DFACC_WRITE) && Happendable(info->aid) == FAIL)
-        HRETURN_ERROR(DFE_DENIED, FAIL);
-#else /* OLD_WAY */
     if (acc_mode == DFACC_READ)
         info->aid = Hstartread(access_rec->file_id, DFTAG_COMPRESSED,
                                info->comp_ref);
@@ -411,7 +398,6 @@ HCIcrle_staccess(accrec_t * access_rec, int16 acc_mode)
 
     if (info->aid == FAIL)
         HRETURN_ERROR(DFE_DENIED, FAIL);
-#endif /* OLD_WAY */
     return (HCIcrle_init(access_rec));  /* initialize the RLE info */
 }   /* end HCIcrle_staccess() */
 

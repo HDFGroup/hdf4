@@ -79,12 +79,3 @@ struct fspec {			/* specification for how to format dump */
 				 */
 };
 
-#ifdef OLD_WAY
-extern int getopt               PROTO((
-                                       int argc,
-                                       char **argv,
-                                       char *opts
-                                ));
-
-#endif /* HP9000 */
-

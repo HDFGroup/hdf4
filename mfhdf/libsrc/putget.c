@@ -256,9 +256,6 @@ fprintf(stderr, "NCcoordck: check 3.6, unfilled=%d\n",unfilled);
                         vp->name->values);
 #endif
 
-#ifdef OLD_WAY
-                count = vp->dsizes[0] / NC_typelen(vp->type);
-#endif
 
                 /*
                  * Seek to correct location
@@ -786,8 +783,6 @@ done:
 /*
  * Given a variable vgid return the id of a valid data storage
  * If no data storage is found, hdf_get_data returns DFREF_NONE(0).
- * OLD WAY: Create and fill in the VS as a side effect if it doesn't
- *          exist yet <- not any more
  *
  * NEW WAY: we delay filling until data is  written out -QAK
  *
@@ -1036,9 +1031,6 @@ NC_var    * vp;
         vp->aid = Hstartread(handle->hdf_file, vp->data_tag, vp->data_ref);
     else
       {
-#ifdef OLD_WAY
-          vp->aid = Hstartwrite(handle->hdf_file, vp->data_tag, vp->data_ref, 0);
-#else /* OLD_WAY */
         if(!IS_RECVAR(vp)) {
           vp->aid = Hstartaccess(handle->hdf_file, vp->data_tag, vp->data_ref, DFACC_WRITE);
           if(vp->set_length==TRUE) {
@@ -1048,7 +1040,6 @@ NC_var    * vp;
         }
         else
           vp->aid = Hstartaccess(handle->hdf_file, vp->data_tag, vp->data_ref, DFACC_WRITE|DFACC_APPENDABLE);
-#endif /* OLD_WAY */
       }
 
     ret_value = vp->aid;

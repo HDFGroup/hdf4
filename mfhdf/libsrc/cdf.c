@@ -2568,10 +2568,6 @@ NC **handlep;
   register int32  cdf_vg = FAIL;
   register int    vgid = 0;
   int             status;
-#ifdef OLD_WAY
-  register int    found;
-  char            class[H4_MAX_NC_CLASS];
-#endif /* OLD_WAY */
   CONSTR(FUNC,"hdf_read_xdr_cdf");
   intn            ret_value = SUCCEED;
 
@@ -2579,32 +2575,6 @@ NC **handlep;
  fprintf(stderr, "hdf_read_xdr_cdf i've been called %d\n", (*handlep)->hdf_file);
 #endif
 
-#ifdef OLD_WAY
-    /* find first thing of type _HDF_CDF */
-    vgid = -1;
-    found = FALSE;
-    while(!found && ((vgid = Vgetid((*handlep)->hdf_file, vgid)) != FAIL))
-    {
-        cdf_vg = Vattach((*handlep)->hdf_file, vgid, "r");
-        if(cdf_vg == FAIL)
-            HGOTO_ERROR(DFE_CANTATTACH, FAIL);
-
-        if (Vgetclass(cdf_vg, class) == FAIL)
-            HGOTO_FAIL(FAIL);
-
-        if(!HDstrcmp(class, _HDF_CDF))
-            found = TRUE;
-        else
-          {
-            if (Vdetach(cdf_vg) == FAIL)
-                HGOTO_FAIL(FAIL);
-          }
-    }
-
-    if(!found)
-        HGOTO_FAIL(FAIL);
-
-#else /* new way */
 
     if((vgid = Vfindclass((*handlep)->hdf_file,_HDF_CDF))!=FAIL)
     {
@@ -2614,8 +2584,6 @@ NC **handlep;
     } /* end if */
     else
         HGOTO_FAIL(FAIL);
-
-#endif /* new way */
 
     (*handlep)->vgid = vgid; /* ref of vgroup */
 

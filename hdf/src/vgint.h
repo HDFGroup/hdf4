@@ -79,9 +79,7 @@ typedef struct dyn_write_struct
       intn     n;      /* S actual # fields in element */
       uint16   ivsize; /* S size of element as stored in vdata */
       char     **name; /* S name of each field */
-#ifndef OLD_WAY
       uint16   *bptr;  /* Pointer to hold the beginning of the buffer */
-#endif /* OLD_WAY */
       int16    *type;  /* S field type (into bptr buffer) */
       uint16   *off;   /* S field offset in element in vdata (into bptr buffer) */
       uint16   *isize; /* S internal (HDF) size [incl order] (into bptr buffer) */

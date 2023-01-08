@@ -442,9 +442,6 @@ DFGRreadref(const char *filename, uint16 ref)
     CONSTR(FUNC, "DFGRreadref");
     intn    ret_value = SUCCEED;
     int32   file_id=(-1);
-#ifdef OLD_WAY
-    int32   aid;
-#endif /* OLD_WAY */
 
     HEclear();
 
@@ -456,17 +453,8 @@ DFGRreadref(const char *filename, uint16 ref)
     if ((file_id = DFGRIopen(filename, DFACC_READ))== FAIL)
         HGOTO_ERROR(DFE_BADOPEN, FAIL);
 
-#ifdef OLD_WAY
-    if ((aid = Hstartread(file_id, DFTAG_RIG, ref)) == FAIL)
-        HGOTO_ERROR(DFE_BADAID, FAIL);
-
-    if (Hendaccess(aid)==FAIL)
-        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
-#else /* OLD_WAY */
     if (Hexist(file_id, DFTAG_RIG, ref) == FAIL)
         HGOTO_ERROR(DFE_BADAID, FAIL);
-
-#endif /* OLD_WAY */
 
     Grrefset = ref;
     ret_value= Hclose(file_id);
@@ -929,11 +917,7 @@ DFGRIriginfo(int32 file_id)
           Grread.datadesc[LUT].ncomponents = 3;
       }
 
-#ifdef OLD_WAY
-    Grlastref = Grread.data[IMAGE].ref;     /* remember ref read */
-#else /* OLD_WAY */
     Grlastref = newref;     /* remember ref read */
-#endif /* OLD_WAY */
 
 done:
   if(ret_value == FAIL)
@@ -1541,11 +1525,7 @@ DFGRIaddimlut(const char *filename, const void * imlut, int32 xdim, int32 ydim,
           newlut = NULL;
       }
 
-#ifdef OLD_WAY
-    Grlastref = wref;   /* remember the last ref */
-#else /* OLD_WAY */
     Grlastref = rigref;   /* remember the last ref */
-#endif /* OLD_WAY */
 
     wref = 0;   /* don't know ref to write next */
 
