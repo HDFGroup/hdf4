@@ -84,7 +84,7 @@ test_hextelt(void)
     ret = Hendaccess(aid1);
     CHECK_VOID(ret, FAIL, "Hendaccess");
 
-    /* Create a new external object of size 2000 bytes in a seperate file */
+    /* Create a new external object of size 2000 bytes in a separate file */
     MESSAGE(5, printf("Creating an external element in file #2\n");
         );
     aid1 = HXcreate(fid, 1000, 4, "t2.hdf", (int32) 0, (int32) 0);
@@ -98,7 +98,7 @@ test_hextelt(void)
     ret = Hendaccess(aid1);
     CHECK_VOID(ret, FAIL, "Hendaccess");
 
-    /* Create a new external string object  in a seperate file */
+    /* Create a new external string object  in a separate file */
     MESSAGE(5, printf("Creating an external element in file #3\n");
         );
     aid1 = HXcreate(fid, 1000, 2, "t3.hdf", (int32) 0, (int32) 0);
@@ -250,7 +250,7 @@ test_hextelt(void)
     aid1 = Hstartread(fid, 1001, 2);
     CHECK_VOID(aid1, FAIL, "Hstartread");
 
-    MESSAGE(5, printf("Inquiring about overlaping external element in file #3\n");
+    MESSAGE(5, printf("Inquiring about overlapping external element in file #3\n");
         );
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
                    &acc_mode, &special);
@@ -370,7 +370,7 @@ test_hextelt(void)
           inbuf[i] = '\0';
       }
     if (errflag)
-        fprintf(stderr,"Error: Wrong data in inbuf[]  from external elment in file #4\n");
+        fprintf(stderr,"Error: Wrong data in inbuf[]  from external element in file #4\n");
 
     ret = Hendaccess(aid1);
     CHECK_VOID(ret, FAIL, "Hendaccess");
@@ -474,7 +474,7 @@ test_hextelt(void)
           inbuf[i] = '\0';
       }
     if (errflag)
-        fprintf(stderr,"Error: Wrong data in inbuf[]  from external elment in file #5\n" );
+        fprintf(stderr,"Error: Wrong data in inbuf[]  from external element in file #5\n" );
 
     ret = Hclose(fid);
     CHECK_VOID(ret, FAIL, "Hclose");
