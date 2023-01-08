@@ -812,8 +812,8 @@ fi
 ## and installed with the libraries.
 ##
 
-## HDF4 version from the first line of the README.txt file.
-H4_VERSION="`cut -d' ' -f3 $srcdir/README.txt | head -1`"
+## HDF4 version from the first line of the README.md file.
+H4_VERSION="`cut -d' ' -f3 $srcdir/README.md | head -1`"
 AC_SUBST([H4_VERSION])
 
 ## Configuration date
