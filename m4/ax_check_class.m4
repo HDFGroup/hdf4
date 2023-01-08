@@ -57,13 +57,13 @@ AU_ALIAS([AC_CHECK_CLASS], [AX_CHECK_CLASS])
 AC_DEFUN([AX_CHECK_CLASS],[
 AC_REQUIRE([AX_PROG_JAVA])
 ac_var_name=`echo $1 | sed 's/\./_/g'`
-dnl Normaly I'd use a AC_CACHE_CHECK here but since the variable name is
+dnl Normally I'd use a AC_CACHE_CHECK here but since the variable name is
 dnl dynamic I need an extra level of extraction
 AC_MSG_CHECKING([for $1 class])
 AC_CACHE_VAL(ax_cv_class_$ac_var_name, [
 if test x$ac_cv_prog_uudecode_base64 = xyes; then
 dnl /**
-dnl  * Test.java: used to test dynamicaly if a class exists.
+dnl  * Test.java: used to test dynamically if a class exists.
 dnl  */
 dnl public class Test
 dnl {
@@ -137,7 +137,7 @@ else
         ifelse([$3], , :, [$3])
 fi
 ])
-dnl for some reason the above statment didn't fall though here?
+dnl for some reason the above statement didn't fall though here?
 dnl do scripts have variable scoping?
 eval "ac_var_val=$`eval echo ac_cv_class_$ac_var_name`"
 AC_MSG_RESULT($ac_var_val)

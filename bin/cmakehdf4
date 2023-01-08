@@ -185,7 +185,7 @@ EOF
 #==========
 # Create the cmake minimum required file to be used by the following
 # configure file. Though not absolute needed, it is better to generate
-# this file before the configure file.  Quote the EOF to preven substitution
+# this file before the configure file.  Quote the EOF to prevent substitution
 # in the text.
 #==========
 #==========
