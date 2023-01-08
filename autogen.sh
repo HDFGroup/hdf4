@@ -13,4 +13,4 @@
 #
 
 # A script to reconfigure autotools for HDF4
-autoreconf -Wall --force --install
+autoreconf --force --install

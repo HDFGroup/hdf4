@@ -1,13 +1,5 @@
 #define SIMPLE_TEST(x) int main(){ x; return 0; }
 
-#ifdef STDC_HEADERS
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
-#include <float.h>
-int main() { return 0; }
-#endif /* STDC_HEADERS */
-
 #ifdef PRINTF_LL_WIDTH
 
 #ifdef HAVE_LONG_LONG

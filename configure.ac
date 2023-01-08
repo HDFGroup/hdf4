@@ -1,6 +1,5 @@
 ## Process this file with autoconf to produce configure.
 ##
-##
 ## Copyright by The HDF Group.
 ## Copyright by the Board of Trustees of the University of Illinois.
 ## All rights reserved.
@@ -11,13 +10,12 @@
 ## distribution tree, or in https://support.hdfgroup.org/ftp/HDF/releases/.
 ## If you do not have access to either file, you may request a copy from
 ## help@hdfgroup.org.
-##
-##
-AC_REVISION($Id$)
 
-## ======================================================================
+## ----------------------------------------------------------------------
 ## Initialize configure.
-## ======================================================================
+##
+AC_PREREQ([2.69])
+
 ## AC_INIT takes the name of the package, the version number, and an
 ## email address to report bugs. AC_CONFIG_SRCDIR takes a unique file
 ## as its argument.
@@ -26,26 +24,58 @@ AC_REVISION($Id$)
 ## release!!!
 ##
 AC_INIT([HDF], [4.2.15-post0], [help@hdfgroup.org])
+
 AC_CONFIG_SRCDIR([hdf/src/atom.c])
+AC_CONFIG_HEADERS([hdf/src/h4config.h])
+
 AC_CONFIG_AUX_DIR([bin])
-AC_CONFIG_HEADER([hdf/src/h4config.h])
 AC_CONFIG_MACRO_DIR([m4])
 
 ## AM_INIT_AUTOMAKE takes a list of options that should be applied to
 ## every Makefile.am when automake is run.
-AM_INIT_AUTOMAKE([foreign])
+AM_INIT_AUTOMAKE([foreign subdir-objects])
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])]) # use silent rules where available - automake 1.11
 
-## AM_MAINTAINER_MODE turns off "rebuild rules" that contain dependencies
-## for Makefiles, configure, etc.  If AM_MAINTAINER_MODE
-## is *not* included here, these files will be rebuilt if out of date.
-## This is a problem because if users try to build on a machine with
-## the wrong versions of autoconf and automake, these files will be
-## rebuilt with the wrong versions and bad things can happen.
-## Also, CVS doesn't preserve dependencies between timestamps, so
-## Makefiles will often think rebuilding needs to occur when it doesn't.
-## Developers should './configure --enable-maintainer-mode' to turn on
-## rebuild rules.
-AM_MAINTAINER_MODE
+## AM_MAINTAINER_MODE determines the behavior of "rebuild rules" that contain
+## dependencies for Makefile.in files, configure, src/H5config.h, etc. If
+## AM_MAINTAINER_MODE is enabled, these files will be rebuilt if out of date.
+## When disabled, the autotools build files can get out of sync and the build
+## system will not complain or try to regenerate downstream files.
+##
+## The AM_MAINTAINER_MODE macro also determines whether the
+## --(enable|disable)-maintainer-mode configure option is available. When the
+## macro is present, with or without a parameter, the option will be added
+## to the generated configure script.
+##
+## In summary:
+##
+##  AM_MAINTAINER_MODE([enable])
+##      - Build dependencies ON by default
+##      - Configure option exists
+##
+##  AM_MAINTAINER_MODE([disable])
+##      - Build dependencies OFF by default
+##      - Configure option exists
+##
+##  AM_MAINTAINER_MODE
+##      - Build dependencies OFF by default
+##      - Configure option exists
+##
+##  No AM_MAINTAINER_MODE macro
+##      - Build dependencies ON by default
+##      - No configure option to control build dependencies
+##
+## The biggest concern for us is that version control systems like git
+## usually don't preserve dependencies between timestamps, so the build
+## system will often think that upstream build files like Makefile.am are
+## dirty and that rebuilding needs to occur when it doesn't. This is a problem
+## in release branches where we provide the autotools-generated files. Users
+## who don't have autoconf, automake, etc. will then have difficulty building
+## release branches checked out from git.
+##
+## By default, maintainer mode is enabled in development branches and disabled
+## in release branches.
+AM_MAINTAINER_MODE([enable])
 
 ## ----------------------------------------------------------------------
 ## Set prefix default (install directory) to a directory in the build area.
@@ -63,16 +93,6 @@ AC_CONFIG_COMMANDS([h4config], [
     sed 's/#undef /#undef H4_/' > h4config
   cp h4config hdf/src/h4config.h
   rm -f h4config
-
-#if test ! -f hdf/src/h4config.h; then
-#    /bin/mv -f h4config hdf/src/h4config.h
-#  elif (diff h4config hdf/src/h4config.h >/dev/null); then
-#    /bin/rm -f h4config
-#    echo "hdf/src/h4config.h is unchanged"
-#  else
-#    /bin/mv -f h4config hdf/src/h4config.h
-#  fi
-
   echo "Post process libhdf4.settings"
   sed '/^#/d' < libhdf4.settings > libhdf4.settings.TMP
   cp libhdf4.settings.TMP libhdf4.settings
@@ -750,8 +770,6 @@ fi
 
 AM_CONDITIONAL([HDF_BUILD_XDR], [test "X$BUILD_XDR" = "Xyes"])
 
-AC_HEADER_STDC
-AC_HEADER_RESOLV
 ## ======================================================================
 ## Checks for types
 ## ======================================================================
@@ -1131,10 +1149,10 @@ AC_CONFIG_FILES([Makefile
                  hdf/util/h4redeploy
                  hdf/util/testutil.sh
                  man/Makefile
-        mfhdf/fortran/ftest.f
-        mfhdf/fortran/jackets.c
-        mfhdf/fortran/netcdf.inc
-        mfhdf/libsrc/netcdf.h
+                 mfhdf/fortran/ftest.f
+                 mfhdf/fortran/jackets.c
+                 mfhdf/fortran/netcdf.inc
+                 mfhdf/libsrc/netcdf.h
                  mfhdf/Makefile
                  mfhdf/dumper/Makefile
                  mfhdf/dumper/testhdp.sh
