@@ -662,36 +662,6 @@ Hgetbit(int32 bitid)
             return ((intn) data);
 }   /* end Hgetbit() */
 
-#ifdef OLD_WAY
-/*--------------------------------------------------------------------------
-
- NAME
-       Hputbit -- write 1 bit to a bit-element
- USAGE
-       intn Hputbit(bitid,bit)
-       int32 bitid;         IN: id of bit-element to read from
-       intn bit;            IN: bit to write
- RETURNS
-       SUCCEED on success, FAIL(-1) to indicate failure
- DESCRIPTION
-       Write one bit to a bit-element.  This function is mostly a wrapper
-       around Hbitwrite.
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
---------------------------------------------------------------------------*/
-intn
-Hputbit(int32 bitid, intn bit)
-{
-    CONSTR(FUNC, "Hputbit");    /* for HERROR */
-
-    if (Hbitwrite(bitid, 1, (uint32) bit) == FAIL)
-        HRETURN_ERROR(DFE_BITWRITE, FAIL)
-            return (SUCCEED);
-}   /* end Hputbit() */
-#endif /* OLD_WAY */
-
 /*--------------------------------------------------------------------------
 
  NAME

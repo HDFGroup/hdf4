@@ -56,16 +56,6 @@ extern      "C"
 
 /* prototypes for dfufp2im.c */
 
-#ifdef OLD_WAY
-    HDFLIBAPI int  duif2i_(int32 *hdim, int32 *vdim, float32 *max, float32 *min,
-                        float32 hscale[], float32 vscale[], float32 data[],
-                  _fcd palette, _fcd outfile, int *ct_method, int32 *hres,
-                        int32 *vres, int *compress, int *lenfn);
-    HDFLIBAPI int  DFUfptoimage(int32 hdim, int32 vdim, float32 max, float32 min,
-                             float32 *hscale, float32 *vscale, float32 *data,
-                             uint8 *palette, char *outfile, int ct_method,
-                             int32 hres, int32 vres, int compress);
-#endif
     HDFLIBAPI int  process
                 (Input * in, Output * out);
     HDFLIBAPI int  generate_scale
