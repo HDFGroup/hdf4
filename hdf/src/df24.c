@@ -84,7 +84,7 @@ DF24getdims(const char *filename, int32 *pxdim, int32 *pydim, intn *pil)
   Newdata = 1;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -173,7 +173,7 @@ DF24getimage(const char *filename, void * image, int32 xdim, int32 ydim)
   Newdata = 0;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -323,7 +323,7 @@ DF24addimage(const char *filename, const void * image, int32 xdim, int32 ydim)
   ret_value = (DFGRIaddimlut(filename, image, xdim, ydim, IMAGE, 0, 0));
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -366,7 +366,7 @@ DF24putimage(const char *filename, const void * image, int32 xdim, int32 ydim)
   ret_value = (DFGRIaddimlut(filename, image, xdim, ydim, IMAGE, 0, 1));
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -451,7 +451,7 @@ DF24nimages(const char *filename)
   ret_value = nimages;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */

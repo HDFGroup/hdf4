@@ -39,10 +39,10 @@ C
       integer ref1, ref2, ref3
 
       call ptestban('Testing', myname)
-      TESTFILE = 'tdfr8f.hdf' 
+      TESTFILE = 'tdfr8f.hdf'
       number_failed = 0
       num_images = 0
-      CR = char(10)  
+      CR = char(10)
 
       do 120 x=1, 100
           do 100 y=1, 100
@@ -77,7 +77,7 @@ C Start here
       num_images = num_images + 1
       call MESSAGE(VERBO_HI, 'Getting ref1')
       ref1 = d8lref()
-      
+
       call MESSAGE(VERBO_HI,
      +     'Putting image 2 with pal 1, REL compression')
       ret=d8aimg(TESTFILE, im2, 321, 111, DFTAG_RLE)
@@ -85,7 +85,7 @@ C Start here
       num_images = num_images + 1
       call MESSAGE(VERBO_HI, 'Getting ref2')
       ref2 = d8lref()
-      
+
       call MESSAGE(VERBO_HI, 'Setting palette 2')
       ret = d8spal(pal2)
       call VRFY(ret, 'd8spal',number_failed)
@@ -96,12 +96,12 @@ C Start here
       num_images = num_images + 1
       call MESSAGE(VERBO_HI, 'Getting ref3')
       ref3 = d8lref()
-      
+
       call MESSAGE(VERBO_HI, 'Getting number of images')
       ret = d8nims(TESTFILE)
-      if (ret .ne. num_images) then 
+      if (ret .ne. num_images) then
           print *, '    >>>> WRONG NUMBER OF IMAGES  <<<   '
-      else 
+      else
 	  if (Verbosity .ge. VERBO_HI) then
 	      print *, ret, ' images in the file'
 	  endif
@@ -156,7 +156,7 @@ C Start here
 
       if (number_failed .eq. 0) then
           call MESSAGE(VERBO_HI, '****** ALL TESTS SUCCESSFUL *******')
-      else 
+      else
           print *, '****' , number_failed, ' TESTS FAILED ****'
       endif
 
@@ -166,7 +166,7 @@ C Start here
 C********************************************************
 C
 C check_im1_pal
-C 
+C
 C********************************************************
 
       subroutine check_im1_pal(od1,od2,nd1,nd2,oim,nim,opal,npal)
@@ -179,8 +179,8 @@ C********************************************************
 
 
       integer prob, i, j
-      
-      prob = 0 
+
+      prob = 0
       call MESSAGE(VERBO_HI, 'Checking image and palette')
 
       if (od1 .ne. nd1 .OR. od2 .ne. nd2) then
@@ -196,7 +196,7 @@ C********************************************************
               endif
 500       continue
 520   continue
-       
+
       if (prob .eq. 0) then
           call MESSAGE(VERBO_HI, 'Image is correct')
       endif
@@ -215,11 +215,11 @@ C********************************************************
       return
       end
 
-    
+
 C********************************************************
 C
 C check_im2_pal
-C 
+C
 C********************************************************
 
       subroutine check_im2_pal(od1,od2,nd1,nd2,oim,nim,opal,npal)
@@ -232,7 +232,7 @@ C********************************************************
 
 
       integer prob, i, j
-      
+
       prob = 0
       call MESSAGE(VERBO_HI, 'Checking image and palette')
 
@@ -249,7 +249,7 @@ C********************************************************
               endif
 500       continue
 520   continue
-       
+
       if (prob .eq. 0) then
           call MESSAGE(VERBO_HI, 'Image is correct')
       endif

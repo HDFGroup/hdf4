@@ -228,7 +228,7 @@ VOIDP DAget_elem(dynarr_p arr_ptr, /* IN: Array to access */
         ret_value=NULL;
     else
         ret_value=arr->arr[elem];
-        
+
 done:
   if(ret_value == NULL)
     { /* Error condition cleanup */
@@ -291,7 +291,7 @@ intn DAset_elem(dynarr_p arr_ptr,  /* IN: Array to access */
 
     /* Set the element value */
     arr->arr[elem]=obj;
-        
+
 done:
   if(ret_value == FAIL)
     { /* Error condition cleanup */

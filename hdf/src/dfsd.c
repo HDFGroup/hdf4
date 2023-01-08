@@ -268,7 +268,7 @@ DFSDgetdims(const char *filename, intn *prank, int32 sizes[], intn maxrank)
   ret_value = Hclose(file_id);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -340,7 +340,7 @@ DFSDgetdatastrs(char *label, char *unit, char *format, char *coordsys)
     }
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -415,7 +415,7 @@ DFSDgetdimstrs(int dim, char *label, char *unit, char *format)
     }     /* end for 'luf' */
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -465,7 +465,7 @@ DFSDgetdatalen(intn *llabel, intn *lunit, intn *lformat, intn *lcoordsys)
   *lcoordsys = (intn)(Readsdg.coordsys ?  HDstrlen(Readsdg.coordsys) : 0);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -515,7 +515,7 @@ DFSDgetdimlen(intn dim, intn *llabel, intn *lunit, intn *lformat)
   *lformat = (intn)(Readsdg.dimluf[FORMAT][dim - 1] ?  HDstrlen(Readsdg.dimluf[FORMAT][dim - 1]) : 0);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -588,7 +588,7 @@ DFSDgetdimscale(intn dim, int32 maxsize, VOIDP scale)
   HDmemcpy(p1, p2, dimsize);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -662,7 +662,7 @@ DFSDgetrange(VOIDP pmax, VOIDP pmin)
     HGOTO_ERROR(DFE_NOVALS, FAIL);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -753,7 +753,7 @@ DFSDsetlengths(intn maxlen_label, intn maxlen_unit, intn maxlen_format,
     Maxstrlen[COORDSYS] = maxlen_coordsys;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -845,7 +845,7 @@ DFSDsetdims(intn rank, int32 dimsizes[])
   Writeref = 0;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -951,7 +951,7 @@ DFSDIsetdatastrs(const char *label, const char *unit, const char *format, const 
   Ref.luf[LABEL] = Ref.luf[UNIT] = Ref.luf[FORMAT] = Ref.coordsys = 0;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1074,7 +1074,7 @@ DFSDIsetdimstrs(intn dim, const char *label, const char *unit, const char *forma
   Ref.luf[LABEL] = Ref.luf[UNIT] = Ref.luf[FORMAT] = 0;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1199,7 +1199,7 @@ DFSDsetdimscale(intn dim, int32 dimsize, VOIDP scale)
     Ref.scales = 0;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1269,7 +1269,7 @@ DFSDsetrange(VOIDP maxi, VOIDP mini)
     Ref.maxmin = 0;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1371,7 +1371,7 @@ DFSDrestart(void)
   Readref = 0;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1422,7 +1422,7 @@ DFSDndatasets(char *filename)
   ret_value = nsdgs;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1462,7 +1462,7 @@ DFSDclear(void)
   ret_value = DFSDIclear(&Writesdg);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1556,7 +1556,7 @@ DFSDreadref(char *filename, uint16 ref)
   ret_value = Hclose(file_id);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1683,7 +1683,7 @@ DFSDstartslice(const char *filename)
     Sddims[i] = 0;  /* nothing written so far */
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1820,7 +1820,7 @@ DFSDsetNT(int32 numbertype)
   ret_value = (DFKsetNT(numbertype));
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1870,7 +1870,7 @@ DFSDIclearNT(DFSsdg * sdg)
   Ref.new_ndg = -1;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1925,7 +1925,7 @@ DFSDgetNT(int32 *pnumbertype)
     HGOTO_ERROR(DFE_BADNUMTYPE, FAIL);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2006,7 +2006,7 @@ DFSDpre32sdg(char *filename, uint16 ref, intn *ispre32)
         ret_value = FAIL;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2123,7 +2123,7 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr * l_nsdghdr)
               nr = nf;
               nf = nf->next;
             }
-          /* MMM:  Tlk to Shiming and make sure the way this part was 
+          /* MMM:  Tlk to Shiming and make sure the way this part was
              rearranged is ok.
            */
           /* check for duplicate nsdg */
@@ -2296,7 +2296,7 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr * l_nsdghdr)
   l_nsdghdr->nsdg_t = ntb->next;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2377,7 +2377,7 @@ DFSDInextnsdg(DFnsdg_t_hdr * l_nsdghdr, DFdi * nsdg)
     }
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3046,7 +3046,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
   sdg->fill_fixed = TRUE;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3491,7 +3491,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
     }
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3579,7 +3579,7 @@ DFSDIendslice(intn isfortran)
   HDfreenclear(Sddims);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3704,7 +3704,7 @@ DFSDIopen(const char *filename, intn acc_mode)
   ret_value = file_id;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3790,7 +3790,7 @@ DFSDIsdginfo(int32 file_id)
   Readref = 0;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3836,7 +3836,7 @@ DFSDIrefresh(char *filename)
     }
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3981,7 +3981,7 @@ DFSDIclear(DFSsdg * sdg)
   Ref.fill_value = -1;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -4062,7 +4062,7 @@ DFSDIgetdata(const char *filename, intn rank, int32 maxsizes[], VOIDP data,
   HDfree((VOIDP) windims);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -4126,7 +4126,7 @@ DFSDIputdata(const char *filename, intn rank, int32 *dimsizes, VOIDP data,
   ret_value = DFSDIendslice(isfortran);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -4508,7 +4508,7 @@ DFSDIgetslice(const char *filename, int32 winst[], int32 windims[],
     ret_value = Hclose(file_id);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -4697,7 +4697,7 @@ DFSDIputslice(int32 windims[], VOIDP data, int32 dims[], intn isfortran)
   ret_value = (ret >= 0 ? 0 : -1);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -4774,7 +4774,7 @@ DFSDgetcal(float64 *pcal, float64 *pcal_err, float64 *pioff,
     HGOTO_ERROR(DFE_NOVALS, FAIL);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -4844,7 +4844,7 @@ DFSDsetcal(float64 cal, float64 cal_err, float64 ioff, float64 ioff_err,
   Ref.cal = 0;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -4917,7 +4917,7 @@ DFSDwriteref(const char *filename, uint16 ref)
   ret_value = Hclose(file_id);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -4982,7 +4982,7 @@ DFSDsetfillvalue(VOIDP fill_value)
     }
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -5038,7 +5038,7 @@ DFSDgetfillvalue(VOIDP fill_value)
     ret_value = FAIL;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -5243,7 +5243,7 @@ DFSDstartslab(const char *filename)
     }
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -5559,7 +5559,7 @@ DFSDwriteslab(int32 start[], int32 stride[],
     ret_value = SUCCEED;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -5642,7 +5642,7 @@ DFSDendslab(void)
   Writeref = 0;   /* Reset Write ref */
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -5680,7 +5680,7 @@ PRIVATE intn DFSDIstart(void)
       HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */

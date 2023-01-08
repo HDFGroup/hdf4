@@ -30,7 +30,7 @@
  * Programmer: Pedro Vicente Nunes, pvn@ncsa.uiuc.edu
  *
  * Date:  August 27, 2003
- *  Modifications: 
+ *  Modifications:
  *  March 8, 2006. Added percent (relative) option
  *
  * Comments:
@@ -41,7 +41,7 @@
 
 char *progname;
 
- 
+
 static void usage()
 {
 
@@ -77,7 +77,7 @@ main(int argc, char *argv[])
     extern int optind;
     extern int opterr;
     extern char *optarg;
- 
+
     static diff_opt_t opt = /* defaults, overridden on command line */
     {
             0,    /* verbose mode */
@@ -99,19 +99,19 @@ main(int argc, char *argv[])
     int    c;
     uint32 nfound;
     int    ret;
-    
+
     opterr = 1;
     progname = argv[0];
-    
+
     if (argc < 2)
         usage();
-    
+
     while ((c = getopt(argc, argv, "VbgsdSDe:t:v:u:p:")) != EOF)
     {
-        switch(c) 
+        switch(c)
         {
         case 'V':  /* display version of the library */
-            printf("%s, %s\n\n", argv[0], LIBVER_STRING ); 
+            printf("%s, %s\n\n", argv[0], LIBVER_STRING );
             exit(0);
         case 'b':  /* verbose mode */
             opt.verbose =1;
@@ -162,20 +162,20 @@ main(int argc, char *argv[])
             break;
        }
     }
-    
+
     argv = argv + optind;
-    
+
     nfound = hdiff(argv[0],argv[1],&opt);
-    
+
    /*-------------------------------------------------------------------------
     * exit code
     *   >0 if differences, 0 if no differences, <0 if error
     *-------------------------------------------------------------------------
     */
-    
+
     ret= (nfound==0 ? 0 : 1 );
     if (opt.err_stat)
         ret=-1;
     return ret;
-    
+
 }

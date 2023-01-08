@@ -13,17 +13,17 @@
 
 #include "mfhdf.h"
 
-#define FILE2_NAME     "SDSfloat2.hdf" 
-#define FILE3_NAME     "SDSfloat3.hdf" 
-#define SDS1_NAME      "SDStemplate" 
-#define SDS2_NAME      "SDStemplate again" 
+#define FILE2_NAME     "SDSfloat2.hdf"
+#define FILE3_NAME     "SDSfloat3.hdf"
+#define SDS1_NAME      "SDStemplate"
+#define SDS2_NAME      "SDStemplate again"
 #define X_LENGTH      6
 #define Y_LENGTH      9
 #define Z_LENGTH      2
 #define RANK2          2  /* Number of dimensions of the SDS */
 #define RANK3          3  /* Number of dimensions of the SDS */
 
-main() 
+main()
 {
     /************************* Variable declaration ************************/
 
@@ -74,7 +74,7 @@ main()
     */
     sd2_id = SDstart (FILE2_NAME, DFACC_CREATE);
     sd3_id = SDstart (FILE3_NAME, DFACC_CREATE);
- 
+
     /*
     * Define the dimensions/origins of the two SDSs to be created.
     */

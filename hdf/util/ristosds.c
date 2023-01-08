@@ -141,7 +141,7 @@ main(int argc, char *argv[])
                   *outdata++ = *indata++;
           nimg--;
       }
-    
+
     dimsizes[0] = nimg0;
     dimsizes[1] = h;
     dimsizes[2] = w;

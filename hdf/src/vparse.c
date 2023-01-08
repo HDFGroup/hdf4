@@ -43,15 +43,15 @@ PRIVATE uint8 *Vpbuf = NULL;
    Given a string (attrs) , the routine parses it into token strings,
    and returns a ptr (attrv) to an array of ptrs where the tokens
    are stored.  The number of tokens are returned in attrc.
-   
+
    Currently used only by routines that manipulate field names.
    As such each field string is truncated to a max length of
    FIELDNAMELENMAX (as defined in hdf.h). For most cases, this
    truncation doesn't happen because FIELDNAMELENMAX is a big number.
-   
+
    Current implementation: all strings inputs converted to uppercase.
    tokens must be separated by COMMAs.
-   
+
    Tokens are stored in static area sym , and pointers are returned
    to calling routine. Hence, tokens must be used before next call
    to scanattrs.
@@ -60,9 +60,9 @@ PRIVATE uint8 *Vpbuf = NULL;
     Returns SUCCEED/FAIL
 
 *******************************************************************************/
-int32 
-scanattrs(const char *attrs, 
-          int32 *attrc, 
+int32
+scanattrs(const char *attrs,
+          int32 *attrc,
           char ***attrv)
 {
     CONSTR(FUNC, "scanattrs");

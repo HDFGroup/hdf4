@@ -59,7 +59,7 @@ C    These definitions are added to test hglibver and hgfilver functions
 C
       integer major_v, minor_v, release
       character*80 hdfstring
-C-------------------------------------------------------------------------     
+C-------------------------------------------------------------------------
       DATA ddata1/10,11,12,13,14,15,16,17,18,19/
       DATA ddata2/20,21,22,23,24,25,26,27,28,29/
       DATA ddata4/40,41,42,43,44,45,46,47,48,49/
@@ -116,7 +116,7 @@ C
       if (ret .le. 0) then
           number_failed = number_failed + 1
           call MESSAGE(3, 'Top Vgroup is not found. ')
-      endif 
+      endif
       vgid1 = vfatch(fid1, vgref1, 'w')
       call VRFY(vgid1,'vfatch',number_failed)
 C      create a single field (char) vdata
@@ -152,7 +152,7 @@ C      use vhfscd and vhfscdm to create char vdata
       call VRFY(ret,'vhfscdm',number_failed)
 
 C      create a five-field vdata, 2*int32,2*double,2*float32,
-C             2*int16 and 3*char type 
+C             2*int16 and 3*char type
       call MESSAGE(5,'Creating a five_field vdata')
       vsid2 = vsfatch(fid1, -1, 'w')
       call VRFY(vsid2,'vsfatch',number_failed)
@@ -243,7 +243,7 @@ C     look for the first vdata
          call VRFY(ret,'vsfinq',number_failed)
          if (nelts .ne. 3) then
              number_failed = number_failed + 1
-             call MESSAGE(3,'Wrong number of records. ') 
+             call MESSAGE(3,'Wrong number of records. ')
          endif
          if (il .ne. FULL_INTERLACE) then
              number_failed = number_failed + 1
@@ -296,10 +296,10 @@ C     read the second vdata
       call VRFY(ret,'vsfsfld',number_failed)
       ret = vsfrd(vsid1, iddata1, 5, FULL_INTERLACE)
       call VRFY(ret,'vsfrd',number_failed)
-      do 40 i=1,10 
+      do 40 i=1,10
           if (iddata1(i) .ne. (9+i)) then
              number_failed = number_failed + 1
-             call MESSAGE(3,'Wrong data. ')  
+             call MESSAGE(3,'Wrong data. ')
           endif
 40    continue
       ret = vsfdtch(vsid1)
@@ -328,7 +328,7 @@ C     read the 'c3' vdata
       call VRFY(vsref1, 'vsffnd', number_failed)
       vsid1 = vsfatch(fid1, vsref1, 'w')
       call VRFY(vsid1, 'vsfatch', number_failed)
-      ret = vsfsfld(vsid1, 'char3') 
+      ret = vsfsfld(vsid1, 'char3')
       call VRFY(ret, 'vsfsfld', number_failed)
       ret = vsfrd(vsid1, idbuf, 5,FULL_INTERLACE)
       call VRFY(ret, 'vsfrd', number_failed)
@@ -339,10 +339,10 @@ C     read the 'c3' vdata
       if (icdata .ne. 'abcdebcdefcdefg')  then
           number_failed = number_failed + 1
           call MESSAGE(3,'Wrong data. ')
-      endif 
+      endif
       ret = vsfdtch(vsid1)
       call VRFY(ret,'vsfdtch',number_failed)
- 
+
 C     read the 'mixed type' vdata
       vsref2 = vsffnd(fid1, 'mixed type')
       call VRFY(vsref2, 'vsffnd', number_failed)
@@ -354,14 +354,14 @@ C
 C     This piece of the code exercises VF interface function
 C     Added by E. Pourmal 1/22/99
 C
-C      
+C
 C     Find the total number of the fields in the vdata.
 C
       ret = vfnflds (vsid2)
       if (ret .ne. 5) then
           number_failed = number_failed + 1
           call MESSAGE(3, 'Wrong number of the vdata fileds. ')
-      endif 
+      endif
 C
 C     Find the datatype of the first field (should be DFNT_INT32)
 C
@@ -376,7 +376,7 @@ C
       ret = vffordr(vsid2, 1)
       if (ret .ne. 2) then
           number_failed = number_failed + 1
-          call MESSAGE(3, 'Wrong field order returned. ') 
+          call MESSAGE(3, 'Wrong field order returned. ')
       endif
 C
 C     Find the name of the third field (should be 'float32')
@@ -384,7 +384,7 @@ C
       ret = vffname(vsid2, 2, field_name)
       if (ret .ne. 0 .or. field_name .ne. 'float32') then
           number_failed = number_failed + 1
-          call MESSAGE(3, 'Cannot return name of the field. ') 
+          call MESSAGE(3, 'Cannot return name of the field. ')
       endif
 C
 C     Find the size as stored in memory of the fourth vdata field.
@@ -540,7 +540,7 @@ C     Close file
 C
 C This subroutine tests vsfsetblsz, vsfsetnm, vsfgetinfo functions
 C
-C It creates and writes multi-component Vdata and single-component Vdata; 
+C It creates and writes multi-component Vdata and single-component Vdata;
 C then it sets sizes and number of blocks
 C for multi-component Vdata's link block and appends to the Vdata.
 C File is then closed and reponened once more; block information
@@ -575,8 +575,8 @@ C
       parameter (N_RECORDS_1 = 5,
      +           N_RECORDS_2 = 256,
      +           ORDER_2     = 2,
-     +           FULL_INTERLACE = 0)               
-   
+     +           FULL_INTERLACE = 0)
+
       integer DFACC_WRITE, DFNT_CHAR8, DFNT_INT32
       parameter (DFACC_WRITE = 2,
      +           DFNT_CHAR8  = 4,
@@ -584,12 +584,12 @@ C
       integer BLOCK_SIZE, NUM_BLOCKS
       parameter (BLOCK_SIZE = 256,
      +           NUM_BLOCKS = 3)
-      
+
 C
 C     Function declaration
 C
       integer hopen, hclose
-      integer vfstart, vhfscd, vhfsdm, vfend 
+      integer vfstart, vhfscd, vhfsdm, vfend
       integer vsfsetblsz, vsfsetnmbl, vsfgetblinfo
       integer vsfatch, vsfdtch, vsffnd, vsfwrt, vsfrd, vsfseek
 
@@ -598,8 +598,8 @@ C**** Variable declaration *******************************************
 C
       integer   status, return_flag
       integer   file_id
-      integer   vdata1_ref, vdata2_ref 
-      integer   vdata2_id 
+      integer   vdata1_ref, vdata2_ref
+      integer   vdata2_id
       character vdata1_buf(N_RECORDS_1)
       integer   vdata2_buf(ORDER_2, N_RECORDS_2)
       integer   buf(ORDER_2)
@@ -627,18 +627,18 @@ C
 C
 C     Initialize the VS interface.
 C
-      status = vfstart(file_id) 
+      status = vfstart(file_id)
       call VRFY(status,'vfstart',number_failed)
 C
 C     Create multi-component vdata and populate it with data from vdata2_buf array.
-C     
+C
       vdata2_ref = vhfsdm(file_id, FIELD2_NAME, vdata2_buf, N_RECORDS_2,
      +                    DFNT_INT32, VDATA2_NAME, CLASS2_NAME,
      +                    ORDER_2)
       call VRFY(vdata2_ref,'vhfsdm',number_failed)
 C
 C     Create single-component vdata and populate it with data from vdata1_buf array.
-C     
+C
       vdata1_ref = vhfscd(file_id, FIELD1_NAME, vdata1_buf, N_RECORDS_1,
      +                    DFNT_CHAR8, VDATA1_NAME, CLASS1_NAME)
       call VRFY(vdata1_ref,'vhfscd',number_failed)
@@ -658,27 +658,27 @@ C
 C
 C     Initialize the VS interface.
 C
-      status = vfstart(file_id) 
+      status = vfstart(file_id)
       call VRFY(status,'vfstart',number_failed)
 C
 C     Attach to the multi-component Vdata
 C
-      vdata2_ref = vsffnd(file_id, VDATA2_NAME) 
+      vdata2_ref = vsffnd(file_id, VDATA2_NAME)
       call VRFY(vdata2_ref,'vsffnd',number_failed)
       vdata2_id = vsfatch(file_id, vdata2_ref, 'w')
-      status = vsfsetblsz(vdata2_id, BLOCK_SIZE) 
+      status = vsfsetblsz(vdata2_id, BLOCK_SIZE)
       call VRFY(status,'vsfsetblsz',number_failed)
-      status = vsfsetnmbl(vdata2_id, NUM_BLOCKS) 
+      status = vsfsetnmbl(vdata2_id, NUM_BLOCKS)
       call VRFY(status,'vsfsetblnm',number_failed)
 C
-C     Append to the multi-component Vdata 
+C     Append to the multi-component Vdata
 C
       n_records = vsfseek(vdata2_id, N_RECORDS_2-1)
       call VRFY(n_records,'vsfseek',number_failed)
       n_records = 1
       status = vsfrd(vdata2_id, buf, n_records, FULL_INTERLACE)
       call VRFY(status,'vsfrd',number_failed)
-       
+
       n_records = N_RECORDS_2
       status = vsfwrt(vdata2_id, vdata2_buf, n_records,
      +                FULL_INTERLACE)
@@ -689,7 +689,7 @@ C
       endif
       call VRFY(vdata2_id,'vsfatch',number_failed)
       status = vsfgetblinfo(vdata2_id, block_size_out, num_blocks_out)
-      if (block_size_out .ne. BLOCK_SIZE .or. 
+      if (block_size_out .ne. BLOCK_SIZE .or.
      +    num_blocks_out .ne. NUM_BLOCKS) then
           call MESSAGE(3,'Linked-block info is wrong ')
           number_failed = number_failed + 1
@@ -713,9 +713,9 @@ C
       include '../src/hdf.inc'
 
       integer number_failed
-      integer fid 
+      integer fid
       integer vgroup_id, vgroup0_id, vgroup1_id, vgroup2_id
-      integer vgroup3_id, vgroup4_id, vgroup5_id 
+      integer vgroup3_id, vgroup4_id, vgroup5_id
       integer vgroup_ref
       integer vdata_id, vdata_ref
       integer vdata1_id, vdata2_id
@@ -772,7 +772,7 @@ C       Set its class name
 
 C       Detach it
         status = vfdtch(vgroup_id)
-        call VRFY(status,'vfdtch',number_failed) 
+        call VRFY(status,'vfdtch',number_failed)
       enddo
 
 C Insert some vgroups into some other vgroups to build some sort of
@@ -818,7 +818,7 @@ C                  |
 C                / | \
 C               /  |  \
 C            vg3  vg4  vg5
-C     
+C
 C      Calling Vgetvgroups on the file should return all ten vgroups.
 C      Calling Vgetvgroups on vg0 should return 2, vg1 and vg2.
 C      Calling Vgetvgroups on vg1 should return 3, vg3, vg4, and vg5
@@ -876,7 +876,7 @@ C     2  3  4  5  6  7  10  11
 
 C     Get 5 vgroups starting from vgroup number 5, the result shouldn't
 C     include the simulated internal vgroups
-       
+
       n_vgs = vfgvgroups(fid, 5, 5, refarray)
       call VRFY(n_vgs,'vfgvgroups',number_failed)
       if(n_vgs.ne.5)then
@@ -884,7 +884,7 @@ C     include the simulated internal vgroups
          number_failed = number_failed + 1
       endif
 
-C     Verify refarray from this Vgetvgroups, 
+C     Verify refarray from this Vgetvgroups,
 C     it should contain: 7, 8, 9, 10, 11
 
       result(1)  = 7
@@ -904,7 +904,7 @@ C     it should contain: 7, 8, 9, 10, 11
             number_failed = number_failed + 1
          endif
       enddo
-      
+
 C     Passing in info count as 0, should fail
       n_vgs = vfgvgroups(fid, 0, 0, refarray)
       if(n_vgs.ne.-1)then
@@ -919,7 +919,7 @@ C     This vgroup should have no sub-vgroup
          number_failed = number_failed + 1
       endif
 
-C     Passing in the starting vgroup beyond the number of 
+C     Passing in the starting vgroup beyond the number of
 C     user-created vgroups, should fail
       n_vgs =  vfgvgroups(fid, 11, 3, refarray)
       if(n_vgs.ne.-1)then
@@ -954,7 +954,7 @@ C       Detach it
 
       vdata1_id = vsfatch(fid, vdref_list(2), "w")
       call VRFY(status,'vsfatch',number_failed)
- 
+
       vdata2_id = vsfatch(fid, vdref_list(3), "w")
       call VRFY(status,'vsfatch',number_failed)
 
@@ -1046,7 +1046,7 @@ C     This vgroup should have no sub-vdatas
          call MESSAGE(3,'Wrong number of vgroups status returned ')
          number_failed = number_failed + 1
       endif
-C     Passing in the starting vgroup beyond the number 
+C     Passing in the starting vgroup beyond the number
 C     of user-created vgroups, should fail
       n_vds = vsfgvdatas(fid, 10, 3, refarray)
       if(n_vds.ne.-1)then
@@ -1055,7 +1055,7 @@ C     of user-created vgroups, should fail
       endif
 
 C     Terminate access
-      
+
       status = vfdtch(vgroup0_id)
       call VRFY(status,'vfdtch vgroup0_id',number_failed)
       status = vsfdtch(vdata1_id)

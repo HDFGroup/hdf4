@@ -1363,7 +1363,7 @@ ndsscal(float64 *cal, float64 *cal_err, float64 *ioff, float64 *ioff_err,
     float64 dcal_err=0.0;
     float64 dioff=0.0;
     float64 dioff_err=0.0;
-    
+
     HDmemcpy(&dcal, cal, sizeof(float64));
     HDmemcpy(&dcal_err, cal_err, sizeof(float64));
     HDmemcpy(&dioff, ioff, sizeof(float64));
@@ -1393,7 +1393,7 @@ ndsgcal(float64 *cal, float64 *cal_err, float64 *ioff, float64 *ioff_err,
     float64 dcal_err ;
     float64 dioff ;
     float64 dioff_err ;
-    
+
     ret =(intf) DFSDgetcal(&dcal, &dcal_err, &dioff, &dioff_err, (int32 *) cal_type);
 
     HDmemcpy(cal, &dcal, sizeof(float64));

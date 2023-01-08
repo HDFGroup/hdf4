@@ -27,7 +27,7 @@ C
 C     Function declaration
 C
       integer hopen, hclose
-      integer mgstart, mgselct, mgrdimg, mgendac, mgend 
+      integer mgstart, mgselct, mgrdimg, mgendac, mgend
 
 C
 C**** Variable declaration *******************************************
@@ -37,9 +37,9 @@ C
       integer gr_id, ri_id
       integer start(2), stride(2), edges(2)
       integer i, j
-      integer*2  entire_image(N_COMPS, X_LENGTH, Y_LENGTH) 
-      integer*2  partial_image(N_COMPS, PART_ROWS, PART_COLS) 
-      integer*2  skipped_image(N_COMPS, SKIP_ROWS, SKIP_COLS) 
+      integer*2  entire_image(N_COMPS, X_LENGTH, Y_LENGTH)
+      integer*2  partial_image(N_COMPS, PART_ROWS, PART_COLS)
+      integer*2  skipped_image(N_COMPS, SKIP_ROWS, SKIP_COLS)
 C
 C**** End of variable declaration ************************************
 C
@@ -55,7 +55,7 @@ C
 C     Select the first raster image in the file.
 C
       ri_id = mgselct(gr_id, 0)
-C     
+C
 C     Define the size of the data to be read, i.e., start from the origin
 C     and go as long as the length of each dimension.
 C
@@ -66,7 +66,7 @@ C
       stride(1) = 1
       stride(2) = 1
 C
-C     Read the data from the raster image array. 
+C     Read the data from the raster image array.
 C
       status = mgrdimg(ri_id, start, stride, edges, entire_image)
 C
@@ -83,17 +83,17 @@ C
 C     Define the size of the data to be read.
 C
       start(1) = ROWS_PART_START
-      start(2) = COLS_PART_START 
-      edges(1) = PART_ROWS 
-      edges(2) = PART_COLS 
+      start(2) = COLS_PART_START
+      edges(1) = PART_ROWS
+      edges(2) = PART_COLS
       stride(1) = 1
       stride(2) = 1
 C
-C     Read a subset of the raster image array. 
+C     Read a subset of the raster image array.
 C
       status = mgrdimg(ri_id, start, stride, edges, partial_image)
 C
-C     Display only the first component of the read sample. 
+C     Display only the first component of the read sample.
 C
       write(*,*)
      +  'Two rows and three columns at 4th row and 2nd column',
@@ -107,17 +107,17 @@ C
 C     Define the size and the pattern to read the data.
 C
       start(1) = ROWS_SKIP_START
-      start(2) = COLS_SKIP_START 
-      edges(1) = SKIP_ROWS 
-      edges(2) = SKIP_COLS 
-      stride(1) = N_STRIDES 
-      stride(2) = N_STRIDES 
+      start(2) = COLS_SKIP_START
+      edges(1) = SKIP_ROWS
+      edges(2) = SKIP_COLS
+      stride(1) = N_STRIDES
+      stride(2) = N_STRIDES
 C
 C     Read all the odd rows and even columns of the image.
 C
       status = mgrdimg(ri_id, start, stride, edges, skipped_image)
 C
-C     Display only the first component of the read sample. 
+C     Display only the first component of the read sample.
 C
       write(*,*) 'All even rows and odd columns of the first component'
       write(*,*)
@@ -126,7 +126,7 @@ C
 30    continue
       write(*,*)
 C
-C     Terminate access to the raster image and to the GR interface, 
+C     Terminate access to the raster image and to the GR interface,
 C     and close the HDF file.
 C
       status = mgendac(ri_id)

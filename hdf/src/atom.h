@@ -15,11 +15,11 @@
 /*-----------------------------------------------------------------------------
  * File:    atom.h
  * Purpose: header file for atom API
- * Dependencies: 
+ * Dependencies:
  * Invokes:
  * Contents:
- * Structure definitions: 
- * Constant definitions: 
+ * Structure definitions:
+ * Constant definitions:
  *---------------------------------------------------------------------------*/
 
 /* avoid re-inclusion */
@@ -212,7 +212,7 @@ HDFLIBAPI atom_t HAregister_atom(group_t grp,     /* IN: Group to register the o
 
 /******************************************************************************
  NAME
-     HAatom_object - Returns to the object ptr for the atom 
+     HAatom_object - Returns to the object ptr for the atom
 
  DESCRIPTION
     Retrieves the object ptr which is associated with the atom.
@@ -231,7 +231,7 @@ HDFLIBAPI VOIDP HAatom_object(atom_t atm   /* IN: Atom to retrieve object for */
 
 /******************************************************************************
  NAME
-     HAatom_group - Returns to the group for the atom 
+     HAatom_group - Returns to the group for the atom
 
  DESCRIPTION
     Retrieves the group which is associated with the atom.

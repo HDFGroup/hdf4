@@ -17,16 +17,16 @@
 * tvattr.c
 *
 * This program tests routines in hdf/src/vattr.c.  Those routines
-*  set or change attributes for a vgroup, a vdata or a field of 
+*  set or change attributes for a vgroup, a vdata or a field of
 *  a vdata; get info about an attribute; read values of an attr.
 *
-* create_vset_stuff() creates 1 empty vgroup and 1 vgroup having 1 
+* create_vset_stuff() creates 1 empty vgroup and 1 vgroup having 1
 *  vdata. write_vattr() adds attributes to the vgroups, vdata and
 *  the fields of the vdata. It then creates new vdata and vgroup,
 *  and adds attrs to them.  read_vattr reads the attributes back,
-*  and check their correctness.  
+*  and check their correctness.
 *
-* test_readattrtwice: tests the fix of bugzilla #486, which a 
+* test_readattrtwice: tests the fix of bugzilla #486, which a
 *	subsequent read of an attribute failed. - BMR - Dec, 2005.
 *
 **************************************************************/
@@ -86,24 +86,24 @@ static intn create_vset_stuff(void)
    if (FAIL == (fid = Hopen(FILENAME, DFACC_CREATE, 0))) {
          num_errs++;
          return FAIL;
-      } 
+      }
    if (Vstart(fid) == FAIL)  {
          num_errs++;
          return FAIL;
-      } 
+      }
    /* Vgroup Generation */
    if (FAIL == (vgid = (Vattach(fid, -1, "w"))))   {
          num_errs++;
          return FAIL;
-      } 
+      }
    if (FAIL == Vsetname(vgid, VGNAME0)) {
          num_errs++;
          return FAIL;
-      } 
+      }
    if (FAIL == Vdetach(vgid)) {
          num_errs++;
          return FAIL;
-      } 
+      }
    /* create a vgroup and a vdata, insert the vdata into the vgroup */
    if (FAIL == (vgid = (Vattach(fid, -1, "w"))))   {
          num_errs++;
@@ -168,7 +168,7 @@ static intn write_vattrs(void)
    int32 vsref, vgref;
    int32 fldindex, vsversion;
    intn  n_flds;
-   
+
     /* add attrs to the 1 vg */
    if (FAIL == (fid = Hopen(FILENAME, DFACC_RDWR, -1))) {
          num_errs++;
@@ -207,7 +207,7 @@ static intn write_vattrs(void)
        printf(">>> Vsetattr failed in changing attr values.\n");
       }
 
-   if (FAIL == Vsetattr(vgid, ATTNAME2, DFNT_UINT16, 2, attr2)) { 
+   if (FAIL == Vsetattr(vgid, ATTNAME2, DFNT_UINT16, 2, attr2)) {
          num_errs++;
          printf(">>> Vsetattr2 failed\n");
       }
@@ -253,7 +253,7 @@ static intn write_vattrs(void)
          printf(">>> VSsetattr4 failed\n");
       }
    if (FAIL == VSfindex(vsid, FLDNAME2, &fldindex) ||
-       fldindex != 1) { 
+       fldindex != 1) {
          num_errs++;
          printf(">>> VSfindex  failed in search for FLDNAME2 .\n");
       }
@@ -329,7 +329,7 @@ static intn write_vattrs(void)
          num_errs++;
          return FAIL;
       }
-   if (N_RECS != VSwrite(vsid, (unsigned char *)data1, N_RECS, 
+   if (N_RECS != VSwrite(vsid, (unsigned char *)data1, N_RECS,
        FULL_INTERLACE)) {
          num_errs++;
          return FAIL;
@@ -385,7 +385,7 @@ static intn write_vattrs(void)
          num_errs++;
          return FAIL;
   }
-  /* attach again with "r" access to test VSsetattr on "r" access vdata 
+  /* attach again with "r" access to test VSsetattr on "r" access vdata
      BMR - Nov 4, 2004 */
   if (FAIL == (vsref = VSfind(fid, VSNAME0)))  {
          num_errs++;
@@ -490,12 +490,12 @@ static intn read_vattrs(void)
       }
    if ((iversion = Vgetversion(vgid)) < VSET_NEW_VERSION) {
          num_errs++;
-         printf(">>> Wrong Vgroup version, should be %d, got %d.\n", 
-                      VSET_NEW_VERSION, (int)iversion); 
+         printf(">>> Wrong Vgroup version, should be %d, got %d.\n",
+                      VSET_NEW_VERSION, (int)iversion);
       }
    if (FAIL == (n_vgattrs = Vnattrs(vgid)) || n_vgattrs != 2) {
          num_errs++;
-         printf(">>> Wrong num of Vgroup0 attrs, should be %d, got %d.\n", 
+         printf(">>> Wrong num of Vgroup0 attrs, should be %d, got %d.\n",
                  2, n_vgattrs);
    }
    if (0 != (iattrindex = Vfindattr(vgid, ATTNAME1)))  {
@@ -675,10 +675,10 @@ static intn read_vattrs(void)
         printf(">>> attname4 should be index 1 of vsname1, not %d.\n",
                      iattrindex);
    }
-   if ((FAIL == VSattrinfo(vsid, _HDF_VDATA, iattrindex, iattrname, 
-               &i_type, &i_count, &i_size)) || 
+   if ((FAIL == VSattrinfo(vsid, _HDF_VDATA, iattrindex, iattrname,
+               &i_type, &i_count, &i_size)) ||
                (HDstrcmp(iattrname, ATTNAME4) != 0) ||
-               (i_type != DFNT_FLOAT32) || (i_count != 1) || 
+               (i_type != DFNT_FLOAT32) || (i_count != 1) ||
                (i_size != DFKNTsize(DFNT_FLOAT | DFNT_NATIVE))) {
         num_errs++;
         printf(">>> Wrong attrinfo for attname4 of vdata vsname1; ");
@@ -693,7 +693,7 @@ static intn read_vattrs(void)
    }
    if (FALSE != VSisattr(vsid)) {
       num_errs++;
-      printf(">>> VSisattr failed. Vsname1 is not attribute vdata.\n"); 
+      printf(">>> VSisattr failed. Vsname1 is not attribute vdata.\n");
    }
    /* get  the 3rd attr of fld0. The attr name is VSNAME1 */
    if ((FAIL == (iattrindex = VSfindattr(vsid, 0, VSNAME1))) ||
@@ -705,7 +705,7 @@ static intn read_vattrs(void)
    if ((FAIL == VSattrinfo(vsid, 0, iattrindex, iattrname,
                &i_type, &i_count, &i_size)) ||
                (HDstrcmp(iattrname, VSNAME1) != 0) ||
-               (i_type != DFNT_FLOAT64) || (i_count != 1) || 
+               (i_type != DFNT_FLOAT64) || (i_count != 1) ||
                (i_size != DFKNTsize(DFNT_FLOAT64 | DFNT_NATIVE))) {
         num_errs++;
         printf(">>> Wrong attrinfo for VSNAME1 of fld 0 of vdata vsname1; ");
@@ -745,7 +745,7 @@ static intn read_vattrs(void)
    ret = Vend(fid);
    CHECK(ret, FAIL, "Vend");
    ret = Hclose(fid);
-   CHECK(ret, FAIL, "Hclose");  
+   CHECK(ret, FAIL, "Hclose");
 
    return 0;
 }
@@ -754,7 +754,7 @@ static void test_readattrtwice(void)
 {
     int32 file_id, vsref, vsid;
     int32 findex, fattr_index;
-    int32 data_type, count, size; 
+    int32 data_type, count, size;
     int32 nfields, num_attrs, num_fattrs;
     char name[MAX_HDF4_NAME_LENGTH + 1];
     char *buffer;
@@ -841,10 +841,10 @@ static void test_readattrtwice(void)
 
 /* main test driver */
 void
-test_vset_attr(void)   
+test_vset_attr(void)
 {
    create_vset_stuff();
    write_vattrs();
-   read_vattrs(); 
+   read_vattrs();
    test_readattrtwice();
 } /* test_vset_attr */

@@ -82,7 +82,7 @@ extern int DFKsetcustom(
                            uint32 source_stride, uint32 dest_stride),
   int  (*DFKcustout) (VOIDP source, VOIDP dest, uint32 num_elm,
                              uint32 source_stride, uint32 dest_stride));
-extern int DFconvert(uint8 *source, uint8 *dest, int ntype, int sourcetype, 
+extern int DFconvert(uint8 *source, uint8 *dest, int ntype, int sourcetype,
                      int desttype, int32 size);
 
 /*

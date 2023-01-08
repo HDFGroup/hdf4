@@ -37,7 +37,7 @@
 
 /*
  * Fill typed array element with specified value, that is
- * 	
+ *
  * 	v[ii] = val;
  */
 static void
@@ -107,7 +107,7 @@ val_stuff(type, v, ii, val)	/* v[ii] = val */
  *
  * 	(v[ii] != val)
  *
- * returns 0 if equal, 1 if not equal 
+ * returns 0 if equal, 1 if not equal
  */
 
 static int
@@ -241,7 +241,7 @@ test_slabs(cdfid)
     }
 
     for (iv = 0; iv < NVARS; iv++) { /* test each type of variable */
-        
+
 	v = emalloc(WSIZE*XSIZE*YSIZE*ZSIZE * nctypelen(va[iv].type));
 	/* fill it with values using a function of dimension indices */
 	ii = 0;
@@ -254,7 +254,7 @@ test_slabs(cdfid)
 		    for (iz=0; iz < ZSIZE; iz++) {
 			corner[3] = iz;
 			/* v[ii++] = VF(corner); */
-                        if (va[iv].type == NC_BYTE || va[iv].type == NC_CHAR) 
+                        if (va[iv].type == NC_BYTE || va[iv].type == NC_CHAR)
 			val_stuff(va[iv].type, v, ii, VFC(corner));
                         else
                         val_stuff(va[iv].type, v, ii, VF(corner));
@@ -263,12 +263,12 @@ test_slabs(cdfid)
 		}
 	    }
 	}
- 	
+
 	for (idim = 0; idim < NDIMS; idim++) {
 	    corner[idim] = 0;
 	    edge[idim] = dims[idim].size;
 	}
-      
+
 	/* ncvarput the whole variable */
 	if (ncvarput(cdfid, varid[iv], corner, edge, (void *) v) == -1) {
 	    error("%s: ncvarput failed", pname);
@@ -307,7 +307,7 @@ test_slabs(cdfid)
 	}
         }
 	 /*endif NC_BYTE || NC_CHAR */
-                
+
 	/* get an interior vector in each direction */
 	for (idim=0; idim < NDIMS; idim++) {
 	    for (jdim=0; jdim < NDIMS; jdim++) {
@@ -324,7 +324,7 @@ test_slabs(cdfid)
 	    for (ii=corner[idim]; ii <= edge[idim]; ii++) {
 		point[idim] = ii;
 		/* if (v[ii-1] != VF(point)) */
-        if (va[iv].type == NC_BYTE || va[iv].type == NC_CHAR){ 
+        if (va[iv].type == NC_BYTE || va[iv].type == NC_CHAR){
 		if (val_diff(va[iv].type, v, ii-1, VFC(point))) {
 		    error("%s: ncvarget got wrong value for vector", pname);
 		    nerrs++;
@@ -390,7 +390,7 @@ test_slabs(cdfid)
 		}
 	    }
 	}
-	
+
 	/* get an interior cube in each direction */
 	for (idim=0; idim < NDIMS; idim++) {
 	    for (jdim=idim+1; jdim < NDIMS; jdim++) {
@@ -456,7 +456,7 @@ test_slabs(cdfid)
 	    }
 	}
 	Free((char *)v);
-   } 
+   }
     return nerrs;
 }
 

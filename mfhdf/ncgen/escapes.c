@@ -19,7 +19,7 @@ expand_escapes(termstring, yytext, yyleng)
      int yyleng;
 {
     char *s, *t, *endp;
-    
+
     yytext[yyleng-1]='\0';	/* don't copy quotes */
     /* expand "\" escapes, e.g. "\t" to tab character  */
     s = termstring;

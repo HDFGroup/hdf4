@@ -31,7 +31,7 @@ struct ncatt {			/* attribute */
 };
 
 typedef
-enum {LANG_NONE, LANG_C, LANG_F} Nclang; 
+enum {LANG_NONE, LANG_C, LANG_F} Nclang;
 
 struct fspec {			/* specification for how to format dump */
     char *name;			/*
@@ -60,7 +60,7 @@ struct fspec {			/* specification for how to format dump */
 				 * data lists.
 				 */
     bool fix_str;		/*
-				 * if true, replace nonalpha-numeric 
+				 * if true, replace nonalpha-numeric
 				 * characters in a name with underscores
 				 */
     Nclang data_lang;		/*

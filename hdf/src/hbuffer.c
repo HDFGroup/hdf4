@@ -82,7 +82,7 @@ funclist_t  buf_funcs =
     NULL         /* no routine registered */
 };
 
-/*------------------------------------------------------------------------ 
+/*------------------------------------------------------------------------
 NAME
    HBconvert -- cause an existing AID to be buffered.
 USAGE
@@ -143,7 +143,7 @@ HBconvert(int32 aid)
         if(HTPinquire(access_rec->ddid,&data_tag,&data_ref,&data_off,&data_len)==FAIL)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
       } /* end if */
-      
+
     /* allocate special info struct for buffered element */
     if ((info = HDmalloc((uint32) sizeof(bufinfo_t)))==NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -197,7 +197,7 @@ HBconvert(int32 aid)
     access_rec->special      = SPECIAL_BUFFERED;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
     } /* end if */
 
@@ -283,7 +283,7 @@ HBPseek(accrec_t * access_rec, int32 offset, int origin)
     access_rec->posn = offset;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -337,7 +337,7 @@ HBPread(accrec_t * access_rec, int32 length, void * data)
     ret_value = length;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -398,7 +398,7 @@ HBPwrite(accrec_t * access_rec, int32 length, const void * data)
         /* update length */
         info->length=new_len;
     } /* end if */
-    
+
     /* Copy data to buffer */
     HDmemcpy(info->buf+access_rec->posn,data,length);
 
@@ -411,7 +411,7 @@ HBPwrite(accrec_t * access_rec, int32 length, const void * data)
     ret_value = length;    /* return length of bytes written */
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -479,7 +479,7 @@ HBPinquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
         *pspecial = (int16)access_rec->special;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -520,7 +520,7 @@ HBPendaccess(accrec_t * access_rec)
     HIrelease_accrec_node(access_rec);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
       if(access_rec!=NULL)
           HIrelease_accrec_node(access_rec);
@@ -528,7 +528,7 @@ done:
 
   /* Normal function cleanup */
 
-  return ret_value; 
+  return ret_value;
 }	/* HBPendaccess */
 
 /* ----------------------------- HBPcloseAID ------------------------------ */
@@ -580,7 +580,7 @@ HBPcloseAID(accrec_t * access_rec)
       }
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -597,12 +597,12 @@ NAME
 USAGE
    int32 HBPinfo(access_rec, info_block)
        accrec_t        * access_rec; IN: access record of element
-       sp_info_block_t * info_block; OUT: information about the special element 
+       sp_info_block_t * info_block; OUT: information about the special element
 RETURNS
    SUCCEED / FAIL
 DESCRIPTION
    Return information about the given external element.  Info_block is
-   assumed to be non-NULL.  
+   assumed to be non-NULL.
 
    --------------------------------------------------------------------------- */
 int32
@@ -623,7 +623,7 @@ HBPinfo(accrec_t * access_rec, sp_info_block_t * info_block)
     info_block->buf_aid = info->buf_aid;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */

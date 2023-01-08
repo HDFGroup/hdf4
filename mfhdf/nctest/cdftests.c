@@ -81,7 +81,7 @@ test_nccreate(path)
 }
 
 
-/* 
+/*
  * Test ncopen
  *    try to open a non-existent netCDF, check error return
  *    open a netCDF with NC_WRITE mode, write something, close it
@@ -186,7 +186,7 @@ test_ncopen(path)
  *    leave define mode and close, releasing netcdf handle
  *    try ncredef with old handle, check error
  * On exit netcdf files are closed.
- * Uses: ncopen, ncredef, ncdimdef, ncvardef, ncattput, ncclose 
+ * Uses: ncopen, ncredef, ncdimdef, ncvardef, ncattput, ncclose
  */
 void
 test_ncredef(path)
@@ -266,7 +266,7 @@ test_ncredef(path)
 }
 
 
-/* 
+/*
  * Test ncendef
  *    check return from proper cdfendif after define mode
  *    try ncendef when in data mode, check error
@@ -312,7 +312,7 @@ test_ncendef(path)
     }
     add_dim(&test, &jj);	/* keep in-memory netcdf in sync */
     add_dim(&test, &kk);	/* keep in-memory netcdf in sync */
-    
+
     /* dimensions added OK, add a variable */
     bb.dims = (int *) emalloc(sizeof(int) * bb.ndims);
     bb.dims[0] = kk_dim;
@@ -323,7 +323,7 @@ test_ncendef(path)
 	ncclose(cdfid); return;
     }
     add_var(&test, &bb);	/* keep in-memory netcdf in sync */
-    
+
     /* variable added OK, add a variable attribute */
     if (ncattput(cdfid, bb_id, bb_range.name, bb_range.type, bb_range.len,
 		  (void *) bb_range.val) == -1) {
@@ -331,7 +331,7 @@ test_ncendef(path)
 	ncclose(cdfid); return;
     }
     add_att(&test, bb_id, &bb_range); /* keep in-memory netcdf in sync */
-    
+
     if (ncendef (cdfid) == -1) {
 	error("%s: ncendef failed", pname);
 	ncclose(cdfid); return;
@@ -357,7 +357,7 @@ test_ncendef(path)
 }
 
 
-/* 
+/*
  * Test ncclose
  *    try on open netCDF
  *    try in define mode and data mode
@@ -409,7 +409,7 @@ test_ncclose(path)
 }
 
 
-/* 
+/*
  * Test ncinquire
  *    try in data mode, check returned values
  *    try in define mode, after adding an unlimited dimension, variable

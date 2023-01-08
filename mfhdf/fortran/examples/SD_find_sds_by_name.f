@@ -22,7 +22,7 @@ C
       integer sfstart, sfn2index, sfselect, sfrdata, sfendacc, sfend
 C
 C**** Variable declaration *******************************************
-C 
+C
       integer sd_id, sds_id, sds_index, status
       integer start(2), edges(2), stride(2)
       integer data(X_LENGTH, Y_LENGTH)
@@ -35,24 +35,24 @@ C     Open the file and initialize the SD interface.
 C
       sd_id = sfstart(FILE_NAME, DFACC_READ)
 C
-C     Find index of the data set with the name specified in WRONG_NAME. 
-C     Error condition occurs, since a data set with this name 
+C     Find index of the data set with the name specified in WRONG_NAME.
+C     Error condition occurs, since a data set with this name
 C     does not exist in the file.
 C
       sds_index = sfn2index(sd_id, WRONG_NAME)
       if (sds_index .eq. -1) then
         write(*,*) "Data set with the name ", WRONG_NAME,
-     +             " does not exist"        
+     +             " does not exist"
       endif
 C
-C     Find index of the data set with the name specified in SDS_NAME  
-C     and use the index to attach to the data set. 
+C     Find index of the data set with the name specified in SDS_NAME
+C     and use the index to attach to the data set.
 C
       sds_index = sfn2index(sd_id, SDS_NAME)
       sds_id    = sfselect(sd_id, sds_index)
 C
-C     Set elements of start array to 0, elements of edges array 
-C     to SDS dimensions, and elements of stride array to 1 to read entire data. 
+C     Set elements of start array to 0, elements of edges array
+C     to SDS dimensions, and elements of stride array to 1 to read entire data.
 C
       start(1) = 0
       start(2) = 0
@@ -61,7 +61,7 @@ C
       stride(1) = 1
       stride(2) = 1
 C
-C     Read entire data into array named data. 
+C     Read entire data into array named data.
 C
       status = sfrdata(sds_id, start, stride, edges, data)
 C
@@ -71,7 +71,7 @@ C           10 1000 12 13 14
 C
       write(*,*) (data(j,10), j = 1, X_LENGTH)
 C
-C     Terminate access to the data set. 
+C     Terminate access to the data set.
 C
       status = sfendacc(sds_id)
 C

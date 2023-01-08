@@ -132,9 +132,9 @@ print_item(int32 fid, dd_t *desc_list, intn n)
                 printf("\tCompressed Element: compression type: %s  modeling type %s\n",
                        (info.comp_type == COMP_CODE_NONE ? "None" :
                         (info.comp_type == COMP_CODE_RLE ? "Run-Length" :
-                         (info.comp_type == COMP_CODE_NBIT ? "N-Bit" : 
-                          (info.comp_type == COMP_CODE_SKPHUFF ? "Skipping Huffman" : 
-                           (info.comp_type == COMP_CODE_DEFLATE ? "Deflated" : 
+                         (info.comp_type == COMP_CODE_NBIT ? "N-Bit" :
+                          (info.comp_type == COMP_CODE_SKPHUFF ? "Skipping Huffman" :
+                           (info.comp_type == COMP_CODE_DEFLATE ? "Deflated" :
                             "Unknown"))))),
                        (info.model_type == COMP_MODEL_STDIO ? "Standard" : "Unknown"));
                 break;

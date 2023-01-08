@@ -58,7 +58,7 @@ C characters of output and input strings in subroutine compare()
       call MESSAGE(5, 'Creating arrays...')
 
       do 110 i=1,dims(2)
-          do 100 j=1,dims(1) 
+          do 100 j=1,dims(1)
              f32(j,i) = (i*10) + j
 100       continue
 110   continue
@@ -107,7 +107,7 @@ C characters of output and input strings in subroutine compare()
       return
       end
 
-     
+
 
       subroutine compare(outstring, instring, num)
       implicit none
@@ -118,7 +118,7 @@ C characters of output and input strings in subroutine compare()
 C
 C Note, outstring and instring are of length 14 instead of 15.
 C
- 
+
       if (outstring .ne. instring) then
           print *, 'Test failed for <', outstring,'>'
           print *, '      HDF says= <', instring,'>'

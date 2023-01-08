@@ -15,7 +15,7 @@
 
 #include "hdf.h"
 
-#define	FILENAME	"vslongname.hdf" 
+#define	FILENAME	"vslongname.hdf"
 #define	VDATA1_NAME	"Vdata 1 9112345678921234567893123456789412345678951234567896123456789 72"
 #define	VDATA2_NAME	"Vdata 2 9112345678921234567893123456789412345678951234567896123456789 72"
 #define	VDATA_CLASS	"Long Name Vdatas78921234567893123456789412345678951234567896123456789 72"
@@ -33,18 +33,18 @@ int main( )
 
    /********************** End of variable declaration **********************/
 
-   /* 
-   * Create the first HDF file. 
+   /*
+   * Create the first HDF file.
    */
    file_id = Hopen (FILENAME, DFACC_CREATE, 0);
 
-   /* 
-   * Initialize the VS interface associated with the first HDF file. 
+   /*
+   * Initialize the VS interface associated with the first HDF file.
    */
    status_n = Vstart (file_id);
 
-   /* 
-   * Create a vdata in the first HDF file. 
+   /*
+   * Create a vdata in the first HDF file.
    */
    vdata1_id = VSattach (file_id, -1, "w");
    vdata2_id = VSattach (file_id, -1, "w");
@@ -67,19 +67,19 @@ int main( )
    status_n = VSsetfields (vdata1_id, "field 1");
    status_n = VSsetfields (vdata2_id, "field 1");
 
-   /* 
-   * Terminate access to the vdata in the first HDF file. 
+   /*
+   * Terminate access to the vdata in the first HDF file.
    */
    status_32 = VSdetach (vdata1_id);
    status_32 = VSdetach (vdata2_id);
 
-   /* 
-   * Terminate access to the VS interface associated with the first HDF file. 
+   /*
+   * Terminate access to the VS interface associated with the first HDF file.
    */
    status_n = Vend (file_id);
 
-   /* 
-   * Close the first HDF file. 
+   /*
+   * Close the first HDF file.
    */
    status_n = Hclose (file_id);
    return 0;

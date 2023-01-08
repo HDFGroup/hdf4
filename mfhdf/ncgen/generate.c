@@ -79,7 +79,7 @@ cline(stmnt)
      const char *stmnt;
 {
     FILE *cout = stdout;
-    
+
     fputs(stmnt, cout);
     fputs("\n", cout);
 }
@@ -227,7 +227,7 @@ gen_c(filename)
 	    "   ncid = nccreate(\"%s\", NC_CLOBBER);",
 	    filename);
     cline(stmnt);
-    
+
     /* define dimensions from info in dims array */
     if (ndims > 0) {
 	cline("");
@@ -278,7 +278,7 @@ gen_c(filename)
 	    cline(stmnt);
 	}
     }
-    
+
     /* define attributes from info in atts array */
     if (natts > 0) {
 	cline("");
@@ -320,12 +320,12 @@ gen_c(filename)
 		    sprintf(stmnt, "   %s_%s[%d] = %s;",
 			    atts[iatt].var == -1 ? "cdf" : vars[atts[iatt].var].name,
 			    atts[iatt].name,
-			    jatt, 
+			    jatt,
 			    val_string);
 		    cline(stmnt);
 		    free (val_string);
 		}
-		
+
 		sprintf(stmnt,
 			"   ncattput (ncid, %s%s, \"%s\", %s, %d, (void *) %s_%s);",
 			atts[iatt].var == -1 ? "NC_GLOBAL" : vars[atts[iatt].var].name,
@@ -360,7 +360,7 @@ fline(stmnt)
     static char cont[] = {	/* continuation characters */
 	' ', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 	'+', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'};
-    
+
     if(stmnt[0] == '*') {
 	fputs(stmnt, fout);
 	fputs("\n", fout);
@@ -543,12 +543,12 @@ gen_fortran(filename)
 	    }
 	}
     }
-    
+
     /* create netCDF file, uses NC_CLOBBER mode */
     fline("* enter define mode");
     sprintf(stmnt, "ncid = nccre (\'%s\', NCCLOB, iret)", filename);
     fline(stmnt);
-    
+
     /* define dimensions from info in dims array */
     if (ndims > 0)
       fline("* define dimensions");
@@ -561,7 +561,7 @@ gen_fortran(filename)
 		  dims[idim].name,dims[idim].name,(int)dims[idim].size);
 	fline(stmnt);
     }
-	  
+
     /* define variables from info in vars array */
     if (nvars > 0) {
 	fline("* define variables");
@@ -573,14 +573,14 @@ gen_fortran(filename)
 		fline(stmnt);
 	    }
 	    if (vars[ivar].ndims > 0) {	/* a dimensioned variable */
-		sprintf(stmnt, 
+		sprintf(stmnt,
 			"%sid = ncvdef (ncid, \'%s\', %s, %d, dims, iret)",
 			vars[ivar].name,
 			vars[ivar].name,
 			ftypename(vars[ivar].type),
 			vars[ivar].ndims);
 	    } else {		/* a scalar */
-		sprintf(stmnt, 
+		sprintf(stmnt,
 			"%sid = ncvdef (ncid, \'%s\', %s, %d, 0, iret)",
 			vars[ivar].name,
 			vars[ivar].name,
@@ -598,7 +598,7 @@ gen_fortran(filename)
 	    if (atts[iatt].type == NC_CHAR && atts[iatt].len > 1) { /* string */
 		val_string = fstrstr((char *) atts[iatt].val,
 				     (long)atts[iatt].len);
-		sprintf(stmnt, 
+		sprintf(stmnt,
 			"call ncaptc(ncid, %s%s, \'%s\', NCCHAR, %d, %s, iret)",
 			atts[iatt].var == -1 ? "NCGLOBAL" : vars[atts[iatt].var].name,
 			atts[iatt].var == -1 ? "" : "id",
@@ -612,12 +612,12 @@ gen_fortran(filename)
 		    val_string = fstring(atts[iatt].type,atts[iatt].val,jatt);
 		    sprintf(stmnt, "%sval(%d) = %s",
 			    ftypes[(int)atts[iatt].type],
-			    jatt+1, 
+			    jatt+1,
 			    val_string);
 		    fline(stmnt);
 		    free (val_string);
 		}
-	    
+
 		sprintf(stmnt,
 			"call ncapt(ncid, %s%s, \'%s\', %s, %d, %sval, iret)",
 			atts[iatt].var == -1 ? "NCGLOBAL" : vars[atts[iatt].var].name,
@@ -793,7 +793,7 @@ cstring(type,valp, num)
 	*cp++ = '\'';
 	*cp = '\0';
 	return sp;
-	
+
       case NC_BYTE:
 	cp = (char *) emalloc (7);
 	bytep = (char *)valp;
@@ -978,7 +978,7 @@ fstrstr(str, ilen)
     istr0 = istr = (char *) emalloc((int)ilen + 1);
     strncpy(istr, (char *) str, (int)ilen);
     istr[ilen] = '\0';
-    
+
     ostr = cp = (char *) emalloc(12*(int)ilen);
     *ostr = '\0';
     if (*istr == '\0') {	/* empty string input, not legal in FORTRAN */
@@ -1045,7 +1045,7 @@ define_netcdf(netcdfname)
      char *netcdfname;
 {
     char *filename;		/* output file name */
-    
+
     if (netcdf_name) {		/* name given on command line */
 	filename = netcdf_name;
     } else {			/* construct name from CDL name */

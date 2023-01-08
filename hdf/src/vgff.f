@@ -11,8 +11,8 @@ C  If you do not have access to either file, you may request a copy from     *
 C  help@hdfgroup.org.                                                        *
 C * * * * * * * * *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 C
-C $Id$ 
-C     
+C $Id$
+C
 c **************************************************************************
 c *
 c * vgFf.f
@@ -27,7 +27,7 @@ c   ============================================================
 c	 VGROUP ROUTINES
 c	============================================================
 
-c	attachs to a vgroup 	
+c	attachs to a vgroup
 c	related: Vattach--vatchc--VFATCH
 
       integer function vfatch(f, vgid, accesstype)
@@ -230,7 +230,7 @@ c     ------------------------------------------------------------
 c     general inquiry on a vdata
 c     related: VSinquire--vsinqc--vsfinq
 
-      integer function vsfinq (vs,nvs,ilace,fields,vsize,vsname) 
+      integer function vsfinq (vs,nvs,ilace,fields,vsize,vsname)
       integer        vs, nvs, ilace, vsize
       character*(*)  fields, vsname
       integer        vsinqc
@@ -451,7 +451,7 @@ c     related: Ventries--ventsc--vfents
 
       integer function vfents (f, vgid)
       integer f, vgid
-      integer ventsc 
+      integer ventsc
 
       vfents = ventsc (f, vgid)
       end
@@ -568,7 +568,7 @@ c     related: VHstoredatam--vhscdmc--vhfscdm
       integer vhscdmc
 
       vhfscdm = vhscdmc (f, field, cbuf, n, dtype, vsname,
-     1          vsclass, order, len(field), len(vsname), 
+     1          vsclass, order, len(field), len(vsname),
      1          len(vsclass))
       end
 
@@ -580,7 +580,7 @@ c     related: VHmakegroup--vhmkgpc--vhfmkgp
       integer f, n
       integer tagarray(*), refarray(*)
       character*(*)  vgname, vgclass
-      integer vhmkgpc 
+      integer vhmkgpc
 
       vhfmkgp = vhmkgpc (f, tagarray, refarray , n, vgname, vgclass,
      1                len(vgname), len(vgclass))
@@ -589,7 +589,7 @@ c     related: VHmakegroup--vhmkgpc--vhfmkgp
 c     ============================================================
 c     More vgroup routines
 
-c     locate a field in a vdata that belongs to this VGROUP	
+c     locate a field in a vdata that belongs to this VGROUP
 c     related: Vflocate--vffloc--vflocc
 
       integer function vffloc  (vg, field)
@@ -615,7 +615,7 @@ c     related: Velts--veltsc--vfelts
 
       integer function vfntr (vg)
       integer vg
-      integer vntrc 
+      integer vntrc
       vfntr = vntrc (vg)
       end
 
@@ -657,7 +657,7 @@ c     ------------------------------------------------------------
 c     specific inquiry on a vdata, gets fields
 c     related: VSQueryfields--vsqfldsc--vsqfflds
 
-      integer function vsqfflds (vs,fields) 
+      integer function vsqfflds (vs,fields)
       integer vs
       character*(*) fields
       integer       vsqfldsc
@@ -669,7 +669,7 @@ c     ------------------------------------------------------------
 c     specific inquiry on a vdata, gets vdata name
 c     related: VSQueryname--vsqnamec--vsqfname
 
-      integer function vsqfname (vs,name) 
+      integer function vsqfname (vs,name)
       integer vs
       character*(*) name
       integer vsqnamec
@@ -691,9 +691,9 @@ c               _HDF_VSUNPACK(1) for unpacking
       integer buf, fldbuf
       character*(*) buflds, pckfld
       integer vsfncpk
-      
+
       vsfnpak = vsfncpk(vs,packtype,buflds,buf,bufsz,nrecs,pckfld,
-     +                 fldbuf, len(buflds), len(pckfld)) 
+     +                 fldbuf, len(buflds), len(pckfld))
       end
 
 c     ============================================================
@@ -710,11 +710,11 @@ c               _HDF_VSUNPACK(1) for unpacking
       integer buf
       character*(*) buflds, pckfld, fldbuf
       integer vsfccpk
-      
+
       vsfcpak = vsfccpk(vs,packtype,buflds,buf,bufsz,nrecs,pckfld,
-     +                 fldbuf, len(buflds), len(pckfld)) 
+     +                 fldbuf, len(buflds), len(pckfld))
       end
-c  
+c
 
 c     ------------------------------------------------------------
 c     Delete a tag/ref pair in a vgroup.
@@ -727,12 +727,12 @@ c     related: vfdtr()-->vdtrc()-->Vdeletetagref()
       vfdtr = vdtrc  ( vg, tag, ref)
       end
 C-------------------------------------------------------------------------
-C        Name:      vsffcls 
-C        Purpose:   looks in the file, finds the vdata 
-C                   with the specified class 
-C                   and returns the ref of the vdata with class vdclass 
+C        Name:      vsffcls
+C        Purpose:   looks in the file, finds the vdata
+C                   with the specified class
+C                   and returns the ref of the vdata with class vdclass
 C        Inputs:    id       -  file ID
-C                   vdclass  -  class of vdata to find  
+C                   vdclass  -  class of vdata to find
 C        Returns:   returns 0 if not found, or error. Otherwise, returns
 C                   the vdata's ref number (a positive integer)
 C        Calls:     vcffcls (C stub for VSfindclass function)
@@ -743,21 +743,21 @@ C-------------------------------------------------------------------------
 C
          INTEGER id
          CHARACTER*(*) vdclass
-         INTEGER vscfcls 
+         INTEGER vscfcls
 C
-         vsffcls = vscfcls(id,vdclass, len(vdclass)) 
+         vsffcls = vscfcls(id,vdclass, len(vdclass))
 
 C
-         return 
+         return
          end
 
 C-------------------------------------------------------------------------
-C        Name:      vffname 
-C        Purpose:   returns the name of a vdata field 
+C        Name:      vffname
+C        Purpose:   returns the name of a vdata field
 C        Inputs:    vdata_id - vdata identofoer
-C                   field_index - field index    
-C        Output:    field_name           
-C        Returns:   returns 0 on if successful and -1 otherwise  
+C                   field_index - field index
+C        Output:    field_name
+C        Returns:   returns 0 on if successful and -1 otherwise
 C        Calls:     vffnamec (C stub for VDfieldname function)
 C        Users:     HDF Fortran programmers
 C-------------------------------------------------------------------------
@@ -765,10 +765,10 @@ C-------------------------------------------------------------------------
          INTEGER function vffname(vdata_id, field_index, field_name)
          INTEGER vdata_id, field_index
          CHARACTER*(*) field_name
-         INTEGER vffnamec 
+         INTEGER vffnamec
          vffname = vffnamec(vdata_id, field_index, field_name,
-     .                      len(field_name)) 
-         return 
+     .                      len(field_name))
+         return
          end
 C-------------------------------------------------------------------------
 C        Name:      vsfsetblsz
@@ -785,8 +785,8 @@ C
          INTEGER id, block_size
          INTEGER vscsetblsz
 C
-         vsfsetblsz = vscsetblsz(id, block_size) 
-         return 
+         vsfsetblsz = vscsetblsz(id, block_size)
+         return
          end
 
 C-------------------------------------------------------------------------
@@ -805,8 +805,8 @@ C
          INTEGER id, num_blocks
          INTEGER vscsetnmbl
 C
-         vsfsetnmbl = vscsetnmbl(id, num_blocks) 
-         return 
+         vsfsetnmbl = vscsetnmbl(id, num_blocks)
+         return
          end
 
 C-------------------------------------------------------------------------
@@ -826,25 +826,25 @@ C
          INTEGER id, num_blocks, block_size
          INTEGER vscgblinfo
 C
-         vsfgetblinfo = vscgblinfo(id, block_size, num_blocks) 
-         return 
+         vsfgetblinfo = vscgblinfo(id, block_size, num_blocks)
+         return
          end
 
 C-------------------------------------------------------------------------
 C        Name:      vfgvgroups
-C        Purpose:   Retrieves reference numbers of vgroups in a file 
-C                   or in a vgroup. 
-C                   
-C        Inputs:    id       - File identifier returned by Hopen or 
-C                              vgroup identifier returned by 
+C        Purpose:   Retrieves reference numbers of vgroups in a file
+C                   or in a vgroup.
+C
+C        Inputs:    id       - File identifier returned by Hopen or
+C                              vgroup identifier returned by
 C                              Vattachvdata identifier
 C                   start_vg - Vgroup index to start retrieving at
-C                   vg_count - Number of vgroups to be retrieved,  
+C                   vg_count - Number of vgroups to be retrieved,
 C                              if vg_count = -1, then only function value
-C                              will be return and refarray will be ignored.    
-C        Outputs:   refarray - Array to hold reference numbers 
-C                              of retrieved vgroups 
-C        Returns:   Returns the actual number of vgroups retrieved 
+C                              will be return and refarray will be ignored.
+C        Outputs:   refarray - Array to hold reference numbers
+C                              of retrieved vgroups
+C        Returns:   Returns the actual number of vgroups retrieved
 C                   if successful, and FAIL (-1) otherwise.
 C        Calls:     vcgvgrp (C stub for Vgetvgroups function)
 C        Users:     HDF Fortran programmers
@@ -857,24 +857,24 @@ C
          INTEGER refarray(*)
          INTEGER vcgvgrp
 C
-         vfgvgroups = vcgvgrp(id, start_vg, vg_count, refarray) 
-         return 
+         vfgvgroups = vcgvgrp(id, start_vg, vg_count, refarray)
+         return
          end
 
 C-------------------------------------------------------------------------
 C        Name:      vsfgvdatas
-C        Purpose:   Retrieves reference numbers of vdatas in a file or 
+C        Purpose:   Retrieves reference numbers of vdatas in a file or
 C                   in a vgroup.
-C                   
-C        Inputs:    id       - File identifier returned by Hopen or vgroup 
+C
+C        Inputs:    id       - File identifier returned by Hopen or vgroup
 C                              identifier returned by Vattach
 C                   start_vd - Vdata number to start retrieving at
-C                   vd_count - Number of vdatas to be retrieved, 
+C                   vd_count - Number of vdatas to be retrieved,
 C                              if vd_count = -1, then only the function
 C                              will be return and refarray will be ignored.
-C        Outputs:   refarray - Array to hold reference numbers of 
-C                              retrieved vdatas 
-C        Returns:   Returns the actual number of user-created vdatas 
+C        Outputs:   refarray - Array to hold reference numbers of
+C                              retrieved vdatas
+C        Returns:   Returns the actual number of user-created vdatas
 C                   retrieved if successful, and FAIL (-1) otherwise.
 C        Calls:     vscgvdatas (C stub for VSgetvdatas function)
 C        Users:     HDF Fortran programmers
@@ -887,6 +887,6 @@ C
          INTEGER refarray(*)
          INTEGER vscgvdatas
 C
-         vsfgvdatas = vscgvdatas(id, start_vd, vd_count, refarray) 
-         return 
+         vsfgvdatas = vscgvdatas(id, start_vd, vd_count, refarray)
+         return
          end

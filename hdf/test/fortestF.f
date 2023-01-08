@@ -141,7 +141,7 @@ C     print *, 'inline=', inline
 C
 11    format(A120)
       end
-    
+
 
 C Run the Fortran test command.
 C
@@ -162,7 +162,7 @@ C Verbosity level command
           Verbosity = index('0123456789', param(1:1)) - 1
           return
       endif
-    
+
 
 C Cleanup command
 C If param is Yes/No, it directs to delete the *.hdf or not.
@@ -180,7 +180,7 @@ C
           endif
           return
       endif
-    
+
 C      print *, '====================================='
 C      print *, cmd, param
 C      print *, '====================================='

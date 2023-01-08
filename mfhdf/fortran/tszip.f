@@ -105,7 +105,7 @@ C
 C  Compression arguments ( defined for clarity, actual values
 C  will be passed to SFSCHUNK function via comp_arg parameter)
 C
-         integer pixels_per_block 
+         integer pixels_per_block
          parameter (pixels_per_block = 12)
 
 C--------------------End of declarations------------------------------
@@ -115,11 +115,11 @@ C-------------------IS SZIP compression present with encoder?--------
          err_szip = 0
 
          comp_type = COMP_CODE_SZIP
-         status = hconfinf(comp_type, info)    
+         status = hconfinf(comp_type, info)
          if(status .LT. 0) then
-            err_szip = err_szip + 1         
+            err_szip = err_szip + 1
             goto 1111
-         endif 
+         endif
          if(info .EQ. 0 ) then
           print *,'Skipping test_szip: compression is not available'
           print *,' '
@@ -131,14 +131,14 @@ C-------------------IS SZIP compression present with encoder?--------
           print *,' '
          goto 3333
        endif
-            
+
 C
 C
-C  We will write to five different files corresponding to the 
+C  We will write to five different files corresponding to the
 C  different compression types
 C
 C  NO compression
-C 
+C
          file = 'comp_szip.hdf'
          name(1) = 'szip_data_int16'
          name(2) = 'szip_data_int32'
@@ -153,11 +153,11 @@ C   Dimension sizes array initialization
 C
          d_dims(1) = n
          d_dims(2) = m
-C        
+C
 C   Initialize original array
 C
-         
-         do 20 j = 1, m 
+
+         do 20 j = 1, m
             do 10 i = 1, n
                data2(i,j) = 10*j + i
                data4(i,j) = 10*j + i
@@ -186,7 +186,7 @@ C
 C
 C        Create the data set
 C
-         sds_id(i_comp) = sfcreate(sd_id, name(i_comp), 
+         sds_id(i_comp) = sfcreate(sd_id, name(i_comp),
      .                     type(i_comp), RANK, d_dims)
             if( sds_id(i_comp) .eq. -1 ) then
                 print *, 'sfcreate failed for', i_comp, ' -th dataset'
@@ -226,13 +226,13 @@ C
                 print *, 'sfwdata failed for', i_comp, ' -th dataset'
                 err_szip = err_szip + 1
             endif
-         
+
          status = sfendacc(sds_id(i_comp))
             if( status .ne. 0 ) then
                 print *, 'sfendacc failed for', i_comp, ' -th dataset'
                 err_szip = err_szip + 1
             endif
-1000      continue 
+1000      continue
          status = sfend (sd_id)
             if( status .ne. 0 ) then
                 print *, 'sfend failed'
@@ -240,7 +240,7 @@ C
             endif
 
 C
-C   Let's check what we have written 
+C   Let's check what we have written
 C
 C   Open files and restart SD interfaces
 C
@@ -250,7 +250,7 @@ C
                 err_szip = err_szip + 1
             endif
          do 2000 i = 1, N_TYPES
-        
+
 C
 C  Find written dataset in each file using its name and index
 C
@@ -273,7 +273,7 @@ C
                 err_szip = err_szip + 1
             endif
                 if (comp_type_out .ne. COMP_CODE_SZIP) then
-            print *, 'wrong compression type for szip 
+            print *, 'wrong compression type for szip
      .                compressed dataset'
                 err_szip = err_szip + 1
                 endif
@@ -282,8 +282,8 @@ C            write(*,*) comp_arg(2), comp_prm_out(2)
 C            write(*,*) comp_prm_out(3)
 C            write(*,*) comp_prm_out(4)
 C            write(*,*) comp_prm_out(5)
-            
-C                if ((comp_arg(1) .ne. comp_prm_out(1)) .or. 
+
+C                if ((comp_arg(1) .ne. comp_prm_out(1)) .or.
 C     .              (comp_arg(2) .ne. comp_prm_out(2))) then
 C            print *, 'wrong compression parameter'
 C                err_szip = err_szip + 1
@@ -296,8 +296,8 @@ C
          start(2) = m_part_start
          edges(1) = n_part
          edges(2) = m_part
-         stride(1) = n_part_stride 
-         stride(2) = m_part_stride 
+         stride(1) = n_part_stride
+         stride(2) = m_part_stride
                 if (i .eq. 1) then
                 status = sfrdata(sds_id(i), start, stride,
      .                           edges, data2_out)
@@ -328,10 +328,10 @@ C
                kl = n_part_start + 1 + (l-1)*n_part_stride
                kj = m_part_start + 1 + (j-1)*m_part_stride
                if (data2(kl, kj) .ne. data2_out(l,j)) then
-                  print *, 'sfrdata read wrong data for ', 
+                  print *, 'sfrdata read wrong data for ',
      .            i ,'-th dataset'
                err_szip = err_szip +1
-               endif 
+               endif
 203         continue
 204      continue
          endif
@@ -341,10 +341,10 @@ C
                kl = n_part_start + 1 + (l-1)*n_part_stride
                kj = m_part_start + 1 + (j-1)*m_part_stride
                if (data4(kl, kj) .ne. data4_out(l,j)) then
-                  print *, 'sfrdata read wrong data for ', 
+                  print *, 'sfrdata read wrong data for ',
      .            i ,'-th dataset'
                err_szip = err_szip +1
-               endif 
+               endif
 205         continue
 206      continue
          endif
@@ -354,10 +354,10 @@ C
                kl = n_part_start + 1 + (l-1)*n_part_stride
                kj = m_part_start + 1 + (j-1)*m_part_stride
                if (rdata4(kl, kj) .ne. rdata4_out(l,j)) then
-                  print *, 'sfrdata read wrong data for ', 
+                  print *, 'sfrdata read wrong data for ',
      .            i ,'-th dataset'
                err_szip = err_szip +1
-               endif 
+               endif
 207         continue
 208      continue
          endif
@@ -367,15 +367,15 @@ C
                kl = n_part_start + 1 + (l-1)*n_part_stride
                kj = m_part_start + 1 + (j-1)*m_part_stride
                if (rdata8(kl, kj) .ne. rdata8_out(l,j)) then
-                  print *, 'sfrdata read wrong data for ', 
+                  print *, 'sfrdata read wrong data for ',
      .            i ,'-th dataset'
                err_szip = err_szip +1
-               endif 
+               endif
 209         continue
 210      continue
          endif
-         
-C 
+
+C
 C  Terminate access to SDS, shutdown interfaces and close the files
 C
            status = sfendacc(sds_id(i))

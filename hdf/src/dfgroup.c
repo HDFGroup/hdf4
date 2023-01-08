@@ -302,18 +302,18 @@ DFdiwrite(int32 file_id, int32 list, uint16 tag, uint16 ref)
  * Users:   callers of DFdiget() when it is NOT called for every pair in the group.
  * Invokes: none
  * Remarks: Notes from Fortner Build Notes:
- *		While working on a group, its info is stored in RAM, and the pointer to 
- *		that info is kept in a global array called Group_List. the size of Group_List 
- *		is fixed, and contains MAX_GROUPS pointers. When DFdiget() has returned 
- *		the last tag-ref pair from a given group's info, that info is freed, and 
+ *		While working on a group, its info is stored in RAM, and the pointer to
+ *		that info is kept in a global array called Group_List. the size of Group_List
+ *		is fixed, and contains MAX_GROUPS pointers. When DFdiget() has returned
+ *		the last tag-ref pair from a given group's info, that info is freed, and
  *		the corresponding slot in the Group_List array is available for re-use.
  *
- *		If DFdiget() is NOT called for every pair in the group, the group info is 
- *		never freed, except by the use of this routine. So when a loop based on 
- *		DFdiget() exits early, it should first call freeDIGroup() to recover the 
- *		group slot for future use. 
+ *		If DFdiget() is NOT called for every pair in the group, the group info is
+ *		never freed, except by the use of this routine. So when a loop based on
+ *		DFdiget() exits early, it should first call freeDIGroup() to recover the
+ *		group slot for future use.
  *
- *		The typical example seems to be an error occuring within the DFdiget() 
+ *		The typical example seems to be an error occuring within the DFdiget()
  *		loop or finding an element while doing a search.
  *
  *---------------------------------------------------------------------------*/
@@ -323,11 +323,11 @@ void DFdifree(int32 groupID)
     CONSTR(FUNC, "DFdifree");
 #endif /* LATER */
 	DIlist_ptr	list_rec;
-	
+
 	list_rec = GID2REC( groupID );
 	if (list_rec == NULL )
 		return;
-	
+
 	HDfree((void*) list_rec->DIlist );
 	HDfree((void*) list_rec );
 	Group_list[groupID & 0xffff ] = NULL;

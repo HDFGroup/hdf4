@@ -25,8 +25,8 @@ extern "C" {
 #endif
 
 
-int copy_vgroup_attrs(int32 vg_in, 
-                      int32 vg_out, 
+int copy_vgroup_attrs(int32 vg_in,
+                      int32 vg_out,
                       char *path,
                       options_t *options);
 
@@ -37,7 +37,7 @@ int vgroup_insert(int32 infile_id,
                   int32 gr_id,             /* GR interface identifier */
                   int32 gr_out,            /* GR interface identifier */
                   int32 vgroup_id_out_par, /* output parent group ID */
-                  char*path_name,          /* absolute path for input group name */          
+                  char*path_name,          /* absolute path for input group name */
                   int32* in_tags,          /* tag list for parent group */
                   int32* in_refs,          /* ref list for parent group */
                   int npairs,              /* number tag/ref pairs for parent group */

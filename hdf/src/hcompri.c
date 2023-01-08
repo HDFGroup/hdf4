@@ -82,7 +82,7 @@ funclist_t  cr_funcs =
     NULL         /* no routine registered */
 };
 
-/*------------------------------------------------------------------------ 
+/*------------------------------------------------------------------------
 NAME
    HRPconvert -- wrap an existing raster image with the special element routines.
 USAGE
@@ -162,11 +162,11 @@ HRPconvert(int32 fid, uint16 tag, uint16 ref, int32 xdim, int32 ydim,int16 schem
     ret_value = HAregister_atom(AIDGROUP,access_rec);  /* return access id */
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
     } /* end if */
 
-  return ret_value; 
+  return ret_value;
 } /* HRPconvert */
 
 /* ------------------------------ HRPstread ------------------------------- */
@@ -245,7 +245,7 @@ HRPseek(accrec_t * access_rec, int32 offset, int origin)
     access_rec->posn = offset;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -293,7 +293,7 @@ HRPread(accrec_t * access_rec, int32 length, void * data)
     ret_value = length;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -341,7 +341,7 @@ HRPwrite(accrec_t * access_rec, int32 length, const void * data)
     ret_value = length;    /* return length of bytes written */
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -409,7 +409,7 @@ HRPinquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
         *pspecial = (int16)access_rec->special;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -464,7 +464,7 @@ HRPendaccess(accrec_t * access_rec)
 
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
       if(access_rec!=NULL)
           HIrelease_accrec_node(access_rec);
@@ -472,7 +472,7 @@ done:
 
   /* Normal function cleanup */
 
-  return ret_value; 
+  return ret_value;
 }	/* HRPendaccess */
 
 /* ----------------------------- HRPcloseAID ------------------------------ */
@@ -510,7 +510,7 @@ HRPcloseAID(accrec_t * access_rec)
 #ifdef LATER
 done:
 #endif /* LATER */
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -527,12 +527,12 @@ NAME
 USAGE
    int32 HRPinfo(access_rec, info_block)
        accrec_t        * access_rec; IN: access record of element
-       sp_info_block_t * info_block; OUT: information about the special element 
+       sp_info_block_t * info_block; OUT: information about the special element
 RETURNS
    SUCCEED / FAIL
 DESCRIPTION
    Return information about the given external element.  Info_block is
-   assumed to be non-NULL.  
+   assumed to be non-NULL.
 
    --------------------------------------------------------------------------- */
 int32
@@ -549,7 +549,7 @@ HRPinfo(accrec_t * access_rec, sp_info_block_t * info_block)
     info_block->key = SPECIAL_COMPRAS;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */

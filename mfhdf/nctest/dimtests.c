@@ -23,7 +23,7 @@
 #include "hdf.h"
 #endif
 
-/* 
+/*
  * Test ncdimdef
  *    try in data mode, check error
  *    check that returned id is one more than previous id
@@ -205,7 +205,7 @@ test_ncdimid(path)
 /*
  * Test ncdiminq
  *    try in both modes
- *    check returned name and size against defined name and size	
+ *    check returned name and size against defined name and size
  *    try with bad dimension handle, check error
  *    try with bad netCDF handle, check error
  */
@@ -295,8 +295,8 @@ test_ncdiminq(path)
       (void) fprintf(stderr,"FAILED! ***\n");
     else
       (void) fprintf(stderr,"ok ***\n");
-}    
-    
+}
+
 /*
  * Test ncdimrename
  *    check that proper rename worked with ncdiminq

@@ -37,7 +37,7 @@ int  copy_gr(int32 infile_id,
 
 int copy_gr_attrs(int32 ri_id,
                   int32 ri_out,
-                  int32 nattrs,          
+                  int32 nattrs,
                   options_t *options);
 
 

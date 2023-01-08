@@ -46,7 +46,7 @@ char       ifields[256];
 static int32 fpack(void);
 static int32 funpack(void);
 
-static int32 
+static int32
 fpack(void)
 {
     /* Open the HDF file. */
@@ -83,7 +83,7 @@ fpack(void)
         source[i].height = (float32)2.22 * (float32)(i+1);
         source[i].speed = (int16)i;
         source[i].ident = (char)('A' + i);
-         /* test error checks  */ 
+         /* test error checks  */
         if (i==0) {
 	    /* test not enough vdata buffer size */
 	    databufptr[0] = &source[i].ident;
@@ -121,7 +121,7 @@ fpack(void)
             num_errs++;
             printf(">>> VSfpack failed in packing record %d\n", i);
         }
- 
+
         pntr += rec_size;
     }
     /* Write the data to the Vset object. */
@@ -195,7 +195,7 @@ funpack(void)
 
     /* Initialize the Vset interface. */
     Vstart(file_id);
-    vdata_ref = VSfind(file_id, "myvdata"); 
+    vdata_ref = VSfind(file_id, "myvdata");
     if (vdata_ref == 0)  {
          num_errs++;
          printf(">>> VSfind failed in finding myvdata.\n");
@@ -207,10 +207,10 @@ funpack(void)
     }
     istat = VSinquire(vdata_id, &in_recs, &iil, ifields, &irec_size,
                        NULL);
-    if (istat == FAIL) {     
-         num_errs++;     
+    if (istat == FAIL) {
+         num_errs++;
          printf(">>> VSinquire failed in for myvdata.\n");
-    }     
+    }
     if ((in_recs != 2*NRECORDS) || (irec_size != rec_size)) {
          num_errs++;
          printf(">>> VSinquire got wrong info for myvdata.\n");
@@ -229,7 +229,7 @@ funpack(void)
          printf(">>> VSfpack failed in unpacking 1st set.\n");
     }
 
-    for (i=0; i<NRECORDS; i++)  
+    for (i=0; i<NRECORDS; i++)
          if ((iident[i] != (char)('A'+i)) || (fabs((double)(itemp[i] - (float32)1.11*(float32)(i+1))) > EPS) ||
             (ispeed[i] != i) || (fabs((double)(iheight[i] - (float32)2.22*(float32)(i+1))) > EPS))  {
             num_errs++;
@@ -240,8 +240,8 @@ funpack(void)
     pntr = databuf;
     databufptr[0] = itemp;
     databufptr[1] = iident;
-    istat = VSfpack(vdata_id, _HDF_VSUNPACK, NULL, pntr, 
-                     rec_size*NRECORDS, NRECORDS, "Temp,Ident", 
+    istat = VSfpack(vdata_id, _HDF_VSUNPACK, NULL, pntr,
+                     rec_size*NRECORDS, NRECORDS, "Temp,Ident",
                      databufptr);
     if (istat == FAIL)  {
          num_errs++;
@@ -249,15 +249,15 @@ funpack(void)
     }
     databufptr[0] = iheight;
     databufptr[1] = ispeed;
-    istat = VSfpack(vdata_id, _HDF_VSUNPACK, NULL, pntr, 
-                     rec_size*NRECORDS, NRECORDS, "Height,Speed", 
+    istat = VSfpack(vdata_id, _HDF_VSUNPACK, NULL, pntr,
+                     rec_size*NRECORDS, NRECORDS, "Height,Speed",
                      databufptr);
     if (istat == FAIL)  {
          num_errs++;
          printf(">>> VSfpack failed in unpacking height & speed.\n");
     }
- 
-    for (i=0; i<NRECORDS; i++)  
+
+    for (i=0; i<NRECORDS; i++)
          if ((iident[i] != (char)('a'+i)) || (fabs((double)(itemp[i] - (float32)3.33*(float32)(i+1))) > EPS) ||
             (ispeed[i] != 2*i) || (fabs((double)(iheight[i] - (float32)4.44*(float32)(i+1))) > EPS))  {
             num_errs++;
@@ -291,7 +291,7 @@ funpack(void)
          printf(">>> VSfpack failed in unpacking 1st subset.\n");
     }
     for (i=0; i<NRECORDS; i++)
-         if ((iident[i] != 'A'+i) || (ispeed[i] != i) || 
+         if ((iident[i] != 'A'+i) || (ispeed[i] != i) ||
               (fabs((double)(iheight[i] - (float32)2.22*(float32)(i+1))) > EPS))  {
             num_errs++;
             printf(">>> Wrong subset data1 after VSfpack.\n");
@@ -310,12 +310,12 @@ funpack(void)
          printf(">>> VSfpack failed in unpacking 2nd subset\n");
     }
     for (i=0; i<NRECORDS; i++)
-         if ((iident[i] != (char)('a'+i)) || (ispeed[i] != 2*i) || 
+         if ((iident[i] != (char)('a'+i)) || (ispeed[i] != 2*i) ||
               (fabs((double)(iheight[i] - (float32)4.44*(float32)(i+1))) > EPS)) {
             num_errs++;
             printf(">>> Wrong subset data2 after VSfpack.\n");
         }
- 
+
     VSdetach(vdata_id);
     Vend(file_id);
     Hclose(file_id);
@@ -326,10 +326,10 @@ funpack(void)
 void
 test_vspack(void)
 {
-     
+
     if (fpack() == FAIL)
         return;
 
     if  (funpack() == FAIL)
         return;
-}  /* test_vspack */ 
+}  /* test_vspack */

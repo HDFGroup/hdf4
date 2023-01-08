@@ -3,8 +3,8 @@
  *   See netcdf/COPYRIGHT file for copying and redistribution conditions.
  *********************************************************************/
 
-/* 
- * utility functions to update in-memory netcdf by adding new 
+/*
+ * utility functions to update in-memory netcdf by adding new
  * dimensions, variables, and attributes.
  */
 #include <stdio.h>

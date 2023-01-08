@@ -63,12 +63,12 @@ nhisystem(_fcd cmd, intf *cmdlen)
 /*-----------------------------------------------------------------------------
  * Name:    fixname
  * Purpose: Fix name for srcdir build and test
- * Inputs:  IN: name - original namea 
+ * Inputs:  IN: name - original namea
  *          IN: name_len - name length
  *          IN/OUT: name_out - buffer to hold modified name
  *          IN/OUT: name_out_len - length of the buffer, and length of modified
- *                  string. 
- * Returns: 0 on success and -1 on failure  
+ *                  string.
+ * Returns: 0 on success and -1 on failure
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
 
@@ -93,7 +93,7 @@ nfixnamec(_fcd name, intf *name_len, _fcd name_out, intf *name_len_out)
     strcat(testfile, c_name);
     *name_len_out = (intf) strlen(testfile);
     HDpackFstring(testfile, _fcdtocp(name_out), *name_len_out);
- 
+
     ret = 0;
     HDfree(c_name);
     return (ret);

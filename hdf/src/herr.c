@@ -138,11 +138,11 @@ USAGE
 RETURNS
    NONE
 DESCRIPTION
-   push a new error onto stack.  If stack is full, error 
-   is ignored.  assumes that the character strings 
-   (function_name and file_name) referred are in some 
-   semi-permanent storage, so it just saves the pointer 
-   to the strings.  blank out the description field so 
+   push a new error onto stack.  If stack is full, error
+   is ignored.  assumes that the character strings
+   (function_name and file_name) referred are in some
+   semi-permanent storage, so it just saves the pointer
+   to the strings.  blank out the description field so
    that a description is reported  only if REreport is called
 
 ---------------------------------------------------------------------------*/

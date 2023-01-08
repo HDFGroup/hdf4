@@ -15,11 +15,11 @@
 /*-----------------------------------------------------------------------------
  * File:    bitvect.h
  * Purpose: header file for bit-vector API
- * Dependencies: 
+ * Dependencies:
  * Invokes:
  * Contents:
- * Structure definitions: 
- * Constant definitions: 
+ * Structure definitions:
+ * Constant definitions:
  *---------------------------------------------------------------------------*/
 
 /* avoid re-inclusion */

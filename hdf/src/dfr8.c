@@ -201,7 +201,7 @@ DFR8setcompress(int32 type, comp_info * cinfo)
   CompInfo = (*cinfo);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -262,7 +262,7 @@ DFR8getdims(const char *filename, int32 *pxdim, int32 *pydim, intn *pispal)
     *pispal = Readrig.lut.tag ? 1 : 0;  /* is there a palette */
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -372,7 +372,7 @@ DFR8getimage(const char *filename, uint8 *image, int32 xdim, int32 ydim, uint8 *
     HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
         if(file_id!=(-1))
             Hclose(file_id);
@@ -438,7 +438,7 @@ DFR8setpalette(uint8 *pal)
     }     /* end else */
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -617,7 +617,7 @@ DFR8Iputimage(const char *filename, const void * image, int32 xdim, int32 ydim,
   ret_value = Hclose(file_id);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
       if(file_id!=(-1))
           Hclose(file_id);
@@ -666,7 +666,7 @@ DFR8putimage(const char *filename, const void * image, int32 xdim, int32 ydim,
   ret_value = (DFR8Iputimage(filename, image, xdim, ydim, compress, 0));
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -714,7 +714,7 @@ DFR8addimage(const char *filename, const void * image, int32 xdim, int32 ydim,
   ret_value = (DFR8Iputimage(filename, image, xdim, ydim, compress, 1));
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -838,7 +838,7 @@ DFR8getrig(int32 file_id, uint16 ref, DFRrig * rig)
     }     /* end while */
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -951,7 +951,7 @@ DFR8putrig(int32 file_id, uint16 ref, DFRrig * rig, intn wdim)
     HGOTO_ERROR(DFE_GROUPWRITE, FAIL);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1127,7 +1127,7 @@ DFR8nimages(const char *filename)
   ret_value = nimages;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1183,7 +1183,7 @@ DFR8readref(const char *filename, uint16 ref)
   ret_value = Hclose(file_id);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
       if(file_id!=(-1))
           Hclose(file_id);
@@ -1229,7 +1229,7 @@ DFR8writeref(const char *filename, uint16 ref)
   Writeref = ref;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1268,7 +1268,7 @@ DFR8restart(void)
   Lastfile[0] = '\0';
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1321,7 +1321,7 @@ done:
  * NAME
  *   DFR8getpalref - get the reference number of the palette
  * DESCRIPTION
- *   Convience function to get reference number of the palette of 
+ *   Convience function to get reference number of the palette of
  *   last image. Must come after DFR8getdims() since it relies on
  *   this call to fill the Readrig structure
  * RETURNS
@@ -1343,7 +1343,7 @@ DFR8getpalref(uint16 *pal_ref)
   *pal_ref = Readrig.lut.ref; /* ref of palette */
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1409,7 +1409,7 @@ DFR8Iopen(const char *filename, intn acc_mode)
   ret_value = file_id;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1602,7 +1602,7 @@ DFR8Iriginfo(int32 file_id)
   Lastref = Readrig.image.ref;    /* remember ref read */
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1641,7 +1641,7 @@ PRIVATE intn DFR8Istart(void)
       HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */

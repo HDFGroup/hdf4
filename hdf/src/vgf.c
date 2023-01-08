@@ -16,13 +16,13 @@
   FUNCTION NAMEING CONVENTION:(For the most part true)
   ---------------------------------------------------
   This file contains the HDF-style C stubs for the Vxxx interfaces i.e.
-  both Vgroups and Vdatas. They call the corresponding C-functions for 
+  both Vgroups and Vdatas. They call the corresponding C-functions for
   the Vxxx interfaces.
 
   The basic routines called by fortran will be of the form vfxxx.
 
   If only a C stub is needed it will be named nvfxxx and have the FNAME()
-  function applied to it. There are a few exceptions where C stub is 
+  function applied to it. There are a few exceptions where C stub is
   named for example ndfixxx or ndfxxx, oh well.
 
   If a Fortran stub is also required the fortran stub will be called
@@ -472,7 +472,7 @@ nvsinqc(intf * vkey, intf * nelt, intf * interlace, _fcd fields, intf * eltsize,
         HDfree(tfields);
         HRETURN_ERROR(DFE_NOSPACE, FAIL)
     }
-    
+
     /* the following contains error for nelt, interlace and eltsize */
     /* if int32 and intf are different in size. */
     status = VSinquire(*vkey, &tnelt, &til, tfields, &teltsz, tvsname);
@@ -710,7 +710,7 @@ FRETVAL(intf)
 nvffnamec(intf * vkey, intf * index, _fcd fname, intf *len)
 {
     char *fieldname = NULL;
-    
+
     if((fieldname=VFfieldname((int32)*vkey,(int32)*index))!=NULL)
       {
        /* HDstrcpy(_fcdtocp(fname),fieldname);*/
@@ -783,7 +783,7 @@ nvsfrdc(intf * vkey, _fcd cbuf, intf * nelt, intf * interlace)
 }
 /* ------------------------------------------------------------------ */
 /*
-   **  reads records from a vdata into integer buffer 
+   **  reads records from a vdata into integer buffer
    **  related: VSread--vsfrd
  */
 
@@ -814,7 +814,7 @@ nvsreadc(intf * vkey, uint8 *buf, intf * nelt, intf * interlace)
 FRETVAL(intf)
 nvsfwrtc(intf * vkey, _fcd cbuf, intf * nelt, intf * interlace)
 {
-    return ((intf) VSwrite(*vkey, (uint8 *) _fcdtocp(cbuf), *nelt, 
+    return ((intf) VSwrite(*vkey, (uint8 *) _fcdtocp(cbuf), *nelt,
             *interlace));
 }
 
@@ -832,7 +832,7 @@ nvsfwrt(intf * vkey, intf *buf, intf * nelt, intf * interlace)
 
 /* ------------------------------------------------------------------ */
 /*
-   **  writes to a vdata 
+   **  writes to a vdata
    **  related: VSwrite--vswritc--VSFWRIT
  */
 
@@ -1081,7 +1081,7 @@ nvhsdmc(intf * f, _fcd field, uint8 *buf, intf * n, intf * datatype,
         return(FAIL);
     }
 
-    ret_val = (intf) VHstoredatam(*f, fld, buf, *n, *datatype, name, 
+    ret_val = (intf) VHstoredatam(*f, fld, buf, *n, *datatype, name,
                         tclass, *order);
     HDfree(fld);
     HDfree(name);
@@ -1336,12 +1336,12 @@ nvsqnamec(intf * vkey, _fcd name, intf *namelen)
 FRETVAL(intf)
 nvsfccpk(intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz,
         intf *nrecs, _fcd pckfld, _fcd fldbuf, intf *buflds_len, intf *fld_len)
-{      
+{
     char  *flds_in_buf;
     char  *afield;
     intf ret;
     VOIDP fldbufpt[1];
-  
+
     flds_in_buf=HDf2cstring(buflds, (intn) *buflds_len);
     if (!flds_in_buf){
 	return(FAIL);
@@ -1360,7 +1360,7 @@ nvsfccpk(intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz,
         afield = NULL;
     }
     fldbufpt[0] = _fcdtocp(fldbuf);
-    ret = VSfpack((int32)*vs, (intn)*packtype, flds_in_buf, (VOIDP)buf, 
+    ret = VSfpack((int32)*vs, (intn)*packtype, flds_in_buf, (VOIDP)buf,
          (intn)*bufsz, (intn)*nrecs, afield, fldbufpt);
 
     if (flds_in_buf) HDfree(flds_in_buf);
@@ -1373,12 +1373,12 @@ nvsfccpk(intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz,
 FRETVAL(intf)
 nvsfncpk(intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz,
         intf *nrecs, _fcd pckfld, intf *fldbuf, intf *buflds_len, intf *fld_len)
-{     
+{
     char  *flds_in_buf;
     char  *afield;
     intf ret;
     VOIDP fldbufpt[1];
-  
+
     flds_in_buf=HDf2cstring(buflds, (intn) *buflds_len);
     if (!flds_in_buf){
 	return(FAIL);
@@ -1397,7 +1397,7 @@ nvsfncpk(intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz,
         afield = NULL;
     }
     fldbufpt[0] = fldbuf;
-    ret = VSfpack((int32)*vs, (intn)*packtype, flds_in_buf, (VOIDP)buf, 
+    ret = VSfpack((int32)*vs, (intn)*packtype, flds_in_buf, (VOIDP)buf,
                   (intn)*bufsz, (intn)*nrecs, afield, fldbufpt);
 
     if (flds_in_buf) HDfree(flds_in_buf);
@@ -1407,8 +1407,8 @@ nvsfncpk(intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz,
 
 /*
    **  C-stub for deleting a tag/ref pair in a vgroup.
-   **  related: called by vfdtr() and calls Vdeletetagref(), 
-   **  
+   **  related: called by vfdtr() and calls Vdeletetagref(),
+   **
  */
 
 FRETVAL(intf)
@@ -1418,13 +1418,13 @@ nvdtrc(intf * vkey, intf * tag, intf * ref)
 }
 
 /*------------------------------------------------------------------------
- *       Name:      vscfcls 
- *       Purpose:   calls VSfindclass 
+ *       Name:      vscfcls
+ *       Purpose:   calls VSfindclass
  *       Inputs:    id    -  file ID
- *                  name  -  class of vdata to find  
+ *                  name  -  class of vdata to find
  *       Returns:   returns 0 if not found, or error. Otherwise, returns
  *                  the vdata's ref number (a positive integer)
- *       Related functions: vffcls, VSfindclass 
+ *       Related functions: vffcls, VSfindclass
  *       Users:     HDF Fortran programmers
  ---------------------------------------------------------------------*/
      FRETVAL (intf)
@@ -1449,7 +1449,7 @@ nvdtrc(intf * vkey, intf * tag, intf * ref)
        ret = VSfindclass( fi_id, class_name);
        HDfree(class_name);
        return(ret);
-} 
+}
 /*------------------------------------------------------------------------
  *       Name:      vscsetblsz
  *       Purpose:   calls VSsetblocksize
@@ -1469,12 +1469,12 @@ nvdtrc(intf * vkey, intf * tag, intf * ref)
 
 {
        intf  ret = -1;
-       intn c_ret;	
+       intn c_ret;
 
        c_ret = VSsetblocksize( *id, *block_size);
        if(c_ret == 0) ret = 0;
        return(ret);
-} 
+}
 /*------------------------------------------------------------------------
  *       Name:      vscsetnmbl
  *       Purpose:   calls VSsetnumblocks
@@ -1499,7 +1499,7 @@ nvdtrc(intf * vkey, intf * tag, intf * ref)
        c_ret = VSsetnumblocks( *id, *num_blocks);
        if(c_ret == 0) ret = 0;
        return(ret);
-} 
+}
 /*------------------------------------------------------------------------
  *       Name:      vscgblinfo
  *       Purpose:   calls VSgetblockinfo
@@ -1515,7 +1515,7 @@ nvdtrc(intf * vkey, intf * tag, intf * ref)
 #else
        nvscgblinfo (id, block_size, num_blocks)
                intf   *id;
-               intf   *block_size; 
+               intf   *block_size;
                intf   *num_blocks;
 #endif /* PROTOTYPE */
 
@@ -1532,14 +1532,14 @@ nvdtrc(intf * vkey, intf * tag, intf * ref)
        	      	ret = 0;
        }
        return(ret);
-} 
+}
 /*------------------------------------------------------------------------
  *       Name:      vcgvgrp
  *       Purpose:   calls Vgetvgroups
  *       Inputs:    id       - vdata identifier
  *                  start_vg - size of the block
  *                  vg_count - number of blocks
- *       Outputs:   refarray - Array to hold reference numbers 
+ *       Outputs:   refarray - Array to hold reference numbers
  *                             of retrieved vgroups
  *       Returns:   0 if succeeds, -1 if fails
  *       Users:     HDF Fortran programmers
@@ -1550,7 +1550,7 @@ nvdtrc(intf * vkey, intf * tag, intf * ref)
 #else
        nvcgvgrp(id, start_vg, vg_count, refarray)
                intf   *id;
-               intf   *start_vg; 
+               intf   *start_vg;
                intf   *vg_count;
 	       intf   *refarray;
 #endif /* PROTOTYPE */
@@ -1570,21 +1570,21 @@ nvdtrc(intf * vkey, intf * tag, intf * ref)
 	 /* copy C refarray to the fortran refarray, converting uint16 to intf type */
 	 for (ii = 0; ii < (uintn)*vg_count; ii++)
 	   refarray[ii] = (intf)c_refarray[ii];
-	 
+
 	 if (c_refarray != NULL)
 	   HDfree(c_refarray);
        }
        return(ret);
-} 
+}
 /*------------------------------------------------------------------------
  *       Name:      vscgvdatas
  *       Purpose:   calls  VSgetvdatas
- *       Inputs:    id       - File identifier returned by Hopen or vgroup 
+ *       Inputs:    id       - File identifier returned by Hopen or vgroup
  *                             identifier returned by Vattach
  *                  start_vd - Vdata number to start retrieving at
  *                  vd_count - Number of vdatas to be retrieved
- *       Outputs:   refarray - Array to hold reference numbers of 
- *                             retrieved vdatas 
+ *       Outputs:   refarray - Array to hold reference numbers of
+ *                             retrieved vdatas
  *       Returns:   0 if succeeds, -1 if fails
  *       Users:     HDF Fortran programmers
  ---------------------------------------------------------------------*/
@@ -1594,7 +1594,7 @@ nvdtrc(intf * vkey, intf * tag, intf * ref)
 #else
        nvscgvdatas(id, start_vd, vd_count, refarray)
                intf   *id;
-               intf   *start_vd; 
+               intf   *start_vd;
                intf   *vd_count;
 	       intf   *refarray;
 #endif /* PROTOTYPE */
@@ -1613,10 +1613,10 @@ nvdtrc(intf * vkey, intf * tag, intf * ref)
          /* copy C refarray to the fortran refarray, converting uint16 to intf type */
 	 for (ii = 0; ii < (uintn)*vd_count; ii++)
 	   refarray[ii] = (intf)c_refarray[ii];
-	 
+
 	 if (c_refarray != NULL)
 	   HDfree(c_refarray);
        }
 
        return(ret);
-} 
+}

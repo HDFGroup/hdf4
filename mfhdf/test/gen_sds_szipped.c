@@ -12,13 +12,13 @@
 
 /****************************************************************************
  * This program generates the data file "sds_szipped.dat" which contains
- * some szipped compressed SDSs. (currently only one dataset but more can be 
+ * some szipped compressed SDSs. (currently only one dataset but more can be
  * added for future tests.)  This data file is used by the following test
  * files:
  *	tcomp.c: to test getting compression information with only decoder
  *	tdatasizes.c: to test getting compressed data size with only decoder
  *
- * This program must be compiled with an h4cc version that was built with 
+ * This program must be compiled with an h4cc version that was built with
  * szip encoder enabled. (2008-10-09 - BMR)
  *
 ****************************************************************************/
@@ -106,7 +106,7 @@ intn main()
     c_info.szip.options_mask |= SZ_RAW_OPTION_MASK;
     c_info.szip.bits_per_pixel = 64;
 
-    status = SDsetcompress (sds_id, comp_type, &c_info); 
+    status = SDsetcompress (sds_id, comp_type, &c_info);
     CHECK(status, FAIL, "SDsetcompress");
 
     /* Write the stored data to the 3rd data set. */

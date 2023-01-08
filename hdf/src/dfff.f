@@ -11,13 +11,13 @@ C* If you do not have access to either file, you may request a copy from     *
 C* help@hdfgroup.org.                                                        *
 C* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 C
-C $Id$ 
+C $Id$
 C
 C------------------------------------------------------------------------------
 C File:     dfFf.f
 C Purpose:  Fortran stubs for Fortran low level i/o routines
 C Invokes:  dfF.c dfkit.c
-C Contents: 
+C Contents:
 C   dfopen:     call dfiopen to open HDF file
 C   dfishdf:    call dfiishdf to find is file is HDF
 C -----------------------------------------------------------------------------

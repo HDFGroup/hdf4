@@ -43,7 +43,7 @@ int  copy_sds(int32 sd_in,
 
 int copy_sds_attrs(int32 sds_id,
                    int32 sds_out,
-                   int32 nattrs,          
+                   int32 nattrs,
                    options_t *options);
 
 

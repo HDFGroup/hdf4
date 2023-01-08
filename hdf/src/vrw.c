@@ -58,7 +58,7 @@ PRIVATE uint8 *Vtbuf = NULL;
     Returns SUCCEED/FAIL
 
 *******************************************************************************/
-intn 
+intn
 VSPshutdown(void)
 {
   intn  ret_value = SUCCEED;
@@ -134,7 +134,7 @@ VSseek(int32 vkey,   /* IN: vdata key */
     ret_value = (eltpos);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -156,7 +156,7 @@ RETURNS
    RETURNS the number of elements read (0 or a +ve integer).
 
 *******************************************************************************/
-int32 
+int32
 VSread(int32 vkey,       /* IN: vdata key */
        uint8 buf[],      /* IN/OUT: space to put elements in */
        int32 nelt,       /* IN: number of elements to read */
@@ -345,7 +345,7 @@ VSread(int32 vkey,       /* IN: vdata key */
             } /* end while */
           }     /* case (C + E) */
     else {
-	  /* 
+	  /*
 	   * Handle the other cases now.
 	   * These cases are less frequent so don't bother unrolling
 	   *   the loops for now.  As a result, we may get into memory
@@ -454,7 +454,7 @@ VSread(int32 vkey,       /* IN: vdata key */
     ret_value = (nelt);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -480,7 +480,7 @@ RETURNS
    RETURNS the number of elements written (0 or a +ve integer).
 
 *******************************************************************************/
-int32 
+int32
 VSwrite(int32 vkey,         /* IN: vdata key */
         const uint8 buf[],  /* IN: elements to write to vdata */
         int32 nelt,         /* IN: number of elements */
@@ -678,7 +678,7 @@ VSwrite(int32 vkey,         /* IN: vdata key */
     else
       {
 
-	  /* 
+	  /*
 	   * Handle the other cases now.
 	   * These cases are less frequent so don't bother unrolling
 	   *   the loops for now.  As a result, we may get into memory
@@ -780,7 +780,7 @@ VSwrite(int32 vkey,         /* IN: vdata key */
     ret_value = (nelt);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */

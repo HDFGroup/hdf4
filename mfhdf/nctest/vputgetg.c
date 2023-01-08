@@ -26,17 +26,17 @@
 
 #define max(A, B)	((A) > (B) ? (A) : (B))
 
-/* 
- * For every variable in open netcdf, puts and gets three hypercubes 
- * of data of the appropriate type, comparing values from get to 
- * values put to check that both ncvarputg and ncvargetg worked.  The 
+/*
+ * For every variable in open netcdf, puts and gets three hypercubes
+ * of data of the appropriate type, comparing values from get to
+ * values put to check that both ncvarputg and ncvargetg worked.  The
  * three hypercubes are
- *    - a large hypercube from (0, 0, ...) to the far corner (diagonally 
+ *    - a large hypercube from (0, 0, ...) to the far corner (diagonally
  *      opposite (0, 0, ...),
- *    - a size 1 hypercube from the far corner with edge lengths of 1 
+ *    - a size 1 hypercube from the far corner with edge lengths of 1
  *      in every direction, and
  *    - a hypercube starting about 1/3 of the way along the diagonal
- *      from (0,0,...) extending 1/3 of the way in every direction 
+ *      from (0,0,...) extending 1/3 of the way in every direction
  *      toward the far corner.
  */
 
@@ -55,7 +55,7 @@ test_varputgetg(cdfid)
     } hc[3], tmp;		/* test hypercubes */
     long nel[3];		/* number of elements in hypercube */
     long strides[H4_MAX_VAR_DIMS];	/* external strides */
-    long basis[H4_MAX_VAR_DIMS];	/* internal array, element-access 
+    long basis[H4_MAX_VAR_DIMS];	/* internal array, element-access
 				   basis vector */
 
     for (iv = 0; iv < test.nvars; iv++)	{ /* for each var in netcdf */
@@ -105,7 +105,7 @@ test_varputgetg(cdfid)
 	    val_fill(test.vars[iv].type, nel[ie], hc[ie].vals);
 
 	    /*
-	     * Set internal-array element-access basis vector to be negative 
+	     * Set internal-array element-access basis vector to be negative
 	     * of natural storage so as to access the elements of the array
 	     * backwards.
 	     */
@@ -115,8 +115,8 @@ test_varputgetg(cdfid)
 		tmpbasis	*= hc[ie].edg[id];
 	    }
 
-	    if(ncvarputg (cdfid, iv, hc[ie].cor, hc[ie].edg, 
-			  strides, basis, 
+	    if(ncvarputg (cdfid, iv, hc[ie].cor, hc[ie].edg,
+			  strides, basis,
 			  (char*)hc[ie].vals+(nel[ie]-1)*
 			      nctypelen(test.vars[iv].type))
 	       == -1) {
@@ -151,7 +151,7 @@ test_varputgetg(cdfid)
 		    dsize[id]	= EXTNPTS(iv, id);
 		add_data(&test, iv, hc[ie].cor, dsize);
 						    /* keep test in sync */
-		if(ncvargetg (cdfid, iv, hc[ie].cor, hc[ie].edg, 
+		if(ncvargetg (cdfid, iv, hc[ie].cor, hc[ie].edg,
 			      strides, basis,
 			      (char*)tmp.vals+(nel[ie]-1)*
 				  nctypelen(test.vars[iv].type))

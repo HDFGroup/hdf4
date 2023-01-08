@@ -88,12 +88,12 @@ int  numused;
 * maWORDain our location in the Raster array as a BIT Offset.  We compute
 * the BYTE Offset WORDo the raster array by dividing this by 8, pick up
 * three BYTEs, compute the bit Offset WORDo our 24-bit chunk, shift to
-* bring the desired code to the bottom, then mask it off and return it. 
+* bring the desired code to the bottom, then mask it off and return it.
 */
 int ReadCode(void)
 {
 	int RawCode, ByteOffset;
-	
+
     ByteOffset = BitOffset / 8;
     RawCode = Raster[ByteOffset] + (0x100 * Raster[ByteOffset + 1]);
     if (CodeSize >= 8)
@@ -109,18 +109,18 @@ BYTE Index;
 {
     if (YC<IHeight)
         *(Image + YC * BytesPerScanline + XC) = Index;
-	
 
-    
+
+
     /* Update the X-coordinate, and if it overflows, update the Y-coordinate */
     if (++XC == IWidth) {
-		
-	/* If a non-WORDerlaced picture, just increment YC to the next scan line. 
+
+	/* If a non-WORDerlaced picture, just increment YC to the next scan line.
 	* If it's WORDerlaced, deal with the WORDerlace as described in the GIF
 	* spec.  Put the decoded scan line out to the screen if we haven't gone
 	* past the bottom of it.
 		*/
-		
+
 		XC = 0;
 		if (!Interlace) YC++;
 		else {
@@ -139,7 +139,7 @@ BYTE Index;
 					YC = 2;
 				}
 				break;
-				
+
 			case 2:
 				YC += 4;
 				if (YC >= IHeight) {
@@ -165,78 +165,78 @@ GIFHEAD      *GifHead;
 {
 	int i;
 
-	XC = 0; 
+	XC = 0;
 	YC = 0;
 	Pass = 0;
 	OutCount = 0;
 	BitOffset = 0;
-	
+
 	DataMask = (WORD)((1L << ((GifHead->PackedField & 0x07) +1)) -1);
 	Raster = GifImageDesc->GIFImage;
-	
-	
+
+
 	/* Check for image seperator */
-	
+
 	/* Now read in values from the image descriptor */
 	IWidth = GifImageDesc->ImageWidth;
 	IHeight = GifImageDesc->ImageHeight;
 	Interlace = GifImageDesc->PackedField & 0x20;
-	
+
 	/* Note that I ignore the possible existence of a local color map.
 	* I'm told there aren't many files around that use them, and the spec
 	* says it's defined for future use.  This could lead to an error
-	* reading some files. 
+	* reading some files.
 	*/
-	
+
 	/* Start reading the raster data. First we get the WORDial code size
 	* and compute decompressor constant values, based on this code size.
 	*/
-	
+
 	CodeSize = GifImageDesc->CodeSize;
 	ClearCode = (1 << CodeSize);
 	EOFCode = ClearCode + 1;
 	FreeCode = FirstFree = ClearCode + 2;
-	
+
 	/* The GIF spec has it that the code size is the code size used to
 	* compute the above values is the code size given in the file, but the
 	* code size used in compression/decompression is the code size given in
 	* the file plus one. (thus the ++).
 	*/
-	
+
 	CodeSize++;
 	InitCodeSize = CodeSize;
 	MaxCode = (1 << CodeSize);
 	ReadMask = MaxCode - 1;
-	
+
 	/* Read the raster data.  Here we just transpose it from the GIF array
 	* to the Raster array, turning it from a series of blocks WORDo one long
 	* data stream, which makes life much easier for ReadCode().
 	*/
-	
-	
-	
+
+
+
 	/*    free(RawGIF);		 We're not done just yet - change made */
-	
+
 	/* Allocate the Image */
-	
+
 	if (!(Image = (BYTE *)malloc(IWidth*IHeight))) {
 		printf("Out of memory");
 		exit(-1);
 	}
-	
+
 	BytesPerScanline = IWidth;
-	
+
 	/* Decompress the file, continuing until you see the GIF EOF code.
 	* One obvious enhancement is to add checking for corrupt files here.
 	*/
-	
+
 	Code = ReadCode();
 	while (Code != EOFCode) {
-		
+
 	/* Clear code sets everything back to its initial value, then reads the
 	* immediately subsequent code as uncompressed data.
 		*/
-		
+
 		if (Code == ClearCode) {
 			CodeSize = InitCodeSize;
 			MaxCode = (1 << CodeSize);
@@ -247,57 +247,57 @@ GIFHEAD      *GifHead;
 			AddToPixel(FinChar);
 		}
 		else {
-			
+
 			/* If not a clear code, then must be data: save same as CurCode and InCode */
-			
+
 			CurCode = InCode = Code;
-			
+
 			/* If greater or equal to FreeCode, not in the hash table yet;
 			* repeat the last character decoded
 			*/
-			
+
 			if (CurCode >= FreeCode) {
 				CurCode = OldCode;
 				OutCode[OutCount++] = FinChar;
 			}
-			
+
 			/* Unless this code is raw data, pursue the chain poWORDed to by CurCode
 			* through the hash table to its end; each code in the chain puts its
 			* associated output code on the output queue.
 			*/
-			
+
 			while (CurCode > DataMask) {
 				if (OutCount > 1024) {
-					/*return error message*/	
+					/*return error message*/
 				}
 				OutCode[OutCount++] = Suffix[CurCode];
 				CurCode = Prefix[CurCode];
 			}
-			
+
 			/* The last code in the chain is treated as raw data. */
-			
+
 			FinChar = CurCode & DataMask;
 			OutCode[OutCount++] = FinChar;
-			
+
 			/* Now we put the data out to the Output routine.
 			* It's been stacked LIFO, so deal with it that way...
 			*/
-			
+
 			for (i = OutCount - 1; i >= 0; i--)
 				AddToPixel(OutCode[i]);
 			OutCount = 0;
-			
+
 			/* Build the hash table on-the-fly. No table is stored in the file. */
-			
+
 			Prefix[FreeCode] = OldCode;
 			Suffix[FreeCode] = FinChar;
 			OldCode = InCode;
-			
+
 			/* PoWORD to the next slot in the table.  If we exceed the current
 			* MaxCode value, increment the code size unless it's already 12.  If it
 			* is, do nothing: the next code decompressed better be CLEAR
 			*/
-			
+
 			FreeCode++;
 			if (FreeCode >= MaxCode) {
 				if (CodeSize < 12) {
@@ -310,7 +310,7 @@ GIFHEAD      *GifHead;
 		Code = ReadCode();
 	}
 
-	return Image;	
+	return Image;
 }
 
 

@@ -156,7 +156,7 @@ C     create a new file
          print *, 'Write data returned', stat
          err = err + 1
       endif
-      
+
       fval = -14.25
       stat = sfsfill(sds2, fval)
       if(stat.ne.0) then
@@ -180,7 +180,7 @@ C     create a new file
          err = err + 1
          print *, 'was expecting 5 got', ivals(1)
       endif
-      
+
       if(err.ne.0) print *, 'Before ReadVerify err = ', err
       if (ivals(2).ne.6)  then
         err = err + 1
@@ -341,7 +341,7 @@ C
           err = err + 1
       endif
       index_empty = sfn2index(fid_empty,'Empty_SDS')
- 
+
       sds_empty= sfselect(fid_empty, index_empty)
       if(sds_empty.eq. -1) then
          print *, 'Select returned', sds_empty
@@ -351,7 +351,7 @@ C
       if(stat.ne. 0 .or. flag_empty. ne. 1) then
         print*, 'sfchempty returned wrong flag, should be 1)'
         err = err +1
-      endif 
+      endif
 
       stat = sfendacc(sds_empty)
       if(stat.ne.0) then
@@ -369,7 +369,7 @@ C
           print *, 'Reopen returned', fid2
           err = err + 1
       endif
- 
+
       sds3 = sfselect(fid2, 0)
       if(sds3.eq. -1) then
          print *, 'Select returned', sds3
@@ -470,14 +470,14 @@ C
          print *, 'Attr info returned', stat
          err = err + 1
       endif
-      
+
       if(nt.ne.4) err = err + 1
       if(rank.ne.12) err = err + 1
       print *, 'name = ',   name
 
       cal   = 0
       cale  = 0
-      ioff  = 0 
+      ioff  = 0
       ioffe = 0
       nt    = 0
       stat = sfgcal(sds4, cal, cale, ioff, ioffe, nt)
@@ -514,7 +514,7 @@ C
          print *, 'Get data strs returned', stat
          err = err + 1
       endif
-      
+
       print *, 'label    = ', l
       print *, 'unit     = ', u
       print *, 'format   = ', f
@@ -525,7 +525,7 @@ C
          print *, 'Get dim strs returned', stat
          err = err + 1
       endif
-      
+
       print *, 'label    = ', l
       print *, 'unit     = ', u
       print *, 'format   = ', f
@@ -635,7 +635,7 @@ C
          err = err + 1
       endif
 
-C     test sfsdmvc and sfisdmvc -- dimval backward compatible 
+C     test sfsdmvc and sfisdmvc -- dimval backward compatible
       fid1 = sfstart('test2.hdf', 4)
       if(fid1 .lt. 1) then
          print *, 'sfstart returned', fid1
@@ -806,7 +806,7 @@ C     read back dimval_non_compat
       dim1=sfdimid(sds2,0)
       stat = sfgdinfo(dim1, name, dims(1), nt, nattr)
       if ((dims(1) .ne. 6) .or. (nt .ne. DFNT_INT32 ))  then
-         print *, '3rd sfgdinfo error', stat, dims(1), nt 
+         print *, '3rd sfgdinfo error', stat, dims(1), nt
          err = err + 1
       endif
       stat = sfisdmvc(dim1)
@@ -923,7 +923,7 @@ C read back
 C read char data and char fill
       stat = sfrcdata(sds2, start, stride, end, icdata)
       do 200 i=1,6
-         if (icdata(i,1) .ne. cfill) then 
+         if (icdata(i,1) .ne. cfill) then
           print *, 'error in read c_fill'
           err = err + 1
          endif
@@ -942,7 +942,7 @@ C read char fillvalue
          print *, 'sfgcfill returned', sds2
          err = err + 1
       endif
- 
+
 C read char attr
       stat = sffattr(sds2, 'CharAttr')
       if (stat .eq. -1) then
@@ -1042,7 +1042,7 @@ C then set to SD_FILL and write the 5th rec.
       endif
       stat = sfendacc(sds1)
       stat = sfend(fid1)
-C open again, change fillmode and write the 5th rec 
+C open again, change fillmode and write the 5th rec
       fid1 = sfstart('test1.hdf', 3)
       i = sfn2index(fid1, 'FIXED_SDS')
       sds1 = sfselect(fid1, i)
@@ -1050,7 +1050,7 @@ C open again, change fillmode and write the 5th rec
       start(2) = 4
       stat = sfwdata(sds1,start,stride,end,ivals)
       stat = sfendacc(sds1)
-      stat = sfend(fid1) 
+      stat = sfend(fid1)
 C read back FIXED_SDS
       fid1 = sfstart('test1.hdf', 3)
       i = sfn2index(fid1, 'FIXED_SDS')
@@ -1098,7 +1098,7 @@ C read FIXED1
          endif
 520   continue
       stat = sfend(fid1)
-C test unlimited sds 
+C test unlimited sds
       fid1 = sfstart('test1.hdf', 3)
       if (fid1 .eq. -1) then
             print *,'Open test1.hdf failed.'
@@ -1141,7 +1141,7 @@ C open again, write the 5th rec
       stat = sfwdata(sds1,start,stride,end, ivals)
       stat = sfendacc(sds1)
       stat = sfend(fid1)
-C read back 
+C read back
       fid1 = sfstart('test1.hdf', 3)
       i = sfn2index(fid1, 'UNLIMITED_SDS')
       sds1 = sfselect(fid1, i)
@@ -1169,7 +1169,7 @@ C read back
              err = err+1
          endif
 650   continue
-      stat = sfend(fid1) 
+      stat = sfend(fid1)
 C
 C
 C     Call three subroutines:
@@ -1200,7 +1200,7 @@ C
       end
 
 
-         subroutine test_chunk( err_chunk ) 
+         subroutine test_chunk( err_chunk )
          implicit none
 C
 C------- Begin Variables declarations -----------------------------------
@@ -1235,7 +1235,7 @@ C  SDS functions declarations
 C
 C         integer   sfstart, sfcreate, sfendacc, sfend,
 C     .             sfn2index, sfselect, sfgcompress,
-C     .             sfsfill, sfschnk, sfscchnk, sfwchnk, 
+C     .             sfsfill, sfschnk, sfscchnk, sfwchnk,
 C     .             sfgichnk, sfrchnk, sfwdata, sfrdata
          include 'mffunc.inc'
 C
@@ -1343,11 +1343,11 @@ C
 C--------------------End of declarations------------------------------
 C
 C
-C  We will write to five different files corresponding to the 
+C  We will write to five different files corresponding to the
 C  different compression types
 C
 C  NO compression
-C 
+C
          file(1) = 'chunk_no.hdf'
          name(1) = 'Nocomp_data'
          comp_type_out(1) = 0
@@ -1356,25 +1356,25 @@ C  RLE compression
 C
          file(2) = 'chunk_rl.hdf'
          name(2) = 'Rlcomp_data'
-         comp_type_out(2) = 1 
+         comp_type_out(2) = 1
 C
 C  Nbit compression
 C
          file(3) = 'chunk_nb.hdf'
          name(3) = 'Nbcomp_data'
-         comp_type_out(3) = 2 
+         comp_type_out(3) = 2
 C
 C  Addaptive Huffman compression
 C
          file(4) = 'chunk_sk.hdf'
          name(4) = 'Hucomp_data'
-         comp_type_out(4) = 1 
+         comp_type_out(4) = 1
 C
 C  Gzip compression
 C
          file(5) = 'chunk_gz.hdf'
          name(5) = 'Gzcomp_data'
-         comp_type_out(5) = 1 
+         comp_type_out(5) = 1
 C
 C   Dimension sizes array initialization
 C
@@ -1392,11 +1392,11 @@ C
          mod2 = mod (m,mc)
          if (mod1 .eq. 0) n_nc_a = n_nc - 1
          if (mod2 .eq. 0) n_mc_a = n_mc - 1
-C        
+C
 C   Initialize original array
 C
-         
-         do 20 j = 1, m 
+
+         do 20 j = 1, m
             do 10 i = 1, n
                data(i,j) = 10*j + i
 10          continue
@@ -1410,31 +1410,31 @@ C
             do 50 i = 1, n_nc_a
                do 40 l = 1, lb
                   do 30 k = 1, kb
-                   chunk_data(k,l,i,j) = 0. 
-30                continue 
+                   chunk_data(k,l,i,j) = 0.
+30                continue
 40              continue
 50            continue
-60        continue          
+60        continue
 C
 C  Assign actual data to the chunks
 C
          do 100 j = 1, n_mc_a
             do 90 i = 1, n_nc_a
-               if (j .eq. n_mc_a .and. mod2 .ne. 0 ) lb = mod(m, mc)  
+               if (j .eq. n_mc_a .and. mod2 .ne. 0 ) lb = mod(m, mc)
                if (i .eq. n_nc_a .and. mod1 .ne. 0 ) kb = mod(n, nc)
                do 80 l = 1, lb
                   do 70 k = 1, kb
                    chunk_data(k,l,i,j) = data ((i-1)*nc +k, (j-1)*mc +l)
-70                continue 
+70                continue
 80              continue
 90            continue
-100        continue 
+100        continue
 C
 C  Initialize SD interfaces
 C
        do 101 i = 1, N_COMP_TYPES
           sd_id(i) = sfstart (file(i), DFACC_CREATE)
-101    continue          
+101    continue
 C
 C  Main loop through different compression types
 C
@@ -1443,7 +1443,7 @@ C
 C
 C        Create the data set
 C
-         sds_id(i_comp) = sfcreate(sd_id(i_comp), name(i_comp), 
+         sds_id(i_comp) = sfcreate(sd_id(i_comp), name(i_comp),
      .                     DFNT_INT32, RANK, d_dims)
             if( sds_id(i_comp) .eq. -1 ) then
                 print *, 'sfcreate failed for', i_comp, ' -th dataset'
@@ -1484,7 +1484,7 @@ C
              comp_arg(1) = deflate_level
          endif
 C
-C        Create chunked SDS 
+C        Create chunked SDS
 C
          status = sfschnk (sds_id(i_comp), ch_dims, comp_type,
      .                     comp_arg)
@@ -1495,8 +1495,8 @@ C
 C
 C        Set chunk cache to hold maximum of nc chunks
 C
-         maxcache =  n_nc_a 
-         flags = 0 
+         maxcache =  n_nc_a
+         flags = 0
          status = sfscchnk (sds_id(i_comp), maxcache, flags)
             if( status .ne. maxcache ) then
                 print *, 'sfscchnk failed for', i_comp, ' -th dataset'
@@ -1508,9 +1508,9 @@ C
          do 150 j = 1, n_mc_a
             do 140 i = 1, n_nc_a
 
-               start_dims(1) = i 
-               start_dims(2) = j 
-            
+               start_dims(1) = i
+               start_dims(2) = j
+
                do 130 l = 1, mc
                   do 120 k = 1, nc
                      chunk(k,l) = chunk_data(k,l,i,j)
@@ -1530,7 +1530,7 @@ C
                 print *, ' first chunk'
                 err_chunk = err_chunk + 1
             endif
-            else 
+            else
             status = sfwchnk(sds_id(i_comp), start_dims, chunk)
             if( status .ne. 0 ) then
                 print *, 'sfwchnk failed for', i_comp, ' -th dataset'
@@ -1540,7 +1540,7 @@ C
             endif
 140         continue
 150       continue
-         
+
          status = sfendacc(sds_id(i_comp))
             if( status .ne. 0 ) then
                 print *, 'sfendacc failed for', i_comp, ' -th dataset'
@@ -1552,12 +1552,12 @@ C
                 err_chunk = err_chunk + 1
             endif
 
-1000      continue 
+1000      continue
 
 C
-C   Let's check what we have written 
+C   Let's check what we have written
 C   We will skip NBIT until things are clarified with QAK.
-          
+
 C
 C   Open files and restart SD interfaces
 C
@@ -1568,7 +1568,7 @@ C
                 print *, 'sfstart failed for', i, ' -th dataset'
                 err_chunk = err_chunk + 1
             endif
-200      continue 
+200      continue
 
 C
 C  Find written dataset in each file using its name and index
@@ -1644,7 +1644,7 @@ C
 
 C
 C  Get and check chunking and compression information about each dataset
-C 
+C
          do 202 i = 1, N_COMP_TYPES
 C
             status = sfgichnk(sds_id(i),ch_dims_out,c_out)
@@ -1661,7 +1661,7 @@ C
                 print *, 'sfgichnk returned incorrect chunk dimensions'
                 err_chunk = err_chunk + 1
             endif
-202      continue  
+202      continue
 
 C
 C   Read part of the data back using sfrdata function
@@ -1670,8 +1670,8 @@ C
          start(2) = m_start
          edges(1) = n_part
          edges(2) = m_part
-         stride(1) = n_stride 
-         stride(2) = m_stride 
+         stride(1) = n_stride
+         stride(2) = m_stride
          do  205 i = 1, N_COMP_TYPES
 C
 C   Skip NBIT until we know how to read nbit data back
@@ -1692,13 +1692,13 @@ C
                kl = n_start + 1 + (l-1)*n_stride
                kj = m_start + 1 + (j-1)*m_stride
                if (data(kl, kj) .ne. part_data(l,j)) then
-                  print *, 'sfrdata read wrong data for ', 
+                  print *, 'sfrdata read wrong data for ',
      .            i ,'-th dataset'
                err_chunk = err_chunk +1
-               endif 
+               endif
 203         continue
 204      continue
- 
+
 205      continue
 
 
@@ -1712,25 +1712,25 @@ C
 C    Skip NBIT
 C
          if(i_comp. eq. 3) goto 2000
-         comp_type = i_comp - 1 
+         comp_type = i_comp - 1
          do 250 j = 1, n_mc_a
             do 240 i = 1, n_nc_a
 
-               start_dims(1) = i 
-               start_dims(2) = j 
-            
+               start_dims(1) = i
+               start_dims(2) = j
+
             status = sfrchnk(sds_id(i_comp), start_dims, chunk_out)
             if (status .ne. 0) then
                 print *, 'sfrchnk failed for ', i, ',', j,
-     .         '-th chunk, compression type is ', comp_type  
+     .         '-th chunk, compression type is ', comp_type
                 err_chunk = err_chunk + 1
             endif
 C
 C  Compare with actual data
 C
                lb = mc
-               kb = nc 
-               if (j .eq. n_mc_a .and. mod2 .ne. 0 ) lb = mod(m, mc)  
+               kb = nc
+               if (j .eq. n_mc_a .and. mod2 .ne. 0 ) lb = mod(m, mc)
                if (i .eq. n_nc_a .and. mod1 .ne. 0 ) kb = mod(n, nc)
                do 280 l = 1, lb
                   do 270 k = 1, kb
@@ -1739,13 +1739,13 @@ C
                print *, 'Data is incorrest'
                   err_chunk = err_chunk + 1
                endif
-270                continue 
+270                continue
 280              continue
 240            continue
 
 250       continue
-         
-C 
+
+C
 C  Terminate access to SDS, shutdown interfaces and close the files
 C
            status = sfendacc(sds_id(i_comp))
@@ -1763,7 +1763,7 @@ C
          return
          end
 
-         subroutine test_char_chunk( err_char_chunk ) 
+         subroutine test_char_chunk( err_char_chunk )
          implicit none
 C
 C------- Begin Variables declarations -----------------------------------
@@ -1796,7 +1796,7 @@ C  SDS functions declarations
 C
 C         integer   sfstart, sfcreate, sfendacc, sfend,
 C     .             sfn2index, sfselect,
-C     .             sfsfill, sfschnk, sfscchnk, sfwcchnk, 
+C     .             sfsfill, sfschnk, sfscchnk, sfwcchnk,
 C     .             sfgichnk, sfrcchnk, sfwcdata, sfrcdata
          include 'mffunc.inc'
 C
@@ -1904,11 +1904,11 @@ C
 C--------------------End of declarations------------------------------
 C
 C
-C  We will write to five different files corresponding to the 
+C  We will write to five different files corresponding to the
 C  different compression types
 C
 C  NO compression
-C 
+C
          file(1) = 'cchunk_no.hdf'
          name(1) = 'Nocomp_data'
          comp_type_out(1) = 0
@@ -1917,25 +1917,25 @@ C  RLE compression
 C
          file(2) = 'cchunk_rl.hdf'
          name(2) = 'Rlcomp_data'
-         comp_type_out(2) = 1 
+         comp_type_out(2) = 1
 C
 C  Nbit compression
 C
          file(3) = 'cchunk_nb.hdf'
          name(3) = 'Nbcomp_data'
-         comp_type_out(3) = 2 
+         comp_type_out(3) = 2
 C
 C  Addaptive Huffman compression
 C
          file(4) = 'cchunk_sk.hdf'
          name(4) = 'Hucomp_data'
-         comp_type_out(4) = 1 
+         comp_type_out(4) = 1
 C
 C  Gzip compression
 C
          file(5) = 'cchunk_gz.hdf'
          name(5) = 'Gzcomp_data'
-         comp_type_out(5) = 1 
+         comp_type_out(5) = 1
 C
 C   Dimension sizes array initialization
 C
@@ -1953,11 +1953,11 @@ C
          mod2 = mod (m,mc)
          if (mod1 .eq. 0) n_nc_a = n_nc - 1
          if (mod2 .eq. 0) n_mc_a = n_mc - 1
-C        
+C
 C   Initialize original array
 C
-         
-         do 20 j = 1, m 
+
+         do 20 j = 1, m
             do 10 i = 1, n
                data(i,j) = char(10*j + i)
 10          continue
@@ -1971,31 +1971,31 @@ C
             do 50 i = 1, n_nc_a
                do 40 l = 1, lb
                   do 30 k = 1, kb
-                   chunk_data(k,l,i,j) = char(32) 
-30                continue 
+                   chunk_data(k,l,i,j) = char(32)
+30                continue
 40              continue
 50            continue
-60        continue          
+60        continue
 C
 C  Assign actual data to the chunks
 C
          do 100 j = 1, n_mc_a
             do 90 i = 1, n_nc_a
-               if (j .eq. n_mc_a .and. mod2 .ne. 0 ) lb = mod(m, mc)  
+               if (j .eq. n_mc_a .and. mod2 .ne. 0 ) lb = mod(m, mc)
                if (i .eq. n_nc_a .and. mod1 .ne. 0 ) kb = mod(n, nc)
                do 80 l = 1, lb
                   do 70 k = 1, kb
                    chunk_data(k,l,i,j) = data ((i-1)*nc +k, (j-1)*mc +l)
-70                continue 
+70                continue
 80              continue
 90            continue
-100        continue 
+100        continue
 C
 C  Initialize SD interfaces
 C
        do 101 i = 1, N_COMP_TYPES
           sd_id(i) = sfstart (file(i), DFACC_CREATE)
-101    continue          
+101    continue
 C
 C  Main loop through different compression types
 C
@@ -2004,7 +2004,7 @@ C
 C
 C        Create the data set
 C
-         sds_id(i_comp) = sfcreate(sd_id(i_comp), name(i_comp), 
+         sds_id(i_comp) = sfcreate(sd_id(i_comp), name(i_comp),
      .                     DFNT_CHAR, RANK, d_dims)
             if( sds_id(i_comp) .eq. -1 ) then
                 print *, 'sfcreate failed for', i_comp, ' -th dataset'
@@ -2045,7 +2045,7 @@ C
              comp_arg(1) = deflate_level
          endif
 C
-C        Create chunked SDS 
+C        Create chunked SDS
 C
          status = sfschnk (sds_id(i_comp), ch_dims, comp_type,
      .                     comp_arg)
@@ -2056,8 +2056,8 @@ C
 C
 C        Set chunk cache to hold maximum of nc chunks
 C
-         maxcache =  n_nc_a 
-         flags = 0 
+         maxcache =  n_nc_a
+         flags = 0
          status = sfscchnk (sds_id(i_comp), maxcache, flags)
             if( status .ne. maxcache ) then
                 print *, 'sfscchnk failed for', i_comp, ' -th dataset'
@@ -2069,9 +2069,9 @@ C
          do 150 j = 1, n_mc_a
             do 140 i = 1, n_nc_a
 
-               start_dims(1) = i 
-               start_dims(2) = j 
-            
+               start_dims(1) = i
+               start_dims(2) = j
+
                do 130 l = 1, mc
                   do 120 k = 1, nc
                      chunk(k,l) = chunk_data(k,l,i,j)
@@ -2091,7 +2091,7 @@ C
                 print *, ' first chunk'
                 err_char_chunk = err_char_chunk + 1
             endif
-            else 
+            else
             status = sfwcchnk(sds_id(i_comp), start_dims, chunk)
             if( status .ne. 0 ) then
                 print *, 'sfwcchnk failed for', i_comp, ' -th dataset'
@@ -2101,7 +2101,7 @@ C
             endif
 140         continue
 150       continue
-         
+
          status = sfendacc(sds_id(i_comp))
             if( status .ne. 0 ) then
                 print *, 'sfendacc failed for', i_comp, ' -th dataset'
@@ -2113,12 +2113,12 @@ C
                 err_char_chunk = err_char_chunk + 1
             endif
 
-1000      continue 
+1000      continue
 
 C
-C   Let's check what we have written 
+C   Let's check what we have written
 C   We will skip NBIT until things are clarified with QAK.
-          
+
 C
 C   Open files and restart SD interfaces
 C
@@ -2129,7 +2129,7 @@ C
                 print *, 'sfstart failed for', i, ' -th dataset'
                 err_char_chunk = err_char_chunk + 1
             endif
-200      continue 
+200      continue
 
 C
 C  Find written dataset in each file using its name and index
@@ -2151,7 +2151,7 @@ C
 
 C
 C  Get and check chunking and compression information about each dataset
-C 
+C
          do 202 i = 1, N_COMP_TYPES
 C
             status = sfgichnk(sds_id(i),ch_dims_out,c_out)
@@ -2168,7 +2168,7 @@ C
                 print *, 'sfgichnk returned incorrect chunk dimensions'
                 err_char_chunk = err_char_chunk + 1
             endif
-202      continue  
+202      continue
 
 C
 C   Read part of the data back using sfrdata function
@@ -2177,8 +2177,8 @@ C
          start(2) = m_start
          edges(1) = n_part
          edges(2) = m_part
-         stride(1) = n_stride 
-         stride(2) = m_stride 
+         stride(1) = n_stride
+         stride(2) = m_stride
          do  205 i = 1, N_COMP_TYPES
 C
 C   Skip NBIT
@@ -2199,13 +2199,13 @@ C
                kl = n_start + 1 + (l-1)*n_stride
                kj = m_start + 1 + (j-1)*m_stride
                if (data(kl, kj) .ne. part_data(l,j)) then
-                  print *, 'sfrdata read wrong data for ', 
+                  print *, 'sfrdata read wrong data for ',
      .            i ,'-th dataset'
                err_char_chunk = err_char_chunk +1
-               endif 
+               endif
 203         continue
 204      continue
- 
+
 205      continue
 
 
@@ -2217,28 +2217,28 @@ C
       do 2000 i_comp = 1, N_COMP_TYPES
 C
 C   Skip NBIT
-C 
-         if(i_comp .eq. 3) goto 2000 
+C
+         if(i_comp .eq. 3) goto 2000
 
-         comp_type = i_comp - 1 
+         comp_type = i_comp - 1
          do 250 j = 1, n_mc_a
             do 240 i = 1, n_nc_a
 
-               start_dims(1) = i 
-               start_dims(2) = j 
-            
+               start_dims(1) = i
+               start_dims(2) = j
+
             status = sfrcchnk(sds_id(i_comp), start_dims, chunk_out)
             if (status .ne. 0) then
                 print *, 'sfrcchnk failed for ', i, ',', j,
-     .         '-th chunk, compression type is ', comp_type  
+     .         '-th chunk, compression type is ', comp_type
                 err_char_chunk = err_char_chunk + 1
             endif
 C
 C  Compare with actual data
 C
                lb = mc
-               kb = nc 
-               if (j .eq. n_mc_a .and. mod2 .ne. 0 ) lb = mod(m, mc)  
+               kb = nc
+               if (j .eq. n_mc_a .and. mod2 .ne. 0 ) lb = mod(m, mc)
                if (i .eq. n_nc_a .and. mod1 .ne. 0 ) kb = mod(n, nc)
                do 280 l = 1, lb
                   do 270 k = 1, kb
@@ -2247,13 +2247,13 @@ C
                print *, 'Data is incorrest'
                   err_char_chunk = err_char_chunk + 1
                endif
-270                continue 
+270                continue
 280              continue
 240            continue
 
 250       continue
-         
-C 
+
+C
 C  Terminate access to SDS, shutdown interfaces and close the files
 C
            status = sfendacc(sds_id(i_comp))
@@ -2272,7 +2272,7 @@ C
          end
 
 
-         subroutine test_compress( err_compress ) 
+         subroutine test_compress( err_compress )
          implicit none
 C
 C------- Begin Variables declarations -----------------------------------
@@ -2387,11 +2387,11 @@ C
 C--------------------End of declarations------------------------------
 C
 C
-C  We will write to five different files corresponding to the 
+C  We will write to five different files corresponding to the
 C  different compression types
 C
 C  NO compression
-C 
+C
          file(1) = 'comp_no.hdf'
          name(1) = 'Nocomp_data'
 C
@@ -2414,11 +2414,11 @@ C   Dimension sizes array initialization
 C
          d_dims(1) = n
          d_dims(2) = m
-C        
+C
 C   Initialize original array
 C
-         
-         do 20 j = 1, m 
+
+         do 20 j = 1, m
             do 10 i = 1, n
                data(i,j) = 10*j + i
 10          continue
@@ -2428,7 +2428,7 @@ C  Initialize SD interfaces
 C
        do 101 i = 1, N_COMP_TYPES
           sd_id(i) = sfstart (file(i), DFACC_CREATE)
-101    continue          
+101    continue
 C
 C  Main loop through different compression types
 C
@@ -2437,7 +2437,7 @@ C
 C
 C        Create the data set
 C
-         sds_id(i_comp) = sfcreate(sd_id(i_comp), name(i_comp), 
+         sds_id(i_comp) = sfcreate(sd_id(i_comp), name(i_comp),
      .                     DFNT_INT32, RANK, d_dims)
             if( sds_id(i_comp) .eq. -1 ) then
                 print *, 'sfcreate failed for', i_comp, ' -th dataset'
@@ -2462,18 +2462,18 @@ C
             comp_arg(i) = 0
 1        continue
 
-         if( i_comp .eq. 1 ) then 
+         if( i_comp .eq. 1 ) then
              comp_type = COMP_CODE_ NONE
          endif
-         if( i_comp .eq. 2 ) then 
+         if( i_comp .eq. 2 ) then
              comp_type = COMP_CODE_ RLE
          endif
-         if( i_comp .eq. 3 ) then 
-             comp_type = COMP_CODE_SKPHUFF 
+         if( i_comp .eq. 3 ) then
+             comp_type = COMP_CODE_SKPHUFF
              comp_arg(1) = skphuff_skp_size
          endif
-         if( i_comp .eq. 4 ) then 
-             comp_type =    COMP_CODE_DEFLATE 
+         if( i_comp .eq. 4 ) then
+             comp_type =    COMP_CODE_DEFLATE
              comp_arg(1) = deflate_level
          endif
          status = sfscompress(sds_id(i_comp), comp_type, comp_arg)
@@ -2496,7 +2496,7 @@ C
                 print *, 'sfwdata failed for', i_comp, ' -th dataset'
                 err_compress = err_compress + 1
             endif
-         
+
          status = sfendacc(sds_id(i_comp))
             if( status .ne. 0 ) then
                 print *, 'sfendacc failed for', i_comp, ' -th dataset'
@@ -2508,10 +2508,10 @@ C
                 err_compress = err_compress + 1
             endif
 
-1000      continue 
+1000      continue
 
 C
-C   Let's check what we have written 
+C   Let's check what we have written
 C
 C   Open files and restart SD interfaces
 C
@@ -2586,8 +2586,8 @@ C
          start(2) = m_part_start
          edges(1) = n_part
          edges(2) = m_part
-         stride(1) = n_part_stride 
-         stride(2) = m_part_stride 
+         stride(1) = n_part_stride
+         stride(2) = m_part_stride
          status = sfrdata (sds_id(i), start, stride, edges,
      .                         part_data)
              if (status .ne. 0) then
@@ -2603,15 +2603,15 @@ C
                kl = n_part_start + 1 + (l-1)*n_part_stride
                kj = m_part_start + 1 + (j-1)*m_part_stride
                if (data(kl, kj) .ne. part_data(l,j)) then
-                  print *, 'sfrdata read wrong data for ', 
+                  print *, 'sfrdata read wrong data for ',
      .            i ,'-th dataset'
                err_compress = err_compress +1
-               endif 
+               endif
 203         continue
 204      continue
- 
-         
-C 
+
+
+C
 C  Terminate access to SDS, shutdown interfaces and close the files
 C
            status = sfendacc(sds_id(i))

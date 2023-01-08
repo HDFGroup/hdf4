@@ -162,7 +162,7 @@ static int test_mgr_compress_a()
         ret = GRendaccess(riid);
         CHECK(ret, FAIL, "GRendaccess");
     }
-    
+
     /* Shut down the GR interface */
     ret = GRend(grid);
     CHECK(ret, FAIL, "GRend");
@@ -348,7 +348,7 @@ static int test_mgr_compress_b()
         CHECK(ret, FAIL, "GRendaccess");
 #endif /* NOT_IMPLEMENTED */
     }
-    
+
     /* Shut down the GR interface */
     ret = GRend(grid);
     CHECK(ret, FAIL, "GRend");
@@ -380,7 +380,7 @@ static int test_mgr_compress_c()
     char gname[60];
     int32 n_comps, dt, im, dims[2], na;
     int   num_errs = 0;    /* number of errors so far */
- 
+
     MESSAGE(8, printf("Operate on 24-bit JPEG compressed images\n"););
 
     /* Create and open the file and initialize GR interface */
@@ -389,53 +389,53 @@ static int test_mgr_compress_c()
 
     gr_id = GRstart(file_id);
     CHECK(gr_id, FAIL, "GRstart");
- 
+
     /* Set data type, interlace mode, and dimensions of image */
     data_type = DFNT_UINT8;
     interlace_mode = MFGR_INTERLACE_PIXEL;
     dim_sizes[0] = 128;
     dim_sizes[1] = 128;
- 
+
     /* Create the raster image array */
     ri_id = GRcreate(gr_id, "24-bit JPEG", 3, data_type, interlace_mode, dim_sizes);
     CHECK(ri_id, FAIL, "GRcreate");
- 
+
     /* Set JPEG compression */
     c_info.jpeg.quality=75;
     c_info.jpeg.force_baseline=1;
     status = GRsetcompress(ri_id, COMP_CODE_JPEG, &c_info);
     CHECK(status, FAIL, "GRsetcompress");
- 
+
     /* Fill the image data buffer with values */
     for (i = 0; i < 128; i++)
        for (j = 0; j < 128; j++)
        {
-          image_buf[i][j][0] = (i+j) + 1;    
-          image_buf[i][j][1] = (i+j) + 1;    
-          image_buf[i][j][2] = (i+j) + 1;    
+          image_buf[i][j][0] = (i+j) + 1;
+          image_buf[i][j][1] = (i+j) + 1;
+          image_buf[i][j][2] = (i+j) + 1;
        }
- 
+
     /* Write data in the buffer into the image array */
     start[0] = start[1] = 0;
     edges[0] = 128;
     edges[1] = 128;
     status = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)image_buf);
     CHECK(status, FAIL, "GRwriteimage");
- 
+
     /* Terminate access to raster image and to GR interface */
     status = GRendaccess(ri_id);
     CHECK(status, FAIL, "GRendaccess");
 
     status = GRend(gr_id);
     CHECK(status, FAIL, "GRend");
- 
+
     /* Start access to the GR interface and get access to the first RI */
     gr_id = GRstart(file_id);
     CHECK(gr_id, FAIL, "GRstart");
- 
+
     ri_id = GRselect(gr_id, 0);
     CHECK(ri_id, FAIL, "GRselect");
- 
+
     /* Get and verify information about this image */
     status = GRgetiminfo(ri_id, gname, &n_comps, &dt, &im, dims, &na);
     CHECK(status, FAIL, "GRreadimage");
@@ -444,14 +444,14 @@ static int test_mgr_compress_c()
     VERIFY(dim_sizes[0], dims[0], "GRgetiminfo");
     VERIFY(dim_sizes[1], dims[1], "GRgetiminfo");
     VERIFY(na, 0, "GRgetiminfo");
- 
+
     /* Read back data */
     start[0] = start[1] = 0;
     edges[0] = 128;
     edges[1] = 128;
     status = GRreadimage(ri_id, start, NULL, edges, (VOIDP)read_buf);
     CHECK(status, FAIL, "GRreadimage");
- 
+
     /* Verify correct image contents */
     if(fuzzy_memcmp(image_buf, read_buf, 128*128*3, JPEG_FUZZ)!=0) {
         MESSAGE(3, printf("tmgrcomp: Error reading data for 24-bit JPEG compressed image\n"););
@@ -468,7 +468,7 @@ static int test_mgr_compress_c()
 
     status = Hclose(file_id);
     CHECK(status, FAIL, "Hclose");
- 
+
     /* Return the number of errors that's been kept track of so far */
     return(num_errs);
 } /* end test_mgr_compress_c() */
@@ -478,7 +478,7 @@ static int test_mgr_compress_c()
 
     - test_get_compress: tests the new functionality, getting compression
                 information of compressed image data.  The test
-        + creates a file and four compressed images written to the file, 
+        + creates a file and four compressed images written to the file,
           then closes the file.
         + re-opens the file, then reads and verifies each image's
           compression information
@@ -500,11 +500,11 @@ static int test_mgr_compress_c()
 #define	DEFLATE_LEVEL		7  /* arbitrary */
 #define	SKPHUFF_SKIPSIZE	28  /* arbitrary */
 
-static intn make_comp_image( 
-		int32 grid, 
-		char* img_name, 
+static intn make_comp_image(
+		int32 grid,
+		char* img_name,
 		comp_coder_t comp_type,    /* Compression method */
-		comp_info* cinfo, 
+		comp_info* cinfo,
 		char* message)    /* Compression parameters */
 {
     int32 riid;         /* RI ID of the working image */
@@ -583,7 +583,7 @@ static int test_get_compress()
     grid = GRstart(fid);
     CHECK(grid, FAIL, "GRstart");
 
-    /* Create and write 4 images, with RLE, deflate, skipping huffman, 
+    /* Create and write 4 images, with RLE, deflate, skipping huffman,
        and JPEG compression methods. */
 
     /* No compression info for the RLE image */
@@ -593,7 +593,7 @@ static int test_get_compress()
     status = make_comp_image(grid, RLE_IMAGE, COMP_CODE_RLE, &cinfo, err_func);
     CHECK(status, FAIL, err_func);
 
-    /* Set the compression info for the second image with skipping 
+    /* Set the compression info for the second image with skipping
        huffman method */
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     cinfo.skphuff.skp_size = SKPHUFF_SKIPSIZE;
@@ -627,7 +627,7 @@ static int test_get_compress()
 
     /*
      * Re-open the file COMPFILE, and retrieve the compression information
-     * of its two images 
+     * of its two images
      */
     fid = Hopen(COMPFILE, DFACC_READ, 0);
     CHECK(fid, FAIL, "Hopen");
@@ -649,9 +649,9 @@ static int test_get_compress()
     status = GRendaccess(riid);
     CHECK(status, FAIL, "GRendaccess");
 
-    /* get the compression info of the second image, and then check 
+    /* get the compression info of the second image, and then check
      * the values against the values set earlier, which are:
-     *		comp_type = COMP_CODE_SKPHUFF 
+     *		comp_type = COMP_CODE_SKPHUFF
      *		skp_size = SKPHUFF_SKIPSIZE
      */
 
@@ -670,9 +670,9 @@ static int test_get_compress()
     status = GRendaccess(riid);
     CHECK(status, FAIL, "GRendaccess");
 
-    /* get the compression info of the third image, and then check 
+    /* get the compression info of the third image, and then check
        the values against the values set earlier, which are:
-		comp_type = COMP_CODE_DEFLATE 
+		comp_type = COMP_CODE_DEFLATE
 		level = DEFLATE_LEVEL
     */
 
@@ -695,8 +695,8 @@ static int test_get_compress()
     riid = GRselect(grid, 3);
     CHECK(riid, FAIL, "GRselect");
 
-    /* get the compression info of the second image, but only check 
-       the compression type value against that being set earlier 
+    /* get the compression info of the second image, but only check
+       the compression type value against that being set earlier
        ('quality' and 'force_baseline' are currently not retrievable) */
     comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
@@ -721,12 +721,12 @@ static int test_get_compress()
 } /* end test_get_compress */
 
 /*--------------------------------------------------------------------------
-    The test routine test_mgr_chunk_compress is added when bug# 307 was 
+    The test routine test_mgr_chunk_compress is added when bug# 307 was
     fixed.
 
-    test_mgr_chunk_compress tests the new functionality, getting 
-    compression information of compressed chunked image data.  It 
-        + creates the file CHKCOMPFILE and adds four compressed chunked 
+    test_mgr_chunk_compress tests the new functionality, getting
+    compression information of compressed chunked image data.  It
+        + creates the file CHKCOMPFILE and adds four compressed chunked
 	  images to it, then closes the file.
         + re-opens the file, then reads and verifies each chunked image's
           compression information
@@ -734,9 +734,9 @@ static int test_get_compress()
         The last three chunked images are compressed using the following
         methods in that order: RLE, Skipping Huffman, Deflate.
         For simplicity, all four images use the same data sample.
-    Note: At this time JPEG is not working correctly for chunked images, 
-    but when it is, its tests should be added to this routines (and to 
-    test_mgr_chunkwr_pixelone as well) appropriately, i.e. another image 
+    Note: At this time JPEG is not working correctly for chunked images,
+    but when it is, its tests should be added to this routines (and to
+    test_mgr_chunkwr_pixelone as well) appropriately, i.e. another image
     should be added to the image list.
 
  -BMR (Oct 7, 01)
@@ -761,10 +761,10 @@ static int test_mgr_chunk_compress()
          interlace_mode, /* interlace mode of the image */
          data_type,      /* data type of the image data */
          comp_flag,      /* compression flag */
-         index, 
+         index,
          img_num;
-   int32 start[2], 
-         stride[2], 
+   int32 start[2],
+         stride[2],
          edge[2];
    comp_info cinfo;    /* Compression parameters - union */
     int   num_errs = 0;    /* number of errors so far */
@@ -775,16 +775,16 @@ static int test_mgr_chunk_compress()
    HDF_CHUNK_DEF chunk_def[N_IMAGES];
    int16 chunk_buf[18];
 
-   int16 chunk00[] = {        110, 111, 112, 120, 121, 122, 
-                              130, 131, 132, 140, 141, 142, 
+   int16 chunk00[] = {        110, 111, 112, 120, 121, 122,
+                              130, 131, 132, 140, 141, 142,
                               150, 151, 152, 160, 161, 162 };
- 
-   int16 chunk01[] = {    210, 211, 212, 220, 221, 222, 
-                          230, 231, 232, 240, 241, 242, 
+
+   int16 chunk01[] = {    210, 211, 212, 220, 221, 222,
+                          230, 231, 232, 240, 241, 242,
                           250, 251, 252, 260, 261, 262};
- 
-   int16 chunk14[] = {    1010, 1011, 1012, 1020, 1021, 1022, 
-                          1030, 1031, 1032, 1040, 1041, 1042, 
+
+   int16 chunk14[] = {    1010, 1011, 1012, 1020, 1021, 1022,
+                          1030, 1031, 1032, 1040, 1041, 1042,
                           1050, 1051, 1052, 1060, 1061, 1062};
 
    int16 data[]    = {
@@ -793,13 +793,13 @@ static int test_mgr_chunk_compress()
 		130, 131, 132, 140, 141, 142, 230, 231, 232, 240, 241, 242,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		150, 151, 152, 160, 161, 162, 250, 251, 252, 260, 261, 262,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		 0, 0, 0, 0, 0, 0, 0, 0, 
-                1010, 1011, 1012, 1020, 1021, 1022, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1030, 1031, 1032, 1040, 1041, 
-                1042, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                0, 1050, 1051, 1052, 1060, 1061, 1062 }; 
+		 0, 0, 0, 0, 0, 0, 0, 0,
+                1010, 1011, 1012, 1020, 1021, 1022, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1030, 1031, 1032, 1040, 1041,
+                1042, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 1050, 1051, 1052, 1060, 1061, 1062 };
 
 
    /********************** End of variable declaration **********************/
@@ -821,16 +821,16 @@ static int test_mgr_chunk_compress()
    dim_sizes[0] = Y_LENGTH;
    dim_sizes[1] = X_LENGTH;
 
-   for (img_num = 0; img_num < N_IMAGES; img_num++ ) {  
+   for (img_num = 0; img_num < N_IMAGES; img_num++ ) {
 
    /* Create the raster image array. */
-   ri_id[img_num] = GRcreate(gr_id, image_name[img_num], N_COMPS, data_type, 
+   ri_id[img_num] = GRcreate(gr_id, image_name[img_num], N_COMPS, data_type,
                      interlace_mode, dim_sizes);
    CHECK(ri_id[img_num], FAIL, "GRcreate");
 
    /* Create chunked image array. */
    switch (img_num) {
-	case 0: 
+	case 0:
 		comp_flag = HDF_CHUNK;
 		chunk_def[img_num].chunk_lengths[0] = 3;
 		chunk_def[img_num].chunk_lengths[1] = 2;
@@ -856,7 +856,7 @@ static int test_mgr_chunk_compress()
 		chunk_def[img_num].comp.cinfo.deflate.level = 6;
 		break;
 #ifdef NOT_WORKING
-	/* JPEG compression for chunked images is not working correctly 
+	/* JPEG compression for chunked images is not working correctly
 	   yet.  Add test here when it is */
 	case 4 :
 		comp_flag = HDF_CHUNK | HDF_COMP;
@@ -872,7 +872,7 @@ static int test_mgr_chunk_compress()
 		break;
 
    } /* end switch */
-    
+
    status = GRsetchunk(ri_id[img_num], chunk_def[img_num], comp_flag);
    CHECK(status, FAIL, "GRsetchunk");
 
@@ -908,19 +908,19 @@ static int test_mgr_chunk_compress()
 
     /* Open the file. */
 
-    file_id = Hopen(CHKCOMPFILE, DFACC_WRITE, 0); 
+    file_id = Hopen(CHKCOMPFILE, DFACC_WRITE, 0);
     CHECK(file_id, FAIL, "Hopen");
 
    /* Initialize the GR interface. */
    gr_id = GRstart(file_id);
    CHECK(gr_id, FAIL, "GRstart");
 
-   for (img_num = 0; img_num < N_IMAGES; img_num++ ) {  
+   for (img_num = 0; img_num < N_IMAGES; img_num++ ) {
 
    /* Find the index of the specified image. */
    index = GRnametoindex(gr_id, image_name[img_num]);
    CHECK(index, FAIL, "GRnametoindex");
-   
+
    /* Select the image. */
    ri_id[img_num] = GRselect(gr_id, index);
    CHECK(ri_id[img_num], FAIL, "GRselect");
@@ -932,7 +932,7 @@ static int test_mgr_chunk_compress()
     status = GRgetcompinfo(ri_id[img_num], &comp_type, &cinfo);
     CHECK(status, FAIL, "GRgetcompinfo");
     switch (img_num) {
-	case 0: 
+	case 0:
 	    VERIFY(comp_type, COMP_CODE_NONE, "GRgetcompinfo");
 	    break;
 	case 1 :
@@ -940,12 +940,12 @@ static int test_mgr_chunk_compress()
 	    break;
 	case 2 :
 	    VERIFY(comp_type, COMP_CODE_SKPHUFF, "GRgetcompinfo");
-	    VERIFY(cinfo.skphuff.skp_size, 
+	    VERIFY(cinfo.skphuff.skp_size,
 		   chunk_def[img_num].comp.cinfo.skphuff.skp_size, "GRgetcompinfo");
 	    break;
 	case 3 :
 	    VERIFY(comp_type, COMP_CODE_DEFLATE, "GRgetcompinfo");
-	    VERIFY(cinfo.deflate.level, 
+	    VERIFY(cinfo.deflate.level,
 		   chunk_def[img_num].comp.cinfo.deflate.level, "GRgetcompinfo");
 	    break;
 #ifdef NOT_WORKING
@@ -987,7 +987,7 @@ static int test_mgr_chunk_compress()
    status = GRendaccess(ri_id[img_num]);
    CHECK(status, FAIL, "GRendaccess");
 
-   } /* end for */    
+   } /* end for */
 
    /* Terminate access to the GR interface and close the HDF file. */
    status = GRend(gr_id);
@@ -1003,14 +1003,14 @@ static int test_mgr_chunk_compress()
 /****************************************************************
 **
 **  test_mgr_compress(): Multi-file Raster Compression tests
-** 
+**
 **  IX. Compressed image tests
 **      A. Create/Read/Write gzip compressed Image
 **      B. Create/Read/Write 8-bit JPEG compressed Image
 **      C. Create/Read/Write 24-bit JPEG compressed Image
 **      D. Retrieve various compression information of compressed Image
 **	E. Retrieve various compression info. of compressed, chunked images
-** 
+**
 ****************************************************************/
 extern void test_mgr_compress()
 {

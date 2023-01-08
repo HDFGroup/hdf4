@@ -17,7 +17,7 @@ C------------------------------------------------------------------------------
 C File:     df24Ff.f
 C Purpose:  read and write 24-bit raster images
 C Invokes:  df24F.c
-C Contents: 
+C Contents:
 C   d2gdims:      - get dimensions of image
 C   d2gimg:       - read in image
 C   d2aimg:       - write out image
@@ -27,7 +27,7 @@ C   DF24getimage: - read in image
 C   DF24getimage: - write out image
 C   DF24readref:  - set reference number to be used for next get
 C
-C Remarks:  A RIG specifies attributes associated with an image - lookup table, 
+C Remarks:  A RIG specifies attributes associated with an image - lookup table,
 C           dimension, compression, color compensation etc.
 C----------------------------------------------------------------------------*/
 
@@ -106,13 +106,13 @@ C----------------------------------------------------------------------------*/
 
 C------------------------------------------------------------------------------
 C Name: d2rref
-C Purpose:  
+C Purpose:
 C Inputs:   filename: name of HDF file
 C           ref:      reference number to be used for next get
 C Returns: 0 on success, -1 on failure with DFerror set
 C Users:    HDF HLL (high-level library) users, utilities, other routines
 C Invokes: d2irref
-C Remarks: 
+C Remarks:
 C----------------------------------------------------------------------------*/
 
       integer function d2rref(name, ref)
@@ -131,7 +131,7 @@ C Inputs:   filename: name of HDF file
 C Returns: # of images on success, -1 on failure with error stack set
 C Users:    HDF HLL (high-level library) users, utilities, other routines
 C Invokes: d2inimg
-C Remarks: 
+C Remarks:
 C----------------------------------------------------------------------------*/
 
       integer function d2nimg(name)

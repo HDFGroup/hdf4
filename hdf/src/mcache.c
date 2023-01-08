@@ -31,13 +31,13 @@
  * File: mcache.c
  *
  * This is a modfied version of the original Berkley code for
- * manipulating a memory pool. This version however is not 
+ * manipulating a memory pool. This version however is not
  * compatible with the original Berkley version.
  *
  * NOTE: references to pages here is the same as chunks
  *
  * AUTHOR - George V.- 1996/08/22
- *****************************************************************************/ 
+ *****************************************************************************/
 
 
 /*
@@ -133,8 +133,8 @@ mcache_set_maxcache(
           if (mp->maxcache < maxcache)
               mp->maxcache = maxcache;
           else /* maxcache is less than current maxcache */
-            {   /* if current number of cached pages is less than request 
-                   then set to 'maxcache', 
+            {   /* if current number of cached pages is less than request
+                   then set to 'maxcache',
                    else we don't currently handle decreasing
                    the curcache to 'maxcache' */
                 if (maxcache > mp->curcache)
@@ -157,7 +157,7 @@ RETURNS
     returns pagesize for object.
 ******************************************************************************/
 int32
-mcache_get_pagesize( 
+mcache_get_pagesize(
     MCACHE *mp /* IN: MCACHE cookie */)
 {
     if (mp != NULL)
@@ -172,14 +172,14 @@ NAME
 
 DESCRIPTION
    Initialize a memory pool for object using the given pagesize
-   and size of object. 
+   and size of object.
 
    Note for 'flags' input only '0' should be used for now.
 
 RETURNS
    A memory pool cookie if successful else NULL
 
-NOTE: 
+NOTE:
       The key string byte for sharing buffers is not implemented.
 ******************************************************************************/
 MCACHE *
@@ -236,7 +236,7 @@ mcache_open(
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
           lp->pgno   = (int32)pageno;     /* set page number */
 
-          /* check if object exists already 
+          /* check if object exists already
              The usefullness of this flag is yet to be
              determined. Currently '0' should be used */
           if (flags == 0)
@@ -252,8 +252,8 @@ mcache_open(
 
     /* initialize input/output filters and cookie to NULL */
     mp->pgin     = NULL;
-    mp->pgout    = NULL;        
-    mp->pgcookie = NULL;        
+    mp->pgout    = NULL;
+    mp->pgcookie = NULL;
 #ifdef STATISTICS
     mp->listhit    = 0;
     mp->cachehit   = 0;
@@ -275,7 +275,7 @@ mcache_open(
           /* free up list elements */
           for (entry = 0; entry < HASHSIZE; ++entry)
             {
-                while ((lp = mp->lhqh[entry].cqh_first) != (VOID *)&mp->lhqh[entry]) 
+                while ((lp = mp->lhqh[entry].cqh_first) != (VOID *)&mp->lhqh[entry])
                   {
                       CIRCLEQ_REMOVE(&mp->lhqh[entry], mp->lhqh[entry].cqh_first, hl);
                       HDfree(lp);
@@ -283,7 +283,7 @@ mcache_open(
             } /* end for entry */
 #ifdef MCACHE_DEBUG
           (VOID)fprintf(stderr,"mcache_open: ERROR \n");
-#endif      
+#endif
           mp = NULL; /* return value */
       } /* end error cleanup */
     /* Normal cleanup */
@@ -313,7 +313,7 @@ RETURNS
 
 ******************************************************************************/
 VOID
-mcache_filter( 
+mcache_filter(
     MCACHE *mp,                                            /* IN: MCACHE cookie */
     int32 (*pgin) (VOID * /* cookie */, int32 /* pgno */, VOID * /* page */),  /* IN: page in filter */
     int32 (*pgout) (VOID * /* cookie */, int32 /* pgno */, const VOID * /*page */), /* IN: page out filter */
@@ -331,7 +331,7 @@ NAME
 
 DESCRIPTION
     Get a new page of memory. This is where we get new pages for the object.
-    This will only return a full page of memory. 
+    This will only return a full page of memory.
     If the last page is an odd size the user must keep track
     of this as only lastpagesize bytes will be written out.
     As a result if the user fills the last page and
@@ -369,15 +369,15 @@ mcache_new(
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* page overflow? */
-    if (mp->npages == MAX_PAGE_NUMBER) 
+    if (mp->npages == MAX_PAGE_NUMBER)
         HE_REPORT_GOTO("page allocation overflow", FAIL);
 
 #ifdef STATISTICS
     ++mp->pagenew;
 #endif
     /*
-     * Get a BKT from the cache.  
-     * Assign a new page number based upon 'flags'. If flags 
+     * Get a BKT from the cache.
+     * Assign a new page number based upon 'flags'. If flags
      * is MCACHE_EXTEND then we want to extend object up to '*pgnoaddr' pages.
      * attach it to the head of the hash chain, the tail of the lru chain,
      * and return.
@@ -389,10 +389,10 @@ mcache_new(
       { /* we increase by one page */
           mp->npages++;                      /* number of pages */
           *pgnoaddr = bp->pgno = mp->npages; /* page number */
-      } 
-    else 
+      }
+    else
       { /* we extend to *pgnoaddr pages */
-          if (*pgnoaddr > MAX_PAGE_NUMBER) 
+          if (*pgnoaddr > MAX_PAGE_NUMBER)
             {
                 (VOID)fprintf(stderr, "mcache_new: page allocation overflow.\n");
                 abort();
@@ -403,15 +403,15 @@ mcache_new(
       }
 #ifdef MCACHE_DEBUG
     (VOID)fprintf(stderr,"mcache_new: increasing #of pages to=%d\n",mp->npages);
-#endif  
+#endif
 
-    /* Pin the page and insert into head of hash chain 
+    /* Pin the page and insert into head of hash chain
      * and tail of lru chain */
     bp->flags = MCACHE_PINNED;
     head = &mp->hqh[HASHKEY(bp->pgno)];
     CIRCLEQ_INSERT_HEAD(head, bp, hq);
     CIRCLEQ_INSERT_TAIL(&mp->lqh, bp, q);
-  
+
     /* Check to see if this page has ever been referenced */
     lhead = &mp->lhqh[HASHKEY(bp->pgno)];
     for (lp = lhead->cqh_first; lp != (VOID *)lhead; lp = lp->hl.cqe_next)
@@ -470,7 +470,7 @@ RETURNS
    The specifed page if successful and NULL otherwise
 ******************************************************************************/
 VOID *
-mcache_get( 
+mcache_get(
     MCACHE *mp,  /* IN: MCACHE cookie */
     int32  pgno, /* IN: page number */
     int32  flags /* IN: XXX not used? */)
@@ -496,9 +496,9 @@ mcache_get(
     if (mp == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* Check for attempting to retrieve a non-existent page. 
+    /* Check for attempting to retrieve a non-existent page.
      *  remember pages go from 1 ->npages  */
-    if (pgno > mp->npages) 
+    if (pgno > mp->npages)
         HE_REPORT_GOTO("attempting to get a non existant page from cache", FAIL);
 
 #ifdef STATISTICS
@@ -506,10 +506,10 @@ mcache_get(
 #endif
 
     /* Check for a page that is cached. */
-    if ((bp = mcache_look(mp, pgno)) != NULL) 
+    if ((bp = mcache_look(mp, pgno)) != NULL)
       {
 #ifdef MCACHE_DEBUG
-          if (bp->flags & MCACHE_PINNED) 
+          if (bp->flags & MCACHE_PINNED)
             {
                 (VOID)fprintf(stderr,
                               "mcache_get: page %d already pinned\n", bp->pgno);
@@ -531,7 +531,7 @@ mcache_get(
 #ifdef MCACHE_DEBUG
           (VOID)fprintf(stderr,"mcache_get: getting cached bp->pgno=%d,npages=%d\n",
                         bp->pgno,mp->npages);
-#endif   
+#endif
           /* update this page reference */
           lhead = &mp->lhqh[HASHKEY(bp->pgno)];
           for (lp = lhead->cqh_first; lp != (VOID *)lhead; lp = lp->hl.cqe_next)
@@ -572,10 +572,10 @@ mcache_get(
               break;
           } /* end if lp->pgno */
 
-    /* If there is no hit then we allocate a new element 
+    /* If there is no hit then we allocate a new element
      *  and insert into hash table */
     if (!list_hit)
-      { /* NO hit, new list element 
+      { /* NO hit, new list element
          * no need to read this page from disk */
           if ((lp = (L_ELEM *)HDmalloc(sizeof(L_ELEM))) == NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -603,7 +603,7 @@ mcache_get(
           rpagesize = mp->pagesize;
 #endif /* UNUSED */
 
-          /* Run through the user's filter. 
+          /* Run through the user's filter.
              we use this fcn to read in the data chunk/page.
              Not the original intention. */
           if (mp->pgin != NULL)
@@ -659,7 +659,7 @@ NAME
    mcache_put -- put a page back into the memory buffer pool
 
 DESCRIPTION
-    Return a page to the buffer pool. Unpin it and mark it 
+    Return a page to the buffer pool. Unpin it and mark it
     appropriately i.e. MCACHE_DIRTY
 
 RETURNS
@@ -688,7 +688,7 @@ mcache_put(
     bp = (BKT *)((char *)page - sizeof(BKT));
 #ifdef MCACHE_DEBUG
     (VOID)fprintf(stderr,"mcache_put: putting page=%d\n",bp->pgno);
-    if (!(bp->flags & MCACHE_PINNED)) 
+    if (!(bp->flags & MCACHE_PINNED))
       {
           (VOID)fprintf(stderr,
                         "mcache_put: page %d not pinned\n", bp->pgno);
@@ -733,7 +733,7 @@ DESCRIPTION
    Does not sync the buffer pool.
 
 RETURNS
-   RET_SUCCESS if successful and RET_ERROR otherwise   
+   RET_SUCCESS if successful and RET_ERROR otherwise
 ******************************************************************************/
 intn
 mcache_close(
@@ -754,7 +754,7 @@ mcache_close(
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Free up any space allocated to the lru pages. */
-    while ((bp = mp->lqh.cqh_first) != (VOID *)&mp->lqh) 
+    while ((bp = mp->lqh.cqh_first) != (VOID *)&mp->lqh)
       {
           CIRCLEQ_REMOVE(&mp->lqh, mp->lqh.cqh_first, q);
           HDfree(bp);
@@ -763,7 +763,7 @@ mcache_close(
     /* free up list elements */
     for (entry = 0; entry < HASHSIZE; ++entry)
       {
-          while ((lp = mp->lhqh[entry].cqh_first) != (VOID *)&mp->lhqh[entry]) 
+          while ((lp = mp->lhqh[entry].cqh_first) != (VOID *)&mp->lhqh[entry])
             {
                 CIRCLEQ_REMOVE(&mp->lhqh[entry], mp->lhqh[entry].cqh_first, hl);
                 HDfree(lp);
@@ -795,7 +795,7 @@ DESCRIPTION
    Sync the pool to disk. Does NOT Free the buffer pool.
 
 RETURNS
-   RET_SUCCESS if successful and RET_ERROR otherwise   
+   RET_SUCCESS if successful and RET_ERROR otherwise
 ******************************************************************************/
 intn
 mcache_sync(
@@ -843,7 +843,7 @@ DESCRIPTION
    If the page is not cached return an error.
 
 RETURNS
-   RET_SUCCESS if successful and RET_ERROR otherwise     
+   RET_SUCCESS if successful and RET_ERROR otherwise
 
 NOTE: No longer used.
       This was mainly used in the case where we extend the object.
@@ -867,21 +867,21 @@ mcache_page_sync(
 
 #ifdef MCACHE_DEBUG
     (VOID)fprintf(stderr,"mcache_page_sync: entering\n");
-#endif  
+#endif
     /* check inputs */
     if (mp == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* Check for attempting to sync a non-existent page. 
+    /* Check for attempting to sync a non-existent page.
      *  remember pages go from 1 ->npages  */
-    if (pgno > mp->npages) 
+    if (pgno > mp->npages)
         HE_REPORT_GOTO("attempting to get a non existant page from cache", FAIL);
 
     /* Check for a page that is cached. */
-    if ((bp = mcache_look(mp, pgno)) != NULL) 
+    if ((bp = mcache_look(mp, pgno)) != NULL)
       {
 #ifdef MCACHE_DEBUG
-          if (bp->flags & MCACHE_PINNED) 
+          if (bp->flags & MCACHE_PINNED)
             {
                 (VOID)fprintf(stderr,
                               "mcache_page_sync: page %u already pinned\n", bp->pgno);
@@ -954,7 +954,7 @@ mcache_page_sync(
 
 #ifdef MCACHE_DEBUG
     (VOID)fprintf(stderr,"mcache_page_sync: exiting\n");
-#endif  
+#endif
     return ret_value;
 } /* mcache_page_sync() */
 #endif
@@ -968,7 +968,7 @@ DESCRIPTION
 
 RETURNS
    A page if successful and NULL otherwise.
-       
+
 NOTE: Note that the size of the page allocated is equal to
       sizeof(bucket element) + pagesize. We only return the
       pagesize fragment to the user. The only caveat here is
@@ -999,7 +999,7 @@ mcache_bkt(
      * The cache never shrinks.
      */
     for (bp = mp->lqh.cqh_first; bp != (VOID *)&mp->lqh; bp = bp->q.cqe_next)
-        if (!(bp->flags & MCACHE_PINNED)) 
+        if (!(bp->flags & MCACHE_PINNED))
           { /* Flush if dirty. */
               if (bp->flags & MCACHE_DIRTY  && mcache_write(mp, bp) == RET_ERROR)
                   HE_REPORT_GOTO("unable to flush a dirty page", FAIL);
@@ -1059,7 +1059,7 @@ DESCRIPTION
    Private routine. Write a page to disk given it's bucket handle.
 
 RETURNS
-   RET_SUCCESS if successful and RET_ERROR otherwise    
+   RET_SUCCESS if successful and RET_ERROR otherwise
 ******************************************************************************/
 static int
 mcache_write(
@@ -1170,13 +1170,13 @@ mcache_look(
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Check for attempt to look up a non-existent page. */
-    if (pgno > mp->npages) 
+    if (pgno > mp->npages)
         HE_REPORT_GOTO("attempting to get a non existant page from cache", FAIL);
 
     /* search through hash chain */
     head = &mp->hqh[HASHKEY(pgno)];
     for (bp = head->cqh_first; bp != (VOID *)head; bp = bp->hq.cqe_next)
-        if (bp->pgno == pgno) 
+        if (bp->pgno == pgno)
           { /* hit....found page in cache */
 #ifdef STATISTICS
               ++mp->cachehit;
@@ -1188,7 +1188,7 @@ mcache_look(
 
     /* Well didn't find page in cache so mark return
      * value as NULL */
-    bp = NULL; 
+    bp = NULL;
 
 #ifdef STATISTICS
     ++mp->cachemiss;
@@ -1255,7 +1255,7 @@ mcache_stat(
     char         *sep   = NULL;
     intn          entry;         /* index into hash table */
     intn          cnt;
-    intn          hitcnt; 
+    intn          hitcnt;
 
 #ifdef HAVE_GETRUSAGE
     myrusage();
@@ -1274,7 +1274,7 @@ mcache_stat(
                         mp->pagealloc, mp->pageflush);
           if (mp->cachehit + mp->cachemiss)
               (VOID)fprintf(stderr,
-                            "%.0f%% cache hit rate (%u hits, %u misses)\n", 
+                            "%.0f%% cache hit rate (%u hits, %u misses)\n",
                             ((double)mp->cachehit / (mp->cachehit + mp->cachemiss))
                             * 100, mp->cachehit, mp->cachemiss);
           (VOID)fprintf(stderr, "%u page reads, %u page writes\n",
@@ -1288,18 +1288,18 @@ mcache_stat(
                                 (sizeof(L_ELEM)*mp->npages)));
           sep = "";
           cnt = 0;
-          for (bp = mp->lqh.cqh_first; bp != (VOID *)&mp->lqh; bp = bp->q.cqe_next) 
+          for (bp = mp->lqh.cqh_first; bp != (VOID *)&mp->lqh; bp = bp->q.cqe_next)
             {
                 (VOID)fprintf(stderr, "%s%u", sep, bp->pgno);
                 if (bp->flags & MCACHE_DIRTY)
                     (VOID)fprintf(stderr, "d");
                 if (bp->flags & MCACHE_PINNED)
                     (VOID)fprintf(stderr, "P");
-                if (++cnt == 10) 
+                if (++cnt == 10)
                   {
                       sep = "\n";
                       cnt = 0;
-                  } 
+                  }
                 else
                     sep = ", ";
             }
@@ -1316,19 +1316,19 @@ mcache_stat(
                       cnt++;
                       (VOID)fprintf(stderr, "%s%u(%u)", sep, lp->pgno, lp->elemhit);
                       hitcnt += lp->elemhit;
-                      if (cnt >= 8) 
+                      if (cnt >= 8)
                         {
                             sep = "\n";
                             cnt = 0;
-                        } 
+                        }
                       else
                           sep = ", ";
                   }
-                if (cnt >= 8) 
+                if (cnt >= 8)
                   {
                       (VOID)fprintf(stderr, "\n");
                       cnt = 0;
-                  } 
+                  }
             }
           (VOID)fprintf(stderr, "\n");
           (VOID)fprintf(stderr, "Total num of elemhits=%d\n",hitcnt);

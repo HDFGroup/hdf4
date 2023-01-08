@@ -312,7 +312,7 @@ DFGRsetcompress(int32 scheme, comp_info * cinfo)
     Grcinfo = (*cinfo);     /* Set the compression parameters */
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -460,7 +460,7 @@ DFGRreadref(const char *filename, uint16 ref)
     ret_value= Hclose(file_id);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
       if(file_id!=(-1))
           Hclose(file_id);
@@ -574,9 +574,9 @@ DFGRgetrig(int32 file_id, uint16 ref, DFGRrig * rig)
                     break;
             }
       }
-      
+
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -709,7 +709,7 @@ DFGRaddrig(int32 file_id, uint16 ref, DFGRrig * rig)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -783,7 +783,7 @@ DFGRIopen(const char *filename, int acc_mode)
     ret_value= file_id;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
       if(file_id!=(-1))
           Hclose(file_id);
@@ -920,7 +920,7 @@ DFGRIriginfo(int32 file_id)
     Grlastref = newref;     /* remember ref read */
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -982,7 +982,7 @@ DFGRIgetdims(const char *filename, int32 *pxdim, int32 *pydim,
   Hclose(file_id);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
       if(file_id!=(-1))
         Hclose(file_id);
@@ -1020,7 +1020,7 @@ DFGRIreqil(intn il, intn type)
     Grreqil[type] = il;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1053,7 +1053,7 @@ done:
 /* ARGSUSED */
 int
 DFGRIgetimlut(const char *filename, void * imlut, int32 xdim, int32 ydim,
-              int type, int isfortran, int *compressed, uint16 *compr_type, 
+              int type, int isfortran, int *compressed, uint16 *compr_type,
 	      int *has_pal)
 {
     CONSTR(FUNC, "DFGRIgetimlut");
@@ -1219,7 +1219,7 @@ DFGRIgetimlut(const char *filename, void * imlut, int32 xdim, int32 ydim,
     Hclose(file_id);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
       if(file_id!=(-1))
         Hclose(file_id);
@@ -1264,7 +1264,7 @@ DFGRIsetdims(int32 xdim, int32 ydim, intn ncomps, int type)
     Ref.dims[type] = 0;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1302,7 +1302,7 @@ DFGRIsetil(int il, int type)
     Grwrite.datadesc[type].interlace = il;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1336,7 +1336,7 @@ DFGRIrestart(void)
     Grrefset = 0;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1530,9 +1530,9 @@ DFGRIaddimlut(const char *filename, const void * imlut, int32 xdim, int32 ydim,
     wref = 0;   /* don't know ref to write next */
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
-        
+
     } /* end if */
 
   /* Normal function cleanup */
@@ -1589,7 +1589,7 @@ PRIVATE intn DFGRIstart(void)
       HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */

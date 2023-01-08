@@ -158,7 +158,7 @@ static int test_mgr_fillvalues()
             MESSAGE(3, printf("Error reading values of attribute FILL_ATTR\n"););
             num_errs++;
         } /* end if */
-    
+
         if (read_fill_vals != NULL)
             HDfree(read_fill_vals);
 
@@ -224,7 +224,7 @@ static int test_mgr_userattr()
     CHECK(grid, FAIL, "GRstart");
 
     /* Set two file attributes. */
-    status = GRsetattr(grid, F_ATT1_NAME, DFNT_CHAR8, F_ATT1_N_VALUES, F_ATT1_VAL); 
+    status = GRsetattr(grid, F_ATT1_NAME, DFNT_CHAR8, F_ATT1_N_VALUES, F_ATT1_VAL);
     CHECK(status, FAIL, "GRsetattr");
 
     status = GRsetattr(grid, F_ATT2_NAME, DFNT_UINT8, F_ATT2_N_VALUES, (VOIDP)file_attr_2);

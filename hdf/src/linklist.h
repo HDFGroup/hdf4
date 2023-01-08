@@ -15,11 +15,11 @@
 /*-----------------------------------------------------------------------------
  * File:    linklist.h
  * Purpose: header file for linked list API
- * Dependencies: 
+ * Dependencies:
  * Invokes:
  * Contents:
- * Structure definitions: 
- * Constant definitions: 
+ * Structure definitions:
+ * Constant definitions:
  *---------------------------------------------------------------------------*/
 
 /* avoid re-inclusion */
@@ -199,7 +199,7 @@ VOIDP HULremove_node(list_head_t *lst,  /* IN: list to modify */
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn 
+intn
 HULshutdown(void);
 
 #if defined c_plusplus || defined __cplusplus

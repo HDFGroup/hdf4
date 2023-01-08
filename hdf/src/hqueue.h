@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (c) 1991, 1993
  *	The Regents of the University of California.  All rights reserved.
  *
@@ -33,12 +33,12 @@
  * File: hqueue.h
  *
  * This is a modfied version of the original Berkley code for
- * manipulating a memory pool. This version however is not 
+ * manipulating a memory pool. This version however is not
  * compatible with the original Berkley version.
  *
  * Author: George V.- 9/3/96
  *
- *****************************************************************************/ 
+ *****************************************************************************/
 
 
 #ifndef	_HQUEUE_H_
@@ -72,7 +72,7 @@
  *
  * For details on the use of these macros, see the queue(3) manual page.
  * (BSD4.3 manual set - GeorgeV)
- * 
+ *
  */
 
 /*

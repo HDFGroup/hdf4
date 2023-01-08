@@ -17,7 +17,7 @@ C------------------------------------------------------------------------------
 C File:     forsupff.f
 C Purpose:  Fortran support routines for Fortran test routines
 C Invokes:  Nothing currently...
-C Contents: 
+C Contents:
 C Remarks: none
 C------------------------------------------------------------------------------
 
@@ -25,7 +25,7 @@ C------------------------------------------------------------------------------
 C------------------------------------------------------------------------------
 C Name: RESULT
 C Purpose:  Report on success of HDF routines
-C Inputs:   
+C Inputs:
 C       errval: value to check for error
 C       routine: name of routine tested
 C       num_failed: running sum of the number of failures
@@ -45,7 +45,7 @@ C------------------------------------------------------------------------------
           num_failed = num_failed + 1
           print *, '    >>> ', routine, ' FAILED: ret = ',
      *           errval, '    <<<'
-      else 
+      else
           print *, routine, ' SUCCESSFUL'
       endif
 
@@ -55,7 +55,7 @@ C------------------------------------------------------------------------------
 C------------------------------------------------------------------------------
 C Name: VRFY
 C Purpose:  Report on success of HDF routines, using verbosity
-C Inputs:   
+C Inputs:
 C       errval: value to check for error
 C       routine: name of routine tested
 C       num_failed: running sum of the number of failures
@@ -75,7 +75,7 @@ C------------------------------------------------------------------------------
           num_failed = num_failed + 1
           print *, '    >>> ', routine, ' FAILED: ret = ',
      *           errval, '    <<<'
-      else 
+      else
           if (verbosity .ge. VERBO_HI) then
               print *, routine, ' SUCCESSFUL'
           endif
@@ -87,7 +87,7 @@ C------------------------------------------------------------------------------
 C------------------------------------------------------------------------------
 C Name: MESSAGE
 C Purpose:  Print something, depending on the verbosity level
-C Inputs:   
+C Inputs:
 C       priority: priority of message (lower values have higher priority)
 C       out_str: string to output
 C Returns: none
@@ -111,7 +111,7 @@ C------------------------------------------------------------------------------
 
 C***************************************************************
 C
-C  gen2Dfloat:  generate 2-D data array 
+C  gen2Dfloat:  generate 2-D data array
 C
 C***************************************************************
       subroutine gen2Dfloat(height, width, data)
@@ -123,7 +123,7 @@ C***************************************************************
 
       integer i, j
 
-C     store one value per row, increasing by one for each row 
+C     store one value per row, increasing by one for each row
       do 110 i=1, height
           do 100 j=1, width
              data(i, j) = float(i)
@@ -158,14 +158,14 @@ C***************************************************************
   100     continue
   110 continue
 
-C     store one value per row, increasing by one for each row 
+C     store one value per row, increasing by one for each row
       multiplier = 255.0 /(max-min)
       do 210 i=1, height
           do 200 j=1, width
              image(i,j) = char( int((data(i,j)-min) * multiplier) )
   200     continue
   210 continue
-      return 
+      return
       end
 
 
@@ -195,7 +195,7 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       return
       end
 
-      
+
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 C
 C     SUBROUTINE errchkarr
@@ -207,9 +207,9 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
       integer err1, err2, err3, num_err
       character*(*)  type
-      
+
       if (err1 .eq. 1) then
-        print *, '>>> Test failed for ', type, ' array' 
+        print *, '>>> Test failed for ', type, ' array'
         num_err = num_err + 1
       else
           if (verbosity .ge. VERBO_HI) then
@@ -238,7 +238,7 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       return
       end
 
-       
+
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 C
 C     SUBROUTINE err_check
@@ -251,7 +251,7 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       integer err, num_err
       character*(*) type
 
-      if (err .eq. 1) then 
+      if (err .eq. 1) then
         print *,'>>> Test failed for ',type, ' array.'
         num_err = num_err+1
       else

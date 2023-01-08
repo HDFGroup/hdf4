@@ -20,7 +20,7 @@
  * Contents: SEE annotation source/header files "mfan.c" and "mfan.h"
  *           for more info on the annotation interface.
  *
- *  NOTES: TYPE here refers to file/data label/description types 
+ *  NOTES: TYPE here refers to file/data label/description types
  *         They are AN_FILE_LABEL, AN_FILE_DESC, AN_DATA_LABEL, AN_DATA_DESC
  *         THE tag/ref refers to data tag/ref. The fortran equivalents
  *         are defined in 'hdf.inc'.
@@ -28,12 +28,12 @@
  *  C-stubs directly callable by Fortran Users
  *  ------------------------------------------
  *    afstart    - start annotation access on file and return annotaton id
- *    affileinfo - get number of file/data annotations in file. 
+ *    affileinfo - get number of file/data annotations in file.
  *                 Indices returned are used in afselect() calls.
  *    afend      - end access to annotation handling on file
  *    afcreate   - create a new data annotation and return a handle
  *    affcreate  - create a new file annotation and return a handle
- *    afselect   - returns an annotation handle(ann_id) from index for 
+ *    afselect   - returns an annotation handle(ann_id) from index for
  *                 a particular annotation TYPE. This handle is then used for
  *                 calls like afwriteann(), afreadann(), afannlen(),..etc
  *    afnumann   - return number of annotations that match TYPE/tag/ref
@@ -43,7 +43,7 @@
  *    afreadann  - read annotation given handle
  *    afendaccess - end access to annotation using handle
  *    afgettagref - get tag/ref pair to annotation ID
- *    afidtagref  - get tag/ref given annotation id 
+ *    afidtagref  - get tag/ref given annotation id
  *    aftagrefid  - get annotation id given tag/ref
  *    afatypetag  - annotation type to corresponding annotation TAG
  *    aftagatype  - annotation TAG to corresponding annotation type
@@ -74,7 +74,7 @@
  * Purpose: Open file for annoation handling
  * Inputs:  file_id: id of HDF file
  * Returns: annotation interface handle on SUCCEED and FAIL otherwise
- * Users:   
+ * Users:
  * Invokes: ANstart()
  * Author: GeorgeV
  *---------------------------------------------------------------------------*/
@@ -90,7 +90,7 @@ nafstart(intf *file_id)
 
 /*-----------------------------------------------------------------------------
  * Name:    affileinfo
- * Purpose: Get number of file/data annotations in file. 
+ * Purpose: Get number of file/data annotations in file.
  * Inputs:  IN an_id:     annotation interface handle
  *          OUT num_flabel: number of file labels in file
  *          OUT num_fdesc:  number of file descriptions in file
@@ -109,7 +109,7 @@ naffileinfo(intf *an_id, intf *num_flabel, intf *num_fdesc, intf *num_olabel,
   CONSTR(FUNC, "affileinfo");
 #endif /* LATER */
   intf  ret;
-  int32 nflabel, nfdesc, nolabel, nodesc; 
+  int32 nflabel, nfdesc, nolabel, nodesc;
 
   ret = ANfileinfo((int32)*an_id, &nflabel, &nfdesc, &nolabel, &nodesc);
 
@@ -123,7 +123,7 @@ naffileinfo(intf *an_id, intf *num_flabel, intf *num_fdesc, intf *num_olabel,
 } /* naffileinfo() */
 
 /*-----------------------------------------------------------------------------
- * Name:    afend    
+ * Name:    afend
  * Purpose: End access to annotation handling on file
  * Inputs:  file_id:
  * Returns: see ANend()
@@ -143,7 +143,7 @@ nafend(intf *an_id)
 
 /*-----------------------------------------------------------------------------
  * Name:    afcreate
- * Purpose: Create a new data annotation and return an annotation handle 
+ * Purpose: Create a new data annotation and return an annotation handle
  * Inputs:  an_id: annotation interface handle
  *          etag:    tag of data to annotate
  *          eref:    ref of data to annotate
@@ -184,7 +184,7 @@ naffcreate(intf *an_id, intf *atype)
 
 /*-----------------------------------------------------------------------------
  * Name:    afselect
- * Purpose: returns an annotation handle(ann_id) from index for 
+ * Purpose: returns an annotation handle(ann_id) from index for
  *          a particular annotation TYPE. This handle is then used for
  *          calls like afwriteann(), afreadann(), afannlen(),..etc
  * Inputs:  an_id: annotation interface handle
@@ -385,9 +385,9 @@ nafendaccess(intf *ann_id)
 } /* nafendaccess() */
 
 /*-----------------------------------------------------------------------------
- * Name:    afgettagref 
- * Purpose: 
- * Inputs:  
+ * Name:    afgettagref
+ * Purpose:
+ * Inputs:
  * Returns: see ANget_tagref()
  * Users:   Fortran Users
  * Invokes: ANget_tagref()
@@ -413,8 +413,8 @@ nafgettagref(intf *an_id, intf *index, intf *type, intf *tag, intf *ref)
 
 /*-----------------------------------------------------------------------------
  * Name:    afidtagref
- * Purpose: 
- * Inputs:  
+ * Purpose:
+ * Inputs:
  * Returns: see ANid2tagref()
  * Users:   Fortran Users
  * Invokes: ANid2tagerf()
@@ -439,8 +439,8 @@ nafidtagref(intf *ann_id, intf *tag, intf *ref)
 
 /*-----------------------------------------------------------------------------
  * Name:    aftagrefid
- * Purpose: 
- * Inputs:  
+ * Purpose:
+ * Inputs:
  * Returns: see ANtagref2id()
  * Users:   Fortran Users
  * Invokes: ANtagref2id()
@@ -452,15 +452,15 @@ naftagrefid(intf *an_id, intf *tag, intf *ref)
 #ifdef LATER
   CONSTR(FUNC, "aftagrefid");
 #endif /* LATER */
-  
+
   return (intf)ANtagref2id((int32)*an_id, (uint16)*tag, (uint16)*ref);
 
 } /* naftagrefid() */
 
 /*-----------------------------------------------------------------------------
  * Name:    afatypetag
- * Purpose: 
- * Inputs:  
+ * Purpose:
+ * Inputs:
  * Returns: see ANatype2tag()
  * Users:   Fortran Users
  * Invokes: ANatype2tag()
@@ -479,8 +479,8 @@ nafatypetag(intf *atype)
 
 /*-----------------------------------------------------------------------------
  * Name:    aftagatype
- * Purpose: 
- * Inputs:  
+ * Purpose:
+ * Inputs:
  * Returns: see ANtag2atype()
  * Users:   Fortran Users
  * Invokes: ANtag2atype()

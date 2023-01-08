@@ -50,7 +50,7 @@ NCxdr_shortsb(xdrs, sp, nshorts)
 
 	if(!xdr_opaque(xdrs, (caddr_t)buf, nbytes))
 		return FALSE ;
-	
+
 	if(xdrs->x_op == XDR_DECODE)
 	{
 		for(cp = buf ; cp < &buf[nbytes] ; sp++, cp += 2 )
@@ -83,7 +83,7 @@ xdr_shorts(xdrs, sp, cnt)
 		return TRUE ;	/* ? */
 
 	odd = cnt % 2 ;
-	if(odd) 
+	if(odd)
 		cnt-- ;
 	/* cnt is even, odd is set if apropos */
 

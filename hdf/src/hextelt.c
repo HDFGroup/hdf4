@@ -45,7 +45,7 @@
 
    ext_tag_desc  - EXT_EXTERN(16 bit constant). Identifies this as an
                    external element description record.
-   offset        - Location of the element(data) within the external 
+   offset        - Location of the element(data) within the external
                    file(32 bit field)
    length        - Length in bytes of the element(data) in the external
                    file(32 bit field)
@@ -79,14 +79,14 @@ EXPORTED ROUTINES
 #include "hdf.h"
 #include "hfile.h"
 
-/* Directory seperator definitions relating to a path. 
+/* Directory seperator definitions relating to a path.
  * Note this does not provide a universal way to recognize
  * different path name conventions and translate between them */
 #if defined WIN386 | defined DOS386
 /* DOS-Windows seperator */
 #define DIR_SEPC  92  /* Integer value of '\' */
 #define DIR_SEPS  "\\"
-#else 
+#else
 /* Unix - POSIX */
 #define DIR_SEPC  47  /* Integer value of '/' */
 #define DIR_SEPS  "/"
@@ -94,7 +94,7 @@ EXPORTED ROUTINES
 
 /* directory path seperator from other directory paths */
 #define DIR_PATH_SEPC 124
-#define DIR_PATH_SEPS "|" 
+#define DIR_PATH_SEPS "|"
 
 /* extinfo_t -- external elt information structure */
 
@@ -134,7 +134,7 @@ funclist_t  ext_funcs =
     HXPreset,
 };
 
-/*------------------------------------------------------------------------ 
+/*------------------------------------------------------------------------
 NAME
    HXcreate -- create an external element
 USAGE
@@ -229,7 +229,7 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
 
                 if ((retcode == FAIL) || (sp_info.key == FAIL))
                     HGOTO_ERROR(DFE_CANTMOD, FAIL);
-		
+
                 /* We can proceed with linked-block and external, but
                    not compression special element */
                 switch(sp_info.key)
@@ -258,7 +258,7 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
             { /* not special */
             /* Then use HTPinquire to get the length of the data. Note: when
                this tag is special, this length is the length of the special
-                info only, not data. */ 
+                info only, not data. */
                 if (HTPinquire(data_id,NULL,NULL,NULL,&data_len)==FAIL)
                 {
                     HTPendaccess(data_id);
@@ -324,7 +324,7 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
     info->length_file_name = (int32)HDstrlen(extern_file_name);
     {
         uint8      *p = local_ptbuf;
-    
+
         INT16ENCODE(p, SPECIAL_EXT);
         INT32ENCODE(p, info->length);
         INT32ENCODE(p, info->extern_offset);
@@ -363,7 +363,7 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
     ret_value = HAregister_atom(AIDGROUP,access_rec);  /* return access id */
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
         if(access_rec!=NULL)
             HIrelease_accrec_node(access_rec);
@@ -383,10 +383,10 @@ done:
   if (buf != NULL)
       HDfree(buf);
 
-  return ret_value; 
+  return ret_value;
 } /* HXcreate */
 
-/*------------------------------------------------------------------------ 
+/*------------------------------------------------------------------------
 NAME
    HXPsetaccesstype -- set the I/O access type of the external file
 USAGE
@@ -435,13 +435,13 @@ HXPsetaccesstype(accrec_t * access_rec)
 	      HDfree(fname);
               info->file_external = file_external;
               break;
-              
+
           default:
               HGOTO_ERROR(DFE_BADOPEN, FAIL);
       }
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
         if(fname!=NULL)
             HDfree(fname);
@@ -537,7 +537,7 @@ HXIstaccess(accrec_t * access_rec, int16 acc_mode)
     ret_value = HAregister_atom(AIDGROUP,access_rec);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
         if(access_rec!=NULL)
             HIrelease_accrec_node(access_rec);
@@ -564,7 +564,7 @@ USAGE
 RETURNS
    The AID of the access record on success FAIL on error.
 DESCRIPTION
-   Calls to HXIstaccess to fill in the access rec for 
+   Calls to HXIstaccess to fill in the access rec for
    reading
 
 ---------------------------------------------------------------------------*/
@@ -635,7 +635,7 @@ HXPseek(accrec_t * access_rec, int32 offset, int origin)
     access_rec->posn = offset;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -718,7 +718,7 @@ HXPread(accrec_t * access_rec, int32 length, void * data)
     ret_value = length;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -740,7 +740,7 @@ USAGE
 RETURNS
    The number of bytes written or FAIL on error
 DESCRIPTION
-   Write out some data to an external file.  
+   Write out some data to an external file.
 
    It looks like this will allow us to write to a file even if we only
    have a read AID for it.   Is that really the behavior that we want?
@@ -793,7 +793,7 @@ HXPwrite(accrec_t * access_rec, int32 length, const void * data)
             /* this external file might not be opened with write permission,
                reopen the file and try again */
                 hdf_file_t  f = (hdf_file_t)HI_OPEN(info->extern_file_name, DFACC_WRITE);
-                
+
                 if (OPENERR(f) ||
                     HI_SEEK(f, access_rec->posn + info->extern_offset) == FAIL ||
                     HI_WRITE(f, data, length) == FAIL)
@@ -828,14 +828,14 @@ HXPwrite(accrec_t * access_rec, int32 length, const void * data)
     ret_value = length;    /* return length of bytes written */
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
 
   /* Normal function cleanup */
 
-  return ret_value; 
+  return ret_value;
 }	/* HXPwrite */
 
 /* ------------------------------ HXPinquire ------------------------------ */
@@ -896,7 +896,7 @@ HXPinquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
         *pspecial = (int16)access_rec->special;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -950,7 +950,7 @@ HXPendaccess(accrec_t * access_rec)
     HIrelease_accrec_node(access_rec);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
       if(access_rec!=NULL)
           HIrelease_accrec_node(access_rec);
@@ -958,7 +958,7 @@ done:
 
   /* Normal function cleanup */
 
-  return ret_value; 
+  return ret_value;
 }	/* HXPendaccess */
 
 /* ----------------------------- HXPcloseAID ------------------------------ */
@@ -971,7 +971,7 @@ USAGE
 RETURNS
    SUCCEED / FAIL
 DESCRIPTION
-   close the file currently being pointed to by this AID but 
+   close the file currently being pointed to by this AID but
    do *NOT* free the AID.
 
    This is called by Hnextread() which reuses an AID to point to
@@ -1005,7 +1005,7 @@ HXPcloseAID(accrec_t * access_rec)
 #ifdef LATER
 done:
 #endif /* LATER */
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1022,7 +1022,7 @@ NAME
 USAGE
    int32 HXPinfo(access_rec, info_block)
    accrec_t        * access_rec; IN: access record of element
-   sp_info_block_t * info_block; OUT: information about the special element 
+   sp_info_block_t * info_block; OUT: information about the special element
 RETURNS
    SUCCEED / FAIL
 DESCRIPTION
@@ -1052,14 +1052,14 @@ HXPinfo(accrec_t * access_rec, sp_info_block_t * info_block)
     info_block->path = info->extern_file_name;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
 
   /* Normal function cleanup */
 
-  return ret_value; 
+  return ret_value;
 }   /* HXPinfo */
 
 /* ------------------------------- HXPreset ------------------------------- */
@@ -1069,7 +1069,7 @@ NAME
 USAGE
    int32 HXPreset(access_rec, info_block)
    accrec_t        * access_rec;   IN: access record of element
-   sp_info_block_t * info_block;   IN: information about the special element 
+   sp_info_block_t * info_block;   IN: information about the special element
 RETURNS
    SUCCEED / FAIL
 DESCRIPTION
@@ -1144,7 +1144,7 @@ HXPreset(accrec_t * access_rec, sp_info_block_t * info_block)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
         if(info!=NULL)
         {
@@ -1157,7 +1157,7 @@ done:
 
   /* Normal function cleanup */
 
-  return ret_value; 
+  return ret_value;
 
 }	/* HXPreset */
 
@@ -1166,7 +1166,7 @@ static	char*	HDFEXTCREATEDIR = NULL;
 static	char*	extdir = NULL;
 static	char*	HDFEXTDIR = NULL;
 
-/*------------------------------------------------------------------------ 
+/*------------------------------------------------------------------------
 NAME
    HXsetcreatedir -- set the directory variable for creating external file
 USAGE
@@ -1203,20 +1203,20 @@ HXsetcreatedir(const char *dir)
 
   if (extcreatedir)
     HDfree(extcreatedir);
-    
+
   extcreatedir = pt;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
 
   /* Normal function cleanup */
-  return ret_value; 
+  return ret_value;
 }	/* HXsetcreatedir */
 
-/*------------------------------------------------------------------------ 
+/*------------------------------------------------------------------------
 NAME
    HXsetdir -- set the directory variable for locating external file
 USAGE
@@ -1253,17 +1253,17 @@ HXsetdir(const char *dir)
 
   if (extdir)
     HDfree(extdir);
-    
+
   extdir = pt;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
 
   /* Normal function cleanup */
-  return ret_value; 
+  return ret_value;
 }	/* HXsetdir */
 
 /* ------------------------------- HXIbuildfilename ------------------------------- */
@@ -1317,7 +1317,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
         HGOTO_ERROR(DFE_NOSPACE, NULL);
 
     fname_len = (int)HDstrlen(fname);
-    
+
     switch (acc_mode){
     case DFACC_CREATE: {			/* Creating a new external element */
         if ( *fname == DIR_SEPC ) {	/* Absolute Pathname */
@@ -1456,7 +1456,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
     }
 
   done:
-    if(ret_value == NULL)   
+    if(ret_value == NULL)
       { /* Error condition cleanup */
           if (finalpath != NULL)
               HDfree(finalpath); /* free this */
@@ -1464,10 +1464,10 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 
     /* Normal function cleanup */
 
-    return ret_value; 
+    return ret_value;
 }	/* HXIbuildfilename */
 
-/*------------------------------------------------------------------------ 
+/*------------------------------------------------------------------------
 NAME
    HXPshutdown -- free any memory buffers we've allocated
 USAGE

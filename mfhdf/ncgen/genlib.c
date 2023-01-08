@@ -38,7 +38,7 @@ derror(fmt, va_alist)
 
     if (lineno == 1)
       (void) fprintf(stderr,"%s: %s: ", progname, cdlname);
-    else  
+    else
       (void) fprintf(stderr,"%s: %s line %d: ", progname, cdlname, lineno);
 
 #ifndef NO_STDARG

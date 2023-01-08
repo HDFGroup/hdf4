@@ -93,7 +93,7 @@ C----------------------------------------------------------------------
 
       sfsdmstr = scsdimstr(id, label, unit, format,
      +     len(label), len(unit), len(format))
-      
+
       return
       end
 
@@ -101,7 +101,7 @@ C----------------------------------------------------------------------
 C Name:     sfsdmname
 C Purpose:  set name of this dimension
 C Inputs:   id: dimension id
-C           name: the name 
+C           name: the name
 C Returns:  0 on success, -1 on failure with DFerror set
 C Users:    HDF Fortran programmers
 C----------------------------------------------------------------------
@@ -113,10 +113,10 @@ C----------------------------------------------------------------------
       integer scsdimname
 
       sfsdmname = scsdimname(id, name, len(name))
-      
+
       return
       end
-        
+
 
 C----------------------------------------------------------------------
 C Name:     sfsdtstr
@@ -135,10 +135,10 @@ C----------------------------------------------------------------------
 
       sfsdtstr = scsdatstr(id, l, u, f, c,
      +     len(l), len(u), len(f), len(c))
-     
+
       return
       end
-   
+
 
 C----------------------------------------------------------------------
 C Name:     sfgdtstr
@@ -157,10 +157,10 @@ C----------------------------------------------------------------------
 
       sfgdtstr = scgdatstrs(id, label, unit, format, coord,
      +     len(label), len(unit), len(format), len(coord), mlen)
-      
+
       return
       end
-   
+
 C----------------------------------------------------------------------
 C Name:     sfgdmstr
 C Purpose:  get strings for this dimension
@@ -178,10 +178,10 @@ C----------------------------------------------------------------------
 
       sfgdmstr = scgdimstrs(id, label, unit, format,
      +     len(label), len(unit), len(format), mlen)
-      
+
       return
       end
-   
+
 C----------------------------------------------------------------------
 C Name:     sfginfo
 C Purpose:  get basic info about this data set
@@ -199,10 +199,10 @@ C----------------------------------------------------------------------
       integer scginfo, len
 
       sfginfo = scginfo(id, name, rank, dims, nt, nattr, len(name))
-      
+
       return
       end
-   
+
 C----------------------------------------------------------------------
 C Name:     sfgainfo
 C Purpose:  get basic info about an attribute
@@ -220,10 +220,10 @@ C----------------------------------------------------------------------
       integer scgainfo, len
 
       sfgainfo = scgainfo(id, number, name, nt, count, len(name))
-      
+
       return
       end
-   
+
 
 C----------------------------------------------------------------------
 C Name:     sfgdinfo
@@ -241,7 +241,7 @@ C----------------------------------------------------------------------
       integer scgdinfo, len
 
       sfgdinfo = scgdinfo(id, name, sz, nt, nattr, len(name))
-      
+
       return
       end
 
@@ -261,7 +261,7 @@ C----------------------------------------------------------------------
       integer scscatt, len
 
       sfscatt = scscatt(id,name,nt,count,data,len(name))
-      
+
       return
       end
 
@@ -281,13 +281,13 @@ C----------------------------------------------------------------------
       integer scsnatt, len
 
       sfsnatt = scsnatt(id, name, nt, count, data, len(name))
-      
+
       return
       end
 
 C----------------------------------------------------------------------
 C Name:     sfsattr
-C Purpose:  for backward compatability. Calls scsattr to 
+C Purpose:  for backward compatability. Calls scsattr to
 C           create (or modify an existing) attribute
 C Inputs:   id: id of object to attribute-ize
 C Outputs:  name, nt, count, data
@@ -303,7 +303,7 @@ C----------------------------------------------------------------------
       integer scsattr, len
 
       sfsattr = scsattr(id, name, nt, count, data, len(name))
-      
+
       return
       end
 
@@ -350,11 +350,11 @@ C        Name:      sfgichnk
 C        Purpose:   get Info on SDS
 C        Inputs:    id       - data set ID
 C        Outputs:   dim_length - chunk dimensions (if any)
-C                   comp_flag: 
+C                   comp_flag:
 C                               -1 - SDS is non-chunked
 C                                0 - SDS is chunked without compression
 C                                1 - SDS is chunked and compressed with
-C                                    RLE, GZIP, SZIP or SKPHUFF 
+C                                    RLE, GZIP, SZIP or SKPHUFF
 C                                2 - SDS is chunked and compressed with
 C                                    NBIT
 C        Returns:   0 on success, -1 on failure
@@ -364,19 +364,19 @@ C-------------------------------------------------------------------------
          integer function sfgichnk(id, dim_length, comp_flag)
 
          integer id, dim_length(*), comp_flag
-         integer scgichnk 
+         integer scgichnk
 
          sfgichnk = scgichnk(id, dim_length, comp_flag)
          return
          end
 
-           
+
 C-------------------------------------------------------------------------
 C        Name:      sfrcchnk
-C        Purpose:   read the specified chunk of CHARACTER data to the SDS 
+C        Purpose:   read the specified chunk of CHARACTER data to the SDS
 C        Inputs:    id       - data set ID
-C                   start    - chunk coordinates 
-C                   char_data - buffer the data will be read into  
+C                   start    - chunk coordinates
+C                   char_data - buffer the data will be read into
 C        Returns:   0 on success, -1 on failure
 C        Calls:     scrcchnk (C stub for SDreadchunk function)
 C        Users:     HDF Fortran programmers
@@ -386,20 +386,20 @@ C-------------------------------------------------------------------------
 C
          integer id, start(*)
          character*(*) char_data(*)
-         integer scrcchnk 
+         integer scrcchnk
 C
-         sfrcchnk = scrcchnk(id, start, char_data) 
+         sfrcchnk = scrcchnk(id, start, char_data)
 C
-         return 
+         return
          end
 
-           
+
 C-------------------------------------------------------------------------
 C        Name:      sfrchnk
-C        Purpose:   read the specified chunk of NUMERIC data to the SDS 
+C        Purpose:   read the specified chunk of NUMERIC data to the SDS
 C        Inputs:    id       - data set ID
-C                   start    - chunk coordinates 
-C                   num_data - buffer the  numeric data will be read into  
+C                   start    - chunk coordinates
+C                   num_data - buffer the  numeric data will be read into
 C        Returns:   0 on success, -1 on failure
 C        Calls:     scrchnk (C stub for SDreadchunk function)
 C        Users:     HDF Fortran programmers
@@ -408,19 +408,19 @@ C-------------------------------------------------------------------------
          integer function sfrchnk(id, start, num_data)
 C
          integer id, start(*), num_data(*)
-         integer scrchnk 
+         integer scrchnk
 C
-         sfrchnk = scrchnk(id, start, num_data) 
+         sfrchnk = scrchnk(id, start, num_data)
 C
-         return 
+         return
          end
 
-           
+
 C-------------------------------------------------------------------------
 C        Name:      sfscchnk
 C        Purpose:   set the maximum number of chunks to cache
 C        Inputs:    id       - data set ID
-C                   maxcache - max number of chunks to cache 
+C                   maxcache - max number of chunks to cache
 C                   flags    - flags =0, HDF_CACHEALL
 C                              Currently only 0 can be passed.
 C        Returns:   0 on success, -1 on failure
@@ -430,49 +430,49 @@ C-------------------------------------------------------------------------
 
          integer function sfscchnk(id, maxcache, flags)
 C
-         integer id, maxcache, flags 
-         integer scscchnk 
+         integer id, maxcache, flags
+         integer scscchnk
 C
-         sfscchnk = scscchnk(id, maxcache, flags) 
+         sfscchnk = scscchnk(id, maxcache, flags)
 C
-         return 
+         return
          end
 
-           
+
 
 C-------------------------------------------------------------------------
 C        Name:      sfschnk
 C        Purpose:   make the SDS a chunked SDS
 C        Inputs:    id       - data set ID
 C                   dim_length - chunk dimensions
-C                   comp_type - type of compression    
+C                   comp_type - type of compression
 C                   supports the following compression types:
-C                            ( see hcomp.h  file) 
+C                            ( see hcomp.h  file)
 C                            COMP_CODE_NONE = 0
 C                            COMP_CODE_RLE = 1
-C                            COMP_CODE_NBIT = 2 
+C                            COMP_CODE_NBIT = 2
 C                            COMP_CODE_SKPHUFF = 3
-C                            COMP_CODE_DEFLATE = 4 
+C                            COMP_CODE_DEFLATE = 4
 C                            COMP_CODE_SZIP = 5
 C                   comp_prm  - compression parameters array
 C        For
-C        Adaptive Huffman 
+C        Adaptive Huffman
 C                   comp_prm(1) = skphuff_skp_size
-C        GZIP       
+C        GZIP
 C                   comp_prm(1) = deflate_level
 C        NBIT
 C                   comp_prm(1) = nbit_sign_ext
 C                   comp_prm(2) = nbit_fill_one
 C                   comp_prm(3) = nbit_start_bit
-C                   comp_prm(4) = nbit_bit_len 
-C         
+C                   comp_prm(4) = nbit_bit_len
+C
 C        SZIP
 C                   comp_prm(1) = options_mask
-C                   comp_prm(2) = pixels_per_block 
+C                   comp_prm(2) = pixels_per_block
 C        NOTE: IT IS USER's responsibility to pass correct compression
 C              parameters for each type of compression
 C
-C                       
+C
 C        Returns:   0 on success, -1 on failure
 C        Calls:     scschnk (C stub for SDsetchunk function)
 C-------------------------------------------------------------------------
@@ -480,19 +480,19 @@ C-------------------------------------------------------------------------
          integer function sfschnk(id, dim_length, comp_type,comp_prm)
 
          integer id, dim_length(*), comp_type, comp_prm(*)
-         integer scschnk 
+         integer scschnk
 
          sfschnk = scschnk(id, dim_length, comp_type, comp_prm)
          return
          end
 
-           
+
 C-------------------------------------------------------------------------
 C        Name:      sfwcchnk
-C        Purpose:   write the specified chunk of CHARACTER data to the SDS 
+C        Purpose:   write the specified chunk of CHARACTER data to the SDS
 C        Inputs:    id       - data set ID
-C                   start    - chunk coordinates 
-C                   char_data - buffer containing  data to be written  
+C                   start    - chunk coordinates
+C                   char_data - buffer containing  data to be written
 C        Returns:   0 on success, -1 on failure
 C        Calls:     scwcchnk (C stub for SDwritechunk function)
 C        Users:     HDF Fortran programmers
@@ -500,22 +500,22 @@ C-------------------------------------------------------------------------
 
          integer function sfwcchnk(id, start, char_data)
 C
-         integer id, start(*) 
+         integer id, start(*)
          character*(*) char_data(*)
-         integer scwcchnk 
+         integer scwcchnk
 C
-         sfwcchnk = scwcchnk(id, start, char_data) 
+         sfwcchnk = scwcchnk(id, start, char_data)
 C
-         return 
+         return
          end
 
-           
+
 C-------------------------------------------------------------------------
 C        Name:      sfwchnk
-C        Purpose:   write the specified chunk of NUMERIC data to the SDS 
+C        Purpose:   write the specified chunk of NUMERIC data to the SDS
 C        Inputs:    id       - data set ID
-C                   start    - chunk coordinates 
-C                   num_data - buffer containing data to be written  
+C                   start    - chunk coordinates
+C                   num_data - buffer containing data to be written
 C        Returns:   0 on success, -1 on failure
 C        Calls:     scwchnk (C stub for SDwritechunk function)
 C        Users:     HDF Fortran programmers
@@ -524,25 +524,25 @@ C-------------------------------------------------------------------------
          integer function sfwchnk(id, start, num_data)
 C
          integer id, start(*), num_data(*)
-         integer scwchnk 
+         integer scwchnk
 C
-         sfwchnk = scwchnk(id, start, num_data) 
+         sfwchnk = scwchnk(id, start, num_data)
 C
-         return 
+         return
          end
 
-           
+
 C-------------------------------------------------------------------------
 C        Name:      sfscompress
-C        Purpose:   compress SDS 
+C        Purpose:   compress SDS
 C        Inputs:    id       - data set ID
 C                   comp_type - type of compression
 C                   supports the following compression types:
-C                            ( see hcomp.h  file) 
+C                            ( see hcomp.h  file)
 C                            COMP_CODE_NONE = 0
 C                            COMP_CODE_RLE =1
 C                            COMP_CODE_SKPHUFF = 3
-C                            COMP_CODE_DEFLATE = 4 
+C                            COMP_CODE_DEFLATE = 4
 C                            COMP_CODE_SZIP =  5
 C                   comp_prm - compression parameter array:
 C                   comp_prm(1) = deflate_level for GZIP
@@ -559,22 +559,22 @@ C-------------------------------------------------------------------------
          integer function sfscompress(id, comp_type,comp_prm)
 
          integer id, comp_type, comp_prm(*)
-         integer scscompress 
+         integer scscompress
          sfscompress = scscompress(id, comp_type, comp_prm)
          return
          end
 
 C-------------------------------------------------------------------------
 C        Name:      sfgcompress
-C        Purpose:   get compression information about  SDS 
+C        Purpose:   get compression information about  SDS
 C        Inputs:    id       - data set ID
 C        Output:    comp_type - type of compression
 C                   supports the following compression types:
-C                            ( see hcomp.h  file) 
+C                            ( see hcomp.h  file)
 C                            COMP_CODE_NONE = 0
 C                            COMP_CODE_RLE =1
 C                            COMP_CODE_SKPHUFF = 3
-C                            COMP_CODE_DEFLATE = 4 
+C                            COMP_CODE_DEFLATE = 4
 C                            COMP_CODE_SZIP =  5
 C                   comp_prm - compression parameter array:
 C                   comp_prm(1) = deflate_level for GZIP
@@ -594,7 +594,7 @@ C-------------------------------------------------------------------------
          integer function sfgcompress(id, comp_type,comp_prm)
 
          integer id, comp_type, comp_prm(*)
-         integer scgcompress 
+         integer scgcompress
          sfgcompress = scgcompress(id, comp_type, comp_prm)
          return
          end
@@ -602,7 +602,7 @@ C-------------------------------------------------------------------------
 
 C-------------------------------------------------------------------------
 C        Name:      sfchempty
-C        Purpose:   checks whether an SDS is empty ( data has not been written) 
+C        Purpose:   checks whether an SDS is empty ( data has not been written)
 C        Inputs:    id       - data set ID
 C        Outputs:   flag     - 1 if SDS is empty, 0 otherwise
 C        Returns:   0 on success, -1 on failure
@@ -612,19 +612,19 @@ C-------------------------------------------------------------------------
 
          integer function sfchempty(id, flag)
 C
-         integer id, flag 
-         integer scchempty 
+         integer id, flag
+         integer scchempty
 C
-         sfchempty = scchempty(id, flag) 
+         sfchempty = scchempty(id, flag)
 C
-         return 
+         return
          end
-           
+
 C----------------------------------------------------------------------
 C     Name:     sfgetfname
 C     Purpose:  Retrieves the name of the file given file identifier
 C     Inputs:   file_id: file identifier
-C     Input/Outputs: filename: character variable to hold 
+C     Input/Outputs: filename: character variable to hold
 C                    the name of the file
 C     Returns:  the length of the name if successful, -1 if fails
 C     Calls:    scgetfname
@@ -643,7 +643,7 @@ C----------------------------------------------------------------------
 
 C-------------------------------------------------------------------------
 C        Name:      sfgetnamelen
-C        Purpose:   Retrieves the length of the name of 
+C        Purpose:   Retrieves the length of the name of
 C                   a file, a dataset, or a dimension.
 C        Inputs:    obj_id   - object identifier
 C        Outputs:   length   - length of the object's name
@@ -657,9 +657,9 @@ C
       integer obj_id, length
       integer scgetnamelen
 C
-      sfgetnamelen = scgetnamelen(obj_id, length) 
+      sfgetnamelen = scgetnamelen(obj_id, length)
 C
-      return 
+      return
       end
 
 C-------------------------------------------------------------------------
@@ -683,15 +683,15 @@ C
       integer obj_id, obj_type
       integer scidtype
 C
-      sfidtype = scidtype(obj_id, obj_type) 
+      sfidtype = scidtype(obj_id, obj_type)
 C
-      return 
+      return
       end
-           
+
 C----------------------------------------------------------------------
 C     Name:     sfgnvars_byname
 C     Purpose:  Gets the number of data sets having the same name
-C     Inputs:   sd_id: SD interface identifier 
+C     Inputs:   sd_id: SD interface identifier
 C               sds_name:  name of a data set
 C     Output:   n_vars: number of data sets with name "name"
 C     Returns:  0 on success, -1 on failure
@@ -705,7 +705,7 @@ C----------------------------------------------------------------------
       integer       sd_id, n_vars
       integer       scgnvars_byname
 
-      sfgnvars_byname = scgnvars_byname(sd_id, sds_name, 
+      sfgnvars_byname = scgnvars_byname(sd_id, sds_name,
      +                  len(sds_name),
      +                  n_vars)
       return
@@ -713,13 +713,13 @@ C----------------------------------------------------------------------
 
 C----------------------------------------------------------------------
 C     Name:     sfn2indices
-C     Purpose:  Retrieves indices and types of all variables with 
+C     Purpose:  Retrieves indices and types of all variables with
 C               the same name
-C     Inputs:   sd_id: SD interface identifier 
+C     Inputs:   sd_id: SD interface identifier
 C               sds_name:  name of a data set
-C     Input/Output:   var_list: array to store indices 
+C     Input/Output:   var_list: array to store indices
 C                     type_list: array to store variable type
-C                                elements may have values 
+C                                elements may have values
 C                                0 - for data set,
 C                                1 - for dimension scale
 C                                2 - unknown type
@@ -728,7 +728,7 @@ C     Calls:    scn2indices
 C     Users:    Fortran stub routine
 C----------------------------------------------------------------------
 
-      integer function sfn2indices(sd_id, sds_name, var_list, 
+      integer function sfn2indices(sd_id, sds_name, var_list,
      +                            type_list, n_vars)
 
       character*(*) sds_name
@@ -737,16 +737,16 @@ C----------------------------------------------------------------------
       integer       n_vars
       integer       scn2indices
 
-      sfn2indices = scn2indices(sd_id, sds_name, len(sds_name), 
+      sfn2indices = scn2indices(sd_id, sds_name, len(sds_name),
      +                    var_list, type_list, n_vars)
       return
       end
 
 C-------------------------------------------------------------------------
 C        Name:      sfgmaxopenf
-C        Purpose:   Retrieves current and maximum number of open files 
-C        Outputs:   cur_max: current number of open files 
-C                   sys_limit: maximum number of open files 
+C        Purpose:   Retrieves current and maximum number of open files
+C        Outputs:   cur_max: current number of open files
+C                   sys_limit: maximum number of open files
 C        Returns:   0 on success, -1 on failure
 C        Calls:     scgmaxopenf
 C        Users:     Fortran stub routine
@@ -757,15 +757,15 @@ C
       integer cur_max, sys_limit
       integer scgmaxopenf
 C
-      sfgmaxopenf = scgmaxopenf(cur_max, sys_limit) 
+      sfgmaxopenf = scgmaxopenf(cur_max, sys_limit)
 C
-      return 
+      return
       end
-           
+
 C-------------------------------------------------------------------------
 C        Name:      sfgnumopenf
 C        Purpose:   Returns the number of files currently being opened
-C        Outputs:   cur_num: current number of open files 
+C        Outputs:   cur_num: current number of open files
 C        Returns:   0 on success, -1 on failure
 C        Calls:     scgnumopenf
 C        Users:     Fortran stub routine
@@ -776,16 +776,16 @@ C
       integer cur_num
       integer scgnumopenf
 C
-      sfgnumopenf = scgnumopenf(cur_num) 
+      sfgnumopenf = scgnumopenf(cur_num)
 C
-      return 
+      return
       end
-           
+
 C-------------------------------------------------------------------------
 C        Name:      sfrmaxopenf
-C        Purpose:   Resets the maximum number of files can be opened 
+C        Purpose:   Resets the maximum number of files can be opened
 C                   at the same time
-C        Outputs:   req_max: requested maximum number of opened files allowed 
+C        Outputs:   req_max: requested maximum number of opened files allowed
 C        Returns:   0 on success, -1 on failure
 C        Calls:     scrmaxopenf
 C        Users:     Fortran stub routine
@@ -796,11 +796,11 @@ C
       integer req_max
       integer scrmaxopenf
 C
-      sfrmaxopenf = scrmaxopenf(req_max) 
+      sfrmaxopenf = scrmaxopenf(req_max)
 C
-      return 
+      return
       end
-           
-           
-           
-           
+
+
+
+

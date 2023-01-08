@@ -42,26 +42,26 @@ struct ncatt {   /* attribute */
 };
 
 typedef
-enum {LANG_NONE, LANG_C, LANG_F} Nclang; 
+enum {LANG_NONE, LANG_C, LANG_F} Nclang;
 
 typedef struct {   /* selection for comparison  */
     int verbose;   /*
      * if true, print cuurent interface comparison
      */
     int ga;   /*
-     * if true, compare global attributes only 
+     * if true, compare global attributes only
      */
     int sa;   /*
-     * if true, compare SD local attributes only 
+     * if true, compare SD local attributes only
      */
     int sd;   /*
-     * if true, compare SD data only 
+     * if true, compare SD data only
      */
     int gr;   /*
-     * if true, compare GR data only 
+     * if true, compare GR data only
      */
     int vd;   /*
-     * if true, compare Vdata only 
+     * if true, compare Vdata only
      */
     uint32 max_err_cnt;         /*
                                  * max. no of difference to be printed
@@ -90,7 +90,7 @@ typedef struct {   /* selection for comparison  */
      * relative diff for the comparison
      */
 
-    int    err_stat;  
+    int    err_stat;
     /* an error occurred (1, error, 0, no error) */
 
 } diff_opt_t;
@@ -127,31 +127,31 @@ uint32  gattr_diff(int32 sdid1, int32 sdid2, diff_opt_t *opt);
 void    pr_att_vals(nc_type type, int len, void *vals);
 
 
-uint32 array_diff(void *buf1, 
-                  void *buf2, 
-                  uint32 tot_cnt, 
+uint32 array_diff(void *buf1,
+                  void *buf2,
+                  uint32 tot_cnt,
                   const char *name1,
                   const char *name2,
                   int rank,
                   int32 *dims,
-                  int32 type, 
-                  float32 err_limit, 
+                  int32 type,
+                  float32 err_limit,
                   float32 err_rel,
-                  uint32 max_err_cnt, 
+                  uint32 max_err_cnt,
                   int32 statistics,
-                  void *fill1, 
+                  void *fill1,
                   void *fill2);
 
 
-uint32 match( uint32 nobjects1, 
+uint32 match( uint32 nobjects1,
               dtable_t *list1,
-              uint32 nobjects2, 
+              uint32 nobjects2,
               dtable_t *list2,
-              int32 sd1_id, 
-              int32 gr1_id, 
-              int32 file1_id,                
-              int32 sd2_id, 
-              int32 gr2_id, 
+              int32 sd1_id,
+              int32 gr1_id,
+              int32 file1_id,
+              int32 sd2_id,
+              int32 gr2_id,
               int32 file2_id,
               diff_opt_t *opt );
 
@@ -175,19 +175,19 @@ void print_dims( int r, int32 *d );
 
 uint32 diff_vs( int32 file1_id,
                 int32 file2_id,
-                int32 ref1,              
+                int32 ref1,
                 int32 ref2,
                 diff_opt_t * opt);
 
 
-uint32 diff_gr( int32 gr1_id,              
+uint32 diff_gr( int32 gr1_id,
                 int32 gr2_id,
-                int32 ref1,              
+                int32 ref1,
                 int32 ref2,
                 diff_opt_t * opt);
 
 
-uint32 diff_sds(int32 sd1_id,              
+uint32 diff_sds(int32 sd1_id,
                 int32 sd2_id,
                 int32 ref1,
                 int32 ref2,

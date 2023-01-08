@@ -23,7 +23,7 @@
  *  mgcreat:    Call GRcreate to create a raster image
  *  mgselct:    Call GRselect to select an existing raster image for I/O
  *  mgn2ndx:    Call GRnametoindex to map an image's name into a index in a file
- *  mggiinf:    Call GRgetiminfo to get information about an image 
+ *  mggiinf:    Call GRgetiminfo to get information about an image
  *  mgwrimg:    Call GRwriteimage to write image data to the file
  *  mgrdimg:    Call GRreadimage to read image data from the file
  *  mgendac:    Call GRendaccess to end access to a raster image
@@ -42,8 +42,8 @@
  *  mgrclut:    Call GRreadlut to read a character palette from the file
  *  mgsxfil:    Call GRsetexternalfile to move an image into an external file
  *  mgsactp:    Call GRsetaccesstype to set the access type for an image
- *  mgscomp:    Call GRsetcompress to compress an image in the file 
- *  mggcomp:    Call GRgetcompinfo to get image compression information 
+ *  mgscomp:    Call GRsetcompress to compress an image in the file
+ *  mggcomp:    Call GRgetcompinfo to get image compression information
  *  mgisattr:    Call GRsetattr to write an attribute for an object
  *  mgiscatt:   Call GRsetattr to write a char attribute for an obj.
  *  mgatinf:    Call GRattrinfo get information about an attribute
@@ -53,7 +53,7 @@
  *  mgfndat:    Call GRfindattr to get the index of an attribute for a name
  *  mglut2ref:  Call GRluttoref to get reference number for a palette specified
  *                   by palette identifier
- * Remarks: 
+ * Remarks:
  *---------------------------------------------------------------------------*/
 
 #include "hdf.h"
@@ -757,9 +757,9 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
  * Outputs: dim_length: chunk dimensions
  *          flags:            -1 - GR is nonchunked
  *                             0 - GR is chunked, no compression
- *                             1 - GR is chunked and compressed 
+ *                             1 - GR is chunked and compressed
  * Returns: 0 on success, -1 on failure with error set
- * Users:   HDF Fortran programmers          
+ * Users:   HDF Fortran programmers
  *-------------------------------------------------------------------------*/
 
     FRETVAL (intf)
@@ -767,7 +767,7 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
       nmgcgichnk(intf *id, intf *dim_length, intf *flags)
 #else
        nmgcgichnk( id, dim_length, flags)
-       intf *id;       
+       intf *id;
        intf *dim_length;
        intf *flags;
 #endif /* PROTOTYPE */
@@ -786,7 +786,7 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
     status = GRgetchunkinfo(riid, &chunk_def, &cflags);
     if(status == FAIL) return FAIL;
 
-    switch (cflags)  
+    switch (cflags)
 
       {
 
@@ -805,7 +805,7 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
          return(ret);
 
       case (HDF_CHUNK | HDF_COMP):     /* Chunked and compressed GR */
-     
+
          *flags = 1;
          for (i=0; i < rank; i++)
               dim_length[rank-i-1] =  chunk_def.comp.chunk_lengths[i];
@@ -815,22 +815,22 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
       default:
 
         return FAIL;
-            
+
       }
 
-}   
+}
 /*-----------------------------------------------------------------------------
  * Name:     mgcrcchnk
  * Purpose:  read the specified chunk of CHARACTER data to the buffer
  * Inputs:   id        - access ID to GR
- *           start     - origin of chunk to read 
+ *           start     - origin of chunk to read
  * Outputs:  char_data  - buffer the data will be read into
- * Calls:    scrchnk 
+ * Calls:    scrchnk
  * Reamrks:  dimensions will be flipped in scrchnk function
  * Returns:  0 on success, -1 on failure with error set
- *----------------------------------------------------------------------------*/   
+ *----------------------------------------------------------------------------*/
     FRETVAL (intf)
-#ifdef PROTOTYPE 
+#ifdef PROTOTYPE
        nmgcrcchnk(intf *id, intf *start, _fcd char_data)
 #else
        nmgcrcchnk(id, start, char_data)
@@ -846,20 +846,20 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
 
        return(ret);
 
-} 
+}
 
 /*-----------------------------------------------------------------------------
  * Name:     mgcrchnk
  * Purpose:  read the specified chunk of NUMERIC data to the buffer
  * Inputs:   id        - access ID to GR
- *           start     - origin of chunk to read 
+ *           start     - origin of chunk to read
  * Outputs:  num_data  - buffer the data will be read into
  * Calls:    GRreadchunk
  * Remarks:  need to flip the dimensions to account for array ordering
  *           differencies (start --> cstart)
- *           If performance becomes an issue, use static cstart 
+ *           If performance becomes an issue, use static cstart
  * Returns:  0 on success, -1 on failure with error set
- *----------------------------------------------------------------------------*/   
+ *----------------------------------------------------------------------------*/
     FRETVAL (intf)
 #ifdef PROTOTYPE
        nmgcrchnk(intf *id, intf *start, VOIDP num_data)
@@ -896,18 +896,18 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
        HDfree((VOIDP)cstart);
        return(ret);
 
-} 
+}
 
 /*-----------------------------------------------------------------------------
  * Name:     mgcscchnk
- * Purpose:  set the maximum number of chunks to cache 
+ * Purpose:  set the maximum number of chunks to cache
  * Inputs:   id        - access ID to GR
  *           maxcache  - max number of chunks to cache
  *           flags     - flags= 0, HDF_CACHEALL
  *                       Currently only 0 can be passed
  * Calls:    GRsetchunkcache
  * Returns:  0 on success, -1 on failure with error set
- *----------------------------------------------------------------------------*/   
+ *----------------------------------------------------------------------------*/
     FRETVAL (intf)
 #ifdef PROTOTYPE
        nmgcscchnk(intf *id, intf *maxcache, intf *flags)
@@ -925,7 +925,7 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
 
        return(ret);
 
-} 
+}
 
 /*-------------------------------------------------------------------------
  * Name:    mgcschnk
@@ -939,11 +939,11 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
  *                              COMP_CODE_DEFLATE (4)
  *                              COMP_CODE_INVALID (5)
  *          comp_prm:   compression parameters array
- *          comp_prm[0] = skphuff_skp_size: size of individual elements for 
+ *          comp_prm[0] = skphuff_skp_size: size of individual elements for
  *                            Adaptive Huffman compression algorithm
  *          comp_prm[0] = deflate_level:    GZIP  compression parameter
  * Returns: 0 on success, -1 on failure with error set
- * Users:   HDF Fortran programmers          
+ * Users:   HDF Fortran programmers
  *-------------------------------------------------------------------------*/
 
     FRETVAL (intf)
@@ -977,9 +977,9 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
        case 0:       /* No compression */
          cflags = HDF_CHUNK;
          for (i=0; i < rank; i++)
-               chunk_def.chunk_lengths[i] = dim_length[rank-i-1]; 
+               chunk_def.chunk_lengths[i] = dim_length[rank-i-1];
          break;
-    
+
        case 1:       /* RLE compression */
          for (i=0; i < rank; i++)
                 chunk_def.comp.chunk_lengths[i] = dim_length[rank-i-1];
@@ -992,16 +992,16 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
 
        case 2:      /* N-bit encoding */
          for (i=0; i < rank; i++)
-                chunk_def.comp.chunk_lengths[i] = dim_length[rank-i-1]; 
+                chunk_def.comp.chunk_lengths[i] = dim_length[rank-i-1];
 
          chunk_def.comp.comp_type = COMP_CODE_NBIT;
          chunk_def.comp.cinfo.nbit.sign_ext = comp_prm[0];
          chunk_def.comp.cinfo.nbit.fill_one = comp_prm[1];
          chunk_def.comp.cinfo.nbit.start_bit = comp_prm[2];
-         chunk_def.comp.cinfo.nbit.bit_len = comp_prm[3];  
+         chunk_def.comp.cinfo.nbit.bit_len = comp_prm[3];
 
-         break; 
- 
+         break;
+
 #endif
        case 3:      /* Skipping Huffman encoding */
           for (i=0; i < rank; i++)
@@ -1012,10 +1012,10 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
 
           break;
 
-       case 4:      /* GZIP compression */  
+       case 4:      /* GZIP compression */
           for (i=0; i < rank; i++)
                  chunk_def.comp.chunk_lengths[i] = dim_length[rank-i-1];
-           
+
           chunk_def.comp.comp_type = COMP_CODE_DEFLATE;
           chunk_def.comp.cinfo.deflate.level = comp_prm[0];
 
@@ -1024,24 +1024,24 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
        default:
 
           return FAIL;
-                    
+
      }
 
     ret = GRsetchunk(riid, chunk_def, cflags);
-     
+
     return(ret);
 
-}   
+}
 /*-----------------------------------------------------------------------------
  * Name:     mgcwcchnk
- * Purpose:  write the specified chunk of CHARACTER data to the GR 
+ * Purpose:  write the specified chunk of CHARACTER data to the GR
  * Inputs:   id        - access ID to GR
- *           start     - origin of chunk to read 
+ *           start     - origin of chunk to read
  * Outputs:  char_data  - buffer the data will be read into
- * Calls:    mgcwchnk 
+ * Calls:    mgcwchnk
  * Reamrks:  dimensions will be flipped in scrchnk function
  * Returns:  0 on success, -1 on failure with error set
- *----------------------------------------------------------------------------*/   
+ *----------------------------------------------------------------------------*/
     FRETVAL (intf)
 #ifdef PROTOTYPE
        nmgcwcchnk(intf *id, intf *start, _fcd char_data)
@@ -1059,7 +1059,7 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
 
        return(ret);
 
-} 
+}
 
 /*-----------------------------------------------------------------------------
  * Name:     mgcwchnk
@@ -1070,9 +1070,9 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
  * Calls:    GRwritechunk
  * Remarks:  need to flip the dimensions to account for array ordering
  *           differencies (start --> cstart)
- *           If performance becomes an issue, use static cstart 
+ *           If performance becomes an issue, use static cstart
  * Returns:  0 on success, -1 on failure with error set
- *----------------------------------------------------------------------------*/   
+ *----------------------------------------------------------------------------*/
     FRETVAL (intf)
 #ifdef PROTOTYPE
        nmgcwchnk(intf *id, intf *start, VOIDP num_data)
@@ -1104,13 +1104,13 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
 
        ret = GRwritechunk(*id, cstart, num_data);
 
-/* Free memory */ 
+/* Free memory */
 
        HDfree((VOIDP)cstart);
 
        return(ret);
 
-} 
+}
 /*-------------------------------------------------------------------------
  * Name:    mgcscompress
  * Puporse: Call GRsetcompress
@@ -1120,15 +1120,15 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
  *                      COMP_CODE_RLE  = 1
  *                      COMP_CODE_SKPHUFF = 3
  *                      COMP_CODE_DEFLATE = 4
- *                      COMP_CODE_JPEG    = 7 
+ *                      COMP_CODE_JPEG    = 7
  *          comp_prm:   compression parameters array
- *          comp_prm[0]=skphuff_skp_size: size of individual elements for 
+ *          comp_prm[0]=skphuff_skp_size: size of individual elements for
  *                            Adaptive Huffman compression algorithm
  *          comp_prm[0]=deflate_level:    GZIP  compression parameter
  *          comp_prm[0]=quality           JPEG parameters
- *          comp_prm[1]=baseline      
+ *          comp_prm[1]=baseline
  * Returns: 0 on success, -1 on failure with error set
- * Users:   HDF Fortran programmers          
+ * Users:   HDF Fortran programmers
  *-------------------------------------------------------------------------*/
 
     FRETVAL (intf)
@@ -1157,22 +1157,22 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
        case COMP_CODE_NONE:       /* No compression */
          c_type = COMP_CODE_NONE;
          break;
-    
+
        case COMP_CODE_RLE:             /* RLE compression */
          c_type = COMP_CODE_RLE;
          break;
- 
+
        case COMP_CODE_SKPHUFF:      /* Skipping Huffman encoding */
           c_type = COMP_CODE_SKPHUFF;
           c_info.skphuff.skp_size = comp_prm[0];
           break;
 
-       case COMP_CODE_DEFLATE:      /* GZIP compression */  
+       case COMP_CODE_DEFLATE:      /* GZIP compression */
           c_type = COMP_CODE_DEFLATE;
           c_info.deflate.level = comp_prm[0];
           break;
 
-       case COMP_CODE_JPEG:      /* JPEG compression */  
+       case COMP_CODE_JPEG:      /* JPEG compression */
           c_type = COMP_CODE_JPEG;
           c_info.jpeg.quality = comp_prm[0];
           c_info.jpeg.force_baseline = comp_prm[1];
@@ -1181,13 +1181,13 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
        default:
 
           return FAIL;
-                    
+
      }
 
     ret = GRsetcompress(riid, c_type, &c_info);
     return(ret);
 
-}   
+}
 /*-------------------------------------------------------------------------
  * Name:    mgcgcompress
  * Puporse: Call GRgetcompinfo
@@ -1197,13 +1197,13 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
  *                      COMP_CODE_RLE  = 1
  *                      COMP_CODE_SKPHUFF = 3
  *                      COMP_CODE_DEFLATE = 4
- *                      COMP_CODE_JPEG    = 7 
+ *                      COMP_CODE_JPEG    = 7
  *          comp_prm:   compression parameters array
- *          comp_prm[0]=skphuff_skp_size: size of individual elements for 
+ *          comp_prm[0]=skphuff_skp_size: size of individual elements for
  *                            Adaptive Huffman compression algorithm
  *          comp_prm[0]=deflate_level:    GZIP  compression parameter
  * Returns: 0 on success, -1 on failure with error set
- * Users:   HDF Fortran programmers          
+ * Users:   HDF Fortran programmers
  *-------------------------------------------------------------------------*/
 
     FRETVAL (intf)
@@ -1234,25 +1234,25 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
          *comp_type = 0;
          ret = 0;
          break;
-    
+
        case COMP_CODE_RLE:             /* RLE compression */
          *comp_type = 1;
          ret = 0;
          break;
- 
+
        case COMP_CODE_SKPHUFF:      /* Skipping Huffman encoding */
           *comp_type = 3;
           comp_prm[0] = (intf)c_info.skphuff.skp_size;
           ret = 0;
           break;
 
-       case COMP_CODE_DEFLATE:      /* GZIP compression */  
+       case COMP_CODE_DEFLATE:      /* GZIP compression */
           *comp_type = 4;
           comp_prm[0] = (intf)c_info.deflate.level;
           ret = 0;
           break;
 
-       case COMP_CODE_JPEG:      /* JPEG compression */  
+       case COMP_CODE_JPEG:      /* JPEG compression */
           *comp_type = 7;
           ret = 0;
           break;
@@ -1260,19 +1260,19 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
        default:
 
           return FAIL;
-                    
+
      } /*end CASE */
     } /*end if */
     return(ret);
 
-}   
+}
 /*-------------------------------------------------------------------------
  * Name:    mglt2rf
  * Puporse: Call GRluttoref
- * Inputs:  id: LUT id returned by GRgetlutid(mggltid) 
+ * Inputs:  id: LUT id returned by GRgetlutid(mggltid)
  * Returns: valid reference number if a pallette exists or 0 (DFREF_WILDCARD)
  *          if one doesn't / FAIL
- * Users:   HDF Fortran programmers          
+ * Users:   HDF Fortran programmers
  *-------------------------------------------------------------------------*/
 
     FRETVAL (intf)
@@ -1293,7 +1293,7 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
  * Puporse: Call GRgetnluts
  * Inputs:  id: image identifier
  * Returns: number of palettes on success and -1 if fails.
- * Users:   HDF Fortran programmers          
+ * Users:   HDF Fortran programmers
  *-------------------------------------------------------------------------*/
 
     FRETVAL (intf)

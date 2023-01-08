@@ -26,7 +26,7 @@ C
       integer number_failed
       character*20 myname
       parameter (myname = 'sdnmms')
-   
+
       integer dsgdata, dsadata, dssdims, dssrang, dsgrang, dssnt
       integer dssdisc, dsgdisc
 
@@ -73,7 +73,7 @@ C that of a numerial argument.
       integer DFNT_NFLOAT64, DFNT_NFLOAT32, DFNT_NINT8, DFNT_NINT16
       integer DFNT_NINT32,  DFNT_NATIVE
       integer DFNT_FLOAT64, DFNT_FLOAT32, DFNT_INT8, DFNT_INT16
-      integer DFNT_INT32 
+      integer DFNT_INT32
 
 
       call ptestban('Testing', myname)
@@ -90,7 +90,7 @@ C      i8min = char(-128)
       i16min = -1200
       i32max = 99999999
       i32min = -999999999
-      
+
       rank = 2
       dims(1) = 10
       dims(2) = 10
@@ -110,9 +110,9 @@ C However, OR() is not really that portable
       DFNT_NINT8 =    DFNT_NATIVE + DFNT_INT8
       DFNT_NINT16 =   DFNT_NATIVE + DFNT_INT16
       DFNT_NINT32 =   DFNT_NATIVE + DFNT_INT32
-      
+
       call MESSAGE(5, 'Creating arrays...')
-      
+
       do 110 i=1,10
           do 100 j=1,10
             f64(i,j) = (i * 40) + j
@@ -129,9 +129,9 @@ C However, OR() is not really that portable
   110 continue
 
       err1 = dssdims(rank, dims)
-      
+
 C
-C  Writing dimscale, max/min, and arrays to a single file 
+C  Writing dimscale, max/min, and arrays to a single file
 C
       call MESSAGE(5, 'Writing arrays to single file...')
 
@@ -140,7 +140,7 @@ C
       err2 = dssrang(f64max, f64min)
       err3 = dsadata('fon.hdf', rank, dims, f64)
       call errchkio(err1, err2, err3, number_failed, 'float64 write')
-      
+
       err  = dssnt(DFNT_NFLOAT32)
       err1 = dssdisc(1, 10, f32scale)
       err2 = dssrang(f32max, f32min)
@@ -152,20 +152,20 @@ C
       err2 = dssrang(surri8max, surri8min)
       err3 = dsadata('fon.hdf', rank, dims, surri8)
       call errchkio(err1, err2, err3, number_failed, 'int8 write')
-      
-      
+
+
       err  = dssnt(DFNT_NINT16)
       err1 = dssdisc(1, 10, i16scale)
       err2 = dssrang(i16max, i16min)
       err3 = dsadata('fon.hdf', rank, dims, i16)
       call errchkio(err1, err2, err3, number_failed, 'int16 write')
-      
+
       err  = dssnt(DFNT_NINT32)
       err1 = dssdisc(1, 10, i32scale)
       err2 = dssrang(i32max, i32min)
       err3 = dsadata('fon.hdf', rank, dims, i32)
       call errchkio(err1, err2, err3, number_failed, 'int32 write')
-      
+
 C
 C  Reading back dimscales, max/min, and arrays from single file
 C
@@ -173,27 +173,27 @@ C
       err2 = dsgdisc(1, 10, tf64scale)
       err3 = dsgrang(tf64max, tf64min)
       call errchkio(err1, err2, err3, number_failed, 'float64 read')
-     
-      err1 = dsgdata('fon.hdf', rank, dims, tf32) 
+
+      err1 = dsgdata('fon.hdf', rank, dims, tf32)
       err2 = dsgdisc(1, 10, tf32scale)
       err3 = dsgrang(tf32max, tf32min)
       call errchkio(err1, err2, err3, number_failed, 'float32 read')
-      
+
       err1 = dsgdata('fon.hdf', rank, dims, surrti8)
       err2 = dsgdisc(1, 10, surrti8scale)
       err3 = dsgrang(surrti8max, surrti8min)
       call errchkio(err1, err2, err3, number_failed, 'int8 read')
-      
+
       err1 = dsgdata('fon.hdf', rank, dims, ti16)
       err2 = dsgdisc(1, 10, ti16scale)
       err3 = dsgrang(ti16max, ti16min)
       call errchkio(err1, err2, err3, number_failed, 'int16 read')
-      
+
       err1 = dsgdata('fon.hdf', rank, dims, ti32)
       err2 = dsgdisc(1, 10, ti32scale)
       err3 = dsgrang(ti32max, ti32min)
       call errchkio(err1, err2, err3, number_failed, 'int32 read')
-      
+
 C
 C  Checking dimscales, max/min and arrays from single file
 C
@@ -245,7 +245,7 @@ C  int8
 C  int16
       err1 = 0
       err2 = 0
-      err3 = 0   
+      err3 = 0
       do 1210 i=1,10
          do 1200 j=1,10
            if (i16(i,j) .ne. ti16(i,j)) err1 = 1
@@ -259,7 +259,7 @@ C  int16
 C  int32
       err1 = 0
       err2 = 0
-      err3 = 0   
+      err3 = 0
       do 1310 i=1,10
          do 1300 j=1,10
            if (i32(i,j) .ne. ti32(i,j)) err1 = 1
@@ -272,7 +272,7 @@ C  int32
 C
 C  Sum up
 C
-      
+
       if (number_failed .gt. 0 ) then
           print *, '        >>> ', number_failed, ' TESTS FAILED <<<'
       else

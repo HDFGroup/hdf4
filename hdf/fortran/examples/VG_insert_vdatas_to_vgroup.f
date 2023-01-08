@@ -34,19 +34,19 @@ C
      +           FIELDNAME_LIST = 'PX,PY')
       integer N_RECORDS
       parameter (N_RECORDS = 30)
-      
-      integer  DFACC_WRITE 
+
+      integer  DFACC_WRITE
       parameter (DFACC_WRITE = 2)
       integer DFNT_FLOAT32, DFNT_INT16
       parameter (DFNT_FLOAT32 = 5, DFNT_INT16 = 22)
-      integer FULL_INTERLACE 
+      integer FULL_INTERLACE
       parameter (FULL_INTERLACE = 0)
 C
 C     Function declaration
 C
       integer hopen, hclose
       integer vfstart, vfatch, vfsnam, vfscls, vfinsrt, vfdtch, vfend
-      integer vsfatch, vsfsnam, vsfscls, vsffdef, vsfsfld, 
+      integer vsfatch, vsfsnam, vsfscls, vsffdef, vsfsfld,
      +        vsfwrt, vsfwrtc, vsfdtch
 
 C
@@ -55,7 +55,7 @@ C
       integer status
       integer file_id
       integer vgroup_id
-      integer vdata1_id, vdata2_id, vdata3_id, vd_index 
+      integer vdata1_id, vdata2_id, vdata3_id, vd_index
       integer num_of_records
       integer i, j, k
       real    pxy(2,N_RECORDS), tmp(N_RECORDS)
@@ -85,11 +85,11 @@ C
 C     Buffer the data for the third and second vdatas.
 C
       do 20 i = 1, N_RECORDS
-         do 10 j = 1, 3 
-            plist(j,i) = k 
+         do 10 j = 1, 3
+            plist(j,i) = k
             k = k+1
 10       continue
-20    continue    
+20    continue
       do 30 i = 1, N_RECORDS
          tmp(i) = (i-1) * 10.0
 30    continue
@@ -142,7 +142,7 @@ C
       vd_index = vfinsrt(vgroup_id, vdata2_id)
       status = vsfdtch(vdata2_id)
 C
-C     Create, write, and insert the third vdata to the vgroup using 
+C     Create, write, and insert the third vdata to the vgroup using
 C     steps similar to those used for the first and second vdatas.
 C
       vdata3_id = vsfatch(file_id, -1, 'w')
@@ -154,7 +154,7 @@ C
      +                        FULL_INTERLACE)
       vd_index = vfinsrt(vgroup_id, vdata3_id)
       status = vsfdtch(vdata3_id)
- 
+
 C
 C     Terminate access to the vgroup 'Vertices'.
 C

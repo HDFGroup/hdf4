@@ -23,7 +23,7 @@ uint8 palette[768];
 int32 xdim, ydim;
 int ispal;
 
-int main(int argc, char *argv[]) 
+int main(int argc, char *argv[])
 {
     int i;
     char *outfile;
@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
     char *annbuf=NULL;      /* buffer to store annotations in */
     int32 annbuflen=0;      /* length of the annotation buffer */
 
-    if (argc < 3) { 
+    if (argc < 3) {
         printf("%s,  version: 1.3   date: October 15, 1994\n", argv[0]);
         printf("  This utility will read in raster-8 images from an\n");
         printf("  HDF file and create a new HDF containing the\n");
@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
                     cinfo.jpeg.force_baseline=TRUE;
                     break;
                 default:
-                    printf("Illegal option: %s, skipping....\n", argv[i]);   
+                    printf("Illegal option: %s, skipping....\n", argv[i]);
                     break;
             }
         }
@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
                               } /* end if */
                             annbuflen=annlen;
                           } /* end if */
-                        if(DFANgetfid(old_fid,annbuf,annbuflen,isfirst)==FAIL) 
+                        if(DFANgetfid(old_fid,annbuf,annbuflen,isfirst)==FAIL)
                             printf("Error reading file annotation from file:%s, continuing\n",argv[i]);
                         else {
                             if(DFANaddfid(out_fid,annbuf)==FAIL)
@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
                       } /* end while */
                   } /* end if */
                 if(copy_fdesc==TRUE) {
-                    isfirst=1; 
+                    isfirst=1;
                     while((annlen=DFANgetfdslen(old_fid,isfirst))!=FAIL) {
                         if(annbuflen==0 || annlen>annbuflen) {
                             if(annbuflen!=0)
@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
                               } /* end if */
                             annbuflen=annlen;
                           } /* end if */
-                        if(DFANgetfds(old_fid,annbuf,annbuflen,isfirst)==FAIL) 
+                        if(DFANgetfds(old_fid,annbuf,annbuflen,isfirst)==FAIL)
                             printf("Error reading file annotation from file:%s, continuing\n",argv[i]);
                         else {
                             if(DFANaddfds(out_fid,annbuf,annlen)==FAIL)

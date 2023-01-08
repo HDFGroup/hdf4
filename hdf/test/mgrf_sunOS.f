@@ -15,7 +15,7 @@ C $Id$
 C
        subroutine mgrf (num_err)
 C
-C Test Program: 
+C Test Program:
 C   Tests the multi-file GR interface.
 C Input file: none
 C Output file: tmgrf.hdf
@@ -34,7 +34,7 @@ C
       parameter (myname = 'mgrf')
 
       integer hopen, hclose
-      integer mgstart, mgfinfo, mgend, mgcreat, mgselct 
+      integer mgstart, mgfinfo, mgend, mgcreat, mgselct
       integer mgn2ndx, mggiinf, mgwrimg, mgrdimg, mgendac
       integer mgid2rf, mgr2idx, mgrltil, mgrimil, mggltid
 c     integer mgwrlut, mgrdlut
@@ -50,7 +50,7 @@ c      integer mgsattr
      *		MFGR_INTERLACE_LINE	= 1,
      * 		MFGR_INTERLACE_COMPONENT	= 2)
 
-      integer 	DFACC_READ, DFACC_WRITE, DFACC_CREATE, DFACC_ALL  
+      integer 	DFACC_READ, DFACC_WRITE, DFACC_CREATE, DFACC_ALL
       integer	DFACC_RDONLY, DFACC_RDWR, DFACC_CLOBBER
 
       parameter(DFACC_READ       	 = 1,
@@ -61,13 +61,13 @@ c      integer mgsattr
      *		DFACC_RDWR		 = 3,
      *		DFACC_CLOBBER		 = 4)
 
-      integer 	DFNT_INT8,  DFNT_UINT8, 
+      integer 	DFNT_INT8,  DFNT_UINT8,
      *		DFNT_INT16, DFNT_UINT16,
-     *		DFNT_INT32, DFNT_UINT32, 
+     *		DFNT_INT32, DFNT_UINT32,
      *          DFNT_INT64, DFNT_UINT64,
      *          DFNT_INT128,DFNT_UINT128,
      *          DFNT_CHAR8, DFNT_UCHAR8
- 
+
       parameter(DFNT_INT8	= 20,
      *		DFNT_UINT8	= 21,
      *		DFNT_INT16	= 22,
@@ -401,7 +401,7 @@ C                       gr_gz.hdf
          print *, '*******mgrf: test_grcompress failed*******'
       endif
 C
-      if (number_failed .eq. 0) then 
+      if (number_failed .eq. 0) then
 	  if (Verbosity .gt. 6) then
 	      print *, CR, CR
 	      print *, '****** ALL TESTS SUCCESSFUL ******'
@@ -410,12 +410,12 @@ C
           print *, '****** ', number_failed, ' TESTS FAILED  ******'
       endif
       return
-      end 
+      end
 
       subroutine test_grchunk( err_grchunk )
       implicit none
       integer N_COMP_TYPES, N_COMP_ARG, NCOMP
-      integer MFGR_INTERLACE_PIXEL 
+      integer MFGR_INTERLACE_PIXEL
       parameter(N_COMP_TYPES = 4, N_COMP_ARG =1)
       parameter(NCOMP = 2, MFGR_INTERLACE_PIXEL = 0)
       integer ri_id(N_COMP_TYPES),
@@ -433,14 +433,14 @@ C
       integer mgstart, mgcreat, mgwrimg, mgsnatt,
      .        mgrdimg, mgselct, mgendac, mgend
 C
-C---GR chunking functions 
+C---GR chunking functions
 C
-      integer mggichnk, 
+      integer mggichnk,
      .        mgscchnk,
      .        mgschnk
 C
       integer hopen, hclose
-      integer DFACC_CREATE, 
+      integer DFACC_CREATE,
      .        DFACC_READ,
      .        DFACC_WRITE
       integer DFNT_INT16
@@ -453,9 +453,9 @@ C
       parameter (X_LENGTH     = 9,
      .           Y_LENGTH     = 4,
      .           X_CH_LENGTH  = 3,
-     .           Y_CH_LENGTH  = 2) 
+     .           Y_CH_LENGTH  = 2)
 C
-C---Compression types and parameters arrays 
+C---Compression types and parameters arrays
 C
       integer comp_type(N_COMP_TYPES), comp_type_out(N_COMP_TYPES)
       integer comp_prm(N_COMP_ARG)
@@ -477,7 +477,7 @@ C
      .           SKPHUFF_SKP_SIZE = 2)
 C
 C---Data
-C 
+C
       integer*2 image_data(NCOMP, X_LENGTH, Y_LENGTH)
       integer*2 image_data_out(NCOMP,X_LENGTH,Y_LENGTH)
 C
@@ -495,33 +495,33 @@ C
 C   No compression
 C
       file(1) = 'grch_no.hdf'
-      name(1) = 'Nocomp_data'    
+      name(1) = 'Nocomp_data'
       comp_type(1) = COMP_CODE_NONE
       comp_type_out(1) = 0
 C
 C   RLE compression
 C
       file(2) = 'grch_rl.hdf'
-      name(2) = 'Rlcomp_data'    
+      name(2) = 'Rlcomp_data'
       comp_type(2) = COMP_CODE_RLE
-      comp_type_out(2) = 1 
+      comp_type_out(2) = 1
 C
 C   Adaptive Huffman compression
 C
       file(3) = 'grch_sk.hdf'
-      name(3) = 'Hucomp_data'    
+      name(3) = 'Hucomp_data'
       comp_type(3) = COMP_CODE_SKPHUFF
-      comp_type_out(3) = 1 
+      comp_type_out(3) = 1
 C
 C   GZIP compression
 C
       file(4) = 'grch_gz.hdf'
-      name(4) = 'Gzcomp_data'    
+      name(4) = 'Gzcomp_data'
       comp_type(4) = COMP_CODE_DEFLATE
-      comp_type_out(4) = 1 
+      comp_type_out(4) = 1
 C
 C  Data initialization
-C 
+C
       do 30 j = 1, Y_LENGTH
          do 20 i = 1, X_LENGTH
            do 10 k = 1, NCOMP
@@ -538,8 +538,8 @@ C
 C
 C---Define chunk dimensions
 C
-         ch_dims(1) = X_CH_LENGTH 
-         ch_dims(2) = Y_CH_LENGTH 
+         ch_dims(1) = X_CH_LENGTH
+         ch_dims(2) = Y_CH_LENGTH
 C
 C   Main loop through different compression types
 C
@@ -574,11 +574,11 @@ C
 C---Fill the image array with the default pixel value
 C
       status = mgsnatt(ri_id(i_comp), 'FillValue', DFNT_INT16,
-     .                 ncomp, pixel_value) 
+     .                 ncomp, pixel_value)
       if(status .ne. 0) then
          print *, 'mgsnatt failed for', i_comp, '-th data set'
          err_grchunk = err_grchunk +1
-      endif 
+      endif
 
 C
 C---Define chunked GR
@@ -590,17 +590,17 @@ C
       if(status .ne. 0) then
          print *, 'mgschnk failed for', i_comp, '-th data set'
          err_grchunk = err_grchunk +1
-      endif 
+      endif
 C
 C---Set chunk cache to hold maximum of 3 chunks
 C
       maxcache = 3
       flags = 0
-      status = mgscchnk (ri_id(i_comp), maxcache, flags) 
+      status = mgscchnk (ri_id(i_comp), maxcache, flags)
       if(status .ne. 3) then
          print *, 'mgscchnk failed for', i_comp, '-th data set'
          err_grchunk = err_grchunk +1
-      endif 
+      endif
 C
 C     Define the location, pattern, and size of the data set
 C     that will be written to.
@@ -616,7 +616,7 @@ C     Write the stored data to the image array.
       if(status .ne. 0) then
          print *, 'mgwrimg failed for', i_comp, '-th data set'
          err_grchunk = err_grchunk +1
-      endif 
+      endif
 C
 C     Terminate access to the array.
 C
@@ -624,7 +624,7 @@ C
       if(status .ne. 0) then
          print *, 'mgendac failed for', i_comp, '-th data set'
          err_grchunk = err_grchunk +1
-      endif 
+      endif
 C
 C     Terminate access to the GR interface.
 C
@@ -632,7 +632,7 @@ C
       if(status .ne. 0) then
          print *, 'mgend failed for', i_comp, '-th data set'
          err_grchunk = err_grchunk +1
-      endif 
+      endif
 C
 C     Close the file.
 C
@@ -640,7 +640,7 @@ C
       if(status .ne. 0) then
          print *, 'hclose failed for', i_comp, '-th data set'
          err_grchunk = err_grchunk +1
-      endif 
+      endif
 
 1000  continue
 
@@ -653,7 +653,7 @@ C
       if(status .eq. -1) then
          print *, 'hopen failed for', i_comp, '-th data set'
          err_grchunk = err_grchunk +1
-      endif 
+      endif
 C
 C     Initiate the GR interface and select first data set.
 C
@@ -661,13 +661,13 @@ C
       if(status .eq. -1) then
          print *, 'mgstart failed for', i_comp, '-th data set'
          err_grchunk = err_grchunk +1
-      endif 
+      endif
       index = 0
       ri_id(i_comp) = mgselct(gr_id(i_comp), index)
       if(status .eq. -1) then
          print *, 'mgselct failed for', i_comp, '-th data set'
          err_grchunk = err_grchunk +1
-      endif 
+      endif
 C
 C     Read the stored data to the image array.
 C
@@ -676,7 +676,7 @@ C
       if(status .ne. 0) then
          print *, 'mgrdimg failed for', i_comp, '-th data set'
          err_grchunk = err_grchunk +1
-      endif 
+      endif
 C
 C--- Compare the data we read with the original data
 C
@@ -686,7 +686,7 @@ C
             if(image_data(k, i, j).ne.image_data_out(k,i,j)) then
              print *, 'data is wrong'
              err_grchunk = err_grchunk +1
-            endif 
+            endif
 40         continue
 50    continue
 60    continue
@@ -698,7 +698,7 @@ C
       if(status .ne. 0) then
          print *, 'mggichnk failed for', i_comp, '-th data set'
          err_grchunk = err_grchunk +1
-      endif 
+      endif
        if (comp_type_out(i_comp) .ne. nc_out) then
           print *, 'mggichnk returns wrong compression type for',
      .              i_comp, '-th data set'
@@ -711,7 +711,7 @@ C
           err_grchunk = err_grchunk + 1
        endif
 
-  
+
 C
 C     Terminate access to the array.
 C
@@ -719,7 +719,7 @@ C
       if(status .ne. 0) then
          print *, 'mgendac failed for', i_comp, '-th data set'
          err_grchunk = err_grchunk +1
-      endif 
+      endif
 C
 C     Terminate access to the GR interface.
 C
@@ -727,7 +727,7 @@ C
       if(status .ne. 0) then
          print *, 'mgend failed for', i_comp, '-th data set'
          err_grchunk = err_grchunk +1
-      endif 
+      endif
 C
 C     Close the file.
 C
@@ -735,7 +735,7 @@ C
       if(status .ne. 0) then
          print *, 'hclose failed for', i_comp, '-th data set'
          err_grchunk = err_grchunk +1
-      endif 
+      endif
 2000  continue
       return
       end
@@ -763,12 +763,12 @@ C
      .        mgsnatt,
      .        mgrdimg, mgselct, mgendac, mgend
 C
-C---GR compression function 
+C---GR compression function
 C
       integer mgscompress
 C
       integer hopen, hclose
-      integer DFACC_CREATE, 
+      integer DFACC_CREATE,
      .        DFACC_READ,
      .        DFACC_WRITE
       integer DFNT_INT16
@@ -781,9 +781,9 @@ C
       parameter (X_LENGTH     = 9,
      .           Y_LENGTH     = 4,
      .           X_CH_LENGTH  = 3,
-     .           Y_CH_LENGTH  = 2) 
+     .           Y_CH_LENGTH  = 2)
 C
-C---Compression types and parameters arrays 
+C---Compression types and parameters arrays
 C
       integer comp_type(N_COMP_TYPES)
       integer comp_prm(N_COMP_ARG)
@@ -805,7 +805,7 @@ C
      .           SKPHUFF_SKP_SIZE = 2)
 C
 C---Data
-C 
+C
       integer*2 image_data(NCOMP, X_LENGTH, Y_LENGTH)
       integer*2 image_data_out(NCOMP,X_LENGTH,Y_LENGTH)
 C
@@ -819,29 +819,29 @@ C
 C   No compression
 C
       file(1) = 'gr_no.hdf'
-      name(1) = 'Nocomp_data'    
+      name(1) = 'Nocomp_data'
       comp_type(1) = COMP_CODE_NONE
 C
 C   RLE compression
 C
       file(2) = 'gr_rl.hdf'
-      name(2) = 'Rlcomp_data'    
+      name(2) = 'Rlcomp_data'
       comp_type(2) = COMP_CODE_RLE
 C
 C   Adaptive Huffman compression
 C
       file(3) = 'gr_sk.hdf'
-      name(3) = 'Hucomp_data'    
+      name(3) = 'Hucomp_data'
       comp_type(3) = COMP_CODE_SKPHUFF
 C
 C   GZIP compression
 C
       file(4) = 'gr_gz.hdf'
-      name(4) = 'Gzcomp_data'    
+      name(4) = 'Gzcomp_data'
       comp_type(4) = COMP_CODE_DEFLATE
 C
 C  Data initialization
-C 
+C
       do 30 j = 1, Y_LENGTH
          do 20 i = 1, X_LENGTH
            do 10 k = 1, NCOMP
@@ -867,7 +867,7 @@ C
       if(file_id(i_comp) .eq. -1) then
          print *, 'hopen failed for', i_comp, '-th data set'
          err_grcompress = err_grcompress +1
-      endif 
+      endif
 C
 C     Initiate the GR interface.
 C
@@ -875,7 +875,7 @@ C
       if(gr_id(i_comp) .eq. -1) then
          print *, 'mgstart failed for', i_comp, '-th data set'
          err_grcompress = err_grcompress +1
-      endif 
+      endif
 
 C     Define the number of components and dimensions of the image.
 
@@ -890,7 +890,7 @@ C     Create the data set.
       if(ri_id(i_comp) .eq. -1) then
          print *, 'mgcreat failed for', i_comp, '-th data set'
          err_grcompress = err_grcompress +1
-      endif 
+      endif
 
 C
 C---Set pixel value
@@ -901,23 +901,23 @@ C
 C---Fill the image array with the default pixel value
 C
       status = mgsnatt(ri_id(i_comp), 'FillValue', DFNT_INT16,
-     .                 ncomp, pixel_value) 
+     .                 ncomp, pixel_value)
       if(status .ne. 0) then
          print *, 'mgsnatt failed for', i_comp, '-th data set'
          err_grcompress = err_grcompress +1
-      endif 
+      endif
 
 C
 C---Set compression
 C
       if (i_comp. eq. 3) comp_prm(1) = SKPHUFF_SKP_SIZE
       if (i_comp. eq. 4) comp_prm(1) =  DEFLATE_LEVEL
-      status = mgscompress (ri_id(i_comp), 
+      status = mgscompress (ri_id(i_comp),
      .                  comp_type(i_comp),comp_prm)
       if(status .ne. 0) then
          print *, 'mgscompress failed for', i_comp, '-th data set'
          err_grcompress = err_grcompress +1
-      endif 
+      endif
 C
 C     Define the location, pattern, and size of the data set
 C     that will be written to.
@@ -933,7 +933,7 @@ C     Write the stored data to the image array..
       if(status .ne. 0) then
          print *, 'mgwrimg failed for', i_comp, '-th data set'
          err_grcompress = err_grcompress +1
-      endif 
+      endif
 C
 C     Terminate access to the array.
 C
@@ -941,7 +941,7 @@ C
       if(status .ne. 0) then
          print *, 'mgendac failed for', i_comp, '-th data set'
          err_grcompress = err_grcompress +1
-      endif 
+      endif
 C
 C     Terminate access to the GR interface.
 C
@@ -949,7 +949,7 @@ C
       if(status .ne. 0) then
          print *, 'mgend failed for', i_comp, '-th data set'
          err_grcompress = err_grcompress +1
-      endif 
+      endif
 C
 C     Close the file.
 C
@@ -957,7 +957,7 @@ C
       if(status .ne. 0) then
          print *, 'hclose failed for', i_comp, '-th data set'
          err_grcompress = err_grcompress +1
-      endif 
+      endif
 
 1000  continue
 
@@ -970,7 +970,7 @@ C
       if(file_id(i_comp) .eq. -1) then
          print *, 'hopen failed for', i_comp, '-th data set'
          err_grcompress = err_grcompress +1
-      endif 
+      endif
 C
 C     Initiate the GR interface and select first data set.
 C
@@ -978,17 +978,17 @@ C
       if(gr_id(i_comp) .eq. -1) then
          print *, 'mgstart failed for', i_comp, '-th data set'
          err_grcompress = err_grcompress +1
-      endif 
+      endif
       index = mgn2ndx(gr_id(i_comp), name(i_comp))
       if(index .eq. -1) then
          print *, 'mgn2ndx failed for', i_comp, '-th data set'
          err_grcompress = err_grcompress +1
-      endif 
+      endif
       ri_id(i_comp) = mgselct(gr_id(i_comp), index)
       if(ri_id(i_comp) .eq. -1) then
          print *, 'mgselct failed for', i_comp, '-th data set'
          err_grcompress = err_grcompress +1
-      endif 
+      endif
 C
 C     Read the stored data to the image array.
 C
@@ -1003,7 +1003,7 @@ C
       if(status .ne. 0) then
          print *, 'mgrdimg failed for', i_comp, '-th data set'
          err_grcompress = err_grcompress +1
-      endif 
+      endif
 C
 C--- Compare the data we read with the original data
 C
@@ -1013,12 +1013,12 @@ C
             if(image_data(k, i, j).ne.image_data_out(k,i,j)) then
              print *, 'data is wrong'
              err_grcompress = err_grcompress +1
-            endif 
+            endif
 40         continue
 50    continue
 60    continue
 
-  
+
 C
 C     Terminate access to the array.
 C
@@ -1026,7 +1026,7 @@ C
       if(status .ne. 0) then
          print *, 'mgendac failed for', i_comp, '-th data set'
          err_grcompress = err_grcompress +1
-      endif 
+      endif
 C
 C     Terminate access to the GR interface.
 C
@@ -1034,7 +1034,7 @@ C
       if(status .ne. 0) then
          print *, 'mgend failed for', i_comp, '-th data set'
          err_grcompress = err_grcompress +1
-      endif 
+      endif
 C
 C     Close the file.
 C
@@ -1042,7 +1042,7 @@ C
       if(status .ne. 0) then
          print *, 'hclose failed for', i_comp, '-th data set'
          err_grcompress = err_grcompress +1
-      endif 
+      endif
 2000  continue
       return
       end
@@ -1053,7 +1053,7 @@ C---This subroutine tests GR write/read functions
 C
       implicit none
       integer N_COMP_TYPES, N_COMP_ARG, NCOMP
-      integer MFGR_INTERLACE_PIXEL 
+      integer MFGR_INTERLACE_PIXEL
       parameter(N_COMP_TYPES = 4, N_COMP_ARG =1)
       parameter(NCOMP = 3, MFGR_INTERLACE_PIXEL = 0)
       integer ri_id(N_COMP_TYPES),
@@ -1070,14 +1070,14 @@ C
       integer mgstart, mgcreat, mgsnatt,
      .        mgrdimg, mgselct, mgendac, mgend
 C
-C---GR chunking functions 
+C---GR chunking functions
 C
-      integer mgwchnk, 
+      integer mgwchnk,
      .        mgrchnk,
      .        mgschnk
 C
       integer hopen, hclose
-      integer DFACC_CREATE, 
+      integer DFACC_CREATE,
      .        DFACC_READ,
      .        DFACC_WRITE
       integer DFNT_INT16
@@ -1090,9 +1090,9 @@ C
       parameter (X_LENGTH     = 6,
      .           Y_LENGTH     = 10,
      .           X_CH_LENGTH  = 3,
-     .           Y_CH_LENGTH  = 2) 
+     .           Y_CH_LENGTH  = 2)
 C
-C---Compression types and parameters arrays 
+C---Compression types and parameters arrays
 C
       integer comp_type(N_COMP_TYPES), comp_type_out(N_COMP_TYPES)
       integer comp_prm(N_COMP_ARG)
@@ -1114,7 +1114,7 @@ C
      .           SKPHUFF_SKP_SIZE = 2)
 C
 C---Data
-C 
+C
       integer*2 chunk11(NCOMP* X_CH_LENGTH*Y_CH_LENGTH)
       integer*2 chunk21(NCOMP* X_CH_LENGTH*Y_CH_LENGTH)
       integer*2 chunk52(NCOMP* X_CH_LENGTH*Y_CH_LENGTH)
@@ -1126,11 +1126,11 @@ C
       integer*2 data_org4(30)
       integer*2 data_org5(30)
       integer*2 data_org6(30)
-       
+
       integer*2 image_data_out(NCOMP,X_LENGTH,Y_LENGTH)
       integer*2 data_arr(NCOMP,X_LENGTH,Y_LENGTH)
 C
-C---Those statemnets were created for SunOS since the 
+C---Those statemnets were created for SunOS since the
 C   compiler does not support multiple continuation lines
 C   needed for data initilization in DATA statement.
 C   This file should be used only on SunOS and
@@ -1159,36 +1159,36 @@ C
 C   No compression
 C
       file(1) = 'grchwr_no.hdf'
-      name(1) = 'Nocomp_data'    
+      name(1) = 'Nocomp_data'
       comp_type(1) = COMP_CODE_NONE
       comp_type_out(1) = 0
 C
 C   RLE compression
 C
       file(2) = 'grchwr_rl.hdf'
-      name(2) = 'Rlcomp_data'    
+      name(2) = 'Rlcomp_data'
       comp_type(2) = COMP_CODE_RLE
-      comp_type_out(2) = 1 
+      comp_type_out(2) = 1
 C
 C   Adaptive Huffman compression
 C
       file(3) = 'grchwr_sk.hdf'
-      name(3) = 'Hucomp_data'    
+      name(3) = 'Hucomp_data'
       comp_type(3) = COMP_CODE_SKPHUFF
-      comp_type_out(3) = 1 
+      comp_type_out(3) = 1
 C
 C   GZIP compression
 C
       file(4) = 'grchwr_gz.hdf'
-      name(4) = 'Gzcomp_data'    
+      name(4) = 'Gzcomp_data'
       comp_type(4) = COMP_CODE_DEFLATE
-      comp_type_out(4) = 1 
+      comp_type_out(4) = 1
 C
 C  Data initialization
-C 
+C
       data chunk11 / 110, 111, 112, 120, 121, 122,
      .                130, 131, 132, 140, 141, 142,
-     .                150, 151, 152, 160, 161, 162/ 
+     .                150, 151, 152, 160, 161, 162/
       data  chunk21 /
      .                210, 211, 212, 220, 221, 222,
      .                230, 231, 232, 240, 241, 242,
@@ -1200,35 +1200,35 @@ C
      .                1050, 1051, 1052, 1060, 1061, 1062
      .              /
 
-      data  data_org1  
-     .              / 110, 111, 112, 120, 121, 122, 
+      data  data_org1
+     .              / 110, 111, 112, 120, 121, 122,
      .                210, 211, 212, 220, 221, 222, 0,
-     .                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+     .                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      .                 0, 0, 0, 0, 0, 0, 0 /
 
-      data  data_org2    
+      data  data_org2
      .              / 130, 131, 132, 140,
-     .                141, 142, 230, 231, 232, 240, 241, 242, 
+     .                141, 142, 230, 231, 232, 240, 241, 242,
      .                0, 0, 0, 0, 0, 0, 0, 0, 0,
      .                0, 0, 0, 0, 0, 0, 0, 0, 0 /
 
-       data data_org3          
+       data data_org3
      .              / 150, 151, 152, 160, 161, 162, 250, 251,
-     .                252, 260, 261, 262, 0, 0, 0, 0, 0, 0, 0, 
+     .                252, 260, 261, 262, 0, 0, 0, 0, 0, 0, 0,
      .                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0/
 
-       data data_org4      
-     .              / 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+       data data_org4
+     .              / 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      .                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      .                1010, 1011, 1012, 1020, 1021, 1022 /
 
-       data data_org5      
+       data data_org5
      .              / 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-     .                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+     .                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      .                1030, 1031, 1032, 1040, 1041, 1042/
 
-       data data_org6    
-     .              / 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+       data data_org6
+     .              / 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      .                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      .                0, 1050, 1051, 1052, 1060, 1061, 1062 /
 
@@ -1241,8 +1241,8 @@ C
 C
 C---Define chunk dimensions
 C
-         ch_dims(1) = Y_CH_LENGTH 
-         ch_dims(2) = X_CH_LENGTH 
+         ch_dims(1) = Y_CH_LENGTH
+         ch_dims(2) = X_CH_LENGTH
 C
 C   Main loop through different compression types
 C
@@ -1278,11 +1278,11 @@ C
 C---Fill the image array with the default pixel value
 C
       status = mgsnatt(ri_id(i_comp), 'FillValue', DFNT_INT16,
-     .                 ncomp, pixel_value) 
+     .                 ncomp, pixel_value)
       if(status .ne. 0) then
          print *, 'mgsnatt failed for', i_comp, '-th data set'
          err_grwrchunk = err_grwrchunk +1
-      endif 
+      endif
 
 C
 C---Define chunked GR
@@ -1294,46 +1294,46 @@ C
       if(status .ne. 0) then
          print *, 'mgschnk failed for', i_comp, '-th data set'
          err_grwrchunk = err_grwrchunk +1
-      endif 
+      endif
 C
-C     Define the location of the first chunk 
+C     Define the location of the first chunk
 C     that will be written to.
-      start(1) = 1 
-      start(2) = 1 
+      start(1) = 1
+      start(2) = 1
 
 C     Write the stored data to the image array.
       status = mgwchnk(ri_id(i_comp), start, chunk11)
       if(status .ne. 0) then
-         print *, 'mgwchnk failed for', i_comp, 
+         print *, 'mgwchnk failed for', i_comp,
      .            '-th data set, first chunk'
          err_grwrchunk = err_grwrchunk +1
-      endif 
+      endif
 C
-C     Define the location of the first chunk 
+C     Define the location of the first chunk
 C     that will be written to.
-      start(1) = 2 
-      start(2) = 1 
+      start(1) = 2
+      start(2) = 1
 
 C     Write the stored data to the image array.
       status = mgwchnk(ri_id(i_comp), start, chunk21)
       if(status .ne. 0) then
-         print *, 'mgwchnk failed for', i_comp, 
+         print *, 'mgwchnk failed for', i_comp,
      .            '-th data set, second chunk'
          err_grwrchunk = err_grwrchunk +1
-      endif 
+      endif
 C
-C     Define the location of the first chunk 
+C     Define the location of the first chunk
 C     that will be written to.
-      start(1) = 5 
-      start(2) = 2 
+      start(1) = 5
+      start(2) = 2
 
 C     Write the stored data to the image array.
       status = mgwchnk(ri_id(i_comp), start, chunk52)
       if(status .ne. 0) then
-         print *, 'mgwchnk failed for', i_comp, 
+         print *, 'mgwchnk failed for', i_comp,
      .            '-th data set, third chunk'
          err_grwrchunk = err_grwrchunk +1
-      endif 
+      endif
 C
 C     Terminate access to the array.
 C
@@ -1341,7 +1341,7 @@ C
       if(status .ne. 0) then
          print *, 'mgendac failed for', i_comp, '-th data set'
          err_grwrchunk = err_grwrchunk +1
-      endif 
+      endif
 C
 C     Terminate access to the GR interface.
 C
@@ -1349,7 +1349,7 @@ C
       if(status .ne. 0) then
          print *, 'mgend failed for', i_comp, '-th data set'
          err_grwrchunk = err_grwrchunk +1
-      endif 
+      endif
 C
 C     Close the file.
 C
@@ -1357,7 +1357,7 @@ C
       if(status .ne. 0) then
          print *, 'hclose failed for', i_comp, '-th data set'
          err_grwrchunk = err_grwrchunk +1
-      endif 
+      endif
 
 1000  continue
 
@@ -1370,7 +1370,7 @@ C
       if(status .eq. -1) then
          print *, 'hopen failed for', i_comp, '-th data set'
          err_grwrchunk = err_grwrchunk +1
-      endif 
+      endif
 C
 C     Initiate the GR interface and select first data set.
 C
@@ -1378,13 +1378,13 @@ C
       if(status .eq. -1) then
          print *, 'mgstart failed for', i_comp, '-th data set'
          err_grwrchunk = err_grwrchunk +1
-      endif 
+      endif
       index = 0
       ri_id(i_comp) = mgselct(gr_id(i_comp), index)
       if(status .eq. -1) then
          print *, 'mgselct failed for', i_comp, '-th data set'
          err_grwrchunk = err_grwrchunk +1
-      endif 
+      endif
 C
 C     Read the stored data to the image array.
 C
@@ -1399,7 +1399,7 @@ C
       if(status .ne. 0) then
          print *, 'mgrdimg failed for', i_comp, '-th data set'
          err_grwrchunk = err_grwrchunk +1
-      endif 
+      endif
 C
 C--- Compare the data we read with the original data
 C
@@ -1409,23 +1409,23 @@ C
             if(data_arr(k, i, j).ne.image_data_out(k,i,j)) then
              print *, 'data is wrong'
              err_grwrchunk = err_grwrchunk +1
-            endif 
+            endif
 40         continue
 50    continue
 60    continue
-  
+
 C
 C--- Read the third chunk back and compare it with original data.
 C
 
-      start(1) = 5 
-      start(2) = 2 
+      start(1) = 5
+      start(2) = 2
       status = mgrchnk(ri_id(i_comp), start, chunk52_out)
       if(status .ne. 0) then
-         print *, 'mgrchnk failed for', i_comp, 
+         print *, 'mgrchnk failed for', i_comp,
      .            '-th data set, third chunk'
          err_grwrchunk = err_grwrchunk +1
-      endif 
+      endif
       do 401 j = 1, NCOMP*X_CH_LENGTH*Y_CH_LENGTH
            if(chunk52(j).ne.chunk52_out(j)) then
              print *, 'read chunk''s data is wrong'
@@ -1440,7 +1440,7 @@ C
       if(status .ne. 0) then
          print *, 'mgendac failed for', i_comp, '-th data set'
          err_grwrchunk = err_grwrchunk +1
-      endif 
+      endif
 C
 C     Terminate access to the GR interface.
 C
@@ -1448,7 +1448,7 @@ C
       if(status .ne. 0) then
          print *, 'mgend failed for', i_comp, '-th data set'
          err_grwrchunk = err_grwrchunk +1
-      endif 
+      endif
 C
 C     Close the file.
 C
@@ -1456,7 +1456,7 @@ C
       if(status .ne. 0) then
          print *, 'hclose failed for', i_comp, '-th data set'
          err_grwrchunk = err_grwrchunk +1
-      endif 
+      endif
 2000  continue
       return
       end

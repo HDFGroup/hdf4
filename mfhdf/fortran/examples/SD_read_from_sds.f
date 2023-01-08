@@ -6,7 +6,7 @@ C
       character*7  FILE_NAME
       integer      X_LENGTH, Y_LENGTH
       parameter   (FILE_NAME  = 'SDS.hdf',
-     +             X_LENGTH = 5, 
+     +             X_LENGTH = 5,
      +             Y_LENGTH = 16)
       integer      DFACC_READ, DFNT_INT32
       parameter   (DFACC_READ = 1,
@@ -38,9 +38,9 @@ C
       sds_id = sfselect(sd_id, sds_index)
 
 C
-C     Set elements of the array start to 0, elements of the array edges to 
+C     Set elements of the array start to 0, elements of the array edges to
 C     SDS dimensions, and elements of the array stride to 1 to read the
-C     entire data. 
+C     entire data.
 C
       start(1) = 0
       start(2) = 0
@@ -50,10 +50,10 @@ C
       stride(2) = 1
 C
 C     Read entire data into data array. Note that sfrdata is used
-C     to read the numeric data. 
+C     to read the numeric data.
 C
       status = sfrdata(sds_id, start, stride, edges, data)
-      
+
 C
 C     Print 10th column; the following numbers are displayed:
 C

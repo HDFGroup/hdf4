@@ -32,7 +32,7 @@ C
 C     Function declaration
 C
       integer hopen, hclose
-      integer mgstart, mgselct, mgcreat, mgwrimg, mgendac, mgend 
+      integer mgstart, mgselct, mgcreat, mgwrimg, mgendac, mgend
 
 C
 C**** Variable declaration *******************************************
@@ -43,7 +43,7 @@ C
       integer start1(2), stride1(2), edges1(2)
       integer start2(2), stride2(2), edges2(2), dim_sizes(2)
       integer i, j, k
-      integer*2  image1_buf(N1_COMPS, X1_LENGTH, Y1_LENGTH) 
+      integer*2  image1_buf(N1_COMPS, X1_LENGTH, Y1_LENGTH)
       character  image2_buf(N2_COMPS, X2_LENGTH, Y2_LENGTH)
 C
 C**** End of variable declaration ************************************
@@ -65,8 +65,8 @@ C     Fill the buffer with values.
 C
       do 20 i = 1, Y1_LENGTH
          do 10 j = 1, X1_LENGTH
-               image1_buf(1,j,i) = 0 
-               image1_buf(2,j,i) = 0 
+               image1_buf(1,j,i) = 0
+               image1_buf(2,j,i) = 0
 10       continue
 20    continue
 C
@@ -85,7 +85,7 @@ C
       status = mgwrimg(ri1_id, start1, stride1, edges1, image1_buf)
 
 C
-C     Set the number type, interlace mode, and dimensions of the second image.  
+C     Set the number type, interlace mode, and dimensions of the second image.
 C
       data_type = DFNT_CHAR8
       interlace_mode = MFGR_INTERLACE_PIXEL
@@ -97,24 +97,24 @@ C
       ri2_id = mgcreat(gr_id, IMAGE2_NAME, N2_COMPS, data_type,
      +                interlace_mode, dim_sizes)
 C
-C     Fill the image data buffer with values. 
+C     Fill the image data buffer with values.
 C
-      do 60 i = 1, Y2_LENGTH 
+      do 60 i = 1, Y2_LENGTH
          do 50 j = 1, X2_LENGTH
-            do 40 k = 1, N2_COMPS 
-               image2_buf(k,j,i) = char(65 + k - 1) 
+            do 40 k = 1, N2_COMPS
+               image2_buf(k,j,i) = char(65 + k - 1)
 40          continue
 50       continue
 60    continue
 
-C     
+C
 C     Define the size of the data to be written, i.e., start from the origin
 C     and go as long as the length of each dimension.
 C
       start2(1) = 0
       start2(2) = 0
       edges2(1) =  dim_sizes(1)
-      edges2(2) =  dim_sizes(2) 
+      edges2(2) =  dim_sizes(2)
       stride2(1) = 1
       stride2(2) = 1
 C

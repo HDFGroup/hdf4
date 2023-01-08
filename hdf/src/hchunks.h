@@ -43,7 +43,7 @@
 #if 0 /* moved definition of class of vdata to hlimits.h */
 #define _HDF_CHK_TBL_CLASS "_HDF_CHK_TBL_" /* 13 bytes */
 #define _HDF_CHK_TBL_CLASS_VER  0          /* zero version number for class */
-#endif /* moved definition of class of vdata to hlimits.h */ 
+#endif /* moved definition of class of vdata to hlimits.h */
 #define _HDF_CHK_TBL_NAME  "_HDF_CHK_TBL_" /* 13 bytes */
 
 /* Define field name for each chunk record i.e. Vdata record */
@@ -89,12 +89,12 @@ typedef struct hchunk_def_struct {
 typedef struct dim_rec_struct {
     /* fields stored in chunked header */
     int32 flag;                /* distrib_type(low 8 bits 0-7)
-                                  - Data distribution along this dimension 
+                                  - Data distribution along this dimension
                                   other(medium low 8 bits 8-15)
                                   - regular/unlimited dimension? */
     int32 dim_length;          /* length of this dimension */
     int32 chunk_length;        /* chunk length along this dimension */
-    
+
     /* info determined from 'flag' field */
     int32 distrib_type;        /* Data distribution along this dimension */
     int32 unlimited;           /* regular(0) or unlimited dimension(1) */

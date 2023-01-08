@@ -18,7 +18,7 @@
 extern int test_unlim();
 extern int test_ncunlim();
 
-int 
+int
 main(int argc, char *argv[])
 {
     intn  status;      /* status flag */

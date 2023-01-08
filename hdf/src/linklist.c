@@ -96,7 +96,7 @@ list_head_t *HULcreate_list(HULfind_func_t find_func    /* IN: object comparison
     ret_value->cmp_func=find_func;
 
 done:
-  if(ret_value == NULL)   
+  if(ret_value == NULL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -426,7 +426,7 @@ static node_info_t *HULIget_list_node(void)
       } /* end else */
 
 done:
-  if(ret_value == NULL)   
+  if(ret_value == NULL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -475,7 +475,7 @@ static void HULIrelease_list_node(node_info_t *nod)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn 
+intn
 HULshutdown(void)
 {
     node_info_t *curr;

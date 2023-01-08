@@ -12,7 +12,7 @@ C
      +           SDS_NAME  = 'Test SD',
      +           VG_NAME   = 'SD Vgroup',
      +           VG_CLASS  = 'Common Vgroups')
-      integer DFACC_CREATE, DFACC_WRITE 
+      integer DFACC_CREATE, DFACC_WRITE
       parameter (DFACC_CREATE = 4, DFACC_WRITE = 2)
       integer DFNT_INT32
       parameter (DFNT_INT32 = 24)
@@ -44,11 +44,11 @@ C
 C     Initialize the V interface.
 C
       status = vfstart(file_id)
-       
+
 C
-C     Initialize SD interface. 
+C     Initialize SD interface.
 C
-      sd_id = sfstart(FILE_NAME, DFACC_WRITE) 
+      sd_id = sfstart(FILE_NAME, DFACC_WRITE)
 C
 C     Set the rank and the size of SDS's dimension.
 C

@@ -121,7 +121,7 @@ has_c_format_att(ncid, varid)
 #define C_FMT_NAME	"C_format" /* name of C format attribute */
 #define	MAX_CFMT_LEN	100	/* max length of C format attribute */
     static char cfmt[MAX_CFMT_LEN];
-    
+
     /*
      * turn off error handling, we expect ncattinq to fail if there is no
      * C_format attribute
@@ -154,7 +154,7 @@ get_fmt(ncid, varid, type)
 
     /* If C_format attribute exists, return it */
     if (c_format_att)
-      return c_format_att;    
+      return c_format_att;
 
     /* Otherwise return sensible default. */
     switch (type) {
@@ -181,7 +181,7 @@ static vnode*
 newvnode()
 {
     vnode *newvp = (vnode*) malloc(sizeof(vnode));
-    
+
     if (!newvp) {
 	error("out of memory!");
 	exit(EXIT_FAILURE);
@@ -208,7 +208,7 @@ varadd(vlist, varid)
      int varid;
 {
     vnode *newvp = newvnode();
-    
+
     newvp -> next = vlist -> next;
     newvp -> id = varid;
     vlist -> next = newvp;
@@ -225,6 +225,6 @@ varmember(vlist, varid)
     for (; vp ; vp = vp->next)
       if (vp->id == varid)
 	return 1;
-    return 0;    
+    return 0;
 }
 

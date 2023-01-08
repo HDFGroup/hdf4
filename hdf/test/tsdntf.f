@@ -38,15 +38,15 @@ C
       integer i, j, err
       integer rank
       integer dims(2)
-  
+
       call ptestban('Testing', myname)
       number_failed = 0
       rank = 2
       dims(1) = 10
       dims(2) = 10
-  
+
       call MESSAGE(5, 'Creating arrays...')
-  
+
       do 110 i=1,10
           do 100 j=1,10
             f64(i,j) = (i * 10) + j
@@ -56,12 +56,12 @@ C
   	    i32(i,j) = (i * 10) + j
   100     continue
   110 continue
-  
+
       err = dssdims(rank, dims)
-  
-C  individual files 
+
+C  individual files
       call MESSAGE(5, 'Testing arrays in individual files...')
-  
+
       err = dssnt(DFNT_FLOAT64)
       call VRFY(err, 'dssnt (float64)', number_failed)
       err = dspdata('o1.hdf', rank, dims, f64)
@@ -143,30 +143,30 @@ C  individual files
       call err_check(err, number_failed, 'int32')
 
 
-C 
+C
       call MESSAGE(5, 'Writing arrays to single file.')
 C
       err = dssnt(DFNT_FLOAT64)
       err = dsadata('ntf.hdf', rank, dims, f64)
       call VRFY(err, 'dsadata (f64)', number_failed)
-       
+
       err = dssnt(DFNT_FLOAT32)
       err = dsadata('ntf.hdf', rank, dims, f32)
       call VRFY(err, 'dsadata (f32)', number_failed)
-       
+
       err = dssnt(DFNT_INT8)
       err = dsadata('ntf.hdf', rank, dims, i8)
       call VRFY(err, 'dsadata (i8)', number_failed)
-       
+
       err = dssnt(DFNT_INT16)
       err = dsadata('ntf.hdf', rank, dims, i16)
       call VRFY(err, 'dsadata (i16)', number_failed)
-       
+
       err = dssnt(DFNT_INT32)
       err = dsadata('ntf.hdf', rank, dims, i32)
       call VRFY(err, 'dsadata (i32)', number_failed)
-       
-C 
+
+C
       call MESSAGE(5, 'Reading arrays from single file... ')
 C
       err = dsgdata('ntf.hdf', rank, dims, tf64)
@@ -179,8 +179,8 @@ C
       call VRFY(err, 'dsgdata (ti16)', number_failed)
       err = dsgdata('ntf.hdf', rank, dims, ti32)
       call VRFY(err, 'dsgdata (ti32)', number_failed)
-       
-C 
+
+C
       call MESSAGE(5, 'Checking arrays from single file...\n\n')
 
       err = 0
@@ -191,7 +191,7 @@ C
   910 continue
 
       call err_check(err, number_failed, 'float64')
-C 
+C
 
       err = 0
       do 1010 i=1,10
@@ -201,7 +201,7 @@ C
  1010 continue
 
       call err_check(err, number_failed, 'float32')
-C 
+C
       err = 0
       do 1110 i=1,10
          do 1100 j=1,10
@@ -210,7 +210,7 @@ C
  1110 continue
 
       call err_check(err, number_failed, 'int8')
-C 
+C
       err = 0
       do 1210 i=1,10
          do 1200 j=1,10
@@ -219,7 +219,7 @@ C
  1210 continue
 
       call err_check(err, number_failed, 'int16')
-C 
+C
       err = 0
       do 1310 i=1,10
          do 1300 j=1,10
@@ -228,7 +228,7 @@ C
  1310 continue
 
       call err_check(err, number_failed, 'int32')
-C 
+C
       if (number_failed .gt. 0 ) then
         print *,'        >>> ', number_failed, ' TESTS FAILED <<<'
       else
@@ -236,4 +236,4 @@ C
       endif
 
       return
-      end  
+      end

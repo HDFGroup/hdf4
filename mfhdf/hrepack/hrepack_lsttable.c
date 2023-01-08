@@ -35,13 +35,13 @@
 int list_table_search(list_table_t *list_tbl, int tag, int ref )
 {
     int i;
-    
-    for (i = 0; i < list_tbl->nobjs; i++) 
+
+    for (i = 0; i < list_tbl->nobjs; i++)
     {
         if (list_tbl->objs[i].tag == tag && list_tbl->objs[i].ref == ref)
             return i;
     }
-    
+
     return -1;
 }
 
@@ -64,20 +64,20 @@ void list_table_add(list_table_t *list_tbl, int tag, int ref, char* path)
 {
     int path_len;
     int i;
-    
-    if (list_tbl->nobjs == list_tbl->size) 
+
+    if (list_tbl->nobjs == list_tbl->size)
     {
         list_tbl->size *= 2;
         list_tbl->objs = (obj_info_t*)HDrealloc(list_tbl->objs, list_tbl->size * sizeof(obj_info_t));
-        
-        for (i = list_tbl->nobjs; i < list_tbl->size; i++) 
+
+        for (i = list_tbl->nobjs; i < list_tbl->size; i++)
         {
             list_tbl->objs[i].tag = -1;
             list_tbl->objs[i].ref = -1;
             list_tbl->objs[i].path = NULL;
         }
     }
-    
+
     i = list_tbl->nobjs++;
     list_tbl->objs[i].tag = tag;
     list_tbl->objs[i].ref = ref;
@@ -108,18 +108,18 @@ void list_table_init( list_table_t **tbl )
 {
     int i;
     list_table_t* list_tbl = (list_table_t*)HDmalloc(sizeof(list_table_t));
-    
+
     list_tbl->size = 20;
     list_tbl->nobjs = 0;
     list_tbl->objs = (obj_info_t*)HDmalloc(list_tbl->size * sizeof(obj_info_t));
-    
-    for (i = 0; i < list_tbl->size; i++) 
+
+    for (i = 0; i < list_tbl->size; i++)
     {
         list_tbl->objs[i].tag = -1;
         list_tbl->objs[i].ref = -1;
-        
+
     }
-    
+
     *tbl = list_tbl;
 }
 
@@ -141,7 +141,7 @@ void list_table_free( list_table_t *list_tbl )
 {
     int i;
 
-    for (i = 0; i < list_tbl->nobjs; i++) 
+    for (i = 0; i < list_tbl->nobjs; i++)
     {
         assert(list_tbl->objs[i].path);
         HDfree(list_tbl->objs[i].path);
@@ -169,7 +169,7 @@ const char* list_table_check(list_table_t *list_tbl, char*obj_name)
 {
     int   i;
     int32 tag;
-    
+
     for (i = 0; i < list_tbl->nobjs; i++)
     {
         if (HDstrcmp(list_tbl->objs[i].path,obj_name)==0)
@@ -184,11 +184,11 @@ const char* list_table_check(list_table_t *list_tbl, char*obj_name)
                 tag==DFTAG_RIG ||
                 tag==DFTAG_RI8 ||
                 tag==DFTAG_CI8 ||
-                tag==DFTAG_II8 ) return NULL; 
+                tag==DFTAG_II8 ) return NULL;
             else return "not compressible/chunk object";
         }
     }
-    
+
     return "not found";
 }
 
@@ -210,19 +210,19 @@ const char* list_table_check(list_table_t *list_tbl, char*obj_name)
 void list_table_print(list_table_t *list_tbl)
 {
     int i;
-    
+
     printf("---------------------------------------\n");
     printf("%5s %6s    %-15s\n", "Tag", "Ref", "Name");
     printf("---------------------------------------\n");
-    
+
     for (i = 0; i < list_tbl->nobjs; i++)
     {
-        printf("%5d %6d    %-15s\n", 
-            list_tbl->objs[i].tag, 
-            list_tbl->objs[i].ref, 
+        printf("%5d %6d    %-15s\n",
+            list_tbl->objs[i].tag,
+            list_tbl->objs[i].ref,
             list_tbl->objs[i].path);
     }
-    
+
 }
 
 

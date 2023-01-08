@@ -192,17 +192,17 @@ intn HTPstart(filerec_t *file_rec       /* IN:  File record to store info in */
 
         /* Get a short-cut for the current DD block being read-in */
         ddcurr=file_rec->ddlast;
-  
+
         /* Go to the beginning of the DD block */
         if (HPseek(file_rec, ddcurr->myoffset) == FAIL)
           HGOTO_ERROR(DFE_SEEKERROR, FAIL);
-  
+
         /* Read in the start of this dd block.
            Read data consists of ndds (number of dd's in this block) and
            offset (offset to the next ddblock). */
         if (HP_read(file_rec, ddhead, NDDS_SZ + OFFSET_SZ) == FAIL)
           HGOTO_ERROR(DFE_READERROR, FAIL);
-  
+
         /* Decode the numbers. */
         p = &ddhead[0];
         INT16DECODE(p, ddcurr->ndds);
@@ -210,18 +210,18 @@ intn HTPstart(filerec_t *file_rec       /* IN:  File record to store info in */
         if (ndds <= 0)		/* validity check */
           HGOTO_ERROR(DFE_CORRUPT, FAIL);
         INT32DECODE(p, ddcurr->nextoffset);
-  
+
         /* check if the DD block is the last thing in the file */
         /* (Unlikely, but possible (I think)) */
         if (ddcurr->myoffset + (NDDS_SZ + OFFSET_SZ) + (ndds * DD_SZ) > end_off)
           end_off = ddcurr->myoffset + (NDDS_SZ + OFFSET_SZ) + (ndds * DD_SZ);
-  
+
         /* Now that we know how many dd's are in this block,
            alloc memory for the records. */
         ddcurr->ddlist = (dd_t *) HDmalloc((uint32) ndds * sizeof(dd_t));
         if (ddcurr->ddlist==(dd_t *)NULL)
           HGOTO_ERROR(DFE_NOSPACE, FAIL);
-  
+
         /* Allocate memory for the temporary buffer also */
         if(tbuf==NULL || ((uintn)ndds*DD_SZ)>tbuf_size)
           {
@@ -232,14 +232,14 @@ intn HTPstart(filerec_t *file_rec       /* IN:  File record to store info in */
               if (tbuf==(uint8 *)NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
           } /* end if */
-  
+
         /* Index of current dd in ddlist of this ddblock is 0. */
         curr_dd_ptr=ddcurr->ddlist;
-  
+
         /* Read in a chunk of dd's from the file. */
         if (HP_read(file_rec, tbuf, ndds * DD_SZ) == FAIL)
           HGOTO_ERROR(DFE_READERROR, FAIL);
-  
+
       /* decode the dd's */
         p = tbuf;
         for (i = 0; i < ndds; i++, curr_dd_ptr++)
@@ -247,30 +247,30 @@ intn HTPstart(filerec_t *file_rec       /* IN:  File record to store info in */
 	    DDDECODE(p, curr_dd_ptr->tag, curr_dd_ptr->ref,
 		curr_dd_ptr->offset, curr_dd_ptr->length);
             curr_dd_ptr->blk=ddcurr;
-  
+
              /* check if maximum ref # exceeded */
             if (file_rec->maxref < curr_dd_ptr->ref)
               file_rec->maxref = curr_dd_ptr->ref;
-  
+
             /* check if the data element is the last thing in the file */
             if ((curr_dd_ptr->offset + curr_dd_ptr->length) > end_off)
               end_off = curr_dd_ptr->offset + curr_dd_ptr->length;
-  
+
             /* Add to the tag info tree */
             if(curr_dd_ptr->tag!=DFTAG_NULL)
                 if(HTIregister_tag_ref(file_rec,curr_dd_ptr)==FAIL)
                     HGOTO_ERROR(DFE_INTERNAL, FAIL);
           }
-  
+
         if (ddcurr->nextoffset != 0)
           {	/* More ddblocks in the file */
               ddblock_t *ddnew;    /* ptr to the new DD block */
-  
+
       /* extend the linked list */
             ddcurr->next = ddnew = (ddblock_t *) HDmalloc((uint32) sizeof(ddblock_t));
             if (ddnew == (ddblock_t *) NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
-  
+
             ddnew->prev = ddcurr;
             ddnew->next = (ddblock_t *) NULL;
             ddnew->ddlist = (dd_t *) NULL;
@@ -284,7 +284,7 @@ intn HTPstart(filerec_t *file_rec       /* IN:  File record to store info in */
         else
               break;
       } /* end for */
-    
+
     /* Update the DFTAG_NULL pointers */
     file_rec->ddnull=NULL;
     file_rec->ddnull_idx=(-1);
@@ -293,7 +293,7 @@ intn HTPstart(filerec_t *file_rec       /* IN:  File record to store info in */
     file_rec->f_end_off = end_off;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -329,17 +329,17 @@ intn HTPinit(filerec_t *file_rec,       /* IN: File record to store info in */
     uint8      *p;              /* temp buffer ptr */
     dd_t       *list;           /* list of dd */
     intn        ret_value = SUCCEED;
-  
+
     HEclear();
     if (file_rec == NULL || ndds<0)	/* valid arguments */
       HGOTO_ERROR(DFE_ARGS, FAIL);
-  
+
     /* 'reasonablize' the value of ndds.  0 means use default */
     if (0 == ndds)
       ndds = DEF_NDDS;
     else if (ndds < MIN_NDDS)
       ndds = MIN_NDDS;
-  
+
     /* allocate the dd block in memory and initialize it */
     file_rec->ddhead = (ddblock_t *) HDmalloc(sizeof(ddblock_t));
     if (file_rec->ddhead == (ddblock_t *) NULL)
@@ -354,14 +354,14 @@ intn HTPinit(filerec_t *file_rec,       /* IN: File record to store info in */
 
     /* Keep the filerec_t pointer around for each ddblock */
     block->frec=file_rec;
-  
+
     /* write first dd block header to file */
     p = &ddhead[0];
     INT16ENCODE(p, block->ndds);
     INT32ENCODE(p, (int32) 0);
     if (HP_write(file_rec, ddhead, NDDS_SZ + OFFSET_SZ) == FAIL)
       HGOTO_ERROR(DFE_WRITEERROR, FAIL);
-  
+
     /* allocate and initialize dd list */
     list = block->ddlist = (dd_t *) HDmalloc((uint32) ndds * sizeof(dd_t));
     if (list == (dd_t *) NULL)
@@ -378,7 +378,7 @@ intn HTPinit(filerec_t *file_rec,       /* IN: File record to store info in */
     tbuf=(uint8 *)HDmalloc(ndds*DD_SZ);
     if (tbuf == NULL)	/* check for DD list */
       HGOTO_ERROR(DFE_NOSPACE, FAIL);
-  
+
     /* Fill the first disk DD block with NIL dd's */
     p = tbuf;
     DDENCODE(p, (uint16) DFTAG_NULL, (uint16) DFREF_NONE,
@@ -392,13 +392,13 @@ intn HTPinit(filerec_t *file_rec,       /* IN: File record to store info in */
     /* Update the DFTAG_NULL pointers */
     file_rec->ddnull=block;
     file_rec->ddnull_idx=(-1);
-  
+
     /* set the end of the file currently to the end of the first DD block */
     file_rec->f_end_off = block->myoffset + (NDDS_SZ + OFFSET_SZ) + (block->ndds * DD_SZ);
-  
+
     /* no dd's yet, so maximum ref is 0 */
     file_rec->maxref = 0;
-  
+
     /* Initialize the tag tree */
     file_rec->tag_tree = tbbtdmake(tagcompare, sizeof(uint16), TBBT_FAST_UINT16_COMPARE);
 
@@ -407,7 +407,7 @@ intn HTPinit(filerec_t *file_rec,       /* IN: File record to store info in */
       HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -425,7 +425,7 @@ done:
  DESCRIPTION
     Syncronizes the in-memory copy of the DD list with the copy on disk by
     writing out the DD blocks which have changed to disk.
-    
+
  RETURNS
     Returns SUCCEED if successful and FAIL otherwise
 
@@ -443,26 +443,26 @@ intn HTPsync(filerec_t *file_rec       /* IN:  File record to store info in */
     int16       ndds;		/* # of DDs per block */
     intn        i;		/* temp ints */
     intn        ret_value = SUCCEED;
-  
+
     HEclear();
     block = file_rec->ddhead;
     if (block == NULL)	/* check for DD list */
       HGOTO_ERROR(DFE_BADDDLIST, FAIL);
-  
+
     while (block != NULL)
       {	/* check all the blocks for flushing */
         if (block->dirty == TRUE)
           {	/* flush this block? */
             if (HPseek(file_rec, block->myoffset) == FAIL)
               HGOTO_ERROR(DFE_SEEKERROR, FAIL);
-  
+
       /* write dd block header to file */
             p = ddhead;
             INT16ENCODE(p, block->ndds);
             INT32ENCODE(p, block->nextoffset);
             if (HP_write(file_rec, ddhead, NDDS_SZ + OFFSET_SZ) == FAIL)
               HGOTO_ERROR(DFE_WRITEERROR, FAIL);
-  
+
       /* n is the maximum number of dd's in tbuf */
             ndds = block->ndds;
             /* Allocate memory for the temporary buffer also */
@@ -475,7 +475,7 @@ intn HTPsync(filerec_t *file_rec       /* IN:  File record to store info in */
                   if (tbuf==(uint8 *)NULL)
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
               } /* end if */
-  
+
       /* write dd list to file */
             list = &block->ddlist[0];	/* start at the first DD, go from there */
             p = tbuf;
@@ -484,14 +484,14 @@ intn HTPsync(filerec_t *file_rec       /* IN:  File record to store info in */
 
             if (HP_write(file_rec, tbuf, ndds * DD_SZ) == FAIL)
               HGOTO_ERROR(DFE_WRITEERROR, FAIL);
-  
+
             block->dirty = FALSE;	/* block has been flushed */
           }	/* end if */
         block = block->next;	/* advance to next block for file */
       }		/* end while */
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -518,7 +518,7 @@ done:
 
 *******************************************************************************/
 intn HTPend(filerec_t *file_rec       /* IN:  File record to store info in */
-) 
+)
 {
     CONSTR(FUNC, "HTPend");	/* for HERROR */
     ddblock_t  *bl, *next;	/* current ddblock and next ddblock pointers.
@@ -547,7 +547,7 @@ intn HTPend(filerec_t *file_rec       /* IN:  File record to store info in */
     file_rec->ddhead = (ddblock_t *) NULL;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -618,7 +618,7 @@ atom_t HTPcreate(filerec_t *file_rec,   /* IN: File record to store info in */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -656,7 +656,7 @@ atom_t HTPselect(filerec_t *file_rec,   /* IN: File record to store info in */
     if(file_rec==NULL || (tag==DFTAG_NULL || tag==DFTAG_WILDCARD) ||
             ref==DFREF_WILDCARD)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-        
+
     /* Try to find the regular tag in the tag info tree */
     if((tip_ptr=(tag_info **)tbbtdfind(file_rec->tag_tree,(VOIDP)&base_tag,NULL))==NULL)
         HGOTO_DONE(FAIL); /* Not an error, we just didn't find the object */
@@ -670,7 +670,7 @@ atom_t HTPselect(filerec_t *file_rec,   /* IN: File record to store info in */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -706,7 +706,7 @@ intn HTPendaccess(atom_t ddid           /* IN: DD id to end access to */
         HGOTO_DONE(FAIL);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -748,7 +748,7 @@ intn HTPdelete(atom_t ddid              /* IN: DD id to delete */
     /* Since we don't know where we are, reset the DFTAG_NULL pointers */
     file_rec->ddnull=NULL;
     file_rec->ddnull_idx=(-1);
-  
+
     if (HPfreediskblock(file_rec,dd_ptr->offset,dd_ptr->length) == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
@@ -765,7 +765,7 @@ intn HTPdelete(atom_t ddid              /* IN: DD id to delete */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -781,7 +781,7 @@ done:
 
  DESCRIPTION
     Updates a tag/ref in the file, allowing the length and/or offset to be
-    modified. 
+    modified.
 
     Note: a value of '-2' for both 'length' and 'offset' are used to indicate
     that the length or offset (respectively) is unchanged and should
@@ -817,7 +817,7 @@ intn HTPupdate(atom_t ddid,             /* IN: DD id to update */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -866,7 +866,7 @@ intn HTPinquire(atom_t ddid,            /* IN: DD id to inquire about */
         *len=dd_ptr->length;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -906,7 +906,7 @@ intn HTPis_special(atom_t ddid             /* IN: DD id to inquire about */
         ret_value=FALSE;
 
 done:
-  if(ret_value == FALSE)   
+  if(ret_value == FALSE)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -949,7 +949,7 @@ intn Hdupdd(int32 file_id,      /* IN: File ID the tag/refs are in */
     file_rec = HAatom_object(file_id);
     if (BADFREC(file_rec))
       HGOTO_ERROR(DFE_ARGS, FAIL);
-  
+
     /* Attach to the old DD in the file */
     if((old_dd=HTPselect(file_rec,old_tag,old_ref))==FAIL)
       HGOTO_ERROR(DFE_NOMATCH, FAIL);
@@ -973,7 +973,7 @@ intn Hdupdd(int32 file_id,      /* IN: File ID the tag/refs are in */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1021,7 +1021,7 @@ int32 Hnumber(int32 file_id,    /* IN: File ID the tag/refs are in */
     ret_value = (int32) real_cnt;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1044,7 +1044,7 @@ done:
     returns the ref number, 0 otherwise
 
 *******************************************************************************/
-uint16 
+uint16
 Hnewref(int32 file_id /* IN: File ID the tag/refs are in */)
 {
     CONSTR(FUNC, "Hnewref");
@@ -1058,7 +1058,7 @@ Hnewref(int32 file_id /* IN: File ID the tag/refs are in */)
     file_rec = HAatom_object(file_id);
     if (BADFREC(file_rec))
         HGOTO_ERROR(DFE_ARGS, 0);
-  
+
     /* if maxref of this file is still below the maximum,
      just return next number */
     if (file_rec->maxref < MAX_REF)
@@ -1070,7 +1070,7 @@ Hnewref(int32 file_id /* IN: File ID the tag/refs are in */)
         for (i_ref = 1; i_ref <= (uint32)MAX_REF; i_ref++)
           {
             dd_t *dd_ptr=NULL;
-            ref = (uint16)i_ref; 
+            ref = (uint16)i_ref;
             if (HTIfind_dd(file_rec, (uint16) DFTAG_WILDCARD, ref, &dd_ptr, DF_FORWARD) == FAIL)
               {
                ret_value = ref; /* set return value to ref found */
@@ -1103,7 +1103,7 @@ done:
     returns the ref number, 0 otherwise
 
 *******************************************************************************/
-uint16 
+uint16
 Htagnewref(int32 file_id,/* IN: File ID the tag/refs are in */
            uint16 tag    /* IN: Tag to search for a new ref for */)
 {
@@ -1119,7 +1119,7 @@ Htagnewref(int32 file_id,/* IN: File ID the tag/refs are in */
     file_rec = HAatom_object(file_id);
     if (BADFREC(file_rec))
         HGOTO_ERROR(DFE_ARGS, 0);
-  
+
     if((tip_ptr = (tag_info **)tbbtdfind(file_rec->tag_tree,(VOIDP)&base_tag,NULL))==NULL)
         ret_value = 1;  /* The first available ref */
     else
@@ -1130,7 +1130,7 @@ Htagnewref(int32 file_id,/* IN: File ID the tag/refs are in */
       } /* end else */
 
 done:
-  if(ret_value == 0)   
+  if(ret_value == 0)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1181,11 +1181,11 @@ intn Hfind(int32 file_id,       /* IN: file ID to search in */
         || find_ref == NULL || find_offset == NULL || find_length == NULL
         || (direction != DF_FORWARD && direction != DF_BACKWARD))
       HGOTO_ERROR(DFE_ARGS, FAIL);
-  
+
     file_rec = HAatom_object(file_id);
     if (BADFREC(file_rec))
       HGOTO_ERROR(DFE_INTERNAL, FAIL);
-  
+
     dd_ptr = NULL;
     if (*find_ref != 0 || *find_tag != 0)
       {		/* continue a search */
@@ -1193,18 +1193,18 @@ intn Hfind(int32 file_id,       /* IN: file ID to search in */
         if (HTIfind_dd(file_rec, *find_tag, *find_ref, &dd_ptr, direction) == FAIL)
           HGOTO_ERROR(DFE_NOMATCH, FAIL);
       }		/* end else */
-  
+
     /* Go get the next match in the given direction */
     if (HTIfind_dd(file_rec, search_tag, search_ref, &dd_ptr, direction) == FAIL)
       HGOTO_DONE(FAIL); /* Not an error, we just didn't find the object */
-  
+
     *find_tag = dd_ptr->tag;
     *find_ref = dd_ptr->ref;
     *find_offset = dd_ptr->offset;
     *find_length = dd_ptr->length;
 
 done:
-    if(ret_value == FAIL)   
+    if(ret_value == FAIL)
       { /* Error condition cleanup */
 
       } /* end if */
@@ -1227,7 +1227,7 @@ done:
     -1-> function failed
 
 *******************************************************************************/
-intn 
+intn
 HDcheck_tagref(int32  file_id, /* IN: id of file */
                uint16 tag,     /* IN: Tag to check */
                uint16 ref      /* IN: ref to check */)
@@ -1245,13 +1245,13 @@ HDcheck_tagref(int32  file_id, /* IN: id of file */
 
     /* check args */
     file_rec = HAatom_object(file_id);
-    if(file_rec == NULL 
-       || (tag == DFTAG_NULL || tag==DFTAG_WILDCARD) 
+    if(file_rec == NULL
+       || (tag == DFTAG_NULL || tag==DFTAG_WILDCARD)
        ||  ref == DFREF_WILDCARD)
         HGOTO_ERROR(DFE_ARGS, -1);
 
     base_tag = BASETAG(tag);
-        
+
     /* Try to find the regular tag in the tag info tree */
     if((tip_ptr = (tag_info **)tbbtdfind(file_rec->tag_tree,
                                          (VOIDP)&base_tag,NULL)) == NULL)
@@ -1265,7 +1265,7 @@ HDcheck_tagref(int32  file_id, /* IN: id of file */
     ret_value = 1;
 
 done:
-  if(ret_value == -1)   
+  if(ret_value == -1)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1297,7 +1297,7 @@ DESCRIPTION
 RETURNS
    returns SUCCEED (0) if successful, FAIL (-1) otherwise
 ************************************************************************/
-intn 
+intn
 HDreuse_tagref(int32 file_id, /* IN: id of file */
                uint16 tag,    /* IN: tag of data descriptor to reuse */
                uint16 ref     /* IN: ref of data descriptor to reuse */ )
@@ -1318,7 +1318,7 @@ HDreuse_tagref(int32 file_id, /* IN: id of file */
   if ((ddid = HTPselect(file_rec, tag, ref)) == FAIL)
     HGOTO_ERROR(DFE_NOMATCH, FAIL);
 
-  /* could reuse space in file by calling HPfreediskblock() routine 
+  /* could reuse space in file by calling HPfreediskblock() routine
      but it does nothing for now. For later. */
   /* if (HPfreediskblock(file_rec,dd_ptr->offset,dd_ptr->length) == FAIL)
       HGOTO_ERROR(DFE_INTERNAL, FAIL); */
@@ -1339,7 +1339,7 @@ HDreuse_tagref(int32 file_id, /* IN: id of file */
       HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1388,7 +1388,7 @@ intn Hdeldd(int32 file_id, uint16 tag, uint16 ref)
     HGOTO_ERROR(DFE_CANTDELDD, FAIL);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1459,7 +1459,7 @@ intn HTPdump_dds(int32 file_id, FILE *fout)
 
                 tinfo_ptr = (tag_info *) * t;   /* get actual pointer to the tag info */
                 fprintf(fout,"Tag: %u\n",tinfo_ptr->tag);
-                
+
                 /* Dump the ref # dynarray */
                 if((size=DAsize_array(tinfo_ptr->d))!=FAIL)
                   {
@@ -1473,7 +1473,7 @@ intn HTPdump_dds(int32 file_id, FILE *fout)
                             fprintf(fout,"dynarray[%d]=%p\n",i,elem);
                       } /* end for */
                   } /* end if */
-                
+
                 /* Dump the ref # bit-vector */
                 if((size=bv_size(tinfo_ptr->b))!=FAIL)
                   {
@@ -1499,7 +1499,7 @@ intn HTPdump_dds(int32 file_id, FILE *fout)
     } /* End of tag node dumping */
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1544,7 +1544,7 @@ static intn HTInew_dd_block(filerec_t * file_rec)
     /* check integrity of file record */
     if (file_rec->ddhead==NULL || file_rec->ddlast==NULL)
       HGOTO_ERROR(DFE_INTERNAL, FAIL);
-  
+
     /* allocate new dd block record and fill in data */
     if ((block = (ddblock_t *) HDmalloc(sizeof(ddblock_t))) == NULL)
       HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -1554,13 +1554,13 @@ static intn HTInew_dd_block(filerec_t * file_rec)
 
     /* Keep the filerec_t pointer around for each ddblock */
     block->frec=file_rec;
-  
+
     /* get room for the new DD block in the file */
     if ((nextoffset = HPgetdiskblock(file_rec, NDDS_SZ + OFFSET_SZ + (ndds * DD_SZ), TRUE)) == FAIL)
       HGOTO_ERROR(DFE_SEEKERROR, FAIL);
     block->myoffset = nextoffset;	/* set offset of new block */
     block->dirty = (uintn)file_rec->cache; /* if we're caching, wait to write DD block */
-  
+
     if (file_rec->cache)	/* if we are caching, wait to update previous DD block */
       file_rec->dirty |= DDLIST_DIRTY;	/* indicate file needs to be flushed */
     else
@@ -1571,7 +1571,7 @@ static intn HTInew_dd_block(filerec_t * file_rec)
         if (HP_write(file_rec, ddhead, NDDS_SZ + OFFSET_SZ) == FAIL)
           HGOTO_ERROR(DFE_WRITEERROR, FAIL);
       }		/* end else */
-  
+
     /* set up the dd list of this dd block and put it in the file
      after the dd block header */
     list = block->ddlist = (dd_t *) HDmalloc((uint32) ndds * sizeof(dd_t));
@@ -1585,7 +1585,7 @@ static intn HTInew_dd_block(filerec_t * file_rec)
     list[0].offset = INVALID_OFFSET;
     list[0].blk = block;
     HDmemfill(&list[1],&list[0],sizeof(dd_t),(uint32)ndds-1);
-  
+
     if (file_rec->cache!=0)
       {	/* if we are caching, wait to update previous DD block */
         uint8 *tbuf;    /* temporary buffer */
@@ -1604,7 +1604,7 @@ static intn HTInew_dd_block(filerec_t * file_rec)
 
         HDfree(tbuf);
       }		/* end if */
-  
+
     /* update previously last ddblock to point to this new dd block */
     file_rec->ddlast->nextoffset = nextoffset;
     block->prev = file_rec->ddlast;
@@ -1627,15 +1627,15 @@ static intn HTInew_dd_block(filerec_t * file_rec)
         if (HP_write(file_rec, ddhead, OFFSET_SZ) == FAIL)
           HGOTO_ERROR(DFE_WRITEERROR, FAIL);
       }	/* end else */
-  
+
     /* update file record */
     file_rec->ddlast = block;
-  
+
     /* set the end of the file to the end of the current DD block */
     file_rec->f_end_off = block->myoffset + (NDDS_SZ + OFFSET_SZ) + (block->ndds * DD_SZ);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1721,12 +1721,12 @@ static intn HTIfind_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
                         /* skip the empty dd's */
                         if (list->tag == DFTAG_NULL)
                             continue;
-      
+
                         /* we have a match !! (anything matches! :-) */
                         *pdd=list;
                         HGOTO_DONE(SUCCEED);
                       }	/* end for */
-        
+
                     /* start from beginning of the next dd list */
                     idx = 0;
                   }	/* end for */
@@ -1760,7 +1760,7 @@ static intn HTIfind_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
                             HGOTO_DONE(SUCCEED);
                           } /* end if */
                       }	/* end for */
-        
+
                     /* start from beginning of the next dd list */
                     idx = 0;
                   }	/* end for */
@@ -1775,7 +1775,7 @@ static intn HTIfind_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
                         /* skip the empty dd's */
                         if (list->tag == DFTAG_NULL)
                             continue;
-      
+
                         if (list->ref == look_ref)
                           {
                             /* we have a match !! */
@@ -1783,7 +1783,7 @@ static intn HTIfind_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
                             HGOTO_DONE(SUCCEED);
                           } /* end if */
                       }	/* end for */
-        
+
                     /* start from beginning of the next dd list */
                     idx = 0;
                   }	/* end for */
@@ -1801,7 +1801,7 @@ static intn HTIfind_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
                             /* skip the empty dd's */
                             if (list->tag == DFTAG_NULL && look_tag != DFTAG_NULL)
                                 continue;
-          
+
                             if (list->tag == look_tag)
                               {
                                 /* we have a match !! */
@@ -1809,7 +1809,7 @@ static intn HTIfind_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
                                 HGOTO_DONE(SUCCEED);
                               } /* end if */
                           }	/* end for */
-            
+
                         /* start from beginning of the next dd list */
                         idx = 0;
                       }	/* end for */
@@ -1824,7 +1824,7 @@ static intn HTIfind_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
                             /* skip the empty dd's */
                             if (list->tag == DFTAG_NULL && look_tag != DFTAG_NULL)
                                 continue;
-          
+
                             if (list->tag == look_tag || list->tag == special_tag)
                               {
                                 /* we have a match !! */
@@ -1832,7 +1832,7 @@ static intn HTIfind_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
                                 HGOTO_DONE(SUCCEED);
                               } /* end if */
                           }	/* end for */
-            
+
                         /* start from beginning of the next dd list */
                         idx = 0;
                       }	/* end for */
@@ -1848,7 +1848,7 @@ static intn HTIfind_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
                         /* skip the empty dd's */
                         if (list->tag == DFTAG_NULL && look_tag != DFTAG_NULL)
                             continue;
-      
+
                         if ((list->tag == look_tag
                             || (special_tag != DFTAG_NULL && list->tag == special_tag))
                             && list->ref == look_ref)
@@ -1858,7 +1858,7 @@ static intn HTIfind_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
                             HGOTO_DONE(SUCCEED);
                         }	/* end if */
                       }	/* end for */
-        
+
                     /* start from beginning of the next dd list */
                     idx = 0;
                   }	/* end for */
@@ -1884,12 +1884,12 @@ static intn HTIfind_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
                       /* skip the empty dd's */
                     if (list[idx].tag == DFTAG_NULL && look_tag != DFTAG_NULL)
                       continue;
-    
+
                     if (((look_tag == DFTAG_WILDCARD || list[idx].tag == look_tag)
                        || (special_tag != DFTAG_NULL && list[idx].tag == special_tag))
                        && (look_ref == DFREF_WILDCARD || list[idx].ref == look_ref))
                       {
-    
+
                         /* we have a match !! */
                         *pdd=&list[idx];
                         HGOTO_DONE(SUCCEED);
@@ -1908,7 +1908,7 @@ static intn HTIfind_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
     ret_value=FAIL;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1958,13 +1958,13 @@ static intn HTIupdate_dd(filerec_t * file_rec, dd_t * dd_ptr)
         /* write in the updated dd */
         if (HPseek(file_rec, offset) == FAIL)
           HGOTO_ERROR(DFE_SEEKERROR, FAIL);
-  
+
         p = tbuf;
 	DDENCODE(p, dd_ptr->tag, dd_ptr->ref, dd_ptr->offset, dd_ptr->length);
         if (HP_write(file_rec, tbuf, DD_SZ) == FAIL)
           HGOTO_ERROR(DFE_WRITEERROR, FAIL);
       } /* end else */
-  
+
     /* check whether to incr. offset of end of file */
     /* not certain whether this is actually necessary, but better safe than */
     /* sorry later... -QAK */
@@ -1973,7 +1973,7 @@ static intn HTIupdate_dd(filerec_t * file_rec, dd_t * dd_ptr)
       file_rec->f_end_off = dd_ptr->offset + dd_ptr->length;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1998,7 +1998,7 @@ USAGE
                                      found, including DFTAG_NULL and
                                      DFTAG_FREE
    uintn       *real_cnt;       OUT: Count of all the tag/ref pairs
-                                     found, excluding DFTAG_NULL and 
+                                     found, excluding DFTAG_NULL and
                                      DFTAG_FREE
 RETURNS
    SUCCEED / FAIL
@@ -2192,7 +2192,7 @@ HTIregister_tag_ref(filerec_t * file_rec, dd_t *dd_ptr)
       HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
       if(tinfo_ptr->d!=NULL)
@@ -2252,7 +2252,7 @@ static intn HTIunregister_tag_ref(filerec_t * file_rec, dd_t *dd_ptr)
     } /* end else */
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */

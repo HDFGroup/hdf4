@@ -395,9 +395,9 @@ read_data(int32 fid, uint16 ref_num, intn test_num, int32 ntype)
           HDget_special_info(aid, &info_block);
           fprintf(stderr, "ERROR: Data from test: %d, number type: %s, model type: %d, coder type: %d differs\n", test_num, s, (int)info_block.model_type, (int)info_block.comp_type);
           MESSAGE(8,
-	  for(i=0; i<read_size*DFKNTsize(ntype); i++) 
+	  for(i=0; i<read_size*DFKNTsize(ntype); i++)
 	    {
-	      if(((char *)in_ptr)[i]!=((char *)out_ptr)[i]) 
+	      if(((char *)in_ptr)[i]!=((char *)out_ptr)[i])
 		  printf("byte %i differs, written:%d, read in:%d\n",i,((char *)out_ptr)[i],((char *)in_ptr)[i]);
 	    } /* end for */
 	  )

@@ -17,7 +17,7 @@ C------------------------------------------------------------------------------
 C File:     dfanFf.f
 C Purpose:    Fortran stub routines for annotations
 C Invokes:    dfanF.c
-C Contents: 
+C Contents:
 C    dagllen      : get length of label of tag/ref
 C    daglab       : get label of tag/ref
 C    dagdlen      : get length of description of tag/ref
@@ -34,7 +34,7 @@ C    dfangetdesc  : get description of tag/ref
 C    dfanputlabel : put label of tag/ref
 C    dfanputdesc  : put description of tag/ref
 C    dfanlablist  : get list of labels for a particular tag
-C    dfanaddfid   : add file ID to file 
+C    dfanaddfid   : add file ID to file
 
 C------------------------------------------------------------------------------
 
