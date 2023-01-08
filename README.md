@@ -42,7 +42,7 @@ Source Distribution Layout
 
    man    -- An incomplete set of man page(s) for HDF.
 
-   release_notes -- 
+   release\_notes -- 
              Installation instructions for UNIX and Windows.
              Descriptions of new features and bug fixes in this release.
              Files in this sub-directory can be used as supplemental 
@@ -66,6 +66,6 @@ System Requirements
 
 Configuring/Testing/Installing 
 ------------------------------
- See the file release_notes/INSTALL for instructions on configuring, testing,
+ See the file release\_notes/INSTALL for instructions on configuring, testing,
  and installing this software on Unix and non-UNIX systems.
 
