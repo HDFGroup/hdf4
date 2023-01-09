@@ -137,6 +137,9 @@
 /* Define to 1 if you have the `wait' function. */
 #cmakedefine H4_HAVE_WAIT @H4_HAVE_WAIT@
 
+/* Define to 1 if you use the WIN32_API. */
+#cmakedefine H4_HAVE_WIN32_API @H4_HAVE_WIN32_API@
+
 /* Define to 1 if you have the <zlib.h> header file. */
 #cmakedefine H4_HAVE_ZLIB_H @H4_HAVE_ZLIB_H@
 
