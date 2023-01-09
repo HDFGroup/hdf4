@@ -169,7 +169,7 @@ typedef struct {
     int *values ;
 } NC_iarray ;
 
-/* NC dimension stucture */
+/* NC dimension structure */
 typedef struct {
     NC_string *name ;
     long size ;
