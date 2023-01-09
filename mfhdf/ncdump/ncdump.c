@@ -23,23 +23,19 @@ long vdims[H4_MAX_NC_DIMS];	/* dimension sizes for a single variable */
 static void
 usage()
 {
-#define USAGE   "\
-  [-V]             Display version of the HDF4 library and exit\n\
-  [-c]             Coordinate variable data and header information\n\
-  [-h]             Header information only, no data\n\
-  [-u]             Replace nonalpha-numerics in names with underscores\n\
-  [-v var1[,...]]  Data for variable(s) <var1>,... only\n\
-  [-b [c|f]]       Brief annotations for C or Fortran indices in data\n\
-  [-f [c|f]]       Full annotations for C or Fortran indices in data\n\
-  [-l len]         Line length maximum in data section (default 80)\n\
-  [-n name]        Name for netCDF (default derived from file name)\n\
-  [-d n[,n]]       Approximate floating-point values with less precision\n\
-  file             File name of input netCDF file\n"
+    printf("ncdump [-V|-c|-h|-u] [-v ...] [[-b|-f] [c|f]] [-l len] [-n name] [-d n[,n]] file\n");
+    printf("\t [-V]             Display version of the HDF4 library and exit\n");
+    printf("\t [-c]             Coordinate variable data and header information\n");
+    printf("\t [-h]             Header information only, no data\n");
+    printf("\t [-u]             Replace nonalpha-numerics in names with underscores\n");
+    printf("\t [-v var1[,...]]  Data for variable(s) <var1>,... only\n");
+    printf("\t [-b [c|f]]       Brief annotations for C or Fortran indices in data\n");
+    printf("\t [-f [c|f]]       Full annotations for C or Fortran indices in data\n");
+    printf("\t [-l len]         Line length maximum in data section (default 80)\n");
+    printf("\t [-n name]        Name for netCDF (default derived from file name)\n");
+    printf("\t [-d n[,n]]       Approximate floating-point values with less precision\n");
+    printf("\t file             File name of input netCDF file\n");
 
-    (void) fprintf(stderr,
-		   "%s [-V|-c|-h|-u] [-v ...] [[-b|-f] [c|f]] [-l len] [-n name] [-d n[,n]] file\n%s",
-		   progname,
-		   USAGE);
     exit(EXIT_FAILURE);
 }
 
