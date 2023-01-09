@@ -100,7 +100,7 @@
 /* always points to the next available slot; the last error record is in slot (top-1) */
 #if defined(H4_BUILT_AS_DYNAMIC_LIB)
 # ifdef _H_ERR_MASTER_
-#  if defined _WIN32 && defined hdf_shared_EXPORTS
+#  if defined H4_HAVE_WIN32_API && defined hdf_shared_EXPORTS
 __declspec(dllexport)
 #  endif
 # else
