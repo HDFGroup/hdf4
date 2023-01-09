@@ -453,7 +453,7 @@ option (HDF4_PACKAGE_EXTLIBS "CPACK - include external libraries" OFF)
 if (NOT HDF4_EXTERNALLY_CONFIGURED)
   if (HDF4_PACKAGE_EXTLIBS)
     set (HDF4_NO_PACKAGES OFF CACHE BOOL "CPACK - Disable packaging" FORCE)
-    if (HDF4_ENABLE_JPEG_LIB_SUPPORT AND JPEG_FOUND)
+    if (HDF4_ENABLE_JPEG_LIB_SUPPORT AND JPEG_FOUND AND NOT BUILD_JPEG_WITH_FETCHCONTENT)
       PACKAGE_JPEG_LIBRARY (${HDF4_ALLOW_EXTERNAL_SUPPORT})
     endif ()
 
@@ -497,11 +497,11 @@ endif ()
 #-----------------------------------------------------------------------------
 # Add the HDF4 Library Target to the build
 #-----------------------------------------------------------------------------
-add_subdirectory (hdf/src )
+add_subdirectory (hdf/src)
 add_subdirectory (mfhdf/libsrc)
 
 if (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "GIT" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
-  if (JPEG_FOUND AND JPEG_USE_EXTERNAL)
+  if (JPEG_FOUND AND JPEG_USE_EXTERNAL AND NOT BUILD_JPEG_WITH_FETCHCONTENT)
     if (NOT ONLY_SHARED_LIBS)
       add_dependencies (${HDF4_SRC_LIB_TARGET} JPEG)
     endif ()

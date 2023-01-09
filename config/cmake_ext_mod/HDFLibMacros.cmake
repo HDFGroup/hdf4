@@ -1,4 +1,43 @@
 #-------------------------------------------------------------------------------
+macro (ORIGINAL_JPEG_LIBRARY compress_type jpeg_pic)
+  # May need to build JPEG with PIC on x64 machines with gcc
+  # Need to use CMAKE_ANSI_CFLAGS define so that compiler test works
+
+  if (${compress_type} MATCHES "GIT")
+    FetchContent_Declare (JPEG
+        GIT_REPOSITORY ${JPEG_URL}
+        GIT_TAG ${JPEG_BRANCH}
+    )
+  elseif (${compress_type} MATCHES "TGZ")
+    FetchContent_Declare (JPEG
+        URL ${JPEG_URL}
+        URL_HASH ""
+    )
+  endif ()
+  FetchContent_GetProperties(JPEG)
+  if(NOT jpeg_POPULATED)
+    FetchContent_Populate(JPEG)
+
+    # Copy an additional/replacement files into the populated source
+    file(COPY ${HDF_RESOURCES_DIR}/JPEG/CMakeLists.txt DESTINATION ${jpeg_SOURCE_DIR})
+
+    add_subdirectory(${jpeg_SOURCE_DIR} ${jpeg_BINARY_DIR})
+  endif()
+
+# Create imported target jpeg-static
+  add_library(${HDF_PACKAGE_NAMESPACE}jpeg-static STATIC IMPORTED)
+  HDF_IMPORT_SET_LIB_OPTIONS (${HDF_PACKAGE_NAMESPACE}jpeg-static "jpeg" STATIC "")
+  add_dependencies (${HDF_PACKAGE_NAMESPACE}jpeg-static JPEG)
+  set (JPEG_STATIC_LIBRARY "${HDF_PACKAGE_NAMESPACE}jpeg-static")
+  set (JPEG_LIBRARIES ${JPEG_STATIC_LIBRARY})
+
+  set (JPEG_INCLUDE_DIR_GEN "${jpeg_BINARY_DIR}")
+  set (JPEG_INCLUDE_DIR "${jpeg_SOURCE_DIR}")
+  set (JPEG_FOUND 1)
+  set (JPEG_INCLUDE_DIRS ${JPEG_INCLUDE_DIR_GEN} ${JPEG_INCLUDE_DIR})
+endmacro ()
+
+#-------------------------------------------------------------------------------
 macro (EXTERNAL_JPEG_LIBRARY compress_type jpeg_pic)
   # May need to build JPEG with PIC on x64 machines with gcc
   # Need to use CMAKE_ANSI_CFLAGS define so that compiler test works
@@ -126,7 +165,7 @@ macro (EXTERNAL_SZIP_LIBRARY compress_type encoding)
     )
   endif ()
   externalproject_get_property (SZIP BINARY_DIR SOURCE_DIR)
-
+#
 ##include (${BINARY_DIR}/${SZIP_PACKAGE_NAME}${HDF_PACKAGE_EXT}-targets.cmake)
 # Create imported target szip-static
   if (USE_LIBAEC)
