@@ -728,7 +728,7 @@ done:
  * Purpose: open or reopen a file
  * Inputs:  filename: name of file to open
  *          acc_mode : access mode
- * Returns: file pointer on success, NULL on failure with DFerror set
+ * Returns: file ID on success, FAIL on failure with DFerror set
  * Users:   HDF systems programmers, all the RIG routines
  * Invokes: DFopen
  * Remarks: This is a hook for someday providing more efficient ways to
@@ -1440,7 +1440,7 @@ DFGRIaddimlut(const char *filename, const void * imlut, int32 xdim, int32 ydim,
           HGOTO_DONE(SUCCEED);
       }
 
-    if (( file_id = DFGRIopen(filename, newfile ? DFACC_CREATE : DFACC_RDWR))== (int32) NULL)
+    if (( file_id = DFGRIopen(filename, newfile ? DFACC_CREATE : DFACC_RDWR)) == FAIL)
         HGOTO_ERROR(DFE_BADOPEN, FAIL);
 
     /* make 8-bit compatibility only for older 8-bit stuff, not JPEG */

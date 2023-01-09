@@ -93,7 +93,7 @@ uint32 diff_sds(int32 sd1_id,
  
  /*obtain name,rank,dimsizes,datatype and num of attributes of sds */
  if (SDgetinfo(sds1_id,sds1_name,&rank1,dimsizes1,&dtype1,&nattrs1)==FAIL) {
-   printf( "Failed to get info for SDS ref <%ld>\n",ref1);
+   printf( "Failed to get info for SDS ref <%d>\n",ref1);
    goto out;
   }
 
@@ -108,7 +108,7 @@ uint32 diff_sds(int32 sd1_id,
  
  /*obtain name,rank,dimsizes,datatype and num of attributes of sds */
  if (SDgetinfo(sds2_id,sds2_name,&rank2,dimsizes2,&dtype2,&nattrs2)==FAIL) {
-   printf( "Failed to get info for SDS ref <%ld>\n",ref2);
+   printf( "Failed to get info for SDS ref <%d>\n",ref2);
    goto out;
   }
 
@@ -147,7 +147,7 @@ uint32 diff_sds(int32 sd1_id,
  if (dtype1 != dtype2) 
  {
   printf("Comparison not supported\n");
-  printf("<%s> has datatype %ld, <%s> has datatype %ld ",sds1_name,dtype1,sds2_name,dtype2);
+  printf("<%s> has datatype %d, <%s> has datatype %d ",sds1_name,dtype1,sds2_name,dtype2);
   goto do_nothing;
  }
 
@@ -159,10 +159,10 @@ uint32 diff_sds(int32 sd1_id,
  if ( rank1 != rank2 )
  {
   printf("Comparison not supported\n");
-  printf("<%s> has rank %ld, dimensions ", sds1_name, rank1);
+  printf("<%s> has rank %d, dimensions ", sds1_name, rank1);
   print_dims(rank1,dimsizes1);
   printf("\n" );
-  printf("<%s> has rank %ld, dimensions ", sds2_name, rank2);
+  printf("<%s> has rank %d, dimensions ", sds2_name, rank2);
   print_dims(rank2,dimsizes2);
   goto do_nothing;
  }
@@ -186,10 +186,10 @@ uint32 diff_sds(int32 sd1_id,
  if (dim_diff==1)
  {
   printf("Comparison not supported\n");
-  printf("<%s> has rank %ld, dimensions ", sds1_name, rank1);
+  printf("<%s> has rank %d, dimensions ", sds1_name, rank1);
   print_dims(rank1,dimsizes1);
   printf("\n" );
-  printf("<%s> has rank %ld, dimensions ", sds2_name, rank2);
+  printf("<%s> has rank %d, dimensions ", sds2_name, rank2);
   print_dims(rank2,dimsizes2);
   goto do_nothing;
  }

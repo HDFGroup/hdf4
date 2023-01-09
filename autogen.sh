@@ -13,4 +13,19 @@
 #
 
 # A script to reconfigure autotools for HDF4
-autoreconf -Wall --force --install
+
+echo
+echo "**************************"
+echo "* HDF4 autogen.sh script *"
+echo "**************************"
+echo
+
+echo
+echo "NOTE: You can ignore the warning about adding -I m4."
+echo "      We already do this in an included file."
+echo
+
+# The "obsolete" warnings category flags our Java macros as obsolete.
+# Since there is no clear way to upgrade them (Java support in the Autotools
+# is not great) and they work well enough for now, we suppress those warnings.
+autoreconf -Wno-obsolete --force --install

@@ -522,13 +522,13 @@ int do_lone(char* file_name, int do_diffs)
     /* create the SDS */
     if ((sds_id = SDcreate (sd_id, "sds", DFNT_INT32, rank, dim_sds))<0)
     {
-        printf( "Could not create SDS <%s>\n");
+        printf( "Could not create SDS <%d>\n", sds_id);
         goto fail;
     }
 
     if (SDwritedata (sds_id, start, NULL, edges, (VOIDP)data)==FAIL)
     {
-        printf( "Failed to set write for SDS <%s>\n");
+        printf( "Failed to set write for SDS <%s>\n", sds_name);
         goto fail;
     }
 

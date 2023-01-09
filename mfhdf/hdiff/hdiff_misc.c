@@ -190,7 +190,7 @@ pr_att_vals(nc_type type, int len, void *vals)
  case DFNT_INT32:
   gp.lp = (int32 *) vals;
   for (iel = 0; iel < len; iel++)
-   Printf ("%ld%s",*gp.lp++,iel<len-1 ? ", " : "");
+   Printf ("%d%s",*gp.lp++,iel<len-1 ? ", " : "");
   break;
  case DFNT_FLOAT:
   gp.fp = (float32 *) vals;

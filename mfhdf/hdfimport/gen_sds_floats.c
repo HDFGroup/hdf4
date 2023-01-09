@@ -23,6 +23,7 @@
 #define RANK2          2  /* Number of dimensions of the SDS */
 #define RANK3          3  /* Number of dimensions of the SDS */
 
+int
 main() 
 {
     /************************* Variable declaration ************************/
@@ -109,4 +110,6 @@ main()
     */
     status = SDend (sd2_id);
     status = SDend (sd3_id);
+
+    return EXIT_SUCCESS;
 }

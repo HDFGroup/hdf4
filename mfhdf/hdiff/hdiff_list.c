@@ -217,13 +217,13 @@ int hdiff_list_vg(const char* fname,
         */
             if ((vg_id = Vattach (file_id, ref, "r"))==FAIL)
             {
-                printf("Error: Could not attach group with ref <%ld>\n", ref);
+                printf("Error: Could not attach group with ref <%d>\n", ref);
                 goto out;
             }
 
             if (Vgetnamelen(vg_id, &name_len)==FAIL)
             {
-                printf("Error: Could not get name length for group with ref <%ld>\n", ref);
+                printf("Error: Could not get name length for group with ref <%d>\n", ref);
                 goto out;
             }
 
@@ -231,13 +231,13 @@ int hdiff_list_vg(const char* fname,
             
             if (Vgetname (vg_id, vg_name)==FAIL)
             {
-                printf("Error: Could not get name for group with ref <%ld>\n", ref);
+                printf("Error: Could not get name for group with ref <%d>\n", ref);
                 goto out;
             }
             
             if (Vgetclassnamelen(vg_id, &name_len)==FAIL)
             {
-                printf("Error: Could not get classname length for group with ref <%ld>\n", ref);
+                printf("Error: Could not get classname length for group with ref <%d>\n", ref);
                 goto out;
             }
 
@@ -245,7 +245,7 @@ int hdiff_list_vg(const char* fname,
             
             if (Vgetclass (vg_id, vg_class)==FAIL)
             {
-                printf("Error: Could not get class for group with ref <%ld>\n", ref);
+                printf("Error: Could not get class for group with ref <%d>\n", ref);
                 goto out;
             }
             
@@ -411,7 +411,7 @@ int insert_vg(const char* fname,
             vg_id = Vattach (file_id, ref, "r");
             if (Vgetnamelen(vg_id, &name_len)==FAIL)
             {
-                printf("Error: Could not get name length for group with ref <%ld>\n", ref);
+                printf("Error: Could not get name length for group with ref <%d>\n", ref);
                 break;
             }
 
@@ -421,7 +421,7 @@ int insert_vg(const char* fname,
 
             if (Vgetclassnamelen(vg_id, &name_len)==FAIL)
             {
-                printf("Error: Could not get classname length for group with ref <%ld>\n", ref);
+                printf("Error: Could not get classname length for group with ref <%d>\n", ref);
                 break;
             }
 
@@ -976,13 +976,13 @@ int insert_an_data(int32 file_id,
     {
         if((ann_id = ANselect(an_id,i,type))==FAIL) 
         {
-            printf( "Failed to select AN %ld of <%s>\n", i, path);
+            printf( "Failed to select AN %d of <%s>\n", i, path);
             continue;
         }
         
         if(ANendaccess(ann_id)==FAIL)
         {
-            printf( "Failed to end AN %ld of <%s>\n", i, path);
+            printf( "Failed to end AN %d of <%s>\n", i, path);
             continue;
         }
         
@@ -1341,19 +1341,19 @@ int  insert_vs( int32 file_id,
     
     if ((vdata_id  = VSattach (file_id, ref, "r")) == FAIL )
     {
-        printf( "Failed to attach vdata ref %ld\n", ref);
+        printf( "Failed to attach vdata ref %d\n", ref);
         return-1;
     }
 
     if (VSgetname  (vdata_id, vdata_name) == FAIL )
     {
-        printf( "Failed to name for vdata ref %ld\n", ref);
+        printf( "Failed to name for vdata ref %d\n", ref);
         return-1;
     }
 
     if (VSgetclass (vdata_id, vdata_class) == FAIL )
     {
-        printf( "Failed to name for vdata ref %ld\n", ref);
+        printf( "Failed to name for vdata ref %d\n", ref);
         return-1;
     }
     

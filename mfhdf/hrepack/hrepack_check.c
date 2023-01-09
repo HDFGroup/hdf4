@@ -89,7 +89,7 @@ int sds_get_compck(char *fname, char *sds_name)
  printf("dimensions:  [");
  for (i = 0; i < rank; i++)
  {
-  printf("%ld ", dimsizes[i]);
+  printf("%d ", dimsizes[i]);
  }
  printf("]\n");
 
@@ -104,7 +104,7 @@ int sds_get_compck(char *fname, char *sds_name)
   printf("chunk dimension:  [");
   for (i = 0; i < rank; i++)
   {
-   printf("%ld ", chunk_def.chunk_lengths[i]);
+   printf("%d ", chunk_def.chunk_lengths[i]);
   }
   printf("]\n");
  }
@@ -138,7 +138,7 @@ int sds_get_compck(char *fname, char *sds_name)
    printf("quality factor:  %d \n", comp_info.jpeg.quality);
    break;
   case COMP_CODE_SZIP:
-   printf("pixels per block:  %ld \n", comp_info.szip.pixels_per_block);
+   printf("pixels per block:  %d \n", comp_info.szip.pixels_per_block);
    break;
   };
  }

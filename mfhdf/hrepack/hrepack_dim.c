@@ -680,7 +680,7 @@ static int gen_dim(char* name,              /* name of SDS */
        
        /* alloc */
        if ((buf = (VOIDP) HDmalloc(nelms * eltsz)) == NULL) {
-           printf( "Failed to allocate %ld elements of size %ld\n", nelms, eltsz);
+           printf( "Failed to allocate %d elements of size %d\n", nelms, eltsz);
            ret=-1;
            goto out;
        }

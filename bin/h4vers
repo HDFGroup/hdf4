@@ -64,7 +64,7 @@ use strict;
 # ./hfile.h or ./hdf/src/hfile.h.
 #
 # If the version number is changed (either `-s' or `-i' was used on
-# the command line) then the first line of the README.txt and
+# the command line) then the first line of the README.md and
 # release_notes/RELEASE.txt two levels above the hfile.h file are also
 # modified so it looks something like: This is hdf4-1.2.3-pre1 currently
 # under development. The AC_INIT macro in configure.in will also change
@@ -169,10 +169,10 @@ die "mutually exclusive options given\n" if $set && $inc;
 #print "file is $file.\n";
 #print "File array is ", @files;
 
-# Determine file to use as hfile.h, README.txt,
+# Determine file to use as hfile.h, README.md,
 # release_notes/RELEASE.txt, configure.in,
 # and config/cmake/scripts/HDF4config.cmake.
-# The paths to README.txt, release_notes/RELEASE.txt, configure.ac,
+# The paths to README.md, release_notes/RELEASE.txt, configure.ac,
 # and config/cmake/scripts/HDF4config.cmake
 # files are always from the directory two levels above hfile.h.
 unless ($file) {
@@ -200,9 +200,9 @@ die "unable to read file: $H4_JAVA\n" unless -r $file;
 my $H4_TESTJAVA = $file;
 $H4_TESTJAVA =~ s/[^\/]*$/..\/..\/java\/test\/TestH4.java/;
 die "unable to read file: $H4_TESTJAVA\n" unless -r $file;
-# README.txt
+# README.md
 my $README = $file;
-$README =~ s/[^\/]*$/..\/..\/README.txt/;
+$README =~ s/[^\/]*$/..\/..\/README.md/;
 die "unable to read file: $README\n" unless -r $file;
 # release_notes/RELEASE.txt
 my $RELEASE = $file;

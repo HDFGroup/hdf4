@@ -186,7 +186,7 @@ int vg_getngrpdep( HFILEID f)
         /* Get vgroup's name */
         if (Vgetnamelen(vg, &name_len)==FAIL)
         {
-            printf("Error: Could not get name length for group with ref <%ld>\n", vgid);
+            printf("Error: Could not get name length for group with ref <%d>\n", vgid);
             continue;
         }
         vgname = (char *) HDmalloc(sizeof(char) * (name_len+1));
@@ -406,7 +406,7 @@ int cmp_gr(int32 ri1_id, int32 ri2_id)
     */
     if ( interlace_mode1 != interlace_mode2 )
     {
-        printf("Warning: different interlace mode: <%ld> and <%ld>", 
+        printf("Warning: different interlace mode: <%d> and <%d>", 
             interlace_mode1,interlace_mode2);
         interlace_mode1=interlace_mode2;
     }
@@ -437,7 +437,7 @@ int cmp_gr(int32 ri1_id, int32 ri2_id)
     
     /* alloc */
     if ((buf1 = (VOIDP) HDmalloc(data_size)) == NULL) {
-        printf( "Failed to allocate %ld elements of size %ld\n", nelms, eltsz);
+        printf( "Failed to allocate %d elements of size %d\n", nelms, eltsz);
         goto out;
     }
     
@@ -455,7 +455,7 @@ int cmp_gr(int32 ri1_id, int32 ri2_id)
     
     /* alloc */
     if ((buf2 = (VOIDP) HDmalloc(data_size)) == NULL) {
-        printf( "Failed to allocate %ld elements of size %ld\n", nelms, eltsz);
+        printf( "Failed to allocate %d elements of size %d\n", nelms, eltsz);
         goto out;
     }
     
@@ -911,7 +911,7 @@ int add_an(int32 file_id, int32 tag, int32 ref)
     
     /* Write the annotation text to the data label */
     if (ANwriteann (data_label_id, DATA_LABEL_TXT, strlen (DATA_LABEL_TXT))==FAIL){
-        printf("Error: writing data label in tag %ld ref %ld\n", tag, ref);
+        printf("Error: writing data label in tag %d ref %d\n", tag, ref);
         return FAIL;
     }
     
@@ -920,7 +920,7 @@ int add_an(int32 file_id, int32 tag, int32 ref)
     
     /* Write the annotation text to the data description */
     if (ANwriteann (data_desc_id, DATA_DESC_TXT, strlen (DATA_DESC_TXT))==FAIL){
-        printf("Error: writing data label in tag %ld ref %ld\n", tag, ref);
+        printf("Error: writing data label in tag %d ref %d\n", tag, ref);
         return FAIL;
     }
     
