@@ -13,7 +13,6 @@
 #
 
 # A script to reconfigure autotools for HDF4
-
 echo
 echo "**************************"
 echo "* HDF4 autogen.sh script *"
@@ -29,3 +28,4 @@ echo
 # Since there is no clear way to upgrade them (Java support in the Autotools
 # is not great) and they work well enough for now, we suppress those warnings.
 autoreconf -Wno-obsolete --force --install
+

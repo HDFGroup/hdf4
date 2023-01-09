@@ -23,7 +23,7 @@ AC_PREREQ([2.69])
 ## NOTE: Do not forget to change the version number here when we do a
 ## release!!!
 ##
-AC_INIT([HDF],[4.2.15-post0],[help@hdfgroup.org])
+AC_INIT([HDF], [4.2.15-post0], [help@hdfgroup.org])
 
 AC_CONFIG_SRCDIR([hdf/src/atom.c])
 AC_CONFIG_HEADERS([hdf/src/h4config.h])
@@ -634,7 +634,7 @@ if test "X$HAVE_SZIP" = "Xyes" -a "x$HAVE_SZLIB_H" = "xyes"; then
 
     AC_SUBST([LL_PATH]) LL_PATH="$LD_LIBRARY_PATH"
 
-    AC_RUN_IFELSE([AC_LANG_SOURCE([[
+    AC_TRY_RUN([
     #include <stdlib.h>
     #include <szlib.h>
 
@@ -646,7 +646,7 @@ if test "X$HAVE_SZIP" = "Xyes" -a "x$HAVE_SZLIB_H" = "xyes"; then
         else
             exit(1);
     }
-    ]])],[CAN_ENCODE="yes"],[CAN_ENCODE="no"],[])
+    ], [CAN_ENCODE="yes"], [CAN_ENCODE="no"],)
 
     ## Report szip encoder test results
     if test "X$CAN_ENCODE" = "Xyes"; then
@@ -758,9 +758,11 @@ if test "X$BUILD_XDR" != "Xyes"; then
       ;;
   esac
 
-  AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+  AC_TRY_LINK([
   #include <rpc/types.h>
-  #include <rpc/xdr.h>]], [[xdr_int]])],[AC_MSG_RESULT([yes]); BUILD_XDR="no"],[AC_MSG_RESULT([no]); BUILD_XDR="yes"])
+  #include <rpc/xdr.h>], [xdr_int],
+                [AC_MSG_RESULT([yes]); BUILD_XDR="no"],
+                [AC_MSG_RESULT([no]); BUILD_XDR="yes"])
 fi
 
 if test "X$BUILD_XDR" != "Xno"; then
@@ -909,7 +911,9 @@ esac
 ## ======================================================================
 
 AC_MSG_CHECKING([for math library support])
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <math.h>]], [[sinh(37.927)]])],[AC_MSG_RESULT([yes])],[AC_MSG_RESULT([no]); LIBS="$LIBS -lm"])
+AC_TRY_LINK([#include <math.h>], [sinh(37.927)],
+            [AC_MSG_RESULT([yes])],
+            [AC_MSG_RESULT([no]); LIBS="$LIBS -lm"])
 
 AC_CHECK_FUNCS([fork system vfork wait])
 
