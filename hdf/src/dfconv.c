@@ -20,7 +20,7 @@
 
  Invokes:
 
- PRIVATE conversion functions: All of these are now in seperate files!
+ PRIVATE conversion functions: All of these are now in separate files!
     dfknat.c
     DFKnb1b -  Native mode for 8 bit integers
     DFKnb2b -  Native mode for 16 bit integers
@@ -408,7 +408,7 @@ DFKislitendNT(int32 numbertype)
  * uint8 * dest      location to put the converted data
  * int  * ntype       the overall number type of the data, ie DFNT_FLOAT...
  * int  * sourcetype  the specific type of the source data, ie DFNTF_IEEE...
- * int  * desttype    the specifid type of the converted data, ie DFNTF_VAX...
+ * int  * desttype    the specified type of the converted data, ie DFNTF_VAX...
  * int  * size        the number (total) of BYTES to convert
  ************************************************************/
 int
@@ -434,7 +434,7 @@ DFconvert(uint8 *source, uint8 *dest, int ntype, int sourcetype, int desttype,
 
     num_elm = (uint32)size / 4;
 
-/* Check to see if they want to covert numbers in from the disk */
+/* Check to see if they want to convert numbers in from the disk */
     if (sourcetype == DFNTF_IEEE && (desttype == DFNTF_VAX ||
                                      desttype == DFNTF_CRAY ||
                                      desttype == DFNTF_PC))

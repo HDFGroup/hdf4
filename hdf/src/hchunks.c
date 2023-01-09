@@ -305,7 +305,7 @@ create_dim_recs(DIM_REC **dptr, /* OUT: dimension record pointers */
     int32 i;
     int32 ret_value = SUCCEED;
 
-    /* allocate space for demension records pointers */
+    /* allocate space for dimension records pointers */
     if ((*dptr = (DIM_REC *)HDmalloc(sizeof(DIM_REC) * (size_t)ndims)) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
@@ -516,7 +516,7 @@ update_chunk_indices(int32 chunk_size, /* IN: physical size of chunk read/writte
 #endif
                 spb[index] = 0; /* position at beginning of chunk */
                 if(++(sbi[index]) == ddims[index].num_chunks)
-                  { /* we've written to all the chunks in this demension,
+                  { /* we've written to all the chunks in this dimension,
                        so reset for this dimension */
 #ifdef CHK_DEBUG_1
                     fprintf(stderr,"uci: accessed all chunks along sbi[%d] so reset \n",

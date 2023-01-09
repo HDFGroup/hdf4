@@ -495,7 +495,7 @@ done:
     by Vnoldattrs when old-style attributes exist in the file.
 
     When a vgroup has both type of attributes, the two list will be
-    combined with the old-style attributes preceeding the new ones.
+    combined with the old-style attributes preceding the new ones.
     The attribute indices will be adjusted accordingly.
 
     This function uses the API function VSgetdatainfo to get the data
@@ -1012,7 +1012,7 @@ GRgetpalinfo(int32 gr_id, uintn pal_count, hdf_ddinfo_t *palinfo_array)
 
     /* Application requests data info of palettes.  Start checking tags in
        the file and when a palette tag is encountered, retrieve its DD.  The
-       process continues until no more tags/refs in the file or the maxinum
+       process continues until no more tags/refs in the file or the maximum
        size of the provided array is reached */
     idx = 0;
     ret_value = aid = Hstartread(file_id, DFTAG_WILDCARD, DFREF_WILDCARD);

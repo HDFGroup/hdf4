@@ -88,7 +88,7 @@ typedef struct DF
       intn        changed;      /* True if anything in DDs modified */
       /* since last write */
       intn        last_dd;      /* see last_dle */
-      intn        defdds;       /* default numer of DD's in each block */
+      intn        defdds;       /* default number of DD's in each block */
       intn        up_access;    /* access permissions to element being */
       /* read/updated. Used by DFstart */
       /* File handle is a file pointer or file descriptor depending on whether */

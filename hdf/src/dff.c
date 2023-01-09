@@ -384,7 +384,7 @@ ndfnewref(intf * dfile)
  * Purpose: Call DFnumber to get unused ref no
  * Inputs:  dfile: pointer to HDF file
  *      tag:   pointer to (int16)tag to count
- * Returns: int: number of occurences of given tag
+ * Returns: int: number of occurrences of given tag
  * Users:   HDF Fortran programmers
  * Invokes: DFnumber
  *---------------------------------------------------------------------------*/

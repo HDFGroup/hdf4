@@ -262,7 +262,7 @@ HDFLIBAPI VOIDP HAremove_atom(atom_t atm   /* IN: Atom to remove */
      HAsearch_atom - Search for an object in a group and get it's pointer.
 
  DESCRIPTION
-    Searchs for an object in a group and returns the pointer to it.
+    Searches for an object in a group and returns the pointer to it.
     This routine calls the function pointer passed in for each object in the
     group until it finds a match.  Currently there is no way to resume a
     search.

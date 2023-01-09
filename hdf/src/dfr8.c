@@ -470,7 +470,7 @@ done:
  COMMENTS, BUGS, ASSUMPTIONS
     Palette will be associated with image is isPalette is 1
     Palette will be written to file if not written before (Palref=0)
-    Creates both RIG and RI8/CI8 tags, to accomodate older programs
+    Creates both RIG and RI8/CI8 tags, to accommodate older programs
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
@@ -1321,7 +1321,7 @@ done:
  * NAME
  *   DFR8getpalref - get the reference number of the palette
  * DESCRIPTION
- *   Convience function to get reference number of the palette of
+ *   Convenience function to get reference number of the palette of
  *   last image. Must come after DFR8getdims() since it relies on
  *   this call to fill the Readrig structure
  * RETURNS

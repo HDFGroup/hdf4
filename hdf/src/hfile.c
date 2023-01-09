@@ -1265,7 +1265,7 @@ Hseek(int32 access_id, int32 offset, intn origin)
 
   /* if special elt, use special function */
   if (access_rec->special)
-    { /* yes, call special seek fucntion with proper args */
+    { /* yes, call special seek function with proper args */
       ret_value = (intn) (*access_rec->special_func->seek) (access_rec, offset, origin);
       goto done;
     }

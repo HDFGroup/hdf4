@@ -68,7 +68,7 @@ nhclose(intf * file_id)
 
 /*-----------------------------------------------------------------------------
  * Name:    hnumber
- * Purpose: Get numer of elements with tag
+ * Purpose: Get number of elements with tag
  * Inputs:  file_id: handle to HDF file to close
  * Returns: the number of objects of type 'tag' else FAIL
  * Users:   HDF Fortran programmers

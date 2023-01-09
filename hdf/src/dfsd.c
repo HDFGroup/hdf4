@@ -1323,7 +1323,7 @@ RETURNS
       SUCCEED(0) if successful and FAIL(-1) otherwise.
 
 DESCRIPTION
-      In addition to appending any multidemensional array of data to an HDF
+      In addition to appending any multidimensional array of data to an HDF
       file, "DFSDaddata" automatically stores any information pertinent to the
       data set. It will not overwrite existing data in the file. The array
       "data" can be of any valid type. However if no number type has been set

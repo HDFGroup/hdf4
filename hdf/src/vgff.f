@@ -27,7 +27,7 @@ c   ============================================================
 c	 VGROUP ROUTINES
 c	============================================================
 
-c	attachs to a vgroup
+c	attaches to a vgroup
 c	related: Vattach--vatchc--VFATCH
 
       integer function vfatch(f, vgid, accesstype)

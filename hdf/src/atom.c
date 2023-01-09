@@ -27,7 +27,7 @@ DESIGN
     in an enum (called group_t) in atom.h.
 
 BUGS/LIMITATIONS
-    Can't interate over the atoms in a group.
+    Can't iterate over the atoms in a group.
 
 LOCAL ROUTINES
   HAIfind_atom      - Returns a pointer to an atom_info_t from a atom ID
@@ -461,7 +461,7 @@ done:
      HAsearch_atom - Search for an object in a group and get it's pointer.
 
  DESCRIPTION
-    Searchs for an object in a group and returns the pointer to it.
+    Searches for an object in a group and returns the pointer to it.
     This routine calls the function pointer passed in for each object in the
     group until it finds a match.  Currently there is no way to resume a
     search.
