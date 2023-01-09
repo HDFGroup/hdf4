@@ -241,6 +241,15 @@ HDFLIBAPI intn SDgetfilename
 HDFLIBAPI intn SDgetnamelen
     (int32 sdsid, uint16 *name_len);
 
+HDFLIBAPI intn HDiscdf
+    (const char *filename);
+
+HDFLIBAPI intn HDisnetcdf
+    (const char *filename);
+
+HDFLIBAPI intn HDisnetcdf64
+    (const char *filename);
+
 /*====================== Chunking Routines ================================*/
 
 /* For definition of HDF_CHUNK_DEF union see hproto.h since
