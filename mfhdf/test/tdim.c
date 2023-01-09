@@ -45,7 +45,7 @@
 	- creates SDS #2 of size LENGTH2xLENGTH3, and sets values to its 
 		first dimension
 
-	The followings are included in this test routine:
+	The following are included in this test routine:
 	- SDgetdimid
 	- SDsetdimname
 	- SDdiminfo
@@ -266,7 +266,7 @@ static intn test_basic_dim()
 	- creates SDS #2 of size LENGTH2xLENGTH3, and sets values to its 
 		first dimension
 
-	The followings are included in this test routine:
+	The following are included in this test routine:
 	- SDgetdimscale
         - SDsetdimscale with the following situations:  (NOT all done yet)
         	+ not called before SDdiminfo 

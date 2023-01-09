@@ -187,7 +187,7 @@ static int test_1dim_singlevar()
 	long rh_start[] = {0};
 	long rh_edges[] = {3};
 	short data[] = { 801,802,803};
-	rh_start[0] = dimsize;	/* starting immediatly pass dimension size */
+	rh_start[0] = dimsize;	/* starting immediately pass dimension size */
 
 	/* write 3 elements to the variable starting at 'dimsize' */
 	status = ncvarput(ncid, varid, rh_start, rh_edges, (void *)data);
@@ -806,7 +806,7 @@ static int test_multidim_singlevar()
 	long rh_start[] = {0,0,0};	/* the end is 3 */
 	long rh_edges[] = {1,3,2};	/* two elements */
 	short data[] = {800,801,802,803,804,805};
-	rh_start[0] = dimsize;	/* starting immediatly pass dimension size */
+	rh_start[0] = dimsize;	/* starting immediately pass dimension size */
 
 	/* Write 3 elements to the variable starting at 'dimsize' */
 	status = ncvarput(ncid, varid, rh_start, rh_edges, (void *)data);

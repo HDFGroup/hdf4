@@ -1298,7 +1298,7 @@ static intn test_getszipinfo()
     status = SDgetdatasize(sds_id, &comp_size, &uncomp_size);
     CHECK(status, FAIL, "SDgetdatasize");
 
-    /* Compute the uncompressed/original size of the data for comparision */
+    /* Compute the uncompressed/original size of the data for comparison */
     orig_size = SZ_WIDTH * SZ_LENGTH * SIZE_INT32;
     VERIFY(uncomp_size, orig_size, "SDgetdatasize");
 

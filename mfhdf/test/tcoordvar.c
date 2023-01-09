@@ -49,7 +49,7 @@
 
         The main contents are listed below.  Note that when a function name
 	appears in the parentheses, it indicates that the associate step 
-	specificly tests the changes made to that function.
+	specifically tests the changes made to that function.
 
 	- create a one-dim SDS, named VAR1_NAME
 	- name its dimension VAR1_NAME
@@ -262,7 +262,7 @@ static intn test_dim1_SDS1(void)
 
         The main contents are listed below.  Note that when a function name
 	appears in the parentheses, it indicates that the associate step 
-	specificly tests the changes made to that function.
+	specifically tests the changes made to that function.
 
 	- create a one-dim SDS, named "Variable 1"
 	- name its dimension "Variable 2"

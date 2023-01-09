@@ -27,7 +27,7 @@
     Sometime, when an error occurs, the cleanup process attempts to
     remove a file, which might still be in use (part of bugzilla #376.)
     The routine test_file_inuse is to test the fix that provides the
-    underlaying call to HPisfile_in_use, which should successfully
+    underlying call to HPisfile_in_use, which should successfully
     determines whether a file is still in use before an attempt to remove.
 
     The main contents include:
