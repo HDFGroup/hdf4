@@ -270,28 +270,6 @@ test_chunks(void)
     aid1 = HMCcreate(fid, 1020, 2, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
     CHECK_VOID(aid1, FAIL, "HMCcreate");
 
-#if 0
-    /* write 16 bytes out */
-    ret = Hwrite(aid1, 16, outbuf);
-    if (ret != 16)
-      {
-          fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", (int) ret);
-          errors++;
-          goto done;
-      }
-
-    MESSAGE(5, printf("Wrote first 16 bytes to 2-D, uint8 chunked element to file\n"); );
-    /* end access */
-    ret = Hendaccess(aid1);
-    CHECK_VOID(ret, FAIL, "Hendaccess");
-
-    MESSAGE(5, printf("Closing the file\n"););
-
-    ret = Hclose(fid);
-    CHECK_VOID(ret, FAIL, "Hclose");
-
-#endif
-
     /* write 12 bytes out */
     ret = Hwrite(aid1, 12, outbuf);
     if (ret != 12)
@@ -1023,13 +1001,6 @@ test_chunks(void)
     chunk[0].model_type = COMP_MODEL_STDIO; /* nothing set */
     chunk[0].cinfo = NULL; /* nothing set */
     chunk[0].minfo = NULL; /* nothing set */
-#if 0
-    chunk[0].chunk_flag = SPECIAL_COMP; /* compression */
-    chunk[0].comp_type  = COMP_CODE_RLE; /* RLE */
-    chunk[0].model_type = COMP_MODEL_STDIO; /* STDIO */
-    chunk[0].cinfo = &cinfo; /* nothing set */
-    chunk[0].minfo = &minfo; /* nothing set */
-#endif
 
     chunk[0].pdims[0].dim_length   = 2;
     chunk[0].pdims[0].chunk_length = 1;
@@ -1398,13 +1369,6 @@ test_chunks(void)
     chunk[0].model_type = COMP_MODEL_STDIO; /* nothing set */
     chunk[0].cinfo = NULL; /* nothing set */
     chunk[0].minfo = NULL; /* nothing set */
-#if 0
-    chunk[0].chunk_flag = SPECIAL_COMP; /* compression */
-    chunk[0].comp_type  = COMP_CODE_RLE; /* RLE */
-    chunk[0].model_type = COMP_MODEL_STDIO; /* STDIO */
-    chunk[0].cinfo = &cinfo; /* nothing set */
-    chunk[0].minfo = &minfo; /* nothing set */
-#endif
 
     chunk[0].pdims[0].dim_length   = 2;
     chunk[0].pdims[0].chunk_length = 1;
@@ -1523,13 +1487,6 @@ test_chunks(void)
     chunk[0].model_type = COMP_MODEL_STDIO; /* nothing set */
     chunk[0].cinfo = NULL; /* nothing set */
     chunk[0].minfo = NULL; /* nothing set */
-#if 0
-    chunk[0].chunk_flag = SPECIAL_COMP; /* compression */
-    chunk[0].comp_type  = COMP_CODE_RLE; /* RLE */
-    chunk[0].model_type = COMP_MODEL_STDIO; /* STDIO */
-    chunk[0].cinfo = &cinfo; /* nothing set */
-    chunk[0].minfo = &minfo; /* nothing set */
-#endif
 
     chunk[0].pdims[0].dim_length   = 2;
     chunk[0].pdims[0].chunk_length = 1;
@@ -1657,13 +1614,6 @@ test_chunks(void)
     chunk[0].model_type = COMP_MODEL_STDIO; /* nothing set */
     chunk[0].cinfo = NULL; /* nothing set */
     chunk[0].minfo = NULL; /* nothing set */
-#if 0
-    chunk[0].chunk_flag = SPECIAL_COMP; /* compression */
-    chunk[0].comp_type  = COMP_CODE_RLE; /* RLE */
-    chunk[0].model_type = COMP_MODEL_STDIO; /* STDIO */
-    chunk[0].cinfo = &cinfo; /* nothing set */
-    chunk[0].minfo = &minfo; /* nothing set */
-#endif
 
     chunk[0].pdims[0].dim_length   = 10;
     chunk[0].pdims[0].chunk_length = 2;
@@ -1847,12 +1797,6 @@ test_chunks(void)
     chunk[0].pdims[1].chunk_length = 240;
     chunk[0].pdims[1].distrib_type = 1;
 
-#if 0
-    /* Open file for reading now */
-    fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
-    CHECK_VOID(fid, FAIL, "Hopen");
-#endif
-
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
     aid1 = HMCcreate(fid, 1020, 10, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
     CHECK_VOID(aid1, FAIL, "HMCcreate");
@@ -2002,14 +1946,6 @@ test_chunks(void)
     chunk[0].chunk_size = 6; /* 3x2 = 6 bytes */
     chunk[0].nt_size    = 1; /* number type size */
     chunk[0].chunk_flag = SPECIAL_COMP; /* compression */
-#if 0
-    chunk[0].comp_type = COMP_CODE_SKPHUFF; /* Skipping Huffman */
-    cinfo.skphuff.skp_size = sizeof(uint8);
-
-    chunk[0].comp_type = COMP_CODE_DEFLATE; /* GZIP */
-    cinfo.deflate.level = 6;
-
-#endif
     chunk[0].comp_type  = COMP_CODE_RLE; /* RLE */
 
     chunk[0].model_type = COMP_MODEL_STDIO; /* STDIO */
@@ -2137,13 +2073,6 @@ test_chunks(void)
     chunk[0].chunk_size = 4; /* 1x1x4 bytes */
     chunk[0].nt_size    = 1; /* number type size */
     chunk[0].chunk_flag = SPECIAL_COMP; /* compression */
-#if 0
-
-    chunk[0].comp_type  = COMP_CODE_RLE; /* RLE */
-
-    chunk[0].comp_type = COMP_CODE_SKPHUFF; /* Skipping Huffman */
-    cinfo.skphuff.skp_size = sizeof(uint8);
-#endif
     chunk[0].comp_type = COMP_CODE_DEFLATE; /* GZIP */
     cinfo.deflate.level = 6;
 

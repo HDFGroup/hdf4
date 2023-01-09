@@ -280,9 +280,6 @@ tbbtindx(TBBT_NODE * root, int32 indx)
     {
       if (indx <= (int32) LeftCnt(ptr))
         {
-#if 0
-          indx -= LeftCnt(ptr);  /* ??....bug */
-#endif
           ptr = ptr->Lchild;
         }
       else if (HasChild(ptr, RIGHT))
@@ -873,11 +870,6 @@ tbbt_printNode(TBBT_NODE * node, VOID(*key_dump)(VOID *,VOID *))
         (*key_dump)(node->key,node->data);
       }
     fflush(stdout);
-#if 0
-    printf("Lcnt=%d, Rcnt=%d\n", (int) node->lcnt, (int) node->rcnt);
-    printf("*key=%d\n", (int) *(int32 *) (node->key));
-    printf("Lchild=%p, Rchild=%p, Parent=%p\n", node->Lchild, node->Rchild, node->Parent);
-#endif
 }   /* end tbbt_printNode() */
 
 VOID

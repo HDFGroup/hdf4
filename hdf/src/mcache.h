@@ -203,12 +203,6 @@ HDFLIBAPI int32  mcache_get_npages (
 HDFLIBAPI VOID     mcache_stat(
     MCACHE *mp /* IN: MCACHE cookie */);
 #endif /* STATISTICS */
-#if 0 /* NOT USED */
-HDFLIBAPI intn     mcache_page_sync (
-    MCACHE *mp, /* IN: MCACHE cookie */
-    int32 pgno, /* IN: page to sync */
-    int32 flags /* IN: flags */);
-#endif
 
 #if defined c_plusplus || defined __cplusplus
 }

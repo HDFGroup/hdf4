@@ -602,16 +602,8 @@ _getopt_internal (argc, argv, optstring, longopts, longind, long_only)
       {
 	if (opterr)
 	  {
-#if 0
-	    if (c < 040 || c >= 0177)
-	      fprintf (stderr, "%s: unrecognized option, character code 0%o\n",
-		       argv[0], c);
-	    else
-	      fprintf (stderr, "%s: unrecognized option `-%c'\n", argv[0], c);
-#else
 	    /* 1003.2 specifies the format of this message.  */
 	    fprintf (stderr, "%s: illegal option -- %c\n", argv[0], c);
-#endif
 	  }
 	optopt = c;
 	return '?';
@@ -644,14 +636,9 @@ _getopt_internal (argc, argv, optstring, longopts, longind, long_only)
 	      {
 		if (opterr)
 		  {
-#if 0
-		    fprintf (stderr, "%s: option `-%c' requires an argument\n",
-			     argv[0], c);
-#else
 		    /* 1003.2 specifies the format of this message.  */
 		    fprintf (stderr, "%s: option requires an argument -- %c\n",
 			     argv[0], c);
-#endif
 		  }
 		optopt = c;
 		if (optstring[0] == ':')

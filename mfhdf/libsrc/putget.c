@@ -1165,11 +1165,6 @@ hdf_xdr_NCvdata(NC *handle,
     /* Collect all the number-type size information, etc. */
     byte_count = count * vp->HDFsize;
 
-#if 0 /* old way */
-    platntsubclass = DFKgetPNSC(vp->HDFtype, DF_MT);
-    outntsubclass = DFKisnativeNT(vp->HDFtype) ? DFKgetPNSC(vp->HDFtype, DF_MT)
-        : (DFKislitendNT(vp->HDFtype) ? DFNTF_PC : DFNTF_HDFDEFAULT);
-#else /* new way */
     if (FAIL == (platntsubclass = DFKgetPNSC(vp->HDFtype, DF_MT)))
       {
           ret_value = FAIL;
@@ -1189,7 +1184,6 @@ hdf_xdr_NCvdata(NC *handle,
           outntsubclass = DFKislitendNT(vp->HDFtype) ? DFNTF_PC : DFNTF_HDFDEFAULT;
       }
 
-#endif
     convert= (uintn)(platntsubclass!=outntsubclass);
 
 /* BMR - bug#268: removed the block here that attempted to allocation

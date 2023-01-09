@@ -1126,40 +1126,6 @@ test_dfr8_24()
     CHECK_VOID(status, FAIL, "Hclose");
 }  /* test_dfr8_24 */
 
-#if 0
-/* clang does not like CHECK_VOID which does not return any value. */
-/* So, coding is wrong but this function is not used at all.*/
-/* So, screen it out for now. -AKC 2013/01/18 */
- /* intn check_dds(char *fname, char *msg)
- */ 
-intn check_dds(int32 grid, char *msg)
-{
-    intn n_pals = 0;
-    hdf_ddinfo_t *palinfo_array = NULL;
-    uint8 *inbuf;
-    intn  status;       /* status returned from routines */
-    intn ii, jj;        /* indices */
-
-    n_pals = 0;
-    n_pals = GRgetpalinfo(grid, 0, NULL);
-    CHECK_VOID(n_pals, FAIL, "GRgetpalinfo");
-
-    palinfo_array = (hdf_ddinfo_t *) HDmalloc(n_pals * sizeof(hdf_ddinfo_t));
-    CHECK_ALLOC(palinfo_array, "palinfo_array", "test_getpalinfo");
-
-    n_pals = GRgetpalinfo(grid, n_pals, palinfo_array);
-    CHECK_VOID(n_pals, FAIL, "GRgetpalinfo");
-
-    fprintf(stderr, "GRgetpalinfo return pal count = %d\n", n_pals);
-    fprintf(stderr, "tag    ref    offset  length \n");
-    for (ii = 0; ii < n_pals; ii++)
-       fprintf(stderr, "%d    %d      %d       %d\n", palinfo_array[ii].tag,
-    palinfo_array[ii].ref, palinfo_array[ii].offset, palinfo_array[ii].length);
-
-    return 0;
-}
-#endif
-
 
 /*************************************************************************
  test_getpalinfo() - tests GRgetpalinfo

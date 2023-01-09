@@ -213,17 +213,6 @@ test_hextelt(void)
           HEprint(stderr, 0);
           errors++;
       }
-
-#if 0
-    ret = Hread(aid1, length, inbuf);
-    if (ret != 2000)
-      {
-          fprintf(stderr, "Incorrect element size returned from Hread: %d\n",
-                  (int) ret);
-          HEprint(stderr, 0);
-          errors++;
-      }
-#endif
     MESSAGE(5, printf("Verifying data(%d bytes) that was stored to file #2\n",(int)ret);
         );
 
@@ -267,16 +256,6 @@ test_hextelt(void)
           HEprint(stderr, 0);
           errors++;
       }
-#if 0
-    ret = Hread(aid1, length, inbuf);
-    if (ret != length)
-      {
-          fprintf(stderr, "Incorrect element size returned from Hread: %d\n",
-                  (int) ret);
-          HEprint(stderr, 0);
-          errors++;
-      }
-#endif
     MESSAGE(5, printf("Verifying data(%d bytes) that was stored in overlapping element in file #3\n",(int)ret);
         );
 

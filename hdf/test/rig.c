@@ -1379,15 +1379,6 @@ test_r24_jpeg(void)
 	num_errs++;
     }
 
-#if 0 /* will remove after finish revising JPEG tests */
-    if ((ret = fuzzy_memcmp(jpeg_24bit_temp, jpeg_24bit_j80, sizeof(jpeg_24bit_orig), JPEG_FUZZ)) != 0)
-      {
-          fprintf(stderr, "24-bit JPEG quality 80 image was incorrect\n");
-          fprintf(stderr, "ret=%d, sizeof(jpeg_24bit_orig)=%u\n", (int) ret, (unsigned) sizeof(jpeg_24bit_orig));
-          num_errs++;
-      }
-#endif
-
     /* Get dimensions of second image */
     ret = DF24getdims(JPEGFILE, &xd, &yd, &il);
     RESULT("DF24getdims");
@@ -1419,15 +1410,6 @@ test_r24_jpeg(void)
 	num_errs++;
     }
 
-#if 0
-    if ((ret = fuzzy_memcmp(jpeg_24bit_temp, jpeg_24bit_j30, sizeof(jpeg_24bit_orig), JPEG_FUZZ)) != 0)
-      {
-          fprintf(stderr, "24-bit JPEG quality 30 image was incorrect\n");
-          fprintf(stderr, "ret=%d, sizeof(jpeg_24bit_orig)=%u\n", (int) ret, (unsigned) sizeof(jpeg_24bit_orig));
-          num_errs++;
-      }
-#endif
-
     /* Get dimensions of third image */
     ret = DF24getdims(JPEGFILE, &xd, &yd, &il);
     RESULT("DF24getdims");
@@ -1458,15 +1440,6 @@ test_r24_jpeg(void)
 	print_mismatched(jpeg_24bit_temp, jpeglib_readbuf, JPEGY*JPEGX*NCOMPS);
 	num_errs++;
     }
-
-#if 0
-    if ((ret = fuzzy_memcmp(jpeg_24bit_temp, jpeg_24bit_j75, sizeof(jpeg_24bit_orig), JPEG_FUZZ)) != 0)
-      {
-          fprintf(stderr, "24-bit JPEG quality 75 image was incorrect\n");
-          fprintf(stderr, "ret=%d, sizeof(jpeg_24bit_orig)=%u\n", (int) ret, (unsigned) sizeof(jpeg_24bit_orig));
-          num_errs++;
-      }
-#endif
 
     HDfree(jpeg_24bit_temp);
 

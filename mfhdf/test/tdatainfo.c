@@ -806,129 +806,6 @@ static intn test_compressed_SDSs()
      Read data using previously obtained data info without HDF4 library
      ******************************************************************/
 
-#if 0
-    /* Open file and read in data without using SD API */
-    {
-        int fd; /* for open */
-        off_t ret; /* for lseek */
-        int32 ret32; /* for DFKconvert */
-        ssize_t readlen=0; /* for read */
-        int32 *readibuf, *readibuf_swapped;
-        float *readfbuf, *readfbuf_swapped;
-        char *readcbuf, *readcbuf_swapped;
-        uint32 n_values;
-        int ii, jj, kk;
-
-        /* Open the file for reading without SD API */
-        fd = open(SIMPLE_FILE, O_RDONLY);
-        if (fd == -1)
-        {
-            fprintf(stderr, "test_compressed_SDSs: unable to open file %s", SIMPLE_FILE);
-            num_errs++;
-            return num_errs;
-        }
-
-        /* Forward to the position of the data of SDS at index 1 */
-        if (lseek(fd, (off_t)sds1_info.offsets[0], SEEK_SET) == -1)
-        {
-            fprintf(stderr, "test_compressed_SDSs: unable to seek offset %d\n",
-                    (int)sds1_info.offsets[0]);
-            num_errs++;
-            return num_errs;
-        }
-
-        /* Allocate buffers for SDS' data */
-        readibuf = (int32 *) HDmalloc(sds1_info.n_values * sizeof(int32));
-        readibuf_swapped = (int32 *) HDmalloc(sds1_info.n_values * sizeof(int32));
-        /* Read in this block of data */
-        readlen = read(fd, (VOIDP)readibuf, (size_t)sds1_info.lengths[0]);
-        CHECK(readlen, FAIL, "DFKconvert");
-
-        ret32 = DFKconvert(readibuf, readibuf_swapped, sds1_info.numtype,
-                (uint32)sds1_info.n_values, DFACC_WRITE, 0, 0);
-        CHECK(ret32, FAIL, "DFKconvert");
-
-        if (ret32 > 0)
-        {
-            /* Compare data read without SD API against the original buffer */
-            for (ii = 0; ii < sds1_info.n_values; ii++)
-            {
-                if (readibuf_swapped[ii] != data1[ii])
-                fprintf(stderr, "At value# %d: written = %d read = %d\n",
-                        ii, data1[ii], readibuf_swapped[ii]);
-            }
-        }
-
-        /* Forward to the position of the data of SDS at index 2 */
-        if (lseek(fd, (off_t)sds2_info.offsets[0], SEEK_SET) == -1)
-        {
-            fprintf(stderr, "test_compressed_SDSs: unable to seek offset %d\n",
-                    (int)sds2_info.offsets[0]);
-            num_errs++;
-            return num_errs;
-        }
-
-        /* Allocate buffers for SDS' data */
-        readibuf = (int32 *) HDmalloc(sds2_info.n_values * sizeof(int32));
-        readibuf_swapped = (int32 *) HDmalloc(sds2_info.n_values * sizeof(int32));
-        /* Read in this block of data */
-        readlen = read(fd, (VOIDP)readibuf, (size_t)sds2_info.lengths[0]);
-        CHECK(readlen, FAIL, "DFKconvert");
-
-        ret32 = DFKconvert(readibuf, readibuf_swapped, sds2_info.numtype,
-                (uint32)sds2_info.n_values, DFACC_WRITE, 0, 0);
-        CHECK(ret32, FAIL, "DFKconvert");
-
-        if (ret32 > 0)
-        {
-            /* Compare data read without SD API against the original buffer */
-            for (ii = 0; ii < sds2_info.n_values; ii++)
-            {
-                if (readibuf_swapped[ii] != data2[ii])
-                fprintf(stderr, "At value# %d: written = %d read = %d\n",
-                        ii, data2[ii], readibuf_swapped[ii]);
-            }
-        }
-
-        /* Forward to the position of the data of SDS at index 3 */
-        if (lseek(fd, (off_t)sds3_info.offsets[0], SEEK_SET) == -1)
-        {
-            fprintf(stderr, "test_compressed_SDSs: unable to seek offset %d\n",
-                    (int)sds3_info.offsets[0]);
-            num_errs++;
-            return num_errs;
-        }
-
-        /* Allocate buffers for SDS' data */
-        readibuf = (int32 *) HDmalloc(sds3_info.n_values * sizeof(int32));
-        readibuf_swapped = (int32 *) HDmalloc(sds3_info.n_values * sizeof(int32));
-        /* Read in this block of data */
-        readlen = read(fd, (VOIDP)readibuf, (size_t)sds3_info.lengths[0]);
-        CHECK(readlen, FAIL, "DFKconvert");
-
-        ret32 = DFKconvert(readibuf, readibuf_swapped, sds3_info.numtype,
-                (uint32)sds3_info.n_values, DFACC_WRITE, 0, 0);
-        CHECK(ret32, FAIL, "DFKconvert");
-
-        if (ret32 > 0)
-        {
-            /* Compare data read without SD API against the original buffer */
-            for (ii = 0; ii < sds3_info.n_values; ii++)
-            {
-                if (readibuf_swapped[ii] != data3[ii])
-                fprintf(stderr, "At value# %d: written = %d read = %d\n",
-                        ii, data3[ii], readibuf_swapped[ii]);
-            }
-        }
-
-        if (close(fd) == -1)
-        {
-            fprintf(stderr, "test_compressed_SDSs: unable to close file %s", SIMPLE_FILE);
-            num_errs++;
-            return num_errs;
-        }
-    }
-#endif
     free_info(&sds1_info);
     free_info(&sds2_info);
     free_info(&sds3_info);
@@ -1167,11 +1044,6 @@ static intn test_chunked_partial()
     CHECK(sds_id, FAIL, "test_chunked_partial: SDselect 'Chunked-Partial-Data'");
 
     /* Verify that only two chunks had been written */
-#if 0 /* need to figure out how to test this feature */
-    info_count = SDgetdatainfo(sds_id, NULL, 0, 0, NULL, NULL);
-    CHECK(info_count, FAIL, "test_chunked_partial: SDgetdatainfo");
-    VERIFY(info_count, 2, "test_chunked_partial: SDgetdatainfo");
-#endif
 
     /* Write another chunk at the coordinate (6) */
     origin[0] = 6;
@@ -1185,11 +1057,6 @@ static intn test_chunked_partial()
     CHECK(sds_id, FAIL, "test_chunked_partial: SDselect 'Chunked-Partial-Data'");
 
     /* Verify new number of chunks written */
-#if 0 /* need to figure out how to test this feature */
-    info_count = SDgetdatainfo(sds_id, NULL, 0, 0, NULL, NULL);
-    CHECK(info_count, FAIL, "test_chunked_partial: SDgetdatainfo");
-    VERIFY(info_count, 3, "test_chunked_partial: SDgetdatainfo");
-#endif
 
     /* Retrieve the offset and length of the chunks */
 
@@ -1206,11 +1073,6 @@ static intn test_chunked_partial()
 
     /* Record number of values the SDS can have */
     sds_info.n_values = 1 * 10; /* chunk has 1 dim of size 10 */
-
-#if 0 /* need to figure out how to test this feature */
-    status = SDgetdatainfo(sds_id, NULL, 0, info_count, sds_info.offsets, sds_info.lengths);
-    CHECK(status, FAIL, "test_chunked_partial: SDgetdatainfo");
-#endif
 
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "test_chunked_partial: SDendaccess");

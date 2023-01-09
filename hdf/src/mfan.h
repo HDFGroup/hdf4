@@ -31,18 +31,6 @@
 
 #include "hdf.h"
 
-#if 0
-/* enumerated types of the varous annotation types
- * NOTE: moved to hdf.h since they are used by end users. */
-typedef enum
-{
-  AN_DATA_LABEL = 0, /* Data label */
-  AN_DATA_DESC,      /* Data description */
-  AN_FILE_LABEL,     /* File label */
-  AN_FILE_DESC       /* File description */
-} ann_type;
-#endif
-
 #if defined MFAN_MASTER | defined MFAN_TESTER
 /* WE ARE IN MAIN ANNOTATION SOURCE FILE "mfan.c" */
 

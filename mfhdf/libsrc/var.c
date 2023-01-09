@@ -250,12 +250,6 @@ out :
         break;
     }
 
-#if 0
-    NCadvise(NC_NOERR, "%s var->len %d, var->szof %d",
-        var->name->values, var->len, var->szof) ;
-    arrayp("\tshape", var->assoc->count, var->shape) ;
-    arrayp("\tdsizes", var->assoc->count, var->dsizes) ;
-#endif
     return(var->assoc->count) ;
 }
 

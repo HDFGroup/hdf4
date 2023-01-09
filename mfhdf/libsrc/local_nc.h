@@ -92,21 +92,6 @@ typedef    unsigned long    u_long;
 #define DATA_TAG  DFTAG_SD
 #define BOGUS_TAG ((uint16) 721)
 
-#if 0
-#define ATTRIBUTE         "Attr0.0"
-#define VARIABLE          "Var0.0"
-#define DIMENSION         "Dim0.0"
-#define UDIMENSION        "UDim0.0"
-#define DIM_VALS          "DimVal0.0"
-#define DIM_VALS01        "DimVal0.1"
-#define CDF               "CDF0.0"
-/* DATA is defined in DTM. Change DATA to DATA0 *
-#define DATA              "Data0.0"
-*/
-#define DATA0             "Data0.0"
-#define ATTR_FIELD_NAME   "VALUES"
-#endif
-
 #define DIMVAL_VERSION00  0  /* <dimsize> fake values */
 #define DIMVAL_VERSION01  1  /* 1 elt with value of <dimsize>  */
 #define BLOCK_MULT  64    /* multiplier for bytes in linked blocks */

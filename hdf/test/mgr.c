@@ -2055,13 +2055,6 @@ static void test_mgr_image_chunk(int flag)
         grid=GRstart(fid);
         CHECK_VOID(grid,FAIL,"GRstart");
 
-#if 0
-        /* Create empty image with default fill value */
-        riid=GRcreate(grid,"Test Image B2a1aa",TEST_NCOMP,TEST_NT,MFGR_INTERLACE_PIXEL,dims);
-        CHECK_VOID(riid,FAIL,"GRcreate");
-
-#endif
-
         /* Get the index of the newly created image */
         index=GRreftoindex(grid,ref);
         CHECK_VOID(index,FAIL,"GRreftoindex");
@@ -2109,32 +2102,6 @@ static void test_mgr_image_chunk(int flag)
     ret=Hclose(fid);
     CHECK_VOID(ret,FAIL,"Hclose");
 
-
-#if 0
-
-    /* Create chunked GR 
-       chunk is 3x2 which will create 6 chunks.
-       Use GZIP compression */
-    cdims[0] = chunk_def.comp.chunk_lengths[0] = 3;
-    cdims[1] = chunk_def.comp.chunk_lengths[1] = 2;
-#if 0
-    chunk_def.comp.comp_type = COMP_CODE_RLE;   /* RLE */
-
-    chunk_def.comp.comp_type = COMP_CODE_SKPHUFF; /* Skipping Huffman */
-    chunk_def.comp.cinfo.skphuff.skp_size = sizeof(uint16);
-#endif
-    chunk_def.comp.comp_type = COMP_CODE_DEFLATE; /* GZIP */
-    chunk_def.comp.cinfo.deflate.level = 6;
-
-    status = GRsetchunk(riid8, chunk_def, HDF_CHUNK | HDF_COMP);
-    if(status == FAIL) 
-      {
-        fprintf(stderr, "Error! Chunk Test 7. Failed to create new chunked, GZIP Compressed data set\n");
-        num_err++;
-        goto test8;
-      }
-#endif
-
 } /* end test_mgr_image_chunk() */
 
 /****************************************************************
@@ -2177,9 +2144,6 @@ test_mgr_image(int flag)
     test_mgr_image_b2a2bb(flag);
     test_mgr_image_b2a2cc(flag);
     test_mgr_image_b2b1(flag);
-#if 0
-    test_mgr_image_chunk(flag);
-#endif
 }   /* end test_mgr_image() */
 
 /****************************************************************

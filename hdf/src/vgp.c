@@ -497,9 +497,6 @@ Load_vfile(HFILEID f /* IN: file handle */)
       {
         if ((int32) 0 == vicheckcompat(f))
           {     /* not compatible */
-#if 0
-              nvfile--;     /* delete the structure for that file */
-#endif
               tbbtdfree(vf->vgtree, vdestroynode, NULL);
               tbbtdfree(vf->vstree, vsdestroynode, NULL);
               HGOTO_ERROR(DFE_BADOPEN, FAIL);
@@ -1791,14 +1788,6 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
                             vg->tag[j] = vg->tag[j+1];
                             vg->ref[j] = vg->ref[j+1];
                         }
-#if 0
-                      /* This method is quick but does not preserve the
-                         order of elements in a vgroup.
-                         swap i'th element with last one. */
-                      vg->tag[i] = vg->tag[(uintn)vg->nvelt - 1];
-                      vg->ref[i] = vg->ref[(uintn)vg->nvelt - 1];
-#endif
-
                   }
                 /* else if last one , do nothing and allow the 
                    number of elements to be decrementd. */

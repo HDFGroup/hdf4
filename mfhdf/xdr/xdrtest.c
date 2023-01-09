@@ -203,15 +203,6 @@ char *av[] ;
     xdr_assert( xdr_vector(xdrs, (char *)encounts, count, szof, xdr_enum)) ;
     poses[jj++] = xdr_getpos(xdrs) ;
 
-#if 0
-    /* stdio performance check */
-    count = 8192 ;
-    for( lnum = 0 ; lnum < count ; lnum++)
-    {
-        xdr_assert( xdr_long(xdrs, &lnum) ) ;
-    }
-#endif
-
 /* flush, rewind  and reopen */
 
     xdr_assert(fflush((FILE *)xdrs->x_private) != EOF) ; /* xdr_destroy(xdrs) */
@@ -351,14 +342,5 @@ char *av[] ;
     putchar('\n') ;
     xdr_assert( poses[jj++] = xdr_getpos(xdrs) ) ;
 
-#if 0
-    /* stdio performance check */
-    count = 8192 ;
-    for( ii = 0 ; ii < count ; ii++)
-    {
-        xdr_assert( xdr_long(xdrs, got_al) ) ;
-        xdr_assert( *got_al == ii ) ;
-    }
-#endif
     exit(0) ;
 }

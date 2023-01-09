@@ -857,21 +857,6 @@ NC_dim *dim;
   fprintf(stderr, "handle->hdf_file = %d\n", handle->hdf_file);
 #endif
 
-#if 0
-  /* look for variable with the given name */
-  if(handle->vars)
-    {
-        dp = (NC_var **) handle->vars->values;
-        for(ii = 0; ii < handle->vars->count; ii++, dp++)
-            if(HDstrcmp(dim->name->values, (*dp)->name->values) == 0)
-              {
-                  /* found it */
-                  found = TRUE;
-                  break;
-              }
-    }
-#endif
-
   if(found)
     {
         /* load in the variable's values */

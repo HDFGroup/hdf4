@@ -30,10 +30,6 @@
 #include "hdf.h"
 #include "hfile.h"
 
-#if 0
-#define MAX_GROUPS 8
-#endif
-
 typedef struct DIlist_struct
   {
       uint8      *DIlist;
