@@ -148,7 +148,7 @@ typedef short hdf_file_t;
    --------------------------------------------------------
         \____________/
                V
-        tag/ref (unique data indentifier in file)
+        tag/ref (unique data identifier in file)
 
    Tag  -- identifies the type of data, 16 bit unsigned integer whose
            value ranges from 1 - 65535. Tags are assigned by NCSA.
@@ -167,8 +167,8 @@ typedef short hdf_file_t;
            32768 - 64999  - user definable
            65000 - 65535  - reserved for expansion of format
 
-   Refererence number - 16 bit unsigned integer whose assignment is not
-          gauranteed to be consecutive. Provides a way to distinguish
+   Reference number - 16 bit unsigned integer whose assignment is not
+          guaranteed to be consecutive. Provides a way to distinguish
           elements with the same tag in the file.
 
    Offset - Specifies the byte offset of the data element from the
@@ -210,7 +210,7 @@ typedef short hdf_file_t;
 
 */
 
-/* record of each data decsriptor */
+/* record of each data descriptor */
 typedef struct dd_t
   {
       uint16      tag;          /* Tag number of element i.e. type of data */
@@ -734,7 +734,7 @@ intn HTPinit(filerec_t *file_rec,       /* IN: File record to store info in */
      HTPsync - Flush the DD list in memory
 
  DESCRIPTION
-    Syncronizes the in-memory copy of the DD list with the copy on disk by
+    Synchronizes the in-memory copy of the DD list with the copy on disk by
     writing out the DD blocks which have changed to disk.
 
  RETURNS

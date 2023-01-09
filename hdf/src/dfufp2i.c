@@ -265,7 +265,7 @@ printinput(Input * in)
     printf("\nmax: %8.2f   min: %8.2f\n", in->max, in->min);
 
     printf("There %s a palette\n", in->is_pal ? "IS" : "is NOT");
-    printf("color tranform method = %s\n",
+    printf("color transform method = %s\n",
            (in->ct_method == EXPAND) ? "expand" : "interpolate");
     if (in->hscale != NULL)
       {
@@ -582,7 +582,7 @@ pixrep_scaled(Input * in, Output * out)
  * compute_offsets
  *
  * Purpose:  For each pixel position on the horizontal or vertical
- *           dimension, compute the offet of the corresponding value
+ *           dimension, compute the offset of the corresponding value
  *           in the scale array.
  * Input:
  *     scale: the scale

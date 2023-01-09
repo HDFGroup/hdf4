@@ -53,7 +53,7 @@
 
 /* HGOTO_ERROR macro, used to facilitate error reporting.  Makes
    same assumptions as HERROR.  IN ADDITION, this macro causes
-   a jump to the label 'done' which should be in every fucntion
+   a jump to the label 'done' which should be in every function
    Also there is an assumption of a variable 'ret_value' */
 
 #define HGOTO_ERROR(err, ret_val) {HERROR(err); ret_value = ret_val; \
@@ -71,7 +71,7 @@
    same assumptions as HRETURN_ERROR.  IN ADDITION, this macro causes
    the file specified by the id "fid" to be closed
    Also , this macro causes a jump to the label 'done' which should
-   be in every fucntion. There is an assumption of a variable 'ret_value' */
+   be in every function. There is an assumption of a variable 'ret_value' */
 
 #define HCLOSE_GOTO_ERROR(hfid, err, ret_val) {HERROR(err); Hclose(hfid); \
                                             ret_value = ret_val; goto done;}
@@ -158,7 +158,7 @@ typedef enum
       DFE_PUTELEM,              /* Hputelement failed in some way */
       DFE_GETELEM,              /* Hgetelement failed in some way */
       DFE_CANTLINK,             /* Can't initialize link information */
-      DFE_CANTSYNC,             /* Cannot syncronize memory with file */
+      DFE_CANTSYNC,             /* Cannot synchronize memory with file */
 
 /* Old group interface errors */
       DFE_BADGROUP,             /* Error from DFdiread in opening a group */
@@ -222,7 +222,7 @@ typedef enum
       DFE_BADMCTYPE,            /* unknown or unavailable machine type specified */
       DFE_BADNUMTYPE,           /* unknown or unavailable number type specified */
       DFE_BADORDER,             /* unknown or illegal array order specified */
-      DFE_RANGE,                /* improper range for attempted acess */
+      DFE_RANGE,                /* improper range for attempted access */
       DFE_BADCONV,              /* Don't know how to convert data type */
       DFE_BADTYPE,              /* Incompatible types specified */
       DFE_BADDIMNAME,           /* Dimension name not valid or already taken */
@@ -358,7 +358,7 @@ PRIVATE const struct error_messages_t error_messages[] =
     {DFE_PUTELEM,       "Hputelement failed in some way"},
     {DFE_GETELEM,       "Hgetelement failed in some way"},
     {DFE_CANTLINK,      "Can't initialize link information"},
-    {DFE_CANTSYNC,      "Cannot syncronize memory with file"},
+    {DFE_CANTSYNC,      "Cannot synchronize memory with file"},
 
 /* Old group interface errors */
     {DFE_BADGROUP,      "Error from DFdiread in opening a group"},

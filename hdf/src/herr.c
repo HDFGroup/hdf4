@@ -134,7 +134,7 @@ USAGE
    int16  error_code;      IN: the numerical value of this error
    char * func_name;       IN: function where the error happened
    char * file_name;       IN: file name of offending function
-   int    line;            IN: line number of the reporting statment
+   int    line;            IN: line number of the reporting statement
 RETURNS
    NONE
 DESCRIPTION

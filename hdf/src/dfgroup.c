@@ -56,7 +56,7 @@ static DIlist_ptr Group_list[MAX_GROUPS] = {NULL};
  * Returns: FAIL on failure else a group ID to the list
  * Users:   other group routines
  * Invokes:
- * Remarks: Allocates internal storeage if necessary
+ * Remarks: Allocates internal storage if necessary
  *---------------------------------------------------------------------------*/
 PRIVATE int32
 setgroupREC(DIlist_ptr list_rec)
@@ -313,7 +313,7 @@ DFdiwrite(int32 file_id, int32 list, uint16 tag, uint16 ref)
  *		DFdiget() exits early, it should first call freeDIGroup() to recover the
  *		group slot for future use.
  *
- *		The typical example seems to be an error occuring within the DFdiget()
+ *		The typical example seems to be an error occurring within the DFdiget()
  *		loop or finding an element while doing a search.
  *
  *---------------------------------------------------------------------------*/

@@ -335,7 +335,7 @@ HCIcnbit_decode(compinfo_t * info, int32 length, uint8 *buf)
                       else
                         {   /* no sign extension */
 #ifdef TESTING
-                            printf("HCInbit_decode(): NO sign extention\n");
+                            printf("HCInbit_decode(): NO sign extension\n");
 #endif
                             for (j = 0; j < nbit_info->nt_size; j++, mask_info++, rbuf++)
                               {

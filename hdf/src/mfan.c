@@ -436,7 +436,7 @@ ANIaddentry(int32 an_id,    /* IN: annotation interface id */
    ANIcreate_ann_tree --  create an annotation tree of 'type' for given file
 
  DESCRIPTION
-   Creates either a label or descritption annotation TBBT tree.
+   Creates either a label or description annotation TBBT tree.
 
  RETURNS
    Number of annotations of 'type' in file if successful and
@@ -714,7 +714,7 @@ ANIfind(int32    an_id, /* IN: annotation interface id */
 
  DESCRIPTION
    Find number of annotation of 'type' for the given element
-   tag/ref pair. Not used for file lables/descs since there
+   tag/ref pair. Not used for file labels/descs since there
    can only be one set of them for a file.
 
  RETURNS
@@ -1052,7 +1052,7 @@ ANIreadann(int32 ann_id, /* IN: annotation id (handle) */
               HE_REPORT_GOTO("Failed to go past tag/ref",FAIL);
       }
 
-    /* read itslef annotation now..*/
+    /* read its annotation now..*/
     if ((int32) FAIL == Hread(aid, ann_len, ann))
         HE_REPORT_GOTO("Failed to read annotation",FAIL);
 
@@ -1416,7 +1416,7 @@ ANfileinfo(int32  an_id,        /* IN:  annotation interface id */
     else
         *n_file_label = file_rec->an_num[AN_FILE_LABEL];
 
-    /* Empty file descritpiton annotation tree? */
+    /* Empty file descripiton annotation tree? */
     if (file_rec->an_num[AN_FILE_DESC] == -1)
       {
           if ((*n_file_desc = ANIcreate_ann_tree(an_id, AN_FILE_DESC)) == FAIL)
@@ -1434,7 +1434,7 @@ ANfileinfo(int32  an_id,        /* IN:  annotation interface id */
     else
         *n_obj_label = file_rec->an_num[AN_DATA_LABEL];
 
-    /* Empty descritpiton annotation tree? */
+    /* Empty descripiton annotation tree? */
     if (file_rec->an_num[AN_DATA_DESC] == -1)
       {
           if ((*n_obj_desc = ANIcreate_ann_tree(an_id, AN_DATA_DESC)) == FAIL)
@@ -2267,7 +2267,7 @@ ANtag2atype(uint16 atag /* IN: annotation tag */)
       case DFTAG_FD:  atype = AN_FILE_DESC;  break;
       case DFTAG_DIL: atype = AN_DATA_LABEL; break;
       case DFTAG_DIA: atype = AN_DATA_DESC;  break;
-          /* This will cause warnings on some compiliers */
+          /* This will cause warnings on some compilers */
       default: atype = AN_UNDEF;
       } /* switch */
     return atype;

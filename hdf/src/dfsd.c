@@ -211,7 +211,7 @@ static intn DFSDIstart(void);
        int   maxrank:     IN:  size of array "dimsizes"
 
  RETURNS
-       Returns SUCCED(0) if successful and FAIL(-1) otherwise.
+       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
  DESCRIPTION
        Gets the number of dimensions(rank) and the sizes of the dimensions
        (dimsizes) for the next data set in the file. The input argument
@@ -435,7 +435,7 @@ done:
        int *lcoordsys;  OUT: length of coordsys string
 
  RETURN
-       Returns SUCCED(0) if successful and FAIL(-1) otherwise
+       Returns SUCCEED(0) if successful and FAIL(-1) otherwise
  DESCRIPTION
        Gets actual length of label, unit, format and coordinate system
        strings. The space allocated for the label, unit, format and
@@ -535,7 +535,7 @@ done:
  RETURN
        Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
  DESCRIPTION
-       Gets the scale corresponding to the specified demension. The DFSD
+       Gets the scale corresponding to the specified dimension. The DFSD
        interface in HDFv3.3 requires that the dimension scales are of the
        same number type as the corresponding data. To store dimension scales
        of a different number type than the corresponding data see the
@@ -619,7 +619,7 @@ done:
        and "min" values stored with the data set to the actual values in
        the data set; they merely retrieve the data. As a result, the
        maximum and minimum values may not always reflect the actual maximum
-       and minimum vlaues in the data set. In some cases the "max" and "min"
+       and minimum values in the data set. In some cases the "max" and "min"
        values may actually lie outside the range of values in the data set.
 ---------------------------------------------------------------------------*/
 int
@@ -917,7 +917,7 @@ DFSDIsetdatastrs(const char *label, const char *unit, const char *format, const 
     */
   for (luf = LABEL; luf <= FORMAT; luf++)
     {
-      /* set lufp to point to label etc. as apppropriate */
+      /* set lufp to point to label etc. as appropriate */
       lufp = (luf == LABEL) ? label : (luf == UNIT) ? unit : format;
 
           /* free space if allocated */
@@ -1034,7 +1034,7 @@ DFSDIsetdimstrs(intn dim, const char *label, const char *unit, const char *forma
 
   for (luf = LABEL; luf <= FORMAT; luf++)
     {
-      /* set lufp to point to label etc. as apppropriate */
+      /* set lufp to point to label etc. as appropriate */
       lufp = (luf == LABEL) ? label : (luf == UNIT) ? unit : format;
 
       /* allocate space if necessary */
@@ -1227,8 +1227,8 @@ done:
        data array. This routine does not compute the maximum and minimum values;
        it merely stores the values it is given. As a result, the
        maximum and minimum values may not always reflect the actual maximum
-       and minimum vlaues in the data set. When the maximum and minimum
-       values are written to a file, the HDF elemement that hold these value
+       and minimum values in the data set. When the maximum and minimum
+       values are written to a file, the HDF element that hold these value
        is cleared, because it is assumed that subsequent data sets will have
        different values for "max" and "min". These values are automatically
        cleared aftera a call to either "DFSDputdata" or "DFSDaddadata".
@@ -1516,7 +1516,7 @@ done:
  RETURNS
        Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
  DESCRIPTION
-       Specifies teh reference number for the data set to be read during
+       Specifies the reference number for the data set to be read during
        the next read operation. This routine is most likely to be used in
        conjunction with "DFANgetlablist" which returns a list of labels for
        a given tag together with their reference numbers. It provides a sort
@@ -1587,7 +1587,7 @@ done:
        size of the slice. The number of elements in both "winst" and "windims"
        must be equal to the rank of the data set. For example, if the file
        contains a 3D data set, "winst" may contain the values {2,4,3}, while
-       "windims" contains the values {3,1,4} and the dims shuld be at least
+       "windims" contains the values {3,1,4} and the dims should be at least
        {3,1,4}, the same size as the slice. This will extract a 3x4,
        two-dimensional slice, containing the elements between(2,4.3) and
        (4,4,6) from the original data set. The array "data" is the array
@@ -1596,7 +1596,7 @@ done:
        of the array "data". The user assigns values to "dims" before calling
        "DFSDgetslice". All parameters assume FORTRAN-style 1-based arrays.
        "DFSDgetslice" is obsoleted by "DFSDreadslab". "DFSDreadslab" is the
-       recommended fucntion call to use when reading hyperslabs(previously
+       recommended function call to use when reading hyperslabs(previously
        known as data slices). HDFv3.3 will continue to support "DFSDgetslice"
        only to maintain backward compatibility with HDF applications built
        on earlier versions of the library.
@@ -1628,7 +1628,7 @@ DFSDgetslice(const char *filename, int32 winst[], int32 windims[], VOIDP data,
        Remember, you must call "DFSDstartslice" before calling "DFSDputslice"
        or "DFSDendslice". "DFSDstarslice" is obsolete in favor of "DFSDstartslab"
        "DFSDstartslab" is the recommended function to call to use when
-       beginning hyperslab(i.e. data slabs) opertaions. HDFv3.3 will continue
+       beginning hyperslab(i.e. data slabs) operations. HDFv3.3 will continue
        to support "DFSDstartslice" only to maintain backward compatibility
        with HDF applications built on earlier version of the library.
 -----------------------------------------------------------------------------*/
@@ -1710,9 +1710,9 @@ done:
        be stored contiguously. Array "windims" specifies the size of the
        slice to be written. The number of elements in "windims" is equal to
        the number of dimensions in the scientific data set array. The array
-       "data" is the array in memory containg the slice. The array "dims"
+       "data" is the array in memory containing the slice. The array "dims"
        contains the dimensions of the array "data". Note that the two arrays
-       "windim" and "dims" need not be the same since the "windims" arguement
+       "windim" and "dims" need not be the same since the "windims" argument
        could refer to a sub-array of "data". In this case only a portion
        of the array "data" is written to the scientific data set. All
        parameters assume FORTRAN-style 1-based arrays. "DFSDputslice" is
@@ -1747,7 +1747,7 @@ DFSDputslice(int32 winend[], VOIDP data, int32 dims[])
        is obsolete in favor of "DFSDendslab". "DFSDendslab" is the
        recommended function call to use when terminating hyperslab(previously
        known as data slices) operations. HDFv3.3 will continue to support
-       "DFSDendslice" only to maintain backward compatability with HDF
+       "DFSDendslice" only to maintain backward compatibility with HDF
        applications build on earlier versions of the library.
 
 ----------------------------------------------------------------------------*/
@@ -2067,7 +2067,7 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr * l_nsdghdr)
   if (!HDvalidfid(file_id))
     HGOTO_ERROR(DFE_BADCALL, FAIL);
 
-    /* Check if temproray buffer has been allocated */
+    /* Check if temporary buffer has been allocated */
   if (ptbuf == NULL)
     {
       ptbuf = (uint8 *) HDmalloc(TBUF_SZ * sizeof(uint8));
@@ -2441,7 +2441,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg * sdg)
   if (!ref)
     HGOTO_ERROR(DFE_BADREF, FAIL);
 
-  /* Check if temproray buffer has been allocated */
+  /* Check if temporary buffer has been allocated */
   if (ptbuf == NULL)
     {
       ptbuf = (uint8 *) HDmalloc(TBUF_SZ * sizeof(uint8));
@@ -3104,7 +3104,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
   if (!ref)
     HGOTO_ERROR(DFE_BADREF, FAIL);
 
-  /* Check if temproray buffer has been allocated */
+  /* Check if temporary buffer has been allocated */
   if (ptbuf == NULL)
     {
       ptbuf = (uint8 *) HDmalloc(TBUF_SZ * sizeof(uint8));
@@ -3965,7 +3965,7 @@ DFSDIclear(DFSsdg * sdg)
   HDfreenclear(sdg->dimscales);
   sdg->rank = 0;
 
-    /* number type is independant to dimsizes   4/7/92  sxu
+    /* number type is independent to dimsizes   4/7/92  sxu
        sdg->numbertype = DFNT_NONE;
        sdg->filenumsubclass = DFNTF_NONE;
      */
@@ -4552,7 +4552,7 @@ DFSDIputslice(int32 windims[], VOIDP data, int32 dims[], intn isfortran)
   int32       fileNTsize;     /* size of this NT as it will be in the file */
   int32       fileNT;         /* class of NT for the data to write */
   int32       isnative;
-  int32       localNTsize;    /* size of this NT as it occurs in theis machine */
+  int32       localNTsize;    /* size of this NT as it occurs in this machine */
   int32       ret = SUCCEED;  /* return code from DFwrite */
   int32       i, j;           /* temporaries */
   int32       numelements;    /* number of elements to write out per row */
@@ -4716,10 +4716,10 @@ done:
        float64 *pcal_err;   OUT: calibration error value
        float64 *pioff;      OUT: uncalibrated offset value
        float64 *pioff_err;  OUT: uncalibrated offset error value
-       int32   *cal_nt;     OUT: Nunber type of uncalibrated data
+       int32   *cal_nt;     OUT: Number type of uncalibrated data
 
  RETURNS
-       Returns SUCCED(0) if successful and FAIL(-1) otherwise.
+       Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
  DESCRIPTION
        This routine reads the calibration record, if there is one, attached
        to the scientific data set. A calibration record contains four 64-bit
@@ -4864,7 +4864,7 @@ done:
        Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
  DESCRIPTION
        Specifies the data set to be written to next by using the reference
-       number. Note that there is no gaurantee that reference numbers appear
+       number. Note that there is no guarantee that reference numbers appear
        in sequence in and HDF file; therefore, it is not safe to assume
        that a reference number is the sequence number for a data set.
 -----------------------------------------------------------------------------*/
@@ -4942,7 +4942,7 @@ done:
        to. The fill value is placed into all unwritten locations. The value
        gets written if the following "DFSDwriteslab" call is the first
        call to the data set i.e. the data set is created. It is assumed that
-       the fille value has the same number type as the data set.
+       the fill value has the same number type as the data set.
  WARNING
        Memory bug on SGI's if you try to free allocated space for fill values.
 -----------------------------------------------------------------------------*/
@@ -5005,7 +5005,7 @@ done:
       data set. The value is set by "DFSDsetfillvalue". Note that a call
       that initializes file information structures such as "DFSDgetdims"
       is required in order for "DFSDgetfillvalue" to succeed. This is because
-      "DFSDgetfillvalue" does not take a file name as an arguement.
+      "DFSDgetfillvalue" does not take a file name as an argument.
 -----------------------------------------------------------------------------*/
 intn
 DFSDgetfillvalue(VOIDP fill_value)
@@ -5070,9 +5070,9 @@ done:
        dimensions of the specified variable. The elements of "slab_size[]"
        must be no larger than the dimensions of the scientific data set.
        The stride feature is not currently implemented. For now just pass
-       the "start[]" array as the arguement for "stride[]" where it will be
+       the "start[]" array as the argument for "stride[]" where it will be
        ignored. To extract a slab of lower dimension than that of the data
-       set, enter 1 in the "slab_size[] array for each ommitted dimension.
+       set, enter 1 in the "slab_size[] array for each omitted dimension.
        For example, to extract a 2D slab from a 3D data set, specify the
        beginning coordinates in 3 dimensions in "start[]" and enter a 1 for
        the for the missing dimension in the array "slab_size[]". More
@@ -5277,7 +5277,7 @@ done:
        the data will be written into the specified hyperslab is with the
        last dimension varying the fastest. The array "data" should be of
        appropriate number type for the data set. Note that neither the
-       compilier nor the HDF sotfware can detect if the wrong type of data
+       compiler nor the HDF software can detect if the wrong type of data
        is written.
 ----------------------------------------------------------------------------*/
 intn

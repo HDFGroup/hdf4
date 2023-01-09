@@ -38,7 +38,7 @@ BUGS/LIMITATIONS
 EXPORTED ROUTINES
   User-level functions:
     Hdupdd      - Duplicate a data descriptor
-    Hnumber     - Count number of occurrances of tag/ref in file
+    Hnumber     - Count number of occurrences of tag/ref in file
     Hnewref     - Returns a ref that is unique in the file
     Htagnewref  - Returns a ref that is unique in the file for a given tag
     Hfind       - Locate the next object of a search in an HDF file
@@ -60,8 +60,8 @@ EXPORTED ROUTINES
   DD list functions:
     HTPstart    - Initialize the DD list from disk (creates the DD list in memory)
     HTPinit     - Create a new DD list (creates the DD list in memory)
-    HTPsync     - Flush the DD list to disk (syncronizes with disk)
-    HTPend      - Close the DD list to disk (syncronizes with disk too)
+    HTPsync     - Flush the DD list to disk (synchronizes with disk)
+    HTPend      - Close the DD list to disk (synchronizes with disk too)
 LOCAL ROUTINES
     HTIfind_dd      - find a specific DD in the file
     HTInew_dd_block - create a new (empty) DD block
@@ -423,7 +423,7 @@ done:
      HTPsync - Flush the DD list in memory
 
  DESCRIPTION
-    Syncronizes the in-memory copy of the DD list with the copy on disk by
+    Synchronizes the in-memory copy of the DD list with the copy on disk by
     writing out the DD blocks which have changed to disk.
 
  RETURNS
@@ -1284,15 +1284,15 @@ DESCRIPTION
    The tag/ref must already exist in the DD list.
    This routine is unsafe and may leave a file in a condition that is
    not usable by some routines.  Use with care. Not valid for
-   special elments right now. Used for allowing the data to change
+   special elements right now. Used for allowing the data to change
    and move somewhere else in the file for non-special elements.
    Must be carefully if apply to higher-level objects like GR's and SDS
    that are comprised of other objects.
-   Usefull when re-writing simple elements whose size changes while
+   Useful when re-writing simple elements whose size changes while
    preserving the original tag/ref of the element since other elements
    might refer to this element by tag/ref e.g. in a Vgroup.
 
-   NOTE: this routine is similiar to Hdeldd() but with a different name
+   NOTE: this routine is similar to Hdeldd() but with a different name
 
 RETURNS
    returns SUCCEED (0) if successful, FAIL (-1) otherwise
@@ -1329,7 +1329,7 @@ HDreuse_tagref(int32 file_id, /* IN: id of file */
     HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
  /* We leave the ref # as 'used' in the tag tree and
-    dont' delete from dynarray of refs. */
+    don't delete from dynarray of refs. */
 
   /* Remove DD from atom group since it should get re-created in Hstartaccess().
      This could be handled better if Hstartaccess() was revamped

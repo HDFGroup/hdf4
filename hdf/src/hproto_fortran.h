@@ -767,7 +767,7 @@ extern      "C"
 #  define nafatypetag   H4_F77_FUNC(afatypetag, AFATYPETAG)
 #  define naftagatype   H4_F77_FUNC(aftagatype, AFTAGATYPE)
 
-/* Multi-file Annotation C-stubs for fortan interface found in mfanf.c */
+/* Multi-file Annotation C-stubs for Fortran interface found in mfanf.c */
 
 HDFFCLIBAPI FRETVAL(intf)
 nafstart(intf *file_id);
@@ -822,7 +822,7 @@ HDFFCLIBAPI FRETVAL(intf)
 naftagatype(intf *tag);
 
 /* if defined Windows */
-/* Multi-file Annotation C-stubs for fortan interface found in mfanf.c */
+/* Multi-file Annotation C-stubs for Fortran interface found in mfanf.c */
 
 HDFFCLIBAPI FRETVAL(intf)
 nafistart(intf *file_id);

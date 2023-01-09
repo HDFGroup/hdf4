@@ -88,7 +88,7 @@ intn GRendaccess(int32 riid)
 
 Dimension Functions:
 int32 GRgetdimid(int32 riid,int32 index)
-    - Get a dimension id ('dimid') for an RI to assign atrributes to. [Later]
+    - Get a dimension id ('dimid') for an RI to assign attributes to. [Later]
 intn GRsetdimname(int32 dimid,char *name)
     - Set the name of a dimension. [Later]
 int32 GRdiminfo(int32 dimid,char *name,int32 *size,int32 *n_attr)
@@ -359,7 +359,7 @@ Get_grfile(HFILEID f)
     or 0 if the element is not special element.
  DESCRIPTION
     Called internally by the GRIget_image_list to allow a chunked or 
-    linked-block element to proceed eventhough its offset is 0.
+    linked-block element to proceed even though its offset is 0.
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
 
@@ -2286,7 +2286,7 @@ intn GRend(int32 grid)
     if (( t1 = (void **)tbbtdfind(gr_tree, &hdf_file_id, NULL)) == NULL)
         HGOTO_DONE(FAIL);
 
-    /* Delete the node and free the gr_info_t stucture */
+    /* Delete the node and free the gr_info_t structure */
     tbbtrem((TBBT_NODE **) gr_tree, (TBBT_NODE *) t1, NULL);
     HDfree(gr_ptr);
 
@@ -4405,7 +4405,7 @@ intn GRsetcompress(int32 riid,comp_coder_t comp_type,comp_info *cinfo)
         HGOTO_ERROR(DFE_NOSZLIB, FAIL);
 #else
     {
-    /* szip is enabled, check and set up szip parms */
+    /* szip is enabled, check and set up szip params */
   if (GRsetup_szip_parms( ri_ptr, &cinfo_x, NULL) == FAIL) {
       HGOTO_ERROR(DFE_INTERNAL, FAIL);
   }
@@ -5455,7 +5455,7 @@ intn GRPshutdown(void)
 
  DESCRIPTION
       This routine makes the GR a chunked GR according to the chunk
-      definiton passed in.
+      definition passed in.
 
       The image currently cannot be special already.  i.e. NBIT,
       COMPRESSED, or EXTERNAL. This is an Error.
@@ -5478,7 +5478,7 @@ intn GRPshutdown(void)
       The variable agruement 'flags' is a bit-or'd value which can currently be
       'HDF_CHUNK' or 'HDF_CHUNK | HDF_COMP'.
 
-      The simplist is the 'chunk_lengths' array specifiying chunk 
+      The simplest is the 'chunk_lengths' array specifying chunk 
       lengths for each dimension where the 'flags' argument set to 
       'HDF_CHUNK';
 
@@ -5707,7 +5707,7 @@ GRsetchunk(int32 riid,              /* IN: raster access id */
     fflush(stderr);
 #endif          
           /* Data distribution along dimensions 
-          *  Check dimension length agains chunk length */
+          *  Check dimension length against chunk length */
           if (i == 0) /* X */
             {
                 if (cdims[i] == ri_ptr->img_dim.xdim)
@@ -5908,7 +5908,7 @@ GRgetchunkinfo(int32 riid,               /* IN: sds access id */
                {   /* Does user want chunk lengths back? */
                    if (chunk_def != NULL)
                      {
-                         /* we assume user has allocat space for chunk lengths */
+                         /* we assume user has allocated space for chunk lengths */
                          /* copy chunk lengths over */
                          for (i = 0; i < info_block.ndims; i++)
                            {
@@ -5989,7 +5989,7 @@ GRwritechunk(int32 riid,       /* IN: access aid to GR */
                pixel_disk_size; /* size of a pixel on disk */
     VOID      *img_data = NULL; /* buffer used for conversion */
     int16      special;         /* Special code */
-    int32      csize;           /* phsical chunk size */
+    int32      csize;           /* physical chunk size */
     sp_info_block_t info_block; /* special info block */
     uint32     byte_count;      /* bytes to write */
     int8       platnumsubclass; /* the machine type of the current platform */
@@ -6209,7 +6209,7 @@ GRreadchunk(int32 riid,    /* IN: access aid to GR */
     uintn      pixel_disk_size; /* size of a pixel on disk */
     VOID      *img_data = NULL; /* buffer used for conversion */
     int16      special;         /* Special code */
-    int32      csize;           /* phsical chunk size */
+    int32      csize;           /* physical chunk size */
     sp_info_block_t info_block; /* special info block */
     uint32     byte_count;      /* bytes to read */
     int8       platnumsubclass; /* the machine type of the current platform */
@@ -6308,7 +6308,7 @@ GRreadchunk(int32 riid,    /* IN: access aid to GR */
                 /* get info about chunked element */
                 if ((ret_value = HDget_special_info(ri_ptr->img_aid, &info_block)) != FAIL)
                   {   
-                      /* calcualte chunk size  */
+                      /* calculate chunk size  */
                       csize = 1;
                       for (i = 0; i < info_block.ndims; i++)
                           csize *= info_block.cdims[i];
