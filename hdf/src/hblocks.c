@@ -12,7 +12,6 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 
-/*LINTLIBRARY */
 /* ------------------------------ hblocks.c -------------------------------
    routines to implement linked-block elements
 

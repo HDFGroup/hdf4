@@ -12,7 +12,6 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 
-/*LINTLIBRARY */
 /* ------------------------------ hextelt.c -------------------------------
 
    Routines for external elements, i.e., data elements that reside on

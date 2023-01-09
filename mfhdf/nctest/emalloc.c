@@ -3,7 +3,6 @@
  *   See netcdf/COPYRIGHT file for copying and redistribution conditions.
  *********************************************************************/
 
-/*LINTLIBRARY*/
 #include <stdio.h>
 #include <stdlib.h>
 #include "error.h"

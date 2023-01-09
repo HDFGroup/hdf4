@@ -12,7 +12,6 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 
-/*LINTLIBRARY */
 /* ------------------------------ HMCxxx -------------------------------
    Routines to implement chunked elements via a Vdatas for
    the chunk table and using a new data tag DFTAG_CHUNK to represent
