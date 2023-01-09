@@ -31,7 +31,7 @@
 
 /* obtain the maximum number of open files allowed, at the same time,
    on the current system */
-#if defined _WIN32
+#if defined H4_HAVE_WIN32_API
 #define MAX_SYS_OPENFILES    _getmaxstdio()
 #else
 #include <sys/resource.h>
@@ -571,7 +571,7 @@ const char *proto ;
 /* NO_GETPID defined if the OS lacks the getpid() function */
 #ifndef NO_GETPID
 #    define TN_NDIGITS 4
-#if defined _WIN32
+#if defined H4_HAVE_WIN32_API
     typedef int pid_t;
 #endif
     pid_t getpid(void);

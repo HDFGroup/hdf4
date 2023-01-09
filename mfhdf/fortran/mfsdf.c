@@ -46,7 +46,7 @@ FRETVAL(intf) nscsnatt();
 FRETVAL(intf) nsfsflmd();
 #endif /* PROTOTYPE */
 
-#if defined _WIN32 && !defined CMAKE_INTDIR
+#if defined H4_HAVE_WIN32_API && !defined CMAKE_INTDIR
 
 /*-----------------------------------------------------------------------------
  * Name:    scend
@@ -811,7 +811,7 @@ nscsblsz(id, block_size)
     return((intf) SDsetblocksize(*id, *block_size));
 }
 
-#endif /* _WIN32 && !CMAKE_INTDIR */
+#endif /* H4_HAVE_WIN32_API && !CMAKE_INTDIR */
 /*-----------------------------------------------------------------------------
  * Name:    scstart
  * Purpose: call SDstart to open HDF file
