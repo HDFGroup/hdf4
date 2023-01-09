@@ -22,7 +22,6 @@
  * mechanisms for netcdf
  */
 
-/*LINTLIBRARY*/
 
 #ifdef NO_STDARG  /* The 4.0 release should be ANSI compliant */
 #undef NO_STDARG

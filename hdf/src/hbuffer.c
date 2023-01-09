@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/*LINTLIBRARY */
 /* ------------------------------ hbuffer.c -------------------------------
 
    Routines for buffered elements, i.e., data elements that reside in memory

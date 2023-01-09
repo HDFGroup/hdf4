@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/*LINTLIBRARY */
 /* ------------------------------ hcompri.c -------------------------------
 
    Routines for reading & writing old-style (i.e. non-special compressed)
