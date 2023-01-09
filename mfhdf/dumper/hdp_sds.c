@@ -348,7 +348,7 @@ int32 sdsdumpfull( int32        sds_id,
 	    {  /* Proceed in the same dimension; as long as there are
 	       elements in this dimension, this loop breaks here after the
 	       last element in the current dimension has been subtracted,
-	       we substract one for the next lower dimension and reset
+	       we subtract one for the next lower dimension and reset
 	       "left[j]" to be the size of dimension j. */
                  start[j]++;
                  break;
@@ -1460,7 +1460,7 @@ intn do_dumpsds(intn  curr_arg,
       }
     /* Normal cleanup */
 
-    /* free the list of structs containg info of selected SDSs */
+    /* free the list of structs containing info of selected SDSs */
     free_obj_chosen_t_list(&dumpsds_opts.all_types, dumpsds_opts.num_chosen);
 
    return ret_value;

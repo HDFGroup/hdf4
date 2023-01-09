@@ -336,7 +336,7 @@ is the index of the node of which the initial display is called.  The
 recursion is continued until this node is visited again; this way, infinite
 loop will be eliminated; or until all of its children are displayed */
 void display(vg_info_t *ptr, 
-        int32       level,  /* level of decendants - for indentation */
+        int32       level,  /* level of decendents - for indentation */
         vg_info_t **list, 
         int32       num_nodes, 
         int32       root_index, /* index of the node starting the tree */
@@ -1614,7 +1614,7 @@ intn do_dumpvg(intn  curr_arg,
       }
     /* Normal cleanup */
 
-    /* free the list of structs containg info of selected Vgroups */
+    /* free the list of structs containing info of selected Vgroups */
     free_obj_chosen_t_list(&dumpvg_opts.all_types, dumpvg_opts.num_chosen);
 
     return ret_value;

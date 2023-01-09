@@ -548,7 +548,7 @@ extern int32 dumpGR_SDattr(int32 nt, dump_info_t * dump_opts, int32 cnt, VOIDP d
 
 /* show.c */
 extern int32 dumpvd(int32 vd, file_format_t ft, int data_only, FILE *fp,
-                    char separater[2],int32 flds_indices[VSFIELDMAX],
+                    char separator[2],int32 flds_indices[VSFIELDMAX],
                     int dumpallfields);
 extern intn dumpattr(int32 vid, int32 findex, intn isvs, file_format_t ft, FILE *fp);
 

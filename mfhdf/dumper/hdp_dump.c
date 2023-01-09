@@ -459,7 +459,7 @@ dumpclean(int32       nt,
       small_attr = TRUE;
 
    /* if the buffer contains at least one \n (LF) or \r (CR), reset
-      flag small_attr to indicate the attribute is considred large. */
+      flag small_attr to indicate the attribute is considered large. */
    else /* space char. criteria */
    {
       tempptr = strchr( (char *) bufptr, '\n'); /* find the first linefeed */
@@ -548,7 +548,7 @@ dumpclean(int32       nt,
       }
       else
       {
-/* this should be printed as binary intstead of \digits */
+/* this should be printed as binary instead of \digits */
          putc('\\', ofp);
          cn = cn + fprintf(ofp, "%03o", *((uchar8 *) bufptr));
       }		
