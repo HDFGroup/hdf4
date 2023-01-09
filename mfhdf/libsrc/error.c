@@ -18,7 +18,7 @@
 
 
 /*
- *   Utility Functions to implement consistant error logging
+ *   Utility Functions to implement consistent error logging
  * mechanisms for netcdf
  */
 

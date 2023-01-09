@@ -17,7 +17,7 @@
 #           Part of MAKEFILE for creating the HDF library, libdf.a,
 #
 # This file contains the definitions of all the source code and headers
-# used in the actual makefile.  They are located here for ease of maintainence.
+# used in the actual makefile.  They are located here for ease of maintenance.
 #
 # ##################################################################
 #

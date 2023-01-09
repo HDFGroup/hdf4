@@ -82,7 +82,7 @@ int main()
     * In this example we do not use compression ( third
     * parameter of SDsetchunk is set to HDF_CHUNK).
     *
-    * To use RLE compresssion, set compression type and flag
+    * To use RLE compression, set compression type and flag
     *
     *            c_def.comp.comp_type = COMP_CODE_RLE;
     *            comp_flag = HDF_CHUNK | HDF_COMP;

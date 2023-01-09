@@ -18,7 +18,7 @@ package hdf.hdflib;
  * This class is a generic container for the parameters to the HDF RLE compressed classes, with the
  * ``new'' type encoding.
  * <p>
- * In this case, there is no auxilliary information.
+ * In this case, there is no auxiliary information.
  */
 public class HDFRLECompInfo extends HDFNewCompInfo {
 

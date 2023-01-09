@@ -148,7 +148,7 @@ obj_chosen_t ** free_node_obj_chosen_t(
    {
       if (aNode->name != NULL)
       {
-		fprintf(stderr, " namd = %s \n", aNode->name);
+		fprintf(stderr, " name = %s \n", aNode->name);
          HDfree( aNode->name );
       }
       if (aNode->classname != NULL)
@@ -512,7 +512,7 @@ make_obj_list(int32 fid, uint32 options)
             if( obj_ptr->group_info == NULL )
             {
 	    /* do not free these because even this element has no group
-	       list, it still can be displayd */
+	       list, it still can be displayed */
 /*
                HDfree(obj_ret->raw_obj_arr);
                HDfree(obj_ret);

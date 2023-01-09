@@ -40,7 +40,7 @@
  *
  *  MEM_WHERE   Save the file/line number of allocated
  *          blocks in the header.
- *          Requires that the compilier supports
+ *          Requires that the compiler supports
  *          __FILE__ and __LINE__ preprocessor
  *          directives.
  *          Also requires that the __FILE__ string
@@ -281,7 +281,7 @@ mem_HDrealloc(
 /* Check for overwrites into the header & footer */
 /* --------------------------------------------- */
 #if defined(MEM_HEADER)
-    q = (unsigned char *) ptr - HEADER_SIZE;    /* Check the Header to consistancy */
+    q = (unsigned char *) ptr - HEADER_SIZE;    /* Check the Header to consistency */
     for (i = 0; i < BLOCK_SIZE; i++)
       {
           if (q[i] != HEADERTAG)
@@ -290,7 +290,7 @@ mem_HDrealloc(
                 return (NULL);
             }   /* end if */
       }     /* end for */
-    q = (unsigned char *) ptr + p->mh_size;     /* Check the Footer for consistancy */
+    q = (unsigned char *) ptr + p->mh_size;     /* Check the Footer for consistency */
     for (i = 0; i < BLOCK_SIZE; i++)
       {
           if (q[i] != HEADERTAG)
@@ -403,7 +403,7 @@ mem_HDfree(
 /* Check for overwrites into the header & footer */
 /* --------------------------------------------- */
 #if defined(MEM_HEADER)
-    q = (unsigned char *) ptr - HEADER_SIZE;    /* Check the Header to consistancy */
+    q = (unsigned char *) ptr - HEADER_SIZE;    /* Check the Header to consistency */
     for (i = 0; i < BLOCK_SIZE; i++)
       {
           if (q[i] != HEADERTAG)
@@ -412,7 +412,7 @@ mem_HDfree(
                 return (NULL);
             }   /* end if */
       }     /* end for */
-    q = (unsigned char *) ptr + p->mh_size;     /* Check the Footer for consistancy */
+    q = (unsigned char *) ptr + p->mh_size;     /* Check the Footer for consistency */
     for (i = 0; i < BLOCK_SIZE; i++)
       {
           if (q[i] != HEADERTAG)
@@ -541,7 +541,7 @@ Mem_Display(FILE * fp)
 /* Check for overwrites into the header & footer */
 /* --------------------------------------------- */
 #if defined(MEM_HEADER)
-          q = (unsigned char *) HDR_2_CLIENT(p) - HEADER_SIZE;  /* Check the Header to consistancy */
+          q = (unsigned char *) HDR_2_CLIENT(p) - HEADER_SIZE;  /* Check the Header to consistency */
           for (i = 0; i < BLOCK_SIZE; i++)
             {
                 if (q[i] != HEADERTAG)
@@ -550,7 +550,7 @@ Mem_Display(FILE * fp)
                       break;
                   }     /* end if */
             }   /* end for */
-          q = (unsigned char *) HDR_2_CLIENT(p) + p->mh_size;   /* Check the Footer for consistancy */
+          q = (unsigned char *) HDR_2_CLIENT(p) + p->mh_size;   /* Check the Footer for consistency */
           for (i = 0; i < BLOCK_SIZE; i++)
             {
                 if (q[i] != HEADERTAG)

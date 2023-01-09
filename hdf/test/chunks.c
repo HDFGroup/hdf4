@@ -75,7 +75,7 @@
  *       They are some extra high order tests to replicate
  *       some test done on EOS-DEM data
  *       Set dimension to 12000x12000 array with 2,500 chunks
- *       whith chunk of 240x240 = 57,600 bytes
+ *       with chunk of 240x240 = 57,600 bytes
  *
  *    11. Create a new element but now there will be partial chunks and Compression.
  *       Set dimension to 4x4 array with 4 chunks where each chunk is 3x2 = 6 bytes.
@@ -1381,7 +1381,7 @@ test_chunks(void)
 
 
     /* The following tests will work if Number type conversion
-       is done on the ouput data, punt for now since 'hdftest'
+       is done on the output data, punt for now since 'hdftest'
        tests these same tests with number type conversion  */
 
     /*
@@ -1828,7 +1828,7 @@ test_chunks(void)
        They are some extra high order tests to replicate
        some test done on EOS-DEM data  -GV.....
        Set dimension to 12000x12000 array with 2,500 chunks
-       whith chunk of 240x240 = 57,600 bytes
+       with chunk of 240x240 = 57,600 bytes
        */
     chunk[0].num_dims   = 2;
     chunk[0].chunk_size = 57600;

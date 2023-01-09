@@ -88,7 +88,7 @@ GIFHEAD *GifHead;       /* Pointer to GIF header structure  */
 BYTE    **MemGif2;       /* GIF image file input FILE stream */
 {
     register WORD i;    /* Loop counter                                */
-    WORD tableSize;     /* Number of entires in the Global Color Table */
+    WORD tableSize;     /* Number of entries in the Global Color Table */
 	
 	GifHead->TableSize = 0;
 	for (i = 0 ; i < 6 ; i++) {
@@ -403,7 +403,7 @@ WORD *DSize;
         if ((dataSize = *(*MemGif2)++) == 0)
             break;  /* Block Terminator encountered */
 		
-        /* Increase the buffer size to accomodate the next sub-block */
+        /* Increase the buffer size to accommodate the next sub-block */
         if (!(ptr1 = ptr2 = (BYTE *) realloc(ptr2, bufSize + dataSize + 1)))
             return((BYTE *) NULL);
 		

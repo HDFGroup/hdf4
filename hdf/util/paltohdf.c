@@ -39,11 +39,11 @@ main(int argc, char *argv[])
           printf("Usage:\n");
           printf("   %s rawpalfile hdffile \n\n", argv[0]);
           printf("%s,  version: 1.1   date: July 1, 1992\n\n", argv[0]);
-          printf("\tThis utility converts a raw palette to hdf format \n\n");
-          printf("\tThe incoming palette is assumed to have 768 bytes:\n");
-          printf("\t256 red values, 256 greens, and 256 blues.\n\n");
-          printf("\tThe palette in the HDF file will have the RGB values\n");
-          printf("\tinterlaced: RGB RGB ... (standard HDF format).\n\n");
+          printf("\t This utility converts a raw palette to hdf format \n\n");
+          printf("\t The incoming palette is assumed to have 768 bytes:\n");
+          printf("\t 256 red values, 256 greens, and 256 blues.\n\n");
+          printf("\t The palette in the HDF file will have the RGB values\n");
+          printf("\t interlaced: RGB RGB ... (standard HDF format).\n\n");
           exit(1);
       }
 

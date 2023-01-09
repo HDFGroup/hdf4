@@ -160,7 +160,7 @@ test_hfile(void)
     ret = Hnextread(aid1, 100, DFREF_WILDCARD, DF_CURRENT);
     if (ret != FAIL)
       {
-          fprintf(stderr, "ERROR: Found a non-existant element at line %d\n",
+          fprintf(stderr, "ERROR: Found a non-existent element at line %d\n",
                   __LINE__);
           errors++;
       }
@@ -175,7 +175,7 @@ test_hfile(void)
     ret = Hnextread(aid1, DFTAG_WILDCARD, 3, DF_CURRENT);
     if (ret != FAIL)
       {
-          fprintf(stderr, "ERROR: Found a non-existant element at line %d\n",
+          fprintf(stderr, "ERROR: Found a non-existent element at line %d\n",
                   __LINE__);
           errors++;
       }

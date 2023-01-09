@@ -24,7 +24,7 @@ if test "X-$CC" = "X-"; then
   CC=gcc
   CC_BASENAME=gcc
 fi
-#Make IBM xlf compiler a deafult
+#Make IBM xlf compiler a default
 if test "X-$F77" = "X-"; then
   F77=xlf
   F77_BASENAME=xlf

@@ -209,7 +209,7 @@ DESCRIPTION
    block header.
 
    The ideal setting for numblocks and blocklen are very data
-   and application depedent.
+   and application dependent.
 
  --------------------------------------------------------------------------- */
 int32
@@ -411,7 +411,7 @@ DESCRIPTION
    block header.
 
    The ideal setting for numblocks and blocklen are very data
-   and application depedent.
+   and application dependent.
 
 ---------------------------------------------------------------------------*/
 intn
@@ -1087,7 +1087,7 @@ HLIgetlink(int32  file_id,
             UINT16DECODE(p, new_link->block_list[i].ref);
     }
 
-    /* end acces to this block table */
+    /* end access to this block table */
     Hendaccess(access_id);
 
     /* set return value */
@@ -1280,7 +1280,7 @@ HLPread(accrec_t *access_rec,
           relative_posn = 0;
           current_length = info->block_length;
       }
-    while (length > 0);     /* if still somemore to read in, repeat */
+    while (length > 0);     /* if still some more to read in, repeat */
 
     access_rec->posn += bytes_read;
     ret_value = bytes_read;
@@ -1631,7 +1631,7 @@ HLInewlink(int32  file_id,
     if (Hwrite(link_id, 2 + 2 * number_blocks, buf) == FAIL)
         HGOTO_ERROR(DFE_WRITEERROR, NULL);
 
-    /* close down acces to this block */
+    /* close down access to this block */
     Hendaccess(link_id);
 
     /* set return value */

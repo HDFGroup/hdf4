@@ -13,7 +13,7 @@
 
 
 /* ------ he-cntrl.c ------
-   This file contains much of the contol mechanisms for HDFed
+   This file contains much of the control mechanisms for HDFed
    - Many of the command line functions
    - The parsing functions
    - predicate handling

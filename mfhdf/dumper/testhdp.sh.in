@@ -157,7 +157,7 @@ do
 	    esac
 	    ;;
 	* )
-	    echo "Unknow option: $1"
+	    echo "Unknown option: $1"
 	    USAGE
 	    exit 1
 	    ;;

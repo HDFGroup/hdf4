@@ -4,7 +4,7 @@ Code Examples
 =============
 This directory contains example programs for the installed APIs and scripts to 
 compile and run them.  Examples in the c subdirectory are always 
-installed, and those in the fortan subdirectory will be installed 
+installed, and those in the fortran subdirectory will be installed 
 when fortran is enabled.
 
 Running the run-all-ex.sh script in this directory will run the scripts and in 

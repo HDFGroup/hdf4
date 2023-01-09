@@ -53,7 +53,7 @@ typedef struct DFSsdg
       float64     ioff, ioff_err;   /* calibration offset stuff              */
       int32       cal_type;     /* number type of data after calibration */
       uint8       fill_value[DFSD_MAXFILL_LEN];     /* fill value if any specified  */
-      intn        fill_fixed;   /* whether ther fill value is a fixed value, or it can change */
+      intn        fill_fixed;   /* whether the fill value is a fixed value, or it can change */
   }
 DFSsdg;
 

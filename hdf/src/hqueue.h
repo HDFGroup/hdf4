@@ -32,9 +32,9 @@
 /*****************************************************************************
  * File: hqueue.h
  *
- * This is a modfied version of the original Berkley code for
+ * This is a modffied version of the original Berkeley code for
  * manipulating a memory pool. This version however is not
- * compatible with the original Berkley version.
+ * compatible with the original Berkeley version.
  *
  * Author: George V.- 9/3/96
  *

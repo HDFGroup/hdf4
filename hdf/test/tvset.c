@@ -18,7 +18,7 @@
  *
  *
  * This file needs another pass at making sure all the return
- * values from function calls are checked in addtion to
+ * values from function calls are checked in addition to
  * verifying that the proper tests are performed on all Vxx fcns - GV 9/5/97
  *
  */
@@ -896,11 +896,11 @@ read_vset_stuff(void)
     CHECK(status,FAIL,"VSdetach:vs1");
 
 #ifndef HAVE_FMPOOL 
-/* Commented out this test when using the file caching.This is beacause this 
+/* Commented out this test when using the file caching.This is because this 
    test opens the external file directly without using HDF calls. As a result
    the file memory pool buffer that was created for this external file will 
    not be shared with this low-level call as the low-level file cache open 
-   creates a unique pool for every call. It is upto the programmer
+   creates a unique pool for every call. It is up to the programmer
    then to share the file pool. -GeorgeV
  */
 
@@ -1623,7 +1623,7 @@ test_vdeletetagref(void)
     CHECK_VOID(vgroup_id,FAIL,"Vattach:vgroup_id");
 
 #ifndef NO_DUPLICATES
-    /* inquire about number of elments in Vgroup.
+    /* inquire about number of elements in Vgroup.
        There should only be 6 of them including one duplicate. */
     if (6 != Vntagrefs(vgroup_id))
       {
@@ -1636,7 +1636,7 @@ test_vdeletetagref(void)
     status = Vdeletetagref(vgroup_id, 1000, 12346);
     CHECK_VOID(status,FAIL,"Vdeletetagref:vgroup_id");
 #else /* NO_DUPLICATES */
-    /* inquire about number of elments in Vgroup.
+    /* inquire about number of elements in Vgroup.
        There should only be 5 of them since no duplicates . */
     if (5 != Vntagrefs(vgroup_id))
       {
@@ -1681,7 +1681,7 @@ test_vdeletetagref(void)
     vgroup_id = Vattach(fid, vg_ref, "r");
     CHECK_VOID(vgroup_id,FAIL,"Vattach:vgroup_id");
 
-    /* inquire about number of elments left in Vgroup.
+    /* inquire about number of elements left in Vgroup.
        There should only be 3 of them now. */
     if (3 != Vntagrefs(vgroup_id))
       {

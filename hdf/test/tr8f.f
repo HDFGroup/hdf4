@@ -20,7 +20,7 @@ C
 C Test program:
 C      Writes images together with pals to a file.
 C      Reads images from the file.
-C      Writes and reads images with speicfied ref's.
+C      Writes and reads images with specified ref's.
 C Input file: none
 C Output file: tdfr8f.hdf
 C

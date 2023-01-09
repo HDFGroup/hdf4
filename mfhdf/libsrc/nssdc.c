@@ -290,7 +290,7 @@ nssdc_read_cdf(xdrs, handlep)
         INT32DECODE(b, varNext);    /* start of next R variable */
         INT32DECODE(b, nt);         /* number type */
         INT32DECODE(b, vMaxRec);    /* number of records for this variable */
-        INT32DECODE(b, vxrNext);    /* start of VXR recrods */
+        INT32DECODE(b, vxrNext);    /* start of VXR records */
         INT32DECODE(b, VXRtail);    /* ??? */
         INT32DECODE(b, vFlags);     /* variable flags <---- record variance in here */
         INT32DECODE(b, dummy);      /* rfuA */
@@ -700,12 +700,12 @@ nssdc_read_cdf(xdrs, handlep)
             bsize = nctypelen(nctype) * count;
             tBuf = (char *)HDmalloc((uint32) bsize);
 
-            /* convert attrbute values and create attr object */
+            /* convert attribute values and create attr object */
             DFKconvert((VOIDP) b, (VOIDP) tBuf, hdftype, count, DFACC_READ, 0, 0);
             attr[0] = NC_new_attr(name, nctype, count, tBuf);
             HDfree(tBuf);
 
-            /* make sure we got a vaild attribute */
+            /* make sure we got a valid attribute */
             if(attr[0] == NULL)
                 return (FALSE);
 
@@ -782,12 +782,12 @@ nssdc_read_cdf(xdrs, handlep)
             bsize = nctypelen(nctype) * count;
             tBuf = (char *)HDmalloc((uint32) bsize);
 
-            /* convert attrbute values and create attr object */
+            /* convert attribute values and create attr object */
             DFKconvert((VOIDP) b, (VOIDP) tBuf, hdftype, count, DFACC_READ, 0, 0);
             attr[0] = NC_new_attr(name, nctype, count, tBuf);
             HDfree(tBuf);
 
-            /* make sure we got a vaild attribute */
+            /* make sure we got a valid attribute */
             if(attr[0] == NULL)
                 return (FALSE);
 

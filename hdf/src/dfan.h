@@ -56,7 +56,7 @@ DFANdirentry;
 typedef struct DFANdirhead
   {
       struct DFANdirhead *next; /* list element */
-      int32       nentries;     /* Numer of entries */
+      int32       nentries;     /* Number of entries */
       DFANdirentry *entries;  /* actually an arbitrary size array */
   }
 DFANdirhead;

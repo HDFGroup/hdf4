@@ -24,7 +24,7 @@
   ******************
     These special elements are invoked at run-time only, information about
     whether an element was written/read through this interface is not stored in
-    the file.  Unless specificly asked for by an API routine or required for a
+    the file.  Unless specifically asked for by an API routine or required for a
     particular kind of access by the library, these routines aren't called.
 
  LOCAL ROUTINES
@@ -354,7 +354,7 @@ done:
 /* ------------------------------ HRPinquire ------------------------------ */
 /*
 NAME
-   HRPinquire -- retreive information about a compressed raster element
+   HRPinquire -- retrieve information about a compressed raster element
 USAGE
    int32 HBPinquire(access_rec, file, tag, ref, len, off, pos, acc, sp)
    access_t * access_rec;      IN:  access record to return info about
@@ -448,7 +448,7 @@ HRPendaccess(accrec_t * access_rec)
     if (BADFREC(file_rec))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* shut down dependant access record */
+    /* shut down dependent access record */
     if (HRPcloseAID(access_rec) == FAIL)
         HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
 

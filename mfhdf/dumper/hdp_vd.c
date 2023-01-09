@@ -617,7 +617,7 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
 	 ERROR_CONT_2( "in %s: VSattach failed for vdata_ref#=%d", 
                         "dumpvd_ascii", (int) vdata_ref );
 
-      /* Note: each of the parameters retuned by a query routine below 
+      /* Note: each of the parameters returned by a query routine below 
 	 must be checked before being used */
 
       /* Retrieves general information about the vdata.  Note that NULL is
@@ -998,7 +998,7 @@ dvd(dump_info_t * dumpvd_opts,
 
              break;
           default:
-             printf("dumping vdata, unknown ouput file option \n");
+             printf("dumping vdata, unknown output file option \n");
              ret_value = FAIL;
       }    /* switch for output file   */
 

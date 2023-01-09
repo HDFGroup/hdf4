@@ -223,7 +223,7 @@ check_fann_rewrite(const char *fname)
        re-write */
     if (b_ann_tag != atag || b_ann_ref != aref)
       {
-          printf(">>> Failed to preseve tag/ref for rewriting of file label\n");
+          printf(">>> Failed to preserve tag/ref for rewriting of file label\n");
           num_errs++;
       }
 
@@ -283,7 +283,7 @@ check_fann_rewrite(const char *fname)
     ret = ANreadann(ann_handle, ann_label, ann_len+1);
     RESULT("ANreadann");
 
-    /* end acces to label */
+    /* end access to label */
     ret = ANendaccess(ann_handle);
     RESULT("ANendaccess");
 
@@ -416,7 +416,7 @@ check_fann(const char *fname)
           ret = ANreadann(ann_handle, ann_label, ann_len+1);
           RESULT("ANreadann");
 
-          /* end acces to label */
+          /* end access to label */
           ret = ANendaccess(ann_handle);
           RESULT("ANendaccess");
 
@@ -527,7 +527,7 @@ check_lab_desc(const char *fname, uint16 tag, uint16 ref, const char *label[],
     char *ann_desc = NULL;  /* annotation desc */
     intn  num_dlabels,  /* number of data labels for an element */
         num_ddescs;   /* number of data descs for an element */
-    int32 *dlabels = NULL; /* array of data lables for an element */
+    int32 *dlabels = NULL; /* array of data labels for an element */
     int32 *ddescs = NULL;  /* array of data descs for an element */
     int i;
 
@@ -638,7 +638,7 @@ check_lab_desc(const char *fname, uint16 tag, uint16 ref, const char *label[],
           ret = ANreadann(dlabels[i], ann_label, ann_len+1);
           RESULT("ANreadann");
 
-          /* end acces to label */
+          /* end access to label */
           ret = ANendaccess(dlabels[i]);
           RESULT("ANendaccess");
 
@@ -673,7 +673,7 @@ check_lab_desc(const char *fname, uint16 tag, uint16 ref, const char *label[],
                 num_errs++;
             }
 
-          /* allocate space for descritpion */
+          /* allocate space for description */
           if (ann_desc == NULL)
             {
                 if ((ann_desc = (char *)HDmalloc((ann_len+1)*sizeof(char)))
@@ -939,7 +939,7 @@ test_man(void)
     /***************** Read file labels and descriptions */
     MESSAGE(5, printf("*** Reading file label and descriptions ***\n"););
 
-    /* Verify file lables/descs */
+    /* Verify file labels/descs */
     if (check_fann(TESTFILE) == FAIL)
         return; /* end of test */
 

@@ -51,7 +51,7 @@ int32 written_data[Z_LENGTH][Y_LENGTH][X_LENGTH];
 int32 ap_data[1][Y_LENGTH][X_LENGTH];
 
 /********************************************************************
-   Name: test_setexternal() - tests basic funtionalities in storing
+   Name: test_setexternal() - tests basic functionalities in storing
             data in an external file
 
    Description:

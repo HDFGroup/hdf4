@@ -409,7 +409,7 @@ uint32 diff_sds(int32 sd1_id,
 	max_err_cnt = (opt->max_err_cnt != MAX_DIFF) ? opt->max_err_cnt : nelms;
 
         /* get array differences. in the case of hyperslab read, increment the number of differences 
-           found in each hyperslab and pass the position at the beggining for printing 
+           found in each hyperslab and pass the position at the beginning for printing 
          */
          nfound=array_diff(sm_buf1, 
              sm_buf2, 
@@ -530,7 +530,7 @@ uint32 diff_sds_attrs(int32 sds1_id,
  uint32 nfound=0;
 
  if ( nattrs1!=nattrs2) {
-  printf( "Different number of atrributes\n");
+  printf( "Different number of attributes\n");
   return 0;
  }
 

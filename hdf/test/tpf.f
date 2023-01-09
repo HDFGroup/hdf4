@@ -221,7 +221,7 @@ C     print *,'last ref is: ', ret
           call MESSAGE(VERBO_DEF + 1,
      +                '****** ALL TESTS SUCCESSFUL ******')
       else
-          print *, '****** ', number_failed, ' TESTS FAILES  ******'
+          print *, '****** ', number_failed, ' TESTS FAILED  ******'
       endif
 
       return

@@ -336,7 +336,7 @@ updateDesc(void)
       }
     he_numDesc = i;
 
-    /* get informations about the groups */
+    /* get information about the groups */
     he_numGrp = 0;
     for (i = 0; i < he_numDesc; i++)
       {
@@ -1129,7 +1129,7 @@ quit(int status)
               return HE_FAIL;
       }
     exit(status);
-    return(status);    /* never excuted.  Just to shut up some comilers */
+    return(status);    /* never executed.  Just to shut up some compilers */
 }
 
 int
@@ -1145,7 +1145,7 @@ HEhelp(HE_CMD * dummy)
 void
 help(void)
 {
-    /* print some help informations */
+    /* print some help information */
     printf("hdfed allows sophisticated HDF users to manipulate the elements in");
     printf(" an HDF file.\nThese manipulations include selecting groups and ");
     printf("showing information about\nthem, dumping them to the output, ");

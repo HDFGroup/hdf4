@@ -35,7 +35,7 @@
  *
  *  DFGRIopen      : open/reopen file
  *  DFGRIriginfo   : obtain info about next RIG
- *  DFGRIgetdims   : get dimensions of lut/iamge
+ *  DFGRIgetdims   : get dimensions of lut/image
  *  DFGRIreqil     : get lut/image with this interlace
  *  DFGRIgetimlut  : get image/lut
  *  DFGRIsetdims   : set image/lut dimensions
@@ -1358,7 +1358,7 @@ done:
  * Users:   HDF systems programmers, DFGRaddimage, DFGRaddlut, DFGRsetlut
  * Invokes: DFGRIopen, DFclose, DFputelement, DFdup, DFGRaddrig, DFputcomp,
  *          DFIerr
- * Remarks: Creates both RIG and RI8/CI8 tags, to accomodate older programs
+ * Remarks: Creates both RIG and RI8/CI8 tags, to accommodate older programs
  *          LUT will be associated with image if set previously
  *---------------------------------------------------------------------------*/
 

@@ -15,7 +15,7 @@
 /*+ hlimits.h
    *** This file contains all hard coded limits for the library
    *** and reserved vdata/vgroup names and classes.
-   *** Also pre-defined attribute names are contained in thie file.
+   *** Also pre-defined attribute names are contained in this file.
    + */
 
 #ifndef _HLIMITS_H
@@ -28,7 +28,7 @@
 #endif
 /**************************************************************************
 *  Generally useful macro definitions
-*   (These are copied from hdfi.h and shoudl remain included in both files
+*   (These are copied from hdfi.h and should remain included in both files
 *       because hlimits.h is included from netcdf.h which is used in some
 *       netCDF utilities which don't need or want the rest of the HDF header
 *       files. -QAK - 2/17/99 )
@@ -152,7 +152,7 @@
 #define FUNC_NAME_LEN   32
 
 /* error_stack is the error stack.  error_top is the stack top pointer,
-   and points tothe next available slot on the stack */
+   and points to the next available slot on the stack */
 #ifndef ERR_STACK_SZ
 #   define ERR_STACK_SZ 10
 #endif
@@ -189,7 +189,7 @@
         changing the class name variable declaration much easier - BMR 4/1/02*/
 #define H4_MAX_VAR_DIMS 32          /* max per variable dimensions */
 
-/* These definitions here are for backward/forward compatibiliy since major
+/* These definitions here are for backward/forward compatibility since major
    constants were modified with H4 prefix to avoid conflicts with the
    real NetCDF-3 library   - EIP 9/5/07                                     */
 

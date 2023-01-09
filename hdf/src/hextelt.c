@@ -79,11 +79,11 @@ EXPORTED ROUTINES
 #include "hdf.h"
 #include "hfile.h"
 
-/* Directory seperator definitions relating to a path.
+/* Directory separator definitions relating to a path.
  * Note this does not provide a universal way to recognize
  * different path name conventions and translate between them */
 #if defined WIN386 | defined DOS386
-/* DOS-Windows seperator */
+/* DOS-Windows separator */
 #define DIR_SEPC  92  /* Integer value of '\' */
 #define DIR_SEPS  "\\"
 #else
@@ -92,7 +92,7 @@ EXPORTED ROUTINES
 #define DIR_SEPS  "/"
 #endif /* !WIN386 & !DOS386 */
 
-/* directory path seperator from other directory paths */
+/* directory path separator from other directory paths */
 #define DIR_PATH_SEPC 124
 #define DIR_PATH_SEPS "|"
 
@@ -841,7 +841,7 @@ done:
 /* ------------------------------ HXPinquire ------------------------------ */
 /*
 NAME
-   HXPinquire -- retreive information about an external element
+   HXPinquire -- retrieve information about an external element
 USAGE
    int32 HXPinquire(access_rec, file, tag, ref, len, off, pos, acc, sp)
    access_t * access_rec;      IN:  access record to return info about
@@ -1336,7 +1336,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
                 goto done;
             }
 
-            /* try Envrironment Variable */
+            /* try Environment Variable */
             if (HDFEXTCREATEDIR) {
                 path_len = (int)HDstrlen(HDFEXTCREATEDIR);
 
@@ -1405,7 +1405,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
                 }
             }
 
-            /* try Envrironment Variable */
+            /* try Environment Variable */
             if (HDFEXTDIR) {
                 dir_pt = HDFEXTDIR;
                 while (*dir_pt){

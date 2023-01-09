@@ -177,7 +177,7 @@ struct vdata_desc
       vs_attr_t   *alist;    /* attribute list */
       int16       version, more;    /* version and "more" field */
       int32       aid;          /* access id - for LINKED blocks */
-      struct vs_instance_struct *instance;  /* ptr to the intance struct for this VData */
+      struct vs_instance_struct *instance;  /* ptr to the instance struct for this VData */
       struct vdata_desc *next;  /* pointer to next node (for free list only) */
   };                            /* VDATA */
 
@@ -200,7 +200,7 @@ typedef struct vg_instance_struct
       /* needs to be first in the structure */
       uintn       ref;          /* ref # of this vgroup in the file */
       /* needs to be second in the structure */
-      intn        nattach;      /* # of current attachs to this vgroup */
+      intn        nattach;      /* # of current attaches to this vgroup */
       int32       nentries;     /* # of entries in that vgroup initially */
       VGROUP     *vg;           /* points to the vg when it is attached */
       struct vg_instance_struct *next;  /* pointer to next node (for free list only) */
@@ -214,7 +214,7 @@ typedef struct vs_instance_struct
       /* needs to be first in the structure */
       uintn       ref;          /* ref # of this vdata in the file */
       /* needs to be second in the structure */
-      intn        nattach;      /* # of current attachs to this vdata */
+      intn        nattach;      /* # of current attaches to this vdata */
       int32       nvertices;    /* # of elements in that vdata initially */
       VDATA      *vs;           /* points to the vdata when it is attached */
       struct vs_instance_struct *next;  /* pointer to next node (for free list only) */

@@ -20,7 +20,7 @@
    **   *DFopen -- open HDF file
    **   *DFclose -- close HDF file
    **   *DFdescriptors -- return a list of the data descriptors in the HDF file
-   **   *DFnumber -- count the number of occurrances of a given tag in HDF file
+   **   *DFnumber -- count the number of occurrences of a given tag in HDF file
    **   *DFsetfind -- set up a search
    **   *DFfind -- search for tag/ref combination
    **   DFaccess -- set up a read/write on a data element

@@ -54,7 +54,7 @@
 #include "hproto_fortran.h"
 
 /*-----------------------------------------------------------------------------
-  FUNCTION NAMEING CONVENTION:
+  FUNCTION NAMING CONVENTION:
   ---------------------------
   This file contains the HDF-style C stubs for the multi-file Annotation
   interface. They call the corresponding C-functions in "mfan.c"
@@ -71,7 +71,7 @@
 
 /*-----------------------------------------------------------------------------
  * Name:    afstart
- * Purpose: Open file for annoation handling
+ * Purpose: Open file for annotation handling
  * Inputs:  file_id: id of HDF file
  * Returns: annotation interface handle on SUCCEED and FAIL otherwise
  * Users:
@@ -188,7 +188,7 @@ naffcreate(intf *an_id, intf *atype)
  *          a particular annotation TYPE. This handle is then used for
  *          calls like afwriteann(), afreadann(), afannlen(),..etc
  * Inputs:  an_id: annotation interface handle
- *          index:   index for particular annoation type. Usually based on
+ *          index:   index for particular annotation type. Usually based on
  *                   number of a particular type obtained from affileinfo()call.
  *                   ZERO based.
  *          atype:   annotation type AN_FILE_LABEL, AN_FILE_DESC, AN_DATA_LABEL
@@ -238,7 +238,7 @@ nafnumann(intf *an_id, intf *atype, intf *etag, intf *eref)
  *          IN etag:    data tag to match
  *          IN eref:    data ref to match
  *          OUT alist[]: list of annotation handles found that match tag/ref
- * Returns: number of annoations found that match else FAIL. see ANannlist()
+ * Returns: number of annotations found that match else FAIL. see ANannlist()
  * Users:   Fortran Users
  * Invokes: ANnumann(), ANannlist()
  * Author: GeorgeV
@@ -262,7 +262,7 @@ nafannlist(intf *an_id, intf *atype, intf *etag, intf *eref, intf alist[])
   if ((tempanlist = (int32 *) HDmalloc(nanns * sizeof(int32))) == NULL)
     HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-  /* Get list of annoation handles to return */
+  /* Get list of annotation handles to return */
   ret = ANannlist((int32)*an_id,(ann_type)*atype,(uint16)*etag,(uint16)*eref,
                   tempanlist);
   if (ret < 0)
@@ -324,7 +324,7 @@ nafwriteann(intf *ann_id,_fcd ann, intf *annlen)
 
     status = ANwriteann((int32)*ann_id, (char *) _fcdtocp(ann), (int32)*annlen);
 
-    HDfree(iann); /* free allocaed space by HDf2cstring */
+    HDfree(iann); /* free allocated space by HDf2cstring */
 
     return status;
 } /* nafwriteann() */
@@ -334,7 +334,7 @@ nafwriteann(intf *ann_id,_fcd ann, intf *annlen)
  * Purpose: Read annotation given handle
  * Inputs:  ann_id:  annotation handle
  *          ann:    annotation read
- *          maxlen: maximum space allocted for "ann"
+ *          maxlen: maximum space allocated for "ann"
  * Returns: see ANreadann() (SUCCEED (0) if successful, else FAIL (-1))
  * Users:   Fortran Users
  * Invokes: ANreadann()

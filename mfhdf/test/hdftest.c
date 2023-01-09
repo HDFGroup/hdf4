@@ -132,7 +132,7 @@ main(int argc, char *argv[])
     f2 = SDstart(FILE2, DFACC_CREATE);
     CHECK(f2, FAIL, "SDstart");
 
-    /* whats in these empty files */
+    /* what's in these empty files */
     status = SDfileinfo(f1, &num_sds, &num_gattr);
     CHECK(status, FAIL, "SDfileinfo");
 
@@ -152,7 +152,7 @@ main(int argc, char *argv[])
     ndg_saved_ref = SDidtoref(newsds);
     CHECK(ndg_saved_ref, 0, "SDidtoref: Failed to get NDG ref for DataSetAlpha ");
 
-    /* create datatset DataSetGamma in file test1.hdf */
+    /* create dataset DataSetGamma in file test1.hdf */
     newsds3 = SDcreate(f1, "DataSetGamma", DFNT_FLOAT64, 1, dimsize);
     CHECK(newsds3, FAIL, "SDcreate:Failed to create a new data set gamma");
 
@@ -187,7 +187,7 @@ main(int argc, char *argv[])
         num_errs++;
       }
 
-    /* Find out info about first atribute for dimension  */
+    /* Find out info about first attribute for dimension  */
     status = SDattrinfo(dimid, (int32) 0, name, &nt, &count);
     CHECK(status, FAIL, "SDattrinfo");
 
@@ -394,7 +394,7 @@ main(int argc, char *argv[])
     status = SDsetrange(newsds, (VOIDP) &max, (VOIDP) &min);
     CHECK(status, FAIL, "SDsetrange");
 
-    /* Brillant...., retrieve it right back....*/
+    /* Brilliant...., retrieve it right back....*/
     status = SDgetrange(newsds, (VOIDP) &imax, (VOIDP) &imin);
     CHECK(status, FAIL, "SDsetrange");
 
@@ -444,7 +444,7 @@ main(int argc, char *argv[])
     status = SDfindattr(newsds, "blarf");
     if(status != FAIL) 
       {
-        fprintf(stderr, "SDfindattr found non-existant attribute\n");
+        fprintf(stderr, "SDfindattr found non-existent attribute\n");
         num_errs++;
       }
 
@@ -1227,7 +1227,7 @@ main(int argc, char *argv[])
     CHECK(status, FAIL, "SDendaccess");
 
     /*
-     * used saved ref at the begining to retrieve the data set
+     * used saved ref at the beginning to retrieve the data set
      */
     
     /* get the index of the data set to which this 'ref' belongs to */

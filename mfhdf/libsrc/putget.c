@@ -2020,7 +2020,7 @@ const long *edges ;
     edp = edges + vp->assoc->count - 1 ;     /* points to last edge */
     orp = origin + vp->assoc->count - 1 ;
 
-    /* Traverse shp back to the begining of boundary while checking that
+    /* Traverse shp back to the beginning of boundary while checking that
     each edge is within limit between start coord and max of dimension */
     for( ; shp >= boundary ; shp--,edp--,orp--)
     {

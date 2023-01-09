@@ -636,11 +636,11 @@ int namelen ;
 
 /*
  * Copy the values of a variable from an input netCDF to an output netCDF.
- * Input and output var assummed to have the same shape.
+ * Input and output var assumed to have the same shape.
  * return -1 on error.
  *
  * This function added to support the netcdf operators. The interface
- * is not documented. We plan to supercede it with something more
+ * is not documented. We plan to supersede it with something more
  * general in a future release.
  */
 static int
@@ -744,7 +744,7 @@ int             outcdf;
         /* Fill is side effect of NCcoordck */
     }
 
-    /* four cases, really not neccessary here, left for future generalization */
+    /* four cases, really not necessary here, left for future generalization */
     if(IS_RECVAR(invp))
     {
         if(IS_RECVAR(outvp))

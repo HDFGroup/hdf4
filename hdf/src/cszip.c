@@ -381,7 +381,7 @@ HCIcszip_encode(compinfo_t * info, int32 length, const uint8 *buf)
 	szip_info->szip_state = SZIP_RUN;
     }
 
-    /* copy the data into the buffer.  This wil be written in 'term' function */
+    /* copy the data into the buffer.  This will be written in 'term' function */
     HDmemcpy(szip_info->buffer + szip_info->buffer_pos, buf, length);
     szip_info->buffer_pos += length;
     szip_info->buffer_size -= length;
@@ -492,7 +492,7 @@ HCIcszip_term(compinfo_t * info)
     if ((out_buffer = HDmalloc(out_buffer_size)) == NULL)
 		HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-    /* set parms */
+    /* set params */
     sz_param.options_mask = szip_info->options_mask;
     sz_param.bits_per_pixel = szip_info->bits_per_pixel;
     sz_param.pixels_per_block = szip_info->pixels_per_block;
@@ -592,7 +592,7 @@ HCIcszip_term(compinfo_t * info)
     *out_buffer=0;   /* data needs to be decompressed */
     cp = out_buffer;
     cp++;
-    INT32ENCODE(cp, size_out);   /* whole bufer needs to be decompressed */
+    INT32ENCODE(cp, size_out);   /* whole buffer needs to be decompressed */
     status = Hwrite(info->aid, size_out+5, out_buffer);
 
     szip_info->szip_dirty=SZIP_CLEAN;

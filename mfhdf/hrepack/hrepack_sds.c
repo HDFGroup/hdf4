@@ -334,7 +334,7 @@ int copy_sds(int32 sd_in,
         
         
        /*-------------------------------------------------------------------------
-        * check for maximum number of chunks treshold
+        * check for maximum number of chunks threshold
         *-------------------------------------------------------------------------
         */
         if ( options->trip>0 ) 

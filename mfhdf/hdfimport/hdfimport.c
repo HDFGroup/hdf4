@@ -350,18 +350,18 @@ struct Raster
 /*
  * state table tokens
  */
-#define FILNAME 0   /* filename */
-#define OPT_o   1   /* output filename */
-#define OPT_r   2   /* convert to image */
-#define OPT_e   3   /* expand image via pixel replication */
-#define OPT_i   4   /* make interpolated image */
-#define NUMBR   5   /* resolution of enlarged image */
-#define OPT_p   6   /* palette filename */
-#define OPT_f   7   /* convert to float (default) */
-#define OPT_h   8   /* request for explanation */
-#define OPT_m   9   /* mean to scale around */
-#define OPT_t   10  /* datatype of the SDS to be written */
-#define OPT_n   11  /* for  a FLOAT 64 binary input file to be accepted as FLOAT 64 SDS (default behaviour is writing it as FLOAT 32 SDS */
+#define FILENAME 0   /* filename */
+#define OPT_o    1   /* output filename */
+#define OPT_r    2   /* convert to image */
+#define OPT_e    3   /* expand image via pixel replication */
+#define OPT_i    4   /* make interpolated image */
+#define NUMBR    5   /* resolution of enlarged image */
+#define OPT_p    6   /* palette filename */
+#define OPT_f    7   /* convert to float (default) */
+#define OPT_h    8   /* request for explanation */
+#define OPT_m    9   /* mean to scale around */
+#define OPT_t    10  /* datatype of the SDS to be written */
+#define OPT_n    11  /* for  a FLOAT 64 binary input file to be accepted as FLOAT 64 SDS (default behaviour is writing it as FLOAT 32 SDS */
 #define ERR 20  /* invalid token */
 
 /*
@@ -371,7 +371,7 @@ static int  state_table[19][12] =
 {
 
     /* token ordering:
-       FILNAME      OPT_o   OPT_r   OPT_e   OPT_i   NUMBR   OPT_p   OPT_f
+       FILENAME     OPT_o   OPT_r   OPT_e   OPT_i   NUMBR   OPT_p   OPT_f
        OPT_h        OPT_m   OPT_z */
 
     /* state 0: start */
@@ -1908,7 +1908,7 @@ gtoken(char *s)
     else if (isnum(s))  /* positive number */
         token = NUMBR;
     else    /* filename */
-        token = FILNAME;
+        token = FILENAME;
 
     return (token);
 }
@@ -2036,141 +2036,141 @@ help(char *name)
     (void) printf("about a mean value.\n\n");
 
     (void) fprintf (stderr, "Synopsis:");
-    (void) fprintf (stderr, "\n\t%s -h[elp]", name);
-    (void) fprintf (stderr, "\n\t\tPrint this summary of usage and exit.");
-    (void) fprintf (stderr, "\n\t\t");
-    (void) fprintf (stderr, "\n\t%s -V", name);
-    (void) fprintf (stderr, "\n\t\tPrint version of the HDF4 library and exit.");
-    (void) fprintf (stderr, "\n\t\t");
-    (void) fprintf (stderr, "\n\t%s <infile> [ [-t[ype] <output-type> | -n] [<infile> [-t[ype] <output-type> | -n]...]", name);
+    (void) fprintf (stderr, "\n\t%s  -h[elp]", name);
+    (void) fprintf (stderr, "\n\t\t Print this summary of usage and exit.");
+    (void) fprintf (stderr, "\n\t\t ");
+    (void) fprintf (stderr, "\n\t%s  -V", name);
+    (void) fprintf (stderr, "\n\t\t Print version of the HDF4 library and exit.");
+    (void) fprintf (stderr, "\n\t\t ");
+    (void) fprintf (stderr, "\n\t%s  <infile> [ [-t[ype] <output-type> | -n] [<infile> [-t[ype] <output-type> | -n]...]", name);
     (void) fprintf (stderr, "\n\t\t\t\t\t-o[utfile] <outfile> [-r[aster] [ras_opts ...]] [-f[loat]]");
 
-    (void) fprintf (stderr, "\n\n\t<infile(s)>:");
-    (void) fprintf (stderr, "\n\t\tName of the input file(s), containing a single ");
-    (void) fprintf (stderr, "\n\t\ttwo-dimensional or three-dimensional floating point array ");
-    (void) fprintf (stderr, "\n\t\tin either ASCII text, native floating point, native integer ");
-    (void) fprintf (stderr, "\n\t\tor HDF SDS format.  If an HDF file is used for input, it ");
-    (void) fprintf (stderr, "\n\t\tmust contain an SDS. The SDS need only contain a dimension ");
-    (void) fprintf (stderr, "\n\t\trecord and the data, but if it also contains maximum and ");
-    (void) fprintf (stderr, "\n\t\tminimum values and/or scales for each axis, these will ");
-    (void) fprintf (stderr, "\n\t\tbe used.  If the input format is ASCII text or native ");
-    (void) fprintf (stderr, "\n\t\tfloating point or native integer, see \"Notes\" below on ");
-    (void) fprintf (stderr, "\n\t\thow it must be organized.");
+    (void) fprintf (stderr, "\n\n\t <infile(s)>:");
+    (void) fprintf (stderr, "\n\t\t Name of the input file(s), containing a single ");
+    (void) fprintf (stderr, "\n\t\t two-dimensional or three-dimensional floating point array ");
+    (void) fprintf (stderr, "\n\t\t in either ASCII text, native floating point, native integer ");
+    (void) fprintf (stderr, "\n\t\t or HDF SDS format.  If an HDF file is used for input, it ");
+    (void) fprintf (stderr, "\n\t\t must contain an SDS. The SDS need only contain a dimension ");
+    (void) fprintf (stderr, "\n\t\t record and the data, but if it also contains maximum and ");
+    (void) fprintf (stderr, "\n\t\t minimum values and/or scales for each axis, these will ");
+    (void) fprintf (stderr, "\n\t\t be used.  If the input format is ASCII text or native ");
+    (void) fprintf (stderr, "\n\t\t floating point or native integer, see \"Notes\" below on ");
+    (void) fprintf (stderr, "\n\t\t how it must be organized.");
 
-    (void) fprintf (stderr, "\n\n\t-t[ype] <output_type>: ");
-    (void) fprintf (stderr, "\n\t\tOptionally used for every input ASCII file to specify the ");
-    (void) fprintf (stderr, "\n\t\tdata type of the data-set to be written. If not specified               ");
-    (void) fprintf (stderr, "\n\t\tdefault data type is 32-bit floating point. <output-type>");
-    (void) fprintf (stderr, "\n\t\tcan be any of the following: FP32 (default), FP64, INT32");
-    (void) fprintf (stderr, "\n\t\tINT16, INT8. It can be used only with ASCII files.");
+    (void) fprintf (stderr, "\n\n\t -t[ype] <output_type>: ");
+    (void) fprintf (stderr, "\n\t\t Optionally used for every input ASCII file to specify the ");
+    (void) fprintf (stderr, "\n\t\t data type of the data-set to be written. If not specified               ");
+    (void) fprintf (stderr, "\n\t\t default data type is 32-bit floating point. <output-type>");
+    (void) fprintf (stderr, "\n\t\t can be any of the following: FP32 (default), FP64, INT32");
+    (void) fprintf (stderr, "\n\t\t INT16, INT8. It can be used only with ASCII files.");
 
-    (void) fprintf (stderr, "\n\n\t-n:  ");
-    (void) fprintf (stderr, "\n\t\tThis option is to be used only if the binary input file ");
-    (void) fprintf (stderr, "\n\t\tcontains 64-bit floating point data and the default");
-    (void) fprintf (stderr, "\n\t\tbehaviour (default behaviour is to write it to a 32-bit");
-    (void) fprintf (stderr, "\n\t\tfloating point data-set) should be overridden to write ");
-    (void) fprintf (stderr, "\n\t\tit to a 64-bit floating point data-set.");
+    (void) fprintf (stderr, "\n\n\t -n:  ");
+    (void) fprintf (stderr, "\n\t\t This option is to be used only if the binary input file ");
+    (void) fprintf (stderr, "\n\t\t contains 64-bit floating point data and the default");
+    (void) fprintf (stderr, "\n\t\t behaviour (default behaviour is to write it to a 32-bit");
+    (void) fprintf (stderr, "\n\t\t floating point data-set) should be overridden to write ");
+    (void) fprintf (stderr, "\n\t\t it to a 64-bit floating point data-set.");
 
-    (void) fprintf (stderr, "\n\n\t-o[utfile] <outfile>:");
-    (void) fprintf (stderr, "\n\t\tData from one or more input files are stored as one or");
-    (void) fprintf (stderr, "\n\t\tmore data sets and/or images in one HDF output file,");
-    (void) fprintf (stderr, "\n\t\t\"outfile\".");
+    (void) fprintf (stderr, "\n\n\t -o[utfile] <outfile>:");
+    (void) fprintf (stderr, "\n\t\t Data from one or more input files are stored as one or");
+    (void) fprintf (stderr, "\n\t\t more data sets and/or images in one HDF output file,");
+    (void) fprintf (stderr, "\n\t\t \"outfile\".");
 
-    (void) fprintf (stderr, "\n\n\t-r[aster]:");
-    (void) fprintf (stderr, "\n\t\tStore output as a raster image set in the output file.");
+    (void) fprintf (stderr, "\n\n\t -r[aster]:");
+    (void) fprintf (stderr, "\n\t\t Store output as a raster image set in the output file.");
 
-    (void) fprintf (stderr, "\n\n\t-f[loat]:");
-    (void) fprintf (stderr, "\n\tStore output as a scientific data set in the output file.");
-    (void) fprintf (stderr, "\n\tThis is the default if the \"-r\" option is not specified.");
+    (void) fprintf (stderr, "\n\n\t -f[loat]:");
+    (void) fprintf (stderr, "\n\t Store output as a scientific data set in the output file.");
+    (void) fprintf (stderr, "\n\t This is the default if the \"-r\" option is not specified.");
 
-    (void) fprintf (stderr, "\n\n\tras_opts ...");
-    (void) fprintf (stderr, "\n\n\t-e[xpand] <horiz> <vert> [<depth>]:");
-    (void) fprintf (stderr, "\n\tExpand float data via pixel replication to produce the");
-    (void) fprintf (stderr, "\n\timage(s).  \"horiz\" and \"vert\" give the horizontal and");
-    (void) fprintf (stderr, "\n\tvertical resolution of the image(s) to be produced; and");
-    (void) fprintf (stderr, "\n\toptionally, \"depth\" gives the number of images or depth");
-    (void) fprintf (stderr, "\n\tplanes (for 3D input data).");
+    (void) fprintf (stderr, "\n\n\t ras_opts ...");
+    (void) fprintf (stderr, "\n\n\t -e[xpand] <horiz> <vert> [<depth>]:");
+    (void) fprintf (stderr, "\n\t Expand float data via pixel replication to produce the");
+    (void) fprintf (stderr, "\n\t image(s).  \"horiz\" and \"vert\" give the horizontal and");
+    (void) fprintf (stderr, "\n\t vertical resolution of the image(s) to be produced; and");
+    (void) fprintf (stderr, "\n\t optionally, \"depth\" gives the number of images or depth");
+    (void) fprintf (stderr, "\n\t planes (for 3D input data).");
 
-    (void) fprintf (stderr, "\n\n\t-i[nterp] <horiz> <vert> [<depth>]:");
-    (void) fprintf (stderr, "\n\t\tApply bilinear, or trilinear, interpolation to the float");
-    (void) fprintf (stderr, "\n\t\tdata to produce the image(s).  \"horiz\", \"vert\", and \"depth\"");
-    (void) fprintf (stderr, "\n\t\tmust be greater than or equal to the dimensions of the");
-    (void) fprintf (stderr, "\n\t\toriginal dataset.");
-    (void) fprintf (stderr, "\n\t\tIf max and min are supplied in input file, this option clips");
-    (void) fprintf (stderr, "\n\t\tvalues that are greater than max or less then min, setting");
-    (void) fprintf (stderr, "\n\t\tthem to the max and min, respectively.");
+    (void) fprintf (stderr, "\n\n\t -i[nterp] <horiz> <vert> [<depth>]:");
+    (void) fprintf (stderr, "\n\t\t Apply bilinear, or trilinear, interpolation to the float");
+    (void) fprintf (stderr, "\n\t\t data to produce the image(s).  \"horiz\", \"vert\", and \"depth\"");
+    (void) fprintf (stderr, "\n\t\t must be greater than or equal to the dimensions of the");
+    (void) fprintf (stderr, "\n\t\t original dataset.");
+    (void) fprintf (stderr, "\n\t\t If max and min are supplied in input file, this option clips");
+    (void) fprintf (stderr, "\n\t\t values that are greater than max or less then min, setting");
+    (void) fprintf (stderr, "\n\t\t them to the max and min, respectively.");
 
-    (void) fprintf (stderr, "\n\n\t-p[alfile] <palfile>:");
-    (void) fprintf (stderr, "\n\t\tStore the palette with the image.  Get the palette from");
-    (void) fprintf (stderr, "\n\t\t\"palfile\"; which may be an HDF file containing a palette,");
-    (void) fprintf (stderr, "\n\t\tor a file containing a raw palette.");
+    (void) fprintf (stderr, "\n\n\t -p[alfile] <palfile>:");
+    (void) fprintf (stderr, "\n\t\t Store the palette with the image.  Get the palette from");
+    (void) fprintf (stderr, "\n\t\t \"palfile\"; which may be an HDF file containing a palette,");
+    (void) fprintf (stderr, "\n\t\t or a file containing a raw palette.");
 
-    (void) fprintf (stderr, "\n\n\t-m[ean] <mean>:");
-    (void) fprintf (stderr, "\n\t\tIf a floating point mean value is given, the image will be");
-    (void) fprintf (stderr, "\n\t\tscaled about the mean.  The new extremes (newmax and newmin),");
-    (void) fprintf (stderr, "\n\t\tas given by:");
+    (void) fprintf (stderr, "\n\n\t -m[ean] <mean>:");
+    (void) fprintf (stderr, "\n\t\t If a floating point mean value is given, the image will be");
+    (void) fprintf (stderr, "\n\t\t scaled about the mean.  The new extremes (newmax and newmin),");
+    (void) fprintf (stderr, "\n\t\t as given by:");
 
-    (void) fprintf (stderr, "\n\n\t\t\tnewmax = mean + max(abs(max-mean), abs(mean-min))");
-    (void) fprintf (stderr, "\n\t\t\tnewmin = mean - max(abs(max-mean), abs(mean-min))");
+    (void) fprintf (stderr, "\n\n\t\t\t newmax = mean + max(abs(max-mean), abs(mean-min))");
+    (void) fprintf (stderr, "\n\t\t\t newmin = mean - max(abs(max-mean), abs(mean-min))");
 
-    (void) fprintf (stderr, "\n\n\t\twill be equidistant from the mean value.  If no mean value");
-    (void) fprintf (stderr, "\n\t\tis given, then the mean will be:  0.5   (max + min)");
+    (void) fprintf (stderr, "\n\n\t\t will be equidistant from the mean value.  If no mean value");
+    (void) fprintf (stderr, "\n\t\t is given, then the mean will be:  0.5   (max + min)");
 
-    (void) fprintf (stderr, "\n\n\tNotes:");
-    (void) fprintf (stderr, "\n\t\tIf the input file format is ASCII text or native floating point or native integer(32-bit,");
-    (void) fprintf (stderr, "\n\t\t16-bit, 8-bit), it");
-    (void) fprintf (stderr, "\n\t\tmust have the following input fields:");
+    (void) fprintf (stderr, "\n\n\t Notes:");
+    (void) fprintf (stderr, "\n\t\t If the input file format is ASCII text or native floating point or native integer(32-bit,");
+    (void) fprintf (stderr, "\n\t\t 16-bit, 8-bit), it");
+    (void) fprintf (stderr, "\n\t\t must have the following input fields:");
 
-    (void) fprintf (stderr, "\n\t\tformat");
-    (void) fprintf (stderr, "\n\t\tnplanes");
-    (void) fprintf (stderr, "\n\t\tnrows");
-    (void) fprintf (stderr, "\n\t\tcols");
-    (void) fprintf (stderr, "\n\t\tmax_value");
-    (void) fprintf (stderr, "\n\t\tmin_value");
-    (void) fprintf (stderr, "\n\t\t[plane1 plane2 plane3 ...]");
-    (void) fprintf (stderr, "\n\t\trow1 row2 row3 ...");
-    (void) fprintf (stderr, "\n\t\tcol1 col2 col3 ...");
-    (void) fprintf (stderr, "\n\t\tdata1 data2 data3 ...");
+    (void) fprintf (stderr, "\n\t\t format");
+    (void) fprintf (stderr, "\n\t\t nplanes");
+    (void) fprintf (stderr, "\n\t\t nrows");
+    (void) fprintf (stderr, "\n\t\t cols");
+    (void) fprintf (stderr, "\n\t\t max_value");
+    (void) fprintf (stderr, "\n\t\t min_value");
+    (void) fprintf (stderr, "\n\t\t [plane1 plane2 plane3 ...]");
+    (void) fprintf (stderr, "\n\t\t row1 row2 row3 ...");
+    (void) fprintf (stderr, "\n\t\t col1 col2 col3 ...");
+    (void) fprintf (stderr, "\n\t\t data1 data2 data3 ...");
 
-    (void) fprintf (stderr, "\n\n\t\tWhere:");
-    (void) fprintf (stderr, "\n\n\t\tformat:");
-    (void) fprintf (stderr, "\n\t\t\tFormat designator (\"TEXT\", \"FP32\", \"FP64\", \"IN32\", \"IN16\", \"IN08\").");
-    (void) fprintf (stderr, "\n\t\t\tnplanes, nrows, ncols:");
-    (void) fprintf (stderr, "\n\t\t\tDimensions are specified in the order slowest changing dimension first.");
-    (void) fprintf (stderr, "\n\t\t\tncols is dimension of the fastest changing dimension. (horizontal axis");
-    (void) fprintf (stderr, "\n\t\t\tor X-axis in a 3D scale)");
-    (void) fprintf (stderr, "\n\t\t\tnrows corresponds to dimension of the vertical axis or Y-axis in a 3D ");
-    (void) fprintf (stderr, "\n\t\t\tscale.");
-    (void) fprintf (stderr, "\n\t\t\tnplanes corresponds to the slowest changing dimension i.e. dimension of ");
-    (void) fprintf (stderr, "\n\t\t\tthe depth axis or the Z-axis in a 3D scale (\"1\" for 2D input).");
-    (void) fprintf (stderr, "\n\t\tmax_value:");
-    (void) fprintf (stderr, "\n\t\t\tMaximum data value.");
-    (void) fprintf (stderr, "\n\t\tmin_value:");
-    (void) fprintf (stderr, "\n\t\t\tMinimum data value.");
-    (void) fprintf (stderr, "\n\t\tplane1, plane2, plane3, ...:");
-    (void) fprintf (stderr, "\n\t\t\tScales for depth axis.");
-    (void) fprintf (stderr, "\n\t\trow1, row2, row3, ...:");
-    (void) fprintf (stderr, "\n\t\t\tScales for the vertical axis.");
-    (void) fprintf (stderr, "\n\t\tcol1, col2, col3, ...:");
-    (void) fprintf (stderr, "\n\t\t\tScales for the horizontal axis.");
-    (void) fprintf (stderr, "\n\t\tdata1, data2, data3, ...:");
-    (void) fprintf (stderr, "\n\t\t\tThe data ordered by rows, left to right and top");
-    (void) fprintf (stderr, "\n\t\t\tto bottom; then optionally, ordered by planes,");
-    (void) fprintf (stderr, "\n\t\t\tfront to back.");
+    (void) fprintf (stderr, "\n\n\t\t Where:");
+    (void) fprintf (stderr, "\n\n\t\t format:");
+    (void) fprintf (stderr, "\n\t\t\t Format designator (\"TEXT\", \"FP32\", \"FP64\", \"IN32\", \"IN16\", \"IN08\").");
+    (void) fprintf (stderr, "\n\t\t\t nplanes, nrows, ncols:");
+    (void) fprintf (stderr, "\n\t\t\t Dimensions are specified in the order slowest changing dimension first.");
+    (void) fprintf (stderr, "\n\t\t\t ncols is dimension of the fastest changing dimension. (horizontal axis");
+    (void) fprintf (stderr, "\n\t\t\t or X-axis in a 3D scale)");
+    (void) fprintf (stderr, "\n\t\t\t nrows corresponds to dimension of the vertical axis or Y-axis in a 3D ");
+    (void) fprintf (stderr, "\n\t\t\t scale.");
+    (void) fprintf (stderr, "\n\t\t\t nplanes corresponds to the slowest changing dimension i.e. dimension of ");
+    (void) fprintf (stderr, "\n\t\t\t the depth axis or the Z-axis in a 3D scale (\"1\" for 2D input).");
+    (void) fprintf (stderr, "\n\t\t max_value:");
+    (void) fprintf (stderr, "\n\t\t\t Maximum data value.");
+    (void) fprintf (stderr, "\n\t\t min_value:");
+    (void) fprintf (stderr, "\n\t\t\t Minimum data value.");
+    (void) fprintf (stderr, "\n\t\t plane1, plane2, plane3, ...:");
+    (void) fprintf (stderr, "\n\t\t\t Scales for depth axis.");
+    (void) fprintf (stderr, "\n\t\t row1, row2, row3, ...:");
+    (void) fprintf (stderr, "\n\t\t\t Scales for the vertical axis.");
+    (void) fprintf (stderr, "\n\t\t col1, col2, col3, ...:");
+    (void) fprintf (stderr, "\n\t\t\t Scales for the horizontal axis.");
+    (void) fprintf (stderr, "\n\t\t data1, data2, data3, ...:");
+    (void) fprintf (stderr, "\n\t\t\t The data ordered by rows, left to right and top");
+    (void) fprintf (stderr, "\n\t\t\t to bottom; then optionally, ordered by planes,");
+    (void) fprintf (stderr, "\n\t\t\t front to back.");
 
-    (void) fprintf (stderr, "\n\n\t\tFor FP32 and FP64 input format, \"format\", \"nplanes\", \"nrows\", \"ncols\",");
-    (void) fprintf (stderr, "\n\t\tand \"nplanes\" are native integers; where \"format\" is the integer");
-    (void) fprintf (stderr, "\n\t\trepresentation of the appropriate 4-character string (0x46503332 for");
-    (void) fprintf (stderr, "\n\t\t\"FP32\" and 0x46503634 for \"FP64\").  The remaining input fields are");
-    (void) fprintf (stderr, "\n\t\tcomposed of native 32-bit floating point values for FP32 input format,");
-    (void) fprintf (stderr, "\n\t\tor native 64-bit floating point values for FP64 input format.");
+    (void) fprintf (stderr, "\n\n\t\t For FP32 and FP64 input format, \"format\", \"nplanes\", \"nrows\", \"ncols\",");
+    (void) fprintf (stderr, "\n\t\t and \"nplanes\" are native integers; where \"format\" is the integer");
+    (void) fprintf (stderr, "\n\t\t representation of the appropriate 4-character string (0x46503332 for");
+    (void) fprintf (stderr, "\n\t\t \"FP32\" and 0x46503634 for \"FP64\").  The remaining input fields are");
+    (void) fprintf (stderr, "\n\t\t composed of native 32-bit floating point values for FP32 input format,");
+    (void) fprintf (stderr, "\n\t\t or native 64-bit floating point values for FP64 input format.");
 
-    (void) fprintf (stderr, "\n\n\tFor IN32, IN16 and IN08 input format, \"format\", \"nplanes\", \"nrows\", \"ncols\",");
-    (void) fprintf (stderr, "\n\t\tand \"nplanes\" are native integers; where \"format\" is the integer");
-    (void) fprintf (stderr, "\n\t\trepresentation of the appropriate 4-character string. The remaining input ");
-    (void) fprintf (stderr, "\n\t\tfields are composed of native 32-bit integer values for IN32 input format,");
-    (void) fprintf (stderr, "\n\t\tor native 16-bit integer values for IN16 input format or native 8-bit ");
-    (void) fprintf (stderr, "\n\t\tinteger values for IN08 input format.");
+    (void) fprintf (stderr, "\n\n\t For IN32, IN16 and IN08 input format, \"format\", \"nplanes\", \"nrows\", \"ncols\",");
+    (void) fprintf (stderr, "\n\t\t and \"nplanes\" are native integers; where \"format\" is the integer");
+    (void) fprintf (stderr, "\n\t\t representation of the appropriate 4-character string. The remaining input ");
+    (void) fprintf (stderr, "\n\t\t fields are composed of native 32-bit integer values for IN32 input format,");
+    (void) fprintf (stderr, "\n\t\t or native 16-bit integer values for IN16 input format or native 8-bit ");
+    (void) fprintf (stderr, "\n\t\t integer values for IN08 input format.");
 
     (void) printf("\nExamples:\n");
     (void) printf("\tConvert floating point data in \"f1.txt\" to SDS ");

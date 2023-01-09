@@ -25,7 +25,7 @@ dumpvd(int32       vd,
        file_format_t ff,
        int         data_only,
        FILE       *fp,
-       char        separater[2],
+       char        separator[2],
        int32       flds_indices[VSFIELDMAX],
        int         dumpallfields)
 {
@@ -313,7 +313,7 @@ dumpvd(int32       vd,
                             address++;
                             /* "separator" is the symbol used for separating
                                different records. */
-                            fprintf(fp, "%s ", separater);
+                            fprintf(fp, "%s ", separator);
                         }
 
                       if (!data_only)
@@ -522,7 +522,7 @@ dumpattr(int32 vid,
     /* loop for number of attributes to process */
     for (i = 0; i < nattrs; i++)
       {
-          /* get attribute infor of vdata/vgroup */
+          /* get attribute info of vdata/vgroup */
           if (isvs)
               status = VSattrinfo(vid, findex, i, name, &i_type, &i_count, &e_size);
           else

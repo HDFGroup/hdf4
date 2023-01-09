@@ -1057,7 +1057,7 @@ done:
     Given a data set name, retrieve a list of structures, each of which
     contains the index of a variable whose name matches the given name, and
     the type of the variable, which is either data set (IS_SDSVAR) or
-    coordinate variable (IS_CRDVAR,) or (UNKNOWN.)  UNKNOW is for data
+    coordinate variable (IS_CRDVAR,) or (UNKNOWN.)  UNKNOWN is for data
     created before the fix of a data corruption bug due to the library's
     inability to distinguish between those two types of variables.  The
     fix was available starting in HDF4.2r2.
@@ -1135,7 +1135,7 @@ done:
  DESCRIPTION
     If a "valid_range" attribute is provided return its
     values in pmax and pmin.  Else if both a "valid max"
-    AND a "vaild min" exist return their values in pmax and pmin.
+    AND a "valid min" exist return their values in pmax and pmin.
 
     Arrgghh, in HDF it was assumed that the max and min values
     were of the same data type as the rest of the data.  So
@@ -1670,7 +1670,7 @@ done:
     Close down this access ID to a data object
 
     Usually, this will do nothing.  However, if the meta-data
-    has changed and SYNC_ON_EACC is defiend flush it all out
+    has changed and SYNC_ON_EACC is defined flush it all out
     to disk.
 
  RETURNS
@@ -2029,9 +2029,9 @@ done:
    SDsetattr -- user level function to create and set an attribute
 
  DESCRIPTION
-   Given an ID and an attribute definition attach the atrribute
+   Given an ID and an attribute definition attach the attribute
    to the thing represented by the ID.  For starters, the valid
-   IDs could be variable, file or dimesnion IDs
+   IDs could be variable, file or dimension IDs
 
  RETURNS
    On error FAIL else SUCCEED.
@@ -2745,7 +2745,7 @@ done:
     SDgetfillvalue -- get the fill value
 
  DESCRIPTION
-    Retreive the fill value for this data set if one has been
+    Retrieve the fill value for this data set if one has been
     stored.  The fill value has the same number type as the
     dataset
 
@@ -2950,7 +2950,7 @@ done:
     SDgetcal -- get calibration information
 
  DESCRIPTION
-    Retreive calibration information.  What is the formula?
+    Retrieve calibration information.  What is the formula?
 
  RETURNS
     SUCCEED / FAIL
@@ -3455,7 +3455,7 @@ done:
     SDgetdimscale -- get scale information for the dimension
 
  DESCRIPTION
-    Retreive the scale information stored with a dimension.  It is
+    Retrieve the scale information stored with a dimension.  It is
     assumed that the user has called SDdiminfo() and that the data
     array is long enough to hold the values.
 
@@ -4126,7 +4126,7 @@ SDgetexternalinfo(int32 id,      /* IN: dataset ID */
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
-    /* End access to the aid if neccessary */
+    /* End access to the aid if necessary */
     if (aid != FAIL)
         Hendaccess(aid);
       }
@@ -5098,7 +5098,7 @@ done:
     SDreftoindex -- map a reference number to a dataset index
 
  DESCRIPTION
-    Given a ref number return the index of the cooresponding dataset
+    Given a ref number return the index of the corresponding dataset
 
  RETURNS
     A dataset index or FAIL
@@ -5325,7 +5325,7 @@ done:
   Ragged arrays are a cross between datasets and index structures.  The
   basic idea is that all but one of the dimensions is constant.  The
   other dimension can vary over the course of the dataset.  This is
-  useful for storing equalarea grids and for making alogrithms much
+  useful for storing equal area grids and for making algorithms much
   more complex.
 
   Ragged arrays can be multi-dimensional and, eventually, record variables
@@ -5341,7 +5341,7 @@ done:
 
   The above ragged array has 7 "lines" the "line length" of the fifth line is
   three.  It is not necessary to set all of the line lengths at the same time
-  nor retreive them all at the same time.   However, to specify the line
+  nor retrieve them all at the same time.   However, to specify the line
   length for line X, the length must be specified for all Y < X (is this
   really necessary?)
 
@@ -5827,7 +5827,7 @@ done:
 
  DESCRIPTION
       This routine makes the SDS a chunked SDS according to the chunk
-      definiton passed in.
+      definition passed in.
 
       The dataset currently cannot be special already.  i.e. NBIT,
       COMPRESSED, or EXTERNAL. This is an Error.
@@ -5850,7 +5850,7 @@ done:
       The variable agruement 'flags' is a bit-or'd value which can currently be
       'HDF_CHUNK' or 'HDF_CHUNK | HDF_COMP'.
 
-      The simplist is the 'chunk_lengths' array specifiying chunk
+      The simplest is the 'chunk_lengths' array specifying chunk
       lengths for each dimension where the 'flags' argument set to
       'HDF_CHUNK';
 
@@ -6103,7 +6103,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
     HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
-    /* initialize datset/chunk sizes using CHUNK definition structure */
+    /* initialize dataset/chunk sizes using CHUNK definition structure */
     chunk[0].chunk_size = 1;
     chunk[0].num_dims = ndims;
 
@@ -6143,7 +6143,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
     fflush(stderr);
 #endif
           /* Data distribution along dimensions
-          *  Check dimension length agains chunk length */
+          *  Check dimension length against chunk length */
           if (cdims[i] == (int32)var->shape[i])
               chunk[0].pdims[i].distrib_type = 0;     /* NONE */
           else
@@ -6286,7 +6286,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
     /* check return */
     if(ret_value != FAIL)
       { /* close old aid and set new one
-         ..hmm......maybe this is for the doubly specail hack since
+         ..hmm......maybe this is for the doubly special hack since
          this code framework came from SDsetcompress()....*/
           if((var->aid != 0) && (var->aid != FAIL))
             {
@@ -6592,7 +6592,7 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
     NC        *handle = NULL;   /* file handle */
     NC_var    *var    = NULL;   /* SDS variable */
     int16      special;         /* Special code */
-    int32      csize;           /* phsical chunk size */
+    int32      csize;           /* physical chunk size */
     uint32     byte_count;      /* bytes to write */
     int8       platntsubclass;  /* the machine type of the current platform */
     int8       outntsubclass;   /* the data's machine type */
@@ -6665,7 +6665,7 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
                 /* get info about chunked element */
                 if ((ret_value = HDget_special_info(var->aid, &info_block)) != FAIL)
                   {
-                      /* calcualte chunk size  */
+                      /* calculate chunk size  */
                       csize = 1;
                       for (i = 0; i < info_block.ndims; i++)
                           csize *= info_block.cdims[i];
@@ -6802,7 +6802,7 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
     NC        *handle = NULL;   /* file handle */
     NC_var    *var    = NULL;   /* SDS variable */
     int16      special;         /* Special code */
-    int32      csize;           /* phsical chunk size */
+    int32      csize;           /* physical chunk size */
     uint32     byte_count;      /* bytes to read */
     int8       platntsubclass;  /* the machine type of the current platform */
     int8       outntsubclass;   /* the data's machine type */
@@ -6891,7 +6891,7 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
                 /* get info about chunked element */
                 if ((ret_value = HDget_special_info(var->aid, &info_block)) != FAIL)
                   {
-                      /* calcualte chunk size  */
+                      /* calculate chunk size  */
                       csize = 1;
                       for (i = 0; i < info_block.ndims; i++)
                           csize *= info_block.cdims[i];
@@ -6982,7 +6982,7 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
   done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
-        /* End access to the aid if neccessary */
+        /* End access to the aid if necessary */
         if (var->aid != FAIL)
         {
             Hendaccess(var->aid);

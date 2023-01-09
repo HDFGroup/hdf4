@@ -164,7 +164,7 @@ extern funclist_t buf_funcs;
 extern funclist_t cr_funcs;
 
 /* Table of these function tables for accessing special elements.  The first
-   member of each record is the speical code for that type of data element. */
+   member of each record is the special code for that type of data element. */
 functab_t   functab[] =
 {
 	{SPECIAL_LINKED, &linked_funcs},
@@ -1024,7 +1024,7 @@ Hstartaccess(int32 file_id, uint16 tag, uint16 ref, uint32 flags)
             ret_value = (*access_rec->special_func->stwrite) (access_rec);
 
           goto done; /* we are done since the special fcn should take
-                        of everthing. */
+                        of everything. */
 
         }	/* end if special */
     }		/* end else tag/ref exists */
@@ -1050,7 +1050,7 @@ Hstartaccess(int32 file_id, uint16 tag, uint16 ref, uint32 flags)
     file_rec->maxref = new_ref;
 
   /*
-   * If this is the first time we are writting to this file
+   * If this is the first time we are writing to this file
    *    update the version tags as needed */
   if (!file_rec->version_set)
     HIcheckfileversion(file_id);
@@ -1265,7 +1265,7 @@ Hseek(int32 access_id, int32 offset, intn origin)
 
   /* if special elt, use special function */
   if (access_rec->special)
-    { /* yes, call special seek fucntion with proper args */
+    { /* yes, call special seek function with proper args */
       ret_value = (intn) (*access_rec->special_func->seek) (access_rec, offset, origin);
       goto done;
     }
@@ -2059,7 +2059,7 @@ Htrunc(int32 aid, int32 trunc_len)
   if (data_len > trunc_len)
     {
       /* set the new length of the dataset.
-         Note value of '-2' for the offset paramter means not to update
+         Note value of '-2' for the offset parameter means not to update
          the offset in the DD.*/
       if(HTPupdate(access_rec->ddid,-2,trunc_len)==FAIL)
           HGOTO_ERROR(DFE_INTERNAL, FAIL);
@@ -2324,7 +2324,7 @@ done:
         This routine indicates to the library that an 'atexit()' cleanip routine
     should not be installed.  The major (only?) purpose for this is in
     situations where the library is dynamically linked into an application and
-    is un-linked from the application before 'exit()' gets callled.  In those
+    is un-linked from the application before 'exit()' gets called.  In those
     situations, a routine installed with 'atexit()' would jump to a routine
     which was no longer in memory, causing errors.
         In order to be effective, this routine _must_ be called before any other
@@ -2698,7 +2698,7 @@ done:
    corresponding ordinary tag, the pair has to be added to the
    special_table.
 
-   The special_table contains pairs of each tag and its corrsponding
+   The special_table contains pairs of each tag and its corresponding
    special tag.  The same table is also used to determine if a tag is
    special.  Add to this table any additional tag/special_tag pairs
    that might be necessary.
@@ -2830,7 +2830,7 @@ done:
  USAGE
     intn Hgetlibversion(majorv, minorv, release, string)
     uint32 *majorv;     OUT: majorv version number
-    uint32 *minorv;     OUT: minorv versoin number
+    uint32 *minorv;     OUT: minorv version number
     uint32 *release;    OUT: release number
     char   string[];    OUT: informational text string (80 chars)
  RETURNS
@@ -2864,7 +2864,7 @@ Hgetlibversion(uint32 *majorv, uint32 *minorv, uint32 *releasev, char *string)
     intn Hgetfileversion(file_id, majorv, minorv, release, string)
     int32 file_id;      IN: handle of file
     uint32 *majorv;     OUT: majorv version number
-    uint32 *minorv;     OUT: minorv versoin number
+    uint32 *minorv;     OUT: minorv version number
     uint32 *release;    OUT: release number
     char *string;       OUT: informational text string (80 chars)
  RETURNS
@@ -4112,7 +4112,7 @@ done:
     or 0 if the element is not special element.
  DESCRIPTION
     Called internally by the GRIget_image_list to allow a chunked or
-    linked-block element to proceed eventhough its offset is 0.
+    linked-block element to proceed even though its offset is 0.
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
 
@@ -4152,7 +4152,7 @@ Hgetspecinfo(int32 file_id, uint16 tag, uint16 ref, sp_info_block_t *info)
         case SPECIAL_COMPRAS:
 	    /* special elt, call special function */
 	    status = (*access_rec->special_func->info) (access_rec, info);
-	    /* return FAIL if special function fails eventhough special type
+	    /* return FAIL if special function fails even though special type
 		was OK */
 	    if (status == FAIL) ret_value = FAIL;
             break;
@@ -4294,8 +4294,8 @@ DESCRIPTION
      do not change a particular file's paging behaviour after it has been
      opened or created. This maybe changed in a later release.
 
-     Use flags arguement of 'MP_PAGEALL' if the whole file is to be cached
-     in memory otherwise passs in zero.
+     Use flags argument of 'MP_PAGEALL' if the whole file is to be cached
+     in memory otherwise pass in zero.
 
 RETURNS
      Returns SUCCEED if successful and FAIL otherwise
@@ -4304,7 +4304,7 @@ NOTE
      This calls the real routine MPset().
      Currently 'maxcache' has to be greater than 1. Maybe use special
      case of 0 to specify you want to turn page buffering off or use
-     the flags arguement.
+     the flags argument.
 
 ******************************************************************************/
 int

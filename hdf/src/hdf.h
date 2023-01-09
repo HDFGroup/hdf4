@@ -28,7 +28,7 @@ typedef struct
 DFdi;
 
 /* For annotations */
-/* enumerated types of the varous annotation types */
+/* enumerated types of the various annotation types */
 typedef enum 
 { 
     AN_UNDEF = -1,
@@ -144,7 +144,7 @@ typedef intn (*hdf_termfunc_t)(void);   /* termination function typedef */
 
 /* .................................................................. */
 
-/* Publically accessible functions declarations.  This includes all the
+/* Publicly accessible functions declarations.  This includes all the
    functions that are used by application programs.  */
 
 #include "hbitio.h"
@@ -155,13 +155,13 @@ typedef intn (*hdf_termfunc_t)(void);   /* termination function typedef */
 #include "vg.h"         /* Add the Vgroup/Vdata header so the users don't have to */
 #include "mfgr.h"       /* Add the GR header so the users don't have to */
 
-/* these may eventaully evolve into real-life functions but not yet */
+/* these may eventually evolve into real-life functions but not yet */
 #define HDFopen(f,a,d)      Hopen((f), (a), (d))
 #define HDFclose(f)         Hclose((f))
 #define Vstart(f)           Vinitialize((f))
 #define Vend(f)             Vfinish((f))
 
-/* Misc. macros for backward compability */
+/* Misc. macros for backward compatibility */
 #define HDgettagname(tag)   HDgettagdesc(tag)
 
 /* This is also defined in fmpio.h */

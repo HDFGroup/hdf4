@@ -40,7 +40,7 @@ HEdisplay(HE_CMD * cmd)
                       printf("display [-position <xpos> <ypos>] [-expansion <exp>] [-large]\n");
                       printf("\t-position\tImage position on console screen\n");
                       printf("\t-expansion\tImage expansion factor\n");
-                      printf("\t-large\t\tMake image as large as posible\n");
+                      printf("\t-large\t\tMake image as large as possible\n");
                       return HE_OK;
                   case HE_POSITION:
                       center = 0;

@@ -246,16 +246,16 @@ struct Raster
 /*
  * state table tokens
  */
-#define FILNAME 0   /* filename */
-#define OPT_o   1   /* output filename */
-#define OPT_r   2   /* convert to image */
-#define OPT_e   3   /* expand image via pixel replication */
-#define OPT_i   4   /* make interpolated image */
-#define NUMBR   5   /* resolution of enlarged image */
-#define OPT_p   6   /* palette filename */
-#define OPT_f   7   /* convert to float (default) */
-#define OPT_h   8   /* request for explanation */
-#define OPT_m   9   /* mean to scale around */
+#define FILENAME 0   /* filename */
+#define OPT_o    1   /* output filename */
+#define OPT_r    2   /* convert to image */
+#define OPT_e    3   /* expand image via pixel replication */
+#define OPT_i    4   /* make interpolated image */
+#define NUMBR    5   /* resolution of enlarged image */
+#define OPT_p    6   /* palette filename */
+#define OPT_f    7   /* convert to float (default) */
+#define OPT_h    8   /* request for explanation */
+#define OPT_m    9   /* mean to scale around */
 #define ERR 20  /* invalid token */
 
 /*
@@ -265,7 +265,7 @@ static int  state_table[17][10] =
 {
 
     /* token ordering:
-       FILNAME      OPT_o   OPT_r   OPT_e   OPT_i   NUMBR   OPT_p   OPT_f
+       FILENAME     OPT_o   OPT_r   OPT_e   OPT_i   NUMBR   OPT_p   OPT_f
        OPT_h        OPT_m   */
 
     /* state 0: start */
@@ -1086,7 +1086,7 @@ gtoken(char *s)
     else if (isnum(s))  /* positive number */
         token = NUMBR;
     else    /* filename */
-        token = FILNAME;
+        token = FILENAME;
 
     return (token);
 }
@@ -1169,173 +1169,173 @@ void
 help(char *name)
 {
     (void) printf("Name:\n");
-    (void) printf("\t%s\n\n", name);
+    (void) printf("\t %s\n\n", name);
     (void) printf("Purpose:\n");
-    (void) printf("\tTo convert floating point data to HDF Scientific ");
+    (void) printf("\t To convert floating point data to HDF Scientific ");
     (void) printf("Data Set (SDS)\n");
-    (void) printf("\tand/or 8-bit Raster Image Set (RIS8) format, ");
+    (void) printf("\t and/or 8-bit Raster Image Set (RIS8) format, ");
     (void) printf("storing the results\n");
-    (void) printf("\tin an HDF file.  The image data can be scaled ");
+    (void) printf("\t in an HDF file.  The image data can be scaled ");
     (void) printf("about a mean value.\n\n");
     (void) printf("Version:\n");
-    (void) printf("\tv1.1 (Apr 30, 1990)\n\n");
+    (void) printf("\t v1.1 (Apr 30, 1990)\n\n");
     (void) printf("Synopsis:\n");
-    (void) printf("\t%s -h[elp], OR\n", name);
-    (void) printf("\t%s <infile> [<infile>...] -o[utfile] ", name);
+    (void) printf("\t %s -h[elp], OR\n", name);
+    (void) printf("\t %s <infile> [<infile>...] -o[utfile] ", name);
     (void) printf("<outfile>\n");
-    (void) printf("\t\t[-r[aster] [ras_opts ...]] [-f[loat]]\n\n");
-    (void) printf("\t-h[elp]:\n");
-    (void) printf("\t\tPrint a helpful summary of usage, and exit.\n\n");
-    (void) printf("\tinfile(s):\n");
-    (void) printf("\t\tInput file(s), containing a single ");
+    (void) printf("\t\t [-r[aster] [ras_opts ...]] [-f[loat]]\n\n");
+    (void) printf("\t -h[elp]:\n");
+    (void) printf("\t\t Print a helpful summary of usage, and exit.\n\n");
+    (void) printf("\t infile(s):\n");
+    (void) printf("\t\t Input file(s), containing a single ");
     (void) printf("two-dimensional or\n");
-    (void) printf("\t\tthree-dimensional floating point array in ");
+    (void) printf("\t\t three-dimensional floating point array in ");
     (void) printf("either ASCII\n");
-    (void) printf("\t\ttext, native floating point, or HDF SDS format.  ");
+    (void) printf("\t\t text, native floating point, or HDF SDS format.  ");
     (void) printf("If an\n");
-    (void) printf("\t\tHDF file is used for input, it must contain an ");
+    (void) printf("\t\t HDF file is used for input, it must contain an ");
     (void) printf("SDS.\n");
-    (void) printf("\t\tThe SDS need only contain a dimension record and ");
+    (void) printf("\t\t The SDS need only contain a dimension record and ");
     (void) printf("the\n");
-    (void) printf("\t\tdata, but if it also contains maximum and ");
+    (void) printf("\t\t data, but if it also contains maximum and ");
     (void) printf("minimum values\n");
-    (void) printf("\t\tand/or scales for each axis, these will be ");
+    (void) printf("\t\t and/or scales for each axis, these will be ");
     (void) printf("used.  If the\n");
-    (void) printf("\t\tinput format is ASCII text or native floating ");
+    (void) printf("\t\t input format is ASCII text or native floating ");
     (void) printf("point, see\n");
-    (void) printf("\t\t\"Notes\" below on how it must be organized.\n\n");
-    (void) printf("\t-o[utfile] <outfile>:\n");
-    (void) printf("\t\tData from one or more input files are stored as ");
+    (void) printf("\t\t \"Notes\" below on how it must be organized.\n\n");
+    (void) printf("\t -o[utfile] <outfile>:\n");
+    (void) printf("\t\t Data from one or more input files are stored as ");
     (void) printf("one or\n");
-    (void) printf("\t\tmore data sets and/or images in one HDF output ");
+    (void) printf("\t\t more data sets and/or images in one HDF output ");
     (void) printf("file,\n\t\t\"outfile\".\n\n");
-    (void) printf("\t-r[aster]:\n");
-    (void) printf("\t\tStore output as a raster image set in the ");
+    (void) printf("\t -r[aster]:\n");
+    (void) printf("\t\t Store output as a raster image set in the ");
     (void) printf("output file\n\n");
-    (void) printf("\t-f[loat]:\n");
-    (void) printf("\t\tStore output as a scientific data set in the ");
+    (void) printf("\t -f[loat]:\n");
+    (void) printf("\t\t Store output as a scientific data set in the ");
     (void) printf("the output file.\n");
-    (void) printf("\t\tThis is the default if the \"-r\" option is not ");
+    (void) printf("\t\t This is the default if the \"-r\" option is not ");
     (void) printf("specified.\n\n");
-    (void) printf("\tras_opts ...\n\n");
-    (void) printf("\t-e[xpand] <horiz> <vert> [<depth>]:\n");
-    (void) printf("\t\tExpand float data via pixel replication to ");
+    (void) printf("\t ras_opts ...\n\n");
+    (void) printf("\t -e[xpand] <horiz> <vert> [<depth>]:\n");
+    (void) printf("\t\t Expand float data via pixel replication to ");
     (void) printf("produce the\n");
-    (void) printf("\t\timage(s).  \"horiz\" and \"vert\" give the ");
+    (void) printf("\t\t image(s).  \"horiz\" and \"vert\" give the ");
     (void) printf("horizontal and\n");
-    (void) printf("\t\tvertical resolution of the image(s) to be ");
+    (void) printf("\t\t vertical resolution of the image(s) to be ");
     (void) printf("produced; and\n");
-    (void) printf("\t\toptionally, \"depth\" gives the number of ");
+    (void) printf("\t\t optionally, \"depth\" gives the number of ");
     (void) printf("images or depth\n");
-    (void) printf("\t\tplanes (for 3D input data).\n\n");
+    (void) printf("\t\t planes (for 3D input data).\n\n");
     (void) printf("\t-i[nterp] <horiz> <vert> [<depth>]:\n");
-    (void) printf("\t\tApply bilinear, or trilinear, interpolation to ");
+    (void) printf("\t\t Apply bilinear, or trilinear, interpolation to ");
     (void) printf("the float\n");
-    (void) printf("\t\tdata to produce the image(s).  \"horiz\", ");
+    (void) printf("\t\t data to produce the image(s).  \"horiz\", ");
     (void) printf("\"vert\", and \"depth\"\n");
-    (void) printf("\t\tmust be greater than or equal to the dimensions ");
+    (void) printf("\t\t must be greater than or equal to the dimensions ");
     (void) printf("of the\n");
-    (void) printf("\t\toriginal dataset.\n\n");
-    (void) printf("\t-p[alfile] <palfile>:\n");
-    (void) printf("\t\tStore the palette with the image.  Get the ");
+    (void) printf("\t\t original dataset.\n\n");
+    (void) printf("\t -p[alfile] <palfile>:\n");
+    (void) printf("\t\t Store the palette with the image.  Get the ");
     (void) printf("palette from\n");
-    (void) printf("\t\t\"palfile\"; which may be an HDF file containing ");
+    (void) printf("\t\t \"palfile\"; which may be an HDF file containing ");
     (void) printf("a palette,\n");
-    (void) printf("\t\tor a file containing a raw palette.\n\n");
-    (void) printf("\t-m[ean] <mean>:\n");
-    (void) printf("\t\tIf a floating point mean value is given, the ");
+    (void) printf("\t\t or a file containing a raw palette.\n\n");
+    (void) printf("\t -m[ean] <mean>:\n");
+    (void) printf("\t\t If a floating point mean value is given, the ");
     (void) printf("image will be\n");
-    (void) printf("\t\tscaled about the mean.  The new extremes ");
+    (void) printf("\t\t scaled about the mean.  The new extremes ");
     (void) printf("(newmax and newmin),\n");
-    (void) printf("\t\tas given by:\n\n");
+    (void) printf("\t\t as given by:\n\n");
     (void) printf("\t\t   newmax = mean + max(abs(max-mean), ");
     (void) printf("abs(mean-min))\n");
     (void) printf("\t\t   newmin = mean - max(abs(max-mean), ");
     (void) printf("abs(mean-min))\n\n");
-    (void) printf("\t\twill be equidistant from the mean value.  If ");
+    (void) printf("\t\t will be equidistant from the mean value.  If ");
     (void) printf("no mean value\n");
-    (void) printf("\t\tis given, then the mean will be:  0.5 * (max ");
+    (void) printf("\t\t is given, then the mean will be:  0.5 * (max ");
     (void) printf("+ min)\n\n");
     (void) printf("Notes:\n");
-    (void) printf("\tIf the input file format is ASCII text or native ");
+    (void) printf("\t If the input file format is ASCII text or native ");
     (void) printf("floating point, it\n");
-    (void) printf("\tmust have the following input fields:\n\n");
-    (void) printf("\t\tformat\n");
-    (void) printf("\t\tnplanes\n");
-    (void) printf("\t\tnrows\n");
-    (void) printf("\t\tncols\n");
-    (void) printf("\t\tmax_value\n");
-    (void) printf("\t\tmin_value\n");
-    (void) printf("\t\t[plane1 plane2 plane3 ...]\n");
-    (void) printf("\t\trow1 row2 row3 ...\n");
-    (void) printf("\t\tcol1 col2 col3 ...\n");
-    (void) printf("\t\tdata1 data2 data3 ...\n");
-    (void) printf("\t\t...\n\n");
-    (void) printf("\tWhere:\n");
-    (void) printf("\t\tformat:\n");
-    (void) printf("\t\t\tFormat designator (\"TEXT\", \"FP32\" or ");
+    (void) printf("\t must have the following input fields:\n\n");
+    (void) printf("\t\t format\n");
+    (void) printf("\t\t nplanes\n");
+    (void) printf("\t\t nrows\n");
+    (void) printf("\t\t ncols\n");
+    (void) printf("\t\t max_value\n");
+    (void) printf("\t\t min_value\n");
+    (void) printf("\t\t [plane1 plane2 plane3 ...]\n");
+    (void) printf("\t\t row1 row2 row3 ...\n");
+    (void) printf("\t\t col1 col2 col3 ...\n");
+    (void) printf("\t\t data1 data2 data3 ...\n");
+    (void) printf("\t\t ...\n\n");
+    (void) printf("\t Where:\n");
+    (void) printf("\t\t format:\n");
+    (void) printf("\t\t\t Format designator (\"TEXT\", \"FP32\" or ");
     (void) printf("\"FP64\").\n");
-    (void) printf("\t\tnplanes:\n");
-    (void) printf("\t\t\tDimension of the depth axis (\"1\" for 2D ");
+    (void) printf("\t\t nplanes:\n");
+    (void) printf("\t\t\t Dimension of the depth axis (\"1\" for 2D ");
     (void) printf("input).\n");
-    (void) printf("\t\tnrows:\n");
-    (void) printf("\t\t\tDimension of the vertical axis.\n");
-    (void) printf("\t\tncols:\n");
-    (void) printf("\t\t\tDimension of the horizontal axis.\n");
-    (void) printf("\t\tmax_value:\n");
-    (void) printf("\t\t\tMaximum data value.\n");
-    (void) printf("\t\tmin_value:\n");
-    (void) printf("\t\t\tMinimum data value.\n");
-    (void) printf("\t\tplane1, plane2, plane3, ...:\n");
-    (void) printf("\t\t\tScales for depth axis.\n");
-    (void) printf("\t\trow1, row2, row3, ...:\n");
-    (void) printf("\t\t\tScales for the vertical axis.\n");
-    (void) printf("\t\tcol1, col2, col3, ...:\n");
-    (void) printf("\t\t\tScales for the horizontal axis.\n");
-    (void) printf("\t\tdata1, data2, data3, ...:\n");
-    (void) printf("\t\t\tThe data ordered by rows, left to right and ");
+    (void) printf("\t\t nrows:\n");
+    (void) printf("\t\t\t Dimension of the vertical axis.\n");
+    (void) printf("\t\t ncols:\n");
+    (void) printf("\t\t\t Dimension of the horizontal axis.\n");
+    (void) printf("\t\t max_value:\n");
+    (void) printf("\t\t\t Maximum data value.\n");
+    (void) printf("\t\t min_value:\n");
+    (void) printf("\t\t\t Minimum data value.\n");
+    (void) printf("\t\t plane1, plane2, plane3, ...:\n");
+    (void) printf("\t\t\t Scales for depth axis.\n");
+    (void) printf("\t\t row1, row2, row3, ...:\n");
+    (void) printf("\t\t\t Scales for the vertical axis.\n");
+    (void) printf("\t\t col1, col2, col3, ...:\n");
+    (void) printf("\t\t\t Scales for the horizontal axis.\n");
+    (void) printf("\t\t data1, data2, data3, ...:\n");
+    (void) printf("\t\t\t The data ordered by rows, left to right and ");
     (void) printf("top\n");
-    (void) printf("\t\t\tto bottom; then optionally, ordered by planes,\n");
-    (void) printf("\t\t\tfront to back.\n\n");
-    (void) printf("\tFor FP32 and FP64 input format, \"format\", ");
+    (void) printf("\t\t\t to bottom; then optionally, ordered by planes,\n");
+    (void) printf("\t\t\t front to back.\n\n");
+    (void) printf("\t For FP32 and FP64 input format, \"format\", ");
     (void) printf("\"nplanes\", \"nrows\", \"ncols\",\n");
-    (void) printf("\tand \"nplanes\" are native integers; where ");
+    (void) printf("\t and \"nplanes\" are native integers; where ");
     (void) printf("\"format\" is the integer\n");
-    (void) printf("\trepresentation of the appropriate 4-character ");
+    (void) printf("\t representation of the appropriate 4-character ");
     (void) printf("string (0x46503332 for\n");
-    (void) printf("\t\"FP32\" and 0x46503634 for \"FP64\").  The ");
+    (void) printf("\t \"FP32\" and 0x46503634 for \"FP64\").  The ");
     (void) printf("remaining input fields are\n");
-    (void) printf("\tcomposed of native 32-bit floating point values for ");
+    (void) printf("\t composed of native 32-bit floating point values for ");
     (void) printf("FP32 input format,\n");
-    (void) printf("\tor native 64-bit floating point values for FP64 ");
+    (void) printf("\t or native 64-bit floating point values for FP64 ");
     (void) printf("input format.\n\n");
     (void) printf("Examples:\n");
-    (void) printf("\tConvert floating point data in \"f1.txt\" to SDS ");
+    (void) printf("\t Convert floating point data in \"f1.txt\" to SDS ");
     (void) printf("format, and store it\n");
-    (void) printf("\tas an SDS in HDF file \"o1\":\n\n");
-    (void) printf("\t\t%s f1.txt -o o1\n\n", name);
-    (void) printf("\tConvert floating point data in \"f2.hdf\" to ");
+    (void) printf("\t as an SDS in HDF file \"o1\":\n\n");
+    (void) printf("\t\t %s f1.txt -o o1\n\n", name);
+    (void) printf("\t Convert floating point data in \"f2.hdf\" to ");
     (void) printf("8-bit raster format, and\n");
-    (void) printf("\tstore it as an RIS8 in HDF file \"o2\":\n\n");
-    (void) printf("\t\t%s f2.hdf -o o2 -r\n\n", name);
-    (void) printf("\tConvert floating point data in \"f3.bin\" to ");
+    (void) printf("\t store it as an RIS8 in HDF file \"o2\":\n\n");
+    (void) printf("\t\t %s f2.hdf -o o2 -r\n\n", name);
+    (void) printf("\t Convert floating point data in \"f3.bin\" to ");
     (void) printf("8-bit raster format and\n");
-    (void) printf("\tSDS format, and store both the RIS8 and the SDS ");
+    (void) printf("\t SDS format, and store both the RIS8 and the SDS ");
     (void) printf("in HDF file \"o3\":\n\n");
-    (void) printf("\t\t%s f3.bin -o o3 -r -f\n\n", name);
-    (void) printf("\tConvert floating point data in \"f4\" to a ");
+    (void) printf("\t\t %s f3.bin -o o3 -r -f\n\n", name);
+    (void) printf("\t Convert floating point data in \"f4\" to a ");
     (void) printf("500x600 raster image, and\n");
-    (void) printf("\tstore the RIS8 in HDF file \"o4\".  Also store a ");
+    (void) printf("\t store the RIS8 in HDF file \"o4\".  Also store a ");
     (void) printf("palette from \"palfile\"\n");
-    (void) printf("\twith the image:\n\n");
-    (void) printf("\t\t%s f4 -o o4 -r -e 500 600 -p palfile\n\n", name);
-    (void) printf("\tConvert floating point data in \"f5\" to 200 ");
+    (void) printf("\t with the image:\n\n");
+    (void) printf("\t\t %s f4 -o o4 -r -e 500 600 -p palfile\n\n", name);
+    (void) printf("\t Convert floating point data in \"f5\" to 200 ");
     (void) printf("planes of 500x600 raster\n");
-    (void) printf("\timages, and store the RIS8 in HDF file \"o5\".  ");
+    (void) printf("\t images, and store the RIS8 in HDF file \"o5\".  ");
     (void) printf("Also scale the image\n");
-    (void) printf("\tdata so that it is centered about a mean value ");
+    (void) printf("\t data so that it is centered about a mean value ");
     (void) printf("of 10.0:\n\n");
-    (void) printf("\t\t%s f5 -o o5 -r -i 500 600 200 -m 10.0\n", name);
+    (void) printf("\t\t %s f5 -o o5 -r -i 500 600 200 -m 10.0\n", name);
 
     return;
 }

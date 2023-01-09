@@ -1022,7 +1022,7 @@ intn compare(const char *outstring, const char *instring)
   Description:
 	readnoHDF_char opens the file and reads in data at the specified
 	offset.  The read data is compared against the original data passed
-	by caller.  If any mis-match occurs, an error message will be
+	by caller.  If any mismatch occurs, an error message will be
 	displayed but the process will continue.
 
   Parameters:

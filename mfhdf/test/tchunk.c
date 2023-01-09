@@ -123,7 +123,7 @@ static uint8  chunk5_u8[4] = { 110, 111, 112, 113};
 
 static uint8  chunk6_u8[4] = { 120, 121, 122, 123};
 
-/* data arrays layed out in memory  */
+/* data arrays laid out in memory  */
 /* for comparison */
 static float32  f32_data[2][3][4] =
 {
@@ -483,7 +483,7 @@ test_chunk()
     CHECK(status, FAIL, "Chunk Test 2. SDendaccess");
 
     /*
-     * Next 3 differnet number types are tested with 3-D arrays
+     * Next 3 different number types are tested with 3-D arrays
      */
   test3:
     /*

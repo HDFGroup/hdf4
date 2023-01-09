@@ -21,7 +21,7 @@ REMARKS
     a variable number of items are needed to be kept track of without the
     additional overhead of a threaded binary tree.  The linked list can be
     either sorted or un-sorted, chosen at creation time.  The interface allows
-    objects (void *'s currently) to be stored and searched and interated
+    objects (void *'s currently) to be stored and searched and iterated
     through in a fairly easy manner
 
 DESIGN
@@ -274,7 +274,7 @@ done:
 
  DESCRIPTION
     Returns the first object in a linked-list and prepares the list for
-    interating through.
+    iterating through.
 
  RETURNS
     Returns a pointer to the first object found in the list, or NULL on failure.

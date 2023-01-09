@@ -372,7 +372,7 @@ drig(dump_info_t *dumprig_opts,
 
                       rig_ref = DFGRIlastref();	/* Determine the reference of the image just read. */
 
-                      /* If the user has specificed the reference option, then 
+                      /* If the user has specified the reference option, then 
                          something has to be done. 
                          Note: the reason why the following part was not done  
                          inside the above "switch" statement is that the reference 
@@ -434,15 +434,15 @@ drig(dump_info_t *dumprig_opts,
                                         fprintf(fp, "RLE compression scheme.\n");
                                         break;
                                     case DFTAG_IMCOMP:
-                                        fprintf(fp, "IMCOMP conmpression scheme.\n");
+                                        fprintf(fp, "IMCOMP compression scheme.\n");
                                         break;
                                     case DFTAG_JPEG:
                                     case DFTAG_JPEG5:
-                                        fprintf(fp, "JPEG conmpression scheme (24-bit data.)\n");
+                                        fprintf(fp, "JPEG compression scheme (24-bit data.)\n");
                                         break;
                                     case DFTAG_GREYJPEG:
                                     case DFTAG_GREYJPEG5:
-                                        fprintf(fp, "JPEG conmpression scheme (8-bit data.)\n");
+                                        fprintf(fp, "JPEG compression scheme (8-bit data.)\n");
                                         break;
                                     default:
                                         fprintf(fp, "unknown scheme.");
@@ -575,7 +575,7 @@ drig(dump_info_t *dumprig_opts,
 
                       rig_ref = DFGRIlastref();	/* Determine the reference of the image just read. */
 
-                      /* If the user has specificed the reference option, then 
+                      /* If the user has specified the reference option, then 
                          something has to be done. 
                          Note: the reason why the following part was not done  
                          inside the above "switch" statement is that the reference 

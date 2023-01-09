@@ -57,7 +57,7 @@ char *argc[];
 
 	if (!(fpGif = fopen(GIFFileName,"rb"))) {
 		printf("Unable to open GIF file for reading.\n");
-		printf("Filename (including path) must be less than %d charachters in length\n",VSNAMELENMAX);
+		printf("Filename (including path) must be less than %d characters in length\n",VSNAMELENMAX);
 		exit(-1);
 	}
 

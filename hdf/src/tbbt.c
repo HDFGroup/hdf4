@@ -297,7 +297,7 @@ tbbtindx(TBBT_NODE * root, int32 indx)
   return (ptr);
 }
 
-/* swapkid -- Often refered to as "rotating" nodes.  ptr and ptr's `side'
+/* swapkid -- Often referred to as "rotating" nodes.  ptr and ptr's `side'
  * child, kid, are swapped so ptr becomes kid's `Other(side)' child.
  * Here is how a single swap (rotate) works:
  *
@@ -652,7 +652,7 @@ tbbtrem(TBBT_NODE ** root, TBBT_NODE * node, VOIDP *kp)
      * been handled completely above and Case 2x has been transformed into
      * Case 2).  `leaf' is a node with one or zero children that we are going
      * to remove.  `next' points where the `side' thread of `leaf' points.
-     * `par' is the parent of `leaf'.  The only posibilities (not counting
+     * `par' is the parent of `leaf'.  The only possibilities (not counting
      * left/right reversals) are shown below:
      *       [Case 1]                  [Case 2]              [Case 2x]
      *            (next)                 (next)         ^         (next & par)
