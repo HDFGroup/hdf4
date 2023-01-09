@@ -167,7 +167,7 @@ nstrncpy (target, source, maxlen)
 }
 #endif
 
-/* copy function used to copy strings with embeded blanks and
+/* copy function used to copy strings with embedded blanks and
    terminated with blanks */
 static void
 nstrncpy (target, source, maxlen)

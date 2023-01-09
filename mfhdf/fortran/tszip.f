@@ -56,7 +56,7 @@ C
          parameter (n_part_stride = 1, m_part_stride = 1)
          parameter (n_part_start = 2, m_part_start = 1)
 C
-C  Sart, stride  and edges parameters in each dimension
+C  Start, stride  and edges parameters in each dimension
 C
          parameter (n_start = 0, m_start = 0)
          parameter (n_stride = 1, m_stride = 1)

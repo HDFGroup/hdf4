@@ -287,7 +287,7 @@ C----------------------------------------------------------------------
 
 C----------------------------------------------------------------------
 C Name:     sfsattr
-C Purpose:  for backward compatability. Calls scsattr to
+C Purpose:  for backward compatibility. Calls scsattr to
 C           create (or modify an existing) attribute
 C Inputs:   id: id of object to attribute-ize
 C Outputs:  name, nt, count, data
