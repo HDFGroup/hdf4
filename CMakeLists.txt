@@ -5,6 +5,17 @@ if (POLICY CMP0074)
   cmake_policy (SET CMP0074 NEW)
 endif ()
 
+if (POLICY CMP0083)
+  # To control generation of Position Independent Executable (PIE) or not,
+  # some flags are required at link time.
+  cmake_policy (SET CMP0083 NEW)
+endif ()
+
+# Avoid warning about DOWNLOAD_EXTRACT_TIMESTAMP in CMake 3.24:
+if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.24.0")
+    cmake_policy(SET CMP0135 NEW)
+endif()
+
 #-----------------------------------------------------------------------------
 # Instructions for use : Normal Build
 #
