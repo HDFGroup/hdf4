@@ -841,7 +841,7 @@ done:
 /* ------------------------------ HXPinquire ------------------------------ */
 /*
 NAME
-   HXPinquire -- retreive information about an external element
+   HXPinquire -- retrieve information about an external element
 USAGE
    int32 HXPinquire(access_rec, file, tag, ref, len, off, pos, acc, sp)
    access_t * access_rec;      IN:  access record to return info about

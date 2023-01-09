@@ -42,7 +42,7 @@
 *                                 2       2      1
 *
 *      o To make version number accessible without parsing the
-*           variable length of new feature list, a dublicated
+*           variable length of new feature list, a duplicated
 *           version number and 3 bytes (the 'more' and the extra
 *           byte) will be added at the end of the VH. See below.
 *           The new code (version 4 or later) will get the
@@ -198,7 +198,7 @@ RETURNS
       Returns SUCCEED if successful;
               FAIL otherwise.
 DESCRIPTION
-      This routine searchs field names only. It doesn't
+      This routine searches field names only. It doesn't
       search the vdata name.  Use VSinquire() or VSgetname()
       to find vdata name.
 ---------------------------------------------------- */
@@ -259,7 +259,7 @@ USAGE
    intn VSsetattr(int32 vsid, int32 findex, char *attrname,
                  int32 datatype, int32 count, void * values)
    int32 vsid;     IN: vdata access id
-   int32 findex; IN: number determined by assinging each field
+   int32 findex; IN: number determined by assigning each field
                        in a record a number starting with 0;
                        _HDF_VDATA (-1) represents the entire vdata.
    const char *attrname;   IN: name of the attribute
@@ -395,7 +395,7 @@ RETURNS
    and its fields when successful, FAIL otherwise.
 DESCRIPTION
    Use VSfnattrs to get number of attributes for a field
-   or for the vdata ifself.
+   or for the vdata itself.
 --------------------------------------------------------  */
 intn VSnattrs(int32 vsid)
 {
@@ -438,7 +438,7 @@ RETURNS
    the specified field when successful, FAIL otherwise.
 DESCRIPTION
    Use VSnattrs to get total number of attributes for all
-   fields and the vdata ifself.
+   fields and the vdata itself.
 --------------------------------------------------------  */
 intn VSfnattrs(int32 vsid, int32 findex)
 {

@@ -31,7 +31,7 @@ BUGS/LIMITATIONS
     of the dynarray can get quite excessive in proportion to the # of elements
     used if the elements used are "sparse" in the dynarray space.
 
-    These are strictly useable from C, adding a FORTRAN calling facility would
+    These are strictly usable from C, adding a FORTRAN calling facility would
     require some re-working of the routines.
 
 LOCAL ROUTINES

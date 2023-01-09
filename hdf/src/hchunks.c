@@ -95,7 +95,7 @@
 ...| fill_val_num_bytes | fill value......  |   ...(optional cont'd)
    ------------------------------------------
 
-          Optinal number of these depending on multiple 'specialness'
+          Optimal number of these depending on multiple 'specialness'
           set in 'flag' field.
 
    <- 2 byte   -> <-      4 bytes  -> <- variable bytes -> (6 + variable bytes)
@@ -110,7 +110,7 @@
    sp_tag_head_len - length of this special element header only.(4 bytes)
                      Does not include length of header with additional
                      'specialness' headers.
-                     NOTE: This is done to make this header layout similiar to the
+                     NOTE: This is done to make this header layout similar to the
                            multiple 'specialiness' layout.
    version        - version info (8 bit field)
    flag           - bit field to set additional specialness  (32 bit field)
@@ -464,7 +464,7 @@ compute_chunk_to_seek(int32 *chunk_seek, /* OUT: new physical chunk seek pos in 
     printf("ccs:   calculated seek position in file is %d\n", new_seek);
 #endif
 
-    /* multiply by number type size to get new physical seek positon */
+    /* multiply by number type size to get new physical seek position */
     *chunk_seek = new_seek * nt_size;
 
 } /* compute_chunk_to_seek() */
@@ -674,7 +674,7 @@ compute_array_to_seek(int32 *user_seek,      /* OUT: user seek */
             }
       }
 
-    /* multiply by number type size to get new physical user seek positon */
+    /* multiply by number type size to get new physical user seek position */
     *user_seek = *user_seek * nt_size;
 
 } /* compute_array_to_seek() */
@@ -711,7 +711,7 @@ calculate_seek_in_chunk(int32 *chunk_seek,/* OUT: new physical seek pos in eleme
             }
       }
 
-    /* multiply by number type size to get new physical seek positon */
+    /* multiply by number type size to get new physical seek position */
     *chunk_seek = *chunk_seek * nt_size;
 
 } /* calculate_seek_in_chunk() */
@@ -902,7 +902,7 @@ chkdestroynode(void * n /* IN: chunk record */ )
 
     if (t != NULL)
       {
-          /* free orgin first */
+          /* free origin first */
           if (t->origin != NULL)
               HDfree(t->origin);
 
@@ -1096,7 +1096,7 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
           if (info->sp_tag_header_len < 0 || info->sp_tag_header_len > 256)
               HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-#if 0 /* dynamic alocation causes a problem on HPUX, removed for now -GV */
+#if 0 /* dynamic allocation causes a problem on HPUX, removed for now -GV */
           /* Allocate buffer space for rest of special header */
           if (( c_sp_header = (uint8 *) HDcalloc(info->sp_tag_header_len,1))==NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -1185,7 +1185,7 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
             {
                 uint16     sp_tag;
 
-                /* first read specail tag header length which is 2+4 bytes */
+                /* first read special tag header length which is 2+4 bytes */
                 if (Hread(dd_aid, 6, local_ptbuf) == FAIL)
                     HGOTO_ERROR(DFE_READERROR, FAIL);
 
@@ -1396,7 +1396,7 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
           access_rec->special_info = (chunkinfo_t *) info;
       } /* end else need to get special info */
 
-    /* access to data elments is done on a per chunk basis which
+    /* access to data elements is done on a per chunk basis which
        can only be done in the read/write routines
        i.e. the cache pagin/pageout routines....*/
 
@@ -1451,8 +1451,8 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
       } /* end if */
 
     /* Normal function cleanup */
-#if 0 /* dynamic alocation causes a problem on HPUX, removed for now -GV */
-    /* free specail element header */
+#if 0 /* dynamic allocation causes a problem on HPUX, removed for now -GV */
+    /* free special element header */
     if (c_sp_header != NULL)
         HDfree(c_sp_header);
 #endif
@@ -1477,7 +1477,7 @@ DESCRIPTION
    All of the pieces of the chunked element are the same size from
    the stand point of the element. If compression is used then
    each chunk is compressed and the compression layer takes
-   care of it as the chunk layer sees each chunks as a seperate
+   care of it as the chunk layer sees each chunks as a separate
    HDF object(DFTAG_CHUNK). The proper compression special header
    needs to be passed to the compression layer.
 
@@ -1548,7 +1548,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
     if (!(file_rec->access & DFACC_WRITE))
         HGOTO_ERROR(DFE_DENIED, FAIL);
 
-    /* check if we are accidently passwed a special tag already */
+    /* check if we are accidentally passwed a special tag already */
     if(SPECIALTAG(tag)
        || (special_tag = MKSPECIALTAG(tag)) == DFTAG_NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -1592,7 +1592,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
 
     info->attached     = 1;
     info->aid          = FAIL;
-    info->version      = _HDF_CHK_HDR_VER ;     /* verson 1 for now */
+    info->version      = _HDF_CHK_HDR_VER ;     /* version 1 for now */
     info->flag         = chk_array->chunk_flag; /* SPECIAL_COMP ? */
     info->cinfo        = NULL;
     info->minfo        = NULL;
@@ -1814,7 +1814,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
     /* Calculate length of this special element header itself.
        Note the value of 'sp_tag_head_len' in the file is the
        total length of this special object header - 6 bytes.
-       beacuse the length of the fields 'sp_tag_desc'(2 bytes) and
+       because the length of the fields 'sp_tag_desc'(2 bytes) and
        'sp_tag_head_len' (4 bytes) which are not included
        If also multiply special need to subtract another 6 byts plus
        length for multiply specialness headers */
@@ -1828,7 +1828,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
           break;
       }
 
-    /* encode info into chunked descripton record */
+    /* encode info into chunked description record */
     {
         uint8      *p = c_sp_header;
         intn        j;
@@ -1990,7 +1990,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
                     HDfree(info->cinfo);
                 if (info->minfo != NULL)
                     HDfree(info->minfo);
-                HDfree(info); /* free spcial info last */
+                HDfree(info); /* free special info last */
             }
 
           /* free access record */
@@ -2205,7 +2205,7 @@ RETURNS
 REVISION LOG
      March 2009: Added during hmap project. -BMR
      August 2010: Modified according to revised SDgetdatainfo -BMR
-     Sept 2010: Mofified to handle chunk with comp and linked-blocks -BMR
+     Sept 2010: Modified to handle chunk with comp and linked-blocks -BMR
      March 2011: Added an "else" to flag as an error if the chunk has additional
 	specialness other than compression, just in case if there is. -BMR
 
@@ -2418,7 +2418,7 @@ NAME
      HMCgetdatasize - get data sizes of the chunked element
 
 DESCRIPTION
-     This routine was intented to be used by HCPgetdatasize for the chunked
+     This routine was intended to be used by HCPgetdatasize for the chunked
      element part.
 
      HMCgetdatasize proceeds as followed:
@@ -2682,8 +2682,8 @@ DESCRIPTION
      new 'maxcache' value only if the new 'maxcache' value is greater than the
      current number of chunks in the cache.
 
-     Use flags arguement of 'HMC_PAGEALL' if the whole object is to be cached
-     in memory otherwise passs in zero.
+     Use flags argument of 'HMC_PAGEALL' if the whole object is to be cached
+     in memory otherwise pass in zero.
 
 RETURNS
      Returns number of 'maxcache' if successful and FAIL otherwise
@@ -3223,7 +3223,7 @@ HMCPread(accrec_t * access_rec, /* IN: access record to mess with */
     read_len = length;
     while (bytes_read < read_len)
       {
-          /* for debuging */
+          /* for debugging */
 #ifdef CHK_DEBUG_3
 	  int i;
           printf(" Seek start(in chunk array):(");
@@ -3361,7 +3361,7 @@ HMCPchunkwrite(void  *cookie,    /* IN: access record to mess with */
     uint8       *v_data  = NULL;  /* chunk table record i.e Vdata record */
     CHUNK_REC   *chkptr  = NULL;  /* Chunk record to inserted in TBBT  */
     const void  *bptr    = NULL;  /* data buffer pointer */
-    int32       chk_id   = FAIL ; /* chunkd accces id */
+    int32       chk_id   = FAIL ; /* chunkd access id */
 #ifdef UNUSED
     uint8      *data     = NULL;  /* data buffer */
     int32       relative_posn;     /* relative position in chunked element */
@@ -3531,7 +3531,7 @@ HMCwriteChunk(int32 access_id,  /* IN: access aid to mess with */
     filerec_t   *file_rec   = NULL; /* file record */
     chunkinfo_t *info       = NULL; /* chunked element information record */
     CHUNK_REC   *chkptr     = NULL; /* Chunk record to inserted in TBBT  */
-    int32       *chk_key    = NULL; /* Chunk recored key for insertion in TBBT */
+    int32       *chk_key    = NULL; /* Chunk record key for insertion in TBBT */
     const void  *bptr       = NULL; /* data buffer pointer */
     void        *chk_data   = NULL; /* chunk data */
     uint8       *chk_dptr   = NULL; /* chunk data pointer */
@@ -3774,7 +3774,7 @@ HMCPwrite(accrec_t * access_rec, /* IN: access record to mess with */
     TBBT_NODE   *entry    = NULL; /* node off of  chunk tree */
 #endif /* UNUSED */
     CHUNK_REC   *chkptr   = NULL; /* Chunk record to inserted in TBBT  */
-    int32       *chk_key  = NULL; /* Chunk recored key for insertion in TBBT */
+    int32       *chk_key  = NULL; /* Chunk record key for insertion in TBBT */
     const uint8 *bptr     = NULL; /* data buffer pointer */
     void        *chk_data = NULL; /* chunk data */
     uint8       *chk_dptr = NULL; /* chunk data pointer */
@@ -3822,7 +3822,7 @@ HMCPwrite(accrec_t * access_rec, /* IN: access record to mess with */
     bptr = datap;
     while (bytes_written < write_len)
       {
-          /* for debuging */
+          /* for debugging */
 #ifdef CHK_DEBUG_4
           printf("Seek start(in chunk array):(");
           for (i = 0; i < info->ndims; i++)
@@ -4180,7 +4180,7 @@ AUTHOR
    -GeorgeV - 9/3/96
 --------------------------------------------------------------------------- */
 int32
-HMCPinfo(accrec_t *access_rec,       /* IN: access record of access elemement */
+HMCPinfo(accrec_t *access_rec,       /* IN: access record of access element */
          sp_info_block_t *info_chunk /* OUT: information about the special element */)
 {
     CONSTR(FUNC, "HMCPinfo");       /* for HERROR */
