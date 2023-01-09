@@ -782,7 +782,7 @@ int insert_vg_attrs(int32 vg_in,
 /*-------------------------------------------------------------------------
  * Function: hdiff_list_glb
  *
- * Purpose: list/insert global SDS attributes, global GR atrributes
+ * Purpose: list/insert global SDS attributes, global GR attributes
  *
  *-------------------------------------------------------------------------
  */
