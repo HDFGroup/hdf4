@@ -28,7 +28,7 @@ int list_main(const char* infname, const char* outfname, options_t *options);
  * Purpose: locate all high-level HDF objects in the file 
  *  and compress/chunk them using options
  *
- * Algorythm: 2 traversals are made to the file; the 1st builds a list of
+ * Algorithm: 2 traversals are made to the file; the 1st builds a list of
  *  the high-level objects, the 2nd makes a copy of them, using the options;
  *  the reason for the 1st traversal is to check for invalid object name requests
  *
@@ -399,7 +399,7 @@ int read_info(const char *filename,
         */
         if (HDstrcmp(stype,"-t") == 0) {
             
-            /* find begining of info */
+            /* find beginning of info */
             i=0; c='0';
             while( c!='"' )
             {
@@ -424,7 +424,7 @@ int read_info(const char *filename,
         */
         else if (HDstrcmp(stype,"-c") == 0) {
             
-            /* find begining of info */
+            /* find beginning of info */
             i=0; c='0';
             while( c!='"' )
             {

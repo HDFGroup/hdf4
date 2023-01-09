@@ -2165,7 +2165,7 @@ int add_file_an(int32 file_id)
         return FAIL;
     }
     
-    /* Teminate access to the vgroup and to the V interface */
+    /* Terminate access to the vgroup and to the V interface */
     if (Vdetach (vgroup_id)==FAIL)
     {
         printf( "Could not detach VG\n");

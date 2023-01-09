@@ -462,7 +462,7 @@ static int gen_dim(char* name,              /* name of SDS */
         
         
        /*-------------------------------------------------------------------------
-        * check for maximum number of chunks treshold
+        * check for maximum number of chunks threshold
         *-------------------------------------------------------------------------
         */
         if ( options->trip>0 ) 

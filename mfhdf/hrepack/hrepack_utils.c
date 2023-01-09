@@ -389,7 +389,7 @@ int  options_get_info(options_t      *options,     /* global options */
         *comp_type   = options->comp_g.type;
         *info        = options->comp_g.info;
         *szip_mode   = options->comp_g.szip_mode;
-        /* check if we can aplly CHUNK */
+        /* check if we can apply CHUNK */
         if (options->chunk_g.rank==rank)
         {
             *chunk_flags              = HDF_CHUNK | HDF_COMP;
