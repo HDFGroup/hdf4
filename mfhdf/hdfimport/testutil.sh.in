@@ -85,7 +85,7 @@ $TESTCMD $srcdir/SDSfloat3.hdf -o SDSfloat3.out
 ($HDFLS -l cb64r2_ris.hdf | $SED) >> hdfls.tmp5 2>&1
 
 # run hdfls on SDSfloat*.out, and remove the library version from the
-# output for later checking agains original output - BMR (2006/9/7)
+# output for later checking against original output - BMR (2006/9/7)
 ($HDFLS SDSfloat2.out | $SED) >> hdffiles.tmp 2>&1
 ($HDFLS SDSfloat3.out | $SED) >> hdffiles.tmp 2>&1
 

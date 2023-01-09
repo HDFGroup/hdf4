@@ -11,5 +11,5 @@ jobs:
       - uses: actions/checkout@v3
       - uses: codespell-project/actions-codespell@master
         with:
-          skip: ./hdf/util/testfiles/*.raw,./hdf/util/testfiles/head.r8,./mfhdf/ncdump/*,./mfhdf/ncgen/*,./mfhdf/nctest/*,./mfhdf/xdr/*,./mfhdf/README
+          skip: ./hdf/util/testfiles/*.raw,./hdf/util/testfiles/head.r8,./mfhdf/ncdump/*,./mfhdf/ncgen/*,./mfhdf/nctest/*,./mfhdf/xdr/*,./mfhdf/README,./mfhdf/THANKS,./mfhdf/FAQ,./mfhdf/MacProjects/*
           ignore_words_list: acount,anid,ans,clude,isnt,fo,msdos,nam,nd,pres,siz,vlone
