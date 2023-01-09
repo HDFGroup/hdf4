@@ -473,7 +473,7 @@ void printHeader(
       fprintf(fp, "   name = %s;", curr_vd->name);
 
    /* print class name - Note that vdclass can be NULL */
-   if( curr_vd->clss[0] == '\0' || curr_vd->clss == NULL )
+   if( curr_vd->clss[0] == '\0')
       fprintf(fp, " class = <Undefined>;\n");
    else
       fprintf(fp, " class = %s;\n", curr_vd->clss);
