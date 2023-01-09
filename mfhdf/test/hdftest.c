@@ -59,7 +59,7 @@ extern int test_SDSprops();
 extern int test_coordvar();
 extern int test_chunk();
 extern int test_compression();
-extern int test_dimension();
+extern int test_dimensions();
 extern int test_attributes();
 extern int test_datasizes();
 extern int test_datainfo();
