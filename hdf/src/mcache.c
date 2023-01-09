@@ -30,9 +30,9 @@
 /*****************************************************************************
  * File: mcache.c
  *
- * This is a modfied version of the original Berkley code for
+ * This is a modified version of the original Berkeley code for
  * manipulating a memory pool. This version however is not
- * compatible with the original Berkley version.
+ * compatible with the original Berkeley version.
  *
  * NOTE: references to pages here is the same as chunks
  *
@@ -58,7 +58,7 @@
 
 #define	__MCACHEINTERFACE_PRIVATE
 #include "hdf.h"     /* number types ..etc */
-#include "hqueue.h"  /* Circluar queue functions(Macros) */
+#include "hqueue.h"  /* Circular queue functions(Macros) */
 #include "mcache.h"
 
 #if defined(hpux) || defined(__hpux) || defined(__hpux__)
@@ -237,7 +237,7 @@ mcache_open(
           lp->pgno   = (int32)pageno;     /* set page number */
 
           /* check if object exists already
-             The usefullness of this flag is yet to be
+             The usefulness of this flag is yet to be
              determined. Currently '0' should be used */
           if (flags == 0)
               lp->eflags = (uint8)ELEM_SYNC; /* valid page exists on disk */
@@ -333,7 +333,7 @@ DESCRIPTION
     we need to create a new page. All returned pages are pinned.
 
 RETURNS
-   The specifed page if successful and NULL otherwise
+   The specified page if successful and NULL otherwise
 ******************************************************************************/
 VOID *
 mcache_get(
@@ -365,7 +365,7 @@ mcache_get(
     /* Check for attempting to retrieve a non-existent page.
      *  remember pages go from 1 ->npages  */
     if (pgno > mp->npages)
-        HE_REPORT_GOTO("attempting to get a non existant page from cache", FAIL);
+        HE_REPORT_GOTO("attempting to get a non-existent page from cache", FAIL);
 
 #ifdef STATISTICS
     ++mp->pageget;
@@ -454,12 +454,12 @@ mcache_get(
 #endif
           CIRCLEQ_INSERT_HEAD(lhead, lp, hl); /* add to list */
 #ifdef MCACHE_DEBUG
-          (VOID)fprintf(stderr,"mcache_get: skiping reading in page=%u\n",pgno);
+          (VOID)fprintf(stderr,"mcache_get: skipping reading in page=%u\n",pgno);
 #endif
       } /*end if !list_hit */
     else
       { /* list hit, need to read page */
-          lp->eflags = ELEM_READ; /* Indiate we are reading this page */
+          lp->eflags = ELEM_READ; /* Indicate we are reading this page */
 
 #ifdef STATISTICS
           ++mp->pageread;
@@ -789,7 +789,7 @@ mcache_bkt(
     }
   /* Normal cleanup */
 
-  return (bp); /* return only the pagesize fragement */
+  return (bp); /* return only the pagesize fragment */
 } /* mcache_bkt() */
 
 /******************************************************************************
@@ -842,7 +842,7 @@ mcache_write(
 
     /* Run page through the user's filter.
        we use this to write the data chunk/page out.
-       This deviates from the orignal purpose of the filter. */
+       This deviates from the original purpose of the filter. */
     if (mp->pgout)
       { /* Note page numbers in HMCPxxx are 0 based not 1 based */
           if (((mp->pgout)(mp->pgcookie, bp->pgno - 1, bp->page)) == FAIL)
@@ -894,7 +894,7 @@ DESCRIPTION
    Private routine. Lookup a page in the cache and return pointer to it.
 
 RETURNS
-   Page if successful and NULL othewise.
+   Page if successful and NULL otherwise.
 ******************************************************************************/
 static BKT *
 mcache_look(
@@ -912,7 +912,7 @@ mcache_look(
 
     /* Check for attempt to look up a non-existent page. */
     if (pgno > mp->npages)
-        HE_REPORT_GOTO("attempting to get a non existant page from cache", FAIL);
+        HE_REPORT_GOTO("attempting to get a nonexistent page from cache", FAIL);
 
     /* search through hash chain */
     head = &mp->hqh[HASHKEY(pgno)];
@@ -1007,7 +1007,7 @@ mcache_stat(
       {
           (VOID)fprintf(stderr, "%u pages in the object\n", mp->npages);
           (VOID)fprintf(stderr,
-                        "page size %u, cacheing %u pages of %u page max cache\n",
+                        "page size %u, caching %u pages of %u page max cache\n",
                         mp->pagesize, mp->curcache, mp->maxcache);
           (VOID)fprintf(stderr, "%u page puts, %u page gets, %u page new\n",
                         mp->pageput, mp->pageget, mp->pagenew);

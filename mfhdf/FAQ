@@ -58,7 +58,7 @@ A:  NetCDF (network Common Data Form) is an interface for scientific data
       The structure of a netCDF dataset can be changed, though this
       sometimes causes the dataset to be copied.
 
-    - Sharable.  One writer and multiple readers may simultaneously access
+    - Shareable.  One writer and multiple readers may simultaneously access
       the same netCDF file.
 
 2:  How do I get the netCDF software package?
@@ -483,7 +483,7 @@ A:  The netcdfgroup and netcdfdigest mailing lists have 290 addresses (some
 
     The US Geological Survey's Branch of Atlantic Marine Geology uses netCDF
     to access a variety of scientific data sets, including output from
-    circulation and sediment tranport models, sonar imagery, digital
+    circulation and sediment transport models, sonar imagery, digital
     elevation models, and environmental sensor data.  It is currently
     investigating the utility of using netCDF for data distribution on
     CDROM.

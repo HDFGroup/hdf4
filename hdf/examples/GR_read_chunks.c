@@ -18,7 +18,7 @@ int main( )
          start[2],       /* start position to read the image array */
          edges[2],       /* edges of read array */
          interlace_mode; /* interlace mode of the image */ 
-   HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
+   HDF_CHUNK_DEF chunk_def;     /* Chunk definition set */ 
    int32 image_data[X_LENGTH][Y_LENGTH][NCOMPS];
    int ii, jj;
 

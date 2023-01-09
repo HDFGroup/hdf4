@@ -27,7 +27,7 @@
 
  Remarks:
     These files used to be in dfconv.c, but it got a little too huge,
-    so I broke them out into seperate files. - Q
+    so I broke them out into separate files. - Q
 
  *------------------------------------------------------------------*/
 

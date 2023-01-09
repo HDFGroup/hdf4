@@ -142,7 +142,7 @@ VOIDP HULsearch_node(list_head_t *lst,  /* IN: list to search */
 
  DESCRIPTION
     Returns the first object in a linked-list and prepares the list for
-    interating through.
+    iterating through.
 
  RETURNS
     Returns a pointer to the first object found in the list, or NULL on failure.

@@ -31,9 +31,9 @@
 /*****************************************************************************
  * File: mcache.h
  *
- * This is a modfied version of the original Berkley code for
+ * This is a modified version of the original Berkeley code for
  * manipulating a memory pool. This version however is not
- * compatible with the original Berkley version.
+ * compatible with the original Berkeley version.
  *
  * This version uses HDF number types.
  *
@@ -53,7 +53,7 @@
 #define _MCACHE_H
 
 /* Required include */
-#include "hqueue.h"    /* Circluar queue functions(Macros) */
+#include "hqueue.h"    /* Circular queue functions(Macros) */
 
 #include "H4api_adpt.h"
 

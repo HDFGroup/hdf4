@@ -55,7 +55,7 @@
 
 /* Public structures */
 
-/* Structure for each Data array dimension Defintion */
+/* Structure for each Data array dimension Definition */
 typedef struct dim_def_struct {
     int32 dim_length;          /* length of this dimension */
     int32 chunk_length;        /* chunk length along this dimension */
@@ -77,7 +77,7 @@ typedef struct hchunk_def_struct {
     model_info *minfo;        /* Compression model info struct */
 }HCHUNK_DEF, * HCHUNK_DEF_PTR;
 
-/* Private structues */
+/* Private structures */
 #ifdef _HCHUNKS_MAIN_
 /* Private to 'hchunks.c' */
 
@@ -267,7 +267,7 @@ extern      "C"
         (accrec_t *access_rec /* IN:  access record to close */);
 
     extern int32 HMCPinfo
-        (accrec_t *access_rec,       /* IN: access record of access elemement */
+        (accrec_t *access_rec,       /* IN: access record of access element */
          sp_info_block_t *info_chunk /* OUT: information about the special element */);
 
     extern int32 HMCPinquire
@@ -304,7 +304,7 @@ funclist_t  chunked_funcs =
     HMCPwrite,
     HMCPendaccess,
     HMCPinfo,
-    NULL         /* no routine registerd */
+    NULL         /* no routine registered */
 };
 
 #endif

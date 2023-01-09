@@ -19,11 +19,11 @@ static char mrcsid[] = "Id: cdftest.c,v 1.11 1994/01/10 23:07:27 chouck Exp ";
 /*
  *	 Program to create a cdf, exercise all cdf functions.
  *  Creates cdf, stuff it full of numbers, closes it. Then
- *  reopens it, and checks for consistancy.
+ *  reopens it, and checks for consistency.
  *  Leaves the file around afterwards.
  *
  *	Based on a program to test the nasa look-alike program,
- * so not the most appropropriate test. See ../nctest for a
+ * so not the most appropriate test. See ../nctest for a
  * complete spec test.
  */
 
@@ -585,7 +585,7 @@ char *argv[];
 			if(tvp->dims[jj] != vdesc->dims[jj] )
 			{
 		printf(
-		"inconsistant dim[%d] for variable %d: %d != %d\n",
+		"inconsistent dim[%d] for variable %d: %d != %d\n",
 		(int)jj, (int)ii, (int)tvp->dims[jj], (int)vdesc->dims[jj] ) ;
 			continue ;
 			}

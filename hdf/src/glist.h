@@ -15,7 +15,7 @@
   Credits:
          Original code is part of the public domain 'Generic List Library'
          by Keith Pomakis(kppomaki@jeeves.uwaterloo.ca)-Spring, 1994
-         It has been modifed to adhere to HDF coding standards.
+         It has been modified to adhere to HDF coding standards.
 
   1996/05/29 - George V.
  ************************************************************************/
@@ -88,7 +88,7 @@ intn HDGLinitialize_list(Generic_list *list /* IN: list */);
     less-than function.  The only time it is valid to re-initialize a list
     is after it has been destroyed.
  RETURNS
-     SUCEED/FAIL
+     SUCCEED/FAIL
 *******************************************************************************/
 intn HDGLinitialize_sorted_list(Generic_list *list/*IN: list */,
                                 intn (*lt)(VOIDP a, VOIDP b)/*IN:sort fcn */);
@@ -340,7 +340,7 @@ intn HDGLis_empty(Generic_list list /*IN: list */);
  NAME
      HDGLis_in_list
  DESCRIPTION
-     Detemines if the object is in the list.
+     Determines if the object is in the list.
  RETURNS
     This function will return TRUE (1) if the specified object is a member
     of the list, and FALSE (0) otherwise.
@@ -356,7 +356,7 @@ intn HDGLis_in_list(Generic_list list, /*IN: list */
     are not copied; only new references to them are made.  The new list
     loses its concept of the current object.
  RETURNS
-    A copy of the orginal list.
+    A copy of the original list.
 *******************************************************************************/
 Generic_list HDGLcopy_list(Generic_list list /*IN: list */);
 

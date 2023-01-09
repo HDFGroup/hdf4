@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/*LINTLIBRARY */
 /* ------------------------------ hbuffer.c -------------------------------
 
    Routines for buffered elements, i.e., data elements that reside in memory
@@ -22,7 +21,7 @@
    File Organization
   ******************
     These special elements are invoked at run-time only, information about
-    whether an element was cached is not stored in the file.  Unless specificly
+    whether an element was cached is not stored in the file.  Unless specifically
     asked for by an API routine or required for a particular kind of access by
     the library, these routines aren't called.
 
@@ -424,7 +423,7 @@ done:
 /* ------------------------------ HBPinquire ------------------------------ */
 /*
 NAME
-   HBPinquire -- retreive information about a buffered element
+   HBPinquire -- retrieve information about a buffered element
 USAGE
    int32 HBPinquire(access_rec, file, tag, ref, len, off, pos, acc, sp)
    access_t * access_rec;      IN:  access record to return info about
@@ -512,7 +511,7 @@ HBPendaccess(accrec_t * access_rec)
     if (access_rec == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* shut down the memory buffer and dependant access record */
+    /* shut down the memory buffer and dependent access record */
     if (HBPcloseAID(access_rec) == FAIL)
         HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
 

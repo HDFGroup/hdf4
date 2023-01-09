@@ -65,21 +65,21 @@ main(int argc, char *argv[])
     if (argc < 2)
       {
           printf("%s,  version: 1.1   date: July 1, 1992\n", argv[0]);
-          printf("\tThis utility extracts all raster-8 images and/or\n");
-          printf("\tpalettes from an HDF file and stores them in two sets of\n");
-          printf("\tfiles containing only images and palettes, respectively.\n");
+          printf("\t This utility extracts all raster-8 images and/or\n");
+          printf("\t palettes from an HDF file and stores them in two sets of\n");
+          printf("\t files containing only images and palettes, respectively.\n");
           printf("Usage:\n");
           printf("hdftor8 hdf_file [-i] [-v] [-r image_file] [-p pal_file]\n");
-          printf("\t-i: interactive (specify filenames interactively)\n");
-          printf("\t-v: verbose (provide descriptive messages)\n");
-          printf("\tImages and palettes are placed in the specified files\n");
-          printf("\tThe names of these files may contain special characters\n");
-          printf("\t\twhich will be replaced by numbers:\n");
-          printf("\t #    replace with image or palette number\n");
-          printf("\t @    replace with x dim of image\n");
-          printf("\t %%    replace with y dim of image\n");
-          printf("\tIf not specified, image filename defaults to img#-@.%%\n");
-          printf("\tIf not specified, palette filename defaults to pal.#\n\n");
+          printf("\t -i: interactive (specify filenames interactively)\n");
+          printf("\t -v: verbose (provide descriptive messages)\n");
+          printf("\t Images and palettes are placed in the specified files\n");
+          printf("\t The names of these files may contain special characters\n");
+          printf("\t\t which will be replaced by numbers:\n");
+          printf("\t  #    replace with image or palette number\n");
+          printf("\t  @    replace with x dim of image\n");
+          printf("\t  %%    replace with y dim of image\n");
+          printf("\t If not specified, image filename defaults to img#-@.%%\n");
+          printf("\t If not specified, palette filename defaults to pal.#\n\n");
           exit(1);
       }
 
@@ -313,7 +313,7 @@ convert(const char *template, int imageNumber, int32 xdim, int32 ydim,
  * OUTPUT:
  *        stringOut : pointer to pointer of converted string (not really)
  * BUG: Both the pointer to the template string and the pointer to the
- *        comverted string are moved to after the position of the conversion.
+ *        converted string are moved to after the position of the conversion.
  */
 void
 fillStr(const char **template, char **stringOut, char *string, char specialChar)

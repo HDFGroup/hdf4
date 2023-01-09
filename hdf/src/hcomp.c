@@ -25,7 +25,7 @@ REMARKS
 
 DESIGN
    The compression I/O functions are designed as state machines.
-   There are two seperate state machines implemented, as layers
+   There are two separate state machines implemented, as layers
    on top of one another.
       The top layer is the modeling layer,
    whose purpose is to send/receive uncompressed bytes between the higher
@@ -121,7 +121,7 @@ funclist_t  comp_funcs =
     HCPwrite,
     HCPendaccess,
     HCPinfo,
-    NULL         /* no routine registerd */
+    NULL         /* no routine registered */
 };
 
 /* #define TESTING */
@@ -771,7 +771,7 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
             || (special_tag = MKSPECIALTAG(tag)) == DFTAG_NULL)
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
-    /* chech for access permission */
+    /* check for access permission */
     if (!(file_rec->access & DFACC_WRITE))
         HRETURN_ERROR(DFE_DENIED, FAIL);
 

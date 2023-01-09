@@ -460,7 +460,7 @@ static int test_mgr_userattr()
 **
 **  test_mgr_attr(): Main multi-file raster attribute test routine
 **
-**  VII. Atribute Functions
+**  VII. Attribute Functions
 **      A. GRattrinfo
 **      B. Read/Write Attributes
 **          1. GRsetattr

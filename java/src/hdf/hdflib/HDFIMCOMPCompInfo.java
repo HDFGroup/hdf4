@@ -17,7 +17,7 @@ package hdf.hdflib;
  * <p>
  * This class is a container for the parameters to the HDF ``Image compression'' compression class.
  * <p>
- * In this case, no auxilliary information is needed.
+ * In this case, no auxiliary information is needed.
  */
 public class HDFIMCOMPCompInfo extends HDFOldCompInfo {
 

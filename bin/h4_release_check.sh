@@ -216,7 +216,7 @@ else
 fi
 
 echo ""
-echo "$yellow  (2) VERIFY: Binary executables do not requre any external $reset"
+echo "$yellow  (2) VERIFY: Binary executables do not require any external $reset"
 echo "$yellow      libraries (except system libraries on some machines): $reset"
 
 echo `echo "      Result from ${magenta}ldd bin/hdp${reset}:  "; ldd bin/hdp`

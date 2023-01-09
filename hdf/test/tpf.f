@@ -11,7 +11,6 @@ C  If you do not have access to either file, you may request a copy from     *
 C  help@hdfgroup.org.                                                        *
 C * * * * * * * * *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 C
-C $Id$
 C
       subroutine tpf (number_failed)
 C      program tpff
@@ -221,7 +220,7 @@ C     print *,'last ref is: ', ret
           call MESSAGE(VERBO_DEF + 1,
      +                '****** ALL TESTS SUCCESSFUL ******')
       else
-          print *, '****** ', number_failed, ' TESTS FAILES  ******'
+          print *, '****** ', number_failed, ' TESTS FAILED  ******'
       endif
 
       return

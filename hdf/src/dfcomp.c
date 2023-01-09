@@ -26,7 +26,7 @@
 
 /* This module (dfcomp.c) used to be in */
 /* charge of the general compression information */
-/* but hcomp.c now supercedes it. */
+/* but hcomp.c now supersedes it. */
 #include "hdf.h"
 
 #define R8_MAX_BLOCKS 32

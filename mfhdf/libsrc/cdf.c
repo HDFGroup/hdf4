@@ -452,7 +452,7 @@ int mode ;
           if(!xdr_cdf(cdf->xdrs, &cdf) )
             {   /* free cdf struct. This cleanup is different than
                    NC_free_xcdf(). */
-                NC_free_cdf(cdf); /* free memory, close structues,files etc*/
+                NC_free_cdf(cdf); /* free memory, close structures,files etc*/
                 cdf = NULL;
                 HGOTO_FAIL(NULL);
             }
@@ -468,7 +468,7 @@ done:
       { /* Failure cleanup */
           if (cdf != NULL)
             { /* handles case other than one for NC_free_cdf().
-                 These routines only free up allocted memory. */
+                 These routines only free up allocated memory. */
                 NC_free_xcdf(cdf); /* no point in catching error here */
                 if (cdf->xdrs != NULL)
                 {
@@ -604,7 +604,7 @@ int *xtendimp ;
 }
 
 /*
- *  NOTE: modfied how errors were caught and reported - GV 9/19/97
+ *  NOTE: modified how errors were caught and reported - GV 9/19/97
  */
 bool_t
 xdr_cdf(xdrs, handlep)
@@ -1579,7 +1579,7 @@ done:
 
 /* --------------------------------------------------------------
 ** hdf_conv_scales converts old scale values into coord var values.
-** Searchs through var list for DFTAG_SDS, reads in the scale data,
+** Searches through var list for DFTAG_SDS, reads in the scale data,
 ** change the ref to ndg_ref and the tag to DATA_TAG, writes the
 ** data out.
 */
@@ -2727,7 +2727,7 @@ int id;
 
     /* Loop though and kill stuff */
     for (t = 0; t < n; t++)
-      {   /* get tag/ref of elment in vgroup */
+      {   /* get tag/ref of element in vgroup */
           if (FAIL == Vgettagref(vg, t, &tag, &ref))
             {
 #ifdef HDF_VG_CLOBBER
@@ -2741,7 +2741,7 @@ int id;
           fprintf(stderr, "hdf_vg_clobber: Looking at <%d, %d> in vgroup\n", tag, ref);
 #endif
           /* switch on the type of element: vgroup, vdata, data,
-             everyting else */
+             everything else */
           switch(tag)
             {
             case DFTAG_VG : /* recursive call */
@@ -2888,7 +2888,7 @@ NC *handle;
             {
 #ifdef HDF_CDF_CLOBBER
                 fprintf(stderr,"hdf_cdf_clobber: member of vgroup is a vgroup,");
-                fprintf(stderr,"deleteing everything in vgroup %d \n",ref);
+                fprintf(stderr,"deleting everything in vgroup %d \n",ref);
 #endif
                 /* check if vgroup exists in file */
                 if (vexistvg(handle->hdf_file, ref) != FAIL)
@@ -3063,7 +3063,7 @@ hdf_close(handle)
               HGOTO_FAIL(FAIL);
           }
 
-        /* go through vgroup hierachy */
+        /* go through vgroup hierarchy */
         while((id = Vgetnext(vg, id)) != FAIL)
           {
             if(Visvg(vg, id))
@@ -3165,7 +3165,7 @@ hdf_close(handle)
 
                         } /* end if vdata */
                     } /* end while looking for vdata in vgroup */
-                } /* end if UNLIMTED dimension vgroup */
+                } /* end if UNLIMITED dimension vgroup */
 
                 if (FAIL == Vdetach(dim))
                   {
@@ -3175,7 +3175,7 @@ hdf_close(handle)
                   }
 
             }/* end if vgroup */
-        } /* end if looking through toplevel vgroup hierachy */
+        } /* end if looking through toplevel vgroup hierarchy */
 
         if (FAIL == Vdetach(vg))
           {

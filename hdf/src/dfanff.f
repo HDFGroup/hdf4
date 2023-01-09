@@ -11,7 +11,6 @@ C* If you do not have access to either file, you may request a copy from     *
 C* help@hdfgroup.org.                                                        *
 C* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 C
-C $Id$
 C
 C------------------------------------------------------------------------------
 C File:     dfanFf.f
@@ -179,7 +178,7 @@ C          reflist: array to place refs in
 C          labellist: array of strings to place labels in
 C          listsize: size of ref and label lists
 C          maxlen: maximum length allowed for label
-C          startpos: beginning from the startpos'th entry, upto listsize
+C          startpos: beginning from the startpos'th entry, up to listsize
 C                entries will be returned.
 C Returns: number of entries on success, -1 on error with DFerror set
 C Users:   HDF users, utilities, other routines
@@ -361,7 +360,7 @@ C          reflist: array to place refs in
 C          labellist: array of strings to place labels in
 C          listsize: size of ref and label lists
 C          maxlen: maximum length allowed for label
-C          startpos: beginning from the startpos'th entry, upto listsize
+C          startpos: beginning from the startpos'th entry, up to listsize
 C                entries will be returned.
 C Returns: number of entries on success, -1 on error with DFerror set
 C Users:   HDF users, utilities, other routines

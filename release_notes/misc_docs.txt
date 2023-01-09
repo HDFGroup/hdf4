@@ -26,7 +26,7 @@ vattr.txt
 windows.txt
 
 To search for a particular document use "filename.txt=" string, for example 
-to seach for the beginning of the new_functions.txt file,
+to search for the beginning of the new_functions.txt file,
 use "new_functions.txt=" string
 
 ================================Fortran_APIs.txt============================
@@ -254,7 +254,7 @@ HDF4.0r2
 ============================================================================
 ================================JPEG.txt====================================
 
-Independant JPEG Group library
+Independent JPEG Group library
     Version 4.1b of the HDF-netCDF library uses v6a of the Independent
 JPEG Group (IJG) JPEG file access library.  For most users of the HDF library,
 this will be completely transparent.  For users who are integrating the HDF
@@ -566,7 +566,7 @@ FORTRAN:
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
    NOTE: These instructions are for Convex/HP Exemplar machines running
-   versions of the OS ealier than 10.x.  For machines running version
+   versions of the OS earlier than 10.x.  For machines running version
    10.x of HP-UX, follow the instructions for HP-UX 10.2.
 
 FreeBSD:
@@ -955,7 +955,7 @@ HDP COMMANDS
 
 HDP COMMAND OPTIONS
 
-(Note: options preceeded by an * have not yet been implemented.)
+(Note: options preceded by an * have not yet been implemented.)
 
 
      hdp list [format options] [content ops] [filter ops] [order ops] 
@@ -1309,7 +1309,7 @@ INSTRUCTIONS FOR OPTION I, TEST AND UTILITY INSTALLATION, NO FORTRAN
 
          6. If all tests passed, run the installation batch file 
        win32ins.bat in directory HDF41r2\. Commands in this file will create
-       subdirectories bin\, include\ and lib\ in HDF41r2\. The bin dirctory
+       subdirectories bin\, include\ and lib\ in HDF41r2\. The bin directory
        will contain the HDF utilities, the include directory will contain 
        header files, and the lib directory will contain:
                jpeg.lib     - JPEG Library
@@ -1370,7 +1370,7 @@ INSTRUCTIONS FOR OPTION II, FULL INSTALLATION WITH FORTRAN
        Run win32ins.bat if you have a Win32 Intel platform OR
        run win32ALPHAins.bat if you have a Win32 Alpha platform.
        Commands in these files will create
-       subdirectories bin\, include\ and lib\ in HDF41r2\. The bin dirctory
+       subdirectories bin\, include\ and lib\ in HDF41r2\. The bin directory
        will contain the HDF utilities, include directory will contain 
        header files, and the lib directory will contain:
                jpeg.lib     - JPEG Library
@@ -2117,7 +2117,7 @@ intn GRendaccess(int32 riid)
 
 Dimension Functions:
 int32 GRgetdimid(int32 riid,int32 index)
-    - Get a dimension id ('dimid') for an RI to assign atrributes to. [Later]
+    - Get a dimension id ('dimid') for an RI to assign attributes to. [Later]
 intn GRsetdimname(int32 dimid,char *name)
     - Set the name of a dimension. [Later]
 int32 GRdiminfo(int32 dimid,char *name,int32 *size,int32 *n_attr)
@@ -2900,7 +2900,7 @@ static int32  d_dims[3]     = {2, 3, 4};  /* data dimensions */
 static int32  edge_dims[3]  = {0, 0, 0};  /* edge dims */
 static int32  start_dims[3] = {0, 0, 0};  /* starting dims  */
 
-/* data arrays layed out in memory  */
+/* data arrays laid out in memory  */
 
 /* used in Example 1 and 5 */
 static uint16  u16_2data[9][4] =

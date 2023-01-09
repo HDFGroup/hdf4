@@ -573,7 +573,6 @@ char *yytext;
 /*********************************************************************
  *   Copyright 1993, UCAR/Unidata
  *   See netcdf/COPYRIGHT file for copying and redistribution conditions.
- *   $Id: ncgen.l 6036 2014-01-20 17:28:01Z acheng $
  *********************************************************************/
 
 #define    STREQ(a, b)    (*(a) == *(b) && strcmp((a), (b)) == 0)

@@ -165,13 +165,13 @@ do_nothing:
 
  /* terminate access to the VSs */
  if (VSdetach (vdata1_id)==FAIL) {
-     printf( "Failed to dettach VS ref %d\n", ref1);
+     printf( "Failed to detach VS ref %d\n", ref1);
      goto out;
  }
  if (vdata2_id!=-1)
  {
      if (VSdetach (vdata2_id)==FAIL) {
-         printf( "Failed to dettach VS ref %d\n", ref2);
+         printf( "Failed to detach VS ref %d\n", ref2);
          goto out;
      }
  }

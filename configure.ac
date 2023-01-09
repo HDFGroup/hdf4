@@ -355,7 +355,8 @@ AC_SUBST([LT_STATIC_EXEC])
 ## ======================================================================
 ## Libtool initialization
 ## ======================================================================
-LT_INIT([dlopen disable-shared])
+## disable-shared sets the default libtool behavior to disable shared libs
+LT_INIT([disable-shared])
 LT_OUTPUT
 
 ## ----------------------------------------------------------------------

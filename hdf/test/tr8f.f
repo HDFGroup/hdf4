@@ -11,7 +11,6 @@ C  If you do not have access to either file, you may request a copy from     *
 C  help@hdfgroup.org.                                                        *
 C * * * * * * * * *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 C
-C $Id$
 C
       subroutine tr8f (number_failed)
       implicit none
@@ -20,7 +19,7 @@ C
 C Test program:
 C      Writes images together with pals to a file.
 C      Reads images from the file.
-C      Writes and reads images with speicfied ref's.
+C      Writes and reads images with specified ref's.
 C Input file: none
 C Output file: tdfr8f.hdf
 C

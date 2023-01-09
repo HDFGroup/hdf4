@@ -49,7 +49,7 @@ HDP COMMANDS
 
 HDP COMMAND OPTIONS
 
-(Note: options preceeded by an * have not yet been implemented.)
+(Note: options preceded by an * have not yet been implemented.)
 
 
      hdp list [format options] [content ops] [filter ops] [order ops] 

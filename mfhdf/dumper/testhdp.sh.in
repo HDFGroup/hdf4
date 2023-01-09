@@ -1,5 +1,4 @@
 #! /bin/sh
-# $Id$
 # Test scripts for hdp (dumper).
 # See the USAGE function for command usage.
 
@@ -157,7 +156,7 @@ do
 	    esac
 	    ;;
 	* )
-	    echo "Unknow option: $1"
+	    echo "Unknown option: $1"
 	    USAGE
 	    exit 1
 	    ;;

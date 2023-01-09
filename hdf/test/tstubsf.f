@@ -1,6 +1,3 @@
-C****************************************************************************
-C* $Id$                       *
-C* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 C * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 C  Copyright by The HDF Group.                                               *
 C  Copyright by the Board of Trustees of the University of Illinois.         *
@@ -100,7 +97,7 @@ C       print *, 'Success:  dfishdf failed with DFerror = ', dfenum
       dfenum = dferrno()
       if (dfile .eq. 0) then
          print *, '>>>Failure:  Error ', dfenum, ' opening file.'
-         print *, '   Quiting.'
+         print *, '   Quitting.'
          return
       else
          call MESSAGE(VERBO_HI, 'Success!')
@@ -133,7 +130,7 @@ C       print *, 'Success:  dfishdf failed with DFerror = ', dfenum
       dfenum = dferrno()
       if (dfile .eq. 0) then
          print *, '>>>Failure:  Error ', dfenum, ' opening file.'
-         print *, '   Quiting.'
+         print *, '   Quitting.'
          return
       else
          call MESSAGE(VERBO_HI, 'Success!')
@@ -259,7 +256,7 @@ C       print *, 'Success:  dfishdf failed with DFerror = ', dfenum
       dfenum = dferrno()
       if (nd .ne. 2) then
          print *, '>>>Failure:'
-         print *, '   Saw ', nd, ' occurrances of tag 255 not than 2.'
+         print *, '   Saw ', nd, ' occurrences of tag 255 not than 2.'
          print *, '   DFerror = ', dfenum
          nerrors = nerrors + 1
       else

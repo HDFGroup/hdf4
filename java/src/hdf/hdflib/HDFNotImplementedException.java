@@ -38,6 +38,6 @@ public class HDFNotImplementedException extends HDFJavaException {
      *            the additional message detail.
      */
     public HDFNotImplementedException(String s) {
-        super("HDFJavaException: HDF function not implmented (yet): " + s);
+        super("HDFJavaException: HDF function not implemented (yet): " + s);
     }
 }

@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id: tfile.c 5218 2009-08-29 04:21:49Z bmribler $ */
 
 #include "mfhdf.h"
 
@@ -27,7 +26,7 @@
     Sometime, when an error occurs, the cleanup process attempts to
     remove a file, which might still be in use (part of bugzilla #376.)
     The routine test_file_inuse is to test the fix that provides the
-    underlaying call to HPisfile_in_use, which should successfully
+    underlying call to HPisfile_in_use, which should successfully
     determines whether a file is still in use before an attempt to remove.
 
     The main contents include:

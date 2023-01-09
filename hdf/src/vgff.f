@@ -11,7 +11,6 @@ C  If you do not have access to either file, you may request a copy from     *
 C  help@hdfgroup.org.                                                        *
 C * * * * * * * * *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 C
-C $Id$
 C
 c **************************************************************************
 c *
@@ -27,7 +26,7 @@ c   ============================================================
 c	 VGROUP ROUTINES
 c	============================================================
 
-c	attachs to a vgroup
+c	attaches to a vgroup
 c	related: Vattach--vatchc--VFATCH
 
       integer function vfatch(f, vgid, accesstype)

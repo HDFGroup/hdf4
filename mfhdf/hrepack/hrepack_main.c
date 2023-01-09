@@ -86,7 +86,7 @@ int main(int argc, char **argv)
 
             options.threshold = parse_number(argv[i+1]);
             if (options.threshold==-1) {
-                printf("Error: Invalid treshold size <%s>\n",argv[i+1]);
+                printf("Error: Invalid threshold size <%s>\n",argv[i+1]);
                 goto out;
             }
             ++i;

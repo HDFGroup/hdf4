@@ -102,7 +102,7 @@ typedef union tag_comp_info
             /* 0 (terrible) to 100 (very good) */
             intn    force_baseline;     /* If force_baseline is set to TRUE then */
             /* quantization tables are limited to */
-            /* 0..255 for JPEG baseline compability */
+            /* 0..255 for JPEG baseline compatibility */
             /* This is only an issue for quality */
             /* settings below 24 */
         }

@@ -11,7 +11,6 @@ C  If you do not have access to either file, you may request a copy from     *
 C  help@hdfgroup.org.                                                        *
 C * * * * * * * * *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 C
-C $Id$
 C
       subroutine tsdnmmsf (number_failed)
       implicit none
@@ -47,7 +46,7 @@ C quantities of precisely 1 byte big.  Integer*1 may have memory size
 C as large as a normal integer (e.g. Cray).
 C Cannot just use the character variables as for some compilers,
 C the argument address of a character argument is not compatible with
-C that of a numerial argument.
+C that of a numerical argument.
 
       integer surri8, surri8max, surri8min, surri8scale
       integer surrti8, surrti8max, surrti8min, surrti8scale

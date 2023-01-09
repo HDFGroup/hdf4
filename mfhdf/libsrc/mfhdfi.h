@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id: mfhdfi.h 5009 2007-12-27 16:49:20Z bmribler $ */
 
 #ifndef _MFHDFI_H
 #define _MFHDFI_H

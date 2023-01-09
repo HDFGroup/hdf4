@@ -856,7 +856,7 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
  * Outputs:  num_data  - buffer the data will be read into
  * Calls:    GRreadchunk
  * Remarks:  need to flip the dimensions to account for array ordering
- *           differencies (start --> cstart)
+ *           differences (start --> cstart)
  *           If performance becomes an issue, use static cstart
  * Returns:  0 on success, -1 on failure with error set
  *----------------------------------------------------------------------------*/
@@ -1069,7 +1069,7 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
  *           num_data  - buffer for data
  * Calls:    GRwritechunk
  * Remarks:  need to flip the dimensions to account for array ordering
- *           differencies (start --> cstart)
+ *           differences (start --> cstart)
  *           If performance becomes an issue, use static cstart
  * Returns:  0 on success, -1 on failure with error set
  *----------------------------------------------------------------------------*/
@@ -1270,7 +1270,7 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
  * Name:    mglt2rf
  * Puporse: Call GRluttoref
  * Inputs:  id: LUT id returned by GRgetlutid(mggltid)
- * Returns: valid reference number if a pallette exists or 0 (DFREF_WILDCARD)
+ * Returns: valid reference number if a palette exists or 0 (DFREF_WILDCARD)
  *          if one doesn't / FAIL
  * Users:   HDF Fortran programmers
  *-------------------------------------------------------------------------*/

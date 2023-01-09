@@ -776,7 +776,7 @@ done:
  COMMENTS, BUGS, ASSUMPTIONS
     This routine does _not_ leave the bitfile in a position to continue
     I/O from the current point, additional modifications would have to be
-    made in order to accomodate this.
+    made in order to accommodate this.
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/

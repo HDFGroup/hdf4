@@ -738,7 +738,7 @@ vsdestroynode(void * n /* IN: Node in TBBT-tree */)
                 VSIrelease_vdata_node(vs);
             } /* end if */
 
-          /* relase this instance to the free list ? */
+          /* release this instance to the free list ? */
           VSIrelease_vsinstance_node((vsinstance_t *)n);
       } /* end if 'n' */
 
@@ -896,7 +896,7 @@ VSattach(HFILEID f,             /* IN: file handle */
     if (NULL == (vf = Get_vfile(f)))
         HGOTO_ERROR(DFE_FNF, FAIL);
 
-    /* check access type and covert to internal mode? */
+    /* check access type and convert to internal mode? */
     if (accesstype[0] == 'R' || accesstype[0] == 'r')
         acc_mode = 'r';
     else if (accesstype[0] == 'W' || accesstype[0] == 'w')
@@ -1482,7 +1482,7 @@ NAME
   VSgetversion
 
 DESCRIPTION
-  get the version nuber of the vdata
+  get the version number of the vdata
 
 RETURNS
   return the version number if successful else '0'.

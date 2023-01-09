@@ -1,7 +1,6 @@
 c********************************************************************
 c   Copyright 1993, UCAR/Unidata
 c   See netcdf/COPYRIGHT file for copying and redistribution conditions.
-c   $Id: ftest-linux.f 5345 2010-01-29 20:55:24Z epourmal $
 c********************************************************************/
 
 
@@ -1281,7 +1280,7 @@ C        Arrays initialization
          DATA epsilon /1.E-6/
          DATA depsilon /1.E-12/
          
-C        Modify filename to accomodate SRCDIR configure option
+C        Modify filename to accommodate SRCDIR configure option
 
          FILENAME = 'test_nc.nc'
          filename_len = len(new_filename)
@@ -1339,7 +1338,7 @@ C        Modify filename to accomodate SRCDIR configure option
          do i = 1, 2
             do j = 1, 3 
             if( abs(a(j,i) - a_val(j,i)) .gt. epsilon ) 
-     +      write(*,*) 'Wrong a value at indecies  ', j, ',', i 
+     +      write(*,*) 'Wrong a value at indices  ', j, ',', i 
             enddo
          enddo
 
@@ -1359,7 +1358,7 @@ C        Modify filename to accomodate SRCDIR configure option
                do k = 1, 2
                if( b(k,j,i) .ne.  b_val(k,j,i)) 
      +         write(*,*) 
-     +        'Wrong b value at indecies  ', k, ',', j, ',', i 
+     +        'Wrong b value at indices  ', k, ',', j, ',', i 
                enddo
             enddo
          enddo

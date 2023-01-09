@@ -1,6 +1,6 @@
 ==========================================================================
 =                                                                        =
-=       This files conatins a history of the HDF4.* releases.            =
+=       This files contains a history of the HDF4.* releases.            =
 =                                                                        =
 =       To find information about a particular release search            =
 =       for %%%4.#.# string, for example 4.2.6, or                       =
@@ -2324,7 +2324,7 @@ This version has been tested in the following platforms:
 Known problems
 ==============
 
-o  For Mac OS X 10.7 Lion, the test suite on the mfhdf side encounter 2 erros,
+o  For Mac OS X 10.7 Lion, the test suite on the mfhdf side encounters 2 errors,
    when optimization is used, whether with the Apple GCC compiler or with the
    GNU GCC compiler.  CFLAGS must be set to use no optimization (-O0 or -g) to
    avoid these failures.  config/apple-darwin11.4.0 is added to direct configure
@@ -2925,7 +2925,7 @@ This version has been tested in the following platforms:
 Known problems
 ==============
 
-o  Wnen buidling in AIX systems, if CC is xlc with -qlanglvl=ansi, configure
+o  When building in AIX systems, if CC is xlc with -qlanglvl=ansi, configure
    fails when checking for the jpeglib.h header due to the duplicated
    macro definition of HAVE_STDLIB_H.  This is because some newer builds
    of jpeg library has HAVE_STDLIB_H defined in its jconfig.h header file.
@@ -3054,7 +3054,7 @@ New features and changes
       information.  If failure occurs while getting compression information,
       the associate compression parameters will be set to -1 to indicate
       that no compression information is retrieved, instead of SDgetchunkinfo
-      simply fails.  This is to support backward compatibily.
+      simply fails.  This is to support backward compatibility.
       (BMR - 2010/02/04)
     - Vgroup name and class name can now be more than the previous limit
       of 64 characters.  Two public functions are provided for applications
@@ -3244,7 +3244,7 @@ HDF 4.2.5 has been tested in the following platforms:
 Known problems
 ==============
 
-o  Wnen buidling in AIX systems, if CC is xlc with -qlanglvl=ansi, configure
+o  When building in AIX systems, if CC is xlc with -qlanglvl=ansi, configure
    fails when checking for the jpeglib.h header due to the duplicated
    macro definition of HAVE_STDLIB_H.  This is because some newer builds
    of jpeg library has HAVE_STDLIB_H defined in its jconfig.h header file.
@@ -4151,7 +4151,7 @@ New features and changes
         - hrepack repacks by hyperslabs for large (non-compressed) datasets.
                                                          PVN - 2007/7/10
         - hdiff enables reading by hyperslabs. This feature was added to 
-          handle very large datasets, where available memory is a isssue. 
+          handle very large datasets, where available memory is an issue. 
                                                          PVN - 2007/6/13
         - hdiff now shows indices in multidimensional array notation. 
                                                          PVN - 2007/4/5
@@ -4413,7 +4413,7 @@ New Features and Changes:
     Configuration
     ============= 
      
-     * By default HDF4 libraies and utilities are installed under 
+     * By default HDF4 libraries and utilities are installed under 
        <source_dir>/NewHDF
                                                12/01/2004 EIP
      * Windows configuration, build and testing procedures have been changed. 
@@ -4512,7 +4512,7 @@ HDF 4.2 Release 1 has been tested on the following platforms:
                                   PGI C and Fortran Compilers Version 5.2-1 
 
     Linux 2.4.21-sgi303rp05012313_10138 (Altix) 
-                                  Intel C++ and Intel Fortran Verison 8.1
+                                  Intel C++ and Intel Fortran Version 8.1
     
     Linux 2.4.20-31.9smp_perfctr_lustre (IA-32)
                                   Intel(R) C++ Version 8.0
@@ -4569,7 +4569,7 @@ o  When using PGI compilers make sure that JPEG library is also compiled with
    to fail.  To bypass the problem
 
        x Set LIBS flag to $PGI_JPEG_INSTALL_DIR/lib/libjpeg.a
-          where $PGI_JPEG_INSTALL_DIR points to the installtion directory
+          where $PGI_JPEG_INSTALL_DIR points to the installation directory
           for the PGI-compiled JPEG library:
 
           setenv LIBS $PGI_JPEG_INSTALL_DIR/lib/libjpeg.a
@@ -4990,7 +4990,7 @@ web page (accessible from the HDF home page):
 
      http://hdf.ncsa.uiuc.edu/platforms.html
 
-Know problmes:
+Known problems:
 
 Writing n-bit datasets from FORTRAN with the SD interface is not working.
 
@@ -6748,7 +6748,7 @@ follow the instructions listed in:
    . A bug was found in the "mfhdf.h" file late in the testing
      stage. The error occurred in the CM5 parallel I/O 
      extension only. The fix is not included in the source
-     release, but it is avalable in the binary release for 
+     release, but it is available in the binary release for 
      the CM5 version.  Please retrieve the fix there. 
    . SDsetcompress does not work correctly.
    . Hdp now works on SunOS and LINUX only. Commands dumpsds, 
@@ -6899,14 +6899,14 @@ Contents
       and the bit in position 25 is a 1, then when the data is
       read back in from the disk, bits 26-31 will be set to a
       1, otherwise bit 25 will be a zero and bits 26-31 will
-      be set to 0. This bit-filling takes higher precendence
+      be set to 0. This bit-filling takes higher precedence
       (i.e. is performed after) the fill_one (see below)
       bit-filling. 
 
       intn fill_one - Whether to fill the "background" bits with
       1's or 0's. The "background" bits of a n-bit dataset are
       those bits in the in-memory representation which fall
-      outside of the actuall n-bit field stored on disk. For
+      outside of the actual n-bit field stored on disk. For
       example, if 5 bits of an unsigned 16-bit integer
       (in-memory) dataset located in bits 5-9 are written to
       disk with the fill_one parameter set to TRUE (or 1),

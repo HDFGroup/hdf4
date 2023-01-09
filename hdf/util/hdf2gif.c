@@ -124,7 +124,7 @@ int main(int argc , char **argv) {
 	
 	HDFName = argv[1];
 	GIFName = argv[2];
-	/* Set a default 10 ms time between two consequetive images in case of multiple image file */
+	/* Set a default 10 ms time between two consecutive images in case of multiple image file */
 	if (argc > 3)
 		time_out = atoi(argv[3]);
 	else

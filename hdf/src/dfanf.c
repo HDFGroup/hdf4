@@ -174,7 +174,7 @@ ndaipann(_fcd filename, intf * tag, intf * ref, _fcd annotation,
  *          labellist: array of strings to place labels in
  *          listsize: size of ref and label lists
  *          maxlen: maximum length allowed for label
- *          startpos: beginning from the startpos'th entry, upto listsize
+ *          startpos: beginning from the startpos'th entry, up to listsize
  *              entries will be returned.
  *          fnlen: length of filename
  * Returns: number of entries on success, -1 on error with DFerror set

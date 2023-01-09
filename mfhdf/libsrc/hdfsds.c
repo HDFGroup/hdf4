@@ -23,7 +23,7 @@
   General Thoughts
 
 
-  Will need to add a 'type' field to the variable stucture so that we can
+  Will need to add a 'type' field to the variable structure so that we can
   how it was stored (basically will want to just store the tag of the object
   as well as the ref (which is already stored)).
   
@@ -798,7 +798,7 @@ hdf_luf_to_attrs(char *labelstr, char *unitstr, char *formatstr, NC_attr **tmp_a
         }
     }
 
-    /* Fomrat => 'format' */
+    /* Format => 'format' */
     if (formatstr && (formatstr[0] != '\0') > 0) 
     {
         *tmp_attr = (NC_attr *) NC_new_attr(_HDF_Format, NC_CHAR,
@@ -1426,7 +1426,7 @@ hdf_read_ndgs(NC *handle)
                          - get the size from dimsize[i]
                          - lref will give the ref of the label descriptor to see if 
                          has a real name else fake one based on the label of the NDG
-                         - look at uref for units information and fref for formating 
+                         - look at uref for units information and fref for formatting 
                          info store both of these as attributes of the coordinate 
                          variable
                          - Promote the dimension to a variable if any of the LUF or

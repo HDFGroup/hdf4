@@ -96,7 +96,7 @@ typedef TBBT_NODE **TBBT_TREE;
 #define   Max(a,b)  ( (a) > (b) ? (a) : (b) )
 
 /* These routines are designed to allow use of a general-purpose balanced tree
- * implimentation.  These trees are appropriate for maintaining in memory one
+ * implementation.  These trees are appropriate for maintaining in memory one
  * or more lists of items, each list sorted according to key values (key values
  * must form a "completely ordered set") where no two items in a single list
  * can have the same key value.  The following operations are supported:
@@ -125,7 +125,7 @@ typedef TBBT_NODE **TBBT_TREE;
  *
  * Since the "data item" pointer is the first field of each tree node, these
  * routines may be used without this "tbbt.h" file.  For example, assume "ITM"
- * is the structre definition for the data items you want to store in lists:
+ * is the structure definition for the data items you want to store in lists:
  * ITM ***tbbtdmake( int (*cmp)(void *,void *,int), int arg );
  * ITM **root= NULL;        (* How to create an empty tree w/o tbbtdmake() *)
  * ITM **tbbtdfind( ITM ***tree, void *key, ITM ***pp );
@@ -267,7 +267,7 @@ HDFLIBAPI TBBT_NODE  *tbbtfirst
 HDFLIBAPI TBBT_NODE  *tbbtlast
                 (TBBT_NODE * root);
 /* Returns a pointer to node from the tree with the lowest(first)/highest(last)
- * key value.  If the tree is empy NULL is returned.  Examples:
+ * key value.  If the tree is empty NULL is returned.  Examples:
  *     node= tbbtfirst(*tree);
  *     node= tbbtfirst(root);
  *     node= tbbtlast(tree->root);

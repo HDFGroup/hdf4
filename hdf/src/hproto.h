@@ -17,7 +17,7 @@
 
 #include "H4api_adpt.h"
 
-/* Usefull macros, which someday might become actual functions */
+/* Useful macros, which someday might become actual functions */
 /* Wrappers for Hinquire. feb-2-92 */
 #define HQueryfileid(aid, fileid)     \
   (Hinquire ((int32)   aid,  (int32*) fileid, (uint16*) NULL,\
@@ -336,11 +336,11 @@ DESCRIPTION
    The tag/ref must already exist in the DD list.
    This routine is unsafe and may leave a file in a condition that is
    not usable by some routines.  Use with care. Not valid for
-   special elments right now. Used for allowing the data to change
+   special elements right now. Used for allowing the data to change
    and move somewhere else in the file for non-special elements.
    Must be carefully if apply to higher-level objects like GR's and SDS
    that are comprised of other objects.
-   Usefull when re-writing simple elements whose size changes while
+   Useful when re-writing simple elements whose size changes while
    preserving the original tag/ref of the element since other elements
    might refer to this element by tag/ref e.g. in a Vgroup.
 
@@ -1218,7 +1218,7 @@ HDFLIBAPI intn GR2bmapped(int32 riid, intn *tobe_mapped, intn *created_byGR);
 /* Cache flags */
 #define HDF_CACHEALL 0x1
 
-/* Chunk Defintion, Note that GRs need only 2 dimensions for the chunk_lengths */
+/* Chunk Definition, Note that GRs need only 2 dimensions for the chunk_lengths */
 typedef union hdf_chunk_def_u
 {
     /* Chunk Lengths only */
@@ -1272,7 +1272,7 @@ typedef union hdf_chunk_def_u
 
       } HDF_CHUNK_DEF
 
-      The simplist is the 'chunk_lengths' array specifiying chunk
+      The simplest is the 'chunk_lengths' array specifying chunk
       lengths for each dimension where the 'flags' argument set to
       'HDF_CHUNK';
 
@@ -1294,7 +1294,7 @@ typedef union hdf_chunk_def_u
       to set the maximum number of chunks in the chunk cache. A default chunk
       cache is always created.
 
-      The following example shows the organization of chunks for a 2D iamge.
+      The following example shows the organization of chunks for a 2D image.
       e.g. 4x4 image with 2x2 chunks. The array shows the layout of
            chunks in the chunk array.
 
@@ -1360,7 +1360,7 @@ HDFLIBAPI intn GRsetchunk
      fill the array of chunk lengths for each dimension as specified in
      the 'HDF_CHUNK_DEF' union. You can pass in a NULL for 'chunk_def'
      if don't want the chunk lengths for each dimension.
-     Additionaly if successful it will return a bit-or'd value in 'flags'
+     Additionally if successful it will return a bit-or'd value in 'flags'
      indicating if the GR is:
 
      Chunked                  -> flags = HDF_CHUNK
@@ -1501,8 +1501,8 @@ DESCRIPTION
      do not change a particular file's paging behaviour after it has been
      opened or created. This maybe changed in a later release.
 
-     Use flags arguement of 'MP_PAGEALL' if the whole file is to be cached
-     in memory otherwise passs in zero.
+     Use flags argument of 'MP_PAGEALL' if the whole file is to be cached
+     in memory otherwise pass in zero.
 
 RETURNS
      Returns SUCCEED if successful and FAIL otherwise
@@ -1511,7 +1511,7 @@ NOTE
      This calls the real routine MPset().
      Currently 'maxcache' has to be greater than 1. Maybe use special
      case of 0 to specify you want to turn page buffering off or use
-     the flags arguement.
+     the flags argument.
 
 ******************************************************************************/
 HDFLIBAPI int  Hmpset(int pagesize, /* IN: pagesize to use for next open/create */
@@ -1540,7 +1540,7 @@ HDFLIBAPI int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create
 
 /* Vset interface functions (used to be in vproto.h) */
 
-/* Useful macros, which someday might become actuall functions */
+/* Useful macros, which someday might become actual functions */
 /*
  * macros for VSinquire
  * all these macros should be public for users

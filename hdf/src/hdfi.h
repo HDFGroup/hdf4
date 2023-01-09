@@ -23,7 +23,7 @@
 /*                              MT/NT constants                             */
 /*  Four MT nibbles represent double, float, int, uchar (from most          */
 /*      significant to least significant).                                  */
-/*  Each "column" in the "table" below is essentially independant of the    */
+/*  Each "column" in the "table" below is essentially independent of the    */
 /*      other "columns", for example the CONVEXNATIVE entry means that the  */
 /*      floating point formats are in Convex native format but the integers */
 /*      are big-endian and standard sizes                                   */

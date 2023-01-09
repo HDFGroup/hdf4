@@ -11,7 +11,6 @@ C  If you do not have access to either file, you may request a copy from     *
 C  help@hdfgroup.org.                                                        *
 C * * * * * * * * *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 C
-C $Id$
 C
       subroutine slabwf (num_err)
 C
@@ -338,7 +337,7 @@ C set ref of SDS to write to
       nref = 2
 
 C
-C Fisrt clear all previous info and restarot to beginning of file
+C First clear all previous info and restarot to beginning of file
 C
       ret = dsclear()
       call VRFY(ret,'dsclear',number_failed)
@@ -346,7 +345,7 @@ C
       ret = dfsdrestart()
       call VRFY(ret,'dfsdrestart',number_failed)
 
-C Get relavant info on SDS
+C Get relevant info on SDS
 
       call MESSAGE(5,'Calling dsigdim to get info on SDS')
       ret = dsgdims(sn2, rank, sz, rank)

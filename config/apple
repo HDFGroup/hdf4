@@ -26,7 +26,7 @@ if test "X-$CC" = "X-"; then
     CC_BASENAME=clang
 fi
 
-# Use gfortran as the deafult F77 compiler.
+# Use gfortran as the default F77 compiler.
 if test "X-$F77" = "X-"; then
   F77=gfortran
   F77_BASENAME=gfortran

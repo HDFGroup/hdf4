@@ -122,7 +122,7 @@ int         display
             (int c, int x, int y, int f, int l);
 
 int         HEIdump
-            (int32 length, int offset, char *foramt, int raw);
+            (int32 length, int offset, char *format, int raw);
 
 int         fileOpen
             (void);

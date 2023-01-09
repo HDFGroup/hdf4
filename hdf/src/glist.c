@@ -263,7 +263,7 @@ return ret_value;
     less-than function.  The only time it is valid to re-initialize a list
     is after it has been destroyed.
  RETURNS
-     SUCEED/FAIL
+     SUCCEED/FAIL
 *******************************************************************************/
 intn
 HDGLinitialize_sorted_list(Generic_list *list,
@@ -853,7 +853,7 @@ HDGLis_empty(Generic_list list)
  NAME
      HDGLis_in_list
  DESCRIPTION
-     Detemines if the object is in the list.
+     Determines if the object is in the list.
  RETURNS
     This function will return TRUE (1) if the specified object is a member
     of the list, and FALSE (0) otherwise.
@@ -880,7 +880,7 @@ HDGLis_in_list(Generic_list list,
     are not copied; only new references to them are made.  The new list
     loses its concept of the current object.
  RETURNS
-    A copy of the orginal list.
+    A copy of the original list.
 *******************************************************************************/
 Generic_list
 HDGLcopy_list(Generic_list list)
@@ -1106,7 +1106,7 @@ HDGLall_such_that(Generic_list list,
         goto done;
       }
 
-    /* copy over elments that satisfy the fcn */
+    /* copy over elements that satisfy the fcn */
     element = list.info->pre_element.next;
     while (element != &list.info->post_element)
       {

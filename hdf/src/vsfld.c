@@ -406,7 +406,7 @@ done:
 /* ----------------------------- VFfieldname ------------------------------ */
 /*
    Return the name of the given field in this Vdata.
-   This is just a pointer to the string in local memory and is only guarenteed
+   This is just a pointer to the string in local memory and is only guaranteed
    to be valid as long as we are VSattached() to this Vdata
 
    Return NULL on failure

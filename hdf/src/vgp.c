@@ -557,7 +557,7 @@ Remove_vfile(HFILEID f /* IN: file handle */)
     if (( t = (VOIDP *) tbbtdfind(vtree, (VOIDP) &f, NULL)) == NULL)
         HGOTO_DONE(FAIL);
 
-    /* Delete the node and free the vfile_t stucture */
+    /* Delete the node and free the vfile_t structure */
     vf = tbbtrem((TBBT_NODE **) vtree, (TBBT_NODE *) t, NULL);
     HDfree(vf);
 
@@ -755,7 +755,7 @@ NAME
    Vfinish  -- end Vxxx access to file
 
 DESCRIPTION
-   End Vxxx acess to file?
+   End Vxxx access to file?
 
 RETURNS
    SUCCEED / FAIL
@@ -1415,7 +1415,7 @@ Vdetach(int32 vkey /* IN: vgroup key */)
               HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
           /*
-           *  If vgroup alreay exists, try to re-use the same
+           *  If vgroup already exists, try to re-use the same
            *  tag/ref. This will cause the pointer to the original
            *  vgroup to be lost but this is okay.
            */
@@ -1743,9 +1743,9 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
    /* NOTE: Move the following comments to the DESCRIPTION of the
             fcn when the issue with duplicate tag/refs is decided.
 
-    If duplicate tag/ref pairs exist, then it deletes the first occurence.
+    If duplicate tag/ref pairs exist, then it deletes the first occurrence.
     If the case of duplicate tag/ref pairs the user can call Vinqtagref() 
-    to see if there are more occurences and then delete them. */
+    to see if there are more occurrences and then delete them. */
 
     /* clear error stack */
     HEclear();
@@ -1763,7 +1763,7 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
     if (vg == NULL)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
-    /* set comparsion tag/ref pair */
+    /* set comparison tag/ref pair */
     ttag = (uint16) tag;
     rref = (uint16) ref;
 
@@ -1773,16 +1773,16 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
           if ((ttag == vg->tag[i]) && (rref == vg->ref[i]))
             { /* found tag/ref pair to delete. 
                  If duplicate tag/ref pairs exist, then it deletes 
-                 the first occurence. If the case of duplicate tag/ref 
+                 the first occurrence. If the case of duplicate tag/ref 
                  pairs the user can call Vinqtagref() to see if there 
-                 are more occurences and then delete them.*/
+                 are more occurrences and then delete them.*/
 
                 /* check if element found is last one in vgroup */
                 if ( i != ((uintn)vg->nvelt - 1))
                   { /* Basically shifts the contents of the array down by one. 
                        This method will preserve the order without using
                        extra memory for storage etc. If speed/performance
-                       is an issue you can use memove()/memcpy(). */
+                       is an issue you can use memmove()/memcpy(). */
                       for (j = i; j < (uintn)vg->nvelt - 1; j++)
                         {
                             vg->tag[j] = vg->tag[j+1];
@@ -2318,7 +2318,7 @@ DESCRIPTION
    gives a name to the VGROUP vg.
 
 RETURNS
-    RETURN VALUES: SUCCEED for success, FAIL for failure (big suprise, eh?)
+    RETURN VALUES: SUCCEED/FAIL
    
 *******************************************************************************/
 int32

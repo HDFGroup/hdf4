@@ -11,7 +11,6 @@ C  If you do not have access to either file, you may request a copy from     *
 C  help@hdfgroup.org.                                                        *
 C * * * * * * * * *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 C
-C $Id$
 C
       subroutine t24f (number_failed)
       implicit none
@@ -238,7 +237,7 @@ C
           call MESSAGE(VERBO_DEF + 1,
      +   '****** ALL TESTS SUCCESSFUL ******')
       else
-          print *, '****** ', number_failed, ' TESTS FAILES  ******'
+          print *, '****** ', number_failed, ' TESTS FAILED  ******'
       endif
 
       return

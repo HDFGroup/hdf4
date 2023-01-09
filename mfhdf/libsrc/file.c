@@ -55,7 +55,7 @@ static int _curr_opened = 0 ; /* the number of files currently opened */
 /* NOTE: _ncdf might have been the number of files currently opened, yet it
    is not decremented when ANY file is closed but only when the file that
    has the same index as _ncdf-1 is closed.  Thus, it indicates the last
-   index in _cdfs intead of the number of files currently opened.  So, I
+   index in _cdfs instead of the number of files currently opened.  So, I
    added _curr_opened to keep track of the number of files currently opened.
    QAK suggested to use atom as in other interfaces and that would eliminate
    similar issues.  - BMR - 11/03/07 */
@@ -659,7 +659,7 @@ int cdfid ;
     if( handle->flags & NC_INDEF) /* in define mode already */
       {
           NC *stash = STASH(cdfid) ;
-          if(stash) NCadvise(NC_EINDEFINE, "%s: in define mode aleady",
+          if(stash) NCadvise(NC_EINDEFINE, "%s: in define mode already",
                              stash->path) ;
           return(-1) ;
       }

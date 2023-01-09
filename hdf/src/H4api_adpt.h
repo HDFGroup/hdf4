@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id: hdfi.h 5435 2010-08-11 17:31:24Z byrn $ */
 
 #ifndef H4API_ADPT_H
 #define H4API_ADPT_H

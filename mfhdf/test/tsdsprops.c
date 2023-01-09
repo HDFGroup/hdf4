@@ -23,7 +23,7 @@
  *		second dataset to contain garbage anymore. (bug 525)
  *	  test_unlim_inloop - tests that appending unlimited data to more 
  *		than one dataset within a loop stores data correctly. (bug 801)
- *	  test_valid_args - tests that when some invalid argments were passed
+ *	  test_valid_args - tests that when some invalid arguments were passed
  *		into an API, they can be caught and handled properly.
  *		(bugzilla 150)
 ****************************************************************************/
@@ -432,7 +432,7 @@ test_unlim_inloop()
 }   /* test_unlim_inloop */
 
 /***************************************************************************
-   Name: test_valid_args() - tests that when some invalid argments were passed
+   Name: test_valid_args() - tests that when some invalid arguments were passed
 			    into an API, they can be caught and handled 
 			    properly. (bugzilla 150)
    Description:
@@ -440,7 +440,7 @@ test_unlim_inloop()
 	- create a data set of size X_LENGTH x Y_LENGTH
 	- write to the data set
 	- close the file, then reopen it
-	- read the dataset giving a stride value, that goes beyong the 
+	- read the dataset giving a stride value, that goes beyond the 
 	  dimension size
 	- when SDreaddata failed, try to check for error code DFE_ARGS and
 	  handle the failure properly
@@ -554,7 +554,7 @@ test_valid_args()
 }   /* test_valid_args */
 
 /*******************************************************************
-   Name: test_valid_args2() - tests that when some invalid argments were passed
+   Name: test_valid_args2() - tests that when some invalid arguments were passed
 			    into SDreaddata, causing the function to attempt
 			    to read beyond the dimension size, can be caught 
 			    and handled properly. (more for bugzilla 150)

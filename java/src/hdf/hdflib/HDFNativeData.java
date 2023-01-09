@@ -479,7 +479,7 @@ public class HDFNativeData {
      * hdf.io.ASCII2HDF
      *
      * @param dataType
-     *            the type of the iamge data
+     *            the type of the image data
      * @param datasize
      *            the size of the image data array
      * @return an array of 'datasize' numbers of 'dataType

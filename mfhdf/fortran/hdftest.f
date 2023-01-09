@@ -542,7 +542,7 @@ C
          err = err + 1
       endif
       if ((ii32(1) .ne. 15) .or. (ii32(2) .ne. 25)) then
-         print *, 'Numeirc attr read erro: '
+         print *, 'Numeric attr read error: '
          print *, ' should be 15 25, get ',ii32(1), ii32(2)
          err = err + 1
       endif
@@ -2322,7 +2322,7 @@ C
          parameter (n_part_stride = 1, m_part_stride = 1)
          parameter (n_part_start = 2, m_part_start = 1)
 C
-C  Sart, stride  and edges parameters in each dimension
+C  Start, stride  and edges parameters in each dimension
 C
          parameter (n_start = 0, m_start = 0)
          parameter (n_stride = 1, m_stride = 1)

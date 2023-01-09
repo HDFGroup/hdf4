@@ -15,7 +15,6 @@
  * Unidata, to assist in its use, correction, modification, or enhancement.
  *
  */
-/* "$Id$" */
 
 #ifndef _NETCDF_
 #define _NETCDF_
@@ -103,9 +102,9 @@ i686-apple-darwin11-llvm-gcc-4.2 (GCC) 4.2.1 (Based on Apple Inc. build 5658) (L
 
 /*
  * XDR_F_INFINITY is a float value whose EXTERNAL (xdr)
- * represention is ieee floating infinity.
+ * representation is ieee floating infinity.
  * XDR_D_INFINITY is a double value whose EXTERNAL (xdr)
- * represention is ieee double floating point infinity.
+ * representation is ieee double floating point infinity.
  * These are used as default fill values below.
  *
  * This section shows three techniques for setting these:
@@ -116,7 +115,7 @@ i686-apple-darwin11-llvm-gcc-4.2 (GCC) 4.2.1 (Based on Apple Inc. build 5658) (L
  *      any ANSI compiler with IEEE floating point representations,
  *      modulo byte order and sizeof() considerations.
  *  Use of pointer puns - may work with many older compilers
- *      which don't allow intialization of unions.
+ *      which don't allow initialization of unions.
  *      Often doesn't work with compilers which have strict
  *      alignment rules.
  */

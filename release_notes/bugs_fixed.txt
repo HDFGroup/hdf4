@@ -280,7 +280,7 @@ HDF4.0b1
 3. Bug fixed in SDgetdimscale.  For dimensions that have no dim scale 
    SDgetdimscale now returns 0 for nt to indicate that  no-scale was assigned.
 4. Several buffers allocated by Hxxxx, SDxxxx, and VSxxxx functions were 
-   used through the entire excecution time of HDF application programs.
+   used through the entire execution time of HDF application programs.
    In previous releases those buffers were not freed by HDF. Some debugging 
    tools list those buffers as memory leaks. In HDF4.0b1 those buffers are freed
    by HDF when the programs exit. The fix doesn't work on SunOS.  

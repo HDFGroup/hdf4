@@ -2261,7 +2261,7 @@ switch (cflags)
  * Outputs:  num_data  - buffer the data will be read into
  * Calls:    SDreadchunk
  * Remarks:  need to flip the dimensions to account for array ordering
- *           differencies (start --> cstart)
+ *           differences (start --> cstart)
  *           If performance becomes an issue, use static cstart
  * Returns:  0 on success, -1 on failure with error set
  *----------------------------------------------------------------------------*/
@@ -2502,7 +2502,7 @@ switch (cflags)
  *           num_data  - buffer for data
  * Calls:    SDwritechunk
  * Remarks:  need to flip the dimensions to account for array ordering
- *           differencies (start --> cstart)
+ *           differences (start --> cstart)
  *           If performance becomes an issue, use static cstart
  * Returns:  0 on success, -1 on failure with error set
  *----------------------------------------------------------------------------*/
@@ -2883,7 +2883,7 @@ nscgetnamelen(obj_id, namelen)
  * Name:    scidtype
  * Purpose: Retrieves type pf the object give an identifier
  * Inputs:  obj_id: object identifier
- * Outputs: obj_type: object type  -1 for invalide
+ * Outputs: obj_type: object type  -1 for invalid
  *                                  0 for file
  *                                  1 for data set
  *                                  2 for dimension scale
@@ -2911,7 +2911,7 @@ nscidtype(obj_id, obj_type)
 }
 /*-----------------------------------------------------------------------------
  * Name:    scrmaxopenf
- * Purpose: Resets the max numebr of files can be opened at the same time
+ * Purpose: Resets the max number of files can be opened at the same time
  * Inputs:  req_max: requested max number of files
  * Returns: current max number of opened files on success, -1 on failure
  *---------------------------------------------------------------------------*/

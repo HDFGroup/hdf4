@@ -73,7 +73,7 @@ int list_an (int32 infile_id,int32 outfile_id,options_t *options);
  * 4) Read all global attributes and annotations. 
  *
  * Modification: January 15, 2015 - JIRA issue HDFFR-1428
- *	The output file contains a vgroup of class RIG0.0 eventhough the input
+ *	The output file contains a vgroup of class RIG0.0 even though the input
  *	file does not contain any GR elements, such as raster images or GR file
  *	attribute.  That is because GRstart is called on the output file
  *	regardless of whether there are any GR items in the input file.  Hrepack
@@ -1242,7 +1242,7 @@ out:
 /*-------------------------------------------------------------------------
  * Function: list_glb
  *
- * Purpose: list/copy global SDS attributes, global GR atrributes
+ * Purpose: list/copy global SDS attributes, global GR attributes
  *
  * Return: SUCCEED, FAIL
  *

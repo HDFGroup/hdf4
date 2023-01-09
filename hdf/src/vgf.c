@@ -13,7 +13,7 @@
 
 
 /*-----------------------------------------------------------------------------
-  FUNCTION NAMEING CONVENTION:(For the most part true)
+  FUNCTION NAMING CONVENTION:(For the most part true)
   ---------------------------------------------------
   This file contains the HDF-style C stubs for the Vxxx interfaces i.e.
   both Vgroups and Vdatas. They call the corresponding C-functions for

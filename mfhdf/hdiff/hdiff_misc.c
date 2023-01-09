@@ -43,7 +43,7 @@ name_path(char *path)
  cp = strrchr(path, FILE_DELIMITER);
  if (cp == 0)  /* no delimiter */
   cp = path;
- else   /* skip delimeter */
+ else   /* skip delimiter */
   cp++;
  newc = (char *) malloc((unsigned) (strlen(cp)+1));
  if (newc == 0) {

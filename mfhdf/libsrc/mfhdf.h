@@ -272,7 +272,7 @@ HDFLIBAPI intn SDgetnamelen
 
       } HDF_CHUNK_DEF
 
-      The simplist is the 'chunk_lengths' array specifiying chunk
+      The simplest is the 'chunk_lengths' array specifying chunk
       lengths for each dimension where the 'flags' argument set to
       'HDF_CHUNK';
 
@@ -363,7 +363,7 @@ HDFLIBAPI intn SDsetchunk
      the 'HDF_CHUNK_DEF' union. It does not tell you the type of compression
      used or the compression parameters. You can pass in a NULL for 'chunk_def'
      if don't want the chunk lengths for each dimension.
-     Additionaly if successful it will return a bit-or'd value in 'flags'
+     Additionally if successful it will return a bit-or'd value in 'flags'
      indicating if the SDS is:
 
      Chunked                  -> flags = HDF_CHUNK

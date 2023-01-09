@@ -34,7 +34,7 @@
  *  dffind:    call DFfind to find next matching item
  *  dferrno:   call DFerrno to return value of DFerror
  *  dfnewref:  call DFnewref to get unused ref no
- *  dfnumber:  call DFnumber to get number of occurrances of given tag
+ *  dfnumber:  call DFnumber to get number of occurrences of given tag
  *  dfstat:    call DFstat to get status info on file
  *  dfiishdf:  call DFishdf to get HDF string
  *---------------------------------------------------------------------------*/
@@ -365,7 +365,7 @@ ndfnewref(intf * dfile)
  * Purpose: Call DFnumber to get unused ref no
  * Inputs:  dfile: pointer to HDF file
  *      tag:   pointer to (int16)tag to count
- * Returns: int: number of occurances of given tag
+ * Returns: int: number of occurrences of given tag
  * Users:   HDF Fortran programmers
  * Invokes: DFnumber
  *---------------------------------------------------------------------------*/
@@ -378,7 +378,7 @@ ndfnumber(intf * dfile, intf * tag)
 
 /*-----------------------------------------------------------------------------
  * Name:    dfstat
- * Purpose: Call DFstat to get staus info on file
+ * Purpose: Call DFstat to get status info on file
  * Inputs:  dfile:  pointer to HDF file
  *      dfinfo: pointer to DFdata structure to fill in
  * Returns: 0 on success, -1 on failure with DFerror set

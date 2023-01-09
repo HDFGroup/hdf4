@@ -341,7 +341,7 @@ printf("cd_f64[%d]=%lf, d_f64[%d]=%lf\n",i,cd_f64[i],i,d_f64[i]);
                 fprintf(stderr,"FLOAT64 data was incorrect\n");
                 num_errs++;
               } /* end if */
-#endif /* Wierd machines */
+#endif /* Weird machines */
             HDfree((VOIDP)data_f64);
           } /* end else */
       } /* end else */

@@ -36,10 +36,10 @@
 
 /* PRIVATE variables and definitions */
 
-/* This sturcture is used to find which file the annotation belongs to
+/* This structure is used to find which file the annotation belongs to
  * and use the subsequent file specific annotation 'key' to find the
  * annotation. The annotation atom group(ANIDGROUP) keeps track of
- * all anotations across the file. */
+ * all annotations across the file. */
 typedef struct ANnode
 {
   int32   file_id;  /* which file this annotation belongs to */
@@ -107,7 +107,7 @@ HDFLIBAPI int32 ANstart(int32 file_id /* IN: file to start annotation access on 
    the range of acceptable indices for ANselect calls.
 
  RETURNS
-   Returns SUCCEED if successful and FAIL othewise
+   Returns SUCCEED if successful and FAIL otherwise
 
 *******************************************************************************/
 HDFLIBAPI intn  ANfileinfo(int32 an_id,         /* IN:  annotation interface id */

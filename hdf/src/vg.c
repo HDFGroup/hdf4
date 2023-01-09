@@ -268,7 +268,7 @@ NAME
    VSgetfields -- returns the name (if any) of all the fields in the vdata
 
 DESCRIPTION
-   Returns the names of all the fields in comma seperated string in
+   Returns the names of all the fields in comma separated string in
    the argument 'fields'. (e.g., "PX,PY").
 
 RETURNS
@@ -277,7 +277,7 @@ RETURNS
 ----------------------------------------------------------------------*/
 int32 
 VSgetfields(int32 vkey,   /* IN: vdata key */
-            char *fields  /* OUT: comman seperated field name list */)
+            char *fields  /* OUT: comma separated field name list */)
 {
     int32        i;
     vsinstance_t *w = NULL;
@@ -303,7 +303,7 @@ VSgetfields(int32 vkey,   /* IN: vdata key */
     if (vs == NULL)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
-    /* Got through Vdata and build the comman seperated string of field names */
+    /* Got through Vdata and build the comma separated string of field names */
     fields[0] = '\0';
     /* No special handling for 0-field vdatas, this algorithm should work fine. */
     for (i = 0; i < vs->wlist.n; i++)
@@ -756,7 +756,7 @@ intn
 VSinquire(int32 vkey,       /* IN: vdata key */
           int32 *nelt,      /* OUT: number of elements in vdata */
           int32 *interlace, /* OUT: interlace scheme of vdata */
-          char *fields,     /* OUT: comma seperated string of field names */
+          char *fields,     /* OUT: comma separated string of field names */
           int32 *eltsize,   /* OUT: total size of all fields in bytes */
           char *vsname      /* OUT: name of vdata */)
 {
@@ -1497,7 +1497,7 @@ vscheckclass(int32 id, /* IN: vgroup id or file id */
                Because a class name that starts with _HDF_CHK_TBL_CLASS
                may have variable information appended to the end after
                _HDF_CHK_TBL_CLASS, we need to compare up to the length
-               of _HDF_CHK_TBL_CLASS so that we can get all occurences
+               of _HDF_CHK_TBL_CLASS so that we can get all occurrences
                of the classes starting with _HDF_CHK_TBL_CLASS.  For
                the non-_HDF_CHK_TBL_CLASS classes, we want to compare
                the entire array of characters.  However, if specific

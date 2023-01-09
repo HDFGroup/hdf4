@@ -46,7 +46,7 @@ typedef int16 gr_interlace_t;
 #define RI_TAG      DFTAG_VG    /* Current RI groups are stored in Vgroups */
 #define ATTR_TAG    DFTAG_VH    /* Current GR attributes are stored in VDatas */
 
-/* The default threshhold for attributes which will be cached */
+/* The default threshold for attributes which will be cached */
 #define GR_ATTR_THRESHHOLD  2048
 
 #define VALIDRIINDEX(i,gp) ((i)>=0 && (i)<(gp)->gr_count)
@@ -69,7 +69,7 @@ typedef struct gr_info {
     uintn       gattr_modified; /* whether any global attributes have been modified */
 
     intn        access;         /* the number of active pointers to this file's GRstuff */
-    uint32      attr_cache;     /* the threshhold for the attribute sizes to cache */
+    uint32      attr_cache;     /* the threshold for the attribute sizes to cache */
 } gr_info_t;
 
 typedef struct at_info {

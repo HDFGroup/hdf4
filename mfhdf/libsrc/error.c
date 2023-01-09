@@ -14,15 +14,13 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id: error.c,v 1.14 90/02/23 16:08:55 davis Exp */
 
 
 /*
- *   Utility Functions to implement consistant error logging
+ *   Utility Functions to implement consistent error logging
  * mechanisms for netcdf
  */
 
-/*LINTLIBRARY*/
 
 #ifdef NO_STDARG  /* The 4.0 release should be ANSI compliant */
 #undef NO_STDARG
