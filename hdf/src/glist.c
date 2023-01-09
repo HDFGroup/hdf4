@@ -1164,28 +1164,3 @@ HDGLremove_all_such_that(Generic_list list,
             HDGLremove_current(list);
       }
 } /* HDGLremove_HDGLall_such_that() */
-
-
-#if 0
-/****************************************************************************/
-/****************************************************************************/
-/**                                                                        **/
-/**                         Internal functions                             **/
-/**                                                                        **/
-/****************************************************************************/
-/****************************************************************************/
-
-static void *
-emalloc(unsigned int n)
-{
-    void *ptr;
-
-    ptr = (void *) malloc(n);
-    if ( ptr == NULL )
-      {
-        fprintf(stderr,"%s: error allocating memory\n", module);
-        exit(1);
-      }
-    return ptr;
-}
-#endif

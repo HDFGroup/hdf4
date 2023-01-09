@@ -811,38 +811,6 @@ intn print_grcomp_info(
       /* print compression method or "NONE" */
       fprintf(fp, "\t Compression method = %s\n", comp_method_txt(comp_type));
 
-#if 0 /* need to fix output of tests after 4.2.8 to display comp info */
-      switch (comp_type)
-      {
-        case COMP_CODE_NONE:
-        case COMP_CODE_JPEG:
-        case COMP_CODE_RLE:
-        case COMP_CODE_IMCOMP:
-	    break;
-        case COMP_CODE_SKPHUFF:
-	    fprintf(fp, "\t\t Skipping unit size = %d\n", c_info.skphuff.skp_size);
-	    break;
-	case COMP_CODE_DEFLATE:
-	    fprintf(fp, "\t\t Deflate level = %d\n", c_info.deflate.level);
-	    break;
-	case COMP_CODE_SZIP:
-	{
-	    char mask_strg[160]; /* 160 is to cover all options and number val*/
-	    if (option_mask_string(c_info.szip.options_mask, mask_strg) != FAIL)
-		fprintf(fp, "\t\t Option mask = %s\n", mask_strg);
-	    else
-		fprintf(fp, "\t\t Option mask might be invalid = %d\n", (int)c_info.szip.options_mask);
-	    fprintf(fp, "\t\t Pixels per block = %d\n", (int)c_info.szip.pixels_per_block);
-	    fprintf(fp, "\t\t Pixels per scanline = %d\n", (int)c_info.szip.pixels_per_scanline);
-	    fprintf(fp, "\t\t Bits per pixel = %d\n", (int)c_info.szip.bits_per_pixel);
-	    fprintf(fp, "\t\t Pixels = %d\n", (int)c_info.szip.pixels);
-	    break;
-	}
-        default:
-	    /* nothing */
-	    break;
-      } /* switch */
-#endif
    }
    else
       fprintf(fp, "\t Compression method = <Unable to get compression method>\n");

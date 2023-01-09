@@ -1615,18 +1615,6 @@ hdf_read_ndgs(NC *handle)
                  * Convert spaces in the name to underscores (yuck) otherwise
                  *    ncgen will barf on ncdumped files)
                  */
-#if 0
-                /* if(labelbuf && (labelbuf[0] != '\0')) 
-                   {
-                   char *c;
-                   for(c = (char *)labelbuf; *c; c++)
-                   if((*c) == ' ') (*c) = '_';
-
-                   vars[current_var] = NC_new_var((char *) labelbuf, type, (int) rank, vardims);
-                   } 
-                   else 
-                   { */
-#endif
 
                 sprintf(tmpname, "Data-Set-%d", ndgRef); 
                 vars[current_var] = NC_new_var(tmpname, type, (int) rank, vardims);
@@ -1635,9 +1623,6 @@ hdf_read_ndgs(NC *handle)
                       HGOTO_ERROR(DFE_INTERNAL, FAIL);
                   }
 
-#if 0
-                /*   } */
-#endif 
                 /*
                  * Fill in extra information so it will be easier to backtrack
                  *    when the user wants to lift data out

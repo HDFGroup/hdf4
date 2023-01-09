@@ -2186,9 +2186,6 @@ SDattrinfo(int32  id,    /* IN:  object ID */
     /* move the information over */
     if(name != NULL)
       {
-#if 0
-          HDstrncpy(name, (*atp)->name->values, (*atp)->name->len);
-#endif
           HDmemcpy(name, (*atp)->name->values, (*atp)->name->len);
           name[(*atp)->name->len] = '\0';
       }
@@ -3627,9 +3624,6 @@ SDdiminfo(int32  id,    /* IN:  dimension ID */
    -BMR, 5/30/2016
 */
 
-#if 0
-        HDstrncpy(name, dim->name->values, dim->name->len);
-#endif
         HDmemcpy(name, dim->name->values, dim->name->len);
         name[dim->name->len] = '\0';
       }
@@ -5316,123 +5310,6 @@ done:
 
     return ret_value;
 } /* SDiscoordvar */
-
-
-#if 0
-/* ---------------------------- RAGGED ARRAYS ----------------------------- */
-/*
-
-  Ragged arrays are a cross between datasets and index structures.  The
-  basic idea is that all but one of the dimensions is constant.  The
-  other dimension can vary over the course of the dataset.  This is
-  useful for storing equal area grids and for making algorithms much
-  more complex.
-
-  Ragged arrays can be multi-dimensional and, eventually, record variables
-  too.  A 2-dimensional ragged array would look like:
-
-  **********
-  ********
-  *********    <---------- This is a line
-  *****
-  ***
-  *********
-  *******
-
-  The above ragged array has 7 "lines" the "line length" of the fifth line is
-  three.  It is not necessary to set all of the line lengths at the same time
-  nor retrieve them all at the same time.   However, to specify the line
-  length for line X, the length must be specified for all Y < X (is this
-  really necessary?)
-
-  Internally, the above ragged array would be stored as a one-dimensional
-  dataset.  In addition, there will be a rag_fill array that contains the
-  line lengths.  This rag_fill array will get written to a separate
-  structure in the file (tag DFTAG_SDRAG).
-
-*/
-/* ------------------------------------------------------------------------ */
-
-
-/******************************************************************************
-  Set the lengths of the lines of a ragged array.
-
-  Currently, these lines must be specified in increasing order (i.e. can't
-  use hyperslab type locations to set them).  This should probably be made
-  nicer once everything else works.
-
-******************************************************************************/
-int32
-SDsetrag(int32 sdsid,
-         int32 low,
-         int32 count,
-         int32 *sizes)
-{
-    NC       *handle = NULL;
-    NC_var   *var = NULL;
-    int32     ret_value = SUCCEED;
-
-#ifdef SDDEBUG
-    fprintf(stderr, "SDsetrag: I've been called\n");
-#endif
-
-    /* clear error stack */
-    HEclear();
-
-    /* get the variable */
-    handle = SDIhandle_from_id(sdsid, SDSTYPE);
-    if(handle == NULL || handle->file_type != HDF_FILE)
-      {
-    HGOTO_ERROR(DFE_ARGS, FAIL);
-      }
-
-    if(handle->vars == NULL)
-      {
-    HGOTO_ERROR(DFE_ARGS, FAIL);
-      }
-
-    var = SDIget_var(handle, sdsid);
-    if((var == NULL) || (var->is_ragged == FALSE))
-      {
-    HGOTO_ERROR(DFE_ARGS, FAIL);
-      }
-
-    /* verify writing to a valid area */
-    if(var->rag_fill != low)
-      {
-        printf("var->rag_fill %d    low %d\n", var->rag_fill, low);
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-      }
-
-    /* allocate some space for the ragged dimension if needed */
-    /* BUG: will need to be changed for ragged records */
-    if(var->rag_list == NULL)
-      {
-        var->rag_list = (int32 *) HDmalloc(sizeof(int32) * var->dsizes[0]);
-        if(var->rag_list == NULL)
-          {
-              HGOTO_ERROR(DFE_ARGS, FAIL);
-          }
-      }
-
-    /* copy over the new values */
-    HDmemcpy(&(var->rag_list[low]), sizes, sizeof(int32) * count);
-
-    /* update count */
-    var->rag_fill += count;
-
-done:
-    if (ret_value == FAIL)
-      { /* Failure cleanup */
-
-      }
-    /* Normal cleanup */
-
-
-    return ret_value;
-} /* SDsetrag */
-
-#endif /* 0 */
 
 
 /******************************************************************************

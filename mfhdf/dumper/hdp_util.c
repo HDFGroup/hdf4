@@ -616,41 +616,11 @@ int sort_obj_list_by_tag(const void *p1, const void *p2)
    return (0);
 }	/* end sort_obj_info_by_tag() */
 
-#if 0 /* No longer possible since objects can have more than one label 
-       * -GV 6/12/97 */
-int sort_obj_list_by_name(const void *p1, const void *p2)
-{
-    const objinfo_t *a = (const objinfo_t *) *((void **) p1);
-    const objinfo_t *b = (const objinfo_t *) *((void **) p2);
-
-	/* Any label has priority over no label, else sort alphabetically */
-    if (a->has_label)
-      {
-          if (b->has_label)
-              return (HDstrcmp(a->lab_info, b->lab_info));
-          else
-              return (1);
-      }		/* end if */
-    else
-      {
-          if (b->has_label)
-              return (-1);
-          else
-              return (0);
-      }		/* end else */
-}	/* end sort_obj_info_by_tag() */
-#endif
 
 void sort_obj_list(objlist_t * o_list, sort_t sort_type)
 {
    switch (sort_type)
    {
-#if 0 /* No longer possible since objects can have more than one label 
-       * -GV 6/12/97 */
-      case ONAME:	/* sort by name order */
-          qsort(o_list->srt_obj_arr, o_list->max_obj, sizeof(objinfo_t *), sort_obj_list_by_name);
-          break;
-#endif
       case OGROUP:		/* sort by group order */
           break;	/* not currently implemented */
 

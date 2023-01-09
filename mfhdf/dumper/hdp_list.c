@@ -52,10 +52,6 @@ list_usage(intn argc,
     printf("\t-of\tPrint items in the order found in the file\n");
     printf("\t-og\tPrint items in group order\n");
     printf("\t-ot\tPrint items in tag order (default)\n");
-#if 0 /* No longer possible since objects can have more than one label 
-       * -GV 6/12/97 */
-    printf("\t-on\tPrint items in name or label order\n");
-#endif
     printf("\t<filelist>\tList of hdf file names, separated by spaces\n");
 }	/* end list_usage() */
 
@@ -174,12 +170,6 @@ parse_list_opts(list_info_t * list_opts,
                             list_opts->order = OFILE;	/* ordering is by file */
                             break;
 
-#if 0 /* No longer possible since objects can have more than one label 
-       * -GV 6/12/97 */
-                        case 'n':
-                            list_opts->order = ONAME;	/* ordering is by name */
-                            break;
-#endif
                         default:
                             printf("ERROR: Invalid list ordering!\n");
                             return (FAIL);

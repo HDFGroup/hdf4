@@ -180,9 +180,6 @@ PRIVATE intn IsCal = 0;         /* has calibration info been set?     */
 /*           userNT=DFNTF_IEEE ;         default */
 
 PRIVATE uint16 Readref = 0;     /* ref of next SDG/NDG to be read? */
-#if 0
-PRIVATE char Lastfile[DF_MAXFNLEN] = "";    /* last file opened */
-#endif
 PRIVATE char *Lastfile = NULL;
 PRIVATE uint16 Lastref = 0;     /* Last ref to be read/written? */
 PRIVATE DFdi lastnsdg;          /* last read nsdg in nsdg_t */

@@ -415,11 +415,6 @@ int cdfid ;
                 nc_serror("xdr_cdf") ;
                 NC_free_cdf(handle) ; /* ?? what should we do now? */
 
-#if 0 /* not sure if we need this here, will check again - 1/26/08 BMR */
-        /* if the _cdf list is empty, deallocate and reset it to NULL */
-        if (_ncdf == 0)
-            ncreset_cdflist();
-#endif
                 return(-1) ;
             }
           if( NC_computeshapes(handle) == -1)

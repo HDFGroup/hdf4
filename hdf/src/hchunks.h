@@ -40,10 +40,6 @@
 #include "hcomp.h"  /* For Compression */
 
 /* Define class, class version and name(partial) for chunk table i.e. Vdata */
-#if 0 /* moved definition of class of vdata to hlimits.h */
-#define _HDF_CHK_TBL_CLASS "_HDF_CHK_TBL_" /* 13 bytes */
-#define _HDF_CHK_TBL_CLASS_VER  0          /* zero version number for class */
-#endif /* moved definition of class of vdata to hlimits.h */
 #define _HDF_CHK_TBL_NAME  "_HDF_CHK_TBL_" /* 13 bytes */
 
 /* Define field name for each chunk record i.e. Vdata record */

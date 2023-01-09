@@ -706,23 +706,6 @@ test_chunk()
         goto test6;
       }
 
-#if 0
-    /* Write data using SDwritedata() */
-    start_dims[0] = 0;
-    start_dims[1] = 0;
-    start_dims[2] = 0;
-    edge_dims[0] = 2;
-    edge_dims[1] = 3;
-    edge_dims[2] = 4;
-    status = SDwritedata(newsds5, start_dims, NULL, edge_dims, (VOIDP) wu8_data);
-    if(status == FAIL)
-      {
-        fprintf(stderr, "Chunk Test 5. Failed to write wu8_data to new chunked data set\n");
-        num_errs++;
-        goto test6;
-      }
-#endif
-
     /* Write data use SDwriteChunk */
     start_dims[0] = 0;
     start_dims[1] = 0;
@@ -985,9 +968,6 @@ test_chunk()
     cdims[0] = chunk_def.comp.chunk_lengths[0] = 1;
     cdims[1] = chunk_def.comp.chunk_lengths[1] = 1;
     cdims[2] = chunk_def.comp.chunk_lengths[2] = 4;
-#if 0
-    chunk_def.comp.comp_type = COMP_CODE_RLE;
-#endif
     chunk_def.comp.comp_type = COMP_CODE_SKPHUFF; /* Skipping Huffman */
     chunk_def.comp.cinfo.skphuff.skp_size = sizeof(uint16);
     status = SDsetchunk(newsds6, chunk_def, HDF_CHUNK | HDF_COMP);
@@ -1341,12 +1321,6 @@ test_chunk()
        Use GZIP compression */
     cdims[0] = chunk_def.comp.chunk_lengths[0] = 3;
     cdims[1] = chunk_def.comp.chunk_lengths[1] = 2;
-#if 0
-    chunk_def.comp.comp_type = COMP_CODE_RLE;   /* RLE */
-
-    chunk_def.comp.comp_type = COMP_CODE_SKPHUFF; /* Skipping Huffman */
-    chunk_def.comp.cinfo.skphuff.skp_size = sizeof(uint16);
-#endif
     chunk_def.comp.comp_type = COMP_CODE_DEFLATE; /* GZIP */
     chunk_def.comp.cinfo.deflate.level = 6;
 

@@ -58,9 +58,6 @@ PRIVATE uint16 Lastref = 0;     /* Last ref read/written */
 PRIVATE uint16 Next_label_ref = 0;  /* Next file label ref to read/write */
 PRIVATE uint16 Next_desc_ref = 0;   /* Next file desc ref to read/write */
 
-#if 0
-static char Lastfile[DF_MAXFNLEN] = "";     /* last file opened */
-#endif
 PRIVATE char *Lastfile = NULL;
 
 /* pointers to directories of object annotations */

@@ -180,25 +180,6 @@ ndfiaccess(intf * dfile, intf * tag, intf * ref, _fcd acc_mode, intf * acclen)
     return (ret);
 }
 
-#if 0
-/*-----------------------------------------------------------------------------
- * Name:    dfstart
- * Purpose: Call DFaccess to set up access to item
- * Inputs:  dfile: pointer to HDF file
- *          tag, ref: attributes of item to access
- *          acc_mode: access mode
- * Returns: 0 on success, -1 on failure with DFerror set
- * Users:   HDF Fortran programmers
- * Invokes: DFaccess
- *---------------------------------------------------------------------------*/
-
-FRETVAL(intf)
-ndfstart(intf * dfile, intf * tag, intf * ref, char *acc_mode)
-{
-    return (DFaccess((DF *) * dfile, (uint16) *tag, (uint16) *ref, acc_mode));
-}
-#endif /* 0 */
-
 /*-----------------------------------------------------------------------------
  * Name:    dfread
  * Purpose: Call DFread to read part of item
