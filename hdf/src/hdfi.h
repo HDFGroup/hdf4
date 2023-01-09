@@ -551,7 +551,7 @@ typedef long            hdf_pint_t;   /* an integer the same size as a pointer *
 /* Metrowerks Mac compiler defines some PC stuff so need to exclude this on the Mac */
 #if !(defined (__APPLE__)) && !(defined(__CYGWIN__))
 
-#if defined _M_ALPHA || defined _M_X64 || defined _M_IA64 || defined _M_IX86 || defined INTEL86 || defined M_I86 || defined M_I386 || defined DOS386 || defined __i386 || defined UNIX386 || defined i386
+#if defined _M_ARM64 || defined _M_ALPHA || defined _M_X64 || defined _M_IA64 || defined _M_IX86 || defined INTEL86 || defined M_I86 || defined M_I386 || defined DOS386 || defined __i386 || defined UNIX386 || defined i386
 #ifndef INTEL86
 #define INTEL86
 #endif /* INTEL86 */
