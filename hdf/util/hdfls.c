@@ -318,7 +318,7 @@ void printfilever(int32 file_id)
                  (unsigned)major, (unsigned)minor, (unsigned)release, string);
       }
     else
-        printf("(Does not have libraray version information)\n");
+        printf("(Does not have library version information)\n");
 }
 
 /* print command usage */

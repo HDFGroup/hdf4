@@ -195,14 +195,14 @@ char     *GIFFileName;
 	if ((status = Vdetach(vgroup_id))==-1) {
 		printf("Could not detach Vgroup\n");
 		printf("%s\n", HEstring(HEvalue(1)));
-		printf("Trying to continure (file may be corrupt)...\n");
+		printf("Trying to continue (file may be corrupt)...\n");
 	}
 
 	/* Terminate access to the V interface */
 	if ((status = Vend(file_id))==-1) {
 		printf("Could not end VGroup access\n");
 		printf("%s\n", HEstring(HEvalue(1)));
-		printf("Trying to continure (file may be corrupt)... \n");
+		printf("Trying to continue (file may be corrupt)... \n");
 	}
 
 	/* Close the HDF file */

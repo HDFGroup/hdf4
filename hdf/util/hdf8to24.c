@@ -38,7 +38,7 @@ static VOID usage(void);
 
 /**********************************************************************
 *  Function :   magnify
-*  Purpose  :   Magnify an image by independant X and Y magnification
+*  Purpose  :   Magnify an image by independent X and Y magnification
 *                   factors.  Note that the coordinates which specify
 *                   the area in the "from" image are _inclusive_, i.e.
 *                   if you would like to magnify the entire image, the
@@ -200,7 +200,7 @@ main(int argc, char *argv[])
     uint8      *img_buf;        /* buffer to store the image in */
     uint8      *img24_buf;      /* buffer to store the 24-bit image in */
     uint8      *pal_buf = NULL; /* buffer to store the palette in */
-    intn        file = 1;       /* the arguement the files start at */
+    intn        file = 1;       /* the argument the files start at */
     intn        i;              /* local counting variable */
 
     if (argc < 3)
@@ -265,7 +265,7 @@ main(int argc, char *argv[])
             }   /* end if */
       }     /* end if */
     else
-        printf("No palette associated with image, using default grey scale converion\n");
+        printf("No palette associated with image, using default grey scale conversion\n");
 
     if (DFR8getimage(argv[file], img_buf, xdim, ydim, (ispal ? pal_buf : NULL)) == FAIL)
       {

@@ -175,7 +175,7 @@ GIFHEAD      *GifHead;
 	Raster = GifImageDesc->GIFImage;
 
 
-	/* Check for image seperator */
+	/* Check for image separator */
 
 	/* Now read in values from the image descriptor */
 	IWidth = GifImageDesc->ImageWidth;
