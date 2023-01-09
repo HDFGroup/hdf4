@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id: hproto.h 4784 2006-11-21 04:49:51Z bmribler $ */
 
 #ifndef _H_PROTO_FORTRAN
 #define _H_PROTO_FORTRAN

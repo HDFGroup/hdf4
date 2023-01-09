@@ -1,4 +1,3 @@
-C $Id$ 
        include 'hdf.inc'
        include 'dffunc.inc'
 C Common block definiton to be included by fortestF.f modules.  If your

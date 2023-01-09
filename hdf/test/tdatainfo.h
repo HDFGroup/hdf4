@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id: tutils.h 5335 2010-01-28 06:28:23Z bmribler $ */
 
 #ifndef _TDATAINFO_H
 #define _TDATAINFO_H
