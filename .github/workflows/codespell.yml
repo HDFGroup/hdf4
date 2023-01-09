@@ -12,4 +12,4 @@ jobs:
       - uses: codespell-project/actions-codespell@master
         with:
           skip: ./hdf/util/testfiles/*.raw,./hdf/util/testfiles/head.r8,./mfhdf/ncdump/*,./mfhdf/ncgen/*,./mfhdf/nctest/*,./mfhdf/xdr/*,./mfhdf/README
-          ignore_words_list: anid,ans,isnt,fo,msdos,siz,vlone
+          ignore_words_list: acount,anid,ans,clude,isnt,fo,msdos,nd,pres,siz,vlone

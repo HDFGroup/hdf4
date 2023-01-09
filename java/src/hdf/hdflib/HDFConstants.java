@@ -258,19 +258,19 @@ public class HDFConstants {
     /** 8-bit integer */
     public static final int DFNT_INT8 = 20;
 
-    /** unsigned 8-bit interger */
+    /** unsigned 8-bit integer */
     public static final int DFNT_UINT8 = 21;
 
     /** short */
     public static final int DFNT_INT16 = 22;
 
-    /** unsigned interger */
+    /** unsigned integer */
     public static final int DFNT_UINT16 = 23;
 
-    /** interger */
+    /** integer */
     public static final int DFNT_INT32 = 24;
 
-    /** unsigned interger */
+    /** unsigned integer */
     public static final int DFNT_UINT32 = 25;
 
     /** Not supported */

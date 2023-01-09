@@ -23,7 +23,7 @@
    you are generating the test is working yet.
 
    DESIGN
-   Each test should have a seperate function which creates the datafiles
+   Each test should have a separate function which creates the datafiles
    necessary for testing it.
 
    BUGS/LIMITATIONS

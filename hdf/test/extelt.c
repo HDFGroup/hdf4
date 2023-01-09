@@ -241,7 +241,7 @@ test_hextelt(void)
           inbuf[i] = '\0';
       }
     if (errflag)
-        fprintf(stderr,"Error: Wrong data in inbuf[] from external elment in file #2\n");
+        fprintf(stderr,"Error: Wrong data in inbuf[] from external element in file #2\n");
 
     ret = Hendaccess(aid1);
     CHECK_VOID(ret, FAIL, "Hendaccess");

@@ -220,7 +220,7 @@ main(int argc, char *argv[])
 
     fclose(cmdfile);
 
-    /* flush stdout to gurantee output preceed those of fortestF */
+    /* flush stdout to guarantee output precedes that of fortestF */
     fflush(stdout);
 
 #  ifndef CMAKE_INTDIR /* not built with cmake */

@@ -94,7 +94,7 @@ test_file_limits(void)
           if (accs[i] < 0)
               break;
       }
-    MESSAGE(5, printf("Opening stoped at %d element\n", i);
+    MESSAGE(5, printf("Opening stopped at %d element\n", i);
         );
 
     MESSAGE(5, puts("Closing access elements");

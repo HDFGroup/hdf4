@@ -546,7 +546,7 @@ public class HDFLibrary implements java.io.Serializable {
      * @exception hdf.hdflib.HDFException
      *                should be thrown for errors.
      *
-     * @return the the data in the form of a continous array of bytes.
+     * @return the the data in the form of a continuous array of bytes.
      *
      *         <p>
      *         <b>NOTE:</b> to read into a Java 2D array use the alternative routine below.
@@ -1100,7 +1100,7 @@ public class HDFLibrary implements java.io.Serializable {
      * @exception hdf.hdflib.HDFException
      *                should be thrown for errors.
      *
-     * @return the the data in the form of a continous array of bytes.
+     * @return the the data in the form of a continuous array of bytes.
      *
      *         <p>
      *         <b>NOTE:</b> to read into a Java array use the alternative routine below.
@@ -1241,7 +1241,7 @@ public class HDFLibrary implements java.io.Serializable {
      * @exception hdf.hdflib.HDFException
      *                should be thrown for errors.
      *
-     * @return the the data in the form of a continous array of bytes.
+     * @return the the data in the form of a continuous array of bytes.
      *
      *         <p>
      *         <b>NOTE:</b> to read into a Java array use the alternative routine below.
@@ -1347,7 +1347,7 @@ public class HDFLibrary implements java.io.Serializable {
      * @exception hdf.hdflib.HDFException
      *                should be thrown for errors.
      *
-     * @return the the data in the form of a continous array of bytes.
+     * @return the the data in the form of a continuous array of bytes.
      *
      *         <p>
      *         <b>NOTE:</b> to read into a Java array use the alternative routine below.
@@ -1388,7 +1388,7 @@ public class HDFLibrary implements java.io.Serializable {
      * @exception hdf.hdflib.HDFException
      *                should be thrown for errors.
      *
-     * @return the the fill value in the form of a continous array of bytes.
+     * @return the the fill value in the form of a continuous array of bytes.
      *
      *         <p>
      *         <b>NOTE:</b> to read into a Java variable use the alternative routine below.
@@ -1494,7 +1494,7 @@ public class HDFLibrary implements java.io.Serializable {
      * @exception hdf.hdflib.HDFException
      *                should be thrown for errors.
      *
-     * @return the the max and min values in the form of a continous array of bytes.
+     * @return the the max and min values in the form of a continuous array of bytes.
      *
      *         <p>
      *         <b>NOTE:</b> to read into Java doubles, use the alternative routine below.

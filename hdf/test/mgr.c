@@ -185,7 +185,7 @@ extern void test_mgr_dup_images();
                         aa. Whole image
                         bb. Sub-setted image
                         cc. Sub-sampled image
-                    2. With user defined vill value
+                    2. With user defined fill value
                         aa. Whole image
                         bb. Sub-setted image
                         cc. Sub-sampled image
@@ -208,7 +208,7 @@ extern void test_mgr_dup_images();
     VI. Special Element Functions [Need to be implemented]
         A. GRsetexternalfile
         B. GRsetaccesstype
-    VII. Atribute Functions
+    VII. Attribute Functions
         A. GRattrinfo
         B. Read/Write Attributes
             1. GRsetattr
@@ -2152,7 +2152,7 @@ static void test_mgr_image_chunk(int flag)
 **                      aa. Whole image
 **                      bb. Sub-setted image
 **                      cc. Sub-sampled image
-**                  2. With user defined vill value
+**                  2. With user defined fill value
 **                      aa. Whole image
 **                      bb. Sub-setted image
 **                      cc. Sub-sampled image
@@ -2631,7 +2631,7 @@ test_mgr_special(int flag)
 **
 **  test_mgr_attr_old(): Multi-file Raster Attribute Test Routine
 ** 
-**  VII. Atribute Functions
+**  VII. Attribute Functions
 **      A. GRattrinfo
 **      B. Read/Write Attributes
 **          1. GRsetattr
@@ -4043,7 +4043,7 @@ test_mgr(void)
         IV. Interlace Functions          - test_mgr_interlace
         V. Palette Functions             - test_mgr_lut
         VI. Special Element Functions    - test_mgr_special
-        VII. Atribute Functions          - test_mgr_attr (tmgrattr.c)
+        VII. Attribute Functions         - test_mgr_attr (tmgrattr.c)
         VIII. Access to old-style images - test_mgr_old
         IX. Compressed Image Functions   - test_mgr_compress (tmgrcomp.c)
         X. DF24 Compatibility tests      - test_mgr_r24

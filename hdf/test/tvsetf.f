@@ -360,7 +360,7 @@ C
       ret = vfnflds (vsid2)
       if (ret .ne. 5) then
           number_failed = number_failed + 1
-          call MESSAGE(3, 'Wrong number of the vdata fileds. ')
+          call MESSAGE(3, 'Wrong number of the vdata fields. ')
       endif
 C
 C     Find the datatype of the first field (should be DFNT_INT32)

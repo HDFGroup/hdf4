@@ -509,7 +509,7 @@ test_append_vs()
   Description:
 	readnoHDF_char opens the file and reads in data at the specified
 	offset.  The read data is compared against the original data passed
-	by caller.  If any mis-match occurs, an error message will be
+	by caller.  If any mismatch occurs, an error message will be
 	displayed but the process will continue.
 
   Parameters:
@@ -729,7 +729,7 @@ test_annotation()
     status_n = ANendaccess(data_desc_id);
     CHECK_VOID(status_n, FAIL, "ANendaccess");
 
-    /* Teminate access to the vgroup and to the V interface. */
+    /* Terminate access to the vgroup and to the V interface. */
     status = Vdetach(vgroup_id);
     status_n = Vend(fid);
 

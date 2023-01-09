@@ -1132,7 +1132,7 @@ C
 C
 C---Those statemnets were created for SunOS since the
 C   compiler does not support multiple continuation lines
-C   needed for data initilization in DATA statement.
+C   needed for data initialization in DATA statement.
 C   This file should be used only on SunOS and
 C   should be deleted from CVS as soon as we drop SunOS support.
 C        EP 5/5/99
