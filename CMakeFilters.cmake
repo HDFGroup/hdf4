@@ -12,6 +12,12 @@ option (BUILD_JPEG_WITH_FETCHCONTENT "Use FetchContent to use original source fi
 if (BUILD_JPEG_WITH_FETCHCONTENT)
   set (JPEG_USE_EXTERNAL "Use External Library Building for JPEG" 1)
   set (JPEG_URL ${JPEG_TGZ_ORIGPATH})
+  if (NOT EXISTS "${JPEG_URL}")
+    set (HDF4_ENABLE_JPEG_SUPPORT OFF CACHE BOOL "" FORCE)
+    if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.15.0")
+      message (VERBOSE "Filter JPEG file ${JPEG_URL} not found")
+    endif ()
+  endif ()
 endif ()
 
 include (ExternalProject)
