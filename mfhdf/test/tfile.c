@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id: tfile.c 5218 2009-08-29 04:21:49Z bmribler $ */
 
 #include "mfhdf.h"
 

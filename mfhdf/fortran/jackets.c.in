@@ -2,7 +2,6 @@
  *    Copyright 1990, University Corporation for Atmospheric Research
  *      See netcdf/COPYRIGHT file for copying and redistribution conditions.
  */
-/* $Id: jackets-linux.c 4772 2006-11-01 16:53:11Z epourmal $ */
 /*
  * OVERVIEW
  *

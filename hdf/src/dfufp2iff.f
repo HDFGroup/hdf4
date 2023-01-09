@@ -11,7 +11,6 @@ C  If you do not have access to either file, you may request a copy from     *
 C  help@hdfgroup.org.                                                        *
 C * * * * * * * * *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 C
-C $Id: dfufp2if.f 1014 1994-01-13 21:16:42Z georgev $
 C
 C------------------------------------------------------------------------------
 C File:     DFUfptoimFf.f

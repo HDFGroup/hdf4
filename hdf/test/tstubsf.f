@@ -1,6 +1,3 @@
-C****************************************************************************
-C* $Id$                       *
-C* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 C * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 C  Copyright by The HDF Group.                                               *
 C  Copyright by the Board of Trustees of the University of Illinois.         *

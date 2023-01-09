@@ -1,7 +1,6 @@
 c********************************************************************
 c   Copyright 1993, UCAR/Unidata
 c   See netcdf/COPYRIGHT file for copying and redistribution conditions.
-c   $Id: ftest-linux.f 5345 2010-01-29 20:55:24Z epourmal $
 c********************************************************************/
 
 
