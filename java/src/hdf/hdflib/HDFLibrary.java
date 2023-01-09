@@ -120,10 +120,10 @@ import org.slf4j.LoggerFactory;
  * bytes that is the data for a multi-dimensional array.
  * <p>
  * For Java, this is a problem, as the type of data must be declared. Furthermore, multidimensional
- * arrays are definitely <i>not</i> layed out contiguously in memory. It would be infeasible to
+ * arrays are definitely <i>not</i> laid out contiguously in memory. It would be infeasible to
  * declare a separate routine for every combination of number type and dimensionality. For that
  * reason, the <b>HDFArray</b> class is used to discover the type, shape, and size of the data array
- * at run time, and to convert to and from contigous bytes. The upshot is that the data can be
+ * at run time, and to convert to and from contiguous bytes. The upshot is that the data can be
  * passed as an ``Object'', and the Java API will translate to and from the appropriate bytes. So
  * the function above would be declared:
  *

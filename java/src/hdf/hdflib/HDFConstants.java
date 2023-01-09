@@ -49,7 +49,7 @@ public class HDFConstants {
     /** */
     public static final int AN_FILE_DESC = AN_DATA_LABEL + 3;
 
-    // HDF Tag Definations
+    // HDF Tag Definitions
     /** */
     public static final int DFREF_WILDCARD = 0;
     /** */
