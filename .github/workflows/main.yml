@@ -19,17 +19,17 @@ jobs:
 #        name: ["Windows Latest MSVC", "Windows Previous MSVC", "Ubuntu Latest GCC", "Ubuntu Debug GCC", "macOS Latest Clang", "Ubuntu Autotools GCC"]
         name: ["Ubuntu Latest GCC", "Ubuntu Debug GCC", "Ubuntu Autotools GCC"]
         include:
-          - name: "Windows Latest MSVC"
-            artifact: "Windows-MSVC.tar.xz"
-            os: windows-2022
-            build_type: "Release"
-            toolchain: ""
-            netcdf: ON
-            java: ON
-            fortran: OFF
-            xdr: ON
-            jpegfc: ON
-            generator: "-G \"Visual Studio 17 2022\" -A x64"
+#          - name: "Windows Latest MSVC"
+#            artifact: "Windows-MSVC.tar.xz"
+#            os: windows-2022
+#            build_type: "Release"
+#            toolchain: ""
+#            netcdf: ON
+#            java: ON
+#            fortran: OFF
+#            xdr: ON
+#            jpegfc: ON
+#            generator: "-G \"Visual Studio 17 2022\" -A x64"
 #          - name: "Windows Previous MSVC"
 #            artifact: "Windows-MSVC.tar.xz"
 #            os: windows-2019
@@ -50,16 +50,17 @@ jobs:
             ts: OFF
             toolchain: "config/toolchain/GCC.cmake"
             generator: "-G Ninja"
-#          - name: "macOS Latest Clang"
-#            artifact: "macOS.tar.xz"
-#            os: macos-latest
-#            build_type: "Release"
-#            netcdf: ON
-#            java: ON
-#            fortran: OFF
-#            xdr: ON
-#            toolchain: "config/toolchain/clang.cmake"
-#            generator: "-G Ninja"
+          - name: "macOS Latest Clang"
+            artifact: "macOS.tar.xz"
+            os: macos-latest
+            build_type: "Release"
+            netcdf: ON
+            java: ON
+            fortran: OFF
+            xdr: ON
+            jpegfc: ON
+            toolchain: "config/toolchain/clang.cmake"
+            generator: "-G Ninja"
           - name: "Ubuntu Debug GCC"
             artifact: "LinuxDBG.tar.xz"
             os: ubuntu-latest

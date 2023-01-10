@@ -56,8 +56,9 @@ set (SZIP_TGZ_NAME "SZip.tar.gz" CACHE STRING "Use SZip from compressed file" FO
 set (SZAEC_TGZ_NAME "LIBAEC.tar.gz" CACHE STRING "Use SZip AEC from compressed file" FORCE)
 set (USE_LIBAEC ON CACHE BOOL "Use libaec szip replacement" FORCE)
 set (JPEG_TGZ_NAME "JPEG9e.tar.gz" CACHE STRING "Use JPEG from compressed file" FORCE)
-set (JPEG_TGZ_ORIGPATH "https://www.ijg.org/files/jpegsrc.v9e.tar.gz" CACHE STRING "Use JPEG from original compressed file" FORCE)
-
+set (JPEG_TGZ_ORIGPATH "https://www.ijg.org/filesz" CACHE STRING "Use JPEG from original location" FORCE)
+set (JPEG_TGZ_ORIGNAME "jpegsrc.v9e.tar.gz" CACHE STRING "Use JPEG from original compressed file" FORCE)
+set (JPEG_USE_LOCALCONTENT ON CACHE BOOL "Use local file for JPEG FetchContent" FORCE)
 set (ZLIB_PACKAGE_NAME "zlib" CACHE STRING "Name of ZLIB package" FORCE)
 set (LIBAEC_PACKAGE_NAME "libaec" CACHE STRING "Name of AEC SZIP package" FORCE)
 set (SZIP_PACKAGE_NAME "szip" CACHE STRING "Name of SZIP package" FORCE)
