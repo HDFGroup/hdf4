@@ -48,7 +48,6 @@
 /*          (i.e. Big-Endian, all 64-bit architecture w/IEEE Floats)        */
 /*--------------------------------------------------------------------------*/
 #define     DFMT_SUN            0x1111
-#define     DFMT_SUN_INTEL      0x4441
 #define     DFMT_APOLLO         0x1111
 #define     DFMT_IBM6000        0x1111
 #define     DFMT_CONVEXNATIVE   0x5511
@@ -81,23 +80,7 @@
  * Define options for each platform
  *-------------------------------------------------------------------------*/
 
-/*
- * Meaning of each defined macros (not completed yet)
- *
- * H4_BIG_LONGS--Define when long is not "equal" to int32.  True in cases
- *      where (int32 *) is not compatible with (long *).  Should
- *      be renamed as LONGNEINT32.
- */
-
 #if (defined(SUN) || defined(sun) || defined(__sun__) || defined(__SUNPRO_C)) & !defined(__i386)
-#ifdef __STDC__
-#define ANSISUN
-#else /* __STDC__ */
-#define KNRSUN
-#endif /* __STDC__ */
-#endif /* SUN || sun */
-
-#if defined(ANSISUN)
 
 #if !defined(SUN)
 #define SUN
@@ -113,11 +96,7 @@ Please check your Makefile.
 #include <sys/time.h>
 #include <sys/file.h>               /* for unbuffered i/o stuff */
 #include <sys/stat.h>
-#if (defined __sun) && (defined __amd64 || defined __i386) /* SunOS on Intel; 32 and 64-bit modes */
-#define DF_MT   DFMT_SUN_INTEL
-#else
 #define DF_MT   DFMT_SUN
-#endif /* __sun */
 typedef void              VOID;
 typedef void              *VOIDP;
 typedef char              *_fcd;
@@ -157,64 +136,7 @@ typedef int               hdf_pint_t;   /* an integer the same size as a pointer
 #define HAVE_STDC
 #define INCLUDES_ARE_ANSI
 
-#endif /* ANSISUN */
-
-#if defined(KNRSUN)
-
-#if !defined(SUN)
-#define SUN
-#endif
-
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE
-
-#   define BSD
-#define DUMBCC     /* because it is.  for later use in macros */
-#ifndef __GNUC__
-#include <memory.h>
-#endif /* __GNUC__ */
-#include <unistd.h>
-#include <sys/file.h>               /* for unbuffered i/o stuff */
-#include <sys/stat.h>
-#define DF_MT             DFMT_SUN
-typedef void              VOID;
-typedef char              *VOIDP;
-typedef char              *_fcd;
-typedef char              char8;
-typedef unsigned char     uchar8;
-typedef char              int8;
-typedef unsigned char     uint8;
-typedef short int         int16;
-typedef unsigned short int uint16;
-typedef long int          int32;
-typedef unsigned long int uint32;
-typedef int               intn;
-typedef unsigned int      uintn;
-typedef int               intf;     /* size of INTEGERs in Fortran compiler */
-typedef float             float32;
-typedef double            float64;
-typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
-#define FNAME_POST_UNDERSCORE
-#define _fcdtocp(desc) (desc)
-#define FILELIB UNIXBUFIO
-
-/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
-
-/* Determine the memory manager we are going to use. Valid values are: */
-/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
-/*  what each does */
-#define JMEMSYS         MEM_ANSI
-
-#ifdef __GNUC__
-#define HAVE_STDC
-#define INCLUDES_ARE_ANSI
-#endif
-
 #endif /* SUN */
-
 
 #if defined(IBM6000) || defined(_AIX)
 
@@ -661,8 +583,9 @@ typedef long              hdf_pint_t;   /* an integer the same size as a pointer
 #define INCLUDES_ARE_ANSI
 #endif
 
-/*-----------------------------------------------------*/
 #endif /*power PC 5 64 */
+
+/*-----------------------------------------------------*/
 /* Linux 64 */
 #if (defined(__linux__) && defined __x86_64__  && !(defined  SUN)) || defined(__CYGWIN__)  /* i.e. 64-bit Linux  but not SunOS on Intel */
                                                                                            /* it should work also for Cygwin 32 & 64 bit */
