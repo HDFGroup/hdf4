@@ -27,10 +27,7 @@
  */
 static
 bool_t
-NCxdr_shortsb(xdrs, sp, nshorts)
-	XDR *xdrs;
-	short *sp;
-	u_int nshorts ;
+NCxdr_shortsb(XDR *xdrs, short *sp, u_int nshorts)
 {
 	unsigned char buf[NC_SHRT_BUFSIZ] ;
 	unsigned char *cp ;
@@ -72,10 +69,7 @@ NCxdr_shortsb(xdrs, sp, nshorts)
  * Translate an array of cnt short integers at sp.
  */
 bool_t
-xdr_shorts(xdrs, sp, cnt)
-	XDR *xdrs;
-	short *sp;
-	u_int cnt ;
+xdr_shorts(XDR *xdrs, short *sp, u_int cnt)
 {
 	int odd ; /* 1 if cnt is odd, 0 otherwise */
 

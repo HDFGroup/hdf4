@@ -3,8 +3,7 @@
  */
 
 /* switch the order of the bytes in a long integer */
-long ntohl(i_in)
-long i_in;
+long ntohl(long i_in)
 {
 	long i_out;
 	register unsigned char *inptr, *outptr;
@@ -21,8 +20,7 @@ long i_in;
 }
 
 /* switch the order of the bytes in a long integer */
-long htonl(i_in)
-long i_in;
+long htonl(long i_in)
 {
 	long i_out;
 	register unsigned char *inptr, *outptr;
@@ -40,8 +38,7 @@ long i_in;
 
 
 /* switch the order of the bytes in a short integer */
-short ntohs(i_in)
-short i_in;
+short ntohs(short i_in)
 {
 	short i_out;
 	register unsigned char *inptr, *outptr;
@@ -56,8 +53,7 @@ short i_in;
 }
 
 /* switch the order of the bytes in a short integer */
-short htons(i_in)
-short i_in;
+short htons(short i_in)
 {
 	short i_out;
 	register unsigned char *inptr, *outptr;

@@ -58,8 +58,7 @@ static int NC_free_xcdf(NC *);
  *       -GV 9/16/97
  */
 static int
-NC_free_xcdf(handle)
-NC *handle ;
+NC_free_xcdf(NC *handle)
 {
     int ret_value = SUCCEED;
 
@@ -88,8 +87,7 @@ done:
  *       -GV 9/16/97
  */
 int
-NC_free_cdf(handle)
-NC *handle ;
+NC_free_cdf(NC *handle)
 {
     int ret_value = SUCCEED;
 
@@ -139,8 +137,7 @@ done:
 
   Refactored out from existing functions. -BMR, Jun 7, 2016
 */
-int32 hdf_get_magicnum(filename)
-const char *filename;
+int32 hdf_get_magicnum(const char *filename)
 {
     CONSTR(FUNC, "hdf_get_magicnum");        /* for HERROR */
     hdf_file_t fp;
@@ -193,8 +190,7 @@ done:
 /*
   Return TRUE/FALSE depending on if the given file is a NASA CDF file
 */
-intn HDiscdf(filename)
-const char *filename;
+intn HDiscdf(const char *filename)
 {
     CONSTR(FUNC, "HDiscdf");    /* for HGOTO_ERROR */
     int32 magic_num = 0;
@@ -223,8 +219,7 @@ done:
 
   Return TRUE if the given file is a netCDF file, FALSE otherwise.
 */
-intn HDisnetcdf(filename)
-const char *filename;
+intn HDisnetcdf(const char *filename)
 {
     CONSTR(FUNC, "HDisnetcdf");    /* for HGOTO_ERROR */
     int32 magic_num = 0;
@@ -253,8 +248,7 @@ done:
 
   Return TRUE if the given file is a netCDF 64-bit file, FALSE otherwise.
 */
-intn HDisnetcdf64(filename)
-const char *filename;
+intn HDisnetcdf64(const char *filename)
 {
     CONSTR(FUNC, "HDisnetcdf64");    /* for HGOTO_ERROR */
     int32 magic_num = 0;
@@ -287,9 +281,7 @@ done:
  * NOTE: Cleaned up to catch errors - GV 9/19/97
  */
 NC *
-NC_new_cdf(name, mode)
-const char *name ;
-int mode ;
+NC_new_cdf(const char *name, int mode)
 {
 #ifdef HDF
     int32 hdf_mode =  DFACC_RDWR; /* default */
@@ -490,10 +482,7 @@ done:
  * NOTE:  Cleaned up to catch errors - GV 9/19/97
  */
 NC *
-NC_dup_cdf(name, mode, old)
-const char *name ;
-int mode ;
-NC *old ;
+NC_dup_cdf(const char *name, int mode, NC *old)
 {
     NC *cdf = NULL;
     NC *ret_value = NULL;
@@ -555,12 +544,7 @@ done:
 }
 
 
-int ncinquire(cdfid, ndimsp, nvarsp, nattrsp, xtendimp)
-int cdfid ;
-int *ndimsp ;
-int *nvarsp ;
-int *nattrsp ;
-int *xtendimp ;
+int ncinquire(int cdfid, int *ndimsp, int *nvarsp, int *nattrsp, int *xtendimp)
 {
     NC *handle ;
 
@@ -607,9 +591,7 @@ int *xtendimp ;
  *  NOTE: modified how errors were caught and reported - GV 9/19/97
  */
 bool_t
-xdr_cdf(xdrs, handlep)
-    XDR *xdrs;
-    NC **handlep;
+xdr_cdf(XDR *xdrs, NC **handlep)
 {
     bool_t ret_value = TRUE;
 
@@ -639,11 +621,8 @@ xdr_cdf(xdrs, handlep)
 
 
 static bool_t
-NC_xdr_cdf(xdrs, handlep)
-    XDR *xdrs;
-    NC **handlep;
+NC_xdr_cdf(XDR *xdrs, NC **handlep)
 {
-
     u_long    magic;
 
     if( xdrs->x_op == XDR_FREE)
@@ -743,8 +722,7 @@ NC_xdr_cdf(xdrs, handlep)
 ** Map an NC_<type> to an HDF type
 */
 int
-hdf_map_type(type)
-nc_type type;
+hdf_map_type(nc_type type)
 {
 
     switch(type)
@@ -775,8 +753,7 @@ nc_type type;
 **    bottom bits
 */
 nc_type
-hdf_unmap_type(type)
-int type;
+hdf_unmap_type(int type)
 {
     switch(type & 0xff)
       {
@@ -806,9 +783,7 @@ int type;
 ** Given a dimension id number return its hdf_ref number (Vgroup id)
 */
 int
-hdf_get_ref(handle, i)
-NC *handle;
-int i;
+hdf_get_ref(NC *handle, int i)
 {
   NC_array  *tmp = NULL;
   NC_dim   **d = NULL;
@@ -838,10 +813,7 @@ int i;
 **        seem valid -GV 9/19/97
 */
 int
-hdf_create_dim_vdata(xdrs, handle, dim)
-XDR *xdrs;
-NC *handle;
-NC_dim *dim;
+hdf_create_dim_vdata(XDR *xdrs, NC *handle, NC_dim *dim)
 {
 #ifdef LATER
     CONSTR(FUNC,"hdf_create_dim_vdata");
@@ -985,10 +957,7 @@ done:
 ** Write out a vdata representing an attribute
 */
 int
-hdf_write_attr(xdrs, handle, attr)
-XDR *xdrs;
-NC *handle;
-NC_attr **attr;
+hdf_write_attr(XDR *xdrs, NC *handle, NC_attr **attr)
 {
     char *name = NULL;
     Void *values = NULL;
@@ -1125,10 +1094,7 @@ done:
 **  return NULL
 */
 int32
-hdf_write_var(xdrs, handle, var)
-XDR *xdrs;
-NC *handle;
-NC_var **var;
+hdf_write_var(XDR *xdrs, NC *handle, NC_var **var)
 {
     NC_array  *  attrs = NULL;
     NC_iarray *  assoc = NULL;
@@ -1380,9 +1346,7 @@ done:
 ** Write out a cdf structure
 */
 intn
-hdf_write_xdr_cdf(xdrs, handlep)
-XDR *xdrs;
-NC **handlep;
+hdf_write_xdr_cdf(XDR *xdrs, NC **handlep)
 {
     int32 count;
     int status, done;
@@ -1584,8 +1548,7 @@ done:
 ** data out.
 */
 intn
-hdf_conv_scales(handlep)
-NC **handlep;
+hdf_conv_scales(NC **handlep)
 {
     int status, scaleref, scaletag, scalelen;
     unsigned i;
@@ -2542,9 +2505,7 @@ done:
 ** Read in a cdf structure
 */
 intn
-hdf_read_xdr_cdf(xdrs, handlep)
-XDR *xdrs;
-NC **handlep;
+hdf_read_xdr_cdf(XDR *xdrs, NC **handlep)
 {
 #if DEBUG
   char            vgname[H4_MAX_NC_NAME];
@@ -2559,7 +2520,6 @@ NC **handlep;
 #if DEBUG
  fprintf(stderr, "hdf_read_xdr_cdf i've been called %d\n", (*handlep)->hdf_file);
 #endif
-
 
     if((vgid = Vfindclass((*handlep)->hdf_file,_HDF_CDF))!=FAIL)
     {
@@ -2617,9 +2577,7 @@ done:
 **    them as netCDF information.
 */
 intn
-hdf_xdr_cdf(xdrs, handlep)
-XDR *xdrs;
-NC **handlep;
+hdf_xdr_cdf(XDR *xdrs, NC **handlep)
 {
     CONSTR(FUNC,"hdf_xdr_cdf"); /* for HERROR */
     intn status;
@@ -2689,9 +2647,7 @@ done:
   with class == DATA are saved
 */
 intn
-hdf_vg_clobber(handle, id)
-NC *handle;
-int id;
+hdf_vg_clobber(NC *handle, int id)
 {
     int   t, n;
     int32 vg, tag, ref;
@@ -2824,8 +2780,7 @@ done:
   Delete a netCDF structure that has been already written to disk
 */
 intn
-hdf_cdf_clobber(handle)
-NC *handle;
+hdf_cdf_clobber(NC *handle)
 {
     int32  vg, tag, ref;
     int    n, t, status;
@@ -3001,8 +2956,7 @@ BMR: handle->numrecs is used to write out the dim value for all unlimited
      file.  I believe this is what the "BUG:" comment above means.  6/24/2013
 */
 intn
-hdf_close(handle)
-    NC *handle;
+hdf_close(NC *handle)
 {
     NC_array  *tmp = NULL;
     NC_var   **vp = NULL;
@@ -3206,8 +3160,7 @@ done:
  * How much space will the xdr'd NC description take.
  *
  */
-int NC_xlen_cdf(cdf)
-NC *cdf ;
+int NC_xlen_cdf(NC *cdf)
 {
     int len = 8 ;
 
@@ -3224,9 +3177,7 @@ NC *cdf ;
 
 #define RECPOS    4L     /* seek index of numrecs value */
 bool_t
-xdr_numrecs(xdrs, handle)
-    XDR *xdrs;
-    NC *handle;
+xdr_numrecs(XDR *xdrs, NC *handle)
 {
 
 #ifdef HDF
@@ -3267,25 +3218,21 @@ xdr_numrecs(xdrs, handle)
 }
 
 static bool_t
-xdr_4bytes(xdrs, cp)
-XDR *xdrs ;
-char *cp ; /* at least 4 valid bytes */
+xdr_4bytes(XDR *xdrs, char *cp)
+/* cp - at least 4 valid bytes */
 {
       return xdr_opaque(xdrs, cp, 4) ;
 }
 
 static bool_t
-xdr_2shorts(xdrs, sp)
-XDR *xdrs ;
-short *sp ; /* at least 2 valid shorts */
+xdr_2shorts(XDR *xdrs, short *sp)
+/* sp - at least 2 valid shorts */
 {
       return xdr_shorts(xdrs, sp, 2) ;
 }
 
 bool_t
-xdr_NC_fill(xdrs, vp)
-XDR *xdrs ;
-NC_var *vp ;
+xdr_NC_fill(XDR *xdrs, NC_var *vp)
 {
     char fillp[2*sizeof(double)] ;
     bool_t stat ;

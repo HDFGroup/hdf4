@@ -18,11 +18,9 @@
 #include    "local_nc.h"
 #include    "alloc.h"
 
-
+/* values: VAX C doesn't like values[] */
 NC_iarray *
-NC_new_iarray(count, values)
-unsigned count ;
-const int *values ;           /* VAX C doesn't like values[] */
+NC_new_iarray(unsigned count, const int *values)
 {
     NC_iarray *ret ;
     int *ip ;
@@ -61,8 +59,7 @@ const int *values ;           /* VAX C doesn't like values[] */
  *       If successful returns SUCCEED else FAIL -GV 9/19/97
  */
 int
-NC_free_iarray(iarray)
-NC_iarray *iarray ;
+NC_free_iarray(NC_iarray *iarray)
 {
     int ret_value = SUCCEED;
 
@@ -78,9 +75,7 @@ NC_iarray *iarray ;
 
 
 bool_t
-xdr_NC_iarray(xdrs, ipp)
-    XDR *xdrs;
-    NC_iarray **ipp;
+xdr_NC_iarray(XDR *xdrs, NC_iarray **ipp)
 {
     int *ip ;
     u_long count = 0;
@@ -120,8 +115,7 @@ xdr_NC_iarray(xdrs, ipp)
 /*
  * How much space will the xdr'd iarray take.
  */
-int NC_xlen_iarray(iarray)
-NC_iarray *iarray ;
+int NC_xlen_iarray(NC_iarray *iarray)
 {
     int len = 4 ;
     if(iarray!=NULL)

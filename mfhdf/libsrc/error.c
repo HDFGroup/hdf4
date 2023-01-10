@@ -45,8 +45,7 @@ extern int errno;
 #else
 /* provide a strerror function for older unix systems */
 char *
-strerror(errnum)
-int errnum ;
+strerror(int errnum)
 {
 	extern int sys_nerr;
 	extern const char * const sys_errlist[];

@@ -30,18 +30,16 @@
  * Perform I/O on a generalized hyperslab.  The efficiency of this
  * implementation is dependent upon caching in the lower layers.
  */
+/* start  - NULL => first corner */
+/* count  - NULL => everything following start[] */
+/* stride - NULL => unity strides */
+/* imap   - NULL => same structure as netCDF variable */
 #ifndef HDF
     static
 #endif
 int
-NCgenio(handle, varid, start, count, stride, imap, values)
-    NC		*handle;
-    int		varid;
-    const long	*start;		/* NULL => first corner */
-    const long	*count;		/* NULL => everything following start[] */
-    const long	*stride;	/* NULL => unity strides */
-    const long	*imap;		/* NULL => same structure as netCDF variable */
-    void	*values ;
+NCgenio(NC *handle, int varid, const long *start, const long *count,
+        const long *stride, const long *imap, void *values)
 {
     int		maxidim;	/* maximum dimensional index */
     NC_var	*vp	= NC_hlookupvar( handle, varid );
@@ -154,15 +152,9 @@ NCgenio(handle, varid, start, count, stride, imap, values)
 /*
  * Generalized hyperslab output.
  */
-    int
-ncvarputg(cdfid, varid, start, count, stride, imap, values)
-int cdfid ;
-int varid ;
-const long *start ;
-const long *count ;
-const long *stride ;
-const long *imap ;
-ncvoid *values ;
+int
+ncvarputg(int cdfid, int varid, const long *start, const long *count,
+          const long *stride, const long *imap, ncvoid *values)
 {
 	NC *handle ;
 
@@ -187,14 +179,8 @@ ncvoid *values ;
  * Generalized hyperslab input.
  */
     int
-ncvargetg(cdfid, varid, start, count, stride, imap, values)
-int cdfid ;
-int varid ;
-const long *start ;
-const long *count ;
-const long *stride ;
-const long *imap ;
-ncvoid *values ;
+ncvargetg(int cdfid, int varid, const long *start, const long *count,
+          const long *stride, const long *imap, ncvoid* values)
 {
 	NC *handle ;
 
@@ -215,13 +201,7 @@ ncvoid *values ;
  * Stride-oriented hyperslab output.
  */
     int
-ncvarputs(cdfid, varid, start, count, stride, values)
-int cdfid ;
-int varid ;
-const long *start ;
-const long *count ;
-const long *stride ;
-ncvoid *values ;
+ncvarputs(int cdfid, int varid, const long *start, const long *count, const long *stride, ncvoid *values)
 {
 	NC *handle ;
 
@@ -246,13 +226,7 @@ ncvoid *values ;
  * Stride-oriented hyperslab input.
  */
     int
-ncvargets(cdfid, varid, start, count, stride, values)
-int cdfid ;
-int varid ;
-const long *start ;
-const long *count ;
-const long *stride ;
-ncvoid *values ;
+ncvargets(int cdfid, int varid, const long *start, const long *count, const long *stride, ncvoid *values)
 {
 	NC *handle ;
 

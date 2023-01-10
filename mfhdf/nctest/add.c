@@ -30,10 +30,9 @@ struct netcdf test;		/*
 				 * with disk netcdf
 				 */
 
+/* add the dimension idim to the netcdf test */
 void
-add_dim (test, idim)		/* add the dimension idim to the netcdf test */
-     struct netcdf *test;
-     struct cdfdim *idim;
+add_dim(struct netcdf *test, struct cdfdim *idim)
 {
     static char pname[] = "add_dim";
 
@@ -50,10 +49,9 @@ add_dim (test, idim)		/* add the dimension idim to the netcdf test */
     test->ndims++;
 }
 
+/* add the variable ivar to the netcdf test */
 void
-add_var (test, ivar)		/* add the variable ivar to the netcdf test */
-     struct netcdf *test;
-     struct cdfvar *ivar;
+add_var (struct netcdf *test, struct cdfvar *ivar)
 {
     static char pname[] = "add_var";
     int i;
@@ -75,11 +73,9 @@ add_var (test, ivar)		/* add the variable ivar to the netcdf test */
     test->nvars++;
 }
 
+/* add attribute iatt to the netcdf test */
 void
-add_att (test, varid, iatt)	/* add attribute iatt to the netcdf test */
-     struct netcdf *test;
-     int varid;			/* variable id */
-     struct cdfatt *iatt;
+add_att (struct netcdf *test, int varid, struct cdfatt *iatt)
 {
     static char pname[] = "add_att";
     int ia;			/* attribute number */
@@ -115,9 +111,9 @@ add_att (test, varid, iatt)	/* add attribute iatt to the netcdf test */
 }
 
 
+/* reset in-memory netcdf test to empty */
 void
-add_reset(test)			/* reset in-memory netcdf test to empty */
-     struct netcdf *test;
+add_reset(struct netcdf *test)
 {
     test->ndims = 0;
     test->nvars = 0;
@@ -126,12 +122,9 @@ add_reset(test)			/* reset in-memory netcdf test to empty */
     test->xdimid = -1;		/* no unlimited dimension */
 }
 
-
+/* delete attribute iatt in the netcdf test */
 void
-del_att (test, varid, iatt)	/* delete attribute iatt in the netcdf test */
-     struct netcdf *test;
-     int varid;			/* variable id */
-     struct cdfatt *iatt;
+del_att (struct netcdf *test, int varid, iatt)
 {
     static char pname[] = "del_att";
     int ia, ib;			/* attribute number */
@@ -160,12 +153,9 @@ del_att (test, varid, iatt)	/* delete attribute iatt in the netcdf test */
 		   test->vars[varid].name, iatt->name);
 }
 
+/* keep max record written updated */
 void
-add_data(test, varid, start, edges) /* keep max record written updated */
-     struct netcdf *test;
-     int varid;
-     long start[];
-     long edges[];
+add_data(struct netcdf *test, int varid, long start[], long edges[])
 {
     if (varid != test->xdimid)	/* not a record variable */
       return;
@@ -175,9 +165,7 @@ add_data(test, varid, start, edges) /* keep max record written updated */
 
 
 void
-errvar(cdfp, varp)
-     struct netcdf *cdfp;
-     struct cdfvar *varp;
+errvar(struct netcdf *cdfp, struct cdfvar *varp)
 {
     const char *types;
     int id;

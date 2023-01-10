@@ -24,11 +24,7 @@ static int ncvarcpy(int, int, int);
 #endif /* NOT_USED */
 
 NC_var *
-NC_new_var(name,type,ndims,dims)
-const char *name ;
-nc_type type ;
-int ndims ;
-const int *dims ;
+NC_new_var(const char *name, nc_type type, int ndims, const int *dims)
 {
     NC_var *ret ;
 
@@ -83,8 +79,7 @@ alloc_err :
  *       If successful returns SUCCEED else FAIL -GV 9/19/97
  */
 intn
-NC_free_var(var)
-NC_var *var ;
+NC_free_var(NC_var *var)
 {
     intn ret_value = SUCCEED;
 
@@ -131,9 +126,7 @@ done:
 #ifndef HDF
 static
 #endif
-int NC_var_shape(var, dims)
-NC_var *var ;
-NC_array *dims;
+int NC_var_shape(NC_var *var, NC_array *dims)
 {
     unsigned long *shape, *dsizes ;
     int ii ;
@@ -254,12 +247,7 @@ out :
 }
 
 
-int ncvardef(cdfid, name, type, ndims, dims)
-int cdfid ;
-const char *name ;
-nc_type type ;
-int ndims ;
-const int dims[] ;
+int ncvardef(int cdfid, const char *name, nc_type type, int ndims, const int dims[])
 {
     NC *handle ;
     NC_var *var[1] ;
@@ -355,8 +343,7 @@ const int dims[] ;
  * Sets handle->begin_rec to start of first record variable
  * returns -1 on error
  */
-int NC_computeshapes( handle )
-NC *handle ;
+int NC_computeshapes(NC *handle)
 {
     NC_var **vbase, **vpp ;
     NC_var *first = NULL ;
@@ -397,9 +384,7 @@ NC *handle ;
 }
 
 
-int ncvarid( cdfid, name)
-int cdfid ;
-const char *name ;
+int ncvarid(int cdfid, const char *name)
 {
     NC *handle ;
     NC_var **dp ;
@@ -433,9 +418,7 @@ const char *name ;
  *  else NULL on error
  */
 NC_var *
-NC_hlookupvar( handle, varid )
-NC *handle ;
-int varid ;
+NC_hlookupvar(NC *handle, int varid)
 {
     NC_array **ap ;
 
@@ -459,9 +442,7 @@ int varid ;
  *  else NULL on error
  */
 static NC_var *
-NC_lookupvar( cdfid, varid )
-int cdfid ;
-int varid ;
+NC_lookupvar(int cdfid, int varid)
 {
     NC *handle ;
 
@@ -473,14 +454,7 @@ int varid ;
 }
 
 
-int ncvarinq( cdfid, varid, name, typep, ndimsp, dims, nattrsp)
-int cdfid ;
-int varid ;
-char *name ;
-nc_type *typep ;
-int *ndimsp ;
-int dims[] ;
-int *nattrsp ;
+int ncvarinq(int cdfid, int varid, char *name, nc_type *typep, int *ndimsp, int dims[], int *nattrsp)
 {
     NC_var *vp ;
     int ii ;
@@ -528,12 +502,8 @@ int *nattrsp ;
 }
 
 
-int ncvarrename(cdfid, varid, newname)
-int cdfid ;
-int varid ;
-const char *newname ;
+int ncvarrename(int cdfid, int varid, const char *newname)
 {
-
     NC *handle ;
     NC_var **vpp ;
     int ii ;
@@ -606,10 +576,7 @@ const char *newname ;
  *  else NULL on error
  */
 static NC_var *
-NC_hvarid(handle, name, namelen)
-NC *handle ;
-const char *name ;
-int namelen ;
+NC_hvarid(NC *handle, const char *name, int namelen)
 {
     NC_var **dp ;
     int ii ;
@@ -638,10 +605,7 @@ int namelen ;
  * general in a future release.
  */
 static int
-ncvarcpy(incdf, varid, outcdf)
-int             incdf;
-int             varid;
-int             outcdf;
+ncvarcpy(int incdf, int varid, int outcdf)
 {
     NC *inhandle, *outhandle ;
     NC_var *invp, *outvp ;
@@ -827,9 +791,7 @@ int             outcdf;
 
 
 bool_t
-xdr_NC_var(xdrs, vpp)
-    XDR *xdrs;
-    NC_var **vpp;
+xdr_NC_var(XDR *xdrs, NC_var **vpp)
 {
     u_long begin = 0;
 
@@ -914,8 +876,7 @@ xdr_NC_var(xdrs, vpp)
  * How much space will the xdr'd var take.
  *
  */
-int NC_xlen_var(vpp)
-NC_var **vpp ;
+int NC_xlen_var(NC_var **vpp)
 {
     int len ;
 

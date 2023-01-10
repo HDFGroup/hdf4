@@ -24,11 +24,8 @@
  * internal replacement for memset
  */
 char *
-NCmemset (s, c, n)
-     char *s;
-     int c, n;
+NCmemset (char *s, int c, int n)
 {
-
   char *cp ;
 
   for (cp = s ; cp < &s[n] ; *cp++ = c )
@@ -44,8 +41,7 @@ NCmemset (s, c, n)
  *  return the size of the on-disk representation
  */
 int
-NC_xtypelen(type)
-nc_type    type ;
+NC_xtypelen(nc_type type)
 {
     char *nada = NULL ;
 
@@ -82,8 +78,7 @@ nc_type    type ;
  *  private version of nctypelen
  */
 size_t
-NC_typelen(type)
-nc_type    type ;
+NC_typelen(nc_type type)
 {
     switch(type){
     case NC_BYTE :
@@ -120,8 +115,7 @@ nc_type    type ;
  *
  */
 int
-nctypelen(type)
-nc_type    type ;
+nctypelen(nc_type type)
 {
     switch(type){
     case NC_BYTE :
@@ -179,10 +173,9 @@ nclong xdr_d_infinity[2] = {0x00000000,0x7ff00000};
  *    Fill an array region with an appropriate special value
  */
 void
-NC_arrayfill(low, len, type)
-void *low ;    /* lower bound of area to be filled */
-size_t len ;    /* how many bytes */
-nc_type type ;
+NC_arrayfill(void *low, size_t len, nc_type type)
+/* low - lower bound of area to be filled */
+/* len how many bytes */
 {
     char *hi, *lo;    /* local low and hi ptr */
 
@@ -234,10 +227,7 @@ nc_type type ;
  * Else, just hook up the values passed in.
  */
 NC_array *
-NC_new_array(type, count, values)
-nc_type type ;
-unsigned count ;
-const void *values ;
+NC_new_array(nc_type type, unsigned count, const void *values)
 {
     NC_array *ret ;
     size_t memlen ;
@@ -292,11 +282,7 @@ alloc_err :
  * If values is non-NULL, copy them in.
  */
 NC_array *
-NC_re_array(old, type, count, values)
-NC_array *old ;
-nc_type type ;
-unsigned count ;
-const void *values ;
+NC_re_array(NC_array *old, nc_type type, unsigned count, const void *values)
 {
     size_t memlen ;
     size_t szof ;
@@ -330,8 +316,7 @@ const void *values ;
  *       If successful returns SUCCEED else FAIL -GV 9/19/97
  */
 int
-NC_free_array(array)
-NC_array *array ;
+NC_free_array(NC_array *array)
 {
     int ret_value = SUCCEED;
 
@@ -441,8 +426,7 @@ done:
 /*
  * How much space will the xdr'd array take.
  */
-int NC_xlen_array(array)
-NC_array *array ;
+int NC_xlen_array(NC_array *array)
 {
     int len = 8 ;
     int rem ;
@@ -501,9 +485,7 @@ NC_array *array ;
  * Add a new handle on the end of and array of handles
  */
 Void *
-NC_incr_array(array, tail)
-NC_array *array ;
-Void *tail ;
+NC_incr_array(NC_array *array, Void *tail)
 {
     char *ap ;
 
@@ -531,9 +513,7 @@ Void *tail ;
  * Definitely NOT Bomb proof.
  */
 void
-NC_copy_arrayvals( target, array )
-char *target ;
-NC_array *array ;
+NC_copy_arrayvals(char *target, NC_array *array)
 {
     size_t memlen ;
 
@@ -543,9 +523,7 @@ NC_array *array ;
 
 
 bool_t
-xdr_NC_array(xdrs, app)
-    XDR *xdrs;
-    NC_array **app;
+xdr_NC_array(XDR *xdrs, NC_array **app)
 {
     bool_t (*xdr_NC_fnct)() ;
     u_long count = 0, *countp=NULL ;

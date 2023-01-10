@@ -21,11 +21,7 @@
 
 
 NC_attr *
-NC_new_attr(name,type,count,values)
-const char *name ;
-nc_type type ;
-unsigned count ;
-const void *values ;
+NC_new_attr(const char *name, nc_type type, unsigned count, const void *values)
 {
 	NC_attr *ret ;
 
@@ -57,8 +53,7 @@ alloc_err :
  *       If successful returns SUCCEED else FAIL -GV 9/19/97
  */
 int
-NC_free_attr(attr)
-NC_attr *attr ;
+NC_free_attr(NC_attr *attr)
 {
     int ret_value = SUCCEED;
 
@@ -94,8 +89,7 @@ done:
  *  Verify that this is a user nc_type
  */
 bool_t
-NCcktype(datatype)
-nc_type datatype ;
+NCcktype(nc_type datatype)
 {
 	switch(datatype){
 	case NC_BYTE :
@@ -118,9 +112,7 @@ nc_type datatype ;
  *  else NULL on error
  */
 static NC_array **
-NC_attrarray( cdfid, varid )
-int cdfid ;
-int varid ;
+NC_attrarray(int cdfid, int varid)
 {
 	NC *handle ;
 	NC_array **ap ;
@@ -150,9 +142,7 @@ int varid ;
  *  return match or NULL if Not Found.
  */
 NC_attr **
-NC_findattr(ap, name)
-NC_array **ap ;
-const char *name ;
+NC_findattr(NC_array **ap, const char *name)
 {
     NC_attr **attr ;
     unsigned attrid ;
@@ -181,11 +171,8 @@ const char *name ;
  * Look up by cdfid, varid and name, return NULL if not found
  */
 static NC_attr **
-NC_lookupattr( cdfid, varid, name, verbose)
-int cdfid ;
-int varid ;
-const char *name ; /* attribute name */
-bool_t verbose ;
+NC_lookupattr(int cdfid, int varid, const char *name, bool_t verbose)
+/* name - attribute name */
 {
 	NC_array **ap ;
 	NC_attr **attr ;
@@ -205,13 +192,8 @@ bool_t verbose ;
  * Common code for attput and attcopy
  */
 static int
-NC_aput(cdfid, ap, name, datatype, count, values)
-int cdfid ;
-NC_array **ap ;
-const char *name ;
-nc_type datatype ;
-unsigned count ;
-const void *values ;
+NC_aput(int cdfid, NC_array **ap, const char *name, nc_type datatype,
+        unsigned count, const void *values)
 {
 	NC *handle ;
 	NC_attr *attr[1] ;
@@ -293,13 +275,8 @@ const void *values ;
 }
 
 
-int ncattput(cdfid, varid, name, datatype, count, values)
-int cdfid ;
-int varid ;
-const char *name ;
-nc_type datatype ;
-int count ;
-const ncvoid *values ;
+int ncattput(int cdfid, int varid, const char *name, nc_type datatype,
+             int count, const ncvoid *values)
 {
 	NC_array **ap ;
 
@@ -323,11 +300,7 @@ const ncvoid *values ;
 }
 
 
-int ncattname( cdfid, varid, attnum, name)
-int cdfid ;
-int varid ;
-int attnum ;
-char *name ;
+int ncattname(int cdfid, int varid, int attnum, char *name)
 {
 	NC_array **ap ;
 	NC_attr **attr ;
@@ -357,12 +330,8 @@ char *name ;
 }
 
 
-int ncattinq( cdfid, varid, name, datatypep, countp)
-int cdfid ;
-int varid ;
-const char *name ; /* input, attribute name */
-nc_type *datatypep ;
-int *countp ;
+int ncattinq(int cdfid, int varid, const char *name, nc_type *datatypep, int *countp)
+/* name - input, attribute name */
 {
 	NC_attr **attr ;
 
@@ -380,13 +349,8 @@ int *countp ;
 }
 
 
-int ncattrename(cdfid, varid, name, newname)
-int cdfid ;
-int varid ;
-const char *name ;
-const char *newname ;
+int ncattrename(int cdfid, int varid, const char *name, const char *newname)
 {
-
 	NC *handle ;
 	NC_attr **attr ;
 	NC_string *new, *old ;
@@ -432,12 +396,7 @@ const char *newname ;
 }
 
 
-int ncattcopy( incdf, invar, name, outcdf, outname)
-int incdf ;
-int invar ;
-const char *name ;
-int outcdf ;
-int outname ;
+int ncattcopy(int incdf, int invar, const char *name, int outcdf, int outname)
 {
 	NC_attr **attr ;
 	NC_array **ap ;
@@ -458,12 +417,8 @@ int outname ;
 }
 
 
-int ncattdel(cdfid, varid, name)
-int cdfid ;
-int varid ;
-const char *name ;
+int ncattdel(int cdfid, int varid, const char *name)
 {
-
 	NC_array **ap ;
 	NC_attr **attr ;
 	NC_attr *old = NULL ;
@@ -511,13 +466,8 @@ const char *name ;
 }
 
 
-int ncattget(cdfid, varid, name, values)
-int cdfid ;
-int varid ;
-const char *name ;
-ncvoid *values ;
+int ncattget(int cdfid, int varid, const char *name, ncvoid *values)
 {
-
 	NC_attr **attr ;
 
 	cdf_routine_name = "ncattget" ;
@@ -533,9 +483,7 @@ ncvoid *values ;
 
 
 bool_t
-xdr_NC_attr(xdrs, app)
-	XDR *xdrs;
-	NC_attr **app;
+xdr_NC_attr(XDR *xdrs, NC_attr **app)
 {
     bool_t ret_value;
 
@@ -568,8 +516,7 @@ xdr_NC_attr(xdrs, app)
 /*
  * How much space will the xdr'd attr take.
  */
-int NC_xlen_attr(app)
-NC_attr **app ;
+int NC_xlen_attr(NC_attr **app)
 {
 	int len ;
 

@@ -59,14 +59,13 @@ static char sccsid[] = "@(#)xdr_array.c 1.10 87/08/11 Copyr 1984 Sun Micro";
  * elsize is the size (in bytes) of each element, and elproc is the
  * xdr procedure to call to handle each element of the array.
  */
+/* addrp - array pointer */
+/* sizep - number of elements */
+/* maxsize - max numberof elements */
+/* elsize - size in bytes of each element */
+/* elproc - xdr routine to handle each element */
 bool_t
-xdr_array(xdrs, addrp, sizep, maxsize, elsize, elproc)
-    XDR *xdrs;
-    caddr_t *addrp;        /* array pointer */
-    u_int *sizep;        /* number of elements */
-    u_int maxsize;        /* max numberof elements */
-    u_int elsize;        /* size in bytes of each element */
-    xdrproc_t elproc;    /* xdr routine to handle each element */
+xdr_array(XDR *xdrs, caddr_t *addrp, u_int *sizep, u_int maxsize, u_int elsize, xdrproc_t elproc)
 {
     u_int i;
     caddr_t target = *addrp;
@@ -136,12 +135,7 @@ xdr_array(xdrs, addrp, sizep, maxsize, elsize, elproc)
  * > xdr_elem: routine to XDR each element
  */
 bool_t
-xdr_vector(xdrs, basep, nelem, elemsize, xdr_elem)
-    XDR *xdrs;
-    char *basep;
-    u_int nelem;
-    u_int elemsize;
-    xdrproc_t xdr_elem;
+xdr_vector(XDR *xdrs, char *basep, u_int nelem, u_int elemsize, xdrproc_t xdr_elem)
 {
     u_int i;
     char *elptr;

@@ -15,8 +15,7 @@ extern int c_flag;
 extern int fortran_flag;
 
 void
-load_netcdf(rec_start)	/* write out record from in-memory structure */
-     void *rec_start;
+load_netcdf(void *rec_start)	/* write out record from in-memory structure */
 {
     int idim;
     int istat=0;
@@ -97,9 +96,9 @@ load_netcdf(rec_start)	/* write out record from in-memory structure */
  * point from ss, a string representation of a floating-point number that
  * might include an exponent part.
  */
-    static void
-    tztrim(ss)
-char *ss;			/* returned string representing dd */
+/* ss - returned string representing dd */
+static void
+tztrim(char *ss)
 {
     char *cp, *ep;
 
@@ -125,8 +124,7 @@ char *ss;			/* returned string representing dd */
 
 /* generate C to put netCDF record from in-memory data */
 static void
-gen_load_c(rec_start)
-     void *rec_start;
+gen_load_c(void *rec_start)
 {
     int idim, ival;
     char *val_string;
@@ -348,11 +346,11 @@ gen_load_c(rec_start)
  * This will cause a Fortran compiler error, but at least all the information
  * will be available.
  */
+/* s     - source string of stement being built */
+/* t     - string to be appended to source */
+/* slenp - pointer to length of source string */
 static void
-fstrcat(s, t, slenp)
-     char *s;			/* source string of stement being built */
-     char *t;			/* string to be appended to source */
-     long *slenp;		/* pointer to length of source string */
+fstrcat(char *s, char *t, long *slenp)
 {
     *slenp += strlen(t);
     if (*slenp >= FORT_MAX_STMNT) {
@@ -367,8 +365,7 @@ fstrcat(s, t, slenp)
 
 
 static void
-gen_load_fortran(rec_start)  /* make Fortran to put record */
-     void *rec_start;
+gen_load_fortran(void *rec_start)  /* make Fortran to put record */
 {
     int idim, ival;
     char *val_string;
@@ -510,9 +507,9 @@ gen_load_fortran(rec_start)  /* make Fortran to put record */
  * struct dims[]     - structure containing name and size of dimensions.
  * int netcdf_record_number - number of current record for this variable.
  */
+/* rec_start - points to data to be loaded  */
 void
-put_variable(rec_start)
-     void *rec_start;		/* points to data to be loaded  */
+put_variable(void *rec_start)
 {
     if (netcdf_flag)
       load_netcdf(rec_start);	/* put variable values (one record's worth) */

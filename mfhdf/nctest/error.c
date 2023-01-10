@@ -25,26 +25,14 @@ int	error_count = 0;
 /*
  * Use for logging error conditions.
  */
-#ifndef NO_STDARG
 void
 error(const char *fmt, ...)
-#else
-/*VARARGS1*/
-void
-error(fmt, va_alist)
-     const char *fmt ;
-     va_dcl
-#endif
 {
     va_list args ;
 
     (void) fprintf(stderr,"*** ");
 
-#ifndef NO_STDARG
     va_start(args, fmt) ;
-#else
-    va_start(args) ;
-#endif
     (void) vfprintf(stderr,fmt,args) ;
     va_end(args) ;
 

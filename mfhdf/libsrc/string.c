@@ -50,9 +50,7 @@ compute_hash(unsigned count,
 #endif /* HDF */
 
 NC_string *
-NC_new_string(count, str)
-unsigned count ;
-const char *str ;
+NC_new_string(unsigned count, const char *str)
 {
     NC_string *ret ;
     size_t memlen ;
@@ -109,8 +107,7 @@ const char *str ;
  *       If successful returns SUCCEED else FAIL -GV 9/19/97
  */
 int
-NC_free_string(cdfstr)
-NC_string *cdfstr ;
+NC_free_string(NC_string *cdfstr)
 {
     int ret_value = SUCCEED;
 
@@ -135,10 +132,7 @@ done:
 
 
 NC_string *
-NC_re_string(old, count, str)
-NC_string *old ;
-unsigned count ;
-const char *str ;
+NC_re_string(NC_string *old, unsigned count, const char *str)
 {
     if(old->count < count) /* punt */
       {
@@ -164,9 +158,7 @@ const char *str ;
 }
 
 bool_t
-xdr_NC_string(xdrs, spp)
-    XDR *xdrs;
-    NC_string **spp;
+xdr_NC_string(XDR *xdrs, NC_string **spp)
 {
         u_long count = 0;
         int status ;
@@ -217,8 +209,7 @@ xdr_NC_string(xdrs, spp)
  * How much space will the xdr'd string take.
  *
  */
-int NC_xlen_string(cdfstr)
-NC_string *cdfstr ;
+int NC_xlen_string(NC_string *cdfstr)
 {
     int len = 4 ;
     int rem ;

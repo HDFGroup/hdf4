@@ -33,9 +33,9 @@
  *    try in define mode, check error
  *    try with bad netCDF handle, check error
  */
+/* path - name of writable netcdf file to open */
 void
-test_ncvarputg(path)
-     char *path;		/* name of writable netcdf file to open */
+test_ncvarputg(char *path)
 {
     int nerrs = 0;
     static char pname[] = "test_ncvarputg";
