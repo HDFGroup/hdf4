@@ -50,7 +50,6 @@
 #define     DFMT_SUN            0x1111
 #define     DFMT_SUN_INTEL      0x4441
 #define     DFMT_ALLIANT        0x1111
-#define     DFMT_IRIX           0x1111
 #define     DFMT_APOLLO         0x1111
 #define     DFMT_IBM6000        0x1111
 #define     DFMT_HP9000         0x1111
@@ -347,80 +346,6 @@ typedef int               hdf_pint_t;   /* an integer the same size as a pointer
 #define JMEMSYS         MEM_ANSI
 
 #endif /* HP9000 */
-
-
-#if defined(IRIX) || defined(IRIS4) || defined(sgi) || defined(__sgi__) || defined(__sgi)
-
-#ifndef IRIX
-#define IRIX
-#endif
-
-#if (_MIPS_SZLONG == 64)
-/* IRIX 64 bits objects.  It is nearly the same as the conventional
- * 32 bits objects.  Let them share IRIX definitions for now.
- */
-#define IRIX64
-#endif
-
-
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE 1
-
-/*
- * BSD was originally defined with no value.  But some newer SGI system
- * header files (e.g., resolv.h) assume it has a value and evaluate it
- * in expressions, thus causing compiling errors.  This has been reported
- * to SGI as bug #781568.  SGI could not provide a list of the semantics
- * of BSD values and suggested a work around of setting BSD to 1.
- */
-#   define BSD 1
-#ifndef __GNUC__
-#include <memory.h>
-#endif /* __GNUC__ */
-#include <sys/file.h>               /* for unbuffered i/o stuff */
-#include <sys/stat.h>
-#define DF_MT              DFMT_IRIX
-typedef void               VOID;
-typedef void               *VOIDP;
-typedef char               *_fcd;
-typedef signed char        char8;
-typedef unsigned char      uchar8;
-typedef signed char        int8;
-typedef unsigned char      uint8;
-typedef short int          int16;
-typedef unsigned short int uint16;
-typedef int                int32;
-typedef unsigned int       uint32;
-typedef int                intn;
-typedef unsigned int       uintn;
-typedef float              float32;
-typedef double             float64;
-typedef int                intf;     /* size of INTEGERs in Fortran compiler */
-typedef long               hdf_pint_t;   /* an integer the same size as a pointer */
-#define FNAME_POST_UNDERSCORE
-#define _fcdtocp(desc) (desc)
-#define FILELIB UNIXBUFIO
-/*
-#ifdef IRIX64
-#define H4_BIG_LONGS
-#endif
-*/
-
-
-/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
-
-/* Determine the memory manager we are going to use. Valid values are: */
-/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
-/*  what each does */
-#define JMEMSYS         MEM_ANSI
-
-#define HAVE_STDC
-#define INCLUDES_ARE_ANSI
-
-#endif /* IRIX */
 
 /* CRAY XT3
  * Note from RedStorm helpdesk,
