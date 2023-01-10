@@ -7,16 +7,22 @@ extern char	*progname;	/* for error messages */
 extern char	*cdlname;	/* for error messages */
 
 #undef PROTO
-#define PROTO(x) x
+#ifndef NO_HAVE_PROTOTYPES
+#   define	PROTO(x)	x
+#else
+#   define	PROTO(x)	()
+#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #ifndef MIPSEL /* punt */
+#ifndef NO_STDARG
 extern void derror(const char *fmt, ...);
 #else
 extern void derror();
+#endif
 #endif
 
 /*
