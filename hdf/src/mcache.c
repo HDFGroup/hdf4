@@ -61,12 +61,6 @@
 #include "hqueue.h"  /* Circular queue functions(Macros) */
 #include "mcache.h"
 
-#if defined(hpux) || defined(__hpux) || defined(__hpux__)
-#include <sys/resource.h>
-#include <sys/syscall.h>
-#define getrusage(a, b)  syscall(SYS_GETRUSAGE, a, b)
-#endif /* hpux */
-
 
 /* Private routines */
 static BKT  *mcache_bkt   (MCACHE *mp);
