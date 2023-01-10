@@ -1081,7 +1081,7 @@ test_ncattname(char *path)
  */
 /* name of writable netcdf file to open */
 void
-test_ncattrename(chat *path)
+test_ncattrename(char *path)
 {
     int nerrs = 0;
     static char pname[] = "test_ncattrename";
