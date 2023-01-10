@@ -25,7 +25,7 @@ macro (ORIGINAL_JPEG_LIBRARY compress_type jpeg_pic)
   endif()
 
 # Create imported target jpeg-static
-  add_library(${HDF_PACKAGE_NAMESPACE}jpeg-static STATIC IMPORTED)
+#  add_library(${HDF_PACKAGE_NAMESPACE}jpeg-static STATIC IMPORTED)
   HDF_IMPORT_SET_LIB_OPTIONS (${HDF_PACKAGE_NAMESPACE}jpeg-static "jpeg" STATIC "")
   add_dependencies (${HDF_PACKAGE_NAMESPACE}jpeg-static JPEG)
   set (JPEG_STATIC_LIBRARY "${HDF_PACKAGE_NAMESPACE}jpeg-static")
