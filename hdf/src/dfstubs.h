@@ -31,10 +31,6 @@
 #include "df.h"
 #undef DFMASTER
 
-#if !defined(__GNUC__) & !defined(CONVEX)
-#include <memory.h>
-#endif /* !__GNUC__ & !CONVEX */
-
 #define DFACC_APPEND    8
 #define DFEL_ABSENT 0
 #define DFEL_RESIDENT   1

@@ -50,8 +50,6 @@
 #define     DFMT_SUN            0x1111
 #define     DFMT_APOLLO         0x1111
 #define     DFMT_IBM6000        0x1111
-#define     DFMT_CONVEXNATIVE   0x5511
-#define     DFMT_CONVEX         0x1111
 #define     DFMT_PC             0x4441
 #define     DFMT_APPLE          0x1111
 #define     DFMT_APPLE_INTEL    0x4441
@@ -138,6 +136,7 @@ typedef int               hdf_pint_t;   /* an integer the same size as a pointer
 
 #endif /* SUN */
 
+/*-----------------------------------------------------*/
 #if defined(IBM6000) || defined(_AIX)
 
 #ifndef IBM6000
@@ -197,72 +196,7 @@ typedef int               hdf_pint_t;   /* an integer the same size as a pointer
 #endif /* IBM6000 */
 
 
-/* CRAY XT3
- * Note from RedStorm helpdesk,
- * When I compile a C code with the '-v' option, it indicates that the compile
- * is done with the macros __QK_USER__ and __LIBCATAMOUNT__ defined.  In
- * addition, there are other macros like __x86_64__ defined as well, to
- * indicate processor type.  __QK_USER__ might be a good check for Catamount,
- * and __x86_64__ might be good for Opteron node.  You might try something
- * like the following in a header file:
- */
-#if ((defined(__QK_USER__)) && (defined(__x86_64__)))
-#define __CRAY_XT3__
-#endif
-
-#if defined(CONVEX) || defined(CONVEXNATIVE) || defined(__convexc__)
-
-#ifndef CONVEX
-#define CONVEX
-#endif
-
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE
-
-#include <sys/types.h>
-#include <sys/stat.h>
-/* For Convex machines with native format floats */
-#ifdef CONVEXNATIVE
-#define DF_MT             DFMT_CONVEXNATIVE
-#else
-#define DF_MT             DFMT_CONVEX
-#endif
-typedef void              VOID;
-typedef void              *VOIDP;
-typedef char              *_fcd;
-typedef char              char8;
-typedef unsigned char     uchar8;
-typedef char              int8;
-typedef unsigned char     uint8;
-typedef short int         int16;
-typedef unsigned short int uint16;
-typedef long int          int32;
-typedef unsigned long int uint32;
-typedef int               intn;
-typedef unsigned int      uintn;
-typedef float             float32;
-typedef double            float64;
-typedef int               intf;     /* size of INTEGERs in Fortran compiler */
-typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
-#define _fcdtocp(desc) (desc)
-#define FILELIB UNIXBUFIO
-
-/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
-
-/* Determine the memory manager we are going to use. Valid values are: */
-/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
-/*  what each does */
-#define JMEMSYS         MEM_ANSI
-#define RIGHT_SHIFT_IS_UNSIGNED
-#define INCLUDES_ARE_ANSI
-#define HAVE_STDC
-
-#endif /* CONVEX */
-
-
+/*-----------------------------------------------------*/
 #if defined (__APPLE__)
 
 #ifndef __APPLE__
@@ -322,6 +256,7 @@ typedef long            hdf_pint_t;   /* an integer the same size as a pointer *
 #endif /* __APPLE__ */
 
 
+/*-----------------------------------------------------*/
 
 /* Metrowerks Mac compiler defines some PC stuff so need to exclude this on the Mac */
 #if !(defined (__APPLE__)) && !(defined(__CYGWIN__))
