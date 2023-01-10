@@ -250,9 +250,6 @@ dimsizes(int ncid, int varid, long *sizes)
  */
 static int
 recput(int ncid, long recnum, void **datap)
-     int ncid;
-     long recnum;
-     void **datap;
 {
     int iv;
     int rvids[VARS];
