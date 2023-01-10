@@ -57,8 +57,8 @@
 /*****************************************************************************/
 /* CONSTANT DEFINITIONS                                                      */
 /*****************************************************************************/
-/* Generally Big-Endian machines */
-#if !defined(INTEL86) && !defined(MIPSEL) && !defined(DEC_ALPHA) && !defined(I860) && !defined(SUN386) && !(defined(__ia64) && !(defined(hpux) || defined(__hpux))) && !defined(__x86_64__)
+/* Big-Endian machines */
+#ifdef __BIG_ENDIAN__
 #       define UI8_IN     DFKnb1b   /* Unsigned Integer, 8 bits */
 #       define UI8_OUT    DFKnb1b
 #       define SI16_IN    DFKnb2b   /* S = Signed */
@@ -89,7 +89,7 @@
 #       define LF64_IN    DFKsb8b
 #       define LF64_OUT   DFKsb8b
 
-#else  /* must be INTEL86 || MIPSEL || DEC_ALPHA || I860 || SUN386 || IA64 || Linux64 (Generally, little-endian machines */
+#else
 #   define UI8_IN     DFKnb1b   /* Big-Endian IEEE support */
 #   define UI8_OUT    DFKnb1b   /* The s in DFKsb2b is for swap */
 #   define SI16_IN    DFKsb2b

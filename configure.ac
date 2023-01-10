@@ -788,6 +788,19 @@ if test "X$BUILD_FORTRAN" = "Xyes"; then
   AC_PROG_F77_C_O
 fi
 
+## ======================================================================
+## Data types and their sizes.
+## ======================================================================
+AC_CHECK_SIZEOF([char])
+AC_CHECK_SIZEOF([short])
+AC_CHECK_SIZEOF([int])
+AC_CHECK_SIZEOF([unsigned])
+AC_CHECK_SIZEOF([long])
+AC_CHECK_SIZEOF([long long])
+AC_CHECK_SIZEOF([float])
+AC_CHECK_SIZEOF([double])
+AC_CHECK_SIZEOF([long double])
+
 ## This is a bit of a hack. The AC_CHECK_SIZEOF macro is supposed to
 ## #define a value in a header file. However, we don't use a generated
 ## header file. So I check the value left over from autoconf's test  is
