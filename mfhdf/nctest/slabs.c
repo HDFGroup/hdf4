@@ -176,7 +176,7 @@ val_diff(nc_type type, void *v, int ii, long val)	/* v[ii] != val */
 /* cdfid - handle of netcdf open and in data mode */
 int
 test_slabs(int cdfid)
-s{
+{
     int nerrs = 0;
     static char pname[] = "test_slabs";
     static struct cdfdim dims[NDIMS] = {
