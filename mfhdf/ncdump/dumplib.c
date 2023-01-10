@@ -58,24 +58,21 @@ static int linep;
 static int max_line_len;
 
 void
-set_indent(in)
-     int in;
+set_indent(int in)
 {
     linep = in;
 }
 
 
 void
-set_max_len(len)
-     int len;
+set_max_len(int len)
 {
     max_line_len = len-2;
 }
 
 
 void
-lput(cp)
-     const char *cp;
+lput(const char *cp)
 {
     int nn = strlen(cp);
 
@@ -101,19 +98,17 @@ static char *formats[] =
 
 /* In case different formats specified with -d option, set them here. */
 void
-set_formats(flt, dbl)
-     char *flt;
-     char *dbl;
+set_formats(char *flt, char *dbl)
 {
     strcpy(formats[3], flt);
     strcpy(formats[4], dbl);
 }
 
 
+/* ncid - netcdf id */
+/* varid - variable id */
 static char *
-has_c_format_att(ncid, varid)
-    int ncid;			/* netcdf id */
-    int varid;			/* variable id */
+has_c_format_att(int ncid, int varid)
 {
     nc_type cfmt_type;
     int cfmt_len;
@@ -144,11 +139,11 @@ has_c_format_att(ncid, varid)
  * Determine print format to use for each value for this variable.  Use value
  * of attribute C_format if it exists, otherwise a sensible default.
  */
+/* ncid  - netcdf id */
+/* varid - variable id */
+/* type  - netCDF data type */
 const char *
-get_fmt(ncid, varid, type)
-     int ncid;			/* netcdf id */
-     int varid;			/* variable id */
-     nc_type type;		/* netCDF data type */
+get_fmt(int ncid, int varid, nc_type type)
 {
     char *c_format_att = has_c_format_att(ncid, varid);
 
@@ -203,9 +198,7 @@ newvlist()
 
 
 void
-varadd(vlist, varid)
-     vnode* vlist;
-     int varid;
+varadd(vnode *vlist, int varid)
 {
     vnode *newvp = newvnode();
 
@@ -216,9 +209,7 @@ varadd(vlist, varid)
 
 
 int
-varmember(vlist, varid)
-     vnode* vlist;
-     int varid;
+varmember(vnode *vlist, int varid)
 {
     vnode *vp = vlist -> next;
 

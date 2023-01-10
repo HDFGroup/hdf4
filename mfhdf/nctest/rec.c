@@ -30,9 +30,7 @@
  * error.
  */
 static int
-numrecvars(ncid, recvarids)
-     int ncid;
-     int *recvarids;
+numrecvars(int ncid, int *recvarids)
 {
     int ndims, iv, nvars;
     int nrecvars;
@@ -62,9 +60,7 @@ numrecvars(ncid, recvarids)
  * variable id.  Returns 0 if not a record variable.  Returns -1 on error.
  */
 static long
-ncrecsize(ncid,vid)
-     int ncid;
-     int vid;
+ncrecsize(int ncid, int vid)
 {
     int recdimid;
     nc_type type;
@@ -97,11 +93,7 @@ ncrecsize(ncid,vid)
  * errors better.
  */
 static int
-recinq(ncid, nrecvars, recvarids, recsizes)
-     int ncid;
-     int *nrecvars;
-     int *recvarids;
-     long *recsizes;
+recinq(int ncid, int *nrecvars, int *recvarids, long *recsizes)
 {
     int iv;
     int rvarids[VARS];
@@ -128,9 +120,9 @@ recinq(ncid, nrecvars, recvarids, recsizes)
  *    check returned values against independently computed values
  *    try with bad netCDF handle, check error
  */
+/* path - name of netcdf file to open */
 void
-test_ncrecinq(path)
-     char *path;		/* name of netcdf file to open */
+test_ncrecinq(char *path)
 {
     int nerrs = 0;
     static char pname[] = "test_ncrecinq";
@@ -234,10 +226,7 @@ test_ncrecinq(path)
  * an open netCDF file.  Returns -1 on error.
  */
 static int
-dimsizes(ncid, varid, sizes)
-     int ncid;
-     int varid;
-     long *sizes;
+dimsizes(int ncid, int varid, long *sizes)
 {
     int ndims;
     int id;
@@ -260,10 +249,7 @@ dimsizes(ncid, varid, sizes)
  * better.
  */
 static int
-recput(ncid, recnum, datap)
-     int ncid;
-     long recnum;
-     void **datap;
+recput(int ncid, long recnum, void **datap)
 {
     int iv;
     int rvids[VARS];
@@ -297,10 +283,7 @@ recput(ncid, recnum, datap)
  * better.
  */
 static int
-recget(ncid, recnum, datap)
-     int ncid;
-     long recnum;
-     void **datap;
+recget(int ncid, int recnum, void **datap)
 {
     int iv;
     int rvids[VARS];
@@ -335,9 +318,9 @@ recget(ncid, recnum, datap)
  *    try in define mode, check error
  *    try with bad netCDF handle, check error
  */
+/* path - name of writable netcdf file to open */
 void
-test_ncrecput(path)
-     char *path;		/* name of writable netcdf file to open */
+test_ncrecput(char *path)
 {
     int nerrs = 0;
     static char pname[] = "test_ncrecput";
@@ -491,9 +474,9 @@ test_ncrecput(path)
  *    try getting the empty subset of variables
  *    try with bad netCDF handle, check error
  */
+/* path - name of netcdf file to open */
 void
-test_ncrecget(path)
-     char *path;		/* name of netcdf file to open */
+test_ncrecget(char *path)
 {
     int nerrs = 0;
     static char pname[] = "test_ncrecget";

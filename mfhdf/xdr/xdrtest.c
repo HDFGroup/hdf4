@@ -38,9 +38,7 @@
 #define EPSILON .0005
 #endif /* __FreeBSD__ */
 
-int main(ac,av)
-int ac ;
-char *av[] ;
+int main(int ac, char *av[])
 {
     int ii ;
     const char *fname ;

@@ -46,9 +46,7 @@
 #include "xdr.h"
 
 bool_t
-xdr_float(xdrs, fp)
-    XDR *xdrs;
-    float *fp;
+xdr_float(XDR *xdrs, float *fp)
 {
     switch (xdrs->x_op) {
 
@@ -65,9 +63,7 @@ xdr_float(xdrs, fp)
 }
 
 bool_t
-xdr_double(xdrs, dp)
-    XDR *xdrs;
-    double *dp;
+xdr_double(XDR *xdrs, double *dp)
 {
     int32_t *i32p;
     bool_t rv;

@@ -30,13 +30,7 @@ FILE *dbg_file;
 #include <stdlib.h>
 #include <string.h> /* to remove warnings, HDFFR-1434 */
 
-#ifdef PROTOTYPE
 int main(int argc, char *argv[])
-#else
-int main(argc, argv)
-int argc;
-char *argv[];
-#endif
 {
     static char testfile[] = "test.nc";
     static char unlim_testfile_name[] = "test_unlim.nc";

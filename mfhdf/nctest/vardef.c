@@ -41,9 +41,9 @@
  *    try with bad dimension ids, check error
  *    try in data mode, check error
  */
+/* path - name of writable netcdf file to open */
 void
-test_ncvardef(path)
-     char *path;		/* name of writable netcdf file to open */
+test_ncvardef(char *path)
 {
     int nerrs = 0;
     int cdfid;			/* netcdf id */

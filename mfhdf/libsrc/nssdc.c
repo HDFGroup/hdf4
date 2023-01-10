@@ -79,8 +79,7 @@
   UnMap a data type.  I.e. go from a CDF type to an NC_<type>
 */
 nc_type
-  cdf_unmap_type(type)
-int type;
+cdf_unmap_type(int type)
 {
 
     switch(type & 0xff) {
@@ -115,9 +114,7 @@ int type;
   Read a NC structure out of a CDF file
 */
 bool_t
-nssdc_read_cdf(xdrs, handlep)
-     XDR *  xdrs;
-     NC  ** handlep;
+nssdc_read_cdf(XDR *xdrs, NC **handlep)
 {
 
     NC     * handle;
@@ -844,9 +841,7 @@ nssdc_read_cdf(xdrs, handlep)
   Write a NC structure out to a CDF file
 */
 bool_t
-nssdc_write_cdf(xdrs, handlep)
-     XDR *  xdrs;
-     NC  ** handlep;
+nssdc_write_cdf(XDR *xdrs, NC **handlep)
 {
 #if DEBUG
     fprintf(stderr, "nssdc_write_cdf i've been called\n");
@@ -869,9 +864,7 @@ nssdc_write_cdf(xdrs, handlep)
   CDF analogue of hdf_xdr_cdf and NC_xdr_cdf
 */
 bool_t
-nssdc_xdr_cdf(xdrs, handlep)
-     XDR *  xdrs;
-     NC  ** handlep;
+nssdc_xdr_cdf(XDR *xdrs, NC **handlep)
 {
 
     int status;

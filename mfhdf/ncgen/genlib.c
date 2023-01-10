@@ -57,8 +57,7 @@ derror(fmt, va_alist)
 
 
 void *
-emalloc (size)			/* check return from malloc */
-int size;
+emalloc (int size)			/* check return from malloc */
 {
     void   *p;
 
@@ -75,9 +74,7 @@ int size;
 }
 
 void *
-erealloc (ptr,size)		/* check return from realloc */
-     void *ptr;
-     int size;
+erealloc (void *ptr, int size)		/* check return from realloc */
 {
     void *p;
 

@@ -40,9 +40,9 @@
  *      toward the far corner.
  */
 
+/* cdfid - handle of netcdf open and in data mode */
 int
-test_varputgetg(cdfid)
-     int cdfid;			/* handle of netcdf open and in data mode */
+test_varputgetg(int cdfid)
 {
     int nerrs = 0;
     static char pname[] = "test_varputgetg";

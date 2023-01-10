@@ -32,9 +32,9 @@
  *    make sure unlimited size works, shows up in ncinquire(...,*xtendim)
  *    try to define a second unlimited dimension, check error
  */
+/* path - name of writable netcdf to open */
 void
-test_ncdimdef(path)
-     char *path;		/* name of writable netcdf to open */
+test_ncdimdef(char *path)
 {
     int nerrs = 0;
     static char pname[] = "test_ncdimdef";
@@ -134,9 +134,9 @@ test_ncdimdef(path)
  *    check return with unlimited size dimension
  *    try with bad handle, check error
  */
+/* path - name of writable netcdf to open */
 void
-test_ncdimid(path)
-     char *path;		/* name of writable netcdf file to open */
+test_ncdimid(char *path)
 {
     int nerrs = 0;
     static char pname[] = "test_ncdimid";
@@ -209,9 +209,9 @@ test_ncdimid(path)
  *    try with bad dimension handle, check error
  *    try with bad netCDF handle, check error
  */
+/* path - name of writable netcdf to open */
 void
-test_ncdiminq(path)
-     char *path;		/* name of writable netcdf file to open */
+test_ncdiminq(char *path)
 {
     int nerrs = 0;
     static char pname[] = "test_ncdiminq";
@@ -304,9 +304,9 @@ test_ncdiminq(path)
  *    try with bad dimension handle, check error
  *    try with bad netCDF handle, check error
  */
+/* path - name of writable netcdf to open */
 void
-test_ncdimrename(path)
-     char *path;		/* name of writable netcdf file to open */
+test_ncdimrename(char *path)
 {
     int nerrs = 0;
     static char pname[] = "test_ncdimrename";
