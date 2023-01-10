@@ -1427,16 +1427,8 @@ nvdtrc(intf * vkey, intf * tag, intf * ref)
  *       Related functions: vffcls, VSfindclass
  *       Users:     HDF Fortran programmers
  ---------------------------------------------------------------------*/
-     FRETVAL (intf)
-#ifdef PROTOTYPE
-       nvscfcls( intf *id, _fcd name, intf *namelen )
-#else
-       nvscfcls (id, name, namelen)
-               intf   *id;
-              _fcd    name;
-               intf   *namelen;
-#endif /* PROTOTYPE */
-
+FRETVAL(intf)
+nvscfcls(intf *id, _fcd name, intf *namelen)
 {
        intf  fi_id;
        intf  ret;
@@ -1458,15 +1450,8 @@ nvdtrc(intf * vkey, intf * tag, intf * ref)
  *       Returns:   0 if succeeds, -1 if fails
  *       Users:     HDF Fortran programmers
  ---------------------------------------------------------------------*/
-     FRETVAL (intf)
-#ifdef PROTOTYPE
-       nvscsetblsz( intf *id , intf *block_size)
-#else
-       nvscsetblsz (id, block_size)
-               intf   *id;
-               intf   *block_size;
-#endif /* PROTOTYPE */
-
+FRETVAL(intf)
+nvscsetblsz(intf *id , intf *block_size)
 {
        intf  ret = -1;
        intn c_ret;
@@ -1483,15 +1468,8 @@ nvdtrc(intf * vkey, intf * tag, intf * ref)
  *       Returns:   0 if succeeds, -1 if fails
  *       Users:     HDF Fortran programmers
  ---------------------------------------------------------------------*/
-     FRETVAL (intf)
-#ifdef PROTOTYPE
-       nvscsetnmbl( intf *id , intf *num_blocks)
-#else
-       nvscsetnmbl (id, num_blocks)
-               intf   *id;
-               intf   *num_blocks;
-#endif /* PROTOTYPE */
-
+FRETVAL(intf)
+nvscsetnmbl(intf *id , intf *num_blocks)
 {
        intf  ret;
        intn  c_ret;
@@ -1509,16 +1487,8 @@ nvdtrc(intf * vkey, intf * tag, intf * ref)
  *       Returns:   0 if succeeds, -1 if fails
  *       Users:     HDF Fortran programmers
  ---------------------------------------------------------------------*/
-     FRETVAL (intf)
-#ifdef PROTOTYPE
-       nvscgblinfo( intf *id , intf *block_size, intf *num_blocks)
-#else
-       nvscgblinfo (id, block_size, num_blocks)
-               intf   *id;
-               intf   *block_size;
-               intf   *num_blocks;
-#endif /* PROTOTYPE */
-
+FRETVAL(intf)
+nvscgblinfo(intf *id , intf *block_size, intf *num_blocks)
 {
        intf  ret = -1;
         intn c_ret;
@@ -1544,17 +1514,8 @@ nvdtrc(intf * vkey, intf * tag, intf * ref)
  *       Returns:   0 if succeeds, -1 if fails
  *       Users:     HDF Fortran programmers
  ---------------------------------------------------------------------*/
-     FRETVAL (intf)
-#ifdef PROTOTYPE
-       nvcgvgrp(intf *id, intf *start_vg, intf *vg_count, intf *refarray)
-#else
-       nvcgvgrp(id, start_vg, vg_count, refarray)
-               intf   *id;
-               intf   *start_vg;
-               intf   *vg_count;
-	       intf   *refarray;
-#endif /* PROTOTYPE */
-
+FRETVAL(intf)
+nvcgvgrp(intf *id, intf *start_vg, intf *vg_count, intf *refarray)
 {
        intf  ret=-1;
        uintn ii;
@@ -1588,17 +1549,8 @@ nvdtrc(intf * vkey, intf * tag, intf * ref)
  *       Returns:   0 if succeeds, -1 if fails
  *       Users:     HDF Fortran programmers
  ---------------------------------------------------------------------*/
-     FRETVAL (intf)
-#ifdef PROTOTYPE
-       nvscgvdatas(intf *id, intf *start_vd, intf *vd_count, intf *refarray)
-#else
-       nvscgvdatas(id, start_vd, vd_count, refarray)
-               intf   *id;
-               intf   *start_vd;
-               intf   *vd_count;
-	       intf   *refarray;
-#endif /* PROTOTYPE */
-
+FRETVAL(intf)
+nvscgvdatas(intf *id, intf *start_vd, intf *vd_count, intf *refarray)
 {
        intf   ret=-1;
        uintn ii;
