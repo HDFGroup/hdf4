@@ -129,7 +129,7 @@ jobs:
       run: |
         mkdir "${{ runner.workspace }}/build"
         cd "${{ runner.workspace }}/build"
-        cmake ${{ matrix.generator }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_TOOLCHAIN_FILE=${{ matrix.toolchain }} -DBUILD_SHARED_LIBS=ON -DHDF4_BUILD_TOOLS=ON -DHDF4_BUILD_UTILS=ON -DHDF4_BUILD_EXAMPLES=ON -DBUILD_JPEG_WITH_PIC:BOOL=ON -DHDF4_BUILD_XDR_LIB:BOOL=${{ matrix.xdr }} -DHDF4_ENABLE_NETCDF:BOOL=${{ matrix.netcdf }} -DHDF4_BUILD_JAVA=${{ matrix.java }} -DHDF4_BUILD_FORTRAN=${{ matrix.fortran }} -DBUILD_JPEG_WITH_FETCHCONTENT=${{ matrix.jpegfc }} $GITHUB_WORKSPACE
+        cmake ${{ matrix.generator }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_TOOLCHAIN_FILE=${{ matrix.toolchain }} -DBUILD_SHARED_LIBS=ON -DHDF4_BUILD_TOOLS=ON -DHDF4_BUILD_UTILS=ON -DHDF4_BUILD_EXAMPLES=ON -DBUILD_JPEG_WITH_PIC:BOOL=ON -DHDF4_BUILD_XDR_LIB:BOOL=${{ matrix.xdr }} -DHDF4_ENABLE_NETCDF:BOOL=${{ matrix.netcdf }} -DHDF4_BUILD_JAVA=${{ matrix.java }} -DHDF4_BUILD_FORTRAN=${{ matrix.fortran }} -DBUILD_JPEG_WITH_FETCHCONTENT=${{ matrix.jpegfc }} -DJPEG_TGZ_ORIGPATH="https://www.ijg.org/filesz" -DJPEG_TGZ_ORIGNAME="jpegsrc.v9e.tar.gz" $GITHUB_WORKSPACE
       shell: bash
 
     - name: Autotools Build
