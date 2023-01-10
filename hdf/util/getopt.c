@@ -39,11 +39,6 @@
 #endif
 #endif
 
-/* This tells Alpha OSF/1 not to define a getopt prototype in <stdio.h>.  */
-#ifndef _NO_PROTO
-#define _NO_PROTO
-#endif
-
 #include <stdio.h>
 
 /* Comment out all this code if we are using the GNU C Library, and are not
