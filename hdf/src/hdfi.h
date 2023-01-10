@@ -1245,12 +1245,6 @@ correctly.
 #define CONSTR(v,s) static const char v[]=s
 #endif
 
-/* Old-style memory allocation function aliases -QAK */
-#define HDgetspace HDmalloc
-#define HDclearspace HDcalloc
-#define HDregetspace HDrealloc
-#define HDfreespace HDfree
-
 /**************************************************************************
 *  Allocation functions defined differently
 **************************************************************************/
