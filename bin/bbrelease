@@ -28,9 +28,11 @@
 USAGE()
 {
 cat << EOF
-Usage: $0 -d <dir> [-h] [--private] [--revision] <methods> ...
+Usage: $0 -d <dir> [-h] [--private] [--revision [--branch BRANCHNAME]] <methods> ...
    -d DIR       The name of the directory where the release(s) should be
                 placed.
+   --branch BRANCHNAME  This is to get the correct version of the branch name from the
+                        repository.  BRANCHNAME for v1.8 should be hdf5_1_8.
    -h           print the help page.
    --private    Make a private release with today's date in version information.
    --revision   Make a private release with the code revision number in version information.
@@ -181,6 +183,10 @@ while [ -n "$1" ]; do
         --revision)
             revmode=yes
             ;;
+        --branch)
+            BRANCHNAME=$1
+            shift
+            ;;
         -*)
             echo "Unknown switch: $arg" 1>&2
             USAGE
@@ -221,13 +227,17 @@ fi
 if [ X$revmode = Xyes ]; then
     VERS_OLD=$VERS
     echo "Save old version $VERS_OLD for restoration later."
+    if [ "${BRANCHNAME}" = "" ]; then
+        BRANCHNAME=`git symbolic-ref -q --short HEAD`
+    fi
     revision=`git rev-parse --short HEAD`
     # Set version information to m.n.r-of$today.
     # (h4vers does not correctly handle just m.n.r-$today.)
     VERS=`echo $VERS | sed -e s/-.*//`-$revision
     echo Private release of $VERS
+    HDF4_VERS=hdf4-$BRANCHNAME-$revision
+    echo file base of $HDF4_VERS
     bin/h4vers -s $VERS
-    HDF4_VERS=hdf4-$branch-$revision
     # use a generic directory name for revision releases
     HDF4_IN_VERS=hdfsrc
 else
