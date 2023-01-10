@@ -61,7 +61,7 @@ BYTE *MemGif;
 	
 
 
-    register WORD i;        /* Loop counter                                 */
+    WORD i;        /* Loop counter                                 */
     BYTE Identifier;        /* Extension block identifier holder            */
     BYTE Label;             /* Extension block label holder                 */
     BYTE ImageCount;        /* Count of the number of images in the file    */

@@ -29,7 +29,7 @@ test_hblocks(void)
     int32       fileid, length, offset, posn;
     uint16      tag, ref;
     int16       acc_mode, special;
-    register int i;
+    int i;
     int32       ret;
     intn        errors = 0;
 

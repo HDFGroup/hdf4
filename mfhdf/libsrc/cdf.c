@@ -1145,8 +1145,8 @@ NC_var **var;
     CONSTR(FUNC,"hdf_write_var");
 #endif /* LATER */
     int32      ret_value = SUCCEED;
-    register unsigned  i, count;
-    register Void *attribute = NULL;
+    unsigned  i, count;
+    Void *attribute = NULL;
 
     count = 0;
     assoc = (*var)-> assoc;
@@ -2132,9 +2132,9 @@ hdf_read_vars(XDR *xdrs,
     int32    rag_ref = 0;
     intn     nattrs;
     hdf_vartype_t var_type = UNKNOWN;
-    register int     t, i;
-    register nc_type type;
-    register int32   var, sub;
+    int     t, i;
+    nc_type type;
+    int32   var, sub;
     intn     ret_value = SUCCEED;
 #ifdef LATER
     CONSTR(FUNC,"hdf_read_vars");
@@ -2550,8 +2550,8 @@ NC **handlep;
   char            vgname[H4_MAX_NC_NAME];
   int32           entries;
 #endif
-  register int32  cdf_vg = FAIL;
-  register int    vgid = 0;
+  int32  cdf_vg = FAIL;
+  int    vgid = 0;
   int             status;
   CONSTR(FUNC,"hdf_read_xdr_cdf");
   intn            ret_value = SUCCEED;
@@ -3007,7 +3007,7 @@ hdf_close(handle)
     NC_array  *tmp = NULL;
     NC_var   **vp = NULL;
     Void      *vars = NULL;
-    register   int i;
+    int i;
     int        id, sub_id;
     int32      vg, dim;
     int32      vs;

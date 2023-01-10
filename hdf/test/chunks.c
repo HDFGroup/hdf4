@@ -195,7 +195,7 @@ test_chunks(void)
     int32       fileid, length, offset, posn;
     uint16      tag, ref;
     int16       acc_mode, special;
-    register int i, j, k;
+    int i, j, k;
 #ifdef BIG_TEST
     int32       x,y;
     int32      nseek = 0;
