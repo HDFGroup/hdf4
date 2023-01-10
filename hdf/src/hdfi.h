@@ -49,22 +49,13 @@
 /*--------------------------------------------------------------------------*/
 #define     DFMT_SUN            0x1111
 #define     DFMT_SUN_INTEL      0x4441
-#define     DFMT_ALLIANT        0x1111
 #define     DFMT_APOLLO         0x1111
 #define     DFMT_IBM6000        0x1111
-#define     DFMT_HP9000         0x1111
 #define     DFMT_CONVEXNATIVE   0x5511
 #define     DFMT_CONVEX         0x1111
-#define     DFMT_UNICOS         0x3331
-#define     DFMT_UNICOSIEEE     0x1831
-#define     DFMT_CTSS           0x3331
-#define     DFMT_VAX            0x2221
-#define     DFMT_MIPSEL         0x4441
 #define     DFMT_PC             0x4441
 #define     DFMT_APPLE          0x1111
 #define     DFMT_APPLE_INTEL    0x4441
-#define     DFMT_MAC            0x1111
-#define     DFMT_SUN386         0x4441
 #define     DFMT_VP             0x6611
 #define     DFMT_I860           0x4441
 #define     DFMT_IA64           0x4441
