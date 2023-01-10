@@ -113,11 +113,7 @@ if(ret == FAIL) {printf("*** UNEXPECTED RETURN from %s is %ld at line %4d in %s\
 #define H4_SKIPPED()       {puts(" -SKIP-");fflush(stdout);}
 
 /* Definition for JPEG tests */
-#ifdef DEC_ALPHA
-#define JPEG_FUZZ 13
-#else
 #define JPEG_FUZZ 1
-#endif
 
 #define ABS(x)  ((int)(x)<0 ? (-x) : x)
 

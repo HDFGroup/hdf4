@@ -66,7 +66,6 @@
 #define     DFMT_MAC            0x1111
 #define     DFMT_SUN386         0x4441
 #define     DFMT_MOTOROLA       0x1111
-#define     DFMT_ALPHA          0x4441
 #define     DFMT_VP             0x6611
 #define     DFMT_I860           0x4441
 #define     DFMT_IA64           0x4441
@@ -475,7 +474,7 @@ typedef long            hdf_pint_t;   /* an integer the same size as a pointer *
 /* Metrowerks Mac compiler defines some PC stuff so need to exclude this on the Mac */
 #if !(defined (__APPLE__)) && !(defined(__CYGWIN__))
 
-#if defined _M_ARM64 || defined _M_ALPHA || defined _M_X64 || defined _M_IA64 || defined _M_IX86 || defined INTEL86 || defined M_I86 || defined M_I386 || defined DOS386 || defined __i386 || defined UNIX386 || defined i386
+#if defined _M_ARM64 || defined _M_X64 || defined _M_IA64 || defined _M_IX86 || defined INTEL86 || defined M_I86 || defined M_I386 || defined DOS386 || defined __i386 || defined UNIX386 || defined i386
 #ifndef INTEL86
 #define INTEL86
 #endif /* INTEL86 */
@@ -562,10 +561,6 @@ typedef long long         hdf_pint_t;   /* 8-byte pointer */
 typedef int               hdf_pint_t;   /* 4-byte pointer */
 #endif /* _WIN64 */
 
-#if defined _M_ALPHA
-#define FNAME_PRE_UNDERSCORE
-#endif
-
 #if defined UNIX386
 #ifdef H4_ABSOFT
 #define FNAME(x) x
@@ -640,59 +635,6 @@ typedef int               hdf_pint_t;   /* an integer the same size as a pointer
 #define JMEMSYS         MEM_ANSI
 
 #endif /* MOTOROLA */
-
-/*-----------------------------------------------------*/
-#if defined DEC_ALPHA || (defined __alpha && defined __unix__)
-
-#ifndef DEC_ALPHA
-#define DEC_ALPHA
-#endif
-
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE
-
-#include <sys/file.h>               /* for unbuffered i/o stuff */
-#include <sys/stat.h>
-#define DF_MT             DFMT_ALPHA
-typedef void              VOID;
-typedef void              *VOIDP;
-typedef char              *_fcd;
-typedef char              char8;
-typedef unsigned char     uchar8;
-typedef char              int8;
-typedef unsigned char     uint8;
-typedef short int         int16;
-typedef unsigned short int uint16;
-#ifndef __rpc_types_h
-typedef int               int32;
-typedef unsigned int      uint32;
-#endif /* __rpc_types_h */
-typedef int               intn;
-typedef unsigned int      uintn;
-typedef int               intf;     /* size of INTEGERs in Fortran compiler */
-typedef float             float32;
-typedef double            float64;
-typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
-#define FNAME_POST_UNDERSCORE
-#define _fcdtocp(desc) (desc)
-#define FILELIB UNIXBUFIO
-
-/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
-
-/* Determine the memory manager we are going to use. Valid values are: */
-/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
-/*  what each does */
-#define JMEMSYS         MEM_ANSI
-
-#ifdef __GNUC__
-#define HAVE_STDC
-#define INCLUDES_ARE_ANSI
-#endif
-
-#endif /* DEC_ALPHA */
 
 /*-----------------------------------------------------*/
 #if defined VP | defined __uxpm__
