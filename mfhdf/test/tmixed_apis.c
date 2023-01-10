@@ -467,7 +467,7 @@ test_vgisinternal()
     int32 vref        = -1;
     intn  ii, status;
     char  internal_array1[20] = {TRUE, TRUE, TRUE, TRUE, TRUE,  TRUE,  TRUE, TRUE,
-                                 TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE};
+                                TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE};
     char  internal_array2[9]  = {TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE};
     intn  num_errs            = 0; /* number of errors so far */
 

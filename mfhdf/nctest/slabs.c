@@ -55,7 +55,7 @@ val_stuff(nc_type type, void *v, int ii, long val) /* v[ii] = val */
         nclong lp[1];
         float  fp[1];
         double dp[1];
-    } *gp;
+    } * gp;
 
     gp = (union gp *)v;
     switch (type) {
@@ -123,7 +123,7 @@ val_stuff(nc_type type, void *v, int ii, long val) /* v[ii] = val */
             nclong lp[1];
             float  fp[1];
             double dp[1];
-        } *gp;
+        } * gp;
 
         gp = (union gp *)v;
         switch (type) {
