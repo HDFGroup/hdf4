@@ -124,7 +124,7 @@ add_reset(struct netcdf *test)
 
 /* delete attribute iatt in the netcdf test */
 void
-del_att (struct netcdf *test, int varid, iatt)
+del_att (struct netcdf *test, int varid, struct cdfatt *iatt)
 {
     static char pname[] = "del_att";
     int ia, ib;			/* attribute number */
