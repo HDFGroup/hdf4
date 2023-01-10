@@ -7,7 +7,7 @@ long ntohl(i_in)
 long i_in;
 {
 	long i_out;
-	register unsigned char *inptr, *outptr;
+	unsigned char *inptr, *outptr;
 
 	inptr = (unsigned char *) &i_in;
 	outptr = (unsigned char *) &i_out;
@@ -25,7 +25,7 @@ long htonl(i_in)
 long i_in;
 {
 	long i_out;
-	register unsigned char *inptr, *outptr;
+	unsigned char *inptr, *outptr;
 
 	inptr = (unsigned char *) &i_in;
 	outptr = (unsigned char *) &i_out;
@@ -44,7 +44,7 @@ short ntohs(i_in)
 short i_in;
 {
 	short i_out;
-	register unsigned char *inptr, *outptr;
+	unsigned char *inptr, *outptr;
 
 	inptr = (unsigned char *) &i_in;
 	outptr = (unsigned char *) &i_out;
@@ -60,7 +60,7 @@ short htons(i_in)
 short i_in;
 {
 	short i_out;
-	register unsigned char *inptr, *outptr;
+	unsigned char *inptr, *outptr;
 
 	inptr = (unsigned char *) &i_in;
 	outptr = (unsigned char *) &i_out;
