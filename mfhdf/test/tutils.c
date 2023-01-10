@@ -26,18 +26,18 @@
         Returns SUCCEED if the file name is generated successfully, or
     FAIL, otherwise.
 *********************************************************************/
-intn make_datafilename(char* basename, char* testfile, unsigned int size)
+intn
+make_datafilename(char *basename, char *testfile, unsigned int size)
 {
-    char *srcdir = getenv("srcdir");
+    char *srcdir   = getenv("srcdir");
     char *tempfile = NULL;
 
-    tempfile = (char *) HDmalloc(sizeof(char *) * (size+1));
+    tempfile = (char *)HDmalloc(sizeof(char *) * (size + 1));
     CHECK_ALLOC(tempfile, "tempfile", "make_datafilename");
-    HDmemset(tempfile, '\0', size+1);
+    HDmemset(tempfile, '\0', size + 1);
 
     /* Generate the correct name for the test file, by prepending the source path */
-    if (srcdir && ((strlen(srcdir) + strlen(basename) + 1) < size))
-    {
+    if (srcdir && ((strlen(srcdir) + strlen(basename) + 1) < size)) {
         strcpy(tempfile, srcdir);
         strcat(tempfile, "/");
     }
@@ -67,7 +67,6 @@ intn make_datafilename(char* basename, char* testfile, unsigned int size)
     return SUCCEED;
 }
 
-
 /********************************************************************
    Name: make_SDS() - Creates and writes a 3-D unlimited SDS.
    Description:
@@ -78,57 +77,56 @@ intn make_datafilename(char* basename, char* testfile, unsigned int size)
         Returns the size of the data that had been written successfully.
    BMR - Dec 1, 2015
 *********************************************************************/
-int32 make_SDS(int32 sd_id, char* sds_name, int32 type, int32 rank,
-            int32* dim_sizes, int32 unlim_dim, VOIDP written_data)
+int32
+make_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, int32 unlim_dim,
+         VOIDP written_data)
 {
-    int32 sds_id;
+    int32  sds_id;
     int32 *start, *edges;
-    int32 sds_size = 0, count = 0;
-    intn  status, ii;
-    intn  num_errs = 0;    /* number of errors in compression test so far */
+    int32  sds_size = 0, count = 0;
+    intn   status, ii;
+    intn   num_errs = 0; /* number of errors in compression test so far */
 
-    start = (int32*)HDmalloc(sizeof(int32) * rank);
+    start = (int32 *)HDmalloc(sizeof(int32) * rank);
     CHECK_ALLOC(start, "start", "make_SDS");
-    edges = (int32*)HDmalloc(sizeof(int32) * rank);
+    edges = (int32 *)HDmalloc(sizeof(int32) * rank);
     CHECK_ALLOC(edges, "edges", "make_SDS");
 
     /* Create the array with the name defined in SDS_NAME */
-    sds_id = SDcreate (sd_id, sds_name, type, rank, dim_sizes);
+    sds_id = SDcreate(sd_id, sds_name, type, rank, dim_sizes);
     CHECK(sds_id, FAIL, "SDcreate");
 
     /* Set the parameters start and edges to write */
-    for (ii = 0; ii < rank; ii++)
-    {
-    start[ii] = 0;
-    edges[ii] = dim_sizes[ii];
+    for (ii = 0; ii < rank; ii++) {
+        start[ii] = 0;
+        edges[ii] = dim_sizes[ii];
     }
 
     /* Give real size to the unlimited dimension */
     if (dim_sizes[0] == SD_UNLIMITED)
-    edges[0] = unlim_dim;
+        edges[0] = unlim_dim;
 
     /* Write the data */
-    status = SDwritedata (sds_id, start, NULL, edges, written_data);
+    status = SDwritedata(sds_id, start, NULL, edges, written_data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Calculate data set's size to verify later */
-    for (ii = 0; ii < rank; ii++)
-    {
-    if (ii == 0)
-        count = edges[0];
-    else
-        count = count * edges[ii];
+    for (ii = 0; ii < rank; ii++) {
+        if (ii == 0)
+            count = edges[0];
+        else
+            count = count * edges[ii];
     }
     sds_size = count * DFKNTsize(type);
 
     /* Terminate access to the data set */
-    status = SDendaccess (sds_id);
+    status = SDendaccess(sds_id);
     CHECK(status, FAIL, "SDendaccess");
 
     HDfree(edges);
     HDfree(start);
 
-    return(sds_size);
+    return (sds_size);
 
 } /* make_SDS */
 
@@ -142,66 +140,64 @@ int32 make_SDS(int32 sd_id, char* sds_name, int32 type, int32 rank,
         Returns the size of the data that had been written successfully.
    BMR - Dec 1, 2015
 *********************************************************************/
-int32 make_CompSDS(int32 sd_id, char* sds_name, int32 type, int32 rank,
-            int32* dim_sizes, VOIDP written_data)
+int32
+make_CompSDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, VOIDP written_data)
 {
-    int32 sds_id;
-    int32 *start, *edges;
-    comp_coder_t comp_type;    /* Compression flag */
-    comp_info c_info;          /* Compression structure */
-    int32 sds_size = 0, count = 0;
-    intn  status, ii;
-    intn  num_errs = 0;  /* number of errors in compression test so far */
+    int32        sds_id;
+    int32       *start, *edges;
+    comp_coder_t comp_type; /* Compression flag */
+    comp_info    c_info;    /* Compression structure */
+    int32        sds_size = 0, count = 0;
+    intn         status, ii;
+    intn         num_errs = 0; /* number of errors in compression test so far */
 
-    start = (int32*)HDmalloc(sizeof(int32) * rank);
+    start = (int32 *)HDmalloc(sizeof(int32) * rank);
     CHECK_ALLOC(start, "start", "make_CompSDS");
-    edges = (int32*)HDmalloc(sizeof(int32) * rank);
+    edges = (int32 *)HDmalloc(sizeof(int32) * rank);
     CHECK_ALLOC(edges, "edges", "make_CompSDS");
 
     /* Define dimensions of the array to be created */
-     /* dim_sizes[0] = Z_LENGTH;
-    dim_sizes[1] = Y_LENGTH;
-    dim_sizes[2] = X_LENGTH;
- */
+    /* dim_sizes[0] = Z_LENGTH;
+   dim_sizes[1] = Y_LENGTH;
+   dim_sizes[2] = X_LENGTH;
+*/
 
     /* Create the array with the name defined in SDS_NAME */
-    sds_id = SDcreate (sd_id, sds_name, type, rank, dim_sizes);
+    sds_id = SDcreate(sd_id, sds_name, type, rank, dim_sizes);
     CHECK(status, FAIL, "SDcreate");
 
     /* Set compression for the data set */
-    comp_type = COMP_CODE_SKPHUFF;
+    comp_type               = COMP_CODE_SKPHUFF;
     c_info.skphuff.skp_size = 18;
-    status = SDsetcompress (sds_id, comp_type, &c_info);
+    status                  = SDsetcompress(sds_id, comp_type, &c_info);
     CHECK(status, FAIL, "SDsetcompress");
 
     /* Set the parameters start and edges to write */
-    for (ii = 0; ii < rank; ii++)
-    {
-    start[ii] = 0;
-    edges[ii] = dim_sizes[ii];
+    for (ii = 0; ii < rank; ii++) {
+        start[ii] = 0;
+        edges[ii] = dim_sizes[ii];
     }
 
     /* Write the data */
-    status = SDwritedata (sds_id, start, NULL, edges, written_data);
+    status = SDwritedata(sds_id, start, NULL, edges, written_data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Compute the uncompressed data size, just to have makeCompSDS similar
        to the other create SDS functions; we don't need to verify the data
        size because we don't move compressed data to external file */
-    for (ii = 0; ii < rank; ii++)
-    {
-    count = count + dim_sizes[ii];
+    for (ii = 0; ii < rank; ii++) {
+        count = count + dim_sizes[ii];
     }
     sds_size = count * DFKNTsize(type);
 
     /* Terminate access to the data set */
-    status = SDendaccess (sds_id);
+    status = SDendaccess(sds_id);
     CHECK(status, FAIL, "SDendaccess");
 
     HDfree(edges);
     HDfree(start);
 
-    return(sds_size);
+    return (sds_size);
 } /* make_CompSDS */
 
 /********************************************************************
@@ -216,50 +212,47 @@ int32 make_CompSDS(int32 sd_id, char* sds_name, int32 type, int32 rank,
         None.
    BMR - Dec 1, 2015
 *********************************************************************/
-int32 make_Ext3D_SDS(int32 sd_id, char* sds_name, int32 type, int32 rank,
-            int32* dim_sizes, VOIDP written_data,
-            int32 offset, char* ext_file_name)
+int32
+make_Ext3D_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, VOIDP written_data,
+               int32 offset, char *ext_file_name)
 {
-    int32 sds_id;
+    int32  sds_id;
     int32 *start, *edges;
-    int32 sds_size = 0, count;
-    intn  status, ii;
-    intn  num_errs = 0;    /* number of errors in compression test so far */
+    int32  sds_size = 0, count;
+    intn   status, ii;
+    intn   num_errs = 0; /* number of errors in compression test so far */
 
-    start = (int32*)HDmalloc(sizeof(int32) * rank);
+    start = (int32 *)HDmalloc(sizeof(int32) * rank);
     CHECK_ALLOC(start, "start", "make_Ext3D_SDS");
-    edges = (int32*)HDmalloc(sizeof(int32) * rank);
+    edges = (int32 *)HDmalloc(sizeof(int32) * rank);
     CHECK_ALLOC(edges, "edges", "make_Ext3D_SDS");
 
     /* Set the parameters start and edges to write */
-    for (ii = 0; ii < rank; ii++)
-    {
+    for (ii = 0; ii < rank; ii++) {
         start[ii] = 0;
         edges[ii] = dim_sizes[ii];
     }
 
     /* Create the array with the name defined in SDS_NAME. */
-    sds_id = SDcreate (sd_id, sds_name, type, rank, dim_sizes);
+    sds_id = SDcreate(sd_id, sds_name, type, rank, dim_sizes);
     CHECK(sds_id, FAIL, "SDcreate");
 
-    status = SDsetexternalfile (sds_id, ext_file_name, offset);
+    status = SDsetexternalfile(sds_id, ext_file_name, offset);
     CHECK(status, FAIL, "SDsetexternalfile");
 
     /* Write the data */
-    status = SDwritedata (sds_id, start, NULL, edges, written_data);
+    status = SDwritedata(sds_id, start, NULL, edges, written_data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Calculate data set's size to verify later */
     count = 1;
-    for (ii = 0; ii < rank; ii++)
-    {
-    count = count * dim_sizes[ii];
+    for (ii = 0; ii < rank; ii++) {
+        count = count * dim_sizes[ii];
     }
     sds_size = count * DFKNTsize(type);
 
-
     /* Terminate access to the data set */
-    status = SDendaccess (sds_id);
+    status = SDendaccess(sds_id);
     CHECK(status, FAIL, "SDendaccess");
 
     HDfree(edges);
@@ -276,21 +269,22 @@ int32 make_Ext3D_SDS(int32 sd_id, char* sds_name, int32 type, int32 rank,
         Returns the SDS' identifier.
    BMR - Dec 1, 2015
 *********************************************************************/
-int32 get_SDSbyName(int32 sd_id, char* sds_name)
+int32
+get_SDSbyName(int32 sd_id, char *sds_name)
 {
     int32 sds_id, sds_index;
     intn  status;
-    intn  num_errs = 0;    /* number of errors in compression test so far */
+    intn  num_errs = 0; /* number of errors in compression test so far */
 
     sds_index = SDnametoindex(sd_id, sds_name);
     CHECK(sds_index, FAIL, "SDnametoindex");
 
     /* Select the data set */
-    sds_id = SDselect (sd_id, sds_index);
+    sds_id = SDselect(sd_id, sds_index);
     CHECK(sds_id, FAIL, "SDselect");
 
     /* Return the data set id */
-    return(sds_id);
+    return (sds_id);
 
 } /* get_SDSbyName */
 
@@ -304,15 +298,15 @@ int32 get_SDSbyName(int32 sd_id, char* sds_name)
         Returns the size of the data that had been written successfully.
    BMR - Dec 1, 2015
 *********************************************************************/
-int32 append_Data2SDS(int32 sd_id, char* sds_name, int32* start, int32* edges, void* ap_data)
+int32
+append_Data2SDS(int32 sd_id, char *sds_name, int32 *start, int32 *edges, void *ap_data)
 {
     int32 sds_id, sds_index;
     int32 sds_size, ntype;
-    int32 comp_size=0, uncomp_size=0;
-char name[80];
+    int32 comp_size = 0, uncomp_size = 0;
+    char  name[80];
     intn  status;
-    intn  num_errs = 0;    /* number of errors in compression test so far */
-
+    intn  num_errs = 0; /* number of errors in compression test so far */
 
     /* Find and select the data set */
     sds_id = get_SDSbyName(sd_id, sds_name);
@@ -326,18 +320,18 @@ char name[80];
     CHECK(status, FAIL, "SDgetdatasize");
 
     /* Append data to it */
-    status = SDwritedata (sds_id, start, NULL, edges, (VOIDP)ap_data);
+    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)ap_data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Calculate data set's size to verify later */
     sds_size = uncomp_size + edges[0] * edges[1] * edges[2] * DFKNTsize(ntype);
 
     /* Terminate access to the data set and file */
-    status = SDendaccess (sds_id);
+    status = SDendaccess(sds_id);
     CHECK(status, FAIL, "SDendaccess");
 
     /* Return the size of data being written */
-    return(sds_size);
+    return (sds_size);
 
 } /* append_Data2SDS */
 
@@ -350,12 +344,13 @@ char name[80];
         None.
    BMR - Dec 1, 2015
 *********************************************************************/
-void verify_datasize(int32 sds_id, int32 data_size, char* sds_name)
+void
+verify_datasize(int32 sds_id, int32 data_size, char *sds_name)
 {
-    int32 comp_size=0, uncomp_size=0;
+    int32 comp_size = 0, uncomp_size = 0;
     char  msg[80];
     intn  status;
-    intn  num_errs = 0;    /* number of errors in compression test so far */
+    intn  num_errs = 0; /* number of errors in compression test so far */
 
     /* Get the size of data set's data */
     status = SDgetdatasize(sds_id, &comp_size, &uncomp_size);

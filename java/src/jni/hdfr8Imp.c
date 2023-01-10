@@ -31,13 +31,14 @@ extern "C" {
 extern jboolean getOldCompInfo(JNIEnv *env, jobject ciobj, comp_info *cinf);
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFR8getdims(JNIEnv *env, jclass clss, jstring filename, jintArray argv, jbooleanArray isp)
+Java_hdf_hdflib_HDFLibrary_DFR8getdims(JNIEnv *env, jclass clss, jstring filename, jintArray argv,
+                                       jbooleanArray isp)
 {
     intn        rval = FAIL;
     const char *fstr = NULL;
     int         ispal;
     jint       *theArgs = NULL;
-    jboolean   *theB = NULL;
+    jboolean   *theB    = NULL;
     jboolean    isCopy;
 
     UNUSED(clss);
@@ -63,8 +64,7 @@ Java_hdf_hdflib_HDFLibrary_DFR8getdims(JNIEnv *env, jclass clss, jstring filenam
 
     theB[0] = JNI_FALSE;
     /* get image dimension information */
-    if ((rval = DFR8getdims(fstr, (int32 *)&(theArgs[0]),
-                (int32 *)&(theArgs[1]), (intn *)&ispal)) == FAIL)
+    if ((rval = DFR8getdims(fstr, (int32 *)&(theArgs[0]), (int32 *)&(theArgs[1]), (intn *)&ispal)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
     if (ispal)
@@ -84,12 +84,13 @@ done:
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFR8getimage(JNIEnv *env, jclass clss, jstring filename, jbyteArray image, jint width, jint height, jbyteArray palette)
+Java_hdf_hdflib_HDFLibrary_DFR8getimage(JNIEnv *env, jclass clss, jstring filename, jbyteArray image,
+                                        jint width, jint height, jbyteArray palette)
 {
     intn        rval = FAIL;
     const char *fstr = NULL;
-    jbyte      *dat = NULL;
-    jbyte      *pal = NULL;
+    jbyte      *dat  = NULL;
+    jbyte      *pal  = NULL;
     jboolean    isCopy;
 
     UNUSED(clss);
@@ -103,14 +104,12 @@ Java_hdf_hdflib_HDFLibrary_DFR8getimage(JNIEnv *env, jclass clss, jstring filena
     PIN_BYTE_ARRAY_CRITICAL(ENVONLY, image, dat, &isCopy, "DFR8getimage:  palette not pinned");
     PIN_JAVA_STRING(ENVONLY, filename, fstr, NULL, "DFR8getimage:  filename not pinned");
 
-    if ((rval = DFR8getimage((char *)fstr, (uint8 *) dat, (int32) width, (int32) height,
-                    (uint8 *)NULL)) == FAIL)
+    if ((rval = DFR8getimage((char *)fstr, (uint8 *)dat, (int32)width, (int32)height, (uint8 *)NULL)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
     PIN_BYTE_ARRAY(ENVONLY, palette, pal, &isCopy, "DFR8getimage:  palette not pinned");
 
-    if ((rval =  DFR8getimage((char *)fstr, (uint8 *) dat, (int32) width, (int32) height,
-                    (uint8 *)pal)) == FAIL)
+    if ((rval = DFR8getimage((char *)fstr, (uint8 *)dat, (int32)width, (int32)height, (uint8 *)pal)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -173,7 +172,7 @@ done:
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_DFR8nimages(JNIEnv *env, jclass clss, jstring hdfFile)
 {
-    int         rval = FAIL;
+    int         rval     = FAIL;
     const char *hdf_file = NULL;
 
     UNUSED(clss);
@@ -194,11 +193,12 @@ done:
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFR8addimage(JNIEnv *env, jclass clss, jstring filename, jbyteArray image, jint width, jint height, jshort compress)
+Java_hdf_hdflib_HDFLibrary_DFR8addimage(JNIEnv *env, jclass clss, jstring filename, jbyteArray image,
+                                        jint width, jint height, jshort compress)
 {
     intn        rval = FAIL;
     const char *fstr = NULL;
-    jbyte      *dat = NULL;
+    jbyte      *dat  = NULL;
     jboolean    isCopy;
 
     UNUSED(clss);
@@ -212,8 +212,8 @@ Java_hdf_hdflib_HDFLibrary_DFR8addimage(JNIEnv *env, jclass clss, jstring filena
     PIN_BYTE_ARRAY(ENVONLY, image, dat, &isCopy, "DFR8addimage:  image not pinned");
     PIN_JAVA_STRING(ENVONLY, filename, fstr, NULL, "DFR8addimage:  filename not pinned");
 
-    if ((rval = DFR8addimage((char *)fstr, (VOIDP) dat, (int32) width, (int32) height,
-                        (uint16)compress)) == FAIL)
+    if ((rval = DFR8addimage((char *)fstr, (VOIDP)dat, (int32)width, (int32)height, (uint16)compress)) ==
+        FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -226,11 +226,12 @@ done:
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFR8putimage(JNIEnv *env, jclass clss, jstring filename, jbyteArray image, jint width, jint height, jint compress)
+Java_hdf_hdflib_HDFLibrary_DFR8putimage(JNIEnv *env, jclass clss, jstring filename, jbyteArray image,
+                                        jint width, jint height, jint compress)
 {
     intn        rval = FAIL;
     const char *fstr = NULL;
-    jbyte      *dat = NULL;
+    jbyte      *dat  = NULL;
     jboolean    isCopy;
 
     UNUSED(clss);
@@ -244,8 +245,8 @@ Java_hdf_hdflib_HDFLibrary_DFR8putimage(JNIEnv *env, jclass clss, jstring filena
     PIN_BYTE_ARRAY(ENVONLY, image, dat, &isCopy, "DFR8putimage:  image not pinned");
     PIN_JAVA_STRING(ENVONLY, filename, fstr, NULL, "DFR8putimage:  filename not pinned");
 
-    if ((rval = DFR8putimage((char *)fstr, (VOIDP) dat, (int32) width, (int32) height,
-                (uint16) compress)) == FAIL)
+    if ((rval = DFR8putimage((char *)fstr, (VOIDP)dat, (int32)width, (int32)height, (uint16)compress)) ==
+        FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -268,11 +269,11 @@ Java_hdf_hdflib_HDFLibrary_DFR8setcompress(JNIEnv *env, jclass clss, jint type, 
     if (cinfo == NULL)
         H4_NULL_ARGUMENT_ERROR(ENVONLY, "DFR8setcompress: cinfo is NULL");
 
-    if (getOldCompInfo(env, cinfo,&cinf) == JNI_FALSE)
+    if (getOldCompInfo(env, cinfo, &cinf) == JNI_FALSE)
         H4_JNI_FATAL_ERROR(ENVONLY, "DFR8setcompress: cinfo not pinned");
 
-        /* fill in cinf depending on the value of 'type' */
-    if ((rval = DFR8setcompress((int32) type, (comp_info *)&cinf)) == FAIL)
+    /* fill in cinf depending on the value of 'type' */
+    if ((rval = DFR8setcompress((int32)type, (comp_info *)&cinf)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -282,7 +283,7 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_DFR8getpalref(JNIEnv *env, jclass clss, jshortArray palref)
 {
-    int      rval = FAIL;
+    int      rval    = FAIL;
     short   *theArgs = NULL;
     jboolean isCopy;
 
@@ -310,7 +311,7 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_DFR8setpalette(JNIEnv *env, jclass clss, jbyteArray palette)
 {
     int      rval = FAIL;
-    jbyte   *dat = NULL;
+    jbyte   *dat  = NULL;
     jboolean isCopy;
 
     UNUSED(clss);

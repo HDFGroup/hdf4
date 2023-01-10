@@ -29,14 +29,15 @@ extern "C" {
 #include "h4jni.h"
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_VHmakegroup(JNIEnv *env, jclass clss, jlong file_id, jintArray tag_array, jintArray ref_array,
-        jint n_objects, jstring vgroup_name, jstring vgroup_class)
+Java_hdf_hdflib_HDFLibrary_VHmakegroup(JNIEnv *env, jclass clss, jlong file_id, jintArray tag_array,
+                                       jintArray ref_array, jint n_objects, jstring vgroup_name,
+                                       jstring vgroup_class)
 {
-    int32       rval = -1;
-    jint       *tags = NULL;
-    jint       *refs = NULL;
+    int32       rval  = -1;
+    jint       *tags  = NULL;
+    jint       *refs  = NULL;
     const char *vname = NULL;
-    const char *vcls = NULL;
+    const char *vcls  = NULL;
     jboolean    isCopy;
 
     UNUSED(clss);
@@ -58,8 +59,7 @@ Java_hdf_hdflib_HDFLibrary_VHmakegroup(JNIEnv *env, jclass clss, jlong file_id, 
     PIN_INT_ARRAY(ENVONLY, tag_array, tags, &isCopy, "VHmakegroup:  tag_array not pinned");
     PIN_INT_ARRAY(ENVONLY, ref_array, refs, &isCopy, "VHmakegroup:  ref_array not pinned");
 
-    if ((rval = VHmakegroup((int32)file_id, (int32 *)tags, (int32 *)refs,
-                        (int32)n_objects, vname, vcls)) < 0)
+    if ((rval = VHmakegroup((int32)file_id, (int32 *)tags, (int32 *)refs, (int32)n_objects, vname, vcls)) < 0)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -76,14 +76,15 @@ done:
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_VHstoredata(JNIEnv *env, jclass clss, jlong file_id, jstring fieldname, jbyteArray buf, jint n_records,
-        jint data_type, jstring vdata_name, jstring vdata_class)
+Java_hdf_hdflib_HDFLibrary_VHstoredata(JNIEnv *env, jclass clss, jlong file_id, jstring fieldname,
+                                       jbyteArray buf, jint n_records, jint data_type, jstring vdata_name,
+                                       jstring vdata_class)
 {
-    int32       rval = -1;
-    jbyte      *buffer = NULL;
+    int32       rval    = -1;
+    jbyte      *buffer  = NULL;
     const char *fldname = NULL;
-    const char *vname = NULL;
-    const char *vcls = NULL;
+    const char *vname   = NULL;
+    const char *vcls    = NULL;
     jboolean    isCopy;
 
     UNUSED(clss);
@@ -105,9 +106,8 @@ Java_hdf_hdflib_HDFLibrary_VHstoredata(JNIEnv *env, jclass clss, jlong file_id, 
     PIN_JAVA_STRING(ENVONLY, vdata_class, vcls, NULL, "VHstoredata:  vdata_class not pinned");
     PIN_BYTE_ARRAY(ENVONLY, buf, buffer, &isCopy, "VHstoredata:  buf not pinned");
 
-    if ((rval = VHstoredata((int32) file_id, fldname,
-                    (uint8 *)buffer, (int32)n_records, (int32)data_type,
-                    vname, vcls)) < 0)
+    if ((rval = VHstoredata((int32)file_id, fldname, (uint8 *)buffer, (int32)n_records, (int32)data_type,
+                            vname, vcls)) < 0)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -124,16 +124,17 @@ done:
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_VHstoredatam(JNIEnv *env, jclass clss, jlong file_id, jstring fieldname, jbyteArray buf, jint n_records,
-        jint data_type, jstring vdata_name, jstring vdata_class, jint order)
+Java_hdf_hdflib_HDFLibrary_VHstoredatam(JNIEnv *env, jclass clss, jlong file_id, jstring fieldname,
+                                        jbyteArray buf, jint n_records, jint data_type, jstring vdata_name,
+                                        jstring vdata_class, jint order)
 {
-    int32       rval = -1;
-    jbyte      *buffer = NULL;
+    int32       rval    = -1;
+    jbyte      *buffer  = NULL;
     const char *fldname = NULL;
-    const char *vname = NULL;
-    const char *vcls = NULL;
+    const char *vname   = NULL;
+    const char *vcls    = NULL;
     jboolean    isCopy;
-    HFILEID fid = (int32)file_id;
+    HFILEID     fid = (int32)file_id;
 
     UNUSED(clss);
 
@@ -154,9 +155,8 @@ Java_hdf_hdflib_HDFLibrary_VHstoredatam(JNIEnv *env, jclass clss, jlong file_id,
     PIN_JAVA_STRING(ENVONLY, vdata_class, vcls, NULL, "VHstoredatam:  vdata_class not pinned");
     PIN_BYTE_ARRAY(ENVONLY, buf, buffer, &isCopy, "VHstoredatam:  buf not pinned");
 
-    if ((rval = VHstoredatam(fid, fldname,
-                    (const uint8 *)buffer, (int32)n_records, (int32)data_type,
-                    vname, vcls, (int32)order)) < 0)
+    if ((rval = VHstoredatam(fid, fldname, (const uint8 *)buffer, (int32)n_records, (int32)data_type, vname,
+                             vcls, (int32)order)) < 0)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:

@@ -3,10 +3,10 @@
  *   See netcdf/COPYRIGHT file for copying and redistribution conditions.
  *********************************************************************/
 
-union generic {			/* used to hold any kind of fill_value */
+union generic { /* used to hold any kind of fill_value */
     double doublev;
-    float floatv;
+    float  floatv;
     nclong longv;
-    short shortv;
-    char charv;
+    short  shortv;
+    char   charv;
 };

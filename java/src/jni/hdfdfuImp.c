@@ -29,17 +29,16 @@ extern "C" {
 #include "h4jni.h"
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFUfptoimage
-(JNIEnv *env, jclass clss, jint hdim, jint vdim,
-        jfloat max, jfloat min, jfloatArray hscale, jfloatArray vscale, jfloatArray data,
-        jbyteArray palette, jstring outfile, jint ct_method, jint hres, jint vres, jint compress)
+Java_hdf_hdflib_HDFLibrary_DFUfptoimage(JNIEnv *env, jclass clss, jint hdim, jint vdim, jfloat max,
+                                        jfloat min, jfloatArray hscale, jfloatArray vscale, jfloatArray data,
+                                        jbyteArray palette, jstring outfile, jint ct_method, jint hres,
+                                        jint vres, jint compress)
 {
     H4_UNIMPLEMENTED(ENVONLY, "DFUfptoimage (windows)");
 
 done:
     return JNI_TRUE;
 }
-
 
 #ifdef __cplusplus
 } /* end extern "C" */

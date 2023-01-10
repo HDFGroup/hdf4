@@ -44,10 +44,10 @@ Java_hdf_hdflib_HDFNativeData_byteToInt___3B(JNIEnv *env, jclass clss, jbyteArra
 {
     jintArray rarray = NULL;
     jboolean  bb;
-    jbyte *   barr   = NULL;
-    jint *    iarray = NULL;
-    jint *    iap    = NULL;
-    char *    bp     = NULL;
+    jbyte    *barr   = NULL;
+    jint     *iarray = NULL;
+    jint     *iap    = NULL;
+    char     *bp     = NULL;
     int       blen;
     int       ii;
     int       len;
@@ -94,10 +94,10 @@ Java_hdf_hdflib_HDFNativeData_byteToFloat___3B(JNIEnv *env, jclass clss, jbyteAr
 {
     jfloatArray rarray = NULL;
     jboolean    bb;
-    jfloat *    farray = NULL;
-    jfloat *    iap    = NULL;
-    jbyte *     barr   = NULL;
-    char *      bp     = NULL;
+    jfloat     *farray = NULL;
+    jfloat     *iap    = NULL;
+    jbyte      *barr   = NULL;
+    char       *bp     = NULL;
     int         blen;
     int         ii;
     int         len;
@@ -144,10 +144,10 @@ Java_hdf_hdflib_HDFNativeData_byteToShort___3B(JNIEnv *env, jclass clss, jbyteAr
 {
     jshortArray rarray = NULL;
     jboolean    bb;
-    jshort *    sarray = NULL;
-    jshort *    iap    = NULL;
-    jbyte *     barr   = NULL;
-    char *      bp     = NULL;
+    jshort     *sarray = NULL;
+    jshort     *iap    = NULL;
+    jbyte      *barr   = NULL;
+    char       *bp     = NULL;
     int         blen;
     int         ii;
     int         len;
@@ -194,10 +194,10 @@ Java_hdf_hdflib_HDFNativeData_byteToLong___3B(JNIEnv *env, jclass clss, jbyteArr
 {
     jlongArray rarray = NULL;
     jboolean   bb;
-    jlong *    larray = NULL;
-    jlong *    iap    = NULL;
-    jbyte *    barr   = NULL;
-    char *     bp     = NULL;
+    jlong     *larray = NULL;
+    jlong     *iap    = NULL;
+    jbyte     *barr   = NULL;
+    char      *bp     = NULL;
     int        blen;
     int        ii;
     int        len;
@@ -244,10 +244,10 @@ Java_hdf_hdflib_HDFNativeData_byteToDouble___3B(JNIEnv *env, jclass clss, jbyteA
 {
     jdoubleArray rarray = NULL;
     jboolean     bb;
-    jdouble *    darray = NULL;
-    jdouble *    iap    = NULL;
-    jbyte *      barr   = NULL;
-    char *       bp     = NULL;
+    jdouble     *darray = NULL;
+    jdouble     *iap    = NULL;
+    jbyte       *barr   = NULL;
+    char        *bp     = NULL;
     int          blen;
     int          ii;
     int          len;
@@ -290,14 +290,15 @@ done:
 
 /* returns int [] */
 JNIEXPORT jintArray JNICALL
-Java_hdf_hdflib_HDFNativeData_byteToInt__II_3B(JNIEnv *env, jclass clss, jint start, jint len, jbyteArray bdata)
+Java_hdf_hdflib_HDFNativeData_byteToInt__II_3B(JNIEnv *env, jclass clss, jint start, jint len,
+                                               jbyteArray bdata)
 {
     jintArray rarray = NULL;
     jboolean  bb;
-    jint *    iarray = NULL;
-    jint *    iap    = NULL;
-    jbyte *   barr   = NULL;
-    char *    bp     = NULL;
+    jint     *iarray = NULL;
+    jint     *iap    = NULL;
+    jbyte    *barr   = NULL;
+    char     *bp     = NULL;
     int       blen;
     int       ii;
 
@@ -341,14 +342,15 @@ done:
 
 /* returns short [] */
 JNIEXPORT jshortArray JNICALL
-Java_hdf_hdflib_HDFNativeData_byteToShort__II_3B(JNIEnv *env, jclass clss, jint start, jint len, jbyteArray bdata)
+Java_hdf_hdflib_HDFNativeData_byteToShort__II_3B(JNIEnv *env, jclass clss, jint start, jint len,
+                                                 jbyteArray bdata)
 {
     jshortArray rarray = NULL;
     jboolean    bb;
-    jshort *    sarray = NULL;
-    jshort *    iap    = NULL;
-    jbyte *     barr   = NULL;
-    char *      bp     = NULL;
+    jshort     *sarray = NULL;
+    jshort     *iap    = NULL;
+    jbyte      *barr   = NULL;
+    char       *bp     = NULL;
     int         blen;
     int         ii;
 
@@ -392,14 +394,15 @@ done:
 
 /* returns float [] */
 JNIEXPORT jfloatArray JNICALL
-Java_hdf_hdflib_HDFNativeData_byteToFloat__II_3B(JNIEnv *env, jclass clss, jint start, jint len, jbyteArray bdata)
+Java_hdf_hdflib_HDFNativeData_byteToFloat__II_3B(JNIEnv *env, jclass clss, jint start, jint len,
+                                                 jbyteArray bdata)
 {
     jfloatArray rarray = NULL;
     jboolean    bb;
-    jfloat *    farray = NULL;
-    jfloat *    iap    = NULL;
-    jbyte *     barr   = NULL;
-    char *      bp     = NULL;
+    jfloat     *farray = NULL;
+    jfloat     *iap    = NULL;
+    jbyte      *barr   = NULL;
+    char       *bp     = NULL;
     int         blen;
     int         ii;
 
@@ -443,14 +446,15 @@ done:
 
 /* returns long [] */
 JNIEXPORT jlongArray JNICALL
-Java_hdf_hdflib_HDFNativeData_byteToLong__II_3B(JNIEnv *env, jclass clss, jint start, jint len, jbyteArray bdata)
+Java_hdf_hdflib_HDFNativeData_byteToLong__II_3B(JNIEnv *env, jclass clss, jint start, jint len,
+                                                jbyteArray bdata)
 {
     jlongArray rarray = NULL;
     jboolean   bb;
-    jlong *    larray = NULL;
-    jlong *    iap    = NULL;
-    jbyte *    barr   = NULL;
-    char *     bp     = NULL;
+    jlong     *larray = NULL;
+    jlong     *iap    = NULL;
+    jbyte     *barr   = NULL;
+    char      *bp     = NULL;
     int        blen;
     int        ii;
 
@@ -494,14 +498,15 @@ done:
 
 /* returns double [] */
 JNIEXPORT jdoubleArray JNICALL
-Java_hdf_hdflib_HDFNativeData_byteToDouble__II_3B(JNIEnv *env, jclass clss, jint start, jint len, jbyteArray bdata)
+Java_hdf_hdflib_HDFNativeData_byteToDouble__II_3B(JNIEnv *env, jclass clss, jint start, jint len,
+                                                  jbyteArray bdata)
 {
     jdoubleArray rarray = NULL;
     jboolean     bb;
-    jdouble *    darray = NULL;
-    jdouble *    iap    = NULL;
-    jbyte *      barr   = NULL;
-    char *       bp     = NULL;
+    jdouble     *darray = NULL;
+    jdouble     *iap    = NULL;
+    jbyte       *barr   = NULL;
+    char        *bp     = NULL;
     int          blen;
     int          ii;
 
@@ -545,14 +550,15 @@ done:
 
 /* returns byte [] */
 JNIEXPORT jbyteArray JNICALL
-Java_hdf_hdflib_HDFNativeData_intToByte__II_3I(JNIEnv *env, jclass clss, jint start, jint len, jintArray idata)
+Java_hdf_hdflib_HDFNativeData_intToByte__II_3I(JNIEnv *env, jclass clss, jint start, jint len,
+                                               jintArray idata)
 {
     jbyteArray rarray = NULL;
     jboolean   bb;
-    jbyte *    barray = NULL;
-    jbyte *    bap    = NULL;
-    jint *     ip     = NULL;
-    jint *     iarr   = NULL;
+    jbyte     *barray = NULL;
+    jbyte     *bap    = NULL;
+    jint      *ip     = NULL;
+    jint      *iarr   = NULL;
     int        ilen;
     int        blen;
     int        ii;
@@ -606,14 +612,15 @@ done:
 
 /* returns byte [] */
 JNIEXPORT jbyteArray JNICALL
-Java_hdf_hdflib_HDFNativeData_shortToByte__II_3S(JNIEnv *env, jclass clss, jint start, jint len, jshortArray sdata)
+Java_hdf_hdflib_HDFNativeData_shortToByte__II_3S(JNIEnv *env, jclass clss, jint start, jint len,
+                                                 jshortArray sdata)
 {
     jbyteArray rarray = NULL;
     jboolean   bb;
-    jshort *   ip     = NULL;
-    jshort *   sarr   = NULL;
-    jbyte *    barray = NULL;
-    jbyte *    bap    = NULL;
+    jshort    *ip     = NULL;
+    jshort    *sarr   = NULL;
+    jbyte     *barray = NULL;
+    jbyte     *bap    = NULL;
     int        ilen;
     int        blen;
     int        ii;
@@ -667,14 +674,15 @@ done:
 
 /* returns byte [] */
 JNIEXPORT jbyteArray JNICALL
-Java_hdf_hdflib_HDFNativeData_floatToByte__II_3F(JNIEnv *env, jclass clss, jint start, jint len, jfloatArray fdata)
+Java_hdf_hdflib_HDFNativeData_floatToByte__II_3F(JNIEnv *env, jclass clss, jint start, jint len,
+                                                 jfloatArray fdata)
 {
     jbyteArray rarray = NULL;
     jboolean   bb;
-    jfloat *   ip     = NULL;
-    jfloat *   farr   = NULL;
-    jbyte *    barray = NULL;
-    jbyte *    bap    = NULL;
+    jfloat    *ip     = NULL;
+    jfloat    *farr   = NULL;
+    jbyte     *barray = NULL;
+    jbyte     *bap    = NULL;
     int        ilen;
     int        blen;
     int        ii;
@@ -728,14 +736,15 @@ done:
 
 /* returns byte [] */
 JNIEXPORT jbyteArray JNICALL
-Java_hdf_hdflib_HDFNativeData_doubleToByte__II_3D(JNIEnv *env, jclass clss, jint start, jint len, jdoubleArray ddata)
+Java_hdf_hdflib_HDFNativeData_doubleToByte__II_3D(JNIEnv *env, jclass clss, jint start, jint len,
+                                                  jdoubleArray ddata)
 {
     jbyteArray rarray = NULL;
     jboolean   bb;
-    jdouble *  ip     = NULL;
-    jdouble *  darr   = NULL;
-    jbyte *    barray = NULL;
-    jbyte *    bap    = NULL;
+    jdouble   *ip     = NULL;
+    jdouble   *darr   = NULL;
+    jbyte     *barray = NULL;
+    jbyte     *bap    = NULL;
     int        ilen;
     int        blen;
     int        ii;
@@ -789,14 +798,15 @@ done:
 
 /* returns byte [] */
 JNIEXPORT jbyteArray JNICALL
-Java_hdf_hdflib_HDFNativeData_longToByte__II_3J(JNIEnv *env, jclass clss, jint start, jint len, jlongArray ldata)
+Java_hdf_hdflib_HDFNativeData_longToByte__II_3J(JNIEnv *env, jclass clss, jint start, jint len,
+                                                jlongArray ldata)
 {
     jbyteArray rarray = NULL;
     jboolean   bb;
-    jlong *    ip     = NULL;
-    jlong *    larr   = NULL;
-    jbyte *    barray = NULL;
-    jbyte *    bap    = NULL;
+    jlong     *ip     = NULL;
+    jlong     *larr   = NULL;
+    jbyte     *barray = NULL;
+    jbyte     *bap    = NULL;
     int        ilen;
     int        blen;
     int        ii;
@@ -854,8 +864,8 @@ Java_hdf_hdflib_HDFNativeData_intToByte__I(JNIEnv *env, jclass clss, jint idata)
 {
     jbyteArray rarray = NULL;
     jboolean   bb;
-    jbyte *    barray = NULL;
-    jbyte *    bap    = NULL;
+    jbyte     *barray = NULL;
+    jbyte     *bap    = NULL;
     int        ij;
     union things {
         int  ival;
@@ -889,8 +899,8 @@ Java_hdf_hdflib_HDFNativeData_floatToByte__F(JNIEnv *env, jclass clss, jfloat fd
 {
     jbyteArray rarray = NULL;
     jboolean   bb;
-    jbyte *    barray = NULL;
-    jbyte *    bap    = NULL;
+    jbyte     *barray = NULL;
+    jbyte     *bap    = NULL;
     int        ij;
     union things {
         float ival;
@@ -924,8 +934,8 @@ Java_hdf_hdflib_HDFNativeData_shortToByte__S(JNIEnv *env, jclass clss, jshort sd
 {
     jbyteArray rarray = NULL;
     jboolean   bb;
-    jbyte *    barray = NULL;
-    jbyte *    bap    = NULL;
+    jbyte     *barray = NULL;
+    jbyte     *bap    = NULL;
     int        ij;
     union things {
         short ival;
@@ -959,8 +969,8 @@ Java_hdf_hdflib_HDFNativeData_doubleToByte__D(JNIEnv *env, jclass clss, jdouble 
 {
     jbyteArray rarray = NULL;
     jboolean   bb;
-    jbyte *    barray = NULL;
-    jbyte *    bap    = NULL;
+    jbyte     *barray = NULL;
+    jbyte     *bap    = NULL;
     int        ij;
     union things {
         double ival;
@@ -994,8 +1004,8 @@ Java_hdf_hdflib_HDFNativeData_longToByte__J(JNIEnv *env, jclass clss, jlong ldat
 {
     jbyteArray rarray = NULL;
     jboolean   bb;
-    jbyte *    barray = NULL;
-    jbyte *    bap    = NULL;
+    jbyte     *barray = NULL;
+    jbyte     *bap    = NULL;
     int        ij;
     union things {
         jlong ival;
@@ -1029,8 +1039,8 @@ Java_hdf_hdflib_HDFNativeData_byteToByte__B(JNIEnv *env, jclass clss, jbyte bdat
 {
     jbyteArray rarray = NULL;
     jboolean   bb;
-    jbyte *    barray = NULL;
-    jbyte *    bap    = NULL;
+    jbyte     *barray = NULL;
+    jbyte     *bap    = NULL;
     int        ij;
     union things {
         jbyte ival;

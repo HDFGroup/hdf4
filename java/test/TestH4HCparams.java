@@ -20,10 +20,10 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 
-import hdf.hdflib.HDFLibrary;
-import hdf.hdflib.HDFException;
 import hdf.hdflib.HDFChunkInfo;
 import hdf.hdflib.HDFConstants;
+import hdf.hdflib.HDFException;
+import hdf.hdflib.HDFLibrary;
 
 import org.junit.After;
 import org.junit.Before;
@@ -33,20 +33,24 @@ import org.junit.Test;
 import org.junit.rules.TestName;
 
 public class TestH4HCparams {
-    @Rule public TestName testname = new TestName();
+    @Rule
+    public TestName testname = new TestName();
 
     @Before
-    public void showTestName() {
+    public void showTestName()
+    {
         System.out.print(testname.getMethodName());
     }
 
     @After
-    public void nextTestName() {
+    public void nextTestName()
+    {
         System.out.println();
     }
 
-    @Test//(expected = HDFException.class)
-    public void testHCget_config_infoIllegalCoderType() throws Throwable {
-        //HDFLibrary.HCget_config_info(HDFConstants.COMP_CODE_INVALID);
+    @Test //(expected = HDFException.class)
+    public void testHCget_config_infoIllegalCoderType() throws Throwable
+    {
+        // HDFLibrary.HCget_config_info(HDFConstants.COMP_CODE_INVALID);
     }
 }

@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
 /*-----------------------------------------------------------------------------
  * File:    dfrle.c
  * Purpose: RLE image compression algorithm
@@ -37,67 +36,60 @@
  *---------------------------------------------------------------------------*/
 
 int32
-DFCIrle(const void * buf, void * bufto, int32 len)
+DFCIrle(const void *buf, void *bufto, int32 len)
 {
     const uint8 *p;
     const uint8 *q;
-    uint8 *cfoll;
-    uint8 *clead;
+    uint8       *cfoll;
+    uint8       *clead;
     const uint8 *begp;
-    int32       i;
+    int32        i;
 
-    p = buf;
-    cfoll = (uint8 *) bufto;    /* place to copy to */
+    p     = buf;
+    cfoll = (uint8 *)bufto; /* place to copy to */
     clead = cfoll + 1;
 
     begp = p;
-    while (len > 0)
-      {     /* encode stuff until gone */
+    while (len > 0) { /* encode stuff until gone */
 
-          q = p + 1;
-          i = len - 1;
-          while (i && i + 120 > len && *p == *q)
-            {
-                q++;
-                i--;
-            }
+        q = p + 1;
+        i = len - 1;
+        while (i && i + 120 > len && *p == *q) {
+            q++;
+            i--;
+        }
 
-          if (q - p > 2)
-            {   /* three in a row */
-                if (p > begp)
-                  {
-                      *cfoll = (uint8) (p - begp);
-                      cfoll = clead;
-                  }
-                *cfoll++ = (uint8) (128 | (uint8) (q - p));     /* len of seq */
-                *cfoll++ = *p;  /* char of seq */
-                len -= q - p;   /* subtract len of seq */
-                p = q;
-                clead = cfoll + 1;
-                begp = p;
+        if (q - p > 2) { /* three in a row */
+            if (p > begp) {
+                *cfoll = (uint8)(p - begp);
+                cfoll  = clead;
             }
-          else
-            {
-                *clead++ = *p++;    /* copy one char */
-                len--;
-                if (p - begp > 120)
-                  {
-                      *cfoll = (uint8) (p - begp);
-                      cfoll = clead++;
-                      begp = p;
-                  }
+            *cfoll++ = (uint8)(128 | (uint8)(q - p)); /* len of seq */
+            *cfoll++ = *p;                            /* char of seq */
+            len -= q - p;                             /* subtract len of seq */
+            p     = q;
+            clead = cfoll + 1;
+            begp  = p;
+        }
+        else {
+            *clead++ = *p++; /* copy one char */
+            len--;
+            if (p - begp > 120) {
+                *cfoll = (uint8)(p - begp);
+                cfoll  = clead++;
+                begp   = p;
             }
-
-      }
-/*
- *  fill in last bytecount
- */
+        }
+    }
+    /*
+     *  fill in last bytecount
+     */
     if (p > begp)
-        *cfoll = (uint8) (p - begp);
+        *cfoll = (uint8)(p - begp);
     else
-        clead--;    /* don't need count position */
+        clead--; /* don't need count position */
 
-    return ((int32) ((uint8 *) clead - (uint8 *) bufto));   /* how many encoded */
+    return ((int32)((uint8 *)clead - (uint8 *)bufto)); /* how many encoded */
 }
 
 /*-----------------------------------------------------------------------------
@@ -117,49 +109,44 @@ DFCIrle(const void * buf, void * bufto, int32 len)
 int32
 DFCIunrle(uint8 *buf, uint8 *bufto, int32 outlen, int resetsave)
 {
-    int cnt;
-    uint8 *p;
-    uint8 *q;
-    uint8      *endp;
+    int          cnt;
+    uint8       *p;
+    uint8       *q;
+    uint8       *endp;
     static uint8 save[255], *savestart = NULL, *saveend = NULL;
     /* save has a list of decompressed bytes not returned in
        previous call.  savestart and saveend specify the position
        at which this list starts and ends in the array save */
 
-    p = (uint8 *) buf;
-    endp = (uint8 *) bufto + outlen;
-    q = (uint8 *) bufto;
+    p    = (uint8 *)buf;
+    endp = (uint8 *)bufto + outlen;
+    q    = (uint8 *)bufto;
     if (resetsave)
-        savestart = saveend = save;     /* forget saved state */
-    while ((saveend > savestart) && (q < endp))     /* copy saved stuff */
+        savestart = saveend = save;             /* forget saved state */
+    while ((saveend > savestart) && (q < endp)) /* copy saved stuff */
         *q++ = *savestart++;
     if (savestart >= saveend)
-        savestart = saveend = save;     /* all copied */
-    while (q < endp)
-      {
-          cnt = (int)*p++;   /* count field */
-          if (!(cnt & 128))
-            {   /* is set of uniques */
-                while (cnt--)
-                  {
-                      if (q < endp)
-                          *q++ = *p++;  /* copy unmodified */
-                      else
-                          *saveend++ = *p++;
-                  }
+        savestart = saveend = save; /* all copied */
+    while (q < endp) {
+        cnt = (int)*p++;    /* count field */
+        if (!(cnt & 128)) { /* is set of uniques */
+            while (cnt--) {
+                if (q < endp)
+                    *q++ = *p++; /* copy unmodified */
+                else
+                    *saveend++ = *p++;
             }
-          else
-            {
-                cnt &= 127;     /* strip high bit */
-                while (cnt--)
-                  {
-                      if (q < endp)
-                          *q++ = *p;    /* copy unmodified */
-                      else
-                          *saveend++ = *p;
-                  }
-                p++;    /* skip that character */
+        }
+        else {
+            cnt &= 127; /* strip high bit */
+            while (cnt--) {
+                if (q < endp)
+                    *q++ = *p; /* copy unmodified */
+                else
+                    *saveend++ = *p;
             }
-      }
-    return ((int32) (p - buf));
+            p++; /* skip that character */
+        }
+    }
+    return ((int32)(p - buf));
 }

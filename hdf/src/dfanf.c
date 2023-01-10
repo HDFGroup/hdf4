@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
 /*-----------------------------------------------------------------------------
  * File:    dfanF.c
  * Purpose: Fortran stubs for annotation routines
@@ -44,24 +43,24 @@
 #include "hproto_fortran.h"
 
 /* conventions used in forming names of routines:
-   **
-   **    dfan: hdf annotation routine (<dfan>addfds)
-   **    add:  add item to file       dfan<add>fds
-   **    get:  get item from file     dfan<get>fds
-   **    f:    file                   dfanadd<f>ds
-   **    id:   id                     dfanaddf<id>
-   **    ds:   description            dfanaddf<ds>
-   **    len:  length                 dfanaddfid<len>
-   **    l:    length (short forms)   dagfid<l>
-   **    da:   dfan (short forms)     <da>gfid
-   **    a:    add (short forms)      da<a>fds
-   **    g:    get (short forms)      da<g>fds
-   **    i:    intermediate routine (not in user interface) da<i>afid
-   * */
+ **
+ **    dfan: hdf annotation routine (<dfan>addfds)
+ **    add:  add item to file       dfan<add>fds
+ **    get:  get item from file     dfan<get>fds
+ **    f:    file                   dfanadd<f>ds
+ **    id:   id                     dfanaddf<id>
+ **    ds:   description            dfanaddf<ds>
+ **    len:  length                 dfanaddfid<len>
+ **    l:    length (short forms)   dagfid<l>
+ **    da:   dfan (short forms)     <da>gfid
+ **    a:    add (short forms)      da<a>fds
+ **    g:    get (short forms)      da<g>fds
+ **    i:    intermediate routine (not in user interface) da<i>afid
+ * */
 
 /*---------------------------------------------------------------------------
 ** Routines for handling tag/ref (not file) annotations
- *-------------------------------------------------------------------------*/
+*-------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------
  * Name:    daclear
  * Purpose: Call DFANIclear to clear Lastref and DFANdir[i]
@@ -74,7 +73,7 @@
 FRETVAL(intf)
 ndaclear(void)
 {
-    return(DFANIclear());
+    return (DFANIclear());
 }
 
 /*-----------------------------------------------------------------------------
@@ -90,16 +89,16 @@ ndaclear(void)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndaiganl(_fcd filename, intf * tag, intf * ref, intf * type, intf * fnlen)
+ndaiganl(_fcd filename, intf *tag, intf *ref, intf *type, intf *fnlen)
 {
-    char       *fn;
-    intf        ret;
+    char *fn;
+    intf  ret;
 
-    fn = HDf2cstring(filename, (intn) *fnlen);
+    fn = HDf2cstring(filename, (intn)*fnlen);
     if (!fn)
-	return(-1);
-    ret = DFANIgetannlen(fn, (uint16) *tag, (uint16) *ref, (intn) *type);
-    HDfree((VOIDP) fn);
+        return (-1);
+    ret = DFANIgetannlen(fn, (uint16)*tag, (uint16)*ref, (intn)*type);
+    HDfree((VOIDP)fn);
 
     return (ret);
 }
@@ -119,18 +118,17 @@ ndaiganl(_fcd filename, intf * tag, intf * ref, intf * type, intf * fnlen)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndaigann(_fcd filename, intf * tag, intf * ref, _fcd annotation, intf * maxlen,
-         intf * type, intf * fnlen)
+ndaigann(_fcd filename, intf *tag, intf *ref, _fcd annotation, intf *maxlen, intf *type, intf *fnlen)
 {
-    char       *fn;
-    intf        ret;
+    char *fn;
+    intf  ret;
 
-    fn = HDf2cstring(filename, (intn) *fnlen);
+    fn = HDf2cstring(filename, (intn)*fnlen);
     if (!fn)
-	return(-1);
-    ret = DFANIgetann(fn, (uint16) *tag, (uint16) *ref,
-		      (uint8 *) _fcdtocp(annotation), (int32) *maxlen, (intn) *type, 1);
-    HDfree((VOIDP) fn);
+        return (-1);
+    ret = DFANIgetann(fn, (uint16)*tag, (uint16)*ref, (uint8 *)_fcdtocp(annotation), (int32)*maxlen,
+                      (intn)*type, 1);
+    HDfree((VOIDP)fn);
 
     return (ret);
 }
@@ -150,18 +148,17 @@ ndaigann(_fcd filename, intf * tag, intf * ref, _fcd annotation, intf * maxlen,
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndaipann(_fcd filename, intf * tag, intf * ref, _fcd annotation,
-         intf * annlen, intf * type, intf * fnlen)
+ndaipann(_fcd filename, intf *tag, intf *ref, _fcd annotation, intf *annlen, intf *type, intf *fnlen)
 {
-    char       *fn;
-    intf        ret;
+    char *fn;
+    intf  ret;
 
-    fn = HDf2cstring(filename, (intn) *fnlen);
+    fn = HDf2cstring(filename, (intn)*fnlen);
     if (!fn)
-	return(-1);
-    ret = DFANIputann(fn, (uint16) *tag, (uint16) *ref,
-             (uint8 *) _fcdtocp(annotation), (int32) *annlen, (intn) *type);
-    HDfree((VOIDP) fn);
+        return (-1);
+    ret = DFANIputann(fn, (uint16)*tag, (uint16)*ref, (uint8 *)_fcdtocp(annotation), (int32)*annlen,
+                      (intn)*type);
+    HDfree((VOIDP)fn);
     return (ret);
 }
 
@@ -185,26 +182,25 @@ ndaipann(_fcd filename, intf * tag, intf * ref, _fcd annotation,
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndailist(_fcd filename, intf * tag, intf reflist[], _fcd labellist,
-         intf * listsize, intf * maxlen, intf * startpos, intf * fnlen)
+ndailist(_fcd filename, intf *tag, intf reflist[], _fcd labellist, intf *listsize, intf *maxlen,
+         intf *startpos, intf *fnlen)
 {
-    char       *fn;
-    int         i;
-    intf        nrefs;
-    uint16     *tempreflist;
+    char   *fn;
+    int     i;
+    intf    nrefs;
+    uint16 *tempreflist;
 
-    fn = HDf2cstring(filename, (intn) *fnlen);
+    fn = HDf2cstring(filename, (intn)*fnlen);
     if (!fn)
-	return(-1);
+        return (-1);
 
     /* create reflist with true uint16s to maintain compatibility
-       ** with machines that allocate more than 16 bits per uint16.
+     ** with machines that allocate more than 16 bits per uint16.
      */
-    tempreflist = (uint16 *) HDmalloc((size_t) (*listsize) * sizeof(uint16));
+    tempreflist = (uint16 *)HDmalloc((size_t)(*listsize) * sizeof(uint16));
     /* 1 for isfortran */
-    nrefs = DFANIlablist(fn, (uint16) *tag, tempreflist,
-                         (uint8 *) _fcdtocp(labellist),
-                         (int) *listsize, (int) *maxlen, (int) *startpos, 1);
+    nrefs = DFANIlablist(fn, (uint16)*tag, tempreflist, (uint8 *)_fcdtocp(labellist), (int)*listsize,
+                         (int)*maxlen, (int)*startpos, 1);
     if (nrefs < 0)
         return FAIL;
 
@@ -212,8 +208,8 @@ ndailist(_fcd filename, intf * tag, intf reflist[], _fcd labellist,
     for (i = 0; i < *listsize; i++)
         reflist[i] = (intf)tempreflist[i];
 
-    HDfree((VOIDP) fn);
-    HDfree((VOIDP) tempreflist);
+    HDfree((VOIDP)fn);
+    HDfree((VOIDP)tempreflist);
 
     return (nrefs);
 }
@@ -254,7 +250,7 @@ ndfanlastref(void)
 
 /*---------------------------------------------------------------------------
 ** Routines for handling file annotations
- *-------------------------------------------------------------------------*/
+*-------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
  * Name:    dfanaddfds
@@ -268,7 +264,7 @@ ndfanlastref(void)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndfanaddfds(intf * dfile, _fcd desc, intf * desclen)
+ndfanaddfds(intf *dfile, _fcd desc, intf *desclen)
 {
     return (DFANIaddfann(*dfile, _fcdtocp(desc), *desclen, DFAN_DESC));
 }
@@ -284,9 +280,9 @@ ndfanaddfds(intf * dfile, _fcd desc, intf * desclen)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndfangetfidlen(intf * dfile, intf * isfirst)
+ndfangetfidlen(intf *dfile, intf *isfirst)
 {
-    return (DFANIgetfannlen(*dfile, DFAN_LABEL, (intn) *isfirst));
+    return (DFANIgetfannlen(*dfile, DFAN_LABEL, (intn)*isfirst));
 }
 
 /*-----------------------------------------------------------------------------
@@ -300,9 +296,9 @@ ndfangetfidlen(intf * dfile, intf * isfirst)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndfangetfdslen(intf * dfile, intf * isfirst)
+ndfangetfdslen(intf *dfile, intf *isfirst)
 {
-    return (DFANIgetfannlen(*dfile, DFAN_DESC, (intn) *isfirst));
+    return (DFANIgetfannlen(*dfile, DFAN_DESC, (intn)*isfirst));
 }
 
 /*-----------------------------------------------------------------------------
@@ -317,10 +313,9 @@ ndfangetfdslen(intf * dfile, intf * isfirst)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndfangetfid(intf * dfile, _fcd id, intf * maxlen, intf * isfirst)
+ndfangetfid(intf *dfile, _fcd id, intf *maxlen, intf *isfirst)
 {
-    return (DFANIgetfann(*dfile, _fcdtocp(id), *maxlen,
-                         DFAN_LABEL, (intn) *isfirst));
+    return (DFANIgetfann(*dfile, _fcdtocp(id), *maxlen, DFAN_LABEL, (intn)*isfirst));
 }
 
 /*-----------------------------------------------------------------------------
@@ -335,10 +330,9 @@ ndfangetfid(intf * dfile, _fcd id, intf * maxlen, intf * isfirst)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndfangetfds(intf * dfile, _fcd id, intf * maxlen, intf * isfirst)
+ndfangetfds(intf *dfile, _fcd id, intf *maxlen, intf *isfirst)
 {
-    return (DFANIgetfann(*dfile, _fcdtocp(id), *maxlen,
-                         DFAN_DESC, (intn) *isfirst));
+    return (DFANIgetfann(*dfile, _fcdtocp(id), *maxlen, DFAN_DESC, (intn)*isfirst));
 }
 
 /*-----------------------------------------------------------------------------
@@ -357,7 +351,7 @@ ndfangetfds(intf * dfile, _fcd id, intf * maxlen, intf * isfirst)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndaafds(intf * dfile, _fcd desc, intf * desclen)
+ndaafds(intf *dfile, _fcd desc, intf *desclen)
 {
     return (DFANIaddfann(*dfile, _fcdtocp(desc), *desclen, DFAN_DESC));
 }
@@ -373,9 +367,9 @@ ndaafds(intf * dfile, _fcd desc, intf * desclen)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndagfidl(intf * dfile, intf * isfirst)
+ndagfidl(intf *dfile, intf *isfirst)
 {
-    return (DFANIgetfannlen(*dfile, DFAN_LABEL, (intn) *isfirst));
+    return (DFANIgetfannlen(*dfile, DFAN_LABEL, (intn)*isfirst));
 }
 
 /*-----------------------------------------------------------------------------
@@ -389,9 +383,9 @@ ndagfidl(intf * dfile, intf * isfirst)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndagfdsl(intf * dfile, intf * isfirst)
+ndagfdsl(intf *dfile, intf *isfirst)
 {
-    return (DFANIgetfannlen(*dfile, DFAN_DESC, (intn) *isfirst));
+    return (DFANIgetfannlen(*dfile, DFAN_DESC, (intn)*isfirst));
 }
 
 /*-----------------------------------------------------------------------------
@@ -406,10 +400,9 @@ ndagfdsl(intf * dfile, intf * isfirst)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndagfid(intf * dfile, _fcd id, intf * maxlen, intf * isfirst)
+ndagfid(intf *dfile, _fcd id, intf *maxlen, intf *isfirst)
 {
-    return (DFANIgetfann(*dfile, _fcdtocp(id), *maxlen,
-                         DFAN_LABEL, (intn) *isfirst));
+    return (DFANIgetfann(*dfile, _fcdtocp(id), *maxlen, DFAN_LABEL, (intn)*isfirst));
 }
 
 /*-----------------------------------------------------------------------------
@@ -425,10 +418,9 @@ ndagfid(intf * dfile, _fcd id, intf * maxlen, intf * isfirst)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndagfds(intf * dfile, _fcd id, intf * maxlen, intf * isfirst)
+ndagfds(intf *dfile, _fcd id, intf *maxlen, intf *isfirst)
 {
-    return (DFANIgetfann(*dfile, _fcdtocp(id), *maxlen,
-                         DFAN_DESC, (intn) *isfirst));
+    return (DFANIgetfann(*dfile, _fcdtocp(id), *maxlen, DFAN_DESC, (intn)*isfirst));
 }
 
 /*-----------------------------------------------------------------------------
@@ -447,7 +439,7 @@ ndagfds(intf * dfile, _fcd id, intf * maxlen, intf * isfirst)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndaiafid(intf * dfile, _fcd id, intf * idlen)
+ndaiafid(intf *dfile, _fcd id, intf *idlen)
 {
     return (DFANIaddfann(*dfile, _fcdtocp(id), *idlen, DFAN_LABEL));
 }

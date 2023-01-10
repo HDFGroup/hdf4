@@ -29,9 +29,9 @@ package hdf.hdflib;
  * function that is part of the HDF API, but which cannot or will not be implemented for Java.
  */
 public class HDFException extends RuntimeException {
-    static public final String OutOfMemoryMessage = "ERROR: HDF Library: Out of memory";
+    static public final String OutOfMemoryMessage  = "ERROR: HDF Library: Out of memory";
     static public final String HDFExceptionMessage = "ERROR: HDF Library Error";
-    static public final String HDFMessage = "ERROR: Unknown HDF Error";
+    static public final String HDFMessage          = "ERROR: Unknown HDF Error";
 
     /**
      *  the specified error number of this exception
@@ -42,9 +42,10 @@ public class HDFException extends RuntimeException {
      */
     protected String detailMessage;
 
-    public HDFException() {
+    public HDFException()
+    {
         super();
-        HDFerror = 0;
+        HDFerror      = 0;
         detailMessage = null;
     }
 
@@ -55,7 +56,8 @@ public class HDFException extends RuntimeException {
      * @param message
      *            the detail message.
      */
-    public HDFException(String message) {
+    public HDFException(String message)
+    {
         super();
         detailMessage = message;
     }
@@ -66,9 +68,10 @@ public class HDFException extends RuntimeException {
      * @param err
      *            the error number.
      */
-    public HDFException(int err) {
+    public HDFException(int err)
+    {
         super();
-        HDFerror = err;
+        HDFerror      = err;
         detailMessage = null;
     }
 
@@ -79,7 +82,8 @@ public class HDFException extends RuntimeException {
      *         have a detail message.
      */
     @Override
-    public String getMessage() {
+    public String getMessage()
+    {
         return detailMessage;
     }
 }

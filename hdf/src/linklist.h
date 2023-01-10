@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
 /*-----------------------------------------------------------------------------
  * File:    linklist.h
  * Purpose: header file for linked list API
@@ -29,8 +28,8 @@
 #include "hdf.h"
 
 /* Definitions for linked-list creation flags */
-#define HUL_UNSORTED_LIST   0x0000
-#define HUL_SORTED_LIST     0x0001
+#define HUL_UNSORTED_LIST 0x0000
+#define HUL_SORTED_LIST   0x0001
 
 /* Type of the function to compare objects & keys */
 typedef intn (*HULsearch_func_t)(const VOIDP obj, const VOIDP key);
@@ -40,25 +39,25 @@ typedef intn (*HULfind_func_t)(const VOIDP obj1, const VOIDP obj2);
 
 /* Linked list information structure used */
 typedef struct node_info_struct_tag {
-    VOIDP *obj_ptr;         /* pointer associated with the linked list node */
-    struct node_info_struct_tag *next;   /* link to list node */
-  }node_info_t;
+    VOIDP                       *obj_ptr; /* pointer associated with the linked list node */
+    struct node_info_struct_tag *next;    /* link to list node */
+} node_info_t;
 
 /* Linked list head structure */
 typedef struct list_head_struct_tag {
-    uintn count;            /* # of nodes in the list */
-    uintn flags;            /* list creation flags */
-    HULfind_func_t cmp_func;    /* node comparison function */
-    node_info_t *node_list; /* pointer to a linked list of nodes */
-    node_info_t *curr_node; /* pointer to the current node when iterating */
-  }list_head_t;
+    uintn          count;     /* # of nodes in the list */
+    uintn          flags;     /* list creation flags */
+    HULfind_func_t cmp_func;  /* node comparison function */
+    node_info_t   *node_list; /* pointer to a linked list of nodes */
+    node_info_t   *curr_node; /* pointer to the current node when iterating */
+} list_head_t;
 
 #if defined LIST_MASTER | defined LIST_TESTER
 
 /* Define this in only one place */
 #ifdef LIST_MASTER
 /* Pointer to the list node free list */
-static node_info_t *node_free_list=NULL;
+static node_info_t *node_free_list = NULL;
 
 #endif /* LIST_MASTER */
 
@@ -67,9 +66,8 @@ static node_info_t *node_free_list=NULL;
 #endif /* LIST_MASTER | LIST_TESTER */
 
 #if defined c_plusplus || defined __cplusplus
-extern      "C"
-{
-#endif                          /* c_plusplus || __cplusplus */
+extern "C" {
+#endif /* c_plusplus || __cplusplus */
 
 /******************************************************************************
  NAME
@@ -83,7 +81,7 @@ extern      "C"
     Returns a pointer to the list if successful and NULL otherwise
 
 *******************************************************************************/
-list_head_t *HULcreate_list(HULfind_func_t find_func    /* IN: object comparison function */
+list_head_t *HULcreate_list(HULfind_func_t find_func /* IN: object comparison function */
 );
 
 /******************************************************************************
@@ -100,7 +98,7 @@ list_head_t *HULcreate_list(HULfind_func_t find_func    /* IN: object comparison
     Returns SUCCEED/FAIL.
 
 *******************************************************************************/
-intn HULdestroy_list(list_head_t *lst    /* IN: list to destroy */
+intn HULdestroy_list(list_head_t *lst /* IN: list to destroy */
 );
 
 /******************************************************************************
@@ -116,8 +114,8 @@ intn HULdestroy_list(list_head_t *lst    /* IN: list to destroy */
     Returns SUCCEED/FAIL.
 
 *******************************************************************************/
-intn HULadd_node(list_head_t *lst,  /* IN: list to modify */
-    VOIDP obj                       /* IN: object to add to the list */
+intn HULadd_node(list_head_t *lst, /* IN: list to modify */
+                 VOIDP        obj  /* IN: object to add to the list */
 );
 
 /******************************************************************************
@@ -131,9 +129,9 @@ intn HULadd_node(list_head_t *lst,  /* IN: list to modify */
     Returns a pointer to the object found in the list, or NULL on failure.
 
 *******************************************************************************/
-VOIDP HULsearch_node(list_head_t *lst,  /* IN: list to search */
-    HULsearch_func_t srch_func,       /* IN: function to use to find node */
-    VOIDP key                       /* IN: key of object to search for */
+VOIDP HULsearch_node(list_head_t     *lst,       /* IN: list to search */
+                     HULsearch_func_t srch_func, /* IN: function to use to find node */
+                     VOIDP            key        /* IN: key of object to search for */
 );
 
 /******************************************************************************
@@ -148,7 +146,7 @@ VOIDP HULsearch_node(list_head_t *lst,  /* IN: list to search */
     Returns a pointer to the first object found in the list, or NULL on failure.
 
 *******************************************************************************/
-VOIDP HULfirst_node(list_head_t *lst   /* IN: list to search */
+VOIDP HULfirst_node(list_head_t *lst /* IN: list to search */
 );
 
 /******************************************************************************
@@ -162,7 +160,7 @@ VOIDP HULfirst_node(list_head_t *lst   /* IN: list to search */
     Returns a pointer to the next object found in the list, or NULL on failure.
 
 *******************************************************************************/
-VOIDP HULnext_node(list_head_t *lst   /* IN: list to search */
+VOIDP HULnext_node(list_head_t *lst /* IN: list to search */
 );
 
 /******************************************************************************
@@ -177,9 +175,9 @@ VOIDP HULnext_node(list_head_t *lst   /* IN: list to search */
     Returns a pointer to the object deleted from the list, or NULL on failure.
 
 *******************************************************************************/
-VOIDP HULremove_node(list_head_t *lst,  /* IN: list to modify */
-    HULsearch_func_t srch_func,       /* IN: function to use to find node to remove */
-    VOIDP key                       /* IN: object to add to the list */
+VOIDP HULremove_node(list_head_t     *lst,       /* IN: list to modify */
+                     HULsearch_func_t srch_func, /* IN: function to use to find node to remove */
+                     VOIDP            key        /* IN: object to add to the list */
 );
 
 /*--------------------------------------------------------------------------
@@ -199,12 +197,10 @@ VOIDP HULremove_node(list_head_t *lst,  /* IN: list to modify */
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
-HULshutdown(void);
+intn HULshutdown(void);
 
 #if defined c_plusplus || defined __cplusplus
 }
-#endif                          /* c_plusplus || __cplusplus */
+#endif /* c_plusplus || __cplusplus */
 
 #endif /* __LINKLIST_H */
-

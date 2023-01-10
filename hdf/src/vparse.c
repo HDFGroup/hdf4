@@ -25,15 +25,15 @@
 #define VSET_INTERFACE
 #include "hdf.h"
 
-#define ISCOMMA(c) ( (c==',') ? 1:0 )
+#define ISCOMMA(c) ((c == ',') ? 1 : 0)
 
-PRIVATE char *symptr[VSFIELDMAX];       /* array of ptrs to tokens  ? */
-PRIVATE char sym[VSFIELDMAX][FIELDNAMELENMAX + 1];  /* array of tokens ? */
-PRIVATE intn nsym;              /* token index ? */
+PRIVATE char *symptr[VSFIELDMAX];                   /* array of ptrs to tokens  ? */
+PRIVATE char  sym[VSFIELDMAX][FIELDNAMELENMAX + 1]; /* array of tokens ? */
+PRIVATE intn  nsym;                                 /* token index ? */
 
 /* Temporary buffer for I/O */
 PRIVATE uint32 Vpbufsize = 0;
-PRIVATE uint8 *Vpbuf = NULL;
+PRIVATE uint8 *Vpbuf     = NULL;
 
 /*******************************************************************************
  NAME
@@ -61,75 +61,68 @@ PRIVATE uint8 *Vpbuf = NULL;
 
 *******************************************************************************/
 int32
-scanattrs(const char *attrs,
-          int32 *attrc,
-          char ***attrv)
+scanattrs(const char *attrs, int32 *attrc, char ***attrv)
 {
     CONSTR(FUNC, "scanattrs");
-    char *s, *s0, *ss;
-    intn len;
-    size_t slen = HDstrlen(attrs)+1;
+    char  *s, *s0, *ss;
+    intn   len;
+    size_t slen = HDstrlen(attrs) + 1;
 
-    if(slen>Vpbufsize)
-      {
+    if (slen > Vpbufsize) {
         Vpbufsize = slen;
         if (Vpbuf)
-            HDfree((VOIDP) Vpbuf);
-        if ((Vpbuf = (uint8 *) HDmalloc(Vpbufsize)) == NULL)
+            HDfree((VOIDP)Vpbuf);
+        if ((Vpbuf = (uint8 *)HDmalloc(Vpbufsize)) == NULL)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      } /* end if */
+    } /* end if */
 
-    HDstrcpy((char *)Vpbuf,attrs);
-    s = (char *)Vpbuf;
+    HDstrcpy((char *)Vpbuf, attrs);
+    s    = (char *)Vpbuf;
     nsym = 0;
 
     s0 = s;
-    while (*s)
-      {
+    while (*s) {
 
 #ifdef VDATA_FIELDS_ALL_UPPER
-          if (*s >= 'a' && *s <= 'z')
-              *s = (char) toupper(*s);
+        if (*s >= 'a' && *s <= 'z')
+            *s = (char)toupper(*s);
 #endif /* VDATA_FIELDS_ALL_UPPER */
 
-          if (ISCOMMA(*s))
-            {
+        if (ISCOMMA(*s)) {
 
-                /* make sure we've got a legitimate length */
-                len = (intn) (s - s0);
-                if (len <= 0)
-                    return (FAIL);
+            /* make sure we've got a legitimate length */
+            len = (intn)(s - s0);
+            if (len <= 0)
+                return (FAIL);
 
-                /* save that token */
-                ss = symptr[nsym] = sym[nsym];
-                nsym++;
+            /* save that token */
+            ss = symptr[nsym] = sym[nsym];
+            nsym++;
 
-                /* shove the string into our static buffer.  YUCK! */
-                if (len > FIELDNAMELENMAX)
-                    len = FIELDNAMELENMAX;
-                HIstrncpy(ss, s0, len + 1);
+            /* shove the string into our static buffer.  YUCK! */
+            if (len > FIELDNAMELENMAX)
+                len = FIELDNAMELENMAX;
+            HIstrncpy(ss, s0, len + 1);
 
-                /* skip over the comma */
+            /* skip over the comma */
+            s++;
+
+            /* skip over white space before the next field name */
+            while (*s && *s == ' ')
                 s++;
 
-                /* skip over white space before the next field name */
-                while (*s && *s == ' ')
-                    s++;
+            /* keep track of the first character of the next token */
+            s0 = s;
+        }
+        else {
 
-                /* keep track of the first character of the next token */
-                s0 = s;
-
-            }
-          else
-            {
-
-                /* move along --- nothing to see here */
-                s++;
-            }
-      }
+            /* move along --- nothing to see here */
+            s++;
+        }
+    }
 
     /* save the last token */
-    len = (intn) (s - s0);
+    len = (intn)(s - s0);
     if (len <= 0)
         return (FAIL);
     ss = symptr[nsym] = sym[nsym];
@@ -140,11 +133,11 @@ scanattrs(const char *attrs,
     HIstrncpy(ss, s0, len + 1);
 
     symptr[nsym] = NULL;
-    *attrc = nsym;
-    *attrv = (char **) symptr;
+    *attrc       = nsym;
+    *attrv       = (char **)symptr;
 
-    return (SUCCEED);   /* ok */
-}   /* scanattrs */
+    return (SUCCEED); /* ok */
+} /* scanattrs */
 
 /*******************************************************************************
  NAME
@@ -164,13 +157,11 @@ VPparse_shutdown(void)
 {
     intn ret_value = SUCCEED;
 
-    if(Vpbuf != NULL)
-      {
+    if (Vpbuf != NULL) {
         HDfree(Vpbuf);
-        Vpbuf = NULL;
+        Vpbuf     = NULL;
         Vpbufsize = 0;
-      } /* end if */
+    } /* end if */
 
     return ret_value;
 } /* end VSPhshutdown() */
-

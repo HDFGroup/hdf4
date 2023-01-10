@@ -34,18 +34,17 @@ public class HDFSZIPCompInfo extends HDFNewCompInfo {
     public int pixels_per_scanline;
 
     /** */
-    public HDFSZIPCompInfo() {
-        ctype = HDFConstants.COMP_CODE_SZIP;
-    }
+    public HDFSZIPCompInfo() { ctype = HDFConstants.COMP_CODE_SZIP; }
 
     /** */
-    public HDFSZIPCompInfo(int bits_per_pixel_in, int options_mask_in, int pixels_in, int pixels_per_block_in, int pixels_per_scanline_in) {
-        ctype = HDFConstants.COMP_CODE_SZIP;
-        bits_per_pixel = bits_per_pixel_in;
-        options_mask = options_mask_in;
-        pixels = pixels_in;
-        pixels_per_block = pixels_per_block_in;
+    public HDFSZIPCompInfo(int bits_per_pixel_in, int options_mask_in, int pixels_in, int pixels_per_block_in,
+                           int pixels_per_scanline_in)
+    {
+        ctype               = HDFConstants.COMP_CODE_SZIP;
+        bits_per_pixel      = bits_per_pixel_in;
+        options_mask        = options_mask_in;
+        pixels              = pixels_in;
+        pixels_per_block    = pixels_per_block_in;
         pixels_per_scanline = pixels_per_scanline_in;
-
     }
 }

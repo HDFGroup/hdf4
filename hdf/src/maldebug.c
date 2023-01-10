@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
 /*----------------------------------------------------------------------
  *
  *  maldebug.c
@@ -65,25 +64,23 @@
 
 /* Constants */
 /* --------- */
-#define MEMTAG  0xa55a  /* Value for mh_tag */
-#define HEADERTAG   0x5a    /* Value for the header and footer data */
+#define MEMTAG    0xa55a /* Value for mh_tag */
+#define HEADERTAG 0x5a   /* Value for the header and footer data */
 
 /* Structures */
 /* ---------- */
-typedef struct memnod
-  {                             /* Memory block header info     */
-      uint16      mh_tag;       /* Special ident tag            */
-      size_t      mh_size;      /* Size of allocation block     */
+typedef struct memnod { /* Memory block header info     */
+    uint16 mh_tag;      /* Special ident tag            */
+    size_t mh_size;     /* Size of allocation block     */
 #if defined(MEM_LIST)
-      struct memnod *mh_next;   /* Next memory block            */
-      struct memnod *mh_prev;   /* Previous memory block        */
+    struct memnod *mh_next; /* Next memory block            */
+    struct memnod *mh_prev; /* Previous memory block        */
 #endif
 #if defined(MEM_WHERE)
-      char       *mh_file;      /* File allocation was from     */
-      uint16      mh_line;      /* Line allocation was from */
+    char  *mh_file; /* File allocation was from     */
+    uint16 mh_line; /* Line allocation was from */
 #endif
-  }
-MEMHDR;
+} MEMHDR;
 
 /* Alignment macros */
 /* ---------------- */
@@ -92,40 +89,40 @@ MEMHDR;
 #define HDR_SIZE sizeof(MEMHDR)
 
 #if defined(MEM_HEADER)
-#define BLOCK_SIZE  5
-#define HEADER_SIZE (sizeof(unsigned char)*BLOCK_SIZE)
-#define RESERVE_SIZE ((((HDR_SIZE+(ALIGN_SIZE-1))/ALIGN_SIZE)*ALIGN_SIZE)+HEADER_SIZE)
+#define BLOCK_SIZE   5
+#define HEADER_SIZE  (sizeof(unsigned char) * BLOCK_SIZE)
+#define RESERVE_SIZE ((((HDR_SIZE + (ALIGN_SIZE - 1)) / ALIGN_SIZE) * ALIGN_SIZE) + HEADER_SIZE)
 #else
-#define BLOCK_SIZE  0
-#define HEADER_SIZE 0
-#define RESERVE_SIZE (((HDR_SIZE+(ALIGN_SIZE-1))/ALIGN_SIZE)*ALIGN_SIZE)
+#define BLOCK_SIZE   0
+#define HEADER_SIZE  0
+#define RESERVE_SIZE (((HDR_SIZE + (ALIGN_SIZE - 1)) / ALIGN_SIZE) * ALIGN_SIZE)
 #endif
 
 /* Conversion macros */
 /* ----------------- */
-#define CLIENT_2_HDR(a) ((MEMHDR *) (((char *)(a)) - RESERVE_SIZE))
-#define HDR_2_CLIENT(a) ((void *) (((char *)(a)) + RESERVE_SIZE))
+#define CLIENT_2_HDR(a) ((MEMHDR *)(((char *)(a)) - RESERVE_SIZE))
+#define HDR_2_CLIENT(a) ((void *)(((char *)(a)) + RESERVE_SIZE))
 
 /* Local variables */
 /* --------------- */
-static unsigned long mem_size = 0;  /* Amount of memory used */
+static unsigned long mem_size = 0; /* Amount of memory used */
 #if defined(MEM_LIST)
-static MEMHDR *memlist = NULL;  /* List of memory blocks */
+static MEMHDR *memlist = NULL; /* List of memory blocks */
 #endif
 
 /* Local functions */
 /* --------------- */
-static void mem_tag_err(void *, int, char *, char *, int);  /* Tag error */
+static void mem_tag_err(void *, int, char *, char *, int); /* Tag error */
 #if defined(MEM_LIST)
-static void mem_list_add(MEMHDR *);     /* Add block to list */
-static void mem_list_delete(MEMHDR *);  /* Delete block from list */
-#define Mem_Tag_Err(a,b,c) mem_tag_err(a,b,c,fil,lin)
+static void mem_list_add(MEMHDR *);    /* Add block to list */
+static void mem_list_delete(MEMHDR *); /* Delete block from list */
+#define Mem_Tag_Err(a, b, c) mem_tag_err(a, b, c, fil, lin)
 #else
-#define Mem_Tag_Err(a,b,c) mem_tag_err(a,b,c,__FILE__,__LINE__)
+#define Mem_Tag_Err(a, b, c) mem_tag_err(a, b, c, __FILE__, __LINE__)
 #endif
 
-#define ME_BADTAG       0
-#define ME_BADHEADER    1
+#define ME_BADTAG    0
+#define ME_BADHEADER 1
 
 /************************************************************************/
 /**** Functions accessed only through macros ****************************/
@@ -160,52 +157,49 @@ static void mem_list_delete(MEMHDR *);  /* Delete block from list */
  *
  */
 
-void       *
+void *
 mem_HDmalloc(
 #if defined(MEM_WHERE)
-                  size_t size,
-                  char *fil,
-                  int lin
+    size_t size, char *fil, int lin
 #else
-                  size_t size
+    size_t size
 #endif
 )
 
 {
-    MEMHDR     *p;
+    MEMHDR *p;
 
-/* Allocate memory block */
-/* --------------------- */
+    /* Allocate memory block */
+    /* --------------------- */
     p = HDmalloc(RESERVE_SIZE + size + HEADER_SIZE);
-    if (p == NULL)
-      {
-          fprintf(stdaux, "NULL pointer malloc'ed in %s, line %d\n", fil, lin);
-          return (NULL);
-      }     /* end if */
+    if (p == NULL) {
+        fprintf(stdaux, "NULL pointer malloc'ed in %s, line %d\n", fil, lin);
+        return (NULL);
+    } /* end if */
 
-/* Init header */
-/* ----------- */
-    p->mh_tag = MEMTAG;
+    /* Init header */
+    /* ----------- */
+    p->mh_tag  = MEMTAG;
     p->mh_size = size;
     mem_size += size;
 #if defined(MEM_WHERE)
     p->mh_file = fil;
-    p->mh_line = (uint16) lin;
+    p->mh_line = (uint16)lin;
 #endif
 
 #if defined(MEM_HEADER)
-    HDmemset((char *) HDR_2_CLIENT(p) - HEADER_SIZE, HEADERTAG, HEADER_SIZE);
-    HDmemset((char *) HDR_2_CLIENT(p) + size, HEADERTAG, HEADER_SIZE);
+    HDmemset((char *)HDR_2_CLIENT(p) - HEADER_SIZE, HEADERTAG, HEADER_SIZE);
+    HDmemset((char *)HDR_2_CLIENT(p) + size, HEADERTAG, HEADER_SIZE);
 #endif
 
 #if defined(MEM_LIST)
     mem_list_add(p);
 #endif
 
-/* Return pointer to client data */
-/* ----------------------------- */
+    /* Return pointer to client data */
+    /* ----------------------------- */
     return (HDR_2_CLIENT(p));
-}   /* end mem_alloc() */
+} /* end mem_alloc() */
 
 /*----------------------------------------------------------------------
  *
@@ -237,108 +231,100 @@ mem_HDmalloc(
  *
  */
 
-void       *
+void *
 mem_HDrealloc(
 #if defined(MEM_WHERE)
-                    void *ptr,
-                    size_t size,
-                    char *fil,
-                    int lin
+    void *ptr, size_t size, char *fil, int lin
 #else
-                    void *ptr,
-                    size_t size
+    void *ptr, size_t size
 #endif
 )
 
 {
-    MEMHDR     *p;
+    MEMHDR *p;
 #if defined(MEM_HEADER) || defined(MEM_COMP_FREE)
     unsigned char *q;
-    int         i;
+    int            i;
 #endif
-    char       *FUNC = "HDrealloc";
+    char *FUNC = "HDrealloc";
 
-/* Check for equivalent to malloc() call, i.e. where ptr==NULL */
+    /* Check for equivalent to malloc() call, i.e. where ptr==NULL */
     if (ptr == NULL)
         return (mem_HDmalloc(size
 #if defined(MEM_WHERE)
-                               ,fil, lin
+                             ,
+                             fil, lin
 #endif
-                ));
+                             ));
 
-/* Convert client pointer to header pointer */
-/* ---------------------------------------- */
+    /* Convert client pointer to header pointer */
+    /* ---------------------------------------- */
     p = CLIENT_2_HDR(ptr);
 
-/* Check for valid block */
-/* --------------------- */
-    if (p->mh_tag != MEMTAG)
-      {
-          Mem_Tag_Err(p, ME_BADTAG, FUNC);
-          return (NULL);
-      }     /* end if */
+    /* Check for valid block */
+    /* --------------------- */
+    if (p->mh_tag != MEMTAG) {
+        Mem_Tag_Err(p, ME_BADTAG, FUNC);
+        return (NULL);
+    } /* end if */
 
 /* Check for overwrites into the header & footer */
 /* --------------------------------------------- */
 #if defined(MEM_HEADER)
-    q = (unsigned char *) ptr - HEADER_SIZE;    /* Check the Header to consistency */
-    for (i = 0; i < BLOCK_SIZE; i++)
-      {
-          if (q[i] != HEADERTAG)
-            {
-                Mem_Tag_Err(p, ME_BADHEADER, FUNC);
-                return (NULL);
-            }   /* end if */
-      }     /* end for */
-    q = (unsigned char *) ptr + p->mh_size;     /* Check the Footer for consistency */
-    for (i = 0; i < BLOCK_SIZE; i++)
-      {
-          if (q[i] != HEADERTAG)
-            {
-                Mem_Tag_Err(p, ME_BADHEADER, FUNC);
-                return (NULL);
-            }   /* end if */
-      }     /* end for */
+    q = (unsigned char *)ptr - HEADER_SIZE; /* Check the Header to consistency */
+    for (i = 0; i < BLOCK_SIZE; i++) {
+        if (q[i] != HEADERTAG) {
+            Mem_Tag_Err(p, ME_BADHEADER, FUNC);
+            return (NULL);
+        }                                  /* end if */
+    }                                      /* end for */
+    q = (unsigned char *)ptr + p->mh_size; /* Check the Footer for consistency */
+    for (i = 0; i < BLOCK_SIZE; i++) {
+        if (q[i] != HEADERTAG) {
+            Mem_Tag_Err(p, ME_BADHEADER, FUNC);
+            return (NULL);
+        } /* end if */
+    }     /* end for */
 #endif
 
-/* Invalidate header */
-/* ----------------- */
+    /* Invalidate header */
+    /* ----------------- */
     p->mh_tag = ~MEMTAG;
     mem_size -= p->mh_size;
 
 #if defined(MEM_WHERE)
-    mem_list_delete(p);     /* Remove block from list */
+    mem_list_delete(p); /* Remove block from list */
 #endif
 
-/* Reallocate memory block */
-/* ----------------------- */
-    p = (MEMHDR *) HDrealloc(p, RESERVE_SIZE + size + HEADER_SIZE);
+    /* Reallocate memory block */
+    /* ----------------------- */
+    p = (MEMHDR *)HDrealloc(p, RESERVE_SIZE + size + HEADER_SIZE);
     if (p == NULL)
         return (NULL);
 
-/* Update header */
-/* ------------- */
-    p->mh_tag = MEMTAG;
+    /* Update header */
+    /* ------------- */
+    p->mh_tag  = MEMTAG;
     p->mh_size = size;
     mem_size += size;
 #if defined(MEM_LIST)
     p->mh_file = fil;
-    p->mh_line = (uint16) lin;
+    p->mh_line = (uint16)lin;
 #endif
 
 #if defined(MEM_WHERE)
-    mem_list_add(p);    /* Add block to list */
+    mem_list_add(p); /* Add block to list */
 #endif
 
 #if defined(MEM_HEADER)
-    HDmemset((char *) HDR_2_CLIENT(p) - HEADER_SIZE, HEADERTAG, HEADER_SIZE);
-    HDmemset((char *) HDR_2_CLIENT(p) + size, HEADERTAG, HEADER_SIZE);
+    HDmemset((char *)HDR_2_CLIENT(p) - HEADER_SIZE, HEADERTAG, HEADER_SIZE);
+    HDmemset((char *)HDR_2_CLIENT(p) + size, HEADERTAG, HEADER_SIZE);
 #endif
 
-/* Return pointer to client data */
-/* ----------------------------- */
+    /* Return pointer to client data */
+    /* ----------------------------- */
     return (HDR_2_CLIENT(p));
-}   /* end mem_realloc() */
+} /* end mem_realloc() */
 
 /*----------------------------------------------------------------------
  *
@@ -369,81 +355,74 @@ mem_HDrealloc(
  *
  */
 
-void       *
+void *
 mem_HDfree(
 #if defined(MEM_WHERE)
-                   void *ptr,
-                   char *fil,
-                   int lin
+    void *ptr, char *fil, int lin
 #else
-                   void *ptr
+    void *ptr
 #endif
 )
 
 {
-    MEMHDR     *p;
+    MEMHDR *p;
 #if defined(MEM_HEADER) || defined(MEM_COMP_FREE)
     unsigned char *q;
-    uintn       i;
+    uintn          i;
 #endif
-    char       *FUNC = "HDfree";
+    char *FUNC = "HDfree";
 
-/* Convert client pointer to header pointer */
-/* ---------------------------------------- */
+    /* Convert client pointer to header pointer */
+    /* ---------------------------------------- */
     p = CLIENT_2_HDR(ptr);
 
-/* Check for valid block */
-/* --------------------- */
-    if (p->mh_tag != MEMTAG)
-      {
-          Mem_Tag_Err(p, ME_BADTAG, FUNC);
-          return (NULL);
-      }     /* end if */
+    /* Check for valid block */
+    /* --------------------- */
+    if (p->mh_tag != MEMTAG) {
+        Mem_Tag_Err(p, ME_BADTAG, FUNC);
+        return (NULL);
+    } /* end if */
 
 /* Check for overwrites into the header & footer */
 /* --------------------------------------------- */
 #if defined(MEM_HEADER)
-    q = (unsigned char *) ptr - HEADER_SIZE;    /* Check the Header to consistency */
-    for (i = 0; i < BLOCK_SIZE; i++)
-      {
-          if (q[i] != HEADERTAG)
-            {
-                Mem_Tag_Err(p, ME_BADHEADER, FUNC);
-                return (NULL);
-            }   /* end if */
-      }     /* end for */
-    q = (unsigned char *) ptr + p->mh_size;     /* Check the Footer for consistency */
-    for (i = 0; i < BLOCK_SIZE; i++)
-      {
-          if (q[i] != HEADERTAG)
-            {
-                Mem_Tag_Err(p, ME_BADHEADER, FUNC);
-                return (NULL);
-            }   /* end if */
-      }     /* end for */
+    q = (unsigned char *)ptr - HEADER_SIZE; /* Check the Header to consistency */
+    for (i = 0; i < BLOCK_SIZE; i++) {
+        if (q[i] != HEADERTAG) {
+            Mem_Tag_Err(p, ME_BADHEADER, FUNC);
+            return (NULL);
+        }                                  /* end if */
+    }                                      /* end for */
+    q = (unsigned char *)ptr + p->mh_size; /* Check the Footer for consistency */
+    for (i = 0; i < BLOCK_SIZE; i++) {
+        if (q[i] != HEADERTAG) {
+            Mem_Tag_Err(p, ME_BADHEADER, FUNC);
+            return (NULL);
+        } /* end if */
+    }     /* end for */
 #endif
 
-/* Invalidate header */
-/* ----------------- */
+    /* Invalidate header */
+    /* ----------------- */
     p->mh_tag = ~MEMTAG;
     mem_size -= p->mh_size;
 
 /* Invalidate the block of memory to be free'd */
 /* ------------------------------------------- */
 #if defined(MEM_COMP_FREE)
-    q = (unsigned char *) ptr;
+    q = (unsigned char *)ptr;
     for (i = 0; i < p->mh_size; i++)
-        q[i] = (unsigned char) ~q[i];
+        q[i] = (unsigned char)~q[i];
 #endif
 
 #if defined(MEM_LIST)
-    mem_list_delete(p);     /* Remove block from list */
+    mem_list_delete(p); /* Remove block from list */
 #endif
 
-/* Free memory block */
-/* ----------------- */
+    /* Free memory block */
+    /* ----------------- */
     return (HDfree(p));
-}   /* end mem_free() */
+} /* end mem_free() */
 
 /************************************************************************/
 /**** Functions accessed directly ***************************************/
@@ -481,7 +460,7 @@ unsigned long
 Mem_Used(void)
 {
     return (mem_size);
-}   /* end Mem_Used() */
+} /* end Mem_Used() */
 
 /*----------------------------------------------------------------------
  *
@@ -511,14 +490,14 @@ Mem_Used(void)
  */
 
 void
-Mem_Display(FILE * fp)
+Mem_Display(FILE *fp)
 {
 #if defined(MEM_LIST)
-    MEMHDR     *p;
-    int         idx;
+    MEMHDR *p;
+    int     idx;
 #if defined(MEM_HEADER)
     unsigned char *q;
-    int         i;
+    int            i;
 #endif
 
 #if defined(MEM_WHERE)
@@ -528,45 +507,40 @@ Mem_Display(FILE * fp)
 #endif
 
     idx = 0;
-    p = memlist;
-    while (p != NULL)
-      {
-          fprintf(fp, "%-5d %6u", idx++, p->mh_size);
+    p   = memlist;
+    while (p != NULL) {
+        fprintf(fp, "%-5d %6u", idx++, p->mh_size);
 #if defined(MEM_WHERE)
-          fprintf(fp, "  %s(%d)", p->mh_file, p->mh_line);
+        fprintf(fp, "  %s(%d)", p->mh_file, p->mh_line);
 #endif
-          if (p->mh_tag != MEMTAG)
-              fprintf(fp, " INVALID TAG");
+        if (p->mh_tag != MEMTAG)
+            fprintf(fp, " INVALID TAG");
 
 /* Check for overwrites into the header & footer */
 /* --------------------------------------------- */
 #if defined(MEM_HEADER)
-          q = (unsigned char *) HDR_2_CLIENT(p) - HEADER_SIZE;  /* Check the Header to consistency */
-          for (i = 0; i < BLOCK_SIZE; i++)
-            {
-                if (q[i] != HEADERTAG)
-                  {
-                      fprintf(fp, " HEADER OVERWRITTEN");
-                      break;
-                  }     /* end if */
-            }   /* end for */
-          q = (unsigned char *) HDR_2_CLIENT(p) + p->mh_size;   /* Check the Footer for consistency */
-          for (i = 0; i < BLOCK_SIZE; i++)
-            {
-                if (q[i] != HEADERTAG)
-                  {
-                      fprintf(fp, " FOOTER OVERWRITTEN");
-                      break;
-                  }     /* end if */
-            }   /* end for */
+        q = (unsigned char *)HDR_2_CLIENT(p) - HEADER_SIZE; /* Check the Header to consistency */
+        for (i = 0; i < BLOCK_SIZE; i++) {
+            if (q[i] != HEADERTAG) {
+                fprintf(fp, " HEADER OVERWRITTEN");
+                break;
+            }                                              /* end if */
+        }                                                  /* end for */
+        q = (unsigned char *)HDR_2_CLIENT(p) + p->mh_size; /* Check the Footer for consistency */
+        for (i = 0; i < BLOCK_SIZE; i++) {
+            if (q[i] != HEADERTAG) {
+                fprintf(fp, " FOOTER OVERWRITTEN");
+                break;
+            } /* end if */
+        }     /* end for */
 #endif
-          fprintf(fp, "\n");
-          p = p->mh_next;
-      }     /* end while */
+        fprintf(fp, "\n");
+        p = p->mh_next;
+    } /* end while */
 #else
     fprintf(fp, "Memory list not compiled (MEM_LIST not defined)\n");
 #endif
-}   /* end Mem_Display() */
+} /* end Mem_Display() */
 
 /************************************************************************/
 /**** Memory list manipulation functions ********************************/
@@ -579,7 +553,7 @@ Mem_Display(FILE * fp)
 
 #if defined(MEM_LIST)
 static void
-mem_list_add(MEMHDR * p)
+mem_list_add(MEMHDR *p)
 {
     p->mh_next = memlist;
     p->mh_prev = NULL;
@@ -591,7 +565,7 @@ mem_list_add(MEMHDR * p)
     printf("mem_list_add()\n");
     Mem_Display(stdout);
 #endif
-}   /* end mem_list_add() */
+} /* end mem_list_add() */
 #endif
 
 /*----------------------------------------------------------------------*/
@@ -603,7 +577,7 @@ mem_list_add(MEMHDR * p)
 
 #if defined(MEM_LIST)
 static void
-mem_list_delete(MEMHDR * p)
+mem_list_delete(MEMHDR *p)
 {
     if (p->mh_next != NULL)
         p->mh_next->mh_prev = p->mh_prev;
@@ -616,7 +590,7 @@ mem_list_delete(MEMHDR * p)
     printf("mem_list_delete()\n");
     Mem_Display(stdout);
 #endif
-}   /* end mem_list_delete() */
+} /* end mem_list_delete() */
 #endif
 
 /************************************************************************/
@@ -635,4 +609,4 @@ mem_tag_err(void *p, int type, char *func, char *fil, int lin)
 #if defined(MEM_LIST)
     Mem_Display(stdaux);
 #endif
-}   /* end mem_tag_err() */
+} /* end mem_tag_err() */

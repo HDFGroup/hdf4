@@ -14,40 +14,41 @@
 
 /* #define MDEBUG 1 */
 
-  /*
-   * Test driver for netCDF implementation.  This program performs
-   * tests against the netCDF specification for all user-level
-   * functions in an implementation of the netCDF library.  Must be
-   * invoked from a directory in which the invoker has write
-   * permission.
-   */
+/*
+ * Test driver for netCDF implementation.  This program performs
+ * tests against the netCDF specification for all user-level
+ * functions in an implementation of the netCDF library.  Must be
+ * invoked from a directory in which the invoker has write
+ * permission.
+ */
 
 #include <stdio.h>
 #if defined TEST_PC || defined TEST_WIN
-FILE *dbg_file;
+FILE                          *dbg_file;
 #endif
 
 #include <stdlib.h>
 #include <string.h> /* to remove warnings, HDFFR-1434 */
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
-    static char testfile[] = "test.nc";
+    static char testfile[]            = "test.nc";
     static char unlim_testfile_name[] = "test_unlim.nc";
-    int status = 0;
+    int         status                = 0;
 
 #if defined TEST_PC || defined TEST_WIN
-    dbg_file=fopen("test.dbg","w+");
+    dbg_file = fopen("test.dbg", "w+");
 #endif
 
 #ifdef MDEBUG
     malloc_debug(2);
 #endif /* MDEBUG */
 
-    ncopts &= ~NC_FATAL;	/* make errors nonfatal */
-    ncopts &= ~NC_VERBOSE;	/* turn off error messages */
-    ncopts |= NC_VERBOSE;	/* turn  error messages on--AKC */
-    ncopts &= ~NC_VERBOSE;	/* turn off error messages */
+    ncopts &= ~NC_FATAL;   /* make errors nonfatal */
+    ncopts &= ~NC_VERBOSE; /* turn off error messages */
+    ncopts |= NC_VERBOSE;  /* turn  error messages on--AKC */
+    ncopts &= ~NC_VERBOSE; /* turn off error messages */
 
     test_nccreate(testfile);
 
@@ -123,4 +124,3 @@ int main(int argc, char *argv[])
 #define EXIT_SUCCESS 0
     return EXIT_SUCCESS;
 }
-

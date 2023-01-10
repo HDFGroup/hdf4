@@ -3,7 +3,7 @@
  *   See netcdf/COPYRIGHT file for copying and redistribution conditions.
  *********************************************************************/
 
-extern char *progname;		/* for error messages */
+extern char *progname; /* for error messages */
 
 #ifndef EXIT_FAILURE
 #define EXIT_SUCCESS 0
@@ -12,9 +12,9 @@ extern char *progname;		/* for error messages */
 
 #undef PROTO
 #ifndef NO_HAVE_PROTOTYPES
-#   define	PROTO(x)	x
+#define PROTO(x) x
 #else
-#   define	PROTO(x)	()
+#define PROTO(x) ()
 #endif
 
 #ifdef __cplusplus
@@ -32,63 +32,41 @@ extern void error();
 
 /*
 extern void	error		PROTO((
-				       char *fmt,
-				       ...
-				       ));
+                                       char *fmt,
+                                       ...
+                                       ));
 */
 
 /* set position in line before lput() calls */
-extern void	set_indent	PROTO((
-				       int indent
-				       ));
+extern void set_indent PROTO((int indent));
 
 /* set maximum line length */
-extern void	set_max_len	PROTO((
-				       int len
-				       ));
+extern void set_max_len PROTO((int len));
 
 /* splits lines to keep them short */
-extern void	lput		PROTO((
-				       const char *string
-				       ));
+extern void lput PROTO((const char *string));
 
 /* In case different formats specified with -d option, set them here. */
-extern void	set_formats	PROTO((
-				       char *flt_fmt,
-				       char *dbl_fmt
-				       ));
+extern void set_formats PROTO((char *flt_fmt, char *dbl_fmt));
 
 /* Determine print format to use for each value for this variable. */
-const char *		get_fmt		PROTO((
-				       int ncid,
-				       int varid,
-				       nc_type type
-				       ));
+const char *get_fmt PROTO((int ncid, int varid, nc_type type));
 
 /* structure for list of variables specified with -v option */
-struct vnode
-{
-    struct vnode* next;
-    int id;
+struct vnode {
+    struct vnode *next;
+    int           id;
 };
 typedef struct vnode vnode;
 
 /* Get new variable list */
-extern vnode*	newvlist	PROTO((
-				       void
-				       ));
+extern vnode *newvlist PROTO((void));
 
 /* Add a variable id to variable list */
-extern void	varadd		PROTO((
-				       vnode* vlist,
-				       int varid
-				       ));
+extern void varadd PROTO((vnode * vlist, int varid));
 
 /* Test if a variable id is in variable list */
-extern int	varmember	PROTO((
-				       vnode* vlist,
-				       int varid
-				       ));
+extern int varmember PROTO((vnode * vlist, int varid));
 
 #ifdef __cplusplus
 }
