@@ -7,8 +7,7 @@ extern char	*progname;	/* for error messages */
 extern char	*cdlname;	/* for error messages */
 
 #undef PROTO
-#   define	PROTO(x)	x
-#endif
+#define PROTO(x) x
 
 #ifdef __cplusplus
 extern "C" {
