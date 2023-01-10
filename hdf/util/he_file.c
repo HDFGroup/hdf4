@@ -16,9 +16,9 @@
 #include "he.h"
 
 /* get the prototype for the wait() func. */
-#if defined SUN | defined HP9000 | defined UNIX386
+#if defined SUN | defined UNIX386
 #include <sys/wait.h>
-#endif /* SUN | HP9000 */
+#endif /* SUN */
 #ifdef H4_HAVE_UNISTD_H
 #include <unistd.h>
 #endif

@@ -285,66 +285,6 @@ typedef int               hdf_pint_t;   /* an integer the same size as a pointer
 
 #endif /* IBM6000 */
 
-#if defined(HP9000) || (!defined(__convexc__) && (defined(hpux) || defined(__hpux)))
-
-#ifndef HP9000
-#define HP9000
-#endif
-
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE
-
-#ifndef HAVE_UNISTD_H
-#define HAVE_UNISTD_H  /* unistd.h - close, fork,..etc */
-#endif
-
-#   define BSD
-#ifndef __GNUC__
-#include <memory.h>
-#endif /* __GNUC__ */
-#include <sys/file.h>               /* for unbuffered i/o stuff */
-#include <sys/stat.h>
-#define DF_MT             DFMT_HP9000
-typedef void              VOID;
-typedef void              *VOIDP;
-typedef char              *_fcd;
-typedef char              char8;
-typedef unsigned char     uchar8;
-typedef char              int8;
-typedef unsigned char     uint8;
-typedef short int         int16;
-typedef unsigned short int uint16;
-#ifdef _LP64 /* 64-bit environment */
-typedef int               int32;
-typedef unsigned int      uint32;
-#else /* 32-bit environment */
-typedef long int          int32;
-typedef unsigned long int uint32;
-#endif
-typedef int               intn;
-typedef unsigned int      uintn;
-typedef float             float32;
-typedef double            float64;
-typedef int               intf;     /* size of INTEGERs in Fortran compiler */
-#ifdef _LP64 /* 64-bit environment */
-typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
-#else /* 32-bit environment */
-typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
-#endif
-#define _fcdtocp(desc) (desc)
-#define FILELIB UNIXBUFIO
-
-/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
-
-/* Determine the memory manager we are going to use. Valid values are: */
-/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
-/*  what each does */
-#define JMEMSYS         MEM_ANSI
-
-#endif /* HP9000 */
 
 /* CRAY XT3
  * Note from RedStorm helpdesk,
