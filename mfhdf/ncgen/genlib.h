@@ -18,7 +18,6 @@ extern void derror(const char *fmt, ...);
 #else
 extern void derror();
 #endif
-#endif
 
 /*
 extern void	derror		PROTO((
