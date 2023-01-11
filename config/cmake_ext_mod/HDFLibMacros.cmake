@@ -66,6 +66,40 @@ macro (ORIGINAL_JPEG_LIBRARY compress_type jpeg_pic)
 endmacro ()
 
 #-------------------------------------------------------------------------------
+macro (ORIGINAL_SZIP_LIBRARY compress_type encoding)
+  # Only libaec library is usable
+  if (${compress_type} MATCHES "GIT")
+    FetchContent_Declare (SZIP
+        GIT_REPOSITORY ${SZIP_URL}
+        GIT_TAG ${SZIP_BRANCH}
+    )
+  elseif (${compress_type} MATCHES "TGZ")
+    FetchContent_Declare (SZIP
+        URL ${SZIP_URL}
+        URL_HASH ""
+    )
+  endif ()
+  FetchContent_GetProperties(SZIP)
+  if(NOT szip_POPULATED)
+    FetchContent_Populate(SZIP)
+
+    # Copy an additional/replacement files into the populated source
+    file(COPY ${HDF_RESOURCES_DIR}/LIBAEC/CMakeLists.txt DESTINATION ${szip_SOURCE_DIR})
+
+    add_subdirectory(${szip_SOURCE_DIR} ${szip_BINARY_DIR})
+  endif()
+
+  set (USE_LIBAEC ON CACHE BOOL "Use libaec szip replacement" FORCE)
+  set (SZIP_STATIC_LIBRARY "szaec-static;aec-static")
+  set (SZIP_LIBRARIES ${SZIP_STATIC_LIBRARY})
+
+  set (SZIP_INCLUDE_DIR_GEN "${BINARY_DIR}")
+  set (SZIP_INCLUDE_DIR "${szip_SOURCE_DIR}/include")
+  set (SZIP_FOUND 1)
+  set (SZIP_INCLUDE_DIRS ${SZIP_INCLUDE_DIR_GEN} ${SZIP_INCLUDE_DIR})
+endmacro ()
+
+#-------------------------------------------------------------------------------
 macro (EXTERNAL_JPEG_LIBRARY compress_type jpeg_pic)
   # May need to build JPEG with PIC on x64 machines with gcc
   # Need to use CMAKE_ANSI_CFLAGS define so that compiler test works
@@ -295,7 +329,6 @@ macro (EXTERNAL_ZLIB_LIBRARY compress_type)
 ##include (${BINARY_DIR}/${ZLIB_PACKAGE_NAME}${HDF_PACKAGE_EXT}-targets.cmake)
 # Create imported target zlib-static
   add_library(${HDF_PACKAGE_NAMESPACE}zlib-static STATIC IMPORTED)
-#  add_library(${HDF_PACKAGE_NAMESPACE}zlib-static ALIAS zlib-static)
   HDF_IMPORT_SET_LIB_OPTIONS (${HDF_PACKAGE_NAMESPACE}zlib-static ${ZLIB_LIB_NAME} STATIC "")
   add_dependencies (${HDF_PACKAGE_NAMESPACE}zlib-static HDF4_ZLIB)
   set (ZLIB_STATIC_LIBRARY "${HDF_PACKAGE_NAMESPACE}zlib-static")
