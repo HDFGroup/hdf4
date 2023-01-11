@@ -51,7 +51,7 @@ WORD
 GetWord (MemGif)
 BYTE *MemGif;
 {
-	register WORD w;
+	WORD w;
 	if (EndianOrder == 1) /* LittleEndian */
 	{
 		w  = (WORD) (*MemGif++ & 0xFF);
@@ -87,7 +87,7 @@ ReadGifHeader(GifHead, MemGif2)
 GIFHEAD *GifHead;       /* Pointer to GIF header structure  */
 BYTE    **MemGif2;       /* GIF image file input FILE stream */
 {
-    register WORD i;    /* Loop counter                                */
+    WORD i;    /* Loop counter                                */
     WORD tableSize;     /* Number of entries in the Global Color Table */
 	
 	GifHead->TableSize = 0;
@@ -155,7 +155,7 @@ ReadGifImageDesc(GifImageDesc, MemGif2)
 GIFIMAGEDESC *GifImageDesc; /* Pointer to GIF image descriptor structure  */
 BYTE         **MemGif2;     /* GIF image file input FILE stream           */
 {
-    register WORD i;        /* Loop counter                               */
+    WORD i;        /* Loop counter                               */
     WORD tableSize;         /* Number of entries in the Local Color Table */
 	BYTE Interlace;         /* PackedField & 0x20 gives information on interlacing */
 	BYTE *TempPtr;

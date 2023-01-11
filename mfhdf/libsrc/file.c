@@ -97,9 +97,9 @@ ncreset_cdflist()
  *  Allocates _cdfs and returns the allocated size if succeeds;
  *  otherwise return FAIL(-1).
  */
+/* req_max - requested max to allocate */
 intn
-NC_reset_maxopenfiles(req_max)
-intn req_max;    /* requested max to allocate */
+NC_reset_maxopenfiles(intn req_max)
 {
     intn sys_limit = MAX_AVAIL_OPENFILES;
     intn alloc_size;
@@ -224,8 +224,7 @@ NC_get_numopencdfs()
  * NULL on error.
  */
 NC *
-NC_check_id(cdfid)
-int cdfid ;
+NC_check_id(int cdfid)
 {
     NC *handle ;
 
@@ -244,9 +243,7 @@ int cdfid ;
  * If 'iserr' arg is true, advise.
  */
 bool_t
-NC_indefine(cdfid, iserr) /* Should be a Macro ? */
-int cdfid ;
-bool_t iserr ;
+NC_indefine(int cdfid, bool_t iserr) /* Should be a Macro ? */
 {
     bool_t ret  ;
     ret = (cdfid >= 0 && cdfid < _ncdf) ?
@@ -266,10 +263,9 @@ bool_t iserr ;
 /*
  *  Common code for ncopen and nccreate.
  */
+/* path - file name */
 static int
-NC_open(path, mode )
-const char    *path ;    /* file name */
-int mode ;
+NC_open(const char *path, int mode)
 {
     NC *handle ;
     int cdfid;
@@ -337,9 +333,8 @@ int mode ;
 }   /* NC_open */
 
 
-int nccreate(path, cmode)
-const char    *path ;    /* file name */
-int         cmode ;
+int nccreate(const char *path, int cmode)
+/* path - file name */
 {
     cdf_routine_name = "nccreate" ;
 
@@ -352,9 +347,8 @@ int         cmode ;
 }
 
 
-int ncopen(path,mode)
-const char    *path ;    /* file name */
-int         mode ;
+int ncopen(const char *path, int mode)
+/* path - file name */
 {
     cdf_routine_name = "ncopen" ;
     if(mode & NC_CREAT)
@@ -366,8 +360,7 @@ int         mode ;
 }
 
 
-int ncsync(cdfid)
-int cdfid ;
+int ncsync(int cdfid)
 {
     NC *handle ;
 
@@ -432,8 +425,7 @@ int cdfid ;
  * In define mode, restore previous definition ;
  * In create, remove the file ;
  */
-int ncabort(cdfid)
-int cdfid ;
+int ncabort(int cdfid)
 {
     NC *handle ;
     char path[FILENAME_MAX + 1] ;
@@ -534,8 +526,7 @@ int cdfid ;
 /*
  * Deprecated function ;
  */
-int ncnobuf(cdfid)
-int cdfid ;
+int ncnobuf(int cdfid)
 {
     NC *handle ;
 
@@ -559,8 +550,7 @@ int cdfid ;
  * and proto to dwell on the same filesystem.)
  */
 static char *
-NCtempname(proto)
-const char *proto ;
+NCtempname(const char *proto)
 {
 /* NO_ACCESS defined if the OS lacks the access() function */
 #ifndef NO_ACCESS
@@ -643,8 +633,7 @@ const char *proto ;
 }
 
 
-int ncredef(cdfid)
-int cdfid ;
+int ncredef(int cdfid)
 {
     NC *handle ;
     NC *new ;
@@ -732,8 +721,7 @@ int cdfid ;
  * Compute offsets and put into the header
  */
 static void
-NC_begins(handle)
-NC *handle ;
+NC_begins(NC *handle)
 {
     unsigned ii ;
     u_long index = 0 ;
@@ -801,10 +789,7 @@ NC *handle ;
  * to xdr_opaque may be used.
  */
 bool_t
-NC_dcpy( target, source, nbytes)
-XDR *target ;
-XDR *source ;
-long nbytes ;
+NC_dcpy(XDR *target, XDR *source, long nbytes)
 {
 /* you may wish to tune this: big on a cray, small on a PC? */
 #define NC_DCP_BUFSIZE 8192
@@ -834,10 +819,7 @@ err:
  * XDR the data of varid in old, target is the new xdr strm
  */
 static bool_t
-NC_vcpy( target, old, varid)
-XDR *target ;
-NC *old ;
-int varid ;
+NC_vcpy(XDR *target, NC *old, int varid)
 {
     NC_var **vpp ;
     vpp = (NC_var **)old->vars->values ;
@@ -857,11 +839,7 @@ int varid ;
  * XDR the data of (varid, recnum) in old, target is the new xdr strm
  */
 static bool_t
-NC_reccpy( target, old, varid, recnum)
-XDR *target ;
-NC *old ;
-int varid ;
-int recnum ;
+NC_reccpy(XDR *target, NC *old, int varid, int recnum)
 {
     NC_var **vpp ;
     vpp = (NC_var **)old->vars->values ;
@@ -881,9 +859,7 @@ int recnum ;
  *  Common code for ncendef, ncclose(endef)
  */
 static
-int NC_endef( cdfid, handle )
-int cdfid ;
-NC *handle ;
+int NC_endef(int cdfid, NC *handle )
 {
     XDR *xdrs ;
     unsigned ii ;
@@ -1031,8 +1007,7 @@ done:
 }
 
 
-int ncendef( cdfid )
-int cdfid ;
+int ncendef(int cdfid)
 {
     NC *handle ;
 
@@ -1049,8 +1024,7 @@ int cdfid ;
 /*
  * This routine is called by SDend()? -GV
  */
-int ncclose( cdfid )
-int cdfid ;
+int ncclose(int cdfid)
 {
     NC *handle ;
 
@@ -1102,9 +1076,7 @@ int cdfid ;
 }
 
 int
-ncsetfill(id, fillmode)
-int id ;
-int fillmode ;
+ncsetfill(int id, int fillmode)
 {
     NC *handle ;
     int ret = 0 ;

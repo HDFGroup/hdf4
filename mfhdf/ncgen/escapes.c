@@ -11,12 +11,9 @@
  * sequence "\t" in yystring would be converted into a single tab character
  * in termstring.  On return, termstring is properly terminated.
  */
-
+/* termstring - returned, with escapes expanded */
 void
-expand_escapes(termstring, yytext, yyleng)
-     char *termstring;		/* returned, with escapes expanded */
-     char *yytext;
-     int yyleng;
+expand_escapes(char *termstring, char *yytext, int yyleng)
 {
     char *s, *t, *endp;
 

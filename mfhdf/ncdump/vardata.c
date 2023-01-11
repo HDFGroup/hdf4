@@ -34,26 +34,26 @@ static void annotate
  * Print a row of variable values.  Makes sure output lines aren't too long
  * by judiciously inserting newlines.
  */
+/* vp - variable */
+/* len - number of values to print */
+/* fmt
+ * printf format used for each value.  If
+ * nc_type is NC_CHAR and this is NULL,
+ * character arrays will be printed as strings
+ * enclosed in quotes.
+ */
+/* more
+ * true if more data will follow, so add
+ * trailing comma
+ */
+/* lastrow
+ * true if this is the last row for this
+ * variable, so terminate with ";" instead of
+ * ","
+ */
+/* vals pointer to block of values */
 static void
-pr_vals(vp, len, fmt, more, lastrow, vals)
-     struct ncvar *vp;		/* variable */
-     long len;			/* number of values to print */
-     char *fmt;			/*
-				 * printf format used for each value.  If
-				 * nc_type is NC_CHAR and this is NULL,
-				 * character arrays will be printed as strings
-				 * enclosed in quotes.
-				 */
-     bool more;			/*
-				 * true if more data will follow, so add
-				 * trailing comma
-				 */
-     bool lastrow;		/*
-				 * true if this is the last row for this
-				 * variable, so terminate with ";" instead of
-				 * ","
-				 */
-     void *vals;		/* pointer to block of values */
+pr_vals(struct ncvar *vp, long len, char *fmt, bool more, bool lastrow, void *vals)
 {
     long iel;
     union {
@@ -216,9 +216,7 @@ pr_vals(vp, len, fmt, more, lastrow, vals)
  * print last delimiter in each line before annotation (, or ;)
  */
 static void
-lastdelim (more, lastrow)
-     bool more;
-     bool lastrow;
+lastdelim (bool more, bool lastrow)
 {
     if (more) {
 	Printf(", ");
@@ -235,12 +233,12 @@ lastdelim (more, lastrow)
 /*
  * Annotates a value in data section with var name and indices in comment
  */
+/* vp  - variable */
+/* fsp - formatting specs */
+/* cor - corner coordinates */
+/* iel - which element in current row */
 static void
-annotate(vp, fsp, cor, iel)
-     struct ncvar *vp;		/* variable */
-     struct fspec* fsp;		/* formatting specs */
-     long cor[];		/* corner coordinates */
-     long iel;			/* which element in current row */
+annotate(struct ncvar *vp, struct fspec *fsp, long cor[], long iel)
 {
     int vrank = vp->ndims;
     int id;
@@ -270,28 +268,28 @@ annotate(vp, fsp, cor, iel)
  * Print a number of commented variable values, where the comments for each
  * value identify the variable, and each dimension index.
  */
+/* vp - variable */
+/* len - number of values to print */
+/* fmt
+ * printf format used for each value.  If
+ * nc_type is NC_CHAR and this is NULL,
+ * character arrays will be printed as strings
+ * enclosed in quotes.
+ */
+/* more
+ * true if more data for this row will follow,
+ * so add trailing comma
+ */
+/* lastrow
+ * true if this is the last row for this
+ * variable, so terminate with ";" instead of
+ * ","
+ */
+/* vals - pointer to block of values */
+/* fsp  - formatting specs */
+/* cor  - corner coordinates */
 static void
-pr_cvals(vp, len, fmt, more, lastrow, vals, fsp, cor)
-     struct ncvar *vp;		/* variable */
-     long len;			/* number of values to print */
-     char *fmt;			/*
-				 * printf format used for each value.  If
-				 * nc_type is NC_CHAR and this is NULL,
-				 * character arrays will be printed as strings
-				 * enclosed in quotes.
-				 */
-     bool more;			/*
-				 * true if more data for this row will follow,
-				 * so add trailing comma
-				 */
-     bool lastrow;		/*
-				 * true if this is the last row for this
-				 * variable, so terminate with ";" instead of
-				 * ","
-				 */
-     void *vals;		/* pointer to block of values */
-     struct fspec* fsp;		/* formatting specs */
-     long cor[];		/* corner coordinates */
+pr_cvals(struct ncvar *vp, long len, char *fmt, bool more, bool lastrow, void *vals, struct fspec *fsp, long cor[])
 {
     long iel;
     union {
@@ -448,12 +446,12 @@ pr_cvals(vp, len, fmt, more, lastrow, vals, fsp, cor)
  * Updates a vector of ints, odometer style.  Returns 0 if odometer
  * overflowed, else 1.
  */
+/* dims  - The "odometer" limits for each dimension  */
+/* ndims - Number of dimensions */
+/* odom  - The "odometer" vector to be updated */
+/* add   - A vector to "add" to odom on each update */
 static int
-upcorner(dims,ndims,odom,add)
-     long *dims;		/* The "odometer" limits for each dimension  */
-     int ndims;			/* Number of dimensions */
-     long* odom;		/* The "odometer" vector to be updated */
-     long* add;			/* A vector to "add" to odom on each update */
+upcorner(long *dims, int ndims, long *odom, long  *add)
 {
     int id;
     int ret = 1;
@@ -472,13 +470,13 @@ upcorner(dims,ndims,odom,add)
 }
 
 
+/* vp    - variable */
+/* vdims - variable dimension sizes */
+/* ncid  - netcdf id */
+/* varid - variable id */
+/* fsp   - formatting specs */
 int
-vardata(vp, vdims, ncid, varid, fsp)
-     struct ncvar *vp;		/* variable */
-     long vdims[];		/* variable dimension sizes */
-     int ncid;			/* netcdf id */
-     int varid;			/* variable id */
-     struct fspec* fsp;		/* formatting specs */
+vardata(struct ncvar *vp, long vdims[], int ncid, int varid, struct fspec *fsp)
 {
     long cor[H4_MAX_VAR_DIMS];	/* corner coordinates */
     long edg[H4_MAX_VAR_DIMS];	/* edges of hypercube */

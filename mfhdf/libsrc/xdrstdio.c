@@ -69,10 +69,7 @@ static struct xdr_ops    xdrNCstdio_ops = {
  * Operation flag is set to op.
  */
 void
-xdrNCstdio_create(xdrs, file, op)
-    register XDR *xdrs;
-    FILE *file;
-    enum xdr_op op;
+xdrNCstdio_create(register XDR *xdrs, FILE *file, enum xdr_op op)
 {
     xdrs->x_op = op;
     xdrs->x_ops = &xdrNCstdio_ops;
@@ -89,16 +86,13 @@ xdrNCstdio_create(xdrs, file, op)
  * This function closes the stream.
  */
 static void
-xdrNCstdio_destroy(xdrs)
-    register XDR *xdrs;
+xdrNCstdio_destroy(register XDR *xdrs)
 {
     (void)fclose((FILE *)xdrs->x_private);
 }
 
 static bool_t
-xdrNCstdio_getlong(xdrs, lp)
-    XDR *xdrs;
-    register long *lp;
+xdrNCstdio_getlong(XDR *xdrs, register long *lp)
 {
     if (fread((caddr_t)lp, sizeof(long), 1, (FILE *)xdrs->x_private) != 1)
     {
@@ -113,9 +107,7 @@ xdrNCstdio_getlong(xdrs, lp)
 }
 
 static bool_t
-xdrNCstdio_putlong(xdrs, lp)
-    XDR *xdrs;
-    long *lp;
+xdrNCstdio_putlong(XDR *xdrs, long *lp)
 {
 #ifndef H4_WORDS_BIGENDIAN
     long mycopy = htonl(*lp);
@@ -132,10 +124,7 @@ xdrNCstdio_putlong(xdrs, lp)
 }
 
 static bool_t
-xdrNCstdio_getbytes(xdrs, addr, len)
-    XDR *xdrs;
-    caddr_t addr;
-    u_int len;
+xdrNCstdio_getbytes(XDR *xdrs, caddr_t addr, u_int len)
 {
     if ((len != 0) && (fread(addr, (int)len, 1, (FILE *)xdrs->x_private) != 1))
     {
@@ -147,10 +136,7 @@ xdrNCstdio_getbytes(xdrs, addr, len)
 }
 
 static bool_t
-xdrNCstdio_putbytes(xdrs, addr, len)
-    XDR *xdrs;
-    caddr_t addr;
-    u_int len;
+xdrNCstdio_putbytes(XDR *xdrs, caddr_t addr, u_int len)
 {
 
     if ((len != 0) && (fwrite(addr, (int)len, 1, (FILE *)xdrs->x_private) != 1))
@@ -163,17 +149,14 @@ xdrNCstdio_putbytes(xdrs, addr, len)
 }
 
 static u_long
-xdrNCstdio_getpos(xdrs)
-    XDR *xdrs;
+xdrNCstdio_getpos(XDR *xdrs)
 {
     XDRNC_POS(xdrs) = ftell((FILE *)xdrs->x_private);
     return ((u_long)XDRNC_POS(xdrs));
 }
 
 static bool_t
-xdrNCstdio_setpos(xdrs, pos)
-    XDR *xdrs;
-    u_int pos;
+xdrNCstdio_setpos(XDR *xdrs, u_int pos)
 {
     if(xdrs->x_op == XDRNC_LASTOP(xdrs) && pos == XDRNC_POS(xdrs))
         return TRUE ;
@@ -191,9 +174,7 @@ xdrNCstdio_setpos(xdrs, pos)
 
 /*ARGSUSED*/
 static int32_t *
-xdrNCstdio_inline(xdrs, len)
-    XDR *xdrs;
-    u_int len;
+xdrNCstdio_inline(XDR *xdrs, u_int len)
 {
 
     /*
@@ -216,18 +197,14 @@ xdrNCstdio_inline(xdrs, len)
  * library function, xdrstdio_destroy() which merely flushes it.
  */
 static void
-xdrNCstdio_destroy(xdrs)
-    XDR *xdrs;
+xdrNCstdio_destroy(XDR *xdrs)
 {
     (void)fclose((FILE *)xdrs->x_private);
 }
 
 static bool_t
-xdrNCstdio_setpos(xdrs, pos)
-    XDR *xdrs;
-    u_int pos;
+xdrNCstdio_setpos(XDR *xdrs, u_int pos)
 {
-
     static XDR *last = NULL ;
     static enum xdr_op lastop = XDR_FREE ;
 
@@ -275,8 +252,7 @@ xdrNCstdio_setpos(xdrs, pos)
  * "sync" (flush) xdr stream.
  */
 int
-NCxdrfile_sync(xdrs)
-    XDR *xdrs;
+NCxdrfile_sync(XDR *xdrs)
 {
     /* assumes xdrstdio, violates layering */
     FILE *fp = (FILE *)xdrs->x_private ;
@@ -288,10 +264,7 @@ NCxdrfile_sync(xdrs)
 
 
 int
-NCxdrfile_create(xdrs, path, ncmode)
-XDR *xdrs ;
-const char *path ;
-int ncmode ;
+NCxdrfile_create(XDR *xdrs, const char *path, int ncmode)
 {
     char *fmode ;
     FILE *fp ;

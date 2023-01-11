@@ -25,7 +25,7 @@ CONTENTS
 - New features and changes
   -- Configuration
 - Support for new platforms and compilers
-- Bugs fixed since HDF 4.2.14
+- Bugs fixed since HDF 4.2.15
   -- Configuration
   -- Library
   -- Utilities
@@ -73,7 +73,7 @@ Support for new platforms and compilers
 =======================================
 
 
-Bugs fixed since HDF 4.2.14
+Bugs fixed since HDF 4.2.15
 ===========================
 
 

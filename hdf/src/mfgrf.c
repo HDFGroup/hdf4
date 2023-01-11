@@ -761,16 +761,8 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
  * Returns: 0 on success, -1 on failure with error set
  * Users:   HDF Fortran programmers
  *-------------------------------------------------------------------------*/
-
-    FRETVAL (intf)
-#ifdef PROTOTYPE
-      nmgcgichnk(intf *id, intf *dim_length, intf *flags)
-#else
-       nmgcgichnk( id, dim_length, flags)
-       intf *id;
-       intf *dim_length;
-       intf *flags;
-#endif /* PROTOTYPE */
+FRETVAL(intf)
+nmgcgichnk(intf *id, intf *dim_length, intf *flags)
 {
 
     HDF_CHUNK_DEF chunk_def;  /* Chunk definition set */
@@ -829,16 +821,8 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
  * Reamrks:  dimensions will be flipped in scrchnk function
  * Returns:  0 on success, -1 on failure with error set
  *----------------------------------------------------------------------------*/
-    FRETVAL (intf)
-#ifdef PROTOTYPE
-       nmgcrcchnk(intf *id, intf *start, _fcd char_data)
-#else
-       nmgcrcchnk(id, start, char_data)
-                intf *id;
-                intf *start;
-               _fcd  char_data;
-#endif /* PROTOTYPE */
-
+FRETVAL(intf)
+nmgcrcchnk(intf *id, intf *start, _fcd char_data)
 {
        intf  ret;
 
@@ -860,16 +844,8 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
  *           If performance becomes an issue, use static cstart
  * Returns:  0 on success, -1 on failure with error set
  *----------------------------------------------------------------------------*/
-    FRETVAL (intf)
-#ifdef PROTOTYPE
-       nmgcrchnk(intf *id, intf *start, VOIDP num_data)
-#else
-       nmgcrchnk(id, start, num_data)
-                intf *id;
-                intf *start;
-                VOIDP num_data;
-#endif /* PROTOTYPE */
-
+FRETVAL(intf)
+nmgcrchnk(intf *id, intf *start, VOIDP num_data)
 {
        intf    ret;
        int32   rank, i;
@@ -908,16 +884,8 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
  * Calls:    GRsetchunkcache
  * Returns:  0 on success, -1 on failure with error set
  *----------------------------------------------------------------------------*/
-    FRETVAL (intf)
-#ifdef PROTOTYPE
-       nmgcscchnk(intf *id, intf *maxcache, intf *flags)
-#else
-       nmgcscchnk(id, maxcache, flags)
-                intf *id;
-                intf *maxcache;
-                intf *flags;
-#endif /* PROTOTYPE */
-
+FRETVAL(intf)
+nmgcscchnk(intf *id, intf *maxcache, intf *flags)
 {
        intf  ret;
 
@@ -945,19 +913,9 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
  * Returns: 0 on success, -1 on failure with error set
  * Users:   HDF Fortran programmers
  *-------------------------------------------------------------------------*/
-
-    FRETVAL (intf)
-#ifdef PROTOTYPE
-      nmgcschnk(intf *id, intf *dim_length, intf *comp_type,
+FRETVAL(intf)
+nmgcschnk(intf *id, intf *dim_length, intf *comp_type,
                 intf *comp_prm)
-#else
-       nmgcschnk( id, dim_length, comp_type,
-                 comp_prm)
-       intf *id;
-       intf *dim_length;
-       intf *comp_type;
-       intf *comp_prm;
-#endif /* PROTOTYPE */
 {
 
     HDF_CHUNK_DEF chunk_def;  /* Chunk definition set */
@@ -1042,16 +1000,8 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
  * Reamrks:  dimensions will be flipped in scrchnk function
  * Returns:  0 on success, -1 on failure with error set
  *----------------------------------------------------------------------------*/
-    FRETVAL (intf)
-#ifdef PROTOTYPE
-       nmgcwcchnk(intf *id, intf *start, _fcd char_data)
-#else
-       nmgcwcchnk(id, start, char_data)
-                intf *id;
-                intf *start;
-               _fcd  char_data;
-#endif /* PROTOTYPE */
-
+FRETVAL(intf)
+nmgcwcchnk(intf *id, intf *start, _fcd char_data)
 {
        intf  ret;
 
@@ -1073,16 +1023,8 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
  *           If performance becomes an issue, use static cstart
  * Returns:  0 on success, -1 on failure with error set
  *----------------------------------------------------------------------------*/
-    FRETVAL (intf)
-#ifdef PROTOTYPE
-       nmgcwchnk(intf *id, intf *start, VOIDP num_data)
-#else
-       nmgcwchnk(id, start, num_data)
-                intf *id;
-                intf *start;
-                VOIDP num_data;
-#endif /* PROTOTYPE */
-
+FRETVAL(intf)
+nmgcwchnk(intf *id, intf *start, VOIDP num_data)
 {
        intf    ret;
        int32   rank, i;
@@ -1130,16 +1072,8 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
  * Returns: 0 on success, -1 on failure with error set
  * Users:   HDF Fortran programmers
  *-------------------------------------------------------------------------*/
-
-    FRETVAL (intf)
-#ifdef PROTOTYPE
-       nmgcscompress(intf *id, intf *comp_type, intf *comp_prm)
-#else
-       nmgcscompress( id, comp_type, comp_prm)
-       intf *id;
-       intf *comp_type;
-       intf *comp_prm;
-#endif /* PROTOTYPE */
+FRETVAL(intf)
+nmgcscompress(intf *id, intf *comp_type, intf *comp_prm)
 {
     int32 riid;               /*  GR id               */
     comp_info c_info;         /* compression info     */
@@ -1205,16 +1139,8 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
  * Returns: 0 on success, -1 on failure with error set
  * Users:   HDF Fortran programmers
  *-------------------------------------------------------------------------*/
-
-    FRETVAL (intf)
-#ifdef PROTOTYPE
-       nmgcgcompress(intf *id, intf *comp_type, intf *comp_prm)
-#else
-       nmgcgcompress( id, comp_type, comp_prm)
-       intf *id;
-       intf *comp_type;
-       intf *comp_prm;
-#endif /* PROTOTYPE */
+FRETVAL(intf)
+nmgcgcompress(intf *id, intf *comp_type, intf *comp_prm)
 {
     comp_info c_info;         /* compression info     */
     comp_coder_t c_type;              /* compression type definition */
@@ -1274,14 +1200,8 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
  *          if one doesn't / FAIL
  * Users:   HDF Fortran programmers
  *-------------------------------------------------------------------------*/
-
-    FRETVAL (intf)
-#ifdef PROTOTYPE
-       nmglt2rf(intf *id)
-#else
-       nmglt2rf( id)
-       intf *id;
-#endif /* PROTOTYPE */
+FRETVAL(intf)
+nmglt2rf(intf *id)
 {
    intf ret;
 
@@ -1295,14 +1215,8 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
  * Returns: number of palettes on success and -1 if fails.
  * Users:   HDF Fortran programmers
  *-------------------------------------------------------------------------*/
-
-    FRETVAL (intf)
-#ifdef PROTOTYPE
-       nmgcgnluts(intf *id)
-#else
-       nmgcgnluts( id)
-       intf *id;
-#endif /* PROTOTYPE */
+FRETVAL(intf)
+nmgcgnluts(intf *id)
 {
    intf ret = -1;
    intn c_ret;

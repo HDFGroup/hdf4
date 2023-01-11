@@ -48,30 +48,10 @@
 /*          (i.e. Big-Endian, all 64-bit architecture w/IEEE Floats)        */
 /*--------------------------------------------------------------------------*/
 #define     DFMT_SUN            0x1111
-#define     DFMT_SUN_INTEL      0x4441
-#define     DFMT_ALLIANT        0x1111
-#define     DFMT_IRIX           0x1111
-#define     DFMT_APOLLO         0x1111
 #define     DFMT_IBM6000        0x1111
-#define     DFMT_HP9000         0x1111
-#define     DFMT_CONVEXNATIVE   0x5511
-#define     DFMT_CONVEX         0x1111
-#define     DFMT_UNICOS         0x3331
-#define     DFMT_UNICOSIEEE     0x1831
-#define     DFMT_CTSS           0x3331
-#define     DFMT_VAX            0x2221
-#define     DFMT_MIPSEL         0x4441
 #define     DFMT_PC             0x4441
 #define     DFMT_APPLE          0x1111
 #define     DFMT_APPLE_INTEL    0x4441
-#define     DFMT_MAC            0x1111
-#define     DFMT_SUN386         0x4441
-#define     DFMT_NEXT           0x1111
-#define     DFMT_MOTOROLA       0x1111
-#define     DFMT_ALPHA          0x4441
-#define     DFMT_VP             0x6611
-#define     DFMT_I860           0x4441
-#define     DFMT_IA64           0x4441
 #define     DFMT_LINUX64        0x4441
 #define     DFMT_POWERPC64      0x1111
 
@@ -94,23 +74,7 @@
  * Define options for each platform
  *-------------------------------------------------------------------------*/
 
-/*
- * Meaning of each defined macros (not completed yet)
- *
- * H4_BIG_LONGS--Define when long is not "equal" to int32.  True in cases
- *      where (int32 *) is not compatible with (long *).  Should
- *      be renamed as LONGNEINT32.
- */
-
 #if (defined(SUN) || defined(sun) || defined(__sun__) || defined(__SUNPRO_C)) & !defined(__i386)
-#ifdef __STDC__
-#define ANSISUN
-#else /* __STDC__ */
-#define KNRSUN
-#endif /* __STDC__ */
-#endif /* SUN || sun */
-
-#if defined(ANSISUN)
 
 #if !defined(SUN)
 #define SUN
@@ -126,11 +90,7 @@ Please check your Makefile.
 #include <sys/time.h>
 #include <sys/file.h>               /* for unbuffered i/o stuff */
 #include <sys/stat.h>
-#if (defined __sun) && (defined __amd64 || defined __i386) /* SunOS on Intel; 32 and 64-bit modes */
-#define DF_MT   DFMT_SUN_INTEL
-#else
 #define DF_MT   DFMT_SUN
-#endif /* __sun */
 typedef void              VOID;
 typedef void              *VOIDP;
 typedef char              *_fcd;
@@ -170,65 +130,9 @@ typedef int               hdf_pint_t;   /* an integer the same size as a pointer
 #define HAVE_STDC
 #define INCLUDES_ARE_ANSI
 
-#endif /* ANSISUN */
-
-#if defined(KNRSUN)
-
-#if !defined(SUN)
-#define SUN
-#endif
-
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE
-
-#   define BSD
-#define DUMBCC     /* because it is.  for later use in macros */
-#ifndef __GNUC__
-#include <memory.h>
-#endif /* __GNUC__ */
-#include <unistd.h>
-#include <sys/file.h>               /* for unbuffered i/o stuff */
-#include <sys/stat.h>
-#define DF_MT             DFMT_SUN
-typedef void              VOID;
-typedef char              *VOIDP;
-typedef char              *_fcd;
-typedef char              char8;
-typedef unsigned char     uchar8;
-typedef char              int8;
-typedef unsigned char     uint8;
-typedef short int         int16;
-typedef unsigned short int uint16;
-typedef long int          int32;
-typedef unsigned long int uint32;
-typedef int               intn;
-typedef unsigned int      uintn;
-typedef int               intf;     /* size of INTEGERs in Fortran compiler */
-typedef float             float32;
-typedef double            float64;
-typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
-#define FNAME_POST_UNDERSCORE
-#define _fcdtocp(desc) (desc)
-#define FILELIB UNIXBUFIO
-
-/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
-
-/* Determine the memory manager we are going to use. Valid values are: */
-/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
-/*  what each does */
-#define JMEMSYS         MEM_ANSI
-
-#ifdef __GNUC__
-#define HAVE_STDC
-#define INCLUDES_ARE_ANSI
-#endif
-
 #endif /* SUN */
 
-
+/*-----------------------------------------------------*/
 #if defined(IBM6000) || defined(_AIX)
 
 #ifndef IBM6000
@@ -287,207 +191,8 @@ typedef int               hdf_pint_t;   /* an integer the same size as a pointer
 
 #endif /* IBM6000 */
 
-#if defined(HP9000) || (!defined(__convexc__) && (defined(hpux) || defined(__hpux)))
 
-#ifndef HP9000
-#define HP9000
-#endif
-
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE
-
-#ifndef HAVE_UNISTD_H
-#define HAVE_UNISTD_H  /* unistd.h - close, fork,..etc */
-#endif
-
-#   define BSD
-#ifndef __GNUC__
-#include <memory.h>
-#endif /* __GNUC__ */
-#include <sys/file.h>               /* for unbuffered i/o stuff */
-#include <sys/stat.h>
-#define DF_MT             DFMT_HP9000
-typedef void              VOID;
-typedef void              *VOIDP;
-typedef char              *_fcd;
-typedef char              char8;
-typedef unsigned char     uchar8;
-typedef char              int8;
-typedef unsigned char     uint8;
-typedef short int         int16;
-typedef unsigned short int uint16;
-#ifdef _LP64 /* 64-bit environment */
-typedef int               int32;
-typedef unsigned int      uint32;
-#else /* 32-bit environment */
-typedef long int          int32;
-typedef unsigned long int uint32;
-#endif
-typedef int               intn;
-typedef unsigned int      uintn;
-typedef float             float32;
-typedef double            float64;
-typedef int               intf;     /* size of INTEGERs in Fortran compiler */
-#ifdef _LP64 /* 64-bit environment */
-typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
-#else /* 32-bit environment */
-typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
-#endif
-#define _fcdtocp(desc) (desc)
-#define FILELIB UNIXBUFIO
-
-/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
-
-/* Determine the memory manager we are going to use. Valid values are: */
-/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
-/*  what each does */
-#define JMEMSYS         MEM_ANSI
-
-#endif /* HP9000 */
-
-
-#if defined(IRIX) || defined(IRIS4) || defined(sgi) || defined(__sgi__) || defined(__sgi)
-
-#ifndef IRIX
-#define IRIX
-#endif
-
-#if (_MIPS_SZLONG == 64)
-/* IRIX 64 bits objects.  It is nearly the same as the conventional
- * 32 bits objects.  Let them share IRIX definitions for now.
- */
-#define IRIX64
-#endif
-
-
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE 1
-
-/*
- * BSD was originally defined with no value.  But some newer SGI system
- * header files (e.g., resolv.h) assume it has a value and evaluate it
- * in expressions, thus causing compiling errors.  This has been reported
- * to SGI as bug #781568.  SGI could not provide a list of the semantics
- * of BSD values and suggested a work around of setting BSD to 1.
- */
-#   define BSD 1
-#ifndef __GNUC__
-#include <memory.h>
-#endif /* __GNUC__ */
-#include <sys/file.h>               /* for unbuffered i/o stuff */
-#include <sys/stat.h>
-#define DF_MT              DFMT_IRIX
-typedef void               VOID;
-typedef void               *VOIDP;
-typedef char               *_fcd;
-typedef signed char        char8;
-typedef unsigned char      uchar8;
-typedef signed char        int8;
-typedef unsigned char      uint8;
-typedef short int          int16;
-typedef unsigned short int uint16;
-typedef int                int32;
-typedef unsigned int       uint32;
-typedef int                intn;
-typedef unsigned int       uintn;
-typedef float              float32;
-typedef double             float64;
-typedef int                intf;     /* size of INTEGERs in Fortran compiler */
-typedef long               hdf_pint_t;   /* an integer the same size as a pointer */
-#define FNAME_POST_UNDERSCORE
-#define _fcdtocp(desc) (desc)
-#define FILELIB UNIXBUFIO
-/*
-#ifdef IRIX64
-#define H4_BIG_LONGS
-#endif
-*/
-
-
-/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
-
-/* Determine the memory manager we are going to use. Valid values are: */
-/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
-/*  what each does */
-#define JMEMSYS         MEM_ANSI
-
-#define HAVE_STDC
-#define INCLUDES_ARE_ANSI
-
-#endif /* IRIX */
-
-/* CRAY XT3
- * Note from RedStorm helpdesk,
- * When I compile a C code with the '-v' option, it indicates that the compile
- * is done with the macros __QK_USER__ and __LIBCATAMOUNT__ defined.  In
- * addition, there are other macros like __x86_64__ defined as well, to
- * indicate processor type.  __QK_USER__ might be a good check for Catamount,
- * and __x86_64__ might be good for Opteron node.  You might try something
- * like the following in a header file:
- */
-#if ((defined(__QK_USER__)) && (defined(__x86_64__)))
-#define __CRAY_XT3__
-#endif
-
-#if defined(CONVEX) || defined(CONVEXNATIVE) || defined(__convexc__)
-
-#ifndef CONVEX
-#define CONVEX
-#endif
-
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE
-
-#include <sys/types.h>
-#include <sys/stat.h>
-/* For Convex machines with native format floats */
-#ifdef CONVEXNATIVE
-#define DF_MT             DFMT_CONVEXNATIVE
-#else
-#define DF_MT             DFMT_CONVEX
-#endif
-typedef void              VOID;
-typedef void              *VOIDP;
-typedef char              *_fcd;
-typedef char              char8;
-typedef unsigned char     uchar8;
-typedef char              int8;
-typedef unsigned char     uint8;
-typedef short int         int16;
-typedef unsigned short int uint16;
-typedef long int          int32;
-typedef unsigned long int uint32;
-typedef int               intn;
-typedef unsigned int      uintn;
-typedef float             float32;
-typedef double            float64;
-typedef int               intf;     /* size of INTEGERs in Fortran compiler */
-typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
-#define _fcdtocp(desc) (desc)
-#define FILELIB UNIXBUFIO
-
-/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
-
-/* Determine the memory manager we are going to use. Valid values are: */
-/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
-/*  what each does */
-#define JMEMSYS         MEM_ANSI
-#define RIGHT_SHIFT_IS_UNSIGNED
-#define INCLUDES_ARE_ANSI
-#define HAVE_STDC
-
-#endif /* CONVEX */
-
-
+/*-----------------------------------------------------*/
 #if defined (__APPLE__)
 
 #ifndef __APPLE__
@@ -547,11 +252,12 @@ typedef long            hdf_pint_t;   /* an integer the same size as a pointer *
 #endif /* __APPLE__ */
 
 
+/*-----------------------------------------------------*/
 
 /* Metrowerks Mac compiler defines some PC stuff so need to exclude this on the Mac */
 #if !(defined (__APPLE__)) && !(defined(__CYGWIN__))
 
-#if defined _M_ARM64 || defined _M_ALPHA || defined _M_X64 || defined _M_IA64 || defined _M_IX86 || defined INTEL86 || defined M_I86 || defined M_I386 || defined DOS386 || defined __i386 || defined UNIX386 || defined i386
+#if defined _M_ARM64 || defined _M_X64 || defined _M_IX86 || defined INTEL86 || defined M_I86 || defined M_I386 || defined DOS386 || defined __i386 || defined UNIX386 || defined i386
 #ifndef INTEL86
 #define INTEL86
 #endif /* INTEL86 */
@@ -638,10 +344,6 @@ typedef long long         hdf_pint_t;   /* 8-byte pointer */
 typedef int               hdf_pint_t;   /* 4-byte pointer */
 #endif /* _WIN64 */
 
-#if defined _M_ALPHA
-#define FNAME_PRE_UNDERSCORE
-#endif
-
 #if defined UNIX386
 #ifdef H4_ABSOFT
 #define FNAME(x) x
@@ -667,257 +369,6 @@ typedef int               hdf_pint_t;   /* 4-byte pointer */
 
 #endif /* INTEL86 */
 #endif /* !(defined(__APPLE__)) */
-
-/*-----------------------------------------------------*/
-#if defined(NEXT) || defined(NeXT)
-
-#ifndef NEXT
-#define NEXT
-#endif
-
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE
-
-#define isascii(c)  (isprint(c) || iscntrl(c))
-#ifndef __GNUC__
-#include <memory.h>
-#endif /* __GNUC__ */
-#include <sys/file.h>               /* for unbuffered i/o stuff */
-#include <sys/stat.h>
-#define DF_MT             DFMT_NEXT
-typedef void              VOID;
-typedef void              *VOIDP;
-typedef char              *_fcd;
-typedef char              char8;
-typedef unsigned char     uchar8;
-typedef char              int8;
-typedef unsigned char     uint8;
-typedef short int         int16;
-typedef unsigned short int uint16;
-typedef long int          int32;
-typedef unsigned long int uint32;
-typedef int               intn;
-typedef unsigned int      uintn;
-typedef int               intf;     /* size of INTEGERs in Fortran compiler */
-typedef float             float32;
-typedef double            float64;
-typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
-#define FNAME_POST_UNDERSCORE
-#define _fcdtocp(desc) (desc)
-#define FILELIB UNIXBUFIO
-
-/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
-
-/* Determine the memory manager we are going to use. Valid values are: */
-/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
-/*  what each does */
-#define JMEMSYS         MEM_ANSI
-
-#define HAVE_STDC
-#define INCLUDES_ARE_ANSI
-
-#endif /* NEXT */
-
-/*-----------------------------------------------------*/
-#if defined(MOTOROLA) || defined(m88k)
-
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE
-
-#ifndef __GNUC__
-#include <memory.h>
-#endif /* __GNUC__ */
-#include <unistd.h>
-#include <sys/file.h>               /* for unbuffered i/o stuff */
-#include <sys/stat.h>
-#ifndef O_RDONLY
-#include <fcntl.h>              /* for unbuffered i/o stuff */
-#endif /*O_RDONLY*/
-#define DF_MT             DFMT_MOTOROLA
-typedef void              VOID;
-typedef void              *VOIDP;
-typedef char              *_fcd;
-typedef char              char8;
-typedef unsigned char     uchar8;
-typedef char              int8;
-typedef unsigned char     uint8;
-typedef short int         int16;
-typedef unsigned short int uint16;
-typedef long int          int32;
-typedef unsigned long int uint32;
-typedef int               intn;
-typedef unsigned int      uintn;
-typedef int               intf;     /* size of INTEGERs in Fortran compiler */
-typedef float             float32;
-typedef double            float64;
-typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
-#define FNAME_POST_UNDERSCORE
-#define _fcdtocp(desc) (desc)
-#define FILELIB UNIXBUFIO
-
-/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
-
-/* Determine the memory manager we are going to use. Valid values are: */
-/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
-/*  what each does */
-#define JMEMSYS         MEM_ANSI
-
-#endif /* MOTOROLA */
-
-/*-----------------------------------------------------*/
-#if defined DEC_ALPHA || (defined __alpha && defined __unix__)
-
-#ifndef DEC_ALPHA
-#define DEC_ALPHA
-#endif
-
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE
-
-#include <sys/file.h>               /* for unbuffered i/o stuff */
-#include <sys/stat.h>
-#define DF_MT             DFMT_ALPHA
-typedef void              VOID;
-typedef void              *VOIDP;
-typedef char              *_fcd;
-typedef char              char8;
-typedef unsigned char     uchar8;
-typedef char              int8;
-typedef unsigned char     uint8;
-typedef short int         int16;
-typedef unsigned short int uint16;
-#ifndef __rpc_types_h
-typedef int               int32;
-typedef unsigned int      uint32;
-#endif /* __rpc_types_h */
-typedef int               intn;
-typedef unsigned int      uintn;
-typedef int               intf;     /* size of INTEGERs in Fortran compiler */
-typedef float             float32;
-typedef double            float64;
-typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
-#define FNAME_POST_UNDERSCORE
-#define _fcdtocp(desc) (desc)
-#define FILELIB UNIXBUFIO
-
-/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
-
-/* Determine the memory manager we are going to use. Valid values are: */
-/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
-/*  what each does */
-#define JMEMSYS         MEM_ANSI
-
-#ifdef __GNUC__
-#define HAVE_STDC
-#define INCLUDES_ARE_ANSI
-#endif
-
-#endif /* DEC_ALPHA */
-
-/*-----------------------------------------------------*/
-#if defined VP | defined __uxpm__
-
-#ifndef VP
-#define VP
-#endif
-
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE 1
-
-#include <memory.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#define DF_MT              DFMT_VP
-typedef void                VOID;
-typedef void               *VOIDP;
-typedef char               *_fcd;
-typedef char               char8;
-typedef unsigned char      uchar8;
-typedef char               int8;
-typedef unsigned char      uint8;
-typedef short int          int16;
-typedef unsigned short int uint16;
-typedef long int           int32;
-typedef unsigned long int  uint32;
-typedef int                intn;
-typedef unsigned int       uintn;
-typedef int                intf;     /* size of INTEGERs in Fortran compiler */
-typedef float              float32;
-typedef double             float64;
-typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
-#define FNAME_POST_UNDERSCORE
-#define _fcdtocp(desc) (desc)
-#define FILELIB UNIXBUFIO
-
-/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
-
-/* Determine the memory manager we are going to use. Valid values are: */
-/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
-/*  what each does */
-#define JMEMSYS         MEM_ANSI
-
-#endif /* VP */
-
-/*-----------------------------------------------------*/
-#if defined I860 | defined i860
-
-#ifndef I860
-#define I860
-#endif
-
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE 1
-
-#include <sys/types.h>
-#include <sys/file.h>           /* for unbuffered i/o stuff */
-#include <sys/stat.h>
-#include <unistd.h>             /* mis-using def. for SEEK_SET, but oh well */
-#define DF_MT   DFMT_I860
-typedef void            VOID;
-typedef void            *VOIDP;
-typedef char            *_fcd;
-typedef char            char8;
-typedef unsigned char   uchar8;
-typedef char            int8;
-typedef unsigned char   uint8;
-typedef short           int16;
-typedef unsigned short  uint16;
-typedef int             int32;
-typedef unsigned int    uint32;
-typedef int             intn;
-typedef unsigned int    uintn;
-typedef float           float32;
-typedef double          float64;
-typedef int             intf;     /* size of INTEGERs in Fortran compiler */
-typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
-#define _fcdtocp(desc) (desc)
-#define FNAME_POST_UNDERSCORE
-#define FILELIB UNIXBUFIO
-
-/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
-
-/* Determine the memory manager we are going to use. Valid values are: */
-/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
-/*  what each does */
-#define JMEMSYS         MEM_ANSI
-
-#endif /* I860 */
-
 
 /*-----------------------------------------------------*/
 /* Power PC 5 64 */
@@ -967,8 +418,9 @@ typedef long              hdf_pint_t;   /* an integer the same size as a pointer
 #define INCLUDES_ARE_ANSI
 #endif
 
-/*-----------------------------------------------------*/
 #endif /*power PC 5 64 */
+
+/*-----------------------------------------------------*/
 /* Linux 64 */
 #if (defined(__linux__) && defined __x86_64__  && !(defined  SUN)) || defined(__CYGWIN__)  /* i.e. 64-bit Linux  but not SunOS on Intel */
                                                                                            /* it should work also for Cygwin 32 & 64 bit */
@@ -1064,55 +516,6 @@ typedef long              hdf_pint_t;   /* an integer the same size as a pointer
 #endif
 
 #endif /*64-bit FreeBSD */
-
-/*-----------------------------------------------------*/
-
-/* IA64 running Linux */
-#if defined __ia64 && !(defined(hpux) || defined(__hpux))
-
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE
-
-#include <sys/file.h>               /* for unbuffered i/o stuff */
-#include <sys/stat.h>
-#define DF_MT             DFMT_IA64
-typedef void              VOID;
-typedef void              *VOIDP;
-typedef char              *_fcd;
-typedef char              char8;
-typedef unsigned char     uchar8;
-typedef char              int8;
-typedef unsigned char     uint8;
-typedef short int         int16;
-typedef unsigned short int uint16;
-typedef int               int32;
-typedef unsigned int      uint32;
-typedef int               intn;
-typedef unsigned int      uintn;
-typedef int               intf;     /* size of INTEGERs in Fortran compiler */
-typedef float             float32;
-typedef double            float64;
-typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
-#define FNAME_POST_UNDERSCORE
-#define _fcdtocp(desc) (desc)
-#define FILELIB UNIXBUFIO
-
-/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
-
-/* Determine the memory manager we are going to use. Valid values are: */
-/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
-/*  what each does */
-#define JMEMSYS         MEM_ANSI
-
-#ifdef __GNUC__
-#define HAVE_STDC
-#define INCLUDES_ARE_ANSI
-#endif
-
-#endif /* IA64 */
 
 #ifndef GOT_MACHINE
 No machine type has been defined.  Your Makefile needs to have someing like
@@ -1244,12 +647,6 @@ correctly.
 #else
 #define CONSTR(v,s) static const char v[]=s
 #endif
-
-/* Old-style memory allocation function aliases -QAK */
-#define HDgetspace HDmalloc
-#define HDclearspace HDcalloc
-#define HDregetspace HDrealloc
-#define HDfreespace HDfree
 
 /**************************************************************************
 *  Allocation functions defined differently

@@ -78,8 +78,7 @@ typedef struct {
 
 
 static void
-free_biobuf(abuf)
-biobuf *abuf;
+free_biobuf(biobuf *abuf)
 {
     if(abuf != NULL)
     HDfree((VOIDP)abuf) ;
@@ -87,9 +86,7 @@ biobuf *abuf;
 
 
 static biobuf *
-new_biobuf(fd, fmode)
-int fd;
-int fmode;
+new_biobuf(int fd, int fmode)
 {
     biobuf *biop ;
 
@@ -113,8 +110,7 @@ int fmode;
 
 
 static int
-rdbuf(biop)
-biobuf *biop;
+rdbuf(biobuf *biop)
 {
     memset(biop->base, 0, ((size_t)(BIOBUFSIZ))) ;
 
@@ -138,8 +134,7 @@ biobuf *biop;
 
 
 static int
-wrbuf(biop)
-biobuf *biop;
+wrbuf(biobuf *biop)
 {
 
     if(!((biop->mode & O_WRONLY) || (biop->mode & O_RDWR))
@@ -163,8 +158,7 @@ biobuf *biop;
 }
 
 static int
-nextbuf(biop)
-biobuf *biop;
+nextbuf(biobuf *biop)
 {
     if(biop->isdirty)
     {
@@ -189,10 +183,7 @@ biobuf *biop;
 #define BREM(p) (BIOBUFSIZ - CNT(p))
 
 static int
-bioread(biop, ptr, nbytes)
-biobuf *biop;
-unsigned char *ptr;
-int nbytes;
+bioread(biobuf *biop, unsigned char *ptr, int nbytes)
 {
     int ngot = 0 ;
     size_t rem ;
@@ -221,10 +212,7 @@ int nbytes;
 
 
 static int
-biowrite(biop, ptr, nbytes)
-biobuf *biop;
-unsigned char *ptr;
-int nbytes;
+biowrite(biobuf *biop, unsigned char *ptr, int nbytes)
 {
     size_t rem ;
     int nwrote = 0 ;
@@ -261,7 +249,7 @@ int nbytes;
 
 static bool_t   xdrposix_getlong();
 static bool_t   xdrposix_putlong();
-#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__
+#if (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__
 static bool_t   xdrposix_getint();
 static bool_t   xdrposix_putint();
 #endif
@@ -269,9 +257,6 @@ static bool_t   xdrposix_getbytes();
 static bool_t   xdrposix_putbytes();
 static ncpos_t  xdrposix_getpos();
 static bool_t   xdrposix_setpos();
-#if (_MIPS_SZLONG == 64)
-static long *    xdrposix_inline();
-#else
 #if (defined __sun && defined _LP64)
 static rpc_inline_t *    xdrposix_inline();
 #else
@@ -279,7 +264,6 @@ static rpc_inline_t *    xdrposix_inline();
 static int32_t *    xdrposix_inline();
 #else
 static netlong *    xdrposix_inline();
-#endif
 #endif
 #endif
 static void xdrposix_destroy();
@@ -290,12 +274,6 @@ static void xdrposix_destroy();
 static struct xdr_ops   xdrposix_ops = {
     xdrposix_getlong,   /* deserialize a 32-bit int */
     xdrposix_putlong,   /* serialize a 32-bit int */
-#if (_MIPS_SZLONG == 64)
-    /* IRIX64 has 64 bits long and 32 bits int. */
-    /* It defines two extra entries for get/put int. */
-    xdrposix_getint,   /* deserialize a 32-bit int */
-    xdrposix_putint,   /* serialize a 32-bit int */
-#endif
     xdrposix_getbytes,  /* deserialize counted bytes */
     xdrposix_putbytes,  /* serialize counted bytes */
     xdrposix_getpos,    /* get offset in the stream */
@@ -328,9 +306,7 @@ static struct xdr_ops   xdrposix_ops = {
  * Fake an XDR initialization for HDF files
  */
 void
-hdf_xdrfile_create(xdrs, ncop)
-     XDR *xdrs;
-     int ncop;
+hdf_xdrfile_create(XDR *xdrs, int ncop)
 {
     biobuf *biop = new_biobuf(-1, 0) ;
 
@@ -351,13 +327,8 @@ hdf_xdrfile_create(xdrs, ncop)
  * Operation flag is set to op.
  */
 static int
-xdrposix_create(xdrs, fd, fmode, op)
-    XDR *xdrs;
-    int fd;
-    int fmode;
-    enum xdr_op op;
+xdrposix_create(XDR *xdrs, int fd, int fmode, enum xdr_op op)
 {
-
     biobuf *biop = new_biobuf(fd, fmode) ;
    /* fprintf(stderr, "xdrposix_create: biop = %p\n", biop);
  */
@@ -390,8 +361,7 @@ fprintf(stderr,"xdrposix_create(): before rdbuf()\n");
  * "sync" a posix xdr stream.
  */
 static int
-xdrposix_sync(xdrs)
-    XDR *xdrs;
+xdrposix_sync(XDR *xdrs)
 {
     biobuf *biop = (biobuf *)xdrs->x_private ;
     if(biop->isdirty)
@@ -416,8 +386,7 @@ xdrposix_sync(xdrs)
  * Cleans up the xdr stream handle xdrs previously set up by xdrposix_create.
  */
 static void
-xdrposix_destroy(xdrs)
-    XDR *xdrs;
+xdrposix_destroy(XDR *xdrs)
 {
     /* flush */
     biobuf *biop = (biobuf *)xdrs->x_private ;
@@ -436,9 +405,7 @@ xdrposix_destroy(xdrs)
 }
 
 static bool_t
-xdrposix_getlong(xdrs, lp)
-    XDR *xdrs;
-    long *lp;
+xdrposix_getlong(XDR *xdrs, long *lp)
 {
     unsigned char *up = (unsigned char *)lp ;
 #if (defined AIX5L64 || defined __powerpc64__ || (defined __hpux && __LP64__))
@@ -454,9 +421,7 @@ xdrposix_getlong(xdrs, lp)
 }
 
 static bool_t
-xdrposix_putlong(xdrs, lp)
-    XDR *xdrs;
-    long *lp;
+xdrposix_putlong(XDR *xdrs, long *lp)
 {
 
     unsigned char *up = (unsigned char *)lp ;
@@ -473,34 +438,24 @@ xdrposix_putlong(xdrs, lp)
     return (TRUE);
 }
 
-static bool_t
-xdrposix_getbytes(xdrs, addr, len)
-    XDR *xdrs;
-    caddr_t addr;
 #if (defined __hpux)
-    int len;
+static bool_t xdrposix_getbytes(XDR *xdrs, caddr_t addr, int len)
 #else
-    u_int len;
+static bool_t xdrposix_getbytes(XDR *xdrs, caddr_t addr, u_int len)
 #endif
 {
-
     if ((len != 0)
             && (bioread((biobuf *)xdrs->x_private, (unsigned char *)addr, (int)len) != len))
         return (FALSE);
     return (TRUE);
 }
 
-static bool_t
-xdrposix_putbytes(xdrs, addr, len)
-    XDR *xdrs;
-    caddr_t addr;
 #if (defined __hpux)
-    int len;
+static bool_t xdrposix_putbytes(XDR *xdrs, caddr_t addr, int len)
 #else
-    u_int len;
+static bool_t xdrposix_putbytes(XDR *xdrs, caddr_t addr, u_int len)
 #endif
 {
-
     if ((len != 0)
             && (biowrite((biobuf *)xdrs->x_private, (unsigned char *)addr, (int)len) != len))
         return (FALSE);
@@ -508,18 +463,14 @@ xdrposix_putbytes(xdrs, addr, len)
 }
 
 static ncpos_t
-xdrposix_getpos(xdrs)
-    XDR *xdrs;
+xdrposix_getpos(XDR *xdrs)
 {
-
     biobuf *biop = (biobuf *)xdrs->x_private ;
     return (BIOBUFSIZ * biop->page + CNT(biop));
 }
 
 static bool_t
-xdrposix_setpos(xdrs, pos)
-    XDR *xdrs;
-    ncpos_t pos;
+xdrposix_setpos(XDR *xdrs, ncpos_t pos)
 {
     biobuf *biop = (biobuf *)xdrs->x_private ;
     if(biop != NULL)
@@ -552,10 +503,6 @@ xdrposix_setpos(xdrs, pos)
         return FALSE;
 }
 
-/*ARGSUSED*/
-#if (_MIPS_SZLONG == 64)
-static long *
-#else
 #if (defined __sun && defined _LP64)
 static rpc_inline_t *
 #else
@@ -565,12 +512,8 @@ static int32_t *
 static netlong *
 #endif
 #endif
-#endif
-xdrposix_inline(xdrs, len)
-    XDR *xdrs;
-    u_int len;
+xdrposix_inline(XDR *xdrs, u_int len)
 {
-
     /*
      * Must do some work to implement this: must insure
      * enough data in the underlying posix buffer,
@@ -580,12 +523,10 @@ xdrposix_inline(xdrs, len)
     return (NULL);
 }
 
-#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64  || defined __x86_64__ || defined __powerpc64__
+#if (defined __sun && defined _LP64) || defined AIX5L64  || defined __x86_64__ || defined __powerpc64__
 
 static bool_t
-xdrposix_getint(xdrs, lp)
-    XDR *xdrs;
-    int *lp;
+xdrposix_getint(XDR *xdrs, int *lp)
 {
     unsigned char *up = (unsigned char *)lp ;
     if(bioread((biobuf *)xdrs->x_private, up, 4) < 4)
@@ -597,11 +538,8 @@ xdrposix_getint(xdrs, lp)
 }
 
 static bool_t
-xdrposix_putint(xdrs, lp)
-    XDR *xdrs;
-    int *lp;
+xdrposix_putint(XDR *xdrs, int *lp)
 {
-
     unsigned char *up = (unsigned char *)lp ;
 #ifndef H4_WORDS_BIGENDIAN
     netlong mycopy = htonl(*lp);
@@ -614,17 +552,13 @@ xdrposix_putint(xdrs, lp)
 #endif /* end of xdrposix_put(get)int */
 
 int
-NCxdrfile_sync(xdrs)
-XDR *xdrs ;
+NCxdrfile_sync(XDR *xdrs)
 {
     return xdrposix_sync(xdrs) ;
 }
 
 int
-NCxdrfile_create(xdrs, path, ncmode)
-XDR *xdrs ;
-const char *path ;
-int ncmode ;
+NCxdrfile_create(XDR *xdrs, const char *path, int ncmode)
 {
     int fmode ;
     int  fd ;

@@ -414,7 +414,7 @@ hdf_get_sdc(NC *handle, uint16 tmpRef, NC_attr **tmp_attr, intn *curr_attr)
 
     if (Hgetelement(handle->hdf_file, DFTAG_SDC, tmpRef, coordbuf) == FAIL)
     {
-        HDfreespace((VOIDP)coordbuf);
+        HDfree((VOIDP)coordbuf);
         HGOTO_ERROR(DFE_GETELEM, DFE_GETELEM);
     }
 
@@ -433,12 +433,12 @@ hdf_get_sdc(NC *handle, uint16 tmpRef, NC_attr **tmp_attr, intn *curr_attr)
             (*curr_attr)++;
         }
     }
-    HDfreespace((VOIDP)coordbuf);
+    HDfree((VOIDP)coordbuf);
 done:
     if (ret_value != DFE_NONE)
       { /* Failure cleanup */
         if (coordbuf != NULL)
-            HDfreespace((VOIDP)coordbuf);
+            HDfree((VOIDP)coordbuf);
       }
     /* Normal cleanup */
 

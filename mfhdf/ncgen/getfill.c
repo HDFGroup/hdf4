@@ -12,9 +12,7 @@
  * that type.
  */
 void
-nc_getfill(type, gval)
-     nc_type type;
-     union generic *gval;
+nc_getfill(nc_type type, union generic *gval)
 {
     switch(type) {
       case NC_CHAR:
@@ -40,12 +38,12 @@ nc_getfill(type, gval)
     }
 }
 
+/* type     - netcdf type code  */
+/* num      - number of values to fill */
+/* datap    - where to start filling */
+/* fill_val - value to use */
 void
-nc_fill(type, num, datp, fill_val)
-     nc_type type;			/* netcdf type code  */
-     long num;			/* number of values to fill */
-     void *datp;		/* where to start filling */
-     union generic fill_val;	/* value to use */
+nc_fill(nc_type type, long num, void *datp, union generic fill_val)
 {
     char *char_valp=NULL;		/* pointers used to accumulate data values */
     short *short_valp=NULL;
@@ -101,11 +99,10 @@ nc_fill(type, num, datp, fill_val)
 /*
  * Given netCDF type, put a value of that type into a fill_value
  */
+/* val  - value of type to be put */
+/* gval - where the value is to be put */
 void
-nc_putfill(type, val, gval)
-     nc_type type;
-     void *val;			/* value of type to be put */
-     union generic *gval;	/* where the value is to be put */
+nc_putfill(nc_type type, void *val, union generic *gval)
 {
     switch(type) {
       case NC_CHAR:

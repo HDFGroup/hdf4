@@ -60,10 +60,7 @@ static const long *NCvcmaxcontig(NC *, NC_var *, const long *, const long *);
 /*
  * Print the values of an array of longs
  */
-int arrayp(label, count, array)
-const char *label ;
-unsigned count ;
-const long array[] ;
+int arrayp(const char *label, unsigned count, const long array[])
 {
     fprintf(stderr, "%s", label) ;
     fputc('\t',stderr) ;
@@ -78,23 +75,20 @@ const long array[] ;
 /*
  * Check if an ncxxx function has called the current function
  */
-static bool_t nc_API(caller)
-const char *caller;
+static bool_t nc_API(const char *caller)
 {
     char *nc_api=NULL;
     nc_api = strstr(caller, "nc");
     if (nc_api == caller)
         return TRUE;
+    return FALSE;
 }
 
 /*
  * At the current position, add a record containing the fill values.
  */
 static bool_t
-NCfillrecord(xdrs, vpp, numvars)
-XDR *xdrs ;
-NC_var **vpp ;
-unsigned numvars ;
+NCfillrecord(XDR *xdrs, NC_var **vpp, unsigned numvars)
 {
     unsigned ii ;
 
@@ -127,10 +121,7 @@ unsigned numvars ;
  * -BMR, 12/09/2008
  */
 bool_t
-NCcoordck(handle, vp, coords)
-NC *handle ;
-NC_var *vp ;
-const long *coords ;
+NCcoordck(NC *handle, NC_var *vp, const long *coords)
 {
     const long *ip ;
     unsigned long *up ;
@@ -367,10 +358,7 @@ bad:
  * Translate the (variable, coords) pair into a seek index
  */
 static u_long
-NC_varoffset(handle, vp, coords)
-NC *handle ;
-NC_var *vp ;
-const long *coords ;
+NC_varoffset(NC *handle, NC_var *vp, const long *coords)
 {
     u_long offset ;
     const long *ip  ;
@@ -465,11 +453,7 @@ const long *coords ;
  * (minimum unit of io is 4 bytes)
  */
 static bool_t
-xdr_NCvbyte(xdrs, rem, count, values)
-XDR *xdrs ;
-unsigned rem ;
-unsigned count ;
-char *values ;
+xdr_NCvbyte(XDR *xdrs, unsigned rem, unsigned count, char *values)
 {
     char buf[4] ;
     u_long origin=0 ;
@@ -555,10 +539,7 @@ char *values ;
  * (minimum unit of io is 4 bytes)
  */
 bool_t
-xdr_NCvshort(xdrs, which, values)
-XDR *xdrs ;
-unsigned which ;
-short *values ;
+xdr_NCvshort(XDR *xdrs, unsigned which, short *values)
 {
     unsigned char buf[4] ; /* unsigned is important here */
     u_long origin=0;
@@ -632,11 +613,7 @@ short *values ;
  * xdr a single datum of type 'type' at 'where'
  */
 static bool_t
-xdr_NCv1data(xdrs, where, type, values)
-XDR *xdrs ;
-u_long where ;
-nc_type type ;
-Void *values ;
+xdr_NCv1data(XDR *xdrs, u_long where, nc_type type, Void *values)
 {
     u_long rem=0 ;
 
@@ -661,7 +638,7 @@ Void *values ;
     case NC_SHORT :
         return( xdr_NCvshort(xdrs, (unsigned)rem/2, (short *)values) ) ;
     case NC_LONG :
-#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__ 
+#if (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__
         return( xdr_int(xdrs, (nclong *)values) ) ;
 #else
         return( xdr_long(xdrs, (nclong *)values) ) ;
@@ -788,9 +765,7 @@ done:
  *
  */
 intn
-hdf_get_data(handle, vp)
-NC *handle;
-NC_var *vp;
+hdf_get_data(NC *handle, NC_var *vp)
 {
     int32     vg = FAIL;
     int32     vsid = DFREF_NONE;
@@ -1008,9 +983,7 @@ done:
 
 */
 int32
-hdf_get_vp_aid(handle, vp)
-NC        * handle;
-NC_var    * vp;
+hdf_get_vp_aid(NC *handle, NC_var *vp)
 {
     int32 ret_value = SUCCEED;
 
@@ -1686,12 +1659,7 @@ done:
  * Return TRUE if everything worked, else FALSE
  */
 static intn
-hdf_xdr_NCv1data(handle, vp, where, type, values)
-NC      * handle;
-NC_var  * vp;
-u_long    where;
-nc_type   type;
-void *values;
+hdf_xdr_NCv1data(NC *handle, NC_var *vp, u_long where, nc_type type, void *values)
 {
 
     intn ret_value = SUCCEED;
@@ -1769,11 +1737,7 @@ nssdc_xdr_NCvdata(NC *handle,
 
 
 static
-int NCvar1io(handle, varid, coords, value)
-NC *handle ;
-int varid ;
-const long *coords ;
-Void *value ;
+int NCvar1io(NC *handle, int varid, const long *coords, Void *value)
 {
     NC_var *vp ;
     u_long offset ;
@@ -1841,11 +1805,7 @@ Void *value ;
 }
 
 
-int ncvarput1(cdfid, varid, coords, value)
-int cdfid ;
-int varid ;
-const long *coords ;
-const ncvoid *value ;
+int ncvarput1(int cdfid, int varid, const long *coords, const ncvoid *value)
 {
     NC *handle ;
 
@@ -1865,11 +1825,7 @@ const ncvoid *value ;
     return( NCvar1io(handle, varid, coords, value) ) ;
 }
 
-int ncvarget1(cdfid, varid, coords, value)
-int cdfid ;
-int varid ;
-const long *coords ;
-ncvoid *value ;
+int ncvarget1(int cdfid, int varid, const long *coords, ncvoid *value)
 {
     NC *handle ;
 
@@ -1889,12 +1845,7 @@ ncvoid *value ;
  * xdr 'count' items of contiguous data of type 'type' at 'where'
  */
 static bool_t
-xdr_NCvdata(xdrs, where, type, count, values)
-XDR *xdrs ;
-u_long where ;
-nc_type type ;
-unsigned count ;
-Void *values ;
+xdr_NCvdata(XDR *xdrs, u_long where, nc_type type, unsigned count, Void *values)
 {
     u_long rem = 0 ;
     bool_t (*xdr_NC_fnct)() ;
@@ -1987,11 +1938,7 @@ Void *values ;
  *  For a "hypercube" put/get, compute the largest contiguous block
  */
 static const long *
-NCvcmaxcontig(handle, vp, origin, edges)
-NC *handle ;
-NC_var *vp ;
-const long *origin ;
-const long *edges ;
+NCvcmaxcontig(NC *handle, NC_var *vp, const long *origin, const long *edges)
 {
     const long *edp, *orp ;
     unsigned long *boundary, *shp ;
@@ -2054,12 +2001,7 @@ const long *edges ;
 
 
 static
-int NCsimplerecio(handle, vp, start, edges, values)
-NC *handle ;
-NC_var *vp ;
-const long *start ;
-const long *edges ;
-Void *values ;
+int NCsimplerecio(NC *handle, NC_var *vp, const long *start, const long *edges, Void *values)
 {
     long offset ;
     long newrecs ;
@@ -2153,14 +2095,8 @@ Void *values ;
  * The following routine is not `static' because it is used by the `putgetg'
  * module for generalized hyperslab access.
  */
-int NCvario(handle, varid, start, edges, values)
-NC *handle ;
-int varid ;
-const long *start ;
-const long *edges ;
-void *values ;
+int NCvario(NC *handle, int varid, const long *start, const long *edges, void *values)
 {
-
     NC_var *vp ;
     const long *edp0, *edp ;
     unsigned long iocount ;
@@ -2384,12 +2320,7 @@ void *values ;
 }
 
 
-int ncvarput(cdfid, varid, start, edges, values)
-int cdfid ;
-int varid ;
-const long *start ;
-const long *edges ;
-ncvoid *values ;
+int ncvarput(int cdfid, int varid, const long *start, const long *edges, ncvoid *values)
 {
     NC *handle ;
 
@@ -2417,11 +2348,11 @@ ncvoid *values ;
  *  provided parameter 'edges'.
  *  -BMR, 2013/8/29
  */
-int NC_fill_buffer(handle, varid, edges, values)
-NC *handle;        /* file structure */
-int varid;        /* var number in handle->vars list */
-const long *edges;    /* size of the array's edges */
-void *values;        /* buffer to be filled */
+/* handle - file structure */
+/* varid - var number in handle->vars list */
+/* edges - size of the array's edges */
+/* values - buffer to be filled */
+int NC_fill_buffer(NC *handle, int varid, const long *edges, void *values)
 {
     NC_var *vp ;
     NC_attr **attr;
@@ -2466,12 +2397,7 @@ void *values;        /* buffer to be filled */
  *
  *  -BMR, 2013/8/29
  */
-int ncvarget(cdfid, varid, start, edges, values)
-int cdfid ;
-int varid ;
-const long *start ;
-const long *edges ;
-ncvoid *values ;
+int ncvarget(int cdfid, int varid, const long *start, const long *edges, ncvoid *values)
 {
     NC *handle;
     NC_var *vp;
@@ -2526,10 +2452,7 @@ ncvoid *values ;
  * Returns -1 on error.
  */
 static int
-NCnumrecvars(handle, vpp, recvarids)
-     NC *handle;
-     NC_var **vpp;
-    int *recvarids;
+NCnumrecvars(NC *handle, NC_var **vpp, int *recvarids)
 {
     NC_var **dp ;
     int ii ;
@@ -2555,8 +2478,7 @@ NCnumrecvars(handle, vpp, recvarids)
 
 
 static long
-NCelemsPerRec(vp)
-NC_var *vp ;
+NCelemsPerRec(NC_var *vp)
 {
     long nelems = 1 ;
     int jj ;
@@ -2572,11 +2494,7 @@ NC_var *vp ;
  * is null, the associated information is not returned.  Returns -1 on error.
  */
 int
-ncrecinq(cdfid, nrecvars, recvarids, recsizes)
-int cdfid ;
-int *nrecvars ;
-int *recvarids ;
-long *recsizes ;
+ncrecinq(int cdfid, int *nrecvars, int *recvarids, long *recsizes)
 {
     NC *handle ;
     int nrvars ;
@@ -2608,10 +2526,7 @@ long *recsizes ;
 
 
 static int
-NCrecio(handle, recnum, datap)
-NC *handle ;
-long recnum ;
-Void **datap ;
+NCrecio(NC *handle, long recnum, Void **datap)
 {
     int nrvars ;
     NC_var *rvp[H4_MAX_NC_VARS] ;
@@ -2675,10 +2590,7 @@ Void **datap ;
  * the address of the data to be written is null.  Return -1 on error.
  */
 int
-ncrecput(cdfid, recnum, datap)
-int cdfid ;
-long recnum ;
-ncvoid * *datap ;
+ncrecput(int cdfid, long recnum, ncvoid **datap)
 {
     NC *handle ;
     long unfilled ;
@@ -2737,10 +2649,7 @@ ncvoid * *datap ;
  * the address of the data to be read is null.  Return -1 on error;
  */
 int
-ncrecget(cdfid, recnum, datap)
-int cdfid ;
-long recnum ;
-ncvoid **datap ;
+ncrecget(int cdfid, long recnum, ncvoid **datap)
 {
     NC *handle ;
 

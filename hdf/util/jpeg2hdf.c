@@ -12,11 +12,9 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "hdf.h"
-#ifndef I860
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#endif /* I860 */
 
 /* Size of the file buffer to copy through */
 #define MAX_FILE_BUF    16384

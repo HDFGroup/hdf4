@@ -45,8 +45,7 @@ usage()
  * last component of path and stripping off any extension.
  */
 static char *
-name_path(path)
-     char *path;
+name_path(char *path)
 {
     char *cp, *new;
 
@@ -73,8 +72,7 @@ name_path(path)
 }
 
 static const char *
-type_name(type)
-     nc_type type;
+type_name(nc_type type)
 {
     switch (type) {
       case NC_BYTE:
@@ -100,9 +98,9 @@ type_name(type)
  * point from ss, a string representation of a floating-point number that
  * might include an exponent part.
  */
+/* ss - returned string representing dd */
 static void
-tztrim(ss)
-     char *ss;			/* returned string representing dd */
+tztrim(char *ss)
 {
     char *cp, *ep;
 
@@ -130,10 +128,7 @@ tztrim(ss)
  * explicit type tags, because their types are not declared.
  */
 static void
-pr_att_vals(type, len, vals)
-     nc_type type;
-     int len;
-     void *vals;
+pr_att_vals(nc_type type, int len, void *vals)
 {
     int iel;
     union {
@@ -558,9 +553,7 @@ do_ncdump(char *path, struct fspec* specp)
 }
 
 static void
-make_lvars(optarg, fspecp)
-     char *optarg;
-     struct fspec* fspecp;
+make_lvars(char *optarg, struct fspec *fspecp)
 {
     char *cp = optarg;
     int nvars = 1;
@@ -601,8 +594,7 @@ make_lvars(optarg, fspecp)
  * command-line and update the default data formats appropriately.
  */
 static void
-set_sigdigs(optarg)
-     char *optarg;
+set_sigdigs(char *optarg)
 {
     char *ptr = optarg;
     char *ptr2 = 0;
@@ -633,9 +625,7 @@ set_sigdigs(optarg)
 
 
 int
-main(argc, argv)
-int argc;
-char *argv[];
+main(int argc, char *argv[])
 {
     extern int optind;
     extern int opterr;

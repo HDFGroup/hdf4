@@ -15,9 +15,7 @@
 #include <stdio.h>
 #include "mfhdf.h"
 #include "hdp.h"
-#ifndef MIPSEL
 #include <math.h>
-#endif /* MIPSEL */
 
 #define IMAGE 1
 

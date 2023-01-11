@@ -34,9 +34,9 @@
  *    try with undefined name, check error
  *    try with bad handle, check error
  */
+/* pathname of writable netcdf file to open */
 void
-test_ncvarid(path)
-     char *path;		/* name of writable netcdf file to open */
+test_ncvarid(char *path)
 {
     int nerrs = 0;
     static char pname[] = "test_ncvarid";
@@ -110,9 +110,9 @@ test_ncvarid(path)
  *    try with bad variable handle, check error
  *    try with bad netCDF handle, check error
  */
+/* path - name of writable netcdf file to open */
 void
-test_ncvarinq(path)
-     char *path;		/* name of writable netcdf file to open */
+test_ncvarinq(char *path)
 {
     int nerrs = 0;
     static char pname[] = "test_ncvarinq";
@@ -253,9 +253,9 @@ struct cdfelm {			/* coordinates and generic value */
  *    for each existing variable, put values of its type at each point
  *    get values and compare with put values
  */
+/* cdfid - handle of netcdf open and in data mode */
 static int
-test_varputget1(cdfid)
-     int cdfid;			/* handle of netcdf open and in data mode */
+test_varputget1(int cdfid)
 {
     int nerrs = 0;
     static char pname[] = "test_varputget1";
@@ -383,9 +383,9 @@ test_varputget1(cdfid)
  *    try in define mode, check error
  *    try with bad netCDF handle, check error
  */
+/* path - name of writable netcdf file to open */
 void
-test_ncvarput1(path)
-     char *path;		/* name of writable netcdf file to open */
+test_ncvarput1(char *path)
 {
     int nerrs = 0;
     static char pname[] = "test_ncvarput1";
@@ -469,9 +469,9 @@ test_ncvarput1(path)
  *    try in define mode, check error
  *    try with bad netCDF handle, check error
  */
+/* path - name of writable netcdf file to open */
 void
-test_ncvarget1(path)
-     char *path;		/* name of writable netcdf file to open */
+test_ncvarget1(char *path)
 {
     int nerrs = 0;
     static char pname[] = "test_ncvarget1";
@@ -555,9 +555,9 @@ test_ncvarget1(path)
  *    try with bad variable handle, check error
  *    try renaming to existing variable name, check error
  */
+/* path - name of writable netcdf file to open */
 void
-test_ncvarrename(path)
-     char *path;		/* name of writable netcdf file to open */
+test_ncvarrename(char *path)
 {
     int nerrs = 0;
     static char pname[] = "test_ncvarrename";

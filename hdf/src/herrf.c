@@ -55,16 +55,7 @@ nheprnt(intf * print_levels)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-
-#ifdef PROTOTYPE
 nheprntc(_fcd filename, intf * print_levels, intf *namelen)
-#else
-nheprntc(filename, print_levels, namelen)
-           _fcd  filename;
-           intf *print_levels;
-           intf  *namelen;
-#endif /* PROTOTYPE */
-
 {
     FILE *err_file;
     char * c_name;
@@ -92,18 +83,9 @@ nheprntc(filename, print_levels, namelen)
  * Outputs: error_message - error message assocoated with the error code
  * Returns: SUCCEED (0) if successful and FAIL(-1) otherwise
  *----------------------------------------------------------------------------*/
-
-
- FRETVAL(intf)
-#ifdef PROTOTYPE
+FRETVAL(intf)
 nhestringc(intf *error_code,
             _fcd error_message, intf *len)
-#else
-nhestringc(error_code, error_message, len)
-           intf *error_code;
-           _fcd  error_message;
-           intf  *len;
-#endif /* PROTOTYPE */
 {
    char *cstring = NULL;
    intn   status;

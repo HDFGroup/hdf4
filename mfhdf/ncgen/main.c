@@ -41,9 +41,7 @@ void usage()
 }
 
 int
-main(argc, argv)
-int argc;
-char *argv[];
+main(int argc, char *argv[])
 {
     extern int optind;
     extern int opterr;

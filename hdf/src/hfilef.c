@@ -153,19 +153,8 @@ nhddontatexit(void)
  *          string  - version number text string
  * Returns: SUCCEED (0) if successful and FAIL(-1) otherwise
  *----------------------------------------------------------------------------*/
-
-
- FRETVAL(intf)
-#ifdef PROTOTYPE
+FRETVAL(intf)
 nhglibverc(intf *major_v, intf *minor_v, intf *release, _fcd string, intf *len)
-#else
-nhglibverc(major_v, minor_v, release, string, len)
-           intf *major_v;
-           intf *minor_v;
-           intf *release;
-           _fcd  string;
-           intf  *len;
-#endif /* PROTOTYPE */
 {
    char *cstring;
    uint32 cmajor_v;
@@ -198,21 +187,9 @@ nhglibverc(major_v, minor_v, release, string, len)
  *          string  - version number text string
  * Returns: SUCCEED (0) if successful and FAIL(-1) otherwise
  *----------------------------------------------------------------------------*/
-
-
- FRETVAL(intf)
-#ifdef PROTOTYPE
+FRETVAL(intf)
 nhgfilverc(intf *file_id, intf *major_v, intf *minor_v, intf *release,
             _fcd string, intf *len)
-#else
-nhgfilverc(file_id, major_v, minor_v, release, string, len)
-           intf *file_id;
-           intf *major_v;
-           intf *minor_v;
-           intf *release;
-           _fcd  string;
-           intf  *len;
-#endif /* PROTOTYPE */
 {
    char *cstring;
    uint32 cmajor_v;

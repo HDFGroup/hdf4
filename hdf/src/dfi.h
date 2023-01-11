@@ -44,29 +44,6 @@
 /*                      Machine dependencies                                */
 /*--------------------------------------------------------------------------*/
 
-#ifdef IRIX
-#undef DF_STRUCTOK
-#include <sys/types.h>
-#include <sys/file.h>   /* for unbuffered i/o stuff */
-#ifndef DFmovmem
-#define DFmovmem(from, to, len) bcopy(from, to, len)
-#endif /* DFmovmem */
-#ifndef DF_STRUCTOK
-#define UINT16READ(p, x)    { x = ((*p++) & 255)<<8; x |= (*p++) & 255; }
-#define INT16READ(p, x)     { x = (*p++)<<8; x |= (*p++) & 255; }
-#define INT32READ(p, x)     { x = (*p++)<<24; x|=((*p++) & 255)<<16;    \
-                                x|=((*p++) & 255)<<8; x|=(*p++) & 255; }
-#define UINT16WRITE(p, x)   { *p++ = (x>>8) & 255; *p++ = x & 255; }
-#define INT16WRITE(p, x)    { *p++ = (x>>8) & 255; *p++ = x & 255; }
-#define INT32WRITE(p, x)    { *p++ = (x>>24) & 255; *p++ = (x>>16) & 255;   \
-                                *p++ = (x>>8) & 255; *p++ = x & 255; }
-#endif /*DF_STRUCTOK */
-#define DF_CREAT(name, prot) creat(name, prot)
-#ifndef DF_MT
-#define DF_MT   DFMT_IRIX
-#endif /* DF_MT  */
-#endif /*IRIX */
-
 #ifdef IBM6000  /* NOTE: IBM6000 defines are same as for SUN */
 #if ! defined mc68010 && ! defined mc68020 && ! defined mc68030
 #undef DF_STRUCTOK
@@ -87,10 +64,6 @@
 #define DF_MT   DFMT_IBM6000
 #endif /*IBM6000 */
 
-#ifdef APOLLO
-#if ! defined mc68010 && ! defined mc68020 && ! defined mc68030
-#undef DF_STRUCTOK
-#endif
 #include <sys/file.h>   /* for unbuffered i/o stuff */
 #define int8 char
 #define uint8 unsigned char

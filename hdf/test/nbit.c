@@ -912,15 +912,6 @@ test_nbit10(int32 fid)
 */
      test_out = (int16) ((outbuf[i] | NBIT_MASK10A) & NBIT_MASK10B);
           test_in = (int16) (inbuf[i] & NBIT_MASK10B);
-/* The following ifdef block fixes a compiler bug on the */
-/* HP9000, leave it in! -QAK */
-#ifdef HP9000
-          {
-              char       *t;
-              t = (char *) &test_out;
-              t = (char *) &test_in;
-          }
-#endif /* HP9000 */
 #ifndef TESTING
           if ((int16) test_in != (int16) test_out)
             {

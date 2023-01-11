@@ -15,9 +15,7 @@
 #include <stdio.h>
 #include "mfhdf.h"
 #include "hdp.h"
-#ifndef MIPSEL
 #include <math.h>
-#endif /* MIPSEL */
 
 #ifdef H4_HAVE_LIBSZ
 #include "szlib.h"

@@ -21,9 +21,7 @@
 
 
 NC_dim *
-NC_new_dim(name,size)
-const char *name ;
-long size ;
+NC_new_dim(const char *name, long size)
 {
     NC_dim *ret ;
 
@@ -56,8 +54,7 @@ alloc_err :
  *       If successful returns SUCCEED else FAIL -GV 9/19/97
  */
 int
-NC_free_dim(dim)
-NC_dim *dim ;
+NC_free_dim(NC_dim *dim)
 {
     int ret_value = SUCCEED;
 
@@ -91,10 +88,7 @@ done:
 }
 
 
-int ncdimdef(cdfid, name, size)
-int cdfid ;
-const char *name ;
-long size ;
+int ncdimdef(int cdfid, const char *name, long size)
 {
     NC *handle ;
     NC_dim *dim[1] ;
@@ -161,9 +155,7 @@ long size ;
     return(handle->dims->count -1) ;
 }
 
-int NC_dimid( handle, name)
-NC *handle;
-char *name;
+int NC_dimid(NC *handle, char *name)
 {
   unsigned ii;
   size_t len;
@@ -181,9 +173,7 @@ char *name;
   return(-1) ;
 }
 
-int ncdimid( cdfid, name)
-int cdfid ;
-const char *name ;
+int ncdimid(int cdfid, const char *name)
 {
     NC *handle ;
     NC_dim **dp ;
@@ -210,11 +200,7 @@ const char *name ;
 }
 
 
-int ncdiminq( cdfid, dimid, name, sizep)
-int cdfid ;
-int dimid ;
-char *name ;
-long *sizep ;
+int ncdiminq(int cdfid, int dimid, char *name, long *sizep)
 {
     NC *handle ;
     NC_dim **dp ;
@@ -254,12 +240,8 @@ long *sizep ;
 }
 
 
-int ncdimrename(cdfid, dimid, newname)
-int cdfid ;
-int dimid ;
-const char *newname ;
+int ncdimrename(int cdfid, int dimid, const char *newname)
 {
-
     NC *handle ;
     NC_dim **dp ;
     NC_string *old, *new ;
@@ -321,9 +303,7 @@ const char *newname ;
 
 
 bool_t
-xdr_NC_dim(xdrs, dpp)
-    XDR *xdrs;
-    NC_dim **dpp;
+xdr_NC_dim(XDR *xdrs, NC_dim **dpp)
 {
     if( xdrs->x_op == XDR_FREE)
     {
@@ -356,8 +336,7 @@ xdr_NC_dim(xdrs, dpp)
 /*
  * How much space will the xdr'd dim take.
  */
-int NC_xlen_dim(dpp)
-NC_dim **dpp ;
+int NC_xlen_dim(NC_dim **dpp)
 {
     int len = 4 ;
     if(*dpp!=NULL)

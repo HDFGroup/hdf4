@@ -21,9 +21,9 @@ extern int c_flag;
 extern int fortran_flag;
 
 /* create netCDF from in-memory structure */
+/* filename - name for output netcdf file */
 static void
-gen_netcdf(filename)
-     char *filename;		/* name for output netcdf file */
+gen_netcdf(char *filename)
 {
     int idim, ivar, iatt;
     int istat;
@@ -75,8 +75,7 @@ gen_netcdf(filename)
  * Output a C statement.
  */
 void
-cline(stmnt)
-     const char *stmnt;
+cline(const char *stmnt)
 {
     FILE *cout = stdout;
 
@@ -87,8 +86,7 @@ cline(stmnt)
 
 /* generate C code for creating netCDF from in-memory structure */
 static void
-gen_c(filename)
-     char *filename;
+gen_c(char *filename)
 {
     int idim, ivar, iatt, jatt, itype, maxdims;
     int scalar_atts, vector_atts;
@@ -351,8 +349,7 @@ gen_c(filename)
  * but since we don't generate any labels, we don't care.
  */
 void
-fline(stmnt)
-     const char *stmnt;
+fline(const char *stmnt)
 {
     FILE *fout = stdout;
     int len = strlen(stmnt);
@@ -381,8 +378,7 @@ fline(stmnt)
 
 /* generate FORTRAN code for creating netCDF from in-memory structure */
 static void
-gen_fortran(filename)
-     char *filename;
+gen_fortran(char *filename)
 {
     int idim, ivar, iatt, jatt, itype, maxdims;
     int vector_atts;
@@ -636,9 +632,9 @@ gen_fortran(filename)
 
 
 /* return C name for netCDF type, given type code */
+/* type  - netCDF type code */
 const char *
-nctype(type)
-     nc_type type;			/* netCDF type code */
+nctype(nc_type type)
 {
     switch (type) {
       case NC_BYTE:
@@ -661,9 +657,9 @@ nctype(type)
 
 
 /* return FORTRAN name for netCDF type, given type code */
+/* type  - netCDF type code */
 static const char *
-ftypename(type)
-     nc_type type;			/* netCDF type code */
+ftypename(nc_type type)
 {
     switch (type) {
       case NC_BYTE:
@@ -686,10 +682,9 @@ ftypename(type)
 
 
 /* return C type name for netCDF type, given type code */
-
+/* type  - netCDF type code */
 const char *
-ncctype(type)
-     nc_type type;			/* netCDF type code */
+ncctype(nc_type type)
 {
     switch (type) {
       case NC_BYTE:
@@ -712,10 +707,9 @@ ncctype(type)
 
 
 /* return Fortran type name for netCDF type, given type code */
-
+/* type - netCDF type code */
 static const char *
-ncftype(type)
-     nc_type type;		/* netCDF type code */
+ncftype(nc_type type)
 {
     switch (type) {
       case NC_BYTE:
@@ -747,12 +741,11 @@ ncftype(type)
  * and the index of the vector element desired, returns a pointer to a
  * malloced string representing the value in C.
  */
-
+/* type - netCDF type code */
+/* valp - pointer to vector of values */
+/* num  - element of vector desired */
 static char *
-cstring(type,valp, num)
-     nc_type type;			/* netCDF type code */
-     void *valp;		/* pointer to vector of values */
-     int num;			/* element of vector desired */
+cstring(nc_type type, void *valp, int num)
 {
     static char *cp, *sp, ch;
     char *bytep;
@@ -836,11 +829,11 @@ cstring(type,valp, num)
  * and the index of the vector element desired, returns a pointer to a
  * malloced string representing the value in FORTRAN.
  */
+/* type - netCDF type code */
+/* valp - pointer to vector of values */
+/* num  - element of vector desired */
 char *
-fstring(type,valp, num)
-     nc_type type;			/* netCDF type code */
-     void *valp;		/* pointer to vector of values */
-     int num;			/* element of vector desired */
+fstring(nc_type type, void *valp, int num)
 {
     static char *cp, *sp;
     char ch;
@@ -899,10 +892,10 @@ fstring(type,valp, num)
  * Given a pointer to a counted string, returns a pointer to a malloced string
  * representing the string as a C constant.
  */
+/* valp - pointer to vector of characters*/
+/* len  - number of characters in valp */
 char *
-cstrstr(valp, len)
-     char *valp;		/* pointer to vector of characters*/
-     long len;			/* number of characters in valp */
+cstrstr(char *valp, long len)
 {
     static char *sp;
     char *cp;
@@ -960,10 +953,10 @@ cstrstr(valp, len)
  * the FORTRAN string "'don''t'", and the string "ab\ncd" would yield
  * "'ab'//char(10)//'cd'".
  */
+/* str  - pointer to vector of characters */
+/* ilen - number of characters in istr */
 char *
-fstrstr(str, ilen)
-     char *str;			/* pointer to vector of characters */
-     long ilen;			/* number of characters in istr */
+fstrstr(char *str, long ilen)
 {
     static char *ostr;
     char *cp, tstr[12];
@@ -1041,8 +1034,7 @@ fstrstr(str, ilen)
 /* invoke netcdf calls (or generate C or Fortran code) to create netcdf
  * from in-memory structure. */
 void
-define_netcdf(netcdfname)
-     char *netcdfname;
+define_netcdf(char *netcdfname)
 {
     char *filename;		/* output file name */
 

@@ -248,13 +248,13 @@ FILE *outfile;
 byte *data;
 int   len;
 {
-  register long fcode;
-  register int i = 0;
-  register int c;
-  register int ent;
-  register int disp;
-  register int hsize_reg;
-  register int hshift;
+  long fcode;
+  int i = 0;
+  int c;
+  int ent;
+  int disp;
+  int hsize_reg;
+  int hshift;
 
   /*
    * Set up the globals:  g_init_bits - initial number of bits
@@ -449,11 +449,11 @@ static void cl_block ()             /* table clear for block compress */
 
 /********************************/
 static void cl_hash(hsize)          /* reset code table */
-register count_int hsize;
+count_int hsize;
 {
-  register count_int *htab_p = htab+hsize;
-  register long i;
-  register long m1 = -1;
+  count_int *htab_p = htab+hsize;
+  long i;
+  long m1 = -1;
 
   i = hsize - 16;
   do {                            /* might use Sys V memset(3) here */

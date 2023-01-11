@@ -34,9 +34,9 @@
  * On exit, netcdf files are closed.
  * Uses: nccreate, ncendef, ncclose, ncopen.
  */
+/* path - name of cdf file to create */
 void
-test_nccreate(path)
-     char *path;		/* name of cdf file to create */
+test_nccreate(char *path)
 {
     int nerrs = 0;
     static char pname[] = "test_nccreate";
@@ -90,9 +90,9 @@ test_nccreate(path)
  * On exit, netcdf files are closed.
  * Uses: ncopen, ncredef, ncattput, ncendef, ncclose.
  */
+/* path - name of writable netcdf file to open */
 void
-test_ncopen(path)
-     char *path;		/* name of writable netcdf file to open */
+test_ncopen(char *path)
 {
     int nerrs = 0;
     static char pname[] = "test_ncopen";
@@ -188,9 +188,9 @@ test_ncopen(path)
  * On exit netcdf files are closed.
  * Uses: ncopen, ncredef, ncdimdef, ncvardef, ncattput, ncclose
  */
+/* path - name of writable netcdf file to open */
 void
-test_ncredef(path)
-     char *path;		/* name of writable netcdf file to open */
+test_ncredef(char *path)
 {
     int nerrs = 0;
     static char pname[] = "test_ncredef";
@@ -274,9 +274,9 @@ test_ncredef(path)
  *  On exit netcdf files are closed.
  * Uses: ncopen, ncredef, ncdimdef, ncvardef, ncattput, ncendef, ncclose
  */
+/* path - name of writable netcdf file to open */
 void
-test_ncendef(path)
-     char *path;		/* name of writable netcdf file to open */
+test_ncendef(char *path)
 {
     int nerrs = 0;
     static char pname[] = "test_ncendef";
@@ -364,9 +364,9 @@ test_ncendef(path)
  *    try with bad handle, check error
  *  On exit netcdf files are closed.
  */
+/* path - name of writable netcdf file to open */
 void
-test_ncclose(path)
-     char *path;		/* name of writable netcdf file to open */
+test_ncclose(char *path)
 {
     int nerrs = 0;
     static char pname[] = "test_ncclose";
@@ -416,9 +416,9 @@ test_ncclose(path)
  *    try with bad handle, check error
  *  On exit netcdf files are closed.
  */
+/* path - name of writable netcdf file to open */
 void
-test_ncinquire(path)
-     char *path;		/* name of writable netcdf file to open */
+test_ncinquire(char *path)
 {
     int nerrs = 0;
     static char pname[] = "test_ncinquire";
@@ -577,9 +577,9 @@ test_ncinquire(path)
  *    try with bad handle, check error
  *  On exit netcdf files are closed.
  */
+/* path - name of writable netcdf file to open */
 void
-test_ncsync(path)
-     char *path;		/* name of writable netcdf file to open */
+test_ncsync(char *path)
 {
     int nerrs = 0;
     static char pname[] = "test_ncsync";
@@ -710,9 +710,9 @@ test_ncsync(path)
  *    try with bad handle, check error
  *  On exit netcdf files are closed.
  */
+/* path - name of writable netcdf file to open */
 void
-test_ncabort(path)
-     char *path;		/* name of writable netcdf file to open */
+test_ncabort(char *path)
 {
     int nerrs = 0;
     static char pname[] = "test_ncabort";

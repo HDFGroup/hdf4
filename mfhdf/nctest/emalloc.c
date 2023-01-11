@@ -11,9 +11,9 @@
 #include "hdf.h"
 #endif
 
+/* check return from malloc */
 void *
-emalloc (size)			/* check return from malloc */
-int size;
+emalloc (int size)
 {
     void   *p;
 
@@ -35,10 +35,9 @@ int size;
     return p;
 }
 
+/* check return from realloc */
 void *
-erealloc (ptr,size)		/* check return from realloc */
-     void *ptr;
-     int size;
+erealloc (void *ptr, int size)
 {
     void *p;
 

@@ -22,6 +22,7 @@ bin/ltmain.sh
 bin/missing
 bin/test-driver
 /configure
+hdf/src/h4config.h.in
 m4/libtool.m4
 m4/ltoptions.m4
 m4/ltsugar.m4
@@ -33,8 +34,6 @@ m4/lt~obsolete.m4
 /HDF4-C-Trunk.cmake
 /atbuild
 /autom4te.cache
-bin/reconfigure.local
-bin/reconfigure.system
 /build
 /build*
 /buildat
