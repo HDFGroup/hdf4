@@ -31,7 +31,7 @@ jobs:
             libaecfc: ON
             zlibfc: ON
             toolchain: ""
-            cacheinit: "-C config/cmake/cacheinit.cmake"
+            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G \"Visual Studio 17 2022\" -A x64"
 #          - name: "Windows Previous MSVC"
 #            artifact: "Windows-MSVC.tar.xz"
@@ -42,7 +42,7 @@ jobs:
 #            fortran: OFF
 #            xdr: ON
 #            toolchain: ""
-#            cacheinit: "-C config/cmake/cacheinit.cmake"
+#            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
 #            generator: "-G \"Visual Studio 16 2019\" -A x64"
           - name: "Ubuntu Latest GCC"
             artifact: "Linux.tar.xz"
@@ -56,8 +56,8 @@ jobs:
             jpegfc: ON
             libaecfc: ON
             zlibfc: ON
-            toolchain: "config/toolchain/GCC.cmake"
-            cacheinit: "-C config/cmake/cacheinit.cmake"
+            toolchain: "$GITHUB_WORKSPACE/config/toolchain/GCC.cmake"
+            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G Ninja"
           - name: "macOS Latest Clang"
             artifact: "macOS.tar.xz"
@@ -70,8 +70,8 @@ jobs:
             jpegfc: ON
             libaecfc: ON
             zlibfc: ON
-            toolchain: "config/toolchain/clang.cmake"
-            cacheinit: "-C config/cmake/cacheinit.cmake"
+            toolchain: "$GITHUB_WORKSPACE/config/toolchain/clang.cmake"
+            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G Ninja"
           - name: "Ubuntu Debug GCC"
             artifact: "LinuxDBG.tar.xz"
@@ -84,7 +84,7 @@ jobs:
             jpegfc: OFF
             libaecfc: OFF
             zlibfc: OFF
-            toolchain: "config/toolchain/GCC.cmake"
+            toolchain: "$GITHUB_WORKSPACE/config/toolchain/GCC.cmake"
             cacheinit: ""
             generator: "-G Ninja"
           - name: "Ubuntu Autotools GCC"
