@@ -80,6 +80,9 @@ jobs:
             java: ON
             fortran: OFF
             xdr: ON
+            jpegfc: OFF
+            libaecfc: OFF
+            zlibfc: OFF
             toolchain: "config/toolchain/GCC.cmake"
             cacheinit: "-C config/cmake/cacheinit.cmake"
             generator: "-G Ninja"
