@@ -1,4 +1,36 @@
 #-------------------------------------------------------------------------------
+macro (ORIGINAL_ZLIB_LIBRARY compress_type)
+  if (${compress_type} MATCHES "GIT")
+    FetchContent_Declare (ZLIB
+        GIT_REPOSITORY ${ZLIB_URL}
+        GIT_TAG ${ZLIB_BRANCH}
+    )
+  elseif (${compress_type} MATCHES "TGZ")
+    FetchContent_Declare (ZLIB
+        URL ${ZLIB_URL}
+        URL_HASH ""
+    )
+  endif ()
+  FetchContent_GetProperties(ZLIB)
+  if(NOT zlib_POPULATED)
+    FetchContent_Populate(ZLIB)
+
+    # Copy an additional/replacement files into the populated source
+    file(COPY ${HDF_RESOURCES_DIR}/ZLIB/CMakeLists.txt DESTINATION ${zlib_SOURCE_DIR})
+
+    add_subdirectory(${zlib_SOURCE_DIR} ${zlib_BINARY_DIR})
+  endif()
+
+  set (ZLIB_STATIC_LIBRARY "zlib-static")
+  set (ZLIB_LIBRARIES ${ZLIB_STATIC_LIBRARY})
+
+  set (ZLIB_INCLUDE_DIR_GEN "${zlib_BINARY_DIR}")
+  set (ZLIB_INCLUDE_DIR "${zlib_SOURCE_DIR}")
+  set (ZLIB_FOUND 1)
+  set (ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIR_GEN} ${ZLIB_INCLUDE_DIR})
+endmacro ()
+
+#-------------------------------------------------------------------------------
 macro (ORIGINAL_JPEG_LIBRARY compress_type jpeg_pic)
   # May need to build JPEG with PIC on x64 machines with gcc
   # Need to use CMAKE_ANSI_CFLAGS define so that compiler test works
@@ -24,11 +56,6 @@ macro (ORIGINAL_JPEG_LIBRARY compress_type jpeg_pic)
     add_subdirectory(${jpeg_SOURCE_DIR} ${jpeg_BINARY_DIR})
   endif()
 
-# Create imported target jpeg-static
-#  add_library(${HDF_PACKAGE_NAMESPACE}jpeg-static STATIC IMPORTED)
-#  HDF_IMPORT_SET_LIB_OPTIONS (${HDF_PACKAGE_NAMESPACE}jpeg-static "jpeg" STATIC "")
-#  add_dependencies (${HDF_PACKAGE_NAMESPACE}jpeg-static JPEG)
-#  set (JPEG_STATIC_LIBRARY "${HDF_PACKAGE_NAMESPACE}jpeg-static")
   set (JPEG_STATIC_LIBRARY "jpeg-static")
   set (JPEG_LIBRARIES ${JPEG_STATIC_LIBRARY})
 
