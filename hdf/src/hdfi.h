@@ -53,7 +53,6 @@
 #define     DFMT_PC             0x4441
 #define     DFMT_APPLE          0x1111
 #define     DFMT_APPLE_INTEL    0x4441
-#define     DFMT_VP             0x6611
 #define     DFMT_I860           0x4441
 #define     DFMT_IA64           0x4441
 #define     DFMT_LINUX64        0x4441
@@ -375,53 +374,6 @@ typedef int               hdf_pint_t;   /* 4-byte pointer */
 #endif /* !(defined(__APPLE__)) */
 
 /*-----------------------------------------------------*/
-#if defined VP | defined __uxpm__
-
-#ifndef VP
-#define VP
-#endif
-
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE 1
-
-#include <memory.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#define DF_MT              DFMT_VP
-typedef void                VOID;
-typedef void               *VOIDP;
-typedef char               *_fcd;
-typedef char               char8;
-typedef unsigned char      uchar8;
-typedef char               int8;
-typedef unsigned char      uint8;
-typedef short int          int16;
-typedef unsigned short int uint16;
-typedef long int           int32;
-typedef unsigned long int  uint32;
-typedef int                intn;
-typedef unsigned int       uintn;
-typedef int                intf;     /* size of INTEGERs in Fortran compiler */
-typedef float              float32;
-typedef double             float64;
-typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
-#define FNAME_POST_UNDERSCORE
-#define _fcdtocp(desc) (desc)
-#define FILELIB UNIXBUFIO
-
-/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
-
-/* Determine the memory manager we are going to use. Valid values are: */
-/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
-/*  what each does */
-#define JMEMSYS         MEM_ANSI
-
-#endif /* VP */
-
-/*-----------------------------------------------------*/
 #if defined I860 | defined i860
 
 #ifndef I860
@@ -468,7 +420,6 @@ typedef int               hdf_pint_t;   /* an integer the same size as a pointer
 #define JMEMSYS         MEM_ANSI
 
 #endif /* I860 */
-
 
 /*-----------------------------------------------------*/
 /* Power PC 5 64 */
