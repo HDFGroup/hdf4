@@ -52,6 +52,7 @@ jobs:
             java: ON
             fortran: OFF
             ts: OFF
+            xdr: ON
             jpegfc: ON
             libaecfc: ON
             zlibfc: ON
