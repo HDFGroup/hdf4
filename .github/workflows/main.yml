@@ -19,25 +19,30 @@ jobs:
 #        name: ["Windows Latest MSVC", "Windows Previous MSVC", "Ubuntu Latest GCC", "Ubuntu Debug GCC", "macOS Latest Clang", "Ubuntu Autotools GCC"]
         name: ["Ubuntu Latest GCC", "Ubuntu Debug GCC", "Ubuntu Autotools GCC"]
         include:
-#          - name: "Windows Latest MSVC"
-#            artifact: "Windows-MSVC.tar.xz"
-#            os: windows-2022
-#            build_type: "Release"
-#            toolchain: ""
-#            netcdf: ON
-#            java: ON
-#            fortran: OFF
-#            xdr: ON
-#            generator: "-G \"Visual Studio 17 2022\" -A x64"
+          - name: "Windows Latest MSVC"
+            artifact: "Windows-MSVC.tar.xz"
+            os: windows-2022
+            build_type: "Release"
+            netcdf: ON
+            java: ON
+            fortran: OFF
+            xdr: ON
+            jpegfc: ON
+            libaecfc: ON
+            zlibfc: ON
+            toolchain: ""
+            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
+            generator: "-G \"Visual Studio 17 2022\" -A x64"
 #          - name: "Windows Previous MSVC"
 #            artifact: "Windows-MSVC.tar.xz"
 #            os: windows-2019
 #            build_type: "Release"
-#            toolchain: ""
 #            netcdf: ON
 #            java: ON
 #            fortran: OFF
 #            xdr: ON
+#            toolchain: ""
+#            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
 #            generator: "-G \"Visual Studio 16 2019\" -A x64"
           - name: "Ubuntu Latest GCC"
             artifact: "Linux.tar.xz"
@@ -47,18 +52,27 @@ jobs:
             java: ON
             fortran: OFF
             ts: OFF
-            toolchain: "config/toolchain/GCC.cmake"
+            xdr: ON
+            jpegfc: ON
+            libaecfc: ON
+            zlibfc: ON
+            toolchain: "$GITHUB_WORKSPACE/config/toolchain/GCC.cmake"
+            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G Ninja"
-#          - name: "macOS Latest Clang"
-#            artifact: "macOS.tar.xz"
-#            os: macos-latest
-#            build_type: "Release"
-#            netcdf: ON
-#            java: ON
-#            fortran: OFF
-#            xdr: ON
-#            toolchain: "config/toolchain/clang.cmake"
-#            generator: "-G Ninja"
+          - name: "macOS Latest Clang"
+            artifact: "macOS.tar.xz"
+            os: macos-latest
+            build_type: "Release"
+            netcdf: ON
+            java: ON
+            fortran: OFF
+            xdr: ON
+            jpegfc: ON
+            libaecfc: ON
+            zlibfc: ON
+            toolchain: "$GITHUB_WORKSPACE/config/toolchain/clang.cmake"
+            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
+            generator: "-G Ninja"
           - name: "Ubuntu Debug GCC"
             artifact: "LinuxDBG.tar.xz"
             os: ubuntu-latest
@@ -67,7 +81,11 @@ jobs:
             java: ON
             fortran: OFF
             xdr: ON
-            toolchain: "config/toolchain/GCC.cmake"
+            jpegfc: OFF
+            libaecfc: OFF
+            zlibfc: OFF
+            toolchain: "$GITHUB_WORKSPACE/config/toolchain/GCC.cmake"
+            cacheinit: ""
             generator: "-G Ninja"
           - name: "Ubuntu Autotools GCC"
             artifact: "LinuxA.tar.xz"
@@ -78,6 +96,7 @@ jobs:
             fortran: disable
             xdr: enable
             toolchain: ""
+            cacheinit: ""
             generator: "autogen"
 
     name: ${{ matrix.name }}
@@ -126,7 +145,7 @@ jobs:
       run: |
         mkdir "${{ runner.workspace }}/build"
         cd "${{ runner.workspace }}/build"
-        cmake ${{ matrix.generator }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_TOOLCHAIN_FILE=${{ matrix.toolchain }} -DBUILD_SHARED_LIBS=ON -DHDF4_BUILD_TOOLS=ON -DHDF4_BUILD_UTILS=ON -DHDF4_BUILD_EXAMPLES=ON -DBUILD_JPEG_WITH_PIC:BOOL=ON -DHDF4_BUILD_XDR_LIB:BOOL=${{ matrix.xdr }} -DHDF4_ENABLE_NETCDF:BOOL=${{ matrix.netcdf }} -DHDF4_BUILD_JAVA=${{ matrix.java }} -DHDF4_BUILD_FORTRAN=${{ matrix.fortran }} $GITHUB_WORKSPACE
+        cmake ${{ matrix.cacheinit }} ${{ matrix.generator }} --log-level=VERBOSE -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_TOOLCHAIN_FILE=${{ matrix.toolchain }} -DHDF4_BUILD_EXAMPLES=ON -DBUILD_JPEG_WITH_PIC:BOOL=ON -DHDF4_BUILD_XDR_LIB:BOOL=${{ matrix.xdr }} -DHDF4_ENABLE_NETCDF:BOOL=${{ matrix.netcdf }} -DHDF4_BUILD_JAVA=${{ matrix.java }} -DHDF4_BUILD_FORTRAN=${{ matrix.fortran }} -DBUILD_JPEG_WITH_FETCHCONTENT=${{ matrix.jpegfc }} -DBUILD_SZIP_WITH_FETCHCONTENT=${{ matrix.libaecfc }} -DBUILD_ZLIB_WITH_FETCHCONTENT=${{ matrix.zlibfc }} $GITHUB_WORKSPACE
       shell: bash
 
     - name: Autotools Build
