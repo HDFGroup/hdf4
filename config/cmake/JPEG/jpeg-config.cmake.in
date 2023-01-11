@@ -1,0 +1,58 @@
+#-----------------------------------------------------------------------------
+# JPEG Config file for compiling against JPEG install directory
+#-----------------------------------------------------------------------------
+@PACKAGE_INIT@
+
+string(TOUPPER @JPEG_PACKAGE@ JPEG_PACKAGE_NAME)
+
+set (${JPEG_PACKAGE_NAME}_VALID_COMPONENTS static shared)
+
+#-----------------------------------------------------------------------------
+# User Options
+#-----------------------------------------------------------------------------
+set (${JPEG_PACKAGE_NAME}_BUILD_SHARED_LIBS    @BUILD_SHARED_LIBS@)
+set (${JPEG_PACKAGE_NAME}_EXPORT_LIBRARIES     @JPEG_LIBRARIES_TO_EXPORT@)
+
+#-----------------------------------------------------------------------------
+# Directories
+#-----------------------------------------------------------------------------
+set (${JPEG_PACKAGE_NAME}_INCLUDE_DIR "@PACKAGE_INCLUDE_INSTALL_DIR@")
+
+set (${JPEG_PACKAGE_NAME}_SHARE_DIR "@PACKAGE_SHARE_INSTALL_DIR@")
+set_and_check (${JPEG_PACKAGE_NAME}_BUILD_DIR "@PACKAGE_CURRENT_BUILD_DIR@")
+
+#-----------------------------------------------------------------------------
+# Version Strings
+#-----------------------------------------------------------------------------
+set (${JPEG_PACKAGE_NAME}_VERSION_STRING @JPEG_VERSION_STRING@)
+set (${JPEG_PACKAGE_NAME}_VERSION_MAJOR  @JPEG_VERSION_MAJOR@)
+set (${JPEG_PACKAGE_NAME}_VERSION_MINOR  @JPEG_VERSION_MINOR@)
+
+#-----------------------------------------------------------------------------
+# Don't include targets if this file is being picked up by another
+# project which has already build JPEG as a subproject
+#-----------------------------------------------------------------------------
+if (NOT TARGET "@JPEG_PACKAGE@")
+  include (@PACKAGE_SHARE_INSTALL_DIR@/@JPEG_PACKAGE@@HDF_PACKAGE_EXT@-targets.cmake)
+endif ()
+
+# Handle default component(static) :
+if (NOT ${JPEG_PACKAGE_NAME}_FIND_COMPONENTS)
+    set (${JPEG_PACKAGE_NAME}_FIND_COMPONENTS static)
+    set (${JPEG_PACKAGE_NAME}_FIND_REQUIRED_static true)
+endif ()
+
+# Handle requested components:
+list (REMOVE_DUPLICATES ${JPEG_PACKAGE_NAME}_FIND_COMPONENTS)
+foreach (comp IN LISTS ${JPEG_PACKAGE_NAME}_FIND_COMPONENTS)
+    list (FIND ${JPEG_PACKAGE_NAME}_EXPORT_LIBRARIES "@JPEG_LIB_CORENAME@-${comp}" HAVE_COMP)
+    if (${HAVE_COMP} LESS 0)
+      set (${JPEG_PACKAGE_NAME}_${comp}_FOUND 0)
+    else ()
+      set (${JPEG_PACKAGE_NAME}_${comp}_FOUND 1)
+      string(TOUPPER ${JPEG_PACKAGE_NAME}_${comp}_LIBRARY COMP_LIBRARY)
+      set (${COMP_LIBRARY} ${${COMP_LIBRARY}} @JPEG_LIB_CORENAME@-${comp})
+    endif ()
+endforeach ()
+
+check_required_components (${JPEG_PACKAGE_NAME})
