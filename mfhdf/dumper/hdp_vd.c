@@ -13,9 +13,7 @@
 
 
 #include "hdp.h"
-#ifndef MIPSEL
 #include <math.h>
-#endif /* MIPSEL */
 
 void 
 dumpvd_usage(intn argc, 

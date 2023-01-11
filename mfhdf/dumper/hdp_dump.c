@@ -16,9 +16,7 @@
 #include "mfhdf.h"
 #include "hdp.h"
 #include <ctype.h>
-#ifndef MIPSEL
 #include <math.h>
-#endif /* MIPSEL */
 
 #define	CARRIAGE_RETURN	13
 #define	LINE_FEED	10

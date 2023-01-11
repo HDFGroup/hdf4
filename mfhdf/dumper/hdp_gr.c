@@ -16,9 +16,7 @@
 #include "mfhdf.h"
 #include "mfgr.h"
 #include "hdp.h"
-#ifndef MIPSEL
 #include <math.h>
-#endif /* MIPSEL */
 
 #define  N_ENTRIES      256     /* number of elements of each color */
 

@@ -17,12 +17,10 @@ extern char	*cdlname;	/* for error messages */
 extern "C" {
 #endif
 
-#ifndef MIPSEL /* punt */
 #ifndef NO_STDARG
 extern void derror(const char *fmt, ...);
 #else
 extern void derror();
-#endif
 #endif
 
 /*
