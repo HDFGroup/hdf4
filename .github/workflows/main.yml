@@ -85,7 +85,7 @@ jobs:
             libaecfc: OFF
             zlibfc: OFF
             toolchain: "config/toolchain/GCC.cmake"
-            cacheinit: "-C config/cmake/cacheinit.cmake"
+            cacheinit: ""
             generator: "-G Ninja"
           - name: "Ubuntu Autotools GCC"
             artifact: "LinuxA.tar.xz"
