@@ -53,8 +53,6 @@
 #define     DFMT_PC             0x4441
 #define     DFMT_APPLE          0x1111
 #define     DFMT_APPLE_INTEL    0x4441
-#define     DFMT_I860           0x4441
-#define     DFMT_IA64           0x4441
 #define     DFMT_LINUX64        0x4441
 #define     DFMT_POWERPC64      0x1111
 
@@ -260,7 +258,7 @@ typedef long            hdf_pint_t;   /* an integer the same size as a pointer *
 /* Metrowerks Mac compiler defines some PC stuff so need to exclude this on the Mac */
 #if !(defined (__APPLE__)) && !(defined(__CYGWIN__))
 
-#if defined _M_ARM64 || defined _M_X64 || defined _M_IA64 || defined _M_IX86 || defined INTEL86 || defined M_I86 || defined M_I386 || defined DOS386 || defined __i386 || defined UNIX386 || defined i386
+#if defined _M_ARM64 || defined _M_X64 || defined _M_IX86 || defined INTEL86 || defined M_I86 || defined M_I386 || defined DOS386 || defined __i386 || defined UNIX386 || defined i386
 #ifndef INTEL86
 #define INTEL86
 #endif /* INTEL86 */
@@ -519,55 +517,6 @@ typedef long              hdf_pint_t;   /* an integer the same size as a pointer
 #endif
 
 #endif /*64-bit FreeBSD */
-
-/*-----------------------------------------------------*/
-
-/* IA64 running Linux */
-#if defined __ia64 && !(defined(hpux) || defined(__hpux))
-
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE
-
-#include <sys/file.h>               /* for unbuffered i/o stuff */
-#include <sys/stat.h>
-#define DF_MT             DFMT_IA64
-typedef void              VOID;
-typedef void              *VOIDP;
-typedef char              *_fcd;
-typedef char              char8;
-typedef unsigned char     uchar8;
-typedef char              int8;
-typedef unsigned char     uint8;
-typedef short int         int16;
-typedef unsigned short int uint16;
-typedef int               int32;
-typedef unsigned int      uint32;
-typedef int               intn;
-typedef unsigned int      uintn;
-typedef int               intf;     /* size of INTEGERs in Fortran compiler */
-typedef float             float32;
-typedef double            float64;
-typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
-#define FNAME_POST_UNDERSCORE
-#define _fcdtocp(desc) (desc)
-#define FILELIB UNIXBUFIO
-
-/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
-
-/* Determine the memory manager we are going to use. Valid values are: */
-/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
-/*  what each does */
-#define JMEMSYS         MEM_ANSI
-
-#ifdef __GNUC__
-#define HAVE_STDC
-#define INCLUDES_ARE_ANSI
-#endif
-
-#endif /* IA64 */
 
 #ifndef GOT_MACHINE
 No machine type has been defined.  Your Makefile needs to have someing like

@@ -88,7 +88,7 @@ main(int argc, char *argv[])
    the size of C pointer; this happens on Solaris, Altix
    AIX and Mac Intel. We need a better fix; see HDFFR-191.
 */
-#if defined _WIN32 || (defined SUN && defined _LP64) || defined __ia64  || defined __x86_64  || defined AIX5L64 || (__APPLE__ && __LP64__)
+#if defined _WIN32 || (defined SUN && defined _LP64) || defined __x86_64  || defined AIX5L64 || (__APPLE__ && __LP64__)
     printf("   Skipping stubs\n");
 #else
     num_tests=InitTest("stubs", "tstubsf", "");
