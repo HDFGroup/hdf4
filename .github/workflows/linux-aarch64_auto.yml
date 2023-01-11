@@ -1,0 +1,59 @@
+name: amd64 arm64-gcc Autotools
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install gcc-aarch64
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y -q gcc-aarch64-linux-gnu
+        sudo apt-get install -y -q binfmt-support qemu qemu-user-static
+    - name: Get Sources
+      uses: actions/checkout@v3
+    - name: Build and Test
+      run: |
+        echo $PWD
+        echo $PATH
+        wget -q https://musl.cc/aarch64-linux-musl-cross.tgz
+        tar -xzf aarch64-linux-musl-cross.tgz      
+        ./aarch64-linux-musl-cross/bin/aarch64-linux-musl-gcc --version
+        sudo cp -r ./aarch64-linux-musl-cross/aarch64-linux-musl/lib/* /lib/
+        git clone https://github.com/alisw/libtirpc
+        cd libtirpc
+        mkdir -p src/sys
+        cd src/sys
+        wget https://raw.githubusercontent.com/openbsd/src/master/sys/sys/queue.h
+        wget https://raw.githubusercontent.com/openbsd/src/master/sys/sys/_null.h
+        cd ../..
+        chmod u+x ./autogen.sh
+        ./autogen.sh
+        ./configure CC=/home/runner/work/hdf4/hdf4/aarch64-linux-musl-cross/bin/aarch64-linux-musl-gcc AR=/home/runner/work/hdf4/hdf4/aarch64-linux-musl-cross/bin/aarch64-linux-musl-ar --disable-gssapi --host=aarch64-linux-musl --prefix=/home/runner/work/hdf4/hdf4/aarch64-linux-musl-cross
+        make
+        sudo make install
+        cd ..        
+        wget -q https://gamma.hdfgroup.org/ftp/pub/outgoing/h4map/src/h4map.tar.gz
+        tar -xzf h4map.tar.gz
+        cd h4map/jpeg-6b
+        ./configure CC=/home/runner/work/hdf4/hdf4/aarch64-linux-musl-cross/bin/aarch64-linux-musl-gcc AR=/home/runner/work/hdf4/hdf4/aarch64-linux-musl-cross/bin/aarch64-linux-musl-ar --prefix=/home/runner/work/hdf4/hdf4/aarch64-linux-musl-cross
+        make
+        sudo make install-lib
+        cd ../..
+        pwd
+        ls
+        git clone https://github.com/madler/zlib
+        cd zlib
+        CC=/home/runner/work/hdf4/hdf4/aarch64-linux-musl-cross/bin/aarch64-linux-musl-gcc AR=/home/runner/work/hdf4/hdf4/aarch64-linux-musl-cross/bin/aarch64-linux-musl-ar ./configure --prefix=/home/runner/work/hdf4/hdf4/aarch64-linux-musl-cross
+        make
+        sudo make install
+        cd ..
+        pwd
+        ls
+        autoreconf -fvi
+        ./configure CC=/home/runner/work/hdf4/hdf4/aarch64-linux-musl-cross/bin/aarch64-linux-musl-gcc CXX=/home/runner/work/hdf4/hdf4/aarch64-linux-musl-cross/bin/aarch64-linux-musl-g++  AR=/home/runner/work/hdf4/hdf4/aarch64-linux-musl-cross/bin/aarch64-linux-musl-ar CFLAGS="-I/home/runner/work/hdf4/hdf4/aarch64-linux-musl-cross/include/tirpc/" LDFLAGS="-L/home/runner/work/hdf4/hdf4/aarch64-linux-musl-cross/lib/ -ltirpc" --host=aarch64-linux-musl --disable-netcdf --disable-fortran --prefix=/home/runner/work/hdf4/hdf4/aarch64-linux-musl-cross --with-jpeg=/home/runner/work/hdf4/hdf4/aarch64-linux-musl-cross --with-zlib=/home/runner/work/hdf4/hdf4/aarch64-linux-musl-cross
+        make
+        make check
