@@ -3,7 +3,7 @@ name: amd64 arm64-gcc CMake
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
+    branches: [ master ]
 jobs:
   build:
     runs-on: ubuntu-latest
