@@ -64,10 +64,6 @@
 #define DF_MT   DFMT_IBM6000
 #endif /*IBM6000 */
 
-#ifdef APOLLO
-#if ! defined mc68010 && ! defined mc68020 && ! defined mc68030
-#undef DF_STRUCTOK
-#endif
 #include <sys/file.h>   /* for unbuffered i/o stuff */
 #define int8 char
 #define uint8 unsigned char

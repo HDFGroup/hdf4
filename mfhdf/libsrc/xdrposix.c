@@ -249,7 +249,7 @@ biowrite(biobuf *biop, unsigned char *ptr, int nbytes)
 
 static bool_t   xdrposix_getlong();
 static bool_t   xdrposix_putlong();
-#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__
+#if (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__
 static bool_t   xdrposix_getint();
 static bool_t   xdrposix_putint();
 #endif
@@ -257,9 +257,6 @@ static bool_t   xdrposix_getbytes();
 static bool_t   xdrposix_putbytes();
 static ncpos_t  xdrposix_getpos();
 static bool_t   xdrposix_setpos();
-#if (_MIPS_SZLONG == 64)
-static long *    xdrposix_inline();
-#else
 #if (defined __sun && defined _LP64)
 static rpc_inline_t *    xdrposix_inline();
 #else
@@ -267,7 +264,6 @@ static rpc_inline_t *    xdrposix_inline();
 static int32_t *    xdrposix_inline();
 #else
 static netlong *    xdrposix_inline();
-#endif
 #endif
 #endif
 static void xdrposix_destroy();
@@ -278,12 +274,6 @@ static void xdrposix_destroy();
 static struct xdr_ops   xdrposix_ops = {
     xdrposix_getlong,   /* deserialize a 32-bit int */
     xdrposix_putlong,   /* serialize a 32-bit int */
-#if (_MIPS_SZLONG == 64)
-    /* IRIX64 has 64 bits long and 32 bits int. */
-    /* It defines two extra entries for get/put int. */
-    xdrposix_getint,   /* deserialize a 32-bit int */
-    xdrposix_putint,   /* serialize a 32-bit int */
-#endif
     xdrposix_getbytes,  /* deserialize counted bytes */
     xdrposix_putbytes,  /* serialize counted bytes */
     xdrposix_getpos,    /* get offset in the stream */
@@ -513,10 +503,6 @@ xdrposix_setpos(XDR *xdrs, ncpos_t pos)
         return FALSE;
 }
 
-/*ARGSUSED*/
-#if (_MIPS_SZLONG == 64)
-static long *
-#else
 #if (defined __sun && defined _LP64)
 static rpc_inline_t *
 #else
@@ -524,7 +510,6 @@ static rpc_inline_t *
 static int32_t *
 #else
 static netlong *
-#endif
 #endif
 #endif
 xdrposix_inline(XDR *xdrs, u_int len)
@@ -538,7 +523,7 @@ xdrposix_inline(XDR *xdrs, u_int len)
     return (NULL);
 }
 
-#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64) || defined AIX5L64  || defined __x86_64__ || defined __powerpc64__
+#if (defined __sun && defined _LP64) || defined AIX5L64  || defined __x86_64__ || defined __powerpc64__
 
 static bool_t
 xdrposix_getint(XDR *xdrs, int *lp)

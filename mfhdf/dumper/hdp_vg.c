@@ -13,9 +13,7 @@
 
 
 #include "hdp.h"
-#ifndef MIPSEL
 #include <math.h>
-#endif /* MIPSEL */
 #include "vg.h"
 
 #define NONAME_LEN 12

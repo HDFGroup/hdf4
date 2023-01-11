@@ -48,7 +48,6 @@
 /*          (i.e. Big-Endian, all 64-bit architecture w/IEEE Floats)        */
 /*--------------------------------------------------------------------------*/
 #define     DFMT_SUN            0x1111
-#define     DFMT_APOLLO         0x1111
 #define     DFMT_IBM6000        0x1111
 #define     DFMT_PC             0x4441
 #define     DFMT_APPLE          0x1111

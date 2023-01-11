@@ -22,12 +22,10 @@ extern "C" {
 #endif
 
 /* Print error message to stderr, don't exit */
-#ifndef MIPSEL /* punt */
 #ifndef NO_STDARG
 extern void error(const char *fmt, ...);
 #else
 extern void error();
-#endif
 #endif
 
 /*
