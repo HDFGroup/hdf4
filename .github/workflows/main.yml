@@ -14,7 +14,7 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     strategy:
-#      fail-fast: false
+      fail-fast: false
       matrix:
 #        name: ["Windows Latest MSVC", "Windows Previous MSVC", "Ubuntu Latest GCC", "Ubuntu Debug GCC", "macOS Latest Clang", "Ubuntu Autotools GCC"]
         name: ["Ubuntu Latest GCC", "Ubuntu Debug GCC", "Ubuntu Autotools GCC"]
