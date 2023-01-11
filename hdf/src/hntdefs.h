@@ -157,16 +157,6 @@
 
 /* then the native sizes of number types */
 
-/* Unusual number sizes */
-/* IA64 (IA64) native number sizes:
-	Char = 8 bits, signed
-	Short=16 int=32 long=64 float=32 double=64 bits
-	Long double=64 bits
-	Char pointers = 64 bits
-	Int pointers = 64 bits
-	Little endian, IEEE floating point
-*/
-
 #    define SIZE_NFLOAT32    4
 #    define SIZE_NFLOAT64    8
 #    define SIZE_NFLOAT128  16  /* No current plans for support */
