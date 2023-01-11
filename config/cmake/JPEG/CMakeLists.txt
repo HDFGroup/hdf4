@@ -7,19 +7,17 @@ PROJECT (JPEG C)
 
 set (BUILD_SHARED_LIBS OFF)
 set (JPEG_PACKAGE_EXT ${HDF_PACKAGE_EXT})
-set (JPEG_EXTERNALLY_CONFIGURED OFF)
-set (CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE})
-set (CMAKE_DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
-set (CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
-set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
-set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY})
-set (CMAKE_PDB_OUTPUT_DIRECTORY ${CMAKE_PDB_OUTPUT_DIRECTORY})
+#set (CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE})
+#set (CMAKE_DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
+#set (CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
+#set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+#set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+#set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY})
+#set (CMAKE_PDB_OUTPUT_DIRECTORY ${CMAKE_PDB_OUTPUT_DIRECTORY})
 set (CMAKE_ANSI_CFLAGS ${jpeg_pic})
 set (HDF_USE_GNU_DIRS ${HDF4_USE_GNU_DIRS})
-set (CMAKE_OSX_ARCHITECTURES ${CMAKE_OSX_ARCHITECTURES})
-set (CMAKE_TOOLCHAIN_FILE ${CMAKE_TOOLCHAIN_FILE})
-set (PACKAGE_NAMESPACE ${HDF_PACKAGE_NAMESPACE})
+#set (CMAKE_OSX_ARCHITECTURES ${CMAKE_OSX_ARCHITECTURES})
+#set (CMAKE_TOOLCHAIN_FILE ${CMAKE_TOOLCHAIN_FILE})
 
 #-----------------------------------------------------------------------------
 # Define some CMake variables for use later in the project
@@ -72,21 +70,6 @@ set (JPEG_PACKAGE_SOVERSION "${JPEG_VERS_MAJOR}.${JPEG_VERS_MINOR}.${JPEG_VERS_R
 set (JPEG_PACKAGE_SOVERSION_MAJOR "${JPEG_VERS_MAJOR}")
 
 HDF_DIR_PATHS(${JPEG_PACKAGE_NAME})
-
-#-----------------------------------------------------------------------------
-# Targets built within this project are exported at Install time for use
-# by other projects
-#-----------------------------------------------------------------------------
-if (NOT JPEG_EXPORTED_TARGETS)
-  set (JPEG_EXPORTED_TARGETS "jpeg-targets")
-endif ()
-
-#-----------------------------------------------------------------------------
-# To include a library in the list exported by the project AT BUILD TIME,
-# add it to this variable. This is NOT used by Make Install, but for projects
-# which include JPEG as a sub-project within their build tree
-#-----------------------------------------------------------------------------
-set_global_variable (JPEG_LIBRARIES_TO_EXPORT "")
 
 #-----------------------------------------------------------------------------
 # Mac OS X Options
@@ -263,24 +246,20 @@ endif ()
 #-----------------------------------------------------------------------------
 # Add Target(s) to CMake Install for import into other projects
 #-----------------------------------------------------------------------------
-if (JPEG_EXPORTED_TARGETS)
-  if (BUILD_SHARED_LIBS)
-    INSTALL_TARGET_PDB (${JPEG_LIBSH_TARGET} ${JPEG_INSTALL_BIN_DIR} libraries)
-  endif (BUILD_SHARED_LIBS)
-  INSTALL_TARGET_PDB (${JPEG_LIB_TARGET} ${JPEG_INSTALL_BIN_DIR} libraries)
+if (BUILD_SHARED_LIBS)
+  INSTALL_TARGET_PDB (${JPEG_LIBSH_TARGET} ${JPEG_INSTALL_BIN_DIR} libraries)
+endif (BUILD_SHARED_LIBS)
+INSTALL_TARGET_PDB (${JPEG_LIB_TARGET} ${JPEG_INSTALL_BIN_DIR} libraries)
 
-  install (
-      TARGETS
-          ${install_targets}
-      EXPORT
-          ${JPEG_EXPORTED_TARGETS}
-      LIBRARY DESTINATION ${JPEG_INSTALL_LIB_DIR} COMPONENT libraries
-      ARCHIVE DESTINATION ${JPEG_INSTALL_LIB_DIR} COMPONENT libraries
-      RUNTIME DESTINATION ${JPEG_INSTALL_BIN_DIR} COMPONENT libraries
-      FRAMEWORK DESTINATION ${JPEG_INSTALL_FWRK_DIR} COMPONENT libraries
-      PUBLIC_HEADER DESTINATION ${JPEG_INSTALL_INCLUDE_DIR} COMPONENT headers
-  )
-endif ()
+install (
+    TARGETS
+        ${install_targets}
+    LIBRARY DESTINATION ${JPEG_INSTALL_LIB_DIR} COMPONENT libraries
+    ARCHIVE DESTINATION ${JPEG_INSTALL_LIB_DIR} COMPONENT libraries
+    RUNTIME DESTINATION ${JPEG_INSTALL_BIN_DIR} COMPONENT libraries
+    FRAMEWORK DESTINATION ${JPEG_INSTALL_FWRK_DIR} COMPONENT libraries
+    PUBLIC_HEADER DESTINATION ${JPEG_INSTALL_INCLUDE_DIR} COMPONENT headers
+)
 
 #-----------------------------------------------------------------------------
 # Generate the jconfig.h file containing user settings needed by compilation
@@ -292,4 +271,13 @@ configure_file (${JPEG_RESOURCES_DIR}/jconfig.h.in ${JPEG_BINARY_DIR}/jconfig.h 
 #-----------------------------------------------------------------------------
 set (JPEG_INCLUDES_BUILD_TIME
     ${JPEG_SRC_DIR} ${JPEG_BINARY_DIR}
+)
+
+#-----------------------------------------------------------------------------
+# Add file(s) to CMake Install
+#-----------------------------------------------------------------------------
+install (
+    FILES ${PROJECT_BINARY_DIR}/jconfig.h
+    DESTINATION ${JPEG_INSTALL_INCLUDE_DIR}
+    COMPONENT headers
 )
