@@ -34,11 +34,6 @@
 
 #include "tproto.h"
 #include <time.h>
-#ifdef I860
-typedef int clock_t;
-#define NO_TIMING
-#define UINT_MAX USI_MAX
-#endif /* I860 */
 
 /* last ditch attempt do define this value... */
 #ifndef UINT_MAX

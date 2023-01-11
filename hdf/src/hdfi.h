@@ -374,54 +374,6 @@ typedef int               hdf_pint_t;   /* 4-byte pointer */
 #endif /* !(defined(__APPLE__)) */
 
 /*-----------------------------------------------------*/
-#if defined I860 | defined i860
-
-#ifndef I860
-#define I860
-#endif
-
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE 1
-
-#include <sys/types.h>
-#include <sys/file.h>           /* for unbuffered i/o stuff */
-#include <sys/stat.h>
-#include <unistd.h>             /* mis-using def. for SEEK_SET, but oh well */
-#define DF_MT   DFMT_I860
-typedef void            VOID;
-typedef void            *VOIDP;
-typedef char            *_fcd;
-typedef char            char8;
-typedef unsigned char   uchar8;
-typedef char            int8;
-typedef unsigned char   uint8;
-typedef short           int16;
-typedef unsigned short  uint16;
-typedef int             int32;
-typedef unsigned int    uint32;
-typedef int             intn;
-typedef unsigned int    uintn;
-typedef float           float32;
-typedef double          float64;
-typedef int             intf;     /* size of INTEGERs in Fortran compiler */
-typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
-#define _fcdtocp(desc) (desc)
-#define FNAME_POST_UNDERSCORE
-#define FILELIB UNIXBUFIO
-
-/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
-
-/* Determine the memory manager we are going to use. Valid values are: */
-/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
-/*  what each does */
-#define JMEMSYS         MEM_ANSI
-
-#endif /* I860 */
-
-/*-----------------------------------------------------*/
 /* Power PC 5 64 */
 #if defined __powerpc64__
 
