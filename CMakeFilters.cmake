@@ -36,7 +36,7 @@ endif ()
 
 option (BUILD_SZIP_WITH_FETCHCONTENT "Use FetchContent to use original source files" OFF)
 if (BUILD_SZIP_WITH_FETCHCONTENT)
-  # Only libaec library is useable
+  # Only libaec library is usable
   set (USE_LIBAEC ON CACHE BOOL "Use libaec szip replacement" FORCE)
   set (SZIP_USE_EXTERNAL "Use External Library Building for SZIP" 1)
   if (NOT LIBAEC_USE_LOCALCONTENT)
