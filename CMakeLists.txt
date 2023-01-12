@@ -566,12 +566,15 @@ endif ()
 # Option to build Fortran bindings/tests/examples
 # Make sure this appears before the CONFIGURE_FILE step
 # so that fortran name mangling is detected before writing H4config.h
+#
+# This interface is UNSAFE on 64-bit systems as the interface attempts to
+# store pointers in 32-bit integers.
 #-----------------------------------------------------------------------------
 # Set default name mangling : overridden by Fortran detection in fortran dir
 set (H4_F77_FUNC "H4_F77_FUNC(name,NAME) name ## _")
 set (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) name ## __")
 if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/fortran" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/fortran")
-  option (HDF4_BUILD_FORTRAN "Build FORTRAN support" ON)
+  option (HDF4_BUILD_FORTRAN "Build FORTRAN support" OFF)
   if (HDF4_BUILD_FORTRAN)
     if (WIN32)
       set (H4_F77_FUNC "H4_F77_FUNC(name,NAME) NAME")
