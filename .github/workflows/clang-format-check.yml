@@ -16,4 +16,4 @@ jobs:
         extensions: 'c,h,cpp,hpp,java'
         clangFormatVersion: 13
         style: file
-        exclude: './config ./mfhdf/ncgen/ncgenyy.c'
+        exclude: './config ./mfhdf/ncgen/ncgenyy.c ./mfhdf/ncgen/ncgentab.c ./mfhdf/ncgen/ncgentab.h'
