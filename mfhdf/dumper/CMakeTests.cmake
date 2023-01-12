@@ -171,7 +171,7 @@ macro (ADD_H4_TEST resultfile resultcode)
             -D "TEST_OUTPUT=${resultfile}.tst"
             -D "TEST_EXPECT=${resultcode}"
             -D "TEST_REFERENCE=${resultfile}.out"
-            -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
+            -P "${HDF_RESOURCES_DIR}/runTest.cmake"
     )
   endif ()
   set_tests_properties (HDP-${resultfile} PROPERTIES DEPENDS HDP-${resultfile}-clearall-objects LABELS ${PROJECT_NAME})

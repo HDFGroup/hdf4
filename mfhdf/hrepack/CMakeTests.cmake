@@ -90,7 +90,7 @@ if (NOT HDF4_ENABLE_USING_MEMCHECKER)
           -D "TEST_OUTPUT=hrepack_check_help.out"
           -D "TEST_EXPECT=1"
           -D "TEST_REFERENCE=hrepack_check_help.txt"
-          -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
+          -P "${HDF_RESOURCES_DIR}/runTest.cmake"
   )
   set_tests_properties (HREPACK-hrepack_check PROPERTIES DEPENDS HREPACK-hrepack-clearall-objects LABELS ${PROJECT_NAME})
 endif ()
@@ -106,7 +106,7 @@ if (NOT HDF4_ENABLE_USING_MEMCHECKER)
           -D "TEST_OUTPUT=hrepack_help.out"
           -D "TEST_EXPECT=0"
           -D "TEST_REFERENCE=hrepack_help.txt"
-          -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
+          -P "${HDF_RESOURCES_DIR}/runTest.cmake"
   )
   set_tests_properties (HREPACK-hrepack_help PROPERTIES DEPENDS HREPACK-hrepack-clearall-objects LABELS ${PROJECT_NAME})
 endif ()

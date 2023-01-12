@@ -113,7 +113,7 @@ add_test (
         -D "TEST_OUTPUT=cdfout.new"
         -D "TEST_EXPECT=0"
         -D "TEST_REFERENCE=testout.sav"
-        -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
+        -P "${HDF_RESOURCES_DIR}/runTest.cmake"
 )
 set_tests_properties (MFHDF_TEST-cdftest PROPERTIES
     FIXTURES_REQUIRED clear_MFHDF_TEST
@@ -162,7 +162,7 @@ if (HDF4_BUILD_XDR_LIB)
             -D "TEST_OUTPUT=xdrtest.tst"
             -D "TEST_EXPECT=0"
             -D "TEST_REFERENCE=xdrtest.out"
-            -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
+            -P "${HDF_RESOURCES_DIR}/runTest.cmake"
     )
   endif ()
   set_tests_properties (MFHDF_TEST-xdrtest PROPERTIES DEPENDS hdfnctest LABELS ${PROJECT_NAME})

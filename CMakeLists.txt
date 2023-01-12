@@ -210,7 +210,6 @@ set (HDF4_TOOLS_LIBSH_TARGET        "${HDF4_TOOLS_LIB_CORENAME}-shared")
 # Define some CMake variables for use later in the project
 #-----------------------------------------------------------------------------
 set (HDF_RESOURCES_DIR        ${HDF4_SOURCE_DIR}/config/cmake)
-set (HDF_RESOURCES_EXT_DIR    ${HDF4_SOURCE_DIR}/config/cmake_ext_mod)
 set (HDF4_HDFSOURCE_DIR       ${HDF4_SOURCE_DIR}/hdf/src)
 set (HDF4_HDF_TESTSOURCE_DIR  ${HDF4_SOURCE_DIR}/hdf/test)
 set (HDF4_MFHDFSOURCE_DIR     ${HDF4_SOURCE_DIR}/mfhdf/libsrc)
@@ -225,7 +224,7 @@ set (HDF4_JAVA_LOGGING_JAR         ${HDF4_SOURCE_DIR}/java/lib/slf4j-api-1.7.33.
 set (HDF4_JAVA_LOGGING_NOP_JAR     ${HDF4_SOURCE_DIR}/java/lib/ext/slf4j-nop-1.7.33.jar)
 set (HDF4_JAVA_LOGGING_SIMPLE_JAR  ${HDF4_SOURCE_DIR}/java/lib/ext/slf4j-simple-1.7.33.jar)
 
-set (CMAKE_MODULE_PATH ${HDF_RESOURCES_DIR} ${HDF_RESOURCES_EXT_DIR} ${CMAKE_MODULE_PATH})
+set (CMAKE_MODULE_PATH ${HDF_RESOURCES_DIR} ${CMAKE_MODULE_PATH})
 
 #-----------------------------------------------------------------------------
 # parse the full version number from hfile.h and include in H4_VERS_INFO
@@ -263,11 +262,11 @@ set (HDF4_PACKAGE_SOVERSION_MAJOR "${H4_VERS_MAJOR}")
 #-----------------------------------------------------------------------------
 # Include some macros for reusable code
 #-----------------------------------------------------------------------------
-include (${HDF_RESOURCES_EXT_DIR}/HDFMacros.cmake)
+include (${HDF_RESOURCES_DIR}/HDFMacros.cmake)
 
 HDF_DIR_PATHS("HDF4")
 
-include (${HDF_RESOURCES_EXT_DIR}/HDFLibMacros.cmake)
+include (${HDF_RESOURCES_DIR}/HDFLibMacros.cmake)
 include (${HDF_RESOURCES_DIR}/HDF4Macros.cmake)
 
 set (HDF4_INSTALL_UTILS_BIN_DIR ${HDF4_INSTALL_BIN_DIR})
@@ -434,7 +433,7 @@ if (MAKE_SYSTEM)
 endif ()
 
 include (${HDF_RESOURCES_DIR}/HDFCompilerFlags.cmake)
-set (CMAKE_MODULE_PATH ${HDF_RESOURCES_DIR} ${HDF_RESOURCES_EXT_DIR} ${CMAKE_MODULE_PATH})
+set (CMAKE_MODULE_PATH ${HDF_RESOURCES_DIR} ${HDF_RESOURCES_DIR} ${CMAKE_MODULE_PATH})
 
 #-----------------------------------------------------------------------------
 # Include user macros

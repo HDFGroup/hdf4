@@ -145,7 +145,7 @@ if (HDF4_BUILD_TOOLS)
               -D "TEST_EXPECT=${resultcode}"
               -D "TEST_FILTER:STRING=(File library|String)[^\n]+\n"
               -D "TEST_REFERENCE=${resultfile}"
-              -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
+              -P "${HDF_RESOURCES_DIR}/runTest.cmake"
       )
     endif ()
     if (NOT "${last_test}" STREQUAL "")
@@ -171,7 +171,7 @@ if (HDF4_BUILD_TOOLS)
               -D "TEST_EXPECT=${resultcode}"
               -D "TEST_FILTER:STRING=(File library|String)[^\n]+\n"
               -D "TEST_REFERENCE=${resultfile}"
-              -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
+              -P "${HDF_RESOURCES_DIR}/runTest.cmake"
       )
     endif ()
     if (NOT "${last_test}" STREQUAL "")
@@ -197,7 +197,7 @@ if (HDF4_BUILD_TOOLS)
               -D "TEST_OUTPUT=${testfile}.tmp"
               -D "TEST_EXPECT=${resultcode}"
               -D "TEST_REFERENCE=${resultfile}"
-              -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
+              -P "${HDF_RESOURCES_DIR}/runTest.cmake"
       )
     endif ()
     if (NOT "${last_test}" STREQUAL "")
