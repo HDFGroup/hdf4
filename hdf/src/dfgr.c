@@ -1048,9 +1048,6 @@ done:
  *          image (but not next lut!).
  *          Automatically decompresses images/luts
  *---------------------------------------------------------------------------*/
-
-/* shut lint up */
-/* ARGSUSED */
 int
 DFGRIgetimlut(const char *filename, void * imlut, int32 xdim, int32 ydim,
               int type, int isfortran, int *compressed, uint16 *compr_type,
@@ -1361,9 +1358,6 @@ done:
  * Remarks: Creates both RIG and RI8/CI8 tags, to accommodate older programs
  *          LUT will be associated with image if set previously
  *---------------------------------------------------------------------------*/
-
-/* shut lint up */
-/* ARGSUSED */
 int
 DFGRIaddimlut(const char *filename, const void * imlut, int32 xdim, int32 ydim,
               int type, int isfortran, int newfile)
