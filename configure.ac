@@ -209,10 +209,17 @@ AC_PROG_CC
 AC_PROG_CPP
 AC_PROG_CXX
 
+## ----------------------------------------------------------------------
+## Check if they would like the Fortran interface compiled
+##
+## This interface is UNSAFE on 64-bit systems as the interface will
+## attempt to store pointers in 32-bit integers.
+##
 AC_ARG_ENABLE([fortran],
               [AS_HELP_STRING([--enable-fortran],
-                              [Build Fortran into library [default=yes]])],,
-              [enableval="yes"])
+                              [Build Fortran into library. This interface
+                               is unsafe on 64-bit systems. [default=no]])],,
+              [enableval="no"])
 
 case "$enableval" in
   yes)

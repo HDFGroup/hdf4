@@ -38,6 +38,14 @@ New features and changes
 ========================
     Configuration:
     -------------
+    - The Fortran interface is disabled by default
+
+      The Fortran interface is unsafe on 32-bit systems as it stores pointers
+      in 32-bit integers. It will be removed in a future release, but for now
+      it will be disabled by default in both CMake and the Autotools.
+
+      (ADB - 2023/01/12)
+
     - Corrected path searched by CMake find_package command
 
       The install path for cmake find_package files had been changed to use
