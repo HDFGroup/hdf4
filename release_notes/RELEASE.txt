@@ -44,7 +44,7 @@ New features and changes
       in 32-bit integers. It will be removed in a future release, but for now
       it will be disabled by default in both CMake and the Autotools.
 
-      (ADB - 2023/01/12)
+      (DER - 2023/01/12)
 
     - Corrected path searched by CMake find_package command
 
