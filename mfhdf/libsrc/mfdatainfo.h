@@ -16,9 +16,6 @@
 
 #include "H4api_adpt.h"
 
-/* Activate raw datainfo interface - added for hmap project in 2010 */
-#if defined DATAINFO_MASTER || defined DATAINFO_TESTER
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -43,5 +40,4 @@ HDFLIBAPI intn SDgetanndatainfo
 #ifdef __cplusplus
 }
 #endif
-#endif /* DATAINFO_MASTER || DATAINFO_TESTER */
-#endif /* _MF_DATAINFO */
+#endif /* _MF_DATAINFO_H */
