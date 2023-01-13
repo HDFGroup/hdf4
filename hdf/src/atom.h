@@ -22,7 +22,6 @@
  * Constant definitions:
  *---------------------------------------------------------------------------*/
 
-/* avoid re-inclusion */
 #ifndef __ATOM_H
 #define __ATOM_H
 
@@ -151,10 +150,10 @@ HDFLIBAPI atom_t atom_id_cache[];
 HDFLIBAPI VOIDP atom_obj_cache[];
 #endif /* ATOM_MASTER */
 
-#if defined c_plusplus || defined __cplusplus
-extern      "C"
+#ifdef __cplusplus
+extern "C"
 {
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 /******************************************************************************
  NAME
@@ -289,9 +288,9 @@ HDFLIBAPI VOIDP HAsearch_atom(group_t grp,        /* IN: Group to search for the
 *******************************************************************************/
 HDFLIBAPI intn HAshutdown(void);
 
-#if defined c_plusplus || defined __cplusplus
+#ifdef __cplusplus
 }
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 #endif /* __ATOM_H */
 

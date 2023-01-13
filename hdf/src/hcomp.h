@@ -22,7 +22,6 @@
  * Constant definitions: lots...
  *---------------------------------------------------------------------------*/
 
-/* avoid re-inclusion */
 #ifndef __HCOMP_H
 #define __HCOMP_H
 

@@ -21,7 +21,7 @@
  * Remarks: This is included with user programs which use RIG
  *---------------------------------------------------------------------------*/
 
-#ifndef DFRIG   /* avoid re-inclusion */
+#ifndef DFRIG
 #define DFRIG
 
 /* description record: used to describe image data, palette data etc. */

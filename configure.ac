@@ -168,7 +168,6 @@ done
 if test "X$host_config" != "Xnone"; then
   CC_BASENAME="`echo $CC | cut -f1 -d' ' | xargs basename 2>/dev/null`"
   F77_BASENAME="`echo $F77 | cut -f1 -d' ' | xargs basename 2>/dev/null`"
-  CXX_BASENAME="`echo $CXX | cut -f1 -d' ' | xargs basename 2>/dev/null`"
   . $host_config
 fi
 
@@ -207,12 +206,18 @@ AC_PROG_MAKE_SET
 
 AC_PROG_CC
 AC_PROG_CPP
-AC_PROG_CXX
 
+## ----------------------------------------------------------------------
+## Check if they would like the Fortran interface compiled
+##
+## This interface is UNSAFE on 64-bit systems as the interface will
+## attempt to store pointers in 32-bit integers.
+##
 AC_ARG_ENABLE([fortran],
               [AS_HELP_STRING([--enable-fortran],
-                              [Build Fortran into library [default=yes]])],,
-              [enableval="yes"])
+                              [Build Fortran into library. This interface
+                               is unsafe on 64-bit systems. [default=no]])],,
+              [enableval="no"])
 
 case "$enableval" in
   yes)
@@ -787,7 +792,6 @@ AC_CHECK_HEADERS([stddef.h io.h])
 AC_CHECK_HEADERS([arpa/inet.h fcntl.h netinet/in.h])
 
 AC_PROG_CC_C_O
-AC_PROG_CXXCPP
 
 if test "X$BUILD_FORTRAN" = "Xyes"; then
   AC_PROG_F77_C_O
@@ -865,18 +869,7 @@ case "X-$enable_production" in
       FFLAGS=$FFLAGS_temp
     fi
 
-    CXXFLAGS_temp=""
-    if test -n "$CXXFLAGS"; then
-      for d in $CXXFLAGS ; do
-        if test "X$d" != "X-g"; then
-          CXXFLAGS_temp="$CXXFLAGS_temp $d"
-        fi
-      done
-      CXXFLAGS=$CXXFLAGS_temp
-    fi
-
     CFLAGS="$CFLAGS $PROD_CFLAGS"
-    CXXFLAGS="$CXXFLAGS $PROD_CXXFLAGS"
     FFLAGS="$FFLAGS $PROD_FFLAGS"
     CPPFLAGS="$CPPFLAGS $PROD_CPPFLAGS"
     ;;
@@ -885,7 +878,6 @@ case "X-$enable_production" in
     CONFIG_MODE=development
     CFLAGS="$CFLAGS $DEBUG_CFLAGS"
     FFLAGS="$FFLAGS $DEBUG_FFLAGS"
-    CXXFLAGS="$CXXFLAGS $DEBUG_CXXFLAGS"
     CPPFLAGS="$CPPFLAGS $DEBUG_CPPFLAGS"
     ;;
   *)

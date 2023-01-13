@@ -22,7 +22,6 @@
  * Constant definitions:
  *---------------------------------------------------------------------------*/
 
-/* avoid re-inclusion */
 #ifndef __MFGR_H
 #define __MFGR_H
 

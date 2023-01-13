@@ -22,7 +22,7 @@
    **   Doug Ilg
  */
 
-#ifndef DFSTUBS_H   /* avoid re-inclusion */
+#ifndef DFSTUBS_H
 #define DFSTUBS_H
 /* This is the master HDF driver (taking the place of df.c), so... */
 #define DFMASTER
@@ -52,10 +52,10 @@ PRIVATE uint16 acc_tag = 0;
 PRIVATE uint16 acc_ref = 0;
 PRIVATE char *DFelement = NULL;
 
-#if defined c_plusplus || defined __cplusplus
-extern      "C"
+#ifdef __cplusplus
+extern "C"
 {
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 /* prototypes for internal routines */
     PRIVATE int DFIclearacc
@@ -64,8 +64,8 @@ extern      "C"
     PRIVATE int DFIcheck
                 (DF * dfile);
 
-#if defined c_plusplus || defined __cplusplus
+#ifdef __cplusplus
 }
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 #endif                          /* DFSTUBS_H */

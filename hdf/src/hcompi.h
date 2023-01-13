@@ -22,7 +22,6 @@
  * Constant definitions:
  *---------------------------------------------------------------------------*/
 
-/* avoid re-inclusion */
 #ifndef __HCOMPI_H
 #define __HCOMPI_H
 

@@ -22,7 +22,6 @@
  * Constant definitions:
  *---------------------------------------------------------------------------*/
 
-/* avoid re-inclusion */
 #ifndef __DYNARRAY_H
 #define __DYNARRAY_H
 
@@ -44,10 +43,10 @@ typedef struct dynarray_tag
 
 #endif /* DYNARRAY_MASTER | DYNARRAY_TESTER */
 
-#if defined c_plusplus || defined __cplusplus
-extern      "C"
+#ifdef __cplusplus
+extern "C"
 {
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 /******************************************************************************
  NAME
@@ -148,9 +147,9 @@ VOIDP DAdel_elem(dynarr_p arr_ptr, /* IN: Array to access */
     intn elem                       /* IN: Array element to retrieve */
 );
 
-#if defined c_plusplus || defined __cplusplus
+#ifdef __cplusplus
 }
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 #endif /* __DYNARRAY_H */
 

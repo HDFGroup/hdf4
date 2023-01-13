@@ -174,7 +174,6 @@ xdrstdio_setpos(XDR *xdrs, u_int pos)
         FALSE : TRUE);
 }
 
-/* ARGSUSED */
 static int32_t *
 xdrstdio_inline(XDR *xdrs, u_int len)
 {

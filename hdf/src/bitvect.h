@@ -22,7 +22,6 @@
  * Constant definitions:
  *---------------------------------------------------------------------------*/
 
-/* avoid re-inclusion */
 #ifndef __BITVECT_H
 #define __BITVECT_H
 
@@ -359,10 +358,11 @@ static const int8 bv_num_ones[256]={
 /* Useful routines for generally private use */
 
 #endif /* BV_MASTER | BV_TESTER */
-#if defined c_plusplus || defined __cplusplus
-extern      "C"
+#ifdef __cplusplus
+extern "C"
 {
-#endif                          /* c_plusplus || __cplusplus */
+#endif
+
 HDFLIBAPI bv_ptr bv_new(int32 num_bits, uint32 flags);
 
 HDFLIBAPI intn bv_delete(bv_ptr b);
@@ -379,9 +379,9 @@ HDFLIBAPI uint32 bv_flags(bv_ptr b);
 
 HDFLIBAPI int32 bv_find(bv_ptr b, int32 last_find, bv_bool value);
 
-#if defined c_plusplus || defined __cplusplus
+#ifdef __cplusplus
 }
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 #endif /* __BITVECT_H */
 

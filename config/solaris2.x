@@ -4,11 +4,11 @@
 # after configure starts and defines, among other things, flags for
 # the various compilation modes.
 
-# Choosing C, Fortran, and C++ Compilers
+# Choosing C and Fortran Compilers
 # --------------------------------------
 #
-# The user should be able to specify the compiler by setting the CC, F77,
-# and CXX environment variables to the name of the compiler and any
+# The user should be able to specify the compiler by setting the CC
+# and F77 environment variables to the name of the compiler and any
 # switches it requires for proper operation. If CC is unset then this
 # script may set it. If CC is unset by time this script completes then
 # configure will try `gcc' and `cc' in that order (perhaps some others
@@ -30,24 +30,17 @@ if test "X-$F77" = "X-"; then
   F77_BASENAME=f77
 fi
 
-if test "X-$CXX" = "X-"; then
-  CXX=CC
-  CXX_BASENAME=CC
-fi
-
-# C, Fortran, and C++ Compiler and Preprocessor Flags
+# C and Fortran Compiler and Preprocessor Flags
 # ---------------------------------------------------
 #
 # - Flags that end with `_CFLAGS' are always passed to the C compiler.
 # - Flags that end with `_FFLAGS' are always passed to the Fortran
 #   compiler.
-# - Flags that end with `_CXXFLAGS' are always passed to the C++ compiler.
-# - Flags that end with `_CPPFLAGS' are passed to the C and C++ compilers
+# - Flags that end with `_CPPFLAGS' are passed to the C compiler
 #   when compiling but not when linking.
 #
 #   DEBUG_CFLAGS
 #   DEBUG_FFLAGS
-#   DEBUG_CXXFLAGS
 #   DEBUG_CPPFLAGS  - Flags to pass to the compiler to create a
 #                     library suitable for use with debugging
 #			          tools. Usually this list will exclude
@@ -57,7 +50,6 @@ fi
 #
 #   PROD_CFLAGS
 #   PROD_FFLAGS
-#   PROD_CXXFLAGS
 #   PROD_CPPFLAGS   - Flags to pass to the compiler to create a
 #                     production version of the library. These
 #                     usually exclude symbolic debugging switches (like
@@ -66,7 +58,6 @@ fi
 #
 #   PROFILE_CFLAGS
 #   PROFILE_FFLAGS
-#   PROFILE_CXXFLAGS
 #   PROFILE_CPPFLAGS- Flags to pass to the compiler to create a
 #                     library suitable for performance testing (like
 #                     `-pg').  This may or may not include debugging or
@@ -93,7 +84,7 @@ fi
 # There are two ways to check the compiler. You can try using `-v' or
 # `--version' to see if the compiler will print a version string.  You
 # can use the value of $FOO_BASENAME which is the base name of the
-# first word in $FOO, where FOO is either CC, F77, or CXX (note that the
+# first word in $FOO, where FOO is either CC or F77 (note that the
 # value of CC may have changed above).
 
 case $CC_BASENAME in
@@ -131,22 +122,6 @@ case $F77_BASENAME in
     DEBUG_FFLAGS="-g"
     PROD_FFLAGS="-O"
     PROFILE_FFLAGS="-pg"
-    ;;
-esac
-
-case $CXX_BASENAME in 
-  g++)
-    CXXFLAGS="$CXXFLAGS"
-    DEBUG_CXXFLAGS="-g -fverbose-asm"
-    PROD_CXXFLAGS="-O3 -fomit-frame-pointer"
-    PROFILE_CXXFLAGS="-pg"
-    ;;
-
-  *)
-    CXXFLAGS="$CXXFLAGS -ansi"
-    DEBUG_CXXFLAGS="-g"
-    PROD_CXXFLAGS="-O"
-    PROFILE_CXXFLAGS="-pg"
     ;;
 esac
 

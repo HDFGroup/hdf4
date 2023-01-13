@@ -142,10 +142,10 @@ typedef TBBT_NODE **TBBT_TREE;
  * void tbbtfree( ITM ***root, void (*df)(ITM *), void (*kf)(void *) );
  */
 
-#if defined c_plusplus || defined __cplusplus
-extern      "C"
+#ifdef __cplusplus
+extern "C"
 {
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 HDFLIBAPI TBBT_TREE  *tbbtdmake
                 (intn (*compar) (VOIDP, VOIDP, intn), intn arg, uintn fast_compare);
@@ -318,8 +318,8 @@ HDFLIBAPI long        tbbtcount
 /* Terminate the buffers used in the tbbt*() interface */
 HDFPUBLIC intn tbbt_shutdown(void);
 
-#if defined c_plusplus || defined __cplusplus
+#ifdef __cplusplus
 }
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 #endif                          /* TBBT_H */
