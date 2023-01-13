@@ -43,7 +43,7 @@ New features and changes
       HDF4 uses pre-defined machine configurations instead of configure tests
       to include header files, set up typedefs, etc. In the future, the
       library will be adapted to use a flexible configure test scheme like
-      HDF5, but in the meantime we will simplify the machine configuration
+      HDF5, but in the meantime we have simplified the machine configuration
       header by dropping configurations for the following platforms:
 
         - Irix / MIPS
