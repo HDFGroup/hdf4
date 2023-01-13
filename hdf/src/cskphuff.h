@@ -22,14 +22,13 @@
  * Constant definitions:
  *---------------------------------------------------------------------------*/
 
-/* avoid re-inclusion */
 #ifndef __CSKPHUFF_H
 #define __CSKPHUFF_H
 
-#if defined c_plusplus || defined __cplusplus
-extern      "C"
+#ifdef __cplusplus
+extern "C"
 {
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 /*
    ** from cskphuff.c
@@ -58,9 +57,9 @@ HDFLIBAPI int32 HCPcskphuff_write
 HDFLIBAPI intn HCPcskphuff_endaccess
                 (accrec_t * access_rec);
 
-#if defined c_plusplus || defined __cplusplus
+#ifdef __cplusplus
 }
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 /* The maximum source character code: */
 #define SKPHUFF_MAX_CHAR     255

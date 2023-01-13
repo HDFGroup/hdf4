@@ -16,10 +16,10 @@
 
 #include "H4api_adpt.h"
 
-#if defined c_plusplus || defined __cplusplus
-extern      "C"
+#ifdef __cplusplus
+extern "C"
 {
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 /* Public functions for getting raw data information */
 
@@ -37,7 +37,7 @@ HDFLIBAPI intn SDgetanndatainfo
     (int32 sdsid, ann_type annot_type, uintn size, int32* offsetarray,
 	int32* lengtharray);
 
-#if defined c_plusplus || defined __cplusplus
+#ifdef __cplusplus
 }
-#endif /* c_plusplus || __cplusplus */
+#endif
 #endif /* _MF_DATAINFO_H */

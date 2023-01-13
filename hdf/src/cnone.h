@@ -23,14 +23,13 @@
  * Constant definitions:
  *---------------------------------------------------------------------------*/
 
-/* avoid re-inclusion */
 #ifndef __CNONE_H
 #define __CNONE_H
 
-#if defined c_plusplus || defined __cplusplus
-extern      "C"
+#ifdef __cplusplus
+extern "C"
 {
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 /*
    ** from cnone.c
@@ -59,9 +58,9 @@ HDFLIBAPI int32 HCPcnone_write
 HDFLIBAPI intn HCPcnone_endaccess
                 (accrec_t * access_rec);
 
-#if defined c_plusplus || defined __cplusplus
+#ifdef __cplusplus
 }
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 /* "none" [en|de]coding information */
 typedef struct

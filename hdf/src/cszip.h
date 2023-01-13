@@ -23,14 +23,13 @@
   * Constant definitions:
   *---------------------------------------------------------------------------*/
 
-/* avoid re-inclusion */
 #ifndef __CSZIP_H
 #define __CSZIP_H
 
-#if defined c_plusplus || defined __cplusplus
-extern      "C"
+#ifdef __cplusplus
+extern "C"
 {
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 /* Special parameters for szip compression */
 /* [These are aliases for the similar definitions in ricehdf.h header file] */
@@ -73,9 +72,9 @@ HDFLIBAPI intn HCPcszip_endaccess
 HDFLIBAPI intn HCPsetup_szip_parms
                  ( comp_info *c_info, int32 nt, int32 ncomp, int32 ndims, int32 *dims, int32 *cdims);
 
-#if defined c_plusplus || defined __cplusplus
+#ifdef __cplusplus
 }
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 
 /* SZIP [en|de]coding information */

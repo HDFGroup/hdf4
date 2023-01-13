@@ -22,7 +22,7 @@
  * Remarks: none
  *----------------------------------------------------------------------------*/
 
-#ifndef DFAN_H  /* avoid re-inclusion */
+#ifndef DFAN_H
 #define DFAN_H
 
 #include "hdf.h"

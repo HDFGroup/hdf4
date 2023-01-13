@@ -52,6 +52,9 @@
 
 /*************************** Utility Functions ***************************/
 
+/* Generates the correct name for the test file */
+intn make_datafilename(char* basename, char* testfile, unsigned int size);
+
 /* Calls SDcreate, SDwritedata, and SDendaccess */
 int32 make_SDS(int32 sd_id, char* sds_name, int32 type, int32 rank,
 			  int32* dim_sizes, int32 unlim_dim, VOIDP written_data);
@@ -73,6 +76,9 @@ int32 append_Data2SDS(int32 sd_id, char* sds_name, int32* start, int32* edges, v
 
 /* Calls SDgetdatasize then verify the size against data_size */
 void verify_datasize(int32 sds_id, int32 data_size, char* sds_name);
+
+/* Verifies the unlimited dimension's size and the variable's data. */
+int verify_info_data(int32 sds_id, int32 expected_dimsize, int16 *result);
 
 /* Find and open an SDS by name */
 int32 get_SDSbyName(int32 sd_id, char* sds_name);

@@ -110,7 +110,7 @@ static intn test_read_dim()
 
     /* Close the file */
     status = SDend(fid);
-    CHECK(status, FAIL, "test_dimensions: SDend");
+    CHECK(status, FAIL, "SDend");
 
     } /* SDstart failed */
 

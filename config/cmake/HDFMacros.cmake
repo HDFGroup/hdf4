@@ -203,7 +203,6 @@ endmacro ()
 macro (TARGET_C_PROPERTIES wintarget libtype)
   target_compile_options(${wintarget} PRIVATE
       $<$<C_COMPILER_ID:MSVC>:${WIN_COMPILE_FLAGS}>
-      $<$<CXX_COMPILER_ID:MSVC>:${WIN_COMPILE_FLAGS}>
   )
   if(MSVC)
     set_property(TARGET ${wintarget} APPEND PROPERTY LINK_FLAGS "${WIN_LINK_FLAGS}")

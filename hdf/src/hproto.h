@@ -55,10 +55,10 @@
              (int32*)   NULL,   (int16*) NULL,  (int16*)  special))
 
 
-#if defined c_plusplus || defined __cplusplus
-extern      "C"
+#ifdef __cplusplus
+extern "C"
 {
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 /*
    ** from hfile.c
@@ -1959,9 +1959,9 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
                 (int32 vkey, const uint8  buf[], int32 nelt, int32 interlace);
 
 
-#if defined c_plusplus || defined __cplusplus
+#ifdef __cplusplus
 }
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 #endif                          /* _H_PROTO */
 

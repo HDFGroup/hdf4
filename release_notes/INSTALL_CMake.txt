@@ -319,8 +319,8 @@ IV. Further considerations
 
    3. If you are building on Apple Darwin platforms, you should add the
       following options:
-          Compiler choice - use xcode by setting the ENV variables of CC and CXX
-          Shared fortran is not supported, build static:
+          Compiler choice - use xcode by setting the ENV variables of CC
+          Shared Fortran is not supported, build static:
             BUILD_SHARED_LIBS:BOOL=OFF
           Additional options:
             CMAKE_ANSI_CFLAGS:STRING=-fPIC
