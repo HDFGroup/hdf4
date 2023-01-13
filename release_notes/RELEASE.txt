@@ -38,6 +38,14 @@ New features and changes
 ========================
     Configuration:
     -------------
+    - Removed the hdf/util/MacProjects directory
+
+    It's unclear what build system these were for, but they have been
+    unmaintained for some time and have been removed. MacOS users can
+    build with the Autotools or CMake.
+
+    (DER - 2023/01/13)
+
     - Dropped support for many obsolete platforms
 
       HDF4 uses pre-defined machine configurations instead of configure tests
@@ -56,6 +64,7 @@ New features and changes
         - Apollo
         - HP-UX / HP-9000
         - Motorola m88k
+        - NeXT
 
       In addition, many #defines have been updated to reflect modern usage,
       particularly on Windows and MacOS.
