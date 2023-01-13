@@ -456,10 +456,10 @@ functab_t;
    **   the H-layer...
  */
 
-#if defined c_plusplus || defined __cplusplus
-extern      "C"
+#ifdef __cplusplus
+extern "C"
 {
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
     HDFLIBAPI accrec_t *HIget_access_rec
                 (void);
@@ -895,9 +895,9 @@ intn HTPdump_dds(int32 file_id,     /* IN: file ID of HDF file to dump info for 
     FILE *fout                      /* IN: file stream to output to */
 );
 
-#if defined c_plusplus || defined __cplusplus
+#ifdef __cplusplus
 }
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 /* #define DISKBLOCK_DEBUG */
 #ifdef DISKBLOCK_DEBUG

@@ -106,7 +106,7 @@ if(CODE_COVERAGE AND NOT CODE_COVERAGE_ADDED)
             ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}
     DEPENDS ccov-clean)
 
-  if(CMAKE_C_COMPILER_ID MATCHES "[Cc]lang" OR CMAKE_CXX_COMPILER_ID MATCHES "[Cc]lang")
+  if(CMAKE_C_COMPILER_ID MATCHES "[Cc]lang")
     # Messages
     message(STATUS "Building with llvm Code Coverage Tools")
 
@@ -140,7 +140,7 @@ if(CODE_COVERAGE AND NOT CODE_COVERAGE_ADDED)
       COMMAND ;
       COMMENT "libs ready for coverage report.")
 
-  elseif(CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+  elseif(CMAKE_C_COMPILER_ID MATCHES "GNU")
     # Messages
     message(STATUS "Building with lcov Code Coverage Tools")
 
@@ -212,7 +212,7 @@ function(target_code_coverage TARGET_NAME)
   if(CODE_COVERAGE)
 
     # Add code coverage instrumentation to the target's linker command
-    if(CMAKE_C_COMPILER_ID MATCHES "[Cc]lang" OR CMAKE_CXX_COMPILER_ID MATCHES "[Cc]lang")
+    if(CMAKE_C_COMPILER_ID MATCHES "[Cc]lang")
       target_compile_options(${TARGET_NAME} PRIVATE -fprofile-instr-generate
                                                     -fcoverage-mapping)
       set_property(
@@ -223,7 +223,7 @@ function(target_code_coverage TARGET_NAME)
         TARGET ${TARGET_NAME}
         APPEND_STRING
         PROPERTY LINK_FLAGS "-fcoverage-mapping ")
-    elseif(CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    elseif(CMAKE_C_COMPILER_ID MATCHES "GNU")
       target_compile_options(${TARGET_NAME} PRIVATE -fprofile-arcs
                                                     -ftest-coverage)
       target_link_libraries(${TARGET_NAME} PRIVATE gcov)
@@ -234,7 +234,7 @@ function(target_code_coverage TARGET_NAME)
 
     # Add shared library to processing for 'all' targets
     if(target_type STREQUAL "SHARED_LIBRARY" AND target_code_coverage_ALL)
-      if(CMAKE_C_COMPILER_ID MATCHES "[Cc]lang" OR CMAKE_CXX_COMPILER_ID MATCHES "[Cc]lang")
+      if(CMAKE_C_COMPILER_ID MATCHES "[Cc]lang")
         add_custom_target(
           ccov-run-${TARGET_NAME}
           COMMAND echo "-object=$<TARGET_FILE:${TARGET_NAME}>" >>
@@ -254,7 +254,7 @@ function(target_code_coverage TARGET_NAME)
 
     # For executables add targets to run and produce output
     if(target_type STREQUAL "EXECUTABLE")
-      if(CMAKE_C_COMPILER_ID MATCHES "[Cc]lang" OR CMAKE_CXX_COMPILER_ID MATCHES "(Apple)?Cc]lang")
+      if(CMAKE_C_COMPILER_ID MATCHES "[Cc]lang")
 
         # If there are shared objects to also work with, generate the string to
         # add them here
@@ -321,7 +321,7 @@ function(target_code_coverage TARGET_NAME)
             -format="html" ${EXCLUDE_REGEX}
           DEPENDS ccov-processing-${TARGET_NAME})
 
-      elseif(CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+      elseif(CMAKE_C_COMPILER_ID MATCHES "GNU")
         set(COVERAGE_INFO
             "${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TARGET_NAME}.info")
 
@@ -412,10 +412,10 @@ endfunction()
 # any subdirectories. To add coverage instrumentation to only specific targets,
 # use `target_code_coverage`.
 function(add_code_coverage)
-  if(CMAKE_C_COMPILER_ID MATCHES "[Cc]lang" OR CMAKE_CXX_COMPILER_ID MATCHES "[Cc]lang")
+  if(CMAKE_C_COMPILER_ID MATCHES "[Cc]lang")
     add_compile_options(-fprofile-instr-generate -fcoverage-mapping)
     add_link_options(-fprofile-instr-generate -fcoverage-mapping)
-  elseif(CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+  elseif(CMAKE_C_COMPILER_ID MATCHES "GNU")
     add_compile_options(-fprofile-arcs -ftest-coverage)
     link_libraries(gcov)
   endif()
@@ -437,7 +437,7 @@ function(add_code_coverage_all_targets)
                         "${multi_value_keywords}" ${ARGN})
 
   if(CODE_COVERAGE)
-    if(CMAKE_C_COMPILER_ID MATCHES "[Cc]lang" OR CMAKE_CXX_COMPILER_ID MATCHES "[Cc]lang")
+    if(CMAKE_C_COMPILER_ID MATCHES "[Cc]lang")
 
       # Merge the profile data for all of the run executables
       add_custom_target(
@@ -489,7 +489,7 @@ function(add_code_coverage_all_targets)
           -format="html" ${EXCLUDE_REGEX}
         DEPENDS ccov-all-processing)
 
-    elseif(CMAKE_C_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    elseif(CMAKE_C_COMPILER_ID MATCHES "GNU")
       set(COVERAGE_INFO "${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/all-merged.info")
 
       # Nothing required for gcov

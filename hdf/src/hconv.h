@@ -21,7 +21,6 @@
  * Constant definitions: lots...
  *---------------------------------------------------------------------------*/
 
-/* avoid re-inclusion */
 #ifndef _HCONV_H
 #define _HCONV_H
 

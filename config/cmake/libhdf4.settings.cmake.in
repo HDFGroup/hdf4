@@ -17,7 +17,7 @@ Compiling Options:
                Compilation Mode: @CMAKE_BUILD_TYPE@
                      C Compiler: @CMAKE_C_COMPILER@
                          CFLAGS: @CMAKE_C_FLAGS@
-                       CPPFLAGS: @CMAKE_CXX_FLAGS@
+                       CPPFLAGS: @CMAKE_CPP_FLAGS@
                Shared Libraries: @H4_ENABLE_SHARED_LIB@
                Static Libraries: YES
   Statically Linked Executables: @BUILD_STATIC_EXECS@

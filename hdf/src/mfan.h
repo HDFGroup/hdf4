@@ -24,7 +24,7 @@
  *
  *----------------------------------------------------------------------------*/
 
-#ifndef _MFAN_H  /* avoid re-inclusion */
+#ifndef _MFAN_H
 #define _MFAN_H
 
 #include "H4api_adpt.h"

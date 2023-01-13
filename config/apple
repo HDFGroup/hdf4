@@ -4,11 +4,11 @@
 # after configure starts and defines, among other things, flags for
 # the various compilation modes.
 
-# Choosing C, Fortran, and C++ Compilers
+# Choosing and Fortran Compilers
 # --------------------------------------
 #
-# The user should be able to specify the compiler by setting the CC, F77,
-# and CXX environment variables to the name of the compiler and any
+# The user should be able to specify the compiler by setting the CC
+# and F77 environment variables to the name of the compiler and any
 # switches it requires for proper operation. If CC is unset then this
 # script may set it. If CC is unset by time this script completes then
 # configure will try `gcc' and `cc' in that order (perhaps some others

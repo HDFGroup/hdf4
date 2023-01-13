@@ -23,7 +23,6 @@
  * Author: -GeorgeV -  9/3/96
  *---------------------------------------------------------------------------*/
 
-/* avoid re-inclusion */
 #ifndef __HCHUNKS_H
 #define __HCHUNKS_H
 
@@ -155,10 +154,10 @@ typedef struct chunkinfo_t
 chunkinfo_t;
 #endif /* _HCHUNKS_MAIN_ */
 
-#if defined c_plusplus || defined __cplusplus
-extern      "C"
+#ifdef __cplusplus
+extern "C"
 {
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 /*
 ** from hchunks.c
@@ -283,9 +282,9 @@ extern      "C"
 
 #endif /* _HCHUNKS_MAIN_ */
 
-#if defined c_plusplus || defined __cplusplus
+#ifdef __cplusplus
 }
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 #ifndef _HCHUNKS_MAIN_
 /* not in master file hchunk.c */

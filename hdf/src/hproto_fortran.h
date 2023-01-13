@@ -18,11 +18,10 @@
 #include "H4api_adpt.h"
 #include "df.h"
 
-#if defined c_plusplus || defined __cplusplus
-extern      "C"
+#ifdef __cplusplus
+extern "C"
 {
-#endif                          /* c_plusplus || __cplusplus */
-
+#endif
 
 /*
    ** from dfanF.c
@@ -1687,9 +1686,9 @@ nmgifndat(intf * riid, _fcd name, intf *nlen);
               int *ct_method, int32 *hres, int32 *vres, int *compress, int *lenfn);
 
 
-#if defined c_plusplus || defined __cplusplus
+#ifdef __cplusplus
 }
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 #endif                          /* _H_PROTO_FORTRAN */
 

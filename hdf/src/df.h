@@ -27,7 +27,7 @@
  *          Since it includes stdio.h etc., do not include these after df.h
  *---------------------------------------------------------------------------*/
 
-#ifndef DF_H    /* avoid re-inclusion */
+#ifndef DF_H
 #define DF_H
 
 #include "H4api_adpt.h"
@@ -107,10 +107,10 @@ DFdata;
 /*--------------------------------------------------------------------------*/
 /*                          Procedure types                                 */
 
-#if defined c_plusplus || defined __cplusplus
-extern      "C"
+#ifdef __cplusplus
+extern "C"
 {
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 /* prototypes for dfstubs.c */
     HDFLIBAPI DF  *DFopen
@@ -195,9 +195,9 @@ extern      "C"
     HDFLIBAPI int  DFconvert
                 (uint8 *source, uint8 *dest, int ntype, int sourcetype, int desttype, int32 size);
 
-#if defined c_plusplus || defined __cplusplus
+#ifdef __cplusplus
 }
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 /*--------------------------------------------------------------------------*/
 /*                          Global Variables                                */

@@ -23,14 +23,13 @@
  * Constant definitions:
  *---------------------------------------------------------------------------*/
 
-/* avoid re-inclusion */
 #ifndef __MSTDIO_H
 #define __MSTDIO_H
 
-#if defined c_plusplus || defined __cplusplus
-extern      "C"
+#ifdef __cplusplus
+extern "C"
 {
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 /*
    ** from mstdio.c
@@ -59,9 +58,9 @@ HDFLIBAPI int32 HCPmstdio_write
 HDFLIBAPI intn HCPmstdio_endaccess
                 (accrec_t * access_rec);
 
-#if defined c_plusplus || defined __cplusplus
+#ifdef __cplusplus
 }
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 /* model information about stdio model */
 typedef struct

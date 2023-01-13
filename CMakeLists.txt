@@ -344,8 +344,6 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin" OR CYGWIN)
   foreach (flag_var
       CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
       CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO
-      CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
-      CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
     if (${flag_var} MATCHES "O3")
       string (REGEX REPLACE "O3" "O2" ${flag_var} "${${flag_var}}")
     endif ()
@@ -369,7 +367,6 @@ if (HDF4_ENABLE_COVERAGE)
     add_code_coverage () # Adds instrumentation to all targets
   else ()
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 --coverage -fprofile-arcs -ftest-coverage")
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g --coverage -O0 -fprofile-arcs -ftest-coverage")
     if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
       set (LDFLAGS "${LDFLAGS} -fprofile-arcs -ftest-coverage")
       link_libraries (gcov)
