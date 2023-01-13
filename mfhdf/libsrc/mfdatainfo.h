@@ -40,4 +40,4 @@ HDFLIBAPI intn SDgetanndatainfo
 #if defined c_plusplus || defined __cplusplus
 }
 #endif /* c_plusplus || __cplusplus */
-#endif /* _MF_DATAINFO */
+#endif /* _MF_DATAINFO_H */
