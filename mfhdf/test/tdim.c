@@ -248,7 +248,7 @@ static intn test_basic_dim()
 
     /* Close the file */
     status = SDend(fid);
-    CHECK(status, FAIL, "test_dimensions: SDend");
+    CHECK(status, FAIL, "SDend");
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -493,7 +493,7 @@ static intn test_dim_scales()
 
     /* Close the file */
     status = SDend(fid);
-    CHECK(status, FAIL, "test_dimensions: SDend");
+    CHECK(status, FAIL, "SDend");
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -760,7 +760,7 @@ static intn test_dim_strs()
 
     /* Close the file */
     status = SDend(fid);
-    CHECK(status, FAIL, "test_dimensions: SDend");
+    CHECK(status, FAIL, "SDend");
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
