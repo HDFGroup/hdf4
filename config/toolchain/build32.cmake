@@ -7,9 +7,11 @@ elseif(MINGW)
   set (CMAKE_SYSTEM_NAME Windows)
   set (TOOLCHAIN_PREFIX i686-w64-mingw32)
   set (CMAKE_C_COMPILER ${TOOLCHAIN_PREFIX}-gcc)
+  set (CMAKE_CXX_COMPILER ${TOOLCHAIN_PREFIX}-g++)
   set (CMAKE_RC_COMPILER ${TOOLCHAIN_PREFIX}-windres)
   set (CMAKE_Fortran_COMPILER ${TOOLCHAIN_PREFIX}-gfortran)
 
+  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32" CACHE STRING "c++ flags")
   set (CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -m32" CACHE STRING "c flags")
 
   set (LIB32 /usr/lib) # Fedora
@@ -44,6 +46,7 @@ elseif(MINGW)
 else ()
   set (CMAKE_SYSTEM_NAME Linux)
 
+  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32" CACHE STRING "c++ flags")
   set (CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -m32" CACHE STRING "c flags")
 
   set (LIB32 /usr/lib) # Fedora
