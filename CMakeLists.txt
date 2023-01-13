@@ -343,7 +343,7 @@ add_definitions (-DHAVE_CONFIG_H)
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin" OR CYGWIN)
   foreach (flag_var
       CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
-      CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO
+      CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO)
     if (${flag_var} MATCHES "O3")
       string (REGEX REPLACE "O3" "O2" ${flag_var} "${${flag_var}}")
     endif ()
