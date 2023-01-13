@@ -38,6 +38,30 @@ New features and changes
 ========================
     Configuration:
     -------------
+    - Dropped support for many obsolete platforms
+
+      HDF4 uses pre-defined machine configurations instead of configure tests
+      to include header files, set up typedefs, etc. In the future, the
+      library will be adapted to use a flexible configure test scheme like
+      HDF5, but in the meantime we have simplified the machine configuration
+      header by dropping configurations for the following platforms:
+
+        - Irix / MIPS
+        - Itanium
+        - Intel i860
+        - Fujitsu VP
+        - Convex
+        - "K&R Sun" and Solaris on x86
+        - DEC Alpha
+        - Apollo
+        - HP-UX / HP-9000
+        - Motorola m88k
+
+      In addition, many #defines have been updated to reflect modern usage,
+      particularly on Windows and MacOS.
+
+      (DER - 2023/01/13)
+
     - Added new option to build jpeg, libaec and zlib inline with CMake.
 
       Using the CMake FetchContent module, the external filters can populate
