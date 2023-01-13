@@ -38,6 +38,21 @@ New features and changes
 ========================
     Configuration:
     -------------
+    - Removed all references to C++
+
+      HDF4 does not have a C++ wrapper and, like HDF5, we do not support
+      building the library with a C++ compiler since the languages are
+      diverging.
+
+      Despite this, some parts of the build system checked for a C++ compiler,
+      manipulated CXXFLAGS, etc. This was mainly in files that were brought
+      over from HDF5. This build system code has been removed.
+
+      As a part of this C++ cleanup, the extern "C" ifdefs in the header files
+      no longer test for c_plusplus.
+
+      (DER - 2023/01/13)
+
     - The Fortran interface is disabled by default
 
       The Fortran interface is unsafe on 32-bit systems as it stores pointers

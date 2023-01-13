@@ -145,10 +145,10 @@ typedef struct MCACHE
 #endif /* STATISTICS */
 } MCACHE;
 
-#if defined c_plusplus || defined __cplusplus
-extern      "C"
+#ifdef __cplusplus
+extern "C"
 {
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 HDFLIBAPI MCACHE *mcache_open (
     VOID *key,          /* IN:byte string used as handle to share buffers */
@@ -204,8 +204,8 @@ HDFLIBAPI VOID     mcache_stat(
     MCACHE *mp /* IN: MCACHE cookie */);
 #endif /* STATISTICS */
 
-#if defined c_plusplus || defined __cplusplus
+#ifdef __cplusplus
 }
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 #endif /* _MCACHE_H */

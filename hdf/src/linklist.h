@@ -22,7 +22,6 @@
  * Constant definitions:
  *---------------------------------------------------------------------------*/
 
-/* avoid re-inclusion */
 #ifndef __LINKLIST_H
 #define __LINKLIST_H
 
@@ -66,10 +65,10 @@ static node_info_t *node_free_list=NULL;
 
 #endif /* LIST_MASTER | LIST_TESTER */
 
-#if defined c_plusplus || defined __cplusplus
-extern      "C"
+#ifdef __cplusplus
+extern "C"
 {
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 /******************************************************************************
  NAME
@@ -202,9 +201,9 @@ VOIDP HULremove_node(list_head_t *lst,  /* IN: list to modify */
 intn
 HULshutdown(void);
 
-#if defined c_plusplus || defined __cplusplus
+#ifdef __cplusplus
 }
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 #endif /* __LINKLIST_H */
 

@@ -21,7 +21,7 @@
  * Remarks: This is included with user programs which use general raster
  *---------------------------------------------------------------------------*/
 
-#ifndef DFGR_H  /* avoid re-inclusion */
+#ifndef DFGR_H
 #define DFGR_H
 
 /* description record: used to describe image data, palette data etc. */
@@ -57,17 +57,17 @@ typedef struct
   }
 DFGRrig;
 
-#if defined c_plusplus || defined __cplusplus
-extern      "C"
+#ifdef __cplusplus
+extern "C"
 {
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 /* Library-developer functions */
 HDFLIBAPI int32 DFGRIopen
                 (const char *filename, int acc_mode);
 
-#if defined c_plusplus || defined __cplusplus
+#ifdef __cplusplus
 }
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 #endif                          /* DFGR_H */

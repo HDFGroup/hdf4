@@ -12,7 +12,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 
-#ifndef DFUFP2IM_H  /* avoid re-inclusion */
+#ifndef DFUFP2IM_H
 #define DFUFP2IM_H
 
 #include "H4api_adpt.h"
@@ -49,10 +49,10 @@ Output;
 /*----------------------------------------------------------------------------*/
 /*                           Function Prototypes                              */
 
-#if defined c_plusplus || defined __cplusplus
-extern      "C"
+#ifdef __cplusplus
+extern "C"
 {
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 /* prototypes for dfufp2im.c */
 
@@ -73,8 +73,8 @@ extern      "C"
                  float32 *hscale, float32 *vscale, float32 *data, uint8 *palette,
                  char *outfile, int ct_method, int32 hres, int32 vres, int compress);
 
-#if defined c_plusplus || defined __cplusplus
+#ifdef __cplusplus
 }
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 #endif                          /* DFUFP2IM_H */

@@ -23,14 +23,13 @@
  * Constant definitions:
  *---------------------------------------------------------------------------*/
 
-/* avoid re-inclusion */
 #ifndef __CRLE_H
 #define __CRLE_H
 
-#if defined c_plusplus || defined __cplusplus
-extern      "C"
+#ifdef __cplusplus
+extern "C"
 {
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 /*
    ** from crle.c
@@ -59,9 +58,9 @@ HDFLIBAPI int32 HCPcrle_write
 HDFLIBAPI intn HCPcrle_endaccess
                 (accrec_t * access_rec);
 
-#if defined c_plusplus || defined __cplusplus
+#ifdef __cplusplus
 }
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 /* size of the RLE buffer */
 #define RLE_BUF_SIZE    128

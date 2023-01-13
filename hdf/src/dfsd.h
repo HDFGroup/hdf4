@@ -24,7 +24,7 @@
  *          multiple dimensions
  *---------------------------------------------------------------------------*/
 
-#ifndef _DFSD_H   /* avoid re-inclusion */
+#ifndef _DFSD_H
 #define _DFSD_H
 
 #include "H4api_adpt.h"
@@ -76,10 +76,10 @@ typedef struct DFnsdg_t_hdr
   }
 DFnsdg_t_hdr;
 
-#if defined c_plusplus || defined __cplusplus
-extern      "C"
+#ifdef __cplusplus
+extern "C"
 {
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
     HDFLIBAPI int32 DFSDIopen
                 (const char * filename, int acc_mode);
@@ -130,8 +130,8 @@ extern      "C"
                 (const char * label, const char * unit, const char * format,
                  const char * coordsys);
 
-#if defined c_plusplus || defined __cplusplus
+#ifdef __cplusplus
 }
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 #endif                          /* _DFSD_H */

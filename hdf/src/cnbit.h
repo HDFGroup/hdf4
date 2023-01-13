@@ -22,14 +22,13 @@
  * Constant definitions:
  *---------------------------------------------------------------------------*/
 
-/* avoid re-inclusion */
 #ifndef __CNBIT_H
 #define __CNBIT_H
 
-#if defined c_plusplus || defined __cplusplus
-extern      "C"
+#ifdef __cplusplus
+extern "C"
 {
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 /*
    ** from cnbit.c
@@ -58,9 +57,9 @@ HDFLIBAPI int32 HCPcnbit_write
 HDFLIBAPI intn HCPcnbit_endaccess
                 (accrec_t * access_rec);
 
-#if defined c_plusplus || defined __cplusplus
+#ifdef __cplusplus
 }
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 /* size of the N-bit buffer */
 #define NBIT_BUF_SIZE   (MAX_NT_SIZE*64)

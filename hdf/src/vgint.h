@@ -238,10 +238,10 @@ vfile_t;
 
 /* .................................................................. */
 
-#if defined c_plusplus || defined __cplusplus
-extern      "C"
+#ifdef __cplusplus
+extern "C"
 {
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 /*
  * Library private routines for the VSet layer
@@ -299,8 +299,8 @@ extern      "C"
     HDFLIBAPI void trimendblanks
                 (char *ss);
 
-#if defined c_plusplus || defined __cplusplus
+#ifdef __cplusplus
 }
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 #endif                          /* _VGINT_H */

@@ -22,7 +22,6 @@
  * Constant definitions:
  *---------------------------------------------------------------------------*/
 
-/* avoid re-inclusion */
 #ifndef __CDEFLATE_H
 #define __CDEFLATE_H
 
@@ -33,10 +32,10 @@
 #include "zlib.h"
 #undef zintf
 
-#if defined c_plusplus || defined __cplusplus
-extern      "C"
+#ifdef __cplusplus
+extern "C"
 {
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 /*
    ** from cdeflate.c
@@ -65,9 +64,9 @@ HDFLIBAPI int32 HCPcdeflate_write
 HDFLIBAPI intn HCPcdeflate_endaccess
                 (accrec_t * access_rec);
 
-#if defined c_plusplus || defined __cplusplus
+#ifdef __cplusplus
 }
-#endif                          /* c_plusplus || __cplusplus */
+#endif
 
 /* Define the [default] size of the buffer to interact with the file. */
 #define DEFLATE_BUF_SIZE    4096
