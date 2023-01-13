@@ -57,7 +57,7 @@
 /* CONSTANT DEFINITIONS                                                      */
 /*****************************************************************************/
 /* Generally Big-Endian machines */
-#if !defined(INTEL86) && !defined(__x86_64__)
+#ifdef H4_WORDS_BIGENDIAN
 #       define UI8_IN     DFKnb1b   /* Unsigned Integer, 8 bits */
 #       define UI8_OUT    DFKnb1b
 #       define SI16_IN    DFKnb2b   /* S = Signed */
@@ -88,7 +88,7 @@
 #       define LF64_IN    DFKsb8b
 #       define LF64_OUT   DFKsb8b
 
-#else  /* must be INTEL86 || Linux64 (Generally, little-endian machines */
+#else  /* not H4_WORDS_BIGENDIAN */
 #   define UI8_IN     DFKnb1b   /* Big-Endian IEEE support */
 #   define UI8_OUT    DFKnb1b   /* The s in DFKsb2b is for swap */
 #   define SI16_IN    DFKsb2b
@@ -119,7 +119,7 @@
 #   define LF64_IN    DFKnb8b
 #   define LF64_OUT   DFKnb8b
 
-#endif /* !INTEL86 && !Linux64*/
+#endif /* H4_WORDS_BIGENDIAN */
 
 /* All Machines currently use the same routines */
 /* for Native mode "conversions" */
