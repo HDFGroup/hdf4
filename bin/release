@@ -319,6 +319,15 @@ release_date=`date +%F`
 today=`date +%Y%m%d`
 pmode='no'
 tmpdir="../#release_tmp.$$"    # tmp work directory
+MAINT_MODE_ENABLED=""
+
+# If maintainer mode is enabled in configure, it should be disabled for release,
+# and enabled again after release files have been created.  If already disabled
+# there's no need to do either.
+MAINT_MODE_ENABLED=`grep ^AM_MAINTAINER_MODE ./configure.ac | grep enable`
+if [ "${MAINT_MODE_ENABLED}" != "" ]; then
+    bin/switch_maint_mode -disable ./configure.ac
+fi
 
 # Restore previous Version information
 RESTORE_VERSION()
@@ -456,6 +465,12 @@ for comp in $methods; do
             ;;
     esac
 done
+
+# If AM_MAINTAINER_MODE was enabled before running this script
+# restore it to "enabled".
+if [ "${MAINT_MODE_ENABLED}" != "" ]; then
+    bin/switch_maint_mode -enable ./configure.ac
+fi
 
 # Copy the RELEASE.txt to the release area.
 cp release_notes/RELEASE.txt $DEST/$HDF4_VERS-RELEASE.txt

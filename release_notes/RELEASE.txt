@@ -38,6 +38,28 @@ New features and changes
 ========================
     Configuration:
     -------------
+    - Changed how maintainer mode works in the Autotools
+
+    The macro has changed from AM_MAINTAINER_MODE to
+    AM_MAINTAINER_MODE([enable]) in master and AM_MAINTAINER_MODE([disable])
+    at release time. The main change is that build dependencies will be ON
+    by default in master so out-of-date configure, Makefile.in will be
+    regenerated when their input files (configure.ac, Makefile.am, etc.)
+    change.
+
+    We previously used the macro with no parameter since we checked in the
+    Autotools-generated files. This allowed switching on maintainer mode
+    with a command-line option, but left maintainer mode off to avoid
+    regenerating the build files when checking out from git did not
+    preserve timestamps, making the files look out-of-date. Now that we no
+    longer check in Autotools-geneated files, we can turn the
+    dependencies on.
+
+    Detailed comments about the behavior of this macro have been added to
+    configure.ac where we define the macro.
+
+    (DER - 2023/01/13)
+
     - Removed the hdf/util/MacProjects directory
 
     It's unclear what build system these were for, but they have been
