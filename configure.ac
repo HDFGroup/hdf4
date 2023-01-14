@@ -12,8 +12,6 @@
 ## If you do not have access to either file, you may request a copy from
 ## help@hdfgroup.org.
 ##
-##
-AC_REVISION($Id$)
 
 ## ======================================================================
 ## Initialize configure.
@@ -790,8 +788,6 @@ fi
 
 AM_CONDITIONAL([HDF_BUILD_XDR], [test "X$BUILD_XDR" = "Xyes"])
 
-AC_HEADER_STDC
-AC_HEADER_RESOLV
 ## ======================================================================
 ## Checks for types
 ## ======================================================================
@@ -807,7 +803,7 @@ AC_HEADER_RESOLV
 ## The hton functions convert host endianness to network endianness.
 ## The ntoh functions convert network endianness to host endianness
 ## ======================================================================
-AC_CHECK_FUNCS([htonl htons ntohl ntohs __builtin_bswap16 __builtin_bswap32 __builtin_bswap64])
+AC_CHECK_FUNCS([htonl htons ntohl ntohs])
 
 ## ======================================================================
 ## Checks for structures
