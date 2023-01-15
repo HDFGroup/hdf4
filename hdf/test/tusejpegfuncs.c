@@ -3,8 +3,17 @@
  * the JPEG package by The Independent JPEG Group                            *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #include <stdio.h>
-#include "jpeglib.h"
+
 #include "tproto.h"
+
+/* Hack to prevent libjpeg from re-defining `boolean` in a way that clashes
+ * with windows.h. This MUST come before including jpeglib.h.
+ */
+#ifdef H4_HAVE_WIN32_API
+#define HAVE_BOOLEAN
+#endif
+
+#include "jpeglib.h"
 
 #define ABS(x)  ((int)(x)<0 ? (-x) : x)
 
