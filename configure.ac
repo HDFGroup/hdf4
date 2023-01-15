@@ -808,7 +808,7 @@ AC_CHECK_FUNCS([htonl htons ntohl ntohs])
 ## ======================================================================
 AC_CHECK_HEADERS([fcntl.h unistd.h])
 
-AC_CHECK_HEADERS([sys/file.h sys/resource.h sys/stat.h sys/time.h])
+AC_CHECK_HEADERS([sys/file.h sys/resource.h sys/stat.h sys/time.h sys/wait.h])
 AC_CHECK_HEADERS([sys/types.h])
 
 AC_CHECK_HEADERS([io.h])

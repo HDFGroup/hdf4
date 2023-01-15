@@ -15,10 +15,9 @@
 /* --- he-file.c  --- file and annotation manipulation routines */
 #include "he.h"
 
-/* get the prototype for the wait() func. */
-#if defined SUN | defined UNIX386
+#ifdef H5_HAVE_SYS_WAIT_H
 #include <sys/wait.h>
-#endif /* SUN */
+#endif
 #ifdef H4_HAVE_UNISTD_H
 #include <unistd.h>
 #endif

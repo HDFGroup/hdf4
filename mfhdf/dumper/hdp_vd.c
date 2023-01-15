@@ -48,12 +48,13 @@ parse_dumpvd_opts(dump_info_t *dumpvd_opts,
    char       *tempPtr, *ptr;
 
    /* traverse the command and process each option */
-#if defined(WIN386) || defined(DOS386)
+/* Allows '/' for options on Windows */
+#ifdef H4_HAVE_WIN32_API
    while ((*curr_arg < argc) && ((argv[*curr_arg][0] == '-') ||
                                  (argv[*curr_arg][0] == '/')))
 #else
    while ((*curr_arg < argc) && (argv[*curr_arg][0] == '-'))
-#endif /* for the use of / as option on PC */
+#endif
    {
       switch (argv[*curr_arg][1])
       {

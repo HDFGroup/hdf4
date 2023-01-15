@@ -212,29 +212,13 @@ typedef long            hdf_pint_t;   /* an integer the same size as a pointer *
 
 /*-----------------------------------------------------*/
 
-#if defined _M_ARM64 || defined _M_X64 || defined _M_IX86 || defined INTEL86 || defined M_I86 || defined M_I386 || defined DOS386 || defined __i386 || defined UNIX386 || defined i386
+#if defined _M_ARM64 || defined _M_X64 || defined _M_IX86 || defined INTEL86 || defined M_I86 || defined M_I386 || defined __i386 || defined i386
+
 #ifndef INTEL86
 #define INTEL86
-#endif /* INTEL86 */
-
-#if !defined UNIX386 && (defined unix || defined __unix)
-#define UNIX386
-#endif /* UNIX386 */
-
-#if !defined DOS386 && defined M_I386
-#define DOS386
-#endif /* M_I386 && !DOS386 */
-
-#if defined _WINDOWS || defined _WIN32
-#define WIN386
-#endif  /* _WINDOWS | _WIN32_ */
-
-#if defined WIN386 || defined DOS386 || defined UNIX386
-#define INTEL386
-#endif /* WIN386 | DOS386 | UNIX386 */
+#endif
 
 #define DF_MT             DFMT_PC
-
 typedef long              intf;     /* size of INTEGERs in Fortran compiler */
 #ifdef _WIN64
 typedef long long         hdf_pint_t;   /* 8-byte pointer */
@@ -242,16 +226,7 @@ typedef long long         hdf_pint_t;   /* 8-byte pointer */
 typedef int               hdf_pint_t;   /* 4-byte pointer */
 #endif /* _WIN64 */
 
-#if defined UNIX386
-#ifdef H4_ABSOFT
-#define FNAME(x) x
-#define DF_CAPFNAMES
-#else
 #define FNAME_POST_UNDERSCORE
-#endif
-#elif defined INTEL386
-#define DF_CAPFNAMES
-#endif
 
 #endif /* INTEL86 */
 
