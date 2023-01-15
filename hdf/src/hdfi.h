@@ -547,12 +547,11 @@ correctly.
 /**************************************************************************
 *  Allocation functions defined differently
 **************************************************************************/
-#if !defined(MALLOC_CHECK)
-#  define HDmalloc(s)      (malloc((size_t)s))
-#  define HDcalloc(a,b)    (calloc((size_t)a,(size_t)b))
-#  define HDfree(p)        (free((void*)p))
-#  define HDrealloc(p,s)   (realloc((void*)p,(size_t)s))
-#endif /* !defined MALLOC_CHECK */
+#define HDmalloc(s)     malloc(s)
+#define HDcalloc(a,b)   calloc(a,b)
+#define HDfree(p)       free(p)
+#define HDrealloc(p,s)  realloc(p,s)
+
 /* Macro to free space and clear pointer to NULL */
 #define HDfreenclear(p) { if((p)!=NULL) HDfree(p); p=NULL; }
 
