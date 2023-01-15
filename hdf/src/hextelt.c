@@ -81,7 +81,7 @@ EXPORTED ROUTINES
 /* Directory separator definitions relating to a path.
  * Note this does not provide a universal way to recognize
  * different path name conventions and translate between them */
-#ifdef H5_HAVE_WIN32_API
+#ifdef H4_HAVE_WIN32_API
 /* DOS-Windows separator */
 #define DIR_SEPC  92  /* Integer value of '\' */
 #define DIR_SEPS  "\\"

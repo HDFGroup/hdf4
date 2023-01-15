@@ -15,7 +15,7 @@
 /* --- he-file.c  --- file and annotation manipulation routines */
 #include "he.h"
 
-#ifdef H5_HAVE_SYS_WAIT_H
+#ifdef H4_HAVE_SYS_WAIT_H
 #include <sys/wait.h>
 #endif
 #ifdef H4_HAVE_UNISTD_H
