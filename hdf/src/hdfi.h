@@ -39,15 +39,24 @@
 /*      6 - Fujitsu VP                                                      */
 /*          (i.e. Big-Endian, 32-bit architecture w/Fujitsu Native Floats)  */
 /*      7 - Cray MPP                                                        */
-/*          (i.e. Big-Endian, 32-bit architecture w/IEEE Floats, but no 16-bit type)            */
+/*          (i.e. Big-Endian, 32-bit architecture w/IEEE Floats, but        */
+/*           no 16-bit type)                                                */
 /*      8 - Cray IEEE                                                       */
 /*          (i.e. Big-Endian, all 64-bit architecture w/IEEE Floats)        */
 /*--------------------------------------------------------------------------*/
-#define     DFMT_SUN            0x1111
-#define     DFMT_PC             0x4441
-#define     DFMT_APPLE_INTEL    0x4441
-#define     DFMT_LINUX64        0x4441
-#define     DFMT_POWERPC64      0x1111
+
+/* There are only two configurations now, both of which have IEEE-754
+ * floating-point support. Type sizes are now specified by C99 fixed-width
+ * integers, so 32- vs 64-bit support doesn't matter in this file.
+ */
+#define DFMT_LE 0x4441  /* Little-endian, IEEE-754 architectures */
+#define DFMT_BE 0x1111  /* Big-endian, IEEE-754 architectures */
+
+#if defined(H4_WORDS_BIGENDIAN) || defined(WORDS_BIGENDIAN)
+#define DF_MT   DFMT_BE
+#else
+#define DF_MT   DFMT_LE
+#endif
 
 /* I/O library constants */
 #define UNIXUNBUFIO 1
@@ -149,7 +158,6 @@ typedef void *          VOIDP;
 #define SUN
 #endif
 
-#define DF_MT   DFMT_SUN
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 #ifdef _LP64 /* 64-bit environment */
 typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
@@ -163,12 +171,6 @@ typedef int               hdf_pint_t;   /* an integer the same size as a pointer
 /*-----------------------------------------------------*/
 #if defined (__APPLE__)
 
-#define DF_MT DFMT_APPLE_INTEL
-
-#ifndef __GNUC__
-#define DUMBCC     /* because it is.  for later use in macros */
-#endif /* __GNUC__ */
-
 typedef int             intf;     /* size of INTEGERs in Fortran compiler */
 typedef long            hdf_pint_t;   /* an integer the same size as a pointer */
 
@@ -179,7 +181,6 @@ typedef long            hdf_pint_t;   /* an integer the same size as a pointer *
 
 #if defined _M_ARM64 || defined _M_X64 || defined _M_IX86 || defined INTEL86 || defined M_I86 || defined M_I386 || defined __i386 || defined i386
 
-#define DF_MT             DFMT_PC
 typedef long              intf;     /* size of INTEGERs in Fortran compiler */
 #ifdef _WIN64
 typedef long long         hdf_pint_t;   /* 8-byte pointer */
@@ -195,7 +196,6 @@ typedef int               hdf_pint_t;   /* 4-byte pointer */
 /* Power PC 5 64 */
 #if defined __powerpc64__
 
-#define DF_MT             DFMT_POWERPC64
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
 #if defined __GNUC__
@@ -209,7 +209,6 @@ typedef long              hdf_pint_t;   /* an integer the same size as a pointer
 #if (defined(__linux__) && defined __x86_64__  && !(defined  SUN)) || defined(__CYGWIN__)  /* i.e. 64-bit Linux  but not SunOS on Intel */
                                                                                            /* it should work also for Cygwin 32 & 64 bit */
 
-#define DF_MT             DFMT_LINUX64
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
 #define FNAME_POST_UNDERSCORE
@@ -221,7 +220,6 @@ typedef long              hdf_pint_t;   /* an integer the same size as a pointer
 
 #if defined __FreeBSD__ && defined __x86_64__
 
-#define DF_MT             DFMT_LINUX64
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
 #define FNAME_POST_UNDERSCORE
@@ -340,11 +338,7 @@ typedef long              hdf_pint_t;   /* an integer the same size as a pointer
 /**************************************************************************
 *  Macros to work around ANSI C portability problems.
 **************************************************************************/
-#ifdef DUMBCC
-#define CONSTR(v,s) char *v=s
-#else
 #define CONSTR(v,s) static const char v[]=s
-#endif
 
 /**************************************************************************
 *  Allocation functions defined differently
