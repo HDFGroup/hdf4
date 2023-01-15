@@ -47,22 +47,22 @@
 typedef unsigned char u_char;
 #endif
 #ifndef u_short
-typedef uint16_t      u_short;
+typedef uint16_t u_short;
 #endif
 #ifndef u_int
-typedef uint32_t      u_int;
+typedef uint32_t u_int;
 #endif
 #ifndef u_long
 typedef unsigned long u_long;
 #endif
 #ifndef u_quad_t
-typedef uint64_t      u_quad_t;
+typedef uint64_t u_quad_t;
 #endif
 #ifndef quad_t
-typedef int64_t       quad_t;
+typedef int64_t quad_t;
 #endif
 #ifndef caddr_t
-typedef char *        caddr_t;
+typedef char *caddr_t;
 #endif
 
 #ifndef TRUE
@@ -77,7 +77,7 @@ typedef int32_t bool_t;
 typedef int32_t enum_t;
 
 #ifndef NULL
-#    define NULL 0
+#define NULL 0
 #endif
 
 #ifdef H4_HAVE_STDDEF_H
@@ -89,8 +89,8 @@ typedef int32_t enum_t;
 extern char *malloc();
 #endif
 
-#define mem_alloc(bsize)        calloc(1, bsize)
-#define mem_free(ptr, bsize)    free(ptr)
+#define mem_alloc(bsize)     calloc(1, bsize)
+#define mem_free(ptr, bsize) free(ptr)
 
 #ifdef H4_HAVE_SYS_TYPES_H
 #include <sys/types.h>
@@ -104,10 +104,10 @@ extern char *malloc();
 #endif
 
 #ifndef INADDR_LOOPBACK
-#define       INADDR_LOOPBACK         (u_long)0x7F000001
+#define INADDR_LOOPBACK (u_long)0x7F000001
 #endif
 #ifndef MAXHOSTNAMELEN
-#define        MAXHOSTNAMELEN  64
+#define MAXHOSTNAMELEN 64
 #endif
 
 #endif /* ndef __TYPES_RPC_HEADER__ */

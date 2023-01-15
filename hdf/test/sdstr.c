@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
 /***************************************************************
 **
 ** This program tests correctness of writing and read datastrings
@@ -23,10 +22,9 @@
 
 #include "tproto.h"
 
-static int  number_failed = 0;
+static int number_failed = 0;
 
-static VOID compare
-            (const char *outstring, const char *instring);
+static VOID compare(const char *outstring, const char *instring);
 
 void
 test_tsdstr(void)
@@ -35,41 +33,36 @@ test_tsdstr(void)
     intn        rank;
     int32       dims[2];
     float32     f32[10][10], tf32[10][10];
-    const char *datalabel = "Datalabel", *dataunit = "Dataunit", *datafmt = "Datafmt",
-               *coordsys = "coordsys";
+    const char *datalabel = "Datalabel", *dataunit = "Dataunit", *datafmt = "Datafmt", *coordsys = "coordsys";
     char        in_datalabel[256], in_dataunit[256], in_datafmt[256], in_coordsys[256];
 
-    const char  *dimlabels[2], *dimunits[2], *dimfmts[2];
+    const char *dimlabels[2], *dimunits[2], *dimfmts[2];
     char        in_dimlabels[2][256], in_dimunits[2][256], in_dimfmts[2][256];
 
-    rank = 2;
+    rank    = 2;
     dims[0] = 10;
     dims[1] = 10;
 
     dimlabels[0] = "c_dim1_label_a";
-    dimunits[0] = "c_dim1_unit_a";
-    dimfmts[0] = "c_dim1_fmt_a";
+    dimunits[0]  = "c_dim1_unit_a";
+    dimfmts[0]   = "c_dim1_fmt_a";
 
     dimlabels[1] = "c_dim2_label_b";
-    dimunits[1] = "c_dim2_unit_b";
-    dimfmts[1] = "c_dim2_fmt_b";
+    dimunits[1]  = "c_dim2_unit_b";
+    dimfmts[1]   = "c_dim2_fmt_b";
 
-    MESSAGE(5, printf("Creating arrays...\n");
-        );
+    MESSAGE(5, printf("Creating arrays...\n"););
 
-    for (i = 0; i < 10; i++)
-      {
-          for (j = 0; j < 10; j++)
-            {
-                f32[i][j] = (float32)((i * 10) + j);   /* range: 0 ~ 4-billion */
-            }
-      }
+    for (i = 0; i < 10; i++) {
+        for (j = 0; j < 10; j++) {
+            f32[i][j] = (float32)((i * 10) + j); /* range: 0 ~ 4-billion */
+        }
+    }
 
     ret = DFSDsetdims(rank, dims);
     RESULT("DFSDsetdims");
     /* individual files */
-    MESSAGE(5, printf("Testing arrays in individual files...\n");
-        );
+    MESSAGE(5, printf("Testing arrays in individual files...\n"););
 
     ret = DFSDsetNT(DFNT_NFLOAT32);
     RESULT("DFSDsetNT");
@@ -83,10 +76,10 @@ test_tsdstr(void)
     ret = DFSDsetdimstrs(2, dimlabels[1], dimunits[1], dimfmts[1]);
     RESULT("DFSDsetdimstrs");
 
-    ret = DFSDputdata("sdstrings.hdf", rank, dims, (VOIDP) f32);
+    ret = DFSDputdata("sdstrings.hdf", rank, dims, (VOIDP)f32);
     RESULT("DFSDputdata");
 
-    ret = DFSDgetdata("sdstrings.hdf", rank, dims, (VOIDP) tf32);
+    ret = DFSDgetdata("sdstrings.hdf", rank, dims, (VOIDP)tf32);
     RESULT("DFSDgetdata");
 
     ret = DFSDgetdatastrs(in_datalabel, in_dataunit, in_datafmt, in_coordsys);
@@ -109,31 +102,23 @@ test_tsdstr(void)
     compare(dimunits[1], in_dimunits[1]);
     compare(dimfmts[1], in_dimfmts[1]);
 
-    if (number_failed > 0)
-      {
-          MESSAGE(7, printf("\n\t>>> %d TESTS FAILED <<<\n\n", number_failed);
-              )
-      }
+    if (number_failed > 0) {
+        MESSAGE(7, printf("\n\t>>> %d TESTS FAILED <<<\n\n", number_failed);)
+    }
     else
-        MESSAGE(7, printf("\n\t>>> ALL TESTS PASSED <<<\n\n");
-        )
+        MESSAGE(7, printf("\n\t>>> ALL TESTS PASSED <<<\n\n");)
 
-        num_errs = num_errs + number_failed;
-
+    num_errs = num_errs + number_failed;
 }
 
-static      VOID
+static VOID
 compare(const char *outstring, const char *instring)
 {
     if (0 == HDstrcmp(outstring, instring))
-        MESSAGE(5, printf("Test passed for %s\n", outstring);
-        )
-        else
-      {
-          MESSAGE(5, printf(">>> Test failed for %s\n", outstring);
-              );
-          MESSAGE(5, printf("    Input string =  %s\n", instring);
-              );
-          number_failed++;
-      }
+        MESSAGE(5, printf("Test passed for %s\n", outstring);)
+    else {
+        MESSAGE(5, printf(">>> Test failed for %s\n", outstring););
+        MESSAGE(5, printf("    Input string =  %s\n", instring););
+        number_failed++;
+    }
 }

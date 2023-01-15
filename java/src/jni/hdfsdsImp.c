@@ -37,7 +37,7 @@ extern jboolean getChunkInfo(JNIEnv *env, jobject chunkobj, HDF_CHUNK_DEF *cinf)
 JNIEXPORT jlong JNICALL
 Java_hdf_hdflib_HDFLibrary_SDstart(JNIEnv *env, jclass clss, jstring filename, jint access)
 {
-    int32 sdid = -1;
+    int32       sdid = -1;
     const char *fstr = NULL;
 
     UNUSED(clss);
@@ -60,8 +60,8 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDend(JNIEnv *env, jclass clss, jlong sdid)
 {
-    intn rval = FAIL;
-    int32 id = (int32)sdid;
+    intn  rval = FAIL;
+    int32 id   = (int32)sdid;
 
     UNUSED(clss);
 
@@ -75,10 +75,10 @@ done:
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_SDfileinfo(JNIEnv *env, jclass clss, jlong sdid, jintArray argv)
 {
-    intn     rval = FAIL;
+    intn     rval    = FAIL;
     jint    *theArgs = NULL;
     jboolean isCopy;
-    int32 id = (int32)sdid;
+    int32    id = (int32)sdid;
 
     UNUSED(clss);
 
@@ -104,11 +104,11 @@ JNIEXPORT jlong JNICALL
 Java_hdf_hdflib_HDFLibrary_SDselect(JNIEnv *env, jclass clss, jlong sdid, jint index)
 {
     int32 rval = -1;
-    int32 id = (int32)sdid;
+    int32 id   = (int32)sdid;
 
     UNUSED(clss);
 
-    if ((rval = (jlong)SDselect(id, (int32) index)) < 0)
+    if ((rval = (jlong)SDselect(id, (int32)index)) < 0)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -119,8 +119,8 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_SDnametoindex(JNIEnv *env, jclass clss, jlong sdid, jstring name)
 {
     intn        rval = -1;
-    const char *str = NULL;
-    int32 id = (int32)sdid;
+    const char *str  = NULL;
+    int32       id   = (int32)sdid;
 
     UNUSED(clss);
 
@@ -140,19 +140,20 @@ done:
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_SDgetinfo(JNIEnv *env, jclass clss, jlong sdsid, jobjectArray name, jintArray dimsizes, jintArray argv)
+Java_hdf_hdflib_HDFLibrary_SDgetinfo(JNIEnv *env, jclass clss, jlong sdsid, jobjectArray name,
+                                     jintArray dimsizes, jintArray argv)
 {
-    intn     rval = FAIL;
-    char    *cname = NULL;
-    int32   *dims = NULL;
+    intn     rval    = FAIL;
+    char    *cname   = NULL;
+    int32   *dims    = NULL;
     int32   *theArgs = NULL;
     jstring  rstring;
     jboolean isCopy;
-    int32 id = (int32)sdsid;
+    int32    id = (int32)sdsid;
 
     UNUSED(clss);
 
-    if ((cname = (char *)HDmalloc(H4_MAX_NC_NAME+1)) == NULL)
+    if ((cname = (char *)HDmalloc(H4_MAX_NC_NAME + 1)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "SDgetinfo: failed to allocate data buffer");
 
     if (name == NULL)
@@ -170,8 +171,7 @@ Java_hdf_hdflib_HDFLibrary_SDgetinfo(JNIEnv *env, jclass clss, jlong sdsid, jobj
     PIN_INT_ARRAY(ENVONLY, dimsizes, dims, &isCopy, "SDgetinfo:  dimsizes not pinned");
     PIN_INT_ARRAY(ENVONLY, argv, theArgs, &isCopy, "SDgetinfo:  argv not pinned");
 
-    if ((rval = SDgetinfo(id, cname, &(theArgs[0]), dims,
-                &(theArgs[1]), &(theArgs[2]))) == FAIL)
+    if ((rval = SDgetinfo(id, cname, &(theArgs[0]), dims, &(theArgs[1]), &(theArgs[2]))) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
     cname[H4_MAX_NC_NAME] = '\0';
@@ -194,15 +194,16 @@ done:
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_SDreaddata(JNIEnv *env, jclass clss, jlong sdsid, jintArray start, jintArray stride, jintArray count, jbyteArray data)
+Java_hdf_hdflib_HDFLibrary_SDreaddata(JNIEnv *env, jclass clss, jlong sdsid, jintArray start,
+                                      jintArray stride, jintArray count, jbyteArray data)
 {
     intn     rval = FAIL;
     int32   *strt = NULL;
     int32   *strd = NULL;
-    int32   *cnt = NULL;
-    jbyte   *d = NULL;
+    int32   *cnt  = NULL;
+    jbyte   *d    = NULL;
     jboolean isCopy;
-    int32 id = (int32)sdsid;
+    int32    id = (int32)sdsid;
 
     UNUSED(clss);
 
@@ -254,15 +255,16 @@ done:
 */
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_SDreaddata_1short(JNIEnv *env, jclass clss, jlong sdsid, jintArray start, jintArray stride, jintArray count, jshortArray data)
+Java_hdf_hdflib_HDFLibrary_SDreaddata_1short(JNIEnv *env, jclass clss, jlong sdsid, jintArray start,
+                                             jintArray stride, jintArray count, jshortArray data)
 {
     intn     rval = FAIL;
     int32   *strt = NULL;
     int32   *strd = NULL;
-    int32   *cnt = NULL;
-    jshort  *d = NULL;
+    int32   *cnt  = NULL;
+    jshort  *d    = NULL;
     jboolean isCopy;
-    int32 id = (int32)sdsid;
+    int32    id = (int32)sdsid;
 
     UNUSED(clss);
 
@@ -302,15 +304,16 @@ done:
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_SDreaddata_1int(JNIEnv *env, jclass clss, jlong sdsid, jintArray start, jintArray stride, jintArray count, jintArray data)
+Java_hdf_hdflib_HDFLibrary_SDreaddata_1int(JNIEnv *env, jclass clss, jlong sdsid, jintArray start,
+                                           jintArray stride, jintArray count, jintArray data)
 {
     intn     rval = FAIL;
     int32   *strt = NULL;
     int32   *strd = NULL;
-    int32   *cnt = NULL;
-    jint    *d = NULL;
+    int32   *cnt  = NULL;
+    jint    *d    = NULL;
     jboolean isCopy;
-    int32 id = (int32)sdsid;
+    int32    id = (int32)sdsid;
 
     UNUSED(clss);
 
@@ -350,15 +353,16 @@ done:
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_SDreaddata_1long(JNIEnv *env, jclass clss, jlong sdsid, jintArray start, jintArray stride, jintArray count, jlongArray data)
+Java_hdf_hdflib_HDFLibrary_SDreaddata_1long(JNIEnv *env, jclass clss, jlong sdsid, jintArray start,
+                                            jintArray stride, jintArray count, jlongArray data)
 {
     intn     rval = FAIL;
     int32   *strt = NULL;
     int32   *strd = NULL;
-    int32   *cnt = NULL;
-    jlong   *d = NULL;
+    int32   *cnt  = NULL;
+    jlong   *d    = NULL;
     jboolean isCopy;
-    int32 id = (int32)sdsid;
+    int32    id = (int32)sdsid;
 
     UNUSED(clss);
 
@@ -398,15 +402,16 @@ done:
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_SDreaddata_1float(JNIEnv *env, jclass clss, jlong sdsid, jintArray start, jintArray stride, jintArray count, jfloatArray data)
+Java_hdf_hdflib_HDFLibrary_SDreaddata_1float(JNIEnv *env, jclass clss, jlong sdsid, jintArray start,
+                                             jintArray stride, jintArray count, jfloatArray data)
 {
     intn     rval = FAIL;
     int32   *strt = NULL;
     int32   *strd = NULL;
-    int32   *cnt = NULL;
-    jfloat  *d = NULL;
+    int32   *cnt  = NULL;
+    jfloat  *d    = NULL;
     jboolean isCopy;
-    int32 id = (int32)sdsid;
+    int32    id = (int32)sdsid;
 
     UNUSED(clss);
 
@@ -446,15 +451,16 @@ done:
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_SDreaddata_1double(JNIEnv *env, jclass clss, jlong sdsid, jintArray start, jintArray stride, jintArray count, jdoubleArray data)
+Java_hdf_hdflib_HDFLibrary_SDreaddata_1double(JNIEnv *env, jclass clss, jlong sdsid, jintArray start,
+                                              jintArray stride, jintArray count, jdoubleArray data)
 {
     intn     rval = FAIL;
     int32   *strt = NULL;
     int32   *strd = NULL;
-    int32   *cnt = NULL;
-    jdouble *d = NULL;
+    int32   *cnt  = NULL;
+    jdouble *d    = NULL;
     jboolean isCopy;
-    int32 id = (int32)sdsid;
+    int32    id = (int32)sdsid;
 
     UNUSED(clss);
 
@@ -496,8 +502,8 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDendaccess(JNIEnv *env, jclass clss, jlong sdsid)
 {
-    intn rval = -1;
-    int32 id = (int32)sdsid;
+    intn  rval = -1;
+    int32 id   = (int32)sdsid;
 
     UNUSED(clss);
 
@@ -512,7 +518,7 @@ JNIEXPORT jlong JNICALL
 Java_hdf_hdflib_HDFLibrary_SDgetdimid(JNIEnv *env, jclass clss, jlong sdsid, jint index)
 {
     int32 rval = -1;
-    int32 id = (int32)sdsid;
+    int32 id   = (int32)sdsid;
 
     UNUSED(clss);
 
@@ -524,11 +530,12 @@ done:
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_SDdiminfo(JNIEnv *env, jclass clss, jlong dimid, jobjectArray dimname, jintArray argv)
+Java_hdf_hdflib_HDFLibrary_SDdiminfo(JNIEnv *env, jclass clss, jlong dimid, jobjectArray dimname,
+                                     jintArray argv)
 {
-    intn     rval = FAIL;
+    intn     rval    = FAIL;
     jint    *theArgs = NULL;
-    char    *data = NULL;
+    char    *data    = NULL;
     jstring  rstring;
     jboolean isCopy;
 
@@ -548,8 +555,8 @@ Java_hdf_hdflib_HDFLibrary_SDdiminfo(JNIEnv *env, jclass clss, jlong dimid, jobj
 
     PIN_INT_ARRAY(ENVONLY, argv, theArgs, &isCopy, "SDdiminfo:  argv not pinned");
 
-    if ((rval = SDdiminfo((int32)dimid, (char *)data, (int32 *)&(theArgs[0]),
-            (int32 *)&(theArgs[1]), (int32 *)&(theArgs[2]))) == FAIL)
+    if ((rval = SDdiminfo((int32)dimid, (char *)data, (int32 *)&(theArgs[0]), (int32 *)&(theArgs[1]),
+                          (int32 *)&(theArgs[2]))) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
     data[255] = '\0';
@@ -575,7 +582,7 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_SDidtoref(JNIEnv *env, jclass clss, jlong sdsid)
 {
     int32 rval = -1;
-    int32 id = (int32)sdsid;
+    int32 id   = (int32)sdsid;
 
     UNUSED(clss);
 
@@ -590,7 +597,7 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_SDreftoindex(JNIEnv *env, jclass clss, jlong sdid, jint ref)
 {
     int32 rval = -1;
-    int32 id = (int32)sdid;
+    int32 id   = (int32)sdid;
 
     UNUSED(clss);
 
@@ -602,14 +609,15 @@ done:
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_SDattrinfo(JNIEnv *env, jclass clss, jlong sdsid, jint index, jobjectArray name, jintArray argv)
+Java_hdf_hdflib_HDFLibrary_SDattrinfo(JNIEnv *env, jclass clss, jlong sdsid, jint index, jobjectArray name,
+                                      jintArray argv)
 {
-    intn     rval = FAIL;
-    char    *data = NULL;
+    intn     rval    = FAIL;
+    char    *data    = NULL;
     jint    *theArgs = NULL;
     jstring  rstring;
     jboolean isCopy;
-    int32 id = (int32)sdsid;
+    int32    id = (int32)sdsid;
 
     UNUSED(clss);
 
@@ -627,8 +635,8 @@ Java_hdf_hdflib_HDFLibrary_SDattrinfo(JNIEnv *env, jclass clss, jlong sdsid, jin
 
     PIN_INT_ARRAY(ENVONLY, argv, theArgs, &isCopy, "SDattrinfo:  argv not pinned");
 
-    if ((rval = SDattrinfo(id, (int32)index, (char *)data, (int32 *)&(theArgs[0]),
-            (int32 *)&(theArgs[1]))) == FAIL)
+    if ((rval = SDattrinfo(id, (int32)index, (char *)data, (int32 *)&(theArgs[0]), (int32 *)&(theArgs[1]))) ==
+        FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
     data[255] = '\0';
@@ -654,9 +662,9 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDreadattr(JNIEnv *env, jclass clss, jlong sdsid, jint index, jbyteArray dat)
 {
     intn     rval = FAIL;
-    jbyte   *arr = NULL;
+    jbyte   *arr  = NULL;
     jboolean isCopy;
-    int32 id = (int32)sdsid;
+    int32    id = (int32)sdsid;
 
     UNUSED(clss);
 
@@ -665,7 +673,7 @@ Java_hdf_hdflib_HDFLibrary_SDreadattr(JNIEnv *env, jclass clss, jlong sdsid, jin
 
     PIN_BYTE_ARRAY(ENVONLY, dat, arr, &isCopy, "SDreadattr:  dat not pinned");
 
-    if ((rval = SDreadattr(id, (int32)index,  (VOIDP)arr)) == FAIL)
+    if ((rval = SDreadattr(id, (int32)index, (VOIDP)arr)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -679,8 +687,8 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_SDfindattr(JNIEnv *env, jclass clss, jlong sdsid, jstring name)
 {
     int32       rval = -1;
-    const char *str = NULL;
-    int32 id = (int32)sdsid;
+    const char *str  = NULL;
+    int32       id   = (int32)sdsid;
 
     UNUSED(clss);
 
@@ -702,8 +710,8 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDiscoordvar(JNIEnv *env, jclass clss, jlong sdsid)
 {
-    intn rval = -1;
-    int32 id = (int32)sdsid;
+    intn  rval = -1;
+    int32 id   = (int32)sdsid;
 
     UNUSED(clss);
 
@@ -717,11 +725,11 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDgetcal(JNIEnv *env, jclass clss, jlong sdsid, jdoubleArray argv, jintArray nt)
 {
-    intn     rval = FAIL;
+    intn     rval    = FAIL;
     jdouble *theArgs = NULL;
-    jint    *theNT = NULL;
+    jint    *theNT   = NULL;
     jboolean isCopy;
-    int32 id = (int32)sdsid;
+    int32    id = (int32)sdsid;
 
     UNUSED(clss);
 
@@ -737,9 +745,8 @@ Java_hdf_hdflib_HDFLibrary_SDgetcal(JNIEnv *env, jclass clss, jlong sdsid, jdoub
     PIN_INT_ARRAY(ENVONLY, nt, theNT, &isCopy, "SDgetcal:  nt not pinned");
     PIN_DOUBLE_ARRAY(ENVONLY, argv, theArgs, &isCopy, "SDgetcal:  argv not pinned");
 
-    if ((rval = SDgetcal(id, (float64 *)&(theArgs[0]),
-            (float64 *)&(theArgs[1]), (float64 *)&(theArgs[2]),
-            (float64 *)&(theArgs[3]), (int32 *)&(theNT[0]))) == FAIL)
+    if ((rval = SDgetcal(id, (float64 *)&(theArgs[0]), (float64 *)&(theArgs[1]), (float64 *)&(theArgs[2]),
+                         (float64 *)&(theArgs[3]), (int32 *)&(theNT[0]))) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -752,16 +759,17 @@ done:
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_SDgetdatastrs(JNIEnv *env, jclass clss, jlong sdsid, jobjectArray strings, jint len)
+Java_hdf_hdflib_HDFLibrary_SDgetdatastrs(JNIEnv *env, jclass clss, jlong sdsid, jobjectArray strings,
+                                         jint len)
 {
-    intn    rval = FAIL;
-    char   *labVal = NULL;
-    char   *unitVal = NULL;
-    char   *fmtVal = NULL;
+    intn    rval        = FAIL;
+    char   *labVal      = NULL;
+    char   *unitVal     = NULL;
+    char   *fmtVal      = NULL;
     char   *coordsysVal = NULL;
     jstring str;
     jstring label, unit, format, coordsys;
-    int32 id = (int32)sdsid;
+    int32   id = (int32)sdsid;
 
     UNUSED(clss);
 
@@ -773,25 +781,25 @@ Java_hdf_hdflib_HDFLibrary_SDgetdatastrs(JNIEnv *env, jclass clss, jlong sdsid, 
 
     if ((label = (jstring)ENVPTR->GetObjectArrayElement(ENVONLY, strings, 0)) != NULL) {
         /* allocate space */
-        if ((labVal = (char *)HDmalloc(len+1)) == NULL)
+        if ((labVal = (char *)HDmalloc(len + 1)) == NULL)
             H4_OUT_OF_MEMORY_ERROR(ENVONLY, "SDgetdatastrs");
     }
     ENVPTR->DeleteLocalRef(ENVONLY, label);
 
     if ((unit = (jstring)ENVPTR->GetObjectArrayElement(ENVONLY, strings, 1)) != NULL) {
-        if ((unitVal = (char *)HDmalloc(len+1)) == NULL)
+        if ((unitVal = (char *)HDmalloc(len + 1)) == NULL)
             H4_OUT_OF_MEMORY_ERROR(ENVONLY, "SDgetdatastrs");
     }
     ENVPTR->DeleteLocalRef(ENVONLY, unit);
 
     if ((format = (jstring)ENVPTR->GetObjectArrayElement(ENVONLY, strings, 2)) != NULL) {
-        if ((fmtVal = (char *)HDmalloc(len+1)) == NULL)
+        if ((fmtVal = (char *)HDmalloc(len + 1)) == NULL)
             H4_OUT_OF_MEMORY_ERROR(ENVONLY, "SDgetdatastrs");
     }
     ENVPTR->DeleteLocalRef(ENVONLY, format);
 
     if ((coordsys = (jstring)ENVPTR->GetObjectArrayElement(ENVONLY, strings, 3)) != NULL) {
-        if ((coordsysVal = (char *)HDmalloc(len+1)) == NULL)
+        if ((coordsysVal = (char *)HDmalloc(len + 1)) == NULL)
             H4_OUT_OF_MEMORY_ERROR(ENVONLY, "SDgetdatastrs");
     }
     ENVPTR->DeleteLocalRef(ENVONLY, coordsys);
@@ -801,26 +809,26 @@ Java_hdf_hdflib_HDFLibrary_SDgetdatastrs(JNIEnv *env, jclass clss, jlong sdsid, 
 
     if (labVal != NULL) {
         labVal[len] = '\0';
-        str = ENVPTR->NewStringUTF(ENVONLY, labVal);
+        str         = ENVPTR->NewStringUTF(ENVONLY, labVal);
         if (str != NULL) {
             ENVPTR->SetObjectArrayElement(ENVONLY, strings, 0, (jobject)str);
         }
     }
     if (unitVal != NULL) {
         unitVal[len] = '\0';
-        str = ENVPTR->NewStringUTF(ENVONLY, unitVal);
+        str          = ENVPTR->NewStringUTF(ENVONLY, unitVal);
         if (str != NULL)
             ENVPTR->SetObjectArrayElement(ENVONLY, strings, 1, (jobject)str);
     }
     if (fmtVal != NULL) {
         fmtVal[len] = '\0';
-        str = ENVPTR->NewStringUTF(ENVONLY, fmtVal);
+        str         = ENVPTR->NewStringUTF(ENVONLY, fmtVal);
         if (str != NULL)
             ENVPTR->SetObjectArrayElement(ENVONLY, strings, 2, (jobject)str);
     }
     if (coordsysVal != NULL) {
         coordsysVal[len] = '\0';
-        str = ENVPTR->NewStringUTF(ENVONLY, coordsysVal);
+        str              = ENVPTR->NewStringUTF(ENVONLY, coordsysVal);
         if (str != NULL)
             ENVPTR->SetObjectArrayElement(ENVONLY, strings, 3, (jobject)str);
     }
@@ -841,10 +849,10 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDgetdimstrs(JNIEnv *env, jclass clss, jlong dimid, jobjectArray strings, jint len)
 {
-    intn    rval = FAIL;
-    char   *labVal = NULL;
+    intn    rval    = FAIL;
+    char   *labVal  = NULL;
     char   *unitVal = NULL;
-    char   *fmtVal = NULL;
+    char   *fmtVal  = NULL;
     jstring str;
     jstring label, unit, format;
 
@@ -858,19 +866,19 @@ Java_hdf_hdflib_HDFLibrary_SDgetdimstrs(JNIEnv *env, jclass clss, jlong dimid, j
 
     if ((label = (jstring)ENVPTR->GetObjectArrayElement(ENVONLY, strings, 0)) != NULL) {
         /* allocate space */
-        if ((labVal = (char *)HDmalloc(len+1)) == NULL)
+        if ((labVal = (char *)HDmalloc(len + 1)) == NULL)
             H4_OUT_OF_MEMORY_ERROR(ENVONLY, "SDgetdimstrs");
     }
     ENVPTR->DeleteLocalRef(ENVONLY, label);
 
     if ((unit = (jstring)ENVPTR->GetObjectArrayElement(ENVONLY, strings, 1)) != NULL) {
-        if ((unitVal = (char *)HDmalloc(len+1)) == NULL)
+        if ((unitVal = (char *)HDmalloc(len + 1)) == NULL)
             H4_OUT_OF_MEMORY_ERROR(ENVONLY, "SDgetdimstrs");
     }
     ENVPTR->DeleteLocalRef(ENVONLY, unit);
 
     if ((format = (jstring)ENVPTR->GetObjectArrayElement(ENVONLY, strings, 2)) != NULL) {
-        if ((fmtVal = (char *)HDmalloc(len+1)) == NULL)
+        if ((fmtVal = (char *)HDmalloc(len + 1)) == NULL)
             H4_OUT_OF_MEMORY_ERROR(ENVONLY, "SDgetdimstrs");
     }
     ENVPTR->DeleteLocalRef(ENVONLY, format);
@@ -880,19 +888,19 @@ Java_hdf_hdflib_HDFLibrary_SDgetdimstrs(JNIEnv *env, jclass clss, jlong dimid, j
 
     if (labVal != NULL) {
         labVal[len] = '\0';
-        str = ENVPTR->NewStringUTF(ENVONLY, labVal);
+        str         = ENVPTR->NewStringUTF(ENVONLY, labVal);
         if (str != NULL)
             ENVPTR->SetObjectArrayElement(ENVONLY, strings, 0, (jobject)str);
     }
     if (unitVal != NULL) {
         unitVal[len] = '\0';
-        str = ENVPTR->NewStringUTF(ENVONLY, unitVal);
+        str          = ENVPTR->NewStringUTF(ENVONLY, unitVal);
         if (str != NULL)
             ENVPTR->SetObjectArrayElement(ENVONLY, strings, 1, (jobject)str);
     }
     if (fmtVal != NULL) {
         fmtVal[len] = '\0';
-        str = ENVPTR->NewStringUTF(ENVONLY, fmtVal);
+        str         = ENVPTR->NewStringUTF(ENVONLY, fmtVal);
         if (str != NULL)
             ENVPTR->SetObjectArrayElement(ENVONLY, strings, 2, (jobject)str);
     }
@@ -914,7 +922,7 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDgetdimscale(JNIEnv *env, jclass clss, jlong dimid, jbyteArray data)
 {
-    intn     rval = FAIL;
+    intn     rval   = FAIL;
     jbyte   *datVal = NULL;
     jboolean isCopy;
 
@@ -938,10 +946,10 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDgetfillvalue(JNIEnv *env, jclass clss, jlong sdsid, jbyteArray data)
 {
-    intn     rval = FAIL;
+    intn     rval   = FAIL;
     jbyte   *datVal = NULL;
     jboolean isCopy;
-    int32 id = (int32)sdsid;
+    int32    id = (int32)sdsid;
 
     UNUSED(clss);
 
@@ -967,7 +975,7 @@ Java_hdf_hdflib_HDFLibrary_SDgetrange(JNIEnv *env, jclass clss, jlong sdsid, jby
     jbyte   *minp = NULL;
     jbyte   *maxp = NULL;
     jboolean isCopy;
-    int32 id = (int32)sdsid;
+    int32    id = (int32)sdsid;
 
     UNUSED(clss);
 
@@ -993,13 +1001,14 @@ done:
 }
 
 JNIEXPORT jlong JNICALL
-Java_hdf_hdflib_HDFLibrary_SDcreate(JNIEnv *env, jclass clss, jlong sd_id, jstring name, jlong number_type, jint rank, jintArray dimsizes)
+Java_hdf_hdflib_HDFLibrary_SDcreate(JNIEnv *env, jclass clss, jlong sd_id, jstring name, jlong number_type,
+                                    jint rank, jintArray dimsizes)
 {
     int32       rval = -1;
-    const char *str = NULL;
+    const char *str  = NULL;
     jint       *dims = NULL;
     jboolean    isCopy;
-    int32 id = (int32)sd_id;
+    int32       id = (int32)sd_id;
 
     UNUSED(clss);
 
@@ -1030,7 +1039,7 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDisrecord(JNIEnv *env, jclass clss, jlong sdsid)
 {
     int32 rval = FAIL;
-    int32 id = (int32)sdsid;
+    int32 id   = (int32)sdsid;
 
     UNUSED(env);
     UNUSED(clss);
@@ -1042,13 +1051,14 @@ Java_hdf_hdflib_HDFLibrary_SDisrecord(JNIEnv *env, jclass clss, jlong sdsid)
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_SDsetattr(JNIEnv *env, jclass clss, jlong s_id, jstring attr_name, jlong num_type, jint count, jbyteArray values)
+Java_hdf_hdflib_HDFLibrary_SDsetattr(JNIEnv *env, jclass clss, jlong s_id, jstring attr_name, jlong num_type,
+                                     jint count, jbyteArray values)
 {
     intn        rval = FAIL;
-    jbyte      *arr = NULL;
-    const char *str = NULL;
+    jbyte      *arr  = NULL;
+    const char *str  = NULL;
     jboolean    isCopy;
-    int32 id = (int32)s_id;
+    int32       id = (int32)s_id;
 
     UNUSED(clss);
 
@@ -1073,17 +1083,17 @@ done:
     return JNI_TRUE;
 }
 
-
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_SDsetcal(JNIEnv *env, jclass clss, jlong sds_id, jdouble cal, jdouble cal_err, jdouble offset, jdouble offset_err, jint number_type)
+Java_hdf_hdflib_HDFLibrary_SDsetcal(JNIEnv *env, jclass clss, jlong sds_id, jdouble cal, jdouble cal_err,
+                                    jdouble offset, jdouble offset_err, jint number_type)
 {
-    intn rval = FAIL;
-    int32 id = (int32)sds_id;
+    intn  rval = FAIL;
+    int32 id   = (int32)sds_id;
 
     UNUSED(clss);
 
-    if ((rval = SDsetcal(id, (float64)cal, (float64)cal_err,
-            (float64)offset, (float64)offset_err, (int32)number_type)) == FAIL)
+    if ((rval = SDsetcal(id, (float64)cal, (float64)cal_err, (float64)offset, (float64)offset_err,
+                         (int32)number_type)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -1091,13 +1101,14 @@ done:
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_SDsetdatastrs(JNIEnv *env, jclass clss, jlong sds_id, jstring label, jstring unit, jstring format, jstring coordsys)
+Java_hdf_hdflib_HDFLibrary_SDsetdatastrs(JNIEnv *env, jclass clss, jlong sds_id, jstring label, jstring unit,
+                                         jstring format, jstring coordsys)
 {
-    intn rval = FAIL;
-    const char *labstr = NULL;
-    const char *unstr = NULL;
+    intn        rval    = FAIL;
+    const char *labstr  = NULL;
+    const char *unstr   = NULL;
     const char *formstr = NULL;
-    const char *csstr = NULL;
+    const char *csstr   = NULL;
 
     UNUSED(clss);
 
@@ -1138,7 +1149,7 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDsetdimname(JNIEnv *env, jclass clss, jlong dim_id, jstring dim_name)
 {
     intn        rval = FAIL;
-    const char *str = NULL;
+    const char *str  = NULL;
 
     UNUSED(clss);
 
@@ -1158,10 +1169,11 @@ done:
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_SDsetdimscale(JNIEnv *env, jclass clss, jlong dim_id, jint count, jint number_type, jbyteArray data)
+Java_hdf_hdflib_HDFLibrary_SDsetdimscale(JNIEnv *env, jclass clss, jlong dim_id, jint count, jint number_type,
+                                         jbyteArray data)
 {
-    intn   rval = FAIL;
-    jbyte *d = NULL;
+    intn     rval = FAIL;
+    jbyte   *d    = NULL;
     jboolean isCopy;
 
     UNUSED(clss);
@@ -1172,7 +1184,7 @@ Java_hdf_hdflib_HDFLibrary_SDsetdimscale(JNIEnv *env, jclass clss, jlong dim_id,
     PIN_BYTE_ARRAY(ENVONLY, data, d, &isCopy, "SDsetdimscale:  data not pinned");
 
     if ((rval = SDsetdimscale((int32)dim_id, (int32)count, (int32)number_type, (VOIDP)d)) == FAIL)
-            H4_LIBRARY_ERROR(ENVONLY);
+        H4_LIBRARY_ERROR(ENVONLY);
 
 done:
     if (d)
@@ -1182,11 +1194,12 @@ done:
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_SDsetdimstrs(JNIEnv *env, jclass clss, jlong dim_id, jstring label, jstring unit, jstring format)
+Java_hdf_hdflib_HDFLibrary_SDsetdimstrs(JNIEnv *env, jclass clss, jlong dim_id, jstring label, jstring unit,
+                                        jstring format)
 {
-    intn        rval = FAIL;
-    const char *labstr = NULL;
-    const char *unstr = NULL;
+    intn        rval    = FAIL;
+    const char *labstr  = NULL;
+    const char *unstr   = NULL;
     const char *formstr = NULL;
 
     UNUSED(clss);
@@ -1204,7 +1217,7 @@ Java_hdf_hdflib_HDFLibrary_SDsetdimstrs(JNIEnv *env, jclass clss, jlong dim_id, 
     PIN_JAVA_STRING(ENVONLY, unit, unstr, NULL, "SDsetdimstrs:  unit not pinned");
     PIN_JAVA_STRING(ENVONLY, format, formstr, NULL, "SDsetdimstrs:  format not pinned");
 
-    if ((rval = SDsetdimstrs((int32) dim_id, labstr, unstr, formstr)) == FAIL)
+    if ((rval = SDsetdimstrs((int32)dim_id, labstr, unstr, formstr)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -1218,13 +1231,13 @@ done:
     return JNI_TRUE;
 }
 
-
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_SDsetexternalfile(JNIEnv *env, jclass clss, jlong sds_id, jstring filename, jint offset)
+Java_hdf_hdflib_HDFLibrary_SDsetexternalfile(JNIEnv *env, jclass clss, jlong sds_id, jstring filename,
+                                             jint offset)
 {
     intn        rval = FAIL;
     const char *fstr = NULL;
-    int32 id = (int32)sds_id;
+    int32       id   = (int32)sds_id;
 
     UNUSED(clss);
 
@@ -1248,8 +1261,8 @@ Java_hdf_hdflib_HDFLibrary_SDsetfillvalue(JNIEnv *env, jclass clss, jlong sds_id
 {
     intn     rval = FAIL;
     jboolean isCopy;
-    jbyte   *d = NULL;
-    int32 id = (int32)sds_id;
+    jbyte   *d  = NULL;
+    int32    id = (int32)sds_id;
 
     UNUSED(clss);
 
@@ -1275,7 +1288,7 @@ Java_hdf_hdflib_HDFLibrary_SDsetrange(JNIEnv *env, jclass clss, jlong sdsid, jby
     jboolean isCopy;
     jbyte   *minp = NULL;
     jbyte   *maxp = NULL;
-    int32 id = (int32)sdsid;
+    int32    id   = (int32)sdsid;
 
     UNUSED(clss);
 
@@ -1300,17 +1313,17 @@ done:
     return JNI_TRUE;
 }
 
-
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_SDwritedata(JNIEnv *env, jclass clss, jlong sdsid, jintArray start, jintArray stride, jintArray edge, jbyteArray data)
+Java_hdf_hdflib_HDFLibrary_SDwritedata(JNIEnv *env, jclass clss, jlong sdsid, jintArray start,
+                                       jintArray stride, jintArray edge, jbyteArray data)
 {
     int32    rval = FAIL;
     int32   *strt = NULL;
     int32   *strd = NULL;
-    int32   *e = NULL;
-    jbyte   *d = NULL;
+    int32   *e    = NULL;
+    jbyte   *d    = NULL;
     jboolean isCopy;
-    int32 id = (int32)sdsid;
+    int32    id = (int32)sdsid;
 
     UNUSED(clss);
 
@@ -1352,15 +1365,15 @@ done:
 /* new stuff for chunking */
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_SDsetnbitdataset(JNIEnv *env, jclass clss, jlong sdsid, jint start_bit, jint bit_len, jint sign_ext, jint fill_one)
+Java_hdf_hdflib_HDFLibrary_SDsetnbitdataset(JNIEnv *env, jclass clss, jlong sdsid, jint start_bit,
+                                            jint bit_len, jint sign_ext, jint fill_one)
 {
-    intn rval = FAIL;
-    int32 id = (int32)sdsid;
+    intn  rval = FAIL;
+    int32 id   = (int32)sdsid;
 
     UNUSED(clss);
 
-    if ((rval = SDsetnbitdataset(id, (intn) start_bit, (intn) bit_len,
-            (intn) sign_ext, (intn) fill_one)) == FAIL)
+    if ((rval = SDsetnbitdataset(id, (intn)start_bit, (intn)bit_len, (intn)sign_ext, (intn)fill_one)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -1372,7 +1385,7 @@ Java_hdf_hdflib_HDFLibrary_SDsetcompress(JNIEnv *env, jclass clss, jlong sdsid, 
 {
     intn      rval = FAIL;
     comp_info cinf;
-    int32 id = (int32)sdsid;
+    int32     id = (int32)sdsid;
 
     UNUSED(clss);
 
@@ -1395,7 +1408,7 @@ Java_hdf_hdflib_HDFLibrary_SDgetcompinfo(JNIEnv *env, jclass clss, jlong sdsid, 
     intn         rval = FAIL;
     comp_coder_t coder;
     comp_info    cinf;
-    int32 id = (int32)sdsid;
+    int32        id = (int32)sdsid;
 
     UNUSED(clss);
 
@@ -1418,7 +1431,7 @@ Java_hdf_hdflib_HDFLibrary_SDgetcompress(JNIEnv *env, jclass clss, jlong sdsid, 
     intn         rval = FAIL;
     comp_coder_t coder;
     comp_info    cinf;
-    int32 id = (int32)sdsid;
+    int32        id = (int32)sdsid;
 
     UNUSED(clss);
 
@@ -1438,8 +1451,8 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDsetaccesstype(JNIEnv *env, jclass clss, jlong sdsid, jint accesstype)
 {
-    intn rval = FAIL;
-    int32 id = (int32)sdsid;
+    intn  rval = FAIL;
+    int32 id   = (int32)sdsid;
 
     UNUSED(clss);
 
@@ -1453,8 +1466,8 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDsetblocksize(JNIEnv *env, jclass clss, jlong sdsid, jint block_size)
 {
-    intn rval = FAIL;
-    int32 id = (int32)sdsid;
+    intn  rval = FAIL;
+    int32 id   = (int32)sdsid;
 
     UNUSED(clss);
 
@@ -1468,8 +1481,8 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDsetfillmode(JNIEnv *env, jclass clss, jlong sdsid, jint fillmode)
 {
-    intn rval = FAIL;
-    int32 id = (int32)sdsid;
+    intn  rval = FAIL;
+    int32 id   = (int32)sdsid;
 
     UNUSED(clss);
 
@@ -1483,8 +1496,8 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDsetdimval_1comp(JNIEnv *env, jclass clss, jlong sdsid, jint comp_mode)
 {
-    intn rval = FAIL;
-    int32 id = (int32)sdsid;
+    intn  rval = FAIL;
+    int32 id   = (int32)sdsid;
 
     UNUSED(clss);
 
@@ -1518,7 +1531,7 @@ Java_hdf_hdflib_HDFLibrary_SDsetchunk(JNIEnv *env, jclass clss, jlong sdsid, job
 {
     intn          rval = FAIL;
     HDF_CHUNK_DEF c_def;
-    int32 id = (int32)sdsid;
+    int32         id = (int32)sdsid;
 
     UNUSED(clss);
 
@@ -1535,15 +1548,15 @@ done:
     return JNI_TRUE;
 }
 
-
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_SDgetchunkinfo(JNIEnv *env, jclass clss, jlong sdsid, jobject chunk_def, jintArray cflags)
+Java_hdf_hdflib_HDFLibrary_SDgetchunkinfo(JNIEnv *env, jclass clss, jlong sdsid, jobject chunk_def,
+                                          jintArray cflags)
 {
     int32         rval = FAIL;
     HDF_CHUNK_DEF cdef;
     jint         *flgs = NULL;
     jboolean      isCopy;
-    int32 id = (int32)sdsid;
+    int32         id = (int32)sdsid;
 
     UNUSED(clss);
 
@@ -1573,10 +1586,10 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDreadchunk(JNIEnv *env, jclass clss, jlong sdid, jintArray origin, jbyteArray dat)
 {
     int32    rval = FAIL;
-    jbyte   *s = NULL;
-    jint    *arr = NULL;
+    jbyte   *s    = NULL;
+    jint    *arr  = NULL;
     jboolean isCopy;
-    int32 id = (int32)sdid;
+    int32    id = (int32)sdid;
 
     UNUSED(clss);
 
@@ -1605,8 +1618,8 @@ done:
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_SDsetchunkcache(JNIEnv *env, jclass clss, jlong sdsid, jint maxcache, jint flags)
 {
-    intn rval = FAIL;
-    int32 id = (int32)sdsid;
+    intn  rval = FAIL;
+    int32 id   = (int32)sdsid;
 
     UNUSED(clss);
 
@@ -1618,13 +1631,14 @@ done:
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_SDwritechunk(JNIEnv *env, jclass clss, jlong sdid, jintArray origin, jbyteArray dat)
+Java_hdf_hdflib_HDFLibrary_SDwritechunk(JNIEnv *env, jclass clss, jlong sdid, jintArray origin,
+                                        jbyteArray dat)
 {
     int32    rval = FAIL;
-    jbyte   *s = NULL;
-    jint    *arr = NULL;
+    jbyte   *s    = NULL;
+    jint    *arr  = NULL;
     jboolean isCopy;
-    int32 id = (int32)sdid;
+    int32    id = (int32)sdid;
 
     UNUSED(clss);
 
@@ -1652,10 +1666,10 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDcheckempty(JNIEnv *env, jclass clss, jlong sdsid, jintArray emptySDS)
 {
-    int32    rval = FAIL;
+    int32    rval    = FAIL;
     intn    *isempty = NULL;
     jboolean isCopy;
-    int32 id = (int32)sdsid;
+    int32    id = (int32)sdsid;
 
     UNUSED(clss);
 

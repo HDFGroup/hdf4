@@ -40,7 +40,6 @@
  * AUTHOR - George V.- 1996/08/22
  *****************************************************************************/
 
-
 /*
  *  NOTE:
  *    Here pagesize is the same thing as chunk size and pages refer to chunks.
@@ -53,17 +52,17 @@
 #define _MCACHE_H
 
 /* Required include */
-#include "hqueue.h"    /* Circular queue functions(Macros) */
+#include "hqueue.h" /* Circular queue functions(Macros) */
 
 #include "H4api_adpt.h"
 
 /* Set return/succeed values */
 #ifdef SUCCEED
-#define RET_SUCCESS  SUCCEED
-#define RET_ERROR    FAIL
+#define RET_SUCCESS SUCCEED
+#define RET_ERROR   FAIL
 #else
-#define RET_SUCCESS  0
-#define RET_ERROR    -1
+#define RET_SUCCESS 0
+#define RET_ERROR   -1
 #endif
 
 /*
@@ -75,133 +74,118 @@
  */
 
 /* Current Hash table size. Page numbers start with 1
-* (i.e 0 will denote invalid page number) */
-#define    HASHSIZE        128
-#define    HASHKEY(pgno)  ((pgno -1) % HASHSIZE)
+ * (i.e 0 will denote invalid page number) */
+#define HASHSIZE      128
+#define HASHKEY(pgno) ((pgno - 1) % HASHSIZE)
 
 /* Default pagesize and max # of pages to cache */
-#define DEF_PAGESIZE   8192
-#define DEF_MAXCACHE   1
+#define DEF_PAGESIZE 8192
+#define DEF_MAXCACHE 1
 
-#define MAX_PAGE_NUMBER 0xffffffff  /* >= # of pages in a object */
+#define MAX_PAGE_NUMBER 0xffffffff /* >= # of pages in a object */
 
 /* The BKT structures are the elements of the queues. */
-typedef struct _bkt
-{
-  CIRCLEQ_ENTRY(_bkt) hq;    /* hash queue */
-  CIRCLEQ_ENTRY(_bkt) q;    /* lru queue */
-  VOID    *page;            /* page */
-  int32   pgno;             /* page number */
-#define    MCACHE_DIRTY  0x01  /* page needs to be written */
-#define    MCACHE_PINNED 0x02  /* page is pinned into memory */
-  uint8   flags;            /* flags */
+typedef struct _bkt {
+    CIRCLEQ_ENTRY(_bkt) hq; /* hash queue */
+    CIRCLEQ_ENTRY(_bkt) q;  /* lru queue */
+    VOID *page;             /* page */
+    int32 pgno;             /* page number */
+#define MCACHE_DIRTY  0x01  /* page needs to be written */
+#define MCACHE_PINNED 0x02  /* page is pinned into memory */
+    uint8 flags;            /* flags */
 } BKT;
 
 /* The element structure for every page referenced(read/written) in object */
-typedef struct _lelem
-{
-  CIRCLEQ_ENTRY(_lelem) hl;        /* hash list */
-  int32        pgno;            /* page number */
+typedef struct _lelem {
+    CIRCLEQ_ENTRY(_lelem) hl; /* hash list */
+    int32 pgno;               /* page number */
 #ifdef STATISTICS
-  int32          elemhit;          /* # of hits on page */
+    int32 elemhit; /* # of hits on page */
 #endif
-#define ELEM_READ       0x01
-#define ELEM_WRITTEN    0x02
-#define ELEM_SYNC       0x03
-  uint8      eflags;            /* 1= read, 2=written, 3=synced */
+#define ELEM_READ    0x01
+#define ELEM_WRITTEN 0x02
+#define ELEM_SYNC    0x03
+    uint8 eflags; /* 1= read, 2=written, 3=synced */
 } L_ELEM;
 
-#define    MCACHE_EXTEND    0x10    /* increase number of pages
-                                   i.e extend object */
+#define MCACHE_EXTEND                                                                                        \
+    0x10 /* increase number of pages                                                                         \
+        i.e extend object */
 
 /* Memory pool cache */
-typedef struct MCACHE
-{
-  CIRCLEQ_HEAD(_lqh, _bkt)    lqh;          /* lru queue head */
-  CIRCLEQ_HEAD(_hqh, _bkt)    hqh[HASHSIZE];  /* hash queue array */
-  CIRCLEQ_HEAD(_lhqh, _lelem) lhqh[HASHSIZE]; /* hash of all elements */
-  int32    curcache;              /* current num of cached pages */
-  int32    maxcache;              /* max number of cached pages */
-  int32    npages;                  /* number of pages in the object */
-  int32    pagesize;              /* cache page size */
-  int32 object_id;            /* access ID of object this cache is for */
-  int32 object_size;          /* size of object to cache
-                                 must be multiple of pagesize for now */
-  int32 (*pgin) (VOID *cookie, int32 pgno, VOID *page); /* page in conversion routine */
-  int32 (*pgout) (VOID *cookie, int32 pgno, const VOID *page);/* page out conversion routine*/
-  VOID    *pgcookie;                         /* cookie for page in/out routines */
+typedef struct MCACHE {
+    CIRCLEQ_HEAD(_lqh, _bkt) lqh;                               /* lru queue head */
+    CIRCLEQ_HEAD(_hqh, _bkt) hqh[HASHSIZE];                     /* hash queue array */
+    CIRCLEQ_HEAD(_lhqh, _lelem) lhqh[HASHSIZE];                 /* hash of all elements */
+    int32 curcache;                                             /* current num of cached pages */
+    int32 maxcache;                                             /* max number of cached pages */
+    int32 npages;                                               /* number of pages in the object */
+    int32 pagesize;                                             /* cache page size */
+    int32 object_id;                                            /* access ID of object this cache is for */
+    int32 object_size;                                          /* size of object to cache
+                                                                   must be multiple of pagesize for now */
+    int32 (*pgin)(VOID *cookie, int32 pgno, VOID *page);        /* page in conversion routine */
+    int32 (*pgout)(VOID *cookie, int32 pgno, const VOID *page); /* page out conversion routine*/
+    VOID *pgcookie;                                             /* cookie for page in/out routines */
 #ifdef STATISTICS
-  int32    listhit;                /* # of list hits */
-  int32    listalloc;              /* # of list elems allocated */
-  int32    cachehit;               /* # of cache hits */
-  int32    cachemiss;              /* # of cache misses */
-  int32    pagealloc;              /* # of pages allocated */
-  int32    pageflush;              /* # of pages flushed */
-  int32    pageget;                /* # of pages requested from pool */
-  int32    pagenew;                /* # of new pages */
-  int32    pageput;                /* # of pages put back into pool */
-  int32    pageread;               /* # of pages read from object */
-  int32    pagewrite;              /* # of pages written to object */
-#endif /* STATISTICS */
+    int32 listhit;   /* # of list hits */
+    int32 listalloc; /* # of list elems allocated */
+    int32 cachehit;  /* # of cache hits */
+    int32 cachemiss; /* # of cache misses */
+    int32 pagealloc; /* # of pages allocated */
+    int32 pageflush; /* # of pages flushed */
+    int32 pageget;   /* # of pages requested from pool */
+    int32 pagenew;   /* # of new pages */
+    int32 pageput;   /* # of pages put back into pool */
+    int32 pageread;  /* # of pages read from object */
+    int32 pagewrite; /* # of pages written to object */
+#endif               /* STATISTICS */
 } MCACHE;
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
-HDFLIBAPI MCACHE *mcache_open (
-    VOID *key,          /* IN:byte string used as handle to share buffers */
-    int32 object_id,    /* IN: object handle */
-    int32 pagesize,     /* IN: chunk size in bytes */
-    int32 maxcache,     /* IN: maximum number of pages to cache at any time */
-    int32 npages,       /* IN: number of chunks currently in object */
-    int32 flags         /* IN: 0= object exists, 1= does not exist */);
+HDFLIBAPI MCACHE *mcache_open(VOID *key,       /* IN:byte string used as handle to share buffers */
+                              int32 object_id, /* IN: object handle */
+                              int32 pagesize,  /* IN: chunk size in bytes */
+                              int32 maxcache,  /* IN: maximum number of pages to cache at any time */
+                              int32 npages,    /* IN: number of chunks currently in object */
+                              int32 flags /* IN: 0= object exists, 1= does not exist */);
 
-HDFLIBAPI VOID     mcache_filter (
-    MCACHE *mp,             /* IN: MCACHE cookie */
-    int32 (*pgin)(VOID *cookie, int32 pgno, VOID *page) ,/* IN: page in filter */
-    int32 (*pgout)(VOID *cookie, int32 pgno, const VOID *page) , /* IN: page out filter */
-    VOID *pgcookie          /* IN: filter cookie */);
+HDFLIBAPI VOID mcache_filter(MCACHE *mp,                                          /* IN: MCACHE cookie */
+                             int32 (*pgin)(VOID *cookie, int32 pgno, VOID *page), /* IN: page in filter */
+                             int32 (*pgout)(VOID *cookie, int32 pgno,
+                                            const VOID *page), /* IN: page out filter */
+                             VOID *pgcookie /* IN: filter cookie */);
 
-HDFLIBAPI VOID    *mcache_new (
-    MCACHE *mp,      /* IN: MCACHE cookie */
-    int32 *pgnoaddr, /* IN/OUT: address of newly create page */
-    int32 flags      /* IN:MCACHE_EXTEND or 0 */);
+HDFLIBAPI VOID *mcache_new(MCACHE *mp,       /* IN: MCACHE cookie */
+                           int32  *pgnoaddr, /* IN/OUT: address of newly create page */
+                           int32   flags /* IN:MCACHE_EXTEND or 0 */);
 
+HDFLIBAPI VOID *mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
+                           int32   pgno, /* IN: page number */
+                           int32   flags /* IN: XXX not used? */);
 
-HDFLIBAPI VOID    *mcache_get (
-    MCACHE *mp, /* IN: MCACHE cookie */
-    int32 pgno, /* IN: page number */
-    int32 flags /* IN: XXX not used? */);
+HDFLIBAPI intn mcache_put(MCACHE *mp,   /* IN: MCACHE cookie */
+                          VOID   *page, /* IN: page to put */
+                          int32   flags /* IN: flags = 0, MCACHE_DIRTY */);
 
-HDFLIBAPI intn     mcache_put (
-    MCACHE *mp, /* IN: MCACHE cookie */
-    VOID *page, /* IN: page to put */
-    int32 flags /* IN: flags = 0, MCACHE_DIRTY */);
+HDFLIBAPI intn mcache_sync(MCACHE *mp /* IN: MCACHE cookie */);
 
-HDFLIBAPI intn     mcache_sync (
-    MCACHE *mp /* IN: MCACHE cookie */);
+HDFLIBAPI intn mcache_close(MCACHE *mp /* IN: MCACHE cookie */);
 
-HDFLIBAPI intn     mcache_close (
-    MCACHE *mp /* IN: MCACHE cookie */);
+HDFLIBAPI int32 mcache_get_pagesize(MCACHE *mp /* IN: MCACHE cookie */);
 
-HDFLIBAPI int32  mcache_get_pagesize (
-    MCACHE *mp /* IN: MCACHE cookie */);
+HDFLIBAPI int32 mcache_get_maxcache(MCACHE *mp /* IN: MCACHE cookie */);
 
-HDFLIBAPI int32  mcache_get_maxcache (
-    MCACHE *mp /* IN: MCACHE cookie */);
+HDFLIBAPI int32 mcache_set_maxcache(MCACHE *mp, /* IN: MCACHE cookie */
+                                    int32   maxcache /* IN: max pages to cache */);
 
-HDFLIBAPI int32  mcache_set_maxcache (
-    MCACHE *mp,     /* IN: MCACHE cookie */
-    int32  maxcache /* IN: max pages to cache */);
-
-HDFLIBAPI int32  mcache_get_npages (
-    MCACHE *mp /* IN: MCACHE cookie */);
+HDFLIBAPI int32 mcache_get_npages(MCACHE *mp /* IN: MCACHE cookie */);
 
 #ifdef STATISTICS
-HDFLIBAPI VOID     mcache_stat(
-    MCACHE *mp /* IN: MCACHE cookie */);
+HDFLIBAPI VOID mcache_stat(MCACHE *mp /* IN: MCACHE cookie */);
 #endif /* STATISTICS */
 
 #ifdef __cplusplus

@@ -35,13 +35,11 @@ public class HDFNBITCompInfo extends HDFNewCompInfo {
     public int bit_len;
 
     /** */
-    public HDFNBITCompInfo() {
-        ctype = HDFConstants.COMP_CODE_NBIT;
-    }
+    public HDFNBITCompInfo() { ctype = HDFConstants.COMP_CODE_NBIT; }
 
     /** */
-    public HDFNBITCompInfo(int Nt, int Sign_ext, int Fill_one, int Start_bit, int Bit_len) {
+    public HDFNBITCompInfo(int Nt, int Sign_ext, int Fill_one, int Start_bit, int Bit_len)
+    {
         ctype = HDFConstants.COMP_CODE_NBIT;
     }
-
 }

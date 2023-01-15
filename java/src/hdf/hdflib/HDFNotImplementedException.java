@@ -26,9 +26,7 @@ package hdf.hdflib;
 public class HDFNotImplementedException extends HDFJavaException {
 
     /** */
-    public HDFNotImplementedException() {
-        super();
-    }
+    public HDFNotImplementedException() { super(); }
 
     /**
      * Constructs an <code>HDFException</code> with the specified unimplemented
@@ -37,7 +35,8 @@ public class HDFNotImplementedException extends HDFJavaException {
      * @param s
      *            the additional message detail.
      */
-    public HDFNotImplementedException(String s) {
+    public HDFNotImplementedException(String s)
+    {
         super("HDFJavaException: HDF function not implemented (yet): " + s);
     }
 }

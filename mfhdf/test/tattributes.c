@@ -19,7 +19,7 @@
  *		"count" is set to 0.  (HDFFD-989 and 227: SDsetattr didn't
  *		fail but, eventually, SDend did)
  *
-****************************************************************************/
+ ****************************************************************************/
 
 #include "mfhdf.h"
 
@@ -29,39 +29,39 @@
 
 /********************************************************************
    Name: test_count() - tests that SDsetattr fails when the parameter
-			"count" is passed into SDsetattr as 0 and the
-			requested attribute is not created.
+                        "count" is passed into SDsetattr as 0 and the
+                        requested attribute is not created.
 
    Description:
-	In the past, when the parameter "count" was set to 0, SDsetattr
-	didn't fail but, eventually, SDend failed when the vdata storing
-	the attribute was being created.  With the knowledge that existing
-	applications would have failed eventually at SDend if such calls
-	existed, and if SDend failure is not detected, the file will be
-	corrupted, we decided to change so that SDsetattr now fails when
-	"count" is 0.
+        In the past, when the parameter "count" was set to 0, SDsetattr
+        didn't fail but, eventually, SDend failed when the vdata storing
+        the attribute was being created.  With the knowledge that existing
+        applications would have failed eventually at SDend if such calls
+        existed, and if SDend failure is not detected, the file will be
+        corrupted, we decided to change so that SDsetattr now fails when
+        "count" is 0.
 
         The main contents of the test are listed below.
 
 
 
 
-	- create a one-dim SDS, named VAR1_NAME
-	- name its dimension VAR1_NAME
-	- get file information and verify that there is only 1 variable, 
-	  dataset VAR1_NAME
-	- set attribute to dimension "Variable 1" (SDsetattr)
-	- set attribute to SDS "Variable 1" (SDsetattr)
-	- get file information and verify that there are 2 variable, 
-	  dataset VAR1_NAME and coordinate variable VAR1_NAME
-	- write data to the SDS
-	- close all and reopen the file
-	- open dataset "Variable 1" (SDnametoindex)
-	- verify that this variable is not a coordinate variable (SDiscoordvar)
-	- read and verify its attribute information and values
-	- get access to the dataset's first dimension
-	- read and verify its attribute information and values
-	- read data and verify that the data is not corrupted
+        - create a one-dim SDS, named VAR1_NAME
+        - name its dimension VAR1_NAME
+        - get file information and verify that there is only 1 variable,
+          dataset VAR1_NAME
+        - set attribute to dimension "Variable 1" (SDsetattr)
+        - set attribute to SDS "Variable 1" (SDsetattr)
+        - get file information and verify that there are 2 variable,
+          dataset VAR1_NAME and coordinate variable VAR1_NAME
+        - write data to the SDS
+        - close all and reopen the file
+        - open dataset "Variable 1" (SDnametoindex)
+        - verify that this variable is not a coordinate variable (SDiscoordvar)
+        - read and verify its attribute information and values
+        - get access to the dataset's first dimension
+        - read and verify its attribute information and values
+        - read data and verify that the data is not corrupted
 
    Return value:
         The number of errors occurred in this routine.
@@ -69,43 +69,44 @@
    BMR - May 18, 2007
 *********************************************************************/
 
-#define FILE_SATTR	"tattributes.hdf"
-#define VAR1_NAME	"Variable 1"
-#define DIM1_NAME	"Dimension 1"
-#define ATTR1_NAME	"Attribute Dimension 1"
-#define ATTR2_NAME	"Attribute SDS 1"
-#define ATTR3_NAME	"Attribute Zero"
-#define ATTR1_VAL       "This is a good attr"
-#define ATTR2_VAL       "This is a another attr"
-#define ATTR1_LEN	20
-#define ATTR2_LEN	23
-#define ATTR3_LEN	5
-#define ATTR_ZERO	"ZERO"
-#define ATTR_LEN_ZERO	0
+#define FILE_SATTR    "tattributes.hdf"
+#define VAR1_NAME     "Variable 1"
+#define DIM1_NAME     "Dimension 1"
+#define ATTR1_NAME    "Attribute Dimension 1"
+#define ATTR2_NAME    "Attribute SDS 1"
+#define ATTR3_NAME    "Attribute Zero"
+#define ATTR1_VAL     "This is a good attr"
+#define ATTR2_VAL     "This is a another attr"
+#define ATTR1_LEN     20
+#define ATTR2_LEN     23
+#define ATTR3_LEN     5
+#define ATTR_ZERO     "ZERO"
+#define ATTR_LEN_ZERO 0
 
-static intn test_count(void)
+static intn
+test_count(void)
 {
-    char  sds_name[20], dim_name[20];
-    float32 sds1_data[] = {0.1, 2.3, 4.5, 6.7, 8.9};
-    float32 out_data[5];
-    int32 dimsize[1], size;
-    int32 sds_id, file_id, dim_id, index;
-    int32 start=0, stride=1;
-    int32 attr_data [5] = {101,102,103,104,105}, scale1_out[5];
-    int32 ntype, rank, count;
-    int32 n_datasets=0, n_file_attrs=0, nattrs=0;
-    intn  status =0;
-    hdf_varlist_t* var_list;
-    intn  is_coord = FALSE;
-    char  attr_name[H4_MAX_NC_NAME], attr_values[80];
-    intn  num_errs = 0;         /* number of errors so far */
+    char           sds_name[20], dim_name[20];
+    float32        sds1_data[] = {0.1, 2.3, 4.5, 6.7, 8.9};
+    float32        out_data[5];
+    int32          dimsize[1], size;
+    int32          sds_id, file_id, dim_id, index;
+    int32          start = 0, stride = 1;
+    int32          attr_data[5] = {101, 102, 103, 104, 105}, scale1_out[5];
+    int32          ntype, rank, count;
+    int32          n_datasets = 0, n_file_attrs = 0, nattrs = 0;
+    intn           status = 0;
+    hdf_varlist_t *var_list;
+    intn           is_coord = FALSE;
+    char           attr_name[H4_MAX_NC_NAME], attr_values[80];
+    intn           num_errs = 0; /* number of errors so far */
 
     file_id = SDstart(FILE_SATTR, DFACC_CREATE);
     CHECK(file_id, FAIL, "SDstart");
 
     /* Create a one-dim dataset named VAR1_NAME, of type DFNT_FLOAT32. */
     dimsize[0] = 5;
-    sds_id = SDcreate(file_id, VAR1_NAME, DFNT_FLOAT32, 1, dimsize);
+    sds_id     = SDcreate(file_id, VAR1_NAME, DFNT_FLOAT32, 1, dimsize);
     CHECK(sds_id, FAIL, "SDcreate");
 
     /* Set the dimension name. */
@@ -124,7 +125,7 @@ static intn test_count(void)
     /* Close dataset and file. */
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "SDendaccess");
-    status = SDend(file_id); 
+    status = SDend(file_id);
     CHECK(status, FAIL, "SDend");
 
     /* Open the file again to check attributes */
@@ -143,7 +144,7 @@ static intn test_count(void)
     CHECK(dim_id, FAIL, "SDgetdimid");
 
     /* Get dimension information to verify there are no attrs set */
-    status = SDdiminfo (dim_id, dim_name, &size, &ntype, &nattrs );
+    status = SDdiminfo(dim_id, dim_name, &size, &ntype, &nattrs);
     VERIFY(nattrs, 0, "SDdiminfo");
 
     /* Set an attribute to dimension DIM1_NAME. */
@@ -164,7 +165,7 @@ static intn test_count(void)
     /* Close dataset and file. */
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "SDendaccess");
-    status = SDend(file_id); 
+    status = SDend(file_id);
     CHECK(status, FAIL, "SDend");
 
     /* Open the file again to check attributes */
@@ -183,7 +184,7 @@ static intn test_count(void)
     CHECK(dim_id, FAIL, "SDgetdimid");
 
     /* Get dimension information to verify there is one attribute set */
-    status = SDdiminfo (dim_id, dim_name, &size, &ntype, &nattrs );
+    status = SDdiminfo(dim_id, dim_name, &size, &ntype, &nattrs);
     VERIFY(nattrs, 1, "SDdiminfo");
 
     /* Get SDS info to verify there is no SDS attribute yet. */
@@ -201,7 +202,7 @@ static intn test_count(void)
     /* Close dataset and file. */
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "SDendaccess");
-    status = SDend(file_id); 
+    status = SDend(file_id);
     CHECK(status, FAIL, "SDend");
 
     /* Open the file again to check attributes */
@@ -229,10 +230,10 @@ static intn test_count(void)
     status = SDreadattr(sds_id, 0, attr_values);
     CHECK(status, FAIL, "SDreadattr");
 
-    if (HDstrncmp(attr_values, ATTR2_VAL, ATTR2_LEN) != 0)
-    {
-	fprintf(stderr, "Unmatched attribute values for SDS %s: is <%s>, should be <%s>\n", VAR1_NAME, attr_values, ATTR2_VAL);
-	num_errs++;
+    if (HDstrncmp(attr_values, ATTR2_VAL, ATTR2_LEN) != 0) {
+        fprintf(stderr, "Unmatched attribute values for SDS %s: is <%s>, should be <%s>\n", VAR1_NAME,
+                attr_values, ATTR2_VAL);
+        num_errs++;
     }
 
     /* Get access to the SDS' first dimension. */
@@ -240,7 +241,7 @@ static intn test_count(void)
     CHECK(dim_id, FAIL, "SDgetdimid");
 
     /* Get dimension information to verify number of attrs */
-    status = SDdiminfo (dim_id, dim_name, &size, &ntype, &nattrs );
+    status = SDdiminfo(dim_id, dim_name, &size, &ntype, &nattrs);
     VERIFY(nattrs, 1, "SDattrinfo");
 
     /* Read and verify the information of the dimension's first attribute. */
@@ -253,29 +254,28 @@ static intn test_count(void)
     status = SDreadattr(dim_id, 0, attr_values);
     CHECK(status, FAIL, "SDreadattr");
 
-    if (HDstrncmp(attr_values, ATTR1_VAL, ATTR1_LEN) != 0)
-    {
-	fprintf(stderr, "Unmatched attribute values for dimension %s: is <%s>, should be <%s>\n", VAR1_NAME, attr_values, ATTR1_VAL);
-	num_errs++;
+    if (HDstrncmp(attr_values, ATTR1_VAL, ATTR1_LEN) != 0) {
+        fprintf(stderr, "Unmatched attribute values for dimension %s: is <%s>, should be <%s>\n", VAR1_NAME,
+                attr_values, ATTR1_VAL);
+        num_errs++;
     }
 
     /* Close dataset and file. */
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "SDendaccess");
 
-    status = SDend(file_id); 
+    status = SDend(file_id);
     CHECK(status, FAIL, "SDend");
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
-}   /* test_count */
-
+} /* test_count */
 
 /* Test driver for testing SD attributes. */
 extern int
 test_attributes()
 {
-    intn num_errs = 0;         /* number of errors */
+    intn num_errs = 0; /* number of errors */
 
     /* Output message about test being performed */
     TESTING("various setting attribute features (tattributes.c)");

@@ -20,7 +20,7 @@
 
 #include "error.h"
 
-int	error_count = 0;
+int error_count = 0;
 
 /*
  * Use for logging error conditions.
@@ -28,18 +28,17 @@ int	error_count = 0;
 void
 error(const char *fmt, ...)
 {
-    va_list args ;
+    va_list args;
 
-    (void) fprintf(stderr,"*** ");
+    (void)fprintf(stderr, "*** ");
 
-    va_start(args, fmt) ;
-    (void) vfprintf(stderr,fmt,args) ;
-    va_end(args) ;
+    va_start(args, fmt);
+    (void)vfprintf(stderr, fmt, args);
+    va_end(args);
 
-    (void) fprintf(stderr, "\n") ;
+    (void)fprintf(stderr, "\n");
     error_count++;
 }
-
 
 /*
  * Turn off netCDF library handling of errors.  Caller must check all error
@@ -48,10 +47,9 @@ error(const char *fmt, ...)
 void
 off_errs()
 {
-    ncopts &= ~NC_FATAL;	/* make errors nonfatal */
-    ncopts &= ~NC_VERBOSE;	/* turn off error messages */
+    ncopts &= ~NC_FATAL;   /* make errors nonfatal */
+    ncopts &= ~NC_VERBOSE; /* turn off error messages */
 }
-
 
 /*
  * Let netCDF library handle subsequent errors.  Callers don't need to check
@@ -60,6 +58,6 @@ off_errs()
 void
 on_errs()
 {
-    ncopts |= NC_FATAL;		/* make errors fatal */
-    ncopts |= NC_VERBOSE;	/* library prints error messages */
+    ncopts |= NC_FATAL;   /* make errors fatal */
+    ncopts |= NC_VERBOSE; /* library prints error messages */
 }

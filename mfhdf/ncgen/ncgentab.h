@@ -36,10 +36,10 @@
    private implementation details that can be changed or removed.  */
 
 #ifndef YY_YY_MFHDF_NCGEN_NCGENTAB_H_INCLUDED
-# define YY_YY_MFHDF_NCGEN_NCGENTAB_H_INCLUDED
+#define YY_YY_MFHDF_NCGEN_NCGENTAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 0
+#define YYDEBUG 0
 #endif
 #if YYDEBUG
 extern int yydebug;
@@ -47,48 +47,44 @@ extern int yydebug;
 
 /* Token kinds.  */
 #ifndef YYTOKENTYPE
-# define YYTOKENTYPE
-  enum yytokentype
-  {
-    YYEMPTY = -2,
-    YYEOF = 0,                     /* "end of file"  */
-    YYerror = 256,                 /* error  */
-    YYUNDEF = 257,                 /* "invalid token"  */
-    NC_UNLIMITED_K = 258,          /* NC_UNLIMITED_K  */
-    BYTE_K = 259,                  /* BYTE_K  */
-    CHAR_K = 260,                  /* CHAR_K  */
-    SHORT_K = 261,                 /* SHORT_K  */
-    LONG_K = 262,                  /* LONG_K  */
-    FLOAT_K = 263,                 /* FLOAT_K  */
-    DOUBLE_K = 264,                /* DOUBLE_K  */
-    IDENT = 265,                   /* IDENT  */
-    TERMSTRING = 266,              /* TERMSTRING  */
-    BYTE_CONST = 267,              /* BYTE_CONST  */
-    CHAR_CONST = 268,              /* CHAR_CONST  */
-    SHORT_CONST = 269,             /* SHORT_CONST  */
-    LONG_CONST = 270,              /* LONG_CONST  */
-    FLOAT_CONST = 271,             /* FLOAT_CONST  */
-    DOUBLE_CONST = 272,            /* DOUBLE_CONST  */
-    DIMENSIONS = 273,              /* DIMENSIONS  */
-    VARIABLES = 274,               /* VARIABLES  */
-    NETCDF = 275,                  /* NETCDF  */
-    DATA = 276                     /* DATA  */
-  };
-  typedef enum yytokentype yytoken_kind_t;
+#define YYTOKENTYPE
+enum yytokentype {
+    YYEMPTY        = -2,
+    YYEOF          = 0,   /* "end of file"  */
+    YYerror        = 256, /* error  */
+    YYUNDEF        = 257, /* "invalid token"  */
+    NC_UNLIMITED_K = 258, /* NC_UNLIMITED_K  */
+    BYTE_K         = 259, /* BYTE_K  */
+    CHAR_K         = 260, /* CHAR_K  */
+    SHORT_K        = 261, /* SHORT_K  */
+    LONG_K         = 262, /* LONG_K  */
+    FLOAT_K        = 263, /* FLOAT_K  */
+    DOUBLE_K       = 264, /* DOUBLE_K  */
+    IDENT          = 265, /* IDENT  */
+    TERMSTRING     = 266, /* TERMSTRING  */
+    BYTE_CONST     = 267, /* BYTE_CONST  */
+    CHAR_CONST     = 268, /* CHAR_CONST  */
+    SHORT_CONST    = 269, /* SHORT_CONST  */
+    LONG_CONST     = 270, /* LONG_CONST  */
+    FLOAT_CONST    = 271, /* FLOAT_CONST  */
+    DOUBLE_CONST   = 272, /* DOUBLE_CONST  */
+    DIMENSIONS     = 273, /* DIMENSIONS  */
+    VARIABLES      = 274, /* VARIABLES  */
+    NETCDF         = 275, /* NETCDF  */
+    DATA           = 276  /* DATA  */
+};
+typedef enum yytokentype yytoken_kind_t;
 #endif
 
 /* Value type.  */
-#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
-# define YYSTYPE_IS_TRIVIAL 1
-# define YYSTYPE_IS_DECLARED 1
+#if !defined YYSTYPE && !defined YYSTYPE_IS_DECLARED
+typedef int                      YYSTYPE;
+#define YYSTYPE_IS_TRIVIAL  1
+#define YYSTYPE_IS_DECLARED 1
 #endif
-
 
 extern YYSTYPE yylval;
 
-
-int yyparse (void);
-
+int yyparse(void);
 
 #endif /* !YY_YY_MFHDF_NCGEN_NCGENTAB_H_INCLUDED  */

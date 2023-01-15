@@ -33,10 +33,10 @@ extern "C" {
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_DFPaddpal(JNIEnv *env, jclass clss, jstring filename, jbyteArray palette)
 {
-    intn         rval = FAIL;
-    const char  *fstr = NULL;
-    jbyte       *dat = NULL;
-    jboolean     isCopy;
+    intn        rval = FAIL;
+    const char *fstr = NULL;
+    jbyte      *dat  = NULL;
+    jboolean    isCopy;
 
     UNUSED(clss);
 
@@ -64,10 +64,10 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_DFPgetpal(JNIEnv *env, jclass clss, jstring filename, jbyteArray palette)
 {
-    intn         rval = FAIL;
-    const char  *fstr = NULL;
-    jbyte       *dat = NULL;
-    jboolean     isCopy;
+    intn        rval = FAIL;
+    const char *fstr = NULL;
+    jbyte      *dat  = NULL;
+    jboolean    isCopy;
 
     UNUSED(clss);
 
@@ -125,14 +125,14 @@ done:
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFPputpal
-(JNIEnv *env, jclass clss, jstring filename, jbyteArray palette, jint overwrite, jstring filemode)
+Java_hdf_hdflib_HDFLibrary_DFPputpal(JNIEnv *env, jclass clss, jstring filename, jbyteArray palette,
+                                     jint overwrite, jstring filemode)
 {
-    intn         rval = FAIL;
-    const char  *fstr = NULL;
-    const char  *mstr = NULL;
-    jbyte       *dat = NULL;
-    jboolean     isCopy;
+    intn        rval = FAIL;
+    const char *fstr = NULL;
+    const char *mstr = NULL;
+    jbyte      *dat  = NULL;
+    jboolean    isCopy;
 
     UNUSED(clss);
 
@@ -148,7 +148,7 @@ Java_hdf_hdflib_HDFLibrary_DFPputpal
     PIN_JAVA_STRING(ENVONLY, filename, fstr, NULL, "DFPputpal:  filename not pinned");
     PIN_JAVA_STRING(ENVONLY, filemode, mstr, NULL, "DFPputpal:  filemode not pinned");
     PIN_BYTE_ARRAY(ENVONLY, palette, dat, &isCopy, "DFPputpal:  palette not pinned");
-    if ((rval = DFPputpal (fstr, (VOIDP)dat, (intn)overwrite, mstr)) == FAIL)
+    if ((rval = DFPputpal(fstr, (VOIDP)dat, (intn)overwrite, mstr)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -165,8 +165,8 @@ done:
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_DFPreadref(JNIEnv *env, jclass clss, jstring filename, jshort ref)
 {
-    intn         rval = FAIL;
-    const char  *fstr = NULL;
+    intn        rval = FAIL;
+    const char *fstr = NULL;
 
     UNUSED(clss);
 
@@ -175,7 +175,7 @@ Java_hdf_hdflib_HDFLibrary_DFPreadref(JNIEnv *env, jclass clss, jstring filename
 
     PIN_JAVA_STRING(ENVONLY, filename, fstr, NULL, "DFPreadref:  filename not pinned");
 
-    if ((rval = DFPreadref((char *)fstr, (uint16) ref)) == FAIL)
+    if ((rval = DFPreadref((char *)fstr, (uint16)ref)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -207,7 +207,7 @@ Java_hdf_hdflib_HDFLibrary_DFPwriteref(JNIEnv *env, jclass clss, jstring filenam
 
     PIN_JAVA_STRING(ENVONLY, filename, fstr, NULL, "DFPwriteref:  filename not pinned");
 
-    if ((rval = DFPwriteref((char *)fstr, (uint16) ref)) == FAIL)
+    if ((rval = DFPwriteref((char *)fstr, (uint16)ref)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -216,7 +216,6 @@ done:
 
     return JNI_TRUE;
 }
-
 
 #ifdef __cplusplus
 } /* end extern "C" */

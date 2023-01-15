@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
 #ifndef HDFI_H
 #define HDFI_H
 
@@ -49,13 +48,13 @@
  * floating-point support. Type sizes are now specified by C99 fixed-width
  * integers, so 32- vs 64-bit support doesn't matter in this file.
  */
-#define DFMT_LE 0x4441  /* Little-endian, IEEE-754 architectures */
-#define DFMT_BE 0x1111  /* Big-endian, IEEE-754 architectures */
+#define DFMT_LE 0x4441 /* Little-endian, IEEE-754 architectures */
+#define DFMT_BE 0x1111 /* Big-endian, IEEE-754 architectures */
 
 #if defined(H4_WORDS_BIGENDIAN) || defined(WORDS_BIGENDIAN)
-#define DF_MT   DFMT_BE
+#define DF_MT DFMT_BE
 #else
-#define DF_MT   DFMT_LE
+#define DF_MT DFMT_LE
 #endif
 
 /* I/O library constants */
@@ -119,33 +118,33 @@
  *-------------------------------------------------------------------------*/
 
 /* Floating-point types */
-typedef float           float32;
-typedef double          float64;
+typedef float  float32;
+typedef double float64;
 
 /* Characters */
-typedef char            char8;
-typedef unsigned char   uchar8;
-typedef char *          _fcd;
+typedef char          char8;
+typedef unsigned char uchar8;
+typedef char         *_fcd;
 #define _fcdtocp(desc) (desc)
 
 /* Fixed-width integer types */
-typedef int8_t          int8;
-typedef uint8_t         uint8;
-typedef int16_t         int16;
-typedef uint16_t        uint16;
-typedef int32_t         int32;
-typedef uint32_t        uint32;
+typedef int8_t   int8;
+typedef uint8_t  uint8;
+typedef int16_t  int16;
+typedef uint16_t uint16;
+typedef int32_t  int32;
+typedef uint32_t uint32;
 
 /* Native integer types */
-typedef int             intn;
-typedef unsigned int    uintn;
+typedef int          intn;
+typedef unsigned int uintn;
 
 /* void and pointers to void */
 #ifndef VOID
 /* winnt.h defines VOID to `void` via a macro */
-typedef void            VOID;
+typedef void VOID;
 #endif
-typedef void *          VOIDP;
+typedef void *VOIDP;
 
 /*-------------------------------------------------------------------------
  * Fortran definitions
@@ -163,27 +162,51 @@ typedef intptr_t hdf_pint_t;
 /*              encode and decode macros               */
 /*-----------------------------------------------------*/
 
-#   define INT16ENCODE(p, i) \
-{ *(p) = (uint8)(((uintn)(i) >> 8) & 0xff); (p)++; \
-        *(p) = (uint8)((uintn)(i) & 0xff); (p)++; }
+#define INT16ENCODE(p, i)                                                                                    \
+    {                                                                                                        \
+        *(p) = (uint8)(((uintn)(i) >> 8) & 0xff);                                                            \
+        (p)++;                                                                                               \
+        *(p) = (uint8)((uintn)(i)&0xff);                                                                     \
+        (p)++;                                                                                               \
+    }
 
-#   define UINT16ENCODE(p, i) \
-{ *(p) = (uint8)(((uintn)(i) >> 8) & 0xff); (p)++; *(p) = (uint8)((i) & 0xff); (p)++; }
+#define UINT16ENCODE(p, i)                                                                                   \
+    {                                                                                                        \
+        *(p) = (uint8)(((uintn)(i) >> 8) & 0xff);                                                            \
+        (p)++;                                                                                               \
+        *(p) = (uint8)((i)&0xff);                                                                            \
+        (p)++;                                                                                               \
+    }
 
-#   define INT32ENCODE(p, i) \
-{ *(p) = (uint8)(((uint32)(i) >> 24) & 0xff); (p)++; \
-        *(p) = (uint8)(((uint32)(i) >> 16) & 0xff); (p)++; \
-        *(p) = (uint8)(((uint32)(i) >> 8) & 0xff); (p)++; \
-        *(p) = (uint8)((uint32)(i) & 0xff); (p)++; }
+#define INT32ENCODE(p, i)                                                                                    \
+    {                                                                                                        \
+        *(p) = (uint8)(((uint32)(i) >> 24) & 0xff);                                                          \
+        (p)++;                                                                                               \
+        *(p) = (uint8)(((uint32)(i) >> 16) & 0xff);                                                          \
+        (p)++;                                                                                               \
+        *(p) = (uint8)(((uint32)(i) >> 8) & 0xff);                                                           \
+        (p)++;                                                                                               \
+        *(p) = (uint8)((uint32)(i)&0xff);                                                                    \
+        (p)++;                                                                                               \
+    }
 
-#   define UINT32ENCODE(p, i) \
-{ *(p) = (uint8)(((i) >> 24) & 0xff); (p)++; \
-        *(p) = (uint8)(((i) >> 16) & 0xff); (p)++; \
-        *(p) = (uint8)(((i) >> 8) & 0xff); (p)++; \
-        *(p) = (uint8)((i) & 0xff); (p)++; }
+#define UINT32ENCODE(p, i)                                                                                   \
+    {                                                                                                        \
+        *(p) = (uint8)(((i) >> 24) & 0xff);                                                                  \
+        (p)++;                                                                                               \
+        *(p) = (uint8)(((i) >> 16) & 0xff);                                                                  \
+        (p)++;                                                                                               \
+        *(p) = (uint8)(((i) >> 8) & 0xff);                                                                   \
+        (p)++;                                                                                               \
+        *(p) = (uint8)((i)&0xff);                                                                            \
+        (p)++;                                                                                               \
+    }
 
-#   define NBYTEENCODE(d, s, n) \
-{   HDmemcpy(d,s,n); p+=n }
+#define NBYTEENCODE(d, s, n)                                                                                 \
+    {                                                                                                        \
+        HDmemcpy(d, s, n);                                                                                   \
+        p += n                                                                                               \
+    }
 
 /* DECODE converts big endian bytes pointed by p to integer values and store
  * it in i.  For signed values, need to do sign-extension when converting
@@ -193,30 +216,53 @@ typedef intptr_t hdf_pint_t;
  * correctly even if i is actually a 64bit int like in a Cray.
  */
 
-#   define INT16DECODE(p, i) \
-{ (i) = ((*(p) & 0x80) ? ~0xffff : 0x00) | ((int16)(*(p) & 0xff) << 8); (p)++; \
-        (i) |= (int16)((*(p) & 0xff)); (p)++; }
+#define INT16DECODE(p, i)                                                                                    \
+    {                                                                                                        \
+        (i) = ((*(p)&0x80) ? ~0xffff : 0x00) | ((int16)(*(p)&0xff) << 8);                                    \
+        (p)++;                                                                                               \
+        (i) |= (int16)((*(p)&0xff));                                                                         \
+        (p)++;                                                                                               \
+    }
 
-#   define UINT16DECODE(p, i) \
-{ (i) = (uint16)((*(p) & 0xff) << 8); (p)++; \
-        (i) |= (uint16)(*(p) & 0xff); (p)++; }
+#define UINT16DECODE(p, i)                                                                                   \
+    {                                                                                                        \
+        (i) = (uint16)((*(p)&0xff) << 8);                                                                    \
+        (p)++;                                                                                               \
+        (i) |= (uint16)(*(p)&0xff);                                                                          \
+        (p)++;                                                                                               \
+    }
 
-#   define INT32DECODE(p, i) \
-{ (i) = (int32)(((int32)*(p) & 0x80) ? ~0xffffffff : 0x00) | ((int32)(*(p) & 0xff) << 24); (p)++; \
-        (i) |= ((int32)(*(p) & 0xff) << 16); (p)++; \
-        (i) |= ((int32)(*(p) & 0xff) << 8); (p)++; \
-        (i) |= (*(p) & 0xff); (p)++; }
+#define INT32DECODE(p, i)                                                                                    \
+    {                                                                                                        \
+        (i) = (int32)(((int32) * (p)&0x80) ? ~0xffffffff : 0x00) | ((int32)(*(p)&0xff) << 24);               \
+        (p)++;                                                                                               \
+        (i) |= ((int32)(*(p)&0xff) << 16);                                                                   \
+        (p)++;                                                                                               \
+        (i) |= ((int32)(*(p)&0xff) << 8);                                                                    \
+        (p)++;                                                                                               \
+        (i) |= (*(p)&0xff);                                                                                  \
+        (p)++;                                                                                               \
+    }
 
-#   define UINT32DECODE(p, i) \
-{ (i) = ((uint32)(*(p) & 0xff) << 24); (p)++; \
-        (i) |= ((uint32)(*(p) & 0xff) << 16); (p)++; \
-        (i) |= ((uint32)(*(p) & 0xff) << 8); (p)++; \
-        (i) |= (uint32)(*(p) & 0xff); (p)++; }
+#define UINT32DECODE(p, i)                                                                                   \
+    {                                                                                                        \
+        (i) = ((uint32)(*(p)&0xff) << 24);                                                                   \
+        (p)++;                                                                                               \
+        (i) |= ((uint32)(*(p)&0xff) << 16);                                                                  \
+        (p)++;                                                                                               \
+        (i) |= ((uint32)(*(p)&0xff) << 8);                                                                   \
+        (p)++;                                                                                               \
+        (i) |= (uint32)(*(p)&0xff);                                                                          \
+        (p)++;                                                                                               \
+    }
 
 /* Note! the NBYTEDECODE macro is backwards from the memcpy() routine, */
 /*      in the spirit of the other DECODE macros */
-#   define NBYTEDECODE(s, d, n) \
-{   HDmemcpy(d,s,n); p+=n }
+#define NBYTEDECODE(s, d, n)                                                                                 \
+    {                                                                                                        \
+        HDmemcpy(d, s, n);                                                                                   \
+        p += n                                                                                               \
+    }
 
 /*----------------------------------------------------------------
 ** MACRO FCALLKEYW for any special fortran-C stub keyword
@@ -231,11 +277,10 @@ typedef intptr_t hdf_pint_t;
 #undef FRETVAL
 #endif
 
-#ifndef FRETVAL /* !MAC */
-#   define FCALLKEYW    /*NONE*/
-#   define FRETVAL(x)   x
+#ifndef FRETVAL    /* !MAC */
+#define FCALLKEYW  /*NONE*/
+#define FRETVAL(x) x
 #endif
-
 
 /*----------------------------------------------------------------
 ** MACRO FNAME for any fortran callable routine name.
@@ -246,84 +291,87 @@ typedef intptr_t hdf_pint_t;
 **
 **---------------------------------------------------------------*/
 #if defined(FNAME_PRE_UNDERSCORE) && defined(FNAME_POST_UNDERSCORE)
-#   define FNAME(x)     _##x##_
+#define FNAME(x) _##x##_
 #endif
 #if defined(FNAME_PRE_UNDERSCORE) && !defined(FNAME_POST_UNDERSCORE)
-#   define FNAME(x)     _##x
+#define FNAME(x) _##x
 #endif
 #if !defined(FNAME_PRE_UNDERSCORE) && defined(FNAME_POST_UNDERSCORE)
-#   define FNAME(x)     x##_
+#define FNAME(x) x##_
 #endif
 #if !defined(FNAME_PRE_UNDERSCORE) && !defined(FNAME_POST_UNDERSCORE)
-#   define FNAME(x)     x
+#define FNAME(x) x
 #endif
 
 /**************************************************************************
-*  Generally useful macro definitions
-**************************************************************************/
+ *  Generally useful macro definitions
+ **************************************************************************/
 #ifndef MIN
-#define MIN(a,b)    (((a)<(b)) ? (a) : (b))
+#define MIN(a, b) (((a) < (b)) ? (a) : (b))
 #endif
 #ifndef MAX
-#define MAX(a,b)    (((a)>(b)) ? (a) : (b))
+#define MAX(a, b) (((a) > (b)) ? (a) : (b))
 #endif
 
 /**************************************************************************
-*  Macros to work around ANSI C portability problems.
-**************************************************************************/
-#define CONSTR(v,s) static const char v[]=s
+ *  Macros to work around ANSI C portability problems.
+ **************************************************************************/
+#define CONSTR(v, s) static const char v[] = s
 
 /**************************************************************************
-*  Allocation functions defined differently
-**************************************************************************/
+ *  Allocation functions defined differently
+ **************************************************************************/
 #define HDmalloc(s)     malloc(s)
-#define HDcalloc(a,b)   calloc(a,b)
+#define HDcalloc(a, b)  calloc(a, b)
 #define HDfree(p)       free(p)
-#define HDrealloc(p,s)  realloc(p,s)
+#define HDrealloc(p, s) realloc(p, s)
 
 /* Macro to free space and clear pointer to NULL */
-#define HDfreenclear(p) { if((p)!=NULL) HDfree(p); p=NULL; }
+#define HDfreenclear(p)                                                                                      \
+    {                                                                                                        \
+        if ((p) != NULL)                                                                                     \
+            HDfree(p);                                                                                       \
+        p = NULL;                                                                                            \
+    }
 
 /**************************************************************************
-*  String functions defined differently
-**************************************************************************/
+ *  String functions defined differently
+ **************************************************************************/
 
-#  define HDstrcat(s1,s2)   (strcat((s1),(s2)))
-#  define HDstrcmp(s,t)     (strcmp((s),(t)))
-#  define HDstrcpy(s,d)     (strcpy((s),(d)))
-#  define HDstrlen(s)       (strlen((const char *)(s)))
-#  define HDstrncmp(s1,s2,n)    (strncmp((s1),(s2),(n)))
-#  define HDstrncpy(s1,s2,n)    (strncpy((s1),(s2),(n)))
-#  define HDstrchr(s,c)         (strchr((s),(c)))
-#  define HDstrrchr(s,c)        (strrchr((s),(c)))
-#  define HDstrtol(s,e,b)       (strtol((s),(e),(b)))
-
-
-/**************************************************************************
-*  Memory functions defined differently
-**************************************************************************/
-
-# define HDmemcpy(dst,src,n)   (memcpy((void *)(dst),(const void *)(src),(size_t)(n)))
-# define HDmemset(dst,c,n)     (memset((void *)(dst),(intn)(c),(size_t)(n)))
-# define HDmemcmp(dst,src,n)   (memcmp((const void *)(dst),(const void *)(src),(size_t)(n)))
-
+#define HDstrcat(s1, s2)     (strcat((s1), (s2)))
+#define HDstrcmp(s, t)       (strcmp((s), (t)))
+#define HDstrcpy(s, d)       (strcpy((s), (d)))
+#define HDstrlen(s)          (strlen((const char *)(s)))
+#define HDstrncmp(s1, s2, n) (strncmp((s1), (s2), (n)))
+#define HDstrncpy(s1, s2, n) (strncpy((s1), (s2), (n)))
+#define HDstrchr(s, c)       (strchr((s), (c)))
+#define HDstrrchr(s, c)      (strrchr((s), (c)))
+#define HDstrtol(s, e, b)    (strtol((s), (e), (b)))
 
 /**************************************************************************
-*  Misc. functions
-**************************************************************************/
-#define HDstat(path, result)    (stat(path, result))
-#define HDgetenv(s1)            (getenv(s1))
-#define HDputenv(s1)            (putenv(s1))
-#define HDltoa(v)               (ltoa(v))
-#if defined (__sun) && defined(__GNUC__)
-#define HDatexit(f)             (0) /* we punt on the Sun using gcc */
+ *  Memory functions defined differently
+ **************************************************************************/
+
+#define HDmemcpy(dst, src, n) (memcpy((void *)(dst), (const void *)(src), (size_t)(n)))
+#define HDmemset(dst, c, n)   (memset((void *)(dst), (intn)(c), (size_t)(n)))
+#define HDmemcmp(dst, src, n) (memcmp((const void *)(dst), (const void *)(src), (size_t)(n)))
+
+/**************************************************************************
+ *  Misc. functions
+ **************************************************************************/
+#define HDstat(path, result) (stat(path, result))
+#define HDgetenv(s1)         (getenv(s1))
+#define HDputenv(s1)         (putenv(s1))
+#define HDltoa(v)            (ltoa(v))
+#if defined(__sun) && defined(__GNUC__)
+#define HDatexit(f) (0) /* we punt on the Sun using gcc */
 #else
-#define HDatexit(f)             (atexit(f))
+#define HDatexit(f) (atexit(f))
 #endif
 
 /**************************************************************************
-*  JPEG #define's - Look in the JPEG docs before changing - (Q)
-**************************************************************************/
+ *  JPEG #define's - Look in the JPEG docs before changing - (Q)
+ **************************************************************************/
 
 /* Determine the memory manager we are going to use. Valid values are:
  *  - MEM_DOS

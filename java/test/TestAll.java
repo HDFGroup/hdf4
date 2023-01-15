@@ -16,17 +16,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses( { TestH4.class,
-    TestH4ANparams.class,
-    TestH4DFparams.class,
-    TestH4DFPparams.class,
-    TestH4DFRparams.class,
-    TestH4GRparams.class,
-    TestH4HCparams.class,
-    TestH4SDparams.class,
-    TestH4Vparams.class,
-    TestH4VSparams.class
-})
+@Suite.SuiteClasses({TestH4.class, TestH4ANparams.class, TestH4DFparams.class, TestH4DFPparams.class,
+                     TestH4DFRparams.class, TestH4GRparams.class, TestH4HCparams.class, TestH4SDparams.class,
+                     TestH4Vparams.class, TestH4VSparams.class})
 
 public class TestAll {
 }

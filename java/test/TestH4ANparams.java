@@ -19,9 +19,9 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 
-import hdf.hdflib.HDFLibrary;
-import hdf.hdflib.HDFException;
 import hdf.hdflib.HDFConstants;
+import hdf.hdflib.HDFException;
+import hdf.hdflib.HDFLibrary;
 
 import org.junit.After;
 import org.junit.Before;
@@ -34,76 +34,90 @@ import org.junit.rules.TestName;
  *
  */
 public class TestH4ANparams {
-    @Rule public TestName testname = new TestName();
+    @Rule
+    public TestName testname = new TestName();
 
     @Before
-    public void showTestName() {
+    public void showTestName()
+    {
         System.out.print(testname.getMethodName());
     }
 
     @After
-    public void nextTestName() {
+    public void nextTestName()
+    {
         System.out.println();
     }
 
     @Test(expected = HDFException.class)
-    public void testANstartIllegalId() throws Throwable {
+    public void testANstartIllegalId() throws Throwable
+    {
         HDFLibrary.ANstart(-1);
     }
 
     @Test(expected = HDFException.class)
-    public void testANendIllegalId() throws Throwable {
+    public void testANendIllegalId() throws Throwable
+    {
         HDFLibrary.ANend(-1);
     }
 
     @Test
-    public void testANendaccessIllegalId() throws Throwable {
-        //function does nothing
+    public void testANendaccessIllegalId() throws Throwable
+    {
+        // function does nothing
         assertTrue(HDFLibrary.ANendaccess(-1));
     }
 
     @Test(expected = HDFException.class)
-    public void testANfileinfoIllegalId() throws Throwable {
+    public void testANfileinfoIllegalId() throws Throwable
+    {
         int[] ids = {0, 0, 0, 0};
         HDFLibrary.ANfileinfo(-1, ids);
     }
 
     @Test(expected = NullPointerException.class)
-    public void testANfileinfoNull() throws Throwable {
+    public void testANfileinfoNull() throws Throwable
+    {
         HDFLibrary.ANfileinfo(0, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testANfileinfoArgument() throws Throwable {
+    public void testANfileinfoArgument() throws Throwable
+    {
         int[] ids = {0, 0};
         HDFLibrary.ANfileinfo(0, ids);
     }
 
     @Test(expected = HDFException.class)
-    public void testANselectIllegalId() throws Throwable {
+    public void testANselectIllegalId() throws Throwable
+    {
         HDFLibrary.ANselect(-1, 0, 0);
     }
 
     @Test(expected = HDFException.class)
-    public void testANnumannIllegalId() throws Throwable {
+    public void testANnumannIllegalId() throws Throwable
+    {
         short tag = 0;
         short ref = 0;
         HDFLibrary.ANnumann(-1, 0, tag, ref);
     }
 
     @Test
-    public void testANatype2tagIllegalId() throws Throwable {
+    public void testANatype2tagIllegalId() throws Throwable
+    {
         assertEquals(HDFLibrary.ANatype2tag(-1), HDFConstants.DFTAG_NULL);
     }
 
     @Test(expected = HDFException.class)
-    public void testANtag2atypeIllegalId() throws Throwable {
+    public void testANtag2atypeIllegalId() throws Throwable
+    {
         short anttype = -1;
         HDFLibrary.ANtag2atype(anttype);
     }
 
     @Test(expected = HDFException.class)
-    public void testANannlistIllegalId() throws Throwable {
+    public void testANannlistIllegalId() throws Throwable
+    {
         short tag = 0;
         short ref = 0;
         int[] ids = {0, 0, 0, 0};
@@ -111,7 +125,8 @@ public class TestH4ANparams {
     }
 
     @Test(expected = NullPointerException.class)
-    public void testANannlistNull() throws Throwable {
+    public void testANannlistNull() throws Throwable
+    {
         short tag = 0;
         short ref = 0;
 
@@ -119,77 +134,90 @@ public class TestH4ANparams {
     }
 
     @Test(expected = HDFException.class)
-    public void testANannlenIllegalId() throws Throwable {
+    public void testANannlenIllegalId() throws Throwable
+    {
         HDFLibrary.ANannlen(-1);
     }
 
     @Test(expected = HDFException.class)
-    public void testANreadannIllegalId() throws Throwable {
+    public void testANreadannIllegalId() throws Throwable
+    {
         String[] str = {""};
         HDFLibrary.ANreadann(-1, str, 0);
     }
 
     @Test(expected = HDFException.class)
-    public void testANcreateIllegalId() throws Throwable {
+    public void testANcreateIllegalId() throws Throwable
+    {
         short tag = 0;
         short ref = 0;
         HDFLibrary.ANcreate(-1, tag, ref, 0);
     }
 
     @Test(expected = HDFException.class)
-    public void testANcreatefIllegalId() throws Throwable {
+    public void testANcreatefIllegalId() throws Throwable
+    {
         HDFLibrary.ANcreatef(-1, 0);
     }
 
     @Test(expected = HDFException.class)
-    public void testANget_tagrefIllegalId() throws Throwable {
+    public void testANget_tagrefIllegalId() throws Throwable
+    {
         short[] ref = {0, 0};
         HDFLibrary.ANget_tagref(-1, 0, 0, ref);
     }
 
     @Test(expected = NullPointerException.class)
-    public void testANget_tagrefNull() throws Throwable {
+    public void testANget_tagrefNull() throws Throwable
+    {
         HDFLibrary.ANget_tagref(0, 0, 0, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testANget_tagrefArgument() throws Throwable {
+    public void testANget_tagrefArgument() throws Throwable
+    {
         short[] ref = {0};
         HDFLibrary.ANget_tagref(0, 0, 0, ref);
     }
 
     @Test(expected = HDFException.class)
-    public void testANid2tagrefIllegalId() throws Throwable {
+    public void testANid2tagrefIllegalId() throws Throwable
+    {
         short[] tag = {0, 0};
         HDFLibrary.ANid2tagref(-1, tag);
     }
 
     @Test(expected = NullPointerException.class)
-    public void testANid2tagrefNull() throws Throwable {
+    public void testANid2tagrefNull() throws Throwable
+    {
         HDFLibrary.ANid2tagref(0, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testANid2tagrefArgument() throws Throwable {
+    public void testANid2tagrefArgument() throws Throwable
+    {
         short[] tag = {0};
         HDFLibrary.ANid2tagref(0, tag);
     }
 
     @Test(expected = HDFException.class)
-    public void testANtagref2idIllegalId() throws Throwable {
+    public void testANtagref2idIllegalId() throws Throwable
+    {
         short tag = 0;
         short ref = 0;
         HDFLibrary.ANtagref2id(-1, tag, ref);
     }
 
     @Test(expected = HDFException.class)
-    public void testANwriteannIllegalId() throws Throwable {
+    public void testANwriteannIllegalId() throws Throwable
+    {
         String str = "";
         HDFLibrary.ANwriteann(-1, str, 0);
     }
 
     @Test(expected = NullPointerException.class)
-    public void testANwriteannNull() throws Throwable {
+    public void testANwriteannNull() throws Throwable
+    {
         HDFLibrary.ANwriteann(0, null, 0);
     }
 }

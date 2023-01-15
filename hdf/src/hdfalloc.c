@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
 #include "hdf.h"
 
 /*
@@ -52,39 +51,37 @@ EXPORTED ROUTINES
  REVISION LOG
 --------------------------------------------------------------------------*/
 void *
-HDmemfill(void * dest, const void * src, uint32 item_size, uint32 num_items)
+HDmemfill(void *dest, const void *src, uint32 item_size, uint32 num_items)
 {
-    uint32      copy_size;      /* size of the buffer to copy */
-    uint32      copy_items;     /* number of items currently copying */
-    uint32      items_left;     /* number of items left to copy */
-    uint8      *curr_dest;      /* ptr into the 'dest' memory where we are currently */
+    uint32 copy_size;  /* size of the buffer to copy */
+    uint32 copy_items; /* number of items currently copying */
+    uint32 items_left; /* number of items left to copy */
+    uint8 *curr_dest;  /* ptr into the 'dest' memory where we are currently */
 
     /* minimal error check for 0 sized array or item size */
-    if (num_items > 0 && item_size > 0)
-      {
-          HDmemcpy(dest, src, item_size);   /* copy first item */
+    if (num_items > 0 && item_size > 0) {
+        HDmemcpy(dest, src, item_size); /* copy first item */
 
-          copy_size = item_size;
-          copy_items = 1;
-          items_left = num_items - 1;
-          curr_dest = ((uint8 *) dest) + item_size;
+        copy_size  = item_size;
+        copy_items = 1;
+        items_left = num_items - 1;
+        curr_dest  = ((uint8 *)dest) + item_size;
 
-          /* copy until we've copied at least half of the items */
-          while (items_left >= copy_items)
-            {
+        /* copy until we've copied at least half of the items */
+        while (items_left >= copy_items) {
 
-                HDmemcpy(curr_dest, dest, copy_size);   /* copy the current chunk */
-                curr_dest += copy_size;     /* move the offset for the next chunk */
-                items_left -= copy_items;   /* decrement the number of items left */
+            HDmemcpy(curr_dest, dest, copy_size); /* copy the current chunk */
+            curr_dest += copy_size;               /* move the offset for the next chunk */
+            items_left -= copy_items;             /* decrement the number of items left */
 
-                copy_size *= 2;     /* increase the size of the chunk to copy */
-                copy_items *= 2;    /* increase the count of items we are copying */
-            }   /* end while */
-          if (items_left > 0)   /* if there are any items left to copy */
-              HDmemcpy(curr_dest, dest, items_left * item_size);
-      }     /* end if */
+            copy_size *= 2;  /* increase the size of the chunk to copy */
+            copy_items *= 2; /* increase the count of items we are copying */
+        }                    /* end while */
+        if (items_left > 0)  /* if there are any items left to copy */
+            HDmemcpy(curr_dest, dest, items_left * item_size);
+    } /* end if */
     return (dest);
-}   /* end HDmemfill() */
+} /* end HDmemfill() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -111,16 +108,16 @@ HDmemfill(void * dest, const void * src, uint32 item_size, uint32 num_items)
 char *
 HIstrncpy(char *dest, const char *source, intn len)
 {
-    char       *destp;
+    char *destp;
 
     destp = dest;
     if (len == 0)
         return (destp);
     for (; (len > 1) && (*source != '\0'); len--)
         *dest++ = *source++;
-    *dest = '\0';   /* Force the last byte be '\0'   */
+    *dest = '\0'; /* Force the last byte be '\0'   */
     return (destp);
-}   /* end HIstrncpy() */
+} /* end HIstrncpy() */
 /* *INDENT-OFF* */
 /* GNU indent 1.9.1 urps on this section, so turn off indenting for now -QAK */
 
@@ -140,21 +137,21 @@ HIstrncpy(char *dest, const char *source, intn len)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-char       *
+char *
 HDstrdup(const char *s)
 {
     char *ret;
 
     /* Make sure original string is not NULL */
     if (s == NULL)
-        return(NULL);
+        return (NULL);
 
     /* Allocate space */
-    ret = (char *) HDmalloc((uint32) HDstrlen(s) + 1);
+    ret = (char *)HDmalloc((uint32)HDstrlen(s) + 1);
     if (ret == NULL)
         return (NULL);
 
     /* Copy the original string and return it */
     HDstrcpy(ret, s);
     return (ret);
-}   /* end HDstrdup() */
+} /* end HDstrdup() */

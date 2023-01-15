@@ -32,12 +32,11 @@ public class HDFChunkInfo {
     public HDFCompInfo cinfo = null;
 
     /** */
-    public HDFChunkInfo() {
-        ctype = HDFConstants.HDF_NONE;
-    }
+    public HDFChunkInfo() { ctype = HDFConstants.HDF_NONE; }
 
     /** */
-    public HDFChunkInfo(int[] cl, int ct, HDFCompInfo ci) {
+    public HDFChunkInfo(int[] cl, int ct, HDFCompInfo ci)
+    {
         if (ct == HDFConstants.COMP_CODE_NONE) {
             ctype = HDFConstants.HDF_CHUNK;
         }
@@ -45,13 +44,14 @@ public class HDFChunkInfo {
             ctype = HDFConstants.HDF_COMP | HDFConstants.HDF_CHUNK;
         }
         chunk_lengths = cl;
-        comp_type = ct;
-        cinfo = ci;
+        comp_type     = ct;
+        cinfo         = ci;
     }
 
     /** */
-    public HDFChunkInfo(int[] cl) {
-        ctype = HDFConstants.HDF_CHUNK;
+    public HDFChunkInfo(int[] cl)
+    {
+        ctype         = HDFConstants.HDF_CHUNK;
         chunk_lengths = cl;
     }
 }

@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
 /*-----------------------------------------------------------------------------
  * File:     mfanf.c
  * Author:   GeorgeV.
@@ -81,11 +80,11 @@
 FRETVAL(intf)
 nafstart(intf *file_id)
 {
-  intf ret;
+    intf ret;
 
-  ret = ANstart((int32)*file_id);
+    ret = ANstart((int32)*file_id);
 
-  return (ret);
+    return (ret);
 } /* nafstart() */
 
 /*-----------------------------------------------------------------------------
@@ -102,24 +101,23 @@ nafstart(intf *file_id)
  * Author: GeorgeV
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-naffileinfo(intf *an_id, intf *num_flabel, intf *num_fdesc, intf *num_olabel,
-            intf *num_odesc)
+naffileinfo(intf *an_id, intf *num_flabel, intf *num_fdesc, intf *num_olabel, intf *num_odesc)
 {
 #ifdef LATER
-  CONSTR(FUNC, "affileinfo");
+    CONSTR(FUNC, "affileinfo");
 #endif /* LATER */
-  intf  ret;
-  int32 nflabel, nfdesc, nolabel, nodesc;
+    intf  ret;
+    int32 nflabel, nfdesc, nolabel, nodesc;
 
-  ret = ANfileinfo((int32)*an_id, &nflabel, &nfdesc, &nolabel, &nodesc);
+    ret = ANfileinfo((int32)*an_id, &nflabel, &nfdesc, &nolabel, &nodesc);
 
-  /* fill in values to return */
-  *num_flabel = nflabel;
-  *num_fdesc  = nfdesc;
-  *num_olabel = nolabel;
-  *num_odesc  = nodesc;
+    /* fill in values to return */
+    *num_flabel = nflabel;
+    *num_fdesc  = nfdesc;
+    *num_olabel = nolabel;
+    *num_odesc  = nodesc;
 
-  return ret;
+    return ret;
 } /* naffileinfo() */
 
 /*-----------------------------------------------------------------------------
@@ -135,10 +133,10 @@ FRETVAL(intf)
 nafend(intf *an_id)
 {
 #ifdef LATER
-  CONSTR(FUNC, "afend");
+    CONSTR(FUNC, "afend");
 #endif /* LATER */
 
-  return (intf)ANend((int32) *an_id);
+    return (intf)ANend((int32)*an_id);
 } /* nafend() */
 
 /*-----------------------------------------------------------------------------
@@ -156,10 +154,10 @@ FRETVAL(intf)
 nafcreate(intf *an_id, intf *etag, intf *eref, intf *atype)
 {
 #ifdef LATER
-  CONSTR(FUNC, "afcreate");
+    CONSTR(FUNC, "afcreate");
 #endif /* LATER */
 
-  return (intf)ANcreate((int32)*an_id,(uint16)*etag,(uint16)*eref,(ann_type)*atype);
+    return (intf)ANcreate((int32)*an_id, (uint16)*etag, (uint16)*eref, (ann_type)*atype);
 } /* nafcreate() */
 
 /*-----------------------------------------------------------------------------
@@ -176,10 +174,10 @@ FRETVAL(intf)
 naffcreate(intf *an_id, intf *atype)
 {
 #ifdef LATER
-  CONSTR(FUNC, "affcreate");
+    CONSTR(FUNC, "affcreate");
 #endif /* LATER */
 
-  return (intf)ANcreatef((int32)*an_id,(ann_type)*atype);
+    return (intf)ANcreatef((int32)*an_id, (ann_type)*atype);
 } /* naffcreate() */
 
 /*-----------------------------------------------------------------------------
@@ -202,10 +200,10 @@ FRETVAL(intf)
 nafselect(intf *an_id, intf *index, intf *atype)
 {
 #ifdef LATER
-  CONSTR(FUNC, "afselect");
+    CONSTR(FUNC, "afselect");
 #endif /* LATER */
 
-  return (intf)ANselect((int32)*an_id,(int32)*index, (ann_type)*atype);
+    return (intf)ANselect((int32)*an_id, (int32)*index, (ann_type)*atype);
 } /* nafselect() */
 
 /*-----------------------------------------------------------------------------
@@ -224,10 +222,10 @@ FRETVAL(intf)
 nafnumann(intf *an_id, intf *atype, intf *etag, intf *eref)
 {
 #ifdef LATER
-  CONSTR(FUNC, "afnumann");
+    CONSTR(FUNC, "afnumann");
 #endif /* LATER */
 
-  return (intf)ANnumann((int32)*an_id,(ann_type)*atype,(uint16)*etag,(uint16)*eref);
+    return (intf)ANnumann((int32)*an_id, (ann_type)*atype, (uint16)*etag, (uint16)*eref);
 } /* nafnumann() */
 
 /*-----------------------------------------------------------------------------
@@ -246,35 +244,34 @@ nafnumann(intf *an_id, intf *atype, intf *etag, intf *eref)
 FRETVAL(intf)
 nafannlist(intf *an_id, intf *atype, intf *etag, intf *eref, intf alist[])
 {
-  CONSTR(FUNC, "afannlist");
-  intf  ret;
-  int32 *tempanlist;
-  intf  nanns;
-  intn  i;
+    CONSTR(FUNC, "afannlist");
+    intf   ret;
+    int32 *tempanlist;
+    intf   nanns;
+    intn   i;
 
-  /* Get number of annotations that match tag/ref pair */
-  nanns = ANnumann((int32)*an_id,(ann_type)*atype,(uint16)*etag,(uint16)*eref);
-  if (nanns < 0)
-    HE_REPORT_RETURN("ANnumann: failed to any annotations", FAIL);
+    /* Get number of annotations that match tag/ref pair */
+    nanns = ANnumann((int32)*an_id, (ann_type)*atype, (uint16)*etag, (uint16)*eref);
+    if (nanns < 0)
+        HE_REPORT_RETURN("ANnumann: failed to any annotations", FAIL);
 
-  /* create annlist with true int32s to maintain compatibility
-  ** with machines that allocate less than 32 bits per int. */
-  if ((tempanlist = (int32 *) HDmalloc(nanns * sizeof(int32))) == NULL)
-    HRETURN_ERROR(DFE_NOSPACE, FAIL);
+    /* create annlist with true int32s to maintain compatibility
+    ** with machines that allocate less than 32 bits per int. */
+    if ((tempanlist = (int32 *)HDmalloc(nanns * sizeof(int32))) == NULL)
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-  /* Get list of annotation handles to return */
-  ret = ANannlist((int32)*an_id,(ann_type)*atype,(uint16)*etag,(uint16)*eref,
-                  tempanlist);
-  if (ret < 0)
-    HE_REPORT_RETURN("ANannlist:failed to any annotations", FAIL);
+    /* Get list of annotation handles to return */
+    ret = ANannlist((int32)*an_id, (ann_type)*atype, (uint16)*etag, (uint16)*eref, tempanlist);
+    if (ret < 0)
+        HE_REPORT_RETURN("ANannlist:failed to any annotations", FAIL);
 
-  /* move annotation handles into caller's alist */
-  for (i = 0; i < nanns; i++)
-    alist[i] = tempanlist[i];
+    /* move annotation handles into caller's alist */
+    for (i = 0; i < nanns; i++)
+        alist[i] = tempanlist[i];
 
-  HDfree((VOIDP) tempanlist); /* free allocated space */
+    HDfree((VOIDP)tempanlist); /* free allocated space */
 
-  return ret;
+    return ret;
 } /* nafannlist() */
 
 /*-----------------------------------------------------------------------------
@@ -290,7 +287,7 @@ FRETVAL(intf)
 nafannlen(intf *an_id)
 {
 #ifdef LATER
-  CONSTR(FUNC, "afannlen");
+    CONSTR(FUNC, "afannlen");
 #endif /* LATER */
 
     return (intf)ANannlen((int32)*an_id);
@@ -308,21 +305,21 @@ nafannlen(intf *an_id)
  * Author: GeorgeV
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-nafwriteann(intf *ann_id,_fcd ann, intf *annlen)
+nafwriteann(intf *ann_id, _fcd ann, intf *annlen)
 {
 #ifdef LATER
-  CONSTR(FUNC, "afwriteann");
+    CONSTR(FUNC, "afwriteann");
 #endif /* LATER */
 
-    char       *iann = NULL;
-    intf        status;
+    char *iann = NULL;
+    intf  status;
 
     /* Convert fortran string to C-String */
-    iann = HDf2cstring(ann, (intn) *annlen);
+    iann = HDf2cstring(ann, (intn)*annlen);
     if (!iann)
-        return(FAIL);
+        return (FAIL);
 
-    status = ANwriteann((int32)*ann_id, (char *) _fcdtocp(ann), (int32)*annlen);
+    status = ANwriteann((int32)*ann_id, (char *)_fcdtocp(ann), (int32)*annlen);
 
     HDfree(iann); /* free allocated space by HDf2cstring */
 
@@ -341,15 +338,15 @@ nafwriteann(intf *ann_id,_fcd ann, intf *annlen)
  * Author: GeorgeV
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-nafreadann(intf *ann_id,_fcd ann, intf *maxlen)
+nafreadann(intf *ann_id, _fcd ann, intf *maxlen)
 {
     CONSTR(FUNC, "afreadann");
-    char	*iann = NULL;
-    intn        status;
+    char *iann = NULL;
+    intn  status;
 
     /* Allocate space for fortran string */
     if (*maxlen)
-        iann = (char *) HDmalloc((uint32) *maxlen + 1);
+        iann = (char *)HDmalloc((uint32)*maxlen + 1);
 
     if (!iann)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
@@ -357,7 +354,7 @@ nafreadann(intf *ann_id,_fcd ann, intf *maxlen)
     status = ANreadann((int32)*ann_id, iann, (int32)*maxlen);
 
     /* C-String to Fortran String */
-    HDpackFstring(iann, _fcdtocp(ann), (intn) *maxlen);
+    HDpackFstring(iann, _fcdtocp(ann), (intn)*maxlen);
 
     if (iann)
         HDfree(iann); /* free allocated space */
@@ -378,10 +375,10 @@ FRETVAL(intf)
 nafendaccess(intf *ann_id)
 {
 #ifdef LATER
-  CONSTR(FUNC, "afendaccess");
+    CONSTR(FUNC, "afendaccess");
 #endif /* LATER */
 
-  return (intf)ANendaccess((int32)*ann_id);
+    return (intf)ANendaccess((int32)*ann_id);
 } /* nafendaccess() */
 
 /*-----------------------------------------------------------------------------
@@ -397,18 +394,17 @@ FRETVAL(intf)
 nafgettagref(intf *an_id, intf *index, intf *type, intf *tag, intf *ref)
 {
 #ifdef LATER
-  CONSTR(FUNC, "afgettagref");
+    CONSTR(FUNC, "afgettagref");
 #endif /* LATER */
-  intf   ret;
-  uint16 otag, oref;
+    intf   ret;
+    uint16 otag, oref;
 
-  ret = (intf)ANget_tagref((int32)*an_id,(int32)*index,(ann_type)*type,
-                           &otag, &oref);
+    ret = (intf)ANget_tagref((int32)*an_id, (int32)*index, (ann_type)*type, &otag, &oref);
 
-  *tag = otag;
-  *ref = oref;
+    *tag = otag;
+    *ref = oref;
 
-  return ret;
+    return ret;
 } /* nafgettagref() */
 
 /*-----------------------------------------------------------------------------
@@ -424,17 +420,17 @@ FRETVAL(intf)
 nafidtagref(intf *ann_id, intf *tag, intf *ref)
 {
 #ifdef LATER
-  CONSTR(FUNC, "afidtagref");
+    CONSTR(FUNC, "afidtagref");
 #endif /* LATER */
-  intf   ret;
-  uint16 otag, oref;
+    intf   ret;
+    uint16 otag, oref;
 
-  ret = (intf)ANid2tagref((int32)*ann_id, &otag, &oref);
+    ret = (intf)ANid2tagref((int32)*ann_id, &otag, &oref);
 
-  *tag = otag;
-  *ref = oref;
+    *tag = otag;
+    *ref = oref;
 
-  return ret;
+    return ret;
 } /* nafidtagref() */
 
 /*-----------------------------------------------------------------------------
@@ -450,10 +446,10 @@ FRETVAL(intf)
 naftagrefid(intf *an_id, intf *tag, intf *ref)
 {
 #ifdef LATER
-  CONSTR(FUNC, "aftagrefid");
+    CONSTR(FUNC, "aftagrefid");
 #endif /* LATER */
 
-  return (intf)ANtagref2id((int32)*an_id, (uint16)*tag, (uint16)*ref);
+    return (intf)ANtagref2id((int32)*an_id, (uint16)*tag, (uint16)*ref);
 
 } /* naftagrefid() */
 
@@ -470,10 +466,10 @@ FRETVAL(intf)
 nafatypetag(intf *atype)
 {
 #ifdef LATER
-  CONSTR(FUNC, "aftypetag");
+    CONSTR(FUNC, "aftypetag");
 #endif /* LATER */
 
-  return (intf)ANatype2tag((ann_type)*atype);
+    return (intf)ANatype2tag((ann_type)*atype);
 
 } /* nafatypetag() */
 
@@ -490,9 +486,9 @@ FRETVAL(intf)
 naftagatype(intf *tag)
 {
 #ifdef LATER
-  CONSTR(FUNC, "aftagatype");
+    CONSTR(FUNC, "aftagatype");
 #endif /* LATER */
 
-  return (intf)ANtag2atype((uint16)*tag);
+    return (intf)ANtag2atype((uint16)*tag);
 
 } /* naftagatype() */

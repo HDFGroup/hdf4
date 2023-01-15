@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
 /* -------------------------------- herr.c -------------------------------- */
 /*
    HDF error handling / reporting routines
@@ -32,7 +31,7 @@ EXPORTED ROUTINES
 #include "hdf.h"
 
 /*
-   ** Include files for variable argument processing for HEreport
+ ** Include files for variable argument processing for HEreport
  */
 #include <stdarg.h>
 
@@ -40,23 +39,20 @@ EXPORTED ROUTINES
    file and line where the error occurs. */
 
 /* the structure of the error stack element */
-typedef struct error_t
-  {
-      hdf_err_code_t error_code;    /* Error number */
-      char function_name[FUNC_NAME_LEN];    /* function where error occur */
-      const char *file_name;    /* file where error occur */
-      intn        line;         /* line in file where error occurs */
-      intn        system;       /* for system or HDF error */
-      char       *desc;         /* optional supplied description */
-  }
-error_t;
-
+typedef struct error_t {
+    hdf_err_code_t error_code;                   /* Error number */
+    char           function_name[FUNC_NAME_LEN]; /* function where error occur */
+    const char    *file_name;                    /* file where error occur */
+    intn           line;                         /* line in file where error occurs */
+    intn           system;                       /* for system or HDF error */
+    char          *desc;                         /* optional supplied description */
+} error_t;
 
 /* pointer to the structure to hold error messages */
 PRIVATE error_t *error_stack = NULL;
 
 #ifndef DEFAULT_MESG
-#   define DEFAULT_MESG "Unknown error"
+#define DEFAULT_MESG "Unknown error"
 #endif
 
 /* size of error message table */
@@ -80,14 +76,13 @@ DESCRIPTION
 const char *
 HEstring(hdf_err_code_t error_code)
 {
-    int         i;              /* temp int index */
+    int i; /* temp int index */
 
     /* look for the error_code in error message table */
     for (i = 0; i < (int)ERRMESG_SZ; i++)
-        if (error_messages[i].error_code == error_code)
-          {
+        if (error_messages[i].error_code == error_code) {
             return error_messages[i].str;
-          }
+        }
 
     /* otherwise, return default message */
     return DEFAULT_MESG;
@@ -112,17 +107,15 @@ HEPclear(void)
 
     /* error_top == 0 means no error in stack */
     /* clean out old descriptions if they exist */
-    for (; error_top > 0; error_top--)
-      {
-          if (error_stack[error_top - 1].desc)
-            {
-                HDfree(error_stack[error_top - 1].desc);
-                error_stack[error_top - 1].desc = NULL;
-            }
-      }
+    for (; error_top > 0; error_top--) {
+        if (error_stack[error_top - 1].desc) {
+            HDfree(error_stack[error_top - 1].desc);
+            error_stack[error_top - 1].desc = NULL;
+        }
+    }
 
 done:
-  return;
+    return;
 } /* HEPclear */
 
 /*-------------------------------------------------------------------------
@@ -148,38 +141,34 @@ DESCRIPTION
 VOID
 HEpush(hdf_err_code_t error_code, const char *function_name, const char *file_name, intn line)
 {
-    intn        i;
+    intn i;
 
     /* if the stack is not allocated, then do it */
-    if (!error_stack)
-      {
-          error_stack = (error_t *) HDmalloc((uint32) sizeof(error_t) * ERR_STACK_SZ);
-          if (!error_stack)
-            {
-                puts("HEpush cannot allocate space.  Unable to continue!!");
-                exit(8);
-            }
-          for (i = 0; i < ERR_STACK_SZ; i++)
-              error_stack[i].desc = NULL;
-      }
+    if (!error_stack) {
+        error_stack = (error_t *)HDmalloc((uint32)sizeof(error_t) * ERR_STACK_SZ);
+        if (!error_stack) {
+            puts("HEpush cannot allocate space.  Unable to continue!!");
+            exit(8);
+        }
+        for (i = 0; i < ERR_STACK_SZ; i++)
+            error_stack[i].desc = NULL;
+    }
 
     /* if stack is full, discard error */
     /* otherwise, push error details onto stack */
 
-    if (error_top < ERR_STACK_SZ)
-      {
-          HDstrcpy(error_stack[error_top].function_name,function_name);
-          error_stack[error_top].file_name = file_name;
-          error_stack[error_top].line = line;
-          error_stack[error_top].error_code = error_code;
-          if (error_stack[error_top].desc)
-            {
-                HDfree(error_stack[error_top].desc);
-                error_stack[error_top].desc = NULL;
-            }
-          error_top++;
-      }
-}   /* HEpush */
+    if (error_top < ERR_STACK_SZ) {
+        HDstrcpy(error_stack[error_top].function_name, function_name);
+        error_stack[error_top].file_name  = file_name;
+        error_stack[error_top].line       = line;
+        error_stack[error_top].error_code = error_code;
+        if (error_stack[error_top].desc) {
+            HDfree(error_stack[error_top].desc);
+            error_stack[error_top].desc = NULL;
+        }
+        error_top++;
+    }
+} /* HEpush */
 
 /*-------------------------------------------------------------------------
 NAME
@@ -196,27 +185,25 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------*/
 VOID
-HEreport(const char *format,...)
+HEreport(const char *format, ...)
 {
-    va_list     arg_ptr;
-    char       *tmp;
-    CONSTR(FUNC, "HEreport");   /* name of function if HIalloc fails */
+    va_list arg_ptr;
+    char   *tmp;
+    CONSTR(FUNC, "HEreport"); /* name of function if HIalloc fails */
 
     va_start(arg_ptr, format);
 
-    if ((error_top < ERR_STACK_SZ + 1) && (error_top > 0))
-      {
-          tmp = (char *) HDmalloc(ERR_STRING_SIZE);
-          if (!tmp)
-            {
-                HERROR(DFE_NOSPACE);
-                goto done;
-            }
-          vsprintf(tmp, format, arg_ptr);
-          if (error_stack[error_top - 1].desc)
-              HDfree(error_stack[error_top - 1].desc);
-          error_stack[error_top - 1].desc = tmp;
-      }
+    if ((error_top < ERR_STACK_SZ + 1) && (error_top > 0)) {
+        tmp = (char *)HDmalloc(ERR_STRING_SIZE);
+        if (!tmp) {
+            HERROR(DFE_NOSPACE);
+            goto done;
+        }
+        vsprintf(tmp, format, arg_ptr);
+        if (error_stack[error_top - 1].desc)
+            HDfree(error_stack[error_top - 1].desc);
+        error_stack[error_top - 1].desc = tmp;
+    }
 
     va_end(arg_ptr);
 
@@ -240,23 +227,20 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------*/
 VOID
-HEprint(FILE * stream, int32 print_levels)
+HEprint(FILE *stream, int32 print_levels)
 {
-    if (print_levels == 0 || print_levels > error_top)  /* print all errors */
+    if (print_levels == 0 || print_levels > error_top) /* print all errors */
         print_levels = error_top;
 
     /* print the errors starting from most recent */
-    for (print_levels--; print_levels >= 0; print_levels--)
-      {
-          fprintf(stream, "HDF error: (%d) <%s>\n\tDetected in %s() [%s line %d]\n",
-                  error_stack[print_levels].error_code,
-                  HEstring(error_stack[print_levels].error_code),
-                  error_stack[print_levels].function_name,
-                  error_stack[print_levels].file_name,
-                  error_stack[print_levels].line);
-          if (error_stack[print_levels].desc)
-              fprintf(stream, "\t%s\n", error_stack[print_levels].desc);
-      }
+    for (print_levels--; print_levels >= 0; print_levels--) {
+        fprintf(stream, "HDF error: (%d) <%s>\n\tDetected in %s() [%s line %d]\n",
+                error_stack[print_levels].error_code, HEstring(error_stack[print_levels].error_code),
+                error_stack[print_levels].function_name, error_stack[print_levels].file_name,
+                error_stack[print_levels].line);
+        if (error_stack[print_levels].desc)
+            fprintf(stream, "\t%s\n", error_stack[print_levels].desc);
+    }
 } /* HEprint */
 
 /* ------------------------------- HEvalue -------------------------------- */
@@ -276,14 +260,14 @@ HEprint(FILE * stream, int32 print_levels)
 int16
 HEvalue(int32 level)
 {
-  int16 ret_value = DFE_NONE;
+    int16 ret_value = DFE_NONE;
 
-  if (level > 0 && level <= error_top)
-    ret_value = (int16) error_stack[error_top - level].error_code;
-  else
-    ret_value = DFE_NONE;
+    if (level > 0 && level <= error_top)
+        ret_value = (int16)error_stack[error_top - level].error_code;
+    else
+        ret_value = DFE_NONE;
 
-  return ret_value;
+    return ret_value;
 } /* HEvalue */
 
 /*--------------------------------------------------------------------------
@@ -303,14 +287,13 @@ HEvalue(int32 level)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn HEshutdown(void)
+intn
+HEshutdown(void)
 {
-    if(error_stack!=NULL)
-      {
-          HDfree(error_stack);
-          error_stack=NULL;
-          error_top=0;
-      } /* end if */
-    return(SUCCEED);
+    if (error_stack != NULL) {
+        HDfree(error_stack);
+        error_stack = NULL;
+        error_top   = 0;
+    } /* end if */
+    return (SUCCEED);
 } /* end HEshutdown() */
-
