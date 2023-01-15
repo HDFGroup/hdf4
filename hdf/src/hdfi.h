@@ -64,6 +64,7 @@
 #define FILELIB UNIXBUFIO
 
 /* Standard header files needed all the time */
+#include <inttypes.h>
 #include <limits.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -76,11 +77,42 @@
 /*-------------------------------------------------------------------------
  * Pre-C99 platform-independent type scheme
  *
- * The integer types will eventually move here when we bring C99 integers
- * to HDF4.
+ * These types were added long before C99 was widely supported (or even
+ * existed). They were formerly mapped to native C types on a machine-specific
+ * basis, but they are now mapped to their equivalent C99 types.
+ *
+ * XXX: Some cruft remains (e.g. VOID) and this should be removed, if
+ *      possible.
  *-------------------------------------------------------------------------*/
-typedef float   float32;
-typedef double  float64;
+
+/* Floating-point types */
+typedef float           float32;
+typedef double          float64;
+
+/* Characters */
+typedef char            char8;
+typedef unsigned char   uchar8;
+typedef char *          _fcd;
+#define _fcdtocp(desc) (desc)
+
+/* Fixed-width integer types */
+typedef int8_t          int8;
+typedef uint8_t         uint8;
+typedef int16_t         int16;
+typedef uint16_t        uint16;
+typedef int32_t         int32;
+typedef uint32_t        uint32;
+
+/* Native integer types */
+typedef int             intn;
+typedef unsigned int    uintn;
+
+/* void and pointers to void */
+#ifndef VOID
+/* winnt.h defines VOID to void via a macro */
+typedef void            VOID;
+#endif
+typedef void *          VOIDP;
 
 /*-------------------------------------------------------------------------
  * Define options for each platform
@@ -103,24 +135,6 @@ Please check your Makefile.
 #include <sys/file.h>               /* for unbuffered i/o stuff */
 #include <sys/stat.h>
 #define DF_MT   DFMT_SUN
-typedef void              VOID;
-typedef void              *VOIDP;
-typedef char              *_fcd;
-typedef char              char8;
-typedef unsigned char     uchar8;
-typedef char              int8;
-typedef unsigned char     uint8;
-typedef short int         int16;
-typedef unsigned short int uint16;
-#ifdef _LP64 /* 64-bit environment */
-typedef int               int32;
-typedef unsigned int      uint32;
-#else /* 32-bit environment */
-typedef long int          int32;
-typedef unsigned long int uint32;
-#endif
-typedef int               intn;
-typedef unsigned int      uintn;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 #ifdef _LP64 /* 64-bit environment */
 typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
@@ -128,7 +142,6 @@ typedef long              hdf_pint_t;   /* an integer the same size as a pointer
 typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
 #endif
 #define FNAME_POST_UNDERSCORE
-#define _fcdtocp(desc) (desc)
 
 #endif /* SUN */
 
@@ -150,28 +163,12 @@ Please check your Makefile.
 #include <sys/file.h>               /* for unbuffered i/o stuff */
 #include <sys/stat.h>
 #define DF_MT             DFMT_IBM6000
-typedef void              VOID;
-typedef void              *VOIDP;
-typedef char              *_fcd;
-#ifndef _ALL_SOURCE
-typedef char              int8;
-typedef short int         int16;
-typedef int               int32;
-#endif
-typedef char              char8;
-typedef unsigned char     uchar8;
-typedef unsigned char     uint8;
-typedef unsigned short int uint16;
-typedef unsigned int      uint32;
-typedef int               intn;
-typedef unsigned int      uintn;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 #ifdef AIX5L64
 typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
 #else /*AIX5L64 */
 typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
 #endif /*AIX5L64 */
-#define _fcdtocp(desc) (desc)
 
 #endif /* IBM6000 */
 
@@ -206,22 +203,8 @@ Please check your Makefile.
 #endif /* INTEL86 */
 #endif /* __i386 */
 
-typedef void            VOID;
-typedef void            *VOIDP;
-typedef char            *_fcd;
-typedef char            char8;
-typedef unsigned char   uchar8;
-typedef char            int8;
-typedef unsigned char   uint8;
-typedef short           int16;
-typedef unsigned short  uint16;
-typedef int             int32;
-typedef unsigned int    uint32;
-typedef int             intn;
-typedef unsigned int    uintn;
 typedef int             intf;     /* size of INTEGERs in Fortran compiler */
 typedef long            hdf_pint_t;   /* an integer the same size as a pointer */
-#define _fcdtocp(desc) (desc)
 
 #endif /* __APPLE__ */
 
@@ -282,21 +265,6 @@ Please check your Makefile.
 
 #define DF_MT             DFMT_PC
 
-#ifndef VOID    /* The stupid windows.h header file uses a #define instead of a typedef */
-typedef void              VOID;
-#endif  /* end VOID */
-typedef void *            VOIDP;
-typedef char *            _fcd;
-typedef char              char8;
-typedef unsigned char     uchar8;
-typedef char              int8;
-typedef unsigned char     uint8;
-typedef short int         int16;
-typedef unsigned short int uint16;
-typedef long int          int32;
-typedef unsigned long int uint32;
-typedef int               intn;
-typedef unsigned int      uintn;
 typedef long              intf;     /* size of INTEGERs in Fortran compiler */
 #ifdef _WIN64
 typedef long long         hdf_pint_t;   /* 8-byte pointer */
@@ -314,7 +282,6 @@ typedef int               hdf_pint_t;   /* 4-byte pointer */
 #elif defined INTEL386
 #define DF_CAPFNAMES
 #endif
-#define _fcdtocp(desc) (desc)
 
 #endif /* INTEL86 */
 
@@ -331,25 +298,11 @@ Please check your Makefile.
 #include <sys/file.h>               /* for unbuffered i/o stuff */
 #include <sys/stat.h>
 #define DF_MT             DFMT_POWERPC64
-typedef void              VOID;
-typedef void              *VOIDP;
-typedef char              *_fcd;
-typedef char              char8;
-typedef unsigned char     uchar8;
-typedef char              int8;
-typedef unsigned char     uint8;
-typedef short int         int16;
-typedef unsigned short int uint16;
-typedef int               int32;
-typedef unsigned int      uint32;
-typedef int               intn;
-typedef unsigned int      uintn;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
 #if defined __GNUC__
 #define FNAME_POST_UNDERSCORE
 #endif
-#define _fcdtocp(desc) (desc)
 
 #endif /*power PC 5 64 */
 
@@ -366,23 +319,9 @@ Please check your Makefile.
 #include <sys/file.h>               /* for unbuffered i/o stuff */
 #include <sys/stat.h>
 #define DF_MT             DFMT_LINUX64
-typedef void              VOID;
-typedef void              *VOIDP;
-typedef char              *_fcd;
-typedef char              char8;
-typedef unsigned char     uchar8;
-typedef char              int8;
-typedef unsigned char     uint8;
-typedef short int         int16;
-typedef unsigned short int uint16;
-typedef int               int32;
-typedef unsigned int      uint32;
-typedef int               intn;
-typedef unsigned int      uintn;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
 #define FNAME_POST_UNDERSCORE
-#define _fcdtocp(desc) (desc)
 
 #endif /*Linux 64 */
 
@@ -400,23 +339,9 @@ Please check your Makefile.
 #include <sys/file.h>               /* for unbuffered i/o stuff */
 #include <sys/stat.h>
 #define DF_MT             DFMT_LINUX64
-typedef void              VOID;
-typedef void              *VOIDP;
-typedef char              *_fcd;
-typedef char              char8;
-typedef unsigned char     uchar8;
-typedef char              int8;
-typedef unsigned char     uint8;
-typedef short int         int16;
-typedef unsigned short int uint16;
-typedef int               int32;
-typedef unsigned int      uint32;
-typedef int               intn;
-typedef unsigned int      uintn;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
 #define FNAME_POST_UNDERSCORE
-#define _fcdtocp(desc) (desc)
 
 #endif /*64-bit FreeBSD */
 

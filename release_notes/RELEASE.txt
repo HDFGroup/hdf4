@@ -38,35 +38,44 @@ New features and changes
 ========================
     Configuration:
     -------------
+    - Fixed-width HDF4 types like int16 now map to C99 types under the hood
+
+      In an effort to make HDF4 more maintainable and "just work" for more
+      platforms, the scheme where HDF4 fixed-width integer types like int16
+      were mapped to C native types like int and short has been replaced
+      with a system that maps them to equivalent C99 types.
+
+      (DER - 2023/01/15)
+    
     - Changed how maintainer mode works in the Autotools
 
-    The macro has changed from AM_MAINTAINER_MODE to
-    AM_MAINTAINER_MODE([enable]) in master and AM_MAINTAINER_MODE([disable])
-    at release time. The main change is that build dependencies will be ON
-    by default in master so out-of-date configure, Makefile.in will be
-    regenerated when their input files (configure.ac, Makefile.am, etc.)
-    change.
+      The macro has changed from AM_MAINTAINER_MODE to
+      AM_MAINTAINER_MODE([enable]) in master and AM_MAINTAINER_MODE([disable])
+      at release time. The main change is that build dependencies will be ON
+      by default in master so out-of-date configure, Makefile.in will be
+      regenerated when their input files (configure.ac, Makefile.am, etc.)
+      change.
 
-    We previously used the macro with no parameter since we checked in the
-    Autotools-generated files. This allowed switching on maintainer mode
-    with a command-line option, but left maintainer mode off to avoid
-    regenerating the build files when checking out from git did not
-    preserve timestamps, making the files look out-of-date. Now that we no
-    longer check in Autotools-geneated files, we can turn the
-    dependencies on.
+      We previously used the macro with no parameter since we checked in the
+      Autotools-generated files. This allowed switching on maintainer mode
+      with a command-line option, but left maintainer mode off to avoid
+      regenerating the build files when checking out from git did not
+      preserve timestamps, making the files look out-of-date. Now that we no
+      longer check in Autotools-geneated files, we can turn the
+      dependencies on.
 
-    Detailed comments about the behavior of this macro have been added to
-    configure.ac where we define the macro.
+      Detailed comments about the behavior of this macro have been added to
+      configure.ac where we define the macro.
 
-    (DER - 2023/01/13)
+      (DER - 2023/01/13)
 
     - Removed the hdf/util/MacProjects directory
 
-    It's unclear what build system these were for, but they have been
-    unmaintained for some time and have been removed. MacOS users can
-    build with the Autotools or CMake.
+      It's unclear what build system these were for, but they have been
+      unmaintained for some time and have been removed. MacOS users can
+      build with the Autotools or CMake.
 
-    (DER - 2023/01/13)
+      (DER - 2023/01/13)
 
     - Dropped support for many obsolete platforms
 
