@@ -44,7 +44,6 @@
 /*          (i.e. Big-Endian, all 64-bit architecture w/IEEE Floats)        */
 /*--------------------------------------------------------------------------*/
 #define     DFMT_SUN            0x1111
-#define     DFMT_IBM6000        0x1111
 #define     DFMT_PC             0x4441
 #define     DFMT_APPLE_INTEL    0x4441
 #define     DFMT_LINUX64        0x4441
@@ -160,26 +159,6 @@ typedef int               hdf_pint_t;   /* an integer the same size as a pointer
 #define FNAME_POST_UNDERSCORE
 
 #endif /* SUN */
-
-/*-----------------------------------------------------*/
-#if defined(IBM6000) || defined(_AIX)
-
-#ifndef IBM6000
-#define IBM6000
-#endif
-
-#define BSD
-
-#define DF_MT             DFMT_IBM6000
-typedef int               intf;     /* size of INTEGERs in Fortran compiler */
-#ifdef AIX5L64
-typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
-#else /*AIX5L64 */
-typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
-#endif /*AIX5L64 */
-
-#endif /* IBM6000 */
-
 
 /*-----------------------------------------------------*/
 #if defined (__APPLE__)

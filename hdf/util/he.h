@@ -24,10 +24,7 @@
  * the following may not exist on all systems it should define stuff
  * like fork(), and other system calls
  */
-#if defined (IBM6000) || defined (SUN)
-#include <unistd.h>
-#endif /* Unix std libs */
-#if defined H4_HAVE_UNISTD_H
+#ifdef H4_HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 

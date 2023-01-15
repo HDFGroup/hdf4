@@ -97,6 +97,7 @@ New features and changes
         - Motorola m88k
         - NeXT
         - MacOS on PowerPC chipsets
+        - IBM RS/6000
 
       In addition, many #defines have been updated to reflect modern usage,
       particularly on Windows and MacOS.

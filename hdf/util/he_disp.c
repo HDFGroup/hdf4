@@ -24,7 +24,6 @@
 int
 HEdisplay(HE_CMD * cmd)
 {
-#ifndef IBM6000
     int i;
     int         center = 1;
     int         xwhere = 0;
@@ -79,10 +78,6 @@ HEdisplay(HE_CMD * cmd)
               return HE_FAIL;
           }
     return display(center, xwhere, ywhere, factor, large);
-#else
-    printf("Display routines do not work on this platform.\n");
-    return 1;
-#endif
 }
 
 void
@@ -95,7 +90,6 @@ goTo(int desc)
     DFR8readref(he_file, he_desc[desc].ref);
 }
 
-#ifndef IBM6000     /* Skip it all */
 
 int         oldcf = 0;          /* old value of compression flag */
 int32       oldx = 0, oldy = 0; /* old values of xdim and ydim */
@@ -399,7 +393,5 @@ rleIt(char *buf, char *bufto, int len)
 
     return ((int) (clead - bufto));     /* how many stored as encoded */
 }
-
-#endif /* IBM6000 */
 
 /* end of display.c */
