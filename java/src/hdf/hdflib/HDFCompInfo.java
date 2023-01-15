@@ -25,7 +25,5 @@ public class HDFCompInfo {
     public int ctype;
 
     /** */
-    public HDFCompInfo() {
-        ctype = HDFConstants.COMP_CODE_NONE;
-    };
+    public HDFCompInfo() { ctype = HDFConstants.COMP_CODE_NONE; };
 }

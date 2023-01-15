@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
 /*-----------------------------------------------------------------------------
  * File:    cnone.h
  * Purpose: Header file for "none" encoding information.
@@ -27,61 +26,44 @@
 #define __CNONE_H
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 /*
-   ** from cnone.c
+ ** from cnone.c
  */
 
-HDFLIBAPI int32 HCPcnone_stread
-                (accrec_t * rec);
+HDFLIBAPI int32 HCPcnone_stread(accrec_t *rec);
 
-HDFLIBAPI int32 HCPcnone_stwrite
-                (accrec_t * rec);
+HDFLIBAPI int32 HCPcnone_stwrite(accrec_t *rec);
 
-HDFLIBAPI int32 HCPcnone_seek
-                (accrec_t * access_rec, int32 offset, int origin);
+HDFLIBAPI int32 HCPcnone_seek(accrec_t *access_rec, int32 offset, int origin);
 
-HDFLIBAPI int32 HCPcnone_inquire
-                (accrec_t * access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
-               int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
-                 int16 *pspecial);
+HDFLIBAPI int32 HCPcnone_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
+                                 int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
+                                 int16 *pspecial);
 
-HDFLIBAPI int32 HCPcnone_read
-                (accrec_t * access_rec, int32 length, void * data);
+HDFLIBAPI int32 HCPcnone_read(accrec_t *access_rec, int32 length, void *data);
 
-HDFLIBAPI int32 HCPcnone_write
-                (accrec_t * access_rec, int32 length, const void * data);
+HDFLIBAPI int32 HCPcnone_write(accrec_t *access_rec, int32 length, const void *data);
 
-HDFLIBAPI intn HCPcnone_endaccess
-                (accrec_t * access_rec);
+HDFLIBAPI intn HCPcnone_endaccess(accrec_t *access_rec);
 
 #ifdef __cplusplus
 }
 #endif
 
 /* "none" [en|de]coding information */
-typedef struct
-{
-    intn        space_holder;   /* merely a space holder so compilers don't barf */
-}
-comp_coder_none_info_t;
+typedef struct {
+    intn space_holder; /* merely a space holder so compilers don't barf */
+} comp_coder_none_info_t;
 
 #ifndef CNONE_MASTER
-extern funclist_t cnone_funcs;  /* functions to perform run-length encoding */
+extern funclist_t cnone_funcs; /* functions to perform run-length encoding */
 #else
-funclist_t  cnone_funcs =
-{                               /* functions to perform run-length encoding */
-    HCPcnone_stread,
-    HCPcnone_stwrite,
-    HCPcnone_seek,
-    HCPcnone_inquire,
-    HCPcnone_read,
-    HCPcnone_write,
-    HCPcnone_endaccess
-};
+funclist_t cnone_funcs = {/* functions to perform run-length encoding */
+                          HCPcnone_stread, HCPcnone_stwrite, HCPcnone_seek,     HCPcnone_inquire,
+                          HCPcnone_read,   HCPcnone_write,   HCPcnone_endaccess};
 #endif
 
 #endif /* __CNONE_H */

@@ -23,26 +23,25 @@ file - mfprivate.h
 ******************************************************************************/
 
 /* Get the dimension record */
-NC_dim * SDIget_dim (NC *handle, int32 id);
+NC_dim *SDIget_dim(NC *handle, int32 id);
 
 /* Get the handle from this object */
-NC * SDIhandle_from_id (int32 id, intn typ);
+NC *SDIhandle_from_id(int32 id, intn typ);
 
 /* Get the variable record */
-NC_var *SDIget_var (NC *handle, int32 sdsid);
+NC_var *SDIget_var(NC *handle, int32 sdsid);
 
 /* Put an attribute in an attribute list */
-intn SDIputattr (NC_array **ap, const char *name, int32 nt, intn count, const void * data);
+intn SDIputattr(NC_array **ap, const char *name, int32 nt, intn count, const void *data);
 
 /* Get index of coordinate variable */
-int32 SDIgetcoordvar (NC *handle, NC_dim *dim, int32 id, int32 nt);
+int32 SDIgetcoordvar(NC *handle, NC_dim *dim, int32 id, int32 nt);
 
 /* Free a variables AID */
-int32 SDIfreevarAID (NC * handle, int32 index);
+int32 SDIfreevarAID(NC *handle, int32 index);
 
 /* Get the attribute list */
-intn SDIapfromid (int32 id, NC ** handlep, NC_array *** app);
+intn SDIapfromid(int32 id, NC **handlep, NC_array ***app);
 
 /* Check permission on the file */
-int SDI_can_clobber (const char *name);
-
+int SDI_can_clobber(const char *name);

@@ -25,27 +25,29 @@ public class HDFJPEGCompInfo extends HDFOldCompInfo {
     /* Struct to contain information about how to compress */
     /* or decompress a JPEG encoded 24-bit image */
 
-    /** Quality factor for JPEG compression, should be from
-                 0 (terrible) to 100 (very good) */
+    /**
+       Quality factor for JPEG compression, should be from
+                 0 (terrible) to 100 (very good)
+     */
     public int quality;
 
-    /** If force_baseline is set to TRUE then
+    /**
+       If force_baseline is set to TRUE then
          quantization tables are limited to
          0..255 for JPEG baseline compatibility
          This is only an issue for quality
-         settings below 24  */
+         settings below 24
+     */
     public int force_baseline; /**/
 
     /** */
-    public HDFJPEGCompInfo() {
-        ctype = HDFConstants.COMP_JPEG;
-    }
+    public HDFJPEGCompInfo() { ctype = HDFConstants.COMP_JPEG; }
 
     /** */
-    public HDFJPEGCompInfo(int qual, int fb) {
-        ctype = HDFConstants.COMP_JPEG;
-        quality = qual;
+    public HDFJPEGCompInfo(int qual, int fb)
+    {
+        ctype          = HDFConstants.COMP_JPEG;
+        quality        = qual;
         force_baseline = fb;
     }
-
 }

@@ -11,17 +11,15 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
 #ifndef _MFHDFI_H
 #define _MFHDFI_H
 
 /* enumerated type used to specify whether a variable is an SDS, coordinate
    variable, or its type is unknown because it was created before HDF4.2r2 */
-typedef enum
-{
-    IS_SDSVAR=0,        /* variable is an actual SDS */
-    IS_CRDVAR=1,        /* variable is a coordinate variable */
-    UNKNOWN=2           /* variable is created before HDF4.2r2, unknown type */
+typedef enum {
+    IS_SDSVAR = 0, /* variable is an actual SDS */
+    IS_CRDVAR = 1, /* variable is a coordinate variable */
+    UNKNOWN   = 2  /* variable is created before HDF4.2r2, unknown type */
 } hdf_vartype_t;
 
 #endif /* _MFHDFI_H */

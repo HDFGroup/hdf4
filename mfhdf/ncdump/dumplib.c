@@ -13,7 +13,7 @@
 #include <varargs.h>
 #endif
 
-#include"h4config.h"
+#include "h4config.h"
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h"
 #else
@@ -30,29 +30,27 @@ void
 error(const char *fmt, ...)
 #else
 /*VARARGS1*/
-void
-error(fmt, va_alist)
-     const char *fmt ;
-     va_dcl
+void error(fmt, va_alist) const char *fmt;
+va_dcl
 #endif
 {
-    va_list args ;
+    va_list args;
 
-    (void) fprintf(stderr,"*** %s: ", progname);
+    (void)fprintf(stderr, "*** %s: ", progname);
 
 #ifndef NO_STDARG
-    va_start(args, fmt) ;
+    va_start(args, fmt);
 #else
-    va_start(args) ;
+    va_start(args);
 #endif
-    (void) vfprintf(stderr,fmt,args) ;
-    va_end(args) ;
+    (void)vfprintf(stderr, fmt, args);
+    va_end(args);
 
-    (void) fprintf(stderr, "\n") ;
-    (void) fflush(stderr);	/* to ensure log files are current */
+    (void)fprintf(stderr, "\n");
+    (void)fflush(stderr); /* to ensure log files are current */
 }
 
-#define LINEPIND	"    "	/* indent of continued lines */
+#define LINEPIND "    " /* indent of continued lines */
 
 static int linep;
 static int max_line_len;
@@ -63,38 +61,33 @@ set_indent(int in)
     linep = in;
 }
 
-
 void
 set_max_len(int len)
 {
-    max_line_len = len-2;
+    max_line_len = len - 2;
 }
-
 
 void
 lput(const char *cp)
 {
     int nn = strlen(cp);
 
-    if (nn+linep > max_line_len && nn > 2) {
-	(void) fputs("\n", stdout);
-	(void) fputs(LINEPIND, stdout);
-	linep = strlen(LINEPIND);
+    if (nn + linep > max_line_len && nn > 2) {
+        (void)fputs("\n", stdout);
+        (void)fputs(LINEPIND, stdout);
+        linep = strlen(LINEPIND);
     }
-    (void) fputs(cp,stdout);
+    (void)fputs(cp, stdout);
     linep += nn;
 }
 
-
-static char *formats[] =
-{
-    "%d",			/* bytes, shorts */
-    "%s",			/* char arrays as strings */
-    "%ld",			/* longs */
-    "%.7g ",			/* floats */
-    "%.15g"			/* doubles */
+static char *formats[] = {
+    "%d",    /* bytes, shorts */
+    "%s",    /* char arrays as strings */
+    "%ld",   /* longs */
+    "%.7g ", /* floats */
+    "%.15g"  /* doubles */
 };
-
 
 /* In case different formats specified with -d option, set them here. */
 void
@@ -104,17 +97,16 @@ set_formats(char *flt, char *dbl)
     strcpy(formats[4], dbl);
 }
 
-
 /* ncid - netcdf id */
 /* varid - variable id */
 static char *
 has_c_format_att(int ncid, int varid)
 {
     nc_type cfmt_type;
-    int cfmt_len;
-    int savopts;
-#define C_FMT_NAME	"C_format" /* name of C format attribute */
-#define	MAX_CFMT_LEN	100	/* max length of C format attribute */
+    int     cfmt_len;
+    int     savopts;
+#define C_FMT_NAME   "C_format" /* name of C format attribute */
+#define MAX_CFMT_LEN 100        /* max length of C format attribute */
     static char cfmt[MAX_CFMT_LEN];
 
     /*
@@ -122,18 +114,17 @@ has_c_format_att(int ncid, int varid)
      * C_format attribute
      */
     savopts = ncopts;
-    ncopts = 0;
+    ncopts  = 0;
     if (ncattinq(ncid, varid, "C_format", &cfmt_type, &cfmt_len) != -1) {
-	ncopts = savopts;	/* restore error handling */
-	if (cfmt_type == NC_CHAR && cfmt_len > 0 && cfmt_len < MAX_CFMT_LEN) {
-	    if (ncattget(ncid, varid, "C_format", (void *)cfmt) != -1)
-	      return &cfmt[0];
-	}
+        ncopts = savopts; /* restore error handling */
+        if (cfmt_type == NC_CHAR && cfmt_len > 0 && cfmt_len < MAX_CFMT_LEN) {
+            if (ncattget(ncid, varid, "C_format", (void *)cfmt) != -1)
+                return &cfmt[0];
+        }
     }
-    ncopts = savopts;		/* restore error handling */
+    ncopts = savopts; /* restore error handling */
     return 0;
 }
-
 
 /*
  * Determine print format to use for each value for this variable.  Use value
@@ -149,73 +140,68 @@ get_fmt(int ncid, int varid, nc_type type)
 
     /* If C_format attribute exists, return it */
     if (c_format_att)
-      return c_format_att;
+        return c_format_att;
 
     /* Otherwise return sensible default. */
     switch (type) {
-      case NC_BYTE:
-	return formats[0];
-      case NC_CHAR:
-	return formats[1];
-      case NC_SHORT:
-	return formats[0];
-      case NC_LONG:
- 	return formats[2];
-      case NC_FLOAT:
-	return formats[3];
-      case NC_DOUBLE:
-	return formats[4];
-      default:
-	error("pr_vals: bad type");
-    return NULL;
+        case NC_BYTE:
+            return formats[0];
+        case NC_CHAR:
+            return formats[1];
+        case NC_SHORT:
+            return formats[0];
+        case NC_LONG:
+            return formats[2];
+        case NC_FLOAT:
+            return formats[3];
+        case NC_DOUBLE:
+            return formats[4];
+        default:
+            error("pr_vals: bad type");
+            return NULL;
     }
 }
 
-
-static vnode*
+static vnode *
 newvnode()
 {
-    vnode *newvp = (vnode*) malloc(sizeof(vnode));
+    vnode *newvp = (vnode *)malloc(sizeof(vnode));
 
     if (!newvp) {
-	error("out of memory!");
-	exit(EXIT_FAILURE);
+        error("out of memory!");
+        exit(EXIT_FAILURE);
     }
     return newvp;
 }
 
-
-vnode*
+vnode *
 newvlist()
 {
     vnode *vp = newvnode();
 
-    vp -> next = 0;
-    vp -> id = -1;		/* bad id */
+    vp->next = 0;
+    vp->id   = -1; /* bad id */
 
     return vp;
 }
-
 
 void
 varadd(vnode *vlist, int varid)
 {
     vnode *newvp = newvnode();
 
-    newvp -> next = vlist -> next;
-    newvp -> id = varid;
-    vlist -> next = newvp;
+    newvp->next = vlist->next;
+    newvp->id   = varid;
+    vlist->next = newvp;
 }
-
 
 int
 varmember(vnode *vlist, int varid)
 {
-    vnode *vp = vlist -> next;
+    vnode *vp = vlist->next;
 
-    for (; vp ; vp = vp->next)
-      if (vp->id == varid)
-	return 1;
+    for (; vp; vp = vp->next)
+        if (vp->id == varid)
+            return 1;
     return 0;
 }
-

@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
 /*-----------------------------------------------------------------------------
  * File:    mstdio.h
  * Purpose: Header file for stdio-like modeling information.
@@ -27,61 +26,44 @@
 #define __MSTDIO_H
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 /*
-   ** from mstdio.c
+ ** from mstdio.c
  */
 
-HDFLIBAPI int32 HCPmstdio_stread
-                (accrec_t * rec);
+HDFLIBAPI int32 HCPmstdio_stread(accrec_t *rec);
 
-HDFLIBAPI int32 HCPmstdio_stwrite
-                (accrec_t * rec);
+HDFLIBAPI int32 HCPmstdio_stwrite(accrec_t *rec);
 
-HDFLIBAPI int32 HCPmstdio_seek
-                (accrec_t * access_rec, int32 offset, int origin);
+HDFLIBAPI int32 HCPmstdio_seek(accrec_t *access_rec, int32 offset, int origin);
 
-HDFLIBAPI int32 HCPmstdio_inquire
-                (accrec_t * access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
-               int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
-                 int16 *pspecial);
+HDFLIBAPI int32 HCPmstdio_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
+                                  int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
+                                  int16 *pspecial);
 
-HDFLIBAPI int32 HCPmstdio_read
-                (accrec_t * access_rec, int32 length, void * data);
+HDFLIBAPI int32 HCPmstdio_read(accrec_t *access_rec, int32 length, void *data);
 
-HDFLIBAPI int32 HCPmstdio_write
-                (accrec_t * access_rec, int32 length, const void * data);
+HDFLIBAPI int32 HCPmstdio_write(accrec_t *access_rec, int32 length, const void *data);
 
-HDFLIBAPI intn HCPmstdio_endaccess
-                (accrec_t * access_rec);
+HDFLIBAPI intn HCPmstdio_endaccess(accrec_t *access_rec);
 
 #ifdef __cplusplus
 }
 #endif
 
 /* model information about stdio model */
-typedef struct
-{
-    int32      pos;            /* position ? */
-}
-comp_model_stdio_info_t;
+typedef struct {
+    int32 pos; /* position ? */
+} comp_model_stdio_info_t;
 
 #ifndef MSTDIO_MASTER
 extern funclist_t mstdio_funcs; /* functions to perform run-length encoding */
 #else
-funclist_t  mstdio_funcs =
-{                               /* functions to perform run-length encoding */
-    HCPmstdio_stread,
-    HCPmstdio_stwrite,
-    HCPmstdio_seek,
-    HCPmstdio_inquire,
-    HCPmstdio_read,
-    HCPmstdio_write,
-    HCPmstdio_endaccess
-};
+funclist_t mstdio_funcs = {/* functions to perform run-length encoding */
+                           HCPmstdio_stread, HCPmstdio_stwrite, HCPmstdio_seek,     HCPmstdio_inquire,
+                           HCPmstdio_read,   HCPmstdio_write,   HCPmstdio_endaccess};
 #endif
 
 #endif /* __MSTDIO_H */

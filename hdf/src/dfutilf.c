@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
 /*-----------------------------------------------------------------------------
  * File:    dfutilf.c
  * Purpose: C stubs for Fortran utility routines
@@ -35,9 +34,9 @@
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndfindnr(intf * dfile, intf * tag, intf * lref)
+ndfindnr(intf *dfile, intf *tag, intf *lref)
 {
-    return ((intf)DFfindnextref(*dfile, (uint16) *tag, (uint16) *lref));
+    return ((intf)DFfindnextref(*dfile, (uint16)*tag, (uint16)*lref));
 }
 
 /*
@@ -57,7 +56,7 @@ ndfindnr(intf * dfile, intf * tag, intf * lref)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndffindnextref(intf * dfile, intf * tag, intf * lref)
+ndffindnextref(intf *dfile, intf *tag, intf *lref)
 {
-    return ((intf)DFfindnextref(*dfile, (uint16) *tag, (uint16) *lref));
+    return ((intf)DFfindnextref(*dfile, (uint16)*tag, (uint16)*lref));
 }

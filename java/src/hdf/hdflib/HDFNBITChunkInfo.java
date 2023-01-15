@@ -34,18 +34,16 @@ public class HDFNBITChunkInfo extends HDFChunkInfo {
     public int fill_one = 0;
 
     /** */
-    public HDFNBITChunkInfo() {
-        ctype = HDFConstants.HDF_NBIT;
-    };
+    public HDFNBITChunkInfo() { ctype = HDFConstants.HDF_NBIT; };
 
     /** */
-    public HDFNBITChunkInfo(int[] cl, int sb, int bl, int se, int fo) {
-        ctype = HDFConstants.HDF_NBIT;
+    public HDFNBITChunkInfo(int[] cl, int sb, int bl, int se, int fo)
+    {
+        ctype         = HDFConstants.HDF_NBIT;
         chunk_lengths = cl;
-        start_bit = sb;
-        bit_len = bl;
-        sign_ext = se;
-        fill_one = fo;
+        start_bit     = sb;
+        bit_len       = bl;
+        sign_ext      = se;
+        fill_one      = fo;
     }
-
 }

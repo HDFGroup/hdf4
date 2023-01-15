@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
 /*------------------------------------------------------------------
  File:  dfknat.c
 
@@ -60,53 +59,46 @@
 /*   Native mode for 1 byte data items                      */
 /************************************************************/
 int
-DFKnb1b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
-        uint32 dest_stride)
+DFKnb1b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
 {
-    int         fast_processing = 0;
-    int         in_place = 0;
+    int    fast_processing = 0;
+    int    in_place        = 0;
     uint32 i;
-    uint8      *source = (uint8 *) s;
-    uint8      *dest = (uint8 *) d;
+    uint8 *source = (uint8 *)s;
+    uint8 *dest   = (uint8 *)d;
     CONSTR(FUNC, "DFKnb1b");
 
     HEclear();
 
-    if (num_elm == 0)
-      {
-          HERROR(DFE_BADCONV);
-          return FAIL;
-      }
+    if (num_elm == 0) {
+        HERROR(DFE_BADCONV);
+        return FAIL;
+    }
 
     /* Determine if faster array processing is appropriate */
-    if ((source_stride == 0 && dest_stride == 0) ||
-        (source_stride == 1 && dest_stride == 1))
+    if ((source_stride == 0 && dest_stride == 0) || (source_stride == 1 && dest_stride == 1))
         fast_processing = 1;
 
     /* Determine if the conversion should be inplace */
     if (source == dest)
         in_place = 1;
 
-    if (fast_processing)
-      {
-          if (!in_place)
-            {
-                HDmemcpy(dest, source, num_elm);
-                return 0;
-            }
-          else
-              return 0;     /* Nothing to do */
-      }
-    else
-      {
-          *dest = *source;
-          for (i = 1; i < num_elm; i++)
-            {
-                dest += dest_stride;
-                source += source_stride;
-                *dest = *source;
-            }
-      }
+    if (fast_processing) {
+        if (!in_place) {
+            HDmemcpy(dest, source, num_elm);
+            return 0;
+        }
+        else
+            return 0; /* Nothing to do */
+    }
+    else {
+        *dest = *source;
+        for (i = 1; i < num_elm; i++) {
+            dest += dest_stride;
+            source += source_stride;
+            *dest = *source;
+        }
+    }
 
     return 0;
 }
@@ -116,28 +108,25 @@ DFKnb1b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 /* -->Native mode for 2 byte data items                     */
 /************************************************************/
 int
-DFKnb2b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
-        uint32 dest_stride)
+DFKnb2b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
 {
-    int         fast_processing = 0;    /* Default is not fast processing */
-    int         in_place = 0;   /* Inplace must be detected */
+    int    fast_processing = 0; /* Default is not fast processing */
+    int    in_place        = 0; /* Inplace must be detected */
     uint32 i;
-    uint8       buf[2];         /* Inplace processing buffer */
-    uint8      *source = (uint8 *) s;
-    uint8      *dest = (uint8 *) d;
+    uint8  buf[2]; /* Inplace processing buffer */
+    uint8 *source = (uint8 *)s;
+    uint8 *dest   = (uint8 *)d;
     CONSTR(FUNC, "DFKnb2b");
 
     HEclear();
 
-    if (num_elm == 0)
-      {
-          HERROR(DFE_BADCONV);
-          return FAIL;
-      }
+    if (num_elm == 0) {
+        HERROR(DFE_BADCONV);
+        return FAIL;
+    }
 
     /* Determine if faster array processing is appropriate */
-    if ((source_stride == 0 && dest_stride == 0) ||
-        (source_stride == 2 && dest_stride == 2))
+    if ((source_stride == 0 && dest_stride == 0) || (source_stride == 2 && dest_stride == 2))
         fast_processing = 1;
 
     /* Determine if the conversion should be inplace */
@@ -145,36 +134,32 @@ DFKnb2b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
         in_place = 1;
 
     if (fast_processing) {
-        if (!in_place)
-          {
-              HDmemcpy(dest, source, num_elm * 2);
-              return 0;
-          }
-        else
-          {     /* Nothing to do */
-              return 0;
-          }
+        if (!in_place) {
+            HDmemcpy(dest, source, num_elm * 2);
+            return 0;
+        }
+        else { /* Nothing to do */
+            return 0;
+        }
     }
 
     /* Generic stride processing */
     if (!in_place)
-        for (i = 0; i < num_elm; i++)
-          {
-              dest[0] = source[0];
-              dest[1] = source[1];
-              dest += dest_stride;
-              source += source_stride;
-          }
+        for (i = 0; i < num_elm; i++) {
+            dest[0] = source[0];
+            dest[1] = source[1];
+            dest += dest_stride;
+            source += source_stride;
+        }
     else
-        for (i = 0; i < num_elm; i++)
-          {
-              buf[0] = source[0];
-              buf[1] = source[1];
-              dest[0] = buf[0];
-              dest[1] = buf[1];
-              dest += dest_stride;
-              source += source_stride;
-          }
+        for (i = 0; i < num_elm; i++) {
+            buf[0]  = source[0];
+            buf[1]  = source[1];
+            dest[0] = buf[0];
+            dest[1] = buf[1];
+            dest += dest_stride;
+            source += source_stride;
+        }
 
     return 0;
 }
@@ -184,28 +169,25 @@ DFKnb2b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 /* -->Native mode for 4 byte items                          */
 /************************************************************/
 int
-DFKnb4b(VOIDP s, VOIDP d, uint32 num_elm,
-        uint32 source_stride, uint32 dest_stride)
+DFKnb4b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
 {
-    int         fast_processing = 0;    /* Default is not fast processing */
-    int         in_place = 0;   /* Inplace must be detected */
+    int    fast_processing = 0; /* Default is not fast processing */
+    int    in_place        = 0; /* Inplace must be detected */
     uint32 i;
-    uint8       buf[4];         /* Inplace processing buffer */
-    uint8      *source = (uint8 *) s;
-    uint8      *dest = (uint8 *) d;
+    uint8  buf[4]; /* Inplace processing buffer */
+    uint8 *source = (uint8 *)s;
+    uint8 *dest   = (uint8 *)d;
     CONSTR(FUNC, "DFKnb4b");
 
     HEclear();
 
-    if (num_elm == 0)
-      {
-          HERROR(DFE_BADCONV);
-          return FAIL;
-      }
+    if (num_elm == 0) {
+        HERROR(DFE_BADCONV);
+        return FAIL;
+    }
 
     /* Determine if faster array processing is appropriate */
-    if ((source_stride == 0 && dest_stride == 0) ||
-        (source_stride == 4 && dest_stride == 4))
+    if ((source_stride == 0 && dest_stride == 0) || (source_stride == 4 && dest_stride == 4))
         fast_processing = 1;
 
     /* Determine if the conversion should be inplace */
@@ -213,42 +195,38 @@ DFKnb4b(VOIDP s, VOIDP d, uint32 num_elm,
         in_place = 1;
 
     if (fast_processing) {
-        if (!in_place)
-          {
-              HDmemcpy(dest, source, num_elm * 4);
-              return 0;
-          }
-        else
-          {     /* Nothing to do */
-              return 0;
-          }
+        if (!in_place) {
+            HDmemcpy(dest, source, num_elm * 4);
+            return 0;
+        }
+        else { /* Nothing to do */
+            return 0;
+        }
     }
 
     /* Generic stride processing */
     if (!in_place)
-        for (i = 0; i < num_elm; i++)
-          {
-              dest[0] = source[0];
-              dest[1] = source[1];
-              dest[2] = source[2];
-              dest[3] = source[3];
-              dest += dest_stride;
-              source += source_stride;
-          }
+        for (i = 0; i < num_elm; i++) {
+            dest[0] = source[0];
+            dest[1] = source[1];
+            dest[2] = source[2];
+            dest[3] = source[3];
+            dest += dest_stride;
+            source += source_stride;
+        }
     else
-        for (i = 0; i < num_elm; i++)
-          {
-              buf[0] = source[0];
-              buf[1] = source[1];
-              buf[2] = source[2];
-              buf[3] = source[3];
-              dest[0] = buf[0];
-              dest[1] = buf[1];
-              dest[2] = buf[2];
-              dest[3] = buf[3];
-              dest += dest_stride;
-              source += source_stride;
-          }
+        for (i = 0; i < num_elm; i++) {
+            buf[0]  = source[0];
+            buf[1]  = source[1];
+            buf[2]  = source[2];
+            buf[3]  = source[3];
+            dest[0] = buf[0];
+            dest[1] = buf[1];
+            dest[2] = buf[2];
+            dest[3] = buf[3];
+            dest += dest_stride;
+            source += source_stride;
+        }
 
     return 0;
 }
@@ -258,29 +236,26 @@ DFKnb4b(VOIDP s, VOIDP d, uint32 num_elm,
 /* -->Native mode for 8 byte items                          */
 /************************************************************/
 int
-DFKnb8b(VOIDP s, VOIDP d, uint32 num_elm,
-        uint32 source_stride, uint32 dest_stride)
+DFKnb8b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
 {
-    int         fast_processing = 0;    /* Default is not fast processing */
-    int         in_place = 0;   /* Inplace must be detected */
+    int    fast_processing = 0; /* Default is not fast processing */
+    int    in_place        = 0; /* Inplace must be detected */
     uint32 i;
-    uint8       buf[8];         /* Inplace processing buffer */
-    uint8      *source = (uint8 *) s;
-    uint8      *dest = (uint8 *) d;
+    uint8  buf[8]; /* Inplace processing buffer */
+    uint8 *source = (uint8 *)s;
+    uint8 *dest   = (uint8 *)d;
 
     CONSTR(FUNC, "DFKnb8b");
 
     HEclear();
 
-    if (num_elm == 0)
-      {
-          HERROR(DFE_BADCONV);
-          return FAIL;
-      }
+    if (num_elm == 0) {
+        HERROR(DFE_BADCONV);
+        return FAIL;
+    }
 
     /* Determine if faster array processing is appropriate */
-    if ((source_stride == 0 && dest_stride == 0) ||
-        (source_stride == 8 && dest_stride == 8))
+    if ((source_stride == 0 && dest_stride == 0) || (source_stride == 8 && dest_stride == 8))
         fast_processing = 1;
 
     /* Determine if the conversion should be inplace */
@@ -288,33 +263,29 @@ DFKnb8b(VOIDP s, VOIDP d, uint32 num_elm,
         in_place = 1;
 
     if (fast_processing) {
-        if (!in_place)
-          {
-              HDmemcpy(dest, source, num_elm * 8);
-              return 0;
-          }
-        else
-          {
-              return 0;     /* No work to do ! */
-          }
+        if (!in_place) {
+            HDmemcpy(dest, source, num_elm * 8);
+            return 0;
+        }
+        else {
+            return 0; /* No work to do ! */
+        }
     }
 
     /* Generic stride processing */
     if (!in_place)
-        for (i = 0; i < num_elm; i++)
-          {
-              HDmemcpy(dest, source, 8);
-              dest += dest_stride;
-              source += source_stride;
-          }
+        for (i = 0; i < num_elm; i++) {
+            HDmemcpy(dest, source, 8);
+            dest += dest_stride;
+            source += source_stride;
+        }
     else
-        for (i = 0; i < num_elm; i++)
-          {
-              HDmemcpy(buf, source, 8);
-              HDmemcpy(dest, buf, 8);
-              dest += dest_stride;
-              source += source_stride;
-          }
+        for (i = 0; i < num_elm; i++) {
+            HDmemcpy(buf, source, 8);
+            HDmemcpy(dest, buf, 8);
+            dest += dest_stride;
+            source += source_stride;
+        }
 
     return 0;
 }

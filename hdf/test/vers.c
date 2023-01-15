@@ -11,11 +11,10 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
 /*
-   ***********************************************************************
-   ** get version string from an HDF file
-   ***********************************************************************
+ ***********************************************************************
+ ** get version string from an HDF file
+ ***********************************************************************
  */
 
 #include <stdio.h>
@@ -24,17 +23,14 @@
 void
 test_vers(void)
 {
-    int         ret;
-    uint32      lmajor, lminor, lrelease;
-    char        lstring[81];
+    int    ret;
+    uint32 lmajor, lminor, lrelease;
+    char   lstring[81];
 
     ret = Hgetlibversion(&lmajor, &lminor, &lrelease, lstring);
     RESULT("Hgetlibversion");
-    MESSAGE(5, printf("Library Version\n");
-        );
-    MESSAGE(5, printf("---------------\n");
-        );
-    MESSAGE(5, printf("Major:\t\t%u\nMinor:\t\t%u\nRelease:\t%u\nString:\t\t\"%s\"\n", (unsigned) lmajor, (unsigned) lminor, (unsigned) lrelease, lstring);
-        );
-
+    MESSAGE(5, printf("Library Version\n"););
+    MESSAGE(5, printf("---------------\n"););
+    MESSAGE(5, printf("Major:\t\t%u\nMinor:\t\t%u\nRelease:\t%u\nString:\t\t\"%s\"\n", (unsigned)lmajor,
+                      (unsigned)lminor, (unsigned)lrelease, lstring););
 }

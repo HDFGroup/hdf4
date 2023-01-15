@@ -30,17 +30,17 @@
  *-------------------------------------------------------------------------
  */
 
-int dtable_search(dtable_t *table, int32 tag, int32 ref )
+int
+dtable_search(dtable_t *table, int32 tag, int32 ref)
 {
- uint32 i;
- 
- for (i = 0; i < table->nobjs; i++)
-  if (table->objs[i].tag == tag && table->objs[i].ref == ref)
-   return i;
-  
-  return -1;
-}
+    uint32 i;
 
+    for (i = 0; i < table->nobjs; i++)
+        if (table->objs[i].tag == tag && table->objs[i].ref == ref)
+            return i;
+
+    return -1;
+}
 
 /*-------------------------------------------------------------------------
  * Function: dtable_add
@@ -56,28 +56,27 @@ int dtable_search(dtable_t *table, int32 tag, int32 ref )
  *-------------------------------------------------------------------------
  */
 
-void dtable_add(dtable_t *table, int32 tag, int32 ref, char* path)
+void
+dtable_add(dtable_t *table, int32 tag, int32 ref, char *path)
 {
- uint32 i;
- 
- if (table->nobjs == table->size) {
-  table->size *= 2;
-  table->objs = (dobj_info_t*)realloc(table->objs, table->size * sizeof(dobj_info_t));
-  
-  for (i = table->nobjs; i < table->size; i++) {
-   table->objs[i].tag = table->objs[i].ref = -1;
-   table->objs[i].flags[0] = table->objs[i].flags[1] = -1;
-  }
- }
- 
- i = table->nobjs++;
- table->objs[i].tag = tag;
- table->objs[i].ref = ref;
- strcpy(table->objs[i].obj_name,path);
- table->objs[i].flags[0] = table->objs[i].flags[1] = -1;
+    uint32 i;
+
+    if (table->nobjs == table->size) {
+        table->size *= 2;
+        table->objs = (dobj_info_t *)realloc(table->objs, table->size * sizeof(dobj_info_t));
+
+        for (i = table->nobjs; i < table->size; i++) {
+            table->objs[i].tag = table->objs[i].ref = -1;
+            table->objs[i].flags[0] = table->objs[i].flags[1] = -1;
+        }
+    }
+
+    i                  = table->nobjs++;
+    table->objs[i].tag = tag;
+    table->objs[i].ref = ref;
+    strcpy(table->objs[i].obj_name, path);
+    table->objs[i].flags[0] = table->objs[i].flags[1] = -1;
 }
-
-
 
 /*-------------------------------------------------------------------------
  * Function: dtable_init
@@ -93,21 +92,22 @@ void dtable_add(dtable_t *table, int32 tag, int32 ref, char* path)
  *-------------------------------------------------------------------------
  */
 
-void dtable_init( dtable_t **tbl )
+void
+dtable_init(dtable_t **tbl)
 {
- uint32 i;
- dtable_t* table = (dtable_t*) malloc(sizeof(dtable_t));
- 
- table->size = 20;
- table->nobjs = 0;
- table->objs = (dobj_info_t*) malloc(table->size * sizeof(dobj_info_t));
- 
- for (i = 0; i < table->size; i++) {
-  table->objs[i].tag = table->objs[i].ref = -1;
-  table->objs[i].flags[0] = table->objs[i].flags[1] = -1;
- }
- 
- *tbl = table;
+    uint32    i;
+    dtable_t *table = (dtable_t *)malloc(sizeof(dtable_t));
+
+    table->size  = 20;
+    table->nobjs = 0;
+    table->objs  = (dobj_info_t *)malloc(table->size * sizeof(dobj_info_t));
+
+    for (i = 0; i < table->size; i++) {
+        table->objs[i].tag = table->objs[i].ref = -1;
+        table->objs[i].flags[0] = table->objs[i].flags[1] = -1;
+    }
+
+    *tbl = table;
 }
 
 /*-------------------------------------------------------------------------
@@ -124,10 +124,11 @@ void dtable_init( dtable_t **tbl )
  *-------------------------------------------------------------------------
  */
 
-void dtable_free( dtable_t *table )
+void
+dtable_free(dtable_t *table)
 {
- free(table->objs);
- free(table);
+    free(table->objs);
+    free(table);
 }
 
 /*-------------------------------------------------------------------------
@@ -144,23 +145,19 @@ void dtable_free( dtable_t *table )
  *-------------------------------------------------------------------------
  */
 
-void dtable_print(dtable_t *table, char* header)
+void
+dtable_print(dtable_t *table, char *header)
 {
- uint32 i;
+    uint32 i;
 
- if ( ! table->nobjs ) /* nothing to do */
-     return;
+    if (!table->nobjs) /* nothing to do */
+        return;
 
- printf("---------------------------------------\n");
- printf("%s %5s %6s    %-15s\n", header, "Tag", "Ref", "Name");
- printf("---------------------------------------\n");
+    printf("---------------------------------------\n");
+    printf("%s %5s %6s    %-15s\n", header, "Tag", "Ref", "Name");
+    printf("---------------------------------------\n");
 
- for (i = 0; i < table->nobjs; i++)
- {
-  printf("       %5d %6d    %-15s\n", 
-   table->objs[i].tag, 
-   table->objs[i].ref, 
-   table->objs[i].obj_name);
- }
-
+    for (i = 0; i < table->nobjs; i++) {
+        printf("       %5d %6d    %-15s\n", table->objs[i].tag, table->objs[i].ref, table->objs[i].obj_name);
+    }
 }

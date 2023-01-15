@@ -11,18 +11,17 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
 /*
-   ** FILE
-   **   hdfunpac.c
-   ** USAGE
-   **   hdfunpac [options] <hdffile>
-   ** DESCRIPTION
-   **   This program unpacks an HDF file by exporting the scientific data
-   **   elements (DFTAG_SD) to external object elements.
-   **      Options are:
-   **           -d <datafile> Use <datafile> as the external filename.
-   **              Default is "DataFile".
+ ** FILE
+ **   hdfunpac.c
+ ** USAGE
+ **   hdfunpac [options] <hdffile>
+ ** DESCRIPTION
+ **   This program unpacks an HDF file by exporting the scientific data
+ **   elements (DFTAG_SD) to external object elements.
+ **      Options are:
+ **           -d <datafile> Use <datafile> as the external filename.
+ **              Default is "DataFile".
  */
 
 #include "hdf.h"
@@ -30,132 +29,117 @@
 #include <string.h>
 
 #ifdef H4_HAVE_SYS_TYPES_H
-# include <sys/types.h>
+#include <sys/types.h>
 #endif
 
 #ifdef H4_HAVE_SYS_STAT_H
-# include <sys/stat.h>
+#include <sys/stat.h>
 #endif
 
 #define DefaultDatafile "DataFile"
 
 /* Prototypes declaration */
-int         main
-            (int, char *a[]);
-void        hdferror
-            (void);
-void        error
-            (const char *);
-void        usage
-            (void);
+int  main(int, char *a[]);
+void hdferror(void);
+void error(const char *);
+void usage(void);
 
 /* variables */
-char       *progname;           /* the name this program is invoked, i.e. argv[0] */
+char *progname; /* the name this program is invoked, i.e. argv[0] */
 
 int
 main(int argc, char *argv[])
 {
-    int32       infile, aid, ret;
-    char       *filename;
-    char        datafilename[DF_MAXFNLEN];
+    int32 infile, aid, ret;
+    char *filename;
+    char  datafilename[DF_MAXFNLEN];
 
-    uint16      tag;
-    uint16      ref;
-    int32       offset, fileoffset;
-    int32       length;
-    int16       special;
+    uint16 tag;
+    uint16 ref;
+    int32  offset, fileoffset;
+    int32  length;
+    int16  special;
 
     /* Get invocation name of program */
     progname = *argv++;
     argc--;
 
     /* parse arguments */
-    while (argc > 0 && **argv == '-')
-      {
-          switch ((*argv)[1])
-            {
-                case 'd':
+    while (argc > 0 && **argv == '-') {
+        switch ((*argv)[1]) {
+            case 'd':
+                argc--;
+                argv++;
+                if (argc > 0) {
+                    strcpy(datafilename, *argv++);
                     argc--;
-                    argv++;
-                    if (argc > 0)
-                      {
-                          strcpy(datafilename, *argv++);
-                          argc--;
-                      }
-                    else
-                      {
-                          usage();
-                          exit(1);
-                      }
-                    break;
-                default:
+                }
+                else {
                     usage();
                     exit(1);
-            }
-      }
+                }
+                break;
+            default:
+                usage();
+                exit(1);
+        }
+    }
 
-    if (argc == 1)
-      {
-          filename = *argv++;
-          argc--;
-      }
-    else
-      {
-          usage();
-          exit(1);
-      }
+    if (argc == 1) {
+        filename = *argv++;
+        argc--;
+    }
+    else {
+        usage();
+        exit(1);
+    }
 
     if (datafilename[0] == '\0')
         strcpy(datafilename, DefaultDatafile);
 
     /* Check to make sure input file is HDF */
-    ret = (int) Hishdf(filename);
-    if (ret == FALSE)
-      {
-          error("given file is not an HDF file\n");
-      }
+    ret = (int)Hishdf(filename);
+    if (ret == FALSE) {
+        error("given file is not an HDF file\n");
+    }
 
     /* check if datafile already exists.  If so, set offset to its length. */
     {
         struct stat buf;
-        if (stat(datafilename, &buf) == 0)
-          {
-              printf("External file %s already exists.  Using append mode.\n", datafilename);
-              fileoffset = (int32)buf.st_size;
-          }
+        if (stat(datafilename, &buf) == 0) {
+            printf("External file %s already exists.  Using append mode.\n", datafilename);
+            fileoffset = (int32)buf.st_size;
+        }
         else
             fileoffset = 0;
     }
 
     /* Open HDF file */
     infile = Hopen(filename, DFACC_RDWR, 0);
-    if (infile == FAIL)
-      {
-          error("Can't open the HDF file\n");
-      }
+    if (infile == FAIL) {
+        error("Can't open the HDF file\n");
+    }
 
     /* Process the file */
     ret = aid = Hstartread(infile, DFTAG_SD, DFREF_WILDCARD);
-    while (ret != FAIL)
-      {
-          /*
-           * Get data about the current one
-           */
-          ret = Hinquire(aid, NULL, &tag, &ref, &length, &offset, NULL, NULL, &special);
+    while (ret != FAIL) {
+        /*
+         * Get data about the current one
+         */
+        ret = Hinquire(aid, NULL, &tag, &ref, &length, &offset, NULL, NULL, &special);
 
-          /* check the tag value since external element object are returned the same. */
-          if (tag == DFTAG_SD)
-            {
-                printf("moving Scientific Data (%d,%d) to %s\n", tag, ref, datafilename);
-                ret = HXcreate(infile, tag, ref, datafilename, fileoffset, length);
-                fileoffset += length;
-            }
+        /* check the tag value since external element object are returned the same. */
+        if (tag == DFTAG_SD) {
+            printf("moving Scientific Data (%d,%d) to %s\n", tag, ref, datafilename);
+            ret = HXcreate(infile, tag, ref, datafilename, fileoffset, length);
+            fileoffset += length;
+        }
 
-          /*
-           * Move to the next one
-           */
-          ret = Hnextread(aid, DFTAG_SD, DFREF_WILDCARD, DF_CURRENT);
-      }
+        /*
+         * Move to the next one
+         */
+        ret = Hnextread(aid, DFTAG_SD, DFREF_WILDCARD, DF_CURRENT);
+    }
 
     /*
      * Close the access element
@@ -170,18 +154,18 @@ main(int argc, char *argv[])
 }
 
 /*
-   ** NAME
-   **   hdferror -- print out HDF error number
-   ** USAGE
-   **   int hdferror()
-   ** RETURNS
-   **   none
-   ** DESCRIPTION
-   **   Print an HDF error number to stderr.
-   ** GLOBAL VARIABLES
-   ** COMMENTS, BUGS, ASSUMPTIONS
-   **   This routine terminates the program with code 1.
-   ** EXAMPLES
+ ** NAME
+ **   hdferror -- print out HDF error number
+ ** USAGE
+ **   int hdferror()
+ ** RETURNS
+ **   none
+ ** DESCRIPTION
+ **   Print an HDF error number to stderr.
+ ** GLOBAL VARIABLES
+ ** COMMENTS, BUGS, ASSUMPTIONS
+ **   This routine terminates the program with code 1.
+ ** EXAMPLES
  */
 void
 hdferror(void)
@@ -191,19 +175,19 @@ hdferror(void)
 }
 
 /*
-   ** NAME
-   **      error -- print error to stderr
-   ** USAGE
-   **      int error(string);
-   **      char *string;           IN: pointer to error description string
-   ** RETURNS
-   **   none
-   ** DESCRIPTION
-   **   Print an HDF error number to stderr.
-   ** GLOBAL VARIABLES
-   ** COMMENTS, BUGS, ASSUMPTIONS
-   **   This routine terminates the program with code 1.
-   ** EXAMPLES
+ ** NAME
+ **      error -- print error to stderr
+ ** USAGE
+ **      int error(string);
+ **      char *string;           IN: pointer to error description string
+ ** RETURNS
+ **   none
+ ** DESCRIPTION
+ **   Print an HDF error number to stderr.
+ ** GLOBAL VARIABLES
+ ** COMMENTS, BUGS, ASSUMPTIONS
+ **   This routine terminates the program with code 1.
+ ** EXAMPLES
  */
 void
 error(const char *string)

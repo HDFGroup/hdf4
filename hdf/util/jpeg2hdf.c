@@ -17,78 +17,76 @@
 #include <string.h>
 
 /* Size of the file buffer to copy through */
-#define MAX_FILE_BUF    16384
+#define MAX_FILE_BUF 16384
 
-typedef enum
-  {                             /* JPEG marker codes */
-      M_SOF0 = 0xc0,
-      M_SOF1 = 0xc1,
-      M_SOF2 = 0xc2,
-      M_SOF3 = 0xc3,
+typedef enum { /* JPEG marker codes */
+               M_SOF0 = 0xc0,
+               M_SOF1 = 0xc1,
+               M_SOF2 = 0xc2,
+               M_SOF3 = 0xc3,
 
-      M_SOF5 = 0xc5,
-      M_SOF6 = 0xc6,
-      M_SOF7 = 0xc7,
+               M_SOF5 = 0xc5,
+               M_SOF6 = 0xc6,
+               M_SOF7 = 0xc7,
 
-      M_JPG = 0xc8,
-      M_SOF9 = 0xc9,
-      M_SOF10 = 0xca,
-      M_SOF11 = 0xcb,
+               M_JPG   = 0xc8,
+               M_SOF9  = 0xc9,
+               M_SOF10 = 0xca,
+               M_SOF11 = 0xcb,
 
-      M_SOF13 = 0xcd,
-      M_SOF14 = 0xce,
-      M_SOF15 = 0xcf,
+               M_SOF13 = 0xcd,
+               M_SOF14 = 0xce,
+               M_SOF15 = 0xcf,
 
-      M_DHT = 0xc4,
+               M_DHT = 0xc4,
 
-      M_DAC = 0xcc,
+               M_DAC = 0xcc,
 
-      M_RST0 = 0xd0,
-      M_RST1 = 0xd1,
-      M_RST2 = 0xd2,
-      M_RST3 = 0xd3,
-      M_RST4 = 0xd4,
-      M_RST5 = 0xd5,
-      M_RST6 = 0xd6,
-      M_RST7 = 0xd7,
+               M_RST0 = 0xd0,
+               M_RST1 = 0xd1,
+               M_RST2 = 0xd2,
+               M_RST3 = 0xd3,
+               M_RST4 = 0xd4,
+               M_RST5 = 0xd5,
+               M_RST6 = 0xd6,
+               M_RST7 = 0xd7,
 
-      M_SOI = 0xd8,
-      M_EOI = 0xd9,
-      M_SOS = 0xda,
-      M_DQT = 0xdb,
-      M_DNL = 0xdc,
-      M_DRI = 0xdd,
-      M_DHP = 0xde,
-      M_EXP = 0xdf,
+               M_SOI = 0xd8,
+               M_EOI = 0xd9,
+               M_SOS = 0xda,
+               M_DQT = 0xdb,
+               M_DNL = 0xdc,
+               M_DRI = 0xdd,
+               M_DHP = 0xde,
+               M_EXP = 0xdf,
 
-      M_APP0 = 0xe0,
-      M_APP15 = 0xef,
+               M_APP0  = 0xe0,
+               M_APP15 = 0xef,
 
-      M_JPG0 = 0xf0,
-      M_JPG13 = 0xfd,
-      M_COM = 0xfe,
+               M_JPG0  = 0xf0,
+               M_JPG13 = 0xfd,
+               M_COM   = 0xfe,
 
-      M_TEM = 0x01,
+               M_TEM = 0x01,
 
-      M_ERROR = 0x100
-  }
-JPEG_MARKER;
+               M_ERROR = 0x100
+} JPEG_MARKER;
 
-PRIVATE int32 num_bytes;        /* number of bytes until the SOS code. */
-PRIVATE int32 image_width = 0;  /* width of the JPEG image in pixels */
-PRIVATE int32 image_height = 0; /* height of the JPEG image in pixels */
-PRIVATE intn num_components = 0;    /* number of components in the JPEG image */
-PRIVATE uint8 file_buf[MAX_FILE_BUF];   /* size of the buffer to copy through */
+PRIVATE int32 num_bytes;              /* number of bytes until the SOS code. */
+PRIVATE int32 image_width    = 0;     /* width of the JPEG image in pixels */
+PRIVATE int32 image_height   = 0;     /* height of the JPEG image in pixels */
+PRIVATE intn  num_components = 0;     /* number of components in the JPEG image */
+PRIVATE uint8 file_buf[MAX_FILE_BUF]; /* size of the buffer to copy through */
 
 /*
  * Routines to parse JPEG markers & save away the useful info.
  */
 
 static intn
-jgetc(FILE * f)
+jgetc(FILE *f)
 /* Get a 2-byte unsigned integer (e.g., a marker parameter length field) */
 {
-    intn        a;
+    intn a;
 
     a = fgetc(f);
     if (a != EOF)
@@ -97,42 +95,41 @@ jgetc(FILE * f)
 }
 
 static int32
-get_2bytes(FILE * f)
+get_2bytes(FILE *f)
 /* Get a 2-byte unsigned integer (e.g., a marker parameter length field) */
 {
-    int32       a;
+    int32 a;
 
     a = jgetc(f);
     return (a << 8) + jgetc(f);
 }
 
-static      VOID
-get_sof(FILE * f)
+static VOID
+get_sof(FILE *f)
 /* Process a SOFn marker */
 {
-    short       ci;
-    int         data_precision;
+    short ci;
+    int   data_precision;
 
     (VOID) get_2bytes(f);
 
     data_precision = jgetc(f);
-    image_height = get_2bytes(f);
-    image_width = get_2bytes(f);
+    image_height   = get_2bytes(f);
+    image_width    = get_2bytes(f);
     num_components = jgetc(f);
 
-    for (ci = 0; ci < num_components; ci++)
-      {
-          jgetc(f);
-          jgetc(f);
-          jgetc(f);
-      }
+    for (ci = 0; ci < num_components; ci++) {
+        jgetc(f);
+        jgetc(f);
+        jgetc(f);
+    }
 }
 
-static      VOID
-skip_variable(FILE * f)
+static VOID
+skip_variable(FILE *f)
 /* Skip over an unknown or uninteresting variable-length marker */
 {
-    int32       length;
+    int32 length;
 
     length = get_2bytes(f);
 
@@ -141,72 +138,64 @@ skip_variable(FILE * f)
 }
 
 static intn
-next_marker(FILE * f)
+next_marker(FILE *f)
 /* Find the next JPEG marker */
 /* Note that the output might not be a valid marker code, */
 /* but it will never be 0 or FF */
 {
-    intn        c, nbytes;
+    intn c, nbytes;
 
     nbytes = 0;
-    do
-      {
-          do
-            {   /* skip any non-FF bytes */
-                nbytes++;
-                c = jgetc(f);
-            }
-          while (c != 0xFF);
-          do
-            {   /* skip any duplicate FFs */
-                nbytes++;
-                c = jgetc(f);
-            }
-          while (c == 0xFF);
-      }
-    while (c == 0);     /* repeat if it was a stuffed FF/00 */
+    do {
+        do { /* skip any non-FF bytes */
+            nbytes++;
+            c = jgetc(f);
+        } while (c != 0xFF);
+        do { /* skip any duplicate FFs */
+            nbytes++;
+            c = jgetc(f);
+        } while (c == 0xFF);
+    } while (c == 0); /* repeat if it was a stuffed FF/00 */
 
     return c;
 }
 
-static      JPEG_MARKER
-process_tables(FILE * f)
+static JPEG_MARKER
+process_tables(FILE *f)
 /* Scan and process JPEG markers that can appear in any order */
 /* Return when an SOI, EOI, SOFn, or SOS is found */
 {
-    int         c;
+    int c;
 
-    while (TRUE)
-      {
-          c = next_marker(f);
+    while (TRUE) {
+        c = next_marker(f);
 
-          switch (c)
-            {
-                case M_EOI:
-                    return ((JPEG_MARKER) c);
+        switch (c) {
+            case M_EOI:
+                return ((JPEG_MARKER)c);
 
-                case M_SOF0:
-                case M_SOF1:
-                case M_SOF9:
-                    get_sof(f);
-                    return ((JPEG_MARKER) c);
+            case M_SOF0:
+            case M_SOF1:
+            case M_SOF9:
+                get_sof(f);
+                return ((JPEG_MARKER)c);
 
-                case M_RST0:    /* these are all parameterless */
-                case M_RST1:
-                case M_RST2:
-                case M_RST3:
-                case M_RST4:
-                case M_RST5:
-                case M_RST6:
-                case M_RST7:
-                case M_TEM:
-                    break;
+            case M_RST0: /* these are all parameterless */
+            case M_RST1:
+            case M_RST2:
+            case M_RST3:
+            case M_RST4:
+            case M_RST5:
+            case M_RST6:
+            case M_RST7:
+            case M_TEM:
+                break;
 
-                default:    /* must be DNL, DHP, EXP, APPn, JPGn, COM, or RESn */
-                    skip_variable(f);
-                    break;
-            }
-      }
+            default: /* must be DNL, DHP, EXP, APPn, JPGn, COM, or RESn */
+                skip_variable(f);
+                break;
+        }
+    }
 }
 
 /*
@@ -214,11 +203,11 @@ process_tables(FILE * f)
  */
 
 static int32
-read_file_header(FILE * f)
+read_file_header(FILE *f)
 {
-    int         c;
+    int c;
 
-    num_bytes = 0;  /* reset the number of bytes into the file we are */
+    num_bytes = 0; /* reset the number of bytes into the file we are */
 
     /* Demand an SOI marker at the start of the file --- otherwise it's
      * probably not a JPEG file at all.  If the user interface wants to support
@@ -231,16 +220,15 @@ read_file_header(FILE * f)
     /* Process markers until SOF */
     c = (int)process_tables(f);
 
-    switch (c)
-      {
-          case M_SOF0:      /* ok, now we know the correct number of bytes to grab */
-          case M_SOF1:
-          case M_SOF9:
-              return (num_bytes);
+    switch (c) {
+        case M_SOF0: /* ok, now we know the correct number of bytes to grab */
+        case M_SOF1:
+        case M_SOF9:
+            return (num_bytes);
 
-          default:
-              return (0);
-      }
+        default:
+            return (0);
+    }
 }
 
 /*-----------------------------------------------------------------------------
@@ -259,35 +247,33 @@ read_file_header(FILE * f)
 static intn
 DFJPEGaddrig(int32 file_id, uint16 ref, uint16 ctag)
 {
-    uint8       ntstring[4];
-    int32       GroupID;
-    uint8      *p;
+    uint8  ntstring[4];
+    int32  GroupID;
+    uint8 *p;
 
-    ntstring[0] = DFNT_VERSION;     /* version */
+    ntstring[0] = DFNT_VERSION; /* version */
     ntstring[1] = DFNT_UCHAR;   /* type */
-    ntstring[2] = 8;    /* width: RIG data is 8-bit chars */
+    ntstring[2] = 8;            /* width: RIG data is 8-bit chars */
     ntstring[3] = DFNTC_BYTE;   /* class: data are numeric values */
-    if (Hputelement(file_id, DFTAG_NT, ref,
-                    (uint8 *) ntstring, (int32) 4) == FAIL)
+    if (Hputelement(file_id, DFTAG_NT, ref, (uint8 *)ntstring, (int32)4) == FAIL)
         return FAIL;
 
-          p = file_buf;
-          INT32ENCODE(p, image_width);  /* width */
-          INT32ENCODE(p, image_height);     /* height */
-          UINT16ENCODE(p, DFTAG_NT);    /* number type */
-          UINT16ENCODE(p, ref);
-          INT16ENCODE(p, num_components);   /* number of components */
-          INT16ENCODE(p, 0);    /* interlace scheme */
-          UINT16ENCODE(p, ctag);    /* compression type */
-          UINT16ENCODE(p, ref);
-          if (Hputelement(file_id, DFTAG_ID, ref,
-                          file_buf, (int32) (p - file_buf)) == FAIL)
-              return FAIL;
+    p = file_buf;
+    INT32ENCODE(p, image_width);  /* width */
+    INT32ENCODE(p, image_height); /* height */
+    UINT16ENCODE(p, DFTAG_NT);    /* number type */
+    UINT16ENCODE(p, ref);
+    INT16ENCODE(p, num_components); /* number of components */
+    INT16ENCODE(p, 0);              /* interlace scheme */
+    UINT16ENCODE(p, ctag);          /* compression type */
+    UINT16ENCODE(p, ref);
+    if (Hputelement(file_id, DFTAG_ID, ref, file_buf, (int32)(p - file_buf)) == FAIL)
+        return FAIL;
 
     /* prepare to start writing rig */
     /* ### NOTE: the parameter to this call may go away */
     if ((GroupID = DFdisetup(10)) == FAIL)
-        return FAIL;    /* max 10 tag/refs in set */
+        return FAIL; /* max 10 tag/refs in set */
     /* add tag/ref to RIG - image description, image and lookup table */
     if (DFdiput(GroupID, DFTAG_ID, ref) == FAIL)
         return FAIL;
@@ -299,133 +285,112 @@ DFJPEGaddrig(int32 file_id, uint16 ref, uint16 ctag)
     return (DFdiwrite(file_id, GroupID, DFTAG_RIG, ref));
 }
 
-static      VOID
+static VOID
 usage(void)
 {
     printf("USAGE: jpeg2hdf <input JPEG file> <output HDF file>\n");
     printf("    <input JPEG file> : JPEG file containing input image \n");
     printf("    <output HDF file> : HDF file to store the image\n");
     exit(1);
-}   /* end usage() */
+} /* end usage() */
 
 int
 main(int argc, char *argv[])
 {
-    int32       off_image;      /* offset of the JPEG image in the JFIF file */
-    int32       file_len;       /* total length of the JPEG file */
-    FILE       *jfif_file;      /* file handle of the JFIF image */
-    int32       file_id;        /* HDF file ID of the file to write */
-    uint16      wtag;           /* tag number to use for the image */
-    uint16      wref;           /* reference number to use for the image */
-    uint16      ctag;           /* tag for the compression to do */
-    int32       aid;            /* access ID for the JPEG image to stuff */
+    int32  off_image; /* offset of the JPEG image in the JFIF file */
+    int32  file_len;  /* total length of the JPEG file */
+    FILE  *jfif_file; /* file handle of the JFIF image */
+    int32  file_id;   /* HDF file ID of the file to write */
+    uint16 wtag;      /* tag number to use for the image */
+    uint16 wref;      /* reference number to use for the image */
+    uint16 ctag;      /* tag for the compression to do */
+    int32  aid;       /* access ID for the JPEG image to stuff */
 
     if (argc != 3)
         usage();
 
-    if (argv[1][0] == '-' || argv[1][0] == '/')     /* check command line */
+    if (argv[1][0] == '-' || argv[1][0] == '/') /* check command line */
         usage();
 
     jfif_file = fopen(argv[1], "rb");
-    if (jfif_file == NULL)
-      {
-          printf("Error opening JPEG file: %s\n", argv[1]);
-          exit(1);
-      }     /* end if */
+    if (jfif_file == NULL) {
+        printf("Error opening JPEG file: %s\n", argv[1]);
+        exit(1);
+    } /* end if */
 
     off_image = read_file_header(jfif_file);
-    if (off_image == 0 || image_width <= 0 || image_height <= 0 || num_components <= 0)
-      {
-          printf("Error reading JPEG file: %s, could not find a JFIF header\n",
-                 argv[1]);
-          exit(1);
-      }     /* end if */
+    if (off_image == 0 || image_width <= 0 || image_height <= 0 || num_components <= 0) {
+        printf("Error reading JPEG file: %s, could not find a JFIF header\n", argv[1]);
+        exit(1);
+    } /* end if */
 
-    if (!fseek(jfif_file, 0, SEEK_END))
-      {
-          file_len = (int32)ftell(jfif_file);
-          fseek(jfif_file, 0, SEEK_SET);    /* go back to beginning of JFIF file */
-      }     /* end if */
-    else
-      {
-          printf("Error, cannot fseek in %s(?!)\n", argv[1]);
-          exit(1);
-      }     /* end else */
+    if (!fseek(jfif_file, 0, SEEK_END)) {
+        file_len = (int32)ftell(jfif_file);
+        fseek(jfif_file, 0, SEEK_SET); /* go back to beginning of JFIF file */
+    }                                  /* end if */
+    else {
+        printf("Error, cannot fseek in %s(?!)\n", argv[1]);
+        exit(1);
+    } /* end else */
 
-    if ((file_id = Hopen(argv[2], DFACC_RDWR, 0)) != FAIL)
-      {
-          wref = Hnewref(file_id);
-          if (!wref)
-            {
-                printf("Error getting a reference number for HDF file: %s\n", argv[2]);
-                Hclose(file_id);
+    if ((file_id = Hopen(argv[2], DFACC_RDWR, 0)) != FAIL) {
+        wref = Hnewref(file_id);
+        if (!wref) {
+            printf("Error getting a reference number for HDF file: %s\n", argv[2]);
+            Hclose(file_id);
+            exit(1);
+        }                /* end if */
+        wtag = DFTAG_CI; /* yes, this is a compressed image */
+        if (num_components == 1)
+            ctag = DFTAG_GREYJPEG5;
+        else if (num_components == 3)
+            ctag = DFTAG_JPEG5;
+        else {
+            printf("Error, cannot support JPEG file containing %d components\n", num_components);
+            Hclose(file_id);
+            exit(1);
+        } /* end else */
+        if ((aid = Hstartwrite(file_id, ctag, wref, 0)) == FAIL) {
+            printf("Error writing JPEG header to HDF file: %s\n", argv[2]);
+            exit(1);
+        } /* end if */
+        Hendaccess(aid);
+        if ((aid = Hstartwrite(file_id, wtag, wref, file_len)) == FAIL) {
+            printf("Error from Hstartwrite() for JPEG image data\n");
+            exit(1);
+        } /* end if */
+        while (file_len > MAX_FILE_BUF) {
+            if (fread(file_buf, sizeof(uint8), MAX_FILE_BUF, jfif_file) != MAX_FILE_BUF) {
+                printf("Error reading JFIF image data from %s\n", argv[1]);
                 exit(1);
-            }   /* end if */
-          wtag = DFTAG_CI;  /* yes, this is a compressed image */
-          if (num_components == 1)
-              ctag = DFTAG_GREYJPEG5;
-          else if (num_components == 3)
-              ctag = DFTAG_JPEG5;
-          else
-            {
-                printf("Error, cannot support JPEG file containing %d components\n",
-                       num_components);
-                Hclose(file_id);
+            } /* end if */
+            if (Hwrite(aid, MAX_FILE_BUF, file_buf) != (int32)(MAX_FILE_BUF)) {
+                printf("Error writing JPEG image data to HDF file\n");
                 exit(1);
-            }   /* end else */
-          if ((aid=Hstartwrite(file_id, ctag, wref, 0)) == FAIL)
-            {
-                printf("Error writing JPEG header to HDF file: %s\n", argv[2]);
+            } /* end if */
+            file_len -= MAX_FILE_BUF;
+        } /* end while */
+        if (file_len > 0) {
+            if (fread(file_buf, sizeof(uint8), (size_t)file_len, jfif_file) != (size_t)file_len) {
+                printf("Error reading JFIF image data from %s\n", argv[1]);
                 exit(1);
-            }   /* end if */
-          Hendaccess(aid);
-          if ((aid = Hstartwrite(file_id, wtag, wref, file_len)) == FAIL)
-            {
-                printf("Error from Hstartwrite() for JPEG image data\n");
+            } /* end if */
+            if (Hwrite(aid, file_len, file_buf) != (int32)(file_len)) {
+                printf("Error writing last of JPEG image data to HDF file\n");
                 exit(1);
-            }   /* end if */
-          while (file_len > MAX_FILE_BUF)
-            {
-                if (fread(file_buf, sizeof(uint8), MAX_FILE_BUF, jfif_file) !=
-                    MAX_FILE_BUF)
-                  {
-                      printf("Error reading JFIF image data from %s\n", argv[1]);
-                      exit(1);
-                  }     /* end if */
-                if (Hwrite(aid, MAX_FILE_BUF, file_buf) != (int32) (MAX_FILE_BUF))
-                  {
-                      printf("Error writing JPEG image data to HDF file\n");
-                      exit(1);
-                  }     /* end if */
-                file_len -= MAX_FILE_BUF;
-            }   /* end while */
-          if (file_len > 0)
-            {
-                if (fread(file_buf, sizeof(uint8), (size_t) file_len, jfif_file)
-                    !=          (size_t) file_len)
-                  {
-                      printf("Error reading JFIF image data from %s\n", argv[1]);
-                      exit(1);
-                  }     /* end if */
-                if (Hwrite(aid, file_len, file_buf) != (int32) (file_len))
-                  {
-                      printf("Error writing last of JPEG image data to HDF file\n");
-                      exit(1);
-                  }     /* end if */
-            }   /* end if */
-          Hendaccess(aid);  /* done with JPEG data, create RIG */
-          if (DFJPEGaddrig(file_id, wref, ctag) == FAIL)
-            {
-                printf("Error writing JPEG RIG information\n");
-                exit(1);
-            }   /* end if */
-          Hclose(file_id);
-      }     /* end if */
-    else
-      {
-          printf("Error opening HDF file: %s\b", argv[2]);
-          exit(1);
-      }     /* end else */
+            }            /* end if */
+        }                /* end if */
+        Hendaccess(aid); /* done with JPEG data, create RIG */
+        if (DFJPEGaddrig(file_id, wref, ctag) == FAIL) {
+            printf("Error writing JPEG RIG information\n");
+            exit(1);
+        } /* end if */
+        Hclose(file_id);
+    } /* end if */
+    else {
+        printf("Error opening HDF file: %s\b", argv[2]);
+        exit(1);
+    } /* end else */
 
     return (0);
-}   /* end jpeg2hdf */
+} /* end jpeg2hdf */

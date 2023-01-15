@@ -35,7 +35,7 @@ Java_hdf_hdflib_HDFLibrary_VQueryref(JNIEnv *env, jclass clss, jlong vkey)
 
     UNUSED(clss);
 
-    if ((rval = VQueryref((int32) vkey)) == FAIL)
+    if ((rval = VQueryref((int32)vkey)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -49,7 +49,7 @@ Java_hdf_hdflib_HDFLibrary_VQuerytag(JNIEnv *env, jclass clss, jlong vkey)
 
     UNUSED(clss);
 
-    if ((rval = VQuerytag((int32) vkey)) == FAIL)
+    if ((rval = VQuerytag((int32)vkey)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
