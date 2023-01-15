@@ -96,6 +96,7 @@ New features and changes
         - HP-UX / HP-9000
         - Motorola m88k
         - NeXT
+        - MacOS on PowerPC chipsets
 
       In addition, many #defines have been updated to reflect modern usage,
       particularly on Windows and MacOS.

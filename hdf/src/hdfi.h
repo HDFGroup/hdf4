@@ -46,7 +46,6 @@
 #define     DFMT_SUN            0x1111
 #define     DFMT_IBM6000        0x1111
 #define     DFMT_PC             0x4441
-#define     DFMT_APPLE          0x1111
 #define     DFMT_APPLE_INTEL    0x4441
 #define     DFMT_LINUX64        0x4441
 #define     DFMT_POWERPC64      0x1111
@@ -185,24 +184,11 @@ typedef int               hdf_pint_t;   /* an integer the same size as a pointer
 /*-----------------------------------------------------*/
 #if defined (__APPLE__)
 
-#ifndef __APPLE__
-#define __APPLE__
-#endif
-#ifdef __LITTLE_ENDIAN__
 #define DF_MT DFMT_APPLE_INTEL
-#else
-#define DF_MT DFMT_APPLE
-#endif
 
 #ifndef __GNUC__
 #define DUMBCC     /* because it is.  for later use in macros */
 #endif /* __GNUC__ */
-
-#ifdef __i386
-#ifndef INTEL86
-#define INTEL86   /* we need this Intel define or bad things happen later */
-#endif /* INTEL86 */
-#endif /* __i386 */
 
 typedef int             intf;     /* size of INTEGERs in Fortran compiler */
 typedef long            hdf_pint_t;   /* an integer the same size as a pointer */
@@ -213,10 +199,6 @@ typedef long            hdf_pint_t;   /* an integer the same size as a pointer *
 /*-----------------------------------------------------*/
 
 #if defined _M_ARM64 || defined _M_X64 || defined _M_IX86 || defined INTEL86 || defined M_I86 || defined M_I386 || defined __i386 || defined i386
-
-#ifndef INTEL86
-#define INTEL86
-#endif
 
 #define DF_MT             DFMT_PC
 typedef long              intf;     /* size of INTEGERs in Fortran compiler */
