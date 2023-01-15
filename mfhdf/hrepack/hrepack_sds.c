@@ -859,7 +859,7 @@ get_print_info(int chunk_flags, HDF_CHUNK_DEF *chunk_def, /* chunk definition */
     if (SDendaccess(sds_id) == FAIL)
         goto out;
 
-    memset(comp_str, 0, 255);
+    HDmemset(comp_str, 0, 255);
 
     /* unlimited dimensions don't work with compression */
     if (is_record) {
