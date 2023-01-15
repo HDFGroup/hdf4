@@ -193,6 +193,17 @@ Support for new platforms and compilers
 
 Bugs fixed since HDF 4.2.15
 ===========================
+    - jpeglib.h `boolean` type no longer conflicts with windows.h
+
+      jpeglib.h defines a `boolean` type that conflicts with the `boolean`
+      type defined in windows.h. In previous versions of the library, this
+      could cause compilation errors when the types clashed.
+
+      We now ensure that `HAVE_BOOLEAN` is defined before jpeglib.h when
+      building on Windows, which avoids the redefinition.
+
+      (DER - 2022/01/15)
+
 
 
 Documentation
