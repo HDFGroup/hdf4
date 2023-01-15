@@ -81,7 +81,7 @@ EXPORTED ROUTINES
 /* Directory separator definitions relating to a path.
  * Note this does not provide a universal way to recognize
  * different path name conventions and translate between them */
-#if defined WIN386 | defined DOS386
+#ifdef H4_HAVE_WIN32_API
 /* DOS-Windows separator */
 #define DIR_SEPC  92  /* Integer value of '\' */
 #define DIR_SEPS  "\\"
@@ -89,7 +89,7 @@ EXPORTED ROUTINES
 /* Unix - POSIX */
 #define DIR_SEPC  47  /* Integer value of '/' */
 #define DIR_SEPS  "/"
-#endif /* !WIN386 & !DOS386 */
+#endif /* H4_HAVE_WIN32_API */
 
 /* directory path separator from other directory paths */
 #define DIR_PATH_SEPC 124

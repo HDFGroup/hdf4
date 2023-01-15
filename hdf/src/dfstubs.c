@@ -1408,10 +1408,6 @@ DFIerr(DF * dfile)
  * The following functions are stubs for the old routines from "dfkit.c".
  *---------------------------------------------------------------------------*/
 
-#if !(defined IBM6000 | defined SUN)
-#include <ctype.h>
-#endif
-
 void       *
 DFIgetspace(uint32 qty)
 {

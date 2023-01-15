@@ -70,15 +70,9 @@
 /* using C buffered file I/O routines to access files */
 #include <stdio.h>
 typedef FILE *hdf_file_t;
-#if defined SUN && defined (__GNUC__)
-#   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
-                                fopen((p), "r+") : fopen((p), "r"))
-#   define HI_CREATE(p)        (fopen((p), "w+"))
-#else /* !SUN w/ GNU CC */
 #   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
                                 fopen((p), "rb+") : fopen((p), "rb"))
 #   define HI_CREATE(p)        (fopen((p), "wb+"))
-#endif /* !SUN w/ GNU CC */
 #   define HI_READ(f, b, n)    (((size_t)(n) == (size_t)fread((b), 1, (size_t)(n), (f))) ? \
                                 SUCCEED : FAIL)
 #   define HI_WRITE(f, b, n)   (((size_t)(n) == (size_t)fwrite((b), 1, (size_t)(n), (f))) ? \

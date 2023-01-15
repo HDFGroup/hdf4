@@ -298,13 +298,13 @@ main(int argc, char *argv[])
       {
           MESSAGE(2, printf("\nCleaning Up...\n\n");
               );
-#if !(defined DOS386 || defined WIN386)
-          system("rm -f *.hdf *.tmp");
-#else   /* OLD_WAY */
+#ifdef H4_HAVE_WIN32_API
           remove("*.hdf");
           remove("*.tmp");
-#endif  /* OLD_WAY */
-      }     /* end if */
+#else
+          system("rm -f *.hdf *.tmp");
+#endif
+      }
     exit(num_errs);
     return num_errs;
 }   /* end main() */

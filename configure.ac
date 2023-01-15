@@ -804,15 +804,15 @@ AM_CONDITIONAL([HDF_BUILD_XDR], [test "X$BUILD_XDR" = "Xyes"])
 AC_CHECK_FUNCS([htonl htons ntohl ntohs])
 
 ## ======================================================================
-## Checks for structures
+## Checks for headers
 ## ======================================================================
-AC_CHECK_HEADERS([sys/time.h sys/file.h sys/resource.h])
+AC_CHECK_HEADERS([fcntl.h unistd.h])
 
-## ======================================================================
-## Checks for compiler characteristics
-## ======================================================================
-AC_CHECK_HEADERS([stddef.h io.h])
-AC_CHECK_HEADERS([arpa/inet.h fcntl.h netinet/in.h])
+AC_CHECK_HEADERS([sys/file.h sys/resource.h sys/stat.h sys/time.h sys/wait.h])
+AC_CHECK_HEADERS([sys/types.h])
+
+AC_CHECK_HEADERS([io.h])
+AC_CHECK_HEADERS([arpa/inet.h netinet/in.h])
 
 AC_PROG_CC_C_O
 
