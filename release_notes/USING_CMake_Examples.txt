@@ -22,7 +22,8 @@ I. Preconditions
 
    1. We suggest you obtain the latest CMake for your platform from the Kitware
       web site. The HDF 4.2.x product requires a minimum CMake version
-      of 3.12. If you are using VS2019, the minimum version is 3.15.
+      of 3.12. If you are using VS2019, the minimum version is 3.15. If you are
+      using VS2022, the minimum version is 3.21.
 
    2. You have installed the HDF4 library built with CMake, by executing
       the HDF Install Utility (the *.msi file in the binary package for
@@ -91,7 +92,7 @@ of the CMake options. If the CTest script mode, as described above, is not used
 note that the following options will not be changed.
     BUILD_SHARED_LIBS     OFF     CACHE BOOL   "Build Shared Libraries"
     HDF_BUILD_C           ON      CACHE BOOL   "Build C support"
-    HDF_BUILD_FORTRAN     ON      CACHE BOOL   "Build FORTRAN support"
+    HDF_BUILD_FORTRAN     OFF     CACHE BOOL   "Build FORTRAN support"
     HDF_BUILD_JAVA        ON      CACHE BOOL   "Build Java support"
     BUILD_TESTING         ON      CACHE BOOL   "Build HDF4 Unit Testing"
     COMPARE_TESTING       ON      CACHE BOOL   "Compare HDF4 Unit Testing to Reference"
