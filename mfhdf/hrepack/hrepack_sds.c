@@ -859,7 +859,7 @@ get_print_info(int chunk_flags, HDF_CHUNK_DEF *chunk_def, /* chunk definition */
     if (SDendaccess(sds_id) == FAIL)
         goto out;
 
-    sprintf(comp_str, "\0");
+    HDmemset(comp_str, 0, 255);
 
     /* unlimited dimensions don't work with compression */
     if (is_record) {
@@ -867,9 +867,7 @@ get_print_info(int chunk_flags, HDF_CHUNK_DEF *chunk_def, /* chunk definition */
         chunk_flags = HDF_NONE;
     }
 
-    if (comp_type > COMP_CODE_NONE)
-
-    {
+    if (comp_type > COMP_CODE_NONE) {
 
         /* compression ratio = uncompressed size /  compressed size */
         a = uncomp_size;
