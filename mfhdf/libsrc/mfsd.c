@@ -4215,7 +4215,7 @@ intn
 SDgetcompress(int32         id,        /* IN: dataset ID */
               comp_coder_t *comp_type, /* OUT: the type of compression */
               comp_info    *c_info)       /* OUT: ptr to compression information
-                 structure for storing the retrieved info */
+              structure for storing the retrieved info */
 {
     CONSTR(FUNC, "SDgetcompress"); /* for HGOTO_ERROR */
     NC     *handle;
@@ -4288,7 +4288,7 @@ intn
 SDgetcompinfo(int32         sdsid,     /* IN: dataset ID */
               comp_coder_t *comp_type, /* OUT: the type of compression */
               comp_info    *c_info)       /* OUT: ptr to compression information
-                 structure for storing the retrieved info */
+              structure for storing the retrieved info */
 {
     CONSTR(FUNC, "SDgetcompinfo"); /* for HGOTO_ERROR */
     NC     *handle;
