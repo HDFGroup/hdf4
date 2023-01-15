@@ -38,6 +38,15 @@ New features and changes
 ========================
     Configuration:
     -------------
+    - The Fortran interface is considered deprecated
+
+      The Fortran interface is broken on 64-bit systems (see the known
+      problems section) and is currently disabled by default. It will
+      be removed in a future version of the library, possibly as early
+      as 4.2.17.
+
+      (DER - 2023/01/15)
+
     - Fixed-width HDF4 types like int16 now map to C99 types under the hood
 
       In an effort to make HDF4 more maintainable and "just work" for more
@@ -277,6 +286,11 @@ This version has been tested in the following platforms:
 
 Known problems
 ==============
+o  The Fortran interface does not work on 64-bit systems as it stores addresses
+   in memory as Fortran INTEGER values, which are typically 32-bit. The
+   Fortran interface is currently disabled by default due to this. It should
+   only be enabled on 32-bit systems.
+
 o  Builds with the autotools option --enable-hdf4-xdr fail on Solaris and
    on IBM ppc64 with the xlc compiler.  The option should not be used on
    those platforms.
