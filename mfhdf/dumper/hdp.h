@@ -425,7 +425,6 @@ typedef struct
 	        is_special:1,	/* flag to indicate item is a special element */
 	        has_label:1,	/* flag to indicate item has a label */
 	        has_desc:1;	/* flag to indicate item has a desc. */
-	intn    no_element;	/* TRUE if group_info is NULL */
 	groupinfo_t     *group_info;/* pointer to group information */
 	sp_info_block_t *spec_info;/* pointer to special element information */
   }

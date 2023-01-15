@@ -966,10 +966,6 @@ print_list_obj(const char *fname,
          }	/* end switch */
       }	 /* end if */
 
-/* BMR 8/1/00: added no_element test to make sure group_info is not NULL */
-/*
-   if (l_opts->group == TRUE && o_info->is_group && o_info->no_element != FALSE)
-*/
    if (l_opts->group == TRUE && o_info->is_group )
    {
       DFdi       *g_obj = NULL;

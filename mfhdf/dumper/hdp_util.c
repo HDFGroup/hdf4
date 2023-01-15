@@ -274,31 +274,29 @@ make_group_list(int32 fid, uint16 tag, uint16 ref)
       {		/* check for Vgroup? */
           int32       vkey;
 
-/* Yes, I know this wastes time, but at least it allows uniform access */
-/* to both types of groups in HDF files... */
+          /* Initialize V interface if it's not done and set flag */
           if (vinit_done == FALSE)
             {	/* check whether we've already init'ed Vsets */
                 vinit_done = TRUE;
                 Vinitialize(fid);
             }	/* end if */
+
+            /* Open the vgroup and get the tags/refs of its elements to return */
           if ((vkey = Vattach(fid, ref, "r")) != FAIL)
             {
                 if ((nobj = Vntagrefs(vkey)) != FAIL)
                   {
-		   if( nobj > 0 ) { /* Albert fixed */
+		            if( nobj > 0 ) { /* Albert fixed */
                       int32      *temp_tag;
                       int32      *temp_ref;
 
                       if ((temp_tag = (int32 *) HDmalloc(sizeof(int32) * nobj)) == NULL)
                         {
-			    fprintf(stderr, "make_group_list: space allocation failed\n");
                             Vdetach(vkey);
                             return (NULL);
                         }	/* end if */
                       if ((temp_ref = (int32 *) HDmalloc(sizeof(int32) * nobj)) == NULL)
                         {
-			    fprintf(stderr, "make_group_list: space allocation failed\n");
-
                             Vdetach(vkey);
                             HDfree(temp_tag);
                             return (NULL);
@@ -314,8 +312,6 @@ make_group_list(int32 fid, uint16 tag, uint16 ref)
 
                       if ((ret = (groupinfo_t *) HDmalloc(sizeof(groupinfo_t))) == NULL)
                         {
-			    fprintf(stderr, "make_group_list: space allocation failed\n");
-
                             Vdetach(vkey);
                             HDfree(temp_tag);
                             HDfree(temp_ref);
@@ -325,8 +321,6 @@ make_group_list(int32 fid, uint16 tag, uint16 ref)
                       ret->curr_dd = 0;
                       if ((ret->dd_arr = (DFdi *) HDmalloc(sizeof(DFdi) * nobj)) == NULL)
                         {
-			    fprintf(stderr, "make_group_list: space allocation failed\n");
-
                             Vdetach(vkey);
                             HDfree(temp_tag);
                             HDfree(temp_ref);
@@ -342,10 +336,9 @@ make_group_list(int32 fid, uint16 tag, uint16 ref)
 
                       HDfree(temp_tag);
                       HDfree(temp_ref);
-		    } /* if nobj > 0 */
-                  /* BMR: 7/28/00 must add this one, otherwise, HDfree fails later */
+		            } /* if nobj > 0 */
                   else /* nobj <= 0 */
-                     return( NULL );
+                     return(NULL);
                   }		/* end if */
                 else	/* bad vkey? */
                     return (NULL);
@@ -360,6 +353,8 @@ make_group_list(int32 fid, uint16 tag, uint16 ref)
 DFdi       *
 get_next_group(groupinfo_t * g_list, intn advance)
 {
+    if (g_list == NULL)
+        return (NULL);
     if (advance)
         g_list->curr_dd++;
     if (g_list->curr_dd >= g_list->max_dds)
@@ -584,9 +579,6 @@ void free_obj_list(
       for (i = 0, obj_ptr = o_list->raw_obj_arr; i < o_list->max_obj; 
 							i++, obj_ptr++)
       {
-         /* group_info can be NULL while is_group is set, how to handle 
-	    this one??? BMR 8/1/2000 
-	    if( obj_ptr->is_group && obj_ptr->group_info != NULL ) */
          if( obj_ptr->is_group )
             free_group_list( obj_ptr->group_info );
          if( obj_ptr->is_special )
