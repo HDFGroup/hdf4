@@ -346,7 +346,6 @@ read_info(const char *filename, options_t *options)
     FILE *fp = NULL;
     char  c;
     int   i;
-    int   rc = 1;
     int   count;
 
     if ((fp = fopen(filename, "r")) == (FILE *)NULL) {
