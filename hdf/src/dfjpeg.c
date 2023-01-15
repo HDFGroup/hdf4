@@ -24,10 +24,18 @@
  *---------------------------------------------------------------------------*/
 
 #include "hdf.h"
+
+/* Hack to prevent libjpeg from re-defining `boolean` in a way that clashes
+ * with windows.h. This MUST come before including jpeglib.h.
+ */
+#ifdef H4_HAVE_WIN32_API
+#define HAVE_BOOLEAN
+#endif
+
 #include "jpeglib.h"
 #include "jerror.h"
-/* Expanded data destination object for HDF output */
 
+/* Expanded data destination object for HDF output */
 typedef struct {
     struct jpeg_destination_mgr pub; /* public fields */
 
