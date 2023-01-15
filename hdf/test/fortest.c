@@ -85,10 +85,10 @@ main(int argc, char *argv[])
     num_tests=InitTest("vgroups", "tvgroups", "");
     num_tests=InitTest("vattrf", "tvattrf", "");
 /* The test is skipped when size of fortran integer is smaller than
-   the size of C pointer; this happens on Solaris, Altix
-   AIX and Mac Intel. We need a better fix; see HDFFR-191.
+   the size of C pointer; this happens on all 64-bit platforms.
+   We need a better fix; see HDFFR-191.
 */
-#if defined _WIN32 || (defined SUN && defined _LP64) || defined __x86_64  || defined AIX5L64 || (__APPLE__ && __LP64__)
+#if defined _WIN64 || defined __x86_64__ || defined _LP64 || defined  __LP64__ || defined __powerpc64__ || defined __aarch64__
     printf("   Skipping stubs\n");
 #else
     num_tests=InitTest("stubs", "tstubsf", "");

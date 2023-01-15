@@ -107,7 +107,6 @@
 
 #include "H4api_adpt.h"
 
-
 /*-------------------------------------------------------------------------
  * Pre-C99 platform-independent type scheme
  *
@@ -143,88 +142,22 @@ typedef unsigned int    uintn;
 
 /* void and pointers to void */
 #ifndef VOID
-/* winnt.h defines VOID to void via a macro */
+/* winnt.h defines VOID to `void` via a macro */
 typedef void            VOID;
 #endif
 typedef void *          VOIDP;
 
 /*-------------------------------------------------------------------------
- * Define options for each platform
+ * Fortran definitions
  *-------------------------------------------------------------------------*/
 
-#if (defined(SUN) || defined(sun) || defined(__sun__) || defined(__SUNPRO_C)) & !defined(__i386)
+/* size of INTEGERs in Fortran compiler */
+typedef int intf;
 
-#if !defined(SUN)
-#define SUN
-#endif
-
-typedef int               intf;     /* size of INTEGERs in Fortran compiler */
-#ifdef _LP64 /* 64-bit environment */
-typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
-#else /* 32-bit environment */
-typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
-#endif
-#define FNAME_POST_UNDERSCORE
-
-#endif /* SUN */
-
-/*-----------------------------------------------------*/
-#if defined (__APPLE__)
-
-typedef int             intf;     /* size of INTEGERs in Fortran compiler */
-typedef long            hdf_pint_t;   /* an integer the same size as a pointer */
-
-#endif /* __APPLE__ */
-
-
-/*-----------------------------------------------------*/
-
-#if defined _M_ARM64 || defined _M_X64 || defined _M_IX86 || defined INTEL86 || defined M_I86 || defined M_I386 || defined __i386 || defined i386
-
-typedef long              intf;     /* size of INTEGERs in Fortran compiler */
-#ifdef _WIN64
-typedef long long         hdf_pint_t;   /* 8-byte pointer */
-#else
-typedef int               hdf_pint_t;   /* 4-byte pointer */
-#endif /* _WIN64 */
+/* Integer that is the same size as a pointer */
+typedef intptr_t hdf_pint_t;
 
 #define FNAME_POST_UNDERSCORE
-
-#endif /* INTEL86 */
-
-/*-----------------------------------------------------*/
-/* Power PC 5 64 */
-#if defined __powerpc64__
-
-typedef int               intf;     /* size of INTEGERs in Fortran compiler */
-typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
-#if defined __GNUC__
-#define FNAME_POST_UNDERSCORE
-#endif
-
-#endif /*power PC 5 64 */
-
-/*-----------------------------------------------------*/
-/* Linux 64 */
-#if (defined(__linux__) && defined __x86_64__  && !(defined  SUN)) || defined(__CYGWIN__)  /* i.e. 64-bit Linux  but not SunOS on Intel */
-                                                                                           /* it should work also for Cygwin 32 & 64 bit */
-
-typedef int               intf;     /* size of INTEGERs in Fortran compiler */
-typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
-#define FNAME_POST_UNDERSCORE
-
-#endif /*Linux 64 */
-
-/*-----------------------------------------------------*/
-/* 64-bit Free BSD */
-
-#if defined __FreeBSD__ && defined __x86_64__
-
-typedef int               intf;     /* size of INTEGERs in Fortran compiler */
-typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
-#define FNAME_POST_UNDERSCORE
-
-#endif /*64-bit FreeBSD */
 
 /*-----------------------------------------------------*/
 /*              encode and decode macros               */
@@ -383,11 +316,11 @@ typedef long              hdf_pint_t;   /* an integer the same size as a pointer
 #define HDgetenv(s1)            (getenv(s1))
 #define HDputenv(s1)            (putenv(s1))
 #define HDltoa(v)               (ltoa(v))
-#if defined (SUN) && defined(__GNUC__)
-#define HDatexit(f)             (0) /* we punt on the SUN using gcc */
-#else /* !SUN & GCC */
+#if defined (__sun) && defined(__GNUC__)
+#define HDatexit(f)             (0) /* we punt on the Sun using gcc */
+#else
 #define HDatexit(f)             (atexit(f))
-#endif /* !SUN & GCC */
+#endif
 
 /**************************************************************************
 *  JPEG #define's - Look in the JPEG docs before changing - (Q)
