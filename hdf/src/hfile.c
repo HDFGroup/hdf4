@@ -170,7 +170,7 @@ functab_t functab[] = {
     {SPECIAL_CHUNKED, &chunked_funcs},
 #ifdef LATER
     {SPECIAL_VLINKED, &vlnk_funcs},
-#endif /* LATER */
+#endif
     {SPECIAL_BUFFERED, &buf_funcs},
     {SPECIAL_COMPRAS, &cr_funcs},
     {0, NULL} /* terminating record; add new record */
@@ -513,9 +513,6 @@ REVISION LOG
 intn
 Hexist(int32 file_id, uint16 search_tag, uint16 search_ref)
 {
-#ifdef LATER
-    CONSTR(FUNC, "Hexist"); /* for HERROR */
-#endif
     uint16 find_tag = 0, find_ref = 0;
     int32  find_offset, find_length;
     intn   ret_value;
@@ -1759,35 +1756,6 @@ DESCRIPTION
 int32
 Hlength(int32 file_id, uint16 tag, uint16 ref)
 {
-#ifdef FASTER_BUT_DOESNT_WORK
-    CONSTR(FUNC, "Hlength"); /* for HERROR */
-    filerec_t *file_rec;     /* file record */
-    ddblock_t *block;        /* DDB containing DD of  element */
-    int32      idx;          /* index into DDB i.e. DD of element */
-    int32      ret_value = SUCCEED;
-
-    /* clear error stack */
-    HEclear();
-
-    file_rec = HAatom_object(file_id);
-    if (BADFREC(file_rec))
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    block = file_rec->ddhead;
-    idx   = -1;
-    if (HIlookup_dd(file_rec, tag, ref, &block, &idx) == FAIL)
-        HGOTO_ERROR(DFE_INTERNAL, FAIL);
-
-    ret_value = block->ddlist[idx].length;
-
-done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-    return ret_value;
-#else  /* FASTER_BUT_DOESNT_WORK */
     CONSTR(FUNC, "Hlength"); /* for HERROR */
     int32 access_id;         /* access record id */
     int32 length = FAIL;     /* length of elt inquired */
@@ -1817,7 +1785,6 @@ done:
 
     /* Normal function cleanup */
     return ret_value;
-#endif /* FASTER_BUT_DOESNT_WORK */
 } /* end Hlength */
 
 /*--------------------------------------------------------------------------
@@ -1893,10 +1860,6 @@ DESCRIPTION
 intn
 Hishdf(const char *filename)
 {
-#ifdef LATER
-    CONSTR(FUNC, "Hishdf");
-#endif /* LATER */
-
     intn       ret;
     hdf_file_t fp;
     intn       ret_value = TRUE;
@@ -2241,22 +2204,11 @@ done:
 intn
 HDdont_atexit(void)
 {
-#ifdef LATER
-    CONSTR(FUNC, "HDdont_atexit"); /* for HERROR */
-#endif                             /* LATER */
     intn ret_value = SUCCEED;
 
     if (install_atexit == TRUE)
         install_atexit = FALSE;
 
-#ifdef LATER
-done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    }  /* end if */
-#endif /* LATER */
-
-    /* Normal function cleanup */
     return (ret_value);
 } /* end HDdont_atexit() */
 
@@ -2383,9 +2335,6 @@ done:
 void
 HPend(void)
 {
-#ifdef LATER
-    CONSTR(FUNC, "HPend");    /* for HERROR */
-#endif                        /* LATER */
     hdf_termfunc_t term_func; /* pointer to a termination routine for an interface */
 
     /* Shutdown the file ID atom group */
@@ -2534,9 +2483,6 @@ GLOBALS
 void *
 HIgetspinfo(accrec_t *access_rec)
 {
-#ifdef LATER
-    CONSTR(FUNC, "HIgetspinfo"); /* for HERROR */
-#endif                           /* LATER */
     void *ret_value = NULL;      /* FAIL */
 
     if ((ret_value = HAsearch_atom(AIDGROUP, HPcompare_accrec_tagref, access_rec)) != NULL)
@@ -2558,24 +2504,9 @@ HIunlock -- unlock a previously locked file record
 PRIVATE int
 HIunlock(filerec_t *file_rec)
 {
-#ifdef LATER
-    CONSTR(FUNC, "HIunlock"); /* for HERROR */
-    int ret_value = SUCCEED;
-#endif /* LATER */
-
     /* unlock the file record */
     file_rec->attach--;
 
-#ifdef LATER
-done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
-    return ret_value;
-#endif /* LATER */
     return (SUCCEED);
 }
 
@@ -2724,9 +2655,6 @@ done:
 intn
 Hgetlibversion(uint32 *majorv, uint32 *minorv, uint32 *releasev, char *string)
 {
-#ifdef LATER
-    CONSTR(FUNC, "Hgetlibversion");
-#endif
     HEclear();
 
     *majorv   = LIBVER_MAJOR;
@@ -2914,10 +2842,6 @@ done:
 PRIVATE intn
 HIrelease_filerec_node(filerec_t *file_rec)
 {
-#ifdef LATER
-    CONSTR(FUNC, "HIrelease_filerec_node");
-#endif /* LATER */
-
     /* Close file if it's opened */
     if (file_rec->file != NULL)
         HI_CLOSE(file_rec->file);
@@ -2926,15 +2850,6 @@ HIrelease_filerec_node(filerec_t *file_rec)
     if (file_rec->path != NULL)
         HDfree(file_rec->path);
     HDfree(file_rec);
-
-#ifdef LATER
-done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    }  /* end if */
-#endif /* LATER */
-
-    /* Normal function cleanup */
 
     return SUCCEED;
 } /* HIrelease_filerec_node */
@@ -2955,10 +2870,6 @@ done:
 intn
 HPisfile_in_use(const char *path)
 {
-#ifdef LATER
-    CONSTR(FUNC, "HPisfile_in_use");
-#endif /* LATER */
-
     filerec_t *file_rec  = NULL;
     intn       ret_value = FALSE;
 
@@ -2970,15 +2881,6 @@ HPisfile_in_use(const char *path)
         ret_value = FALSE;
     else if (file_rec->refcount) /* file is in use if ref count is not 0 */
         ret_value = TRUE;
-
-#ifdef LATER
-done:
-    if (ret_value == FALSE) { /* Error condition cleanup */
-
-    }  /* end if */
-#endif /* LATER */
-
-    /* Normal function cleanup */
 
     return ret_value;
 } /* HPisfile_in_use */
@@ -3002,9 +2904,6 @@ HPcompare_filerec_path(const void *obj, const void *key)
     const filerec_t *frec      = obj;
     const char      *fname     = key;
     intn             ret_value = FALSE; /* set default as FALSE */
-#ifdef LATER
-    CONSTR(FUNC, "HPcompare_filerec_path");
-#endif /* LATER */
 
     /* check args */
     if (frec != NULL && fname != NULL) {
@@ -3018,15 +2917,6 @@ HPcompare_filerec_path(const void *obj, const void *key)
                 ret_value = FALSE;
         }
     }
-
-#ifdef LATER
-done:
-    if (ret_value == FALSE) { /* Error condition cleanup */
-
-    }  /* end if */
-#endif /* LATER */
-
-    /* Normal function cleanup */
 
     return ret_value;
 } /* HPcompare_filerec_path */
@@ -3171,10 +3061,6 @@ done:
 void
 HIrelease_accrec_node(accrec_t *acc)
 {
-#ifdef LATER
-    CONSTR(FUNC, "HIrelease_atom_node"); /* for HERROR */
-#endif                                   /* LATER */
-
     /* Insert the atom at the beginning of the free list */
     acc->next        = accrec_free_list;
     accrec_free_list = acc;
@@ -3409,9 +3295,6 @@ DESCRIPTION
 intn
 HPfreediskblock(filerec_t *file_rec, int32 block_off, int32 block_size)
 {
-#ifdef LATER
-    CONSTR(FUNC, "HPfreediskblock");
-#endif
     intn ret_value = SUCCEED;
 
     /* shut compiler up */
@@ -3992,7 +3875,7 @@ Hgetspecinfo(int32 file_id, uint16 tag, uint16 ref, sp_info_block_t *info)
 #ifdef LATER
         case SPECIAL_VLINKED:
             break;
-#endif /* LATER */
+#endif
         default:
             ret_value = 0;
     } /* switch */

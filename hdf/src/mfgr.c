@@ -2793,15 +2793,6 @@ GRwriteimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], voi
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     if (whole_image == TRUE) { /* write the whole image out */
-#ifdef OLD_WAY
-        if (new_image == TRUE) { /* Create the tag/ref for the new image */
-            ri_ptr->img_tag = DFTAG_RI;
-            ri_ptr->img_ref = Htagnewref(hdf_file_id, ri_ptr->img_tag);
-        } /* end if */
-        if (Hputelement(hdf_file_id, ri_ptr->img_tag, ri_ptr->img_ref, (uint8 *)img_data,
-                        (int32)pixel_disk_size * count[XDIM] * count[YDIM]) == FAIL)
-            HGOTO_ERROR(DFE_PUTELEM, FAIL);
-#else                               /* OLD_WAY */
         /* Make certain we are at the beginning */
         if (Hseek(ri_ptr->img_aid, 0, DF_START) == FAIL)
             HGOTO_ERROR(DFE_SEEKERROR, FAIL);
@@ -2810,7 +2801,6 @@ GRwriteimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], voi
         if (Hwrite(ri_ptr->img_aid, (int32)pixel_disk_size * count[XDIM] * count[YDIM], (uint8 *)img_data) ==
             FAIL)
             HGOTO_ERROR(DFE_WRITEERROR, FAIL);
-#endif                              /* OLD_WAY */
     }                               /* end if */
     else {                          /* write only part of the image out */
         int32 img_offset;           /* current offset in the image data */

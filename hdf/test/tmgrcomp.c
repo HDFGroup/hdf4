@@ -214,7 +214,7 @@ test_mgr_compress_b()
         uint8        attr;                                       /* Attribute data */
 #ifdef NOT_IMPLEMENTED
         int32 count[2]; /* Size of image data to operate on */
-#endif                  /* NOT_IMPLEMENTED */
+#endif
         intn i, j;      /* indices */
 
         /* Initialize data we are going to write out */

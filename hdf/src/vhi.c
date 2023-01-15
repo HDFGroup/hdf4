@@ -48,15 +48,10 @@
    be zero or negative.
    Returns -1 if error; ref of that new vdata (a +ve integer) if successful.
    ------------------------------------------------------------------------- */
-
 int32
 VHstoredata(HFILEID f, const char *field, const uint8 *buf, int32 n, int32 datatype, const char *vsname,
             const char *vsclass)
-
 {
-#ifdef LATER
-    CONSTR(FUNC, "VHstoredata");
-#endif
     int32 order = 1;
     int32 ret_value;
 
@@ -89,7 +84,6 @@ VHstoredata(HFILEID f, const char *field, const uint8 *buf, int32 n, int32 datat
    n should not be zero or negative.
    Returns -1 if error; ref of that new vdata (a +ve integer) if successful.
    --------------------------------------------------------------------------- */
-
 int32
 VHstoredatam(HFILEID f, const char *field, const uint8 *buf, int32 n, int32 datatype, const char *vsname,
              const char *vsclass, int32 order)

@@ -132,10 +132,6 @@ done:
 void
 VSIrelease_vdata_node(VDATA *vs /* IN: vdata to release */)
 {
-#ifdef LATER
-    CONSTR(FUNC, "VSIrelease_vdata_node"); /* for HERROR */
-#endif                                     /* LATER */
-
     /* Insert the atom at the beginning of the free list */
     vs->next        = vdata_free_list;
     vdata_free_list = vs;
@@ -199,10 +195,6 @@ done:
 void
 VSIrelease_vsinstance_node(vsinstance_t *vs /* IN: vinstance node to release */)
 {
-#ifdef LATER
-    CONSTR(FUNC, "VSIrelease_vsinstance_node"); /* for HERROR */
-#endif                                          /* LATER */
-
     /* Insert the atom at the beginning of the free list */
     vs->next             = vsinstance_free_list;
     vsinstance_free_list = vs;
@@ -390,10 +382,6 @@ vpackvs(VDATA *vs,    /* IN/OUT: */
         uint8  buf[], /* IN: */
         int32 *size /* OUT: */)
 {
-#ifdef LATER
-    CONSTR(FUNC, "vpackvg");
-#endif /* LATER */
-
     int32  i;
     int16  slen;
     uint8 *bb        = NULL;
@@ -489,14 +477,6 @@ vpackvs(VDATA *vs,    /* IN/OUT: */
     *size = (int32)(bb - buf) + 1;
     *bb   = 0;
 
-#ifdef LATER
-done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    }  /* end if */
-#endif /* LATER */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* vpackvs */
 

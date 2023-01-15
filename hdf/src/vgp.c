@@ -203,10 +203,6 @@ done:
 void
 VIrelease_vgroup_node(VGROUP *vg)
 {
-#ifdef LATER
-    CONSTR(FUNC, "VIrelease_vgroup_node"); /* for HERROR */
-#endif                                     /* LATER */
-
     /* Insert the atom at the beginning of the free list */
     vg->next         = vgroup_free_list;
     vgroup_free_list = vg;
@@ -269,10 +265,6 @@ done:
 void
 VIrelease_vginstance_node(vginstance_t *vg /* IN: vgroup instance to release */)
 {
-#ifdef LATER
-    CONSTR(FUNC, "VIrelease_vginstance_node"); /* for HERROR */
-#endif                                         /* LATER */
-
     /* Insert the vsinstance at the beginning of the free list */
     vg->next             = vginstance_free_list;
     vginstance_free_list = vg;
@@ -668,20 +660,6 @@ vfdestroynode(VOIDP n /* IN: vfile_t record to free */)
     }
 } /* vfdestroynode */
 
-#ifdef NOTNEEDED
-/* ---------------------------- vtfreekey ------------------------- */
-/*
-   Frees B-Tree index (actually doesn't anything at all)
-
-   *** Only called by B-tree routines, should _not_ be called externally ***
- */
-VOID
-vtfreekey(VOIDP k)
-{
-    k = k; /* i.e. do nothing */
-} /* vtfreekey */
-#endif
-
 /*******************************************************************************
 NAME
    Vinitialize  -- initialize Vxxx interface
@@ -822,9 +800,6 @@ vexistvg(HFILEID f, /* IN: file handle */
          uint16  vgid /* IN: vgroup id */)
 {
     int32 ret_value;
-#ifdef LATER
-    CONSTR(FUNC, "vexistvg");
-#endif
 
     if (NULL == (vginstance_t *)vginst(f, vgid))
         ret_value = (FAIL);
@@ -870,9 +845,6 @@ vpackvg(VGROUP *vg,    /* IN: */
         uint8   buf[], /* IN/OUT: */
         int32  *size /* IN/OUT: */)
 {
-#ifdef LATER
-    CONSTR(FUNC, "vpackvg");
-#endif
     uintn  i;
     size_t slen      = 0;
     uint16 temp_len  = 0;
@@ -949,14 +921,6 @@ vpackvg(VGROUP *vg,    /* IN: */
     /* it there (and the size calc. wrong) it */
     /* has to be left alone -QAK */
 
-#ifdef LATER
-done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    }  /* end if */
-#endif /* LATER */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* vpackvg */
 
@@ -3012,9 +2976,6 @@ RETURNS
 intn
 Vclose(HFILEID f /* IN: file handle */)
 {
-#ifdef LATER
-    CONSTR(FUNC, "Vclose");
-#endif
     intn ret_value = SUCCEED;
 
     if (Vfinish(f) == FAIL)

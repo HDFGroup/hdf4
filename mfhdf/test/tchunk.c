@@ -27,33 +27,6 @@ static int32 d_dims[3]     = {2, 3, 4};
 static int32 cdims[3]      = {1, 2, 3}; /* chunk lengths */
 
 /* Chunk teseting - arrays for chunk writes */
-/* float32 arrays */
-#ifdef NOT_USED
-static float32 chunk1_f32[4] = {(float32)0.0, (float32)1.0, (float32)2.0, (float32)3.0};
-
-static float32 chunk2_f32[4] = {(float32)10.0, (float32)11.0, (float32)12.0, (float32)13.0};
-
-static float32 chunk3_f32[4] = {(float32)20.0, (float32)21.0, (float32)22.0, (float32)23.0};
-
-static float32 chunk4_f32[4] = {(float32)100.0, (float32)101.0, (float32)102.0, (float32)103.0};
-
-static float32 chunk5_f32[4] = {(float32)110.0, (float32)111.0, (float32)112.0, (float32)113.0};
-
-static float32 chunk6_f32[4] = {(float32)120.0, (float32)121.0, (float32)122.0, (float32)123.0};
-
-/* uint16 arrays */
-static uint16 chunk1_u16[4] = {0, 1, 2, 3};
-
-static uint16 chunk2_u16[4] = {10, 11, 12, 13};
-
-static uint16 chunk3_u16[4] = {20, 21, 22, 23};
-
-static uint16 chunk4_u16[4] = {100, 101, 102, 103};
-
-static uint16 chunk5_u16[4] = {110, 111, 112, 113};
-
-static uint16 chunk6_u16[4] = {120, 121, 122, 123};
-#endif /* NOT_USED */
 
 /* uint16 chunk arrays used in example 1 */
 static uint16 chunk1_2u16[6] = {11, 21, 12, 22, 13, 23};

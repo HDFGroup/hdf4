@@ -660,13 +660,6 @@ SDPfreebuf()
         tValues_size = 0;
     } /* end if */
 
-#ifdef LATER
-done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-#endif /* LATER */
-
     return ret_value;
 }
 
@@ -2096,11 +2089,11 @@ NCvario(NC *handle, int varid, const long *start, const long *edges, void *value
     /* HDFFR-1385: the fix for this bug may fix this problem too.-BMR */
     if (handle->numrecs < vp->numrecs)
         handle->numrecs = vp->numrecs;
-#endif /* NOTNOW */
+#endif
 
 #ifdef VDEBUG
     fprintf(stderr, "Exiting NCvario\n");
-#endif /* VDEBUG */
+#endif
     return (0);
 }
 

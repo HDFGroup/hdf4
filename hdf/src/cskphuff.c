@@ -367,9 +367,6 @@ HCIcskphuff_encode(compinfo_t *info, int32 length, const uint8 *buf)
 PRIVATE int32
 HCIcskphuff_term(compinfo_t *info)
 {
-#ifdef LATER
-    CONSTR(FUNC, "HCIcskphuff_term");
-#endif                                       /* endif LATER */
     comp_coder_skphuff_info_t *skphuff_info; /* ptr to skipping Huffman info */
     intn                       i;            /* local counting variable */
 

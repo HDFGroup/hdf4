@@ -1679,9 +1679,6 @@ DESCRIPTION
 int32
 HLPcloseAID(accrec_t *access_rec)
 {
-#ifdef LATER
-    CONSTR(FUNC, "HLPcloseAID"); /* for HERROR */
-#endif                           /* LATER */
     linkinfo_t *info =           /* special information record */
         (linkinfo_t *)access_rec->special_info;
     int32 ret_value = SUCCEED;
@@ -1702,15 +1699,6 @@ HLPcloseAID(accrec_t *access_rec)
         HDfree(info);
         access_rec->special_info = NULL;
     }
-
-#ifdef LATER
-done:
-#endif                       /* LATER */
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
 
     return ret_value;
 } /* HLPcloseAID */

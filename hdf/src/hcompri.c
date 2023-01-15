@@ -474,9 +474,6 @@ DESCRIPTION
 int32
 HRPcloseAID(accrec_t *access_rec)
 {
-#ifdef LATER
-    CONSTR(FUNC, "HRPcloseAID"); /* for HERROR */
-#endif                           /* LATER */
     crinfo_t *info =             /* special information record */
         (crinfo_t *)access_rec->special_info;
     int32 ret_value = SUCCEED;
@@ -488,15 +485,6 @@ HRPcloseAID(accrec_t *access_rec)
         HDfree(info);
         access_rec->special_info = NULL;
     }
-
-#ifdef LATER
-done:
-#endif                       /* LATER */
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
 
     return (ret_value);
 } /* HRPcloseAID */
