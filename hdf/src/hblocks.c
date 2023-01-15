@@ -1679,7 +1679,7 @@ DESCRIPTION
 int32
 HLPcloseAID(accrec_t *access_rec)
 {
-    linkinfo_t *info =           /* special information record */
+    linkinfo_t *info = /* special information record */
         (linkinfo_t *)access_rec->special_info;
     int32 ret_value = SUCCEED;
 

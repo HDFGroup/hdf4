@@ -215,7 +215,7 @@ test_mgr_compress_b()
 #ifdef NOT_IMPLEMENTED
         int32 count[2]; /* Size of image data to operate on */
 #endif
-        intn i, j;      /* indices */
+        intn i, j; /* indices */
 
         /* Initialize data we are going to write out */
         for (i = 0; i < 10; i++)

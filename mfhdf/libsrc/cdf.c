@@ -1036,10 +1036,10 @@ hdf_write_var(XDR *xdrs, NC *handle, NC_var **var)
     int32      refs[H4_MAX_NC_ATTRS + H4_MAX_VAR_DIMS + 10];
     uint16     nt_ref, rank;
     int32      GroupID, val, vs_id;
-    uint8     *bufp = NULL;
-    int32    ret_value = SUCCEED;
-    unsigned i, count;
-    Void    *attribute = NULL;
+    uint8     *bufp      = NULL;
+    int32      ret_value = SUCCEED;
+    unsigned   i, count;
+    Void      *attribute = NULL;
 
     count = 0;
     assoc = (*var)->assoc;

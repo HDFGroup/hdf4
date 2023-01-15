@@ -1758,7 +1758,7 @@ Hlength(int32 file_id, uint16 tag, uint16 ref)
 {
     CONSTR(FUNC, "Hlength"); /* for HERROR */
     int32 access_id;         /* access record id */
-    int32 length = FAIL;     /* length of elt inquired */
+    int32 length    = FAIL;  /* length of elt inquired */
     int32 ret_value = SUCCEED;
 
     /* clear error stack */
@@ -2483,7 +2483,7 @@ GLOBALS
 void *
 HIgetspinfo(accrec_t *access_rec)
 {
-    void *ret_value = NULL;      /* FAIL */
+    void *ret_value = NULL; /* FAIL */
 
     if ((ret_value = HAsearch_atom(AIDGROUP, HPcompare_accrec_tagref, access_rec)) != NULL)
         HGOTO_DONE(((accrec_t *)ret_value)->special_info);

@@ -474,7 +474,7 @@ DESCRIPTION
 int32
 HRPcloseAID(accrec_t *access_rec)
 {
-    crinfo_t *info =             /* special information record */
+    crinfo_t *info = /* special information record */
         (crinfo_t *)access_rec->special_info;
     int32 ret_value = SUCCEED;
 

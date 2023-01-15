@@ -1622,10 +1622,10 @@ done:
 static intn
 HTIfind_dd(filerec_t *file_rec, uint16 look_tag, uint16 look_ref, dd_t **pdd, intn direction)
 {
-    intn       idx;             /* index into ddlist of current dd searched */
-    ddblock_t *block;           /* ptr to current ddblock searched */
-    dd_t      *list;            /* ptr to current ddlist searched */
-    uint16     special_tag;     /* corresponding special tag */
+    intn       idx;         /* index into ddlist of current dd searched */
+    ddblock_t *block;       /* ptr to current ddblock searched */
+    dd_t      *list;        /* ptr to current ddlist searched */
+    uint16     special_tag; /* corresponding special tag */
     intn       ret_value = SUCCEED;
 
     HEclear();
