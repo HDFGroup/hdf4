@@ -418,11 +418,11 @@ test_vgmixedattrs()
         char   cvalues[20];
         int32  ivalues[10];
         char  *check_attr_names[5]  = {"Attribute 6", "Attribute 7", "Attribute 1", "Attribute 2",
-                                       "Attribute 5"};
+                                     "Attribute 5"};
         char  *check_attr_values[5] = {"VG0 oldattr0", "VG0 oldattr1",
-                                       "",        /* int values, added by test_vvsattrs with attr1 */
-                                       "Vgroup0", /* added by test_vvsattrs with attr2 */
-                                       "VG0 newattr"};
+                                      "",        /* int values, added by test_vvsattrs with attr1 */
+                                      "Vgroup0", /* added by test_vvsattrs with attr2 */
+                                      "VG0 newattr"};
 
         /* Get attribute information and verify its name and number of fields,
            which should be 1 */
