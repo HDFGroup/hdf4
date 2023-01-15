@@ -385,21 +385,6 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
     HDFLIBAPI int32 HDspaceleft
                 (void);
 
-#if defined(MALLOC_CHECK)
-    HDFPUBLIC void * HDmalloc
-                (uint32 qty);
-
-    HDFPUBLIC void * HDrealloc
-                (void * where, uint32 qty);
-
-    HDFPUBLIC void * HDcalloc
-                (uint32 n, uint32 size);
-
-    HDFPUBLIC void HDfree
-                (void * ptr);
-
-#endif /* defined MALLOC_CHECK */
-
     HDFPUBLIC char *HDstrdup
                 (const char *s);
 

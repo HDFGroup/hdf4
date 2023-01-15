@@ -1425,12 +1425,8 @@ DFIgetspace(uint32 qty)
 void       *
 DFIfreespace(void *ptr)
 {
-#ifdef MALLOC_CHECK
-    return (HDfree(ptr));
-#else
     HDfree(ptr);
     return (NULL);
-#endif
 }
 
 intn
