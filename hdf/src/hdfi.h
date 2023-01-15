@@ -15,10 +15,6 @@
 #ifndef HDFI_H
 #define HDFI_H
 
-#ifdef GOT_MACHINE
-#undef GOT_MACHINE
-#endif
-
 /*--------------------------------------------------------------------------*/
 /*                              MT/NT constants                             */
 /*  Four MT nibbles represent double, float, int, uchar (from most          */
@@ -155,12 +151,6 @@ typedef void *          VOIDP;
 #define SUN
 #endif
 
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE
-
 #define DF_MT   DFMT_SUN
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 #ifdef _LP64 /* 64-bit environment */
@@ -179,13 +169,7 @@ typedef int               hdf_pint_t;   /* an integer the same size as a pointer
 #define IBM6000
 #endif
 
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE
-
-#   define BSD
+#define BSD
 
 #define DF_MT             DFMT_IBM6000
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
@@ -209,11 +193,6 @@ typedef int               hdf_pint_t;   /* an integer the same size as a pointer
 #else
 #define DF_MT DFMT_APPLE
 #endif
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE 1
 
 #ifndef __GNUC__
 #define DUMBCC     /* because it is.  for later use in macros */
@@ -254,12 +233,6 @@ typedef long            hdf_pint_t;   /* an integer the same size as a pointer *
 #define INTEL386
 #endif /* WIN386 | DOS386 | UNIX386 */
 
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE 1
-
 #define DF_MT             DFMT_PC
 
 typedef long              intf;     /* size of INTEGERs in Fortran compiler */
@@ -286,12 +259,6 @@ typedef int               hdf_pint_t;   /* 4-byte pointer */
 /* Power PC 5 64 */
 #if defined __powerpc64__
 
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE
-
 #define DF_MT             DFMT_POWERPC64
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
@@ -305,11 +272,6 @@ typedef long              hdf_pint_t;   /* an integer the same size as a pointer
 /* Linux 64 */
 #if (defined(__linux__) && defined __x86_64__  && !(defined  SUN)) || defined(__CYGWIN__)  /* i.e. 64-bit Linux  but not SunOS on Intel */
                                                                                            /* it should work also for Cygwin 32 & 64 bit */
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE
 
 #define DF_MT             DFMT_LINUX64
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
@@ -323,24 +285,12 @@ typedef long              hdf_pint_t;   /* an integer the same size as a pointer
 
 #if defined __FreeBSD__ && defined __x86_64__
 
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE
-
 #define DF_MT             DFMT_LINUX64
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
 #define FNAME_POST_UNDERSCORE
 
 #endif /*64-bit FreeBSD */
-
-#ifndef GOT_MACHINE
-No machine type has been defined.  Your Makefile needs to have someing like
--DSUN or -DUNICOS in order for the HDF internal structures to be defined
-correctly.
-#endif
 
 /*-----------------------------------------------------*/
 /*              encode and decode macros               */
