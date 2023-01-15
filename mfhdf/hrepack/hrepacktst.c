@@ -110,29 +110,41 @@ static unsigned char *g_image_data = NULL;
  *
  *-------------------------------------------------------------------------
  */
-
 static int
 read_data(const char *fname)
 {
     int   i, n;
+    int   count;
     int   color_planes;
     char  str[20];
-    FILE *f;
+    FILE *f = NULL;
     int   w, h;
 
     f = fopen(fname, "r");
 
     if (f == NULL) {
         printf("Could not open file <%s>\n", fname);
-        return -1;
+        goto error;
     }
 
-    fscanf(f, "%s", str);
-    fscanf(f, "%d", &color_planes);
-    fscanf(f, "%s", str);
-    fscanf(f, "%d", &h);
-    fscanf(f, "%s", str);
-    fscanf(f, "%d", &w);
+    count = fscanf(f, "%s", str);
+    if (count != 1)
+        goto error;
+    count = fscanf(f, "%d", &color_planes);
+    if (count != 1)
+        goto error;
+    count = fscanf(f, "%s", str);
+    if (count != 1)
+        goto error;
+    count = fscanf(f, "%d", &h);
+    if (count != 1)
+        goto error;
+    count = fscanf(f, "%s", str);
+    if (count != 1)
+        goto error;
+    count = fscanf(f, "%d", &w);
+    if (count != 1)
+        goto error;
 
     /* globals */
     g_ncomps   = color_planes;
@@ -147,12 +159,19 @@ read_data(const char *fname)
     g_image_data = (unsigned char *)HDmalloc(w * h * color_planes * sizeof(unsigned char));
 
     for (i = 0; i < h * w * color_planes; i++) {
-        fscanf(f, "%d", &n);
+        count = fscanf(f, "%d", &n);
+        if (count != 1)
+            goto error;
         g_image_data[i] = (unsigned char)n;
     }
     fclose(f);
 
     return 1;
+
+error:
+    if (NULL != f)
+        fclose(f);
+    return -1;
 }
 
 /*-------------------------------------------------------------------------

@@ -345,7 +345,9 @@ read_info(const char *filename, options_t *options)
     char  comp_info[1024];
     FILE *fp = NULL;
     char  c;
-    int   i, rc = 1;
+    int   i;
+    int rc = 1;
+    int count;
 
     if ((fp = fopen(filename, "r")) == (FILE *)NULL) {
         printf("Cannot open options file %s", filename);
@@ -354,8 +356,8 @@ read_info(const char *filename, options_t *options)
 
     /* cycle until end of file reached */
     while (1) {
-        rc = fscanf(fp, "%s", stype);
-        if (rc == -1)
+        count = fscanf(fp, "%s", stype);
+        if (count != 1)
             break;
 
         /*-------------------------------------------------------------------------
@@ -368,12 +370,16 @@ read_info(const char *filename, options_t *options)
             i = 0;
             c = '0';
             while (c != '"') {
-                fscanf(fp, "%c", &c);
+                count = fscanf(fp, "%c", &c);
+                if (count != 1)
+                    goto out;
             }
             c = '0';
             /* go until end */
             while (c != '"') {
-                fscanf(fp, "%c", &c);
+                count = fscanf(fp, "%c", &c);
+                if (count != 1)
+                    goto out;
                 comp_info[i] = c;
                 i++;
             }
@@ -392,12 +398,16 @@ read_info(const char *filename, options_t *options)
             i = 0;
             c = '0';
             while (c != '"') {
-                fscanf(fp, "%c", &c);
+                count = fscanf(fp, "%c", &c);
+                if (count != 1)
+                    goto out;
             }
             c = '0';
             /* go until end */
             while (c != '"') {
-                fscanf(fp, "%c", &c);
+                count = fscanf(fp, "%c", &c);
+                if (count != 1)
+                    goto out;
                 comp_info[i] = c;
                 i++;
             }
