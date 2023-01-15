@@ -63,13 +63,44 @@
 /* The library always uses UNIXBUFIO */
 #define FILELIB UNIXBUFIO
 
-/* Standard header files needed all the time */
+/* Standard C library headers */
+#include <ctype.h>
 #include <inttypes.h>
 #include <limits.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+/* POSIX headers
+ *
+ * Checked for individually, since POSIX compliance is spotty and even
+ * non-POSIX platforms like Windows have some of these headers.
+ */
+#ifdef H4_HAVE_FCNTL_H
+#include <fcntl.h>
+#endif
+#ifdef H4_HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+#ifdef H4_HAVE_SYS_FILE_H
+#include <sys/file.h>
+#endif
+#ifdef H4_HAVE_SYS_STAT_H
+#include <sys/stat.h>
+#endif
+#ifdef H4_HAVE_SYS_TIME_H
+#include <sys/time.h>
+#endif
+#ifdef H4_HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+
+/* Windows headers */
+#ifdef H4_HAVE_WIN32_API
+#include <windows.h>
+#include <io.h>
+#endif
 
 #include "H4api_adpt.h"
 
@@ -130,10 +161,6 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE
 
-#include <unistd.h>                 /* for some file I/O stuff */
-#include <sys/time.h>
-#include <sys/file.h>               /* for unbuffered i/o stuff */
-#include <sys/stat.h>
 #define DF_MT   DFMT_SUN
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 #ifdef _LP64 /* 64-bit environment */
@@ -160,8 +187,6 @@ Please check your Makefile.
 
 #   define BSD
 
-#include <sys/file.h>               /* for unbuffered i/o stuff */
-#include <sys/stat.h>
 #define DF_MT             DFMT_IBM6000
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 #ifdef AIX5L64
@@ -194,9 +219,6 @@ Please check your Makefile.
 #define DUMBCC     /* because it is.  for later use in macros */
 #endif /* __GNUC__ */
 
-#include <sys/types.h>
-#include <sys/file.h>               /* for unbuffered i/o stuff */
-#include <sys/stat.h>
 #ifdef __i386
 #ifndef INTEL86
 #define INTEL86   /* we need this Intel define or bad things happen later */
@@ -238,31 +260,6 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
 
-#if defined _WINDOWS || defined _WIN32
-#pragma comment( lib, "oldnames" )
-#endif
-
-#include <fcntl.h>
-#ifdef UNIX386
-#include <sys/types.h>      /* for unbuffered file I/O */
-#include <sys/stat.h>
-#include <unistd.h>
-#else /* !UNIX386 */
-#ifdef H4_HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#ifdef H4_HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-#include <io.h>
-#endif /* UNIX386 */
-#include <ctype.h>          /* for character macros */
-
-#if defined WIN386
-#include <windows.h>        /* include the windows headers */
-#define HAVE_BOOLEAN
-#endif /* WIN386 */
-
 #define DF_MT             DFMT_PC
 
 typedef long              intf;     /* size of INTEGERs in Fortran compiler */
@@ -295,8 +292,6 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE
 
-#include <sys/file.h>               /* for unbuffered i/o stuff */
-#include <sys/stat.h>
 #define DF_MT             DFMT_POWERPC64
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
@@ -316,8 +311,6 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE
 
-#include <sys/file.h>               /* for unbuffered i/o stuff */
-#include <sys/stat.h>
 #define DF_MT             DFMT_LINUX64
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
@@ -336,8 +329,6 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE
 
-#include <sys/file.h>               /* for unbuffered i/o stuff */
-#include <sys/stat.h>
 #define DF_MT             DFMT_LINUX64
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
@@ -532,10 +523,4 @@ correctly.
  */
 #define JMEMSYS MEM_ANSI
 
-/* Compatibility #define for V3.3, should be taken out by v4.0 - QAK */
-/* Commented out only, just in case any legacy code is still using it out there.
-   Will be removed in a few maintenance releases.  -BMR, Jun 5, 2016
-#define DFSDnumber DFSDndatasets */
-
 #endif /* HDFI_H */
-
