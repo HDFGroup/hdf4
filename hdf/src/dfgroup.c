@@ -305,9 +305,6 @@ DFdiwrite(int32 file_id, int32 list, uint16 tag, uint16 ref)
 void
 DFdifree(int32 groupID)
 {
-#ifdef LATER
-    CONSTR(FUNC, "DFdifree");
-#endif /* LATER */
     DIlist_ptr list_rec;
 
     list_rec = GID2REC(groupID);

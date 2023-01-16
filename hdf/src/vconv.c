@@ -353,9 +353,6 @@ oldunpackvg(VGROUP *vg, uint8 buf[], int32 *size)
     uint8 *bb;
     int16  int16var;
     uintn  i;
-#ifdef LATER
-    CONSTR(FUNC, "oldunpackvg");
-#endif
 
     *size = *size; /* dummy, so that compiler thinks it is used  */
 
@@ -385,9 +382,6 @@ oldunpackvs(VDATA *vs, uint8 buf[], int32 *size)
     uint8 *bb;
     int16  int16var;
     intn   i;
-#ifdef LATER
-    CONSTR(FUNC, "oldunpackvs");
-#endif
 
     *size = *size; /* dummy */
 

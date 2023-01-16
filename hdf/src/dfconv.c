@@ -135,10 +135,6 @@ DFKqueryNT(void)
 int
 DFKNTsize(int32 number_type)
 {
-#ifdef LATER
-    CONSTR(FUNC, "DFKNTsize");
-#endif
-
     /* mask off the litend bit since little endian and big endian have */
     /* the same size.  Only need to distinguish size difference between */
     /* HDF and native types. */

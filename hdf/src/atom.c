@@ -615,10 +615,6 @@ done:
 static void
 HAIrelease_atom_node(atom_info_t *atm)
 {
-#ifdef LATER
-    CONSTR(FUNC, "HAIrelease_atom_node"); /* for HERROR */
-#endif                                    /* LATER */
-
     /* Insert the atom at the beginning of the free list */
     atm->next      = atom_free_list;
     atom_free_list = atm;

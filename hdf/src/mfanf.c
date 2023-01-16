@@ -75,7 +75,6 @@
  * Returns: annotation interface handle on SUCCEED and FAIL otherwise
  * Users:
  * Invokes: ANstart()
- * Author: GeorgeV
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
 nafstart(intf *file_id)
@@ -85,7 +84,7 @@ nafstart(intf *file_id)
     ret = ANstart((int32)*file_id);
 
     return (ret);
-} /* nafstart() */
+}
 
 /*-----------------------------------------------------------------------------
  * Name:    affileinfo
@@ -98,14 +97,10 @@ nafstart(intf *file_id)
  * Returns: see ANfileinfo()
  * Users:   Fortran Users
  * Invokes: ANfileinfo()
- * Author: GeorgeV
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
 naffileinfo(intf *an_id, intf *num_flabel, intf *num_fdesc, intf *num_olabel, intf *num_odesc)
 {
-#ifdef LATER
-    CONSTR(FUNC, "affileinfo");
-#endif /* LATER */
     intf  ret;
     int32 nflabel, nfdesc, nolabel, nodesc;
 
@@ -118,7 +113,7 @@ naffileinfo(intf *an_id, intf *num_flabel, intf *num_fdesc, intf *num_olabel, in
     *num_odesc  = nodesc;
 
     return ret;
-} /* naffileinfo() */
+}
 
 /*-----------------------------------------------------------------------------
  * Name:    afend
@@ -127,17 +122,12 @@ naffileinfo(intf *an_id, intf *num_flabel, intf *num_fdesc, intf *num_olabel, in
  * Returns: see ANend()
  * Users:   Fortran Users
  * Invokes: ANend()
- * Author: GeorgeV
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
 nafend(intf *an_id)
 {
-#ifdef LATER
-    CONSTR(FUNC, "afend");
-#endif /* LATER */
-
     return (intf)ANend((int32)*an_id);
-} /* nafend() */
+}
 
 /*-----------------------------------------------------------------------------
  * Name:    afcreate
@@ -153,12 +143,8 @@ nafend(intf *an_id)
 FRETVAL(intf)
 nafcreate(intf *an_id, intf *etag, intf *eref, intf *atype)
 {
-#ifdef LATER
-    CONSTR(FUNC, "afcreate");
-#endif /* LATER */
-
     return (intf)ANcreate((int32)*an_id, (uint16)*etag, (uint16)*eref, (ann_type)*atype);
-} /* nafcreate() */
+}
 
 /*-----------------------------------------------------------------------------
  * Name:    affcreate
@@ -168,17 +154,12 @@ nafcreate(intf *an_id, intf *etag, intf *eref, intf *atype)
  * Returns: see ANcreatef()
  * Users:   Fortran Users
  * Invokes: ANcreatf()
- * Author: GeorgeV
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
 naffcreate(intf *an_id, intf *atype)
 {
-#ifdef LATER
-    CONSTR(FUNC, "affcreate");
-#endif /* LATER */
-
     return (intf)ANcreatef((int32)*an_id, (ann_type)*atype);
-} /* naffcreate() */
+}
 
 /*-----------------------------------------------------------------------------
  * Name:    afselect
@@ -194,17 +175,12 @@ naffcreate(intf *an_id, intf *atype)
  * Returns: see ANselect()
  * Users:   Fortran Users
  * Invokes: ANselect()
- * Author: GeorgeV
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
 nafselect(intf *an_id, intf *index, intf *atype)
 {
-#ifdef LATER
-    CONSTR(FUNC, "afselect");
-#endif /* LATER */
-
     return (intf)ANselect((int32)*an_id, (int32)*index, (ann_type)*atype);
-} /* nafselect() */
+}
 
 /*-----------------------------------------------------------------------------
  * Name:    afnumann
@@ -216,17 +192,12 @@ nafselect(intf *an_id, intf *index, intf *atype)
  * Returns: see ANnumann()
  * Users:   Fortran Users
  * Invokes: ANnumann()
- * Author: GeorgeV
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
 nafnumann(intf *an_id, intf *atype, intf *etag, intf *eref)
 {
-#ifdef LATER
-    CONSTR(FUNC, "afnumann");
-#endif /* LATER */
-
     return (intf)ANnumann((int32)*an_id, (ann_type)*atype, (uint16)*etag, (uint16)*eref);
-} /* nafnumann() */
+}
 
 /*-----------------------------------------------------------------------------
  * Name:    afannlist
@@ -239,7 +210,6 @@ nafnumann(intf *an_id, intf *atype, intf *etag, intf *eref)
  * Returns: number of annotations found that match else FAIL. see ANannlist()
  * Users:   Fortran Users
  * Invokes: ANnumann(), ANannlist()
- * Author: GeorgeV
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
 nafannlist(intf *an_id, intf *atype, intf *etag, intf *eref, intf alist[])
@@ -281,17 +251,12 @@ nafannlist(intf *an_id, intf *atype, intf *etag, intf *eref, intf alist[])
  * Returns: see ANannlen()
  * Users:   Fortran Users
  * Invokes: ANannlen()
- * Author: GeorgeV
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
 nafannlen(intf *an_id)
 {
-#ifdef LATER
-    CONSTR(FUNC, "afannlen");
-#endif /* LATER */
-
     return (intf)ANannlen((int32)*an_id);
-} /* nafannlen() */
+}
 
 /*-----------------------------------------------------------------------------
  * Name:    afwriteann
@@ -302,15 +267,10 @@ nafannlen(intf *an_id)
  * Returns: see ANwriteann()
  * Users:   Fortran Users
  * Invokes: ANwriteann()
- * Author: GeorgeV
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
 nafwriteann(intf *ann_id, _fcd ann, intf *annlen)
 {
-#ifdef LATER
-    CONSTR(FUNC, "afwriteann");
-#endif /* LATER */
-
     char *iann = NULL;
     intf  status;
 
@@ -324,7 +284,7 @@ nafwriteann(intf *ann_id, _fcd ann, intf *annlen)
     HDfree(iann); /* free allocated space by HDf2cstring */
 
     return status;
-} /* nafwriteann() */
+}
 
 /*-----------------------------------------------------------------------------
  * Name:    afreadann
@@ -335,7 +295,6 @@ nafwriteann(intf *ann_id, _fcd ann, intf *annlen)
  * Returns: see ANreadann() (SUCCEED (0) if successful, else FAIL (-1))
  * Users:   Fortran Users
  * Invokes: ANreadann()
- * Author: GeorgeV
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
 nafreadann(intf *ann_id, _fcd ann, intf *maxlen)
@@ -360,7 +319,7 @@ nafreadann(intf *ann_id, _fcd ann, intf *maxlen)
         HDfree(iann); /* free allocated space */
 
     return status;
-} /* nafreadann() */
+}
 
 /*-----------------------------------------------------------------------------
  * Name:    afendaccess
@@ -369,17 +328,12 @@ nafreadann(intf *ann_id, _fcd ann, intf *maxlen)
  * Returns: see ANendaccess()
  * Users:   Fortran Users
  * Invokes: ANendaccess()
- * Author: GeorgeV
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
 nafendaccess(intf *ann_id)
 {
-#ifdef LATER
-    CONSTR(FUNC, "afendaccess");
-#endif /* LATER */
-
     return (intf)ANendaccess((int32)*ann_id);
-} /* nafendaccess() */
+}
 
 /*-----------------------------------------------------------------------------
  * Name:    afgettagref
@@ -388,14 +342,10 @@ nafendaccess(intf *ann_id)
  * Returns: see ANget_tagref()
  * Users:   Fortran Users
  * Invokes: ANget_tagref()
- * Author: GeorgeV
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
 nafgettagref(intf *an_id, intf *index, intf *type, intf *tag, intf *ref)
 {
-#ifdef LATER
-    CONSTR(FUNC, "afgettagref");
-#endif /* LATER */
     intf   ret;
     uint16 otag, oref;
 
@@ -405,7 +355,7 @@ nafgettagref(intf *an_id, intf *index, intf *type, intf *tag, intf *ref)
     *ref = oref;
 
     return ret;
-} /* nafgettagref() */
+}
 
 /*-----------------------------------------------------------------------------
  * Name:    afidtagref
@@ -414,14 +364,10 @@ nafgettagref(intf *an_id, intf *index, intf *type, intf *tag, intf *ref)
  * Returns: see ANid2tagref()
  * Users:   Fortran Users
  * Invokes: ANid2tagerf()
- * Author: GeorgeV
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
 nafidtagref(intf *ann_id, intf *tag, intf *ref)
 {
-#ifdef LATER
-    CONSTR(FUNC, "afidtagref");
-#endif /* LATER */
     intf   ret;
     uint16 otag, oref;
 
@@ -431,7 +377,7 @@ nafidtagref(intf *ann_id, intf *tag, intf *ref)
     *ref = oref;
 
     return ret;
-} /* nafidtagref() */
+}
 
 /*-----------------------------------------------------------------------------
  * Name:    aftagrefid
@@ -440,18 +386,12 @@ nafidtagref(intf *ann_id, intf *tag, intf *ref)
  * Returns: see ANtagref2id()
  * Users:   Fortran Users
  * Invokes: ANtagref2id()
- * Author: GeorgeV
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
 naftagrefid(intf *an_id, intf *tag, intf *ref)
 {
-#ifdef LATER
-    CONSTR(FUNC, "aftagrefid");
-#endif /* LATER */
-
     return (intf)ANtagref2id((int32)*an_id, (uint16)*tag, (uint16)*ref);
-
-} /* naftagrefid() */
+}
 
 /*-----------------------------------------------------------------------------
  * Name:    afatypetag
@@ -460,18 +400,12 @@ naftagrefid(intf *an_id, intf *tag, intf *ref)
  * Returns: see ANatype2tag()
  * Users:   Fortran Users
  * Invokes: ANatype2tag()
- * Author: GeorgeV
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
 nafatypetag(intf *atype)
 {
-#ifdef LATER
-    CONSTR(FUNC, "aftypetag");
-#endif /* LATER */
-
     return (intf)ANatype2tag((ann_type)*atype);
-
-} /* nafatypetag() */
+}
 
 /*-----------------------------------------------------------------------------
  * Name:    aftagatype
@@ -480,15 +414,9 @@ nafatypetag(intf *atype)
  * Returns: see ANtag2atype()
  * Users:   Fortran Users
  * Invokes: ANtag2atype()
- * Author: GeorgeV
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
 naftagatype(intf *tag)
 {
-#ifdef LATER
-    CONSTR(FUNC, "aftagatype");
-#endif /* LATER */
-
     return (intf)ANtag2atype((uint16)*tag);
-
-} /* naftagatype() */
+}

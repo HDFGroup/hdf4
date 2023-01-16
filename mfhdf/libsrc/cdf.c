@@ -761,9 +761,6 @@ hdf_get_ref(NC *handle, int i)
 int
 hdf_create_dim_vdata(XDR *xdrs, NC *handle, NC_dim *dim)
 {
-#ifdef LATER
-    CONSTR(FUNC, "hdf_create_dim_vdata");
-#endif /* LATER */
     int   found = FALSE;
     int   ref;
     int32 val;
@@ -956,13 +953,6 @@ hdf_write_attr(XDR *xdrs, NC *handle, NC_attr **attr)
     fprintf(stderr, "hdf_write_attr returning %d\n", ret_value);
 #endif
 
-#ifdef LATER
-done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-#endif /* LATER */
-
     return ret_value;
 } /* hdf_write_attr */
 
@@ -1046,13 +1036,10 @@ hdf_write_var(XDR *xdrs, NC *handle, NC_var **var)
     int32      refs[H4_MAX_NC_ATTRS + H4_MAX_VAR_DIMS + 10];
     uint16     nt_ref, rank;
     int32      GroupID, val, vs_id;
-    uint8     *bufp = NULL;
-#ifdef LATER
-    CONSTR(FUNC, "hdf_write_var");
-#endif /* LATER */
-    int32    ret_value = SUCCEED;
-    unsigned i, count;
-    Void    *attribute = NULL;
+    uint8     *bufp      = NULL;
+    int32      ret_value = SUCCEED;
+    unsigned   i, count;
+    Void      *attribute = NULL;
 
     count = 0;
     assoc = (*var)->assoc;
@@ -1461,9 +1448,6 @@ hdf_conv_scales(NC **handlep)
     uint8    *scalebuf  = NULL;
     uint8    *datap     = NULL;
     intn      ret_value = SUCCEED;
-#ifdef LATER
-    CONSTR(FUNC, "hdf_conv_scales");
-#endif /* LATER */
 
     if ((*handlep)->vars) {
         tmp  = (*handlep)->vars;
@@ -1961,9 +1945,6 @@ hdf_read_vars(XDR *xdrs, NC *handle, int32 vg)
     nc_type       type;
     int32         var, sub;
     intn          ret_value = SUCCEED;
-#ifdef LATER
-    CONSTR(FUNC, "hdf_read_vars");
-#endif /* LATER */
 
     count = 0;
     id    = -1;
@@ -2752,9 +2733,6 @@ hdf_close(NC *handle)
     int32     vs;
     char class[H4_MAX_NC_CLASS] = "";
     intn ret_value              = SUCCEED;
-#ifdef LATER
-    CONSTR(FUNC, "hdf_close");
-#endif /* LATER */
 
 #ifdef HDF_CLOSE
     fprintf(stderr, "hdf_close: I've been called\n");

@@ -130,12 +130,8 @@ test_simple_vs()
     int16 rec_num;        /* current record number */
     int32 offset, length; /* offset/length buffers for single block of data */
     intn  n_blocks;       /* number of blocks a vdata has */
-#ifdef NOTUSED
-    t_hdf_datainfo_t vs_info; /* data structure to hold offset/length arrays and
-        some other information about the data */
-#endif
-    int32 status;   /* Status values from routines */
-    intn  status_n; /* Status values from routines */
+    int32 status;         /* Status values from routines */
+    intn  status_n;       /* Status values from routines */
 
     /* Open the HDF file and initialize the interface. */
     fid = Hopen(SIMPLE_FILE, DFACC_CREATE, 0);

@@ -412,11 +412,6 @@ static void output(code) int code;
         flush_char();
 
         fflush(g_outfile);
-
-#ifdef FOO
-        if (ferror(g_outfile))
-            FatalError("unable to write GIF file");
-#endif
     }
 }
 

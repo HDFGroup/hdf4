@@ -109,13 +109,6 @@ NC_free_string(NC_string *cdfstr)
         Free(cdfstr);
     }
 
-#ifdef LATER
-done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-#endif /* LATER */
-
     return ret_value;
 }
 

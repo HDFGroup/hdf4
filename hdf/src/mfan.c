@@ -191,9 +191,6 @@ ANIanncmp(void *i, /* IN: annotation key(tag,ref) */
 intn
 ANIdestroy(void)
 {
-#ifdef LATER
-    CONSTR(FUNC, "ANIdestroy");
-#endif /* LATER */
     int32 ret_value = SUCCEED;
 
     /* Clear error stack */
@@ -1537,9 +1534,6 @@ ANcreate(int32    an_id,    /* IN: annotation interface ID */
          ann_type type      /* IN: AN_DATA_LABEL for data labels,
                                   AN_DATA_DESC for data descriptions*/)
 {
-#ifdef LATER
-    CONSTR(FUNC, "ANcreate"); /* for HERROR */
-#endif                        /* LATER */
     int32 ret_value;
 
     ret_value = (ANIcreate(an_id, elem_tag, elem_ref, type));
@@ -1567,9 +1561,6 @@ ANcreatef(int32    an_id,/* IN: annotation interface ID */
           ann_type type  /* IN:  AN_FILE_LABEL for file labels,
                                  AN_FILE_DESC for file descriptions.*/)
 {
-#ifdef LATER
-    CONSTR(FUNC, "ANcreatef"); /* for HERROR */
-#endif                         /* LATER */
     uint16 ann_tag;
     uint16 ann_ref;
     int32  ret_value = SUCCEED;
@@ -1775,9 +1766,6 @@ done:
 EXPORT int32
 ANannlen(int32 ann_id /* IN: annotation id */)
 {
-#ifdef LATER
-    CONSTR(FUNC, "ANannlen");
-#endif /* LATER */
     int32 ret_value;
 
     ret_value = ANIannlen(ann_id);
@@ -1804,9 +1792,6 @@ ANwriteann(int32       ann_id, /* IN: annotation id */
            const char *ann,    /* IN: annotation to write */
            int32       annlen /* IN: length of annotation */)
 {
-#ifdef LATER
-    CONSTR(FUNC, "ANwriteann"); /* for HERROR */
-#endif                          /* LATER */
     int32 ret_value;
 
     ret_value = ANIwriteann(ann_id, ann, annlen);
@@ -1833,9 +1818,6 @@ ANreadann(int32 ann_id, /* IN: annotation id (handle) */
           char *ann,    /* OUT: space to return annotation in */
           int32 maxlen /* IN: size of space to return annotation in */)
 {
-#ifdef LATER
-    CONSTR(FUNC, "ANreadann"); /* for HERROR */
-#endif                         /* LATER */
     int32 ret_value;
 
     ret_value = ANIreadann(ann_id, ann, maxlen);
@@ -1859,9 +1841,6 @@ ANreadann(int32 ann_id, /* IN: annotation id (handle) */
 EXPORT intn
 ANendaccess(int32 ann_id /* IN: annotation id */)
 {
-#ifdef LATER
-    CONSTR(FUNC, "ANendaccess"); /* for HERROR */
-#endif                           /* LATER */
     intn ret_value = SUCCEED;
     /* shut compiler up */
     ann_id = ann_id;
@@ -2136,9 +2115,6 @@ done:
 EXPORT uint16
 ANatype2tag(ann_type atype /* IN: Annotation type */)
 { /* Switch on annotation type "atype" */
-#ifdef LATER
-    CONSTR(FUNC, "ANatype2tag"); /* for HERROR */
-#endif                           /* LATER */
     uint16 ann_tag;
 
     switch ((ann_type)atype) {
@@ -2177,9 +2153,6 @@ ANatype2tag(ann_type atype /* IN: Annotation type */)
 EXPORT ann_type
 ANtag2atype(uint16 atag /* IN: annotation tag */)
 { /* Switch on annotation tag */
-#ifdef LATER
-    CONSTR(FUNC, "ANtag2atype"); /* for HERROR */
-#endif                           /* LATER */
     ann_type atype;
 
     switch ((uint16)atag) {

@@ -680,9 +680,6 @@ intn
 HTPendaccess(atom_t ddid /* IN: DD id to end access to */
 )
 {
-#ifdef LATER
-    CONSTR(FUNC, "HTPendaccess"); /* for HERROR */
-#endif                            /* LATER */
     int32 ret_value = SUCCEED;
 
     /* Chuck the atom */
@@ -1625,13 +1622,10 @@ done:
 static intn
 HTIfind_dd(filerec_t *file_rec, uint16 look_tag, uint16 look_ref, dd_t **pdd, intn direction)
 {
-#ifdef LATER
-    CONSTR(FUNC, "HTIfind_dd"); /* for HERROR */
-#endif                          /* LATER */
-    intn       idx;             /* index into ddlist of current dd searched */
-    ddblock_t *block;           /* ptr to current ddblock searched */
-    dd_t      *list;            /* ptr to current ddlist searched */
-    uint16     special_tag;     /* corresponding special tag */
+    intn       idx;         /* index into ddlist of current dd searched */
+    ddblock_t *block;       /* ptr to current ddblock searched */
+    dd_t      *list;        /* ptr to current ddlist searched */
+    uint16     special_tag; /* corresponding special tag */
     intn       ret_value = SUCCEED;
 
     HEclear();

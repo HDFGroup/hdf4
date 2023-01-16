@@ -3947,7 +3947,7 @@ test_mgr_old(int flag)
     test_mgr_old_e(flag);
 #ifdef NOT_IMPLEMENTED
     test_mgr_old_f(flag);
-#endif /* NOT_YET */
+#endif
 
 } /* end test_mgr_old() */
 

@@ -437,10 +437,6 @@ done:
 static void
 HULIrelease_list_node(node_info_t *nod)
 {
-#ifdef LATER
-    CONSTR(FUNC, "HULIrelease_list_node"); /* for HERROR */
-#endif                                     /* LATER */
-
     /* Insert the node at the beginning of the free list */
     nod->next      = node_free_list;
     node_free_list = nod;

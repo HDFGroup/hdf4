@@ -371,9 +371,6 @@ HCIcnbit_decode(compinfo_t *info, int32 length, uint8 *buf)
 PRIVATE int32
 HCIcnbit_encode(compinfo_t *info, int32 length, const uint8 *buf)
 {
-#ifdef LATER
-    CONSTR(FUNC, "HCIcnbit_encode");
-#endif
     comp_coder_nbit_info_t *nbit_info;   /* ptr to n-bit info */
     int32                   orig_length; /* original length to write */
     uint32                  output_bits; /* bits to write to the file */
@@ -439,10 +436,6 @@ HCIcnbit_encode(compinfo_t *info, int32 length, const uint8 *buf)
 PRIVATE int32
 HCIcnbit_term(compinfo_t *info)
 {
-#ifdef LATER
-    CONSTR(FUNC, "HCIcnbit_term");
-#endif
-
     /* shut compiler up */
     info = info;
 
