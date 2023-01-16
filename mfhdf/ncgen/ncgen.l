@@ -4,8 +4,6 @@
  *   See netcdf/COPYRIGHT file for copying and redistribution conditions.
  *********************************************************************/
 
-#define    STREQ(a, b)    (*(a) == *(b) && strcmp((a), (b)) == 0)
-
 /* lex specification for tokens for ncgen */
 
 char errstr[100];        /* for short error messages */
