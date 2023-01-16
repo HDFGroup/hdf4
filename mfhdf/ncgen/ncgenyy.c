@@ -639,8 +639,6 @@ char *yytext;
  *   See netcdf/COPYRIGHT file for copying and redistribution conditions.
  *********************************************************************/
 
-#define    STREQ(a, b)    (*(a) == *(b) && strcmp((a), (b)) == 0)
-
 /* lex specification for tokens for ncgen */
 
 char errstr[100];        /* for short error messages */
@@ -651,8 +649,8 @@ void expand_escapes();
 #include <ctype.h>
 #include <limits.h>
 #include "ncgentab.h"
-#line 655 "mfhdf/ncgen//ncgenyy.c"
-#line 656 "mfhdf/ncgen//ncgenyy.c"
+#line 653 "mfhdf/ncgen//ncgenyy.c"
+#line 654 "mfhdf/ncgen//ncgenyy.c"
 
 #define INITIAL 0
 
@@ -861,9 +859,9 @@ YY_DECL
 		}
 
 	{
-#line 24 "mfhdf/ncgen//ncgen.l"
+#line 22 "mfhdf/ncgen//ncgen.l"
 
-#line 867 "mfhdf/ncgen//ncgenyy.c"
+#line 865 "mfhdf/ncgen//ncgenyy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -922,13 +920,13 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 25 "mfhdf/ncgen//ncgen.l"
+#line 23 "mfhdf/ncgen//ncgen.l"
 /* comment */ ;
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 27 "mfhdf/ncgen//ncgen.l"
+#line 25 "mfhdf/ncgen//ncgen.l"
 {
             if(yyleng > MAXTRST) {
                 yyerror("string too long, truncated\n");
@@ -940,59 +938,59 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 36 "mfhdf/ncgen//ncgen.l"
+#line 34 "mfhdf/ncgen//ncgen.l"
 {return (FLOAT_K);}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 37 "mfhdf/ncgen//ncgen.l"
+#line 35 "mfhdf/ncgen//ncgen.l"
 {return (CHAR_K);}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 38 "mfhdf/ncgen//ncgen.l"
+#line 36 "mfhdf/ncgen//ncgen.l"
 {return (BYTE_K);}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 39 "mfhdf/ncgen//ncgen.l"
+#line 37 "mfhdf/ncgen//ncgen.l"
 {return (SHORT_K);}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 40 "mfhdf/ncgen//ncgen.l"
+#line 38 "mfhdf/ncgen//ncgen.l"
 {return (LONG_K);}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 41 "mfhdf/ncgen//ncgen.l"
+#line 39 "mfhdf/ncgen//ncgen.l"
 {return (DOUBLE_K);}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 42 "mfhdf/ncgen//ncgen.l"
+#line 40 "mfhdf/ncgen//ncgen.l"
 {long_val = -1;
             return (NC_UNLIMITED_K);}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 45 "mfhdf/ncgen//ncgen.l"
+#line 43 "mfhdf/ncgen//ncgen.l"
 {return (DIMENSIONS);}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 46 "mfhdf/ncgen//ncgen.l"
+#line 44 "mfhdf/ncgen//ncgen.l"
 {return (VARIABLES);}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 47 "mfhdf/ncgen//ncgen.l"
+#line 45 "mfhdf/ncgen//ncgen.l"
 {return (DATA);}
 	YY_BREAK
 case 13:
 /* rule 13 can match eol */
 YY_RULE_SETUP
-#line 48 "mfhdf/ncgen//ncgen.l"
+#line 46 "mfhdf/ncgen//ncgen.l"
 {
         char *s = (char*)yytext+strlen("netcdf");
         char *t = (char*)yytext+yyleng-1;
@@ -1009,7 +1007,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 62 "mfhdf/ncgen//ncgen.l"
+#line 60 "mfhdf/ncgen//ncgen.l"
 {    /* double missing values */
         double_val = FILL_DOUBLE;  /* IEEE double infinity */
         return (DOUBLE_CONST);
@@ -1017,7 +1015,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 67 "mfhdf/ncgen//ncgen.l"
+#line 65 "mfhdf/ncgen//ncgen.l"
 {    /* float missing values */
         float_val = FILL_FLOAT;  /* IEEE float infinity */
         return (FLOAT_CONST);
@@ -1025,7 +1023,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 71 "mfhdf/ncgen//ncgen.l"
+#line 69 "mfhdf/ncgen//ncgen.l"
 {
         if ((yylval = lookup(yytext)) == NULL) {
             yylval = install(yytext);
@@ -1036,14 +1034,14 @@ YY_RULE_SETUP
 case 17:
 /* rule 17 can match eol */
 YY_RULE_SETUP
-#line 78 "mfhdf/ncgen//ncgen.l"
+#line 76 "mfhdf/ncgen//ncgen.l"
 {
         lineno++ ;
         }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 81 "mfhdf/ncgen//ncgen.l"
+#line 79 "mfhdf/ncgen//ncgen.l"
 {
         if (sscanf((char*)yytext, "%le", &double_val) != 1) {
             sprintf(errstr,"bad long or double constant: %s",(char*)yytext);
@@ -1054,7 +1052,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 88 "mfhdf/ncgen//ncgen.l"
+#line 86 "mfhdf/ncgen//ncgen.l"
 {
         if (sscanf((char*)yytext, "%e", &float_val) != 1) {
             sprintf(errstr,"bad float constant: %s",(char*)yytext);
@@ -1065,7 +1063,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 95 "mfhdf/ncgen//ncgen.l"
+#line 93 "mfhdf/ncgen//ncgen.l"
 {
         if (sscanf((char*)yytext, "%hd", &short_val) != 1) {
             sprintf(errstr,"bad short constant: %s",(char*)yytext);
@@ -1076,7 +1074,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 102 "mfhdf/ncgen//ncgen.l"
+#line 100 "mfhdf/ncgen//ncgen.l"
 {
         /* machines where doubles have more precision than longs. */
         /*
@@ -1106,7 +1104,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 128 "mfhdf/ncgen//ncgen.l"
+#line 126 "mfhdf/ncgen//ncgen.l"
 {
         long dd;
         if (sscanf((char*)yytext, "%li", &dd) != 1) {
@@ -1120,7 +1118,7 @@ YY_RULE_SETUP
 case 23:
 /* rule 23 can match eol */
 YY_RULE_SETUP
-#line 137 "mfhdf/ncgen//ncgen.l"
+#line 135 "mfhdf/ncgen//ncgen.l"
 {
             (void) sscanf((char*)&yytext[1],"%c",&byte_val);
         return (BYTE_CONST);
@@ -1128,7 +1126,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 141 "mfhdf/ncgen//ncgen.l"
+#line 139 "mfhdf/ncgen//ncgen.l"
 {
         byte_val = strtol((char*)&yytext[2], (char **) 0, 8);
         return (BYTE_CONST);
@@ -1136,7 +1134,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 145 "mfhdf/ncgen//ncgen.l"
+#line 143 "mfhdf/ncgen//ncgen.l"
 {
         byte_val = strtol((char*)&yytext[2], (char **) 0, 16);
         return (BYTE_CONST);
@@ -1144,7 +1142,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 149 "mfhdf/ncgen//ncgen.l"
+#line 147 "mfhdf/ncgen//ncgen.l"
 {
         switch ((char)yytext[2]) {
             case 'a': byte_val = '\007'; break; /* not everyone under-
@@ -1165,21 +1163,21 @@ YY_RULE_SETUP
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 167 "mfhdf/ncgen//ncgen.l"
+#line 165 "mfhdf/ncgen//ncgen.l"
 {/* whitespace */ ;
         }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 169 "mfhdf/ncgen//ncgen.l"
+#line 167 "mfhdf/ncgen//ncgen.l"
 return (yytext[0]) ;
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 170 "mfhdf/ncgen//ncgen.l"
+#line 168 "mfhdf/ncgen//ncgen.l"
 ECHO;
 	YY_BREAK
-#line 1183 "mfhdf/ncgen//ncgenyy.c"
+#line 1181 "mfhdf/ncgen//ncgenyy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2184,4 +2182,4 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 170 "mfhdf/ncgen//ncgen.l"
+#line 168 "mfhdf/ncgen//ncgen.l"

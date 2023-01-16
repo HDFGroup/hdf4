@@ -16,6 +16,7 @@
 #ifdef HDF
 
 #include "hdftest.h"
+#include "local_nc.h"
 
 /********************************************************************
    Name: test_file_inuse() - tests preventing of an in-use file being

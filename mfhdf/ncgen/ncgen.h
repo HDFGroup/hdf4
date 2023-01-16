@@ -12,9 +12,10 @@
 #define FORT_MAX_STMNT    66 * FORT_MAX_LINES /* max chars in FORTRAN statement */
 #define C_MAX_STMNT       FORT_MAX_STMNT      /* until we fix to break up C lines */
 
-/* Why is STREQ re-defined in multiple places? (hdf.h, then here, msoftyy.c,
-   and vms_yy.c) -> compiler warnings. -BMR, Jul 17, 2012 */
-#define STREQ(a, b) (*(a) == *(b) && strcmp((a), (b)) == 0)
+/* Decorated with NC_ to distinguish it from the library's STREQ, which
+ * differs slightly.
+ */
+#define NC_STREQ(a, b) (*(a) == *(b) && strcmp((a), (b)) == 0)
 
 extern struct dims { /* dimensions */
     long  size;

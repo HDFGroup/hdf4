@@ -601,15 +601,19 @@ test_named_vars(void)
     /* Compare file contents with predefined text to verify */
     for (idx = 0; idx < n_datasets; idx++) {
 
+        int count;
+
         sds_id = SDselect(file_id, idx);
         CHECK(sds_id, FAIL, "SDselect");
         status = SDgetinfo(sds_id, sds_name, &array_rank, NULL, NULL, NULL);
         CHECK(status, FAIL, "SDgetinfo");
         is_coordvar = SDiscoordvar(sds_id);
         if (is_coordvar)
-            sprintf(line, "#%d Coordinate %d-dim '%s'\n", idx, array_rank, sds_name);
+            count = snprintf(line, 40, "#%d Coordinate %d-dim '%s'\n", idx, array_rank, sds_name);
         else
-            sprintf(line, "#%d SDS        %d-dim '%s'\n", idx, array_rank, sds_name);
+            count = snprintf(line, 40, "#%d SDS        %d-dim '%s'\n", idx, array_rank, sds_name);
+        CHECK(count, -1, "snprintf error");
+        VERIFY((count <= 40), TRUE, "snprintf truncation");
 
         if (strncmp(contents[idx], line, strlen(contents[idx])) != 0) {
             fprintf(stderr, "File contents are incorrect in testing variable types at variable of index %d\n",

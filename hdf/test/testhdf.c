@@ -268,12 +268,8 @@ main(int argc, char *argv[])
 
     if (CleanUp) {
         MESSAGE(2, printf("\nCleaning Up...\n\n"););
-#ifdef H4_HAVE_WIN32_API
         remove("*.hdf");
         remove("*.tmp");
-#else
-        system("rm -f *.hdf *.tmp");
-#endif
     }
     exit(num_errs);
     return num_errs;
