@@ -260,23 +260,16 @@ static struct xdr_ops xdrposix_ops = {
     xdrposix_getpos,   /* get offset in the stream */
     xdrposix_setpos,   /* set offset in the stream */
     xdrposix_inline,   /* prime stream for inline macros */
-#if (defined __sun && defined _LP64) || defined __x86_64__ || defined __powerpc64__
-    xdrposix_destroy, /* destroy stream */
-#if !(defined __x86_64__) && !(defined __powerpc64__) ||                                                     \
-    (defined __sun && defined _LP64) /* i.e. we are on SUN/Intel in 64-bit mode */
-    NULL,                            /* no xdr_control function defined */
-#endif
-    /* Solaris 64-bit (arch=v9 and arch=amd64) has 64 bits long and 32 bits int. */
-    /* It defines the two extra entries for get/put int. here */
+    xdrposix_destroy,  /* destroy stream */
+    NULL,              /* no xdr_control function defined */
+#if defined(__sun) && defined(_LP64)
+    /* Solaris 64-bit (arch=v9 and arch=amd64) differentiates between
+     * 32-bit integers and 64-bit longs via two extra callbacks for
+     * int here. These are not present on other XDR implementations
+     * like TI-RPC.
+     */
     xdrposix_getint, /* deserialize a 32-bit int */
     xdrposix_putint  /* serialize a 32-bit int */
-#else
-#ifdef AIX5L64
-    xdrposix_destroy,  NULL,           NULL,
-    xdrposix_getint,   xdrposix_putint
-#else  /*AIX5L64 */
-    xdrposix_destroy /* destroy stream */
-#endif /*AIX5L64 */
 #endif
 };
 
