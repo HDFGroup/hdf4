@@ -116,7 +116,7 @@ annotate(const char *editor, int ann)
 #if defined(H4_HAVE_FORK) && defined(H4_HAVE_WAIT)
     if (fork() == 0) {
         /* this is the child */
-        if (execl(editor, editor, file, 0) == -1)
+        if (execl(editor, editor, file, 0, (char *)NULL) == -1)
             fprintf(stderr, "Error while editing label.\n");
 
         /* return control to the parent if exec fails
