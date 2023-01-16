@@ -41,13 +41,13 @@ BYTE *b;
 {
     if (EndianOrder == 0) /* Big Endian */
     {
-        b[0] = w & 0xFF00;
+        b[0] = (BYTE)(w & 0xFF00);
         b[1] = w & 0xFF;
     }
     else /* Little Endian */
     {
         b[0] = w & 0xFF;
-        b[1] = w & 0xFF00;
+        b[1] = (BYTE)(w & 0xFF00);
     }
 }
 
