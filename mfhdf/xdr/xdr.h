@@ -110,6 +110,8 @@ typedef struct {
         int32_t *(*x_inline)(/*XDR *, size_t */);
         /* Free the stream. */
         void (*x_destroy)(/*XDR * */);
+        /* Control */
+        bool_t  (*x_control)(/*XDR *, int, void * */);
     } * x_ops;
     char *x_public;  /* users' data */
     void *x_private; /* pointer to private data */
