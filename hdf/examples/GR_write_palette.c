@@ -68,6 +68,7 @@ main()
      * Write the data in the buffer into the image array.
      */
     status = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)image_buf);
+    CHECK_NOT_VAL(status, FAIL, "GRwriteimage");
 
     /*
      * Initialize the palette to grayscale.
@@ -92,13 +93,18 @@ main()
      * Write data to the palette.
      */
     status = GRwritelut(pal_id, N_COMPS_PAL, DFNT_UINT8, interlace_mode, N_ENTRIES, (VOIDP)palette_buf);
+    CHECK_NOT_VAL(status, FAIL, "GRwritelut");
 
     /*
      * Terminate access to the image and to the GR interface, and
      * close the HDF file.
      */
     status = GRendaccess(ri_id);
+    CHECK_NOT_VAL(status, FAIL, "GRendaccess");
     status = GRend(gr_id);
+    CHECK_NOT_VAL(status, FAIL, "GRend");
     status = Hclose(file_id);
+    CHECK_NOT_VAL(status, FAIL, "Hclose");
+
     return 0;
 }

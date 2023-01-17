@@ -48,6 +48,7 @@ main()
      * Read the data from the file into sub1_data array.
      */
     status = SDreaddata(sds_id, start, stride, edges, (VOIDP)sub1_data);
+    CHECK_NOT_VAL(status, FAIL, "SDreaddata");
 
     /*
      * Print what we have just read; the following numbers should be displayed:
@@ -74,6 +75,7 @@ main()
      * parameter is set to NULL for contiguous reading.
      */
     status = SDreaddata(sds_id, start, NULL, edges, (VOIDP)sub2_data);
+    CHECK_NOT_VAL(status, FAIL, "SDreaddata");
 
     /*
      * Print what we have just read; the following numbers should be displayed:
@@ -104,6 +106,7 @@ main()
      * Read the data from the file into sub3_data array.
      */
     status = SDreaddata(sds_id, start, stride, edges, (VOIDP)sub3_data);
+    CHECK_NOT_VAL(status, FAIL, "SDreaddata");
 
     /*
      * Print what we have just read; the following numbers should be displayed:
@@ -121,11 +124,13 @@ main()
      * Terminate access to the data set.
      */
     status = SDendaccess(sds_id);
+    CHECK_NOT_VAL(status, FAIL, "SDendaccess");
 
     /*
      * Terminate access to the SD interface and close the file.
      */
     status = SDend(sd_id);
+    CHECK_NOT_VAL(status, FAIL, "SDend");
 
     return 0;
 }

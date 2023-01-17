@@ -34,6 +34,7 @@ main()
      */
     n_values = 16;
     status   = SDsetattr(sd_id, FILE_ATTR_NAME, DFNT_CHAR, n_values, (VOIDP)file_values);
+    CHECK_NOT_VAL(status, FAIL, "SDsetattr");
 
     /*
      * Select the first data set.
@@ -47,6 +48,7 @@ main()
      */
     n_values = 2;
     status   = SDsetattr(sds_id, SDS_ATTR_NAME, DFNT_FLOAT32, n_values, (VOIDP)sds_values);
+    CHECK_NOT_VAL(status, FAIL, "SDsetattr");
 
     /*
      * Get the the second dimension identifier of the SDS.
@@ -59,16 +61,19 @@ main()
      */
     n_values = 7;
     status   = SDsetattr(dim_id, DIM_ATTR_NAME, DFNT_CHAR, n_values, (VOIDP)dim_values);
+    CHECK_NOT_VAL(status, FAIL, "SDsetattr");
 
     /*
      * Terminate access to the data set.
      */
     status = SDendaccess(sds_id);
+    CHECK_NOT_VAL(status, FAIL, "SDendaccess");
 
     /*
      * Terminate access to the SD interface and close the file.
      */
     status = SDend(sd_id);
+    CHECK_NOT_VAL(status, FAIL, "SDend");
 
     return 0;
 }

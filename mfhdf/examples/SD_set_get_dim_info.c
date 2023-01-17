@@ -67,14 +67,16 @@ main()
          */
         switch (dim_index) {
             case 0:
-                status   = SDsetdimname(dim_id, DIM_NAME_Y);
+                status = SDsetdimname(dim_id, DIM_NAME_Y);
+                CHECK_NOT_VAL(status, FAIL, "SDsetdimname");
                 n_values = Y_LENGTH;
-                status   = SDsetdimscale(dim_id, n_values, DFNT_FLOAT64, (VOIDP)data_Y);
+                SDsetdimscale(dim_id, n_values, DFNT_FLOAT64, (VOIDP)data_Y);
                 break;
             case 1:
-                status   = SDsetdimname(dim_id, DIM_NAME_X);
+                status = SDsetdimname(dim_id, DIM_NAME_X);
+                CHECK_NOT_VAL(status, FAIL, "SDsetdimname");
                 n_values = X_LENGTH;
-                status   = SDsetdimscale(dim_id, n_values, DFNT_INT16, (VOIDP)data_X);
+                SDsetdimscale(dim_id, n_values, DFNT_INT16, (VOIDP)data_X);
                 break;
             default:
                 break;
@@ -107,6 +109,7 @@ main()
          */
 
         status = SDdiminfo(dim_id, dim_name, &n_values, &data_type, &n_attrs);
+        CHECK_NOT_VAL(status, FAIL, "SDdiminfo");
         printf("Information about %d dimension:\n", dim_index + 1);
         printf("dimension name is %s\n", dim_name);
         printf("number of scale values is %d\n", n_values);
@@ -120,7 +123,8 @@ main()
         switch (dim_index) {
             case 0:
                 status = SDgetdimscale(dim_id, (VOIDP)data_Y_out);
-                nrow   = 4;
+                CHECK_NOT_VAL(status, FAIL, "SDgetdimscale");
+                nrow = 4;
                 for (i = 0; i < n_values / nrow; i++) {
                     for (j = 0; j < nrow; j++)
                         printf("  %-6.3f", data_Y_out[i * nrow + j]);
@@ -129,6 +133,7 @@ main()
                 break;
             case 1:
                 status = SDgetdimscale(dim_id, (VOIDP)data_X_out);
+                CHECK_NOT_VAL(status, FAIL, "SDgetdimscale");
                 for (i = 0; i < n_values; i++)
                     printf("  %d", data_X_out[i]);
                 break;
@@ -141,12 +146,14 @@ main()
     /*
      * Terminate access to the data set.
      */
-    status = SDendaccess(sds_id);
+    SDendaccess(sds_id);
+    CHECK_NOT_VAL(status, FAIL, "SDendaccess");
 
     /*
      * Terminate access to the SD interface and close the file.
      */
-    status = SDend(sd_id);
+    SDend(sd_id);
+    CHECK_NOT_VAL(status, FAIL, "SDend");
 
     return 0;
 }

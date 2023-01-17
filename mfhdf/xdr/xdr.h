@@ -190,6 +190,11 @@ xdr_putint32(XDR *xdrs, int32_t *ip)
     if ((xdrs)->x_ops->x_destroy)                                                                            \
     (*(xdrs)->x_ops->x_destroy)(xdrs)
 
+#define XDR_CONTROL(xdrs, req, op)                                                                           \
+    if ((xdrs)->x_ops->x_control)                                                                            \
+    (*(xdrs)->x_ops->x_control)(xdrs, req, op)
+#define xdr_control(xdrs, req, op) XDR_CONTROL(xdrs, req, op)
+
 /*
  * Support struct for discriminated unions.
  * You create an array of xdrdiscrim structures, terminated with

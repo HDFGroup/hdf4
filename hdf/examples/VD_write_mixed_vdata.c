@@ -21,16 +21,16 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    intn  status_n;                        /* returned status for functions returning an intn  */
-    int32 status_32,                       /* returned status for functions returning an int32 */
-        file_id, vdata_id, vdata_ref = -1, /* vdata's reference number, set to -1 to create */
-        num_of_records;                    /* number of records actually written to the vdata */
-    float32 temp[N_RECORDS];               /* buffer to hold values of first field   */
-    int16   height[N_RECORDS];             /* buffer to hold values of second field  */
-    float32 speed[N_RECORDS];              /* buffer to hold values of third field   */
-    char8   ident[N_RECORDS];              /* buffer to hold values of fourth field  */
-    VOIDP   fldbufptrs[N_FIELDS];          /*pointers to be pointing to the field buffers*/
-    uint16  databuf[BUF_SIZE];             /* buffer to hold the data after being packed*/
+    intn  status_n;  /* returned status for functions returning an intn  */
+    int32 status_32, /* returned status for functions returning an int32 */
+        file_id, vdata_id;
+    int32   vdata_ref = -1;       /* vdata's reference number, set to -1 to create */
+    float32 temp[N_RECORDS];      /* buffer to hold values of first field   */
+    int16   height[N_RECORDS];    /* buffer to hold values of second field  */
+    float32 speed[N_RECORDS];     /* buffer to hold values of third field   */
+    char8   ident[N_RECORDS];     /* buffer to hold values of fourth field  */
+    VOIDP   fldbufptrs[N_FIELDS]; /*pointers to be pointing to the field buffers*/
+    uint16  databuf[BUF_SIZE];    /* buffer to hold the data after being packed*/
     int     i;
 
     /********************** End of variable declaration **********************/
@@ -44,6 +44,7 @@ main()
      * Initialize the VS interface.
      */
     status_n = Vstart(file_id);
+    CHECK_NOT_VAL(status_n, FAIL, "Vstart");
 
     /*
      * Create a new vdata.
@@ -54,21 +55,28 @@ main()
      * Set name and class name of the vdata.
      */
     status_32 = VSsetname(vdata_id, VDATA_NAME);
+    CHECK_NOT_VAL(status_32, FAIL, "VSsetname");
     status_32 = VSsetclass(vdata_id, CLASS_NAME);
+    CHECK_NOT_VAL(status_32, FAIL, "VSsetclass");
 
     /*
      * Introduce each field's name, data type, and order.  This is the first
      * part in defining a vdata field.
      */
     status_n = VSfdefine(vdata_id, FIELD1_NAME, DFNT_FLOAT32, ORDER);
+    CHECK_NOT_VAL(status_n, FAIL, "VSfdefine");
     status_n = VSfdefine(vdata_id, FIELD2_NAME, DFNT_INT16, ORDER);
+    CHECK_NOT_VAL(status_n, FAIL, "VSfdefine");
     status_n = VSfdefine(vdata_id, FIELD3_NAME, DFNT_FLOAT32, ORDER);
+    CHECK_NOT_VAL(status_n, FAIL, "VSfdefine");
     status_n = VSfdefine(vdata_id, FIELD4_NAME, DFNT_CHAR8, ORDER);
+    CHECK_NOT_VAL(status_n, FAIL, "VSfdefine");
 
     /*
      * Finalize the definition of the fields of the vdata.
      */
     status_n = VSsetfields(vdata_id, FIELDNAME_LIST);
+    CHECK_NOT_VAL(status_n, FAIL, "VSsetfields");
 
     /*
      * Enter data values into the field buffers by the records.
@@ -96,18 +104,23 @@ main()
      */
     status_n =
         VSfpack(vdata_id, _HDF_VSPACK, NULL, (VOIDP)databuf, BUF_SIZE, N_RECORDS, NULL, (VOIDP)fldbufptrs);
+    CHECK_NOT_VAL(status_n, FAIL, "VSfpack");
 
     /*
      * Write all records of the packed data to the vdata.
      */
-    num_of_records = VSwrite(vdata_id, (uint8 *)databuf, N_RECORDS, FULL_INTERLACE);
+    VSwrite(vdata_id, (uint8 *)databuf, N_RECORDS, FULL_INTERLACE);
 
     /*
      * Terminate access to the vdata and the VS interface, then close
      * the HDF file.
      */
     status_32 = VSdetach(vdata_id);
-    status_n  = Vend(file_id);
+    CHECK_NOT_VAL(status_32, FAIL, "VSdetach");
+    status_n = Vend(file_id);
+    CHECK_NOT_VAL(status_n, FAIL, "Vend");
     status_32 = Hclose(file_id);
+    CHECK_NOT_VAL(status_32, FAIL, "Hclose");
+
     return 0;
 }

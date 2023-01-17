@@ -8,15 +8,16 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    intn  status_n;                       /* returned status for functions returning an intn */
-    int32 status_32,                      /* returned status for functions returning an int32*/
-        file_id, an_id, ann_id, n_annots, /* number of annotations */
-        *ann_list,                        /* list of annotation identifiers */
-        vgroup_ref,                       /* reference number of the vgroup */
-        index;                            /* index of an annotation in the annotation list */
-    ann_type annot_type = AN_DATA_DESC;   /* annotation to be obtained*/
-    uint16   ann_tag, ann_ref,            /* tag/ref number of an annotation */
-        vgroup_tag = DFTAG_VG;            /* tag of the vgroup */
+    intn     status_n;  /* returned status for functions returning an intn */
+    int32    status_32; /* returned status for functions returning an int32*/
+    int32    file_id, an_id;
+    int32    n_annots;                  /* number of annotations */
+    int32   *ann_list = NULL;           /* list of annotation identifiers */
+    int32    vgroup_ref;                /* reference number of the vgroup */
+    int32    index;                     /* index of an annotation in the annotation list */
+    ann_type annot_type = AN_DATA_DESC; /* annotation to be obtained*/
+    uint16   ann_tag, ann_ref,          /* tag/ref number of an annotation */
+        vgroup_tag = DFTAG_VG;          /* tag of the vgroup */
 
     /********************** End of variable declaration **********************/
 
@@ -29,16 +30,19 @@ main()
      * Initialize the V interface.
      */
     status_n = Vstart(file_id);
+    CHECK_NOT_VAL(status_n, FAIL, "Vstart");
 
     /*
      * Get the vgroup named VG_NAME.
      */
     vgroup_ref = Vfind(file_id, VG_NAME);
+    CHECK_NOT_VAL(vgroup_ref, FAIL, "Vfind");
 
     /*
      * Initialize the AN interface and obtain an interface id.
      */
     an_id = ANstart(file_id);
+    CHECK_NOT_VAL(an_id, FAIL, "ANstart");
 
     /*
      * Get the number of object descriptions.  Note that, since ANnumann takes
@@ -93,7 +97,9 @@ main()
      * Terminate access to the AN interface and close the HDF file.
      */
     status_32 = ANend(an_id);
-    status_n  = Hclose(file_id);
+    CHECK_NOT_VAL(status_32, FAIL, "ANend");
+    status_n = Hclose(file_id);
+    CHECK_NOT_VAL(status_n, FAIL, "Hclose");
 
     /*
      * Free the space allocated for the annotation identifier list.

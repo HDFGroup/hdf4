@@ -8,8 +8,9 @@ main()
     /************************* Variable declaration **************************/
 
     intn  status_n;  /* returned status for functions returning an intn  */
-    int32 status_32, /* returned status for functions returning an int32 */
-        vgroup_ref = -1, vgroup1_id, vgroup2_id, file_id;
+    int32 status_32; /* returned status for functions returning an int32 */
+    int32 vgroup_ref = -1;
+    int32 vgroup1_id, vgroup2_id, file_id;
 
     /********************** End of variable declaration **********************/
 
@@ -22,6 +23,7 @@ main()
      * Initialize the V interface.
      */
     status_n = Vstart(file_id);
+    CHECK_NOT_VAL(status_n, FAIL, "Vstart");
 
     /*
      * Create the first vgroup.  Note that the vgroup reference number is set
@@ -42,16 +44,21 @@ main()
      * Terminate access to the first vgroup.
      */
     status_32 = Vdetach(vgroup1_id);
+    CHECK_NOT_VAL(status_32, FAIL, "Vdetach");
 
     /*
      * Terminate access to the second vgroup.
      */
     status_32 = Vdetach(vgroup2_id);
+    CHECK_NOT_VAL(status_32, FAIL, "Vdetach");
 
     /*
      * Terminate access to the V interface and close the HDF file.
      */
     status_n = Vend(file_id);
+    CHECK_NOT_VAL(status_n, FAIL, "Vend");
     status_n = Hclose(file_id);
+    CHECK_NOT_VAL(status_n, FAIL, "Hclose");
+
     return 0;
 }

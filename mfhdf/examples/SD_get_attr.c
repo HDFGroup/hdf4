@@ -33,6 +33,7 @@ main()
      * parameter is an SD interface identifier.
      */
     status = SDattrinfo(sd_id, attr_index, attr_name, &data_type, &n_values);
+    CHECK_NOT_VAL(status, FAIL, "SDattrinfo");
 
     /* The data type should be DFNT_CHAR, from SD_set_attr.c */
     if (data_type == DFNT_CHAR) {
@@ -47,6 +48,7 @@ main()
          * Read the file attribute data.
          */
         status = SDreadattr(sd_id, attr_index, fileattr_data);
+        CHECK_NOT_VAL(status, FAIL, "SDreadattr");
 
         /*
          * Print out file attribute value and free buffer.
@@ -70,6 +72,7 @@ main()
      * Get information about the data set attribute.
      */
     status = SDattrinfo(sds_id, attr_index, attr_name, &data_type, &n_values);
+    CHECK_NOT_VAL(status, FAIL, "SDattrinfo");
 
     /*
      * The data type should be DFNT_FLOAT32, from SD_set_attr.c.
@@ -86,6 +89,7 @@ main()
          * Read the SDS attribute data.
          */
         status = SDreadattr(sds_id, attr_index, sds_data);
+        CHECK_NOT_VAL(status, FAIL, "SDreadattr");
 
         /*
          * Print out SDS attribute data type and values and free buffer.
@@ -112,6 +116,7 @@ main()
      * Get information about the dimension attribute.
      */
     status = SDattrinfo(dim_id, attr_index, attr_name, &data_type, &n_values);
+    CHECK_NOT_VAL(status, FAIL, "SDattrinfo");
 
     /*
      * The data type should be DFNT_CHAR, from SD_set_attr.c.
@@ -127,7 +132,8 @@ main()
         /*
          * Read the dimension attribute data.
          */
-        status                     = SDreadattr(dim_id, attr_index, dimattr_data);
+        status = SDreadattr(dim_id, attr_index, dimattr_data);
+        CHECK_NOT_VAL(status, FAIL, "SDreadattr");
         dimattr_data[n_values - 1] = '\0';
 
         /*
@@ -142,7 +148,9 @@ main()
      * close the file.
      */
     status = SDendaccess(sds_id);
+    CHECK_NOT_VAL(status, FAIL, "SDendaccess");
     status = SDend(sd_id);
+    CHECK_NOT_VAL(status, FAIL, "SDend");
 
     /*   Output of this program is :
      *

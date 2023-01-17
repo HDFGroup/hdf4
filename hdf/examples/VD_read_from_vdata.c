@@ -18,9 +18,8 @@ main()
     intn  status_n;                             /* returned status for functions returning an intn  */
     int32 status_32,                            /* returned status for functions returning an int32 */
         file_id, vdata_id, vdata_ref,           /* vdata's reference number */
-        num_of_records,                         /* number of records actually written to the vdata */
-        record_pos;                             /* position of the current record */
-    int16   i, rec_num;                         /* current record number in the vdata */
+        num_of_records;                         /* number of records actually written to the vdata */
+    int16   rec_num;                            /* current record number in the vdata */
     float32 databuf[N_RECORDS][N_VALS_PER_REC]; /* buffer for vdata values */
 
     /********************** End of variable declaration **********************/
@@ -34,6 +33,7 @@ main()
      * Initialize the VS interface.
      */
     status_n = Vstart(file_id);
+    CHECK_NOT_VAL(status_n, FAIL, "Vstart");
 
     /*
      * Get the reference number of the vdata, whose name is specified in
@@ -53,11 +53,12 @@ main()
      * Specify the fields that will be read.
      */
     status_n = VSsetfields(vdata_id, FIELDNAME_LIST);
+    CHECK_NOT_VAL(status_n, FAIL, "VSsetfields");
 
     /*
      * Place the current point to the position specified in RECORD_INDEX.
      */
-    record_pos = VSseek(vdata_id, RECORD_INDEX);
+    VSseek(vdata_id, RECORD_INDEX);
 
     /*
      * Read the next N_RECORDS records from the vdata and store the data
@@ -80,7 +81,11 @@ main()
      * the HDF file.
      */
     status_32 = VSdetach(vdata_id);
-    status_n  = Vend(file_id);
+    CHECK_NOT_VAL(status_32, FAIL, "VSdetach");
+    status_n = Vend(file_id);
+    CHECK_NOT_VAL(status_n, FAIL, "Vend");
     status_32 = Hclose(file_id);
+    CHECK_NOT_VAL(status_32, FAIL, "Hclose");
+
     return 0;
 }

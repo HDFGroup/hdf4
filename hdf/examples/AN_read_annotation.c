@@ -23,17 +23,20 @@ main()
      * Open the HDF file.
      */
     file_id = Hopen(FILE_NAME, DFACC_READ, 0);
+    CHECK_NOT_VAL(file_id, FAIL, "Hopen");
 
     /*
      * Initialize the AN interface.
      */
     an_id = ANstart(file_id);
+    CHECK_NOT_VAL(an_id, FAIL, "ANstart");
 
     /*
      * Get the annotation information, e.g., the numbers of file labels, file
      * descriptions, data labels, and data descriptions.
      */
     status_n = ANfileinfo(an_id, &n_file_labels, &n_file_descs, &n_data_labels, &n_data_descs);
+    CHECK_NOT_VAL(status_n, FAIL, "ANfileinfo");
 
     /*
      * Get the data labels.  Note that this for loop can be used to
@@ -48,6 +51,7 @@ main()
          * Get the identifier of the current data label.
          */
         ann_id = ANselect(an_id, index, AN_DATA_LABEL);
+        CHECK_NOT_VAL(ann_id, FAIL, "ANselect");
 
         /*
          * Get the length of the data label.
@@ -68,6 +72,7 @@ main()
          *
          */
         status_32 = ANreadann(ann_id, ann_buf, ann_length + 1);
+        CHECK_NOT_VAL(status_32, FAIL, "ANreadann");
         printf("Data label index: %d\n", index);
         printf("Data label contents: %s\n", ann_buf);
 
@@ -75,6 +80,7 @@ main()
          * Terminate access to the current data label.
          */
         status_n = ANendaccess(ann_id);
+        CHECK_NOT_VAL(status_n, FAIL, "ANendaccess");
 
         /*
          * Free the space allocated for the annotation buffer.
@@ -86,6 +92,9 @@ main()
      * Terminate access to the AN interface and close the HDF file.
      */
     status_32 = ANend(an_id);
-    status_n  = Hclose(file_id);
+    CHECK_NOT_VAL(status_32, FAIL, "ANend");
+    status_n = Hclose(file_id);
+    CHECK_NOT_VAL(status_n, FAIL, "Hclose");
+
     return 0;
 }

@@ -42,6 +42,7 @@ main()
      * Read entire data into data array.
      */
     status = SDreaddata(sds_id, start, NULL, edges, (VOIDP)data);
+    CHECK_NOT_VAL(status, FAIL, "SDreaddata");
 
     /*
      * Print 10th row; the following numbers should be displayed.
@@ -56,11 +57,13 @@ main()
      * Terminate access to the data set.
      */
     status = SDendaccess(sds_id);
+    CHECK_NOT_VAL(status, FAIL, "SDendaccess");
 
     /*
      * Terminate access to the SD interface and close the file.
      */
     status = SDend(sd_id);
+    CHECK_NOT_VAL(status, FAIL, "SDend");
 
     return 0;
 }

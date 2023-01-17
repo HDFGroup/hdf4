@@ -24,6 +24,7 @@ main()
      * Initialize the VS interface.
      */
     status_n = Vstart(file_id);
+    CHECK_NOT_VAL(status_n, FAIL, "Vstart");
 
     /*
      * Set the reference number to -1 to start the search from
@@ -44,7 +45,7 @@ main()
      */
     while ((vdata_ref = VSgetid(file_id, vdata_ref)) != FAIL) {
         vdata_id = VSattach(file_id, vdata_ref, "r");
-        if ((status_n = VSfexist(vdata_id, SEARCHED_FIELDS)) != FAIL) {
+        if (VSfexist(vdata_id, SEARCHED_FIELDS) != FAIL) {
             found_fields = TRUE;
             break;
         }
@@ -53,6 +54,7 @@ main()
          * Detach from the current vdata before continuing searching.
          */
         status_32 = VSdetach(vdata_id);
+        CHECK_NOT_VAL(status_32, FAIL, "VSdetach");
 
         index++; /* advance the index by 1 for the next vdata */
     }
@@ -66,12 +68,16 @@ main()
     else {
         printf("Fields Position and Temperature found in the vdata at position %d\n", index);
         status_32 = VSdetach(vdata_id);
+        CHECK_NOT_VAL(status_32, FAIL, "VSdetach");
     }
 
     /*
      * Terminate access to the VS interface and close the HDF file.
      */
-    status_n  = Vend(file_id);
+    status_n = Vend(file_id);
+    CHECK_NOT_VAL(status_n, FAIL, "Vend");
     status_32 = Hclose(file_id);
+    CHECK_NOT_VAL(status_32, FAIL, "Hclose");
+
     return 0;
 }

@@ -138,6 +138,20 @@ typedef intn (*hdf_termfunc_t)(void); /* termination function typedef */
 
 /* .................................................................. */
 
+/* Publicly useful macros for tests/examples.  */
+
+/* Used to make certain a checked value _is_not_ a specific value.
+ * If the checked value matches the specific value, print an error message. */
+#define CHECK_NOT_VAL(ret, val, where)                                                                       \
+    do {                                                                                                     \
+        if (ret == val) {                                                                                    \
+            printf("*** ERROR from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,          \
+                   __FILE__);                                                                                \
+        }                                                                                                    \
+    } while (0)
+
+/* .................................................................. */
+
 /* Publicly accessible functions declarations.  This includes all the
    functions that are used by application programs.  */
 

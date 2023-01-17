@@ -11,17 +11,15 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    intn  status;            /* status for functions returning an intn */
-    int32 file_id,           /* HDF file identifier */
-        gr_id,               /* GR interface identifier */
-        ri_id,               /* raster image identifier */
-        dims[2],             /* dimension sizes of the image array */
-        start[2],            /* start position to read the image array */
-        edges[2],            /* edges of read array */
-        interlace_mode;      /* interlace mode of the image */
-    HDF_CHUNK_DEF chunk_def; /* Chunk definition set */
-    int32         image_data[X_LENGTH][Y_LENGTH][NCOMPS];
-    int           ii, jj;
+    intn  status;  /* status for functions returning an intn */
+    int32 file_id, /* HDF file identifier */
+        gr_id,     /* GR interface identifier */
+        ri_id,     /* raster image identifier */
+        dims[2],   /* dimension sizes of the image array */
+        start[2],  /* start position to read the image array */
+        edges[2];  /* edges of read array */
+    int32 image_data[X_LENGTH][Y_LENGTH][NCOMPS];
+    int   ii, jj;
 
     /********************** End of variable declaration **********************/
 
@@ -51,6 +49,7 @@ main()
 
     /* Read the data in the image array. */
     status = GRreadimage(ri_id, start, NULL, edges, (VOIDP)image_data);
+    CHECK_NOT_VAL(status, FAIL, "GRreadimage");
 
     printf("Image Data:\n");
     printf("Component 1:\n  ");
@@ -79,7 +78,11 @@ main()
      * close the HDF file.
      */
     status = GRendaccess(ri_id);
+    CHECK_NOT_VAL(status, FAIL, "GRendaccess");
     status = GRend(gr_id);
+    CHECK_NOT_VAL(status, FAIL, "GRend");
     status = Hclose(file_id);
+    CHECK_NOT_VAL(status, FAIL, "Hclose");
+
     return 0;
 }

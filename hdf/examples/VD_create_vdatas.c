@@ -26,6 +26,7 @@ main()
      * Initialize the VS interface associated with the first HDF file.
      */
     status_n = Vstart(file1_id);
+    CHECK_NOT_VAL(status_n, FAIL, "Vstart");
 
     /*
      * Create a vdata in the first HDF file.
@@ -36,6 +37,7 @@ main()
      * Assign a name to the vdata.
      */
     status_32 = VSsetname(vdata_id, VDATA_NAME);
+    CHECK_NOT_VAL(status_32, FAIL, "VSsetname");
 
     /*
      * Other operations on the vdata identified by vdata_id can be carried
@@ -51,6 +53,7 @@ main()
      * Initialize the VS interface associated with the second HDF file.
      */
     status_n = Vstart(file2_id);
+    CHECK_NOT_VAL(status_n, FAIL, "Vstart");
 
     /*
      * Create the first vdata in the second HDF file.
@@ -66,7 +69,9 @@ main()
      * Assign a class name to these vdatas.
      */
     status_32 = VSsetclass(vdata1_id, VDATA_CLASS);
+    CHECK_NOT_VAL(status_32, FAIL, "VSsetclass");
     status_32 = VSsetclass(vdata2_id, VDATA_CLASS);
+    CHECK_NOT_VAL(status_32, FAIL, "VSsetclass");
 
     /*
      * Other operations on the vdatas identified by vdata1_id and vdata2_id
@@ -77,11 +82,13 @@ main()
      * Terminate access to the first vdata in the second HDF file.
      */
     status_32 = VSdetach(vdata1_id);
+    CHECK_NOT_VAL(status_32, FAIL, "VSdetach");
 
     /*
      * Terminate access to the second vdata in the second HDF file.
      */
     status_32 = VSdetach(vdata2_id);
+    CHECK_NOT_VAL(status_32, FAIL, "VSdetach");
 
     /*
     * From this point on, any operations on the vdatas identified by vdata1_id
@@ -92,25 +99,31 @@ main()
      * Terminate access to the VS interface associated with the second HDF file.
      */
     status_n = Vend(file2_id);
+    CHECK_NOT_VAL(status_n, FAIL, "Vend");
 
     /*
      * Close the second HDF file.
      */
     status_n = Hclose(file2_id);
+    CHECK_NOT_VAL(status_n, FAIL, "Hclose");
 
     /*
      * Terminate access to the vdata in the first HDF file.
      */
     status_32 = VSdetach(vdata_id);
+    CHECK_NOT_VAL(status_32, FAIL, "VSdetach");
 
     /*
      * Terminate access to the VS interface associated with the first HDF file.
      */
     status_n = Vend(file1_id);
+    CHECK_NOT_VAL(status_n, FAIL, "Vend");
 
     /*
      * Close the first HDF file.
      */
     status_n = Hclose(file1_id);
+    CHECK_NOT_VAL(status_n, FAIL, "Hclose");
+
     return 0;
 }

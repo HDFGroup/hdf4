@@ -28,6 +28,7 @@ main()
      * Initialize the VS interface.
      */
     status_n = Vstart(file_id);
+    CHECK_NOT_VAL(status_n, FAIL, "Vstart");
 
     /*
      * Set vdata_ref to -1 to start the search from the beginning of file.
@@ -52,6 +53,7 @@ main()
         if (VSisattr(vdata_id) != TRUE) {
             status_n =
                 VSinquire(vdata_id, &n_records, &interlace_mode, fieldname_list, &vdata_size, vdata_name);
+            CHECK_NOT_VAL(status_n, FAIL, "VSinquire");
             printf("Vdata %s: - contains %d records\n\tInterlace mode: %s \
                  \n\tFields: %s - %d bytes\n\t\n",
                    vdata_name, n_records, interlace_mode == FULL_INTERLACE ? "FULL" : "NONE", fieldname_list,
@@ -62,12 +64,16 @@ main()
          * Detach from the current vdata.
          */
         status_32 = VSdetach(vdata_id);
+        CHECK_NOT_VAL(status_32, FAIL, "VSdetach");
     } /* while */
 
     /*
      * Terminate access to the VS interface and close the HDF file.
      */
-    status_n  = Vend(file_id);
+    status_n = Vend(file_id);
+    CHECK_NOT_VAL(status_n, FAIL, "Vend");
     status_32 = Hclose(file_id);
+    CHECK_NOT_VAL(status_32, FAIL, "Hclose");
+
     return 0;
 }

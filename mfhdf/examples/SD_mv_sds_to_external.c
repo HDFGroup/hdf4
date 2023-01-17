@@ -31,12 +31,15 @@ main()
      * values into it, starting at byte location OFFSET.
      */
     status = SDsetexternalfile(sds_id, EXT_FILE_NAME, OFFSET);
+    CHECK_NOT_VAL(status, FAIL, "SDsetexternalfile");
 
     /*
      * Terminate access to the data set, SD interface, and file.
      */
     status = SDendaccess(sds_id);
+    CHECK_NOT_VAL(status, FAIL, "SDendaccess");
     status = SDend(sd_id);
+    CHECK_NOT_VAL(status, FAIL, "SDend");
 
     return 0;
 }

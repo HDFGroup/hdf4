@@ -56,6 +56,7 @@ main()
     chunk_def.comp.chunk_lengths[0]    = 3;
     chunk_def.comp.chunk_lengths[1]    = 2;
     status                             = GRsetchunk(ri_id, chunk_def, HDF_CHUNK | HDF_COMP);
+    CHECK_NOT_VAL(status, FAIL, "GRsetchunk");
 
     /*
      * Write first chunk(0,0).
@@ -63,6 +64,7 @@ main()
     origin[0] = 0;
     origin[1] = 0;
     status    = GRwritechunk(ri_id, origin, (VOIDP)chunk00);
+    CHECK_NOT_VAL(status, FAIL, "GRwritechunk");
 
     /*
      * Write second chunk(0,1).
@@ -70,6 +72,7 @@ main()
     origin[0] = 0;
     origin[1] = 1;
     status    = GRwritechunk(ri_id, origin, (VOIDP)chunk01);
+    CHECK_NOT_VAL(status, FAIL, "GRwritechunk");
 
     /*
      * Write third chunk(1,4).
@@ -77,13 +80,18 @@ main()
     origin[0] = 1;
     origin[1] = 4;
     status    = GRwritechunk(ri_id, origin, (VOIDP)chunk14);
+    CHECK_NOT_VAL(status, FAIL, "GRwritechunk");
 
     /*
      * Terminate access to the raster image and to the GR interface and,
      * close the HDF file.
      */
     status = GRendaccess(ri_id);
+    CHECK_NOT_VAL(status, FAIL, "GRendaccess");
     status = GRend(gr_id);
+    CHECK_NOT_VAL(status, FAIL, "GRend");
     status = Hclose(file_id);
+    CHECK_NOT_VAL(status, FAIL, "Hclose");
+
     return 0;
 }

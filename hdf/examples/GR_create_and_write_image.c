@@ -30,11 +30,13 @@ main()
      * Create and open the file.
      */
     file_id = Hopen(FILE_NAME, DFACC_CREATE, 0);
+    CHECK_NOT_VAL(file_id, FAIL, "Hopen");
 
     /*
      * Initialize the GR interface.
      */
     gr_id = GRstart(file_id);
+    CHECK_NOT_VAL(gr_id, FAIL, "GRstart");
 
     /*
      * Set the data type, interlace mode, and dimensions of the image.
@@ -48,6 +50,7 @@ main()
      * Create the raster image array.
      */
     ri_id = GRcreate(gr_id, IMAGE_NAME, N_COMPS, data_type, interlace_mode, dim_sizes);
+    CHECK_NOT_VAL(ri_id, FAIL, "GRcreate");
 
     /*
      * Fill the image data buffer with values.
@@ -71,13 +74,18 @@ main()
      * Write the data in the buffer into the image array.
      */
     status = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)image_buf);
+    CHECK_NOT_VAL(status, FAIL, "GRwriteimage");
 
     /*
      * Terminate access to the raster image and to the GR interface and,
      * close the HDF file.
      */
     status = GRendaccess(ri_id);
+    CHECK_NOT_VAL(status, FAIL, "GRendaccess");
     status = GRend(gr_id);
+    CHECK_NOT_VAL(status, FAIL, "GRend");
     status = Hclose(file_id);
+    CHECK_NOT_VAL(status, FAIL, "Hclose");
+
     return 0;
 }

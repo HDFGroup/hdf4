@@ -7,12 +7,13 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    intn  status_n;                                /* returned status for functions returning an intn  */
-    int32 status_32,                               /* returned status for functions returning an int32 */
-        file_id, vgroup_id, vgroup_ref, obj_index, /* index of an object within a vgroup */
-        num_of_pairs,                              /* number of tag/ref number pairs, i.e., objects */
-        obj_tag, obj_ref,                          /* tag/ref number of an HDF object */
-        vgroup_pos = 0;                            /* position of a vgroup in the file */
+    intn  status_n;  /* returned status for functions returning an intn  */
+    int32 status_32; /* returned status for functions returning an int32 */
+    int32 file_id, vgroup_id, vgroup_ref;
+    int32 obj_index;        /* index of an object within a vgroup */
+    int32 num_of_pairs;     /* number of tag/ref number pairs, i.e., objects */
+    int32 obj_tag, obj_ref; /* tag/ref number of an HDF object */
+    int32 vgroup_pos = 0;   /* position of a vgroup in the file */
 
     /********************** End of variable declaration ***********************/
 
@@ -25,6 +26,7 @@ main()
      * Initialize the V interface.
      */
     status_n = Vstart(file_id);
+    CHECK_NOT_VAL(status_n, FAIL, "Vstart");
 
     /*
      * Obtain each vgroup in the file by its reference number, get the
@@ -64,6 +66,7 @@ main()
                  * by its index, obj_index, and display them.
                  */
                 status_n = Vgettagref(vgroup_id, obj_index, &obj_tag, &obj_ref);
+                CHECK_NOT_VAL(status_n, FAIL, "Vgettagref");
                 printf("tag = %d, ref = %d", obj_tag, obj_ref);
 
                 /*
@@ -86,6 +89,7 @@ main()
          * Terminate access to the current vgroup.
          */
         status_32 = Vdetach(vgroup_id);
+        CHECK_NOT_VAL(status_32, FAIL, "Vdetach");
 
         /*
          * Move to the next vgroup position.
@@ -97,6 +101,9 @@ main()
      * Terminate access to the V interface and close the file.
      */
     status_n = Vend(file_id);
+    CHECK_NOT_VAL(status_n, FAIL, "Vend");
     status_n = Hclose(file_id);
+    CHECK_NOT_VAL(status_n, FAIL, "Hclose");
+
     return 0;
 }

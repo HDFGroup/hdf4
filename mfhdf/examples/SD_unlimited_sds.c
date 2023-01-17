@@ -57,13 +57,16 @@ main()
      * Write the data.
      */
     status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)data);
+    CHECK_NOT_VAL(status, FAIL, "SDwritedata");
 
     /*
      * Terminate access to the array data set, terminate access
      * to the SD interface, and close the file.
      */
     status = SDendaccess(sds_id);
+    CHECK_NOT_VAL(status, FAIL, "SDendaccess");
     status = SDend(sd_id);
+    CHECK_NOT_VAL(status, FAIL, "SDend");
 
     /*
      * Store the array values to be appended to the data set.
@@ -102,17 +105,20 @@ main()
          * Append data to the data set.
          */
         status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)append_data);
+        CHECK_NOT_VAL(status, FAIL, "SDwritedata");
     }
 
     /*
      * Terminate access to the data set.
      */
     status = SDendaccess(sds_id);
+    CHECK_NOT_VAL(status, FAIL, "SDendaccess");
 
     /*
      * Terminate access to the SD interface and close the file.
      */
     status = SDend(sd_id);
+    CHECK_NOT_VAL(status, FAIL, "SDend");
 
     return 0;
 }

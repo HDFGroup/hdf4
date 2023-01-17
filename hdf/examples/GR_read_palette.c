@@ -46,12 +46,14 @@ main()
      * Obtain and display information about the palette.
      */
     status = GRgetlutinfo(pal_id, &n_comps, &data_type, &interlace_mode, &n_entries);
+    CHECK_NOT_VAL(status, FAIL, "GRgetlutinfo");
     printf("Palette: %d components; %d entries\n", n_comps, n_entries);
 
     /*
      * Read the palette data.
      */
     status = GRreadlut(pal_id, (VOIDP)palette_data);
+    CHECK_NOT_VAL(status, FAIL, "GRreadlut");
 
     /*
      * Display the palette data.  Recall that HDF supports only 256 colors.
@@ -74,7 +76,11 @@ main()
      * close the HDF file.
      */
     status = GRendaccess(ri_id);
+    CHECK_NOT_VAL(status, FAIL, "GRendaccess");
     status = GRend(gr_id);
+    CHECK_NOT_VAL(status, FAIL, "GRend");
     status = Hclose(file_id);
+    CHECK_NOT_VAL(status, FAIL, "Hclose");
+
     return 0;
 }

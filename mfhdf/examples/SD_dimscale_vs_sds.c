@@ -24,6 +24,7 @@ main()
      * Obtain information about the file.
      */
     status = SDfileinfo(sd_id, &n_datasets, &n_file_attr);
+    CHECK_NOT_VAL(status, FAIL, "SDfileinfo");
 
     /* Get information about each SDS in the file.
      *  Check whether it is a coordinate variable, then display retrieved
@@ -38,6 +39,7 @@ main()
     for (sds_index = 0; sds_index < n_datasets; sds_index++) {
         sds_id = SDselect(sd_id, sds_index);
         status = SDgetinfo(sds_id, sds_name, &rank, dim_sizes, &data_type, &n_attrs);
+        CHECK_NOT_VAL(status, FAIL, "SDgetinfo");
         if (SDiscoordvar(sds_id))
             printf(" Coordinate variable with the name %s\n", sds_name);
         else
@@ -47,12 +49,14 @@ main()
          * Terminate access to the selected data set.
          */
         status = SDendaccess(sds_id);
+        CHECK_NOT_VAL(status, FAIL, "SDendaccess");
     }
 
     /*
      * Terminate access to the SD interface and close the file.
      */
     status = SDend(sd_id);
+    CHECK_NOT_VAL(status, FAIL, "SDend");
 
     return 0;
 }
