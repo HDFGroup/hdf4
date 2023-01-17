@@ -95,21 +95,21 @@
 
 #if defined(mfhdf_hdiff_shared_EXPORTS)
 #if defined(_MSC_VER) || defined(__MINGW32__) /* MSVC Compiler Case */
-#define HDFPUBLIC   __declspec(dllimport)
-#define HDFLIBAPI   extern __declspec(dllimport)
+#define HDFPUBLIC __declspec(dllimport)
+#define HDFLIBAPI extern __declspec(dllimport)
 #elif (__GNUC__ >= 4) /* GCC 4.x has support for visibility options */
-#define HDFPUBLIC   __attribute__((visibility("default")))
-#define HDFLIBAPI   extern __attribute__((visibility("default")))
+#define HDFPUBLIC __attribute__((visibility("default")))
+#define HDFLIBAPI extern __attribute__((visibility("default")))
 #endif
 #endif /* mfhdf_hdiff_shared_EXPORTS */
 
 #if defined(mfhdf_hrepack_shared_EXPORTS)
 #if defined(_MSC_VER) || defined(__MINGW32__) /* MSVC Compiler Case */
-#define HDFPUBLIC   __declspec(dllimport)
-#define HDFLIBAPI   extern __declspec(dllimport)
+#define HDFPUBLIC __declspec(dllimport)
+#define HDFLIBAPI extern __declspec(dllimport)
 #elif (__GNUC__ >= 4) /* GCC 4.x has support for visibility options */
-#define HDFPUBLIC   __attribute__((visibility("default")))
-#define HDFLIBAPI   extern __attribute__((visibility("default")))
+#define HDFPUBLIC __attribute__((visibility("default")))
+#define HDFLIBAPI extern __attribute__((visibility("default")))
 #endif
 #endif /* mfhdf_hrepack_shared_EXPORTS */
 
