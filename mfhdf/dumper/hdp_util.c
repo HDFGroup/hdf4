@@ -326,6 +326,8 @@ make_group_list(int32 fid, uint16 tag, uint16 ref)
 DFdi *
 get_next_group(groupinfo_t *g_list, intn advance)
 {
+    if (g_list == NULL)
+        return (NULL);
     if (advance)
         g_list->curr_dd++;
     if (g_list->curr_dd >= g_list->max_dds)
@@ -524,12 +526,8 @@ free_obj_list(objlist_t *o_list)
     intn       i;       /* local counting variable */
     objinfo_t *obj_ptr; /* temporary pointer to a working DD object */
 
-    /* BMR: verify that o_list is not nil before accessing */
     if (o_list != NULL) {
         for (i = 0, obj_ptr = o_list->raw_obj_arr; i < o_list->max_obj; i++, obj_ptr++) {
-            /* group_info can be NULL while is_group is set, how to handle
-               this one??? BMR 8/1/2000
-               if( obj_ptr->is_group && obj_ptr->group_info != NULL ) */
             if (obj_ptr->is_group)
                 free_group_list(obj_ptr->group_info);
             if (obj_ptr->is_special)

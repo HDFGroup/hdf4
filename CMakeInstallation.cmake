@@ -316,41 +316,7 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
     endif ()
 #WiX variables
     set (CPACK_WIX_UNINSTALL "1")
-# .. variable:: CPACK_WIX_LICENSE_RTF
-#  RTF License File
-#
-#  If CPACK_RESOURCE_FILE_LICENSE has an .rtf extension it is used as-is.
-#
-#  If CPACK_RESOURCE_FILE_LICENSE has an .txt extension it is implicitly
-#  converted to RTF by the WiX Generator.
-#  The expected encoding of the .txt file is UTF-8.
-#
-#  With CPACK_WIX_LICENSE_RTF you can override the license file used by the
-#  WiX Generator in case CPACK_RESOURCE_FILE_LICENSE is in an unsupported
-#  format or the .txt -> .rtf conversion does not work as expected.
-    set (CPACK_RESOURCE_FILE_LICENSE "${HDF4_BINARY_DIR}/COPYING.txt")
-# .. variable:: CPACK_WIX_PRODUCT_ICON
-#  The Icon shown next to the program name in Add/Remove programs.
     set(CPACK_WIX_PRODUCT_ICON "${HDF_RESOURCES_DIR}\\\\hdf.ico")
-#
-# .. variable:: CPACK_WIX_UI_BANNER
-#
-#  The bitmap will appear at the top of all installer pages other than the
-#  welcome and completion dialogs.
-#
-#  If set, this image will replace the default banner image.
-#
-#  This image must be 493 by 58 pixels.
-#
-# .. variable:: CPACK_WIX_UI_DIALOG
-#
-#  Background bitmap used on the welcome and completion dialogs.
-#
-#  If this variable is set, the installer will replace the default dialog
-#  image.
-#
-#  This image must be 493 by 312 pixels.
-#
     set(CPACK_WIX_PROPERTY_ARPCOMMENTS "Hierarchical Data Format (HDF) Software Library and Utilities")
     set(CPACK_WIX_PROPERTY_ARPURLINFOABOUT "${HDF4_PACKAGE_URL}")
     set(CPACK_WIX_PROPERTY_ARPHELPLINK "${HDF4_PACKAGE_BUGREPORT}")
@@ -397,24 +363,29 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
     set (CPACK_PACKAGING_INSTALL_PREFIX "/${CPACK_PACKAGE_INSTALL_DIRECTORY}")
     set (CPACK_COMPONENTS_ALL_IN_ONE_PACKAGE ON)
 
-#    list (APPEND CPACK_GENERATOR "DEB")
-    set (CPACK_DEBIAN_PACKAGE_SECTION "Libraries")
-    set (CPACK_DEBIAN_PACKAGE_MAINTAINER "${HDF4_PACKAGE_BUGREPORT}")
+    option (HDF4_PACK_CREATE_DEB  "Package the HDF Library in a DEB package" OFF)
+    if (HDF4_PACK_CREATE_DEB)
+      list (APPEND CPACK_GENERATOR "DEB")
+      set (CPACK_DEBIAN_PACKAGE_SECTION "Libraries")
+      set (CPACK_DEBIAN_PACKAGE_MAINTAINER "${HDF4_PACKAGE_BUGREPORT}")
+    endif ()
 
-#    list (APPEND CPACK_GENERATOR "RPM")
-    set (CPACK_RPM_PACKAGE_RELEASE "1")
-    set (CPACK_RPM_PACKAGE_RELEASE_DIST ON)
-    set (CPACK_RPM_COMPONENT_INSTALL ON)
-    set (CPACK_RPM_PACKAGE_RELOCATABLE ON)
-    set (CPACK_RPM_FILE_NAME "RPM-DEFAULT")
-    set (CPACK_RPM_PACKAGE_NAME "${CPACK_PACKAGE_NAME}")
-    set (CPACK_RPM_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION}")
-    set (CPACK_RPM_PACKAGE_VENDOR "${CPACK_PACKAGE_VENDOR}")
-    set (CPACK_RPM_PACKAGE_LICENSE "BSD-style")
-    set (CPACK_RPM_PACKAGE_GROUP "Development/Libraries")
-    set (CPACK_RPM_PACKAGE_URL "${HDF4_PACKAGE_URL}")
-    set (CPACK_RPM_PACKAGE_SUMMARY "HDF is a unique technology suite that makes possible the management of extremely large and complex data collections.")
-    set (CPACK_RPM_PACKAGE_DESCRIPTION
+    option (HDF4_PACK_CREATE_RPM  "Package the HDF Library in a RPM package" OFF)
+    if (HDF4_PACK_CREATE_RPM)
+      list (APPEND CPACK_GENERATOR "RPM")
+      set (CPACK_RPM_PACKAGE_RELEASE "1")
+      set (CPACK_RPM_PACKAGE_RELEASE_DIST ON)
+      set (CPACK_RPM_COMPONENT_INSTALL ON)
+      set (CPACK_RPM_PACKAGE_RELOCATABLE ON)
+      set (CPACK_RPM_FILE_NAME "RPM-DEFAULT")
+      set (CPACK_RPM_PACKAGE_NAME "${CPACK_PACKAGE_NAME}")
+      set (CPACK_RPM_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION}")
+      set (CPACK_RPM_PACKAGE_VENDOR "${CPACK_PACKAGE_VENDOR}")
+      set (CPACK_RPM_PACKAGE_LICENSE "BSD-style")
+      set (CPACK_RPM_PACKAGE_GROUP "Development/Libraries")
+      set (CPACK_RPM_PACKAGE_URL "${HDF4_PACKAGE_URL}")
+      set (CPACK_RPM_PACKAGE_SUMMARY "HDF is a unique technology suite that makes possible the management of extremely large and complex data collections.")
+      set (CPACK_RPM_PACKAGE_DESCRIPTION
         "The HDF technology suite includes:
 
     * A versatile data model that can represent very complex data objects and a wide variety of metadata.
@@ -429,13 +400,14 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
 
 The HDF data model, file format, API, library, and tools are open and distributed without charge.
 "
-    )
+      )
 
-    #-----------------------------------------------------------------------------
-    # Configure the spec file for the install RPM
-    #-----------------------------------------------------------------------------
-#    configure_file ("${HDF4_RESOURCES_DIR}/hdf4.spec.in" "${CMAKE_CURRENT_BINARY_DIR}/${HDF4_PACKAGE_NAME}.spec" @ONLY IMMEDIATE)
-#    set (CPACK_RPM_USER_BINARY_SPECFILE "${CMAKE_CURRENT_BINARY_DIR}/${HDF4_PACKAGE_NAME}.spec")
+      #-----------------------------------------------------------------------------
+      # Configure the spec file for the install RPM
+      #-----------------------------------------------------------------------------
+#      configure_file ("${HDF4_RESOURCES_DIR}/hdf4.spec.in" "${CMAKE_CURRENT_BINARY_DIR}/${HDF4_PACKAGE_NAME}.spec" @ONLY IMMEDIATE)
+#      set (CPACK_RPM_USER_BINARY_SPECFILE "${CMAKE_CURRENT_BINARY_DIR}/${HDF4_PACKAGE_NAME}.spec")
+    endif ()
   endif ()
 
   # By default, do not warn when built on machines using only VS Express:

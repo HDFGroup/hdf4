@@ -262,7 +262,8 @@ NAME
 
 DESCRIPTION
    Returns the names of all the fields in comma separated string in
-   the argument 'fields'. (e.g., "PX,PY").
+   the argument 'fields', e.g., "PX,PY", if 'fields' is not NULL, otherwise,
+   simply returns the number of fields in the vdata.
 
 RETURNS
    Returns FAIL on error,
@@ -278,11 +279,6 @@ VSgetfields(int32 vkey, /* IN: vdata key */
     int32         ret_value = SUCCEED;
     CONSTR(FUNC, "VSgetfields");
 
-    /* check if a NULL field list is passed in, then return with
-       error (found while fixing bug #554) - BMR 4/30/01 */
-    if (fields == NULL)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
     /* check key is valid vdata */
     if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -296,13 +292,15 @@ VSgetfields(int32 vkey, /* IN: vdata key */
     if (vs == NULL)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
-    /* Got through Vdata and build the comma separated string of field names */
-    fields[0] = '\0';
-    /* No special handling for 0-field vdatas, this algorithm should work fine. */
-    for (i = 0; i < vs->wlist.n; i++) { /* build the comma-separated string */
-        HDstrcat(fields, vs->wlist.name[i]);
-        if (i < vs->wlist.n - 1)
-            HDstrcat(fields, ",");
+    /* Got through Vdata and build the comma separated string of field names.
+       No special handling for 0-field vdatas, this algorithm should work fine. */
+    if (fields != NULL) {
+        fields[0] = '\0';
+        for (i = 0; i < vs->wlist.n; i++) { /* build the comma-separated string */
+            HDstrcat(fields, vs->wlist.name[i]);
+            if (i < vs->wlist.n - 1)
+                HDstrcat(fields, ",");
+        }
     }
 
     /* return number of fields */

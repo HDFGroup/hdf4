@@ -419,7 +419,7 @@ HDFLIBAPI void HEprint(FILE *stream, int32 print_level);
 
 HDFLIBAPI int16 HEvalue(int32 level);
 
-HDFLIBAPI void HEPclear(void);
+HDFLIBAPI void HEclear(void);
 
 HDFLIBAPI intn HEshutdown(void);
 
