@@ -20,11 +20,7 @@ if (NOT ONLY_SHARED_LIBS)
   TARGET_C_PROPERTIES (hdp STATIC)
   target_link_libraries (hdp PRIVATE ${HDF4_MF_LIB_TARGET})
   set_target_properties (hdp PROPERTIES COMPILE_DEFINITIONS "HDF")
-  if (WIN32)
-    set_target_properties (hdp PROPERTIES LINK_FLAGS "/STACK:10000000")
-  endif ()
   set_global_variable (HDF4_UTILS_TO_EXPORT "${HDF4_UTILS_TO_EXPORT};hdp")
-
   set (H4_DEP_EXECUTABLES hdp)
 endif ()
 
@@ -34,11 +30,7 @@ if (BUILD_SHARED_LIBS)
   TARGET_C_PROPERTIES (hdp-shared SHARED)
   target_link_libraries (hdp-shared PRIVATE ${HDF4_MF_LIBSH_TARGET})
   set_target_properties (hdp-shared PROPERTIES COMPILE_DEFINITIONS "HDF")
-  if (WIN32)
-    set_target_properties (hdp-shared PROPERTIES LINK_FLAGS "/STACK:10000000")
-  endif ()
   set_global_variable (HDF4_UTILS_TO_EXPORT "${HDF4_UTILS_TO_EXPORT};hdp-shared")
-
   set (H4_DEP_EXECUTABLES ${H4_DEP_EXECUTABLES} hdp-shared)
 endif ()
 
