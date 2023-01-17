@@ -1,22 +1,28 @@
 # CTestCustom.cmake
-set (CTEST_CUSTOM_MAXIMUM_NUMBER_OF_WARNINGS 1500)
+set (CTEST_CUSTOM_MAXIMUM_NUMBER_OF_WARNINGS 3000)
 
 set (CTEST_CUSTOM_WARNING_EXCEPTION
     ${CTEST_CUSTOM_WARNING_EXCEPTION}
     ".*note.*expected.*void.*but argument is of type.*volatile.*"
-    "src.ZLIB.*:[ \t]*warning"
-    "zlib-src.*:[ \t]*warning"
-    "warning LNK4197:.*ZLIB-prefix"
-    "szip-src.*:[ \t]*warning"
-    "src.SZIP.*:[ \t]*warning"
-    "warning LNK4197:.*SZIP-prefix"
-    "jpeg-src.*:[ \t]*warning"
-    "src.JPEG.*:[ \t]*warning"
-    "warning LNK4197:.*JPEG-prefix"
+    ".*src.SZIP.*"
+    ".*src.ZLIB.*"
+    ".*src.JPEG.*"
+    ".*szip.src.*"
+    ".*zlib.src.*"
+    ".*jpeg.src.*"
     ".*POSIX name for this item is deprecated.*"
     ".*disabling jobserver mode.*"
     ".*warning.*implicit declaration of function.*"
     ".*note: expanded from macro.*"
+    "note.*expected.*void.*but argument is of type.*volatile.*"
+    "stamp.verify"
+    "CMake Warning*stamp"
+    "warning LNK4197:.*ZLIB-prefix"
+    "warning LNK4197:.*SZIP-prefix"
+    "warning LNK4197:.*JPEG-prefix"
+    "POSIX name for this item is deprecated.*"
+    "disabling jobserver mode.*"
+#    "note: expanded from macro.*"
 )
 
 set (CTEST_CUSTOM_MEMCHECK_IGNORE
@@ -106,22 +112,4 @@ set (CTEST_CUSTOM_MEMCHECK_IGNORE
     NC_TEST-clearall-objects
     HEDIT-hdfed.input1
     HEDIT-ristosds.input1
-)
-
-set (CTEST_CUSTOM_MAXIMUM_NUMBER_OF_WARNINGS 3000)
-
-set (CTEST_CUSTOM_WARNING_EXCEPTION
-    ${CTEST_CUSTOM_WARNING_EXCEPTION}
-    ".*note.*expected.*void.*but argument is of type.*volatile.*"
-    ".*src.SZIP.*:[ \t]*warning.*"
-    ".*src.ZLIB.*:[ \t]*warning.*"
-    ".*src.JPEG.*:[ \t]*warning.*"
-    ".*POSIX name for this item is deprecated.*"
-    ".*disabling jobserver mode.*"
-    ".*warning.*implicit declaration of function.*"
-    ".*note: expanded from macro.*"
-)
-
-set (CTEST_CUSTOM_MEMCHECK_IGNORE
-    ${CTEST_CUSTOM_MEMCHECK_IGNORE}
 )

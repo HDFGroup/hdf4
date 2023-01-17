@@ -942,7 +942,6 @@ hdf_read_ndgs(NC *handle)
     int32          aid1;
     uint16         ndgTag;
     uint16         ndgRef;
-    uint16         sddRef;
     uint16         lRef;
     uint16         uRef;
     uint16         fRef;
@@ -979,7 +978,6 @@ hdf_read_ndgs(NC *handle)
     intn   status;
     intn   tag_index;
     uint8 *p         = NULL;
-    uint8  tBuf[128] = "";
     intn   scale_offset; /* current offset into the scales record for the
                        current dimension's values */
     intn ret_value = SUCCEED;
@@ -1028,9 +1026,6 @@ hdf_read_ndgs(NC *handle)
          */
         status = SUCCEED;
         while (status == SUCCEED) {
-            uint16 ntTag;
-            uint16 ntRef;
-
             if (HQuerytagref(aid, &ndgTag, &ndgRef) == FAIL) {
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
             }
@@ -1051,7 +1046,7 @@ hdf_read_ndgs(NC *handle)
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
             }
 
-            sddRef = lRef = uRef = fRef = sRef = sdRef = 0;
+            lRef = uRef = fRef = sRef = sdRef = 0;
 
             /* default number type is Float32 */
             type    = NC_FLOAT;
@@ -1151,7 +1146,6 @@ hdf_read_ndgs(NC *handle)
                             scaletypes[i] = temptype;
                         }
 
-                        sddRef = tmpRef; /* prepare for a new dim var */
                         if (Hendaccess(aid1) == FAIL) {
                             HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
                         }
@@ -1504,7 +1498,6 @@ hdf_read_ndgs(NC *handle)
              * If there is an annotation put in 'remarks'
              */
             {
-                NC_attr *tmp_attr = NULL;
                 err_code          = DFE_NONE;
 
                 err_code = hdf_get_desc_annot(handle, ndgTag, ndgRef, &attrs[current_attr], &current_attr);
@@ -1519,7 +1512,6 @@ hdf_read_ndgs(NC *handle)
              * NOT 'long_name' 9/2/94)
              */
             {
-                NC_attr *tmp_attr = NULL;
                 err_code          = DFE_NONE;
 
                 err_code = hdf_get_label_annot(handle, ndgTag, ndgRef, &attrs[current_attr], &current_attr);

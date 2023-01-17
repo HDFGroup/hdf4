@@ -235,6 +235,8 @@ SDgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
 
     /* Get the attribute's name */
     status = SDattrinfo(id, attrindex, attrname, &ntype, &count);
+    if (status == FAIL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Check if the id given is a file id, or SDS id, or dimension id, and get
        appropriate info structure */
@@ -708,14 +710,13 @@ SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32 *offsetarra
     int32 file_id = FAIL, /* file, AN API, annotation IDs */
         an_id = FAIL, ann_id = FAIL;
     NC     *handle  = NULL;    /* file structure */
-    NC_var *var     = NULL;    /* variable structure of sds, to get NDG ref */
     int32  *dannots = NULL,    /* list of data annotation IDs */
         n_flabels   = 0,       /* number of file labels */
         n_fdescs    = 0,       /* number of file descriptions */
         n_dlabels   = 0,       /* number of object labels */
         n_ddescs    = 0;       /* number of file descriptions */
     uint16 elem_tag, elem_ref; /* tag/ref of dataset's NDG */
-    intn   num_annots,         /* number of annotation of requested type */
+    intn   num_annots = -1,    /* number of annotation of requested type */
         ii, ret_value = 0;
 
     /* Clear error stack */
