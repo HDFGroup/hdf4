@@ -1,0 +1,50 @@
+name: arm64 OpenBSD 7.2 CMake
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  test: # make sure the action works on a clean machine without building
+    name: ${{ matrix.os.name }} ${{ matrix.os.architecture }} ${{ matrix.os.version }} on ${{ matrix.os.host }}
+    runs-on: ${{ matrix.os.host }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - name: openbsd
+            architecture: arm64
+            version: '7.2'
+            host: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: ${{ matrix.os.name }}
+        uses: hyoklee/openbsd-action@master
+        env:
+          FOO: A
+          BAR: B        
+        with:
+          environment_variables: FOO BAR        
+          operating_system: ${{ matrix.os.name }}
+          architecture: ${{ matrix.os.architecture }}
+          version: '${{ matrix.os.version }}'
+          shell: bash          
+          run: |
+            uname -a
+            echo $SHELL
+            pwd
+            ls -lah
+            whoami
+            env | sort
+            sudo pkg_add git
+            git clone https://github.com/hyoklee/hdf4
+            cd hdf4
+            sudo pkg_add cmake
+            sudo pkg_add jpeg
+            mkdir build
+            cd build
+            cmake -DHDF4_BUILD_FORTRAN:BOOL=OFF ..
+            make
+            make test
