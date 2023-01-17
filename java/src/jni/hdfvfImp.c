@@ -35,7 +35,7 @@ Java_hdf_hdflib_HDFLibrary_VFfieldesize(JNIEnv *env, jclass clss, jlong vdata_id
 
     UNUSED(clss);
 
-    if((rval = VFfieldesize((int32)vdata_id, (int32)field_index)) == FAIL)
+    if ((rval = VFfieldesize((int32)vdata_id, (int32)field_index)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -49,7 +49,7 @@ Java_hdf_hdflib_HDFLibrary_VFfieldisize(JNIEnv *env, jclass clss, jlong vdata_id
 
     UNUSED(clss);
 
-    if((rval = VFfieldisize((int32)vdata_id, (int32)field_index)) == FAIL)
+    if ((rval = VFfieldisize((int32)vdata_id, (int32)field_index)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -64,7 +64,7 @@ Java_hdf_hdflib_HDFLibrary_VFfieldname(JNIEnv *env, jclass clss, jlong vdata_id,
 
     UNUSED(clss);
 
-    if((str = VFfieldname((int32) vdata_id,  (int32) field_index)) == NULL)
+    if ((str = VFfieldname((int32)vdata_id, (int32)field_index)) == NULL)
         H4_LIBRARY_ERROR(ENVONLY);
 
     /* convert it to java string */
@@ -81,7 +81,7 @@ Java_hdf_hdflib_HDFLibrary_VFfieldorder(JNIEnv *env, jclass clss, jlong vdata_id
 
     UNUSED(clss);
 
-    if((rval = VFfieldorder((int32)vdata_id, (int32)field_index)) == FAIL)
+    if ((rval = VFfieldorder((int32)vdata_id, (int32)field_index)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -89,14 +89,13 @@ done:
 }
 
 JNIEXPORT jlong JNICALL
-Java_hdf_hdflib_HDFLibrary_VFfieldtype
-(JNIEnv *env, jclass clss, jlong vdata_id, int field_index)
+Java_hdf_hdflib_HDFLibrary_VFfieldtype(JNIEnv *env, jclass clss, jlong vdata_id, int field_index)
 {
     int32 rval = FAIL;
 
     UNUSED(clss);
 
-    if((rval = VFfieldtype((int32)vdata_id, (int32)field_index)) == FAIL)
+    if ((rval = VFfieldtype((int32)vdata_id, (int32)field_index)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -104,14 +103,13 @@ done:
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_VFnfields
-(JNIEnv *env, jclass clss, jlong key)
+Java_hdf_hdflib_HDFLibrary_VFnfields(JNIEnv *env, jclass clss, jlong key)
 {
     int32 rval = FAIL;
 
     UNUSED(clss);
 
-    if((rval = VFnfields((int32)key)) == FAIL)
+    if ((rval = VFnfields((int32)key)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:

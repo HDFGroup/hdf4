@@ -38,6 +38,54 @@ New features and changes
 ========================
     Configuration:
     -------------
+    - The Fortran interface is considered deprecated
+
+      The Fortran interface is broken on 64-bit systems (see the known
+      problems section) and is currently disabled by default. It will
+      be removed in a future version of the library, possibly as early
+      as 4.2.17.
+
+      (DER - 2023/01/15)
+
+    - Fixed-width HDF4 types like int16 now map to C99 types under the hood
+
+      In an effort to make HDF4 more maintainable and "just work" for more
+      platforms, the scheme where HDF4 fixed-width integer types like int16
+      were mapped to C native types like int and short has been replaced
+      with a system that maps them to equivalent C99 types.
+
+      (DER - 2023/01/15)
+    
+    - Changed how maintainer mode works in the Autotools
+
+      The macro has changed from AM_MAINTAINER_MODE to
+      AM_MAINTAINER_MODE([enable]) in master and AM_MAINTAINER_MODE([disable])
+      at release time. The main change is that build dependencies will be ON
+      by default in master so out-of-date configure, Makefile.in will be
+      regenerated when their input files (configure.ac, Makefile.am, etc.)
+      change.
+
+      We previously used the macro with no parameter since we checked in the
+      Autotools-generated files. This allowed switching on maintainer mode
+      with a command-line option, but left maintainer mode off to avoid
+      regenerating the build files when checking out from git did not
+      preserve timestamps, making the files look out-of-date. Now that we no
+      longer check in Autotools-geneated files, we can turn the
+      dependencies on.
+
+      Detailed comments about the behavior of this macro have been added to
+      configure.ac where we define the macro.
+
+      (DER - 2023/01/13)
+
+    - Removed the hdf/util/MacProjects directory
+
+      It's unclear what build system these were for, but they have been
+      unmaintained for some time and have been removed. MacOS users can
+      build with the Autotools or CMake.
+
+      (DER - 2023/01/13)
+
     - Dropped support for many obsolete platforms
 
       HDF4 uses pre-defined machine configurations instead of configure tests
@@ -56,6 +104,9 @@ New features and changes
         - Apollo
         - HP-UX / HP-9000
         - Motorola m88k
+        - NeXT
+        - MacOS on PowerPC chipsets
+        - IBM RS/6000
 
       In addition, many #defines have been updated to reflect modern usage,
       particularly on Windows and MacOS.
@@ -151,6 +202,17 @@ Support for new platforms and compilers
 
 Bugs fixed since HDF 4.2.15
 ===========================
+    - jpeglib.h `boolean` type no longer conflicts with windows.h
+
+      jpeglib.h defines a `boolean` type that conflicts with the `boolean`
+      type defined in windows.h. In previous versions of the library, this
+      could cause compilation errors when the types clashed.
+
+      We now ensure that `HAVE_BOOLEAN` is defined before jpeglib.h when
+      building on Windows, which avoids the redefinition.
+
+      (DER - 2022/01/15)
+
 
 
 Documentation
@@ -224,6 +286,11 @@ This version has been tested in the following platforms:
 
 Known problems
 ==============
+o  The Fortran interface does not work on 64-bit systems as it stores addresses
+   in memory as Fortran INTEGER values, which are typically 32-bit. The
+   Fortran interface is currently disabled by default due to this. It should
+   only be enabled on 32-bit systems.
+
 o  Builds with the autotools option --enable-hdf4-xdr fail on Solaris and
    on IBM ppc64 with the xlc compiler.  The option should not be used on
    those platforms.

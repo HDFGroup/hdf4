@@ -7,8 +7,11 @@
 
 %{
 #include        <string.h>
-#include	<stdlib.h>
+#include	    <stdlib.h>
 #include        "ncgen.h"
+
+int yylex(void);
+void yyerror(char* s);
 
 typedef struct Symbol {		/* symbol table entry */
 	char    	*name;
@@ -247,7 +250,7 @@ attdecl:        att
 		       /* shrink space down to what was really needed */
 		       att_space = erealloc(att_space, valnum*nctypelen(valtype));
 		       atts[natts].val = att_space;
-		       if (STREQ(atts[natts].name, _FillValue)) {
+		       if (NC_STREQ(atts[natts].name, _FillValue)) {
 			   nc_putfill(atts[natts].type,
 				       atts[natts].val,
 				       &vars[atts[natts].var].fill_value);
@@ -678,7 +681,7 @@ const:         CHAR_CONST
 
 void derror();
 
-yyerror(s)	/* called for yacc syntax error */
+void yyerror(s)	/* called for yacc syntax error */
      char *s;
 {
 	derror(s);
@@ -700,7 +703,7 @@ char *sname;
 {
     YYSTYPE sp;
     for (sp = symlist; sp != (YYSTYPE) 0; sp = sp -> next)
-	if (STREQ(sp -> name, sname)) {
+	if (NC_STREQ(sp -> name, sname)) {
 	    return sp;
 	}
     return 0;			/* 0 ==> not found */

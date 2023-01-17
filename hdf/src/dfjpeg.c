@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
 /*-----------------------------------------------------------------------------
  * File:    dfjpeg.c
  * Purpose: JPEG image compression algorithm
@@ -24,37 +23,44 @@
  *---------------------------------------------------------------------------*/
 
 #include "hdf.h"
+
+/* Hack to prevent libjpeg from re-defining `boolean` in a way that clashes
+ * with windows.h. This MUST come before including jpeglib.h.
+ */
+#ifdef H4_HAVE_WIN32_API
+#define HAVE_BOOLEAN
+#endif
+
 #include "jpeglib.h"
 #include "jerror.h"
-/* Expanded data destination object for HDF output */
 
+/* Expanded data destination object for HDF output */
 typedef struct {
     struct jpeg_destination_mgr pub; /* public fields */
 
-    int32 aid;              /* target AID for output */
-    int32 file_id;          /* HDF file ID */
-    uint16 tag, ref;        /* tag & ref of image to output */
-    const void * image;            /* pointer to the image data */
-    int32 xdim, ydim;       /* X & Y dimensions of the image */
-    int16 scheme;           /* type of image (8-bit or 24-bit) */
+    int32       aid;        /* target AID for output */
+    int32       file_id;    /* HDF file ID */
+    uint16      tag, ref;   /* tag & ref of image to output */
+    const void *image;      /* pointer to the image data */
+    int32       xdim, ydim; /* X & Y dimensions of the image */
+    int16       scheme;     /* type of image (8-bit or 24-bit) */
 
-    JOCTET *buffer;         /* buffer for JPEG library to fill */
+    JOCTET *buffer; /* buffer for JPEG library to fill */
 } hdf_destination_mgr;
 
-typedef hdf_destination_mgr * hdf_dest_ptr;
+typedef hdf_destination_mgr *hdf_dest_ptr;
 
-#define OUTPUT_BUF_SIZE     4096    /* size of JPEG output buffer */
+#define OUTPUT_BUF_SIZE 4096 /* size of JPEG output buffer */
 
 /* Prototypes */
 extern void    hdf_init_destination(struct jpeg_compress_struct *cinfo_ptr);
 extern boolean hdf_empty_output_buffer(struct jpeg_compress_struct *cinfo_ptr);
 extern void    hdf_term_destination(struct jpeg_compress_struct *cinfo_ptr);
-extern intn    jpeg_HDF_dest(struct jpeg_compress_struct *cinfo_ptr, int32 file_id, uint16 tag,
-                             uint16 ref, const void * image, int32 xdim, int32 ydim, int16 scheme);
+extern intn    jpeg_HDF_dest(struct jpeg_compress_struct *cinfo_ptr, int32 file_id, uint16 tag, uint16 ref,
+                             const void *image, int32 xdim, int32 ydim, int16 scheme);
 extern intn    jpeg_HDF_dest_term(struct jpeg_compress_struct *cinfo_ptr);
 
 void (*jpeg_message_handler)(j_common_ptr cinfo) = NULL;
-
 
 /*-----------------------------------------------------------------------------
  * Name:    hdf_init_destination
@@ -69,22 +75,23 @@ void (*jpeg_message_handler)(j_common_ptr cinfo) = NULL;
 void
 hdf_init_destination(struct jpeg_compress_struct *cinfo_ptr)
 {
-    hdf_dest_ptr dest=(hdf_dest_ptr)cinfo_ptr->dest;
-    int32 temp_aid;
+    hdf_dest_ptr dest = (hdf_dest_ptr)cinfo_ptr->dest;
+    int32        temp_aid;
 
-    if((dest->buffer=HDmalloc(sizeof(JOCTET)*OUTPUT_BUF_SIZE))==NULL)
+    if ((dest->buffer = HDmalloc(sizeof(JOCTET) * OUTPUT_BUF_SIZE)) == NULL)
         ERREXIT1(cinfo_ptr, JERR_OUT_OF_MEMORY, (int)1);
 
     /* Create empty JPEG5/GREYJPEG5 tag/ref to indicate the image */
-    if((temp_aid=Hstartwrite(dest->file_id,(uint16)dest->scheme,dest->ref,0))==FAIL)
+    if ((temp_aid = Hstartwrite(dest->file_id, (uint16)dest->scheme, dest->ref, 0)) == FAIL)
         ERREXIT(cinfo_ptr, JERR_FILE_WRITE);
     Hendaccess(temp_aid);
 
-    if((dest->aid=Hstartaccess(dest->file_id,dest->tag,dest->ref,DFACC_WRITE|DFACC_APPENDABLE))==FAIL)
+    if ((dest->aid = Hstartaccess(dest->file_id, dest->tag, dest->ref, DFACC_WRITE | DFACC_APPENDABLE)) ==
+        FAIL)
         ERREXIT(cinfo_ptr, JERR_FILE_WRITE);
 
     dest->pub.next_output_byte = dest->buffer;
-    dest->pub.free_in_buffer = OUTPUT_BUF_SIZE;
+    dest->pub.free_in_buffer   = OUTPUT_BUF_SIZE;
 } /* end hdf_init_destination() */
 
 /*-----------------------------------------------------------------------------
@@ -100,13 +107,13 @@ hdf_init_destination(struct jpeg_compress_struct *cinfo_ptr)
 boolean
 hdf_empty_output_buffer(struct jpeg_compress_struct *cinfo_ptr)
 {
-    hdf_dest_ptr dest=(hdf_dest_ptr)cinfo_ptr->dest;
+    hdf_dest_ptr dest = (hdf_dest_ptr)cinfo_ptr->dest;
 
-    if(Hwrite(dest->aid,OUTPUT_BUF_SIZE,dest->buffer)!=OUTPUT_BUF_SIZE)
+    if (Hwrite(dest->aid, OUTPUT_BUF_SIZE, dest->buffer) != OUTPUT_BUF_SIZE)
         ERREXIT(cinfo_ptr, JERR_FILE_WRITE);
 
     dest->pub.next_output_byte = dest->buffer;
-    dest->pub.free_in_buffer = OUTPUT_BUF_SIZE;
+    dest->pub.free_in_buffer   = OUTPUT_BUF_SIZE;
     return TRUE;
 } /* end hdf_empty_output_buffer() */
 
@@ -123,7 +130,7 @@ hdf_empty_output_buffer(struct jpeg_compress_struct *cinfo_ptr)
 void
 hdf_term_destination(struct jpeg_compress_struct *cinfo_ptr)
 {
-    hdf_dest_ptr dest=(hdf_dest_ptr)cinfo_ptr->dest;
+    hdf_dest_ptr dest = (hdf_dest_ptr)cinfo_ptr->dest;
     /* note that 'free_in_buffer' is size_t in the jpeg library */
     int32 datacount = (int32)OUTPUT_BUF_SIZE - (int32)dest->pub.free_in_buffer;
 
@@ -159,31 +166,31 @@ hdf_term_destination(struct jpeg_compress_struct *cinfo_ptr)
  *          These routines will be called by the JPEG routines to output
  *---------------------------------------------------------------------------*/
 intn
-jpeg_HDF_dest(struct jpeg_compress_struct *cinfo_ptr, int32 file_id, uint16 tag,
-    uint16 ref, const void * image, int32 xdim, int32 ydim, int16 scheme)
+jpeg_HDF_dest(struct jpeg_compress_struct *cinfo_ptr, int32 file_id, uint16 tag, uint16 ref,
+              const void *image, int32 xdim, int32 ydim, int16 scheme)
 {
-    CONSTR(FUNC, "jpeg_HDF_dest");     /* for HERROR */
+    CONSTR(FUNC, "jpeg_HDF_dest"); /* for HERROR */
     hdf_dest_ptr dest;
 
-    if((dest=HDmalloc(sizeof(hdf_destination_mgr)))==NULL)
-        HRETURN_ERROR(DFE_NOSPACE,FAIL);
+    if ((dest = HDmalloc(sizeof(hdf_destination_mgr))) == NULL)
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-    cinfo_ptr->dest=(struct jpeg_destination_mgr *)dest;
-    dest->pub.init_destination = hdf_init_destination;
+    cinfo_ptr->dest               = (struct jpeg_destination_mgr *)dest;
+    dest->pub.init_destination    = hdf_init_destination;
     dest->pub.empty_output_buffer = hdf_empty_output_buffer;
-    dest->pub.term_destination = hdf_term_destination ;
+    dest->pub.term_destination    = hdf_term_destination;
 
     /* Now the HDF specific parameters */
-    dest->aid = 0;  /* start with no AID */
+    dest->aid     = 0; /* start with no AID */
     dest->file_id = file_id;
-    dest->tag = tag;
-    dest->ref = ref;
-    dest->image = image;
-    dest->xdim = xdim;
-    dest->ydim = ydim;
-    dest->scheme = scheme;
+    dest->tag     = tag;
+    dest->ref     = ref;
+    dest->image   = image;
+    dest->xdim    = xdim;
+    dest->ydim    = ydim;
+    dest->scheme  = scheme;
 
-    return(SUCCEED);
+    return (SUCCEED);
 } /* end jpeg_HDF_dest() */
 
 /*-----------------------------------------------------------------------------
@@ -202,7 +209,7 @@ jpeg_HDF_dest_term(struct jpeg_compress_struct *cinfo_ptr)
     /* all we need to do for now is to free up the dest. mgr structure */
     HDfree(cinfo_ptr->dest);
 
-    return(SUCCEED);
+    return (SUCCEED);
 } /* end jpeg_HDF_dest_term() */
 
 /***********************************************************************/
@@ -226,31 +233,30 @@ jpeg_HDF_dest_term(struct jpeg_compress_struct *cinfo_ptr)
  *---------------------------------------------------------------------------*/
 
 intn
-DFCIjpeg(int32 file_id, uint16 tag, uint16 ref, int32 xdim, int32 ydim,
-         const void * image, int16 scheme, comp_info * scheme_info)
+DFCIjpeg(int32 file_id, uint16 tag, uint16 ref, int32 xdim, int32 ydim, const void *image, int16 scheme,
+         comp_info *scheme_info)
 {
-    CONSTR(FUNC, "DFCIjpeg");     /* for HERROR */
+    CONSTR(FUNC, "DFCIjpeg"); /* for HERROR */
     /* These three structs contain JPEG parameters and working data.
      * They must survive for the duration of parameter setup and one
      * call to jpeg_compress; typically, making them local data in the
      * calling routine is the best strategy.
      */
     struct jpeg_compress_struct *cinfo_ptr;
-    struct jpeg_error_mgr *jerr_ptr;
-    JSAMPROW row_pointer[1];
-    intn row_stride;
-    const uint8 *image_buffer=image;
+    struct jpeg_error_mgr       *jerr_ptr;
+    JSAMPROW                     row_pointer[1];
+    intn                         row_stride;
+    const uint8                 *image_buffer = image;
 
-    if((cinfo_ptr=HDcalloc(1,sizeof(struct jpeg_compress_struct)))==NULL)
-        HRETURN_ERROR(DFE_NOSPACE,FAIL);
+    if ((cinfo_ptr = HDcalloc(1, sizeof(struct jpeg_compress_struct))) == NULL)
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-    if((jerr_ptr=HDmalloc(sizeof(struct jpeg_error_mgr)))==NULL)
-        HRETURN_ERROR(DFE_NOSPACE,FAIL);
+    if ((jerr_ptr = HDmalloc(sizeof(struct jpeg_error_mgr))) == NULL)
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     /* Initialize the error-handling routines */
     cinfo_ptr->err = jpeg_std_error(jerr_ptr);
-    if (jpeg_message_handler != NULL)
-    {
+    if (jpeg_message_handler != NULL) {
         jerr_ptr->output_message = jpeg_message_handler;
     }
 
@@ -258,40 +264,38 @@ DFCIjpeg(int32 file_id, uint16 tag, uint16 ref, int32 xdim, int32 ydim,
     jpeg_create_compress(cinfo_ptr);
 
     /* Set-up HDF destination manager */
-    jpeg_HDF_dest(cinfo_ptr,file_id,tag,ref,image,xdim,ydim,scheme);
+    jpeg_HDF_dest(cinfo_ptr, file_id, tag, ref, image, xdim, ydim, scheme);
 
     /* Set up default JPEG parameters in the cinfo data structure. */
-    cinfo_ptr->image_width=(JDIMENSION)xdim;
-    cinfo_ptr->image_height=(JDIMENSION)ydim;
-    if((uint16)scheme==DFTAG_JPEG5) /* 24-bit image */
-      {
-        cinfo_ptr->input_components=3;
-        cinfo_ptr->in_color_space=JCS_RGB;
-        row_stride=xdim*3;
-      } /* end if */
-    else if((uint16)scheme==DFTAG_GREYJPEG5) /* 8-bit image */
-      {
-        cinfo_ptr->input_components=1;
-        cinfo_ptr->in_color_space=JCS_GRAYSCALE;
-        row_stride=xdim;
-      } /* end if */
+    cinfo_ptr->image_width  = (JDIMENSION)xdim;
+    cinfo_ptr->image_height = (JDIMENSION)ydim;
+    if ((uint16)scheme == DFTAG_JPEG5) /* 24-bit image */
+    {
+        cinfo_ptr->input_components = 3;
+        cinfo_ptr->in_color_space   = JCS_RGB;
+        row_stride                  = xdim * 3;
+    }                                           /* end if */
+    else if ((uint16)scheme == DFTAG_GREYJPEG5) /* 8-bit image */
+    {
+        cinfo_ptr->input_components = 1;
+        cinfo_ptr->in_color_space   = JCS_GRAYSCALE;
+        row_stride                  = xdim;
+    } /* end if */
     else
-        HRETURN_ERROR(DFE_ARGS,FAIL);
+        HRETURN_ERROR(DFE_ARGS, FAIL);
     jpeg_set_defaults(cinfo_ptr);
 
     /* Set up user JPEG parameters in the cinfo data structure. */
-    jpeg_set_quality(cinfo_ptr, scheme_info->jpeg.quality,
-                 (boolean)scheme_info->jpeg.force_baseline);
+    jpeg_set_quality(cinfo_ptr, scheme_info->jpeg.quality, (boolean)scheme_info->jpeg.force_baseline);
 
     /* OK, get things started */
-    jpeg_start_compress(cinfo_ptr,TRUE);
+    jpeg_start_compress(cinfo_ptr, TRUE);
 
     /* write the whole image out at once */
-    while (cinfo_ptr->next_scanline < cinfo_ptr->image_height)
-      {
-        row_pointer[0]=(JSAMPROW)(&image_buffer[(size_t)cinfo_ptr->next_scanline * (size_t)row_stride]);
-        jpeg_write_scanlines(cinfo_ptr,row_pointer,1);
-      } /* end while */
+    while (cinfo_ptr->next_scanline < cinfo_ptr->image_height) {
+        row_pointer[0] = (JSAMPROW)(&image_buffer[(size_t)cinfo_ptr->next_scanline * (size_t)row_stride]);
+        jpeg_write_scanlines(cinfo_ptr, row_pointer, 1);
+    } /* end while */
 
     /* Finish writing stuff out */
     jpeg_finish_compress(cinfo_ptr);
@@ -306,6 +310,5 @@ DFCIjpeg(int32 file_id, uint16 tag, uint16 ref, int32 xdim, int32 ydim,
     HDfree(jerr_ptr);
     HDfree(cinfo_ptr);
 
-    return (SUCCEED);   /* we must be ok... */
-}   /* end DFCIjpeg() */
-
+    return (SUCCEED); /* we must be ok... */
+} /* end DFCIjpeg() */

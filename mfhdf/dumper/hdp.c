@@ -14,13 +14,13 @@
 #define HDP_MASTER
 #define VSET_INTERFACE
 #include "hdp.h"
-#include "local_nc.h"	/* to use some definitions */
+#include "local_nc.h" /* to use some definitions */
 
 /* Print the usage message about this utility */
-static void 
+static void
 usage(intn argc, char *argv[])
 {
-    printf("%s, %s\n\n", argv[0], LIBVER_STRING );
+    printf("%s, %s\n\n", argv[0], LIBVER_STRING);
     printf("Usage: hdp [-H] command [command options] <filelist>\n");
     printf("\t -H  Display usage information about the specified command.\n");
     printf("\t     If no command is specified, -H lists all commands.\n");
@@ -35,24 +35,24 @@ usage(intn argc, char *argv[])
 }
 
 void
-init_dump_opts(dump_info_t * dump_opts)
+init_dump_opts(dump_info_t *dump_opts)
 {
-    dump_opts->filter = DALL; /* default dump all GRs */
-    dump_opts->by_index.num_list = NULL; /* no index given */
+    dump_opts->filter             = DALL; /* default dump all GRs */
+    dump_opts->by_index.num_list  = NULL; /* no index given */
     dump_opts->by_index.num_items = 0;
-    dump_opts->by_ref.num_list = NULL; /* no ref# given */
-    dump_opts->by_ref.num_items = 0;
-    dump_opts->by_name.str_list = NULL; /* no name given */
-    dump_opts->by_name.num_items = 0;
-    dump_opts->by_class.str_list = NULL; /* no class given */
+    dump_opts->by_ref.num_list    = NULL; /* no ref# given */
+    dump_opts->by_ref.num_items   = 0;
+    dump_opts->by_name.str_list   = NULL; /* no name given */
+    dump_opts->by_name.num_items  = 0;
+    dump_opts->by_class.str_list  = NULL; /* no class given */
     dump_opts->by_class.num_items = 0;
-    dump_opts->contents = DVERBOSE;   /* default dump all information */
-    dump_opts->dump_to_file = FALSE;          /* don't dump to output file */
-    dump_opts->file_format = DASCII;    /* default output is ASCII file */
-    dump_opts->file_type = HDF_FILE;    /* assuming an HDF file is provided */
-    dump_opts->print_pal = FALSE;     /* GR only, don't print palette */
-    dump_opts->keep_order = FALSE;
-    dump_opts->all_types = NULL;
+    dump_opts->contents           = DVERBOSE; /* default dump all information */
+    dump_opts->dump_to_file       = FALSE;    /* don't dump to output file */
+    dump_opts->file_format        = DASCII;   /* default output is ASCII file */
+    dump_opts->file_type          = HDF_FILE; /* assuming an HDF file is provided */
+    dump_opts->print_pal          = FALSE;    /* GR only, don't print palette */
+    dump_opts->keep_order         = FALSE;
+    dump_opts->all_types          = NULL;
 
     /* no specific dataset requested, default to dump all datasets */
     dump_opts->num_chosen = NO_SPECIFIC;
@@ -66,7 +66,7 @@ init_dump_opts(dump_info_t * dump_opts)
     /* print data starting at column 16 unless reset otherwise */
     dump_opts->firstln_indent = 16;
 
-    /* print data on a continuous line starting at column 16 unless 
+    /* print data on a continuous line starting at column 16 unless
        reset otherwise */
     dump_opts->contln_indent = 16;
 
@@ -80,107 +80,100 @@ init_dump_opts(dump_info_t * dump_opts)
     dump_opts->no_lattr_data = FALSE;
 
     HDstrcpy(dump_opts->file_name, "\0");
-}       /* end init_dump_opts() */
+} /* end init_dump_opts() */
 
-
-int 
+int
 main(int argc, char *argv[])
 {
-    command_t   cmd;			/* command to perform */
-    intn        curr_arg;		/* current cmd line argument */
-    dump_opt_t  glob_opts;		/* global options for all commands */
-    intn        j;				/* local counting variables */
+    command_t  cmd;       /* command to perform */
+    intn       curr_arg;  /* current cmd line argument */
+    dump_opt_t glob_opts; /* global options for all commands */
+    intn       j;         /* local counting variables */
 
     HDmemset(&glob_opts, 0, sizeof(dump_opt_t));
 
-    if (argc < 2)
-      {
-          usage(argc, argv);
-          exit(1);
-      }		/* end if */
+    if (argc < 2) {
+        usage(argc, argv);
+        exit(1);
+    } /* end if */
 
     curr_arg = 1;
-/*  printf("Argument 0: %s\n",argv[0]);
-    printf("Argument 1: %s\n",argv[1]);
-    */
-    while (curr_arg < argc && (argv[curr_arg][0] == '-'))
-      {
-              /*  while(curr_arg<argc && (argv[curr_arg][0]=='-' || argv[curr_arg][0]=='/')) {  */
-          switch (argv[curr_arg][1])
-            {
+    /*  printf("Argument 0: %s\n",argv[0]);
+        printf("Argument 1: %s\n",argv[1]);
+        */
+    while (curr_arg < argc && (argv[curr_arg][0] == '-')) {
+        /*  while(curr_arg<argc && (argv[curr_arg][0]=='-' || argv[curr_arg][0]=='/')) {  */
+        switch (argv[curr_arg][1]) {
             case 'H':
-                    /*     case 'h':  *//*    Print help for a given command */
-                if (curr_arg < argc - 1)
-                  {
-                      glob_opts.help = TRUE;	/* for displaying options. */
-                      break;
-                  }
+                /*     case 'h':  */ /*    Print help for a given command */
+                if (curr_arg < argc - 1) {
+                    glob_opts.help = TRUE; /* for displaying options. */
+                    break;
+                }
             default:
-                usage(argc, argv);	/* Display the general usage. */
+                usage(argc, argv); /* Display the general usage. */
                 exit(1);
-            }	/* end switch */
-          curr_arg++;
-      }		/* end while */
+        } /* end switch */
+        curr_arg++;
+    } /* end while */
 
-    for (j = 0, cmd = HELP; j < (sizeof(commands) / sizeof(const char *)); j++, cmd++)
-      {
-          if (HDstrcmp(argv[curr_arg], commands[j]) == 0)
-              break;
-      }		/* end for */
+    for (j = 0, cmd = HELP; j < (sizeof(commands) / sizeof(const char *)); j++, cmd++) {
+        if (HDstrcmp(argv[curr_arg], commands[j]) == 0)
+            break;
+    } /* end for */
 
-/* printf("cmd=%d\n",(int)cmd);
-   printf("command=%s\n",argv[curr_arg]);
-   */
+    /* printf("cmd=%d\n",(int)cmd);
+       printf("command=%s\n",argv[curr_arg]);
+       */
     curr_arg++;
 
-	/* must be a legit command */
-    switch (cmd)
-      {
-      case LIST:
-          if (FAIL == do_list(curr_arg, argc, argv, glob_opts.help))
-              exit(1);
-          break;
+    /* must be a legit command */
+    switch (cmd) {
+        case LIST:
+            if (FAIL == do_list(curr_arg, argc, argv, glob_opts.help))
+                exit(1);
+            break;
 
-      case DUMPSDS:
-          if (FAIL == do_dumpsds(curr_arg, argc, argv, glob_opts.help))
-              exit(1);
-          break;
+        case DUMPSDS:
+            if (FAIL == do_dumpsds(curr_arg, argc, argv, glob_opts.help))
+                exit(1);
+            break;
 
-      case DUMPRIG:
-	  /* BMR: retire dumprig, have dumpgr do the work */
-          if (FAIL == do_dumprig(curr_arg, argc, argv, glob_opts.help)) 
-/*
-	  fprintf( stderr, ">>> Please make a note that dumprig is no longer available.\n");
-	  fprintf( stderr, "    The command dumpgr is and should be used in its place.\n" );
-          if (FAIL == do_dumpgr(curr_arg, argc, argv, glob_opts.help)) */
-              exit(1);
-          break;
+        case DUMPRIG:
+            /* BMR: retire dumprig, have dumpgr do the work */
+            if (FAIL == do_dumprig(curr_arg, argc, argv, glob_opts.help))
+                /*
+                          fprintf( stderr, ">>> Please make a note that dumprig is no longer available.\n");
+                          fprintf( stderr, "    The command dumpgr is and should be used in its place.\n" );
+                          if (FAIL == do_dumpgr(curr_arg, argc, argv, glob_opts.help)) */
+                exit(1);
+            break;
 
-      case DUMPVG:
-          if (FAIL == do_dumpvg(curr_arg, argc, argv, glob_opts.help))
-              exit(1);
-          break;
+        case DUMPVG:
+            if (FAIL == do_dumpvg(curr_arg, argc, argv, glob_opts.help))
+                exit(1);
+            break;
 
-      case DUMPVD:
-          if (FAIL == do_dumpvd(curr_arg, argc, argv, glob_opts.help))
-              exit(1);
-          break;
+        case DUMPVD:
+            if (FAIL == do_dumpvd(curr_arg, argc, argv, glob_opts.help))
+                exit(1);
+            break;
 
-      case DUMPGR:
-          if (FAIL == do_dumpgr(curr_arg, argc, argv, glob_opts.help))
-              exit(1);
-          break;
+        case DUMPGR:
+            if (FAIL == do_dumpgr(curr_arg, argc, argv, glob_opts.help))
+                exit(1);
+            break;
 
-      case HELP:
-      case NONE:
-          usage(argc, argv);
-          break;
+        case HELP:
+        case NONE:
+            usage(argc, argv);
+            break;
 
-      default:
-          printf("Invalid command!, cmd=%d\n", (int) cmd);
-          exit(1);
-          break;
-      }		/* end switch */
+        default:
+            printf("Invalid command!, cmd=%d\n", (int)cmd);
+            exit(1);
+            break;
+    } /* end switch */
 
     return (0);
 }
@@ -196,29 +189,29 @@ DESCRIPTION
    instead of (struct vdata_desc).wlist.esize as VSsizeof.
 
 RETURNS
-   The byte size of the field(s), positive integer, on success; 
+   The byte size of the field(s), positive integer, on success;
    otherwise, returns FAIL.
 ----------------------------------------------------------------- */
-int32 
-VShdfsize(int32 vkey,   /* IN vdata key */
-         char *fields  /* IN: Name(s) of the fields to check size of */ )
+int32
+VShdfsize(int32 vkey, /* IN vdata key */
+          char *fields /* IN: Name(s) of the fields to check size of */)
 {
-    int32       totalsize;
-    int32       i, j;
-    int32       found;
-    int32       ac;
-    char        **av = NULL;
-    vsinstance_t *w  = NULL;
-    VDATA        *vs = NULL;
-    int32        ret_value = SUCCEED;
+    int32         totalsize;
+    int32         i, j;
+    int32         found;
+    int32         ac;
+    char        **av        = NULL;
+    vsinstance_t *w         = NULL;
+    VDATA        *vs        = NULL;
+    int32         ret_value = SUCCEED;
     CONSTR(FUNC, "VShdfsize");
 
     /* check key is valid vdata */
-    if (HAatom_group(vkey)!=VSIDGROUP)
+    if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* get vdata instance */
-    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
+    if (NULL == (w = (vsinstance_t *)HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     /* get vdata itself and check it */
@@ -228,43 +221,39 @@ VShdfsize(int32 vkey,   /* IN vdata key */
 
     totalsize = 0;
     if (fields == NULL) /* default case? */
-      {   /* count all field sizes in vdata */
-        for (j = 0; j < vs->wlist.n; j++)	
+    {                   /* count all field sizes in vdata */
+        for (j = 0; j < vs->wlist.n; j++)
             totalsize += vs->wlist.isize[j];
-      }		
-    else if (fields[0] != '\0')  /* implies: return 0 for empty 'fields' */
-      {  /* parse field string */
+    }
+    else if (fields[0] != '\0') /* implies: return 0 for empty 'fields' */
+    {                           /* parse field string */
         if ((scanattrs(fields, &ac, &av) < 0) || (ac < 1))
             HGOTO_ERROR(DFE_ARGS, FAIL);
 
-        for (i = 0; i < ac; i++)
-          {   /* check fields in vs */
-            for (found = 0, j = 0; j < vs->wlist.n; j++)	
-                if (!HDstrcmp(av[i], vs->wlist.name[j]))
-                  {
+        for (i = 0; i < ac; i++) { /* check fields in vs */
+            for (found = 0, j = 0; j < vs->wlist.n; j++)
+                if (!HDstrcmp(av[i], vs->wlist.name[j])) {
                     totalsize += vs->wlist.isize[j];
                     found = 1;
                     break;
-                  }
+                }
 
             if (!found)
                 HGOTO_ERROR(DFE_ARGS, FAIL);
-          }	/* end for */
-      }		/* end else */
+        } /* end for */
+    }     /* end else */
 
     /* return total size of vdata fields specified */
     ret_value = totalsize;
 
 done:
-  if(ret_value == FAIL)   
-    { /* Error condition cleanup */
+    if (ret_value == FAIL) { /* Error condition cleanup */
 
     } /* end if */
 
-  /* Normal function cleanup */
-  return ret_value;
-}   /* VShdfsize */
-
+    /* Normal function cleanup */
+    return ret_value;
+} /* VShdfsize */
 
 /* ------------- VSattrhdfsize --------------------------
 NAME
@@ -273,7 +262,7 @@ USAGE
       intn VSattrhdfsize(int32 vsid, int32 findex, intn attrindex, int32 *size);
       int32 vsid;      IN: vdata id
       int32 findex;    IN: field index. _HDF_VDATA (-1) for the vdata
-      intn attrindex;  IN: which attr of the field/vdata 
+      intn attrindex;  IN: which attr of the field/vdata
                            attrindex is 0-based
       int32 *size;     OUT: size of the attr values in hdf files.
 RETURNS
@@ -281,44 +270,45 @@ RETURNS
 DESCRIPTION
         size can be NULL if which is not interested.
 --------------------------------------------------- */
-intn VSattrhdfsize(int32 vsid, int32 findex, intn attrindex, int32 *size)
+intn
+VSattrhdfsize(int32 vsid, int32 findex, intn attrindex, int32 *size)
 {
 
-     CONSTR(FUNC, "VSattrhdfsize");
-     VDATA *vs, *attr_vs;
-     vs_attr_t *vs_alist;
-     vsinstance_t *vs_inst, *attr_inst;
-     int32 attr_vsid;
-     int32 ret_value = SUCCEED;
-     intn i, nattrs, a_index, found;
-     DYN_VWRITELIST *w;
+    CONSTR(FUNC, "VSattrhdfsize");
+    VDATA          *vs, *attr_vs;
+    vs_attr_t      *vs_alist;
+    vsinstance_t   *vs_inst, *attr_inst;
+    int32           attr_vsid;
+    int32           ret_value = SUCCEED;
+    intn            i, nattrs, a_index, found;
+    DYN_VWRITELIST *w;
 
-     HEclear();
-     if (HAatom_group(vsid) != VSIDGROUP)
+    HEclear();
+    if (HAatom_group(vsid) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-     /* locate vs' index in vstab */
-     if (NULL == (vs_inst = (vsinstance_t *)HAatom_object(vsid)))
+    /* locate vs' index in vstab */
+    if (NULL == (vs_inst = (vsinstance_t *)HAatom_object(vsid)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
-     if (NULL == (vs = vs_inst->vs))
+    if (NULL == (vs = vs_inst->vs))
         HGOTO_ERROR(DFE_NOVS, FAIL);
-     if ((findex >= vs->wlist.n || findex < 0) && (findex != _HDF_VDATA))
+    if ((findex >= vs->wlist.n || findex < 0) && (findex != _HDF_VDATA))
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
-     nattrs = vs->nattrs;
-     if (attrindex <0 || attrindex >= nattrs)
+    nattrs = vs->nattrs;
+    if (attrindex < 0 || attrindex >= nattrs)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-     vs_alist = vs->alist;
-     if (nattrs == 0 || vs_alist == NULL)
-          /* no attrs or bad attr list */
-            HGOTO_ERROR(DFE_ARGS, FAIL);
-    found = 0;
-    a_index = -1; 
-    for (i=0; i<nattrs; i++)  {
-        if (vs_alist->findex == findex)  {
-           a_index++; 
-           if (a_index == attrindex) {
-              found = 1;
-              break;
-           }
+    vs_alist = vs->alist;
+    if (nattrs == 0 || vs_alist == NULL)
+        /* no attrs or bad attr list */
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+    found   = 0;
+    a_index = -1;
+    for (i = 0; i < nattrs; i++) {
+        if (vs_alist->findex == findex) {
+            a_index++;
+            if (a_index == attrindex) {
+                found = 1;
+                break;
+            }
         }
         vs_alist++;
     }
@@ -339,9 +329,9 @@ intn VSattrhdfsize(int32 vsid, int32 findex, intn attrindex, int32 *size)
 
     w = &(attr_vs->wlist);
     /* This vdata should have only 1 field */
-     /* if (w->n != 1 || HDstrcmp(w->name[0], ATTR_FIELD_NAME)) <- commented out
-	Note: ATTR_FIELD_NAME cannot be used here because hdfeos sets fieldname
-	to "AttrValues", not ATTR_FIELD_NAME. -BMR, 2014/12/01 */ 
+    /* if (w->n != 1 || HDstrcmp(w->name[0], ATTR_FIELD_NAME)) <- commented out
+       Note: ATTR_FIELD_NAME cannot be used here because hdfeos sets fieldname
+       to "AttrValues", not ATTR_FIELD_NAME. -BMR, 2014/12/01 */
     if (w->n != 1)
         HGOTO_ERROR(DFE_BADATTR, FAIL);
     if (size)
@@ -349,14 +339,13 @@ intn VSattrhdfsize(int32 vsid, int32 findex, intn attrindex, int32 *size)
     if (FAIL == VSdetach(attr_vsid))
         HGOTO_ERROR(DFE_CANTDETACH, FAIL);
 done:
-    if (ret_value == FAIL)
-    { /* Error condition cleanup */
+    if (ret_value == FAIL) { /* Error condition cleanup */
 
     } /* end if */
 
-  /* Normal function cleanup */
-  return ret_value;
-}  /* VSattrhdfsize */
+    /* Normal function cleanup */
+    return ret_value;
+} /* VSattrhdfsize */
 
 /* ----------   Vattrhdfsize ----------------------
 NAME
@@ -373,31 +362,32 @@ RETURNS
 DESCRIPTION
         size can be NULL if which is not interested.
 --------------------------------------------------- */
-intn Vattrhdfsize(int32 vgid, intn attrindex, int32 *size)
+intn
+Vattrhdfsize(int32 vgid, intn attrindex, int32 *size)
 {
     CONSTR(FUNC, "Vattrhdfsize");
-    VGROUP *vg;
-    VDATA *vs;
-    DYN_VWRITELIST  *w;
-    vginstance_t *v;
-    vsinstance_t *vs_inst;
-    vg_attr_t *vg_alist=NULL;
-    intn adjusted_index;
-    int32 fid, vsid;
-    int32 ret_value = SUCCEED;
+    VGROUP         *vg;
+    VDATA          *vs;
+    DYN_VWRITELIST *w;
+    vginstance_t   *v;
+    vsinstance_t   *vs_inst;
+    vg_attr_t      *vg_alist = NULL;
+    intn            adjusted_index;
+    int32           fid, vsid;
+    int32           ret_value = SUCCEED;
 
     HEclear();
     if (HAatom_group(vgid) != VGIDGROUP)
-       HGOTO_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     /* locate vg's index in vgtab */
     if (NULL == (v = (vginstance_t *)HAatom_object(vgid)))
-       HGOTO_ERROR(DFE_VTAB, FAIL);
-    vg = v->vg;
+        HGOTO_ERROR(DFE_VTAB, FAIL);
+    vg  = v->vg;
     fid = vg->f;
     if (vg == NULL)
-       HGOTO_ERROR(DFE_BADPTR, FAIL);
+        HGOTO_ERROR(DFE_BADPTR, FAIL);
     if (vg->otag != DFTAG_VG)
-       HGOTO_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Validate arguments */
 
@@ -409,15 +399,14 @@ intn Vattrhdfsize(int32 vgid, intn attrindex, int32 *size)
        attribute issue, see headers of Vnattrs2, Vattrinfo2 in src for details */
     adjusted_index = attrindex;
     if (adjusted_index < vg->noldattrs) /* index of old-style attribute */
-        vg_alist = vg->old_alist;  /* use old-attr list */
-    else if (adjusted_index >= vg->noldattrs &&
-             adjusted_index < (vg->nattrs+vg->noldattrs))
-                 /* index of new-style attributes */
+        vg_alist = vg->old_alist;       /* use old-attr list */
+    else if (adjusted_index >= vg->noldattrs && adjusted_index < (vg->nattrs + vg->noldattrs))
+    /* index of new-style attributes */
     {
         /* Adjust the index to accommodate for the old-style attributes
            preceding the new-style attribute list */
         adjusted_index = adjusted_index - vg->noldattrs;
-        vg_alist = vg->alist;        /* use new-attr list */
+        vg_alist       = vg->alist; /* use new-attr list */
     }
     else /* not that many attrs */
         HGOTO_ERROR(DFE_BADATTR, FAIL);
@@ -443,21 +432,20 @@ intn Vattrhdfsize(int32 vgid, intn attrindex, int32 *size)
 
     w = &(vs->wlist);
     /* This vdata should have only 1 field */
-     /* if (w->n != 1 || HDstrcmp(w->name[0], ATTR_FIELD_NAME)) <- commented out
-	Note: ATTR_FIELD_NAME cannot be used here because hdfeos sets fieldname
-	to "AttrValues", not ATTR_FIELD_NAME. -BMR, 2014/12/01 */ 
-    if (w->n != 1 )
+    /* if (w->n != 1 || HDstrcmp(w->name[0], ATTR_FIELD_NAME)) <- commented out
+       Note: ATTR_FIELD_NAME cannot be used here because hdfeos sets fieldname
+       to "AttrValues", not ATTR_FIELD_NAME. -BMR, 2014/12/01 */
+    if (w->n != 1)
         HGOTO_ERROR(DFE_BADATTR, FAIL);
     if (size)
-       *size = w->order[0] * (DFKNTsize(w->type[0]));
+        *size = w->order[0] * (DFKNTsize(w->type[0]));
     if (FAIL == VSdetach(vsid))
         HGOTO_ERROR(DFE_CANTDETACH, FAIL);
 done:
-    if (ret_value == FAIL)
-    { /* Error condition cleanup */
+    if (ret_value == FAIL) { /* Error condition cleanup */
 
     } /* end if */
 
-  /* Normal function cleanup */
-  return ret_value;
-}  /* Vattrhdfsize */
+    /* Normal function cleanup */
+    return ret_value;
+} /* Vattrhdfsize */

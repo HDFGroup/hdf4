@@ -16,14 +16,10 @@
  *
  ***********************************************************  */
 
-
 #ifndef _VATTR_H
 #define _VATTR_H
 
 #include "hdf.h"
 #include "vg.h"
 
-
 #endif
-
-

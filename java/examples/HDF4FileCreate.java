@@ -27,7 +27,8 @@ import hdf.hdflib.HDFLibrary;
 public class HDF4FileCreate {
     private static String fname = "HDF4FileCreate.hdf";
 
-    public static void main(String args[]) throws Exception {
+    public static void main(String args[]) throws Exception
+    {
         long file_id = -1;
 
         // Create a new file using default properties.

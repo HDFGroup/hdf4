@@ -39,7 +39,8 @@ I. Preconditions
 
    1. We suggest you obtain the latest CMake for your platform from the Kitware
       web site. The HDF 4.2.x product requires a minimum CMake version
-      of 3.12. If you are using VS2019, the minimum version is 3.15.
+      of 3.12. If you are using VS2019, the minimum version is 3.15. If you are
+      using VS2022, the minimum version is 3.21.
 
    2. You have installed the HDF4 library built with CMake, by executing
       the HDF Install Utility (the *.msi file in the binary package for
@@ -83,7 +84,7 @@ Go through these steps to build HDF4 applications with CMake.
    1. Run CMake
    2. Configure the cache settings
    3. Build HDF4 Applications
-   4. Test HDF4 Applications.
+   4. Test HDF4 Applications
 
 These steps are described in more detail below.
 

@@ -29,17 +29,14 @@
 #include "hdf4_netcdf.h"
 #endif
 
-
-int ncerr = NC_NOERR ;
-
+int ncerr = NC_NOERR;
 
 /*
  * russ's last minute whistles
  *    The error(3) subroutines emit no messages unless NC_VERBOSE bit is on.
  *    The error(3) subroutines call exit() when NC_FATAL bit is on.
  */
-int ncopts = (NC_FATAL | NC_VERBOSE) ;
-
+int ncopts = (NC_FATAL | NC_VERBOSE);
 
 /*
  *    Set to the the name of the current interface routine by the

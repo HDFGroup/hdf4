@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
 /*
    FILE
    cnone.c
@@ -40,11 +39,10 @@
 #define CNONE_MASTER
 #define CODER_CLIENT
 /* HDF compression includes */
-#include "hcompi.h"     /* Internal definitions for compression */
+#include "hcompi.h" /* Internal definitions for compression */
 
 /* declaration of the functions provided in this module */
-PRIVATE int32 HCIcnone_staccess
-            (accrec_t * access_rec, int16 acc_mode);
+PRIVATE int32 HCIcnone_staccess(accrec_t *access_rec, int16 acc_mode);
 
 /*--------------------------------------------------------------------------
  NAME
@@ -67,26 +65,24 @@ PRIVATE int32 HCIcnone_staccess
  REVISION LOG
 --------------------------------------------------------------------------*/
 PRIVATE int32
-HCIcnone_staccess(accrec_t * access_rec, int16 acc_mode)
+HCIcnone_staccess(accrec_t *access_rec, int16 acc_mode)
 {
     CONSTR(FUNC, "HCIcnone_staccess");
-    compinfo_t *info;           /* special element information */
+    compinfo_t *info; /* special element information */
 
-    info = (compinfo_t *) access_rec->special_info;
+    info = (compinfo_t *)access_rec->special_info;
 
     if (acc_mode == DFACC_READ)
-        info->aid = Hstartread(access_rec->file_id, DFTAG_COMPRESSED,
-                               info->comp_ref);
+        info->aid = Hstartread(access_rec->file_id, DFTAG_COMPRESSED, info->comp_ref);
     else
-        info->aid = Hstartwrite(access_rec->file_id, DFTAG_COMPRESSED,
-                                info->comp_ref, info->length);
+        info->aid = Hstartwrite(access_rec->file_id, DFTAG_COMPRESSED, info->comp_ref, info->length);
 
     if (info->aid == FAIL)
         HRETURN_ERROR(DFE_DENIED, FAIL);
-    if ((acc_mode&DFACC_WRITE) && Happendable(info->aid) == FAIL)
+    if ((acc_mode & DFACC_WRITE) && Happendable(info->aid) == FAIL)
         HRETURN_ERROR(DFE_DENIED, FAIL);
     return (SUCCEED);
-}   /* end HCIcnone_staccess() */
+} /* end HCIcnone_staccess() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -108,15 +104,15 @@ HCIcnone_staccess(accrec_t * access_rec, int16 acc_mode)
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPcnone_stread(accrec_t * access_rec)
+HCPcnone_stread(accrec_t *access_rec)
 {
     CONSTR(FUNC, "HCPcnone_stread");
-    int32       ret;
+    int32 ret;
 
     if ((ret = HCIcnone_staccess(access_rec, DFACC_READ)) == FAIL)
         HRETURN_ERROR(DFE_CINIT, FAIL);
     return (ret);
-}   /* HCPcnone_stread() */
+} /* HCPcnone_stread() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -138,15 +134,15 @@ HCPcnone_stread(accrec_t * access_rec)
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPcnone_stwrite(accrec_t * access_rec)
+HCPcnone_stwrite(accrec_t *access_rec)
 {
     CONSTR(FUNC, "HCPcnone_stwrite");
-    int32       ret;
+    int32 ret;
 
     if ((ret = HCIcnone_staccess(access_rec, DFACC_WRITE)) == FAIL)
         HRETURN_ERROR(DFE_CINIT, FAIL);
     return (ret);
-}   /* HCPcnone_stwrite() */
+} /* HCPcnone_stwrite() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -173,18 +169,18 @@ HCPcnone_stwrite(accrec_t * access_rec)
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPcnone_seek(accrec_t * access_rec, int32 offset, int origin)
+HCPcnone_seek(accrec_t *access_rec, int32 offset, int origin)
 {
     CONSTR(FUNC, "HCPcnone_seek");
-    compinfo_t *info;           /* special element information */
+    compinfo_t *info; /* special element information */
 
-    info = (compinfo_t *) access_rec->special_info;
+    info = (compinfo_t *)access_rec->special_info;
 
     if (Hseek(info->aid, offset, origin) == FAIL)
         HRETURN_ERROR(DFE_CSEEK, FAIL);
 
     return (SUCCEED);
-}   /* HCPcnone_seek() */
+} /* HCPcnone_seek() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -208,18 +204,18 @@ HCPcnone_seek(accrec_t * access_rec, int32 offset, int origin)
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPcnone_read(accrec_t * access_rec, int32 length, void * data)
+HCPcnone_read(accrec_t *access_rec, int32 length, void *data)
 {
     CONSTR(FUNC, "HCPcnone_read");
-    compinfo_t *info;           /* special element information */
+    compinfo_t *info; /* special element information */
 
-    info = (compinfo_t *) access_rec->special_info;
+    info = (compinfo_t *)access_rec->special_info;
 
     if (Hread(info->aid, length, data) == FAIL)
         HRETURN_ERROR(DFE_CDECODE, FAIL);
 
     return (length);
-}   /* HCPcnone_read() */
+} /* HCPcnone_read() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -243,18 +239,18 @@ HCPcnone_read(accrec_t * access_rec, int32 length, void * data)
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPcnone_write(accrec_t * access_rec, int32 length, const void * data)
+HCPcnone_write(accrec_t *access_rec, int32 length, const void *data)
 {
     CONSTR(FUNC, "HCPcnone_write");
-    compinfo_t *info;           /* special element information */
+    compinfo_t *info; /* special element information */
 
-    info = (compinfo_t *) access_rec->special_info;
+    info = (compinfo_t *)access_rec->special_info;
 
     if (Hwrite(info->aid, length, data) == FAIL)
         HRETURN_ERROR(DFE_CENCODE, FAIL);
 
     return (length);
-}   /* HCPcnone_write() */
+} /* HCPcnone_write() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -286,23 +282,22 @@ HCPcnone_write(accrec_t * access_rec, int32 length, const void * data)
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPcnone_inquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
-                 uint16 *pref, int32 *plength, int32 *poffset,
-                 int32 *pposn, int16 *paccess, int16 *pspecial)
+HCPcnone_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength,
+                 int32 *poffset, int32 *pposn, int16 *paccess, int16 *pspecial)
 {
     /* shut compiler up */
     access_rec = access_rec;
-    pfile_id = pfile_id;
-    ptag = ptag;
-    pref = pref;
-    plength = plength;
-    poffset = poffset;
-    pposn = pposn;
-    paccess = paccess;
-    pspecial = pspecial;
+    pfile_id   = pfile_id;
+    ptag       = ptag;
+    pref       = pref;
+    plength    = plength;
+    poffset    = poffset;
+    pposn      = pposn;
+    paccess    = paccess;
+    pspecial   = pspecial;
 
     return (SUCCEED);
-}   /* HCPcnone_inquire() */
+} /* HCPcnone_inquire() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -324,16 +319,16 @@ HCPcnone_inquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
  REVISION LOG
 --------------------------------------------------------------------------*/
 intn
-HCPcnone_endaccess(accrec_t * access_rec)
+HCPcnone_endaccess(accrec_t *access_rec)
 {
     CONSTR(FUNC, "HCPcnone_endaccess");
-    compinfo_t *info;           /* special element information */
+    compinfo_t *info; /* special element information */
 
-    info = (compinfo_t *) access_rec->special_info;
+    info = (compinfo_t *)access_rec->special_info;
 
     /* close the compressed data AID */
     if (Hendaccess(info->aid) == FAIL)
         HRETURN_ERROR(DFE_CANTCLOSE, FAIL);
 
     return (SUCCEED);
-}   /* HCPcnone_endaccess() */
+} /* HCPcnone_endaccess() */

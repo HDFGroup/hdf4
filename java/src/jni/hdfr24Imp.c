@@ -30,12 +30,11 @@ extern "C" {
 
 extern jboolean getOldCompInfo(JNIEnv *env, jobject ciobj, comp_info *cinf);
 
-
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_DF24getdims(JNIEnv *env, jclass clss, jstring filename, jintArray argv)
 {
-    intn        rval = FAIL;
-    const char *fstr = NULL;
+    intn        rval    = FAIL;
+    const char *fstr    = NULL;
     jint       *theArgs = NULL;
     jboolean    isCopy;
 
@@ -54,7 +53,8 @@ Java_hdf_hdflib_HDFLibrary_DF24getdims(JNIEnv *env, jclass clss, jstring filenam
     PIN_JAVA_STRING(ENVONLY, filename, fstr, NULL, "DF24getdims:  filename not pinned");
 
     /* get image dimension information */
-    if ((rval = DF24getdims(fstr, (int32 *)&(theArgs[0]), (int32 *)&(theArgs[1]), (intn *)&(theArgs[2]))) == FAIL)
+    if ((rval = DF24getdims(fstr, (int32 *)&(theArgs[0]), (int32 *)&(theArgs[1]), (intn *)&(theArgs[2]))) ==
+        FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -67,11 +67,12 @@ done:
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DF24getimage(JNIEnv *env, jclass clss, jstring filename, jbyteArray image, jint width, jint height)
+Java_hdf_hdflib_HDFLibrary_DF24getimage(JNIEnv *env, jclass clss, jstring filename, jbyteArray image,
+                                        jint width, jint height)
 {
     intn        rval = FAIL;
     const char *fstr = NULL;
-    jbyte      *dat = NULL;
+    jbyte      *dat  = NULL;
     jboolean    isCopy;
 
     UNUSED(clss);
@@ -88,7 +89,7 @@ Java_hdf_hdflib_HDFLibrary_DF24getimage(JNIEnv *env, jclass clss, jstring filena
     PIN_BYTE_ARRAY_CRITICAL(ENVONLY, image, dat, &isCopy, "DF24getimage:  image not pinned");
     PIN_JAVA_STRING(ENVONLY, filename, fstr, NULL, "DF24getimage:  filename not pinned");
 
-    if ((rval =  DF24getimage(fstr, (VOIDP) dat, (int32) width, (int32) height)) == FAIL)
+    if ((rval = DF24getimage(fstr, (VOIDP)dat, (int32)width, (int32)height)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -149,7 +150,7 @@ done:
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_DF24nimages(JNIEnv *env, jclass clss, jstring hdfFile)
 {
-    intn        rval = FAIL;
+    intn        rval     = FAIL;
     const char *hdf_file = NULL;
 
     UNUSED(clss);
@@ -184,11 +185,12 @@ done:
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DF24addimage(JNIEnv *env, jclass clss, jstring filename, jbyteArray image, jint width, jint height)
+Java_hdf_hdflib_HDFLibrary_DF24addimage(JNIEnv *env, jclass clss, jstring filename, jbyteArray image,
+                                        jint width, jint height)
 {
     intn        rval = FAIL;
     const char *fstr = NULL;
-    jbyte      *dat = NULL;
+    jbyte      *dat  = NULL;
     jboolean    isCopy;
 
     UNUSED(clss);
@@ -205,7 +207,7 @@ Java_hdf_hdflib_HDFLibrary_DF24addimage(JNIEnv *env, jclass clss, jstring filena
     PIN_BYTE_ARRAY(ENVONLY, image, dat, &isCopy, "DF24addimage:  image not pinned");
     PIN_JAVA_STRING(ENVONLY, filename, fstr, NULL, "DF24addimage:  filename is not pinned");
 
-    if ((rval = DF24addimage((char *)fstr, (VOIDP) dat, (int32) width, (int32) height)) == FAIL)
+    if ((rval = DF24addimage((char *)fstr, (VOIDP)dat, (int32)width, (int32)height)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -218,11 +220,12 @@ done:
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DF24putimage(JNIEnv *env, jclass clss, jstring filename, jbyteArray image, jint width, jint height)
+Java_hdf_hdflib_HDFLibrary_DF24putimage(JNIEnv *env, jclass clss, jstring filename, jbyteArray image,
+                                        jint width, jint height)
 {
     intn        rval = FAIL;
     const char *fstr = NULL;
-    jbyte      *dat = NULL;
+    jbyte      *dat  = NULL;
     jboolean    isCopy;
 
     UNUSED(clss);
@@ -239,7 +242,7 @@ Java_hdf_hdflib_HDFLibrary_DF24putimage(JNIEnv *env, jclass clss, jstring filena
     PIN_BYTE_ARRAY(ENVONLY, image, dat, &isCopy, "DF24putimage:  image not pinned");
     PIN_JAVA_STRING(ENVONLY, filename, fstr, NULL, "DF24putimage:  filename is not pinned");
 
-    if ((rval = DF24putimage(fstr, (VOIDP) dat, (int32) width, (int32) height)) == FAIL)
+    if ((rval = DF24putimage(fstr, (VOIDP)dat, (int32)width, (int32)height)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -263,14 +266,14 @@ Java_hdf_hdflib_HDFLibrary_DF24setcompress(JNIEnv *env, jclass clss, jint type, 
     if (cinfo == NULL)
         H4_NULL_ARGUMENT_ERROR(ENVONLY, "DF24setcompress: cinfo is NULL");
 
-    bval = getOldCompInfo(env, cinfo,&cinf);
+    bval = getOldCompInfo(env, cinfo, &cinf);
 
     if (bval == JNI_FALSE) {
         H4_JNI_FATAL_ERROR(ENVONLY, "DF24setcompress: cinfo not pinned");
     } /* end if */
     else {
         /* fill in cinf depending on the value of 'type' */
-        if ((rval = DF24setcompress((int32) type, (comp_info *)&cinf)) == FAIL)
+        if ((rval = DF24setcompress((int32)type, (comp_info *)&cinf)) == FAIL)
             H4_LIBRARY_ERROR(ENVONLY);
     }
 
@@ -285,7 +288,7 @@ Java_hdf_hdflib_HDFLibrary_DF24setdims(JNIEnv *env, jclass clss, jint width, jin
 
     UNUSED(clss);
 
-    if ((rval = DF24setdims((int32) width, (int32) height)) == FAIL)
+    if ((rval = DF24setdims((int32)width, (int32)height)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -299,7 +302,7 @@ Java_hdf_hdflib_HDFLibrary_DF24setil(JNIEnv *env, jclass clss, jint il)
 
     UNUSED(clss);
 
-    if ((rval = DF24setil((intn) il)) == FAIL)
+    if ((rval = DF24setil((intn)il)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:

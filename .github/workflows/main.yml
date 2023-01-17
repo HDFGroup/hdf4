@@ -4,10 +4,13 @@ name: hdf4 dev CI
 on:
   workflow_dispatch:
   push:
-    paths-ignore:
-    - 'release_notes/**'
   pull_request:
     branches: [ master ]
+    paths-ignore:
+    - '.github/CODEOWNERS'
+    - 'release_notes/**'
+    - 'COPYING'
+    - '**.md'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:

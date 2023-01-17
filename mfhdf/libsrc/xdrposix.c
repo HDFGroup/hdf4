@@ -20,161 +20,148 @@
  * the following isn't 32-bits):
  */
 #ifndef NETLONG
-#   define NETLONG  long
+#define NETLONG long
 #endif
-typedef NETLONG     netlong;
-#undef  NETLONG
+typedef NETLONG netlong;
+#undef NETLONG
 
 #include <string.h>
 #include "local_nc.h" /* prototypes for NCadvis, nc_error */
-            /* also obtains <stdio.h>, <rpc/types.h>, &
-            * <rpc/xdr.h> */
+                      /* also obtains <stdio.h>, <rpc/types.h>, &
+                       * <rpc/xdr.h> */
 
 #ifdef H4_HAVE_STDINT_H
-# include <stdint.h>
+#include <stdint.h>
 #endif
 
 #ifdef H4_HAVE_UNISTD_H
-# include <unistd.h>
+#include <unistd.h>
 #endif
 
 #ifdef H4_HAVE_IO_H
-# include <io.h>
+#include <io.h>
 #endif
 
 #ifdef H4_HAVE_FCNTL_H
-# include <fcntl.h>
+#include <fcntl.h>
 #endif
 
 #ifdef H4_HAVE_SYS_TYPES_H
-# include <sys/types.h>
+#include <sys/types.h>
 #endif
 
 /*EIP #include "netcdf.h" */
 #include "mfhdf.h"
 
 #if !(defined DOS_FS)
-        typedef u_int ncpos_t ;  /* all unicies */
+typedef u_int ncpos_t; /* all unicies */
 #else
-      typedef off_t ncpos_t ;
+typedef off_t   ncpos_t;
 #endif
 
 typedef struct {
-    int fd;         /* the file descriptor */
-    int mode;       /* file access mode, O_RDONLY, etc */
-    int isdirty ;
-    off_t page ;
-    int nread ;     /* number of bytes successfully read */
-    int nwrote ;    /* number of bytes last write */
-    int cnt ;       /* number of valid bytes in buffer */
-    unsigned char *ptr;         /* next byte */
+    int            fd;   /* the file descriptor */
+    int            mode; /* file access mode, O_RDONLY, etc */
+    int            isdirty;
+    off_t          page;
+    int            nread;  /* number of bytes successfully read */
+    int            nwrote; /* number of bytes last write */
+    int            cnt;    /* number of valid bytes in buffer */
+    unsigned char *ptr;    /* next byte */
 #ifdef DOS_FS
-#define BIOBUFSIZ   512
+#define BIOBUFSIZ 512
 #else
-#define BIOBUFSIZ   8192
+#define BIOBUFSIZ 8192
 #endif
-    unsigned char base[BIOBUFSIZ];      /* the data buffer */
+    unsigned char base[BIOBUFSIZ]; /* the data buffer */
 } biobuf;
-
 
 static void
 free_biobuf(biobuf *abuf)
 {
-    if(abuf != NULL)
-    HDfree((VOIDP)abuf) ;
+    if (abuf != NULL)
+        HDfree((VOIDP)abuf);
 }
-
 
 static biobuf *
 new_biobuf(int fd, int fmode)
 {
-    biobuf *biop ;
+    biobuf *biop;
 
-    biop = (biobuf *)HDmalloc(sizeof(biobuf)) ;
-    if(biop == NULL)
-        return NULL ;
-    biop->fd = fd ;
+    biop = (biobuf *)HDmalloc(sizeof(biobuf));
+    if (biop == NULL)
+        return NULL;
+    biop->fd = fd;
 
-    biop->mode = fmode ;
+    biop->mode = fmode;
 
-    biop->isdirty = 0 ;
-    biop->page = 0 ;
-    biop->nread = 0 ;
-    biop->nwrote = 0 ;
-    biop->cnt = 0 ;
-    memset(biop->base, 0, ((size_t)(BIOBUFSIZ))) ;
-    biop->ptr = biop->base ;
+    biop->isdirty = 0;
+    biop->page    = 0;
+    biop->nread   = 0;
+    biop->nwrote  = 0;
+    biop->cnt     = 0;
+    memset(biop->base, 0, ((size_t)(BIOBUFSIZ)));
+    biop->ptr = biop->base;
 
-    return biop ;
+    return biop;
 }
-
 
 static int
 rdbuf(biobuf *biop)
 {
-    memset(biop->base, 0, ((size_t)(BIOBUFSIZ))) ;
+    memset(biop->base, 0, ((size_t)(BIOBUFSIZ)));
 
-    if(biop->mode & O_WRONLY)
-    {
-        biop->cnt = 0 ;
+    if (biop->mode & O_WRONLY) {
+        biop->cnt = 0;
     }
-    else
-    {
-        if(biop->nwrote != BIOBUFSIZ)
-        {
+    else {
+        if (biop->nwrote != BIOBUFSIZ) {
             /* last write wasn't a full block, adjust position ahead */
-            if(lseek(biop->fd, biop->page * BIOBUFSIZ, SEEK_SET) == ((off_t)-1))
-                return -1 ;
+            if (lseek(biop->fd, biop->page * BIOBUFSIZ, SEEK_SET) == ((off_t)-1))
+                return -1;
         }
-        biop->nread = biop->cnt = read(biop->fd, (VOIDP)biop->base, BIOBUFSIZ) ;
+        biop->nread = biop->cnt = read(biop->fd, (VOIDP)biop->base, BIOBUFSIZ);
     }
-    biop->ptr = biop->base ;
-    return biop->cnt ;
+    biop->ptr = biop->base;
+    return biop->cnt;
 }
-
 
 static int
 wrbuf(biobuf *biop)
 {
 
-    if(!((biop->mode & O_WRONLY) || (biop->mode & O_RDWR))
-        || biop->cnt == 0)
-    {
-        biop->nwrote = 0 ;
+    if (!((biop->mode & O_WRONLY) || (biop->mode & O_RDWR)) || biop->cnt == 0) {
+        biop->nwrote = 0;
     }
-    else
-    {
-        if(biop->nread != 0)
-        {
+    else {
+        if (biop->nread != 0) {
             /* if we read something, we have to adjust position back */
-            if(lseek(biop->fd, biop->page * BIOBUFSIZ, SEEK_SET) == ((off_t)-1))
-                return -1 ;
+            if (lseek(biop->fd, biop->page * BIOBUFSIZ, SEEK_SET) == ((off_t)-1))
+                return -1;
         }
-        biop->nwrote = write(biop->fd, (VOIDP)biop->base, biop->cnt) ;
+        biop->nwrote = write(biop->fd, (VOIDP)biop->base, biop->cnt);
     }
-    biop->isdirty = 0 ;
+    biop->isdirty = 0;
 
-    return biop->nwrote ;
+    return biop->nwrote;
 }
 
 static int
 nextbuf(biobuf *biop)
 {
-    if(biop->isdirty)
-    {
-        if(wrbuf(biop) < 0)
-            return -1 ;
+    if (biop->isdirty) {
+        if (wrbuf(biop) < 0)
+            return -1;
     }
 
-    biop->page++ ;
+    biop->page++;
 
     /* read it in */
-    if(rdbuf(biop) < 0 )
-        return -1 ;
+    if (rdbuf(biop) < 0)
+        return -1;
 
-    return biop->cnt ;
+    return biop->cnt;
 }
-
 
 #define CNT(p) ((p)->ptr - (p)->base)
 /* # of unread bytes in buffer */
@@ -185,85 +172,79 @@ nextbuf(biobuf *biop)
 static int
 bioread(biobuf *biop, unsigned char *ptr, int nbytes)
 {
-    int ngot = 0 ;
-    size_t rem ;
+    int    ngot = 0;
+    size_t rem;
 
-    if(nbytes == 0)
-        return 0 ;
+    if (nbytes == 0)
+        return 0;
 
-    while(nbytes > (rem = REM(biop)))
-    {
-        if(rem > 0)
-        {
-            (void) memcpy(ptr, biop->ptr, rem) ;
-            ptr += rem ;
-            nbytes -= rem ;
-            ngot += rem ;
+    while (nbytes > (rem = REM(biop))) {
+        if (rem > 0) {
+            (void)memcpy(ptr, biop->ptr, rem);
+            ptr += rem;
+            nbytes -= rem;
+            ngot += rem;
         }
-        if(nextbuf(biop) <= 0)
-            return ngot ;
+        if (nextbuf(biop) <= 0)
+            return ngot;
     }
     /* we know nbytes <= REM at this point */
-    (void) memcpy(ptr, biop->ptr, (size_t)nbytes) ;
-    biop->ptr += nbytes ;
-    ngot += nbytes ;
-    return ngot ;
+    (void)memcpy(ptr, biop->ptr, (size_t)nbytes);
+    biop->ptr += nbytes;
+    ngot += nbytes;
+    return ngot;
 }
-
 
 static int
 biowrite(biobuf *biop, unsigned char *ptr, int nbytes)
 {
-    size_t rem ;
-    int nwrote = 0 ;
-    int cnt ;
+    size_t rem;
+    int    nwrote = 0;
+    int    cnt;
 
-    if(!((biop->mode & O_WRONLY) || (biop->mode & O_RDWR)))
-        return -1 ;
+    if (!((biop->mode & O_WRONLY) || (biop->mode & O_RDWR)))
+        return -1;
 
-    while(nbytes > (rem = BREM(biop)))
-    {
-        if(rem > 0)
-        {
-            (void) memcpy(biop->ptr, ptr, rem) ;
-            biop->isdirty = !0 ;
-            biop->cnt = BIOBUFSIZ ;
-            ptr += rem ;
-            nbytes -= rem ;
-            nwrote += rem ;
+    while (nbytes > (rem = BREM(biop))) {
+        if (rem > 0) {
+            (void)memcpy(biop->ptr, ptr, rem);
+            biop->isdirty = !0;
+            biop->cnt     = BIOBUFSIZ;
+            ptr += rem;
+            nbytes -= rem;
+            nwrote += rem;
         }
-        if(nextbuf(biop) < 0)
-            return nwrote ;
+        if (nextbuf(biop) < 0)
+            return nwrote;
     }
     /* we know nbytes <= BREM at this point */
-    (void) memcpy(biop->ptr, ptr, (size_t)nbytes) ;
-    biop->isdirty = !0 ;
-    biop->ptr += nbytes ;
-    if((cnt = CNT(biop)) > biop->cnt)
-        biop->cnt = cnt ;
-    nwrote += nbytes ;
+    (void)memcpy(biop->ptr, ptr, (size_t)nbytes);
+    biop->isdirty = !0;
+    biop->ptr += nbytes;
+    if ((cnt = CNT(biop)) > biop->cnt)
+        biop->cnt = cnt;
+    nwrote += nbytes;
 
-    return nwrote ;
+    return nwrote;
 }
 
-
-static bool_t   xdrposix_getlong();
-static bool_t   xdrposix_putlong();
+static bool_t                                   xdrposix_getlong();
+static bool_t                                   xdrposix_putlong();
 #if (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__
-static bool_t   xdrposix_getint();
-static bool_t   xdrposix_putint();
+static bool_t                                                                            xdrposix_getint();
+static bool_t                                                                            xdrposix_putint();
 #endif
-static bool_t   xdrposix_getbytes();
-static bool_t   xdrposix_putbytes();
-static ncpos_t  xdrposix_getpos();
-static bool_t   xdrposix_setpos();
+static bool_t  xdrposix_getbytes();
+static bool_t  xdrposix_putbytes();
+static ncpos_t xdrposix_getpos();
+static bool_t  xdrposix_setpos();
 #if (defined __sun && defined _LP64)
-static rpc_inline_t *    xdrposix_inline();
+static rpc_inline_t *xdrposix_inline();
 #else
-#if ((defined __x86_64__ ) && !(defined __sun && defined _LP64)) || defined __powerpc64__
-static int32_t *    xdrposix_inline();
+#if ((defined __x86_64__) && !(defined __sun && defined _LP64)) || defined __powerpc64__
+static int32_t *xdrposix_inline();
 #else
-static netlong *    xdrposix_inline();
+static netlong *xdrposix_inline();
 #endif
 #endif
 static void xdrposix_destroy();
@@ -271,36 +252,26 @@ static void xdrposix_destroy();
 /*
  * Ops vector for posix type XDR
  */
-static struct xdr_ops   xdrposix_ops = {
-    xdrposix_getlong,   /* deserialize a 32-bit int */
-    xdrposix_putlong,   /* serialize a 32-bit int */
-    xdrposix_getbytes,  /* deserialize counted bytes */
-    xdrposix_putbytes,  /* serialize counted bytes */
-    xdrposix_getpos,    /* get offset in the stream */
-    xdrposix_setpos,    /* set offset in the stream */
-    xdrposix_inline,    /* prime stream for inline macros */
-#if (defined __sun && defined _LP64) || defined __x86_64__ || defined __powerpc64__
-    xdrposix_destroy,   /* destroy stream */
-#if !(defined __x86_64__) && !(defined __powerpc64__) || (defined  __sun && defined _LP64) /* i.e. we are on SUN/Intel in 64-bit mode */
-    NULL,               /* no xdr_control function defined */
-#endif
-    /* Solaris 64-bit (arch=v9 and arch=amd64) has 64 bits long and 32 bits int. */
-    /* It defines the two extra entries for get/put int. here */
-    xdrposix_getint,   /* deserialize a 32-bit int */
-    xdrposix_putint    /* serialize a 32-bit int */
-#else
-#ifdef AIX5L64
-    xdrposix_destroy,
-    NULL,
-    NULL,
-    xdrposix_getint,
-    xdrposix_putint
-#else /*AIX5L64 */
-    xdrposix_destroy    /* destroy stream */
-#endif /*AIX5L64 */
+static struct xdr_ops xdrposix_ops = {
+    xdrposix_getlong,  /* deserialize a 32-bit int */
+    xdrposix_putlong,  /* serialize a 32-bit int */
+    xdrposix_getbytes, /* deserialize counted bytes */
+    xdrposix_putbytes, /* serialize counted bytes */
+    xdrposix_getpos,   /* get offset in the stream */
+    xdrposix_setpos,   /* set offset in the stream */
+    xdrposix_inline,   /* prime stream for inline macros */
+    xdrposix_destroy,  /* destroy stream */
+    NULL,              /* no xdr_control function defined */
+#if defined(__sun) && defined(_LP64)
+    /* Solaris 64-bit (arch=v9 and arch=amd64) differentiates between
+     * 32-bit integers and 64-bit longs via two extra callbacks for
+     * int here. These are not present on other XDR implementations
+     * like TI-RPC.
+     */
+    xdrposix_getint, /* deserialize a 32-bit int */
+    xdrposix_putint  /* serialize a 32-bit int */
 #endif
 };
-
 
 /*
  * Fake an XDR initialization for HDF files
@@ -308,18 +279,17 @@ static struct xdr_ops   xdrposix_ops = {
 void
 hdf_xdrfile_create(XDR *xdrs, int ncop)
 {
-    biobuf *biop = new_biobuf(-1, 0) ;
+    biobuf *biop = new_biobuf(-1, 0);
 
-    if(ncop & NC_CREAT)
+    if (ncop & NC_CREAT)
         xdrs->x_op = XDR_ENCODE;
     else
         xdrs->x_op = XDR_DECODE;
 
-    xdrs->x_ops = &xdrposix_ops;
-    xdrs->x_private = (caddr_t) biop;
+    xdrs->x_ops     = &xdrposix_ops;
+    xdrs->x_private = (caddr_t)biop;
 
 } /* hdf_xdrfile_create */
-
 
 /*
  * Initialize a posix xdr stream.
@@ -329,32 +299,31 @@ hdf_xdrfile_create(XDR *xdrs, int ncop)
 static int
 xdrposix_create(XDR *xdrs, int fd, int fmode, enum xdr_op op)
 {
-    biobuf *biop = new_biobuf(fd, fmode) ;
-   /* fprintf(stderr, "xdrposix_create: biop = %p\n", biop);
- */
+    biobuf *biop = new_biobuf(fd, fmode);
+    /* fprintf(stderr, "xdrposix_create: biop = %p\n", biop);
+     */
 #ifdef XDRDEBUG
-fprintf(stderr,"xdrposix_create(): xdrs=%p, fd=%d, fmode=%d, op=%d\n",xdrs,fd,fmode,(int)op);
-fprintf(stderr,"xdrposix_create(): after new_biobuf(), biop=%p\n",biop);
+    fprintf(stderr, "xdrposix_create(): xdrs=%p, fd=%d, fmode=%d, op=%d\n", xdrs, fd, fmode, (int)op);
+    fprintf(stderr, "xdrposix_create(): after new_biobuf(), biop=%p\n", biop);
 #endif
-    xdrs->x_op = op;
-    xdrs->x_ops = &xdrposix_ops;
-    xdrs->x_private = (caddr_t) biop ;
+    xdrs->x_op      = op;
+    xdrs->x_ops     = &xdrposix_ops;
+    xdrs->x_private = (caddr_t)biop;
     /* unused */
     xdrs->x_handy = 0;
-    xdrs->x_base = 0;
-    if(biop == NULL)
-        return -1 ;
+    xdrs->x_base  = 0;
+    if (biop == NULL)
+        return -1;
 
     /* if write only, or just created (empty), done */
-    if((biop->mode & O_WRONLY)
-            || (biop->mode & O_CREAT))
-        return 0 ;
+    if ((biop->mode & O_WRONLY) || (biop->mode & O_CREAT))
+        return 0;
 
 #ifdef XDRDEBUG
-fprintf(stderr,"xdrposix_create(): before rdbuf()\n");
+    fprintf(stderr, "xdrposix_create(): before rdbuf()\n");
 #endif
     /* else, read the first bufferful */
-    return( rdbuf(biop) ) ;
+    return (rdbuf(biop));
 }
 
 /*
@@ -363,23 +332,21 @@ fprintf(stderr,"xdrposix_create(): before rdbuf()\n");
 static int
 xdrposix_sync(XDR *xdrs)
 {
-    biobuf *biop = (biobuf *)xdrs->x_private ;
-    if(biop->isdirty)
-    {
+    biobuf *biop = (biobuf *)xdrs->x_private;
+    if (biop->isdirty) {
         /* flush */
-        if(wrbuf(biop) < 0)
-            return -1 ;
+        if (wrbuf(biop) < 0)
+            return -1;
     }
 
-    biop->nwrote = 0 ; /* force seek in rdbuf */
+    biop->nwrote = 0; /* force seek in rdbuf */
 
     /* read it in */
-    if(rdbuf(biop) < 0 )
-        return -1 ;
+    if (rdbuf(biop) < 0)
+        return -1;
 
-    return biop->cnt ;
+    return biop->cnt;
 }
-
 
 /*
  * Destroy a posix xdr stream.
@@ -389,17 +356,15 @@ static void
 xdrposix_destroy(XDR *xdrs)
 {
     /* flush */
-    biobuf *biop = (biobuf *)xdrs->x_private ;
-    if(biop != NULL)
-    {
-        if(biop->isdirty)
-        {
-            (void) wrbuf(biop) ;
+    biobuf *biop = (biobuf *)xdrs->x_private;
+    if (biop != NULL) {
+        if (biop->isdirty) {
+            (void)wrbuf(biop);
         }
-        if(biop->fd != -1)
-            (void) close(biop->fd) ;
-   /* fprintf(stderr, "\nxdrposix_destroy: going to free_biobuf\n");
- */
+        if (biop->fd != -1)
+            (void)close(biop->fd);
+        /* fprintf(stderr, "\nxdrposix_destroy: going to free_biobuf\n");
+         */
         free_biobuf(biop);
     }
 }
@@ -407,15 +372,15 @@ xdrposix_destroy(XDR *xdrs)
 static bool_t
 xdrposix_getlong(XDR *xdrs, long *lp)
 {
-    unsigned char *up = (unsigned char *)lp ;
+    unsigned char *up = (unsigned char *)lp;
 #if (defined AIX5L64 || defined __powerpc64__ || (defined __hpux && __LP64__))
-    *lp = 0 ;
-    up += (sizeof(long) - 4) ;
+    *lp = 0;
+    up += (sizeof(long) - 4);
 #endif
-    if(bioread((biobuf *)xdrs->x_private, up, 4) < 4)
+    if (bioread((biobuf *)xdrs->x_private, up, 4) < 4)
         return (FALSE);
 #ifndef H4_WORDS_BIGENDIAN
-    *lp =  ntohl(*lp);
+    *lp = ntohl(*lp);
 #endif
     return (TRUE);
 }
@@ -424,13 +389,13 @@ static bool_t
 xdrposix_putlong(XDR *xdrs, long *lp)
 {
 
-    unsigned char *up = (unsigned char *)lp ;
+    unsigned char *up = (unsigned char *)lp;
 #ifndef H4_WORDS_BIGENDIAN
     netlong mycopy = htonl(*lp);
-    up = (unsigned char *)&mycopy;
+    up             = (unsigned char *)&mycopy;
 #endif
-#if (defined AIX5L64  || defined __powerpc64__ || (defined __hpux && __LP64__))
-    up += (sizeof(long) - 4) ;
+#if (defined AIX5L64 || defined __powerpc64__ || (defined __hpux && __LP64__))
+    up += (sizeof(long) - 4);
 #endif
 
     if (biowrite((biobuf *)xdrs->x_private, up, 4) < 4)
@@ -439,25 +404,27 @@ xdrposix_putlong(XDR *xdrs, long *lp)
 }
 
 #if (defined __hpux)
-static bool_t xdrposix_getbytes(XDR *xdrs, caddr_t addr, int len)
+static bool_t
+xdrposix_getbytes(XDR *xdrs, caddr_t addr, int len)
 #else
-static bool_t xdrposix_getbytes(XDR *xdrs, caddr_t addr, u_int len)
+static bool_t
+xdrposix_getbytes(XDR *xdrs, caddr_t addr, u_int len)
 #endif
 {
-    if ((len != 0)
-            && (bioread((biobuf *)xdrs->x_private, (unsigned char *)addr, (int)len) != len))
+    if ((len != 0) && (bioread((biobuf *)xdrs->x_private, (unsigned char *)addr, (int)len) != len))
         return (FALSE);
     return (TRUE);
 }
 
 #if (defined __hpux)
-static bool_t xdrposix_putbytes(XDR *xdrs, caddr_t addr, int len)
+static bool_t
+xdrposix_putbytes(XDR *xdrs, caddr_t addr, int len)
 #else
-static bool_t xdrposix_putbytes(XDR *xdrs, caddr_t addr, u_int len)
+static bool_t
+xdrposix_putbytes(XDR *xdrs, caddr_t addr, u_int len)
 #endif
 {
-    if ((len != 0)
-            && (biowrite((biobuf *)xdrs->x_private, (unsigned char *)addr, (int)len) != len))
+    if ((len != 0) && (biowrite((biobuf *)xdrs->x_private, (unsigned char *)addr, (int)len) != len))
         return (FALSE);
     return (TRUE);
 }
@@ -465,39 +432,36 @@ static bool_t xdrposix_putbytes(XDR *xdrs, caddr_t addr, u_int len)
 static ncpos_t
 xdrposix_getpos(XDR *xdrs)
 {
-    biobuf *biop = (biobuf *)xdrs->x_private ;
+    biobuf *biop = (biobuf *)xdrs->x_private;
     return (BIOBUFSIZ * biop->page + CNT(biop));
 }
 
 static bool_t
 xdrposix_setpos(XDR *xdrs, ncpos_t pos)
 {
-    biobuf *biop = (biobuf *)xdrs->x_private ;
-    if(biop != NULL)
-    {
-        off_t page ;
-        int index ;
-        int nread ;
-        page = pos / BIOBUFSIZ ;
-        index = pos % BIOBUFSIZ ;
-        if(page != biop->page)
-        {
-            if(biop->isdirty)
-            {
-                if( wrbuf(biop) < 0)
-                    return FALSE ;
+    biobuf *biop = (biobuf *)xdrs->x_private;
+    if (biop != NULL) {
+        off_t page;
+        int   index;
+        int   nread;
+        page  = pos / BIOBUFSIZ;
+        index = pos % BIOBUFSIZ;
+        if (page != biop->page) {
+            if (biop->isdirty) {
+                if (wrbuf(biop) < 0)
+                    return FALSE;
             }
-            if(page != biop->page +1)
-                biop->nwrote = 0 ; /* force seek in rdbuf */
+            if (page != biop->page + 1)
+                biop->nwrote = 0; /* force seek in rdbuf */
 
-            biop->page = page ;
+            biop->page = page;
 
-            nread = rdbuf(biop) ;
-            if(nread < 0 || ((biop->mode & O_RDONLY) && nread < index))
-                return FALSE ;
+            nread = rdbuf(biop);
+            if (nread < 0 || ((biop->mode & O_RDONLY) && nread < index))
+                return FALSE;
         }
-        biop->ptr = biop->base + index ;
-        return TRUE ;
+        biop->ptr = biop->base + index;
+        return TRUE;
     }
     else
         return FALSE;
@@ -506,7 +470,7 @@ xdrposix_setpos(XDR *xdrs, ncpos_t pos)
 #if (defined __sun && defined _LP64)
 static rpc_inline_t *
 #else
-#if ((defined  __x86_64__) && !(defined __sun && defined _LP64)) || defined __powerpc64__
+#if ((defined __x86_64__) && !(defined __sun && defined _LP64)) || defined __powerpc64__
 static int32_t *
 #else
 static netlong *
@@ -523,13 +487,13 @@ xdrposix_inline(XDR *xdrs, u_int len)
     return (NULL);
 }
 
-#if (defined __sun && defined _LP64) || defined AIX5L64  || defined __x86_64__ || defined __powerpc64__
+#if (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__
 
 static bool_t
 xdrposix_getint(XDR *xdrs, int *lp)
 {
-    unsigned char *up = (unsigned char *)lp ;
-    if(bioread((biobuf *)xdrs->x_private, up, 4) < 4)
+    unsigned char *up = (unsigned char *)lp;
+    if (bioread((biobuf *)xdrs->x_private, up, 4) < 4)
         return (FALSE);
 #ifndef H4_WORDS_BIGENDIAN
     *lp = ntohl(*lp);
@@ -540,10 +504,10 @@ xdrposix_getint(XDR *xdrs, int *lp)
 static bool_t
 xdrposix_putint(XDR *xdrs, int *lp)
 {
-    unsigned char *up = (unsigned char *)lp ;
+    unsigned char *up = (unsigned char *)lp;
 #ifndef H4_WORDS_BIGENDIAN
     netlong mycopy = htonl(*lp);
-    up = (unsigned char *)&mycopy;
+    up             = (unsigned char *)&mycopy;
 #endif
     if (biowrite((biobuf *)xdrs->x_private, up, 4) < 4)
         return (FALSE);
@@ -554,69 +518,68 @@ xdrposix_putint(XDR *xdrs, int *lp)
 int
 NCxdrfile_sync(XDR *xdrs)
 {
-    return xdrposix_sync(xdrs) ;
+    return xdrposix_sync(xdrs);
 }
 
 int
 NCxdrfile_create(XDR *xdrs, const char *path, int ncmode)
 {
-    int fmode ;
-    int  fd ;
-    enum xdr_op op ;
+    int         fmode;
+    int         fd;
+    enum xdr_op op;
 
 #ifdef XDRDEBUG
-fprintf(stderr,"NCxdrfile_create(): XDR=%p, path=%s, ncmode=%d\n",xdrs,path,ncmode);
+    fprintf(stderr, "NCxdrfile_create(): XDR=%p, path=%s, ncmode=%d\n", xdrs, path, ncmode);
 #endif
-    switch(ncmode & 0x0f) {
-    case NC_NOCLOBBER :
-        fmode = O_RDWR | O_CREAT | O_EXCL ;
-        break ;
-    case NC_CLOBBER :
-        fmode = O_RDWR | O_CREAT | O_TRUNC ;
-        break ;
-    case NC_WRITE :
-        fmode = O_RDWR ;
-        break ;
-    case NC_NOWRITE :
-        fmode = O_RDONLY ;
-        break ;
-    default:
-        NCadvise(NC_EINVAL, "Bad flag %0x", ncmode & 0x0f) ;
-        return(-1) ;
+    switch (ncmode & 0x0f) {
+        case NC_NOCLOBBER:
+            fmode = O_RDWR | O_CREAT | O_EXCL;
+            break;
+        case NC_CLOBBER:
+            fmode = O_RDWR | O_CREAT | O_TRUNC;
+            break;
+        case NC_WRITE:
+            fmode = O_RDWR;
+            break;
+        case NC_NOWRITE:
+            fmode = O_RDONLY;
+            break;
+        default:
+            NCadvise(NC_EINVAL, "Bad flag %0x", ncmode & 0x0f);
+            return (-1);
     }
 #ifdef DOS_FS
     /*
      * set default mode to binary to suppress the expansion of
      * 0x0f into CRLF
      */
-    if(_fmode != O_BINARY)
-        _fmode = O_BINARY ;
+    if (_fmode != O_BINARY)
+        _fmode = O_BINARY;
 #endif
-    fd = open(path, fmode, 0666) ;
+    fd = open(path, fmode, 0666);
 #ifdef XDRDEBUG
-fprintf(stderr,"NCxdrfile_create(): fmode=%d, fd=%d\n",fmode,fd);
+    fprintf(stderr, "NCxdrfile_create(): fmode=%d, fd=%d\n", fmode, fd);
 #endif
-    if( fd == -1 )
-    {
-        nc_serror("filename \"%s\"", path) ;
-        return(-1) ;
+    if (fd == -1) {
+        nc_serror("filename \"%s\"", path);
+        return (-1);
     } /* else */
 
-    if( ncmode & NC_CREAT )
-    {
-        op = XDR_ENCODE ;
-    } else {
-        op = XDR_DECODE ;
+    if (ncmode & NC_CREAT) {
+        op = XDR_ENCODE;
+    }
+    else {
+        op = XDR_DECODE;
     }
 
 #ifdef XDRDEBUG
-fprintf(stderr,"NCxdrfile_create(): before xdrposix_create()\n");
+    fprintf(stderr, "NCxdrfile_create(): before xdrposix_create()\n");
 #endif
-    if(xdrposix_create(xdrs, fd, fmode, op) < 0)
-        return -1 ;
-    /* else */
+    if (xdrposix_create(xdrs, fd, fmode, op) < 0)
+        return -1;
+        /* else */
 #ifdef XDRDEBUG
-fprintf(stderr,"NCxdrfile_create(): after xdrposix_create()\n");
+    fprintf(stderr, "NCxdrfile_create(): after xdrposix_create()\n");
 #endif
-    return fd ;
+    return fd;
 }

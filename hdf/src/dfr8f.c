@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
 /*-----------------------------------------------------------------------------
  * File:    dfr8F.c
  * Purpose: C stubs for Fortran RIS routines
@@ -48,7 +47,7 @@
 FRETVAL(intf)
 nd8spal(_fcd pal)
 {
-    return (DFR8setpalette((uint8 *) _fcdtocp(pal)));
+    return (DFR8setpalette((uint8 *)_fcdtocp(pal)));
 }
 
 /*-----------------------------------------------------------------------------
@@ -79,23 +78,23 @@ nd8first(void)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-nd8igdim(_fcd filename, intf * xdim, intf * ydim, intf * ispal, intf * lenfn)
+nd8igdim(_fcd filename, intf *xdim, intf *ydim, intf *ispal, intf *lenfn)
 {
-    char       *fn;
-    intf        ret;
-    int32	txdim, tydim;
-    intn	tispal;
+    char *fn;
+    intf  ret;
+    int32 txdim, tydim;
+    intn  tispal;
 
-    fn = HDf2cstring(filename, (intn) *lenfn);
+    fn = HDf2cstring(filename, (intn)*lenfn);
     if (!fn)
-	return(-1);
+        return (-1);
     ret = DFR8getdims(fn, &txdim, &tydim, &tispal);
-    if (ret != FAIL){
-	*xdim = txdim;
-	*ydim = tydim;
-	*ispal = tispal;
+    if (ret != FAIL) {
+        *xdim  = txdim;
+        *ydim  = tydim;
+        *ispal = tispal;
     }
-    HDfree((VOIDP) fn);
+    HDfree((VOIDP)fn);
     return (ret);
 }
 
@@ -113,17 +112,16 @@ nd8igdim(_fcd filename, intf * xdim, intf * ydim, intf * ispal, intf * lenfn)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-nd8igimg(_fcd filename, _fcd image, intf * xdim, intf * ydim, _fcd pal, intf * lenfn)
+nd8igimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, _fcd pal, intf *lenfn)
 {
-    char       *fn;
-    intf        ret;
+    char *fn;
+    intf  ret;
 
-    fn = HDf2cstring(filename, (intn) *lenfn);
+    fn = HDf2cstring(filename, (intn)*lenfn);
     if (!fn)
-	return(-1);
-    ret = DFR8getimage(fn, (uint8 *) _fcdtocp(image), *xdim, *ydim,
-                       (uint8 *) _fcdtocp(pal));
-    HDfree((VOIDP) fn);
+        return (-1);
+    ret = DFR8getimage(fn, (uint8 *)_fcdtocp(image), *xdim, *ydim, (uint8 *)_fcdtocp(pal));
+    HDfree((VOIDP)fn);
     return (ret);
 }
 
@@ -141,18 +139,16 @@ nd8igimg(_fcd filename, _fcd image, intf * xdim, intf * ydim, _fcd pal, intf * l
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-nd8ipimg(_fcd filename, _fcd image, intf * xdim, intf * ydim, intf * compress,
-         intf * lenfn)
+nd8ipimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *compress, intf *lenfn)
 {
-    char       *fn;
-    intf        ret;
+    char *fn;
+    intf  ret;
 
-    fn = HDf2cstring(filename, (intn) *lenfn);
+    fn = HDf2cstring(filename, (intn)*lenfn);
     if (!fn)
-	return(-1);
-    ret = (intf) DFR8putimage(fn, (VOIDP) _fcdtocp(image),
-                          (int32) *xdim, (int32) *ydim, (uint16) *compress);
-    HDfree((VOIDP) fn);
+        return (-1);
+    ret = (intf)DFR8putimage(fn, (VOIDP)_fcdtocp(image), (int32)*xdim, (int32)*ydim, (uint16)*compress);
+    HDfree((VOIDP)fn);
     return (ret);
 }
 
@@ -170,18 +166,16 @@ nd8ipimg(_fcd filename, _fcd image, intf * xdim, intf * ydim, intf * compress,
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-nd8iaimg(_fcd filename, _fcd image, intf * xdim, intf * ydim, intf * compress,
-         intf * lenfn)
+nd8iaimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *compress, intf *lenfn)
 {
-    char       *fn;
-    intf        ret;
+    char *fn;
+    intf  ret;
 
-    fn = HDf2cstring(filename, (intn) *lenfn);
+    fn = HDf2cstring(filename, (intn)*lenfn);
     if (!fn)
-	return(-1);
-    ret = (intf) DFR8addimage(fn, (VOIDP) _fcdtocp(image),
-                          (int32) *xdim, (int32) *ydim, (uint16) *compress);
-    HDfree((VOIDP) fn);
+        return (-1);
+    ret = (intf)DFR8addimage(fn, (VOIDP)_fcdtocp(image), (int32)*xdim, (int32)*ydim, (uint16)*compress);
+    HDfree((VOIDP)fn);
     return (ret);
 }
 
@@ -197,19 +191,19 @@ nd8iaimg(_fcd filename, _fcd image, intf * xdim, intf * ydim, intf * compress,
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-nd8irref(_fcd filename, intf * ref, intf * fnlen)
+nd8irref(_fcd filename, intf *ref, intf *fnlen)
 {
-    char       *fn;
-    intf        ret;
-    uint16      Ref;
+    char  *fn;
+    intf   ret;
+    uint16 Ref;
 
-    Ref = (uint16) *ref;
+    Ref = (uint16)*ref;
 
-    fn = HDf2cstring(filename, (intn) *fnlen);
+    fn = HDf2cstring(filename, (intn)*fnlen);
     if (!fn)
         return -1;
     ret = DFR8readref(fn, Ref);
-    HDfree((VOIDP) fn);
+    HDfree((VOIDP)fn);
     return ret;
 }
 
@@ -225,19 +219,19 @@ nd8irref(_fcd filename, intf * ref, intf * fnlen)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-nd8iwref(_fcd filename, intf * ref, intf * fnlen)
+nd8iwref(_fcd filename, intf *ref, intf *fnlen)
 {
-    char       *fn;
-    intf        ret;
-    uint16      Ref;
+    char  *fn;
+    intf   ret;
+    uint16 Ref;
 
-    Ref = (uint16) *ref;
+    Ref = (uint16)*ref;
 
-    fn = HDf2cstring(filename, (intn) *fnlen);
+    fn = HDf2cstring(filename, (intn)*fnlen);
     if (!fn)
-	return(-1);
+        return (-1);
     ret = DFR8writeref(fn, Ref);
-    HDfree((VOIDP) fn);
+    HDfree((VOIDP)fn);
     return (ret);
 }
 
@@ -253,16 +247,16 @@ nd8iwref(_fcd filename, intf * ref, intf * fnlen)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-nd8inims(_fcd filename, intf * fnlen)
+nd8inims(_fcd filename, intf *fnlen)
 {
-    char       *fn;
-    intf        ret;
+    char *fn;
+    intf  ret;
 
-    fn = HDf2cstring(filename, (intn) *fnlen);
+    fn = HDf2cstring(filename, (intn)*fnlen);
     if (!fn)
-	return(-1);
+        return (-1);
     ret = DFR8nimages(fn);
-    HDfree((VOIDP) fn);
+    HDfree((VOIDP)fn);
     return (ret);
 }
 
@@ -295,17 +289,16 @@ nd8lref(void)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-nd8scomp(intf * scheme)
+nd8scomp(intf *scheme)
 {
-    comp_info   cinfo;          /* Structure containing compression parameters */
+    comp_info cinfo; /* Structure containing compression parameters */
 
-    if (*scheme == COMP_JPEG)
-      {     /* check for JPEG compression and set defaults */
-          cinfo.jpeg.quality = 75;
-          cinfo.jpeg.force_baseline = 1;
-      }     /* end if */
-    return (DFR8setcompress((int32) *scheme, &cinfo));
-}   /* end d8scomp() */
+    if (*scheme == COMP_JPEG) { /* check for JPEG compression and set defaults */
+        cinfo.jpeg.quality        = 75;
+        cinfo.jpeg.force_baseline = 1;
+    } /* end if */
+    return (DFR8setcompress((int32)*scheme, &cinfo));
+} /* end d8scomp() */
 
 /*-----------------------------------------------------------------------------
  * Name:    d8sjpeg
@@ -320,14 +313,14 @@ nd8scomp(intf * scheme)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-nd8sjpeg(intf * quality, intf * force_baseline)
+nd8sjpeg(intf *quality, intf *force_baseline)
 {
-    comp_info   cinfo;          /* Structure containing compression parameters */
+    comp_info cinfo; /* Structure containing compression parameters */
 
-    cinfo.jpeg.quality = (intn) *quality;
-    cinfo.jpeg.force_baseline = (intn) *force_baseline;
-    return (DFR8setcompress((int32) COMP_JPEG, &cinfo));
-}   /* end d8sjpeg() */
+    cinfo.jpeg.quality        = (intn)*quality;
+    cinfo.jpeg.force_baseline = (intn)*force_baseline;
+    return (DFR8setcompress((int32)COMP_JPEG, &cinfo));
+} /* end d8sjpeg() */
 
 /*-----------------------------------------------------------------------------
  * Name:    dfr8lastref
@@ -358,7 +351,7 @@ FRETVAL(intf)
 ndfr8setpalette(_fcd pal)
 {
 
-    return (DFR8setpalette((uint8 *) _fcdtocp(pal)));
+    return (DFR8setpalette((uint8 *)_fcdtocp(pal)));
 }
 
 /*-----------------------------------------------------------------------------
@@ -391,17 +384,16 @@ ndfr8restart(void)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndfr8scompress(intf * scheme)
+ndfr8scompress(intf *scheme)
 {
-    comp_info   cinfo;          /* Structure containing compression parameters */
+    comp_info cinfo; /* Structure containing compression parameters */
 
-    if (*scheme == COMP_JPEG)
-      {     /* check for JPEG compression and set defaults */
-          cinfo.jpeg.quality = 75;
-          cinfo.jpeg.force_baseline = 1;
-      }     /* end if */
-    return (DFR8setcompress((int32) *scheme, &cinfo));
-}   /* end dfr8setcompress() */
+    if (*scheme == COMP_JPEG) { /* check for JPEG compression and set defaults */
+        cinfo.jpeg.quality        = 75;
+        cinfo.jpeg.force_baseline = 1;
+    } /* end if */
+    return (DFR8setcompress((int32)*scheme, &cinfo));
+} /* end dfr8setcompress() */
 
 /*-----------------------------------------------------------------------------
  * Name:    dfr8sjpeg
@@ -416,11 +408,11 @@ ndfr8scompress(intf * scheme)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndfr8sjpeg(intf * quality, intf * force_baseline)
+ndfr8sjpeg(intf *quality, intf *force_baseline)
 {
-    comp_info   cinfo;          /* Structure containing compression parameters */
+    comp_info cinfo; /* Structure containing compression parameters */
 
-    cinfo.jpeg.quality = (intn) *quality;
-    cinfo.jpeg.force_baseline = (intn) *force_baseline;
-    return (DFR8setcompress((int32) COMP_JPEG, &cinfo));
-}   /* end dfr8setjpeg() */
+    cinfo.jpeg.quality        = (intn)*quality;
+    cinfo.jpeg.force_baseline = (intn)*force_baseline;
+    return (DFR8setcompress((int32)COMP_JPEG, &cinfo));
+} /* end dfr8setjpeg() */

@@ -5,25 +5,19 @@
 
 #undef PROTO
 #ifndef NO_HAVE_PROTOTYPES
-#   define	PROTO(x)	x
+#define PROTO(x) x
 #else
-#   define	PROTO(x)	()
+#define PROTO(x) ()
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-extern void	*emalloc	PROTO((
-				       int size
-				       ));
+extern void *emalloc PROTO((int size));
 
-extern void	*erealloc	PROTO((
-				       void *ptr,
-				       int size
-				       ));
+extern void *erealloc PROTO((void *ptr, int size));
 
 #ifdef __cplusplus
 }
 #endif
-

@@ -12,8 +12,6 @@
 ## If you do not have access to either file, you may request a copy from
 ## help@hdfgroup.org.
 ##
-##
-AC_REVISION($Id$)
 
 ## ======================================================================
 ## Initialize configure.
@@ -25,10 +23,10 @@ AC_REVISION($Id$)
 ## NOTE: Do not forget to change the version number here when we do a
 ## release!!!
 ##
-AC_INIT([HDF], [4.2.15-post0], [help@hdfgroup.org])
+AC_INIT([HDF],[4.2.15-post0],[help@hdfgroup.org])
 AC_CONFIG_SRCDIR([hdf/src/atom.c])
 AC_CONFIG_AUX_DIR([bin])
-AC_CONFIG_HEADER([hdf/src/h4config.h])
+AC_CONFIG_HEADERS([hdf/src/h4config.h])
 AC_CONFIG_MACRO_DIR([m4])
 
 ## AM_INIT_AUTOMAKE takes a list of options that should be applied to
@@ -40,17 +38,46 @@ AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([foreign])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])]) # use silent rules where available - automake 1.11
 
-## AM_MAINTAINER_MODE turns off "rebuild rules" that contain dependencies
-## for Makefiles, configure, etc.  If AM_MAINTAINER_MODE
-## is *not* included here, these files will be rebuilt if out of date.
-## This is a problem because if users try to build on a machine with
-## the wrong versions of autoconf and automake, these files will be
-## rebuilt with the wrong versions and bad things can happen.
-## Also, CVS doesn't preserve dependencies between timestamps, so
-## Makefiles will often think rebuilding needs to occur when it doesn't.
-## Developers should './configure --enable-maintainer-mode' to turn on
-## rebuild rules.
-AM_MAINTAINER_MODE
+## AM_MAINTAINER_MODE determines the behavior of "rebuild rules" that contain
+## dependencies for Makefile.in files, configure, src/H5config.h, etc. If
+## AM_MAINTAINER_MODE is enabled, these files will be rebuilt if out of date.
+## When disabled, the autotools build files can get out of sync and the build
+## system will not complain or try to regenerate downstream files.
+##
+## The AM_MAINTAINER_MODE macro also determines whether the
+## --(enable|disable)-maintainer-mode configure option is available. When the
+## macro is present, with or without a parameter, the option will be added
+## to the generated configure script.
+##
+## In summary:
+##
+##  AM_MAINTAINER_MODE([enable])
+##      - Build dependencies ON by default
+##      - Configure option exists
+##
+##  AM_MAINTAINER_MODE([disable])
+##      - Build dependencies OFF by default
+##      - Configure option exists
+##
+##  AM_MAINTAINER_MODE
+##      - Build dependencies OFF by default
+##      - Configure option exists
+##
+##  No AM_MAINTAINER_MODE macro
+##      - Build dependencies ON by default
+##      - No configure option to control build dependencies
+##
+## The biggest concern for us is that version control systems like git
+## usually don't preserve dependencies between timestamps, so the build
+## system will often think that upstream build files like Makefile.am are
+## dirty and that rebuilding needs to occur when it doesn't. This is a problem
+## in release branches where we provide the autotools-generated files. Users
+## who don't have autoconf, automake, etc. will then have difficulty building
+## release branches checked out from git.
+##
+## By default, maintainer mode is enabled in development branches and disabled
+## in release branches.
+AM_MAINTAINER_MODE([enable])
 
 ## ----------------------------------------------------------------------
 ## Set prefix default (install directory) to a directory in the build area.
@@ -624,7 +651,7 @@ if test "X$HAVE_SZIP" = "Xyes" -a "x$HAVE_SZLIB_H" = "xyes"; then
 
     AC_SUBST([LL_PATH]) LL_PATH="$LD_LIBRARY_PATH"
 
-    AC_TRY_RUN([
+    AC_RUN_IFELSE([AC_LANG_SOURCE([[
     #include <stdlib.h>
     #include <szlib.h>
 
@@ -636,7 +663,7 @@ if test "X$HAVE_SZIP" = "Xyes" -a "x$HAVE_SZLIB_H" = "xyes"; then
         else
             exit(1);
     }
-    ], [CAN_ENCODE="yes"], [CAN_ENCODE="no"],)
+    ]])],[CAN_ENCODE="yes"],[CAN_ENCODE="no"],[])
 
     ## Report szip encoder test results
     if test "X$CAN_ENCODE" = "Xyes"; then
@@ -748,11 +775,9 @@ if test "X$BUILD_XDR" != "Xyes"; then
       ;;
   esac
 
-  AC_TRY_LINK([
+  AC_LINK_IFELSE([AC_LANG_PROGRAM([[
   #include <rpc/types.h>
-  #include <rpc/xdr.h>], [xdr_int],
-                [AC_MSG_RESULT([yes]); BUILD_XDR="no"],
-                [AC_MSG_RESULT([no]); BUILD_XDR="yes"])
+  #include <rpc/xdr.h>]], [[xdr_int]])],[AC_MSG_RESULT([yes]); BUILD_XDR="no"],[AC_MSG_RESULT([no]); BUILD_XDR="yes"])
 fi
 
 if test "X$BUILD_XDR" != "Xno"; then
@@ -761,8 +786,6 @@ fi
 
 AM_CONDITIONAL([HDF_BUILD_XDR], [test "X$BUILD_XDR" = "Xyes"])
 
-AC_HEADER_STDC
-AC_HEADER_RESOLV
 ## ======================================================================
 ## Checks for types
 ## ======================================================================
@@ -778,18 +801,18 @@ AC_HEADER_RESOLV
 ## The hton functions convert host endianness to network endianness.
 ## The ntoh functions convert network endianness to host endianness
 ## ======================================================================
-AC_CHECK_FUNCS([htonl htons ntohl ntohs __builtin_bswap16 __builtin_bswap32 __builtin_bswap64])
+AC_CHECK_FUNCS([htonl htons ntohl ntohs])
 
 ## ======================================================================
-## Checks for structures
+## Checks for headers
 ## ======================================================================
-AC_CHECK_HEADERS([sys/time.h sys/file.h sys/resource.h])
+AC_CHECK_HEADERS([fcntl.h unistd.h])
 
-## ======================================================================
-## Checks for compiler characteristics
-## ======================================================================
-AC_CHECK_HEADERS([stddef.h io.h])
-AC_CHECK_HEADERS([arpa/inet.h fcntl.h netinet/in.h])
+AC_CHECK_HEADERS([sys/file.h sys/resource.h sys/stat.h sys/time.h sys/wait.h])
+AC_CHECK_HEADERS([sys/types.h])
+
+AC_CHECK_HEADERS([io.h])
+AC_CHECK_HEADERS([arpa/inet.h netinet/in.h])
 
 AC_PROG_CC_C_O
 
@@ -890,9 +913,7 @@ esac
 ## ======================================================================
 
 AC_MSG_CHECKING([for math library support])
-AC_TRY_LINK([#include <math.h>], [sinh(37.927)],
-            [AC_MSG_RESULT([yes])],
-            [AC_MSG_RESULT([no]); LIBS="$LIBS -lm"])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <math.h>]], [[sinh(37.927)]])],[AC_MSG_RESULT([yes])],[AC_MSG_RESULT([no]); LIBS="$LIBS -lm"])
 
 AC_CHECK_FUNCS([fork system vfork wait])
 

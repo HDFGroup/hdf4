@@ -24,11 +24,11 @@
 #define Included_h4jni
 
 #ifdef __cplusplus
-  #define ENVPTR (env)
-  #define ENVONLY
+#define ENVPTR (env)
+#define ENVONLY
 #else /* __cplusplus */
-  #define ENVPTR (*env)
-  #define ENVONLY env
+#define ENVPTR  (*env)
+#define ENVONLY env
 #endif /* __cplusplus */
 
 /*
@@ -73,7 +73,7 @@
             H5_JNI_FATAL_ERROR(envptr, "JNI error: GetMethodID failed");                                     \
         }                                                                                                    \
         if (NULL == (ret_obj = (*envptr)->NewObjectA(envptr, cls, constructor, (args)))) {                   \
-            printf("FATAL ERROR: %s: Creation failed\n", classname);                                       \
+            printf("FATAL ERROR: %s: Creation failed\n", classname);                                         \
             CHECK_JNI_EXCEPTION(envptr, JNI_FALSE);                                                          \
         }                                                                                                    \
     } while (0)
@@ -258,7 +258,7 @@ extern jboolean h4nullArgument(JNIEnv *, const char *);
 extern jboolean h4badArgument(JNIEnv *, const char *);
 extern jboolean h4outOfMemory(JNIEnv *, const char *);
 extern jboolean h4assertion(JNIEnv *env, const char *);
-extern jboolean h4NotImplemented (JNIEnv *, const char *);
+extern jboolean h4NotImplemented(JNIEnv *, const char *);
 extern jboolean h4libraryError(JNIEnv *env);
 extern jboolean h4raiseException(JNIEnv *, const char *);
 
@@ -304,7 +304,7 @@ extern jboolean h4raiseException(JNIEnv *, const char *);
 
 #define H4_UNIMPLEMENTED(env, message)                                                                       \
     do {                                                                                                     \
-        h4NotImplemented(env, message);                                                                       \
+        h4NotImplemented(env, message);                                                                      \
         goto done;                                                                                           \
     } while (0)
 

@@ -122,6 +122,9 @@
 /* Define to 1 if you have the <sys/types.h> header file. */
 #cmakedefine H4_HAVE_SYS_TYPES_H @H4_HAVE_SYS_TYPES_H@
 
+/* Define to 1 if you have the <sys/wait.h> header file. */
+#cmakedefine H4_HAVE_SYS_WAIT_H @H4_HAVE_SYS_WAIT_H@
+
 /* Define if szip has encoder */
 #cmakedefine H4_HAVE_SZIP_ENCODER @H4_HAVE_SZIP_ENCODER@
 
@@ -186,14 +189,16 @@
 /* The size of `int*', as computed by sizeof. */
 #cmakedefine H4_SIZEOF_INTP @H4_SIZEOF_INTP@
 
-/* Define to 1 if you have the ANSI C header files. */
-#cmakedefine H4_STDC_HEADERS @H4_STDC_HEADERS@
+/* Define to 1 if all of the C90 standard headers exist (not just the ones
+   required in a freestanding environment). This macro is provided for
+   backward compatibility; new code need not use it. */
+#define H4_STDC_HEADERS 1
 
 /* Version number of package */
 #define H4_VERSION "@HDF4_PACKAGE_VERSION_STRING@"
 
-/* Define to 1 if your processor stores words with the most significant byte
-   first (like Motorola and SPARC, unlike Intel and VAX). */
+/* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
+   significant byte first (like Motorola and SPARC, unlike Intel). */
 #cmakedefine H4_WORDS_BIGENDIAN @H4_WORDS_BIGENDIAN@
 
 /* Define to 1 if `lex' declares `yytext' as a `char *' by default, not a
