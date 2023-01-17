@@ -5,9 +5,12 @@ set (CTEST_CUSTOM_WARNING_EXCEPTION
     ${CTEST_CUSTOM_WARNING_EXCEPTION}
     ".*note.*expected.*void.*but argument is of type.*volatile.*"
     "src.ZLIB.*:[ \t]*warning"
+    "zlib-src.*:[ \t]*warning"
     "warning LNK4197:.*ZLIB-prefix"
+    "szip-src.*:[ \t]*warning"
     "src.SZIP.*:[ \t]*warning"
     "warning LNK4197:.*SZIP-prefix"
+    "jpeg-src.*:[ \t]*warning"
     "src.JPEG.*:[ \t]*warning"
     "warning LNK4197:.*JPEG-prefix"
     ".*POSIX name for this item is deprecated.*"
