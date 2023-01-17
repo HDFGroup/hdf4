@@ -945,7 +945,7 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
 
                                 case DFTAG_ID: /* Image description info */
                                 {
-                                    uint8     *p = GRtbuf;
+                                    uint8 *p = GRtbuf;
                                     if (Hgetelement(file_id, (uint16)img_tag, (uint16)img_ref, GRtbuf) !=
                                         FAIL)
                                         Decode_diminfo(p, &(new_image->img_dim));
@@ -978,7 +978,7 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                                             new_image->img_dim.nt |= DFNT_LITEND;
                                     } /* end if */
                                     break;
-                                }     /* end case DFTAG_ID */
+                                } /* end case DFTAG_ID */
 
                                 case DFTAG_VH: /* Attribute information */
                                 {
@@ -2692,7 +2692,7 @@ GRwriteimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], voi
     /* locate RI's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *)HAatom_object(riid)))
         HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
-    gr_ptr      = ri_ptr->gr_ptr;
+    gr_ptr = ri_ptr->gr_ptr;
 
     comp_type = COMP_CODE_NONE;
     scheme    = ri_ptr->img_dim.comp_tag;
@@ -5971,8 +5971,8 @@ GRreadchunk(int32  riid,   /* IN: access aid to GR */
     uint32          comp_config;
     comp_coder_t    comp_type;
     comp_info       cinfo;
-    intn            status           = FAIL;
-    intn            ret_value        = SUCCEED;
+    intn            status    = FAIL;
+    intn            ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();

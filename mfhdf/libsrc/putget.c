@@ -2182,8 +2182,8 @@ NC_fill_buffer(NC *handle, int varid, const long *edges, void *values)
 int
 ncvarget(int cdfid, int varid, const long *start, const long *edges, ncvoid *values)
 {
-    NC     *handle;
-    int     status = 0;
+    NC *handle;
+    int status = 0;
 
     cdf_routine_name = "ncvarget";
 

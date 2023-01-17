@@ -709,12 +709,12 @@ SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32 *offsetarra
     CONSTR(FUNC, "SDgetanndatainfo");
     int32 file_id = FAIL, /* file, AN API, annotation IDs */
         an_id = FAIL, ann_id = FAIL;
-    NC     *handle  = NULL;    /* file structure */
-    int32  *dannots = NULL,    /* list of data annotation IDs */
-        n_flabels   = 0,       /* number of file labels */
-        n_fdescs    = 0,       /* number of file descriptions */
-        n_dlabels   = 0,       /* number of object labels */
-        n_ddescs    = 0;       /* number of file descriptions */
+    NC    *handle  = NULL;     /* file structure */
+    int32 *dannots = NULL,     /* list of data annotation IDs */
+        n_flabels  = 0,        /* number of file labels */
+        n_fdescs   = 0,        /* number of file descriptions */
+        n_dlabels  = 0,        /* number of object labels */
+        n_ddescs   = 0;        /* number of file descriptions */
     uint16 elem_tag, elem_ref; /* tag/ref of dataset's NDG */
     intn   num_annots = -1,    /* number of annotation of requested type */
         ii, ret_value = 0;

@@ -977,7 +977,7 @@ hdf_read_ndgs(NC *handle)
     intn   i;
     intn   status;
     intn   tag_index;
-    uint8 *p         = NULL;
+    uint8 *p = NULL;
     intn   scale_offset; /* current offset into the scales record for the
                        current dimension's values */
     intn ret_value = SUCCEED;
@@ -1498,7 +1498,7 @@ hdf_read_ndgs(NC *handle)
              * If there is an annotation put in 'remarks'
              */
             {
-                err_code          = DFE_NONE;
+                err_code = DFE_NONE;
 
                 err_code = hdf_get_desc_annot(handle, ndgTag, ndgRef, &attrs[current_attr], &current_attr);
                 if (err_code != DFE_NONE) {
@@ -1512,7 +1512,7 @@ hdf_read_ndgs(NC *handle)
              * NOT 'long_name' 9/2/94)
              */
             {
-                err_code          = DFE_NONE;
+                err_code = DFE_NONE;
 
                 err_code = hdf_get_label_annot(handle, ndgTag, ndgRef, &attrs[current_attr], &current_attr);
                 if (err_code != DFE_NONE) {

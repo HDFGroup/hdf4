@@ -318,7 +318,7 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
 
     return (SUCCEED);
 
-#else /* ifdef H4_HAVE_LIBSZ */
+#else  /* ifdef H4_HAVE_LIBSZ */
     (void)info;
     (void)length;
     (void)buf;
@@ -386,7 +386,7 @@ HCIcszip_encode(compinfo_t *info, int32 length, const uint8 *buf)
 
     return (SUCCEED);
 
-#else /* ifdef H4_HAVE_SZIP_ENCODER */
+#else  /* ifdef H4_HAVE_SZIP_ENCODER */
     (void)info;
     (void)length;
     (void)buf;
@@ -606,7 +606,7 @@ HCIcszip_term(compinfo_t *info)
 
     return (SUCCEED);
 
-#else /* H4_HAVE_SZIP_ENCODER */
+#else  /* H4_HAVE_SZIP_ENCODER */
     (void)info;
 
     HRETURN_ERROR(DFE_CANTCOMP, FAIL);

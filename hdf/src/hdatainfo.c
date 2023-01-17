@@ -927,7 +927,7 @@ GRgetpalinfo(int32 gr_id, uintn pal_count, hdf_ddinfo_t *palinfo_array)
     CONSTR(FUNC, "GRgetpalinfo");
     gr_info_t *gr_ptr;
     int32      file_id;
-    int32      aid    = FAIL;
+    int32      aid = FAIL;
     intn       idx;
     intn       ret_value = SUCCEED;
 
