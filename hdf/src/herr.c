@@ -36,7 +36,7 @@ EXPORTED ROUTINES
 #include <stdarg.h>
 
 /* always points to the next available slot; the last error record is in slot (top-1) */
-   static int32 error_top = 0;
+static int32 error_top = 0;
 
 /* We use a stack to hold the errors plus we keep track of the function,
    file and line where the error occurs. */
