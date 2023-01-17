@@ -35,6 +35,9 @@ EXPORTED ROUTINES
  */
 #include <stdarg.h>
 
+/* always points to the next available slot; the last error record is in slot (top-1) */
+   static int32 error_top = 0;
+
 /* We use a stack to hold the errors plus we keep track of the function,
    file and line where the error occurs. */
 
@@ -100,7 +103,7 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------*/
 VOID
-HEPclear(void)
+HEclear(void)
 {
     if (!error_top)
         goto done;
@@ -116,7 +119,7 @@ HEPclear(void)
 
 done:
     return;
-} /* HEPclear */
+} /* HEclear */
 
 /*-------------------------------------------------------------------------
 NAME
