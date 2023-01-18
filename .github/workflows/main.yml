@@ -159,7 +159,6 @@ jobs:
       - name: Install Dependencies (Windows)
         run: |
            choco install ninja
-           choco install libjpeg-turbo
         if: matrix.os == 'windows-2022'
 
       - name: Install Dependencies (macOS)
