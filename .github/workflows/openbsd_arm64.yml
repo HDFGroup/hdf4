@@ -2,7 +2,7 @@ name: arm64 OpenBSD 7.2 CMake
 
 on:
   push:
-    branches: [master]
+    branches: [push, pull_request]
 
 jobs:
   test: # make sure the action works on a clean machine without building
@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: ${{ matrix.os.name }}
-        uses: hyoklee/openbsd-action@master
+        uses: cross-platform-actions/action@v0.8.0
         env:
           FOO: A
           BAR: B        
@@ -39,7 +39,7 @@ jobs:
             whoami
             env | sort
             sudo pkg_add git
-            git clone https://github.com/hyoklee/hdf4
+            git clone https://github.com/HDFGroup/hdf4
             cd hdf4
             sudo pkg_add cmake
             sudo pkg_add jpeg
