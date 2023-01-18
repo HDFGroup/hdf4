@@ -239,6 +239,6 @@ jobs:
         if: (matrix.generator == 'autogen')
 
       - name: Autotools Verify Install
-        run: make check-install
+        run: make installcheck
         working-directory: ${{ runner.workspace }}/build
         if: (matrix.generator == 'autogen')
