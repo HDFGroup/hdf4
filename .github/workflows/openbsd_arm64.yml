@@ -1,8 +1,6 @@
 name: arm64 OpenBSD 7.2 CMake
 
-on:
-  push:
-    branches: [push, pull_request]
+on: [push, pull_request]
 
 jobs:
   test: # make sure the action works on a clean machine without building
