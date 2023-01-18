@@ -39,7 +39,6 @@ jobs:
           - "Windows MSVC CMake"
           - "Ubuntu gcc CMake"
           - "Ubuntu gcc Autotools"
-          - "Ubuntu gcc Autotools parallel (build only)"
           - "MacOS Clang CMake"
 
         netcdf:
