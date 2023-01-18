@@ -867,7 +867,7 @@ AC_ARG_ENABLE([production],
               [AS_HELP_STRING([--enable-production],
                               [Determines how to run the compiler.])])
 
-case "X-$enable_production" in
+case "X-$enable-production" in
   X-|X-yes)
     AC_MSG_RESULT([production])
     CONFIG_MODE=production
