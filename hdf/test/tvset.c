@@ -1660,10 +1660,11 @@ test_emptyvdata(void)
     status = VFnfields(vs1);
     VERIFY_VOID(status, 0, "VFnfields");
 
-    /* Verify that VSgetfields will return the number of fields when passing
-       in a NULL for field name list */
+    /* Verify that VSgetfields will return FAIL when passing in a NULL
+       for field name list (from bug #554), although this might never
+       happen - BMR 5/17/01 */
     status = VSgetfields(vs1, NULL);
-    VERIFY_VOID(status, 0, "VSgetfields");
+    VERIFY_VOID(status, FAIL, "VSgetfields");
 
     status = VSgetfields(vs1, fields);
     CHECK_VOID(status, FAIL, "VSgetfields");
