@@ -159,7 +159,7 @@ jobs:
         run: |
            choco install ninja
            choco install libjpeg-turbo
-        if: matrix.os == 'windows-latest'
+        if: matrix.os == 'windows-2022'
 
       - name: Install Dependencies (macOS)
         run: brew install ninja
