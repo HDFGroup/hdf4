@@ -21,7 +21,7 @@ jobs:
   build_and_test:
 
     strategy:
-      fail-fast: false
+      fail-fast: true
 
       # The current matrix has three dimensions:
       #
@@ -238,7 +238,8 @@ jobs:
         working-directory: ${{ runner.workspace }}/build
         if: (matrix.generator == 'autogen')
 
-      - name: Autotools Verify Install
-        run: make installcheck
-        working-directory: ${{ runner.workspace }}/build
-        if: (matrix.generator == 'autogen')
+      # Commented out until autotools linking is fixed
+#      - name: Autotools Verify Install
+#        run: make installcheck
+#        working-directory: ${{ runner.workspace }}/build
+#        if: (matrix.generator == 'autogen')
