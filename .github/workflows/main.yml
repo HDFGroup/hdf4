@@ -39,6 +39,7 @@ jobs:
           - "Windows MSVC CMake"
           - "Ubuntu gcc CMake"
           - "Ubuntu gcc Autotools"
+          - "Ubuntu gcc SysXDR Autotools"
           - "MacOS Clang CMake"
 
         netcdf:
@@ -101,6 +102,19 @@ jobs:
           - name: "Ubuntu gcc Autotools"
             os: ubuntu-latest
             xdr: enable
+            java: enable
+            toolchain: ""
+            generator: "autogen"
+            flags: ""
+            run_tests: true
+
+          # Linux (Ubuntu) w/ gcc + system XDR + Autotools
+          #
+          # Keep this identical to the CMake configs. Note the difference in
+          # the values.
+          - name: "Ubuntu gcc SysXDR Autotools"
+            os: ubuntu-latest
+            xdr: disable
             java: enable
             toolchain: ""
             generator: "autogen"
