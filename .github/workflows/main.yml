@@ -12,161 +12,233 @@ on:
     - 'COPYING'
     - '**.md'
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+# A workflow run is made up of one or more jobs that can run sequentially or
+# in parallel. We just have one job, but the matrix items defined below will
+# run in parallel.
 jobs:
-  # This workflow contains a single job called "build"
-  build:
+
+  # A workflow that builds the library and runs all the tests
+  build_and_test:
+
     strategy:
 #      fail-fast: false
+
+      # The current matrix has three dimensions:
+      #
+      # * config name
+      # * netcdf on/off
+      # * release vs. debug build
+      #
+      # Most configuration information is added via the 'include' mechanism,
+      # which will append the key-value pairs in the configuration where the
+      # names match.
+
       matrix:
-#        name: ["Windows Latest MSVC", "Windows Previous MSVC", "Ubuntu Latest GCC", "Ubuntu Debug GCC", "macOS Latest Clang", "Ubuntu Autotools GCC"]
-        name: ["Ubuntu Latest GCC", "Ubuntu Debug GCC", "Ubuntu Autotools GCC"]
+
+        name:
+          - "Windows MSVC CMake"
+          - "Ubuntu gcc CMake"
+          - "Ubuntu gcc Autotools"
+          - "Ubuntu gcc Autotools parallel (build only)"
+          - "MacOS Clang CMake"
+
+        netcdf:
+          - enabled: true
+            text: " NC"
+          - enabled: false
+            text: ""
+
+        build_mode:
+          - text: " REL"
+            cmake: "Release"
+            autotools: "enable-production"
+          - text: " DBG"
+            cmake: "Debug"
+            autotools: "disable-production"
+
+        # This is where we list the bulk of the options for each configuration.
+        # The key-value pair values are usually appropriate for being CMake or
+        # Autotools configure values, so be aware of that.
+
         include:
-          - name: "Windows Latest MSVC"
-            artifact: "Windows-MSVC.tar.xz"
+
+          # Windows w/ MSVC + CMake
+          #
+          # No Fortran, parallel, or VFDs that rely on POSIX things
+          - name: "Windows MSVC CMake"
             os: windows-2022
-            build_type: "Release"
-            netcdf: ON
-            java: ON
-            fortran: OFF
+            toolchain: ""
             xdr: ON
+            java: ON
             jpegfc: ON
             libaecfc: ON
             zlibfc: ON
-            toolchain: ""
             cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G \"Visual Studio 17 2022\" -A x64"
-#          - name: "Windows Previous MSVC"
-#            artifact: "Windows-MSVC.tar.xz"
-#            os: windows-2019
-#            build_type: "Release"
-#            netcdf: ON
-#            java: ON
-#            fortran: OFF
-#            xdr: ON
-#            toolchain: ""
-#            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
-#            generator: "-G \"Visual Studio 16 2019\" -A x64"
-          - name: "Ubuntu Latest GCC"
-            artifact: "Linux.tar.xz"
+            run_tests: true
+
+          # Linux (Ubuntu) w/ gcc + CMake
+          #
+          # We might think about adding Clang, but MacOS already tests that
+          # so it's not critical
+          - name: "Ubuntu gcc CMake"
             os: ubuntu-latest
-            build_type: "Release"
-            netcdf: ON
-            java: ON
-            fortran: OFF
-            ts: OFF
             xdr: ON
+            java: ON
             jpegfc: ON
             libaecfc: ON
             zlibfc: ON
             toolchain: "$GITHUB_WORKSPACE/config/toolchain/GCC.cmake"
             cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G Ninja"
-          - name: "macOS Latest Clang"
-            artifact: "macOS.tar.xz"
+            run_tests: true
+
+          # Linux (Ubuntu) w/ gcc + Autotools
+          #
+          # Keep this identical to the CMake configs. Note the difference in
+          # the values.
+          - name: "Ubuntu gcc Autotools"
+            os: ubuntu-latest
+            xdr: enable
+            java: enable
+            toolchain: ""
+            generator: "autogen"
+            flags: ""
+            run_tests: true
+
+          # MacOS w/ Clang + CMake
+          #
+          # We could also build with the Autotools via brew installing them,
+          # but that seems unnecessary
+          - name: "MacOS Clang CMake"
             os: macos-latest
-            build_type: "Release"
-            netcdf: ON
-            java: ON
-            fortran: OFF
             xdr: ON
+            java: ON
             jpegfc: ON
             libaecfc: ON
             zlibfc: ON
             toolchain: "$GITHUB_WORKSPACE/config/toolchain/clang.cmake"
             cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G Ninja"
-          - name: "Ubuntu Debug GCC"
-            artifact: "LinuxDBG.tar.xz"
-            os: ubuntu-latest
-            build_type: "Debug"
-            netcdf: ON
-            java: ON
-            fortran: OFF
-            xdr: ON
-            jpegfc: OFF
-            libaecfc: OFF
-            zlibfc: OFF
-            toolchain: "$GITHUB_WORKSPACE/config/toolchain/GCC.cmake"
-            cacheinit: ""
-            generator: "-G Ninja"
-          - name: "Ubuntu Autotools GCC"
-            artifact: "LinuxA.tar.xz"
-            os: ubuntu-20.04
-            build_type: "Release"
-            netcdf: enable
-            java: disable
-            fortran: disable
-            xdr: enable
-            toolchain: ""
-            cacheinit: ""
-            generator: "autogen"
+            run_tests: true
 
-    name: ${{ matrix.name }}
+    # Sets the job's name from the properties
+    name: "${{ matrix.name }}${{ matrix.build_mode.text }}${{ matrix.netcdf.text }}"
+
+    # Don't run the action if the commit message says to skip CI
+    if: "!contains(github.event.head_commit.message, 'skip-ci')"
+
     # The type of runner that the job will run on
     runs-on: ${{ matrix.os }}
-    if: "!contains(github.event.head_commit.message, 'skip-ci')"
-          
+
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    - name: Install Dependencies (Linux)
-      run: sudo apt-get install -y ninja-build libtirpc-dev
-      if: matrix.os == 'ubuntu-latest'
-    - name: Install Autotools Dependencies (Linux)
-      run: sudo apt-get install -y automake autoconf libtool libtool-bin
-      if: matrix.generator == 'autogen'
-    - name: Install Dependencies (Windows)
-      run: |
-         choco install ninja
-         choco install libjpeg-turbo
-      if: matrix.os == 'windows-latest'
-    - name: Install Dependencies (macOS)
-      run: brew install ninja
-      if: matrix.os == 'macos-latest'
-    - name: Set environment for MSVC (Windows)
-      if:  matrix.os == 'windows-latest'
-      run: |
-        # Set these env vars so cmake picks the correct compiler
-        echo "CXX=cl.exe" >> $GITHUB_ENV
-        echo "CC=cl.exe" >> $GITHUB_ENV
+
+      #
+      # SETUP
+      #
+
+      #Useful for debugging
+      - name: Dump matrix context
+        run: echo '${{ toJSON(matrix) }}'
+
+      - name: Install CMake Dependencies (Linux)
+        run: sudo apt-get install -y ninja-build libtirpc-dev
+        if: matrix.os == 'ubuntu-latest'
+
+      - name: Install Autotools Dependencies (Linux)
+        run: |
+           sudo apt update
+           sudo apt install automake autoconf libtool libtool-bin
+           sudo apt install gcc-11 g++-11 gfortran-11
+           echo "CC=gcc-11" >> $GITHUB_ENV
+           echo "CXX=g++-11" >> $GITHUB_ENV
+        if: (matrix.generator == 'autogen')
+
+      - name: Install Dependencies (Windows)
+        run: |
+           choco install ninja
+           choco install libjpeg-turbo
+        if: matrix.os == 'windows-latest'
+
+      - name: Install Dependencies (macOS)
+        run: brew install ninja
+        if: matrix.os == 'macos-latest'
+
+      - name: Set environment for MSVC (Windows)
+        run: |
+          # Set these environment variables so CMake picks the correct compiler
+          echo "CXX=cl.exe" >> $GITHUB_ENV
+          echo "CC=cl.exe" >> $GITHUB_ENV
+        if:  matrix.os == 'windows-latest'
     
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - name: Get Sources
-      uses: actions/checkout@v3
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Get Sources
+        uses: actions/checkout@v3
 
-    - name: Autotools Configure 
-      if: matrix.generator == 'autogen'
-      run: |
-        sh ./autogen.sh
-        mkdir "${{ runner.workspace }}/build"
-        cd "${{ runner.workspace }}/build"
-        $GITHUB_WORKSPACE/configure --disable-shared --${{ matrix.xdr }}-hdf4-xdr --${{ matrix.netcdf }}-netcdf --${{ matrix.java }}-java --${{ matrix.fortran }}-fortran
-      shell: bash
+      #
+      # AUTOTOOLS CONFIGURE
+      #
 
-    - name: Configure
-      if: matrix.generator != 'autogen'
-      run: |
-        mkdir "${{ runner.workspace }}/build"
-        cd "${{ runner.workspace }}/build"
-        cmake ${{ matrix.cacheinit }} ${{ matrix.generator }} --log-level=VERBOSE -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_TOOLCHAIN_FILE=${{ matrix.toolchain }} -DHDF4_BUILD_EXAMPLES=ON -DBUILD_JPEG_WITH_PIC:BOOL=ON -DHDF4_BUILD_XDR_LIB:BOOL=${{ matrix.xdr }} -DHDF4_ENABLE_NETCDF:BOOL=${{ matrix.netcdf }} -DHDF4_BUILD_JAVA=${{ matrix.java }} -DHDF4_BUILD_FORTRAN=${{ matrix.fortran }} -DBUILD_JPEG_WITH_FETCHCONTENT=${{ matrix.jpegfc }} -DBUILD_SZIP_WITH_FETCHCONTENT=${{ matrix.libaecfc }} -DBUILD_ZLIB_WITH_FETCHCONTENT=${{ matrix.zlibfc }} $GITHUB_WORKSPACE
-      shell: bash
+      - name: Autotools Configure
+        run: |
+          sh ./autogen.sh
+          mkdir "${{ runner.workspace }}/build"
+          cd "${{ runner.workspace }}/build"
+          ${{ matrix.flags }} $GITHUB_WORKSPACE/configure --${{ matrix.build_mode.autotools }} --${{ matrix.xdr }}-hdf4-xdr --${{ matrix.netcdf }}-netcdf --${{ matrix.java }}-java --enable-shared
+        shell: bash
+        if: (matrix.generator == 'autogen')
 
-    - name: Autotools Build
-      if: matrix.generator == 'autogen'
-      run: make
-      working-directory: ${{ runner.workspace }}/build      
+      #
+      # CMAKE CONFIGURE
+      #
 
-    - name: Build
-      if: matrix.generator != 'autogen'
-      run: cmake --build . --config ${{ matrix.build_type }}
-      working-directory: ${{ runner.workspace }}/build      
+      - name: CMake Configure
+        run: |
+          mkdir "${{ runner.workspace }}/build"
+          cd "${{ runner.workspace }}/build"
+        cmake ${{ matrix.cacheinit }} ${{ matrix.generator }} --log-level=VERBOSE -DCMAKE_BUILD_TYPE=${{ matrix.build_mode.cmake }} -DCMAKE_TOOLCHAIN_FILE=${{ matrix.toolchain }} -DHDF4_BUILD_EXAMPLES=ON -DBUILD_JPEG_WITH_PIC:BOOL=ON -DHDF4_BUILD_XDR_LIB:BOOL=${{ matrix.xdr }} -DHDF4_ENABLE_NETCDF:BOOL=${{ matrix.netcdf }} -DHDF4_BUILD_JAVA=${{ matrix.java }} -DBUILD_JPEG_WITH_FETCHCONTENT=${{ matrix.jpegfc }} -DBUILD_SZIP_WITH_FETCHCONTENT=${{ matrix.libaecfc }} -DBUILD_ZLIB_WITH_FETCHCONTENT=${{ matrix.zlibfc }} $GITHUB_WORKSPACE
+        shell: bash
+        if: (matrix.generator != 'autogen')
 
-    - name: Autotools Test
-      if: matrix.generator == 'autogen'
-      run: make check
-      working-directory: ${{ runner.workspace }}/build
+      #
+      # BUILD
+      #
 
-    - name: Test
-      if: matrix.generator != 'autogen'
-      run: ctest --build . -C ${{ matrix.build_type }} -V
-      working-directory: ${{ runner.workspace }}/build
+      - name: Autotools Build
+        run: make
+        working-directory: ${{ runner.workspace }}/build
+        if: matrix.generator == 'autogen'
+
+      - name: CMake Build
+        run: cmake --build . --config ${{ matrix.build_mode.cmake }}
+        working-directory: ${{ runner.workspace }}/build
+        if: matrix.generator != 'autogen'
+
+      #
+      # RUN TESTS
+      #
+
+      - name: Autotools Run Tests
+        run: make check
+        working-directory: ${{ runner.workspace }}/build
+        if: (matrix.generator == 'autogen') && (matrix.run_tests)
+
+      - name: CMake Run Tests
+        run: ctest --build . -C ${{ matrix.build_mode.cmake }} -V
+        working-directory: ${{ runner.workspace }}/build
+        if: matrix.generator != 'autogen'
+
+      #
+      # INSTALL (note that this runs even when we don't run the tests)
+      #
+
+      - name: Autotools Install
+        run: make install
+        working-directory: ${{ runner.workspace }}/build
+        if: (matrix.generator == 'autogen')
+
+      - name: Autotools Verify Install
+        run: make check-install
+        working-directory: ${{ runner.workspace }}/build
+        if: (matrix.generator == 'autogen')
