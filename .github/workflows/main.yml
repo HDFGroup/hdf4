@@ -41,6 +41,7 @@ jobs:
           - "Ubuntu gcc Autotools"
           - "Ubuntu gcc SysXDR Autotools"
           - "MacOS Clang CMake"
+          - "Ubuntu mingw CMake"
 
         netcdf:
           - enabled: enable
@@ -49,6 +50,14 @@ jobs:
           - enabled: disable
             cmake: OFF
             text: ""
+
+        shared:
+          - enabled: enable
+            cmake: ON
+            text: " Shared"
+          - enabled: disable
+            cmake: OFF
+            text: " Static"
 
         build_mode:
           - text: " REL"
@@ -78,6 +87,7 @@ jobs:
             cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G \"Visual Studio 17 2022\" -A x64"
             run_tests: true
+            use_mingw: false
 
           # Linux (Ubuntu) w/ gcc + CMake
           #
@@ -94,6 +104,7 @@ jobs:
             cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G Ninja"
             run_tests: true
+            use_mingw: false
 
           # Linux (Ubuntu) w/ gcc + Autotools
           #
@@ -107,6 +118,7 @@ jobs:
             generator: "autogen"
             flags: ""
             run_tests: true
+            use_mingw: false
 
           # Linux (Ubuntu) w/ gcc + system XDR + Autotools
           #
@@ -120,6 +132,7 @@ jobs:
             generator: "autogen"
             flags: ""
             run_tests: true
+            use_mingw: false
 
           # MacOS w/ Clang + CMake
           #
@@ -136,9 +149,25 @@ jobs:
             cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G Ninja"
             run_tests: true
+            use_mingw: false
+
+          # Linux (Ubuntu) w/ mingw + CMake
+          #
+          - name: "Ubuntu mingw CMake"
+            os: ubuntu-latest
+            xdr: ON
+            java: ON
+            jpegfc: ON
+            libaecfc: ON
+            zlibfc: ON
+            toolchain: "$GITHUB_WORKSPACE/config/toolchain/mingw64.cmake"
+            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
+            generator: "-G Ninja"
+            run_tests: true
+            use_mingw: true
 
     # Sets the job's name from the properties
-    name: "${{ matrix.name }}${{ matrix.build_mode.text }}${{ matrix.netcdf.text }}"
+    name: "${{ matrix.name }}${{ matrix.build_mode.text }}${{ matrix.shared.text }}${{ matrix.netcdf.text }}"
 
     # The type of runner that the job will run on
     runs-on: ${{ matrix.os }}
@@ -160,6 +189,12 @@ jobs:
       - name: Install CMake Dependencies (Linux)
         run: sudo apt-get install -y ninja-build libtirpc-dev
         if: matrix.os == 'ubuntu-latest'
+
+      - name: Install MinGW Dependencies (Linux)
+        uses: egor-tensin/setup-mingw@v2
+        with:
+          platform: x64
+        if: (matrix.use_mingw)
 
       - name: Install Autotools Dependencies (Linux)
         run: |
@@ -199,7 +234,7 @@ jobs:
           sh ./autogen.sh
           mkdir "${{ runner.workspace }}/build"
           cd "${{ runner.workspace }}/build"
-          ${{ matrix.flags }} $GITHUB_WORKSPACE/configure --${{ matrix.build_mode.autotools }} --${{ matrix.xdr }}-hdf4-xdr --${{ matrix.netcdf.enabled }}-netcdf --${{ matrix.java }}-java --enable-shared
+          ${{ matrix.flags }} $GITHUB_WORKSPACE/configure --${{ matrix.build_mode.autotools }} --${{ matrix.xdr }}-hdf4-xdr --${{ matrix.netcdf.enabled }}-netcdf --${{ matrix.java }}-java --${{ matrix.shared.enabled }}-shared
         shell: bash
         if: (matrix.generator == 'autogen')
 
@@ -211,7 +246,7 @@ jobs:
         run: |
           mkdir "${{ runner.workspace }}/build"
           cd "${{ runner.workspace }}/build"
-          cmake ${{ matrix.cacheinit }} ${{ matrix.generator }} --log-level=VERBOSE -DCMAKE_BUILD_TYPE=${{ matrix.build_mode.cmake }} -DCMAKE_TOOLCHAIN_FILE=${{ matrix.toolchain }} -DHDF4_BUILD_EXAMPLES=ON -DBUILD_JPEG_WITH_PIC:BOOL=ON -DHDF4_BUILD_XDR_LIB:BOOL=${{ matrix.xdr }} -DHDF4_ENABLE_NETCDF:BOOL=${{ matrix.netcdf.cmake }} -DHDF4_BUILD_JAVA=${{ matrix.java }} -DBUILD_JPEG_WITH_FETCHCONTENT=${{ matrix.jpegfc }} -DBUILD_SZIP_WITH_FETCHCONTENT=${{ matrix.libaecfc }} -DBUILD_ZLIB_WITH_FETCHCONTENT=${{ matrix.zlibfc }} $GITHUB_WORKSPACE
+          cmake ${{ matrix.cacheinit }} ${{ matrix.generator }} --log-level=VERBOSE -DCMAKE_BUILD_TYPE=${{ matrix.build_mode.cmake }} -DCMAKE_TOOLCHAIN_FILE=${{ matrix.toolchain }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.shared.enabled }} -DHDF4_BUILD_EXAMPLES=ON -DBUILD_JPEG_WITH_PIC:BOOL=ON -DHDF4_BUILD_XDR_LIB:BOOL=${{ matrix.xdr }} -DHDF4_ENABLE_NETCDF:BOOL=${{ matrix.netcdf.cmake }} -DHDF4_BUILD_JAVA=${{ matrix.java }} -DBUILD_JPEG_WITH_FETCHCONTENT=${{ matrix.jpegfc }} -DBUILD_SZIP_WITH_FETCHCONTENT=${{ matrix.libaecfc }} -DBUILD_ZLIB_WITH_FETCHCONTENT=${{ matrix.zlibfc }} $GITHUB_WORKSPACE
         shell: bash
         if: (matrix.generator != 'autogen')
 
