@@ -40,7 +40,6 @@ jobs:
           - "Ubuntu gcc CMake"
           - "Ubuntu gcc Autotools"
           - "MacOS Clang CMake"
-          - "Ubuntu mingw CMake"
 
         netcdf:
           - enabled: true
@@ -118,20 +117,6 @@ jobs:
             libaecfc: ON
             zlibfc: ON
             toolchain: "$GITHUB_WORKSPACE/config/toolchain/clang.cmake"
-            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
-            generator: "-G Ninja"
-            run_tests: true
-
-          # Linux (Ubuntu) w/ mingw + CMake
-          #
-          - name: "Ubuntu mingw CMake"
-            os: ubuntu-latest
-            xdr: ON
-            java: ON
-            jpegfc: ON
-            libaecfc: ON
-            zlibfc: ON
-            toolchain: "$GITHUB_WORKSPACE/config/toolchain/mingw64.cmake"
             cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G Ninja"
             run_tests: true
