@@ -170,7 +170,7 @@ jobs:
           # Set these environment variables so CMake picks the correct compiler
           echo "CXX=cl.exe" >> $GITHUB_ENV
           echo "CC=cl.exe" >> $GITHUB_ENV
-        if:  matrix.os == 'windows-latest'
+        if:  matrix.os == 'windows-2022'
     
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Get Sources
