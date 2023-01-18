@@ -966,6 +966,8 @@ hdf_xdr_NCvdata(NC *handle, NC_var *vp, u_long where, nc_type type, uint32 count
     intn   ret_value    = SUCCEED;
     int32  alloc_status = FAIL; /* no successful allocation yet */
 
+    (void)type;
+
 #ifdef DEBUG
     fprintf(stderr, "hdf_xdr_NCvdata I've been called : %s\n", vp->name->values);
 #endif
@@ -1542,6 +1544,9 @@ nssdc_xdr_NCvdata(NC *handle, NC_var *vp, u_long where, nc_type type, uint32 cou
 {
     int32 status;
     int32 byte_count;
+
+    (void)type;
+    (void)values;
 
 #ifdef DEBUG
     fprintf(stderr, "nssdc_xdr_NCvdata I've been called : %s\n", vp->name->values);
@@ -2176,9 +2181,8 @@ NC_fill_buffer(NC *handle, int varid, const long *edges, void *values)
 int
 ncvarget(int cdfid, int varid, const long *start, const long *edges, ncvoid *values)
 {
-    NC     *handle;
-    NC_var *vp;
-    int     status = 0;
+    NC *handle;
+    int status = 0;
 
     cdf_routine_name = "ncvarget";
 
