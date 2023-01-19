@@ -40,11 +40,8 @@
 /* 32-bit integer on the host architecture */
 typedef int32_t netlong;
 
-#if !(defined DOS_FS)
-typedef u_int ncpos_t; /* all unicies */
-#else
-typedef off_t   ncpos_t;
-#endif
+/* Stream position types */
+typedef u_int ncpos_t;
 
 typedef struct {
     int            fd;   /* the file descriptor */
