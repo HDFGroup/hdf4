@@ -9,49 +9,36 @@
  * useful when the descriptor actually represents a file. It
  * corrects some performance problems with xdrstdio_getpos() and
  * xdrstdio_getpos() in the xdr_stdio implementation.
- *
- * -glenn
  */
 
-/*
- * 32-bit integer on the host architecture (on the CRAY, this is actually 64
- * bits; however, a pointer to this type is still passed to the XDR functions
- * x_getlong() and x_putlong(), so, on that platform, it doesn't matter if
- * the following isn't 32-bits):
- */
-#ifndef NETLONG
-#define NETLONG long
-#endif
-typedef NETLONG netlong;
-#undef NETLONG
-
+#include <inttypes.h>
 #include <string.h>
-#include "local_nc.h" /* prototypes for NCadvis, nc_error */
-                      /* also obtains <stdio.h>, <rpc/types.h>, &
-                       * <rpc/xdr.h> */
 
-#ifdef H4_HAVE_STDINT_H
-#include <stdint.h>
-#endif
-
-#ifdef H4_HAVE_UNISTD_H
-#include <unistd.h>
+#ifdef H4_HAVE_FCNTL_H
+#include <fcntl.h>
 #endif
 
 #ifdef H4_HAVE_IO_H
 #include <io.h>
 #endif
 
-#ifdef H4_HAVE_FCNTL_H
-#include <fcntl.h>
+#ifdef H4_HAVE_UNISTD_H
+#include <unistd.h>
 #endif
 
 #ifdef H4_HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 
-/*EIP #include "netcdf.h" */
+/* prototypes for NCadvis, nc_error also obtains <stdio.h>, <rpc/types.h>, &
+ * <rpc/xdr.h>
+ */
+#include "local_nc.h"
+
 #include "mfhdf.h"
+
+/* 32-bit integer on the host architecture */
+typedef int32_t netlong;
 
 #if !(defined DOS_FS)
 typedef u_int ncpos_t; /* all unicies */
