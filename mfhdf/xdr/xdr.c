@@ -570,7 +570,7 @@ xdr_bytes(XDR *xdrs, char **cpp, u_int *sizep, u_int maxsize)
                 return (TRUE);
             }
             if (sp == NULL) {
-                *cpp = sp = mem_alloc(nodesize);
+                *cpp = sp = calloc(1, nodesize);
                 allocated = TRUE;
             }
             if (sp == NULL) {
@@ -591,7 +591,7 @@ xdr_bytes(XDR *xdrs, char **cpp, u_int *sizep, u_int maxsize)
 
         case XDR_FREE:
             if (sp != NULL) {
-                mem_free(sp, nodesize);
+                free(sp);
                 *cpp = NULL;
             }
             return (TRUE);
@@ -713,7 +713,7 @@ xdr_string(XDR *xdrs, char **cpp, u_int maxsize)
 
         case XDR_DECODE:
             if (sp == NULL) {
-                *cpp = sp = mem_alloc(nodesize);
+                *cpp = sp = calloc(1, nodesize);
                 allocated = TRUE;
             }
             if (sp == NULL) {
@@ -734,7 +734,7 @@ xdr_string(XDR *xdrs, char **cpp, u_int maxsize)
             return (ret);
 
         case XDR_FREE:
-            mem_free(sp, nodesize);
+            free(s);
             *cpp = NULL;
             return (TRUE);
     }
