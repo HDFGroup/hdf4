@@ -792,6 +792,7 @@ HLgetdatainfo(int32 file_id, uint8 *buf, /* IN: special header info */
     int  ii;
     intn ret_value = SUCCEED;
 
+    (void)start_block; /*not used */
     /* Clear error stack */
     HEclear();
 

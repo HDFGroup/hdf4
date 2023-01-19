@@ -137,6 +137,8 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
     NC_var            *var = NULL; /* shorthand for vars[current_var] */
     vix_t             *end;
 
+    (void)xdrs;
+
     /* interesting stuff in CDR record */
     int32 gdrOffset, vers, release, encoding, flags, inc;
 
@@ -853,6 +855,9 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
 bool_t
 nssdc_write_cdf(XDR *xdrs, NC **handlep)
 {
+    (void)xdrs;
+    (void)handlep;
+
 #if DEBUG
     fprintf(stderr, "nssdc_write_cdf i've been called\n");
 #endif

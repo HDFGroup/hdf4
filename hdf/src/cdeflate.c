@@ -558,16 +558,12 @@ HCPcdeflate_read(accrec_t *access_rec, int32 length, void *data)
     CONSTR(FUNC, "HCPcdeflate_read");
     compinfo_t                *info;         /* special element information */
     comp_coder_deflate_info_t *deflate_info; /* ptr to gzip 'deflate' info */
-    uintn                      uninit;       /* Whether the interface was initialized */
 
     info         = (compinfo_t *)access_rec->special_info;
     deflate_info = &(info->cinfo.coder_info.deflate_info);
 
     /* Check if second stage of initialization has been performed */
     if (deflate_info->acc_init != DFACC_READ) {
-        /* preserve the initialized state for later */
-        uninit = (deflate_info->acc_init != 0);
-
         /* Terminate the previous method of access */
         if (HCIcdeflate_term(info, deflate_info->acc_mode) == FAIL)
             HRETURN_ERROR(DFE_CTERM, FAIL);

@@ -3217,11 +3217,9 @@ SDdiminfo(int32  id,   /* IN:  dimension ID */
     CONSTR(FUNC, "SDdiminfo"); /* for HGOTO_ERROR */
     NC      *handle = NULL;
     NC_dim  *dim    = NULL;
-    NC_var  *var    = NULL;
     NC_var **dp     = NULL;
     intn     ii;
     intn     len;
-    int32    varid;
     int      ret_value = SUCCEED;
 
 #ifdef SDDEBUG
@@ -3374,8 +3372,9 @@ SDgetdimstrs(int32 id, /* IN:  dataset ID */
                 if (namelen == (*dp)->name->len && HDstrncmp(name, (*dp)->name->values, HDstrlen(name)) == 0)
                     /* because a dim was given, make sure that this is a coord var */
                     /* if it is an SDS, the function will fail */
-                    if ((*dp)->var_type == IS_SDSVAR)
+                    if ((*dp)->var_type == IS_SDSVAR) {
                         HGOTO_ERROR(DFE_ARGS, FAIL)
+                    }
                     /* only proceed if this variable is a coordinate var or when
                     its status is unknown due to its being created prior to
                     the fix of bugzilla 624 - BMR - 05/14/2007 */
@@ -3788,6 +3787,8 @@ SDgetexternalfile(int32  id,           /* IN: dataset ID */
         /* Get the access id and then its special info */
         aid     = Hstartread(handle->hdf_file, var->data_tag, var->data_ref);
         retcode = HDget_special_info(aid, &info_block);
+        if ((retcode == FAIL) || (info_block.key == FAIL))
+            HGOTO_ERROR(DFE_CANTMOD, FAIL);
 
         /* If the SDS has external element, return the external file info */
         if (info_block.key == SPECIAL_EXT) {

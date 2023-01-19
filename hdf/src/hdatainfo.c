@@ -927,10 +927,8 @@ GRgetpalinfo(int32 gr_id, uintn pal_count, hdf_ddinfo_t *palinfo_array)
     CONSTR(FUNC, "GRgetpalinfo");
     gr_info_t *gr_ptr;
     int32      file_id;
-    int32      nbytes = 0;
-    int32      aid    = FAIL;
+    int32      aid = FAIL;
     intn       idx;
-    uintn      count;
     intn       ret_value = SUCCEED;
 
     /* Clear error stack */
@@ -946,8 +944,8 @@ GRgetpalinfo(int32 gr_id, uintn pal_count, hdf_ddinfo_t *palinfo_array)
 
     file_id = gr_ptr->hdf_file_id; /* alias of the file id */
 
-    /* Validate array size.  Fail when count is a pos number but the array is
-       NULL, or when count is a neg number */
+    /* Validate array size.  Fail when pal_count is a pos number but the array is
+       NULL, or when pal_count is a neg number */
     if ((pal_count > 0 && palinfo_array == NULL) || pal_count < 0)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 

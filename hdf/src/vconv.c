@@ -69,7 +69,7 @@
 PRIVATE int16 local_sizetab[] = {LOCAL_UNTYPEDSIZE, LOCAL_CHARSIZE, LOCAL_INTSIZE,   LOCAL_FLOATSIZE,
                                  LOCAL_LONGSIZE,    LOCAL_BYTESIZE, LOCAL_SHORTSIZE, LOCAL_DOUBLESIZE};
 
-#define LOCALSIZETAB_SIZE sizeof(local_sizetab) / sizeof(int)
+#define LOCALSIZETAB_SIZE sizeof(local_sizetab) / (sizeof(int))
 
 /*
  ** returns the machine size of a field type

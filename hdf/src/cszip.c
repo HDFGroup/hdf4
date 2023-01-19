@@ -318,10 +318,12 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
 
     return (SUCCEED);
 
-#else /* ifdef H4_HAVE_LIBSZ */
+#else  /* ifdef H4_HAVE_LIBSZ */
+    (void)info;
+    (void)length;
+    (void)buf;
 
     HRETURN_ERROR(DFE_CANTCOMP, FAIL);
-
 #endif /* H4_HAVE_LIBSZ */
 
 } /* end HCIcszip_decode() */
@@ -384,10 +386,12 @@ HCIcszip_encode(compinfo_t *info, int32 length, const uint8 *buf)
 
     return (SUCCEED);
 
-#else /* ifdef H4_HAVE_SZIP_ENCODER */
+#else  /* ifdef H4_HAVE_SZIP_ENCODER */
+    (void)info;
+    (void)length;
+    (void)buf;
 
     HRETURN_ERROR(DFE_CANTDECOMP, FAIL);
-
 #endif /* H4_HAVE_SZIP_ENCODER */
 
 } /* end HCIcszip_encode() */
@@ -602,10 +606,10 @@ HCIcszip_term(compinfo_t *info)
 
     return (SUCCEED);
 
-#else /* H4_HAVE_SZIP_ENCODER */
+#else  /* H4_HAVE_SZIP_ENCODER */
+    (void)info;
 
     HRETURN_ERROR(DFE_CANTCOMP, FAIL);
-
 #endif /* H4_HAVE_SZIP_ENCODER */
 
 } /* end HCIcszip_term() */
@@ -868,6 +872,9 @@ HCPcszip_write(accrec_t *access_rec, int32 length, const void *data)
 
     return (length);
 #else /* ifdef H4_HAVE_SZIP_ENCODER */
+    (void)access_rec;
+    (void)length;
+    (void)data;
 
     HRETURN_ERROR(DFE_CANTDECOMP, FAIL);
 
@@ -1066,6 +1073,13 @@ done:
     return (ret_value);
 #else
     /* szip not enabled */
+    (void)c_info;
+    (void)nt;
+    (void)ncomp;
+    (void)ndims;
+    (void)dims;
+    (void)cdims;
+
     return (FAIL);
 #endif
 }
