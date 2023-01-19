@@ -734,7 +734,7 @@ xdr_string(XDR *xdrs, char **cpp, u_int maxsize)
             return (ret);
 
         case XDR_FREE:
-            free(s);
+            free(sp);
             *cpp = NULL;
             return (TRUE);
     }
