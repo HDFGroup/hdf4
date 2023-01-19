@@ -96,15 +96,6 @@ AC_CONFIG_COMMANDS([h4config], [
   cp h4config hdf/src/h4config.h
   rm -f h4config
 
-#if test ! -f hdf/src/h4config.h; then
-#    /bin/mv -f h4config hdf/src/h4config.h
-#  elif (diff h4config hdf/src/h4config.h >/dev/null); then
-#    /bin/rm -f h4config
-#    echo "hdf/src/h4config.h is unchanged"
-#  else
-#    /bin/mv -f h4config hdf/src/h4config.h
-#  fi
-
   echo "Post process libhdf4.settings"
   sed '/^#/d' < libhdf4.settings > libhdf4.settings.TMP
   cp libhdf4.settings.TMP libhdf4.settings
