@@ -1064,10 +1064,13 @@ vgdumpfull(int32 vg_id, dump_info_t *dumpvg_opts, int32 file_id, int32 num_entri
                    if this failed.  If succeeded, check for exceeding max allowed */
                 num_fields = VFnfields(vs);
                 if (num_fields == FAIL)
-                    ERROR_CONT_END("in %s: VFnfields failed for vdata with ref#=%d", "dumpvd_ascii", (int)elem_ref, vs);
+                    ERROR_CONT_END("in %s: VFnfields failed for vdata with ref#=%d", "dumpvd_ascii",
+                                   (int)elem_ref, vs);
 
                 if (num_fields >= VSFIELDMAX)
-                    ERROR_CONT_END("in %s: Number of fields exceeded the max allowed for vdata with ref#=%d, i.e., possible data corruption", "dumpvd_ascii", (int)elem_ref, vs);
+                    ERROR_CONT_END("in %s: Number of fields exceeded the max allowed for vdata with ref#=%d, "
+                                   "i.e., possible data corruption",
+                                   "dumpvd_ascii", (int)elem_ref, vs);
 
                 vsize = VShdfsize(vs, fields);
                 if (vsize == FAIL)
