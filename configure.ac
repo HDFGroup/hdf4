@@ -91,8 +91,8 @@ AC_PREFIX_DEFAULT([`pwd`/hdf4])
 ## configure.
 AC_CONFIG_COMMANDS([h4config], [
   echo "modifying hdf/src/h4config.h"
-  sed 's/#define /#define H4_/' < hdf/src/h4config.h |\
-    sed 's/#undef /#undef H4_/' > h4config
+  sed 's/#\([[:blank:]]\)*define /#\1define H4_/' < hdf/src/h4config.h |\
+    sed 's/#\([[:blank:]]\)*undef /#\1undef H4_/' > h4config
   cp h4config hdf/src/h4config.h
   rm -f h4config
 
