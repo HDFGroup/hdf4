@@ -522,14 +522,12 @@ NCxdrfile_create(XDR *xdrs, const char *path, int ncmode)
             NCadvise(NC_EINVAL, "Bad flag %0x", ncmode & 0x0f);
             return -1;
     }
-#ifdef DOS_FS
-    /*
-     * set default mode to binary to suppress the expansion of
-     * 0x0f into CRLF
-     */
-    if (_fmode != O_BINARY)
-        _fmode = O_BINARY;
+
+#ifdef H5_HAVE_WIN32_API
+    /* Set default mode to binary to suppress the expansion of 0x0f into CRLF */
+    _fmode |= O_BINARY;
 #endif
+
     fd = open(path, fmode, 0666);
 #ifdef XDRDEBUG
     fprintf(stderr, "NCxdrfile_create(): fmode=%d, fd=%d\n", fmode, fd);
