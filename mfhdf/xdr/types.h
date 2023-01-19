@@ -39,8 +39,17 @@
 
 #include "h4config.h"
 
-#ifdef H4_HAVE_STDINT_H
+#include <stddef.h>
 #include <stdint.h>
+#include <stdlib.h>
+#include <time.h>
+
+#ifdef H4_HAVE_SYS_TIME_H
+#include <sys/time.h>
+#endif
+
+#ifdef H4_HAVE_SYS_TYPES_H
+#include <sys/types.h>
 #endif
 
 #ifndef u_char
@@ -75,39 +84,5 @@ typedef int32_t bool_t;
 
 /* Define the enumerated type in the wire protocol. */
 typedef int32_t enum_t;
-
-#ifndef NULL
-#define NULL 0
-#endif
-
-#ifdef H4_HAVE_STDDEF_H
-#include <stddef.h>
-#endif
-#ifdef H4_HAVE_STDLIB_H
-#include <stdlib.h>
-#else
-extern char *malloc();
-#endif
-
-#define mem_alloc(bsize)     calloc(1, bsize)
-#define mem_free(ptr, bsize) free(ptr)
-
-#ifdef H4_HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-
-#ifdef __CYGWIN32__
-#include <time.h>
-#endif
-#ifdef H4_HAVE_SYS_TIME_H
-#include <sys/time.h>
-#endif
-
-#ifndef INADDR_LOOPBACK
-#define INADDR_LOOPBACK (u_long)0x7F000001
-#endif
-#ifndef MAXHOSTNAMELEN
-#define MAXHOSTNAMELEN 64
-#endif
 
 #endif /* ndef __TYPES_RPC_HEADER__ */

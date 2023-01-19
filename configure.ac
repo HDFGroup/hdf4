@@ -851,7 +851,7 @@ AC_SUBST([CONFIG_USER]) CONFIG_USER="`whoami`@`hostname`"
 ## Configuration mode (production, development, etc)
 AC_SUBST([CONFIG_MODE])
 
-AC_C_BIGENDIAN([], [])
+AC_C_BIGENDIAN
 
 ## Are we building this in debug or production mode? (Remove the -g flag
 ## in production mode.)

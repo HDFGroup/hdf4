@@ -9,55 +9,39 @@
  * useful when the descriptor actually represents a file. It
  * corrects some performance problems with xdrstdio_getpos() and
  * xdrstdio_getpos() in the xdr_stdio implementation.
- *
- * -glenn
  */
 
-/*
- * 32-bit integer on the host architecture (on the CRAY, this is actually 64
- * bits; however, a pointer to this type is still passed to the XDR functions
- * x_getlong() and x_putlong(), so, on that platform, it doesn't matter if
- * the following isn't 32-bits):
- */
-#ifndef NETLONG
-#define NETLONG long
-#endif
-typedef NETLONG netlong;
-#undef NETLONG
-
+#include <inttypes.h>
 #include <string.h>
-#include "local_nc.h" /* prototypes for NCadvis, nc_error */
-                      /* also obtains <stdio.h>, <rpc/types.h>, &
-                       * <rpc/xdr.h> */
 
-#ifdef H4_HAVE_STDINT_H
-#include <stdint.h>
-#endif
-
-#ifdef H4_HAVE_UNISTD_H
-#include <unistd.h>
+#ifdef H4_HAVE_FCNTL_H
+#include <fcntl.h>
 #endif
 
 #ifdef H4_HAVE_IO_H
 #include <io.h>
 #endif
 
-#ifdef H4_HAVE_FCNTL_H
-#include <fcntl.h>
+#ifdef H4_HAVE_UNISTD_H
+#include <unistd.h>
 #endif
 
 #ifdef H4_HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 
-/*EIP #include "netcdf.h" */
+/* prototypes for NCadvis, nc_error also obtains <stdio.h>, <rpc/types.h>, &
+ * <rpc/xdr.h>
+ */
+#include "local_nc.h"
+
 #include "mfhdf.h"
 
-#if !(defined DOS_FS)
-typedef u_int ncpos_t; /* all unicies */
-#else
-typedef off_t   ncpos_t;
-#endif
+/* 32-bit integer on the host architecture */
+typedef int32_t netlong;
+
+/* Stream position type */
+typedef u_int ncpos_t;
 
 typedef struct {
     int            fd;   /* the file descriptor */
@@ -68,19 +52,14 @@ typedef struct {
     int            nwrote; /* number of bytes last write */
     int            cnt;    /* number of valid bytes in buffer */
     unsigned char *ptr;    /* next byte */
-#ifdef DOS_FS
-#define BIOBUFSIZ 512
-#else
 #define BIOBUFSIZ 8192
-#endif
     unsigned char base[BIOBUFSIZ]; /* the data buffer */
 } biobuf;
 
 static void
-free_biobuf(biobuf *abuf)
+free_biobuf(biobuf *buf)
 {
-    if (abuf != NULL)
-        HDfree((VOIDP)abuf);
+    HDfree(buf);
 }
 
 static biobuf *
@@ -164,8 +143,10 @@ nextbuf(biobuf *biop)
 }
 
 #define CNT(p) ((p)->ptr - (p)->base)
+
 /* # of unread bytes in buffer */
 #define REM(p) ((p)->cnt - CNT(p))
+
 /* available space for write in buffer */
 #define BREM(p) (BIOBUFSIZ - CNT(p))
 
@@ -228,26 +209,18 @@ biowrite(biobuf *biop, unsigned char *ptr, int nbytes)
     return nwrote;
 }
 
-static bool_t                                   xdrposix_getlong();
-static bool_t                                   xdrposix_putlong();
-#if (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__
-static bool_t                                                                            xdrposix_getint();
-static bool_t                                                                            xdrposix_putint();
-#endif
-static bool_t  xdrposix_getbytes();
-static bool_t  xdrposix_putbytes();
-static ncpos_t xdrposix_getpos();
-static bool_t  xdrposix_setpos();
-#if (defined __sun && defined _LP64)
-static rpc_inline_t *xdrposix_inline();
-#else
-#if ((defined __x86_64__) && !(defined __sun && defined _LP64)) || defined __powerpc64__
-static int32_t *xdrposix_inline();
-#else
+static bool_t   xdrposix_getlong();
+static bool_t   xdrposix_putlong();
+static bool_t   xdrposix_getbytes();
+static bool_t   xdrposix_putbytes();
+static ncpos_t  xdrposix_getpos();
+static bool_t   xdrposix_setpos();
 static netlong *xdrposix_inline();
+static void     xdrposix_destroy();
+#if (defined __sun && defined _LP64)
+static bool_t xdrposix_getint();
+static bool_t xdrposix_putint();
 #endif
-#endif
-static void xdrposix_destroy();
 
 /*
  * Ops vector for posix type XDR
@@ -300,8 +273,6 @@ static int
 xdrposix_create(XDR *xdrs, int fd, int fmode, enum xdr_op op)
 {
     biobuf *biop = new_biobuf(fd, fmode);
-    /* fprintf(stderr, "xdrposix_create: biop = %p\n", biop);
-     */
 #ifdef XDRDEBUG
     fprintf(stderr, "xdrposix_create(): xdrs=%p, fd=%d, fmode=%d, op=%d\n", xdrs, fd, fmode, (int)op);
     fprintf(stderr, "xdrposix_create(): after new_biobuf(), biop=%p\n", biop);
@@ -323,7 +294,7 @@ xdrposix_create(XDR *xdrs, int fd, int fmode, enum xdr_op op)
     fprintf(stderr, "xdrposix_create(): before rdbuf()\n");
 #endif
     /* else, read the first bufferful */
-    return (rdbuf(biop));
+    return rdbuf(biop);
 }
 
 /*
@@ -363,8 +334,6 @@ xdrposix_destroy(XDR *xdrs)
         }
         if (biop->fd != -1)
             (void)close(biop->fd);
-        /* fprintf(stderr, "\nxdrposix_destroy: going to free_biobuf\n");
-         */
         free_biobuf(biop);
     }
 }
@@ -373,16 +342,16 @@ static bool_t
 xdrposix_getlong(XDR *xdrs, long *lp)
 {
     unsigned char *up = (unsigned char *)lp;
-#if (defined AIX5L64 || defined __powerpc64__ || (defined __hpux && __LP64__))
+#if (defined AIX5L64 || defined __powerpc64__)
     *lp = 0;
     up += (sizeof(long) - 4);
 #endif
     if (bioread((biobuf *)xdrs->x_private, up, 4) < 4)
-        return (FALSE);
+        return FALSE;
 #ifndef H4_WORDS_BIGENDIAN
     *lp = ntohl(*lp);
 #endif
-    return (TRUE);
+    return TRUE;
 }
 
 static bool_t
@@ -394,46 +363,36 @@ xdrposix_putlong(XDR *xdrs, long *lp)
     netlong mycopy = htonl(*lp);
     up             = (unsigned char *)&mycopy;
 #endif
-#if (defined AIX5L64 || defined __powerpc64__ || (defined __hpux && __LP64__))
+#if (defined AIX5L64 || defined __powerpc64__)
     up += (sizeof(long) - 4);
 #endif
 
     if (biowrite((biobuf *)xdrs->x_private, up, 4) < 4)
-        return (FALSE);
-    return (TRUE);
+        return FALSE;
+    return TRUE;
 }
 
-#if (defined __hpux)
-static bool_t
-xdrposix_getbytes(XDR *xdrs, caddr_t addr, int len)
-#else
 static bool_t
 xdrposix_getbytes(XDR *xdrs, caddr_t addr, u_int len)
-#endif
 {
     if ((len != 0) && (bioread((biobuf *)xdrs->x_private, (unsigned char *)addr, (int)len) != len))
-        return (FALSE);
-    return (TRUE);
+        return FALSE;
+    return TRUE;
 }
 
-#if (defined __hpux)
-static bool_t
-xdrposix_putbytes(XDR *xdrs, caddr_t addr, int len)
-#else
 static bool_t
 xdrposix_putbytes(XDR *xdrs, caddr_t addr, u_int len)
-#endif
 {
     if ((len != 0) && (biowrite((biobuf *)xdrs->x_private, (unsigned char *)addr, (int)len) != len))
-        return (FALSE);
-    return (TRUE);
+        return FALSE;
+    return TRUE;
 }
 
 static ncpos_t
 xdrposix_getpos(XDR *xdrs)
 {
     biobuf *biop = (biobuf *)xdrs->x_private;
-    return (BIOBUFSIZ * biop->page + CNT(biop));
+    return BIOBUFSIZ * biop->page + CNT(biop);
 }
 
 static bool_t
@@ -467,15 +426,7 @@ xdrposix_setpos(XDR *xdrs, ncpos_t pos)
         return FALSE;
 }
 
-#if (defined __sun && defined _LP64)
-static rpc_inline_t *
-#else
-#if ((defined __x86_64__) && !(defined __sun && defined _LP64)) || defined __powerpc64__
-static int32_t *
-#else
 static netlong *
-#endif
-#endif
 xdrposix_inline(XDR *xdrs, u_int len)
 {
     /*
@@ -484,21 +435,21 @@ xdrposix_inline(XDR *xdrs, u_int len)
      * that the buffer is aligned so that we can indirect through a
      * netlong *, and stuff this pointer in xdrs->x_buf.
      */
-    return (NULL);
+    return NULL;
 }
 
-#if (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__
+#if (defined __sun && defined _LP64)
 
 static bool_t
 xdrposix_getint(XDR *xdrs, int *lp)
 {
     unsigned char *up = (unsigned char *)lp;
     if (bioread((biobuf *)xdrs->x_private, up, 4) < 4)
-        return (FALSE);
+        return FALSE;
 #ifndef H4_WORDS_BIGENDIAN
     *lp = ntohl(*lp);
 #endif
-    return (TRUE);
+    return TRUE;
 }
 
 static bool_t
@@ -510,8 +461,8 @@ xdrposix_putint(XDR *xdrs, int *lp)
     up             = (unsigned char *)&mycopy;
 #endif
     if (biowrite((biobuf *)xdrs->x_private, up, 4) < 4)
-        return (FALSE);
-    return (TRUE);
+        return FALSE;
+    return TRUE;
 }
 #endif /* end of xdrposix_put(get)int */
 
@@ -546,24 +497,22 @@ NCxdrfile_create(XDR *xdrs, const char *path, int ncmode)
             break;
         default:
             NCadvise(NC_EINVAL, "Bad flag %0x", ncmode & 0x0f);
-            return (-1);
+            return -1;
     }
-#ifdef DOS_FS
-    /*
-     * set default mode to binary to suppress the expansion of
-     * 0x0f into CRLF
-     */
-    if (_fmode != O_BINARY)
-        _fmode = O_BINARY;
+
+#ifdef H5_HAVE_WIN32_API
+    /* Set default mode to binary to suppress the expansion of 0x0f into CRLF */
+    _fmode |= O_BINARY;
 #endif
+
     fd = open(path, fmode, 0666);
 #ifdef XDRDEBUG
     fprintf(stderr, "NCxdrfile_create(): fmode=%d, fd=%d\n", fmode, fd);
 #endif
     if (fd == -1) {
         nc_serror("filename \"%s\"", path);
-        return (-1);
-    } /* else */
+        return -1;
+    }
 
     if (ncmode & NC_CREAT) {
         op = XDR_ENCODE;
@@ -577,7 +526,6 @@ NCxdrfile_create(XDR *xdrs, const char *path, int ncmode)
 #endif
     if (xdrposix_create(xdrs, fd, fmode, op) < 0)
         return -1;
-        /* else */
 #ifdef XDRDEBUG
     fprintf(stderr, "NCxdrfile_create(): after xdrposix_create()\n");
 #endif
