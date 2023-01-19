@@ -296,6 +296,10 @@ VSgetfields(int32 vkey, /* IN: vdata key */
     if (vs == NULL)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
+    /* check for possible corrupted value */
+    if (vs->wlist.n > VSFIELDMAX)
+        HGOTO_ERROR(DFE_EXCEEDMAX, FAIL);
+
     /* Got through Vdata and build the comma separated string of field names */
     fields[0] = '\0';
     /* No special handling for 0-field vdatas, this algorithm should work fine. */
@@ -355,6 +359,10 @@ VSfexist(int32 vkey, /* IN: vdata key */
     /* call scanattrs to parse the string */
     if (scanattrs(fields, &ac, &av) < 0)
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
+
+    /* check for exceeding max number of fields */
+    if (ac > VSFIELDMAX)
+        HGOTO_ERROR(DFE_EXCEEDMAX, FAIL);
 
     /* get vdata itself and check it
        check also that more than one field in 'fields' */
@@ -434,6 +442,10 @@ VSsizeof(int32 vkey, /* IN vdata key */
     if (vs == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
+    /* check for possible corrupted value */
+    if (vs->wlist.n > VSFIELDMAX)
+        HGOTO_ERROR(DFE_EXCEEDMAX, FAIL);
+
     totalsize = 0;
     if (fields == NULL) /* default case? */
     {                   /* count all field sizes in vdata */
@@ -443,6 +455,10 @@ VSsizeof(int32 vkey, /* IN vdata key */
     else { /* parse field string */
         if ((scanattrs(fields, &ac, &av) < 0) || (ac < 1))
             HGOTO_ERROR(DFE_ARGS, FAIL);
+
+        /* check for exceeding max number of fields */
+        if (ac > VSFIELDMAX)
+            HGOTO_ERROR(DFE_EXCEEDMAX, FAIL);
 
         for (i = 0; i < ac; i++) { /* check fields in vs */
             for (found = 0, j = 0; j < vs->wlist.n; j++)
