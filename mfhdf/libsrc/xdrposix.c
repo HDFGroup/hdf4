@@ -40,7 +40,7 @@
 /* 32-bit integer on the host architecture */
 typedef int32_t netlong;
 
-/* Stream position types */
+/* Stream position type */
 typedef u_int ncpos_t;
 
 typedef struct {
@@ -209,26 +209,18 @@ biowrite(biobuf *biop, unsigned char *ptr, int nbytes)
     return nwrote;
 }
 
-static bool_t                                   xdrposix_getlong();
-static bool_t                                   xdrposix_putlong();
-#if (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__
-static bool_t                                                                            xdrposix_getint();
-static bool_t                                                                            xdrposix_putint();
-#endif
-static bool_t  xdrposix_getbytes();
-static bool_t  xdrposix_putbytes();
-static ncpos_t xdrposix_getpos();
-static bool_t  xdrposix_setpos();
-#if (defined __sun && defined _LP64)
-static rpc_inline_t *xdrposix_inline();
-#else
-#if ((defined __x86_64__) && !(defined __sun && defined _LP64)) || defined __powerpc64__
-static int32_t *xdrposix_inline();
-#else
+static bool_t   xdrposix_getlong();
+static bool_t   xdrposix_putlong();
+static bool_t   xdrposix_getbytes();
+static bool_t   xdrposix_putbytes();
+static ncpos_t  xdrposix_getpos();
+static bool_t   xdrposix_setpos();
 static netlong *xdrposix_inline();
+static void     xdrposix_destroy();
+#if (defined __sun && defined _LP64)
+static bool_t xdrposix_getint();
+static bool_t xdrposix_putint();
 #endif
-#endif
-static void xdrposix_destroy();
 
 /*
  * Ops vector for posix type XDR
@@ -434,15 +426,7 @@ xdrposix_setpos(XDR *xdrs, ncpos_t pos)
         return FALSE;
 }
 
-#if (defined __sun && defined _LP64)
-static rpc_inline_t *
-#else
-#if ((defined __x86_64__) && !(defined __sun && defined _LP64)) || defined __powerpc64__
-static int32_t *
-#else
 static netlong *
-#endif
-#endif
 xdrposix_inline(XDR *xdrs, u_int len)
 {
     /*
@@ -454,7 +438,7 @@ xdrposix_inline(XDR *xdrs, u_int len)
     return NULL;
 }
 
-#if (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__
+#if (defined __sun && defined _LP64)
 
 static bool_t
 xdrposix_getint(XDR *xdrs, int *lp)
