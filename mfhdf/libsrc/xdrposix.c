@@ -55,11 +55,7 @@ typedef struct {
     int            nwrote; /* number of bytes last write */
     int            cnt;    /* number of valid bytes in buffer */
     unsigned char *ptr;    /* next byte */
-#ifdef DOS_FS
-#define BIOBUFSIZ 512
-#else
 #define BIOBUFSIZ 8192
-#endif
     unsigned char base[BIOBUFSIZ]; /* the data buffer */
 } biobuf;
 
