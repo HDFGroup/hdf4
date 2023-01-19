@@ -959,6 +959,7 @@ vgdumpfull(int32 vg_id, dump_info_t *dumpvg_opts, int32 file_id, int32 num_entri
     int32 nv;
     int32 interlace;
     int32 vsize;
+    int32 num_fields = 0;
     char  vsname[MAXNAMELEN];
     char  vsclass[VSNAMELENMAX + 1];
     char *vgname    = NULL;
@@ -1058,6 +1059,18 @@ vgdumpfull(int32 vg_id, dump_info_t *dumpvg_opts, int32 file_id, int32 num_entri
                 if (FAIL == status)
                     ERROR_NOTIFY_2("in %s: VSinquire failed for vdata with ref#=%d", "vgdumpfull",
                                    (int)elem_ref);
+
+                /* Get the number of fields in the vdata, continue to the next vdata
+                   if this failed.  If succeeded, check for exceeding max allowed */
+                num_fields = VFnfields(vs);
+                if (num_fields == FAIL)
+                    ERROR_CONT_END("in %s: VFnfields failed for vdata with ref#=%d", "dumpvd_ascii",
+                                   (int)elem_ref, vs);
+
+                if (num_fields >= VSFIELDMAX)
+                    ERROR_CONT_END("in %s: Number of fields exceeded the max allowed for vdata with ref#=%d, "
+                                   "i.e., possible data corruption",
+                                   "dumpvd_ascii", (int)elem_ref, vs);
 
                 vsize = VShdfsize(vs, fields);
                 if (vsize == FAIL)
