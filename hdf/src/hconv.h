@@ -56,7 +56,8 @@
 /* CONSTANT DEFINITIONS                                                      */
 /*****************************************************************************/
 /* Big-endian */
-#if defined(H4_WORDS_BIGENDIAN) || defined(WORDS_BIGENDIAN)
+#ifdef H4_WORDS_BIGENDIAN
+
 #define UI8_IN   DFKnb1b /* Unsigned Integer, 8 bits */
 #define UI8_OUT  DFKnb1b
 #define SI16_IN  DFKnb2b /* S = Signed */
@@ -87,7 +88,8 @@
 #define LF64_IN   DFKsb8b
 #define LF64_OUT  DFKsb8b
 
-#else                    /* Little-endian */
+#else /* Little-endian */
+
 #define UI8_IN   DFKnb1b /* Big-Endian IEEE support */
 #define UI8_OUT  DFKnb1b /* The s in DFKsb2b is for swap */
 #define SI16_IN  DFKsb2b

@@ -86,19 +86,19 @@
 
 /* The BKT structures are the elements of the queues. */
 typedef struct _bkt {
-    CIRCLEQ_ENTRY(_bkt) hq; /* hash queue */
-    CIRCLEQ_ENTRY(_bkt) q;  /* lru queue */
-    VOID *page;             /* page */
-    int32 pgno;             /* page number */
-#define MCACHE_DIRTY  0x01  /* page needs to be written */
-#define MCACHE_PINNED 0x02  /* page is pinned into memory */
-    uint8 flags;            /* flags */
+    H4_CIRCLEQ_ENTRY(_bkt) hq; /* hash queue */
+    H4_CIRCLEQ_ENTRY(_bkt) q;  /* lru queue */
+    VOID *page;                /* page */
+    int32 pgno;                /* page number */
+#define MCACHE_DIRTY  0x01     /* page needs to be written */
+#define MCACHE_PINNED 0x02     /* page is pinned into memory */
+    uint8 flags;               /* flags */
 } BKT;
 
 /* The element structure for every page referenced(read/written) in object */
 typedef struct _lelem {
-    CIRCLEQ_ENTRY(_lelem) hl; /* hash list */
-    int32 pgno;               /* page number */
+    H4_CIRCLEQ_ENTRY(_lelem) hl; /* hash list */
+    int32 pgno;                  /* page number */
 #ifdef STATISTICS
     int32 elemhit; /* # of hits on page */
 #endif
@@ -114,9 +114,9 @@ typedef struct _lelem {
 
 /* Memory pool cache */
 typedef struct MCACHE {
-    CIRCLEQ_HEAD(_lqh, _bkt) lqh;                               /* lru queue head */
-    CIRCLEQ_HEAD(_hqh, _bkt) hqh[HASHSIZE];                     /* hash queue array */
-    CIRCLEQ_HEAD(_lhqh, _lelem) lhqh[HASHSIZE];                 /* hash of all elements */
+    H4_CIRCLEQ_HEAD(_lqh, _bkt) lqh;                            /* lru queue head */
+    H4_CIRCLEQ_HEAD(_hqh, _bkt) hqh[HASHSIZE];                  /* hash queue array */
+    H4_CIRCLEQ_HEAD(_lhqh, _lelem) lhqh[HASHSIZE];              /* hash of all elements */
     int32 curcache;                                             /* current num of cached pages */
     int32 maxcache;                                             /* max number of cached pages */
     int32 npages;                                               /* number of pages in the object */
