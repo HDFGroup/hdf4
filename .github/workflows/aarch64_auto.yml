@@ -28,7 +28,13 @@ jobs:
             echo ::set-output name=uname::$(uname -a)
             git clone https://github.com/HDFGroup/hdf4
             cd hdf4
-            ./ci.sh
+            export EXT2LIB+=" -ltirpc"
+            echo $EXT2LIB
+            autoreconf -fvi
+            ./configure --enable-shared --disable-fortran --disable-netcdf
+            cat ./config.log
+            make
+            make check            
 
       - name: Get the output
         # Echo the `uname` output parameter from the `runcmd` step
