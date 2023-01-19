@@ -92,7 +92,7 @@ xdr_array(XDR *xdrs, caddr_t *addrp, u_int *sizep, u_int maxsize, u_int elsize, 
             case XDR_DECODE:
                 if (c == 0)
                     return (TRUE);
-                *addrp = target = mem_alloc(nodesize);
+                *addrp = target = calloc(1, nodesize);
                 if (target == NULL) {
                     (void)fprintf(stderr, "xdr_array: out of memory\n");
                     return (FALSE);
@@ -116,7 +116,7 @@ xdr_array(XDR *xdrs, caddr_t *addrp, u_int *sizep, u_int maxsize, u_int elsize, 
      * the array may need freeing
      */
     if (xdrs->x_op == XDR_FREE) {
-        mem_free(*addrp, nodesize);
+        free(*addrp);
         *addrp = NULL;
     }
     return (stat);
