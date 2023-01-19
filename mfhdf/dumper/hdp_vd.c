@@ -509,8 +509,8 @@ dumpvd_ascii(dump_info_t *dumpvd_opts, int32 file_id, const char *file_name, FIL
     intn          dumpall = 0;
     file_format_t ff      = DASCII;
     vd_info_t     curr_vd;
-    int32         vd_id     = FAIL;
-    int32         an_handle = FAIL;
+    int32         vd_id      = FAIL;
+    int32         an_handle  = FAIL;
     int32         num_fields = 0;
     intn          status = SUCCEED, ret_value = SUCCEED;
     char          fields[VSFIELDMAX * FIELDNAMELENMAX];
