@@ -41,6 +41,11 @@ jobs:
           - "Ubuntu gcc Autotools"
           - "Ubuntu gcc SysXDR Autotools"
           - "MacOS Clang CMake"
+          - "Ubuntu mingw CMake"
+          - "Windows static MSVC CMake"
+          - "Ubuntu static gcc CMake"
+          - "Ubuntu static gcc Autotools"
+          - "MacOS static Clang CMake"
 
         netcdf:
           - enabled: enable
@@ -70,6 +75,7 @@ jobs:
           - name: "Windows MSVC CMake"
             os: windows-2022
             toolchain: ""
+            shared: ON
             xdr: ON
             java: ON
             jpegfc: ON
@@ -78,6 +84,7 @@ jobs:
             cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G \"Visual Studio 17 2022\" -A x64"
             run_tests: true
+            use_mingw: false
 
           # Linux (Ubuntu) w/ gcc + CMake
           #
@@ -85,6 +92,7 @@ jobs:
           # so it's not critical
           - name: "Ubuntu gcc CMake"
             os: ubuntu-latest
+            shared: ON
             xdr: ON
             java: ON
             jpegfc: ON
@@ -94,6 +102,7 @@ jobs:
             cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G Ninja"
             run_tests: true
+            use_mingw: false
 
           # Linux (Ubuntu) w/ gcc + Autotools
           #
@@ -101,12 +110,14 @@ jobs:
           # the values.
           - name: "Ubuntu gcc Autotools"
             os: ubuntu-latest
+            shared: enable
             xdr: enable
             java: enable
             toolchain: ""
             generator: "autogen"
             flags: ""
             run_tests: true
+            use_mingw: false
 
           # Linux (Ubuntu) w/ gcc + system XDR + Autotools
           #
@@ -114,12 +125,14 @@ jobs:
           # the values.
           - name: "Ubuntu gcc SysXDR Autotools"
             os: ubuntu-latest
+            shared: enable
             xdr: disable
             java: enable
             toolchain: ""
             generator: "autogen"
             flags: ""
             run_tests: true
+            use_mingw: false
 
           # MacOS w/ Clang + CMake
           #
@@ -127,6 +140,7 @@ jobs:
           # but that seems unnecessary
           - name: "MacOS Clang CMake"
             os: macos-latest
+            shared: ON
             xdr: ON
             java: ON
             jpegfc: ON
@@ -136,9 +150,94 @@ jobs:
             cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G Ninja"
             run_tests: true
+            use_mingw: false
+
+          # Linux (Ubuntu) w/ mingw + CMake
+          #
+          - name: "Ubuntu mingw CMake"
+            os: ubuntu-latest
+            shared: ON
+            xdr: ON
+            java: OFF
+            jpegfc: ON
+            libaecfc: ON
+            zlibfc: ON
+            toolchain: "$GITHUB_WORKSPACE/config/toolchain/mingw64.cmake"
+            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
+            generator: "-G Ninja"
+            run_tests: false
+            use_mingw: true
+
+          # Windows w/ MSVC + CMake
+          #
+          # No Fortran, parallel, or VFDs that rely on POSIX things
+          - name: "Windows static MSVC CMake"
+            os: windows-2022
+            toolchain: ""
+            shared: OFF
+            xdr: ON
+            java: OFF
+            jpegfc: ON
+            libaecfc: ON
+            zlibfc: ON
+            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
+            generator: "-G \"Visual Studio 17 2022\" -A x64"
+            run_tests: true
+            use_mingw: false
+
+          # Linux (Ubuntu) w/ gcc + CMake
+          #
+          # We might think about adding Clang, but MacOS already tests that
+          # so it's not critical
+          - name: "Ubuntu static gcc CMake"
+            os: ubuntu-latest
+            shared: OFF
+            xdr: ON
+            java: OFF
+            jpegfc: ON
+            libaecfc: ON
+            zlibfc: ON
+            toolchain: "$GITHUB_WORKSPACE/config/toolchain/GCC.cmake"
+            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
+            generator: "-G Ninja"
+            run_tests: true
+            use_mingw: false
+
+          # Linux (Ubuntu) w/ gcc + Autotools
+          #
+          # Keep this identical to the CMake configs. Note the difference in
+          # the values.
+          - name: "Ubuntu static gcc Autotools"
+            os: ubuntu-latest
+            shared: disable
+            xdr: enable
+            java: disable
+            toolchain: ""
+            generator: "autogen"
+            flags: ""
+            run_tests: true
+            use_mingw: false
+
+          # MacOS w/ Clang + CMake
+          #
+          # We could also build with the Autotools via brew installing them,
+          # but that seems unnecessary
+          - name: "MacOS static Clang CMake"
+            os: macos-latest
+            shared: OFF
+            xdr: ON
+            java: OFF
+            jpegfc: ON
+            libaecfc: ON
+            zlibfc: ON
+            toolchain: "$GITHUB_WORKSPACE/config/toolchain/clang.cmake"
+            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
+            generator: "-G Ninja"
+            run_tests: true
+            use_mingw: false
 
     # Sets the job's name from the properties
-    name: "${{ matrix.name }}${{ matrix.build_mode.text }}${{ matrix.netcdf.text }}"
+    name: "${{ matrix.name }}${{ matrix.build_mode.text }}${{ matrix.shared.text }}${{ matrix.netcdf.text }}"
 
     # The type of runner that the job will run on
     runs-on: ${{ matrix.os }}
@@ -160,6 +259,12 @@ jobs:
       - name: Install CMake Dependencies (Linux)
         run: sudo apt-get install -y ninja-build libtirpc-dev
         if: matrix.os == 'ubuntu-latest'
+
+      - name: Install MinGW Dependencies (Linux)
+        uses: egor-tensin/setup-mingw@v2
+        with:
+          platform: x64
+        if: (matrix.use_mingw)
 
       - name: Install Autotools Dependencies (Linux)
         run: |
@@ -199,7 +304,7 @@ jobs:
           sh ./autogen.sh
           mkdir "${{ runner.workspace }}/build"
           cd "${{ runner.workspace }}/build"
-          ${{ matrix.flags }} $GITHUB_WORKSPACE/configure --${{ matrix.build_mode.autotools }} --${{ matrix.xdr }}-hdf4-xdr --${{ matrix.netcdf.enabled }}-netcdf --${{ matrix.java }}-java --enable-shared
+          ${{ matrix.flags }} $GITHUB_WORKSPACE/configure --${{ matrix.build_mode.autotools }} --${{ matrix.xdr }}-hdf4-xdr --${{ matrix.netcdf.enabled }}-netcdf --${{ matrix.java }}-java --${{ matrix.shared }}-shared
         shell: bash
         if: (matrix.generator == 'autogen')
 
@@ -211,9 +316,9 @@ jobs:
         run: |
           mkdir "${{ runner.workspace }}/build"
           cd "${{ runner.workspace }}/build"
-          cmake ${{ matrix.cacheinit }} ${{ matrix.generator }} --log-level=VERBOSE -DCMAKE_BUILD_TYPE=${{ matrix.build_mode.cmake }} -DCMAKE_TOOLCHAIN_FILE=${{ matrix.toolchain }} -DHDF4_BUILD_EXAMPLES=ON -DBUILD_JPEG_WITH_PIC:BOOL=ON -DHDF4_BUILD_XDR_LIB:BOOL=${{ matrix.xdr }} -DHDF4_ENABLE_NETCDF:BOOL=${{ matrix.netcdf.cmake }} -DHDF4_BUILD_JAVA=${{ matrix.java }} -DBUILD_JPEG_WITH_FETCHCONTENT=${{ matrix.jpegfc }} -DBUILD_SZIP_WITH_FETCHCONTENT=${{ matrix.libaecfc }} -DBUILD_ZLIB_WITH_FETCHCONTENT=${{ matrix.zlibfc }} $GITHUB_WORKSPACE
+          cmake ${{ matrix.cacheinit }} ${{ matrix.generator }} --log-level=VERBOSE -DCMAKE_BUILD_TYPE=${{ matrix.build_mode.cmake }} -DCMAKE_TOOLCHAIN_FILE=${{ matrix.toolchain }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.shared }} -DHDF4_BUILD_EXAMPLES=ON -DBUILD_JPEG_WITH_PIC:BOOL=ON -DHDF4_BUILD_XDR_LIB:BOOL=${{ matrix.xdr }} -DHDF4_ENABLE_NETCDF:BOOL=${{ matrix.netcdf.cmake }} -DHDF4_BUILD_JAVA=${{ matrix.java }} -DBUILD_JPEG_WITH_FETCHCONTENT=${{ matrix.jpegfc }} -DBUILD_SZIP_WITH_FETCHCONTENT=${{ matrix.libaecfc }} -DBUILD_ZLIB_WITH_FETCHCONTENT=${{ matrix.zlibfc }} $GITHUB_WORKSPACE
         shell: bash
-        if: (matrix.generator != 'autogen')
+        if: (matrix.generator != 'autogen') && ! ((matrix.name == 'Ubuntu mingw CMake') && (matrix.build_mode.cmake == 'Debug'))
 
       #
       # BUILD
@@ -222,12 +327,12 @@ jobs:
       - name: Autotools Build
         run: make
         working-directory: ${{ runner.workspace }}/build
-        if: matrix.generator == 'autogen'
+        if: (matrix.generator == 'autogen')
 
       - name: CMake Build
         run: cmake --build . --config ${{ matrix.build_mode.cmake }}
         working-directory: ${{ runner.workspace }}/build
-        if: matrix.generator != 'autogen'
+        if: (matrix.generator != 'autogen') && ! ((matrix.name == 'Ubuntu mingw CMake') && (matrix.build_mode.cmake == 'Debug'))
 
       #
       # RUN TESTS
@@ -241,7 +346,7 @@ jobs:
       - name: CMake Run Tests
         run: ctest --build . -C ${{ matrix.build_mode.cmake }} -V
         working-directory: ${{ runner.workspace }}/build
-        if: matrix.generator != 'autogen'
+        if: (matrix.generator != 'autogen') && (matrix.run_tests) && ! ((matrix.name == 'Ubuntu mingw CMake') && (matrix.build_mode.cmake == 'Debug'))
 
       #
       # INSTALL (note that this runs even when we don't run the tests)
