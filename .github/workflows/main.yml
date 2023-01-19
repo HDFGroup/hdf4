@@ -42,6 +42,10 @@ jobs:
           - "Ubuntu gcc SysXDR Autotools"
           - "MacOS Clang CMake"
           - "Ubuntu mingw CMake"
+          - "Windows static MSVC CMake"
+          - "Ubuntu static gcc CMake"
+          - "Ubuntu static gcc Autotools"
+          - "MacOS static Clang CMake"
 
         netcdf:
           - enabled: enable
@@ -50,14 +54,6 @@ jobs:
           - enabled: disable
             cmake: OFF
             text: ""
-
-        shared:
-          - enabled: enable
-            cmake: ON
-            text: " Shared"
-          - enabled: disable
-            cmake: OFF
-            text: " Static"
 
         build_mode:
           - text: " REL"
@@ -79,6 +75,7 @@ jobs:
           - name: "Windows MSVC CMake"
             os: windows-2022
             toolchain: ""
+            shared: ON
             xdr: ON
             java: ON
             jpegfc: ON
@@ -95,6 +92,7 @@ jobs:
           # so it's not critical
           - name: "Ubuntu gcc CMake"
             os: ubuntu-latest
+            shared: ON
             xdr: ON
             java: ON
             jpegfc: ON
@@ -112,6 +110,7 @@ jobs:
           # the values.
           - name: "Ubuntu gcc Autotools"
             os: ubuntu-latest
+            shared: enable
             xdr: enable
             java: enable
             toolchain: ""
@@ -126,6 +125,7 @@ jobs:
           # the values.
           - name: "Ubuntu gcc SysXDR Autotools"
             os: ubuntu-latest
+            shared: enable
             xdr: disable
             java: enable
             toolchain: ""
@@ -140,6 +140,7 @@ jobs:
           # but that seems unnecessary
           - name: "MacOS Clang CMake"
             os: macos-latest
+            shared: ON
             xdr: ON
             java: ON
             jpegfc: ON
@@ -155,6 +156,7 @@ jobs:
           #
           - name: "Ubuntu mingw CMake"
             os: ubuntu-latest
+            shared: ON
             xdr: ON
             java: ON
             jpegfc: ON
@@ -165,6 +167,74 @@ jobs:
             generator: "-G Ninja"
             run_tests: true
             use_mingw: true
+
+          # Windows w/ MSVC + CMake
+          #
+          # No Fortran, parallel, or VFDs that rely on POSIX things
+          - name: "Windows static MSVC CMake"
+            os: windows-2022
+            toolchain: ""
+            shared: OFF
+            xdr: ON
+            java: OFF
+            jpegfc: ON
+            libaecfc: ON
+            zlibfc: ON
+            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
+            generator: "-G \"Visual Studio 17 2022\" -A x64"
+            run_tests: true
+            use_mingw: false
+
+          # Linux (Ubuntu) w/ gcc + CMake
+          #
+          # We might think about adding Clang, but MacOS already tests that
+          # so it's not critical
+          - name: "Ubuntu static gcc CMake"
+            os: ubuntu-latest
+            shared: OFF
+            xdr: ON
+            java: OFF
+            jpegfc: ON
+            libaecfc: ON
+            zlibfc: ON
+            toolchain: "$GITHUB_WORKSPACE/config/toolchain/GCC.cmake"
+            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
+            generator: "-G Ninja"
+            run_tests: true
+            use_mingw: false
+
+          # Linux (Ubuntu) w/ gcc + Autotools
+          #
+          # Keep this identical to the CMake configs. Note the difference in
+          # the values.
+          - name: "Ubuntu static gcc Autotools"
+            os: ubuntu-latest
+            shared: disable
+            xdr: enable
+            java: disable
+            toolchain: ""
+            generator: "autogen"
+            flags: ""
+            run_tests: true
+            use_mingw: false
+
+          # MacOS w/ Clang + CMake
+          #
+          # We could also build with the Autotools via brew installing them,
+          # but that seems unnecessary
+          - name: "MacOS static Clang CMake"
+            os: macos-latest
+            shared: OFF
+            xdr: ON
+            java: OFF
+            jpegfc: ON
+            libaecfc: ON
+            zlibfc: ON
+            toolchain: "$GITHUB_WORKSPACE/config/toolchain/clang.cmake"
+            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
+            generator: "-G Ninja"
+            run_tests: true
+            use_mingw: false
 
     # Sets the job's name from the properties
     name: "${{ matrix.name }}${{ matrix.build_mode.text }}${{ matrix.shared.text }}${{ matrix.netcdf.text }}"
