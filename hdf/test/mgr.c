@@ -1148,17 +1148,17 @@ test_mgr_init(void)
     }
     strcat(datafile, DATAFILE);
 
-    /* Ok, now create a new file */
-    fid = Hopen(TESTFILE, DFACC_RDWR, 0);
+    /* Create a new file */
+    fid = Hopen(TESTFILE, DFACC_CREATE, 0);
     CHECK_VOID(fid, FAIL, "Hopen");
 
     /* Try initializing the GR interface */
     grid = GRstart(fid);
     CHECK_VOID(grid, FAIL, "GRstart");
 
+    /* Test getting the number of datasets and the number of file attributes */
     ret = (intn)GRfileinfo(grid, &n_datasets, &n_attrs);
     CHECK_VOID(ret, FAIL, "GRfileinfo");
-
     if (n_datasets != 0 || n_attrs != 0) {
         MESSAGE(3, printf("Error! Number of datasets/attributes in new file incorrect\n"););
         num_errs++;
@@ -1174,8 +1174,7 @@ test_mgr_init(void)
 
     MESSAGE(8, printf("Try checking out an existing file\n"););
 
-    /* Ok, now check an existing file */
-
+    /* Perform the same test on an existing file */
     fid = Hopen(datafile, DFACC_READ, 0);
     CHECK_VOID(fid, FAIL, "Hopen");
 
@@ -1183,9 +1182,9 @@ test_mgr_init(void)
     grid = GRstart(fid);
     CHECK_VOID(grid, FAIL, "GRstart");
 
+    /* Test getting the number of datasets and the number of file attributes */
     ret = (intn)GRfileinfo(grid, &n_datasets, &n_attrs);
     CHECK_VOID(ret, FAIL, "GRfileinfo");
-
     if (n_datasets != 5 || n_attrs != 2) {
         MESSAGE(3, printf("Error! Number of datasets/attributes in existing file incorrect\n"););
         num_errs++;
