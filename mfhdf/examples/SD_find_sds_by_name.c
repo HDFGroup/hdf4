@@ -12,7 +12,6 @@ main()
     /************************* Variable declaration **************************/
 
     int32 sd_id, sds_id, sds_index;
-    intn  status;
     int32 start[2], edges[2];
     int32 data[Y_LENGTH][X_LENGTH];
     int   j;
@@ -22,7 +21,8 @@ main()
     /*
      * Open the file for reading and initialize the SD interface.
      */
-    sd_id = SDstart(FILE_NAME, DFACC_READ);
+    if ((sd_id = SDstart(FILE_NAME, DFACC_READ)) == FAIL)
+        printf("*** ERROR from SDstart\n");
 
     /*
      * Find index of the data set with the name specified in WRONG_NAME.
@@ -53,7 +53,8 @@ main()
     /*
      * Read the entire data into the buffer named data.
      */
-    status = SDreaddata(sds_id, start, NULL, edges, (VOIDP)data);
+    if (SDreaddata(sds_id, start, NULL, edges, (VOIDP)data) == FAIL)
+        printf("*** ERROR from SDreaddata\n");
 
     /*
      * Print 10th row; the following numbers should be displayed:
@@ -67,12 +68,14 @@ main()
     /*
      * Terminate access to the data set.
      */
-    status = SDendaccess(sds_id);
+    if (SDendaccess(sds_id) == FAIL)
+        printf("*** ERROR from SDendaccess\n");
 
     /*
      * Terminate access to the SD interface and close the file.
      */
-    status = SDend(sd_id);
+    if (SDend(sd_id) == FAIL)
+        printf("*** ERROR from SDend\n");
 
     return 0;
 }

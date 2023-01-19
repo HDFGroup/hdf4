@@ -1,12 +1,8 @@
 #include "hdf.h"
 
-#define FILE_NAME "General_RImages.hdf"
-#define X1_LENGTH                                                                                            \
-    5 /* number of columns in the first image                                                                \
-        being modified */
-#define Y1_LENGTH                                                                                            \
-    2                 /* number of rows in the first image                                                   \
-                        being modified */
+#define FILE_NAME   "General_RImages.hdf"
+#define X1_LENGTH   5 /* number of columns in the first image being modified */
+#define Y1_LENGTH   2 /* number of rows in the first image being modified */
 #define N1_COMPS    2 /* number of components in the first image */
 #define IMAGE1_NAME "Image Array 1"
 #define IMAGE2_NAME "Image Array 2"
@@ -19,17 +15,14 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    intn  status;                                     /* status for functions returning an intn */
     int32 file_id,                                    /* HDF file identifier */
         gr_id,                                        /* GR interface identifier */
         ri1_id,                                       /* raster image identifier */
         start1[2],                                    /* start position to write for each dimension */
-        edges1[2],                                    /* number of elements to be written along
-                                                        each dimension */
+        edges1[2],                                    /* number of elements to be written along each dimension */
         ri2_id,                                       /* raster image identifier */
         start2[2],                                    /* start position to write for each dimension */
-        edges2[2],                                    /* number of elements to be written along
-                                                        each dimension */
+        edges2[2],                                    /* number of elements to be written along each dimension */
         dims_sizes[2],                                /* sizes of the two dimensions of the image array */
         data_type,                                    /* data type of the image data */
         interlace_mode;                               /* interlace mode of the image */
@@ -42,12 +35,14 @@ main()
     /*
      * Open the HDF file for writing.
      */
-    file_id = Hopen(FILE_NAME, DFACC_WRITE, 0);
+    if ((file_id = Hopen(FILE_NAME, DFACC_WRITE, 0)) == FAIL)
+        printf("*** ERROR from Hopen\n");
 
     /*
      * Initialize the GR interface.
      */
-    gr_id = GRstart(file_id);
+    if ((gr_id = GRstart(file_id)) == FAIL)
+        printf("*** ERROR from GRstart\n");
 
     /*
      * Select the first raster image in the file.
@@ -75,7 +70,8 @@ main()
     /*
      * Write the data in the buffer into the image array.
      */
-    status = GRwriteimage(ri1_id, start1, NULL, edges1, (VOIDP)image1_buf);
+    if (GRwriteimage(ri1_id, start1, NULL, edges1, (VOIDP)image1_buf) == FAIL)
+        printf("*** ERROR from GRwriteimage\n");
 
     /*
      * Set the interlace mode and dimensions of the second image.
@@ -113,15 +109,21 @@ main()
     /*
      * Write the data in the buffer into the second image array.
      */
-    status = GRwriteimage(ri2_id, start2, NULL, edges2, (VOIDP)image2_buf);
+    if ( GRwriteimage(ri2_id, start2, NULL, edges2, (VOIDP)image2_buf) == FAIL)
+        printf("*** ERROR from GRwriteimage\n");
 
     /*
      * Terminate access to the raster images and to the GR interface, and
      * close the HDF file.
      */
-    status = GRendaccess(ri1_id);
-    status = GRendaccess(ri2_id);
-    status = GRend(gr_id);
-    status = Hclose(file_id);
+    if (GRendaccess(ri1_id) == FAIL)
+        printf("*** ERROR from GRendaccess\n");
+    if (GRendaccess(ri2_id) == FAIL)
+        printf("*** ERROR from GRendaccess\n");
+    if (GRend(gr_id) == FAIL)
+        printf("*** ERROR from GRend\n");
+    if (Hclose(file_id) == FAIL)
+        printf("*** ERROR from Hclose\n");
+
     return 0;
 }

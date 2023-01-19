@@ -8,9 +8,7 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    intn  status_n;     /* returned status for functions returning an intn  */
-    int32 status_32,    /* returned status for functions returning an int32 */
-        n_records,      /* to retrieve the number of records in the vdata   */
+    int32 n_records,    /* to retrieve the number of records in the vdata   */
         interlace_mode, /* to retrieve the interlace mode of the vdata      */
         vdata_size,     /* to retrieve the size of all specified fields     */
         file_id, vdata_ref, vdata_id;
@@ -22,12 +20,14 @@ main()
     /*
      * Open the HDF file for reading.
      */
-    file_id = Hopen(FILE_NAME, DFACC_READ, 0);
+    if ((file_id = Hopen(FILE_NAME, DFACC_READ, 0)) == FAIL)
+        printf("*** ERROR from Hopen\n");
 
     /*
      * Initialize the VS interface.
      */
-    status_n = Vstart(file_id);
+    if (Vstart(file_id) == FAIL)
+        printf("*** ERROR from Vstart\n");
 
     /*
      * Set vdata_ref to -1 to start the search from the beginning of file.
@@ -50,8 +50,8 @@ main()
          * obtain and display its information.
          */
         if (VSisattr(vdata_id) != TRUE) {
-            status_n =
-                VSinquire(vdata_id, &n_records, &interlace_mode, fieldname_list, &vdata_size, vdata_name);
+            if (VSinquire(vdata_id, &n_records, &interlace_mode, fieldname_list, &vdata_size, vdata_name) == FAIL)
+                printf("*** ERROR from VSinquire\n");
             printf("Vdata %s: - contains %d records\n\tInterlace mode: %s \
                  \n\tFields: %s - %d bytes\n\t\n",
                    vdata_name, n_records, interlace_mode == FULL_INTERLACE ? "FULL" : "NONE", fieldname_list,
@@ -61,13 +61,17 @@ main()
         /*
          * Detach from the current vdata.
          */
-        status_32 = VSdetach(vdata_id);
+        if (VSdetach(vdata_id) == FAIL)
+            printf("*** ERROR from VSdetach\n");
     } /* while */
 
     /*
      * Terminate access to the VS interface and close the HDF file.
      */
-    status_n  = Vend(file_id);
-    status_32 = Hclose(file_id);
+    if (Vend(file_id) == FAIL)
+        printf("*** ERROR from Vend\n");
+    if (Hclose(file_id) == FAIL)
+        printf("*** ERROR from Hclose\n");
+
     return 0;
 }

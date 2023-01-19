@@ -7,13 +7,11 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    intn  status_n;  /* returned status for functions returning an intn  */
-    int32 status_32, /* returned status for functions returning an int32 */
-        file_id,     /* HDF file identifier */
-        an_id,       /* AN interface identifier */
-        ann_id,      /* an annotation identifier */
-        index,       /* position of an annotation in all of the same type*/
-        ann_length,  /* length of the text in an annotation */
+    int32 file_id,  /* HDF file identifier */
+        an_id,      /* AN interface identifier */
+        ann_id,     /* an annotation identifier */
+        index,      /* position of an annotation in all of the same type*/
+        ann_length, /* length of the text in an annotation */
         n_file_labels, n_file_descs, n_data_labels, n_data_descs;
     char *ann_buf; /* buffer to hold the read annotation */
 
@@ -22,18 +20,21 @@ main()
     /*
      * Open the HDF file.
      */
-    file_id = Hopen(FILE_NAME, DFACC_READ, 0);
+    if ((file_id = Hopen(FILE_NAME, DFACC_READ, 0)) == FAIL)
+        printf("*** ERROR from Hopen\n");
 
     /*
      * Initialize the AN interface.
      */
-    an_id = ANstart(file_id);
+    if ((an_id = ANstart(file_id)) == FAIL)
+        printf("*** ERROR from ANstart\n");
 
     /*
      * Get the annotation information, e.g., the numbers of file labels, file
      * descriptions, data labels, and data descriptions.
      */
-    status_n = ANfileinfo(an_id, &n_file_labels, &n_file_descs, &n_data_labels, &n_data_descs);
+    if (ANfileinfo(an_id, &n_file_labels, &n_file_descs, &n_data_labels, &n_data_descs) == FAIL)
+        printf("*** ERROR from ANfileinfo\n");
 
     /*
      * Get the data labels.  Note that this for loop can be used to
@@ -47,7 +48,8 @@ main()
         /*
          * Get the identifier of the current data label.
          */
-        ann_id = ANselect(an_id, index, AN_DATA_LABEL);
+        if ((ann_id = ANselect(an_id, index, AN_DATA_LABEL)) == FAIL)
+            printf("*** ERROR from ANselect\n");
 
         /*
          * Get the length of the data label.
@@ -67,14 +69,16 @@ main()
          * necessarily end with a null character.
          *
          */
-        status_32 = ANreadann(ann_id, ann_buf, ann_length + 1);
+        if (ANreadann(ann_id, ann_buf, ann_length + 1) == FAIL)
+            printf("*** ERROR from ANreadann\n");
         printf("Data label index: %d\n", index);
         printf("Data label contents: %s\n", ann_buf);
 
         /*
          * Terminate access to the current data label.
          */
-        status_n = ANendaccess(ann_id);
+        if (ANendaccess(ann_id) == FAIL)
+            printf("*** ERROR from ANendaccess\n");
 
         /*
          * Free the space allocated for the annotation buffer.
@@ -85,7 +89,9 @@ main()
     /*
      * Terminate access to the AN interface and close the HDF file.
      */
-    status_32 = ANend(an_id);
-    status_n  = Hclose(file_id);
+    if (ANend(an_id) == FAIL)
+        printf("*** ERROR from ANend\n");
+    if (Hclose(file_id) == FAIL)
+        printf("*** ERROR from Hclose\n");
     return 0;
 }

@@ -10,10 +10,8 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    intn status_n,   /* returned status for functions returning an intn  */
-        n_attrs;     /* number of attributes of the vgroup */
-    int32 status_32, /* returned status for functions returning an int32 */
-        file_id, vgroup_ref, vgroup_id, attr_index, i, vg_version, data_type, n_values, size;
+    intn n_attrs; /* number of attributes of the vgroup */
+    int32 file_id, vgroup_ref, vgroup_id, attr_index, i, vg_version, data_type, n_values, size;
     char vg_attr[N_ATT_VALUES] = {'v', 'g', 'r', 'o', 'u', 'p', '\0'};
     char vgattr_buf[N_ATT_VALUES], attr_name[30];
 
@@ -22,12 +20,14 @@ main()
     /*
      * Open the HDF file for writing.
      */
-    file_id = Hopen(FILE_NAME, DFACC_WRITE, 0);
+    if ((file_id = Hopen(FILE_NAME, DFACC_WRITE, 0)) == FAIL)
+        printf("*** ERROR from Hopen\n");
 
     /*
      * Initialize the V interface.
      */
-    status_n = Vstart(file_id);
+    if (Vstart(file_id) == FAIL)
+        printf("*** ERROR from Vstart\n");
 
     /*
      * Get the reference number of the vgroup named VGROUP_NAME.
@@ -60,7 +60,8 @@ main()
     /*
      * Add the attribute named VGATTR_NAME to the vgroup.
      */
-    status_n = Vsetattr(vgroup_id, VGATTR_NAME, DFNT_CHAR, N_ATT_VALUES, vg_attr);
+    if (Vsetattr(vgroup_id, VGATTR_NAME, DFNT_CHAR, N_ATT_VALUES, vg_attr) == FAIL)
+        printf("*** ERROR from Vsetattr\n");
 
     /*
      * Get and display the number of attributes attached to this vgroup.
@@ -74,13 +75,15 @@ main()
      * and the size of the attribute are not desired.
      */
     for (attr_index = 0; attr_index < n_attrs; attr_index++) {
-        status_n = Vattrinfo(vgroup_id, attr_index, attr_name, NULL, &n_values, NULL);
+        if (Vattrinfo(vgroup_id, attr_index, attr_name, NULL, &n_values, NULL) == FAIL)
+            printf("*** ERROR from Vattrinfo\n");
         printf("\nAttribute #%d is named %s and has %d values: ", attr_index + 1, attr_name, n_values);
 
         /*
          * Get and display the attribute values.
          */
-        status_n = Vgetattr(vgroup_id, attr_index, vgattr_buf);
+        if (Vgetattr(vgroup_id, attr_index, vgattr_buf) == FAIL)
+            printf("*** ERROR from Vgetattr\n");
         for (i = 0; i < n_values; i++)
             printf("%c ", vgattr_buf[i]);
         printf("\n");
@@ -90,8 +93,12 @@ main()
      * Terminate access to the vgroup and to the V interface, and close
      * the HDF file.
      */
-    status_32 = Vdetach(vgroup_id);
-    status_n  = Vend(file_id);
-    status_n  = Hclose(file_id);
+    if (Vdetach(vgroup_id) == FAIL)
+        printf("*** ERROR from Vdetach\n");
+    if (Vend(file_id) == FAIL)
+        printf("*** ERROR from Vend\n");
+    if (Hclose(file_id) == FAIL)
+        printf("*** ERROR from Hclose\n");
+
     return 0;
 }

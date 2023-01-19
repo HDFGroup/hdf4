@@ -19,7 +19,6 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    intn  status; /* status for functions returning an intn */
     int32 gr_id, ri_id, file_id, ri_index;
     int16 ri_attr_2[RI_ATT2_N_VALUES] = {1, 2, 3, 4, 5, 6};
 
@@ -28,7 +27,8 @@ main()
     /*
      * Open the HDF file.
      */
-    file_id = Hopen(FILE_NAME, DFACC_WRITE, 0);
+    if ((file_id = Hopen(FILE_NAME, DFACC_WRITE, 0)) == FAIL)
+        printf("*** ERROR from Hopen\n");
 
     /*
      * Initialize the GR interface.
@@ -39,9 +39,11 @@ main()
      * Set two file attributes to the file with names, data types, numbers of
      * values, and values of the attributes specified.
      */
-    status = GRsetattr(gr_id, F_ATT1_NAME, DFNT_CHAR8, F_ATT1_N_VALUES, (VOIDP)F_ATT1_VAL);
+    if (GRsetattr(gr_id, F_ATT1_NAME, DFNT_CHAR8, F_ATT1_N_VALUES, (VOIDP)F_ATT1_VAL) == FAIL)
+        printf("*** ERROR from GRsetattr\n");
 
-    status = GRsetattr(gr_id, F_ATT2_NAME, DFNT_CHAR8, F_ATT2_N_VALUES, (VOIDP)F_ATT2_VAL);
+    if (GRsetattr(gr_id, F_ATT2_NAME, DFNT_CHAR8, F_ATT2_N_VALUES, (VOIDP)F_ATT2_VAL) == FAIL)
+        printf("*** ERROR from GRsetattr\n");
 
     /*
      * Obtain the index of the image named IMAGE_NAME.
@@ -57,16 +59,22 @@ main()
      * Set two attributes to the image with names, data types, numbers of
      * values, and values of the attributes specified.
      */
-    status = GRsetattr(ri_id, RI_ATT1_NAME, DFNT_CHAR8, RI_ATT1_N_VALUES, (VOIDP)RI_ATT1_VAL);
+    if (GRsetattr(ri_id, RI_ATT1_NAME, DFNT_CHAR8, RI_ATT1_N_VALUES, (VOIDP)RI_ATT1_VAL) == FAIL)
+        printf("*** ERROR from GRsetattr\n");
 
-    status = GRsetattr(ri_id, RI_ATT2_NAME, DFNT_INT16, RI_ATT2_N_VALUES, (VOIDP)ri_attr_2);
+    if (GRsetattr(ri_id, RI_ATT2_NAME, DFNT_INT16, RI_ATT2_N_VALUES, (VOIDP)ri_attr_2) == FAIL)
+        printf("*** ERROR from GRsetattr\n");
 
     /*
      * Terminate access to the image and to the GR interface, and close the
      * HDF file.
      */
-    status = GRendaccess(ri_id);
-    status = GRend(gr_id);
-    status = Hclose(file_id);
+    if (GRendaccess(ri_id) == FAIL)
+        printf("*** ERROR from GRendaccess\n");
+    if (GRend(gr_id) == FAIL)
+        printf("*** ERROR from GRend\n");
+    if (Hclose(file_id) == FAIL)
+        printf("*** ERROR from Hclose\n");
+
     return 0;
 }
