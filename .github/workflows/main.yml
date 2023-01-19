@@ -158,7 +158,7 @@ jobs:
             os: ubuntu-latest
             shared: ON
             xdr: ON
-            java: ON
+            java: OFF
             jpegfc: ON
             libaecfc: ON
             zlibfc: ON
