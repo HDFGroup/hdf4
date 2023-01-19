@@ -509,8 +509,9 @@ dumpvd_ascii(dump_info_t *dumpvd_opts, int32 file_id, const char *file_name, FIL
     intn          dumpall = 0;
     file_format_t ff      = DASCII;
     vd_info_t     curr_vd;
-    int32         vd_id     = FAIL;
-    int32         an_handle = FAIL;
+    int32         vd_id      = FAIL;
+    int32         an_handle  = FAIL;
+    int32         num_fields = 0;
     intn          status = SUCCEED, ret_value = SUCCEED;
     char          fields[VSFIELDMAX * FIELDNAMELENMAX];
 
@@ -563,6 +564,18 @@ dumpvd_ascii(dump_info_t *dumpvd_opts, int32 file_id, const char *file_name, FIL
         if (FAIL == VSinquire(vd_id, &nvf, &interlace, fields, NULL, vdname))
             ERROR_CONT_END("in %s: VSinquire failed for vdata with ref#=%d", "dumpvd_ascii", (int)vdata_ref,
                            vd_id);
+
+        /* Get the number of fields in the vdata, continue to the next vdata
+           if this failed.  If succeeded, check for exceeding max allowed */
+        num_fields = VFnfields(vd_id);
+        if (num_fields == FAIL)
+            ERROR_CONT_END("in %s: VFnfields failed for vdata with ref#=%d", "dumpvd_ascii", (int)vdata_ref,
+                           vd_id);
+
+        if (num_fields >= VSFIELDMAX)
+            ERROR_CONT_END("in %s: Number of fields exceeded the max allowed for vdata with ref#=%d, i.e., "
+                           "possible data corruption",
+                           "dumpvd_ascii", (int)vdata_ref, vd_id);
 
         /* Get the HDF size of the specified fields of the vdata; VShdfsize
            returns 0 if there are no fields previously defined */

@@ -51,7 +51,7 @@
 #define DFMT_LE 0x4441 /* Little-endian, IEEE-754 architectures */
 #define DFMT_BE 0x1111 /* Big-endian, IEEE-754 architectures */
 
-#if defined(H4_WORDS_BIGENDIAN) || defined(WORDS_BIGENDIAN)
+#ifdef H4_WORDS_BIGENDIAN
 #define DF_MT DFMT_BE
 #else
 #define DF_MT DFMT_LE

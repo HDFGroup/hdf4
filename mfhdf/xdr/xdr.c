@@ -475,16 +475,16 @@ xdr_enum(XDR *xdrs, enum_t *ep)
      * enums are treated as ints
      */
     if (sizeof(enum sizecheck) == sizeof(long)) {
-        return (xdr_long(xdrs, (long *)(void *)ep));
+        return xdr_long(xdrs, (long *)(void *)ep);
     }
     else if (sizeof(enum sizecheck) == sizeof(int)) {
-        return (xdr_int(xdrs, (int *)(void *)ep));
+        return xdr_int(xdrs, (int *)(void *)ep);
     }
     else if (sizeof(enum sizecheck) == sizeof(short)) {
-        return (xdr_short(xdrs, (short *)(void *)ep));
+        return xdr_short(xdrs, (short *)(void *)ep);
     }
     else {
-        return (FALSE);
+        return FALSE;
     }
 }
 

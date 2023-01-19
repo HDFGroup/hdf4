@@ -446,7 +446,6 @@ bv_find(bv_ptr b, int32 last_find, bv_bool value)
     if (value == BV_TRUE) {   /* looking for first '1' in the bit-vector */
         if (last_find >= 0) { /* if the last bit found option is used, look for more bits in that same byte */
             intn bit_off;
-            int  unused;
 
             first_byte = (uint32)last_find / BV_BASE_BITS;
             bit_off    = (intn)(((uint32)last_find - (first_byte * BV_BASE_BITS)) + 1);

@@ -175,7 +175,8 @@ xdrstdio_setpos(XDR *xdrs, u_int pos)
 static int32_t *
 xdrstdio_inline(XDR *xdrs, u_int len)
 {
-
+    (void)xdrs;
+    (void)len;
     /*
      * Must do some work to implement this: must insure
      * enough data in the underlying stdio buffer,

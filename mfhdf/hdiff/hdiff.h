@@ -99,8 +99,8 @@ typedef struct {        /* selection for comparison  */
 extern "C" {
 #endif
 
-HDFTOOLSAPI uint32 hdiff(const char *fname1, const char *fname2, diff_opt_t *opt);
-HDFTOOLSAPI void   make_vars(char *optarg, diff_opt_t *opt, int option);
+uint32 hdiff(const char *fname1, const char *fname2, diff_opt_t *opt);
+void   make_vars(char *optarg, diff_opt_t *opt, int option);
 
 #ifdef __cplusplus
 }

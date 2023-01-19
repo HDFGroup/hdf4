@@ -198,10 +198,10 @@ mcache_open(VOID *key,       /* IN: byte string used as handle to share buffers 
     if ((mp = (MCACHE *)HDcalloc(1, sizeof(MCACHE))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-    CIRCLEQ_INIT(&mp->lqh);
+    H4_CIRCLEQ_INIT(&mp->lqh);
     for (entry = 0; entry < HASHSIZE; ++entry) {
-        CIRCLEQ_INIT(&mp->hqh[entry]);
-        CIRCLEQ_INIT(&mp->lhqh[entry]);
+        H4_CIRCLEQ_INIT(&mp->hqh[entry]);
+        H4_CIRCLEQ_INIT(&mp->lhqh[entry]);
     }
 
     /* Initialize max # of pages to cache and number of pages in object */
@@ -231,8 +231,8 @@ mcache_open(VOID *key,       /* IN: byte string used as handle to share buffers 
         lp->elemhit = 0;
         ++(mp->listalloc);
 #endif
-        CIRCLEQ_INSERT_HEAD(lhead, lp, hl); /* add to list */
-    }                                       /* end for pageno */
+        H4_CIRCLEQ_INSERT_HEAD(lhead, lp, hl); /* add to list */
+    }                                          /* end for pageno */
 
     /* initialize input/output filters and cookie to NULL */
     mp->pgin     = NULL;
@@ -258,7 +258,7 @@ done:
         /* free up list elements */
         for (entry = 0; entry < HASHSIZE; ++entry) {
             while ((lp = mp->lhqh[entry].cqh_first) != (VOID *)&mp->lhqh[entry]) {
-                CIRCLEQ_REMOVE(&mp->lhqh[entry], mp->lhqh[entry].cqh_first, hl);
+                H4_CIRCLEQ_REMOVE(&mp->lhqh[entry], mp->lhqh[entry].cqh_first, hl);
                 HDfree(lp);
             }
         } /* end for entry */
@@ -365,10 +365,10 @@ mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
          * of the lru chain.
          */
         head = &mp->hqh[HASHKEY(bp->pgno)];
-        CIRCLEQ_REMOVE(head, bp, hq);
-        CIRCLEQ_INSERT_HEAD(head, bp, hq);
-        CIRCLEQ_REMOVE(&mp->lqh, bp, q);
-        CIRCLEQ_INSERT_TAIL(&mp->lqh, bp, q);
+        H4_CIRCLEQ_REMOVE(head, bp, hq);
+        H4_CIRCLEQ_INSERT_HEAD(head, bp, hq);
+        H4_CIRCLEQ_REMOVE(&mp->lqh, bp, q);
+        H4_CIRCLEQ_INSERT_TAIL(&mp->lqh, bp, q);
         /* Return a pinned page. */
         bp->flags |= MCACHE_PINNED;
 
@@ -426,7 +426,7 @@ mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
         ++mp->listalloc;
         lp->elemhit = 1;
 #endif
-        CIRCLEQ_INSERT_HEAD(lhead, lp, hl); /* add to list */
+        H4_CIRCLEQ_INSERT_HEAD(lhead, lp, hl); /* add to list */
 #ifdef MCACHE_DEBUG
         (VOID) fprintf(stderr, "mcache_get: skipping reading in page=%u\n", pgno);
 #endif
@@ -470,8 +470,8 @@ mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
      * of the lru chain.
      */
     head = &mp->hqh[HASHKEY(bp->pgno)];
-    CIRCLEQ_INSERT_HEAD(head, bp, hq);
-    CIRCLEQ_INSERT_TAIL(&mp->lqh, bp, q);
+    H4_CIRCLEQ_INSERT_HEAD(head, bp, hq);
+    H4_CIRCLEQ_INSERT_TAIL(&mp->lqh, bp, q);
 
 done:
     if (ret_value == RET_ERROR) { /* error cleanup */
@@ -583,14 +583,14 @@ mcache_close(MCACHE *mp /* IN: MCACHE cookie */)
 
     /* Free up any space allocated to the lru pages. */
     while ((bp = mp->lqh.cqh_first) != (VOID *)&mp->lqh) {
-        CIRCLEQ_REMOVE(&mp->lqh, mp->lqh.cqh_first, q);
+        H4_CIRCLEQ_REMOVE(&mp->lqh, mp->lqh.cqh_first, q);
         HDfree(bp);
     }
 
     /* free up list elements */
     for (entry = 0; entry < HASHSIZE; ++entry) {
         while ((lp = mp->lhqh[entry].cqh_first) != (VOID *)&mp->lhqh[entry]) {
-            CIRCLEQ_REMOVE(&mp->lhqh[entry], mp->lhqh[entry].cqh_first, hl);
+            H4_CIRCLEQ_REMOVE(&mp->lhqh[entry], mp->lhqh[entry].cqh_first, hl);
             HDfree(lp);
             nelem++;
         }
@@ -701,8 +701,8 @@ mcache_bkt(MCACHE *mp /* IN: MCACHE cookie */)
 #endif
             /* Remove from the hash and lru queues. */
             head = &mp->hqh[HASHKEY(bp->pgno)];
-            CIRCLEQ_REMOVE(head, bp, hq);
-            CIRCLEQ_REMOVE(&mp->lqh, bp, q);
+            H4_CIRCLEQ_REMOVE(head, bp, hq);
+            H4_CIRCLEQ_REMOVE(&mp->lqh, bp, q);
 #ifdef MCACHE_DEBUG
             {
                 VOID *spage;
