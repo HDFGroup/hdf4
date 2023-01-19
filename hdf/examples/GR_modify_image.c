@@ -15,18 +15,18 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    int32 file_id,                                    /* HDF file identifier */
-        gr_id,                                        /* GR interface identifier */
-        ri1_id,                                       /* raster image identifier */
-        start1[2],                                    /* start position to write for each dimension */
-        edges1[2],                                    /* number of elements to be written along each dimension */
-        ri2_id,                                       /* raster image identifier */
-        start2[2],                                    /* start position to write for each dimension */
-        edges2[2],                                    /* number of elements to be written along each dimension */
-        dims_sizes[2],                                /* sizes of the two dimensions of the image array */
-        data_type,                                    /* data type of the image data */
-        interlace_mode;                               /* interlace mode of the image */
-    int16 i, j;                                       /* indices for the dimensions */
+    int32 file_id,      /* HDF file identifier */
+        gr_id,          /* GR interface identifier */
+        ri1_id,         /* raster image identifier */
+        start1[2],      /* start position to write for each dimension */
+        edges1[2],      /* number of elements to be written along each dimension */
+        ri2_id,         /* raster image identifier */
+        start2[2],      /* start position to write for each dimension */
+        edges2[2],      /* number of elements to be written along each dimension */
+        dims_sizes[2],  /* sizes of the two dimensions of the image array */
+        data_type,      /* data type of the image data */
+        interlace_mode; /* interlace mode of the image */
+    int16 i, j;         /* indices for the dimensions */
     int16 image1_buf[Y1_LENGTH][X1_LENGTH][N1_COMPS]; /* data of first image */
     char  image2_buf[Y2_LENGTH][X2_LENGTH][N2_COMPS]; /* data of second image*/
 
@@ -109,7 +109,7 @@ main()
     /*
      * Write the data in the buffer into the second image array.
      */
-    if ( GRwriteimage(ri2_id, start2, NULL, edges2, (VOIDP)image2_buf) == FAIL)
+    if (GRwriteimage(ri2_id, start2, NULL, edges2, (VOIDP)image2_buf) == FAIL)
         printf("*** ERROR from GRwriteimage\n");
 
     /*

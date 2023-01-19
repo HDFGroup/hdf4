@@ -18,7 +18,7 @@ main()
     /*
      * Create the first HDF file.
      */
-     if ((file1_id = Hopen(FILE1_NAME, DFACC_CREATE, 0)) == FAIL)
+    if ((file1_id = Hopen(FILE1_NAME, DFACC_CREATE, 0)) == FAIL)
         printf("*** ERROR from Hopen\n");
 
     /*

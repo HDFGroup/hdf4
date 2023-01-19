@@ -61,7 +61,7 @@ main()
              * name and class. Note: the current vgroup must be detached before
              * moving to the next.
              */
-            vgroup_id   = Vattach(file_id, ref_array[lone_vg_number], "r");
+            vgroup_id = Vattach(file_id, ref_array[lone_vg_number], "r");
             if (Vgetnamelen(vgroup_id, &name_len) == FAIL)
                 printf("*** ERROR from Vgetnamelen\n");
             vgroup_name = (char *)HDmalloc(sizeof(char *) * (name_len + 1));

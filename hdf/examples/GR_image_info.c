@@ -46,7 +46,7 @@ main()
     printf("RI#    Name       Components  Type         Interlace     \
    Dimensions   Attributes\n\n");
     for (ri_index = 0; ri_index < n_rimages; ri_index++) {
-        ri_id  = GRselect(gr_id, ri_index);
+        ri_id = GRselect(gr_id, ri_index);
         if (GRgetiminfo(ri_id, name, &n_comps, &data_type, &interlace_mode, dim_sizes, &n_attrs) == FAIL)
             printf("*** ERROR from GRgetiminfo\n");
         /*

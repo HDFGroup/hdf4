@@ -111,8 +111,8 @@ main()
     /*
      * Set chunk cache to hold maximum of 3 chunks.
      */
-    maxcache     = 3;
-    flag         = 0;
+    maxcache = 3;
+    flag     = 0;
     SDsetchunkcache(sds_id, maxcache, flag);
 
     /*

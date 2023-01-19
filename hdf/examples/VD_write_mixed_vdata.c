@@ -101,7 +101,8 @@ main()
      * pointers fldbufptrs, and store the packed data into the buffer
      * databuf.  Note that the second parameter is _HDF_VSPACK for packing.
      */
-    if (VSfpack(vdata_id, _HDF_VSPACK, NULL, (VOIDP)databuf, BUF_SIZE, N_RECORDS, NULL, (VOIDP)fldbufptrs) == FAIL)
+    if (VSfpack(vdata_id, _HDF_VSPACK, NULL, (VOIDP)databuf, BUF_SIZE, N_RECORDS, NULL, (VOIDP)fldbufptrs) ==
+        FAIL)
         printf("*** ERROR from VSfpack\n");
 
     /*

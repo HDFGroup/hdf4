@@ -49,15 +49,14 @@ main()
      * array. Note that the buffer vdata1_buf is cast to (uint8 *) for the
      * benefit of generic data type.
      */
-    VHstoredata(file_id, FIELD1_NAME, (uint8 *)vdata1_buf, N_RECORDS_1, DFNT_CHAR8, VDATA1_NAME,
-                             CLASS1_NAME);
+    VHstoredata(file_id, FIELD1_NAME, (uint8 *)vdata1_buf, N_RECORDS_1, DFNT_CHAR8, VDATA1_NAME, CLASS1_NAME);
 
     /*
      * Create the second vdata and populate it with data from the vdata2_buf
      * array.
      */
-    VHstoredatam(file_id, FIELD2_NAME, (uint8 *)vdata2_buf, N_RECORDS_2, DFNT_INT32, VDATA2_NAME,
-                              CLASS2_NAME, ORDER_2);
+    VHstoredatam(file_id, FIELD2_NAME, (uint8 *)vdata2_buf, N_RECORDS_2, DFNT_INT32, VDATA2_NAME, CLASS2_NAME,
+                 ORDER_2);
 
     /*
      * Terminate access to the VS interface and close the HDF file.

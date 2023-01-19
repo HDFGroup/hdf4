@@ -10,10 +10,10 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    intn n_attrs; /* number of attributes of the vgroup */
+    intn  n_attrs; /* number of attributes of the vgroup */
     int32 file_id, vgroup_ref, vgroup_id, attr_index, i, vg_version, data_type, n_values, size;
-    char vg_attr[N_ATT_VALUES] = {'v', 'g', 'r', 'o', 'u', 'p', '\0'};
-    char vgattr_buf[N_ATT_VALUES], attr_name[30];
+    char  vg_attr[N_ATT_VALUES] = {'v', 'g', 'r', 'o', 'u', 'p', '\0'};
+    char  vgattr_buf[N_ATT_VALUES], attr_name[30];
 
     /********************** End of variable declaration **********************/
 

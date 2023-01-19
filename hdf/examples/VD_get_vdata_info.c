@@ -50,7 +50,8 @@ main()
          * obtain and display its information.
          */
         if (VSisattr(vdata_id) != TRUE) {
-            if (VSinquire(vdata_id, &n_records, &interlace_mode, fieldname_list, &vdata_size, vdata_name) == FAIL)
+            if (VSinquire(vdata_id, &n_records, &interlace_mode, fieldname_list, &vdata_size, vdata_name) ==
+                FAIL)
                 printf("*** ERROR from VSinquire\n");
             printf("Vdata %s: - contains %d records\n\tInterlace mode: %s \
                  \n\tFields: %s - %d bytes\n\t\n",

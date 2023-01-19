@@ -97,7 +97,7 @@ main()
      * Terminate access to the AN interface and close the HDF file.
      */
     if (ANend(an_id) == FAIL)
-            printf("*** ERROR from ANend\n");
+        printf("*** ERROR from ANend\n");
     if (Hclose(file_id) == FAIL)
         printf("*** ERROR from Hclose\n");
 

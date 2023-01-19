@@ -124,7 +124,7 @@ main()
             case 0:
                 if (SDgetdimscale(dim_id, (VOIDP)data_Y_out) == FAIL)
                     printf("*** ERROR from SDgetdimscale\n");
-                nrow   = 4;
+                nrow = 4;
                 for (i = 0; i < n_values / nrow; i++) {
                     for (j = 0; j < nrow; j++)
                         printf("  %-6.3f", data_Y_out[i * nrow + j]);

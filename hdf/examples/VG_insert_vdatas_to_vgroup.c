@@ -113,7 +113,7 @@ main()
      * Create, write, and insert the second vdata to the vgroup using
      * steps similar to those used for the first vdata.
      */
-    vdata2_id      = VSattach(file_id, -1, "w");
+    vdata2_id = VSattach(file_id, -1, "w");
     if (VSsetname(vdata2_id, VD2_NAME) == FAIL)
         printf("*** ERROR from VSsetname\n");
     if (VSsetclass(vdata2_id, VD2_CLASS) == FAIL)
@@ -131,7 +131,7 @@ main()
      * Create, write, and insert the third vdata to the vgroup using
      * steps similar to those used for the first and second vdatas.
      */
-    vdata3_id      = VSattach(file_id, -1, "w");
+    vdata3_id = VSattach(file_id, -1, "w");
     if (VSsetname(vdata3_id, VD3_NAME) == FAIL)
         printf("*** ERROR from VSsetname\n");
     if (VSsetclass(vdata3_id, VD3_CLASS) == FAIL)

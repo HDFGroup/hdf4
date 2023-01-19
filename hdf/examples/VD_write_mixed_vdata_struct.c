@@ -42,7 +42,7 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    int32 file_id, vdata_id;
+    int32  file_id, vdata_id;
     uint8  databuf[BUFFER_SIZE]; /* buffer to hold the data after being packed */
     uint8 *pntr;                 /* pointer pointing to the current record in the data buffer*/
     int16  rec_num;              /* current record number */
