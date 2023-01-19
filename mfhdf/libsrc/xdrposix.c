@@ -40,7 +40,7 @@
 /* 32-bit integer on the host architecture */
 typedef int32_t netlong;
 
-/* Stream position types */
+/* Stream position type */
 typedef u_int ncpos_t;
 
 typedef struct {
