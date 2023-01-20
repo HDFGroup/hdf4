@@ -1034,7 +1034,10 @@ static const uint8  jpeg_24bit_j75[JPEGY][JPEGX][3] =
     255, 103, 2,   255, 103, 2,   255, 103, 2,   255, 103, 2,   255, 103, 2,   255, 103, 2};
 #endif
 
+<<<<<<< Upstream, based on branch 'master-hdf-test-warn' of https://github.com/byrnHDF/hdf4.git
     void test_GRgetcomptype(); /* in "tdfr8.c" */
+=======
+>>>>>>> 6470c28 Gorrect typo
 static VOID check_im_pal(int32 oldx, int32 oldy, int32 newx, int32 newy, uint8 *oldim, uint8 *newim,
                          uint8 *oldpal, uint8 *newpal);
 
