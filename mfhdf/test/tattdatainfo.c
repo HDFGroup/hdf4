@@ -501,7 +501,7 @@ add_sdsSDG_annotations()
         refnum = DFSDlastref();
 
         if ((j % 3) != 0) /* read in annotations for 2 out of every 3 */
-            num_errs = check_lab_desc(DFAN_SDG_FILE, DFTAG_SDG, refnum, labsds, descsds);
+            check_lab_desc(DFAN_SDG_FILE, DFTAG_SDG, refnum, labsds, descsds);
     }
     HDfree((VOIDP)data);
 
