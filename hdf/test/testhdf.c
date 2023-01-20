@@ -268,11 +268,8 @@ main(int argc, char *argv[])
 
     if (CleanUp) {
         MESSAGE(2, printf("\nCleaning Up...\n\n"););
-#if !(defined DOS386 || defined WIN386)
+#ifndef H5_HAVE_WIN32_API 
         system("rm -f *.hdf *.tmp");
-#else
-        remove("*.hdf");
-        remove("*.tmp");
 #endif
     }
     exit(num_errs);
