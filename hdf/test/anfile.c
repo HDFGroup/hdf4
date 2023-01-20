@@ -113,11 +113,12 @@ test_anfile(void)
 static int
 checkannlen(int32 ret, const char *oldstr, const char *type, int32 testflag)
 {
+    (void)testflag;
+
     if ((ret >= 0) && (ret != (int32)HDstrlen(oldstr))) {
         printf("Length of %s is INCORRECT\n", type);
         printf("It is:  %d\n", (int)ret);
         printf("It should be: %d\n", (int)HDstrlen(oldstr));
-        testflag = FAIL;
         return FAIL;
     }
     return SUCCEED;
@@ -126,11 +127,12 @@ checkannlen(int32 ret, const char *oldstr, const char *type, int32 testflag)
 static int
 checkann(const char *oldstr, const char *newstr, int32 ret, const char *type, int32 testflag)
 {
+    (void)testflag;
+
     if ((ret >= 0) && (0 != HDstrcmp(oldstr, newstr))) {
         printf("%s is INCORRECT.\n", type);
         printf("It is:  %s\n", newstr);
         printf("It should be: %s\n", oldstr);
-        testflag = FAIL;
         return (FAIL);
     }
     return (SUCCEED);

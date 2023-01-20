@@ -305,18 +305,13 @@ test_vgmixedattrs()
     int32 fid; /* File ID */
     int32 vgroup_id, vgroup_ref;
     int32 n_attrs;
-    int32 ref_list[NUM_VGROUPS], vdref_list[NUM_VDATAS];
     int32 offsets[10], lengths[10]; /* offsets and lengths of attrs' data */
     /* Note: each array element is associated with an individual attribute, not
        a data element block; data of an attribute only has one pair of off/len*/
-    char  vgclass[20];
     int   ii;
     int32 attr_ref;
     intn  status;    /* returned status */
     intn  status_32; /* returned status for functions returning an int32! */
-
-    /* Attribute names to be checked against */
-    char aname_check[5][20] = {ATTNAME1, ATTNAME2, ATTNAME5, ATTNAME6, ATTNAME7};
 
     /* Attributes to be set for various elements */
     uint32 attr1[4] = {4, 5, 6, 7}; /* copied from test_vvsattrs, only to
@@ -411,7 +406,7 @@ test_vgmixedattrs()
 
     /* Test Vattrinfo2 and Vgetattr2 on each attribute */
     for (ii = 0; ii < n_attrs; ii++) {
-        char   aname[20], values[100];
+        char   aname[20];
         int32  atype, acount, asize, n_fields;
         uint16 refnum;
         int    jj;
@@ -512,7 +507,6 @@ test_grattrs()
     int32 file_id,      /* HDF file identifier */
         gr_id,          /* GR interface identifier */
         ri_id,          /* raster image identifier */
-        num_type,       /* number type of the image values */
         start[2],       /* where to start to write for each dimension  */
         edges[2],       /* how long to write for each dimension */
         dimsizes[2],    /* sizes of the two dimensions of the image array   */
