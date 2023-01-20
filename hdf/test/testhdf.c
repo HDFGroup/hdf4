@@ -268,7 +268,7 @@ main(int argc, char *argv[])
 
     if (CleanUp) {
         MESSAGE(2, printf("\nCleaning Up...\n\n"););
-#ifndef H5_HAVE_WIN32_API 
+#ifndef H5_HAVE_WIN32_API
         system("rm -f *.hdf *.tmp");
 #endif
     }
