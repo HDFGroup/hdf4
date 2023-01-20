@@ -75,7 +75,7 @@ test_rank0()
     /* Attempt to set chunk but should fail */
     HDmemset(&c_def, 0, sizeof(HDF_CHUNK_DEF));
     comp_flag = HDF_CHUNK;
-    status    = SDsetchunk(sds_id, c_def, comp_flag);
+    status    = SDsetchunk(sds2_id, c_def, comp_flag);
     VERIFY(status, FAIL, "test_rank0: SDsetchunk");
 
     /* Close the SDSs */
@@ -91,7 +91,6 @@ test_rank0()
     for (j = 0; j < Y_LENGTH; j++) {
         for (i = 0; i < X_LENGTH; i++) {
             buf[j][i]     = i;
-            buf_dup[j][i] = i;
         }
     }
     /* Select the first dataset */
