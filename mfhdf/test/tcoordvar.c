@@ -93,7 +93,7 @@ test_dim1_SDS1(void)
     int32          start = 0, stride = 1;
     int32          num_type, count;
     int32          n_datasets, n_file_attrs, n_local_attrs, n_vars = 0;
-    intn           status = 0, idx, idx1;
+    intn           status   = 0, idx, idx1;
     hdf_varlist_t *var_list = NULL;
     intn           is_coord = FALSE;
     char           attr_name[H4_MAX_NC_NAME], attr_values[80];
@@ -291,7 +291,7 @@ test_dim1_SDS2(void)
     int32   num_type, array_rank;
     int32   n_datasets, n_file_attrs, n_local_attrs;
     float32 out_data2[2][3];
-    intn    status = 0, idx, idx1, idx2;
+    intn    status   = 0, idx, idx1, idx2;
     intn    num_errs = 0; /* number of errors so far */
 
     file_id = SDstart(FILE2, DFACC_CREATE);
@@ -493,7 +493,7 @@ test_named_vars(void)
     int32          scale1[5] = {101, 102, 103, 104, 105};
     int32          array_rank;
     int32          n_datasets, n_file_attrs, n_vars = 0;
-    intn           status = 0, idx;
+    intn           status      = 0, idx;
     intn           is_coordvar = FALSE;
     hdf_varlist_t *allvars;
     intn           num_errs = 0; /* number of errors so far */

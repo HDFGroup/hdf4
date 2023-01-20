@@ -83,7 +83,7 @@ test_attrs()
     int32   offset = 0, length = 0;
     char8   file_values[] = "Storm_track_data";
     float32 sds_values[2] = {2., 10.};
-    char8   dim_values[] = "Seconds";
+    char8   dim_values[]  = "Seconds";
     intn    status;
     int     ii, jj;
     intn    num_errs = 0; /* number of errors so far */
@@ -554,11 +554,11 @@ get_ann_datainfo(int32 id, ann_type annot_type, int32 *chk_offsets, int32 *chk_l
 static int
 test_dfannots(void)
 {
-    int32  sd_id, sds_id, sds_index;
-    intn   status;
-    int32  n_datasets, n_file_attr;
-    int32  chk_offsets[10], chk_lengths[10];
-    intn   num_errs     = 0;
+    int32 sd_id, sds_id, sds_index;
+    intn  status;
+    int32 n_datasets, n_file_attr;
+    int32 chk_offsets[10], chk_lengths[10];
+    intn  num_errs = 0;
 
     /* Add file annotations */
     status = add_sdfile_annotations();

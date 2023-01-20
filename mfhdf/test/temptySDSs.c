@@ -255,17 +255,11 @@ test_chunked_SDSs(int32 fid)
     int           num_errs = 0; /* number of errors so far */
 
     /* Declare chunks data type and initialize some of them. */
-    int16 chunk1[3][2] = { {1, 1},
-                           {1, 1},
-                           {1, 1} };
+    int16 chunk1[3][2] = {{1, 1}, {1, 1}, {1, 1}};
 
-    int16 chunk2[3][2] = { {2, 2},
-                           {2, 2},
-                           {2, 2} };
+    int16 chunk2[3][2] = {{2, 2}, {2, 2}, {2, 2}};
 
-    int16 chunk3[3][2] = { {3, 3},
-                           {3, 3},
-                           {3, 3} };
+    int16 chunk3[3][2] = {{3, 3}, {3, 3}, {3, 3}};
 
     c_def.chunk_lengths[0] = 3;
     c_def.chunk_lengths[1] = 2;

@@ -835,14 +835,14 @@ test_compressed_SDSs()
 static intn
 test_empty_SDSs()
 {
-    int32         sd_id, sds_id;
-    int32         dimsizes[RANK];
-    uintn         info_count = 0;
-    comp_coder_t  comp_type; /* Compression flag */
-    comp_info     c_info;    /* Compression structure */
-    int           ii;
-    intn          status;
-    int           num_errs = 0; /* number of errors so far */
+    int32        sd_id, sds_id;
+    int32        dimsizes[RANK];
+    uintn        info_count = 0;
+    comp_coder_t comp_type; /* Compression flag */
+    comp_info    c_info;    /* Compression structure */
+    int          ii;
+    intn         status;
+    int          num_errs = 0; /* number of errors so far */
 
     /* Use the same file as in test_compressed_SDSs */
     sd_id = SDstart(NODATA_FILE, DFACC_CREATE);
@@ -949,7 +949,7 @@ test_chunked_partial()
 {
     int32            sd_id, sds_id, sds_index;
     int32            dimsizes[RANK], origin[RANK], starts[RANK], rank = 0, edges[RANK];
-    HDF_CHUNK_DEF    c_def;           /* Chunking definitions */
+    HDF_CHUNK_DEF    c_def; /* Chunking definitions */
     uintn            info_count = 0;
     t_hdf_datainfo_t sds_info;
     int32            data[Y_LENGTH][X_LENGTH];
@@ -1599,7 +1599,7 @@ test_extend_SDSs()
 extern int
 test_datainfo()
 {
-    int  num_errs = 0;
+    int num_errs = 0;
 
     /* Output message about test being performed */
     TESTING("getting location info of data (tdatainfo.c)");
