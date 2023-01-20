@@ -268,8 +268,9 @@ main(int argc, char *argv[])
 
     if (CleanUp) {
         MESSAGE(2, printf("\nCleaning Up...\n\n"););
-        remove("*.hdf");
-        remove("*.tmp");
+#ifndef H5_HAVE_WIN32_API
+        system("rm -f *.hdf *.tmp");
+#endif
     }
     exit(num_errs);
     return num_errs;
