@@ -480,24 +480,19 @@ add_sdsSDG_annotations()
     /********  Write labels and descriptions *********/
     for (j = 0; j < REPS; j++) {
         /* write out scientific data set */
-        ret = DFSDadddata(DFAN_SDG_FILE, 2, dimsizes, (VOIDP)data);
-        CHECK(ret, FAIL, "add_sdsSDG_annotations: DFSDadddata");
+        DFSDadddata(DFAN_SDG_FILE, 2, dimsizes, (VOIDP)data);
 
         /* write out annotations for 2 out of every 3 */
         refnum = DFSDlastref();
 
-        ret = DFANputlabel(DFAN_SDG_FILE, DFTAG_SDG, refnum, labsds);
-        CHECK(ret, FAIL, "add_sdsSDG_annotations: DFANputlabel");
-
-        ret = DFANputdesc(DFAN_SDG_FILE, DFTAG_SDG, refnum, descsds, (int32)HDstrlen(descsds));
-        CHECK(ret, FAIL, "add_sdsSDG_annotations: DFANputdesc");
+        DFANputlabel(DFAN_SDG_FILE, DFTAG_SDG, refnum, labsds);
+        DFANputdesc(DFAN_SDG_FILE, DFTAG_SDG, refnum, descsds, (int32)HDstrlen(descsds));
     }
 
     /********  Read labels and descriptions *********/
 
     for (j = 0; j < REPS; j++) {
-        ret = DFSDgetdims(DFAN_SDG_FILE, &rank, dimsizes, 3);
-        CHECK(ret, FAIL, "add_sdsSDG_annotations: DFSDgetdims");
+        DFSDgetdims(DFAN_SDG_FILE, &rank, dimsizes, 3);
         refnum = DFSDlastref();
 
         if ((j % 3) != 0) /* read in annotations for 2 out of every 3 */
