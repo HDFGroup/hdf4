@@ -282,7 +282,7 @@ test_empty_SDSs(int32 fid)
 static intn
 test_chunked_partial(int32 fid)
 {
-    int32         sds_id, sds_index;
+    int32         sds_id;
     int32         dim_sizes[RANK], origin[RANK];
     HDF_CHUNK_DEF c_def;          /* Chunking definitions */
     int32         flag;           /* Chunking flag */
@@ -520,9 +520,9 @@ test_chkcmp_SDSs(int32 fid)
 static intn
 test_extend_SDSs(int32 fid)
 {
-    int32 sds_id, sds_index;
+    int32 sds_id;
     int32 dimsize[2], start[2], edges[2];
-    int32 dimsize1[1], start1[1], edges1[1];
+    int32 start1[1], edges1[1];
     int32 data[Y_LENGTH][X_LENGTH];
     float fdata[Y_LENGTH];
     int32 output[Y_LENGTH][X_LENGTH];

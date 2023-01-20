@@ -326,7 +326,6 @@ test_longfilename()
     int32 fid;     /* file id */
     int32 dset1;   /* dataset ids */
     int32 dims[2]; /* variable shapes */
-    int   ii;
     char  dsname[10];
     char  filename[256];
     intn  status   = 0; /* status returned by called functions */

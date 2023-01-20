@@ -85,7 +85,7 @@ check_getchunkinfo(int32 fid,          /* file id */
 {
     int32         sds_id, sds_index;
     HDF_CHUNK_DEF c_def_out; /* Chunking definitions */
-    int32         comp_flag, c_flags;
+    int32         c_flags;
     intn          status;
     int           num_errs = 0;
     char          mesg[80];
@@ -255,13 +255,17 @@ test_chunked_SDSs(int32 fid)
     int           num_errs = 0; /* number of errors so far */
 
     /* Declare chunks data type and initialize some of them. */
-    int16 chunk1[3][2] = {1, 1, 1, 1, 1, 1};
+    int16 chunk1[3][2] = { {1, 1},
+                           {1, 1},
+                           {1, 1} };
 
-    int16 chunk2[3][2] = {2, 2, 2, 2, 2, 2};
+    int16 chunk2[3][2] = { {2, 2},
+                           {2, 2},
+                           {2, 2} };
 
-    int16 chunk3[3][2] = {3, 3, 3, 3, 3, 3};
-
-    int16 chunk6[3][2] = {6, 6, 6, 6, 6, 6};
+    int16 chunk3[3][2] = { {3, 3},
+                           {3, 3},
+                           {3, 3} };
 
     c_def.chunk_lengths[0] = 3;
     c_def.chunk_lengths[1] = 2;

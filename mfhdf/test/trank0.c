@@ -33,14 +33,14 @@
 extern int
 test_rank0()
 {
-    int32         fid, sds1_id, sds2_id, sds_id;
+    int32         fid, sds1_id, sds2_id;
     int32         dim_sizes[2], array_rank, num_type, attributes;
     int32         start[2], edges[2];
     comp_coder_t  comp_type; /* to retrieve compression type into */
     comp_info     c_info;    /* compression information structure */
     int32         comp_flag; /* compression flag */
     HDF_CHUNK_DEF c_def;     /* Chunking definitions */
-    int32         buf[Y_LENGTH][X_LENGTH], buf_dup[Y_LENGTH][X_LENGTH];
+    int32         buf[Y_LENGTH][X_LENGTH];
     intn          i, j, status;
     int32         status_32;
     intn          num_errs = 0; /* number of errors so far */

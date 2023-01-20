@@ -453,7 +453,6 @@ test_mult_setexternal()
 {
     int32 sd_id, sds1_id;
     int32 dim_sizes[3];
-    int32 sds1_size = 0;
     char *extfile_name;
     intn  name_len = 0;
     intn  status   = SUCCEED;
