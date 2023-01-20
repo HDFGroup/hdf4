@@ -8,7 +8,6 @@ main()
     /************************* Variable declaration **************************/
 
     int32 sd_id, sds_id, sds_index;
-    intn  status;
     int32 rank, data_type, dim_sizes[H4_MAX_VAR_DIMS];
     int32 n_datasets, n_file_attr, n_attrs;
     char  sds_name[H4_MAX_NC_NAME];
@@ -18,12 +17,14 @@ main()
     /*
      * Open the file and initialize the SD interface.
      */
-    sd_id = SDstart(FILE_NAME, DFACC_READ);
+    if ((sd_id = SDstart(FILE_NAME, DFACC_READ)) == FAIL)
+        printf("*** ERROR from SDstart\n");
 
     /*
      * Obtain information about the file.
      */
-    status = SDfileinfo(sd_id, &n_datasets, &n_file_attr);
+    if (SDfileinfo(sd_id, &n_datasets, &n_file_attr) == FAIL)
+        printf("*** ERROR from SDfileinfo\n");
 
     /* Get information about each SDS in the file.
      *  Check whether it is a coordinate variable, then display retrieved
@@ -37,7 +38,8 @@ main()
      */
     for (sds_index = 0; sds_index < n_datasets; sds_index++) {
         sds_id = SDselect(sd_id, sds_index);
-        status = SDgetinfo(sds_id, sds_name, &rank, dim_sizes, &data_type, &n_attrs);
+        if (SDgetinfo(sds_id, sds_name, &rank, dim_sizes, &data_type, &n_attrs) == FAIL)
+            printf("*** ERROR from SDgetinfo\n");
         if (SDiscoordvar(sds_id))
             printf(" Coordinate variable with the name %s\n", sds_name);
         else
@@ -46,13 +48,15 @@ main()
         /*
          * Terminate access to the selected data set.
          */
-        status = SDendaccess(sds_id);
+        if (SDendaccess(sds_id) == FAIL)
+            printf("*** ERROR from SDendaccess\n");
     }
 
     /*
      * Terminate access to the SD interface and close the file.
      */
-    status = SDend(sd_id);
+    if (SDend(sd_id) == FAIL)
+        printf("*** ERROR from SDend\n");
 
     return 0;
 }

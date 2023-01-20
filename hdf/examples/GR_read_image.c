@@ -19,15 +19,13 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    intn  status; /* status for functions returning an intn */
-    int32 index;
-    int32 file_id, gr_id, ri_id, start[2], /* start position to write for each dimension */
-        edges[2],                          /* number of elements to bewritten along
-                                              each dimension */
-        stride[2],                         /* number of elements to skip on each dimension */
-        dim_sizes[2];                      /* dimension sizes of the image array */
-    int16 entire_image[Y_LENGTH][X_LENGTH][N_COMPS], partial_image[PART_ROWS][PART_COLS][N_COMPS],
-        skipped_image[SKIP_ROWS][SKIP_COLS][N_COMPS];
+    int32 file_id, gr_id, ri_id;
+    int32 start[2];  /* start position to write for each dimension */
+    int32 edges[2];  /* number of elements to bewritten along each dimension */
+    int32 stride[2]; /* number of elements to skip on each dimension */
+    int16 entire_image[Y_LENGTH][X_LENGTH][N_COMPS];
+    int16 partial_image[PART_ROWS][PART_COLS][N_COMPS];
+    int16 skipped_image[SKIP_ROWS][SKIP_COLS][N_COMPS];
     int32 i, j;
 
     /********************** End of variable declaration **********************/
@@ -35,7 +33,8 @@ main()
     /*
      * Open the HDF file for reading.
      */
-    file_id = Hopen(FILE_NAME, DFACC_READ, 0);
+    if ((file_id = Hopen(FILE_NAME, DFACC_READ, 0)) == FAIL)
+        printf("*** ERROR from Hopen\n");
 
     /*
      * Initialize the GR interface.
@@ -58,7 +57,8 @@ main()
     /*
      * Read the data from the raster image array.
      */
-    status = GRreadimage(ri_id, start, NULL, edges, (VOIDP)entire_image);
+    if (GRreadimage(ri_id, start, NULL, edges, (VOIDP)entire_image) == FAIL)
+        printf("*** ERROR from GRreadimage\n");
 
     /*
      * Display only the first component of the image since the two components
@@ -82,7 +82,8 @@ main()
     /*
      * Read a subset of the raster image array.
      */
-    status = GRreadimage(ri_id, start, NULL, edges, (VOIDP)partial_image);
+    if (GRreadimage(ri_id, start, NULL, edges, (VOIDP)partial_image) == FAIL)
+        printf("*** ERROR from GRreadimage\n");
 
     /*
      * Display the first component of the read sample.
@@ -107,7 +108,8 @@ main()
     /*
      * Read all the odd rows and even columns of the image.
      */
-    status = GRreadimage(ri_id, start, stride, edges, (VOIDP)skipped_image);
+    if (GRreadimage(ri_id, start, stride, edges, (VOIDP)skipped_image) == FAIL)
+        printf("*** ERROR from GRreadimage\n");
 
     /*
      * Display the first component of the read sample.
@@ -123,8 +125,12 @@ main()
      * Terminate access to the raster image and to the GR interface, and
      * close the HDF file.
      */
-    status = GRendaccess(ri_id);
-    status = GRend(gr_id);
-    status = Hclose(file_id);
+    if (GRendaccess(ri_id) == FAIL)
+        printf("*** ERROR from GRendaccess\n");
+    if (GRend(gr_id) == FAIL)
+        printf("*** ERROR from GRend\n");
+    if (Hclose(file_id) == FAIL)
+        printf("*** ERROR from Hclose\n");
+
     return 0;
 }

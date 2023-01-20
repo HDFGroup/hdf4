@@ -11,7 +11,6 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    intn  status;            /* status for functions returning an intn */
     int32 file_id,           /* HDF file identifier */
         gr_id,               /* GR interface identifier */
         ri_id,               /* raster image identifier */
@@ -31,7 +30,8 @@ main()
     /*
      * Create and open the file.
      */
-    file_id = Hopen(FILE_NAME, DFACC_CREATE, 0);
+    if ((file_id = Hopen(FILE_NAME, DFACC_CREATE, 0)) == FAIL)
+        printf("*** ERROR from Hopen\n");
 
     /*
      * Initialize the GR interface.
@@ -55,35 +55,43 @@ main()
     chunk_def.comp.cinfo.deflate.level = 6;
     chunk_def.comp.chunk_lengths[0]    = 3;
     chunk_def.comp.chunk_lengths[1]    = 2;
-    status                             = GRsetchunk(ri_id, chunk_def, HDF_CHUNK | HDF_COMP);
+    if (GRsetchunk(ri_id, chunk_def, HDF_CHUNK | HDF_COMP) == FAIL)
+        printf("*** ERROR from GRsetchunk\n");
 
     /*
      * Write first chunk(0,0).
      */
     origin[0] = 0;
     origin[1] = 0;
-    status    = GRwritechunk(ri_id, origin, (VOIDP)chunk00);
+    if (GRwritechunk(ri_id, origin, (VOIDP)chunk00) == FAIL)
+        printf("*** ERROR from GRwritechunk\n");
 
     /*
      * Write second chunk(0,1).
      */
     origin[0] = 0;
     origin[1] = 1;
-    status    = GRwritechunk(ri_id, origin, (VOIDP)chunk01);
+    if (GRwritechunk(ri_id, origin, (VOIDP)chunk01) == FAIL)
+        printf("*** ERROR from GRwritechunk\n");
 
     /*
      * Write third chunk(1,4).
      */
     origin[0] = 1;
     origin[1] = 4;
-    status    = GRwritechunk(ri_id, origin, (VOIDP)chunk14);
+    if (GRwritechunk(ri_id, origin, (VOIDP)chunk14) == FAIL)
+        printf("*** ERROR from GRwritechunk\n");
 
     /*
      * Terminate access to the raster image and to the GR interface and,
      * close the HDF file.
      */
-    status = GRendaccess(ri_id);
-    status = GRend(gr_id);
-    status = Hclose(file_id);
+    if (GRendaccess(ri_id) == FAIL)
+        printf("*** ERROR from GRendaccess\n");
+    if (GRend(gr_id) == FAIL)
+        printf("*** ERROR from GRend\n");
+    if (Hclose(file_id) == FAIL)
+        printf("*** ERROR from Hclose\n");
+
     return 0;
 }

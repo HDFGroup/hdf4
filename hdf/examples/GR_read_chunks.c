@@ -11,29 +11,28 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    intn  status;            /* status for functions returning an intn */
-    int32 file_id,           /* HDF file identifier */
-        gr_id,               /* GR interface identifier */
-        ri_id,               /* raster image identifier */
-        dims[2],             /* dimension sizes of the image array */
-        start[2],            /* start position to read the image array */
-        edges[2],            /* edges of read array */
-        interlace_mode;      /* interlace mode of the image */
-    HDF_CHUNK_DEF chunk_def; /* Chunk definition set */
-    int32         image_data[X_LENGTH][Y_LENGTH][NCOMPS];
-    int           ii, jj;
+    int32 file_id, /* HDF file identifier */
+        gr_id,     /* GR interface identifier */
+        ri_id,     /* raster image identifier */
+        dims[2],   /* dimension sizes of the image array */
+        start[2],  /* start position to read the image array */
+        edges[2];  /* edges of read array */
+    int32 image_data[X_LENGTH][Y_LENGTH][NCOMPS];
+    int   ii, jj;
 
     /********************** End of variable declaration **********************/
 
     /*
      * Open the file for reading.
      */
-    file_id = Hopen(FILE_NAME, DFACC_RDONLY, 0);
+    if ((file_id = Hopen(FILE_NAME, DFACC_RDONLY, 0)) == FAIL)
+        printf("*** ERROR from Hopen\n");
 
     /*
      * Initialize the GR interface.
      */
-    gr_id = GRstart(file_id);
+    if ((gr_id = GRstart(file_id)) == FAIL)
+        printf("*** ERROR from GRstart\n");
 
     /*
      * Open the raster image array.
@@ -50,7 +49,8 @@ main()
     edges[1]            = dims[1];
 
     /* Read the data in the image array. */
-    status = GRreadimage(ri_id, start, NULL, edges, (VOIDP)image_data);
+    if (GRreadimage(ri_id, start, NULL, edges, (VOIDP)image_data) == FAIL)
+        printf("*** ERROR from GRreadimage\n");
 
     printf("Image Data:\n");
     printf("Component 1:\n  ");
@@ -78,8 +78,12 @@ main()
      * Terminate access to the raster image and to the GR interface and,
      * close the HDF file.
      */
-    status = GRendaccess(ri_id);
-    status = GRend(gr_id);
-    status = Hclose(file_id);
+    if (GRendaccess(ri_id) == FAIL)
+        printf("*** ERROR from GRendaccess\n");
+    if (GRend(gr_id) == FAIL)
+        printf("*** ERROR from GRend\n");
+    if (Hclose(file_id) == FAIL)
+        printf("*** ERROR from Hclose\n");
+
     return 0;
 }

@@ -15,7 +15,6 @@ main()
     /************************* Variable declaration **************************/
 
     int32   sd_id, sds_id, sds_index;
-    intn    status;
     int32   dim_index, dim_id;
     int32   n_values, data_type, n_attrs;
     int16   data_X[X_LENGTH]; /* X dimension dimension scale */
@@ -38,7 +37,8 @@ main()
     /*
      * Open the file and initialize SD interface.
      */
-    sd_id = SDstart(FILE_NAME, DFACC_WRITE);
+    if ((sd_id = SDstart(FILE_NAME, DFACC_WRITE)) == FAIL)
+        printf("*** ERROR from SDstart\n");
 
     /*
      * Get the index of the data set specified in SDS_NAME.
@@ -67,14 +67,16 @@ main()
          */
         switch (dim_index) {
             case 0:
-                status   = SDsetdimname(dim_id, DIM_NAME_Y);
+                if (SDsetdimname(dim_id, DIM_NAME_Y) == FAIL)
+                    printf("*** ERROR from SDsetdimname\n");
                 n_values = Y_LENGTH;
-                status   = SDsetdimscale(dim_id, n_values, DFNT_FLOAT64, (VOIDP)data_Y);
+                SDsetdimscale(dim_id, n_values, DFNT_FLOAT64, (VOIDP)data_Y);
                 break;
             case 1:
-                status   = SDsetdimname(dim_id, DIM_NAME_X);
+                if (SDsetdimname(dim_id, DIM_NAME_X) == FAIL)
+                    printf("*** ERROR from SDsetdimname\n");
                 n_values = X_LENGTH;
-                status   = SDsetdimscale(dim_id, n_values, DFNT_INT16, (VOIDP)data_X);
+                SDsetdimscale(dim_id, n_values, DFNT_INT16, (VOIDP)data_X);
                 break;
             default:
                 break;
@@ -106,7 +108,8 @@ main()
          *               0  1  2  3  4
          */
 
-        status = SDdiminfo(dim_id, dim_name, &n_values, &data_type, &n_attrs);
+        if (SDdiminfo(dim_id, dim_name, &n_values, &data_type, &n_attrs) == FAIL)
+            printf("*** ERROR from SDdiminfo\n");
         printf("Information about %d dimension:\n", dim_index + 1);
         printf("dimension name is %s\n", dim_name);
         printf("number of scale values is %d\n", n_values);
@@ -119,8 +122,9 @@ main()
         printf("Scale values are :\n");
         switch (dim_index) {
             case 0:
-                status = SDgetdimscale(dim_id, (VOIDP)data_Y_out);
-                nrow   = 4;
+                if (SDgetdimscale(dim_id, (VOIDP)data_Y_out) == FAIL)
+                    printf("*** ERROR from SDgetdimscale\n");
+                nrow = 4;
                 for (i = 0; i < n_values / nrow; i++) {
                     for (j = 0; j < nrow; j++)
                         printf("  %-6.3f", data_Y_out[i * nrow + j]);
@@ -128,7 +132,8 @@ main()
                 }
                 break;
             case 1:
-                status = SDgetdimscale(dim_id, (VOIDP)data_X_out);
+                if (SDgetdimscale(dim_id, (VOIDP)data_X_out) == FAIL)
+                    printf("*** ERROR from SDgetdimscale\n");
                 for (i = 0; i < n_values; i++)
                     printf("  %d", data_X_out[i]);
                 break;
@@ -141,12 +146,14 @@ main()
     /*
      * Terminate access to the data set.
      */
-    status = SDendaccess(sds_id);
+    if (SDendaccess(sds_id) == FAIL)
+        printf("*** ERROR from SDendaccess\n");
 
     /*
      * Terminate access to the SD interface and close the file.
      */
-    status = SDend(sd_id);
+    if (SDend(sd_id) == FAIL)
+        printf("*** ERROR from SDend\n");
 
     return 0;
 }

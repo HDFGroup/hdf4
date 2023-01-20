@@ -208,14 +208,15 @@ fi
 
 case $CC_BASENAME in
   gcc)
+    CFLAGS="-Wall -Wcast-qual -Wconversion -Wextra -Wfloat-equal -Wformat=2 -Winit-self -Winvalid-pch -Wmissing-include-dirs -Wshadow -Wundef -Wwrite-strings -pedantic -Wno-c++-compat"
     if test $cc_vers_major -ge 10; then
         CFLAGS="$CFLAGS -Wno-error=implicit-function-declaration"
     else
         CFLAGS="$CFLAGS"
     fi
-    DEBUG_CFLAGS="-g -fverbose-asm"
+    DEBUG_CFLAGS="$CFLAGS -g -fverbose-asm"
     DEBUG_CPPFLAGS=
-    PROD_CFLAGS="-O3 -fomit-frame-pointer"
+    PROD_CFLAGS="$CFLAGS -O3 -fomit-frame-pointer"
     PROD_CPPFLAGS=
     PROFILE_CFLAGS="-pg"
     PROFILE_CPPFLAGS=

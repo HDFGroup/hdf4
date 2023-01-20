@@ -11,14 +11,14 @@ main()
     /************************* Variable declaration **************************/
 
     int32 sd_id, sds_id, sds_index;
-    intn  status;
 
     /********************* End of variable declaration ***********************/
 
     /*
      * Open the file and initialize the SD interface.
      */
-    sd_id = SDstart(FILE_NAME, DFACC_WRITE);
+    if ((sd_id = SDstart(FILE_NAME, DFACC_WRITE)) == FAIL)
+        printf("*** ERROR from SDstart\n");
 
     /*
      * Select the first data set.
@@ -30,13 +30,16 @@ main()
      * Create a file with the name EXT_FILE_NAME and move the data set
      * values into it, starting at byte location OFFSET.
      */
-    status = SDsetexternalfile(sds_id, EXT_FILE_NAME, OFFSET);
+    if (SDsetexternalfile(sds_id, EXT_FILE_NAME, OFFSET) == FAIL)
+        printf("*** ERROR from SDsetexternalfile\n");
 
     /*
      * Terminate access to the data set, SD interface, and file.
      */
-    status = SDendaccess(sds_id);
-    status = SDend(sd_id);
+    if (SDendaccess(sds_id) == FAIL)
+        printf("*** ERROR from SDendaccess\n");
+    if (SDend(sd_id) == FAIL)
+        printf("*** ERROR from SDend\n");
 
     return 0;
 }

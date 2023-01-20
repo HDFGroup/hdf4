@@ -11,7 +11,6 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    intn  status;       /* status for functions returning an intn */
     int32 file_id,      /* HDF file identifier */
         gr_id,          /* GR interface identifier */
         ri_id,          /* raster image identifier */
@@ -29,12 +28,14 @@ main()
     /*
      * Create and open the file.
      */
-    file_id = Hopen(FILE_NAME, DFACC_CREATE, 0);
+    if ((file_id = Hopen(FILE_NAME, DFACC_CREATE, 0)) == FAIL)
+        printf("*** ERROR from Hopen\n");
 
     /*
      * Initialize the GR interface.
      */
-    gr_id = GRstart(file_id);
+    if ((gr_id = GRstart(file_id)) == FAIL)
+        printf("*** ERROR from GRstart\n");
 
     /*
      * Set the data type, interlace mode, and dimensions of the image.
@@ -47,7 +48,8 @@ main()
     /*
      * Create the raster image array.
      */
-    ri_id = GRcreate(gr_id, IMAGE_NAME, N_COMPS, data_type, interlace_mode, dim_sizes);
+    if ((ri_id = GRcreate(gr_id, IMAGE_NAME, N_COMPS, data_type, interlace_mode, dim_sizes)) == FAIL)
+        printf("*** ERROR from GRcreate\n");
 
     /*
      * Fill the image data buffer with values.
@@ -70,14 +72,18 @@ main()
     /*
      * Write the data in the buffer into the image array.
      */
-    status = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)image_buf);
+    if (GRwriteimage(ri_id, start, NULL, edges, (VOIDP)image_buf) == FAIL)
+        printf("*** ERROR from GRwriteimage\n");
 
     /*
      * Terminate access to the raster image and to the GR interface and,
      * close the HDF file.
      */
-    status = GRendaccess(ri_id);
-    status = GRend(gr_id);
-    status = Hclose(file_id);
+    if (GRendaccess(ri_id) == FAIL)
+        printf("*** ERROR from GRendaccess\n");
+    if (GRend(gr_id) == FAIL)
+        printf("*** ERROR from GRend\n");
+    if (Hclose(file_id) == FAIL)
+        printf("*** ERROR from Hclose\n");
     return 0;
 }

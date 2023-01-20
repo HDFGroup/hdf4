@@ -860,7 +860,7 @@ AC_ARG_ENABLE([production],
               [AS_HELP_STRING([--enable-production],
                               [Determines how to run the compiler.])])
 
-case "X-$enable-production" in
+case "X-$enable_production" in
   X-|X-yes)
     AC_MSG_RESULT([production])
     CONFIG_MODE=production
@@ -898,6 +898,7 @@ case "X-$enable-production" in
     ;;
   *)
     AC_MSG_RESULT([user-defined])
+    CONFIG_MODE="user-defined (most CFLAGS, etc. set by user)"
     ;;
 esac
 
