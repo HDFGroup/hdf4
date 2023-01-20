@@ -62,8 +62,15 @@ typedef struct {
 extern funclist_t cnone_funcs; /* functions to perform run-length encoding */
 #else
 funclist_t cnone_funcs = {/* functions to perform run-length encoding */
-                          HCPcnone_stread, HCPcnone_stwrite, HCPcnone_seek,     HCPcnone_inquire,
-                          HCPcnone_read,   HCPcnone_write,   HCPcnone_endaccess, NULL, NULL};
+                          HCPcnone_stread,
+                          HCPcnone_stwrite,
+                          HCPcnone_seek,
+                          HCPcnone_inquire,
+                          HCPcnone_read,
+                          HCPcnone_write,
+                          HCPcnone_endaccess,
+                          NULL,
+                          NULL};
 #endif
 
 #endif /* __CNONE_H */

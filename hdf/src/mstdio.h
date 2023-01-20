@@ -61,9 +61,15 @@ typedef struct {
 #ifndef MSTDIO_MASTER
 extern funclist_t mstdio_funcs;
 #else
-funclist_t mstdio_funcs = {
-                           HCPmstdio_stread, HCPmstdio_stwrite, HCPmstdio_seek,     HCPmstdio_inquire,
-                           HCPmstdio_read,   HCPmstdio_write,   HCPmstdio_endaccess, NULL, NULL};
+funclist_t mstdio_funcs = {HCPmstdio_stread,
+                           HCPmstdio_stwrite,
+                           HCPmstdio_seek,
+                           HCPmstdio_inquire,
+                           HCPmstdio_read,
+                           HCPmstdio_write,
+                           HCPmstdio_endaccess,
+                           NULL,
+                           NULL};
 #endif
 
 #endif /* __MSTDIO_H */

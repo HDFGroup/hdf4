@@ -77,9 +77,15 @@ typedef struct {
 extern funclist_t cdeflate_funcs; /* functions to perform gzip encoding */
 #else
 funclist_t cdeflate_funcs = {/* functions to perform gzip encoding */
-                             HCPcdeflate_stread,   HCPcdeflate_stwrite, HCPcdeflate_seek,
-                             HCPcdeflate_inquire,  HCPcdeflate_read,    HCPcdeflate_write,
-                             HCPcdeflate_endaccess, NULL, NULL};
+                             HCPcdeflate_stread,
+                             HCPcdeflate_stwrite,
+                             HCPcdeflate_seek,
+                             HCPcdeflate_inquire,
+                             HCPcdeflate_read,
+                             HCPcdeflate_write,
+                             HCPcdeflate_endaccess,
+                             NULL,
+                             NULL};
 #endif
 
 #endif /* __CDEFLATE_H */
