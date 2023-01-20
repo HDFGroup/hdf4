@@ -1034,8 +1034,8 @@ static const uint8  jpeg_24bit_j75[JPEGY][JPEGX][3] =
     255, 103, 2,   255, 103, 2,   255, 103, 2,   255, 103, 2,   255, 103, 2,   255, 103, 2};
 #endif
 
-static VOID check_im_pal(int32 oldx, int32 oldy, int32 newx, int32 newy, uint8 *oldim, uint8 *newim,
-                         uint8 *oldpal, uint8 *newpal);
+    static VOID check_im_pal(int32 oldx, int32 oldy, int32 newx, int32 newy, uint8 *oldim, uint8 *newim,
+                             uint8 *oldpal, uint8 *newpal);
 
 /* These two functions are in tusejpegfuncs.c.  They use JPEG functions directly
    to compress and decompress the same data as in test_r24_jpeg, to verify that
