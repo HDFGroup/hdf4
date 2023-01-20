@@ -3160,7 +3160,7 @@ test_blockinfo_multLBs(void)
     }
 
     /* Write the data from data_buf2 to the vdata with full interlacing mode. */
-    record_pos     = VSseek(vdata2_id, N_RECORDS);
+    VSseek(vdata2_id, N_RECORDS);
     num_of_records = VSwrite(vdata2_id, (uint8 *)data_buf2, N_RECORDS, FULL_INTERLACE);
     VERIFY_VOID(num_of_records, N_RECORDS, "VSwrite:vdata2_id");
 
