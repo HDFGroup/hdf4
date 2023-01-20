@@ -406,7 +406,7 @@ add_sdsNDG_annotations()
     gen2Dfloat(ROWS, COLS, data);
 
     /* Set rank and dimension sizes for subsequent SDSs */
-    ret = DFSDsetdims(2, dimsizes);
+    DFSDsetdims(2, dimsizes);
 
     /********  Write labels and descriptions *********/
 
@@ -452,6 +452,7 @@ add_sdsSDG_annotations()
 {
     char   labsds[MAXLEN_LAB], descsds[MAXLEN_DESC], descris[MAXLEN_DESC];
     uint16 refnum;
+    int32  ret;
     intn   rank;
     int    j;
     int32  dimsizes[2];
@@ -478,28 +479,32 @@ add_sdsSDG_annotations()
 
     /********  Write labels and descriptions *********/
     for (j = 0; j < REPS; j++) {
-
         /* write out scientific data set */
-        DFSDadddata(DFAN_SDG_FILE, 2, dimsizes, (VOIDP)data);
+        ret = DFSDadddata(DFAN_SDG_FILE, 2, dimsizes, (VOIDP)data);
+        CHECK(ret, FAIL, "add_sdsSDG_annotations: DFSDadddata");
 
-        { /* write out annotations for 2 out of every 3 */
-            refnum = DFSDlastref();
-            DFANputlabel(DFAN_SDG_FILE, DFTAG_SDG, refnum, labsds);
-            DFANputdesc(DFAN_SDG_FILE, DFTAG_SDG, refnum, descsds, (int32)HDstrlen(descsds));
-        }
+        /* write out annotations for 2 out of every 3 */
+        refnum = DFSDlastref();
+
+        ret = DFANputlabel(DFAN_SDG_FILE, DFTAG_SDG, refnum, labsds);
+        CHECK(ret, FAIL, "add_sdsSDG_annotations: DFANputlabel");
+
+        ret = DFANputdesc(DFAN_SDG_FILE, DFTAG_SDG, refnum, descsds, (int32)HDstrlen(descsds));
+        CHECK(ret, FAIL, "add_sdsSDG_annotations: DFANputdesc");
     }
 
     /********  Read labels and descriptions *********/
 
     for (j = 0; j < REPS; j++) {
-        DFSDgetdims(DFAN_SDG_FILE, &rank, dimsizes, 3);
+        ret = DFSDgetdims(DFAN_SDG_FILE, &rank, dimsizes, 3);
+        CHECK(ret, FAIL, "add_sdsSDG_annotations: DFSDgetdims");
         refnum = DFSDlastref();
 
         if ((j % 3) != 0) /* read in annotations for 2 out of every 3 */
             num_errs = check_lab_desc(DFAN_SDG_FILE, DFTAG_SDG, refnum, labsds, descsds);
     }
-
     HDfree((VOIDP)data);
+
     return 0;
 }
 
