@@ -282,7 +282,7 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
 
         if ((int32)size_out != out_length) {
             /* This should never happen?? */
-            printf("status: %d ??bytes != out_length %d != %d\n", status, size_out, out_length);
+            printf("status: %d ??bytes != out_length %zu != %d\n", status, size_out, out_length);
         }
 
         /* The data is successfully decompressed. Put into the szip struct */
