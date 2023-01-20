@@ -15,12 +15,10 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    intn  status_n;                             /* returned status for functions returning an intn  */
-    int32 status_32,                            /* returned status for functions returning an int32 */
-        file_id, vdata_id, vdata_ref,           /* vdata's reference number */
-        num_of_records,                         /* number of records actually written to the vdata */
-        record_pos;                             /* position of the current record */
-    int16   i, rec_num;                         /* current record number in the vdata */
+    int32   file_id, vdata_id;
+    int32   vdata_ref;                          /* vdata's reference number */
+    int32   num_of_records;                     /* number of records actually written to the vdata */
+    int16   rec_num;                            /* current record number in the vdata */
     float32 databuf[N_RECORDS][N_VALS_PER_REC]; /* buffer for vdata values */
 
     /********************** End of variable declaration **********************/
@@ -28,12 +26,14 @@ main()
     /*
      * Open the HDF file for reading.
      */
-    file_id = Hopen(FILE_NAME, DFACC_READ, 0);
+    if ((file_id = Hopen(FILE_NAME, DFACC_READ, 0)) == FAIL)
+        printf("*** ERROR from Hopen\n");
 
     /*
      * Initialize the VS interface.
      */
-    status_n = Vstart(file_id);
+    if (Vstart(file_id) == FAIL)
+        printf("*** ERROR from Vstart\n");
 
     /*
      * Get the reference number of the vdata, whose name is specified in
@@ -52,12 +52,13 @@ main()
     /*
      * Specify the fields that will be read.
      */
-    status_n = VSsetfields(vdata_id, FIELDNAME_LIST);
+    if (VSsetfields(vdata_id, FIELDNAME_LIST) == FAIL)
+        printf("*** ERROR from VSsetfields\n");
 
     /*
      * Place the current point to the position specified in RECORD_INDEX.
      */
-    record_pos = VSseek(vdata_id, RECORD_INDEX);
+    VSseek(vdata_id, RECORD_INDEX);
 
     /*
      * Read the next N_RECORDS records from the vdata and store the data
@@ -79,8 +80,12 @@ main()
      * Terminate access to the vdata and to the VS interface, then close
      * the HDF file.
      */
-    status_32 = VSdetach(vdata_id);
-    status_n  = Vend(file_id);
-    status_32 = Hclose(file_id);
+    if (VSdetach(vdata_id) == FAIL)
+        printf("*** ERROR from VSdetach\n");
+    if (Vend(file_id) == FAIL)
+        printf("*** ERROR from Vend\n");
+    if (Hclose(file_id) == FAIL)
+        printf("*** ERROR from Hclose\n");
+
     return 0;
 }

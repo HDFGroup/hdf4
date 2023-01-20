@@ -7,21 +7,22 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    intn  status_n;  /* returned status for functions returning an intn  */
-    int32 status_32, /* returned status for functions returning an int32 */
-        vgroup_ref = -1, vgroup1_id, vgroup2_id, file_id;
+    int32 vgroup_ref = -1;
+    int32 vgroup1_id, vgroup2_id, file_id;
 
     /********************** End of variable declaration **********************/
 
     /*
      * Create the HDF file.
      */
-    file_id = Hopen(FILE_NAME, DFACC_CREATE, 0);
+    if ((file_id = Hopen(FILE_NAME, DFACC_CREATE, 0)) == FAIL)
+        printf("*** ERROR from Hopen\n");
 
     /*
      * Initialize the V interface.
      */
-    status_n = Vstart(file_id);
+    if (Vstart(file_id) == FAIL)
+        printf("*** ERROR from Vstart\n");
 
     /*
      * Create the first vgroup.  Note that the vgroup reference number is set
@@ -41,17 +42,22 @@ main()
     /*
      * Terminate access to the first vgroup.
      */
-    status_32 = Vdetach(vgroup1_id);
+    if (Vdetach(vgroup1_id) == FAIL)
+        printf("*** ERROR from Vdetach\n");
 
     /*
      * Terminate access to the second vgroup.
      */
-    status_32 = Vdetach(vgroup2_id);
+    if (Vdetach(vgroup2_id) == FAIL)
+        printf("*** ERROR from Vdetach\n");
 
     /*
      * Terminate access to the V interface and close the HDF file.
      */
-    status_n = Vend(file_id);
-    status_n = Hclose(file_id);
+    if (Vend(file_id) == FAIL)
+        printf("*** ERROR from Vend\n");
+    if (Hclose(file_id) == FAIL)
+        printf("*** ERROR from Hclose\n");
+
     return 0;
 }
