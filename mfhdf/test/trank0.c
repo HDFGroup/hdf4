@@ -33,7 +33,7 @@
 extern int
 test_rank0()
 {
-    int32         fid, sds1_id, sds2_id;
+    int32         fid, sds1_id, sds2_id, sds_id;
     int32         dim_sizes[2], array_rank, num_type, attributes;
     int32         start[2], edges[2];
     comp_coder_t  comp_type; /* to retrieve compression type into */
