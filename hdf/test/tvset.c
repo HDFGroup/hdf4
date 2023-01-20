@@ -2653,7 +2653,6 @@ test_extfile(void)
     void   *columnPtrs[3];
     int     bufsize;
     void   *databuf;
-    void   *databuf2;
     intn    name_len = 0;
     intn    status_n; /* returned status for functions returning an intn  */
     int32   status;   /* returned status for functions returning an int32 */
@@ -2862,13 +2861,12 @@ test_blockinfo_oneLB(void)
     int32 status;   /* returned status for functions returning an int32 */
     int16 rec_num;  /* current record number */
     int32 record_pos;
-    int32 fid, vdata1_id, vdata2_id, vdata_ref = -1, /* ref number of a vdata, set to -1 to create  */
-        num_of_records,                              /* number of records actually written to vdata */
-        data_buf1[N_RECORDS][N_VALS_PER_REC_1],      /* for first vdata's data */
-        data_buf2[N_RECORDS][N_VALS_PER_REC_2],      /* for second vdata's data */
-        block_size, num_blocks;                      /* retrieved by VSgetblockinfo */
-    intn    n_vds    = 0;
-    uint16 *refarray = NULL;
+    int32 fid, vdata1_id, vdata2_id;
+    int32 vdata_ref = -1,                       /* ref number of a vdata, set to -1 to create  */
+        num_of_records,                         /* number of records actually written to vdata */
+        data_buf1[N_RECORDS][N_VALS_PER_REC_1], /* for first vdata's data */
+        data_buf2[N_RECORDS][N_VALS_PER_REC_2], /* for second vdata's data */
+        block_size, num_blocks;                 /* retrieved by VSgetblockinfo */
 
     /* Create the HDF file for data used in this test routine */
     fid = Hopen(LKBLK_FILE, DFACC_CREATE, 0);
@@ -3082,14 +3080,11 @@ test_blockinfo_multLBs(void)
     intn  status_n; /* returned status for functions returning an intn  */
     int32 status;   /* returned status for functions returning an int32 */
     int16 rec_num;  /* current record number */
-    int32 record_pos;
-    int32 fid, vdata1_id, vdata2_id, vdata_ref = -1, /* ref number of a vdata, set to -1 to create  */
-        num_of_records,                              /* number of records actually written to vdata */
-        data_buf1[N_RECORDS][N_VALS_PER_REC_1],      /* for first vdata's data */
-        data_buf2[N_RECORDS][N_VALS_PER_REC_2],      /* for second vdata's data */
-        block_size, num_blocks;                      /* retrieved by VSgetblockinfo */
-    intn    n_vds    = 0;
-    uint16 *refarray = NULL;
+    int32 fid, vdata1_id, vdata2_id;
+    int32 vdata_ref = -1,                       /* ref number of a vdata, set to -1 to create  */
+        num_of_records,                         /* number of records actually written to vdata */
+        data_buf2[N_RECORDS][N_VALS_PER_REC_2], /* for second vdata's data */
+        block_size, num_blocks;                 /* retrieved by VSgetblockinfo */
 
     /******************************************************************
      * Reopen the file, and the vdata APPENDABLE_VDATA, then append more
@@ -3246,14 +3241,8 @@ test_VSofclass()
 {
     intn  status_n; /* returned status for functions returning an intn  */
     int32 status;   /* returned status for functions returning an int32 */
-    int16 rec_num;  /* current record number */
-    int32 record_pos;
-    int32 fid, vdata1_id, vdata2_id, vdata_ref = -1, /* ref number of a vdata, set to -1 to create  */
-        num_of_records,                              /* number of records actually written to vdata */
-        data_buf1[N_RECORDS][N_VALS_PER_REC_1],      /* for first vdata's data */
-        data_buf2[N_RECORDS][N_VALS_PER_REC_2],      /* for second vdata's data */
-        block_size, num_blocks;                      /* retrieved by VSgetblockinfo */
-    intn    n_vds    = 0;
+    int32 fid;
+    intn  n_vds = 0;
     uint16 *refarray = NULL;
 
     /* Open file LKBLK_FILE for reading. */
@@ -3325,8 +3314,6 @@ test_VSofclass()
 void
 test_blockinfo(void)
 {
-    int32 status;
-
     /* test the case of setting block size doesn't have effect until linked-
        block element is created */
     test_blockinfo_oneLB();

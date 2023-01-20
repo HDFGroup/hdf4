@@ -423,16 +423,11 @@ test_append_vs()
     CHECK_VOID(vs1_ref, FAIL, "VSQueryref");
 
     /* Make another simple vdata to cause linked-blocks */
-    {
-        int32 vd2_ref;
+    for (rec_num = 0; rec_num < N_RECORDS; rec_num++)
+        data_buf0[rec_num][0] = 10 + rec_num;
 
-        for (rec_num = 0; rec_num < N_RECORDS; rec_num++)
-            data_buf0[rec_num][0] = 10 + rec_num;
-
-        /* Create and write to another very simple vdata */
-        vd2_ref = VHstoredata(fid, "Field 1", (const uint8 *)data_buf0, N_RECORDS, DFNT_INT32,
-                              "Another One Field One Order", "Very Simple Vdata");
-    }
+    /* Create and write to another very simple vdata */
+    VHstoredata(fid, "Field 1", (const uint8 *)data_buf0, N_RECORDS, DFNT_INT32, "Another One Field One Order", "Very Simple Vdata");
 
     /* Make up the second batch of data for the appendable vdata */
     for (rec_num = 0; rec_num < N_RECORDS; rec_num++) {
@@ -1129,17 +1124,23 @@ test_getpalinfo()
     uint8 image_buf[WIDTH][LENGTH][N_COMPS_IMG]; /* data of raster image */
     uint8 palette_buf1[N_ENTRIES][N_COMPS_PAL];  /* for LUT mostly */
     uint8 palette_buf2[N_ENTRIES][N_COMPS_PAL];
-    uint8 paletteA[N_ENTRIES * N_COMPS_PAL], /* for IP8 mostly */
-        paletteB[N_ENTRIES * N_COMPS_PAL], paletteD[N_ENTRIES * N_COMPS_PAL];
-    intn          n_pals        = 0;    /* number of palettes, returned by DFPnpals and GRgetpalinfo */
+    uint8 paletteA[N_ENTRIES * N_COMPS_PAL]; /* for IP8 mostly */
+    uint8 paletteB[N_ENTRIES * N_COMPS_PAL];
+    uint8 paletteD[N_ENTRIES * N_COMPS_PAL];
+    intn  n_pals = 0; /* number of palettes, returned by DFPnpals and GRgetpalinfo */
+
     hdf_ddinfo_t *palinfo_array = NULL; /* list of palette DDs */
     uint8        *inbuf;                /* palette data read back in */
     intn          ii, jj;               /* indices */
     intn          status;               /* status returned from routines */
 
     /* Initialize the 8-bit image array */
-    static uint8 raster_data[WIDTH][LENGTH] = {1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 1, 2, 3,
-                                               4, 5, 5, 4, 3, 2, 1, 6, 4, 2, 0, 2};
+    static uint8 raster_data[WIDTH][LENGTH] =
+    { {1, 2, 3, 4, 5},
+      {5, 4, 3, 2, 1},
+      {1, 2, 3, 4, 5},
+      {5, 4, 3, 2, 1},
+      {6, 4, 2, 0, 2} };
 
     /* Palettes are added in the following means and order:
         paletteA (DFPputpal)
