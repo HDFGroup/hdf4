@@ -87,8 +87,15 @@ typedef struct {
 HDFLIBAPI funclist_t cszip_funcs; /* functions to perform szip encoding */
 #else
 funclist_t cszip_funcs = {/* functions to perform szip encoding */
-                          HCPcszip_stread, HCPcszip_stwrite, HCPcszip_seek,     HCPcszip_inquire,
-                          HCPcszip_read,   HCPcszip_write,   HCPcszip_endaccess};
+                          HCPcszip_stread,
+                          HCPcszip_stwrite,
+                          HCPcszip_seek,
+                          HCPcszip_inquire,
+                          HCPcszip_read,
+                          HCPcszip_write,
+                          HCPcszip_endaccess,
+                          NULL,
+                          NULL};
 #endif
 
 #endif /* __CSZIP_H */

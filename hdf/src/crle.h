@@ -98,8 +98,15 @@ typedef struct {
 extern funclist_t crle_funcs; /* functions to perform run-length encoding */
 #else
 funclist_t crle_funcs = {/* functions to perform run-length encoding */
-                         HCPcrle_stread, HCPcrle_stwrite, HCPcrle_seek,     HCPcrle_inquire,
-                         HCPcrle_read,   HCPcrle_write,   HCPcrle_endaccess};
+                         HCPcrle_stread,
+                         HCPcrle_stwrite,
+                         HCPcrle_seek,
+                         HCPcrle_inquire,
+                         HCPcrle_read,
+                         HCPcrle_write,
+                         HCPcrle_endaccess,
+                         NULL,
+                         NULL};
 #endif
 
 #endif /* __CRLE_H */
