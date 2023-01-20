@@ -59,11 +59,11 @@ typedef struct {
 } comp_model_stdio_info_t;
 
 #ifndef MSTDIO_MASTER
-extern funclist_t mstdio_funcs; /* functions to perform run-length encoding */
+extern funclist_t mstdio_funcs;
 #else
-funclist_t mstdio_funcs = {/* functions to perform run-length encoding */
+funclist_t mstdio_funcs = {
                            HCPmstdio_stread, HCPmstdio_stwrite, HCPmstdio_seek,     HCPmstdio_inquire,
-                           HCPmstdio_read,   HCPmstdio_write,   HCPmstdio_endaccess};
+                           HCPmstdio_read,   HCPmstdio_write,   HCPmstdio_endaccess, NULL, NULL};
 #endif
 
 #endif /* __MSTDIO_H */

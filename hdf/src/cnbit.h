@@ -84,7 +84,7 @@ extern funclist_t cnbit_funcs; /* functions to perform N-bit encoding */
 #else
 funclist_t cnbit_funcs = {/* functions to perform N-bit encoding */
                           HCPcnbit_stread, HCPcnbit_stwrite, HCPcnbit_seek,     HCPcnbit_inquire,
-                          HCPcnbit_read,   HCPcnbit_write,   HCPcnbit_endaccess};
+                          HCPcnbit_read,   HCPcnbit_write,   HCPcnbit_endaccess, NULL, NULL};
 #endif
 
 #endif /* __CNBIT_H */

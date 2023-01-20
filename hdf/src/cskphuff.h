@@ -80,7 +80,7 @@ extern funclist_t cskphuff_funcs; /* functions to perform skipping huffman encod
 funclist_t cskphuff_funcs = {/* functions to perform skipping huffman encoding */
                              HCPcskphuff_stread,   HCPcskphuff_stwrite, HCPcskphuff_seek,
                              HCPcskphuff_inquire,  HCPcskphuff_read,    HCPcskphuff_write,
-                             HCPcskphuff_endaccess};
+                             HCPcskphuff_endaccess, NULL, NULL};
 #endif
 
 #endif /* __CSKPHUFF_H */
