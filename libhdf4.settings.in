@@ -14,7 +14,6 @@ General Information:
 
 Compiling Options:
 ------------------
-               Compilation Mode: @CONFIG_MODE@
                      C compiler: @CC_VERSION@
                          CFLAGS: @CFLAGS@
                        CPPFLAGS: @CPPFLAGS@
@@ -22,9 +21,9 @@ Compiling Options:
                Static Libraries: @enable_static@
   Statically Linked Executables: @STATIC_EXEC@
                         LDFLAGS: @LDFLAGS@
- 	 	Extra libraries: @LIBS@
- 		       Archiver: @AR@
- 		 	 Ranlib: @RANLIB@
+                Extra libraries: @LIBS@
+                       Archiver: @AR@
+                         Ranlib: @RANLIB@
 
 Languages:
 ----------
