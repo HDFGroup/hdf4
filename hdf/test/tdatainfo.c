@@ -427,7 +427,8 @@ test_append_vs()
         data_buf0[rec_num][0] = 10 + rec_num;
 
     /* Create and write to another very simple vdata */
-    VHstoredata(fid, "Field 1", (const uint8 *)data_buf0, N_RECORDS, DFNT_INT32, "Another One Field One Order", "Very Simple Vdata");
+    VHstoredata(fid, "Field 1", (const uint8 *)data_buf0, N_RECORDS, DFNT_INT32,
+                "Another One Field One Order", "Very Simple Vdata");
 
     /* Make up the second batch of data for the appendable vdata */
     for (rec_num = 0; rec_num < N_RECORDS; rec_num++) {
@@ -1135,12 +1136,8 @@ test_getpalinfo()
     intn          status;               /* status returned from routines */
 
     /* Initialize the 8-bit image array */
-    static uint8 raster_data[WIDTH][LENGTH] =
-    { {1, 2, 3, 4, 5},
-      {5, 4, 3, 2, 1},
-      {1, 2, 3, 4, 5},
-      {5, 4, 3, 2, 1},
-      {6, 4, 2, 0, 2} };
+    static uint8 raster_data[WIDTH][LENGTH] = {
+        {1, 2, 3, 4, 5}, {5, 4, 3, 2, 1}, {1, 2, 3, 4, 5}, {5, 4, 3, 2, 1}, {6, 4, 2, 0, 2}};
 
     /* Palettes are added in the following means and order:
         paletteA (DFPputpal)

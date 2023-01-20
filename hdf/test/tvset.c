@@ -3239,10 +3239,10 @@ test_blockinfo_multLBs(void)
 static void
 test_VSofclass()
 {
-    intn  status_n; /* returned status for functions returning an intn  */
-    int32 status;   /* returned status for functions returning an int32 */
-    int32 fid;
-    intn  n_vds = 0;
+    intn    status_n; /* returned status for functions returning an intn  */
+    int32   status;   /* returned status for functions returning an int32 */
+    int32   fid;
+    intn    n_vds    = 0;
     uint16 *refarray = NULL;
 
     /* Open file LKBLK_FILE for reading. */
