@@ -90,7 +90,7 @@ test_rank0()
        is not corrupted */
     for (j = 0; j < Y_LENGTH; j++) {
         for (i = 0; i < X_LENGTH; i++) {
-            buf[j][i]     = i;
+            buf[j][i] = i;
         }
     }
     /* Select the first dataset */
