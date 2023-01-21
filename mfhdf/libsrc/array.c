@@ -477,10 +477,12 @@ bool_t
 xdr_NC_array(XDR *xdrs, NC_array **app)
 {
     bool_t (*xdr_NC_fnct)();
-    u_long  count = 0, *countp = NULL;
-    nc_type type = NC_UNSPECIFIED, *typep = NULL;
-    bool_t  stat;
-    Void   *vp = NULL;
+    unsigned  count = 0;
+    unsigned *countp = NULL;
+    unsigned  temp_count = 0;
+    nc_type   type = NC_UNSPECIFIED;
+    bool_t    stat;
+    Void     *vp = NULL;
 
     switch (xdrs->x_op) {
         case XDR_FREE:
@@ -499,30 +501,26 @@ xdr_NC_array(XDR *xdrs, NC_array **app)
             /* fall into */
         case XDR_DECODE:
             countp = &count;
-            typep  = &type;
             break;
     }
 
-    if (!xdr_int(xdrs, typep)) {
+    if (!xdr_int(xdrs, &type)) {
         NCadvise(NC_EXDR, "xdr_NC_array:xdr_int (enum)");
         return (FALSE);
     }
 
-    {
-        u_long temp_count = 0;
-        if (!xdr_u_long(xdrs, &temp_count)) {
-            NCadvise(NC_EXDR, "xdr_NC_array:xdr_u_long");
-            return (FALSE);
-        }
-        *countp = temp_count;
+    if (!xdr_u_int(xdrs, &temp_count)) {
+        NCadvise(NC_EXDR, "xdr_NC_array:xdr_u_long");
+        return (FALSE);
     }
+    *countp = temp_count;
 
     if (xdrs->x_op == XDR_DECODE) {
-        if (*typep == NC_UNSPECIFIED && *countp == 0) {
+        if (type == NC_UNSPECIFIED && *countp == 0) {
             *app = NULL;
             return (TRUE);
-        } /* else */
-        (*app) = NC_new_array(*typep, (unsigned)*countp, (Void *)NULL);
+        }
+        (*app) = NC_new_array(type, (unsigned)*countp, (Void *)NULL);
         if ((*app) == NULL) {
             NCadvise(NC_EXDR, "xdr_NC_array:NC_new_array  (second call)");
             return (FALSE);
@@ -531,7 +529,7 @@ xdr_NC_array(XDR *xdrs, NC_array **app)
 
     vp = (*app)->values;
 
-    switch (*typep) {
+    switch (type) {
         case NC_UNSPECIFIED:
         case NC_BYTE:
         case NC_CHAR:
@@ -563,7 +561,7 @@ xdr_NC_array(XDR *xdrs, NC_array **app)
             xdr_NC_fnct = xdr_NC_attr;
             goto loop;
         default: {
-            NCadvise(NC_EBADTYPE, "xdr_NC_array: unknown type 0x%x", (unsigned)*typep);
+            NCadvise(NC_EBADTYPE, "xdr_NC_array: unknown type %d", type);
             return (FALSE);
         }
     }
