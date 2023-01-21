@@ -98,7 +98,7 @@ fi
 
 if test "X-gcc" = "X-$cc_vendor"; then
 
-    CFLAGS="-Wall -Wcast-qual -Wconversion -Wextra -Wfloat-equal -Wformat=2 -Winit-self -Winvalid-pch -Wmissing-include-dirs -Wshadow -Wundef -Wwrite-strings -pedantic -Wno-c++-compat"
+    CFLAGS="$CFLAGS -Wall -Wcast-qual -Wconversion -Wextra -Wfloat-equal -Wformat=2 -Winit-self -Winvalid-pch -Wmissing-include-dirs -Wshadow -Wundef -Wwrite-strings -pedantic -Wno-c++-compat"
     if test $cc_vers_major -ge 10; then
         CFLAGS="$CFLAGS -Wno-error=implicit-function-declaration"
     else
