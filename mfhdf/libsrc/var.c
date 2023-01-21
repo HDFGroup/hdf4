@@ -729,16 +729,6 @@ xdr_NC_var(XDR *xdrs, NC_var **vpp)
     if (!xdr_NC_array(xdrs, &((*vpp)->attrs)))
         return (FALSE);
 
-        /* This USE_ENUM may not be necessary after xdr and code cleanup.
-        See HDFFR-1318, HDFFR-1327, and other Mac/XDR issues for details.
-        I had tried and xdr_enum worked consistently even though there were
-        failures in other places. -BMR, 6/14/2016 */
-#ifdef USE_ENUM
-    if (!xdr_enum(xdrs, (enum_t *)&((*vpp)->type))) {
-        return (FALSE);
-    }
-#else
-    /* Using static variable seemed to help prevent bad memory accesses */
     {
         int temp_type = 0;
         if (!xdr_int(xdrs, &temp_type)) {
@@ -747,7 +737,6 @@ xdr_NC_var(XDR *xdrs, NC_var **vpp)
         (*vpp)->type = (nc_type)temp_type;
     }
 
-#endif
     {
         u_long temp_len = 0;
         if (!xdr_u_long(xdrs, &temp_len)) {

@@ -503,21 +503,11 @@ xdr_NC_array(XDR *xdrs, NC_array **app)
             break;
     }
 
-        /* This USE_ENUM may not be necessary after xdr and code cleanup.
-        See HDFFR-1318, HDFFR-1327, and other Mac/XDR issues for details.
-           -BMR, 6/14/2016 */
-#ifdef USE_ENUM
-    if (!xdr_enum(xdrs, (enum_t *)typep)) {
-        NCadvise(NC_EXDR, "xdr_NC_array:xdr_enum");
-        return (FALSE);
-    }
-#else
     if (!xdr_int(xdrs, typep)) {
         NCadvise(NC_EXDR, "xdr_NC_array:xdr_int (enum)");
         return (FALSE);
     }
 
-#endif
     {
         u_long temp_count = 0;
         if (!xdr_u_long(xdrs, &temp_count)) {
