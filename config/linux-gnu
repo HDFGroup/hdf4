@@ -26,6 +26,16 @@ if test -z "$CC"; then
   CC_BASENAME=gcc
 fi
 
+# Figure out GNU C compiler flags
+. $srcdir/config/gnu-flags
+
+# Figure out Intel C compiler flags
+. $srcdir/config/intel-flags
+
+# Figure out Clang C compiler flags
+. $srcdir/config/clang-flags
+
+# Use default Fortran compiler according to what C compiler is used.
 if test "X-$F77" = "X-"; then
   F77=gfortran
   F77_BASENAME=gfortran
@@ -57,27 +67,41 @@ else
     esac
 fi
 
+# Figure out GNU FC compiler flags
+. $srcdir/config/gnu-fflags
 
 # compiler version strings
+
+# check if the compiler_version_info is already set
+if test -z "$cc_version_info"; then
+
 case $CC in
     # whatever matches *pgcc* will also match *gcc*, so this one must come first
     *pgcc*)
-        cc_version_info=`$CC $CFLAGS -V 2>&1 | grep 'pgcc'`
-        cc_version=`echo $cc_version |sed 's/pgcc \([-a-z0-9\.\-]*\).*/\1/'`
+        cc_version_info=`$CC $CFLAGS $H5_CFLAGS -V 2>&1 | grep 'pgcc'`
         ;;
 
     *gcc*)
-        cc_version_info=`$CC $CFLAGS --version 2>&1 | grep -v 'PathScale' |\
+        cc_version_info=`$CC $CFLAGS $H5_CFLAGS --version 2>&1 | grep -v 'PathScale' |\
             grep 'GCC' | sed 's/\(.*(GCC) [-a-z0-9\. ]*\).*/\1/'`
-        cc_version="`$CC $CFLAGS -v 2>&1 | grep -v 'PathScale' |\
-            grep -v '^icc.*version' |\
-            grep 'gcc version' | sed 's/.*gcc version \([-a-z0-9\.]*\).*/\1/'`"
         ;;
+    # this must come before *icc* for the same reason
+    *mpicc*)
+        cc_version_info=`$CC $CCFLAGS $H5_CCFLAGS -v 2>&1 | grep 'version' |\
+            sed 's/^[a-z0-9]* for //' |\
+            sed 's/\"/\\\"/g' |\
+            sed 's/^\([a-z]* \)/ built with \1/1'`
+        cc_version_info=`echo $cc_version_info`
+        ;; 
 
     *icc*)
-        cc_version_info=`$CC $CFLAGS -V 2>&1 | grep 'Version' |\
+        cc_version_info=`$CC $CCFLAGS $H5_CCFLAGS -V 2>&1 | grep 'Version' |\
             sed 's/\(Intel.* Compiler\).*\( Version [a-z0-9\.]*\).*\( Build [0-9]*\)/\1\2\3/'`
-        cc_version=`echo $cc_version |sed 's/.*Version \([-a-z0-9\.\-]*\).*/\1/'`
+        ;;
+
+    *clang*)
+        cc_version_info="`$CC $CFLAGS $H5_CFLAGS --version 2>&1 |\
+            grep 'clang version' | sed 's/.*clang version \([-a-z0-9\.]*\).*/\1/'`"
         ;;
 
     *)
@@ -85,14 +109,7 @@ case $CC in
         ;;
 esac
 
-if test X != "X$cc_version"; then
-    # Get the compiler version numbers
-    cc_vers_major=`echo $cc_version | cut -f1 -d.`
 fi
-test -n "$cc_vers_major" || cc_vers_major=0
-
-# Figure out GNU C compiler flags
-. $srcdir/config/gnu-flags
 
 # get fortran version info
 case $F77 in
@@ -151,9 +168,6 @@ if test X != "X$fc_version"; then
     # Get the compiler version numbers
     fc_vers_major=`echo $fc_version | cut -f1 -d.`
 fi
-
-# Figure out GNU FC compiler flags
-. $srcdir/config/gnu-fflags
 
 # Overriding Configure Tests
 # --------------------------
