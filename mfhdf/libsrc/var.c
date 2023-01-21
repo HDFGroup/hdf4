@@ -707,9 +707,9 @@ ncvarcpy(int incdf, int varid, int outcdf)
 bool_t
 xdr_NC_var(XDR *xdrs, NC_var **vpp)
 {
-    unsigned begin = 0;
+    unsigned begin     = 0;
     int      temp_type = 0;
-    unsigned temp_len = 0;
+    unsigned temp_len  = 0;
 
     if (xdrs->x_op == XDR_FREE) {
         NC_free_var((*vpp));

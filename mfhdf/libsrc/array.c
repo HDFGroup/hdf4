@@ -477,10 +477,10 @@ bool_t
 xdr_NC_array(XDR *xdrs, NC_array **app)
 {
     bool_t (*xdr_NC_fnct)();
-    unsigned  count = 0;
-    unsigned *countp = NULL;
+    unsigned  count      = 0;
+    unsigned *countp     = NULL;
     unsigned  temp_count = 0;
-    nc_type   type = NC_UNSPECIFIED;
+    nc_type   type       = NC_UNSPECIFIED;
     bool_t    stat;
     Void     *vp = NULL;
 
