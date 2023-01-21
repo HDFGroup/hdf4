@@ -38,6 +38,20 @@ New features and changes
 ========================
     Configuration:
     -------------
+    - Better Autotools compiler support on Linux and MacOS
+
+      The machine configuration files have been split into machine and
+      compiler files, which have been updated with additional warning
+      flags and compiler support.
+
+      Both Linux and MacOS now support:
+
+        * gcc
+        * clang
+        * icc/icx
+
+      (DER - 2023/01/20)
+
     - The Fortran interface is considered deprecated
 
       The Fortran interface is broken on 64-bit systems (see the known
