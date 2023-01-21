@@ -42,7 +42,7 @@
  * and verifies the returned values. */
 static void
 check_datasizes(int32 fid,               /* file id */
-                char *sds_name,          /* name of the inquired SDS */
+                const char *sds_name,    /* name of the inquired SDS */
                 int32 comp_size_check,   /* expected compressed data size */
                 int32 uncomp_size_check, /* expected non-compressed data size */
                 int  *ret_num_errs /* current number of errors */)
@@ -282,7 +282,7 @@ test_empty_SDSs(int32 fid)
 static intn
 test_chunked_partial(int32 fid)
 {
-    int32         sds_id, sds_index;
+    int32         sds_id;
     int32         dim_sizes[RANK], origin[RANK];
     HDF_CHUNK_DEF c_def;          /* Chunking definitions */
     int32         flag;           /* Chunking flag */
@@ -362,9 +362,9 @@ test_chkcmp_SDSs(int32 fid)
     int           num_errs = 0; /* number of errors so far */
 
     /* Declare chunks data type and initialize some of them. */
-    int16 chunk1[CHK_X][CHK_Y] = {{1, 1}, {1, 1}, {1, 1}};
+    int32 chunk1[CHK_X][CHK_Y] = {{1, 1}, {1, 1}, {1, 1}};
 
-    int16 chunk3[CHK_X][CHK_Y] = {{3, 3}, {3, 3}, {3, 3}};
+    int32 chunk3[CHK_X][CHK_Y] = {{3, 3}, {3, 3}, {3, 3}};
 
     int32 chunk2[CHK_X][CHK_Y] = {{2, 2}, {2, 2}, {2, 2}};
 
@@ -520,13 +520,16 @@ test_chkcmp_SDSs(int32 fid)
 static intn
 test_extend_SDSs(int32 fid)
 {
-    int32 sds_id, sds_index;
-    int32 dimsize[2], start[2], edges[2];
-    int32 dimsize1[1], start1[1], edges1[1];
+    int32 sds_id      = -1;
+    int32 dimsize[2]  = {-1, -1};
+    int32 start[2]    = {-1, -1};
+    int32 edges[2]    = {-1, -1};
+    int32 start1[1]   = {-1};
+    int32 edges1[1]   = {-1};
     int32 data[Y_LENGTH][X_LENGTH];
     float fdata[Y_LENGTH];
     int32 output[Y_LENGTH][X_LENGTH];
-    intn  status;
+    intn  status = -1;
     int   i, j;
     int   num_errs = 0; /* number of errors so far */
 
@@ -534,6 +537,10 @@ test_extend_SDSs(int32 fid)
     for (j = 0; j < Y_LENGTH; j++) {
         for (i = 0; i < X_LENGTH; i++)
             data[j][i] = (i + j) + 1;
+    }
+
+    for (j = 0; j < Y_LENGTH; j++) {
+        fdata[j] = -1.0F;
     }
 
     /* Create a 2x2 dataset called "EmptyDataset" */
@@ -569,7 +576,7 @@ test_extend_SDSs(int32 fid)
                     Y_LENGTH * X_LENGTH * SIZE_INT32, &num_errs);
 
     /* Create another dataset with 1 unlimited dimension */
-    sds_id = SDcreate(fid, "AppendableDataset 2", DFNT_FLOAT64, 1, dimsize);
+    sds_id = SDcreate(fid, "AppendableDataset 2", DFNT_FLOAT32, 1, dimsize);
     CHECK(sds_id, FAIL, "test_extend_SDSs: SDcreate 'AppendableDataset 2'");
 
     /* Define the location and size of the data to be written to the dataset */
@@ -595,8 +602,8 @@ test_extend_SDSs(int32 fid)
 extern int
 test_datasizes()
 {
-    int32 fid;
-    intn  status;
+    int32 fid      = -1;
+    intn  status   = -1;
     int   num_errs = 0;
 
     /* Output message about test being performed */

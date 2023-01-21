@@ -1245,7 +1245,7 @@ HLPwrite(accrec_t *access_rec, int32 length, const void *datap)
     int32 current_length;     /* length of current block */
     int32 nbytes        = 0;  /* #bytes written by any single Hwrite */
     int32 bytes_written = 0;  /* total #bytes written by HLIwrite */
-    uint8 local_ptbuf[4];
+    uint8 local_ptbuf[4] = {0, 0, 0, 0};
     int32 ret_value = SUCCEED;
 
     /* convert file id to file record */

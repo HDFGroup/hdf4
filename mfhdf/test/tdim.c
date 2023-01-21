@@ -695,8 +695,8 @@ test_dim_strs()
     dims[0] = LENGTH4;
     dims[1] = LENGTH5;
 
-    for (i = 0; i < rank; i++)
-        edges[i] = dims[i];
+    edges[0] = LENGTH2;
+    edges[1] = LENGTH3;
 
     /* Create the data set */
     sds_id = SDcreate(fid, DS3_NAME, DFNT_UINT32, rank, dims);

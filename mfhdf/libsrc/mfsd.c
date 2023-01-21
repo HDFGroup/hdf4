@@ -324,9 +324,9 @@ SDstart(const char *name, /* IN: file name to open */
         int32       HDFmode /* IN: access mode to open file with */)
 {
     CONSTR(FUNC, "SDstart"); /* for HGOTO_ERROR */
-    intn  cdfid;
-    int32 fid;
-    intn  NCmode;
+    intn  cdfid     = -1;
+    int32 fid       = -1;
+    intn  NCmode    = -1;
     NC   *handle    = NULL;
     int32 ret_value = SUCCEED;
 
