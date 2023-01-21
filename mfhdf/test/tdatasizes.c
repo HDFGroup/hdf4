@@ -592,7 +592,7 @@ test_extend_SDSs(int32 fid)
     CHECK(status, FAIL, "test_extend_SDSs: SDendaccess");
 
     /* Check the size of the data of this SDS */
-    check_datasizes(fid, "AppendableDataset 2", Y_LENGTH * SIZE_FLOAT64, Y_LENGTH * SIZE_FLOAT64, &num_errs);
+    check_datasizes(fid, "AppendableDataset 2", Y_LENGTH * SIZE_FLOAT32, Y_LENGTH * SIZE_FLOAT32, &num_errs);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
