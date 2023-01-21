@@ -57,8 +57,8 @@ test_mgr_dup_images()
     }
 
     /* Initialize data we are going to write out, same for all images */
-    for (i = 0; i < Y_LENGTH; i++)
-        for (j = 0; j < X_LENGTH; j++)
+    for (i = 0; i < X_LENGTH; i++)
+        for (j = 0; j < Y_LENGTH; j++)
             image_data[i][j] = (uint8)(i + j);
 
     /**** Make an image with compressed data ****/
@@ -93,7 +93,7 @@ test_mgr_dup_images()
         HDF_CHUNK_DEF c_def;
 
         /* Create the second image */
-        riid = GRcreate(grid, IMAGE_CHUNK, N_COMPS, DFNT_UINT8, il, dims);
+        riid = GRcreate(grid, IMAGE_CHUNK, 1, DFNT_UINT8, il, dims);
         CHECK_VOID(riid, FAIL, "GRcreate");
 
         /* Make it chunked image */
@@ -121,7 +121,7 @@ test_mgr_dup_images()
         HDF_CHUNK_DEF c_def;
 
         /* Create the image */
-        riid = GRcreate(grid, IMAGE_CMP_CHK, 3, DFNT_UINT8, il, dims);
+        riid = GRcreate(grid, IMAGE_CMP_CHK, 1, DFNT_UINT8, il, dims);
         CHECK_VOID(riid, FAIL, "GRcreate");
 
         /* Define the location, pattern, and size of the data set */
@@ -137,7 +137,7 @@ test_mgr_dup_images()
         CHECK_VOID(status, FAIL, "GRsetchunk");
 
         /* Write the stored data to the image array */
-        status = GRwriteimage(riid, start, NULL, edges, (VOIDP)image_data);
+        status = GRwriteimage(riid, start, NULL, edges, image_data);
         CHECK_VOID(status, FAIL, "GRwriteimage");
 
         /* Terminate access to the image */
