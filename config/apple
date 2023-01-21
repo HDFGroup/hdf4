@@ -20,11 +20,20 @@
 #       variable is set based on the incoming value of $CC and is only
 #       used within this file.
 
-# Use clang as the default C compiler.
+# The default compiler is `clang'.
 if test "X-$CC" = "X-"; then
     CC=clang
     CC_BASENAME=clang
 fi
+
+# Figure out GNU C compiler flags
+. $srcdir/config/gnu-flags
+
+# Figure out Intel C compiler flags
+. $srcdir/config/intel-flags
+
+# Figure out Clang C compiler flags
+. $srcdir/config/clang-flags
 
 # Use gfortran as the default F77 compiler.
 if test "X-$F77" = "X-"; then
@@ -32,96 +41,96 @@ if test "X-$F77" = "X-"; then
   F77_BASENAME=gfortran
 fi
 
-case $CC_BASENAME in
-  clang)
-    CFLAGS="$CFLAGS -Wno-error=implicit-function-declaration"
-    DEBUG_CFLAGS="-g -ansi -Wall -pedantic "
-    DEBUG_CPPFLAGS=
-    # There is a bug somewhere in mfhdf/libsrc that is exposed by compiling
-    # with any optimization in $CC in Lion (Darwin 11) & up
-    # Use -O0 for now.
-    case "$host_os" in
-    darwin1[1-9].*)    # Lion & Mountain Lion & Mavericks & Yosemeti
-        xOFLAG="-O2"
-        ;;
-    *)        # Other OSX versions
-        xOFLAG="-O2"
-        ;;
-    esac
-    PROD_CFLAGS=${PROD_CFLAGS:-"$xOFLAG"}
-    PROD_CPPFLAGS=
-    PROFILE_CFLAGS="-pg"
-    PROFILE_CPPFLAGS=
-    ;;
+# Figure out GNU FC compiler flags
+. $srcdir/config/gnu-fflags
 
-  icc)
-    CFLAGS="$CFLAGS"
-    DEBUG_CFLAGS="-g"
-    DEBUG_CPPFLAGS=
-    # There is a bug somewhere in mfhdf/libsrc that is exposed by compiling
-    # with any optimization in $CC in Lion, Mountain Lion, Mavericks and Yosemeti systems.
-    # Use -O0 for now.
-    case "$host_os" in
-    darwin1[1-9].*)    # Lion & Mountain Lion & Mavericks & Yosemite & 5 more
-        xOFLAG="-O2"
-        ;;
-    *)        # Other OSX versions
-        xOFLAG="-O2"
-        ;;
-    esac
-    PROD_CFLAGS=${PROD_CFLAGS:-"$xOFLAG"}
-    PROD_CPPFLAGS=
-    PROFILE_CFLAGS="-pg"
-    PROFILE_CPPFLAGS=
-    ;;
+# compiler version strings
 
-  gcc)
-    if test $cc_vers_major -ge 10; then
-        CFLAGS="$CFLAGS -Wno-error=implicit-function-declaration"
-    else
-        CFLAGS="$CFLAGS"
-    fi
-    DEBUG_CFLAGS="-g -ansi -Wall -pedantic "
-    DEBUG_CPPFLAGS=
-    # There is a bug somewhere in mfhdf/libsrc that is exposed by compiling
-    # with any optimization in $CC in Lion, Mountain Lion, Mavericks and Yosemeti systems.
-    # Use -O0 for now.
-    case "$host_os" in
-    darwin1[1-9].*)    # Lion & Mountain Lion & Mavericks & Yosemeti & 5 more
-        xOFLAG="-O2"
-        ;;
-    *)        # Other OSX versions
-        xOFLAG="-O2"
-        ;;
-    esac
-    PROD_CFLAGS=${PROD_CFLAGS:-"-ansi  -Wall -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Wconversion -Wmissing-prototypes -Wnested-externs -pedantic $xOFLAG"}
-    PROD_CFLAGS=${PROD_CFLAGS:-"-ansi  -Wall -pedantic $xOFLAG"}
-    PROD_CPPFLAGS=
-    PROFILE_CFLAGS="-pg"
-    PROFILE_CPPFLAGS=
-    ;;
+# check if the compiler_version_info is already set
+if test -z "$cc_version_info"; then
 
-  *)
-    CFLAGS="$CFLAGS"
-    DEBUG_CFLAGS="-g"
-    DEBUG_CPPFLAGS=
-    PROD_CFLAGS=${PROD_CFLAGS:-"-O2"}
-    PROD_CPPFLAGS=
-    PROFILE_CFLAGS="-pg"
-    PROFILE_CPPFLAGS=
-    ;;
+case $CC in
+    # whatever matches *pgcc* will also match *gcc*, so this one must come first
+    *pgcc*)
+        cc_version_info=`$CC $CFLAGS $H5_CFLAGS -V 2>&1 | grep 'pgcc'`
+        ;;
+
+    *gcc*)
+        cc_version_info=`$CC $CFLAGS $H5_CFLAGS --version 2>&1 | grep -v 'PathScale' |\
+            grep 'GCC' | sed 's/\(.*(GCC) [-a-z0-9\. ]*\).*/\1/'`
+        ;;
+
+    *icc*)
+        cc_version_info=`$CC $CCFLAGS $H5_CCFLAGS -V 2>&1 | grep 'Version' |\
+            sed 's/\(Intel.* Compiler\).*\( Version [a-z0-9\.]*\).*\( Build [0-9]*\)/\1\2\3/'`
+        ;;
+
+    *clang*)
+        cc_version_info="`$CC $CFLAGS $H5_CFLAGS --version 2>&1 |\
+            grep 'clang version' | sed 's/.*clang version \([-a-z0-9\.]*\).*/\1/'`"
+        ;;
+
+    *)
+        echo "No match to get cc_version_info for $CC"
+        ;;
 esac
 
-case $F77_BASENAME in
-  gfortran)
-    if test $fc_vers_major -ge 10; then
-        FFLAGS="$FFLAGS -fallow-argument-mismatch"
-    else
-        FFLAGS="$FFLAGS"
-    fi
-    DEBUG_FFLAGS="-g"
-    PROD_FFLAGS="-O2"
-    PROFILE_FFLAGS="-pg"
-    ;;
+fi
+
+# get fortran version info
+case $F77 in
+    *gfortran*)
+        fc_version_info=`$F77 $FFLAGS --version 2>&1 |\
+            grep 'GCC' | sed 's/\(.*(GCC) [-a-z0-9\. ]*\).*/\1/'`
+        fc_version="`$F77 $FFLAGS -v 2>&1 |grep 'gcc version' |\
+                sed 's/.*gcc version \([-a-z0-9\.]*\).*/\1/'`"
+        if test X != "X$fc_version"; then
+            fc_version=`echo $fc_version |sed 's/[-a-z]//g'`
+        fi
+        ;;
+
+    *ifc*|*ifort*)
+        fc_version_info=`$F77 $FFLAGS -V 2>&1 | grep 'Version' |\
+            sed 's/\(Intel.* Compiler\).*\( Version [a-z0-9\.]*\).*\( Build [0-9]*\)/\1\2\3/'`
+        fc_version="`$F77 $FFLAGS -V 2>&1 |grep '^Intel'`"
+        if test X != "X$fc_version"; then
+            fc_version="`echo $fc_version |sed 's/.*Version \([-a-z0-9\.\-]*\).*/\1/'`"
+        fi
+        ;;
+
+    *f95*)
+        # Figure out which compiler we are using: pgf90 or Absoft f95
+        RM='rm -f'
+        tmpfile=/tmp/cmpver.$$
+        $F77 -V >$tmpfile
+        if test -s "$tmpfile"; then
+            if( grep -s 'Absoft' $tmpfile > /dev/null) then
+                FC_BASENAME=f95
+            fi
+        fi
+        $RM $tmpfile
+        fc_version_info=`$F77 -V | grep Absoft`
+        ;;
+
+    *g95*|*g77*)
+        fc_version_info=`$F77 $FFLAGS --version 2>&1 |\
+            grep 'GCC'`
+        ;;
+
+    *pgf90*)
+        fc_version_info=`$F77 $FFLAGS -V 2>&1 | grep 'pgf90'`
+        fc_version="`$F77 $FFLAGS -V 2>&1 |grep '^pgf90 '`"
+        if test X != "X$fc_version"; then
+            fc_version=`echo $fc_version |sed 's/pgf90 \([-a-z0-9\.\-]*\).*/\1/'`
+        fi
+        ;;
+
+     *)
+        echo "No match to get fc_version_info for $F77"
+        ;;
 esac
 
+if test X != "X$fc_version"; then
+    # Get the compiler version numbers
+    fc_vers_major=`echo $fc_version | cut -f1 -d.`
+fi

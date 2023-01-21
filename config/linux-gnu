@@ -85,14 +85,6 @@ case $CC in
         cc_version_info=`$CC $CFLAGS $H5_CFLAGS --version 2>&1 | grep -v 'PathScale' |\
             grep 'GCC' | sed 's/\(.*(GCC) [-a-z0-9\. ]*\).*/\1/'`
         ;;
-    # this must come before *icc* for the same reason
-    *mpicc*)
-        cc_version_info=`$CC $CCFLAGS $H5_CCFLAGS -v 2>&1 | grep 'version' |\
-            sed 's/^[a-z0-9]* for //' |\
-            sed 's/\"/\\\"/g' |\
-            sed 's/^\([a-z]* \)/ built with \1/1'`
-        cc_version_info=`echo $cc_version_info`
-        ;; 
 
     *icc*)
         cc_version_info=`$CC $CCFLAGS $H5_CCFLAGS -V 2>&1 | grep 'Version' |\
