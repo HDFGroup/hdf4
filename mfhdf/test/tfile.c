@@ -54,13 +54,13 @@
 static intn
 test_file_inuse()
 {
-    int32 file_id, sd_id[5], sds_id[5];
-    intn  statusn;
-    int32 dims[1], start[1], edges[1], rank;
-    int16 array_data[DIM0];
-    char *names[5] = {"data1", "data2", "data3", "data4", "data5"};
-    intn  i, j;
-    intn  num_errs = 0; /* number of errors so far */
+    int32       file_id, sd_id[5], sds_id[5];
+    intn        statusn;
+    int32       dims[1], start[1], edges[1], rank;
+    int16       array_data[DIM0];
+    const char *names[5] = {"data1", "data2", "data3", "data4", "data5"};
+    intn        i, j;
+    intn        num_errs = 0; /* number of errors so far */
 
     for (i = 0; i < 5; i++) {
         /* Create and open the file and initiate the SD interface. */
@@ -90,7 +90,10 @@ test_file_inuse()
 
         /* Fill the stored-data array with values. */
         for (j = 0; j < DIM0; j++) {
-            array_data[j] = (i + 1) * (j + 1);
+            /* Max values: i = 5, j = DIM0 (10), so the largest value
+             * stored is 6 * 11 = 66
+             */
+            array_data[j] = (int16)((i + 1) * (j + 1));
         }
 
         /* Write data to the data set */
@@ -326,7 +329,6 @@ test_longfilename()
     int32 fid;     /* file id */
     int32 dset1;   /* dataset ids */
     int32 dims[2]; /* variable shapes */
-    int   ii;
     char  dsname[10];
     char  filename[256];
     intn  status   = 0; /* status returned by called functions */
@@ -377,16 +379,16 @@ test_longfilename()
 static int
 test_fileformat()
 {
-    int32 fid;                  /* file id */
-    intn  ishdf            = 0; /* true if file has HDF format */
-    intn  isnetcdf         = 0; /* true if file has classic netCDF format */
-    intn  isnetcdf64       = 0; /* true if file has 64-bit netCDF format */
-    intn  num_errs         = 0; /* number of errors so far */
-    char  testfile[512]    = "";
-    char *hdf_basename     = "hdffile.hdf"; /* hdf file to test */
-    char *netcdf1_basename = "Roy.nc";      /* classic netCDF file to test */
-    char *netcdf2_basename = "Roy-64.nc";   /* netCDF 64-bit file to test */
-    intn  status           = 0;             /* status returned by called functions */
+    int32       fid;                  /* file id */
+    intn        ishdf            = 0; /* true if file has HDF format */
+    intn        isnetcdf         = 0; /* true if file has classic netCDF format */
+    intn        isnetcdf64       = 0; /* true if file has 64-bit netCDF format */
+    intn        num_errs         = 0; /* number of errors so far */
+    char        testfile[512]    = "";
+    const char *hdf_basename     = "hdffile.hdf"; /* hdf file to test */
+    const char *netcdf1_basename = "Roy.nc";      /* classic netCDF file to test */
+    const char *netcdf2_basename = "Roy-64.nc";   /* netCDF 64-bit file to test */
+    intn        status           = 0;             /* status returned by called functions */
 
     /* Create an empty HDF file to test Hishdf. */
     fid = SDstart(hdf_basename, DFACC_CREATE);

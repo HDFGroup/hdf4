@@ -805,8 +805,9 @@ HIget_bitfile_rec(void)
     CONSTR(FUNC, "HIget_bitfile_rec");
     bitrec_t *ret_value = NULL;
 
-    ret_value = (bitrec_t *)HDcalloc(1, sizeof(bitrec_t));
-    if ((ret_value->bytea = (uint8 *)HDmalloc(BITBUF_SIZE)) == NULL)
+    if ((ret_value = HDcalloc(1, sizeof(bitrec_t))) == NULL)
+        HRETURN_ERROR(DFE_NOSPACE, NULL);
+    if ((ret_value->bytea = HDcalloc(1, BITBUF_SIZE)) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, NULL);
 
     return ret_value;

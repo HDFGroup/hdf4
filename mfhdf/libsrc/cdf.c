@@ -308,11 +308,11 @@ NC_new_cdf(const char *name, int mode)
     }
 
     /* Delay allocating xdr struct until it is needed */
-    cdf->xdrs = (XDR *)HDmalloc(sizeof(XDR));
+    cdf->xdrs = (XDR *)HDcalloc(1, sizeof(XDR));
     if (cdf->xdrs == NULL) {
         nc_serror("NC_new_cdf: xdrs");
         HGOTO_FAIL(NULL);
-    } /* else */
+    }
 
     /*
      * Set up the XDR functions that some of the netCDF old code uses

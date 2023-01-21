@@ -1203,18 +1203,18 @@ test_getszipinfo()
 
     int32        sd_id, sds_id, sds_index;
     intn         status;
-    int32        dim_sizes[2], array_rank, num_type, attributes;
+    int32        dim_sizes[2] = {-1, -1};
+    int32        array_rank   = -1;
+    int32        num_type     = -1;
+    int32        attributes   = -1;
     char         name[H4_MAX_NC_NAME];
-    comp_info    c_info;
-    int32        start[2], edges[2];
     comp_coder_t comp_type;
-    int32        comp_size, uncomp_size, orig_size;
-    int16        fill_value = 0; /* Fill value */
-    int          i, j;
+    int32        comp_size     = -1;
+    int32        uncomp_size   = -1;
+    int32        orig_size     = -1;
     int          num_errs      = 0; /* number of errors so far */
     char         testfile[512] = "";
-    int32       *out_data      = NULL;
-    char        *basename      = "sds_szipped.dat";
+    const char  *basename      = "sds_szipped.dat";
 
     /********************* End of variable declaration ***********************/
 
@@ -1301,18 +1301,18 @@ test_getszipdata()
 {
     /************************* Variable declaration **************************/
 
-    int32     sd_id, sds_id;
-    intn      status;
-    int32     dim_sizes[2], array_rank, num_type, attributes;
-    char      name[H4_MAX_NC_NAME];
-    comp_info c_info;
-    int32     start[2], edges[2];
-    int16     fill_value = 0; /* Fill value */
-    int       i, j;
-    int       num_errs = 0; /* number of errors so far */
-    int32     out_data[SZ_LENGTH][SZ_WIDTH];
-    char      testfile[512] = "";
-    char     *basename      = "sds_szipped.dat";
+    int32       sd_id, sds_id;
+    intn        status;
+    int32       dim_sizes[2], array_rank, num_type, attributes;
+    char        name[H4_MAX_NC_NAME];
+    comp_info   c_info;
+    int32       start[2], edges[2];
+    int16       fill_value = 0; /* Fill value */
+    int         i, j;
+    int         num_errs = 0; /* number of errors so far */
+    int32       out_data[SZ_LENGTH][SZ_WIDTH];
+    char        testfile[512] = "";
+    const char *basename      = "sds_szipped.dat";
 
     /* data to compare against read data from sds_szipped.dat */
     int32 in_data[SZ_LENGTH][SZ_WIDTH] = {

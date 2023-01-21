@@ -676,7 +676,7 @@ SDIresizebuf(void **buf, int32 *buf_size, int32 size_wanted)
         if (*buf)
             HDfree(*buf);
         *buf_size = size_wanted;
-        *buf      = HDmalloc(size_wanted);
+        *buf      = HDcalloc(1, size_wanted);
         if (*buf == NULL) {
             *buf_size = 0;
             ret_value = FAIL;
@@ -1826,7 +1826,7 @@ NCvcmaxcontig(NC *handle, NC_var *vp, const long *origin, const long *edges)
 static int
 NCsimplerecio(NC *handle, NC_var *vp, const long *start, const long *edges, Void *values)
 {
-    long offset;
+    long offset = -1;
     long newrecs;
 
     /* 'start' should be verified as valid upon prior to entry to this

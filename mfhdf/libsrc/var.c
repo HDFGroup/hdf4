@@ -707,7 +707,9 @@ ncvarcpy(int incdf, int varid, int outcdf)
 bool_t
 xdr_NC_var(XDR *xdrs, NC_var **vpp)
 {
-    u_long begin = 0;
+    unsigned begin     = 0;
+    int      temp_type = 0;
+    unsigned temp_len  = 0;
 
     if (xdrs->x_op == XDR_FREE) {
         NC_free_var((*vpp));
@@ -729,28 +731,22 @@ xdr_NC_var(XDR *xdrs, NC_var **vpp)
     if (!xdr_NC_array(xdrs, &((*vpp)->attrs)))
         return (FALSE);
 
-    {
-        int temp_type = 0;
-        if (!xdr_int(xdrs, &temp_type)) {
-            return (FALSE);
-        }
-        (*vpp)->type = (nc_type)temp_type;
+    if (!xdr_int(xdrs, &temp_type)) {
+        return (FALSE);
     }
+    (*vpp)->type = (nc_type)temp_type;
 
-    {
-        u_long temp_len = 0;
-        if (!xdr_u_long(xdrs, &temp_len)) {
-            return (FALSE);
-        }
-        (*vpp)->len = temp_len;
+    if (!xdr_u_int(xdrs, &temp_len)) {
+        return (FALSE);
     }
+    (*vpp)->len = (unsigned long)temp_len;
 
     if (xdrs->x_op == XDR_DECODE)
         (*vpp)->szof = NC_typelen((*vpp)->type);
 
     if (xdrs->x_op == XDR_ENCODE)
         begin = (*vpp)->begin;
-    if (!xdr_u_long(xdrs, &begin))
+    if (!xdr_u_int(xdrs, &begin))
         return (FALSE);
     if (xdrs->x_op == XDR_DECODE)
         (*vpp)->begin = begin;
