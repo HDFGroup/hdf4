@@ -27,7 +27,7 @@
     FAIL, otherwise.
 *********************************************************************/
 intn
-make_datafilename(char *basename, char *testfile, unsigned int size)
+make_datafilename(const char *basename, char *testfile, unsigned int size)
 {
     char *srcdir   = getenv("srcdir");
     char *tempfile = NULL;
