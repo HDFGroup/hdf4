@@ -41,11 +41,11 @@
 /* Utility routine that selects that named SDS, then calls SDgetdatasize
  * and verifies the returned values. */
 static void
-check_datasizes(int32 fid,               /* file id */
-                const char *sds_name,    /* name of the inquired SDS */
-                int32 comp_size_check,   /* expected compressed data size */
-                int32 uncomp_size_check, /* expected non-compressed data size */
-                int  *ret_num_errs /* current number of errors */)
+check_datasizes(int32       fid,               /* file id */
+                const char *sds_name,          /* name of the inquired SDS */
+                int32       comp_size_check,   /* expected compressed data size */
+                int32       uncomp_size_check, /* expected non-compressed data size */
+                int        *ret_num_errs /* current number of errors */)
 {
     int32 sds_id, sds_index;
     intn  status;
@@ -520,12 +520,12 @@ test_chkcmp_SDSs(int32 fid)
 static intn
 test_extend_SDSs(int32 fid)
 {
-    int32 sds_id      = -1;
-    int32 dimsize[2]  = {-1, -1};
-    int32 start[2]    = {-1, -1};
-    int32 edges[2]    = {-1, -1};
-    int32 start1[1]   = {-1};
-    int32 edges1[1]   = {-1};
+    int32 sds_id     = -1;
+    int32 dimsize[2] = {-1, -1};
+    int32 start[2]   = {-1, -1};
+    int32 edges[2]   = {-1, -1};
+    int32 start1[1]  = {-1};
+    int32 edges1[1]  = {-1};
     int32 data[Y_LENGTH][X_LENGTH];
     float fdata[Y_LENGTH];
     int32 output[Y_LENGTH][X_LENGTH];

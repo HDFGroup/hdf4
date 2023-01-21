@@ -453,11 +453,11 @@ test_mult_setexternal()
 {
     int32 sd_id, sds1_id;
     int32 dim_sizes[3];
-    int32 sds1_size = 0;
+    int32 sds1_size    = 0;
     char *extfile_name = NULL;
-    intn  name_len = 0;
-    intn  status   = SUCCEED;
-    intn  num_errs = 0; /* number of errors in compression test so far */
+    intn  name_len     = 0;
+    intn  status       = SUCCEED;
+    intn  num_errs     = 0; /* number of errors in compression test so far */
 
     /* Create the file and initialize the SD interface */
     sd_id = SDstart(EXTTST, DFACC_CREATE);
