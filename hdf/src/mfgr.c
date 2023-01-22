@@ -5434,7 +5434,7 @@ GRgetchunkinfo(int32          riid,      /* IN: sds access id */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 #ifdef CHK_DEBUG
-    fprintf(stderr, "%s: ri_ptr->img_aid =%d \n", FUNC, ri_ptr->img_aid);
+    fprintf(stderr, "%s: ri_ptr->img_aid =%d \n", __func__, ri_ptr->img_aid);
 #endif
 
     /* inquire about element */
@@ -5558,7 +5558,7 @@ GRwritechunk(int32       riid,   /* IN: access aid to GR */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 #ifdef CHK_DEBUG
-    fprintf(stderr, "%s: ri_ptr->img_aid =%d \n", FUNC, ri_ptr->img_aid);
+    fprintf(stderr, "%s: ri_ptr->img_aid =%d \n", __func__, ri_ptr->img_aid);
 #endif
     comp_type = COMP_CODE_NONE;
     scheme    = ri_ptr->img_dim.comp_tag;
@@ -5755,7 +5755,7 @@ GRreadchunk(int32  riid,   /* IN: access aid to GR */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 #ifdef CHK_DEBUG
-    fprintf(stderr, "%s: ri_ptr->img_aid =%d \n", FUNC, ri_ptr->img_aid);
+    fprintf(stderr, "%s: ri_ptr->img_aid =%d \n", __func__, ri_ptr->img_aid);
 #endif
 
     comp_type = COMP_CODE_NONE;
@@ -5968,7 +5968,7 @@ GRsetchunkcache(int32 riid,     /* IN: access aid to mess with */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 #ifdef CHK_DEBUG
-    fprintf(stderr, "%s: ri_ptr->img_aid =%d \n", FUNC, ri_ptr->img_aid);
+    fprintf(stderr, "%s: ri_ptr->img_aid =%d \n", __func__, ri_ptr->img_aid);
 #endif
 
     /* inquire about element */

@@ -121,21 +121,20 @@ bool_t
 nssdc_read_cdf(XDR *xdrs, NC **handlep)
 {
 
-    NC                *handle;
-    uint8              buffer[1000];
-    uint8             *b;
-    int32              dummy;
-    static const char *FUNC = "nssdc_read_cdf";
-    hdf_file_t         fp;
-    intn               i, j;
-    int32              rank, current_var, current_dim, hdftype;
-    nc_type            nctype;
-    intn               dims[H4_MAX_VAR_DIMS];
-    int32              dim_sz[H4_MAX_VAR_DIMS];
-    NC_dim            *dim_rec[H4_MAX_VAR_DIMS];
-    NC_var            *vars[H4_MAX_NC_VARS];
-    NC_var            *var = NULL; /* shorthand for vars[current_var] */
-    vix_t             *end;
+    NC        *handle;
+    uint8      buffer[1000];
+    uint8     *b;
+    int32      dummy;
+    hdf_file_t fp;
+    intn       i, j;
+    int32      rank, current_var, current_dim, hdftype;
+    nc_type    nctype;
+    intn       dims[H4_MAX_VAR_DIMS];
+    int32      dim_sz[H4_MAX_VAR_DIMS];
+    NC_dim    *dim_rec[H4_MAX_VAR_DIMS];
+    NC_var    *vars[H4_MAX_NC_VARS];
+    NC_var    *var = NULL; /* shorthand for vars[current_var] */
+    vix_t     *end;
 
     (void)xdrs;
 

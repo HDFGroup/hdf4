@@ -242,9 +242,8 @@ NC_new_cdf(const char *name, int mode)
 #ifdef HDF
     int32 hdf_mode = DFACC_RDWR; /* default */
 #endif
-    NC                *cdf       = NULL;
-    static const char *FUNC      = "NC_new_cdf";
-    NC                *ret_value = NULL;
+    NC *cdf       = NULL;
+    NC *ret_value = NULL;
 
     /* allocate an NC struct */
     cdf = (NC *)HDcalloc(1, sizeof(NC));
@@ -785,12 +784,11 @@ done:
 int
 hdf_create_compat_dim_vdata(XDR *xdrs, NC *handle, NC_dim *dim, int32 dimval_ver)
 {
-    static const char *FUNC = "hdf_create_compat_dim_vdata";
-    int                i;
-    int                ref;
-    long               dsize;
-    int32             *val       = NULL;
-    int                ret_value = FAIL;
+    int    i;
+    int    ref;
+    long   dsize;
+    int32 *val       = NULL;
+    int    ret_value = FAIL;
 
 #ifdef DEBUG
     fprintf(stderr, "hdf_create_compat_dim_vdata I've been called\n");
