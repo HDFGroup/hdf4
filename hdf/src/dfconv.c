@@ -95,14 +95,13 @@ static int (*DFKnumout)(VOIDP source, VOIDP dest, uint32 num_elm, uint32 source_
 PRIVATE int
 DFKInoset(VOIDP source, VOIDP dest, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
 {
-    HEclear();
+    (void)source;
+    (void)dest;
+    (void)num_elm;
+    (void)source_stride;
+    (void)dest_stride;
 
-    /* shut the compiler up about not using the arguments */
-    source        = source;
-    dest          = dest;
-    num_elm       = num_elm;
-    source_stride = source_stride;
-    dest_stride   = dest_stride;
+    HEclear();
 
     /* If this is causing a problem for you, call DFKsetntype */
     HERROR(DFE_BADCONV);

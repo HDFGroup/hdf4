@@ -1084,6 +1084,8 @@ DFR8writeref(const char *filename, uint16 ref)
 {
     intn ret_value = SUCCEED;
 
+    (void)filename;
+
     HEclear();
 
     /* Perform global, one-time initialization */
@@ -1091,8 +1093,6 @@ DFR8writeref(const char *filename, uint16 ref)
         if (DFR8Istart() == FAIL)
             HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
-    /* shut compiler up */
-    filename = filename;
     Writeref = ref;
 
 done:

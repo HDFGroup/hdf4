@@ -3034,10 +3034,9 @@ HPfreediskblock(filerec_t *file_rec, int32 block_off, int32 block_size)
 {
     intn ret_value = SUCCEED;
 
-    /* shut compiler up */
-    file_rec   = file_rec;
-    block_off  = block_off;
-    block_size = block_size;
+    (void)file_rec;
+    (void)block_off;
+    (void)block_size;
 
     return ret_value;
 } /* HPfreediskblock() */

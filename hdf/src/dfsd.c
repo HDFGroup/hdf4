@@ -4019,8 +4019,7 @@ DFSDIputslice(int32 windims[], VOIDP data, int32 dims[], intn isfortran)
     uint8 *buf;           /* buffer containing converted current row */
     intn   ret_value = SUCCEED;
 
-    /* shut compiler up */
-    isfortran = isfortran;
+    (void)isfortran;
 
     HEclear();
 
@@ -4478,8 +4477,8 @@ DFSDreadslab(const char *filename, int32 start[], int32 slab_size[], int32 strid
              int32 buffer_size[])
 {
     intn ret_value = SUCCEED;
-    /* shut compiler up */
-    stride = stride;
+
+    (void)stride;
 
     ret_value = (DFSDgetslice(filename, start, slab_size, buffer, buffer_size));
 
@@ -4691,8 +4690,7 @@ DFSDwriteslab(int32 start[], int32 stride[], int32 count[], VOIDP data)
                             /*   of current block */
     intn ret_value = SUCCEED;
 
-    /* shut compiler up */
-    stride = stride;
+    (void)stride;
 
     /* Clear error stack  */
     HEclear();

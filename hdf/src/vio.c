@@ -1102,11 +1102,10 @@ VSappendable(int32 vkey, /* IN: vdata key */
     VDATA        *vs        = NULL;
     int32         ret_value = SUCCEED;
 
+    (void)blk;
+
     /* clear error stack */
     HEclear();
-
-    /* shut compiler up */
-    blk = blk;
 
     /* check vdata key is a valid */
     if (HAatom_group(vkey) != VSIDGROUP)

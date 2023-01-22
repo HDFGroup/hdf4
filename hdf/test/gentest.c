@@ -185,9 +185,8 @@ gen_nbit_test(void)
 int
 main(int argc, char *argv[])
 {
-    /* shut compiler up */
-    argc = argc;
-    argv = argv;
+    (void)argc;
+    (void)argv;
 
     gen_bitio_test();
     gen_nbit_test();
