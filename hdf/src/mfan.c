@@ -162,8 +162,7 @@ ANIanncmp(void *i, /* IN: annotation key(tag,ref) */
           void *j, /* IN: annotation key(tag,ref) */
           intn  value /* not used */)
 {
-    /* shut compiler up */
-    value = value;
+    (void)value;
 
     if (*(int32 *)i == *(int32 *)j)
         return 0;
@@ -1739,8 +1738,8 @@ EXPORT intn
 ANendaccess(int32 ann_id /* IN: annotation id */)
 {
     intn ret_value = SUCCEED;
-    /* shut compiler up */
-    ann_id = ann_id;
+
+    (void)ann_id;
 
     return ret_value;
 } /* ANendaccess() */

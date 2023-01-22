@@ -184,8 +184,7 @@ mcache_open(VOID *key,       /* IN: byte string used as handle to share buffers 
     intn          entry; /* index into hash table */
     int32         pageno;
 
-    /* shut compiler up */
-    key = key;
+    (void)key;
 
     /* Set the pagesize and max # of pages to cache */
     if (pagesize == 0)
@@ -330,8 +329,7 @@ mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
 #endif               /* UNUSED */
     intn list_hit;   /* hit flag */
 
-    /* shut compiler up */
-    flags = flags;
+    (void)flags;
 
 #ifdef MCACHE_DEBUG
     (VOID) fprintf(stderr, "mcache_get: entering \n");

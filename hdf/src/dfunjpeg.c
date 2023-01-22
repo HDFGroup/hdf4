@@ -230,11 +230,10 @@ jpeg_HDF_src(struct jpeg_decompress_struct *cinfo_ptr, int32 file_id, uint16 tag
 {
     hdf_src_ptr src;
 
-    /* shut compiler up */
-    image  = image;
-    xdim   = xdim;
-    ydim   = ydim;
-    scheme = scheme;
+    (void)image;
+    (void)xdim;
+    (void)ydim;
+    (void)scheme;
 
     if ((src = HDmalloc(sizeof(hdf_source_mgr))) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);

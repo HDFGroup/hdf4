@@ -173,8 +173,7 @@ DESCRIPTION
 int32
 HRPstread(accrec_t *rec)
 {
-    /* shut compilers up*/
-    rec = rec;
+    (void)rec;
 
     assert(0 && "Should never be called");
     return (FAIL);
@@ -196,8 +195,7 @@ DESCRIPTION
 int32
 HRPstwrite(accrec_t *rec)
 {
-    /* shut compilers up*/
-    rec = rec;
+    (void)rec;
 
     assert(0 && "Should never be called");
     return (FAIL);

@@ -465,8 +465,7 @@ HCPcrle_seek(accrec_t *access_rec, int32 offset, int origin)
     comp_coder_rle_info_t *rle_info; /* ptr to RLE info */
     uint8                 *tmp_buf;  /* pointer to throw-away buffer */
 
-    /* shut compiler up */
-    origin = origin;
+    (void)origin;
 
     info     = (compinfo_t *)access_rec->special_info;
     rle_info = &(info->cinfo.coder_info.rle_info);
@@ -607,16 +606,15 @@ int32
 HCPcrle_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength,
                 int32 *poffset, int32 *pposn, int16 *paccess, int16 *pspecial)
 {
-    /* shut compiler up */
-    access_rec = access_rec;
-    pfile_id   = pfile_id;
-    ptag       = ptag;
-    pref       = pref;
-    plength    = plength;
-    poffset    = poffset;
-    pposn      = pposn;
-    paccess    = paccess;
-    pspecial   = pspecial;
+    (void)access_rec;
+    (void)pfile_id;
+    (void)ptag;
+    (void)pref;
+    (void)plength;
+    (void)poffset;
+    (void)pposn;
+    (void)paccess;
+    (void)pspecial;
 
     return (SUCCEED);
 } /* HCPcrle_inquire() */

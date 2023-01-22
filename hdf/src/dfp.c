@@ -387,8 +387,8 @@ DFPwriteref(const char *filename, uint16 ref)
 {
     intn ret_value = SUCCEED;
 
-    /* shut compiler up */
-    filename = filename;
+    (void)filename;
+
     Writeref = ref;
 
     return ret_value;

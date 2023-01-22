@@ -279,16 +279,15 @@ int32
 HCPcnone_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength,
                  int32 *poffset, int32 *pposn, int16 *paccess, int16 *pspecial)
 {
-    /* shut compiler up */
-    access_rec = access_rec;
-    pfile_id   = pfile_id;
-    ptag       = ptag;
-    pref       = pref;
-    plength    = plength;
-    poffset    = poffset;
-    pposn      = pposn;
-    paccess    = paccess;
-    pspecial   = pspecial;
+    (void)access_rec;
+    (void)pfile_id;
+    (void)ptag;
+    (void)pref;
+    (void)plength;
+    (void)poffset;
+    (void)pposn;
+    (void)paccess;
+    (void)pspecial;
 
     return (SUCCEED);
 } /* HCPcnone_inquire() */

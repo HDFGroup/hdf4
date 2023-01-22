@@ -229,8 +229,7 @@ PRIVATE intn GRIisspecial_type(int32 file_id, uint16 tag, uint16 ref);
 intn
 rigcompare(void *k1, void *k2, intn cmparg)
 {
-    /* shut compiler up */
-    cmparg = cmparg;
+    (void)cmparg;
 
     return ((intn)((*(int32 *)k1) - (*(int32 *)k2))); /* valid for integer keys */
 } /* rigcompare */

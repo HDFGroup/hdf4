@@ -532,8 +532,7 @@ vcompare(VOIDP k1, /* IN: first key to compare*/
          VOIDP k2, /* IN: second key to compare */
          intn  cmparg /* IN: not used */)
 {
-    /* shut compiler up */
-    cmparg = cmparg;
+    (void)cmparg;
 
     return (intn)((*(int32 *)k1) - (*(int32 *)k2)); /* valid for integer keys */
 } /* vcompare */

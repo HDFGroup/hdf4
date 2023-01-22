@@ -950,8 +950,7 @@ DFGRIgetimlut(const char *filename, void *imlut, int32 xdim, int32 ydim, int typ
     int32  aid;
     intn   ret_value = SUCCEED;
 
-    /* shut compiler up */
-    isfortran = isfortran;
+    (void)isfortran;
 
     HEclear();
 
@@ -1210,8 +1209,7 @@ DFGRIaddimlut(const char *filename, const void *imlut, int32 xdim, int32 ydim, i
     uint8 *p;
     intn   ret_value = SUCCEED;
 
-    /* shut compiler up */
-    isfortran = isfortran;
+    (void)isfortran;
 
     HEclear();
 
