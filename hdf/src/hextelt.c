@@ -1170,8 +1170,8 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
     /* initialize HDFEXTDIR and HDFCREATEDIR if invoked the first time */
     if (firstinvoked) {
         firstinvoked    = 0;
-        HDFEXTCREATEDIR = HDgetenv("HDFEXTCREATEDIR");
-        HDFEXTDIR       = HDgetenv("HDFEXTDIR");
+        HDFEXTCREATEDIR = getenv("HDFEXTCREATEDIR");
+        HDFEXTDIR       = getenv("HDFEXTDIR");
     }
 
     if (!ext_fname)
@@ -1224,7 +1224,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
         }                             /*DFACC_CREATE */
         case DFACC_OLD: {             /* Locating an old external element */
             if (*fname == DIR_SEPC) { /* Absolute Pathname */
-                if (HDstat(fname, &filestat) == 0) {
+                if (stat(fname, &filestat) == 0) {
                     ret_value = (HDstrcpy(finalpath, fname));
                     goto done;
                 }
@@ -1264,7 +1264,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
                             HGOTO_ERROR(DFE_NOSPACE, NULL);
 
                         HDstrcpy(path_pt, fname);
-                        if (HDstat(finalpath, &filestat) == 0) {
+                        if (stat(finalpath, &filestat) == 0) {
                             ret_value = finalpath;
                             goto done;
                         }
@@ -1294,7 +1294,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
                             HGOTO_ERROR(DFE_NOSPACE, NULL);
 
                         HDstrcpy(path_pt, fname);
-                        if (HDstat(finalpath, &filestat) == 0) {
+                        if (stat(finalpath, &filestat) == 0) {
                             ret_value = finalpath;
                             goto done;
                         }
@@ -1305,7 +1305,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
                 /* Don't have Head File information now.  Continue */
 
                 /* See if the file exists */
-                if (HDstat(fname, &filestat) == 0) {
+                if (stat(fname, &filestat) == 0) {
                     ret_value = (HDstrcpy(finalpath, fname));
                     goto done;
                 }

@@ -353,19 +353,6 @@ typedef intptr_t hdf_pint_t;
 #define HDmemcmp(dst, src, n) (memcmp((const void *)(dst), (const void *)(src), (size_t)(n)))
 
 /**************************************************************************
- *  Misc. functions
- **************************************************************************/
-#define HDstat(path, result) (stat(path, result))
-#define HDgetenv(s1)         (getenv(s1))
-#define HDputenv(s1)         (putenv(s1))
-#define HDltoa(v)            (ltoa(v))
-#if defined(__sun) && defined(__GNUC__)
-#define HDatexit(f) (0) /* we punt on the Sun using gcc */
-#else
-#define HDatexit(f) (atexit(f))
-#endif
-
-/**************************************************************************
  *  JPEG #define's - Look in the JPEG docs before changing - (Q)
  **************************************************************************/
 

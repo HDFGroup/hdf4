@@ -2091,10 +2091,17 @@ HIstart(void)
     /* Don't call this routine again... */
     library_terminate = TRUE;
 
-    /* Install atexit() library cleanup routine */
+    /* Install atexit() library cleanup routine
+     *
+     * In the past, this had problems with Solaris + gcc
+     *
+     * XXX: Check to see if this is true with modern Solaris
+     */
+#if !(defined(__sun) && defined(__GNUC__))
     if (install_atexit == TRUE)
-        if (HDatexit(&HPend) != 0)
+        if (atexit(&HPend) != 0)
             HGOTO_ERROR(DFE_CANTINIT, FAIL);
+#endif
 
     /* Create the file ID and access ID groups */
     if (HAinit_group(FIDGROUP, 64) == FAIL)
