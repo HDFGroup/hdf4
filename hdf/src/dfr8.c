@@ -161,7 +161,6 @@ PRIVATE intn DFR8Istart(void);
 intn
 DFR8setcompress(int32 type, comp_info *cinfo)
 {
-    CONSTR(FUNC, "DFR8setcompress");
     intn ret_value = SUCCEED;
 
     /* Perform global, one-time initialization */
@@ -220,7 +219,6 @@ done:
 intn
 DFR8getdims(const char *filename, int32 *pxdim, int32 *pydim, intn *pispal)
 {
-    CONSTR(FUNC, "DFR8getdims");
     int32 file_id   = (-1);
     intn  ret_value = SUCCEED;
 
@@ -289,7 +287,6 @@ done:
 intn
 DFR8getimage(const char *filename, uint8 *image, int32 xdim, int32 ydim, uint8 *pal)
 {
-    CONSTR(FUNC, "DFR8getimage");
     int32 file_id   = (-1);
     intn  ret_value = SUCCEED;
 
@@ -383,7 +380,6 @@ done:
 intn
 DFR8setpalette(uint8 *pal)
 {
-    CONSTR(FUNC, "DFR8setpalette");
     intn ret_value = SUCCEED;
 
     /* Perform global, one-time initialization */
@@ -449,7 +445,6 @@ done:
 PRIVATE intn
 DFR8Iputimage(const char *filename, const void *image, int32 xdim, int32 ydim, uint16 compress, intn append)
 {
-    CONSTR(FUNC, "DFR8Iputimage");
     intn   acc_mode; /* create if op 0, write if op 1 */
     int32  file_id = (-1);
     uint16 r8tag;       /* RIG and raster tags of image being written */
@@ -613,7 +608,6 @@ done:
 intn
 DFR8putimage(const char *filename, const void *image, int32 xdim, int32 ydim, uint16 compress)
 {
-    CONSTR(FUNC, "DFR8putimage"); /* for HERROR */
     intn ret_value;
 
     /* Perform global, one-time initialization */
@@ -659,7 +653,6 @@ done:
 intn
 DFR8addimage(const char *filename, const void *image, int32 xdim, int32 ydim, uint16 compress)
 {
-    CONSTR(FUNC, "DFR8addimage"); /* for HERROR */
     intn ret_value;
 
     /* Perform global, one-time initialization */
@@ -705,7 +698,6 @@ done:
 PRIVATE intn
 DFR8getrig(int32 file_id, uint16 ref, DFRrig *rig)
 {
-    CONSTR(FUNC, "DFR8getrig");
     uint16 elt_tag;
     uint16 elt_ref;
     uint8  ntstring[4];
@@ -818,7 +810,6 @@ done:
 PRIVATE intn
 DFR8putrig(int32 file_id, uint16 ref, DFRrig *rig, intn wdim)
 {
-    CONSTR(FUNC, "DFR8putrig");
     static uint16 prevdimref = 0; /*ref of previous dimension record, to reuse */
     R8dim         im8dim;
     uint8         ntstring[4];
@@ -924,7 +915,6 @@ done:
 intn
 DFR8nimages(const char *filename)
 {
-    CONSTR(FUNC, "DFR8nimages");
     int32  file_id;
     int32  group_id;           /* group ID for looking at RIG's */
     uint16 elt_tag, elt_ref;   /* tag/ref of items in a RIG */
@@ -1089,7 +1079,6 @@ done:
 intn
 DFR8readref(const char *filename, uint16 ref)
 {
-    CONSTR(FUNC, "DFR8readref");
     int32 file_id = (-1);
     int32 aid;
     intn  ret_value = SUCCEED;
@@ -1145,7 +1134,6 @@ done:
 intn
 DFR8writeref(const char *filename, uint16 ref)
 {
-    CONSTR(FUNC, "DFR8writeref"); /* for HERROR */
     intn ret_value = SUCCEED;
 
     HEclear();
@@ -1187,7 +1175,6 @@ done:
 intn
 DFR8restart(void)
 {
-    CONSTR(FUNC, "DFR8restart"); /* for HERROR */
     intn ret_value = SUCCEED;
 
     /* Perform global, one-time initialization */
@@ -1225,7 +1212,6 @@ done:
 uint16
 DFR8lastref(void)
 {
-    CONSTR(FUNC, "DFR8lastref"); /* for HERROR */
     uint16 ret_value;
 
     /* Perform global, one-time initialization */
@@ -1259,7 +1245,6 @@ done:
 intn
 DFR8getpalref(uint16 *pal_ref)
 {
-    CONSTR(FUNC, "DFR8getpalref");
     intn ret_value = SUCCEED;
 
     HEclear();
@@ -1307,7 +1292,6 @@ done:
 PRIVATE int32
 DFR8Iopen(const char *filename, intn acc_mode)
 {
-    CONSTR(FUNC, "DFR8Iopen");
     int32 file_id;
     int32 ret_value = SUCCEED;
 
@@ -1366,7 +1350,6 @@ done:
 PRIVATE intn
 DFR8Iriginfo(int32 file_id)
 {
-    CONSTR(FUNC, "DFR8Iriginfo");
     uint16 riref = 0, ciref = 0;
     int32  aid = FAIL;
     uint16 ref;
@@ -1526,7 +1509,6 @@ done:
 PRIVATE intn
 DFR8Istart(void)
 {
-    CONSTR(FUNC, "DFR8Istart"); /* for HERROR */
     intn ret_value = SUCCEED;
 
     /* Don't call this routine again... */

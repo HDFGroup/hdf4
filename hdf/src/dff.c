@@ -97,7 +97,6 @@ ndfclose(intf *dfile)
 FRETVAL(intf)
 ndfdesc(intf *dfile, intf ptr[][4], intf *begin, intf *num)
 {
-    CONSTR(FUNC, "dfdesc");
     DFdesc *ptr1;
     int     i;
     intf    num_desc;
@@ -307,7 +306,6 @@ ndfsfind(intf *dfile, intf *tag, intf *ref)
 FRETVAL(intf)
 ndffind(intf *dfile, intf *itag, intf *iref, intf *len)
 {
-    CONSTR(FUNC, "dffind");
     DFdesc *ptr1;
     intf    ret;
 

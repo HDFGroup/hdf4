@@ -581,7 +581,6 @@ DFANclear(void)
 intn
 DFANIclear(void)
 {
-    CONSTR(FUNC, "DFANIclear");
     DFANdirhead *p, *q;
     intn         ret_value = SUCCEED;
 
@@ -646,7 +645,6 @@ done:
 PRIVATE int32
 DFANIopen(const char *filename, intn acc_mode)
 {
-    CONSTR(FUNC, "DFANIopen");
     int32        file_id;
     DFANdirhead *p, *q;
     int32        ret_value = SUCCEED;
@@ -741,7 +739,6 @@ done:
 uint16
 DFANIlocate(int32 file_id, int type, uint16 tag, uint16 ref)
 {
-    CONSTR(FUNC, "DFANIlocate");
     uint8        datadi[4];
     int32        more_anns;
     int32        aid;
@@ -845,7 +842,6 @@ done:
 int
 DFANIaddentry(int type, uint16 annref, uint16 datatag, uint16 dataref)
 {
-    CONSTR(FUNC, "DFANIaddentry");
     int32        i;
     DFANdirhead *p, *q;
     int          ret_value = SUCCEED;
@@ -925,7 +921,6 @@ done:
 int32
 DFANIgetannlen(const char *filename, uint16 tag, uint16 ref, int type)
 {
-    CONSTR(FUNC, "DFANIgetannlen");
     int32  file_id, annlength;
     uint16 anntag, annref;
     int32  ret_value = SUCCEED;
@@ -998,7 +993,6 @@ done:
 intn
 DFANIgetann(const char *filename, uint16 tag, uint16 ref, uint8 *ann, int32 maxlen, int type, int isfortran)
 {
-    CONSTR(FUNC, "DFANIgetann");
     int32  file_id, aid;
     int32  annlen;
     uint16 anntag, annref;
@@ -1111,7 +1105,6 @@ done:
 intn
 DFANIputann(const char *filename, uint16 tag, uint16 ref, uint8 *ann, int32 annlen, int type)
 {
-    CONSTR(FUNC, "DFANIputann");
     int32  file_id, aid;
     int    newflag = 0;
     uint16 anntag, annref;
@@ -1234,7 +1227,6 @@ intn
 DFANIlablist(const char *filename, uint16 tag, uint16 reflist[], uint8 *labellist, int listsize, int maxlen,
              int startpos, int isfortran)
 {
-    CONSTR(FUNC, "DFANIlablist");
     int32        i;
     int          j, k;
     int32        file_id, aid, len;
@@ -1377,7 +1369,6 @@ done:
 int
 DFANIaddfann(int32 file_id, char *ann, int32 annlen, int type)
 {
-    CONSTR(FUNC, "DFANIaddfann");
     uint16 anntag, annref;
     int    ret_value = SUCCEED;
 
@@ -1436,7 +1427,6 @@ done:
 int32
 DFANIgetfannlen(int32 file_id, int type, int isfirst)
 {
-    CONSTR(FUNC, "DFANIgetfannlen");
     uint16 anntag, annref;
     int32  aid;
     int32  length;
@@ -1516,7 +1506,6 @@ done:
 int32
 DFANIgetfann(int32 file_id, char *ann, int32 maxlen, int type, int isfirst)
 {
-    CONSTR(FUNC, "DFANIgetfann");
     uint16 anntag, annref;
     int32  length, aid;
     int32  ret_value = SUCCEED;
@@ -1616,7 +1605,6 @@ done:
 PRIVATE intn
 DFANIstart(void)
 {
-    CONSTR(FUNC, "DFANIstart"); /* for HERROR */
     intn ret_value = SUCCEED;
 
     /* Don't call this routine again... */

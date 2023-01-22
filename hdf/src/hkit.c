@@ -75,7 +75,6 @@ DESCRIPTION
 char *
 HDf2cstring(_fcd fdesc, intn len)
 {
-    CONSTR(FUNC, "HDf2cstring"); /* for HERROR */
     char *cstr, *str;
     int   i;
 
@@ -146,8 +145,6 @@ DESCRIPTION
 intn
 HDflush(int32 file_id)
 {
-    CONSTR(FUNC, "HDflush"); /* for HERROR */
-
     filerec_t *file_rec;
 
     file_rec = HAatom_object(file_id);
@@ -200,7 +197,6 @@ DESCRIPTION
 char *
 HDgettagsname(uint16 tag)
 {
-    CONSTR(FUNC, "HDgettagsname"); /* for HERROR */
     char *ret = NULL;
     intn  i;
 
@@ -268,7 +264,6 @@ DESCRIPTION
 char *
 HDgetNTdesc(int32 nt)
 {
-    CONSTR(FUNC, "HDgetNTdesc"); /* for HERROR */
     intn  i;
     char *ret_desc = NULL;
 
@@ -322,7 +317,6 @@ DESCRIPTION
 const char *
 HDfidtoname(int32 file_id)
 {
-    CONSTR(FUNC, "HDfidtoname"); /* for HERROR */
     filerec_t *file_rec;
 
     if ((file_rec = HAatom_object(file_id)) == NULL)

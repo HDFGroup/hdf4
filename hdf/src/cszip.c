@@ -61,7 +61,6 @@ PRIVATE int32 HCIcszip_term(compinfo_t *info);
 PRIVATE int32
 HCIcszip_init(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HCIcszip_init");
     compinfo_t             *info;      /* special element information */
     comp_coder_szip_info_t *szip_info; /* ptr to SZIP info */
     intn                    ret_value = SUCCEED;
@@ -124,7 +123,6 @@ done:
 PRIVATE int32
 HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
 {
-    CONSTR(FUNC, "HCIcszip_decode");
 #ifdef H4_HAVE_LIBSZ
     accrec_t               *access_rec;
     comp_coder_szip_info_t *szip_info; /* ptr to SZIP info */
@@ -352,7 +350,6 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
 PRIVATE int32
 HCIcszip_encode(compinfo_t *info, int32 length, const uint8 *buf)
 {
-    CONSTR(FUNC, "HCIcszip_encode");
 #ifdef H4_HAVE_SZIP_ENCODER
     int                     bytes_per_pixel;
     comp_coder_szip_info_t *szip_info; /* ptr to SZIP info */
@@ -418,7 +415,6 @@ HCIcszip_encode(compinfo_t *info, int32 length, const uint8 *buf)
 PRIVATE int32
 HCIcszip_term(compinfo_t *info)
 {
-    CONSTR(FUNC, "HCIcszip_term");
 #ifdef H4_HAVE_SZIP_ENCODER
     comp_coder_szip_info_t *szip_info; /* ptr to SZIP info */
     uint8                  *out_buffer;
@@ -637,7 +633,6 @@ HCIcszip_term(compinfo_t *info)
 PRIVATE int32
 HCIcszip_staccess(accrec_t *access_rec, int16 acc_mode)
 {
-    CONSTR(FUNC, "HCIcszip_staccess");
     compinfo_t *info; /* special element information */
 
     info = (compinfo_t *)access_rec->special_info;
@@ -683,7 +678,6 @@ HCIcszip_staccess(accrec_t *access_rec, int16 acc_mode)
 int32
 HCPcszip_stread(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HCPcszip_stread");
     int32 ret;
 
     if ((ret = HCIcszip_staccess(access_rec, DFACC_READ)) == FAIL)
@@ -713,7 +707,6 @@ HCPcszip_stread(accrec_t *access_rec)
 int32
 HCPcszip_stwrite(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HCPcszip_stwrite");
     int32 ret;
 
     if ((ret = HCIcszip_staccess(access_rec, DFACC_WRITE)) == FAIL)
@@ -750,7 +743,6 @@ HCPcszip_stwrite(accrec_t *access_rec)
 int32
 HCPcszip_seek(accrec_t *access_rec, int32 offset, int origin)
 {
-    CONSTR(FUNC, "HCPcszip_seek");
     compinfo_t             *info;      /* special element information */
     comp_coder_szip_info_t *szip_info; /* ptr to SZIP info */
     uint8                  *tmp_buf;   /* pointer to throw-away buffer */
@@ -816,7 +808,6 @@ HCPcszip_seek(accrec_t *access_rec, int32 offset, int origin)
 int32
 HCPcszip_read(accrec_t *access_rec, int32 length, void *data)
 {
-    CONSTR(FUNC, "HCPcszip_read");
     compinfo_t *info; /* special element information */
 
     info = (compinfo_t *)access_rec->special_info;
@@ -851,7 +842,6 @@ HCPcszip_read(accrec_t *access_rec, int32 length, void *data)
 int32
 HCPcszip_write(accrec_t *access_rec, int32 length, const void *data)
 {
-    CONSTR(FUNC, "HCPcszip_write");
 #ifdef H4_HAVE_SZIP_ENCODER
     compinfo_t             *info;      /* special element information */
     comp_coder_szip_info_t *szip_info; /* ptr to SZIP info */
@@ -950,7 +940,6 @@ HCPcszip_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pr
 intn
 HCPcszip_endaccess(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HCPcszip_endaccess");
     compinfo_t             *info;      /* special element information */
     comp_coder_szip_info_t *szip_info; /* ptr to SZIP info */
 

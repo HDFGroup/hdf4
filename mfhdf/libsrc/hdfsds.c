@@ -136,7 +136,6 @@ hdf_query_seen_sdg(uint16 ndgRef)
 PRIVATE intn
 hdf_register_seen_sdg(uint16 sdgRef)
 {
-    CONSTR(FUNC, "hdf_register_seen_sdg"); /* for HERROR */
     intn ret_value = SUCCEED;
 
     /* check if table is allocated */
@@ -218,7 +217,6 @@ hdf_check_nt(uint8 *ntstring, int32 *type)
 PRIVATE hdf_err_code_t
 hdf_read_rank(int32 acc_id, int16 *rank)
 {
-    CONSTR(FUNC, "hdf_read_rank"); /* for HERROR */
     uint8         *p, *local_buf = NULL;
     hdf_err_code_t ret_value = DFE_NONE;
 
@@ -268,7 +266,6 @@ done:
 PRIVATE hdf_err_code_t
 hdf_read_dimsizes(int32 acc_id, int16 rank, int32 *dimsizes)
 {
-    CONSTR(FUNC, "hdf_read_dimsizes"); /* for HERROR */
     uint8         *p, *local_buf = NULL;
     intn           i;
     hdf_err_code_t ret_value = DFE_NONE;
@@ -319,7 +316,6 @@ done:
 PRIVATE hdf_err_code_t
 hdf_read_NT(int32 acc_id, NC *handle, uint8 *ntstring_buf)
 {
-    CONSTR(FUNC, "hdf_read_NT"); /* for HERROR */
     uint16         ntTag;
     uint16         ntRef;
     uint8         *p, *local_buf = NULL;
@@ -368,7 +364,6 @@ done:
 PRIVATE hdf_err_code_t
 hdf_get_sdc(NC *handle, uint16 tmpRef, NC_attr **tmp_attr, intn *curr_attr)
 {
-    CONSTR(FUNC, "hdf_get_sdc");    /* for HERROR */
     uint8         *coordbuf = NULL; /* buffer to store coord system info */
     int            len;
     hdf_err_code_t ret_value = DFE_NONE;
@@ -426,7 +421,6 @@ done:
 uint8 *
 hdf_get_pred_str_attr(NC *handle, uint16 stratt_tag, uint16 satt_ref, int null_count)
 {
-    CONSTR(FUNC, "hdf_get_pred_str_attr"); /* for HERROR */
     uint8 *tmpbuf = NULL;                  /* buffer to store predefined string attribute info */
     intn   i;
     uint8 *ret_value = NULL;
@@ -482,7 +476,6 @@ done:
 PRIVATE hdf_err_code_t
 hdf_get_desc_annot(NC *handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr, intn *curr_attr)
 {
-    CONSTR(FUNC, "hdf_get_desc_annot"); /* for HERROR */
     intn           i;
     hdf_err_code_t ret_value = DFE_NONE;
 
@@ -587,7 +580,6 @@ done:
 PRIVATE hdf_err_code_t
 hdf_get_label_annot(NC *handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr, intn *curr_attr)
 {
-    CONSTR(FUNC, "hdf_get_label_annot"); /* for HERROR */
     intn           i;
     hdf_err_code_t ret_value = DFE_NONE;
 
@@ -693,7 +685,6 @@ done:
 PRIVATE hdf_err_code_t
 hdf_luf_to_attrs(char *labelstr, char *unitstr, char *formatstr, NC_attr **tmp_attr, intn *curr_attr)
 {
-    CONSTR(FUNC, "hdf_luf_to_attrs"); /* for HERROR */
     hdf_err_code_t ret_value = DFE_NONE;
 
     /* label => "long_name"  */
@@ -763,7 +754,6 @@ done:
 PRIVATE hdf_err_code_t
 hdf_get_rangeinfo(nc_type nctype, int32 hdftype, NC_attr **tmp_attr, intn *curr_attr)
 {
-    CONSTR(FUNC, "hdf_get_rangeinfo"); /* for HERROR */
     uint8          tBuf[128] = "";
     intn           idx       = 0; /* index for tBuf */
     hdf_err_code_t ret_value = DFE_NONE;
@@ -820,7 +810,6 @@ done:
 PRIVATE hdf_err_code_t
 hdf_get_cal(nc_type nctype, int32 hdftype, NC_attr **tmp_attr, intn *curr_attr)
 {
-    CONSTR(FUNC, "hdf_get_cal"); /* for HERROR */
     uint8          tBuf[128] = "";
     intn           idx       = 0; /* index for tBuf */
     hdf_err_code_t ret_value = DFE_NONE;
@@ -931,7 +920,6 @@ done:
 PRIVATE intn
 hdf_read_ndgs(NC *handle)
 {
-    CONSTR(FUNC, "hdf_read_ndgs"); /* for HERROR */
     char  tmpname[80] = "";
     uint8 ntstring[4] = "";
     intn  dimcount;
@@ -1656,7 +1644,6 @@ done:
 intn
 hdf_read_sds_cdf(XDR *xdrs, NC **handlep)
 {
-    CONSTR(FUNC, "hdf_read_sds_cdf"); /* for HERROR */
     intn status;
     NC  *handle    = NULL;
     intn ret_value = SUCCEED;

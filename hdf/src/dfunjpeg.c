@@ -228,7 +228,6 @@ intn
 jpeg_HDF_src(struct jpeg_decompress_struct *cinfo_ptr, int32 file_id, uint16 tag, uint16 ref, VOIDP image,
              int32 xdim, int32 ydim, int16 scheme)
 {
-    CONSTR(FUNC, "jpeg_HDF_src"); /* for HERROR */
     hdf_src_ptr src;
 
     /* shut compiler up */
@@ -305,7 +304,6 @@ jpeg_HDF_src_term(struct jpeg_decompress_struct *cinfo_ptr)
 intn
 DFCIunjpeg(int32 file_id, uint16 tag, uint16 ref, VOIDP image, int32 xdim, int32 ydim, int16 scheme)
 {
-    CONSTR(FUNC, "DFCIunjpeg"); /* for HERROR */
     /* These three structs contain JPEG parameters and working data.
      * They must survive for the duration of parameter setup and one
      * call to jpeg_decompress; typically, making them local data in the

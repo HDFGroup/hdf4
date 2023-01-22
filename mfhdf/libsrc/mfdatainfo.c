@@ -106,7 +106,6 @@ intn
 SDgetdatainfo(int32 sdsid, int32 *chk_coord, uintn start_block, uintn info_count, int32 *offsetarray,
               int32 *lengtharray)
 {
-    CONSTR(FUNC, "SDgetdatainfo"); /* for HGOTO_ERROR */
     NC     *handle;
     NC_var *var;
     intn    count     = FAIL; /* number of data blocks */
@@ -201,7 +200,6 @@ done:
 intn
 SDgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
 {
-    CONSTR(FUNC, "SDgetattdatainfo");
     NC     *handle;
     NC_var *var;
     NC_dim *dim;
@@ -497,7 +495,6 @@ get_attr_tag(char *attr_name, uint16 *attr_tag)
 intn
 SDgetoldattdatainfo(int32 dim_id, int32 sdsid, char *attr_name, int32 *offset, int32 *length)
 {
-    CONSTR(FUNC, "SDgetoldattdatainfo");
     NC     *handle;
     NC_var *var;
     int32   off, len, dim_att_len = 0, sdsluf_len = 0, offp = 0;
@@ -706,7 +703,6 @@ done:
 intn
 SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32 *offsetarray, int32 *lengtharray)
 {
-    CONSTR(FUNC, "SDgetanndatainfo");
     int32 file_id = FAIL, /* file, AN API, annotation IDs */
         an_id = FAIL, ann_id = FAIL;
     NC    *handle  = NULL;     /* file structure */

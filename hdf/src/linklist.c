@@ -75,7 +75,6 @@ list_head_t *
 HULcreate_list(HULfind_func_t find_func /* IN: object comparison function */
 )
 {
-    CONSTR(FUNC, "HULcreate_list"); /* for HERROR */
     list_head_t *ret_value = NULL;  /* ptr to the linked list "head" node */
 
     HEclear();
@@ -121,7 +120,6 @@ intn
 HULdestroy_list(list_head_t *lst /* IN: list to destroy */
 )
 {
-    CONSTR(FUNC, "HULdestroy_list"); /* for HERROR */
     node_info_t *curr_node,          /* current node while walking through list */
         *next_node;                  /* next node in the list */
     intn ret_value = SUCCEED;        /* return value */
@@ -168,7 +166,6 @@ HULadd_node(list_head_t *lst, /* IN: list to modify */
             VOIDP        obj  /* IN: object to add to the list */
 )
 {
-    CONSTR(FUNC, "HULadd_node");      /* for HERROR */
     node_info_t *new_node;            /* new node to insert into the list */
     intn         ret_value = SUCCEED; /* return value */
 
@@ -238,7 +235,6 @@ HULsearch_node(list_head_t     *lst,       /* IN: list to search */
                VOIDP            key        /* IN: key of object to search for */
 )
 {
-    CONSTR(FUNC, "HULsearch_node"); /* for HERROR */
     node_info_t *curr_node;         /* current node we are on */
     VOIDP        ret_value = NULL;  /* default return value */
 
@@ -277,7 +273,6 @@ VOIDP
 HULfirst_node(list_head_t *lst /* IN: list to search */
 )
 {
-    CONSTR(FUNC, "HULfirst_node"); /* for HERROR */
     VOIDP ret_value = NULL;        /* default return value */
 
     HEclear();
@@ -313,7 +308,6 @@ VOIDP
 HULnext_node(list_head_t *lst /* IN: list to search */
 )
 {
-    CONSTR(FUNC, "HULnext_node"); /* for HERROR */
     VOIDP ret_value = NULL;       /* default return value */
 
     HEclear();
@@ -353,7 +347,6 @@ HULremove_node(list_head_t     *lst,       /* IN: list to modify */
                VOIDP            key        /* IN: object to add to the list */
 )
 {
-    CONSTR(FUNC, "HULremove_node"); /* for HERROR */
     node_info_t *curr_node,         /* current node we are on */
         *prev_node;                 /* previous node we looked at */
     VOIDP ret_value = NULL;         /* default return value */
@@ -400,7 +393,6 @@ done:
 static node_info_t *
 HULIget_list_node(void)
 {
-    CONSTR(FUNC, "HULIget_list_node"); /* for HERROR */
     node_info_t *ret_value = NULL;
 
     HEclear();

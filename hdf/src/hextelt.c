@@ -171,7 +171,6 @@ MODIFICATION
 int32
 HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, int32 offset, int32 start_len)
 {
-    CONSTR(FUNC, "HXcreate");                  /* for HERROR */
     filerec_t *file_rec;                       /* file record */
     accrec_t  *access_rec = NULL;              /* access element record */
     int32      dd_aid;                         /* AID for writing the special info */
@@ -375,7 +374,6 @@ DESCRIPTION
 intn
 HXPsetaccesstype(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HXPsetaccesstype");
     hdf_file_t file_external; /* external file descriptor */
     extinfo_t *info;          /* special element information */
     char      *fname     = NULL;
@@ -445,7 +443,6 @@ DESCRIPTION
 PRIVATE int32
 HXIstaccess(accrec_t *access_rec, int16 acc_mode)
 {
-    CONSTR(FUNC, "HXIstaccess"); /* for HERROR */
     extinfo_t *info     = NULL;  /* special element information */
     filerec_t *file_rec = NULL;  /* file record */
     int32      data_off;         /* offset of the data we are checking */
@@ -587,7 +584,6 @@ int32
 HXPseek(accrec_t *access_rec, int32 offset, int origin)
 {
     int32 ret_value = SUCCEED;
-    CONSTR(FUNC, "HXPseek"); /* for HERROR */
 
     /* Adjust offset according to origin.
        there is no upper bound to posn */
@@ -635,7 +631,6 @@ DESCRIPTION
 int32
 HXPread(accrec_t *access_rec, int32 length, void *data)
 {
-    CONSTR(FUNC, "HXPread"); /* for HERROR */
     extinfo_t *info =        /* information on the special element */
         (extinfo_t *)access_rec->special_info;
     int32 ret_value = SUCCEED;
@@ -713,7 +708,6 @@ int32
 HXPwrite(accrec_t *access_rec, int32 length, const void *data)
 {
     uint8 local_ptbuf[4];     /* temp buffer */
-    CONSTR(FUNC, "HXPwrite"); /* for HERROR */
     extinfo_t *info =         /* information on the special element */
         (extinfo_t *)(access_rec->special_info);
     uint8     *p = local_ptbuf; /* temp buffer ptr */
@@ -822,7 +816,6 @@ int32
 HXPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength, int32 *poffset,
            int32 *pposn, int16 *paccess, int16 *pspecial)
 {
-    CONSTR(FUNC, "HXPinquire"); /* for HERROR */
     extinfo_t *info =           /* special information record */
         (extinfo_t *)access_rec->special_info;
     uint16 data_tag, data_ref; /* tag/ref of the data we are checking */
@@ -876,7 +869,6 @@ DESCRIPTION
 intn
 HXPendaccess(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HXPendaccess"); /* for HERROR */
     filerec_t *file_rec;          /* file record */
     intn       ret_value = SUCCEED;
 
@@ -973,7 +965,6 @@ DESCRIPTION
 int32
 HXPinfo(accrec_t *access_rec, sp_info_block_t *info_block)
 {
-    CONSTR(FUNC, "HXPinfo"); /* for HERROR */
     extinfo_t *info =        /* special information record */
         (extinfo_t *)access_rec->special_info;
     int32 ret_value = SUCCEED;
@@ -1023,7 +1014,6 @@ DESCRIPTION
 int32
 HXPreset(accrec_t *access_rec, sp_info_block_t *info_block)
 {
-    CONSTR(FUNC, "HXPreset");                  /* for HERROR */
     filerec_t *file_rec;                       /* file record */
     uint8      local_ptbuf[14 + MAX_PATH_LEN]; /* temp buffer */
     extinfo_t *info =                          /* special information record */
@@ -1124,7 +1114,6 @@ FORTRAN
 intn
 HXsetcreatedir(const char *dir)
 {
-    CONSTR(FUNC, "HXsetcreatedir");
     char *pt;
     intn  ret_value = SUCCEED;
 
@@ -1172,7 +1161,6 @@ FORTRAN
 intn
 HXsetdir(const char *dir)
 {
-    CONSTR(FUNC, "HXsetdir");
     char *pt;
     intn  ret_value = SUCCEED;
 
@@ -1222,7 +1210,6 @@ PRIVATE
 char *
 HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 {
-    CONSTR(FUNC, "HXIbuildfilename");
     int        fname_len;        /* string length of the ext_fname */
     int        path_len;         /* string length of prepend pathname */
     static int firstinvoked = 1; /* true if invoked the first time */

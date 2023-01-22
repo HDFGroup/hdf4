@@ -67,7 +67,6 @@ PRIVATE int32 HCIcnone_staccess(accrec_t *access_rec, int16 acc_mode);
 PRIVATE int32
 HCIcnone_staccess(accrec_t *access_rec, int16 acc_mode)
 {
-    CONSTR(FUNC, "HCIcnone_staccess");
     compinfo_t *info; /* special element information */
 
     info = (compinfo_t *)access_rec->special_info;
@@ -106,7 +105,6 @@ HCIcnone_staccess(accrec_t *access_rec, int16 acc_mode)
 int32
 HCPcnone_stread(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HCPcnone_stread");
     int32 ret;
 
     if ((ret = HCIcnone_staccess(access_rec, DFACC_READ)) == FAIL)
@@ -136,7 +134,6 @@ HCPcnone_stread(accrec_t *access_rec)
 int32
 HCPcnone_stwrite(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HCPcnone_stwrite");
     int32 ret;
 
     if ((ret = HCIcnone_staccess(access_rec, DFACC_WRITE)) == FAIL)
@@ -171,7 +168,6 @@ HCPcnone_stwrite(accrec_t *access_rec)
 int32
 HCPcnone_seek(accrec_t *access_rec, int32 offset, int origin)
 {
-    CONSTR(FUNC, "HCPcnone_seek");
     compinfo_t *info; /* special element information */
 
     info = (compinfo_t *)access_rec->special_info;
@@ -206,7 +202,6 @@ HCPcnone_seek(accrec_t *access_rec, int32 offset, int origin)
 int32
 HCPcnone_read(accrec_t *access_rec, int32 length, void *data)
 {
-    CONSTR(FUNC, "HCPcnone_read");
     compinfo_t *info; /* special element information */
 
     info = (compinfo_t *)access_rec->special_info;
@@ -241,7 +236,6 @@ HCPcnone_read(accrec_t *access_rec, int32 length, void *data)
 int32
 HCPcnone_write(accrec_t *access_rec, int32 length, const void *data)
 {
-    CONSTR(FUNC, "HCPcnone_write");
     compinfo_t *info; /* special element information */
 
     info = (compinfo_t *)access_rec->special_info;
@@ -321,7 +315,6 @@ HCPcnone_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pr
 intn
 HCPcnone_endaccess(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HCPcnone_endaccess");
     compinfo_t *info; /* special element information */
 
     info = (compinfo_t *)access_rec->special_info;

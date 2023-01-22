@@ -204,7 +204,6 @@ DESCRIPTION
 intn
 VSfindex(int32 vsid, const char *fieldname, int32 *findex)
 {
-    CONSTR(FUNC, "VSfindex");
     vsinstance_t   *vs_inst;
     VDATA          *vs;
     DYN_VWRITELIST *w;
@@ -278,7 +277,6 @@ DESCRIPTION
 intn
 VSsetattr(int32 vsid, int32 findex, const char *attrname, int32 datatype, int32 count, const void *values)
 {
-    CONSTR(FUNC, "VSsetattr");
     vsinstance_t   *vs_inst, *attr_inst;
     VDATA          *vs, *attr_vs;
     DYN_VWRITELIST *w, *attr_w;
@@ -394,7 +392,6 @@ DESCRIPTION
 intn
 VSnattrs(int32 vsid)
 {
-    CONSTR(FUNC, "VSnattrs");
     vsinstance_t *vs_inst;
     VDATA        *vs;
     int32         ret_value = SUCCEED;
@@ -437,7 +434,6 @@ DESCRIPTION
 intn
 VSfnattrs(int32 vsid, int32 findex)
 {
-    CONSTR(FUNC, "VSfnattrs");
     vsinstance_t *vs_inst;
     VDATA        *vs;
     int32         ret_value = SUCCEED;
@@ -492,7 +488,6 @@ DESCRIPTION
 intn
 VSfindattr(int32 vsid, int32 findex, const char *attrname)
 {
-    CONSTR(FUNC, "VSfindattr");
     VDATA        *vs, *attr_vs;
     vsinstance_t *vs_inst, *attr_inst;
     vs_attr_t    *vs_alist;
@@ -586,8 +581,6 @@ DESCRIPTION
 intn
 VSattrinfo(int32 vsid, int32 findex, intn attrindex, char *name, int32 *datatype, int32 *count, int32 *size)
 {
-
-    CONSTR(FUNC, "VSattrinfo");
     VDATA          *vs, *attr_vs;
     vs_attr_t      *vs_alist;
     vsinstance_t   *vs_inst, *attr_inst;
@@ -679,7 +672,6 @@ DESCRIPTION
 intn
 VSgetattr(int32 vsid, int32 findex, intn attrindex, void *values)
 {
-    CONSTR(FUNC, "VSgetattr");
     VDATA        *vs, *attr_vs;
     vs_attr_t    *vs_alist;
     vsinstance_t *vs_inst, *attr_inst;
@@ -768,7 +760,6 @@ DESCRIPTION
 intn
 VSisattr(int32 vsid)
 {
-    CONSTR(FUNC, "VSsetattr");
     vsinstance_t *vs_inst;
     VDATA        *vs;
     int32         ret_value = FALSE;
@@ -817,7 +808,6 @@ DESCRIPTION
 intn
 Vsetattr(int32 vgid, const char *attrname, int32 datatype, int32 count, const void *values)
 {
-    CONSTR(FUNC, "Vsetattr");
     VGROUP         *vg;
     VDATA          *vs;
     vginstance_t   *v;
@@ -934,7 +924,6 @@ DESCRIPTION
 int32
 Vgetversion(int32 vgid)
 {
-    CONSTR(FUNC, "Vgetversion");
     VGROUP       *vg;
     vginstance_t *v;
     int16         vg_version;
@@ -977,7 +966,6 @@ DESCRIPTION
 intn
 Vnattrs(int32 vgid)
 {
-    CONSTR(FUNC, "Vnattrs");
     VGROUP       *vg;
     vginstance_t *v;
     int32         ret_value = SUCCEED;
@@ -1050,7 +1038,6 @@ DESCRIPTION
 intn
 Vnoldattrs(int32 vgid)
 {
-    CONSTR(FUNC, "Vnoldattrs");
     VGROUP       *vg;
     vginstance_t *v;
     intn          n_old_attrs = 0;
@@ -1161,7 +1148,6 @@ DESCRIPTION
 intn
 Vnattrs2(int32 vgid)
 {
-    CONSTR(FUNC, "Vnattrs2");
     intn  n_new_attrs = 0, n_old_attrs = 0;
     int32 ret_value = SUCCEED;
 
@@ -1202,7 +1188,6 @@ done:
 intn
 Vfindattr(int32 vgid, const char *attrname)
 {
-    CONSTR(FUNC, "Vfindattr");
     VGROUP       *vg;
     VDATA        *vs;
     vginstance_t *v;
@@ -1282,7 +1267,6 @@ DESCRIPTION
 intn
 Vattrinfo(int32 vgid, intn attrindex, char *name, int32 *datatype, int32 *count, int32 *size)
 {
-    CONSTR(FUNC, "Vattrinfo");
     VGROUP         *vg;
     VDATA          *vs;
     DYN_VWRITELIST *w;
@@ -1387,7 +1371,6 @@ intn
 Vattrinfo2(int32 vgid, intn attrindex, char *name, int32 *datatype, int32 *count, int32 *size, int32 *nfields,
            uint16 *refnum)
 {
-    CONSTR(FUNC, "Vattrinfo2");
     VGROUP         *vg;
     VDATA          *vs;
     DYN_VWRITELIST *w;
@@ -1489,7 +1472,6 @@ DESCRIPTION
 intn
 Vgetattr(int32 vgid, intn attrindex, void *values)
 {
-    CONSTR(FUNC, "Vgetattr");
     VGROUP       *vg;
     VDATA        *vs;
     char          fields[FIELDNAMELENMAX];
@@ -1570,7 +1552,6 @@ DESCRIPTION
 intn
 Vgetattr2(int32 vgid, intn attrindex, void *values)
 {
-    CONSTR(FUNC, "Vgetattr2");
     VGROUP       *vg;
     VDATA        *vs;
     char          fields[FIELDNAMELENMAX];

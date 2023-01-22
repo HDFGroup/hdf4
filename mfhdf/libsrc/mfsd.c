@@ -130,7 +130,6 @@ NC *
 SDIhandle_from_id(int32 id, /* IN: an object (file, dim, dataset) ID */
                   intn  typ /* IN: IN: the type of ID this is */)
 {
-    CONSTR(FUNC, "SDIhandle_from_id"); /* for HGOTO_ERROR */
     int32 tmp;
     NC   *ret_value = NULL;
 
@@ -166,7 +165,6 @@ NC_var *
 SDIget_var(NC   *handle, /* IN: the handle for this file */
            int32 sdsid /* IN: a dataset ID */)
 {
-    CONSTR(FUNC, "SDIget_var"); /* for HGOTO_ERROR */
     int32      varid;
     NC_array **ap        = NULL;
     NC_var    *ret_value = NULL;
@@ -206,7 +204,6 @@ NC_dim *
 SDIget_dim(NC   *handle, /* IN: the handle for this file */
            int32 id /* IN: a dimension ID */)
 {
-    CONSTR(FUNC, "SDIget_dim"); /* for HGOTO_ERROR */
     int32      dimindex;
     NC_array **ap        = NULL;
     NC_dim    *ret_value = NULL;
@@ -245,7 +242,6 @@ done:
 static intn
 SDIstart(void)
 {
-    CONSTR(FUNC, "SDIstart"); /* for HGOTO_ERROR */
     intn ret_value = SUCCEED;
 
     /* Don't call this routine again... */
@@ -323,7 +319,6 @@ int32
 SDstart(const char *name, /* IN: file name to open */
         int32       HDFmode /* IN: access mode to open file with */)
 {
-    CONSTR(FUNC, "SDstart"); /* for HGOTO_ERROR */
     intn  cdfid     = -1;
     int32 fid       = -1;
     intn  NCmode    = -1;
@@ -403,7 +398,6 @@ done:
 intn
 SDend(int32 id /* IN: file ID of file to close */)
 {
-    CONSTR(FUNC, "SDend"); /* for HGOTO_ERROR */
     intn cdfid;
     NC  *handle    = NULL;
     intn ret_value = SUCCEED;
@@ -483,7 +477,6 @@ SDfileinfo(int32  fid,      /* IN:  file ID */
            int32 *datasets, /* OUT: number of datasets in the file */
            int32 *attrs /* OUT: number of global attributes */)
 {
-    CONSTR(FUNC, "SDfileinfo"); /* for HGOTO_ERROR */
     NC  *handle    = NULL;
     intn ret_value = SUCCEED;
 
@@ -546,7 +539,6 @@ int32
 SDselect(int32 fid, /* IN: file ID */
          int32 index /* IN: index of dataset to get ID for */)
 {
-    CONSTR(FUNC, "SDselect"); /* for HGOTO_ERROR */
     NC   *handle = NULL;
     int32 sdsid; /* the id we're gonna build */
     int32 ret_value = FAIL;
@@ -611,7 +603,6 @@ SDgetinfo(int32  sdsid,    /* IN:  dataset ID */
           int32 *nt,       /* OUT: number type of data */
           int32 *nattrs /* OUT: the number of local attributes */)
 {
-    CONSTR(FUNC, "SDgetinfo"); /* for HGOTO_ERROR */
     intn    i;
     NC     *handle    = NULL;
     NC_var *var       = NULL;
@@ -697,7 +688,6 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
            int32 *end,    /* IN:  number of values to read per dimension */
            void  *data /* OUT: data buffer */)
 {
-    CONSTR(FUNC, "SDreaddata"); /* for HGOTO_ERROR */
     NC          *handle = NULL;
     NC_dim      *dim    = NULL;
     intn         varid;
@@ -870,7 +860,6 @@ int32
 SDnametoindex(int32       fid, /* IN: file ID */
               const char *name /* IN: name of dataset to search for */)
 {
-    CONSTR(FUNC, "SDnametoindex"); /* for HGOTO_ERROR */
     unsigned ii;
     intn     len;
     NC      *handle    = NULL;
@@ -931,7 +920,6 @@ SDgetnumvars_byname(int32       fid,  /* IN: file ID */
                     const char *name, /* IN: name of dataset to search for */
                     int32      *n_vars)
 {
-    CONSTR(FUNC, "SDgetnumvars_byname"); /* for HGOTO_ERROR */
     unsigned ii;
     intn     len;
     int32    count     = 0;
@@ -999,7 +987,6 @@ SDnametoindices(int32          fid,  /* IN: file ID */
                 const char    *name, /* IN: name of dataset to search for */
                 hdf_varlist_t *var_list)
 {
-    CONSTR(FUNC, "SDnametoindices"); /* for HGOTO_ERROR */
     unsigned       ii;
     intn           len;
     NC            *handle = NULL;
@@ -1068,7 +1055,6 @@ SDgetrange(int32 sdsid, /* IN:  dataset ID */
            void *pmax,  /* OUT: valid max */
            void *pmin /* OUT: valid min */)
 {
-    CONSTR(FUNC, "SDgetrange"); /* for HGOTO_ERROR */
     NC       *handle    = NULL;
     NC_var   *var       = NULL;
     NC_attr **attr      = NULL;
@@ -1189,7 +1175,6 @@ SDcreate(int32       fid,  /* IN: file ID */
          int32       rank, /* IN: rank of dataset */
          int32      *dimsizes /* IN: array of dimension sizes */)
 {
-    CONSTR(FUNC, "SDcreate"); /* for HGOTO_ERROR */
     intn    i;
     NC     *handle = NULL;
     NC_var *var    = NULL;
@@ -1376,7 +1361,6 @@ int32
 SDgetdimid(int32 sdsid, /* IN: dataset ID */
            intn  number /* IN: index of dimension, in the SDS, ie. <= rank-1 */)
 {
-    CONSTR(FUNC, "SDgetdimid"); /* for HGOTO_ERROR */
     NC     *handle = NULL;
     NC_var *var    = NULL;
     int32   id;
@@ -1449,7 +1433,6 @@ intn
 SDsetdimname(int32       id, /* IN: dataset ID */
              const char *name /* IN: dimension name */)
 {
-    CONSTR(FUNC, "SDsetdimname"); /* for HGOTO_ERROR */
     NC        *handle = NULL;
     NC_dim    *dim    = NULL;
     NC_dim   **dp     = NULL;
@@ -1540,7 +1523,6 @@ done:
 intn
 SDendaccess(int32 id /* IN: dataset ID */)
 {
-    CONSTR(FUNC, "SDendaccess"); /* for HGOTO_ERROR */
     NC   *handle;
     int32 ret_value = SUCCEED;
 
@@ -1619,7 +1601,6 @@ SDIputattr(NC_array  **ap,    /* IN/OUT: attribute list */
            intn        count, /* IN:     number of attribute values */
            const void *data /* IN:     attribute values */)
 {
-    CONSTR(FUNC, "SDIputattr"); /* for HGOTO_ERROR */
     NC_attr  *attr = NULL;
     NC_attr **atp  = NULL;
     NC_attr  *old  = NULL;
@@ -1707,7 +1688,6 @@ SDsetrange(int32 sdsid, /* IN: dataset ID */
            void *pmax,  /* IN: valid max */
            void *pmin /* IN: valid min */)
 {
-    CONSTR(FUNC, "SDsetrange"); /* for HGOTO_ERROR */
     NC     *handle = NULL;
     NC_var *var    = NULL;
     uint8   data[80];
@@ -1778,7 +1758,6 @@ SDIapfromid(int32       id,      /* IN:  object ID */
             NC        **handlep, /* IN:  handle for this file */
             NC_array ***app /* OUT: attribute list */)
 {
-    CONSTR(FUNC, "SDIapfromid"); /* for HGOTO_ERROR */
     NC     *handle = NULL;
     NC_var *var    = NULL;
     NC_dim *dim    = NULL;
@@ -1864,7 +1843,6 @@ SDsetattr(int32       id,    /* IN: object ID */
           int32       count, /* IN: number of attribute values */
           const void *data /* IN: attribute values */)
 {
-    CONSTR(FUNC, "SDsetattr"); /* for HGOTO_ERROR */
     NC_array **ap     = NULL;
     NC        *handle = NULL;
     intn       sz;
@@ -1950,7 +1928,6 @@ SDattrinfo(int32  id,    /* IN:  object ID */
            int32 *nt,    /* OUT: attribute number type */
            int32 *count /* OUT: number of attribute values */)
 {
-    CONSTR(FUNC, "SDattrinfo"); /* for HGOTO_ERROR */
     NC_array  *ap        = NULL;
     NC_array **app       = NULL;
     NC_attr  **atp       = NULL;
@@ -2022,7 +1999,6 @@ SDreadattr(int32 id,    /* IN:  object ID */
            int32 index, /* IN:  attribute index */
            void *buf /* OUT: data buffer  */)
 {
-    CONSTR(FUNC, "SDreadattr"); /* for HGOTO_ERROR */
     NC_array  *ap        = NULL;
     NC_array **app       = NULL;
     NC_attr  **atp       = NULL;
@@ -2090,7 +2066,6 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
             int32 *end,    /* IN: number of values to write per dimension */
             void  *data /* IN: data buffer */)
 {
-    CONSTR(FUNC, "SDwritedata"); /* for HGOTO_ERROR */
     intn         varid;
     int32        status;
     comp_coder_t comp_type;
@@ -2274,7 +2249,6 @@ SDsetdatastrs(int32       sdsid, /* IN: dataset ID */
               const char *f,     /* IN: format string ("format") */
               const char *c /* IN: coordsys string ("coordsys") */)
 {
-    CONSTR(FUNC, "SDsetdatastrs"); /* for HGOTO_ERROR */
     NC     *handle    = NULL;
     NC_var *var       = NULL;
     intn    ret_value = SUCCEED;
@@ -2355,7 +2329,6 @@ SDsetcal(int32   sdsid, /* IN: dataset ID */
          float64 ioffe, /* IN: integer offset error */
          int32   nt /* IN: number type of uncalibrated data */)
 {
-    CONSTR(FUNC, "SDsetcal"); /* for HGOTO_ERROR */
     NC     *handle    = NULL;
     NC_var *var       = NULL;
     intn    ret_value = SUCCEED;
@@ -2428,7 +2401,6 @@ intn
 SDsetfillvalue(int32 sdsid, /* IN: dataset ID */
                void *val /* IN: fillvalue */)
 {
-    CONSTR(FUNC, "SDsetfillvalue"); /* for HGOTO_ERROR */
     NC     *handle    = NULL;
     NC_var *var       = NULL;
     intn    ret_value = SUCCEED;
@@ -2486,7 +2458,6 @@ intn
 SDgetfillvalue(int32 sdsid, /* IN:  dataset ID */
                void *val /* OUT: fillvalue */)
 {
-    CONSTR(FUNC, "SDgetfillvalue"); /* for HGOTO_ERROR */
     NC       *handle    = NULL;
     NC_var   *var       = NULL;
     NC_attr **attr      = NULL;
@@ -2554,7 +2525,6 @@ SDgetdatastrs(int32 sdsid, /* IN:  dataset ID */
               char *c,     /* OUT: coordsys string ("coordsys") */
               intn  len /* IN:  buffer length */)
 {
-    CONSTR(FUNC, "SDgetdatastrs"); /* for HGOTO_ERROR */
     NC       *handle    = NULL;
     NC_var   *var       = NULL;
     NC_attr **attr      = NULL;
@@ -2664,7 +2634,6 @@ SDgetcal(int32    sdsid, /* IN:  dataset ID */
          float64 *ioffe, /* OUT: integer offset error */
          int32   *nt /* OUT: number type of uncalibrated data */)
 {
-    CONSTR(FUNC, "SDgetcal"); /* for HGOTO_ERROR */
     NC       *handle    = NULL;
     NC_var   *var       = NULL;
     NC_attr **attr      = NULL;
@@ -2754,7 +2723,6 @@ SDIgetcoordvar(NC     *handle, /* IN: file handle */
                int32   id,     /* IN: dimension ID */
                int32   nt /* IN: number type to use if new variable*/)
 {
-    CONSTR(FUNC, "SDIgetcoordvar"); /* for HGOTO_ERROR */
     unsigned   ii;
     unsigned   len;
     nc_type    nctype;
@@ -2887,7 +2855,6 @@ SDsetdimstrs(int32       id, /* IN: dimension ID */
              const char *u,  /* IN: units string ("units") */
              const char *f /* IN: format string ("format") */)
 {
-    CONSTR(FUNC, "SDsetdimstrs"); /* for HGOTO_ERROR */
     intn    varid;
     NC     *handle    = NULL;
     NC_dim *dim       = NULL;
@@ -2971,7 +2938,6 @@ int32
 SDIfreevarAID(NC   *handle, /* IN: file handle */
               int32 index /* IN: variable index */)
 {
-    CONSTR(FUNC, "SDIfreevarAID"); /* for HGOTO_ERROR */
     NC_array **ap        = NULL;
     NC_var    *var       = NULL;
     int32      ret_value = SUCCEED;
@@ -3024,7 +2990,6 @@ SDsetdimscale(int32 id,    /* IN: dimension ID */
               int32 nt,    /* IN: number type of data */
               void *data /* IN: scale values */)
 {
-    CONSTR(FUNC, "SDsetdimscale"); /* for HGOTO_ERROR */
     NC     *handle = NULL;
     NC_dim *dim    = NULL;
     int32   status;
@@ -3110,7 +3075,6 @@ intn
 SDgetdimscale(int32 id, /* IN:  dimension ID */
               void *data /* OUT: scale values */)
 {
-    CONSTR(FUNC, "SDgetdimscale"); /* for HGOTO_ERROR */
     NC     *handle = NULL;
     NC_dim *dim    = NULL;
     NC_var *vp     = NULL;
@@ -3214,7 +3178,6 @@ SDdiminfo(int32  id,   /* IN:  dimension ID */
           int32 *nt,   /* OUT: number type of scales */
           int32 *nattr /* OUT: the number of local attributes */)
 {
-    CONSTR(FUNC, "SDdiminfo"); /* for HGOTO_ERROR */
     NC      *handle = NULL;
     NC_dim  *dim    = NULL;
     NC_var **dp     = NULL;
@@ -3324,7 +3287,6 @@ SDgetdimstrs(int32 id, /* IN:  dataset ID */
              char *f,  /* OUT: format string ("format") */
              intn  len /* IN:  buffer length */)
 {
-    CONSTR(FUNC, "SDgetdimstrs"); /* for HGOTO_ERROR */
     NC       *handle = NULL;
     NC_var   *var    = NULL;
     NC_var  **dp     = NULL;
@@ -3483,7 +3445,6 @@ SDsetexternalfile(int32       id,       /* IN: dataset ID */
                   const char *filename, /* IN: name of external file */
                   int32       offset /* IN: offset in external file */)
 {
-    CONSTR(FUNC, "SDsetexternalfile"); /* for HGOTO_ERROR */
     NC     *handle       = NULL;
     NC_var *var          = NULL;
     intn    extfname_len = 0; /* Length of external file's name */
@@ -3608,7 +3569,6 @@ SDgetexternalinfo(int32  id,           /* IN: dataset ID */
                   int32 *offset,       /* IN: offset in external file */
                   int32 *length /* IN: length of external data */)
 {
-    CONSTR(FUNC, "SDgetexternalinfo"); /* for HGOTO_ERROR */
     NC     *handle           = NULL;
     NC_var *var              = NULL;
     int32   aid              = FAIL;
@@ -3753,7 +3713,6 @@ SDgetexternalfile(int32  id,           /* IN: dataset ID */
                   char  *ext_filename, /* IN: name of external file */
                   int32 *offset /* IN: offset in external file */)
 {
-    CONSTR(FUNC, "SDgetexternalfile"); /* for HGOTO_ERROR */
     NC     *handle     = NULL;
     NC_var *var        = NULL;
     intn    actual_len = 0;
@@ -3874,7 +3833,6 @@ SDsetnbitdataset(int32 id,        /* IN: dataset ID */
                  intn  sign_ext,  /* IN: Whether to sign extend */
                  intn  fill_one /* IN: Whether to fill background w/1's */)
 {
-    CONSTR(FUNC, "SDsetnbitdataset"); /* for HGOTO_ERROR */
     NC        *handle = NULL;
     NC_var    *var    = NULL;
     model_info m_info; /* modeling information for the HCcreate() call */
@@ -3982,7 +3940,6 @@ done:
 intn
 SDsetup_szip_parms(int32 id, NC *handle, comp_info *c_info, int32 *cdims)
 {
-    CONSTR(FUNC, "SDsetup_szip_parms"); /* for HGOTO_ERROR */
     NC_dim *dim;                        /* to check if the dimension is unlimited */
     int32   dimindex;                   /* to obtain the NC_dim record */
     NC_var *var;
@@ -4041,7 +3998,6 @@ SDsetcompress(int32        id,        /* IN: dataset ID */
                    perform on the next image */
               comp_info *c_info /* IN: ptr to compression info struct*/)
 {
-    CONSTR(FUNC, "SDsetcompress"); /* for HGOTO_ERROR */
     NC        *handle;
     NC_var    *var;
     NC_dim    *dim;      /* to check if the dimension is unlimited */
@@ -4219,7 +4175,6 @@ SDgetcompress(
     comp_info    *c_info /* OUT: ptr to compression information structure for storing the retrieved info */
 )
 {
-    CONSTR(FUNC, "SDgetcompress"); /* for HGOTO_ERROR */
     NC     *handle;
     NC_var *var;
     intn    status    = FAIL;
@@ -4293,7 +4248,6 @@ SDgetcompinfo(int32         sdsid,     /* IN: dataset ID */
          structure for storing the retrieved info */
 )
 {
-    CONSTR(FUNC, "SDgetcompinfo"); /* for HGOTO_ERROR */
     NC     *handle;
     NC_var *var;
     intn    status    = FAIL;
@@ -4365,7 +4319,6 @@ intn
 SDgetcomptype(int32         sdsid, /* IN: dataset ID */
               comp_coder_t *comp_type /* OUT: the type of compression */)
 {
-    CONSTR(FUNC, "SDgetcomptype"); /* for HGOTO_ERROR */
     NC     *handle;
     NC_var *var;
     intn    status    = FAIL;
@@ -4434,7 +4387,6 @@ SDgetdatasize(int32  sdsid,     /* IN: dataset ID */
               int32 *orig_size) /* OUT: size of original data */
 
 {
-    CONSTR(FUNC, "SDgetdatasize"); /* for HGOTO_ERROR */
     NC     *handle;
     NC_var *var;
     int32  *comp_size_tmp = NULL, *orig_size_tmp = NULL;
@@ -4514,7 +4466,6 @@ int32
 SDfindattr(int32       id, /* IN: object ID */
            const char *attrname /* IN: attribute name */)
 {
-    CONSTR(FUNC, "SDfindattr"); /* for HGOTO_ERROR */
     NC_array  *ap     = NULL;
     NC_array **app    = NULL;
     NC_attr  **attr   = NULL;
@@ -4575,7 +4526,6 @@ done:
 int32
 SDidtoref(int32 id /* IN: dataset ID */)
 {
-    CONSTR(FUNC, "SDidtoref"); /* for HGOTO_ERROR */
     NC     *handle    = NULL;
     NC_var *var       = NULL;
     int32   ret_value = FAIL;
@@ -4626,7 +4576,6 @@ int32
 SDreftoindex(int32 fid, /* IN: file ID */
              int32 ref /* IN: reference number */)
 {
-    CONSTR(FUNC, "SDreftoindex"); /* for HGOTO_ERROR */
     NC      *handle = NULL;
     NC_var **dp     = NULL;
     intn     ii;
@@ -4680,7 +4629,6 @@ done:
 int32
 SDisrecord(int32 id /* IN: dataset ID */)
 {
-    CONSTR(FUNC, "SDisrecord"); /* for HGOTO_ERROR */
     NC     *handle;
     NC_var *var;
     int32   ret_value = TRUE;
@@ -4738,7 +4686,6 @@ done:
 intn
 SDiscoordvar(int32 id /* IN: dataset ID */)
 {
-    CONSTR(FUNC, "SDiscoordvar"); /* for HGOTO_ERROR */
     NC     *handle = NULL;
     NC_var *var    = NULL;
     NC_dim *dim    = NULL;
@@ -4826,7 +4773,6 @@ intn
 SDsetaccesstype(int32 id, /* IN: dataset ID */
                 uintn accesstype /* IN: access type */)
 {
-    CONSTR(FUNC, "SDsetaccesstype"); /* for HGOTO_ERROR */
     NC     *handle    = NULL;
     NC_var *var       = NULL;
     intn    ret_value = SUCCEED;
@@ -4894,7 +4840,6 @@ intn
 SDsetblocksize(int32 sdsid, /* IN: dataset ID */
                int32 block_size /* IN: size of the block in bytes */)
 {
-    CONSTR(FUNC, "SDsetblocksize"); /* for HGOTO_ERROR */
     NC     *handle    = NULL;
     NC_var *var       = NULL;
     intn    ret_value = SUCCEED;
@@ -4945,7 +4890,6 @@ intn
 SDgetblocksize(int32  sdsid, /* IN: dataset ID */
                int32 *block_size /* OUT: size of the block in bytes */)
 {
-    CONSTR(FUNC, "SDgetblocksize"); /* for HGOTO_ERROR */
     NC     *handle       = NULL;
     NC_var *var          = NULL;
     int32   block_length = -1;
@@ -5019,7 +4963,6 @@ SDsetfillmode(int32 sd_id,  /* IN: HDF file ID, returned from SDstart */
                                    either SD_FILL or SD_NOFILL.
                                    SD_FILL is the default mode. */)
 {
-    CONSTR(FUNC, "SDsetfillmode"); /* for HGOTO_ERROR */
     NC  *handle = NULL;
     intn cdfid;
     intn ret_value = FAIL;
@@ -5065,7 +5008,6 @@ SDsetdimval_comp(int32 dimid,    /* IN: dimension ID, returned from SDgetdimid *
                                     SD_DIMVAL_BW_INCOMP -- incompatible.
                                     (defined in mfhdf.h ) */)
 {
-    CONSTR(FUNC, "SDsetdimval_comp"); /* for HGOTO_ERROR */
     NC     *handle    = NULL;
     NC_dim *dim       = NULL;
     intn    ret_value = SUCCEED;
@@ -5121,7 +5063,6 @@ done:
 intn
 SDisdimval_bwcomp(int32 dimid /* IN: dimension ID, returned from SDgetdimid */)
 {
-    CONSTR(FUNC, "SDisdimval_bwcomp"); /* for HGOTO_ERROR */
     NC     *handle    = NULL;
     NC_dim *dim       = NULL;
     intn    ret_value = FAIL;
@@ -5277,7 +5218,6 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
            HDF_CHUNK_DEF chunk_def, /* IN: chunk definition */
            int32         flags /* IN: flags */)
 {
-    CONSTR(FUNC, "SDsetchunk");      /* for HGOTO_ERROR */
     NC            *handle    = NULL; /* file handle */
     NC_var        *var       = NULL; /* SDS variable */
     NC_attr      **fill_attr = NULL; /* fill value attribute */
@@ -5674,7 +5614,6 @@ SDgetchunkinfo(int32          sdsid,     /* IN: sds access id */
                HDF_CHUNK_DEF *chunk_def, /* IN/OUT: chunk definition */
                int32         *flags /* IN/OUT: flags */)
 {
-    CONSTR(FUNC, "SDgetchunkinfo"); /* for HGOTO_ERROR */
     NC             *handle = NULL;  /* file handle */
     NC_var         *var    = NULL;  /* SDS variable */
     sp_info_block_t info_block;     /* special info block */
@@ -5880,7 +5819,6 @@ SDwritechunk(int32       sdsid,  /* IN: access aid to SDS */
              int32      *origin, /* IN: origin of chunk to write */
              const void *datap /* IN: buffer for data */)
 {
-    CONSTR(FUNC, "SDwritechunk");   /* for HGOTO_ERROR */
     NC             *handle = NULL;  /* file handle */
     NC_var         *var    = NULL;  /* SDS variable */
     int16           special;        /* Special code */
@@ -6068,7 +6006,6 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
             int32 *origin, /* IN: origin of chunk to write */
             void  *datap /* IN/OUT: buffer for data */)
 {
-    CONSTR(FUNC, "SDreadchunk");    /* for HGOTO_ERROR */
     NC             *handle = NULL;  /* file handle */
     NC_var         *var    = NULL;  /* SDS variable */
     int16           special;        /* Special code */
@@ -6302,7 +6239,6 @@ SDsetchunkcache(int32 sdsid,    /* IN: access aid to mess with */
                 int32 maxcache, /* IN: max number of chunks to cache */
                 int32 flags /* IN: flags = 0, HDF_CACHEALL */)
 {
-    CONSTR(FUNC, "SDsetchunkcache"); /* for HGOTO_ERROR */
     NC     *handle = NULL;           /* file handle */
     NC_var *var    = NULL;           /* SDS variable */
     int16   special;                 /* Special code */
@@ -6382,7 +6318,6 @@ int32
 SDcheckempty(int32 sdsid, /* IN: dataset ID */
              intn *emptySDS /* TRUE if SDS is empty */)
 {
-    CONSTR(FUNC, "SDcheckempty"); /* for HGOTO_ERROR */
     NC     *handle    = NULL;     /* file record struct */
     NC_var *var       = NULL;     /* variable record struct */
     int32   ret_value = SUCCEED;
@@ -6461,7 +6396,6 @@ done:
 hdf_idtype_t
 SDidtype(int32 an_id)
 {
-    CONSTR(FUNC, "SDidtype");      /* for HGOTO_ERROR */
     NC          *handle    = NULL; /* file record struct */
     hdf_idtype_t ret_value = NOT_SDAPI_ID;
 
@@ -6523,7 +6457,6 @@ SDidtype(int32 an_id)
 intn
 SDreset_maxopenfiles(intn req_max)
 {
-    CONSTR(FUNC, "SDreset_maxopenfiles"); /* for HGOTO_ERROR */
     intn ret_value = SUCCEED;
 
 #ifdef SDDEBUG
@@ -6569,7 +6502,6 @@ SDget_maxopenfiles(intn *curr_max,  /* OUT: current # of open files allowed */
                    intn *sys_limit) /* OUT: max # of open files allowed on
                                a system */
 {
-    CONSTR(FUNC, "SDget_maxopenfiles"); /* for HGOTO_ERROR */
     intn ret_value = SUCCEED;
 
 #ifdef SDDEBUG
@@ -6618,7 +6550,6 @@ done:
 intn
 SDget_numopenfiles()
 {
-    CONSTR(FUNC, "SDget_numopenfiles"); /* for HGOTO_ERROR */
     intn ret_value = SUCCEED;
 
 #ifdef SDDEBUG
@@ -6655,7 +6586,6 @@ intn
 SDgetfilename(int32 fid, /* IN:  file ID */
               char *filename /* OUT: name of the file */)
 {
-    CONSTR(FUNC, "SDgetfilename"); /* for HGOTO_ERROR */
     NC  *handle = NULL;
     intn len;
     intn ret_value = SUCCEED;
@@ -6708,7 +6638,6 @@ intn
 SDgetnamelen(int32   id, /* IN:  object ID */
              uint16 *name_len /* OUT: buffer for name's length */)
 {
-    CONSTR(FUNC, "SDgetnamelen"); /* for HGOTO_ERROR */
     NC     *handle    = NULL;
     NC_var *var       = NULL;
     NC_dim *dim       = NULL;

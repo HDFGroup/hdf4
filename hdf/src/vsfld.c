@@ -80,7 +80,6 @@ VSsetfields(int32 vkey, const char *fields)
     vsinstance_t   *w;
     VDATA          *vs;
     intn            ret_value = FAIL;
-    CONSTR(FUNC, "VSsetfields");
 
     /* check if a NULL field list is passed in, then return with
        error (bug #554) - BMR 4/30/01 */
@@ -268,7 +267,6 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
     vsinstance_t *w;
     VDATA        *vs;
     intn          ret_value = SUCCEED;
-    CONSTR(FUNC, "VSfdefine");
 
     if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -353,7 +351,6 @@ VFnfields(int32 vkey)
     vsinstance_t *w;
     VDATA        *vs;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "VFnfields");
 
     if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -391,7 +388,6 @@ VFfieldname(int32 vkey, int32 index)
     vsinstance_t *w;
     VDATA        *vs;
     char         *ret_value = NULL; /* FAIL */
-    CONSTR(FUNC, "VFfieldname");
 
     if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, NULL);
@@ -430,7 +426,6 @@ VFfieldtype(int32 vkey, int32 index)
     vsinstance_t *w;
     VDATA        *vs;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "VFfeildtype");
 
     if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -470,7 +465,6 @@ VFfieldisize(int32 vkey, int32 index)
     vsinstance_t *w;
     VDATA        *vs;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "VFfieldisize");
 
     if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -510,7 +504,6 @@ VFfieldesize(int32 vkey, int32 index)
     vsinstance_t *w;
     VDATA        *vs;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "VFfieldesize");
 
     if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -550,7 +543,6 @@ VFfieldorder(int32 vkey, int32 index)
     vsinstance_t *w;
     VDATA        *vs;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "VFfieldorder");
 
     if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -607,7 +599,6 @@ FORTRAN
 intn
 VSsetexternalfile(int32 vkey, const char *filename, int32 offset)
 {
-    CONSTR(FUNC, "VSsetexternalfile");
     int32 ret_value = SUCCEED;
 
     vsinstance_t *w;
@@ -682,7 +673,6 @@ done:
 intn
 VSgetexternalfile(int32 vkey, uintn buf_size, char *ext_filename, int32 *offset)
 {
-    CONSTR(FUNC, "VSgetexternalfile");
     vsinstance_t   *w;
     VDATA          *vs;
     sp_info_block_t info_block;
@@ -789,7 +779,6 @@ done:
 intn
 VSgetexternalinfo(int32 vkey, uintn buf_size, char *ext_filename, int32 *offset, int32 *length)
 {
-    CONSTR(FUNC, "VSgetexternalinfo");
     vsinstance_t *w;
     VDATA        *vs;
     intn          actual_fname_len = 0;
@@ -919,8 +908,6 @@ intn
 VSfpack(int32 vsid, intn packtype, const char *fields_in_buf, void *buf, intn bufsz, intn n_records,
         const char *fields, void *fldbufpt[])
 {
-    CONSTR(FUNC, "VSfpack");
-
     int32           ac;
     char          **av, *s;
     uint8          *bufp   = (uint8 *)buf;

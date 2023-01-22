@@ -212,7 +212,6 @@ structures.
 intn
 HDGLinitialize_list(Generic_list *list)
 {
-    CONSTR(FUNC, "HDGLinitialize_list"); /* for HERROR */
     intn ret_value = SUCCEED;
 
     /* Allocate an initialize info struct */
@@ -318,7 +317,6 @@ HDGLdestroy_list(Generic_list *list)
 intn
 HDGLadd_to_beginning(Generic_list list, VOIDP pointer)
 {
-    CONSTR(FUNC, "HDGLadd_to_beginning"); /* for HERROR */
     Generic_list_element *element;
     intn                  ret_value = SUCCEED;
 
@@ -360,7 +358,6 @@ done:
 intn
 HDGLadd_to_end(Generic_list list, VOIDP pointer)
 {
-    CONSTR(FUNC, "HDGLadd_to_end"); /* for HERROR */
     Generic_list_element *element;
     intn                  ret_value = SUCCEED;
 
@@ -402,7 +399,6 @@ done:
 intn
 HDGLadd_to_list(Generic_list list, VOIDP pointer)
 {
-    CONSTR(FUNC, "HDGLadd_to_list"); /* for HERROR */
     Generic_list_element *element, *new_element;
     intn                  ret_value = SUCCEED;
 

@@ -267,7 +267,6 @@ DFGRgetimage(const char *filename, void *image, int32 xdim, int32 ydim)
 int
 DFGRsetcompress(int32 scheme, comp_info *cinfo)
 {
-    CONSTR(FUNC, "DFGRsetcompress");
     intn ret_value = SUCCEED;
 
     HEclear();
@@ -419,7 +418,6 @@ DFGRputimage(const char *filename, void *image, int32 xdim, int32 ydim)
 int
 DFGRreadref(const char *filename, uint16 ref)
 {
-    CONSTR(FUNC, "DFGRreadref");
     intn  ret_value = SUCCEED;
     int32 file_id   = (-1);
 
@@ -472,7 +470,6 @@ done:
 PRIVATE int
 DFGRgetrig(int32 file_id, uint16 ref, DFGRrig *rig)
 {
-    CONSTR(FUNC, "DFGRgetrig");
     uint16 elt_tag, elt_ref;
     uint8  ntstring[4];
     int    type;
@@ -573,7 +570,6 @@ done:
 PRIVATE int
 DFGRaddrig(int32 file_id, uint16 ref, DFGRrig *rig)
 {
-    CONSTR(FUNC, "DFGRaddrig");
     uint8 ntstring[4];
     int32 lutsize;
     int32 GroupID;
@@ -698,7 +694,6 @@ done:
 int32
 DFGRIopen(const char *filename, int acc_mode)
 {
-    CONSTR(FUNC, "DFGRIopen");
     int32 file_id   = (-1);
     int32 ret_value = SUCCEED;
 
@@ -765,7 +760,6 @@ done:
 PRIVATE int
 DFGRIriginfo(int32 file_id)
 {
-    CONSTR(FUNC, "DFGRIriginfo");
     int    i, isfirst;
     uint16 newref = 0, newtag = 0, gettag, getref, ref = 0, dummy = 0;
     struct {
@@ -891,7 +885,6 @@ done:
 int
 DFGRIgetdims(const char *filename, int32 *pxdim, int32 *pydim, int *pncomps, int *pil, int type)
 {
-    CONSTR(FUNC, "DFGRIgetdims");
     intn  ret_value = SUCCEED;
     int32 file_id   = (-1);
 
@@ -946,7 +939,6 @@ done:
 int
 DFGRIreqil(intn il, intn type)
 {
-    CONSTR(FUNC, "DFGRIreqil");
     intn ret_value = SUCCEED;
 
     HEclear();
@@ -990,7 +982,6 @@ int
 DFGRIgetimlut(const char *filename, void *imlut, int32 xdim, int32 ydim, int type, int isfortran,
               int *compressed, uint16 *compr_type, int *has_pal)
 {
-    CONSTR(FUNC, "DFGRIgetimlut");
     int32  file_id = (-1);
     int32  currpos[3], currmax[3], destsize[3], bufsize, i, j;
     uint8 *buf, *destp;
@@ -1151,7 +1142,6 @@ done:
 int
 DFGRIsetdims(int32 xdim, int32 ydim, intn ncomps, int type)
 {
-    CONSTR(FUNC, "DFGRIsetdims");
     intn ret_value = SUCCEED;
 
     /* Perform global, one-time initialization */
@@ -1192,7 +1182,6 @@ done:
 int
 DFGRIsetil(int il, int type)
 {
-    CONSTR(FUNC, "DFGRIsetil");
     intn ret_value = SUCCEED;
 
     /* Perform global, one-time initialization */
@@ -1226,7 +1215,6 @@ done:
 int
 DFGRIrestart(void)
 {
-    CONSTR(FUNC, "DFGRIrestart");
     intn ret_value = SUCCEED;
 
     /* Perform global, one-time initialization */
@@ -1267,7 +1255,6 @@ int
 DFGRIaddimlut(const char *filename, const void *imlut, int32 xdim, int32 ydim, int type, int isfortran,
               int newfile)
 {
-    CONSTR(FUNC, "DFGRIaddimlut");
     int32  file_id = (-1);
     uint16 wtag, wref; /* tag of image/lut being written */
     uint16 rigref;     /* ref # for the RIG */
@@ -1461,7 +1448,6 @@ DFGRIlastref(void)
 PRIVATE intn
 DFGRIstart(void)
 {
-    CONSTR(FUNC, "DFGRIstart"); /* for HERROR */
     intn ret_value = SUCCEED;
 
     /* Don't call this routine again... */
