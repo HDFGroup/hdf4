@@ -1489,7 +1489,7 @@ done:
 int32
 GRstart(int32 hdf_file_id)
 {
-    gr_info_t *gr_ptr;       /* ptr to the new GR information for a file */
+    gr_info_t *gr_ptr; /* ptr to the new GR information for a file */
     int32      ret_value = SUCCEED;
 
     /* clear error stack and check validity of file id */
@@ -1582,7 +1582,7 @@ done:
 intn
 GRfileinfo(int32 grid, int32 *n_datasets, int32 *n_attrs)
 {
-    gr_info_t *gr_ptr;          /* ptr to the GR information for a file */
+    gr_info_t *gr_ptr; /* ptr to the GR information for a file */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of file id */
@@ -1636,9 +1636,9 @@ done:
 PRIVATE intn
 GRIupdatemeta(int32 hdf_file_id, ri_info_t *img_ptr)
 {
-    uint8  GRtbuf[64];             /* local buffer for reading RIG info */
-    uint8  ntstring[4];            /* temporary storage for the number type information */
-    uint8 *p;                      /* temporary pointer into buffer */
+    uint8  GRtbuf[64];  /* local buffer for reading RIG info */
+    uint8  ntstring[4]; /* temporary storage for the number type information */
+    uint8 *p;           /* temporary pointer into buffer */
     intn   ret_value = SUCCEED;
 
     HEclear();
@@ -1756,7 +1756,7 @@ done:
 PRIVATE intn
 GRIupdateRIG(int32 hdf_file_id, ri_info_t *img_ptr)
 {
-    int32 GroupID;                /* RIG id for group interface */
+    int32 GroupID; /* RIG id for group interface */
     intn  ret_value = SUCCEED;
 
     HEclear();
@@ -1838,7 +1838,7 @@ done:
 PRIVATE intn
 GRIupdateRI(int32 hdf_file_id, ri_info_t *img_ptr)
 {
-    int32 GroupID;               /* RI vgroup id */
+    int32 GroupID; /* RI vgroup id */
     intn  ret_value = SUCCEED;
     int32 temp_ref; /* used to hold the returned value from a function
                             that may return a ref or a FAIL - BMR */
@@ -2241,9 +2241,9 @@ done:
 int32
 GRselect(int32 grid, int32 index)
 {
-    gr_info_t *gr_ptr;        /* ptr to the GR information for this grid */
-    ri_info_t *ri_ptr;        /* ptr to the image to work with */
-    void     **t;             /* temp. ptr to the image found */
+    gr_info_t *gr_ptr; /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr; /* ptr to the image to work with */
+    void     **t;      /* temp. ptr to the image found */
     int32      ret_value = SUCCEED;
 
     /* clear error stack and check validity of file id */
@@ -2310,9 +2310,9 @@ done:
 int32
 GRcreate(int32 grid, const char *name, int32 ncomp, int32 nt, int32 il, int32 dimsizes[2])
 {
-    int32      GroupID;       /* ID of the Vgroup created */
-    gr_info_t *gr_ptr;        /* ptr to the GR information for this grid */
-    ri_info_t *ri_ptr;        /* ptr to the image to work with */
+    int32      GroupID; /* ID of the Vgroup created */
+    gr_info_t *gr_ptr;  /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr;  /* ptr to the image to work with */
     int32      ret_value = SUCCEED;
     int32      temp_ref; /* used to hold the returned value from a function
                                  that may return a ref or a FAIL - BMR */
@@ -2428,9 +2428,9 @@ done:
 int32
 GRnametoindex(int32 grid, const char *name)
 {
-    gr_info_t *gr_ptr;             /* ptr to the GR information for this grid */
-    ri_info_t *ri_ptr;             /* ptr to the image to work with */
-    void     **t;                  /* temp. ptr to the image found */
+    gr_info_t *gr_ptr; /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr; /* ptr to the image to work with */
+    void     **t;      /* temp. ptr to the image found */
     int32      ret_value = SUCCEED;
 
     /* clear error stack and check validity of file id */
@@ -2496,7 +2496,7 @@ done:
 intn
 GRgetiminfo(int32 riid, char *name, int32 *ncomp, int32 *nt, int32 *il, int32 dimsizes[2], int32 *n_attr)
 {
-    ri_info_t *ri_ptr;           /* ptr to the image to work with */
+    ri_info_t *ri_ptr; /* ptr to the image to work with */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
@@ -2566,7 +2566,7 @@ done:
 intn
 GRgetnluts(int32 riid)
 {
-    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    ri_info_t *ri_ptr; /* ptr to the image to work with */
     intn       ret_value = FAIL;
 
     /* clear error stack and check validity of args */
@@ -3319,7 +3319,7 @@ done:
 intn
 GRendaccess(int32 riid)
 {
-    ri_info_t *ri_ptr;           /* ptr to the image to work with */
+    ri_info_t *ri_ptr; /* ptr to the image to work with */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
@@ -3396,8 +3396,8 @@ done:
 uint16
 GRidtoref(int32 riid)
 {
-    ri_info_t *ri_ptr;         /* ptr to the image to work with */
-    uint16     ret_value = 0;  /* FAIL? */
+    ri_info_t *ri_ptr;        /* ptr to the image to work with */
+    uint16     ret_value = 0; /* FAIL? */
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -3459,9 +3459,9 @@ done:
 int32
 GRreftoindex(int32 grid, uint16 ref)
 {
-    gr_info_t *gr_ptr;            /* ptr to the GR information for this grid */
-    ri_info_t *ri_ptr;            /* ptr to the image to work with */
-    void     **t;                 /* temp. ptr to the image found */
+    gr_info_t *gr_ptr; /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr; /* ptr to the image to work with */
+    void     **t;      /* temp. ptr to the image found */
     int32      ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
@@ -3525,7 +3525,7 @@ done:
 intn
 GRreqlutil(int32 riid, intn il)
 {
-    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    ri_info_t *ri_ptr; /* ptr to the image to work with */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
@@ -3582,7 +3582,7 @@ done:
 intn
 GRreqimageil(int32 riid, intn il)
 {
-    ri_info_t *ri_ptr;            /* ptr to the image to work with */
+    ri_info_t *ri_ptr; /* ptr to the image to work with */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
@@ -3684,7 +3684,7 @@ done:
 uint16
 GRluttoref(int32 lutid)
 {
-    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    ri_info_t *ri_ptr; /* ptr to the image to work with */
     uint16     ret_value = 0;
 
     /* clear error stack and check validity of args */
@@ -3738,7 +3738,7 @@ done:
 intn
 GRgetlutinfo(int32 lutid, int32 *ncomp, int32 *nt, int32 *il, int32 *nentries)
 {
-    ri_info_t *ri_ptr;            /* ptr to the image to work with */
+    ri_info_t *ri_ptr; /* ptr to the image to work with */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
@@ -3813,8 +3813,8 @@ done:
 intn
 GRwritelut(int32 lutid, int32 ncomps, int32 nt, int32 il, int32 nentries, void *data)
 {
-    int32      hdf_file_id;     /* file ID from Hopen */
-    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    int32      hdf_file_id; /* file ID from Hopen */
+    ri_info_t *ri_ptr;      /* ptr to the image to work with */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
@@ -3900,8 +3900,8 @@ done:
 intn
 GRreadlut(int32 lutid, void *data)
 {
-    int32      hdf_file_id;    /* file ID from Hopen */
-    ri_info_t *ri_ptr;         /* ptr to the image to work with */
+    int32      hdf_file_id; /* file ID from Hopen */
+    ri_info_t *ri_ptr;      /* ptr to the image to work with */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
@@ -3980,8 +3980,8 @@ done:
 intn
 GRsetexternalfile(int32 riid, const char *filename, int32 offset)
 {
-    ri_info_t *ri_ptr;                 /* ptr to the image to work with */
-    int32      tmp_aid;                /* AID returned from HXcreate() */
+    ri_info_t *ri_ptr;  /* ptr to the image to work with */
+    int32      tmp_aid; /* AID returned from HXcreate() */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
@@ -4061,7 +4061,7 @@ done:
 intn
 GRsetaccesstype(int32 riid, uintn accesstype)
 {
-    ri_info_t *ri_ptr;               /* ptr to the image to work with */
+    ri_info_t *ri_ptr; /* ptr to the image to work with */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
@@ -4165,7 +4165,7 @@ done:
 intn
 GRsetcompress(int32 riid, comp_coder_t comp_type, comp_info *cinfo)
 {
-    ri_info_t *ri_ptr;             /* ptr to the image to work with */
+    ri_info_t *ri_ptr; /* ptr to the image to work with */
     comp_info  cinfo_x;
     uint32     comp_config;
     intn       ret_value = SUCCEED;
@@ -4288,7 +4288,7 @@ done:
 intn
 GRgetcompress(int32 riid, comp_coder_t *comp_type, comp_info *cinfo)
 {
-    ri_info_t *ri_ptr;             /* ptr to the image to work with */
+    ri_info_t *ri_ptr; /* ptr to the image to work with */
     int32      file_id;
     uint16     scheme; /* compression scheme used for JPEG images */
     intn       ret_value = SUCCEED;
@@ -4395,7 +4395,7 @@ done:
 intn
 GRgetcomptype(int32 riid, comp_coder_t *comp_type)
 {
-    ri_info_t *ri_ptr;             /* ptr to the image to work with */
+    ri_info_t *ri_ptr; /* ptr to the image to work with */
     int32      file_id;
     uint16     scheme; /* compression scheme used for old images */
     intn       ret_value = SUCCEED;
@@ -4484,7 +4484,7 @@ done:
 intn
 GRgetcompinfo(int32 riid, comp_coder_t *comp_type, comp_info *cinfo)
 {
-    ri_info_t *ri_ptr;             /* ptr to the image to work with */
+    ri_info_t *ri_ptr; /* ptr to the image to work with */
     int32      file_id;
     uint16     scheme; /* compression scheme used for JPEG images */
     intn       ret_value = SUCCEED;
@@ -4775,11 +4775,11 @@ done:
 intn
 GRattrinfo(int32 id, int32 index, char *name, int32 *attr_nt, int32 *count)
 {
-    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
-    ri_info_t *ri_ptr;          /* ptr to the image to work with */
-    void     **t;               /* temp. ptr to the image found */
-    TBBT_TREE *search_tree;     /* attribute tree to search through */
-    at_info_t *at_ptr;          /* ptr to the attribute to work with */
+    gr_info_t *gr_ptr;      /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr;      /* ptr to the image to work with */
+    void     **t;           /* temp. ptr to the image found */
+    TBBT_TREE *search_tree; /* attribute tree to search through */
+    at_info_t *at_ptr;      /* ptr to the attribute to work with */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
@@ -4858,13 +4858,13 @@ done:
 intn
 GRgetattr(int32 id, int32 index, void *data)
 {
-    int32      hdf_file_id;    /* HDF file ID from Hopen */
-    gr_info_t *gr_ptr;         /* ptr to the GR information for this grid */
-    ri_info_t *ri_ptr;         /* ptr to the image to work with */
-    void     **t;              /* temp. ptr to the image found */
-    TBBT_TREE *search_tree;    /* attribute tree to search through */
-    at_info_t *at_ptr;         /* ptr to the attribute to work with */
-    int32      at_size;        /* size in bytes of the attribute data */
+    int32      hdf_file_id; /* HDF file ID from Hopen */
+    gr_info_t *gr_ptr;      /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr;      /* ptr to the image to work with */
+    void     **t;           /* temp. ptr to the image found */
+    TBBT_TREE *search_tree; /* attribute tree to search through */
+    at_info_t *at_ptr;      /* ptr to the attribute to work with */
+    int32      at_size;     /* size in bytes of the attribute data */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
@@ -4970,11 +4970,11 @@ done:
 int32
 GRfindattr(int32 id, const char *name)
 {
-    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
-    ri_info_t *ri_ptr;          /* ptr to the image to work with */
-    void     **t;               /* temp. ptr to the image found */
-    TBBT_TREE *search_tree;     /* attribute tree to search through */
-    at_info_t *at_ptr;          /* ptr to the attribute to work with */
+    gr_info_t *gr_ptr;      /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr;      /* ptr to the image to work with */
+    void     **t;           /* temp. ptr to the image found */
+    TBBT_TREE *search_tree; /* attribute tree to search through */
+    at_info_t *at_ptr;      /* ptr to the attribute to work with */
     int32      ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
@@ -5085,9 +5085,9 @@ done:
 PRIVATE intn
 GRIgetaid(ri_info_t *ri_ptr, intn acc_perm)
 {
-    int32      hdf_file_id;    /* HDF file ID */
-    gr_info_t *gr_ptr;         /* ptr to the file GR information for this image */
-    model_info minfo;          /* Dummy modeling information structure */
+    int32      hdf_file_id; /* HDF file ID */
+    gr_info_t *gr_ptr;      /* ptr to the file GR information for this image */
+    model_info minfo;       /* Dummy modeling information structure */
     intn       ret_value = SUCCEED;
 
     HEclear();

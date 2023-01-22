@@ -443,10 +443,10 @@ DESCRIPTION
 PRIVATE int32
 HXIstaccess(accrec_t *access_rec, int16 acc_mode)
 {
-    extinfo_t *info     = NULL;  /* special element information */
-    filerec_t *file_rec = NULL;  /* file record */
-    int32      data_off;         /* offset of the data we are checking */
-    uint8      local_ptbuf[12];  /* working buffer */
+    extinfo_t *info     = NULL; /* special element information */
+    filerec_t *file_rec = NULL; /* file record */
+    int32      data_off;        /* offset of the data we are checking */
+    uint8      local_ptbuf[12]; /* working buffer */
     int32      ret_value = SUCCEED;
 
     /* get file record and validate */
@@ -631,7 +631,7 @@ DESCRIPTION
 int32
 HXPread(accrec_t *access_rec, int32 length, void *data)
 {
-    extinfo_t *info =        /* information on the special element */
+    extinfo_t *info = /* information on the special element */
         (extinfo_t *)access_rec->special_info;
     int32 ret_value = SUCCEED;
 
@@ -707,8 +707,8 @@ DESCRIPTION
 int32
 HXPwrite(accrec_t *access_rec, int32 length, const void *data)
 {
-    uint8 local_ptbuf[4];     /* temp buffer */
-    extinfo_t *info =         /* information on the special element */
+    uint8      local_ptbuf[4]; /* temp buffer */
+    extinfo_t *info =          /* information on the special element */
         (extinfo_t *)(access_rec->special_info);
     uint8     *p = local_ptbuf; /* temp buffer ptr */
     filerec_t *file_rec;        /* file record */
@@ -816,7 +816,7 @@ int32
 HXPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength, int32 *poffset,
            int32 *pposn, int16 *paccess, int16 *pspecial)
 {
-    extinfo_t *info =           /* special information record */
+    extinfo_t *info = /* special information record */
         (extinfo_t *)access_rec->special_info;
     uint16 data_tag, data_ref; /* tag/ref of the data we are checking */
     int32  ret_value = SUCCEED;
@@ -869,7 +869,7 @@ DESCRIPTION
 intn
 HXPendaccess(accrec_t *access_rec)
 {
-    filerec_t *file_rec;          /* file record */
+    filerec_t *file_rec; /* file record */
     intn       ret_value = SUCCEED;
 
     /* validate argument */
@@ -965,7 +965,7 @@ DESCRIPTION
 int32
 HXPinfo(accrec_t *access_rec, sp_info_block_t *info_block)
 {
-    extinfo_t *info =        /* special information record */
+    extinfo_t *info = /* special information record */
         (extinfo_t *)access_rec->special_info;
     int32 ret_value = SUCCEED;
 

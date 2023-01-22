@@ -236,7 +236,7 @@ DFSDgetdims(const char *filename, intn *prank, int32 sizes[], intn maxrank)
 {
     intn  i;
     int32 file_id;
-    intn ret_value = SUCCEED;
+    intn  ret_value = SUCCEED;
 
     HEclear(); /* Clear error stack */
 
@@ -303,7 +303,7 @@ DFSDgetdatastrs(char *label, char *unit, char *format, char *coordsys)
 {
     int32 luf;
     char *lufp;
-    intn ret_value = SUCCEED;
+    intn  ret_value = SUCCEED;
 
     HEclear(); /* Clear error stack */
 
@@ -372,7 +372,7 @@ DFSDgetdimstrs(int dim, char *label, char *unit, char *format)
     intn  luf;
     intn  rdim;
     char *lufp;
-    intn ret_value = SUCCEED;
+    intn  ret_value = SUCCEED;
 
     HEclear(); /* Clear error stack */
 
@@ -537,7 +537,7 @@ DFSDgetdimscale(intn dim, int32 maxsize, VOIDP scale)
     int32  localNTsize;
     intn   rdim;
     uint8 *p1, *p2;
-    intn ret_value = SUCCEED;
+    intn   ret_value = SUCCEED;
 
     HEclear(); /* Clear error stack */
 
@@ -614,7 +614,7 @@ DFSDgetrange(VOIDP pmax, VOIDP pmin)
     int32  numtype;
     uint32 localNTsize;
     uint8 *p1, *p2;
-    int ret_value = SUCCEED;
+    int    ret_value = SUCCEED;
 
     HEclear(); /* Clear error stack */
 
@@ -872,10 +872,10 @@ DFSDsetdatastrs(const char *label, const char *unit, const char *format, const c
 intn
 DFSDIsetdatastrs(const char *label, const char *unit, const char *format, const char *coordsys)
 {
-    intn luf;                         /* takes values LABEL, UNIT, FORMAT */
-                                      /* in succession */
-    const char *lufp;                 /* points to label, unit, format */
-                                      /* in succession */
+    intn luf;         /* takes values LABEL, UNIT, FORMAT */
+                      /* in succession */
+    const char *lufp; /* points to label, unit, format */
+                      /* in succession */
     intn ret_value = SUCCEED;
 
     /* Perform global, one-time initialization */
@@ -3438,7 +3438,7 @@ done:
 intn
 DFSDIsdginfo(int32 file_id)
 {
-    DFdi ptr;
+    DFdi  ptr;
     int32 aid;
     intn  ret_value = SUCCEED;
 

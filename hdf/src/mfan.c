@@ -1857,7 +1857,7 @@ ANget_tagref(int32    an_id, /* IN: annotation interface ID */
              uint16 *tag,    /* OUT: Tag for annotation */
              uint16 *ref /* OUT: ref for annotation */)
 {
-    filerec_t *file_rec  = NULL;  /* file record pointer */
+    filerec_t *file_rec  = NULL; /* file record pointer */
     TBBT_NODE *entry     = NULL;
     ANentry   *ann_entry = NULL;
     int32      ret_value = SUCCEED;

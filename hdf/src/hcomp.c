@@ -302,8 +302,8 @@ int32
 HCPquery_encode_header(comp_model_t model_type, model_info *m_info, comp_coder_t coder_type,
                        comp_info *c_info)
 {
-    int32 coder_len = 2;                    /* # of bytes to encode coder information (2 minimum) */
-    int32 model_len = 2;                    /* # of bytes to encode model information (2 minimum) */
+    int32 coder_len = 2; /* # of bytes to encode coder information (2 minimum) */
+    int32 model_len = 2; /* # of bytes to encode model information (2 minimum) */
     int32 ret_value = SUCCEED;
 
     /* clear error stack and validate args */
@@ -596,8 +596,8 @@ PRIVATE int32
 HCIwrite_header(atom_t file_id, compinfo_t *info, uint16 special_tag, uint16 ref, comp_info *c_info,
                 model_info *m_info)
 {
-    int32  dd_aid;                   /* AID for writing the special info */
-    uint8 *p;                        /* pointer to the temporary buffer */
+    int32  dd_aid; /* AID for writing the special info */
+    uint8 *p;      /* pointer to the temporary buffer */
     uint8  local_ptbuf[32];
     int32  header_len; /* how many bytes the header is */
     int32  ret_value = SUCCEED;
@@ -654,8 +654,8 @@ done:
 PRIVATE int32
 HCIread_header(accrec_t *access_rec, compinfo_t *info, comp_info *c_info, model_info *m_info)
 {
-    uint16 header_version;          /* version of the compression header */
-    uint8 *p;                       /* pointer to the temporary buffer */
+    uint16 header_version; /* version of the compression header */
+    uint8 *p;              /* pointer to the temporary buffer */
     uint8 *local_ptbuf;
     int32  ret_value = SUCCEED;
 
@@ -1051,10 +1051,10 @@ done:
 PRIVATE int32
 HCIstaccess(accrec_t *access_rec, int16 acc_mode)
 {
-    compinfo_t *info = NULL;     /* special element information */
-    filerec_t  *file_rec;        /* file record */
-    comp_info   c_info;          /* encoding information from the header */
-    model_info  m_info;          /* modeling information from the header */
+    compinfo_t *info = NULL; /* special element information */
+    filerec_t  *file_rec;    /* file record */
+    comp_info   c_info;      /* encoding information from the header */
+    model_info  m_info;      /* modeling information from the header */
     int32       ret_value = SUCCEED;
 
     /* get file record and validate */
@@ -1114,8 +1114,8 @@ done:
 int32
 HCPstread(accrec_t *access_rec)
 {
-    compinfo_t *info;          /* information on the special element */
-    int32       ret_value;     /* AID to return */
+    compinfo_t *info;      /* information on the special element */
+    int32       ret_value; /* AID to return */
 
     if ((ret_value = HCIstaccess(access_rec, DFACC_READ)) == FAIL)
         HGOTO_ERROR(DFE_DENIED, FAIL);
@@ -1151,8 +1151,8 @@ done:
 int32
 HCPstwrite(accrec_t *access_rec)
 {
-    compinfo_t *info;           /* information on the special element */
-    int32       ret_value;      /* AID to return */
+    compinfo_t *info;      /* information on the special element */
+    int32       ret_value; /* AID to return */
 
     if ((ret_value = HCIstaccess(access_rec, DFACC_WRITE)) == FAIL)
         HGOTO_ERROR(DFE_DENIED, FAIL);
@@ -1190,7 +1190,7 @@ done:
 int32
 HCPseek(accrec_t *access_rec, int32 offset, intn origin)
 {
-    compinfo_t *info;        /* information on the special element */
+    compinfo_t *info; /* information on the special element */
     int32       ret_value;
 
     /* Adjust offset according to origin.  There is no upper bound to posn */
@@ -1238,7 +1238,7 @@ done:
 int32
 HCPread(accrec_t *access_rec, int32 length, void *data)
 {
-    compinfo_t *info;        /* information on the special element */
+    compinfo_t *info; /* information on the special element */
     int32       ret_value;
 
     /* validate length */
@@ -1291,7 +1291,7 @@ done:
 int32
 HCPwrite(accrec_t *access_rec, int32 length, const void *data)
 {
-    compinfo_t *info;         /* information on the special element */
+    compinfo_t *info; /* information on the special element */
     uint8       local_ptbuf[4];
     uint8      *p = local_ptbuf; /* temp buffer ptr */
     filerec_t  *file_rec;        /* file record */
@@ -1367,7 +1367,7 @@ int32
 HCPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength, int32 *poffset,
            int32 *pposn, int16 *paccess, int16 *pspecial)
 {
-    compinfo_t *info =          /* special information record */
+    compinfo_t *info = /* special information record */
         (compinfo_t *)access_rec->special_info;
     uint16 data_tag, data_ref; /* tag/ref of the data we are checking */
     int32  data_off;           /* offset of the data we are checking */
@@ -1416,7 +1416,7 @@ HCPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, in
 intn
 HCPendaccess(accrec_t *access_rec)
 {
-    filerec_t *file_rec;          /* file record */
+    filerec_t *file_rec; /* file record */
     intn       ret_value = SUCCEED;
 
     /* validate argument */
@@ -1472,7 +1472,7 @@ done:
 int32
 HCPcloseAID(accrec_t *access_rec)
 {
-    compinfo_t *info;            /* special information record */
+    compinfo_t *info; /* special information record */
     int32       ret = SUCCEED;
 
     info = (compinfo_t *)access_rec->special_info;
@@ -1626,15 +1626,15 @@ intn
 HCPgetcomptype(int32 file_id, uint16 data_tag, uint16 data_ref, /* IN: tag/ref of element */
                comp_coder_t *comp_type)                         /* OUT: compression type */
 {
-    uint16     ctag, cref;          /* tag/ref for the special info header object */
-    int32      data_id  = FAIL;     /* temporary AID for header info */
-    int32      temp_aid = FAIL;     /* temporary AID for header info */
-    int32      data_len;            /* offset of the data we are checking */
-    uint8     *p;                   /* pointers to the temporary buffer */
-    uint8     *local_ptbuf = NULL;  /* temporary buffer */
-    uint16     sp_tag;              /* special tag */
-    uint16     c_type;              /* compression type */
-    filerec_t *file_rec;            /* file record */
+    uint16     ctag, cref;         /* tag/ref for the special info header object */
+    int32      data_id  = FAIL;    /* temporary AID for header info */
+    int32      temp_aid = FAIL;    /* temporary AID for header info */
+    int32      data_len;           /* offset of the data we are checking */
+    uint8     *p;                  /* pointers to the temporary buffer */
+    uint8     *local_ptbuf = NULL; /* temporary buffer */
+    uint16     sp_tag;             /* special tag */
+    uint16     c_type;             /* compression type */
+    filerec_t *file_rec;           /* file record */
     intn       ret_value = SUCCEED;
 
     /* clear error stack */

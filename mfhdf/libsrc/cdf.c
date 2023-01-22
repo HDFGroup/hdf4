@@ -2321,7 +2321,7 @@ hdf_read_xdr_cdf(XDR *xdrs, NC **handlep)
     int32 cdf_vg = FAIL;
     int   vgid   = 0;
     int   status;
-    intn ret_value = SUCCEED;
+    intn  ret_value = SUCCEED;
 
 #if DEBUG
     fprintf(stderr, "hdf_read_xdr_cdf i've been called %d\n", (*handlep)->hdf_file);

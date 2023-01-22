@@ -1816,9 +1816,9 @@ HMCgetcompress(accrec_t     *access_rec, /* IN: access record */
                comp_coder_t *comp_type,  /* OUT: compression type */
                comp_info    *c_info)        /* OUT: retrieved compression info */
 {
-    chunkinfo_t *info = NULL;       /* chunked element information record */
-    model_info   m_info;            /* modeling information - dummy */
-    comp_model_t model_type;        /* modeling type - dummy */
+    chunkinfo_t *info = NULL; /* chunked element information record */
+    model_info   m_info;      /* modeling information - dummy */
+    comp_model_t model_type;  /* modeling type - dummy */
     intn         ret_value = SUCCEED;
 
     /* Get the special info from the given record */
@@ -1997,10 +1997,10 @@ HMCgetdatainfo(int32 file_id, uint16 tag, uint16 ref, int32 *chk_coord, /* IN: c
                int32 *offsetarray, /* OUT: array to hold offsets */
                int32 *lengtharray) /* OUT: array to hold lengths */
 {
-    uint16       comp_ref = 0;      /* ref# of compressed data */
-    chunkinfo_t *chkinfo  = NULL;   /* chunked element information */
-    atom_t       ddid     = FAIL;   /* description record access id */
-    atom_t       cmpddid  = FAIL;   /* description record access id */
+    uint16       comp_ref = 0;    /* ref# of compressed data */
+    chunkinfo_t *chkinfo  = NULL; /* chunked element information */
+    atom_t       ddid     = FAIL; /* description record access id */
+    atom_t       cmpddid  = FAIL; /* description record access id */
     uint16       new_tag = 0, new_ref = 0;
     int32        new_off = 0, new_len = 0;
     intn         count   = 0; /* number of blocks */
@@ -2741,7 +2741,7 @@ HMCreadChunk(int32  access_id, /* IN: access aid to mess with */
              int32 *origin,    /* IN: origin of chunk to read */
              void  *datap /* IN: buffer for data */)
 {
-    accrec_t *access_rec = NULL;  /* access record */
+    accrec_t *access_rec = NULL; /* access record */
 #ifdef UNUSED
     uint8 *data = NULL;           /* data buffer */
 #endif                            /* UNUSED */
@@ -3231,7 +3231,7 @@ HMCwriteChunk(int32       access_id, /* IN: access aid to mess with */
               int32      *origin,    /* IN: origin of chunk to write */
               const void *datap /* IN: buffer for data */)
 {
-    accrec_t *access_rec = NULL;   /* access record */
+    accrec_t *access_rec = NULL; /* access record */
 #ifdef UNUSED
     uint8     *data    = NULL;       /* data buffer */
     CHUNK_REC *chk_rec = NULL;       /* current chunk */
@@ -3799,7 +3799,7 @@ AUTHOR
 intn
 HMCPendaccess(accrec_t *access_rec /* IN:  access record to close */)
 {
-    filerec_t *file_rec  = NULL;   /* file record */
+    filerec_t *file_rec  = NULL; /* file record */
     intn       ret_value = SUCCEED;
 
     /* validate argument */

@@ -76,7 +76,7 @@ DAcreate_array(intn start_size, /* IN: Initial array size */
                intn incr_mult   /* IN: multiple to create additional elements in */
 )
 {
-    dynarr_t *new_arr   = NULL;     /* ptr to the new dynarray */
+    dynarr_t *new_arr   = NULL; /* ptr to the new dynarray */
     dynarr_p  ret_value = NULL;
 
     HEclear();
@@ -127,7 +127,7 @@ DAdestroy_array(dynarr_p arr,      /* IN: Array to destroy */
                 intn     free_elem /* IN: whether to free each element */
 )
 {
-    dynarr_t *dest_arr;              /* ptr to the dynarray destroy*/
+    dynarr_t *dest_arr; /* ptr to the dynarray destroy*/
     intn      i;
     intn      ret_value = SUCCEED;
 
@@ -171,7 +171,7 @@ intn
 DAsize_array(dynarr_p arr /* IN: Array to get size of */
 )
 {
-    dynarr_t *arr_ptr;            /* ptr to the dynarray destroy*/
+    dynarr_t *arr_ptr; /* ptr to the dynarray destroy*/
     intn      ret_value = SUCCEED;
 
     HEclear();
@@ -208,7 +208,7 @@ DAget_elem(dynarr_p arr_ptr, /* IN: Array to access */
            intn     elem     /* IN: Array element to retrieve */
 )
 {
-    dynarr_t *arr;              /* ptr to the dynarray */
+    dynarr_t *arr; /* ptr to the dynarray */
     VOIDP     ret_value = NULL;
 
     HEclear();
@@ -250,7 +250,7 @@ DAset_elem(dynarr_p arr_ptr, /* IN: Array to access */
            VOIDP    obj      /* IN: Pointer to the object to store */
 )
 {
-    dynarr_t *arr;              /* ptr to the dynarray */
+    dynarr_t *arr; /* ptr to the dynarray */
     intn      ret_value = SUCCEED;
 
     HEclear();
@@ -307,7 +307,7 @@ DAdel_elem(dynarr_p arr_ptr, /* IN: Array to access */
            intn     elem     /* IN: Array element to retrieve */
 )
 {
-    dynarr_t *arr;              /* ptr to the dynarray */
+    dynarr_t *arr; /* ptr to the dynarray */
     VOIDP     ret_value = NULL;
 
     HEclear();

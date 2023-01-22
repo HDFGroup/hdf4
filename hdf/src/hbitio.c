@@ -83,9 +83,9 @@ PRIVATE intn HIbitstart(void);
 int32
 Hstartbitread(int32 file_id, uint16 tag, uint16 ref)
 {
-    int32            aid;          /* Access ID for the bit-level routines to use */
-    struct bitrec_t *bitfile_rec;  /* Pointer to the bitfile record */
-    int32            ret_value;    /* return bit ID */
+    int32            aid;         /* Access ID for the bit-level routines to use */
+    struct bitrec_t *bitfile_rec; /* Pointer to the bitfile record */
+    int32            ret_value;   /* return bit ID */
 
     /* clear error stack */
     HEclear();
@@ -159,10 +159,10 @@ Hstartbitread(int32 file_id, uint16 tag, uint16 ref)
 int32
 Hstartbitwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
 {
-    bitrec_t *bitfile_rec;          /* access record */
-    int32     aid;                  /* Access ID for the bit-level routines to use */
-    intn      exists;               /* whether dataset exists already */
-    int32     ret_value;            /* return bit ID */
+    bitrec_t *bitfile_rec; /* access record */
+    int32     aid;         /* Access ID for the bit-level routines to use */
+    intn      exists;      /* whether dataset exists already */
+    int32     ret_value;   /* return bit ID */
 
     /* clear error stack and check validity of file id */
     HEclear();
@@ -240,7 +240,7 @@ Hstartbitwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
 intn
 Hbitappendable(int32 bitid)
 {
-    bitrec_t *bitfile_rec;          /* access record */
+    bitrec_t *bitfile_rec; /* access record */
 
     /* clear error stack and check validity of file id */
     HEclear();
@@ -538,11 +538,11 @@ REVISION LOG
 intn
 Hbitseek(int32 bitid, int32 byte_offset, intn bit_offset)
 {
-    bitrec_t *bitfile_rec;    /* access record */
-    int32     seek_pos;       /* position of block to seek to */
-    int32     read_size;      /* number of bytes to read into buffer */
-    int32     n;              /* number of bytes actually read */
-    intn      new_block;      /* whether to move to another block in the dataset */
+    bitrec_t *bitfile_rec; /* access record */
+    int32     seek_pos;    /* position of block to seek to */
+    int32     read_size;   /* number of bytes to read into buffer */
+    int32     n;           /* number of bytes actually read */
+    intn      new_block;   /* whether to move to another block in the dataset */
 
     /* clear error stack and check validity of file id */
     HEclear();
@@ -658,7 +658,7 @@ Hgetbit(int32 bitid)
 int32
 Hendbitaccess(int32 bitfile_id, intn flushbit)
 {
-    bitrec_t *bitfile_rec;         /* bitfile record */
+    bitrec_t *bitfile_rec; /* bitfile record */
 
     /* check validity of access id */
     bitfile_rec = HAatom_object(bitfile_id);

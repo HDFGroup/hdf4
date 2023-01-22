@@ -297,7 +297,7 @@ DESCRIPTION
 int32
 HBPread(accrec_t *access_rec, int32 length, void *data)
 {
-    bufinfo_t *info =        /* information on the special element */
+    bufinfo_t *info = /* information on the special element */
         (bufinfo_t *)access_rec->special_info;
     int32 ret_value = SUCCEED;
 
@@ -347,7 +347,7 @@ DESCRIPTION
 int32
 HBPwrite(accrec_t *access_rec, int32 length, const void *data)
 {
-    bufinfo_t *info =         /* information on the special element */
+    bufinfo_t *info = /* information on the special element */
         (bufinfo_t *)(access_rec->special_info);
     int32 new_len; /* new length of object */
     int32 ret_value = SUCCEED;
@@ -428,7 +428,7 @@ int32
 HBPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength, int32 *poffset,
            int32 *pposn, int16 *paccess, int16 *pspecial)
 {
-    bufinfo_t *info =           /* special information record */
+    bufinfo_t *info = /* special information record */
         (bufinfo_t *)access_rec->special_info;
     uint16 data_tag, data_ref; /* tag/ref of the data we are checking */
     int32  data_off;           /* offset of the data we are checking */
@@ -528,7 +528,7 @@ DESCRIPTION
 int32
 HBPcloseAID(accrec_t *access_rec)
 {
-    bufinfo_t *info =            /* special information record */
+    bufinfo_t *info = /* special information record */
         (bufinfo_t *)access_rec->special_info;
     int32 ret_value = SUCCEED;
 
@@ -580,7 +580,7 @@ DESCRIPTION
 int32
 HBPinfo(accrec_t *access_rec, sp_info_block_t *info_block)
 {
-    bufinfo_t *info =        /* special information record */
+    bufinfo_t *info = /* special information record */
         (bufinfo_t *)access_rec->special_info;
     int32 ret_value = SUCCEED;
 

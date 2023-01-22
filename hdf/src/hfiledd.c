@@ -145,9 +145,9 @@ intn
 HTPstart(filerec_t *file_rec /* IN:  File record to store info in */
 )
 {
-    uint8 *tbuf      = NULL;  /* temporary buffer */
-    uintn  tbuf_size = 0;     /* temporary buffer size */
-    int32  end_off   = 0;     /* offset of the end of the file */
+    uint8 *tbuf      = NULL; /* temporary buffer */
+    uintn  tbuf_size = 0;    /* temporary buffer size */
+    int32  end_off   = 0;    /* offset of the end of the file */
     intn   ret_value = SUCCEED;
 
     HEclear();
@@ -507,8 +507,8 @@ intn
 HTPend(filerec_t *file_rec /* IN:  File record to store info in */
 )
 {
-    ddblock_t *bl, *next;   /* current ddblock and next ddblock pointers.
-                               for freeing ddblock linked list */
+    ddblock_t *bl, *next; /* current ddblock and next ddblock pointers.
+                             for freeing ddblock linked list */
     intn ret_value = SUCCEED;
 
     HEclear();
@@ -560,7 +560,7 @@ HTPcreate(filerec_t *file_rec, /* IN: File record to store info in */
           uint16     ref       /* IN: ref to create */
 )
 {
-    dd_t  *dd_ptr    = NULL;   /* ptr to dd created */
+    dd_t  *dd_ptr    = NULL; /* ptr to dd created */
     atom_t ret_value = SUCCEED;
 
     HEclear();
@@ -707,7 +707,7 @@ intn
 HTPdelete(atom_t ddid /* IN: DD id to delete */
 )
 {
-    dd_t      *dd_ptr;         /* ptr to the DD info for the tag/ref */
+    dd_t      *dd_ptr; /* ptr to the DD info for the tag/ref */
     filerec_t *file_rec;
     int32      ret_value = SUCCEED;
 
@@ -770,8 +770,8 @@ HTPupdate(atom_t ddid,    /* IN: DD id to update */
           int32  new_len  /* IN: new length for DD */
 )
 {
-    dd_t *dd_ptr      = NULL;  /* ptr to the DD info for the tag/ref */
-    int32 dont_change = -2;    /* initialize to '-2' */
+    dd_t *dd_ptr      = NULL; /* ptr to the DD info for the tag/ref */
+    int32 dont_change = -2;   /* initialize to '-2' */
     int32 ret_value   = SUCCEED;
 
     HEclear();
@@ -819,7 +819,7 @@ HTPinquire(atom_t  ddid, /* IN: DD id to inquire about */
            int32  *len   /* IN: length of DD */
 )
 {
-    dd_t *dd_ptr;               /* ptr to the DD info for the tag/ref */
+    dd_t *dd_ptr; /* ptr to the DD info for the tag/ref */
     intn  ret_value = SUCCEED;
 
     HEclear();
@@ -862,7 +862,7 @@ intn
 HTPis_special(atom_t ddid /* IN: DD id to inquire about */
 )
 {
-    dd_t *dd_ptr;                  /* ptr to the DD info for the tag/ref */
+    dd_t *dd_ptr; /* ptr to the DD info for the tag/ref */
     int32 ret_value = FAIL;
 
     HEclear();
@@ -907,11 +907,11 @@ Hdupdd(int32  file_id, /* IN: File ID the tag/refs are in */
        uint16 old_ref  /* IN: Ref of old tag/ref */
 )
 {
-    filerec_t *file_rec;    /* file record */
-    atom_t     old_dd;      /* The DD id for the old DD */
-    atom_t     new_dd;      /* The DD id for the new DD */
-    int32      old_len;     /* The length of the old DD */
-    int32      old_off;     /* The offset of the old DD */
+    filerec_t *file_rec; /* file record */
+    atom_t     old_dd;   /* The DD id for the old DD */
+    atom_t     new_dd;   /* The DD id for the new DD */
+    int32      old_len;  /* The length of the old DD */
+    int32      old_off;  /* The offset of the old DD */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of file id */
@@ -1131,8 +1131,8 @@ Hfind(int32   file_id,    /* IN: file ID to search in */
                           /*  DF_BACKWARD searches backward from the current location */
 )
 {
-    filerec_t *file_rec;   /* file record */
-    dd_t      *dd_ptr;     /* ptr to current ddlist searched */
+    filerec_t *file_rec; /* file record */
+    dd_t      *dd_ptr;   /* ptr to current ddlist searched */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of the access id */
@@ -1189,12 +1189,12 @@ HDcheck_tagref(int32  file_id, /* IN: id of file */
                uint16 tag,     /* IN: Tag to check */
                uint16 ref /* IN: ref to check */)
 {
-    filerec_t *file_rec  = NULL;    /* file record */
-    dd_t      *dd_ptr    = NULL;    /* ptr to the DD info for the tag/ref */
-    tag_info **tip_ptr   = NULL;    /* ptr to the ptr to the info for a tag */
-    tag_info  *tinfo_ptr = NULL;    /* pointer to the info for a tag */
-    uint16     base_tag;            /* corresponding base tag (if the tag is special) */
-    intn       ret_value = 1;       /* default tag/ref exists  */
+    filerec_t *file_rec  = NULL; /* file record */
+    dd_t      *dd_ptr    = NULL; /* ptr to the DD info for the tag/ref */
+    tag_info **tip_ptr   = NULL; /* ptr to the ptr to the info for a tag */
+    tag_info  *tinfo_ptr = NULL; /* pointer to the info for a tag */
+    uint16     base_tag;         /* corresponding base tag (if the tag is special) */
+    intn       ret_value = 1;    /* default tag/ref exists  */
 
     /* clear error stack */
     HEclear();
@@ -1319,8 +1319,8 @@ DESCRIPTION
 intn
 Hdeldd(int32 file_id, uint16 tag, uint16 ref)
 {
-    filerec_t *file_rec;    /* file record */
-    atom_t     ddid;        /* ID for the DD */
+    filerec_t *file_rec; /* file record */
+    atom_t     ddid;     /* ID for the DD */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of file record id */
@@ -1833,8 +1833,8 @@ done:
 static intn
 HTIupdate_dd(filerec_t *file_rec, dd_t *dd_ptr)
 {
-    ddblock_t *block;             /* DD block the dd is in */
-    int32      idx;               /* index of the DD in the DD block */
+    ddblock_t *block; /* DD block the dd is in */
+    int32      idx;   /* index of the DD in the DD block */
     intn       ret_value = SUCCEED;
 
     HEclear();

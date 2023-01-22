@@ -421,7 +421,7 @@ done:
 uint8 *
 hdf_get_pred_str_attr(NC *handle, uint16 stratt_tag, uint16 satt_ref, int null_count)
 {
-    uint8 *tmpbuf = NULL;                  /* buffer to store predefined string attribute info */
+    uint8 *tmpbuf = NULL; /* buffer to store predefined string attribute info */
     intn   i;
     uint8 *ret_value = NULL;
 

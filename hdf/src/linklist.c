@@ -75,7 +75,7 @@ list_head_t *
 HULcreate_list(HULfind_func_t find_func /* IN: object comparison function */
 )
 {
-    list_head_t *ret_value = NULL;  /* ptr to the linked list "head" node */
+    list_head_t *ret_value = NULL; /* ptr to the linked list "head" node */
 
     HEclear();
 
@@ -120,9 +120,9 @@ intn
 HULdestroy_list(list_head_t *lst /* IN: list to destroy */
 )
 {
-    node_info_t *curr_node,          /* current node while walking through list */
-        *next_node;                  /* next node in the list */
-    intn ret_value = SUCCEED;        /* return value */
+    node_info_t *curr_node,   /* current node while walking through list */
+        *next_node;           /* next node in the list */
+    intn ret_value = SUCCEED; /* return value */
 
     HEclear();
     if (lst == NULL)
@@ -235,8 +235,8 @@ HULsearch_node(list_head_t     *lst,       /* IN: list to search */
                VOIDP            key        /* IN: key of object to search for */
 )
 {
-    node_info_t *curr_node;         /* current node we are on */
-    VOIDP        ret_value = NULL;  /* default return value */
+    node_info_t *curr_node;        /* current node we are on */
+    VOIDP        ret_value = NULL; /* default return value */
 
     HEclear();
     if (lst == NULL || srch_func == NULL || key == NULL)
@@ -273,7 +273,7 @@ VOIDP
 HULfirst_node(list_head_t *lst /* IN: list to search */
 )
 {
-    VOIDP ret_value = NULL;        /* default return value */
+    VOIDP ret_value = NULL; /* default return value */
 
     HEclear();
     if (lst == NULL)
@@ -308,7 +308,7 @@ VOIDP
 HULnext_node(list_head_t *lst /* IN: list to search */
 )
 {
-    VOIDP ret_value = NULL;       /* default return value */
+    VOIDP ret_value = NULL; /* default return value */
 
     HEclear();
     if (lst == NULL)
@@ -347,9 +347,9 @@ HULremove_node(list_head_t     *lst,       /* IN: list to modify */
                VOIDP            key        /* IN: object to add to the list */
 )
 {
-    node_info_t *curr_node,         /* current node we are on */
-        *prev_node;                 /* previous node we looked at */
-    VOIDP ret_value = NULL;         /* default return value */
+    node_info_t *curr_node, /* current node we are on */
+        *prev_node;         /* previous node we looked at */
+    VOIDP ret_value = NULL; /* default return value */
 
     HEclear();
     if (lst == NULL || srch_func == NULL || key == NULL)

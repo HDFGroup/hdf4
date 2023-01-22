@@ -79,7 +79,7 @@ int32
 DFdiread(int32 file_id, uint16 tag, uint16 ref)
 {
     DIlist_ptr new_list;
-    int32 length;
+    int32      length;
 
     HEclear();
 

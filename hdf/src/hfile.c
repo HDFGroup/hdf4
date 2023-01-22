@@ -434,7 +434,7 @@ DESCRIPTION
 intn
 Hclose(int32 file_id)
 {
-    filerec_t *file_rec;    /* file record pointer */
+    filerec_t *file_rec; /* file record pointer */
     intn       ret_value = SUCCEED;
 
     /* Clear errors and check args and all the boring stuff. */
@@ -550,7 +550,7 @@ intn
 Hinquire(int32 access_id, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength, int32 *poffset,
          int32 *pposn, int16 *paccess, int16 *pspecial)
 {
-    accrec_t *access_rec;     /* access record */
+    accrec_t *access_rec; /* access record */
     intn      ret_value = SUCCEED;
 
     /* clear error stack and check validity of access id */
@@ -649,7 +649,7 @@ DESCRIPTION
 int32
 Hstartread(int32 file_id, uint16 tag, uint16 ref)
 {
-    int32 ret;                  /* AID to return */
+    int32 ret; /* AID to return */
     int32 ret_value = SUCCEED;
 
     /* clear error stack */
@@ -829,8 +829,8 @@ DESCRIPTION
 int32
 Hstartwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
 {
-    accrec_t *access_rec;        /* access record */
-    int32     ret;               /* AID to return */
+    accrec_t *access_rec; /* access record */
+    int32     ret;        /* AID to return */
     int32     ret_value = SUCCEED;
 
     /* clear error stack */
@@ -1024,9 +1024,9 @@ DESCRIPTION
 intn
 Hsetlength(int32 aid, int32 length)
 {
-    accrec_t  *access_rec;      /* access record */
-    filerec_t *file_rec;        /* file record */
-    int32      offset;          /* offset of this data element in file */
+    accrec_t  *access_rec; /* access record */
+    filerec_t *file_rec;   /* file record */
+    int32      offset;     /* offset of this data element in file */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of file id */
@@ -1081,7 +1081,7 @@ DESCRIPTION
 intn
 Happendable(int32 aid)
 {
-    accrec_t *access_rec;        /* access record */
+    accrec_t *access_rec; /* access record */
     intn      ret_value = SUCCEED;
 
     /* clear error stack and check validity of file id */
@@ -1120,10 +1120,10 @@ DESCRIPTION
 intn
 HPisappendable(int32 aid)
 {
-    accrec_t  *access_rec;          /* access record */
-    filerec_t *file_rec;            /* file record */
-    int32      data_len;            /* length of the data we are checking */
-    int32      data_off;            /* offset of the data we are checking */
+    accrec_t  *access_rec; /* access record */
+    filerec_t *file_rec;   /* file record */
+    int32      data_len;   /* length of the data we are checking */
+    int32      data_off;   /* offset of the data we are checking */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of file id */
@@ -1270,7 +1270,7 @@ DESCRIPTION
 int32
 Htell(int32 access_id)
 {
-    accrec_t *access_rec;  /* access record */
+    accrec_t *access_rec; /* access record */
     int32     ret_value = SUCCEED;
 
     /* clear error stack and check validity of this access id */
@@ -1397,10 +1397,10 @@ DESCRIPTION
 int32
 Hwrite(int32 access_id, int32 length, const void *data)
 {
-    filerec_t *file_rec;    /* file record */
-    accrec_t  *access_rec;  /* access record */
-    int32      data_len;    /* length of the data we are checking */
-    int32      data_off;    /* offset of the data we are checking */
+    filerec_t *file_rec;   /* file record */
+    accrec_t  *access_rec; /* access record */
+    int32      data_len;   /* length of the data we are checking */
+    int32      data_off;   /* offset of the data we are checking */
     int32      ret_value = SUCCEED;
 
     /* clear error stack and check validity of access id */
@@ -1637,8 +1637,8 @@ DESCRIPTION
 int32
 Hgetelement(int32 file_id, uint16 tag, uint16 ref, uint8 *data)
 {
-    int32 access_id = FAIL;      /* access record id */
-    int32 length;                /* length of this elt */
+    int32 access_id = FAIL; /* access record id */
+    int32 length;           /* length of this elt */
     int32 ret_value = SUCCEED;
 
     /* clear error stack */
@@ -1688,7 +1688,7 @@ DESCRIPTION
 int32
 Hputelement(int32 file_id, uint16 tag, uint16 ref, const uint8 *data, int32 length)
 {
-    int32 access_id = FAIL;      /* access record id */
+    int32 access_id = FAIL; /* access record id */
     int32 ret_value = SUCCEED;
 
     /* clear error stack */
@@ -1736,8 +1736,8 @@ DESCRIPTION
 int32
 Hlength(int32 file_id, uint16 tag, uint16 ref)
 {
-    int32 access_id;         /* access record id */
-    int32 length    = FAIL;  /* length of elt inquired */
+    int32 access_id;        /* access record id */
+    int32 length    = FAIL; /* length of elt inquired */
     int32 ret_value = SUCCEED;
 
     /* clear error stack */
@@ -1791,8 +1791,8 @@ DESCRIPTION
 int32
 Hoffset(int32 file_id, uint16 tag, uint16 ref)
 {
-    int32 access_id;         /* access record id */
-    int32 offset    = FAIL;  /* offset of elt inquired */
+    int32 access_id;        /* access record id */
+    int32 offset    = FAIL; /* offset of elt inquired */
     int32 ret_value = SUCCEED;
 
     /* clear error stack */
@@ -1882,9 +1882,9 @@ DESCRIPTION
 int32
 Htrunc(int32 aid, int32 trunc_len)
 {
-    accrec_t *access_rec;   /* access record */
-    int32     data_len;     /* length of the data we are checking */
-    int32     data_off;     /* offset of the data we are checking */
+    accrec_t *access_rec; /* access record */
+    int32     data_len;   /* length of the data we are checking */
+    int32     data_off;   /* offset of the data we are checking */
     int32     ret_value = SUCCEED;
 
     /* clear error stack and check validity of access id */
@@ -1991,7 +1991,7 @@ NOTE
 intn
 Hsync(int32 file_id)
 {
-    filerec_t *file_rec;   /* file record */
+    filerec_t *file_rec; /* file record */
     intn       ret_value = SUCCEED;
 
     /* check validity of file record and get dd ptr */
@@ -2029,7 +2029,7 @@ DESCRIPTION
 intn
 Hcache(int32 file_id, intn cache_on)
 {
-    filerec_t *file_rec;    /* file record */
+    filerec_t *file_rec; /* file record */
     intn       ret_value = SUCCEED;
 
     if (file_id == CACHE_ALL_FILES) /* check whether to modify the default cache */
@@ -2114,7 +2114,7 @@ DESCRIPTION
 intn
 Hsetaccesstype(int32 access_id, uintn accesstype)
 {
-    accrec_t *access_rec;           /* access record */
+    accrec_t *access_rec; /* access record */
     intn      ret_value = SUCCEED;
 
     /* clear error stack and check validity of this access id */
@@ -2385,7 +2385,7 @@ DESCRIPTION
 PRIVATE funclist_t *
 HIget_function_table(accrec_t *access_rec)
 {
-    filerec_t  *file_rec;                 /* file record */
+    filerec_t  *file_rec; /* file record */
     int16       spec_code;
     uint8       lbuf[4];          /* temporary buffer */
     uint8      *p;                /* tmp buf ptr */
@@ -3052,7 +3052,7 @@ HIupdate_version(int32 file_id)
     uint8 /*lstring[81], */ lversion[LIBVER_LEN];
     filerec_t              *file_rec;
     int                     i;
-    int ret_value = SUCCEED;
+    int                     ret_value = SUCCEED;
 
     HEclear();
 
@@ -3113,8 +3113,8 @@ PRIVATE int
 HIread_version(int32 file_id)
 {
     filerec_t *file_rec;
-    int   ret_value = SUCCEED;
-    uint8 fversion[LIBVER_LEN];
+    int        ret_value = SUCCEED;
+    uint8      fversion[LIBVER_LEN];
     memset(fversion, 0, sizeof(fversion));
 
     HEclear();
@@ -3583,9 +3583,9 @@ done:
 int32
 HPread_drec(int32 file_id, atom_t data_id, uint8 **drec_buf)
 {
-    int32  drec_len = 0;         /* length of the description record */
-    int32  drec_aid = -1;        /* description record access id */
-    uint16 drec_tag, drec_ref;   /* description record tag/ref */
+    int32  drec_len = 0;       /* length of the description record */
+    int32  drec_aid = -1;      /* description record access id */
+    uint16 drec_tag, drec_ref; /* description record tag/ref */
     int32  ret_value = 0;
 
     /* get the info for the dataset (description record) */
@@ -3647,9 +3647,9 @@ done:
 int32
 HDcheck_empty(int32 file_id, uint16 tag, uint16 ref, intn *emptySDS /* TRUE if data element is empty */)
 {
-    int32      length;             /* length of the element's data */
-    atom_t     data_id = FAIL;     /* dd ID of existing regular element */
-    filerec_t *file_rec;           /* file record pointer */
+    int32      length;         /* length of the element's data */
+    atom_t     data_id = FAIL; /* dd ID of existing regular element */
+    filerec_t *file_rec;       /* file record pointer */
     uint8     *local_ptbuf = NULL, *p;
     int16      sptag       = -1; /* special tag read from desc record */
     int32      ret_value   = SUCCEED;

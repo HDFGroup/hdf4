@@ -260,7 +260,7 @@ DESCRIPTION
 int32
 HRPread(accrec_t *access_rec, int32 length, void *data)
 {
-    crinfo_t *info =         /* information on the special element */
+    crinfo_t *info = /* information on the special element */
         (crinfo_t *)access_rec->special_info;
     int32 ret_value = SUCCEED;
 
@@ -306,7 +306,7 @@ DESCRIPTION
 int32
 HRPwrite(accrec_t *access_rec, int32 length, const void *data)
 {
-    crinfo_t *info =          /* information on the special element */
+    crinfo_t *info = /* information on the special element */
         (crinfo_t *)(access_rec->special_info);
     int32 ret_value = SUCCEED;
 
@@ -361,7 +361,7 @@ int32
 HRPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength, int32 *poffset,
            int32 *pposn, int16 *paccess, int16 *pspecial)
 {
-    crinfo_t *info =            /* special information record */
+    crinfo_t *info = /* special information record */
         (crinfo_t *)access_rec->special_info;
     uint16 data_tag, data_ref; /* tag/ref of the data we are checking */
     int32  data_off;           /* offset of the data we are checking */
@@ -415,7 +415,7 @@ DESCRIPTION
 intn
 HRPendaccess(accrec_t *access_rec)
 {
-    filerec_t *file_rec;          /* file record */
+    filerec_t *file_rec; /* file record */
     intn       ret_value = SUCCEED;
 
     /* validate argument */

@@ -620,7 +620,7 @@ RETURNS
 intn
 mcache_sync(MCACHE *mp /* IN: MCACHE cookie */)
 {
-    BKT *bp        = NULL;       /* bucket element */
+    BKT *bp        = NULL; /* bucket element */
     intn ret_value = RET_SUCCESS;
 
 #ifdef MCACHE_DEBUG

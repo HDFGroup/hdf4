@@ -153,7 +153,7 @@ intn
 HAdestroy_group(group_t grp /* IN: Group to destroy */
 )
 {
-    atom_group_t *grp_ptr   = NULL;  /* ptr to the atomic group */
+    atom_group_t *grp_ptr   = NULL; /* ptr to the atomic group */
     intn          ret_value = SUCCEED;
 
     HEclear();
@@ -212,10 +212,10 @@ HAregister_atom(group_t grp,   /* IN: Group to register the object in */
                 VOIDP   object /* IN: Object to attach to atom */
 )
 {
-    atom_group_t *grp_ptr = NULL;    /* ptr to the atomic group */
-    atom_info_t  *atm_ptr = NULL;    /* ptr to the new atom */
-    atom_t        atm_id;            /* new atom ID */
-    uintn         hash_loc;          /* new item's hash table location */
+    atom_group_t *grp_ptr = NULL; /* ptr to the atomic group */
+    atom_info_t  *atm_ptr = NULL; /* ptr to the new atom */
+    atom_t        atm_id;         /* new atom ID */
+    uintn         hash_loc;       /* new item's hash table location */
     atom_t        ret_value = SUCCEED;
 
     HEclear();
@@ -373,11 +373,11 @@ VOIDP
 HAremove_atom(atom_t atm /* IN: Atom to remove */
 )
 {
-    atom_group_t *grp_ptr = NULL;  /* ptr to the atomic group */
-    atom_info_t  *curr_atm,        /* ptr to the current atom */
-        *last_atm;                 /* ptr to the last atom */
-    group_t grp;                   /* atom's atomic group */
-    uintn   hash_loc;              /* atom's hash table location */
+    atom_group_t *grp_ptr = NULL; /* ptr to the atomic group */
+    atom_info_t  *curr_atm,       /* ptr to the current atom */
+        *last_atm;                /* ptr to the last atom */
+    group_t grp;                  /* atom's atomic group */
+    uintn   hash_loc;             /* atom's hash table location */
 #ifdef ATOMS_ARE_CACHED
     uintn i; /* local counting variable */
 #endif       /* ATOMS_ARE_CACHED */
@@ -460,9 +460,9 @@ HAsearch_atom(group_t         grp,  /* IN: Group to search for the object in */
               const void     *key   /* IN: pointer to key to compare against */
 )
 {
-    atom_group_t *grp_ptr = NULL;  /* ptr to the atomic group */
-    atom_info_t  *atm_ptr = NULL;  /* ptr to the new atom */
-    intn          i;               /* local counting variable */
+    atom_group_t *grp_ptr = NULL; /* ptr to the atomic group */
+    atom_info_t  *atm_ptr = NULL; /* ptr to the new atom */
+    intn          i;              /* local counting variable */
     void         *ret_value = NULL;
 
     HEclear();

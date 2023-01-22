@@ -776,14 +776,14 @@ HLgetdatainfo(int32 file_id, uint8 *buf, /* IN: special header info */
               int32 *offsetarray,        /* OUT: array to hold offsets */
               int32 *lengtharray)        /* OUT: array to hold lengths */
 {
-    link_t *link_info = NULL;      /* link information, to get block ref#s*/
-    intn    num_data_blocks;       /* number of blocks that actually have data */
-    uint16  link_ref;              /* ref# pointing to a block table */
-    uint8  *p = NULL;              /* pointer to special info buffer */
-    int32   num_blocks,            /* number of blocks in each table */
-        block_length,              /* length of each block */
-        total_length,              /* total data length of the element */
-        accum_length;              /* accummulative length of actual data in blocks */
+    link_t *link_info = NULL; /* link information, to get block ref#s*/
+    intn    num_data_blocks;  /* number of blocks that actually have data */
+    uint16  link_ref;         /* ref# pointing to a block table */
+    uint8  *p = NULL;         /* pointer to special info buffer */
+    int32   num_blocks,       /* number of blocks in each table */
+        block_length,         /* length of each block */
+        total_length,         /* total data length of the element */
+        accum_length;         /* accummulative length of actual data in blocks */
     int  ii;
     intn ret_value = SUCCEED;
 
@@ -971,7 +971,7 @@ DESCRIPTION
 PRIVATE link_t *
 HLIgetlink(int32 file_id, uint16 ref, int32 number_blocks)
 {
-    int32   access_id;          /* access record id */
+    int32   access_id; /* access record id */
     uint8  *buffer    = NULL;
     uint16  tag       = DFTAG_LINKED;
     link_t *new_link  = NULL;
@@ -1456,8 +1456,8 @@ DESCRIPTION
 PRIVATE link_t *
 HLInewlink(int32 file_id, int32 number_blocks, uint16 link_ref, uint16 first_block_ref)
 {
-    int32   link_id;            /* access record id of new link */
-    uint8  *buf       = NULL;   /* temp buffer */
+    int32   link_id;          /* access record id of new link */
+    uint8  *buf       = NULL; /* temp buffer */
     link_t *t_link    = NULL;
     link_t *ret_value = NULL; /* FAIL */
 
@@ -1608,7 +1608,7 @@ DESCRIPTION
 intn
 HLPendaccess(accrec_t *access_rec)
 {
-    filerec_t *file_rec;          /* file record */
+    filerec_t *file_rec; /* file record */
     intn       ret_value = SUCCEED;
 
     /* validate argument */
@@ -1770,7 +1770,7 @@ HLsetblockinfo(int32 aid,        /* access record id */
                int32 block_size, /* length to be used for each linked-block */
                int32 num_blocks) /* number of blocks the element will have */
 {
-    accrec_t *access_rec;           /* access record */
+    accrec_t *access_rec; /* access record */
     intn      ret_value = SUCCEED;
 
     /* clear error stack */
@@ -1841,7 +1841,7 @@ HLgetblockinfo(int32  aid,        /* access record id */
                int32 *block_size, /* length being used for each linked-block */
                int32 *num_blocks) /* number of blocks the element will have */
 {
-    accrec_t *access_rec;           /* access record */
+    accrec_t *access_rec; /* access record */
     intn      ret_value = SUCCEED;
 
     /* clear error stack */

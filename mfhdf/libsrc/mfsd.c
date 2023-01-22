@@ -3940,8 +3940,8 @@ done:
 intn
 SDsetup_szip_parms(int32 id, NC *handle, comp_info *c_info, int32 *cdims)
 {
-    NC_dim *dim;                        /* to check if the dimension is unlimited */
-    int32   dimindex;                   /* to obtain the NC_dim record */
+    NC_dim *dim;      /* to check if the dimension is unlimited */
+    int32   dimindex; /* to obtain the NC_dim record */
     NC_var *var;
     int32   ndims;
     int     i;
@@ -5614,9 +5614,9 @@ SDgetchunkinfo(int32          sdsid,     /* IN: sds access id */
                HDF_CHUNK_DEF *chunk_def, /* IN/OUT: chunk definition */
                int32         *flags /* IN/OUT: flags */)
 {
-    NC             *handle = NULL;  /* file handle */
-    NC_var         *var    = NULL;  /* SDS variable */
-    sp_info_block_t info_block;     /* special info block */
+    NC             *handle = NULL; /* file handle */
+    NC_var         *var    = NULL; /* SDS variable */
+    sp_info_block_t info_block;    /* special info block */
     comp_coder_t    comp_type;
     comp_info       c_info;
     int16           special;             /* Special code */
@@ -6239,9 +6239,9 @@ SDsetchunkcache(int32 sdsid,    /* IN: access aid to mess with */
                 int32 maxcache, /* IN: max number of chunks to cache */
                 int32 flags /* IN: flags = 0, HDF_CACHEALL */)
 {
-    NC     *handle = NULL;           /* file handle */
-    NC_var *var    = NULL;           /* SDS variable */
-    int16   special;                 /* Special code */
+    NC     *handle = NULL; /* file handle */
+    NC_var *var    = NULL; /* SDS variable */
+    int16   special;       /* Special code */
     intn    ret_value = SUCCEED;
 
     /* clear error stack */
@@ -6318,8 +6318,8 @@ int32
 SDcheckempty(int32 sdsid, /* IN: dataset ID */
              intn *emptySDS /* TRUE if SDS is empty */)
 {
-    NC     *handle    = NULL;     /* file record struct */
-    NC_var *var       = NULL;     /* variable record struct */
+    NC     *handle    = NULL; /* file record struct */
+    NC_var *var       = NULL; /* variable record struct */
     int32   ret_value = SUCCEED;
 
 #ifdef SDDEBUG
