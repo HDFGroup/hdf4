@@ -113,9 +113,9 @@ main(int argc, char *argv[])
     uint32 lmajor, lminor, lrelease;
     char   lstring[81];
 
-    /* Un-buffer the stdout and stderr */
-    setbuf(stderr, NULL);
+    /* Un-buffer stdout */
     setbuf(stdout, NULL);
+
     /* Tests are generally arranged from least to most complexity... */
 #if !defined _WIN32
     InitTest("bitvect", test_bitvect, "Bit-Vector routines");
