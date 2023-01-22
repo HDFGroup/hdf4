@@ -79,7 +79,6 @@ MODIFICATION HISTORY
 int32
 HCPmstdio_stread(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HCPmstdio_stread");
     compinfo_t *info; /* information on the special element */
 
     info = (compinfo_t *)access_rec->special_info;
@@ -118,7 +117,6 @@ HCPmstdio_stread(accrec_t *access_rec)
 int32
 HCPmstdio_stwrite(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HCPmstdio_stwrite");
     compinfo_t *info; /* information on the special element */
 
     info = (compinfo_t *)access_rec->special_info;
@@ -167,7 +165,6 @@ HCPmstdio_stwrite(accrec_t *access_rec)
 int32
 HCPmstdio_seek(accrec_t *access_rec, int32 offset, int origin)
 {
-    CONSTR(FUNC, "HCPmstdio_seek");
     compinfo_t *info; /* information on the special element */
     int32       ret;
 
@@ -206,7 +203,6 @@ HCPmstdio_seek(accrec_t *access_rec, int32 offset, int origin)
 int32
 HCPmstdio_read(accrec_t *access_rec, int32 length, void *data)
 {
-    CONSTR(FUNC, "HCPmstdio_read");
     compinfo_t *info; /* information on the special element */
     int32       ret;
 
@@ -244,7 +240,6 @@ HCPmstdio_read(accrec_t *access_rec, int32 length, void *data)
 int32
 HCPmstdio_write(accrec_t *access_rec, int32 length, const void *data)
 {
-    CONSTR(FUNC, "HCPmstdio_write");
     compinfo_t *info; /* information on the special element */
     int32       ret;
 
@@ -297,7 +292,6 @@ int32
 HCPmstdio_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength,
                   int32 *poffset, int32 *pposn, int16 *paccess, int16 *pspecial)
 {
-    CONSTR(FUNC, "HCPmstdio_inquire");
     compinfo_t *info; /* information on the special element */
     int32       ret;
 
@@ -330,7 +324,6 @@ HCPmstdio_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *p
 intn
 HCPmstdio_endaccess(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HCPmstdio_endaccess");
     compinfo_t *info; /* information on the special element */
     intn        ret;
 

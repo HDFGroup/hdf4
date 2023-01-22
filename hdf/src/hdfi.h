@@ -315,11 +315,6 @@ typedef intptr_t hdf_pint_t;
 #endif
 
 /**************************************************************************
- *  Macros to work around ANSI C portability problems.
- **************************************************************************/
-#define CONSTR(v, s) static const char v[] = s
-
-/**************************************************************************
  *  Allocation functions defined differently
  **************************************************************************/
 #define HDmalloc(s)     malloc(s)

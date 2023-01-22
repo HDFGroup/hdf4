@@ -96,7 +96,6 @@ int32
 HRPconvert(int32 fid, uint16 tag, uint16 ref, int32 xdim, int32 ydim, int16 scheme, comp_info *cinfo,
            uintn pixel_size)
 {
-    CONSTR(FUNC, "HRPconvert");   /* for HERROR */
     filerec_t *file_rec;          /* file record */
     accrec_t  *access_rec = NULL; /* access element record */
     crinfo_t  *info;              /* information for the compressed raster element */
@@ -224,7 +223,6 @@ int32
 HRPseek(accrec_t *access_rec, int32 offset, int origin)
 {
     int32 ret_value = SUCCEED;
-    CONSTR(FUNC, "HRPseek"); /* for HERROR */
 
     /* Adjust offset according to origin.  There is no upper bound to posn */
     if (origin != DF_START || offset != 0)
@@ -262,8 +260,7 @@ DESCRIPTION
 int32
 HRPread(accrec_t *access_rec, int32 length, void *data)
 {
-    CONSTR(FUNC, "HRPread"); /* for HERROR */
-    crinfo_t *info =         /* information on the special element */
+    crinfo_t *info = /* information on the special element */
         (crinfo_t *)access_rec->special_info;
     int32 ret_value = SUCCEED;
 
@@ -309,8 +306,7 @@ DESCRIPTION
 int32
 HRPwrite(accrec_t *access_rec, int32 length, const void *data)
 {
-    CONSTR(FUNC, "HRPwrite"); /* for HERROR */
-    crinfo_t *info =          /* information on the special element */
+    crinfo_t *info = /* information on the special element */
         (crinfo_t *)(access_rec->special_info);
     int32 ret_value = SUCCEED;
 
@@ -365,8 +361,7 @@ int32
 HRPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength, int32 *poffset,
            int32 *pposn, int16 *paccess, int16 *pspecial)
 {
-    CONSTR(FUNC, "HRPinquire"); /* for HERROR */
-    crinfo_t *info =            /* special information record */
+    crinfo_t *info = /* special information record */
         (crinfo_t *)access_rec->special_info;
     uint16 data_tag, data_ref; /* tag/ref of the data we are checking */
     int32  data_off;           /* offset of the data we are checking */
@@ -420,8 +415,7 @@ DESCRIPTION
 intn
 HRPendaccess(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HRPendaccess"); /* for HERROR */
-    filerec_t *file_rec;          /* file record */
+    filerec_t *file_rec; /* file record */
     intn       ret_value = SUCCEED;
 
     /* validate argument */
@@ -507,7 +501,6 @@ DESCRIPTION
 int32
 HRPinfo(accrec_t *access_rec, sp_info_block_t *info_block)
 {
-    CONSTR(FUNC, "HRPinfo"); /* for HERROR */
     int32 ret_value = SUCCEED;
 
     /* validate access record */

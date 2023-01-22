@@ -177,7 +177,6 @@ mcache_open(VOID *key,       /* IN: byte string used as handle to share buffers 
             int32 npages,    /* IN: number of chunks currently in object */
             int32 flags /* IN: 0= object exists, 1= does not exist  */)
 {
-    CONSTR(FUNC, "mcache_open");    /* for HERROR */
     struct _lhqh *lhead     = NULL; /* head of an entry in list hash chain */
     MCACHE       *mp        = NULL; /* MCACHE cookie */
     L_ELEM       *lp        = NULL;
@@ -322,7 +321,6 @@ mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
            int32   pgno, /* IN: page number */
            int32   flags /* IN: XXX not used? */)
 {
-    CONSTR(FUNC, "mcache_get");     /* for HERROR */
     struct _hqh  *head      = NULL; /* head of lru queue */
     struct _lhqh *lhead     = NULL; /* head of an entry in list hash chain */
     BKT          *bp        = NULL; /* bucket element */
@@ -505,7 +503,6 @@ mcache_put(MCACHE *mp,   /* IN: MCACHE cookie */
            VOID   *page, /* IN: page to put */
            int32   flags /* IN: flags = 0, MCACHE_DIRTY */)
 {
-    CONSTR(FUNC, "mcache_put");     /* for HERROR */
     struct _lhqh *lhead     = NULL; /* head of an entry in list hash chain */
     L_ELEM       *lp        = NULL;
     BKT          *bp        = NULL; /* bucket element ptr */
@@ -567,7 +564,6 @@ RETURNS
 intn
 mcache_close(MCACHE *mp /* IN: MCACHE cookie */)
 {
-    CONSTR(FUNC, "mcache_close"); /* for HERROR */
     L_ELEM *lp        = NULL;
     BKT    *bp        = NULL; /* bucket element */
     intn    nelem     = 0;
@@ -624,8 +620,7 @@ RETURNS
 intn
 mcache_sync(MCACHE *mp /* IN: MCACHE cookie */)
 {
-    CONSTR(FUNC, "mcache_sync"); /* for HERROR */
-    BKT *bp        = NULL;       /* bucket element */
+    BKT *bp        = NULL; /* bucket element */
     intn ret_value = RET_SUCCESS;
 
 #ifdef MCACHE_DEBUG
@@ -673,7 +668,6 @@ NOTE: Note that the size of the page allocated is equal to
 static BKT *
 mcache_bkt(MCACHE *mp /* IN: MCACHE cookie */)
 {
-    CONSTR(FUNC, "mcache_bkt");    /* for HERROR */
     struct _hqh *head      = NULL; /* head of hash chain */
     BKT         *bp        = NULL; /* bucket element */
     intn         ret_value = RET_SUCCESS;
@@ -758,7 +752,6 @@ static int
 mcache_write(MCACHE *mp, /* IN: MCACHE cookie */
              BKT    *bp /* IN: bucket element */)
 {
-    CONSTR(FUNC, "mcache_write");   /* for HERROR */
     struct _lhqh *lhead     = NULL; /* head of an entry in list hash chain */
     L_ELEM       *lp        = NULL;
     intn          ret_value = RET_SUCCESS;
@@ -845,7 +838,6 @@ static BKT *
 mcache_look(MCACHE *mp, /* IN: MCACHE cookie */
             int32   pgno /* IN: page to look up in cache */)
 {
-    CONSTR(FUNC, "mcache_look");   /* for HERROR */
     struct _hqh *head      = NULL; /* head of hash chain */
     BKT         *bp        = NULL; /* bucket element */
     intn         ret_value = RET_SUCCESS;

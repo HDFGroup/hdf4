@@ -214,7 +214,6 @@ nafnumann(intf *an_id, intf *atype, intf *etag, intf *eref)
 FRETVAL(intf)
 nafannlist(intf *an_id, intf *atype, intf *etag, intf *eref, intf alist[])
 {
-    CONSTR(FUNC, "afannlist");
     intf   ret;
     int32 *tempanlist;
     intf   nanns;
@@ -299,7 +298,6 @@ nafwriteann(intf *ann_id, _fcd ann, intf *annlen)
 FRETVAL(intf)
 nafreadann(intf *ann_id, _fcd ann, intf *maxlen)
 {
-    CONSTR(FUNC, "afreadann");
     char *iann = NULL;
     intn  status;
 

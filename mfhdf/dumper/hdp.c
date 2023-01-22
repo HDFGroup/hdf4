@@ -204,7 +204,6 @@ VShdfsize(int32 vkey, /* IN vdata key */
     vsinstance_t *w         = NULL;
     VDATA        *vs        = NULL;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "VShdfsize");
 
     /* check key is valid vdata */
     if (HAatom_group(vkey) != VSIDGROUP)
@@ -274,7 +273,6 @@ intn
 VSattrhdfsize(int32 vsid, int32 findex, intn attrindex, int32 *size)
 {
 
-    CONSTR(FUNC, "VSattrhdfsize");
     VDATA          *vs, *attr_vs;
     vs_attr_t      *vs_alist;
     vsinstance_t   *vs_inst, *attr_inst;
@@ -365,7 +363,6 @@ DESCRIPTION
 intn
 Vattrhdfsize(int32 vgid, intn attrindex, int32 *size)
 {
-    CONSTR(FUNC, "Vattrhdfsize");
     VGROUP         *vg;
     VDATA          *vs;
     DYN_VWRITELIST *w;

@@ -53,7 +53,6 @@ static DIlist_ptr Group_list[MAX_GROUPS] = {NULL};
 PRIVATE int32
 setgroupREC(DIlist_ptr list_rec)
 {
-    CONSTR(FUNC, "setgroupREC");
     uintn i;
 
     for (i = 0; i < MAX_GROUPS; i++)
@@ -80,8 +79,7 @@ int32
 DFdiread(int32 file_id, uint16 tag, uint16 ref)
 {
     DIlist_ptr new_list;
-    CONSTR(FUNC, "DFdiread");
-    int32 length;
+    int32      length;
 
     HEclear();
 
@@ -131,7 +129,6 @@ DFdiread(int32 file_id, uint16 tag, uint16 ref)
 intn
 DFdiget(int32 list, uint16 *ptag, uint16 *pref)
 {
-    CONSTR(FUNC, "DFdiget");
     uint8     *p;
     DIlist_ptr list_rec;
 
@@ -168,7 +165,6 @@ DFdiget(int32 list, uint16 *ptag, uint16 *pref)
 intn
 DFdinobj(int32 list)
 {
-    CONSTR(FUNC, "DFdinobj");
     DIlist_ptr list_rec;
 
     list_rec = GID2REC(list);
@@ -194,7 +190,6 @@ DFdinobj(int32 list)
 int32
 DFdisetup(int maxsize)
 {
-    CONSTR(FUNC, "DFdisetup");
     DIlist_ptr new_list;
 
     new_list = (DIlist_ptr)HDmalloc((uint32)sizeof(DIlist));
@@ -227,7 +222,6 @@ DFdisetup(int maxsize)
 intn
 DFdiput(int32 list, uint16 tag, uint16 ref)
 {
-    CONSTR(FUNC, "DFdiput");
     uint8     *p;
     DIlist_ptr list_rec;
 
@@ -260,7 +254,6 @@ DFdiput(int32 list, uint16 tag, uint16 ref)
 intn
 DFdiwrite(int32 file_id, int32 list, uint16 tag, uint16 ref)
 {
-    CONSTR(FUNC, "DFdiwrite");
     int32      ret; /* return value */
     DIlist_ptr list_rec;
 

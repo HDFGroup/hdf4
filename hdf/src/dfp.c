@@ -59,7 +59,6 @@ PRIVATE int32 DFPIopen(const char *filename, intn acc_mode);
 intn
 DFPgetpal(const char *filename, void *palette)
 {
-    CONSTR(FUNC, "DFPgetpal");
     int32 file_id;
     int32 aid;
     int32 length;
@@ -156,7 +155,6 @@ done:
 intn
 DFPputpal(const char *filename, const void *palette, intn overwrite, const char *filemode)
 {
-    CONSTR(FUNC, "DFPputpal");
     int32 file_id;
     intn  ret_value = SUCCEED;
 
@@ -247,7 +245,6 @@ DFPaddpal(const char *filename, const void *palette)
 intn
 DFPnpals(const char *filename)
 {
-    CONSTR(FUNC, "DFPnpals");
     int32  file_id;
     intn   curr_pal;           /* current palette count */
     int32  nip8, nlut;         /* number of IP8s & number of LUTs */
@@ -356,7 +353,6 @@ done:
 intn
 DFPreadref(const char *filename, uint16 ref)
 {
-    CONSTR(FUNC, "DFPreadref");
     int32 file_id;
     int32 aid;
     intn  ret_value = SUCCEED;
@@ -506,7 +502,6 @@ DFPlastref(void)
 PRIVATE int32
 DFPIopen(const char *filename, intn acc_mode)
 {
-    CONSTR(FUNC, "DFPIopen");
     int32 file_id;
     int32 ret_value = SUCCEED;
 

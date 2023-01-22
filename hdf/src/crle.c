@@ -80,7 +80,6 @@ PRIVATE int32 HCIcrle_term(compinfo_t *info);
 PRIVATE int32
 HCIcrle_init(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HCIcrle_init");
     compinfo_t            *info;     /* special element information */
     comp_coder_rle_info_t *rle_info; /* ptr to RLE info */
 
@@ -124,7 +123,6 @@ HCIcrle_init(accrec_t *access_rec)
 PRIVATE int32
 HCIcrle_decode(compinfo_t *info, int32 length, uint8 *buf)
 {
-    CONSTR(FUNC, "HCIcrle_decode");
     comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
     int32                  orig_length; /* original length to read */
     uintn                  dec_len;     /* length to decode */
@@ -200,7 +198,6 @@ HCIcrle_decode(compinfo_t *info, int32 length, uint8 *buf)
 PRIVATE int32
 HCIcrle_encode(compinfo_t *info, int32 length, const uint8 *buf)
 {
-    CONSTR(FUNC, "HCIcrle_encode");
     comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
     int32                  orig_length; /* original length to write */
     intn                   c;           /* character to hold a byte read in */
@@ -311,7 +308,6 @@ HCIcrle_encode(compinfo_t *info, int32 length, const uint8 *buf)
 PRIVATE int32
 HCIcrle_term(compinfo_t *info)
 {
-    CONSTR(FUNC, "HCIcrle_term");
     comp_coder_rle_info_t *rle_info; /* ptr to RLE info */
     intn                   c;        /* character to hold a byte read in */
 
@@ -365,7 +361,6 @@ HCIcrle_term(compinfo_t *info)
 PRIVATE int32
 HCIcrle_staccess(accrec_t *access_rec, int16 acc_mode)
 {
-    CONSTR(FUNC, "HCIcrle_staccess");
     compinfo_t *info; /* special element information */
 
     info = (compinfo_t *)access_rec->special_info;
@@ -403,7 +398,6 @@ HCIcrle_staccess(accrec_t *access_rec, int16 acc_mode)
 int32
 HCPcrle_stread(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HCPcrle_stread");
     int32 ret;
 
     if ((ret = HCIcrle_staccess(access_rec, DFACC_READ)) == FAIL)
@@ -433,7 +427,6 @@ HCPcrle_stread(accrec_t *access_rec)
 int32
 HCPcrle_stwrite(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HCPcrle_stwrite");
     int32 ret;
 
     if ((ret = HCIcrle_staccess(access_rec, DFACC_WRITE)) == FAIL)
@@ -468,7 +461,6 @@ HCPcrle_stwrite(accrec_t *access_rec)
 int32
 HCPcrle_seek(accrec_t *access_rec, int32 offset, int origin)
 {
-    CONSTR(FUNC, "HCPcrle_seek");
     compinfo_t            *info;     /* special element information */
     comp_coder_rle_info_t *rle_info; /* ptr to RLE info */
     uint8                 *tmp_buf;  /* pointer to throw-away buffer */
@@ -529,7 +521,6 @@ HCPcrle_seek(accrec_t *access_rec, int32 offset, int origin)
 int32
 HCPcrle_read(accrec_t *access_rec, int32 length, void *data)
 {
-    CONSTR(FUNC, "HCPcrle_read");
     compinfo_t *info; /* special element information */
 
     info = (compinfo_t *)access_rec->special_info;
@@ -564,7 +555,6 @@ HCPcrle_read(accrec_t *access_rec, int32 length, void *data)
 int32
 HCPcrle_write(accrec_t *access_rec, int32 length, const void *data)
 {
-    CONSTR(FUNC, "HCPcrle_write");
     compinfo_t            *info;     /* special element information */
     comp_coder_rle_info_t *rle_info; /* ptr to RLE info */
 
@@ -653,7 +643,6 @@ HCPcrle_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pre
 intn
 HCPcrle_endaccess(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HCPcrle_endaccess");
     compinfo_t            *info;     /* special element information */
     comp_coder_rle_info_t *rle_info; /* ptr to RLE info */
 

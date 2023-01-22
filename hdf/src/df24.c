@@ -67,7 +67,6 @@ static int32 last_ydim = 0; /* .....gheesh......... */
 intn
 DF24getdims(const char *filename, int32 *pxdim, int32 *pydim, intn *pil)
 {
-    CONSTR(FUNC, "DF24getdims");
     intn ncomps;
     intn ret_value = SUCCEED;
 
@@ -138,7 +137,6 @@ DF24reqil(intn il)
 intn
 DF24getimage(const char *filename, void *image, int32 xdim, int32 ydim)
 {
-    CONSTR(FUNC, "DF24getimage");
     intn   il;
     int32  tx, ty;
     int    compressed, has_pal;
@@ -304,7 +302,6 @@ DF24restart(void)
 intn
 DF24addimage(const char *filename, const void *image, int32 xdim, int32 ydim)
 {
-    CONSTR(FUNC, "DF24addimage");
     intn ret_value = SUCCEED;
 
     /* 0 == C */
@@ -346,7 +343,6 @@ done:
 intn
 DF24putimage(const char *filename, const void *image, int32 xdim, int32 ydim)
 {
-    CONSTR(FUNC, "DF24putimage");
     intn ret_value = SUCCEED;
 
     /* 0 == C */
@@ -383,7 +379,6 @@ done:
 intn
 DF24nimages(const char *filename)
 {
-    CONSTR(FUNC, "DF24nimages");
     int32  file_id;
     int32  group_id;           /* group ID for looking at RIG's */
     uint16 elt_tag, elt_ref;   /* tag/ref of items in a RIG */

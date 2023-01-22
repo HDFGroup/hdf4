@@ -129,7 +129,6 @@ done:
 int32
 hdf_get_magicnum(const char *filename)
 {
-    CONSTR(FUNC, "hdf_get_magicnum"); /* for HERROR */
     hdf_file_t fp;
     uint8      buf[4];
     uint8     *pbuf = NULL;
@@ -178,7 +177,6 @@ done:
 intn
 HDiscdf(const char *filename)
 {
-    CONSTR(FUNC, "HDiscdf"); /* for HGOTO_ERROR */
     int32 magic_num = 0;
     intn  ret_value = FALSE;
 
@@ -207,7 +205,6 @@ done:
 intn
 HDisnetcdf(const char *filename)
 {
-    CONSTR(FUNC, "HDisnetcdf"); /* for HGOTO_ERROR */
     int32 magic_num = 0;
     intn  ret_value = FALSE;
 
@@ -236,7 +233,6 @@ done:
 intn
 HDisnetcdf64(const char *filename)
 {
-    CONSTR(FUNC, "HDisnetcdf64"); /* for HGOTO_ERROR */
     int32 magic_num = 0;
     intn  ret_value = FALSE;
 
@@ -2325,8 +2321,7 @@ hdf_read_xdr_cdf(XDR *xdrs, NC **handlep)
     int32 cdf_vg = FAIL;
     int   vgid   = 0;
     int   status;
-    CONSTR(FUNC, "hdf_read_xdr_cdf");
-    intn ret_value = SUCCEED;
+    intn  ret_value = SUCCEED;
 
 #if DEBUG
     fprintf(stderr, "hdf_read_xdr_cdf i've been called %d\n", (*handlep)->hdf_file);
@@ -2388,7 +2383,6 @@ done:
 intn
 hdf_xdr_cdf(XDR *xdrs, NC **handlep)
 {
-    CONSTR(FUNC, "hdf_xdr_cdf"); /* for HERROR */
     intn status;
     intn ret_value = SUCCEED;
 

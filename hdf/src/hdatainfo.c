@@ -110,7 +110,6 @@ intn
 HDgetdatainfo(int32 file_id, uint16 tag, uint16 ref, int32 *chk_coord, uintn start_block, uintn info_count,
               int32 *offsetarray, int32 *lengtharray)
 {
-    CONSTR(FUNC, "HDgetdatainfo");                  /* for HGOTO_ERROR */
     filerec_t *file_rec;                            /* file record */
     uint16     sp_tag;                              /* special tag */
     uint16     comp_ref = 0;                        /* ref for compressed data or comp header */
@@ -351,7 +350,6 @@ done:
 intn
 VSgetdatainfo(int32 vsid, uintn start_block, uintn info_count, int32 *offsetarray, int32 *lengtharray)
 {
-    CONSTR(FUNC, "VSgetdatainfo");
     vsinstance_t *vs_inst = NULL;
     VDATA        *vs      = NULL;
     accrec_t     *access_rec;
@@ -477,7 +475,6 @@ done:
 intn
 Vgetattdatainfo(int32 vgid, intn attrindex, int32 *offset, int32 *length)
 {
-    CONSTR(FUNC, "Vgetattdatainfo");
     VGROUP       *vg;
     vg_attr_t    *vg_alist;
     vginstance_t *vg_inst;
@@ -582,7 +579,6 @@ done:
 intn
 VSgetattdatainfo(int32 vsid, int32 findex, intn attrindex, int32 *offset, int32 *length)
 {
-    CONSTR(FUNC, "VSgetattdatainfo");
     VDATA        *vs;
     vs_attr_t    *vs_alist;
     vsinstance_t *vs_inst;
@@ -693,7 +689,6 @@ done:
 intn
 GRgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
 {
-    CONSTR(FUNC, "GRgetattdatainfo");
     int32      hdf_file_id;         /* file id */
     int32      attr_vsid;           /* id of vdata that stores the attribute */
     group_t    id_group = BADGROUP; /* temporary group of id */
@@ -821,7 +816,6 @@ TODO
 intn
 GRgetdatainfo(int32 riid, uintn start_block, uintn info_count, int32 *offsetarray, int32 *lengtharray)
 {
-    CONSTR(FUNC, "GRgetdatainfo");
     ri_info_t *ri_ptr;      /* ptr to the image to work with */
     int32      hdf_file_id; /* short cut for file id */
     int32      length = 0;
@@ -924,7 +918,6 @@ DESCRIPTION
 intn
 GRgetpalinfo(int32 gr_id, uintn pal_count, hdf_ddinfo_t *palinfo_array)
 {
-    CONSTR(FUNC, "GRgetpalinfo");
     gr_info_t *gr_ptr;
     int32      file_id;
     int32      aid = FAIL;
@@ -1032,7 +1025,6 @@ ANgetdatainfo(int32  ann_id, /* IN: annotation id */
               int32 *offset, /* OUT: buffer for offset */
               int32 *length) /* OUT: buffer for length */
 {
-    CONSTR(FUNC, "ANgetdatainfo");
     filerec_t *file_rec = NULL; /* file record pointer */
     ANnode    *ann_node = NULL;
     int32      file_id  = FAIL;

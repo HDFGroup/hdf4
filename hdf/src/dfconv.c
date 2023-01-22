@@ -95,8 +95,6 @@ static int (*DFKnumout)(VOIDP source, VOIDP dest, uint32 num_elm, uint32 source_
 PRIVATE int
 DFKInoset(VOIDP source, VOIDP dest, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
 {
-    CONSTR(FUNC, "DFKInoset");
-
     HEclear();
 
     /* shut the compiler up about not using the arguments */
@@ -206,8 +204,6 @@ DFKNTsize(int32 number_type)
 intn
 DFKsetNT(int32 ntype)
 {
-    CONSTR(FUNC, "DFKsetNT");
-
     HEclear();
 
     g_ntype = ntype;
@@ -399,7 +395,6 @@ int
 DFconvert(uint8 *source, uint8 *dest, int ntype, int sourcetype, int desttype, int32 size)
 {
     uint32 num_elm;
-    CONSTR(FUNC, "DFconvert");
 
     HEclear();
 
@@ -446,8 +441,6 @@ DFconvert(uint8 *source, uint8 *dest, int ntype, int sourcetype, int desttype, i
 int8
 DFKgetPNSC(int32 numbertype, int32 machinetype)
 {
-    CONSTR(FUNC, "DFKgetPNSC");
-
     /* clear error stack and validate args */
     HEclear();
 

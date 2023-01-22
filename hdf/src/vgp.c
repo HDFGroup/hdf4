@@ -161,7 +161,6 @@ VGROUP *
 VIget_vgroup_node(void)
 {
     VGROUP *ret_value = NULL;
-    CONSTR(FUNC, "VIget_vgroup_node");
 
     /* clear error stack */
     HEclear();
@@ -223,7 +222,6 @@ vginstance_t *
 VIget_vginstance_node(void)
 {
     vginstance_t *ret_value = NULL;
-    CONSTR(FUNC, "VIget_vginstance_node");
 
     /* clear error stack */
     HEclear();
@@ -350,7 +348,6 @@ Load_vfile(HFILEID f /* IN: file handle */)
     uint16        tag       = DFTAG_NULL;
     uint16        ref       = DFTAG_NULL;
     intn          ret_value = SUCCEED;
-    CONSTR(FUNC, "Load_vfile");
 
     /* clear error stack */
     HEclear();
@@ -503,7 +500,6 @@ Remove_vfile(HFILEID f /* IN: file handle */)
     VOIDP   *t         = NULL;
     vfile_t *vf        = NULL;
     intn     ret_value = SUCCEED;
-    CONSTR(FUNC, "Remove_vfile");
 
     /* clear error stack */
     HEclear();
@@ -675,7 +671,6 @@ intn
 Vinitialize(HFILEID f /* IN: file handle */)
 {
     intn ret_value = SUCCEED;
-    CONSTR(FUNC, "Vinitialize");
 
     /* clear error stack */
     HEclear();
@@ -714,7 +709,6 @@ intn
 Vfinish(HFILEID f /* IN: file handle */)
 {
     intn ret_value = SUCCEED;
-    CONSTR(FUNC, "Vfinish");
 
     /* clear error stack */
     HEclear();
@@ -753,7 +747,6 @@ vginst(HFILEID f, /* IN: file handle */
     vfile_t      *vf        = NULL;
     vginstance_t *ret_value = NULL;
     int32         key;
-    CONSTR(FUNC, "vginstance");
 
     /* clear error stack */
     HEclear();
@@ -948,7 +941,6 @@ vunpackvg(VGROUP *vg,    /* IN/OUT: */
     uint16 uint16var;
     intn   i;
     int32  ret_value = SUCCEED;
-    CONSTR(FUNC, "vunpackvg");
 
     /* clear error stack */
     HEclear();
@@ -1055,7 +1047,6 @@ VPgetinfo(HFILEID f, /* IN: file handle */
     /*  intn          len;    intn mismatches Vgbufsize type -- uint32 */
     size_t  len;
     VGROUP *ret_value = NULL; /* FAIL */
-    CONSTR(FUNC, "VPgetinfo");
 
     /* clear error stack */
     HEclear();
@@ -1137,7 +1128,6 @@ Vattach(HFILEID     f,    /* IN: file handle */
     filerec_t    *file_rec = NULL; /* file record */
     int16         acc_mode;
     atom_t        ret_value = FAIL;
-    CONSTR(FUNC, "Vattach");
 
     /* clear error stack */
     HEclear();
@@ -1280,7 +1270,6 @@ Vdetach(int32 vkey /* IN: vgroup key */)
     vginstance_t *v  = NULL;
     int32         vgpacksize;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "Vdetach");
 
     /* clear error stack */
     HEclear();
@@ -1399,7 +1388,6 @@ Vinsert(int32 vkey, /* IN: vgroup key */
     int32         newfid;
     uintn         u;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "Vinsert");
 
     /* clear error stack */
     HEclear();
@@ -1502,7 +1490,6 @@ Vflocate(int32 vkey, /* IN: vdata key */
     VGROUP       *vg = NULL;
     int32         vskey;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "Vflocate");
 
     /* clear error stack */
     HEclear();
@@ -1575,7 +1562,6 @@ Vinqtagref(int32 vkey, /* IN: vgroup key */
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
     intn          ret_value = FALSE;
-    CONSTR(FUNC, "Vinqtagref");
 
     /* clear error stack */
     HEclear();
@@ -1636,7 +1622,6 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
     vginstance_t *v         = NULL; /* vgroup instance struct */
     VGROUP       *vg        = NULL; /* in-memory vgroup struct */
     intn          ret_value = SUCCEED;
-    CONSTR(FUNC, "Vdeletetagref");
 
     /* NOTE: Move the following comments to the DESCRIPTION of the
              fcn when the issue with duplicate tag/refs is decided.
@@ -1731,7 +1716,6 @@ Vntagrefs(int32 vkey /* IN: vgroup key */)
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "Vntagrefs");
 
     /* clear error stack */
     HEclear();
@@ -1781,7 +1765,6 @@ Vnrefs(int32 vkey, /* IN: vgroup key */
     uint16        ttag = (uint16)tag; /* alias for faster comparison */
     uintn         u;                  /* local counting variable */
     int32         ret_value = 0;      /* zero refs to start */
-    CONSTR(FUNC, "Vnrefs");
 
     /* clear error stack */
     HEclear();
@@ -1840,7 +1823,6 @@ Vgettagrefs(int32 vkey,       /* IN: vgroup key */
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "Vgettagrefs");
 
     /* clear error stack */
     HEclear();
@@ -1902,7 +1884,6 @@ Vgettagref(int32  vkey,  /* IN: vgroup key */
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
     intn          ret_value = SUCCEED;
-    CONSTR(FUNC, "Vgettagref");
 
     /* clear error stack */
     HEclear();
@@ -1952,7 +1933,6 @@ VQuerytag(int32 vkey /* IN: vgroup key */)
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "Vgettagref");
 
     /* clear error stack */
     HEclear();
@@ -1998,7 +1978,6 @@ VQueryref(int32 vkey /* IN: vgroup id */)
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "Vgettagref");
 
     /* clear error stack */
     HEclear();
@@ -2057,7 +2036,6 @@ Vaddtagref(int32 vkey, /* IN: vgroup key */
     uintn i;
 #endif /* NO_DUPLICATES */
     int32 ret_value = SUCCEED;
-    CONSTR(FUNC, "Vaddtagref");
 
     /* clear error stack */
     HEclear();
@@ -2113,7 +2091,6 @@ vinsertpair(VGROUP *vg,  /* IN: vgroup struct */
             uint16  ref /* IN: ref to insert */)
 {
     int32 ret_value = SUCCEED;
-    CONSTR(FUNC, "vinsertpair");
 
     /* clear error stack */
     HEclear();
@@ -2165,7 +2142,6 @@ Ventries(HFILEID f, /* IN: file handle */
 {
     vginstance_t *v         = NULL;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "Ventries");
 
     /* clear error stack */
     HEclear();
@@ -2207,7 +2183,6 @@ int32
 Vsetname(int32       vkey, /* IN: vgroup key */
          const char *vgname /* IN: name to set for vgroup */)
 {
-    CONSTR(FUNC, "Vsetname");
     vginstance_t *v  = NULL;
     VGROUP       *vg = NULL;
     size_t        name_len;
@@ -2276,7 +2251,6 @@ int32
 Vsetclass(int32       vkey, /* IN: vgroup key */
           const char *vgclass /* IN: class to set for vgroup */)
 {
-    CONSTR(FUNC, "Vsetclass");
     vginstance_t *v  = NULL;
     VGROUP       *vg = NULL;
     size_t        classname_len;
@@ -2355,7 +2329,6 @@ Visvg(int32 vkey, /* IN: vgroup key */
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
     intn          ret_value = FALSE; /* initialize to FALSE */
-    CONSTR(FUNC, "Visvg");
 
     /* clear error stack */
     HEclear();
@@ -2413,7 +2386,6 @@ Visvs(int32 vkey, /* IN: vgroup key */
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
     intn          ret_value = FALSE; /* initialize to false */
-    CONSTR(FUNC, "VSisvs");
 
     /* clear error stack */
     HEclear();
@@ -2471,7 +2443,6 @@ Vgetid(HFILEID f, /* IN: file handle */
     VOIDP        *t  = NULL;
     int32         key;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "Vgetid");
 
     /* clear error stack */
     HEclear();
@@ -2551,7 +2522,6 @@ Vgetnext(int32 vkey, /* IN: vgroup key */
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
     int32         ret_value = FAIL;
-    CONSTR(FUNC, "Vgetnext");
 
     /* clear error stack */
     HEclear();
@@ -2628,7 +2598,6 @@ Vgetnamelen(int32   vkey, /* IN: vgroup key */
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "Vgetnamelen");
 
     /* clear error stack */
     HEclear();
@@ -2692,7 +2661,6 @@ Vgetclassnamelen(int32   vkey, /* IN: vgroup key */
     VGROUP       *vg = NULL;
     size_t        temp_len;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "Vgetclassnamelen");
 
     /* clear error stack */
     HEclear();
@@ -2754,7 +2722,6 @@ Vgetname(int32 vkey, /* IN: vgroup key */
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "Vgetname");
 
     /* clear error stack */
     HEclear();
@@ -2808,7 +2775,6 @@ Vgetclass(int32 vkey, /* IN: vgroup key */
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "Vgetclass");
 
     /* clear error stack */
     HEclear();
@@ -2865,7 +2831,6 @@ Vinquire(int32  vkey,     /* IN: vgroup key */
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
     intn          ret_value = SUCCEED;
-    CONSTR(FUNC, "Vinquire");
 
     /* clear error stack */
     HEclear();
@@ -2933,7 +2898,6 @@ Vopen(char *path,     /* IN: file name */
       int16 ndds /* IN: number of DD in a block */)
 {
     HFILEID ret_value = SUCCEED;
-    CONSTR(FUNC, "Vopen");
 
     /* clear error stack */
     HEclear();
@@ -3012,7 +2976,6 @@ Vdelete(int32 f, /* IN: file handle */
     int32      key;
     filerec_t *file_rec  = NULL; /* file record */
     int32      ret_value = SUCCEED;
-    CONSTR(FUNC, "Vdelete");
 
     /* clear error stack */
     HEclear();
@@ -3071,7 +3034,6 @@ PRIVATE intn
 VIstart(void)
 {
     intn ret_value = SUCCEED;
-    CONSTR(FUNC, "VIstart"); /* for HERROR */
 
     /* Don't call this routine again... */
     library_terminate = TRUE;
@@ -3111,7 +3073,6 @@ VPshutdown(void)
     VGROUP       *v         = NULL;
     vginstance_t *vg        = NULL;
     intn          ret_value = SUCCEED;
-    CONSTR(FUNC, "VPshutdown");
 
     /* Release the vdata free-list if it exists */
     if (vgroup_free_list != NULL) {
@@ -3182,7 +3143,6 @@ done:
 intn
 Vgisinternal(int32 vkey /* vgroup's identifier */)
 {
-    CONSTR(FUNC, "Vgisinternal");
     vginstance_t *v           = NULL;
     VGROUP       *vg          = NULL;
     intn          is_internal = FALSE;
@@ -3303,7 +3263,6 @@ Vgetvgroups(int32   id,       /* IN: file id or vgroup id */
             uintn   n_vgs,    /* IN: number of user-created vgs to return */
             uint16 *refarray /* IN/OUT: ref array to fill */)
 {
-    CONSTR(FUNC, "Vgetvgroups");
     vginstance_t *vg_inst = NULL;
     int32         vg_ref;
     intn          nactual_vgs, user_vgs, ii;

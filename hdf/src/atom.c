@@ -84,7 +84,6 @@ HAinit_group(group_t grp,      /* IN: Group to initialize */
              intn    hash_size /* IN: Minimum hash table size to use for group */
 )
 {
-    CONSTR(FUNC, "HAinit_group");   /* for HERROR */
     atom_group_t *grp_ptr   = NULL; /* ptr to the atomic group */
     intn          ret_value = SUCCEED;
 
@@ -154,8 +153,7 @@ intn
 HAdestroy_group(group_t grp /* IN: Group to destroy */
 )
 {
-    CONSTR(FUNC, "HAdestroy_group"); /* for HERROR */
-    atom_group_t *grp_ptr   = NULL;  /* ptr to the atomic group */
+    atom_group_t *grp_ptr   = NULL; /* ptr to the atomic group */
     intn          ret_value = SUCCEED;
 
     HEclear();
@@ -214,11 +212,10 @@ HAregister_atom(group_t grp,   /* IN: Group to register the object in */
                 VOIDP   object /* IN: Object to attach to atom */
 )
 {
-    CONSTR(FUNC, "HAregister_atom"); /* for HERROR */
-    atom_group_t *grp_ptr = NULL;    /* ptr to the atomic group */
-    atom_info_t  *atm_ptr = NULL;    /* ptr to the new atom */
-    atom_t        atm_id;            /* new atom ID */
-    uintn         hash_loc;          /* new item's hash table location */
+    atom_group_t *grp_ptr = NULL; /* ptr to the atomic group */
+    atom_info_t  *atm_ptr = NULL; /* ptr to the new atom */
+    atom_t        atm_id;         /* new atom ID */
+    uintn         hash_loc;       /* new item's hash table location */
     atom_t        ret_value = SUCCEED;
 
     HEclear();
@@ -281,7 +278,6 @@ HAatom_object(atom_t atm /* IN: Atom to retrieve object for */
 )
 #endif /* ATOMS_CACHE_INLINE */
 {
-    CONSTR(FUNC, "HAatom_object"); /* for HERROR */
 #ifndef ATOMS_CACHE_INLINE
 #ifdef ATOMS_ARE_CACHED
     uintn i;                       /* local counter */
@@ -345,7 +341,6 @@ group_t
 HAatom_group(atom_t atm /* IN: Atom to retrieve group for */
 )
 {
-    CONSTR(FUNC, "HAatom_group"); /* for HERROR */
     group_t ret_value = BADGROUP;
 
     HEclear();
@@ -378,12 +373,11 @@ VOIDP
 HAremove_atom(atom_t atm /* IN: Atom to remove */
 )
 {
-    CONSTR(FUNC, "HAremove_atom"); /* for HERROR */
-    atom_group_t *grp_ptr = NULL;  /* ptr to the atomic group */
-    atom_info_t  *curr_atm,        /* ptr to the current atom */
-        *last_atm;                 /* ptr to the last atom */
-    group_t grp;                   /* atom's atomic group */
-    uintn   hash_loc;              /* atom's hash table location */
+    atom_group_t *grp_ptr = NULL; /* ptr to the atomic group */
+    atom_info_t  *curr_atm,       /* ptr to the current atom */
+        *last_atm;                /* ptr to the last atom */
+    group_t grp;                  /* atom's atomic group */
+    uintn   hash_loc;             /* atom's hash table location */
 #ifdef ATOMS_ARE_CACHED
     uintn i; /* local counting variable */
 #endif       /* ATOMS_ARE_CACHED */
@@ -466,10 +460,9 @@ HAsearch_atom(group_t         grp,  /* IN: Group to search for the object in */
               const void     *key   /* IN: pointer to key to compare against */
 )
 {
-    CONSTR(FUNC, "HAsearch_atom"); /* for HERROR */
-    atom_group_t *grp_ptr = NULL;  /* ptr to the atomic group */
-    atom_info_t  *atm_ptr = NULL;  /* ptr to the new atom */
-    intn          i;               /* local counting variable */
+    atom_group_t *grp_ptr = NULL; /* ptr to the atomic group */
+    atom_info_t  *atm_ptr = NULL; /* ptr to the new atom */
+    intn          i;              /* local counting variable */
     void         *ret_value = NULL;
 
     HEclear();
@@ -515,7 +508,6 @@ static atom_info_t *
 HAIfind_atom(atom_t atm /* IN: Atom to retrieve atom for */
 )
 {
-    CONSTR(FUNC, "HAIfind_atom"); /* for HERROR */
     atom_group_t *grp_ptr = NULL; /* ptr to the atomic group */
     atom_info_t  *atm_ptr = NULL; /* ptr to the new atom */
     group_t       grp;            /* atom's atomic group */
@@ -578,7 +570,6 @@ done:
 static atom_info_t *
 HAIget_atom_node(void)
 {
-    CONSTR(FUNC, "HAIget_atom_node"); /* for HERROR */
     atom_info_t *ret_value = NULL;
 
     HEclear();

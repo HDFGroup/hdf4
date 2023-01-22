@@ -193,7 +193,6 @@ DESCRIPTION
 int32
 HLcreate(int32 file_id, uint16 tag, uint16 ref, int32 block_length, int32 number_blocks)
 {
-    CONSTR(FUNC, "HLcreate");              /* for HERROR */
     filerec_t  *file_rec;                  /* file record */
     accrec_t   *access_rec = NULL;         /* access record */
     int32       dd_aid;                    /* AID for writing the special info */
@@ -382,7 +381,6 @@ DESCRIPTION
 intn
 HLconvert(int32 aid, int32 block_length, int32 number_blocks)
 {
-    CONSTR(FUNC, "HLconvert");                          /* for HERROR */
     filerec_t  *file_rec;                               /* file record */
     accrec_t   *access_rec = NULL;                      /* access record */
     linkinfo_t *info;                                   /* information for the linked blocks elt */
@@ -559,7 +557,6 @@ HDinqblockinfo(int32 aid, int32 *length, int32 *first_length, int32 *block_lengt
 {
     accrec_t *arec;
     int       ret_value = SUCCEED;
-    CONSTR(FUNC, "HDinqblockinfo");
 
     HEclear();
     if ((arec = HAatom_object(aid)) == (accrec_t *)NULL)
@@ -608,7 +605,6 @@ DESCRIPTION
 PRIVATE int32
 HLIstaccess(accrec_t *access_rec, int16 acc_mode)
 {
-    CONSTR(FUNC, "HLIstaccess");    /* for HERROR */
     filerec_t  *file_rec;           /* file record */
     linkinfo_t *info = NULL;        /* information about data elt */
     int32       dd_aid;             /* AID for writing the special info */
@@ -780,15 +776,14 @@ HLgetdatainfo(int32 file_id, uint8 *buf, /* IN: special header info */
               int32 *offsetarray,        /* OUT: array to hold offsets */
               int32 *lengtharray)        /* OUT: array to hold lengths */
 {
-    CONSTR(FUNC, "HLgetdatainfo"); /* for HERROR */
-    link_t *link_info = NULL;      /* link information, to get block ref#s*/
-    intn    num_data_blocks;       /* number of blocks that actually have data */
-    uint16  link_ref;              /* ref# pointing to a block table */
-    uint8  *p = NULL;              /* pointer to special info buffer */
-    int32   num_blocks,            /* number of blocks in each table */
-        block_length,              /* length of each block */
-        total_length,              /* total data length of the element */
-        accum_length;              /* accummulative length of actual data in blocks */
+    link_t *link_info = NULL; /* link information, to get block ref#s*/
+    intn    num_data_blocks;  /* number of blocks that actually have data */
+    uint16  link_ref;         /* ref# pointing to a block table */
+    uint8  *p = NULL;         /* pointer to special info buffer */
+    int32   num_blocks,       /* number of blocks in each table */
+        block_length,         /* length of each block */
+        total_length,         /* total data length of the element */
+        accum_length;         /* accummulative length of actual data in blocks */
     int  ii;
     intn ret_value = SUCCEED;
 
@@ -976,8 +971,7 @@ DESCRIPTION
 PRIVATE link_t *
 HLIgetlink(int32 file_id, uint16 ref, int32 number_blocks)
 {
-    CONSTR(FUNC, "HLIgetlink"); /* for HERROR */
-    int32   access_id;          /* access record id */
+    int32   access_id; /* access record id */
     uint8  *buffer    = NULL;
     uint16  tag       = DFTAG_LINKED;
     link_t *new_link  = NULL;
@@ -1054,7 +1048,6 @@ DESCRIPTION
 int32
 HLPseek(accrec_t *access_rec, int32 offset, int origin)
 {
-    CONSTR(FUNC, "HLPseek"); /* for HERROR */
     int32 ret_value = SUCCEED;
 
     /* validate access record */
@@ -1105,7 +1098,6 @@ DESCRIPTION
 int32
 HLPread(accrec_t *access_rec, int32 length, void *datap)
 {
-    CONSTR(FUNC, "HLPread"); /* for HERROR */
     uint8 *data = (uint8 *)datap;
     /* information record for this special data elt */
     linkinfo_t *info   = (linkinfo_t *)(access_rec->special_info);
@@ -1227,7 +1219,6 @@ DESCRIPTION
 int32
 HLPwrite(accrec_t *access_rec, int32 length, const void *datap)
 {
-    CONSTR(FUNC, "HLPwrite"); /* for HERROR */
     const uint8 *data = datap;
     filerec_t   *file_rec;           /* file record */
     int32        dd_aid;             /* AID for writing the special info */
@@ -1465,9 +1456,8 @@ DESCRIPTION
 PRIVATE link_t *
 HLInewlink(int32 file_id, int32 number_blocks, uint16 link_ref, uint16 first_block_ref)
 {
-    CONSTR(FUNC, "HLInewlink"); /* for HERROR */
-    int32   link_id;            /* access record id of new link */
-    uint8  *buf       = NULL;   /* temp buffer */
+    int32   link_id;          /* access record id of new link */
+    uint8  *buf       = NULL; /* temp buffer */
     link_t *t_link    = NULL;
     link_t *ret_value = NULL; /* FAIL */
 
@@ -1562,7 +1552,6 @@ int32
 HLPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength, int32 *poffset,
            int32 *pposn, int16 *paccess, int16 *pspecial)
 {
-    CONSTR(FUNC, "HLPinquire");     /* for HERROR */
     uint16      data_tag, data_ref; /* Tag/ref of the data in the file */
     linkinfo_t *info =              /* special information record */
         (linkinfo_t *)access_rec->special_info;
@@ -1619,8 +1608,7 @@ DESCRIPTION
 intn
 HLPendaccess(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HLPendaccess"); /* for HERROR */
-    filerec_t *file_rec;          /* file record */
+    filerec_t *file_rec; /* file record */
     intn       ret_value = SUCCEED;
 
     /* validate argument */
@@ -1724,7 +1712,6 @@ DESCRIPTION
 int32
 HLPinfo(accrec_t *access_rec, sp_info_block_t *info_block)
 {
-    CONSTR(FUNC, "HLPinfo");
     linkinfo_t *info = /* special information record */
         (linkinfo_t *)access_rec->special_info;
     int32 ret_value = SUCCEED;
@@ -1783,8 +1770,7 @@ HLsetblockinfo(int32 aid,        /* access record id */
                int32 block_size, /* length to be used for each linked-block */
                int32 num_blocks) /* number of blocks the element will have */
 {
-    CONSTR(FUNC, "HLsetblockinfo"); /* for HERROR */
-    accrec_t *access_rec;           /* access record */
+    accrec_t *access_rec; /* access record */
     intn      ret_value = SUCCEED;
 
     /* clear error stack */
@@ -1855,8 +1841,7 @@ HLgetblockinfo(int32  aid,        /* access record id */
                int32 *block_size, /* length being used for each linked-block */
                int32 *num_blocks) /* number of blocks the element will have */
 {
-    CONSTR(FUNC, "HLgetblockinfo"); /* for HERROR */
-    accrec_t *access_rec;           /* access record */
+    accrec_t *access_rec; /* access record */
     intn      ret_value = SUCCEED;
 
     /* clear error stack */

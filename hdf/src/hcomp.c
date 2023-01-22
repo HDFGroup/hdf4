@@ -141,7 +141,6 @@ PRIVATE int32
 HCIinit_coder(int16 acc_mode, comp_coder_info_t *cinfo, comp_coder_t coder_type, comp_info *c_info)
 {
     uint32 comp_info;
-    CONSTR(FUNC, "HCIinit_coder"); /* for HERROR */
 
     HCget_config_info(coder_type, &comp_info);
     /* TODO: This construct S.B.
@@ -261,8 +260,6 @@ HCIinit_coder(int16 acc_mode, comp_coder_info_t *cinfo, comp_coder_t coder_type,
 PRIVATE int32
 HCIinit_model(int16 acc_mode, comp_model_info_t *minfo, comp_model_t model_type, model_info *m_info)
 {
-    CONSTR(FUNC, "HCIinit_model"); /* for HERROR */
-
     /* shut compiler up */
     acc_mode = acc_mode;
     m_info   = m_info;
@@ -305,9 +302,8 @@ int32
 HCPquery_encode_header(comp_model_t model_type, model_info *m_info, comp_coder_t coder_type,
                        comp_info *c_info)
 {
-    CONSTR(FUNC, "HCPquery_encode_header"); /* for HERROR */
-    int32 coder_len = 2;                    /* # of bytes to encode coder information (2 minimum) */
-    int32 model_len = 2;                    /* # of bytes to encode model information (2 minimum) */
+    int32 coder_len = 2; /* # of bytes to encode coder information (2 minimum) */
+    int32 model_len = 2; /* # of bytes to encode model information (2 minimum) */
     int32 ret_value = SUCCEED;
 
     /* clear error stack and validate args */
@@ -383,7 +379,6 @@ intn
 HCPencode_header(uint8 *p, comp_model_t model_type, model_info *m_info, comp_coder_t coder_type,
                  comp_info *c_info)
 {
-    CONSTR(FUNC, "HCPencode_header"); /* for HERROR */
     int32 ret_value = SUCCEED;
 
     /* clear error stack and validate args */
@@ -486,7 +481,6 @@ intn
 HCPdecode_header(uint8 *p, comp_model_t *model_type, model_info *m_info, comp_coder_t *coder_type,
                  comp_info *c_info)
 {
-    CONSTR(FUNC, "HCPdecode_header"); /* for HERROR */
     uint16 m_type, c_type;
     int32  ret_value = SUCCEED;
 
@@ -602,9 +596,8 @@ PRIVATE int32
 HCIwrite_header(atom_t file_id, compinfo_t *info, uint16 special_tag, uint16 ref, comp_info *c_info,
                 model_info *m_info)
 {
-    CONSTR(FUNC, "HCIwrite_header"); /* for HERROR */
-    int32  dd_aid;                   /* AID for writing the special info */
-    uint8 *p;                        /* pointer to the temporary buffer */
+    int32  dd_aid; /* AID for writing the special info */
+    uint8 *p;      /* pointer to the temporary buffer */
     uint8  local_ptbuf[32];
     int32  header_len; /* how many bytes the header is */
     int32  ret_value = SUCCEED;
@@ -661,9 +654,8 @@ done:
 PRIVATE int32
 HCIread_header(accrec_t *access_rec, compinfo_t *info, comp_info *c_info, model_info *m_info)
 {
-    CONSTR(FUNC, "HCIread_header"); /* for HERROR */
-    uint16 header_version;          /* version of the compression header */
-    uint8 *p;                       /* pointer to the temporary buffer */
+    uint16 header_version; /* version of the compression header */
+    uint8 *p;              /* pointer to the temporary buffer */
     uint8 *local_ptbuf;
     int32  ret_value = SUCCEED;
 
@@ -720,7 +712,6 @@ int32
 HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type, model_info *m_info,
          comp_coder_t coder_type, comp_info *c_info)
 {
-    CONSTR(FUNC, "HCcreate");      /* for HERROR */
     filerec_t  *file_rec;          /* file record */
     accrec_t   *access_rec = NULL; /* access element record */
     compinfo_t *info       = NULL; /* special element information */
@@ -861,7 +852,6 @@ HCPgetcompress(int32 file_id, uint16 data_tag, uint16 data_ref,
                comp_coder_t *comp_type, /* OUT: compression type */
                comp_info    *c_info)       /* OUT: retrieved compression info */
 {
-    CONSTR(FUNC, "HCPgetcompress"); /* for HGOTO_ERROR */
     int32       aid        = 0, status;
     accrec_t   *access_rec = NULL; /* access element record */
     compinfo_t *info       = NULL; /* compressed element information */
@@ -963,7 +953,6 @@ HCPgetcompinfo(int32 file_id, uint16 data_tag, uint16 data_ref,
                comp_coder_t *comp_type, /* OUT: compression type */
                comp_info    *c_info)       /* OUT: retrieved compression info */
 {
-    CONSTR(FUNC, "HCPgetcompinfo"); /* for HGOTO_ERROR */
     int32        aid        = 0, status;
     accrec_t    *access_rec = NULL; /* access element record */
     compinfo_t  *info       = NULL; /* compressed element information */
@@ -1062,11 +1051,10 @@ done:
 PRIVATE int32
 HCIstaccess(accrec_t *access_rec, int16 acc_mode)
 {
-    CONSTR(FUNC, "HCIstaccess"); /* for HERROR */
-    compinfo_t *info = NULL;     /* special element information */
-    filerec_t  *file_rec;        /* file record */
-    comp_info   c_info;          /* encoding information from the header */
-    model_info  m_info;          /* modeling information from the header */
+    compinfo_t *info = NULL; /* special element information */
+    filerec_t  *file_rec;    /* file record */
+    comp_info   c_info;      /* encoding information from the header */
+    model_info  m_info;      /* modeling information from the header */
     int32       ret_value = SUCCEED;
 
     /* get file record and validate */
@@ -1126,9 +1114,8 @@ done:
 int32
 HCPstread(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HCPstread"); /* for HERROR */
-    compinfo_t *info;          /* information on the special element */
-    int32       ret_value;     /* AID to return */
+    compinfo_t *info;      /* information on the special element */
+    int32       ret_value; /* AID to return */
 
     if ((ret_value = HCIstaccess(access_rec, DFACC_READ)) == FAIL)
         HGOTO_ERROR(DFE_DENIED, FAIL);
@@ -1164,9 +1151,8 @@ done:
 int32
 HCPstwrite(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HCPstwrite"); /* for HERROR */
-    compinfo_t *info;           /* information on the special element */
-    int32       ret_value;      /* AID to return */
+    compinfo_t *info;      /* information on the special element */
+    int32       ret_value; /* AID to return */
 
     if ((ret_value = HCIstaccess(access_rec, DFACC_WRITE)) == FAIL)
         HGOTO_ERROR(DFE_DENIED, FAIL);
@@ -1204,8 +1190,7 @@ done:
 int32
 HCPseek(accrec_t *access_rec, int32 offset, intn origin)
 {
-    CONSTR(FUNC, "HCPseek"); /* for HERROR */
-    compinfo_t *info;        /* information on the special element */
+    compinfo_t *info; /* information on the special element */
     int32       ret_value;
 
     /* Adjust offset according to origin.  There is no upper bound to posn */
@@ -1253,8 +1238,7 @@ done:
 int32
 HCPread(accrec_t *access_rec, int32 length, void *data)
 {
-    CONSTR(FUNC, "HCPread"); /* for HERROR */
-    compinfo_t *info;        /* information on the special element */
+    compinfo_t *info; /* information on the special element */
     int32       ret_value;
 
     /* validate length */
@@ -1307,8 +1291,7 @@ done:
 int32
 HCPwrite(accrec_t *access_rec, int32 length, const void *data)
 {
-    CONSTR(FUNC, "HCPwrite"); /* for HERROR */
-    compinfo_t *info;         /* information on the special element */
+    compinfo_t *info; /* information on the special element */
     uint8       local_ptbuf[4];
     uint8      *p = local_ptbuf; /* temp buffer ptr */
     filerec_t  *file_rec;        /* file record */
@@ -1384,8 +1367,7 @@ int32
 HCPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength, int32 *poffset,
            int32 *pposn, int16 *paccess, int16 *pspecial)
 {
-    CONSTR(FUNC, "HCPinquire"); /* for HERROR */
-    compinfo_t *info =          /* special information record */
+    compinfo_t *info = /* special information record */
         (compinfo_t *)access_rec->special_info;
     uint16 data_tag, data_ref; /* tag/ref of the data we are checking */
     int32  data_off;           /* offset of the data we are checking */
@@ -1434,8 +1416,7 @@ HCPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, in
 intn
 HCPendaccess(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HCPendaccess"); /* for HERROR */
-    filerec_t *file_rec;          /* file record */
+    filerec_t *file_rec; /* file record */
     intn       ret_value = SUCCEED;
 
     /* validate argument */
@@ -1491,8 +1472,7 @@ done:
 int32
 HCPcloseAID(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HCPcloseAID"); /* for HERROR */
-    compinfo_t *info;            /* special information record */
+    compinfo_t *info; /* special information record */
     int32       ret = SUCCEED;
 
     info = (compinfo_t *)access_rec->special_info;
@@ -1527,7 +1507,6 @@ DESCRIPTION
 int32
 HCPinfo(accrec_t *access_rec, sp_info_block_t *info_block)
 {
-    CONSTR(FUNC, "HCPinfo");
     compinfo_t *info = /* special information record */
         (compinfo_t *)access_rec->special_info;
 
@@ -1574,7 +1553,6 @@ intn
 HCget_config_info(comp_coder_t coder_type, /* IN: compression type */
                   uint32      *compression_config_info)
 {
-    CONSTR(FUNC, "HCget_config_info");
 
     *compression_config_info = 0;
     switch (coder_type) {
@@ -1648,16 +1626,15 @@ intn
 HCPgetcomptype(int32 file_id, uint16 data_tag, uint16 data_ref, /* IN: tag/ref of element */
                comp_coder_t *comp_type)                         /* OUT: compression type */
 {
-    CONSTR(FUNC, "HCPgetcomptype"); /* for HGOTO_ERROR */
-    uint16     ctag, cref;          /* tag/ref for the special info header object */
-    int32      data_id  = FAIL;     /* temporary AID for header info */
-    int32      temp_aid = FAIL;     /* temporary AID for header info */
-    int32      data_len;            /* offset of the data we are checking */
-    uint8     *p;                   /* pointers to the temporary buffer */
-    uint8     *local_ptbuf = NULL;  /* temporary buffer */
-    uint16     sp_tag;              /* special tag */
-    uint16     c_type;              /* compression type */
-    filerec_t *file_rec;            /* file record */
+    uint16     ctag, cref;         /* tag/ref for the special info header object */
+    int32      data_id  = FAIL;    /* temporary AID for header info */
+    int32      temp_aid = FAIL;    /* temporary AID for header info */
+    int32      data_len;           /* offset of the data we are checking */
+    uint8     *p;                  /* pointers to the temporary buffer */
+    uint8     *local_ptbuf = NULL; /* temporary buffer */
+    uint16     sp_tag;             /* special tag */
+    uint16     c_type;             /* compression type */
+    filerec_t *file_rec;           /* file record */
     intn       ret_value = SUCCEED;
 
     /* clear error stack */
@@ -1789,7 +1766,6 @@ HCPgetdatasize(int32 file_id, uint16 data_tag, uint16 data_ref, /* IN: tag/ref o
                int32 *comp_size,                                /* OUT  - size of compressed data */
                int32 *orig_size)                                /* OUT  - size of non-compressed data */
 {
-    CONSTR(FUNC, "HCPgetdatasize"); /* for HGOTO_ERROR */
     uint8     *local_ptbuf = NULL, *p;
     uint16     sp_tag; /* special tag */
     uint16     comp_ref = 0;

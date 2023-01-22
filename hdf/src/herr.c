@@ -192,7 +192,6 @@ HEreport(const char *format, ...)
 {
     va_list arg_ptr;
     char   *tmp;
-    CONSTR(FUNC, "HEreport"); /* name of function if HIalloc fails */
 
     va_start(arg_ptr, format);
 

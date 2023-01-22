@@ -66,7 +66,6 @@ DFKsb2b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stri
     uint8  buf[2]; /* Inplace processing buffer */
     uint8 *source = (uint8 *)s;
     uint8 *dest   = (uint8 *)d;
-    CONSTR(FUNC, "DFKsb2b");
 
     HEclear();
 
@@ -139,7 +138,6 @@ DFKsb4b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stri
     uint8  buf[4]; /* Inplace processing buffer */
     uint8 *source = (uint8 *)s;
     uint8 *dest   = (uint8 *)d;
-    CONSTR(FUNC, "DFKsb4b");
 #ifdef TEST3_sb4b
     uint32 *lp_dest;
     uint32 *lp_src;
@@ -306,7 +304,6 @@ DFKsb8b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stri
     uint8  buf[8]; /* Inplace processing buffer */
     uint8 *source = (uint8 *)s;
     uint8 *dest   = (uint8 *)d;
-    CONSTR(FUNC, "DFKsb8b");
 
     HEclear();
 
