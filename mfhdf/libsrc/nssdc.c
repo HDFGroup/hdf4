@@ -125,7 +125,6 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
     uint8              buffer[1000];
     uint8             *b;
     int32              dummy;
-    static const char *FUNC = "nssdc_read_cdf";
     hdf_file_t         fp;
     intn               i, j;
     int32              rank, current_var, current_dim, hdftype;

@@ -2233,9 +2233,8 @@ done:
 NAME
    HIget_function_table -- create special function table
 USAGE
-   int HIget_func_table(access_rec, FUNC)
+   int HIget_func_table(access_rec)
    accrec_t * access_rec;     IN: access record we are working on
-   char     * FUNC;           IN: function we are working for
 RETURNS
    NULL no matter what (seems odd....)
 DESCRIPTION
@@ -3238,7 +3237,7 @@ HPseek(filerec_t *file_rec, int32 offset)
     intn ret_value = SUCCEED;
 
 #ifdef HFILE_SEEKINFO
-    printf("%s: file_rec=%p, last_offset=%ld, offset=%ld, last_op=%d", FUNC, file_rec,
+    printf("%s: file_rec=%p, last_offset=%ld, offset=%ld, last_op=%d", __func__, file_rec,
            (long)file_rec->f_cur_off, (long)offset, (int)file_rec->last_op);
 #endif /* HFILE_SEEKINFO */
     if (file_rec->f_cur_off != offset || file_rec->last_op == H4_OP_UNKNOWN) {
