@@ -69,10 +69,6 @@ NC_free_xcdf(NC *handle)
     }
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 }
 
@@ -109,10 +105,6 @@ NC_free_cdf(NC *handle)
     }
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 }
 
@@ -163,10 +155,6 @@ hdf_get_magicnum(const char *filename)
     else
         HGOTO_ERROR(DFE_INVFILE, FAIL);
 done:
-    if (ret_value == FALSE) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* hdf_get_magicnum */
 
@@ -191,10 +179,6 @@ HDiscdf(const char *filename)
         ret_value = FALSE;
 
 done:
-    if (ret_value == FALSE) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 }
 
@@ -219,10 +203,6 @@ HDisnetcdf(const char *filename)
         ret_value = FALSE;
 
 done:
-    if (ret_value == FALSE) { /* FALSE cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* HDisnetcdf */
 
@@ -247,10 +227,6 @@ HDisnetcdf64(const char *filename)
         ret_value = FALSE;
 
 done:
-    if (ret_value == FALSE) { /* FALSE cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* HDisnetcdf64 */
 
@@ -440,7 +416,7 @@ done:
             Free(cdf);
         }
     }
-    /* Normal cleanup */
+
     return ret_value;
 } /* NC_new_cdf */
 
@@ -502,7 +478,6 @@ done:
             Free(cdf);
         }
     }
-    /* Normal cleanup */
 
     return ret_value;
 }
@@ -795,10 +770,6 @@ hdf_create_dim_vdata(XDR *xdrs, NC *handle, NC_dim *dim)
     ret_value = ref;
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* hdf_create_dim_vdata */
 
@@ -869,9 +840,6 @@ hdf_create_compat_dim_vdata(XDR *xdrs, NC *handle, NC_dim *dim, int32 dimval_ver
     ret_value = ref;
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
     if (val != NULL)
         HDfree(val);
 
@@ -1007,9 +975,6 @@ hdf_write_dim(XDR *xdrs, NC *handle, NC_dim **dim, int32 cnt)
     ret_value = (*dim)->vgid; /* ref of vgroup of dimension */
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
 
     return ret_value;
 } /* hdf_write_dim */
@@ -1239,10 +1204,6 @@ hdf_write_var(XDR *xdrs, NC *handle, NC_var **var)
     ret_value = (*var)->vgid; /* ref of vgroup of variable */
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* hdf_write_var */
 
@@ -1413,9 +1374,6 @@ hdf_write_xdr_cdf(XDR *xdrs, NC **handlep)
 #endif
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
     if (dim_size_array != NULL)
         HDfree(dim_size_array);
     if (dim_hash_array != NULL)
@@ -1489,9 +1447,6 @@ hdf_conv_scales(NC **handlep)
     }
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
     if (scalebuf != NULL)
         HDfree(scalebuf);
 
@@ -1682,7 +1637,7 @@ done:
             handle->dims = NULL;
         }
     }
-    /* Normal cleanup */
+
     if (dimension != NULL)
         HDfree(dimension);
 
@@ -1757,10 +1712,6 @@ hdf_num_attrs(NC   *handle, /* IN: handle to SDS */
     ret_value = count;
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* hdf_num_attrs */
 
@@ -1897,7 +1848,7 @@ done:
         if (Array != NULL)
             NC_free_array(Array);
     }
-    /* Normal cleanup */
+
     if (values != NULL)
         HDfree(values);
     if (attributes != NULL)
@@ -2299,7 +2250,7 @@ done:
         if (handle->vars != NULL)
             NC_free_array(handle->vars);
     }
-    /* Normal cleanup */
+
     if (variables != NULL)
         HDfree(variables);
     if (dims != NULL)
@@ -2367,7 +2318,6 @@ done:
         if (cdf_vg != FAIL)
             Vdetach(cdf_vg);
     }
-    /* Normal cleanup */
 
     return ret_value;
 } /* hdf_read_xdr_cdf */
@@ -2430,10 +2380,6 @@ hdf_xdr_cdf(XDR *xdrs, NC **handlep)
     }
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* hdf_xdr_cdf */
 
@@ -2555,7 +2501,6 @@ done:
         fprintf(stderr, "hdf_vg_clobber: failed \n");
 #endif
     }
-    /* Normal cleanup */
 
     return ret_value;
 } /* hdf_vg_clobber */
@@ -2696,9 +2641,8 @@ done:
 #ifdef HDF_CDF_CLOBBER
         fprintf(stderr, "hdf_cdf_clobber: Failed to Clobber VGroup %d\n\n", handle->vgid);
 #endif
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     return ret_value;
 } /* hdf_cdf_clobber */
 
@@ -2864,11 +2808,6 @@ hdf_close(NC *handle)
     } /* end if we need to flush out unlimited dimensions? */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* hdf_close */
 

@@ -412,9 +412,8 @@ done:
         if (aid != 0)
             if (Hendaccess(aid) == FAIL)
                 HERROR(DFE_CANTENDACCESS);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     return ret_value;
 } /* GRIisspecial_type */
 
@@ -1283,12 +1282,6 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
     HDfree(img_info); /* free image info structures */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end GRIget_image_list() */
 
@@ -1442,12 +1435,6 @@ GRIil_convert(const void *inbuf, gr_interlace_t inil, void *outbuf, gr_interlace
     }             /* end else */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     /* Free arrays allocated during this routine */
     /* (common for both error and normal returns) */
     if (in_comp_ptr != NULL)
@@ -1550,11 +1537,6 @@ GRstart(int32 hdf_file_id)
     ret_value = HAregister_atom(GRIDGROUP, gr_ptr);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRstart() */
 
@@ -1603,11 +1585,6 @@ GRfileinfo(int32 grid, int32 *n_datasets, int32 *n_attrs)
         *n_attrs = gr_ptr->gattr_count;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRfileinfo() */
 
@@ -1723,12 +1700,6 @@ GRIupdatemeta(int32 hdf_file_id, ri_info_t *img_ptr)
         HGOTO_ERROR(DFE_PUTELEM, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end GRIupdatemeta() */
 
@@ -1805,12 +1776,6 @@ GRIupdateRIG(int32 hdf_file_id, ri_info_t *img_ptr)
         HGOTO_ERROR(DFE_GROUPWRITE, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end GRIupdateRIG() */
 
@@ -1916,12 +1881,6 @@ GRIupdateRI(int32 hdf_file_id, ri_info_t *img_ptr)
         HGOTO_ERROR(DFE_CANTDETACH, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end GRIupdateRI() */
 
@@ -1982,12 +1941,6 @@ GRIup_attr_data(int32 hdf_file_id, at_info_t *attr_ptr)
     } /* end else */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end GRIup_attr_data() */
 
@@ -2208,11 +2161,6 @@ GRend(int32 grid)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRend() */
 
@@ -2270,11 +2218,6 @@ GRselect(int32 grid, int32 index)
     ret_value = HAregister_atom(RIIDGROUP, ri_ptr);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRselect() */
 
@@ -2396,11 +2339,6 @@ GRcreate(int32 grid, const char *name, int32 ncomp, int32 nt, int32 il, int32 di
     ret_value = HAregister_atom(RIIDGROUP, ri_ptr);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRcreate() */
 
@@ -2455,11 +2393,6 @@ GRnametoindex(int32 grid, const char *name)
     ret_value = (FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRnametoindex() */
 
@@ -2531,11 +2464,6 @@ GRgetiminfo(int32 riid, char *name, int32 *ncomp, int32 *nt, int32 *il, int32 di
         *n_attr = ri_ptr->lattr_count;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRgetiminfo() */
 
@@ -2586,11 +2514,6 @@ GRgetnluts(int32 riid)
         ret_value = 1;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRgetnluts() */
 
@@ -3012,11 +2935,6 @@ GRwriteimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], voi
     gr_ptr->gr_modified   = TRUE;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRwriteimage() */
 
@@ -3285,11 +3203,6 @@ GRreadimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], void
     } /* end if */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRreadimage() */
 
@@ -3363,11 +3276,6 @@ GRendaccess(int32 riid)
         HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRendaccess() */
 
@@ -3424,12 +3332,6 @@ GRidtoref(int32 riid)
     } /* end else */
 
 done:
-    if (ret_value == 0) /* 0 is invalid ref */
-    {                   /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRidtoref() */
 
@@ -3487,11 +3389,6 @@ GRreftoindex(int32 grid, uint16 ref)
     ret_value = (FAIL);
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRreftoindex() */
 
@@ -3544,11 +3441,6 @@ GRreqlutil(int32 riid, intn il)
     ri_ptr->lut_il = (gr_interlace_t)il;
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRreqlutil() */
 
@@ -3601,11 +3493,6 @@ GRreqimageil(int32 riid, intn il)
     ri_ptr->im_il = (gr_interlace_t)il;
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRreqimageil() */
 
@@ -3649,11 +3536,6 @@ GRgetlutid(int32 riid, int32 lut_index)
     ret_value = (riid);
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRgetlutid() */
 
@@ -3701,11 +3583,6 @@ GRluttoref(int32 lutid)
     ret_value = ri_ptr->lut_ref;
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRluttoref() */
 
@@ -3775,11 +3652,6 @@ GRgetlutinfo(int32 lutid, int32 *ncomp, int32 *nt, int32 *il, int32 *nentries)
     } /* end else */
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRgetlutinfo() */
 
@@ -3866,11 +3738,6 @@ GRwritelut(int32 lutid, int32 ncomps, int32 nt, int32 il, int32 nentries, void *
     } /* end else */
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRwritelut() */
 
@@ -3945,11 +3812,6 @@ GRreadlut(int32 lutid, void *data)
     } /* end if */
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRreadlut() */
 
@@ -4024,11 +3886,6 @@ GRsetexternalfile(int32 riid, const char *filename, int32 offset)
         HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRsetexternalfile() */
 
@@ -4081,11 +3938,6 @@ GRsetaccesstype(int32 riid, uintn accesstype)
     ri_ptr->acc_type = accesstype;
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRsetaccesstype() */
 
@@ -4243,11 +4095,6 @@ GRsetcompress(int32 riid, comp_coder_t comp_type, comp_info *cinfo)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRsetcompress() */
 
@@ -4328,11 +4175,6 @@ GRgetcompress(int32 riid, comp_coder_t *comp_type, comp_info *cinfo)
     }
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRgetcompress() */
 
@@ -4437,9 +4279,6 @@ GRgetcomptype(int32 riid, comp_coder_t *comp_type)
         *comp_type = temp_comp_type;
     }
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-    }                     /* end if */
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRgetcomptype() */
 
@@ -4529,11 +4368,6 @@ GRgetcompinfo(int32 riid, comp_coder_t *comp_type, comp_info *cinfo)
     }
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRgetcompinfo() */
 
@@ -4738,11 +4572,6 @@ GRsetattr(int32 id, const char *name, int32 attr_nt, int32 count, const void *da
     } /* end if */
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRsetattr() */
 
@@ -4823,11 +4652,6 @@ GRattrinfo(int32 id, int32 index, char *name, int32 *attr_nt, int32 *count)
         *count = at_ptr->len;
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRattrinfo() */
 
@@ -4936,11 +4760,6 @@ GRgetattr(int32 id, int32 index, void *data)
         HDfreenclear(at_ptr->data);
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRgetattr() */
 
@@ -5012,11 +4831,6 @@ GRfindattr(int32 id, const char *name)
     ret_value = (FAIL);
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRfindattr() */
 
@@ -5049,12 +4863,6 @@ GRIstart(void)
         HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return (ret_value);
 } /* end GRIstart() */
 
@@ -5157,9 +4965,7 @@ GRIgetaid(ri_info_t *ri_ptr, intn acc_perm)
 done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         ri_ptr->img_aid = 0;
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
     return ret_value;
 } /* end GRIgetaid() */
@@ -5555,10 +5361,6 @@ GRsetchunk(int32         riid,      /* IN: raster access id */
 #endif
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     /* free fill value */
     if (fill_pixel != NULL)
         HDfree(fill_pixel);
@@ -5676,9 +5478,6 @@ GRgetchunkinfo(int32          riid,      /* IN: sds access id */
     }
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
     return ret_value;
 } /* GRgetchunkinfo() */
 
@@ -5868,9 +5667,6 @@ GRwritechunk(int32       riid,   /* IN: access aid to GR */
     } /* end if Hinquire */
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
     /* dont forget to free up info is special info block
        This space was allocated by the library */
     if (info_block.cdims != NULL)
@@ -6070,9 +5866,6 @@ GRreadchunk(int32  riid,   /* IN: access aid to GR */
     } /* end if Hinquire */
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
     /* dont forget to free up info is special info block
        This space was allocated by the library */
     if (info_block.cdims != NULL)
@@ -6189,9 +5982,6 @@ GRsetchunkcache(int32 riid,     /* IN: access aid to mess with */
     }
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
     return ret_value;
 } /* GRsetchunkcache() */
 
@@ -6296,9 +6086,6 @@ GR2bmapped(int32 riid, intn *tobe_mapped, intn *name_generated)
     *name_generated = ri_ptr->name_generated;
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-    }                     /* end if */
-    /* Normal function cleanup */
     return ret_value;
 } /* GR2bmapped */
 /*

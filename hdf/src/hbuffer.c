@@ -268,12 +268,6 @@ HBPseek(accrec_t *access_rec, int32 offset, int origin)
     access_rec->posn = offset;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HBPseek */
 
@@ -320,12 +314,6 @@ HBPread(accrec_t *access_rec, int32 length, void *data)
     ret_value = length;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return (ret_value);
 } /* HBPread */
 
@@ -392,12 +380,6 @@ HBPwrite(accrec_t *access_rec, int32 length, const void *data)
     ret_value = length; /* return length of bytes written */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return (ret_value);
 } /* HBPwrite */
 
@@ -457,12 +439,6 @@ HBPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, in
         *pspecial = (int16)access_rec->special;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HBPinquire */
 
@@ -499,9 +475,7 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (access_rec != NULL)
             HIrelease_accrec_node(access_rec);
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
     return ret_value;
 } /* HBPendaccess */
@@ -553,12 +527,6 @@ HBPcloseAID(accrec_t *access_rec)
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return (ret_value);
 } /* HBPcloseAID */
 
@@ -594,11 +562,5 @@ HBPinfo(accrec_t *access_rec, sp_info_block_t *info_block)
     info_block->buf_aid = info->buf_aid;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return (ret_value);
 } /* HBPinfo */

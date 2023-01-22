@@ -685,10 +685,6 @@ SDIresizebuf(void **buf, int32 *buf_size, int32 size_wanted)
     }     /* end if */
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* end SDIresizebuf() */
 
@@ -882,7 +878,6 @@ done:
             Vdetach(vg); /* no point in catch error here if we fail */
         }
     }
-    /* Normal cleanup */
 
     return ret_value;
 } /* hdf_get_data */
@@ -928,10 +923,6 @@ hdf_get_vp_aid(NC *handle, NC_var *vp)
     ret_value = vp->aid;
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* hdf_get_vp_aid */
 
@@ -1494,10 +1485,6 @@ hdf_xdr_NCvdata(NC *handle, NC_var *vp, u_long where, nc_type type, uint32 count
 #endif
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* hdf_xdr_NCvdata */
 
@@ -1522,10 +1509,6 @@ hdf_xdr_NCv1data(NC *handle, NC_var *vp, u_long where, nc_type type, void *value
     ret_value = hdf_xdr_NCvdata(handle, vp, where, type, 1, values);
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* hdf_xdr_NCv1data */
 

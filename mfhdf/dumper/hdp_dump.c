@@ -347,10 +347,6 @@ dumpfull(int32 nt, dump_info_t *dump_opts, int32 cnt, /* number of items in 'dat
     }
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* dumpfull */
 
@@ -503,9 +499,5 @@ dumpclean(int32 nt, dump_info_t *dump_opts, int32 cnt, /* number of items in 'da
     putc('\n', ofp); /* newline */
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* dumpclean */

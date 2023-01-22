@@ -708,11 +708,6 @@ HIbitstart(void)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return (ret_value);
 } /* end HIbitstart() */
 

@@ -346,11 +346,6 @@ HCPquery_encode_header(comp_model_t model_type, model_info *m_info, comp_coder_t
     ret_value = model_len + coder_len;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end HCPquery_encode_header() */
 
@@ -448,11 +443,6 @@ HCPencode_header(uint8 *p, comp_model_t model_type, model_info *m_info, comp_cod
     } /* end switch */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end HCPencode_header() */
 
@@ -563,11 +553,6 @@ HCPdecode_header(uint8 *p, comp_model_t *model_type, model_info *m_info, comp_co
     } /* end switch */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end HCPdecode_header() */
 
@@ -624,11 +609,6 @@ HCIwrite_header(atom_t file_id, compinfo_t *info, uint16 special_tag, uint16 ref
         HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end HCIwrite_header() */
 
@@ -677,11 +657,6 @@ HCIread_header(accrec_t *access_rec, compinfo_t *info, comp_info *c_info, model_
     HDfree(local_ptbuf);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end HCIread_header() */
 
@@ -814,9 +789,8 @@ done:
             HIrelease_accrec_node(access_rec);
         if (info != NULL)
             HDfree(info);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     if (buf != NULL)
         HDfree(buf);
 
@@ -914,9 +888,8 @@ done:
         if (aid != 0)
             if (Hendaccess(aid) == FAIL)
                 HERROR(DFE_CANTENDACCESS);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     return ret_value;
 } /* HCPgetcompress */
 
@@ -1025,9 +998,8 @@ done:
         if (aid != 0)
             if (Hendaccess(aid) == FAIL)
                 HERROR(DFE_CANTENDACCESS);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     return ret_value;
 } /* HCPgetcompinfo */
 
@@ -1089,9 +1061,8 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (info != NULL)
             HDfree(info);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     return ret_value;
 } /* end HCIstaccess() */
 
@@ -1124,11 +1095,6 @@ HCPstread(accrec_t *access_rec)
         HGOTO_ERROR(DFE_MODEL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end HCPstread() */
 
@@ -1161,11 +1127,6 @@ HCPstwrite(accrec_t *access_rec)
         HGOTO_ERROR(DFE_MODEL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end HCPstwrite() */
 
@@ -1209,11 +1170,6 @@ HCPseek(accrec_t *access_rec, int32 offset, intn origin)
     access_rec->posn = offset;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end HCPseek() */
 
@@ -1262,11 +1218,6 @@ HCPread(accrec_t *access_rec, int32 length, void *data)
     ret_value = length;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end HCPread() */
 
@@ -1330,11 +1281,6 @@ HCPwrite(accrec_t *access_rec, int32 length, const void *data)
     ret_value = length; /* return length of bytes written */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end HCPwrite() */
 
@@ -1446,9 +1392,7 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (access_rec != NULL)
             HIrelease_accrec_node(access_rec);
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
     return ret_value;
 } /* end HCPendaccess() */
@@ -1714,9 +1658,6 @@ HCPgetcomptype(int32 file_id, uint16 data_tag, uint16 data_ref, /* IN: tag/ref o
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-    }                        /* end if */
-
     /* end access to the aid's if they've been accessed */
     if (temp_aid != FAIL)
         if (Hendaccess(temp_aid) == FAIL)
@@ -1729,7 +1670,6 @@ done:
     if (local_ptbuf != NULL)
         HDfree(local_ptbuf);
 
-    /* Normal function cleanup */
     return ret_value;
 } /* HCPgetcomptype */
 
@@ -1852,10 +1792,6 @@ HCPgetdatasize(int32 file_id, uint16 data_tag, uint16 data_ref, /* IN: tag/ref o
         HGOTO_ERROR(DFE_CANTACCESS, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-    }                        /* end if */
-
-    /* Normal function cleanup */
     if (local_ptbuf != NULL)
         HDfree(local_ptbuf);
 

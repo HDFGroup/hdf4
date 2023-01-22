@@ -194,10 +194,6 @@ VSref_index(int32 file_id, int32 vd_ref)
     }
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* VSref_index */
 
@@ -259,10 +255,6 @@ VSstr_index(int32 file_id, char *filter_str, /* searched vd's name or class */
     ret_value = FAIL;
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* VSstr_index() */
 
@@ -373,10 +365,6 @@ choose_vd(dump_info_t *dumpvd_opts, int32 **vd_chosen, int32 file_id, int *index
      be different from dumpvd_opts->num_chosen because of the non-unique
      class name */
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* choose_vd */
 
@@ -684,7 +672,6 @@ done:
         if (vd_id != FAIL)
             VSdetach(vd_id);
     }
-    /* Normal cleanup */
 
     return ret_value;
 } /* dumpvd_ascii() */
@@ -784,8 +771,6 @@ dumpvd_binary(dump_info_t *dumpvd_opts, int32 file_id, const char *file_name, FI
         vd_id = FAIL; /* reset */
 
     } /* for each vdata */
-
-    /* Normal cleanup */
 
     return (ret_value);
 } /* dumpvd_binary */
@@ -949,7 +934,6 @@ done:
             vd_chosen = NULL;
         }
     }
-    /* Normal cleanup */
 
     return ret_value;
 } /* dvd */
@@ -994,10 +978,6 @@ do_dumpvd(intn curr_arg, intn argc, char *argv[], intn help)
         ERROR_GOTO_0("in do_dumpvd: dvd failed");
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     /* free the lists for given indices, ref#s, names, and classes if
        they had been allocated */
     free_num_list(dumpvd_opts.by_index.num_list);

@@ -614,12 +614,6 @@ DFANIclear(void)
     Lastref = 0; /* 0 is invalid ref */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -701,12 +695,6 @@ DFANIopen(const char *filename, intn acc_mode)
     ret_value = file_id;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -813,11 +801,6 @@ DFANIlocate(int32 file_id, int type, uint16 tag, uint16 ref)
     HERROR(DFE_NOMATCH);
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -891,11 +874,6 @@ DFANIaddentry(int type, uint16 annref, uint16 datatag, uint16 dataref)
         q->entries[i].annref = 0;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -957,12 +935,6 @@ DFANIgetannlen(const char *filename, uint16 tag, uint16 ref, int type)
     ret_value = annlength;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -1070,11 +1042,6 @@ DFANIgetann(const char *filename, uint16 tag, uint16 ref, uint8 *ann, int32 maxl
     ret_value = (Hclose(file_id));
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -1185,11 +1152,6 @@ DFANIputann(const char *filename, uint16 tag, uint16 ref, uint8 *ann, int32 annl
     ret_value = (Hclose(file_id));
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -1338,12 +1300,6 @@ DFANIlablist(const char *filename, uint16 tag, uint16 reflist[], uint8 *labellis
         ret_value = nrefs;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -1395,11 +1351,6 @@ DFANIaddfann(int32 file_id, char *ann, int32 annlen, int type)
     Lastref = annref; /* remember ref last accessed */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -1470,11 +1421,6 @@ DFANIgetfannlen(int32 file_id, int type, int isfirst)
         HGOTO_ERROR(DFE_NOMATCH, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -1574,15 +1520,9 @@ DFANIgetfann(int32 file_id, char *ann, int32 maxlen, int type, int isfirst)
 
     Hendaccess(aid);
 
+    ret_value = length;
+
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-    else
-        ret_value = length;
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -1615,12 +1555,6 @@ DFANIstart(void)
         HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return (ret_value);
 } /* end DFANIstart() */
 

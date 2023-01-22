@@ -266,7 +266,6 @@ done:
 #endif
         mp = NULL; /* return value */
     }              /* end error cleanup */
-    /* Normal cleanup */
 #ifdef MCACHE_DEBUG
     (VOID) fprintf(stderr, "mcache_open: mp->pagesize=%lu\n", mp->pagesize);
     (VOID) fprintf(stderr, "mcache_open: mp->maxcache=%u\n", mp->maxcache);
@@ -480,7 +479,6 @@ done:
             HDfree(lp);
         return NULL;
     }
-    /* Normal cleanup */
 #ifdef MCACHE_DEBUG
     (VOID) fprintf(stderr, "mcache_get: Exiting \n");
 #endif
@@ -542,11 +540,6 @@ mcache_put(MCACHE *mp,   /* IN: MCACHE cookie */
     }
 
 done:
-    if (ret_value == RET_ERROR) { /* error cleanup */
-        return ret_value;
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* mcache_put () */
 
@@ -596,7 +589,6 @@ done:
     if (ret_value == RET_ERROR) { /* error cleanup */
         return ret_value;
     }
-    /* Normal cleanup */
 
     /* Free the MCACHE cookie. */
     HDfree(mp);
@@ -640,7 +632,6 @@ done:
     if (ret_value == RET_ERROR) { /* error cleanup */
         return ret_value;
     }
-    /* Normal cleanup */
 
 #ifdef MCACHE_DEBUG
     (VOID) fprintf(stderr, "mcache_sync: exiting \n");
@@ -733,7 +724,6 @@ done:
 
         return NULL;
     }
-    /* Normal cleanup */
 
     return (bp); /* return only the pagesize fragment */
 } /* mcache_bkt() */
@@ -816,7 +806,6 @@ done:
 #endif
         return ret_value;
     }
-    /* Normal cleanup */
 
 #ifdef MCACHE_DEBUG
     (VOID) fprintf(stderr, "mcache_write: exiting\n");
@@ -870,11 +859,6 @@ mcache_look(MCACHE *mp, /* IN: MCACHE cookie */
     ++mp->cachemiss;
 #endif
 done:
-    if (ret_value == RET_ERROR) { /* error cleanup */
-        return NULL;
-    }
-    /* Normal cleanup */
-
     return (bp);
 } /* mcache_look() */
 

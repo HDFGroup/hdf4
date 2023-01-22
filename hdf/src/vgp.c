@@ -179,12 +179,6 @@ VIget_vgroup_node(void)
     HDmemset(ret_value, 0, sizeof(VGROUP));
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return (ret_value);
 } /* VIget_vgroup_node */
 
@@ -240,12 +234,6 @@ VIget_vginstance_node(void)
     HDmemset(ret_value, 0, sizeof(vginstance_t));
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return (ret_value);
 } /* VIget_vginstance_node */
 
@@ -474,12 +462,6 @@ Load_vfile(HFILEID f /* IN: file handle */)
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Load_vfile */
 
@@ -530,12 +512,6 @@ Remove_vfile(HFILEID f /* IN: file handle */)
     HDfree(vf);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Remove_vfile */
 
@@ -686,11 +662,6 @@ Vinitialize(HFILEID f /* IN: file handle */)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vinitialize() */
 
@@ -718,11 +689,6 @@ Vfinish(HFILEID f /* IN: file handle */)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vfinish() */
 
@@ -767,12 +733,6 @@ vginst(HFILEID f, /* IN: file handle */
     HGOTO_ERROR(DFE_NOMATCH, NULL);
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* vginst */
 
@@ -1018,11 +978,6 @@ vunpackvg(VGROUP *vg,    /* IN/OUT: */
         }         /* new version */
     }             /* end if */
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 
 } /* vunpackvg */
@@ -1084,12 +1039,6 @@ VPgetinfo(HFILEID f, /* IN: file handle */
     ret_value = vg;
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end VPgetinfo */
 
@@ -1235,11 +1184,6 @@ Vattach(HFILEID     f,    /* IN: file handle */
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vattach */
 
@@ -1353,11 +1297,6 @@ Vdetach(int32 vkey /* IN: vgroup key */)
     v->nattach--;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vdetach */
 
@@ -1459,11 +1398,6 @@ Vinsert(int32 vkey, /* IN: vgroup key */
     ret_value = (vg->nvelt - 1);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vinsert */
 
@@ -1529,12 +1463,6 @@ Vflocate(int32 vkey, /* IN: vdata key */
     ret_value = (FAIL); /* field not found */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Vflocate */
 
@@ -1588,11 +1516,6 @@ Vinqtagref(int32 vkey, /* IN: vgroup key */
     }
 
 done:
-    if (ret_value == FALSE) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vinqtagref */
 
@@ -1690,11 +1613,6 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
     ret_value = FAIL;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vdeletetagref */
 
@@ -1736,11 +1654,6 @@ Vntagrefs(int32 vkey /* IN: vgroup key */)
     ret_value = ((vg->otag == DFTAG_VG) ? (int32)vg->nvelt : FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vntagrefs */
 
@@ -1788,12 +1701,6 @@ Vnrefs(int32 vkey, /* IN: vgroup key */
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Vnrefs */
 
@@ -1851,11 +1758,6 @@ Vgettagrefs(int32 vkey,       /* IN: vgroup key */
     ret_value = (n);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vgettagrefs */
 
@@ -1908,11 +1810,6 @@ Vgettagref(int32  vkey,  /* IN: vgroup key */
     *ref = (int32)vg->ref[which];
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vgettagref */
 
@@ -1953,12 +1850,6 @@ VQuerytag(int32 vkey /* IN: vgroup key */)
     ret_value = ((int32)vg->otag);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* VQuerytag */
 
@@ -1998,12 +1889,6 @@ VQueryref(int32 vkey /* IN: vgroup id */)
     ret_value = ((int32)vg->oref);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* VQueryref */
 
@@ -2065,11 +1950,6 @@ Vaddtagref(int32 vkey, /* IN: vgroup key */
     ret_value = vinsertpair(vg, (uint16)tag, (uint16)ref);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vaddtagref */
 
@@ -2113,12 +1993,6 @@ vinsertpair(VGROUP *vg,  /* IN: vgroup struct */
     ret_value  = ((int32)vg->nvelt);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* vinsertpair() */
 
@@ -2159,12 +2033,6 @@ Ventries(HFILEID f, /* IN: file handle */
         ret_value = FAIL;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Ventries */
 
@@ -2225,11 +2093,6 @@ Vsetname(int32       vkey, /* IN: vgroup key */
     vg->marked = TRUE;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vsetname */
 
@@ -2299,12 +2162,6 @@ Vsetclass(int32       vkey, /* IN: vgroup key */
     vg->marked = TRUE;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Vsetclass */
 
@@ -2357,12 +2214,6 @@ Visvg(int32 vkey, /* IN: vgroup key */
     }
 
 done:
-    if (ret_value == FALSE) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Visvg */
 
@@ -2410,12 +2261,6 @@ Visvs(int32 vkey, /* IN: vgroup key */
     }
 
 done:
-    if (ret_value == FALSE) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Visvs */
 
@@ -2485,12 +2330,6 @@ Vgetid(HFILEID f, /* IN: file handle */
         }                                   /* end else */
     }
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Vgetid */
 
@@ -2570,12 +2409,6 @@ Vgetnext(int32 vkey, /* IN: vgroup key */
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Vgetnext  */
 
@@ -2634,10 +2467,6 @@ Vgetnamelen(int32   vkey, /* IN: vgroup key */
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-    /* Normal function cleanup */
     return ret_value;
 } /* Vgetnamelen */
 
@@ -2693,12 +2522,6 @@ Vgetclassnamelen(int32   vkey, /* IN: vgroup key */
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Vgetclassnamelen */
 
@@ -2746,12 +2569,6 @@ Vgetname(int32 vkey, /* IN: vgroup key */
         vgname[0] = '\0';
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Vgetname */
 
@@ -2799,12 +2616,6 @@ Vgetclass(int32 vkey, /* IN: vgroup key */
         vgclass[0] = '\0';
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Vgetclass */
 
@@ -2861,12 +2672,6 @@ Vinquire(int32  vkey,     /* IN: vgroup key */
         *nentries = (int32)vg->nvelt;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Vinquire */
 
@@ -2911,12 +2716,6 @@ Vopen(char *path,     /* IN: file name */
         HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Vopen() */
 
@@ -3010,12 +2809,6 @@ Vdelete(int32 f, /* IN: file handle */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Vdelete */
 
@@ -3047,12 +2840,6 @@ VIstart(void)
         HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return (ret_value);
 } /* end VIstart() */
 
@@ -3115,11 +2902,6 @@ VPshutdown(void)
     } /* end if */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end VPshutdown() */
 
@@ -3191,10 +2973,6 @@ Vgisinternal(int32 vkey /* vgroup's identifier */)
     ret_value = is_internal;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-    }                        /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vgisinternal */
 
@@ -3412,10 +3190,5 @@ Vgetvgroups(int32   id,       /* IN: file id or vgroup id */
         HGOTO_ERROR(DFE_ARGS, FAIL);
     }
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vgetvgroups */

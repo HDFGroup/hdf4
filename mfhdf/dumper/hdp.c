@@ -246,11 +246,6 @@ VShdfsize(int32 vkey, /* IN vdata key */
     ret_value = totalsize;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VShdfsize */
 
@@ -337,11 +332,6 @@ VSattrhdfsize(int32 vsid, int32 findex, intn attrindex, int32 *size)
     if (FAIL == VSdetach(attr_vsid))
         HGOTO_ERROR(DFE_CANTDETACH, FAIL);
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSattrhdfsize */
 
@@ -439,10 +429,5 @@ Vattrhdfsize(int32 vgid, intn attrindex, int32 *size)
     if (FAIL == VSdetach(vsid))
         HGOTO_ERROR(DFE_CANTDETACH, FAIL);
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vattrhdfsize */

@@ -292,12 +292,6 @@ DFGRsetcompress(int32 scheme, comp_info *cinfo)
     Grcinfo = (*cinfo); /* Set the compression parameters */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end DFGRsetcompress() */
 
@@ -441,10 +435,7 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (file_id != (-1))
             Hclose(file_id);
-
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
     return ret_value;
 }
@@ -546,12 +537,6 @@ DFGRgetrig(int32 file_id, uint16 ref, DFGRrig *rig)
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -666,12 +651,6 @@ DFGRaddrig(int32 file_id, uint16 ref, DFGRrig *rig)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -739,10 +718,7 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (file_id != (-1))
             Hclose(file_id);
-
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
     return ret_value;
 }
@@ -857,12 +833,6 @@ DFGRIriginfo(int32 file_id)
     Grlastref = newref; /* remember ref read */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -918,9 +888,7 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (file_id != (-1))
             Hclose(file_id);
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
     return ret_value;
 }
@@ -951,12 +919,6 @@ DFGRIreqil(intn il, intn type)
     Grreqil[type] = il;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -1119,9 +1081,7 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (file_id != (-1))
             Hclose(file_id);
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
     return ret_value;
 }
@@ -1159,12 +1119,6 @@ DFGRIsetdims(int32 xdim, int32 ydim, intn ncomps, int type)
     Ref.dims[type] = 0;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -1195,12 +1149,6 @@ DFGRIsetil(int il, int type)
     Grwrite.datadesc[type].interlace = il;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 /*-----------------------------------------------------------------------------
@@ -1227,12 +1175,6 @@ DFGRIrestart(void)
     Grrefset = 0;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -1400,11 +1342,6 @@ DFGRIaddimlut(const char *filename, const void *imlut, int32 xdim, int32 ydim, i
     wref = 0; /* don't know ref to write next */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     if (file_id != (-1))
         Hclose(file_id);
 
@@ -1458,12 +1395,6 @@ DFGRIstart(void)
         HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return (ret_value);
 } /* end DFGRIstart() */
 

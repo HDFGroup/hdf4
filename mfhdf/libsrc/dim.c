@@ -72,10 +72,6 @@ NC_free_dim(NC_dim *dim)
     }
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 }
 

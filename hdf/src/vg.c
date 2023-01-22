@@ -144,11 +144,6 @@ VSelts(int32 vkey /* IN: vdata key */)
     ret_value = (vs->nvertices);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSelts */
 
@@ -187,11 +182,6 @@ VSgetinterlace(int32 vkey /* IN: vdata key */)
     ret_value = ((int32)(vs->interlace));
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSgetinterlace */
 
@@ -245,11 +235,6 @@ VSsetinterlace(int32 vkey, /* IN: vdata key */
         ret_value = FAIL;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSsetinterlace */
 
@@ -309,11 +294,6 @@ VSgetfields(int32 vkey, /* IN: vdata key */
     ret_value = ((int32)vs->wlist.n);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSgetfields */
 
@@ -391,11 +371,6 @@ VSfexist(int32 vkey, /* IN: vdata key */
     ret_value = TRUE;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSfexist */
 
@@ -471,11 +446,6 @@ VSsizeof(int32 vkey, /* IN vdata key */
     ret_value = totalsize;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSsizeof */
 
@@ -553,11 +523,6 @@ VSsetname(int32       vkey, /* IN: Vdata key */
         vs->new_h_sz = TRUE; /* mark vdata header size being changed */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSsetname */
 
@@ -618,11 +583,6 @@ VSsetclass(int32       vkey, /* IN: vdata key */
         vs->new_h_sz = TRUE; /* mark vdata header size being changed */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSsetclass */
 
@@ -666,11 +626,6 @@ VSgetname(int32 vkey, /* IN: vdata key */
     HDstrcpy(vsname, vs->vsname);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSgetname */
 
@@ -714,11 +669,6 @@ VSgetclass(int32 vkey, /* IN: vdata key */
     HDstrcpy(vsclass, vs->vsclass);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSgetclass */
 
@@ -773,11 +723,6 @@ VSinquire(int32  vkey,      /* IN: vdata key */
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value; /* ok */
 
 } /* VSinquire */
@@ -846,11 +791,6 @@ VSlone(HFILEID f,       /* IN: file id */
     ret_value = nlone; /* return the TOTAL # of lone vdatas */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSlone */
 
@@ -919,11 +859,6 @@ Vlone(HFILEID f,       /* IN: file id */
     ret_value = nlone; /* return the TOTAL # of lone vgroups */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vlone */
 
@@ -970,11 +905,6 @@ Vfind(HFILEID     f, /* IN: file id */
     }
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vfind */
 
@@ -1020,11 +950,6 @@ VSfind(HFILEID     f, /* IN: file id */
     }
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSfind */
 
@@ -1073,11 +998,6 @@ Vfindclass(HFILEID     f, /* IN: file id */
     }
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vfindclass */
 
@@ -1123,11 +1043,6 @@ VSfindclass(HFILEID     f, /* IN: file id */
     }
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSfindclass */
 
@@ -1178,11 +1093,6 @@ VSsetblocksize(int32 vkey,       /* IN: vdata key */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSsetblocksize */
 
@@ -1233,11 +1143,6 @@ VSsetnumblocks(int32 vkey,       /* IN: vdata key */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSsetnumblocks */
 
@@ -1288,11 +1193,6 @@ VSgetblockinfo(int32  vkey,       /* IN: vdata id */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSgetblockinfo */
 
@@ -1378,11 +1278,6 @@ VSofclass(int32       id,       /* IN: file id or vgroup id */
     ret_value = VSIgetvdatas(id, vsclass, start_vd, n_vds, refarray);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSofclass */
 
@@ -1462,10 +1357,6 @@ vscheckclass(int32 id, /* IN: vgroup id or file id */
             ret_value = FALSE;
     }
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-    }                        /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* vscheckclass */
 
@@ -1636,10 +1527,6 @@ VSIgetvdatas(int32       id,       /* IN: file id or vgroup id */
         ret_value = nactual_vds;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-    }                        /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSIgetvdatas */
 
@@ -1697,10 +1584,6 @@ VSgetvdatas(int32       id,       /* IN: file id or vgroup id */
     /* Passing NULL in to VSIgetvdatas to get user-created vdatas */
     ret_value = VSIgetvdatas(id, NULL, start_vd, n_vds, refarray);
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-    }                        /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSgetvdatas */
 

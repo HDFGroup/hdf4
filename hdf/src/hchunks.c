@@ -341,9 +341,8 @@ done:
             HDfree(*spb);
         if (*sui != NULL)
             HDfree(*sui);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     return ret_value;
 } /* end create_dim_recs() */
 
@@ -1268,7 +1267,6 @@ done:
 
     } /* end if */
 
-    /* Normal function cleanup */
 #if 0 /* dynamic allocation causes a problem on HPUX, removed for now -GV */
     /* free special element header */
     if (c_sp_header != NULL)
@@ -1787,7 +1785,6 @@ done:
             HIrelease_accrec_node(access_rec);
     } /* end if */
 
-    /* Normal function cleanup */
     /* free special element header */
     if (c_sp_header != NULL)
         HDfree(c_sp_header);
@@ -1837,11 +1834,6 @@ HMCgetcompress(accrec_t     *access_rec, /* IN: access record */
         *comp_type = COMP_CODE_NONE;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* HMCgetcompress() */
 
@@ -1952,11 +1944,6 @@ HMCgetcomptype(int32         dd_aid,    /* IN: access id of header info */
     } /* switch flag */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     /* Free special element headers */
     if (c_sp_header != NULL)
         HDfree(c_sp_header);
@@ -2174,9 +2161,8 @@ done:
             HTPendaccess(ddid);
         if (new_aid != FAIL)
             Hendaccess(new_aid);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     return ret_value;
 } /* HMCgetdatainfo */
 
@@ -2404,11 +2390,6 @@ HMCgetdatasize(int32 file_id, uint8 *p, /* IN: access id of header info */
         *orig_size = chk_data_size * num_recs;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     /* Free allocated space for vdata record */
     if (v_data != NULL)
         HDfree(v_data);
@@ -2491,11 +2472,6 @@ HMCsetMaxcache(int32 access_id, /* IN: access aid to mess with */
         ret_value = FAIL;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* HMCsetMaxcache() */
 
@@ -2602,11 +2578,6 @@ HMCPseek(accrec_t *access_rec, /* IN: access record to mess with */
 #endif
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* HMCPseek */
 
@@ -2713,7 +2684,6 @@ done:
             Hendaccess(chk_id);
     } /* end if */
 
-    /* Normal function cleanup */
 #ifdef CHK_DEBUG_3
     printf("HMCPchunkread exit with ret_value= %d \n", ret_value);
 #endif
@@ -2864,11 +2834,6 @@ HMCreadChunk(int32  access_id, /* IN: access aid to mess with */
         ret_value = FAIL;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-    }                        /* end if */
-
-    /* Normal function cleanup */
-
 #ifdef CHK_DEBUG_5
     printf("HMCreadChunk: exited, ret=%d \n", ret_value);
 #endif
@@ -3044,11 +3009,6 @@ HMCPread(accrec_t *access_rec, /* IN: access record to mess with */
     printf("}\n");
 #endif
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* HMCPread  */
 
@@ -3198,9 +3158,8 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (chk_id != FAIL)
             Hendaccess(chk_id);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     if (v_data != NULL)
         HDfree(v_data);
 
@@ -3426,9 +3385,7 @@ done:
         }
         if (chk_key != NULL)
             HDfree(chk_key);
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
 #ifdef CHK_DEBUG_4
     printf("HMCwriteChunk: exited, ret=%d \n", ret_value);
@@ -3667,9 +3624,7 @@ done:
         }
         if (chk_key != NULL)
             HDfree(chk_key);
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
 #ifdef CHK_DEBUG_4
     printf("HMCPwrite: exited, ret=%d \n", ret_value);
@@ -3773,12 +3728,6 @@ HMCPcloseAID(accrec_t *access_rec /* IN:  access record of file to close */)
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HMCPcloseAID */
 
@@ -3830,9 +3779,8 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (access_rec != NULL)
             HIrelease_accrec_node(access_rec);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     return ret_value;
 } /* HMCPendaccess */
 
@@ -3893,9 +3841,7 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (info_chunk->cdims != NULL)
             HDfree(info_chunk->cdims);
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
     return ret_value;
 } /* HMCPinfo */
@@ -3959,11 +3905,6 @@ HMCPinquire(accrec_t *access_rec, /* IN:  access record to return info about */
         *pspecial = (int16)access_rec->special;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* HMCPinquire */
 
@@ -4001,10 +3942,5 @@ HMCPgetnumrecs(accrec_t *access_rec, /* access record */
         ret_value = FAIL;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* HMCPgetnumrecs */

@@ -411,9 +411,8 @@ done:
         /* Chuck the file record we've built */
         if (file_rec != NULL && file_rec->refcount == 0)
             HIrelease_filerec_node(file_rec);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     return ret_value;
 } /* Hopen */
 
@@ -478,11 +477,6 @@ Hclose(int32 file_id)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Hclose */
 
@@ -578,11 +572,6 @@ Hinquire(int32 access_id, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *pl
         *pspecial = 0;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end Hinquire */
 
@@ -618,11 +607,6 @@ Hfidinquire(int32 file_id, char **fname, intn *faccess, intn *attach)
     *attach  = file_rec->attach;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Hfidinquire */
 
@@ -662,11 +646,6 @@ Hstartread(int32 file_id, uint16 tag, uint16 ref)
     ret_value = ret;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Hstartread() */
 
@@ -800,11 +779,6 @@ Hnextread(int32 access_id, uint16 tag, uint16 ref, intn origin)
     access_rec->posn    = 0;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end Hnextread() */
 
@@ -851,11 +825,6 @@ Hstartwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
     ret_value = ret;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end Hstartwrite */
 
@@ -999,10 +968,8 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (access_rec != NULL)
             HIrelease_accrec_node(access_rec);
+    }
 
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end Hstartaccess */
 
@@ -1055,11 +1022,6 @@ Hsetlength(int32 aid, int32 length)
     access_rec->new_elem = FALSE;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end Hsetlength */
 
@@ -1094,11 +1056,6 @@ Happendable(int32 aid)
     access_rec->appendable = TRUE;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end Happendable */
 
@@ -1146,11 +1103,6 @@ HPisappendable(int32 aid)
         ret_value = FAIL;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end HPisappendable */
 
@@ -1245,11 +1197,6 @@ Hseek(int32 access_id, int32 offset, intn origin)
     access_rec->posn = offset;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Hseek() */
 
@@ -1284,11 +1231,6 @@ Htell(int32 access_id)
     ret_value = (int32)access_rec->posn;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Htell() */
 
@@ -1366,11 +1308,6 @@ Hread(int32 access_id, int32 length, void *data)
     ret_value = length;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Hread */
 
@@ -1479,11 +1416,6 @@ Hwrite(int32 access_id, int32 length, const void *data)
     ret_value = length;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end Hwrite */
 
@@ -1514,12 +1446,6 @@ HDgetc(int32 access_id)
     ret_value = (intn)c;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HDgetc */
 
@@ -1550,12 +1476,6 @@ HDputc(uint8 c, int32 access_id)
     ret_value = (intn)c;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HDputc */
 
@@ -1610,9 +1530,8 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (access_rec != NULL)
             HIrelease_accrec_node(access_rec);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     return ret_value;
 } /* Hendaccess */
 
@@ -1661,9 +1580,8 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (access_id != FAIL)
             Hendaccess(access_id);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     return ret_value;
 } /* Hgetelement() */
 
@@ -1708,9 +1626,8 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (access_id != FAIL)
             Hendaccess(access_id);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     return ret_value;
 } /* end Hputelement() */
 
@@ -1758,11 +1675,6 @@ Hlength(int32 file_id, uint16 tag, uint16 ref)
     ret_value = length;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end Hlength */
 
@@ -1812,11 +1724,6 @@ Hoffset(int32 file_id, uint16 tag, uint16 ref)
     ret_value = offset;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Hoffset */
 
@@ -1857,11 +1764,6 @@ Hishdf(const char *filename)
     }
 
 done:
-    if (ret_value == FALSE) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Hishdf */
 
@@ -1921,11 +1823,6 @@ Htrunc(int32 aid, int32 trunc_len)
         HGOTO_ERROR(DFE_BADLEN, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end Htrunc() */
 
@@ -1962,12 +1859,6 @@ HIsync(filerec_t *file_rec)
     }                        /* end if */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HIsync */
 
@@ -2004,11 +1895,6 @@ Hsync(int32 file_id)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Hsync */
 
@@ -2051,11 +1937,6 @@ Hcache(int32 file_id, intn cache_on)
     } /* end else */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Hcache */
 
@@ -2140,11 +2021,6 @@ Hsetaccesstype(int32 access_id, uintn accesstype)
         ret_value = HXPsetaccesstype(access_rec);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Hsetacceesstype() */
 
@@ -2237,11 +2113,6 @@ HIstart(void)
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return (ret_value);
 } /* end HIstart() */
 
@@ -2277,11 +2148,6 @@ HPregister_term_func(hdf_termfunc_t term_func)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return (ret_value);
 } /* end HPregister_term_func() */
 
@@ -2360,12 +2226,6 @@ HIextend_file(filerec_t *file_rec)
         HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HIextend_file */
 
@@ -2417,12 +2277,6 @@ HIget_function_table(accrec_t *access_rec)
     }
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HIget_function_table */
 
@@ -2458,12 +2312,6 @@ HIgetspinfo(accrec_t *access_rec)
         HGOTO_DONE(((accrec_t *)ret_value)->special_info);
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HIgetspinfo */
 
@@ -2536,12 +2384,6 @@ HDmake_special_tag(uint16 tag)
         }
 
 done:
-    if (ret_value == DFTAG_NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -2565,12 +2407,6 @@ HDis_special_tag(uint16 tag)
         }
 
 done:
-    if (ret_value == FALSE) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -2593,12 +2429,6 @@ HDbase_tag(uint16 tag)
             break;
         }
 done:
-    if (ret_value == tag) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -2675,11 +2505,6 @@ Hgetfileversion(int32 file_id, uint32 *majorv, uint32 *minorv, uint32 *release, 
         HIstrncpy(string, file_rec->version.string, LIBVSTR_LEN + 1);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Hgetfileversion */
 
@@ -2735,12 +2560,6 @@ HIcheckfileversion(int32 file_id)
     file_rec->version_set = TRUE;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HIcheckfileversion */
 
@@ -2784,12 +2603,6 @@ HIget_filerec_node(const char *path)
     } /* end if */
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HIget_filerec_node */
 
@@ -2920,12 +2733,6 @@ HPcompare_accrec_tagref(const void *rec1, const void *rec2)
     } /* end if */
 
 done:
-    if (ret_value == FALSE) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return (ret_value);
 } /* HPcompare_accrec_tagref */
 
@@ -2960,12 +2767,6 @@ HIvalid_magic(hdf_file_t file)
         ret_value = TRUE;
 
 done:
-    if (ret_value == FALSE) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -3001,12 +2802,6 @@ HIget_access_rec(void)
     HDmemset(ret_value, 0, sizeof(accrec_t));
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HIget_access_rec */
 
@@ -3083,12 +2878,6 @@ HIupdate_version(int32 file_id)
     file_rec->version.modified = 0;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HIupdate_version */
 
@@ -3143,12 +2932,6 @@ HIread_version(int32 file_id)
     file_rec->version.modified = 0;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HIread_version */
 
@@ -3227,12 +3010,6 @@ HPgetdiskblock(filerec_t *file_rec, int32 block_size, intn moveto)
     file_rec->f_end_off += block_size;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HPgetdiskblock() */
 
@@ -3300,12 +3077,6 @@ HDget_special_info(int32 access_id, sp_info_block_t *info_block)
         info_block->key = FAIL;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HDget_special_info */
 
@@ -3345,12 +3116,6 @@ HDset_special_info(int32 access_id, sp_info_block_t *info_block)
 
     /* else is not special so fail */
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HDset_special_info */
 
@@ -3446,12 +3211,6 @@ HP_read(filerec_t *file_rec, void *buf, int32 bytes)
     file_rec->f_cur_off += bytes;
     file_rec->last_op = H4_OP_READ;
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end HP_read() */
 
@@ -3501,12 +3260,6 @@ HPseek(filerec_t *file_rec, int32 offset)
 #endif /* HFILE_SEEKINFO */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end HPseek() */
 
@@ -3551,12 +3304,6 @@ HP_write(filerec_t *file_rec, const void *buf, int32 bytes)
     file_rec->last_op = H4_OP_WRITE;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end HP_write() */
 
@@ -3607,11 +3354,6 @@ HPread_drec(int32 file_id, atom_t data_id, uint8 **drec_buf)
     ret_value = drec_len;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* HPread_drec */
 
@@ -3747,11 +3489,6 @@ HDcheck_empty(int32 file_id, uint16 tag, uint16 ref, intn *emptySDS /* TRUE if d
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     if (local_ptbuf != NULL)
         HDfree(local_ptbuf);
 
@@ -3841,9 +3578,8 @@ done:
         if (aid != 0)
             if (Hendaccess(aid) == FAIL)
                 HERROR(DFE_CANTENDACCESS);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     return ret_value;
 } /* Hgetspecinfo */
 
@@ -3982,12 +3718,6 @@ Hmpset(int pagesize, /* IN: pagesize to use for next open/create */
     ret_value = MPset(pagesize, maxcache, flags);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -4021,12 +3751,6 @@ Hmpget(int *pagesize, /* OUT: pagesize to used in last open/create */
     *maxcache = mcache;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Hmpget() */
 

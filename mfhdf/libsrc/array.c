@@ -374,10 +374,6 @@ NC_free_array(NC_array *array)
     }
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 }
 

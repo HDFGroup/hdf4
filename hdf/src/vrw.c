@@ -131,11 +131,6 @@ VSseek(int32 vkey, /* IN: vdata key */
     ret_value = (eltpos);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSseek */
 
@@ -428,11 +423,6 @@ VSread(int32 vkey,  /* IN: vdata key */
     ret_value = (nelt);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSread */
 
@@ -739,10 +729,5 @@ VSwrite(int32       vkey,  /* IN: vdata key */
     ret_value = (nelt);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSwrite */

@@ -350,9 +350,8 @@ done:
             HDfree(fname);
         if (data_id != FAIL)
             HTPendaccess(data_id);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     if (buf != NULL)
         HDfree(buf);
 
@@ -414,10 +413,7 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (fname != NULL)
             HDfree(fname);
-
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
     return ret_value;
 }
@@ -511,9 +507,7 @@ done:
                 HDfree(info->extern_file_name);
             HDfree(info);
         }
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
     return ret_value;
 } /* HXIstaccess */
@@ -598,12 +592,6 @@ HXPseek(accrec_t *access_rec, int32 offset, int origin)
     access_rec->posn = offset;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HXPseek */
 
@@ -677,12 +665,6 @@ HXPread(accrec_t *access_rec, int32 length, void *data)
     ret_value = length;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HXPread */
 
@@ -779,12 +761,6 @@ HXPwrite(accrec_t *access_rec, int32 length, const void *data)
     ret_value = length; /* return length of bytes written */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HXPwrite */
 
@@ -844,12 +820,6 @@ HXPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, in
         *pspecial = (int16)access_rec->special;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HXPinquire */
 
@@ -899,10 +869,7 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (access_rec != NULL)
             HIrelease_accrec_node(access_rec);
-    } /* end if */
-
-    /* Normal function cleanup */
-
+    }
     return ret_value;
 } /* HXPendaccess */
 
@@ -982,12 +949,6 @@ HXPinfo(accrec_t *access_rec, sp_info_block_t *info_block)
     info_block->path             = info->extern_file_name;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HXPinfo */
 
@@ -1078,10 +1039,7 @@ done:
                 HDfree(info->extern_file_name);
             HDfree(info);
         }
-
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
     return ret_value;
 
@@ -1130,11 +1088,6 @@ HXsetcreatedir(const char *dir)
     extcreatedir = pt;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* HXsetcreatedir */
 
@@ -1177,11 +1130,6 @@ HXsetdir(const char *dir)
     extdir = pt;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* HXsetdir */
 
@@ -1376,10 +1324,8 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 done:
     if (ret_value == NULL) { /* Error condition cleanup */
         if (finalpath != NULL)
-            HDfree(finalpath); /* free this */
-    }                          /* end if */
-
-    /* Normal function cleanup */
+            HDfree(finalpath);
+    }
 
     return ret_value;
 } /* HXIbuildfilename */

@@ -159,9 +159,6 @@ SDgetdatainfo(int32 sdsid, int32 *chk_coord, uintn start_block, uintn info_count
     /* Returning number of data blocks */
     ret_value = count;
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
     return ret_value;
 } /* SDgetdatainfo */
 
@@ -387,7 +384,6 @@ done:
             if (Vdetach(vg_id) == FAIL)
                 HGOTO_ERROR(DFE_CANTDETACH, FAIL);
     }
-    /* Normal cleanup */
 
     return ret_value;
 } /* SDgetattdatainfo */
@@ -664,7 +660,6 @@ done:
         if (lufbuf)
             HDfree(lufbuf);
     }
-    /* Normal cleanup */
 
     return ret_value;
 } /* SDgetoldattdatainfo */
@@ -852,10 +847,6 @@ SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32 *offsetarra
     ret_value = num_annots;
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     /* Release allocated memory */
     if (dannots)
         HDfree(dannots);

@@ -172,11 +172,6 @@ NC_reset_maxopenfiles(intn req_max)
     HGOTO_DONE(max_NC_open);
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-                             /* Nothing yet. */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* NC_reset_maxopenfiles */
 

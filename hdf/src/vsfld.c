@@ -242,11 +242,6 @@ VSsetfields(int32 vkey, const char *fields)
     } /* setting read list */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSsetfields */
 
@@ -332,11 +327,6 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
         vs->nusym++;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSfdefine */
 
@@ -366,11 +356,6 @@ VFnfields(int32 vkey)
     ret_value = ((int32)vs->wlist.n);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VFnfields */
 
@@ -406,11 +391,6 @@ VFfieldname(int32 vkey, int32 index)
     ret_value = ((char *)vs->wlist.name[index]);
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VFfieldname */
 
@@ -444,11 +424,6 @@ VFfieldtype(int32 vkey, int32 index)
     ret_value = ((int32)vs->wlist.type[index]);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VFfieldtype */
 
@@ -483,11 +458,6 @@ VFfieldisize(int32 vkey, int32 index)
     ret_value = ((int32)vs->wlist.isize[index]);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VFfieldisize */
 
@@ -522,12 +492,6 @@ VFfieldesize(int32 vkey, int32 index)
     ret_value = ((int32)vs->wlist.esize[index]);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* VFfieldesize */
 
@@ -561,11 +525,6 @@ VFfieldorder(int32 vkey, int32 index)
     ret_value = ((int32)vs->wlist.order[index]);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VFfieldorder */
 
@@ -638,12 +597,6 @@ VSsetexternalfile(int32 vkey, const char *filename, int32 offset)
         ret_value = FAIL;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* VSsetexternalfile */
 
@@ -733,10 +686,6 @@ VSgetexternalfile(int32 vkey, uintn buf_size, char *ext_filename, int32 *offset)
             ret_value = FAIL;
     }
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-    /* Normal function cleanup */
     return ret_value;
 } /* VSgetexternalfile */
 
@@ -858,10 +807,6 @@ VSgetexternalinfo(int32 vkey, uintn buf_size, char *ext_filename, int32 *offset,
             ret_value = 0; /* no external file name */
     }
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-    /* Normal function cleanup */
     return ret_value;
 } /* VSgetexternalinfo */
 

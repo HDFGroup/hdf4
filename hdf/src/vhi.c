@@ -117,11 +117,6 @@ VHstoredatam(HFILEID f, const char *field, const uint8 *buf, int32 n, int32 data
     ret_value = ((int32)ref);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VHstoredatam */
 
@@ -182,12 +177,6 @@ VHmakegroup(HFILEID f, int32 tagarray[], int32 refarray[], int32 n, const char *
     ret_value = (ref);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* VHmakegroup */
 

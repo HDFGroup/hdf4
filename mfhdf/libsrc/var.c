@@ -103,10 +103,6 @@ NC_free_var(NC_var *var)
     }
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 }
 

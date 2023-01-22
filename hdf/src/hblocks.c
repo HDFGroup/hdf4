@@ -335,9 +335,8 @@ done:
             HDfree(info);
         if (access_rec != NULL)
             HIrelease_accrec_node(access_rec);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     return ret_value;
 } /* HLcreate() */
 
@@ -515,7 +514,7 @@ HLconvert(int32 aid, int32 block_length, int32 number_blocks)
     if (old_posn > 0) {
         if (Hseek(aid, old_posn, DF_START) == FAIL)
             HGOTO_ERROR(DFE_BADSEEK, FAIL);
-    } /* end if */
+    }
 
 done:
     if (ret_value == FAIL) { /* Error condition cleanup */
@@ -523,9 +522,8 @@ done:
             HDfree(access_rec->special_info);
         if (access_rec != NULL)
             HIrelease_accrec_node(access_rec);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     return ret_value;
 } /* end HLconvert() */
 
@@ -575,12 +573,6 @@ HDinqblockinfo(int32 aid, int32 *length, int32 *first_length, int32 *block_lengt
         *number_blocks = ((linkinfo_t *)(arec->special_info))->number_blocks;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HDinqblockinfo */
 
@@ -736,9 +728,7 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (access_rec->special_info != NULL)
             HDfree(access_rec->special_info);
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
     return ret_value;
 } /* HLIstaccess */
@@ -896,9 +886,8 @@ done:
             if (link_info->block_list != NULL)
                 HDfree(link_info->block_list);
         HDfree(link_info);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     return ret_value;
 } /* HLgetdatainfo */
 
@@ -1021,9 +1010,8 @@ done:
             HDfree(new_link->block_list);
         if (new_link != NULL)
             HDfree(new_link);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     if (buffer != NULL)
         HDfree(buffer);
 
@@ -1067,12 +1055,6 @@ HLPseek(accrec_t *access_rec, int32 offset, int origin)
     access_rec->posn = offset;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HLPseek */
 
@@ -1190,12 +1172,6 @@ HLPread(accrec_t *access_rec, int32 length, void *datap)
     ret_value = bytes_read;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HLPread  */
 
@@ -1427,12 +1403,6 @@ HLPwrite(accrec_t *access_rec, int32 length, const void *datap)
     ret_value = bytes_written;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HLPwrite */
 
@@ -1516,9 +1486,8 @@ done:
             HDfree(t_link->block_list);
         if (t_link != NULL)
             HDfree(t_link);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     if (buf != NULL)
         HDfree(buf);
 
@@ -1580,12 +1549,6 @@ HLPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, in
         *pspecial = (int16)access_rec->special;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HLPinquire */
 
@@ -1639,9 +1602,7 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (access_rec != NULL)
             HIrelease_accrec_node(access_rec);
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
     return ret_value;
 } /* HLPendaccess */
@@ -1728,12 +1689,6 @@ HLPinfo(accrec_t *access_rec, sp_info_block_t *info_block)
     info_block->nblocks   = info->number_blocks;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HLPinfo */
 
@@ -1803,10 +1758,6 @@ HLsetblockinfo(int32 aid,        /* access record id */
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-    }                        /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end HLsetblockinfo */
 
@@ -1858,10 +1809,5 @@ HLgetblockinfo(int32  aid,        /* access record id */
         *num_blocks = access_rec->num_blocks;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end HLgetblockinfo */
