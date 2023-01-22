@@ -122,11 +122,6 @@ DFPgetpal(const char *filename, void *palette)
     ret_value = Hclose(file_id);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end DFPgetpal() */
 
@@ -193,11 +188,6 @@ DFPputpal(const char *filename, const void *palette, intn overwrite, const char 
     ret_value = (Hclose(file_id));
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end DFPputpal() */
 
@@ -325,11 +315,6 @@ DFPnpals(const char *filename)
     ret_value = npals;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end DFPnpals() */
 
@@ -377,11 +362,6 @@ DFPreadref(const char *filename, uint16 ref)
     ret_value = (Hclose(file_id));
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end DFPreadref() */
 
@@ -522,11 +502,5 @@ DFPIopen(const char *filename, intn acc_mode)
     ret_value = (file_id);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end DFPIopen() */

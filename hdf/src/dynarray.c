@@ -103,10 +103,9 @@ done:
             if (new_arr->arr != NULL)
                 HDfree(new_arr->arr);
             HDfree(new_arr);
-        } /* end if */
-    }     /* end if */
+        }
+    }
 
-    /* Normal function cleanup */
     return ret_value;
 } /* end DAcreate_array() */
 
@@ -148,11 +147,6 @@ DAdestroy_array(dynarr_p arr,      /* IN: Array to destroy */
     HDfree(dest_arr);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end DAdestroy_array() */
 
@@ -182,11 +176,6 @@ DAsize_array(dynarr_p arr /* IN: Array to get size of */
     ret_value = arr_ptr->num_elems;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end DAsize_array() */
 
@@ -222,11 +211,6 @@ DAget_elem(dynarr_p arr_ptr, /* IN: Array to access */
         ret_value = arr->arr[elem];
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end DAget_elem() */
 
@@ -281,11 +265,6 @@ DAset_elem(dynarr_p arr_ptr, /* IN: Array to access */
     arr->arr[elem] = obj;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end DAset_elem() */
 
@@ -323,10 +302,5 @@ DAdel_elem(dynarr_p arr_ptr, /* IN: Array to access */
     } /* end else */
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end DAdel_elem() */

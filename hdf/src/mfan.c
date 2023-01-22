@@ -229,12 +229,6 @@ ANIstart(void)
         HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return (ret_value);
 } /* end ANIstart() */
 
@@ -272,12 +266,6 @@ ANIinit(void)
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* ANIinit() */
 
@@ -405,9 +393,7 @@ done:
             HDfree(ann_entry);
         if (ann_node != NULL)
             HDfree(ann_node);
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
     return ret_value;
 } /* ANIaddentry */
@@ -587,9 +573,7 @@ done:
             HDfree(ann_node);
         if (FAIL != aid)
             Hendaccess(aid);
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
     return ret_value;
 } /* ANIcreate_ann_tree */
@@ -657,12 +641,6 @@ ANIfind(int32    an_id, /* IN: annotation interface id */
     ret_value = ann_entry->ann_id;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* ANIfind */
 #endif /* NOT_USED_YET */
@@ -725,12 +703,6 @@ ANInumann(int32    an_id,  /* IN: annotation interface id */
     ret_value = nanns;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* ANInumann */
 
@@ -793,12 +765,6 @@ ANIannlist(int32    an_id,  /* IN: annotation interface id */
     ret_value = nanns;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* ANIannlist */
 
@@ -880,12 +846,6 @@ ANIannlen(int32 ann_id /*  IN: annotation id */)
     ret_value = (ann_length);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* ANIannlen */
 
@@ -1010,9 +970,7 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (FAIL != aid)
             Hendaccess(aid);
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
     return ret_value;
 } /* ANIreadann */
@@ -1159,9 +1117,7 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (FAIL != aid)
             Hendaccess(aid);
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
     return ret_value;
 } /* ANIwriteann */
@@ -1243,12 +1199,6 @@ ANIcreate(int32    file_id,  /* IN: file ID */
     ret_value = ann_id;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* ANIcreate() */
 
@@ -1290,10 +1240,6 @@ ANstart(int32 file_id /* IN: file to start annotation access on*/)
     ret_value = file_id;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-    }                        /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* ANstart() */
 
@@ -1365,11 +1311,6 @@ ANfileinfo(int32  an_id,        /* IN:  annotation interface id */
         *n_obj_desc = file_rec->an_num[AN_DATA_DESC];
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* ANfileinfo() */
 
@@ -1490,11 +1431,6 @@ ANend(int32 an_id /* IN: Annotation ID of file to close */)
     file_rec->an_num[AN_FILE_DESC]   = -1;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* ANend() */
 
@@ -1570,11 +1506,6 @@ ANcreatef(int32    an_id,/* IN: annotation interface ID */
     ret_value = ANIcreate(an_id, ann_tag, ann_ref, type);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* ANcreateann() */
 
@@ -1635,11 +1566,6 @@ ANselect(int32    an_id, /* IN: annotation interface ID */
     ret_value = ann_entry->ann_id;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* ANselect() */
 
@@ -1678,12 +1604,6 @@ ANnumann(int32    an_id,  /* IN: annotation interface id */
     ret_value = ANInumann(an_id, type, elem_tag, elem_ref);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* ANnumann() */
 
@@ -1723,12 +1643,6 @@ ANannlist(int32    an_id,  /* IN: annotation interface id */
     ret_value = ANIannlist(an_id, type, elem_tag, elem_ref, ann_list);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* ANannlist() */
 
@@ -1910,12 +1824,6 @@ ANget_tagref(int32    an_id, /* IN: annotation interface ID */
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* ANget_tagref() */
 
@@ -1984,12 +1892,6 @@ ANid2tagref(int32   ann_id, /* IN: annotation id */
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* ANid2tagref */
 
@@ -2069,12 +1971,6 @@ ANtagref2id(int32  an_id,   /* IN  Annotation interface id */
     ret_value = ann_entry->ann_id;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* ANtagref2id */
 

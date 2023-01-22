@@ -271,11 +271,6 @@ DFSDgetdims(const char *filename, intn *prank, int32 sizes[], intn maxrank)
     ret_value = Hclose(file_id);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -338,11 +333,6 @@ DFSDgetdatastrs(char *label, char *unit, char *format, char *coordsys)
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -408,11 +398,6 @@ DFSDgetdimstrs(int dim, char *label, char *unit, char *format)
     }     /* end for 'luf' */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -456,11 +441,6 @@ DFSDgetdatalen(intn *llabel, intn *lunit, intn *lformat, intn *lcoordsys)
     *lcoordsys = (intn)(Readsdg.coordsys ? HDstrlen(Readsdg.coordsys) : 0);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -504,11 +484,6 @@ DFSDgetdimlen(intn dim, intn *llabel, intn *lunit, intn *lformat)
     *lformat = (intn)(Readsdg.dimluf[FORMAT][dim - 1] ? HDstrlen(Readsdg.dimluf[FORMAT][dim - 1]) : 0);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -575,11 +550,6 @@ DFSDgetdimscale(intn dim, int32 maxsize, VOIDP scale)
     HDmemcpy(p1, p2, dimsize);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -647,11 +617,6 @@ DFSDgetrange(VOIDP pmax, VOIDP pmin)
         HGOTO_ERROR(DFE_NOVALS, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -735,11 +700,6 @@ DFSDsetlengths(intn maxlen_label, intn maxlen_unit, intn maxlen_format, intn max
         Maxstrlen[COORDSYS] = maxlen_coordsys;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -820,11 +780,6 @@ DFSDsetdims(intn rank, int32 dimsizes[])
     Writeref    = 0;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -919,12 +874,6 @@ DFSDIsetdatastrs(const char *label, const char *unit, const char *format, const 
     Ref.luf[LABEL] = Ref.luf[UNIT] = Ref.luf[FORMAT] = Ref.coordsys = 0;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -1034,12 +983,6 @@ DFSDIsetdimstrs(intn dim, const char *label, const char *unit, const char *forma
     Ref.luf[LABEL] = Ref.luf[UNIT] = Ref.luf[FORMAT] = 0;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -1145,11 +1088,6 @@ DFSDsetdimscale(intn dim, int32 dimsize, VOIDP scale)
     Ref.scales = 0;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -1213,11 +1151,6 @@ DFSDsetrange(VOIDP maxi, VOIDP mini)
     Ref.maxmin = 0;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -1313,11 +1246,6 @@ DFSDrestart(void)
     Readref = 0;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -1362,11 +1290,6 @@ DFSDndatasets(char *filename)
     ret_value = nsdgs;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -1400,11 +1323,6 @@ DFSDclear(void)
     ret_value = DFSDIclear(&Writesdg);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -1433,12 +1351,6 @@ DFSDlastref(void)
     ret_value = (uint16)Lastref;
 
 done:
-    if (ret_value == 0) /* 0 is invalid ref */
-    {                   /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -1491,11 +1403,6 @@ DFSDreadref(char *filename, uint16 ref)
     ret_value = Hclose(file_id);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -1615,11 +1522,6 @@ DFSDstartslice(const char *filename)
         Sddims[i] = 0; /* nothing written so far */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -1749,11 +1651,6 @@ DFSDsetNT(int32 numbertype)
     ret_value = (DFKsetNT(numbertype));
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -1796,12 +1693,6 @@ DFSDIclearNT(DFSsdg *sdg)
     Ref.new_ndg = -1;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -1849,11 +1740,6 @@ DFSDgetNT(int32 *pnumbertype)
         HGOTO_ERROR(DFE_BADNUMTYPE, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -1922,11 +1808,6 @@ DFSDpre32sdg(char *filename, uint16 ref, intn *ispre32)
         ret_value = FAIL;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end of DFSDpre32sdg   */
 
@@ -2186,11 +2067,6 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr *l_nsdghdr)
     l_nsdghdr->nsdg_t = ntb->next;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     /* Release the first nodes in stb and ntb  */
     if (stb != NULL)
         HDfree((VOIDP)stb);
@@ -2256,12 +2132,6 @@ DFSDInextnsdg(DFnsdg_t_hdr *l_nsdghdr, DFdi *nsdg)
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end of DFSDInextnsdg   */
 
@@ -2835,12 +2705,6 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg *sdg)
     sdg->fill_fixed = TRUE;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -3220,12 +3084,6 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg *sdg)
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -3300,12 +3158,6 @@ DFSDIendslice(intn isfortran)
     HDfreenclear(Sddims);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -3416,12 +3268,6 @@ DFSDIopen(const char *filename, intn acc_mode)
     ret_value = file_id;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -3495,12 +3341,6 @@ DFSDIsdginfo(int32 file_id)
     Readref = 0;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -3538,12 +3378,6 @@ DFSDIrefresh(char *filename)
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -3678,12 +3512,6 @@ DFSDIclear(DFSsdg *sdg)
     Ref.fill_value            = -1;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -3753,12 +3581,6 @@ DFSDIgetdata(const char *filename, intn rank, int32 maxsizes[], VOIDP data, intn
     HDfree((VOIDP)windims);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -3812,12 +3634,6 @@ DFSDIputdata(const char *filename, intn rank, int32 *dimsizes, VOIDP data, intn 
     ret_value = DFSDIendslice(isfortran);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -4155,12 +3971,6 @@ DFSDIgetslice(const char *filename, int32 winst[], int32 windims[], VOIDP data, 
         ret_value = Hclose(file_id);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -4329,12 +4139,6 @@ DFSDIputslice(int32 windims[], VOIDP data, int32 dims[], intn isfortran)
     ret_value = (ret >= 0 ? 0 : -1);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -4402,11 +4206,6 @@ DFSDgetcal(float64 *pcal, float64 *pcal_err, float64 *pioff, float64 *pioff_err,
         HGOTO_ERROR(DFE_NOVALS, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* DFSDgetcal */
 
@@ -4469,11 +4268,6 @@ DFSDsetcal(float64 cal, float64 cal_err, float64 ioff, float64 ioff_err, int32 c
     Ref.cal = 0;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -4538,11 +4332,6 @@ DFSDwriteref(const char *filename, uint16 ref)
     ret_value = Hclose(file_id);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -4599,11 +4388,6 @@ DFSDsetfillvalue(VOIDP fill_value)
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -4653,11 +4437,6 @@ DFSDgetfillvalue(VOIDP fill_value)
         ret_value = FAIL;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -4846,11 +4625,6 @@ DFSDstartslab(const char *filename)
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -5139,11 +4913,6 @@ DFSDwriteslab(int32 start[], int32 stride[], int32 count[], VOIDP data)
         ret_value = SUCCEED;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -5216,11 +4985,6 @@ DFSDendslab(void)
     Writeref  = 0;                /* Reset Write ref */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -5253,12 +5017,6 @@ DFSDIstart(void)
         HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return (ret_value);
 } /* end DFSDIstart() */
 

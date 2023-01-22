@@ -127,10 +127,8 @@ done:
             if (grp_ptr->atom_list != NULL)
                 HDfree(grp_ptr->atom_list);
             HDfree(grp_ptr);
-        } /* end if */
-    }     /* end if */
-
-    /* Normal function cleanup */
+        }
+    }
 
     return ret_value;
 } /* end HAinit_group() */
@@ -182,12 +180,6 @@ HAdestroy_group(group_t grp /* IN: Group to destroy */
     } /* end if */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end HAdestroy_group() */
 
@@ -248,12 +240,6 @@ HAregister_atom(group_t grp,   /* IN: Group to register the object in */
     ret_value = atm_id;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end HAregister_atom() */
 
@@ -317,12 +303,6 @@ HAatom_object(atom_t atm /* IN: Atom to retrieve object for */
         ret_value = atm_ptr->obj_ptr;
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end HAatom_object() */
 
@@ -349,12 +329,6 @@ HAatom_group(atom_t atm /* IN: Atom to retrieve group for */
         HGOTO_ERROR(DFE_ARGS, BADGROUP);
 
 done:
-    if (ret_value == BADGROUP) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end HAatom_group() */
 
@@ -431,12 +405,6 @@ HAremove_atom(atom_t atm /* IN: Atom to remove */
     (grp_ptr->atoms)--;
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end HAremove_atom() */
 
@@ -484,12 +452,6 @@ HAsearch_atom(group_t         grp,  /* IN: Group to search for the object in */
     }     /* end for */
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end HAsearch_atom() */
 
@@ -546,12 +508,6 @@ HAIfind_atom(atom_t atm /* IN: Atom to retrieve atom for */
     ret_value = atm_ptr;
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end HAIfind_atom() */
 
@@ -583,12 +539,6 @@ HAIget_atom_node(void)
     } /* end else */
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end HAIget_atom_node() */
 

@@ -69,10 +69,6 @@ NC_free_attr(NC_attr *attr)
     }
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 }
 

@@ -159,7 +159,7 @@ done:
         /* free the list if it had been allocated */
         free_obj_chosen_t_list(&dumpvg_opts->all_types, dumpvg_opts->num_chosen);
     }
-    /* Normal cleanup */
+
     return (ret_value);
 } /* end parse_dumpvg_opts */
 
@@ -215,10 +215,6 @@ Vref_index(int32 file_id, int32 vg_ref)
     }
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* Vref_index */
 
@@ -290,7 +286,6 @@ done:
     if (ret_value == FAIL) { /* Failure cleanup */
         SAFE_FREE(name);     /* free name and set it to NULL */
     }
-    /* Normal cleanup */
 
     return ret_value;
 } /* Vstr_ref() */
@@ -496,7 +491,6 @@ done:
             *vgclass = NULL;
         }
     }
-    /* Normal cleanup */
 
     return (ret_value);
 } /* end of get_VGandInfo */
@@ -529,7 +523,7 @@ done:
         if (an_id != FAIL)
             ANend(an_id);
     }
-    /* Normal cleanup */
+
     return (ret_value);
 } /* end of print_data_annots */
 
@@ -744,10 +738,6 @@ get_VGindex_list(int32 file_id, dump_info_t *dumpvg_opts, int32 **vg_chosen, int
                              because of the non-unique class name */
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-                             /* need to free vg_chosen here */
-    }
-    /* Normal cleanup */
     return ret_value;
 } /* end of get_VGindex_list */
 
@@ -785,7 +775,7 @@ done:
             if (FAIL == ANend(an_id))
                 fprintf(stderr, "ANend failed for an_id(%d) for file %s\n", (int)an_id, file_name);
     }
-    /* Normal cleanup */
+
     return (ret_value);
 } /* end of print_file_annotations */
 
@@ -935,9 +925,6 @@ vgBuildGraph(int32 vg_id, int32 file_id, int32 num_entries, const char *file_nam
         }     /* for */
     }
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
     SAFE_FREE(vgname);  /* free vg name and set it to NULL */
     SAFE_FREE(vgclass); /* free vg class name and set it to NULL */
 
@@ -1145,9 +1132,6 @@ vgdumpfull(int32 vg_id, dump_info_t *dumpvg_opts, int32 file_id, int32 num_entri
         printf("     None.\n");
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
     SAFE_FREE(vgname);  /* free vg name and set it to NULL */
     SAFE_FREE(vgclass); /* free vg class name and set it to NULL */
 
@@ -1442,7 +1426,7 @@ done:
         SAFE_FREE(vgname);  /* free vg name and set it to NULL */
         SAFE_FREE(vgclass); /* free vg class name and set it to NULL */
     }
-    /* Normal cleanup */
+
     return ret_value;
 } /* dvg */
 
@@ -1481,10 +1465,6 @@ do_dumpvg(intn curr_arg, intn argc, char *argv[], intn help)
         ERROR_GOTO_0("in do_dumpvg: dvg failed");
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     /* free the list of structs containing info of selected Vgroups */
     free_obj_chosen_t_list(&dumpvg_opts.all_types, dumpvg_opts.num_chosen);
 

@@ -94,11 +94,6 @@ HULcreate_list(HULfind_func_t find_func /* IN: object comparison function */
     ret_value->cmp_func = find_func;
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end HULcreate_list() */
 
@@ -140,11 +135,6 @@ HULdestroy_list(list_head_t *lst /* IN: list to destroy */
     HDfree(lst);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end HULdestroy_list() */
 
@@ -210,11 +200,6 @@ HULadd_node(list_head_t *lst, /* IN: list to modify */
     } /* end else */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end HULadd_node() */
 
@@ -249,11 +234,6 @@ HULsearch_node(list_head_t     *lst,       /* IN: list to search */
     } /* end while */
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end HULsearch_node() */
 
@@ -285,11 +265,6 @@ HULfirst_node(list_head_t *lst /* IN: list to search */
     } /* end if */
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end HULfirst_node() */
 
@@ -321,11 +296,6 @@ HULnext_node(list_head_t *lst /* IN: list to search */
     } /* end if */
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end HULnext_node() */
 
@@ -370,11 +340,6 @@ HULremove_node(list_head_t     *lst,       /* IN: list to modify */
     }     /* end while */
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end HULremove_node() */
 
@@ -406,12 +371,6 @@ HULIget_list_node(void)
     } /* end else */
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end HULIget_list_node() */
 

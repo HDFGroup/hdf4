@@ -239,11 +239,6 @@ VSfindex(int32 vsid, const char *fieldname, int32 *findex)
     if (!found)
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSfindex */
 
@@ -367,11 +362,6 @@ VSsetattr(int32 vsid, int32 findex, const char *attrname, int32 datatype, int32 
     vs->marked   = 1;
     vs->new_h_sz = 1;
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSsetattr */
 
@@ -407,11 +397,6 @@ VSnattrs(int32 vsid)
         HGOTO_ERROR(DFE_NOVS, FAIL);
     ret_value = vs->nattrs;
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSnattrs */
 
@@ -462,11 +447,6 @@ VSfnattrs(int32 vsid, int32 findex)
     }
     ret_value = nattrs;
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSfattrs */
 
@@ -550,12 +530,6 @@ VSfindattr(int32 vsid, int32 findex, const char *attrname)
     }
 
 done:
-    if (ret_value == FAIL) { /*  Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* VSfindattr */
 
@@ -646,11 +620,6 @@ VSattrinfo(int32 vsid, int32 findex, intn attrindex, char *name, int32 *datatype
     if (FAIL == VSdetach(attr_vsid))
         HGOTO_ERROR(DFE_CANTDETACH, FAIL);
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSattrinfo */
 
@@ -736,11 +705,6 @@ VSgetattr(int32 vsid, int32 findex, intn attrindex, void *values)
         HGOTO_ERROR(DFE_CANTDETACH, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSgetattr */
 
@@ -775,11 +739,6 @@ VSisattr(int32 vsid)
     if (HDstrcmp(vs->vsclass, _HDF_ATTRIBUTE) == 0)
         ret_value = TRUE;
 done:
-    if (ret_value == FALSE) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSisattr */
 
@@ -897,11 +856,6 @@ Vsetattr(int32 vgid, const char *attrname, int32 datatype, int32 count, const vo
     vg->old_alist = NULL;
     vg->noldattrs = 0;
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vsetattr */
 
@@ -944,11 +898,6 @@ Vgetversion(int32 vgid)
     ret_value  = (int32)vg_version;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vgetversion */
 
@@ -985,11 +934,6 @@ Vnattrs(int32 vgid)
     ret_value = vg->nattrs;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vnattrs */
 
@@ -1112,14 +1056,8 @@ Vnoldattrs(int32 vgid)
     } /* there are some old attributes */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
     if (areflist != NULL)
         HDfree(areflist);
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vnoldattrs */
 
@@ -1167,10 +1105,6 @@ Vnattrs2(int32 vgid)
     ret_value = n_old_attrs + n_new_attrs;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-    /* Normal function cleanup */
     return ret_value;
 } /* Vnattrs2 */
 
@@ -1237,10 +1171,6 @@ Vfindattr(int32 vgid, const char *attrname)
     }
 
 done:
-    if (ret_value == FAIL) { /*  Error condition cleanup */
-    }                        /* end if */
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Vfindattr */
 
@@ -1320,11 +1250,6 @@ Vattrinfo(int32 vgid, intn attrindex, char *name, int32 *datatype, int32 *count,
     if (FAIL == VSdetach(vsid))
         HGOTO_ERROR(DFE_CANTDETACH, FAIL);
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vattrinfo */
 
@@ -1447,11 +1372,6 @@ Vattrinfo2(int32 vgid, intn attrindex, char *name, int32 *datatype, int32 *count
     if (FAIL == VSdetach(vsid))
         HGOTO_ERROR(DFE_CANTDETACH, FAIL);
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vattrinfo2 */
 
@@ -1520,11 +1440,6 @@ Vgetattr(int32 vgid, intn attrindex, void *values)
         HGOTO_ERROR(DFE_CANTDETACH, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vgetattr */
 
@@ -1637,7 +1552,6 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (vsid != -1)
             VSdetach(vsid);
-    } /* end if */
-    /* Normal function cleanup */
+    }
     return ret_value;
 } /* Vgetattr2 */

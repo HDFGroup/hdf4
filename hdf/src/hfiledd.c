@@ -286,11 +286,6 @@ HTPstart(filerec_t *file_rec /* IN:  File record to store info in */
     file_rec->f_end_off = end_off;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     if (tbuf != NULL)
         HDfree(tbuf);
 
@@ -398,11 +393,6 @@ HTPinit(filerec_t *file_rec, /* IN: File record to store info in */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     HDfree(tbuf);
 
     return ret_value;
@@ -478,11 +468,6 @@ HTPsync(filerec_t *file_rec /* IN:  File record to store info in */
     }                             /* end while */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     if (tbuf != (uint8 *)NULL)
         HDfree(tbuf);
 
@@ -532,12 +517,6 @@ HTPend(filerec_t *file_rec /* IN:  File record to store info in */
     file_rec->ddhead = (ddblock_t *)NULL;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end HTPend() */
 
@@ -598,12 +577,6 @@ HTPcreate(filerec_t *file_rec, /* IN: File record to store info in */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HTPcreate() */
 
@@ -648,12 +621,6 @@ HTPselect(filerec_t *file_rec, /* IN: File record to store info in */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HTPselect() */
 
@@ -681,12 +648,6 @@ HTPendaccess(atom_t ddid /* IN: DD id to end access to */
         HGOTO_DONE(FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HTPendaccess() */
 
@@ -739,12 +700,6 @@ HTPdelete(atom_t ddid /* IN: DD id to delete */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HTPdelete() */
 
@@ -790,12 +745,6 @@ HTPupdate(atom_t ddid,    /* IN: DD id to update */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HTPupdate() */
 
@@ -838,12 +787,6 @@ HTPinquire(atom_t  ddid, /* IN: DD id to inquire about */
         *len = dd_ptr->length;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HTPinquire() */
 
@@ -877,12 +820,6 @@ HTPis_special(atom_t ddid /* IN: DD id to inquire about */
         ret_value = FALSE;
 
 done:
-    if (ret_value == FALSE) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HTPis_special() */
 
@@ -943,11 +880,6 @@ Hdupdd(int32  file_id, /* IN: File ID the tag/refs are in */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Hdupdd() */
 
@@ -990,11 +922,6 @@ Hnumber(int32  file_id, /* IN: File ID the tag/refs are in */
     ret_value = (int32)real_cnt;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Hnumber() */
 
@@ -1044,11 +971,6 @@ Hnewref(int32 file_id /* IN: File ID the tag/refs are in */)
     }                            /* end else */
 
 done:
-    if (ret_value == DFREF_NONE) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Hnewref() */
 
@@ -1091,11 +1013,6 @@ Htagnewref(int32  file_id, /* IN: File ID the tag/refs are in */
     } /* end else */
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Htagnewref() */
 
@@ -1162,11 +1079,6 @@ Hfind(int32   file_id,    /* IN: file ID to search in */
     *find_length = dd_ptr->length;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end Hfind() */
 
@@ -1218,12 +1130,6 @@ HDcheck_tagref(int32  file_id, /* IN: id of file */
     ret_value = 1;
 
 done:
-    if (ret_value == -1) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HDcheck_tagref() */
 
@@ -1290,11 +1196,6 @@ HDreuse_tagref(int32  file_id, /* IN: id of file */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end HDreuse_tagref */
 
@@ -1338,11 +1239,6 @@ Hdeldd(int32 file_id, uint16 tag, uint16 ref)
         HGOTO_ERROR(DFE_CANTDELDD, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end Hdeldd */
 
@@ -1444,12 +1340,6 @@ HTPdump_dds(int32 file_id, FILE *fout)
     } /* End of tag node dumping */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HTPdump_dds */
 #endif /* DEBUGGING */
@@ -1572,12 +1462,6 @@ HTInew_dd_block(filerec_t *file_rec)
     file_rec->f_end_off = block->myoffset + (NDDS_SZ + OFFSET_SZ) + (block->ndds * DD_SZ);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HTInew_dd_block */
 
@@ -1808,12 +1692,6 @@ HTIfind_dd(filerec_t *file_rec, uint16 look_tag, uint16 look_ref, dd_t **pdd, in
     ret_value = FAIL;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HTIfind_dd */
 
@@ -1870,12 +1748,6 @@ HTIupdate_dd(filerec_t *file_rec, dd_t *dd_ptr)
         file_rec->f_end_off = dd_ptr->offset + dd_ptr->length;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HTIupdate_dd */
 
@@ -2076,9 +1948,7 @@ done:
 
         if (tinfo_ptr->d != NULL)
             DAdestroy_array(tinfo_ptr->d, 0);
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
     return ret_value;
 } /* HTIregister_tag_ref */
@@ -2129,12 +1999,6 @@ HTIunregister_tag_ref(filerec_t *file_rec, dd_t *dd_ptr)
     } /* end else */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HTIunregister_tag_ref */
 

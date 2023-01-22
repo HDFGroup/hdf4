@@ -161,10 +161,6 @@ hdf_register_seen_sdg(uint16 sdgRef)
     }
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* hdf_register_seen_sdg */
 
@@ -401,7 +397,6 @@ done:
         if (coordbuf != NULL)
             HDfree((VOIDP)coordbuf);
     }
-    /* Normal cleanup */
 
     return ret_value;
 } /* hdf_get_sdc */
@@ -1617,7 +1612,7 @@ done:
         if (ptbuf != NULL)
             HDfree(ptbuf);
     }
-    /* Normal cleanup */
+
     if (dims != NULL)
         HDfree((VOIDP)dims);
     if (vars != NULL)
@@ -1676,10 +1671,6 @@ hdf_read_sds_cdf(XDR *xdrs, NC **handlep)
     sdgTable = NULL;
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* hdf_read_sds_cdf */
 

@@ -318,10 +318,6 @@ HDgetdatainfo(int32 file_id, uint16 tag, uint16 ref, int32 *chk_coord, uintn sta
     /* Return the number of data blocks */
     ret_value = count;
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-    }                        /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* HDgetdatainfo */
 
@@ -422,9 +418,6 @@ VSgetdatainfo(int32 vsid, uintn start_block, uintn info_count, int32 *offsetarra
     ret_value = count;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-    }                        /* end if */
-    /* Normal function cleanup */
     return ret_value;
 } /* VSgetdatainfo */
 
@@ -540,11 +533,6 @@ Vgetattdatainfo(int32 vgid, intn attrindex, int32 *offset, int32 *length)
     /* Return the number of data blocks, which should be 1 */
     ret_value = status;
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vgetattdatainfo */
 
@@ -655,11 +643,6 @@ VSgetattdatainfo(int32 vsid, int32 findex, intn attrindex, int32 *offset, int32 
     ret_value = status;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSgetattdatainfo */
 
@@ -786,9 +769,6 @@ GRgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
     ret_value = status; /* should be 1 */
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-    }                     /* end if */
-    /* Normal function cleanup */
     return ret_value;
 } /* GRgetattdatainfo */
 
@@ -884,9 +864,6 @@ GRgetdatainfo(int32 riid, uintn start_block, uintn info_count, int32 *offsetarra
     ret_value = count;
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-    }                     /* end if */
-    /* Normal function cleanup */
     return ret_value;
 } /* GRgetdatainfo */
 
@@ -996,8 +973,8 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (aid != FAIL)
             Hendaccess(aid);
-    } /* end if */
-    /* Normal function cleanup */
+    }
+
     return ret_value;
 } /* GRgetpalinfo */
 
@@ -1113,8 +1090,5 @@ ANgetdatainfo(int32  ann_id, /* IN: annotation id */
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-    }                        /* end if */
-    /* Normal function cleanup */
     return ret_value;
 } /* ANgetdatainfo */

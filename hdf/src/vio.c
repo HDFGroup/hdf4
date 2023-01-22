@@ -108,12 +108,6 @@ VSIget_vdata_node(void)
     HDmemset(ret_value, 0, sizeof(VDATA));
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return (ret_value);
 } /* VSIget_vdata_node */
 
@@ -170,12 +164,6 @@ VSIget_vsinstance_node(void)
     HDmemset(ret_value, 0, sizeof(vsinstance_t));
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return (ret_value);
 } /* VSIget_vsinstance_node */
 
@@ -290,12 +278,6 @@ vsinst(HFILEID f, /* IN: File handle */
     ret_value = ((vsinstance_t *)*t);
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* vsinst */
 
@@ -637,11 +619,6 @@ vunpackvs(VDATA *vs,    /* IN/OUT: */
     } /* if version <= 4 */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* vunpackvs */
 
@@ -749,12 +726,6 @@ VSPgetinfo(HFILEID f, /* IN: file handle */
     ret_value = (vs);
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end VSPgetinfo() */
 
@@ -967,12 +938,6 @@ VSattach(HFILEID     f,    /* IN: file handle */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* VSattach */
 
@@ -1116,11 +1081,6 @@ VSdetach(int32 vkey /* IN: vdata key? */)
     } /* end of 'write' case */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSdetach */
 
@@ -1167,11 +1127,6 @@ VSappendable(int32 vkey, /* IN: vdata key */
         ret_value = Happendable(vs->aid);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSappendable */
 
@@ -1238,11 +1193,6 @@ VSgetid(HFILEID f, /* IN: file handle */
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSgetid */
 
@@ -1285,12 +1235,6 @@ VSQuerytag(int32 vkey /* IN: vdata key */)
     ret_value = ((int32)vs->otag);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* VSQuerytag */
 
@@ -1333,12 +1277,6 @@ VSQueryref(int32 vkey /* IN: vdata key */)
     ret_value = ((int32)vs->oref);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* VSQueryref */
 
@@ -1380,12 +1318,6 @@ vswritelist(int32 vkey /* IN: vdata key */)
     ret_value = (&(vs->wlist));
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* vswritelist() */
 
@@ -1427,12 +1359,6 @@ VSgetversion(int32 vkey /* IN: vdata key */)
     ret_value = (int32)vs->version;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end VSgetversion() */
 
@@ -1492,10 +1418,5 @@ VSdelete(int32 f, /* IN: file handle */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSdelete */
