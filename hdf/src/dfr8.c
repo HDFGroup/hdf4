@@ -557,7 +557,6 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (file_id != (-1))
             Hclose(file_id);
-
     }
 
     return ret_value;

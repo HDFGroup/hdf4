@@ -968,7 +968,6 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (access_rec != NULL)
             HIrelease_accrec_node(access_rec);
-
     }
 
     return ret_value;
