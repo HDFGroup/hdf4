@@ -373,6 +373,9 @@ main(int argc, char *argv[])
     struct tcdfvar *tvp = testvars;
     union getret    got;
 
+    (void)argc;
+    (void)argv;
+
 #if defined TEST_PC || defined TEST_WIN
     dbg_file = fopen("test.dbg", "w+");
 #endif

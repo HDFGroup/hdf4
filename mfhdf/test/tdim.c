@@ -70,20 +70,16 @@
 static intn
 test_basic_dim()
 {
-    int32   fid, sds_id, status, dim0_id, dim1_id, sds_idx;
-    int32   dims[2], start[2], edges[2], rank;
-    int16   array1_data[LENGTH0][LENGTH1]; /* data for first SDS */
-    uint32  array2_data[LENGTH2][LENGTH3]; /* data for second SDS */
-    int32   dim_sizes[H4_MAX_VAR_DIMS];    /* read dimensions */
-    intn    i, j;
-    int32   array_rank, num_type, attributes;
-    char    dim_name[H4_MAX_NC_NAME], name[H4_MAX_NC_NAME];
-    uint8   scale0[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 255};
-    int16   scale1[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-    char8   scale2[] = {'d', 'i', 'm', '2'}, scale2_out[4];
-    float32 scalef[] = {1., 2., 3., 4.};
-    int32   size, dim_data_type, dim_num_attrs;
-    int     num_errs = 0; /* number of errors so far */
+    int32 fid, sds_id, status, dim0_id, dim1_id, sds_idx;
+    int32 dims[2], start[2], edges[2], rank;
+    int16 array1_data[LENGTH0][LENGTH1]; /* data for first SDS */
+    int32 dim_sizes[H4_MAX_VAR_DIMS];    /* read dimensions */
+    intn  i, j;
+    int32 array_rank, num_type, attributes;
+    char  dim_name[H4_MAX_NC_NAME], name[H4_MAX_NC_NAME];
+    uint8 scale0[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 255};
+    int32 size, dim_data_type, dim_num_attrs;
+    int   num_errs = 0; /* number of errors so far */
 
     /* Create the file defined by BASIC_FILE and initiate the SD interface. */
     fid = SDstart(BASIC_FILE, DFACC_CREATE);
@@ -536,21 +532,18 @@ test_dim_scales()
 static intn
 test_dim_strs()
 {
-    int32   fid, sds_id, status, dim0_id, dim1_id, sds_idx, coord_var_id;
-    int32   dims[2], start[2], edges[2], rank;
-    int16   array1_data[LENGTH0][LENGTH1]; /* data for first SDS */
-    uint32  array2_data[LENGTH2][LENGTH3]; /* data for second SDS */
-    int32   dim_sizes[H4_MAX_VAR_DIMS];    /* read dimensions */
-    intn    i, j;
-    int32   array_rank, num_type, attributes;
-    char    dim_name[H4_MAX_NC_NAME], name[H4_MAX_NC_NAME];
-    uint8   scale0[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 255};
-    int16   scale1[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-    char8   scale2[] = {'d', 'i', 'm', '2'}, scale2_out[4];
-    float32 scalef[] = {1., 2., 3., 4.};
-    int32   size, dim_data_type, dim_num_attrs;
-    char    label[DIMSTRS_LEN], unit[DIMSTRS_LEN], format[DIMSTRS_LEN];
-    int     num_errs = 0; /* number of errors so far */
+    int32  fid, sds_id, status, dim0_id, dim1_id, sds_idx, coord_var_id;
+    int32  dims[2], start[2], edges[2], rank;
+    int16  array1_data[LENGTH0][LENGTH1]; /* data for first SDS */
+    uint32 array2_data[LENGTH2][LENGTH3]; /* data for second SDS */
+    int32  dim_sizes[H4_MAX_VAR_DIMS];    /* read dimensions */
+    intn   i, j;
+    int32  array_rank, num_type, attributes;
+    char   dim_name[H4_MAX_NC_NAME], name[H4_MAX_NC_NAME];
+    char8  scale2[] = {'d', 'i', 'm', '2'};
+    int32  size, dim_data_type, dim_num_attrs;
+    char   label[DIMSTRS_LEN], unit[DIMSTRS_LEN], format[DIMSTRS_LEN];
+    int    num_errs = 0; /* number of errors so far */
 
     /* Open the file defined by BASIC_FILE and initiate the SD interface. */
     fid = SDstart(BASIC_FILE, DFACC_RDWR);

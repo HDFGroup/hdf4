@@ -246,7 +246,7 @@ static intn
 test_vdatavgroups()
 {
     int32       fid, dset1, dset2, dset3, dimid, vgroup_id, vdata_id;
-    int32       num_allvgroups, num_allvdatas;
+    int32       num_allvdatas;
     intn        num_vgroups, num_vdatas;
     int32       dimsize[RANK];
     float32     att1_values[2] = {2., 10.};
