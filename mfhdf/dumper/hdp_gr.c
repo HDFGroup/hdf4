@@ -696,7 +696,7 @@ print_grcomp_info(FILE *fp, int32 ri_id)
 {
     comp_info    c_info; /* Compression structure */
     comp_coder_t comp_type = COMP_CODE_NONE;
-    intn         status = FAIL;                /* returned status from a called function */
+    intn         status    = FAIL; /* returned status from a called function */
 
     /* Get compression info */
     HDmemset(&c_info, 0, sizeof(c_info));

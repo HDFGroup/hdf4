@@ -590,8 +590,8 @@ Java_hdf_hdflib_HDFLibrary_HCget_1config_1info(JNIEnv *env, jclass clss, jint co
     intn   rval                    = FAIL;
     uint32 compression_config_info = 0;
 
-  UNUSED(env);
-  UNUSED(clss);
+    UNUSED(env);
+    UNUSED(clss);
 
     /* check for success... */
     if ((rval = HCget_config_info((comp_coder_t)coder_type, (uint32 *)&compression_config_info)) == FAIL)

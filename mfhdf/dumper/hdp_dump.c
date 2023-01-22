@@ -365,7 +365,7 @@ dumpclean(int32 nt, dump_info_t *dump_opts, int32 cnt, /* number of items in 'da
     char *tempptr;           /* used in finding CR or LF in data buffer */
     intn  ret_value = SUCCEED;
 
-   (void)dump_opts;
+    (void)dump_opts;
 
     /* check inputs */
     if (NULL == databuf)

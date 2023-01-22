@@ -1551,7 +1551,7 @@ hdf_read_dims(XDR *xdrs, NC *handle, int32 vg)
                                           version 3.3r1. This call is not necessary since handle vs is
                                           obtained by specifying class name.
                                           Elena Pourmal 2/17/99
-
+           
                                                             if (VSsetfields(vs, "Values") == FAIL)
                                                             {
                                                                 ret_value = FAIL;
