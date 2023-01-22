@@ -91,7 +91,8 @@ static void char_init(), char_out(), flush_char();
 
 static byte pc2nc[256], r1[256], g1[256], b1[256];
 
-void xvbzero(char *s, int  len)
+void
+xvbzero(char *s, int len)
 {
     for (; len > 0; len--)
         *s++ = 0;
@@ -100,18 +101,18 @@ void xvbzero(char *s, int  len)
 /*************************************************************/
 int
 hdfWriteGIF(FILE *fp, byte *pic, int ptype, int w, int h, byte *rmap, byte *gmap, byte *bmap, byte *pc2ncmap,
-      int numcols, int colorstyle, int BitsPerPixel)
+            int numcols, int colorstyle, int BitsPerPixel)
 {
     int   InitCodeSize;
     int   i;
     byte *pic8;
     pic8 = pic;
 
-  (void)ptype;
-  (void)numcols;
-  (void)colorstyle;
+    (void)ptype;
+    (void)numcols;
+    (void)colorstyle;
 
-    Interlace  = 0;
+    Interlace = 0;
 
     for (i = 0; i < 256; i++) {
         pc2nc[i] = pc2ncmap[i];
@@ -142,7 +143,8 @@ hdfWriteGIF(FILE *fp, byte *pic, int ptype, int w, int h, byte *rmap, byte *gmap
 }
 
 /******************************/
-static void putword(int w, FILE *fp)
+static void
+putword(int w, FILE *fp)
 {
     /* writes a 16-bit integer in GIF order (LSB first) */
 
@@ -221,7 +223,8 @@ static int ClearCode;
 static int EOFCode;
 
 /********************************************************/
-static void compress(int init_bits, FILE *outfile, byte *data, int len)
+static void
+compress(int init_bits, FILE *outfile, byte *data, int len)
 {
     long fcode;
     int  i = 0;
@@ -348,7 +351,8 @@ nomatch:
 static unsigned long masks[] = {0x0000, 0x0001, 0x0003, 0x0007, 0x000F, 0x001F, 0x003F, 0x007F, 0x00FF,
                                 0x01FF, 0x03FF, 0x07FF, 0x0FFF, 0x1FFF, 0x3FFF, 0x7FFF, 0xFFFF};
 
-static void output(int code)
+static void
+output(int code)
 {
     cur_accum &= masks[cur_bits];
 
@@ -414,7 +418,8 @@ cl_block(void) /* table clear for block compress */
 
 /********************************/
 /* reset code table */
-static void cl_hash(count_int hsize)
+static void
+cl_hash(count_int hsize)
 {
     count_int *htab_p = htab + hsize;
     long       i;
@@ -474,7 +479,8 @@ static char accum[256];
  * Add a character to the end of the current packet, and if it is 254
  * characters, flush the packet to disk.
  */
-static void char_out(int c)
+static void
+char_out(int c)
 {
     accum[a_count++] = c;
     if (a_count >= 254)

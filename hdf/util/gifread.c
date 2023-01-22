@@ -80,7 +80,7 @@ GetByte(BYTE *MemGif)
 */
 int
 ReadGifHeader(GIFHEAD *GifHead, /* Pointer to GIF header structure  */
-              BYTE   **MemGif2) /* GIF image file input FILE stream */
+              BYTE   **MemGif2)   /* GIF image file input FILE stream */
 {
     WORD i;         /* Loop counter                                */
     WORD tableSize; /* Number of entries in the Global Color Table */
@@ -234,7 +234,7 @@ ReadGifImageDesc(GIFIMAGEDESC *GifImageDesc, BYTE **MemGif2)
 **  MemGif2           - GIF image file input FILE stream
 */
 int
-ReadGifGraphicControl(GIFGRAPHICCONTROL *GifGraphicControl, BYTE**MemGif2)
+ReadGifGraphicControl(GIFGRAPHICCONTROL *GifGraphicControl, BYTE **MemGif2)
 {
     for (int i = 0; i < 5; i++) {
         GifGraphicControl->GCEDump[i] = *(*MemGif2)++;

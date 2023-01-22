@@ -168,7 +168,8 @@ static enum { REQUIRE_ORDER, PERMUTE, RETURN_IN_ORDER } ordering;
 
 char *getenv(const char *name);
 
-static char *my_index(const char *str, int chr)
+static char *
+my_index(const char *str, int chr)
 {
     while (*str) {
         if (*str == chr)
@@ -211,7 +212,8 @@ static int last_nonopt;
    `first_nonopt' and `last_nonopt' are relocated so that they describe
    the new indices of the non-options in ARGV after they are moved.  */
 
-static void exchange(char **argv)
+static void
+exchange(char **argv)
 {
     int   bottom = first_nonopt;
     int   middle = last_nonopt;
@@ -317,7 +319,8 @@ static void exchange(char **argv)
    long-named options.  */
 
 int
-_getopt_internal(int argc, char *const *argv, const char *optstring, const struct option *longopts, int *longind, int long_only)
+_getopt_internal(int argc, char *const *argv, const char *optstring, const struct option *longopts,
+                 int *longind, int long_only)
 {
     int option_index;
 
@@ -600,7 +603,7 @@ getopt(int argc, char *const *argv, const char *optstring)
    the above definition of `getopt'.  */
 
 int
-       main(int argc, char **argv)
+main(int argc, char **argv)
 {
     int c;
     int digit_optind = 0;

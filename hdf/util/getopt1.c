@@ -62,8 +62,7 @@ char *getenv(const char *name);
 #endif
 
 int
-getopt_long(int argc, char *const *argv, const char *shortopts, const struct option
-                             *longopts, int *indexptr)
+getopt_long(int argc, char *const *argv, const char *shortopts, const struct option *longopts, int *indexptr)
 {
     return _getopt_internal(argc, argv, options, long_options, opt_index, 0);
 }
@@ -74,8 +73,8 @@ getopt_long(int argc, char *const *argv, const char *shortopts, const struct opt
    instead.  */
 
 int
-getopt_long_only(int argc, char *const *argv, const char *shortopts, const struct
-                             option *longopts, int *indexptr)
+getopt_long_only(int argc, char *const *argv, const char *shortopts, const struct option *longopts,
+                 int *indexptr)
 {
     return _getopt_internal(argc, argv, options, long_options, opt_index, 1);
 }
