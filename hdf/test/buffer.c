@@ -498,7 +498,6 @@ main(int argc, char *argv[])
                 aid = HLcreate(fid, BUFF_TAG, ref_num, HDF_APPENDABLE_BLOCK_LEN, HDF_APPENDABLE_BLOCK_NUM);
                 CHECK(aid, FAIL, "HLcreate");
                 break;
-
         }
 
         /* Write the initial data to the data element */
