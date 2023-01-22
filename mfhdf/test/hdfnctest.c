@@ -25,6 +25,9 @@ main(int argc, char *argv[])
     intn status;       /* status flag */
     int  num_errs = 0; /* number of errors so far */
 
+    (void)argc;
+    (void)argv;
+
     /* Tests reading/writing datasets with unlimited dimension via HDF
        API (bugzilla 1378) -BMR, Jan 07, 2009 */
     status   = test_unlim(); /* in tunlim.c */

@@ -707,7 +707,9 @@ ncvarcpy(int incdf, int varid, int outcdf)
 bool_t
 xdr_NC_var(XDR *xdrs, NC_var **vpp)
 {
-    u_long begin = 0;
+    unsigned begin     = 0;
+    int      temp_type = 0;
+    unsigned temp_len  = 0;
 
     if (xdrs->x_op == XDR_FREE) {
         NC_free_var((*vpp));
@@ -729,39 +731,22 @@ xdr_NC_var(XDR *xdrs, NC_var **vpp)
     if (!xdr_NC_array(xdrs, &((*vpp)->attrs)))
         return (FALSE);
 
-        /* This USE_ENUM may not be necessary after xdr and code cleanup.
-        See HDFFR-1318, HDFFR-1327, and other Mac/XDR issues for details.
-        I had tried and xdr_enum worked consistently even though there were
-        failures in other places. -BMR, 6/14/2016 */
-#ifdef USE_ENUM
-    if (!xdr_enum(xdrs, (enum_t *)&((*vpp)->type))) {
+    if (!xdr_int(xdrs, &temp_type)) {
         return (FALSE);
     }
-#else
-    /* Using static variable seemed to help prevent bad memory accesses */
-    {
-        int temp_type = 0;
-        if (!xdr_int(xdrs, &temp_type)) {
-            return (FALSE);
-        }
-        (*vpp)->type = (nc_type)temp_type;
-    }
+    (*vpp)->type = (nc_type)temp_type;
 
-#endif
-    {
-        u_long temp_len = 0;
-        if (!xdr_u_long(xdrs, &temp_len)) {
-            return (FALSE);
-        }
-        (*vpp)->len = temp_len;
+    if (!xdr_u_int(xdrs, &temp_len)) {
+        return (FALSE);
     }
+    (*vpp)->len = (unsigned long)temp_len;
 
     if (xdrs->x_op == XDR_DECODE)
         (*vpp)->szof = NC_typelen((*vpp)->type);
 
     if (xdrs->x_op == XDR_ENCODE)
         begin = (*vpp)->begin;
-    if (!xdr_u_long(xdrs, &begin))
+    if (!xdr_u_int(xdrs, &begin))
         return (FALSE);
     if (xdrs->x_op == XDR_DECODE)
         (*vpp)->begin = begin;

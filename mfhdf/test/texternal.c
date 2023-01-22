@@ -453,11 +453,10 @@ test_mult_setexternal()
 {
     int32 sd_id, sds1_id;
     int32 dim_sizes[3];
-    int32 sds1_size = 0;
-    char *extfile_name;
-    intn  name_len = 0;
-    intn  status   = SUCCEED;
-    intn  num_errs = 0; /* number of errors in compression test so far */
+    char *extfile_name = NULL;
+    intn  name_len     = 0;
+    intn  status       = SUCCEED;
+    intn  num_errs     = 0; /* number of errors in compression test so far */
 
     /* Create the file and initialize the SD interface */
     sd_id = SDstart(EXTTST, DFACC_CREATE);
@@ -469,7 +468,7 @@ test_mult_setexternal()
 
     /* Create data set SDS1 and write data to the external file; the returned
        value is the size of the data had been written for this sds */
-    sds1_size = make_Ext3D_SDS(sd_id, SDS1, DFNT_INT32, 3, dim_sizes, (VOIDP)written_data, OFFSET, EXTFILE2);
+    make_Ext3D_SDS(sd_id, SDS1, DFNT_INT32, 3, dim_sizes, (VOIDP)written_data, OFFSET, EXTFILE2);
 
     /* Close the file to flush */
     status = SDend(sd_id);
@@ -502,7 +501,7 @@ test_mult_setexternal()
         fprintf(stderr, "SDsetexternalfile should return length greater than 0\n");
 
     /* Prepare buffer for external file name */
-    extfile_name = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+    extfile_name = HDmalloc(sizeof(char *) * (name_len + 1));
     CHECK_ALLOC(extfile_name, "extfile_name", "test_getexternal");
     HDmemset(extfile_name, '\0', name_len + 1);
 
@@ -523,6 +522,8 @@ test_mult_setexternal()
 
     /* Read data of the data set and verify against the original */
     verify_data(sd_id, 0);
+
+    HDfree(extfile_name);
 
     /* Close the file */
     status = SDend(sd_id);

@@ -249,9 +249,9 @@ NC_indefine(int cdfid, bool_t iserr) /* Should be a Macro ? */
 static int
 NC_open(const char *path, int mode)
 {
-    NC  *handle;
-    int  cdfid;
-    intn cdfs_size;
+    NC  *handle    = NULL;
+    int  cdfid     = -1;
+    intn cdfs_size = -1;
 
     /* Allocate _cdfs, if it is already allocated, nothing will be done */
     if (_cdfs == NULL) {

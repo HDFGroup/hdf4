@@ -33,18 +33,18 @@ typedef struct bitrec_t {
     int32 bit_id;       /* Bitfile ID for internal use */
                         /* Note that since HDF has signed 32bit offset limit we need to change this to signed
                            since the get passed to Hxxx calls which take signed 32bit arguments */
-    int32 block_offset, /* offset of the current buffered block in the dataset */
-        max_offset,     /* offset of the last byte written to the dataset */
-        byte_offset;    /* offset of the current byte in the dataset */
+    int32 block_offset; /* offset of the current buffered block in the dataset */
+    int32 max_offset;   /* offset of the last byte written to the dataset */
+    int32 byte_offset;  /* offset of the current byte in the dataset */
 
-    intn count,    /* bit count to next boundary */
-        buf_read;  /* number of bytes read into buffer (necessary for random I/O) */
-    uint8  access; /* What the access on this file is ('r', 'w', etc..) */
-    uint8  mode;   /* how are we interacting with the data now ('r', 'w', etc) */
-    uint8  bits;   /* extra bit buffer, 0..BITNUM-1 bits */
-    uint8 *bytep;  /* current position in buffer */
-    uint8 *bytez;  /* end of buffer to compare */
-    uint8 *bytea;  /* byte buffer */
+    intn   count;    /* bit count to next boundary */
+    intn   buf_read; /* number of bytes read into buffer (necessary for random I/O) */
+    uint8  access;   /* What the access on this file is ('r', 'w', etc..) */
+    uint8  mode;     /* how are we interacting with the data now ('r', 'w', etc) */
+    uint8  bits;     /* extra bit buffer, 0..BITNUM-1 bits */
+    uint8 *bytep;    /* current position in buffer */
+    uint8 *bytez;    /* end of buffer to compare */
+    uint8 *bytea;    /* byte buffer */
 } bitrec_t;
 
 #ifndef BITMASTER

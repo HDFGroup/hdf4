@@ -59,7 +59,7 @@ test_various_comps()
 {
     /************************* Variable declaration **************************/
 
-    int32     sd_id, sds_id, sds_index;
+    int32     sd_id, sds_id;
     intn      status;
     int32     comp_type; /* Compression flag */
     comp_info c_info;    /* Compression structure */

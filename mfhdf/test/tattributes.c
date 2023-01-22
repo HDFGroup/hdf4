@@ -86,20 +86,16 @@
 static intn
 test_count(void)
 {
-    char           sds_name[20], dim_name[20];
-    float32        sds1_data[] = {0.1, 2.3, 4.5, 6.7, 8.9};
-    float32        out_data[5];
-    int32          dimsize[1], size;
-    int32          sds_id, file_id, dim_id, index;
-    int32          start = 0, stride = 1;
-    int32          attr_data[5] = {101, 102, 103, 104, 105}, scale1_out[5];
-    int32          ntype, rank, count;
-    int32          n_datasets = 0, n_file_attrs = 0, nattrs = 0;
-    intn           status = 0;
-    hdf_varlist_t *var_list;
-    intn           is_coord = FALSE;
-    char           attr_name[H4_MAX_NC_NAME], attr_values[80];
-    intn           num_errs = 0; /* number of errors so far */
+    char    sds_name[20], dim_name[20];
+    float32 sds1_data[] = {0.1, 2.3, 4.5, 6.7, 8.9};
+    int32   dimsize[1], size;
+    int32   sds_id, file_id, dim_id, index;
+    int32   start = 0, stride = 1;
+    int32   ntype, rank, count;
+    int32   nattrs = 0;
+    intn    status = 0;
+    char    attr_name[H4_MAX_NC_NAME], attr_values[80];
+    intn    num_errs = 0; /* number of errors so far */
 
     file_id = SDstart(FILE_SATTR, DFACC_CREATE);
     CHECK(file_id, FAIL, "SDstart");

@@ -158,8 +158,7 @@ test_nonspecial_SDSs()
     int32            dimsizes[2], starts[2], edges[2], rank = 0;
     int32            data1[LENGTH1_X];
     float            data2[LENGTH2_X][LENGTH2_Y];
-    char             data3[LENGTH3_X], outdata3[LENGTH3_X];
-    int32            offset1, length1, offset2, length2, offset3, length3;
+    char             data3[LENGTH3_X];
     t_hdf_datainfo_t sds1_info, sds2_info, sds3_info;
     uintn            info_count = 0;
     intn             status;
@@ -362,13 +361,9 @@ test_nonspecial_SDSs()
     {
         int     fd;          /* for open */
         int32   ret32;       /* for DFKconvert */
-        int     ret;         /* for fabs */
         ssize_t readlen = 0; /* for read */
         int32  *readibuf, *readibuf_swapped;
         float  *readfbuf, *readfbuf_swapped;
-        char   *readcbuf, *readcbuf_swapped;
-        char    readfbuf_str[12], data2_str[12]; /* for comparing readfbuf values */
-        uint32  n_values;
         int     ii, jj, kk;
 
         /* Open the file for reading without SD API */
@@ -508,16 +503,14 @@ test_nonspecial_SDSs()
 static intn
 test_compressed_SDSs()
 {
-    int32            sd_id, sds_id, esds_id, usds_id;
+    int32            sd_id, sds_id;
     int32            starts[2], edges[2], dimsizes[2], rank = 0;
     comp_coder_t     comp_type; /* Compression flag */
     comp_info        c_info;    /* Compression structure */
-    int8             data[Y_LENGTH][X_LENGTH];
     int32            data1[LENGTH1_X];
     float            data2[LENGTH2_X][LENGTH2_Y];
     char             data3[LENGTH3_X];
     t_hdf_datainfo_t sds1_info, sds2_info, sds3_info;
-    int32            offset = 0, length = 0;
     int32            pixels_per_scanline;
     uintn            info_count = 0;
     intn             status;
@@ -842,16 +835,14 @@ test_compressed_SDSs()
 static intn
 test_empty_SDSs()
 {
-    int32         sd_id, sds_id, sds_index;
-    int32         dimsizes[RANK];
-    HDF_CHUNK_DEF c_def; /* Chunking definitions */
-    int32         flag;
-    uintn         info_count = 0;
-    comp_coder_t  comp_type; /* Compression flag */
-    comp_info     c_info;    /* Compression structure */
-    int           ii, jj;
-    intn          status;
-    int           num_errs = 0; /* number of errors so far */
+    int32        sd_id, sds_id;
+    int32        dimsizes[RANK];
+    uintn        info_count = 0;
+    comp_coder_t comp_type; /* Compression flag */
+    comp_info    c_info;    /* Compression structure */
+    int          ii;
+    intn         status;
+    int          num_errs = 0; /* number of errors so far */
 
     /* Use the same file as in test_compressed_SDSs */
     sd_id = SDstart(NODATA_FILE, DFACC_CREATE);
@@ -958,12 +949,9 @@ test_chunked_partial()
 {
     int32            sd_id, sds_id, sds_index;
     int32            dimsizes[RANK], origin[RANK], starts[RANK], rank = 0, edges[RANK];
-    HDF_CHUNK_DEF    c_def;           /* Chunking definitions */
-    int32            flag;            /* Chunking flag */
-    int32            fill_value = -2; /* Fill value */
+    HDF_CHUNK_DEF    c_def; /* Chunking definitions */
     uintn            info_count = 0;
     t_hdf_datainfo_t sds_info;
-    int32           *offarray = NULL, *lenarray = NULL;
     int32            data[Y_LENGTH][X_LENGTH];
     int              fd; /* for open */
     int              ii, jj, chk_num;
@@ -971,10 +959,6 @@ test_chunked_partial()
     intn             status;
 
     /* Declare chunks data type and initialize some of them. */
-    int32 chunk1[CHK_X][CHK_Y] = {{4, 4}, {4, 4}, {4, 4}};
-
-    int32 chunk3[CHK_X][CHK_Y] = {{3, 3}, {3, 3}, {3, 3}};
-
     int32 chunk_1dim[10] = {10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
 
     /* Create the file and initialize the SD interface */
@@ -1093,14 +1077,10 @@ test_chunked_partial()
 
     /* Read each chunk and compare values */
     for (chk_num = 0; chk_num < info_count; chk_num++) {
-        off_t   ret;         /* for lseek */
         int32   ret32;       /* for DFKconvert */
         ssize_t readlen = 0; /* for read */
         int32  *readibuf, *readibuf_swapped;
-        float  *readfbuf, *readfbuf_swapped;
-        char   *readcbuf, *readcbuf_swapped;
-        uint32  n_values;
-        int     ii, jj, kk;
+        int     ii;
 
         /* Forward to the position of the data of the SDS */
         if (lseek(fd, (off_t)sds_info.offsets[chk_num], SEEK_SET) == -1) {
@@ -1157,22 +1137,20 @@ test_chkcmp_SDSs()
 {
     int32            sd_id, sds_id, sds_index;
     int32            cmpsds_id, cmpsds_index;
-    int32            flag, maxcache, new_maxcache;
+    int32            flag;
     int32            dimsizes[RANK], origin[RANK], rank = 0;
     HDF_CHUNK_DEF    c_def; /* Chunking definitions */
     t_hdf_datainfo_t sds_info, cmpsds_info;
     int32            fill_value = 0; /* Fill value */
-    int32            comp_size1 = 0, uncomp_size1 = 0;
-    int32            comp_size2 = 0, uncomp_size2 = 0;
     int32            chk_coord[2];
     uintn            info_count = 0;
     intn             status;
     int              num_errs = 0; /* number of errors so far */
 
     /* Declare chunks data type and initialize some of them. */
-    int16 chunk1[CHK_X][CHK_Y] = {{1, 1}, {1, 1}, {1, 1}};
+    int32 chunk1[CHK_X][CHK_Y] = {{1, 1}, {1, 1}, {1, 1}};
 
-    int16 chunk3[CHK_X][CHK_Y] = {{3, 3}, {3, 3}, {3, 3}};
+    int32 chunk3[CHK_X][CHK_Y] = {{3, 3}, {3, 3}, {3, 3}};
 
     int32 chunk2[CHK_X][CHK_Y] = {{2, 2}, {2, 2}, {2, 2}};
 
@@ -1377,7 +1355,7 @@ test_extend_SDSs()
 {
     int32            sd_id, sds_id, sds_index;
     int32            dimsizes[2], starts[2], edges[2], rank = 0;
-    int32            dimsize1[1], start1[1], edges1[1];
+    int32            start1[1], edges1[1];
     int32            data1[Y_LENGTH][X_LENGTH];
     int32            data2[Y_LENGTH][X_LENGTH];
     int32            data3[Y_LENGTH][X_LENGTH];
@@ -1385,7 +1363,6 @@ test_extend_SDSs()
     int32            output[Y_LENGTH * 3][X_LENGTH];
     uintn            info_count = 0;
     t_hdf_datainfo_t sds_info;
-    int32           *offarray = NULL, *lenarray = NULL;
     int32            block_size = 0;
     intn             status;
     int              i, j, kk;
@@ -1395,6 +1372,10 @@ test_extend_SDSs()
     for (j = 0; j < Y_LENGTH; j++)
         for (i = 0; i < X_LENGTH; i++)
             data1[j][i] = (i + j) + 1;
+
+    for (j = 0; j < Y_LENGTH; j++) {
+        fdata[j] = -1.0F;
+    }
 
     /* Create the file and initialize the SD interface */
     sd_id = SDstart(EXTEND_FILE, DFACC_CREATE);
@@ -1438,7 +1419,7 @@ test_extend_SDSs()
     CHECK(status, FAIL, "test_extend_SDSs: SDendaccess");
 
     /* Create another dataset with 1 unlimited dimension */
-    sds_id = SDcreate(sd_id, "Extend-Data 2", DFNT_FLOAT64, RANK1, dimsizes);
+    sds_id = SDcreate(sd_id, "Extend-Data 2", DFNT_FLOAT32, RANK1, dimsizes);
     CHECK(sds_id, FAIL, "test_extend_SDSs: SDcreate");
 
     /* Define the location and size of the data to be written to the dataset */
@@ -1622,8 +1603,7 @@ test_extend_SDSs()
 extern int
 test_datainfo()
 {
-    intn status;
-    int  num_errs = 0;
+    int num_errs = 0;
 
     /* Output message about test being performed */
     TESTING("getting location info of data (tdatainfo.c)");

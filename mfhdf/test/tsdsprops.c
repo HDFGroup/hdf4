@@ -693,7 +693,7 @@ test_valid_args2()
 
     /* Read second dataset with out of bound stride */
     sds_id     = SDselect(sd_id, 1);
-    d2start[0] = d2start[0] = 0;
+    d2start[0] = d2start[1] = 0;
     d2stride[0]             = 1;
     d2stride[1]             = D2_Y; /* should be D2_Y - 1 */
     d2count[0]              = D2_X;

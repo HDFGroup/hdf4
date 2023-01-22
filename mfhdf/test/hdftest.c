@@ -67,16 +67,14 @@ extern int test_att_ann_datainfo();
 int
 main(int argc, char *argv[])
 {
-    int32   f1, f2, fext, fnbit;      /* File handles */
+    int32   f1, f2, fnbit;            /* File handles */
     int32   nt;                       /* Number type */
     int32   dimsize[10];              /* dimension sizes */
     int32   newsds, newsds2, newsds3; /* SDS handles */
     int32   sdsid;                    /* SDS handle */
-    int32   noextsds;                 /* no external SDS id */
     int32   dimid, dimid1, dimid2;    /* Dimension handles */
     int32   num_sds;                  /* number of SDS in file */
     int32   num_gattr;                /* Number of global attributes */
-    int32   offset;                   /* offset for ? */
     int32   index;                    /* Index of dataset in file */
     int32   ival;
     int32   sdid;   /* another SDS handle */
@@ -99,6 +97,9 @@ main(int argc, char *argv[])
     float32 data[1000], max, min, imax, imin;
     float64 cal, cale, ioff, ioffe;
     int     num_errs = 0; /* number of errors so far */
+
+    (void)argc;
+    (void)argv;
 
     ncopts = NC_VERBOSE;
 
