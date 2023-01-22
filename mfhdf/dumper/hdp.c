@@ -20,6 +20,8 @@
 static void
 usage(intn argc, char *argv[])
 {
+    (void)argc;
+
     printf("%s, %s\n\n", argv[0], LIBVER_STRING);
     printf("Usage: hdp [-H] command [command options] <filelist>\n");
     printf("\t -H  Display usage information about the specified command.\n");

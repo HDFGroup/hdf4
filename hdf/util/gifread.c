@@ -50,8 +50,7 @@ WORD
 BYTE *MemGif;
 {
     WORD w;
-    if (EndianOrder == 1) /* LittleEndian */
-    {
+    if (EndianOrder == 1) { /* LittleEndian */
         w = (WORD)(*MemGif++ & 0xFF);
         w |= (WORD)((*MemGif++ & 0xFF) << 0x08);
     }
@@ -151,7 +150,6 @@ BYTE        **MemGif2;      /* GIF image file input FILE stream           */
 {
     WORD  i;         /* Loop counter                               */
     WORD  tableSize; /* Number of entries in the Local Color Table */
-    BYTE  Interlace; /* PackedField & 0x20 gives information on interlacing */
     BYTE *TempPtr;
     int   ch, ch1;
 
@@ -186,8 +184,6 @@ BYTE        **MemGif2;      /* GIF image file input FILE stream           */
     }
 
     GifImageDesc->PackedField = GifImageDesc->GIDDump[8];
-
-    Interlace = GifImageDesc->PackedField & 0x20;
 
     /* Check if a Local Color Table is present */
     if (GifImageDesc->PackedField & 0x80) {

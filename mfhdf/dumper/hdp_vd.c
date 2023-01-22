@@ -17,6 +17,8 @@
 void
 dumpvd_usage(intn argc, char *argv[])
 {
+    (void)argc;
+
     printf("Usage:\n");
     printf("%s dumpvd [-a|-i <indices>|-r <refs>|-n <names>|-c <classes>|-f <f1, f2,..>] [-dhv] [-o "
            "<filename>] [-bx] <filelist>\n",
@@ -371,6 +373,8 @@ done:
 void
 printHeader(FILE *fp, char *fldstring, char *fields, vd_info_t *curr_vd)
 {
+    (void)fldstring;
+
     fprintf(fp, "Vdata: %d\n", (int)curr_vd->index);
     if (curr_vd->tag == FAIL) /* print vdata tag */
         fprintf(fp, "   tag = <Undefined>; ");
@@ -692,6 +696,9 @@ dumpvd_binary(dump_info_t *dumpvd_opts, int32 file_id, const char *file_name, FI
     intn          status;
     intn          ret_value = SUCCEED;
     char          fields[VSFIELDMAX * FIELDNAMELENMAX];
+
+    (void)dumpvd_opts;
+    (void)file_name;
 
     vd_chosen_idx = 0; /* "vd_chosen_idx" is used to index the array of "vd_chosen". */
 

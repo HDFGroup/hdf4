@@ -545,7 +545,6 @@ copy_sds(int32 sd_in, int32 sd_out, int32 tag, /* tag of input SDS */
             /* stripmine info */
             int32 sm_size[H4_MAX_VAR_DIMS]; /*stripmine size */
             int32 sm_nbytes;                /*bytes per stripmine */
-            int32 sm_nelmts;                /*elements per stripmine*/
 
             /* hyperslab info */
             int32 hs_offset[H4_MAX_VAR_DIMS]; /*starting offset */
@@ -565,8 +564,6 @@ copy_sds(int32 sd_in, int32 sd_out, int32 tag, /* tag of input SDS */
             }
 
             sm_buf = HDmalloc((size_t)sm_nbytes);
-
-            sm_nelmts = sm_nbytes / p_type_nbytes;
 
             /* the stripmine loop */
             HDmemset(hs_offset, 0, sizeof hs_offset);
@@ -788,6 +785,8 @@ copy_sds_attrs(int32 id_in, int32 id_out, int32 nattrs, options_t *options)
     char  attr_name[H4_MAX_NC_NAME];
     VOIDP attr_buf = NULL;
     int   i;
+
+    (void)options;
 
     /* loop through attributes in input SDS */
     for (i = 0; i < nattrs; i++) {

@@ -868,6 +868,10 @@ VSfpack(int32 vsid, intn packtype, const char *fields_in_buf, void *buf, intn bu
         int32 *offs; /* offset of buf fields in buf */
     } blist;
 
+    /* initialize tobe-allocated vars in case of error before allocation */
+    blist.idx  = NULL;
+    blist.offs = NULL;
+
     if (HAatom_group(vsid) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     /* locate vs' index in vgtab */

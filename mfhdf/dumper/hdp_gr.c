@@ -35,6 +35,8 @@ intn dgr(dump_info_t *dumpgr_opts, intn curr_arg, intn argc, char *argv[]);
 void
 dumpgr_usage(intn argc, char *argv[])
 {
+    (void)argc;
+
     printf("Usage:\n");
     printf("%s dumpgr [-a|-i <indices>|-r <refs>|-n <names>] [-m <interlace>] [-dhvcs] [-p|-pd] [-o "
            "<filename>] [-bx] <filelist>\n",
@@ -694,7 +696,6 @@ print_grcomp_info(FILE *fp, int32 ri_id)
 {
     comp_info    c_info; /* Compression structure */
     comp_coder_t comp_type = COMP_CODE_NONE;
-    int32        comp_size = 0, orig_size = 0; /* compressed and original sizes */
     intn         status = FAIL;                /* returned status from a called function */
 
     /* Get compression info */

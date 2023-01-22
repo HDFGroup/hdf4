@@ -115,6 +115,9 @@ options_get_info(options_t     *options,     /* global options */
                  int32          dtype        /* numeric type (for SZIP), IN */
 )
 {
+    (void)dtype;
+    (void)dimsizes;
+    (void)ncomps;
 
     pack_info_t *obj = NULL; /* check if we have information for this object */
     int          i;

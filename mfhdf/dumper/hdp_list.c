@@ -32,6 +32,8 @@ intn print_annots_in_file(int32 an_id, const char *fname, int32 n_annotations, a
 static void
 list_usage(intn argc, char *argv[])
 {
+    (void)argc;
+
     printf("Usage:\n");
     printf("%s list [-acensldg] [-o<f|g|t|n>] [-t tag] <filelist>\n", argv[0]);
     printf("\t-a\tPrint annotations of items (sets long output)\n");
@@ -586,6 +588,8 @@ print_all_file_descs(const char *fname, list_info_t *list_opts, /* for print_SDa
     char *attr_nt_desc = NULL;
     VOIDP attr_buf     = NULL;
     intn  ret_value    = SUCCEED;
+
+    (void)list_opts;
 
     /* find out how many file labels/descs and data labels/descs in file */
     if (FAIL == ANfileinfo(an_id, &n_file_label, &n_file_desc, &n_data_label, &n_data_desc)) {

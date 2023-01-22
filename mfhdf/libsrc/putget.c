@@ -1754,7 +1754,6 @@ NCvcmaxcontig(NC *handle, NC_var *vp, const long *origin, const long *edges)
 {
     const long    *edp, *orp;
     unsigned long *boundary, *shp;
-    int            partial = 0;
 
     if (IS_RECVAR(vp)) {
         /*     one dimensional   &&  the only 'record' variable  */
@@ -1778,10 +1777,7 @@ NCvcmaxcontig(NC *handle, NC_var *vp, const long *origin, const long *edges)
             NCadvise(NC_EINVAL, "Invalid edge length %d", *edp);
             return (NULL);
         }
-        /* Mark that the writing is partial when any edge is smaller than the
-               matching dimension */
         if (*edp < *shp) {
-            partial = 1;
             break;
             /* Why do we want to break here?  What if the later edge is out
             of limit and we break out as soon as a smaller edge is reached? -BMR */
@@ -1792,15 +1788,6 @@ NCvcmaxcontig(NC *handle, NC_var *vp, const long *origin, const long *edges)
     forward once to point to the first element in edges.  -BMR, 4/15/2013 */
     if (shp < boundary) /* made it all the way */
         edp++;
-
-    /*
-     *   This little check makes certain that if complete "slices" of the
-     *  regular dimensions of an unlimited dimension dataset are being written
-     *  out, it's ok to write out a "block" of all those slices at once. -QAK
-     */
-    /*    if( IS_RECVAR(vp) && (edp-1==edges) && !partial)
-            edp=edges;
-    */
 
     /* shp, edp reference last index s.t. shape[ii] == edge[ii] */
     return (edp);

@@ -2487,7 +2487,6 @@ Vgetclassnamelen(int32   vkey, /* IN: vgroup key */
 {
     vginstance_t *v  = NULL;
     VGROUP       *vg = NULL;
-    size_t        temp_len;
     int32         ret_value = SUCCEED;
 
     /* clear error stack */

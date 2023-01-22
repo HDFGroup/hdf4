@@ -452,7 +452,6 @@ add_sdsSDG_annotations()
 {
     char   labsds[MAXLEN_LAB], descsds[MAXLEN_DESC], descris[MAXLEN_DESC];
     uint16 refnum;
-    int32  ret;
     intn   rank;
     int    j;
     int32  dimsizes[2];

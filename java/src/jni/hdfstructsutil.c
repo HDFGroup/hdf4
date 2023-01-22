@@ -382,7 +382,6 @@ getChunkInfo(JNIEnv *env, jobject chunkobj, HDF_CHUNK_DEF *cinf)
     jobject  larr;
     jint    *lens;
     int      i;
-    jboolean bval;
     jboolean bb;
 
     jc = ENVPTR->FindClass(ENVONLY, "hdf/hdflib/HDFChunkInfo");
@@ -429,7 +428,7 @@ getChunkInfo(JNIEnv *env, jobject chunkobj, HDF_CHUNK_DEF *cinf)
         }
 
         /* set compression information */
-        bval = getNewCompInfo(env, (jobject)larr, &(cinf->comp.cinfo));
+        return getNewCompInfo(env, (jobject)larr, &(cinf->comp.cinfo));
     }
     else if (ctype == (HDF_CHUNK | HDF_NBIT)) {
         jc = ENVPTR->FindClass(ENVONLY, "hdf/hdflib/HDFNBITChunkInfo");
@@ -590,6 +589,9 @@ Java_hdf_hdflib_HDFLibrary_HCget_1config_1info(JNIEnv *env, jclass clss, jint co
 {
     intn   rval                    = FAIL;
     uint32 compression_config_info = 0;
+
+  UNUSED(env);
+  UNUSED(clss);
 
     /* check for success... */
     if ((rval = HCget_config_info((comp_coder_t)coder_type, (uint32 *)&compression_config_info)) == FAIL)
