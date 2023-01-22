@@ -24,9 +24,7 @@ extern int hdfWriteGIF(FILE *fp, BYTE *pic, int ptype, int w, int h, BYTE *rmap,
 int EndianOrder;
 
 VOID
-      PutByte(b, fpGif)
-BYTE  b;
-FILE *fpGif;
+PutByte(BYTE  b, FILE *fpGif)
 {
     if (fputc(b, fpGif) == EOF) {
         printf("File Writing Error, cannot continue");
@@ -35,26 +33,20 @@ FILE *fpGif;
 }
 
 VOID
-      WordToByte(w, b)
-WORD  w;
-BYTE *b;
+WordToByte(WORD  w, BYTE *b)
 {
-    if (EndianOrder == 0) /* Big Endian */
-    {
+    if (EndianOrder == 0) { /* Big Endian */
         b[0] = (BYTE)(w & 0xFF00);
         b[1] = w & 0xFF;
     }
-    else /* Little Endian */
-    {
+    else  {/* Little Endian */
         b[0] = w & 0xFF;
         b[1] = (BYTE)(w & 0xFF00);
     }
 }
 
 VOID
-      putword(w, fp)
-int   w;
-FILE *fp;
+putword(int w, FILE *fp)
 {
     /* writes a 16-bit integer in GIF order (LSB first) */
 
@@ -66,15 +58,14 @@ FILE *fp;
 int
 main(int argc, char **argv)
 {
-
-    intn  status;                /* status for functions returning an intn */
-    int32 file_id,               /* HDF file identifier */
-        gr_id,                   /* GR interface identifier */
-        ri_id, pal_id, start[2], /* start position to write for each dimension */
-        stride[2], dim_sizes[2], /* dimension sizes of the image array */
-        interlace_mode,          /* interlace mode of the image */
-        data_type,               /* data type of the image data */
-        i, index;
+    intn  status;                  /* status for functions returning an intn */
+    int32 file_id;                 /* HDF file identifier */
+    int32 gr_id;                   /* GR interface identifier */
+    int32 ri_id, pal_id, start[2]; /* start position to write for each dimension */
+    int32 stride[2], dim_sizes[2]; /* dimension sizes of the image array */
+    int32 interlace_mode;          /* interlace mode of the image */
+    int32 data_type;               /* data type of the image data */
+    int32 i, index;
 
     char gr_name[256];
 
@@ -105,13 +96,9 @@ main(int argc, char **argv)
     BYTE Blue[256];
 
     int RWidth, RHeight;
-    int LeftOfs, TopOfs;
     int ColorMapSize, InitCodeSize, Background, BitsPerPixel;
     int j, nc;
-    int w, h;
     int numcols = 256;
-    int CountDown;
-    int curx, cury;
     int time_out;
 
     BYTE pc2nc[256], r1[256], g1[256], b1[256];
@@ -130,7 +117,7 @@ main(int argc, char **argv)
 
     /* Do Endian Order testing and set Endian Order */
     x           = 0x0001;
-    b           = (BYTE *)&w;
+	b = (BYTE *) &x;
     EndianOrder = (b[0] ? 1 : 0);
 
     start[0] = start[1] = 0;
@@ -208,8 +195,6 @@ main(int argc, char **argv)
 
         Image  = (BYTE *)malloc(dim_sizes[0] * dim_sizes[1]);
         status = GRreadimage(ri_id, start, stride, dim_sizes, Image);
-        w      = dim_sizes[0];
-        h      = dim_sizes[1];
 
         /* If the first image does not have a palette, I make my own global color table
         ** Obviously this is not the best thing to do, better steps would be:
@@ -262,16 +247,11 @@ main(int argc, char **argv)
 
         RWidth  = dim_sizes[0];
         RHeight = dim_sizes[1];
-        LeftOfs = TopOfs = 0;
-
-        CountDown = w * h; /* # of pixels we'll be doing */
 
         if (BitsPerPixel <= 1)
             InitCodeSize = 2;
         else
             InitCodeSize = BitsPerPixel;
-
-        curx = cury = 0;
 
         if (!fpGif) {
             fprintf(stderr, "WriteGIF: file not open for writing\n");

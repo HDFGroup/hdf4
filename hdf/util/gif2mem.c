@@ -39,7 +39,7 @@
 extern int EndianOrder;
 
 GIFTOMEM
-Gif2Mem(MemGif) BYTE *MemGif;
+Gif2Mem(BYTE *MemGif)
 {
     /*
     ** The gif structure outline for passing data to memory

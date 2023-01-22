@@ -15,9 +15,7 @@
 #include "gif.h"
 #include <string.h>
 int
-      main(argv, argc)
-int   argv;
-char *argc[];
+main(int argv, char *argc[])
 {
 
     GIFTOMEM     GifMemoryStruct;

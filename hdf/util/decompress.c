@@ -101,7 +101,7 @@ ReadCode(void)
     return (RawCode & ReadMask);
 }
 
-void AddToPixel(Index) BYTE Index;
+void AddToPixel(BYTE Index)
 {
     if (YC < IHeight)
         *(Image + YC * BytesPerScanline + XC) = Index;
@@ -154,10 +154,7 @@ void AddToPixel(Index) BYTE Index;
 
 /* Main routine.  Convert a GIF image to an HDF image */
 
-BYTE               *
-Decompress(GifImageDesc, GifHead)
-GIFIMAGEDESC *GifImageDesc;
-GIFHEAD      *GifHead;
+BYTE *Decompress(GIFIMAGEDESC *GifImageDesc, GIFHEAD *GifHead)
 {
     int i;
 
