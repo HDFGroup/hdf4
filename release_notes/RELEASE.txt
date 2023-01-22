@@ -38,12 +38,26 @@ New features and changes
 ========================
     Configuration:
     -------------
+    - Better Autotools compiler support on Linux and MacOS
+
+      The machine configuration files have been split into machine and
+      compiler files, which have been updated with additional warning
+      flags and compiler support.
+
+      Both Linux and MacOS now support:
+
+        * gcc
+        * clang
+        * icc/icx
+
+      (DER - 2023/01/20)
+
     - The Fortran interface is considered deprecated
 
       The Fortran interface is broken on 64-bit systems (see the known
-      problems section) and is currently disabled by default. It will
-      be removed in a future version of the library, possibly as early
-      as 4.2.17.
+      problems section) and is currently disabled by default. It may
+      be removed in a future version of the library or replaced with an
+      alternative Fortran wrapper, possibly as early as 4.2.17.
 
       (DER - 2023/01/15)
 
@@ -202,6 +216,23 @@ Support for new platforms and compilers
 
 Bugs fixed since HDF 4.2.15
 ===========================
+    - Specifying CC on the command line works correctly in the Autotools
+
+      The CC variable was processed incorrectly in the Autotools build files
+      which led to minimal CFLAGS, etc. flags being specified when anything
+      other than CC=gcc was specified.
+
+      (DER - 2023/01/20)
+
+    - --enable-production in the Autotools works correctly
+
+      The variable that was checked when processing --enable-production in
+      the Autotools was spelled incorrectly, leading an Autotools build
+      to default to a "user defined" build that specified minimal flags
+      in CFLAGS, etc.
+
+      (DER - 2023/01/20)
+
     - Segfault is replaced with a failure
 
       Mathworks reported that a segfault had occurred when reading a

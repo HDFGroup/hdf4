@@ -97,7 +97,7 @@
 /*************************** Utility Functions ***************************/
 
 /* Generates the correct name for the test file */
-intn make_datafilename(char *basename, char *testfile, unsigned int size);
+intn make_datafilename(const char *basename, char *testfile, unsigned int size);
 
 /* Calls SDcreate, SDwritedata, and SDendaccess */
 int32 make_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, int32 unlim_dim,

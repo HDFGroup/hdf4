@@ -1148,9 +1148,9 @@ test_chkcmp_SDSs()
     int              num_errs = 0; /* number of errors so far */
 
     /* Declare chunks data type and initialize some of them. */
-    int16 chunk1[CHK_X][CHK_Y] = {{1, 1}, {1, 1}, {1, 1}};
+    int32 chunk1[CHK_X][CHK_Y] = {{1, 1}, {1, 1}, {1, 1}};
 
-    int16 chunk3[CHK_X][CHK_Y] = {{3, 3}, {3, 3}, {3, 3}};
+    int32 chunk3[CHK_X][CHK_Y] = {{3, 3}, {3, 3}, {3, 3}};
 
     int32 chunk2[CHK_X][CHK_Y] = {{2, 2}, {2, 2}, {2, 2}};
 
@@ -1373,6 +1373,10 @@ test_extend_SDSs()
         for (i = 0; i < X_LENGTH; i++)
             data1[j][i] = (i + j) + 1;
 
+    for (j = 0; j < Y_LENGTH; j++) {
+        fdata[j] = -1.0F;
+    }
+
     /* Create the file and initialize the SD interface */
     sd_id = SDstart(EXTEND_FILE, DFACC_CREATE);
     CHECK(sd_id, FAIL, "test_extend_SDSs: SDstart");
@@ -1415,7 +1419,7 @@ test_extend_SDSs()
     CHECK(status, FAIL, "test_extend_SDSs: SDendaccess");
 
     /* Create another dataset with 1 unlimited dimension */
-    sds_id = SDcreate(sd_id, "Extend-Data 2", DFNT_FLOAT64, RANK1, dimsizes);
+    sds_id = SDcreate(sd_id, "Extend-Data 2", DFNT_FLOAT32, RANK1, dimsizes);
     CHECK(sds_id, FAIL, "test_extend_SDSs: SDcreate");
 
     /* Define the location and size of the data to be written to the dataset */

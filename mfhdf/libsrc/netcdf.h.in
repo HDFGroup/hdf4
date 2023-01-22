@@ -24,7 +24,7 @@
 #include "H4api_adpt.h"
 
 /*
- * The definitions ncvoid, USE_ENUM, and MAX_NC_OPEN, may need to be set
+ * The definitions ncvoid and MAX_NC_OPEN, may need to be set
  * properly for your installation.
  */
 
@@ -37,23 +37,6 @@
 /* system doesn't have void type */
 #define ncvoid    char
 #endif
-
-
-/*
- *   If xdr_enum works properly on your system, you can define
- * USE_ENUM so that nc_type is an enum.
- * Otherwise, delete this definition so that the nc_type is
- * an int and the valid values are #defined.
- */
-#ifndef __APPLE__
-/* xdr_enum does not work properly for Mac Lion using the Apple GCC compiler
-i686-apple-darwin11-llvm-gcc-4.2 (GCC) 4.2.1 (Based on Apple Inc. build 5658) (LLVM build 2336.1.00)
- */
-/* Do not use it for all Macs for now. See ticket HDFFR-1318. */
-/* So define USE_ENUM only if this is not an APPLE. */
-#define USE_ENUM
-#endif
-
 
 /*
  * The following macro is provided for backward compatibility only.  If you
@@ -241,27 +224,10 @@ i686-apple-darwin11-llvm-gcc-4.2 (GCC) 4.2.1 (Based on Apple Inc. build 5658) (L
 
 #endif /* HDF */
 
-#ifdef USE_ENUM
-/*
- *  The netcdf data types
+/* This type used to be defined as an enum, but the C standard is a bit
+ * vague as to which integer type you actually get to represent your enum
+ * and passing that through a pointer caused failures on MacOS.
  */
-typedef enum {
-    NC_UNSPECIFIED, /* private */
-    NC_BYTE,
-    NC_CHAR,
-    NC_SHORT,
-    NC_LONG,
-    NC_FLOAT,
-    NC_DOUBLE,
-    /* private */
-    NC_BITFIELD,
-    NC_STRING,
-    NC_IARRAY,
-    NC_DIMENSION,
-    NC_VARIABLE,
-    NC_ATTRIBUTE
-} nc_type ;
-#else
 typedef int nc_type ;
 #define    NC_UNSPECIFIED 0 /* private */
 #define    NC_BYTE 1
@@ -277,8 +243,6 @@ typedef int nc_type ;
 #define    NC_DIMENSION 10
 #define    NC_VARIABLE 11
 #define    NC_ATTRIBUTE 12
-#endif
-
 
 /*
  * C data types corresponding to netCDF data types:
