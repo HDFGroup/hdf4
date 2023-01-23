@@ -104,6 +104,11 @@ main(int argv, char *argc[])
     HDfree(StartPos);
 
     HDfree(GifMemoryStruct.GifHeader);
+    HDfree(GifMemoryStruct.GifImageDesc);
+    HDfree(GifMemoryStruct.GifPlainTextExtension);
+    HDfree(GifMemoryStruct.GifApplicationExtension);
+    HDfree(GifMemoryStruct.GifCommentExtension);
+    HDfree(GifMemoryStruct.GifGraphicControlExtension);
 
     if (GifMemoryStruct.GifApplicationExtension != NULL)
         HDfree(GifMemoryStruct.GifApplicationExtension);
