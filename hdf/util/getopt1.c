@@ -54,7 +54,7 @@
 #ifdef __GNU_LIBRARY__
 #include <stdlib.h>
 #else
-char *getenv();
+char *getenv(const char *name);
 #endif
 
 #ifndef NULL
@@ -62,12 +62,7 @@ char *getenv();
 #endif
 
 int
-                     getopt_long(argc, argv, options, long_options, opt_index)
-int                  argc;
-char *const         *argv;
-const char          *options;
-const struct option *long_options;
-int                 *opt_index;
+getopt_long(int argc, char *const *argv, const char *shortopts, const struct option *longopts, int *indexptr)
 {
     return _getopt_internal(argc, argv, options, long_options, opt_index, 0);
 }
@@ -78,12 +73,8 @@ int                 *opt_index;
    instead.  */
 
 int
-                     getopt_long_only(argc, argv, options, long_options, opt_index)
-int                  argc;
-char *const         *argv;
-const char          *options;
-const struct option *long_options;
-int                 *opt_index;
+getopt_long_only(int argc, char *const *argv, const char *shortopts, const struct option *longopts,
+                 int *indexptr)
 {
     return _getopt_internal(argc, argv, options, long_options, opt_index, 1);
 }
@@ -95,9 +86,7 @@ int                 *opt_index;
 #include <stdio.h>
 
 int
-       main(argc, argv)
-int    argc;
-char **argv;
+main(int argc, char **argv)
 {
     int c;
     int digit_optind = 0;
