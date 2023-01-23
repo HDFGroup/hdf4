@@ -16,14 +16,13 @@
 
 #include <string.h>
 #include "local_nc.h"
-#include "alloc.h"
 
 NC_attr *
 NC_new_attr(const char *name, nc_type type, unsigned count, const void *values)
 {
     NC_attr *ret;
 
-    ret = (NC_attr *)HDmalloc(sizeof(NC_attr));
+    ret = malloc(sizeof(NC_attr));
     if (ret == NULL)
         goto alloc_err;
 
@@ -65,7 +64,7 @@ NC_free_attr(NC_attr *attr)
             goto done;
         }
 
-        Free(attr);
+        free(attr);
     }
 
 done:
@@ -454,7 +453,7 @@ xdr_NC_attr(XDR *xdrs, NC_attr **app)
     }
 
     if (xdrs->x_op == XDR_DECODE) {
-        *app = (NC_attr *)HDmalloc(sizeof(NC_attr));
+        *app = malloc(sizeof(NC_attr));
         if (*app == NULL) {
             nc_serror("xdr_NC_attr");
             return (FALSE);

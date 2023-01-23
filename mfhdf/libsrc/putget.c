@@ -16,7 +16,6 @@
 
 #include <string.h>
 #include "local_nc.h"
-#include "alloc.h"
 #ifdef HDF
 #include "hfile.h" /* Ugh!  We need the defs for HI_READ and HI_SEEK */
 
@@ -213,8 +212,8 @@ NCcoordck(NC *handle, NC_var *vp, const long *coords)
 
             /* strg and strg1 are to hold fill value and its conversion */
             len   = (vp->len / vp->HDFsize) * vp->szof;
-            strg  = (Void *)HDmalloc(len);
-            strg1 = (Void *)HDmalloc(len);
+            strg  = malloc(len);
+            strg1 = malloc(len);
             if (NULL == strg || NULL == strg1)
                 return FALSE;
 
@@ -263,8 +262,8 @@ NCcoordck(NC *handle, NC_var *vp, const long *coords)
             fprintf(stderr, "WROTE %d values at location %d (numrecs = %d)\n", count, *ip * count,
                     vp->numrecs);
 #endif
-            HDfree(strg);
-            HDfree(strg1);
+            free(strg);
+            free(strg1);
             strg = strg1 = NULL;
         } /* !SD_NOFILL  */
 
@@ -459,7 +458,7 @@ xdr_NCvbyte(XDR *xdrs, unsigned rem, unsigned count, char *values)
              * beyond EOF
              */
             clearerr((FILE *)xdrs->x_private);
-            (void)HDmemset(buf, 0, sizeof(buf));
+            memset(buf, 0, sizeof(buf));
         }
         else {
             NCadvise(NC_EXDR, "xdr_NCvbyte");
@@ -467,7 +466,7 @@ xdr_NCvbyte(XDR *xdrs, unsigned rem, unsigned count, char *values)
             return (FALSE);
         }
 #else
-        (void)HDmemset(buf, 0, sizeof(buf));
+        memset(buf, 0, sizeof(buf));
 #endif /* XDRSTDIO */
     }
 
@@ -526,7 +525,7 @@ xdr_NCvshort(XDR *xdrs, unsigned which, short *values)
              * beyond EOF
              */
             clearerr((FILE *)xdrs->x_private);
-            (void)memset(buf, 0, sizeof(buf));
+            memset(buf, 0, sizeof(buf));
         }
         else {
             NCadvise(NC_EXDR, "xdr_NCvbyte");
@@ -534,7 +533,7 @@ xdr_NCvshort(XDR *xdrs, unsigned which, short *values)
             return (FALSE);
         }
 #else
-        (void)HDmemset(buf, 0, sizeof(buf));
+        memset(buf, 0, sizeof(buf));
 #endif /* XDRSTDIO */
     }
 
@@ -646,21 +645,19 @@ PRIVATE int8 *tValues      = NULL;
 intn
 SDPfreebuf()
 {
-    int ret_value = SUCCEED;
-
     if (tBuf != NULL) {
-        HDfree(tBuf);
+        free(tBuf);
         tBuf      = NULL;
         tBuf_size = 0;
-    } /* end if */
+    }
 
     if (tValues != NULL) {
-        HDfree(tValues);
+        free(tValues);
         tValues      = NULL;
         tValues_size = 0;
-    } /* end if */
+    }
 
-    return ret_value;
+    return SUCCEED;
 }
 
 /* ------------------------------ SDIresizebuf ------------------------------ */
@@ -673,16 +670,15 @@ SDIresizebuf(void **buf, int32 *buf_size, int32 size_wanted)
     intn ret_value = SUCCEED;
 
     if (*buf_size < size_wanted) {
-        if (*buf)
-            HDfree(*buf);
+        free(*buf);
         *buf_size = size_wanted;
-        *buf      = HDcalloc(1, size_wanted);
+        *buf      = calloc(1, size_wanted);
         if (*buf == NULL) {
             *buf_size = 0;
             ret_value = FAIL;
             goto done;
-        } /* end if */
-    }     /* end if */
+        }
+    }
 
 done:
     return ret_value;

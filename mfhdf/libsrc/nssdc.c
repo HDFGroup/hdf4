@@ -388,7 +388,7 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
         while (vxrNext != 0) {
             vix_t *vix;
 
-            vix = (vix_t *)HDmalloc(sizeof(vix_t));
+            vix = malloc(sizeof(vix_t));
             if (vix == NULL)
                 HRETURN_ERROR(DFE_NOSPACE, FALSE);
 
@@ -560,7 +560,7 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
         while (vxrNext != 0) {
             vix_t *vix;
 
-            vix = (vix_t *)HDmalloc(sizeof(vix_t));
+            vix = malloc(sizeof(vix_t));
             if (vix == NULL)
                 HRETURN_ERROR(DFE_NOSPACE, FALSE);
 
@@ -702,12 +702,12 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
             hdftype = hdf_map_type(nctype);
 
             bsize = nctypelen(nctype) * count;
-            tBuf  = (char *)HDmalloc((uint32)bsize);
+            tBuf  = malloc((uint32)bsize);
 
             /* convert attribute values and create attr object */
             DFKconvert((VOIDP)b, (VOIDP)tBuf, hdftype, count, DFACC_READ, 0, 0);
             attr[0] = NC_new_attr(name, nctype, count, tBuf);
-            HDfree(tBuf);
+            free(tBuf);
 
             /* make sure we got a valid attribute */
             if (attr[0] == NULL)
@@ -787,12 +787,12 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
             hdftype = hdf_map_type(nctype);
 
             bsize = nctypelen(nctype) * count;
-            tBuf  = (char *)HDmalloc((uint32)bsize);
+            tBuf  = malloc((uint32)bsize);
 
             /* convert attribute values and create attr object */
             DFKconvert((VOIDP)b, (VOIDP)tBuf, hdftype, count, DFACC_READ, 0, 0);
             attr[0] = NC_new_attr(name, nctype, count, tBuf);
-            HDfree(tBuf);
+            free(tBuf);
 
             /* make sure we got a valid attribute */
             if (attr[0] == NULL)

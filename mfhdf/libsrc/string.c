@@ -16,7 +16,6 @@
 
 #include <string.h>
 #include "local_nc.h"
-#include "alloc.h"
 
 #ifdef HDF
 static uint32
@@ -57,7 +56,7 @@ NC_new_string(unsigned count, const char *str)
         return NULL;
     }
 
-    ret = (NC_string *)HDmalloc(sizeof(NC_string));
+    ret = malloc(sizeof(NC_string));
     if (ret == NULL)
         goto alloc_err;
     ret->count = count;
@@ -68,7 +67,7 @@ NC_new_string(unsigned count, const char *str)
     if (count != 0) /* allocate */
     {
         memlen      = count + 1;
-        ret->values = (char *)HDmalloc(memlen);
+        ret->values = malloc(memlen);
         if (ret->values == NULL)
             goto alloc_err;
         if (str != NULL) {
@@ -84,32 +83,25 @@ NC_new_string(unsigned count, const char *str)
         ret->values = NULL;
     }
 
-    return (ret);
+    return ret;
 alloc_err:
     nc_serror("NC_new_string");
-    if (ret != NULL)
-        HDfree(ret);
-    return (NULL);
+    free(ret);
+    return NULL;
 }
 
 /*
- * Free string, and, if needed, its values.
- *
- * NOTE: Changed return value to return 'int'
- *       If successful returns SUCCEED else FAIL -GV 9/19/97
+ * Free string and its values
  */
 int
 NC_free_string(NC_string *cdfstr)
 {
-    int ret_value = SUCCEED;
-
     if (cdfstr != NULL) {
-        if (cdfstr->values != NULL)
-            Free(cdfstr->values);
-        Free(cdfstr);
+        free(cdfstr->values);
+        free(cdfstr);
     }
 
-    return ret_value;
+    return SUCCEED;
 }
 
 NC_string *
@@ -195,5 +187,5 @@ NC_xlen_string(NC_string *cdfstr)
         if ((rem = len % 4) != 0)
             len += 4 - rem;
     }
-    return (len);
+    return len;
 }

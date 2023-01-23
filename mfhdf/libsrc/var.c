@@ -16,7 +16,6 @@
 
 #include <string.h>
 #include "local_nc.h"
-#include "alloc.h"
 
 #ifdef NOT_USED
 static int ncvarcpy(int, int, int);
@@ -27,7 +26,7 @@ NC_new_var(const char *name, nc_type type, int ndims, const int *dims)
 {
     NC_var *ret;
 
-    ret = (NC_var *)HDcalloc(1, sizeof(NC_var));
+    ret = calloc(1, sizeof(NC_var));
     if (ret == NULL)
         goto alloc_err;
 
@@ -90,16 +89,14 @@ NC_free_var(NC_var *var)
             ret_value = FAIL;
             goto done;
         }
-        if (var->shape != NULL)
-            Free(var->shape);
-        if (var->dsizes != NULL)
-            Free(var->dsizes);
+        free(var->shape);
+        free(var->dsizes);
 
         if (NC_free_array(var->attrs) == FAIL) {
             ret_value = FAIL;
             goto done;
         }
-        Free(var);
+        free(var);
     }
 
 done:
@@ -140,7 +137,7 @@ static
         var->len = xszof;
         goto out;
     }
-    shape = (unsigned long *)HDmalloc(ii * sizeof(unsigned long));
+    shape = malloc(ii * sizeof(unsigned long));
     if (shape == NULL) {
         nc_serror("NC_var_shape");
         return (-1);
@@ -153,7 +150,7 @@ static
     for (ip = var->assoc->values, op = shape; ii > 0; ii--) {
         if (*ip < 0 || *ip >= ((dims != NULL) ? dims->count : 1)) {
             NCadvise(NC_EBADDIM, "Bad dimension id %d", *ip);
-            Free(shape);
+            free(shape);
             return (-1);
         }
         dp  = (NC_dim **)dims->values + *ip;
@@ -161,7 +158,7 @@ static
         if (*op == NC_UNLIMITED && ii != var->assoc->count) {
             NCadvise(NC_EUNLIMPOS, "NC_UNLIMITED size applied to index other than 0 %d",
                      var->assoc->count - ii);
-            Free(shape);
+            free(shape);
             return (-1);
         }
         op++;
@@ -169,25 +166,23 @@ static
     }
 
     /* Free memory if this var already has shape previously allocated */
-    if (var->shape != NULL)
-        Free(var->shape);
+    free(var->shape);
     var->shape = shape;
 
     /*
      * Allocate the dsizes array
      */
     ii     = var->assoc->count;
-    dsizes = (unsigned long *)HDmalloc(ii * sizeof(unsigned long));
+    dsizes = malloc(ii * sizeof(unsigned long));
     if (dsizes == NULL) {
-        Free(shape);
+        free(shape);
         var->shape = NULL;
         nc_serror("NC_var_shape");
         return (-1);
     }
 
     /* Free memory if this var already has dsizes previously allocated */
-    if (var->dsizes != NULL)
-        Free(var->dsizes);
+    free(var->dsizes);
     var->dsizes = dsizes;
 
     /*
@@ -713,7 +708,7 @@ xdr_NC_var(XDR *xdrs, NC_var **vpp)
     }
 
     if (xdrs->x_op == XDR_DECODE) {
-        *vpp = (NC_var *)HDcalloc(1, sizeof(NC_var));
+        *vpp = calloc(1, sizeof(NC_var));
         if (*vpp == NULL) {
             nc_serror("xdr_NC_var");
             return (FALSE);
