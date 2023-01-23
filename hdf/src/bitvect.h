@@ -42,10 +42,10 @@ typedef struct bv_struct_tag *bv_ptr;
 #if defined BV_MASTER | defined BV_TESTER
 
 /* Base type of the array used to store the bits */
-typedef unsigned char bv_base;
+typedef uint8 bv_base;
 
 /* # of bits in the base type of the array used to store the bits */
-#define BV_BASE_BITS (sizeof(bv_base) * 8)
+#define BV_BASE_BITS 8
 
 /* bit-vector structure used
  *
@@ -56,7 +56,7 @@ typedef unsigned char bv_base;
 typedef struct bv_struct_tag {
     int32   bits_used;   /* The actual number of bits current in use */
     int32   array_size;  /* The number of bv_base elements in the bit-vector */
-    int32   flags;       /* The flags used to create this bit-vector */
+    uint32   flags;       /* The flags used to create this bit-vector */
     int32    last_zero;  /* The last location we know had a zero bit */
     bv_base *buffer;     /* Pointer to the buffer used to store the bits */
 } bv_struct;

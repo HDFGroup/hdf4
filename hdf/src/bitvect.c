@@ -33,9 +33,8 @@ DESIGN
  */
 
 #define BV_MASTER
-#include "bitvect.h" /* Multi-file raster information */
 
-/* Local pre-processor macros */
+#include "bitvect.h" /* Multi-file raster information */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -59,8 +58,9 @@ DESIGN
 bv_ptr
 bv_new(int32 num_bits, uint32 flags)
 {
-    int32  base_elements; /* the number of base elements needed to store the # of bits requested */
-    bv_ptr b = NULL;      /* ptr to the new bit-vector */
+    int32  base_elements;  /* # of base elements needed to store the # of bits requested */
+    size_t array_mem_size; /* size of the array in memory */
+    bv_ptr b = NULL;       /* ptr to the new bit-vector */
 
     /* Check for invalid numbers of bits or bad flags */
     if (num_bits < -1 || num_bits == 0)
@@ -81,11 +81,13 @@ bv_new(int32 num_bits, uint32 flags)
     b->bits_used  = num_bits;
     b->array_size = ((base_elements / BV_CHUNK_SIZE) + 1) * BV_CHUNK_SIZE;
     b->flags      = flags;
-    if ((b->buffer = malloc(sizeof(bv_base) * b->array_size)) == NULL)
+
+    array_mem_size = sizeof(bv_base) * (size_t)(b->array_size);
+    if ((b->buffer = malloc(array_mem_size)) == NULL)
         goto error;
 
     /* Zero the intial bits */
-    memset(b->buffer, 0, b->array_size);
+    memset(b->buffer, 0, array_mem_size);
     b->last_zero = 0;
 
     return b;
@@ -118,15 +120,11 @@ error:
 intn
 bv_delete(bv_ptr b)
 {
-    /* Error checking */
-    if (b == NULL)
+    if (b == NULL || b->buffer == NULL)
         return FAIL;
-    free(b);
 
-    /* Free the space used */
-    if (b->buffer == NULL)
-        return FAIL;
     free(b->buffer);
+    free(b);
 
     return SUCCEED;
 } /* bv_delete() */
@@ -158,8 +156,8 @@ bv_set(bv_ptr b, int32 bit_num, bv_bool value)
     if (b == NULL || bit_num < 0)
         return FAIL;
 
-    base_elem = bit_num / (int32)BV_BASE_BITS;
-    bit_elem  = bit_num % (int32)BV_BASE_BITS;
+    base_elem = bit_num / BV_BASE_BITS;
+    bit_elem  = bit_num % BV_BASE_BITS;
 
     /* Check if the bit is beyond the end of the current bit-vector */
     if (bit_num >= b->bits_used) {
@@ -173,17 +171,21 @@ bv_set(bv_ptr b, int32 bit_num, bv_bool value)
                 /* allocate more space for bits */
                 bv_base *old_buf = b->buffer; /* ptr to the old buffer */
                 int32    num_chunks;          /* number of chunks to grab */
+                size_t   new_size;
+                size_t   extra_size;
 
                 num_chunks =
-                    (int32)((((bit_num / BV_BASE_BITS) + 1) - b->array_size) / BV_CHUNK_SIZE) + 1;
-                if ((b->buffer = realloc(b->buffer, b->array_size + num_chunks * BV_CHUNK_SIZE)) == NULL) {
+                    ((((bit_num / BV_BASE_BITS) + 1) - b->array_size) / BV_CHUNK_SIZE) + 1;
+                new_size = (size_t)(b->array_size + num_chunks * BV_CHUNK_SIZE);
+                if ((b->buffer = realloc(b->buffer, new_size)) == NULL) {
                     b->buffer = old_buf;
                     /* Could not allocate a larger bit buffer */
                     return FAIL;
                 }
 
                 /* Zero the bits, for the new bits */
-                memset(&b->buffer[b->array_size], 0, num_chunks * BV_CHUNK_SIZE);
+                extra_size = (size_t)(num_chunks * BV_CHUNK_SIZE);
+                memset(&b->buffer[b->array_size], 0, extra_size);
 
                 b->array_size += num_chunks * BV_CHUNK_SIZE;
                 b->bits_used = bit_num + 1;
@@ -262,15 +264,19 @@ bv_get(bv_ptr b, int32 bit_num)
 intn
 bv_clear(bv_ptr b, bv_bool value)
 {
+    size_t array_mem_size;
+
     if (b == NULL || b->buffer == NULL)
         return FAIL;
 
+    array_mem_size = sizeof(bv_base) * (size_t)(b->array_size);
+
     if (value == BV_TRUE) {
-        memset(b->buffer, 255, b->array_size);
+        memset(b->buffer, 255, array_mem_size);
         b->last_zero = -1;
     }
     else {
-        HDmemset(b->buffer, 0, b->array_size);
+        memset(b->buffer, 0, array_mem_size);
         b->last_zero = 0;
     }
 
@@ -297,7 +303,7 @@ bv_size(bv_ptr b)
     if (b == NULL)
         return FAIL;
 
-    return ((int32)b->bits_used);
+    return b->bits_used;
 } /* bv_size() */
 
 /*--------------------------------------------------------------------------
@@ -363,7 +369,7 @@ bv_find(bv_ptr b, int32 last_find, bv_bool value)
 
             first_byte = last_find / BV_BASE_BITS;
             bit_off    = (intn)((last_find - (first_byte * BV_BASE_BITS)) + 1);
-            slush_bits = (bv_base)(b->buffer[first_byte] & (~bv_bit_mask[bit_off]));
+            slush_bits = b->buffer[first_byte] & (~bv_bit_mask[bit_off]);
             if (slush_bits != 0)
                 return (first_byte * BV_BASE_BITS) + bv_first_zero[(~slush_bits)];
             first_byte++;
@@ -378,7 +384,7 @@ bv_find(bv_ptr b, int32 last_find, bv_bool value)
         if ((bytes_used * BV_BASE_BITS) < b->bits_used) {
             slush_bits = (bv_base)(b->buffer[i] & bv_bit_mask[b->bits_used - (bytes_used * BV_BASE_BITS)]);
             if (slush_bits != 0)
-                return (i * BV_BASE_BITS) + bv_first_zero[(bv_base)(~slush_bits)];
+                return (i * BV_BASE_BITS) + bv_first_zero[~slush_bits];
         }
     }
     else {
