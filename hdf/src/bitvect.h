@@ -367,7 +367,7 @@ HDFLIBAPI intn bv_get(bv_ptr b, int32 bit_num);
 
 HDFLIBAPI int32 bv_size(bv_ptr b);
 
-HDFLIBAPI int32 bv_find(bv_ptr b, int32 last_find, bv_bool value);
+HDFLIBAPI int32 bv_find_next_zero(bv_ptr b);
 
 #ifdef __cplusplus
 }

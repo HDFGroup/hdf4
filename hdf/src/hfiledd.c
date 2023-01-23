@@ -1008,9 +1008,9 @@ Htagnewref(int32  file_id, /* IN: File ID the tag/refs are in */
         ret_value = 1;        /* The first available ref */
     else {                    /* found an existing tag */
         tinfo_ptr = *tip_ptr; /* get the pointer to the tag info */
-        if ((ret_value = (uint16)bv_find(tinfo_ptr->b, -1, BV_FALSE)) == (uint16)FAIL)
+        if ((ret_value = (uint16)bv_find_next_zero(tinfo_ptr->b)) == (uint16)FAIL)
             HGOTO_ERROR(DFE_BVFIND, 0);
-    } /* end else */
+    }
 
 done:
     return ret_value;

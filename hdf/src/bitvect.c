@@ -30,6 +30,10 @@ DESIGN
     array of base type (uint8s currently) and the bits in "standard" C order
     (i.e. bit 0 is the lowest bit in the byte) in each byte.  This does make
     for a slightly strange "bit-swapped" storage, but is the most efficient.
+
+    The data structure is optimized for finding the next zero bit an array
+    and caches this location when appropriate. It is NOT similarly optimized
+    for finding 1 bits as that is not a use case in the HDF4 library.
  */
 
 #define BV_MASTER
@@ -106,10 +110,7 @@ error:
     Disposes of a bit-vector created by bv_new.  This routine is responsible
     for completely cleaning up the bit-vector and disposing of all dynamically
     allocated space.
- GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 intn
 bv_delete(bv_ptr b)
@@ -218,7 +219,7 @@ bv_get(bv_ptr b, int32 bit_num)
     intn  ret_value; /* the variable to store the return value */
 
     if (b == NULL || b->buffer == NULL || bit_num < 0)
-        return (FAIL);
+        return FAIL;
 
     /* Check for asking for a bit off of the end of the vector */
     if (bit_num >= b->bits_used)
@@ -258,86 +259,57 @@ bv_size(bv_ptr b)
 
 /*--------------------------------------------------------------------------
  NAME
-    bv_find
+    bv_find_next_zero
  PURPOSE
-    Find the next bit of a given value
+    Find the next zero bit
  USAGE
-    int32 bv_find(b,last_find,value)
+    int32 bv_find_next_zero(b)
         bv_ptr b;                   IN: Bit-vector to use
-        int32 last_find;            IN: bit offset of last bit found
-        bv_bool value;              IN: boolean value to look for
  RETURNS
-    Returns offset of next bit on success, FAIL on error
+    Returns offset of next zero bit on success, FAIL on error
  DESCRIPTION
-    Find the next highest bit of a given bit value.
- GLOBAL VARIABLES
+    Find the next highest zero bit.
  COMMENTS, BUGS, ASSUMPTIONS
-    "last_find" capability not currently implemented for '0' searches - QAK
- EXAMPLES
- REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-bv_find(bv_ptr b, int32 last_find, bv_bool value)
+bv_find_next_zero(bv_ptr b)
 {
     int32   old_bits_used;  /* the last number of bits used */
     int32   bytes_used;     /* number of full bytes used */
-    int32   first_byte = 0; /* The first byte to begin searching at */
     bv_base slush_bits;     /* extra bits which don't fit into a byte */
     int32   i;              /* local counting variable */
+    bv_base *tmp_buf;
 
     if (b == NULL || b->buffer == NULL)
         return FAIL;
 
     bytes_used = b->bits_used / BV_BASE_BITS;
-    if (value == BV_TRUE) {   /* looking for first '1' in the bit-vector */
-        if (last_find >= 0) { /* if the last bit found option is used, look for more bits in that same byte */
-            int bit_off;
 
-            first_byte = last_find / BV_BASE_BITS;
-            bit_off    = (int)((last_find - (first_byte * BV_BASE_BITS)) + 1);
-            slush_bits = b->buffer[first_byte] & (~bv_bit_mask[bit_off]);
-            if (slush_bits != 0)
-                return (first_byte * BV_BASE_BITS) + bv_first_zero[(~slush_bits)];
-            first_byte++;
-        }
+    /* looking for first '0' in the bit-vector */
 
-        for (i = first_byte; i < bytes_used; i++) {
-            if (b->buffer[i] != 0)
-                return (i * BV_BASE_BITS) + bv_first_zero[~b->buffer[i]];
-        }
+    if (b->last_zero >= 0)
+        i = b->last_zero;
+    else
+        i = 0;
 
-        /* Any extra bits left over? */
-        if ((bytes_used * BV_BASE_BITS) < b->bits_used) {
-            slush_bits = (bv_base)(b->buffer[i] & bv_bit_mask[b->bits_used - (bytes_used * BV_BASE_BITS)]);
-            if (slush_bits != 0)
-                return (i * BV_BASE_BITS) + bv_first_zero[~slush_bits];
-        }
+    tmp_buf = &b->buffer[i];
+
+    while (i < bytes_used && *tmp_buf == 255) {
+        i++;
+        tmp_buf++;
     }
-    else {
-        /* looking for first '0' in the bit-vector */
-        bv_base *tmp_buf;
 
-        if (b->last_zero >= 0)
-            i = b->last_zero;
-        else
-            i = 0;
-        tmp_buf = &b->buffer[i];
-        while (i < bytes_used && *tmp_buf == 255) {
-            i++;
-            tmp_buf++;
-        }
-        if (i < bytes_used) {
+    if (i < bytes_used) {
+        b->last_zero = i;
+        return (i * BV_BASE_BITS) + bv_first_zero[*tmp_buf];
+    }
+
+    /* Any extra bits left over? */
+    if ((bytes_used * BV_BASE_BITS) < b->bits_used) {
+        slush_bits = (bv_base)(b->buffer[i] & bv_bit_mask[b->bits_used - (bytes_used * BV_BASE_BITS)]);
+        if (slush_bits != 255) {
             b->last_zero = i;
-            return (i * BV_BASE_BITS) + bv_first_zero[*tmp_buf];
-        }
-
-        /* Any extra bits left over? */
-        if ((bytes_used * BV_BASE_BITS) < b->bits_used) {
-            slush_bits = (bv_base)(b->buffer[i] & bv_bit_mask[b->bits_used - (bytes_used * BV_BASE_BITS)]);
-            if (slush_bits != 255) {
-                b->last_zero = i;
-                return (i * BV_BASE_BITS) + bv_first_zero[slush_bits];
-            }
+            return (i * BV_BASE_BITS) + bv_first_zero[slush_bits];
         }
     }
 
