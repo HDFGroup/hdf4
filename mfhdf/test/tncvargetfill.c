@@ -27,15 +27,14 @@
  *	  test_readings       - tests reading passed written data and max number
  *				of records in the file.
  *
- * BMR - Aug, 2013
  ****************************************************************************/
 
 #include "mfhdf.h"
 #include "hdftest.h"
 
-#define DIM0                                                                                                 \
-    20 /* this value is used to declare larger buffer for when                                               \
-          reading past the maximum number of records in the file */
+/* Used to declare a larger buffer for when attempting to read past the
+   maximum number of records in the file */
+#define DIM0 20
 
 /********************************************************************
    Name: test_1dim_multivars() - tests reading/writing on multiple variables,
@@ -53,7 +52,7 @@
 
    Return value:
         The number of errors occurred in this test.
-   BMR - Sep 4, 2013
+
 *********************************************************************/
 
 #define FILENAME1  "onedimmultivars.hdf"
@@ -245,7 +244,7 @@ test_1dim_multivars()
 
    Return value:
         The number of errors occurred in this routine.
-   BMR - Sep 4, 2013
+
 *********************************************************************/
 
 #define DIM00       10
@@ -595,7 +594,7 @@ test_multidims()
 
    Return value:
         The number of errors occurred in this test.
-   BMR - Sep 4, 2013
+
 *********************************************************************/
 static int
 test_readings(long max_numrecs)

@@ -1181,11 +1181,6 @@ main(int argc, char *argv[])
     status = SDend(f1);
     CHECK(status, FAIL, "SDend");
 
-    /****************************************************************
-     * Moved testing of external storage stuff into texternal.c     *
-     * -BMR, Nov 16, 2015                                           *
-     ****************************************************************/
-
 #ifdef NBIT_TEST
 
     /*
@@ -1281,49 +1276,36 @@ main(int argc, char *argv[])
     num_errs = num_errs + status;
 #endif /* NETCDF_READ_TEST */
 
-    /* BMR: Added a test routine dedicated for testing dimensions.  A
-       test on SDsetdimscale for an unsigned type was added while I was
-       fixing bug #172.  I didn't want to add this test into the already
-       very long main program so, instead, I added this routine, which can
-       be appended with other dimension tests in the future.  Also, some
-       day, the main program can be shortened and some of its dimension-related
-       tests can be moved into this test routine (in tdims.c) - 04/18/01 */
+    /* Tests dimension functions (in tdim.c) */
     status   = test_dimensions();
     num_errs = num_errs + status;
 
-    /* BMR: Added a test routine dedicated for testing SDcheckempty. 09/17/04 */
+    /* Tests SDcheckempty (in temptySDSs.c) */
     status   = test_checkempty();
     num_errs = num_errs + status;
 
-    /* BMR: Added a test routine dedicated for testing attributes (currently
-  only SDsetattr with count=0, more will be moved here eventually
-  (in tattributes.c) - 05/31/11 */
+    /* Tests attribute functions (in tattributes.c) */
     status   = test_attributes();
     num_errs = num_errs + status;
 
-    /* BMR: Added a test routine dedicated for testing SDgetdatasize (in
-       tdatasizes.c) - 09/17/08 */
+    /* Tests SDgetdatasize (in tdatasizes.c) */
     status   = test_datasizes();
     num_errs = num_errs + status;
 
-    /* BMR: Added a test routine dedicated for testing SDgetdatainfo (in
-       tdatainfo.c) - 03/20/10 */
+    /* Tests getting SDS data information (in tdatainfo.c) */
     status   = test_datainfo();
     num_errs = num_errs + status;
 
-    /* BMR: Added a test routine dedicated for testing SDgetattdatainfo
-       and SDgetanndatainto (in tattdatainfo.c) - 1/7/10 */
+    /* Tests getting attribute and annotation data information (in tattdatainfo.c) */
     status   = test_att_ann_datainfo();
     num_errs = num_errs + status;
 
-    /* BMR: Added a test routine dedicated for testing SDidtype (in tidtypes.c)
-       -01/21/05.  Changed file name to tmixed_apis.c and added tests for
-       Vgetvgroups, VSgetvdatas, and Vgisinternal -2011 & 01/2012 */
+    /* Tests SDidtype and V/VS APIs on vgroups/vdatas associated with an sds
+       (in tidtypes.c) */
     status   = test_mixed_apis();
     num_errs = num_errs + status;
 
-    /* BMR: Added a test routine dedicated for testing miscellaneous
-       file-related APIs (in tfiles.c) - 10/12/05 */
+    /* Tests miscellaneous file-related APIs (in tfiles.c) */
     status   = test_files();
     num_errs = num_errs + status;
 
@@ -1334,22 +1316,19 @@ main(int argc, char *argv[])
     status = test_rank0();
     num_errs = num_errs + status; */
 
-    /* BMR: Added a test routine dedicated for testing functionality
-       related to SDS' properties (in tsdsprops.c) - 09/12/06 */
+    /* Tests functionality related to SDS' properties (in tsdsprops.c) */
     status   = test_SDSprops();
     num_errs = num_errs + status;
 
-    /* BMR: Added a test routine dedicated for testing functionality
-       related to coordinate variables (in tcoordvar.c) - 05/21/07 */
+    /* Tests functionality related to coordinate variables (in tcoordvar.c) */
     status   = test_coordvar();
     num_errs = num_errs + status;
 
-    /* BMR: Added a test routine dedicated for testing functionality
-       related to external data (in textdata.c) - 10/29/15 */
+    /* Tests functionality related to external data (in textdata.c) */
     status   = test_external();
     num_errs = num_errs + status;
 
-    /* BMR: Verifies that some functions will not fail even though SZIP
+    /* Verifies that some functions will not fail even though SZIP
        library is not present or only decoder is available. */
     status   = test_szip_compression(); /* in tszip.c */
     num_errs = num_errs + status;

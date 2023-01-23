@@ -28,18 +28,15 @@ main(int argc, char *argv[])
     (void)argc;
     (void)argv;
 
-    /* Tests reading/writing datasets with unlimited dimension via HDF
-       API (bugzilla 1378) -BMR, Jan 07, 2009 */
+    /* Tests reading/writing datasets with unlimited dimension via HDF API */
     status   = test_unlim(); /* in tunlim.c */
     num_errs = num_errs + status;
 
-    /* Tests reading/writing variables with unlimited dimension via nc
-       API (bugzilla 1378) -BMR, Jan 07, 2009 */
+    /* Tests reading/writing variables with unlimited dimension via nc API */
     status   = test_ncunlim(); /* in tncunlim.c */
     num_errs = num_errs + status;
 
-    /* Tests ncvarget in filling fill-values where appropriate (HDFFR-1390)
-       -BMR, Sep 05, 2013 */
+    /* Tests ncvarget in filling fill-values where appropriate (HDFFR-1390) */
     status   = test_ncvargetfill(); /* in tncvargetfill.c */
     num_errs = num_errs + status;
 

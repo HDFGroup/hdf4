@@ -135,10 +135,9 @@ test_chunk()
     status   = SDsetfillvalue(newsds1, (VOIDP)&fill_u16);
     CHECK(status, FAIL, "Chunk Test 1. SDsetfillvalue");
 
-    /* Added to verify that the problem reported in bug HDFFR-5 is gone.  The
-       fix was actually done for and documented in bug HDFFR-171.  It is
-       verified here that SDsetchunk works properly after SDgetchunkinfo
-       being called on an empty SDS prior to SDsetchunk. -BMR, 2011/10/25 */
+    /*
+       Verifies fix for HDFFR-5/HDFFR-171.
+    */
     c_flags_out = 0;
     status      = SDgetchunkinfo(newsds1, NULL, &c_flags_out);
     CHECK(status, FAIL, "Chunk Test 1. SDgetchunkinfo on empty SDS");
@@ -189,7 +188,7 @@ test_chunk()
         goto test2;
     }
 
-    /* read a portion of data back in using SDreaddata*/
+    /* Read a portion of data back in using SDreaddata */
     start_dims[0] = 0;
     start_dims[1] = 0;
     edge_dims[0]  = 9;
@@ -824,19 +823,13 @@ test6:
         goto test7;
     }
 
-    /*
-     * Retrieve and verify the compression type
-     */
+    /* Retrieve and verify the compression type */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
     status    = SDgetcomptype(newsds6, &comp_type);
     CHECK(status, FAIL, "Chunk Test 6. SDgetcomptype");
     VERIFY(comp_type, chunk_def.comp.comp_type, "Chunk Test 6. SDgetcomptype");
 
-    /*
-     * Retrieve and verify the compression info - bug# 307, 10/10/01 - BMR
-     * Updated: SDgetcompress replaced by SDgetcompinfo - bugzilla# 130,
-     *		4/17/05 -BMR
-     */
+    /* Retrieve and verify the compression info - bug# 307 and bugzilla# 130 */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
     HDmemset(&cinfo, 0, sizeof(cinfo));
     status = SDgetcompinfo(newsds6, &comp_type, &cinfo);
@@ -905,7 +898,7 @@ test6:
         goto test7;
     }
 
-    /* read data back in */
+    /* Read data back in */
     start_dims[0] = 0;
     start_dims[1] = 0;
     start_dims[2] = 0;
@@ -1192,9 +1185,9 @@ test7:
     CHECK(status, FAIL, "Chunk Test 7. SDendaccess");
 
     /*
-     * Added to test getting compression information for chunked SDS -
-     * bug# 307, 10/10/01 - BMR
+     * Test getting compression information for chunked SDS - bug# 307
      */
+
     /* Select same SDS again, first get index */
     if ((index = SDnametoindex(fchk, "DataSetChunked_2D_GZIP_1")) == FAIL) {
         fprintf(stderr, "Chunk Test 7. SDnametoindex  Failed for GZIP compressed data set\n");
@@ -1208,11 +1201,7 @@ test7:
         goto test8;
     }
 
-    /*
-     * Retrieve and verify the compression info - bug# 307, 10/10/01 - BMR
-     * Updated: SDgetcompress replaced by SDgetcompinfo - bugzilla# 130,
-     *		4/17/05 -BMR
-     */
+    /* Retrieve and verify the compression info - bug# 307 and bugzilla# 130 */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
     HDmemset(&cinfo, 0, sizeof(cinfo));
     status = SDgetcompinfo(newsds7, &comp_type, &cinfo);
@@ -1220,9 +1209,7 @@ test7:
     VERIFY(comp_type, chunk_def.comp.comp_type, "Chunk Test 6. SDgetcompinfo");
     VERIFY(cinfo.deflate.level, chunk_def.comp.cinfo.deflate.level, "Chunk Test 6. SDgetcompinfo");
 
-    /*
-     * Retrieve and verify the compression type
-     */
+    /* Retrieve and verify the compression type */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
     status    = SDgetcomptype(newsds7, &comp_type);
     CHECK(status, FAIL, "Chunk Test 7. SDgetcomptype");
@@ -1365,11 +1352,7 @@ test8:
     CHECK(status, FAIL, "Chunk Test 8. SDgetcomptype");
     VERIFY(comp_type, COMP_CODE_NBIT, "Chunk Test 8. SDgetcomptype");
 
-    /*
-     * Retrieve and verify the compression info - bug# 307, 10/10/01 - BMR
-     * Updated: SDgetcompress replaced by SDgetcompinfo - bugzilla# 130,
-     *		4/17/05 -BMR
-     */
+    /* Retrieve and verify the compression info - bug# 307 and bugzilla# 130 */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
     HDmemset(&cinfo, 0, sizeof(cinfo));
     status = SDgetcompinfo(newsds8, &comp_type, &cinfo);

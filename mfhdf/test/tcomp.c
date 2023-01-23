@@ -39,7 +39,6 @@
    Return value:
         The number of errors occurred in this routine.
 
-   BMR - May 18, 2007
 *********************************************************************/
 
 #ifdef H4_HAVE_LIBSZ
@@ -253,7 +252,7 @@ test_compressed_data()
     }
 
     /*
-     * Retrieve and verify the compression info - bug# 307, 9/7/01 - BMR
+     * Retrieve and verify the compression info - bug# 307
      */
 #ifndef H4_NO_DEPRECATED_SYMBOLS   /* Jan 9, 2013 */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
@@ -609,7 +608,7 @@ test_compressed_data()
     }
 
     /*
-     * Retrieve and verify the compression info - bug# 307, 9/7/01 - BMR
+     * Retrieve and verify the compression info - bug# 307
      */
 #ifndef H4_NO_DEPRECATED_SYMBOLS   /* Jan 9, 2013 */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
@@ -695,7 +694,7 @@ test_compressed_data()
     }
 
     /*
-     * Retrieve and verify the compression info - bug# 307, 9/7/01 - BMR
+     * Retrieve and verify the compression info - bug# 307
      */
 #ifndef H4_NO_DEPRECATED_SYMBOLS   /* Jan 9, 2013 */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
@@ -782,7 +781,7 @@ test_compressed_data()
     }
 
     /*
-     * Retrieve and verify the compression info - bug# 307, 9/7/01 - BMR
+     * Retrieve and verify the compression info - bug# 307
      */
 #ifndef H4_NO_DEPRECATED_SYMBOLS   /* Jan 9, 2013 */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */

@@ -31,7 +31,6 @@
  *	  test_1dim_multivars_addon - tests multiple 1-dim variables that were
  *		added on to existing file
  *
- * BMR - Dec 30, 2008
  ****************************************************************************/
 
 #include "mfhdf.h"
@@ -57,13 +56,7 @@
 
    Return value:
         The number of errors occurred in this routine.
-   BMR - Dec 30, 2008
 
-   Note: This function will be moved to tutils.c; must decide what
-         to do about the data type and sizes, so that the approach
-         will be consistent within the test suite.  Right now, test
-         tncvargetfill.c is using it from here.
-   BMR - Sep 4, 2013
 *********************************************************************/
 
 int
@@ -115,7 +108,6 @@ verify_info_data(int32 sds_id, int32 expected_dimsize, int16 *result)
    Return value:
         The number of errors occurred in this routine.
 
-   BMR - Dec 30, 2008
 *********************************************************************/
 
 #define FILENAME1 "onedimonevar.nc"
@@ -234,7 +226,6 @@ test_1dim_singlevar()
    Return value:
         The number of errors occurred in this routine.
 
-   BMR - Dec 22, 2008
 *********************************************************************/
 
 #define FILENAME2 "onedimmultivars.nc"
@@ -387,7 +378,6 @@ test_1dim_multivars()
    Return value:
         The number of errors occurred in this routine.
 
-   BMR - Dec 22, 2008
 *********************************************************************/
 
 #define DIM00     10
@@ -580,7 +570,6 @@ test_multidim_singlevar()
    Return value:
         The number of errors occurred in this routine.
 
-   BMR - Dec 30, 2008
 *********************************************************************/
 
 static int
