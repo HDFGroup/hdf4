@@ -19,74 +19,17 @@ PURPOSE
     Provide an API for dynamically-sized bit-vectors or "bit-sets"
 
 REMARKS
-    These function manipulate ordered sets of "bits".  They are designed
-    to closely resemble the functions which one can perform in C with the
-    "bit-wise" algebraic functions, with some additional pizzaz thrown in.
+    These function manipulate ordered sets of "bits".
 
 DESIGN
-        These routines a designed to be a modular component for use both
-    inside the HDF library and out.
-        They will use the HDF typedefs & Standard C library macros, but do
-    not explicitly depend on being inside the library itself.
-        Each bit-vector is stored in memory as an array of unsigned 8-bit
+    Each bit-vector is stored in memory as an array of unsigned 8-bit
     integers (uint8's in HDF types), which can grow as additional bits are
     flagged in the bit-vector.
-        Each bit-vector is stored with the lowest bits in location 0 in the
+
+    Each bit-vector is stored with the lowest bits in location 0 in the
     array of base type (uint8s currently) and the bits in "standard" C order
     (i.e. bit 0 is the lowest bit in the byte) in each byte.  This does make
     for a slightly strange "bit-swapped" storage, but is the most efficient.
-
-BUGS/LIMITATIONS
-   Currently the following design limitations are still in place:
-
-EXPORTED ROUTINES
-
-bv_ptr bv_new(int32 num_bits, uint32 flags)
-    - Creates a new bit-vector with a particular starting # of bits.
-
-intn bv_delete(bv_ptr b)
-    - Deletes a bit-vector created with bv_new.
-
-intn bv_set(bv_ptr b, int32 bit_num, bv_bool value)
-    - Sets a bit in a bit-vector to a given boolean value.
-
-intn bv_get(bv_ptr b, int32 bit_num)
-    - Gets a bit from a bit-vector.
-
-intn bv_clear(bv_ptr b, bv_bool value)
-    - Clears an entire bit-vector to a given boolean value.
-
-int32 bv_size(bv_ptr b)
-    - Reports the number of bits used in a bit-vector.
-
-uint32 bv_flags(bv_ptr b)
-    - Returns the flags used when creating the bit-vector
-
-int32 bv_find(bv_ptr b, int32 last_find, bv_bool value)
-    - Find the next bit in a bit-vector with a given value.
-
-Functions that it would be nice to see (some day):
-
-intn bv_bitand(bv_ptr b, int32 bit_num, bv_bool value)
-    - Perform a boolean AND operation on a bit in a bit-vector.
-
-intn bv_bitor(bv_ptr b, int32 bit_num, bv_bool value)
-    - Perform a boolean OR operation on a bit in a bit-vector.
-
-intn bv_bitxor(bv_ptr b, int32 bit_num, bv_bool value)
-    - Perform a boolean XOR operation on a bit in a bit-vector.
-
-intn bv_bitnot(bv_ptr b, int32 bit_num)
-    - Perform a boolean NOT operation on a bit in a bit-vector.
-
-bv_ptr *bv_vectand(bv_ptr b1, bv_ptr b2)
-    - Perform a boolean AND operation between two bit-vectors.
-
-bv_ptr *bv_vector(bv_ptr b1, bv_ptr b2)
-    - Perform a boolean OR operation between two bit-vectors.
-
-bv_ptr *bv_vectxor(bv_ptr b1, bv_ptr b2)
-    - Perform a boolean XOR operation between two bit-vectors.
  */
 
 #define BV_MASTER
@@ -129,20 +72,20 @@ bv_new(int32 num_bits, uint32 flags)
     if (num_bits == -1)
         num_bits = BV_DEFAULT_BITS;
 
-    base_elements = ((num_bits % (int32)BV_BASE_BITS) > 0) ? (num_bits / (int32)BV_BASE_BITS) + 1
-                                                           : (num_bits / (int32)BV_BASE_BITS);
+    base_elements = ((num_bits % BV_BASE_BITS) > 0) ? (num_bits / BV_BASE_BITS) + 1
+                                                           : (num_bits / BV_BASE_BITS);
 
     if ((b = malloc(sizeof(bv_struct))) == NULL)
         goto error;
 
-    b->bits_used  = (uint32)num_bits;
-    b->array_size = (uint32)(((base_elements / BV_CHUNK_SIZE) + 1) * BV_CHUNK_SIZE);
+    b->bits_used  = num_bits;
+    b->array_size = ((base_elements / BV_CHUNK_SIZE) + 1) * BV_CHUNK_SIZE;
     b->flags      = flags;
     if ((b->buffer = malloc(sizeof(bv_base) * b->array_size)) == NULL)
         goto error;
 
     /* Zero the intial bits */
-    HDmemset(b->buffer, 0, b->array_size);
+    memset(b->buffer, 0, b->array_size);
     b->last_zero = 0;
 
     return b;
@@ -219,12 +162,12 @@ bv_set(bv_ptr b, int32 bit_num, bv_bool value)
     bit_elem  = bit_num % (int32)BV_BASE_BITS;
 
     /* Check if the bit is beyond the end of the current bit-vector */
-    if ((uint32)bit_num >= b->bits_used) {
+    if (bit_num >= b->bits_used) {
         /* OK to extend? */
         if (b->flags & BV_EXTENDABLE) {
-            if ((uint32)base_elem < b->array_size) {
+            if (base_elem < b->array_size) {
                 /* just use more bits in the currently allocated block */
-                b->bits_used = (uint32)(bit_num + 1);
+                b->bits_used = bit_num + 1;
             }
             else {
                 /* allocate more space for bits */
@@ -232,18 +175,18 @@ bv_set(bv_ptr b, int32 bit_num, bv_bool value)
                 int32    num_chunks;          /* number of chunks to grab */
 
                 num_chunks =
-                    (int32)(((((uint32)bit_num / BV_BASE_BITS) + 1) - b->array_size) / BV_CHUNK_SIZE) + 1;
-                if ((b->buffer = realloc(b->buffer, b->array_size + (uint32)num_chunks * BV_CHUNK_SIZE)) == NULL) {
+                    (int32)((((bit_num / BV_BASE_BITS) + 1) - b->array_size) / BV_CHUNK_SIZE) + 1;
+                if ((b->buffer = realloc(b->buffer, b->array_size + num_chunks * BV_CHUNK_SIZE)) == NULL) {
                     b->buffer = old_buf;
                     /* Could not allocate a larger bit buffer */
                     return FAIL;
                 }
 
                 /* Zero the bits, for the new bits */
-                HDmemset(&b->buffer[b->array_size], 0, num_chunks * BV_CHUNK_SIZE);
+                memset(&b->buffer[b->array_size], 0, num_chunks * BV_CHUNK_SIZE);
 
-                b->array_size += (uint32)(num_chunks * BV_CHUNK_SIZE);
-                b->bits_used = (uint32)bit_num + 1;
+                b->array_size += num_chunks * BV_CHUNK_SIZE;
+                b->bits_used = bit_num + 1;
             }
         }
         else {
@@ -289,11 +232,11 @@ bv_get(bv_ptr b, int32 bit_num)
         return (FAIL);
 
     /* Check for asking for a bit off of the end of the vector */
-    if ((uint32)bit_num >= b->bits_used)
+    if (bit_num >= b->bits_used)
         return BV_FALSE;
 
-    base_elem = bit_num / (int32)BV_BASE_BITS;
-    bit_elem  = bit_num % (int32)BV_BASE_BITS;
+    base_elem = bit_num / BV_BASE_BITS;
+    bit_elem  = bit_num % BV_BASE_BITS;
 
     ret_value = b->buffer[base_elem] & bv_bit_value[bit_elem];
     ret_value >>= bit_elem;
@@ -404,11 +347,11 @@ bv_flags(bv_ptr b)
 int32
 bv_find(bv_ptr b, int32 last_find, bv_bool value)
 {
-    uint32  old_bits_used;  /* the last number of bits used */
-    uint32  bytes_used;     /* number of full bytes used */
-    uint32  first_byte = 0; /* The first byte to begin searching at */
+    int32   old_bits_used;  /* the last number of bits used */
+    int32   bytes_used;     /* number of full bytes used */
+    int32   first_byte = 0; /* The first byte to begin searching at */
     bv_base slush_bits;     /* extra bits which don't fit into a byte */
-    uint32  u;              /* local counting variable */
+    int32   i;              /* local counting variable */
 
     if (b == NULL || b->buffer == NULL)
         return FAIL;
@@ -418,24 +361,24 @@ bv_find(bv_ptr b, int32 last_find, bv_bool value)
         if (last_find >= 0) { /* if the last bit found option is used, look for more bits in that same byte */
             intn bit_off;
 
-            first_byte = (uint32)last_find / BV_BASE_BITS;
-            bit_off    = (intn)(((uint32)last_find - (first_byte * BV_BASE_BITS)) + 1);
+            first_byte = last_find / BV_BASE_BITS;
+            bit_off    = (intn)((last_find - (first_byte * BV_BASE_BITS)) + 1);
             slush_bits = (bv_base)(b->buffer[first_byte] & (~bv_bit_mask[bit_off]));
             if (slush_bits != 0)
-                return ((int32)(first_byte * BV_BASE_BITS) + bv_first_zero[(~slush_bits)]);
+                return (first_byte * BV_BASE_BITS) + bv_first_zero[(~slush_bits)];
             first_byte++;
         }
 
-        for (u = first_byte; u < bytes_used; u++) {
-            if (b->buffer[u] != 0)
-                return ((int32)(u * BV_BASE_BITS) + bv_first_zero[~b->buffer[u]]);
+        for (i = first_byte; i < bytes_used; i++) {
+            if (b->buffer[i] != 0)
+                return (i * BV_BASE_BITS) + bv_first_zero[~b->buffer[i]];
         }
 
         /* Any extra bits left over? */
         if ((bytes_used * BV_BASE_BITS) < b->bits_used) {
-            slush_bits = (bv_base)(b->buffer[u] & bv_bit_mask[b->bits_used - (bytes_used * BV_BASE_BITS)]);
+            slush_bits = (bv_base)(b->buffer[i] & bv_bit_mask[b->bits_used - (bytes_used * BV_BASE_BITS)]);
             if (slush_bits != 0)
-                return ((int32)(u * BV_BASE_BITS) + bv_first_zero[(bv_base)(~slush_bits)]);
+                return (i * BV_BASE_BITS) + bv_first_zero[(bv_base)(~slush_bits)];
         }
     }
     else {
@@ -443,33 +386,33 @@ bv_find(bv_ptr b, int32 last_find, bv_bool value)
         bv_base *tmp_buf;
 
         if (b->last_zero >= 0)
-            u = (uint32)b->last_zero;
+            i = b->last_zero;
         else
-            u = 0;
-        tmp_buf = &b->buffer[u];
-        while (u < bytes_used && *tmp_buf == 255) {
-            u++;
+            i = 0;
+        tmp_buf = &b->buffer[i];
+        while (i < bytes_used && *tmp_buf == 255) {
+            i++;
             tmp_buf++;
         }
-        if (u < bytes_used) {
-            b->last_zero = (int32)u;
-            return ((int32)(u * BV_BASE_BITS) + bv_first_zero[*tmp_buf]);
+        if (i < bytes_used) {
+            b->last_zero = i;
+            return (i * BV_BASE_BITS) + bv_first_zero[*tmp_buf];
         }
 
         /* Any extra bits left over? */
         if ((bytes_used * BV_BASE_BITS) < b->bits_used) {
-            slush_bits = (bv_base)(b->buffer[u] & bv_bit_mask[b->bits_used - (bytes_used * BV_BASE_BITS)]);
+            slush_bits = (bv_base)(b->buffer[i] & bv_bit_mask[b->bits_used - (bytes_used * BV_BASE_BITS)]);
             if (slush_bits != 255) {
-                b->last_zero = (int32)u;
-                return ((int32)(u * BV_BASE_BITS) + bv_first_zero[slush_bits]);
+                b->last_zero = i;
+                return (i * BV_BASE_BITS) + bv_first_zero[slush_bits];
             }
         }
     }
 
     /* Beyond the current end of the bit-vector, extend the bit-vector */
     old_bits_used = b->bits_used;
-    if (bv_set(b, (int32)b->bits_used, BV_FALSE) == FAIL)
+    if (bv_set(b, b->bits_used, BV_FALSE) == FAIL)
         return FAIL;
 
-    return (int32)old_bits_used;
+    return old_bits_used;
 } /* bv_find() */
