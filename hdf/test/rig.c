@@ -1046,8 +1046,8 @@ test_r24_jpeg(void)
             num_errs++;
         }
 
-        HDfree (nonhdf_buffer);
-        HDfree (hdf_buffer);
+        HDfree(nonhdf_buffer);
+        HDfree(hdf_buffer);
 
         /* Move forward to the next set of non-HDF data, equivalent to the next
            image in the HDF file JPEGFILE */
