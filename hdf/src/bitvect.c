@@ -235,43 +235,6 @@ bv_get(bv_ptr b, int32 bit_num)
 
 /*--------------------------------------------------------------------------
  NAME
-    bv_clear
- PURPOSE
-    Clears a bit-vector to a given boolean value
- USAGE
-    intn bv_clear(b,value)
-        bv_ptr b;                   IN: Bit-vector to use
-        bv_bool value;              IN: bit value to set the bit to
- RETURNS
-    Returns SUCCEED/FAIL
- DESCRIPTION
-    Sets an entire bit vector to a given boolean value
- COMMENTS, BUGS, ASSUMPTIONS
---------------------------------------------------------------------------*/
-intn
-bv_clear(bv_ptr b, bv_bool value)
-{
-    size_t array_mem_size;
-
-    if (b == NULL || b->buffer == NULL)
-        return FAIL;
-
-    array_mem_size = sizeof(bv_base) * (size_t)(b->array_size);
-
-    if (value == BV_TRUE) {
-        memset(b->buffer, 255, array_mem_size);
-        b->last_zero = -1;
-    }
-    else {
-        memset(b->buffer, 0, array_mem_size);
-        b->last_zero = 0;
-    }
-
-    return SUCCEED;
-} /* bv_clear() */
-
-/*--------------------------------------------------------------------------
- NAME
     bv_size
  PURPOSE
     Report the number of bits in the bit-vector
@@ -328,10 +291,10 @@ bv_find(bv_ptr b, int32 last_find, bv_bool value)
     bytes_used = b->bits_used / BV_BASE_BITS;
     if (value == BV_TRUE) {   /* looking for first '1' in the bit-vector */
         if (last_find >= 0) { /* if the last bit found option is used, look for more bits in that same byte */
-            intn bit_off;
+            int bit_off;
 
             first_byte = last_find / BV_BASE_BITS;
-            bit_off    = (intn)((last_find - (first_byte * BV_BASE_BITS)) + 1);
+            bit_off    = (int)((last_find - (first_byte * BV_BASE_BITS)) + 1);
             slush_bits = b->buffer[first_byte] & (~bv_bit_mask[bit_off]);
             if (slush_bits != 0)
                 return (first_byte * BV_BASE_BITS) + bv_first_zero[(~slush_bits)];

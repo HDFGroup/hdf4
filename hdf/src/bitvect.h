@@ -365,8 +365,6 @@ HDFLIBAPI intn bv_set(bv_ptr b, int32 bit_num, bv_bool value);
 
 HDFLIBAPI intn bv_get(bv_ptr b, int32 bit_num);
 
-HDFLIBAPI intn bv_clear(bv_ptr b, bv_bool value);
-
 HDFLIBAPI int32 bv_size(bv_ptr b);
 
 HDFLIBAPI int32 bv_find(bv_ptr b, int32 last_find, bv_bool value);
