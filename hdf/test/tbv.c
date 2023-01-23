@@ -15,20 +15,6 @@
    FILE
    tbv.c
    Test HDF bit-vector (bv) routines.
-
-   REMARKS
-
-   DESIGN
-
-   BUGS/LIMITATIONS
-
-   EXPORTED ROUTINES
-
-   AUTHOR
-   Quincey Koziol
-
-   MODIFICATION HISTORY
-   12/11/95 - Started coding.
  */
 
 #include "tproto.h"
@@ -56,7 +42,7 @@ test_1(void)
     MESSAGE(8, printf("Bit-vector size=%d\n", (int)size););
     VERIFY_VOID(size, BV_DEFAULT_BITS, "bv_size");
     flags = bv_flags(b);
-    CHECK_VOID(flags, (uint32)FAIL, "bv_flags");
+    VERIFY_VOID(flags, 0, "bv_flags");
     MESSAGE(8, printf("Bit-vector flags=%lx\n", (unsigned long)flags););
     ret = bv_delete(b);
     CHECK_VOID(ret, FAIL, "bv_delete");
@@ -68,7 +54,7 @@ test_1(void)
     MESSAGE(8, printf("Bit-vector size=%d\n", (int)size););
     VERIFY_VOID(size, 80000, "bv_size");
     flags = bv_flags(b);
-    CHECK_VOID(flags, (uint32)FAIL, "bv_flags");
+    VERIFY_VOID(flags, BV_EXTENDABLE, "bv_flags");
     MESSAGE(8, printf("Bit-vector flags=%lx\n", (unsigned long)flags););
     ret = bv_delete(b);
     CHECK_VOID(ret, FAIL, "bv_delete");
@@ -92,7 +78,7 @@ test_2(void)
     MESSAGE(8, printf("Bit-vector size=%d\n", (int)size););
     VERIFY_VOID(size, BV_DEFAULT_BITS, "bv_size");
     flags = bv_flags(b);
-    CHECK_VOID(flags, (uint32)FAIL, "bv_flags");
+    VERIFY_VOID(flags, 0, "bv_flags");
     MESSAGE(8, printf("Bit-vector flags=%lx\n", (unsigned long)flags););
     /* Check setting bits */
     ret = bv_set(b, 13, BV_TRUE);
@@ -122,7 +108,7 @@ test_2(void)
     MESSAGE(8, printf("Bit-vector size=%d\n", (int)size););
     VERIFY_VOID(size, 1000, "bv_size");
     flags = bv_flags(b);
-    CHECK_VOID(flags, (uint32)FAIL, "bv_flags");
+    VERIFY_VOID(flags, BV_EXTENDABLE, "bv_flags");
     MESSAGE(8, printf("Bit-vector flags=%lx\n", (unsigned long)flags););
     /* Check setting bits */
     ret = bv_set(b, 13, BV_TRUE);
@@ -166,7 +152,7 @@ test_3(void)
     MESSAGE(8, printf("Bit-vector size=%d\n", (int)size););
     VERIFY_VOID(size, BV_DEFAULT_BITS, "bv_size");
     flags = bv_flags(b);
-    CHECK_VOID(flags, (uint32)FAIL, "bv_flags");
+    VERIFY_VOID(flags, BV_EXTENDABLE, "bv_flags");
     MESSAGE(8, printf("Bit-vector flags=%lx\n", (unsigned long)flags););
 
     /* Check setting bits */

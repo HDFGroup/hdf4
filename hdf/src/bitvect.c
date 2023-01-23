@@ -87,14 +87,6 @@ bv_ptr *bv_vector(bv_ptr b1, bv_ptr b2)
 
 bv_ptr *bv_vectxor(bv_ptr b1, bv_ptr b2)
     - Perform a boolean XOR operation between two bit-vectors.
-
-LOCAL ROUTINES
-
-AUTHOR
-   Quincey Koziol
-
-MODIFICATION HISTORY
-   12/05/95  - Starting writing specs & coding prototype
  */
 
 #define BV_MASTER
@@ -391,7 +383,8 @@ bv_size(bv_ptr b)
     uint32 bv_size(b)
         bv_ptr b;                   IN: Bit-vector to use
  RETURNS
-    Returns bit-vector flags on success, FAIL on error
+    Returns bit-vector flags.
+    Cannot indicate failure, returns 0 on NULL pointer.
  DESCRIPTION
     Returns the current flags for the bit-vector.
  GLOBAL VARIABLES
@@ -404,9 +397,9 @@ bv_flags(bv_ptr b)
 {
     /* Error checking */
     if (b == NULL)
-        return (FAIL);
+        return 0;
 
-    return (b->flags);
+    return b->flags;
 } /* bv_flags() */
 
 /*--------------------------------------------------------------------------
