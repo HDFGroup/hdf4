@@ -105,8 +105,10 @@ main(int argv, char *argc[])
 
     if (GifMemoryStruct.GifApplicationExtension != NULL) {
         ExtCount = (int32)(GifMemoryStruct.GifHeader)->ApplicationCount;
-        for (i = 0; i < ExtCount; i++)
+        for (i = 0; i < ExtCount; i++) {
+            HDfree(GifMemoryStruct.GifApplicationExtension[i]->ApplicationData);
             HDfree(GifMemoryStruct.GifApplicationExtension[i]);
+        }
         HDfree(GifMemoryStruct.GifApplicationExtension);
     }
     HDfree(GifMemoryStruct.GifImageDesc);
