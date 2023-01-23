@@ -45,8 +45,8 @@ usage()
 int
 main(int argc, char *argv[])
 {
-    int          c;
-    FILE        *fp;
+    int   c;
+    FILE *fp;
 
     yyin  = stdin;
     yyout = stdout;
