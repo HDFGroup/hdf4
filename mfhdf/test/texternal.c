@@ -17,15 +17,11 @@
 
 #include "hdftest.h"
 
-#define EXTTST   "exttst.hdf"         /* main file for external file test */
-#define EXTFILE  "SD_external_file"   /* file to contain external data */
-#define EXTFILE1 "SD_external_file 2" /* file to contain external data */
-#define EXTSDS                                                                                               \
-    "ExternalDataSet" /* data set written with external data                                                 \
-   right after creation */
-#define EXTSDS2                                                                                              \
-    "ExternalDataSet 2"                /* data set first empty then written                                  \
-                  with external data */
+#define EXTTST   "exttst.hdf"          /* main file for external file test */
+#define EXTFILE  "SD_external_file"    /* file to contain external data */
+#define EXTFILE1 "SD_external_file 2"  /* file to contain external data */
+#define EXTSDS   "ExternalDataSet"     /* data set written with external data                                                  right after creation */
+#define EXTSDS2  "ExternalDataSet 2"   /* data set first empty then written                                                    with external data */
 #define WRAPSDS  "WrapperDataSet"      /* data set pointing to external data */
 #define NOEXTSDS "NoExternalDataSet"   /* data set with data in main file */
 #define EXTFILE2 "ExternalSDSexisting" /* data set having data */
@@ -81,7 +77,6 @@ int32 ap_data[1][Y_LENGTH][X_LENGTH];
    Return value:
     The number of errors occurred in this routine.
 
-   BMR - Jan 16, 2009
 *********************************************************************/
 static int
 test_setexternal()
@@ -256,7 +251,6 @@ test_setexternal()
    Return value:
     The number of errors occurred in this routine.
 
-   BMR - Jan 16, 2009
 *********************************************************************/
 static int
 test_getexternal()
@@ -446,7 +440,6 @@ test_getexternal()
    Return value:
     The number of errors occurred in this routine.
 
-   BMR - Jan 16, 2009
 *********************************************************************/
 int
 test_mult_setexternal()
@@ -481,7 +474,7 @@ test_mult_setexternal()
     /* Move data from an external data set, SDS1, into the external file again.
        This simulates the situation of the example being run more than once,
        causing failure in daily test.  This action should have no effect now.
-       (HDFFR-1521)-BMR */
+       (HDFFR-1521) */
 
     /* Select the named data set, id is checked by callee */
     sds1_id = get_SDSbyName(sd_id, SDS1);
@@ -555,7 +548,6 @@ test_mult_setexternal()
    Return value:
     The number of errors occurred in this routine.
 
-   BMR - Jan 16, 2009
 *********************************************************************/
 int
 test_special_combos()
@@ -708,8 +700,7 @@ test_external()
     /* Test SDgetexternalfile basic functionality */
     num_errs = num_errs + test_getexternal();
 
-    /* Test that calling SDsetexternalfile repeatedly will not fail (HDFFR-1516)
-       -BMR, 10/29/15 */
+    /* Test calling SDsetexternalfile repeatedly */
     num_errs = num_errs + test_mult_setexternal();
 
     /* Test multiple specialness */
@@ -729,7 +720,6 @@ test_external()
     data against the original buffer.
    Return value:
         None.
-   BMR - Dec 1, 2015
 *********************************************************************/
 void
 verify_data(int32 sd_id, int32 sds_ind)

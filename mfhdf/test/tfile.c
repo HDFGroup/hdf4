@@ -21,6 +21,7 @@
 /********************************************************************
    Name: test_file_inuse() - tests preventing of an in-use file being
                 removed at cleanup time.
+                (bugzilla #376)
 
    Description:
     Sometime, when an error occurs, the cleanup process attempts to
@@ -45,7 +46,6 @@
    Return value:
     The number of errors occurred in this routine.
 
-   BMR - Jun 22, 2005
 *********************************************************************/
 
 #define FILE_NAME "bug376.hdf" /* data file to test */
@@ -138,6 +138,7 @@ test_file_inuse()
    Name: test_max_open_files() - tests the new API SDreset_maxopenfiles,
                 SDget_maxopenfiles, SDget_numopenfiles,
                 and SDgetfilename.
+                (bugzilla #396 and #440)
 
    Description:
     There were multiple requests from the users to increase the maximum
@@ -170,7 +171,6 @@ test_file_inuse()
    Return value:
     The number of errors occurred in this routine.
 
-   BMR - Oct 14, 2005
 *********************************************************************/
 
 #define NUM_FILES_LOW 35
@@ -268,7 +268,7 @@ test_max_open_files()
             temp_limit = index;
 
         /* only CHECK returned value from SDstart if the failure wasn't
-           because of "too many open files" -BMR 2006/11/01 */
+           because of "too many open files" */
         else
             CHECK(fids[index], FAIL, "test_maxopenfiles: SDstart");
     }
@@ -318,7 +318,6 @@ test_max_open_files()
    Return value:
     The number of errors occurred in this routine.
 
-   BMR - Jan 16, 2009
 *********************************************************************/
 
 #define NX 2
@@ -373,7 +372,6 @@ test_longfilename()
    Return value:
     The number of errors occurred in this routine.
 
-   BMR - Jun 06, 2016
 *********************************************************************/
 
 static int
@@ -438,18 +436,16 @@ test_files()
     /* Output message about test being performed */
     TESTING("miscellaneous file related functions (tfile.c)");
 
-    /* test that an in-use file is not removed in certain failure
-       cleanup. 06/21/05 - bugzilla 376 - BMR */
+    /* Test that an in-use file is not removed in certain failure cleanup. */
     num_errs = num_errs + test_file_inuse();
 
-    /* test APIs that were added for fixing bugzilla 396 and 440.
-       09/07/05 - BMR */
+    /* Test handling of number of open files */
     num_errs = num_errs + test_max_open_files();
 
-    /* test the fix of bugzzila 1331. 01/16/09 - BMR */
+    /* Test file with very long name */
     num_errs = num_errs + test_longfilename();
 
-    /* test the fix of JIRA HDFFR-1519. 06/06/16 - BMR */
+    /* Test determining of file format */
     num_errs = num_errs + test_fileformat();
 
     if (num_errs == 0)

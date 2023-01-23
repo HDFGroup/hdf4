@@ -75,7 +75,7 @@ make_datafilename(const char *basename, char *testfile, unsigned int size)
     (Note: should be modified for more different ranks.)
    Return value:
         Returns the size of the data that had been written successfully.
-   BMR - Dec 1, 2015
+
 *********************************************************************/
 int32
 make_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, int32 unlim_dim,
@@ -138,7 +138,7 @@ make_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, 
     (Note: should be modified for different ranks.)
    Return value:
         Returns the size of the data that had been written successfully.
-   BMR - Dec 1, 2015
+
 *********************************************************************/
 int32
 make_CompSDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, VOIDP written_data)
@@ -210,7 +210,7 @@ make_CompSDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_siz
         Returns the size of the data that had been written successfully.
    Return value:
         None.
-   BMR - Dec 1, 2015
+
 *********************************************************************/
 int32
 make_Ext3D_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, VOIDP written_data,
@@ -267,7 +267,7 @@ make_Ext3D_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_s
     Calls SDnametoindex and SDselect to open a data set by its name.
    Return value:
         Returns the SDS' identifier.
-   BMR - Dec 1, 2015
+
 *********************************************************************/
 int32
 get_SDSbyName(int32 sd_id, char *sds_name)
@@ -295,7 +295,7 @@ get_SDSbyName(int32 sd_id, char *sds_name)
     to close it.
    Return value:
         Returns the size of the data that had been written successfully.
-   BMR - Dec 1, 2015
+
 *********************************************************************/
 int32
 append_Data2SDS(int32 sd_id, char *sds_name, int32 *start, int32 *edges, void *ap_data)
@@ -341,7 +341,7 @@ append_Data2SDS(int32 sd_id, char *sds_name, int32 *start, int32 *edges, void *a
     given data_size and reports if they are different.
    Return value:
         None.
-   BMR - Dec 1, 2015
+
 *********************************************************************/
 void
 verify_datasize(int32 sds_id, int32 data_size, char *sds_name)

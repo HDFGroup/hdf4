@@ -42,10 +42,6 @@
         "count" is 0.
 
         The main contents of the test are listed below.
-
-
-
-
         - create a one-dim SDS, named VAR1_NAME
         - name its dimension VAR1_NAME
         - get file information and verify that there is only 1 variable,
@@ -66,7 +62,6 @@
    Return value:
         The number of errors occurred in this routine.
 
-   BMR - May 18, 2007
 *********************************************************************/
 
 #define FILE_SATTR    "tattributes.hdf"

@@ -10,30 +10,20 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+/********************************************************************
+ * tdim.c - tests dimension functionality
+ * Structure of this file:
+ *    test_dimensions - test driver
+ *    test_dim_basics - tests basic dimension operations
+ *    test_dim_scales - tests basic dimension scale operations
+ *    test_dim_strs   - tests SDsetdimstrs and SDgetdimstrs
+ *
+*********************************************************************/
+
 #include "mfhdf.h"
 
 #ifdef HDF
-
 #include "hdftest.h"
-
-/********************************************************************
-   HISTORY:
-   - 04/18/01
-   This test is added to test SDsetdimscale while fixing bug #172.
-   Beside the fact that the main program was already very long, adding
-   this separate test routine will also define a place for additional
-   dimension tests to be appended in the future.  Also, hopefully, some
-   day, the main program can be shortened and some of its
-   dimension-related tests can be moved into this test routine.
-
-   - 07/28/09
-   Moved tests in test_dimensions into smaller subtests and added test
-   for SDgetdimstrs.  The structure of this file becomes:
-        test_dimensions
-            test_dim_basics
-            test_dim_scales
-            test_dim_strs
-*********************************************************************/
 
 /********************************************************************
    Name: test_dim_basics()

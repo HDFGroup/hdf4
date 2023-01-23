@@ -71,7 +71,6 @@
    Return value:
         The number of errors occurred in this routine.
 
-   BMR - May 18, 2007
 *********************************************************************/
 
 #define VAR1_NAME  "Variable 1"
@@ -272,7 +271,6 @@ test_dim1_SDS1(void)
    Return value:
         The number of errors occurred in this routine.
 
-   BMR - May 18, 2007
 *********************************************************************/
 
 #define VAR1_NAME "Variable 1"
@@ -475,7 +473,6 @@ test_dim1_SDS2(void)
    Return value:
         The number of errors occurred in this routine.
 
-   BMR - Dec 30, 2007
 *********************************************************************/
 
 #define COMMON_NAME  "Common Name"
