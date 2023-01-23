@@ -99,9 +99,9 @@ typedef struct {
     struct xdr_ops {
         /* Get/put long from underlying stream */
         bool_t (*x_getlong)(XDR *, int32_t *);
-        bool_t (*x_putlong)(XDR *, int32_t * ;
+        bool_t (*x_putlong)(XDR *, int32_t *);
         /* Get/put bytes. */
-        bool_t (*x_getbytes)(XDR *, void *, size_t ;
+        bool_t (*x_getbytes)(XDR *, void *, size_t);
         bool_t (*x_putbytes)(XDR *, void *, size_t);
         /* Get or seek within the stream (offsets from beginning of stream). */
         u_int (*x_getpostn)(XDR *);
