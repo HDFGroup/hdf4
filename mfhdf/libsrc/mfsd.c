@@ -1161,7 +1161,7 @@ SDcreate(int32       fid,  /* IN: file ID */
     }
 
     /* make fake dimensions which may or may not be over-ridden later */
-    dims = (intn *)HDmalloc(rank * sizeof(intn));
+    dims = malloc(rank * sizeof(intn));
     if (dims == NULL) {
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     }
@@ -1266,7 +1266,7 @@ SDcreate(int32       fid,  /* IN: file ID */
     handle->flags |= NC_HDIRTY;
 
     /* free dims */
-    HDfree(dims);
+    free(dims);
 
     ret_value = sdsid;
 
@@ -3444,7 +3444,7 @@ SDgetexternalinfo(int32  id,           /* IN: dataset ID */
     if (var->data_ref) {
         int32           retcode = 0;
         sp_info_block_t info_block; /* special info block */
-        HDmemset(&info_block, 0, sizeof(sp_info_block_t));
+        memset(&info_block, 0, sizeof(sp_info_block_t));
 
         /* Get the access id and then its special info */
         aid = Hstartread(handle->hdf_file, var->data_tag, var->data_ref);
@@ -4226,9 +4226,9 @@ SDgetdatasize(int32  sdsid,     /* IN: dataset ID */
     /* allocate temporary buffers so user's arguments can be kept intact
        until finished */
     if (comp_size != NULL)
-        comp_size_tmp = (int32 *)HDmalloc(sizeof(int32));
+        comp_size_tmp = malloc(sizeof(int32));
     if (orig_size != NULL)
-        orig_size_tmp = (int32 *)HDmalloc(sizeof(int32));
+        orig_size_tmp = malloc(sizeof(int32));
 
     /* get NC_var record */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
@@ -4261,10 +4261,8 @@ SDgetdatasize(int32  sdsid,     /* IN: dataset ID */
         *orig_size = *orig_size_tmp;
 
 done:
-    if (comp_size_tmp != NULL)
-        HDfree(comp_size_tmp);
-    if (orig_size_tmp != NULL)
-        HDfree(orig_size_tmp);
+    free(comp_size_tmp);
+    free(orig_size_tmp);
 
     return ret_value;
 } /* SDgetdatasize */
@@ -5028,7 +5026,6 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
 
     /* make sure this is cleared */
     memset(chunk, 0, sizeof(chunk[0]));
-    /* Check some args */
 
     /* get file handle and verify it is an HDF file
        we only handle dealing with SDS only not coordinate variables */
@@ -5153,7 +5150,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
 #endif
 
     /* allocate space for chunk dimensions */
-    if ((chunk[0].pdims = (DIM_DEF *)HDmalloc(ndims * sizeof(DIM_DEF))) == NULL) {
+    if ((chunk[0].pdims = malloc(ndims * sizeof(DIM_DEF))) == NULL) {
         HGOTO_ERROR(DFE_ARGS, FAIL);
     }
 
@@ -5214,7 +5211,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
     /* allocate space for fill value whose number type is the same as
        the dataset */
     fill_val_len = var->HDFsize;
-    if ((fill_val = (void *)HDmalloc(fill_val_len)) == NULL) {
+    if ((fill_val = malloc(fill_val_len)) == NULL) {
         HGOTO_ERROR(DFE_ARGS, FAIL);
     }
 
@@ -5274,15 +5271,14 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
 
     /* make sure our tmp buffer is big enough to hold fill value */
     if (convert && tBuf_size < fill_val_len) {
-        if (tBuf != NULL)
-            HDfree(tBuf);
+        free(tBuf);
         tBuf_size = fill_val_len;
-        tBuf      = HDmalloc(tBuf_size);
+        tBuf      = malloc(tBuf_size);
         if (tBuf == NULL) {
             tBuf_size = 0;
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
-        } /* end if */
-    }     /* end if */
+        }
+    }
 
 #ifdef CHK_DEBUG
     fprintf(stderr, "SDsetchunk: get ready to create, convert=%d\n", convert);
@@ -5339,14 +5335,11 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
 
 done:
     /* free fill value */
-    if (fill_val != NULL)
-        HDfree(fill_val);
-    if (tBuf != NULL)
-        HDfree(tBuf);
+    free(fill_val);
+    free(tBuf);
 
     /* free chunk dims */
-    if (chunk[0].pdims != NULL)
-        HDfree(chunk[0].pdims);
+    free(chunk[0].pdims);
 
     return ret_value;
 } /* SDsetchunk */
@@ -5549,7 +5542,7 @@ SDgetchunkinfo(int32          sdsid,     /* IN: sds access id */
                     break; /* default */
             }              /* end of switch info_block.comp_type */
             /* Free up info in special info block, allocated by the library */
-            HDfree(info_block.cdims);
+            free(info_block.cdims);
         }
     }
     else /* not special chunked element */
@@ -5688,16 +5681,15 @@ SDwritechunk(int32       sdsid,  /* IN: access aid to SDS */
 
                 /* make sure our tmp buffer is big enough to hold everything */
                 if (convert && tBuf_size < byte_count) {
-                    if (tBuf != NULL)
-                        HDfree(tBuf);
+                    free(tBuf);
                     tBuf_size = byte_count;
-                    tBuf      = HDmalloc(tBuf_size);
+                    tBuf      = malloc(tBuf_size);
                     if (tBuf == NULL) {
                         tBuf_size = 0;
                         ret_value = FAIL;
                         HGOTO_ERROR(DFE_NOSPACE, FAIL);
-                    } /* end if */
-                }     /* end if */
+                    }
+                }
 
                 /* Write chunk out, */
                 if (convert) {
@@ -5736,11 +5728,9 @@ SDwritechunk(int32       sdsid,  /* IN: access aid to SDS */
 done:
     /* dont forget to free up info is special info block
        This space was allocated by the library */
-    if (info_block.cdims != NULL)
-        HDfree(info_block.cdims);
+    free(info_block.cdims);
 
-    if (tBuf != NULL)
-        HDfree(tBuf);
+    free(tBuf);
 
     return ret_value;
 } /* SDwritechunk() */
@@ -5887,15 +5877,14 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
 
                 /* make sure our tmp buffer is big enough to hold everything */
                 if (convert && tBuf_size < byte_count) {
-                    if (tBuf != NULL)
-                        HDfree(tBuf);
+                    free(tBuf);
                     tBuf_size = byte_count;
-                    tBuf      = HDmalloc(tBuf_size);
+                    tBuf      = malloc(tBuf_size);
                     if (tBuf == NULL) {
                         tBuf_size = 0;
                         HGOTO_ERROR(DFE_NOSPACE, FAIL);
-                    } /* end if */
-                }     /* end if */
+                    }
+                }
 
                 /* read chunk in */
                 if (convert) {
@@ -5945,11 +5934,9 @@ done:
 
     /* dont forget to free up info in special info block
        This space was allocated by the library */
-    if (info_block.cdims != NULL)
-        HDfree(info_block.cdims);
+    free(info_block.cdims);
 
-    if (tBuf != NULL)
-        HDfree(tBuf);
+    free(tBuf);
 
     return ret_value;
 } /* SDreadchunk() */

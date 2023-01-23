@@ -568,7 +568,7 @@ SDgetoldattdatainfo(int32 dim_id, int32 sdsid, char *attr_name, int32 *offset, i
         }
 
         /* Read the luf string */
-        lufbuf = (char *)HDmalloc(len + 1);
+        lufbuf = malloc(len + 1);
         if (lufbuf == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         Hgetelement(handle->hdf_file, att_tag, att_ref, lufbuf);
@@ -618,7 +618,7 @@ SDgetoldattdatainfo(int32 dim_id, int32 sdsid, char *attr_name, int32 *offset, i
                     dim_att_len = 0;
                 /* If dimension has attribute, calculate its attr length */
                 else {
-                    dim_att = (char *)HDmalloc(HDstrlen(lufp) + 1);
+                    dim_att = malloc(HDstrlen(lufp) + 1);
                     if (dim_att == NULL)
                         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
@@ -636,10 +636,9 @@ SDgetoldattdatainfo(int32 dim_id, int32 sdsid, char *attr_name, int32 *offset, i
                     /* add the length to the offset so far */
                     offp += dim_att_len + 1;
                 }
-                if (dim_att != NULL) {
-                    HDfree(dim_att);
-                    dim_att = NULL;
-                }
+
+                free(dim_att);
+                dim_att = NULL;
             }
 
             /* Calculate offset and length of the requested dimension's luf   */
@@ -652,13 +651,11 @@ SDgetoldattdatainfo(int32 dim_id, int32 sdsid, char *attr_name, int32 *offset, i
         }
         ret_value = 1;
     }
-    if (lufbuf)
-        HDfree(lufbuf);
+    free(lufbuf);
 
 done:
     if (ret_value == FAIL) { /* Failure cleanup */
-        if (lufbuf)
-            HDfree(lufbuf);
+        free(lufbuf);
     }
 
     return ret_value;
@@ -824,7 +821,7 @@ SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32 *offsetarra
                 num_annots = size;
 
             /* Allocate space for list of annotation IDs on this tag/ref */
-            if ((dannots = (int32 *)HDmalloc(num_annots * sizeof(int32))) == NULL)
+            if ((dannots = malloc(num_annots * sizeof(int32))) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
             /* Get list of annotations IDs on this tag/ref */
@@ -848,8 +845,7 @@ SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32 *offsetarra
 
 done:
     /* Release allocated memory */
-    if (dannots)
-        HDfree(dannots);
+    free(dannots);
 
     /* Terminate access to the AN API and close the file if they are opened */
     if (an_id != FAIL)

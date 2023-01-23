@@ -25,7 +25,6 @@
 #include <string.h>
 #include <errno.h>
 #include "local_nc.h"
-#include "alloc.h"
 #include "herr.h"
 
 /* obtain the maximum number of open files allowed, at the same time,
@@ -84,7 +83,7 @@ static void
 ncreset_cdflist()
 {
     if (_cdfs != NULL) {
-        HDfree((VOIDP)_cdfs);
+        free(_cdfs);
         _cdfs = NULL;
     }
 }
@@ -114,7 +113,7 @@ NC_reset_maxopenfiles(intn req_max)
     _cdfs as is and return the current max */
     if (req_max == 0) {
         if (!_cdfs) {
-            _cdfs = (NC **)HDmalloc(sizeof(NC *) * (max_NC_open));
+            _cdfs = malloc(sizeof(NC *) * (max_NC_open));
 
             /* If allocation fails, return 0 for no allocation */
             if (_cdfs == NULL) {
@@ -144,7 +143,7 @@ NC_reset_maxopenfiles(intn req_max)
         alloc_size = req_max;
 
     /* Allocate a new list */
-    newlist = (NC **)HDmalloc(sizeof(NC *) * alloc_size);
+    newlist = malloc(sizeof(NC *) * alloc_size);
 
     /* If allocation fails, return 0 for no allocation */
     if (newlist == NULL) {
@@ -159,7 +158,7 @@ NC_reset_maxopenfiles(intn req_max)
     if (_cdfs != NULL) {
         for (i = 0; i < _ncdf; i++)
             newlist[i] = _cdfs[i];
-        HDfree(_cdfs);
+        free(_cdfs);
     }
 
     /* Set _cdfs to the new list */

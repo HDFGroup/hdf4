@@ -15,7 +15,6 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "local_nc.h"
-#include "alloc.h"
 
 /* values: VAX C doesn't like values[] */
 NC_iarray *
@@ -25,14 +24,14 @@ NC_new_iarray(unsigned count, const int *values)
     int       *ip;
     size_t     memlen;
 
-    ret = (NC_iarray *)HDmalloc(sizeof(NC_iarray));
+    ret = malloc(sizeof(NC_iarray));
     if (ret == NULL)
         goto alloc_err;
     ret->count = count;
     if (count != 0) /* allocate */
     {
         memlen      = count * sizeof(int);
-        ret->values = (int *)HDmalloc(memlen);
+        ret->values = malloc(memlen);
         if (ret->values == NULL)
             goto alloc_err;
         if (values != NULL) /* copy them in */
@@ -52,23 +51,17 @@ alloc_err:
 }
 
 /*
- * Free iarray, and, if needed, its values.
- *
- * NOTE: Changed return value to return 'int'
- *       If successful returns SUCCEED else FAIL -GV 9/19/97
+ * Free iarray and its values
  */
 int
 NC_free_iarray(NC_iarray *iarray)
 {
-    int ret_value = SUCCEED;
-
     if (iarray != NULL) {
-        if (iarray->values != NULL)
-            Free(iarray->values);
-        Free(iarray);
+        free(iarray->values);
+        free(iarray);
     }
 
-    return ret_value;
+    return SUCCEED;
 }
 
 bool_t

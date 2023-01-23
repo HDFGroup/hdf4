@@ -56,18 +56,12 @@ typedef struct {
     unsigned char base[BIOBUFSIZ]; /* the data buffer */
 } biobuf;
 
-static void
-free_biobuf(biobuf *buf)
-{
-    HDfree(buf);
-}
-
 static biobuf *
 new_biobuf(int fd, int fmode)
 {
     biobuf *biop;
 
-    biop = (biobuf *)HDmalloc(sizeof(biobuf));
+    biop = malloc(sizeof(biobuf));
     if (biop == NULL)
         return NULL;
     biop->fd = fd;
@@ -334,7 +328,7 @@ xdrposix_destroy(XDR *xdrs)
         }
         if (biop->fd != -1)
             (void)close(biop->fd);
-        free_biobuf(biop);
+        free(biop);
     }
 }
 

@@ -15,7 +15,6 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "local_nc.h"
-#include "alloc.h"
 
 /* you may wish to tune this: big on a cray, small on a PC? */
 #define NC_SHRT_BUFSIZ 8192

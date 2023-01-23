@@ -16,7 +16,6 @@
 
 #include <string.h>
 #include "local_nc.h"
-#include "alloc.h"
 
 #ifdef NO_MEM_FUNCTS
 /*
@@ -178,10 +177,10 @@ NC_arrayfill(void *low, size_t len, nc_type type)
     hi = lo + len;
     switch (type) {
         case NC_BYTE:
-            HDmemset(lo, FILL_BYTE, len);
+            memset(lo, FILL_BYTE, len);
             break;
         case NC_CHAR:
-            HDmemset(lo, FILL_CHAR, len);
+            memset(lo, FILL_CHAR, len);
             break;
         case NC_SHORT:
             while (lo < hi) {
@@ -209,7 +208,7 @@ NC_arrayfill(void *low, size_t len, nc_type type)
             }
             break;
         default:
-            HDmemset(lo, 0xff, len);
+            memset(lo, 0xff, len);
             break;
     }
 }
@@ -226,7 +225,7 @@ NC_new_array(nc_type type, unsigned count, const void *values)
     NC_array *ret;
     size_t    memlen;
 
-    ret = (NC_array *)HDmalloc(sizeof(NC_array));
+    ret = malloc(sizeof(NC_array));
     if (ret == NULL)
         goto alloc_err;
 
@@ -242,7 +241,7 @@ NC_new_array(nc_type type, unsigned count, const void *values)
     fprintf(stderr, "NC_new_array(): count=%u, memlen=%u\n", count, memlen);
 #endif
     if (count != 0) {
-        ret->values = (Void *)HDmalloc(memlen);
+        ret->values = malloc(memlen);
 #ifdef SDDEBUG
         fprintf(stderr, "NC_new_array(): ret->values=%p, values=%p\n", ret->values, values);
 #endif
@@ -367,10 +366,10 @@ NC_free_array(NC_array *array)
                     break;
             }
 
-            Free(array->values);
+            free(array->values);
         }
 
-        Free(array);
+        free(array);
     }
 
 done:
@@ -446,7 +445,7 @@ NC_incr_array(NC_array *array, Void *tail)
         return (NULL);
     }
 
-    array->values = (Void *)HDrealloc(array->values, (array->count + 1) * array->szof);
+    array->values = realloc(array->values, (array->count + 1) * array->szof);
     if (array->values == NULL) {
         nc_serror("extend_array");
         return (NULL);

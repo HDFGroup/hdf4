@@ -141,7 +141,7 @@ hdf_register_seen_sdg(uint16 sdgRef)
     /* check if table is allocated */
     if (!sdgTable) {
         sdgMax   = SDG_MAX_INITIAL;
-        sdgTable = (uint16 *)HDmalloc(sdgMax * sizeof(uint16));
+        sdgTable = malloc(sdgMax * sizeof(uint16));
         if (sdgTable == NULL) {
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         }
@@ -154,7 +154,7 @@ hdf_register_seen_sdg(uint16 sdgRef)
     /* check if we need to increase size of table */
     if (sdgCurrent == sdgMax) {
         sdgMax *= 2;
-        sdgTable = (uint16 *)HDrealloc((VOIDP)sdgTable, sdgMax * sizeof(uint16));
+        sdgTable = realloc(sdgTable, sdgMax * sizeof(uint16));
         if (sdgTable == NULL) {
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         }
@@ -216,7 +216,7 @@ hdf_read_rank(int32 acc_id, int16 *rank)
     uint8         *p, *local_buf = NULL;
     hdf_err_code_t ret_value = DFE_NONE;
 
-    local_buf = (uint8 *)HDmalloc(2 * sizeof(uint8));
+    local_buf = malloc(2 * sizeof(uint8));
     if (local_buf == NULL) {
         HGOTO_ERROR(DFE_NOSPACE, DFE_NOSPACE);
     }
@@ -232,7 +232,7 @@ hdf_read_rank(int32 acc_id, int16 *rank)
         if (temp_rank > 0) /* what about the case of rank=0? -BMR */
         {
             *rank = temp_rank;
-            HDfree(local_buf);
+            free(local_buf);
         }
         else
             HGOTO_ERROR(DFE_RANGE, DFE_RANGE);
@@ -240,8 +240,7 @@ hdf_read_rank(int32 acc_id, int16 *rank)
 
 done:
     if (ret_value != DFE_NONE) { /* Failure cleanup */
-        if (local_buf != NULL)
-            HDfree(local_buf);
+        free(local_buf);
     }
 
     /* return DFE_NONE or error code */
@@ -266,7 +265,7 @@ hdf_read_dimsizes(int32 acc_id, int16 rank, int32 *dimsizes)
     intn           i;
     hdf_err_code_t ret_value = DFE_NONE;
 
-    local_buf = (uint8 *)HDmalloc(4 * (size_t)rank * sizeof(uint8));
+    local_buf = malloc(4 * (size_t)rank * sizeof(uint8));
     if (local_buf == NULL) {
         HGOTO_ERROR(DFE_NOSPACE, DFE_NOSPACE);
     }
@@ -286,12 +285,11 @@ hdf_read_dimsizes(int32 acc_id, int16 rank, int32 *dimsizes)
         else
             dimsizes[i] = dim_size;
     }
-    HDfree(local_buf);
+    free(local_buf);
 
 done:
     if (ret_value != DFE_NONE) { /* Failure cleanup */
-        if (local_buf != NULL)
-            HDfree(local_buf);
+        free(local_buf);
     }
 
     /* return DFE_NONE or error code */
@@ -317,7 +315,7 @@ hdf_read_NT(int32 acc_id, NC *handle, uint8 *ntstring_buf)
     uint8         *p, *local_buf = NULL;
     hdf_err_code_t ret_value = DFE_NONE;
 
-    local_buf = (uint8 *)HDmalloc(4 * sizeof(uint8));
+    local_buf = malloc(4 * sizeof(uint8));
     if (local_buf == NULL) {
         HGOTO_ERROR(DFE_NOSPACE, DFE_NOSPACE);
     }
@@ -334,12 +332,11 @@ hdf_read_NT(int32 acc_id, NC *handle, uint8 *ntstring_buf)
     if (Hgetelement(handle->hdf_file, ntTag, ntRef, ntstring_buf) == FAIL) {
         HGOTO_ERROR(DFE_GETELEM, DFE_GETELEM);
     }
-    HDfree(local_buf);
+    free(local_buf);
 
 done:
     if (ret_value != DFE_NONE) { /* Failure cleanup */
-        if (local_buf != NULL)
-            HDfree(local_buf);
+        free(local_buf);
     }
 
     /* return DFE_NONE or error code */
@@ -369,13 +366,13 @@ hdf_get_sdc(NC *handle, uint16 tmpRef, NC_attr **tmp_attr, intn *curr_attr)
         HGOTO_ERROR(DFE_INTERNAL, DFE_INTERNAL);
     }
 
-    coordbuf = (uint8 *)HDmalloc((uint32)len + 1);
+    coordbuf = malloc((uint32)len + 1);
     if (NULL == coordbuf) {
         HGOTO_ERROR(DFE_NOSPACE, DFE_NOSPACE);
     }
 
     if (Hgetelement(handle->hdf_file, DFTAG_SDC, tmpRef, coordbuf) == FAIL) {
-        HDfree((VOIDP)coordbuf);
+        free(coordbuf);
         HGOTO_ERROR(DFE_GETELEM, DFE_GETELEM);
     }
 
@@ -391,11 +388,11 @@ hdf_get_sdc(NC *handle, uint16 tmpRef, NC_attr **tmp_attr, intn *curr_attr)
             (*curr_attr)++;
         }
     }
-    HDfree((VOIDP)coordbuf);
+    free(coordbuf);
 done:
     if (ret_value != DFE_NONE) { /* Failure cleanup */
         if (coordbuf != NULL)
-            HDfree((VOIDP)coordbuf);
+            free(coordbuf);
     }
 
     return ret_value;
@@ -432,7 +429,7 @@ hdf_get_pred_str_attr(NC *handle, uint16 stratt_tag, uint16 satt_ref, int null_c
             HGOTO_ERROR(DFE_INTERNAL, NULL);
         }
 
-        tmpbuf = (uint8 *)HDmalloc((uint32)len + 3);
+        tmpbuf = malloc((uint32)len + 3);
         if (NULL == tmpbuf) {
             HGOTO_ERROR(DFE_NOSPACE, NULL);
         }
@@ -448,8 +445,7 @@ hdf_get_pred_str_attr(NC *handle, uint16 stratt_tag, uint16 satt_ref, int null_c
 
 done:
     if (ret_value == NULL) { /* Failure cleanup */
-        if (tmpbuf != NULL)
-            HDfree(tmpbuf);
+        free(tmpbuf);
     }
 
     /* return the string attribute */
@@ -492,7 +488,7 @@ hdf_get_desc_annot(NC *handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr,
     num_ddescs = ANnumann(an_handle, AN_DATA_DESC, ndgTag, ndgRef);
     if (num_ddescs != 0) {
         /* allocate space for list of desc annotation id's with this tag/ref */
-        if ((ddescs = (int32 *)HDmalloc(num_ddescs * sizeof(int32))) == NULL) {
+        if ((ddescs = malloc(num_ddescs * sizeof(int32))) == NULL) {
             HGOTO_ERROR(DFE_NOSPACE, DFE_ANAPIERROR);
         }
 
@@ -509,10 +505,10 @@ hdf_get_desc_annot(NC *handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr,
 
             /* allocate space for desc */
             if (ann_desc == NULL) {
-                if ((ann_desc = (char *)HDmalloc((ann_len + 1) * sizeof(char))) == NULL) {
+                if ((ann_desc = malloc((ann_len + 1) * sizeof(char))) == NULL) {
                     HGOTO_ERROR(DFE_NOSPACE, DFE_NOSPACE);
                 }
-                HDmemset(ann_desc, '\0', ann_len + 1);
+                memset(ann_desc, '\0', ann_len + 1);
             }
 
             /* read desc */
@@ -539,18 +535,15 @@ hdf_get_desc_annot(NC *handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr,
             ANendaccess(ddescs[i]);
 
             /* free buffer */
-            if (ann_desc != NULL) {
-                HDfree(ann_desc);
-                ann_desc = NULL;
-            }
+            free(ann_desc);
+            ann_desc = NULL;
         }
 
     } /* end if descs */
 
 done:
     if (ret_value == DFE_NONE) { /* Failure cleanup */
-        if (ddescs != NULL)
-            HDfree(ddescs);
+        free(ddescs);
         if (an_handle != FAIL)
             ANend(an_handle);
     }
@@ -597,7 +590,7 @@ hdf_get_label_annot(NC *handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr
 
     if (num_dlabels != 0) {
         /* allocate space for list of label annotation id's with this tag/ref */
-        if ((dlabels = (int32 *)HDmalloc(num_dlabels * sizeof(int32))) == NULL) {
+        if ((dlabels = malloc(num_dlabels * sizeof(int32))) == NULL) {
             HGOTO_ERROR(DFE_ANAPIERROR, DFE_ANAPIERROR);
         }
 
@@ -614,10 +607,10 @@ hdf_get_label_annot(NC *handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr
 
             /* allocate space for label */
             if (ann_label == NULL) {
-                if ((ann_label = (char *)HDmalloc((ann_len + 1) * sizeof(char))) == NULL) {
+                if ((ann_label = malloc((ann_len + 1) * sizeof(char))) == NULL) {
                     HGOTO_ERROR(DFE_ANAPIERROR, DFE_ANAPIERROR);
                 }
-                HDmemset(ann_label, '\0', ann_len + 1);
+                memset(ann_label, '\0', ann_len + 1);
             }
 
             /* read label */
@@ -644,17 +637,14 @@ hdf_get_label_annot(NC *handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr
             ANendaccess(dlabels[i]);
 
             /* free buffer */
-            if (ann_label != NULL) {
-                HDfree(ann_label);
-                ann_label = NULL;
-            }
+            free(ann_label);
+            ann_label = NULL;
         }
     } /* end if labels */
 
 done:
     if (ret_value == DFE_NONE) { /* Failure cleanup */
-        if (dlabels != NULL)
-            HDfree(dlabels);
+        free(dlabels);
         if (an_handle != FAIL)
             ANend(an_handle);
     }
@@ -969,17 +959,17 @@ hdf_read_ndgs(NC *handle)
      */
     max_thangs = 1; /* what is this limit ? */
 
-    dims = (NC_dim **)HDmalloc(sizeof(NC_dim *) * max_thangs);
+    dims = malloc(sizeof(NC_dim *) * max_thangs);
     if (NULL == dims) {
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     }
 
-    vars = (NC_var **)HDmalloc(sizeof(NC_var *) * max_thangs);
+    vars = malloc(sizeof(NC_var *) * max_thangs);
     if (NULL == vars) {
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     }
 
-    attrs = (NC_attr **)HDmalloc(sizeof(NC_attr *) * 100);
+    attrs = malloc(sizeof(NC_attr *) * 100);
     if (NULL == attrs) {
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     }
@@ -1053,7 +1043,7 @@ hdf_read_ndgs(NC *handle)
 
             /* Check if temporary buffer has been allocated */
             if (ptbuf == NULL) {
-                ptbuf = (uint8 *)HDmalloc(TBUF_SZ * sizeof(uint8));
+                ptbuf = malloc(TBUF_SZ * sizeof(uint8));
                 if (ptbuf == NULL) {
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
                 }
@@ -1075,17 +1065,17 @@ hdf_read_ndgs(NC *handle)
                             HGOTO_ERROR(err_code, FAIL);
 
                         /* get space for dimensions */
-                        dimsizes = (int32 *)HDmalloc((uint32)rank * sizeof(int32));
+                        dimsizes = malloc((uint32)rank * sizeof(int32));
                         if (dimsizes == NULL) {
                             HGOTO_ERROR(DFE_NOSPACE, FAIL);
                         }
 
-                        vardims = (intn *)HDmalloc((uint32)rank * sizeof(intn));
+                        vardims = malloc((uint32)rank * sizeof(intn));
                         if (vardims == NULL) {
                             HGOTO_ERROR(DFE_NOSPACE, FAIL);
                         }
 
-                        scaletypes = (int32 *)HDmalloc((uint32)rank * sizeof(int32));
+                        scaletypes = malloc((uint32)rank * sizeof(int32));
                         if (scaletypes == NULL) {
                             HGOTO_ERROR(DFE_NOSPACE, FAIL);
                         }
@@ -1242,10 +1232,8 @@ hdf_read_ndgs(NC *handle)
             }     /* end while 'DFdiget()'*/
 
             /* Free local buffer */
-            if (ptbuf != NULL) {
-                HDfree(ptbuf);
-                ptbuf = NULL;
-            }
+            free(ptbuf);
+            ptbuf = NULL;
 
             /*
              * Get the predefined string attributes of the dataset.  Note
@@ -1314,12 +1302,12 @@ hdf_read_ndgs(NC *handle)
                 if (current_dim == max_thangs) {
                     /* need to allocate more space */
                     max_thangs *= 2;
-                    dims = (NC_dim **)HDrealloc((VOIDP)dims, sizeof(NC_dim *) * max_thangs);
+                    dims = realloc(dims, sizeof(NC_dim *) * max_thangs);
                     if (NULL == dims) {
                         HGOTO_ERROR(DFE_NOSPACE, FAIL);
                     }
 
-                    vars = (NC_var **)HDrealloc((VOIDP)vars, sizeof(NC_var *) * max_thangs);
+                    vars = realloc(vars, sizeof(NC_var *) * max_thangs);
                     if (NULL == vars) {
                         HGOTO_ERROR(DFE_NOSPACE, FAIL);
                     }
@@ -1416,11 +1404,11 @@ hdf_read_ndgs(NC *handle)
                         /* need to allocate more space */
                         max_thangs *= 2;
 
-                        dims = (NC_dim **)HDrealloc((VOIDP)dims, sizeof(NC_dim *) * max_thangs);
+                        dims = realloc(dims, sizeof(NC_dim *) * max_thangs);
                         if (NULL == dims)
                             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-                        vars = (NC_var **)HDrealloc((VOIDP)vars, sizeof(NC_var *) * max_thangs);
+                        vars = realloc(vars, sizeof(NC_var *) * max_thangs);
                         if (NULL == vars)
                             HGOTO_ERROR(DFE_NOSPACE, FAIL);
                     }
@@ -1529,12 +1517,12 @@ hdf_read_ndgs(NC *handle)
                 /* need to allocate more space */
                 max_thangs *= 2;
 
-                dims = (NC_dim **)HDrealloc((VOIDP)dims, sizeof(NC_dim *) * max_thangs);
+                dims = realloc(dims, sizeof(NC_dim *) * max_thangs);
                 if (NULL == dims) {
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
                 }
 
-                vars = (NC_var **)HDrealloc((VOIDP)vars, sizeof(NC_var *) * max_thangs);
+                vars = realloc(vars, sizeof(NC_var *) * max_thangs);
                 if (NULL == vars) {
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
                 }
@@ -1543,20 +1531,13 @@ hdf_read_ndgs(NC *handle)
             /*
              * De-allocate temporary storage
              */
-            if (labelbuf != NULL)
-                HDfree((VOIDP)labelbuf);
-            if (scalebuf != NULL)
-                HDfree((VOIDP)scalebuf);
-            if (unitbuf != NULL)
-                HDfree((VOIDP)unitbuf);
-            if (formatbuf != NULL)
-                HDfree((VOIDP)formatbuf);
-            if (dimsizes != NULL)
-                HDfree((VOIDP)dimsizes);
-            if (vardims != NULL)
-                HDfree((VOIDP)vardims);
-            if (scaletypes != NULL)
-                HDfree((VOIDP)scaletypes);
+            free(labelbuf);
+            free(scalebuf);
+            free(unitbuf);
+            free(formatbuf);
+            free(dimsizes);
+            free(vardims);
+            free(scaletypes);
 
             /*
              * Look for the next DataSet
@@ -1594,30 +1575,19 @@ hdf_read_ndgs(NC *handle)
 
 done:
     if (ret_value == FAIL) { /* FAIL cleanup? */
-        if (labelbuf != NULL)
-            HDfree((VOIDP)labelbuf);
-        if (scalebuf != NULL)
-            HDfree((VOIDP)scalebuf);
-        if (unitbuf != NULL)
-            HDfree((VOIDP)unitbuf);
-        if (formatbuf != NULL)
-            HDfree((VOIDP)formatbuf);
-        if (dimsizes != NULL)
-            HDfree((VOIDP)dimsizes);
-        if (vardims != NULL)
-            HDfree((VOIDP)vardims);
-        if (scaletypes != NULL)
-            HDfree((VOIDP)scaletypes);
-        if (ptbuf != NULL)
-            HDfree(ptbuf);
+        free(labelbuf);
+        free(scalebuf);
+        free(unitbuf);
+        free(formatbuf);
+        free(dimsizes);
+        free(vardims);
+        free(scaletypes);
+        free(ptbuf);
     }
 
-    if (dims != NULL)
-        HDfree((VOIDP)dims);
-    if (vars != NULL)
-        HDfree((VOIDP)vars);
-    if (attrs != NULL)
-        HDfree((VOIDP)attrs);
+    free(dims);
+    free(vars);
+    free(attrs);
 
     return ret_value;
 } /* hdf_read_ndgs */
@@ -1653,7 +1623,8 @@ hdf_read_sds_cdf(XDR *xdrs, NC **handlep)
      */
 
     /* we haven't seen any SDG-NDG combos yet */
-    HDfreenclear(sdgTable);
+    free(sdgTable);
+    sdgTable = NULL;
 
     handle = (*handlep);
     if (NULL == handle) {
@@ -1666,9 +1637,7 @@ hdf_read_sds_cdf(XDR *xdrs, NC **handlep)
     }
 
     /* deallocate SDG-NDG space */
-    if (sdgTable != NULL)
-        HDfree((VOIDP)sdgTable);
-
+    free(sdgTable);
     sdgTable = NULL;
 
 done:
