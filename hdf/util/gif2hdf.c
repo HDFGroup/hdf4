@@ -22,7 +22,7 @@ main(int argv, char *argc[])
     GIFIMAGEDESC gifImageDesc;
 
     FILE *fpGif;
-    int32 i, ImageCount;
+    int32 i, ImageCount, ExtCount;
     int32 filesize;
     BYTE *MemGif;
     BYTE *StartPos;
@@ -103,15 +103,18 @@ main(int argv, char *argc[])
     }
     HDfree(StartPos);
 
-    HDfree(GifMemoryStruct.GifHeader);
+    if (GifMemoryStruct.GifApplicationExtension != NULL) {
+        ExtCount = (int32)(GifMemoryStruct.GifHeader)->ApplicationCount;
+        for (i = 0; i < ExtCount; i++)
+            HDfree(GifMemoryStruct.GifApplicationExtension[i]);
+        HDfree(GifMemoryStruct.GifApplicationExtension);
+    }
     HDfree(GifMemoryStruct.GifImageDesc);
     HDfree(GifMemoryStruct.GifPlainTextExtension);
-    HDfree(GifMemoryStruct.GifApplicationExtension);
     HDfree(GifMemoryStruct.GifCommentExtension);
     HDfree(GifMemoryStruct.GifGraphicControlExtension);
 
-    if (GifMemoryStruct.GifApplicationExtension != NULL)
-        HDfree(GifMemoryStruct.GifApplicationExtension);
+    HDfree(GifMemoryStruct.GifHeader);
 
     return (0);
 }
