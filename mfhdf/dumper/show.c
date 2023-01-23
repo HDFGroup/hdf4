@@ -240,7 +240,7 @@ dumpvd(int32 vd, file_format_t ff, int data_only, FILE *fp, char separator[2], i
                     ERROR_GOTO_3("in %s: VSread failed for vd(%d) with external file %s.  Please verify the "
                                  "file exists in the same directory.",
                                  "dumpvd", (int)vd, extfile_name);
-                    HDfree (extfile_name);
+                    HDfree(extfile_name);
                 }
                 else
                     ERROR_GOTO_2("in %s: VSread failed for vd(%d)", "dumpvd", (int)vd);
@@ -366,7 +366,7 @@ dumpvd(int32 vd, file_format_t ff, int data_only, FILE *fp, char separator[2], i
                     ERROR_GOTO_3("in %s: VSread failed for vd(%d) with external file %s.  Please verify the "
                                  "file exists in the same directory",
                                  "dumpvd", (int)vd, extfile_name);
-                    HDfree (extfile_name);
+                    HDfree(extfile_name);
                 }
                 else
                     ERROR_GOTO_2("in %s: VSread failed for vd(%d)", "dumpvd", (int)vd);
