@@ -312,9 +312,8 @@ XDRLIBAPI void xdrmem_create(XDR *, char *, u_int, enum xdr_op);
 XDRLIBAPI void xdrstdio_create(XDR *, FILE *, enum xdr_op);
 
 /* XDR pseudo records for tcp */
-XDRLIBAPI void xdrrec_create(XDR *, u_int, u_int, void *,
-        int (*)(void *, void *, int),
-        int (*)(void *, void *, int));
+XDRLIBAPI void xdrrec_create(XDR *, u_int, u_int, void *, int (*)(void *, void *, int),
+                             int (*)(void *, void *, int));
 
 /* make end of xdr record */
 XDRLIBAPI bool_t xdrrec_endofrecord(XDR *, int);
