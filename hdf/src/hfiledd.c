@@ -1914,7 +1914,7 @@ HTIregister_tag_ref(filerec_t *file_rec, dd_t *dd_ptr)
         tbbtdins(file_rec->tag_tree, (VOIDP)tinfo_ptr, NULL);
 
         /* Take care of the bit-vector */
-        if ((tinfo_ptr->b = bv_new(-1, BV_EXTENDABLE)) == NULL)
+        if ((tinfo_ptr->b = bv_new(-1)) == NULL)
             HGOTO_ERROR(DFE_BVNEW, FAIL);
         /* Set the 0'th bit in the bit-vector (cannot be stored in HDF files) */
         /* Yes, this is a kludge due to ref # zero not being used -QAK */

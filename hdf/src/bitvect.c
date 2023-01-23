@@ -42,10 +42,8 @@ DESIGN
  PURPOSE
     Create a new bit-vector.
  USAGE
-    bv_ptr bv_new(num_bits, flags)
+    bv_ptr bv_new(num_bits)
         int32 num_bits;             IN: The initial number of bits in the vector
-        uint32 flags;               IN: Flags to determine special attributes
-                                        of the newly created bit-vector
  RETURNS
     Returns either a valid bv_ptr on succeed or NULL on failure.
  DESCRIPTION
@@ -53,19 +51,16 @@ DESIGN
  COMMENTS, BUGS, ASSUMPTIONS
     * If num_bits is set to -1, then the default number of bits is used.
     * num_bits must be positive or -1.
-    * Flags are only checked for BV_ERROR, which is considered an error
 --------------------------------------------------------------------------*/
 bv_ptr
-bv_new(int32 num_bits, uint32 flags)
+bv_new(int32 num_bits)
 {
     int32  base_elements;  /* # of base elements needed to store the # of bits requested */
     size_t array_mem_size; /* size of the array in memory */
     bv_ptr b = NULL;       /* ptr to the new bit-vector */
 
-    /* Check for invalid numbers of bits or bad flags */
+    /* Check for invalid numbers of bits */
     if (num_bits < -1 || num_bits == 0)
-        goto error;
-    if (flags == BV_ERROR)
         goto error;
 
     /* Check for requesting the default # of bits */
@@ -80,7 +75,6 @@ bv_new(int32 num_bits, uint32 flags)
 
     b->bits_used  = num_bits;
     b->array_size = ((base_elements / BV_CHUNK_SIZE) + 1) * BV_CHUNK_SIZE;
-    b->flags      = flags;
 
     array_mem_size = sizeof(bv_base) * (size_t)(b->array_size);
     if ((b->buffer = malloc(array_mem_size)) == NULL)
@@ -161,39 +155,32 @@ bv_set(bv_ptr b, int32 bit_num, bv_bool value)
 
     /* Check if the bit is beyond the end of the current bit-vector */
     if (bit_num >= b->bits_used) {
-        /* OK to extend? */
-        if (b->flags & BV_EXTENDABLE) {
-            if (base_elem < b->array_size) {
-                /* just use more bits in the currently allocated block */
-                b->bits_used = bit_num + 1;
-            }
-            else {
-                /* allocate more space for bits */
-                bv_base *old_buf = b->buffer; /* ptr to the old buffer */
-                int32    num_chunks;          /* number of chunks to grab */
-                size_t   new_size;
-                size_t   extra_size;
-
-                num_chunks =
-                    ((((bit_num / BV_BASE_BITS) + 1) - b->array_size) / BV_CHUNK_SIZE) + 1;
-                new_size = (size_t)(b->array_size + num_chunks * BV_CHUNK_SIZE);
-                if ((b->buffer = realloc(b->buffer, new_size)) == NULL) {
-                    b->buffer = old_buf;
-                    /* Could not allocate a larger bit buffer */
-                    return FAIL;
-                }
-
-                /* Zero the bits, for the new bits */
-                extra_size = (size_t)(num_chunks * BV_CHUNK_SIZE);
-                memset(&b->buffer[b->array_size], 0, extra_size);
-
-                b->array_size += num_chunks * BV_CHUNK_SIZE;
-                b->bits_used = bit_num + 1;
-            }
+        if (base_elem < b->array_size) {
+            /* just use more bits in the currently allocated block */
+            b->bits_used = bit_num + 1;
         }
         else {
-            /* Can't extend */
-            return FAIL;
+            /* allocate more space for bits */
+            bv_base *old_buf = b->buffer; /* ptr to the old buffer */
+            int32    num_chunks;          /* number of chunks to grab */
+            size_t   new_size;
+            size_t   extra_size;
+
+            num_chunks =
+                ((((bit_num / BV_BASE_BITS) + 1) - b->array_size) / BV_CHUNK_SIZE) + 1;
+            new_size = (size_t)(b->array_size + num_chunks * BV_CHUNK_SIZE);
+            if ((b->buffer = realloc(b->buffer, new_size)) == NULL) {
+                b->buffer = old_buf;
+                /* Could not allocate a larger bit buffer */
+                return FAIL;
+            }
+
+            /* Zero the bits, for the new bits */
+            extra_size = (size_t)(num_chunks * BV_CHUNK_SIZE);
+            memset(&b->buffer[b->array_size], 0, extra_size);
+
+            b->array_size += num_chunks * BV_CHUNK_SIZE;
+            b->bits_used = bit_num + 1;
         }
     }
 
@@ -305,30 +292,6 @@ bv_size(bv_ptr b)
 
     return b->bits_used;
 } /* bv_size() */
-
-/*--------------------------------------------------------------------------
- NAME
-    bv_flags
- PURPOSE
-    Returns the flags for a bit-vector
- USAGE
-    uint32 bv_size(b)
-        bv_ptr b;                   IN: Bit-vector to use
- RETURNS
-    Returns bit-vector flags.
-    Returns BV_ERROR on errors.
- DESCRIPTION
-    Returns the current flags for the bit-vector.
- COMMENTS, BUGS, ASSUMPTIONS
---------------------------------------------------------------------------*/
-uint32
-bv_flags(bv_ptr b)
-{
-    if (b == NULL)
-        return BV_ERROR;
-
-    return b->flags;
-} /* bv_flags() */
 
 /*--------------------------------------------------------------------------
  NAME

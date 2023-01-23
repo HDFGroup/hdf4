@@ -26,10 +26,6 @@
 /* Boolean values used */
 typedef enum { BV_FALSE = 0, BV_TRUE = 1 } bv_bool;
 
-/* Flags for the bit-vector */
-#define BV_EXTENDABLE  0x00000001 /* Bit-vector is extendible */
-#define BV_ERROR       0xFFFFFFFF /* Error value (all bits set) */
-
 /* Default size of a bit-vector */
 #define BV_DEFAULT_BITS 128
 
@@ -56,7 +52,6 @@ typedef uint8 bv_base;
 typedef struct bv_struct_tag {
     int32   bits_used;   /* The actual number of bits current in use */
     int32   array_size;  /* The number of bv_base elements in the bit-vector */
-    uint32   flags;       /* The flags used to create this bit-vector */
     int32    last_zero;  /* The last location we know had a zero bit */
     bv_base *buffer;     /* Pointer to the buffer used to store the bits */
 } bv_struct;
@@ -362,7 +357,7 @@ static const int8 bv_num_ones[256] = {
 extern "C" {
 #endif
 
-HDFLIBAPI bv_ptr bv_new(int32 num_bits, uint32 flags);
+HDFLIBAPI bv_ptr bv_new(int32 num_bits);
 
 HDFLIBAPI intn bv_delete(bv_ptr b);
 
@@ -373,8 +368,6 @@ HDFLIBAPI intn bv_get(bv_ptr b, int32 bit_num);
 HDFLIBAPI intn bv_clear(bv_ptr b, bv_bool value);
 
 HDFLIBAPI int32 bv_size(bv_ptr b);
-
-HDFLIBAPI uint32 bv_flags(bv_ptr b);
 
 HDFLIBAPI int32 bv_find(bv_ptr b, int32 last_find, bv_bool value);
 

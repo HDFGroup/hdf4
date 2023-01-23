@@ -30,39 +30,27 @@ test_1(void)
 {
     bv_ptr b;
     int32  size;
-    uint32 flags;
     intn   ret;
 
     MESSAGE(6, printf("Testing basic bit-vector creation & deletion\n"););
 
-    MESSAGE(7, printf("Test getting bit-vector flags from a NULL pointer\n"););
-    flags = bv_flags(NULL);
-    VERIFY_VOID(flags, BV_ERROR, "bv_flags");
-    MESSAGE(8, printf("Bit-vector flags=0x%08"PRIX32"\n", flags););
-
     /* Test basic default creation */
     MESSAGE(7, printf("Create a bit-vector with all defaults\n"););
-    b = bv_new(-1, 0);
+    b = bv_new(-1);
     CHECK_VOID(b, NULL, "bv_new");
     size = bv_size(b);
     MESSAGE(8, printf("Bit-vector size=%"PRId32"\n", size););
     VERIFY_VOID(size, BV_DEFAULT_BITS, "bv_size");
-    flags = bv_flags(b);
-    VERIFY_VOID(flags, 0, "bv_flags");
-    MESSAGE(8, printf("Bit-vector flags=0x%08"PRIX32"\n", flags););
     ret = bv_delete(b);
     CHECK_VOID(ret, FAIL, "bv_delete");
 
-    /* Test creating an extendable bit-vector */
+    /* Test creating a bit-vector w/ size >> defaults */
     MESSAGE(7, printf("Create an extendable bit-vector with large # of bits\n"););
-    b = bv_new(80000, BV_EXTENDABLE);
+    b = bv_new(80000);
     CHECK_VOID(b, NULL, "bv_new");
     size = bv_size(b);
     MESSAGE(8, printf("Bit-vector size=%"PRId32"\n", size););
     VERIFY_VOID(size, 80000, "bv_size");
-    flags = bv_flags(b);
-    VERIFY_VOID(flags, BV_EXTENDABLE, "bv_flags");
-    MESSAGE(8, printf("Bit-vector flags=0x%08"PRIX32"\n", flags););
     ret = bv_delete(b);
     CHECK_VOID(ret, FAIL, "bv_delete");
 } /* end test_1 */
@@ -73,21 +61,17 @@ test_2(void)
 {
     bv_ptr b;
     int32  size;
-    uint32 flags;
     intn   ret;
 
     MESSAGE(6, printf("Testing basic bit-vector set & get\n"););
 
     /* test basic default creation */
     MESSAGE(7, printf("Create a bit-vector with all defaults\n"););
-    b = bv_new(-1, 0);
+    b = bv_new(-1);
     CHECK_VOID(b, NULL, "bv_new");
     size = bv_size(b);
     MESSAGE(8, printf("Bit-vector size=%"PRId32"\n", size););
     VERIFY_VOID(size, BV_DEFAULT_BITS, "bv_size");
-    flags = bv_flags(b);
-    VERIFY_VOID(flags, 0, "bv_flags");
-    MESSAGE(8, printf("Bit-vector flags=0x%08"PRIX32"\n", flags););
 
     /* Check setting bits */
     ret = bv_set(b, 13, BV_TRUE);
@@ -95,7 +79,7 @@ test_2(void)
     ret = bv_set(b, 3, BV_TRUE);
     CHECK_VOID(ret, FAIL, "bv_set");
     ret = bv_set(b, 150, BV_TRUE);
-    VERIFY_VOID(ret, FAIL, "bv_set");
+    CHECK_VOID(ret, FAIL, "bv_set");
 
     /* Check getting bits */
     ret = bv_get(b, 2);
@@ -112,16 +96,13 @@ test_2(void)
     ret = bv_delete(b);
     CHECK_VOID(ret, FAIL, "bv_delete");
 
-    /* Test another bit vector with a larg number of bits */
+    /* Test another bit vector with a large number of bits */
     MESSAGE(7, printf("Create an extendable bit-vector with large # of bits\n"););
-    b = bv_new(1000, BV_EXTENDABLE);
+    b = bv_new(1000);
     CHECK_VOID(b, NULL, "bv_new");
     size = bv_size(b);
     MESSAGE(8, printf("Bit-vector size=%"PRId32"\n", size););
     VERIFY_VOID(size, 1000, "bv_size");
-    flags = bv_flags(b);
-    VERIFY_VOID(flags, BV_EXTENDABLE, "bv_flags");
-    MESSAGE(8, printf("Bit-vector flags=0x%08"PRIX32"\n", flags););
 
     /* Check setting bits */
     ret = bv_set(b, 13, BV_TRUE);
@@ -156,21 +137,17 @@ test_3(void)
     bv_ptr b;
     int32  size;
     int32  bit_num;
-    uint32 flags;
     intn   ret;
 
     MESSAGE(6, printf("Testing basic bit-vector set & get\n"););
 
     /* Create an extendable bit-vector */
     MESSAGE(7, printf("Create an extendable bit-vector\n"););
-    b = bv_new(-1, BV_EXTENDABLE);
+    b = bv_new(-1);
     CHECK_VOID(b, NULL, "bv_new");
     size = bv_size(b);
     MESSAGE(8, printf("Bit-vector size=%"PRId32"\n", size););
     VERIFY_VOID(size, BV_DEFAULT_BITS, "bv_size");
-    flags = bv_flags(b);
-    VERIFY_VOID(flags, BV_EXTENDABLE, "bv_flags");
-    MESSAGE(8, printf("Bit-vector flags=0x%08"PRIX32"\n", flags););
 
     /* Check setting bits */
     ret = bv_set(b, 13, BV_TRUE);
@@ -181,7 +158,6 @@ test_3(void)
     CHECK_VOID(ret, FAIL, "bv_set");
     ret = bv_set(b, 152, BV_TRUE);
     CHECK_VOID(ret, FAIL, "bv_set");
-
 
     /* Check getting bits */
     ret = bv_get(b, 2);
