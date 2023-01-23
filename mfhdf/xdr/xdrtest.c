@@ -121,11 +121,7 @@ main(int ac, char *av[])
 #ifdef CREATE
     /* Create */
 
-#ifdef __STDC__
     F = fopen(fname, "wb");
-#else
-    F = fopen(fname, "w");
-#endif
     if (F == NULL) {
         perror("fopen failed");
         exit(-1);
@@ -197,11 +193,7 @@ main(int ac, char *av[])
 
     xdr_assert(fclose(F) != EOF);
 #endif /* CREATE */
-#ifdef __STDC__
     F = fopen(fname, "rb");
-#else
-    F = fopen(fname, "r");
-#endif
     if (F == NULL) {
         perror("fopen failed");
         exit(-1);

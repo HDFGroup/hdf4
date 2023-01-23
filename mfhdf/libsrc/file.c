@@ -62,11 +62,6 @@ static NC **_cdfs;
 #define HNDLE(id) (((id) >= 0 && (id) < _ncdf) ? _cdfs[(id)] : NULL)
 #define STASH(id) (((id) >= 0 && (id) < _ncdf) ? HNDLE(_cdfs[(id)]->redefid) : NULL)
 
-#ifdef NO_STDC_REMOVE
-/* try unix 'unlink' */
-#define remove(fpath) unlink((fpath))
-#endif
-
 #ifdef DOS_FS
 #define SEP '\\' /* this separates path components on DOS */
 #endif
