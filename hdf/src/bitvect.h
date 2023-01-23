@@ -32,9 +32,8 @@
 typedef enum { BV_FALSE = 0, BV_TRUE = 1 } bv_bool;
 
 /* Flags for the bit-vector */
-#define BV_INIT_TO_ONE                                                                                       \
-    0x00000001 /* to indicate whether to create the bit-vector with one's instead of zero's */
-#define BV_EXTENDABLE 0x00000002 /* to indicate that the bit-vector can be extended */
+#define BV_EXTENDABLE  0x00000001 /* Bit-vector is extendible */
+#define BV_ERROR       0xFFFFFFFF /* Error value (all bits set) */
 
 /* Default size of a bit-vector */
 #define BV_DEFAULT_BITS 128
@@ -355,9 +354,10 @@ static const int8 bv_num_ones[256] = {
     7, /* "254" - n bits are 1's */ 8  /* "255" - n bits are 1's */
 };
 
+#endif /* BV_MASTER | BV_TESTER */
+
 /* Useful routines for generally private use */
 
-#endif /* BV_MASTER | BV_TESTER */
 #ifdef __cplusplus
 extern "C" {
 #endif
