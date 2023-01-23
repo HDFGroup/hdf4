@@ -20,6 +20,8 @@
 static void
 usage(intn argc, char *argv[])
 {
+    (void)argc;
+
     printf("%s, %s\n\n", argv[0], LIBVER_STRING);
     printf("Usage: hdp [-H] command [command options] <filelist>\n");
     printf("\t -H  Display usage information about the specified command.\n");
@@ -204,7 +206,6 @@ VShdfsize(int32 vkey, /* IN vdata key */
     vsinstance_t *w         = NULL;
     VDATA        *vs        = NULL;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "VShdfsize");
 
     /* check key is valid vdata */
     if (HAatom_group(vkey) != VSIDGROUP)
@@ -247,11 +248,6 @@ VShdfsize(int32 vkey, /* IN vdata key */
     ret_value = totalsize;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VShdfsize */
 
@@ -274,7 +270,6 @@ intn
 VSattrhdfsize(int32 vsid, int32 findex, intn attrindex, int32 *size)
 {
 
-    CONSTR(FUNC, "VSattrhdfsize");
     VDATA          *vs, *attr_vs;
     vs_attr_t      *vs_alist;
     vsinstance_t   *vs_inst, *attr_inst;
@@ -339,11 +334,6 @@ VSattrhdfsize(int32 vsid, int32 findex, intn attrindex, int32 *size)
     if (FAIL == VSdetach(attr_vsid))
         HGOTO_ERROR(DFE_CANTDETACH, FAIL);
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSattrhdfsize */
 
@@ -365,7 +355,6 @@ DESCRIPTION
 intn
 Vattrhdfsize(int32 vgid, intn attrindex, int32 *size)
 {
-    CONSTR(FUNC, "Vattrhdfsize");
     VGROUP         *vg;
     VDATA          *vs;
     DYN_VWRITELIST *w;
@@ -442,10 +431,5 @@ Vattrhdfsize(int32 vgid, intn attrindex, int32 *size)
     if (FAIL == VSdetach(vsid))
         HGOTO_ERROR(DFE_CANTDETACH, FAIL);
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vattrhdfsize */

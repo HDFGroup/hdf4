@@ -169,7 +169,6 @@ intn
 jpeg_HDF_dest(struct jpeg_compress_struct *cinfo_ptr, int32 file_id, uint16 tag, uint16 ref,
               const void *image, int32 xdim, int32 ydim, int16 scheme)
 {
-    CONSTR(FUNC, "jpeg_HDF_dest"); /* for HERROR */
     hdf_dest_ptr dest;
 
     if ((dest = HDmalloc(sizeof(hdf_destination_mgr))) == NULL)
@@ -236,7 +235,6 @@ intn
 DFCIjpeg(int32 file_id, uint16 tag, uint16 ref, int32 xdim, int32 ydim, const void *image, int16 scheme,
          comp_info *scheme_info)
 {
-    CONSTR(FUNC, "DFCIjpeg"); /* for HERROR */
     /* These three structs contain JPEG parameters and working data.
      * They must survive for the duration of parameter setup and one
      * call to jpeg_compress; typically, making them local data in the

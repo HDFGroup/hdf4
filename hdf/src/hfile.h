@@ -15,8 +15,8 @@
    *** Header for hfile.c, routines for low level data element I/O
    + */
 
-#ifndef HFILE_H
-#define HFILE_H
+#ifndef H4_HFILE_H
+#define H4_HFILE_H
 
 #include "H4api_adpt.h"
 
@@ -819,4 +819,4 @@ extern
 
 #endif /* DISKBLOCK_DEBUG */
 
-#endif /* HFILE_H */
+#endif /* H4_HFILE_H */

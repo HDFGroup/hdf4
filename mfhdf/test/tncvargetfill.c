@@ -27,15 +27,14 @@
  *	  test_readings       - tests reading passed written data and max number
  *				of records in the file.
  *
- * BMR - Aug, 2013
  ****************************************************************************/
 
 #include "mfhdf.h"
 #include "hdftest.h"
 
-#define DIM0                                                                                                 \
-    20 /* this value is used to declare larger buffer for when                                               \
-          reading past the maximum number of records in the file */
+/* Used to declare a larger buffer for when attempting to read past the
+   maximum number of records in the file */
+#define DIM0 20
 
 /********************************************************************
    Name: test_1dim_multivars() - tests reading/writing on multiple variables,
@@ -53,7 +52,7 @@
 
    Return value:
         The number of errors occurred in this test.
-   BMR - Sep 4, 2013
+
 *********************************************************************/
 
 #define FILENAME1  "onedimmultivars.hdf"
@@ -245,7 +244,7 @@ test_1dim_multivars()
 
    Return value:
         The number of errors occurred in this routine.
-   BMR - Sep 4, 2013
+
 *********************************************************************/
 
 #define DIM00       10
@@ -595,7 +594,7 @@ test_multidims()
 
    Return value:
         The number of errors occurred in this test.
-   BMR - Sep 4, 2013
+
 *********************************************************************/
 static int
 test_readings(long max_numrecs)
@@ -618,7 +617,7 @@ test_readings(long max_numrecs)
     /* result data to compare against read data */
 
     /* data resulted from reading at start=[4,0,0] for edges=[6,1,1] */
-    int16 result3D_start400_edge611[DIM0][DIM1][DIM2] = {-3, -3, -3, 800, -3, -3};
+    int16 result3D_start400_edge611[DIM0][DIM1][DIM2] = {{-3, -3}, {-3, 800}, {-3, -3}};
 
     /* data resulted from reading at start=[4] for edges=[6] */
     int16 result1D_start4_edge6[] = {302, 303, -1, -1, -1, -1};

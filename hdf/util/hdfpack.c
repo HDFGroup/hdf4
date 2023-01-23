@@ -80,7 +80,6 @@ main(int argc, char *argv[])
     int     optset   = 0;
     intn    external = FALSE;
     char   *tmp, fname[2][80];
-    CONSTR(FUNC, "main");
 
     /*
      **   Get invocation name of program
@@ -388,7 +387,6 @@ copy_blocks(mydd_t *dd, int32 infile, int32 outfile)
 {
     int32           inaid, ret, rdret, outaid;
     sp_info_block_t info;
-    CONSTR(FUNC, "copy_blocks");
 
     inaid = Hstartread(infile, dd->tag, dd->ref);
     ret   = HDget_special_info(inaid, &info);
@@ -459,7 +457,6 @@ VOID
 merge_blocks(mydd_t *dd, int32 infile, int32 outfile)
 {
     int32 inaid, outaid, ret, len;
-    CONSTR(FUNC, "merge_blocks");
 
     inaid = Hstartread(infile, dd->tag, dd->ref);
     if (inaid == FAIL) {

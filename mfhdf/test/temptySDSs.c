@@ -25,7 +25,7 @@
  *		values
  *    check_getchunkinfo - utility routine that calls SDgetchunkinfo and
  *		verifies that function did not fail on empty SDS and the file
- *		is opened as read-only. (bug HDFFR-171, -BMR 2011/10/23)
+ *		is opened as read-only. (bug HDFFR-171)
  ****************************************************************************/
 
 #include "mfhdf.h"
@@ -489,8 +489,7 @@ test_with_existing_file()
 
 /* This function verifies that the bug HDFFR-171 is fixed.  It opens
    the file as read-only, then calls SDgetchunkinfo on some empty SDS's.
-   SDgetchunkinfo should not fail and should return HDF_NONE for the flag.
-   -BMR 2011/10/20. */
+   SDgetchunkinfo should not fail and should return HDF_NONE for the flag. */
 static intn
 test_getchunkinfo()
 {

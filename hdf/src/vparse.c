@@ -63,7 +63,6 @@ PRIVATE uint8 *Vpbuf     = NULL;
 int32
 scanattrs(const char *attrs, int32 *attrc, char ***attrv)
 {
-    CONSTR(FUNC, "scanattrs");
     char  *s, *s0, *ss;
     intn   len;
     size_t slen = HDstrlen(attrs) + 1;

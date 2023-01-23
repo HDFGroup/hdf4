@@ -161,7 +161,6 @@ PRIVATE intn DFR8Istart(void);
 intn
 DFR8setcompress(int32 type, comp_info *cinfo)
 {
-    CONSTR(FUNC, "DFR8setcompress");
     intn ret_value = SUCCEED;
 
     /* Perform global, one-time initialization */
@@ -187,11 +186,6 @@ DFR8setcompress(int32 type, comp_info *cinfo)
     CompInfo = (*cinfo);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end DFR8setcompress() */
 
@@ -220,7 +214,6 @@ done:
 intn
 DFR8getdims(const char *filename, int32 *pxdim, int32 *pydim, intn *pispal)
 {
-    CONSTR(FUNC, "DFR8getdims");
     int32 file_id   = (-1);
     intn  ret_value = SUCCEED;
 
@@ -247,11 +240,6 @@ DFR8getdims(const char *filename, int32 *pxdim, int32 *pydim, intn *pispal)
         *pispal = Readrig.lut.tag ? 1 : 0; /* is there a palette */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     if (file_id != (-1))
         Hclose(file_id);
 
@@ -289,7 +277,6 @@ done:
 intn
 DFR8getimage(const char *filename, uint8 *image, int32 xdim, int32 ydim, uint8 *pal)
 {
-    CONSTR(FUNC, "DFR8getimage");
     int32 file_id   = (-1);
     intn  ret_value = SUCCEED;
 
@@ -352,10 +339,7 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (file_id != (-1))
             Hclose(file_id);
-
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
     return ret_value;
 } /* end DFR8getimage() */
@@ -383,7 +367,6 @@ done:
 intn
 DFR8setpalette(uint8 *pal)
 {
-    CONSTR(FUNC, "DFR8setpalette");
     intn ret_value = SUCCEED;
 
     /* Perform global, one-time initialization */
@@ -411,11 +394,6 @@ DFR8setpalette(uint8 *pal)
     } /* end else */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end DFR8setpalette() */
 
@@ -449,7 +427,6 @@ done:
 PRIVATE intn
 DFR8Iputimage(const char *filename, const void *image, int32 xdim, int32 ydim, uint16 compress, intn append)
 {
-    CONSTR(FUNC, "DFR8Iputimage");
     intn   acc_mode; /* create if op 0, write if op 1 */
     int32  file_id = (-1);
     uint16 r8tag;       /* RIG and raster tags of image being written */
@@ -580,10 +557,7 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (file_id != (-1))
             Hclose(file_id);
-
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
     return ret_value;
 } /* end DFR8Iputimage() */
@@ -613,7 +587,6 @@ done:
 intn
 DFR8putimage(const char *filename, const void *image, int32 xdim, int32 ydim, uint16 compress)
 {
-    CONSTR(FUNC, "DFR8putimage"); /* for HERROR */
     intn ret_value;
 
     /* Perform global, one-time initialization */
@@ -624,12 +597,6 @@ DFR8putimage(const char *filename, const void *image, int32 xdim, int32 ydim, ui
     ret_value = (DFR8Iputimage(filename, image, xdim, ydim, compress, 0));
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end DFR8putimage() */
 
@@ -659,7 +626,6 @@ done:
 intn
 DFR8addimage(const char *filename, const void *image, int32 xdim, int32 ydim, uint16 compress)
 {
-    CONSTR(FUNC, "DFR8addimage"); /* for HERROR */
     intn ret_value;
 
     /* Perform global, one-time initialization */
@@ -670,12 +636,6 @@ DFR8addimage(const char *filename, const void *image, int32 xdim, int32 ydim, ui
     ret_value = (DFR8Iputimage(filename, image, xdim, ydim, compress, 1));
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end DFR8addimage() */
 
@@ -705,7 +665,6 @@ done:
 PRIVATE intn
 DFR8getrig(int32 file_id, uint16 ref, DFRrig *rig)
 {
-    CONSTR(FUNC, "DFR8getrig");
     uint16 elt_tag;
     uint16 elt_ref;
     uint8  ntstring[4];
@@ -785,12 +744,6 @@ DFR8getrig(int32 file_id, uint16 ref, DFRrig *rig)
     }     /* end while */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end DFR8getrig() */
 
@@ -818,7 +771,6 @@ done:
 PRIVATE intn
 DFR8putrig(int32 file_id, uint16 ref, DFRrig *rig, intn wdim)
 {
-    CONSTR(FUNC, "DFR8putrig");
     static uint16 prevdimref = 0; /*ref of previous dimension record, to reuse */
     R8dim         im8dim;
     uint8         ntstring[4];
@@ -895,12 +847,6 @@ DFR8putrig(int32 file_id, uint16 ref, DFRrig *rig, intn wdim)
         HGOTO_ERROR(DFE_GROUPWRITE, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end DFR8putrig() */
 
@@ -924,7 +870,6 @@ done:
 intn
 DFR8nimages(const char *filename)
 {
-    CONSTR(FUNC, "DFR8nimages");
     int32  file_id;
     int32  group_id;           /* group ID for looking at RIG's */
     uint16 elt_tag, elt_ref;   /* tag/ref of items in a RIG */
@@ -1060,11 +1005,6 @@ DFR8nimages(const char *filename)
     ret_value = nimages;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end DFR8nimages() */
 
@@ -1089,7 +1029,6 @@ done:
 intn
 DFR8readref(const char *filename, uint16 ref)
 {
-    CONSTR(FUNC, "DFR8readref");
     int32 file_id = (-1);
     int32 aid;
     intn  ret_value = SUCCEED;
@@ -1118,10 +1057,8 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (file_id != (-1))
             Hclose(file_id);
+    }
 
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end DFR8readref() */
 
@@ -1145,8 +1082,9 @@ done:
 intn
 DFR8writeref(const char *filename, uint16 ref)
 {
-    CONSTR(FUNC, "DFR8writeref"); /* for HERROR */
     intn ret_value = SUCCEED;
+
+    (void)filename;
 
     HEclear();
 
@@ -1155,17 +1093,9 @@ DFR8writeref(const char *filename, uint16 ref)
         if (DFR8Istart() == FAIL)
             HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
-    /* shut compiler up */
-    filename = filename;
     Writeref = ref;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end DFR8writeref() */
 
@@ -1187,7 +1117,6 @@ done:
 intn
 DFR8restart(void)
 {
-    CONSTR(FUNC, "DFR8restart"); /* for HERROR */
     intn ret_value = SUCCEED;
 
     /* Perform global, one-time initialization */
@@ -1198,12 +1127,6 @@ DFR8restart(void)
     Lastfile[0] = '\0';
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end DFR8restart() */
 
@@ -1225,7 +1148,6 @@ done:
 uint16
 DFR8lastref(void)
 {
-    CONSTR(FUNC, "DFR8lastref"); /* for HERROR */
     uint16 ret_value;
 
     /* Perform global, one-time initialization */
@@ -1236,13 +1158,6 @@ DFR8lastref(void)
     ret_value = Lastref;
 
 done:
-    if (ret_value == 0) /* 0 is invalid ref */
-    {                   /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end DFR8lastref() */
 
@@ -1259,7 +1174,6 @@ done:
 intn
 DFR8getpalref(uint16 *pal_ref)
 {
-    CONSTR(FUNC, "DFR8getpalref");
     intn ret_value = SUCCEED;
 
     HEclear();
@@ -1272,12 +1186,6 @@ DFR8getpalref(uint16 *pal_ref)
     *pal_ref = Readrig.lut.ref; /* ref of palette */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end DFR8getpalref() */
 
@@ -1307,7 +1215,6 @@ done:
 PRIVATE int32
 DFR8Iopen(const char *filename, intn acc_mode)
 {
-    CONSTR(FUNC, "DFR8Iopen");
     int32 file_id;
     int32 ret_value = SUCCEED;
 
@@ -1335,12 +1242,6 @@ DFR8Iopen(const char *filename, intn acc_mode)
     ret_value = file_id;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end DFR8Iopen() */
 
@@ -1366,7 +1267,6 @@ done:
 PRIVATE intn
 DFR8Iriginfo(int32 file_id)
 {
-    CONSTR(FUNC, "DFR8Iriginfo");
     uint16 riref = 0, ciref = 0;
     int32  aid = FAIL;
     uint16 ref;
@@ -1498,12 +1398,6 @@ DFR8Iriginfo(int32 file_id)
     Lastref = Readrig.image.ref; /* remember ref read */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end DFR8Iriginfo() */
 
@@ -1526,7 +1420,6 @@ done:
 PRIVATE intn
 DFR8Istart(void)
 {
-    CONSTR(FUNC, "DFR8Istart"); /* for HERROR */
     intn ret_value = SUCCEED;
 
     /* Don't call this routine again... */
@@ -1537,11 +1430,6 @@ DFR8Istart(void)
         HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return (ret_value);
 } /* end DFR8Istart() */
 

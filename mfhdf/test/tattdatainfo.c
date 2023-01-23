@@ -19,7 +19,7 @@
  *	test_annots    - tests getting SDS annotation's data info
  *	test_dfsdattrs - tests getting data info of old attributes added by
  *			 DFSD API
- * -BMR, Jul 2010
+ *
  ****************************************************************************/
 
 #include "mfhdf.h"
@@ -56,7 +56,6 @@ intn readnoHDF_char(const char *filename, const int32 offset, const int32 length
         the use of the HDF4 library, and will be verified against the original
         data buffers.
 
-   BMR - Jul 2010
  ****************************************************************************/
 #define SDS1_NAME      "First SDS"
 #define SDS2_NAME      "Second SDS"
@@ -452,7 +451,6 @@ add_sdsSDG_annotations()
 {
     char   labsds[MAXLEN_LAB], descsds[MAXLEN_DESC], descris[MAXLEN_DESC];
     uint16 refnum;
-    int32  ret;
     intn   rank;
     int    j;
     int32  dimsizes[2];
@@ -549,7 +547,7 @@ get_ann_datainfo(int32 id, ann_type annot_type, int32 *chk_offsets, int32 *chk_l
         This routine uses several utility routines to
         - create various file's and data's annotations
         - retrieve and verify the offsets/lengths of these annotations
-   BMR - Feb 2011
+
 ***************************************************************************/
 static int
 test_dfannots(void)
@@ -686,7 +684,6 @@ test_dfannots(void)
         at the retrieved offsets/lengths, without the use of the HDF4 library,
         and will be verified against the original data buffers.
 
-   BMR - Mar 2011
 ***************************************************************************/
 #define OLDATTFILE "tdfsdatts.hdf"
 #define XX         6
@@ -876,7 +873,7 @@ compare(const char *outstring, const char *instring)
 
   Return value:
         SUCCEED/FAIL
-  BMR - Jul 2010
+
 ********************************************************************/
 intn
 readnoHDF_char(const char *filename, const int32 offset, const int32 length, const char *orig_buf)

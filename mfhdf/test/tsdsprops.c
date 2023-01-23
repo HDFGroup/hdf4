@@ -45,7 +45,6 @@
    Return value:
         The number of errors occurred in this routine.
 
-   BMR - Oct 2006
 ****************************************************************************/
 
 #define FILE_NAME "SDSlongname.hdf" /* data file to test SDS names */
@@ -172,7 +171,6 @@ test_SDSnames()
    Return value:
         The number of errors occurred in this routine.
 
-   BMR - Oct 2005
 ****************************************************************************/
 
 #define UD_FILE_NAME "Unlim_dim.hdf" /* data file to test unlimited dim */
@@ -316,7 +314,6 @@ test_unlim_dim()
    Return value:
         The number of errors occurred in this routine.
 
-   BMR - Oct 2005
 ****************************************************************************/
 
 #define UDIL_FILE_NAME "Unlim_inloop.hdf" /* file to test unlim dims in loop */
@@ -446,7 +443,6 @@ test_unlim_inloop()
    Return value:
         The number of errors occurred in this routine.
 
-   BMR - Sep 2007
 ****************************************************************************/
 
 #define ARGS_FILE_NAME "test_arguments.hdf" /* file to test validating args */

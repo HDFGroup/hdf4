@@ -15,7 +15,6 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "local_nc.h"
-#include "alloc.h"
 #include "herr.h"
 
 #ifdef HDF
@@ -69,10 +68,6 @@ NC_free_xcdf(NC *handle)
     }
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 }
 
@@ -91,7 +86,7 @@ NC_free_cdf(NC *handle)
 
         /* destroy xdr struct */
         xdr_destroy(handle->xdrs);
-        Free(handle->xdrs);
+        free(handle->xdrs);
         handle->xdrs = NULL;
 
 #ifdef HDF
@@ -104,15 +99,11 @@ NC_free_cdf(NC *handle)
         }
 #endif /* HDF */
 
-        Free(handle);
+        free(handle);
         handle = NULL;
     }
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 }
 
@@ -129,7 +120,6 @@ done:
 int32
 hdf_get_magicnum(const char *filename)
 {
-    CONSTR(FUNC, "hdf_get_magicnum"); /* for HERROR */
     hdf_file_t fp;
     uint8      buf[4];
     uint8     *pbuf = NULL;
@@ -164,10 +154,6 @@ hdf_get_magicnum(const char *filename)
     else
         HGOTO_ERROR(DFE_INVFILE, FAIL);
 done:
-    if (ret_value == FALSE) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* hdf_get_magicnum */
 
@@ -178,7 +164,6 @@ done:
 intn
 HDiscdf(const char *filename)
 {
-    CONSTR(FUNC, "HDiscdf"); /* for HGOTO_ERROR */
     int32 magic_num = 0;
     intn  ret_value = FALSE;
 
@@ -192,11 +177,6 @@ HDiscdf(const char *filename)
     else
         ret_value = FALSE;
 
-done:
-    if (ret_value == FALSE) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 }
 
@@ -207,7 +187,6 @@ done:
 intn
 HDisnetcdf(const char *filename)
 {
-    CONSTR(FUNC, "HDisnetcdf"); /* for HGOTO_ERROR */
     int32 magic_num = 0;
     intn  ret_value = FALSE;
 
@@ -221,11 +200,6 @@ HDisnetcdf(const char *filename)
     else
         ret_value = FALSE;
 
-done:
-    if (ret_value == FALSE) { /* FALSE cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* HDisnetcdf */
 
@@ -236,7 +210,6 @@ done:
 intn
 HDisnetcdf64(const char *filename)
 {
-    CONSTR(FUNC, "HDisnetcdf64"); /* for HGOTO_ERROR */
     int32 magic_num = 0;
     intn  ret_value = FALSE;
 
@@ -249,11 +222,6 @@ HDisnetcdf64(const char *filename)
         ret_value = TRUE;
     else
         ret_value = FALSE;
-
-done:
-    if (ret_value == FALSE) { /* FALSE cleanup */
-    }
-    /* Normal cleanup */
 
     return ret_value;
 } /* HDisnetcdf64 */
@@ -270,12 +238,11 @@ NC_new_cdf(const char *name, int mode)
 #ifdef HDF
     int32 hdf_mode = DFACC_RDWR; /* default */
 #endif
-    NC                *cdf       = NULL;
-    static const char *FUNC      = "NC_new_cdf";
-    NC                *ret_value = NULL;
+    NC *cdf       = NULL;
+    NC *ret_value = NULL;
 
     /* allocate an NC struct */
-    cdf = (NC *)HDcalloc(1, sizeof(NC));
+    cdf = calloc(1, sizeof(NC));
     if (cdf == NULL) {
         nc_serror("NC_new_cdf");
         HGOTO_FAIL(NULL);
@@ -308,7 +275,7 @@ NC_new_cdf(const char *name, int mode)
     }
 
     /* Delay allocating xdr struct until it is needed */
-    cdf->xdrs = (XDR *)HDcalloc(1, sizeof(XDR));
+    cdf->xdrs = calloc(1, sizeof(XDR));
     if (cdf->xdrs == NULL) {
         nc_serror("NC_new_cdf: xdrs");
         HGOTO_FAIL(NULL);
@@ -439,12 +406,12 @@ done:
             NC_free_xcdf(cdf); /* no point in catching error here */
             if (cdf->xdrs != NULL) {
                 xdr_destroy(cdf->xdrs);
-                Free(cdf->xdrs);
+                free(cdf->xdrs);
             }
-            Free(cdf);
+            free(cdf);
         }
     }
-    /* Normal cleanup */
+
     return ret_value;
 } /* NC_new_cdf */
 
@@ -460,7 +427,7 @@ NC_dup_cdf(const char *name, int mode, NC *old)
     NC *cdf       = NULL;
     NC *ret_value = NULL;
 
-    cdf = (NC *)HDmalloc(sizeof(NC));
+    cdf = malloc(sizeof(NC));
     if (cdf == NULL) {
         nc_serror("NC_dup_cdf");
         HGOTO_FAIL(NULL);
@@ -468,7 +435,7 @@ NC_dup_cdf(const char *name, int mode, NC *old)
 
     cdf->flags = old->flags | NC_INDEF;
 
-    cdf->xdrs = (XDR *)HDmalloc(sizeof(XDR));
+    cdf->xdrs = malloc(sizeof(XDR));
     if (cdf->xdrs == NULL) {
         nc_serror("NC_dup_cdf: xdrs");
         HGOTO_FAIL(NULL);
@@ -499,14 +466,12 @@ NC_dup_cdf(const char *name, int mode, NC *old)
 done:
     if (ret_value == NULL) { /* Failure cleanup */
         if (cdf != NULL) {   /* free up allocated structures */
-            if (cdf->xdrs != NULL)
-                Free(cdf->xdrs);
+            free(cdf->xdrs);
 
             NC_free_xcdf(cdf); /* don't catch error here */
-            Free(cdf);
+            free(cdf);
         }
     }
-    /* Normal cleanup */
 
     return ret_value;
 }
@@ -767,14 +732,16 @@ hdf_create_dim_vdata(XDR *xdrs, NC *handle, NC_dim *dim)
     long  dsize;
     int   ret_value = FAIL;
 
-#if DEBUG
+    (void)xdrs;
+
+#ifdef DEBUG
     fprintf(stderr, "hdf_create_dim_vdata I've been called\n");
     fprintf(stderr, "handle->hdf_file = %d\n", handle->hdf_file);
 #endif
 
     if (found) {
         /* load in the variable's values */
-#if DEBUG
+#ifdef DEBUG
         fprintf(stderr, "Found real values for dimension %s\n", dim->name->values);
 #endif
     }
@@ -792,17 +759,13 @@ hdf_create_dim_vdata(XDR *xdrs, NC *handle, NC_dim *dim)
         }
     }
 
-#if DEBUG
+#ifdef DEBUG
     fprintf(stderr, "Returning vdata pointer %d\n", ref);
 #endif
 
     ret_value = ref;
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* hdf_create_dim_vdata */
 
@@ -818,12 +781,13 @@ done:
 int
 hdf_create_compat_dim_vdata(XDR *xdrs, NC *handle, NC_dim *dim, int32 dimval_ver)
 {
-    static const char *FUNC = "hdf_create_compat_dim_vdata";
-    int                i;
-    int                ref;
-    long               dsize;
-    int32             *val       = NULL;
-    int                ret_value = FAIL;
+    int    i;
+    int    ref;
+    long   dsize;
+    int32 *val       = NULL;
+    int    ret_value = FAIL;
+
+    (void)xdrs;
 
 #ifdef DEBUG
     fprintf(stderr, "hdf_create_compat_dim_vdata I've been called\n");
@@ -842,7 +806,7 @@ hdf_create_compat_dim_vdata(XDR *xdrs, NC *handle, NC_dim *dim, int32 dimval_ver
     fprintf(stderr, "Creating fake dim  ::::%s::: (%d)\n", dim->name->values, dsize);
 #endif
     /* allocate space */
-    val = (int32 *)HDmalloc(dsize * sizeof(int32));
+    val = malloc(dsize * sizeof(int32));
     if (!val)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
@@ -873,11 +837,7 @@ hdf_create_compat_dim_vdata(XDR *xdrs, NC *handle, NC_dim *dim, int32 dimval_ver
     ret_value = ref;
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-    if (val != NULL)
-        HDfree(val);
+    free(val);
 
     return ret_value;
 } /* hdf_create_compat_dim_vdata */
@@ -895,12 +855,14 @@ hdf_write_attr(XDR *xdrs, NC *handle, NC_attr **attr)
     int   order;
     int   ret_value = SUCCEED;
 
+    (void)xdrs;
+
     name   = (*attr)->name->values;
     values = (*attr)->data->values;
     size   = (*attr)->data->count;
     type   = (*attr)->HDFtype;
 
-#if DEBUG
+#ifdef DEBUG
     fprintf(stderr, "hdf_write_attr I've been called\n");
     fprintf(stderr, "The attribute is called %s\n", name);
     fprintf(stderr, "Type = %d (%d)  size  %d\n", type, (*attr)->HDFtype, size);
@@ -949,7 +911,7 @@ hdf_write_attr(XDR *xdrs, NC *handle, NC_attr **attr)
     ret_value = VHstoredatam(handle->hdf_file, ATTR_FIELD_NAME, (unsigned char *)values, size, type, name,
                              _HDF_ATTRIBUTE, order);
 
-#if DEBUG
+#ifdef DEBUG
     fprintf(stderr, "hdf_write_attr returning %d\n", ret_value);
 #endif
 
@@ -969,7 +931,7 @@ hdf_write_dim(XDR *xdrs, NC *handle, NC_dim **dim, int32 cnt)
     char  name[H4_MAX_NC_NAME] = "";
     int32 ret_value            = SUCCEED;
 
-#if DEBUG
+#ifdef DEBUG
     fprintf(stderr, "hdf_write_dim I've been called\n");
     fprintf(stderr, "The name is -- %s -- \n", (*dim)->name->values);
 #endif
@@ -1011,9 +973,6 @@ hdf_write_dim(XDR *xdrs, NC *handle, NC_dim **dim, int32 cnt)
     ret_value = (*dim)->vgid; /* ref of vgroup of dimension */
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
 
     return ret_value;
 } /* hdf_write_dim */
@@ -1045,7 +1004,7 @@ hdf_write_var(XDR *xdrs, NC *handle, NC_var **var)
     assoc = (*var)->assoc;
     attrs = (*var)->attrs;
 
-#if DEBUG
+#ifdef DEBUG
     fprintf(stderr, "hdf_write_var I've been called\n");
     fprintf(stderr, "handle->hdf_file = %d\n", handle->hdf_file);
     fprintf(stderr, "The name is -- %s -- \n", (*var)->name->values);
@@ -1126,7 +1085,7 @@ hdf_write_var(XDR *xdrs, NC *handle, NC_var **var)
     if ((*var)->data_ref) {
         tags[count] = (int32)DFTAG_SD;
         refs[count] = (*var)->data_ref;
-#if DEBUG
+#ifdef DEBUG
         fprintf(stderr, " ---- Carrying forward data with ref %d ---- \n", (*var)->data_ref);
 #endif
         count++;
@@ -1243,10 +1202,6 @@ hdf_write_var(XDR *xdrs, NC *handle, NC_var **var)
     ret_value = (*var)->vgid; /* ref of vgroup of variable */
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* hdf_write_var */
 
@@ -1274,7 +1229,7 @@ hdf_write_xdr_cdf(XDR *xdrs, NC **handlep)
     Void     *attrs     = NULL;
     intn      ret_value = SUCCEED;
 
-#if DEBUG
+#ifdef DEBUG
     fprintf(stderr, "hdf_write_xdr_cdf i've been called op = %d \n", xdrs->x_op);
 #endif
 
@@ -1293,13 +1248,13 @@ hdf_write_xdr_cdf(XDR *xdrs, NC **handlep)
     if ((*handlep)->attrs)
         sz += (*handlep)->attrs->count;
 
-#if DEBUG
+#ifdef DEBUG
     fprintf(stderr, "sz = %d\n", sz);
 #endif
 
     /* allocate tag / ref arrays */
-    tags = (int32 *)HDmalloc(sz * sizeof(int32) + 1);
-    refs = (int32 *)HDmalloc(sz * sizeof(int32) + 1);
+    tags = malloc(sz * sizeof(int32) + 1);
+    refs = malloc(sz * sizeof(int32) + 1);
     if (NULL == tags || NULL == refs) {
 #ifdef DEBUG
         fprintf(stderr, "Out of memory line %d file %s\n", __LINE__, __FILE__);
@@ -1315,8 +1270,8 @@ hdf_write_xdr_cdf(XDR *xdrs, NC **handlep)
         tmp  = (*handlep)->dims;
         dims = (NC_dim **)(*handlep)->dims->values;
 
-        tsizeptr = dim_size_array = (long *)HDmalloc(sizeof(long) * (size_t)tmp->count);
-        thashptr = dim_hash_array = (uint32 *)HDmalloc(sizeof(uint32) * (size_t)tmp->count);
+        tsizeptr = dim_size_array = malloc(sizeof(long) * (size_t)tmp->count);
+        thashptr = dim_hash_array = malloc(sizeof(uint32) * (size_t)tmp->count);
 
         if (NULL == dim_size_array || NULL == dim_hash_array) {
 #ifdef DEBUG
@@ -1397,7 +1352,7 @@ hdf_write_xdr_cdf(XDR *xdrs, NC **handlep)
         }
     }
 
-#if DEBUG
+#ifdef DEBUG
     fprintf(stderr, "About to write top level VG with %d elements\n", count);
     {
         int i;
@@ -1417,17 +1372,10 @@ hdf_write_xdr_cdf(XDR *xdrs, NC **handlep)
 #endif
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-    if (dim_size_array != NULL)
-        HDfree(dim_size_array);
-    if (dim_hash_array != NULL)
-        HDfree(dim_hash_array);
-    if (tags != NULL)
-        HDfree(tags);
-    if (refs != NULL)
-        HDfree(refs);
+    free(dim_size_array);
+    free(dim_hash_array);
+    free(tags);
+    free(refs);
 
     return ret_value;
 } /* hdf_write_xdr_cdf */
@@ -1465,7 +1413,7 @@ hdf_conv_scales(NC **handlep)
                     (*vars)->data_tag = DATA_TAG;
                 }
                 else { /* has scale values */
-                    scalebuf = (uint8 *)HDmalloc((uint32)scalelen);
+                    scalebuf = malloc((uint32)scalelen);
                     if (scalebuf == NULL)
                         HGOTO_FAIL(FAIL);
 
@@ -1493,11 +1441,7 @@ hdf_conv_scales(NC **handlep)
     }
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-    if (scalebuf != NULL)
-        HDfree(scalebuf);
+    free(scalebuf);
 
     return ret_value;
 }
@@ -1520,11 +1464,13 @@ hdf_read_dims(XDR *xdrs, NC *handle, int32 vg)
     int32    vs;
     intn     ret_value = SUCCEED;
 
+    (void)xdrs;
+
     found = FALSE;
     count = 0;
     id    = -1;
 
-#if DEBUG
+#ifdef DEBUG
     fprintf(stderr, "hdf_read_dims I've been called, handle->hdf_file = %d\n", handle->hdf_file);
 #endif
 
@@ -1532,7 +1478,7 @@ hdf_read_dims(XDR *xdrs, NC *handle, int32 vg)
      * Allocate enough space in case everything is a dimension
      */
     count     = 0;
-    dimension = (NC_dim **)HDmalloc(sizeof(NC_dim *) * Vntagrefs(vg) + 1);
+    dimension = malloc(sizeof(NC_dim *) * Vntagrefs(vg) + 1);
     if (NULL == dimension) {
         /* replace it with NCadvice or HERROR?? */
 #ifdef DEBUG
@@ -1646,7 +1592,7 @@ hdf_read_dims(XDR *xdrs, NC *handle, int32 vg)
 #endif
                                 HGOTO_FAIL(FAIL);
                             } /*  dimension[count]  */
-#if DEBUG
+#ifdef DEBUG
                             fprintf(stderr, "Dimension <%s> has size %d\n", vgname, dim_size);
 #endif
                             if (!HDstrcmp(vsclass, DIM_VALS01)) /* dimvals01 only  */
@@ -1675,7 +1621,7 @@ hdf_read_dims(XDR *xdrs, NC *handle, int32 vg)
     else
         handle->dims = NULL;
 
-#if DEBUG
+#ifdef DEBUG
     fprintf(stderr, "Created dimension array %d \n", handle->dims);
 #endif
 
@@ -1686,9 +1632,8 @@ done:
             handle->dims = NULL;
         }
     }
-    /* Normal cleanup */
-    if (dimension != NULL)
-        HDfree(dimension);
+
+    free(dimension);
 
     return ret_value;
 } /* hdf_read_dims */
@@ -1761,10 +1706,6 @@ hdf_num_attrs(NC   *handle, /* IN: handle to SDS */
     ret_value = count;
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* hdf_num_attrs */
 
@@ -1787,10 +1728,12 @@ hdf_read_attrs(XDR *xdrs, NC *handle, int32 vg)
     NC_array *Array                = NULL;
     NC_array *ret_value            = NULL;
 
+    (void)xdrs;
+
     count = 0;
     id    = -1;
 
-#if DEBUG
+#ifdef DEBUG
     fprintf(stderr, "hdf_read_attrs I've been called, handle->hdf_file = %d\n", handle->hdf_file);
 #endif
 
@@ -1810,7 +1753,7 @@ hdf_read_attrs(XDR *xdrs, NC *handle, int32 vg)
      * Allocate enough space in case everything is an attribute
      */
     count      = 0;
-    attributes = (NC_attr **)HDmalloc(sizeof(NC_attr *) * n + 1);
+    attributes = malloc(sizeof(NC_attr *) * n + 1);
     if (NULL == attributes) {
         /* replace it with NCAdvice or HERROR? */
 #ifdef HDF_READ_ATTRS
@@ -1844,7 +1787,7 @@ hdf_read_attrs(XDR *xdrs, NC *handle, int32 vg)
                 if ((type = hdf_unmap_type(nt)) == FAIL)
                     HGOTO_FAIL(NULL);
 
-                values = (char *)HDmalloc(vsize * attr_size + 1);
+                values = malloc(vsize * attr_size + 1);
                 if (NULL == values)
                     HGOTO_FAIL(NULL);
 
@@ -1876,7 +1819,7 @@ hdf_read_attrs(XDR *xdrs, NC *handle, int32 vg)
                         attr_size);
 #endif
                 /* free values and reset to NULL */
-                HDfree(values);
+                free(values);
                 values = NULL;
                 count++;
             } /* end if attribute ? */
@@ -1901,11 +1844,9 @@ done:
         if (Array != NULL)
             NC_free_array(Array);
     }
-    /* Normal cleanup */
-    if (values != NULL)
-        HDfree(values);
-    if (attributes != NULL)
-        HDfree(attributes);
+
+    free(values);
+    free(attributes);
 
     return ret_value;
 } /* hdf_read_attrs */
@@ -1957,7 +1898,7 @@ hdf_read_vars(XDR *xdrs, NC *handle, int32 vg)
      * Allocate enough space in case everything is a variable
      */
     count     = 0;
-    variables = (NC_var **)HDmalloc(sizeof(NC_var *) * Vntagrefs(vg) + 1);
+    variables = malloc(sizeof(NC_var *) * Vntagrefs(vg) + 1);
     if (NULL == variables) {
 #ifdef HDF_READ_VARS
         fprintf(stderr, "hdf_read_vars:Out of memory line %d file %s\n", __LINE__, __FILE__);
@@ -1968,7 +1909,7 @@ hdf_read_vars(XDR *xdrs, NC *handle, int32 vg)
     /*
      * Allocate enough space in case lots of dimensions
      */
-    dims = (int *)HDmalloc(sizeof(int) * Vntagrefs(vg) + 1);
+    dims = malloc(sizeof(int) * Vntagrefs(vg) + 1);
     if (NULL == dims) {
 #ifdef HDF_READ_VARS
         fprintf(stderr, "hdf_read_vars:Out of memory line %d file %s\n", __LINE__, __FILE__);
@@ -2256,10 +2197,8 @@ hdf_read_vars(XDR *xdrs, NC *handle, int32 vg)
                          * Deallocate the shape info as it will be recomputed
                          *  at a higher level later
                          */
-                        if (vp->shape != NULL)
-                            HDfree(vp->shape);
-                        if (vp->dsizes != NULL)
-                            HDfree(vp->dsizes);
+                        free(vp->shape);
+                        free(vp->dsizes);
                         /* Reset these two pointers to NULL after
                             freeing.  BMR 4/11/01 */
                         vp->shape  = NULL;
@@ -2303,11 +2242,9 @@ done:
         if (handle->vars != NULL)
             NC_free_array(handle->vars);
     }
-    /* Normal cleanup */
-    if (variables != NULL)
-        HDfree(variables);
-    if (dims != NULL)
-        HDfree(dims);
+
+    free(variables);
+    free(dims);
 
     return ret_value;
 } /* hdf_read_vars */
@@ -2318,17 +2255,16 @@ done:
 intn
 hdf_read_xdr_cdf(XDR *xdrs, NC **handlep)
 {
-#if DEBUG
+#ifdef DEBUG
     char  vgname[H4_MAX_NC_NAME];
     int32 entries;
 #endif
     int32 cdf_vg = FAIL;
     int   vgid   = 0;
     int   status;
-    CONSTR(FUNC, "hdf_read_xdr_cdf");
-    intn ret_value = SUCCEED;
+    intn  ret_value = SUCCEED;
 
-#if DEBUG
+#ifdef DEBUG
     fprintf(stderr, "hdf_read_xdr_cdf i've been called %d\n", (*handlep)->hdf_file);
 #endif
 
@@ -2342,7 +2278,7 @@ hdf_read_xdr_cdf(XDR *xdrs, NC **handlep)
 
     (*handlep)->vgid = vgid; /* ref of vgroup */
 
-#if DEBUG
+#ifdef DEBUG
     Vinquire(cdf_vg, &entries, vgname);
     fprintf(stderr, "Found _HDF_CDF : %s  (%d entries)\n", vgname, entries);
 #endif
@@ -2372,7 +2308,6 @@ done:
         if (cdf_vg != FAIL)
             Vdetach(cdf_vg);
     }
-    /* Normal cleanup */
 
     return ret_value;
 } /* hdf_read_xdr_cdf */
@@ -2388,7 +2323,6 @@ done:
 intn
 hdf_xdr_cdf(XDR *xdrs, NC **handlep)
 {
-    CONSTR(FUNC, "hdf_xdr_cdf"); /* for HERROR */
     intn status;
     intn ret_value = SUCCEED;
 
@@ -2436,10 +2370,6 @@ hdf_xdr_cdf(XDR *xdrs, NC **handlep)
     }
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* hdf_xdr_cdf */
 
@@ -2561,7 +2491,6 @@ done:
         fprintf(stderr, "hdf_vg_clobber: failed \n");
 #endif
     }
-    /* Normal cleanup */
 
     return ret_value;
 } /* hdf_vg_clobber */
@@ -2702,9 +2631,8 @@ done:
 #ifdef HDF_CDF_CLOBBER
         fprintf(stderr, "hdf_cdf_clobber: Failed to Clobber VGroup %d\n\n", handle->vgid);
 #endif
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     return ret_value;
 } /* hdf_cdf_clobber */
 
@@ -2870,11 +2798,6 @@ hdf_close(NC *handle)
     } /* end if we need to flush out unlimited dimensions? */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* hdf_close */
 
@@ -2936,13 +2859,6 @@ xdr_numrecs(XDR *xdrs, NC *handle)
 }
 
 static bool_t
-xdr_4bytes(XDR *xdrs, char *cp)
-/* cp - at least 4 valid bytes */
-{
-    return xdr_opaque(xdrs, cp, 4);
-}
-
-static bool_t
 xdr_2shorts(XDR *xdrs, short *sp)
 /* sp - at least 2 valid shorts */
 {
@@ -2985,8 +2901,6 @@ xdr_NC_fill(XDR *xdrs, NC_var *vp)
         case NC_BYTE:
         case NC_CHAR:
             alen /= 4;
-            /* xdr_NC_fnct = xdr_4bytes ;
-             *  */
             xdr_NC_fnct = xdr_bytes;
             break;
         case NC_SHORT:

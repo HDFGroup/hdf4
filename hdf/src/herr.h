@@ -16,26 +16,11 @@
    *** to be included by all ".c" files
    + */
 
-#ifndef __HERR_H
-#define __HERR_H
+#ifndef H4_HERR_H
+#define H4_HERR_H
 
-/* if these symbols are not provided by the compiler, we'll have to
-   fake them.  These are used in HERROR for recording location of
-   error in code. */
-
-#ifndef __FILE__
-#define __FILE__ "File name not supported"
-#endif
-#ifndef __LINE__
-#define __LINE__ 0
-#endif
-
-/* HERROR macro, used to facilitate error reporting.  Assumes that
-   there's a variable called FUNC which holds the function name.
-   Assume that func and file are both stored in static space, or at
-   least be not corrupted in the meanwhile. */
-
-#define HERROR(e) HEpush(e, FUNC, __FILE__, __LINE__)
+/* HERROR macro, used to facilitate error reporting */
+#define HERROR(e) HEpush(e, __func__, __FILE__, __LINE__)
 
 /* HRETURN_ERROR macro, used to facilitate error reporting.  Makes
    same assumptions as HERROR.  IN ADDITION, this macro causes
@@ -518,4 +503,4 @@ PRIVATE const struct error_messages_t error_messages[] = {
 };
 #endif /* _H_ERR_MASTER_ */
 
-#endif /* __HERR_H */
+#endif /* H4_HERR_H */

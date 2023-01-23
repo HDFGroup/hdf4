@@ -103,6 +103,8 @@ fmtuint16(VOIDP x, file_format_t ff, FILE *ofp)
 intn
 fmtchar(VOIDP x, file_format_t ff, FILE *ofp)
 {
+    (void)ff;
+
     if (isprint(*(unsigned char *)x)) {
         putc(*((char *)x), ofp);
         return (1);
@@ -347,10 +349,6 @@ dumpfull(int32 nt, dump_info_t *dump_opts, int32 cnt, /* number of items in 'dat
     }
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* dumpfull */
 
@@ -366,6 +364,8 @@ dumpclean(int32 nt, dump_info_t *dump_opts, int32 cnt, /* number of items in 'da
     intn  is_null;           /* TRUE if current character is a null  */
     char *tempptr;           /* used in finding CR or LF in data buffer */
     intn  ret_value = SUCCEED;
+
+    (void)dump_opts;
 
     /* check inputs */
     if (NULL == databuf)
@@ -503,9 +503,5 @@ dumpclean(int32 nt, dump_info_t *dump_opts, int32 cnt, /* number of items in 'da
     putc('\n', ofp); /* newline */
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* dumpclean */

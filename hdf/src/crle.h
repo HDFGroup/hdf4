@@ -22,8 +22,8 @@
  * Constant definitions:
  *---------------------------------------------------------------------------*/
 
-#ifndef __CRLE_H
-#define __CRLE_H
+#ifndef H4_CRLE_H
+#define H4_CRLE_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -109,4 +109,4 @@ funclist_t crle_funcs = {/* functions to perform run-length encoding */
                          NULL};
 #endif
 
-#endif /* __CRLE_H */
+#endif /* H4_CRLE_H */

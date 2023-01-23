@@ -34,8 +34,8 @@
 /*
  * Rpc additions to <sys/types.h>
  */
-#ifndef __TYPES_RPC_HEADER__
-#define __TYPES_RPC_HEADER__
+#ifndef H4_XDR_TYPES_H
+#define H4_XDR_TYPES_H
 
 #include "h4config.h"
 
@@ -85,4 +85,4 @@ typedef int32_t bool_t;
 /* Define the enumerated type in the wire protocol. */
 typedef int32_t enum_t;
 
-#endif /* ndef __TYPES_RPC_HEADER__ */
+#endif /* H4_XDR_TYPES_H */

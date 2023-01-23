@@ -22,8 +22,8 @@
  * Author: -GeorgeV -  9/3/96
  *---------------------------------------------------------------------------*/
 
-#ifndef __HCHUNKS_H
-#define __HCHUNKS_H
+#ifndef H4_HCHUNKS_H
+#define H4_HCHUNKS_H
 
 #include "H4api_adpt.h"
 
@@ -277,4 +277,4 @@ funclist_t chunked_funcs = {
 
 #endif
 
-#endif /* __HCHUNKS_H */
+#endif /* H4_HCHUNKS_H */

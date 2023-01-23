@@ -229,8 +229,7 @@ PRIVATE intn GRIisspecial_type(int32 file_id, uint16 tag, uint16 ref);
 intn
 rigcompare(void *k1, void *k2, intn cmparg)
 {
-    /* shut compiler up */
-    cmparg = cmparg;
+    (void)cmparg;
 
     return ((intn)((*(int32 *)k1) - (*(int32 *)k2))); /* valid for integer keys */
 } /* rigcompare */
@@ -373,7 +372,6 @@ Get_grfile(HFILEID f)
 PRIVATE intn
 GRIisspecial_type(int32 file_id, uint16 tag, uint16 ref)
 {
-    CONSTR(FUNC, "GRIisspecial_type");
     accrec_t *access_rec = NULL; /* access element record */
     int32     aid;
     intn      ret_value = 0;
@@ -413,9 +411,8 @@ done:
         if (aid != 0)
             if (Hendaccess(aid) == FAIL)
                 HERROR(DFE_CANTENDACCESS);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     return ret_value;
 } /* GRIisspecial_type */
 
@@ -566,7 +563,6 @@ Decode_diminfo(uint8 *p, dim_info_t *dim_info)
 static intn
 GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
 {
-    CONSTR(FUNC, "GRIget_image_list");
     uint16     gr_ref;                          /* ref # of the Vgroup containing new-style RIs */
     intn       curr_image;                      /* current image gathering information about */
     intn       nimages;                         /* total number of potential images */
@@ -1285,12 +1281,6 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
     HDfree(img_info); /* free image info structures */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end GRIget_image_list() */
 
@@ -1329,7 +1319,6 @@ intn
 GRIil_convert(const void *inbuf, gr_interlace_t inil, void *outbuf, gr_interlace_t outil, int32 dims[2],
               int32 ncomp, int32 nt)
 {
-    CONSTR(FUNC, "GRIil_convert"); /* for HERROR */
     intn         ret_value     = SUCCEED;
     uintn        pixel_size    = (uintn)DFKNTsize((nt | DFNT_NATIVE) & (~DFNT_LITEND)) * (uintn)ncomp;
     uintn        comp_size     = (uintn)DFKNTsize((nt | DFNT_NATIVE) & (~DFNT_LITEND));
@@ -1445,12 +1434,6 @@ GRIil_convert(const void *inbuf, gr_interlace_t inil, void *outbuf, gr_interlace
     }             /* end else */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     /* Free arrays allocated during this routine */
     /* (common for both error and normal returns) */
     if (in_comp_ptr != NULL)
@@ -1492,8 +1475,7 @@ done:
 int32
 GRstart(int32 hdf_file_id)
 {
-    CONSTR(FUNC, "GRstart"); /* for HERROR */
-    gr_info_t *gr_ptr;       /* ptr to the new GR information for a file */
+    gr_info_t *gr_ptr; /* ptr to the new GR information for a file */
     int32      ret_value = SUCCEED;
 
     /* clear error stack and check validity of file id */
@@ -1554,11 +1536,6 @@ GRstart(int32 hdf_file_id)
     ret_value = HAregister_atom(GRIDGROUP, gr_ptr);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRstart() */
 
@@ -1586,8 +1563,7 @@ done:
 intn
 GRfileinfo(int32 grid, int32 *n_datasets, int32 *n_attrs)
 {
-    CONSTR(FUNC, "GRfileinfo"); /* for HERROR */
-    gr_info_t *gr_ptr;          /* ptr to the GR information for a file */
+    gr_info_t *gr_ptr; /* ptr to the GR information for a file */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of file id */
@@ -1608,11 +1584,6 @@ GRfileinfo(int32 grid, int32 *n_datasets, int32 *n_attrs)
         *n_attrs = gr_ptr->gattr_count;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRfileinfo() */
 
@@ -1641,10 +1612,9 @@ done:
 PRIVATE intn
 GRIupdatemeta(int32 hdf_file_id, ri_info_t *img_ptr)
 {
-    CONSTR(FUNC, "GRIupdatemeta"); /* for HERROR */
-    uint8  GRtbuf[64];             /* local buffer for reading RIG info */
-    uint8  ntstring[4];            /* temporary storage for the number type information */
-    uint8 *p;                      /* temporary pointer into buffer */
+    uint8  GRtbuf[64];  /* local buffer for reading RIG info */
+    uint8  ntstring[4]; /* temporary storage for the number type information */
+    uint8 *p;           /* temporary pointer into buffer */
     intn   ret_value = SUCCEED;
 
     HEclear();
@@ -1729,12 +1699,6 @@ GRIupdatemeta(int32 hdf_file_id, ri_info_t *img_ptr)
         HGOTO_ERROR(DFE_PUTELEM, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end GRIupdatemeta() */
 
@@ -1762,8 +1726,7 @@ done:
 PRIVATE intn
 GRIupdateRIG(int32 hdf_file_id, ri_info_t *img_ptr)
 {
-    CONSTR(FUNC, "GRIupdateRIG"); /* for HERROR */
-    int32 GroupID;                /* RIG id for group interface */
+    int32 GroupID; /* RIG id for group interface */
     intn  ret_value = SUCCEED;
 
     HEclear();
@@ -1812,12 +1775,6 @@ GRIupdateRIG(int32 hdf_file_id, ri_info_t *img_ptr)
         HGOTO_ERROR(DFE_GROUPWRITE, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end GRIupdateRIG() */
 
@@ -1845,8 +1802,7 @@ done:
 PRIVATE intn
 GRIupdateRI(int32 hdf_file_id, ri_info_t *img_ptr)
 {
-    CONSTR(FUNC, "GRIupdateRI"); /* for HERROR */
-    int32 GroupID;               /* RI vgroup id */
+    int32 GroupID; /* RI vgroup id */
     intn  ret_value = SUCCEED;
     int32 temp_ref; /* used to hold the returned value from a function
                             that may return a ref or a FAIL - BMR */
@@ -1924,12 +1880,6 @@ GRIupdateRI(int32 hdf_file_id, ri_info_t *img_ptr)
         HGOTO_ERROR(DFE_CANTDETACH, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end GRIupdateRI() */
 
@@ -1957,7 +1907,6 @@ done:
 PRIVATE intn
 GRIup_attr_data(int32 hdf_file_id, at_info_t *attr_ptr)
 {
-    CONSTR(FUNC, "GRIup_attr_data"); /* for HERROR */
     intn ret_value = SUCCEED;
 
     HEclear();
@@ -1991,12 +1940,6 @@ GRIup_attr_data(int32 hdf_file_id, at_info_t *attr_ptr)
     } /* end else */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end GRIup_attr_data() */
 
@@ -2022,7 +1965,6 @@ done:
 intn
 GRend(int32 grid)
 {
-    CONSTR(FUNC, "GRend");  /* for HERROR */
     int32      hdf_file_id; /* HDF file ID */
     int32      GroupID;     /* VGroup ID for the GR group */
     gr_info_t *gr_ptr;      /* ptr to the GR information for this grid */
@@ -2218,11 +2160,6 @@ GRend(int32 grid)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRend() */
 
@@ -2251,10 +2188,9 @@ done:
 int32
 GRselect(int32 grid, int32 index)
 {
-    CONSTR(FUNC, "GRselect"); /* for HERROR */
-    gr_info_t *gr_ptr;        /* ptr to the GR information for this grid */
-    ri_info_t *ri_ptr;        /* ptr to the image to work with */
-    void     **t;             /* temp. ptr to the image found */
+    gr_info_t *gr_ptr; /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr; /* ptr to the image to work with */
+    void     **t;      /* temp. ptr to the image found */
     int32      ret_value = SUCCEED;
 
     /* clear error stack and check validity of file id */
@@ -2281,11 +2217,6 @@ GRselect(int32 grid, int32 index)
     ret_value = HAregister_atom(RIIDGROUP, ri_ptr);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRselect() */
 
@@ -2321,10 +2252,9 @@ done:
 int32
 GRcreate(int32 grid, const char *name, int32 ncomp, int32 nt, int32 il, int32 dimsizes[2])
 {
-    CONSTR(FUNC, "GRcreate"); /* for HERROR */
-    int32      GroupID;       /* ID of the Vgroup created */
-    gr_info_t *gr_ptr;        /* ptr to the GR information for this grid */
-    ri_info_t *ri_ptr;        /* ptr to the image to work with */
+    int32      GroupID; /* ID of the Vgroup created */
+    gr_info_t *gr_ptr;  /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr;  /* ptr to the image to work with */
     int32      ret_value = SUCCEED;
     int32      temp_ref; /* used to hold the returned value from a function
                                  that may return a ref or a FAIL - BMR */
@@ -2408,11 +2338,6 @@ GRcreate(int32 grid, const char *name, int32 ncomp, int32 nt, int32 il, int32 di
     ret_value = HAregister_atom(RIIDGROUP, ri_ptr);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRcreate() */
 
@@ -2440,10 +2365,9 @@ done:
 int32
 GRnametoindex(int32 grid, const char *name)
 {
-    CONSTR(FUNC, "GRnametoindex"); /* for HERROR */
-    gr_info_t *gr_ptr;             /* ptr to the GR information for this grid */
-    ri_info_t *ri_ptr;             /* ptr to the image to work with */
-    void     **t;                  /* temp. ptr to the image found */
+    gr_info_t *gr_ptr; /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr; /* ptr to the image to work with */
+    void     **t;      /* temp. ptr to the image found */
     int32      ret_value = SUCCEED;
 
     /* clear error stack and check validity of file id */
@@ -2468,11 +2392,6 @@ GRnametoindex(int32 grid, const char *name)
     ret_value = (FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRnametoindex() */
 
@@ -2509,8 +2428,7 @@ done:
 intn
 GRgetiminfo(int32 riid, char *name, int32 *ncomp, int32 *nt, int32 *il, int32 dimsizes[2], int32 *n_attr)
 {
-    CONSTR(FUNC, "GRgetiminfo"); /* for HERROR */
-    ri_info_t *ri_ptr;           /* ptr to the image to work with */
+    ri_info_t *ri_ptr; /* ptr to the image to work with */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
@@ -2545,11 +2463,6 @@ GRgetiminfo(int32 riid, char *name, int32 *ncomp, int32 *nt, int32 *il, int32 di
         *n_attr = ri_ptr->lattr_count;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRgetiminfo() */
 
@@ -2580,8 +2493,7 @@ done:
 intn
 GRgetnluts(int32 riid)
 {
-    CONSTR(FUNC, "GRgetnluts"); /* for HERROR */
-    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    ri_info_t *ri_ptr; /* ptr to the image to work with */
     intn       ret_value = FAIL;
 
     /* clear error stack and check validity of args */
@@ -2601,11 +2513,6 @@ GRgetnluts(int32 riid)
         ret_value = 1;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRgetnluts() */
 
@@ -2648,7 +2555,6 @@ done:
 intn
 GRwriteimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], void *data)
 {
-    CONSTR(FUNC, "GRwriteimage");   /* for HERROR */
     int32      stride[2];           /* pointer to the stride array */
     gr_info_t *gr_ptr;              /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;              /* ptr to the image to work with */
@@ -3028,11 +2934,6 @@ GRwriteimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], voi
     gr_ptr->gr_modified   = TRUE;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRwriteimage() */
 
@@ -3074,7 +2975,6 @@ done:
 intn
 GRreadimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], void *data)
 {
-    CONSTR(FUNC, "GRreadimage");      /* for HERROR */
     int32        hdf_file_id;         /* HDF file ID */
     gr_info_t   *gr_ptr;              /* ptr to the GR information for this grid */
     ri_info_t   *ri_ptr;              /* ptr to the image to work with */
@@ -3302,11 +3202,6 @@ GRreadimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], void
     } /* end if */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRreadimage() */
 
@@ -3336,8 +3231,7 @@ done:
 intn
 GRendaccess(int32 riid)
 {
-    CONSTR(FUNC, "GRendaccess"); /* for HERROR */
-    ri_info_t *ri_ptr;           /* ptr to the image to work with */
+    ri_info_t *ri_ptr; /* ptr to the image to work with */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
@@ -3381,11 +3275,6 @@ GRendaccess(int32 riid)
         HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRendaccess() */
 
@@ -3414,9 +3303,8 @@ done:
 uint16
 GRidtoref(int32 riid)
 {
-    CONSTR(FUNC, "GRidtoref"); /* for HERROR */
-    ri_info_t *ri_ptr;         /* ptr to the image to work with */
-    uint16     ret_value = 0;  /* FAIL? */
+    ri_info_t *ri_ptr;        /* ptr to the image to work with */
+    uint16     ret_value = 0; /* FAIL? */
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -3443,12 +3331,6 @@ GRidtoref(int32 riid)
     } /* end else */
 
 done:
-    if (ret_value == 0) /* 0 is invalid ref */
-    {                   /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRidtoref() */
 
@@ -3478,10 +3360,9 @@ done:
 int32
 GRreftoindex(int32 grid, uint16 ref)
 {
-    CONSTR(FUNC, "GRreftoindex"); /* for HERROR */
-    gr_info_t *gr_ptr;            /* ptr to the GR information for this grid */
-    ri_info_t *ri_ptr;            /* ptr to the image to work with */
-    void     **t;                 /* temp. ptr to the image found */
+    gr_info_t *gr_ptr; /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr; /* ptr to the image to work with */
+    void     **t;      /* temp. ptr to the image found */
     int32      ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
@@ -3507,11 +3388,6 @@ GRreftoindex(int32 grid, uint16 ref)
     ret_value = (FAIL);
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRreftoindex() */
 
@@ -3545,8 +3421,7 @@ done:
 intn
 GRreqlutil(int32 riid, intn il)
 {
-    CONSTR(FUNC, "GRreqlutil"); /* for HERROR */
-    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    ri_info_t *ri_ptr; /* ptr to the image to work with */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
@@ -3565,11 +3440,6 @@ GRreqlutil(int32 riid, intn il)
     ri_ptr->lut_il = (gr_interlace_t)il;
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRreqlutil() */
 
@@ -3603,8 +3473,7 @@ done:
 intn
 GRreqimageil(int32 riid, intn il)
 {
-    CONSTR(FUNC, "GRreqimageil"); /* for HERROR */
-    ri_info_t *ri_ptr;            /* ptr to the image to work with */
+    ri_info_t *ri_ptr; /* ptr to the image to work with */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
@@ -3623,11 +3492,6 @@ GRreqimageil(int32 riid, intn il)
     ri_ptr->im_il = (gr_interlace_t)il;
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRreqimageil() */
 
@@ -3659,7 +3523,6 @@ done:
 int32
 GRgetlutid(int32 riid, int32 lut_index)
 {
-    CONSTR(FUNC, "GRgetlutid"); /* for HERROR */
     int32 ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
@@ -3672,11 +3535,6 @@ GRgetlutid(int32 riid, int32 lut_index)
     ret_value = (riid);
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRgetlutid() */
 
@@ -3707,8 +3565,7 @@ done:
 uint16
 GRluttoref(int32 lutid)
 {
-    CONSTR(FUNC, "GRluttoref"); /* for HERROR */
-    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    ri_info_t *ri_ptr; /* ptr to the image to work with */
     uint16     ret_value = 0;
 
     /* clear error stack and check validity of args */
@@ -3725,11 +3582,6 @@ GRluttoref(int32 lutid)
     ret_value = ri_ptr->lut_ref;
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRluttoref() */
 
@@ -3762,8 +3614,7 @@ done:
 intn
 GRgetlutinfo(int32 lutid, int32 *ncomp, int32 *nt, int32 *il, int32 *nentries)
 {
-    CONSTR(FUNC, "GRgetlutinfo"); /* for HERROR */
-    ri_info_t *ri_ptr;            /* ptr to the image to work with */
+    ri_info_t *ri_ptr; /* ptr to the image to work with */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
@@ -3800,11 +3651,6 @@ GRgetlutinfo(int32 lutid, int32 *ncomp, int32 *nt, int32 *il, int32 *nentries)
     } /* end else */
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRgetlutinfo() */
 
@@ -3838,9 +3684,8 @@ done:
 intn
 GRwritelut(int32 lutid, int32 ncomps, int32 nt, int32 il, int32 nentries, void *data)
 {
-    CONSTR(FUNC, "GRwritelut"); /* for HERROR */
-    int32      hdf_file_id;     /* file ID from Hopen */
-    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    int32      hdf_file_id; /* file ID from Hopen */
+    ri_info_t *ri_ptr;      /* ptr to the image to work with */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
@@ -3892,11 +3737,6 @@ GRwritelut(int32 lutid, int32 ncomps, int32 nt, int32 il, int32 nentries, void *
     } /* end else */
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRwritelut() */
 
@@ -3926,9 +3766,8 @@ done:
 intn
 GRreadlut(int32 lutid, void *data)
 {
-    CONSTR(FUNC, "GRreadlut"); /* for HERROR */
-    int32      hdf_file_id;    /* file ID from Hopen */
-    ri_info_t *ri_ptr;         /* ptr to the image to work with */
+    int32      hdf_file_id; /* file ID from Hopen */
+    ri_info_t *ri_ptr;      /* ptr to the image to work with */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
@@ -3972,11 +3811,6 @@ GRreadlut(int32 lutid, void *data)
     } /* end if */
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRreadlut() */
 
@@ -4007,9 +3841,8 @@ done:
 intn
 GRsetexternalfile(int32 riid, const char *filename, int32 offset)
 {
-    CONSTR(FUNC, "GRsetexternalfile"); /* for HERROR */
-    ri_info_t *ri_ptr;                 /* ptr to the image to work with */
-    int32      tmp_aid;                /* AID returned from HXcreate() */
+    ri_info_t *ri_ptr;  /* ptr to the image to work with */
+    int32      tmp_aid; /* AID returned from HXcreate() */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
@@ -4052,11 +3885,6 @@ GRsetexternalfile(int32 riid, const char *filename, int32 offset)
         HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRsetexternalfile() */
 
@@ -4089,8 +3917,7 @@ done:
 intn
 GRsetaccesstype(int32 riid, uintn accesstype)
 {
-    CONSTR(FUNC, "GRsetaccesstype"); /* for HERROR */
-    ri_info_t *ri_ptr;               /* ptr to the image to work with */
+    ri_info_t *ri_ptr; /* ptr to the image to work with */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
@@ -4110,11 +3937,6 @@ GRsetaccesstype(int32 riid, uintn accesstype)
     ri_ptr->acc_type = accesstype;
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRsetaccesstype() */
 
@@ -4194,8 +4016,7 @@ done:
 intn
 GRsetcompress(int32 riid, comp_coder_t comp_type, comp_info *cinfo)
 {
-    CONSTR(FUNC, "GRsetcompress"); /* for HERROR */
-    ri_info_t *ri_ptr;             /* ptr to the image to work with */
+    ri_info_t *ri_ptr; /* ptr to the image to work with */
     comp_info  cinfo_x;
     uint32     comp_config;
     intn       ret_value = SUCCEED;
@@ -4273,11 +4094,6 @@ GRsetcompress(int32 riid, comp_coder_t comp_type, comp_info *cinfo)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRsetcompress() */
 
@@ -4318,8 +4134,7 @@ done:
 intn
 GRgetcompress(int32 riid, comp_coder_t *comp_type, comp_info *cinfo)
 {
-    CONSTR(FUNC, "GRgetcompress"); /* for HGOTO_ERROR */
-    ri_info_t *ri_ptr;             /* ptr to the image to work with */
+    ri_info_t *ri_ptr; /* ptr to the image to work with */
     int32      file_id;
     uint16     scheme; /* compression scheme used for JPEG images */
     intn       ret_value = SUCCEED;
@@ -4359,11 +4174,6 @@ GRgetcompress(int32 riid, comp_coder_t *comp_type, comp_info *cinfo)
     }
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRgetcompress() */
 
@@ -4426,8 +4236,7 @@ done:
 intn
 GRgetcomptype(int32 riid, comp_coder_t *comp_type)
 {
-    CONSTR(FUNC, "GRgetcomptype"); /* for HGOTO_ERROR */
-    ri_info_t *ri_ptr;             /* ptr to the image to work with */
+    ri_info_t *ri_ptr; /* ptr to the image to work with */
     int32      file_id;
     uint16     scheme; /* compression scheme used for old images */
     intn       ret_value = SUCCEED;
@@ -4469,9 +4278,6 @@ GRgetcomptype(int32 riid, comp_coder_t *comp_type)
         *comp_type = temp_comp_type;
     }
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-    }                     /* end if */
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRgetcomptype() */
 
@@ -4516,8 +4322,7 @@ done:
 intn
 GRgetcompinfo(int32 riid, comp_coder_t *comp_type, comp_info *cinfo)
 {
-    CONSTR(FUNC, "GRgetcompinfo"); /* for HGOTO_ERROR */
-    ri_info_t *ri_ptr;             /* ptr to the image to work with */
+    ri_info_t *ri_ptr; /* ptr to the image to work with */
     int32      file_id;
     uint16     scheme; /* compression scheme used for JPEG images */
     intn       ret_value = SUCCEED;
@@ -4562,11 +4367,6 @@ GRgetcompinfo(int32 riid, comp_coder_t *comp_type, comp_info *cinfo)
     }
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRgetcompinfo() */
 
@@ -4601,7 +4401,6 @@ done:
 intn
 GRsetattr(int32 id, const char *name, int32 attr_nt, int32 count, const void *data)
 {
-    CONSTR(FUNC, "GRsetattr");    /* for HERROR */
     int32      hdf_file_id;       /* HDF file ID from Hopen */
     gr_info_t *gr_ptr;            /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr = NULL;     /* ptr to the image to work with */
@@ -4772,11 +4571,6 @@ GRsetattr(int32 id, const char *name, int32 attr_nt, int32 count, const void *da
     } /* end if */
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRsetattr() */
 
@@ -4809,12 +4603,11 @@ done:
 intn
 GRattrinfo(int32 id, int32 index, char *name, int32 *attr_nt, int32 *count)
 {
-    CONSTR(FUNC, "GRattrinfo"); /* for HERROR */
-    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
-    ri_info_t *ri_ptr;          /* ptr to the image to work with */
-    void     **t;               /* temp. ptr to the image found */
-    TBBT_TREE *search_tree;     /* attribute tree to search through */
-    at_info_t *at_ptr;          /* ptr to the attribute to work with */
+    gr_info_t *gr_ptr;      /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr;      /* ptr to the image to work with */
+    void     **t;           /* temp. ptr to the image found */
+    TBBT_TREE *search_tree; /* attribute tree to search through */
+    at_info_t *at_ptr;      /* ptr to the attribute to work with */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
@@ -4858,11 +4651,6 @@ GRattrinfo(int32 id, int32 index, char *name, int32 *attr_nt, int32 *count)
         *count = at_ptr->len;
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRattrinfo() */
 
@@ -4893,14 +4681,13 @@ done:
 intn
 GRgetattr(int32 id, int32 index, void *data)
 {
-    CONSTR(FUNC, "GRgetattr"); /* for HERROR */
-    int32      hdf_file_id;    /* HDF file ID from Hopen */
-    gr_info_t *gr_ptr;         /* ptr to the GR information for this grid */
-    ri_info_t *ri_ptr;         /* ptr to the image to work with */
-    void     **t;              /* temp. ptr to the image found */
-    TBBT_TREE *search_tree;    /* attribute tree to search through */
-    at_info_t *at_ptr;         /* ptr to the attribute to work with */
-    int32      at_size;        /* size in bytes of the attribute data */
+    int32      hdf_file_id; /* HDF file ID from Hopen */
+    gr_info_t *gr_ptr;      /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr;      /* ptr to the image to work with */
+    void     **t;           /* temp. ptr to the image found */
+    TBBT_TREE *search_tree; /* attribute tree to search through */
+    at_info_t *at_ptr;      /* ptr to the attribute to work with */
+    int32      at_size;     /* size in bytes of the attribute data */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
@@ -4972,11 +4759,6 @@ GRgetattr(int32 id, int32 index, void *data)
         HDfreenclear(at_ptr->data);
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRgetattr() */
 
@@ -5006,12 +4788,11 @@ done:
 int32
 GRfindattr(int32 id, const char *name)
 {
-    CONSTR(FUNC, "GRfindattr"); /* for HERROR */
-    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
-    ri_info_t *ri_ptr;          /* ptr to the image to work with */
-    void     **t;               /* temp. ptr to the image found */
-    TBBT_TREE *search_tree;     /* attribute tree to search through */
-    at_info_t *at_ptr;          /* ptr to the attribute to work with */
+    gr_info_t *gr_ptr;      /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr;      /* ptr to the image to work with */
+    void     **t;           /* temp. ptr to the image found */
+    TBBT_TREE *search_tree; /* attribute tree to search through */
+    at_info_t *at_ptr;      /* ptr to the attribute to work with */
     int32      ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
@@ -5049,11 +4830,6 @@ GRfindattr(int32 id, const char *name)
     ret_value = (FAIL);
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end GRfindattr() */
 
@@ -5076,7 +4852,6 @@ done:
 PRIVATE intn
 GRIstart(void)
 {
-    CONSTR(FUNC, "GRIstart"); /* for HERROR */
     intn ret_value = SUCCEED;
 
     /* Don't call this routine again... */
@@ -5087,12 +4862,6 @@ GRIstart(void)
         HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return (ret_value);
 } /* end GRIstart() */
 
@@ -5123,10 +4892,9 @@ done:
 PRIVATE intn
 GRIgetaid(ri_info_t *ri_ptr, intn acc_perm)
 {
-    CONSTR(FUNC, "GRIgetaid"); /* for HERROR */
-    int32      hdf_file_id;    /* HDF file ID */
-    gr_info_t *gr_ptr;         /* ptr to the file GR information for this image */
-    model_info minfo;          /* Dummy modeling information structure */
+    int32      hdf_file_id; /* HDF file ID */
+    gr_info_t *gr_ptr;      /* ptr to the file GR information for this image */
+    model_info minfo;       /* Dummy modeling information structure */
     intn       ret_value = SUCCEED;
 
     HEclear();
@@ -5196,9 +4964,7 @@ GRIgetaid(ri_info_t *ri_ptr, intn acc_perm)
 done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         ri_ptr->img_aid = 0;
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
     return ret_value;
 } /* end GRIgetaid() */
@@ -5356,7 +5122,6 @@ GRsetchunk(int32         riid,      /* IN: raster access id */
            HDF_CHUNK_DEF chunk_def, /* IN: chunk definition */
            int32         flags /* IN: flags */)
 {
-    CONSTR(FUNC, "GRsetchunk");
     ri_info_t     *ri_ptr = NULL;     /* ptr to the image to work with */
     HCHUNK_DEF     chunk[1];          /* H-level chunk definition */
     HDF_CHUNK_DEF *cdef = NULL;       /* GR Chunk definition */
@@ -5595,10 +5360,6 @@ GRsetchunk(int32         riid,      /* IN: raster access id */
 #endif
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     /* free fill value */
     if (fill_pixel != NULL)
         HDfree(fill_pixel);
@@ -5644,7 +5405,6 @@ GRgetchunkinfo(int32          riid,      /* IN: sds access id */
                HDF_CHUNK_DEF *chunk_def, /* IN/OUT: chunk definition */
                int32         *flags /* IN/OUT: flags */)
 {
-    CONSTR(FUNC, "GRgetchunkinfo");
     ri_info_t      *ri_ptr = NULL;       /* ptr to the image to work with */
     sp_info_block_t info_block;          /* special info block */
     int16           special;             /* Special code */
@@ -5674,7 +5434,7 @@ GRgetchunkinfo(int32          riid,      /* IN: sds access id */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 #ifdef CHK_DEBUG
-    fprintf(stderr, "%s: ri_ptr->img_aid =%d \n", FUNC, ri_ptr->img_aid);
+    fprintf(stderr, "%s: ri_ptr->img_aid =%d \n", __func__, ri_ptr->img_aid);
 #endif
 
     /* inquire about element */
@@ -5717,9 +5477,6 @@ GRgetchunkinfo(int32          riid,      /* IN: sds access id */
     }
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
     return ret_value;
 } /* GRgetchunkinfo() */
 
@@ -5754,7 +5511,6 @@ GRwritechunk(int32       riid,   /* IN: access aid to GR */
              int32      *origin, /* IN: origin of chunk to write */
              const VOID *datap /* IN: buffer for data */)
 {
-    CONSTR(FUNC, "GRwritechunk");
     ri_info_t *ri_ptr = NULL;        /* ptr to the image to work with */
     uintn      pixel_mem_size,       /* size of a pixel in memory */
         pixel_disk_size;             /* size of a pixel on disk */
@@ -5802,7 +5558,7 @@ GRwritechunk(int32       riid,   /* IN: access aid to GR */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 #ifdef CHK_DEBUG
-    fprintf(stderr, "%s: ri_ptr->img_aid =%d \n", FUNC, ri_ptr->img_aid);
+    fprintf(stderr, "%s: ri_ptr->img_aid =%d \n", __func__, ri_ptr->img_aid);
 #endif
     comp_type = COMP_CODE_NONE;
     scheme    = ri_ptr->img_dim.comp_tag;
@@ -5910,9 +5666,6 @@ GRwritechunk(int32       riid,   /* IN: access aid to GR */
     } /* end if Hinquire */
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
     /* dont forget to free up info is special info block
        This space was allocated by the library */
     if (info_block.cdims != NULL)
@@ -5956,7 +5709,6 @@ GRreadchunk(int32  riid,   /* IN: access aid to GR */
             int32 *origin, /* IN: origin of chunk to write */
             VOID  *datap /* IN/OUT: buffer for data */)
 {
-    CONSTR(FUNC, "GRreadchunk");
     ri_info_t      *ri_ptr = NULL;   /* ptr to the image to work with */
     uintn           pixel_mem_size;  /* size of a pixel in memory */
     uintn           pixel_disk_size; /* size of a pixel on disk */
@@ -6003,7 +5755,7 @@ GRreadchunk(int32  riid,   /* IN: access aid to GR */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 #ifdef CHK_DEBUG
-    fprintf(stderr, "%s: ri_ptr->img_aid =%d \n", FUNC, ri_ptr->img_aid);
+    fprintf(stderr, "%s: ri_ptr->img_aid =%d \n", __func__, ri_ptr->img_aid);
 #endif
 
     comp_type = COMP_CODE_NONE;
@@ -6113,9 +5865,6 @@ GRreadchunk(int32  riid,   /* IN: access aid to GR */
     } /* end if Hinquire */
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
     /* dont forget to free up info is special info block
        This space was allocated by the library */
     if (info_block.cdims != NULL)
@@ -6183,7 +5932,6 @@ GRsetchunkcache(int32 riid,     /* IN: access aid to mess with */
                 int32 maxcache, /* IN: max number of chunks to cache */
                 int32 flags /* IN: flags = 0, HDF_CACHEALL */)
 {
-    CONSTR(FUNC, "GRsetchunkcache");
     ri_info_t *ri_ptr = NULL; /* ptr to the image to work with */
     int16      special;       /* Special code */
     intn       ret_value = SUCCEED;
@@ -6220,7 +5968,7 @@ GRsetchunkcache(int32 riid,     /* IN: access aid to mess with */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 #ifdef CHK_DEBUG
-    fprintf(stderr, "%s: ri_ptr->img_aid =%d \n", FUNC, ri_ptr->img_aid);
+    fprintf(stderr, "%s: ri_ptr->img_aid =%d \n", __func__, ri_ptr->img_aid);
 #endif
 
     /* inquire about element */
@@ -6233,9 +5981,6 @@ GRsetchunkcache(int32 riid,     /* IN: access aid to mess with */
     }
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
     return ret_value;
 } /* GRsetchunkcache() */
 
@@ -6276,7 +6021,6 @@ MODIFICATION
 intn
 GR2bmapped(int32 riid, intn *tobe_mapped, intn *name_generated)
 {
-    CONSTR(FUNC, "GR2bmapped");
     ri_info_t *ri_ptr;             /* ptr to the image to work with */
     intn       should_map = FALSE; /* TRUE if the image should be mapped */
     uint16     img_tag, img_ref;   /* shortcuts image's tag/ref */
@@ -6341,9 +6085,6 @@ GR2bmapped(int32 riid, intn *tobe_mapped, intn *name_generated)
     *name_generated = ri_ptr->name_generated;
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-    }                     /* end if */
-    /* Normal function cleanup */
     return ret_value;
 } /* GR2bmapped */
 /*

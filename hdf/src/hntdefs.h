@@ -15,8 +15,8 @@
    *** This file contains all the number-type definitions for HDF
    + */
 
-#ifndef _HNT_H
-#define _HNT_H
+#ifndef H4_HNT_H
+#define H4_HNT_H
 
 /* masks for types */
 #define DFNT_HDF    0x00000000 /* standard HDF format  */
@@ -210,4 +210,4 @@
 
 /* maximum size of the atomic data types */
 #define MAX_NT_SIZE 16
-#endif /* _HNT_H */
+#endif /* H4_HNT_H */

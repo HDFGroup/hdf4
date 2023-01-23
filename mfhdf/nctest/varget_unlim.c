@@ -50,7 +50,6 @@ test_ncvarget_unlim(char *basefile)
     int         time[12];
     short       val[12][3][2];
     long        start[3], count[3];
-    int         name_size = 0;
     int         i, j, n;
 
     (void)fprintf(stderr, "*** Testing %s ...\t", &pname[5]);

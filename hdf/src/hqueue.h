@@ -40,8 +40,8 @@
  *
  *****************************************************************************/
 
-#ifndef _HQUEUE_H_
-#define _HQUEUE_H_
+#ifndef H4_HQUEUE_H
+#define H4_HQUEUE_H
 
 /*
  * This file defines three types of data structures: lists, tail queues,
@@ -155,4 +155,4 @@
         else                                                                                                 \
             (elm)->field.cqe_prev->field.cqe_next = (elm)->field.cqe_next;                                   \
     }
-#endif /* !_HQUEUE_H_ */
+#endif /* H4_HQUEUE_H */

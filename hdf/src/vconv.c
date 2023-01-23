@@ -177,7 +177,6 @@ vimakecompat(HFILEID f)
     int32   ret;
     uintn   u;
     uint16  tag = DFTAG_NULL, ref = DFTAG_NULL;
-    CONSTR(FUNC, "vimakecompat");
 
     /* =============================================  */
     /* --- read all vgs and convert each --- */
@@ -307,7 +306,6 @@ vcheckcompat(char *fs)
 
     HFILEID f;
     int32   ret;
-    CONSTR(FUNC, "vcheckcompat");
 
     f = Hopen(fs, DFACC_ALL, 0);
     if (f == FAIL)
@@ -335,7 +333,6 @@ vmakecompat(char *fs)
 {
     HFILEID f;
     int32   ret;
-    CONSTR(FUNC, "vmakecompat");
 
     f = Hopen(fs, DFACC_ALL, 0);
     if (f == FAIL)

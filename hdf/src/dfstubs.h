@@ -21,8 +21,9 @@
  **   Doug Ilg
  */
 
-#ifndef DFSTUBS_H
-#define DFSTUBS_H
+#ifndef H4_DFSTUBS_H
+#define H4_DFSTUBS_H
+
 /* This is the master HDF driver (taking the place of df.c), so... */
 #define DFMASTER
 #undef PERM_OUT /* used to "comment out" code */
@@ -64,4 +65,4 @@ PRIVATE int DFIcheck(DF *dfile);
 }
 #endif
 
-#endif /* DFSTUBS_H */
+#endif /* H4_DFSTUBS_H */

@@ -22,8 +22,8 @@
  * Constant definitions:
  *---------------------------------------------------------------------------*/
 
-#ifndef __CNONE_H
-#define __CNONE_H
+#ifndef H4_CNONE_H
+#define H4_CNONE_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -73,4 +73,4 @@ funclist_t cnone_funcs = {/* functions to perform run-length encoding */
                           NULL};
 #endif
 
-#endif /* __CNONE_H */
+#endif /* H4_CNONE_H */

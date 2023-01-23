@@ -1255,8 +1255,7 @@ ndsisdas(_fcd flabel, _fcd funit, _fcd fformat, _fcd fcoordsys, intf *isfortran,
         return FAIL;
     }
 
-    /* shut compiler up */
-    isfortran = isfortran;
+    (void)isfortran;
 
     status = DFSDIsetdatastrs(label, unit, format, coordsys);
 

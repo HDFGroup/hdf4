@@ -245,7 +245,6 @@ DESCRIPTION
 int32
 Hopen(const char *path, intn acc_mode, int16 ndds)
 {
-    CONSTR(FUNC, "Hopen");       /* For HERROR */
     filerec_t *file_rec  = NULL; /* File record */
     int        vtag      = 0;    /* write version tag? */
     int32      fid       = FAIL; /* File ID */
@@ -412,9 +411,8 @@ done:
         /* Chuck the file record we've built */
         if (file_rec != NULL && file_rec->refcount == 0)
             HIrelease_filerec_node(file_rec);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     return ret_value;
 } /* Hopen */
 
@@ -435,8 +433,7 @@ DESCRIPTION
 intn
 Hclose(int32 file_id)
 {
-    CONSTR(FUNC, "Hclose"); /* for HERROR */
-    filerec_t *file_rec;    /* file record pointer */
+    filerec_t *file_rec; /* file record pointer */
     intn       ret_value = SUCCEED;
 
     /* Clear errors and check args and all the boring stuff. */
@@ -480,11 +477,6 @@ Hclose(int32 file_id)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Hclose */
 
@@ -552,8 +544,7 @@ intn
 Hinquire(int32 access_id, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength, int32 *poffset,
          int32 *pposn, int16 *paccess, int16 *pspecial)
 {
-    CONSTR(FUNC, "Hinquire"); /* for HERROR */
-    accrec_t *access_rec;     /* access record */
+    accrec_t *access_rec; /* access record */
     intn      ret_value = SUCCEED;
 
     /* clear error stack and check validity of access id */
@@ -581,11 +572,6 @@ Hinquire(int32 access_id, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *pl
         *pspecial = 0;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end Hinquire */
 
@@ -607,7 +593,6 @@ done:
 intn
 Hfidinquire(int32 file_id, char **fname, intn *faccess, intn *attach)
 {
-    CONSTR(FUNC, "Hfidinquire"); /* for HERROR */
     filerec_t *file_rec;
     intn       ret_value = SUCCEED;
 
@@ -622,11 +607,6 @@ Hfidinquire(int32 file_id, char **fname, intn *faccess, intn *attach)
     *attach  = file_rec->attach;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Hfidinquire */
 
@@ -653,8 +633,7 @@ DESCRIPTION
 int32
 Hstartread(int32 file_id, uint16 tag, uint16 ref)
 {
-    CONSTR(FUNC, "Hstartread"); /* for HERROR */
-    int32 ret;                  /* AID to return */
+    int32 ret; /* AID to return */
     int32 ret_value = SUCCEED;
 
     /* clear error stack */
@@ -667,11 +646,6 @@ Hstartread(int32 file_id, uint16 tag, uint16 ref)
     ret_value = ret;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Hstartread() */
 
@@ -701,7 +675,6 @@ DF_END _not_ supported yet!
 intn
 Hnextread(int32 access_id, uint16 tag, uint16 ref, intn origin)
 {
-    CONSTR(FUNC, "Hnextread");           /* for HERROR */
     filerec_t *file_rec;                 /* file record */
     accrec_t  *access_rec;               /* access record */
     uint16     new_tag = 0, new_ref = 0; /* new tag & ref to access */
@@ -806,11 +779,6 @@ Hnextread(int32 access_id, uint16 tag, uint16 ref, intn origin)
     access_rec->posn    = 0;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end Hnextread() */
 
@@ -835,9 +803,8 @@ DESCRIPTION
 int32
 Hstartwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
 {
-    CONSTR(FUNC, "Hstartwrite"); /* for HERROR */
-    accrec_t *access_rec;        /* access record */
-    int32     ret;               /* AID to return */
+    accrec_t *access_rec; /* access record */
+    int32     ret;        /* AID to return */
     int32     ret_value = SUCCEED;
 
     /* clear error stack */
@@ -858,11 +825,6 @@ Hstartwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
     ret_value = ret;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end Hstartwrite */
 
@@ -887,7 +849,6 @@ DESCRIPTION
 int32
 Hstartaccess(int32 file_id, uint16 tag, uint16 ref, uint32 flags)
 {
-    CONSTR(FUNC, "Hstartaccess");        /* for HERROR */
     intn       ddnew      = FALSE;       /* is the dd a new one? */
     filerec_t *file_rec   = NULL;        /* file record */
     accrec_t  *access_rec = NULL;        /* access record */
@@ -1007,10 +968,8 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (access_rec != NULL)
             HIrelease_accrec_node(access_rec);
+    }
 
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end Hstartaccess */
 
@@ -1032,10 +991,9 @@ DESCRIPTION
 intn
 Hsetlength(int32 aid, int32 length)
 {
-    CONSTR(FUNC, "Hsetlength"); /* for HERROR */
-    accrec_t  *access_rec;      /* access record */
-    filerec_t *file_rec;        /* file record */
-    int32      offset;          /* offset of this data element in file */
+    accrec_t  *access_rec; /* access record */
+    filerec_t *file_rec;   /* file record */
+    int32      offset;     /* offset of this data element in file */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of file id */
@@ -1064,11 +1022,6 @@ Hsetlength(int32 aid, int32 length)
     access_rec->new_elem = FALSE;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end Hsetlength */
 
@@ -1090,8 +1043,7 @@ DESCRIPTION
 intn
 Happendable(int32 aid)
 {
-    CONSTR(FUNC, "Happendable"); /* for HERROR */
-    accrec_t *access_rec;        /* access record */
+    accrec_t *access_rec; /* access record */
     intn      ret_value = SUCCEED;
 
     /* clear error stack and check validity of file id */
@@ -1104,11 +1056,6 @@ Happendable(int32 aid)
     access_rec->appendable = TRUE;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end Happendable */
 
@@ -1130,11 +1077,10 @@ DESCRIPTION
 intn
 HPisappendable(int32 aid)
 {
-    CONSTR(FUNC, "HPisappendable"); /* for HERROR */
-    accrec_t  *access_rec;          /* access record */
-    filerec_t *file_rec;            /* file record */
-    int32      data_len;            /* length of the data we are checking */
-    int32      data_off;            /* offset of the data we are checking */
+    accrec_t  *access_rec; /* access record */
+    filerec_t *file_rec;   /* file record */
+    int32      data_len;   /* length of the data we are checking */
+    int32      data_off;   /* offset of the data we are checking */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of file id */
@@ -1157,11 +1103,6 @@ HPisappendable(int32 aid)
         ret_value = FAIL;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end HPisappendable */
 
@@ -1189,7 +1130,6 @@ DESCRIPTION
 intn
 Hseek(int32 access_id, int32 offset, intn origin)
 {
-    CONSTR(FUNC, "Hseek");          /* for HERROR */
     accrec_t  *access_rec;          /* access record */
     intn       old_offset = offset; /* save for later potential use */
     filerec_t *file_rec;            /* file record */
@@ -1257,11 +1197,6 @@ Hseek(int32 access_id, int32 offset, intn origin)
     access_rec->posn = offset;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Hseek() */
 
@@ -1282,8 +1217,7 @@ DESCRIPTION
 int32
 Htell(int32 access_id)
 {
-    CONSTR(FUNC, "Htell"); /* for HERROR */
-    accrec_t *access_rec;  /* access record */
+    accrec_t *access_rec; /* access record */
     int32     ret_value = SUCCEED;
 
     /* clear error stack and check validity of this access id */
@@ -1297,11 +1231,6 @@ Htell(int32 access_id)
     ret_value = (int32)access_rec->posn;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Htell() */
 
@@ -1325,7 +1254,6 @@ DESCRIPTION
 int32
 Hread(int32 access_id, int32 length, void *data)
 {
-    CONSTR(FUNC, "Hread"); /* for HERROR */
     filerec_t *file_rec;   /* file record */
     accrec_t  *access_rec; /* access record */
     int32      data_len;   /* length of the data we are checking */
@@ -1380,11 +1308,6 @@ Hread(int32 access_id, int32 length, void *data)
     ret_value = length;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Hread */
 
@@ -1411,11 +1334,10 @@ DESCRIPTION
 int32
 Hwrite(int32 access_id, int32 length, const void *data)
 {
-    CONSTR(FUNC, "Hwrite"); /* for HERROR */
-    filerec_t *file_rec;    /* file record */
-    accrec_t  *access_rec;  /* access record */
-    int32      data_len;    /* length of the data we are checking */
-    int32      data_off;    /* offset of the data we are checking */
+    filerec_t *file_rec;   /* file record */
+    accrec_t  *access_rec; /* access record */
+    int32      data_len;   /* length of the data we are checking */
+    int32      data_off;   /* offset of the data we are checking */
     int32      ret_value = SUCCEED;
 
     /* clear error stack and check validity of access id */
@@ -1494,11 +1416,6 @@ Hwrite(int32 access_id, int32 length, const void *data)
     ret_value = length;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end Hwrite */
 
@@ -1520,7 +1437,6 @@ DESCRIPTION
 intn
 HDgetc(int32 access_id)
 {
-    CONSTR(FUNC, "HDgetc");        /* for HERROR */
     uint8 c         = (uint8)FAIL; /* character read in */
     intn  ret_value = SUCCEED;
 
@@ -1530,12 +1446,6 @@ HDgetc(int32 access_id)
     ret_value = (intn)c;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HDgetc */
 
@@ -1558,7 +1468,6 @@ DESCRIPTION
 intn
 HDputc(uint8 c, int32 access_id)
 {
-    CONSTR(FUNC, "HDputc"); /* for HERROR */
     intn ret_value = SUCCEED;
 
     if (Hwrite(access_id, 1, &c) == FAIL)
@@ -1567,12 +1476,6 @@ HDputc(uint8 c, int32 access_id)
     ret_value = (intn)c;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HDputc */
 
@@ -1596,7 +1499,6 @@ DESCRIPTION
 intn
 Hendaccess(int32 access_id)
 {
-    CONSTR(FUNC, "Hendaccess");   /* for HERROR */
     filerec_t *file_rec;          /* file record */
     accrec_t  *access_rec = NULL; /* access record */
     intn       ret_value  = SUCCEED;
@@ -1628,9 +1530,8 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (access_rec != NULL)
             HIrelease_accrec_node(access_rec);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     return ret_value;
 } /* Hendaccess */
 
@@ -1655,9 +1556,8 @@ DESCRIPTION
 int32
 Hgetelement(int32 file_id, uint16 tag, uint16 ref, uint8 *data)
 {
-    CONSTR(FUNC, "Hgetelement"); /* for HERROR */
-    int32 access_id = FAIL;      /* access record id */
-    int32 length;                /* length of this elt */
+    int32 access_id = FAIL; /* access record id */
+    int32 length;           /* length of this elt */
     int32 ret_value = SUCCEED;
 
     /* clear error stack */
@@ -1680,9 +1580,8 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (access_id != FAIL)
             Hendaccess(access_id);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     return ret_value;
 } /* Hgetelement() */
 
@@ -1707,8 +1606,7 @@ DESCRIPTION
 int32
 Hputelement(int32 file_id, uint16 tag, uint16 ref, const uint8 *data, int32 length)
 {
-    CONSTR(FUNC, "Hputelement"); /* for HERROR */
-    int32 access_id = FAIL;      /* access record id */
+    int32 access_id = FAIL; /* access record id */
     int32 ret_value = SUCCEED;
 
     /* clear error stack */
@@ -1728,9 +1626,8 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (access_id != FAIL)
             Hendaccess(access_id);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     return ret_value;
 } /* end Hputelement() */
 
@@ -1756,9 +1653,8 @@ DESCRIPTION
 int32
 Hlength(int32 file_id, uint16 tag, uint16 ref)
 {
-    CONSTR(FUNC, "Hlength"); /* for HERROR */
-    int32 access_id;         /* access record id */
-    int32 length    = FAIL;  /* length of elt inquired */
+    int32 access_id;        /* access record id */
+    int32 length    = FAIL; /* length of elt inquired */
     int32 ret_value = SUCCEED;
 
     /* clear error stack */
@@ -1779,11 +1675,6 @@ Hlength(int32 file_id, uint16 tag, uint16 ref)
     ret_value = length;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end Hlength */
 
@@ -1812,9 +1703,8 @@ DESCRIPTION
 int32
 Hoffset(int32 file_id, uint16 tag, uint16 ref)
 {
-    CONSTR(FUNC, "Hoffset"); /* for HERROR */
-    int32 access_id;         /* access record id */
-    int32 offset    = FAIL;  /* offset of elt inquired */
+    int32 access_id;        /* access record id */
+    int32 offset    = FAIL; /* offset of elt inquired */
     int32 ret_value = SUCCEED;
 
     /* clear error stack */
@@ -1834,11 +1724,6 @@ Hoffset(int32 file_id, uint16 tag, uint16 ref)
     ret_value = offset;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Hoffset */
 
@@ -1879,11 +1764,6 @@ Hishdf(const char *filename)
     }
 
 done:
-    if (ret_value == FALSE) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Hishdf */
 
@@ -1904,10 +1784,9 @@ DESCRIPTION
 int32
 Htrunc(int32 aid, int32 trunc_len)
 {
-    CONSTR(FUNC, "Htrunc"); /* for HERROR */
-    accrec_t *access_rec;   /* access record */
-    int32     data_len;     /* length of the data we are checking */
-    int32     data_off;     /* offset of the data we are checking */
+    accrec_t *access_rec; /* access record */
+    int32     data_len;   /* length of the data we are checking */
+    int32     data_off;   /* offset of the data we are checking */
     int32     ret_value = SUCCEED;
 
     /* clear error stack and check validity of access id */
@@ -1944,11 +1823,6 @@ Htrunc(int32 aid, int32 trunc_len)
         HGOTO_ERROR(DFE_BADLEN, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end Htrunc() */
 
@@ -1968,7 +1842,6 @@ NOTE
 PRIVATE intn
 HIsync(filerec_t *file_rec)
 {
-    CONSTR(FUNC, "HIsync"); /* for HERROR */
     intn ret_value = SUCCEED;
 
     /* check whether to flush the file info */
@@ -1986,12 +1859,6 @@ HIsync(filerec_t *file_rec)
     }                        /* end if */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HIsync */
 
@@ -2015,8 +1882,7 @@ NOTE
 intn
 Hsync(int32 file_id)
 {
-    CONSTR(FUNC, "Hsync"); /* for HERROR */
-    filerec_t *file_rec;   /* file record */
+    filerec_t *file_rec; /* file record */
     intn       ret_value = SUCCEED;
 
     /* check validity of file record and get dd ptr */
@@ -2029,11 +1895,6 @@ Hsync(int32 file_id)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Hsync */
 
@@ -2054,8 +1915,7 @@ DESCRIPTION
 intn
 Hcache(int32 file_id, intn cache_on)
 {
-    CONSTR(FUNC, "Hcache"); /* for HERROR */
-    filerec_t *file_rec;    /* file record */
+    filerec_t *file_rec; /* file record */
     intn       ret_value = SUCCEED;
 
     if (file_id == CACHE_ALL_FILES) /* check whether to modify the default cache */
@@ -2077,11 +1937,6 @@ Hcache(int32 file_id, intn cache_on)
     } /* end else */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Hcache */
 
@@ -2140,8 +1995,7 @@ DESCRIPTION
 intn
 Hsetaccesstype(int32 access_id, uintn accesstype)
 {
-    CONSTR(FUNC, "Hsetaccesstype"); /* for HERROR */
-    accrec_t *access_rec;           /* access record */
+    accrec_t *access_rec; /* access record */
     intn      ret_value = SUCCEED;
 
     /* clear error stack and check validity of this access id */
@@ -2167,11 +2021,6 @@ Hsetaccesstype(int32 access_id, uintn accesstype)
         ret_value = HXPsetaccesstype(access_rec);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Hsetacceesstype() */
 
@@ -2237,16 +2086,22 @@ Internal Routines
 PRIVATE intn
 HIstart(void)
 {
-    CONSTR(FUNC, "HIstart"); /* for HERROR */
     intn ret_value = SUCCEED;
 
     /* Don't call this routine again... */
     library_terminate = TRUE;
 
-    /* Install atexit() library cleanup routine */
+    /* Install atexit() library cleanup routine
+     *
+     * In the past, this had problems with Solaris + gcc
+     *
+     * XXX: Check to see if this is true with modern Solaris
+     */
+#if !(defined(__sun) && defined(__GNUC__))
     if (install_atexit == TRUE)
-        if (HDatexit(&HPend) != 0)
+        if (atexit(&HPend) != 0)
             HGOTO_ERROR(DFE_CANTINIT, FAIL);
+#endif
 
     /* Create the file ID and access ID groups */
     if (HAinit_group(FIDGROUP, 64) == FAIL)
@@ -2265,11 +2120,6 @@ HIstart(void)
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return (ret_value);
 } /* end HIstart() */
 
@@ -2296,7 +2146,6 @@ done:
 intn
 HPregister_term_func(hdf_termfunc_t term_func)
 {
-    CONSTR(FUNC, "HPregister_term_func"); /* for HERROR */
     intn ret_value = SUCCEED;
     if (library_terminate == FALSE)
         if (HIstart() == FAIL)
@@ -2306,11 +2155,6 @@ HPregister_term_func(hdf_termfunc_t term_func)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return (ret_value);
 } /* end HPregister_term_func() */
 
@@ -2380,7 +2224,6 @@ DESCRIPTION
 PRIVATE intn
 HIextend_file(filerec_t *file_rec)
 {
-    CONSTR(FUNC, "HIextend_file"); /* for HERROR */
     uint8 temp      = 0;
     intn  ret_value = SUCCEED;
 
@@ -2390,12 +2233,6 @@ HIextend_file(filerec_t *file_rec)
         HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HIextend_file */
 
@@ -2403,9 +2240,8 @@ done:
 NAME
    HIget_function_table -- create special function table
 USAGE
-   int HIget_func_table(access_rec, FUNC)
+   int HIget_func_table(access_rec)
    accrec_t * access_rec;     IN: access record we are working on
-   char     * FUNC;           IN: function we are working for
 RETURNS
    NULL no matter what (seems odd....)
 DESCRIPTION
@@ -2415,8 +2251,7 @@ DESCRIPTION
 PRIVATE funclist_t *
 HIget_function_table(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HIget_function_table"); /* for HERROR */
-    filerec_t  *file_rec;                 /* file record */
+    filerec_t  *file_rec; /* file record */
     int16       spec_code;
     uint8       lbuf[4];          /* temporary buffer */
     uint8      *p;                /* tmp buf ptr */
@@ -2448,12 +2283,6 @@ HIget_function_table(accrec_t *access_rec)
     }
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HIget_function_table */
 
@@ -2489,12 +2318,6 @@ HIgetspinfo(accrec_t *access_rec)
         HGOTO_DONE(((accrec_t *)ret_value)->special_info);
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HIgetspinfo */
 
@@ -2567,12 +2390,6 @@ HDmake_special_tag(uint16 tag)
         }
 
 done:
-    if (ret_value == DFTAG_NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -2596,12 +2413,6 @@ HDis_special_tag(uint16 tag)
         }
 
 done:
-    if (ret_value == FALSE) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -2624,12 +2435,6 @@ HDbase_tag(uint16 tag)
             break;
         }
 done:
-    if (ret_value == tag) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -2687,7 +2492,6 @@ Hgetlibversion(uint32 *majorv, uint32 *minorv, uint32 *releasev, char *string)
 intn
 Hgetfileversion(int32 file_id, uint32 *majorv, uint32 *minorv, uint32 *release, char *string)
 {
-    CONSTR(FUNC, "Hgetfileversion");
     filerec_t *file_rec;
     intn       ret_value = SUCCEED;
 
@@ -2707,11 +2511,6 @@ Hgetfileversion(int32 file_id, uint32 *majorv, uint32 *minorv, uint32 *release, 
         HIstrncpy(string, file_rec->version.string, LIBVSTR_LEN + 1);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Hgetfileversion */
 
@@ -2730,7 +2529,6 @@ done:
 PRIVATE intn
 HIcheckfileversion(int32 file_id)
 {
-    CONSTR(FUNC, "HIcheckfileversion");
     filerec_t *file_rec;
     uint32     lmajorv, lminorv, lrelease;
     uint32     fmajorv, fminorv, frelease;
@@ -2768,12 +2566,6 @@ HIcheckfileversion(int32 file_id)
     file_rec->version_set = TRUE;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HIcheckfileversion */
 
@@ -2796,7 +2588,6 @@ done:
 PRIVATE filerec_t *
 HIget_filerec_node(const char *path)
 {
-    CONSTR(FUNC, "HIget_filerec_node");
     filerec_t *ret_value = NULL;
 
     if ((ret_value = HAsearch_atom(FIDGROUP, HPcompare_filerec_path, path)) == NULL) {
@@ -2818,12 +2609,6 @@ HIget_filerec_node(const char *path)
     } /* end if */
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HIget_filerec_node */
 
@@ -2937,7 +2722,6 @@ HPcompare_filerec_path(const void *obj, const void *key)
 intn
 HPcompare_accrec_tagref(const void *rec1, const void *rec2)
 {
-    CONSTR(FUNC, "HPcompare_accrec_tagref");
     uint16 tag1, ref1;        /* tag/ref of access record #1 */
     uint16 tag2, ref2;        /* tag/ref of access record #2 */
     intn   ret_value = FALSE; /* FAIL */
@@ -2955,12 +2739,6 @@ HPcompare_accrec_tagref(const void *rec1, const void *rec2)
     } /* end if */
 
 done:
-    if (ret_value == FALSE) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return (ret_value);
 } /* HPcompare_accrec_tagref */
 
@@ -2980,7 +2758,6 @@ done:
 PRIVATE intn
 HIvalid_magic(hdf_file_t file)
 {
-    CONSTR(FUNC, "HIvalid_magic");
     char b[MAGICLEN];       /* Temporary buffer */
     intn ret_value = FALSE; /* FAIL */
 
@@ -2996,12 +2773,6 @@ HIvalid_magic(hdf_file_t file)
         ret_value = TRUE;
 
 done:
-    if (ret_value == FALSE) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -3019,7 +2790,6 @@ done:
 accrec_t *
 HIget_access_rec(void)
 {
-    CONSTR(FUNC, "HIget_access_rec");
     accrec_t *ret_value = NULL;
 
     HEclear();
@@ -3038,12 +2808,6 @@ HIget_access_rec(void)
     HDmemset(ret_value, 0, sizeof(accrec_t));
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HIget_access_rec */
 
@@ -3089,8 +2853,7 @@ HIupdate_version(int32 file_id)
     uint8 /*lstring[81], */ lversion[LIBVER_LEN];
     filerec_t              *file_rec;
     int                     i;
-    CONSTR(FUNC, "Hupdate_version");
-    int ret_value = SUCCEED;
+    int                     ret_value = SUCCEED;
 
     HEclear();
 
@@ -3121,12 +2884,6 @@ HIupdate_version(int32 file_id)
     file_rec->version.modified = 0;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HIupdate_version */
 
@@ -3151,9 +2908,8 @@ PRIVATE int
 HIread_version(int32 file_id)
 {
     filerec_t *file_rec;
-    CONSTR(FUNC, "Hread_version");
-    int   ret_value = SUCCEED;
-    uint8 fversion[LIBVER_LEN];
+    int        ret_value = SUCCEED;
+    uint8      fversion[LIBVER_LEN];
     memset(fversion, 0, sizeof(fversion));
 
     HEclear();
@@ -3182,12 +2938,6 @@ HIread_version(int32 file_id)
     file_rec->version.modified = 0;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HIread_version */
 
@@ -3213,7 +2963,6 @@ DESCRIPTION
 int32
 HPgetdiskblock(filerec_t *file_rec, int32 block_size, intn moveto)
 {
-    CONSTR(FUNC, "HPgetdiskblock");
     uint8 temp;
     int32 ret_value = SUCCEED;
 
@@ -3267,12 +3016,6 @@ HPgetdiskblock(filerec_t *file_rec, int32 block_size, intn moveto)
     file_rec->f_end_off += block_size;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HPgetdiskblock() */
 
@@ -3297,10 +3040,9 @@ HPfreediskblock(filerec_t *file_rec, int32 block_off, int32 block_size)
 {
     intn ret_value = SUCCEED;
 
-    /* shut compiler up */
-    file_rec   = file_rec;
-    block_off  = block_off;
-    block_size = block_size;
+    (void)file_rec;
+    (void)block_off;
+    (void)block_size;
 
     return ret_value;
 } /* HPfreediskblock() */
@@ -3324,7 +3066,6 @@ HPfreediskblock(filerec_t *file_rec, int32 block_off, int32 block_size)
 int32
 HDget_special_info(int32 access_id, sp_info_block_t *info_block)
 {
-    CONSTR(FUNC, "HDget_special_info");
     accrec_t *access_rec; /* access record */
     int32     ret_value = FAIL;
 
@@ -3341,12 +3082,6 @@ HDget_special_info(int32 access_id, sp_info_block_t *info_block)
         info_block->key = FAIL;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HDget_special_info */
 
@@ -3371,7 +3106,6 @@ done:
 int32
 HDset_special_info(int32 access_id, sp_info_block_t *info_block)
 {
-    CONSTR(FUNC, "HDset_special_info");
     accrec_t *access_rec; /* access record */
     int32     ret_value = FAIL;
 
@@ -3387,12 +3121,6 @@ HDset_special_info(int32 access_id, sp_info_block_t *info_block)
 
     /* else is not special so fail */
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HDset_special_info */
 
@@ -3471,7 +3199,6 @@ Hdumpseek(void)
 intn
 HP_read(filerec_t *file_rec, void *buf, int32 bytes)
 {
-    CONSTR(FUNC, "HP_read");
     intn ret_value = SUCCEED;
 
     /* Check for switching file access operations */
@@ -3489,12 +3216,6 @@ HP_read(filerec_t *file_rec, void *buf, int32 bytes)
     file_rec->f_cur_off += bytes;
     file_rec->last_op = H4_OP_READ;
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end HP_read() */
 
@@ -3520,11 +3241,10 @@ done:
 intn
 HPseek(filerec_t *file_rec, int32 offset)
 {
-    CONSTR(FUNC, "HPseek");
     intn ret_value = SUCCEED;
 
 #ifdef HFILE_SEEKINFO
-    printf("%s: file_rec=%p, last_offset=%ld, offset=%ld, last_op=%d", FUNC, file_rec,
+    printf("%s: file_rec=%p, last_offset=%ld, offset=%ld, last_op=%d", __func__, file_rec,
            (long)file_rec->f_cur_off, (long)offset, (int)file_rec->last_op);
 #endif /* HFILE_SEEKINFO */
     if (file_rec->f_cur_off != offset || file_rec->last_op == H4_OP_UNKNOWN) {
@@ -3545,12 +3265,6 @@ HPseek(filerec_t *file_rec, int32 offset)
 #endif /* HFILE_SEEKINFO */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end HPseek() */
 
@@ -3577,7 +3291,6 @@ done:
 intn
 HP_write(filerec_t *file_rec, const void *buf, int32 bytes)
 {
-    CONSTR(FUNC, "HP_write");
     intn ret_value = SUCCEED;
 
     /* Check for switching file access operations */
@@ -3596,12 +3309,6 @@ HP_write(filerec_t *file_rec, const void *buf, int32 bytes)
     file_rec->last_op = H4_OP_WRITE;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end HP_write() */
 
@@ -3628,10 +3335,9 @@ done:
 int32
 HPread_drec(int32 file_id, atom_t data_id, uint8 **drec_buf)
 {
-    CONSTR(FUNC, "HDread_drec"); /* for HERROR */
-    int32  drec_len = 0;         /* length of the description record */
-    int32  drec_aid = -1;        /* description record access id */
-    uint16 drec_tag, drec_ref;   /* description record tag/ref */
+    int32  drec_len = 0;       /* length of the description record */
+    int32  drec_aid = -1;      /* description record access id */
+    uint16 drec_tag, drec_ref; /* description record tag/ref */
     int32  ret_value = 0;
 
     /* get the info for the dataset (description record) */
@@ -3653,11 +3359,6 @@ HPread_drec(int32 file_id, atom_t data_id, uint8 **drec_buf)
     ret_value = drec_len;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* HPread_drec */
 
@@ -3693,10 +3394,9 @@ done:
 int32
 HDcheck_empty(int32 file_id, uint16 tag, uint16 ref, intn *emptySDS /* TRUE if data element is empty */)
 {
-    CONSTR(FUNC, "HDcheck_empty"); /* for HERROR */
-    int32      length;             /* length of the element's data */
-    atom_t     data_id = FAIL;     /* dd ID of existing regular element */
-    filerec_t *file_rec;           /* file record pointer */
+    int32      length;         /* length of the element's data */
+    atom_t     data_id = FAIL; /* dd ID of existing regular element */
+    filerec_t *file_rec;       /* file record pointer */
     uint8     *local_ptbuf = NULL, *p;
     int16      sptag       = -1; /* special tag read from desc record */
     int32      ret_value   = SUCCEED;
@@ -3794,11 +3494,6 @@ HDcheck_empty(int32 file_id, uint16 tag, uint16 ref, intn *emptySDS /* TRUE if d
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     if (local_ptbuf != NULL)
         HDfree(local_ptbuf);
 
@@ -3839,7 +3534,6 @@ done:
 intn
 Hgetspecinfo(int32 file_id, uint16 tag, uint16 ref, sp_info_block_t *info)
 {
-    CONSTR(FUNC, "Hgetspecinfo");
     accrec_t *access_rec = NULL; /* access element record */
     int32     aid;
     intn      status = 0, ret_value = 0;
@@ -3889,9 +3583,8 @@ done:
         if (aid != 0)
             if (Hendaccess(aid) == FAIL)
                 HERROR(DFE_CANTENDACCESS);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     return ret_value;
 } /* Hgetspecinfo */
 
@@ -4030,12 +3723,6 @@ Hmpset(int pagesize, /* IN: pagesize to use for next open/create */
     ret_value = MPset(pagesize, maxcache, flags);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -4069,12 +3756,6 @@ Hmpget(int *pagesize, /* OUT: pagesize to used in last open/create */
     *maxcache = mcache;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Hmpget() */
 

@@ -3,6 +3,9 @@
  *   See netcdf/COPYRIGHT file for copying and redistribution conditions.
  *********************************************************************/
 
+#ifndef H4NC_GENLIB_H
+#define H4NC_GENLIB_H
+
 extern char *progname; /* for error messages */
 extern char *cdlname;  /* for error messages */
 
@@ -67,3 +70,5 @@ void close_netcdf(void);
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* H4NC_GENLIB_H */

@@ -16,14 +16,13 @@
 
 #include <string.h>
 #include "local_nc.h"
-#include "alloc.h"
 
 NC_dim *
 NC_new_dim(const char *name, long size)
 {
     NC_dim *ret;
 
-    ret = (NC_dim *)HDmalloc(sizeof(NC_dim));
+    ret = malloc(sizeof(NC_dim));
     if (ret == NULL)
         goto alloc_err;
 
@@ -68,14 +67,10 @@ NC_free_dim(NC_dim *dim)
             ret_value = FAIL;
             goto done;
         }
-        Free(dim);
+        free(dim);
     }
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 }
 
@@ -285,7 +280,7 @@ xdr_NC_dim(XDR *xdrs, NC_dim **dpp)
     }
 
     if (xdrs->x_op == XDR_DECODE) {
-        *dpp = (NC_dim *)HDmalloc(sizeof(NC_dim));
+        *dpp = malloc(sizeof(NC_dim));
         if (*dpp == NULL) {
             nc_serror("xdr_NC_dim");
             return (FALSE);

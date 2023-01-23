@@ -22,8 +22,8 @@
  * Constant definitions:
  *---------------------------------------------------------------------------*/
 
-#ifndef __MSTDIO_H
-#define __MSTDIO_H
+#ifndef H4_MSTDIO_H
+#define H4_MSTDIO_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -72,4 +72,4 @@ funclist_t mstdio_funcs = {HCPmstdio_stread,
                            NULL};
 #endif
 
-#endif /* __MSTDIO_H */
+#endif /* H4_MSTDIO_H */

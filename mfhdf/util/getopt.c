@@ -41,6 +41,8 @@ getopt(int argc, char **argv, char *opts)
     int        c;
     char      *cp;
 
+    (void)argc;
+
     if (sp == 1)
         if (optind >= argc || argv[optind][0] != '-' || argv[optind][1] == '\0')
             return (EOF);

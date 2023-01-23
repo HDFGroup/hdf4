@@ -11,8 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef HDF_H
-#define HDF_H
+#ifndef H4_HDF_H
+#define H4_HDF_H
 
 #include "h4config.h"
 #include "hdfi.h"
@@ -161,4 +161,4 @@ typedef intn (*hdf_termfunc_t)(void); /* termination function typedef */
 /* This is also defined in fmpio.h */
 #define MP_PAGEALL 0x01 /* page the whole file i.e. no limit on 'maxcache'*/
 
-#endif /* HDF_H */
+#endif /* H4_HDF_H */

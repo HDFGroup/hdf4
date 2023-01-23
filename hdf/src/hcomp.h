@@ -21,8 +21,8 @@
  * Constant definitions: lots...
  *---------------------------------------------------------------------------*/
 
-#ifndef __HCOMP_H
-#define __HCOMP_H
+#ifndef H4_HCOMP_H
+#define H4_HCOMP_H
 
 /* For determining which type of modeling is being done */
 typedef enum {
@@ -120,4 +120,4 @@ typedef union tag_comp_info { /* Union to contain compression information */
 
 } comp_info;
 
-#endif /* __HCOMP_H */
+#endif /* H4_HCOMP_H */

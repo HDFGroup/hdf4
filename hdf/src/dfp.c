@@ -59,7 +59,6 @@ PRIVATE int32 DFPIopen(const char *filename, intn acc_mode);
 intn
 DFPgetpal(const char *filename, void *palette)
 {
-    CONSTR(FUNC, "DFPgetpal");
     int32 file_id;
     int32 aid;
     int32 length;
@@ -123,11 +122,6 @@ DFPgetpal(const char *filename, void *palette)
     ret_value = Hclose(file_id);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end DFPgetpal() */
 
@@ -156,7 +150,6 @@ done:
 intn
 DFPputpal(const char *filename, const void *palette, intn overwrite, const char *filemode)
 {
-    CONSTR(FUNC, "DFPputpal");
     int32 file_id;
     intn  ret_value = SUCCEED;
 
@@ -195,11 +188,6 @@ DFPputpal(const char *filename, const void *palette, intn overwrite, const char 
     ret_value = (Hclose(file_id));
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end DFPputpal() */
 
@@ -247,7 +235,6 @@ DFPaddpal(const char *filename, const void *palette)
 intn
 DFPnpals(const char *filename)
 {
-    CONSTR(FUNC, "DFPnpals");
     int32  file_id;
     intn   curr_pal;           /* current palette count */
     int32  nip8, nlut;         /* number of IP8s & number of LUTs */
@@ -328,11 +315,6 @@ DFPnpals(const char *filename)
     ret_value = npals;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end DFPnpals() */
 
@@ -356,7 +338,6 @@ done:
 intn
 DFPreadref(const char *filename, uint16 ref)
 {
-    CONSTR(FUNC, "DFPreadref");
     int32 file_id;
     int32 aid;
     intn  ret_value = SUCCEED;
@@ -381,11 +362,6 @@ DFPreadref(const char *filename, uint16 ref)
     ret_value = (Hclose(file_id));
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end DFPreadref() */
 
@@ -411,8 +387,8 @@ DFPwriteref(const char *filename, uint16 ref)
 {
     intn ret_value = SUCCEED;
 
-    /* shut compiler up */
-    filename = filename;
+    (void)filename;
+
     Writeref = ref;
 
     return ret_value;
@@ -506,7 +482,6 @@ DFPlastref(void)
 PRIVATE int32
 DFPIopen(const char *filename, intn acc_mode)
 {
-    CONSTR(FUNC, "DFPIopen");
     int32 file_id;
     int32 ret_value = SUCCEED;
 
@@ -527,11 +502,5 @@ DFPIopen(const char *filename, intn acc_mode)
     ret_value = (file_id);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end DFPIopen() */

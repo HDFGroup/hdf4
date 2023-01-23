@@ -100,7 +100,6 @@ VSseek(int32 vkey, /* IN: vdata key */
     vsinstance_t *w         = NULL;
     VDATA        *vs        = NULL;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "VSseek");
 
     /* clear error stack */
     HEclear();
@@ -132,11 +131,6 @@ VSseek(int32 vkey, /* IN: vdata key */
     ret_value = (eltpos);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSseek */
 
@@ -181,7 +175,6 @@ VSread(int32 vkey,  /* IN: vdata key */
     vsinstance_t   *wi        = NULL;
     VDATA          *vs        = NULL;
     int32           ret_value = SUCCEED;
-    CONSTR(FUNC, "VSread");
 
     /* clear error stack */
     HEclear();
@@ -430,11 +423,6 @@ VSread(int32 vkey,  /* IN: vdata key */
     ret_value = (nelt);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSread */
 
@@ -483,7 +471,6 @@ VSwrite(int32       vkey,  /* IN: vdata key */
     int32           chunk;
     int32           done; /* number of records to do / done */
     int32           ret_value = SUCCEED;
-    CONSTR(FUNC, "VSwrite");
 
     /* clear error stack */
     HEclear();
@@ -742,10 +729,5 @@ VSwrite(int32       vkey,  /* IN: vdata key */
     ret_value = (nelt);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSwrite */

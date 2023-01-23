@@ -11,8 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef MFDATAINFO_H
-#define MFDATAINFO_H
+#ifndef MFH4_MFDATAINFO_H
+#define MFH4_MFDATAINFO_H
 
 #include "H4api_adpt.h"
 
@@ -35,4 +35,4 @@ HDFLIBAPI intn SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, in
 #ifdef __cplusplus
 }
 #endif
-#endif /* _MF_DATAINFO_H */
+#endif /* MFH4_MFDATAINFO_H */

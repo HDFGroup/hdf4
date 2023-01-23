@@ -80,7 +80,6 @@ VSsetfields(int32 vkey, const char *fields)
     vsinstance_t   *w;
     VDATA          *vs;
     intn            ret_value = FAIL;
-    CONSTR(FUNC, "VSsetfields");
 
     /* check if a NULL field list is passed in, then return with
        error (bug #554) - BMR 4/30/01 */
@@ -243,11 +242,6 @@ VSsetfields(int32 vkey, const char *fields)
     } /* setting read list */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSsetfields */
 
@@ -268,7 +262,6 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
     vsinstance_t *w;
     VDATA        *vs;
     intn          ret_value = SUCCEED;
-    CONSTR(FUNC, "VSfdefine");
 
     if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -334,11 +327,6 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
         vs->nusym++;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSfdefine */
 
@@ -353,7 +341,6 @@ VFnfields(int32 vkey)
     vsinstance_t *w;
     VDATA        *vs;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "VFnfields");
 
     if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -369,11 +356,6 @@ VFnfields(int32 vkey)
     ret_value = ((int32)vs->wlist.n);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VFnfields */
 
@@ -391,7 +373,6 @@ VFfieldname(int32 vkey, int32 index)
     vsinstance_t *w;
     VDATA        *vs;
     char         *ret_value = NULL; /* FAIL */
-    CONSTR(FUNC, "VFfieldname");
 
     if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, NULL);
@@ -410,11 +391,6 @@ VFfieldname(int32 vkey, int32 index)
     ret_value = ((char *)vs->wlist.name[index]);
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VFfieldname */
 
@@ -430,7 +406,6 @@ VFfieldtype(int32 vkey, int32 index)
     vsinstance_t *w;
     VDATA        *vs;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "VFfeildtype");
 
     if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -449,11 +424,6 @@ VFfieldtype(int32 vkey, int32 index)
     ret_value = ((int32)vs->wlist.type[index]);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VFfieldtype */
 
@@ -470,7 +440,6 @@ VFfieldisize(int32 vkey, int32 index)
     vsinstance_t *w;
     VDATA        *vs;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "VFfieldisize");
 
     if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -489,11 +458,6 @@ VFfieldisize(int32 vkey, int32 index)
     ret_value = ((int32)vs->wlist.isize[index]);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VFfieldisize */
 
@@ -510,7 +474,6 @@ VFfieldesize(int32 vkey, int32 index)
     vsinstance_t *w;
     VDATA        *vs;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "VFfieldesize");
 
     if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -529,12 +492,6 @@ VFfieldesize(int32 vkey, int32 index)
     ret_value = ((int32)vs->wlist.esize[index]);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* VFfieldesize */
 
@@ -550,7 +507,6 @@ VFfieldorder(int32 vkey, int32 index)
     vsinstance_t *w;
     VDATA        *vs;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "VFfieldorder");
 
     if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -569,11 +525,6 @@ VFfieldorder(int32 vkey, int32 index)
     ret_value = ((int32)vs->wlist.order[index]);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VFfieldorder */
 
@@ -607,7 +558,6 @@ FORTRAN
 intn
 VSsetexternalfile(int32 vkey, const char *filename, int32 offset)
 {
-    CONSTR(FUNC, "VSsetexternalfile");
     int32 ret_value = SUCCEED;
 
     vsinstance_t *w;
@@ -647,12 +597,6 @@ VSsetexternalfile(int32 vkey, const char *filename, int32 offset)
         ret_value = FAIL;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* VSsetexternalfile */
 
@@ -682,7 +626,6 @@ done:
 intn
 VSgetexternalfile(int32 vkey, uintn buf_size, char *ext_filename, int32 *offset)
 {
-    CONSTR(FUNC, "VSgetexternalfile");
     vsinstance_t   *w;
     VDATA          *vs;
     sp_info_block_t info_block;
@@ -743,10 +686,6 @@ VSgetexternalfile(int32 vkey, uintn buf_size, char *ext_filename, int32 *offset)
             ret_value = FAIL;
     }
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-    /* Normal function cleanup */
     return ret_value;
 } /* VSgetexternalfile */
 
@@ -789,7 +728,6 @@ done:
 intn
 VSgetexternalinfo(int32 vkey, uintn buf_size, char *ext_filename, int32 *offset, int32 *length)
 {
-    CONSTR(FUNC, "VSgetexternalinfo");
     vsinstance_t *w;
     VDATA        *vs;
     intn          actual_fname_len = 0;
@@ -869,10 +807,6 @@ VSgetexternalinfo(int32 vkey, uintn buf_size, char *ext_filename, int32 *offset,
             ret_value = 0; /* no external file name */
     }
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-    /* Normal function cleanup */
     return ret_value;
 } /* VSgetexternalinfo */
 
@@ -919,8 +853,6 @@ intn
 VSfpack(int32 vsid, intn packtype, const char *fields_in_buf, void *buf, intn bufsz, intn n_records,
         const char *fields, void *fldbufpt[])
 {
-    CONSTR(FUNC, "VSfpack");
-
     int32           ac;
     char          **av, *s;
     uint8          *bufp   = (uint8 *)buf;
@@ -935,6 +867,10 @@ VSfpack(int32 vsid, intn packtype, const char *fields_in_buf, void *buf, intn bu
         int32 *idx;  /* index of buf fields in vdata */
         int32 *offs; /* offset of buf fields in buf */
     } blist;
+
+    /* initialize tobe-allocated vars in case of error before allocation */
+    blist.idx  = NULL;
+    blist.offs = NULL;
 
     if (HAatom_group(vsid) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);

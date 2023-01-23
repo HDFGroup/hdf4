@@ -162,8 +162,7 @@ ANIanncmp(void *i, /* IN: annotation key(tag,ref) */
           void *j, /* IN: annotation key(tag,ref) */
           intn  value /* not used */)
 {
-    /* shut compiler up */
-    value = value;
+    (void)value;
 
     if (*(int32 *)i == *(int32 *)j)
         return 0;
@@ -219,7 +218,6 @@ ANIdestroy(void)
 PRIVATE intn
 ANIstart(void)
 {
-    CONSTR(FUNC, "ANIstart"); /* for HERROR */
     intn ret_value = SUCCEED;
 
     /* Don't call this routine again... */
@@ -230,12 +228,6 @@ ANIstart(void)
         HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return (ret_value);
 } /* end ANIstart() */
 
@@ -258,7 +250,6 @@ done:
 PRIVATE int32
 ANIinit(void)
 {
-    CONSTR(FUNC, "ANIinit");
     int32 ret_value = SUCCEED;
 
     /* Clear error stack */
@@ -274,12 +265,6 @@ ANIinit(void)
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* ANIinit() */
 
@@ -310,7 +295,6 @@ ANIaddentry(int32    an_id, /* IN: annotation interface id */
             uint16 elmref,  /* IN: ref of item of which this is annotation */
             intn   new_ann /* IN: new annotation flag */)
 {
-    CONSTR(FUNC, "ANIaddentry");
     filerec_t *file_rec  = NULL; /* file record pointer */
     uint16     ann_tag   = DFTAG_NULL;
     int32     *ann_key   = NULL;
@@ -408,9 +392,7 @@ done:
             HDfree(ann_entry);
         if (ann_node != NULL)
             HDfree(ann_node);
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
     return ret_value;
 } /* ANIaddentry */
@@ -437,7 +419,6 @@ ANIcreate_ann_tree(int32    an_id,/* IN: annotation interface id */
                                          AN_FILE_LABEL for file labels,
                                          AN_FILE_DESC for file descriptions.*/)
 {
-    CONSTR(FUNC, "ANIcreate_ann_tree");
     filerec_t *file_rec = NULL; /* file record pointer */
     uint8      datadi[4];
     int32      more_anns;
@@ -591,9 +572,7 @@ done:
             HDfree(ann_node);
         if (FAIL != aid)
             Hendaccess(aid);
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
     return ret_value;
 } /* ANIcreate_ann_tree */
@@ -621,7 +600,6 @@ ANIfind(int32    an_id, /* IN: annotation interface id */
                                AN_FILE_DESC for file descriptions.*/
         uint16 ann_ref /* IN: ref of annotation */)
 {
-    CONSTR(FUNC, "ANIfind");
     filerec_t *file_rec  = NULL; /* file record pointer */
     TBBT_NODE *entry     = NULL;
     ANentry   *ann_entry = NULL;
@@ -662,12 +640,6 @@ ANIfind(int32    an_id, /* IN: annotation interface id */
     ret_value = ann_entry->ann_id;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* ANIfind */
 #endif /* NOT_USED_YET */
@@ -698,7 +670,6 @@ ANInumann(int32    an_id,  /* IN: annotation interface id */
           uint16 elem_tag, /* IN: tag of item of which this is annotation */
           uint16 elem_ref /* IN: ref of item of which this is annotation */)
 {
-    CONSTR(FUNC, "ANInumann");
     filerec_t *file_rec  = NULL; /* file record pointer */
     TBBT_NODE *entry     = NULL;
     ANentry   *ann_entry = NULL;
@@ -731,12 +702,6 @@ ANInumann(int32    an_id,  /* IN: annotation interface id */
     ret_value = nanns;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* ANInumann */
 
@@ -766,7 +731,6 @@ ANIannlist(int32    an_id,  /* IN: annotation interface id */
            uint16 elem_ref, /* IN: ref of item of which this is annotation */
            int32  ann_list[] /* OUT: array of ann_id's that match criteria. */)
 {
-    CONSTR(FUNC, "ANIannlist");
     filerec_t *file_rec  = NULL; /* file record pointer */
     TBBT_NODE *entry     = NULL;
     ANentry   *ann_entry = NULL;
@@ -800,12 +764,6 @@ ANIannlist(int32    an_id,  /* IN: annotation interface id */
     ret_value = nanns;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* ANIannlist */
 
@@ -826,7 +784,6 @@ done:
 PRIVATE int32
 ANIannlen(int32 ann_id /*  IN: annotation id */)
 {
-    CONSTR(FUNC, "ANIannlen");
     ANnode *ann_node = NULL;
     int32   file_id  = FAIL;
     int32   type;
@@ -888,12 +845,6 @@ ANIannlen(int32 ann_id /*  IN: annotation id */)
     ret_value = (ann_length);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* ANIannlen */
 
@@ -917,7 +868,6 @@ ANIreadann(int32 ann_id, /* IN: annotation id (handle) */
            char *ann,    /* OUT: space to return annotation in */
            int32 maxlen /* IN: size of space to return annotation in */)
 {
-    CONSTR(FUNC, "ANIreadann");
     ANnode *ann_node = NULL;
     int32   file_id  = FAIL;
     int32   type;
@@ -1019,9 +969,7 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (FAIL != aid)
             Hendaccess(aid);
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
     return ret_value;
 } /* ANIreadann */
@@ -1046,7 +994,6 @@ ANIwriteann(int32       ann_id, /* IN: annotation id */
             const char *ann,    /* IN: annotation to write */
             int32       ann_len /* IN: length of annotation */)
 {
-    CONSTR(FUNC, "ANIwriteann");
     filerec_t *file_rec  = NULL; /* file record pointer */
     TBBT_NODE *entry     = NULL;
     ANentry   *ann_entry = NULL;
@@ -1169,9 +1116,7 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (FAIL != aid)
             Hendaccess(aid);
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
     return ret_value;
 } /* ANIwriteann */
@@ -1200,7 +1145,6 @@ ANIcreate(int32    file_id,  /* IN: file ID */
                                     AN_FILE_LABEL for file labels,
                                     AN_FILE_DESC for file descriptions.*/)
 {
-    CONSTR(FUNC, "ANIcreate"); /* for HERROR */
     int32  ann_id = FAIL;
     uint16 ann_tag;
     uint16 ann_ref;
@@ -1254,12 +1198,6 @@ ANIcreate(int32    file_id,  /* IN: file ID */
     ret_value = ann_id;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* ANIcreate() */
 
@@ -1283,7 +1221,6 @@ done:
 EXPORT int32
 ANstart(int32 file_id /* IN: file to start annotation access on*/)
 {
-    CONSTR(FUNC, "ANstart");
     filerec_t *file_rec  = NULL; /* file record pointer */
     int32      ret_value = SUCCEED;
 
@@ -1302,10 +1239,6 @@ ANstart(int32 file_id /* IN: file to start annotation access on*/)
     ret_value = file_id;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-    }                        /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* ANstart() */
 
@@ -1333,7 +1266,6 @@ ANfileinfo(int32  an_id,        /* IN:  annotation interface id */
            int32 *n_obj_label,  /* OUT: the # of object labels */
            int32 *n_obj_desc /* OUT: the # of object descriptions */)
 {
-    CONSTR(FUNC, "ANfileinfo");  /* for HERROR */
     filerec_t *file_rec  = NULL; /* file record pointer */
     intn       ret_value = SUCCEED;
 
@@ -1378,11 +1310,6 @@ ANfileinfo(int32  an_id,        /* IN:  annotation interface id */
         *n_obj_desc = file_rec->an_num[AN_DATA_DESC];
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* ANfileinfo() */
 
@@ -1399,7 +1326,6 @@ done:
 EXPORT int32
 ANend(int32 an_id /* IN: Annotation ID of file to close */)
 {
-    CONSTR(FUNC, "ANend");
     filerec_t *file_rec  = NULL; /* file record pointer */
     TBBT_NODE *aentry    = NULL;
     ANentry   *ann_entry = NULL;
@@ -1504,11 +1430,6 @@ ANend(int32 an_id /* IN: Annotation ID of file to close */)
     file_rec->an_num[AN_FILE_DESC]   = -1;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* ANend() */
 
@@ -1584,11 +1505,6 @@ ANcreatef(int32    an_id,/* IN: annotation interface ID */
     ret_value = ANIcreate(an_id, ann_tag, ann_ref, type);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* ANcreateann() */
 
@@ -1614,7 +1530,6 @@ ANselect(int32    an_id, /* IN: annotation interface ID */
                                 AN_FILE_LABEL for file labels,
                                 AN_FILE_DESC for file descriptions.*/)
 {
-    CONSTR(FUNC, "ANselect");    /* for HERROR */
     filerec_t *file_rec  = NULL; /* file record pointer */
     TBBT_NODE *entry     = NULL;
     ANentry   *ann_entry = NULL;
@@ -1650,11 +1565,6 @@ ANselect(int32    an_id, /* IN: annotation interface ID */
     ret_value = ann_entry->ann_id;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* ANselect() */
 
@@ -1684,7 +1594,6 @@ ANnumann(int32    an_id,  /* IN: annotation interface id */
          uint16 elem_tag, /* IN: tag of item of which this is annotation */
          uint16 elem_ref /* IN: ref of item of which this is annotation */)
 {
-    CONSTR(FUNC, "ANnumann");
     intn ret_value = SUCCEED;
 
     /* deal with invalid types */
@@ -1694,12 +1603,6 @@ ANnumann(int32    an_id,  /* IN: annotation interface id */
     ret_value = ANInumann(an_id, type, elem_tag, elem_ref);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* ANnumann() */
 
@@ -1730,7 +1633,6 @@ ANannlist(int32    an_id,  /* IN: annotation interface id */
           uint16 elem_ref, /* IN: ref of item of which this is annotation */
           int32  ann_list[] /* OUT: array of ann_id's that match criteria. */)
 {
-    CONSTR(FUNC, "ANannlist");
     intn ret_value = SUCCEED;
 
     /* deal with invalid types */
@@ -1740,12 +1642,6 @@ ANannlist(int32    an_id,  /* IN: annotation interface id */
     ret_value = ANIannlist(an_id, type, elem_tag, elem_ref, ann_list);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* ANannlist() */
 
@@ -1842,8 +1738,8 @@ EXPORT intn
 ANendaccess(int32 ann_id /* IN: annotation id */)
 {
     intn ret_value = SUCCEED;
-    /* shut compiler up */
-    ann_id = ann_id;
+
+    (void)ann_id;
 
     return ret_value;
 } /* ANendaccess() */
@@ -1874,8 +1770,7 @@ ANget_tagref(int32    an_id, /* IN: annotation interface ID */
              uint16 *tag,    /* OUT: Tag for annotation */
              uint16 *ref /* OUT: ref for annotation */)
 {
-    CONSTR(FUNC, "ANget_tagref"); /* for HERROR */
-    filerec_t *file_rec  = NULL;  /* file record pointer */
+    filerec_t *file_rec  = NULL; /* file record pointer */
     TBBT_NODE *entry     = NULL;
     ANentry   *ann_entry = NULL;
     int32      ret_value = SUCCEED;
@@ -1928,12 +1823,6 @@ ANget_tagref(int32    an_id, /* IN: annotation interface ID */
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* ANget_tagref() */
 
@@ -1956,7 +1845,6 @@ ANid2tagref(int32   ann_id, /* IN: annotation id */
             uint16 *tag,    /* OUT: Tag for annotation */
             uint16 *ref /* OUT: ref for annotation */)
 {
-    CONSTR(FUNC, "ANid2tagref");
     ANnode *ann_node = NULL;
     int32   file_id  = FAIL;
     int32   type;
@@ -2003,12 +1891,6 @@ ANid2tagref(int32   ann_id, /* IN: annotation id */
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* ANid2tagref */
 
@@ -2032,7 +1914,6 @@ ANtagref2id(int32  an_id,   /* IN  Annotation interface id */
             uint16 ann_tag, /* IN: Tag for annotation */
             uint16 ann_ref /* IN: ref for annotation */)
 {
-    CONSTR(FUNC, "ANtagref2id");
     filerec_t *file_rec  = NULL; /* file record pointer */
     TBBT_NODE *entry     = NULL;
     ANentry   *ann_entry = NULL;
@@ -2089,12 +1970,6 @@ ANtagref2id(int32  an_id,   /* IN  Annotation interface id */
     ret_value = ann_entry->ann_id;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* ANtagref2id */
 

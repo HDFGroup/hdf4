@@ -11,8 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef REPACK_GR_H_
-#define REPACK_GR_H_
+#ifndef HREPACK_GR_H
+#define HREPACK_GR_H
 
 #include "hrepack.h"
 #include "hrepack_lsttable.h"
@@ -33,4 +33,4 @@ int copy_gr_attrs(int32 ri_id, int32 ri_out, int32 nattrs, options_t *options);
 }
 #endif
 
-#endif /* REPACK_GR_H_ */
+#endif /* HREPACK_GR_H */

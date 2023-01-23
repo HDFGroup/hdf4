@@ -424,7 +424,6 @@ done:
         if (bb != NULL)
             HDfree((VOIDP)bb);
     }
-    /* Normal cleanup */
 
     return ret_value;
 } /* dumpvd */
@@ -608,7 +607,6 @@ done:
         if (buf != NULL)
             HDfree(buf);
     }
-    /* Normal cleanup */
 
     return ret_value;
 }

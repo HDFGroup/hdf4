@@ -297,7 +297,6 @@ create_dim_recs(DIM_REC **dptr, /* OUT: dimension record pointers */
                 int32   **sui,  /* OUT: seek user indices array */
                 int32     ndims /* IN: number of dimension of element */)
 {
-    CONSTR(FUNC, "create_dim_recs"); /* for HERROR */
     int32 i;
     int32 ret_value = SUCCEED;
 
@@ -342,9 +341,8 @@ done:
             HDfree(*spb);
         if (*sui != NULL)
             HDfree(*sui);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     return ret_value;
 } /* end create_dim_recs() */
 
@@ -696,8 +694,8 @@ chkcompare(void *k1, /* IN: first key */
            intn  cmparg /* IN: not sure? */)
 {
     intn ret_value;
-    /* shut compiler up */
-    cmparg = cmparg;
+
+    (void)cmparg;
 
     /* valid for integer keys */
     ret_value = ((intn)((*(int32 *)k1) - (*(int32 *)k2)));
@@ -787,7 +785,6 @@ PRIVATE int32
 HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
              int16     acc_mode /* IN: access mode */)
 {
-    CONSTR(FUNC, "HMCIstaccess");    /* for HERROR */
     filerec_t   *file_rec = NULL;    /* file record */
     chunkinfo_t *info     = NULL;    /* information about data elt */
     int32        dd_aid;             /* AID for writing the special info */
@@ -1270,7 +1267,6 @@ done:
 
     } /* end if */
 
-    /* Normal function cleanup */
 #if 0 /* dynamic allocation causes a problem on HPUX, removed for now -GV */
     /* free special element header */
     if (c_sp_header != NULL)
@@ -1333,7 +1329,6 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
           HCHUNK_DEF *chk_array /* IN: structure describing chunk distribution
                                   can be an array? but we only handle 1 level */ )
 {
-    CONSTR(FUNC, "HMCcreate");            /* for HERROR */
     filerec_t   *file_rec    = NULL;      /* file record */
     accrec_t    *access_rec  = NULL;      /* access record */
     int32        dd_aid      = FAIL;      /* AID for writing the special info */
@@ -1353,8 +1348,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
     char   v_class[VSNAMELENMAX + 1] = ""; /* Vdata class */
     intn   i;                              /* loop index */
 
-    /* shut compiler up */
-    nlevels = nlevels;
+    (void)nlevels;
 
     /* clear error stack and validate file record id */
     HEclear();
@@ -1790,7 +1784,6 @@ done:
             HIrelease_accrec_node(access_rec);
     } /* end if */
 
-    /* Normal function cleanup */
     /* free special element header */
     if (c_sp_header != NULL)
         HDfree(c_sp_header);
@@ -1819,10 +1812,9 @@ HMCgetcompress(accrec_t     *access_rec, /* IN: access record */
                comp_coder_t *comp_type,  /* OUT: compression type */
                comp_info    *c_info)        /* OUT: retrieved compression info */
 {
-    CONSTR(FUNC, "HMCgetcompress"); /* for HERROR */
-    chunkinfo_t *info = NULL;       /* chunked element information record */
-    model_info   m_info;            /* modeling information - dummy */
-    comp_model_t model_type;        /* modeling type - dummy */
+    chunkinfo_t *info = NULL; /* chunked element information record */
+    model_info   m_info;      /* modeling information - dummy */
+    comp_model_t model_type;  /* modeling type - dummy */
     intn         ret_value = SUCCEED;
 
     /* Get the special info from the given record */
@@ -1841,11 +1833,6 @@ HMCgetcompress(accrec_t     *access_rec, /* IN: access record */
         *comp_type = COMP_CODE_NONE;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* HMCgetcompress() */
 
@@ -1869,7 +1856,6 @@ intn
 HMCgetcomptype(int32         dd_aid,    /* IN: access id of header info */
                comp_coder_t *comp_type) /* OUT: compression type */
 {
-    CONSTR(FUNC, "HMCgetcomptype");   /* for HERROR */
     uint8 *bufp;                      /* pointer to buffer */
     uint8  version;                   /* Version of this Chunked element */
     int32  flag;                      /* flag for multiply specialness ...*/
@@ -1957,11 +1943,6 @@ HMCgetcomptype(int32         dd_aid,    /* IN: access id of header info */
     } /* switch flag */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     /* Free special element headers */
     if (c_sp_header != NULL)
         HDfree(c_sp_header);
@@ -2002,11 +1983,10 @@ HMCgetdatainfo(int32 file_id, uint16 tag, uint16 ref, int32 *chk_coord, /* IN: c
                int32 *offsetarray, /* OUT: array to hold offsets */
                int32 *lengtharray) /* OUT: array to hold lengths */
 {
-    CONSTR(FUNC, "HMCgetdatainfo"); /* for HERROR */
-    uint16       comp_ref = 0;      /* ref# of compressed data */
-    chunkinfo_t *chkinfo  = NULL;   /* chunked element information */
-    atom_t       ddid     = FAIL;   /* description record access id */
-    atom_t       cmpddid  = FAIL;   /* description record access id */
+    uint16       comp_ref = 0;    /* ref# of compressed data */
+    chunkinfo_t *chkinfo  = NULL; /* chunked element information */
+    atom_t       ddid     = FAIL; /* description record access id */
+    atom_t       cmpddid  = FAIL; /* description record access id */
     uint16       new_tag = 0, new_ref = 0;
     int32        new_off = 0, new_len = 0;
     intn         count   = 0; /* number of blocks */
@@ -2180,9 +2160,8 @@ done:
             HTPendaccess(ddid);
         if (new_aid != FAIL)
             Hendaccess(new_aid);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     return ret_value;
 } /* HMCgetdatainfo */
 
@@ -2219,7 +2198,6 @@ HMCgetdatasize(int32 file_id, uint8 *p, /* IN: access id of header info */
                int32 *comp_size,        /* OUT: size of compressed data */
                int32 *orig_size)        /* OUT: size of uncompression type */
 {
-    CONSTR(FUNC, "HMCgetdatasize");              /* for HERROR */
     uint16       comp_ref = 0;                   /* ref# of compressed data */
     char         vsname[VSNAMELENMAX + 1];       /* Vdata name */
     char         v_class[VSNAMELENMAX + 1] = ""; /* Vdata class for comparison */
@@ -2411,11 +2389,6 @@ HMCgetdatasize(int32 file_id, uint8 *p, /* IN: access id of header info */
         *orig_size = chk_data_size * num_recs;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     /* Free allocated space for vdata record */
     if (v_data != NULL)
         HDfree(v_data);
@@ -2464,13 +2437,11 @@ HMCsetMaxcache(int32 access_id, /* IN: access aid to mess with */
                int32 maxcache,  /* IN: max number of pages to cache */
                int32 flags /* IN: flags = 0, HMC_PAGEALL */)
 {
-    CONSTR(FUNC, "HMCsetMaxcache"); /* for HERROR */
     accrec_t    *access_rec = NULL; /* access record */
     chunkinfo_t *info       = NULL; /* chunked element information record */
     int32        ret_value  = SUCCEED;
 
-    /* shut compiler up */
-    flags = flags;
+    (void)flags;
 
 #ifdef CHK_DEBUG_2
     fprintf(stderr, "HMCsetMaxcache: access_id =%d \n", access_id);
@@ -2499,11 +2470,6 @@ HMCsetMaxcache(int32 access_id, /* IN: access aid to mess with */
         ret_value = FAIL;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* HMCsetMaxcache() */
 
@@ -2570,7 +2536,6 @@ HMCPseek(accrec_t *access_rec, /* IN: access record to mess with */
          int32     offset,     /* IN: seek offset */
          int       origin /* IN: where we should calc the offset from */)
 {
-    CONSTR(FUNC, "HMCPseek");      /* for HERROR */
     chunkinfo_t *info      = NULL; /* information for the chunked elt */
     int32        ret_value = SUCCEED;
 
@@ -2611,11 +2576,6 @@ HMCPseek(accrec_t *access_rec, /* IN: access record to mess with */
 #endif
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* HMCPseek */
 
@@ -2639,7 +2599,6 @@ HMCPchunkread(void *cookie,    /* IN: access record to mess with */
               int32 chunk_num, /* IN: chunk to read */
               void *datap /* OUT: buffer for data */)
 {
-    CONSTR(FUNC, "HMCPchunkread");                /* for HERROR */
     accrec_t    *access_rec = (accrec_t *)cookie; /* access record */
     chunkinfo_t *info       = NULL;               /* information record for this special data elt */
     CHUNK_REC   *chk_rec    = NULL;               /* chunk record */
@@ -2723,7 +2682,6 @@ done:
             Hendaccess(chk_id);
     } /* end if */
 
-    /* Normal function cleanup */
 #ifdef CHK_DEBUG_3
     printf("HMCPchunkread exit with ret_value= %d \n", ret_value);
 #endif
@@ -2751,8 +2709,7 @@ HMCreadChunk(int32  access_id, /* IN: access aid to mess with */
              int32 *origin,    /* IN: origin of chunk to read */
              void  *datap /* IN: buffer for data */)
 {
-    CONSTR(FUNC, "HMCreadChunk"); /* for HERROR */
-    accrec_t *access_rec = NULL;  /* access record */
+    accrec_t *access_rec = NULL; /* access record */
 #ifdef UNUSED
     uint8 *data = NULL;           /* data buffer */
 #endif                            /* UNUSED */
@@ -2875,11 +2832,6 @@ HMCreadChunk(int32  access_id, /* IN: access aid to mess with */
         ret_value = FAIL;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-    }                        /* end if */
-
-    /* Normal function cleanup */
-
 #ifdef CHK_DEBUG_5
     printf("HMCreadChunk: exited, ret=%d \n", ret_value);
 #endif
@@ -2906,7 +2858,6 @@ HMCPread(accrec_t *access_rec, /* IN: access record to mess with */
          int32     length,     /* IN: number of bytes to read */
          void     *datap /* OUT: buffer for data */)
 {
-    CONSTR(FUNC, "HMCPread"); /* for HERROR */
 #ifdef UNUSED
     uint8 *data = NULL;                /* data buffer */
 #endif                                 /* UNUSED */
@@ -3056,11 +3007,6 @@ HMCPread(accrec_t *access_rec, /* IN: access record to mess with */
     printf("}\n");
 #endif
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* HMCPread  */
 
@@ -3084,7 +3030,6 @@ HMCPchunkwrite(void       *cookie,    /* IN: access record to mess with */
                int32       chunk_num, /* IN: chunk number */
                const void *datap /* IN: buffer for data */)
 {
-    CONSTR(FUNC, "HMCPchunkwrite");               /* for HERROR */
     accrec_t    *access_rec = (accrec_t *)cookie; /* access record */
     chunkinfo_t *info       = NULL;               /* chunked element information record */
     CHUNK_REC   *chk_rec    = NULL;               /* current chunk */
@@ -3211,9 +3156,8 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (chk_id != FAIL)
             Hendaccess(chk_id);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     if (v_data != NULL)
         HDfree(v_data);
 
@@ -3244,8 +3188,7 @@ HMCwriteChunk(int32       access_id, /* IN: access aid to mess with */
               int32      *origin,    /* IN: origin of chunk to write */
               const void *datap /* IN: buffer for data */)
 {
-    CONSTR(FUNC, "HMCwriteChunk"); /* for HERROR */
-    accrec_t *access_rec = NULL;   /* access record */
+    accrec_t *access_rec = NULL; /* access record */
 #ifdef UNUSED
     uint8     *data    = NULL;       /* data buffer */
     CHUNK_REC *chk_rec = NULL;       /* current chunk */
@@ -3440,9 +3383,7 @@ done:
         }
         if (chk_key != NULL)
             HDfree(chk_key);
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
 #ifdef CHK_DEBUG_4
     printf("HMCwriteChunk: exited, ret=%d \n", ret_value);
@@ -3472,7 +3413,6 @@ HMCPwrite(accrec_t   *access_rec, /* IN: access record to mess with */
           int32       length,     /* IN: number of bytes to write */
           const void *datap /* IN: buffer for data */)
 {
-    CONSTR(FUNC, "HMCPwrite");    /* for HERROR */
     filerec_t   *file_rec = NULL; /* file record */
     chunkinfo_t *info     = NULL; /* chunked element information record */
 #ifdef UNUSED
@@ -3682,9 +3622,7 @@ done:
         }
         if (chk_key != NULL)
             HDfree(chk_key);
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
 #ifdef CHK_DEBUG_4
     printf("HMCPwrite: exited, ret=%d \n", ret_value);
@@ -3718,7 +3656,6 @@ AUTHOR
 int32
 HMCPcloseAID(accrec_t *access_rec /* IN:  access record of file to close */)
 {
-    CONSTR(FUNC, "HMCPcloseAID");  /* for HERROR */
     chunkinfo_t *info      = NULL; /* special information record */
     int32        ret_value = SUCCEED;
 
@@ -3789,12 +3726,6 @@ HMCPcloseAID(accrec_t *access_rec /* IN:  access record of file to close */)
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HMCPcloseAID */
 
@@ -3815,8 +3746,7 @@ AUTHOR
 intn
 HMCPendaccess(accrec_t *access_rec /* IN:  access record to close */)
 {
-    CONSTR(FUNC, "HMCPendaccess"); /* for HERROR */
-    filerec_t *file_rec  = NULL;   /* file record */
+    filerec_t *file_rec  = NULL; /* file record */
     intn       ret_value = SUCCEED;
 
     /* validate argument */
@@ -3847,9 +3777,8 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (access_rec != NULL)
             HIrelease_accrec_node(access_rec);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     return ret_value;
 } /* HMCPendaccess */
 
@@ -3870,7 +3799,6 @@ int32
 HMCPinfo(accrec_t        *access_rec, /* IN: access record of access element */
          sp_info_block_t *info_chunk /* OUT: information about the special element */)
 {
-    CONSTR(FUNC, "HMCPinfo");      /* for HERROR */
     chunkinfo_t *info      = NULL; /* special information record */
     int32        ret_value = SUCCEED;
     intn         i; /* loop variable */
@@ -3911,9 +3839,7 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (info_chunk->cdims != NULL)
             HDfree(info_chunk->cdims);
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
     return ret_value;
 } /* HMCPinfo */
@@ -3943,7 +3869,6 @@ HMCPinquire(accrec_t *access_rec, /* IN:  access record to return info about */
             int16    *paccess,    /* OUT: access mode; */
             int16    *pspecial /* OUT: special code; */)
 {
-    CONSTR(FUNC, "HMCPinquire");     /* for HERROR */
     uint16       data_tag, data_ref; /* Tag/ref of the data in the file */
     chunkinfo_t *info      = NULL;   /* special information record */
     int32        ret_value = SUCCEED;
@@ -3978,11 +3903,6 @@ HMCPinquire(accrec_t *access_rec, /* IN:  access record to return info about */
         *pspecial = (int16)access_rec->special;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* HMCPinquire */
 
@@ -4002,7 +3922,6 @@ int32
 HMCPgetnumrecs(accrec_t *access_rec, /* access record */
                int32    *num_recs /* OUT: length of the chunked elt */)
 {
-    CONSTR(FUNC, "HMCPgetnumrecs"); /* for HGOTO_ERROR */
     chunkinfo_t *chunk_info = NULL; /* chunked element information record */
     int32        ret_value  = SUCCEED;
 
@@ -4021,10 +3940,5 @@ HMCPgetnumrecs(accrec_t *access_rec, /* access record */
         ret_value = FAIL;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* HMCPgetnumrecs */

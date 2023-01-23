@@ -35,7 +35,9 @@ main(int argc, char *argv[])
 {
     static char testfile[]            = "test.nc";
     static char unlim_testfile_name[] = "test_unlim.nc";
-    int         status                = 0;
+
+    (void)argc;
+    (void)argv;
 
 #if defined TEST_PC || defined TEST_WIN
     dbg_file = fopen("test.dbg", "w+");

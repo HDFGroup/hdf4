@@ -650,7 +650,7 @@ gdata(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_ma
     float64    *fp64;
     int8       *in8;
     int32       hdfdims[3], start[3]; /* order: ZYX or YX */
-    int32       sd_id, sds_id, sd_index, dim_id;
+    int32       sd_id, sds_id, sd_index;
     int32       len = in->dims[0] * in->dims[1] * in->dims[2];
     char        infile[NAME_LEN];
     intn        status;
@@ -840,7 +840,6 @@ static int
 gdimen(struct infilesformat infile_info, struct Input *in, FILE *strm)
 {
     int32 hdfdims[3]; /* order: ZYX or YX */
-    intn  status;     /* returned value from APIs */
     char  infile[NAME_LEN];
     char *sds_name = NULL;
     int32 rank, nattrs, dtype; /* rank, num of attrs, data type */
@@ -2660,7 +2659,6 @@ set_dimensions(int32 sds_id, struct Input *in, int32 nt, VOIDP dscale, VOIDP vsc
 
     if (in->rank == 2) {
         int32 edges[2];
-        intn  status;
 
         edges[0] = in->dims[1];
         edges[1] = in->dims[0];
@@ -2742,11 +2740,9 @@ process(struct Options *opt)
     int            is_maxmin;
     int            is_scale;
     int32          len;
-    FILE          *strm;
+    FILE          *strm = NULL;
     int32          hdf;
     int32          sd_id, sds_id;
-    int32          start3[3], edges3[3], start2[2], edges2[2];
-    int32          dim_index = 0, dim_id;
 
 #ifdef DEBUG
     int h, v, d;
@@ -2760,7 +2756,6 @@ process(struct Options *opt)
     const char *err3c = "same as %s dimension of the\n\t dataset, ";
     const char *err3d = "which is: %d.\n\n";
     const char *err4  = "Unable to write an RIS8 to the HDF output file\n";
-    const char *err5  = "Unable to write an SDS to the HDF output file\n";
     const char *err5a = "Unable to set range to an SDS\n";
     const char *err6a = "Unable to close the SDS\n";
     const char *err6  = "Unable to close the HDF output file\n";

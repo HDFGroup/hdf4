@@ -87,7 +87,6 @@ PRIVATE int32 HCIcnbit_term(compinfo_t *info);
 PRIVATE int32
 HCIcnbit_init(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HCIcnbit_init");
     compinfo_t             *info;               /* special element information */
     comp_coder_nbit_info_t *nbit_info;          /* ptr to N-bit info */
     intn                    bits;               /* number of bits in number type */
@@ -220,7 +219,6 @@ HCIcnbit_init(accrec_t *access_rec)
 PRIVATE int32
 HCIcnbit_decode(compinfo_t *info, int32 length, uint8 *buf)
 {
-    CONSTR(FUNC, "HCIcnbit_decode");
     comp_coder_nbit_info_t *nbit_info;   /* ptr to n-bit info */
     int32                   orig_length; /* original length to write */
     uint32                  input_bits;  /* bits read from the file */
@@ -436,8 +434,7 @@ HCIcnbit_encode(compinfo_t *info, int32 length, const uint8 *buf)
 PRIVATE int32
 HCIcnbit_term(compinfo_t *info)
 {
-    /* shut compiler up */
-    info = info;
+    (void)info;
 
 #ifdef TESTING
     printf("HCPcnbit_term(): func called\n");
@@ -468,7 +465,6 @@ HCIcnbit_term(compinfo_t *info)
 PRIVATE int32
 HCIcnbit_staccess(accrec_t *access_rec, int16 acc_mode)
 {
-    CONSTR(FUNC, "HCIcnbit_staccess");
     compinfo_t *info; /* special element information */
 
     info = (compinfo_t *)access_rec->special_info;
@@ -514,7 +510,6 @@ HCIcnbit_staccess(accrec_t *access_rec, int16 acc_mode)
 int32
 HCPcnbit_stread(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HCPcnbit_stread");
     int32 ret;
 
     if ((ret = HCIcnbit_staccess(access_rec, DFACC_READ)) == FAIL)
@@ -544,7 +539,6 @@ HCPcnbit_stread(accrec_t *access_rec)
 int32
 HCPcnbit_stwrite(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HCPcnbit_stwrite");
     int32 ret;
 
 #ifdef TESTING
@@ -582,13 +576,11 @@ HCPcnbit_stwrite(accrec_t *access_rec)
 int32
 HCPcnbit_seek(accrec_t *access_rec, int32 offset, int origin)
 {
-    CONSTR(FUNC, "HCPcnbit_seek");
     compinfo_t             *info;       /* special element information */
     comp_coder_nbit_info_t *nbit_info;  /* ptr to n-bit info */
     int32                   bit_offset; /* offset of the bit to seek to */
 
-    /* shut compiler up */
-    origin = origin;
+    (void)origin;
 
     info      = (compinfo_t *)access_rec->special_info;
     nbit_info = &(info->cinfo.coder_info.nbit_info);
@@ -633,7 +625,6 @@ HCPcnbit_seek(accrec_t *access_rec, int32 offset, int origin)
 int32
 HCPcnbit_read(accrec_t *access_rec, int32 length, void *data)
 {
-    CONSTR(FUNC, "HCPcnbit_read");
     compinfo_t *info; /* special element information */
 
     info = (compinfo_t *)access_rec->special_info;
@@ -668,7 +659,6 @@ HCPcnbit_read(accrec_t *access_rec, int32 length, void *data)
 int32
 HCPcnbit_write(accrec_t *access_rec, int32 length, const void *data)
 {
-    CONSTR(FUNC, "HCPcnbit_write");
     compinfo_t *info; /* special element information */
 
     info = (compinfo_t *)access_rec->special_info;
@@ -718,16 +708,15 @@ int32
 HCPcnbit_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength,
                  int32 *poffset, int32 *pposn, int16 *paccess, int16 *pspecial)
 {
-    /* shut compiler up */
-    access_rec = access_rec;
-    pfile_id   = pfile_id;
-    ptag       = ptag;
-    pref       = pref;
-    plength    = plength;
-    poffset    = poffset;
-    pposn      = pposn;
-    paccess    = paccess;
-    pspecial   = pspecial;
+    (void)access_rec;
+    (void)pfile_id;
+    (void)ptag;
+    (void)pref;
+    (void)plength;
+    (void)poffset;
+    (void)pposn;
+    (void)paccess;
+    (void)pspecial;
 
     return (SUCCEED);
 } /* HCPcnbit_inquire() */
@@ -754,7 +743,6 @@ HCPcnbit_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pr
 intn
 HCPcnbit_endaccess(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HCPcnbit_endaccess");
     compinfo_t *info; /* special element information */
 
 #ifdef TESTING

@@ -403,7 +403,6 @@ nvsseekc(intf *vkey, intf *eltpos)
 FRETVAL(intf)
 nvsgnamc(intf *vkey, _fcd vsname, intf *vsnamelen)
 {
-    CONSTR(FUNC, "vsgnamc");
     char *tvsname = NULL;
     intn  status;
 
@@ -430,7 +429,6 @@ nvsgnamc(intf *vkey, _fcd vsname, intf *vsnamelen)
 FRETVAL(intf)
 nvsgclsc(intf *vkey, _fcd vsclass, intf *vsclasslen)
 {
-    CONSTR(FUNC, "vsgclsc");
     char *tvsclass = NULL;
     intn  status;
 
@@ -458,7 +456,6 @@ FRETVAL(intf)
 nvsinqc(intf *vkey, intf *nelt, intf *interlace, _fcd fields, intf *eltsize, _fcd vsname, intf *fieldslen,
         intf *vsnamelen)
 {
-    CONSTR(FUNC, "vsinqc");
     char *tfields = NULL;
     char *tvsname = NULL;
     intn  status;

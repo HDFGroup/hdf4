@@ -779,14 +779,14 @@ DFupdate(DF *dfile)
 int
 DFstat(DF *dfile, DFdata *dfinfo)
 {
+    (void)dfinfo;
+
     if (DFIcheck(dfile) != 0) {
         DFerror = DFE_NOTOPEN;
         return (-1);
     }
     else
         DFerror = DFE_NONE;
-
-    dfinfo = dfinfo;
 
     return (0);
 }

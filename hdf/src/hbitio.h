@@ -18,8 +18,8 @@
  **  These are mainly used for compression I/O and N-bit data objects.
  */
 
-#ifndef __HBITIO_H
-#define __HBITIO_H
+#ifndef H4_HBITIO_H
+#define H4_HBITIO_H
 
 /* Define the number of elements in the buffered array */
 #define BITBUF_SIZE 4096
@@ -72,4 +72,4 @@ extern
 /* Function-like Macros */
 #define Hputbit(bitid, bit) ((Hbitwrite(bitid, 1, (uint32)bit) == FAIL) ? FAIL : SUCCEED)
 
-#endif /* __HBITIO_H */
+#endif /* H4_HBITIO_H */

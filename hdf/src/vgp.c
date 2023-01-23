@@ -161,7 +161,6 @@ VGROUP *
 VIget_vgroup_node(void)
 {
     VGROUP *ret_value = NULL;
-    CONSTR(FUNC, "VIget_vgroup_node");
 
     /* clear error stack */
     HEclear();
@@ -180,12 +179,6 @@ VIget_vgroup_node(void)
     HDmemset(ret_value, 0, sizeof(VGROUP));
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return (ret_value);
 } /* VIget_vgroup_node */
 
@@ -223,7 +216,6 @@ vginstance_t *
 VIget_vginstance_node(void)
 {
     vginstance_t *ret_value = NULL;
-    CONSTR(FUNC, "VIget_vginstance_node");
 
     /* clear error stack */
     HEclear();
@@ -242,12 +234,6 @@ VIget_vginstance_node(void)
     HDmemset(ret_value, 0, sizeof(vginstance_t));
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return (ret_value);
 } /* VIget_vginstance_node */
 
@@ -350,7 +336,6 @@ Load_vfile(HFILEID f /* IN: file handle */)
     uint16        tag       = DFTAG_NULL;
     uint16        ref       = DFTAG_NULL;
     intn          ret_value = SUCCEED;
-    CONSTR(FUNC, "Load_vfile");
 
     /* clear error stack */
     HEclear();
@@ -477,12 +462,6 @@ Load_vfile(HFILEID f /* IN: file handle */)
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Load_vfile */
 
@@ -503,7 +482,6 @@ Remove_vfile(HFILEID f /* IN: file handle */)
     VOIDP   *t         = NULL;
     vfile_t *vf        = NULL;
     intn     ret_value = SUCCEED;
-    CONSTR(FUNC, "Remove_vfile");
 
     /* clear error stack */
     HEclear();
@@ -534,12 +512,6 @@ Remove_vfile(HFILEID f /* IN: file handle */)
     HDfree(vf);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Remove_vfile */
 
@@ -560,8 +532,7 @@ vcompare(VOIDP k1, /* IN: first key to compare*/
          VOIDP k2, /* IN: second key to compare */
          intn  cmparg /* IN: not used */)
 {
-    /* shut compiler up */
-    cmparg = cmparg;
+    (void)cmparg;
 
     return (intn)((*(int32 *)k1) - (*(int32 *)k2)); /* valid for integer keys */
 } /* vcompare */
@@ -675,7 +646,6 @@ intn
 Vinitialize(HFILEID f /* IN: file handle */)
 {
     intn ret_value = SUCCEED;
-    CONSTR(FUNC, "Vinitialize");
 
     /* clear error stack */
     HEclear();
@@ -691,11 +661,6 @@ Vinitialize(HFILEID f /* IN: file handle */)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vinitialize() */
 
@@ -714,7 +679,6 @@ intn
 Vfinish(HFILEID f /* IN: file handle */)
 {
     intn ret_value = SUCCEED;
-    CONSTR(FUNC, "Vfinish");
 
     /* clear error stack */
     HEclear();
@@ -724,11 +688,6 @@ Vfinish(HFILEID f /* IN: file handle */)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vfinish() */
 
@@ -753,7 +712,6 @@ vginst(HFILEID f, /* IN: file handle */
     vfile_t      *vf        = NULL;
     vginstance_t *ret_value = NULL;
     int32         key;
-    CONSTR(FUNC, "vginstance");
 
     /* clear error stack */
     HEclear();
@@ -774,12 +732,6 @@ vginst(HFILEID f, /* IN: file handle */
     HGOTO_ERROR(DFE_NOMATCH, NULL);
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* vginst */
 
@@ -948,7 +900,6 @@ vunpackvg(VGROUP *vg,    /* IN/OUT: */
     uint16 uint16var;
     intn   i;
     int32  ret_value = SUCCEED;
-    CONSTR(FUNC, "vunpackvg");
 
     /* clear error stack */
     HEclear();
@@ -1026,11 +977,6 @@ vunpackvg(VGROUP *vg,    /* IN/OUT: */
         }         /* new version */
     }             /* end if */
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 
 } /* vunpackvg */
@@ -1055,7 +1001,6 @@ VPgetinfo(HFILEID f, /* IN: file handle */
     /*  intn          len;    intn mismatches Vgbufsize type -- uint32 */
     size_t  len;
     VGROUP *ret_value = NULL; /* FAIL */
-    CONSTR(FUNC, "VPgetinfo");
 
     /* clear error stack */
     HEclear();
@@ -1093,12 +1038,6 @@ VPgetinfo(HFILEID f, /* IN: file handle */
     ret_value = vg;
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end VPgetinfo */
 
@@ -1137,7 +1076,6 @@ Vattach(HFILEID     f,    /* IN: file handle */
     filerec_t    *file_rec = NULL; /* file record */
     int16         acc_mode;
     atom_t        ret_value = FAIL;
-    CONSTR(FUNC, "Vattach");
 
     /* clear error stack */
     HEclear();
@@ -1245,11 +1183,6 @@ Vattach(HFILEID     f,    /* IN: file handle */
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vattach */
 
@@ -1280,7 +1213,6 @@ Vdetach(int32 vkey /* IN: vgroup key */)
     vginstance_t *v  = NULL;
     int32         vgpacksize;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "Vdetach");
 
     /* clear error stack */
     HEclear();
@@ -1364,11 +1296,6 @@ Vdetach(int32 vkey /* IN: vgroup key */)
     v->nattach--;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vdetach */
 
@@ -1399,7 +1326,6 @@ Vinsert(int32 vkey, /* IN: vgroup key */
     int32         newfid;
     uintn         u;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "Vinsert");
 
     /* clear error stack */
     HEclear();
@@ -1471,11 +1397,6 @@ Vinsert(int32 vkey, /* IN: vgroup key */
     ret_value = (vg->nvelt - 1);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vinsert */
 
@@ -1502,7 +1423,6 @@ Vflocate(int32 vkey, /* IN: vdata key */
     VGROUP       *vg = NULL;
     int32         vskey;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "Vflocate");
 
     /* clear error stack */
     HEclear();
@@ -1542,12 +1462,6 @@ Vflocate(int32 vkey, /* IN: vdata key */
     ret_value = (FAIL); /* field not found */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Vflocate */
 
@@ -1575,7 +1489,6 @@ Vinqtagref(int32 vkey, /* IN: vgroup key */
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
     intn          ret_value = FALSE;
-    CONSTR(FUNC, "Vinqtagref");
 
     /* clear error stack */
     HEclear();
@@ -1602,11 +1515,6 @@ Vinqtagref(int32 vkey, /* IN: vgroup key */
     }
 
 done:
-    if (ret_value == FALSE) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vinqtagref */
 
@@ -1636,7 +1544,6 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
     vginstance_t *v         = NULL; /* vgroup instance struct */
     VGROUP       *vg        = NULL; /* in-memory vgroup struct */
     intn          ret_value = SUCCEED;
-    CONSTR(FUNC, "Vdeletetagref");
 
     /* NOTE: Move the following comments to the DESCRIPTION of the
              fcn when the issue with duplicate tag/refs is decided.
@@ -1705,11 +1612,6 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
     ret_value = FAIL;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vdeletetagref */
 
@@ -1731,7 +1633,6 @@ Vntagrefs(int32 vkey /* IN: vgroup key */)
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "Vntagrefs");
 
     /* clear error stack */
     HEclear();
@@ -1752,11 +1653,6 @@ Vntagrefs(int32 vkey /* IN: vgroup key */)
     ret_value = ((vg->otag == DFTAG_VG) ? (int32)vg->nvelt : FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vntagrefs */
 
@@ -1781,7 +1677,6 @@ Vnrefs(int32 vkey, /* IN: vgroup key */
     uint16        ttag = (uint16)tag; /* alias for faster comparison */
     uintn         u;                  /* local counting variable */
     int32         ret_value = 0;      /* zero refs to start */
-    CONSTR(FUNC, "Vnrefs");
 
     /* clear error stack */
     HEclear();
@@ -1805,12 +1700,6 @@ Vnrefs(int32 vkey, /* IN: vgroup key */
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Vnrefs */
 
@@ -1840,7 +1729,6 @@ Vgettagrefs(int32 vkey,       /* IN: vgroup key */
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "Vgettagrefs");
 
     /* clear error stack */
     HEclear();
@@ -1869,11 +1757,6 @@ Vgettagrefs(int32 vkey,       /* IN: vgroup key */
     ret_value = (n);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vgettagrefs */
 
@@ -1902,7 +1785,6 @@ Vgettagref(int32  vkey,  /* IN: vgroup key */
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
     intn          ret_value = SUCCEED;
-    CONSTR(FUNC, "Vgettagref");
 
     /* clear error stack */
     HEclear();
@@ -1927,11 +1809,6 @@ Vgettagref(int32  vkey,  /* IN: vgroup key */
     *ref = (int32)vg->ref[which];
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vgettagref */
 
@@ -1952,7 +1829,6 @@ VQuerytag(int32 vkey /* IN: vgroup key */)
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "Vgettagref");
 
     /* clear error stack */
     HEclear();
@@ -1973,12 +1849,6 @@ VQuerytag(int32 vkey /* IN: vgroup key */)
     ret_value = ((int32)vg->otag);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* VQuerytag */
 
@@ -1998,7 +1868,6 @@ VQueryref(int32 vkey /* IN: vgroup id */)
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "Vgettagref");
 
     /* clear error stack */
     HEclear();
@@ -2019,12 +1888,6 @@ VQueryref(int32 vkey /* IN: vgroup id */)
     ret_value = ((int32)vg->oref);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* VQueryref */
 
@@ -2057,7 +1920,6 @@ Vaddtagref(int32 vkey, /* IN: vgroup key */
     uintn i;
 #endif /* NO_DUPLICATES */
     int32 ret_value = SUCCEED;
-    CONSTR(FUNC, "Vaddtagref");
 
     /* clear error stack */
     HEclear();
@@ -2087,11 +1949,6 @@ Vaddtagref(int32 vkey, /* IN: vgroup key */
     ret_value = vinsertpair(vg, (uint16)tag, (uint16)ref);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vaddtagref */
 
@@ -2113,7 +1970,6 @@ vinsertpair(VGROUP *vg,  /* IN: vgroup struct */
             uint16  ref /* IN: ref to insert */)
 {
     int32 ret_value = SUCCEED;
-    CONSTR(FUNC, "vinsertpair");
 
     /* clear error stack */
     HEclear();
@@ -2136,12 +1992,6 @@ vinsertpair(VGROUP *vg,  /* IN: vgroup struct */
     ret_value  = ((int32)vg->nvelt);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* vinsertpair() */
 
@@ -2165,7 +2015,6 @@ Ventries(HFILEID f, /* IN: file handle */
 {
     vginstance_t *v         = NULL;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "Ventries");
 
     /* clear error stack */
     HEclear();
@@ -2183,12 +2032,6 @@ Ventries(HFILEID f, /* IN: file handle */
         ret_value = FAIL;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Ventries */
 
@@ -2207,7 +2050,6 @@ int32
 Vsetname(int32       vkey, /* IN: vgroup key */
          const char *vgname /* IN: name to set for vgroup */)
 {
-    CONSTR(FUNC, "Vsetname");
     vginstance_t *v  = NULL;
     VGROUP       *vg = NULL;
     size_t        name_len;
@@ -2250,11 +2092,6 @@ Vsetname(int32       vkey, /* IN: vgroup key */
     vg->marked = TRUE;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vsetname */
 
@@ -2276,7 +2113,6 @@ int32
 Vsetclass(int32       vkey, /* IN: vgroup key */
           const char *vgclass /* IN: class to set for vgroup */)
 {
-    CONSTR(FUNC, "Vsetclass");
     vginstance_t *v  = NULL;
     VGROUP       *vg = NULL;
     size_t        classname_len;
@@ -2325,12 +2161,6 @@ Vsetclass(int32       vkey, /* IN: vgroup key */
     vg->marked = TRUE;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Vsetclass */
 
@@ -2355,7 +2185,6 @@ Visvg(int32 vkey, /* IN: vgroup key */
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
     intn          ret_value = FALSE; /* initialize to FALSE */
-    CONSTR(FUNC, "Visvg");
 
     /* clear error stack */
     HEclear();
@@ -2384,12 +2213,6 @@ Visvg(int32 vkey, /* IN: vgroup key */
     }
 
 done:
-    if (ret_value == FALSE) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Visvg */
 
@@ -2413,7 +2236,6 @@ Visvs(int32 vkey, /* IN: vgroup key */
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
     intn          ret_value = FALSE; /* initialize to false */
-    CONSTR(FUNC, "VSisvs");
 
     /* clear error stack */
     HEclear();
@@ -2438,12 +2260,6 @@ Visvs(int32 vkey, /* IN: vgroup key */
     }
 
 done:
-    if (ret_value == FALSE) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Visvs */
 
@@ -2471,7 +2287,6 @@ Vgetid(HFILEID f, /* IN: file handle */
     VOIDP        *t  = NULL;
     int32         key;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "Vgetid");
 
     /* clear error stack */
     HEclear();
@@ -2514,12 +2329,6 @@ Vgetid(HFILEID f, /* IN: file handle */
         }                                   /* end else */
     }
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Vgetid */
 
@@ -2551,7 +2360,6 @@ Vgetnext(int32 vkey, /* IN: vgroup key */
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
     int32         ret_value = FAIL;
-    CONSTR(FUNC, "Vgetnext");
 
     /* clear error stack */
     HEclear();
@@ -2600,12 +2408,6 @@ Vgetnext(int32 vkey, /* IN: vgroup key */
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Vgetnext  */
 
@@ -2628,7 +2430,6 @@ Vgetnamelen(int32   vkey, /* IN: vgroup key */
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "Vgetnamelen");
 
     /* clear error stack */
     HEclear();
@@ -2665,10 +2466,6 @@ Vgetnamelen(int32   vkey, /* IN: vgroup key */
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-    /* Normal function cleanup */
     return ret_value;
 } /* Vgetnamelen */
 
@@ -2688,11 +2485,9 @@ int32
 Vgetclassnamelen(int32   vkey, /* IN: vgroup key */
                  uint16 *classname_len /* OUT: length of vgroup's classname */)
 {
-    vginstance_t *v  = NULL;
-    VGROUP       *vg = NULL;
-    size_t        temp_len;
+    vginstance_t *v         = NULL;
+    VGROUP       *vg        = NULL;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "Vgetclassnamelen");
 
     /* clear error stack */
     HEclear();
@@ -2725,12 +2520,6 @@ Vgetclassnamelen(int32   vkey, /* IN: vgroup key */
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Vgetclassnamelen */
 
@@ -2754,7 +2543,6 @@ Vgetname(int32 vkey, /* IN: vgroup key */
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "Vgetname");
 
     /* clear error stack */
     HEclear();
@@ -2779,12 +2567,6 @@ Vgetname(int32 vkey, /* IN: vgroup key */
         vgname[0] = '\0';
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Vgetname */
 
@@ -2808,7 +2590,6 @@ Vgetclass(int32 vkey, /* IN: vgroup key */
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "Vgetclass");
 
     /* clear error stack */
     HEclear();
@@ -2833,12 +2614,6 @@ Vgetclass(int32 vkey, /* IN: vgroup key */
         vgclass[0] = '\0';
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Vgetclass */
 
@@ -2865,7 +2640,6 @@ Vinquire(int32  vkey,     /* IN: vgroup key */
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
     intn          ret_value = SUCCEED;
-    CONSTR(FUNC, "Vinquire");
 
     /* clear error stack */
     HEclear();
@@ -2896,12 +2670,6 @@ Vinquire(int32  vkey,     /* IN: vgroup key */
         *nentries = (int32)vg->nvelt;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Vinquire */
 
@@ -2933,7 +2701,6 @@ Vopen(char *path,     /* IN: file name */
       int16 ndds /* IN: number of DD in a block */)
 {
     HFILEID ret_value = SUCCEED;
-    CONSTR(FUNC, "Vopen");
 
     /* clear error stack */
     HEclear();
@@ -2947,12 +2714,6 @@ Vopen(char *path,     /* IN: file name */
         HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Vopen() */
 
@@ -3012,7 +2773,6 @@ Vdelete(int32 f, /* IN: file handle */
     int32      key;
     filerec_t *file_rec  = NULL; /* file record */
     int32      ret_value = SUCCEED;
-    CONSTR(FUNC, "Vdelete");
 
     /* clear error stack */
     HEclear();
@@ -3047,12 +2807,6 @@ Vdelete(int32 f, /* IN: file handle */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* Vdelete */
 
@@ -3071,7 +2825,6 @@ PRIVATE intn
 VIstart(void)
 {
     intn ret_value = SUCCEED;
-    CONSTR(FUNC, "VIstart"); /* for HERROR */
 
     /* Don't call this routine again... */
     library_terminate = TRUE;
@@ -3085,12 +2838,6 @@ VIstart(void)
         HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return (ret_value);
 } /* end VIstart() */
 
@@ -3111,7 +2858,6 @@ VPshutdown(void)
     VGROUP       *v         = NULL;
     vginstance_t *vg        = NULL;
     intn          ret_value = SUCCEED;
-    CONSTR(FUNC, "VPshutdown");
 
     /* Release the vdata free-list if it exists */
     if (vgroup_free_list != NULL) {
@@ -3154,11 +2900,6 @@ VPshutdown(void)
     } /* end if */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end VPshutdown() */
 
@@ -3182,7 +2923,6 @@ done:
 intn
 Vgisinternal(int32 vkey /* vgroup's identifier */)
 {
-    CONSTR(FUNC, "Vgisinternal");
     vginstance_t *v           = NULL;
     VGROUP       *vg          = NULL;
     intn          is_internal = FALSE;
@@ -3231,10 +2971,6 @@ Vgisinternal(int32 vkey /* vgroup's identifier */)
     ret_value = is_internal;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-    }                        /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vgisinternal */
 
@@ -3303,7 +3039,6 @@ Vgetvgroups(int32   id,       /* IN: file id or vgroup id */
             uintn   n_vgs,    /* IN: number of user-created vgs to return */
             uint16 *refarray /* IN/OUT: ref array to fill */)
 {
-    CONSTR(FUNC, "Vgetvgroups");
     vginstance_t *vg_inst = NULL;
     int32         vg_ref;
     intn          nactual_vgs, user_vgs, ii;
@@ -3453,10 +3188,5 @@ Vgetvgroups(int32   id,       /* IN: file id or vgroup id */
         HGOTO_ERROR(DFE_ARGS, FAIL);
     }
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vgetvgroups */

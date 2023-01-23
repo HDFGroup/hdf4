@@ -46,9 +46,10 @@
  *****************************************************************/
 
 #include <stdio.h>
-#include "gif.h"
 #include <stdlib.h>
 #include <string.h>
+
+#include "gif.h"
 
 typedef BYTE     byte;
 typedef long int count_int;
@@ -71,13 +72,10 @@ typedef long int count_int;
 /* MONO returns total intensity of r,g,b components */
 #define MONO(rd, gn, bl) (((rd)*11 + (gn)*16 + (bl)*5) >> 5) /*.33R+ .5G+ .17B*/
 
-static int  Width, Height;
 static int  curx, cury;
 static long CountDown;
 static int  Interlace;
 
-#ifdef __STDC__
-static void putword(int, FILE *);
 static void compress(int, FILE *, byte *, int);
 static void output(int);
 static void cl_block(void);
@@ -85,39 +83,24 @@ static void cl_hash(count_int);
 static void char_init(void);
 static void char_out(int);
 static void flush_char(void);
-#else
-static void putword(), compress(), output(), cl_block(), cl_hash();
-static void char_init(), char_out(), flush_char();
-#endif
 
 static byte pc2nc[256], r1[256], g1[256], b1[256];
 
-void xvbzero(s, len) char *s;
-int  len;
-{
-    for (; len > 0; len--)
-        *s++ = 0;
-}
-
 /*************************************************************/
 int
-      hdfWriteGIF(fp, pic, ptype, w, h, rmap, gmap, bmap, pc2ncmap, numcols, colorstyle, BitsPerPixel)
-FILE *fp;
-byte *pic;
-int   ptype, w, h;
-byte *rmap, *gmap, *bmap, *pc2ncmap;
-int   numcols, colorstyle;
-int   BitsPerPixel;
+hdfWriteGIF(FILE *fp, byte *pic, int ptype, int w, int h, byte *rmap, byte *gmap, byte *bmap, byte *pc2ncmap,
+            int numcols, int colorstyle, int BitsPerPixel)
 {
-    int   RWidth, RHeight;
-    int   LeftOfs, TopOfs;
-    int   ColorMapSize, InitCodeSize, Background;
+    int   InitCodeSize;
     int   i;
     byte *pic8;
     pic8 = pic;
 
-    Interlace  = 0;
-    Background = 0;
+    (void)ptype;
+    (void)numcols;
+    (void)colorstyle;
+
+    Interlace = 0;
 
     for (i = 0; i < 256; i++) {
         pc2nc[i] = pc2ncmap[i];
@@ -125,12 +108,6 @@ int   BitsPerPixel;
         g1[i]    = gmap[i];
         b1[i]    = bmap[i];
     }
-
-    ColorMapSize = 1 << BitsPerPixel;
-
-    RWidth = Width = w;
-    RHeight = Height = h;
-    LeftOfs = TopOfs = 0;
 
     CountDown = w * h; /* # of pixels we'll be doing */
 
@@ -151,17 +128,6 @@ int   BitsPerPixel;
     if (ferror(fp))
         return -1;
     return (0);
-}
-
-/******************************/
-static void putword(w, fp) int w;
-FILE       *fp;
-{
-    /* writes a 16-bit integer in GIF order (LSB first) */
-
-    fputc(w & 0xff, fp);
-
-    fputc((w >> 8) & 0xff, fp);
 }
 
 /***********************************************************************/
@@ -234,10 +200,8 @@ static int ClearCode;
 static int EOFCode;
 
 /********************************************************/
-static void compress(init_bits, outfile, data, len) int init_bits;
-FILE       *outfile;
-byte       *data;
-int         len;
+static void
+compress(int init_bits, FILE *outfile, byte *data, int len)
 {
     long fcode;
     int  i = 0;
@@ -257,8 +221,8 @@ int         len;
     /* initialize 'compress' globals */
     maxbits    = XV_BITS;
     maxmaxcode = 1 << XV_BITS;
-    xvbzero((char *)htab, sizeof(htab));
-    xvbzero((char *)codetab, sizeof(codetab));
+    memset(htab, 0, sizeof(htab));
+    memset(codetab, 0, sizeof(codetab));
     hsize     = HSIZE;
     free_ent  = 0;
     clear_flg = 0;
@@ -364,7 +328,8 @@ nomatch:
 static unsigned long masks[] = {0x0000, 0x0001, 0x0003, 0x0007, 0x000F, 0x001F, 0x003F, 0x007F, 0x00FF,
                                 0x01FF, 0x03FF, 0x07FF, 0x0FFF, 0x1FFF, 0x3FFF, 0x7FFF, 0xFFFF};
 
-static void output(code) int code;
+static void
+output(int code)
 {
     cur_accum &= masks[cur_bits];
 
@@ -417,7 +382,7 @@ static void output(code) int code;
 
 /********************************/
 static void
-cl_block() /* table clear for block compress */
+cl_block(void) /* table clear for block compress */
 {
     /* Clear out the hash table */
 
@@ -429,8 +394,9 @@ cl_block() /* table clear for block compress */
 }
 
 /********************************/
-static void cl_hash(hsize) /* reset code table */
-    count_int hsize;
+/* reset code table */
+static void
+cl_hash(count_int hsize)
 {
     count_int *htab_p = htab + hsize;
     long       i;
@@ -476,7 +442,7 @@ static int a_count;
  * Set up the 'byte output' routine
  */
 static void
-char_init()
+char_init(void)
 {
     a_count = 0;
 }
@@ -490,7 +456,8 @@ static char accum[256];
  * Add a character to the end of the current packet, and if it is 254
  * characters, flush the packet to disk.
  */
-static void char_out(c) int c;
+static void
+char_out(int c)
 {
     accum[a_count++] = c;
     if (a_count >= 254)
@@ -501,7 +468,7 @@ static void char_out(c) int c;
  * Flush the packet to disk, and reset the accumulator
  */
 static void
-flush_char()
+flush_char(void)
 {
     if (a_count > 0) {
         fputc(a_count, g_outfile);

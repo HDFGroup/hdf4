@@ -236,8 +236,7 @@ DFSDgetdims(const char *filename, intn *prank, int32 sizes[], intn maxrank)
 {
     intn  i;
     int32 file_id;
-    CONSTR(FUNC, "DFSDgetdims");
-    intn ret_value = SUCCEED;
+    intn  ret_value = SUCCEED;
 
     HEclear(); /* Clear error stack */
 
@@ -272,11 +271,6 @@ DFSDgetdims(const char *filename, intn *prank, int32 sizes[], intn maxrank)
     ret_value = Hclose(file_id);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -304,8 +298,7 @@ DFSDgetdatastrs(char *label, char *unit, char *format, char *coordsys)
 {
     int32 luf;
     char *lufp;
-    CONSTR(FUNC, "DFSDgetdatastrs");
-    intn ret_value = SUCCEED;
+    intn  ret_value = SUCCEED;
 
     HEclear(); /* Clear error stack */
 
@@ -340,11 +333,6 @@ DFSDgetdatastrs(char *label, char *unit, char *format, char *coordsys)
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -374,8 +362,7 @@ DFSDgetdimstrs(int dim, char *label, char *unit, char *format)
     intn  luf;
     intn  rdim;
     char *lufp;
-    CONSTR(FUNC, "DFSDgetdimstrs");
-    intn ret_value = SUCCEED;
+    intn  ret_value = SUCCEED;
 
     HEclear(); /* Clear error stack */
 
@@ -411,11 +398,6 @@ DFSDgetdimstrs(int dim, char *label, char *unit, char *format)
     }     /* end for 'luf' */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -441,7 +423,6 @@ done:
 intn
 DFSDgetdatalen(intn *llabel, intn *lunit, intn *lformat, intn *lcoordsys)
 {
-    CONSTR(FUNC, "DFSDgetdatalen");
     intn ret_value = SUCCEED;
 
     HEclear(); /* Clear error stack */
@@ -460,11 +441,6 @@ DFSDgetdatalen(intn *llabel, intn *lunit, intn *lformat, intn *lcoordsys)
     *lcoordsys = (intn)(Readsdg.coordsys ? HDstrlen(Readsdg.coordsys) : 0);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -488,7 +464,6 @@ done:
 intn
 DFSDgetdimlen(intn dim, intn *llabel, intn *lunit, intn *lformat)
 {
-    CONSTR(FUNC, "DFSDgetdimlen");
     intn ret_value = SUCCEED;
 
     HEclear(); /* Clear error stack */
@@ -509,11 +484,6 @@ DFSDgetdimlen(intn dim, intn *llabel, intn *lunit, intn *lformat)
     *lformat = (intn)(Readsdg.dimluf[FORMAT][dim - 1] ? HDstrlen(Readsdg.dimluf[FORMAT][dim - 1]) : 0);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -542,8 +512,7 @@ DFSDgetdimscale(intn dim, int32 maxsize, VOIDP scale)
     int32  localNTsize;
     intn   rdim;
     uint8 *p1, *p2;
-    CONSTR(FUNC, "DFSDgetdimscale");
-    intn ret_value = SUCCEED;
+    intn   ret_value = SUCCEED;
 
     HEclear(); /* Clear error stack */
 
@@ -581,11 +550,6 @@ DFSDgetdimscale(intn dim, int32 maxsize, VOIDP scale)
     HDmemcpy(p1, p2, dimsize);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -620,8 +584,7 @@ DFSDgetrange(VOIDP pmax, VOIDP pmin)
     int32  numtype;
     uint32 localNTsize;
     uint8 *p1, *p2;
-    CONSTR(FUNC, "DFSDgetrange");
-    int ret_value = SUCCEED;
+    int    ret_value = SUCCEED;
 
     HEclear(); /* Clear error stack */
 
@@ -654,11 +617,6 @@ DFSDgetrange(VOIDP pmax, VOIDP pmin)
         HGOTO_ERROR(DFE_NOVALS, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -725,7 +683,6 @@ DFSDgetdata(const char *filename, intn rank, int32 maxsizes[], VOIDP data)
 intn
 DFSDsetlengths(intn maxlen_label, intn maxlen_unit, intn maxlen_format, intn maxlen_coordsys)
 {
-    CONSTR(FUNC, "DFSDsetlengths");
     intn ret_value = SUCCEED;
 
     /* Perform global, one-time initialization */
@@ -743,11 +700,6 @@ DFSDsetlengths(intn maxlen_label, intn maxlen_unit, intn maxlen_format, intn max
         Maxstrlen[COORDSYS] = maxlen_coordsys;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -773,7 +725,6 @@ intn
 DFSDsetdims(intn rank, int32 dimsizes[])
 {
     intn i;
-    CONSTR(FUNC, "DFSDsetdims");
     intn ret_value = SUCCEED;
 
     HEclear();
@@ -829,11 +780,6 @@ DFSDsetdims(intn rank, int32 dimsizes[])
     Writeref    = 0;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -881,11 +827,10 @@ DFSDsetdatastrs(const char *label, const char *unit, const char *format, const c
 intn
 DFSDIsetdatastrs(const char *label, const char *unit, const char *format, const char *coordsys)
 {
-    intn luf;                         /* takes values LABEL, UNIT, FORMAT */
-                                      /* in succession */
-    const char *lufp;                 /* points to label, unit, format */
-                                      /* in succession */
-    CONSTR(FUNC, "DFSDIsetdatastrs"); /* for HERROR */
+    intn luf;         /* takes values LABEL, UNIT, FORMAT */
+                      /* in succession */
+    const char *lufp; /* points to label, unit, format */
+                      /* in succession */
     intn ret_value = SUCCEED;
 
     /* Perform global, one-time initialization */
@@ -929,12 +874,6 @@ DFSDIsetdatastrs(const char *label, const char *unit, const char *format, const 
     Ref.luf[LABEL] = Ref.luf[UNIT] = Ref.luf[FORMAT] = Ref.coordsys = 0;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -993,7 +932,6 @@ DFSDIsetdimstrs(intn dim, const char *label, const char *unit, const char *forma
                       /* in succession */
     const char *lufp; /* points to label, unit, format */
                       /* in succession */
-    CONSTR(FUNC, "DFSDsetdimstrs");
     intn ret_value = SUCCEED;
 
     HEclear();
@@ -1045,12 +983,6 @@ DFSDIsetdimstrs(intn dim, const char *label, const char *unit, const char *forma
     Ref.luf[LABEL] = Ref.luf[UNIT] = Ref.luf[FORMAT] = 0;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -1081,7 +1013,6 @@ DFSDsetdimscale(intn dim, int32 dimsize, VOIDP scale)
     int32  localNTsize;
     uint8 *p1, *p2;
     intn   ret_value = SUCCEED;
-    CONSTR(FUNC, "DFSDsetdimscale");
 
     HEclear();
 
@@ -1157,11 +1088,6 @@ DFSDsetdimscale(intn dim, int32 dimsize, VOIDP scale)
     Ref.scales = 0;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -1198,7 +1124,6 @@ DFSDsetrange(VOIDP maxi, VOIDP mini)
     intn   i;
     uint8 *p1, *p2;
     intn   ret_value = SUCCEED;
-    CONSTR(FUNC, "DFSDsetrange"); /* for HERROR */
 
     HEclear();
 
@@ -1226,11 +1151,6 @@ DFSDsetrange(VOIDP maxi, VOIDP mini)
     Ref.maxmin = 0;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -1315,7 +1235,6 @@ intn
 DFSDrestart(void)
 {
     intn ret_value = SUCCEED;
-    CONSTR(FUNC, "DFSDndatasets");
 
     /* Perform global, one-time initialization */
     if (library_terminate == FALSE)
@@ -1327,11 +1246,6 @@ DFSDrestart(void)
     Readref = 0;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -1356,7 +1270,6 @@ DFSDndatasets(char *filename)
     int32 file_id;
     int32 nsdgs     = 0;
     int32 ret_value = SUCCEED;
-    CONSTR(FUNC, "DFSDndatasets");
 
     HEclear();
 
@@ -1377,11 +1290,6 @@ DFSDndatasets(char *filename)
     ret_value = nsdgs;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -1400,7 +1308,6 @@ done:
 intn
 DFSDclear(void)
 {
-    CONSTR(FUNC, "DFSDclear");
     intn ret_value = SUCCEED;
 
     /* Perform global, one-time initialization */
@@ -1416,11 +1323,6 @@ DFSDclear(void)
     ret_value = DFSDIclear(&Writesdg);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -1439,7 +1341,6 @@ done:
 uint16
 DFSDlastref(void)
 {
-    CONSTR(FUNC, "DFSDlastref");
     uint16 ret_value;
 
     /* Perform global, one-time initialization */
@@ -1450,12 +1351,6 @@ DFSDlastref(void)
     ret_value = (uint16)Lastref;
 
 done:
-    if (ret_value == 0) /* 0 is invalid ref */
-    {                   /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -1485,7 +1380,6 @@ DFSDreadref(char *filename, uint16 ref)
     int32 file_id;
     int32 aid;
     intn  ret_value = SUCCEED;
-    CONSTR(FUNC, "DFSDreadref");
 
     HEclear();
 
@@ -1509,11 +1403,6 @@ DFSDreadref(char *filename, uint16 ref)
     ret_value = Hclose(file_id);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -1589,7 +1478,6 @@ DFSDstartslice(const char *filename)
     intn  i;
     int32 size;
     intn  ret_value = SUCCEED;
-    CONSTR(FUNC, "DFSDstartslice");
 
     HEclear();
 
@@ -1634,11 +1522,6 @@ DFSDstartslice(const char *filename)
         Sddims[i] = 0; /* nothing written so far */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -1742,7 +1625,6 @@ DFSDsetNT(int32 numbertype)
 {
     uint8 outNT;
     intn  ret_value = SUCCEED;
-    CONSTR(FUNC, "DFSDsetNT");
 
     HEclear();
 
@@ -1769,11 +1651,6 @@ DFSDsetNT(int32 numbertype)
     ret_value = (DFKsetNT(numbertype));
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -1792,7 +1669,6 @@ DFSDIclearNT(DFSsdg *sdg)
 {
     intn i;
     intn ret_value = SUCCEED;
-    CONSTR(FUNC, "DFSDIclearNT");
 
     HEclear();
 
@@ -1817,12 +1693,6 @@ DFSDIclearNT(DFSsdg *sdg)
     Ref.new_ndg = -1;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -1857,7 +1727,6 @@ intn
 DFSDgetNT(int32 *pnumbertype)
 {
     intn ret_value = SUCCEED;
-    CONSTR(FUNC, "DFSDgetNT");
 
     HEclear();
 
@@ -1871,11 +1740,6 @@ DFSDgetNT(int32 *pnumbertype)
         HGOTO_ERROR(DFE_BADNUMTYPE, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -1908,7 +1772,6 @@ DFSDpre32sdg(char *filename, uint16 ref, intn *ispre32)
     intn      found = 0;
     DFnsdgle *ptr;
     intn      ret_value = SUCCEED;
-    CONSTR(FUNC, "DFSDpre32sdg");
 
     HEclear();
 
@@ -1945,11 +1808,6 @@ DFSDpre32sdg(char *filename, uint16 ref, intn *ispre32)
         ret_value = FAIL;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end of DFSDpre32sdg   */
 
@@ -1993,7 +1851,6 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr *l_nsdghdr)
     DFdi      lnkdd[2];
     uint8    *bufp;
     intn      ret_value = SUCCEED;
-    CONSTR(FUNC, "DFSDsetnsdg_t");
 
     HEclear();
 
@@ -2210,11 +2067,6 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr *l_nsdghdr)
     l_nsdghdr->nsdg_t = ntb->next;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     /* Release the first nodes in stb and ntb  */
     if (stb != NULL)
         HDfree((VOIDP)stb);
@@ -2238,7 +2090,6 @@ DFSDInextnsdg(DFnsdg_t_hdr *l_nsdghdr, DFdi *nsdg)
     intn      found = FALSE;
     DFnsdgle *ptr;
     intn      ret_value = SUCCEED;
-    CONSTR(FUNC, "DFSDInextnsdg");
 
     HEclear();
 
@@ -2281,12 +2132,6 @@ DFSDInextnsdg(DFnsdg_t_hdr *l_nsdghdr, DFdi *nsdg)
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end of DFSDInextnsdg   */
 
@@ -2329,7 +2174,6 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg *sdg)
     uint8 *buf;
     uint8 *p; /* temporary pointer for moving things to buffer */
     intn   ret_value = SUCCEED;
-    CONSTR(FUNC, "DFSDIgetndg");
 
     HEclear();
 
@@ -2861,12 +2705,6 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg *sdg)
     sdg->fill_fixed = TRUE;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -2904,7 +2742,6 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg *sdg)
     int32  aid;
     DFdi   nt;
     intn   ret_value = SUCCEED;
-    CONSTR(FUNC, "DFSDIputndg");
 
     HEclear();
 
@@ -3247,12 +3084,6 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg *sdg)
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -3271,7 +3102,6 @@ DFSDIendslice(intn isfortran)
 {
     intn i;
     intn ret_value = SUCCEED;
-    CONSTR(FUNC, "DFSDIendslice");
 
     HEclear();
 
@@ -3328,12 +3158,6 @@ DFSDIendslice(intn isfortran)
     HDfreenclear(Sddims);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -3357,7 +3181,6 @@ DFSDIopen(const char *filename, intn acc_mode)
 {
     int32 file_id;
     int32 ret_value = SUCCEED;
-    CONSTR(FUNC, "DFSDIopen");
 
     /* Perform global, one-time initialization */
     if (library_terminate == FALSE)
@@ -3445,12 +3268,6 @@ DFSDIopen(const char *filename, intn acc_mode)
     ret_value = file_id;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -3467,8 +3284,7 @@ done:
 intn
 DFSDIsdginfo(int32 file_id)
 {
-    DFdi ptr;
-    CONSTR(FUNC, "DFSDIsdginfo");
+    DFdi  ptr;
     int32 aid;
     intn  ret_value = SUCCEED;
 
@@ -3525,12 +3341,6 @@ DFSDIsdginfo(int32 file_id)
     Readref = 0;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -3549,7 +3359,6 @@ DFSDIrefresh(char *filename)
 {
     int32 file_id;
     intn  ret_value = SUCCEED;
-    CONSTR(FUNC, "DFSDIrefresh");
 
     HEclear();
 
@@ -3569,12 +3378,6 @@ DFSDIrefresh(char *filename)
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -3655,7 +3458,6 @@ DFSDIclear(DFSsdg *sdg)
     intn i;
     intn luf;
     intn ret_value = SUCCEED;
-    CONSTR(FUNC, "DFSDIclear");
 
     HEclear();
 
@@ -3710,12 +3512,6 @@ DFSDIclear(DFSsdg *sdg)
     Ref.fill_value            = -1;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -3747,7 +3543,6 @@ DFSDIgetdata(const char *filename, intn rank, int32 maxsizes[], VOIDP data, intn
     int32 *windims;
     int32  file_id;
     intn   ret_value = SUCCEED;
-    CONSTR(FUNC, "DFSDIgetdata");
 
     HEclear();
 
@@ -3786,12 +3581,6 @@ DFSDIgetdata(const char *filename, intn rank, int32 maxsizes[], VOIDP data, intn
     HDfree((VOIDP)windims);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -3816,7 +3605,6 @@ DFSDIputdata(const char *filename, intn rank, int32 *dimsizes, VOIDP data, intn 
 {
     int32 file_id;
     intn  ret_value = SUCCEED;
-    CONSTR(FUNC, "DFSDIputdata");
 
     HEclear();
 
@@ -3846,12 +3634,6 @@ DFSDIputdata(const char *filename, intn rank, int32 *dimsizes, VOIDP data, intn 
     ret_value = DFSDIendslice(isfortran);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -3935,7 +3717,6 @@ DFSDIgetslice(const char *filename, int32 winst[], int32 windims[], VOIDP data, 
     uint8 *buf;             /* buffer containing the converted current row */
     int32  file_id;         /* HDF file pointer */
     intn   ret_value = SUCCEED;
-    CONSTR(FUNC, "DFSDIgetslice");
 
     HEclear();
 
@@ -4190,12 +3971,6 @@ DFSDIgetslice(const char *filename, int32 winst[], int32 windims[], VOIDP data, 
         ret_value = Hclose(file_id);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -4243,10 +4018,8 @@ DFSDIputslice(int32 windims[], VOIDP data, int32 dims[], intn isfortran)
                           /*  the start of the current row */
     uint8 *buf;           /* buffer containing converted current row */
     intn   ret_value = SUCCEED;
-    CONSTR(FUNC, "DFSDIputslice");
 
-    /* shut compiler up */
-    isfortran = isfortran;
+    (void)isfortran;
 
     HEclear();
 
@@ -4365,12 +4138,6 @@ DFSDIputslice(int32 windims[], VOIDP data, int32 dims[], intn isfortran)
     ret_value = (ret >= 0 ? 0 : -1);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 }
 
@@ -4415,7 +4182,6 @@ intn
 DFSDgetcal(float64 *pcal, float64 *pcal_err, float64 *pioff, float64 *pioff_err, int32 *cal_nt)
 {
     intn ret_value = SUCCEED;
-    CONSTR(FUNC, "DFSDgetcal");
 
     HEclear();
 
@@ -4439,11 +4205,6 @@ DFSDgetcal(float64 *pcal, float64 *pcal_err, float64 *pioff, float64 *pioff_err,
         HGOTO_ERROR(DFE_NOVALS, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* DFSDgetcal */
 
@@ -4488,7 +4249,6 @@ done:
 intn
 DFSDsetcal(float64 cal, float64 cal_err, float64 ioff, float64 ioff_err, int32 cal_nt)
 {
-    CONSTR(FUNC, "DFSDsetcal");
     intn ret_value = SUCCEED;
 
     HEclear();
@@ -4507,11 +4267,6 @@ DFSDsetcal(float64 cal, float64 cal_err, float64 ioff, float64 ioff_err, int32 c
     Ref.cal = 0;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -4536,7 +4291,6 @@ DFSDwriteref(const char *filename, uint16 ref)
     int32 file_id;
     int32 aid;
     intn  ret_value = SUCCEED;
-    CONSTR(FUNC, "DFSDwriteref");
 
     /* Clear error stack */
     HEclear();
@@ -4577,11 +4331,6 @@ DFSDwriteref(const char *filename, uint16 ref)
     ret_value = Hclose(file_id);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -4611,7 +4360,6 @@ DFSDsetfillvalue(VOIDP fill_value)
     int32  numtype;     /* current number type  */
     uint32 localNTsize; /* size of this NT on as it is on this machine  */
     intn   ret_value = SUCCEED;
-    CONSTR(FUNC, "DFSDsetfillvalue");
 
     /* Clear error stack  */
     HEclear();
@@ -4639,11 +4387,6 @@ DFSDsetfillvalue(VOIDP fill_value)
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -4669,7 +4412,6 @@ DFSDgetfillvalue(VOIDP fill_value)
     int32  numtype;     /* current number type  */
     uint32 localNTsize; /* size of this NT on as it is on this machine  */
     intn   ret_value = SUCCEED;
-    CONSTR(FUNC, "DFSDgetfillvalue");
 
     /* Clear error stack  */
     HEclear();
@@ -4694,11 +4436,6 @@ DFSDgetfillvalue(VOIDP fill_value)
         ret_value = FAIL;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -4740,8 +4477,8 @@ DFSDreadslab(const char *filename, int32 start[], int32 slab_size[], int32 strid
              int32 buffer_size[])
 {
     intn ret_value = SUCCEED;
-    /* shut compiler up */
-    stride = stride;
+
+    (void)stride;
 
     ret_value = (DFSDgetslice(filename, start, slab_size, buffer, buffer_size));
 
@@ -4777,7 +4514,6 @@ DFSDstartslab(const char *filename)
     uint8  platnumsubclass;
     uint8  outNT; /* file number type subclass */
     intn   ret_value = SUCCEED;
-    CONSTR(FUNC, "DFSDstartslab");
 
     /* Clear errors */
     HEclear();
@@ -4888,11 +4624,6 @@ DFSDstartslab(const char *filename)
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -4958,10 +4689,8 @@ DFSDwriteslab(int32 start[], int32 stride[], int32 count[], VOIDP data)
     uint8 *datap;           /* ptr into data[] at starting offset */
                             /*   of current block */
     intn ret_value = SUCCEED;
-    CONSTR(FUNC, "DFSDwriteslab");
 
-    /* shut compiler up */
-    stride = stride;
+    (void)stride;
 
     /* Clear error stack  */
     HEclear();
@@ -5182,11 +4911,6 @@ DFSDwriteslab(int32 start[], int32 stride[], int32 count[], VOIDP data)
         ret_value = SUCCEED;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -5208,7 +4932,6 @@ intn
 DFSDendslab(void)
 {
     intn ret_value = SUCCEED;
-    CONSTR(FUNC, "DFSDendslab");
 
     /* Clear error stack */
     HEclear();
@@ -5260,11 +4983,6 @@ DFSDendslab(void)
     Writeref  = 0;                /* Reset Write ref */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 }
 
@@ -5287,7 +5005,6 @@ done:
 PRIVATE intn
 DFSDIstart(void)
 {
-    CONSTR(FUNC, "DFSDIstart"); /* for HERROR */
     intn ret_value = SUCCEED;
 
     /* Don't call this routine again... */
@@ -5298,12 +5015,6 @@ DFSDIstart(void)
         HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return (ret_value);
 } /* end DFSDIstart() */
 

@@ -25,7 +25,6 @@
 #include <string.h>
 #include <errno.h>
 #include "local_nc.h"
-#include "alloc.h"
 #include "herr.h"
 
 /* obtain the maximum number of open files allowed, at the same time,
@@ -63,11 +62,6 @@ static NC **_cdfs;
 #define HNDLE(id) (((id) >= 0 && (id) < _ncdf) ? _cdfs[(id)] : NULL)
 #define STASH(id) (((id) >= 0 && (id) < _ncdf) ? HNDLE(_cdfs[(id)]->redefid) : NULL)
 
-#ifdef NO_STDC_REMOVE
-/* try unix 'unlink' */
-#define remove(fpath) unlink((fpath))
-#endif
-
 #ifdef DOS_FS
 #define SEP '\\' /* this separates path components on DOS */
 #endif
@@ -84,7 +78,7 @@ static void
 ncreset_cdflist()
 {
     if (_cdfs != NULL) {
-        HDfree((VOIDP)_cdfs);
+        free(_cdfs);
         _cdfs = NULL;
     }
 }
@@ -114,7 +108,7 @@ NC_reset_maxopenfiles(intn req_max)
     _cdfs as is and return the current max */
     if (req_max == 0) {
         if (!_cdfs) {
-            _cdfs = (NC **)HDmalloc(sizeof(NC *) * (max_NC_open));
+            _cdfs = malloc(sizeof(NC *) * (max_NC_open));
 
             /* If allocation fails, return 0 for no allocation */
             if (_cdfs == NULL) {
@@ -144,7 +138,7 @@ NC_reset_maxopenfiles(intn req_max)
         alloc_size = req_max;
 
     /* Allocate a new list */
-    newlist = (NC **)HDmalloc(sizeof(NC *) * alloc_size);
+    newlist = malloc(sizeof(NC *) * alloc_size);
 
     /* If allocation fails, return 0 for no allocation */
     if (newlist == NULL) {
@@ -159,7 +153,7 @@ NC_reset_maxopenfiles(intn req_max)
     if (_cdfs != NULL) {
         for (i = 0; i < _ncdf; i++)
             newlist[i] = _cdfs[i];
-        HDfree(_cdfs);
+        free(_cdfs);
     }
 
     /* Set _cdfs to the new list */
@@ -172,11 +166,6 @@ NC_reset_maxopenfiles(intn req_max)
     HGOTO_DONE(max_NC_open);
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-                             /* Nothing yet. */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* NC_reset_maxopenfiles */
 

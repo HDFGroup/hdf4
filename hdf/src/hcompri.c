@@ -96,7 +96,6 @@ int32
 HRPconvert(int32 fid, uint16 tag, uint16 ref, int32 xdim, int32 ydim, int16 scheme, comp_info *cinfo,
            uintn pixel_size)
 {
-    CONSTR(FUNC, "HRPconvert");   /* for HERROR */
     filerec_t *file_rec;          /* file record */
     accrec_t  *access_rec = NULL; /* access element record */
     crinfo_t  *info;              /* information for the compressed raster element */
@@ -174,8 +173,7 @@ DESCRIPTION
 int32
 HRPstread(accrec_t *rec)
 {
-    /* shut compilers up*/
-    rec = rec;
+    (void)rec;
 
     assert(0 && "Should never be called");
     return (FAIL);
@@ -197,8 +195,7 @@ DESCRIPTION
 int32
 HRPstwrite(accrec_t *rec)
 {
-    /* shut compilers up*/
-    rec = rec;
+    (void)rec;
 
     assert(0 && "Should never be called");
     return (FAIL);
@@ -224,7 +221,6 @@ int32
 HRPseek(accrec_t *access_rec, int32 offset, int origin)
 {
     int32 ret_value = SUCCEED;
-    CONSTR(FUNC, "HRPseek"); /* for HERROR */
 
     /* Adjust offset according to origin.  There is no upper bound to posn */
     if (origin != DF_START || offset != 0)
@@ -234,12 +230,6 @@ HRPseek(accrec_t *access_rec, int32 offset, int origin)
     access_rec->posn = offset;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HRPseek */
 
@@ -262,8 +252,7 @@ DESCRIPTION
 int32
 HRPread(accrec_t *access_rec, int32 length, void *data)
 {
-    CONSTR(FUNC, "HRPread"); /* for HERROR */
-    crinfo_t *info =         /* information on the special element */
+    crinfo_t *info = /* information on the special element */
         (crinfo_t *)access_rec->special_info;
     int32 ret_value = SUCCEED;
 
@@ -281,12 +270,6 @@ HRPread(accrec_t *access_rec, int32 length, void *data)
     ret_value = length;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return (ret_value);
 } /* HRPread */
 
@@ -309,8 +292,7 @@ DESCRIPTION
 int32
 HRPwrite(accrec_t *access_rec, int32 length, const void *data)
 {
-    CONSTR(FUNC, "HRPwrite"); /* for HERROR */
-    crinfo_t *info =          /* information on the special element */
+    crinfo_t *info = /* information on the special element */
         (crinfo_t *)(access_rec->special_info);
     int32 ret_value = SUCCEED;
 
@@ -329,12 +311,6 @@ HRPwrite(accrec_t *access_rec, int32 length, const void *data)
     ret_value = length; /* return length of bytes written */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return (ret_value);
 } /* HRPwrite */
 
@@ -365,8 +341,7 @@ int32
 HRPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength, int32 *poffset,
            int32 *pposn, int16 *paccess, int16 *pspecial)
 {
-    CONSTR(FUNC, "HRPinquire"); /* for HERROR */
-    crinfo_t *info =            /* special information record */
+    crinfo_t *info = /* special information record */
         (crinfo_t *)access_rec->special_info;
     uint16 data_tag, data_ref; /* tag/ref of the data we are checking */
     int32  data_off;           /* offset of the data we are checking */
@@ -395,12 +370,6 @@ HRPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, in
         *pspecial = (int16)access_rec->special;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HRPinquire */
 
@@ -420,8 +389,7 @@ DESCRIPTION
 intn
 HRPendaccess(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HRPendaccess"); /* for HERROR */
-    filerec_t *file_rec;          /* file record */
+    filerec_t *file_rec; /* file record */
     intn       ret_value = SUCCEED;
 
     /* validate argument */
@@ -451,9 +419,7 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (access_rec != NULL)
             HIrelease_accrec_node(access_rec);
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
     return ret_value;
 } /* HRPendaccess */
@@ -507,7 +473,6 @@ DESCRIPTION
 int32
 HRPinfo(accrec_t *access_rec, sp_info_block_t *info_block)
 {
-    CONSTR(FUNC, "HRPinfo"); /* for HERROR */
     int32 ret_value = SUCCEED;
 
     /* validate access record */
@@ -518,11 +483,5 @@ HRPinfo(accrec_t *access_rec, sp_info_block_t *info_block)
     info_block->key = SPECIAL_COMPRAS;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return (ret_value);
 } /* HRPinfo */

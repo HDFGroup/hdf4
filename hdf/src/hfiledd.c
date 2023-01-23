@@ -145,10 +145,9 @@ intn
 HTPstart(filerec_t *file_rec /* IN:  File record to store info in */
 )
 {
-    CONSTR(FUNC, "HTPstart"); /* for HERROR */
-    uint8 *tbuf      = NULL;  /* temporary buffer */
-    uintn  tbuf_size = 0;     /* temporary buffer size */
-    int32  end_off   = 0;     /* offset of the end of the file */
+    uint8 *tbuf      = NULL; /* temporary buffer */
+    uintn  tbuf_size = 0;    /* temporary buffer size */
+    int32  end_off   = 0;    /* offset of the end of the file */
     intn   ret_value = SUCCEED;
 
     HEclear();
@@ -287,11 +286,6 @@ HTPstart(filerec_t *file_rec /* IN:  File record to store info in */
     file_rec->f_end_off = end_off;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     if (tbuf != NULL)
         HDfree(tbuf);
 
@@ -316,7 +310,6 @@ HTPinit(filerec_t *file_rec, /* IN: File record to store info in */
         int16      ndds      /* IN: # of DDs to store in each block */
 )
 {
-    CONSTR(FUNC, "HTPinit");                /* for HERROR */
     ddblock_t *block;                       /* dd block to initialize */
     uint8      ddhead[NDDS_SZ + OFFSET_SZ]; /* storage for the DD header */
     uint8     *tbuf = NULL;                 /* temporary buffer */
@@ -400,11 +393,6 @@ HTPinit(filerec_t *file_rec, /* IN: File record to store info in */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     HDfree(tbuf);
 
     return ret_value;
@@ -426,7 +414,6 @@ intn
 HTPsync(filerec_t *file_rec /* IN:  File record to store info in */
 )
 {
-    CONSTR(FUNC, "HTPsync");                /* for HERROR */
     ddblock_t *block;                       /* dd block to initialize */
     uint8      ddhead[NDDS_SZ + OFFSET_SZ]; /* storage for the DD header */
     uint8     *tbuf      = NULL;            /* temporary buffer */
@@ -481,11 +468,6 @@ HTPsync(filerec_t *file_rec /* IN:  File record to store info in */
     }                             /* end while */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     if (tbuf != (uint8 *)NULL)
         HDfree(tbuf);
 
@@ -510,9 +492,8 @@ intn
 HTPend(filerec_t *file_rec /* IN:  File record to store info in */
 )
 {
-    CONSTR(FUNC, "HTPend"); /* for HERROR */
-    ddblock_t *bl, *next;   /* current ddblock and next ddblock pointers.
-                               for freeing ddblock linked list */
+    ddblock_t *bl, *next; /* current ddblock and next ddblock pointers.
+                             for freeing ddblock linked list */
     intn ret_value = SUCCEED;
 
     HEclear();
@@ -536,12 +517,6 @@ HTPend(filerec_t *file_rec /* IN:  File record to store info in */
     file_rec->ddhead = (ddblock_t *)NULL;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* end HTPend() */
 
@@ -564,8 +539,7 @@ HTPcreate(filerec_t *file_rec, /* IN: File record to store info in */
           uint16     ref       /* IN: ref to create */
 )
 {
-    CONSTR(FUNC, "HTPcreate"); /* for HERROR */
-    dd_t  *dd_ptr    = NULL;   /* ptr to dd created */
+    dd_t  *dd_ptr    = NULL; /* ptr to dd created */
     atom_t ret_value = SUCCEED;
 
     HEclear();
@@ -603,12 +577,6 @@ HTPcreate(filerec_t *file_rec, /* IN: File record to store info in */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HTPcreate() */
 
@@ -630,7 +598,6 @@ HTPselect(filerec_t *file_rec, /* IN: File record to store info in */
           uint16     ref       /* IN: ref to select */
 )
 {
-    CONSTR(FUNC, "HTPselect");           /* for HERROR */
     dd_t      *dd_ptr;                   /* ptr to the DD info for the tag/ref */
     tag_info **tip_ptr;                  /* ptr to the ptr to the info for a tag */
     tag_info  *tinfo_ptr;                /* pointer to the info for a tag */
@@ -654,12 +621,6 @@ HTPselect(filerec_t *file_rec, /* IN: File record to store info in */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HTPselect() */
 
@@ -687,12 +648,6 @@ HTPendaccess(atom_t ddid /* IN: DD id to end access to */
         HGOTO_DONE(FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HTPendaccess() */
 
@@ -713,8 +668,7 @@ intn
 HTPdelete(atom_t ddid /* IN: DD id to delete */
 )
 {
-    CONSTR(FUNC, "HTPdelete"); /* for HERROR */
-    dd_t      *dd_ptr;         /* ptr to the DD info for the tag/ref */
+    dd_t      *dd_ptr; /* ptr to the DD info for the tag/ref */
     filerec_t *file_rec;
     int32      ret_value = SUCCEED;
 
@@ -746,12 +700,6 @@ HTPdelete(atom_t ddid /* IN: DD id to delete */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HTPdelete() */
 
@@ -777,9 +725,8 @@ HTPupdate(atom_t ddid,    /* IN: DD id to update */
           int32  new_len  /* IN: new length for DD */
 )
 {
-    CONSTR(FUNC, "HTPupdate"); /* for HERROR */
-    dd_t *dd_ptr      = NULL;  /* ptr to the DD info for the tag/ref */
-    int32 dont_change = -2;    /* initialize to '-2' */
+    dd_t *dd_ptr      = NULL; /* ptr to the DD info for the tag/ref */
+    int32 dont_change = -2;   /* initialize to '-2' */
     int32 ret_value   = SUCCEED;
 
     HEclear();
@@ -798,12 +745,6 @@ HTPupdate(atom_t ddid,    /* IN: DD id to update */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HTPupdate() */
 
@@ -827,8 +768,7 @@ HTPinquire(atom_t  ddid, /* IN: DD id to inquire about */
            int32  *len   /* IN: length of DD */
 )
 {
-    CONSTR(FUNC, "HTPinquire"); /* for HERROR */
-    dd_t *dd_ptr;               /* ptr to the DD info for the tag/ref */
+    dd_t *dd_ptr; /* ptr to the DD info for the tag/ref */
     intn  ret_value = SUCCEED;
 
     HEclear();
@@ -847,12 +787,6 @@ HTPinquire(atom_t  ddid, /* IN: DD id to inquire about */
         *len = dd_ptr->length;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HTPinquire() */
 
@@ -871,8 +805,7 @@ intn
 HTPis_special(atom_t ddid /* IN: DD id to inquire about */
 )
 {
-    CONSTR(FUNC, "HTPis_special"); /* for HERROR */
-    dd_t *dd_ptr;                  /* ptr to the DD info for the tag/ref */
+    dd_t *dd_ptr; /* ptr to the DD info for the tag/ref */
     int32 ret_value = FAIL;
 
     HEclear();
@@ -887,12 +820,6 @@ HTPis_special(atom_t ddid /* IN: DD id to inquire about */
         ret_value = FALSE;
 
 done:
-    if (ret_value == FALSE) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HTPis_special() */
 
@@ -917,12 +844,11 @@ Hdupdd(int32  file_id, /* IN: File ID the tag/refs are in */
        uint16 old_ref  /* IN: Ref of old tag/ref */
 )
 {
-    CONSTR(FUNC, "Hdupdd"); /* for HERROR */
-    filerec_t *file_rec;    /* file record */
-    atom_t     old_dd;      /* The DD id for the old DD */
-    atom_t     new_dd;      /* The DD id for the new DD */
-    int32      old_len;     /* The length of the old DD */
-    int32      old_off;     /* The offset of the old DD */
+    filerec_t *file_rec; /* file record */
+    atom_t     old_dd;   /* The DD id for the old DD */
+    atom_t     new_dd;   /* The DD id for the new DD */
+    int32      old_len;  /* The length of the old DD */
+    int32      old_off;  /* The offset of the old DD */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of file id */
@@ -954,11 +880,6 @@ Hdupdd(int32  file_id, /* IN: File ID the tag/refs are in */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Hdupdd() */
 
@@ -982,7 +903,6 @@ Hnumber(int32  file_id, /* IN: File ID the tag/refs are in */
         uint16 tag      /* IN: Tag to count */
 )
 {
-    CONSTR(FUNC, "Hnumber");
     uintn      all_cnt;
     uintn      real_cnt;
     filerec_t *file_rec; /* file record */
@@ -1002,11 +922,6 @@ Hnumber(int32  file_id, /* IN: File ID the tag/refs are in */
     ret_value = (int32)real_cnt;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Hnumber() */
 
@@ -1027,7 +942,6 @@ done:
 uint16
 Hnewref(int32 file_id /* IN: File ID the tag/refs are in */)
 {
-    CONSTR(FUNC, "Hnewref");
     filerec_t *file_rec; /* file record */
     uint16     ref;      /* the new ref */
     uint16     ret_value = DFREF_NONE;
@@ -1057,11 +971,6 @@ Hnewref(int32 file_id /* IN: File ID the tag/refs are in */)
     }                            /* end else */
 
 done:
-    if (ret_value == DFREF_NONE) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Hnewref() */
 
@@ -1083,7 +992,6 @@ uint16
 Htagnewref(int32  file_id, /* IN: File ID the tag/refs are in */
            uint16 tag /* IN: Tag to search for a new ref for */)
 {
-    CONSTR(FUNC, "Htagnewref");
     filerec_t *file_rec;                 /* file record */
     tag_info  *tinfo_ptr;                /* pointer to the info for a tag */
     tag_info **tip_ptr;                  /* ptr to the ptr to the info for a tag */
@@ -1105,11 +1013,6 @@ Htagnewref(int32  file_id, /* IN: File ID the tag/refs are in */
     } /* end else */
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Htagnewref() */
 
@@ -1145,9 +1048,8 @@ Hfind(int32   file_id,    /* IN: file ID to search in */
                           /*  DF_BACKWARD searches backward from the current location */
 )
 {
-    CONSTR(FUNC, "Hfind"); /* for HERROR */
-    filerec_t *file_rec;   /* file record */
-    dd_t      *dd_ptr;     /* ptr to current ddlist searched */
+    filerec_t *file_rec; /* file record */
+    dd_t      *dd_ptr;   /* ptr to current ddlist searched */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of the access id */
@@ -1177,11 +1079,6 @@ Hfind(int32   file_id,    /* IN: file ID to search in */
     *find_length = dd_ptr->length;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end Hfind() */
 
@@ -1204,13 +1101,12 @@ HDcheck_tagref(int32  file_id, /* IN: id of file */
                uint16 tag,     /* IN: Tag to check */
                uint16 ref /* IN: ref to check */)
 {
-    CONSTR(FUNC, "HDcheck_tagref"); /* for HERROR */
-    filerec_t *file_rec  = NULL;    /* file record */
-    dd_t      *dd_ptr    = NULL;    /* ptr to the DD info for the tag/ref */
-    tag_info **tip_ptr   = NULL;    /* ptr to the ptr to the info for a tag */
-    tag_info  *tinfo_ptr = NULL;    /* pointer to the info for a tag */
-    uint16     base_tag;            /* corresponding base tag (if the tag is special) */
-    intn       ret_value = 1;       /* default tag/ref exists  */
+    filerec_t *file_rec  = NULL; /* file record */
+    dd_t      *dd_ptr    = NULL; /* ptr to the DD info for the tag/ref */
+    tag_info **tip_ptr   = NULL; /* ptr to the ptr to the info for a tag */
+    tag_info  *tinfo_ptr = NULL; /* pointer to the info for a tag */
+    uint16     base_tag;         /* corresponding base tag (if the tag is special) */
+    intn       ret_value = 1;    /* default tag/ref exists  */
 
     /* clear error stack */
     HEclear();
@@ -1234,12 +1130,6 @@ HDcheck_tagref(int32  file_id, /* IN: id of file */
     ret_value = 1;
 
 done:
-    if (ret_value == -1) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HDcheck_tagref() */
 
@@ -1270,7 +1160,6 @@ HDreuse_tagref(int32  file_id, /* IN: id of file */
                uint16 tag,     /* IN: tag of data descriptor to reuse */
                uint16 ref /* IN: ref of data descriptor to reuse */)
 {
-    CONSTR(FUNC, "HDreusedd");  /* for HERROR */
     filerec_t *file_rec = NULL; /* file record */
     atom_t     ddid;            /* ID for the DD */
     intn       ret_value = SUCCEED;
@@ -1307,11 +1196,6 @@ HDreuse_tagref(int32  file_id, /* IN: id of file */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end HDreuse_tagref */
 
@@ -1336,9 +1220,8 @@ DESCRIPTION
 intn
 Hdeldd(int32 file_id, uint16 tag, uint16 ref)
 {
-    CONSTR(FUNC, "Hdeldd"); /* for HERROR */
-    filerec_t *file_rec;    /* file record */
-    atom_t     ddid;        /* ID for the DD */
+    filerec_t *file_rec; /* file record */
+    atom_t     ddid;     /* ID for the DD */
     intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of file record id */
@@ -1356,11 +1239,6 @@ Hdeldd(int32 file_id, uint16 tag, uint16 ref)
         HGOTO_ERROR(DFE_CANTDELDD, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end Hdeldd */
 
@@ -1382,7 +1260,6 @@ done:
 intn
 HTPdump_dds(int32 file_id, FILE *fout)
 {
-    CONSTR(FUNC, "HTPdump_dds");
     filerec_t *file_rec; /* file record */
     int        ret_value = SUCCEED;
 
@@ -1463,12 +1340,6 @@ HTPdump_dds(int32 file_id, FILE *fout)
     } /* End of tag node dumping */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HTPdump_dds */
 #endif /* DEBUGGING */
@@ -1492,7 +1363,6 @@ done:
 static intn
 HTInew_dd_block(filerec_t *file_rec)
 {
-    CONSTR(FUNC, "HTInew_dd_block");        /* for HERROR */
     int32      nextoffset;                  /* offset of new ddblock */
     uint8      ddhead[NDDS_SZ + OFFSET_SZ]; /* storage for the DD header */
     int32      offset;                      /* offset to the offset of new ddblock */
@@ -1592,12 +1462,6 @@ HTInew_dd_block(filerec_t *file_rec)
     file_rec->f_end_off = block->myoffset + (NDDS_SZ + OFFSET_SZ) + (block->ndds * DD_SZ);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HTInew_dd_block */
 
@@ -1828,12 +1692,6 @@ HTIfind_dd(filerec_t *file_rec, uint16 look_tag, uint16 look_ref, dd_t **pdd, in
     ret_value = FAIL;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HTIfind_dd */
 
@@ -1853,9 +1711,8 @@ done:
 static intn
 HTIupdate_dd(filerec_t *file_rec, dd_t *dd_ptr)
 {
-    CONSTR(FUNC, "HTIupdate_dd"); /* for HERROR */
-    ddblock_t *block;             /* DD block the dd is in */
-    int32      idx;               /* index of the DD in the DD block */
+    ddblock_t *block; /* DD block the dd is in */
+    int32      idx;   /* index of the DD in the DD block */
     intn       ret_value = SUCCEED;
 
     HEclear();
@@ -1891,12 +1748,6 @@ HTIupdate_dd(filerec_t *file_rec, dd_t *dd_ptr)
         file_rec->f_end_off = dd_ptr->offset + dd_ptr->length;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HTIupdate_dd */
 
@@ -2046,7 +1897,6 @@ HTIcount_dd(filerec_t *file_rec, uint16 cnt_tag, uint16 cnt_ref, uintn *all_cnt,
 static intn
 HTIregister_tag_ref(filerec_t *file_rec, dd_t *dd_ptr)
 {
-    CONSTR(FUNC, "HTIregister_tag_ref");
     tag_info  *tinfo_ptr;                        /* pointer to the info for a tag */
     tag_info **tip_ptr;                          /* ptr to the ptr to the info for a tag */
     uint16     base_tag  = BASETAG(dd_ptr->tag); /* the base tag for the tag tree */
@@ -2098,9 +1948,7 @@ done:
 
         if (tinfo_ptr->d != NULL)
             DAdestroy_array(tinfo_ptr->d, 0);
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
     return ret_value;
 } /* HTIregister_tag_ref */
@@ -2121,7 +1969,6 @@ done:
 static intn
 HTIunregister_tag_ref(filerec_t *file_rec, dd_t *dd_ptr)
 {
-    CONSTR(FUNC, "HTIunregister_tag_ref");
     tag_info  *tinfo_ptr;                        /* pointer to the info for a tag */
     tag_info **tip_ptr;                          /* ptr to the ptr to the info for a tag */
     uint16     base_tag  = BASETAG(dd_ptr->tag); /* the base tag for the tag tree */
@@ -2152,12 +1999,6 @@ HTIunregister_tag_ref(filerec_t *file_rec, dd_t *dd_ptr)
     } /* end else */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HTIunregister_tag_ref */
 
@@ -2171,8 +2012,8 @@ intn
 tagcompare(VOIDP k1, VOIDP k2, intn cmparg)
 {
     intn ret_value;
-    /* shut compiler up */
-    cmparg = cmparg;
+
+    (void)cmparg;
 
     ret_value = ((intn)((*(uint16 *)k1) - (*(uint16 *)k2))); /* valid for integer keys */
 

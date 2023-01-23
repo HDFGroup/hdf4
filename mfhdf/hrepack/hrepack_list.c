@@ -1060,6 +1060,10 @@ list_glb(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_
     int32 n_datasets, /* number of datasets in the file */
         n_file_attrs; /* number of file attributes */
 
+    (void)infile_id;
+    (void)outfile_id;
+    (void)list_tbl;
+
     if (options->trip == 0) {
         return SUCCEED;
     }

@@ -83,10 +83,9 @@ PRIVATE intn HIbitstart(void);
 int32
 Hstartbitread(int32 file_id, uint16 tag, uint16 ref)
 {
-    CONSTR(FUNC, "Hstartbitread"); /* for HERROR */
-    int32            aid;          /* Access ID for the bit-level routines to use */
-    struct bitrec_t *bitfile_rec;  /* Pointer to the bitfile record */
-    int32            ret_value;    /* return bit ID */
+    int32            aid;         /* Access ID for the bit-level routines to use */
+    struct bitrec_t *bitfile_rec; /* Pointer to the bitfile record */
+    int32            ret_value;   /* return bit ID */
 
     /* clear error stack */
     HEclear();
@@ -160,11 +159,10 @@ Hstartbitread(int32 file_id, uint16 tag, uint16 ref)
 int32
 Hstartbitwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
 {
-    CONSTR(FUNC, "Hstartbitwrite"); /* for HERROR */
-    bitrec_t *bitfile_rec;          /* access record */
-    int32     aid;                  /* Access ID for the bit-level routines to use */
-    intn      exists;               /* whether dataset exists already */
-    int32     ret_value;            /* return bit ID */
+    bitrec_t *bitfile_rec; /* access record */
+    int32     aid;         /* Access ID for the bit-level routines to use */
+    intn      exists;      /* whether dataset exists already */
+    int32     ret_value;   /* return bit ID */
 
     /* clear error stack and check validity of file id */
     HEclear();
@@ -242,8 +240,7 @@ Hstartbitwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
 intn
 Hbitappendable(int32 bitid)
 {
-    CONSTR(FUNC, "Hbitappendable"); /* for HERROR */
-    bitrec_t *bitfile_rec;          /* access record */
+    bitrec_t *bitfile_rec; /* access record */
 
     /* clear error stack and check validity of file id */
     HEclear();
@@ -285,7 +282,6 @@ Hbitappendable(int32 bitid)
 intn
 Hbitwrite(int32 bitid, intn count, uint32 data)
 {
-    CONSTR(FUNC, "Hbitwrite");            /* for HERROR */
     static int32     last_bit_id = (-1);  /* the bit ID of the last bitfile_record accessed */
     static bitrec_t *bitfile_rec = NULL;  /* access record */
     intn             orig_count  = count; /* keep track of orig, number of bits to output */
@@ -417,7 +413,6 @@ Hbitwrite(int32 bitid, intn count, uint32 data)
 intn
 Hbitread(int32 bitid, intn count, uint32 *data)
 {
-    CONSTR(FUNC, "Hbitread");            /* for HERROR */
     static int32     last_bit_id = (-1); /* the bit ID of the last bitfile_record accessed */
     static bitrec_t *bitfile_rec = NULL; /* access record */
     uint32           l;
@@ -543,12 +538,11 @@ REVISION LOG
 intn
 Hbitseek(int32 bitid, int32 byte_offset, intn bit_offset)
 {
-    CONSTR(FUNC, "Hbitseek"); /* for HERROR */
-    bitrec_t *bitfile_rec;    /* access record */
-    int32     seek_pos;       /* position of block to seek to */
-    int32     read_size;      /* number of bytes to read into buffer */
-    int32     n;              /* number of bytes actually read */
-    intn      new_block;      /* whether to move to another block in the dataset */
+    bitrec_t *bitfile_rec; /* access record */
+    int32     seek_pos;    /* position of block to seek to */
+    int32     read_size;   /* number of bytes to read into buffer */
+    int32     n;           /* number of bytes actually read */
+    intn      new_block;   /* whether to move to another block in the dataset */
 
     /* clear error stack and check validity of file id */
     HEclear();
@@ -629,7 +623,6 @@ Hbitseek(int32 bitid, int32 byte_offset, intn bit_offset)
 intn
 Hgetbit(int32 bitid)
 {
-    CONSTR(FUNC, "Hgetbit"); /* for HERROR */
     uint32 data;
 
     if (Hbitread(bitid, 1, &data) == FAIL)
@@ -665,8 +658,7 @@ Hgetbit(int32 bitid)
 int32
 Hendbitaccess(int32 bitfile_id, intn flushbit)
 {
-    CONSTR(FUNC, "Hendbitaccess"); /* for HERROR */
-    bitrec_t *bitfile_rec;         /* bitfile record */
+    bitrec_t *bitfile_rec; /* bitfile record */
 
     /* check validity of access id */
     bitfile_rec = HAatom_object(bitfile_id);
@@ -706,7 +698,6 @@ Hendbitaccess(int32 bitfile_id, intn flushbit)
 PRIVATE intn
 HIbitstart(void)
 {
-    CONSTR(FUNC, "HIbitstart"); /* for HERROR */
     intn ret_value = SUCCEED;
 
     /* Don't call this routine again... */
@@ -717,11 +708,6 @@ HIbitstart(void)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return (ret_value);
 } /* end HIbitstart() */
 
@@ -758,7 +744,6 @@ done:
 PRIVATE intn
 HIbitflush(bitrec_t *bitfile_rec, intn flushbit, intn writeout)
 {
-    CONSTR(FUNC, "HIbitflush");
     intn write_size; /* number of bytes to write out */
 
     if (bitfile_rec->count < (intn)BITNUM) { /* check if there are any */
@@ -802,7 +787,6 @@ HIbitflush(bitrec_t *bitfile_rec, intn flushbit, intn writeout)
 PRIVATE bitrec_t *
 HIget_bitfile_rec(void)
 {
-    CONSTR(FUNC, "HIget_bitfile_rec");
     bitrec_t *ret_value = NULL;
 
     if ((ret_value = HDcalloc(1, sizeof(bitrec_t))) == NULL)
@@ -833,7 +817,6 @@ HIget_bitfile_rec(void)
 PRIVATE intn
 HIread2write(bitrec_t *bitfile_rec)
 {
-    CONSTR(FUNC, "HIread2write");
 
     bitfile_rec->block_offset = (int32)LONG_MIN; /* set to bogus value */
     bitfile_rec->mode         = 'w';             /* change to write mode */
@@ -862,7 +845,6 @@ HIread2write(bitrec_t *bitfile_rec)
 PRIVATE intn
 HIwrite2read(bitrec_t *bitfile_rec)
 {
-    CONSTR(FUNC, "HIwrite2read");
     intn  prev_count  = bitfile_rec->count; /* preserve this for later */
     int32 prev_offset = bitfile_rec->byte_offset;
 

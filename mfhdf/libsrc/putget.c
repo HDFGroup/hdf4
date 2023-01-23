@@ -16,7 +16,6 @@
 
 #include <string.h>
 #include "local_nc.h"
-#include "alloc.h"
 #ifdef HDF
 #include "hfile.h" /* Ugh!  We need the defs for HI_READ and HI_SEEK */
 
@@ -213,8 +212,8 @@ NCcoordck(NC *handle, NC_var *vp, const long *coords)
 
             /* strg and strg1 are to hold fill value and its conversion */
             len   = (vp->len / vp->HDFsize) * vp->szof;
-            strg  = (Void *)HDmalloc(len);
-            strg1 = (Void *)HDmalloc(len);
+            strg  = malloc(len);
+            strg1 = malloc(len);
             if (NULL == strg || NULL == strg1)
                 return FALSE;
 
@@ -263,8 +262,8 @@ NCcoordck(NC *handle, NC_var *vp, const long *coords)
             fprintf(stderr, "WROTE %d values at location %d (numrecs = %d)\n", count, *ip * count,
                     vp->numrecs);
 #endif
-            HDfree(strg);
-            HDfree(strg1);
+            free(strg);
+            free(strg1);
             strg = strg1 = NULL;
         } /* !SD_NOFILL  */
 
@@ -459,7 +458,7 @@ xdr_NCvbyte(XDR *xdrs, unsigned rem, unsigned count, char *values)
              * beyond EOF
              */
             clearerr((FILE *)xdrs->x_private);
-            (void)HDmemset(buf, 0, sizeof(buf));
+            memset(buf, 0, sizeof(buf));
         }
         else {
             NCadvise(NC_EXDR, "xdr_NCvbyte");
@@ -467,7 +466,7 @@ xdr_NCvbyte(XDR *xdrs, unsigned rem, unsigned count, char *values)
             return (FALSE);
         }
 #else
-        (void)HDmemset(buf, 0, sizeof(buf));
+        memset(buf, 0, sizeof(buf));
 #endif /* XDRSTDIO */
     }
 
@@ -526,7 +525,7 @@ xdr_NCvshort(XDR *xdrs, unsigned which, short *values)
              * beyond EOF
              */
             clearerr((FILE *)xdrs->x_private);
-            (void)memset(buf, 0, sizeof(buf));
+            memset(buf, 0, sizeof(buf));
         }
         else {
             NCadvise(NC_EXDR, "xdr_NCvbyte");
@@ -534,7 +533,7 @@ xdr_NCvshort(XDR *xdrs, unsigned which, short *values)
             return (FALSE);
         }
 #else
-        (void)HDmemset(buf, 0, sizeof(buf));
+        memset(buf, 0, sizeof(buf));
 #endif /* XDRSTDIO */
     }
 
@@ -646,21 +645,19 @@ PRIVATE int8 *tValues      = NULL;
 intn
 SDPfreebuf()
 {
-    int ret_value = SUCCEED;
-
     if (tBuf != NULL) {
-        HDfree(tBuf);
+        free(tBuf);
         tBuf      = NULL;
         tBuf_size = 0;
-    } /* end if */
+    }
 
     if (tValues != NULL) {
-        HDfree(tValues);
+        free(tValues);
         tValues      = NULL;
         tValues_size = 0;
-    } /* end if */
+    }
 
-    return ret_value;
+    return SUCCEED;
 }
 
 /* ------------------------------ SDIresizebuf ------------------------------ */
@@ -673,22 +670,17 @@ SDIresizebuf(void **buf, int32 *buf_size, int32 size_wanted)
     intn ret_value = SUCCEED;
 
     if (*buf_size < size_wanted) {
-        if (*buf)
-            HDfree(*buf);
+        free(*buf);
         *buf_size = size_wanted;
-        *buf      = HDcalloc(1, size_wanted);
+        *buf      = calloc(1, size_wanted);
         if (*buf == NULL) {
             *buf_size = 0;
             ret_value = FAIL;
             goto done;
-        } /* end if */
-    }     /* end if */
+        }
+    }
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* end SDIresizebuf() */
 
@@ -882,7 +874,6 @@ done:
             Vdetach(vg); /* no point in catch error here if we fail */
         }
     }
-    /* Normal cleanup */
 
     return ret_value;
 } /* hdf_get_data */
@@ -928,10 +919,6 @@ hdf_get_vp_aid(NC *handle, NC_var *vp)
     ret_value = vp->aid;
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* hdf_get_vp_aid */
 
@@ -1494,10 +1481,6 @@ hdf_xdr_NCvdata(NC *handle, NC_var *vp, u_long where, nc_type type, uint32 count
 #endif
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* hdf_xdr_NCvdata */
 
@@ -1522,10 +1505,6 @@ hdf_xdr_NCv1data(NC *handle, NC_var *vp, u_long where, nc_type type, void *value
     ret_value = hdf_xdr_NCvdata(handle, vp, where, type, 1, values);
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* hdf_xdr_NCv1data */
 
@@ -1771,7 +1750,6 @@ NCvcmaxcontig(NC *handle, NC_var *vp, const long *origin, const long *edges)
 {
     const long    *edp, *orp;
     unsigned long *boundary, *shp;
-    int            partial = 0;
 
     if (IS_RECVAR(vp)) {
         /*     one dimensional   &&  the only 'record' variable  */
@@ -1795,10 +1773,7 @@ NCvcmaxcontig(NC *handle, NC_var *vp, const long *origin, const long *edges)
             NCadvise(NC_EINVAL, "Invalid edge length %d", *edp);
             return (NULL);
         }
-        /* Mark that the writing is partial when any edge is smaller than the
-               matching dimension */
         if (*edp < *shp) {
-            partial = 1;
             break;
             /* Why do we want to break here?  What if the later edge is out
             of limit and we break out as soon as a smaller edge is reached? -BMR */
@@ -1809,15 +1784,6 @@ NCvcmaxcontig(NC *handle, NC_var *vp, const long *origin, const long *edges)
     forward once to point to the first element in edges.  -BMR, 4/15/2013 */
     if (shp < boundary) /* made it all the way */
         edp++;
-
-    /*
-     *   This little check makes certain that if complete "slices" of the
-     *  regular dimensions of an unlimited dimension dataset are being written
-     *  out, it's ok to write out a "block" of all those slices at once. -QAK
-     */
-    /*    if( IS_RECVAR(vp) && (edp-1==edges) && !partial)
-            edp=edges;
-    */
 
     /* shp, edp reference last index s.t. shape[ii] == edge[ii] */
     return (edp);

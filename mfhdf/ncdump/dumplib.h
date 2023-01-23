@@ -3,6 +3,9 @@
  *   See netcdf/COPYRIGHT file for copying and redistribution conditions.
  *********************************************************************/
 
+#ifndef NCDUMP_DUMPLIB_H
+#define NCDUMP_DUMPLIB_H
+
 extern char *progname; /* for error messages */
 
 #ifndef EXIT_FAILURE
@@ -69,3 +72,5 @@ extern int varmember PROTO((vnode * vlist, int varid));
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* NCDUMP_DUMPLIB_H */

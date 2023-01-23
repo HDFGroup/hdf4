@@ -141,7 +141,6 @@ HCIcskphuff_splay(comp_coder_skphuff_info_t *skphuff_info, uint8 plain)
 PRIVATE int32
 HCIcskphuff_init(accrec_t *access_rec, uintn alloc_buf)
 {
-    CONSTR(FUNC, "HCIcskphuff_init");
     compinfo_t                *info;         /* special element information */
     comp_coder_skphuff_info_t *skphuff_info; /* ptr to skphuff info */
     intn                       i, j, k;      /* local counting var */
@@ -231,7 +230,6 @@ HCIcskphuff_init(accrec_t *access_rec, uintn alloc_buf)
 PRIVATE int32
 HCIcskphuff_decode(compinfo_t *info, int32 length, uint8 *buf)
 {
-    CONSTR(FUNC, "HCIcskphuff_decode");
     comp_coder_skphuff_info_t *skphuff_info; /* ptr to skipping Huffman info */
     int32                      orig_length;  /* original length to read */
     uint32                     bit;          /* bit from the file */
@@ -293,7 +291,6 @@ HCIcskphuff_decode(compinfo_t *info, int32 length, uint8 *buf)
 PRIVATE int32
 HCIcskphuff_encode(compinfo_t *info, int32 length, const uint8 *buf)
 {
-    CONSTR(FUNC, "HCIcskphuff_encode");
     comp_coder_skphuff_info_t *skphuff_info; /* ptr to skipping Huffman info */
     int32                      orig_length;  /* original length to write */
     intn                       stack_ptr;    /* pointer to the position on the stack */
@@ -412,7 +409,6 @@ HCIcskphuff_term(compinfo_t *info)
 PRIVATE int32
 HCIcskphuff_staccess(accrec_t *access_rec, int16 acc_mode)
 {
-    CONSTR(FUNC, "HCIcskphuff_staccess");
     compinfo_t *info; /* special element information */
 
     info = (compinfo_t *)access_rec->special_info;
@@ -462,7 +458,6 @@ HCIcskphuff_staccess(accrec_t *access_rec, int16 acc_mode)
 int32
 HCPcskphuff_stread(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HCPcskphuff_stread");
     int32 ret;
 
     if ((ret = HCIcskphuff_staccess(access_rec, DFACC_READ)) == FAIL)
@@ -493,7 +488,6 @@ HCPcskphuff_stread(accrec_t *access_rec)
 int32
 HCPcskphuff_stwrite(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HCPcskphuff_stwrite");
     int32 ret;
 
 #ifdef TESTING
@@ -534,13 +528,11 @@ HCPcskphuff_stwrite(accrec_t *access_rec)
 int32
 HCPcskphuff_seek(accrec_t *access_rec, int32 offset, int origin)
 {
-    CONSTR(FUNC, "HCPcskphuff_seek");
     compinfo_t                *info;         /* special element information */
     comp_coder_skphuff_info_t *skphuff_info; /* ptr to skipping Huffman info */
     uint8                     *tmp_buf;      /* pointer to throw-away buffer */
 
-    /* shut compiler up */
-    origin = origin;
+    (void)origin;
 
     info         = (compinfo_t *)access_rec->special_info;
     skphuff_info = &(info->cinfo.coder_info.skphuff_info);
@@ -592,7 +584,6 @@ HCPcskphuff_seek(accrec_t *access_rec, int32 offset, int origin)
 int32
 HCPcskphuff_read(accrec_t *access_rec, int32 length, void *data)
 {
-    CONSTR(FUNC, "HCPcskphuff_read");
     compinfo_t *info; /* special element information */
 
     info = (compinfo_t *)access_rec->special_info;
@@ -627,7 +618,6 @@ HCPcskphuff_read(accrec_t *access_rec, int32 length, void *data)
 int32
 HCPcskphuff_write(accrec_t *access_rec, int32 length, const void *data)
 {
-    CONSTR(FUNC, "HCPcskphuff_write");
     compinfo_t                *info;         /* special element information */
     comp_coder_skphuff_info_t *skphuff_info; /* ptr to skipping Huffman info */
 
@@ -679,16 +669,15 @@ int32
 HCPcskphuff_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength,
                     int32 *poffset, int32 *pposn, int16 *paccess, int16 *pspecial)
 {
-    /* shut compiler up */
-    access_rec = access_rec;
-    pfile_id   = pfile_id;
-    ptag       = ptag;
-    pref       = pref;
-    plength    = plength;
-    poffset    = poffset;
-    pposn      = pposn;
-    paccess    = paccess;
-    pspecial   = pspecial;
+    (void)access_rec;
+    (void)pfile_id;
+    (void)ptag;
+    (void)pref;
+    (void)plength;
+    (void)poffset;
+    (void)pposn;
+    (void)paccess;
+    (void)pspecial;
 
     return (SUCCEED);
 } /* HCPcskphuff_inquire() */
@@ -715,7 +704,6 @@ HCPcskphuff_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 
 intn
 HCPcskphuff_endaccess(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HCPcskphuff_endaccess");
     compinfo_t *info; /* special element information */
 
     info = (compinfo_t *)access_rec->special_info;

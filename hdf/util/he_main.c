@@ -956,8 +956,7 @@ quit(int status)
 int
 HEhelp(HE_CMD *dummy)
 {
-    /* shut compiler up */
-    dummy = dummy;
+    (void)dummy;
 
     help();
     return HE_OK;

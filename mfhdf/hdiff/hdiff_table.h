@@ -10,8 +10,8 @@
  *                                                                          *
  ****************************************************************************/
 
-#ifndef HDIFF_TABLE_H__
-#define HDIFF_TABLE_H__
+#ifndef HDIFF_TABLE_H
+#define HDIFF_TABLE_H
 
 #include "hdf.h"
 #include "mfhdf.h"
@@ -52,4 +52,4 @@ void dtable_print(dtable_t *table, char *header);
 }
 #endif
 
-#endif /* HDIFF_TABLE_H__ */
+#endif /* HDIFF_TABLE_H */

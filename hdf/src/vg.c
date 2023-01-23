@@ -126,7 +126,6 @@ VSelts(int32 vkey /* IN: vdata key */)
     vsinstance_t *w         = NULL;
     VDATA        *vs        = NULL;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "VSelts");
 
     /* make sure vdata key is part of vdata group */
     if (HAatom_group(vkey) != VSIDGROUP)
@@ -145,11 +144,6 @@ VSelts(int32 vkey /* IN: vdata key */)
     ret_value = (vs->nvertices);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSelts */
 
@@ -170,7 +164,6 @@ VSgetinterlace(int32 vkey /* IN: vdata key */)
     vsinstance_t *w         = NULL;
     VDATA        *vs        = NULL;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "VSgetinterlace");
 
     /* check key is valid vdata */
     if (HAatom_group(vkey) != VSIDGROUP)
@@ -189,11 +182,6 @@ VSgetinterlace(int32 vkey /* IN: vdata key */)
     ret_value = ((int32)(vs->interlace));
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSgetinterlace */
 
@@ -215,7 +203,6 @@ VSsetinterlace(int32 vkey, /* IN: vdata key */
     vsinstance_t *w         = NULL;
     VDATA        *vs        = NULL;
     intn          ret_value = SUCCEED;
-    CONSTR(FUNC, "VSsetinterlace");
 
     /* check key is valid vdata */
     if (HAatom_group(vkey) != VSIDGROUP)
@@ -248,11 +235,6 @@ VSsetinterlace(int32 vkey, /* IN: vdata key */
         ret_value = FAIL;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSsetinterlace */
 
@@ -276,7 +258,6 @@ VSgetfields(int32 vkey, /* IN: vdata key */
     vsinstance_t *w         = NULL;
     VDATA        *vs        = NULL;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "VSgetfields");
 
     /* check if a NULL field list is passed in, then return with
        error (found while fixing bug #554) - BMR 4/30/01 */
@@ -313,11 +294,6 @@ VSgetfields(int32 vkey, /* IN: vdata key */
     ret_value = ((int32)vs->wlist.n);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSgetfields */
 
@@ -346,7 +322,6 @@ VSfexist(int32 vkey, /* IN: vdata key */
     int32           i, j;
     int32           found;
     intn            ret_value = SUCCEED;
-    CONSTR(FUNC, "VSfexist");
 
     /* check key is valid vdata */
     if (HAatom_group(vkey) != VSIDGROUP)
@@ -396,11 +371,6 @@ VSfexist(int32 vkey, /* IN: vdata key */
     ret_value = TRUE;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSfexist */
 
@@ -427,7 +397,6 @@ VSsizeof(int32 vkey, /* IN vdata key */
     vsinstance_t *w         = NULL;
     VDATA        *vs        = NULL;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "VSsizeof");
 
     /* check key is valid vdata */
     if (HAatom_group(vkey) != VSIDGROUP)
@@ -477,11 +446,6 @@ VSsizeof(int32 vkey, /* IN vdata key */
     ret_value = totalsize;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSsizeof */
 
@@ -498,7 +462,7 @@ RETURNS
 VOID
 VSdump(int32 vkey /* IN: vdata key */)
 {
-    vkey = vkey; /* suppress warning */
+    (void)vkey;
 } /* VSdump */
 
 /*-------------------------------------------------------
@@ -523,7 +487,6 @@ VSsetname(int32       vkey, /* IN: Vdata key */
     int32         curr_len;
     int32         slen;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "VSsetname");
 
     /* check key is valid vdata */
     if (HAatom_group(vkey) != VSIDGROUP)
@@ -560,11 +523,6 @@ VSsetname(int32       vkey, /* IN: Vdata key */
         vs->new_h_sz = TRUE; /* mark vdata header size being changed */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSsetname */
 
@@ -590,7 +548,6 @@ VSsetclass(int32       vkey, /* IN: vdata key */
     int32         curr_len;
     int32         slen;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "VSsetclass");
 
     /* check key is valid vdata */
     if (HAatom_group(vkey) != VSIDGROUP)
@@ -626,11 +583,6 @@ VSsetclass(int32       vkey, /* IN: vdata key */
         vs->new_h_sz = TRUE; /* mark vdata header size being changed */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSsetclass */
 
@@ -652,7 +604,6 @@ VSgetname(int32 vkey, /* IN: vdata key */
     vsinstance_t *w         = NULL;
     VDATA        *vs        = NULL;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "VSgetname");
 
     /* check key is valid vdata */
     if (HAatom_group(vkey) != VSIDGROUP)
@@ -675,11 +626,6 @@ VSgetname(int32 vkey, /* IN: vdata key */
     HDstrcpy(vsname, vs->vsname);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSgetname */
 
@@ -701,7 +647,6 @@ VSgetclass(int32 vkey, /* IN: vdata key */
     vsinstance_t *w         = NULL;
     VDATA        *vs        = NULL;
     int32         ret_value = SUCCEED;
-    CONSTR(FUNC, "VSgetclass");
 
     /* check key is valid vdata */
     if (HAatom_group(vkey) != VSIDGROUP)
@@ -724,11 +669,6 @@ VSgetclass(int32 vkey, /* IN: vdata key */
     HDstrcpy(vsclass, vs->vsclass);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSgetclass */
 
@@ -754,7 +694,6 @@ VSinquire(int32  vkey,      /* IN: vdata key */
 {
     intn ret_value = SUCCEED;
     intn status;
-    CONSTR(FUNC, "VSinquire");
 
     /* check key is valid vdata */
     if (HAatom_group(vkey) != VSIDGROUP)
@@ -784,11 +723,6 @@ VSinquire(int32  vkey,      /* IN: vdata key */
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value; /* ok */
 
 } /* VSinquire */
@@ -818,7 +752,6 @@ VSlone(HFILEID f,       /* IN: file id */
     uint8 *lonevdata = NULL; /* lcl wrk area: stores flags of vdatas */
     int32  nlone;            /* total number of lone vdatas */
     int32  ret_value = SUCCEED;
-    CONSTR(FUNC, "VSlone");
 
     /* -- allocate local space for vdata refs, init to zeros -- */
     if (NULL == (lonevdata = (uint8 *)HDcalloc(MAX_REF, sizeof(uint8))))
@@ -858,11 +791,6 @@ VSlone(HFILEID f,       /* IN: file id */
     ret_value = nlone; /* return the TOTAL # of lone vdatas */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSlone */
 
@@ -891,7 +819,6 @@ Vlone(HFILEID f,       /* IN: file id */
     uint8 *lonevg = NULL; /* local wrk area: stores flags of vgroups */
     int32  nlone;         /* total number of lone vgroups */
     int32  ret_value = SUCCEED;
-    CONSTR(FUNC, "Vlone");
 
     /* -- allocate space for vgroup refs, init to zeroes -- */
     if (NULL == (lonevg = (uint8 *)HDcalloc(MAX_REF, sizeof(uint8))))
@@ -932,11 +859,6 @@ Vlone(HFILEID f,       /* IN: file id */
     ret_value = nlone; /* return the TOTAL # of lone vgroups */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vlone */
 
@@ -961,7 +883,6 @@ Vfind(HFILEID     f, /* IN: file id */
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
     int32         ret_value = 0;
-    CONSTR(FUNC, "Vfind");
 
     /* check for null vgroup name */
     if (vgname == NULL)
@@ -984,11 +905,6 @@ Vfind(HFILEID     f, /* IN: file id */
     }
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vfind */
 
@@ -1013,7 +929,6 @@ VSfind(HFILEID     f, /* IN: file id */
     vsinstance_t *v         = NULL;
     VDATA        *vs        = NULL;
     int32         ret_value = 0;
-    CONSTR(FUNC, "VSfind");
 
     /* check for null vdata name */
     if (vsname == NULL)
@@ -1035,11 +950,6 @@ VSfind(HFILEID     f, /* IN: file id */
     }
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSfind */
 
@@ -1064,7 +974,6 @@ Vfindclass(HFILEID     f, /* IN: file id */
     vginstance_t *v         = NULL;
     VGROUP       *vg        = NULL;
     int32         ret_value = 0;
-    CONSTR(FUNC, "Vfindclass");
 
     /* check for null vgroup class */
     if (vgclass == NULL)
@@ -1089,11 +998,6 @@ Vfindclass(HFILEID     f, /* IN: file id */
     }
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* Vfindclass */
 
@@ -1118,7 +1022,6 @@ VSfindclass(HFILEID     f, /* IN: file id */
     vsinstance_t *v         = NULL;
     VDATA        *vs        = NULL;
     int32         ret_value = 0;
-    CONSTR(FUNC, "VSfindclass");
 
     /* check for null vdata class */
     if (vsclass == NULL)
@@ -1140,11 +1043,6 @@ VSfindclass(HFILEID     f, /* IN: file id */
     }
 
 done:
-    if (ret_value == 0) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSfindclass */
 
@@ -1173,7 +1071,6 @@ VSsetblocksize(int32 vkey,       /* IN: vdata key */
     vsinstance_t *w         = NULL;
     VDATA        *vs        = NULL;
     intn          ret_value = SUCCEED;
-    CONSTR(FUNC, "VSsetblocksize");
 
     /* clear error stack */
     HEclear();
@@ -1196,11 +1093,6 @@ VSsetblocksize(int32 vkey,       /* IN: vdata key */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSsetblocksize */
 
@@ -1229,7 +1121,6 @@ VSsetnumblocks(int32 vkey,       /* IN: vdata key */
     vsinstance_t *w         = NULL;
     VDATA        *vs        = NULL;
     intn          ret_value = SUCCEED;
-    CONSTR(FUNC, "VSsetnumblocks");
 
     /* clear error stack */
     HEclear();
@@ -1252,11 +1143,6 @@ VSsetnumblocks(int32 vkey,       /* IN: vdata key */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSsetnumblocks */
 
@@ -1285,7 +1171,6 @@ VSgetblockinfo(int32  vkey,       /* IN: vdata id */
     vsinstance_t *w         = NULL;
     VDATA        *vs        = NULL;
     intn          ret_value = SUCCEED;
-    CONSTR(FUNC, "VSgetblockinfo");
 
     /* clear error stack */
     HEclear();
@@ -1308,11 +1193,6 @@ VSgetblockinfo(int32  vkey,       /* IN: vdata id */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSgetblockinfo */
 
@@ -1386,7 +1266,6 @@ VSofclass(int32       id,       /* IN: file id or vgroup id */
           uintn       n_vds,    /* IN: number of user-created vds to return */
           uint16     *refarray /* IN/OUT: ref array to fill */)
 {
-    CONSTR(FUNC, "VSofclass");
     intn ret_value = 0;
 
     /* clear error stack */
@@ -1399,11 +1278,6 @@ VSofclass(int32       id,       /* IN: file id or vgroup id */
     ret_value = VSIgetvdatas(id, vsclass, start_vd, n_vds, refarray);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSofclass */
 
@@ -1426,7 +1300,6 @@ vscheckclass(int32 id, /* IN: vgroup id or file id */
 	    const char *vsclass  /* IN: class name to be queried or NULL for
 					 non-internal vdata */)
 {
-    CONSTR(FUNC, "vscheckclass");
     vsinstance_t *vs_inst   = NULL;
     VDATA        *vs        = NULL;
     intn          ret_value = FALSE;
@@ -1484,10 +1357,6 @@ vscheckclass(int32 id, /* IN: vgroup id or file id */
             ret_value = FALSE;
     }
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-    }                        /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* vscheckclass */
 
@@ -1529,7 +1398,6 @@ VSIgetvdatas(int32       id,       /* IN: file id or vgroup id */
              const uintn n_vds,    /* IN: number of user-created vds to return */
              uint16     *refarray /* IN/OUT: ref array to fill */)
 {
-    CONSTR(FUNC, "VSIgetvdatas");
     vginstance_t *vg_inst     = NULL;
     group_t       id_type     = HAatom_group(id); /* id is FIDGROUP or VGIDGROUP */
     intn          nactual_vds = 0, nfound_vds = 0, ii;
@@ -1659,10 +1527,6 @@ VSIgetvdatas(int32       id,       /* IN: file id or vgroup id */
         ret_value = nactual_vds;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-    }                        /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSIgetvdatas */
 
@@ -1708,7 +1572,6 @@ VSgetvdatas(int32       id,       /* IN: file id or vgroup id */
             const uintn n_vds,    /* IN: number of user-created vds to return */
             uint16     *refarray /* IN/OUT: ref array to fill */)
 {
-    CONSTR(FUNC, "VSgetvdatas");
     int32 ret_value = SUCCEED;
 
     /* clear error stack */
@@ -1721,10 +1584,6 @@ VSgetvdatas(int32       id,       /* IN: file id or vgroup id */
     /* Passing NULL in to VSIgetvdatas to get user-created vdatas */
     ret_value = VSIgetvdatas(id, NULL, start_vd, n_vds, refarray);
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-    }                        /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VSgetvdatas */
 

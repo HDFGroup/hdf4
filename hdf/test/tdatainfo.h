@@ -11,8 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef _TDATAINFO_H
-#define _TDATAINFO_H
+#ifndef H4_TDATAINFO_H
+#define H4_TDATAINFO_H
 
 typedef struct {
     int32  numtype;  /* number type of data */
@@ -28,4 +28,4 @@ void free_info(t_hdf_datainfo_t *info);
 /* Other utility functions */
 intn readnoHDF_char(const char *filename, const int32 offset, const int32 length, const char *orig_buf);
 
-#endif /* _TDATAINFO_H */
+#endif /* H4_TDATAINFO_H */

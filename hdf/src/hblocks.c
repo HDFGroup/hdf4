@@ -193,7 +193,6 @@ DESCRIPTION
 int32
 HLcreate(int32 file_id, uint16 tag, uint16 ref, int32 block_length, int32 number_blocks)
 {
-    CONSTR(FUNC, "HLcreate");              /* for HERROR */
     filerec_t  *file_rec;                  /* file record */
     accrec_t   *access_rec = NULL;         /* access record */
     int32       dd_aid;                    /* AID for writing the special info */
@@ -336,9 +335,8 @@ done:
             HDfree(info);
         if (access_rec != NULL)
             HIrelease_accrec_node(access_rec);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     return ret_value;
 } /* HLcreate() */
 
@@ -382,7 +380,6 @@ DESCRIPTION
 intn
 HLconvert(int32 aid, int32 block_length, int32 number_blocks)
 {
-    CONSTR(FUNC, "HLconvert");                          /* for HERROR */
     filerec_t  *file_rec;                               /* file record */
     accrec_t   *access_rec = NULL;                      /* access record */
     linkinfo_t *info;                                   /* information for the linked blocks elt */
@@ -517,7 +514,7 @@ HLconvert(int32 aid, int32 block_length, int32 number_blocks)
     if (old_posn > 0) {
         if (Hseek(aid, old_posn, DF_START) == FAIL)
             HGOTO_ERROR(DFE_BADSEEK, FAIL);
-    } /* end if */
+    }
 
 done:
     if (ret_value == FAIL) { /* Error condition cleanup */
@@ -525,9 +522,8 @@ done:
             HDfree(access_rec->special_info);
         if (access_rec != NULL)
             HIrelease_accrec_node(access_rec);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     return ret_value;
 } /* end HLconvert() */
 
@@ -559,7 +555,6 @@ HDinqblockinfo(int32 aid, int32 *length, int32 *first_length, int32 *block_lengt
 {
     accrec_t *arec;
     int       ret_value = SUCCEED;
-    CONSTR(FUNC, "HDinqblockinfo");
 
     HEclear();
     if ((arec = HAatom_object(aid)) == (accrec_t *)NULL)
@@ -578,12 +573,6 @@ HDinqblockinfo(int32 aid, int32 *length, int32 *first_length, int32 *block_lengt
         *number_blocks = ((linkinfo_t *)(arec->special_info))->number_blocks;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HDinqblockinfo */
 
@@ -608,7 +597,6 @@ DESCRIPTION
 PRIVATE int32
 HLIstaccess(accrec_t *access_rec, int16 acc_mode)
 {
-    CONSTR(FUNC, "HLIstaccess");    /* for HERROR */
     filerec_t  *file_rec;           /* file record */
     linkinfo_t *info = NULL;        /* information about data elt */
     int32       dd_aid;             /* AID for writing the special info */
@@ -740,9 +728,7 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (access_rec->special_info != NULL)
             HDfree(access_rec->special_info);
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
     return ret_value;
 } /* HLIstaccess */
@@ -780,15 +766,14 @@ HLgetdatainfo(int32 file_id, uint8 *buf, /* IN: special header info */
               int32 *offsetarray,        /* OUT: array to hold offsets */
               int32 *lengtharray)        /* OUT: array to hold lengths */
 {
-    CONSTR(FUNC, "HLgetdatainfo"); /* for HERROR */
-    link_t *link_info = NULL;      /* link information, to get block ref#s*/
-    intn    num_data_blocks;       /* number of blocks that actually have data */
-    uint16  link_ref;              /* ref# pointing to a block table */
-    uint8  *p = NULL;              /* pointer to special info buffer */
-    int32   num_blocks,            /* number of blocks in each table */
-        block_length,              /* length of each block */
-        total_length,              /* total data length of the element */
-        accum_length;              /* accummulative length of actual data in blocks */
+    link_t *link_info = NULL; /* link information, to get block ref#s*/
+    intn    num_data_blocks;  /* number of blocks that actually have data */
+    uint16  link_ref;         /* ref# pointing to a block table */
+    uint8  *p = NULL;         /* pointer to special info buffer */
+    int32   num_blocks,       /* number of blocks in each table */
+        block_length,         /* length of each block */
+        total_length,         /* total data length of the element */
+        accum_length;         /* accummulative length of actual data in blocks */
     int  ii;
     intn ret_value = SUCCEED;
 
@@ -901,9 +886,8 @@ done:
             if (link_info->block_list != NULL)
                 HDfree(link_info->block_list);
         HDfree(link_info);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     return ret_value;
 } /* HLgetdatainfo */
 
@@ -976,8 +960,7 @@ DESCRIPTION
 PRIVATE link_t *
 HLIgetlink(int32 file_id, uint16 ref, int32 number_blocks)
 {
-    CONSTR(FUNC, "HLIgetlink"); /* for HERROR */
-    int32   access_id;          /* access record id */
+    int32   access_id; /* access record id */
     uint8  *buffer    = NULL;
     uint16  tag       = DFTAG_LINKED;
     link_t *new_link  = NULL;
@@ -1027,9 +1010,8 @@ done:
             HDfree(new_link->block_list);
         if (new_link != NULL)
             HDfree(new_link);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     if (buffer != NULL)
         HDfree(buffer);
 
@@ -1054,7 +1036,6 @@ DESCRIPTION
 int32
 HLPseek(accrec_t *access_rec, int32 offset, int origin)
 {
-    CONSTR(FUNC, "HLPseek"); /* for HERROR */
     int32 ret_value = SUCCEED;
 
     /* validate access record */
@@ -1074,12 +1055,6 @@ HLPseek(accrec_t *access_rec, int32 offset, int origin)
     access_rec->posn = offset;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HLPseek */
 
@@ -1105,7 +1080,6 @@ DESCRIPTION
 int32
 HLPread(accrec_t *access_rec, int32 length, void *datap)
 {
-    CONSTR(FUNC, "HLPread"); /* for HERROR */
     uint8 *data = (uint8 *)datap;
     /* information record for this special data elt */
     linkinfo_t *info   = (linkinfo_t *)(access_rec->special_info);
@@ -1198,12 +1172,6 @@ HLPread(accrec_t *access_rec, int32 length, void *datap)
     ret_value = bytes_read;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HLPread  */
 
@@ -1227,7 +1195,6 @@ DESCRIPTION
 int32
 HLPwrite(accrec_t *access_rec, int32 length, const void *datap)
 {
-    CONSTR(FUNC, "HLPwrite"); /* for HERROR */
     const uint8 *data = datap;
     filerec_t   *file_rec;           /* file record */
     int32        dd_aid;             /* AID for writing the special info */
@@ -1436,12 +1403,6 @@ HLPwrite(accrec_t *access_rec, int32 length, const void *datap)
     ret_value = bytes_written;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HLPwrite */
 
@@ -1465,9 +1426,8 @@ DESCRIPTION
 PRIVATE link_t *
 HLInewlink(int32 file_id, int32 number_blocks, uint16 link_ref, uint16 first_block_ref)
 {
-    CONSTR(FUNC, "HLInewlink"); /* for HERROR */
-    int32   link_id;            /* access record id of new link */
-    uint8  *buf       = NULL;   /* temp buffer */
+    int32   link_id;          /* access record id of new link */
+    uint8  *buf       = NULL; /* temp buffer */
     link_t *t_link    = NULL;
     link_t *ret_value = NULL; /* FAIL */
 
@@ -1526,9 +1486,8 @@ done:
             HDfree(t_link->block_list);
         if (t_link != NULL)
             HDfree(t_link);
-    } /* end if */
+    }
 
-    /* Normal function cleanup */
     if (buf != NULL)
         HDfree(buf);
 
@@ -1562,7 +1521,6 @@ int32
 HLPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength, int32 *poffset,
            int32 *pposn, int16 *paccess, int16 *pspecial)
 {
-    CONSTR(FUNC, "HLPinquire");     /* for HERROR */
     uint16      data_tag, data_ref; /* Tag/ref of the data in the file */
     linkinfo_t *info =              /* special information record */
         (linkinfo_t *)access_rec->special_info;
@@ -1591,12 +1549,6 @@ HLPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, in
         *pspecial = (int16)access_rec->special;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HLPinquire */
 
@@ -1619,8 +1571,7 @@ DESCRIPTION
 intn
 HLPendaccess(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HLPendaccess"); /* for HERROR */
-    filerec_t *file_rec;          /* file record */
+    filerec_t *file_rec; /* file record */
     intn       ret_value = SUCCEED;
 
     /* validate argument */
@@ -1651,9 +1602,7 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (access_rec != NULL)
             HIrelease_accrec_node(access_rec);
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
     return ret_value;
 } /* HLPendaccess */
@@ -1724,7 +1673,6 @@ DESCRIPTION
 int32
 HLPinfo(accrec_t *access_rec, sp_info_block_t *info_block)
 {
-    CONSTR(FUNC, "HLPinfo");
     linkinfo_t *info = /* special information record */
         (linkinfo_t *)access_rec->special_info;
     int32 ret_value = SUCCEED;
@@ -1741,12 +1689,6 @@ HLPinfo(accrec_t *access_rec, sp_info_block_t *info_block)
     info_block->nblocks   = info->number_blocks;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HLPinfo */
 
@@ -1783,8 +1725,7 @@ HLsetblockinfo(int32 aid,        /* access record id */
                int32 block_size, /* length to be used for each linked-block */
                int32 num_blocks) /* number of blocks the element will have */
 {
-    CONSTR(FUNC, "HLsetblockinfo"); /* for HERROR */
-    accrec_t *access_rec;           /* access record */
+    accrec_t *access_rec; /* access record */
     intn      ret_value = SUCCEED;
 
     /* clear error stack */
@@ -1817,10 +1758,6 @@ HLsetblockinfo(int32 aid,        /* access record id */
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-    }                        /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end HLsetblockinfo */
 
@@ -1855,8 +1792,7 @@ HLgetblockinfo(int32  aid,        /* access record id */
                int32 *block_size, /* length being used for each linked-block */
                int32 *num_blocks) /* number of blocks the element will have */
 {
-    CONSTR(FUNC, "HLgetblockinfo"); /* for HERROR */
-    accrec_t *access_rec;           /* access record */
+    accrec_t *access_rec; /* access record */
     intn      ret_value = SUCCEED;
 
     /* clear error stack */
@@ -1873,10 +1809,5 @@ HLgetblockinfo(int32  aid,        /* access record id */
         *num_blocks = access_rec->num_blocks;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end HLgetblockinfo */

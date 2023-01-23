@@ -20,8 +20,8 @@
   1996/05/29 - George V.
  ************************************************************************/
 
-#ifndef GLIST_H
-#define GLIST_H
+#ifndef H4_GLIST_H
+#define H4_GLIST_H
 
 #include "hdf.h" /* needed for data types */
 
@@ -662,4 +662,4 @@ void HDGLremove_all_such_that(Generic_list list,                     /*IN: list 
 *******************************************************************************/
 #define HDGQcopy_queue HDGLcopy_list
 
-#endif /* GLIST_H */
+#endif /* H4_GLIST_H */

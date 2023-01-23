@@ -96,7 +96,6 @@ FORTRAN
 intn
 HBconvert(int32 aid)
 {
-    CONSTR(FUNC, "HBconvert");     /* for HERROR */
     accrec_t  *access_rec = NULL;  /* access element record */
     accrec_t  *new_access_rec;     /* newly created access record */
     accrec_t  *tmp_access_rec;     /* temp. access record */
@@ -207,8 +206,7 @@ DESCRIPTION
 int32
 HBPstread(accrec_t *rec)
 {
-    /* shut compilers up*/
-    rec = rec;
+    (void)rec;
 
     assert(0 && "Should never be called");
     return (FAIL);
@@ -230,8 +228,7 @@ DESCRIPTION
 int32
 HBPstwrite(accrec_t *rec)
 {
-    /* shut compilers up*/
-    rec = rec;
+    (void)rec;
 
     assert(0 && "Should never be called");
     return (FAIL);
@@ -256,7 +253,6 @@ int32
 HBPseek(accrec_t *access_rec, int32 offset, int origin)
 {
     int32 ret_value = SUCCEED;
-    CONSTR(FUNC, "HBPseek"); /* for HERROR */
 
     /* Adjust offset according to origin.  There is no upper bound to posn */
     if (origin == DF_CURRENT)
@@ -270,12 +266,6 @@ HBPseek(accrec_t *access_rec, int32 offset, int origin)
     access_rec->posn = offset;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HBPseek */
 
@@ -299,8 +289,7 @@ DESCRIPTION
 int32
 HBPread(accrec_t *access_rec, int32 length, void *data)
 {
-    CONSTR(FUNC, "HBPread"); /* for HERROR */
-    bufinfo_t *info =        /* information on the special element */
+    bufinfo_t *info = /* information on the special element */
         (bufinfo_t *)access_rec->special_info;
     int32 ret_value = SUCCEED;
 
@@ -323,12 +312,6 @@ HBPread(accrec_t *access_rec, int32 length, void *data)
     ret_value = length;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return (ret_value);
 } /* HBPread */
 
@@ -350,8 +333,7 @@ DESCRIPTION
 int32
 HBPwrite(accrec_t *access_rec, int32 length, const void *data)
 {
-    CONSTR(FUNC, "HBPwrite"); /* for HERROR */
-    bufinfo_t *info =         /* information on the special element */
+    bufinfo_t *info = /* information on the special element */
         (bufinfo_t *)(access_rec->special_info);
     int32 new_len; /* new length of object */
     int32 ret_value = SUCCEED;
@@ -396,12 +378,6 @@ HBPwrite(accrec_t *access_rec, int32 length, const void *data)
     ret_value = length; /* return length of bytes written */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return (ret_value);
 } /* HBPwrite */
 
@@ -432,8 +408,7 @@ int32
 HBPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength, int32 *poffset,
            int32 *pposn, int16 *paccess, int16 *pspecial)
 {
-    CONSTR(FUNC, "HBPinquire"); /* for HERROR */
-    bufinfo_t *info =           /* special information record */
+    bufinfo_t *info = /* special information record */
         (bufinfo_t *)access_rec->special_info;
     uint16 data_tag, data_ref; /* tag/ref of the data we are checking */
     int32  data_off;           /* offset of the data we are checking */
@@ -462,12 +437,6 @@ HBPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, in
         *pspecial = (int16)access_rec->special;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* HBPinquire */
 
@@ -487,7 +456,6 @@ DESCRIPTION
 intn
 HBPendaccess(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HBPendaccess"); /* for HERROR */
     intn ret_value = SUCCEED;
 
     /* validate argument */
@@ -505,9 +473,7 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (access_rec != NULL)
             HIrelease_accrec_node(access_rec);
-    } /* end if */
-
-    /* Normal function cleanup */
+    }
 
     return ret_value;
 } /* HBPendaccess */
@@ -534,8 +500,7 @@ DESCRIPTION
 int32
 HBPcloseAID(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HBPcloseAID"); /* for HERROR */
-    bufinfo_t *info =            /* special information record */
+    bufinfo_t *info = /* special information record */
         (bufinfo_t *)access_rec->special_info;
     int32 ret_value = SUCCEED;
 
@@ -560,12 +525,6 @@ HBPcloseAID(accrec_t *access_rec)
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return (ret_value);
 } /* HBPcloseAID */
 
@@ -587,8 +546,7 @@ DESCRIPTION
 int32
 HBPinfo(accrec_t *access_rec, sp_info_block_t *info_block)
 {
-    CONSTR(FUNC, "HBPinfo"); /* for HERROR */
-    bufinfo_t *info =        /* special information record */
+    bufinfo_t *info = /* special information record */
         (bufinfo_t *)access_rec->special_info;
     int32 ret_value = SUCCEED;
 
@@ -602,11 +560,5 @@ HBPinfo(accrec_t *access_rec, sp_info_block_t *info_block)
     info_block->buf_aid = info->buf_aid;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return (ret_value);
 } /* HBPinfo */

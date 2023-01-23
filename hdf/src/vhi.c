@@ -88,7 +88,6 @@ int32
 VHstoredatam(HFILEID f, const char *field, const uint8 *buf, int32 n, int32 datatype, const char *vsname,
              const char *vsclass, int32 order)
 {
-    CONSTR(FUNC, "VHstoredatam");
     int32 ref;
     int32 vs;
     int32 ret_value = SUCCEED;
@@ -118,11 +117,6 @@ VHstoredatam(HFILEID f, const char *field, const uint8 *buf, int32 n, int32 data
     ret_value = ((int32)ref);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* VHstoredatam */
 
@@ -159,7 +153,6 @@ VHmakegroup(HFILEID f, int32 tagarray[], int32 refarray[], int32 n, const char *
     int32 ref, i;
     int32 vg;
     int32 ret_value = SUCCEED;
-    CONSTR(FUNC, "VHmakegroup");
 
     if ((vg = Vattach(f, -1, "w")) == FAIL)
         HGOTO_ERROR(DFE_CANTATTACH, FAIL);
@@ -184,12 +177,6 @@ VHmakegroup(HFILEID f, int32 tagarray[], int32 refarray[], int32 n, const char *
     ret_value = (ref);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
-
     return ret_value;
 } /* VHmakegroup */
 

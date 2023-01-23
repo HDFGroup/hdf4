@@ -14,8 +14,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef _NC_ERROR_
-#define _NC_ERROR_
+#ifndef MFH4_ERROR_H
+#define MFH4_ERROR_H
 
 #include "H4api_adpt.h"
 
@@ -27,4 +27,4 @@ HDFLIBAPI void nc_serror();
 HDFLIBAPI void NCadvise();
 #endif /* NO_STDARG */
 
-#endif /* _NC_ERROR_ */
+#endif /* MFH4_ERROR_H */

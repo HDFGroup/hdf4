@@ -62,7 +62,6 @@ intn
 DFputcomp(int32 file_id, uint16 tag, uint16 ref, const uint8 *image, int32 xdim, int32 ydim, uint8 *palette,
           uint8 *newpal, int16 scheme, comp_info *cinfo)
 {
-    CONSTR(FUNC, "DFputcomp");
     uint8       *buffer;   /* buffer to hold compressed image */
     const uint8 *in;       /* pointer to input for compression */
     uint8       *out;      /* pointer to space for compressed output */
@@ -179,7 +178,6 @@ DFputcomp(int32 file_id, uint16 tag, uint16 ref, const uint8 *image, int32 xdim,
 int
 DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim, int32 ydim, uint16 scheme)
 {
-    CONSTR(FUNC, "DFgetcomp");
     uint8 *buffer;
     uint8 *in;
     uint8 *out;

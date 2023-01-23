@@ -15,7 +15,9 @@
    ***  private header file for hkit routines
    + */
 
-#ifndef __HKIT_H
+#ifndef H4_HKIT_H
+#define H4_HKIT_H
+
 #include "hdf.h"
 #include "hfile.h"
 
@@ -156,4 +158,4 @@ PRIVATE const nt_descript_t nt_descriptions[] = {
 
 };
 
-#endif /* __HKIT_H */
+#endif /* H4_HKIT_H */

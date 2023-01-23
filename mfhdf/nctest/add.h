@@ -3,6 +3,9 @@
  *   See netcdf/COPYRIGHT file for copying and redistribution conditions.
  *********************************************************************/
 
+#ifndef NCTEST_ADD_H
+#define NCTEST_ADD_H
+
 #undef PROTO
 #ifndef NO_HAVE_PROTOTYPES
 #define PROTO(x) x
@@ -38,3 +41,5 @@ extern void errvar PROTO((struct netcdf *, struct cdfvar *));
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* NCTEST_ADD_H */

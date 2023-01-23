@@ -230,7 +230,7 @@ test_nonSDAPI_ids()
  *   - Reopen the file using V API
  *   - Verify that Vgetvgroups and VSgetvdatas return only the vgroups and
  *     vdatas that were created by the application.
- * Mar 4, 2011 -BMR
+ *
  ****************************************************************************/
 /* data file to test getting vgs/vds from an SD file */
 #define VVS_FILE   "tvdatasvgroups_SD.hdf"
@@ -454,7 +454,7 @@ test_vdatavgroups()
  *   - Use the existing files created by test_vdatavgroups
  *   - Get the number of vgroups in the file
  *   - For each vgroup, verify that it is internal or not
- * Jan 6, 2012 -BMR
+ *
  ****************************************************************************/
 
 #define VVS_FILE "tvdatasvgroups_SD.hdf"

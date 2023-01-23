@@ -28,6 +28,8 @@ intn have_szip = 0;
 void
 dumpsds_usage(intn argc, char *argv[])
 {
+    (void)argc;
+
     printf("Usage:\n");
     printf(
         "%s dumpsds [-k][-a|-i <indices>|-r <refs>|-n <names>] [-cdhvs] [-o <filename>] [-bx] <filelist>\n",
@@ -167,7 +169,7 @@ done:
         /* free the list if it had been allocated */
         free_obj_chosen_t_list(&dumpsds_opts->all_types, dumpsds_opts->num_chosen);
     }
-    /* Normal cleanup */
+
     return (ret_value);
 } /* end parse_dumpsds_opts */
 
@@ -353,9 +355,6 @@ sdsdumpfull(int32 sds_id, dump_info_t *dumpsds_opts, int32 rank, int32 dimsizes[
         fprintf(fp, "\n");
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
     SAFE_FREE(edge)
     SAFE_FREE(start)
     SAFE_FREE(left)
@@ -399,7 +398,6 @@ get_SDSindex_list(int32 sd_id, dump_info_t *dumpsds_opts,
         HGOTO_DONE(NO_SPECIFIC);
 
     for (ii = 0; ii < num_sds_chosen; ii++) {
-        int jj;
         /* if the current chosen SDS was requested by its index, store the
         index in the array sds_chosen */
         switch (dumpsds_opts->all_types[ii].type_of_info) {
@@ -448,9 +446,6 @@ get_SDSindex_list(int32 sd_id, dump_info_t *dumpsds_opts,
 
     ret_value = sds_count;
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
     return ret_value;
 } /* end of get_SDSindex_list */
 
@@ -973,7 +968,7 @@ done:
             SDendaccess(sds_id);
         SAFE_FREE(sdsname);
     }
-    /* Normal cleanup */
+
     return ret_value;
 } /* end of printSDS_ASCII() */
 
@@ -1024,7 +1019,6 @@ done:
         if (sds_id != FAIL)
             SDendaccess(sds_id);
     }
-    /* Normal cleanup */
 
     return ret_value;
 } /* end of printSDS_BINARY */
@@ -1258,7 +1252,7 @@ done:
 
         SAFE_FREE(sds_chosen);
     }
-    /* Normal cleanup */
+
     return ret_value;
 } /* dsd */
 
@@ -1298,10 +1292,6 @@ do_dumpsds(intn curr_arg, intn argc, char *argv[], intn help)
         ERROR_GOTO_0("in do_dumpsds: dsd failed");
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     /* free the list of structs containing info of selected SDSs */
     free_obj_chosen_t_list(&dumpsds_opts.all_types, dumpsds_opts.num_chosen);
 

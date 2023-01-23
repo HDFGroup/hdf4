@@ -38,6 +38,12 @@ New features and changes
 ========================
     Configuration:
     -------------
+    - The vattr.h header file is no longer distributed
+
+      This header file was empty aside from including hdf.h and vg.h.
+
+      (DER - 2023/01/22)
+
     - Better Autotools compiler support on Linux and MacOS
 
       The machine configuration files have been split into machine and

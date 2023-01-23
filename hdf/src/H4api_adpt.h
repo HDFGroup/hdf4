@@ -11,8 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef H4API_ADPT_H
-#define H4API_ADPT_H
+#ifndef H4_API_ADPT_H
+#define H4_API_ADPT_H
 
 #include "h4config.h"
 
@@ -157,4 +157,4 @@
 #define HDFFCLIBAPI extern
 #endif /*H4_BUILT_AS_DYNAMIC_LIB  */
 
-#endif /* H4API_ADPT_H */
+#endif /* H4_API_ADPT_H */

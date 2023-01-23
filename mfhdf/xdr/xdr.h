@@ -38,8 +38,8 @@
  * Copyright (C) 1984, Sun Microsystems, Inc.
  */
 
-#ifndef __XDR_HEADER__
-#define __XDR_HEADER__
+#ifndef H4_XDR_H
+#define H4_XDR_H
 
 #include "H4api_adpt.h"
 
@@ -327,4 +327,4 @@ XDRLIBAPI bool_t xdrrec_eof();
 }
 #endif
 
-#endif /* !__XDR_HEADER__ */
+#endif /* H4_XDR_H */

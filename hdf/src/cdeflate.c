@@ -67,7 +67,6 @@ PRIVATE int32 HCIcdeflate_init(compinfo_t *info);
 PRIVATE int32
 HCIcdeflate_init(compinfo_t *info)
 {
-    CONSTR(FUNC, "HCIcdeflate_init");
     comp_coder_deflate_info_t *deflate_info; /* ptr to deflate info */
 
     if (Hseek(info->aid, 0, 0) == FAIL) /* seek to beginning of element */
@@ -113,7 +112,6 @@ HCIcdeflate_init(compinfo_t *info)
 PRIVATE int32
 HCIcdeflate_decode(compinfo_t *info, int32 length, uint8 *buf)
 {
-    CONSTR(FUNC, "HCIcdeflate_decode");
     comp_coder_deflate_info_t *deflate_info; /* ptr to deflate info */
     int                        zstat;        /* inflate status */
     int32                      bytes_read;
@@ -181,7 +179,6 @@ HCIcdeflate_decode(compinfo_t *info, int32 length, uint8 *buf)
 PRIVATE int32
 HCIcdeflate_encode(compinfo_t *info, int32 length, void *buf)
 {
-    CONSTR(FUNC, "HCIcdeflate_encode");
     comp_coder_deflate_info_t *deflate_info; /* ptr to skipping Huffman info */
 
     deflate_info = &(info->cinfo.coder_info.deflate_info);
@@ -233,7 +230,6 @@ HCIcdeflate_encode(compinfo_t *info, int32 length, void *buf)
 PRIVATE int32
 HCIcdeflate_term(compinfo_t *info, uint32 acc_mode)
 {
-    CONSTR(FUNC, "HCIcdeflate_term");
     comp_coder_deflate_info_t *deflate_info; /* ptr to deflation info */
 
     deflate_info = &(info->cinfo.coder_info.deflate_info);
@@ -304,7 +300,6 @@ HCIcdeflate_term(compinfo_t *info, uint32 acc_mode)
 PRIVATE int32
 HCIcdeflate_staccess(accrec_t *access_rec, int16 acc_mode)
 {
-    CONSTR(FUNC, "HCIcdeflate_staccess");
     compinfo_t                *info;         /* special element information */
     comp_coder_deflate_info_t *deflate_info; /* ptr to deflate info */
 
@@ -362,7 +357,6 @@ HCIcdeflate_staccess(accrec_t *access_rec, int16 acc_mode)
 PRIVATE int32
 HCIcdeflate_staccess2(accrec_t *access_rec, int16 acc_mode)
 {
-    CONSTR(FUNC, "HCIcdeflate_staccess2");
     compinfo_t                *info;         /* special element information */
     comp_coder_deflate_info_t *deflate_info; /* ptr to deflate info */
 
@@ -420,8 +414,6 @@ HCIcdeflate_staccess2(accrec_t *access_rec, int16 acc_mode)
 int32
 HCPcdeflate_stread(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HCPcdeflate_stread");
-
     if (HCIcdeflate_staccess(access_rec, DFACC_READ) == FAIL)
         HRETURN_ERROR(DFE_CINIT, FAIL);
 
@@ -450,8 +442,6 @@ HCPcdeflate_stread(accrec_t *access_rec)
 int32
 HCPcdeflate_stwrite(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HCPcdeflate_stwrite");
-
     if (HCIcdeflate_staccess(access_rec, DFACC_WRITE) == FAIL)
         HRETURN_ERROR(DFE_CINIT, FAIL);
 
@@ -485,13 +475,11 @@ HCPcdeflate_stwrite(accrec_t *access_rec)
 int32
 HCPcdeflate_seek(accrec_t *access_rec, int32 offset, int origin)
 {
-    CONSTR(FUNC, "HCPcdeflate_seek");
     compinfo_t                *info;                          /* special element information */
     comp_coder_deflate_info_t *deflate_info;                  /* ptr to gzip 'deflate' info */
     uint8                      tmp_buf[DEFLATE_TMP_BUF_SIZE]; /* temporary buffer */
 
-    /* shut compiler up */
-    origin = origin;
+    (void)origin;
 
     info         = (compinfo_t *)access_rec->special_info;
     deflate_info = &(info->cinfo.coder_info.deflate_info);
@@ -555,7 +543,6 @@ HCPcdeflate_seek(accrec_t *access_rec, int32 offset, int origin)
 int32
 HCPcdeflate_read(accrec_t *access_rec, int32 length, void *data)
 {
-    CONSTR(FUNC, "HCPcdeflate_read");
     compinfo_t                *info;         /* special element information */
     comp_coder_deflate_info_t *deflate_info; /* ptr to gzip 'deflate' info */
 
@@ -607,7 +594,6 @@ HCPcdeflate_read(accrec_t *access_rec, int32 length, void *data)
 int32
 HCPcdeflate_write(accrec_t *access_rec, int32 length, const void *data)
 {
-    CONSTR(FUNC, "HCPcdeflate_write");
     compinfo_t                *info;         /* special element information */
     comp_coder_deflate_info_t *deflate_info; /* ptr to skipping Huffman info */
 
@@ -674,16 +660,15 @@ int32
 HCPcdeflate_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, int32 *plength,
                     int32 *poffset, int32 *pposn, int16 *paccess, int16 *pspecial)
 {
-    /* shut compiler up */
-    access_rec = access_rec;
-    pfile_id   = pfile_id;
-    ptag       = ptag;
-    pref       = pref;
-    plength    = plength;
-    poffset    = poffset;
-    pposn      = pposn;
-    paccess    = paccess;
-    pspecial   = pspecial;
+    (void)access_rec;
+    (void)pfile_id;
+    (void)ptag;
+    (void)pref;
+    (void)plength;
+    (void)poffset;
+    (void)pposn;
+    (void)paccess;
+    (void)pspecial;
 
     return (SUCCEED);
 } /* HCPcdeflate_inquire() */
@@ -710,7 +695,6 @@ HCPcdeflate_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 
 intn
 HCPcdeflate_endaccess(accrec_t *access_rec)
 {
-    CONSTR(FUNC, "HCPcdeflate_endaccess");
     compinfo_t                *info;         /* special element information */
     comp_coder_deflate_info_t *deflate_info; /* ptr to gzip 'deflate' info */
 

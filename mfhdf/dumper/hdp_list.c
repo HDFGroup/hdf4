@@ -32,6 +32,8 @@ intn print_annots_in_file(int32 an_id, const char *fname, int32 n_annotations, a
 static void
 list_usage(intn argc, char *argv[])
 {
+    (void)argc;
+
     printf("Usage:\n");
     printf("%s list [-acensldg] [-o<f|g|t|n>] [-t tag] <filelist>\n", argv[0]);
     printf("\t-a\tPrint annotations of items (sets long output)\n");
@@ -290,7 +292,6 @@ done:
         if (buf != NULL)
             HDfree(buf);
     }
-    /* Normal cleanup */
 
     return ret_value;
 } /* print_annots_by_object() */
@@ -306,10 +307,6 @@ print_data_labels(const char *fname, int32 an_id, uint16 tag, uint16 ref)
         ERROR_GOTO_0("in print_data_labels\n");
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* end print_data_labels */
 
@@ -324,10 +321,6 @@ print_data_descs(const char *fname, int32 an_id, uint16 tag, uint16 ref)
         ERROR_GOTO_0("in print_data_descs\n");
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* end print_data_descs */
 
@@ -400,7 +393,6 @@ done:
         if (annotation != NULL)
             HDfree(annotation);
     }
-    /* Normal cleanup */
 
     return ret_value;
 } /* end print_annots_in_file */
@@ -426,10 +418,6 @@ print_all_data_labels(const char *fname, int32 an_id)
         ERROR_GOTO_0("in print_all_data_labels\n");
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* print_all_data_labels() */
 
@@ -500,9 +488,6 @@ print_all_data_descs(const char *fname, int32 an_id)
     } /* end for every data desc */
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
     if (ann_id != FAIL)
         ANendaccess(ann_id);
     if (desc != NULL)
@@ -576,9 +561,6 @@ print_all_file_labels(const char *fname, int32 an_id)
     } /* end for every file label */
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
     if (ann_id != FAIL)
         ANendaccess(ann_id);
     if (label != NULL)
@@ -606,6 +588,8 @@ print_all_file_descs(const char *fname, list_info_t *list_opts, /* for print_SDa
     char *attr_nt_desc = NULL;
     VOIDP attr_buf     = NULL;
     intn  ret_value    = SUCCEED;
+
+    (void)list_opts;
 
     /* find out how many file labels/descs and data labels/descs in file */
     if (FAIL == ANfileinfo(an_id, &n_file_label, &n_file_desc, &n_data_label, &n_data_desc)) {
@@ -690,7 +674,6 @@ done:
         if (attr_buf != NULL)
             HDfree((VOIDP)attr_buf);
     }
-    /* Normal cleanup */
 
     return ret_value;
 } /* end print_all_file_descs() */
@@ -771,7 +754,6 @@ done:
         if (desc != NULL)
             HDfree(desc);
     }
-    /* Normal cleanup */
 
     return ret_value;
 } /* end print_all_file_descs() */
@@ -887,7 +869,6 @@ done:
         if (buf != NULL)
             HDfree(buf);
     }
-    /* Normal cleanup */
 
     return ret_value;
 } /* print_list_obj() */
@@ -1093,7 +1074,6 @@ done:
         if (o_list != NULL)
             free_obj_list(o_list);
     }
-    /* Normal cleanup */
     if (f_list != NULL)
         free_file_list(f_list);
 

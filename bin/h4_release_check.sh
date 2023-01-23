@@ -88,7 +88,7 @@ dffunc.f90 dffunc.inc dfgr.h df.h dfi.h dfrig.h dfsd.h dfstubs.h dfufp2i.h dynar
 h4config.h hbitio.h hchunks.h hcomp.h hcompi.h hconv.h hdatainfo.h hdf2netcdf.h hdf.f90
 hdf.h hdfi.h hdf.inc herr.h hfile.h hkit.h hlimits.h hntdefs.h hproto_fortran.h hproto.h
 htags.h linklist.h local_nc.h mfan.h mfdatainfo.h mffunc.f90 mffunc.inc mfgr.h mfhdf.h
-mfhdfi.h mstdio.h netcdf.f90 netcdf.h netcdf.inc tbbt.h vattr.h vg.h)
+mfhdfi.h mstdio.h netcdf.f90 netcdf.h netcdf.inc tbbt.h vg.h)
 
 lib_file=(libdf.a libdf.la libhdf4.settings libjpeg.a libmfhdf.a libmfhdf.la libsz.a libz.a)
 

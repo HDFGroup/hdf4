@@ -10,8 +10,8 @@
  *                                                                          *
  ****************************************************************************/
 
-#ifndef HDF_HDIFF_MATCH_TABLE__
-#define HDF_HDIFF_MATCH_TABLE__
+#ifndef HDIFF_MATTBL_H
+#define HDIFF_MATTBL_H
 
 #include "hdf.h"
 #include "mfhdf.h"
@@ -47,4 +47,4 @@ void match_table_add(match_table_t *table, unsigned *flags, char *path, int32 ta
 }
 #endif
 
-#endif /* HDF_HDIFF_MATCH_TABLE__ */
+#endif /* HDIFF_MATTBL_H */

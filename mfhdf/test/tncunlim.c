@@ -27,7 +27,7 @@
  *        test_1dim_singlevar - tests on a single variable with only 1 dimension
  *        test_1dim_multivars - tests on multiple variables with only 1 dimension
  *        test_multidim_singlevar - tests on single variable with multiple dimensions
- * BMR - Dec 22, 2008
+ *
  ****************************************************************************/
 
 #include "mfhdf.h"
@@ -47,7 +47,6 @@
    Return value:
         The number of errors occurred in this routine.
 
-   BMR - Dec 22, 2008
 *********************************************************************/
 
 #define DIM0      20
@@ -284,7 +283,6 @@ test_1dim_singlevar()
    Return value:
         The number of errors occurred in this routine.
 
-   BMR - Dec 22, 2008
 *********************************************************************/
 
 #define FILENAME2 "onedimmultivars.nc"
@@ -620,7 +618,7 @@ test_1dim_multivars()
        number of records in the file will fail.  However, because ncvarget leads
        to the internal function NCcoordck which uses NCadvise to display the
        error and exit() so the test is disabled but the code should remain here
-       for future testing. -BMR, Dec 30, 2008 */
+       for future testing. */
     { /* Read both variables pass the end by 2 records, should fail */
         long start[] = {0};
         long edges[1];
@@ -662,7 +660,6 @@ test_1dim_multivars()
    Return value:
         The number of errors occurred in this routine.
 
-   BMR - Dec 22, 2008
 *********************************************************************/
 
 #define DIM1      3

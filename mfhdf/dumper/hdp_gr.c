@@ -35,6 +35,8 @@ intn dgr(dump_info_t *dumpgr_opts, intn curr_arg, intn argc, char *argv[]);
 void
 dumpgr_usage(intn argc, char *argv[])
 {
+    (void)argc;
+
     printf("Usage:\n");
     printf("%s dumpgr [-a|-i <indices>|-r <refs>|-n <names>] [-m <interlace>] [-dhvcs] [-p|-pd] [-o "
            "<filename>] [-bx] <filelist>\n",
@@ -213,7 +215,6 @@ done:
         free_num_list(dumpgr_opts->by_ref.num_list);
         free_str_list(dumpgr_opts->by_name.str_list, dumpgr_opts->by_name.num_items);
     }
-    /* Normal cleanup */
 
     return ret_value;
 } /* end parse_dumpgr_opts */
@@ -282,9 +283,6 @@ grdumpfull(int32 ri_id, dump_info_t *dumpgr_opts, int32 ncomps, /* "ncomps" is t
         ERROR_GOTO_2("in %s: dumpfull failed for ri_id(%d)", "grdumpfull", (int)ri_id);
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
     if (edge != NULL)
         HDfree((VOIDP)edge);
     if (start != NULL)
@@ -374,10 +372,6 @@ get_RIindex_list(int32 gr_id, dump_info_t *dumpgr_opts,
     ret_value = ri_count;
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     return ret_value;
 } /* end of get_RIindex_list */
 
@@ -673,9 +667,6 @@ print_Palette(int32 ri_id, int32 num_pals, /* number of palettes, currently only
     }         /* end else */
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
     return ret_value;
 } /* end of print_Palette */
 
@@ -705,8 +696,7 @@ print_grcomp_info(FILE *fp, int32 ri_id)
 {
     comp_info    c_info; /* Compression structure */
     comp_coder_t comp_type = COMP_CODE_NONE;
-    int32        comp_size = 0, orig_size = 0; /* compressed and original sizes */
-    intn         status = FAIL;                /* returned status from a called function */
+    intn         status    = FAIL; /* returned status from a called function */
 
     /* Get compression info */
     HDmemset(&c_info, 0, sizeof(c_info));
@@ -875,7 +865,6 @@ printGR_ASCII(int32 gr_id, dump_info_t *dumpgr_opts, int32 ndsets, /* number of 
         ri_id = FAIL; /* reset image id */
     }                 /* for ndsets  */
 
-    /* Normal cleanup */
     resetBuff((VOIDP *)&nt_desc);
 
     return ret_value; /* status of calls */
@@ -1154,9 +1143,6 @@ dgr(dump_info_t *dumpgr_opts, intn curr_arg, intn argc, char *argv[])
         fclose(fp);
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup  */
-    }
-    /* Normal cleanup */
     closeGR(&file_id, &gr_id, &gr_chosen);
 
     return ret_value;
@@ -1196,10 +1182,6 @@ do_dumpgr(intn curr_arg, intn argc, char *argv[], intn help)
         ERROR_GOTO_0("in do_dumpgr: dgr failed");
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     /* free the lists for given indices, ref#s, and names if
        they had been allocated */
     free_num_list(dumpgr_opts.by_index.num_list);

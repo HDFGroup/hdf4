@@ -76,8 +76,7 @@ DAcreate_array(intn start_size, /* IN: Initial array size */
                intn incr_mult   /* IN: multiple to create additional elements in */
 )
 {
-    CONSTR(FUNC, "DAcreate_array"); /* for HERROR */
-    dynarr_t *new_arr   = NULL;     /* ptr to the new dynarray */
+    dynarr_t *new_arr   = NULL; /* ptr to the new dynarray */
     dynarr_p  ret_value = NULL;
 
     HEclear();
@@ -104,10 +103,9 @@ done:
             if (new_arr->arr != NULL)
                 HDfree(new_arr->arr);
             HDfree(new_arr);
-        } /* end if */
-    }     /* end if */
+        }
+    }
 
-    /* Normal function cleanup */
     return ret_value;
 } /* end DAcreate_array() */
 
@@ -128,8 +126,7 @@ DAdestroy_array(dynarr_p arr,      /* IN: Array to destroy */
                 intn     free_elem /* IN: whether to free each element */
 )
 {
-    CONSTR(FUNC, "DAdestroy_array"); /* for HERROR */
-    dynarr_t *dest_arr;              /* ptr to the dynarray destroy*/
+    dynarr_t *dest_arr; /* ptr to the dynarray destroy*/
     intn      i;
     intn      ret_value = SUCCEED;
 
@@ -150,11 +147,6 @@ DAdestroy_array(dynarr_p arr,      /* IN: Array to destroy */
     HDfree(dest_arr);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end DAdestroy_array() */
 
@@ -173,8 +165,7 @@ intn
 DAsize_array(dynarr_p arr /* IN: Array to get size of */
 )
 {
-    CONSTR(FUNC, "DAsize_array"); /* for HERROR */
-    dynarr_t *arr_ptr;            /* ptr to the dynarray destroy*/
+    dynarr_t *arr_ptr; /* ptr to the dynarray destroy*/
     intn      ret_value = SUCCEED;
 
     HEclear();
@@ -185,11 +176,6 @@ DAsize_array(dynarr_p arr /* IN: Array to get size of */
     ret_value = arr_ptr->num_elems;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end DAsize_array() */
 
@@ -211,8 +197,7 @@ DAget_elem(dynarr_p arr_ptr, /* IN: Array to access */
            intn     elem     /* IN: Array element to retrieve */
 )
 {
-    CONSTR(FUNC, "DAget_elem"); /* for HERROR */
-    dynarr_t *arr;              /* ptr to the dynarray */
+    dynarr_t *arr; /* ptr to the dynarray */
     VOIDP     ret_value = NULL;
 
     HEclear();
@@ -226,11 +211,6 @@ DAget_elem(dynarr_p arr_ptr, /* IN: Array to access */
         ret_value = arr->arr[elem];
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end DAget_elem() */
 
@@ -254,8 +234,7 @@ DAset_elem(dynarr_p arr_ptr, /* IN: Array to access */
            VOIDP    obj      /* IN: Pointer to the object to store */
 )
 {
-    CONSTR(FUNC, "DAset_elem"); /* for HERROR */
-    dynarr_t *arr;              /* ptr to the dynarray */
+    dynarr_t *arr; /* ptr to the dynarray */
     intn      ret_value = SUCCEED;
 
     HEclear();
@@ -286,11 +265,6 @@ DAset_elem(dynarr_p arr_ptr, /* IN: Array to access */
     arr->arr[elem] = obj;
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end DAset_elem() */
 
@@ -312,8 +286,7 @@ DAdel_elem(dynarr_p arr_ptr, /* IN: Array to access */
            intn     elem     /* IN: Array element to retrieve */
 )
 {
-    CONSTR(FUNC, "DAdel_elem"); /* for HERROR */
-    dynarr_t *arr;              /* ptr to the dynarray */
+    dynarr_t *arr; /* ptr to the dynarray */
     VOIDP     ret_value = NULL;
 
     HEclear();
@@ -329,10 +302,5 @@ DAdel_elem(dynarr_p arr_ptr, /* IN: Array to access */
     } /* end else */
 
 done:
-    if (ret_value == NULL) { /* Error condition cleanup */
-
-    } /* end if */
-
-    /* Normal function cleanup */
     return ret_value;
 } /* end DAdel_elem() */

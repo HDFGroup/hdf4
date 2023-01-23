@@ -66,7 +66,6 @@ DFKnb1b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stri
     uint32 i;
     uint8 *source = (uint8 *)s;
     uint8 *dest   = (uint8 *)d;
-    CONSTR(FUNC, "DFKnb1b");
 
     HEclear();
 
@@ -116,7 +115,6 @@ DFKnb2b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stri
     uint8  buf[2]; /* Inplace processing buffer */
     uint8 *source = (uint8 *)s;
     uint8 *dest   = (uint8 *)d;
-    CONSTR(FUNC, "DFKnb2b");
 
     HEclear();
 
@@ -177,7 +175,6 @@ DFKnb4b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stri
     uint8  buf[4]; /* Inplace processing buffer */
     uint8 *source = (uint8 *)s;
     uint8 *dest   = (uint8 *)d;
-    CONSTR(FUNC, "DFKnb4b");
 
     HEclear();
 
@@ -244,8 +241,6 @@ DFKnb8b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stri
     uint8  buf[8]; /* Inplace processing buffer */
     uint8 *source = (uint8 *)s;
     uint8 *dest   = (uint8 *)d;
-
-    CONSTR(FUNC, "DFKnb8b");
 
     HEclear();
 

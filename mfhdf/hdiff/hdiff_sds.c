@@ -289,7 +289,6 @@ diff_sds(int32 sd1_id, int32 sd2_id, int32 ref1, int32 ref2, diff_opt_t *opt)
             /* stripmine info */
             int32 sm_size[H4_MAX_VAR_DIMS]; /*stripmine size */
             int32 sm_nbytes;                /*bytes per stripmine */
-            int32 sm_nelmts;                /*elements per stripmine*/
 
             /* hyperslab info */
             int32 hs_offset[H4_MAX_VAR_DIMS]; /*starting offset */
@@ -310,8 +309,6 @@ diff_sds(int32 sd1_id, int32 sd2_id, int32 ref1, int32 ref2, diff_opt_t *opt)
 
             sm_buf1 = HDmalloc((size_t)sm_nbytes);
             sm_buf2 = HDmalloc((size_t)sm_nbytes);
-
-            sm_nelmts = sm_nbytes / p_type_nbytes;
 
             /* the stripmine loop */
             HDmemset(hs_offset, 0, sizeof hs_offset);

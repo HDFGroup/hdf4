@@ -11,8 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef HDFI_H
-#define HDFI_H
+#ifndef H4_HDFI_H
+#define H4_HDFI_H
 
 /*--------------------------------------------------------------------------*/
 /*                              MT/NT constants                             */
@@ -315,11 +315,6 @@ typedef intptr_t hdf_pint_t;
 #endif
 
 /**************************************************************************
- *  Macros to work around ANSI C portability problems.
- **************************************************************************/
-#define CONSTR(v, s) static const char v[] = s
-
-/**************************************************************************
  *  Allocation functions defined differently
  **************************************************************************/
 #define HDmalloc(s)     malloc(s)
@@ -358,19 +353,6 @@ typedef intptr_t hdf_pint_t;
 #define HDmemcmp(dst, src, n) (memcmp((const void *)(dst), (const void *)(src), (size_t)(n)))
 
 /**************************************************************************
- *  Misc. functions
- **************************************************************************/
-#define HDstat(path, result) (stat(path, result))
-#define HDgetenv(s1)         (getenv(s1))
-#define HDputenv(s1)         (putenv(s1))
-#define HDltoa(v)            (ltoa(v))
-#if defined(__sun) && defined(__GNUC__)
-#define HDatexit(f) (0) /* we punt on the Sun using gcc */
-#else
-#define HDatexit(f) (atexit(f))
-#endif
-
-/**************************************************************************
  *  JPEG #define's - Look in the JPEG docs before changing - (Q)
  **************************************************************************/
 
@@ -384,4 +366,4 @@ typedef intptr_t hdf_pint_t;
  */
 #define JMEMSYS MEM_ANSI
 
-#endif /* HDFI_H */
+#endif /* H4_HDFI_H */

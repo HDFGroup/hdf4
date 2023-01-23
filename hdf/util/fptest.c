@@ -70,9 +70,8 @@ main(int argc, char *argv[])
     const char *fp32 = "FP32";
     const char *fp64 = "FP64";
 
-    /* shut compiler up */
-    argv = argv;
-    argc = argc;
+    (void)argv;
+    (void)argc;
 
     /*
      * initialize the row, column, and plane vectors

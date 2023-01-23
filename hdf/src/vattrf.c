@@ -154,7 +154,6 @@ FRETVAL(intf)
 nvsfcain(intf *vsid, intf *findex, intf *aindex, _fcd attrname, intf *dtype, intf *count, intf *size,
          intf *attrnamelen)
 {
-    CONSTR(FUNC, "vsfainf");
     intf ret = FAIL;
     /* temporary variables */
     int32 cfindex;

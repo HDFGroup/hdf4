@@ -11,8 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef REPACK_UTILS_H_
-#define REPACK_UTILS_H_
+#ifndef HREPACK_UTILS_H
+#define HREPACK_UTILS_H
 
 #include "hrepack.h"
 #include "hrepack_parse.h"
@@ -45,4 +45,4 @@ int set_szip(int        pixels_per_block, /*in */
 }
 #endif
 
-#endif /* REPACK_UTILS_H_ */
+#endif /* HREPACK_UTILS_H */

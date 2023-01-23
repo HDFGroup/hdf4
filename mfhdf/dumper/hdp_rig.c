@@ -21,6 +21,8 @@
 static void
 dumprig_usage(intn argc, char *argv[])
 {
+    (void)argc;
+
     printf("Usage:\n");
 #ifdef LATER
     printf("%s dumprig [-a|-i <indices>|-n <names>|-r <refs>] [-dhvc] [-o <filename> [-bx]] <filelist>\n",
@@ -584,7 +586,6 @@ done:
         if (rig_chosen != NULL)
             HDfree(rig_chosen);
     }
-    /* Normal cleanup */
 
     return ret_value;
 } /* drig */
@@ -617,10 +618,6 @@ do_dumprig(intn curr_arg, intn argc, char *argv[], intn help)
     }
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-    }
-    /* Normal cleanup */
-
     if (dumprig_opts.filter_num != NULL)
         HDfree(dumprig_opts.filter_num);
 

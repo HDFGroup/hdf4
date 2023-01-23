@@ -21,7 +21,6 @@
  * Inputs:  NONE
  * Returns: verbosity level on success, FAIL on failure
  * Users:   HDF Fortran programmers
- * Invokes: HDgetenv
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
@@ -29,7 +28,7 @@ ngetverb(void)
 {
     char *verb_str;
     intn  verb_level = FAIL;
-    verb_str         = HDgetenv(FOR_VERB);
+    verb_str         = getenv(FOR_VERB);
 
     if (verb_str != NULL)
         verb_level = (intn)HDstrtol(verb_str, NULL, 0); /* convert whole string using base 10 */
