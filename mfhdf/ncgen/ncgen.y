@@ -24,21 +24,21 @@ typedef struct Symbol {		/* symbol table entry */
 	} *YYSTYPE1;
 
 #define YYSTYPE YYSTYPE1
-YYSTYPE install(), lookup();
+YYSTYPE install(char *sname), lookup(char *sname);
 YYSTYPE symlist;		/* symbol table: linked list */
 
-void init_netcdf();		/* initializes netcdf counts (e.g. nvars) */
-void define_netcdf();		/* generates all define mode stuff */
-void load_netcdf();		/* generates variable puts */
-void close_netcdf();		/* generates close */
+void init_netcdf(void);		/* initializes netcdf counts (e.g. nvars) */
+void define_netcdf(char *netcdfname);		/* generates all define mode stuff */
+void load_netcdf(void *rec_start);		/* generates variable puts */
+void close_netcdf(void);		/* generates close */
 
-void derror();			/* varargs message emitter */
-void *emalloc(), *erealloc();	/* malloc that checks for memory exhausted */
-void clearout();		/* initializes symbol table */
-void nc_getfill();		/* to get fill value for various types */
-void nc_putfill();		/* to get fill value for various types */
-void nc_fill();		/* fills a generic array with a value */
-int  put_variable();            /* invoke nc calls or generate code to put */
+void derror(const char *fmt, ...);			/* varargs message emitter */
+void *emalloc(int size), *erealloc(void *ptr, int size);	/* malloc that checks for memory exhausted */
+void clearout(void);		/* initializes symbol table */
+void nc_getfill(nc_type, union generic *);		/* to get fill value for various types */
+void nc_putfill(nc_type, void *, union generic *);		/* to get fill value for various types */
+void nc_fill(nc_type, long, void *, union generic);		/* fills a generic array with a value */
+int  put_variable(void *);            /* invoke nc calls or generate code to put */
                                 /* variable values            */
 extern int derror_count;	/* counts errors in netcdf definition */
 extern int lineno;		/* line number for error messages */
@@ -698,8 +698,7 @@ yywrap()			/* returns 1 on EOF if no more input */
 
 /* Symbol table operations for ncgen tool */
 
-YYSTYPE lookup(sname)       /* find sname in symbol table (linear search) */
-char *sname;
+YYSTYPE lookup(char *sname)       /* find sname in symbol table (linear search) */
 {
     YYSTYPE sp;
     for (sp = symlist; sp != (YYSTYPE) 0; sp = sp -> next)
@@ -709,8 +708,7 @@ char *sname;
     return 0;			/* 0 ==> not found */
 }
 
-YYSTYPE install(sname)  /* install sname in symbol table */
-char *sname;
+YYSTYPE install(char *sname)  /* install sname in symbol table */
 {
     YYSTYPE sp;
 
