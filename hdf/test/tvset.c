@@ -3277,6 +3277,8 @@ test_VSofclass()
     VERIFY_VOID(refarray[0], 3, "VSofclass");
     VERIFY_VOID(refarray[1], 0, "VSofclass");
 
+    HDfree(refarray);
+
     /* Terminate access to the V interface and close the file. */
     status_n = Vend(fid);
     CHECK_VOID(status_n, FAIL, "Vend");
