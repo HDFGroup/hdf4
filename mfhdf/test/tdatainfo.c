@@ -1536,16 +1536,18 @@ test_extend_SDSs()
     { /* Verify the offsets and lengths returned by SDgetdatainfo */
         /* NOTE: if "datainfo_extend.hdf" is changed, the following
            initialization of the offsets must be updated accordingly. -BMR */
-        int32 check_offsets[3] = {2776, 3962, 4362};
+        int32 check_offsets[3] = {2776, 3706, 4106};
         int32 check_lengths[3] = {400, 400, 400};
         VERIFY(info_count, 3, "test_extend_SDSs: SDgetdatainfo");
         for (kk = 0; kk < info_count; kk++) {
-            if (sds_info.offsets[kk] != check_offsets[kk])
-                fprintf(stderr, "test_extend_SDSs: incorrect offset %d for block #%d\n", sds_info.offsets[kk],
-                        kk);
-            if (sds_info.lengths[kk] != check_lengths[kk])
-                fprintf(stderr, "test_extend_SDSs: incorrect length %d for block #%d\n", sds_info.lengths[kk],
-                        kk);
+            if (sds_info.offsets[kk] != check_offsets[kk]) {
+                fprintf(stderr, "\ntest_extend_SDSs: incorrect offset %d for block #%d\n", sds_info.offsets[kk], kk);
+                num_errs++;
+            }
+            if (sds_info.lengths[kk] != check_lengths[kk]) {
+                fprintf(stderr, "\ntest_extend_SDSs: incorrect length %d for block #%d\n", sds_info.lengths[kk], kk);
+                num_errs++;
+            }
         }
     } /* done verifying offsets and lengths */
 
@@ -1616,7 +1618,10 @@ test_datainfo()
     /* Test extendable SDSs */
     num_errs = num_errs + test_extend_SDSs();
 
-    if (num_errs == 0)
+    if (num_errs == 0) {
         PASSED();
+    }
+    else
+        H4_FAILED();
     return num_errs;
 }
