@@ -40,7 +40,7 @@ test_1(void)
     b = bv_new(-1);
     CHECK_VOID(b, NULL, "bv_new");
     size = bv_size(b);
-    MESSAGE(8, printf("Bit-vector size=%"PRId32"\n", size););
+    MESSAGE(8, printf("Bit-vector size=%" PRId32 "\n", size););
     VERIFY_VOID(size, BV_DEFAULT_BITS, "bv_size");
     ret = bv_delete(b);
     CHECK_VOID(ret, FAIL, "bv_delete");
@@ -50,7 +50,7 @@ test_1(void)
     b = bv_new(80000);
     CHECK_VOID(b, NULL, "bv_new");
     size = bv_size(b);
-    MESSAGE(8, printf("Bit-vector size=%"PRId32"\n", size););
+    MESSAGE(8, printf("Bit-vector size=%" PRId32 "\n", size););
     VERIFY_VOID(size, 80000, "bv_size");
     ret = bv_delete(b);
     CHECK_VOID(ret, FAIL, "bv_delete");
@@ -71,7 +71,7 @@ test_2(void)
     b = bv_new(-1);
     CHECK_VOID(b, NULL, "bv_new");
     size = bv_size(b);
-    MESSAGE(8, printf("Bit-vector size=%"PRId32"\n", size););
+    MESSAGE(8, printf("Bit-vector size=%" PRId32 "\n", size););
     VERIFY_VOID(size, BV_DEFAULT_BITS, "bv_size");
 
     /* Check setting bits */
@@ -102,7 +102,7 @@ test_2(void)
     b = bv_new(1000);
     CHECK_VOID(b, NULL, "bv_new");
     size = bv_size(b);
-    MESSAGE(8, printf("Bit-vector size=%"PRId32"\n", size););
+    MESSAGE(8, printf("Bit-vector size=%" PRId32 "\n", size););
     VERIFY_VOID(size, 1000, "bv_size");
 
     /* Check setting bits */
@@ -147,7 +147,7 @@ test_3(void)
     b = bv_new(-1);
     CHECK_VOID(b, NULL, "bv_new");
     size = bv_size(b);
-    MESSAGE(8, printf("Bit-vector size=%"PRId32"\n", size););
+    MESSAGE(8, printf("Bit-vector size=%" PRId32 "\n", size););
     VERIFY_VOID(size, BV_DEFAULT_BITS, "bv_size");
 
     /* Check setting bits */
@@ -180,28 +180,28 @@ test_3(void)
     bit_num = bv_find_next_zero(b);
     CHECK_VOID(bit_num, FAIL, "bv_find_next_zero");
     VERIFY_VOID(bit_num, 0, "bv_find_next_zero");
-    MESSAGE(8, printf("First 0 found at: %"PRId32"\n", bit_num););
+    MESSAGE(8, printf("First 0 found at: %" PRId32 "\n", bit_num););
     ret = bv_set(b, bit_num, BV_TRUE);
     CHECK_VOID(ret, FAIL, "bv_set");
 
     bit_num = bv_find_next_zero(b);
     CHECK_VOID(bit_num, FAIL, "bv_find_next_zero");
     VERIFY_VOID(bit_num, 1, "bv_find_next_zero");
-    MESSAGE(8, printf("Second 0 found at: %"PRId32"\n", bit_num););
+    MESSAGE(8, printf("Second 0 found at: %" PRId32 "\n", bit_num););
     ret = bv_set(b, bit_num, BV_TRUE);
     CHECK_VOID(ret, FAIL, "bv_set");
 
     bit_num = bv_find_next_zero(b);
     CHECK_VOID(bit_num, FAIL, "bv_find_next_zero");
     VERIFY_VOID(bit_num, 2, "bv_find_next_zero");
-    MESSAGE(8, printf("Third 0 found at: %"PRId32"\n", bit_num););
+    MESSAGE(8, printf("Third 0 found at: %" PRId32 "\n", bit_num););
     ret = bv_set(b, bit_num, BV_TRUE);
     CHECK_VOID(ret, FAIL, "bv_set");
 
     bit_num = bv_find_next_zero(b);
     CHECK_VOID(bit_num, FAIL, "bv_find_next_zero");
     VERIFY_VOID(bit_num, 4, "bv_find_next_zero");
-    MESSAGE(8, printf("Fourth 0 found at: %"PRId32"\n", bit_num););
+    MESSAGE(8, printf("Fourth 0 found at: %" PRId32 "\n", bit_num););
     ret = bv_set(b, bit_num, BV_TRUE);
     CHECK_VOID(ret, FAIL, "bv_set");
 
@@ -225,7 +225,7 @@ test_4(void)
     b = bv_new(16);
     CHECK_VOID(b, NULL, "bv_new");
     size = bv_size(b);
-    MESSAGE(8, printf("Bit-vector size=%"PRId32"\n", size););
+    MESSAGE(8, printf("Bit-vector size=%" PRId32 "\n", size););
     VERIFY_VOID(size, 16, "bv_size");
 
     /* Set all the bits to 1 */
@@ -250,7 +250,7 @@ test_4(void)
     bit_num = bv_find_next_zero(b);
     CHECK_VOID(bit_num, FAIL, "bv_find_next_zero");
     VERIFY_VOID(bit_num, 13, "bv_find_next_zero");
-    MESSAGE(8, printf("Remaining 0 found at: %"PRId32"\n", bit_num););
+    MESSAGE(8, printf("Remaining 0 found at: %" PRId32 "\n", bit_num););
 
     /* Reset the zero bits */
     ret = bv_set(b, 13, BV_FALSE);
@@ -266,7 +266,7 @@ test_4(void)
     bit_num = bv_find_next_zero(b);
     CHECK_VOID(bit_num, FAIL, "bv_find_next_zero");
     VERIFY_VOID(bit_num, 5, "bv_find_next_zero");
-    MESSAGE(8, printf("Remaining 0 found at: %"PRId32"\n", bit_num););
+    MESSAGE(8, printf("Remaining 0 found at: %" PRId32 "\n", bit_num););
 
     /* Now set remaining bit to 1 */
     ret = bv_set(b, 5, BV_TRUE);
@@ -276,7 +276,7 @@ test_4(void)
     bit_num = bv_find_next_zero(b);
     CHECK_VOID(bit_num, FAIL, "bv_find_next_zero");
     VERIFY_VOID(bit_num, 16, "bv_find_next_zero");
-    MESSAGE(8, printf("Remaining 0 found at: %"PRId32"\n", bit_num););
+    MESSAGE(8, printf("Remaining 0 found at: %" PRId32 "\n", bit_num););
 
     ret = bv_delete(b);
     CHECK_VOID(ret, FAIL, "bv_delete");
