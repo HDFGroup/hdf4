@@ -18,7 +18,7 @@
  *    test_dim_scales - tests basic dimension scale operations
  *    test_dim_strs   - tests SDsetdimstrs and SDgetdimstrs
  *
-*********************************************************************/
+ *********************************************************************/
 
 #include "mfhdf.h"
 

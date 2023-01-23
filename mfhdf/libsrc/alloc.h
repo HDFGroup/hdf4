@@ -14,38 +14,15 @@
 #ifndef MFH4_ALLOC_H
 #define MFH4_ALLOC_H
 
-#ifndef NO_STDLIB
 #include <stdlib.h>
-#else
-extern char *malloc();
-extern char *realloc();
-#ifndef NULL
-#define NULL 0
-#endif /* !NULL */
-#endif /* !NO_STDLIB */
 
 #ifdef HDF
 #define Alloc(theNum, theType) (theType *)HDmalloc(sizeof(theType) * (theNum))
+#define Free(s)                HDfree(s)
 #else
 #define Alloc(theNum, theType) (theType *)malloc(sizeof(theType) * (theNum))
+#define Free(s)                free(s)
 #endif
-
-#ifndef NO_STDLIB
-#ifdef HDF
-#define Free(ptr) HDfree((VOIDP)ptr)
-#else
-#define Free(ptr)   free(ptr)
-#define HDfree(ptr) free(ptr)
-#endif
-#else
-/* old style free */
-#ifdef HDF
-#define Free(ptr) (void)HDfree((char *)ptr)
-#else
-#define Free(ptr)   (void)free((char *)ptr)
-#define HDfree(ptr) (void)free((char *)ptr)
-#endif
-#endif /* !NO_STDLIB */
 
 /* We need to define these to standard ones when HDF is not defined */
 #ifndef HDF
@@ -53,7 +30,8 @@ extern char *realloc();
 #define HDmemset(dst, c, n)     memset(dst, c, n)
 #define HDrealloc(p, s)         realloc(p, s)
 #define HDmalloc(s)             malloc(s)
-#endif /* HDF */
+#define HDfree(s)               free(s)
+#endif
 
 #define ARRAYLEN(arr) (sizeof(arr) / sizeof(arr[0]))
 
