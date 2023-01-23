@@ -17,14 +17,15 @@
    *** Also pre-defined attribute names are contained in this file.
    + */
 
-#ifndef _HLIMITS_H
-#define _HLIMITS_H
+#ifndef H4_HLIMITS_H
+#define H4_HLIMITS_H
 
 #if defined H4_HAVE_WIN32_API
 #define HDsetvbuf(F, S, M, Z) (((Z) > 1) ? setvbuf(F, S, M, Z) : setvbuf(F, S, M, 2))
 #else
 #define HDsetvbuf(F, S, M, Z) setvbuf(F, S, M, Z)
 #endif
+
 /**************************************************************************
  *  Generally useful macro definitions
  *   (These are copied from hdfi.h and should remain included in both files
@@ -204,8 +205,6 @@ changing the class name variable declaration much easier - BMR 4/1/02*/
 /* ----------------- Constants for MFGR interface --------------------- */
 #define H4_MAX_GR_NAME 256 /* max length of a name */
 
-#endif /* _HLIMITS_H */
-
 /* -----------  Reserved classes and names for vdatas/vgroups -----*/
 
 /* The names of the Vgroups created by the GR interface, from mfgr.h */
@@ -289,3 +288,6 @@ char *INTERNAL_HDF_VDS[] = {DIM_VALS, DIM_VALS01, _HDF_ATTRIBUTE, _HDF_SDSVAR,
 #define _HDF_ValidMin       "valid_min"
 #define _HDF_Remarks        "remarks"    /* annotation, by DFAN */
 #define _HDF_AnnoLabel      "anno_label" /* annotation label, by DFAN */
+
+#endif /* H4_HLIMITS_H */
+

@@ -11,8 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef REPACK_OPTTABLE_H_
-#define REPACK_OPTTABLE_H_
+#ifndef HREPACK_OPTTABLE_H
+#define HREPACK_OPTTABLE_H
 
 #include "hdf.h"
 #include "mfhdf.h"
@@ -34,4 +34,4 @@ pack_info_t *options_get_object(char *path, options_table_t *table);
 }
 #endif
 
-#endif /* REPACK_OPTTABLE_H_ */
+#endif /* HREPACK_OPTTABLE_H */

@@ -21,8 +21,8 @@
  * Constant definitions:
  *---------------------------------------------------------------------------*/
 
-#ifndef __ATOM_H
-#define __ATOM_H
+#ifndef H4_ATOM_H
+#define H4_ATOM_H
 
 #include "H4api_adpt.h"
 
@@ -292,4 +292,4 @@ HDFLIBAPI intn HAshutdown(void);
 }
 #endif
 
-#endif /* __ATOM_H */
+#endif /* H4_ATOM_H */

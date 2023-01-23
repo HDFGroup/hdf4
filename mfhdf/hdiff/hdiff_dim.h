@@ -10,8 +10,8 @@
  *                                                                          *
  ****************************************************************************/
 
-#ifndef HDIFF_DIM_H_
-#define HDIFF_DIM_H_
+#ifndef HDIFF_DIM_H
+#define HDIFF_DIM_H
 
 #include "hdiff.h"
 
@@ -43,4 +43,4 @@ uint32 diff_match_dim(int32 sd1_id, int32 sd2_id, diff_dim_table_t *td1_1, diff_
 }
 #endif
 
-#endif /* HDIFF_DIM_H_ */
+#endif /* HDIFF_DIM_H */

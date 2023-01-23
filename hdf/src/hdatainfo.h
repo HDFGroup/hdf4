@@ -11,8 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef _HDATAINFO_H
-#define _HDATAINFO_H
+#ifndef H4_HDATAINFO_H
+#define H4_HDATAINFO_H
 
 #include "H4api_adpt.h"
 
@@ -52,4 +52,4 @@ HDFLIBAPI intn GRgetpalinfo(int32 gr_id, uintn pal_count, hdf_ddinfo_t *palinfo_
 #ifdef __cplusplus
 }
 #endif
-#endif /* _HDATAINFO */
+#endif /* H4_HDATAINFO */

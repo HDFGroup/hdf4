@@ -3,6 +3,9 @@
  *   See netcdf/COPYRIGHT file for copying and redistribution conditions.
  *********************************************************************/
 
+#ifndef H4NC_NCGEN_H
+#define H4NC_NCGEN_H
+
 #include "local_nc.h"
 #include "generic.h" /* defines union generic */
 
@@ -51,3 +54,5 @@ extern struct atts {
     int     len;
     void   *val;
 } atts[H4_MAX_NC_ATTRS]; /* should be a malloc'ed list, not an array */
+
+#endif /* H4NC_NCGEN_H */

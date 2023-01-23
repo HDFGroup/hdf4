@@ -14,10 +14,11 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef _LOCAL_NC_
-#define _LOCAL_NC_
+#ifndef MFH4_LOCAL_NC_H
+#define MFH4_LOCAL_NC_H
 
 #include "H4api_adpt.h"
+
 /*
  *    netcdf library 'private' data structures, objects and interfaces
  */
@@ -602,4 +603,4 @@ HDFLIBAPI intn HDisnetcdf64(const char *filename);
 }
 #endif
 
-#endif /* _LOCAL_NC_ */
+#endif /* MFH4_LOCAL_NC_H */

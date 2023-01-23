@@ -21,8 +21,8 @@
  * Constant definitions:
  *---------------------------------------------------------------------------*/
 
-#ifndef __DYNARRAY_H
-#define __DYNARRAY_H
+#ifndef H4_DYNARRAY_H
+#define H4_DYNARRAY_H
 
 #include "hdf.h"
 
@@ -148,4 +148,4 @@ VOIDP DAdel_elem(dynarr_p arr_ptr, /* IN: Array to access */
 }
 #endif
 
-#endif /* __DYNARRAY_H */
+#endif /* H4_DYNARRAY_H */

@@ -3,6 +3,9 @@
  *   See netcdf/COPYRIGHT file for copying and redistribution conditions.
  *********************************************************************/
 
+#ifndef NCTEST_VAL_H
+#define NCTEST_VAL_H
+
 #undef PROTO
 #ifndef NO_HAVE_PROTOTYPES
 #define PROTO(x) x
@@ -28,6 +31,9 @@ extern int val_cmp PROTO((nc_type, long, void *, void *));
 
 /* print typed value block with values of specified type */
 extern void val_out PROTO((nc_type, long, void *));
+
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* NCTEST_VAL_H */

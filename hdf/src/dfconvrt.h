@@ -15,8 +15,8 @@
  * calls by making DFconvert into a macro.
  * Peter Webb, Oct 11, 1989
  */
-#ifndef DFCONVRT_H
-#define DFCONVRT_H
+#ifndef H4_DFCONVRT_H
+#define H4_DFCONVRT_H
 
 #ifndef FUNC_CONV
 /* This is the default */
@@ -103,4 +103,4 @@
     }
 #endif /* !FUNC_CONV */
 
-#endif /* !DFCONVRT_H */
+#endif /* H4_DFCONVRT_H */

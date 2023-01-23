@@ -21,8 +21,8 @@
  * Constant definitions:
  *---------------------------------------------------------------------------*/
 
-#ifndef __LINKLIST_H
-#define __LINKLIST_H
+#ifndef H4_LINKLIST_H
+#define H4_LINKLIST_H
 
 #include "hdf.h"
 
@@ -202,4 +202,4 @@ intn HULshutdown(void);
 }
 #endif
 
-#endif /* __LINKLIST_H */
+#endif /* H4_LINKLIST_H */

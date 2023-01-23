@@ -11,8 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef _H_PROTO
-#define _H_PROTO
+#ifndef H4_H_PROTO
+#define H4_H_PROTO
 
 #include "H4api_adpt.h"
 
@@ -1544,4 +1544,4 @@ HDFLIBAPI int32 VSwrite(int32 vkey, const uint8 buf[], int32 nelt, int32 interla
 }
 #endif
 
-#endif /* _H_PROTO */
+#endif /* H4_H_PROTO */

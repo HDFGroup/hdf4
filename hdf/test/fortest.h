@@ -11,8 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef __FORTEST_H
-#define __FORTEST_H
+#ifndef H4_FORTEST_H
+#define H4_FORTEST_H
 
 #include "H4api_adpt.h"
 #include "hdf.h"
@@ -30,4 +30,4 @@ HDFFCLIBAPI FRETVAL(intf) ngetverb(void);
 HDFFCLIBAPI FRETVAL(intf) nhisystem(_fcd cmd, intf *cmdlen);
 HDFFCLIBAPI FRETVAL(intf) nfixnamec(_fcd name, intf *name_len, _fcd name_out, intf *name_len_out);
 
-#endif /* __FORTEST_H */
+#endif /* H4_FORTEST_H */

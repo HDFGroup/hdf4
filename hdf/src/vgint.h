@@ -25,8 +25,8 @@
  *
  ******************************************************************************/
 
-#ifndef _VGINT_H
-#define _VGINT_H
+#ifndef H4_VGINT_H
+#define H4_VGINT_H
 
 #include "H4api_adpt.h"
 
@@ -273,4 +273,4 @@ HDFLIBAPI void trimendblanks(char *ss);
 }
 #endif
 
-#endif /* _VGINT_H */
+#endif /* H4_VGINT_H */

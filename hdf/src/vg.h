@@ -25,8 +25,8 @@
  *
  ******************************************************************************/
 
-#ifndef _VG_H
-#define _VG_H
+#ifndef H4_VG_H
+#define H4_VG_H
 
 /* --------------  H D F    V S E T   tags  ---------------------------- */
 
@@ -70,4 +70,4 @@
 #include "vgint.h" /* Library VSet information header */
 #endif             /* VSET_INTERFACE */
 
-#endif /* _VG_H */
+#endif /* H4_VG_H */

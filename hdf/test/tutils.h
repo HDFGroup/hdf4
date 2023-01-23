@@ -11,8 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef _TUTILS_H
-#define _TUTILS_H
+#ifndef H4_TUTILS_H
+#define H4_TUTILS_H
 
 /* Define these for use in all the tests */
 #ifndef TESTMASTER
@@ -224,4 +224,5 @@ intn make_datafilename(char *basename, char *testfile, unsigned int size);
 /* default is Unix */
 #define CLEAN_CMD "rm -f *.hdf"
 #endif /* _WIN32  */
-#endif /* _TUTILS_H */
+
+#endif /* H4_TUTILS_H */

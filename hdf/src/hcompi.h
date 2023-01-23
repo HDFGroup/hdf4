@@ -21,8 +21,8 @@
  * Constant definitions:
  *---------------------------------------------------------------------------*/
 
-#ifndef __HCOMPI_H
-#define __HCOMPI_H
+#ifndef H4_HCOMPI_H
+#define H4_HCOMPI_H
 
 #include "hfile.h"
 
@@ -95,4 +95,4 @@ typedef struct compinfo_tag {
     comp_state_cache_t sinfo;    /* state information for caching */
 } compinfo_t;
 
-#endif /* __HCOMPI_H */
+#endif /* H4_HCOMPI_H */

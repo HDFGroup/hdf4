@@ -11,8 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef _ALLOC_H_
-#define _ALLOC_H_
+#ifndef MFH4_ALLOC_H
+#define MFH4_ALLOC_H
 
 #ifndef NO_STDLIB
 #include <stdlib.h>
@@ -57,4 +57,4 @@ extern char *realloc();
 
 #define ARRAYLEN(arr) (sizeof(arr) / sizeof(arr[0]))
 
-#endif /* !_ALLOC_H_ */
+#endif /* MFH4_ALLOC_H */

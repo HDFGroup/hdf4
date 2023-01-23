@@ -20,8 +20,8 @@
  * Constant definitions: lots...
  *---------------------------------------------------------------------------*/
 
-#ifndef _HCONV_H
-#define _HCONV_H
+#ifndef H4_HCONV_H
+#define H4_HCONV_H
 
 /* This looks redundant because previously, VMS platform would undefine DUFF. */
 /* Don't know why. -AKC 2014/1/18 */
@@ -153,4 +153,4 @@ union float_uint_uchar {
     unsigned char c[4];
 };
 
-#endif /* _HCONV_H */
+#endif /* H4_HCONV_H */

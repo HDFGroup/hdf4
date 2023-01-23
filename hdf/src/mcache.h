@@ -48,8 +48,8 @@
  *    -georgev
  */
 
-#ifndef _MCACHE_H
-#define _MCACHE_H
+#ifndef H4_MCACHE_H
+#define H4_MCACHE_H
 
 /* Required include */
 #include "hqueue.h" /* Circular queue functions(Macros) */
@@ -192,4 +192,4 @@ HDFLIBAPI VOID mcache_stat(MCACHE *mp /* IN: MCACHE cookie */);
 }
 #endif
 
-#endif /* _MCACHE_H */
+#endif /* H4_MCACHE_H */

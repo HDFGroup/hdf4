@@ -11,8 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef REPACK_LSTTABLE_H_
-#define REPACK_LSTTABLE_H_
+#ifndef HREPACK_LSTTABLE_H
+#define HREPACK_LSTTABLE_H
 
 #include "hdf.h"
 #include "mfhdf.h"
@@ -68,4 +68,4 @@ void        list_table_print(list_table_t *list_tbl);
 }
 #endif
 
-#endif /* REPACK_LSTTABLE_H_ */
+#endif /* HREPACK_LSTTABLE_H */

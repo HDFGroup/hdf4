@@ -11,8 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef REPACK_PARSE_H_
-#define REPACK_PARSE_H_
+#ifndef HREPACK_PARSE_H
+#define HREPACK_PARSE_H
 
 #include "hdf.h"
 #include "mfhdf.h"
@@ -37,4 +37,4 @@ obj_list_t *parse_chunk(const char *str, int *n_objs, int32 *chunk_lengths, int 
 }
 #endif
 
-#endif /* REPACK_PARSE_H_ */
+#endif /* HREPACK_PARSE_H */

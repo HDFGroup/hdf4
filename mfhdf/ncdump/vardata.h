@@ -3,6 +3,9 @@
  *   See netcdf/COPYRIGHT file for copying and redistribution conditions.
  *********************************************************************/
 
+#ifndef NCDUMP_VARDATA_H
+#define NCDUMP_VARDATA_H
+
 extern char *progname; /* for error messages */
 
 #undef PROTO
@@ -27,3 +30,5 @@ extern int vardata PROTO((struct ncvar *, /* variable */
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* NCDUMP_VARDATA_H */

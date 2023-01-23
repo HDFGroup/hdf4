@@ -21,8 +21,8 @@
  * Constant definitions:
  *---------------------------------------------------------------------------*/
 
-#ifndef __BITVECT_H
-#define __BITVECT_H
+#ifndef H4_BITVECT_H
+#define H4_BITVECT_H
 
 #include "H4api_adpt.h"
 
@@ -382,4 +382,4 @@ HDFLIBAPI int32 bv_find(bv_ptr b, int32 last_find, bv_bool value);
 }
 #endif
 
-#endif /* __BITVECT_H */
+#endif /* H4_BITVECT_H */

@@ -22,8 +22,8 @@
  * Constant definitions:
  *---------------------------------------------------------------------------*/
 
-#ifndef __CSZIP_H
-#define __CSZIP_H
+#ifndef H4_CSZIP_H
+#define H4_CSZIP_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -98,4 +98,4 @@ funclist_t cszip_funcs = {/* functions to perform szip encoding */
                           NULL};
 #endif
 
-#endif /* __CSZIP_H */
+#endif /* H4_CSZIP_H */

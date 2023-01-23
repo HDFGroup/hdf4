@@ -4,8 +4,8 @@
  *   /hdf/src/master/mfhdf/ncdump/ncdump.h,v 1.1 1993/04/21 21:51:19 chouck Exp
  *********************************************************************/
 
-#ifndef HDIFF_H__
-#define HDIFF_H__
+#ifndef HDIFF_H
+#define HDIFF_H
 
 #include "hdf.h"
 #include "mfhdf.h"
@@ -133,4 +133,4 @@ uint32 diff_gr(int32 gr1_id, int32 gr2_id, int32 ref1, int32 ref2, diff_opt_t *o
 
 uint32 diff_sds(int32 sd1_id, int32 sd2_id, int32 ref1, int32 ref2, diff_opt_t *opt);
 
-#endif
+#endif /* HDIFF_H */

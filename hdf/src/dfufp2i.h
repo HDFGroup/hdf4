@@ -11,8 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef DFUFP2IM_H
-#define DFUFP2IM_H
+#ifndef H4_DFUFP2IM_H
+#define H4_DFUFP2IM_H
 
 #include "H4api_adpt.h"
 
@@ -64,4 +64,4 @@ HDFLIBAPI int DFUfptoimage(int32 hdim, int32 vdim, float32 max, float32 min, flo
 }
 #endif
 
-#endif /* DFUFP2IM_H */
+#endif /* H4_DFUFP2IM_H */

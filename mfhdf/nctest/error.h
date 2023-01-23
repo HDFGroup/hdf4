@@ -3,6 +3,9 @@
  *   See netcdf/COPYRIGHT file for copying and redistribution conditions.
  *********************************************************************/
 
+#ifndef NCTEST_ERROR_H
+#define NCTEST_ERROR_H
+
 #undef PROTO
 #ifndef NO_HAVE_PROTOTYPES
 #define PROTO(x) x
@@ -46,3 +49,5 @@ extern void on_errs PROTO((void));
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* NCTEST_ERROR_H */

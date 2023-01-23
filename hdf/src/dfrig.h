@@ -20,8 +20,8 @@
  * Remarks: This is included with user programs which use RIG
  *---------------------------------------------------------------------------*/
 
-#ifndef DFRIG
-#define DFRIG
+#ifndef H4_DFRIG_h
+#define H4_DFRIG_H
 
 /* description record: used to describe image data, palette data etc. */
 typedef struct {
@@ -62,4 +62,4 @@ typedef struct R8dim {
     uint16 yd;
 } R8dim;
 
-#endif /*DFRIG */
+#endif /* H4_DFRIG_H */

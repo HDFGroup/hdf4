@@ -3,6 +3,9 @@
  *   See netcdf/COPYRIGHT file for copying and redistribution conditions.
  *********************************************************************/
 
+#ifndef NCTEST_TESTS_H
+#define NCTEST_TESTS_H
+
 #undef PROTO
 #ifndef NO_HAVE_PROTOTYPES
 #define PROTO(x) x
@@ -55,3 +58,5 @@ extern int test_slabs           PROTO((int));
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* NCTEST_TESTS_H */

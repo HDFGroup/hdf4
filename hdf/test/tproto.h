@@ -11,8 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef _TPROTO_H
-#define _TPROTO_H
+#ifndef H4_TPROTO_H
+#define H4_TPROTO_H
 
 #include "hdf.h"
 #include "tutils.h"
@@ -56,4 +56,4 @@ void test_datainfo(void);
 void test_attdatainfo(void);
 void test_mgr_szip(void);
 
-#endif /* _TPROTO_H */
+#endif /* H4_TPROTO_H */
