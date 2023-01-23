@@ -18,10 +18,10 @@
 
 #ifdef HDF
 #define Alloc(theNum, theType) (theType *)HDmalloc(sizeof(theType) * (theNum))
-#define Free(s) HDfree(s)
+#define Free(s)                HDfree(s)
 #else
 #define Alloc(theNum, theType) (theType *)malloc(sizeof(theType) * (theNum))
-#define Free(s) free(s)
+#define Free(s)                free(s)
 #endif
 
 /* We need to define these to standard ones when HDF is not defined */

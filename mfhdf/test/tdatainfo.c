@@ -1541,11 +1541,13 @@ test_extend_SDSs()
         VERIFY(info_count, 3, "test_extend_SDSs: SDgetdatainfo");
         for (kk = 0; kk < info_count; kk++) {
             if (sds_info.offsets[kk] != check_offsets[kk]) {
-                fprintf(stderr, "\ntest_extend_SDSs: incorrect offset %d for block #%d\n", sds_info.offsets[kk], kk);
+                fprintf(stderr, "\ntest_extend_SDSs: incorrect offset %d for block #%d\n",
+                        sds_info.offsets[kk], kk);
                 num_errs++;
             }
             if (sds_info.lengths[kk] != check_lengths[kk]) {
-                fprintf(stderr, "\ntest_extend_SDSs: incorrect length %d for block #%d\n", sds_info.lengths[kk], kk);
+                fprintf(stderr, "\ntest_extend_SDSs: incorrect length %d for block #%d\n",
+                        sds_info.lengths[kk], kk);
                 num_errs++;
             }
         }
