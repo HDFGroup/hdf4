@@ -98,16 +98,16 @@ typedef struct __rpc_xdr {
     enum xdr_op x_op; /* operation; fast additional param */
     struct xdr_ops {
         /* Get/put long from underlying stream */
-        bool_t (*x_getlong)(struct __rpc_xdr *, int32_t *);
-        bool_t (*x_putlong)(struct __rpc_xdr *, int32_t *);
+        bool_t (*x_getlong)(struct __rpc_xdr *, long *);
+        bool_t (*x_putlong)(struct __rpc_xdr *, long *);
         /* Get/put bytes. */
-        bool_t (*x_getbytes)(struct __rpc_xdr *, void *, size_t);
-        bool_t (*x_putbytes)(struct __rpc_xdr *, void *, size_t);
+        bool_t (*x_getbytes)(struct __rpc_xdr *, void *, u_int);
+        bool_t (*x_putbytes)(struct __rpc_xdr *, void *, u_int);
         /* Get or seek within the stream (offsets from beginning of stream). */
         u_int (*x_getpostn)(struct __rpc_xdr *);
-        bool_t (*x_setpostn)(struct __rpc_xdr *, off_t);
+        bool_t (*x_setpostn)(struct __rpc_xdr *, u_int);
         /* Returns a pointer to the next n bytes in the stream. */
-        int32_t *(*x_inline)(struct __rpc_xdr *, size_t);
+        int32_t *(*x_inline)(struct __rpc_xdr *, u_int);
         /* Free the stream. */
         void (*x_destroy)(struct __rpc_xdr *);
         /* Control */
