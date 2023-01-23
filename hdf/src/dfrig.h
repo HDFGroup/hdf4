@@ -20,7 +20,7 @@
  * Remarks: This is included with user programs which use RIG
  *---------------------------------------------------------------------------*/
 
-#ifndef H4_DFRIG_h
+#ifndef H4_DFRIG_H
 #define H4_DFRIG_H
 
 /* description record: used to describe image data, palette data etc. */
