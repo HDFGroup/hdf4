@@ -124,7 +124,6 @@ main(int argv, char *argc[])
         HDfree(GifMemoryStruct.GifCommentExtension);
     }
 
-
     if (GifMemoryStruct.GifPlainTextExtension != NULL) {
         int32 TextCount = (int32)(GifMemoryStruct.GifHeader)->PlainTextCount;
         for (i = 0; i < TextCount; i++) {
