@@ -129,4 +129,3 @@ int verify_info_data(int32 sds_id, int32 expected_dimsize, int16 *result);
 int32 get_SDSbyName(int32 sd_id, char *sds_name);
 
 #endif /* HDFTEST_H */
-

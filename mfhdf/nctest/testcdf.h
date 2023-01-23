@@ -67,4 +67,3 @@ extern struct netcdf test; /*
                             */
 
 #endif /* NCTEST_TESTCDF_H */
-

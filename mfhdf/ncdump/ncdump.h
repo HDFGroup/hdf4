@@ -83,4 +83,3 @@ struct fspec {             /* specification for how to format dump */
 };
 
 #endif /* NCDUMP_H */
-

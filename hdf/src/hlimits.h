@@ -290,4 +290,3 @@ char *INTERNAL_HDF_VDS[] = {DIM_VALS, DIM_VALS01, _HDF_ATTRIBUTE, _HDF_SDSVAR,
 #define _HDF_AnnoLabel      "anno_label" /* annotation label, by DFAN */
 
 #endif /* H4_HLIMITS_H */
-
