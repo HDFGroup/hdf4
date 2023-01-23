@@ -46,9 +46,10 @@
  *****************************************************************/
 
 #include <stdio.h>
-#include "gif.h"
 #include <stdlib.h>
 #include <string.h>
+
+#include "gif.h"
 
 typedef BYTE     byte;
 typedef long int count_int;
@@ -75,8 +76,6 @@ static int  curx, cury;
 static long CountDown;
 static int  Interlace;
 
-#ifdef __STDC__
-static void putword(int, FILE *);
 static void compress(int, FILE *, byte *, int);
 static void output(int);
 static void cl_block(void);
@@ -84,19 +83,8 @@ static void cl_hash(count_int);
 static void char_init(void);
 static void char_out(int);
 static void flush_char(void);
-#else
-static void putword(), compress(), output(), cl_block(), cl_hash();
-static void char_init(), char_out(), flush_char();
-#endif
 
 static byte pc2nc[256], r1[256], g1[256], b1[256];
-
-void
-xvbzero(char *s, int len)
-{
-    for (; len > 0; len--)
-        *s++ = 0;
-}
 
 /*************************************************************/
 int
@@ -140,17 +128,6 @@ hdfWriteGIF(FILE *fp, byte *pic, int ptype, int w, int h, byte *rmap, byte *gmap
     if (ferror(fp))
         return -1;
     return (0);
-}
-
-/******************************/
-static void
-putword(int w, FILE *fp)
-{
-    /* writes a 16-bit integer in GIF order (LSB first) */
-
-    fputc(w & 0xff, fp);
-
-    fputc((w >> 8) & 0xff, fp);
 }
 
 /***********************************************************************/
@@ -244,8 +221,8 @@ compress(int init_bits, FILE *outfile, byte *data, int len)
     /* initialize 'compress' globals */
     maxbits    = XV_BITS;
     maxmaxcode = 1 << XV_BITS;
-    xvbzero((char *)htab, sizeof(htab));
-    xvbzero((char *)codetab, sizeof(codetab));
+    memset(htab, 0, sizeof(htab));
+    memset(codetab, 0, sizeof(codetab));
     hsize     = HSIZE;
     free_ent  = 0;
     clear_flg = 0;

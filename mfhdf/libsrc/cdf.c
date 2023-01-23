@@ -2859,13 +2859,6 @@ xdr_numrecs(XDR *xdrs, NC *handle)
 }
 
 static bool_t
-xdr_4bytes(XDR *xdrs, char *cp)
-/* cp - at least 4 valid bytes */
-{
-    return xdr_opaque(xdrs, cp, 4);
-}
-
-static bool_t
 xdr_2shorts(XDR *xdrs, short *sp)
 /* sp - at least 2 valid shorts */
 {
@@ -2908,8 +2901,6 @@ xdr_NC_fill(XDR *xdrs, NC_var *vp)
         case NC_BYTE:
         case NC_CHAR:
             alen /= 4;
-            /* xdr_NC_fnct = xdr_4bytes ;
-             *  */
             xdr_NC_fnct = xdr_bytes;
             break;
         case NC_SHORT:

@@ -25,18 +25,19 @@
 
 #include "mfhdf.h"
 
-#ifdef H4_HAVE_SYS_TYPES_H
-#include <sys/types.h>
+#include <math.h>
+
+#ifdef H4_HAVE_FCNTL_H
+#include <fcntl.h>
+#endif
+#ifdef H4_HAVE_UNISTD_H
+#include <unistd.h>
 #endif
 #ifdef H4_HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-#ifdef H4_HAVE_FCNTL_H
-#include <fcntl.h>
-#endif
-#include <math.h>
-#ifdef H4_HAVE_UNISTD_H
-#include <unistd.h>
+#ifdef H4_HAVE_SYS_TYPES_H
+#include <sys/types.h>
 #endif
 
 #if defined H4_HAVE_WIN32_API
@@ -98,17 +99,6 @@ free_info(t_hdf_datainfo_t *info)
         if (info->dimsizes != NULL)
             HDfree(info->dimsizes);
     }
-}
-
-/* This is used to temporarily verify results.  Will remove when finallized. */
-static void
-print_info(char *name, uintn info_count, t_hdf_datainfo_t data_info)
-{
-    int ii;
-
-    fprintf(stderr, "offset/length of '%s'\n", name);
-    for (ii = 0; ii < info_count; ii++)
-        fprintf(stderr, "%d: %d   %d\n", ii, data_info.offsets[ii], data_info.lengths[ii]);
 }
 
 /* Calculates the number of values in an SDS using the dimensions and rank */
