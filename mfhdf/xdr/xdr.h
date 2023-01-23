@@ -94,24 +94,24 @@ enum xdr_op { XDR_ENCODE = 0, XDR_DECODE = 1, XDR_FREE = 2 };
  * an operations vector for the particular implementation (e.g. see xdr_mem.c),
  * and two private fields for the use of the particular implementation.
  */
-typedef struct {
+typedef struct __rpc_xdr {
     enum xdr_op x_op; /* operation; fast additional param */
     struct xdr_ops {
         /* Get/put long from underlying stream */
-        bool_t (*x_getlong)(XDR *, int32_t *);
-        bool_t (*x_putlong)(XDR *, int32_t *);
+        bool_t (*x_getlong)(struct __rpc_xdr *, int32_t *);
+        bool_t (*x_putlong)(struct __rpc_xdr *, int32_t *);
         /* Get/put bytes. */
-        bool_t (*x_getbytes)(XDR *, void *, size_t);
-        bool_t (*x_putbytes)(XDR *, void *, size_t);
+        bool_t (*x_getbytes)(struct __rpc_xdr *, void *, size_t);
+        bool_t (*x_putbytes)(struct __rpc_xdr *, void *, size_t);
         /* Get or seek within the stream (offsets from beginning of stream). */
-        u_int (*x_getpostn)(XDR *);
-        bool_t (*x_setpostn)(XDR *, off_t);
+        u_int (*x_getpostn)(struct __rpc_xdr *);
+        bool_t (*x_setpostn)(struct __rpc_xdr *, off_t);
         /* Returns a pointer to the next n bytes in the stream. */
-        int32_t *(*x_inline)(XDR *, size_t);
+        int32_t *(*x_inline)(struct __rpc_xdr *, size_t);
         /* Free the stream. */
-        void (*x_destroy)(XDR *);
+        void (*x_destroy)(struct __rpc_xdr *);
         /* Control */
-        bool_t (*x_control)(XDR *, int, void *);
+        bool_t (*x_control)(struct __rpc_xdr *, int, void *);
     } * x_ops;
     char *x_public;  /* users' data */
     void *x_private; /* pointer to private data */
