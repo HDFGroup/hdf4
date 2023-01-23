@@ -84,7 +84,7 @@ bv_new(int32 num_bits)
     if ((b->buffer = malloc(array_mem_size)) == NULL)
         goto error;
 
-    /* Zero the intial bits */
+    /* Zero the initial bits */
     memset(b->buffer, 0, array_mem_size);
     b->last_zero = 0;
 
