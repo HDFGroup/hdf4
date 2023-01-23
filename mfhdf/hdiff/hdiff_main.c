@@ -16,11 +16,12 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
+
+#include "../libsrc/getopt.h"
 #include "hdf.h"
 #include "hfile.h"
 #include "mfhdf.h"
 #include "hdiff.h"
-#include "getopt.h"
 
 /*-------------------------------------------------------------------------
  * Function: main

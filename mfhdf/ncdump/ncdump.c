@@ -9,9 +9,9 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include "local_nc.h"
-#include "getopt.h"
-
 #include "ncdump.h"
+
+#include "../libsrc/getopt.h"
 #include "dumplib.h"
 #include "vardata.h"
 
