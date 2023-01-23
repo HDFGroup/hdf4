@@ -99,10 +99,10 @@ typedef struct __rpc_xdr {
     struct xdr_ops {
         /* Get/put long from underlying stream */
         bool_t (*x_getlong)(struct __rpc_xdr *, long *);
-        bool_t (*x_putlong)(struct __rpc_xdr *, long *);
+        bool_t (*x_putlong)(struct __rpc_xdr *, const long *);
         /* Get/put bytes. */
-        bool_t (*x_getbytes)(struct __rpc_xdr *, void *, u_int);
-        bool_t (*x_putbytes)(struct __rpc_xdr *, void *, u_int);
+        bool_t (*x_getbytes)(struct __rpc_xdr *, char *, u_int);
+        bool_t (*x_putbytes)(struct __rpc_xdr *, const char *, u_int);
         /* Get or seek within the stream (offsets from beginning of stream). */
         u_int (*x_getpostn)(struct __rpc_xdr *);
         bool_t (*x_setpostn)(struct __rpc_xdr *, u_int);
@@ -128,7 +128,7 @@ typedef struct __rpc_xdr {
  * allocate dynamic storage of the appropriate size and return it.
  * bool_t    (*xdrproc_t)(XDR *, caddr_t *);
  */
-typedef bool_t (*xdrproc_t)();
+typedef bool_t (*xdrproc_t)(XDR *, ...);
 
 /*
  * Operations defined on a XDR handle
@@ -306,22 +306,26 @@ XDRLIBAPI bool_t      xdr_netobj(XDR *, struct netobj *);
 extern "C" {
 #endif
 /* XDR using memory buffers */
-XDRLIBAPI void xdrmem_create();
+XDRLIBAPI void xdrmem_create(XDR *, char *, u_int, enum xdr_op);
 
 /* XDR using stdio library */
 XDRLIBAPI void xdrstdio_create(XDR *, FILE *, enum xdr_op);
 
 /* XDR pseudo records for tcp */
-XDRLIBAPI void xdrrec_create();
+XDRLIBAPI void xdrrec_create(XDR *, u_int, u_int, void *,
+        int (*)(void *, void *, int),
+        int (*)(void *, void *, int));
 
 /* make end of xdr record */
-XDRLIBAPI bool_t xdrrec_endofrecord();
+XDRLIBAPI bool_t xdrrec_endofrecord(XDR *, int);
 
 /* move to beginning of next record */
-XDRLIBAPI bool_t xdrrec_skiprecord();
+XDRLIBAPI bool_t xdrrec_skiprecord(XDR *);
 
 /* true if no more input */
-XDRLIBAPI bool_t xdrrec_eof();
+XDRLIBAPI bool_t xdrrec_eof(XDR *);
+
+XDRLIBAPI u_int xdrrec_readbytes(XDR *, caddr_t, u_int);
 
 #ifdef __cplusplus
 }
