@@ -954,7 +954,6 @@ hdf_read_ndgs(NC *handle)
     uint8    *scalebuf  = NULL; /* buffer to store scale info */
     uint8    *unitbuf   = NULL; /* buffer to store unit info */
     uint8    *formatbuf = NULL; /* buffer to store format info */
-    uint8    *coordbuf  = NULL; /* buffer to store coord system info */
     intn      new_dim;          /* == new dim so create coord variable     */
     /* random book-keeping */
     intn   i;
@@ -1642,6 +1641,8 @@ hdf_read_sds_cdf(XDR *xdrs, NC **handlep)
     intn status;
     NC  *handle    = NULL;
     intn ret_value = SUCCEED;
+
+    (void)xdrs;
 
     /*
      * go through and treat each SDS as a separate variable

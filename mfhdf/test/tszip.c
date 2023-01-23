@@ -45,7 +45,6 @@ test_szip_SDS8bit()
     int          i, j;
     int          num_errs = 0; /* number of errors so far */
     comp_coder_t comp_type;    /* to retrieve compression type into */
-    comp_info    cinfo;        /* compression information structure */
     int8         out_data[LENGTH][WIDTH];
     int8         in_data[LENGTH][WIDTH] = {{1, 1, 2, 2, 3, 4}, {1, 1, 2, 2, 3, 4}, {1, 1, 2, 2, 3, 4},
                                    {3, 3, 0, 4, 3, 4}, {3, 3, 0, 4, 3, 4}, {3, 3, 0, 4, 3, 4},
@@ -1307,9 +1306,7 @@ test_getszipdata()
     intn        status;
     int32       dim_sizes[2], array_rank, num_type, attributes;
     char        name[H4_MAX_NC_NAME];
-    comp_info   c_info;
     int32       start[2], edges[2];
-    int16       fill_value = 0; /* Fill value */
     int         i, j;
     int         num_errs = 0; /* number of errors so far */
     int32       out_data[SZ_LENGTH][SZ_WIDTH];

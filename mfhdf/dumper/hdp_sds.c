@@ -28,6 +28,8 @@ intn have_szip = 0;
 void
 dumpsds_usage(intn argc, char *argv[])
 {
+    (void)argc;
+
     printf("Usage:\n");
     printf(
         "%s dumpsds [-k][-a|-i <indices>|-r <refs>|-n <names>] [-cdhvs] [-o <filename>] [-bx] <filelist>\n",
@@ -396,7 +398,6 @@ get_SDSindex_list(int32 sd_id, dump_info_t *dumpsds_opts,
         HGOTO_DONE(NO_SPECIFIC);
 
     for (ii = 0; ii < num_sds_chosen; ii++) {
-        int jj;
         /* if the current chosen SDS was requested by its index, store the
         index in the array sds_chosen */
         switch (dumpsds_opts->all_types[ii].type_of_info) {

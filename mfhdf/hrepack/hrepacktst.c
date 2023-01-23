@@ -193,10 +193,8 @@ static int
 vg_getngrpdep(HFILEID f)
 {
     int32  vg, vgt;
-    int32  vgotag, vgoref;
     int32  vgid = -1;
     int32  vsid = -1;
-    int32  vsno = 0;
     int32  vstag;
     int32  i, nvg, n, ne, nlnk;
     uint16 name_len;
@@ -219,8 +217,8 @@ vg_getngrpdep(HFILEID f)
         vgname = (char *)HDmalloc(sizeof(char) * (name_len + 1));
 
         Vinquire(vg, &n, vgname);
-        vgotag = VQuerytag(vg);
-        vgoref = VQueryref(vg);
+        VQuerytag(vg);
+        VQueryref(vg);
 
         for (i = 0; i < Vntagrefs(vg); i++) {
             Vgettagref(vg, i, &vstag, &vsid);
@@ -235,8 +233,8 @@ vg_getngrpdep(HFILEID f)
 
                 Vinquire(vgt, &ne, vgname);
 
-                vgotag = VQuerytag(vgt);
-                vgoref = VQueryref(vgt);
+                VQuerytag(vgt);
+                VQueryref(vgt);
 
                 Vdetach(vgt);
 
@@ -316,6 +314,8 @@ static void
 set_chunk_def(comp_coder_t comp_type, int32 *dim, int32 ncomps, int32 bits_per_pixel, /* for szip */
               HDF_CHUNK_DEF *chunk_def)
 {
+    (void)ncomps;
+    (void)bits_per_pixel;
 
     /* Define chunk's dimensions */
     chunk_def->chunk_lengths[0] = dim[0] / 2;
@@ -1206,6 +1206,9 @@ add_glb_attrs(const char *fname, int32 file_id, int32 sd_id, int32 gr_id)
     uint8 attr_values[2] = {1, 2};
     int   n_values       = 2;
 
+    (void)fname;
+    (void)file_id;
+
     /*-------------------------------------------------------------------------
      * make SDS global attributes
      *-------------------------------------------------------------------------
@@ -1408,6 +1411,8 @@ add_sd(const char  *fname,       /* file name */
     float64       data_Y[Y_DIM];             /* Y dimension dimension scale */
     int           i, j;
     HDF_CHUNK_DEF chunk_def; /* Chunking definitions */
+
+    (void)fname;
 
     /* set the size of the SDS's dimension */
     dim_sds[0] = Y_DIM;
@@ -2120,6 +2125,9 @@ add_sd_szip(const char *fname,          /* file name */
     HDF_CHUNK_DEF chunk_def;                  /* chunking definitions */
     int32         edges[2],                   /* write edges */
         start[2] = {0, 0};                    /* write start */
+
+    (void)fname;
+    (void)file_id;
 
     edges[0] = dim[0];
     edges[1] = dim[1];

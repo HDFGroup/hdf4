@@ -46,7 +46,7 @@ main()
      * exit the program.
      */
     if (vdata_ref == 0)
-        exit;
+        return 0;
     vdata_id = VSattach(file_id, vdata_ref, "r");
 
     /*

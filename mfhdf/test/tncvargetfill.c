@@ -618,7 +618,7 @@ test_readings(long max_numrecs)
     /* result data to compare against read data */
 
     /* data resulted from reading at start=[4,0,0] for edges=[6,1,1] */
-    int16 result3D_start400_edge611[DIM0][DIM1][DIM2] = {-3, -3, -3, 800, -3, -3};
+    int16 result3D_start400_edge611[DIM0][DIM1][DIM2] = {{-3, -3}, {-3, 800}, {-3, -3}};
 
     /* data resulted from reading at start=[4] for edges=[6] */
     int16 result1D_start4_edge6[] = {302, 303, -1, -1, -1, -1};

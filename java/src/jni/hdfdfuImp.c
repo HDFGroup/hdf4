@@ -34,6 +34,20 @@ Java_hdf_hdflib_HDFLibrary_DFUfptoimage(JNIEnv *env, jclass clss, jint hdim, jin
                                         jbyteArray palette, jstring outfile, jint ct_method, jint hres,
                                         jint vres, jint compress)
 {
+    UNUSED(clss);
+    UNUSED(hdim);
+    UNUSED(vdim);
+    UNUSED(max);
+    UNUSED(min);
+    UNUSED(hscale);
+    UNUSED(vscale);
+    UNUSED(data);
+    UNUSED(palette);
+    UNUSED(outfile);
+    UNUSED(ct_method);
+    UNUSED(hres);
+    UNUSED(vres);
+    UNUSED(compress);
     H4_UNIMPLEMENTED(ENVONLY, "DFUfptoimage (windows)");
 
 done:

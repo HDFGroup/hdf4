@@ -21,6 +21,8 @@
 static void
 dumprig_usage(intn argc, char *argv[])
 {
+    (void)argc;
+
     printf("Usage:\n");
 #ifdef LATER
     printf("%s dumprig [-a|-i <indices>|-n <names>|-r <refs>] [-dhvc] [-o <filename> [-bx]] <filelist>\n",

@@ -92,7 +92,7 @@ test_dim1_SDS1(void)
     int32          sds_id, file_id, dim_id, index;
     int32          start = 0, stride = 1;
     int32          num_type, count;
-    int32          n_datasets, n_file_attrs, n_local_attrs, n_vars = 0;
+    int32          n_datasets, n_file_attrs, n_vars = 0;
     intn           status   = 0, idx, idx1;
     hdf_varlist_t *var_list = NULL;
     intn           is_coord = FALSE;

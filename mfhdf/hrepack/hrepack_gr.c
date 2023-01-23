@@ -588,6 +588,8 @@ copy_gr_attrs(int32 ri_id, int32 ri_out, int32 nattrs, options_t *options)
     VOIDP attr_buf = NULL;
     int   i;
 
+    (void)options;
+
     /* loop through attributes in input GR */
     for (i = 0; i < nattrs; i++) {
         if (GRattrinfo(ri_id, i, attr_name, &dtype, &nelms) == FAIL) {

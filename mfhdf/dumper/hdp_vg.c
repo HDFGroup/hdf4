@@ -41,6 +41,8 @@ intn   vgdumpfull(int32 vg_id, dump_info_t *dumpvg_opts, int32 file_id, int32 nu
 void
 dumpvg_usage(intn argc, char *argv[])
 {
+    (void)argc;
+
     printf("Usage:\n");
     printf("%s dumpvg [-a|-i <indices>|-r <refs>|-n <names>|-c <classes>] [-hv] [-o <filename>] <filelist>\n",
            argv[0]);
@@ -623,7 +625,7 @@ print_fields(char *fields, char *field_title, /* */
 int32
 get_VGindex_list(int32 file_id, dump_info_t *dumpvg_opts, int32 **vg_chosen, intn *index_error)
 {
-    intn  ii, jj;
+    intn  ii;
     int32 index, find_ref, vg_count = 0, num_vg_chosen = dumpvg_opts->num_chosen, found = FALSE, ref_num;
     intn  ret_value = 0;
 

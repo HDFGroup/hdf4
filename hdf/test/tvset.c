@@ -2860,7 +2860,6 @@ test_blockinfo_oneLB(void)
     intn  status_n; /* returned status for functions returning an intn  */
     int32 status;   /* returned status for functions returning an int32 */
     int16 rec_num;  /* current record number */
-    int32 record_pos;
     int32 fid, vdata1_id, vdata2_id;
     int32 vdata_ref = -1,                       /* ref number of a vdata, set to -1 to create  */
         num_of_records,                         /* number of records actually written to vdata */
@@ -3026,7 +3025,7 @@ test_blockinfo_oneLB(void)
     }
 
     /* Append the data to the first vdata. */
-    record_pos     = VSseek(vdata1_id, N_RECORDS);
+    VSseek(vdata1_id, N_RECORDS);
     num_of_records = VSwrite(vdata1_id, (uint8 *)data_buf1, N_RECORDS, FULL_INTERLACE);
     VERIFY_VOID(num_of_records, N_RECORDS, "VSwrite:vdata1_id");
 
