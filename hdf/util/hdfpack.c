@@ -351,6 +351,9 @@ main(int argc, char *argv[])
     if (from_file && to_file) {
     }
 
+    HDfree(data);
+    HDfree(dlist);
+
     /*
      **   done; close files
      */
