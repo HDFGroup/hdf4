@@ -17,13 +17,11 @@
 
 #include "hdftest.h"
 
-#define EXTTST   "exttst.hdf"         /* main file for external file test */
-#define EXTFILE  "SD_external_file"   /* file to contain external data */
-#define EXTFILE1 "SD_external_file 2" /* file to contain external data */
-#define EXTSDS                                                                                               \
-    "ExternalDataSet" /* data set written with external data right after creation */
-#define EXTSDS2                                                                                              \
-    "ExternalDataSet 2"                /* data set first empty then written                with external data */
+#define EXTTST   "exttst.hdf"          /* main file for external file test */
+#define EXTFILE  "SD_external_file"    /* file to contain external data */
+#define EXTFILE1 "SD_external_file 2"  /* file to contain external data */
+#define EXTSDS   "ExternalDataSet"     /* data set written with external data right after creation */
+#define EXTSDS2  "ExternalDataSet 2"   /* data set first empty then written with external data */
 #define WRAPSDS  "WrapperDataSet"      /* data set pointing to external data */
 #define NOEXTSDS "NoExternalDataSet"   /* data set with data in main file */
 #define EXTFILE2 "ExternalSDSexisting" /* data set having data */
