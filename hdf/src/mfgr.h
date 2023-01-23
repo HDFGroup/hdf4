@@ -21,8 +21,8 @@
  * Constant definitions:
  *---------------------------------------------------------------------------*/
 
-#ifndef __MFGR_H
-#define __MFGR_H
+#ifndef H4_MFGR_H
+#define H4_MFGR_H
 
 #include "H4api_adpt.h"
 
@@ -142,4 +142,4 @@ HDFLIBAPI VOID GRIridestroynode(void *n);
 
 #endif /* MFGR_MASTER | MFGR_TESTER */
 
-#endif /* __MFGR_H */
+#endif /* H4_MFGR_H */

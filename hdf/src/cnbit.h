@@ -21,8 +21,8 @@
  * Constant definitions:
  *---------------------------------------------------------------------------*/
 
-#ifndef __CNBIT_H
-#define __CNBIT_H
+#ifndef H4_CNBIT_H
+#define H4_CNBIT_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -94,4 +94,4 @@ funclist_t cnbit_funcs = {/* functions to perform N-bit encoding */
                           NULL};
 #endif
 
-#endif /* __CNBIT_H */
+#endif /* H4_CNBIT_H */

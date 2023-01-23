@@ -26,8 +26,8 @@
  *          Since it includes stdio.h etc., do not include these after df.h
  *---------------------------------------------------------------------------*/
 
-#ifndef DF_H
-#define DF_H
+#ifndef H4_DF_H
+#define H4_DF_H
 
 #include "H4api_adpt.h"
 
@@ -172,4 +172,4 @@ int DFerror; /* Error code for DF routines */
 
 #define DFTOFID(df) (int32)(df->list)
 
-#endif /* DF_H */
+#endif /* H4_DF_H */

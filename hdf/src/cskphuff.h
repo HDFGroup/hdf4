@@ -21,8 +21,8 @@
  * Constant definitions:
  *---------------------------------------------------------------------------*/
 
-#ifndef __CSKPHUFF_H
-#define __CSKPHUFF_H
+#ifndef H4_CSKPHUFF_H
+#define H4_CSKPHUFF_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -89,4 +89,4 @@ funclist_t cskphuff_funcs = {/* functions to perform skipping huffman encoding *
                              NULL};
 #endif
 
-#endif /* __CSKPHUFF_H */
+#endif /* H4_CSKPHUFF_H */

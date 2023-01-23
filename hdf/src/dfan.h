@@ -21,8 +21,8 @@
  * Remarks: none
  *----------------------------------------------------------------------------*/
 
-#ifndef DFAN_H
-#define DFAN_H
+#ifndef H4_DFAN_H
+#define H4_DFAN_H
 
 #include "hdf.h"
 
@@ -56,4 +56,4 @@ typedef struct DFANdirhead {
     DFANdirentry       *entries;  /* actually an arbitrary size array */
 } DFANdirhead;
 
-#endif /* DFAN_H */
+#endif /* H4_DFAN_H */

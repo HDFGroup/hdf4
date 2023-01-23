@@ -10,8 +10,8 @@
  *                                                                          *
  ****************************************************************************/
 
-#ifndef HDF_HDIFF_LIST__
-#define HDF_HDIFF_LIST__
+#ifndef HDIFF_LIST_H
+#define HDIFF_LIST_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -84,4 +84,4 @@ int insert_vs_attrs(int32 in, int32 findex, intn attrindex);
 }
 #endif
 
-#endif /* HDF_HDIFF_LIST__ */
+#endif /* HDIFF_LIST_H */

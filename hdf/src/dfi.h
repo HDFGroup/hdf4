@@ -24,8 +24,8 @@
  *          This file is included with user programs, but users do not see it.
  *---------------------------------------------------------------------------*/
 
-#ifndef DFI_H
-#define DFI_H
+#ifndef H4_DFI_H
+#define H4_DFI_H
 
 /*--------------------------------------------------------------------------*/
 /*          Compilation Parameters for Flexibility and Portability          */
@@ -125,4 +125,4 @@
 #include <stdio.h>
 #endif /*FILE */
 
-#endif /* DFI_H */
+#endif /* H4_DFI_H */

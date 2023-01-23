@@ -16,8 +16,8 @@
    *** to be included by all ".c" files
    + */
 
-#ifndef __HERR_H
-#define __HERR_H
+#ifndef H4_HERR_H
+#define H4_HERR_H
 
 /* HERROR macro, used to facilitate error reporting */
 #define HERROR(e) HEpush(e, __func__, __FILE__, __LINE__)
@@ -503,4 +503,4 @@ PRIVATE const struct error_messages_t error_messages[] = {
 };
 #endif /* _H_ERR_MASTER_ */
 
-#endif /* __HERR_H */
+#endif /* H4_HERR_H */

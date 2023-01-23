@@ -11,8 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef REPACK_SDS_H_
-#define REPACK_SDS_H_
+#ifndef HREPACK_SDS_H
+#define HREPACK_SDS_H
 
 #include "hrepack.h"
 #include "hrepack_lsttable.h"
@@ -32,4 +32,4 @@ int copy_sds_attrs(int32 sds_id, int32 sds_out, int32 nattrs, options_t *options
 }
 #endif
 
-#endif /* REPACK_SDS_H_ */
+#endif /* HREPACK_SDS_H */

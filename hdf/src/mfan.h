@@ -23,8 +23,8 @@
  *
  *----------------------------------------------------------------------------*/
 
-#ifndef _MFAN_H
-#define _MFAN_H
+#ifndef H4_MFAN_H
+#define H4_MFAN_H
 
 #include "H4api_adpt.h"
 
@@ -340,4 +340,4 @@ HDFLIBAPI ann_type ANtag2atype(uint16 atag /* IN: annotation tag */);
 
 #endif /* !defined MFAN_MASTER && !MFAN_TESTER */
 
-#endif /* _MFAN_H */
+#endif /* H4_MFAN_H */

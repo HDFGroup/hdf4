@@ -10,8 +10,8 @@
  *                                                                          *
  ****************************************************************************/
 
-#ifndef REPACK_VG_H_
-#define REPACK_VG_H_
+#ifndef HREPACK_VG_H
+#define HREPACK_VG_H
 
 #include "hrepack.h"
 #include "hrepack_lsttable.h"
@@ -38,4 +38,4 @@ int vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interfac
 }
 #endif
 
-#endif /* REPACK_VG_H_ */
+#endif /* HREPACK_VG_H */

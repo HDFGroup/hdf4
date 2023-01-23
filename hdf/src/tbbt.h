@@ -14,8 +14,8 @@
 /* "tbbt.h" -- Data types/routines for threaded, balanced, binary trees. */
 /* Extended from Knuth 6.2.3, Algorithm A */
 
-#ifndef TBBT_H
-#define TBBT_H
+#ifndef H4_TBBT_H
+#define H4_TBBT_H
 
 #include "H4api_adpt.h"
 
@@ -301,4 +301,4 @@ HDFPUBLIC intn tbbt_shutdown(void);
 }
 #endif
 
-#endif /* TBBT_H */
+#endif /* H4_TBBT_H */

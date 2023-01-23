@@ -3,6 +3,9 @@
  *   See netcdf/COPYRIGHT file for copying and redistribution conditions.
  *********************************************************************/
 
+#ifndef NCDUMP_H
+#define NCDUMP_H
+
 #define Printf (void)printf
 #define ERR_READFAIL                                                                                         \
     -2 /* Used to return by vardata() to indicate that                                                       \
@@ -78,3 +81,5 @@ struct fspec {             /* specification for how to format dump */
                             * option on command line
                             */
 };
+
+#endif /* NCDUMP_H */

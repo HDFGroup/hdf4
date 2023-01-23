@@ -23,8 +23,8 @@
  *          multiple dimensions
  *---------------------------------------------------------------------------*/
 
-#ifndef _DFSD_H
-#define _DFSD_H
+#ifndef H4_DFSD_H
+#define H4_DFSD_H
 
 #include "H4api_adpt.h"
 
@@ -109,4 +109,4 @@ HDFLIBAPI int DFSDIsetdatastrs(const char *label, const char *unit, const char *
 }
 #endif
 
-#endif /* _DFSD_H */
+#endif /* H4_DFSD_H */

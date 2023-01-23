@@ -11,8 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef _MFSD_H_
-#define _MFSD_H_
+#ifndef MFH4_MFHDF_H
+#define MFH4_MFHDF_H
 
 #ifndef HDF
 #define HDF 1
@@ -423,4 +423,4 @@ HDFLIBAPI intn SDsetchunkcache(int32 sdsid,    /* IN: sds access id */
 }
 #endif
 
-#endif /* _MFSD_H_ */
+#endif /* MFH4_MFHDF_H */

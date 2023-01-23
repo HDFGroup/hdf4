@@ -11,8 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef HDFI_H
-#define HDFI_H
+#ifndef H4_HDFI_H
+#define H4_HDFI_H
 
 /*--------------------------------------------------------------------------*/
 /*                              MT/NT constants                             */
@@ -366,4 +366,4 @@ typedef intptr_t hdf_pint_t;
  */
 #define JMEMSYS MEM_ANSI
 
-#endif /* HDFI_H */
+#endif /* H4_HDFI_H */

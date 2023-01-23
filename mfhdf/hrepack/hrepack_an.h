@@ -11,8 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef REPACK_AN_H_
-#define REPACK_AN_H_
+#ifndef HREPACK_AN_H
+#define HREPACK_AN_H
 
 #include "hrepack.h"
 
@@ -36,4 +36,4 @@ int copy_an_data(int32 infile_id, int32 outfile_id, int32 ref_in, int32 tag_in, 
 }
 #endif
 
-#endif /* REPACK_AN_H_ */
+#endif /* HREPACK_AN_H */

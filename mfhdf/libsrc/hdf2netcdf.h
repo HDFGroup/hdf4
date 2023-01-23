@@ -11,6 +11,9 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#ifndef MFH4_HDF_2_NETCDF_H
+#define MFH4_HDF_2_NETCDF_H
+
 #include "h4config.h"
 #include "H4api_adpt.h"
 /* If we disable the HDF version of the netCDF API (ncxxx interface)
@@ -69,3 +72,5 @@
 #define ncnobuf     HNAME(ncnobuf) /* no prototype for this one */
 
 #endif /* !H4_HAVE_NETCDF i.e NOT USING HDF version of netCDF API */
+
+#endif /* MFH4_HDF_2_NETCDF_H */

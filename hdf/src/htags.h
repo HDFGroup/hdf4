@@ -15,8 +15,8 @@
    *** This file contains all the tag definitions for HDF
    + */
 
-#ifndef _HTAGS_H
-#define _HTAGS_H
+#ifndef H4_HTAGS_H
+#define H4_HTAGS_H
 
 /* wild-card tags and refs. Should only be used in interface calls
    and never stored in the file i.e. in DD's. */
@@ -132,4 +132,4 @@
 #define SPECIAL_BUFFERED 6 /* Buffered element */
 #define SPECIAL_COMPRAS  7 /* Compressed Raster element */
 
-#endif /* _HTAGS_H */
+#endif /* H4_HTAGS_H */

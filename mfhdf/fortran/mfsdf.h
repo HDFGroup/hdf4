@@ -11,8 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef _MFSDF_H_
-#define _MFSDF_H_
+#ifndef H4_MFSDF_H
+#define H4_MFSDF_H
 
 #include "H4api_adpt.h"
 
@@ -171,4 +171,4 @@ HDFFCLIBAPI FRETVAL(intf) nsfsblsz(intf *id, intf *block_size);
 }
 #endif
 
-#endif /* _MFSDF_H_ */
+#endif /* H4_MFSDF_H */

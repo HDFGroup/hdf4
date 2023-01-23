@@ -11,6 +11,9 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#ifndef HDFTEST_H
+#define HDFTEST_H
+
 /*
  * The name of the test is printed by saying TESTING("something") which will
  * result in the string `Testing something' being flushed to standard output.
@@ -124,3 +127,5 @@ int verify_info_data(int32 sds_id, int32 expected_dimsize, int16 *result);
 
 /* Find and open an SDS by name */
 int32 get_SDSbyName(int32 sd_id, char *sds_name);
+
+#endif /* HDFTEST_H */

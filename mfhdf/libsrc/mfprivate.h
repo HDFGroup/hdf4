@@ -22,6 +22,9 @@ file - mfprivate.h
   Aug 8, 2010 -BMR
 ******************************************************************************/
 
+#ifndef MFH4_MFPRIVATE_H
+#define MFH4_MFPRIVATE_H
+
 /* Get the dimension record */
 NC_dim *SDIget_dim(NC *handle, int32 id);
 
@@ -45,3 +48,5 @@ intn SDIapfromid(int32 id, NC **handlep, NC_array ***app);
 
 /* Check permission on the file */
 int SDI_can_clobber(const char *name);
+
+#endif /* MFH4_MFPRIVATE_H */

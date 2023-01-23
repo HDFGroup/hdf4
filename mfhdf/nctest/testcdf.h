@@ -3,6 +3,9 @@
  *   See netcdf/COPYRIGHT file for copying and redistribution conditions.
  *********************************************************************/
 
+#ifndef NCTEST_TESTCDF_H
+#define NCTEST_TESTCDF_H
+
 /*
  * In-memory structure holding netcdf structure for comparing with
  * on-disk netcdf.  Whenever a disk netcdf is updated in the test
@@ -62,3 +65,5 @@ extern struct netcdf test; /*
                             * in-memory netcdf structure, kept in sync
                             * with disk netcdf
                             */
+
+#endif /* NCTEST_TESTCDF_H */

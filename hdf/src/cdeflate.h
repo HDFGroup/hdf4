@@ -21,8 +21,8 @@
  * Constant definitions:
  *---------------------------------------------------------------------------*/
 
-#ifndef __CDEFLATE_H
-#define __CDEFLATE_H
+#ifndef H4_CDEFLATE_H
+#define H4_CDEFLATE_H
 
 #include "H4api_adpt.h"
 
@@ -88,4 +88,4 @@ funclist_t cdeflate_funcs = {/* functions to perform gzip encoding */
                              NULL};
 #endif
 
-#endif /* __CDEFLATE_H */
+#endif /* H4_CDEFLATE_H */

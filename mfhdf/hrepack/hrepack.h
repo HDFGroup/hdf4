@@ -11,8 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef REPACK_H_
-#define REPACK_H_
+#ifndef HREPACK_H
+#define HREPACK_H
 
 #include "hrepack_lsttable.h"
 
@@ -86,4 +86,4 @@ int read_info(const char *filename, options_t *options);
 }
 #endif
 
-#endif /* REPACK_H_ */
+#endif /* HREPACK_H */

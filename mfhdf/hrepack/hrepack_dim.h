@@ -10,8 +10,8 @@
  *                                                                          *
  ****************************************************************************/
 
-#ifndef REPACK_DIM_H_
-#define REPACK_DIM_H_
+#ifndef HREPACK_DIM_H
+#define HREPACK_DIM_H
 
 #include "hrepack.h"
 
@@ -42,4 +42,4 @@ void match_dim(int32 sd_in, int32 sd_out, dim_table_t *dt1, dim_table_t *dt2, op
 }
 #endif
 
-#endif /* REPACK_DIM_H_ */
+#endif /* HREPACK_DIM_H */

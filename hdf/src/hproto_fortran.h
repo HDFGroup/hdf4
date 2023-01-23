@@ -11,8 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef _H_PROTO_FORTRAN
-#define _H_PROTO_FORTRAN
+#ifndef H4_H_PROTO_FORTRAN
+#define H4_H_PROTO_FORTRAN
 
 #include "H4api_adpt.h"
 #include "df.h"
@@ -1266,4 +1266,4 @@ HDFFCLIBAPI FRETVAL(int) nduif2i(int32 *hdim, int32 *vdim, float32 *max, float32
 }
 #endif
 
-#endif /* _H_PROTO_FORTRAN */
+#endif /* H4_H_PROTO_FORTRAN */
