@@ -2997,6 +2997,7 @@ test_mgr_image(int flag)
     test_mgr_image_b2a2bb(flag);
     test_mgr_image_b2a2cc(flag);
     test_mgr_image_b2b1(flag);
+    test_mgr_image_chunk(flag);
 } /* end test_mgr_image() */
 
 /****************************************************************
@@ -3446,29 +3447,6 @@ test_mgr_special(int flag)
     /* Output message about test being performed */
     MESSAGE(6, printf("Testing Multi-file Raster Special Element routines\n"););
 } /* end test_mgr_special() */
-
-/****************************************************************
-**
-**  test_mgr_attr_old(): Multi-file Raster Attribute Test Routine
-**
-**  VII. Attribute Functions
-**      A. GRattrinfo
-**      B. Read/Write Attributes
-**          1. GRsetattr
-**          2. GRgetattr
-**      C. GRfindattr
-**
-****************************************************************/
-static void
-test_mgr_attr_old(int flag)
-{
-    (void)flag;
-
-    /* Output message about test being performed */
-    MESSAGE(6, printf("Testing Multi-file Raster Attribute routines\n"););
-
-    /* I believe that these are adequately tested in the test_mgr_image routine -QAK */
-} /* end test_mgr_attr_old() */
 
 #define OLDRLEFILE      "test_files/8bit.dat"
 #define OLDGREYJPEGFILE "test_files/greyjpeg.dat"

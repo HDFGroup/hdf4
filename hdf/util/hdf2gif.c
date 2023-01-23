@@ -11,8 +11,9 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "gif.h"
 #include <stdio.h>
+
+#include "gif.h"
 
 #define HDFNAME     "laser.hdf"
 #define VGROUPCLASS "RIG0.0"
@@ -23,29 +24,7 @@ extern int hdfWriteGIF(FILE *fp, BYTE *pic, int ptype, int w, int h, BYTE *rmap,
 
 int EndianOrder;
 
-VOID
-PutByte(BYTE b, FILE *fpGif)
-{
-    if (fputc(b, fpGif) == EOF) {
-        printf("File Writing Error, cannot continue");
-        exit(-1);
-    }
-}
-
-VOID
-WordToByte(WORD w, BYTE *b)
-{
-    if (EndianOrder == 0) { /* Big Endian */
-        b[0] = (BYTE)(w & 0xFF00);
-        b[1] = w & 0xFF;
-    }
-    else { /* Little Endian */
-        b[0] = w & 0xFF;
-        b[1] = (BYTE)(w & 0xFF00);
-    }
-}
-
-VOID
+static void
 putword(int w, FILE *fp)
 {
     /* writes a 16-bit integer in GIF order (LSB first) */

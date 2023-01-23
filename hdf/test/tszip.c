@@ -15,10 +15,10 @@
  *  SZIP support eliminated for HDF4.2R1
  */
 #include <hdf.h>
+#include "tutils.h"
+
 #ifdef H4_HAVE_LIBSZ
 #include "szlib.h"
-#endif
-#include "tutils.h"
 
 /*
  *  NOTE: these tests should be elaborated:
@@ -53,7 +53,6 @@
 static void
 test_szip_RI8bit()
 {
-#ifdef H4_HAVE_LIBSZ
     /************************* Variable declaration **************************/
 
     intn  status;       /* status for functions returning an intn */
@@ -257,7 +256,6 @@ test_szip_RI8bit()
     status = Hclose(file_id);
     CHECK_VOID(status, FAIL, "Hclose");
 
-#endif
 } /* end of test_szip_RI8bit */
 
 /*
@@ -266,7 +264,6 @@ test_szip_RI8bit()
 static void
 test_szip_RI16bit()
 {
-#ifdef H4_HAVE_LIBSZ
     /************************* Variable declaration **************************/
 
     intn  status;       /* status for functions returning an intn */
@@ -469,7 +466,6 @@ test_szip_RI16bit()
     status = Hclose(file_id);
     CHECK_VOID(status, FAIL, "Hclose");
 
-#endif
 } /* end of test_szip_RI16bit */
 
 /*
@@ -478,7 +474,6 @@ test_szip_RI16bit()
 static void
 test_szip_RI32bit()
 {
-#ifdef H4_HAVE_LIBSZ
     /************************* Variable declaration **************************/
 
     intn  status;       /* status for functions returning an intn */
@@ -681,7 +676,6 @@ test_szip_RI32bit()
     status = Hclose(file_id);
     CHECK_VOID(status, FAIL, "Hclose");
 
-#endif
 } /* end of test_szip_RI32bit */
 
 /*
@@ -690,7 +684,6 @@ test_szip_RI32bit()
 static void
 test_szip_RIfl32bit()
 {
-#ifdef H4_HAVE_LIBSZ
     /************************* Variable declaration **************************/
 
     intn  status;       /* status for functions returning an intn */
@@ -895,7 +888,6 @@ test_szip_RIfl32bit()
     status = Hclose(file_id);
     CHECK_VOID(status, FAIL, "Hclose");
 
-#endif
 } /* end of test_szip_RIfl32bit */
 
 /*
@@ -904,7 +896,6 @@ test_szip_RIfl32bit()
 static void
 test_szip_RIfl64bit()
 {
-#ifdef H4_HAVE_LIBSZ
     /************************* Variable declaration **************************/
 
     intn  status;       /* status for functions returning an intn */
@@ -1109,7 +1100,6 @@ test_szip_RIfl64bit()
     status = Hclose(file_id);
     CHECK_VOID(status, FAIL, "Hclose");
 
-#endif
 } /* end of test_szip_RIfl64bit */
 
 /*
@@ -1123,7 +1113,6 @@ test_szip_RIfl64bit()
 static void
 test_szip_chunk()
 {
-#ifdef H4_HAVE_LIBSZ
 
     /************************* Variable declaration **************************/
 
@@ -1325,8 +1314,8 @@ test_szip_chunk()
     status = Hclose(file_id);
     CHECK_VOID(status, FAIL, "Hclose");
 
-#endif
 } /* end of test_szip_chunk */
+#endif /* H4_HAVE_LIBSZ */
 
 /****************************************************************
  *
