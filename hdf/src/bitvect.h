@@ -50,8 +50,8 @@ typedef uint8 bv_base;
  * larger than 2Gbits would require an internal API change.
  */
 typedef struct bv_struct_tag {
-    int32   bits_used;   /* The actual number of bits current in use */
-    int32   array_size;  /* The number of bv_base elements in the bit-vector */
+    int32    bits_used;  /* The actual number of bits current in use */
+    int32    array_size; /* The number of bv_base elements in the bit-vector */
     int32    last_zero;  /* The last location we know had a zero bit */
     bv_base *buffer;     /* Pointer to the buffer used to store the bits */
 } bv_struct;

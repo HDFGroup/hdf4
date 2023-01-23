@@ -71,8 +71,8 @@ bv_new(int32 num_bits)
     if (num_bits == -1)
         num_bits = BV_DEFAULT_BITS;
 
-    base_elements = ((num_bits % BV_BASE_BITS) > 0) ? (num_bits / BV_BASE_BITS) + 1
-                                                           : (num_bits / BV_BASE_BITS);
+    base_elements =
+        ((num_bits % BV_BASE_BITS) > 0) ? (num_bits / BV_BASE_BITS) + 1 : (num_bits / BV_BASE_BITS);
 
     if ((b = malloc(sizeof(bv_struct))) == NULL)
         goto error;
@@ -167,9 +167,8 @@ bv_set(bv_ptr b, int32 bit_num, bv_bool value)
             size_t   new_size;
             size_t   extra_size;
 
-            num_chunks =
-                ((((bit_num / BV_BASE_BITS) + 1) - b->array_size) / BV_CHUNK_SIZE) + 1;
-            new_size = (size_t)(b->array_size + num_chunks * BV_CHUNK_SIZE);
+            num_chunks = ((((bit_num / BV_BASE_BITS) + 1) - b->array_size) / BV_CHUNK_SIZE) + 1;
+            new_size   = (size_t)(b->array_size + num_chunks * BV_CHUNK_SIZE);
             if ((b->buffer = realloc(b->buffer, new_size)) == NULL) {
                 b->buffer = old_buf;
                 /* Could not allocate a larger bit buffer */
@@ -274,10 +273,10 @@ bv_size(bv_ptr b)
 int32
 bv_find_next_zero(bv_ptr b)
 {
-    int32   old_bits_used;  /* the last number of bits used */
-    int32   bytes_used;     /* number of full bytes used */
-    bv_base slush_bits;     /* extra bits which don't fit into a byte */
-    int32   i;              /* local counting variable */
+    int32    old_bits_used; /* the last number of bits used */
+    int32    bytes_used;    /* number of full bytes used */
+    bv_base  slush_bits;    /* extra bits which don't fit into a byte */
+    int32    i;             /* local counting variable */
     bv_base *tmp_buf;
 
     if (b == NULL || b->buffer == NULL)

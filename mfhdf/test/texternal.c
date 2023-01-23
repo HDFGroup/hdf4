@@ -21,10 +21,11 @@
 #define EXTFILE  "SD_external_file"   /* file to contain external data */
 #define EXTFILE1 "SD_external_file 2" /* file to contain external data */
 #define EXTSDS   "ExternalDataSet"    /* data set written with external data right after creation */
-#define EXTSDS2  "ExternalDataSet 2"  /* data set first empty then written                with external data \
-                                       */
-#define WRAPSDS  "WrapperDataSet"     /* data set pointing to external data */
-#define NOEXTSDS "NoExternalDataSet"  /* data set with data in main file */
+#define EXTSDS2                                                                                              \
+    "ExternalDataSet 2"              /* data set first empty then written                with external data  \
+                                      */
+#define WRAPSDS  "WrapperDataSet"    /* data set pointing to external data */
+#define NOEXTSDS "NoExternalDataSet" /* data set with data in main file */
 #define EXTFILE2 "ExternalSDSexisting" /* data set having data */
 #define EXTFILE3 "ShouldNotHappen"     /* data set already is external */
 #define OFFSET   24
