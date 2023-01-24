@@ -453,6 +453,8 @@ print_GRattrs(int32 gr_id, int32 n_file_attrs, FILE *fp, dump_info_t *dumpgr_opt
                                  (int)attr_index);
             }
             /* free buffer and reset it to NULL */
+            HDfree(attr_buf);
+            attr_buf = NULL;
         } /* end of if no file attributes */
     }     /* for all attributes of GR */
 
@@ -532,6 +534,8 @@ print_RIattrs(int32 ri_id, intn ri_index, int32 nattrs, FILE *fp, dump_info_t *d
                     ERROR_CONT_3("in %s: dumpfull failed for %d'th attribute of %d'th RI", "print_RIattrs",
                                  (int)attr_index, (int)ri_index);
             }
+            HDfree(attr_buf);
+            attr_buf = NULL;
         } /* end of if no local attributes */
     }     /* for all attributes of an RI */
 

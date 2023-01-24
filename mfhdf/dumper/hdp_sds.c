@@ -262,6 +262,7 @@ sdsdumpfull(int32 sds_id, dump_info_t *dumpsds_opts, int32 rank, int32 dimsizes[
                 ERROR_GOTO_3("in %s: SDreaddata failed for sds_id(%d) with external file %s.  Please verify "
                              "the file exists in the same directory.",
                              "sdsdumpfull", (int)sds_id, extfile_name);
+                SAFE_FREE(extfile_name);
             }
             else
                 ERROR_GOTO_2("in %s: SDreaddata failed for sds_id(%d)", "sdsdumpfull", (int)sds_id);
@@ -295,6 +296,7 @@ sdsdumpfull(int32 sds_id, dump_info_t *dumpsds_opts, int32 rank, int32 dimsizes[
                     ERROR_GOTO_3("in %s: SDreaddata failed for sds_id(%d) with external file %s.  Please "
                                  "verify the file exists in the same directory.",
                                  "sdsdumpfull", (int)sds_id, extfile_name);
+                    SAFE_FREE(extfile_name);
                 }
                 else
                     ERROR_GOTO_2("in %s: SDreaddata failed for sds_id(%d)", "sdsdumpfull", (int)sds_id);
@@ -529,6 +531,7 @@ print_SDattrs(int32 sd_id, FILE *fp, int32 n_file_attrs, dump_info_t *dumpsds_op
                     ERROR_CONT_2("in %s: dumpfull failed for %d'th attribute", "print_SDattrs",
                                  (int)attr_index);
             }
+            SAFE_FREE(attr_buf);
         } /* end of if no file attributes */
     }     /* for each file attribute */
 
@@ -612,9 +615,9 @@ print_SDSattrs(int32 sds_id, int32 nattrs, FILE *fp, dump_info_t *dumpsds_opts)
                                  (int)attr_index);
                 }
             }
+            SAFE_FREE(attr_buf);
         } /* end of if no local attributes */
-        SAFE_FREE(attr_buf);
-    } /* for each attribute */
+    }     /* for each attribute */
 
     return (ret_value);
 } /* end of print_SDSattrs */
