@@ -542,16 +542,12 @@ NCtempname(const char *proto)
     (void)strcat(begin, seed);
 
     cp = begin + TN_NSEED + TN_NACCES + TN_NDIGITS;
-#ifndef NO_GETPID
     *cp = '\0';
     pid = getpid();
     while (--cp >= begin + TN_NSEED + TN_NACCES) {
         *cp = (pid % 10) + '0';
         pid /= 10;
     }
-#else
-    *cp-- = '\0';
-#endif /* !NO_GETPID */
 
     /* update seed for next call */
     sp = seed;
