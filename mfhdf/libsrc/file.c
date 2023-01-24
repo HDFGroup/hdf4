@@ -510,8 +510,9 @@ NCtempname(const char *proto)
 #define TN_NDIGITS 4
 #if defined H4_HAVE_WIN32_API
     typedef int pid_t;
-#endif
+#else
     pid_t        getpid(void);
+#endif
     unsigned int pid; /* OS/2 DOS (MicroSoft Lib) allows "negative" int pids */
 
     static char seed[] = {'a', 'a', 'a', '\0'};
