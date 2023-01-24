@@ -76,7 +76,7 @@ Gif2Mem(BYTE *MemGif)
     /* Allocate memory for the GIF structures           */
     /* Plug the structs into GifMemoryStruct at the end */
     /****************************************************/
-    if (!(gifHead = (GIFHEAD *)malloc(sizeof(GIFHEAD)))) {
+    if (!(gifHead = (GIFHEAD *)HDcalloc(1, sizeof(GIFHEAD)))) {
         printf("Could not allocate memory for gifHead\n");
         exit(-1);
     }

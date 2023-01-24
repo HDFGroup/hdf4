@@ -295,6 +295,9 @@ main(int argc, char *argv[])
         Hendaccess(aid);
     } /* end if */
 
+    /* Close the HDF file */
+    status = Hclose(fid);
+
     if (n == 0)
         printf("Error, no JPEG images found in HDF file\n");
     return (0);
