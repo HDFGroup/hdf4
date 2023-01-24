@@ -36,9 +36,9 @@
 static int
 test_mgr_compress_a()
 {
-    int32 fid;          /* HDF file ID */
-    int32 grid;         /* GRID for the interface */
-    int32 ret;          /* generic return value */
+    int32 fid;  /* HDF file ID */
+    int32 grid; /* GRID for the interface */
+    int32 ret;  /* generic return value */
 
     MESSAGE(8, printf("Operate on gzip compressed images\n"););
 
@@ -182,9 +182,9 @@ test_mgr_compress_a()
 static int
 test_mgr_compress_b()
 {
-    int32 fid;          /* HDF file ID */
-    int32 grid;         /* GRID for the interface */
-    int32 ret;          /* generic return value */
+    int32 fid;  /* HDF file ID */
+    int32 grid; /* GRID for the interface */
+    int32 ret;  /* generic return value */
 
     MESSAGE(8, printf("Operate on 8-bit JPEG compressed images\n"););
 
@@ -762,7 +762,7 @@ test_mgr_chunk_compress()
         comp_flag,       /* compression flag */
         index, img_num;
     int32     start[2], stride[2], edge[2];
-    comp_info cinfo;        /* Compression parameters - union */
+    comp_info cinfo; /* Compression parameters - union */
 
     comp_coder_t  comp_type;
     int16         data_out[3 * Y_LENGTH * X_LENGTH];
