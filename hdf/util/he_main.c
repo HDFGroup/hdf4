@@ -69,7 +69,7 @@
 #endif
 /* NO_GETPID defined if the OS lacks the getpid() function */
 #ifndef NO_GETPID
-    pid_t        getpid(void);
+pid_t getpid(void);
 #endif /* !NO_GETPID */
 
 /* the return status of last command executed */
