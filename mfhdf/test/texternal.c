@@ -362,8 +362,8 @@ test_getexternal()
         VERIFY(name_len, (intn)HDstrlen(extfile_name), "SDgetexternalinfo");
         VERIFY_CHAR(short_name, extfile_name, "SDgetexternalinfo");
         HDfree(short_name);
-        HDfree(extfile_name);
     }
+    HDfree(extfile_name);
 
     /* Close the data set */
     status = SDendaccess(sds_id);
