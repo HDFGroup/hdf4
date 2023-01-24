@@ -70,11 +70,11 @@
 /* NO_GETPID defined if the OS lacks the getpid() function */
 #ifndef NO_GETPID
 #if defined H4_HAVE_WIN32_API
-    typedef int pid_t;
+typedef int pid_t;
 #endif
-    pid_t        getpid(void);
-    unsigned int pid; /* OS/2 DOS (MicroSoft Lib) allows "negative" int pids */
-#endif /* !NO_GETPID */
+pid_t        getpid(void);
+unsigned int pid; /* OS/2 DOS (MicroSoft Lib) allows "negative" int pids */
+#endif            /* !NO_GETPID */
 
 /* the return status of last command executed */
 int he_status = HE_OK;
