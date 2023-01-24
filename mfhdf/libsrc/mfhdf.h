@@ -169,7 +169,7 @@ HDFLIBAPI intn SDreset_maxopenfiles(intn req_max);
 
 HDFLIBAPI intn SDget_maxopenfiles(intn *curr_max, intn *sys_limit);
 
-HDFLIBAPI intn SDget_numopenfiles();
+HDFLIBAPI intn SDget_numopenfiles(void);
 
 HDFLIBAPI intn SDgetdatasize(int32 sdsid, int32 *comp_size, int32 *uncomp_size);
 

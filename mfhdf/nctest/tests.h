@@ -50,7 +50,7 @@ extern void test_ncattcopy      PROTO((char *, char *));
 extern void test_ncattname      PROTO((char *));
 extern void test_ncattrename    PROTO((char *));
 extern void test_ncattdel       PROTO((char *));
-extern void test_nctypelen      PROTO(());
+extern void test_nctypelen      PROTO((void));
 extern int test_varputget       PROTO((int));
 extern int test_varputgetg      PROTO((int));
 extern int test_slabs           PROTO((int));

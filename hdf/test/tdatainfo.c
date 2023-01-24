@@ -1395,6 +1395,7 @@ test_getpalinfo()
                     "palette data pointed by tag/ref = %d/%d at offset/length = %d/%d differs from written\n",
                     palinfo_array[0].tag, palinfo_array[0].ref, palinfo_array[0].offset,
                     palinfo_array[0].length);
+        HDfree(inbuf);
 
         /* Read and verify data of the palette pointed to by 301/4.  This is the
            data element that was not revealed by DFPgetpal because the tag/ref pair
@@ -1412,6 +1413,9 @@ test_getpalinfo()
                     "palette data pointed by tag/ref = %d/%d at offset/length = %d/%d differs from written\n",
                     palinfo_array[7].tag, palinfo_array[7].ref, palinfo_array[7].offset,
                     palinfo_array[7].length);
+        HDfree(inbuf);
+
+        HDfree(palinfo_array);
     }
 
     /* Terminate access to the GR interface and close the file */
