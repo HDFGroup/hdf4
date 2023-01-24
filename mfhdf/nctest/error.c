@@ -45,7 +45,7 @@ error(const char *fmt, ...)
  * returns after calling this, until on_errs() is called.
  */
 void
-off_errs()
+off_errs(void)
 {
     ncopts &= ~NC_FATAL;   /* make errors nonfatal */
     ncopts &= ~NC_VERBOSE; /* turn off error messages */
@@ -56,7 +56,7 @@ off_errs()
  * error returns after this.  (This is the initial default.)
  */
 void
-on_errs()
+on_errs(void)
 {
     ncopts |= NC_FATAL;   /* make errors fatal */
     ncopts |= NC_VERBOSE; /* library prints error messages */
