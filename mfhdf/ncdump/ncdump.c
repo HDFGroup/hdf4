@@ -9,8 +9,9 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include "local_nc.h"
-
 #include "ncdump.h"
+
+#include "getopt.h"
 #include "dumplib.h"
 #include "vardata.h"
 
@@ -607,9 +608,6 @@ set_sigdigs(char *optarg)
 int
 main(int argc, char *argv[])
 {
-    extern int          optind;
-    extern int          opterr;
-    extern char        *optarg;
     static struct fspec fspec = /* defaults, overridden on command line */
         {
             0,         /* construct netcdf name from file name */
