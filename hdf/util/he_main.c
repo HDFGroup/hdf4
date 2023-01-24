@@ -69,9 +69,9 @@
 #endif
 
 #if defined __MINGW32__
-    int getpid(void);
+int         getpid(void);
 #else
-    pid_t getpid(void);
+pid_t getpid(void);
 #endif
 
 /* the return status of last command executed */
