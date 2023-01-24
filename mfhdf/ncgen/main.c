@@ -10,7 +10,7 @@
 #ifdef __hpux
 #include <locale.h>
 #endif
-#include "../libsrc/getopt.h"
+#include "getopt.h"
 
 #include "ncgen.h"
 #include "genlib.h"

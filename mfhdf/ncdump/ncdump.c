@@ -11,7 +11,7 @@
 #include "local_nc.h"
 #include "ncdump.h"
 
-#include "../libsrc/getopt.h"
+#include "getopt.h"
 #include "dumplib.h"
 #include "vardata.h"
 
