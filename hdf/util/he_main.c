@@ -210,11 +210,7 @@ getTmpName(char **pname)
     static int count = 0;
     char       s[32];
 
-#ifndef NO_GETPID
-    (void)sprintf(s, "%she.%d", TDIR, count);
-#else
     (void)sprintf(s, "%she%d.%d", TDIR, (int)getpid(), count);
-#endif
     count++;
 
     length = (int)HDstrlen(s);
