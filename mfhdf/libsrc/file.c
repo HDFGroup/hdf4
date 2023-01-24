@@ -501,12 +501,7 @@ ncnobuf(int cdfid)
 static char *
 NCtempname(const char *proto)
 {
-/* NO_ACCESS defined if the OS lacks the access() function */
-#ifndef NO_ACCESS
 #define TN_NACCES 1
-#else
-#define TN_NACCES 0
-#endif /* !NO_ACCESS */
 #define TN_NDIGITS 4
 #if defined H4_HAVE_WIN32_API
     typedef int pid_t;
@@ -556,7 +551,6 @@ NCtempname(const char *proto)
     if (*sp != '\0')
         ++*sp;
 
-#ifndef NO_ACCESS
     for (*cp = 'a'; access(tnbuf, 0) == 0;) {
         if (++*cp > 'z') {
             /* ran out of tries */
@@ -564,7 +558,6 @@ NCtempname(const char *proto)
             return tnbuf;
         }
     }
-#endif /* !NO_ACCESS */
 
     return tnbuf;
 }
