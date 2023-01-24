@@ -67,6 +67,14 @@
 #ifdef H4_HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+/* NO_GETPID defined if the OS lacks the getpid() function */
+#ifndef NO_GETPID
+#if defined H4_HAVE_WIN32_API
+    typedef int pid_t;
+#endif
+    pid_t        getpid(void);
+    unsigned int pid; /* OS/2 DOS (MicroSoft Lib) allows "negative" int pids */
+#endif /* !NO_GETPID */
 
 /* the return status of last command executed */
 int he_status = HE_OK;
@@ -204,7 +212,11 @@ getTmpName(char **pname)
     static int count = 0;
     char       s[32];
 
+#ifndef NO_GETPID
+    (void)sprintf(s, "%she.%d", TDIR, count);
+#else
     (void)sprintf(s, "%she%d.%d", TDIR, (int)getpid(), count);
+#endif
     count++;
 
     length = (int)HDstrlen(s);
