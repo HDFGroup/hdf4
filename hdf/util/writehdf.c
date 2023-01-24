@@ -100,8 +100,11 @@ char    *GIFFileName;
                           (int32)(GifMemoryStruct.GifCommentExtension[i])->DataSize,
                           (VOIDP)(GifMemoryStruct.GifCommentExtension[i])->CommentData);
         HDfree(GifMemoryStruct.GifCommentExtension[i]);
+        GifMemoryStruct.GifCommentExtension[i] = NULL;
     }
+    gifHead.CommentCount = 0;
     HDfree(GifMemoryStruct.GifCommentExtension);
+    GifMemoryStruct.GifCommentExtension = NULL;
 
     for (i = 0; i < ApplicationCount; i++) {
         sprintf(ApplicationName, "Application Extension Data %d", (int)i);
