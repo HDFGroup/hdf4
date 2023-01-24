@@ -507,17 +507,12 @@ NCtempname(const char *proto)
 #else
 #define TN_NACCES 0
 #endif /* !NO_ACCESS */
-/* NO_GETPID defined if the OS lacks the getpid() function */
-#ifndef NO_GETPID
 #define TN_NDIGITS 4
 #if defined H4_HAVE_WIN32_API
     typedef int pid_t;
 #endif
     pid_t        getpid(void);
     unsigned int pid; /* OS/2 DOS (MicroSoft Lib) allows "negative" int pids */
-#else
-#define TN_NDIGITS 0
-#endif /* !NO_GETPID */
 
     static char seed[] = {'a', 'a', 'a', '\0'};
 #define TN_NSEED (sizeof(seed) - 1)
