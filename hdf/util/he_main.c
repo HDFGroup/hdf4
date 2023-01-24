@@ -70,9 +70,17 @@
 /* NO_GETPID defined if the OS lacks the getpid() function */
 #ifndef NO_GETPID
 #if defined __MINGW32__
+<<<<<<< Upstream, based on branch 'master-intel-win' of https://github.com/byrnHDF/hdf4.git
 typedef int pid_t;
+=======
+    int getpid(void);
+>>>>>>> 8b8d97d mingw wants int getpid()
 #endif
+<<<<<<< Upstream, based on branch 'master-intel-win' of https://github.com/byrnHDF/hdf4.git
 pid_t getpid(void);
+=======
+    pid_t getpid(void);
+>>>>>>> 8b8d97d mingw wants int getpid()
 #endif /* !NO_GETPID */
 
 /* the return status of last command executed */
