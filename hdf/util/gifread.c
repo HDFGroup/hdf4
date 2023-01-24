@@ -255,7 +255,9 @@ ReadGifGraphicControl(GIFGRAPHICCONTROL *GifGraphicControl, BYTE **MemGif2)
 int
 ReadGifPlainText(GIFPLAINTEXT *GifPlainText, BYTE **MemGif2)
 {
-    for (int i = 0; i < 13; i++) {
+    int i;
+
+    for (i = 0; i < 13; i++) {
         GifPlainText->PTEDump[i] = *(*MemGif2)++;
     }
 
