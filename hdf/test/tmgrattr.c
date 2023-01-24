@@ -74,7 +74,6 @@ test_mgr_fillvalues()
     int32        ntype, n_values;
     hdf_ntinfo_t nt_info;      /* struct containing name and byte order of a num type */
     int32        ret;          /* generic return value */
-    int          num_errs = 0; /* number of errors so far */
 
     MESSAGE(8, printf("Reading fill-value attribute\n"););
 
@@ -211,7 +210,6 @@ test_mgr_userattr()
     VOIDP        data_buf;     /* buffer to hold the attribute values */
     hdf_ntinfo_t nt_info;      /* struct containing name and byte order of a num type */
     intn         status;       /* status for functions returning an intn */
-    int          num_errs = 0; /* number of errors so far */
 
     MESSAGE(8, printf("Reading user-defined attribute\n"););
 
@@ -460,8 +458,6 @@ test_mgr_userattr()
 extern void
 test_mgr_attr()
 {
-    int num_errs = 0;
-
     /* Output message about test being performed */
     MESSAGE(5, printf("Testing Multi-file Raster Attribute routines\n"););
 
