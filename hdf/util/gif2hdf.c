@@ -91,12 +91,11 @@ main(int argv, char *argc[])
         printf("HDF Write Error\n\n");
 
     /* Free all buffers */
-    HDfree(StartPos);
-
     if (GifMemoryStruct.GifImageDesc != NULL) {
         int32 ImageCount = (int32)(GifMemoryStruct.GifHeader)->ImageCount;
         for (i = 0; i < ImageCount; i++) {
-            HDfree(GifMemoryStruct.GifImageDesc[i]->Image);
+            if (GifMemoryStruct.GifImageDesc[i]->Image != NULL)
+                HDfree(GifMemoryStruct.GifImageDesc[i]->Image);
             HDfree(GifMemoryStruct.GifImageDesc[i]);
 
             if (GifMemoryStruct.GifGraphicControlExtension[i] != NULL)
@@ -115,14 +114,11 @@ main(int argv, char *argc[])
         HDfree(GifMemoryStruct.GifApplicationExtension);
     }
 
+    /* The following will segfault
     if (GifMemoryStruct.GifCommentExtension != NULL) {
-        int32 CommentCount = (int32)(GifMemoryStruct.GifHeader)->CommentCount;
-        for (i = 0; i < CommentCount; i++) {
-            HDfree(GifMemoryStruct.GifCommentExtension[i]->CommentData);
-            HDfree(GifMemoryStruct.GifCommentExtension[i]);
-        }
         HDfree(GifMemoryStruct.GifCommentExtension);
     }
+    */
 
     if (GifMemoryStruct.GifPlainTextExtension != NULL) {
         int32 TextCount = (int32)(GifMemoryStruct.GifHeader)->PlainTextCount;
@@ -132,6 +128,8 @@ main(int argv, char *argc[])
         }
         HDfree(GifMemoryStruct.GifPlainTextExtension);
     }
+
+    HDfree(StartPos);
 
     HDfree(GifMemoryStruct.GifHeader);
 
