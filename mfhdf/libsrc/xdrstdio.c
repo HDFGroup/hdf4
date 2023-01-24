@@ -23,14 +23,32 @@
 
 #include <stdio.h>
 
-#include "local_nc.h" /* prototypes for NCadvis, nc_error */
-                      /* also obtains <stdio.h>, <rpc/types.h>, &
-                       * <rpc/xdr.h> */
 #ifdef H4_HAVE_FCNTL_H
 #include <fcntl.h> /* O_BINARY */
 #endif
-#ifdef DOS_FS
-#define USE_BFLAG
+
+#ifdef H4_HAVE_UNISTD_H
+#include <unistd.h> /* access(), F_OK */
+#endif
+
+#include "local_nc.h" /* prototypes for NCadvis, nc_error */
+                      /* also obtains <stdio.h>, <rpc/types.h>, &
+                       * <rpc/xdr.h> */
+#include "netcdf.h"   /* NC_ */
+
+#ifndef F_OK
+#define F_OK 0
+#endif
+
+#ifdef H4_HAVE_WIN32_API
+/* Windows requires the 'b' flag to avoid line ending problems */
+#define CREAT_FOPENFLAGS   "w+b"
+#define WRITE_FOPENFLAGS   "r+b"
+#define NOWRITE_FOPENFLAGS "rb"
+#else
+#define CREAT_FOPENFLAGS   "w+"
+#define WRITE_FOPENFLAGS   "r+"
+#define NOWRITE_FOPENFLAGS "r"
 #endif
 
 #ifdef USE_XDRNCSTDIO
@@ -94,13 +112,13 @@ xdrNCstdio_getlong(XDR *xdrs, register long *lp)
 {
     if (fread((caddr_t)lp, sizeof(long), 1, (FILE *)xdrs->x_private) != 1) {
         XDRNC_POS(xdrs) = ftell((FILE *)xdrs->x_private);
-        return (FALSE);
+        return FALSE;
     }
 #ifndef H4_WORDS_BIGENDIAN
     *lp = ntohl(*lp);
 #endif
     XDRNC_POS(xdrs) += sizeof(long);
-    return (TRUE);
+    return TRUE;
 }
 
 static bool_t
@@ -113,10 +131,10 @@ xdrNCstdio_putlong(XDR *xdrs, long *lp)
 
     if (fwrite((caddr_t)lp, sizeof(long), 1, (FILE *)xdrs->x_private) != 1) {
         XDRNC_POS(xdrs) = ftell((FILE *)xdrs->x_private);
-        return (FALSE);
+        return FALSE;
     }
     XDRNC_POS(xdrs) += sizeof(long);
-    return (TRUE);
+    return TRUE;
 }
 
 static bool_t
@@ -124,10 +142,10 @@ xdrNCstdio_getbytes(XDR *xdrs, caddr_t addr, u_int len)
 {
     if ((len != 0) && (fread(addr, (int)len, 1, (FILE *)xdrs->x_private) != 1)) {
         XDRNC_POS(xdrs) = ftell((FILE *)xdrs->x_private);
-        return (FALSE);
+        return FALSE;
     }
     XDRNC_POS(xdrs) += len;
-    return (TRUE);
+    return TRUE;
 }
 
 static bool_t
@@ -136,17 +154,17 @@ xdrNCstdio_putbytes(XDR *xdrs, caddr_t addr, u_int len)
 
     if ((len != 0) && (fwrite(addr, (int)len, 1, (FILE *)xdrs->x_private) != 1)) {
         XDRNC_POS(xdrs) = ftell((FILE *)xdrs->x_private);
-        return (FALSE);
+        return FALSE;
     }
     XDRNC_POS(xdrs) += len;
-    return (TRUE);
+    return TRUE;
 }
 
 static u_long
 xdrNCstdio_getpos(XDR *xdrs)
 {
     XDRNC_POS(xdrs) = ftell((FILE *)xdrs->x_private);
-    return ((u_long)XDRNC_POS(xdrs));
+    return (u_long)XDRNC_POS(xdrs);
 }
 
 static bool_t
@@ -154,13 +172,13 @@ xdrNCstdio_setpos(XDR *xdrs, u_int pos)
 {
     if (xdrs->x_op == XDRNC_LASTOP(xdrs) && pos == XDRNC_POS(xdrs))
         return TRUE;
-    /* else */
+
     XDRNC_LASTOP(xdrs) = xdrs->x_op;
     if (fseek((FILE *)xdrs->x_private, (long)pos, 0) < 0) {
         XDRNC_POS(xdrs) = ftell((FILE *)xdrs->x_private);
-        return (FALSE);
+        return FALSE;
     }
-    /* else */
+
     XDRNC_POS(xdrs) = pos;
     return TRUE;
 }
@@ -178,7 +196,7 @@ xdrNCstdio_inline(XDR *xdrs, u_int len)
      * most of the gains to be had here and require storage
      * management on this buffer, so we don't do this.
      */
-    return (NULL);
+    return NULL;
 }
 #else
 
@@ -214,29 +232,6 @@ xdrNCstdio_setpos(XDR *xdrs, u_int pos)
 
 #endif /* USE_XDRNCSTDIO */
 
-/********/
-
-#ifdef H4_HAVE_UNISTD_H
-#include <unistd.h> /* access(), F_OK */
-#endif
-
-#ifndef F_OK
-#define F_OK 0
-#endif
-
-#include "netcdf.h"   /* NC_ */
-#include "local_nc.h" /* prototypes for NCadvis, nc_error */
-
-#ifndef USE_BFLAG /* Doesn't Understand the "b" (binary flag to fopen) */
-#define CREAT_FOPENFLAGS   "w+"
-#define WRITE_FOPENFLAGS   "r+"
-#define NOWRITE_FOPENFLAGS "r"
-#else
-#define CREAT_FOPENFLAGS   "w+b"
-#define WRITE_FOPENFLAGS   "r+b"
-#define NOWRITE_FOPENFLAGS "rb"
-#endif /* !USE_BFLAG */
-
 /*
  * "sync" (flush) xdr stream.
  */
@@ -245,9 +240,10 @@ NCxdrfile_sync(XDR *xdrs)
 {
     /* assumes xdrstdio, violates layering */
     FILE *fp = (FILE *)xdrs->x_private;
+
     if (fflush(fp) == 0)
-        return 0; /* success */
-    /* else, failure */
+        return 0;
+
     return -1;
 }
 
@@ -262,7 +258,7 @@ NCxdrfile_create(XDR *xdrs, const char *path, int ncmode)
         case NC_NOCLOBBER:
             if (access(path, F_OK) != -1) {
                 NCadvise(NC_EEXIST, "\"%s\": File exists", path);
-                return (-1);
+                return -1;
             }
             /* fall into */
         case NC_CLOBBER:
@@ -276,22 +272,14 @@ NCxdrfile_create(XDR *xdrs, const char *path, int ncmode)
             break;
         default:
             NCadvise(NC_EINVAL, "Bad flag %0x", ncmode & 0x0f);
-            return (-1);
+            return -1;
     }
 
-#ifdef DOS_FS
-    /*
-     * set default mode to binary to suppress the expansion of
-     * 0x0f into CRLF
-     */
-    if (_fmode != O_BINARY)
-        _fmode = O_BINARY;
-#endif
     fp = fopen(path, fmode);
     if (fp == NULL) {
         nc_serror("filename \"%s\"", path);
-        return (-1);
-    } /* else */
+        return -1;
+    }
 
     if (ncmode & NC_CREAT) {
         op = XDR_ENCODE;
