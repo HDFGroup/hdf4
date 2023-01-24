@@ -72,9 +72,9 @@
 int         getpid(void);
 #else
 #if defined H4_HAVE_WIN32_API
-    typedef int pid_t;
+typedef int pid_t;
 #else
-    pid_t getpid(void);
+pid_t getpid(void);
 #endif
 #endif
 
