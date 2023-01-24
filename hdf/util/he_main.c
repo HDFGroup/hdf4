@@ -69,7 +69,10 @@
 #endif
 /* NO_GETPID defined if the OS lacks the getpid() function */
 #ifndef NO_GETPID
-pid_t getpid(void);
+#if defined __MINGW32__
+    typedef int pid_t;
+#endif
+    pid_t        getpid(void);
 #endif /* !NO_GETPID */
 
 /* the return status of last command executed */
