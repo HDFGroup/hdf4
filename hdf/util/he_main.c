@@ -67,19 +67,12 @@
 #ifdef H4_HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-/* NO_GETPID defined if the OS lacks the getpid() function */
+
 #if defined __MINGW32__
-<<<<<<< Upstream, based on branch 'master-intel-win' of https://github.com/byrnHDF/hdf4.git
-int         getpid(void);
-#endif
-pid_t getpid(void);
-#endif /* !NO_GETPID */
-=======
     int getpid(void);
 #else
     pid_t getpid(void);
 #endif
->>>>>>> 41ce9a1 Cleanup NO_GETPID
 
 /* the return status of last command executed */
 int he_status = HE_OK;
