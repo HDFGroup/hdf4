@@ -501,23 +501,14 @@ ncnobuf(int cdfid)
 static char *
 NCtempname(const char *proto)
 {
-/* NO_ACCESS defined if the OS lacks the access() function */
-#ifndef NO_ACCESS
-#define TN_NACCES 1
-#else
-#define TN_NACCES 0
-#endif /* !NO_ACCESS */
-/* NO_GETPID defined if the OS lacks the getpid() function */
-#ifndef NO_GETPID
+#define TN_NACCES  1
 #define TN_NDIGITS 4
 #if defined H4_HAVE_WIN32_API
     typedef int pid_t;
-#endif
-    pid_t        getpid(void);
-    unsigned int pid; /* OS/2 DOS (MicroSoft Lib) allows "negative" int pids */
 #else
-#define TN_NDIGITS 0
-#endif /* !NO_GETPID */
+    pid_t getpid(void);
+#endif
+    unsigned int pid; /* OS/2 DOS (MicroSoft Lib) allows "negative" int pids */
 
     static char seed[] = {'a', 'a', 'a', '\0'};
 #define TN_NSEED (sizeof(seed) - 1)
@@ -545,17 +536,13 @@ NCtempname(const char *proto)
     *begin = '\0';
     (void)strcat(begin, seed);
 
-    cp = begin + TN_NSEED + TN_NACCES + TN_NDIGITS;
-#ifndef NO_GETPID
+    cp  = begin + TN_NSEED + TN_NACCES + TN_NDIGITS;
     *cp = '\0';
     pid = getpid();
     while (--cp >= begin + TN_NSEED + TN_NACCES) {
         *cp = (pid % 10) + '0';
         pid /= 10;
     }
-#else
-    *cp-- = '\0';
-#endif /* !NO_GETPID */
 
     /* update seed for next call */
     sp = seed;
@@ -564,7 +551,6 @@ NCtempname(const char *proto)
     if (*sp != '\0')
         ++*sp;
 
-#ifndef NO_ACCESS
     for (*cp = 'a'; access(tnbuf, 0) == 0;) {
         if (++*cp > 'z') {
             /* ran out of tries */
@@ -572,7 +558,6 @@ NCtempname(const char *proto)
             return tnbuf;
         }
     }
-#endif /* !NO_ACCESS */
 
     return tnbuf;
 }

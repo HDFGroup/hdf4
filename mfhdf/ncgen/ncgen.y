@@ -31,6 +31,7 @@ void init_netcdf(void);		/* initializes netcdf counts (e.g. nvars) */
 void define_netcdf(char *netcdfname);		/* generates all define mode stuff */
 void load_netcdf(void *rec_start);		/* generates variable puts */
 void close_netcdf(void);		/* generates close */
+const char *nctype(nc_type);
 
 void derror(const char *fmt, ...);			/* varargs message emitter */
 void *emalloc(int size), *erealloc(void *ptr, int size);	/* malloc that checks for memory exhausted */

@@ -68,6 +68,16 @@
 #include <unistd.h>
 #endif
 
+#if defined __MINGW32__
+int         getpid(void);
+#else
+#if defined H4_HAVE_WIN32_API
+typedef int pid_t;
+#else
+pid_t getpid(void);
+#endif
+#endif
+
 /* the return status of last command executed */
 int he_status = HE_OK;
 
