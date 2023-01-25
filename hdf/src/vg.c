@@ -484,7 +484,7 @@ VSsetname(int32       vkey, /* IN: Vdata key */
 {
     vsinstance_t *w  = NULL;
     VDATA        *vs = NULL;
-    int32         curr_len;
+    int32         curr_len = 0;
     int32         slen;
     int32         ret_value = SUCCEED;
 
