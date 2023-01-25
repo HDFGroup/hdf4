@@ -36,10 +36,9 @@
 static int
 test_mgr_compress_a()
 {
-    int32 fid;          /* HDF file ID */
-    int32 grid;         /* GRID for the interface */
-    int32 ret;          /* generic return value */
-    int   num_errs = 0; /* number of errors so far */
+    int32 fid;  /* HDF file ID */
+    int32 grid; /* GRID for the interface */
+    int32 ret;  /* generic return value */
 
     MESSAGE(8, printf("Operate on gzip compressed images\n"););
 
@@ -183,10 +182,9 @@ test_mgr_compress_a()
 static int
 test_mgr_compress_b()
 {
-    int32 fid;          /* HDF file ID */
-    int32 grid;         /* GRID for the interface */
-    int32 ret;          /* generic return value */
-    int   num_errs = 0; /* number of errors so far */
+    int32 fid;  /* HDF file ID */
+    int32 grid; /* GRID for the interface */
+    int32 ret;  /* generic return value */
 
     MESSAGE(8, printf("Operate on 8-bit JPEG compressed images\n"););
 
@@ -388,7 +386,6 @@ test_mgr_compress_c()
     comp_info c_info;
     char      gname[60];
     int32     n_comps, dt, im, dims[2], na;
-    int       num_errs = 0; /* number of errors so far */
 
     MESSAGE(8, printf("Operate on 24-bit JPEG compressed images\n"););
 
@@ -568,7 +565,6 @@ test_get_compress()
     comp_info    cinfo;        /* Compression parameters - union */
     char         err_func[80]; /* name of the functions where failure occurs */
     intn         status;       /* generic return value */
-    int          num_errs = 0; /* number of errors so far */
 
     /* D - Retrieve compression information of compressed images */
     MESSAGE(8, printf("Verify the compression information of compressed images\n"););
@@ -766,8 +762,7 @@ test_mgr_chunk_compress()
         comp_flag,       /* compression flag */
         index, img_num;
     int32     start[2], stride[2], edge[2];
-    comp_info cinfo;        /* Compression parameters - union */
-    int       num_errs = 0; /* number of errors so far */
+    comp_info cinfo; /* Compression parameters - union */
 
     comp_coder_t  comp_type;
     int16         data_out[3 * Y_LENGTH * X_LENGTH];
@@ -1009,8 +1004,6 @@ test_mgr_chunk_compress()
 extern void
 test_mgr_compress()
 {
-    int num_errs = 0;
-
     /* Output message about test being performed */
     MESSAGE(5, printf("Testing Multi-file Raster Compression Functions\n"););
 

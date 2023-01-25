@@ -72,9 +72,8 @@ test_mgr_fillvalues()
     int32        stride[2];             /* stride of image data to grab */
     char         attr_name[H4_MAX_GR_NAME];
     int32        ntype, n_values;
-    hdf_ntinfo_t nt_info;      /* struct containing name and byte order of a num type */
-    int32        ret;          /* generic return value */
-    int          num_errs = 0; /* number of errors so far */
+    hdf_ntinfo_t nt_info; /* struct containing name and byte order of a num type */
+    int32        ret;     /* generic return value */
 
     MESSAGE(8, printf("Reading fill-value attribute\n"););
 
@@ -208,10 +207,9 @@ test_mgr_userattr()
     int32        dims[2];                         /* dimension sizes of the image */
     int32        n_attrs;                         /* number of attributes with each image */
     int16        ri_attr_2[RI_ATT2_N_VALUES] = {1, 2, 3, 4, 5, 6};
-    VOIDP        data_buf;     /* buffer to hold the attribute values */
-    hdf_ntinfo_t nt_info;      /* struct containing name and byte order of a num type */
-    intn         status;       /* status for functions returning an intn */
-    int          num_errs = 0; /* number of errors so far */
+    VOIDP        data_buf; /* buffer to hold the attribute values */
+    hdf_ntinfo_t nt_info;  /* struct containing name and byte order of a num type */
+    intn         status;   /* status for functions returning an intn */
 
     MESSAGE(8, printf("Reading user-defined attribute\n"););
 
@@ -460,8 +458,6 @@ test_mgr_userattr()
 extern void
 test_mgr_attr()
 {
-    int num_errs = 0;
-
     /* Output message about test being performed */
     MESSAGE(5, printf("Testing Multi-file Raster Attribute routines\n"););
 

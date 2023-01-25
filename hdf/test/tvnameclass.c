@@ -310,7 +310,6 @@ test_vgisinternal()
     intn  ii, status;
     char  testfile[H4_MAX_NC_NAME] = "";
     char  internal_array2[2]       = {TRUE, TRUE};
-    intn  num_errs                 = 0; /* number of errors so far */
 
     /* Use a GR file to test Vgisinternal on internal vgroups */
 
