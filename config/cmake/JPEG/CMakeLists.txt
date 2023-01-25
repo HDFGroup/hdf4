@@ -154,6 +154,7 @@ endif ()
 if (CMAKE_C_COMPILER_ID MATCHES "[Cc]lang")
    set (CMAKE_C_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_C_FLAGS} -Wno-deprecated-non-prototype -Wno-strict-prototypes")
 endif ()
+
 #-----------------------------------------------------------------------------
 # This is in here to help some of the GCC based IDES like Eclipse
 # and code blocks parse the compiler errors and warnings better.
