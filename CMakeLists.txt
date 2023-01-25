@@ -2,6 +2,7 @@ cmake_minimum_required (VERSION 3.12)
 project (HDF4 C)
 
 if (POLICY CMP0074)
+  # find_package() uses <PackageName>_ROOT variables.
   cmake_policy (SET CMP0074 NEW)
 endif ()
 
@@ -335,6 +336,12 @@ endif ()
 
 set (CMAKE_POSITION_INDEPENDENT_CODE ON)
 
+if (NOT BUILD_SHARED_LIBS)
+  set (tgt_file_ext "")
+else ()
+  set (tgt_file_ext "-shared")
+endif ()
+
 add_definitions (-DHAVE_CONFIG_H)
 
 #-----------------------------------------------------------------------------
@@ -355,6 +362,11 @@ if (HDF4_ENABLE_ANALYZER_TOOLS)
 endif ()
 if (HDF4_ENABLE_SANITIZERS)
   include (${HDF4_SOURCE_DIR}/config/sanitizer/sanitizers.cmake)
+endif ()
+option (HDF4_ENABLE_FORMATTERS "format source files" OFF)
+mark_as_advanced (HDF4_ENABLE_FORMATTERS)
+if (HDF4_ENABLE_FORMATTERS)
+  include (${HDF4_SOURCE_DIR}/config/sanitizer/formatting.cmake)
 endif ()
 
 #-----------------------------------------------------------------------------
@@ -529,6 +541,21 @@ if (HDF4_BUILD_XDR_LIB)
   endif ()
   if (BUILD_SHARED_LIBS)
     add_dependencies (${HDF4_MF_LIBSH_TARGET} ${HDF4_MF_XDR_LIBSH_TARGET})
+  endif ()
+endif ()
+
+#-----------------------------------------------------------------------------
+# Option to build documentation
+#-----------------------------------------------------------------------------
+option (HDF4_BUILD_DOC "Build documentation" OFF)
+if (HDF4_BUILD_DOC AND EXISTS "${HDF4_DOXYGEN_DIR}" AND IS_DIRECTORY "${HDF4_DOXYGEN_DIR}")
+# check if Doxygen is installed
+  find_package(Doxygen)
+  if (DOXYGEN_FOUND)
+    message(STATUS "Doxygen version: ${DOXYGEN_VERSION}")
+    add_subdirectory (doxygen)
+  else ()
+    message(STATUS "Doxygen needs to be installed to generate the doxygen documentation")
   endif ()
 endif ()
 

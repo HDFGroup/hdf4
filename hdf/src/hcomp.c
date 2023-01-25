@@ -140,14 +140,14 @@ funclist_t comp_funcs = {
 PRIVATE int32
 HCIinit_coder(int16 acc_mode, comp_coder_info_t *cinfo, comp_coder_t coder_type, comp_info *c_info)
 {
-    uint32 comp_info;
+    uint32 comp_config_info;
 
-    HCget_config_info(coder_type, &comp_info);
+    HCget_config_info(coder_type, &comp_config_info);
     /* TODO: This construct S.B.
      *       (comp_info & (COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED))
      *     but the calling code does not handle it correctly
      */
-    if ((comp_info & COMP_DECODER_ENABLED | COMP_ENCODER_ENABLED) == 0) {
+    if ((comp_config_info & COMP_DECODER_ENABLED | COMP_ENCODER_ENABLED) == 0) {
         /* coder not present?? */
         HRETURN_ERROR(DFE_BADCODER, FAIL)
     }
