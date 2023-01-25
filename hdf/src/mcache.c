@@ -825,8 +825,8 @@ static BKT *
 mcache_look(MCACHE *mp, /* IN: MCACHE cookie */
             int32   pgno /* IN: page to look up in cache */)
 {
-    struct _hqh *head      = NULL; /* head of hash chain */
-    BKT         *bp        = NULL; /* bucket element */
+    struct _hqh *head = NULL; /* head of hash chain */
+    BKT         *bp   = NULL; /* bucket element */
 
     /* check inputs */
     if (mp == NULL) {
