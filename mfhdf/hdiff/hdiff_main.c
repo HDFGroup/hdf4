@@ -16,6 +16,8 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
+
+#include "getopt.h"
 #include "hdf.h"
 #include "hfile.h"
 #include "mfhdf.h"
@@ -71,10 +73,6 @@ usage()
 int
 main(int argc, char *argv[])
 {
-    extern int   optind;
-    extern int   opterr;
-    extern char *optarg;
-
     static diff_opt_t opt = /* defaults, overridden on command line */
         {
             0,        /* verbose mode */

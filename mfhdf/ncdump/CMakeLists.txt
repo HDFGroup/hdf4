@@ -9,7 +9,7 @@ set (ncdump_SRCS
     ${HDF4_MFHDF_NCDUMP_SOURCE_DIR}/dumplib.c
     ${HDF4_MFHDF_NCDUMP_SOURCE_DIR}/ncdump.c
     ${HDF4_MFHDF_NCDUMP_SOURCE_DIR}/vardata.c
-    ${HDF4_SOURCE_DIR}/mfhdf/util/getopt.c
+    ${HDF4_MFHDFSOURCE_DIR}/getopt.c
 )
 
 if (NOT ONLY_SHARED_LIBS)

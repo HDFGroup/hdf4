@@ -62,8 +62,8 @@ static NC **_cdfs;
 #define HNDLE(id) (((id) >= 0 && (id) < _ncdf) ? _cdfs[(id)] : NULL)
 #define STASH(id) (((id) >= 0 && (id) < _ncdf) ? HNDLE(_cdfs[(id)]->redefid) : NULL)
 
-#ifdef DOS_FS
-#define SEP '\\' /* this separates path components on DOS */
+#ifdef H4_HAVE_WIN32_API
+#define SEP '\\' /* this separates path components on Windows */
 #endif
 #ifndef SEP
 #define SEP '/' /* default, unix */
@@ -878,7 +878,7 @@ NC_endef(int cdfid, NC *handle)
 
         /* close stash */
 /*                NC_free_cdf(stash) ; */
-#ifdef DOS_FS
+#ifdef H4_HAVE_WIN32_API
         xdr_destroy(handle->xdrs); /* close handle */
         if (remove(realpath) != 0)
             nc_serror("couldn't remove filename \"%s\"", realpath);
@@ -900,7 +900,7 @@ NC_endef(int cdfid, NC *handle)
             return (-1);
         }
         (void)strncpy(handle->path, realpath, FILENAME_MAX);
-#ifdef DOS_FS
+#ifdef H4_HAVE_WIN32_API
         if (NCxdrfile_create(handle->xdrs, handle->path, NC_WRITE) < 0)
             return -1;
 #endif
