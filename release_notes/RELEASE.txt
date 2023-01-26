@@ -38,6 +38,16 @@ New features and changes
 ========================
     Configuration:
     -------------
+    - Updated the warnings flags for compilers with files for gcc,
+      clang and Intel compilers.
+
+      As explained in a README file in config, the warnings are generally
+      version-specific based on a common file. Warnings that are no longer
+      an issue are configured to generate an error if it is accidently
+      introduced. Other compilers could be added.
+
+      (ADB - 2023/01/26)
+
     - The vattr.h header file is no longer distributed
 
       This header file was empty aside from including hdf.h and vg.h.
