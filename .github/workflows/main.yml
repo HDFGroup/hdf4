@@ -312,7 +312,7 @@ jobs:
            sudo pkg_add git
            sudo pkg_add cmake
            sudo pkg_add jpeg
-        if: (matrix.bsd_setup == 'true')
+        if: (matrix.bsd_setup)
 
       - name: Set environment for MSVC (Windows)
         run: |
