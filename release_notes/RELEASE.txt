@@ -40,13 +40,16 @@ New features and changes
     -------------
     - The FreeBSD Autotools config was updated to work like MacOS and Linux
 
-      config/freebsd was updated to try a variety of compilers and the
-      default was set to 'cc', which should map to clang. Fortran is less
+      The config/freebsd file was updated to try a variety of compilers and
+      the default was set to 'cc', which should map to clang. Fortran is less
       well tested due to its issues with 64-bit systems, but the default
       of 'f77' was left alone.
 
       It may be necessary to specify --with-jpeg=/usr/local if libjpeg was
       installed via the package manager.
+
+      A GitHub action that tests FreeBSD via MacOS + xhyve has been added to
+      make sure FreeBSD support doesn't break.
 
       (DER - 2023/01/25)
 
