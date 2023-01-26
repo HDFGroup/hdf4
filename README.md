@@ -1,6 +1,9 @@
 HDF version 4.2.15-post0 currently under development
 ===================================================
 
+[![master build status](https://img.shields.io/github/actions/workflow/status/HDFGroup/hdf4/main.yml?branch=master&label=master)](https://github.com/HDFGroup/hdf4/actions?query=branch%3Amaster)
+[![BSD](https://img.shields.io/badge/License-BSD-blue.svg)](https://github.com/HDFGroup/hdf4/blob/develop/COPYING)
+
 Information about HDF
 ---------------------
 
