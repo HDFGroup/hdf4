@@ -236,25 +236,29 @@ jobs:
             run_tests: true
             use_mingw: false
 
+          # A bug in cross-platform-actions is currently preventing FreeBSD
+          # from accessing pkg. This test will be enabled after the bug
+          # has been fixed.
+          #
           # FreeBSD x86-64 w/ cc (clang) via MacOS + xhyve
-          - name: "FreeBSD static Autotools CMake"
-            architecture: x86-64
-            version: '13.1'
-            uses: cross-platform-actions/action@v0.7.0
-            env:
-              CFLAGS: -I/usr/local
-              CPPFLAGS: -I/usr/local
-              LDFLAGS: -L/usr/local
-            environment_variables: CFLAGS CPPFLAGS LDFLAGS
-            os: macos-12
-            shared: disable
-            xdr: enable
-            java: disable
-            toolchain: ""
-            generator: "autogen"
-            run_tests: true
-            use_mingw: false
-            bsd_setup: true
+          #          - name: "FreeBSD static Autotools CMake"
+          #  architecture: x86-64
+          #  version: '13.1'
+          #  uses: cross-platform-actions/action@v0.10.0
+          #  env:
+          #    CFLAGS: -I/usr/local
+          #    CPPFLAGS: -I/usr/local
+          #    LDFLAGS: -L/usr/local
+          #  environment_variables: CFLAGS CPPFLAGS LDFLAGS
+          #  os: macos-12
+          #  shared: disable
+          #  xdr: enable
+          #  java: disable
+          #  toolchain: ""
+          #  generator: "autogen"
+          #  run_tests: true
+          #  use_mingw: false
+          #  bsd_setup: true
 
     # Sets the job's name from the properties
     name: "${{ matrix.name }}${{ matrix.build_mode.text }}${{ matrix.shared.text }}${{ matrix.netcdf.text }}"
