@@ -306,12 +306,12 @@ jobs:
 
       - name: Install Autotools Dependencies (BSD)
         run: |
-           sudo pkg_add autoconf
-           sudo pkg_add automake
-           sudo pkg_add libtool
-           sudo pkg_add git
-           sudo pkg_add cmake
-           sudo pkg_add jpeg
+           sudo pkg install autoconf
+           sudo pkg install automake
+           sudo pkg install libtool
+           sudo pkg install git
+           sudo pkg install cmake
+           sudo pkg install jpeg
         if: (matrix.bsd_setup)
 
       - name: Set environment for MSVC (Windows)
