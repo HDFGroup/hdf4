@@ -543,20 +543,6 @@ if (HDF4_BUILD_XDR_LIB)
     add_dependencies (${HDF4_MF_LIBSH_TARGET} ${HDF4_MF_XDR_LIBSH_TARGET})
   endif ()
 endif ()
-
-#-----------------------------------------------------------------------------
-# Option to build documentation
-#-----------------------------------------------------------------------------
-option (HDF4_BUILD_DOC "Build documentation" OFF)
-if (HDF4_BUILD_DOC AND EXISTS "${HDF4_DOXYGEN_DIR}" AND IS_DIRECTORY "${HDF4_DOXYGEN_DIR}")
-# check if Doxygen is installed
-  find_package(Doxygen)
-  if (DOXYGEN_FOUND)
-    message(STATUS "Doxygen version: ${DOXYGEN_VERSION}")
-    add_subdirectory (doxygen)
-  else ()
-    message(STATUS "Doxygen needs to be installed to generate the doxygen documentation")
-  endif ()
 endif ()
 
 #-----------------------------------------------------------------------------

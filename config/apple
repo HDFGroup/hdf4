@@ -26,7 +26,7 @@ if test "X-$CC" = "X-"; then
     CC_BASENAME=clang
 fi
 
-# Figure out GNU C compiler flags
+# Figure out C compiler flags
 . $srcdir/config/gnu-flags
 
 # Figure out Intel C compiler flags
@@ -41,8 +41,9 @@ if test "X-$F77" = "X-"; then
   F77_BASENAME=gfortran
 fi
 
-# Figure out GNU FC compiler flags
+# Figure out FORTRAN compiler flags
 . $srcdir/config/gnu-fflags
+. $srcdir/config/intel-fflags
 
 # compiler version strings
 
@@ -57,7 +58,7 @@ case $CC in
 
     *gcc*)
         cc_version_info=`$CC $CFLAGS $H4_CFLAGS --version 2>&1 | grep -v 'PathScale' |\
-            grep 'GCC' | sed 's/\(.*(GCC) [-a-z0-9\. ]*\).*/\1/'`
+            grep 'GCC' | sed 's/.*\((GCC) [-a-z0-9\. ]*.*\)/\1/'`
         ;;
 
     *icc*)
