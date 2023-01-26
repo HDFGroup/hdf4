@@ -19,7 +19,7 @@
 
 #ifdef HDF
 #include "hfile.h"
-extern intn hdf_xdr_cdf PROTO((XDR * xdrs, NC **handlep));
+extern intn hdf_xdr_cdf(XDR *xdrs, NC **handlep);
 
 /* A couple of local prototypes to HDF section*/
 intn hdf_cdf_clobber(NC *handle);
