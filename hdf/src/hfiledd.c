@@ -1008,9 +1008,9 @@ Htagnewref(int32  file_id, /* IN: File ID the tag/refs are in */
         ret_value = 1;        /* The first available ref */
     else {                    /* found an existing tag */
         tinfo_ptr = *tip_ptr; /* get the pointer to the tag info */
-        if ((ret_value = (uint16)bv_find(tinfo_ptr->b, -1, BV_FALSE)) == (uint16)FAIL)
+        if ((ret_value = (uint16)bv_find_next_zero(tinfo_ptr->b)) == (uint16)FAIL)
             HGOTO_ERROR(DFE_BVFIND, 0);
-    } /* end else */
+    }
 
 done:
     return ret_value;
@@ -1914,7 +1914,7 @@ HTIregister_tag_ref(filerec_t *file_rec, dd_t *dd_ptr)
         tbbtdins(file_rec->tag_tree, (VOIDP)tinfo_ptr, NULL);
 
         /* Take care of the bit-vector */
-        if ((tinfo_ptr->b = bv_new(-1, BV_EXTENDABLE)) == NULL)
+        if ((tinfo_ptr->b = bv_new(-1)) == NULL)
             HGOTO_ERROR(DFE_BVNEW, FAIL);
         /* Set the 0'th bit in the bit-vector (cannot be stored in HDF files) */
         /* Yes, this is a kludge due to ref # zero not being used -QAK */
