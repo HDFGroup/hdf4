@@ -6,54 +6,47 @@
 #ifndef NCTEST_TESTS_H
 #define NCTEST_TESTS_H
 
-#undef PROTO
-#ifndef NO_HAVE_PROTOTYPES
-#define PROTO(x) x
-#else
-#define PROTO(x) ()
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-extern void test_nccreate       PROTO((char *));
-extern void test_ncopen         PROTO((char *));
-extern void test_ncredef        PROTO((char *));
-extern void test_ncendef        PROTO((char *));
-extern void test_ncclose        PROTO((char *));
-extern void test_ncinquire      PROTO((char *));
-extern void test_ncsync         PROTO((char *));
-extern void test_ncabort        PROTO((char *));
-extern void test_ncdimdef       PROTO((char *));
-extern void test_ncdimid        PROTO((char *));
-extern void test_ncdiminq       PROTO((char *));
-extern void test_ncdimrename    PROTO((char *));
-extern void test_ncvardef       PROTO((char *));
-extern void test_ncvarid        PROTO((char *));
-extern void test_ncvarinq       PROTO((char *));
-extern void test_ncvarput1      PROTO((char *));
-extern void test_ncvarget1      PROTO((char *));
-extern void test_ncvarput       PROTO((char *));
-extern void test_ncvarget       PROTO((char *));
-extern void test_ncvarputg      PROTO((char *));
-extern void test_ncvargetg      PROTO((char *));
-extern void test_ncvarget_unlim PROTO((char *));
-extern void test_ncrecinq       PROTO((char *));
-extern void test_ncrecput       PROTO((char *));
-extern void test_ncrecget       PROTO((char *));
-extern void test_ncvarrename    PROTO((char *));
-extern void test_ncattput       PROTO((char *));
-extern void test_ncattinq       PROTO((char *));
-extern void test_ncattget       PROTO((char *));
-extern void test_ncattcopy      PROTO((char *, char *));
-extern void test_ncattname      PROTO((char *));
-extern void test_ncattrename    PROTO((char *));
-extern void test_ncattdel       PROTO((char *));
-extern void test_nctypelen      PROTO((void));
-extern int test_varputget       PROTO((int));
-extern int test_varputgetg      PROTO((int));
-extern int test_slabs           PROTO((int));
+extern void test_nccreate(char *);
+extern void test_ncopen(char *);
+extern void test_ncredef(char *);
+extern void test_ncendef(char *);
+extern void test_ncclose(char *);
+extern void test_ncinquire(char *);
+extern void test_ncsync(char *);
+extern void test_ncabort(char *);
+extern void test_ncdimdef(char *);
+extern void test_ncdimid(char *);
+extern void test_ncdiminq(char *);
+extern void test_ncdimrename(char *);
+extern void test_ncvardef(char *);
+extern void test_ncvarid(char *);
+extern void test_ncvarinq(char *);
+extern void test_ncvarput1(char *);
+extern void test_ncvarget1(char *);
+extern void test_ncvarput(char *);
+extern void test_ncvarget(char *);
+extern void test_ncvarputg(char *);
+extern void test_ncvargetg(char *);
+extern void test_ncvarget_unlim(char *);
+extern void test_ncrecinq(char *);
+extern void test_ncrecput(char *);
+extern void test_ncrecget(char *);
+extern void test_ncvarrename(char *);
+extern void test_ncattput(char *);
+extern void test_ncattinq(char *);
+extern void test_ncattget(char *);
+extern void test_ncattcopy(char *, char *);
+extern void test_ncattname(char *);
+extern void test_ncattrename(char *);
+extern void test_ncattdel(char *);
+extern void test_nctypelen(void);
+extern int  test_varputget(int);
+extern int  test_varputgetg(int);
+extern int  test_slabs(int);
 
 #ifdef __cplusplus
 }

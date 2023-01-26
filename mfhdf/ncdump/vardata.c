@@ -25,7 +25,7 @@
  */
 extern char *fixstr(char *str, bool fix_str);
 
-static void annotate PROTO((struct ncvar * vp, struct fspec *fsp, long cor[], long iel));
+static void annotate(struct ncvar *vp, struct fspec *fsp, long cor[], long iel);
 
 #define STREQ(a, b) (*(a) == *(b) && strcmp((a), (b)) == 0)
 
