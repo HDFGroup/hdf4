@@ -269,12 +269,6 @@ HDFLIBAPI const char *cdf_routine_name; /* defined in lerror.c */
 /* Format version number for link file */
 #define NCLINKMAGIC 0x43444c01 /*  C D L 1 */
 
-/* #ifndef HDF */ /* HDF has already worked out if we have prototypes */
-#ifdef HDF
-#define PROTOTYPE
-#endif
-/* #endif */ /* HDF */
-
 #ifdef __cplusplus
 extern "C" {
 #endif

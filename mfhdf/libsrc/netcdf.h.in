@@ -306,13 +306,6 @@ HDFLIBAPI int ncerr ;
 
 HDFLIBAPI int ncopts ;    /* default is (NC_FATAL | NC_VERBOSE) */
 
-#ifndef HAVE_PROTOTYPES
-#   if defined(__STDC__) || defined(__GNUC__) || defined(__cplusplus)
-#       define    HAVE_PROTOTYPES
-#   endif
-#endif
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif
