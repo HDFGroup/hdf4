@@ -26,15 +26,15 @@ extern void	derror		(
                                        );
 */
 
-extern void *emalloc  (int size);
-extern void *erealloc (void *ptr, int size);
-extern void usage     (void);
+extern void *emalloc(int size);
+extern void *erealloc(void *ptr, int size);
+extern void  usage(void);
 
-extern void yyerror (char *);
+extern void yyerror(char *);
 
-extern int yyparse (void);
+extern int yyparse(void);
 
-extern void put_variable (void *);
+extern void put_variable(void *);
 
 /* generate.c */
 void        cline(const char *stmnt);

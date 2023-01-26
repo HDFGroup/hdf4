@@ -19,7 +19,7 @@
 
 #ifdef HDF
 #include "hfile.h"
-extern intn hdf_xdr_cdf (XDR * xdrs, NC **handlep);
+extern intn hdf_xdr_cdf(XDR *xdrs, NC **handlep);
 
 /* A couple of local prototypes to HDF section*/
 intn hdf_cdf_clobber(NC *handle);
@@ -1540,7 +1540,7 @@ hdf_read_dims(XDR *xdrs, NC *handle, int32 vg)
                                           version 3.3r1. This call is not necessary since handle vs is
                                           obtained by specifying class name.
                                           Elena Pourmal 2/17/99
-
+           
                                                             if (VSsetfields(vs, "Values") == FAIL)
                                                             {
                                                                 ret_value = FAIL;

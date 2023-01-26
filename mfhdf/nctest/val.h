@@ -11,19 +11,19 @@ extern "C" {
 #endif
 
 /* fill typed value block with values of specified type */
-extern void val_fill (nc_type, long, void *);
+extern void val_fill(nc_type, long, void *);
 
 /* fill typed value block with zeros of specified type */
-extern void val_fill_zero (nc_type, long, void *);
+extern void val_fill_zero(nc_type, long, void *);
 
 /*
  * compare two typed value blocks, return 0 if equal, 1+n otherwise,
  * where n is the index of the first differing element.
  */
-extern int val_cmp (nc_type, long, void *, void *);
+extern int val_cmp(nc_type, long, void *, void *);
 
 /* print typed value block with values of specified type */
-extern void val_out (nc_type, long, void *);
+extern void val_out(nc_type, long, void *);
 
 #ifdef __cplusplus
 }

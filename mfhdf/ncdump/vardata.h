@@ -13,12 +13,12 @@ extern "C" {
 #endif
 
 /* Output the data for a single variable, in CDL syntax. */
-extern int vardata (struct ncvar *, /* variable */
-                          long[],         /* variable dimension sizes */
-                          int,            /* netcdf id */
-                          int,            /* variable id */
-                          struct fspec *  /* formatting specs */
-                          );
+extern int vardata(struct ncvar *, /* variable */
+                   long[],         /* variable dimension sizes */
+                   int,            /* netcdf id */
+                   int,            /* variable id */
+                   struct fspec *  /* formatting specs */
+);
 
 #ifdef __cplusplus
 }
