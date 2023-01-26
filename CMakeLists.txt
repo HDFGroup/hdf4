@@ -543,7 +543,6 @@ if (HDF4_BUILD_XDR_LIB)
     add_dependencies (${HDF4_MF_LIBSH_TARGET} ${HDF4_MF_XDR_LIBSH_TARGET})
   endif ()
 endif ()
-endif ()
 
 #-----------------------------------------------------------------------------
 # Dashboard and Testing Settings
