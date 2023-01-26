@@ -504,13 +504,13 @@ NCtempname(const char *proto)
 #define TN_NACCES  1
 #define TN_NDIGITS 4
 #if defined __MINGW32__
-int         getpid(void);
+    int getpid(void);
 #else
 #if defined H4_HAVE_WIN32_API
-typedef int pid_t;
-pid_t _getpid(void);
+    typedef int pid_t;
+    pid_t       _getpid(void);
 #else
-pid_t getpid(void);
+    pid_t getpid(void);
 #endif
 #endif
     unsigned int pid; /* OS/2 DOS (MicroSoft Lib) allows "negative" int pids */
@@ -543,10 +543,10 @@ pid_t getpid(void);
 
     cp  = begin + TN_NSEED + TN_NACCES + TN_NDIGITS;
     *cp = '\0';
-#if defined _WIN32 &&!defined __MINGW32__
+#if defined _WIN32 && !defined __MINGW32__
     pid = _getpid();
 #else
-    pid = getpid();
+    pid   = getpid();
 #endif
     while (--cp >= begin + TN_NSEED + TN_NACCES) {
         *cp = (pid % 10) + '0';
