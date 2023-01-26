@@ -312,83 +312,76 @@ HDFLIBAPI int ncopts ;    /* default is (NC_FATAL | NC_VERBOSE) */
 #   endif
 #endif
 
-#undef PROTO
-#ifdef HAVE_PROTOTYPES
-#   define    PROTO(x)    x
-#else
-#   define    PROTO(x)    ()
-#endif
-
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-HDFLIBAPI int nccreate    PROTO((
+HDFLIBAPI int nccreate    (
     const char*    path,
     int        cmode
-));
-HDFLIBAPI int ncopen    PROTO((
+);
+HDFLIBAPI int ncopen    (
     const char*    path,
     int        mode
-));
-HDFLIBAPI int ncredef    PROTO((
+);
+HDFLIBAPI int ncredef    (
     int        cdfid
-));
-HDFLIBAPI int ncendef    PROTO((
+);
+HDFLIBAPI int ncendef    (
     int        cdfid
-));
-HDFLIBAPI int ncclose    PROTO((
+);
+HDFLIBAPI int ncclose    (
     int        cdfid
-));
-HDFLIBAPI int ncinquire    PROTO((
+);
+HDFLIBAPI int ncinquire    (
     int        cdfid,
     int*    ndims,
     int*    nvars,
     int*    natts,
     int*    recdim
-));
-HDFLIBAPI int ncsync    PROTO((
+);
+HDFLIBAPI int ncsync    (
     int        cdfid
-));
-HDFLIBAPI int ncabort    PROTO((
+);
+HDFLIBAPI int ncabort    (
     int        cdfid
-));
-HDFLIBAPI int ncnobuf    PROTO((
+);
+HDFLIBAPI int ncnobuf    (
     int        cdfid
-));
-HDFLIBAPI int ncdimdef    PROTO((
+);
+HDFLIBAPI int ncdimdef    (
     int        cdfid,
     const char*    name,
     long    length
-));
-HDFLIBAPI int ncdimid    PROTO((
+);
+HDFLIBAPI int ncdimid    (
     int        cdfid,
     const char*    name
-));
-HDFLIBAPI int ncdiminq    PROTO((
+);
+HDFLIBAPI int ncdiminq    (
     int        cdfid,
     int        dimid,
     char*    name,
     long*    length
-));
-HDFLIBAPI int ncdimrename    PROTO((
+);
+HDFLIBAPI int ncdimrename    (
     int        cdfid,
     int        dimid,
     const char*    name
-));
-HDFLIBAPI int ncvardef    PROTO((
+);
+HDFLIBAPI int ncvardef    (
     int        cdfid,
     const char*    name,
     nc_type    datatype,
     int        ndims,
     const int*    dim
-));
-HDFLIBAPI int ncvarid    PROTO((
+);
+HDFLIBAPI int ncvarid    (
     int        cdfid,
     const char*    name
-));
-HDFLIBAPI int ncvarinq    PROTO((
+);
+HDFLIBAPI int ncvarinq    (
     int        cdfid,
     int        varid,
     char*    name,
@@ -396,50 +389,50 @@ HDFLIBAPI int ncvarinq    PROTO((
     int*    ndims,
     int*    dim,
     int*    natts
-));
-HDFLIBAPI int ncvarput1    PROTO((
+);
+HDFLIBAPI int ncvarput1    (
     int        cdfid,
     int        varid,
     const long*    coords,
     const void*    value
-));
-HDFLIBAPI int ncvarget1    PROTO((
+);
+HDFLIBAPI int ncvarget1    (
     int        cdfid,
     int        varid,
     const long*    coords,
     void*    value
-));
-HDFLIBAPI int ncvarput    PROTO((
+);
+HDFLIBAPI int ncvarput    (
     int        cdfid,
     int        varid,
     const long*    start,
     const long*    count,
     void*    value
-));
-HDFLIBAPI int ncvarget    PROTO((
+);
+HDFLIBAPI int ncvarget    (
     int        cdfid,
     int        varid,
     const long*    start,
     const long*    count,
     void*    value
-));
-HDFLIBAPI int ncvarputs    PROTO((
+);
+HDFLIBAPI int ncvarputs    (
     int        cdfid,
     int        varid,
     const long*    start,
     const long*    count,
     const long*    stride,
     void*    values
-));
-HDFLIBAPI int ncvargets    PROTO((
+);
+HDFLIBAPI int ncvargets    (
     int        cdfid,
     int        varid,
     const long*    start,
     const long*    count,
     const long*    stride,
     void*    values
-));
-HDFLIBAPI int ncvarputg    PROTO((
+);
+HDFLIBAPI int ncvarputg    (
     int        cdfid,
     int        varid,
     const long*    start,
@@ -447,8 +440,8 @@ HDFLIBAPI int ncvarputg    PROTO((
     const long*    stride,
     const long*    imap,
     void* values
-));
-HDFLIBAPI int ncvargetg    PROTO((
+);
+HDFLIBAPI int ncvargetg    (
     int        cdfid,
     int        varid,
     const long*    start,
@@ -456,80 +449,80 @@ HDFLIBAPI int ncvargetg    PROTO((
     const long*    stride,
     const long*    imap,
     void*    values
-));
-HDFLIBAPI int ncvarrename    PROTO((
+);
+HDFLIBAPI int ncvarrename    (
     int        cdfid,
     int        varid,
     const char*    name
-));
-HDFLIBAPI int ncattput    PROTO((
+);
+HDFLIBAPI int ncattput    (
     int        cdfid,
     int        varid,
     const char*    name,
     nc_type    datatype,
     int        len,
     const void*    value
-));
-HDFLIBAPI int ncattinq    PROTO((
+);
+HDFLIBAPI int ncattinq    (
     int        cdfid,
     int        varid,
     const char*    name,
     nc_type*    datatype,
     int*    len
-));
-HDFLIBAPI int ncattget    PROTO((
+);
+HDFLIBAPI int ncattget    (
     int        cdfid,
     int        varid,
     const char*    name,
     void*    value
-));
-HDFLIBAPI int ncattcopy    PROTO((
+);
+HDFLIBAPI int ncattcopy    (
     int        incdf,
     int        invar,
     const char*    name,
     int        outcdf,
     int        outvar
-));
-HDFLIBAPI int ncattname    PROTO((
+);
+HDFLIBAPI int ncattname    (
     int        cdfid,
     int        varid,
     int        attnum,
     char*    name
-));
-HDFLIBAPI int ncattrename    PROTO((
+);
+HDFLIBAPI int ncattrename    (
     int        cdfid,
     int        varid,
     const char*    name,
     const char*    newname
-));
-HDFLIBAPI int ncattdel    PROTO((
+);
+HDFLIBAPI int ncattdel    (
     int        cdfid,
     int        varid,
     const char*    name
-));
-HDFLIBAPI int nctypelen    PROTO((
+);
+HDFLIBAPI int nctypelen    (
     nc_type    datatype
-));
-HDFLIBAPI int ncsetfill    PROTO((
+);
+HDFLIBAPI int ncsetfill    (
     int        cdfid,
     int        fillmode
-));
-HDFLIBAPI int ncrecinq        PROTO((
+);
+HDFLIBAPI int ncrecinq        (
     int        cdfid,
     int*    nrecvars,
     int*    recvarids,
     long*    recsizes
-));
-HDFLIBAPI int ncrecget        PROTO((
+);
+HDFLIBAPI int ncrecget        (
     int        cdfid,
     long    recnum,
     void**    datap
-));
-HDFLIBAPI int ncrecput        PROTO((
+);
+HDFLIBAPI int ncrecput        (
     int        cdfid,
     long    recnum,
     void* * datap
-));
+);
 #ifdef __cplusplus
 }
 #endif

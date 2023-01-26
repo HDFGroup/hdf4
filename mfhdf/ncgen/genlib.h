@@ -9,13 +9,6 @@
 extern char *progname; /* for error messages */
 extern char *cdlname;  /* for error messages */
 
-#undef PROTO
-#ifndef NO_HAVE_PROTOTYPES
-#define PROTO(x) x
-#else
-#define PROTO(x) ()
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -27,21 +20,21 @@ extern void derror();
 #endif
 
 /*
-extern void	derror		PROTO((
+extern void	derror		(
                                        char *fmt,
                                        ...
-                                       ));
+                                       );
 */
 
-extern void *emalloc  PROTO((int size));
-extern void *erealloc PROTO((void *ptr, int size));
-extern void usage     PROTO((void));
+extern void *emalloc  (int size);
+extern void *erealloc (void *ptr, int size);
+extern void usage     (void);
 
-extern void yyerror PROTO((char *));
+extern void yyerror (char *);
 
-extern int yyparse PROTO((void));
+extern int yyparse (void);
 
-extern void put_variable PROTO((void *));
+extern void put_variable (void *);
 
 /* generate.c */
 void        cline(const char *stmnt);
