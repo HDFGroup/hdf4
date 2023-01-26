@@ -237,7 +237,7 @@ jobs:
             use_mingw: false
 
           # FreeBSD x86-64 w/ cc (clang) via MacOS + xhyve
-          - name: "FreeBSD static Clang CMake"
+          - name: "FreeBSD static Autotools CMake"
             architecture: x86-64
             version: '13.1'
             uses: cross-platform-actions/action@v0.8.0
@@ -306,6 +306,7 @@ jobs:
 
       - name: Install Autotools Dependencies (BSD)
         run: |
+           sudo pkg bootstrap
            sudo pkg install autoconf
            sudo pkg install automake
            sudo pkg install libtool
