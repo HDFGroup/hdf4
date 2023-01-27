@@ -1,7 +1,7 @@
 HDF version 4.2.15-post0 currently under development
 ===================================================
 
-![HDF5 Logo](doc/img/HDF5.png)
+![HDF Logo](doc/img/HDF.png)
 
 [![master build status](https://img.shields.io/github/actions/workflow/status/HDFGroup/hdf4/main.yml?branch=master&label=master)](https://github.com/HDFGroup/hdf4/actions?query=branch%3Amaster)
 [![BSD](https://img.shields.io/badge/License-BSD-blue.svg)](https://github.com/HDFGroup/hdf4/blob/develop/COPYING)
@@ -11,15 +11,15 @@ Information about HDF
 
  The HDF (or HDF4) home page is located here:
 
-    https://support.hdfgroup.org/products/hdf4/
+    <https://support.hdfgroup.org/products/hdf4/>
 
  The most recent version of the software can be obtained from:
 
-    https://support.hdfgroup.org/release4/obtain.html
+    <https://support.hdfgroup.org/release4/obtain.html>
 
  The HDF documentation can be found in:
 
-    https://support.hdfgroup.org/release4/doc/index.html
+    <https://support.hdfgroup.org/release4/doc/index.html>
 
 
 FORUM and NEWS
