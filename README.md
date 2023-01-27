@@ -5,20 +5,21 @@ HDF version 4.2.15-post0 currently under development
 [![master build status](https://img.shields.io/github/actions/workflow/status/HDFGroup/hdf4/main.yml?branch=master&label=master)](https://github.com/HDFGroup/hdf4/actions?query=branch%3Amaster)
 [![BSD](https://img.shields.io/badge/License-BSD-blue.svg)](https://github.com/HDFGroup/hdf4/blob/develop/COPYING)
 
-Information about HDF / HDF4
-----------------------------
+DOCUMENTATION
+-------------
+Full Documentation and Programming Resources for this release can be found at
 
- The HDF (or HDF4) home page is located here:
+   https://portal.hdfgroup.org/display/HDF4
 
-    https://support.hdfgroup.org/products/hdf4/
+See the RELEASE.txt file in the release\_notes/ directory for information specific
+to the features and updates included in this release of the library.
 
- The most recent version of the software can be obtained from:
+Several more files are located within the release\_notes/ directory with specific
+details for several common platforms and configurations.
 
-    https://support.hdfgroup.org/release4/obtain.html
-
- The HDF documentation can be found in:
-
-    https://support.hdfgroup.org/release4/doc/index.html
+    INSTALL - Start Here. General instructions for compiling and installing the library
+    INSTALL_CMAKE  - instructions for building with CMake (Kitware.com)
+    INSTALL_WINDOWS and INSTALL_CYGWIN - MS Windows installations.
 
 
 FORUM and NEWS
@@ -51,6 +52,17 @@ HDF4 does not release on a regular schedule. Instead, releases are driven by
 new features and bug fixes, though we try to have at least one release of each
 maintenance branch per year. Future HDF4 releases indicated on this schedule
 are tentative.
+
+
+SNAPSHOTS, PREVIOUS RELEASES AND SOURCE CODE
+--------------------------------------------
+Source packages for current and previous releases are located at:
+    
+   https://portal.hdfgroup.org/display/support/Download+HDF4
+
+Development code is available at our Github location:
+    
+   https://github.com/HDFGroup/hdf4.git
 
 
 Source Distribution Layout
@@ -104,4 +116,3 @@ Configuring/Testing/Installing
 ------------------------------
  See the file release\_notes/INSTALL for instructions on configuring, testing,
  and installing this software on Unix and non-UNIX systems.
-
