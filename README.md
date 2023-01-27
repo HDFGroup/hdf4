@@ -11,15 +11,15 @@ Information about HDF
 
  The HDF (or HDF4) home page is located here:
 
-    <https://support.hdfgroup.org/products/hdf4/>
+    https://support.hdfgroup.org/products/hdf4/
 
  The most recent version of the software can be obtained from:
 
-    <https://support.hdfgroup.org/release4/obtain.html>
+    https://support.hdfgroup.org/release4/obtain.html
 
  The HDF documentation can be found in:
 
-    <https://support.hdfgroup.org/release4/doc/index.html>
+    https://support.hdfgroup.org/release4/doc/index.html
 
 
 FORUM and NEWS
