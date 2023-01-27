@@ -185,6 +185,16 @@ New features and changes
 
       (DER - 2023/01/12)
 
+    - Add new CMake configuration variable HDF4_USE_GNU_DIRS
+
+      HDF4_USE_GNU_DIRS (default OFF) selects the use of GNU Coding Standard install
+      directory variables by including the CMake module, GNUInstallDirs(see CMake
+      documentation for details). The HDF_DIR_PATHS macro in the HDFMacros.cmake file
+      sets various PATH variables for use during the build, test and install processes.
+      By default, the historical settings for these variables will be used.
+
+      (ADB - 2022/10/21)
+
     - Corrected path searched by CMake find_package command
 
       The install path for cmake find_package files had been changed to use
