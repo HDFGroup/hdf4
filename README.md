@@ -110,9 +110,3 @@ System Requirements
 
    * C and Fortran compilers. For a list of the supported compilers,
      see release_notes/RELEASE.txt file.
-
-
-Configuring/Testing/Installing 
-------------------------------
- See the file release\_notes/INSTALL for instructions on configuring, testing,
- and installing this software on Unix and non-UNIX systems.
