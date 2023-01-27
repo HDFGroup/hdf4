@@ -1,5 +1,4 @@
 HDF version 4.2.15-post0 currently under development
-===================================================
 
 ![HDF Logo](doc/img/HDF.png)
 
