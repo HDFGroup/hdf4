@@ -282,8 +282,8 @@ HAremove_atom(atom_t atm /* IN: Atom to remove */
         *last_atm;                /* ptr to the last atom */
     group_t grp;                  /* atom's atomic group */
     uintn   hash_loc;             /* atom's hash table location */
-    uintn i;                      /* local counting variable */
-    VOIDP ret_value = NULL;
+    uintn   i;                    /* local counting variable */
+    VOIDP   ret_value = NULL;
 
     HEclear();
     grp = ATOM_TO_GROUP(atm);
