@@ -264,7 +264,7 @@ Java_hdf_hdflib_HDFLibrary_GRreadimage(JNIEnv *env, jclass clss, jlong ri_id, ji
     else
         PIN_INT_ARRAY(ENVONLY, stride, strd, &isCopy, "GRreadimage:  stride not pinned");
 
-    if ((rval = GRreadimage((int32)ri_id, (int32 *)strt, (int32 *)strd, (int32 *)edg, (VOIDP)arr)) == FAIL)
+    if ((rval = GRreadimage((int32)ri_id, (int32 *)strt, (int32 *)strd, (int32 *)edg, (void *)arr)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -405,7 +405,7 @@ Java_hdf_hdflib_HDFLibrary_GRreadlut(JNIEnv *env, jclass clss, jlong pal_id, jby
 
     PIN_BYTE_ARRAY(ENVONLY, pal_data, arr, &isCopy, "GRreadlut:  pal_data not pinned");
 
-    if ((rval = GRreadlut((int32)pal_id, (VOIDP)arr)) == FAIL)
+    if ((rval = GRreadlut((int32)pal_id, (void *)arr)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -480,7 +480,7 @@ Java_hdf_hdflib_HDFLibrary_GRgetattr(JNIEnv *env, jclass clss, jlong gr_id, jint
 
     PIN_BYTE_ARRAY(ENVONLY, values, arr, &isCopy, "GRgetattr:  values not pinned");
 
-    if ((rval = GRgetattr((int32)gr_id, (int32)attr_index, (VOIDP)arr)) == FAIL)
+    if ((rval = GRgetattr((int32)gr_id, (int32)attr_index, (void *)arr)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -581,7 +581,7 @@ Java_hdf_hdflib_HDFLibrary_GRsetattr__JLjava_lang_String_2JILjava_lang_String_2(
     PIN_JAVA_STRING(ENVONLY, attr_name, str, NULL, "GRsetattr:  attr_name not pinned");
     PIN_JAVA_STRING(ENVONLY, values, val, NULL, "GRsetattr:  values not pinned");
 
-    if ((rval = GRsetattr((int32)gr_id, str, (int32)data_type, (int32)count, (VOIDP)val)) == FAIL)
+    if ((rval = GRsetattr((int32)gr_id, str, (int32)data_type, (int32)count, (void *)val)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -614,7 +614,7 @@ Java_hdf_hdflib_HDFLibrary_GRsetattr__JLjava_lang_String_2JI_3B(JNIEnv *env, jcl
     PIN_JAVA_STRING(ENVONLY, attr_name, str, NULL, "GRsetattr:  attr_name not pinned");
     PIN_BYTE_ARRAY(ENVONLY, values, arr, &isCopy, "GRsetattr:  values not pinned");
 
-    if ((rval = GRsetattr((int32)gr_id, str, (int32)data_type, (int32)count, (VOIDP)arr)) == FAIL)
+    if ((rval = GRsetattr((int32)gr_id, str, (int32)data_type, (int32)count, (void *)arr)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -784,7 +784,7 @@ Java_hdf_hdflib_HDFLibrary_GRwriteimage(JNIEnv *env, jclass clss, jlong ri_id, j
     else
         PIN_INT_ARRAY(ENVONLY, stride, strd, &isCopy, "GRwriteimage:  stride not pinned");
 
-    if ((rval = GRwriteimage((int32)ri_id, (int32 *)strt, (int32 *)strd, (int32 *)edg, (VOIDP)arr)) == FAIL)
+    if ((rval = GRwriteimage((int32)ri_id, (int32 *)strt, (int32 *)strd, (int32 *)edg, (void *)arr)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -816,7 +816,7 @@ Java_hdf_hdflib_HDFLibrary_GRwritelut(JNIEnv *env, jclass clss, jlong pal_id, ji
     PIN_BYTE_ARRAY(ENVONLY, pal_data, arr, &isCopy, "GRwritelut:  pal_data not pinned");
 
     if ((rval = GRwritelut((int32)pal_id, (int32)ncomp, (int32)data_type, (int32)interlace,
-                           (int32)num_entries, (VOIDP)arr)) == FAIL)
+                           (int32)num_entries, (void *)arr)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:

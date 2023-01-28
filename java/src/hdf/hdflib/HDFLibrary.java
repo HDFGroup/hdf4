@@ -71,7 +71,7 @@ import org.slf4j.LoggerFactory;
  * <td>void</td>
  * </tr>
  * <tr>
- * <td>void *, VOIDP, char * (meaning ``any'')</td>
+ * <td>void *, void *, char * (meaning ``any'')</td>
  * <td>Special -- see HDFArray</td>
  * </tr>
  * </table>
@@ -113,10 +113,10 @@ import org.slf4j.LoggerFactory;
  *
  * <pre>
  *      int SDreaddata(int sdsid, int32 *start, int32 * stride,
- *             int32 *count, VOIDP data);
+ *             int32 *count, void * data);
  * </pre>
  * <p>
- * where ``VOIDP'' means that the data may be any valid numeric type, and is a contiguous block of
+ * The data parameter may be any valid numeric type, and is a contiguous block of
  * bytes that is the data for a multi-dimensional array.
  * <p>
  * For Java, this is a problem, as the type of data must be declared. Furthermore, multidimensional

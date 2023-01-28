@@ -606,8 +606,8 @@ Java_hdf_hdflib_HDFLibrary_VSfpack(JNIEnv *env, jclass clss, jlong vdata_id, jin
 
     /*
         VSfpack((int32) vdata_id, (intn) action, char
-            *fields_in_buf, VOIDP buf, intn buf_size, intn
-            n_records, char *fields, VOIDP bufptrs[]);
+            *fields_in_buf, void * buf, intn buf_size, intn
+            n_records, char *fields, void * bufptrs[]);
     */
     H4_UNIMPLEMENTED(ENVONLY, "VSfpack");
 
@@ -859,7 +859,7 @@ Java_hdf_hdflib_HDFLibrary_VSgetattr(JNIEnv *env, jclass clss, jlong id, jint fi
 
     PIN_BYTE_ARRAY(ENVONLY, values, arr, &isCopy, "VSgetattr:  values not pinned");
 
-    if ((rval = VSgetattr((int32)id, (int32)field_index, (int32)attr_index, (VOIDP)arr)) == FAIL)
+    if ((rval = VSgetattr((int32)id, (int32)field_index, (int32)attr_index, (void *)arr)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -920,7 +920,7 @@ Java_hdf_hdflib_HDFLibrary_VSsetattr__JILjava_lang_String_2JILjava_lang_String_2
     PIN_JAVA_STRING(ENVONLY, values, val, NULL, "VSsetattr:  values not pinned");
 
     if ((rval = VSsetattr((int32)id, (int32)index, (char *)str, (int32)data_type, (int32)count,
-                          (VOIDP)val)) == FAIL)
+                          (void *)val)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -955,7 +955,7 @@ Java_hdf_hdflib_HDFLibrary_VSsetattr__JILjava_lang_String_2JI_3B(JNIEnv *env, jc
     PIN_JAVA_STRING(ENVONLY, attr_name, str, NULL, "VSsetattr:  attr_name not pinned");
 
     if ((rval = VSsetattr((int32)id, (int32)index, (char *)str, (int32)data_type, (int32)count,
-                          (VOIDP)arr)) == FAIL)
+                          (void *)arr)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:

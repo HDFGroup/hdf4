@@ -700,7 +700,7 @@ Java_hdf_hdflib_HDFLibrary_Vgetattr(JNIEnv *env, jclass clss, jlong gr_id, jint 
 
     PIN_BYTE_ARRAY(ENVONLY, values, arr, &isCopy, "Vgetattr:  values not pinned");
 
-    if ((rval = Vgetattr2((int32)gr_id, (int32)attr_index, (VOIDP)arr)) == FAIL)
+    if ((rval = Vgetattr2((int32)gr_id, (int32)attr_index, (void *)arr)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -759,7 +759,7 @@ Java_hdf_hdflib_HDFLibrary_Vsetattr__JLjava_lang_String_2JILjava_lang_String_2(J
     PIN_JAVA_STRING(ENVONLY, attr_name, str, NULL, "Vsetattr:  attr_name not pinned");
     PIN_JAVA_STRING(ENVONLY, values, val, NULL, "Vsetattr:  values not pinned");
 
-    if ((rval = Vsetattr((int32)gr_id, (char *)str, (int32)data_type, (int32)count, (VOIDP)val)) == FAIL)
+    if ((rval = Vsetattr((int32)gr_id, (char *)str, (int32)data_type, (int32)count, (void *)val)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -792,7 +792,7 @@ Java_hdf_hdflib_HDFLibrary_Vsetattr__JLjava_lang_String_2JI_3B(JNIEnv *env, jcla
     PIN_JAVA_STRING(ENVONLY, attr_name, str, NULL, "Vsetattr:  attr_name not pinned");
     PIN_BYTE_ARRAY(ENVONLY, values, arr, &isCopy, "Vsetattr:  values not pinned");
 
-    if ((rval = Vsetattr((int32)id, (char *)str, (int32)data_type, (int32)count, (VOIDP)arr)) == FAIL)
+    if ((rval = Vsetattr((int32)id, (char *)str, (int32)data_type, (int32)count, (void *)arr)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:

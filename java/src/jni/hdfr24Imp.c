@@ -89,7 +89,7 @@ Java_hdf_hdflib_HDFLibrary_DF24getimage(JNIEnv *env, jclass clss, jstring filena
     PIN_BYTE_ARRAY_CRITICAL(ENVONLY, image, dat, &isCopy, "DF24getimage:  image not pinned");
     PIN_JAVA_STRING(ENVONLY, filename, fstr, NULL, "DF24getimage:  filename not pinned");
 
-    if ((rval = DF24getimage(fstr, (VOIDP)dat, (int32)width, (int32)height)) == FAIL)
+    if ((rval = DF24getimage(fstr, (void *)dat, (int32)width, (int32)height)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -207,7 +207,7 @@ Java_hdf_hdflib_HDFLibrary_DF24addimage(JNIEnv *env, jclass clss, jstring filena
     PIN_BYTE_ARRAY(ENVONLY, image, dat, &isCopy, "DF24addimage:  image not pinned");
     PIN_JAVA_STRING(ENVONLY, filename, fstr, NULL, "DF24addimage:  filename is not pinned");
 
-    if ((rval = DF24addimage((char *)fstr, (VOIDP)dat, (int32)width, (int32)height)) == FAIL)
+    if ((rval = DF24addimage((char *)fstr, (void *)dat, (int32)width, (int32)height)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -242,7 +242,7 @@ Java_hdf_hdflib_HDFLibrary_DF24putimage(JNIEnv *env, jclass clss, jstring filena
     PIN_BYTE_ARRAY(ENVONLY, image, dat, &isCopy, "DF24putimage:  image not pinned");
     PIN_JAVA_STRING(ENVONLY, filename, fstr, NULL, "DF24putimage:  filename is not pinned");
 
-    if ((rval = DF24putimage(fstr, (VOIDP)dat, (int32)width, (int32)height)) == FAIL)
+    if ((rval = DF24putimage(fstr, (void *)dat, (int32)width, (int32)height)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
