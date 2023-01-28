@@ -1,0 +1,162 @@
+#                                                   -*- shell-script -*-
+#
+# This file is part of the HDF4 build script. It is processed shortly
+# after configure starts and defines, among other things, flags for
+# the various compilation modes.
+
+# Choosing C and Fortran Compilers
+# --------------------------------------
+#
+# The user should be able to specify the compiler by setting the CC
+# and F77 environment variables to the name of the compiler and any
+# switches it requires for proper operation. If CC is unset then this
+# script may set it. If CC is unset by time this script completes then
+# configure will try `gcc' and `cc' in that order (perhaps some others
+# too).
+#
+# Note: Code later in this file may depend on the value of $CC_BASENAME
+#       in order to distinguish between different compilers when
+#       deciding which compiler command-line switches to use.  This
+#       variable is set based on the incoming value of $CC and is only
+#       used within this file.
+
+if test "X-$CC" = "X-"; then
+  CC=cc
+  CC_BASENAME=cc
+fi
+
+# Try gcc compiler flags
+. $srcdir/config/gnu-flags
+
+# Try solaris native compiler flags
+if test "X-" = "X-$cc_flags_set"; then
+  # HDF4 must be built with a C99 compiler on Solaris
+  # -erroff=%none turns on all warnings
+  H4_CFLAGS="$H4_CFLAGS -xc99=all -erroff=%none"
+
+  # Production
+  # NDEBUG is handled explicitly by the configure script
+  PROD_CFLAGS=
+
+  # Debug
+  # NDEBUG is handled explicitly by the configure script
+  # -g is handled by the symbols flags
+  DEBUG_CFLAGS=
+
+  # Symbols
+  # -g produces output for dbx, NOT gdb. You can use "gdb on" from
+  # inside gdb to use gdb commands if you need to debug.
+  # If you want a LOT of debugging information (at the expense of
+  # really slow code), try using -g3. That will even let you debug
+  # into macros.
+  # -s strips symbols, as in gcc
+  NO_SYMBOLS_CFLAGS="-s"
+  SYMBOLS_CFLAGS="-g"
+
+  # Profile
+  # This produces profiling output for gprof. If you want to use
+  # the Solaris profiler, use -xprofile instead.
+  PROFILE_CFLAGS="-xpg"
+
+  # Optimization
+  # -O has switched to -xO{1|2|3|4|5}. -xO3 is probably a good compromise
+  # for the daily tests, but you might want to switch to -xO2 or lower
+  # if you are actively debugging.
+  HIGH_OPT_CFLAGS="-xO5"
+  DEBUG_OPT_CFLAGS="-xO3"
+  NO_OPT_CFLAGS=
+
+  cc_flags_set=yes
+    # Special linking flag is needed to build with Fortran on Solaris 5.9
+    system_version="`uname -r`"
+    case "$system_version" in
+	5.9*)
+	    # Need the xopenmp flag to build the Fortran library
+	    if test X-$enable_fortran = X-yes; then
+		AM_LDFLAGS="$AM_LDFLAGS -xopenmp=stubs"
+	    fi
+	    ;;
+    esac
+
+fi
+
+LIBS="$LIBS"
+
+# The default Fortran compiler
+if test "X-$F77" = "X-"; then
+  F77=f77
+  F77_BASENAME=f77
+fi
+
+case $CC_BASENAME in
+  gcc)
+    CFLAGS="$CFLAGS -ansi"
+    DEBUG_CFLAGS="-g "
+    DEBUG_CPPFLAGS=
+    PROD_CFLAGS="-O3 "
+    PROD_CPPFLAGS=
+    PROFILE_CFLAGS="-pg"
+    PROFILE_CPPFLAGS=
+    ;;
+
+  *)
+    CFLAGS="$CFLAGS"
+    DEBUG_CFLAGS="-g -v"
+    DEBUG_CPPFLAGS=
+    PROD_CFLAGS="-xO2"
+    PROD_CPPFLAGS=
+    PROFILE_CFLAGS="-pg"
+    PROFILE_CPPFLAGS=
+    ;;
+esac
+
+case $F77_BASENAME in 
+  g77)
+    FFLAGS="$FFLAGS -Wsign-compare"
+    DEBUG_FFLAGS="-g"
+    PROD_FFLAGS="-O3 -fomit-frame-pointer"
+    PROFILE_FFLAGS="-pg"
+    ;;
+
+  *)
+    FFLAGS="$FFLAGS -O"
+    DEBUG_FFLAGS="-g"
+    PROD_FFLAGS="-O"
+    PROFILE_FFLAGS="-pg"
+    ;;
+esac
+
+# compiler version strings
+case $CC in
+    *cc*)
+        cc_version_info=`$CC $CFLAGS $H5_CFLAGS -V 2>&1 | grep 'Sun' |\
+            sed 's/.*\(Sun .*\)/\1 /'`
+        ;;
+
+    *)
+        echo "No match to get cc_version_info for $CC"
+        ;;
+esac
+echo "C compiler '$CC' is $cc_version_info"
+
+case $F77 in
+    # The PGI and Intel compilers are automatically detected below
+    *f90*|*f77*)
+        fc_version_info=`$F77 $FFLAGS $H4_FFLAGS -V 2>&1 | grep 'Sun' |\
+            sed 's/.*\(Sun .*\)/\1 /'`
+        ;;
+
+     *)
+        echo "No match to get fc_version_info for $F77"
+        ;;
+esac
+echo "Fortran compiler '$F77' is $fc_version_info"
+
+# Overriding Configure Tests
+# --------------------------
+#
+# Values for overriding configuration tests when cross compiling.
+
+# Set this to `yes' or `no' depending on whether the target is big
+# endian or little endian.
+#ac_cv_c_bigendian=${ac_cv_c_bigendian='yes'}

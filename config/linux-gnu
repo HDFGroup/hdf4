@@ -78,21 +78,21 @@ if test -z "$cc_version_info"; then
 case $CC in
     # whatever matches *pgcc* will also match *gcc*, so this one must come first
     *pgcc*)
-        cc_version_info=`$CC $CFLAGS $H5_CFLAGS -V 2>&1 | grep 'pgcc'`
+        cc_version_info=`$CC $CFLAGS $H4_CFLAGS -V 2>&1 | grep 'pgcc'`
         ;;
 
     *gcc*)
-        cc_version_info=`$CC $CFLAGS $H5_CFLAGS --version 2>&1 | grep -v 'PathScale' |\
+        cc_version_info=`$CC $CFLAGS $H4_CFLAGS --version 2>&1 | grep -v 'PathScale' |\
             grep 'GCC' | sed 's/\(.*(GCC) [-a-z0-9\. ]*\).*/\1/'`
         ;;
 
     *icc*)
-        cc_version_info=`$CC $CCFLAGS $H5_CCFLAGS -V 2>&1 | grep 'Version' |\
+        cc_version_info=`$CC $CCFLAGS $H4_CCFLAGS -V 2>&1 | grep 'Version' |\
             sed 's/\(Intel.* Compiler\).*\( Version [a-z0-9\.]*\).*\( Build [0-9]*\)/\1\2\3/'`
         ;;
 
     *clang*)
-        cc_version_info="`$CC $CFLAGS $H5_CFLAGS --version 2>&1 |\
+        cc_version_info="`$CC $CFLAGS $H4_CFLAGS --version 2>&1 |\
             grep 'clang version' | sed 's/.*clang version \([-a-z0-9\.]*\).*/\1/'`"
         ;;
 
