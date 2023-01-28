@@ -14,32 +14,18 @@
 /*-----------------------------------------------------------------------------
  * File:    atom.h
  * Purpose: header file for atom API
- * Dependencies:
- * Invokes:
- * Contents:
- * Structure definitions:
- * Constant definitions:
  *---------------------------------------------------------------------------*/
 
 #ifndef H4_ATOM_H
 #define H4_ATOM_H
 
+#include "hdf.h"
+
 #include "H4api_adpt.h"
 
 /* Atom Features control */
-/* Define the following macro for fast hash calculations (but limited hash sizes) */
-#define HASH_SIZE_POWER_2
 
-/* Define the following macro for atom caching over all the atoms */
-#define ATOMS_ARE_CACHED
-
-/* Define the following macro for "inline" atom lookups from the cache */
-#ifdef ATOMS_ARE_CACHED /* required for this to work */
-#define ATOMS_CACHE_INLINE
-#endif /* ATOMS_ARE_CACHED */
-
-#ifdef ATOMS_CACHE_INLINE
-/* Do swap using XOR operator. Ugly but fast... -QAK */
+/* Do swap using XOR operator. Ugly but fast... */
 #define HAIswap_cache(i, j)                                                                                  \
     atom_id_cache[i] ^= atom_id_cache[j],                                                                    \
         atom_obj_cache[i] = (void *)((hdf_pint_t)atom_obj_cache[j] ^ (hdf_pint_t)atom_obj_cache[i]),         \
@@ -55,9 +41,6 @@
      : atom_id_cache[2] == atm ? (HAIswap_cache(1, 2), atom_obj_cache[1])                                    \
      : atom_id_cache[3] == atm ? (HAIswap_cache(2, 3), atom_obj_cache[2])                                    \
                                : HAPatom_object(atm))
-#endif /* ATOMS_CACHE_INLINE */
-
-#include "hdf.h"
 
 /* Group values allowed */
 typedef enum {
@@ -82,29 +65,22 @@ typedef intn (*HAsearch_func_t)(const void *obj, const void *key);
 
 #if defined ATOM_MASTER | defined ATOM_TESTER
 
-/* # of bits to use for Group ID in each atom (change if MAXGROUP>16) */
+/* # of bits to use for Group ID in each atom (change if MAXGROUP > 16) */
 #define GROUP_BITS 4
 #define GROUP_MASK 0x0F
 
-/* # of bits to use for the Atom index in each atom (change if MAXGROUP>16) */
+/* # of bits to use for the Atom index in each atom (change if MAXGROUP > 16) */
 #define ATOM_BITS 28
 #define ATOM_MASK 0x0FFFFFFF
 
-#ifdef ATOMS_ARE_CACHED
 /* # of previous atoms cached, change inline caching macros (HAatom_object & HAIswap_cache) if this changes */
 #define ATOM_CACHE_SIZE 4
-#endif /* ATOMS_ARE_CACHED */
 
 /* Map an atom to a Group number */
 #define ATOM_TO_GROUP(a) ((group_t)((((atom_t)(a)) >> ((sizeof(atom_t) * 8) - GROUP_BITS)) & GROUP_MASK))
 
-#ifdef HASH_SIZE_POWER_2
 /* Map an atom to a hash location (assumes s is a power of 2 and smaller than the ATOM_MASK constant) */
 #define ATOM_TO_LOC(a, s) ((atom_t)(a) & ((s)-1))
-#else /* HASH_SIZE_POWER_2 */
-/* Map an atom to a hash location */
-#define ATOM_TO_LOC(a, s) (((atom_t)(a)&ATOM_MASK) % (s))
-#endif /* HASH_SIZE_POWER_2 */
 
 /* Combine a Group number and an atom index into an atom */
 #define MAKE_ATOM(g, i)                                                                                      \
@@ -135,11 +111,9 @@ static atom_group_t *atom_group_list[MAXGROUP] = {NULL};
 /* Pointer to the atom node free list */
 static atom_info_t *atom_free_list = NULL;
 
-#ifdef ATOMS_ARE_CACHED
 /* Array of pointers to atomic groups */
 HDFPUBLIC atom_t atom_id_cache[ATOM_CACHE_SIZE]  = {-1, -1, -1, -1};
 HDFPUBLIC VOIDP  atom_obj_cache[ATOM_CACHE_SIZE] = {NULL};
-#endif /* ATOMS_ARE_CACHED */
 #endif /* ATOM_MASTER */
 
 /* Useful routines for generally private use */
@@ -220,13 +194,8 @@ HDFLIBAPI atom_t HAregister_atom(group_t grp,   /* IN: Group to register the obj
     Returns object ptr if successful and NULL otherwise
 
 *******************************************************************************/
-#ifdef ATOMS_CACHE_INLINE
 HDFLIBAPI VOIDP HAPatom_object(atom_t atm /* IN: Atom to retrieve object for */
 );
-#else  /* ATOMS_CACHE_INLINE */
-HDFLIBAPI VOIDP HAatom_object(atom_t atm /* IN: Atom to retrieve object for */
-);
-#endif /* ATOMS_CACHE_INLINE */
 
 /******************************************************************************
  NAME
