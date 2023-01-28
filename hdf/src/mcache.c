@@ -825,20 +825,17 @@ static BKT *
 mcache_look(MCACHE *mp, /* IN: MCACHE cookie */
             int32   pgno /* IN: page to look up in cache */)
 {
-    struct _hqh *head = NULL; /* head of hash chain */
-    BKT         *bp   = NULL; /* bucket element */
+    struct _hqh *head      = NULL; /* head of hash chain */
+    BKT         *bp        = NULL; /* bucket element */
+    intn         ret_value = RET_SUCCESS;
 
     /* check inputs */
-    if (mp == NULL) {
-        HERROR(DFE_ARGS);
-        goto done;
-    }
+    if (mp == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Check for attempt to look up a non-existent page. */
-    if (pgno > mp->npages) {
-        HEreport("attempting to get a nonexistent page from cache");
-        goto done;
-    }
+    if (pgno > mp->npages)
+        HE_REPORT_GOTO("attempting to get a nonexistent page from cache", FAIL);
 
     /* search through hash chain */
     head = &mp->hqh[HASHKEY(pgno)];
@@ -848,6 +845,7 @@ mcache_look(MCACHE *mp, /* IN: MCACHE cookie */
             ++mp->cachehit;
 #endif
             /* done */
+            ret_value = RET_SUCCESS;
             goto done;
         }
 

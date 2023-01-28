@@ -482,9 +482,9 @@ int32
 VSsetname(int32       vkey, /* IN: Vdata key */
           const char *vsname /* IN: name to set for vdata*/)
 {
-    vsinstance_t *w        = NULL;
-    VDATA        *vs       = NULL;
-    int32         curr_len = 0;
+    vsinstance_t *w  = NULL;
+    VDATA        *vs = NULL;
+    int32         curr_len;
     int32         slen;
     int32         ret_value = SUCCEED;
 

@@ -4,39 +4,6 @@
 # after configure starts and defines, among other things, flags for
 # the various compilation modes.
 
-#
-
-#
-# For now, do not promote any warnings to errors.
-#
-WARNINGS_AS_ERRORS_DFLT=no
-
-#
-# This filter rewrites -Werror= as -W, in that way demoting warnings
-# promoted to errors back to warnings, if WARNINGS_AS_ERRORS is no.
-#
-demote_errors()
-{
-    if [ ${WARNINGS_AS_ERRORS:-${WARNINGS_AS_ERRORS_DFLT}} = no ]; then
-        sed 's,-Werror=,-W,g'
-    else
-        cat
-    fi
-}
-
-#
-# Prepend `$srcdir/config/clang-warnings/` to the filename suffix(es) given as
-# subroutine argument(s), remove comments starting with # and ending
-# at EOL, replace spans of whitespace (including newlines) with spaces,
-# and re-emit the file(s) thus filtered on the standard output stream.
-#
-load_clang_arguments()
-{
-    set -- $(for arg; do
-        sed 's,#.*$,,' $srcdir/config/clang-warnings/${arg} | demote_errors
-    done)
-    IFS=' ' echo "$*"
-}
 # Get the compiler version in a way that works for clang
 # unless a compiler version is already known
 #
@@ -49,12 +16,12 @@ if test "X-" = "X-$cc_flags_set"; then
     # Note that the Xcode reported LLVM version doesn't match the canonical
     # LLVM version, so you'll need to do different version checks for
     # Xcode.
-    cc_version="`$CC $CFLAGS $H4_CFLAGS -v 2>&1 |\
+    cc_version="`$CC $CFLAGS -v 2>&1 |\
         grep 'clang version' | sed 's/.*clang version \([-a-z0-9\.]*\).*/\1/'`"
     if test -n "$cc_version"; then
         cc_vendor="clang"
     else
-        cc_version="`$CC $CFLAGS $H4_CFLAGS -v 2>&1 |\
+        cc_version="`$CC $CFLAGS $H5_CFLAGS -v 2>&1 |\
             grep 'Apple LLVM version' | sed 's/.*Apple LLVM version \([-a-z0-9\.]*\).*/\1/'`"
         if test -n "$cc_version"; then
             cc_vendor="Apple LLVM"
@@ -74,116 +41,16 @@ fi
 
 if test "X-clang" = "X-$cc_vendor" -o "X-Apple LLVM" = "X-$cc_vendor"; then
     echo "compiler '$CC' is $cc_vendor-$cc_version"
-    ###############################
-    # Architecture-specific flags #
-    ###############################
 
-    arch=
-    case "$host_os-$host_cpu" in
-        # FreeBSD sets the information from "uname -m" to the general machine
-        # architecture, not the specific CPU for the machine, so even our
-        # Pentium II Xeon server is set to "i386".  Once we know we are on a FreeBSD
-        # machine, use the "sysctl" command to get the CPU hardware model.
-        freebsd*-i386)
-            host_cpu_model=`sysctl -n hw.model`
-            case "$host_cpu_model" in
-                # Hmm.. this might not catch Celerons, but it won't hurt them either...
-                *Pro*|*II*|*III*|*IV*|*Athlon*)
-                    # architecture-specific optimizations cause problems
-                    # for some users who build binaries to be used on
-                    # multiple architectures.
-                    # arch="-march=i686"
-                ;;
-            esac
-            ;;
+    CFLAGS="$CFLAGS -Wno-error=implicit-function-declaration"
+    CFLAGS="$CFLAGS -ansi -Wall -pedantic"
 
-        *-i686)
-                    # architecture-specific optimizations cause problems
-                    # for some users who build binaries to be used on
-                    # multiple architectures.
-                    # arch="-march=i686"
-            ;;
-    esac
-
-    case "$host_os-$host_cpu" in
-        # cygwin needs the "-std=c99" flag removed, so make
-        # a specific case for Cygwin without the flag and a default
-        # case to add the flag everywhere else
-        cygwin-*)
-            ;;
-
-        *)
-            H4_CFLAGS="$H4_CFLAGS -std=c99"
-            ;;
-    esac
-
-    H4_CFLAGS="$H4_CFLAGS $arch"
-
-    ##############
-    # Production #
-    ##############
-
-    # NDEBUG is handled explicitly by the configure script
-    PROD_CFLAGS=
-
-    #########
-    # Debug #
-    #########
-
-    # NDEBUG is handled explicitly by the configure script
-    # -g is handled by the symbols flags
-    DEBUG_CFLAGS="-ftrapv -fno-common"
-
-    ###########
-    # Symbols #
-    ###########
-
-    NO_SYMBOLS_CFLAGS=
-    SYMBOLS_CFLAGS="-g"
-
-    #############
-    # Profiling #
-    #############
-
+    DEBUG_CFLAGS="$CFLAGS -g"
+    DEBUG_CPPFLAGS=
+    PROD_CFLAGS="$CFLAGS -O2"
+    PROD_CPPFLAGS=
     PROFILE_CFLAGS="-pg"
-
-    ################
-    # Optimization #
-    ################
-
-    HIGH_OPT_CFLAGS="-O3"
-    NO_OPT_CFLAGS="-O0"
-
-    # -Og is only understood by clang 4+ and Xcode 9+
-    # Otherwise use -O1 (which is what -Og usually equates to)
-    if test "X-clang" = "X-$cc_vendor" -a $cc_vers_major -ge 4 -o "X-Apple LLVM" = "X-$cc_vendor" -a $cc_vers_major -ge 9; then
-        DEBUG_OPT_CFLAGS="-Og"
-    else
-        DEBUG_OPT_CFLAGS="-O1"
-    fi
-
-    ############
-    # Warnings #
-    ############
-
-    ###########
-    # General #
-    ###########
-
-    H4_CFLAGS="$H4_CFLAGS $(load_clang_arguments general)"
-    H4_ECFLAGS="$H4_ECFLAGS $(load_clang_arguments error-general)"
-
-    ######################
-    # Developer warnings #
-    ######################
-
-    NO_DEVELOPER_WARNING_CFLAGS=$(load_clang_arguments no-developer-general)
-    DEVELOPER_WARNING_CFLAGS=$(load_clang_arguments developer-general)
-
-    #############################
-    # Version-specific warnings #
-    #############################
-
+    PROFILE_CPPFLAGS=
 
     #################
     # Flags are set #

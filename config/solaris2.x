@@ -21,41 +21,14 @@
 #       used within this file.
 
 if test "X-$CC" = "X-"; then
-  CC=gcc
-  CC_BASENAME=gcc
+  CC=cc
+  CC_BASENAME=cc
 fi
 
 if test "X-$F77" = "X-"; then
-  F77=gfortran
-  F77_BASENAME=gfortran
+  F77=f77
+  F77_BASENAME=f77
 fi
-
-
-# compiler version strings
-case $CC in
-
-    *gcc*)
-        cc_version_info=`$CC $CFLAGS $H5_CFLAGS --version 2>&1 | grep -v 'PathScale' |\
-            grep 'GCC' | sed 's/\(.*(GCC) [-a-z0-9\. ]*\).*/\1/'`
-        ;;
-
-    *)
-        echo "No match to get cc_version_info for $CC"
-        ;;
-esac
-
-# get fortran version info
-case $F77 in
-    *gfortran*)
-        fc_version_info=`$F77 $FFLAGS --version 2>&1 |\
-            grep 'GCC' | sed 's/\(.*(GCC) [-a-z0-9\. ]*\).*/\1/'`
-        ;;
-
-     *)
-        echo "No match to get fc_version_info for $F77"
-        ;;
-esac
-
 
 # C and Fortran Compiler and Preprocessor Flags
 # ---------------------------------------------------
@@ -70,7 +43,7 @@ esac
 #   DEBUG_FFLAGS
 #   DEBUG_CPPFLAGS  - Flags to pass to the compiler to create a
 #                     library suitable for use with debugging
-#                      tools. Usually this list will exclude
+#			          tools. Usually this list will exclude
 #                     optimization switches (like `-O') and include
 #                     switches that turn on symbolic debugging support
 #                     (like `-g').
@@ -89,7 +62,7 @@ esac
 #                     library suitable for performance testing (like
 #                     `-pg').  This may or may not include debugging or
 #                     production flags.
-#
+#			
 #   FFLAGS
 #   CFLAGS          - Flags can be added to these variable which
 #                     might already be partially initialized. These
@@ -98,7 +71,7 @@ esac
 #
 #                     WARNING: flags do not have to be added to the CFLAGS
 #                     or FFLAGS variable if the compiler is the GNU gcc
-#                     and gfortran compiler.
+#                     and g77 compiler.
 #
 #                     FFLAGS and CFLAGS should contain *something* or else
 #                     configure will probably add `-g'. For most systems
@@ -116,14 +89,10 @@ esac
 
 case $CC_BASENAME in
   gcc)
-    if test $cc_vers_major -ge 10; then
-        CFLAGS="$CFLAGS -Wno-error=implicit-function-declaration"
-    else
-        CFLAGS="$CFLAGS"
-    fi
-    DEBUG_CFLAGS="-g -fverbose-asm"
+    CFLAGS="$CFLAGS -ansi"
+    DEBUG_CFLAGS="-g "
     DEBUG_CPPFLAGS=
-    PROD_CFLAGS="-O2 -fomit-frame-pointer"
+    PROD_CFLAGS="-O3 "
     PROD_CPPFLAGS=
     PROFILE_CFLAGS="-pg"
     PROFILE_CPPFLAGS=
@@ -131,26 +100,62 @@ case $CC_BASENAME in
 
   *)
     CFLAGS="$CFLAGS"
-    DEBUG_CFLAGS="-g"
+    DEBUG_CFLAGS="-g -v"
     DEBUG_CPPFLAGS=
-    PROD_CFLAGS="-O"
+    PROD_CFLAGS="-xO2"
     PROD_CPPFLAGS=
     PROFILE_CFLAGS="-pg"
     PROFILE_CPPFLAGS=
     ;;
 esac
 
-case $F77_BASENAME in
-  gfortran)
-    if test $fc_vers_major -ge 10; then
-        FFLAGS="$FFLAGS -fallow-argument-mismatch"
-    else
-        FFLAGS="$FFLAGS"
-    fi
+case $F77_BASENAME in 
+  g77)
+    FFLAGS="$FFLAGS -Wsign-compare"
+    DEBUG_FFLAGS="-g"
+    PROD_FFLAGS="-O3 -fomit-frame-pointer"
+    PROFILE_FFLAGS="-pg"
+    ;;
+
+  *)
+    FFLAGS="$FFLAGS -O"
     DEBUG_FFLAGS="-g"
     PROD_FFLAGS="-O"
     PROFILE_FFLAGS="-pg"
     ;;
-
 esac
 
+# compiler version strings
+case $CC in
+    *cc*)
+        cc_version_info=`$CC $CFLAGS $H5_CFLAGS -V 2>&1 | grep 'Sun' |\
+            sed 's/.*\(Sun.*Sun.*\)/\1 /'`
+        ;;
+
+    *)
+        echo "No match to get cc_version_info for $CC"
+        ;;
+esac
+echo "C compiler '$CC' is $cc_version_info"
+
+case $F77 in
+    # The PGI and Intel compilers are automatically detected below
+    *f90*|*f77*)
+        fc_version_info=`$F77 $FFLAGS $H5_FFLAGS -V 2>&1 | grep 'Sun' |\
+            sed 's/.*\(Sun.*Sun.*\)/\1 /'`
+        ;;
+
+     *)
+        echo "No match to get fc_version_info for $F77"
+        ;;
+esac
+echo "Fortran compiler '$F77' is $fc_version_info"
+
+# Overriding Configure Tests
+# --------------------------
+#
+# Values for overriding configuration tests when cross compiling.
+
+# Set this to `yes' or `no' depending on whether the target is big
+# endian or little endian.
+#ac_cv_c_bigendian=${ac_cv_c_bigendian='yes'}
