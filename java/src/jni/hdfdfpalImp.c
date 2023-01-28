@@ -49,7 +49,7 @@ Java_hdf_hdflib_HDFLibrary_DFPaddpal(JNIEnv *env, jclass clss, jstring filename,
     PIN_JAVA_STRING(ENVONLY, filename, fstr, NULL, "DFPaddpal:  filename not pinned");
     PIN_BYTE_ARRAY(ENVONLY, palette, dat, &isCopy, "DFPaddpal:  palette not pinned");
 
-    if ((rval = DFPaddpal(fstr, (VOIDP)dat)) == FAIL)
+    if ((rval = DFPaddpal(fstr, (void *)dat)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -80,7 +80,7 @@ Java_hdf_hdflib_HDFLibrary_DFPgetpal(JNIEnv *env, jclass clss, jstring filename,
     PIN_JAVA_STRING(ENVONLY, filename, fstr, NULL, "DFPgetpal:  filename not pinned");
     PIN_BYTE_ARRAY(ENVONLY, palette, dat, &isCopy, "DFPgetpal:  palette not pinned");
 
-    if ((rval = DFPgetpal(fstr, (VOIDP)dat)) == FAIL)
+    if ((rval = DFPgetpal(fstr, (void *)dat)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -148,7 +148,7 @@ Java_hdf_hdflib_HDFLibrary_DFPputpal(JNIEnv *env, jclass clss, jstring filename,
     PIN_JAVA_STRING(ENVONLY, filename, fstr, NULL, "DFPputpal:  filename not pinned");
     PIN_JAVA_STRING(ENVONLY, filemode, mstr, NULL, "DFPputpal:  filemode not pinned");
     PIN_BYTE_ARRAY(ENVONLY, palette, dat, &isCopy, "DFPputpal:  palette not pinned");
-    if ((rval = DFPputpal(fstr, (VOIDP)dat, (intn)overwrite, mstr)) == FAIL)
+    if ((rval = DFPputpal(fstr, (void *)dat, (intn)overwrite, mstr)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
