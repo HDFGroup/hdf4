@@ -51,22 +51,23 @@ static void HAIrelease_atom_node(atom_info_t *atm);
     Returns SUCCEED if successful and FAIL otherwise
 *******************************************************************************/
 int
-HAinit_group(group_t grp,      /* IN: Group to initialize */
-             int     hash_size /* IN: Minimum hash table size to use for group */
+HAinit_group(group_t  grp,      /* IN: Group to initialize */
+             unsigned hash_size /* IN: Minimum hash table size to use for group */
 )
 {
     atom_group_t *grp_ptr   = NULL; /* ptr to the atomic group */
     int           ret_value = SUCCEED;
 
     HEclear();
-    if ((grp <= BADGROUP || grp >= MAXGROUP) && hash_size > 0)
+
+    if (grp <= BADGROUP || grp >= MAXGROUP || hash_size == 0)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+    /* Ensure hash_size is a power of 2 */
+    if ((hash_size & (hash_size - 1)) != 0)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Assertion necessary for faster pointer swapping */
     assert(sizeof(hdf_pint_t) == sizeof(void *));
-
-    if (hash_size & (hash_size - 1))
-        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if (atom_group_list[grp] == NULL) {
         /* Allocate the group information */
@@ -192,7 +193,7 @@ HAregister_atom(group_t grp,   /* IN: Group to register the object in */
     atm_ptr->next    = NULL;
 
     /* hash bucket already full, prepend to front of chain */
-    hash_loc = grp_ptr->nextid % (unsigned)grp_ptr->hash_size;
+    hash_loc = grp_ptr->nextid % grp_ptr->hash_size;
     if (grp_ptr->atom_list[hash_loc] != NULL)
         atm_ptr->next = grp_ptr->atom_list[hash_loc];
 
@@ -295,7 +296,7 @@ HAremove_atom(atom_t atm /* IN: Atom to remove */
         HGOTO_ERROR(DFE_INTERNAL, NULL);
 
     /* Get the location in which the atom is located */
-    hash_loc = (unsigned)ATOM_TO_LOC(atm, grp_ptr->hash_size);
+    hash_loc = ATOM_TO_LOC(atm, grp_ptr->hash_size);
     curr_atm = grp_ptr->atom_list[hash_loc];
     if (curr_atm == NULL)
         HGOTO_ERROR(DFE_INTERNAL, NULL);
@@ -355,7 +356,7 @@ HAsearch_atom(group_t         grp,  /* IN: Group to search for the object in */
 {
     atom_group_t *grp_ptr = NULL; /* ptr to the atomic group */
     atom_info_t  *atm_ptr = NULL; /* ptr to the new atom */
-    int           i;              /* local counting variable */
+    unsigned      u;              /* local counting variable */
     void         *ret_value = NULL;
 
     HEclear();
@@ -367,8 +368,8 @@ HAsearch_atom(group_t         grp,  /* IN: Group to search for the object in */
         HGOTO_ERROR(DFE_INTERNAL, NULL);
 
     /* Start at the beginning of the array */
-    for (i = 0; i < grp_ptr->hash_size; i++) {
-        atm_ptr = grp_ptr->atom_list[i];
+    for (u = 0; u < grp_ptr->hash_size; u++) {
+        atm_ptr = grp_ptr->atom_list[u];
         while (atm_ptr != NULL) {
             if ((*func)(atm_ptr->obj_ptr, key))
                 HGOTO_DONE(atm_ptr->obj_ptr); /* found the item we are looking for */
@@ -410,7 +411,7 @@ HAIfind_atom(atom_t atm /* IN: Atom to retrieve atom for */
         HGOTO_ERROR(DFE_INTERNAL, NULL);
 
     /* Get the location in which the atom is located */
-    hash_loc = (unsigned)ATOM_TO_LOC(atm, grp_ptr->hash_size);
+    hash_loc = ATOM_TO_LOC(atm, grp_ptr->hash_size);
     atm_ptr  = grp_ptr->atom_list[hash_loc];
     if (atm_ptr == NULL)
         HGOTO_ERROR(DFE_INTERNAL, NULL);

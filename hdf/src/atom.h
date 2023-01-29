@@ -44,21 +44,21 @@
 
 /* Group values allowed */
 typedef enum {
-    BADGROUP   = (-1), /* Invalid Group */
-    DDGROUP    = 0,    /* Group ID for DD objects */
-    AIDGROUP   = 1,    /* Group ID for access ID objects */
-    FIDGROUP   = 2,    /* Group ID for file ID objects */
-    VGIDGROUP  = 3,    /* Group ID for Vgroup ID objects */
-    VSIDGROUP  = 4,    /* Group ID for Vdata ID objects */
-    GRIDGROUP  = 5,    /* Group ID for GR ID objects */
-    RIIDGROUP  = 6,    /* Group ID for RI ID objects */
-    BITIDGROUP = 7,    /* Group ID for Bitfile ID objects */
-    ANIDGROUP  = 8,    /* Group ID for Annotation ID objects */
-    MAXGROUP           /* Highest group in group_t (Invalid as true group) */
+    BADGROUP   = -1, /* Invalid Group */
+    DDGROUP    = 0,  /* Group ID for DD objects */
+    AIDGROUP   = 1,  /* Group ID for access ID objects */
+    FIDGROUP   = 2,  /* Group ID for file ID objects */
+    VGIDGROUP  = 3,  /* Group ID for Vgroup ID objects */
+    VSIDGROUP  = 4,  /* Group ID for Vdata ID objects */
+    GRIDGROUP  = 5,  /* Group ID for GR ID objects */
+    RIIDGROUP  = 6,  /* Group ID for RI ID objects */
+    BITIDGROUP = 7,  /* Group ID for Bitfile ID objects */
+    ANIDGROUP  = 8,  /* Group ID for Annotation ID objects */
+    MAXGROUP         /* Highest group in group_t (Invalid as true group) */
 } group_t;
 
 /* Type of atoms to return to users */
-typedef int32 atom_t;
+typedef int32_t atom_t;
 
 /* Type of the function to compare objects & keys */
 typedef int (*HAsearch_func_t)(const void *obj, const void *key);
@@ -80,7 +80,7 @@ typedef int (*HAsearch_func_t)(const void *obj, const void *key);
 #define ATOM_TO_GROUP(a) ((group_t)((((atom_t)(a)) >> ((sizeof(atom_t) * 8) - GROUP_BITS)) & GROUP_MASK))
 
 /* Map an atom to a hash location (assumes s is a power of 2 and smaller than the ATOM_MASK constant) */
-#define ATOM_TO_LOC(a, s) ((atom_t)(a) & ((s)-1))
+#define ATOM_TO_LOC(a, s) ((uint32_t)(a) & ((s)-1))
 
 /* Combine a Group number and an atom index into an atom */
 #define MAKE_ATOM(g, i)                                                                                      \
@@ -96,7 +96,7 @@ typedef struct atom_info_struct_tag {
 /* Atom group structure used */
 typedef struct atom_group_struct_tag {
     unsigned      count;     /* # of times this group has been initialized */
-    int           hash_size; /* size of the hash table to store the atoms in */
+    unsigned      hash_size; /* size of the hash table to store the atoms in */
     unsigned      atoms;     /* current number of atoms held */
     unsigned      nextid;    /* atom ID to use for the next atom */
     atom_info_t **atom_list; /* pointer to an array of ptrs to atoms */
@@ -142,8 +142,8 @@ extern "C" {
     Returns SUCCEED if successful and FAIL otherwise
 
 *******************************************************************************/
-HDFLIBAPI int HAinit_group(group_t grp,     /* IN: Group to initialize */
-                           int    hash_size /* IN: Minimum hash table size to use for group */
+HDFLIBAPI int HAinit_group(group_t  grp,      /* IN: Group to initialize */
+                           unsigned hash_size /* IN: Minimum hash table size to use for group */
 );
 
 /******************************************************************************
