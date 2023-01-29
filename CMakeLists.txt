@@ -2,7 +2,6 @@ cmake_minimum_required (VERSION 3.12)
 project (HDF4 C)
 
 if (POLICY CMP0074)
-  # find_package() uses <PackageName>_ROOT variables.
   cmake_policy (SET CMP0074 NEW)
 endif ()
 
@@ -336,12 +335,6 @@ endif ()
 
 set (CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-if (NOT BUILD_SHARED_LIBS)
-  set (tgt_file_ext "")
-else ()
-  set (tgt_file_ext "-shared")
-endif ()
-
 add_definitions (-DHAVE_CONFIG_H)
 
 #-----------------------------------------------------------------------------
@@ -362,11 +355,6 @@ if (HDF4_ENABLE_ANALYZER_TOOLS)
 endif ()
 if (HDF4_ENABLE_SANITIZERS)
   include (${HDF4_SOURCE_DIR}/config/sanitizer/sanitizers.cmake)
-endif ()
-option (HDF4_ENABLE_FORMATTERS "format source files" OFF)
-mark_as_advanced (HDF4_ENABLE_FORMATTERS)
-if (HDF4_ENABLE_FORMATTERS)
-  include (${HDF4_SOURCE_DIR}/config/sanitizer/formatting.cmake)
 endif ()
 
 #-----------------------------------------------------------------------------

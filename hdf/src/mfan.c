@@ -100,8 +100,6 @@ extern intn ANIanncmp(void *i, void *j, intn value);
 
 /* private initialization routine */
 PRIVATE intn ANIstart(void);
-/* private destroy routine */
-PRIVATE intn ANIdestroy(void);
 
 /*-----------------------------------------------------------------------------
  *                          Internal Routines
