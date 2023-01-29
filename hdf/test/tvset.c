@@ -1590,6 +1590,10 @@ test_vdeletetagref(void)
         printf(">>> Vinqtagref couldn't find valid element\n");
     }
 
+    /* Terminate access to the vgroup. */
+    status = Vdetach(vgroup_id);
+    CHECK_VOID(status, FAIL, "VSdetach:vgroup_id");
+
     /* Terminate access to the Vxxx interface and close the file. */
     status = Vend(fid);
     CHECK_VOID(status, FAIL, "Vend:fid");
@@ -2210,6 +2214,12 @@ test_getvgroups(void)
 
     if (refarray != NULL)
         HDfree(refarray);
+
+    /* Close remaining vgroups  */
+    status = Vdetach(vgroup0_id);
+    CHECK_VOID(status, FAIL, "Vdetach vgroup0_id");
+    status = Vdetach(vgroup1_id);
+    CHECK_VOID(status, FAIL, "Vdetach vgroup1_id");
 
     /* Terminate access to the V interface and close the HDF file.  */
     status_n = Vend(fid);
