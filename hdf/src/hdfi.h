@@ -14,7 +14,7 @@
 #ifndef H4_HDFI_H
 #define H4_HDFI_H
 
-#include "h4config.h"
+#include "H4api_adpt.h"
 
 /*--------------------------------------------------------------------------*/
 /*                              MT/NT constants                             */

@@ -1,4 +1,6 @@
--Werror=incompatible-pointer-types
+#
+# mfhdf/xdrposix.c
+-Wno-error=incompatible-pointer-types
 -Werror=int-conversion
 #
 # In GCC 4.4.7, the compiler gripes about shadowed global

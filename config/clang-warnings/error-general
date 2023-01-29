@@ -4,7 +4,9 @@
 #
 -Werror=bad-function-cast
 -Werror=implicit-function-declaration
--Werror=incompatible-pointer-types
+#
+# mfhdf/xdrposix.c
+-Wno-error=incompatible-pointer-types
 -Werror=missing-declarations
 -Werror=packed
 -Werror=shadow

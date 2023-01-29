@@ -14,7 +14,6 @@
 #ifndef H4_HDF_H
 #define H4_HDF_H
 
-#include "h4config.h"
 #include "hdfi.h"
 #include "hlimits.h"
 

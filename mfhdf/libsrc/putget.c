@@ -35,6 +35,8 @@ static intn SDIresizebuf(void **buf, int32 *buf_size, int32 size_wanted);
 
 static const long *NCvcmaxcontig(NC *, NC_var *, const long *, const long *);
 
+int NC_fill_buffer(NC *handle, int varid, const long *edges, void *values);
+
 /*
  * If you use ./xdrstdio.c rather than ./xdrposix.c as
  * your bottom layer, the you may need to #define XDRSTDIO
@@ -643,7 +645,7 @@ PRIVATE int8 *tValues      = NULL;
     Throw away the temporary buffer we've allocated
 */
 intn
-SDPfreebuf()
+SDPfreebuf(void)
 {
     if (tBuf != NULL) {
         free(tBuf);
