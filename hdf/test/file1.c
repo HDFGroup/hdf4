@@ -73,7 +73,7 @@ test_file_limits(void)
 
     MESSAGE(5, puts("Opening write access elements"););
     for (i = 0; i < BIG; i++) {
-        accs[i] = Hstartwrite(files[0], (uint16)100, (uint16)(i+1), 100L);
+        accs[i] = Hstartwrite(files[0], (uint16)100, (uint16)(i + 1), 100L);
         if (accs[i] < 0)
             break;
     }
