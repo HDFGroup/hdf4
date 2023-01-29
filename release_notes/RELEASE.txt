@@ -244,6 +244,13 @@ Support for new platforms and compilers
 
 Bugs fixed since HDF 4.2.15
 ===========================
+    - Fixed a small memory leak in the atom code
+
+      The atom list hast table of each atom group list was not cleaned up at
+      library shutdown, leading to a small memory leak (at most, a few kB).
+
+      (DER - 2023/01/29)
+
     - Specifying CC on the command line works correctly in the Autotools
 
       The CC variable was processed incorrectly in the Autotools build files
