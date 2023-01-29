@@ -38,7 +38,7 @@ if (BUILD_SHARED_LIBS)
   add_library (${HDF4_MF_XDR_LIBSH_TARGET} SHARED ${HDF4_MFHDF_XDR_SRCS} ${HDF4_MFHDF_XDR_HDRS})
   target_include_directories(${HDF4_MF_XDR_LIBSH_TARGET} PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDF_XDR_SOURCE_DIR}")
   target_compile_options(${HDF4_MF_XDR_LIBSH_TARGET} PRIVATE "${HDF4_CMAKE_C_FLAGS}")
-  target_compile_definitions(${HDF4_MF_XDRSH_LIB_TARGET}
+  target_compile_definitions(${HDF4_MF_XDR_LIBSH_TARGET}
       PUBLIC
           ${HDF_EXTRA_C_FLAGS}
           ${HDF_EXTRA_FLAGS}
