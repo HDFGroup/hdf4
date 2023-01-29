@@ -595,6 +595,7 @@ HAshutdown(void)
 
     for (i = 0; i < (intn)MAXGROUP; i++)
         if (atom_group_list[i] != NULL) {
+            HDfree(atom_group_list[i]->atom_list);
             HDfree(atom_group_list[i]);
             atom_group_list[i] = NULL;
         } /* end if */
