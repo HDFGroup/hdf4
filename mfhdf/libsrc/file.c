@@ -519,8 +519,7 @@ NCtempname(const char *proto)
 #define TN_NDIGITS 4
 <<<<<<< HEAD
 =======
-#if defined __MINGW32__
-    int getpid(void);
+#if defined __MINGW32__ int getpid(void);
 #else
 #if defined H4_HAVE_WIN32_API
     typedef int pid_t;
