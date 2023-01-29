@@ -25,6 +25,7 @@ extern "C" {
 #include <jni.h>
 #include "hdf.h"
 #include "h4jni.h"
+#include "hdfexceptionImp.h"
 
 /********************/
 /* Local Macros     */
@@ -58,18 +59,18 @@ extern "C" {
 #define THROWINTEXCEPTION(className, args)                                                                   \
     {                                                                                                        \
         jmethodID jm;                                                                                        \
-        jclass    jc;                                                                                        \
+        jclass    jcls;                                                                                        \
         jobject   ex;                                                                                        \
                                                                                                              \
-        if (NULL == (jc = ENVPTR->FindClass(ENVONLY, (className))))                                          \
+        if (NULL == (jcls = ENVPTR->FindClass(ENVONLY, (className))))                                          \
             CHECK_JNI_EXCEPTION(ENVONLY, JNI_FALSE);                                                         \
                                                                                                              \
-        if (NULL == (jm = ENVPTR->GetMethodID(ENVONLY, jc, "<init>", "(I)V"))) {                             \
+        if (NULL == (jm = ENVPTR->GetMethodID(ENVONLY, jcls, "<init>", "(I)V"))) {                             \
             printf("THROWEXCEPTION FATAL ERROR: GetMethodID failed\n");                                      \
             CHECK_JNI_EXCEPTION(ENVONLY, JNI_FALSE);                                                         \
         }                                                                                                    \
                                                                                                              \
-        if (NULL == (ex = ENVPTR->NewObjectA(ENVONLY, jc, jm, (jvalue *)(args)))) {                          \
+        if (NULL == (ex = ENVPTR->NewObjectA(ENVONLY, jcls, jm, (jvalue *)(args)))) {                          \
             printf("THROWEXCEPTION FATAL ERROR: Class %s: Creation failed\n", (className));                  \
             CHECK_JNI_EXCEPTION(ENVONLY, JNI_FALSE);                                                         \
         }                                                                                                    \

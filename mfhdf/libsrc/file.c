@@ -517,6 +517,7 @@ NCtempname(const char *proto)
 {
 #define TN_NACCES  1
 #define TN_NDIGITS 4
+<<<<<<< Upstream, based on branch 'master-cmake-warn' of https://github.com/byrnHDF/hdf4.git
 <<<<<<< HEAD
 =======
 #if defined __MINGW32__ int getpid(void);
@@ -529,6 +530,8 @@ NCtempname(const char *proto)
 #endif
 #endif
 >>>>>>> branch 'master' of https://github.com/HDFGroup/hdf4.git
+=======
+>>>>>>> 634d523 Fix includes
     unsigned int pid; /* OS/2 DOS (MicroSoft Lib) allows "negative" int pids */
 
     static char seed[] = {'a', 'a', 'a', '\0'};
