@@ -389,10 +389,10 @@ HAremove_atom(atom_t atm /* IN: Atom to remove */
     atom_group_t *grp_ptr = NULL; /* ptr to the atomic group */
     atom_info_t  *curr_atm;       /* ptr to the current atom */
     atom_info_t  *last_atm;       /* ptr to the last atom */
-    group_t  grp;                 /* atom's atomic group */
-    unsigned hash_loc;            /* atom's hash table location */
-    unsigned u;                   /* local counting variable */
-    void    *ret_value = NULL;
+    group_t       grp;            /* atom's atomic group */
+    unsigned      hash_loc;       /* atom's hash table location */
+    unsigned      u;              /* local counting variable */
+    void         *ret_value = NULL;
 
     HEclear();
     grp = ATOM_TO_GROUP(atm);
