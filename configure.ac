@@ -153,16 +153,23 @@ fi
 ##
 ## If the `OS' ends with a version number then remove it. For instance,
 ## `freebsd3.1' would become `freebsd'
-##
-case "$host_os" in
-  aix4.*)       host_os_novers="aix4.x"     ;;
-  aix5.*)       host_os_novers="aix5.x"     ;;
-  darwin10.*)   host_os_novers="darwin10.x" ;;
-  darwin11.*)   host_os_novers="darwin11.x" ;;
-  darwin12.*)   host_os_novers="darwin12.x" ;;
-  freebsd*)     host_os_novers="freebsd"    ;;
-  solaris2.*)   host_os_novers="solaris2.x" ;;
-  *)            host_os_novers="$host_os"   ;;
+
+case $host_os in
+  aix*)
+    host_os_novers=aix
+    ;;
+  freebsd*)
+    host_os_novers=freebsd
+    ;;
+  netbsd*)
+    host_os_novers=netbsd
+    ;;
+  solaris*)
+    host_os_novers=solaris
+    ;;
+  *)
+    host_os_novers=$host_os
+    ;;
 esac
 
 host_config="none"

@@ -26,7 +26,7 @@ if test "X-$CC" = "X-"; then
     CC_BASENAME=clang
 fi
 
-# Figure out GNU C compiler flags
+# Figure out C compiler flags
 . $srcdir/config/gnu-flags
 
 # Figure out Intel C compiler flags
@@ -41,8 +41,9 @@ if test "X-$F77" = "X-"; then
   F77_BASENAME=gfortran
 fi
 
-# Figure out GNU FC compiler flags
+# Figure out FORTRAN compiler flags
 . $srcdir/config/gnu-fflags
+. $srcdir/config/intel-fflags
 
 # compiler version strings
 
@@ -52,21 +53,21 @@ if test -z "$cc_version_info"; then
 case $CC in
     # whatever matches *pgcc* will also match *gcc*, so this one must come first
     *pgcc*)
-        cc_version_info=`$CC $CFLAGS $H5_CFLAGS -V 2>&1 | grep 'pgcc'`
+        cc_version_info=`$CC $CFLAGS $H4_CFLAGS -V 2>&1 | grep 'pgcc'`
         ;;
 
     *gcc*)
-        cc_version_info=`$CC $CFLAGS $H5_CFLAGS --version 2>&1 | grep -v 'PathScale' |\
-            grep 'GCC' | sed 's/\(.*(GCC) [-a-z0-9\. ]*\).*/\1/'`
+        cc_version_info=`$CC $CFLAGS $H4_CFLAGS --version 2>&1 | grep -v 'PathScale' |\
+            grep 'GCC' | sed 's/.*\((GCC) [-a-z0-9\. ]*.*\)/\1/'`
         ;;
 
     *icc*)
-        cc_version_info=`$CC $CCFLAGS $H5_CCFLAGS -V 2>&1 | grep 'Version' |\
+        cc_version_info=`$CC $CCFLAGS $H4_CCFLAGS -V 2>&1 | grep 'Version' |\
             sed 's/\(Intel.* Compiler\).*\( Version [a-z0-9\.]*\).*\( Build [0-9]*\)/\1\2\3/'`
         ;;
 
     *clang*)
-        cc_version_info="`$CC $CFLAGS $H5_CFLAGS --version 2>&1 |\
+        cc_version_info="`$CC $CFLAGS $H4_CFLAGS --version 2>&1 |\
             grep 'clang version' | sed 's/.*clang version \([-a-z0-9\.]*\).*/\1/'`"
         ;;
 

@@ -1,0 +1,140 @@
+#                                                   -*- shell-script -*-
+#
+# This file is part of the HDF4 build script. It is processed shortly
+# after configure starts and defines, among other things, flags for
+# the various compilation modes.
+
+# C and Fortran Compiler and Preprocessor Flags
+# ---------------------------------------------------
+#
+# - Flags that end with `_CFLAGS' are always passed to the C compiler.
+# - Flags that end with `_FFLAGS' are always passed to the Fortran
+#   compiler.
+# - Flags that end with `_CPPFLAGS' are passed to the C compiler
+#   when compiling but not when linking.
+#
+# Prepend `$srcdir/config/intel-warnings/` to the filename suffix(es) given as
+# subroutine argument(s), remove comments starting with # and ending
+# at EOL, replace spans of whitespace (including newlines) with spaces,
+# and re-emit the file(s) thus filtered on the standard output stream.
+#
+load_intel_arguments()
+{
+    set -- $(for arg; do
+        sed 's,#.*$,,' $srcdir/config/intel-warnings/${arg}
+    done)
+    IFS=' ' echo "$*"
+}
+
+# Get the compiler version in a way that works for ifort
+# ifort unless a compiler version is already known
+#
+#   fc_vendor:    The compiler name: ifort
+#   fc_version:   Version number: 8.0
+#
+if test X = "X$fc_flags_set"; then
+    fc_version="`$F77 $FFLAGS $H4_FFLAGS -V 2>&1 |grep '^Intel'`"
+    if test X != "X$fc_version"; then
+        fc_vendor=ifort
+        fc_version="`echo $fc_version |sed 's/.*Version \([-a-z0-9\.\-]*\).*/\1/'`"
+        echo "compiler '$F77' is Intel $fc_vendor-$fc_version"
+
+        # Some version numbers
+        # Intel version numbers are of the form: "major.minor"
+        fc_vers_major=`echo $fc_version | cut -f1 -d.`
+        fc_vers_minor=`echo $fc_version | cut -f2 -d.`
+        #fc_vers_patch=`echo $fc_version | cut -f2 -d.`
+        test -n "$fc_vers_major" || fc_vers_major=0
+        test -n "$fc_vers_minor" || fc_vers_minor=0
+        test -n "$fc_vers_patch" || fc_vers_patch=0
+        fc_vers_all=`expr $fc_vers_major '*' 1000000 + $fc_vers_minor '*' 1000 + $fc_vers_patch`
+    fi
+fi
+
+if test "X-ifort" = "X-$fc_vendor"; then
+
+    F77_BASENAME=ifort
+    F9XSUFFIXFLAG=""
+    FSEARCH_DIRS=""
+
+    ###############################
+    # Architecture-specific flags #
+    ###############################
+
+    arch=
+    # Nothing currently. (Uncomment code below and modify to add any)
+    #case "$host_os-$host_cpu" in
+    #    *-i686)
+    #        arch="-march=i686"
+    #        ;;
+    #esac
+
+    # Host-specific flags
+    # Nothing currently. (Uncomment code below and modify to add any)
+    #case "`hostname`" in
+    #    sleipnir.ncsa.uiuc.edu)
+    #        arch="$arch -pipe"
+    #        ;;
+    #esac
+
+    ##############
+    # Production #
+    ##############
+
+    PROD_FCFLAGS=
+
+    #########
+    # Debug #
+    #########
+
+    DEBUG_FCFLAGS="-check all"
+
+    ###########
+    # Symbols #
+    ###########
+
+    NO_SYMBOLS_FCFLAGS=
+    SYMBOLS_FCFLAGS="-g"
+
+    #############
+    # Profiling #
+    #############
+
+    PROFILE_FCFLAGS="-p"
+
+    ################
+    # Optimization #
+    ################
+
+    HIGH_OPT_FCFLAGS="-O3"
+    DEBUG_OPT_FCFLAGS=
+    NO_OPT_FCFLAGS=
+
+    ############
+    # Warnings #
+    ############
+
+    ###########
+    # General #
+    ###########
+
+    H5_FCFLAGS="$H4_FCFLAGS -free"
+    H5_FCFLAGS="$H4_FCFLAGS $(load_intel_arguments ifort-general)"
+
+    #############################
+    # Version-specific warnings #
+    #############################
+
+
+    #################
+    # Flags are set #
+    #################
+    fc_flags_set=yes
+fi
+
+# Clear fc info if no flags set
+if test "X-$fc_flags_set" = "X-"; then
+  fc_vendor=
+  fc_version=
+fi
+

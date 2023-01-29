@@ -8,7 +8,7 @@
 ## This file is part of HDF.  The full HDF copyright notice, including
 ## terms governing use, modification, and redistribution, is contained in
 ## the COPYING file, which can be found at the root of the source code
-## distribution tree, or in https://support.hdfgroup.org/ftp/HDF/releases/.
+## distribution tree, or in https://www.hdfgroup.org/licenses.
 ## If you do not have access to either file, you may request a copy from
 ## help@hdfgroup.org.
 
@@ -67,7 +67,7 @@ all-local: $(EXTRA_LIB) $(EXTRA_PROG) $(chk_TESTS)
 # make install-doc doesn't do anything outside of doc directory, but
 # Makefiles should recognize it.
 # UPDATE: docs no longer reside in this build tree, so this target
-# is depreciated.
+# is deprecated.
 install-doc uninstall-doc:
 	@echo "Nothing to be done."
 
@@ -138,7 +138,7 @@ $(TEST_PROG_CHKEXE) dummy.chkexe_:
 	      cat $${log}; \
 	   fi; \
 	fi
- 
+
 # The dummysh.chkexe here prevents the target from being
 # empty if there are no tests in the current directory.
 # $${log} is the log file.

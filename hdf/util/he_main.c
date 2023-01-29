@@ -73,6 +73,7 @@ int         getpid(void);
 #else
 #if defined H4_HAVE_WIN32_API
 typedef int pid_t;
+pid_t       _getpid(void);
 #else
 pid_t getpid(void);
 #endif
@@ -213,8 +214,13 @@ getTmpName(char **pname)
     int        length;
     static int count = 0;
     char       s[32];
-
-    (void)sprintf(s, "%she%d.%d", TDIR, (int)getpid(), count);
+    int        pid;
+#if defined _WIN32 && !defined __MINGW32__
+    pid = _getpid();
+#else
+    pid = getpid();
+#endif
+    (void)sprintf(s, "%she%d.%d", TDIR, pid, count);
     count++;
 
     length = (int)HDstrlen(s);
