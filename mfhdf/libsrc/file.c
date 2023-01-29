@@ -30,11 +30,11 @@
 
 #ifndef H4_HAVE_GETPID
 #if defined __MINGW32__
-    int getpid(void);
+int         getpid(void);
 #else
 #if defined H4_HAVE_WIN32_API
-    typedef int pid_t;
-    pid_t       _getpid(void);
+typedef int pid_t;
+pid_t       _getpid(void);
 #else
 pid_t getpid(void);
 #endif
