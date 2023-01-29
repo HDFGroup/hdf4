@@ -40,9 +40,6 @@ FILE
 #define ATOM_BITS 28
 #define ATOM_MASK 0x0FFFFFFF
 
-/* # of previous atoms cached, change inline caching macros (HAatom_object & HAIswap_cache) if this changes */
-#define ATOM_CACHE_SIZE 4
-
 /* Map an atom to a Group number */
 #define ATOM_TO_GROUP(a) ((group_t)((((atom_t)(a)) >> ((sizeof(atom_t) * 8) - GROUP_BITS)) & GROUP_MASK))
 
@@ -390,8 +387,8 @@ HAremove_atom(atom_t atm /* IN: Atom to remove */
 )
 {
     atom_group_t *grp_ptr = NULL; /* ptr to the atomic group */
-    atom_info_t  *curr_atm,       /* ptr to the current atom */
-        *last_atm;                /* ptr to the last atom */
+    atom_info_t  *curr_atm;       /* ptr to the current atom */
+    atom_info_t  *last_atm;       /* ptr to the last atom */
     group_t  grp;                 /* atom's atomic group */
     unsigned hash_loc;            /* atom's hash table location */
     unsigned u;                   /* local counting variable */
@@ -621,10 +618,16 @@ HAshutdown(void)
         }
     }
 
-    for (i = 0; i < (int)MAXGROUP; i++)
+    /* Free the atom groups */
+    for (i = 0; i < (int)MAXGROUP; i++) {
         if (atom_group_list[i] != NULL) {
+            free(atom_group_list[i]->atom_list);
             free(atom_group_list[i]);
-            atom_group_list[i] = NULL;
         }
+    }
+
+    /* Don't leave stale global data around */
+    memset(atom_group_list, 0, sizeof(atom_group_t *) * MAXGROUP);
+
     return SUCCEED;
 } /* end HAshutdown() */
