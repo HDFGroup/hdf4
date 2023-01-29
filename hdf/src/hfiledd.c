@@ -543,22 +543,24 @@ HTPcreate(filerec_t *file_rec, /* IN: File record to store info in */
     atom_t ret_value = SUCCEED;
 
     HEclear();
+
     if (file_rec == NULL || (tag == DFTAG_NULL || tag == DFTAG_WILDCARD) || ref == DFREF_WILDCARD)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if (HTIfind_dd(file_rec, (uint16)DFTAG_NULL, (uint16)DFTAG_WILDCARD, &dd_ptr, DF_FORWARD) == FAIL) {
         if (HTInew_dd_block(file_rec) == FAIL) {
             HGOTO_ERROR(DFE_NOFREEDD, FAIL);
-        } /* end if */
+        }
         else
             dd_ptr = &file_rec->ddlast->ddlist[0];
-    } /* end if */
+    }
 
     /* Insert DD information into the DD list in memory */
     dd_ptr->tag = tag;
     dd_ptr->ref = ref;
     /* the following assures object definition in DD list
-       without data written for object. */
+     * without data written for object.
+     */
     dd_ptr->offset = INVALID_OFFSET;
     dd_ptr->length = INVALID_LENGTH;
 

@@ -36,16 +36,17 @@ test_file_limits(void)
     MESSAGE(5, puts("Opening many files of same name"););
     for (i = 0; i < BIG; i++) {
         files[i] = Hopen("thf.hdf", DFACC_RDWR, 0);
+        CHECK_VOID(files[i], -1, "Hopen");
         if (files[i] < 0) {
-            /*            i++; */
             break;
-        } /* end if */
+        }
     }
     MESSAGE(5, printf("Opening stopped at %d/%d files\n", i, BIG););
 
     MESSAGE(5, puts("Closing all files"););
-    for (i--; i >= 0; i--) {
+    for (i = i-1; i >= 0; i--) {
         ret = Hclose(files[i]);
+        CHECK_VOID(ret, -1, "Hclose");
         if (ret < 0)
             printf("Error closing file %d\n", i);
     }
@@ -56,16 +57,17 @@ test_file_limits(void)
         char fname[100];
         sprintf(fname, "%s%1d.hdf", TESTFILE_NAME, i);
         files[i] = Hopen(fname, DFACC_ALL, 0);
+        CHECK_VOID(files[i], -1, "Hopen");
         if (files[i] < 0) {
-            /*            i++; */
             break;
-        } /* end if */
+        }
     }
     MESSAGE(5, printf("Opening stopped at %d/%d files\n", i, BIG););
 
     MESSAGE(5, puts("Closing all files except first open"););
-    for (i--; i > 0; i--) {
+    for (i = i-1; i > 0; i--) {
         ret = Hclose(files[i]);
+        CHECK_VOID(ret, -1, "Hclose");
         if (ret < 0)
             printf("Error closing file %d\n", i);
     }
@@ -73,21 +75,24 @@ test_file_limits(void)
 
     MESSAGE(5, puts("Opening write access elements"););
     for (i = 0; i < BIG; i++) {
-        accs[i] = Hstartwrite(files[0], (uint16)100, (uint16)i, 100L);
+        accs[i] = Hstartwrite(files[0], (uint16)100, (uint16)(i+1), 100L);
+        CHECK_VOID(accs[i], -1, "Hstartwrite");
         if (accs[i] < 0)
             break;
     }
     MESSAGE(5, printf("Opening stopped at %d element\n", i););
 
     MESSAGE(5, puts("Closing access elements"););
-    for (i--; i >= 0; i--) {
+    for (i = i-1; i >= 0; i--) {
         ret = Hendaccess(accs[i]);
+        CHECK_VOID(ret, -1, "Hendaccess");
         if (ret < 0)
             printf("Error ending access %d\n", i);
     }
     MESSAGE(5, puts("Ended access"););
 
     ret = Hclose(files[0]);
+    CHECK_VOID(ret, -1, "Hclose");
 } /* end test_file_limits() */
 
 #define TAG1 ((uint16)1000)

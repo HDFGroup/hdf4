@@ -112,6 +112,8 @@ static atom_info_t *HAIget_atom_node(void);
 
 static void HAIrelease_atom_node(atom_info_t *atm);
 
+static void HAIfree_atom_list(atom_info_t *info);
+
 /******************************************************************************
  NAME
      HAinit_group - Initialize an atomic group
@@ -267,8 +269,10 @@ HAregister_atom(group_t grp,   /* IN: Group to register the object in */
     atm_ptr->obj_ptr = object;
     atm_ptr->next    = NULL;
 
-    /* Hash bucket already full, prepend to front of chain */
+    /* Simple mod operation to find hash bucket */
     hash_loc = grp_ptr->nextid % grp_ptr->hash_size;
+
+    /* Hash bucket already contains linked list nodes, prepend to front */
     if (grp_ptr->atom_list[hash_loc] != NULL)
         atm_ptr->next = grp_ptr->atom_list[hash_loc];
 
@@ -395,6 +399,7 @@ HAremove_atom(atom_t atm /* IN: Atom to remove */
     void         *ret_value = NULL;
 
     HEclear();
+
     grp = ATOM_TO_GROUP(atm);
     if (grp <= BADGROUP || grp >= MAXGROUP)
         HGOTO_ERROR(DFE_ARGS, NULL);
@@ -403,12 +408,13 @@ HAremove_atom(atom_t atm /* IN: Atom to remove */
     if (grp_ptr == NULL || grp_ptr->count <= 0)
         HGOTO_ERROR(DFE_INTERNAL, NULL);
 
-    /* Get the location in which the atom is located */
+    /* Get the hash bucket in which the atom is located */
     hash_loc = ATOM_TO_LOC(atm, grp_ptr->hash_size);
     curr_atm = grp_ptr->atom_list[hash_loc];
     if (curr_atm == NULL)
         HGOTO_ERROR(DFE_INTERNAL, NULL);
 
+    /* Iterate through the linked list to find the atom */
     last_atm = NULL;
     while (curr_atm != NULL) {
         if (curr_atm->id == atm)
@@ -418,8 +424,10 @@ HAremove_atom(atom_t atm /* IN: Atom to remove */
     }
 
     if (curr_atm != NULL) {
-        if (last_atm == NULL) /* Atom is the first the chain */
+        if (last_atm == NULL) {
+            /* Atom is the first in the list */
             grp_ptr->atom_list[hash_loc] = curr_atm->next;
+        }
         else
             last_atm->next = curr_atm->next;
         ret_value = curr_atm->obj_ptr;
@@ -571,6 +579,7 @@ HAIget_atom_node(void)
     }
 
 done:
+    memset(ret_value, 0, sizeof(atom_info_t));
     return ret_value;
 } /* end HAIget_atom_node() */
 
@@ -594,6 +603,26 @@ HAIrelease_atom_node(atom_info_t *atm)
 
 /*--------------------------------------------------------------------------
  NAME
+    HAIfree_atom_list
+
+ PURPOSE
+    Free a linked list of atoms
+--------------------------------------------------------------------------*/
+static void
+HAIfree_atom_list(atom_info_t *info)
+{
+    atom_info_t *curr = info;
+    atom_info_t *next = NULL;
+
+    while (curr != NULL) {
+        next  = curr->next;
+        free(curr);
+        curr = next;
+    }
+}
+
+/*--------------------------------------------------------------------------
+ NAME
     HAshutdown
 
  PURPOSE
@@ -606,17 +635,10 @@ HAIrelease_atom_node(atom_info_t *atm)
 int
 HAshutdown(void)
 {
-    atom_info_t *curr;
-    int          i;
+    int i;
 
-    /* Release the free-list if it exists */
-    if (atom_free_list != NULL) {
-        while (atom_free_list != NULL) {
-            curr           = atom_free_list;
-            atom_free_list = atom_free_list->next;
-            free(curr);
-        }
-    }
+    /* Release the free list */
+    HAIfree_atom_list(atom_free_list);
 
     /* Free the atom groups */
     for (i = 0; i < (int)MAXGROUP; i++) {
@@ -627,6 +649,7 @@ HAshutdown(void)
     }
 
     /* Don't leave stale global data around */
+    atom_free_list = NULL;
     memset(atom_group_list, 0, sizeof(atom_group_t *) * MAXGROUP);
 
     return SUCCEED;

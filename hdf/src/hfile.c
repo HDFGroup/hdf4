@@ -786,18 +786,18 @@ done:
 NAME
    Hstartwrite -- set up a WRITE access elt for a write
 USAGE
-   int32 Hstartwrite(fileid, tag, ref, len)
-   int fileid;             IN: id of file to write to
-   int tag;                IN: tag to write to
-   int ref;                IN: ref to write to
-   long length;            IN: the length of the data element
+   int32 Hstartwrite(file_id, tag, ref, len)
+   int32  file_id;          IN: id of file to write to
+   uint16 tag;              IN: tag to write to
+   uint16 ref;              IN: ref to write to
+   int32  length;           IN: the length of the data element
 RETURNS
    returns id of access element if successful and FAIL otherwise
 DESCRIPTION
    Set up a WRITE access elt to write out a data element.  The DD list
    of the file is searched first.  If the tag/ref is found, it is
    NOT replaced - the seek position is presumably at 0.
-                        If it does not exist, it is created.
+   If it does not exist, it is created.
 
 --------------------------------------------------------------------------*/
 int32
@@ -807,7 +807,6 @@ Hstartwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
     int32     ret;        /* AID to return */
     int32     ret_value = SUCCEED;
 
-    /* clear error stack */
     HEclear();
 
     /* Call Hstartaccess with the modified base tag */
@@ -816,11 +815,11 @@ Hstartwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
 
     access_rec = HAatom_object(ret);
 
-    /* if new element set the length */
+    /* If new element set the length */
     if (access_rec->new_elem && (Hsetlength(ret, length) == FAIL)) {
         Hendaccess(ret);
         HGOTO_ERROR(DFE_BADLEN, FAIL);
-    } /* end if */
+    }
 
     ret_value = ret;
 
@@ -956,16 +955,17 @@ Hstartaccess(int32 file_id, uint16 tag, uint16 ref, uint32 flags)
     if (new_ref > file_rec->maxref)
         file_rec->maxref = new_ref;
 
-    /*
-     * If this is the first time we are writing to this file
-     *    update the version tags as needed */
+    /* If this is the first time we are writing to this file
+     * update the version tags as needed
+     */
     if (!file_rec->version_set)
         HIcheckfileversion(file_id);
 
-    ret_value = HAregister_atom(AIDGROUP, access_rec);
+    if ((ret_value = HAregister_atom(AIDGROUP, access_rec)) == FAIL)
+        HGOTO_ERROR(DFE_BADAID, FAIL);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
+    if (ret_value == FAIL) {
         if (access_rec != NULL)
             HIrelease_accrec_node(access_rec);
     }

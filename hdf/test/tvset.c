@@ -1590,6 +1590,10 @@ test_vdeletetagref(void)
         printf(">>> Vinqtagref couldn't find valid element\n");
     }
 
+    /* Terminate access to the vgroup. */
+    status = Vdetach(vgroup_id);
+    CHECK_VOID(status, FAIL, "VSdetach:vgroup_id");
+
     /* Terminate access to the Vxxx interface and close the file. */
     status = Vend(fid);
     CHECK_VOID(status, FAIL, "Vend:fid");
@@ -1973,6 +1977,7 @@ test_getvgroups(void)
     CHECK_VOID(vgroup1_id, FAIL, "Vattach");
     vgroup2_id = Vattach(fid, ref_list[2], "w");
     CHECK_VOID(vgroup2_id, FAIL, "Vattach");
+
     status = Vinsert(vgroup0_id, vgroup1_id);
     CHECK_VOID(status, FAIL, "Vinsert vgroup1_id into vgroup0_id");
     status = Vinsert(vgroup0_id, vgroup2_id);
@@ -1985,6 +1990,7 @@ test_getvgroups(void)
     CHECK_VOID(vgroup4_id, FAIL, "Vattach");
     vgroup5_id = Vattach(fid, ref_list[5], "w");
     CHECK_VOID(vgroup5_id, FAIL, "Vattach");
+
     status = Vinsert(vgroup1_id, vgroup3_id);
     CHECK_VOID(status, FAIL, "Vinsert vgroup3_id into vgroup1_id");
     status = Vinsert(vgroup1_id, vgroup4_id);
@@ -2210,6 +2216,12 @@ test_getvgroups(void)
 
     if (refarray != NULL)
         HDfree(refarray);
+
+    /* Close remaining vgroups  */
+    status = Vdetach(vgroup0_id);
+    CHECK_VOID(status, FAIL, "Vdetach vgroup0_id");
+    status = Vdetach(vgroup1_id);
+    CHECK_VOID(status, FAIL, "Vdetach vgroup1_id");
 
     /* Terminate access to the V interface and close the HDF file.  */
     status_n = Vend(fid);
@@ -3341,7 +3353,6 @@ test_vsets(void)
     status = read_vset_stuff();
     if (status == FAIL)
         return;
-
     /* test VSdelete() */
     test_vsdelete();
 
