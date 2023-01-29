@@ -23,25 +23,6 @@
 
 #include "H4api_adpt.h"
 
-/* Atom Features control */
-
-/* Do swap using XOR operator. Ugly but fast... */
-#define HAIswap_cache(i, j)                                                                                  \
-        atom_id_cache[i] ^= atom_id_cache[j],                                                                \
-        atom_obj_cache[i] = (void *)((intptr_t)atom_obj_cache[j] ^ (intptr_t)atom_obj_cache[i]),             \
-        atom_id_cache[j] ^= atom_id_cache[i],                                                                \
-        atom_obj_cache[j] = (void *)((intptr_t)atom_obj_cache[i] ^ (intptr_t)atom_obj_cache[j]),             \
-        atom_id_cache[i] ^= atom_id_cache[j],                                                                \
-        atom_obj_cache[i] = (void *)((intptr_t)atom_obj_cache[i] ^ (intptr_t)atom_obj_cache[j])              \
-
-/* Note! This is hardwired to the atom cache value being 4 */
-#define HAatom_object(atm)                                                                                   \
-    (atom_id_cache[0] == atm   ? atom_obj_cache[0]                                                           \
-     : atom_id_cache[1] == atm ? (HAIswap_cache(0, 1), atom_obj_cache[0])                                    \
-     : atom_id_cache[2] == atm ? (HAIswap_cache(1, 2), atom_obj_cache[1])                                    \
-     : atom_id_cache[3] == atm ? (HAIswap_cache(2, 3), atom_obj_cache[2])                                    \
-                               : HAPatom_object(atm))
-
 /* Group values allowed */
 typedef enum {
     BADGROUP   = -1, /* Invalid Group */
@@ -62,20 +43,6 @@ typedef int32_t atom_t;
 
 /* Type of the function to compare objects & keys */
 typedef int (*HAsearch_func_t)(const void *obj, const void *key);
-
-/* Define this in only one place */
-#ifdef ATOM_MASTER
-
-/* Array of pointers to atomic groups */
-/* # of previous atoms cached, change inline caching macros (HAatom_object & HAIswap_cache) if this changes */
-#define ATOM_CACHE_SIZE 4
-
-HDFPUBLIC atom_t atom_id_cache[ATOM_CACHE_SIZE]  = {-1, -1, -1, -1};
-HDFPUBLIC void  *atom_obj_cache[ATOM_CACHE_SIZE] = {NULL};
-#else
-HDFLIBAPI atom_t atom_id_cache[];
-HDFLIBAPI void  *atom_obj_cache[];
-#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -146,7 +113,7 @@ HDFLIBAPI atom_t HAregister_atom(group_t grp,   /* IN: Group to register the obj
     Returns object ptr if successful and NULL otherwise
 
 *******************************************************************************/
-HDFLIBAPI void *HAPatom_object(atom_t atm /* IN: Atom to retrieve object for */
+HDFLIBAPI void *HAatom_object(atom_t atm /* IN: Atom to retrieve object for */
 );
 
 /******************************************************************************

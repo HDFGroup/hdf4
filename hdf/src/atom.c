@@ -25,8 +25,6 @@ FILE
 
 */
 
-#define ATOM_MASTER
-
 #include "hdfi.h"
 #include "atom.h"
 
@@ -54,6 +52,18 @@ FILE
 /* Combine a Group number and an atom index into an atom */
 #define MAKE_ATOM(g, i)                                                                                      \
     ((((atom_t)(g)&GROUP_MASK) << ((sizeof(atom_t) * 8) - GROUP_BITS)) | ((atom_t)(i)&ATOM_MASK))
+
+/* # of previous atoms cached, change HAatom_object & SWAP_CACHE if this changes */
+#define ATOM_CACHE_SIZE 4
+
+/* Swap cache elements using XOR operator. Ugly but fast... */
+#define SWAP_CACHE(i, j)                                                                                     \
+        atom_id_cache[i] ^= atom_id_cache[j],                                                                \
+        atom_obj_cache[i] = (void *)((intptr_t)atom_obj_cache[j] ^ (intptr_t)atom_obj_cache[i]),             \
+        atom_id_cache[j] ^= atom_id_cache[i],                                                                \
+        atom_obj_cache[j] = (void *)((intptr_t)atom_obj_cache[i] ^ (intptr_t)atom_obj_cache[j]),             \
+        atom_id_cache[i] ^= atom_id_cache[j],                                                                \
+        atom_obj_cache[i] = (void *)((intptr_t)atom_obj_cache[i] ^ (intptr_t)atom_obj_cache[j])              \
 
 /********************
  * Private typedefs *
@@ -85,9 +95,19 @@ static atom_group_t *atom_group_list[MAXGROUP] = {NULL};
 /* Pointer to the atom node free list */
 static atom_info_t *atom_free_list = NULL;
 
+/* Atom cache arrays
+ *
+ * One of the arrays holds the atoms and the other holds the objects the
+ * atoms point to. These MUST be kept in sync!
+ */
+static atom_t atom_id_cache[ATOM_CACHE_SIZE]  = {-1, -1, -1, -1};
+static void  *atom_obj_cache[ATOM_CACHE_SIZE] = {NULL, NULL, NULL, NULL};
+
 /*******************************
  * Private function prototypes *
  *******************************/
+
+static void *HAIatom_object(atom_t atm);
 
 static atom_info_t *HAIfind_atom(atom_t atm);
 
@@ -271,13 +291,46 @@ done:
      HAatom_object - Returns to the object ptr for the atom
 
  DESCRIPTION
-    Retrieves the object ptr which is associated with the atom.
+    Retrieves the object ptr which is associated with the atom. This call
+    first checks the atom cache and reverts to the general lookup if that
+    fails.
 
  RETURNS
     Returns object ptr if successful and NULL otherwise
 *******************************************************************************/
 void *
-HAPatom_object(atom_t atm /* IN: Atom to retrieve object for */
+HAatom_object(atom_t atm)
+{
+    /* This unmaintainable mess was converted from a public macro in atom.h and
+     * should be cleaned up and merged with HAIatom_object()
+     */
+
+    /* Note! This is hardwired to the atom cache size being 4 */
+
+    /* Checks if the atom is in the cache, moving items around as it goes. If
+     * the atom is not found, it does a general lookup via HAIatom_object()
+     * and returns that.
+     */
+    return (atom_id_cache[0] == atm   ? atom_obj_cache[0]
+     : atom_id_cache[1] == atm ? (SWAP_CACHE(0, 1), atom_obj_cache[0])
+     : atom_id_cache[2] == atm ? (SWAP_CACHE(1, 2), atom_obj_cache[1])
+     : atom_id_cache[3] == atm ? (SWAP_CACHE(2, 3), atom_obj_cache[2])
+                               : HAIatom_object(atm));
+}
+
+/******************************************************************************
+ NAME
+     HAIatom_object - Returns to the object ptr for the atom
+
+ DESCRIPTION
+    Retrieves the object ptr which is associated with the atom without using
+    the atom cache.
+
+ RETURNS
+    Returns object ptr if successful and NULL otherwise
+*******************************************************************************/
+static void *
+HAIatom_object(atom_t atm /* IN: Atom to retrieve object for */
 )
 {
     atom_info_t *atm_ptr   = NULL; /* ptr to the new atom */
@@ -378,12 +431,14 @@ HAremove_atom(atom_t atm /* IN: Atom to remove */
     else /* Couldn't find the atom in the proper place */
         HGOTO_ERROR(DFE_INTERNAL, NULL);
 
-    /* Delete object from cache */
+    /* Delete object from cache (assumes only be a single instance of the
+     * atom can be stored in the cache)
+     */
     for (u = 0; u < ATOM_CACHE_SIZE; u++)
         if (atom_id_cache[u] == atm) {
-            atom_id_cache[u]  = (-1);
+            atom_id_cache[u]  = -1;
             atom_obj_cache[u] = NULL;
-            break; /* we assume there is only one instance in the cache */
+            break;
         }
 
     /* Decrement the number of atoms in the group */
