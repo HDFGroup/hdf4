@@ -250,7 +250,7 @@ HAregister_atom(group_t grp,   /* IN: Group to register the object in */
     atm_ptr->obj_ptr = object;
     atm_ptr->next    = NULL;
 
-    /* hash bucket already full, prepend to front of chain */
+    /* Hash bucket already full, prepend to front of chain */
     hash_loc = grp_ptr->nextid % grp_ptr->hash_size;
     if (grp_ptr->atom_list[hash_loc] != NULL)
         atm_ptr->next = grp_ptr->atom_list[hash_loc];
@@ -368,14 +368,14 @@ HAremove_atom(atom_t atm /* IN: Atom to remove */
     }
 
     if (curr_atm != NULL) {
-        if (last_atm == NULL) /* atom is the first the chain */
+        if (last_atm == NULL) /* Atom is the first the chain */
             grp_ptr->atom_list[hash_loc] = curr_atm->next;
         else
             last_atm->next = curr_atm->next;
         ret_value = curr_atm->obj_ptr;
         HAIrelease_atom_node(curr_atm);
     }
-    else /* couldn't find the atom in the proper place */
+    else /* Couldn't find the atom in the proper place */
         HGOTO_ERROR(DFE_INTERNAL, NULL);
 
     /* Delete object from cache */

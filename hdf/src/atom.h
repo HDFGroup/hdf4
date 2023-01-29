@@ -27,12 +27,12 @@
 
 /* Do swap using XOR operator. Ugly but fast... */
 #define HAIswap_cache(i, j)                                                                                  \
-    atom_id_cache[i] ^= atom_id_cache[j],                                                                    \
-        atom_obj_cache[i] = (void *)((hdf_pint_t)atom_obj_cache[j] ^ (hdf_pint_t)atom_obj_cache[i]),         \
-        atom_id_cache[j] ^= atom_id_cache[i],                                                                \
-        atom_obj_cache[j] = (void *)((hdf_pint_t)atom_obj_cache[i] ^ (hdf_pint_t)atom_obj_cache[j]),         \
         atom_id_cache[i] ^= atom_id_cache[j],                                                                \
-        atom_obj_cache[i] = (void *)((hdf_pint_t)atom_obj_cache[i] ^ (hdf_pint_t)atom_obj_cache[j])
+        atom_obj_cache[i] = (void *)((intptr_t)atom_obj_cache[j] ^ (intptr_t)atom_obj_cache[i]),             \
+        atom_id_cache[j] ^= atom_id_cache[i],                                                                \
+        atom_obj_cache[j] = (void *)((intptr_t)atom_obj_cache[i] ^ (intptr_t)atom_obj_cache[j]),             \
+        atom_id_cache[i] ^= atom_id_cache[j],                                                                \
+        atom_obj_cache[i] = (void *)((intptr_t)atom_obj_cache[i] ^ (intptr_t)atom_obj_cache[j])              \
 
 /* Note! This is hardwired to the atom cache value being 4 */
 #define HAatom_object(atm)                                                                                   \
@@ -63,8 +63,6 @@ typedef int32_t atom_t;
 /* Type of the function to compare objects & keys */
 typedef int (*HAsearch_func_t)(const void *obj, const void *key);
 
-#if defined ATOM_MASTER
-
 /* Define this in only one place */
 #ifdef ATOM_MASTER
 
@@ -74,13 +72,7 @@ typedef int (*HAsearch_func_t)(const void *obj, const void *key);
 
 HDFPUBLIC atom_t atom_id_cache[ATOM_CACHE_SIZE]  = {-1, -1, -1, -1};
 HDFPUBLIC void  *atom_obj_cache[ATOM_CACHE_SIZE] = {NULL};
-#endif /* ATOM_MASTER */
-
-/* Useful routines for generally private use */
-
-#endif /* ATOM_MASTER */
-
-#ifndef ATOM_MASTER
+#else
 HDFLIBAPI atom_t atom_id_cache[];
 HDFLIBAPI void  *atom_obj_cache[];
 #endif
