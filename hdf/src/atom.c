@@ -55,12 +55,12 @@ FILE
 
 /* Swap cache elements using XOR operator. Ugly but fast... */
 #define SWAP_CACHE(i, j)                                                                                     \
-        atom_id_cache[i] ^= atom_id_cache[j],                                                                \
+    atom_id_cache[i] ^= atom_id_cache[j],                                                                    \
         atom_obj_cache[i] = (void *)((intptr_t)atom_obj_cache[j] ^ (intptr_t)atom_obj_cache[i]),             \
         atom_id_cache[j] ^= atom_id_cache[i],                                                                \
         atom_obj_cache[j] = (void *)((intptr_t)atom_obj_cache[i] ^ (intptr_t)atom_obj_cache[j]),             \
         atom_id_cache[i] ^= atom_id_cache[j],                                                                \
-        atom_obj_cache[i] = (void *)((intptr_t)atom_obj_cache[i] ^ (intptr_t)atom_obj_cache[j])              \
+        atom_obj_cache[i] = (void *)((intptr_t)atom_obj_cache[i] ^ (intptr_t)atom_obj_cache[j])
 
 /********************
  * Private typedefs *
@@ -309,10 +309,10 @@ HAatom_object(atom_t atm)
      * and returns that.
      */
     return (atom_id_cache[0] == atm   ? atom_obj_cache[0]
-     : atom_id_cache[1] == atm ? (SWAP_CACHE(0, 1), atom_obj_cache[0])
-     : atom_id_cache[2] == atm ? (SWAP_CACHE(1, 2), atom_obj_cache[1])
-     : atom_id_cache[3] == atm ? (SWAP_CACHE(2, 3), atom_obj_cache[2])
-                               : HAIatom_object(atm));
+            : atom_id_cache[1] == atm ? (SWAP_CACHE(0, 1), atom_obj_cache[0])
+            : atom_id_cache[2] == atm ? (SWAP_CACHE(1, 2), atom_obj_cache[1])
+            : atom_id_cache[3] == atm ? (SWAP_CACHE(2, 3), atom_obj_cache[2])
+                                      : HAIatom_object(atm));
 }
 
 /******************************************************************************
