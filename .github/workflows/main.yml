@@ -236,30 +236,6 @@ jobs:
             run_tests: true
             use_mingw: false
 
-          # A bug in cross-platform-actions is currently preventing FreeBSD
-          # from accessing pkg. This test will be enabled after the bug
-          # has been fixed.
-          #
-          # FreeBSD x86-64 w/ cc (clang) via MacOS + xhyve
-          #          - name: "FreeBSD static Autotools CMake"
-          #  architecture: x86-64
-          #  version: '13.1'
-          #  uses: cross-platform-actions/action@v0.10.0
-          #  env:
-          #    CFLAGS: -I/usr/local
-          #    CPPFLAGS: -I/usr/local
-          #    LDFLAGS: -L/usr/local
-          #  environment_variables: CFLAGS CPPFLAGS LDFLAGS
-          #  os: macos-12
-          #  shared: disable
-          #  xdr: enable
-          #  java: disable
-          #  toolchain: ""
-          #  generator: "autogen"
-          #  run_tests: true
-          #  use_mingw: false
-          #  bsd_setup: true
-
     # Sets the job's name from the properties
     name: "${{ matrix.name }}${{ matrix.build_mode.text }}${{ matrix.shared.text }}${{ matrix.netcdf.text }}"
 
@@ -297,7 +273,7 @@ jobs:
            sudo apt install gcc-11 g++-11 gfortran-11
            echo "CC=gcc-11" >> $GITHUB_ENV
            echo "CXX=g++-11" >> $GITHUB_ENV
-        if: (matrix.generator == 'autogen') && (matrix.os == 'ubuntu-latest')
+        if: (matrix.generator == 'autogen')
 
       - name: Install Dependencies (Windows)
         run: |
@@ -307,17 +283,6 @@ jobs:
       - name: Install Dependencies (macOS)
         run: brew install ninja
         if: matrix.os == 'macos-latest'
-
-      - name: Install Autotools Dependencies (BSD)
-        run: |
-           sudo pkg bootstrap
-           sudo pkg install autoconf
-           sudo pkg install automake
-           sudo pkg install libtool
-           sudo pkg install git
-           sudo pkg install cmake
-           sudo pkg install jpeg
-        if: (matrix.bsd_setup)
 
       - name: Set environment for MSVC (Windows)
         run: |

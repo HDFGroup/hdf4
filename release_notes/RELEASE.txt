@@ -48,9 +48,6 @@ New features and changes
       It may be necessary to specify --with-jpeg=/usr/local if libjpeg was
       installed via the package manager.
 
-      A GitHub action that tests FreeBSD via MacOS + xhyve has been added to
-      make sure FreeBSD support doesn't break.
-
       (DER - 2023/01/25)
 
     - The vattr.h header file is no longer distributed
