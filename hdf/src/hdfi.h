@@ -68,6 +68,7 @@
 #define FILELIB UNIXBUFIO
 
 /* Standard C library headers */
+#include <assert.h>
 #include <ctype.h>
 #include <inttypes.h>
 #include <limits.h>

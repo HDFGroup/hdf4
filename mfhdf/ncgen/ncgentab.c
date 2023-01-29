@@ -67,7 +67,7 @@
 
 
 /* First part of user prologue.  */
-#line 8 "./mfhdf/ncgen/ncgen.y"
+#line 8 "mfhdf/ncgen//ncgen.y"
 
 #include        <string.h>
 #include	    <stdlib.h>
@@ -87,22 +87,21 @@ typedef struct Symbol {		/* symbol table entry */
 	} *YYSTYPE1;
 
 #define YYSTYPE YYSTYPE1
-YYSTYPE install(char *sname), lookup(char *sname);
+YYSTYPE install(), lookup();
 YYSTYPE symlist;		/* symbol table: linked list */
 
-void init_netcdf(void);		/* initializes netcdf counts (e.g. nvars) */
-void define_netcdf(char *netcdfname);		/* generates all define mode stuff */
-void load_netcdf(void *rec_start);		/* generates variable puts */
-void close_netcdf(void);		/* generates close */
-const char *nctype(nc_type);
+void init_netcdf();		/* initializes netcdf counts (e.g. nvars) */
+void define_netcdf();		/* generates all define mode stuff */
+void load_netcdf();		/* generates variable puts */
+void close_netcdf();		/* generates close */
 
-void derror(const char *fmt, ...);			/* varargs message emitter */
-void *emalloc(int size), *erealloc(void *ptr, int size);	/* malloc that checks for memory exhausted */
-void clearout(void);		/* initializes symbol table */
-void nc_getfill(nc_type, union generic *);		/* to get fill value for various types */
-void nc_putfill(nc_type, void *, union generic *);		/* to get fill value for various types */
-void nc_fill(nc_type, long, void *, union generic);		/* fills a generic array with a value */
-int  put_variable(void *);            /* invoke nc calls or generate code to put */
+void derror();			/* varargs message emitter */
+void *emalloc(), *erealloc();	/* malloc that checks for memory exhausted */
+void clearout();		/* initializes symbol table */
+void nc_getfill();		/* to get fill value for various types */
+void nc_putfill();		/* to get fill value for various types */
+void nc_fill();		/* fills a generic array with a value */
+int  put_variable();            /* invoke nc calls or generate code to put */
                                 /* variable values            */
 extern int derror_count;	/* counts errors in netcdf definition */
 extern int lineno;		/* line number for error messages */
@@ -131,7 +130,7 @@ static double *double_valp;
 static void *rec_cur;		/* pointer to where next data value goes */
 static void *rec_start;		/* start of space for a record of data */
 
-#line 135 "./mfhdf/ncgen/ncgentab.c"
+#line 134 "mfhdf/ncgen//ncgentab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -615,14 +614,14 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   103,   103,   105,   110,   101,   121,   122,   124,   125,
-     127,   128,   130,   136,   144,   155,   157,   158,   160,   161,
-     163,   163,   165,   167,   168,   169,   170,   171,   172,   174,
-     175,   178,   177,   203,   205,   206,   208,   209,   211,   231,
-     230,   262,   263,   269,   279,   285,   286,   288,   297,   303,
-     314,   320,   326,   332,   338,   346,   347,   350,   351,   354,
-     353,   416,   417,   420,   420,   486,   511,   544,   569,   594,
-     619,   644
+       0,   102,   102,   104,   109,   100,   120,   121,   123,   124,
+     126,   127,   129,   135,   143,   154,   156,   157,   159,   160,
+     162,   162,   164,   166,   167,   168,   169,   170,   171,   173,
+     174,   177,   176,   202,   204,   205,   207,   208,   210,   230,
+     229,   261,   262,   268,   278,   284,   285,   287,   296,   302,
+     313,   319,   325,   331,   337,   345,   346,   349,   350,   353,
+     352,   415,   416,   419,   419,   485,   510,   543,   568,   593,
+     618,   643
 };
 #endif
 
@@ -1252,61 +1251,61 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* $@1: %empty  */
-#line 103 "./mfhdf/ncgen/ncgen.y"
+#line 102 "mfhdf/ncgen//ncgen.y"
                    { init_netcdf(); }
-#line 1258 "./mfhdf/ncgen/ncgentab.c"
+#line 1257 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 3: /* $@2: %empty  */
-#line 105 "./mfhdf/ncgen/ncgen.y"
+#line 104 "mfhdf/ncgen//ncgen.y"
                      {
                        if (ndims > H4_MAX_NC_DIMS)
                          derror("Too many dimensions");
                    }
-#line 1267 "./mfhdf/ncgen/ncgentab.c"
+#line 1266 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 4: /* $@3: %empty  */
-#line 110 "./mfhdf/ncgen/ncgen.y"
+#line 109 "mfhdf/ncgen//ncgen.y"
                    {
 		       if (derror_count == 0)
 			 define_netcdf(netcdfname);
 		   }
-#line 1276 "./mfhdf/ncgen/ncgentab.c"
+#line 1275 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 5: /* ncdesc: NETCDF '{' $@1 dimsection $@2 vasection $@3 datasection '}'  */
-#line 116 "./mfhdf/ncgen/ncgen.y"
+#line 115 "mfhdf/ncgen//ncgen.y"
                    {
 		       if (derror_count == 0)
 			 close_netcdf();
 		   }
-#line 1285 "./mfhdf/ncgen/ncgentab.c"
+#line 1284 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 12: /* dimdecl: dimd '=' LONG_CONST  */
-#line 131 "./mfhdf/ncgen/ncgen.y"
+#line 130 "mfhdf/ncgen//ncgen.y"
                    { if (long_val <= 0)
 			 derror("negative dimension size");
 		     dims[ndims].size = long_val;
 		     ndims++;
 		   }
-#line 1295 "./mfhdf/ncgen/ncgentab.c"
+#line 1294 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 13: /* dimdecl: dimd '=' NC_UNLIMITED_K  */
-#line 137 "./mfhdf/ncgen/ncgen.y"
+#line 136 "mfhdf/ncgen//ncgen.y"
                    {  if (rec_dim != -1)
 			 derror("only one NC_UNLIMITED dimension allowed");
 		     rec_dim = ndims; /* the unlimited (record) dimension */
 		     dims[ndims].size = NC_UNLIMITED;
 		     ndims++;
 		   }
-#line 1306 "./mfhdf/ncgen/ncgentab.c"
+#line 1305 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 14: /* dimd: dim  */
-#line 145 "./mfhdf/ncgen/ncgen.y"
+#line 144 "mfhdf/ncgen//ncgen.y"
                    { if (yyvsp[0]->is_dim == 1) {
 		        derror( "duplicate dimension declaration for %s",
 		                yyvsp[0]->name);
@@ -1316,47 +1315,47 @@ yyreduce:
 		     dims[ndims].name = (char *) emalloc(strlen(yyvsp[0]->name)+1);
 		     (void) strcpy(dims[ndims].name, yyvsp[0]->name);
 		   }
-#line 1320 "./mfhdf/ncgen/ncgentab.c"
+#line 1319 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 23: /* type: BYTE_K  */
-#line 167 "./mfhdf/ncgen/ncgen.y"
+#line 166 "mfhdf/ncgen//ncgen.y"
                           { type_code = NC_BYTE; }
-#line 1326 "./mfhdf/ncgen/ncgentab.c"
+#line 1325 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 24: /* type: CHAR_K  */
-#line 168 "./mfhdf/ncgen/ncgen.y"
+#line 167 "mfhdf/ncgen//ncgen.y"
                           { type_code = NC_CHAR; }
-#line 1332 "./mfhdf/ncgen/ncgentab.c"
+#line 1331 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 25: /* type: SHORT_K  */
-#line 169 "./mfhdf/ncgen/ncgen.y"
+#line 168 "mfhdf/ncgen//ncgen.y"
                            { type_code = NC_SHORT; }
-#line 1338 "./mfhdf/ncgen/ncgentab.c"
+#line 1337 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 26: /* type: LONG_K  */
-#line 170 "./mfhdf/ncgen/ncgen.y"
+#line 169 "mfhdf/ncgen//ncgen.y"
                           { type_code = NC_LONG; }
-#line 1344 "./mfhdf/ncgen/ncgentab.c"
+#line 1343 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 27: /* type: FLOAT_K  */
-#line 171 "./mfhdf/ncgen/ncgen.y"
+#line 170 "mfhdf/ncgen//ncgen.y"
                            { type_code = NC_FLOAT; }
-#line 1350 "./mfhdf/ncgen/ncgentab.c"
+#line 1349 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 28: /* type: DOUBLE_K  */
-#line 172 "./mfhdf/ncgen/ncgen.y"
+#line 171 "mfhdf/ncgen//ncgen.y"
                             { type_code = NC_DOUBLE; }
-#line 1356 "./mfhdf/ncgen/ncgentab.c"
+#line 1355 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 31: /* $@4: %empty  */
-#line 178 "./mfhdf/ncgen/ncgen.y"
+#line 177 "mfhdf/ncgen//ncgen.y"
                    {
 		    if (nvars >= H4_MAX_NC_VARS)
 		       derror("too many variables");
@@ -1376,20 +1375,20 @@ yyreduce:
 		    nc_getfill(type_code, &vars[nvars].fill_value);
 		    vars[nvars].has_data = 0; /* has no data (yet) */
 		   }
-#line 1380 "./mfhdf/ncgen/ncgentab.c"
+#line 1379 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 32: /* varspec: var $@4 dimspec  */
-#line 198 "./mfhdf/ncgen/ncgen.y"
+#line 197 "mfhdf/ncgen//ncgen.y"
                    {
 		    vars[nvars].ndims = nvdims;
 		    nvars++;
 		   }
-#line 1389 "./mfhdf/ncgen/ncgentab.c"
+#line 1388 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 38: /* vdim: dim  */
-#line 212 "./mfhdf/ncgen/ncgen.y"
+#line 211 "mfhdf/ncgen//ncgen.y"
                    {
 		    if (nvdims >= H4_MAX_VAR_DIMS) {
 		       derror("%s has too many dimensions",vars[nvars].name);
@@ -1407,11 +1406,11 @@ yyreduce:
 		    vars[nvars].dims[nvdims] = dimnum;
                     nvdims++;
 		   }
-#line 1411 "./mfhdf/ncgen/ncgentab.c"
+#line 1410 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 39: /* $@5: %empty  */
-#line 231 "./mfhdf/ncgen/ncgen.y"
+#line 230 "mfhdf/ncgen//ncgen.y"
                    {
 		       valnum = 0;
 		       valtype = NC_UNSPECIFIED;
@@ -1425,11 +1424,11 @@ yyreduce:
 		       float_valp = (float *) att_space;
 		       double_valp = (double *) att_space;
 		   }
-#line 1429 "./mfhdf/ncgen/ncgentab.c"
+#line 1428 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 40: /* attdecl: att $@5 '=' attvallist  */
-#line 245 "./mfhdf/ncgen/ncgen.y"
+#line 244 "mfhdf/ncgen//ncgen.y"
                    {
 		       if (natts >= H4_MAX_NC_ATTRS)
 			 derror("too many attributes");
@@ -1446,19 +1445,19 @@ yyreduce:
 		       }
 		       natts++;
 		   }
-#line 1450 "./mfhdf/ncgen/ncgentab.c"
+#line 1449 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 42: /* att: ':' attr  */
-#line 264 "./mfhdf/ncgen/ncgen.y"
+#line 263 "mfhdf/ncgen//ncgen.y"
                    {
 		    varnum = -1;  /* handle of "global" attribute */
 		   }
-#line 1458 "./mfhdf/ncgen/ncgentab.c"
+#line 1457 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 43: /* avar: var  */
-#line 270 "./mfhdf/ncgen/ncgen.y"
+#line 269 "mfhdf/ncgen//ncgen.y"
                    { if (yyvsp[0]->is_var == 1)
 		       varnum = yyvsp[0]->vnum;
 		    else {
@@ -1467,41 +1466,41 @@ yyreduce:
 		      YYABORT;
 		      }
 		   }
-#line 1471 "./mfhdf/ncgen/ncgentab.c"
+#line 1470 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 44: /* attr: IDENT  */
-#line 280 "./mfhdf/ncgen/ncgen.y"
+#line 279 "mfhdf/ncgen//ncgen.y"
                    {
 		       atts[natts].name = (char *) emalloc(strlen(yyvsp[0]->name)+1);
 		       (void) strcpy(atts[natts].name,yyvsp[0]->name);
 		   }
-#line 1480 "./mfhdf/ncgen/ncgentab.c"
+#line 1479 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 47: /* aconst: attconst  */
-#line 289 "./mfhdf/ncgen/ncgen.y"
+#line 288 "mfhdf/ncgen//ncgen.y"
                    {
 		    if (valtype == NC_UNSPECIFIED)
 		      valtype = atype_code;
 		    if (valtype != atype_code)
 		      derror("values for attribute must be all of same type");
 		   }
-#line 1491 "./mfhdf/ncgen/ncgentab.c"
+#line 1490 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 48: /* attconst: CHAR_CONST  */
-#line 298 "./mfhdf/ncgen/ncgen.y"
+#line 297 "mfhdf/ncgen//ncgen.y"
                    {
 		       atype_code = NC_CHAR;
 		       *char_valp++ = char_val;
 		       valnum++;
 		   }
-#line 1501 "./mfhdf/ncgen/ncgentab.c"
+#line 1500 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 49: /* attconst: TERMSTRING  */
-#line 304 "./mfhdf/ncgen/ncgen.y"
+#line 303 "mfhdf/ncgen//ncgen.y"
                    {
 		       atype_code = NC_CHAR;
 		       {
@@ -1512,61 +1511,61 @@ yyreduce:
 			   char_valp += len;
 		       }
 		   }
-#line 1516 "./mfhdf/ncgen/ncgentab.c"
+#line 1515 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 50: /* attconst: BYTE_CONST  */
-#line 315 "./mfhdf/ncgen/ncgen.y"
+#line 314 "mfhdf/ncgen//ncgen.y"
                    {
 		       atype_code = NC_BYTE;
 		       *byte_valp++ = byte_val;
 		       valnum++;
 		   }
-#line 1526 "./mfhdf/ncgen/ncgentab.c"
+#line 1525 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 51: /* attconst: SHORT_CONST  */
-#line 321 "./mfhdf/ncgen/ncgen.y"
+#line 320 "mfhdf/ncgen//ncgen.y"
                    {
 		       atype_code = NC_SHORT;
 		       *short_valp++ = short_val;
 		       valnum++;
 		   }
-#line 1536 "./mfhdf/ncgen/ncgentab.c"
+#line 1535 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 52: /* attconst: LONG_CONST  */
-#line 327 "./mfhdf/ncgen/ncgen.y"
+#line 326 "mfhdf/ncgen//ncgen.y"
                    {
 		       atype_code = NC_LONG;
 		       *long_valp++ = long_val;
 		       valnum++;
 		   }
-#line 1546 "./mfhdf/ncgen/ncgentab.c"
+#line 1545 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 53: /* attconst: FLOAT_CONST  */
-#line 333 "./mfhdf/ncgen/ncgen.y"
+#line 332 "mfhdf/ncgen//ncgen.y"
                    {
 		       atype_code = NC_FLOAT;
 		       *float_valp++ = float_val;
 		       valnum++;
 		   }
-#line 1556 "./mfhdf/ncgen/ncgentab.c"
+#line 1555 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 54: /* attconst: DOUBLE_CONST  */
-#line 339 "./mfhdf/ncgen/ncgen.y"
+#line 338 "mfhdf/ncgen//ncgen.y"
                    {
 		       atype_code = NC_DOUBLE;
 		       *double_valp++ = double_val;
 		       valnum++;
 		   }
-#line 1566 "./mfhdf/ncgen/ncgentab.c"
+#line 1565 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 59: /* $@6: %empty  */
-#line 354 "./mfhdf/ncgen/ncgen.y"
+#line 353 "mfhdf/ncgen//ncgen.y"
                    {
 		       valtype = vars[varnum].type; /* variable type */
 		       valnum = 0;	/* values accumulated for variable */
@@ -1615,11 +1614,11 @@ yyreduce:
 			   break;
 		       }
 		 }
-#line 1619 "./mfhdf/ncgen/ncgentab.c"
+#line 1618 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 60: /* datadecl: avar $@6 '=' constlist  */
-#line 403 "./mfhdf/ncgen/ncgen.y"
+#line 402 "mfhdf/ncgen//ncgen.y"
                    {
 		       if (valnum > 0 && valnum < var_len) { /* leftovers */
 			   nc_fill(valtype,
@@ -1632,11 +1631,11 @@ yyreduce:
 		       }
 		       free ((char *) rec_start);
 		 }
-#line 1636 "./mfhdf/ncgen/ncgentab.c"
+#line 1635 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 63: /* $@7: %empty  */
-#line 420 "./mfhdf/ncgen/ncgen.y"
+#line 419 "mfhdf/ncgen//ncgen.y"
                    {
 		       if(valnum >= var_len) {
 			   derror("too many values for this variable");
@@ -1644,11 +1643,11 @@ yyreduce:
 		       }
 		       not_a_string = 1;
                    }
-#line 1648 "./mfhdf/ncgen/ncgentab.c"
+#line 1647 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 64: /* dconst: $@7 const  */
-#line 428 "./mfhdf/ncgen/ncgen.y"
+#line 427 "mfhdf/ncgen//ncgen.y"
                    {
 		       if (not_a_string) {
 			   switch (valtype) {
@@ -1705,11 +1704,11 @@ yyreduce:
 			   }
 		       }
 		 }
-#line 1709 "./mfhdf/ncgen/ncgentab.c"
+#line 1708 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 65: /* const: CHAR_CONST  */
-#line 487 "./mfhdf/ncgen/ncgen.y"
+#line 486 "mfhdf/ncgen//ncgen.y"
                    {
 		       atype_code = NC_CHAR;
 		       switch (valtype) {
@@ -1734,11 +1733,11 @@ yyreduce:
 		       }
 		       valnum++;
 		   }
-#line 1738 "./mfhdf/ncgen/ncgentab.c"
+#line 1737 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 66: /* const: TERMSTRING  */
-#line 512 "./mfhdf/ncgen/ncgen.y"
+#line 511 "mfhdf/ncgen//ncgen.y"
                    {
 		       not_a_string = 0;
 		       atype_code = NC_CHAR;
@@ -1771,11 +1770,11 @@ yyreduce:
 			   }
 		       }
 		   }
-#line 1775 "./mfhdf/ncgen/ncgentab.c"
+#line 1774 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 67: /* const: BYTE_CONST  */
-#line 545 "./mfhdf/ncgen/ncgen.y"
+#line 544 "mfhdf/ncgen//ncgen.y"
                    {
 		       atype_code = NC_BYTE;
 		       switch (valtype) {
@@ -1800,11 +1799,11 @@ yyreduce:
 		       }
 		       valnum++;
 		   }
-#line 1804 "./mfhdf/ncgen/ncgentab.c"
+#line 1803 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 68: /* const: SHORT_CONST  */
-#line 570 "./mfhdf/ncgen/ncgen.y"
+#line 569 "mfhdf/ncgen//ncgen.y"
                    {
 		       atype_code = NC_SHORT;
 		       switch (valtype) {
@@ -1829,11 +1828,11 @@ yyreduce:
 		       }
 		       valnum++;
 		   }
-#line 1833 "./mfhdf/ncgen/ncgentab.c"
+#line 1832 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 69: /* const: LONG_CONST  */
-#line 595 "./mfhdf/ncgen/ncgen.y"
+#line 594 "mfhdf/ncgen//ncgen.y"
                    {
 		       atype_code = NC_LONG;
 		       switch (valtype) {
@@ -1858,11 +1857,11 @@ yyreduce:
 		       }
 		       valnum++;
 		   }
-#line 1862 "./mfhdf/ncgen/ncgentab.c"
+#line 1861 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 70: /* const: FLOAT_CONST  */
-#line 620 "./mfhdf/ncgen/ncgen.y"
+#line 619 "mfhdf/ncgen//ncgen.y"
                    {
 		       atype_code = NC_FLOAT;
 		       switch (valtype) {
@@ -1887,11 +1886,11 @@ yyreduce:
 		       }
 		       valnum++;
 		   }
-#line 1891 "./mfhdf/ncgen/ncgentab.c"
+#line 1890 "mfhdf/ncgen//ncgentab.c"
     break;
 
   case 71: /* const: DOUBLE_CONST  */
-#line 645 "./mfhdf/ncgen/ncgen.y"
+#line 644 "mfhdf/ncgen//ncgen.y"
                    {
 		       atype_code = NC_DOUBLE;
 		       switch (valtype) {
@@ -1919,11 +1918,11 @@ yyreduce:
 		       }
 		       valnum++;
 		   }
-#line 1923 "./mfhdf/ncgen/ncgentab.c"
+#line 1922 "mfhdf/ncgen//ncgentab.c"
     break;
 
 
-#line 1927 "./mfhdf/ncgen/ncgentab.c"
+#line 1926 "mfhdf/ncgen//ncgentab.c"
 
       default: break;
     }
@@ -2116,7 +2115,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 676 "./mfhdf/ncgen/ncgen.y"
+#line 675 "mfhdf/ncgen//ncgen.y"
 
 
 /* PROGRAMS */
@@ -2124,7 +2123,7 @@ yyreturnlab:
 /* get lexical input routine generated by lex  */
 #include "ncgenyy.c"
 
-void derror(const char *fmt, ...);
+void derror();
 
 void yyerror(s)	/* called for yacc syntax error */
      char *s;
@@ -2143,7 +2142,8 @@ yywrap()			/* returns 1 on EOF if no more input */
 
 /* Symbol table operations for ncgen tool */
 
-YYSTYPE lookup(char *sname)       /* find sname in symbol table (linear search) */
+YYSTYPE lookup(sname)       /* find sname in symbol table (linear search) */
+char *sname;
 {
     YYSTYPE sp;
     for (sp = symlist; sp != (YYSTYPE) 0; sp = sp -> next)
@@ -2153,7 +2153,8 @@ YYSTYPE lookup(char *sname)       /* find sname in symbol table (linear search) 
     return 0;			/* 0 ==> not found */
 }
 
-YYSTYPE install(char *sname)  /* install sname in symbol table */
+YYSTYPE install(sname)  /* install sname in symbol table */
+char *sname;
 {
     YYSTYPE sp;
 

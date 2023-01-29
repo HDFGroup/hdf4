@@ -19,6 +19,7 @@
 ####      Only build shared libraries       ####
 #set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DONLY_SHARED_LIBS:BOOL=OFF")
 ####      Add PIC option on linux/mac       ####
+#set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DCMAKE_ANSI_CFLAGS:STRING=-fPIC")
 #set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DBUILD_JPEG_WITH_PIC:BOOL=ON
 
 #############################################################################################

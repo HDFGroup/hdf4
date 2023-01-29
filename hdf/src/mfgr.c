@@ -204,10 +204,6 @@ PRIVATE intn GRIgetaid(ri_info_t *img_ptr, intn acc_perm);
 
 PRIVATE intn GRIisspecial_type(int32 file_id, uint16 tag, uint16 ref);
 
-#ifdef H4_HAVE_LIBSZ /* we have the library */
-PRIVATE intn GRsetup_szip_parms(ri_info_t *ri_ptr, comp_info *c_info, int32 *cdims);
-#endif
-
 /*--------------------------------------------------------------------------
  NAME
     rigcompare
@@ -3945,8 +3941,6 @@ done:
 } /* end GRsetaccesstype() */
 
 #ifdef H4_HAVE_LIBSZ /* we have the library */
-intn GRsetup_szip_parms(ri_info_t *ri_ptr, comp_info *c_info, int32 *cdims);
-
 /*--------------------------------------------------------------------------
  NAME
     GRsetup_szip_parms( ri_info_t *ri_ptr, comp_info *c_info, int32 *cdims)
