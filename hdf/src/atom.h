@@ -61,7 +61,7 @@ typedef enum {
 typedef int32 atom_t;
 
 /* Type of the function to compare objects & keys */
-typedef intn (*HAsearch_func_t)(const void *obj, const void *key);
+typedef int (*HAsearch_func_t)(const void *obj, const void *key);
 
 #if defined ATOM_MASTER | defined ATOM_TESTER
 
@@ -89,16 +89,16 @@ typedef intn (*HAsearch_func_t)(const void *obj, const void *key);
 /* Atom information structure used */
 typedef struct atom_info_struct_tag {
     atom_t                       id;      /* atom ID for this info */
-    VOIDP                       *obj_ptr; /* pointer associated with the atom */
+    void                       **obj_ptr; /* pointer associated with the atom */
     struct atom_info_struct_tag *next;    /* link to next atom (in case of hash-clash) */
 } atom_info_t;
 
 /* Atom group structure used */
 typedef struct atom_group_struct_tag {
-    uintn         count;     /* # of times this group has been initialized */
-    intn          hash_size; /* size of the hash table to store the atoms in */
-    uintn         atoms;     /* current number of atoms held */
-    uintn         nextid;    /* atom ID to use for the next atom */
+    unsigned      count;     /* # of times this group has been initialized */
+    int           hash_size; /* size of the hash table to store the atoms in */
+    unsigned      atoms;     /* current number of atoms held */
+    unsigned      nextid;    /* atom ID to use for the next atom */
     atom_info_t **atom_list; /* pointer to an array of ptrs to atoms */
 } atom_group_t;
 
@@ -113,7 +113,7 @@ static atom_info_t *atom_free_list = NULL;
 
 /* Array of pointers to atomic groups */
 HDFPUBLIC atom_t atom_id_cache[ATOM_CACHE_SIZE]  = {-1, -1, -1, -1};
-HDFPUBLIC VOIDP  atom_obj_cache[ATOM_CACHE_SIZE] = {NULL};
+HDFPUBLIC void  *atom_obj_cache[ATOM_CACHE_SIZE] = {NULL};
 #endif /* ATOM_MASTER */
 
 /* Useful routines for generally private use */
@@ -122,8 +122,8 @@ HDFPUBLIC VOIDP  atom_obj_cache[ATOM_CACHE_SIZE] = {NULL};
 
 #ifndef ATOM_MASTER
 HDFLIBAPI atom_t atom_id_cache[];
-HDFLIBAPI VOIDP  atom_obj_cache[];
-#endif /* ATOM_MASTER */
+HDFLIBAPI void  *atom_obj_cache[];
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -142,8 +142,8 @@ extern "C" {
     Returns SUCCEED if successful and FAIL otherwise
 
 *******************************************************************************/
-HDFLIBAPI intn HAinit_group(group_t grp,      /* IN: Group to initialize */
-                            intn    hash_size /* IN: Minimum hash table size to use for group */
+HDFLIBAPI int HAinit_group(group_t grp,     /* IN: Group to initialize */
+                           int    hash_size /* IN: Minimum hash table size to use for group */
 );
 
 /******************************************************************************
@@ -160,7 +160,7 @@ HDFLIBAPI intn HAinit_group(group_t grp,      /* IN: Group to initialize */
     Returns SUCCEED if successful and FAIL otherwise
 
 *******************************************************************************/
-HDFLIBAPI intn HAdestroy_group(group_t grp /* IN: Group to destroy */
+HDFLIBAPI int HAdestroy_group(group_t grp /* IN: Group to destroy */
 );
 
 /******************************************************************************
@@ -180,7 +180,7 @@ HDFLIBAPI intn HAdestroy_group(group_t grp /* IN: Group to destroy */
 
 *******************************************************************************/
 HDFLIBAPI atom_t HAregister_atom(group_t grp,   /* IN: Group to register the object in */
-                                 VOIDP   object /* IN: Object to attach to atom */
+                                 void   *object /* IN: Object to attach to atom */
 );
 
 /******************************************************************************
@@ -194,7 +194,7 @@ HDFLIBAPI atom_t HAregister_atom(group_t grp,   /* IN: Group to register the obj
     Returns object ptr if successful and NULL otherwise
 
 *******************************************************************************/
-HDFLIBAPI VOIDP HAPatom_object(atom_t atm /* IN: Atom to retrieve object for */
+HDFLIBAPI void *HAPatom_object(atom_t atm /* IN: Atom to retrieve object for */
 );
 
 /******************************************************************************
@@ -222,7 +222,7 @@ HDFLIBAPI group_t HAatom_group(atom_t atm /* IN: Atom to retrieve group for */
     Returns atom's object if successful and FAIL otherwise
 
 *******************************************************************************/
-HDFLIBAPI VOIDP HAremove_atom(atom_t atm /* IN: Atom to remove */
+HDFLIBAPI void *HAremove_atom(atom_t atm /* IN: Atom to remove */
 );
 
 /******************************************************************************
@@ -239,7 +239,7 @@ HDFLIBAPI VOIDP HAremove_atom(atom_t atm /* IN: Atom to remove */
     Returns pointer an atom's object if successful and NULL otherwise
 
 *******************************************************************************/
-HDFLIBAPI VOIDP HAsearch_atom(group_t         grp,  /* IN: Group to search for the object in */
+HDFLIBAPI void *HAsearch_atom(group_t         grp,  /* IN: Group to search for the object in */
                               HAsearch_func_t func, /* IN: Ptr to the comparison function */
                               const void     *key   /* IN: pointer to key to compare against */
 );
@@ -255,7 +255,7 @@ HDFLIBAPI VOIDP HAsearch_atom(group_t         grp,  /* IN: Group to search for t
     Returns SUCCEED/FAIL
 
 *******************************************************************************/
-HDFLIBAPI intn HAshutdown(void);
+HDFLIBAPI int HAshutdown(void);
 
 #ifdef __cplusplus
 }
