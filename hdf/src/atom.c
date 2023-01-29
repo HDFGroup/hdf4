@@ -615,7 +615,7 @@ HAIfree_atom_list(atom_info_t *info)
     atom_info_t *next = NULL;
 
     while (curr != NULL) {
-        next  = curr->next;
+        next = curr->next;
         free(curr);
         curr = next;
     }

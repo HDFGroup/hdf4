@@ -44,7 +44,7 @@ test_file_limits(void)
     MESSAGE(5, printf("Opening stopped at %d/%d files\n", i, BIG););
 
     MESSAGE(5, puts("Closing all files"););
-    for (i = i-1; i >= 0; i--) {
+    for (i = i - 1; i >= 0; i--) {
         ret = Hclose(files[i]);
         CHECK_VOID(ret, -1, "Hclose");
         if (ret < 0)
@@ -65,7 +65,7 @@ test_file_limits(void)
     MESSAGE(5, printf("Opening stopped at %d/%d files\n", i, BIG););
 
     MESSAGE(5, puts("Closing all files except first open"););
-    for (i = i-1; i > 0; i--) {
+    for (i = i - 1; i > 0; i--) {
         ret = Hclose(files[i]);
         CHECK_VOID(ret, -1, "Hclose");
         if (ret < 0)
@@ -75,7 +75,7 @@ test_file_limits(void)
 
     MESSAGE(5, puts("Opening write access elements"););
     for (i = 0; i < BIG; i++) {
-        accs[i] = Hstartwrite(files[0], (uint16)100, (uint16)(i+1), 100L);
+        accs[i] = Hstartwrite(files[0], (uint16)100, (uint16)(i + 1), 100L);
         CHECK_VOID(accs[i], -1, "Hstartwrite");
         if (accs[i] < 0)
             break;
@@ -83,7 +83,7 @@ test_file_limits(void)
     MESSAGE(5, printf("Opening stopped at %d element\n", i););
 
     MESSAGE(5, puts("Closing access elements"););
-    for (i = i-1; i >= 0; i--) {
+    for (i = i - 1; i >= 0; i--) {
         ret = Hendaccess(accs[i]);
         CHECK_VOID(ret, -1, "Hendaccess");
         if (ret < 0)
