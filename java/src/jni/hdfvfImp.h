@@ -30,23 +30,22 @@
 extern "C" {
 #endif /* __cplusplus */
 
-JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_VFfieldesize(JNIEnv *env, jclass clss, jlong vdata_id, int field_index);
+JNIEXPORT jint JNICALL Java_hdf_hdflib_HDFLibrary_VFfieldesize(JNIEnv *env, jclass clss, jlong vdata_id,
+                                                               int field_index);
 
-JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_VFfieldisize(JNIEnv *env, jclass clss, jlong vdata_id, int field_index);
+JNIEXPORT jint JNICALL Java_hdf_hdflib_HDFLibrary_VFfieldisize(JNIEnv *env, jclass clss, jlong vdata_id,
+                                                               int field_index);
 
-JNIEXPORT jstring JNICALL
-Java_hdf_hdflib_HDFLibrary_VFfieldname(JNIEnv *env, jclass clss, jlong vdata_id, int field_index);
+JNIEXPORT jstring JNICALL Java_hdf_hdflib_HDFLibrary_VFfieldname(JNIEnv *env, jclass clss, jlong vdata_id,
+                                                                 int field_index);
 
-JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_VFfieldorder(JNIEnv *env, jclass clss, jlong vdata_id, int field_index);
+JNIEXPORT jint JNICALL Java_hdf_hdflib_HDFLibrary_VFfieldorder(JNIEnv *env, jclass clss, jlong vdata_id,
+                                                               int field_index);
 
-JNIEXPORT jlong JNICALL
-Java_hdf_hdflib_HDFLibrary_VFfieldtype(JNIEnv *env, jclass clss, jlong vdata_id, int field_index);
+JNIEXPORT jlong JNICALL Java_hdf_hdflib_HDFLibrary_VFfieldtype(JNIEnv *env, jclass clss, jlong vdata_id,
+                                                               int field_index);
 
-JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_VFnfields(JNIEnv *env, jclass clss, jlong key);
+JNIEXPORT jint JNICALL Java_hdf_hdflib_HDFLibrary_VFnfields(JNIEnv *env, jclass clss, jlong key);
 
 #ifdef __cplusplus
 } /* end extern "C" */

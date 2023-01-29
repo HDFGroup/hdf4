@@ -30,11 +30,9 @@
 extern "C" {
 #endif /* __cplusplus */
 
-JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_VQueryref(JNIEnv *env, jclass clss, jlong vkey);
+JNIEXPORT jint JNICALL Java_hdf_hdflib_HDFLibrary_VQueryref(JNIEnv *env, jclass clss, jlong vkey);
 
-JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_VQuerytag(JNIEnv *env, jclass clss, jlong vkey);
+JNIEXPORT jint JNICALL Java_hdf_hdflib_HDFLibrary_VQuerytag(JNIEnv *env, jclass clss, jlong vkey);
 
 #ifdef __cplusplus
 } /* end extern "C" */

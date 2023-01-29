@@ -30,14 +30,12 @@
 extern "C" {
 #endif /* __cplusplus */
 
-JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_HEvalue(JNIEnv *env, jclass clss, jint level);
+JNIEXPORT jint JNICALL Java_hdf_hdflib_HDFLibrary_HEvalue(JNIEnv *env, jclass clss, jint level);
 
-JNIEXPORT void JNICALL
-Java_hdf_hdflib_HDFLibrary_HEprint(JNIEnv *env, jclass clss, jobject stream, jint level);
+JNIEXPORT void JNICALL Java_hdf_hdflib_HDFLibrary_HEprint(JNIEnv *env, jclass clss, jobject stream,
+                                                          jint level);
 
-JNIEXPORT jstring JNICALL
-Java_hdf_hdflib_HDFLibrary_HEstring(JNIEnv *env, jclass clss, jshort error_code);
+JNIEXPORT jstring JNICALL Java_hdf_hdflib_HDFLibrary_HEstring(JNIEnv *env, jclass clss, jshort error_code);
 
 #ifdef __cplusplus
 } /* end extern "C" */

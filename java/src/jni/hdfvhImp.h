@@ -30,20 +30,21 @@
 extern "C" {
 #endif /* __cplusplus */
 
-JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_VHmakegroup(JNIEnv *env, jclass clss, jlong file_id, jintArray tag_array,
-                                       jintArray ref_array, jint n_objects, jstring vgroup_name,
-                                       jstring vgroup_class);
+JNIEXPORT jint JNICALL Java_hdf_hdflib_HDFLibrary_VHmakegroup(JNIEnv *env, jclass clss, jlong file_id,
+                                                              jintArray tag_array, jintArray ref_array,
+                                                              jint n_objects, jstring vgroup_name,
+                                                              jstring vgroup_class);
 
-JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_VHstoredata(JNIEnv *env, jclass clss, jlong file_id, jstring fieldname,
-                                       jbyteArray buf, jint n_records, jint data_type, jstring vdata_name,
-                                       jstring vdata_class);
+JNIEXPORT jint JNICALL Java_hdf_hdflib_HDFLibrary_VHstoredata(JNIEnv *env, jclass clss, jlong file_id,
+                                                              jstring fieldname, jbyteArray buf,
+                                                              jint n_records, jint data_type,
+                                                              jstring vdata_name, jstring vdata_class);
 
-JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_VHstoredatam(JNIEnv *env, jclass clss, jlong file_id, jstring fieldname,
-                                        jbyteArray buf, jint n_records, jint data_type, jstring vdata_name,
-                                        jstring vdata_class, jint order);
+JNIEXPORT jint JNICALL Java_hdf_hdflib_HDFLibrary_VHstoredatam(JNIEnv *env, jclass clss, jlong file_id,
+                                                               jstring fieldname, jbyteArray buf,
+                                                               jint n_records, jint data_type,
+                                                               jstring vdata_name, jstring vdata_class,
+                                                               jint order);
 
 #ifdef __cplusplus
 } /* end extern "C" */

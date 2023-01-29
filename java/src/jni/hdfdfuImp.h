@@ -30,11 +30,12 @@
 extern "C" {
 #endif /* __cplusplus */
 
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFUfptoimage(JNIEnv *env, jclass clss, jint hdim, jint vdim, jfloat max,
-                                        jfloat min, jfloatArray hscale, jfloatArray vscale, jfloatArray data,
-                                        jbyteArray palette, jstring outfile, jint ct_method, jint hres,
-                                        jint vres, jint compress);
+JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_DFUfptoimage(JNIEnv *env, jclass clss, jint hdim,
+                                                                   jint vdim, jfloat max, jfloat min,
+                                                                   jfloatArray hscale, jfloatArray vscale,
+                                                                   jfloatArray data, jbyteArray palette,
+                                                                   jstring outfile, jint ct_method, jint hres,
+                                                                   jint vres, jint compress);
 
 #ifdef __cplusplus
 } /* end extern "C" */

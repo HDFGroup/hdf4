@@ -30,30 +30,27 @@
 extern "C" {
 #endif /* __cplusplus */
 
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFPaddpal(JNIEnv *env, jclass clss, jstring filename, jbyteArray palette);
+JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_DFPaddpal(JNIEnv *env, jclass clss, jstring filename,
+                                                                jbyteArray palette);
 
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFPgetpal(JNIEnv *env, jclass clss, jstring filename, jbyteArray palette);
+JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_DFPgetpal(JNIEnv *env, jclass clss, jstring filename,
+                                                                jbyteArray palette);
 
-JNIEXPORT jshort JNICALL
-Java_hdf_hdflib_HDFLibrary_DFPlastref(JNIEnv *env, jclass clss);
+JNIEXPORT jshort JNICALL Java_hdf_hdflib_HDFLibrary_DFPlastref(JNIEnv *env, jclass clss);
 
-JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_DFPnpals(JNIEnv *env, jclass clss, jstring filename);
+JNIEXPORT jint JNICALL Java_hdf_hdflib_HDFLibrary_DFPnpals(JNIEnv *env, jclass clss, jstring filename);
 
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFPputpal(JNIEnv *env, jclass clss, jstring filename, jbyteArray palette,
-                                     jint overwrite, jstring filemode);
+JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_DFPputpal(JNIEnv *env, jclass clss, jstring filename,
+                                                                jbyteArray palette, jint overwrite,
+                                                                jstring filemode);
 
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFPreadref(JNIEnv *env, jclass clss, jstring filename, jshort ref);
+JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_DFPreadref(JNIEnv *env, jclass clss, jstring filename,
+                                                                 jshort ref);
 
-JNIEXPORT jshort JNICALL
-Java_hdf_hdflib_HDFLibrary_DFPrestart(JNIEnv *env, jclass clss);
+JNIEXPORT jshort JNICALL Java_hdf_hdflib_HDFLibrary_DFPrestart(JNIEnv *env, jclass clss);
 
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFPwriteref(JNIEnv *env, jclass clss, jstring filename, jshort ref);
+JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_DFPwriteref(JNIEnv *env, jclass clss, jstring filename,
+                                                                  jshort ref);
 
 #ifdef __cplusplus
 } /* end extern "C" */

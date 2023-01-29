@@ -30,11 +30,9 @@
 extern "C" {
 #endif /* __cplusplus */
 
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_HXsetcreatedir(JNIEnv *env, jclass clss, jstring dir);
+JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_HXsetcreatedir(JNIEnv *env, jclass clss, jstring dir);
 
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_HXsetdir(JNIEnv *env, jclass clss, jstring dir);
+JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_HXsetdir(JNIEnv *env, jclass clss, jstring dir);
 
 #ifdef __cplusplus
 } /* end extern "C" */

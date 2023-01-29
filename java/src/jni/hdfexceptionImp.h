@@ -35,8 +35,8 @@ extern "C" {
  *
  *  Call the HDF library to print the HDF error stack to 'file_name'.
  */
-JNIEXPORT void JNICALL
-Java_hdf_hdflib_HDFLibraryException_printStackTrace0(JNIEnv *env, jobject obj, jstring file_name);
+JNIEXPORT void JNICALL Java_hdf_hdflib_HDFLibraryException_printStackTrace0(JNIEnv *env, jobject obj,
+                                                                            jstring file_name);
 
 #ifdef __cplusplus
 } /* end extern "C" */

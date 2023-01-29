@@ -30,45 +30,41 @@
 extern "C" {
 #endif /* __cplusplus */
 
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFR8getdims(JNIEnv *env, jclass clss, jstring filename, jintArray argv,
-                                       jbooleanArray isp);
+JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_DFR8getdims(JNIEnv *env, jclass clss, jstring filename,
+                                                                  jintArray argv, jbooleanArray isp);
 
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFR8getimage(JNIEnv *env, jclass clss, jstring filename, jbyteArray image,
-                                        jint width, jint height, jbyteArray palette);
+JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_DFR8getimage(JNIEnv *env, jclass clss, jstring filename,
+                                                                   jbyteArray image, jint width, jint height,
+                                                                   jbyteArray palette);
 
-JNIEXPORT jshort JNICALL
-Java_hdf_hdflib_HDFLibrary_DFR8lastref(JNIEnv *env, jclass clss);
+JNIEXPORT jshort JNICALL Java_hdf_hdflib_HDFLibrary_DFR8lastref(JNIEnv *env, jclass clss);
 
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFR8readref(JNIEnv *env, jclass clss, jstring filename, jshort ref);
+JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_DFR8readref(JNIEnv *env, jclass clss, jstring filename,
+                                                                  jshort ref);
 
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFR8restart(JNIEnv *env, jclass clss);
+JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_DFR8restart(JNIEnv *env, jclass clss);
 
-JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_DFR8nimages(JNIEnv *env, jclass clss, jstring hdfFile);
+JNIEXPORT jint JNICALL Java_hdf_hdflib_HDFLibrary_DFR8nimages(JNIEnv *env, jclass clss, jstring hdfFile);
 
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFR8addimage(JNIEnv *env, jclass clss, jstring filename, jbyteArray image,
-                                        jint width, jint height, jshort compress);
+JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_DFR8addimage(JNIEnv *env, jclass clss, jstring filename,
+                                                                   jbyteArray image, jint width, jint height,
+                                                                   jshort compress);
 
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFR8putimage(JNIEnv *env, jclass clss, jstring filename, jbyteArray image,
-                                        jint width, jint height, jint compress);
+JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_DFR8putimage(JNIEnv *env, jclass clss, jstring filename,
+                                                                   jbyteArray image, jint width, jint height,
+                                                                   jint compress);
 
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFR8setcompress(JNIEnv *env, jclass clss, jint type, jobject cinfo);
+JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_DFR8setcompress(JNIEnv *env, jclass clss, jint type,
+                                                                      jobject cinfo);
 
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFR8getpalref(JNIEnv *env, jclass clss, jshortArray palref);
+JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_DFR8getpalref(JNIEnv *env, jclass clss,
+                                                                    jshortArray palref);
 
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFR8setpalette(JNIEnv *env, jclass clss, jbyteArray palette);
+JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_DFR8setpalette(JNIEnv *env, jclass clss,
+                                                                     jbyteArray palette);
 
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFR8writeref(JNIEnv *env, jclass clss, jstring filename, jshort ref);
+JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_DFR8writeref(JNIEnv *env, jclass clss, jstring filename,
+                                                                   jshort ref);
 
 #ifdef __cplusplus
 } /* end extern "C" */

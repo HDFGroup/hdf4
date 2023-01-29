@@ -30,26 +30,24 @@
 extern "C" {
 #endif /* __cplusplus */
 
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_VSQuerycount(JNIEnv *env, jclass clss, jlong vdata_id, jintArray n_records);
+JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_VSQuerycount(JNIEnv *env, jclass clss, jlong vdata_id,
+                                                                   jintArray n_records);
 
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_VSQueryfields(JNIEnv *env, jclass clss, jlong vdata_id, jobjectArray fields);
+JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_VSQueryfields(JNIEnv *env, jclass clss, jlong vdata_id,
+                                                                    jobjectArray fields);
 
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_VSQueryinterlace(JNIEnv *env, jclass clss, jlong vdata_id, jintArray interlace);
+JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_VSQueryinterlace(JNIEnv *env, jclass clss,
+                                                                       jlong vdata_id, jintArray interlace);
 
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_VSQueryname(JNIEnv *env, jclass clss, jlong vdata_id, jobjectArray vdata_name);
+JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_VSQueryname(JNIEnv *env, jclass clss, jlong vdata_id,
+                                                                  jobjectArray vdata_name);
 
-JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_VSQueryref(JNIEnv *env, jclass clss, jlong vdata_id);
+JNIEXPORT jint JNICALL Java_hdf_hdflib_HDFLibrary_VSQueryref(JNIEnv *env, jclass clss, jlong vdata_id);
 
-JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_VSQuerytag(JNIEnv *env, jclass clss, jlong vdata_id);
+JNIEXPORT jint JNICALL Java_hdf_hdflib_HDFLibrary_VSQuerytag(JNIEnv *env, jclass clss, jlong vdata_id);
 
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_VSQueryvsize(JNIEnv *env, jclass clss, jlong vdata_id, jintArray vdata_size);
+JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_VSQueryvsize(JNIEnv *env, jclass clss, jlong vdata_id,
+                                                                   jintArray vdata_size);
 
 #ifdef __cplusplus
 } /* end extern "C" */
