@@ -28,17 +28,8 @@
 #include <unistd.h> /* getpid(), access(), F_OK */
 #endif
 
-#ifndef H4_HAVE_GETPID
-#if defined __MINGW32__
-int         getpid(void);
-#else
-#if defined H4_HAVE_WIN32_API
+#if defined H4_HAVE_WIN32_API && !defined __MINGW32__
 typedef int pid_t;
-pid_t       _getpid(void);
-#else
-pid_t getpid(void);
-#endif
-#endif
 #endif
 
 /* obtain the maximum number of open files allowed, at the same time,
@@ -547,11 +538,7 @@ NCtempname(const char *proto)
 
     cp  = begin + TN_NSEED + TN_NACCES + TN_NDIGITS;
     *cp = '\0';
-#if defined _WIN32 && !defined __MINGW32__
-    pid = _getpid();
-#else
-    pid   = getpid();
-#endif
+    pid = getpid();
     while (--cp >= begin + TN_NSEED + TN_NACCES) {
         *cp = (pid % 10) + '0';
         pid /= 10;
