@@ -14,6 +14,8 @@
 #ifndef H4_HDFI_H
 #define H4_HDFI_H
 
+#include "h4config.h"
+
 /*--------------------------------------------------------------------------*/
 /*                              MT/NT constants                             */
 /*  Four MT nibbles represent double, float, int, uchar (from most          */
@@ -66,6 +68,7 @@
 #define FILELIB UNIXBUFIO
 
 /* Standard C library headers */
+#include <assert.h>
 #include <ctype.h>
 #include <inttypes.h>
 #include <limits.h>

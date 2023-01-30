@@ -673,7 +673,7 @@ Java_hdf_hdflib_HDFLibrary_SDreadattr(JNIEnv *env, jclass clss, jlong sdsid, jin
 
     PIN_BYTE_ARRAY(ENVONLY, dat, arr, &isCopy, "SDreadattr:  dat not pinned");
 
-    if ((rval = SDreadattr(id, (int32)index, (VOIDP)arr)) == FAIL)
+    if ((rval = SDreadattr(id, (int32)index, (void *)arr)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -1071,7 +1071,7 @@ Java_hdf_hdflib_HDFLibrary_SDsetattr(JNIEnv *env, jclass clss, jlong s_id, jstri
     PIN_JAVA_STRING(ENVONLY, attr_name, str, NULL, "SDsetattr:  attr_name not pinned");
     PIN_BYTE_ARRAY(ENVONLY, values, arr, &isCopy, "SDsetattr:  values not pinned");
 
-    if ((rval = SDsetattr(id, str, (int32)num_type, (int32)count, (VOIDP)arr)) == FAIL)
+    if ((rval = SDsetattr(id, str, (int32)num_type, (int32)count, (void *)arr)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -1183,7 +1183,7 @@ Java_hdf_hdflib_HDFLibrary_SDsetdimscale(JNIEnv *env, jclass clss, jlong dim_id,
 
     PIN_BYTE_ARRAY(ENVONLY, data, d, &isCopy, "SDsetdimscale:  data not pinned");
 
-    if ((rval = SDsetdimscale((int32)dim_id, (int32)count, (int32)number_type, (VOIDP)d)) == FAIL)
+    if ((rval = SDsetdimscale((int32)dim_id, (int32)count, (int32)number_type, (void *)d)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -1271,7 +1271,7 @@ Java_hdf_hdflib_HDFLibrary_SDsetfillvalue(JNIEnv *env, jclass clss, jlong sds_id
 
     PIN_BYTE_ARRAY(ENVONLY, fill_val, d, &isCopy, "SDsetfillvalue:  fill_val not pinned");
 
-    if ((rval = SDsetfillvalue(id, (VOIDP)d)) == FAIL)
+    if ((rval = SDsetfillvalue(id, (void *)d)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -1346,7 +1346,7 @@ Java_hdf_hdflib_HDFLibrary_SDwritedata(JNIEnv *env, jclass clss, jlong sdsid, ji
     if (stride != NULL)
         PIN_INT_ARRAY(ENVONLY, stride, strd, &isCopy, "SDwritedata:  stride not pinned");
 
-    if ((rval = SDwritedata(id, strt, strd, e, (VOIDP)d)) == FAIL)
+    if ((rval = SDwritedata(id, strt, strd, e, (void *)d)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
