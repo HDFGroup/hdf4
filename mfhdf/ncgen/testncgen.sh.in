@@ -110,8 +110,8 @@ RUN() {
    ${TESTS_ENVIRONMENT} $NCDUMP -n test1 test0.nc > test1.cdl
 
    # Run test.
-   if [ $HDF_BUILD_NETCDF -ne 0 ]; then
-      if [ $HDF_BUILD_FORTRAN -ne 0 ]; then
+   if [ "$HDF_BUILD_NETCDF" = "0" ]; then
+      if [ "$HDF_BUILD_FORTRAN" = "0" ]; then
          bcheck
          ccheck
          fcheck
@@ -137,4 +137,3 @@ RUN
 
 # End of test, return exit code
 FINISH
-    
