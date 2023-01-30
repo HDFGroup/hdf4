@@ -29,7 +29,7 @@
 #endif
 
 #if defined H4_HAVE_WIN32_API && !defined __MINGW32__
-typedef int pid_t;
+typedef int                               pid_t;
 #endif
 
 /* obtain the maximum number of open files allowed, at the same time,

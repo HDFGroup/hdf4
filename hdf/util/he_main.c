@@ -69,7 +69,7 @@
 #endif
 
 #if defined H4_HAVE_WIN32_API && !defined __MINGW32__
-typedef int pid_t;
+typedef int                               pid_t;
 #endif
 
 /* the return status of last command executed */
