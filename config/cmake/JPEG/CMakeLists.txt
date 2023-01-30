@@ -17,8 +17,8 @@ endif ()
 if (WINDOWS)
   set (HAVE_STDDEF_H 1)
   set (HAVE_SYS_TYPES_H 1)
-  set (HAVE_PROTOTYPES 1) # jpeg
 endif ()
+set (HAVE_PROTOTYPES 1) # jpeg
 CHECK_INCLUDE_FILE_CONCAT ("sys/types.h"     HAVE_SYS_TYPES_H)
 CHECK_INCLUDE_FILE_CONCAT ("stddef.h"        HAVE_STDDEF_H)
 

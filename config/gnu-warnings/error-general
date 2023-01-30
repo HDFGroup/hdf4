@@ -18,18 +18,7 @@
 -Werror=packed
 -Werror=pointer-sign
 -Werror=pointer-to-int-cast
-#
-# hdf/src/hproto.h and the following
-# hdf/src/cdeflate.c
-# hdf/src/cnbit.c
-# hdf/src/cnone.c
-# hdf/src/crle.c
-# hdf/src/cskphuff.c
-# hdf/src/cszip.c
-# /hdf/src/hcomp.c
-# hdf/src/mstdio.c
-#-Werror=redundant-decls
--Wredundant-decls
+-Werror=redundant-decls
 #
 # hdf/src/dfjpeg.c:
 #-Werror=strict-prototypes

@@ -108,8 +108,6 @@
 #include <io.h>
 #endif
 
-#include "H4api_adpt.h"
-
 /*-------------------------------------------------------------------------
  * Pre-C99 platform-independent type scheme
  *

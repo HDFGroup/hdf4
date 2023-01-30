@@ -27,8 +27,6 @@ static intn hdf_xdr_NCvdata(NC *handle, NC_var *vp, u_long where, nc_type type, 
 
 static intn hdf_xdr_NCv1data(NC *handle, NC_var *vp, u_long where, nc_type type, void *values);
 
-int32 hdf_get_vp_aid(NC *handle, NC_var *vp);
-
 static intn SDIresizebuf(void **buf, int32 *buf_size, int32 size_wanted);
 
 #endif /* HDF */
