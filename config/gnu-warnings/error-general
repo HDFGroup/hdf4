@@ -20,7 +20,9 @@
 -Werror=pointer-to-int-cast
 -Werror=redundant-decls
 #
-# hdf/src/dfjpeg.c:
+# mfhdf/libsrc/array.c
+# mfhdf/libsrc/cdf.c
+# mfhdf/libsrc/putget.c
 #-Werror=strict-prototypes
 -Wstrict-prototypes
 -Werror=switch
