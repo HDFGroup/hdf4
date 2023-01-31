@@ -658,7 +658,7 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
     comp_coder_t comp_type = COMP_CODE_INVALID;
     uint32       comp_config;
     NC_var      *var;
-#if LONG_MAX > INT32_MAX
+#ifdef H4_HAVE_LP64
     long Start[H4_MAX_VAR_DIMS];
     long End[H4_MAX_VAR_DIMS];
     long Stride[H4_MAX_VAR_DIMS];
@@ -740,7 +740,7 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
      * In general, (long) == int32
      * In cases where it doesn't we need to convert
      */
-#if LONG_MAX > INT32_MAX
+#ifdef H4_HAVE_LP64
     {
         int i;
         for (i = 0; i < var->assoc->count; i++) {
@@ -1973,7 +1973,7 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
     NC_var      *var;
     NC          *handle = NULL;
     NC_dim      *dim    = NULL;
-#if LONG_MAX > INT32_MAX
+#ifdef H4_HAVE_LP64
     long Start[H4_MAX_VAR_DIMS];
     long End[H4_MAX_VAR_DIMS];
     long Stride[H4_MAX_VAR_DIMS];
@@ -2071,7 +2071,7 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
      * In general, (long) == int32
      * In cases where it doesn't we need to convert
      */
-#if LONG_MAX > INT32_MAX
+#ifdef H4_HAVE_LP64
     {
         int     i;
         NC_var *var = SDIget_var(handle, sdsid);
