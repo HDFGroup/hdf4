@@ -84,8 +84,7 @@ main(int argc, char *argv[])
    the size of C pointer; this happens on all 64-bit platforms.
    We need a better fix; see HDFFR-191.
 */
-#if defined _WIN64 || defined __x86_64__ || defined _LP64 || defined __LP64__ || defined __powerpc64__ ||    \
-    defined                                                                              __aarch64__
+#if defined _WIN64 || H4_HAVE_LP64
     printf("   Skipping stubs\n");
 #else
     num_tests = InitTest("stubs", "tstubsf", "");

@@ -590,7 +590,7 @@ xdr_NCv1data(XDR *xdrs, u_long where, nc_type type, Void *values)
         case NC_SHORT:
             return (xdr_NCvshort(xdrs, (unsigned)rem / 2, (short *)values));
         case NC_LONG:
-#if (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__
+#ifdef H4_HAVE_LP64
             return (xdr_int(xdrs, (nclong *)values));
 #else
             return (xdr_long(xdrs, (nclong *)values));
