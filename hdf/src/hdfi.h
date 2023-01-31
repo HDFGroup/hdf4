@@ -106,6 +106,7 @@
 #ifdef H4_HAVE_WIN32_API
 #include <windows.h>
 #include <io.h>
+#include <process.h>
 #endif
 
 /*-------------------------------------------------------------------------
@@ -147,6 +148,13 @@ typedef unsigned int uintn;
 typedef void VOID;
 #endif
 typedef void *VOIDP;
+
+/*-------------------------------------------------------------------------
+ * Is this an LP64 system?
+ *-------------------------------------------------------------------------*/
+#if LONG_MAX == INT64_MAX
+#define H4_HAVE_LP64
+#endif
 
 /*-------------------------------------------------------------------------
  * Fortran definitions

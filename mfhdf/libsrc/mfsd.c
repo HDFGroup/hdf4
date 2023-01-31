@@ -660,7 +660,7 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
     comp_coder_t comp_type = COMP_CODE_INVALID;
     uint32       comp_config;
     NC_var      *var;
-#ifdef H4_BIG_LONGS
+#ifdef H4_HAVE_LP64
     long Start[H4_MAX_VAR_DIMS];
     long End[H4_MAX_VAR_DIMS];
     long Stride[H4_MAX_VAR_DIMS];
@@ -742,7 +742,7 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
      * In general, (long) == int32
      * In cases where it doesn't we need to convert
      */
-#ifdef H4_BIG_LONGS
+#ifdef H4_HAVE_LP64
     {
         int i;
         for (i = 0; i < var->assoc->count; i++) {
@@ -752,13 +752,10 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
                 Stride[i] = (long)stride[i];
         }
     }
-
 #else
-
     Start        = (long *)start;
     End          = (long *)end;
     Stride       = (long *)stride;
-
 #endif
 
     /* Validate stride value if given - make sure we don't try to "stride" */
@@ -1978,7 +1975,7 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
     NC_var      *var;
     NC          *handle = NULL;
     NC_dim      *dim    = NULL;
-#ifdef H4_BIG_LONGS
+#ifdef H4_HAVE_LP64
     long Start[H4_MAX_VAR_DIMS];
     long End[H4_MAX_VAR_DIMS];
     long Stride[H4_MAX_VAR_DIMS];
@@ -2076,12 +2073,31 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
      * In general, (long) == int32
      * In cases where it doesn't we need to convert
      */
+<<<<<<< HEAD
 #ifdef H4_BIG_LONGS
     var = SDIget_var(handle, sdsid);
 
     if (var == NULL) {
         HGOTO_ERROR(DFE_ARGS, FAIL);
+=======
+#ifdef H4_HAVE_LP64
+    {
+        int     i;
+        NC_var *var = SDIget_var(handle, sdsid);
+
+        if (var == NULL) {
+            HGOTO_ERROR(DFE_ARGS, FAIL);
+        }
+
+        for (i = 0; i < var->assoc->count; i++) {
+            Start[i] = (long)start[i];
+            End[i]   = (long)end[i];
+            if (stride)
+                Stride[i] = (long)stride[i];
+        }
+>>>>>>> branch 'master' of https://github.com/HDFGroup/hdf4.git
     }
+<<<<<<< HEAD
 
     for (i = 0; i < var->assoc->count; i++) {
         Start[i] = (long)start[i];
@@ -2089,12 +2105,12 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
         if (stride)
             Stride[i] = (long)stride[i];
     }
+=======
+>>>>>>> branch 'master' of https://github.com/HDFGroup/hdf4.git
 #else
-
-    Start  = (long *)start;
-    End    = (long *)end;
-    Stride = (long *)stride;
-
+    Start        = (long *)start;
+    End          = (long *)end;
+    Stride       = (long *)stride;
 #endif
 
     /* Check if this data is being written out to a newly created dataset */
