@@ -2073,12 +2073,6 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
      * In general, (long) == int32
      * In cases where it doesn't we need to convert
      */
-<<<<<<< HEAD
-#ifdef H4_BIG_LONGS var = SDIget_var(handle, sdsid);
-
-    if (var == NULL) {
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-=======
 #ifdef H4_HAVE_LP64
     {
         int     i;
@@ -2094,18 +2088,7 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
             if (stride)
                 Stride[i] = (long)stride[i];
         }
->>>>>>> branch 'master' of https://github.com/HDFGroup/hdf4.git
     }
-<<<<<<< HEAD
-
-    for (i = 0; i < var->assoc->count; i++) {
-        Start[i] = (long)start[i];
-        End[i]   = (long)end[i];
-        if (stride)
-            Stride[i] = (long)stride[i];
-    }
-=======
->>>>>>> branch 'master' of https://github.com/HDFGroup/hdf4.git
 #else Start = (long *)start;
     End         = (long *)end;
     Stride      = (long *)stride;
