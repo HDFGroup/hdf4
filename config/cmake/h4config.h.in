@@ -3,9 +3,6 @@
 #ifndef H4_CONFIG_H_
 #define H4_CONFIG_H_
 
-/* int* greater or equal to 8 bytes */
-#cmakedefine H4_BIG_LONGS @H4_BIG_LONGS@
-
 /* Define to dummy `main' function (if any) required to link to the Fortran
    libraries. */
 #cmakedefine H4_F77_DUMMY_MAIN @H4_F77_DUMMY_MAIN@
@@ -185,9 +182,6 @@
 
 /* Define to the version of this package. */
 #define H4_PACKAGE_VERSION "@HDF4_PACKAGE_VERSION_STRING@"
-
-/* The size of `int*', as computed by sizeof. */
-#cmakedefine H4_SIZEOF_INTP @H4_SIZEOF_INTP@
 
 /* Define to 1 if all of the C90 standard headers exist (not just the ones
    required in a freestanding environment). This macro is provided for
