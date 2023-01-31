@@ -2090,8 +2090,8 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
         }
     }
 #else Start = (long *)start;
-    End         = (long *)end;
-    Stride      = (long *)stride;
+    End          = (long *)end;
+    Stride       = (long *)stride;
 #endif
 
     /* Check if this data is being written out to a newly created dataset */
