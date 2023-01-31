@@ -349,7 +349,6 @@ endif ()
 if (NOT LIBAEC_EXTERNALLY_CONFIGURED)
   install (
       FILES
-          ${LIBAEC_SOURCE_DIR}/Copyright.txt
           ${LIBAEC_SOURCE_DIR}/README.md
           ${LIBAEC_SOURCE_DIR}/INSTALL
           ${LIBAEC_SOURCE_DIR}/CHANGELOG.md
