@@ -3945,7 +3945,6 @@ done:
 } /* end GRsetaccesstype() */
 
 #ifdef H4_HAVE_LIBSZ /* we have the library */
-intn GRsetup_szip_parms(ri_info_t *ri_ptr, comp_info *c_info, int32 *cdims);
 
 /*--------------------------------------------------------------------------
  NAME

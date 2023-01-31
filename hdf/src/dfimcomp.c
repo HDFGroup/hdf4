@@ -1013,11 +1013,18 @@ classify(struct box *ptr, struct box *child)
     }     /* end of for i */
 
     /* assign points */
-    child->nmbr_pts      = total;
-    child->nmbr_distinct = distinct;
-    child->pts           = (int *)HDmalloc((unsigned)distinct * sizeof(int));
-    for (i = 0; i < distinct; i++)
-        child->pts[i] = temp[i];
+    if (distinct > 0) {
+        child->nmbr_pts      = total;
+        child->nmbr_distinct = distinct;
+        child->pts           = (int *)HDmalloc((unsigned)distinct * sizeof(int));
+        for (i = 0; i < distinct; i++)
+            child->pts[i] = temp[i];
+    }
+    else {
+        child->nmbr_pts      = 0;
+        child->nmbr_distinct = 0;
+        child->pts           = NULL;
+    }
 
     HDfree((VOIDP)temp);
 

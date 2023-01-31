@@ -28,6 +28,7 @@ extern "C" {
 #include "hdf.h"
 #include "mfhdf.h"
 #include "h4jni.h"
+#include "hdfsdsImp.h"
 
 extern jboolean makeChunkInfo(JNIEnv *env, jobject chunkobj, int32 flgs, HDF_CHUNK_DEF *cinf);
 extern jboolean getNewCompInfo(JNIEnv *env, jobject ciobj, comp_info *cinf);

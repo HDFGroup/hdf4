@@ -14,18 +14,23 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <string.h>
+#include <errno.h>
+#include "h4config.h"
+#include "local_nc.h"
+#include "herr.h"
+
 #ifdef DEBUG
 #include <assert.h>
 #endif /* DEBUG */
 
 #ifdef H4_HAVE_UNISTD_H
-#include <unistd.h> /* access(), F_OK */
+#include <unistd.h> /* getpid(), access(), F_OK */
 #endif
 
-#include <string.h>
-#include <errno.h>
-#include "local_nc.h"
-#include "herr.h"
+#if defined H4_HAVE_WIN32_API && !defined __MINGW32__
+typedef int                               pid_t;
+#endif
 
 /* obtain the maximum number of open files allowed, at the same time,
    on the current system */
@@ -75,7 +80,7 @@ static intn max_NC_open = H4_MAX_NC_OPEN; /* current netCDF default */
  * Resets _cdfs
  */
 static void
-ncreset_cdflist()
+ncreset_cdflist(void)
 {
     if (_cdfs != NULL) {
         free(_cdfs);
@@ -173,7 +178,7 @@ done:
  *  Returns the current # of open files allowed
  */
 intn
-NC_get_maxopenfiles()
+NC_get_maxopenfiles(void)
 {
     return (max_NC_open);
 } /* NC_get_maxopenfiles */
@@ -182,7 +187,7 @@ NC_get_maxopenfiles()
  *  Returns the maximum number of open files the system allows.
  */
 intn
-NC_get_systemlimit()
+NC_get_systemlimit(void)
 {
     return (MAX_AVAIL_OPENFILES);
 } /* NC_get_systemlimit */
@@ -191,7 +196,7 @@ NC_get_systemlimit()
  *  Returns the number of files currently being opened.
  */
 int
-NC_get_numopencdfs()
+NC_get_numopencdfs(void)
 {
     return (_curr_opened);
 } /* NC_get_numopencdfs */
@@ -503,16 +508,6 @@ NCtempname(const char *proto)
 {
 #define TN_NACCES  1
 #define TN_NDIGITS 4
-#if defined __MINGW32__
-    int getpid(void);
-#else
-#if defined H4_HAVE_WIN32_API
-    typedef int pid_t;
-    pid_t       _getpid(void);
-#else
-    pid_t getpid(void);
-#endif
-#endif
     unsigned int pid; /* OS/2 DOS (MicroSoft Lib) allows "negative" int pids */
 
     static char seed[] = {'a', 'a', 'a', '\0'};
@@ -543,11 +538,7 @@ NCtempname(const char *proto)
 
     cp  = begin + TN_NSEED + TN_NACCES + TN_NDIGITS;
     *cp = '\0';
-#if defined _WIN32 && !defined __MINGW32__
-    pid = _getpid();
-#else
-    pid   = getpid();
-#endif
+    pid = getpid();
     while (--cp >= begin + TN_NSEED + TN_NACCES) {
         *cp = (pid % 10) + '0';
         pid /= 10;

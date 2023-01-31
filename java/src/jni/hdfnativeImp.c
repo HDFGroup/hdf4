@@ -37,6 +37,7 @@ extern "C" {
 #include <jni.h>
 #include "hdf.h"
 #include "h4jni.h"
+#include "hdfnativeImp.h"
 
 /* returns int [] */
 JNIEXPORT jintArray JNICALL

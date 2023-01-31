@@ -29,6 +29,7 @@ extern "C" {
 #include <string.h>
 #include "hdf.h"
 #include "h4jni.h"
+#include "hdfanImp.h"
 
 JNIEXPORT jlong JNICALL
 Java_hdf_hdflib_HDFLibrary_ANstart(JNIEnv *env, jclass clss, jlong file_id)

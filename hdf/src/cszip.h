@@ -59,8 +59,11 @@ HDFLIBAPI int32 HCPcszip_write(accrec_t *access_rec, int32 length, const void *d
 
 HDFLIBAPI intn HCPcszip_endaccess(accrec_t *access_rec);
 
-HDFLIBAPI intn HCPsetup_szip_parms(comp_info *c_info, int32 nt, int32 ncomp, int32 ndims, int32 *dims,
-                                   int32 *cdims);
+/*
+ * prototype in proto.h
+ * HDFLIBAPI intn HCPsetup_szip_parms(comp_info *c_info, int32 nt, int32 ncomp, int32 ndims, int32 *dims,
+ *                                   int32 *cdims);
+ */
 
 #ifdef __cplusplus
 }

@@ -10,6 +10,7 @@
  * corrects some performance problems with xdrstdio_getpos() and
  * xdrstdio_getpos() in the xdr_stdio implementation.
  */
+#include "h4config.h"
 
 #include <inttypes.h>
 #include <string.h>
@@ -36,6 +37,14 @@
 #include "local_nc.h"
 
 #include "mfhdf.h"
+
+#ifdef H4_HAVE_ARPA_INET_H
+#include <arpa/inet.h>
+#endif
+
+#ifdef H4_HAVE_NETINET_IN_H
+#include <netinet/in.h> /* for htonl() */
+#endif
 
 /* 32-bit integer on the host architecture */
 typedef int32_t netlong;
@@ -203,17 +212,17 @@ biowrite(biobuf *biop, unsigned char *ptr, int nbytes)
     return nwrote;
 }
 
-static bool_t   xdrposix_getlong();
-static bool_t   xdrposix_putlong();
-static bool_t   xdrposix_getbytes();
-static bool_t   xdrposix_putbytes();
-static ncpos_t  xdrposix_getpos();
-static bool_t   xdrposix_setpos();
-static netlong *xdrposix_inline();
-static void     xdrposix_destroy();
+static bool_t   xdrposix_getlong(XDR *xdrs, long *lp);
+static bool_t   xdrposix_putlong(XDR *xdrs, long *lp);
+static bool_t   xdrposix_getbytes(XDR *xdrs, caddr_t addr, u_int len);
+static bool_t   xdrposix_putbytes(XDR *xdrs, caddr_t addr, u_int len);
+static ncpos_t  xdrposix_getpos(XDR *xdrs);
+static bool_t   xdrposix_setpos(XDR *xdrs, ncpos_t pos);
+static netlong *xdrposix_inline(XDR *xdrs, u_int len);
+static void     xdrposix_destroy(XDR *xdrs);
 #if (defined __sun && defined _LP64)
-static bool_t xdrposix_getint();
-static bool_t xdrposix_putint();
+static bool_t xdrposix_getint(XDR *xdrs, int *lp);
+static bool_t xdrposix_putint(XDR *xdrs, int *lp);
 #endif
 
 /*
@@ -423,6 +432,8 @@ xdrposix_setpos(XDR *xdrs, ncpos_t pos)
 static netlong *
 xdrposix_inline(XDR *xdrs, u_int len)
 {
+    (void)xdrs;
+    (void)len;
     /*
      * Must do some work to implement this: must insure
      * enough data in the underlying posix buffer,

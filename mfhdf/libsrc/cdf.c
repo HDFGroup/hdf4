@@ -19,12 +19,8 @@
 
 #ifdef HDF
 #include "hfile.h"
-extern intn hdf_xdr_cdf(XDR *xdrs, NC **handlep);
 
-/* A couple of local prototypes to HDF section*/
-intn hdf_cdf_clobber(NC *handle);
-
-intn hdf_close(NC *handle);
+int32 hdf_get_magicnum(const char *filename);
 
 static intn hdf_num_attrs(NC   *handle, /* IN: handle to SDS */
                           int32 vg /* IN: ref of top Vgroup */);
