@@ -2074,9 +2074,7 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
      * In cases where it doesn't we need to convert
      */
 #ifdef H4_HAVE_LP64
-    {
-        int     i;
-        NC_var *var = SDIget_var(handle, sdsid);
+        var = SDIget_var(handle, sdsid);
 
         if (var == NULL) {
             HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -2088,10 +2086,10 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
             if (stride)
                 Stride[i] = (long)stride[i];
         }
-    }
-#else Start = (long *)start;
-    End          = (long *)end;
-    Stride       = (long *)stride;
+#else
+    Start  = (long *)start;
+    End    = (long *)end;
+    Stride = (long *)stride;
 #endif
 
     /* Check if this data is being written out to a newly created dataset */
