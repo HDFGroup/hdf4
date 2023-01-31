@@ -2074,8 +2074,7 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
      * In cases where it doesn't we need to convert
      */
 <<<<<<< HEAD
-#ifdef H4_BIG_LONGS
-    var = SDIget_var(handle, sdsid);
+#ifdef H4_BIG_LONGS var = SDIget_var(handle, sdsid);
 
     if (var == NULL) {
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -2107,10 +2106,9 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
     }
 =======
 >>>>>>> branch 'master' of https://github.com/HDFGroup/hdf4.git
-#else
-    Start        = (long *)start;
-    End          = (long *)end;
-    Stride       = (long *)stride;
+#else Start = (long *)start;
+    End         = (long *)end;
+    Stride      = (long *)stride;
 #endif
 
     /* Check if this data is being written out to a newly created dataset */
