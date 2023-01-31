@@ -813,26 +813,6 @@ if test "X$BUILD_FORTRAN" = "Xyes"; then
   AC_PROG_F77_C_O
 fi
 
-## This is a bit of a hack. The AC_CHECK_SIZEOF macro is supposed to
-## #define a value in a header file. However, we don't use a generated
-## header file. So I check the value left over from autoconf's test  is
-## >= 8.
-AC_CHECK_SIZEOF([int*])
-
-if test $ac_cv_sizeof_intp -ge 8; then
-#  CPPFLAGS="$CPPFLAGS -DBIG_LONGS"
-  AC_DEFINE([BIG_LONGS], [1], [int* greater or equal to 8 bytes])
-
-  ## Define super secret special flag for AIX machines in 64-bit mode.
-  case "${host}" in
-    *-ibm-aix*) CPPFLAGS="$CPPFLAGS -DAIX5L64" ;;
-    *)          ;;
-  esac
-#  if test "X$BUILD_XDR" = "Xyes"; then
-#    AC_MSG_ERROR([--enable-hdf4-xdr is not supported for 64 bit mode.])
-#  fi
-fi
-
 ## ----------------------------------------------------------------------
 ## Set some variables for general configuration information to be saved
 ## and installed with the libraries.
