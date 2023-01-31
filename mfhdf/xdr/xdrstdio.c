@@ -121,15 +121,13 @@ xdrstdio_putlong(XDR *xdrs, const long *lp)
 {
     int32_t mycopy;
 
-#if defined(_LP64)
-    if ((*lp > UINT32_MAX) || (*lp < INT32_MIN))
-        return (FALSE);
-#endif
+    if ((*lp > INT32_MAX) || (*lp < INT32_MIN))
+        return FALSE;
 
     mycopy = (int32_t)htonl((int32_t)*lp);
     if (fwrite(&mycopy, sizeof(int32_t), 1, (FILE *)xdrs->x_private) != 1)
-        return (FALSE);
-    return (TRUE);
+        return FALSE;
+    return TRUE;
 }
 
 static bool_t
