@@ -38,6 +38,14 @@ New features and changes
 ========================
     Configuration:
     -------------
+    - Disabling NetCDF now disables building ncdump, ncgen, and nctest
+
+      Building v2.3.2 (circa 1993) versions of these programs is of dubious
+      value in any situation. These should definitely be skipped when the
+      --disable-netcdf / HDF_ENABLE_NETCDF:OFF options are selected.
+
+      (DER - 2023/01/31)
+
     - The FreeBSD Autotools config was updated to work like MacOS and Linux
 
       The config/freebsd file was updated to try a variety of compilers and
