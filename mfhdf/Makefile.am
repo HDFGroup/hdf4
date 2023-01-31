@@ -16,10 +16,16 @@ else
 FORTRAN_DIR =
 endif
 
-# src folder in root Makefile, build other folders now
-SUBDIRS = $(XDR_DIR) libsrc $(FORTRAN_DIR) test ncdump ncgen dumper hdfimport hdiff hrepack nctest
+if HDF_BUILD_NETCDF
+NETCDF_DIRS = ncdump ncgen nctest
+else
+NETCDF_DIRS =
+endif
 
-DIST_SUBDIRS = xdr libsrc fortran test ncdump ncgen dumper hdfimport hdiff hrepack nctest examples
+# src folder in root Makefile, build other folders now
+SUBDIRS = $(XDR_DIR) libsrc $(FORTRAN_DIR) test $(NETCDF_DIRS) dumper hdfimport hdiff hrepack
+
+DIST_SUBDIRS = xdr libsrc fortran test $(NETCDF_DIRS)  dumper hdfimport hdiff hrepack examples
 
 installcheck-local:
 	@(cd examples && $(MAKE) $(AM_MAKEFLAGS) $@) || exit 1;

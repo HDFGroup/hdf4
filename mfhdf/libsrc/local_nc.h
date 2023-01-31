@@ -54,10 +54,10 @@ typedef unsigned long u_long;
 
 #include <rpc/types.h>
 #include <rpc/xdr.h>
-#else              /* H4_NO_SYS_XDR_INC */
-#include "types.h" /* <types.h */
-#include "xdr.h"   /* <xdr.h> */
-#endif             /* H4_NO_SYS_XDR_INC */
+#else /* H4_NO_SYS_XDR_INC */
+#include "types.h"
+#include "xdr.h"
+#endif /* H4_NO_SYS_XDR_INC */
 
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h" /* needed for defs of nc_type, ncvoid, ... */

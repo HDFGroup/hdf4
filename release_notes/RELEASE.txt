@@ -38,6 +38,7 @@ New features and changes
 ========================
     Configuration:
     -------------
+
     - Updated the warnings flags for compilers with files for gcc,
       clang and Intel compilers.
 
@@ -46,7 +47,15 @@ New features and changes
       an issue are configured to generate an error if it is accidentally
       introduced. Other compilers could be added.
 
-      (ADB - 2023/01/29)
+      (ADB - 2023/01/31)
+
+    - Disabling NetCDF now disables building ncdump, ncgen, and nctest
+
+      Building v2.3.2 (circa 1993) versions of these programs is of dubious
+      value in any situation. These should definitely be skipped when the
+      --disable-netcdf / HDF_ENABLE_NETCDF:OFF options are selected.
+
+      (DER - 2023/01/31)
 
     - The FreeBSD Autotools config was updated to work like MacOS and Linux
 
