@@ -28,6 +28,7 @@ extern "C" {
 #include "hdf.h"
 #include "hfile.h"
 #include "h4jni.h"
+#include "hdfheImp.h"
 
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_HEvalue(JNIEnv *env, jclass clss, jint level)

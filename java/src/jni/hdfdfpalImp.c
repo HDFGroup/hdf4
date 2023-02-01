@@ -29,6 +29,7 @@ extern "C" {
 #include <string.h>
 #include "hdf.h"
 #include "h4jni.h"
+#include "hdfdfpalImp.h"
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_DFPaddpal(JNIEnv *env, jclass clss, jstring filename, jbyteArray palette)

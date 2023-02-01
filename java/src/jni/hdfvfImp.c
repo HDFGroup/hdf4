@@ -27,6 +27,7 @@ extern "C" {
 #include <jni.h>
 #include "hdf.h"
 #include "h4jni.h"
+#include "hdfvfImp.h"
 
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_VFfieldesize(JNIEnv *env, jclass clss, jlong vdata_id, int field_index)

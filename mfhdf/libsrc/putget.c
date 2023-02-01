@@ -27,13 +27,13 @@ static intn hdf_xdr_NCvdata(NC *handle, NC_var *vp, u_long where, nc_type type, 
 
 static intn hdf_xdr_NCv1data(NC *handle, NC_var *vp, u_long where, nc_type type, void *values);
 
-int32 hdf_get_vp_aid(NC *handle, NC_var *vp);
-
 static intn SDIresizebuf(void **buf, int32 *buf_size, int32 size_wanted);
 
 #endif /* HDF */
 
 static const long *NCvcmaxcontig(NC *, NC_var *, const long *, const long *);
+
+int NC_fill_buffer(NC *handle, int varid, const long *edges, void *values);
 
 /*
  * If you use ./xdrstdio.c rather than ./xdrposix.c as
@@ -643,7 +643,7 @@ PRIVATE int8 *tValues      = NULL;
     Throw away the temporary buffer we've allocated
 */
 intn
-SDPfreebuf()
+SDPfreebuf(void)
 {
     if (tBuf != NULL) {
         free(tBuf);

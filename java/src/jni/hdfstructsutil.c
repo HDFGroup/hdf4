@@ -26,6 +26,7 @@ extern "C" {
 #include <jni.h>
 #include "hdf.h"
 #include "h4jni.h"
+#include "hdfstructsutil.h"
 
 /*
  *  Get information from a Java HDFNewCompInfo object in to a C comp_info

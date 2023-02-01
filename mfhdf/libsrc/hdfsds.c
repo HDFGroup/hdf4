@@ -90,6 +90,8 @@ PRIVATE intn hdf_register_seen_sdg(uint16 ndgRef);
 
 PRIVATE intn hdf_read_ndgs(NC *handle);
 
+uint8 *hdf_get_pred_str_attr(NC *handle, uint16 stratt_tag, uint16 satt_ref, int null_count);
+
 /******************************************************************************
  NAME
    hdf_query_seen_sdg

@@ -14,7 +14,7 @@
 #ifndef H4_HDFI_H
 #define H4_HDFI_H
 
-#include "h4config.h"
+#include "H4api_adpt.h"
 
 /*--------------------------------------------------------------------------*/
 /*                              MT/NT constants                             */
@@ -106,9 +106,8 @@
 #ifdef H4_HAVE_WIN32_API
 #include <windows.h>
 #include <io.h>
+#include <process.h>
 #endif
-
-#include "H4api_adpt.h"
 
 /*-------------------------------------------------------------------------
  * Pre-C99 platform-independent type scheme

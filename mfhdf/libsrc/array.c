@@ -491,9 +491,10 @@ xdr_NC_array(XDR *xdrs, NC_array **app)
                     return (FALSE);
                 }
             }
-            count = (*app)->count;
-            type  = (*app)->type;
-            /* fall into */
+            count  = (*app)->count;
+            type   = (*app)->type;
+            countp = &count;
+            break;
         case XDR_DECODE:
             countp = &count;
             break;

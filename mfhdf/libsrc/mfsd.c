@@ -111,6 +111,8 @@ NOTE: This file needs to have the comments cleaned up for most of the
 #include "mfprivate.h"
 #endif
 
+intn SDsetup_szip_parms(int32 id, NC *handle, comp_info *c_info, int32 *cdims);
+
 /* Whether we've installed the library termination function yet for this interface */
 PRIVATE intn library_terminate = FALSE;
 
@@ -1984,6 +1986,7 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
 #endif
     intn no_strides = 0;
     intn ret_value  = SUCCEED;
+    int  i;
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDwritedata: I've been called\n");
@@ -2052,8 +2055,7 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
 
     /* Check for strides all set to '1', so it acts like NULL was passed */
     if (stride != NULL) {
-        int     i;
-        NC_var *var = SDIget_var(handle, sdsid);
+        var = SDIget_var(handle, sdsid);
 
         if (var == NULL) {
             HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -2072,20 +2074,17 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
      * In cases where it doesn't we need to convert
      */
 #ifdef H4_HAVE_LP64
-    {
-        int     i;
-        NC_var *var = SDIget_var(handle, sdsid);
+    var = SDIget_var(handle, sdsid);
 
-        if (var == NULL) {
-            HGOTO_ERROR(DFE_ARGS, FAIL);
-        }
+    if (var == NULL) {
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+    }
 
-        for (i = 0; i < var->assoc->count; i++) {
-            Start[i] = (long)start[i];
-            End[i]   = (long)end[i];
-            if (stride)
-                Stride[i] = (long)stride[i];
-        }
+    for (i = 0; i < var->assoc->count; i++) {
+        Start[i] = (long)start[i];
+        End[i]   = (long)end[i];
+        if (stride)
+            Stride[i] = (long)stride[i];
     }
 #else
     Start        = (long *)start;
@@ -2094,16 +2093,14 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
 #endif
 
     /* Check if this data is being written out to a newly created dataset */
-    {
-        NC_var *var = SDIget_var(handle, sdsid);
+    var = SDIget_var(handle, sdsid);
 
-        if (var->created) {
-            if (!IS_RECVAR(var) && (handle->flags & NC_NOFILL)) {
-                var->set_length = TRUE;
-            } /* end if */
-            var->created = FALSE;
+    if (var->created) {
+        if (!IS_RECVAR(var) && (handle->flags & NC_NOFILL)) {
+            var->set_length = TRUE;
         } /* end if */
-    }
+        var->created = FALSE;
+    } /* end if */
 
     /* call the writeg routines if a stride is given */
     if (stride == NULL || no_strides == 1)
@@ -6285,7 +6282,7 @@ done:
 
 ******************************************************************************/
 intn
-SDget_numopenfiles()
+SDget_numopenfiles(void)
 {
     intn ret_value = SUCCEED;
 

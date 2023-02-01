@@ -28,6 +28,7 @@ extern "C" {
 #include "hdf.h"
 #include "hfile.h"
 #include "h4jni.h"
+#include "hdfImp.h"
 
 /*
  * Class:     hdf_hdflib_HDFLibrary

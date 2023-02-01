@@ -571,7 +571,7 @@ SDgetoldattdatainfo(int32 dim_id, int32 sdsid, char *attr_name, int32 *offset, i
         lufbuf = malloc(len + 1);
         if (lufbuf == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
-        Hgetelement(handle->hdf_file, att_tag, att_ref, lufbuf);
+        Hgetelement(handle->hdf_file, att_tag, att_ref, (uint8 *)lufbuf);
 
         /*
          * Parse the luf string to obtain the offset/length of the requested luf

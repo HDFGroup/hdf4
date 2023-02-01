@@ -27,6 +27,7 @@ extern "C" {
 #include <jni.h>
 #include "hdf.h"
 #include "h4jni.h"
+#include "hdfdfuImp.h"
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_DFUfptoimage(JNIEnv *env, jclass clss, jint hdim, jint vdim, jfloat max,

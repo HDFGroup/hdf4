@@ -35,17 +35,9 @@
  * XDR_ENCODE serializes onto the stream, XDR_DECODE de-serializes
  * from the stream.
  */
-#if !defined(lint) && defined(SCCSIDS)
-static char sccsid[] = "@(#)xdr_stdio.c 1.16 87/08/11 Copyr 1984 Sun Micro";
-#endif
-
 #include "h4config.h"
 
 #include <stdio.h>
-
-#ifdef _MSC_VER
-#include <Winsock2.h>
-#endif
 
 #ifdef H4_HAVE_ARPA_INET_H
 #include <arpa/inet.h>

@@ -1,0 +1,35 @@
+#
+# HDF code should not trigger the following warnings under any
+# circumstances, so ask the compiler to treat them as errors:
+#
+-Werror=bad-function-cast
+#
+# hdf/src/dfstubs.c
+# hdf/src/mcache.c
+#-Werror=cast-align
+-Wcast-align
+-Werror=format
+-Werror=implicit-function-declaration
+-Werror=int-to-pointer-cast
+-Werror=missing-declarations
+-Werror=missing-prototypes
+-Werror=nested-externs
+-Werror=old-style-definition
+-Werror=packed
+-Werror=pointer-sign
+-Werror=pointer-to-int-cast
+-Werror=redundant-decls
+#
+# mfhdf/libsrc/array.c
+# mfhdf/libsrc/cdf.c
+# mfhdf/libsrc/putget.c
+#-Werror=strict-prototypes
+-Wstrict-prototypes
+-Werror=switch
+-Werror=unused-but-set-variable
+-Werror=unused-variable
+#
+#-Werror=discarded-qualifiers
+#
+-Wunused-function
+-Wunused-parameter

@@ -54,10 +54,10 @@ typedef unsigned long u_long;
 
 #include <rpc/types.h>
 #include <rpc/xdr.h>
-#else              /* H4_NO_SYS_XDR_INC */
-#include "types.h" /* <types.h */
-#include "xdr.h"   /* <xdr.h> */
-#endif             /* H4_NO_SYS_XDR_INC */
+#else /* H4_NO_SYS_XDR_INC */
+#include "types.h"
+#include "xdr.h"
+#endif /* H4_NO_SYS_XDR_INC */
 
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h" /* needed for defs of nc_type, ncvoid, ... */
@@ -561,11 +561,11 @@ HDFLIBAPI intn NC_var_shape(NC_var *var, NC_array *dims);
 
 HDFLIBAPI intn NC_reset_maxopenfiles(intn req_max);
 
-HDFLIBAPI intn NC_get_maxopenfiles();
+HDFLIBAPI intn NC_get_maxopenfiles(void);
 
-HDFLIBAPI intn NC_get_systemlimit();
+HDFLIBAPI intn NC_get_systemlimit(void);
 
-HDFLIBAPI int NC_get_numopencdfs();
+HDFLIBAPI int NC_get_numopencdfs(void);
 
 /* CDF stuff. don't need anymore? -GV */
 HDFLIBAPI nc_type cdf_unmap_type(int type);
