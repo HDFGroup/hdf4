@@ -515,7 +515,7 @@ xdr_NCvshort(XDR *xdrs, unsigned which, short *values)
         xdrs->x_op = XDR_DECODE;
     }
 
-    if (!xdr_opaque(xdrs, (caddr_t)buf, 4)) {
+    if (!xdr_opaque(xdrs, (char *)buf, 4)) {
         /* get failed, assume we are trying to read off the end */
 #ifdef XDRSTDIO
         /* See N.B. 2 above */
@@ -549,7 +549,7 @@ xdr_NCvshort(XDR *xdrs, unsigned which, short *values)
 
         if (!xdr_setpos(xdrs, origin))
             return (FALSE);
-        if (!xdr_opaque(xdrs, (caddr_t)buf, 4))
+        if (!xdr_opaque(xdrs, (char *)buf, 4))
             return (FALSE);
     }
     else {

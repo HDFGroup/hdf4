@@ -79,12 +79,10 @@ xdr_free(xdrproc_t proc, void *objp)
  * XDR nothing
  */
 bool_t
-xdr_void(void /* xdrs, addr */)
-/* XDR *xdrs; */
-/* caddr_t addr; */
+xdr_void(void)
 {
 
-    return (TRUE);
+    return TRUE;
 }
 
 /*
@@ -494,7 +492,7 @@ xdr_enum(XDR *xdrs, enum_t *ep)
  * cp points to the opaque object and cnt gives the byte length.
  */
 bool_t
-xdr_opaque(XDR *xdrs, caddr_t cp, u_int cnt)
+xdr_opaque(XDR *xdrs, char *cp, u_int cnt)
 {
     u_int      rndup;
     static int crud[BYTES_PER_XDR_UNIT];
@@ -518,7 +516,7 @@ xdr_opaque(XDR *xdrs, caddr_t cp, u_int cnt)
         }
         if (rndup == 0)
             return (TRUE);
-        return (XDR_GETBYTES(xdrs, (caddr_t)(void *)crud, rndup));
+        return (XDR_GETBYTES(xdrs, (char *)crud, rndup));
     }
 
     if (xdrs->x_op == XDR_ENCODE) {

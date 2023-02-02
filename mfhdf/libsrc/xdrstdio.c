@@ -17,7 +17,7 @@
  *  UCAR/Unidata modifications for netcdf:
  *      _destroy closes the stream.
  *      current stream position cached in x_public
- *             (assumes caddr_t can hold a long)
+ *             (assumes char * can hold a long)
  *      last op cached in x_handy
  */
 
@@ -89,7 +89,7 @@ xdrNCstdio_create(register XDR *xdrs, FILE *file, enum xdr_op op)
 {
     xdrs->x_op         = op;
     xdrs->x_ops        = &xdrNCstdio_ops;
-    xdrs->x_private    = (caddr_t)file;
+    xdrs->x_private    = (char *)file;
     xdrs->x_handy      = 0;
     xdrs->x_base       = 0;
     XDRNC_LASTOP(xdrs) = XDR_FREE;
@@ -110,7 +110,7 @@ xdrNCstdio_destroy(register XDR *xdrs)
 static bool_t
 xdrNCstdio_getlong(XDR *xdrs, register long *lp)
 {
-    if (fread((caddr_t)lp, sizeof(long), 1, (FILE *)xdrs->x_private) != 1) {
+    if (fread((char *)lp, sizeof(long), 1, (FILE *)xdrs->x_private) != 1) {
         XDRNC_POS(xdrs) = ftell((FILE *)xdrs->x_private);
         return FALSE;
     }
@@ -129,7 +129,7 @@ xdrNCstdio_putlong(XDR *xdrs, long *lp)
     lp          = &mycopy;
 #endif
 
-    if (fwrite((caddr_t)lp, sizeof(long), 1, (FILE *)xdrs->x_private) != 1) {
+    if (fwrite((char *)lp, sizeof(long), 1, (FILE *)xdrs->x_private) != 1) {
         XDRNC_POS(xdrs) = ftell((FILE *)xdrs->x_private);
         return FALSE;
     }
@@ -138,7 +138,7 @@ xdrNCstdio_putlong(XDR *xdrs, long *lp)
 }
 
 static bool_t
-xdrNCstdio_getbytes(XDR *xdrs, caddr_t addr, u_int len)
+xdrNCstdio_getbytes(XDR *xdrs, char *addr, u_int len)
 {
     if ((len != 0) && (fread(addr, (int)len, 1, (FILE *)xdrs->x_private) != 1)) {
         XDRNC_POS(xdrs) = ftell((FILE *)xdrs->x_private);
@@ -149,7 +149,7 @@ xdrNCstdio_getbytes(XDR *xdrs, caddr_t addr, u_int len)
 }
 
 static bool_t
-xdrNCstdio_putbytes(XDR *xdrs, caddr_t addr, u_int len)
+xdrNCstdio_putbytes(XDR *xdrs, char *addr, u_int len)
 {
 
     if ((len != 0) && (fwrite(addr, (int)len, 1, (FILE *)xdrs->x_private) != 1)) {
