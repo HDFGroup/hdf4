@@ -40,7 +40,7 @@ NCxdr_shortsb(XDR *xdrs, short *sp, u_int nshorts)
         }
     }
 
-    if (!xdr_opaque(xdrs, (caddr_t)buf, nbytes))
+    if (!xdr_opaque(xdrs, (char *)buf, nbytes))
         return FALSE;
 
     if (xdrs->x_op == XDR_DECODE) {

@@ -126,7 +126,7 @@ typedef struct __rpc_xdr {
  * The opaque pointer generally points to a structure of the data type
  * to be decoded.  If this pointer is 0, then the type routines should
  * allocate dynamic storage of the appropriate size and return it.
- * bool_t    (*xdrproc_t)(XDR *, caddr_t *);
+ * bool_t    (*xdrproc_t)(XDR *, char **);
  */
 typedef bool_t (*xdrproc_t)(XDR *, ...);
 
@@ -325,7 +325,7 @@ XDRLIBAPI bool_t xdrrec_skiprecord(XDR *);
 /* true if no more input */
 XDRLIBAPI bool_t xdrrec_eof(XDR *);
 
-XDRLIBAPI u_int xdrrec_readbytes(XDR *, caddr_t, u_int);
+XDRLIBAPI u_int xdrrec_readbytes(XDR *, char *, u_int);
 
 #ifdef __cplusplus
 }
