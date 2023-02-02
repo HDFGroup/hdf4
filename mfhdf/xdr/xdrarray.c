@@ -63,13 +63,13 @@ static char sccsid[] = "@(#)xdr_array.c 1.10 87/08/11 Copyr 1984 Sun Micro";
 /* elsize - size in bytes of each element */
 /* elproc - xdr routine to handle each element */
 bool_t
-xdr_array(XDR *xdrs, caddr_t *addrp, u_int *sizep, u_int maxsize, u_int elsize, xdrproc_t elproc)
+xdr_array(XDR *xdrs, char **addrp, u_int *sizep, u_int maxsize, u_int elsize, xdrproc_t elproc)
 {
-    u_int   i;
-    caddr_t target = *addrp;
-    u_int   c; /* the actual element count */
-    bool_t  stat = TRUE;
-    u_int   nodesize;
+    u_int  i;
+    char  *target = *addrp;
+    u_int  c; /* the actual element count */
+    bool_t stat = TRUE;
+    u_int  nodesize;
 
     /* like strings, arrays are really counted arrays */
     if (!xdr_u_int(xdrs, sizep)) {

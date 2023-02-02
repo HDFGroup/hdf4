@@ -214,8 +214,8 @@ biowrite(biobuf *biop, unsigned char *ptr, int nbytes)
 
 static bool_t   xdrposix_getlong(XDR *xdrs, long *lp);
 static bool_t   xdrposix_putlong(XDR *xdrs, const long *lp);
-static bool_t   xdrposix_getbytes(XDR *xdrs, caddr_t addr, u_int len);
-static bool_t   xdrposix_putbytes(XDR *xdrs, const caddr_t addr, u_int len);
+static bool_t   xdrposix_getbytes(XDR *xdrs, char *addr, u_int len);
+static bool_t   xdrposix_putbytes(XDR *xdrs, const char *addr, u_int len);
 static ncpos_t  xdrposix_getpos(XDR *xdrs);
 static bool_t   xdrposix_setpos(XDR *xdrs, ncpos_t pos);
 static netlong *xdrposix_inline(XDR *xdrs, u_int len);
@@ -263,7 +263,7 @@ hdf_xdrfile_create(XDR *xdrs, int ncop)
         xdrs->x_op = XDR_DECODE;
 
     xdrs->x_ops     = &xdrposix_ops;
-    xdrs->x_private = (caddr_t)biop;
+    xdrs->x_private = (char *)biop;
 
 } /* hdf_xdrfile_create */
 
@@ -282,7 +282,7 @@ xdrposix_create(XDR *xdrs, int fd, int fmode, enum xdr_op op)
 #endif
     xdrs->x_op      = op;
     xdrs->x_ops     = &xdrposix_ops;
-    xdrs->x_private = (caddr_t)biop;
+    xdrs->x_private = (char *)biop;
     /* unused */
     xdrs->x_handy = 0;
     xdrs->x_base  = 0;
@@ -376,7 +376,7 @@ xdrposix_putlong(XDR *xdrs, const long *lp)
 }
 
 static bool_t
-xdrposix_getbytes(XDR *xdrs, caddr_t addr, u_int len)
+xdrposix_getbytes(XDR *xdrs, char *addr, u_int len)
 {
     if ((len != 0) && (bioread((biobuf *)xdrs->x_private, (unsigned char *)addr, (int)len) != len))
         return FALSE;
@@ -384,7 +384,7 @@ xdrposix_getbytes(XDR *xdrs, caddr_t addr, u_int len)
 }
 
 static bool_t
-xdrposix_putbytes(XDR *xdrs, const caddr_t addr, u_int len)
+xdrposix_putbytes(XDR *xdrs, const char *addr, u_int len)
 {
     if ((len != 0) && (biowrite((biobuf *)xdrs->x_private, (unsigned char *)addr, (int)len) != len))
         return FALSE;
