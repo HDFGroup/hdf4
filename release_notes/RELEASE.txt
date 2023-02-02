@@ -38,6 +38,13 @@ New features and changes
 ========================
     Configuration:
     -------------
+    - Added Intel OneAPI compiler support to the configuration files
+
+      The CMake toolchain file for Intel was updated to allow the
+      LLVM based compilers to be chosen. The autotools config for
+      Intel check for the new compiler name; icx.
+
+      (ADB - 2023/02/02)
 
     - Updated the warnings flags for compilers with files for gcc,
       clang and Intel compilers.
