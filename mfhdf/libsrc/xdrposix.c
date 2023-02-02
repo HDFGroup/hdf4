@@ -213,16 +213,16 @@ biowrite(biobuf *biop, unsigned char *ptr, int nbytes)
 }
 
 static bool_t   xdrposix_getlong(XDR *xdrs, long *lp);
-static bool_t   xdrposix_putlong(XDR *xdrs, long *lp);
+static bool_t   xdrposix_putlong(XDR *xdrs, const long *lp);
 static bool_t   xdrposix_getbytes(XDR *xdrs, caddr_t addr, u_int len);
-static bool_t   xdrposix_putbytes(XDR *xdrs, caddr_t addr, u_int len);
+static bool_t   xdrposix_putbytes(XDR *xdrs, const caddr_t addr, u_int len);
 static ncpos_t  xdrposix_getpos(XDR *xdrs);
 static bool_t   xdrposix_setpos(XDR *xdrs, ncpos_t pos);
 static netlong *xdrposix_inline(XDR *xdrs, u_int len);
 static void     xdrposix_destroy(XDR *xdrs);
 #if (defined __sun && defined _LP64)
 static bool_t xdrposix_getint(XDR *xdrs, int *lp);
-static bool_t xdrposix_putint(XDR *xdrs, int *lp);
+static bool_t xdrposix_putint(XDR *xdrs, const int *lp);
 #endif
 
 /*
@@ -358,7 +358,7 @@ xdrposix_getlong(XDR *xdrs, long *lp)
 }
 
 static bool_t
-xdrposix_putlong(XDR *xdrs, long *lp)
+xdrposix_putlong(XDR *xdrs, const long *lp)
 {
 
     unsigned char *up = (unsigned char *)lp;
@@ -384,7 +384,7 @@ xdrposix_getbytes(XDR *xdrs, caddr_t addr, u_int len)
 }
 
 static bool_t
-xdrposix_putbytes(XDR *xdrs, caddr_t addr, u_int len)
+xdrposix_putbytes(XDR *xdrs, const caddr_t addr, u_int len)
 {
     if ((len != 0) && (biowrite((biobuf *)xdrs->x_private, (unsigned char *)addr, (int)len) != len))
         return FALSE;
@@ -458,7 +458,7 @@ xdrposix_getint(XDR *xdrs, int *lp)
 }
 
 static bool_t
-xdrposix_putint(XDR *xdrs, int *lp)
+xdrposix_putint(XDR *xdrs, const int *lp)
 {
     unsigned char *up = (unsigned char *)lp;
 #ifndef H4_WORDS_BIGENDIAN
