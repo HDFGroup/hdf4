@@ -711,6 +711,7 @@ case "$enableval" in
     ;;
   no)
     BUILD_XDR="no"
+    AC_MSG_RESULT([using system XDR]);
     ;;
 esac
 
@@ -770,7 +771,7 @@ if test "X$BUILD_XDR" != "Xyes"; then
 
   AC_LINK_IFELSE([AC_LANG_PROGRAM([[
   #include <rpc/types.h>
-  #include <rpc/xdr.h>]], [[xdr_int]])],[AC_MSG_RESULT([yes]); BUILD_XDR="no"],[AC_MSG_RESULT([no]); BUILD_XDR="yes"])
+  #include <rpc/xdr.h>]], [[xdr_int]])],[BUILD_XDR="no"],[BUILD_XDR="yes"])
 fi
 
 if test "X$BUILD_XDR" != "Xno"; then
