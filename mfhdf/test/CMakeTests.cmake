@@ -141,6 +141,7 @@ if (HDF4_BUILD_XDR_LIB)
     TARGET_C_PROPERTIES (xdrtest SHARED)
     target_link_libraries (xdrtest PRIVATE ${HDF4_MF_XDR_LIBSH_TARGET})
   endif ()
+  target_compile_options(xdrtest PRIVATE "-Wno-incompatible-function-pointer-types")
 
   if (MSVC_VERSION LESS 1900)
     HDFTEST_COPY_FILE("${HDF4_MFHDF_XDR_DIR}/xdrtest.out" "${PROJECT_BINARY_DIR}/TEST/xdrtest.out" "xdrtest_files")
