@@ -1,7 +1,7 @@
 # Uncomment the following line and the correct system name to use cross-compiling
 #set(CMAKE_SYSTEM_NAME Linux)
 
-set(CMAKE_COMPILER_VENDOR "GCC")
+set(CMAKE_COMPILER_VENDOR "gcc")
 
 set(CMAKE_C_COMPILER cc)
 set(CMAKE_CXX_COMPILER c++)
