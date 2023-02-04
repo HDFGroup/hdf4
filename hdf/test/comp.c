@@ -360,7 +360,7 @@ read_data(int32 fid, uint16 ref_num, intn test_num, int32 ntype)
         num_errs++;
     } /* end if */
 
-    if (HDmemcmp(in_ptr, out_ptr, read_size) != 0) {
+    if (memcmp(in_ptr, out_ptr, read_size) != 0) {
         char *s = HDgetNTdesc(ntype);
 
         HDget_special_info(aid, &info_block);

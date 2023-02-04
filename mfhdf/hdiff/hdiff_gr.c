@@ -228,7 +228,7 @@ diff_gr(int32 gr1_id, int32 gr2_id, int32 ref1, int32 ref2, diff_opt_t *opt)
          *-------------------------------------------------------------------------
          */
 
-        cmp = HDmemcmp(buf1, buf2, data_size);
+        cmp = memcmp(buf1, buf2, data_size);
         if (cmp != 0) {
             /* if the given max_err_cnt is set (i.e. not its default MAX_DIFF),
                use it, otherwise, use the total number of elements in the dataset */

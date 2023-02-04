@@ -358,7 +358,6 @@ typedef intptr_t hdf_pint_t;
 
 #define HDmemcpy(dst, src, n) (memcpy((void *)(dst), (const void *)(src), (size_t)(n)))
 #define HDmemset(dst, c, n)   (memset((void *)(dst), (intn)(c), (size_t)(n)))
-#define HDmemcmp(dst, src, n) (memcmp((const void *)(dst), (const void *)(src), (size_t)(n)))
 
 /**************************************************************************
  *  JPEG #define's - Look in the JPEG docs before changing - (Q)

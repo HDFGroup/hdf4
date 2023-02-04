@@ -100,7 +100,7 @@ test_mgr_compress_a()
         CHECK(ret, FAIL, "GRreadimage");
 
         /* Verify correct image contents */
-        if (HDmemcmp(image, image0, 10 * 10) != 0) {
+        if (memcmp(image, image0, 10 * 10) != 0) {
             MESSAGE(3, printf("Error reading data for gzip compressed image\n"););
             num_errs++;
         } /* end if */
@@ -156,7 +156,7 @@ test_mgr_compress_a()
         CHECK(ret, FAIL, "GRreadimage");
 
         /* Verify correct image contents */
-        if (HDmemcmp(image, image0, 10 * 10) != 0) {
+        if (memcmp(image, image0, 10 * 10) != 0) {
             MESSAGE(3, printf("Error reading 2nd data for gzip compressed image\n"););
             num_errs++;
         } /* end if */
@@ -286,7 +286,7 @@ test_mgr_compress_b()
         CHECK(ret, FAIL, "GRreadimage");
 
         /* Verify correct image contents */
-        if (HDmemcmp(image, image0, 10 * 10) != 0) {
+        if (memcmp(image, image0, 10 * 10) != 0) {
             MESSAGE(3, printf("Error reading data for gzip compressed image\n"););
             num_errs++;
         } /* end if */
@@ -344,7 +344,7 @@ test_mgr_compress_b()
         CHECK(ret, FAIL, "GRreadimage");
 
         /* Verify correct image contents */
-        if (HDmemcmp(image, image0, 10 * 10) != 0) {
+        if (memcmp(image, image0, 10 * 10) != 0) {
             MESSAGE(3, printf("Error reading 2nd data for gzip compressed image\n"););
             num_errs++;
         } /* end if */
@@ -955,7 +955,7 @@ test_mgr_chunk_compress()
         origin[1] = 4;
         status    = GRreadchunk(ri_id[img_num], origin, (VOIDP)chunk_buf);
         CHECK(status, FAIL, "GRreadchunk");
-        if (0 != HDmemcmp(chunk_buf, chunk14, sizeof(chunk14))) {
+        if (0 != memcmp(chunk_buf, chunk14, sizeof(chunk14))) {
             MESSAGE(3, printf("Error in reading chunk at line %d\n", __LINE__););
             MESSAGE(3, printf("Image #%d\n", (int)img_num););
             num_errs++;
@@ -968,7 +968,7 @@ test_mgr_chunk_compress()
         edge[1]               = X_LENGTH;
         status                = GRreadimage(ri_id[img_num], start, stride, edge, (VOIDP)data_out);
         CHECK(status, FAIL, "GRreadimage");
-        if (0 != HDmemcmp(data_out, data, sizeof(data))) {
+        if (0 != memcmp(data_out, data, sizeof(data))) {
             MESSAGE(3, printf("%d: Error reading data for the whole image\n", __LINE__););
             MESSAGE(3, printf("%d: Compression method\n", (int)img_num););
             num_errs++;

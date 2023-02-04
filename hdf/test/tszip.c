@@ -243,7 +243,7 @@ test_szip_RI8bit()
     CHECK_VOID(status, FAIL, "GRreadimage");
 
     /* Compare read data against input data */
-    if (0 != HDmemcmp(out_data, in_data, sizeof(in_data)))
+    if (0 != memcmp(out_data, in_data, sizeof(in_data)))
         printf("Error in reading the whole image \n");
 
     /* Terminate access to the raster image */
@@ -453,7 +453,7 @@ test_szip_RI16bit()
     CHECK_VOID(status, FAIL, "GRreadimage");
 
     /* Compare read data against input data */
-    if (0 != HDmemcmp(out_data, in_data, sizeof(in_data)))
+    if (0 != memcmp(out_data, in_data, sizeof(in_data)))
         printf("Error in reading the whole image \n");
 
     /* Terminate access to the raster image */
@@ -663,7 +663,7 @@ test_szip_RI32bit()
     CHECK_VOID(status, FAIL, "GRreadimage");
 
     /* Compare read data against input data */
-    if (0 != HDmemcmp(out_data, in_data, sizeof(in_data)))
+    if (0 != memcmp(out_data, in_data, sizeof(in_data)))
         printf("Error in reading the whole image \n");
 
     /* Terminate access to the raster image */
@@ -875,7 +875,7 @@ test_szip_RIfl32bit()
     CHECK_VOID(status, FAIL, "GRreadimage");
 
     /* Compare read data against input data */
-    if (0 != HDmemcmp(out_data, in_data, sizeof(in_data)))
+    if (0 != memcmp(out_data, in_data, sizeof(in_data)))
         printf("Error in reading the whole image \n");
 
     /* Terminate access to the raster image */
@@ -1087,7 +1087,7 @@ test_szip_RIfl64bit()
     CHECK_VOID(status, FAIL, "GRreadimage");
 
     /* Compare read data against input data */
-    if (0 != HDmemcmp(out_data, in_data, sizeof(in_data)))
+    if (0 != memcmp(out_data, in_data, sizeof(in_data)))
         printf("Error in reading the whole image \n");
 
     /* Terminate access to the raster image */
@@ -1269,7 +1269,7 @@ test_szip_chunk()
     origin[1] = 0;
     status    = GRreadchunk(ri_id, origin, (VOIDP)chunk_buf);
     CHECK_VOID(status, FAIL, "GRreadchunk");
-    if (0 != HDmemcmp(chunk_buf, chunk00, sizeof(chunk00))) {
+    if (0 != memcmp(chunk_buf, chunk00, sizeof(chunk00))) {
         printf("Error in reading chunk 00\n");
         num_errs++;
     }
@@ -1279,7 +1279,7 @@ test_szip_chunk()
     origin[1] = 1;
     status    = GRreadchunk(ri_id, origin, (VOIDP)chunk_buf);
     CHECK_VOID(status, FAIL, "GRreadchunk");
-    if (0 != HDmemcmp(chunk_buf, chunk01, sizeof(chunk01))) {
+    if (0 != memcmp(chunk_buf, chunk01, sizeof(chunk01))) {
         printf("Error in reading chunk 01\n");
         num_errs++;
     }
@@ -1289,7 +1289,7 @@ test_szip_chunk()
     origin[1] = 4;
     status    = GRreadchunk(ri_id, origin, (VOIDP)chunk_buf);
     CHECK_VOID(status, FAIL, "GRreadchunk");
-    if (0 != HDmemcmp(chunk_buf, chunk14, sizeof(chunk14))) {
+    if (0 != memcmp(chunk_buf, chunk14, sizeof(chunk14))) {
         printf("Error in reading chunk 14\n");
         num_errs++;
     }
@@ -1301,7 +1301,7 @@ test_szip_chunk()
     edge[1]               = WIDTH_CH;
     status                = GRreadimage(ri_id, start, stride, edge, (VOIDP)data_out);
     CHECK_VOID(status, FAIL, "GRreadimage");
-    if (0 != HDmemcmp(data_out, data, sizeof(data))) {
+    if (0 != memcmp(data_out, data, sizeof(data))) {
         printf("Error in reading the whole image \n");
         num_errs++;
     }

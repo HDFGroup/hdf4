@@ -1745,13 +1745,13 @@ gtype(char *infile, struct Input *in, FILE **strm)
             (void)fprintf(stderr, err2, infile);
             goto err;
         }
-        if (!HDmemcmp("TEXT", buf, 4) || !HDmemcmp("text", buf, 4)) {
+        if (!memcmp("TEXT", buf, 4) || !memcmp("text", buf, 4)) {
             in->is_text = TRUE;
             if (in->outtype == NO_NE)
                 in->outtype = FP_32;
         }
         else {
-            if (!HDmemcmp("FP64", buf, 4) || !HDmemcmp("fp64", buf, 4)) {
+            if (!memcmp("FP64", buf, 4) || !memcmp("fp64", buf, 4)) {
                 in->is_fp64 = TRUE;
                 if (in->outtype != FP_64)
                     if (in->outtype != NO_NE) {
@@ -1766,16 +1766,16 @@ gtype(char *infile, struct Input *in, FILE **strm)
                     (void)fprintf(stderr, err4, infile);
                     goto err;
                 }
-                if (!HDmemcmp("FP32", buf, 4) || !HDmemcmp("fp32", buf, 4)) {
+                if (!memcmp("FP32", buf, 4) || !memcmp("fp32", buf, 4)) {
                     in->is_fp32 = TRUE;
                     in->outtype = FP_32;
                 }
 
-                else if (!HDmemcmp("IN32", buf, 4) || !HDmemcmp("in32", buf, 4))
+                else if (!memcmp("IN32", buf, 4) || !memcmp("in32", buf, 4))
                     in->outtype = INT_32;
-                else if (!HDmemcmp("IN16", buf, 4) || !HDmemcmp("in16", buf, 4))
+                else if (!memcmp("IN16", buf, 4) || !memcmp("in16", buf, 4))
                     in->outtype = INT_16;
-                else if (!HDmemcmp("IN08", buf, 4) || !HDmemcmp("in08", buf, 4))
+                else if (!memcmp("IN08", buf, 4) || !memcmp("in08", buf, 4))
                     in->outtype = INT_8;
                 else {
                     (void)fprintf(stderr, err3, infile);

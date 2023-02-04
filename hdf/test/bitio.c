@@ -120,7 +120,7 @@ test_bitio_write(void)
         ret = Hbitread(bitid1, (intn)outbuf[i], &inbuf2[i]);
         VERIFY_VOID((uint8)ret, outbuf[i], "Hbitread");
     } /* end for */
-    if (HDmemcmp(outbuf2, inbuf2, sizeof(int32) * BUFSIZE)) {
+    if (memcmp(outbuf2, inbuf2, sizeof(int32) * BUFSIZE)) {
         printf("Error in writing/reading bit I/O data\n");
         HEprint(stdout, 0);
         num_errs++;
@@ -215,7 +215,7 @@ test_bitio_read(void)
     RESULT("DFKconvert");
 
     /* check the data */
-    if (HDmemcmp(inbuf, test_ptr, DATASIZE) != 0) {
+    if (memcmp(inbuf, test_ptr, DATASIZE) != 0) {
         printf("Error in reading bit I/O data\n");
         HEprint(stdout, 0);
         num_errs++;

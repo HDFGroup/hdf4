@@ -473,7 +473,7 @@ cmp_gr(int32 ri1_id, int32 ri2_id)
         goto out;
     }
 
-    cmp = HDmemcmp(buf1, buf2, data_size);
+    cmp = memcmp(buf1, buf2, data_size);
     if (cmp != 0)
         printf("Differences found\n");
     else

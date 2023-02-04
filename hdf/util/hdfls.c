@@ -384,7 +384,7 @@ dumpDD(void)
                     printf("Error reading in file: %s\n", file_name);
                     return (FAIL);
                 } /* end if */
-                if (HDmemcmp(block_head, diskblock_header, DISKBLOCK_HSIZE) != 0) {
+                if (memcmp(block_head, diskblock_header, DISKBLOCK_HSIZE) != 0) {
                     intn k;
 
                     printf("Header wrong for disk block!\n");
@@ -401,7 +401,7 @@ dumpDD(void)
                     printf("Error reading in file: %s\n", file_name);
                     return (FAIL);
                 } /* end if */
-                if (HDmemcmp(block_tail, diskblock_tail, DISKBLOCK_TSIZE) != 0) {
+                if (memcmp(block_tail, diskblock_tail, DISKBLOCK_TSIZE) != 0) {
                     intn k;
 
                     printf("Tail wrong for disk block!\n");

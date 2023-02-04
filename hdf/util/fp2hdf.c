@@ -1025,7 +1025,7 @@ gtype(char *infile, struct Input *in, FILE **strm)
             (void)fprintf(stderr, err2, infile);
             goto err;
         }
-        if (!HDmemcmp("TEXT", buf, 4) || !HDmemcmp("text", buf, 4)) {
+        if (!memcmp("TEXT", buf, 4) || !memcmp("text", buf, 4)) {
 #if defined H4_HAVE_WIN32_API
             _fmode = _O_TEXT;
 #endif
@@ -1037,9 +1037,9 @@ gtype(char *infile, struct Input *in, FILE **strm)
                 (void)fprintf(stderr, err2, infile);
                 goto err;
             }
-            if (!HDmemcmp("FP32", buf, 4) || !HDmemcmp("fp32", buf, 4))
+            if (!memcmp("FP32", buf, 4) || !memcmp("fp32", buf, 4))
                 in->is_fp32 = TRUE;
-            else if (!HDmemcmp("FP64", buf, 4) || !HDmemcmp("fp64", buf, 4))
+            else if (!memcmp("FP64", buf, 4) || !memcmp("fp64", buf, 4))
                 in->is_fp64 = TRUE;
             else {
                 (void)fprintf(stderr, err3, infile);

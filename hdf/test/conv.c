@@ -130,7 +130,7 @@ test_conv(void)
         RESULT("DFKconvert");
         MESSAGE(6, printf("%d/%d seconds to convert %d %s int8 values\n", (int)(c4 - c3), (int)CLOCKS_PER_SEC,
                           (int)TEST_SIZE, test_name[t]););
-        if (HDmemcmp(src_int8, dst2_int8, TEST_SIZE * sizeof(int8))) {
+        if (memcmp(src_int8, dst2_int8, TEST_SIZE * sizeof(int8))) {
             printf("Error converting %s int8 values!\n", test_name[t]);
             HEprint(stdout, 0);
             num_errs++;
@@ -163,7 +163,7 @@ test_conv(void)
         RESULT("DFKconvert");
         MESSAGE(6, printf("%d/%d seconds to convert %d %s int8 values with %d/%d stride\n", (int)(c4 - c3),
                           (int)CLOCKS_PER_SEC, (int)TEST_SIZE, test_name[t], DEST_STRIDE, SOURCE_STRIDE););
-        if (HDmemcmp(src_int8, dst2_int8, (TEST_SIZE / 2) * sizeof(int8))) {
+        if (memcmp(src_int8, dst2_int8, (TEST_SIZE / 2) * sizeof(int8))) {
             printf("Error converting %s int8 values with strides!\n", test_name[t]);
             HEprint(stdout, 0);
             num_errs++;
@@ -211,7 +211,7 @@ test_conv(void)
         RESULT("DFKconvert");
         MESSAGE(6, printf("%d/%d seconds to convert %d %s uint8 values\n", (int)(c4 - c3),
                           (int)CLOCKS_PER_SEC, (int)TEST_SIZE, test_name[t]););
-        if (HDmemcmp(src_uint8, dst2_uint8, TEST_SIZE * sizeof(uint8))) {
+        if (memcmp(src_uint8, dst2_uint8, TEST_SIZE * sizeof(uint8))) {
             printf("Error converting %s uint8 values!\n", test_name[t]);
             HEprint(stdout, 0);
             num_errs++;
@@ -245,7 +245,7 @@ test_conv(void)
         RESULT("DFKconvert");
         MESSAGE(6, printf("%d/%d seconds to convert %d %s uint8 values with %d/%d stride\n", (int)(c4 - c3),
                           (int)CLOCKS_PER_SEC, (int)TEST_SIZE, test_name[t], DEST_STRIDE, SOURCE_STRIDE););
-        if (HDmemcmp(src_uint8, dst2_uint8, (TEST_SIZE / 2) * sizeof(uint8))) {
+        if (memcmp(src_uint8, dst2_uint8, (TEST_SIZE / 2) * sizeof(uint8))) {
             printf("Error converting %s uint8 values with strides!\n", test_name[t]);
             HEprint(stdout, 0);
             num_errs++;
@@ -293,7 +293,7 @@ test_conv(void)
         RESULT("DFKconvert");
         MESSAGE(6, printf("%d/%d seconds to convert %d %s int16 values\n", (int)(c4 - c3),
                           (int)CLOCKS_PER_SEC, (int)TEST_SIZE, test_name[t]););
-        if (HDmemcmp(src_int16, dst2_int16, TEST_SIZE * sizeof(int16))) {
+        if (memcmp(src_int16, dst2_int16, TEST_SIZE * sizeof(int16))) {
             printf("Error converting %s int16 values!\n", test_name[t]);
             HEprint(stdout, 0);
             num_errs++;
@@ -326,7 +326,7 @@ test_conv(void)
         RESULT("DFKconvert");
         MESSAGE(6, printf("%d/%d seconds to convert %d %s int16 values with %d/%d stride\n", (int)(c4 - c3),
                           (int)CLOCKS_PER_SEC, (int)TEST_SIZE, test_name[t], DEST_STRIDE, SOURCE_STRIDE););
-        if (HDmemcmp(src_int16, dst2_int16, (TEST_SIZE / 2) * sizeof(int16))) {
+        if (memcmp(src_int16, dst2_int16, (TEST_SIZE / 2) * sizeof(int16))) {
             printf("Error converting %s int16 values with strides!\n", test_name[t]);
             HEprint(stdout, 0);
             num_errs++;
@@ -374,7 +374,7 @@ test_conv(void)
         RESULT("DFKconvert");
         MESSAGE(6, printf("%d/%d seconds to convert %d %s uint16 values\n", (int)(c4 - c3),
                           (int)CLOCKS_PER_SEC, (int)TEST_SIZE, test_name[t]););
-        if (HDmemcmp(src_uint16, dst2_uint16, TEST_SIZE * sizeof(uint16))) {
+        if (memcmp(src_uint16, dst2_uint16, TEST_SIZE * sizeof(uint16))) {
             printf("Error converting %s uint16 values!\n", test_name[t]);
             HEprint(stdout, 0);
             num_errs++;
@@ -407,7 +407,7 @@ test_conv(void)
         RESULT("DFKconvert");
         MESSAGE(6, printf("%d/%d seconds to convert %d %s uint16 values with %d/%d stride\n", (int)(c4 - c3),
                           (int)CLOCKS_PER_SEC, (int)TEST_SIZE, test_name[t], DEST_STRIDE, SOURCE_STRIDE););
-        if (HDmemcmp(src_uint16, dst2_uint16, (TEST_SIZE / 2) * sizeof(uint16))) {
+        if (memcmp(src_uint16, dst2_uint16, (TEST_SIZE / 2) * sizeof(uint16))) {
             printf("Error converting %s uint16 values with strides!\n", test_name[t]);
             HEprint(stdout, 0);
             num_errs++;
@@ -455,7 +455,7 @@ test_conv(void)
         RESULT("DFKconvert");
         MESSAGE(6, printf("%d/%d seconds to convert %d %s int32 values\n", (int)(c4 - c3),
                           (int)CLOCKS_PER_SEC, (int)TEST_SIZE, test_name[t]););
-        if (HDmemcmp(src_int32, dst2_int32, TEST_SIZE * sizeof(int32))) {
+        if (memcmp(src_int32, dst2_int32, TEST_SIZE * sizeof(int32))) {
             printf("Error converting %s int32 values!\n", test_name[t]);
             HEprint(stdout, 0);
             num_errs++;
@@ -488,7 +488,7 @@ test_conv(void)
         RESULT("DFKconvert");
         MESSAGE(6, printf("%d/%d seconds to convert %d %s int32 values with %d/%d stride\n", (int)(c4 - c3),
                           (int)CLOCKS_PER_SEC, (int)TEST_SIZE, test_name[t], DEST_STRIDE, SOURCE_STRIDE););
-        if (HDmemcmp(src_int32, dst2_int32, (TEST_SIZE / 2) * sizeof(int32))) {
+        if (memcmp(src_int32, dst2_int32, (TEST_SIZE / 2) * sizeof(int32))) {
             printf("Error converting %s int32 values with strides!\n", test_name[t]);
             HEprint(stdout, 0);
             num_errs++;
@@ -536,7 +536,7 @@ test_conv(void)
         RESULT("DFKconvert");
         MESSAGE(6, printf("%d/%d seconds to convert %d %s uint32 values\n", (int)(c4 - c3),
                           (int)CLOCKS_PER_SEC, (int)TEST_SIZE, test_name[t]););
-        if (HDmemcmp(src_uint32, dst2_uint32, TEST_SIZE * sizeof(uint32))) {
+        if (memcmp(src_uint32, dst2_uint32, TEST_SIZE * sizeof(uint32))) {
             printf("Error converting %s uint32 values!\n", test_name[t]);
             HEprint(stdout, 0);
             num_errs++;
@@ -569,7 +569,7 @@ test_conv(void)
         RESULT("DFKconvert");
         MESSAGE(6, printf("%d/%d seconds to convert %d %s uint32 values with %d/%d stride\n", (int)(c4 - c3),
                           (int)CLOCKS_PER_SEC, (int)TEST_SIZE, test_name[t], DEST_STRIDE, SOURCE_STRIDE););
-        if (HDmemcmp(src_uint32, dst2_uint32, (TEST_SIZE / 2) * sizeof(uint32))) {
+        if (memcmp(src_uint32, dst2_uint32, (TEST_SIZE / 2) * sizeof(uint32))) {
             printf("Error converting %s uint32 values with strides!\n", test_name[t]);
             HEprint(stdout, 0);
             num_errs++;
@@ -622,7 +622,7 @@ test_conv(void)
         MESSAGE(6, printf("%d/%d seconds to convert %d %s float32 values\n", (int)(c4 - c3),
                           (int)CLOCKS_PER_SEC, (int)TEST_SIZE, test_name[t]););
 
-        if (HDmemcmp(src_float32, dst2_float32, TEST_SIZE * sizeof(float32))) {
+        if (memcmp(src_float32, dst2_float32, TEST_SIZE * sizeof(float32))) {
             printf("Error converting %s float32 values!\n", test_name[t]);
             HEprint(stdout, 0);
             num_errs++;
@@ -660,7 +660,7 @@ test_conv(void)
         MESSAGE(6, printf("%d/%d seconds to convert %d %s float32 values with %d/%d stride\n", (int)(c4 - c3),
                           (int)CLOCKS_PER_SEC, (int)TEST_SIZE, test_name[t], DEST_STRIDE, SOURCE_STRIDE););
 
-        if (HDmemcmp(src_float32, dst2_float32, (TEST_SIZE / 2) * sizeof(float32))) {
+        if (memcmp(src_float32, dst2_float32, (TEST_SIZE / 2) * sizeof(float32))) {
             printf("Error converting %s float32 values with strides!\n", test_name[t]);
             HEprint(stdout, 0);
             num_errs++;
@@ -713,7 +713,7 @@ test_conv(void)
         MESSAGE(6, printf("%d/%d seconds to convert %d %s float64 values\n", (int)(c4 - c3),
                           (int)CLOCKS_PER_SEC, (int)TEST_SIZE, test_name[t]););
 
-        if (HDmemcmp(src_float64, dst2_float64, TEST_SIZE * sizeof(float64))) {
+        if (memcmp(src_float64, dst2_float64, TEST_SIZE * sizeof(float64))) {
             printf("Error converting %s float64 values!\n", test_name[t]);
             HEprint(stdout, 0);
             num_errs++;
@@ -750,7 +750,7 @@ test_conv(void)
         RESULT("DFKconvert");
         MESSAGE(6, printf("%d/%d seconds to convert %d %s float64 values with %d/%d stride\n", (int)(c4 - c3),
                           (int)CLOCKS_PER_SEC, (int)TEST_SIZE, test_name[t], DEST_STRIDE, SOURCE_STRIDE););
-        if (HDmemcmp(src_float64, dst2_float64, (TEST_SIZE / 2) * sizeof(float64))) {
+        if (memcmp(src_float64, dst2_float64, (TEST_SIZE / 2) * sizeof(float64))) {
             printf("Error converting %s float64 values with strides!\n", test_name[t]);
             HEprint(stdout, 0);
             num_errs++;

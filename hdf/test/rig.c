@@ -924,7 +924,7 @@ test_r24_jpeg(void)
 
     /* Compare data decompressed by HDF against that by JPEG lib, the buffers
        should be identical */
-    if (HDmemcmp(jpeg_24bit_temp, jpeglib_readbuf, JPEGY * JPEGX * NCOMPS)) {
+    if (memcmp(jpeg_24bit_temp, jpeglib_readbuf, JPEGY * JPEGX * NCOMPS)) {
         fprintf(stderr, "24-bit JPEG quality 80 image was incorrect\n");
         print_mismatched(jpeg_24bit_temp, jpeglib_readbuf, JPEGY * JPEGX * NCOMPS);
         num_errs++;
@@ -953,7 +953,7 @@ test_r24_jpeg(void)
 
     /* Compare data decompressed by HDF against that by JPEG lib, the buffers
        should be identical */
-    if (HDmemcmp(jpeg_24bit_temp, jpeglib_readbuf, JPEGY * JPEGX * NCOMPS)) {
+    if (memcmp(jpeg_24bit_temp, jpeglib_readbuf, JPEGY * JPEGX * NCOMPS)) {
         fprintf(stderr, "24-bit JPEG quality 30 image was incorrect\n");
         print_mismatched(jpeg_24bit_temp, jpeglib_readbuf, JPEGY * JPEGX * NCOMPS);
         num_errs++;
@@ -982,7 +982,7 @@ test_r24_jpeg(void)
 
     /* Compare data decompressed by HDF against that by JPEG lib, the buffers
        should be identical */
-    if (HDmemcmp(jpeg_24bit_temp, jpeglib_readbuf, JPEGY * JPEGX * NCOMPS)) {
+    if (memcmp(jpeg_24bit_temp, jpeglib_readbuf, JPEGY * JPEGX * NCOMPS)) {
         fprintf(stderr, "24-bit JPEG quality 75 image was incorrect\n");
         print_mismatched(jpeg_24bit_temp, jpeglib_readbuf, JPEGY * JPEGX * NCOMPS);
         num_errs++;
@@ -1040,7 +1040,7 @@ test_r24_jpeg(void)
 
         /* Compare compressed data from the HDF file against that from the
            non-HDF file.  The two buffers should be identical */
-        if (HDmemcmp(hdf_buffer, nonhdf_buffer, length)) {
+        if (memcmp(hdf_buffer, nonhdf_buffer, length)) {
             /* Display any mismatched values for debugging */
             print_mismatched(hdf_buffer, nonhdf_buffer, length);
             num_errs++;
@@ -1308,7 +1308,7 @@ test_r8(void)
     ret = DFR8getimage(JPEGFILE, (uint8 *)jpeg_8bit_temp, JPEGX, JPEGY, NULL);
     RESULT("DFR8getimage");
 
-    if (HDmemcmp(jpeg_8bit_temp, jpeg_8bit_j80, sizeof(jpeg_8bit_orig))) {
+    if (memcmp(jpeg_8bit_temp, jpeg_8bit_j80, sizeof(jpeg_8bit_orig))) {
         fprintf(stderr, "8-bit JPEG quality 80 image was incorrect\n");
         num_errs++;
     }
@@ -1324,7 +1324,7 @@ test_r8(void)
     ret = DFR8getimage(JPEGFILE, (uint8 *)jpeg_8bit_temp, JPEGX, JPEGY, NULL);
     RESULT("DFR8getimage");
 
-    if (HDmemcmp(jpeg_8bit_temp, jpeg_8bit_j30, sizeof(jpeg_8bit_orig))) {
+    if (memcmp(jpeg_8bit_temp, jpeg_8bit_j30, sizeof(jpeg_8bit_orig))) {
         fprintf(stderr, "8-bit JPEG quality 30 image was incorrect\n");
         num_errs++;
     }
@@ -1340,7 +1340,7 @@ test_r8(void)
     ret = DFR8getimage(JPEGFILE, (uint8 *)jpeg_8bit_temp, JPEGX, JPEGY, NULL);
     RESULT("DFR8getimage");
 
-    if (HDmemcmp(jpeg_8bit_temp, jpeg_8bit_j75, sizeof(jpeg_8bit_orig))) {
+    if (memcmp(jpeg_8bit_temp, jpeg_8bit_j75, sizeof(jpeg_8bit_orig))) {
         fprintf(stderr, "8-bit JPEG quality 75 image was incorrect\n");
         num_errs++;
     }
@@ -1405,7 +1405,7 @@ test_pal(void)
     /* read and check palette 1 */
     ret = DFPgetpal(TESTFILE, ipal);
     RESULT("DFPgetpal");
-    if (HDmemcmp(ipal, pal1, 768) != 0)
+    if (memcmp(ipal, pal1, 768) != 0)
         for (i = 0; i < 768; i++)
             if ((uint8)pal1[i] != (uint8)ipal[i])
                 printf("Error at %d, ipal %d pal1 %d\n", (int)i, (int)ipal[i], (int)pal1[i]);
@@ -1418,7 +1418,7 @@ test_pal(void)
     /* read and check palette 2 */
     ret = DFPgetpal(TESTFILE, ipal);
     RESULT("DFPgetpal");
-    if (HDmemcmp(ipal, pal2, 768) != 0)
+    if (memcmp(ipal, pal2, 768) != 0)
         for (i = 0; i < 768; i++)
             if ((uint8)ipal[i] != (uint8)pal2[i])
                 printf("Error at %d, ipal %d pal2 %d\n", (int)i, (int)ipal[i], (int)pal2[i]);
@@ -1438,7 +1438,7 @@ test_pal(void)
     RESULT("DFPreadref");
     ret = DFPgetpal(TESTFILE, ipal);
     RESULT("DFPgetpal");
-    if (HDmemcmp(ipal, pal2, 768) != 0)
+    if (memcmp(ipal, pal2, 768) != 0)
         for (i = 0; i < 768; i++)
             if (ipal[i] != pal2[i])
                 printf("Error at %d, ipal %d pal2 %d\n", i, ipal[i], pal2[i]);
@@ -1448,7 +1448,7 @@ test_pal(void)
     RESULT("DFPreadref");
     ret = DFPgetpal(TESTFILE, ipal);
     RESULT("DFPgetpal");
-    if (HDmemcmp(ipal, pal1, 768) != 0)
+    if (memcmp(ipal, pal1, 768) != 0)
         for (i = 0; i < 768; i++)
             if (ipal[i] != pal1[i])
                 printf("Error at %d, ipal %d pal1 %d\n", i, ipal[i], pal1[i]);
@@ -1467,7 +1467,7 @@ test_pal(void)
 
     ret = DFPgetpal(TESTFILE, ipal);
     RESULT("DFPgetpal");
-    if (HDmemcmp(ipal, pal1, 768) != 0)
+    if (memcmp(ipal, pal1, 768) != 0)
         for (i = 0; i < 768; i++)
             if (ipal[i] != pal1[i])
                 printf("(%d) Error at %d, ipal %d pal1 %d\n", __LINE__, i, ipal[i], pal1[i]);

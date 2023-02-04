@@ -1390,7 +1390,7 @@ test_getpalinfo()
         status = Hgetelement(fid, palinfo_array[0].tag, palinfo_array[0].ref, inbuf);
         CHECK_VOID(status, FAIL, "Hgetelement");
 
-        if (HDmemcmp(inbuf, paletteA, palinfo_array[0].length) != 0)
+        if (memcmp(inbuf, paletteA, palinfo_array[0].length) != 0)
             fprintf(stderr,
                     "palette data pointed by tag/ref = %d/%d at offset/length = %d/%d differs from written\n",
                     palinfo_array[0].tag, palinfo_array[0].ref, palinfo_array[0].offset,
@@ -1408,7 +1408,7 @@ test_getpalinfo()
         status = Hgetelement(fid, palinfo_array[7].tag, palinfo_array[7].ref, inbuf);
         CHECK_VOID(status, FAIL, "Hgetelement");
 
-        if (HDmemcmp(inbuf, palette_buf1, palinfo_array[7].length) != 0)
+        if (memcmp(inbuf, palette_buf1, palinfo_array[7].length) != 0)
             fprintf(stderr,
                     "palette data pointed by tag/ref = %d/%d at offset/length = %d/%d differs from written\n",
                     palinfo_array[7].tag, palinfo_array[7].ref, palinfo_array[7].offset,

@@ -249,7 +249,7 @@ vdata_cmp(int32 vs1, int32 vs2, char *gname, char *cname, diff_opt_t *opt)
 
     if (vsize1 == vsize2) {
         for (i = 0; i < nv1; i++) {
-            if (HDmemcmp(b1, b2, (size_t)vsize1) == 0) {
+            if (memcmp(b1, b2, (size_t)vsize1) == 0) {
                 b1 += vsize1;
                 b2 += vsize2;
                 continue;

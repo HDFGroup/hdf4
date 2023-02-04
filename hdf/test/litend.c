@@ -109,7 +109,7 @@ test_little_read(void)
             ret     = DFSDgetdata(filename, rank, dimsizes, (VOIDP)data_i8);
             RESULT("DFSDgetdata");
 
-            if (HDmemcmp(cdata_i8, data_i8, CDIM_X * CDIM_Y * sizeof(int8))) {
+            if (memcmp(cdata_i8, data_i8, CDIM_X * CDIM_Y * sizeof(int8))) {
                 fprintf(stderr, "INT8 data was incorrect\n");
                 num_errs++;
             } /* end if */
@@ -137,7 +137,7 @@ test_little_read(void)
             ret     = DFSDgetdata(filename, rank, dimsizes, (VOIDP)data_u8);
             RESULT("DFSDgetdata");
 
-            if (HDmemcmp(cdata_u8, data_u8, CDIM_X * CDIM_Y * sizeof(uint8))) {
+            if (memcmp(cdata_u8, data_u8, CDIM_X * CDIM_Y * sizeof(uint8))) {
                 fprintf(stderr, "UINT8 data was incorrect\n");
                 num_errs++;
             } /* end if */
@@ -165,7 +165,7 @@ test_little_read(void)
             ret      = DFSDgetdata(filename, rank, dimsizes, (VOIDP)data_i16);
             RESULT("DFSDgetdata");
 
-            if (HDmemcmp(cdata_i16, data_i16, CDIM_X * CDIM_Y * sizeof(int16))) {
+            if (memcmp(cdata_i16, data_i16, CDIM_X * CDIM_Y * sizeof(int16))) {
                 fprintf(stderr, "INT16 data was incorrect\n");
                 num_errs++;
             } /* end if */
@@ -193,7 +193,7 @@ test_little_read(void)
             ret      = DFSDgetdata(filename, rank, dimsizes, (VOIDP)data_u16);
             RESULT("DFSDgetdata");
 
-            if (HDmemcmp(cdata_u16, data_u16, CDIM_X * CDIM_Y * sizeof(uint16))) {
+            if (memcmp(cdata_u16, data_u16, CDIM_X * CDIM_Y * sizeof(uint16))) {
                 fprintf(stderr, "UINT16 data was incorrect\n");
                 num_errs++;
             } /* end if */
@@ -221,7 +221,7 @@ test_little_read(void)
             ret      = DFSDgetdata(filename, rank, dimsizes, (VOIDP)data_i32);
             RESULT("DFSDgetdata");
 
-            if (HDmemcmp(cdata_i32, data_i32, CDIM_X * CDIM_Y * sizeof(int32))) {
+            if (memcmp(cdata_i32, data_i32, CDIM_X * CDIM_Y * sizeof(int32))) {
                 fprintf(stderr, "INT32 data was incorrect\n");
                 num_errs++;
             } /* end if */
@@ -249,7 +249,7 @@ test_little_read(void)
             ret      = DFSDgetdata(filename, rank, dimsizes, (VOIDP)data_u32);
             RESULT("DFSDgetdata");
 
-            if (HDmemcmp(cdata_u32, data_u32, CDIM_X * CDIM_Y * sizeof(uint32))) {
+            if (memcmp(cdata_u32, data_u32, CDIM_X * CDIM_Y * sizeof(uint32))) {
                 fprintf(stderr, "UINT32 data was incorrect\n");
                 num_errs++;
             } /* end if */
@@ -277,7 +277,7 @@ test_little_read(void)
             ret      = DFSDgetdata(filename, rank, dimsizes, (VOIDP)data_f32);
             RESULT("DFSDgetdata");
 
-            if (HDmemcmp(cdata_f32, data_f32, CDIM_X * CDIM_Y * sizeof(float32))) {
+            if (memcmp(cdata_f32, data_f32, CDIM_X * CDIM_Y * sizeof(float32))) {
                 fprintf(stderr, "FLOAT32 data was incorrect\n");
                 num_errs++;
             } /* end if */
@@ -305,7 +305,7 @@ test_little_read(void)
             ret      = DFSDgetdata(filename, rank, dimsizes, (VOIDP)data_f64);
             RESULT("DFSDgetdata");
 
-            if (HDmemcmp(cdata_f64, data_f64, CDIM_X * CDIM_Y * sizeof(float64))) {
+            if (memcmp(cdata_f64, data_f64, CDIM_X * CDIM_Y * sizeof(float64))) {
                 fprintf(stderr, "FLOAT64 data was incorrect\n");
                 num_errs++;
             } /* end if */
@@ -429,7 +429,7 @@ test_little_write(void)
             ret     = DFSDgetdata(TMPFILE, rank, dimsizes, (VOIDP)data_i8);
             RESULT("DFSDgetdata");
 
-            if (HDmemcmp(cdata_i8, data_i8, CDIM_X * CDIM_Y * sizeof(int8))) {
+            if (memcmp(cdata_i8, data_i8, CDIM_X * CDIM_Y * sizeof(int8))) {
                 fprintf(stderr, "INT8 data was incorrect\n");
                 num_errs++;
             } /* end if */
@@ -455,7 +455,7 @@ test_little_write(void)
             ret     = DFSDgetdata(TMPFILE, rank, dimsizes, (VOIDP)data_u8);
             RESULT("DFSDgetdata");
 
-            if (HDmemcmp(cdata_u8, data_u8, CDIM_X * CDIM_Y * sizeof(uint8))) {
+            if (memcmp(cdata_u8, data_u8, CDIM_X * CDIM_Y * sizeof(uint8))) {
                 fprintf(stderr, "UINT8 data was incorrect\n");
                 num_errs++;
             } /* end if */
@@ -481,7 +481,7 @@ test_little_write(void)
             ret      = DFSDgetdata(TMPFILE, rank, dimsizes, (VOIDP)data_i16);
             RESULT("DFSDgetdata");
 
-            if (HDmemcmp(cdata_i16, data_i16, CDIM_X * CDIM_Y * sizeof(int16))) {
+            if (memcmp(cdata_i16, data_i16, CDIM_X * CDIM_Y * sizeof(int16))) {
                 fprintf(stderr, "INT16 data was incorrect\n");
                 num_errs++;
             } /* end if */
@@ -507,7 +507,7 @@ test_little_write(void)
             ret      = DFSDgetdata(TMPFILE, rank, dimsizes, (VOIDP)data_u16);
             RESULT("DFSDgetdata");
 
-            if (HDmemcmp(cdata_u16, data_u16, CDIM_X * CDIM_Y * sizeof(uint16))) {
+            if (memcmp(cdata_u16, data_u16, CDIM_X * CDIM_Y * sizeof(uint16))) {
                 fprintf(stderr, "UINT16 data was incorrect\n");
                 num_errs++;
             } /* end if */
@@ -533,7 +533,7 @@ test_little_write(void)
             ret      = DFSDgetdata(TMPFILE, rank, dimsizes, (VOIDP)data_i32);
             RESULT("DFSDgetdata");
 
-            if (HDmemcmp(cdata_i32, data_i32, CDIM_X * CDIM_Y * sizeof(int32))) {
+            if (memcmp(cdata_i32, data_i32, CDIM_X * CDIM_Y * sizeof(int32))) {
                 fprintf(stderr, "INT32 data was incorrect\n");
                 num_errs++;
             } /* end if */
@@ -559,7 +559,7 @@ test_little_write(void)
             ret      = DFSDgetdata(TMPFILE, rank, dimsizes, (VOIDP)data_u32);
             RESULT("DFSDgetdata");
 
-            if (HDmemcmp(cdata_u32, data_u32, CDIM_X * CDIM_Y * sizeof(uint32))) {
+            if (memcmp(cdata_u32, data_u32, CDIM_X * CDIM_Y * sizeof(uint32))) {
                 fprintf(stderr, "UINT32 data was incorrect\n");
                 num_errs++;
             } /* end if */
@@ -585,7 +585,7 @@ test_little_write(void)
             ret      = DFSDgetdata(TMPFILE, rank, dimsizes, (VOIDP)data_f32);
             RESULT("DFSDgetdata");
 
-            if (HDmemcmp(cdata_f32, data_f32, CDIM_X * CDIM_Y * sizeof(float32))) {
+            if (memcmp(cdata_f32, data_f32, CDIM_X * CDIM_Y * sizeof(float32))) {
                 fprintf(stderr, "FLOAT32 data was incorrect\n");
                 num_errs++;
             } /* end if */
@@ -611,7 +611,7 @@ test_little_write(void)
             ret      = DFSDgetdata(TMPFILE, rank, dimsizes, (VOIDP)data_f64);
             RESULT("DFSDgetdata");
 
-            if (HDmemcmp(cdata_f64, data_f64, CDIM_X * CDIM_Y * sizeof(float64))) {
+            if (memcmp(cdata_f64, data_f64, CDIM_X * CDIM_Y * sizeof(float64))) {
                 fprintf(stderr, "FLOAT64 data was incorrect\n");
                 num_errs++;
             } /* end if */

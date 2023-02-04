@@ -494,7 +494,7 @@ diff_sds_attrs(int32 sds1_id, int32 nattrs1, int32 sds2_id, int32 nattrs2, char 
             goto out;
         }
 
-        cmp = HDmemcmp(attr1_buf, attr2_buf, nelms1 * DFKNTsize(dtype1 | DFNT_NATIVE));
+        cmp = memcmp(attr1_buf, attr2_buf, nelms1 * DFKNTsize(dtype1 | DFNT_NATIVE));
         if (cmp != 0) {
             printf("\n---------------------------\n");
             printf("%s:%s = \n", sds1_name, attr1_name);
