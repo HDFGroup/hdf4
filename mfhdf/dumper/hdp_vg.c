@@ -674,7 +674,7 @@ get_VGindex_list(int32 file_id, dump_info_t *dumpvg_opts, int32 **vg_chosen, int
                     else {
                         /* reallocate the array vg_chosen to hold multiple
                            vgroups since name is not unique b/w vgroups */
-                        *vg_chosen = (int32 *)HDrealloc(*vg_chosen, sizeof(int32) * (num_vg_chosen + 1));
+                        *vg_chosen = (int32 *)realloc(*vg_chosen, sizeof(int32) * (num_vg_chosen + 1));
                         if (*vg_chosen == NULL) {
                             fprintf(stderr, "Failure in get_VGindex_list: Not enough memory!\n");
                             exit(1);
@@ -709,7 +709,7 @@ get_VGindex_list(int32 file_id, dump_info_t *dumpvg_opts, int32 **vg_chosen, int
                     else {
                         /* reallocate the array vg_chosen to hold multiple
                            vgroups since class name is not unique b/w vgroups */
-                        *vg_chosen = (int32 *)HDrealloc(*vg_chosen, sizeof(int32) * (num_vg_chosen + 1));
+                        *vg_chosen = (int32 *)realloc(*vg_chosen, sizeof(int32) * (num_vg_chosen + 1));
                         if (*vg_chosen == NULL) {
                             fprintf(stderr, "Failure in get_VGindex_list: Not enough memory!\n");
                             exit(1);
@@ -1302,7 +1302,7 @@ dvg(dump_info_t *dumpvg_opts, intn curr_arg, intn argc, char *argv[])
                reallocate the list of nodes to the proper amount */
             if (num_nodes > max_vgs) {
                 max_vgs += NUM_VGS;
-                list = HDrealloc(list, (uint32)sizeof(vg_info_t *) * max_vgs);
+                list = realloc(list, (uint32)sizeof(vg_info_t *) * max_vgs);
                 CHECK_ALLOC(list, "list", "dvg");
             }
 

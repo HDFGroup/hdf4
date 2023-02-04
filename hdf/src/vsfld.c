@@ -307,7 +307,7 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
         }
         else {
-            if ((tmp_sym = (SYMDEF *)HDrealloc(tmp_sym, sizeof(SYMDEF) * (size_t)(usymid + 1))) == NULL)
+            if ((tmp_sym = (SYMDEF *)realloc(tmp_sym, sizeof(SYMDEF) * (size_t)(usymid + 1))) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
         }
         vs->usym = tmp_sym;

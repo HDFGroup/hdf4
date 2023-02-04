@@ -311,7 +311,7 @@ diff_match_dim_table_add(diff_match_dim_table_t *table, unsigned *flags, char *d
     if (table->nobjs == table->size) {
         table->size *= 2;
         table->objs =
-            (diff_match_dim_name_t *)HDrealloc(table->objs, table->size * sizeof(diff_match_dim_name_t));
+            (diff_match_dim_name_t *)realloc(table->objs, table->size * sizeof(diff_match_dim_name_t));
 
         for (i = table->nobjs; i < table->size; i++) {
             table->objs[i].ref      = -1;
@@ -402,7 +402,7 @@ diff_dim_table_add(diff_dim_table_t *table, int ref, char *name)
 
     if (table->nobjs == table->size) {
         table->size *= 2;
-        table->objs = (diff_dim_name_t *)HDrealloc(table->objs, table->size * sizeof(diff_dim_name_t));
+        table->objs = (diff_dim_name_t *)realloc(table->objs, table->size * sizeof(diff_dim_name_t));
 
         for (i = table->nobjs; i < table->size; i++) {
             table->objs[i].ref = -1;

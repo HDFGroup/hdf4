@@ -43,7 +43,7 @@ match_table_add(match_table_t *table, unsigned *flags, char *path, int32 tag1, i
 
     if (table->nobjs == table->size) {
         table->size *= 2;
-        table->objs = (match_info_t *)HDrealloc(table->objs, table->size * sizeof(match_info_t));
+        table->objs = (match_info_t *)realloc(table->objs, table->size * sizeof(match_info_t));
 
         for (i = table->nobjs; i < table->size; i++) {
             table->objs[i].tag1 = table->objs[i].ref1 = -1;

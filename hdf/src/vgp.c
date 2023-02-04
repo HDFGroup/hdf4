@@ -1977,8 +1977,8 @@ vinsertpair(VGROUP *vg,  /* IN: vgroup struct */
     if ((intn)vg->nvelt >= vg->msize) {
         vg->msize *= 2;
 
-        vg->tag = (uint16 *)HDrealloc((VOIDP)vg->tag, vg->msize * sizeof(uint16));
-        vg->ref = (uint16 *)HDrealloc((VOIDP)vg->ref, vg->msize * sizeof(uint16));
+        vg->tag = (uint16 *)realloc((VOIDP)vg->tag, vg->msize * sizeof(uint16));
+        vg->ref = (uint16 *)realloc((VOIDP)vg->ref, vg->msize * sizeof(uint16));
 
         if ((vg->tag == NULL) || (vg->ref == NULL))
             HGOTO_ERROR(DFE_NOSPACE, FAIL);

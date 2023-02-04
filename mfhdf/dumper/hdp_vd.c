@@ -342,7 +342,7 @@ choose_vd(dump_info_t *dumpvd_opts, int32 **vd_chosen, int32 file_id, int *index
                 if (vd_count < num_vd_chosen)
                     (*vd_chosen)[vd_count] = index;
                 else {
-                    *vd_chosen = (int32 *)HDrealloc(*vd_chosen, sizeof(int32) * (num_vd_chosen + 1));
+                    *vd_chosen = (int32 *)realloc(*vd_chosen, sizeof(int32) * (num_vd_chosen + 1));
                     if (*vd_chosen == NULL) {
                         fprintf(stderr, "Failure in choose_vd: Memory re-allocation error\n");
                         exit(1);

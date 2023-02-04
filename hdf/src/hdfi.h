@@ -329,7 +329,6 @@ typedef intptr_t hdf_pint_t;
 #define HDmalloc(s)     malloc(s)
 #define HDcalloc(a, b)  calloc(a, b)
 #define HDfree(p)       free(p)
-#define HDrealloc(p, s) realloc(p, s)
 
 /* Macro to free space and clear pointer to NULL */
 #define HDfreenclear(p)                                                                                      \

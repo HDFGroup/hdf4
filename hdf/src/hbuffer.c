@@ -356,7 +356,7 @@ HBPwrite(accrec_t *access_rec, int32 length, const void *data)
         else {
             uint8 *temp_buf = info->buf; /* temporary buffer pointer in case realloc fails */
 
-            if ((info->buf = HDrealloc(info->buf, (uint32)new_len)) == NULL) {
+            if ((info->buf = realloc(info->buf, (uint32)new_len)) == NULL) {
                 info->buf = temp_buf;
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
             } /* end if */

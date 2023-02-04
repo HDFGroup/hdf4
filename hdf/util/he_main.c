@@ -816,13 +816,13 @@ readFromFile(char *file, char **pBuf)
         if (bufLen == HE_BUF_SZ)
             *pBuf = (char *)HDmalloc(bufLen);
         else
-            *pBuf = (char *)HDrealloc(*pBuf, bufLen);
+            *pBuf = (char *)realloc(*pBuf, bufLen);
         if (*pBuf == NULL)
             return FAIL;
 
         num_read = (int32)fread((*pBuf) + soFar, 1, HE_BUF_SZ, fp);
     }
-    *pBuf          = (char *)HDrealloc(*pBuf, soFar + 1);
+    *pBuf          = (char *)realloc(*pBuf, soFar + 1);
     (*pBuf)[soFar] = '\0';
     fclose(fp);
     return soFar;

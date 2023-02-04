@@ -693,7 +693,7 @@ match_dim_table_add(match_dim_table_t *mdim_tbl, unsigned *flags, char *dim_name
     if (mdim_tbl->nobjs == mdim_tbl->size) {
         mdim_tbl->size *= 2;
         mdim_tbl->objs =
-            (match_dim_name_t *)HDrealloc(mdim_tbl->objs, mdim_tbl->size * sizeof(match_dim_name_t));
+            (match_dim_name_t *)realloc(mdim_tbl->objs, mdim_tbl->size * sizeof(match_dim_name_t));
 
         for (i = mdim_tbl->nobjs; i < mdim_tbl->size; i++) {
             mdim_tbl->objs[i].ref      = -1;
@@ -782,7 +782,7 @@ dim_table_add(dim_table_t *dim_tbl, int ref, char *name)
 
     if (dim_tbl->nobjs == dim_tbl->size) {
         dim_tbl->size *= 2;
-        dim_tbl->objs = (dim_name_t *)HDrealloc(dim_tbl->objs, dim_tbl->size * sizeof(dim_name_t));
+        dim_tbl->objs = (dim_name_t *)realloc(dim_tbl->objs, dim_tbl->size * sizeof(dim_name_t));
 
         for (i = dim_tbl->nobjs; i < dim_tbl->size; i++) {
             dim_tbl->objs[i].ref = -1;

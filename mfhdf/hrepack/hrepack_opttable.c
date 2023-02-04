@@ -83,7 +83,7 @@ options_add_chunk(obj_list_t *obj_list, int n_objs, int32 *chunk_lengths, int ch
 
     if (op_tbl->nelems + n_objs >= op_tbl->size) {
         op_tbl->size += n_objs;
-        op_tbl->objs = (pack_info_t *)HDrealloc(op_tbl->objs, op_tbl->size * sizeof(pack_info_t));
+        op_tbl->objs = (pack_info_t *)realloc(op_tbl->objs, op_tbl->size * sizeof(pack_info_t));
         for (i = op_tbl->nelems; i < op_tbl->size; i++) {
             HDstrcpy(op_tbl->objs[i].objpath, "\0");
             op_tbl->objs[i].comp.info  = -1;
@@ -163,7 +163,7 @@ options_add_comp(obj_list_t *obj_list, int n_objs, comp_info_t comp, options_tab
 
     if (op_tbl->nelems + n_objs >= op_tbl->size) {
         op_tbl->size += n_objs;
-        op_tbl->objs = (pack_info_t *)HDrealloc(op_tbl->objs, op_tbl->size * sizeof(pack_info_t));
+        op_tbl->objs = (pack_info_t *)realloc(op_tbl->objs, op_tbl->size * sizeof(pack_info_t));
         for (i = op_tbl->nelems; i < op_tbl->size; i++) {
             HDstrcpy(op_tbl->objs[i].objpath, "\0");
             op_tbl->objs[i].comp.info  = -1;

@@ -66,7 +66,7 @@ list_table_add(list_table_t *list_tbl, int tag, int ref, char *path)
 
     if (list_tbl->nobjs == list_tbl->size) {
         list_tbl->size *= 2;
-        list_tbl->objs = (obj_info_t *)HDrealloc(list_tbl->objs, list_tbl->size * sizeof(obj_info_t));
+        list_tbl->objs = (obj_info_t *)realloc(list_tbl->objs, list_tbl->size * sizeof(obj_info_t));
 
         for (i = list_tbl->nobjs; i < list_tbl->size; i++) {
             list_tbl->objs[i].tag  = -1;

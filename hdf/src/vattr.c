@@ -349,7 +349,7 @@ VSsetattr(int32 vsid, int32 findex, const char *attrname, int32 datatype, int32 
         vs->alist = (vs_attr_t *)HDmalloc(sizeof(vs_attr_t));
     }
     else
-        vs->alist = HDrealloc(vs->alist, (vs->nattrs + 1) * sizeof(vs_attr_t));
+        vs->alist = realloc(vs->alist, (vs->nattrs + 1) * sizeof(vs_attr_t));
     if (vs->alist == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     vs->alist[vs->nattrs].findex = findex;
@@ -842,7 +842,7 @@ Vsetattr(int32 vgid, const char *attrname, int32 datatype, int32 count, const vo
         vg->alist = (vg_attr_t *)HDmalloc(sizeof(vg_attr_t));
     else
         /* not exist */
-        vg->alist = HDrealloc(vg->alist, (vg->nattrs + 1) * sizeof(vg_attr_t));
+        vg->alist = realloc(vg->alist, (vg->nattrs + 1) * sizeof(vg_attr_t));
     if (vg->alist == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     vg->nattrs++;
