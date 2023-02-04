@@ -1125,9 +1125,9 @@ test_getpalinfo()
     uint8 image_buf[WIDTH][LENGTH][N_COMPS_IMG]; /* data of raster image */
     uint8 palette_buf1[N_ENTRIES][N_COMPS_PAL];  /* for LUT mostly */
     uint8 palette_buf2[N_ENTRIES][N_COMPS_PAL];
-    uint8 paletteA[N_ENTRIES * N_COMPS_PAL]; /* for IP8 mostly */
-    uint8 paletteB[N_ENTRIES * N_COMPS_PAL];
-    uint8 paletteD[N_ENTRIES * N_COMPS_PAL];
+    uint8 paletteA[N_ENTRIES * N_COMPS_PAL] = {0}; /* for IP8 mostly */
+    uint8 paletteB[N_ENTRIES * N_COMPS_PAL] = {0};
+    uint8 paletteD[N_ENTRIES * N_COMPS_PAL] = {0};
     intn  n_pals = 0; /* number of palettes, returned by DFPnpals and GRgetpalinfo */
 
     hdf_ddinfo_t *palinfo_array = NULL; /* list of palette DDs */
