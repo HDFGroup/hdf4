@@ -72,7 +72,7 @@ copy_vs(int32 infile_id, int32 outfile_id, int32 tag, /* tag of input VS */
     }
 
     /* ignore reserved HDF groups/vdatas; they are lone ones */
-    if (is_lone == 1 && vdata_class != NULL) {
+    if (is_lone == 1 && vdata_class[0] == '\0') {
         if (is_reserved(vdata_class)) {
             if (VSdetach(vdata_id) == FAIL)
                 printf("Failed to detach vdata <%s>\n", path_name);

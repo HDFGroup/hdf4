@@ -388,7 +388,7 @@ DFSDgetdimstrs(int dim, char *label, char *unit, char *format)
     for (luf = LABEL; luf <= FORMAT; luf++) {
         lufp = (luf == LABEL) ? label : (luf == UNIT) ? unit : format;
         if (lufp) {
-            if (!Readsdg.dimluf) { /* no labels etc */
+            if (Readsdg.dimluf[0] == NULL) { /* no labels etc */
                 *lufp = '\0';
                 continue;
             }
