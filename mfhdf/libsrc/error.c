@@ -64,8 +64,8 @@ nc_serror(const char *fmt, ...)
                 break;
         }
 
-        errno = 0;            /* ??? */
-    }                         /* NC_VERBOSE */
+        errno = 0; /* ??? */
+    }              /* NC_VERBOSE */
 
     if (ncopts & NC_FATAL) {
         exit(ncopts);

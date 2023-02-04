@@ -462,8 +462,8 @@ main(void)
 
     /*	NC	*/
     printf("NC ");
-    cdf_assert(ncinquire(id, &(cdesc->num_dims), &(cdesc->num_vars), &(cdesc->num_attrs), &(cdesc->xtendim)) ==
-           id);
+    cdf_assert(
+        ncinquire(id, &(cdesc->num_dims), &(cdesc->num_vars), &(cdesc->num_attrs), &(cdesc->xtendim)) == id);
     if (cdesc->num_dims != num_dims) {
         printf(" num_dims  : %d != %d\n", (int)cdesc->num_dims, (int)num_dims);
         exit(1);
@@ -502,7 +502,7 @@ main(void)
     for (ii = 0; ii < cdesc->num_vars; ii++, tvp++) {
         int jj;
         cdf_assert(ncvarinq(id, ii, vdesc->mnem, &(vdesc->type), &(vdesc->ndims), vdesc->dims,
-                        &(vdesc->num_attrs)) == ii);
+                            &(vdesc->num_attrs)) == ii);
         if (strcmp(tvp->mnem, vdesc->mnem) != 0) {
             printf("attr %d mnem mismatch %s, %s\n", (int)ii, tvp->mnem, vdesc->mnem);
             continue;
