@@ -86,7 +86,7 @@ typedef FILE *hdf_file_t;
 typedef int hdf_file_t;
 #define HI_OPEN(p, a)     (((a)&DFACC_WRITE) ? open((p), O_RDWR) : open((p), O_RDONLY))
 #define HI_CREATE(p)      (open((p), O_RDWR | O_CREAT | O_TRUNC, 0666))
-#define HI_CLOSE(f)       (((f = ((close(f) == 0) ? NULL : f)) == NULL) ? SUCCEED : FAIL)
+#define HI_CLOSE(f)       (((f = ((close(f) == 0) ? -1 : f)) == -1) ? SUCCEED : FAIL)
 #define HI_FLUSH(f)       (SUCCEED)
 #define HI_READ(f, b, n)  (((n) == read((f), (char *)(b), (n))) ? SUCCEED : FAIL)
 #define HI_WRITE(f, b, n) (((n) == write((f), (char *)(b), (n))) ? SUCCEED : FAIL)
