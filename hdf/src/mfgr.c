@@ -431,7 +431,7 @@ New_grfile(HFILEID f)
     gr_info_t *g;
 
     /* Allocate the gr_info_t structure */
-    if (NULL == (g = (gr_info_t *)HDcalloc(1, sizeof(gr_info_t))))
+    if (NULL == (g = (gr_info_t *)calloc(1, sizeof(gr_info_t))))
         return (NULL);
 
     /* Assign the file ID & insert into the tree */

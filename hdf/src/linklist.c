@@ -80,7 +80,7 @@ HULcreate_list(HULfind_func_t find_func /* IN: object comparison function */
     HEclear();
 
     /* Allocate the head information */
-    if ((ret_value = (list_head_t *)HDcalloc(1, sizeof(list_head_t))) == NULL)
+    if ((ret_value = (list_head_t *)calloc(1, sizeof(list_head_t))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, NULL);
 
     /* Set the counter */

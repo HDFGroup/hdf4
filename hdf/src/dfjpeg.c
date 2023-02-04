@@ -246,7 +246,7 @@ DFCIjpeg(int32 file_id, uint16 tag, uint16 ref, int32 xdim, int32 ydim, const vo
     intn                         row_stride;
     const uint8                 *image_buffer = image;
 
-    if ((cinfo_ptr = HDcalloc(1, sizeof(struct jpeg_compress_struct))) == NULL)
+    if ((cinfo_ptr = calloc(1, sizeof(struct jpeg_compress_struct))) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     if ((jerr_ptr = HDmalloc(sizeof(struct jpeg_error_mgr))) == NULL)

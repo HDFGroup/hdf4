@@ -18,7 +18,6 @@
 
 /* We need to define these to standard ones when HDF is not defined */
 #ifndef HDF
-#define HDcalloc(nelem, elsize) calloc(nelem, elsize)
 #define HDmalloc(s)             malloc(s)
 #define HDfree(s)               free(s)
 #endif

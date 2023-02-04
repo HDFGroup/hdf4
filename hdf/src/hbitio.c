@@ -789,9 +789,9 @@ HIget_bitfile_rec(void)
 {
     bitrec_t *ret_value = NULL;
 
-    if ((ret_value = HDcalloc(1, sizeof(bitrec_t))) == NULL)
+    if ((ret_value = calloc(1, sizeof(bitrec_t))) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, NULL);
-    if ((ret_value->bytea = HDcalloc(1, BITBUF_SIZE)) == NULL)
+    if ((ret_value->bytea = calloc(1, BITBUF_SIZE)) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, NULL);
 
     return ret_value;

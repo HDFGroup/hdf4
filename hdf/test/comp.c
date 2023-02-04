@@ -140,12 +140,12 @@ allocate_buffers(void)
         outbuf_int32[i]  = (int32 *)HDmalloc(BUFSIZE * sizeof(int32));
         outbuf_uint32[i] = (uint32 *)HDmalloc(BUFSIZE * sizeof(uint32));
     } /* end for */
-    inbuf_int8   = (int8 *)HDcalloc(BUFSIZE, sizeof(int8));
-    inbuf_uint8  = (uint8 *)HDcalloc(BUFSIZE, sizeof(uint8));
-    inbuf_int16  = (int16 *)HDcalloc(BUFSIZE, sizeof(int16));
-    inbuf_uint16 = (uint16 *)HDcalloc(BUFSIZE, sizeof(uint16));
-    inbuf_int32  = (int32 *)HDcalloc(BUFSIZE, sizeof(int32));
-    inbuf_uint32 = (uint32 *)HDcalloc(BUFSIZE, sizeof(uint32));
+    inbuf_int8   = (int8 *)calloc(BUFSIZE, sizeof(int8));
+    inbuf_uint8  = (uint8 *)calloc(BUFSIZE, sizeof(uint8));
+    inbuf_int16  = (int16 *)calloc(BUFSIZE, sizeof(int16));
+    inbuf_uint16 = (uint16 *)calloc(BUFSIZE, sizeof(uint16));
+    inbuf_int32  = (int32 *)calloc(BUFSIZE, sizeof(int32));
+    inbuf_uint32 = (uint32 *)calloc(BUFSIZE, sizeof(uint32));
 } /* allocate_buffers() */
 
 static void

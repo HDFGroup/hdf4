@@ -297,7 +297,7 @@ New_vfile(HFILEID f /* IN: file handle */)
     vfile_t *v = NULL;
 
     /* Allocate the vfile_t structure */
-    if (NULL == (v = (vfile_t *)HDcalloc(1, sizeof(vfile_t))))
+    if (NULL == (v = (vfile_t *)calloc(1, sizeof(vfile_t))))
         return (NULL);
 
     /* Assign the file ID & insert into the tree */

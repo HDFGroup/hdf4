@@ -102,7 +102,7 @@ HAinit_group(group_t grp,      /* IN: Group to initialize */
 #endif /* HASH_SIZE_POWER_2 */
 
     if (atom_group_list[grp] == NULL) { /* Allocate the group information */
-        grp_ptr = (atom_group_t *)HDcalloc(1, sizeof(atom_group_t));
+        grp_ptr = (atom_group_t *)calloc(1, sizeof(atom_group_t));
         if (grp_ptr == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         atom_group_list[grp] = grp_ptr;
@@ -114,7 +114,7 @@ HAinit_group(group_t grp,      /* IN: Group to initialize */
         grp_ptr->hash_size = hash_size;
         grp_ptr->atoms     = 0;
         grp_ptr->nextid    = 0;
-        if ((grp_ptr->atom_list = (atom_info_t **)HDcalloc(hash_size, sizeof(atom_info_t *))) == NULL)
+        if ((grp_ptr->atom_list = (atom_info_t **)calloc(hash_size, sizeof(atom_info_t *))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
     } /* end if */
 

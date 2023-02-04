@@ -487,7 +487,7 @@ main(int argc, char *argv[])
         exit(1);
     }
 
-    desc_buf = (dd_t *)HDcalloc(MAXBUFF, sizeof(dd_t));
+    desc_buf = (dd_t *)calloc(MAXBUFF, sizeof(dd_t));
 
     while (i < argc) {
         file_name = argv[i];

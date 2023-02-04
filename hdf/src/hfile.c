@@ -2591,7 +2591,7 @@ HIget_filerec_node(const char *path)
     filerec_t *ret_value = NULL;
 
     if ((ret_value = HAsearch_atom(FIDGROUP, HPcompare_filerec_path, path)) == NULL) {
-        if ((ret_value = (filerec_t *)HDcalloc(1, sizeof(filerec_t))) == NULL)
+        if ((ret_value = (filerec_t *)calloc(1, sizeof(filerec_t))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
 
         if ((ret_value->path = (char *)HDstrdup(path)) == NULL)

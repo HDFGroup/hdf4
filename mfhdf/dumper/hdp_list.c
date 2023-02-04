@@ -253,7 +253,7 @@ print_annots_by_object(const char *fname, int32 an_id, ann_type annot_type, uint
                              annot_type_text, error_item);
 
             /* allocate space for the data annotation */
-            buf = HDcalloc((ann_length + 1) * sizeof(char), 1);
+            buf = calloc((ann_length + 1) * sizeof(char), 1);
             CHECK_ALLOC(buf, "buf", func_name);
 
             buf[ann_length] = '\0';
@@ -365,7 +365,7 @@ print_annots_in_file(int32 an_id, const char *fname, int32 n_annotations, ann_ty
                          fname);
 
         /* allocate space for an annotation */
-        annotation = (char *)HDcalloc(len + 1, 1);
+        annotation = (char *)calloc(len + 1, 1);
         CHECK_ALLOC(annotation, "annotation", func_name);
 
         /* read in annotation and print it */
@@ -462,7 +462,7 @@ print_all_data_descs(const char *fname, int32 an_id)
         }
 
         /* allocate room for a data desc */
-        desc = (char *)HDcalloc(len + 1, 1);
+        desc = (char *)calloc(len + 1, 1);
         CHECK_ALLOC(desc, "desc", "print_all_data_descs");
 
         /* read in data desc and print it */
@@ -535,7 +535,7 @@ print_all_file_labels(const char *fname, int32 an_id)
         }
 
         /* allocate room for the file label */
-        label = (char *)HDcalloc(len + 1, 1);
+        label = (char *)calloc(len + 1, 1);
         CHECK_ALLOC(label, "label", "print_all_data_labels");
 
         /* read in file label and print it */
@@ -617,7 +617,7 @@ print_all_file_descs(const char *fname, list_info_t *list_opts, /* for print_SDa
         }
 
         /* allocate room for the file desc */
-        desc = (char *)HDcalloc(len + 1, 1);
+        desc = (char *)calloc(len + 1, 1);
         CHECK_ALLOC(desc, "desc", "print_all_file_descs");
 
         /* read in file desc and print it */
@@ -722,7 +722,7 @@ print_file_descs(const char *f_name, int32 an_id)
         }
 
         /* allocate room for the file desc */
-        desc = (char *)HDcalloc(len + 1, 1);
+        desc = (char *)calloc(len + 1, 1);
         CHECK_ALLOC(desc, "desc", "print_file_descs");
 
         /* read in file desc and print it */

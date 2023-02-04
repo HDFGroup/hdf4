@@ -193,7 +193,7 @@ mcache_open(VOID *key,       /* IN: byte string used as handle to share buffers 
         maxcache = (int32)DEF_MAXCACHE;
 
     /* Allocate and initialize the MCACHE cookie. */
-    if ((mp = (MCACHE *)HDcalloc(1, sizeof(MCACHE))) == NULL)
+    if ((mp = (MCACHE *)calloc(1, sizeof(MCACHE))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     H4_CIRCLEQ_INIT(&mp->lqh);

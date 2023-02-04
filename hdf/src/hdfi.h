@@ -326,9 +326,8 @@ typedef intptr_t hdf_pint_t;
 /**************************************************************************
  *  Memory functions defined differently
  **************************************************************************/
-#define HDmalloc(s)     malloc(s)
-#define HDcalloc(a, b)  calloc(a, b)
-#define HDfree(p)       free(p)
+#define HDmalloc(s) malloc(s)
+#define HDfree(p)   free(p)
 
 #define HDmemcpy(dst, src, n) (memcpy((void *)(dst), (const void *)(src), (size_t)(n)))
 

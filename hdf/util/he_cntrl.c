@@ -611,7 +611,7 @@ info(int all, int longout, int group, int label)
             printf("Empty (tag %d) : %d slots.\n", DFTAG_NULL, empty);
     }
     else {
-        mark = (int *)HDcalloc(he_numDesc, sizeof(int));
+        mark = (int *)calloc(he_numDesc, sizeof(int));
 
         if (all) {
             start = 0;
@@ -973,7 +973,7 @@ parseCmd(char **p)
     if (!(**p))
         return NULL;
 
-    cmd       = (HE_CMD *)HDcalloc(1, sizeof(HE_CMD));
+    cmd       = (HE_CMD *)calloc(1, sizeof(HE_CMD));
     cmd->next = cmd->sub = (HE_CMD *)NULL;
     cmd->argc            = 1;
     cmd->argv[0]         = nextWord(p);
@@ -1098,7 +1098,7 @@ mkDupCmd(HE_CMD *cmd)
     int     i;
     HE_CMD *dupCmd;
 
-    dupCmd       = (HE_CMD *)HDcalloc(1, sizeof(HE_CMD));
+    dupCmd       = (HE_CMD *)calloc(1, sizeof(HE_CMD));
     dupCmd->func = cmd->func;
     dupCmd->argc = cmd->argc;
     dupCmd->next = dupCmd->sub = (HE_CMD *)NULL;
@@ -1203,7 +1203,7 @@ resetPred(void)
     if (he_predicates != NULL)
         HDfree(he_predicates);
 
-    he_predicates        = (HE_PRED *)HDcalloc(2, sizeof(HE_PRED));
+    he_predicates        = (HE_PRED *)calloc(2, sizeof(HE_PRED));
     he_predicates[0].key = HEK_GROUP;
     he_predicates[1].key = 0;
 
@@ -1275,7 +1275,7 @@ parsePred(int argc, char *argv[])
     char    *s;
     char    *tok;
 
-    pred = (HE_PRED *)HDcalloc(HE_PRED_SZ, sizeof(HE_PRED));
+    pred = (HE_PRED *)calloc(HE_PRED_SZ, sizeof(HE_PRED));
 
     for (i = 1; i < argc; i++) {
         s = argv[i];

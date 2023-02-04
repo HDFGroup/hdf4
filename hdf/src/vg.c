@@ -754,7 +754,7 @@ VSlone(HFILEID f,       /* IN: file id */
     int32  ret_value = SUCCEED;
 
     /* -- allocate local space for vdata refs, init to zeros -- */
-    if (NULL == (lonevdata = (uint8 *)HDcalloc(MAX_REF, sizeof(uint8))))
+    if (NULL == (lonevdata = (uint8 *)calloc(MAX_REF, sizeof(uint8))))
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* -- look for all vdatas in the file, and flag (1) each -- */
@@ -821,7 +821,7 @@ Vlone(HFILEID f,       /* IN: file id */
     int32  ret_value = SUCCEED;
 
     /* -- allocate space for vgroup refs, init to zeroes -- */
-    if (NULL == (lonevg = (uint8 *)HDcalloc(MAX_REF, sizeof(uint8))))
+    if (NULL == (lonevg = (uint8 *)calloc(MAX_REF, sizeof(uint8))))
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* -- look for all vgroups in the file, and flag (1) each -- */

@@ -934,7 +934,7 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
 
 #if 0 /* dynamic allocation causes a problem on HPUX, removed for now -GV */
           /* Allocate buffer space for rest of special header */
-          if (( c_sp_header = (uint8 *) HDcalloc(info->sp_tag_header_len,1))==NULL)
+          if (( c_sp_header = (uint8 *) calloc(info->sp_tag_header_len,1))==NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
 #endif
         /* first read special header in */
@@ -1034,7 +1034,7 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
                     HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
                 /* Allocate buffer space for compression special header */
-                if ((info->comp_sp_tag_header = HDcalloc(info->comp_sp_tag_head_len, 1)) == NULL)
+                if ((info->comp_sp_tag_header = calloc(info->comp_sp_tag_head_len, 1)) == NULL)
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                 /* read special header in */
@@ -1604,7 +1604,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
     }
 
     /* Allocate buffer space for header */
-    if ((c_sp_header = (uint8 *)HDcalloc(sp_tag_header_len, 1)) == NULL)
+    if ((c_sp_header = (uint8 *)calloc(sp_tag_header_len, 1)) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* Calculate length of this special element header itself.
@@ -1880,7 +1880,7 @@ HMCgetcomptype(int32         dd_aid,    /* IN: access id of header info */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     /* Allocate buffer space for rest of special header */
-    if ((c_sp_header = (uint8 *)HDcalloc(sp_tag_header_len, 1)) == NULL)
+    if ((c_sp_header = (uint8 *)calloc(sp_tag_header_len, 1)) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* read special info header in */
@@ -1923,7 +1923,7 @@ HMCgetcomptype(int32         dd_aid,    /* IN: access id of header info */
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
             /* Allocate buffer space for compression special header */
-            if ((comp_sp_tag_header = HDcalloc(comp_sp_tag_head_len, 1)) == NULL)
+            if ((comp_sp_tag_header = calloc(comp_sp_tag_head_len, 1)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
             /* Read compression special header in */

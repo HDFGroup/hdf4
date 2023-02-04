@@ -1906,7 +1906,7 @@ HTIregister_tag_ref(filerec_t *file_rec, dd_t *dd_ptr)
     /* Add to the tag info tree */
     if ((tip_ptr = (tag_info **)tbbtdfind(file_rec->tag_tree, (VOIDP)&base_tag, NULL)) ==
         NULL) { /* a new tag was found */
-        if ((tinfo_ptr = (tag_info *)HDcalloc(1, sizeof(tag_info))) == NULL)
+        if ((tinfo_ptr = (tag_info *)calloc(1, sizeof(tag_info))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         tinfo_ptr->tag = base_tag;
 
