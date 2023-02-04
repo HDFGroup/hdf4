@@ -41,11 +41,11 @@
 #define SEED(s)       (srand(s))
 #define RandInt(a, b) ((rand() % (((b) - (a)) + 1)) + (a))
 
-PRIVATE VOID swap_arr(int32 *arr, intn a, intn b);
+static VOID swap_arr(int32 *arr, intn a, intn b);
 
 intn tcompare(VOIDP k1, VOIDP k2, intn cmparg);
 
-PRIVATE VOID
+static VOID
 swap_arr(int32 *arr, intn a, intn b)
 {
     int32 t;

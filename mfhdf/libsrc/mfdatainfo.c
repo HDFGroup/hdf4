@@ -63,7 +63,7 @@ LOCAL ROUTINES
 #include "mfprivate.h"
 #endif
 
-PRIVATE intn get_attr_tag(char *attr_name, uint16 *attr_tag);
+static intn get_attr_tag(char *attr_name, uint16 *attr_tag);
 
 /******************************************************************************
  NAME
@@ -410,7 +410,7 @@ done:
     application can use tag/ref to read the attribute string.
 
  ******************************************************************************/
-PRIVATE intn
+static intn
 get_attr_tag(char *attr_name, uint16 *attr_tag)
 {
     intn ret_value = SUCCEED;

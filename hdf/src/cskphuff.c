@@ -49,7 +49,7 @@
  */
 
 /* declaration of the functions provided in this module */
-PRIVATE int32 HCIcskphuff_init(accrec_t *access_rec, uintn alloc_buf);
+static int32 HCIcskphuff_init(accrec_t *access_rec, uintn alloc_buf);
 
 /*--------------------------------------------------------------------------
  NAME
@@ -138,7 +138,7 @@ HCIcskphuff_splay(comp_coder_skphuff_info_t *skphuff_info, uint8 plain)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcskphuff_init(accrec_t *access_rec, uintn alloc_buf)
 {
     compinfo_t                *info;         /* special element information */
@@ -227,7 +227,7 @@ HCIcskphuff_init(accrec_t *access_rec, uintn alloc_buf)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcskphuff_decode(compinfo_t *info, int32 length, uint8 *buf)
 {
     comp_coder_skphuff_info_t *skphuff_info; /* ptr to skipping Huffman info */
@@ -288,7 +288,7 @@ HCIcskphuff_decode(compinfo_t *info, int32 length, uint8 *buf)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcskphuff_encode(compinfo_t *info, int32 length, const uint8 *buf)
 {
     comp_coder_skphuff_info_t *skphuff_info; /* ptr to skipping Huffman info */
@@ -361,7 +361,7 @@ HCIcskphuff_encode(compinfo_t *info, int32 length, const uint8 *buf)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcskphuff_term(compinfo_t *info)
 {
     comp_coder_skphuff_info_t *skphuff_info; /* ptr to skipping Huffman info */
@@ -406,7 +406,7 @@ HCIcskphuff_term(compinfo_t *info)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcskphuff_staccess(accrec_t *access_rec, int16 acc_mode)
 {
     compinfo_t *info; /* special element information */

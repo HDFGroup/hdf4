@@ -27,13 +27,13 @@
 
 #define ISCOMMA(c) ((c == ',') ? 1 : 0)
 
-PRIVATE char *symptr[VSFIELDMAX];                   /* array of ptrs to tokens  ? */
-PRIVATE char  sym[VSFIELDMAX][FIELDNAMELENMAX + 1]; /* array of tokens ? */
-PRIVATE intn  nsym;                                 /* token index ? */
+static char *symptr[VSFIELDMAX];                   /* array of ptrs to tokens  ? */
+static char  sym[VSFIELDMAX][FIELDNAMELENMAX + 1]; /* array of tokens ? */
+static intn  nsym;                                 /* token index ? */
 
 /* Temporary buffer for I/O */
-PRIVATE uint32 Vpbufsize = 0;
-PRIVATE uint8 *Vpbuf     = NULL;
+static uint32 Vpbufsize = 0;
+static uint8 *Vpbuf     = NULL;
 
 /*******************************************************************************
  NAME

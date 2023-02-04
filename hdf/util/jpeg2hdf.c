@@ -72,11 +72,11 @@ typedef enum { /* JPEG marker codes */
                M_ERROR = 0x100
 } JPEG_MARKER;
 
-PRIVATE int32 num_bytes;              /* number of bytes until the SOS code. */
-PRIVATE int32 image_width    = 0;     /* width of the JPEG image in pixels */
-PRIVATE int32 image_height   = 0;     /* height of the JPEG image in pixels */
-PRIVATE intn  num_components = 0;     /* number of components in the JPEG image */
-PRIVATE uint8 file_buf[MAX_FILE_BUF]; /* size of the buffer to copy through */
+static int32 num_bytes;              /* number of bytes until the SOS code. */
+static int32 image_width    = 0;     /* width of the JPEG image in pixels */
+static int32 image_height   = 0;     /* height of the JPEG image in pixels */
+static intn  num_components = 0;     /* number of components in the JPEG image */
+static uint8 file_buf[MAX_FILE_BUF]; /* size of the buffer to copy through */
 
 /*
  * Routines to parse JPEG markers & save away the useful info.

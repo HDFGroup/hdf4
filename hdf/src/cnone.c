@@ -42,7 +42,7 @@
 #include "hcompi.h" /* Internal definitions for compression */
 
 /* declaration of the functions provided in this module */
-PRIVATE int32 HCIcnone_staccess(accrec_t *access_rec, int16 acc_mode);
+static int32 HCIcnone_staccess(accrec_t *access_rec, int16 acc_mode);
 
 /*--------------------------------------------------------------------------
  NAME
@@ -64,7 +64,7 @@ PRIVATE int32 HCIcnone_staccess(accrec_t *access_rec, int16 acc_mode);
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcnone_staccess(accrec_t *access_rec, int16 acc_mode)
 {
     compinfo_t *info; /* special element information */

@@ -17,8 +17,8 @@
  Part of the HDF Vset interface.
 
  VDATAs are handled by routines in here.
- PRIVATE functions manipulate vsdir and are used only within this file.
- PRIVATE data structures in here pertain to vdatas in vsdir only.
+ static functions manipulate vsdir and are used only within this file.
+ static data structures in here pertain to vdatas in vsdir only.
 
 
 LOCAL ROUTINES
@@ -62,11 +62,11 @@ EXPORTED ROUTINES
 #include "hdf.h"
 
 /* Private Function Prototypes */
-PRIVATE intn vunpackvs(VDATA *vs, uint8 buf[], int32 len);
+static intn vunpackvs(VDATA *vs, uint8 buf[], int32 len);
 
 /* Temporary buffer for I/O */
-PRIVATE uint32 Vhbufsize = 0;
-PRIVATE uint8 *Vhbuf     = NULL;
+static uint32 Vhbufsize = 0;
+static uint8 *Vhbuf     = NULL;
 
 /* Pointers to the VDATA & vsinstance node free lists */
 static VDATA        *vdata_free_list      = NULL;
@@ -326,7 +326,7 @@ CONTENTS of VS stored in HDF file with tag VSDESCTAG:
 
 /* ------------------------------- vpackvs ----------------------------------- */
 /*
-   The following 2 PRIVATE routines, vpackvs and vunpackvs, packs and unpacks
+   The following 2 static routines, vpackvs and vunpackvs, packs and unpacks
    a VDATA structure into a compact form suitable for storing in the HDF file.
  */
 
@@ -471,7 +471,7 @@ RETURNS
    SUCCEED / FAIL
 
 *******************************************************************************/
-PRIVATE intn
+static intn
 vunpackvs(VDATA *vs,    /* IN/OUT: */
           uint8  buf[], /* IN: */
           int32  len /* IN: */)

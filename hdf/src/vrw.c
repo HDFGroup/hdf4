@@ -41,8 +41,8 @@ EXPORTED ROUTINES
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #endif /* MIN */
 
-PRIVATE uint32 Vtbufsize = 0;
-PRIVATE uint8 *Vtbuf     = NULL;
+static uint32 Vtbufsize = 0;
+static uint8 *Vtbuf     = NULL;
 
 /*******************************************************************************
  NAME

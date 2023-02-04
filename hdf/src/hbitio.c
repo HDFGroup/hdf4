@@ -47,17 +47,17 @@ MODIFICATION HISTORY
 /* Local Variables */
 
 /* Whether we've installed the library termination function yet for this interface */
-PRIVATE intn library_terminate = FALSE;
+static intn library_terminate = FALSE;
 
 /* Local Function Declarations */
-PRIVATE bitrec_t *HIget_bitfile_rec(void);
+static bitrec_t *HIget_bitfile_rec(void);
 
-PRIVATE intn HIbitflush(bitrec_t *bitfile_rec, intn flushbit, intn writeout);
+static intn HIbitflush(bitrec_t *bitfile_rec, intn flushbit, intn writeout);
 
-PRIVATE intn HIwrite2read(bitrec_t *bitfile_rec);
-PRIVATE intn HIread2write(bitrec_t *bitfile_rec);
+static intn HIwrite2read(bitrec_t *bitfile_rec);
+static intn HIread2write(bitrec_t *bitfile_rec);
 
-PRIVATE intn HIbitstart(void);
+static intn HIbitstart(void);
 
 /* #define TESTING */
 /* Actual Function Definitions */
@@ -695,7 +695,7 @@ Hendbitaccess(int32 bitfile_id, intn flushbit)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 HIbitstart(void)
 {
     intn ret_value = SUCCEED;
@@ -741,7 +741,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 HIbitflush(bitrec_t *bitfile_rec, intn flushbit, intn writeout)
 {
     intn write_size; /* number of bytes to write out */
@@ -784,7 +784,7 @@ HIbitflush(bitrec_t *bitfile_rec, intn flushbit, intn writeout)
 /*--------------------------------------------------------------------------
  HIget_bitfile_rec - get a new bitfile record
 --------------------------------------------------------------------------*/
-PRIVATE bitrec_t *
+static bitrec_t *
 HIget_bitfile_rec(void)
 {
     bitrec_t *ret_value = NULL;
@@ -814,7 +814,7 @@ HIget_bitfile_rec(void)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 HIread2write(bitrec_t *bitfile_rec)
 {
 
@@ -842,7 +842,7 @@ HIread2write(bitrec_t *bitfile_rec)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 HIwrite2read(bitrec_t *bitfile_rec)
 {
     intn  prev_count  = bitfile_rec->count; /* preserve this for later */

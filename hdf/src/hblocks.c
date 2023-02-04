@@ -148,11 +148,11 @@ typedef struct linkinfo_t {
 } linkinfo_t;
 
 /* private functions */
-PRIVATE int32 HLIstaccess(accrec_t *access_rec, int16 acc_mode);
+static int32 HLIstaccess(accrec_t *access_rec, int16 acc_mode);
 
-PRIVATE link_t *HLInewlink(int32 file_id, int32 number_blocks, uint16 link_ref, uint16 first_block_ref);
+static link_t *HLInewlink(int32 file_id, int32 number_blocks, uint16 link_ref, uint16 first_block_ref);
 
-PRIVATE link_t *HLIgetlink(int32 file_id, uint16 ref, int32 number_blocks);
+static link_t *HLIgetlink(int32 file_id, uint16 ref, int32 number_blocks);
 
 /* the accessing function table for linked blocks */
 funclist_t linked_funcs = {
@@ -594,7 +594,7 @@ DESCRIPTION
    pull in the information ourselves
 
 ----------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HLIstaccess(accrec_t *access_rec, int16 acc_mode)
 {
     filerec_t  *file_rec;           /* file record */
@@ -957,7 +957,7 @@ DESCRIPTION
    It seems that num_blocks is redundant.
 
 ---------------------------------------------------------------------------*/
-PRIVATE link_t *
+static link_t *
 HLIgetlink(int32 file_id, uint16 ref, int32 number_blocks)
 {
     int32   access_id; /* access record id */
@@ -1423,7 +1423,7 @@ DESCRIPTION
    ptr to the new link/block table.
 
 ---------------------------------------------------------------------------*/
-PRIVATE link_t *
+static link_t *
 HLInewlink(int32 file_id, int32 number_blocks, uint16 link_ref, uint16 first_block_ref)
 {
     int32   link_id;          /* access record id of new link */

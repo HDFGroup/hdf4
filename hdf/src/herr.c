@@ -52,7 +52,7 @@ typedef struct error_t {
 } error_t;
 
 /* pointer to the structure to hold error messages */
-PRIVATE error_t *error_stack = NULL;
+static error_t *error_stack = NULL;
 
 #ifndef DEFAULT_MESG
 #define DEFAULT_MESG "Unknown error"

@@ -50,7 +50,7 @@ static DIlist_ptr Group_list[MAX_GROUPS] = {NULL};
  * Invokes:
  * Remarks: Allocates internal storage if necessary
  *---------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 setgroupREC(DIlist_ptr list_rec)
 {
     uintn i;
