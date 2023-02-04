@@ -137,9 +137,9 @@ test_conv(void)
         } /* end if */
 
         /* clear arrays for next test */
-        HDmemset(src_int8, 0xae, TEST_SIZE * sizeof(int8));
-        HDmemset(dst_int8, 0xae, TEST_SIZE * sizeof(int8));
-        HDmemset(dst2_int8, 0xae, TEST_SIZE * sizeof(int8));
+        memset(src_int8, 0xae, TEST_SIZE * sizeof(int8));
+        memset(dst_int8, 0xae, TEST_SIZE * sizeof(int8));
+        memset(dst2_int8, 0xae, TEST_SIZE * sizeof(int8));
         /* Seed arrays with random values */
         for (i = 0; i < TEST_SIZE; i += SOURCE_STRIDE)
             src_int8[i] = (int8)(RAND() - RAND_MAX / 2);
@@ -218,9 +218,9 @@ test_conv(void)
         } /* end if */
 
         /* clear arrays for next test */
-        HDmemset(src_uint8, 0xae, TEST_SIZE * sizeof(uint8));
-        HDmemset(dst_uint8, 0xae, TEST_SIZE * sizeof(uint8));
-        HDmemset(dst2_uint8, 0xae, TEST_SIZE * sizeof(uint8));
+        memset(src_uint8, 0xae, TEST_SIZE * sizeof(uint8));
+        memset(dst_uint8, 0xae, TEST_SIZE * sizeof(uint8));
+        memset(dst2_uint8, 0xae, TEST_SIZE * sizeof(uint8));
 
         /* Seed arrays with random values */
         for (i = 0; i < TEST_SIZE; i += SOURCE_STRIDE)
@@ -300,9 +300,9 @@ test_conv(void)
         } /* end if */
 
         /* clear arrays for next test */
-        HDmemset(src_int16, 0xae, TEST_SIZE * sizeof(int16));
-        HDmemset(dst_int16, 0xae, TEST_SIZE * sizeof(int16));
-        HDmemset(dst2_int16, 0xae, TEST_SIZE * sizeof(int16));
+        memset(src_int16, 0xae, TEST_SIZE * sizeof(int16));
+        memset(dst_int16, 0xae, TEST_SIZE * sizeof(int16));
+        memset(dst2_int16, 0xae, TEST_SIZE * sizeof(int16));
         /* Seed arrays with random values */
         for (i = 0; i < TEST_SIZE; i += SOURCE_STRIDE)
             src_int16[i] = (int16)(RAND() - RAND_MAX / 2);
@@ -381,9 +381,9 @@ test_conv(void)
         } /* end if */
 
         /* clear arrays for next test */
-        HDmemset(src_uint16, 0xae, TEST_SIZE * sizeof(uint16));
-        HDmemset(dst_uint16, 0xae, TEST_SIZE * sizeof(uint16));
-        HDmemset(dst2_uint16, 0xae, TEST_SIZE * sizeof(uint16));
+        memset(src_uint16, 0xae, TEST_SIZE * sizeof(uint16));
+        memset(dst_uint16, 0xae, TEST_SIZE * sizeof(uint16));
+        memset(dst2_uint16, 0xae, TEST_SIZE * sizeof(uint16));
         /* Seed arrays with random values */
         for (i = 0; i < TEST_SIZE; i += SOURCE_STRIDE)
             src_uint16[i] = (uint16)RAND();
@@ -462,9 +462,9 @@ test_conv(void)
         } /* end if */
 
         /* clear arrays for next test */
-        HDmemset(src_int32, 0xae, TEST_SIZE * sizeof(int32));
-        HDmemset(dst_int32, 0xae, TEST_SIZE * sizeof(int32));
-        HDmemset(dst2_int32, 0xae, TEST_SIZE * sizeof(int32));
+        memset(src_int32, 0xae, TEST_SIZE * sizeof(int32));
+        memset(dst_int32, 0xae, TEST_SIZE * sizeof(int32));
+        memset(dst2_int32, 0xae, TEST_SIZE * sizeof(int32));
         /* Seed arrays with random values */
         for (i = 0; i < TEST_SIZE; i += SOURCE_STRIDE)
             src_int32[i] = (int32)(RAND() - RAND_MAX / 2);
@@ -543,9 +543,9 @@ test_conv(void)
         } /* end if */
 
         /* clear arrays for next test */
-        HDmemset(src_uint32, 0xae, TEST_SIZE * sizeof(uint32));
-        HDmemset(dst_uint32, 0xae, TEST_SIZE * sizeof(uint32));
-        HDmemset(dst2_uint32, 0xae, TEST_SIZE * sizeof(uint32));
+        memset(src_uint32, 0xae, TEST_SIZE * sizeof(uint32));
+        memset(dst_uint32, 0xae, TEST_SIZE * sizeof(uint32));
+        memset(dst2_uint32, 0xae, TEST_SIZE * sizeof(uint32));
         /* Seed arrays with random values */
         for (i = 0; i < TEST_SIZE; i += SOURCE_STRIDE)
             src_uint32[i] = (uint32)RAND();
@@ -629,9 +629,9 @@ test_conv(void)
         } /* end if */
 
         /* clear arrays for next test */
-        HDmemset(src_float32, 0xae, TEST_SIZE * sizeof(float32));
-        HDmemset(dst_float32, 0xae, TEST_SIZE * sizeof(float32));
-        HDmemset(dst2_float32, 0xae, TEST_SIZE * sizeof(float32));
+        memset(src_float32, 0xae, TEST_SIZE * sizeof(float32));
+        memset(dst_float32, 0xae, TEST_SIZE * sizeof(float32));
+        memset(dst2_float32, 0xae, TEST_SIZE * sizeof(float32));
         /* Seed arrays with random values */
         for (i = 0; i < TEST_SIZE; i += SOURCE_STRIDE) {
             src_float32[i] = (float32)(RAND() - RAND_MAX / 2);
@@ -720,9 +720,9 @@ test_conv(void)
         } /* end if */
 
         /* clear arrays for next test */
-        HDmemset(src_float64, 0xae, TEST_SIZE * sizeof(float64));
-        HDmemset(dst_float64, 0xae, TEST_SIZE * sizeof(float64));
-        HDmemset(dst2_float64, 0xae, TEST_SIZE * sizeof(float64));
+        memset(src_float64, 0xae, TEST_SIZE * sizeof(float64));
+        memset(dst_float64, 0xae, TEST_SIZE * sizeof(float64));
+        memset(dst2_float64, 0xae, TEST_SIZE * sizeof(float64));
         /* Seed arrays with random values */
         for (i = 0; i < TEST_SIZE; i += SOURCE_STRIDE) {
             src_float64[i] = (float64)(RAND() - RAND_MAX / 2);

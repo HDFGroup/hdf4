@@ -226,14 +226,14 @@ test_szip_RI8bit()
 
     /* Get and verify the image's compression information */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
 
     status = GRgetcompinfo(ri_id, &comp_type, &cinfo);
     CHECK_VOID(status, FAIL, "GRgetcompinfo");
     VERIFY_VOID(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
 
     /* Wipe out the output buffer */
-    HDmemset(&out_data, 0, sizeof(out_data));
+    memset(&out_data, 0, sizeof(out_data));
 
     /* Read the whole image */
     start[0] = start[1] = 0;
@@ -436,14 +436,14 @@ test_szip_RI16bit()
 
     /* Get and verify the image's compression information */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
 
     status = GRgetcompinfo(ri_id, &comp_type, &cinfo);
     CHECK_VOID(status, FAIL, "GRgetcompinfo");
     VERIFY_VOID(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
 
     /* Wipe out the output buffer */
-    HDmemset(&out_data, 0, sizeof(out_data));
+    memset(&out_data, 0, sizeof(out_data));
 
     /* Read the whole image */
     start[0] = start[1] = 0;
@@ -646,14 +646,14 @@ test_szip_RI32bit()
 
     /* Get and verify the image's compression information */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
 
     status = GRgetcompinfo(ri_id, &comp_type, &cinfo);
     CHECK_VOID(status, FAIL, "GRgetcompinfo");
     VERIFY_VOID(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
 
     /* Wipe out the output buffer */
-    HDmemset(&out_data, 0, sizeof(out_data));
+    memset(&out_data, 0, sizeof(out_data));
 
     /* Read the whole image */
     start[0] = start[1] = 0;
@@ -858,14 +858,14 @@ test_szip_RIfl32bit()
 
     /* Get and verify the image's compression information */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
 
     status = GRgetcompinfo(ri_id, &comp_type, &cinfo);
     CHECK_VOID(status, FAIL, "GRgetcompinfo");
     VERIFY_VOID(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
 
     /* Wipe out the output buffer */
-    HDmemset(&out_data, 0, sizeof(out_data));
+    memset(&out_data, 0, sizeof(out_data));
 
     /* Read the whole image */
     start[0] = start[1] = 0;
@@ -1070,14 +1070,14 @@ test_szip_RIfl64bit()
 
     /* Get and verify the image's compression information */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
 
     status = GRgetcompinfo(ri_id, &comp_type, &cinfo);
     CHECK_VOID(status, FAIL, "GRgetcompinfo");
     VERIFY_VOID(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
 
     /* Wipe out the output buffer */
-    HDmemset(&out_data, 0, sizeof(out_data));
+    memset(&out_data, 0, sizeof(out_data));
 
     /* Read the whole image */
     start[0] = start[1] = 0;
@@ -1258,7 +1258,7 @@ test_szip_chunk()
 
     /* Get and verify the image's compression information. */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo_out, 0, sizeof(cinfo_out));
+    memset(&cinfo_out, 0, sizeof(cinfo_out));
 
     status = GRgetcompinfo(ri_id, &comp_type, &cinfo_out);
     CHECK_VOID(status, FAIL, "GRgetcompinfo");

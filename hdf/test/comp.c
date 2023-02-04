@@ -156,12 +156,12 @@ init_buffers(void)
     for (i = 0; i < NUM_OUTBUFS; i++) {
         switch (i) {
             case 0: /* all zero filled */
-                HDmemset(outbuf_int8[i], 0, BUFSIZE * sizeof(int8));
-                HDmemset(outbuf_uint8[i], 0, BUFSIZE * sizeof(uint8));
-                HDmemset(outbuf_int16[i], 0, BUFSIZE * sizeof(int16));
-                HDmemset(outbuf_uint16[i], 0, BUFSIZE * sizeof(uint16));
-                HDmemset(outbuf_int32[i], 0, BUFSIZE * sizeof(int32));
-                HDmemset(outbuf_uint32[i], 0, BUFSIZE * sizeof(uint32));
+                memset(outbuf_int8[i], 0, BUFSIZE * sizeof(int8));
+                memset(outbuf_uint8[i], 0, BUFSIZE * sizeof(uint8));
+                memset(outbuf_int16[i], 0, BUFSIZE * sizeof(int16));
+                memset(outbuf_uint16[i], 0, BUFSIZE * sizeof(uint16));
+                memset(outbuf_int32[i], 0, BUFSIZE * sizeof(int32));
+                memset(outbuf_uint32[i], 0, BUFSIZE * sizeof(uint32));
                 break;
 
             case 1: /* fibonacci sequence */

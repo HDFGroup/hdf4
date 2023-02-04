@@ -279,7 +279,7 @@ read_test(int32 aid)
         }
 
         /* Clear input buffer */
-        HDmemset(in_buf, 0, elemsize);
+        memset(in_buf, 0, elemsize);
 
         /* Increment the total I/O time */
         acc_time += (end_time.tv_sec - start_time.tv_sec) * FACTOR + (end_time.tv_usec - start_time.tv_usec);
@@ -402,7 +402,7 @@ write_test(int32 aid, intn num_timings)
         }
 
         /* Clear input buffer */
-        HDmemset(in_buf, 0, elemsize);
+        memset(in_buf, 0, elemsize);
 
         /* Increment the total I/O time */
         acc_time += (end_time.tv_sec - start_time.tv_sec) * FACTOR + (end_time.tv_usec - start_time.tv_usec);

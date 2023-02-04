@@ -722,7 +722,7 @@ print_comp_info(FILE *fp, int32 sds_id, comp_coder_t *comp_type)
     intn      status = FAIL;                /* returned status from a called function */
 
     /* get compression info */
-    HDmemset(&c_info, 0, sizeof(c_info));
+    memset(&c_info, 0, sizeof(c_info));
     status = SDgetcompinfo(sds_id, comp_type, &c_info);
 
     /* if getting comp info succeeds, proceed to print out appropriate
@@ -806,9 +806,9 @@ printSDS_ASCII(int32 sd_id, dump_info_t *dumpsds_opts, int32 sds_index, /* index
         ret_value = SUCCEED; /* returned value of printSDS_ASCII */
 
     /* Reset variables. */
-    HDmemset(dimsizes, 0, sizeof(int32) * MAXRANK);
-    HDmemset(dimNT, 0, sizeof(int32) * MAXRANK);
-    HDmemset(dimnattr, 0, sizeof(int32) * MAXRANK);
+    memset(dimsizes, 0, sizeof(int32) * MAXRANK);
+    memset(dimNT, 0, sizeof(int32) * MAXRANK);
+    memset(dimnattr, 0, sizeof(int32) * MAXRANK);
 
     /* get access to the current dataset */
     sds_id = SDselect(sd_id, sds_index);
@@ -988,7 +988,7 @@ printSDS_BINARY(int32 sd_id, dump_info_t *dumpsds_opts, int32 sds_index, /* inde
     HDstrcpy(curr_file_name, dumpsds_opts->ifile_name);
 
     /* Reset variable */
-    HDmemset(dimsizes, 0, sizeof(int32) * MAXRANK);
+    memset(dimsizes, 0, sizeof(int32) * MAXRANK);
 
     sds_id = SDselect(sd_id, sds_index);
     if (sds_id == FAIL)

@@ -148,7 +148,7 @@ copy_sds(int32 sd_in, int32 sd_out, int32 tag, /* tag of input SDS */
     chunk_flags = chunk_flags_in = HDF_NONE;
 
     if (empty_sds == 0) {
-        HDmemset(&c_info_in, 0, sizeof(comp_info));
+        memset(&c_info_in, 0, sizeof(comp_info));
         if (SDgetcompinfo(sds_id, &comp_type_in, &c_info_in) == FAIL) {
             printf("Could not get compression information for SDS <%s>\n", path);
             goto out;
@@ -566,7 +566,7 @@ copy_sds(int32 sd_in, int32 sd_out, int32 tag, /* tag of input SDS */
             sm_buf = HDmalloc((size_t)sm_nbytes);
 
             /* the stripmine loop */
-            HDmemset(hs_offset, 0, sizeof hs_offset);
+            memset(hs_offset, 0, sizeof hs_offset);
 
             for (elmtno = 0; elmtno < p_nelmts; elmtno += hs_nelmts) {
                 /* calculate the hyperslab size */
@@ -858,7 +858,7 @@ get_print_info(int chunk_flags, HDF_CHUNK_DEF *chunk_def, /* chunk definition */
     if (SDendaccess(sds_id) == FAIL)
         goto out;
 
-    HDmemset(comp_str, 0, 255);
+    memset(comp_str, 0, 255);
 
     /* unlimited dimensions don't work with compression */
     if (is_record) {

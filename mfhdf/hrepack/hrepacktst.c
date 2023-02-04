@@ -525,7 +525,7 @@ sds_verifiy_comp(const char *sds_name, int32 in_comp_type, int32 in_comp_info)
      */
 
     comp_type = COMP_CODE_NONE; /* reset variables before retrieving info */
-    HDmemset(&comp_info, 0, sizeof(comp_info));
+    memset(&comp_info, 0, sizeof(comp_info));
     SDgetcompinfo(sds_id, &comp_type, &comp_info);
     if (comp_type != in_comp_type) {
         printf("Error: Compression type does not match ");
@@ -626,7 +626,7 @@ sds_verifiy_comp_all(comp_coder_t in_comp_type, int in_comp_info)
         if (empty_sds == 0) {
 
             comp_type = COMP_CODE_NONE; /* reset variables before retrieving info */
-            HDmemset(&comp_info, 0, sizeof(comp_info));
+            memset(&comp_info, 0, sizeof(comp_info));
 
             if (SDisrecord(sds_id))
                 is_record = 1;

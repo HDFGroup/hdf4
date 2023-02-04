@@ -646,7 +646,7 @@ VSgetexternalfile(int32 vkey, uintn buf_size, char *ext_filename, int32 *offset)
     if (vs->aid == 0 || vs->aid == FAIL)
         HGOTO_ERROR(DFE_ARGS, FAIL)
     else {
-        HDmemset(&info_block, 0, sizeof(sp_info_block_t));
+        memset(&info_block, 0, sizeof(sp_info_block_t));
 
         /* HDget_special_info gets the special type and the special info */
         if (HDget_special_info(vs->aid, &info_block) == FAIL)
@@ -749,7 +749,7 @@ VSgetexternalinfo(int32 vkey, uintn buf_size, char *ext_filename, int32 *offset,
     else {
         intn            retcode = 0;
         sp_info_block_t info_block;
-        HDmemset(&info_block, 0, sizeof(sp_info_block_t));
+        memset(&info_block, 0, sizeof(sp_info_block_t));
 
         /* Get the special info */
         retcode = HDget_special_info(vs->aid, &info_block);

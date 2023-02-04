@@ -1151,7 +1151,7 @@ HLPread(accrec_t *access_rec, int32 length, void *datap)
             Hendaccess(access_id);
         }
         else { /*if block is missing, fill this part of buffer with zero's */
-            HDmemset(data, 0, (size_t)remaining);
+            memset(data, 0, (size_t)remaining);
             bytes_read += nbytes;
         }
 

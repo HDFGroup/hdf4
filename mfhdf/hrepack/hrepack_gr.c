@@ -101,7 +101,7 @@ copy_gr(int32 infile_id, int32 outfile_id, int32 gr_in, int32 gr_out, int32 tag,
      */
 
     comp_type_in = COMP_CODE_NONE; /* reset variables before retrieving information */
-    HDmemset(&c_info_in, 0, sizeof(comp_info));
+    memset(&c_info_in, 0, sizeof(comp_info));
     stat = GRgetcompinfo(ri_id, &comp_type_in, &c_info_in);
     if (stat == FAIL && comp_type_in > 0) {
         printf("Could not get compress information for GR <%s>\n", path);

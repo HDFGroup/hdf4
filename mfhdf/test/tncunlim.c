@@ -139,7 +139,7 @@ test_1dim_singlevar()
         long start[] = {0};
         long edges[1];
         edges[0] = dimsize;
-        HDmemset(outdata, 0, DIM0);
+        memset(outdata, 0, DIM0);
         status = ncvarget(ncid, varid, start, edges, outdata);
         CHECK(status, -1, "ncvarget");
 
@@ -172,7 +172,7 @@ test_1dim_singlevar()
         long start[] = {0};
         long edges[1];
         edges[0] = dimsize;
-        HDmemset(outdata, 0, DIM0);
+        memset(outdata, 0, DIM0);
         status = ncvarget(ncid, varid, start, edges, outdata);
         CHECK(status, -1, "ncvarget");
 
@@ -207,7 +207,7 @@ test_1dim_singlevar()
         long start[] = {0};
         long edges[1];
         edges[0] = dimsize;
-        HDmemset(outdata, 0, DIM0 + 2);
+        memset(outdata, 0, DIM0 + 2);
         status = ncvarget(ncid, varid, start, edges, outdata);
         CHECK(status, -1, "ncvarget");
 
@@ -246,7 +246,7 @@ test_1dim_singlevar()
         long edges[1];
         edges[0] = dimsize;
 
-        HDmemset(outdata, 0, DIM0 + 2);
+        memset(outdata, 0, DIM0 + 2);
         status = ncvarget(ncid, varid, start, edges, outdata);
         CHECK(status, -1, "ncvarget");
 
@@ -402,7 +402,7 @@ test_1dim_multivars()
         long start[] = {0};
         long edges[1];
         edges[0] = dimsize;
-        HDmemset(outdata, 0, DIM0);
+        memset(outdata, 0, DIM0);
 
         /* Read and verify data of Variable 1 */
         status = ncvarget(ncid, varid1, start, edges, outdata);
@@ -419,7 +419,7 @@ test_1dim_multivars()
 
         /* Read and verify data of Variable 2 */
         edges[0] = 2; /* only reading what written to this variable so far */
-        HDmemset(outdata, 0, DIM0);
+        memset(outdata, 0, DIM0);
         status = ncvarget(ncid, varid2, start, edges, outdata);
         CHECK(status, -1, "ncvarget");
 
@@ -435,7 +435,7 @@ test_1dim_multivars()
         /* Try to read again but up to the max number of records, 4 in this case
            because the other variable in the file has 4 elements written */
         edges[0] = dimsize;
-        HDmemset(outdata, 0, DIM0);
+        memset(outdata, 0, DIM0);
         status = ncvarget(ncid, varid2, start, edges, outdata);
         CHECK(status, -1, "ncvarget");
 
@@ -480,7 +480,7 @@ test_1dim_multivars()
 
         /* Read and verify data of Variable 1 */
         /* read data should be: 300  301  302  303  400  401 */
-        HDmemset(outdata, 0, DIM0);
+        memset(outdata, 0, DIM0);
         status = ncvarget(ncid, varid1, start, edges, outdata);
         CHECK(status, -1, "ncvarget");
 
@@ -495,7 +495,7 @@ test_1dim_multivars()
         /* Read and verify data of Variable 2 */
         /* read data should be: 102  104  -2  -2  -2  -2 */
         edges[0] = 2;
-        HDmemset(outdata, 0, DIM0);
+        memset(outdata, 0, DIM0);
         status = ncvarget(ncid, varid2, start, edges, outdata);
         CHECK(status, -1, "ncvarget");
 
@@ -532,7 +532,7 @@ test_1dim_multivars()
 
         /* Read and verify data of Variable 1 */
         /* read data should be: 300  301  302  303  400  401  -1 */
-        HDmemset(outdata, 0, DIM0);
+        memset(outdata, 0, DIM0);
         status = ncvarget(ncid, varid1, start, edges, outdata);
         CHECK(status, -1, "ncvarget");
 
@@ -546,7 +546,7 @@ test_1dim_multivars()
 
         /* Read and verify data of Variable 1 */
         /* read data should be: 102  104  -2  -2  200  201  202 */
-        HDmemset(outdata, 0, DIM0);
+        memset(outdata, 0, DIM0);
         status = ncvarget(ncid, varid2, start, edges, outdata);
         CHECK(status, -1, "ncvarget");
 
@@ -586,7 +586,7 @@ test_1dim_multivars()
 
         /* Read and verify data of Variable 1; read data should be: */
         /* 300 301 302 303 400 401 -1 -1 -1 -1 -1 -1 500 501 502    */
-        HDmemset(outdata, 0, DIM0);
+        memset(outdata, 0, DIM0);
         status = ncvarget(ncid, varid1, start, edges, outdata);
         CHECK(status, -1, "ncvarget");
 
@@ -600,7 +600,7 @@ test_1dim_multivars()
 
         /* Read and verify data of Variable 2; read data should be: */
         /* 102 104 -2 -2 200 201 202 -2 -2 -2 -2 -2 -2 -2 -2 */
-        HDmemset(outdata, 0, DIM0);
+        memset(outdata, 0, DIM0);
         status = ncvarget(ncid, varid2, start, edges, outdata);
         CHECK(status, -1, "ncvarget");
 
@@ -625,12 +625,12 @@ test_1dim_multivars()
         edges[0] = dimsize + 2;
 
         /* read data of Variable 1; should fail */
-        HDmemset(outdata, 0, DIM0);
+        memset(outdata, 0, DIM0);
         status = ncvarget(ncid, varid1, start, edges, outdata);
         VERIFY(status, -1, "ncvarget");
 
         /* read data of Variable 1; should fail */
-        HDmemset(outdata, 0, DIM0);
+        memset(outdata, 0, DIM0);
         status = ncvarget(ncid, varid2, start, edges, outdata);
         VERIFY(status, -1, "ncvarget");
 
@@ -773,7 +773,7 @@ test_multidim_singlevar()
         long start[] = {0, 0, 0};
         long edges[] = {0, DIM1, DIM2};
         edges[0]     = dimsize;
-        HDmemset(outdata, 0, DIM0 * DIM1 * DIM2);
+        memset(outdata, 0, DIM0 * DIM1 * DIM2);
         status = ncvarget(ncid, varid, start, edges, outdata);
         CHECK(status, -1, "ncvarget");
 
@@ -816,7 +816,7 @@ test_multidim_singlevar()
         long start[] = {0, 0, 0};
         long edges[] = {0, DIM1, DIM2};
         edges[0]     = dimsize;
-        HDmemset(outdata, 0, DIM0 * DIM1 * DIM2);
+        memset(outdata, 0, DIM0 * DIM1 * DIM2);
         status = ncvarget(ncid, varid, start, edges, outdata);
         CHECK(status, -1, "ncvarget");
 
@@ -863,7 +863,7 @@ test_multidim_singlevar()
         long start[] = {0, 0, 0};
         long edges[] = {0, DIM1, DIM2};
         edges[0]     = dimsize;
-        HDmemset(outdata, 0, DIM0 * DIM1 * DIM2);
+        memset(outdata, 0, DIM0 * DIM1 * DIM2);
         status = ncvarget(ncid, varid, start, edges, outdata);
         CHECK(status, -1, "ncvarget");
 

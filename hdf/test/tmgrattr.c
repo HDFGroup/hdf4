@@ -110,7 +110,7 @@ test_mgr_fillvalues()
         CHECK(riid, FAIL, "GRselect");
 
         /* Buffer to read image's data in */
-        HDmemset(image, 0, (size_t)(dims[0] * dims[1] * N_COMPS) * sizeof(float32));
+        memset(image, 0, (size_t)(dims[0] * dims[1] * N_COMPS) * sizeof(float32));
 
         /* Fill the memory-only with the default pixel fill-value */
         HDmemfill(image0, fill_pixel, sizeof(fill_pixel), sizeof(image0) / sizeof(fill_pixel));

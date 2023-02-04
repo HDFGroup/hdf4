@@ -92,7 +92,7 @@ main(int argc, char *argv[])
     dump_opt_t glob_opts; /* global options for all commands */
     intn       j;         /* local counting variables */
 
-    HDmemset(&glob_opts, 0, sizeof(dump_opt_t));
+    memset(&glob_opts, 0, sizeof(dump_opt_t));
 
     if (argc < 2) {
         usage(argc, argv);

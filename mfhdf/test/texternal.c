@@ -312,7 +312,7 @@ test_getexternal()
 
         extfile_name = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
         CHECK_ALLOC(extfile_name, "extfile_name", "SDgetexternalfile");
-        HDmemset(extfile_name, '\0', name_len + 1);
+        memset(extfile_name, '\0', name_len + 1);
 
         /* Call SDgetexternalfile again and get the external file info */
         name_len = SDgetexternalfile(sds_id, name_len + 1, extfile_name, &offset);
@@ -339,7 +339,7 @@ test_getexternal()
     /* Prepare buffer for external file name */
     extfile_name = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
     CHECK_ALLOC(extfile_name, "extfile_name", "test_getexternal");
-    HDmemset(extfile_name, '\0', name_len + 1);
+    memset(extfile_name, '\0', name_len + 1);
 
     /* Call SDgetexternalinfo again and get the external file info */
     name_len = SDgetexternalinfo(sds_id, name_len + 1, extfile_name, &offset, &length);
@@ -351,9 +351,9 @@ test_getexternal()
     {
         char *short_name = (char *)HDmalloc(sizeof(char *) * (name_len));
         CHECK_ALLOC(short_name, "short_name", "test_getexternal");
-        HDmemset(short_name, '\0', name_len);
+        memset(short_name, '\0', name_len);
         HDstrncpy(short_name, EXTFILE, name_len - 2);
-        HDmemset(extfile_name, '\0', name_len);
+        memset(extfile_name, '\0', name_len);
 
         /* Call SDgetexternalinfo again with smaller buffer size and verify
            that SDgetexternalinfo reads the name truncated to the given
@@ -393,7 +393,7 @@ test_getexternal()
 
     extfile_name = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
     CHECK_ALLOC(extfile_name, "extfile_name", "test_getexternal");
-    HDmemset(extfile_name, '\0', name_len + 1);
+    memset(extfile_name, '\0', name_len + 1);
 
     /* Call SDgetexternalinfo again and get the external file info */
     name_len = SDgetexternalinfo(sds_id, name_len + 1, extfile_name, &offset, &length);
@@ -496,7 +496,7 @@ test_mult_setexternal()
     /* Prepare buffer for external file name */
     extfile_name = HDmalloc(sizeof(char *) * (name_len + 1));
     CHECK_ALLOC(extfile_name, "extfile_name", "test_getexternal");
-    HDmemset(extfile_name, '\0', name_len + 1);
+    memset(extfile_name, '\0', name_len + 1);
 
     /* Call SDgetexternalinfo again and get the external file info */
     name_len = SDgetexternalinfo(sds1_id, name_len + 1, extfile_name, NULL, NULL);

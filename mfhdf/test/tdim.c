@@ -638,9 +638,9 @@ test_dim_strs()
 
     /* Get and verify that predefined attributes label, unit, and format
        are not assigned to this dimension */
-    HDmemset(label, 0, DIMSTRS_LEN);
-    HDmemset(unit, 0, DIMSTRS_LEN);
-    HDmemset(format, 0, DIMSTRS_LEN);
+    memset(label, 0, DIMSTRS_LEN);
+    memset(unit, 0, DIMSTRS_LEN);
+    memset(format, 0, DIMSTRS_LEN);
     status = SDgetdimstrs(dim1_id, label, unit, format, DIMSTRS_LEN);
     CHECK(status, FAIL, "SDgetdimstrs");
     VERIFY(label[0], '\0', "SDgetdimstrs");
@@ -734,9 +734,9 @@ test_dim_strs()
 
     /* Get and verify that predefined attributes label, unit, and format
        are not assigned to this dimension */
-    HDmemset(label, 0, DIMSTRS_LEN);
-    HDmemset(unit, 0, DIMSTRS_LEN);
-    HDmemset(format, 0, DIMSTRS_LEN);
+    memset(label, 0, DIMSTRS_LEN);
+    memset(unit, 0, DIMSTRS_LEN);
+    memset(format, 0, DIMSTRS_LEN);
     status = SDgetdimstrs(dim0_id, label, unit, format, DIMSTRS_LEN);
     CHECK(status, FAIL, "SDgetdimstrs");
     VERIFY(label[0], '\0', "SDgetdimstrs");

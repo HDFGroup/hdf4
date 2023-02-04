@@ -161,7 +161,7 @@ test_chunk()
     VERIFY(c_flags_out, (HDF_CHUNK), "Chunk Test 1. SDgetchunkinfo");
 
     /* Check getting compression info with SDgetchunkinfo */
-    HDmemset(&chunk_def_out, 0, sizeof(HDF_CHUNK_DEF));
+    memset(&chunk_def_out, 0, sizeof(HDF_CHUNK_DEF));
     c_flags_out = 0;
     status      = SDgetchunkinfo(newsds1, &chunk_def_out, &c_flags_out);
     CHECK(status, FAIL, "Chunk Test 1. SDgetchunkinfo");
@@ -831,7 +831,7 @@ test6:
 
     /* Retrieve and verify the compression info - bug# 307 and bugzilla# 130 */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     status = SDgetcompinfo(newsds6, &comp_type, &cinfo);
     CHECK(status, FAIL, "Chunk Test 6. SDgetcompinfo");
     VERIFY(comp_type, chunk_def.comp.comp_type, "Chunk Test 6. SDgetcompinfo");
@@ -1034,7 +1034,7 @@ test6:
     VERIFY(c_flags_out, (HDF_CHUNK | HDF_COMP), "Chunk Test 6. SDgetchunkinfo");
 
     /* Check getting compression info with SDgetchunkinfo */
-    HDmemset(&chunk_def_out, 0, sizeof(HDF_CHUNK_DEF));
+    memset(&chunk_def_out, 0, sizeof(HDF_CHUNK_DEF));
     c_flags_out = 0;
     status      = SDgetchunkinfo(newsds6, &chunk_def_out, &c_flags_out);
     CHECK(status, FAIL, "Chunk Test 6. SDgetchunkinfo");
@@ -1126,7 +1126,7 @@ test7:
     CHECK(status, FAIL, "Chunk Test 7. SDgetchunkinfo");
     VERIFY(c_flags_out, (HDF_CHUNK | HDF_COMP), "Chunk Test 7. SDgetchunkinfo");
 
-    HDmemset(&chunk_def_out, 0, sizeof(HDF_CHUNK_DEF));
+    memset(&chunk_def_out, 0, sizeof(HDF_CHUNK_DEF));
     c_flags_out = 0;
     status      = SDgetchunkinfo(newsds7, &chunk_def_out, &c_flags_out);
     CHECK(status, FAIL, "Chunk Test 7. SDgetchunkinfo");
@@ -1203,7 +1203,7 @@ test7:
 
     /* Retrieve and verify the compression info - bug# 307 and bugzilla# 130 */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     status = SDgetcompinfo(newsds7, &comp_type, &cinfo);
     CHECK(status, FAIL, "Chunk Test 6. SDgetcompinfo");
     VERIFY(comp_type, chunk_def.comp.comp_type, "Chunk Test 6. SDgetcompinfo");
@@ -1279,7 +1279,7 @@ test8:
 
     /* Check getting compression info with SDgetchunkinfo */
     c_flags_out = 0;
-    HDmemset(&chunk_def_out, 0, sizeof(HDF_CHUNK_DEF));
+    memset(&chunk_def_out, 0, sizeof(HDF_CHUNK_DEF));
     status = SDgetchunkinfo(newsds8, &chunk_def_out, &c_flags_out);
     CHECK(status, FAIL, "Chunk Test 8. SDgetchunkinfo");
     VERIFY(c_flags_out, (HDF_CHUNK | HDF_NBIT), "Chunk Test 8. SDgetchunkinfo");
@@ -1354,7 +1354,7 @@ test8:
 
     /* Retrieve and verify the compression info - bug# 307 and bugzilla# 130 */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     status = SDgetcompinfo(newsds8, &comp_type, &cinfo);
     CHECK(status, FAIL, "Chunk Test 8. SDgetcompinfo");
 

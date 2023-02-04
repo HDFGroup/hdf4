@@ -84,7 +84,7 @@ parse_comp(const char *str, int *n_objs, comp_info_t *comp)
             else
                 obj[k + 1] = '\0';
             HDstrcpy(obj_list[n].obj, obj);
-            HDmemset(obj, 0, sizeof(obj));
+            memset(obj, 0, sizeof(obj));
             n++;
             k = -1;
         }
@@ -349,7 +349,7 @@ parse_chunk(const char *str, int *n_objs, int32 *chunk_lengths, int *chunk_rank)
             else
                 obj[k + 1] = '\0';
             HDstrcpy(obj_list[n].obj, obj);
-            HDmemset(obj, 0, sizeof(obj));
+            memset(obj, 0, sizeof(obj));
             n++;
             k = -1;
         }

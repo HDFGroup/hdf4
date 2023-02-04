@@ -612,7 +612,7 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
     /* Get space to store the image offsets */
     if ((img_info = (imginfo_t *)HDmalloc(nimages * sizeof(imginfo_t))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
-    HDmemset(img_info, 0, (size_t)nimages * sizeof(imginfo_t));
+    memset(img_info, 0, (size_t)nimages * sizeof(imginfo_t));
 
     /* search through the GR group for raster images & global attributes */
     curr_image = 0;
@@ -855,7 +855,7 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                         } /* end if */
 
                         /* Initialize all the fields in the image structure to zeros */
-                        HDmemset(new_image, 0, sizeof(ri_info_t));
+                        memset(new_image, 0, sizeof(ri_info_t));
 
                         /* Get the name of the image */
                         if (Vgetnamelen(img_key, &name_len) == FAIL)
@@ -1072,7 +1072,7 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                     } /* end if */
 
                     /* Initialize all the fields in the image structure to zeros */
-                    HDmemset(new_image, 0, sizeof(ri_info_t));
+                    memset(new_image, 0, sizeof(ri_info_t));
 
                     /* Get the name of the image */
                     sprintf(textbuf, "Raster Image #%d", (int)i);
@@ -1218,7 +1218,7 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                     } /* end if */
 
                     /* Initialize all the fields in the image structure to zeros */
-                    HDmemset(new_image, 0, sizeof(ri_info_t));
+                    memset(new_image, 0, sizeof(ri_info_t));
 
                     /* Get the name of the image */
                     sprintf(textbuf, "Raster Image #%d", (int)i);
@@ -2279,7 +2279,7 @@ GRcreate(int32 grid, const char *name, int32 ncomp, int32 nt, int32 il, int32 di
     /* Allocate space for the new image information */
     if ((ri_ptr = (ri_info_t *)HDmalloc(sizeof(ri_info_t))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
-    HDmemset(ri_ptr, 0, sizeof(ri_info_t));
+    memset(ri_ptr, 0, sizeof(ri_info_t));
 
     /* Allocate space for the name and copy it */
     if ((ri_ptr->name = (char *)HDmalloc(HDstrlen(name) + 1)) == NULL)
@@ -2746,7 +2746,7 @@ GRwriteimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], voi
                                DFACC_WRITE, 0, 0);
                 } /* end if */
                 else
-                    HDmemset(fill_pixel, 0, pixel_disk_size);
+                    memset(fill_pixel, 0, pixel_disk_size);
             } /* end else */
 
             /* check for "low" pixel runs */
@@ -3101,7 +3101,7 @@ GRreadimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], void
                 HGOTO_ERROR(DFE_BADATTR, FAIL);
         }    /* end if */
         else /* no fill value attribute */
-            HDmemset(fill_pixel, 0, pixel_mem_size);
+            memset(fill_pixel, 0, pixel_mem_size);
 
         /* Fill the user's buffer with the fill value */
         HDmemfill(data, fill_pixel, pixel_mem_size, (uint32)(count[XDIM] * count[YDIM]));
@@ -5324,7 +5324,7 @@ GRsetchunk(int32         riid,      /* IN: raster access id */
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
         } /* end if */
         else
-            HDmemset(fill_pixel, 0, pixel_disk_size);
+            memset(fill_pixel, 0, pixel_disk_size);
     } /* end else */
 
 #ifdef CHK_DEBUG

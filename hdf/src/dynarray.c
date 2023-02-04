@@ -255,7 +255,7 @@ DAset_elem(dynarr_p arr_ptr, /* IN: Array to access */
 
             if ((new_arr = (VOIDP *)realloc(arr->arr, new_size * sizeof(VOIDP))) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
-            HDmemset(&new_arr[arr->num_elems], 0, sizeof(VOIDP) * (uintn)(new_size - arr->num_elems));
+            memset(&new_arr[arr->num_elems], 0, sizeof(VOIDP) * (uintn)(new_size - arr->num_elems));
             arr->arr = new_arr;
         } /* end else */
         arr->num_elems = new_size;

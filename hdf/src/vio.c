@@ -105,7 +105,7 @@ VSIget_vdata_node(void)
     } /* end else */
 
     /* Initialize to zeros */
-    HDmemset(ret_value, 0, sizeof(VDATA));
+    memset(ret_value, 0, sizeof(VDATA));
 
 done:
     return (ret_value);
@@ -161,7 +161,7 @@ VSIget_vsinstance_node(void)
     } /* end else */
 
     /* Initialize to zeros */
-    HDmemset(ret_value, 0, sizeof(vsinstance_t));
+    memset(ret_value, 0, sizeof(vsinstance_t));
 
 done:
     return (ret_value);

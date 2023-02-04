@@ -75,7 +75,7 @@ typedef struct {
 intn
 alloc_info(t_hdf_datainfo_t *info, uintn info_count, int32 n_dims)
 {
-    HDmemset(info, 0, sizeof(info));
+    memset(info, 0, sizeof(info));
     info->offsets = (int32 *)HDmalloc(info_count * sizeof(int32));
     if (info->offsets == NULL)
         return -1;
@@ -538,7 +538,7 @@ test_compressed_SDSs()
     CHECK(sds_id, FAIL, "test_compressed_SDSs: SDcreate 'Deflate-Data'");
 
     comp_type = COMP_CODE_DEFLATE;
-    HDmemset(&c_info, 0, sizeof(c_info));
+    memset(&c_info, 0, sizeof(c_info));
     c_info.deflate.level = 6;
     status               = SDsetcompress(sds_id, comp_type, &c_info);
     CHECK(status, FAIL, "test_compressed_SDSs: SDsetcompress 'Deflate-Data'");
@@ -569,7 +569,7 @@ test_compressed_SDSs()
     CHECK(sds_id, FAIL, "test_compressed_SDSs: SDcreate 'SZIP-Data'");
 
     comp_type = COMP_CODE_SZIP;
-    HDmemset(&c_info, 0, sizeof(c_info));
+    memset(&c_info, 0, sizeof(c_info));
     pixels_per_scanline = dimsizes[1];
     c_info.szip.pixels  = dimsizes[0] * dimsizes[1];
     ;
@@ -631,7 +631,7 @@ test_compressed_SDSs()
     sds_id      = SDcreate(sd_id, "SKPHUFF-Data", DFNT_CHAR, RANK1, dimsizes);
     CHECK(sds_id, FAIL, "test_compressed_SDSs: SDcreate 'SKPHUFF-Data'");
 
-    HDmemset(&c_info, 0, sizeof(c_info));
+    memset(&c_info, 0, sizeof(c_info));
     comp_type               = COMP_CODE_SKPHUFF;
     c_info.skphuff.skp_size = 4;
     status                  = SDsetcompress(sds_id, comp_type, &c_info);
@@ -855,7 +855,7 @@ test_empty_SDSs()
     sds_id = SDcreate(sd_id, "Compressed-No-Data", DFNT_INT16, RANK, dimsizes);
     CHECK(sds_id, FAIL, "test_empty_SDSs: SDcreate 'Compressed-No-Data'");
 
-    HDmemset(&c_info, 0, sizeof(c_info));
+    memset(&c_info, 0, sizeof(c_info));
     comp_type               = COMP_CODE_SKPHUFF;
     c_info.skphuff.skp_size = 4;
     status                  = SDsetcompress(sds_id, comp_type, &c_info);
@@ -956,7 +956,7 @@ test_chunked_partial()
     CHECK(sd_id, FAIL, "test_chunked_partial: SDstart");
 
     /* Initialize chunk size */
-    HDmemset(&c_def, 0, sizeof(c_def));
+    memset(&c_def, 0, sizeof(c_def));
     c_def.chunk_lengths[0] = 10;
 
     /*
@@ -1145,7 +1145,7 @@ test_chkcmp_SDSs()
     int32 chunk2[CHK_X][CHK_Y] = {{2, 2}, {2, 2}, {2, 2}};
 
     /* Initialize chunk size */
-    HDmemset(&c_def, 0, sizeof(c_def));
+    memset(&c_def, 0, sizeof(c_def));
     c_def.chunk_lengths[0] = CHK_X;
     c_def.chunk_lengths[1] = CHK_Y;
 
@@ -1170,7 +1170,7 @@ test_chkcmp_SDSs()
     CHECK(status, FAIL, "test_chkcmp_SDSs: SDsetfillvalue");
 
     /* Set info for chunking and compression */
-    HDmemset(&c_def, 0, sizeof(c_def));
+    memset(&c_def, 0, sizeof(c_def));
     c_def.chunk_lengths[0] = CHK_X;
     c_def.chunk_lengths[1] = CHK_Y;
 
@@ -1180,7 +1180,7 @@ test_chkcmp_SDSs()
     status                         = SDsetchunk(cmpsds_id, c_def, flag);
     CHECK(status, FAIL, "test_chkcmp_SDSs: SDsetchunk");
 
-    HDmemset(&c_def, 0, sizeof(c_def));
+    memset(&c_def, 0, sizeof(c_def));
     c_def.chunk_lengths[0] = CHK_X;
     c_def.chunk_lengths[1] = CHK_Y;
 
@@ -1393,7 +1393,7 @@ test_extend_SDSs()
     VERIFY(block_size, BLOCK_SIZE, "SDgetblocksize");
 
     /* Check data. */
-    HDmemset(&output, 0, sizeof(output));
+    memset(&output, 0, sizeof(output));
     status = SDreaddata(sds_id, starts, NULL, edges, (VOIDP)output);
     CHECK(status, FAIL, "test_extend_SDSs: SDreaddata");
 
@@ -1473,7 +1473,7 @@ test_extend_SDSs()
     starts[1] = 0;
     edges[0]  = Y_LENGTH + Y_LENGTH + Y_LENGTH;
     edges[1]  = X_LENGTH;
-    HDmemset(&output, 0, sizeof(output));
+    memset(&output, 0, sizeof(output));
     status = SDreaddata(sds_id, starts, NULL, edges, (VOIDP)output);
     CHECK(status, FAIL, "test_extend_SDSs: SDreaddata");
 

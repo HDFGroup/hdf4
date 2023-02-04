@@ -914,14 +914,14 @@ test_oneblock_ri()
     /* Create and write 3 more images: RLE, Deflate, and Skipping Huffman */
 
     /* No compression info for the RLE image */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
 
     /* Create and write the RLE compressed image to this file, starting the
        data values with the letter 'r' */
     status = make_comp_image(grid, RLE_IMAGE, 'r', COMP_CODE_RLE, &cinfo);
 
     /* Set the compression info for the image with Skipping Huffman method */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     cinfo.skphuff.skp_size = SKPHUFF_SKIPSIZE;
 
     /* Create and write the Skipping Huffman compressed image to this file,
@@ -929,7 +929,7 @@ test_oneblock_ri()
     status = make_comp_image(grid, SKPHUFF_IMAGE, 's', COMP_CODE_SKPHUFF, &cinfo);
 
     /* Set the compression info for the image with Deflate method */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     cinfo.deflate.level = DEFLATE_LEVEL;
 
     /* Create and write the Deflate compressed image to this file, starting the
@@ -937,7 +937,7 @@ test_oneblock_ri()
     status = make_comp_image(grid, DEFLATE_IMAGE, 'd', COMP_CODE_DEFLATE, &cinfo);
 
     /* Set the compression method for the image with JPEG method */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     cinfo.jpeg.quality        = 100;
     cinfo.jpeg.force_baseline = 1;
 

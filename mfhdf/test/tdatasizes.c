@@ -296,7 +296,7 @@ test_chunked_partial(int32 fid)
     int16 chunk3[CHK_X][CHK_Y] = {{3, 3}, {3, 3}, {3, 3}};
 
     /* Initialize chunk size */
-    HDmemset(&c_def, 0, sizeof(c_def));
+    memset(&c_def, 0, sizeof(c_def));
     c_def.chunk_lengths[0] = CHK_X;
     c_def.chunk_lengths[1] = CHK_Y;
 
@@ -369,7 +369,7 @@ test_chkcmp_SDSs(int32 fid)
     int32 chunk2[CHK_X][CHK_Y] = {{2, 2}, {2, 2}, {2, 2}};
 
     /* Initialize chunk size */
-    HDmemset(&c_def, 0, sizeof(c_def));
+    memset(&c_def, 0, sizeof(c_def));
     c_def.chunk_lengths[0] = CHK_X;
     c_def.chunk_lengths[1] = CHK_Y;
 
@@ -397,7 +397,7 @@ test_chkcmp_SDSs(int32 fid)
     CHECK(status, FAIL, "test_chkcmp_SDSs: SDsetchunk 'ChunkedDeflateData'");
 
     /* Set info for chunking and compression */
-    HDmemset(&c_def, 0, sizeof(c_def));
+    memset(&c_def, 0, sizeof(c_def));
     c_def.chunk_lengths[0] = CHK_X;
     c_def.chunk_lengths[1] = CHK_Y;
 
@@ -557,7 +557,7 @@ test_extend_SDSs(int32 fid)
     CHECK(sds_id, FAIL, "test_extend_SDSs: SDwritedata");
 
     /* Check data. */
-    HDmemset(&output, 0, sizeof(output));
+    memset(&output, 0, sizeof(output));
     status = SDreaddata(sds_id, start, NULL, edges, (VOIDP)output);
     CHECK(sds_id, FAIL, "test_extend_SDSs: SDreaddata");
     /* Initialize data for the dataset */

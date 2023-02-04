@@ -2805,7 +2805,7 @@ HIget_access_rec(void)
     } /* end else */
 
     /* Initialize to zeros */
-    HDmemset(ret_value, 0, sizeof(accrec_t));
+    memset(ret_value, 0, sizeof(accrec_t));
 
 done:
     return ret_value;
@@ -2875,7 +2875,7 @@ HIupdate_version(int32 file_id)
         UINT32ENCODE(p, file_rec->version.release);
         HIstrncpy((char *)p, file_rec->version.string, LIBVSTR_LEN);
         i = (int)HDstrlen((char *)p);
-        HDmemset(&p[i], 0, LIBVSTR_LEN - i);
+        memset(&p[i], 0, LIBVSTR_LEN - i);
     }
 
     if (Hputelement(file_id, (uint16)DFTAG_VERSION, (uint16)1, lversion, (int32)LIBVER_LEN) == FAIL)

@@ -2796,12 +2796,12 @@ test_extfile(void)
     {
         /* Make a shorter string to verify later */
         char *short_name = (char *)HDmalloc(sizeof(char *) * (name_len));
-        HDmemset(short_name, '\0', name_len);
+        memset(short_name, '\0', name_len);
         HDstrncpy(short_name, EXTERNAL_FILE, name_len - 2);
 
         /* Prepare buffer for external file name in the following test */
         extfile_name = (char *)HDmalloc(sizeof(char *) * (name_len - 1));
-        HDmemset(extfile_name, '\0', name_len);
+        memset(extfile_name, '\0', name_len);
 
         /* Call VSgetexternalinfo again with smaller buffer size and make sure
            VSgetexternalinfo reads the name truncated to the given buffer size*/

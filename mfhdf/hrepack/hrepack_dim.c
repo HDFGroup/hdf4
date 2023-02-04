@@ -262,7 +262,7 @@ gen_dim(char *name, /* name of SDS */
 
     if (empty_sds == 0) {
         comp_type_in = COMP_CODE_NONE; /* reset variables before retrieving information */
-        HDmemset(&c_info_in, 0, sizeof(comp_info));
+        memset(&c_info_in, 0, sizeof(comp_info));
         if (SDgetcompinfo(sds_id, &comp_type_in, &c_info_in) == FAIL) {
             printf("Could not get compression information for SDS <%s>\n", sds_name);
             SDendaccess(sds_id);

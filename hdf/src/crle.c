@@ -157,7 +157,7 @@ HCIcrle_decode(compinfo_t *info, int32 length, uint8 *buf)
             dec_len = (uintn)length;
 
         if (rle_info->rle_state == RLE_RUN)
-            HDmemset(buf, rle_info->last_byte, dec_len); /* copy the run */
+            memset(buf, rle_info->last_byte, dec_len); /* copy the run */
         else {
             HDmemcpy(buf, &(rle_info->buffer[rle_info->buf_pos]), dec_len);
             rle_info->buf_pos += (intn)dec_len;

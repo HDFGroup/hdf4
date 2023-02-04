@@ -143,7 +143,7 @@ test_mgr_compress_a()
         CHECK(ret, FAIL, "GRendaccess");
 
         /* Check that the image made it out correctly */
-        HDmemset(image, 0, 10 * 10);
+        memset(image, 0, 10 * 10);
 
         /* Get the second image in this file */
         riid = GRselect(grid, 1);
@@ -331,7 +331,7 @@ test_mgr_compress_b()
         CHECK(ret, FAIL, "GRendaccess");
 
         /* Check that the image made it out correctly */
-        HDmemset(image, 0, 10 * 10);
+        memset(image, 0, 10 * 10);
 
         /* Get the second image in this file */
         riid = GRselect(grid, 1);
@@ -585,7 +585,7 @@ test_get_compress()
        and JPEG compression methods. */
 
     /* No compression info for the RLE image */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
 
     /* Create and write the first compressed image in this file */
     status = make_comp_image(grid, RLE_IMAGE, COMP_CODE_RLE, &cinfo, err_func);
@@ -593,7 +593,7 @@ test_get_compress()
 
     /* Set the compression info for the second image with skipping
        huffman method */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     cinfo.skphuff.skp_size = SKPHUFF_SKIPSIZE;
 
     /* Create and write the second compressed image in this file */
@@ -601,7 +601,7 @@ test_get_compress()
     CHECK(status, FAIL, err_func);
 
     /* Set the compression info for the third image with deflate method */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     cinfo.deflate.level = DEFLATE_LEVEL;
 
     /* Create and write the third compressed image in this file */
@@ -609,7 +609,7 @@ test_get_compress()
     CHECK(status, FAIL, err_func);
 
     /* Set the compression method for the fourth image */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     cinfo.jpeg.quality        = 100; /* won't be able to retrieved anyway */
     cinfo.jpeg.force_baseline = 1;
 
@@ -658,7 +658,7 @@ test_get_compress()
     CHECK(riid, FAIL, "GRselect");
 
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     status = GRgetcompinfo(riid, &comp_type, &cinfo);
     CHECK(status, FAIL, "GRgetcompinfo");
     VERIFY(comp_type, COMP_CODE_SKPHUFF, "GRgetcompinfo");
@@ -679,7 +679,7 @@ test_get_compress()
     CHECK(riid, FAIL, "GRselect");
 
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     status = GRgetcompinfo(riid, &comp_type, &cinfo);
     CHECK(status, FAIL, "GRgetcompinfo");
     VERIFY(comp_type, COMP_CODE_DEFLATE, "GRgetcompinfo");
@@ -697,7 +697,7 @@ test_get_compress()
        the compression type value against that being set earlier
        ('quality' and 'force_baseline' are currently not retrievable) */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     status = GRgetcompinfo(riid, &comp_type, &cinfo);
     CHECK(status, FAIL, "GRgetcompinfo");
     VERIFY(comp_type, COMP_CODE_JPEG, "GRgetcompinfo");
@@ -919,7 +919,7 @@ test_mgr_chunk_compress()
 
         /* Get and verify the image's compression information */
         comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-        HDmemset(&cinfo, 0, sizeof(cinfo));
+        memset(&cinfo, 0, sizeof(cinfo));
 
         status = GRgetcompinfo(ri_id[img_num], &comp_type, &cinfo);
         CHECK(status, FAIL, "GRgetcompinfo");

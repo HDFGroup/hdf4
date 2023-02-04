@@ -392,7 +392,7 @@ make_obj_list(int32 fid, uint32 options)
     } /* end if */
 
     /* Clear array of dd/object information */
-    HDmemset(obj_ret->raw_obj_arr, 0, sizeof(objinfo_t) * nobj);
+    memset(obj_ret->raw_obj_arr, 0, sizeof(objinfo_t) * nobj);
 
     /*
      * Read all the tag/ref's in the file into an array

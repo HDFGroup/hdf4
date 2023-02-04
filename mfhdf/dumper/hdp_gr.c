@@ -703,7 +703,7 @@ print_grcomp_info(FILE *fp, int32 ri_id)
     intn         status    = FAIL; /* returned status from a called function */
 
     /* Get compression info */
-    HDmemset(&c_info, 0, sizeof(c_info));
+    memset(&c_info, 0, sizeof(c_info));
     status = GRgetcompinfo(ri_id, &comp_type, &c_info);
 
     /* if getting comp info succeeds, proceed to print out appropriate
@@ -764,7 +764,7 @@ printGR_ASCII(int32 gr_id, dump_info_t *dumpgr_opts, int32 ndsets, /* number of 
         ri_count++; /* count the # of images being processed */
 
         /* Reset variables. */
-        HDmemset(dimsizes, 0, sizeof(int32) * MAXRANK);
+        memset(dimsizes, 0, sizeof(int32) * MAXRANK);
 
         /* get access to the current image */
         ri_id = GRselect(gr_id, ri_index);
@@ -922,7 +922,7 @@ printGR_BINARY(int32 gr_id, dump_info_t *dumpgr_opts, int32 num_ri_chosen, /* # 
         ri_count++; /* count the # of images being processed */
 
         /* Reset variables. */
-        HDmemset(dimsizes, 0, sizeof(int32) * MAXRANK);
+        memset(dimsizes, 0, sizeof(int32) * MAXRANK);
 
         /* get access to the current image */
         ri_id = GRselect(gr_id, ri_index);

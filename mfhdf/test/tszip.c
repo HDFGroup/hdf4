@@ -115,14 +115,14 @@ test_szip_SDS8bit()
 
     /* Retrieve compression informayion about the dataset */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&c_info, 0, sizeof(c_info));
+    memset(&c_info, 0, sizeof(c_info));
 
     status = SDgetcompinfo(sds_id, &comp_type, &c_info);
     CHECK(status, FAIL, "SDgetcompinfo");
     VERIFY(comp_type, COMP_CODE_SZIP, "SDgetcompinfo");
 
     /* Wipe out the output buffer */
-    HDmemset(&out_data, 0, sizeof(out_data));
+    memset(&out_data, 0, sizeof(out_data));
 
     /* Read the data set */
     start[0] = 0;
@@ -238,7 +238,7 @@ test_szip_SDS16bit()
     CHECK(status, FAIL, "SDgetinfo");
 
     /* Wipe out the output buffer */
-    HDmemset(&out_data, 0, sizeof(out_data));
+    memset(&out_data, 0, sizeof(out_data));
 
     /* Read the data set */
     start[0] = 0;
@@ -354,7 +354,7 @@ test_szip_SDS32bit()
     CHECK(status, FAIL, "SDgetinfo");
 
     /* Wipe out the output buffer */
-    HDmemset(&out_data, 0, sizeof(out_data));
+    memset(&out_data, 0, sizeof(out_data));
 
     /* Read the data set */
     start[0] = 0;
@@ -472,7 +472,7 @@ test_szip_SDSfl32bit()
     CHECK(status, FAIL, "SDgetinfo");
 
     /* Wipe out the output buffer */
-    HDmemset(&out_data, 0, sizeof(out_data));
+    memset(&out_data, 0, sizeof(out_data));
 
     /* Read the data set */
     start[0] = 0;
@@ -590,7 +590,7 @@ test_szip_SDSfl64bit()
     CHECK(status, FAIL, "SDgetinfo");
 
     /* Wipe out the output buffer */
-    HDmemset(&out_data, 0, sizeof(out_data));
+    memset(&out_data, 0, sizeof(out_data));
 
     /* Read the data set */
     start[0] = 0;
@@ -708,7 +708,7 @@ test_szip_chunk()
     new_maxcache = SDsetchunkcache(sds_id, maxcache, flag);
     CHECK(new_maxcache, FAIL, "SDsetchunkcache");
 
-    HDmemset(&c_def_out, 0, sizeof(HDF_CHUNK_DEF));
+    memset(&c_def_out, 0, sizeof(HDF_CHUNK_DEF));
     c_flags_out = 0;
     status      = SDgetchunkinfo(sds_id, &c_def_out, &c_flags_out);
     CHECK(status, FAIL, "SDgetchunkinfo");
@@ -784,7 +784,7 @@ test_szip_chunk()
 
     /* Retrieve compression information about the dataset */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
 
     status = SDgetcompinfo(sds_id, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompinfo");
@@ -955,14 +955,14 @@ test_szip_chunk_3d()
     status   = SDwritedata(sds_id, start, NULL, edges, (VOIDP)out_data);
     CHECK(status, FAIL, "SDwritedata");
 
-    HDmemset(&c_def_out, 0, sizeof(HDF_CHUNK_DEF));
+    memset(&c_def_out, 0, sizeof(HDF_CHUNK_DEF));
     c_flags_out = 0;
     status      = SDgetchunkinfo(sds_id0, &c_def_out, &c_flags_out);
     CHECK(status, FAIL, "SDgetchunkinfo");
     VERIFY(c_flags_out, c_flags, "SDgetchunkinfo");
     VERIFY(c_def_out.comp.comp_type, COMP_CODE_SZIP, "SDgetchunkinfo");
 
-    HDmemset(&c_def_out, 0, sizeof(HDF_CHUNK_DEF));
+    memset(&c_def_out, 0, sizeof(HDF_CHUNK_DEF));
     c_flags_out = 0;
     status      = SDgetchunkinfo(sds_id, &c_def_out, &c_flags_out);
     CHECK(status, FAIL, "SDgetchunkinfo");
@@ -992,7 +992,7 @@ test_szip_chunk_3d()
 
     /* Retrieve compression information about the dataset */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
 
     status = SDgetcompinfo(sds_id, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompinfo");
@@ -1131,7 +1131,7 @@ test_szip_unlimited()
     CHECK(status, FAIL, "SDgetinfo");
 
     /* Wipe out the output buffer */
-    HDmemset(&out_data, 0, sizeof(out_data));
+    memset(&out_data, 0, sizeof(out_data));
 
     /* Read the data set */
     start[0] = 0;
@@ -1344,7 +1344,7 @@ test_getszipdata()
     edges[1] = dim_sizes[1];
 
     /* Wipe out the output buffer */
-    HDmemset(&out_data, 0, sizeof(out_data));
+    memset(&out_data, 0, sizeof(out_data));
 
     /* Read the data set */
     status = SDreaddata(sds_id, start, NULL, edges, (VOIDP)out_data);

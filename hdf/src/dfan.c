@@ -1217,9 +1217,9 @@ DFANIlablist(const char *filename, uint16 tag, uint16 reflist[], uint8 *labellis
 
     /* clear labellist.  pad with blanks for Fortran; add null for C  */
     if (isfortran)
-        HDmemset(labellist, ' ', (uint32)maxlen * (uint32)listsize);
+        memset(labellist, ' ', (uint32)maxlen * (uint32)listsize);
     else
-        HDmemset(labellist, '\0', (uint32)maxlen * (uint32)listsize);
+        memset(labellist, '\0', (uint32)maxlen * (uint32)listsize);
 
     /* find all refs for this tag; store them in reflist */
     nrefs = (intn)Hnumber(file_id, tag); /* how many times is tag in file? */

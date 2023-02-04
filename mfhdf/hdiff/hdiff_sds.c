@@ -311,7 +311,7 @@ diff_sds(int32 sd1_id, int32 sd2_id, int32 ref1, int32 ref2, diff_opt_t *opt)
             sm_buf2 = HDmalloc((size_t)sm_nbytes);
 
             /* the stripmine loop */
-            HDmemset(hs_offset, 0, sizeof hs_offset);
+            memset(hs_offset, 0, sizeof hs_offset);
 
             for (elmtno = 0; elmtno < p_nelmts; elmtno += hs_nelmts) {
                 /* calculate the hyperslab size */

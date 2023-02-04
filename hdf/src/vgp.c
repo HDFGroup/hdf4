@@ -176,7 +176,7 @@ VIget_vgroup_node(void)
     } /* end else */
 
     /* Initialize to zeros */
-    HDmemset(ret_value, 0, sizeof(VGROUP));
+    memset(ret_value, 0, sizeof(VGROUP));
 
 done:
     return (ret_value);
@@ -231,7 +231,7 @@ VIget_vginstance_node(void)
     } /* end else */
 
     /* Initialize to zeros */
-    HDmemset(ret_value, 0, sizeof(vginstance_t));
+    memset(ret_value, 0, sizeof(vginstance_t));
 
 done:
     return (ret_value);
