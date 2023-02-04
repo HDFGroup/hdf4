@@ -1154,8 +1154,7 @@ DESCRIPTION
 #define HDstrcpy3(s1, s2, s3, s4)     (HDstrcat(HDstrcat(HDstrcpy(s1, s2), s3), s4))
 #define HDstrcpy4(s1, s2, s3, s4, s5) (HDstrcat(HDstrcat(HDstrcat(HDstrcpy(s1, s2), s3), s4), s5))
 
-static
-char *
+static char *
 HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 {
     int        fname_len;        /* string length of the ext_fname */

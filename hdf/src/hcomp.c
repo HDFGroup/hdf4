@@ -90,15 +90,15 @@ MODIFICATION HISTORY
 static int32 HCIstaccess(accrec_t *access_rec, int16 acc_mode);
 
 static int32 HCIinit_coder(int16 acc_mode, comp_coder_info_t *cinfo, comp_coder_t coder_type,
-                            comp_info *coder_info);
+                           comp_info *coder_info);
 
 static int32 HCIread_header(accrec_t *access_rec, compinfo_t *info, comp_info *c_info, model_info *m_info);
 
 static int32 HCIwrite_header(atom_t file_id, compinfo_t *info, uint16 special_tag, uint16 ref,
-                              comp_info *c_info, model_info *m_info);
+                             comp_info *c_info, model_info *m_info);
 
 static int32 HCIinit_model(int16 acc_mode, comp_model_info_t *minfo, comp_model_t model_type,
-                            model_info *m_info);
+                           model_info *m_info);
 
 /* comp_funcs -- struct of accessing functions for the compressed
    data element function modules.  The position of each function in

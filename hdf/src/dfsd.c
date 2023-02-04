@@ -154,14 +154,14 @@ static DFSsdg Writesdg = /* struct for writing */
 
 static uint16 Writeref = 0;         /* ref of next SDG/NDG to write to file */
 static intn   Newdata  = (-1);      /* Values in Readsdg fresh? */
-                                     /* -1 : no descriptor read */
-                                     /* 1 : descriptor read */
+                                    /* -1 : no descriptor read */
+                                    /* 1 : descriptor read */
 static intn Nextsdg = 1;            /* Signal if DFSDgetdata should get the */
-                                     /* next SDG/NDG */
+                                    /* next SDG/NDG */
 static int32  Sfile_id = DF_NOFILE; /* pointer to file for slice writes */
 static int32 *Sddims;               /*dims written so far in slice write */
 
-static struct {   /* Indicators of status (s) of info:    */
+static struct {    /* Indicators of status (s) of info:    */
     intn dims;     /* s = -1: there is no info in this category */
     intn nt;       /* s = 0: info was set, but not yet written */
     intn coordsys; /* s > 0: info was set and written with ref no.s */

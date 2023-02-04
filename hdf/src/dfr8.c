@@ -122,7 +122,7 @@ static intn library_terminate = FALSE;
 
 /* private functions */
 static intn DFR8Iputimage(const char *filename, const void *image, int32 xdim, int32 ydim, uint16 compress,
-                           intn append);
+                          intn append);
 
 static int32 DFR8Iopen(const char *filename, intn acc_mode);
 

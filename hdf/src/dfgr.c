@@ -56,10 +56,10 @@ static uint16 Grrefset   = 0;       /* Ref of image to get next */
 static uint16 Grlastref  = 0;       /* Last ref read/written */
 static intn   Grreqil[2] = {0, 0};  /* requested lut/image il */
 static struct {                     /* track refs of set vals written before */
-    intn  lut;                       /* -1: no vals set */
-    int16 dims[2];                   /* 0: vals set, not written */
-    intn  nt;                        /* non-zero: ref of val in file */
-} Ref                  = {-1, {-1, -1}, -1};
+    intn  lut;                      /* -1: no vals set */
+    int16 dims[2];                  /* 0: vals set, not written */
+    intn  nt;                       /* non-zero: ref of val in file */
+} Ref                 = {-1, {-1, -1}, -1};
 static DFGRrig Grread = {
     /* information about RIG being read */
     NULL,

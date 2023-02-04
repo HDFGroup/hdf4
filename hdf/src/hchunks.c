@@ -271,7 +271,7 @@ LOCAL ROUTINES
 
 /* private functions */
 static int32 HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
-                           int16     acc_mode /* IN: access mode */);
+                          int16     acc_mode /* IN: access mode */);
 
 /* -------------------------------------------------------------------------
 NAME

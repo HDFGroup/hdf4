@@ -113,7 +113,7 @@ DFKInoset(VOIDP source, VOIDP dest, uint32 num_elm, uint32 source_stride, uint32
  *****************************************************************************/
 
 static int32 g_ntype = DFNT_NONE; /* Holds current number type. */
-                                   /* Initially not set.         */
+                                  /* Initially not set.         */
 
 /************************************************************
  * DFKqueryNT()
