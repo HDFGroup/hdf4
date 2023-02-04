@@ -17,7 +17,7 @@
 /* Size of the file buffer to copy through */
 #define MAX_FILE_BUF 16384
 
-PRIVATE uint8 file_buf[MAX_FILE_BUF]; /* size of the buffer to copy through */
+static uint8 file_buf[MAX_FILE_BUF]; /* size of the buffer to copy through */
 
 static VOID usage(void);
 

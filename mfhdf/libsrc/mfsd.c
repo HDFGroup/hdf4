@@ -114,7 +114,7 @@ NOTE: This file needs to have the comments cleaned up for most of the
 intn SDsetup_szip_parms(int32 id, NC *handle, comp_info *c_info, int32 *cdims);
 
 /* Whether we've installed the library termination function yet for this interface */
-PRIVATE intn library_terminate = FALSE;
+static intn library_terminate = FALSE;
 
 #ifdef MFSD_INTERNAL
 /******************************************************************************

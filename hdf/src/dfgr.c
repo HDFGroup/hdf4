@@ -46,21 +46,21 @@
 #include "hdf.h"
 #include "dfgr.h"
 
-PRIVATE char     *Grlastfile = NULL;
-PRIVATE uint8    *Grlutdata  = NULL; /* points to lut, if in memory */
-PRIVATE intn      Grnewdata  = 0;    /* does Grread contain fresh data? */
-PRIVATE intn      Grcompr    = 0;    /* compression scheme to use */
-PRIVATE comp_info Grcinfo;           /* Compression information for each
+static char     *Grlastfile = NULL;
+static uint8    *Grlutdata  = NULL; /* points to lut, if in memory */
+static intn      Grnewdata  = 0;    /* does Grread contain fresh data? */
+static intn      Grcompr    = 0;    /* compression scheme to use */
+static comp_info Grcinfo;           /* Compression information for each
                                         scheme */
-PRIVATE uint16 Grrefset   = 0;       /* Ref of image to get next */
-PRIVATE uint16 Grlastref  = 0;       /* Last ref read/written */
-PRIVATE intn   Grreqil[2] = {0, 0};  /* requested lut/image il */
-PRIVATE struct {                     /* track refs of set vals written before */
-    intn  lut;                       /* -1: no vals set */
-    int16 dims[2];                   /* 0: vals set, not written */
-    intn  nt;                        /* non-zero: ref of val in file */
-} Ref                  = {-1, {-1, -1}, -1};
-PRIVATE DFGRrig Grread = {
+static uint16 Grrefset   = 0;       /* Ref of image to get next */
+static uint16 Grlastref  = 0;       /* Last ref read/written */
+static intn   Grreqil[2] = {0, 0};  /* requested lut/image il */
+static struct {                     /* track refs of set vals written before */
+    intn  lut;                      /* -1: no vals set */
+    int16 dims[2];                  /* 0: vals set, not written */
+    intn  nt;                       /* non-zero: ref of val in file */
+} Ref                 = {-1, {-1, -1}, -1};
+static DFGRrig Grread = {
     /* information about RIG being read */
     NULL,
     0,
@@ -82,7 +82,7 @@ PRIVATE DFGRrig Grread = {
         {0, 0, 0, 0, {0, 0}, {0, 0}},
     },
 };
-PRIVATE DFGRrig Grwrite = {
+static DFGRrig Grwrite = {
     /* information about RIG being written */
     NULL,
     0,
@@ -104,7 +104,7 @@ PRIVATE DFGRrig Grwrite = {
         {0, 0, 0, 0, {0, 0}, {0, 0}},
     },
 };
-PRIVATE DFGRrig Grzrig = {
+static DFGRrig Grzrig = {
     /* empty RIG for initialization */
     NULL,
     0,
@@ -128,16 +128,16 @@ PRIVATE DFGRrig Grzrig = {
 };
 
 /* Whether we've installed the library termination function yet for this interface */
-PRIVATE intn library_terminate = FALSE;
+static intn library_terminate = FALSE;
 
 #define LUT   0
 #define IMAGE 1
 
 /* private functions */
-PRIVATE int  DFGRIriginfo(int32 file_id);
-PRIVATE int  DFGRgetrig(int32 file_id, uint16 ref, DFGRrig *rig);
-PRIVATE int  DFGRaddrig(int32 file_id, uint16 ref, DFGRrig *rig);
-PRIVATE intn DFGRIstart(void);
+static int  DFGRIriginfo(int32 file_id);
+static int  DFGRgetrig(int32 file_id, uint16 ref, DFGRrig *rig);
+static int  DFGRaddrig(int32 file_id, uint16 ref, DFGRrig *rig);
+static intn DFGRIstart(void);
 
 /*-----------------------------------------------------------------------------
  * Name:    DFGRgetlutdims
@@ -458,7 +458,7 @@ done:
  * Remarks: incomplete - does not support DFTAG_MA etc.
  *---------------------------------------------------------------------------*/
 
-PRIVATE int
+static int
 DFGRgetrig(int32 file_id, uint16 ref, DFGRrig *rig)
 {
     uint16 elt_tag, elt_ref;
@@ -552,7 +552,7 @@ done:
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-PRIVATE int
+static int
 DFGRaddrig(int32 file_id, uint16 ref, DFGRrig *rig)
 {
     uint8 ntstring[4];
@@ -733,7 +733,7 @@ done:
  * Remarks: if Grrefset set, gets image with that ref, if any
  *---------------------------------------------------------------------------*/
 
-PRIVATE int
+static int
 DFGRIriginfo(int32 file_id)
 {
     int    i, isfirst;
@@ -1380,7 +1380,7 @@ DFGRIlastref(void)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 DFGRIstart(void)
 {
     intn ret_value = SUCCEED;

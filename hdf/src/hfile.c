@@ -123,14 +123,14 @@
 /*--------------------- Locally defined Globals -----------------------------*/
 
 /* The default state of the file DD caching */
-PRIVATE intn default_cache = TRUE;
+static intn default_cache = TRUE;
 
 /* Whether we've installed the library termination function yet for this interface */
-PRIVATE intn          library_terminate = FALSE;
-PRIVATE Generic_list *cleanup_list      = NULL;
+static intn          library_terminate = FALSE;
+static Generic_list *cleanup_list      = NULL;
 
 /* Whether to install the atexit routine */
-PRIVATE intn install_atexit = TRUE;
+static intn install_atexit = TRUE;
 
 /*--------------------- Externally defined Globals --------------------------*/
 /* Function tables declarations.  These function tables contain pointers
@@ -180,27 +180,27 @@ functab_t functab[] = {
 /*
  ** Declaration of private functions.
  */
-PRIVATE intn HIunlock(filerec_t *file_rec);
+static intn HIunlock(filerec_t *file_rec);
 
-PRIVATE filerec_t *HIget_filerec_node(const char *path);
+static filerec_t *HIget_filerec_node(const char *path);
 
-PRIVATE intn HIrelease_filerec_node(filerec_t *file_rec);
+static intn HIrelease_filerec_node(filerec_t *file_rec);
 
-PRIVATE intn HIvalid_magic(hdf_file_t file);
+static intn HIvalid_magic(hdf_file_t file);
 
-PRIVATE intn HIextend_file(filerec_t *file_rec);
+static intn HIextend_file(filerec_t *file_rec);
 
-PRIVATE funclist_t *HIget_function_table(accrec_t *access_rec);
+static funclist_t *HIget_function_table(accrec_t *access_rec);
 
-PRIVATE intn HIupdate_version(int32);
+static intn HIupdate_version(int32);
 
-PRIVATE intn HIread_version(int32);
+static intn HIread_version(int32);
 
-PRIVATE intn HIcheckfileversion(int32 file_id);
+static intn HIcheckfileversion(int32 file_id);
 
-PRIVATE intn HIsync(filerec_t *file_rec);
+static intn HIsync(filerec_t *file_rec);
 
-PRIVATE intn HIstart(void);
+static intn HIstart(void);
 
 /* #define TESTING */
 
@@ -1839,7 +1839,7 @@ DESCRIPTION
 NOTE
 
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 HIsync(filerec_t *file_rec)
 {
     intn ret_value = SUCCEED;
@@ -2083,7 +2083,7 @@ Internal Routines
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 HIstart(void)
 {
     intn ret_value = SUCCEED;
@@ -2221,7 +2221,7 @@ DESCRIPTION
    member of the file_rec.  This is mainly written as a function so that
    the functionality is localized.
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 HIextend_file(filerec_t *file_rec)
 {
     uint8 temp      = 0;
@@ -2248,7 +2248,7 @@ DESCRIPTION
    Set up the table of special functions for a given special element
 
 --------------------------------------------------------------------------*/
-PRIVATE funclist_t *
+static funclist_t *
 HIget_function_table(accrec_t *access_rec)
 {
     filerec_t  *file_rec; /* file record */
@@ -2324,7 +2324,7 @@ done:
 /*--------------------------------------------------------------------------
 HIunlock -- unlock a previously locked file record
 --------------------------------------------------------------------------*/
-PRIVATE int
+static int
 HIunlock(filerec_t *file_rec)
 {
     /* unlock the file record */
@@ -2364,7 +2364,7 @@ typedef struct special_table_t {
     uint16 special_tag;
 } special_table_t;
 
-PRIVATE special_table_t special_table[] = {
+static special_table_t special_table[] = {
     {0x8010, 0x4000 | 0x8010}, /* dummy */
 };
 
@@ -2526,7 +2526,7 @@ done:
     Checks that the file's version is current and update it if it isn't.
 
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 HIcheckfileversion(int32 file_id)
 {
     filerec_t *file_rec;
@@ -2585,7 +2585,7 @@ done:
        absolute paths.
 
 --------------------------------------------------------------------------*/
-PRIVATE filerec_t *
+static filerec_t *
 HIget_filerec_node(const char *path)
 {
     filerec_t *ret_value = NULL;
@@ -2624,7 +2624,7 @@ done:
         Release a file record back to the system
 
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 HIrelease_filerec_node(filerec_t *file_rec)
 {
     /* Close file if it's opened */
@@ -2755,7 +2755,7 @@ done:
        file are the HDF "magic number" HDFMAGIC
 
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 HIvalid_magic(hdf_file_t file)
 {
     char b[MAGICLEN];       /* Temporary buffer */
@@ -2846,7 +2846,7 @@ HIrelease_accrec_node(accrec_t *acc)
     entry.
 
 --------------------------------------------------------------------------*/
-PRIVATE int
+static int
 HIupdate_version(int32 file_id)
 {
     /* uint32 lmajorv, lminorv, lrelease; */
@@ -2904,7 +2904,7 @@ done:
     Writes to version fields of appropriate file_records[] entry.
 
 --------------------------------------------------------------------------*/
-PRIVATE int
+static int
 HIread_version(int32 file_id)
 {
     filerec_t *file_rec;

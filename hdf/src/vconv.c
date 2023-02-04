@@ -32,7 +32,7 @@
 
 /*
  ** ==================================================================
- ** PRIVATE data areas and routines
+ ** static data areas and routines
  ** ==================================================================
  * */
 
@@ -66,8 +66,8 @@
    stores sizes of local machine's known types
  */
 
-PRIVATE int16 local_sizetab[] = {LOCAL_UNTYPEDSIZE, LOCAL_CHARSIZE, LOCAL_INTSIZE,   LOCAL_FLOATSIZE,
-                                 LOCAL_LONGSIZE,    LOCAL_BYTESIZE, LOCAL_SHORTSIZE, LOCAL_DOUBLESIZE};
+static int16 local_sizetab[] = {LOCAL_UNTYPEDSIZE, LOCAL_CHARSIZE, LOCAL_INTSIZE,   LOCAL_FLOATSIZE,
+                                LOCAL_LONGSIZE,    LOCAL_BYTESIZE, LOCAL_SHORTSIZE, LOCAL_DOUBLESIZE};
 
 #define LOCALSIZETAB_SIZE sizeof(local_sizetab) / (sizeof(int))
 
@@ -75,7 +75,7 @@ PRIVATE int16 local_sizetab[] = {LOCAL_UNTYPEDSIZE, LOCAL_CHARSIZE, LOCAL_INTSIZ
  ** returns the machine size of a field type
  ** returns FAIL if error
  */
-PRIVATE int16
+static int16
 VSIZEOF(int16 x)
 {
     if (x < 0 || x > (int16)(LOCALSIZETAB_SIZE - 1)) {
@@ -96,8 +96,8 @@ VSIZEOF(int16 x)
 
 /* ------------------------------------------------------------------ */
 
-PRIVATE void oldunpackvg(VGROUP *vg, uint8 buf[], int32 *size);
-PRIVATE void oldunpackvs(VDATA *vs, uint8 buf[], int32 *size);
+static void oldunpackvg(VGROUP *vg, uint8 buf[], int32 *size);
+static void oldunpackvs(VDATA *vs, uint8 buf[], int32 *size);
 
 /*
  *  this routine checks that the given OPENED file is compatible with

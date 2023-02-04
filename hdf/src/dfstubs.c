@@ -86,12 +86,12 @@
 /*
  *  Important Internal Variables
  */
-PRIVATE DF *DFlist = NULL; /* pointer to list of open DFs */
+static DF *DFlist = NULL; /* pointer to list of open DFs */
 #ifdef PERM_OUT
-PRIVATE int            DFinuse    = 0;    /* How many are currently in use */
-PRIVATE uint16         DFmaxref   = 0;    /* which is the largest ref used? */
-PRIVATE unsigned char *DFreflist  = NULL; /* list of refs in use */
-PRIVATE char           patterns[] = {0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01};
+static int            DFinuse    = 0;    /* How many are currently in use */
+static uint16         DFmaxref   = 0;    /* which is the largest ref used? */
+static unsigned char *DFreflist  = NULL; /* list of refs in use */
+static char           patterns[] = {0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01};
 #endif /* PERM_OUT */
 
 /*
@@ -505,7 +505,7 @@ DFaccess(DF *dfile, uint16 tag, uint16 ref, char *acc_mode)
     return (0);
 }
 
-PRIVATE int
+static int
 DFIclearacc(void)
 {
     Hendaccess(DFaid);
@@ -1051,7 +1051,7 @@ DFerrno(void)
  * Users:   HDF systems programmers, several routines in this file
  *---------------------------------------------------------------------------*/
 
-PRIVATE int
+static int
 DFIcheck(DF *dfile)
 {
     DFerror = DFE_NONE;

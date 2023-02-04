@@ -270,8 +270,8 @@ LOCAL ROUTINES
 #include "hchunks.h"
 
 /* private functions */
-PRIVATE int32 HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
-                           int16     acc_mode /* IN: access mode */);
+static int32 HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
+                          int16     acc_mode /* IN: access mode */);
 
 /* -------------------------------------------------------------------------
 NAME
@@ -290,7 +290,7 @@ RETURNS
 AUTHOR
    -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 create_dim_recs(DIM_REC **dptr, /* OUT: dimension record pointers */
                 int32   **sbi,  /* OUT: seek chunk indices array */
                 int32   **spb,  /* OUT: seek pos w/ chunk array */
@@ -357,7 +357,7 @@ RETURNS
 AUTHOR
    -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
-PRIVATE void
+static void
 update_chunk_indices_seek(int32    sloc,    /* IN: physical Seek loc in element */
                           int32    ndims,   /* IN: number of dimensions of elem */
                           int32    nt_size, /* IN: number type size */
@@ -405,7 +405,7 @@ RETURNS
 AUTHOR
    -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
-PRIVATE void
+static void
 compute_chunk_to_seek(int32   *chunk_seek, /* OUT: new physical chunk seek pos in element*/
                       int32    ndims,      /* IN: number of dims */
                       int32    nt_size,    /* IN: number type size */
@@ -465,7 +465,7 @@ RETURNS
 AUTHOR
    -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
-PRIVATE void
+static void
 compute_chunk_to_array(int32   *chunk_indices,   /* IN: chunk indices */
                        int32   *chunk_array_ind, /* IN: chunk array indices */
                        int32   *array_indices,   /* OUT: array indices */
@@ -505,7 +505,7 @@ RETURNS
 AUTHOR
    -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
-PRIVATE void
+static void
 compute_array_to_seek(int32   *user_seek,     /* OUT: user seek */
                       int32   *array_indices, /* IN: user array indices */
                       int32    nt_size,       /* IN: number type size */
@@ -540,7 +540,7 @@ RETURNS
 AUTHOR
    -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
-PRIVATE void
+static void
 calculate_seek_in_chunk(int32   *chunk_seek, /* OUT: new physical seek pos in element*/
                         int32    ndims,      /* IN: number of dims */
                         int32    nt_size,    /* IN: number type size */
@@ -575,7 +575,7 @@ RETURNS
 AUTHOR
    -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
-PRIVATE void
+static void
 update_seek_pos_chunk(int32    chunk_seek, /* IN: physical seek pos in chunk */
                       int32    ndims,      /* IN: number of dims */
                       int32    nt_size,    /* IN: number type size */
@@ -613,7 +613,7 @@ RETURNS
 AUTHOR
    -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
-PRIVATE void
+static void
 calculate_chunk_num(int32   *chunk_num, /* OUT: new chunk number within element */
                     int32    ndims,     /* IN: number of dims */
                     int32   *sbi,       /* IN: seek chunk array */
@@ -646,7 +646,7 @@ RETURNS
 AUTHOR
    -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
-PRIVATE void
+static void
 calculate_chunk_for_chunk(int32   *chunk_size,     /* OUT: chunk size for this chunk */
                           int32    ndims,          /* IN: number of dims */
                           int32    nt_size,        /* IN: number type size */
@@ -781,7 +781,7 @@ RETURNS
 AUTHOR
    -GeorgeV - 9/3/96
 ----------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
              int16     acc_mode /* IN: access mode */)
 {

@@ -19,7 +19,7 @@
 
  Invokes:
 
- PRIVATE conversion functions: All of these are now in separate files!
+ Static conversion functions: All of these are now in separate files!
     dfknat.c
     DFKnb1b -  Native mode for 8 bit integers
     DFKnb2b -  Native mode for 16 bit integers
@@ -49,7 +49,7 @@
 
 /*****************************************************************************/
 /*                                                                           */
-/*    All the routines in this file marked as PRIVATE have been marked so    */
+/*    All the routines in this file marked as static have been marked so    */
 /*  for a reason.  *ANY* of these routines may or may nor be supported in    */
 /*  the next version of HDF (4.00).  Furthurmore, the names, parameters, or   */
 /*  functionality is *NOT* guaranteed to remain the same.                    */
@@ -70,7 +70,7 @@
 /*
  **  Static function prototypes
  */
-PRIVATE int DFKInoset(VOIDP source, VOIDP dest, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
+static int DFKInoset(VOIDP source, VOIDP dest, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
 /* Prototypes */
 extern int32 DFKqueryNT(void);
@@ -92,7 +92,7 @@ static int (*DFKnumout)(VOIDP source, VOIDP dest, uint32 num_elm, uint32 source_
  * If the programmer forgot to call DFKsetntype, then let
  * them know about it.
  ************************************************************/
-PRIVATE int
+static int
 DFKInoset(VOIDP source, VOIDP dest, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
 {
     (void)source;
@@ -112,8 +112,8 @@ DFKInoset(VOIDP source, VOIDP dest, uint32 num_elm, uint32 source_stride, uint32
  * Routines that depend on the above information
  *****************************************************************************/
 
-PRIVATE int32 g_ntype = DFNT_NONE; /* Holds current number type. */
-                                   /* Initially not set.         */
+static int32 g_ntype = DFNT_NONE; /* Holds current number type. */
+                                  /* Initially not set.         */
 
 /************************************************************
  * DFKqueryNT()

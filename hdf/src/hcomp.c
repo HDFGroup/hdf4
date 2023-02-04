@@ -87,18 +87,18 @@ MODIFICATION HISTORY
 #define COMP_START_BLOCK    0
 
 /* declaration of the functions provided in this module */
-PRIVATE int32 HCIstaccess(accrec_t *access_rec, int16 acc_mode);
+static int32 HCIstaccess(accrec_t *access_rec, int16 acc_mode);
 
-PRIVATE int32 HCIinit_coder(int16 acc_mode, comp_coder_info_t *cinfo, comp_coder_t coder_type,
-                            comp_info *coder_info);
+static int32 HCIinit_coder(int16 acc_mode, comp_coder_info_t *cinfo, comp_coder_t coder_type,
+                           comp_info *coder_info);
 
-PRIVATE int32 HCIread_header(accrec_t *access_rec, compinfo_t *info, comp_info *c_info, model_info *m_info);
+static int32 HCIread_header(accrec_t *access_rec, compinfo_t *info, comp_info *c_info, model_info *m_info);
 
-PRIVATE int32 HCIwrite_header(atom_t file_id, compinfo_t *info, uint16 special_tag, uint16 ref,
-                              comp_info *c_info, model_info *m_info);
+static int32 HCIwrite_header(atom_t file_id, compinfo_t *info, uint16 special_tag, uint16 ref,
+                             comp_info *c_info, model_info *m_info);
 
-PRIVATE int32 HCIinit_model(int16 acc_mode, comp_model_info_t *minfo, comp_model_t model_type,
-                            model_info *m_info);
+static int32 HCIinit_model(int16 acc_mode, comp_model_info_t *minfo, comp_model_t model_type,
+                           model_info *m_info);
 
 /* comp_funcs -- struct of accessing functions for the compressed
    data element function modules.  The position of each function in
@@ -137,7 +137,7 @@ funclist_t comp_funcs = {
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIinit_coder(int16 acc_mode, comp_coder_info_t *cinfo, comp_coder_t coder_type, comp_info *c_info)
 {
     uint32 comp_config_info;
@@ -257,7 +257,7 @@ HCIinit_coder(int16 acc_mode, comp_coder_info_t *cinfo, comp_coder_t coder_type,
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIinit_model(int16 acc_mode, comp_model_info_t *minfo, comp_model_t model_type, model_info *m_info)
 {
     (void)acc_mode;
@@ -576,7 +576,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIwrite_header(atom_t file_id, compinfo_t *info, uint16 special_tag, uint16 ref, comp_info *c_info,
                 model_info *m_info)
 {
@@ -630,7 +630,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIread_header(accrec_t *access_rec, compinfo_t *info, comp_info *c_info, model_info *m_info)
 {
     uint16 header_version; /* version of the compression header */
@@ -1018,7 +1018,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIstaccess(accrec_t *access_rec, int16 acc_mode)
 {
     compinfo_t *info = NULL; /* special element information */

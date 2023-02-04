@@ -72,7 +72,7 @@ const char *HDF_INTERNAL_VDS[] = {DIM_VALS,    DIM_VALS01,      _HDF_ATTRIBUTE, 
 
 /* Private functions */
 #ifdef VDATA_FIELDS_ALL_UPPER
-PRIVATE int32 matchnocase(char *strx, char *stry);
+static int32 matchnocase(char *strx, char *stry);
 #endif /* VDATA_FIELDS_ALL_UPPER */
 
 #ifdef VDATA_FIELDS_ALL_UPPER
@@ -87,7 +87,7 @@ RETURNS
    if strings match return TRUE,
    else FALSE
 --------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 matchnocase(char *strx, /* IN: first string to be compared */
             char *stry /* IN: second string to be compared */)
 {
@@ -1294,7 +1294,7 @@ RETURNS
    return TRUE, else FALSE.
    BMR - 2010/11/30
 *******************************************************************************/
-PRIVATE intn
+static intn
 vscheckclass(int32 id, /* IN: vgroup id or file id */
 	    uint16 vs_ref, /* IN: reference number of vdata being checked */
 	    const char *vsclass  /* IN: class name to be queried or NULL for

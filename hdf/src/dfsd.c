@@ -105,10 +105,10 @@ Fortran stub functions:
 #define NFGSDG_TYPE_SDGNDG 2 /* an SDG in NDG */
 
 /* Init NSDG table header      */
-PRIVATE DFnsdg_t_hdr *nsdghdr = NULL;
+static DFnsdg_t_hdr *nsdghdr = NULL;
 
 /* initialize aid to -1 and numbertype to DFNT_NONE.   S. Xu    */
-PRIVATE DFSsdg Readsdg = /* struct for reading */
+static DFSsdg Readsdg = /* struct for reading */
     {{(uint16)0, (uint16)0},
      (intn)0,
      NULL,
@@ -130,7 +130,7 @@ PRIVATE DFSsdg Readsdg = /* struct for reading */
      {0},
      0};
 
-PRIVATE DFSsdg Writesdg = /* struct for writing */
+static DFSsdg Writesdg = /* struct for writing */
     {{(uint16)0, (uint16)0},
      (intn)0,
      NULL,
@@ -152,16 +152,16 @@ PRIVATE DFSsdg Writesdg = /* struct for writing */
      {0},
      0};
 
-PRIVATE uint16 Writeref = 0;         /* ref of next SDG/NDG to write to file */
-PRIVATE intn   Newdata  = (-1);      /* Values in Readsdg fresh? */
-                                     /* -1 : no descriptor read */
-                                     /* 1 : descriptor read */
-PRIVATE intn Nextsdg = 1;            /* Signal if DFSDgetdata should get the */
-                                     /* next SDG/NDG */
-PRIVATE int32  Sfile_id = DF_NOFILE; /* pointer to file for slice writes */
-PRIVATE int32 *Sddims;               /*dims written so far in slice write */
+static uint16 Writeref = 0;         /* ref of next SDG/NDG to write to file */
+static intn   Newdata  = (-1);      /* Values in Readsdg fresh? */
+                                    /* -1 : no descriptor read */
+                                    /* 1 : descriptor read */
+static intn Nextsdg = 1;            /* Signal if DFSDgetdata should get the */
+                                    /* next SDG/NDG */
+static int32  Sfile_id = DF_NOFILE; /* pointer to file for slice writes */
+static int32 *Sddims;               /*dims written so far in slice write */
 
-PRIVATE struct {   /* Indicators of status (s) of info:    */
+static struct {    /* Indicators of status (s) of info:    */
     intn dims;     /* s = -1: there is no info in this category */
     intn nt;       /* s = 0: info was set, but not yet written */
     intn coordsys; /* s > 0: info was set and written with ref no.s */
@@ -174,11 +174,11 @@ PRIVATE struct {   /* Indicators of status (s) of info:    */
     intn new_ndg;
 } Ref = {-1, -1, -1, {-1, -1, -1}, -1, -1, -1, -1, -1, -1};
 
-PRIVATE intn Maxstrlen[4]  = {DFS_MAXLEN, DFS_MAXLEN, DFS_MAXLEN, DFS_MAXLEN};
-PRIVATE intn Ismaxmin      = 0; /* is there a max/min value on read?  */
-PRIVATE intn FileTranspose = 0; /* is the data in column major order? */
-PRIVATE intn Fortorder     = 0; /* should data be written col major?  */
-PRIVATE intn IsCal         = 0; /* has calibration info been set?     */
+static intn Maxstrlen[4]  = {DFS_MAXLEN, DFS_MAXLEN, DFS_MAXLEN, DFS_MAXLEN};
+static intn Ismaxmin      = 0; /* is there a max/min value on read?  */
+static intn FileTranspose = 0; /* is the data in column major order? */
+static intn Fortorder     = 0; /* should data be written col major?  */
+static intn IsCal         = 0; /* has calibration info been set?     */
 
 /* In ver. 3.2 numbertype and file number format (subclass) are included  */
 /* in DFSsdg, and  fileNTsize is local to functions .           */
@@ -188,16 +188,16 @@ PRIVATE intn IsCal         = 0; /* has calibration info been set?     */
 /*           outNTsize=4,                        */
 /*           userNT=DFNTF_IEEE ;         default */
 
-PRIVATE uint16 Readref  = 0; /* ref of next SDG/NDG to be read? */
-PRIVATE char  *Lastfile = NULL;
-PRIVATE uint16 Lastref  = 0; /* Last ref to be read/written? */
-PRIVATE DFdi   lastnsdg;     /* last read nsdg in nsdg_t */
+static uint16 Readref  = 0; /* ref of next SDG/NDG to be read? */
+static char  *Lastfile = NULL;
+static uint16 Lastref  = 0; /* Last ref to be read/written? */
+static DFdi   lastnsdg;     /* last read nsdg in nsdg_t */
 
 /* Whether we've installed the library termination function yet for this interface */
-PRIVATE intn library_terminate = FALSE;
+static intn library_terminate = FALSE;
 
 /* Private buffer */
-PRIVATE uint8 *ptbuf = NULL;
+static uint8 *ptbuf = NULL;
 
 /* Prototypes */
 static intn DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr *l_nsdghdr);
@@ -5002,7 +5002,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 DFSDIstart(void)
 {
     intn ret_value = SUCCEED;

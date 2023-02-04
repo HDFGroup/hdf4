@@ -37,29 +37,29 @@
 #define DFSRCH_OLD    0
 #define DFSRCH_NEW    1
 
-PRIVATE int32  DFid        = 0;
-PRIVATE int32  DFaid       = 0;
-PRIVATE int    DFaccmode   = 0;
-PRIVATE int    DFelaccmode = 0;
-PRIVATE uint16 search_tag  = 0;
-PRIVATE uint16 search_ref  = 0;
-PRIVATE int    search_stat = DFSRCH_NEW;
-PRIVATE int32  search_aid  = 0;
-PRIVATE int    DFelstat    = DFEL_ABSENT;
-PRIVATE int32  DFelsize    = 0;
-PRIVATE int32  DFelseekpos = 0;
-PRIVATE uint16 acc_tag     = 0;
-PRIVATE uint16 acc_ref     = 0;
-PRIVATE char  *DFelement   = NULL;
+static int32  DFid        = 0;
+static int32  DFaid       = 0;
+static int    DFaccmode   = 0;
+static int    DFelaccmode = 0;
+static uint16 search_tag  = 0;
+static uint16 search_ref  = 0;
+static int    search_stat = DFSRCH_NEW;
+static int32  search_aid  = 0;
+static int    DFelstat    = DFEL_ABSENT;
+static int32  DFelsize    = 0;
+static int32  DFelseekpos = 0;
+static uint16 acc_tag     = 0;
+static uint16 acc_ref     = 0;
+static char  *DFelement   = NULL;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /* prototypes for internal routines */
-PRIVATE int DFIclearacc(void);
+static int DFIclearacc(void);
 
-PRIVATE int DFIcheck(DF *dfile);
+static int DFIcheck(DF *dfile);
 
 #ifdef __cplusplus
 }

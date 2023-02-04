@@ -48,15 +48,15 @@
 /* #define TESTING */
 
 /* declaration of the functions provided in this module */
-PRIVATE int32 HCIcrle_staccess(accrec_t *access_rec, int16 acc_mode);
+static int32 HCIcrle_staccess(accrec_t *access_rec, int16 acc_mode);
 
-PRIVATE int32 HCIcrle_init(accrec_t *access_rec);
+static int32 HCIcrle_init(accrec_t *access_rec);
 
-PRIVATE int32 HCIcrle_decode(compinfo_t *info, int32 length, uint8 *buf);
+static int32 HCIcrle_decode(compinfo_t *info, int32 length, uint8 *buf);
 
-PRIVATE int32 HCIcrle_encode(compinfo_t *info, int32 length, const uint8 *buf);
+static int32 HCIcrle_encode(compinfo_t *info, int32 length, const uint8 *buf);
 
-PRIVATE int32 HCIcrle_term(compinfo_t *info);
+static int32 HCIcrle_term(compinfo_t *info);
 
 /*--------------------------------------------------------------------------
  NAME
@@ -77,7 +77,7 @@ PRIVATE int32 HCIcrle_term(compinfo_t *info);
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcrle_init(accrec_t *access_rec)
 {
     compinfo_t            *info;     /* special element information */
@@ -120,7 +120,7 @@ HCIcrle_init(accrec_t *access_rec)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcrle_decode(compinfo_t *info, int32 length, uint8 *buf)
 {
     comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
@@ -195,7 +195,7 @@ HCIcrle_decode(compinfo_t *info, int32 length, uint8 *buf)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcrle_encode(compinfo_t *info, int32 length, const uint8 *buf)
 {
     comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
@@ -305,7 +305,7 @@ HCIcrle_encode(compinfo_t *info, int32 length, const uint8 *buf)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcrle_term(compinfo_t *info)
 {
     comp_coder_rle_info_t *rle_info; /* ptr to RLE info */
@@ -358,7 +358,7 @@ HCIcrle_term(compinfo_t *info)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcrle_staccess(accrec_t *access_rec, int16 acc_mode)
 {
     compinfo_t *info; /* special element information */

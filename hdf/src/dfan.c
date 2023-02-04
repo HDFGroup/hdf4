@@ -53,27 +53,27 @@
 
 #include "hdf.h"
 #include "dfan.h"
-PRIVATE uint16 Lastref        = 0; /* Last ref read/written */
-PRIVATE uint16 Next_label_ref = 0; /* Next file label ref to read/write */
-PRIVATE uint16 Next_desc_ref  = 0; /* Next file desc ref to read/write */
+static uint16 Lastref        = 0; /* Last ref read/written */
+static uint16 Next_label_ref = 0; /* Next file label ref to read/write */
+static uint16 Next_desc_ref  = 0; /* Next file desc ref to read/write */
 
-PRIVATE char *Lastfile = NULL;
+static char *Lastfile = NULL;
 
 /* pointers to directories of object annotations */
-PRIVATE DFANdirhead *DFANdir[2] = {
+static DFANdirhead *DFANdir[2] = {
     NULL, /* object labels       */
     NULL  /* object descriptions */
 };
 
 /* Whether we've installed the library termination function yet for this interface */
-PRIVATE intn library_terminate = FALSE;
+static intn library_terminate = FALSE;
 
 /*
  ** Prototypes for local functions
  */
 
-PRIVATE int32 DFANIopen(const char *filename, intn acc_mode);
-PRIVATE intn  DFANIstart(void);
+static int32 DFANIopen(const char *filename, intn acc_mode);
+static intn  DFANIstart(void);
 
 /*-----------------------------------------------------------------------------
  * HDF object (i.e. tag/ref) label and description input routines
@@ -621,7 +621,7 @@ done:
  NAME
        DFANIopen -- open or reopen a file
  USAGE
-       PRIVATE int32 DFANIopen(filename, acc_mode)
+       static int32 DFANIopen(filename, acc_mode)
        char *filename;  IN: name of file to open
        intn acc_mode;     IN: access mode
  RETURNS
@@ -636,7 +636,7 @@ done:
  REVISION LOG
 
  *------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 DFANIopen(const char *filename, intn acc_mode)
 {
     int32        file_id;
@@ -1542,7 +1542,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 DFANIstart(void)
 {
     intn ret_value = SUCCEED;

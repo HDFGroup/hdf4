@@ -112,17 +112,17 @@ const char *HDF_INTERNAL_VGS[] = {_HDF_VARIABLE, _HDF_DIMENSION, _HDF_UDIMENSION
 /* Prototypes */
 extern VOID vprint(VOIDP k1);
 
-PRIVATE intn Load_vfile(HFILEID f);
+static intn Load_vfile(HFILEID f);
 
-PRIVATE intn Remove_vfile(HFILEID f);
+static intn Remove_vfile(HFILEID f);
 
-PRIVATE intn vunpackvg(VGROUP *vg, uint8 buf[], intn len);
+static intn vunpackvg(VGROUP *vg, uint8 buf[], intn len);
 
-PRIVATE intn VIstart(void);
+static intn VIstart(void);
 
 /*
  * --------------------------------------------------------------------
- * PRIVATE  data structure and routines.
+ * Private data structure and routines.
  *
  * Info about all vgroups in the file are loaded into vgtab  at start;
  * and the vg field set to NULL until that vgroup is attached,
@@ -136,11 +136,11 @@ PRIVATE intn VIstart(void);
 TBBT_TREE *vtree = NULL;
 
 /* Whether we've installed the library termination function yet for this interface */
-PRIVATE intn library_terminate = FALSE;
+static intn library_terminate = FALSE;
 
 /* Temporary buffer for I/O */
-PRIVATE uint32 Vgbufsize = 0;
-PRIVATE uint8 *Vgbuf     = NULL;
+static uint32 Vgbufsize = 0;
+static uint8 *Vgbuf     = NULL;
 
 /* Pointers to the VGROUP & vginstance node free lists */
 static VGROUP       *vgroup_free_list     = NULL;
@@ -291,7 +291,7 @@ RETURNS
    Returns a pointer to the vfile_t for that file on success, otherwise NULL.
 
 *******************************************************************************/
-PRIVATE vfile_t *
+static vfile_t *
 New_vfile(HFILEID f /* IN: file handle */)
 {
     vfile_t *v = NULL;
@@ -325,7 +325,7 @@ RETURNS
    RETURNS SUCCEED if ok.
 
 *******************************************************************************/
-PRIVATE intn
+static intn
 Load_vfile(HFILEID f /* IN: file handle */)
 {
     vfile_t      *vf = NULL;
@@ -476,7 +476,7 @@ DESCRIPTION
 RETURNS
 
 *******************************************************************************/
-PRIVATE intn
+static intn
 Remove_vfile(HFILEID f /* IN: file handle */)
 {
     VOIDP   *t         = NULL;
@@ -890,7 +890,7 @@ RETURNS
    NO RETURN VALUES
 
 *******************************************************************************/
-PRIVATE intn
+static intn
 vunpackvg(VGROUP *vg,    /* IN/OUT: */
           uint8   buf[], /* IN: */
           intn    len /* IN: */)
@@ -2821,7 +2821,7 @@ done:
  RETURNS
     Returns SUCCEED/FAIL
 *******************************************************************************/
-PRIVATE intn
+static intn
 VIstart(void)
 {
     intn ret_value = SUCCEED;

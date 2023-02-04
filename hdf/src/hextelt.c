@@ -109,8 +109,8 @@ typedef struct {
 } extinfo_t;
 
 /* forward declaration of the functions provided in this module */
-PRIVATE int32 HXIstaccess(accrec_t *access_rec, int16 access);
-PRIVATE char *HXIbuildfilename(const char *ext_fname, const intn acc_mode);
+static int32 HXIstaccess(accrec_t *access_rec, int16 access);
+static char *HXIbuildfilename(const char *ext_fname, const intn acc_mode);
 
 /* ext_funcs -- table of the accessing functions of the external
    data element function modules.  The position of each function in
@@ -436,7 +436,7 @@ DESCRIPTION
    pull in the information ourselves
 
 ---------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HXIstaccess(accrec_t *access_rec, int16 acc_mode)
 {
     extinfo_t *info     = NULL; /* special element information */
@@ -1154,8 +1154,7 @@ DESCRIPTION
 #define HDstrcpy3(s1, s2, s3, s4)     (HDstrcat(HDstrcat(HDstrcpy(s1, s2), s3), s4))
 #define HDstrcpy4(s1, s2, s3, s4, s5) (HDstrcat(HDstrcat(HDstrcat(HDstrcpy(s1, s2), s3), s4), s5))
 
-PRIVATE
-char *
+static char *
 HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 {
     int        fname_len;        /* string length of the ext_fname */

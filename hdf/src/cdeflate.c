@@ -43,7 +43,7 @@
 /* #define TESTING */
 
 /* declaration of the functions provided in this module */
-PRIVATE int32 HCIcdeflate_init(compinfo_t *info);
+static int32 HCIcdeflate_init(compinfo_t *info);
 
 /*--------------------------------------------------------------------------
  NAME
@@ -64,7 +64,7 @@ PRIVATE int32 HCIcdeflate_init(compinfo_t *info);
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcdeflate_init(compinfo_t *info)
 {
     comp_coder_deflate_info_t *deflate_info; /* ptr to deflate info */
@@ -109,7 +109,7 @@ HCIcdeflate_init(compinfo_t *info)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcdeflate_decode(compinfo_t *info, int32 length, uint8 *buf)
 {
     comp_coder_deflate_info_t *deflate_info; /* ptr to deflate info */
@@ -176,7 +176,7 @@ HCIcdeflate_decode(compinfo_t *info, int32 length, uint8 *buf)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcdeflate_encode(compinfo_t *info, int32 length, void *buf)
 {
     comp_coder_deflate_info_t *deflate_info; /* ptr to skipping Huffman info */
@@ -227,7 +227,7 @@ HCIcdeflate_encode(compinfo_t *info, int32 length, void *buf)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcdeflate_term(compinfo_t *info, uint32 acc_mode)
 {
     comp_coder_deflate_info_t *deflate_info; /* ptr to deflation info */
@@ -297,7 +297,7 @@ HCIcdeflate_term(compinfo_t *info, uint32 acc_mode)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcdeflate_staccess(accrec_t *access_rec, int16 acc_mode)
 {
     compinfo_t                *info;         /* special element information */
@@ -354,7 +354,7 @@ HCIcdeflate_staccess(accrec_t *access_rec, int16 acc_mode)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcdeflate_staccess2(accrec_t *access_rec, int16 acc_mode)
 {
     compinfo_t                *info;         /* special element information */

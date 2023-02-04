@@ -323,7 +323,7 @@ typedef struct error_messages_t {
     const char    *str;
 } error_messages_t;
 
-PRIVATE const struct error_messages_t error_messages[] = {
+static const struct error_messages_t error_messages[] = {
     {DFE_NONE, "No error"},
     /* Low-level I/O errors */
     {DFE_FNF, "File not found"},

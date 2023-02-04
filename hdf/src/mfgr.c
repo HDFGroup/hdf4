@@ -181,7 +181,7 @@ MODIFICATION HISTORY
 static TBBT_TREE *gr_tree = NULL;
 
 /* Whether we've installed the library termination function yet for this interface */
-PRIVATE intn library_terminate = FALSE;
+static intn library_terminate = FALSE;
 
 typedef struct image_info_struct {
     uint16 grp_tag, grp_ref; /* tag/ref of the group the image is in */
@@ -190,22 +190,22 @@ typedef struct image_info_struct {
     int32  offset;           /* offset of the image data */
 } imginfo_t;
 
-PRIVATE intn GRIupdatemeta(int32 hdf_file_id, ri_info_t *img_ptr);
+static intn GRIupdatemeta(int32 hdf_file_id, ri_info_t *img_ptr);
 
-PRIVATE intn GRIupdateRIG(int32 hdf_file_id, ri_info_t *img_ptr);
+static intn GRIupdateRIG(int32 hdf_file_id, ri_info_t *img_ptr);
 
-PRIVATE intn GRIupdateRI(int32 hdf_file_id, ri_info_t *img_ptr);
+static intn GRIupdateRI(int32 hdf_file_id, ri_info_t *img_ptr);
 
-PRIVATE intn GRIup_attr_data(int32 hdf_file_id, at_info_t *attr_ptr);
+static intn GRIup_attr_data(int32 hdf_file_id, at_info_t *attr_ptr);
 
-PRIVATE intn GRIstart(void);
+static intn GRIstart(void);
 
-PRIVATE intn GRIgetaid(ri_info_t *img_ptr, intn acc_perm);
+static intn GRIgetaid(ri_info_t *img_ptr, intn acc_perm);
 
-PRIVATE intn GRIisspecial_type(int32 file_id, uint16 tag, uint16 ref);
+static intn GRIisspecial_type(int32 file_id, uint16 tag, uint16 ref);
 
 #ifdef H4_HAVE_LIBSZ /* we have the library */
-PRIVATE intn GRsetup_szip_parms(ri_info_t *ri_ptr, comp_info *c_info, int32 *cdims);
+static intn GRsetup_szip_parms(ri_info_t *ri_ptr, comp_info *c_info, int32 *cdims);
 #endif
 
 /*--------------------------------------------------------------------------
@@ -332,7 +332,7 @@ GRIridestroynode(void *n)
    Looks in the TBBT gr_tree for the file ID of a file.
    Returns a pointer to the gr_info_t for that file on success, otherwise NULL.
  */
-PRIVATE gr_info_t *
+static gr_info_t *
 Get_grfile(HFILEID f)
 {
     void **t; /* vfile_t pointer from tree */
@@ -373,7 +373,7 @@ Get_grfile(HFILEID f)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 GRIisspecial_type(int32 file_id, uint16 tag, uint16 ref)
 {
     accrec_t *access_rec = NULL; /* access element record */
@@ -425,7 +425,7 @@ done:
    Creates gr_info_t structure and adds it to the tree
    Returns a pointer to the gr_info_t for that file on success, otherwise NULL.
  */
-PRIVATE gr_info_t *
+static gr_info_t *
 New_grfile(HFILEID f)
 {
     gr_info_t *g;
@@ -447,7 +447,7 @@ New_grfile(HFILEID f)
 
    Added to refactor repeated code. -BMR, Jun 7, 2015
  */
-PRIVATE void
+static void
 Store_imginfo(imginfo_t *imginfo, uint16 grp_tag, uint16 grp_ref, uint16 img_tag, uint16 img_ref)
 {
     imginfo->grp_tag = (uint16)grp_tag;
@@ -467,7 +467,7 @@ Store_imginfo(imginfo_t *imginfo, uint16 grp_tag, uint16 grp_ref, uint16 img_tag
 
    Added to refactor repeated code. -BMR, Jul 13, 2015
  */
-PRIVATE intn
+static intn
 Get_oldimgs(int32 file_id, imginfo_t *img_info, uint16 searched_tag)
 {
     uint16     find_tag, find_ref;
@@ -496,7 +496,7 @@ Get_oldimgs(int32 file_id, imginfo_t *img_info, uint16 searched_tag)
 
    Added to refactor repeated code. -BMR, Apr 23, 2015
  */
-PRIVATE void
+static void
 Init_diminfo(dim_info_t *dim_info)
 { /* Init_diminfo */
     dim_info->dim_ref          = DFREF_WILDCARD;
@@ -521,7 +521,7 @@ Init_diminfo(dim_info_t *dim_info)
 
    Added to refactor repeated code. -BMR, Apr 23, 2015
  */
-PRIVATE void
+static void
 Decode_diminfo(uint8 *p, dim_info_t *dim_info)
 {
     int16 int16var; /* temp var */
@@ -1613,7 +1613,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 GRIupdatemeta(int32 hdf_file_id, ri_info_t *img_ptr)
 {
     uint8  GRtbuf[64];  /* local buffer for reading RIG info */
@@ -1727,7 +1727,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 GRIupdateRIG(int32 hdf_file_id, ri_info_t *img_ptr)
 {
     int32 GroupID; /* RIG id for group interface */
@@ -1803,7 +1803,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 GRIupdateRI(int32 hdf_file_id, ri_info_t *img_ptr)
 {
     int32 GroupID; /* RI vgroup id */
@@ -1908,7 +1908,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 GRIup_attr_data(int32 hdf_file_id, at_info_t *attr_ptr)
 {
     intn ret_value = SUCCEED;
@@ -4854,7 +4854,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 GRIstart(void)
 {
     intn ret_value = SUCCEED;
@@ -4894,7 +4894,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 GRIgetaid(ri_info_t *ri_ptr, intn acc_perm)
 {
     int32      hdf_file_id; /* HDF file ID */

@@ -30,14 +30,14 @@
 #include "hdf.h"
 
 /* remember that '0' is invalid ref number */
-PRIVATE uint16 Readref  = 0;
-PRIVATE uint16 Writeref = 0;
-PRIVATE uint16 Refset   = 0; /* Ref of palette to get next */
-PRIVATE uint16 Lastref  = 0; /* Last ref read/written */
+static uint16 Readref  = 0;
+static uint16 Writeref = 0;
+static uint16 Refset   = 0; /* Ref of palette to get next */
+static uint16 Lastref  = 0; /* Last ref read/written */
 
-PRIVATE char Lastfile[DF_MAXFNLEN] = ""; /* last file opened */
+static char Lastfile[DF_MAXFNLEN] = ""; /* last file opened */
 
-PRIVATE int32 DFPIopen(const char *filename, intn acc_mode);
+static int32 DFPIopen(const char *filename, intn acc_mode);
 
 /*--------------------------------------------------------------------------
  NAME
@@ -479,7 +479,7 @@ DFPlastref(void)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 DFPIopen(const char *filename, intn acc_mode)
 {
     int32 file_id;

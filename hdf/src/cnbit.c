@@ -55,15 +55,15 @@ static const uint32 mask_arr32[33] = {/* array of values with [n] bits set */
                                       0x3FFFFFFF, 0x7FFFFFFF, 0xFFFFFFFFUL};
 
 /* declaration of the functions provided in this module */
-PRIVATE int32 HCIcnbit_staccess(accrec_t *access_rec, int16 acc_mode);
+static int32 HCIcnbit_staccess(accrec_t *access_rec, int16 acc_mode);
 
-PRIVATE int32 HCIcnbit_init(accrec_t *access_rec);
+static int32 HCIcnbit_init(accrec_t *access_rec);
 
-PRIVATE int32 HCIcnbit_decode(compinfo_t *info, int32 length, uint8 *buf);
+static int32 HCIcnbit_decode(compinfo_t *info, int32 length, uint8 *buf);
 
-PRIVATE int32 HCIcnbit_encode(compinfo_t *info, int32 length, const uint8 *buf);
+static int32 HCIcnbit_encode(compinfo_t *info, int32 length, const uint8 *buf);
 
-PRIVATE int32 HCIcnbit_term(compinfo_t *info);
+static int32 HCIcnbit_term(compinfo_t *info);
 
 /*--------------------------------------------------------------------------
  NAME
@@ -84,7 +84,7 @@ PRIVATE int32 HCIcnbit_term(compinfo_t *info);
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcnbit_init(accrec_t *access_rec)
 {
     compinfo_t             *info;               /* special element information */
@@ -216,7 +216,7 @@ HCIcnbit_init(accrec_t *access_rec)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcnbit_decode(compinfo_t *info, int32 length, uint8 *buf)
 {
     comp_coder_nbit_info_t *nbit_info;   /* ptr to n-bit info */
@@ -366,7 +366,7 @@ HCIcnbit_decode(compinfo_t *info, int32 length, uint8 *buf)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcnbit_encode(compinfo_t *info, int32 length, const uint8 *buf)
 {
     comp_coder_nbit_info_t *nbit_info;   /* ptr to n-bit info */
@@ -431,7 +431,7 @@ HCIcnbit_encode(compinfo_t *info, int32 length, const uint8 *buf)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcnbit_term(compinfo_t *info)
 {
     (void)info;
@@ -462,7 +462,7 @@ HCIcnbit_term(compinfo_t *info)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcnbit_staccess(accrec_t *access_rec, int16 acc_mode)
 {
     compinfo_t *info; /* special element information */
