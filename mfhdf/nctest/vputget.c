@@ -119,8 +119,8 @@ test_varputget(int cdfid)
                     }
                 }
             }
-            Free((char *)hc[ie].vals);
-            Free((char *)tmp.vals);
+            free(hc[ie].vals);
+            free(tmp.vals);
         }
     }
     return nerrs;

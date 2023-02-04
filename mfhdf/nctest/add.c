@@ -126,7 +126,7 @@ del_att(struct netcdf *test, int varid, struct cdfatt *iatt)
 
     for (ia = 0; ia < test->natts; ia++) { /* find attribute to delete */
         if (test->atts[ia].var == varid && strcmp(test->atts[ia].name, iatt->name) == 0) {
-            Free(test->atts[ia].name);
+            free(test->atts[ia].name);
             for (ib = ia + 1; ib < test->natts; ib++) { /* move down */
                 test->atts[ib - 1].var  = test->atts[ib].var;
                 test->atts[ib - 1].name = test->atts[ib].name;

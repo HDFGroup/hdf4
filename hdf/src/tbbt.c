@@ -15,12 +15,12 @@
 /* Extended from (added threads to) Knuth 6.2.3, Algorithm A (AVL trees) */
 /* Basic tree structure by Adel'son-Vel'skii and Landis */
 
-#include <stdio.h> /* NULL */
+#include <stdio.h>
+
 #include "hdf.h"
+
 #define TBBT_INTERNALS
 #include "tbbt.h"
-#define Alloc(cnt, typ) (typ *)HDmalloc((cnt) * sizeof(typ))
-#define Free(x)         (HDfree((VOIDP)x))
 
 #define KEYcmp(k1, k2, a)                                                                                    \
     ((NULL != compar) ? (*compar)(k1, k2, a) : memcmp(k1, k2, 0 < (a) ? (a) : (intn)HDstrlen(k1)))
@@ -649,16 +649,17 @@ tbbtrem(TBBT_NODE **root, TBBT_NODE *node, VOIDP *kp)
 TBBT_TREE *
 tbbtdmake(intn (*cmp)(VOIDP /* k1 */, VOIDP /* k2 */, intn /* arg */), intn arg, uintn fast_compare)
 {
-    TBBT_TREE *tree = Alloc(1, TBBT_TREE);
-
+    TBBT_TREE *tree = malloc(sizeof(TBBT_TREE));
     if (NULL == tree)
-        return (NULL);
+        return NULL;
+
     tree->root         = NULL;
     tree->count        = 0;
     tree->fast_compare = fast_compare;
     tree->compar       = cmp;
     tree->cmparg       = arg;
-    return (tree);
+
+    return tree;
 }
 
 #ifdef WASTE_STACK
@@ -861,11 +862,11 @@ TBBT_TREE *
 tbbtdfree(TBBT_TREE *tree, VOID (*fd)(VOIDP /* item */), VOID (*fk)(VOIDP /* key */))
 {
     if (tree == NULL)
-        return (NULL);
+        return NULL;
 
     tbbtfree(&tree->root, fd, fk);
-    Free(tree);
-    return (NULL);
+    free(tree);
+    return NULL;
 }
 
 /* returns the number of nodes in the tree */
@@ -873,9 +874,9 @@ long
 tbbtcount(TBBT_TREE *tree)
 {
     if (tree == NULL)
-        return (-1);
+        return -1;
     else
-        return ((long)tree->count);
+        return (long)tree->count;
 }
 
 /******************************************************************************
@@ -898,9 +899,9 @@ tbbt_get_node(void)
     if (tbbt_free_list != NULL) {
         ret_value      = tbbt_free_list;
         tbbt_free_list = tbbt_free_list->Lchild;
-    } /* end if */
+    }
     else
-        ret_value = (TBBT_NODE *)Alloc(1, TBBT_NODE);
+        ret_value = malloc(sizeof(TBBT_NODE));
 
     return ret_value;
 } /* end tbbt_get_node() */
@@ -951,8 +952,8 @@ tbbt_shutdown(void)
         while (tbbt_free_list != NULL) {
             curr           = tbbt_free_list;
             tbbt_free_list = tbbt_free_list->Lchild;
-            Free(curr);
-        } /* end while */
-    }     /* end if */
-    return (SUCCEED);
+            free(curr);
+        }
+    }
+    return SUCCEED;
 } /* end tbbt_shutdown() */

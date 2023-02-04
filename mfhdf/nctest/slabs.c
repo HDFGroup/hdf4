@@ -426,7 +426,7 @@ val_stuff(nc_type type, void *v, int ii, long val) /* v[ii] = val */
                         }
                     }
                 }
-                Free((char *)v);
+                free(v);
             }
             return nerrs;
         }
