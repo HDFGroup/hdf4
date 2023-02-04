@@ -108,7 +108,7 @@ HRPconvert(int32 fid, uint16 tag, uint16 ref, int32 xdim, int32 ydim, int16 sche
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* allocate special info struct for buffered element */
-    if ((info = HDmalloc((uint32)sizeof(crinfo_t))) == NULL)
+    if ((info = malloc((uint32)sizeof(crinfo_t))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* fill in special info struct */

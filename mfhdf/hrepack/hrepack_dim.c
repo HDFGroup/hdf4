@@ -614,7 +614,7 @@ gen_dim(char *name, /* name of SDS */
          */
 
         /* alloc */
-        if ((buf = (VOIDP)HDmalloc(nelms * eltsz)) == NULL) {
+        if ((buf = (VOIDP)malloc(nelms * eltsz)) == NULL) {
             printf("Failed to allocate %d elements of size %d\n", nelms, eltsz);
             ret = -1;
             goto out;
@@ -726,11 +726,11 @@ static void
 match_dim_table_init(match_dim_table_t **tbl)
 {
     int                i;
-    match_dim_table_t *mdim_tbl = (match_dim_table_t *)HDmalloc(sizeof(match_dim_table_t));
+    match_dim_table_t *mdim_tbl = (match_dim_table_t *)malloc(sizeof(match_dim_table_t));
 
     mdim_tbl->size  = 20;
     mdim_tbl->nobjs = 0;
-    mdim_tbl->objs  = (match_dim_name_t *)HDmalloc(mdim_tbl->size * sizeof(match_dim_name_t));
+    mdim_tbl->objs  = (match_dim_name_t *)malloc(mdim_tbl->size * sizeof(match_dim_name_t));
 
     for (i = 0; i < mdim_tbl->size; i++) {
         mdim_tbl->objs[i].ref      = -1;
@@ -812,11 +812,11 @@ void
 dim_table_init(dim_table_t **tbl)
 {
     int          i;
-    dim_table_t *dim_tbl = (dim_table_t *)HDmalloc(sizeof(dim_table_t));
+    dim_table_t *dim_tbl = (dim_table_t *)malloc(sizeof(dim_table_t));
 
     dim_tbl->size  = 20;
     dim_tbl->nobjs = 0;
-    dim_tbl->objs  = (dim_name_t *)HDmalloc(dim_tbl->size * sizeof(dim_name_t));
+    dim_tbl->objs  = (dim_name_t *)malloc(dim_tbl->size * sizeof(dim_name_t));
 
     for (i = 0; i < dim_tbl->size; i++) {
         dim_tbl->objs[i].ref = -1;

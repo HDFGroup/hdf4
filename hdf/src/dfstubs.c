@@ -1344,7 +1344,7 @@ DFIgetspace(uint32 qty)
 {
     void *ret;
 
-    ret     = (void *)HDmalloc(qty);
+    ret     = (void *)malloc(qty);
     DFerror = (int)HEvalue(1);
     return (ret);
 }

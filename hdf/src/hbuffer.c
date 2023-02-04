@@ -132,7 +132,7 @@ HBconvert(int32 aid)
     } /* end if */
 
     /* allocate special info struct for buffered element */
-    if ((info = HDmalloc((uint32)sizeof(bufinfo_t))) == NULL)
+    if ((info = malloc((uint32)sizeof(bufinfo_t))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* fill in special info struct */
@@ -142,7 +142,7 @@ HBconvert(int32 aid)
 
     /* Get space for buffer */
     if (data_len > 0) {
-        if ((info->buf = HDmalloc((uint32)data_len)) == NULL)
+        if ((info->buf = malloc((uint32)data_len)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
     } /* end if */
     else
@@ -350,7 +350,7 @@ HBPwrite(accrec_t *access_rec, int32 length, const void *data)
         /* Resize buffer in safe manner */
         /* Realloc should handle this, but the Sun is whining about it... -QAK */
         if (info->buf == NULL) {
-            if ((info->buf = HDmalloc((uint32)new_len)) == NULL)
+            if ((info->buf = malloc((uint32)new_len)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
         }
         else {

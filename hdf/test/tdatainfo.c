@@ -64,10 +64,10 @@ typedef struct {
 intn
 alloc_info(t_hdf_datainfo_t *info, uintn info_count)
 {
-    info->offsets = (int32 *)HDmalloc(info_count * sizeof(int32));
+    info->offsets = (int32 *)malloc(info_count * sizeof(int32));
     if (info->offsets == NULL)
         return -1;
-    info->lengths = (int32 *)HDmalloc(info_count * sizeof(int32));
+    info->lengths = (int32 *)malloc(info_count * sizeof(int32));
     if (info->lengths == NULL)
         return -1;
     return 0;
@@ -532,7 +532,7 @@ readnoHDF_char(const char *filename, const int32 offset, const int32 length, con
     }
 
     /* Allocate buffers for SDS' data */
-    readcbuf = (char *)HDmalloc(length * sizeof(char));
+    readcbuf = (char *)malloc(length * sizeof(char));
     if (readcbuf == NULL) {
         fprintf(stderr, "readnoHDF_char: allocation readcbuf failed\n");
         ret_value = FAIL;
@@ -1375,7 +1375,7 @@ test_getpalinfo()
         n_pals = GRgetpalinfo(grid, 0, NULL);
         CHECK_VOID(n_pals, FAIL, "GRgetpalinfo");
 
-        palinfo_array = (hdf_ddinfo_t *)HDmalloc(n_pals * sizeof(hdf_ddinfo_t));
+        palinfo_array = (hdf_ddinfo_t *)malloc(n_pals * sizeof(hdf_ddinfo_t));
         CHECK_ALLOC(palinfo_array, "palinfo_array", "test_getpalinfo");
 
         n_pals = GRgetpalinfo(grid, n_pals, palinfo_array);
@@ -1383,9 +1383,9 @@ test_getpalinfo()
 
         /* Read and verify data of the first palette which is pointed to by both
            data identifiers 201/ref and 301/ref */
-        /* inbuf = (uint8 *) HDmalloc(palinfo_array[0].length * sizeof(uint8));
+        /* inbuf = (uint8 *) malloc(palinfo_array[0].length * sizeof(uint8));
          */
-        inbuf = (uint8 *)HDmalloc(palinfo_array[0].length);
+        inbuf = (uint8 *)malloc(palinfo_array[0].length);
         CHECK_ALLOC(inbuf, "inbuf", "test_getpalinfo");
         status = Hgetelement(fid, palinfo_array[0].tag, palinfo_array[0].ref, inbuf);
         CHECK_VOID(status, FAIL, "Hgetelement");
@@ -1401,9 +1401,9 @@ test_getpalinfo()
            data element that was not revealed by DFPgetpal because the tag/ref pair
            201/4 is associated with a different offset */
 
-        /* inbuf = (uint8 *) HDmalloc(palinfo_array[7].length * sizeof(uint8));
+        /* inbuf = (uint8 *) malloc(palinfo_array[7].length * sizeof(uint8));
          */
-        inbuf = (uint8 *)HDmalloc(palinfo_array[7].length);
+        inbuf = (uint8 *)malloc(palinfo_array[7].length);
         CHECK_ALLOC(inbuf, "inbuf", "test_getpalinfo");
         status = Hgetelement(fid, palinfo_array[7].tag, palinfo_array[7].ref, inbuf);
         CHECK_VOID(status, FAIL, "Hgetelement");

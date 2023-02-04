@@ -174,12 +174,12 @@ process(Input *in, Output *out)
      *  allocate buffers for output and scales
      */
     if (!in->is_hscale)
-        in->hscale = (float32 *)HDmalloc((uint32)(1 + in->hdim) * sizeof(float32));
+        in->hscale = (float32 *)malloc((uint32)(1 + in->hdim) * sizeof(float32));
     if (!in->is_vscale)
-        in->vscale = (float32 *)HDmalloc((uint32)(1 + in->vdim) * sizeof(float32));
+        in->vscale = (float32 *)malloc((uint32)(1 + in->vdim) * sizeof(float32));
     out->hres  = (out->hres <= in->hdim) ? in->hdim : out->hres;
     out->vres  = (out->vres <= in->vdim) ? in->vdim : out->vres;
-    out->image = (uint8 *)HDmalloc((size_t)out->hres * (size_t)out->vres);
+    out->image = (uint8 *)malloc((size_t)out->hres * (size_t)out->vres);
 
     /*
      *  if necessary, generate x and y scales
@@ -355,12 +355,12 @@ convert_interp(Input *in, Output *out)
     delx   = xrange / (float32)out->hres; /* x axis increment in image */
     dely   = yrange / (float32)out->vres; /* y axis increment in image */
 
-    dxs = (float32 *)HDmalloc(sizeof(float32) * (size_t)out->hres);
+    dxs = (float32 *)malloc(sizeof(float32) * (size_t)out->hres);
     /* temp space for dx's */
-    dys = (float32 *)HDmalloc(sizeof(float32) * (size_t)out->vres);
+    dys = (float32 *)malloc(sizeof(float32) * (size_t)out->vres);
     /* temp space for dy's */
-    xinc     = (uint8 *)HDmalloc((size_t)out->hres);
-    yoffs    = (int32 *)HDmalloc((size_t)(out->vres + 1) * sizeof(int32));
+    xinc     = (uint8 *)malloc((size_t)out->hres);
+    yoffs    = (int32 *)malloc((size_t)(out->vres + 1) * sizeof(int32));
     yoffs[0] = 0;
 
     if (range < (float32)0.0)
@@ -513,9 +513,9 @@ pixrep_scaled(Input *in, Output *out)
     if (range < (float32)0.0)
         range = -range; /* max must be > min */
 
-    hoffsets = (int32 *)HDmalloc((uint32)(out->hres + 1) * sizeof(int32));
-    voffsets = (int32 *)HDmalloc((uint32)(out->vres + 1) * sizeof(int32));
-    pixvals  = (uint8 *)HDmalloc((uint32)in->hdim + 1);
+    hoffsets = (int32 *)malloc((uint32)(out->hres + 1) * sizeof(int32));
+    voffsets = (int32 *)malloc((uint32)(out->vres + 1) * sizeof(int32));
+    pixvals  = (uint8 *)malloc((uint32)in->hdim + 1);
     compute_offsets(in->hscale, in->hdim, hoffsets, out->hres);
     compute_offsets(in->vscale, in->vdim, voffsets, out->vres);
 
@@ -576,7 +576,7 @@ compute_offsets(float32 *scale, int32 dim, int32 *offsets, int32 res)
     int32    i, j;
     float32 *midpt, pt, delta;
 
-    midpt = (float32 *)HDmalloc(sizeof(float32) * (size_t)dim);
+    midpt = (float32 *)malloc(sizeof(float32) * (size_t)dim);
 
     for (i = 0; i < dim - 1; i++) { /* compute all midpoints */
         midpt[i] = (scale[i] + scale[i + 1]) / (float32)2.0;

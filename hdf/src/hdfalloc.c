@@ -147,7 +147,7 @@ HDstrdup(const char *s)
         return (NULL);
 
     /* Allocate space */
-    ret = (char *)HDmalloc((uint32)HDstrlen(s) + 1);
+    ret = (char *)malloc((uint32)HDstrlen(s) + 1);
     if (ret == NULL)
         return (NULL);
 

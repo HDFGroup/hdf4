@@ -208,8 +208,8 @@ test_bitio_read(void)
     ret = Hendbitaccess(bitid1, 0);
     RESULT("Hbitendaccess");
 
-    test_ptr = (uint8 *)HDmalloc((size_t)((DATASIZE / 4) * DFKNTsize(DFNT_UINT32)));
-    CHECK_VOID(test_ptr, NULL, "HDmalloc");
+    test_ptr = (uint8 *)malloc((size_t)((DATASIZE / 4) * DFKNTsize(DFNT_UINT32)));
+    CHECK_VOID(test_ptr, NULL, "malloc");
 
     ret = DFKconvert(inbuf2, test_ptr, DFNT_UINT32, (DATASIZE / 4), DFACC_WRITE, 0, 0);
     RESULT("DFKconvert");

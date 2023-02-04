@@ -24,7 +24,7 @@ emalloc(int size)
     if (size == 0)
         return 0;
 #ifdef HDF
-    p = (void *)HDmalloc((uint32)size);
+    p = (void *)malloc((uint32)size);
 #else
     p = (void *)malloc((unsigned)size);
 #endif

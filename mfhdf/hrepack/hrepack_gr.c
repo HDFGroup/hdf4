@@ -355,7 +355,7 @@ copy_gr(int32 infile_id, int32 outfile_id, int32 gr_in, int32 gr_out, int32 tag,
      */
 
     /* alloc */
-    if ((buf = (VOIDP)HDmalloc(data_size)) == NULL) {
+    if ((buf = (VOIDP)malloc(data_size)) == NULL) {
         printf("Failed to allocate %d elements of size %d\n", nelms, eltsz);
         GRendaccess(ri_id);
         if (path)
@@ -599,7 +599,7 @@ copy_gr_attrs(int32 ri_id, int32 ri_out, int32 nattrs, options_t *options)
         /* compute the number of the bytes for each value. */
         numtype = dtype & DFNT_MASK;
         eltsz   = DFKNTsize(numtype | DFNT_NATIVE);
-        if ((attr_buf = (VOIDP)HDmalloc(nelms * eltsz)) == NULL) {
+        if ((attr_buf = (VOIDP)malloc(nelms * eltsz)) == NULL) {
             printf("Error allocating %d values of size %d for attribute %s", nelms, numtype, attr_name);
             return -1;
         }

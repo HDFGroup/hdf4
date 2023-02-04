@@ -697,7 +697,7 @@ nscginfo(intf *id, _fcd name, intf *rank, intf *dimsizes, intf *nt, intf *nattr,
 
     iname = NULL;
     if (*len)
-        iname = (char *)HDmalloc((uint32)*len + 1);
+        iname = (char *)malloc((uint32)*len + 1);
 
     status = SDgetinfo((int32)*id, iname, &rank32, cdims, &nt32, &nattr32);
 
@@ -909,7 +909,7 @@ nsccreate(intf *id, _fcd name, intf *nt, intf *rank, intf *dims, intf *namelen)
     int32 *cdims, i;
 
     fn    = HDf2cstring(name, *namelen);
-    cdims = (int32 *)HDmalloc(sizeof(int32) * (*rank));
+    cdims = (int32 *)malloc(sizeof(int32) * (*rank));
     if (!cdims)
         return FAIL;
 
@@ -1170,11 +1170,11 @@ nscgdimstrs(intf *dim, _fcd label, _fcd unit, _fcd format, intf *llabel, intf *l
     iunit = ilabel = iformat = NULL;
 
     if (*llabel)
-        ilabel = (char *)HDmalloc((uint32)*llabel + 1);
+        ilabel = (char *)malloc((uint32)*llabel + 1);
     if (*lunit)
-        iunit = (char *)HDmalloc((uint32)*lunit + 1);
+        iunit = (char *)malloc((uint32)*lunit + 1);
     if (*lformat)
-        iformat = (char *)HDmalloc((uint32)*lformat + 1);
+        iformat = (char *)malloc((uint32)*lformat + 1);
 
     ret = (intf)SDgetdimstrs(*dim, ilabel, iunit, iformat, *mlen);
 
@@ -1245,13 +1245,13 @@ nscgdatstrs(intf *id, _fcd label, _fcd unit, _fcd format, _fcd coord, intf *llab
     iunit = ilabel = iformat = NULL;
 
     if (*llabel)
-        ilabel = (char *)HDmalloc((uint32)*llabel + 1);
+        ilabel = (char *)malloc((uint32)*llabel + 1);
     if (*lunit)
-        iunit = (char *)HDmalloc((uint32)*lunit + 1);
+        iunit = (char *)malloc((uint32)*lunit + 1);
     if (*lformat)
-        iformat = (char *)HDmalloc((uint32)*lformat + 1);
+        iformat = (char *)malloc((uint32)*lformat + 1);
     if (*lcoord)
-        icoord = (char *)HDmalloc((uint32)*lcoord + 1);
+        icoord = (char *)malloc((uint32)*lcoord + 1);
 
     ret = (intf)SDgetdatastrs(*id, ilabel, iunit, iformat, icoord, *len);
 
@@ -1292,7 +1292,7 @@ nscgainfo(intf *id, intf *number, _fcd name, intf *nt, intf *count, intf *len)
 
     iname = NULL;
     if (*len)
-        iname = (char *)HDmalloc((uint32)*len + 1);
+        iname = (char *)malloc((uint32)*len + 1);
 
     status = SDattrinfo(*id, *number, iname, &nt32, &cnt32);
 
@@ -1326,7 +1326,7 @@ nscgdinfo(intf *id, _fcd name, intf *sz, intf *nt, intf *nattr, intf *len)
 
     iname = NULL;
     if (*len)
-        iname = (char *)HDmalloc((uint32)*len + 1);
+        iname = (char *)malloc((uint32)*len + 1);
 
     status = SDdiminfo(*id, iname, &sz32, &nt32, &nattr32);
 
@@ -1699,7 +1699,7 @@ nscrchnk(intf *id, intf *start, VOIDP num_data)
     /* Allocate memory for cstart array; use static array, if performance
            becomes an issue */
 
-    cstart = (int32 *)HDmalloc(sizeof(int32) * rank);
+    cstart = (int32 *)malloc(sizeof(int32) * rank);
     if (!cstart)
         return FAIL;
 
@@ -1903,7 +1903,7 @@ nscwchnk(intf *id, intf *start, VOIDP num_data)
     /* Allocate memory for cstart array; use static array, if performance
            becomes an issue */
 
-    cstart = (int32 *)HDmalloc(sizeof(int32) * rank);
+    cstart = (int32 *)malloc(sizeof(int32) * rank);
     if (!cstart)
         return FAIL;
 
@@ -2163,7 +2163,7 @@ nscgetfname(intf *file_id, _fcd name, intf *namelen)
 
     fn = NULL;
     if (*namelen)
-        fn = (char *)HDmalloc((uint32)*namelen + 1);
+        fn = (char *)malloc((uint32)*namelen + 1);
 
     ret = (intn)SDgetfilename(*file_id, fn);
     HDpackFstring(fn, _fcdtocp(name), *namelen);
@@ -2295,7 +2295,7 @@ nscn2indices(intf *sd_id, _fcd name, intf *namelen, intf *var_list, intf *type_l
     fn = HDf2cstring(name, *namelen);
     if (!fn)
         return (FAIL);
-    c_var_list = (hdf_varlist_t *)HDmalloc(*n_vars * sizeof(hdf_varlist_t));
+    c_var_list = (hdf_varlist_t *)malloc(*n_vars * sizeof(hdf_varlist_t));
     if (!c_var_list)
         return (FAIL);
 

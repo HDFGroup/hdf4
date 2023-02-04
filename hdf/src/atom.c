@@ -534,7 +534,7 @@ HAIget_atom_node(void)
         atom_free_list = atom_free_list->next;
     } /* end if */
     else {
-        if ((ret_value = (atom_info_t *)HDmalloc(sizeof(atom_info_t))) == NULL)
+        if ((ret_value = (atom_info_t *)malloc(sizeof(atom_info_t))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
     } /* end else */
 

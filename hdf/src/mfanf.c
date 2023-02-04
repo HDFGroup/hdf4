@@ -226,7 +226,7 @@ nafannlist(intf *an_id, intf *atype, intf *etag, intf *eref, intf alist[])
 
     /* create annlist with true int32s to maintain compatibility
     ** with machines that allocate less than 32 bits per int. */
-    if ((tempanlist = (int32 *)HDmalloc(nanns * sizeof(int32))) == NULL)
+    if ((tempanlist = (int32 *)malloc(nanns * sizeof(int32))) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     /* Get list of annotation handles to return */
@@ -303,7 +303,7 @@ nafreadann(intf *ann_id, _fcd ann, intf *maxlen)
 
     /* Allocate space for fortran string */
     if (*maxlen)
-        iann = (char *)HDmalloc((uint32)*maxlen + 1);
+        iann = (char *)malloc((uint32)*maxlen + 1);
 
     if (!iann)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);

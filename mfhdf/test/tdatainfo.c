@@ -76,13 +76,13 @@ intn
 alloc_info(t_hdf_datainfo_t *info, uintn info_count, int32 n_dims)
 {
     memset(info, 0, sizeof(info));
-    info->offsets = (int32 *)HDmalloc(info_count * sizeof(int32));
+    info->offsets = (int32 *)malloc(info_count * sizeof(int32));
     if (info->offsets == NULL)
         return -1;
-    info->lengths = (int32 *)HDmalloc(info_count * sizeof(int32));
+    info->lengths = (int32 *)malloc(info_count * sizeof(int32));
     if (info->lengths == NULL)
         return -1;
-    info->dimsizes = (int32 *)HDmalloc(n_dims * sizeof(int32));
+    info->dimsizes = (int32 *)malloc(n_dims * sizeof(int32));
     if (info->dimsizes == NULL)
         return -1;
     return 0;
@@ -372,8 +372,8 @@ test_nonspecial_SDSs()
         }
 
         /* Allocate buffers for SDS' data */
-        readibuf         = (int32 *)HDmalloc(sds1_info.n_values * sizeof(int32));
-        readibuf_swapped = (int32 *)HDmalloc(sds1_info.n_values * sizeof(int32));
+        readibuf         = (int32 *)malloc(sds1_info.n_values * sizeof(int32));
+        readibuf_swapped = (int32 *)malloc(sds1_info.n_values * sizeof(int32));
         /* Read in this block of data */
         readlen = read(fd, (VOIDP)readibuf, (size_t)sds1_info.lengths[0]);
         CHECK(readlen, FAIL, "DFKconvert");
@@ -401,8 +401,8 @@ test_nonspecial_SDSs()
         }
 
         /* Allocate buffers for SDS' data */
-        readfbuf         = (float32 *)HDmalloc(sds2_info.n_values * sizeof(float32));
-        readfbuf_swapped = (float32 *)HDmalloc(sds2_info.n_values * sizeof(float32));
+        readfbuf         = (float32 *)malloc(sds2_info.n_values * sizeof(float32));
+        readfbuf_swapped = (float32 *)malloc(sds2_info.n_values * sizeof(float32));
         /* Read in this block of data */
         readlen = read(fd, (VOIDP)readfbuf, (size_t)sds2_info.lengths[0]);
         CHECK(readlen, FAIL, "DFKconvert");
@@ -433,8 +433,8 @@ test_nonspecial_SDSs()
         }
 
         /* Allocate buffers for SDS' data */
-        readibuf         = (int32 *)HDmalloc(sds3_info.n_values * sizeof(int32));
-        readibuf_swapped = (int32 *)HDmalloc(sds3_info.n_values * sizeof(int32));
+        readibuf         = (int32 *)malloc(sds3_info.n_values * sizeof(int32));
+        readibuf_swapped = (int32 *)malloc(sds3_info.n_values * sizeof(int32));
         /* Read in this block of data */
         readlen = read(fd, (VOIDP)readibuf, (size_t)sds3_info.lengths[0]);
         CHECK(readlen, FAIL, "DFKconvert");
@@ -1081,10 +1081,10 @@ test_chunked_partial()
         }
 
         /* Allocate buffers for SDS' data */
-        readibuf         = (int32 *)HDmalloc(sds_info.lengths[chk_num]);
-        readibuf_swapped = (int32 *)HDmalloc(sds_info.lengths[chk_num]);
-        /* readibuf = (int32 *) HDmalloc(sds_info.n_values * sizeof(int32));
-         readibuf_swapped = (int32 *) HDmalloc(sds_info.n_values * sizeof(int32));
+        readibuf         = (int32 *)malloc(sds_info.lengths[chk_num]);
+        readibuf_swapped = (int32 *)malloc(sds_info.lengths[chk_num]);
+        /* readibuf = (int32 *) malloc(sds_info.n_values * sizeof(int32));
+         readibuf_swapped = (int32 *) malloc(sds_info.n_values * sizeof(int32));
          */
         /* Read in this block of data */
         readlen = read(fd, (VOIDP)readibuf, (size_t)sds_info.lengths[chk_num]);

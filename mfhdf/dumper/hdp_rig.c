@@ -138,7 +138,7 @@ parse_dumprig_opts(dump_info_t *dumprig_opts, intn *curr_arg, intn argc, char *a
                 if (*ptr != '\0') /* count the last item */
                     numItems++;
 
-                dumprig_opts->filter_num = (intn *)HDmalloc(sizeof(intn) * numItems);
+                dumprig_opts->filter_num = (intn *)malloc(sizeof(intn) * numItems);
                 if (dumprig_opts->filter_num == NULL) {
                     printf("Not enough memory!\n");
                     exit(-1);
@@ -229,7 +229,7 @@ drig(dump_info_t *dumprig_opts, intn curr_arg, intn argc, char *argv[], int mode
 
         num_rig_chosen = dumprig_opts->num_chosen;
         if (num_rig_chosen > 0) {
-            if ((rig_chosen = (int32 *)HDmalloc(sizeof(int32) * num_rig_chosen)) == NULL) {
+            if ((rig_chosen = (int32 *)malloc(sizeof(int32) * num_rig_chosen)) == NULL) {
                 fprintf(stderr, "Memory allocation error\n");
                 ret_value = FAIL;
                 goto done;
@@ -319,7 +319,7 @@ drig(dump_info_t *dumprig_opts, intn curr_arg, intn argc, char *argv[], int mode
                        8-bit image or 3 for a 24-bit image. */
                     eltsz      = DFKNTsize(DFNT_UINT8 | DFNT_NATIVE) * ncomps;
                     read_nelts = width * height; /* Number of elements to be read in. */
-                    if ((image = (VOIDP)HDmalloc(read_nelts * eltsz)) == NULL) {
+                    if ((image = (VOIDP)malloc(read_nelts * eltsz)) == NULL) {
                         fprintf(stderr, "Not enough memory!\n");
                         ret_value = FAIL;
                         goto done;
@@ -502,7 +502,7 @@ drig(dump_info_t *dumprig_opts, intn curr_arg, intn argc, char *argv[], int mode
                        8-bit image or 3 for a 24-bit image. */
                     eltsz      = DFKNTsize(DFNT_UINT8 | DFNT_NATIVE) * ncomps;
                     read_nelts = width * height; /* Number of elements to be read in. */
-                    if ((image = (VOIDP)HDmalloc(read_nelts * eltsz)) == NULL) {
+                    if ((image = (VOIDP)malloc(read_nelts * eltsz)) == NULL) {
                         fprintf(stderr, "Not enough memory!\n");
                         ret_value = FAIL;
                         goto done;

@@ -199,7 +199,7 @@ test_chunks(void)
         outbuf[i] = (char)(i % 256);
 
     /* allocate space for chunk dimensions */
-    if ((chunk[0].pdims = (DIM_DEF *)HDmalloc(5 * sizeof(DIM_DEF))) == NULL) {
+    if ((chunk[0].pdims = (DIM_DEF *)malloc(5 * sizeof(DIM_DEF))) == NULL) {
         printf("test_chunks: error allocatin space for chunk dims\n");
         errors++;
         goto done;

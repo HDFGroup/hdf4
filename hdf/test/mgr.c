@@ -2739,8 +2739,8 @@ test_mgr_image_b2b1(int flag)
                 int32 stride[2];
 
                 img_data =
-                    HDmalloc((size_t)(dimsizes[0] * dimsizes[1] * ncomp * DFKNTsize(nt | DFNT_NATIVE)));
-                CHECK_VOID(img_data, NULL, "HDmalloc");
+                    malloc((size_t)(dimsizes[0] * dimsizes[1] * ncomp * DFKNTsize(nt | DFNT_NATIVE)));
+                CHECK_VOID(img_data, NULL, "malloc");
 
                 memset(img_data, 0,
                          (size_t)(dimsizes[0] * dimsizes[1] * ncomp * DFKNTsize(nt | DFNT_NATIVE)));
@@ -3080,8 +3080,8 @@ test_mgr_interlace(int flag)
             ret   = GRgetiminfo(riid, name, &ncomp, &nt, &il, dimsizes, &n_attr);
             CHECK_VOID(ret, FAIL, "GRgetiminfo");
 
-            image = HDmalloc((size_t)(dimsizes[XDIM] * dimsizes[YDIM] * ncomp * DFKNTsize(nt | DFNT_NATIVE)));
-            CHECK_VOID(image, NULL, "HDmalloc");
+            image = malloc((size_t)(dimsizes[XDIM] * dimsizes[YDIM] * ncomp * DFKNTsize(nt | DFNT_NATIVE)));
+            CHECK_VOID(image, NULL, "malloc");
 
             start[0] = start[1] = 0;
             stride[0] = stride[1] = 1;
@@ -3092,12 +3092,12 @@ test_mgr_interlace(int flag)
                 VOIDP pixel_buf;
 
                 img_data =
-                    HDmalloc((size_t)(dimsizes[0] * dimsizes[1] * ncomp * DFKNTsize(nt | DFNT_NATIVE)));
-                CHECK_VOID(img_data, NULL, "HDmalloc");
+                    malloc((size_t)(dimsizes[0] * dimsizes[1] * ncomp * DFKNTsize(nt | DFNT_NATIVE)));
+                CHECK_VOID(img_data, NULL, "malloc");
 
                 pixel_buf =
-                    HDmalloc((size_t)(dimsizes[0] * dimsizes[1] * ncomp * DFKNTsize(nt | DFNT_NATIVE)));
-                CHECK_VOID(pixel_buf, NULL, "HDmalloc");
+                    malloc((size_t)(dimsizes[0] * dimsizes[1] * ncomp * DFKNTsize(nt | DFNT_NATIVE)));
+                CHECK_VOID(pixel_buf, NULL, "malloc");
 
                 memset(img_data, 0,
                          (size_t)(dimsizes[0] * dimsizes[1] * ncomp * DFKNTsize(nt | DFNT_NATIVE)));
@@ -3233,8 +3233,8 @@ test_mgr_lut_a(int flag)
         pal_il      = (int32)MFGR_INTERLACE_PIXEL;
         pal_entries = 256;
 
-        pal_data = HDmalloc((size_t)(pal_entries * pal_ncomp * DFKNTsize(pal_nt | DFNT_NATIVE)));
-        CHECK_VOID(pal_data, NULL, "HDmalloc");
+        pal_data = malloc((size_t)(pal_entries * pal_ncomp * DFKNTsize(pal_nt | DFNT_NATIVE)));
+        CHECK_VOID(pal_data, NULL, "malloc");
 
         /* Initialize the palette data, in 'pixel' interlace */
         tmp_data = (uint8 *)pal_data;
@@ -3251,11 +3251,11 @@ test_mgr_lut_a(int flag)
             VOIDP pixel_buf;
             int32 dimsizes2[2];
 
-            tmp_data = HDmalloc((size_t)(pal_entries * pal_ncomp * DFKNTsize(pal_nt | DFNT_NATIVE)));
-            CHECK_VOID(tmp_data, NULL, "HDmalloc");
+            tmp_data = malloc((size_t)(pal_entries * pal_ncomp * DFKNTsize(pal_nt | DFNT_NATIVE)));
+            CHECK_VOID(tmp_data, NULL, "malloc");
 
-            pixel_buf = HDmalloc((size_t)(pal_entries * pal_ncomp * DFKNTsize(pal_nt | DFNT_NATIVE)));
-            CHECK_VOID(pixel_buf, NULL, "HDmalloc");
+            pixel_buf = malloc((size_t)(pal_entries * pal_ncomp * DFKNTsize(pal_nt | DFNT_NATIVE)));
+            CHECK_VOID(pixel_buf, NULL, "malloc");
 
             memset(tmp_data, 0, (size_t)(pal_entries * pal_ncomp * DFKNTsize(pal_nt | DFNT_NATIVE)));
 

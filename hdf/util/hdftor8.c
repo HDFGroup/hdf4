@@ -325,7 +325,7 @@ newSpace(int32 size)
     if (size >= oldSize) {
         if (oldSpace != NULL)
             HDfree(oldSpace);
-        if ((oldSpace = (char *)HDmalloc((uint32)size)) == NULL) {
+        if ((oldSpace = (char *)malloc((uint32)size)) == NULL) {
             puts("Out of memory. Abort.");
             exit(1);
         }

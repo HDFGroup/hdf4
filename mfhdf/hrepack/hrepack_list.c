@@ -355,7 +355,7 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
          * use the nlones returned to allocate sufficient space for the
          * buffer ref_array to hold the reference numbers of all lone vgroups,
          */
-        ref_array = (int32 *)HDmalloc(sizeof(int32) * nlones);
+        ref_array = (int32 *)malloc(sizeof(int32) * nlones);
 
         /*
          * and call Vlone again to retrieve the reference numbers into
@@ -386,7 +386,7 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
                 printf("Error: Could not get name length for group with ref <%d>\n", ref);
                 goto out;
             }
-            vg_name = (char *)HDmalloc(sizeof(char) * (name_len + 1));
+            vg_name = (char *)malloc(sizeof(char) * (name_len + 1));
 
             if (Vgetname(vg_id, vg_name) == FAIL) {
                 printf("Could not get name for group\n");
@@ -399,7 +399,7 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
                 goto out;
             }
 
-            vg_class = (char *)HDmalloc(sizeof(char) * (name_len + 1));
+            vg_class = (char *)malloc(sizeof(char) * (name_len + 1));
 
             if (Vgetclass(vg_id, vg_class) == FAIL) {
                 printf("Could not get class for group\n");
@@ -466,8 +466,8 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
             /* insert objects for this group */
             ntagrefs = Vntagrefs(vg_id);
             if (ntagrefs > 0) {
-                tags = (int32 *)HDmalloc(sizeof(int32) * ntagrefs);
-                refs = (int32 *)HDmalloc(sizeof(int32) * ntagrefs);
+                tags = (int32 *)malloc(sizeof(int32) * ntagrefs);
+                refs = (int32 *)malloc(sizeof(int32) * ntagrefs);
                 if (Vgettagrefs(vg_id, tags, refs, ntagrefs) < 0)
                     goto out;
 
@@ -599,7 +599,7 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
                     printf("Error: Could not get name length for group with ref <%d>\n", ref);
                     goto out;
                 }
-                vg_name = (char *)HDmalloc(sizeof(char) * (name_len + 1));
+                vg_name = (char *)malloc(sizeof(char) * (name_len + 1));
                 if (Vgetname(vg_id, vg_name) == FAIL) {
                     printf("Could not get name for group\n");
                     goto out;
@@ -611,7 +611,7 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
                     goto out;
                 }
 
-                vg_class = (char *)HDmalloc(sizeof(char) * (name_len + 1));
+                vg_class = (char *)malloc(sizeof(char) * (name_len + 1));
                 if (Vgetclass(vg_id, vg_class) == FAIL) {
                     printf("Could not get class for group\n");
                     goto out;
@@ -703,8 +703,8 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
                     /* insert objects for this group */
                     ntagrefs = Vntagrefs(vg_id);
                     if (ntagrefs > 0) {
-                        tags = (int32 *)HDmalloc(sizeof(int32) * ntagrefs);
-                        refs = (int32 *)HDmalloc(sizeof(int32) * ntagrefs);
+                        tags = (int32 *)malloc(sizeof(int32) * ntagrefs);
+                        refs = (int32 *)malloc(sizeof(int32) * ntagrefs);
                         if (Vgettagrefs(vg_id, tags, refs, ntagrefs) < 0)
                             goto out;
                         /* recurse */
@@ -975,7 +975,7 @@ list_vs(int32 infile_id, int32 outfile_id, list_table_t *list_tbl, options_t *op
          * use the nlones returned to allocate sufficient space for the
          * buffer ref_array to hold the reference numbers of all lone vgroups,
          */
-        ref_array = (int32 *)HDmalloc(sizeof(int32) * nlones);
+        ref_array = (int32 *)malloc(sizeof(int32) * nlones);
 
         /*
          * and call VSlone again to retrieve the reference numbers into
@@ -1151,7 +1151,7 @@ list_an(int32 infile_id, int32 outfile_id, options_t *options)
         ann_length = ANannlen(ann_id);
 
         /* Allocate space for the buffer to hold the data label text */
-        ann_buf = HDmalloc((ann_length + 1) * sizeof(char));
+        ann_buf = malloc((ann_length + 1) * sizeof(char));
 
         /*
          * Read and display the file label.  Note that the size of the buffer,
@@ -1199,7 +1199,7 @@ list_an(int32 infile_id, int32 outfile_id, options_t *options)
         ann_length = ANannlen(ann_id);
 
         /* Allocate space for the buffer to hold the data label text */
-        ann_buf = HDmalloc((ann_length + 1) * sizeof(char));
+        ann_buf = malloc((ann_length + 1) * sizeof(char));
 
         if (ANreadann(ann_id, ann_buf, ann_length + 1) == FAIL) {
             printf("Could not read AN\n");

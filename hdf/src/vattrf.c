@@ -162,7 +162,7 @@ nvsfcain(intf *vsid, intf *findex, intf *aindex, _fcd attrname, intf *dtype, int
 
     cfindex = *findex;
     /* Allocate space for fortran strings */
-    tattrname = (char *)HDmalloc(*attrnamelen + 1);
+    tattrname = (char *)malloc(*attrnamelen + 1);
     if (!tattrname)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 

@@ -215,7 +215,7 @@ HDGLinitialize_list(Generic_list *list)
     intn ret_value = SUCCEED;
 
     /* Allocate an initialize info struct */
-    list->info = (Generic_list_info *)HDmalloc(sizeof(Generic_list_info));
+    list->info = (Generic_list_info *)malloc(sizeof(Generic_list_info));
 
     if (list->info != NULL) {
         list->info->pre_element.pointer   = NULL;
@@ -325,7 +325,7 @@ HDGLadd_to_beginning(Generic_list list, VOIDP pointer)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Allocate and add to beginning of list */
-    element = (Generic_list_element *)HDmalloc(sizeof(Generic_list_element));
+    element = (Generic_list_element *)malloc(sizeof(Generic_list_element));
     if (element != NULL) {
         element->next     = list.info->pre_element.next;
         element->previous = &list.info->pre_element;
@@ -366,7 +366,7 @@ HDGLadd_to_end(Generic_list list, VOIDP pointer)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Allocate and add to end of list */
-    element = (Generic_list_element *)HDmalloc(sizeof(Generic_list_element));
+    element = (Generic_list_element *)malloc(sizeof(Generic_list_element));
     if (element != NULL) {
         element->next     = &list.info->post_element;
         element->previous = list.info->post_element.previous;
@@ -413,7 +413,7 @@ HDGLadd_to_list(Generic_list list, VOIDP pointer)
             element = element->next;
 
         /* Allocate and add to list */
-        new_element = (Generic_list_element *)HDmalloc(sizeof(Generic_list_element));
+        new_element = (Generic_list_element *)malloc(sizeof(Generic_list_element));
         if (new_element != NULL) {
             new_element->next     = element;
             new_element->previous = element->previous;

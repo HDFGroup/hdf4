@@ -78,7 +78,7 @@ hdf_init_destination(struct jpeg_compress_struct *cinfo_ptr)
     hdf_dest_ptr dest = (hdf_dest_ptr)cinfo_ptr->dest;
     int32        temp_aid;
 
-    if ((dest->buffer = HDmalloc(sizeof(JOCTET) * OUTPUT_BUF_SIZE)) == NULL)
+    if ((dest->buffer = malloc(sizeof(JOCTET) * OUTPUT_BUF_SIZE)) == NULL)
         ERREXIT1(cinfo_ptr, JERR_OUT_OF_MEMORY, (int)1);
 
     /* Create empty JPEG5/GREYJPEG5 tag/ref to indicate the image */
@@ -171,7 +171,7 @@ jpeg_HDF_dest(struct jpeg_compress_struct *cinfo_ptr, int32 file_id, uint16 tag,
 {
     hdf_dest_ptr dest;
 
-    if ((dest = HDmalloc(sizeof(hdf_destination_mgr))) == NULL)
+    if ((dest = malloc(sizeof(hdf_destination_mgr))) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     cinfo_ptr->dest               = (struct jpeg_destination_mgr *)dest;
@@ -249,7 +249,7 @@ DFCIjpeg(int32 file_id, uint16 tag, uint16 ref, int32 xdim, int32 ydim, const vo
     if ((cinfo_ptr = calloc(1, sizeof(struct jpeg_compress_struct))) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-    if ((jerr_ptr = HDmalloc(sizeof(struct jpeg_error_mgr))) == NULL)
+    if ((jerr_ptr = malloc(sizeof(struct jpeg_error_mgr))) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     /* Initialize the error-handling routines */

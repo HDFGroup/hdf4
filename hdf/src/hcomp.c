@@ -724,7 +724,7 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type, model_i
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
         } /* end if */
 
-        if ((buf = HDmalloc((uint32)data_len)) == NULL)
+        if ((buf = malloc((uint32)data_len)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         if (Hgetelement(file_id, tag, ref, buf) == FAIL)
             HGOTO_ERROR(DFE_READERROR, FAIL);
@@ -735,7 +735,7 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type, model_i
     } /* end if */
 
     /* set up the special element information and write it to file */
-    info                     = (compinfo_t *)HDmalloc(sizeof(compinfo_t));
+    info                     = (compinfo_t *)malloc(sizeof(compinfo_t));
     access_rec->special_info = info;
     if (info == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -1038,7 +1038,7 @@ HCIstaccess(accrec_t *access_rec, int16 acc_mode)
     access_rec->access  = (uint32)(acc_mode | DFACC_READ);
 
     /* get the special info record */
-    access_rec->special_info = HDmalloc(sizeof(compinfo_t));
+    access_rec->special_info = malloc(sizeof(compinfo_t));
     info                     = (compinfo_t *)access_rec->special_info;
     if (info == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -1600,7 +1600,7 @@ HCPgetcomptype(int32 file_id, uint16 data_tag, uint16 data_ref, /* IN: tag/ref o
         }
 
         /* element is special, proceed with reading special info header */
-        if ((local_ptbuf = (uint8 *)HDmalloc(data_len)) == NULL)
+        if ((local_ptbuf = (uint8 *)malloc(data_len)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
         /* Get the special info header */

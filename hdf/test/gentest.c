@@ -81,7 +81,7 @@ gen_bitio_test(void)
     if ((fid = Hopen(BITIO_NAME, DFACC_CREATE, 0)) == FAIL)
         return (FAIL);
 
-    if ((bit_data = (uint8 *)HDmalloc(BITIO_SIZE1 * sizeof(uint8))) == NULL) {
+    if ((bit_data = (uint8 *)malloc(BITIO_SIZE1 * sizeof(uint8))) == NULL) {
         Hclose(fid);
         return (FAIL);
     } /* end if */
@@ -133,12 +133,12 @@ gen_nbit_test(void)
     if ((fid = Hopen(NBIT_NAME, DFACC_CREATE, 0)) == FAIL)
         return (FAIL);
 
-    if ((nbit_data = (uint8 *)HDmalloc(NBIT_SIZE1 * sizeof(uint8))) == NULL) {
+    if ((nbit_data = (uint8 *)malloc(NBIT_SIZE1 * sizeof(uint8))) == NULL) {
         Hclose(fid);
         return (FAIL);
     } /* end if */
 
-    if ((out_data = (uint8 *)HDmalloc(NBIT_SIZE1 * sizeof(uint8))) == NULL) {
+    if ((out_data = (uint8 *)malloc(NBIT_SIZE1 * sizeof(uint8))) == NULL) {
         HDfree(nbit_data);
         Hclose(fid);
         return (FAIL);

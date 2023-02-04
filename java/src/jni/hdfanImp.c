@@ -206,7 +206,7 @@ Java_hdf_hdflib_HDFLibrary_ANreadann(JNIEnv *env, jclass clss, jlong ann_id, job
 
     UNUSED(clss);
 
-    if (NULL == (data = (char *)HDmalloc(sizeof(char) * (size_t)maxlen + 1)))
+    if (NULL == (data = (char *)malloc(sizeof(char) * (size_t)maxlen + 1)))
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "ANreadan: failed to allocate data buffer");
 
     if (annbuf == NULL)

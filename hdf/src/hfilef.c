@@ -163,7 +163,7 @@ nhglibverc(intf *major_v, intf *minor_v, intf *release, _fcd string, intf *len)
 
     cstring = NULL;
     if (*len)
-        cstring = (char *)HDmalloc((uint32)*len + 1);
+        cstring = (char *)malloc((uint32)*len + 1);
     status = Hgetlibversion(&cmajor_v, &cminor_v, &crelease, cstring);
 
     HDpackFstring(cstring, _fcdtocp(string), *len);
@@ -198,7 +198,7 @@ nhgfilverc(intf *file_id, intf *major_v, intf *minor_v, intf *release, _fcd stri
 
     cstring = NULL;
     if (*len)
-        cstring = (char *)HDmalloc((uint32)*len + 1);
+        cstring = (char *)malloc((uint32)*len + 1);
     status = Hgetfileversion((int32)*file_id, &cmajor_v, &cminor_v, &crelease, cstring);
 
     HDpackFstring(cstring, _fcdtocp(string), *len);

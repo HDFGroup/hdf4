@@ -487,7 +487,7 @@ test_r24(void)
     uint16 ref0, ref1, ref2;
     uint8 *jpeg_24bit_temp;
 
-    jpeg_24bit_temp = (uint8 *)HDmalloc(JPEGX * JPEGY * 3);
+    jpeg_24bit_temp = (uint8 *)malloc(JPEGX * JPEGY * 3);
     if (!jpeg_24bit_temp) {
         fprintf(stderr, "Out of memory!\n");
         exit(1);
@@ -858,7 +858,7 @@ test_r24_jpeg(void)
     int ret;
 
     /* Allocate buffer for DF24getimage to store read data */
-    jpeg_24bit_temp = (uint8 *)HDmalloc(JPEGX * JPEGY * 3);
+    jpeg_24bit_temp = (uint8 *)malloc(JPEGX * JPEGY * 3);
     if (!jpeg_24bit_temp) {
         fprintf(stderr, "Out of memory!\n");
         exit(1);
@@ -1022,9 +1022,9 @@ test_r24_jpeg(void)
         CHECK_VOID(status, FAIL, "GRgetdatainfo");
 
         /* Allocate buffers for the data from the HDF file and non-HDF file */
-        hdf_buffer = (uint8 *)HDmalloc(length * sizeof(uint8));
+        hdf_buffer = (uint8 *)malloc(length * sizeof(uint8));
         CHECK_ALLOC(hdf_buffer, "hdf_buffer", "test_r24_jpeg");
-        nonhdf_buffer = (uint8 *)HDmalloc(length * sizeof(uint8));
+        nonhdf_buffer = (uint8 *)malloc(length * sizeof(uint8));
         CHECK_ALLOC(nonhdf_buffer, "nonhdf_buffer", "test_r24_jpeg");
 
         /* Read the block of data from the HDF file using offset/length returned by
@@ -1131,36 +1131,36 @@ test_r8(void)
     int    ispal;
     uint8 *jpeg_8bit_temp;
 
-    im1 = (uint8 *)HDmalloc(XD1 * YD1 * sizeof(uint8));
-    ii1 = (uint8 *)HDmalloc(XD1 * YD1 * sizeof(uint8));
+    im1 = (uint8 *)malloc(XD1 * YD1 * sizeof(uint8));
+    ii1 = (uint8 *)malloc(XD1 * YD1 * sizeof(uint8));
     if (!im1 || !ii1) {
         fprintf(stderr, "Out of memory!\n");
         exit(1);
     }
 
-    im2 = (uint8 *)HDmalloc(XD2 * YD2 * sizeof(uint8));
-    ii2 = (uint8 *)HDmalloc(XD2 * YD2 * sizeof(uint8));
+    im2 = (uint8 *)malloc(XD2 * YD2 * sizeof(uint8));
+    ii2 = (uint8 *)malloc(XD2 * YD2 * sizeof(uint8));
     if (!im2 || !ii2) {
         fprintf(stderr, "Out of memory!\n");
         exit(1);
     }
 
-    im3 = (uint8 *)HDmalloc(XD3 * YD3 * sizeof(uint8));
-    ii3 = (uint8 *)HDmalloc(XD3 * YD3 * sizeof(uint8));
+    im3 = (uint8 *)malloc(XD3 * YD3 * sizeof(uint8));
+    ii3 = (uint8 *)malloc(XD3 * YD3 * sizeof(uint8));
     if (!im3 || !ii3) {
         fprintf(stderr, "Out of memory!\n");
         exit(1);
     }
 
-    pal1 = (uint8 *)HDmalloc(768 * sizeof(char));
-    pal2 = (uint8 *)HDmalloc(768 * sizeof(char));
-    ipal = (uint8 *)HDmalloc(768 * sizeof(char));
+    pal1 = (uint8 *)malloc(768 * sizeof(char));
+    pal2 = (uint8 *)malloc(768 * sizeof(char));
+    ipal = (uint8 *)malloc(768 * sizeof(char));
     if (!ipal || !pal1 || !pal2) {
         fprintf(stderr, "Out of memory!\n");
         exit(1);
     }
 
-    jpeg_8bit_temp = (uint8 *)HDmalloc(JPEGX * JPEGY);
+    jpeg_8bit_temp = (uint8 *)malloc(JPEGX * JPEGY);
     if (!jpeg_8bit_temp) {
         fprintf(stderr, "Out of memory!\n");
         exit(1);
@@ -1370,9 +1370,9 @@ test_pal(void)
 
     uint8 *pal1, *pal2, *ipal;
 
-    pal1 = (uint8 *)HDmalloc(768 * sizeof(uint8));
-    pal2 = (uint8 *)HDmalloc(768 * sizeof(uint8));
-    ipal = (uint8 *)HDmalloc(768 * sizeof(uint8));
+    pal1 = (uint8 *)malloc(768 * sizeof(uint8));
+    pal2 = (uint8 *)malloc(768 * sizeof(uint8));
+    ipal = (uint8 *)malloc(768 * sizeof(uint8));
     if (!ipal || !pal1 || !pal2) {
         fprintf(stderr, "Out of memory!\n");
         exit(1);

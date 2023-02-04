@@ -340,7 +340,7 @@ ANIaddentry(int32    an_id, /* IN: annotation interface id */
     }
 
     /* allocate space for key */
-    if ((ann_key = (int32 *)HDmalloc(sizeof(int32))) == NULL)
+    if ((ann_key = (int32 *)malloc(sizeof(int32))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* Create 32bit key from type/ref
@@ -350,7 +350,7 @@ ANIaddentry(int32    an_id, /* IN: annotation interface id */
     *ann_key = AN_CREATE_KEY(type, ann_ref);
 
     /* Initialize annotation node for insertion in annotation atom group*/
-    if ((ann_node = HDmalloc(sizeof(ANnode))) == NULL)
+    if ((ann_node = malloc(sizeof(ANnode))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     ann_node->file_id = an_id;
@@ -358,7 +358,7 @@ ANIaddentry(int32    an_id, /* IN: annotation interface id */
     ann_node->new_ann = new_ann;
 
     /* Initialize annotation entry for insertion into corresponding TBBT */
-    if ((ann_entry = HDmalloc(sizeof(ANentry))) == NULL)
+    if ((ann_entry = malloc(sizeof(ANentry))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* register annotation with atom group ANIDGROUP */
@@ -508,7 +508,7 @@ ANIcreate_ann_tree(int32    an_id,/* IN: annotation interface id */
         }
 
         /* allocate space for key */
-        if ((ann_key = (int32 *)HDmalloc(sizeof(int32))) == NULL)
+        if ((ann_key = (int32 *)malloc(sizeof(int32))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
         /* Create key from tag/ref pair
@@ -518,7 +518,7 @@ ANIcreate_ann_tree(int32    an_id,/* IN: annotation interface id */
         *ann_key = AN_CREATE_KEY(type, ann_ref);
 
         /* Initialize annotation node for insertion in annotation atom group*/
-        if ((ann_node = HDmalloc(sizeof(ANnode))) == NULL)
+        if ((ann_node = malloc(sizeof(ANnode))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
         ann_node->file_id = an_id;
@@ -527,7 +527,7 @@ ANIcreate_ann_tree(int32    an_id,/* IN: annotation interface id */
 
         /* Initialize annotation entry for insertion into corresponding TBBT */
         /* and  decode data tag/ref */
-        if ((ann_entry = HDmalloc(sizeof(ANentry))) == NULL)
+        if ((ann_entry = malloc(sizeof(ANentry))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
         ann_entry->annref = ann_ref;

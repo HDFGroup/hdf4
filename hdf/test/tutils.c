@@ -56,8 +56,7 @@ make_datafilename(char *basename, char *testfile, unsigned int size)
     char *srcdir   = getenv("srcdir");
     char *tempfile = NULL;
 
-    tempfile = (char *)HDmalloc(sizeof(char *) * (size + 1));
-    memset(tempfile, '\0', size + 1);
+    tempfile = (char *)calloc(sizeof(char *), (size + 1));
 
     /* Generate the correct name for the test file, by prepending the source path */
     if (srcdir && ((strlen(srcdir) + strlen(basename) + 1) < size)) {

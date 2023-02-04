@@ -159,7 +159,7 @@ test_dim1_SDS1(void)
     }
     else {
         /* Get the list of all variables of named VAR1_NAME */
-        var_list = (hdf_varlist_t *)HDmalloc(n_vars * sizeof(hdf_varlist_t));
+        var_list = (hdf_varlist_t *)malloc(n_vars * sizeof(hdf_varlist_t));
         status   = SDnametoindices(file_id, VAR1_NAME, var_list);
 
         /* In this case, the first variable is a dataset */
@@ -578,7 +578,7 @@ test_named_vars(void)
     CHECK(status, FAIL, "SDgetnumvars_byname");
     VERIFY(n_vars, 3, "SDgetnumvars_byname");
 
-    allvars = (hdf_varlist_t *)HDmalloc(n_vars * sizeof(hdf_varlist_t));
+    allvars = (hdf_varlist_t *)malloc(n_vars * sizeof(hdf_varlist_t));
     status  = SDnametoindices(file_id, COMMON_NAME, allvars);
     CHECK(status, FAIL, "SDnametoindices");
     VERIFY(allvars[0].var_type, IS_SDSVAR, "SDnametoindices");

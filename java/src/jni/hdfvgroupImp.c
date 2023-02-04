@@ -120,7 +120,7 @@ Java_hdf_hdflib_HDFLibrary_Vgetclass(JNIEnv *env, jclass clss, jlong vgroup_id, 
 
     UNUSED(clss);
 
-    if ((data = (char *)HDmalloc(H4_MAX_NC_CLASS + 1)) == NULL)
+    if ((data = (char *)malloc(H4_MAX_NC_CLASS + 1)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "Vgetclass: failed to allocate data buffer");
 
     if (hdfclassname == NULL)
@@ -159,7 +159,7 @@ Java_hdf_hdflib_HDFLibrary_Vgetname(JNIEnv *env, jclass clss, jlong vgroup_id, j
 
     UNUSED(clss);
 
-    if ((data = (char *)HDmalloc(H4_MAX_GR_NAME + 1)) == NULL)
+    if ((data = (char *)malloc(H4_MAX_GR_NAME + 1)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "Vgetname: failed to allocate data buffer");
 
     if (hdfname == NULL)
@@ -476,7 +476,7 @@ Java_hdf_hdflib_HDFLibrary_Vinquire(JNIEnv *env, jclass clss, jlong vgroup_id, j
 
     UNUSED(clss);
 
-    if ((data = (char *)HDmalloc(H4_MAX_NC_NAME + 1)) == NULL)
+    if ((data = (char *)malloc(H4_MAX_NC_NAME + 1)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "Vinquire: failed to allocate data buffer");
 
     if (n_entries == NULL)
@@ -624,7 +624,7 @@ Java_hdf_hdflib_HDFLibrary_Vattrinfo(JNIEnv *env, jclass clss, jlong id, jint in
 
     UNUSED(clss);
 
-    if ((data = (char *)HDmalloc(256)) == NULL)
+    if ((data = (char *)malloc(256)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "Vattrinfo2: failed to allocate data buffer");
 
     if (name == NULL)

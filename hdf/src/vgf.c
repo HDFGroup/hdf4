@@ -407,7 +407,7 @@ nvsgnamc(intf *vkey, _fcd vsname, intf *vsnamelen)
     intn  status;
 
     /* Allocate space for fortran strings */
-    tvsname = (char *)HDmalloc(*vsnamelen + 1);
+    tvsname = (char *)malloc(*vsnamelen + 1);
     if (!tvsname)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
@@ -433,7 +433,7 @@ nvsgclsc(intf *vkey, _fcd vsclass, intf *vsclasslen)
     intn  status;
 
     /* Allocate space for fortran strings */
-    tvsclass = (char *)HDmalloc(*vsclasslen + 1);
+    tvsclass = (char *)malloc(*vsclasslen + 1);
     if (!tvsclass)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
@@ -462,10 +462,10 @@ nvsinqc(intf *vkey, intf *nelt, intf *interlace, _fcd fields, intf *eltsize, _fc
     int32 tnelt, til, teltsz;
 
     /* Allocate space for fortran strings */
-    tfields = (char *)HDmalloc(*fieldslen + 1);
+    tfields = (char *)malloc(*fieldslen + 1);
     if (!tfields)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
-    tvsname = (char *)HDmalloc(*vsnamelen + 1);
+    tvsname = (char *)malloc(*vsnamelen + 1);
     if (!tvsname) {
         HDfree(tfields);
         HRETURN_ERROR(DFE_NOSPACE, FAIL)
@@ -1536,7 +1536,7 @@ nvcgvgrp(intf *id, intf *start_vg, intf *vg_count, intf *refarray)
         ret = (intf)Vgetvgroups((int32)*id, (uintn)*start_vg, 0, NULL);
     }
     else {
-        c_refarray = (uint16 *)HDmalloc(sizeof(uint16) * (uintn)*vg_count);
+        c_refarray = (uint16 *)malloc(sizeof(uint16) * (uintn)*vg_count);
         ret        = (intf)Vgetvgroups((int32)*id, (uintn)*start_vg, (uintn)*vg_count, c_refarray);
 
         /* copy C refarray to the fortran refarray, converting uint16 to intf type */
@@ -1571,7 +1571,7 @@ nvscgvdatas(intf *id, intf *start_vd, intf *vd_count, intf *refarray)
         ret = (intf)VSgetvdatas((int32)*id, (uintn)*start_vd, 0, NULL);
     }
     else {
-        c_refarray = (uint16 *)HDmalloc(sizeof(uint16) * (uintn)*vd_count);
+        c_refarray = (uint16 *)malloc(sizeof(uint16) * (uintn)*vd_count);
         ret        = (intf)VSgetvdatas((int32)*id, (uintn)*start_vd, (uintn)*vd_count, c_refarray);
         /* copy C refarray to the fortran refarray, converting uint16 to intf type */
         for (ii = 0; ii < (uintn)*vd_count; ii++)

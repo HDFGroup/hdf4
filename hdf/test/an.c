@@ -62,9 +62,9 @@ test_an(void)
 
     /***** generate float array and image *****/
 
-    data     = (float *)HDmalloc(ROWS * COLS * sizeof(float));
-    image    = (uint8 *)HDmalloc(ROWS * COLS * sizeof(char));
-    newimage = (uint8 *)HDmalloc(ROWS * COLS * sizeof(char));
+    data     = (float *)malloc(ROWS * COLS * sizeof(float));
+    image    = (uint8 *)malloc(ROWS * COLS * sizeof(char));
+    newimage = (uint8 *)malloc(ROWS * COLS * sizeof(char));
 
     dimsizes[0] = ROWS;
     dimsizes[1] = COLS;
@@ -201,7 +201,7 @@ check_lab_desc(uint16 tag, uint16 ref, char *label, char *desc)
         num_errs++;
     }
     else {
-        indesc = (char *)HDmalloc(indesclen + 1);
+        indesc = (char *)malloc(indesclen + 1);
         ret    = DFANgetdesc(TESTFILE, tag, ref, indesc, MAXLEN_DESC);
         RESULT("DFANgetdesc");
         indesc[indesclen] = '\0';
@@ -238,9 +238,9 @@ test_an_2(void)
 
     /***** generate float array and image *****/
 
-    data     = (float *)HDmalloc(ROWS * COLS * sizeof(float));
-    image    = (uint8 *)HDmalloc(ROWS * COLS * sizeof(char));
-    newimage = (uint8 *)HDmalloc(ROWS * COLS * sizeof(char));
+    data     = (float *)malloc(ROWS * COLS * sizeof(float));
+    image    = (uint8 *)malloc(ROWS * COLS * sizeof(char));
+    newimage = (uint8 *)malloc(ROWS * COLS * sizeof(char));
 
     dimsizes[0] = ROWS;
     dimsizes[1] = COLS;

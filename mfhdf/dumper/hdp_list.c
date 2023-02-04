@@ -235,7 +235,7 @@ print_annots_by_object(const char *fname, int32 an_id, ann_type annot_type, uint
     if (ann_num > 0) { /* print data annotation */
 
         /* allocate space for all label/description id's for data object */
-        ann_list = HDmalloc(ann_num * sizeof(int32));
+        ann_list = malloc(ann_num * sizeof(int32));
         CHECK_ALLOC(ann_list, "ann_list", func_name);
 
         /* retrieve all the data objects label/description handles and

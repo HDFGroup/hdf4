@@ -247,7 +247,7 @@ Vstr_ref(int32 file_id, char *searched_str,          /* vg's class name */
         {
             ERROR_GOTO_2("in %s: Vgetclassnamelen failed for vg ref=%d", "Vstr_ref", (int)*find_ref);
         }
-        name = (char *)HDmalloc(sizeof(char) * (name_len + 1));
+        name = (char *)malloc(sizeof(char) * (name_len + 1));
         /* If allocation fails, Vstr_ref simply terminates hdp. */
         CHECK_ALLOC(name, "vgroup classname", "Vstr_ref");
 
@@ -436,7 +436,7 @@ get_VGandInfo(int32 *vg_id, int32 file_id, int32 vg_ref, const char *file_name, 
         ERROR_GOTO_2("in %s: Vgetnamelen failed for vg ref=%d", "get_VGandInfo", (int)vg_ref);
     }
     if (name_len > 0) {
-        *vgname = (char *)HDmalloc(sizeof(char) * (name_len + 1));
+        *vgname = (char *)malloc(sizeof(char) * (name_len + 1));
 
         /* If allocation fails, get_VGandInfo simply terminates hdp. */
         CHECK_ALLOC(*vgname, "*vgname", "get_VGandInfo");
@@ -449,7 +449,7 @@ get_VGandInfo(int32 *vg_id, int32 file_id, int32 vg_ref, const char *file_name, 
         }
     }
     else {
-        *vgname = (char *)HDmalloc(sizeof(char) * (NONAME_LEN));
+        *vgname = (char *)malloc(sizeof(char) * (NONAME_LEN));
         HDstrcpy(*vgname, "<Undefined>");
         status = Vinquire(*vg_id, n_entries, NULL);
         if (FAIL == status) /* go to done and return a FAIL */
@@ -466,7 +466,7 @@ get_VGandInfo(int32 *vg_id, int32 file_id, int32 vg_ref, const char *file_name, 
         ERROR_GOTO_2("in %s: Vgetclassnamelen failed for vg ref=%d", "get_VGandInfo", (int)vg_ref);
     }
     if (name_len > 0) {
-        *vgclass = (char *)HDmalloc(sizeof(char) * (name_len + 1));
+        *vgclass = (char *)malloc(sizeof(char) * (name_len + 1));
 
         /* If allocation fails, get_VGandInfo simply terminates hdp. */
         CHECK_ALLOC(*vgclass, "*vgclass", "get_VGandInfo");
@@ -478,7 +478,7 @@ get_VGandInfo(int32 *vg_id, int32 file_id, int32 vg_ref, const char *file_name, 
         }
     }
     else {
-        *vgclass = (char *)HDmalloc(sizeof(char) * (NONAME_LEN));
+        *vgclass = (char *)malloc(sizeof(char) * (NONAME_LEN));
         HDstrcpy(*vgclass, "<Undefined>");
     }
 
@@ -539,9 +539,9 @@ alloc_list_of_strings(int32 num_entries)
     intn   i;
 
     /* I don't know why +1 here and only i<num_entries at for loop - BMR*/
-    /* probably, +1 so that HDmalloc won't fail when num_entries = 0, was */
+    /* probably, +1 so that malloc won't fail when num_entries = 0, was */
     /* added in r1842.  But, that means possible memory leak! */
-    ptr = (char **)HDmalloc(sizeof(char *) * (num_entries));
+    ptr = (char **)malloc(sizeof(char *) * (num_entries));
 
     /* If allocation fails, alloc_list_of_string simply terminates hdp. */
     CHECK_ALLOC(ptr, "ptr", "alloc_list_of_strings");
@@ -558,7 +558,7 @@ alloc_strg_of_chars(char *strg)
 {
     char *ptr = NULL;
 
-    ptr = (char *)HDmalloc(sizeof(char) * (HDstrlen(strg) + 1));
+    ptr = (char *)malloc(sizeof(char) * (HDstrlen(strg) + 1));
 
     /* If allocation fails, alloc_list_of_string simply terminates hdp. */
     CHECK_ALLOC(ptr, "ptr", "alloc_strg_of_chars");
@@ -861,7 +861,7 @@ vgBuildGraph(int32 vg_id, int32 file_id, int32 num_entries, const char *file_nam
 
                 /* vgroup has no name */
                 if (HDstrlen(vgname) == 0 || vgname == NULL) {
-                    vgname = (char *)HDmalloc(sizeof(char) * (NONAME_LEN));
+                    vgname = (char *)malloc(sizeof(char) * (NONAME_LEN));
                     HDstrcat(vgname, "<Undefined>");
                 }
 
@@ -1006,7 +1006,7 @@ vgdumpfull(int32 vg_id, dump_info_t *dumpvg_opts, int32 file_id, int32 num_entri
                 }
                 /* vgroup has no name */
                 if (HDstrlen(vgname) == 0 || vgname == NULL) {
-                    vgname = (char *)HDmalloc(sizeof(char) * (NONAME_LEN));
+                    vgname = (char *)malloc(sizeof(char) * (NONAME_LEN));
                     HDstrcat(vgname, "<Undefined>");
                 }
 
@@ -1254,7 +1254,7 @@ dvg(dump_info_t *dumpvg_opts, intn curr_arg, intn argc, char *argv[])
         /* allocate space for the list of nodes to be printed in the
            Graphical Representation part */
         max_vgs = NUM_VGS;
-        list    = (vg_info_t **)HDmalloc(sizeof(vg_info_t *) * max_vgs);
+        list    = (vg_info_t **)malloc(sizeof(vg_info_t *) * max_vgs);
         CHECK_ALLOC(list, "list", "dvg");
 
         for (j = 0; j < max_vgs; j++) /* init that list */
@@ -1306,7 +1306,7 @@ dvg(dump_info_t *dumpvg_opts, intn curr_arg, intn argc, char *argv[])
                 CHECK_ALLOC(list, "list", "dvg");
             }
 
-            list[curr_vg] = (vg_info_t *)HDmalloc(sizeof(vg_info_t));
+            list[curr_vg] = (vg_info_t *)malloc(sizeof(vg_info_t));
             CHECK_ALLOC(list[curr_vg], "list[curr_vg]", "dvg");
             list[curr_vg]->children = NULL;
             list[curr_vg]->type     = NULL;
@@ -1379,7 +1379,7 @@ dvg(dump_info_t *dumpvg_opts, intn curr_arg, intn argc, char *argv[])
 
             /* fill the graph. rep. node for this vgroup */
             list[curr_vg]->index   = Vref_index(file_id, vg_ref);
-            list[curr_vg]->vg_name = (char *)HDmalloc(sizeof(char) * (HDstrlen(vgname) + 1));
+            list[curr_vg]->vg_name = (char *)malloc(sizeof(char) * (HDstrlen(vgname) + 1));
             HDstrcpy(list[curr_vg]->vg_name, vgname);
             list[curr_vg]->displayed     = FALSE;
             list[curr_vg]->treedisplayed = FALSE; /* BMR - 01/16/99 */

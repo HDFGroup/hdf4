@@ -610,7 +610,7 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
     }
 
     /* Get space to store the image offsets */
-    if ((img_info = (imginfo_t *)HDmalloc(nimages * sizeof(imginfo_t))) == NULL)
+    if ((img_info = (imginfo_t *)malloc(nimages * sizeof(imginfo_t))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     memset(img_info, 0, (size_t)nimages * sizeof(imginfo_t));
 
@@ -665,7 +665,7 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                         at_info_t *new_attr; /* attr to add to the set of global attrs */
                         int32      at_key;   /* VData key for the attribute */
 
-                        if ((new_attr = (at_info_t *)HDmalloc(sizeof(at_info_t))) == NULL)
+                        if ((new_attr = (at_info_t *)malloc(sizeof(at_info_t))) == NULL)
                             HGOTO_ERROR(DFE_NOSPACE, FAIL);
                         new_attr->ref           = (uint16)grp_ref;
                         new_attr->index         = gr_ptr->gattr_count;
@@ -691,7 +691,7 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                             /* Get the name of the attribute */
                             if ((fname = VFfieldname(at_key, 0)) == NULL) {
                                 sprintf(textbuf, "Attribute #%d", (int)new_attr->index);
-                                if ((new_attr->name = (char *)HDmalloc(HDstrlen(textbuf) + 1)) == NULL) {
+                                if ((new_attr->name = (char *)malloc(HDstrlen(textbuf) + 1)) == NULL) {
                                     VSdetach(at_key);
                                     HDfree(new_attr);
                                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -699,7 +699,7 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                                 HDstrcpy(new_attr->name, textbuf);
                             } /* end if */
                             else {
-                                if ((new_attr->name = (char *)HDmalloc(HDstrlen(fname) + 1)) == NULL) {
+                                if ((new_attr->name = (char *)malloc(HDstrlen(fname) + 1)) == NULL) {
                                     VSdetach(at_key);
                                     HDfree(new_attr);
                                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -848,7 +848,7 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
 
                     if ((img_key = Vattach(file_id, (int32)img_info[i].grp_ref, "r")) != FAIL) {
                         uint16 name_len;
-                        if ((new_image = (ri_info_t *)HDmalloc(sizeof(ri_info_t))) == NULL) {
+                        if ((new_image = (ri_info_t *)malloc(sizeof(ri_info_t))) == NULL) {
                             HDfree(img_info); /* free offsets */
                             Hclose(file_id);
                             HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -860,7 +860,7 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                         /* Get the name of the image */
                         if (Vgetnamelen(img_key, &name_len) == FAIL)
                             name_len = 20; /* for "Raster Image #%d" */
-                        if ((new_image->name = (char *)HDmalloc(name_len + 1)) == NULL)
+                        if ((new_image->name = (char *)malloc(name_len + 1)) == NULL)
                             HGOTO_ERROR(DFE_NOSPACE, FAIL);
                         if (Vgetname(img_key, new_image->name) == FAIL)
                             sprintf(new_image->name, "Raster Image #%d", (int)i);
@@ -985,7 +985,7 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                                     at_info_t *new_attr; /* attr to add to the local attr set */
                                     int32      at_key;   /* VData key for the attribute */
 
-                                    if ((new_attr = (at_info_t *)HDmalloc(sizeof(at_info_t))) == NULL)
+                                    if ((new_attr = (at_info_t *)malloc(sizeof(at_info_t))) == NULL)
                                         HGOTO_ERROR(DFE_NOSPACE, FAIL);
                                     new_attr->ref           = (uint16)img_ref;
                                     new_attr->index         = new_image->lattr_count;
@@ -1009,7 +1009,7 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                                         /* Get the name of the attribute */
                                         if ((fname = VFfieldname(at_key, 0)) == NULL) {
                                             sprintf(textbuf, "Attribute #%d", (int)new_attr->index);
-                                            if ((new_attr->name = (char *)HDmalloc(HDstrlen(textbuf) + 1)) ==
+                                            if ((new_attr->name = (char *)malloc(HDstrlen(textbuf) + 1)) ==
                                                 NULL) {
                                                 VSdetach(at_key);
                                                 HDfree(new_attr);
@@ -1018,7 +1018,7 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                                             HDstrcpy(new_attr->name, textbuf);
                                         } /* end if */
                                         else {
-                                            if ((new_attr->name = (char *)HDmalloc(HDstrlen(fname) + 1)) ==
+                                            if ((new_attr->name = (char *)malloc(HDstrlen(fname) + 1)) ==
                                                 NULL) {
                                                 VSdetach(at_key);
                                                 HDfree(new_attr);
@@ -1065,7 +1065,7 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                     if ((GroupID = DFdiread(file_id, DFTAG_RIG, img_info[i].grp_ref)) == FAIL)
                         HGOTO_ERROR(DFE_READERROR, FAIL);
 
-                    if ((new_image = (ri_info_t *)HDmalloc(sizeof(ri_info_t))) == NULL) {
+                    if ((new_image = (ri_info_t *)malloc(sizeof(ri_info_t))) == NULL) {
                         HDfree(img_info); /* free offsets */
                         Hclose(file_id);
                         HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -1076,7 +1076,7 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
 
                     /* Get the name of the image */
                     sprintf(textbuf, "Raster Image #%d", (int)i);
-                    if ((new_image->name = (char *)HDmalloc(HDstrlen(textbuf) + 1)) == NULL)
+                    if ((new_image->name = (char *)malloc(HDstrlen(textbuf) + 1)) == NULL)
                         HGOTO_ERROR(DFE_NOSPACE, FAIL);
                     HDstrcpy(new_image->name, textbuf);
                     new_image->name_generated = TRUE;
@@ -1211,7 +1211,7 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                     char       textbuf[VGNAMELENMAX + 1]; /* buffer to store the name in */
                     uint8      GRtbuf[64];                /* local buffer for reading RIG info */
 
-                    if ((new_image = (ri_info_t *)HDmalloc(sizeof(ri_info_t))) == NULL) {
+                    if ((new_image = (ri_info_t *)malloc(sizeof(ri_info_t))) == NULL) {
                         HDfree(img_info); /* free offsets */
                         Hclose(file_id);
                         HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -1222,7 +1222,7 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
 
                     /* Get the name of the image */
                     sprintf(textbuf, "Raster Image #%d", (int)i);
-                    if ((new_image->name = (char *)HDmalloc(HDstrlen(textbuf) + 1)) == NULL)
+                    if ((new_image->name = (char *)malloc(HDstrlen(textbuf) + 1)) == NULL)
                         HGOTO_ERROR(DFE_NOSPACE, FAIL);
                     HDstrcpy(new_image->name, textbuf);
                     new_image->name_generated = TRUE;
@@ -1338,21 +1338,21 @@ GRIil_convert(const void *inbuf, gr_interlace_t inil, void *outbuf, gr_interlace
         HDmemcpy(outbuf, inbuf, (size_t)dims[XDIM] * (size_t)dims[YDIM] * (size_t)pixel_size);
     else {
         /* allocate pixel pointer arrays */
-        if ((in_comp_ptr = HDmalloc(sizeof(void *) * (size_t)ncomp)) == NULL)
+        if ((in_comp_ptr = malloc(sizeof(void *) * (size_t)ncomp)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
-        if ((out_comp_ptr = HDmalloc(sizeof(void *) * (size_t)ncomp)) == NULL)
+        if ((out_comp_ptr = malloc(sizeof(void *) * (size_t)ncomp)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
         /* allocate pixel increment arrays */
-        if ((in_pixel_add = HDmalloc(sizeof(int32) * (size_t)ncomp)) == NULL)
+        if ((in_pixel_add = malloc(sizeof(int32) * (size_t)ncomp)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
-        if ((out_pixel_add = HDmalloc(sizeof(int32) * (size_t)ncomp)) == NULL)
+        if ((out_pixel_add = malloc(sizeof(int32) * (size_t)ncomp)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
         /* allocate line increment arrays */
-        if ((in_line_add = HDmalloc(sizeof(int32) * (size_t)ncomp)) == NULL)
+        if ((in_line_add = malloc(sizeof(int32) * (size_t)ncomp)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
-        if ((out_line_add = HDmalloc(sizeof(int32) * (size_t)ncomp)) == NULL)
+        if ((out_line_add = malloc(sizeof(int32) * (size_t)ncomp)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
         /* Set up the input buffer pointers and adders */
@@ -2277,12 +2277,12 @@ GRcreate(int32 grid, const char *name, int32 ncomp, int32 nt, int32 il, int32 di
         HGOTO_ERROR(DFE_GRNOTFOUND, FAIL);
 
     /* Allocate space for the new image information */
-    if ((ri_ptr = (ri_info_t *)HDmalloc(sizeof(ri_info_t))) == NULL)
+    if ((ri_ptr = (ri_info_t *)malloc(sizeof(ri_info_t))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     memset(ri_ptr, 0, sizeof(ri_info_t));
 
     /* Allocate space for the name and copy it */
-    if ((ri_ptr->name = (char *)HDmalloc(HDstrlen(name) + 1)) == NULL)
+    if ((ri_ptr->name = (char *)malloc(HDstrlen(name) + 1)) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     HDstrcpy(ri_ptr->name, name);
 
@@ -2661,14 +2661,14 @@ GRwriteimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], voi
 
     if (convert || switch_interlace == TRUE) { /* convert image data to HDF disk format */
         /* Allocate space for the conversion buffer */
-        if ((img_data = HDmalloc(pixel_disk_size * (size_t)count[XDIM] * (size_t)count[YDIM])) == NULL)
+        if ((img_data = malloc(pixel_disk_size * (size_t)count[XDIM] * (size_t)count[YDIM])) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
         if (switch_interlace == TRUE) {
             void *pixel_buf; /* buffer for the pixel interlaced data */
 
             /* Allocate space for the conversion buffer */
-            if ((pixel_buf = HDmalloc(pixel_mem_size * (size_t)count[XDIM] * (size_t)count[YDIM])) == NULL)
+            if ((pixel_buf = malloc(pixel_mem_size * (size_t)count[XDIM] * (size_t)count[YDIM])) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
             GRIil_convert(data, ri_ptr->img_dim.il, pixel_buf, MFGR_INTERLACE_PIXEL, count,
@@ -2726,7 +2726,7 @@ GRwriteimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], voi
             void *fill_pixel;                                /* converted value for the filled pixel */
             int32 at_index;                                  /* attribute index for the fill value */
 
-            if ((fill_pixel = HDmalloc(pixel_disk_size)) == NULL)
+            if ((fill_pixel = malloc(pixel_disk_size)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
             /* create correct disk version of fill pixel */
@@ -2738,7 +2738,7 @@ GRwriteimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], voi
             {
                 /* Try to find a fill value attribute */
                 if ((at_index = GRfindattr(riid, FILL_ATTR)) != FAIL) { /* Found a fill value attribute */
-                    if ((ri_ptr->fill_value = HDmalloc(pixel_mem_size)) == NULL)
+                    if ((ri_ptr->fill_value = malloc(pixel_mem_size)) == NULL)
                         HGOTO_ERROR(DFE_NOSPACE, FAIL);
                     if (GRgetattr(riid, at_index, ri_ptr->fill_value) == FAIL)
                         HGOTO_ERROR(DFE_BADATTR, FAIL);
@@ -2762,7 +2762,7 @@ GRwriteimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], voi
             /* create the "line" pixel block */
             /* allocate space for the "line" block */
             fill_line_size = (int32)pixel_disk_size * ri_ptr->img_dim.xdim;
-            if ((fill_line = HDmalloc(fill_line_size)) == NULL)
+            if ((fill_line = malloc(fill_line_size)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
             HDmemfill(fill_line, fill_pixel, pixel_disk_size, (uint32)ri_ptr->img_dim.xdim);
 
@@ -3092,7 +3092,7 @@ GRreadimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], void
         void *fill_pixel;      /* converted value for the filled pixel */
         int32 at_index;
 
-        if ((fill_pixel = HDmalloc(pixel_mem_size)) == NULL)
+        if ((fill_pixel = malloc(pixel_mem_size)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
         /* Try to find a fill value attribute */
@@ -3110,7 +3110,7 @@ GRreadimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], void
     else {             /* an image exists in the file */
         if (convert) { /* convert image data to HDF disk format */
             /* Allocate space for the conversion buffer */
-            if ((img_data = HDmalloc(pixel_disk_size * (size_t)count[XDIM] * (size_t)count[YDIM])) == NULL)
+            if ((img_data = malloc(pixel_disk_size * (size_t)count[XDIM] * (size_t)count[YDIM])) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
         }    /* end if */
         else /* no conversion necessary, just use the user's buffer */
@@ -3194,7 +3194,7 @@ GRreadimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], void
         void *pixel_buf; /* buffer for the pixel interlaced data */
 
         /* Allocate space for the conversion buffer */
-        if ((pixel_buf = HDmalloc(pixel_mem_size * (size_t)count[XDIM] * (size_t)count[YDIM])) == NULL)
+        if ((pixel_buf = malloc(pixel_mem_size * (size_t)count[XDIM] * (size_t)count[YDIM])) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
         GRIil_convert(data, MFGR_INTERLACE_PIXEL, pixel_buf, ri_ptr->im_il, count, ri_ptr->img_dim.ncomps,
@@ -3801,7 +3801,7 @@ GRreadlut(int32 lutid, void *data)
             (uintn)(ri_ptr->lut_dim.ncomps * DFKNTsize((ri_ptr->lut_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND)));
 
         /* Allocate space for the conversion buffer */
-        if ((pixel_buf = HDmalloc(pixel_mem_size * (size_t)ri_ptr->lut_dim.xdim)) == NULL)
+        if ((pixel_buf = malloc(pixel_mem_size * (size_t)ri_ptr->lut_dim.xdim)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
         count[XDIM] = 1;
@@ -3860,7 +3860,7 @@ GRsetexternalfile(int32 riid, const char *filename, int32 offset)
     if (NULL == (ri_ptr = (ri_info_t *)HAatom_object(riid)))
         HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
 
-    if ((ri_ptr->ext_name = (char *)HDmalloc(HDstrlen(filename) + 1)) == NULL)
+    if ((ri_ptr->ext_name = (char *)malloc(HDstrlen(filename) + 1)) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* Mark the image as external and cache parameters */
@@ -4514,7 +4514,7 @@ GRsetattr(int32 id, const char *name, int32 attr_nt, int32 count, const void *da
             if (new_at_size > at_size || at_ptr->data == NULL) {
                 if (at_ptr->data != NULL)
                     HDfree(at_ptr->data);
-                if ((at_ptr->data = HDmalloc(new_at_size)) == NULL)
+                if ((at_ptr->data = malloc(new_at_size)) == NULL)
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
             } /* end if */
             HDmemcpy(at_ptr->data, data, new_at_size);
@@ -4527,7 +4527,7 @@ GRsetattr(int32 id, const char *name, int32 attr_nt, int32 count, const void *da
     }                                     /* end if */
     else                                  /* a new attribute */
     {
-        if ((at_ptr = (at_info_t *)HDmalloc(sizeof(at_info_t))) == NULL)
+        if ((at_ptr = (at_info_t *)malloc(sizeof(at_info_t))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
         /* Fill in fields for the new attribute */
@@ -4536,7 +4536,7 @@ GRsetattr(int32 id, const char *name, int32 attr_nt, int32 count, const void *da
         at_ptr->len   = count;
 
         /* allocate space for the attribute name & copy it */
-        if ((at_ptr->name = (char *)HDmalloc(HDstrlen(name) + 1)) == NULL)
+        if ((at_ptr->name = (char *)malloc(HDstrlen(name) + 1)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         HDstrcpy(at_ptr->name, name);
 
@@ -4544,7 +4544,7 @@ GRsetattr(int32 id, const char *name, int32 attr_nt, int32 count, const void *da
         at_size = at_ptr->len * DFKNTsize((at_ptr->nt | DFNT_NATIVE) & (~DFNT_LITEND));
         if ((uint32)at_size < gr_ptr->attr_cache) { /* cacheable */
             /* allocate space for the attribute name & copy it */
-            if ((at_ptr->data = (char *)HDmalloc(at_size)) == NULL)
+            if ((at_ptr->data = (char *)malloc(at_size)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
             HDmemcpy(at_ptr->data, data, at_size);
             at_ptr->data_modified = TRUE;
@@ -4739,7 +4739,7 @@ GRgetattr(int32 id, int32 index, void *data)
         int32 AttrID; /* attribute Vdata id */
 
         /* Grab some memory for the attribute data */
-        if ((at_ptr->data = HDmalloc(at_size)) == NULL)
+        if ((at_ptr->data = malloc(at_size)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
         if ((AttrID = VSattach(hdf_file_id, (int32)at_ptr->ref, "r")) == FAIL)
@@ -5242,7 +5242,7 @@ GRsetchunk(int32         riid,      /* IN: raster access id */
                   for Rasters it is 2 */
 
     /* allocate space for chunk dimensions */
-    if ((chunk[0].pdims = (DIM_DEF *)HDmalloc(ndims * sizeof(DIM_DEF))) == NULL)
+    if ((chunk[0].pdims = (DIM_DEF *)malloc(ndims * sizeof(DIM_DEF))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* initialize image/chunk sizes using CHUNK definition structure */
@@ -5302,7 +5302,7 @@ GRsetchunk(int32         riid,      /* IN: raster access id */
 #endif
 
     /* allocate space for fill pixel */
-    if ((fill_pixel = HDmalloc(pixel_disk_size)) == NULL)
+    if ((fill_pixel = malloc(pixel_disk_size)) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* create correct disk version of fill pixel */
@@ -5315,7 +5315,7 @@ GRsetchunk(int32         riid,      /* IN: raster access id */
     {
         /* Try to find a fill value attribute */
         if ((at_index = GRfindattr(riid, FILL_ATTR)) != FAIL) { /* Found a fill value attribute */
-            if ((ri_ptr->fill_value = HDmalloc(pixel_mem_size)) == NULL)
+            if ((ri_ptr->fill_value = malloc(pixel_mem_size)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
             if (GRgetattr(riid, at_index, ri_ptr->fill_value) == FAIL)
                 HGOTO_ERROR(DFE_BADATTR, FAIL);
@@ -5627,14 +5627,14 @@ GRwritechunk(int32       riid,   /* IN: access aid to GR */
                 /* convert if necessary */
                 if (convert || switch_interlace == TRUE) {
                     /* Allocate space for the conversion buffer */
-                    if ((img_data = HDmalloc(pixel_disk_size * csize)) == NULL)
+                    if ((img_data = malloc(pixel_disk_size * csize)) == NULL)
                         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                     if (switch_interlace == TRUE) {
                         void *pixel_buf; /* buffer for the pixel interlaced data */
 
                         /* Allocate space for the conversion buffer */
-                        if ((pixel_buf = HDmalloc(pixel_mem_size * csize)) == NULL)
+                        if ((pixel_buf = malloc(pixel_mem_size * csize)) == NULL)
                             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                         if (FAIL == GRIil_convert((VOID *)datap, ri_ptr->img_dim.il, pixel_buf,
@@ -5825,7 +5825,7 @@ GRreadchunk(int32  riid,   /* IN: access aid to GR */
                 /* read chunk in */
                 if (convert) {
                     /* Allocate space for the conversion buffer */
-                    if ((img_data = HDmalloc(pixel_disk_size * csize)) == NULL)
+                    if ((img_data = malloc(pixel_disk_size * csize)) == NULL)
                         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                     /* read it in */
@@ -5851,7 +5851,7 @@ GRreadchunk(int32  riid,   /* IN: access aid to GR */
                     void *pixel_buf; /* buffer for the pixel interlaced data */
 
                     /* Allocate space for the conversion buffer */
-                    if ((pixel_buf = HDmalloc(pixel_mem_size * csize)) == NULL)
+                    if ((pixel_buf = malloc(pixel_mem_size * csize)) == NULL)
                         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                     if (FAIL == GRIil_convert(datap, MFGR_INTERLACE_PIXEL, pixel_buf, ri_ptr->im_il,

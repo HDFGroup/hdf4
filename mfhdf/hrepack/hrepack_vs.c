@@ -181,7 +181,7 @@ copy_vs(int32 infile_id, int32 outfile_id, int32 tag, /* tag of input VS */
         goto out;
     }
     if (n_records > 0) {
-        if ((buf = (uint8 *)HDmalloc((size_t)(n_records * vdata_size))) == NULL) {
+        if ((buf = (uint8 *)malloc((size_t)(n_records * vdata_size))) == NULL) {
             printf("Failed to get memory for new VS <%s>\n", path);
             ret = -1;
             goto out;
@@ -293,7 +293,7 @@ copy_vdata_attribute(int32 in, int32 out, int32 findex, intn attrindex)
     VSattrinfo(in, findex, attrindex, attr_name, &attr_type, &n_values, &attr_size);
 
     /* Allocate space for attribute values */
-    if ((values = (VOIDP)HDmalloc((size_t)(attr_size * n_values))) == NULL) {
+    if ((values = (VOIDP)malloc((size_t)(attr_size * n_values))) == NULL) {
         printf("Cannot allocate %d values of size %d for attribute %s", n_values, attr_size, attr_name);
         return -1;
     }

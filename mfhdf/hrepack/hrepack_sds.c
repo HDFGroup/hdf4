@@ -505,7 +505,7 @@ copy_sds(int32 sd_in, int32 sd_out, int32 tag, /* tag of input SDS */
         if (need < H4TOOLS_MALLOCSIZE ||
             /* for compressed datasets do one operation I/O, but allow hyperslab for chunked */
             (chunk_flags == HDF_NONE && comp_type > COMP_CODE_NONE)) {
-            buf = (VOIDP)HDmalloc(need);
+            buf = (VOIDP)malloc(need);
         }
 
         /*-------------------------------------------------------------------------
@@ -563,7 +563,7 @@ copy_sds(int32 sd_in, int32 sd_out, int32 tag, /* tag of input SDS */
                 assert(sm_nbytes > 0);
             }
 
-            sm_buf = HDmalloc((size_t)sm_nbytes);
+            sm_buf = malloc((size_t)sm_nbytes);
 
             /* the stripmine loop */
             memset(hs_offset, 0, sizeof hs_offset);
@@ -667,7 +667,7 @@ copy_sds(int32 sd_in, int32 sd_out, int32 tag, /* tag of input SDS */
             numtype = dtype & DFNT_MASK;
             eltsz   = DFKNTsize(numtype | DFNT_NATIVE);
 
-            if ((dim_buf = (VOIDP)HDmalloc(dimsizes[i] * eltsz)) == NULL) {
+            if ((dim_buf = (VOIDP)malloc(dimsizes[i] * eltsz)) == NULL) {
                 printf("Failed to alloc %d for dimension scale\n", dimsizes[i]);
                 goto out;
             }
@@ -797,7 +797,7 @@ copy_sds_attrs(int32 id_in, int32 id_out, int32 nattrs, options_t *options)
         /* compute the number of the bytes for each value. */
         numtype = dtype & DFNT_MASK;
         eltsz   = DFKNTsize(numtype | DFNT_NATIVE);
-        if ((attr_buf = (VOIDP)HDmalloc(nelms * eltsz)) == NULL) {
+        if ((attr_buf = (VOIDP)malloc(nelms * eltsz)) == NULL) {
             printf("Error allocating %d values of size %d for attribute %s", nelms, numtype, attr_name);
             goto out;
         }

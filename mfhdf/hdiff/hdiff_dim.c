@@ -344,11 +344,11 @@ static void
 diff_match_dim_table_init(diff_match_dim_table_t **tbl)
 {
     int                     i;
-    diff_match_dim_table_t *table = (diff_match_dim_table_t *)HDmalloc(sizeof(diff_match_dim_table_t));
+    diff_match_dim_table_t *table = (diff_match_dim_table_t *)malloc(sizeof(diff_match_dim_table_t));
 
     table->size  = 20;
     table->nobjs = 0;
-    table->objs  = (diff_match_dim_name_t *)HDmalloc(table->size * sizeof(diff_match_dim_name_t));
+    table->objs  = (diff_match_dim_name_t *)malloc(table->size * sizeof(diff_match_dim_name_t));
 
     for (i = 0; i < table->size; i++) {
         table->objs[i].ref      = -1;
@@ -432,11 +432,11 @@ void
 diff_dim_table_init(diff_dim_table_t **tbl)
 {
     int               i;
-    diff_dim_table_t *table = (diff_dim_table_t *)HDmalloc(sizeof(diff_dim_table_t));
+    diff_dim_table_t *table = (diff_dim_table_t *)malloc(sizeof(diff_dim_table_t));
 
     table->size  = 20;
     table->nobjs = 0;
-    table->objs  = (diff_dim_name_t *)HDmalloc(table->size * sizeof(diff_dim_name_t));
+    table->objs  = (diff_dim_name_t *)malloc(table->size * sizeof(diff_dim_name_t));
 
     for (i = 0; i < table->size; i++) {
         table->objs[i].ref = -1;

@@ -310,7 +310,7 @@ test_getexternal()
         name_len = SDgetexternalfile(sds_id, 0, NULL, NULL);
         VERIFY(name_len, (intn)HDstrlen(EXTFILE), "SDgetexternalfile");
 
-        extfile_name = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+        extfile_name = (char *)malloc(sizeof(char *) * (name_len + 1));
         CHECK_ALLOC(extfile_name, "extfile_name", "SDgetexternalfile");
         memset(extfile_name, '\0', name_len + 1);
 
@@ -337,7 +337,7 @@ test_getexternal()
     }
 
     /* Prepare buffer for external file name */
-    extfile_name = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+    extfile_name = (char *)malloc(sizeof(char *) * (name_len + 1));
     CHECK_ALLOC(extfile_name, "extfile_name", "test_getexternal");
     memset(extfile_name, '\0', name_len + 1);
 
@@ -349,7 +349,7 @@ test_getexternal()
     /* Test passing in smaller buffer for external file name than actual;
     name should be truncated */
     {
-        char *short_name = (char *)HDmalloc(sizeof(char *) * (name_len));
+        char *short_name = (char *)malloc(sizeof(char *) * (name_len));
         CHECK_ALLOC(short_name, "short_name", "test_getexternal");
         memset(short_name, '\0', name_len);
         HDstrncpy(short_name, EXTFILE, name_len - 2);
@@ -391,7 +391,7 @@ test_getexternal()
         VERIFY(ret_code, FAIL, "SDgetexternalinfo");
     }
 
-    extfile_name = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+    extfile_name = (char *)malloc(sizeof(char *) * (name_len + 1));
     CHECK_ALLOC(extfile_name, "extfile_name", "test_getexternal");
     memset(extfile_name, '\0', name_len + 1);
 
@@ -494,7 +494,7 @@ test_mult_setexternal()
         fprintf(stderr, "SDsetexternalfile should return length greater than 0\n");
 
     /* Prepare buffer for external file name */
-    extfile_name = HDmalloc(sizeof(char *) * (name_len + 1));
+    extfile_name = malloc(sizeof(char *) * (name_len + 1));
     CHECK_ALLOC(extfile_name, "extfile_name", "test_getexternal");
     memset(extfile_name, '\0', name_len + 1);
 
@@ -786,7 +786,7 @@ verify_data(int32 sd_id, int32 sds_ind)
     }
 
     /* Allocate buffer for reading, after establishing the data size */
-    outdata = (int32 *)HDmalloc(data_size);
+    outdata = (int32 *)malloc(data_size);
     CHECK_ALLOC(outdata, "outdata", "verify_data");
 
     /* Read the entire sds and verify that the data is as the original buffer */

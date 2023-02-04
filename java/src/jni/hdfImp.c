@@ -205,7 +205,7 @@ Java_hdf_hdflib_HDFLibrary_Hgetfileversion(JNIEnv *env, jclass clss, jlong file_
 
     UNUSED(clss);
 
-    if ((data = (char *)HDmalloc(LIBVSTR_LEN + 1)) == NULL)
+    if ((data = (char *)malloc(LIBVSTR_LEN + 1)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "Hgetfileversion: failed to allocate data buffer");
 
     if (fvstring == NULL)
@@ -252,7 +252,7 @@ Java_hdf_hdflib_HDFLibrary_Hgetlibversion(JNIEnv *env, jclass clss, jintArray ve
 
     UNUSED(clss);
 
-    if ((data = (char *)HDmalloc(LIBVSTR_LEN + 1)) == NULL)
+    if ((data = (char *)malloc(LIBVSTR_LEN + 1)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "Hgetlibversion: failed to allocate data buffer");
 
     if (lvstring == NULL)

@@ -148,7 +148,7 @@ HEpush(hdf_err_code_t error_code, const char *function_name, const char *file_na
 
     /* if the stack is not allocated, then do it */
     if (!error_stack) {
-        error_stack = (error_t *)HDmalloc((uint32)sizeof(error_t) * ERR_STACK_SZ);
+        error_stack = (error_t *)malloc((uint32)sizeof(error_t) * ERR_STACK_SZ);
         if (!error_stack) {
             puts("HEpush cannot allocate space.  Unable to continue!!");
             exit(8);
@@ -196,7 +196,7 @@ HEreport(const char *format, ...)
     va_start(arg_ptr, format);
 
     if ((error_top < ERR_STACK_SZ + 1) && (error_top > 0)) {
-        tmp = (char *)HDmalloc(ERR_STRING_SIZE);
+        tmp = (char *)malloc(ERR_STRING_SIZE);
         if (!tmp) {
             HERROR(DFE_NOSPACE);
             goto done;

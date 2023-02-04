@@ -102,7 +102,7 @@ ndfdesc(intf *dfile, intf ptr[][4], intf *begin, intf *num)
     intf    num_desc;
 
     /* allocate temporary space */
-    if ((ptr1 = (DFdesc *)HDmalloc((uint32)*num * sizeof(DFdesc))) == NULL)
+    if ((ptr1 = (DFdesc *)malloc((uint32)*num * sizeof(DFdesc))) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, -1);
     ;
     num_desc = DFdescriptors((DF *)*dfile, ptr1, (intn)*begin, (intn)*num);
@@ -309,7 +309,7 @@ ndffind(intf *dfile, intf *itag, intf *iref, intf *len)
     DFdesc *ptr1;
     intf    ret;
 
-    ptr1 = (DFdesc *)HDmalloc((uint32)sizeof(DFdesc));
+    ptr1 = (DFdesc *)malloc((uint32)sizeof(DFdesc));
     if (ptr1 == NULL)
         HRETURN_ERROR(DFE_NOSPACE, -1);
     ret = DFfind((DF *)*dfile, ptr1);

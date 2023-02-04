@@ -32,7 +32,7 @@ make_datafilename(const char *basename, char *testfile, unsigned int size)
     char *srcdir   = getenv("srcdir");
     char *tempfile = NULL;
 
-    tempfile = (char *)HDmalloc(sizeof(char *) * (size + 1));
+    tempfile = (char *)malloc(sizeof(char *) * (size + 1));
     CHECK_ALLOC(tempfile, "tempfile", "make_datafilename");
     memset(tempfile, '\0', size + 1);
 
@@ -87,9 +87,9 @@ make_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, 
     intn   status, ii;
     intn   num_errs = 0; /* number of errors in compression test so far */
 
-    start = (int32 *)HDmalloc(sizeof(int32) * rank);
+    start = (int32 *)malloc(sizeof(int32) * rank);
     CHECK_ALLOC(start, "start", "make_SDS");
-    edges = (int32 *)HDmalloc(sizeof(int32) * rank);
+    edges = (int32 *)malloc(sizeof(int32) * rank);
     CHECK_ALLOC(edges, "edges", "make_SDS");
 
     /* Create the array with the name defined in SDS_NAME */
@@ -151,9 +151,9 @@ make_CompSDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_siz
     intn         status   = 0, ii;
     intn         num_errs = 0; /* number of errors in compression test so far */
 
-    start = (int32 *)HDmalloc(sizeof(int32) * rank);
+    start = (int32 *)malloc(sizeof(int32) * rank);
     CHECK_ALLOC(start, "start", "make_CompSDS");
-    edges = (int32 *)HDmalloc(sizeof(int32) * rank);
+    edges = (int32 *)malloc(sizeof(int32) * rank);
     CHECK_ALLOC(edges, "edges", "make_CompSDS");
 
     /* Define dimensions of the array to be created */
@@ -222,9 +222,9 @@ make_Ext3D_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_s
     intn   status   = 0, ii;
     intn   num_errs = 0; /* number of errors in compression test so far */
 
-    start = (int32 *)HDmalloc(sizeof(int32) * rank);
+    start = (int32 *)malloc(sizeof(int32) * rank);
     CHECK_ALLOC(start, "start", "make_Ext3D_SDS");
-    edges = (int32 *)HDmalloc(sizeof(int32) * rank);
+    edges = (int32 *)malloc(sizeof(int32) * rank);
     CHECK_ALLOC(edges, "edges", "make_Ext3D_SDS");
 
     /* Set the parameters start and edges to write */

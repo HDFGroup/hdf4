@@ -366,7 +366,7 @@ HULIget_list_node(void)
         node_free_list = node_free_list->next;
     } /* end if */
     else {
-        if ((ret_value = (node_info_t *)HDmalloc(sizeof(node_info_t))) == NULL)
+        if ((ret_value = (node_info_t *)malloc(sizeof(node_info_t))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
     } /* end else */
 

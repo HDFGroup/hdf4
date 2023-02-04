@@ -92,7 +92,7 @@ Java_hdf_hdflib_HDFLibrary_VSgetclass(JNIEnv *env, jclass clss, jlong vdata_id, 
 
     UNUSED(clss);
 
-    if (NULL == (className = (char *)HDmalloc(VSNAMELENMAX + 1)))
+    if (NULL == (className = (char *)malloc(VSNAMELENMAX + 1)))
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "VSgetclass: failed to allocate data buffer");
 
     if (hdfclass == NULL)
@@ -131,7 +131,7 @@ Java_hdf_hdflib_HDFLibrary_VSgetname(JNIEnv *env, jclass clss, jlong vdata_id, j
 
     UNUSED(clss);
 
-    if (NULL == (data = (char *)HDmalloc(sizeof(char) * (size_t)VSNAMELENMAX + 1)))
+    if (NULL == (data = (char *)malloc(sizeof(char) * (size_t)VSNAMELENMAX + 1)))
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "VSgetname: failed to allocate data buffer");
 
     if (hdfname == NULL)
@@ -283,7 +283,7 @@ Java_hdf_hdflib_HDFLibrary_VSgetfields(JNIEnv *env, jclass clss, jlong vdata_id,
 
     UNUSED(clss);
 
-    if (NULL == (flds = (char *)HDmalloc(sizeof(char) * (size_t)25600)))
+    if (NULL == (flds = (char *)malloc(sizeof(char) * (size_t)25600)))
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "VSgetfields: failed to allocate data buffer");
 
     if (fields == NULL)
@@ -349,10 +349,10 @@ Java_hdf_hdflib_HDFLibrary_VSinquire(JNIEnv *env, jclass clss, jlong vdata_id, j
     if (ENVPTR->GetArrayLength(ENVONLY, sargs) < 2)
         H4_BAD_ARGUMENT_ERROR(ENVONLY, "VSinquire: output array sargs < order 2");
 
-    if (NULL == (flds = (char *)HDmalloc(sizeof(char) * (size_t)MAX_FIELD_SIZE + 1)))
+    if (NULL == (flds = (char *)malloc(sizeof(char) * (size_t)MAX_FIELD_SIZE + 1)))
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "VSinquire: failed to allocate data buffer");
 
-    if (NULL == (name = (char *)HDmalloc(sizeof(char) * (size_t)H4_MAX_NC_NAME + 1)))
+    if (NULL == (name = (char *)malloc(sizeof(char) * (size_t)H4_MAX_NC_NAME + 1)))
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "VSinquire: failed to allocate data buffer");
 
     PIN_INT_ARRAY(ENVONLY, iargs, theArgs, &isCopy, "VSinquire:  iargs not pinned");
@@ -737,7 +737,7 @@ Java_hdf_hdflib_HDFLibrary_VSattrinfo(JNIEnv *env, jclass clss, jlong id, jint i
 
     UNUSED(clss);
 
-    if ((data = (char *)HDmalloc(256)) == NULL)
+    if ((data = (char *)malloc(256)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "VSattrinfo: failed to allocate data buffer");
 
     if (name == NULL)

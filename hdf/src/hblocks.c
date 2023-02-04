@@ -272,7 +272,7 @@ HLcreate(int32 file_id, uint16 tag, uint16 ref, int32 block_length, int32 number
     link_ref = Htagnewref(file_id, DFTAG_LINKED);
 
     /* allocate and fill special info struct */
-    if ((info = (linkinfo_t *)HDmalloc((uint32)sizeof(linkinfo_t))) == NULL)
+    if ((info = (linkinfo_t *)malloc((uint32)sizeof(linkinfo_t))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     info->attached      = 1;
@@ -464,7 +464,7 @@ HLconvert(int32 aid, int32 block_length, int32 number_blocks)
     link_ref = Htagnewref(file_id, DFTAG_LINKED);
 
     /* allocates special info struct for linked blocks */
-    access_rec->special_info = HDmalloc((uint32)sizeof(linkinfo_t));
+    access_rec->special_info = malloc((uint32)sizeof(linkinfo_t));
     if (!access_rec->special_info)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
@@ -664,7 +664,7 @@ HLIstaccess(accrec_t *access_rec, int16 acc_mode)
         HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
     /* allocate space for special information */
-    access_rec->special_info = HDmalloc((uint32)sizeof(linkinfo_t));
+    access_rec->special_info = malloc((uint32)sizeof(linkinfo_t));
     info                     = (linkinfo_t *)access_rec->special_info;
     if (!info)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -967,19 +967,19 @@ HLIgetlink(int32 file_id, uint16 ref, int32 number_blocks)
     link_t *ret_value = NULL; /* FAIL */
 
     /* allocate necessary memory for in-memory block table */
-    new_link = (link_t *)HDmalloc((uint32)sizeof(link_t));
+    new_link = (link_t *)malloc((uint32)sizeof(link_t));
 
     if (new_link == NULL)
         HGOTO_ERROR(DFE_NOSPACE, NULL);
 
-    new_link->block_list = (block_t *)HDmalloc((uint32)number_blocks * sizeof(block_t));
+    new_link->block_list = (block_t *)malloc((uint32)number_blocks * sizeof(block_t));
     if (new_link->block_list == NULL)
         HGOTO_ERROR(DFE_NOSPACE, NULL);
 
     new_link->next = (link_t *)NULL;
 
     /* create temp buffer to read block table in */
-    buffer = (uint8 *)HDmalloc((uint32)(2 + 2 * number_blocks));
+    buffer = (uint8 *)malloc((uint32)(2 + 2 * number_blocks));
     if (buffer == NULL)
         HGOTO_ERROR(DFE_NOSPACE, NULL);
 
@@ -1433,12 +1433,12 @@ HLInewlink(int32 file_id, int32 number_blocks, uint16 link_ref, uint16 first_blo
 
     /* set up new link record in memory */
     /* new link record */
-    t_link = (link_t *)HDmalloc((uint32)sizeof(link_t));
+    t_link = (link_t *)malloc((uint32)sizeof(link_t));
 
     if (!t_link)
         HGOTO_ERROR(DFE_NOSPACE, NULL);
 
-    t_link->block_list = (block_t *)HDmalloc((uint32)number_blocks * sizeof(block_t));
+    t_link->block_list = (block_t *)malloc((uint32)number_blocks * sizeof(block_t));
     if (!t_link->block_list)
         HGOTO_ERROR(DFE_NOSPACE, NULL);
 
@@ -1454,7 +1454,7 @@ HLInewlink(int32 file_id, int32 number_blocks, uint16 link_ref, uint16 first_blo
         int32  i; /* temp int index */
         uint8 *p; /* temp buffer ptr */
 
-        p = buf = (uint8 *)HDmalloc((uint32)(2 + 2 * number_blocks));
+        p = buf = (uint8 *)malloc((uint32)(2 + 2 * number_blocks));
         if (!buf)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
 

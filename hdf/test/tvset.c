@@ -89,11 +89,11 @@ write_vset_stuff(void)
     /* allocate these buffers dynamically and not off the stack
        as they were previously handled */
     if (gbuf1 == NULL) {
-        gbuf1 = (uint8 *)HDmalloc(sizeof(uint8) * 65536);
+        gbuf1 = (uint8 *)malloc(sizeof(uint8) * 65536);
     }
 
     if (gbuf2 == NULL) {
-        gbuf2 = (float32 *)HDmalloc(sizeof(float32) * 20000);
+        gbuf2 = (float32 *)malloc(sizeof(float32) * 20000);
     }
 
     fid = Hopen(FNAME0, DFACC_CREATE, 100);
@@ -595,7 +595,7 @@ read_vset_stuff(void)
     status = Vgetnamelen(vg1, &name_len);
     CHECK(status, FAIL, "Vgetnamelen:vg1");
 
-    vgname = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+    vgname = (char *)malloc(sizeof(char *) * (name_len + 1));
     CHECK_ALLOC(vgname, "vgname", "read_vset_stuff");
 
     status = Vgetname(vg1, vgname);
@@ -604,7 +604,7 @@ read_vset_stuff(void)
     status = Vgetclassnamelen(vg1, &name_len);
     CHECK(status, FAIL, "Vgetclassnamelen:vg1");
 
-    vgclass = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+    vgclass = (char *)malloc(sizeof(char *) * (name_len + 1));
     CHECK_ALLOC(vgclass, "vgclass", "read_vset_stuff");
 
     status = Vgetclass(vg1, vgclass);
@@ -1834,7 +1834,7 @@ test_vglongnames(void)
     status = Vgetnamelen(vg1, &name_len);
     CHECK_VOID(status, FAIL, "Vgetnamelen");
 
-    vgname = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+    vgname = (char *)malloc(sizeof(char *) * (name_len + 1));
     CHECK_ALLOC(vgname, "vgname", "test_vglongnames");
 
     status = Vgetname(vg1, vgname);
@@ -1852,7 +1852,7 @@ test_vglongnames(void)
     status = Vgetclassnamelen(vg1, &name_len);
     CHECK_VOID(status, FAIL, "Vgetnamelen");
 
-    vgclass = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+    vgclass = (char *)malloc(sizeof(char *) * (name_len + 1));
     CHECK_ALLOC(vgclass, "vgclass", "test_vglongnames");
 
     status = Vgetclass(vg1, vgclass);
@@ -1880,7 +1880,7 @@ test_vglongnames(void)
     status = Vgetnamelen(vg1, &name_len);
     CHECK_VOID(status, FAIL, "Vgetnamelen");
 
-    vgname = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+    vgname = (char *)malloc(sizeof(char *) * (name_len + 1));
     CHECK_ALLOC(vgname, "vgname", "test_vglongnames");
 
     status = Vgetname(vg1, vgname);
@@ -1898,7 +1898,7 @@ test_vglongnames(void)
     status = Vgetclassnamelen(vg1, &name_len);
     CHECK_VOID(status, FAIL, "Vgetnamelen");
 
-    vgclass = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+    vgclass = (char *)malloc(sizeof(char *) * (name_len + 1));
     CHECK_ALLOC(vgclass, "vgclass", "test_vglongnames");
 
     status = Vgetclass(vg1, vgclass);
@@ -2019,7 +2019,7 @@ test_getvgroups(void)
     VERIFY_VOID(n_vgs, NUM_VGROUPS, "Vgetvgroups fid");
 
     /* Allocate space to retrieve the reference numbers of n_vgs vgroups */
-    refarray = (uint16 *)HDmalloc(sizeof(uint16) * n_vgs);
+    refarray = (uint16 *)malloc(sizeof(uint16) * n_vgs);
 
     /* Get all the vgroups in the file */
     n_vgs = Vgetvgroups(fid, 0, n_vgs, refarray);
@@ -2247,7 +2247,7 @@ check_vgs(int32 id, uintn start_vg, uintn n_vgs, char *ident_text, /* just for d
     VERIFY(count, resultcount, "Vgetvgroups");
 
     /* Allocate space to retrieve the reference numbers of 'count' vgroups */
-    refarray = (uint16 *)HDmalloc(sizeof(uint16) * count);
+    refarray = (uint16 *)malloc(sizeof(uint16) * count);
     if (refarray == NULL) {
         fprintf(stderr, "check_vgs: Allocation refarray failed\n");
         return (-1);
@@ -2288,7 +2288,7 @@ check_vds(int32 id, uintn start_vd, uintn n_vds, char *ident_text, /* just for d
     VERIFY(count, resultcount, message);
 
     /* Allocate space to retrieve the reference numbers of 'count' vdatas */
-    refarray = (uint16 *)HDmalloc(sizeof(uint16) * count);
+    refarray = (uint16 *)malloc(sizeof(uint16) * count);
     if (refarray == NULL) {
         fprintf(stderr, "check_vds: Allocation refarray failed\n");
         return (-1);
@@ -2767,7 +2767,7 @@ test_extfile(void)
         name_len = VSgetexternalfile(vdata1_id, 0, NULL, NULL);
         VERIFY_VOID(name_len, (intn)HDstrlen(EXTERNAL_FILE), "VSgetexternalfile");
 
-        extfile_name = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+        extfile_name = (char *)malloc(sizeof(char *) * (name_len + 1));
         CHECK_ALLOC(extfile_name, "extfile_name", "test_extfile");
 
         /* Old function: Get the external file name - VSgetexternalfile
@@ -2782,7 +2782,7 @@ test_extfile(void)
     name_len = VSgetexternalinfo(vdata1_id, 0, NULL, NULL, NULL);
     VERIFY_VOID(name_len, (intn)HDstrlen(EXTERNAL_FILE), "VSgetexternalinfo");
 
-    extfile_name = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+    extfile_name = (char *)malloc(sizeof(char *) * (name_len + 1));
     CHECK_ALLOC(extfile_name, "extfile_name", "test_extfile");
 
     /* Get the external file name */
@@ -2795,12 +2795,12 @@ test_extfile(void)
        name should be truncated */
     {
         /* Make a shorter string to verify later */
-        char *short_name = (char *)HDmalloc(sizeof(char *) * (name_len));
+        char *short_name = (char *)malloc(sizeof(char *) * (name_len));
         memset(short_name, '\0', name_len);
         HDstrncpy(short_name, EXTERNAL_FILE, name_len - 2);
 
         /* Prepare buffer for external file name in the following test */
-        extfile_name = (char *)HDmalloc(sizeof(char *) * (name_len - 1));
+        extfile_name = (char *)malloc(sizeof(char *) * (name_len - 1));
         memset(extfile_name, '\0', name_len);
 
         /* Call VSgetexternalinfo again with smaller buffer size and make sure
@@ -3267,7 +3267,7 @@ test_VSofclass()
     VERIFY_VOID(n_vds, 2, "VSofclass");
 
     /* Allocate space for the ref array to pass into VSofclass. */
-    refarray = (uint16 *)HDmalloc(sizeof(uint16) * n_vds);
+    refarray = (uint16 *)malloc(sizeof(uint16) * n_vds);
     CHECK_ALLOC(refarray, "refarray", "test_blockinfo_multLBs");
 
     /* The following tests rely on the reference numbers of the two vdatas of

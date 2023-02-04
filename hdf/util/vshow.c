@@ -118,7 +118,7 @@ main(int ac, char **av)
         }
         /* get the length of the vgname to allocate enough space */
         Vgetnamelen(vg, &name_len);
-        vgname = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+        vgname = (char *)malloc(sizeof(char *) * (name_len + 1));
         if (vgname == NULL) {
             printf("Error: Out of memory. Cannot allocate %d bytes space. Quit.\n", name_len + 1);
             return (0);
@@ -132,7 +132,7 @@ main(int ac, char **av)
 
         /* get the length of the vgname to allocate enough space */
         Vgetclassnamelen(vg, &name_len);
-        vgclass = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+        vgclass = (char *)malloc(sizeof(char *) * (name_len + 1));
         if (vgclass == NULL) {
             printf("Error: Out of memory. Cannot allocate %d bytes space. Quit.\n", name_len + 1);
             return (0);
@@ -186,7 +186,7 @@ main(int ac, char **av)
 
                 /* get length of the vgclass to allocate enough space */
                 Vgetclassnamelen(vgt, &name_len);
-                vgclass = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+                vgclass = (char *)malloc(sizeof(char *) * (name_len + 1));
                 if (vgclass == NULL) {
                     printf("Error: Out of memory. Cannot allocate %d bytes space. Quit.\n", name_len + 1);
                     return (0);
@@ -197,7 +197,7 @@ main(int ac, char **av)
 
                 /* get length of the vgname to allocate enough space */
                 Vgetnamelen(vgt, &name_len);
-                vgname = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+                vgname = (char *)malloc(sizeof(char *) * (name_len + 1));
                 if (vgname == NULL) {
                     printf("Error: Out of memory. Cannot allocate %d bytes space. Quit.\n", name_len + 1);
                     return (0);
@@ -237,7 +237,7 @@ main(int ac, char **av)
     if (nlone > 0) {
 
         printf("Lone vdatas:\n");
-        if (NULL == (lonevs = (int32 *)HDmalloc(sizeof(int) * (size_t)nlone))) {
+        if (NULL == (lonevs = (int32 *)malloc(sizeof(int) * (size_t)nlone))) {
             printf("%s: File has %d lone vdatas but ", av[0], (int)nlone);
             printf("cannot alloc lonevs space. Quit.\n");
             exit(0);
@@ -386,7 +386,7 @@ vsdumpfull(int32 vs)
     }
 
     done = 0;
-    bb   = (uint8 *)HDmalloc(bufsize);
+    bb   = (uint8 *)malloc(bufsize);
     if (bb == NULL) {
         printf("vsdumpfull malloc error\n");
         return (0);
@@ -568,7 +568,7 @@ dumpattr(int32 vid, intn full, intn isvs)
                 printf("     %d: name=%s type=%d count=%d size=%d\n", i, name, (int)i_type, (int)i_count,
                        (int)i_size);
                 if (i_size > BUFFER) {
-                    if (NULL == (buf = HDmalloc(i_size))) {
+                    if (NULL == (buf = malloc(i_size))) {
                         printf(">>>dumpattr:can't allocate buf.\n");
                         continue;
                     }
@@ -678,7 +678,7 @@ dumpattr(int32 vid, intn full, intn isvs)
             printf("   %d: name=%s type=%d count=%d size=%d\n", i, name, (int)i_type, (int)i_count,
                    (int)i_size);
             if (i_size > BUFFER) {
-                if (NULL == (buf = HDmalloc(i_size))) {
+                if (NULL == (buf = malloc(i_size))) {
                     printf(">>>dumpattr:can't allocate buf.\n");
                     continue;
                 }

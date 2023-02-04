@@ -243,16 +243,16 @@ grdumpfull(int32 ri_id, dump_info_t *dumpgr_opts, int32 ncomps, /* "ncomps" is t
     CHECK_POS(eltsz, "eltsz", "grdumpfull");
     CHECK_POS(ncomps, "ncomps", "grdumpfull");
 
-    buf = (VOIDP)HDmalloc(read_nelts * eltsz);
+    buf = (VOIDP)malloc(read_nelts * eltsz);
     CHECK_ALLOC(buf, "buf", "grdumpfull");
 
-    start = (int32 *)HDmalloc(2 * sizeof(int32));
+    start = (int32 *)malloc(2 * sizeof(int32));
     CHECK_ALLOC(start, "start", "grdumpfull");
 
-    edge = (int32 *)HDmalloc(2 * sizeof(int32));
+    edge = (int32 *)malloc(2 * sizeof(int32));
     CHECK_ALLOC(edge, "edge", "grdumpfull");
 
-    stride = (int32 *)HDmalloc(2 * sizeof(int32));
+    stride = (int32 *)malloc(2 * sizeof(int32));
     CHECK_ALLOC(stride, "stride", "grdumpfull");
 
     start[0] = start[1] = 0;
@@ -424,7 +424,7 @@ print_GRattrs(int32 gr_id, int32 n_file_attrs, FILE *fp, dump_info_t *dumpgr_opt
             CHECK_POS(attr_buf_size, "attr_buf_size", "print_GRattrs");
 
             /* allocate space for the attribute's values */
-            attr_buf = (VOIDP)HDmalloc(attr_buf_size);
+            attr_buf = (VOIDP)malloc(attr_buf_size);
             CHECK_ALLOC(attr_buf, "attr_buf", "print_GRattrs");
 
             /* read the values of the attribute into the buffer */
@@ -505,7 +505,7 @@ print_RIattrs(int32 ri_id, intn ri_index, int32 nattrs, FILE *fp, dump_info_t *d
             CHECK_POS(attr_buf_size, "attr_buf_size", "print_RIattrs");
 
             /* allocate space for attribute's values */
-            attr_buf = (VOIDP)HDmalloc(attr_buf_size);
+            attr_buf = (VOIDP)malloc(attr_buf_size);
             CHECK_ALLOC(attr_buf, "attr_buf", "print_RIattrs");
 
             /* read the values of the attribute into buffer attr_buf */

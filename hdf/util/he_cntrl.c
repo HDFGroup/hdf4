@@ -328,7 +328,7 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
 
         case 'i': {
             int32 *idata;
-            idata = (int32 *)HDmalloc(length / 4 * sizeof(int32));
+            idata = (int32 *)malloc(length / 4 * sizeof(int32));
 
             DFKconvert((VOIDP)(data + offset), (VOIDP)idata, DFNT_INT32 | raw_flag, length / 4, DFACC_READ, 0,
                        0);
@@ -346,7 +346,7 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
 
         case 'd': {
             uint32 *idata;
-            idata = (uint32 *)HDmalloc(length / 4 * sizeof(int32));
+            idata = (uint32 *)malloc(length / 4 * sizeof(int32));
 
             DFKconvert((VOIDP)(data + offset), (VOIDP)idata, DFNT_UINT32 | raw_flag, length / 4, DFACC_READ,
                        0, 0);
@@ -363,7 +363,7 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
         } break;
         case 'j': {
             int16 *sdata;
-            sdata = (int16 *)HDmalloc(length / 2 * sizeof(int16));
+            sdata = (int16 *)malloc(length / 2 * sizeof(int16));
             DFKconvert((VOIDP)(data + offset), (VOIDP)sdata, DFNT_INT16 | raw_flag, length / 2, DFACC_READ, 0,
                        0);
 
@@ -381,7 +381,7 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
 
         case 's': {
             uint16 *sdata;
-            sdata = (uint16 *)HDmalloc(length / 2 * sizeof(uint16));
+            sdata = (uint16 *)malloc(length / 2 * sizeof(uint16));
 
             DFKconvert((VOIDP)(data + offset), (VOIDP)sdata, DFNT_UINT16 | raw_flag, length / 2, DFACC_READ,
                        0, 0);
@@ -399,7 +399,7 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
 
         case 'b': {
             uint8 *bdata;
-            bdata = (uint8 *)HDmalloc(length);
+            bdata = (uint8 *)malloc(length);
 
             DFKconvert((VOIDP)(data + offset), (VOIDP)bdata, DFNT_UINT8 | raw_flag, length, DFACC_READ, 0, 0);
             printf("%8d: ", offset);
@@ -419,7 +419,7 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
             intn  sizeintn;
 
             sizeintn = sizeof(intn);
-            idata    = (intn *)HDmalloc((size_t)(length / 4 * sizeintn));
+            idata    = (intn *)malloc((size_t)(length / 4 * sizeintn));
             DFKconvert((VOIDP)(data + offset), (VOIDP)idata, DFNT_NINT32 | raw_flag, length / 4, DFACC_READ,
                        0, 0);
             printf("%8d: ", offset);
@@ -439,7 +439,7 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
             intn  sizeintn;
 
             sizeintn = sizeof(intn);
-            idata    = (intn *)HDmalloc((size_t)(length / 4 * sizeintn));
+            idata    = (intn *)malloc((size_t)(length / 4 * sizeintn));
             DFKconvert((VOIDP)(data + offset), (VOIDP)idata, DFNT_NINT32 | raw_flag, length / 4, DFACC_READ,
                        0, 0);
             printf("%8d: ", offset);
@@ -473,7 +473,7 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
 
         case 'f': {
             float32 *fdata;
-            fdata = (float32 *)HDmalloc(length / 4 * sizeof(float32));
+            fdata = (float32 *)malloc(length / 4 * sizeof(float32));
 
             DFKconvert((VOIDP)(data + offset), (VOIDP)fdata, DFNT_FLOAT32 | raw_flag, length / 4, DFACC_READ,
                        0, 0);
@@ -492,7 +492,7 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
 
         case 'e': {
             float64 *fdata;
-            fdata = (float64 *)HDmalloc(length / 8 * sizeof(float64));
+            fdata = (float64 *)malloc(length / 8 * sizeof(float64));
 
             DFKconvert((VOIDP)(data + offset), (VOIDP)fdata, DFNT_FLOAT64 | raw_flag, length / 8, DFACC_READ,
                        0, 0);
@@ -951,7 +951,7 @@ nextWord(char **p)
         s++;
     len = (unsigned)(s - q);
 
-    word = (char *)HDmalloc(len + 1);
+    word = (char *)malloc(len + 1);
     HDstrncpy(word, q, len);
     word[len] = '\0';
 
@@ -1409,7 +1409,7 @@ nextToken(char **p)
         while (*s && !isalnum((int)*s))
             s++;
 
-    q = tok = (char *)HDmalloc((s - (*p)) + 1);
+    q = tok = (char *)malloc((s - (*p)) + 1);
     while (*p != s)
         *q++ = *(*p)++;
     *q = '\0';

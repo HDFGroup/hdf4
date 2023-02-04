@@ -64,7 +64,7 @@ main()
             vgroup_id = Vattach(file_id, ref_array[lone_vg_number], "r");
             if (Vgetnamelen(vgroup_id, &name_len) == FAIL)
                 printf("*** ERROR from Vgetnamelen\n");
-            vgroup_name = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+            vgroup_name = (char *)malloc(sizeof(char *) * (name_len + 1));
             if (vgroup_name == NULL) {
                 fprintf(stderr, "Not enough memory for vgroup_name!\n");
                 exit(1);
@@ -74,7 +74,7 @@ main()
 
             if (Vgetclassnamelen(vgroup_id, &name_len) == FAIL)
                 printf("*** ERROR from Vgetclassnamelen\n");
-            vgroup_class = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+            vgroup_class = (char *)malloc(sizeof(char *) * (name_len + 1));
             if (vgroup_class == NULL) {
                 fprintf(stderr, "Not enough memory for vgroup_class!\n");
                 exit(1);

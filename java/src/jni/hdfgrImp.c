@@ -186,7 +186,7 @@ Java_hdf_hdflib_HDFLibrary_GRgetiminfo(JNIEnv *env, jclass clss, jlong ri_id, jo
 
     UNUSED(clss);
 
-    if ((data = (char *)HDmalloc(H4_MAX_GR_NAME + 1)) == NULL)
+    if ((data = (char *)malloc(H4_MAX_GR_NAME + 1)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "GRgetiminfo: failed to allocate data buffer");
 
     if (gr_name == NULL)
@@ -429,7 +429,7 @@ Java_hdf_hdflib_HDFLibrary_GRattrinfo(JNIEnv *env, jclass clss, jlong gr_id, jin
     UNUSED(clss);
 
     /* check for out of memory error ... */
-    if ((data = (char *)HDmalloc(H4_MAX_GR_NAME + 1)) == NULL)
+    if ((data = (char *)malloc(H4_MAX_GR_NAME + 1)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "GRattrinfo: failed to allocate data buffer");
 
     if (name == NULL)

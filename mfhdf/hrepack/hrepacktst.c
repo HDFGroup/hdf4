@@ -156,7 +156,7 @@ read_data(const char *fname)
         g_image_data = NULL;
     }
 
-    g_image_data = (unsigned char *)HDmalloc(w * h * color_planes * sizeof(unsigned char));
+    g_image_data = (unsigned char *)malloc(w * h * color_planes * sizeof(unsigned char));
 
     for (i = 0; i < h * w * color_planes; i++) {
         count = fscanf(f, "%d", &n);
@@ -214,7 +214,7 @@ vg_getngrpdep(HFILEID f)
             printf("Error: Could not get name length for group with ref <%d>\n", vgid);
             continue;
         }
-        vgname = (char *)HDmalloc(sizeof(char) * (name_len + 1));
+        vgname = (char *)malloc(sizeof(char) * (name_len + 1));
 
         Vinquire(vg, &n, vgname);
         VQuerytag(vg);
@@ -445,7 +445,7 @@ cmp_gr(int32 ri1_id, int32 ri2_id)
      */
 
     /* alloc */
-    if ((buf1 = (VOIDP)HDmalloc(data_size)) == NULL) {
+    if ((buf1 = (VOIDP)malloc(data_size)) == NULL) {
         printf("Failed to allocate %d elements of size %d\n", nelms, eltsz);
         goto out;
     }
@@ -462,7 +462,7 @@ cmp_gr(int32 ri1_id, int32 ri2_id)
      */
 
     /* alloc */
-    if ((buf2 = (VOIDP)HDmalloc(data_size)) == NULL) {
+    if ((buf2 = (VOIDP)malloc(data_size)) == NULL) {
         printf("Failed to allocate %d elements of size %d\n", nelms, eltsz);
         goto out;
     }

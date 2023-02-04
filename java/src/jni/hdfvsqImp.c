@@ -65,7 +65,7 @@ Java_hdf_hdflib_HDFLibrary_VSQueryfields(JNIEnv *env, jclass clss, jlong vdata_i
 
     UNUSED(clss);
 
-    if ((data = (char *)HDmalloc(4096)) == NULL)
+    if ((data = (char *)malloc(4096)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "VSQueryfields: failed to allocate data buffer");
 
     if (fields == NULL)
@@ -130,7 +130,7 @@ Java_hdf_hdflib_HDFLibrary_VSQueryname(JNIEnv *env, jclass clss, jlong vdata_id,
 
     UNUSED(clss);
 
-    if ((data = (char *)HDmalloc(VSNAMELENMAX + 1)) == NULL)
+    if ((data = (char *)malloc(VSNAMELENMAX + 1)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "VSQueryname: failed to allocate data buffer");
 
     if (vdata_name == NULL)

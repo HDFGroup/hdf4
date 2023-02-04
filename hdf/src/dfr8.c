@@ -376,7 +376,7 @@ DFR8setpalette(uint8 *pal)
 
     /* Check if paletteBuf buffer has been allocated */
     if (paletteBuf == NULL) {
-        paletteBuf = (uint8 *)HDmalloc(768 * sizeof(uint8));
+        paletteBuf = (uint8 *)malloc(768 * sizeof(uint8));
         if (paletteBuf == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
     } /* end if */
@@ -447,7 +447,7 @@ DFR8Iputimage(const char *filename, const void *image, int32 xdim, int32 ydim, u
 
     /* Check if Palette buffer has been allocated */
     if (paletteBuf == NULL) {
-        paletteBuf = (uint8 *)HDmalloc(768 * sizeof(uint8));
+        paletteBuf = (uint8 *)malloc(768 * sizeof(uint8));
         if (paletteBuf == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
     } /* end if */
@@ -922,7 +922,7 @@ DFR8nimages(const char *filename)
     }
 
     /* Get space to store the image offsets */
-    if ((img_off = (int32 *)HDmalloc(nimages * sizeof(int32))) == NULL)
+    if ((img_off = (int32 *)malloc(nimages * sizeof(int32))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* go through the RIGs looking for 8-bit images */

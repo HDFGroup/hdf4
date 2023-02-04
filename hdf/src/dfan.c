@@ -652,7 +652,7 @@ DFANIopen(const char *filename, intn acc_mode)
 
     /* Check if filename buffer has been allocated */
     if (Lastfile == NULL) {
-        Lastfile = (char *)HDmalloc((DF_MAXFNLEN + 1) * sizeof(char));
+        Lastfile = (char *)malloc((DF_MAXFNLEN + 1) * sizeof(char));
         if (Lastfile == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         *Lastfile = '\0'; /* initialize with 0-length string */
@@ -752,10 +752,10 @@ DFANIlocate(int32 file_id, int type, uint16 tag, uint16 ref)
             HGOTO_ERROR(DFE_INTERNAL, 0);
 
         /* allocate directory space, and space for entries. */
-        DFANdir[type] = (DFANdirhead *)HDmalloc((uint32)sizeof(DFANdirhead));
+        DFANdir[type] = (DFANdirhead *)malloc((uint32)sizeof(DFANdirhead));
         if (DFANdir[type] == NULL)
             HGOTO_ERROR(DFE_NOSPACE, 0);
-        DFANdir[type]->entries = (DFANdirentry *)HDmalloc((size_t)nanns * sizeof(DFANdirentry));
+        DFANdir[type]->entries = (DFANdirentry *)malloc((size_t)nanns * sizeof(DFANdirentry));
         if (DFANdir[type]->entries == NULL)
             HGOTO_ERROR(DFE_NOSPACE, 0);
 
@@ -852,9 +852,9 @@ DFANIaddentry(int type, uint16 annref, uint16 datatag, uint16 dataref)
 
     /* need new list or new node in list */
     /* allocate directory space and space for entries. */
-    if ((q = (DFANdirhead *)HDmalloc((uint32)sizeof(DFANdirhead))) == NULL)
+    if ((q = (DFANdirhead *)malloc((uint32)sizeof(DFANdirhead))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
-    q->entries = (DFANdirentry *)HDmalloc(DFAN_DEFENTRIES * sizeof(DFANdirentry));
+    q->entries = (DFANdirentry *)malloc(DFAN_DEFENTRIES * sizeof(DFANdirentry));
     if (q->entries == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 

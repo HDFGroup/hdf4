@@ -214,7 +214,7 @@ mcache_open(VOID *key,       /* IN: byte string used as handle to share buffers 
     /* Initialize list hash chain */
     for (pageno = 1; pageno <= mp->npages; ++pageno) {
         lhead = &mp->lhqh[HASHKEY(pageno)];
-        if ((lp = (L_ELEM *)HDmalloc(sizeof(L_ELEM))) == NULL)
+        if ((lp = (L_ELEM *)malloc(sizeof(L_ELEM))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         lp->pgno = (int32)pageno; /* set page number */
 
@@ -412,7 +412,7 @@ mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
      *  and insert into hash table */
     if (!list_hit) { /* NO hit, new list element
                       * no need to read this page from disk */
-        if ((lp = (L_ELEM *)HDmalloc(sizeof(L_ELEM))) == NULL)
+        if ((lp = (L_ELEM *)malloc(sizeof(L_ELEM))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
         lp->pgno   = pgno;
@@ -700,7 +700,7 @@ mcache_bkt(MCACHE *mp /* IN: MCACHE cookie */)
         } /* end if bp->flags */
 
     /* create a new page */
-    new : if ((bp = (BKT *)HDmalloc(sizeof(BKT) + (uintn)mp->pagesize)) == NULL)
+    new : if ((bp = (BKT *)malloc(sizeof(BKT) + (uintn)mp->pagesize)) == NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
 #ifdef STATISTICS

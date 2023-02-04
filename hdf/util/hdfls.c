@@ -73,7 +73,7 @@ print_item(int32 fid, dd_t *desc_list, intn n)
     if (labels) { /* read in all of the labels */
         len = DFANgetlablen(file_name, desc_list[n].tag, desc_list[n].ref);
         if (len != FAIL) {
-            label_str      = (char *)HDmalloc((uint32)len + 1);
+            label_str      = (char *)malloc((uint32)len + 1);
             status         = DFANgetlabel(file_name, desc_list[n].tag, desc_list[n].ref, label_str, len + 1);
             label_str[len] = '\0';
             if (status == FAIL)
@@ -86,7 +86,7 @@ print_item(int32 fid, dd_t *desc_list, intn n)
         /* read in all of the annotations */
         len = DFANgetdesclen(file_name, desc_list[n].tag, desc_list[n].ref);
         if (len != FAIL) {
-            label_str      = (char *)HDmalloc((uint32)len + 1);
+            label_str      = (char *)malloc((uint32)len + 1);
             status         = DFANgetdesc(file_name, desc_list[n].tag, desc_list[n].ref, label_str, len + 1);
             label_str[len] = '\0';
             if (status == FAIL)
@@ -186,8 +186,8 @@ print_item(int32 fid, dd_t *desc_list, intn n)
                 ntagrefs = Vntagrefs(vkey);
                 printf("\tContents: %d items\n", (int)ntagrefs);
                 if (ntagrefs > 0) {
-                    tag_arr = (int32 *)HDmalloc(sizeof(int32) * (size_t)ntagrefs);
-                    ref_arr = (int32 *)HDmalloc(sizeof(int32) * (size_t)ntagrefs);
+                    tag_arr = (int32 *)malloc(sizeof(int32) * (size_t)ntagrefs);
+                    ref_arr = (int32 *)malloc(sizeof(int32) * (size_t)ntagrefs);
                     if (tag_arr == NULL || ref_arr == NULL) {
                         HDfree(tag_arr);
                         HDfree(ref_arr);
@@ -355,7 +355,7 @@ dumpDD(void)
         printf(" size of block: %ld, number of DDs:%d, next block: %ld\n",
                (long)(NDDS_SZ + OFFSET_SZ + (n_dds * DD_SZ)), (int)n_dds, (long)next_block);
 
-        ddbuf = (uint8 *)HDmalloc(n_dds * DD_SZ);
+        ddbuf = (uint8 *)malloc(n_dds * DD_SZ);
         if (HI_READ(file_id, ddbuf, n_dds * DD_SZ) == FAIL) {
             printf("Error reading in file: %s\n", file_name);
             return (FAIL);

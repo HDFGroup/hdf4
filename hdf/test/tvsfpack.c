@@ -73,7 +73,7 @@ fpack(void)
     istat    = VSsetfields(vdata_id, FIELD_NAMES);
     rec_size = 2 * sizeof(float32) + sizeof(int16) + sizeof(char);
 
-    databuf = (uint8 *)HDmalloc(((2 * sizeof(float32)) + sizeof(int16) + sizeof(char)) * NRECORDS);
+    databuf = (uint8 *)malloc(((2 * sizeof(float32)) + sizeof(int16) + sizeof(char)) * NRECORDS);
 
     pntr = databuf;
     /* pack a record at a time */

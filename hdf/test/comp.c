@@ -133,12 +133,12 @@ allocate_buffers(void)
     intn i;
 
     for (i = 0; i < NUM_OUTBUFS; i++) {
-        outbuf_int8[i]   = (int8 *)HDmalloc(BUFSIZE * sizeof(int8));
-        outbuf_uint8[i]  = (uint8 *)HDmalloc(BUFSIZE * sizeof(uint8));
-        outbuf_int16[i]  = (int16 *)HDmalloc(BUFSIZE * sizeof(int16));
-        outbuf_uint16[i] = (uint16 *)HDmalloc(BUFSIZE * sizeof(uint16));
-        outbuf_int32[i]  = (int32 *)HDmalloc(BUFSIZE * sizeof(int32));
-        outbuf_uint32[i] = (uint32 *)HDmalloc(BUFSIZE * sizeof(uint32));
+        outbuf_int8[i]   = (int8 *)malloc(BUFSIZE * sizeof(int8));
+        outbuf_uint8[i]  = (uint8 *)malloc(BUFSIZE * sizeof(uint8));
+        outbuf_int16[i]  = (int16 *)malloc(BUFSIZE * sizeof(int16));
+        outbuf_uint16[i] = (uint16 *)malloc(BUFSIZE * sizeof(uint16));
+        outbuf_int32[i]  = (int32 *)malloc(BUFSIZE * sizeof(int32));
+        outbuf_uint32[i] = (uint32 *)malloc(BUFSIZE * sizeof(uint32));
     } /* end for */
     inbuf_int8   = (int8 *)calloc(BUFSIZE, sizeof(int8));
     inbuf_uint8  = (uint8 *)calloc(BUFSIZE, sizeof(uint8));

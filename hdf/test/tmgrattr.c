@@ -139,7 +139,7 @@ test_mgr_fillvalues()
         VERIFY_CHAR(attr_name, FILL_ATTR, "GRattrinfo");
 
         /* Allocate a buffer to hold the attribute data. */
-        read_fill_vals = HDmalloc(n_values * sizeof(float32));
+        read_fill_vals = malloc(n_values * sizeof(float32));
         if (read_fill_vals == NULL) {
             fprintf(stderr, "Unable to allocate space for attribute data.\n");
             exit(1);

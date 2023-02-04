@@ -301,18 +301,18 @@ create_dim_recs(DIM_REC **dptr, /* OUT: dimension record pointers */
     int32 ret_value = SUCCEED;
 
     /* allocate space for dimension records pointers */
-    if ((*dptr = (DIM_REC *)HDmalloc(sizeof(DIM_REC) * (size_t)ndims)) == NULL)
+    if ((*dptr = (DIM_REC *)malloc(sizeof(DIM_REC) * (size_t)ndims)) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* allocate space for seek chunk indices and chunk seek positions */
-    if ((*sbi = (int32 *)HDmalloc(sizeof(int32) * (size_t)ndims)) == NULL)
+    if ((*sbi = (int32 *)malloc(sizeof(int32) * (size_t)ndims)) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-    if ((*spb = (int32 *)HDmalloc(sizeof(int32) * (size_t)ndims)) == NULL)
+    if ((*spb = (int32 *)malloc(sizeof(int32) * (size_t)ndims)) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* allocate space for user seek indices */
-    if ((*sui = (int32 *)HDmalloc(sizeof(int32) * (size_t)ndims)) == NULL)
+    if ((*sui = (int32 *)malloc(sizeof(int32) * (size_t)ndims)) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* for each dimension */
@@ -894,7 +894,7 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
     else /* need to allocate a new special info and get it */
     {
         /* allocate space for special chunk info */
-        if ((info = (chunkinfo_t *)HDmalloc(sizeof(chunkinfo_t))) == NULL)
+        if ((info = (chunkinfo_t *)malloc(sizeof(chunkinfo_t))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
         info->seek_chunk_indices   = NULL;
@@ -1002,7 +1002,7 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
             INT32DECODE(p, (info->fill_val_len)); /* 4 bytes */
 
             /* allocate space for fill value */
-            if ((info->fill_val = HDmalloc((size_t)info->fill_val_len)) == NULL)
+            if ((info->fill_val = malloc((size_t)info->fill_val_len)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
             /* finally decode fill value */
@@ -1042,9 +1042,9 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
                     HGOTO_ERROR(DFE_READERROR, FAIL);
 
                 /* allocate compression special info  */
-                if ((info->cinfo = (comp_info *)HDmalloc(sizeof(comp_info))) == NULL)
+                if ((info->cinfo = (comp_info *)malloc(sizeof(comp_info))) == NULL)
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
-                if ((info->minfo = (model_info *)HDmalloc(sizeof(model_info))) == NULL)
+                if ((info->minfo = (model_info *)malloc(sizeof(model_info))) == NULL)
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                 /* Decode header */
@@ -1109,7 +1109,7 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
                 HGOTO_ERROR(DFE_BADFIELDS, FAIL);
 
             /* Allocate space for a single Vdata record */
-            if ((v_data = HDmalloc((size_t)vdata_size)) == NULL)
+            if ((v_data = malloc((size_t)vdata_size)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
             /* for each record read it in and put into TBBT tree
@@ -1131,15 +1131,15 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
                 pntr = v_data; /* set pointer to vdata record */
 
                 /* Allocate space for a chunk record */
-                if ((chkptr = (CHUNK_REC *)HDmalloc(sizeof(CHUNK_REC))) == NULL)
+                if ((chkptr = (CHUNK_REC *)malloc(sizeof(CHUNK_REC))) == NULL)
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                 /* Allocate space for a origin in chunk record */
-                if ((chkptr->origin = (int32 *)HDmalloc((size_t)info->ndims * sizeof(int32))) == NULL)
+                if ((chkptr->origin = (int32 *)malloc((size_t)info->ndims * sizeof(int32))) == NULL)
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                 /* allocate space for key */
-                if ((chk_key = (int32 *)HDmalloc(sizeof(int32))) == NULL)
+                if ((chk_key = (int32 *)malloc(sizeof(int32))) == NULL)
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                 /* Copy origin first */
@@ -1393,7 +1393,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
        special chunks i.e. ghost chunks.-> Pass on this for now  */
 
     /* allocate and fill in special chunk info struct for CHUNKs */
-    if ((info = (chunkinfo_t *)HDmalloc(sizeof(chunkinfo_t))) == NULL)
+    if ((info = (chunkinfo_t *)malloc(sizeof(chunkinfo_t))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     info->attached             = 1;
@@ -1418,7 +1418,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
     info->num_recs             = 0;            /* zero Vdata records to start */
     info->fill_val_len         = fill_val_len; /* length of fill value */
     /* allocate space for fill value */
-    if ((info->fill_val = HDmalloc((uint32)fill_val_len)) == NULL)
+    if ((info->fill_val = malloc((uint32)fill_val_len)) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     /* copy fill value over */
     HDmemcpy(info->fill_val, fill_val, info->fill_val_len); /* fill_val_len bytes */
@@ -1429,9 +1429,9 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
         case SPECIAL_COMP:
             /* set compression info */
             /* allocate compression special info  */
-            if ((info->cinfo = (comp_info *)HDmalloc(sizeof(comp_info))) == NULL)
+            if ((info->cinfo = (comp_info *)malloc(sizeof(comp_info))) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
-            if ((info->minfo = (model_info *)HDmalloc(sizeof(model_info))) == NULL)
+            if ((info->minfo = (model_info *)malloc(sizeof(model_info))) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
             /* find compression header length */
@@ -1440,7 +1440,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
                                        (comp_coder_t)chk_array->comp_type, chk_array->cinfo);
 
             /* allocate space for compression header */
-            if ((info->comp_sp_tag_header = HDmalloc((size_t)info->comp_sp_tag_head_len)) == NULL)
+            if ((info->comp_sp_tag_header = malloc((size_t)info->comp_sp_tag_head_len)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
             /* Encode header for storage */
@@ -2220,7 +2220,7 @@ HMCgetdatasize(int32 file_id, uint8 *p, /* IN: access id of header info */
     p = p + 4;
 
     /* Allocate and fill in special chunk info struct for CHUNKs */
-    if ((chkinfo = (chunkinfo_t *)HDmalloc(sizeof(chunkinfo_t))) == NULL)
+    if ((chkinfo = (chunkinfo_t *)malloc(sizeof(chunkinfo_t))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* Version info */
@@ -2298,7 +2298,7 @@ HMCgetdatasize(int32 file_id, uint8 *p, /* IN: access id of header info */
                         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
 
                     /* Allocate space for a single Vdata record */
-                    if ((v_data = HDmalloc((size_t)vdata_size)) == NULL)
+                    if ((v_data = malloc((size_t)vdata_size)) == NULL)
                         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                     /* Read in the tag/ref of each chunk then get the
@@ -3078,7 +3078,7 @@ HMCPchunkwrite(void       *cookie,    /* IN: access record to mess with */
         /* so create a new Vdata record */
         /* Allocate space for a single Chunk record in Vdata */
         if (v_data == NULL) {
-            if ((v_data = HDmalloc(((size_t)info->ndims * sizeof(int32)) + (2 * sizeof(uint16)))) == NULL)
+            if ((v_data = malloc(((size_t)info->ndims * sizeof(int32)) + (2 * sizeof(uint16)))) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
         }
 
@@ -3266,15 +3266,15 @@ HMCwriteChunk(int32       access_id, /* IN: access aid to mess with */
 
             /* so create a new chunk record */
             /* Allocate space for a chunk record */
-            if ((chkptr = (CHUNK_REC *)HDmalloc(sizeof(CHUNK_REC))) == NULL)
+            if ((chkptr = (CHUNK_REC *)malloc(sizeof(CHUNK_REC))) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
             /* Allocate space for a origin in chunk record */
-            if ((chkptr->origin = (int32 *)HDmalloc((size_t)info->ndims * sizeof(int32))) == NULL)
+            if ((chkptr->origin = (int32 *)malloc((size_t)info->ndims * sizeof(int32))) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
             /* allocate space for key */
-            if ((chk_key = (int32 *)HDmalloc(sizeof(int32))) == NULL)
+            if ((chk_key = (int32 *)malloc(sizeof(int32))) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
             /* Initialize chunk record */
@@ -3495,15 +3495,15 @@ HMCPwrite(accrec_t   *access_rec, /* IN: access record to mess with */
 
             /* so create a new chunk record */
             /* Allocate space for a chunk record */
-            if ((chkptr = (CHUNK_REC *)HDmalloc(sizeof(CHUNK_REC))) == NULL)
+            if ((chkptr = (CHUNK_REC *)malloc(sizeof(CHUNK_REC))) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
             /* Allocate space for a origin in chunk record */
-            if ((chkptr->origin = (int32 *)HDmalloc((size_t)info->ndims * sizeof(int32))) == NULL)
+            if ((chkptr->origin = (int32 *)malloc((size_t)info->ndims * sizeof(int32))) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
             /* allocate space for key */
-            if ((chk_key = (int32 *)HDmalloc(sizeof(int32))) == NULL)
+            if ((chk_key = (int32 *)malloc(sizeof(int32))) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
             /* Initialize chunk record */
@@ -3827,7 +3827,7 @@ HMCPinfo(accrec_t        *access_rec, /* IN: access record of access element */
     }
 
     /* allocate space for chunk lengths */
-    if ((info_chunk->cdims = (int32 *)HDmalloc((size_t)info->ndims * sizeof(int32))) == NULL)
+    if ((info_chunk->cdims = (int32 *)malloc((size_t)info->ndims * sizeof(int32))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* copy info over */

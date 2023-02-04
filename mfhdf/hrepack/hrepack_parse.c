@@ -71,7 +71,7 @@ parse_comp(const char *str, int *n_objs, comp_info_t *comp)
      */
 
     n++;
-    obj_list = HDmalloc(n * sizeof(obj_list_t));
+    obj_list = malloc(n * sizeof(obj_list_t));
     *n_objs  = n;
 
     /* get object list */
@@ -336,7 +336,7 @@ parse_chunk(const char *str, int *n_objs, int32 *chunk_lengths, int *chunk_rank)
      */
 
     n++;
-    obj_list = HDmalloc(n * sizeof(obj_list_t));
+    obj_list = malloc(n * sizeof(obj_list_t));
     *n_objs  = n;
 
     /* get object list */

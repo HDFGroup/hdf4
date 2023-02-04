@@ -119,7 +119,7 @@ VSsetfields(int32 vkey, const char *fields)
 
                 /* allocate space for the internal WRITELIST structures */
                 /* Allocate buffer to hold all the int16/uint16 arrays */
-                if ((wlist->bptr = HDmalloc(sizeof(uint16) * (size_t)(ac * 5))) == NULL)
+                if ((wlist->bptr = malloc(sizeof(uint16) * (size_t)(ac * 5))) == NULL)
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                 /* Use buffer to support the other arrays */
@@ -128,7 +128,7 @@ VSsetfields(int32 vkey, const char *fields)
                 wlist->isize = wlist->off + ac;
                 wlist->order = wlist->isize + ac;
                 wlist->esize = wlist->order + ac;
-                if ((wlist->name = HDmalloc(sizeof(char *) * (size_t)ac)) == NULL) {
+                if ((wlist->name = malloc(sizeof(char *) * (size_t)ac)) == NULL) {
                     HDfree(wlist->bptr);
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
                 } /* end if */
@@ -223,7 +223,7 @@ VSsetfields(int32 vkey, const char *fields)
         rlist->item = NULL;
 
         /* Allocate enough space for the read list */
-        if ((rlist->item = (intn *)HDmalloc(sizeof(intn) * (size_t)(ac))) == NULL)
+        if ((rlist->item = (intn *)malloc(sizeof(intn) * (size_t)(ac))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         for (i = 0; i < ac; i++) {
             found = FALSE;
@@ -303,7 +303,7 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
         usymid = (intn)vs->nusym;
         /* use temporary pointer in case we run out of memory, so we don't loose original list */
         if (tmp_sym == NULL) {
-            if ((tmp_sym = (SYMDEF *)HDmalloc(sizeof(SYMDEF) * (size_t)(usymid + 1))) == NULL)
+            if ((tmp_sym = (SYMDEF *)malloc(sizeof(SYMDEF) * (size_t)(usymid + 1))) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
         }
         else {
@@ -891,8 +891,8 @@ VSfpack(int32 vsid, intn packtype, const char *fields_in_buf, void *buf, intn bu
             HGOTO_ERROR(DFE_ARGS, FAIL);
     }
     blist.n    = ac;
-    blist.idx  = (int32 *)HDmalloc((size_t)ac * sizeof(int32));
-    blist.offs = (int32 *)HDmalloc((size_t)ac * sizeof(int32));
+    blist.idx  = (int32 *)malloc((size_t)ac * sizeof(int32));
+    blist.offs = (int32 *)malloc((size_t)ac * sizeof(int32));
     if ((blist.idx == NULL) || (blist.offs == NULL))
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     /* fill arrays blist.msizes and blist.offs; calculate
@@ -943,11 +943,11 @@ VSfpack(int32 vsid, intn packtype, const char *fields_in_buf, void *buf, intn bu
     else
         ac = blist.n;
     /* fill array of fmsizes, foffs, fbufps */
-    if ((fmsizes = (int32 *)HDmalloc((size_t)ac * sizeof(int32))) == NULL)
+    if ((fmsizes = (int32 *)malloc((size_t)ac * sizeof(int32))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
-    if ((foffs = (int32 *)HDmalloc((size_t)ac * sizeof(int32))) == NULL)
+    if ((foffs = (int32 *)malloc((size_t)ac * sizeof(int32))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
-    if ((fbufps = (uint8 **)HDmalloc((size_t)ac * sizeof(uint8 *))) == NULL)
+    if ((fbufps = (uint8 **)malloc((size_t)ac * sizeof(uint8 *))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     if (fields != NULL) { /* a subset of buf fields */
         for (i = 0; i < ac; i++) {

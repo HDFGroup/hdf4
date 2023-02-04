@@ -197,7 +197,7 @@ ndailist(_fcd filename, intf *tag, intf reflist[], _fcd labellist, intf *listsiz
     /* create reflist with true uint16s to maintain compatibility
      ** with machines that allocate more than 16 bits per uint16.
      */
-    tempreflist = (uint16 *)HDmalloc((size_t)(*listsize) * sizeof(uint16));
+    tempreflist = (uint16 *)malloc((size_t)(*listsize) * sizeof(uint16));
     /* 1 for isfortran */
     nrefs = DFANIlablist(fn, (uint16)*tag, tempreflist, (uint8 *)_fcdtocp(labellist), (int)*listsize,
                          (int)*maxlen, (int)*startpos, 1);

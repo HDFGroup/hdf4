@@ -178,7 +178,7 @@ decomp_using_jpeglib(const char *filename,    /* file to read compressed data fr
 
     /* Allocate local buffer to hold read values until all reading is done
        before copying into caller's buffer */
-    local_buf = HDmalloc(im_height * im_width * im_ncomps * sizeof(uint8));
+    local_buf = malloc(im_height * im_width * im_ncomps * sizeof(uint8));
     CHECK_ALLOC(local_buf, "local_buf", "decomp_using_jpeglib");
 
     /* Set up the JPEG error routines */

@@ -180,7 +180,7 @@ getElement(int desc, char **pdata)
     length = he_desc[desc].length;
 
     /* alloc memory to read the element in */
-    *pdata = (char *)HDmalloc(length);
+    *pdata = (char *)malloc(length);
     if (*pdata == NULL)
         return FAIL;
 
@@ -216,7 +216,7 @@ getTmpName(char **pname)
     if (length <= 0)
         return FAIL;
 
-    *pname = (char *)HDmalloc(length + 1);
+    *pname = (char *)malloc(length + 1);
     HDstrcpy(*pname, s);
 
     return length;
@@ -332,10 +332,10 @@ updateDesc(void)
         if (isGrp(he_desc[i].tag)) {
             he_grp[he_numGrp].desc = i;
             /*                he_grp[he_numGrp].size = (int) (he_desc[i].length / sizeof(tag_ref));
-                            he_grp[he_numGrp].ddList = (tag_ref_ptr) HDmalloc(he_desc[i].length);
+                            he_grp[he_numGrp].ddList = (tag_ref_ptr) malloc(he_desc[i].length);
             */
             he_grp[he_numGrp].size   = (int)(he_desc[i].length / 4);
-            he_grp[he_numGrp].ddList = (tag_ref_ptr)HDmalloc(he_grp[he_numGrp].size * sizeof(tag_ref));
+            he_grp[he_numGrp].ddList = (tag_ref_ptr)malloc(he_grp[he_numGrp].size * sizeof(tag_ref));
 
             if (!he_grp[he_numGrp].ddList) {
                 fprintf(stderr, "Out of memory. Closing file.\n");
@@ -419,7 +419,7 @@ getR8(int xdim, int ydim, char *image, char *pal, int compress)
             return FAIL;
 
     length = xdim * ydim;
-    buf    = (char *)HDmalloc(length);
+    buf    = (char *)malloc(length);
 
     if ((fp = fopen(image, "r")) == NULL) {
         fprintf(stderr, "Error opening image file: %s.\n", image);
@@ -545,10 +545,10 @@ getCurrRig(int32 *pXdim, int32 *pYdim, char **pPalette, char **pRaster)
         return FAIL;
     }
     if (ispal)
-        *pPalette = (char *)HDmalloc(HE_PALETTE_SZ);
+        *pPalette = (char *)malloc(HE_PALETTE_SZ);
     else
         *pPalette = (char *)NULL;
-    *pRaster = (char *)HDmalloc((size_t)(*pXdim) * (size_t)(*pYdim));
+    *pRaster = (char *)malloc((size_t)(*pXdim) * (size_t)(*pYdim));
 
     if (DFR8getimage(he_file, (unsigned char *)*pRaster, *pXdim, *pYdim, (unsigned char *)*pPalette) ==
         FAIL) {
@@ -622,7 +622,7 @@ writeElt(char *file, uint16 ref, int elt)
         UINT16DECODE(p, ntRef);
 
         /* set up to write the number type element */
-        ntDesc      = (tag_ref_ptr)HDmalloc(sizeof(tag_ref));
+        ntDesc      = (tag_ref_ptr)malloc(sizeof(tag_ref));
         ntDesc->tag = ntTag;
         ntDesc->ref = ntRef;
         nt          = findDesc(ntDesc);
@@ -764,7 +764,7 @@ getAnn(int ann, uint16 tag, uint16 ref, char **pBuf)
     if (ann == HE_LABEL) {
         len = DFANgetlablen(he_file, tag, ref);
         if (len > 0) {
-            *pBuf = (char *)HDmalloc((size_t)(len + 1));
+            *pBuf = (char *)malloc((size_t)(len + 1));
             DFANgetlabel(he_file, tag, ref, *pBuf, len + 1);
         }
         else
@@ -773,7 +773,7 @@ getAnn(int ann, uint16 tag, uint16 ref, char **pBuf)
     else {
         len = DFANgetdesclen(he_file, tag, ref);
         if (len > 0) {
-            *pBuf = (char *)HDmalloc((size_t)len);
+            *pBuf = (char *)malloc((size_t)len);
             DFANgetdesc(he_file, tag, ref, *pBuf, len);
         }
         else
@@ -814,7 +814,7 @@ readFromFile(char *file, char **pBuf)
     for (num_read = HE_BUF_SZ; num_read == HE_BUF_SZ; soFar += num_read) {
         bufLen += HE_BUF_SZ;
         if (bufLen == HE_BUF_SZ)
-            *pBuf = (char *)HDmalloc(bufLen);
+            *pBuf = (char *)malloc(bufLen);
         else
             *pBuf = (char *)realloc(*pBuf, bufLen);
         if (*pBuf == NULL)
@@ -906,7 +906,7 @@ catStr(const char *s, const char *s1)
 {
     char *t;
 
-    t = (char *)HDmalloc(HDstrlen(s) + HDstrlen(s1) + 1);
+    t = (char *)malloc(HDstrlen(s) + HDstrlen(s1) + 1);
     HDstrcpy(t, s);
     HDstrcat(t, s1);
     return t;
@@ -917,7 +917,7 @@ copyStr(char *s)
 {
     char *t;
 
-    t = (char *)HDmalloc(HDstrlen(s) + 1);
+    t = (char *)malloc(HDstrlen(s) + 1);
     HDstrcpy(t, s);
     return t;
 }
@@ -1053,7 +1053,7 @@ convertTemplate(char *template, int n1, int n2, int n3, char **pname)
     sprintf(s2, "%1d", n2);
     sprintf(s3, "%1d", n3);
 
-    *pname = t = (char *)HDmalloc(HDstrlen(template) + 61);
+    *pname = t = (char *)malloc(HDstrlen(template) + 61);
 
     while (*template)
         switch (*template) {

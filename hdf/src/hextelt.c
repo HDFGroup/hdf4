@@ -264,7 +264,7 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
     if (access_rec == NULL)
         HGOTO_ERROR(DFE_TOOMANY, FAIL);
 
-    access_rec->special_info = HDmalloc((uint32)sizeof(extinfo_t));
+    access_rec->special_info = malloc((uint32)sizeof(extinfo_t));
     info                     = (extinfo_t *)access_rec->special_info;
     if (!info)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -275,7 +275,7 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
     /* If there is data, either regular or special, read the data then write
        it to the external file, otherwise, do nothing */
     if (data_id != FAIL && data_len > 0) {
-        if ((buf = HDmalloc((uint32)data_len)) == NULL)
+        if ((buf = malloc((uint32)data_len)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         if (Hgetelement(file_id, tag, ref, buf) == FAIL)
             HGOTO_ERROR(DFE_READERROR, FAIL);
@@ -471,7 +471,7 @@ HXIstaccess(accrec_t *access_rec, int16 acc_mode)
         if (HP_read(file_rec, local_ptbuf, 12) == FAIL)
             HGOTO_ERROR(DFE_READERROR, FAIL);
 
-        access_rec->special_info = HDmalloc((uint32)sizeof(extinfo_t));
+        access_rec->special_info = malloc((uint32)sizeof(extinfo_t));
         info                     = (extinfo_t *)access_rec->special_info;
         if (info == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -482,7 +482,7 @@ HXIstaccess(accrec_t *access_rec, int16 acc_mode)
             INT32DECODE(p, info->extern_offset);
             INT32DECODE(p, info->length_file_name);
         }
-        info->extern_file_name = (char *)HDmalloc((uint32)info->length_file_name + 1);
+        info->extern_file_name = (char *)malloc((uint32)info->length_file_name + 1);
         if (!info->extern_file_name)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         if (HP_read(file_rec, info->extern_file_name, info->length_file_name) == FAIL)
@@ -1178,7 +1178,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
     fname = ext_fname;
 
     /* get the space for the final pathname */
-    if (!(finalpath = HDmalloc(MAX_PATH_LEN)))
+    if (!(finalpath = malloc(MAX_PATH_LEN)))
         HGOTO_ERROR(DFE_NOSPACE, NULL);
 
     fname_len = (int)HDstrlen(fname);

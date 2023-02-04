@@ -71,7 +71,7 @@ scanattrs(const char *attrs, int32 *attrc, char ***attrv)
         Vpbufsize = slen;
         if (Vpbuf)
             HDfree((VOIDP)Vpbuf);
-        if ((Vpbuf = (uint8 *)HDmalloc(Vpbufsize)) == NULL)
+        if ((Vpbuf = (uint8 *)malloc(Vpbufsize)) == NULL)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
     } /* end if */
 

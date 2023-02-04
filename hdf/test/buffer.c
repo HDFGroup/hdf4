@@ -443,8 +443,8 @@ main(int argc, char *argv[])
         exit(1);
     }
 
-    out_buf = HDmalloc((size_t)elemsize * sizeof(uint8));
-    in_buf  = HDmalloc((size_t)elemsize * sizeof(uint8));
+    out_buf = malloc((size_t)elemsize * sizeof(uint8));
+    in_buf  = malloc((size_t)elemsize * sizeof(uint8));
 
     Verbosity = 4; /* Default Verbosity is Low */
 

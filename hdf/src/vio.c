@@ -100,7 +100,7 @@ VSIget_vdata_node(void)
     }
     else /* allocate a new node */
     {
-        if ((ret_value = (VDATA *)HDmalloc(sizeof(VDATA))) == NULL)
+        if ((ret_value = (VDATA *)malloc(sizeof(VDATA))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
     } /* end else */
 
@@ -156,7 +156,7 @@ VSIget_vsinstance_node(void)
     }
     else /* allocate a new vsinstance record */
     {
-        if ((ret_value = (vsinstance_t *)HDmalloc(sizeof(vsinstance_t))) == NULL)
+        if ((ret_value = (vsinstance_t *)malloc(sizeof(vsinstance_t))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
     } /* end else */
 
@@ -527,7 +527,7 @@ vunpackvs(VDATA *vs,    /* IN/OUT: */
             vs->wlist.name = NULL;
         }      /* end if */
         else { /* Allocate buffer to hold all the int16/uint16 arrays */
-            if (NULL == (vs->wlist.bptr = HDmalloc(sizeof(uint16) * (size_t)(vs->wlist.n * 5))))
+            if (NULL == (vs->wlist.bptr = malloc(sizeof(uint16) * (size_t)(vs->wlist.n * 5))))
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
             /* Use buffer to support the other arrays */
@@ -550,12 +550,12 @@ vunpackvs(VDATA *vs,    /* IN/OUT: */
                 UINT16DECODE(bb, vs->wlist.order[i]);
 
             /* retrieve the field names (and each field name's length)  */
-            if (NULL == (vs->wlist.name = HDmalloc(sizeof(char *) * (size_t)vs->wlist.n)))
+            if (NULL == (vs->wlist.name = malloc(sizeof(char *) * (size_t)vs->wlist.n)))
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
             for (i = 0; i < vs->wlist.n; i++) {
                 INT16DECODE(bb, int16var); /* this gives the length */
-                if (NULL == (vs->wlist.name[i] = HDmalloc((int16var + 1) * sizeof(char))))
+                if (NULL == (vs->wlist.name[i] = malloc((int16var + 1) * sizeof(char))))
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                 HIstrncpy(vs->wlist.name[i], (char *)bb, int16var + 1);
@@ -595,7 +595,7 @@ vunpackvs(VDATA *vs,    /* IN/OUT: */
             if (vs->flags & VS_ATTR_SET) { /* get attr info */
                 INT32DECODE(bb, vs->nattrs);
 
-                if (NULL == (vs->alist = (vs_attr_t *)HDmalloc(vs->nattrs * sizeof(vs_attr_t))))
+                if (NULL == (vs->alist = (vs_attr_t *)malloc(vs->nattrs * sizeof(vs_attr_t))))
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                 for (i = 0; i < vs->nattrs; i++) {
@@ -706,7 +706,7 @@ VSPgetinfo(HFILEID f, /* IN: file handle */
         if (Vhbuf != NULL)
             HDfree(Vhbuf);
 
-        if ((Vhbuf = (uint8 *)HDmalloc(Vhbufsize)) == NULL)
+        if ((Vhbuf = (uint8 *)malloc(Vhbufsize)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
     } /* end if */
 
@@ -1024,7 +1024,7 @@ VSdetach(int32 vkey /* IN: vdata key? */)
                 if (Vhbuf)
                     HDfree(Vhbuf);
 
-                if ((Vhbuf = HDmalloc(Vhbufsize)) == NULL)
+                if ((Vhbuf = malloc(Vhbufsize)) == NULL)
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
             } /* end if */
 

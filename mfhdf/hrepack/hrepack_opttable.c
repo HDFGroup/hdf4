@@ -30,11 +30,11 @@ void
 options_table_init(options_table_t **tbl)
 {
     int              i;
-    options_table_t *op_tbl = (options_table_t *)HDmalloc(sizeof(options_table_t));
+    options_table_t *op_tbl = (options_table_t *)malloc(sizeof(options_table_t));
 
     op_tbl->size   = 3;
     op_tbl->nelems = 0;
-    op_tbl->objs   = (pack_info_t *)HDmalloc(op_tbl->size * sizeof(pack_info_t));
+    op_tbl->objs   = (pack_info_t *)malloc(op_tbl->size * sizeof(pack_info_t));
 
     for (i = 0; i < op_tbl->size; i++) {
         HDstrcpy(op_tbl->objs[i].objpath, "\0");

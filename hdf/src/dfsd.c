@@ -758,7 +758,7 @@ DFSDsetdims(intn rank, int32 dimsizes[])
     }
 
     /* allocate dimensions */
-    Writesdg.dimsizes = (int32 *)HDmalloc((size_t)rank * sizeof(int32));
+    Writesdg.dimsizes = (int32 *)malloc((size_t)rank * sizeof(int32));
     if (Writesdg.dimsizes == NULL) {
         ret_value = FAIL;
         goto done;
@@ -953,7 +953,7 @@ DFSDIsetdimstrs(intn dim, const char *label, const char *unit, const char *forma
 
         /* allocate space if necessary */
         if (!Writesdg.dimluf[luf]) {
-            Writesdg.dimluf[luf] = (char **)HDmalloc((uint32)Writesdg.rank * sizeof(char *));
+            Writesdg.dimluf[luf] = (char **)malloc((uint32)Writesdg.rank * sizeof(char *));
             if (Writesdg.dimluf[luf] == NULL) {
                 ret_value = FAIL;
                 goto done;
@@ -1061,7 +1061,7 @@ DFSDsetdimscale(intn dim, int32 dimsize, VOIDP scale)
 
     /* allocate space for dimscales if necessary */
     if (!Writesdg.dimscales) {
-        Writesdg.dimscales = (uint8 **)HDmalloc((uint32)Writesdg.rank * sizeof(int8 *));
+        Writesdg.dimscales = (uint8 **)malloc((uint32)Writesdg.rank * sizeof(int8 *));
         if (Writesdg.dimscales == NULL) {
             ret_value = FAIL;
             goto done;
@@ -1072,7 +1072,7 @@ DFSDsetdimscale(intn dim, int32 dimsize, VOIDP scale)
 
     if (!Writesdg.dimscales[rdim]) {
         /* allocate dimension scale space if necessary */
-        Writesdg.dimscales[rdim] = (uint8 *)HDmalloc((uint32)bytesize);
+        Writesdg.dimscales[rdim] = (uint8 *)malloc((uint32)bytesize);
         if (Writesdg.dimscales[rdim] == NULL) {
             ret_value = FAIL;
             goto done;
@@ -1514,7 +1514,7 @@ DFSDstartslice(const char *filename)
         HCLOSE_GOTO_ERROR(Sfile_id, DFE_BADAID, FAIL);
 
     /* allocate array for keeping track of dims written */
-    Sddims = (int32 *)HDmalloc((uint32)Writesdg.rank * sizeof(int32));
+    Sddims = (int32 *)malloc((uint32)Writesdg.rank * sizeof(int32));
     if (Sddims == NULL)
         HCLOSE_GOTO_ERROR(Sfile_id, DFE_NOSPACE, FAIL);
 
@@ -1864,7 +1864,7 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr *l_nsdghdr)
 
     /* Check if temporary buffer has been allocated */
     if (ptbuf == NULL) {
-        ptbuf = (uint8 *)HDmalloc(TBUF_SZ * sizeof(uint8));
+        ptbuf = (uint8 *)malloc(TBUF_SZ * sizeof(uint8));
         if (ptbuf == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
     }
@@ -1882,7 +1882,7 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr *l_nsdghdr)
         l_nsdghdr->nsdg_t = NULL;
         HGOTO_DONE(SUCCEED);
     }
-    if ((ntb = (DFnsdgle *)HDmalloc(sz_DFnsdgle)) == NULL)
+    if ((ntb = (DFnsdgle *)malloc(sz_DFnsdgle)) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* the first node in each table is a dummy node  */
@@ -1892,7 +1892,7 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr *l_nsdghdr)
     ntb->sdg.ref  = 0;
     ntb->next     = NULL;
 
-    if ((stb = (DFnsdgle *)HDmalloc(sz_DFnsdgle)) == NULL)
+    if ((stb = (DFnsdgle *)malloc(sz_DFnsdgle)) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     stb->nsdg.tag = DFTAG_NULL; /* set up and init an sdg table  */
@@ -1921,7 +1921,7 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr *l_nsdghdr)
                 HGOTO_ERROR(DFE_BADNDG, FAIL);
 
             /* add a node to the table */
-            if ((new = (DFnsdgle *)HDmalloc(sz_DFnsdgle)) == NULL)
+            if ((new = (DFnsdgle *)malloc(sz_DFnsdgle)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
             new->nsdg.tag = DFTAG_NDG;
@@ -1977,7 +1977,7 @@ DFSDIsetnsdg_t(int32 file_id, DFnsdg_t_hdr *l_nsdghdr)
                 HGOTO_ERROR(DFE_BADNDG, FAIL);
 
             /* insert a new node */
-            if ((new = (DFnsdgle *)HDmalloc(sz_DFnsdgle)) == NULL)
+            if ((new = (DFnsdgle *)malloc(sz_DFnsdgle)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
             new->nsdg.tag = DFTAG_SDG;
@@ -2190,7 +2190,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg *sdg)
 
     /* Check if temporary buffer has been allocated */
     if (ptbuf == NULL) {
-        ptbuf = (uint8 *)HDmalloc(TBUF_SZ * sizeof(uint8));
+        ptbuf = (uint8 *)malloc(TBUF_SZ * sizeof(uint8));
         if (ptbuf == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
     }
@@ -2236,7 +2236,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg *sdg)
                 sdg->rank = (intn)int16var;
 
                 /* get space for dimensions */
-                sdg->dimsizes = (int32 *)HDmalloc((uint32)sdg->rank * sizeof(int32));
+                sdg->dimsizes = (int32 *)malloc((uint32)sdg->rank * sizeof(int32));
                 if (sdg->dimsizes == NULL) {
                     DFdifree(GroupID);
                     Hendaccess(aid);
@@ -2369,7 +2369,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg *sdg)
                     DFdifree(GroupID);
                     HGOTO_ERROR(DFE_BADLEN, FAIL);
                 }
-                buf = (uint8 *)HDmalloc((uint32)length);
+                buf = (uint8 *)malloc((uint32)length);
                 if (buf == NULL) {
                     DFdifree(GroupID);
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -2384,7 +2384,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg *sdg)
                 p = buf;
 
                 /* allocate data luf space */
-                sdg->dataluf[luf] = (char *)HDmalloc((uint32)HDstrlen((char *)p) + 1);
+                sdg->dataluf[luf] = (char *)malloc((uint32)HDstrlen((char *)p) + 1);
 
                 if (sdg->dataluf[luf] == NULL) {
                     DFdifree(GroupID);
@@ -2397,7 +2397,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg *sdg)
                 p += HDstrlen(sdg->dataluf[luf]) + 1;
 
                 /* get space for dimluf array */
-                sdg->dimluf[luf] = (char **)HDmalloc((uint32)sdg->rank * sizeof(char *));
+                sdg->dimluf[luf] = (char **)malloc((uint32)sdg->rank * sizeof(char *));
                 if (sdg->dimluf[luf] == NULL) {
                     DFdifree(GroupID);
                     HDfree((VOIDP)buf);
@@ -2406,7 +2406,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg *sdg)
 
                 /* extract dimension lufs */
                 for (i = 0; i < sdg->rank; i++) {
-                    sdg->dimluf[luf][i] = (char *)HDmalloc((uint32)HDstrlen((char *)p) + 1);
+                    sdg->dimluf[luf][i] = (char *)malloc((uint32)HDstrlen((char *)p) + 1);
                     if (sdg->dimluf[luf][i] == NULL) {
                         DFdifree(GroupID);
                         HDfree((VOIDP)buf);
@@ -2432,7 +2432,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg *sdg)
                 }
 
                 /* read isscales */
-                isscales = (uint8 *)HDmalloc((uint32)sdg->rank);
+                isscales = (uint8 *)malloc((uint32)sdg->rank);
                 if (isscales == NULL) {
                     DFdifree(GroupID);
                     Hendaccess(aid);
@@ -2445,7 +2445,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg *sdg)
                 }
 
                 /* allocate scale pointers */
-                sdg->dimscales = (uint8 **)HDmalloc((uint32)sdg->rank * sizeof(int8 *));
+                sdg->dimscales = (uint8 **)malloc((uint32)sdg->rank * sizeof(int8 *));
                 if (sdg->dimscales == NULL) {
                     DFdifree(GroupID);
                     HDfree((VOIDP)isscales);
@@ -2460,7 +2460,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg *sdg)
                         continue;
 
                     /* space for scale */
-                    sdg->dimscales[i] = (uint8 *)HDmalloc((size_t)(sdg->dimsizes[i] * localNTsize));
+                    sdg->dimscales[i] = (uint8 *)malloc((size_t)(sdg->dimsizes[i] * localNTsize));
                     if (sdg->dimscales[i] == NULL) {
                         DFdifree(GroupID);
                         HDfree((VOIDP)isscales);
@@ -2479,7 +2479,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg *sdg)
                     }
                     else { /* conversion necessary */
                         /* allocate conversion buffer */
-                        buf = (uint8 *)HDmalloc((size_t)(sdg->dimsizes[i] * fileNTsize));
+                        buf = (uint8 *)malloc((size_t)(sdg->dimsizes[i] * fileNTsize));
                         if (buf == NULL) {
                             DFdifree(GroupID);
                             HDfree((VOIDP)isscales);
@@ -2518,7 +2518,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg *sdg)
                     HGOTO_ERROR(DFE_BADLEN, FAIL);
                 }
 
-                sdg->coordsys = (char *)HDmalloc((uint32)length);
+                sdg->coordsys = (char *)malloc((uint32)length);
                 if (sdg->coordsys == NULL) {
                     DFdifree(GroupID);
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -2541,7 +2541,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg *sdg)
                 else {
                     /* conversion needed */
                     /* allocate buffer */
-                    buf = (uint8 *)HDmalloc((size_t)(2 * fileNTsize));
+                    buf = (uint8 *)malloc((size_t)(2 * fileNTsize));
                     if (buf == NULL) {
                         DFdifree(GroupID);
                         HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -2605,7 +2605,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg *sdg)
                     }
 
                     /* allocate buffer */
-                    buf = (uint8 *)HDmalloc((uint32)eltSize);
+                    buf = (uint8 *)malloc((uint32)eltSize);
                     if (buf == NULL) {
                         DFdifree(GroupID);
                         HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -2670,7 +2670,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg *sdg)
                     }
 
                     /* allocate buffer for conversion  */
-                    buf = (uint8 *)HDmalloc((uint32)eltSize);
+                    buf = (uint8 *)malloc((uint32)eltSize);
                     if (buf == NULL) {
                         DFdifree(GroupID);
                         HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -2757,7 +2757,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg *sdg)
 
     /* Check if temporary buffer has been allocated */
     if (ptbuf == NULL) {
-        ptbuf = (uint8 *)HDmalloc(TBUF_SZ * sizeof(uint8));
+        ptbuf = (uint8 *)malloc(TBUF_SZ * sizeof(uint8));
         if (ptbuf == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
     }
@@ -2857,7 +2857,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg *sdg)
 
     /* check if there is a scale and write it out */
     if (!Ref.scales) { /* if scale set */
-        Isscales = (uint8 *)HDmalloc((uint32)sdg->rank);
+        Isscales = (uint8 *)malloc((uint32)sdg->rank);
         if (Isscales == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         Ref.scales = (-1); /* assume there is no scale */
@@ -2906,7 +2906,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg *sdg)
             }
             else { /* convert and write */
                 /* allocate buffer */
-                buf = (uint8 *)HDmalloc((uint32)(fileNTsize * sdg->dimsizes[j]));
+                buf = (uint8 *)malloc((uint32)(fileNTsize * sdg->dimsizes[j]));
                 if (buf == NULL) {
                     HDfree((VOIDP)Isscales);
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -2958,7 +2958,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg *sdg)
         }
         else {
             /* allocate buffer */
-            buf = (uint8 *)HDmalloc((size_t)(2 * fileNTsize)); /* max/min is 8 bytes */
+            buf = (uint8 *)malloc((size_t)(2 * fileNTsize)); /* max/min is 8 bytes */
             if (buf == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
@@ -3198,7 +3198,7 @@ DFSDIopen(const char *filename, intn acc_mode)
      *    open file for first time
      */
     if (Lastfile == NULL) {
-        Lastfile = (char *)HDmalloc((DF_MAXFNLEN + 1) * sizeof(char));
+        Lastfile = (char *)malloc((DF_MAXFNLEN + 1) * sizeof(char));
         if (Lastfile == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         /* open file */
@@ -3249,7 +3249,7 @@ DFSDIopen(const char *filename, intn acc_mode)
 
     /* if read, set up nsdg table */
     if (nsdghdr == NULL) {
-        nsdghdr = (DFnsdg_t_hdr *)HDmalloc((uint32)sizeof(DFnsdg_t_hdr));
+        nsdghdr = (DFnsdg_t_hdr *)malloc((uint32)sizeof(DFnsdg_t_hdr));
         if (nsdghdr == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         nsdghdr->size   = 0;
@@ -3527,7 +3527,7 @@ done:
  * Returns: 0 on success, FAIL on failure with error set
  * Outputs: actual scientific data in array
  * Users:   DFSDgetdata
- * Invokes: DFSDIgetslice, HDmalloc, HDfree, DFSDIopen, Hclose,
+ * Invokes: DFSDIgetslice, malloc, HDfree, DFSDIopen, Hclose,
  *          HERROR, DFSDIsdginfo
  * Method:  Open file, call DFSDIsdginfo to read sdg if necessary, set up
  *          window start and end arrays, call DFSDIgetslice.
@@ -3560,11 +3560,11 @@ DFSDIgetdata(const char *filename, intn rank, int32 maxsizes[], VOIDP data, intn
             HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
     }
 
-    winst = (int32 *)HDmalloc((uint32)Readsdg.rank * sizeof(int32));
+    winst = (int32 *)malloc((uint32)Readsdg.rank * sizeof(int32));
     if (winst == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-    windims = (int32 *)HDmalloc((uint32)Readsdg.rank * sizeof(int32));
+    windims = (int32 *)malloc((uint32)Readsdg.rank * sizeof(int32));
     if (windims == NULL) {
         HDfree((VOIDP)winst);
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -3596,7 +3596,7 @@ done:
  * Globals: Writeref
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   HDF users, utilities, other routines
- * Invokes: DFSDIopen, Hclose, HDmalloc, HDfree, DFSDIputslice,
+ * Invokes: DFSDIopen, Hclose, malloc, HDfree, DFSDIputslice,
  *          DFSDstartslice, DFSDIendslice
  * Method:  Create file if necessary, allocate arrays, call slice routines
  *---------------------------------------------------------------------------*/
@@ -3756,7 +3756,7 @@ DFSDIgetslice(const char *filename, int32 winst[], int32 windims[], VOIDP data, 
         }
     }
     /* allocate buffers */
-    wstart = (int32 *)HDmalloc((size_t)(4 * rank) * sizeof(int32));
+    wstart = (int32 *)malloc((size_t)(4 * rank) * sizeof(int32));
     if (wstart == NULL) {
         HCLOSE_GOTO_ERROR(file_id, DFE_NOSPACE, FAIL);
     }
@@ -3826,7 +3826,7 @@ DFSDIgetslice(const char *filename, int32 winst[], int32 windims[], VOIDP data, 
 
         /* allocate 1 row buffers */
         if (convert) {
-            if ((buf = (uint8 *)HDmalloc((uint32)readsize)) == NULL) {
+            if ((buf = (uint8 *)malloc((uint32)readsize)) == NULL) {
                 HDfree((VOIDP)wstart);
                 Hendaccess(aid);
                 HCLOSE_GOTO_ERROR(file_id, DFE_NOSPACE, FAIL);
@@ -3836,7 +3836,7 @@ DFSDIgetslice(const char *filename, int32 winst[], int32 windims[], VOIDP data, 
             buf = NULL;
 
         if (transposed) {
-            scatterbuf = (uint8 *)HDmalloc((size_t)(numelements * localNTsize));
+            scatterbuf = (uint8 *)malloc((size_t)(numelements * localNTsize));
 
             if (scatterbuf == NULL) {
                 HDfree((VOIDP)wstart);
@@ -3848,7 +3848,7 @@ DFSDIgetslice(const char *filename, int32 winst[], int32 windims[], VOIDP data, 
         else
             scatterbuf = NULL;
 
-        offset = (int32 *)HDmalloc((size_t)(3 * rank) * sizeof(int32));
+        offset = (int32 *)malloc((size_t)(3 * rank) * sizeof(int32));
         if (offset == NULL) {
             HDfree((VOIDP)wstart);
             HDfree((VOIDP)buf);
@@ -3983,7 +3983,7 @@ done:
  *          isfortran: 0 for C, 1 for Fortran
  * Returns: 0 on success, FAIL on failure with error set
  * Users:   DFSDputslice
- * Invokes: DFwrite, HDmalloc, HDfree,DFKnumout(if conversion
+ * Invokes: DFwrite, malloc, HDfree,DFKnumout(if conversion
         required)
  * Method:  check dimensions for contiguity, convert types if necessary
  *          write to file
@@ -4115,7 +4115,7 @@ DFSDIputslice(int32 windims[], VOIDP data, int32 dims[], intn isfortran)
         writesize   = numelements * fileNTsize;
         datastride  = dims[leastsig] * localNTsize;
         if (convert) {
-            buf = (uint8 *)HDmalloc((uint32)writesize);
+            buf = (uint8 *)malloc((uint32)writesize);
             if (buf == NULL)
                 HCLOSE_GOTO_ERROR(Sfile_id, DFE_NOSPACE, FAIL);
             for (i = 0; i < j; i++, datap += datastride) {
@@ -4571,7 +4571,7 @@ DFSDstartslab(const char *filename)
             fill_bufsize = sdg_size;
 
         /* Allocate space for fill buffer */
-        if ((fill_buf = (uint8 *)HDmalloc((uint32)fill_bufsize)) == NULL) {
+        if ((fill_buf = (uint8 *)malloc((uint32)fill_bufsize)) == NULL) {
             Hendaccess(Writesdg.aid);
             HCLOSE_GOTO_ERROR(Sfile_id, DFE_NOSPACE, FAIL);
         }
@@ -4739,7 +4739,7 @@ DFSDwriteslab(int32 start[], int32 stride[], int32 count[], VOIDP data)
      ** Allocate temporary buffers(3) to hold starting, size,
      **  and file(SDG in file) dimensions
      */
-    startdims = (int32 *)HDmalloc((size_t)(3 * rank) * sizeof(int32));
+    startdims = (int32 *)malloc((size_t)(3 * rank) * sizeof(int32));
     if (startdims == NULL)
         HCLOSE_GOTO_ERROR(Sfile_id, DFE_NOSPACE, FAIL);
     sizedims = startdims + rank;
@@ -4793,7 +4793,7 @@ DFSDwriteslab(int32 start[], int32 stride[], int32 count[], VOIDP data)
 
         /* If conversion, allocate 1 row buffers */
         if (convert) {
-            if ((buf = (uint8 *)HDmalloc((uint32)rowsize)) == NULL) {
+            if ((buf = (uint8 *)malloc((uint32)rowsize)) == NULL) {
                 HDfree((VOIDP)startdims);
                 Hendaccess(aid);
                 HCLOSE_GOTO_ERROR(Sfile_id, DFE_NOSPACE, FAIL);
@@ -4803,7 +4803,7 @@ DFSDwriteslab(int32 start[], int32 stride[], int32 count[], VOIDP data)
             buf = NULL;
 
         /* Allocate space for file and data offsets and dimsleft */
-        foffset = (int32 *)HDmalloc((size_t)(3 * rank) * sizeof(int32));
+        foffset = (int32 *)malloc((size_t)(3 * rank) * sizeof(int32));
         if (foffset == NULL) {
             HDfree((VOIDP)startdims);
             HDfree((VOIDP)buf);

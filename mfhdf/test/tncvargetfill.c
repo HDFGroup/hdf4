@@ -333,7 +333,7 @@ test_multidims()
     edges[0]                       = dimsizes3D[0];
     edges[1]                       = dimsizes3D[1];
     edges[2]                       = dimsizes3D[2];
-    outdata3                       = (int16 *)HDmalloc(edges[0] * edges[1] * edges[2] * sizeof(int16));
+    outdata3                       = (int16 *)malloc(edges[0] * edges[1] * edges[2] * sizeof(int16));
     status                         = SDreaddata(dset1, start, NULL, edges, (VOIDP)outdata3);
     CHECK(status, FAIL, "SDreaddata");
 

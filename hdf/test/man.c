@@ -247,7 +247,7 @@ check_fann_rewrite(const char *fname)
 
     /* allocate space for label */
     if (ann_label == NULL) {
-        if ((ann_label = (char *)HDmalloc((ann_len + 1) * sizeof(char))) == NULL) {
+        if ((ann_label = (char *)malloc((ann_len + 1) * sizeof(char))) == NULL) {
             printf("Error: failed to allocate space to hold file label \n");
             return FAIL;
         }
@@ -370,7 +370,7 @@ check_fann(const char *fname)
 
         /* allocate space for label */
         if (ann_label == NULL) {
-            if ((ann_label = (char *)HDmalloc((ann_len + 1) * sizeof(char))) == NULL) {
+            if ((ann_label = (char *)malloc((ann_len + 1) * sizeof(char))) == NULL) {
                 printf("Error: failed to allocate space to hold file label \n");
                 return FAIL;
             }
@@ -418,7 +418,7 @@ check_fann(const char *fname)
 
         /* allocate space for desc */
         if (ann_desc == NULL) {
-            if ((ann_desc = (char *)HDmalloc((ann_len + 1) * sizeof(char))) == NULL) {
+            if ((ann_desc = (char *)malloc((ann_len + 1) * sizeof(char))) == NULL) {
                 printf("Error: failed to allocate space to hold file desc  \n");
                 return FAIL;
             }
@@ -520,7 +520,7 @@ check_lab_desc(const char *fname, uint16 tag, uint16 ref, const char *label[], c
         num_errs++;
     }
     else {
-        if ((dlabels = (int32 *)HDmalloc(num_dlabels * sizeof(int32))) == NULL) {
+        if ((dlabels = (int32 *)malloc(num_dlabels * sizeof(int32))) == NULL) {
             printf("Error: failed to allocate space to hold data label ids\n");
             return FAIL;
         }
@@ -532,7 +532,7 @@ check_lab_desc(const char *fname, uint16 tag, uint16 ref, const char *label[], c
         num_errs++;
     }
     else {
-        if ((ddescs = (int32 *)HDmalloc(num_ddescs * sizeof(int32))) == NULL) {
+        if ((ddescs = (int32 *)malloc(num_ddescs * sizeof(int32))) == NULL) {
             printf("Error: failed to allocate space to hold data descs ids\n");
             return FAIL;
         }
@@ -565,7 +565,7 @@ check_lab_desc(const char *fname, uint16 tag, uint16 ref, const char *label[], c
 
         /* allocate space for label */
         if (ann_label == NULL) {
-            if ((ann_label = (char *)HDmalloc((ann_len + 1) * sizeof(char))) == NULL) {
+            if ((ann_label = (char *)malloc((ann_len + 1) * sizeof(char))) == NULL) {
                 printf("Error: failed to allocate space to hold data label \n");
                 return FAIL;
             }
@@ -609,7 +609,7 @@ check_lab_desc(const char *fname, uint16 tag, uint16 ref, const char *label[], c
 
         /* allocate space for description */
         if (ann_desc == NULL) {
-            if ((ann_desc = (char *)HDmalloc((ann_len + 1) * sizeof(char))) == NULL) {
+            if ((ann_desc = (char *)malloc((ann_len + 1) * sizeof(char))) == NULL) {
                 printf("Error: failed to allocate space to hold data desc \n");
                 return FAIL;
             }
@@ -700,15 +700,15 @@ test_man(void)
     int32    ann_handle;  /* annotation handle */
 
     /***** generate float array and image *****/
-    if ((data = (float32 *)HDmalloc(ROWS * COLS * sizeof(float32))) == NULL) {
+    if ((data = (float32 *)malloc(ROWS * COLS * sizeof(float32))) == NULL) {
         fprintf(stderr, "Error: unable to allocate space\n");
         return;
     }
-    if ((image = (uint8 *)HDmalloc(ROWS * COLS * sizeof(char))) == NULL) {
+    if ((image = (uint8 *)malloc(ROWS * COLS * sizeof(char))) == NULL) {
         fprintf(stderr, "Error: unable to allocate space\n");
         return;
     }
-    if ((newimage = (uint8 *)HDmalloc(ROWS * COLS * sizeof(char))) == NULL) {
+    if ((newimage = (uint8 *)malloc(ROWS * COLS * sizeof(char))) == NULL) {
         fprintf(stderr, "Error: unable to allocate space\n");
         return;
     }

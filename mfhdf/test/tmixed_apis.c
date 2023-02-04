@@ -373,7 +373,7 @@ test_vdatavgroups()
     VERIFY(num_vgroups, NUM_VGS, "Vgetvgroups");
 
     /* Allocate sufficient memory to hold the list of user-created vg refs */
-    refarray = (uint16 *)HDmalloc(sizeof(uint16) * num_vgroups);
+    refarray = (uint16 *)malloc(sizeof(uint16) * num_vgroups);
     CHECK_ALLOC(refarray, "refarray", "test_vdatavgroups");
 
     /* Now, get the user-created vgroup refs */
@@ -389,7 +389,7 @@ test_vdatavgroups()
         status = Vgetnamelen(vgroup_id, &name_len);
         CHECK(status, FAIL, "Vgetnamelen");
 
-        vg_name = (char *)HDmalloc((sizeof(char) * name_len) + 1);
+        vg_name = (char *)malloc((sizeof(char) * name_len) + 1);
         CHECK_ALLOC(vg_name, "vg_name", "test_vdatavgroups");
 
         status = Vgetname(vgroup_id, vg_name);
@@ -413,7 +413,7 @@ test_vdatavgroups()
     VERIFY(num_vdatas, NUM_VDS, "VSgetvdatas");
 
     /* Allocate sufficient memory to hold the list of user-created vd refs */
-    refarray = (uint16 *)HDmalloc(sizeof(uint16) * num_vdatas);
+    refarray = (uint16 *)malloc(sizeof(uint16) * num_vdatas);
     CHECK_ALLOC(refarray, "refarray", "test_vdatavgroups");
 
     /* Now, get the user-created vdata refs */

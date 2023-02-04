@@ -275,7 +275,7 @@ init_global(int32 xdim, int32 ydim, VOIDP out, VOIDP out_pal)
     new_pal = (unsigned char *)out_pal;
     if (color_pt)
         HDfree((VOIDP)color_pt);
-    color_pt = (struct rgb *)HDmalloc((unsigned)((xdim * ydim) / 8) * sizeof(struct rgb));
+    color_pt = (struct rgb *)malloc((unsigned)((xdim * ydim) / 8) * sizeof(struct rgb));
 
     if (image == NULL || color_pt == NULL || new_pal == NULL) {
         return; /* punt! */
@@ -610,8 +610,8 @@ init(int blocks, int distinct, struct rgb *my_color_pt)
         HDfree((VOIDP)hist);
     if (distinct_pt)
         HDfree((VOIDP)distinct_pt);
-    hist        = (int *)HDmalloc((unsigned)distinct * sizeof(int));
-    distinct_pt = (struct rgb *)HDmalloc((unsigned)distinct * sizeof(struct rgb));
+    hist        = (int *)malloc((unsigned)distinct * sizeof(int));
+    distinct_pt = (struct rgb *)malloc((unsigned)distinct * sizeof(struct rgb));
 
     for (i = 0; i < distinct; i++)
         hist[i] = 0;
@@ -636,7 +636,7 @@ init(int blocks, int distinct, struct rgb *my_color_pt)
     }
 
     /* set up first box */
-    first = (struct box *)HDmalloc(sizeof(struct box));
+    first = (struct box *)malloc(sizeof(struct box));
     for (i = RED; i <= BLUE; i++) {
         first->bnd[i][LO] = (float32)999.9;
         first->bnd[i][HI] = (float32)-999.9;
@@ -653,13 +653,13 @@ init(int blocks, int distinct, struct rgb *my_color_pt)
         first->bnd[i][HI] = first->bnd[i][HI] + (float32)EPSILON;
     } /* end of for i */
 
-    first->pts = (int *)HDmalloc((unsigned)distinct * sizeof(int));
+    first->pts = (int *)malloc((unsigned)distinct * sizeof(int));
     for (i = 0; i < distinct; i++)
         first->pts[i] = i;
     first->nmbr_pts      = 2 * blocks;
     first->nmbr_distinct = distinct;
 
-    dummy           = (struct box *)HDmalloc(sizeof(struct box));
+    dummy           = (struct box *)malloc(sizeof(struct box));
     frontier        = dummy;
     dummy->right    = first;
     first->left     = dummy;
@@ -806,8 +806,8 @@ split_box(struct box *ptr)
     median = find_med(ptr, dim);
 
     /* create 2 child */
-    l_child = (struct box *)HDmalloc(sizeof(struct box));
-    r_child = (struct box *)HDmalloc(sizeof(struct box));
+    l_child = (struct box *)malloc(sizeof(struct box));
+    r_child = (struct box *)malloc(sizeof(struct box));
 
     for (i = RED; i <= BLUE; i++)
         for (j = HI; j <= LO; j++) {
@@ -942,7 +942,7 @@ find_med(struct box *ptr, int dim)
     int    *rank;
     float32 median;
 
-    rank = (int *)HDmalloc((unsigned)ptr->nmbr_distinct * sizeof(int));
+    rank = (int *)malloc((unsigned)ptr->nmbr_distinct * sizeof(int));
     for (i = 0; i < ptr->nmbr_distinct; i++)
         rank[i] = ptr->pts[i];
 
@@ -993,7 +993,7 @@ classify(struct box *ptr, struct box *child)
     int *temp;
     int  distinct, total;
 
-    temp = (int *)HDmalloc((unsigned)ptr->nmbr_distinct * sizeof(int));
+    temp = (int *)malloc((unsigned)ptr->nmbr_distinct * sizeof(int));
 
     distinct = 0;
     total    = 0;
@@ -1016,7 +1016,7 @@ classify(struct box *ptr, struct box *child)
     if (distinct > 0) {
         child->nmbr_pts      = total;
         child->nmbr_distinct = distinct;
-        child->pts           = (int *)HDmalloc((unsigned)distinct * sizeof(int));
+        child->pts           = (int *)malloc((unsigned)distinct * sizeof(int));
         for (i = 0; i < distinct; i++)
             child->pts[i] = temp[i];
     }

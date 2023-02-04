@@ -2111,7 +2111,7 @@ HIstart(void)
 
     if (cleanup_list == NULL) {
         /* allocate list to hold terminateion fcns */
-        if ((cleanup_list = HDmalloc(sizeof(Generic_list))) == NULL)
+        if ((cleanup_list = malloc(sizeof(Generic_list))) == NULL)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
         /* initialize list */
@@ -2800,7 +2800,7 @@ HIget_access_rec(void)
         accrec_free_list = accrec_free_list->next;
     } /* end if */
     else {
-        if ((ret_value = (accrec_t *)HDmalloc(sizeof(accrec_t))) == NULL)
+        if ((ret_value = (accrec_t *)malloc(sizeof(accrec_t))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
     } /* end else */
 
@@ -3344,7 +3344,7 @@ HPread_drec(int32 file_id, atom_t data_id, uint8 **drec_buf)
     if (HTPinquire(data_id, &drec_tag, &drec_ref, NULL, &drec_len) == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-    if ((*drec_buf = (uint8 *)HDmalloc(drec_len)) == NULL)
+    if ((*drec_buf = (uint8 *)malloc(drec_len)) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* get the special info header */

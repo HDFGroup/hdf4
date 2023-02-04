@@ -102,7 +102,7 @@ test_vglongnames(void)
     status = Vgetnamelen(vg1, &name_len);
     CHECK_VOID(status, FAIL, "Vgetnamelen");
 
-    vgname = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+    vgname = (char *)malloc(sizeof(char *) * (name_len + 1));
     CHECK_ALLOC(vgname, "vgname", "test_vglongnames");
 
     status = Vgetname(vg1, vgname);
@@ -116,7 +116,7 @@ test_vglongnames(void)
     status = Vgetclassnamelen(vg1, &name_len);
     CHECK_VOID(status, FAIL, "Vgetnamelen");
 
-    vgclass = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+    vgclass = (char *)malloc(sizeof(char *) * (name_len + 1));
     CHECK_ALLOC(vgclass, "vgclass", "test_vglongnames");
 
     status = Vgetclass(vg1, vgclass);
@@ -140,7 +140,7 @@ test_vglongnames(void)
     status = Vgetnamelen(vg1, &name_len);
     CHECK_VOID(status, FAIL, "Vgetnamelen");
 
-    vgname = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+    vgname = (char *)malloc(sizeof(char *) * (name_len + 1));
     CHECK_ALLOC(vgname, "vgname", "test_vglongnames");
 
     status = Vgetname(vg1, vgname);
@@ -158,7 +158,7 @@ test_vglongnames(void)
     status = Vgetclassnamelen(vg1, &name_len);
     CHECK_VOID(status, FAIL, "Vgetnamelen");
 
-    vgclass = (char *)HDmalloc(sizeof(char *) * (name_len + 1));
+    vgclass = (char *)malloc(sizeof(char *) * (name_len + 1));
     CHECK_ALLOC(vgclass, "vgclass", "test_vglongnames");
 
     status = Vgetclass(vg1, vgclass);

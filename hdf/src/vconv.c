@@ -191,7 +191,7 @@ vimakecompat(HFILEID f)
         if (buf == NULL || bsize > old_bsize) {
             if (buf != NULL)
                 HDfree((VOIDP)buf);
-            if ((buf = (uint8 *)HDmalloc(bsize)) == NULL)
+            if ((buf = (uint8 *)malloc(bsize)) == NULL)
                 HRETURN_ERROR(DFE_NOSPACE, 0);
             old_bsize = bsize;
         } /* end if */
@@ -245,7 +245,7 @@ vimakecompat(HFILEID f)
         if (buf == NULL || bsize > old_bsize) {
             if (buf != NULL)
                 HDfree((VOIDP)buf);
-            if ((buf = (uint8 *)HDmalloc(bsize)) == NULL)
+            if ((buf = (uint8 *)malloc(bsize)) == NULL)
                 HRETURN_ERROR(DFE_NOSPACE, 0);
             old_bsize = bsize;
         } /* end if */

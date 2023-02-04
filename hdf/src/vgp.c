@@ -171,7 +171,7 @@ VIget_vgroup_node(void)
         vgroup_free_list = vgroup_free_list->next;
     } /* end if */
     else {
-        if ((ret_value = (VGROUP *)HDmalloc(sizeof(VGROUP))) == NULL)
+        if ((ret_value = (VGROUP *)malloc(sizeof(VGROUP))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
     } /* end else */
 
@@ -226,7 +226,7 @@ VIget_vginstance_node(void)
         vginstance_free_list = vginstance_free_list->next;
     } /* end if */
     else {
-        if ((ret_value = (vginstance_t *)HDmalloc(sizeof(vginstance_t))) == NULL)
+        if ((ret_value = (vginstance_t *)malloc(sizeof(vginstance_t))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
     } /* end else */
 
@@ -923,8 +923,8 @@ vunpackvg(VGROUP *vg,    /* IN/OUT: */
         UINT16DECODE(bb, vg->nvelt);
 
         vg->msize = ((uintn)vg->nvelt > (uintn)MAXNVELT ? vg->nvelt : MAXNVELT);
-        vg->tag   = (uint16 *)HDmalloc(vg->msize * sizeof(uint16));
-        vg->ref   = (uint16 *)HDmalloc(vg->msize * sizeof(uint16));
+        vg->tag   = (uint16 *)malloc(vg->msize * sizeof(uint16));
+        vg->ref   = (uint16 *)malloc(vg->msize * sizeof(uint16));
 
         if ((vg->tag == NULL) || (vg->ref == NULL))
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -942,7 +942,7 @@ vunpackvg(VGROUP *vg,    /* IN/OUT: */
         if (uint16var == 0)
             vg->vgname = NULL;
         else {
-            vg->vgname = (char *)HDmalloc(uint16var + 1);
+            vg->vgname = (char *)malloc(uint16var + 1);
             HIstrncpy(vg->vgname, (char *)bb, (intn)uint16var + 1);
             bb += (size_t)uint16var;
         }
@@ -952,7 +952,7 @@ vunpackvg(VGROUP *vg,    /* IN/OUT: */
         if (uint16var == 0)
             vg->vgclass = NULL;
         else {
-            vg->vgclass = (char *)HDmalloc(uint16var + 1);
+            vg->vgclass = (char *)malloc(uint16var + 1);
             HIstrncpy(vg->vgclass, (char *)bb, (intn)uint16var + 1);
             bb += (size_t)uint16var;
         }
@@ -966,7 +966,7 @@ vunpackvg(VGROUP *vg,    /* IN/OUT: */
             if (vg->flags & VG_ATTR_SET) { /* the vg has attrs */
                 INT32DECODE(bb, vg->nattrs);
 
-                if (NULL == (vg->alist = HDmalloc(vg->nattrs * sizeof(vg_attr_t))))
+                if (NULL == (vg->alist = malloc(vg->nattrs * sizeof(vg_attr_t))))
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                 for (i = 0; i < vg->nattrs; i++) {
@@ -1015,7 +1015,7 @@ VPgetinfo(HFILEID f, /* IN: file handle */
         if (Vgbuf)
             HDfree((VOIDP)Vgbuf);
 
-        if ((Vgbuf = (uint8 *)HDmalloc(Vgbufsize)) == NULL)
+        if ((Vgbuf = (uint8 *)malloc(Vgbufsize)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
     } /* end if */
 
@@ -1112,8 +1112,8 @@ Vattach(HFILEID     f,    /* IN: file handle */
 
         /* initialize new vg */
         vg->msize = MAXNVELT;
-        vg->tag   = (uint16 *)HDmalloc(vg->msize * sizeof(uint16));
-        vg->ref   = (uint16 *)HDmalloc(vg->msize * sizeof(uint16));
+        vg->tag   = (uint16 *)malloc(vg->msize * sizeof(uint16));
+        vg->ref   = (uint16 *)malloc(vg->msize * sizeof(uint16));
 
         vg->vgname  = NULL;
         vg->vgclass = NULL;
@@ -1250,7 +1250,7 @@ Vdetach(int32 vkey /* IN: vgroup key */)
             if (Vgbuf)
                 HDfree((VOIDP)Vgbuf);
 
-            if ((Vgbuf = (uint8 *)HDmalloc(Vgbufsize)) == NULL)
+            if ((Vgbuf = (uint8 *)malloc(Vgbufsize)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
         } /* end if */
 
@@ -2080,7 +2080,7 @@ Vsetname(int32       vkey, /* IN: vgroup key */
         HDfree(vg->vgname);
 
     /* allocate space for new name */
-    vg->vgname = (char *)HDmalloc(name_len + 1);
+    vg->vgname = (char *)malloc(name_len + 1);
 
     /* check for unsuccessful allocation */
     if (vg->vgname == NULL)
@@ -2149,7 +2149,7 @@ Vsetclass(int32       vkey, /* IN: vgroup key */
         HDfree(vg->vgclass);
 
     /* allocate space for new name */
-    vg->vgclass = (char *)HDmalloc(classname_len + 1);
+    vg->vgclass = (char *)malloc(classname_len + 1);
 
     /* check for unsuccessful allocation */
     if (vg->vgclass == NULL)

@@ -265,7 +265,7 @@ VSread(int32 vkey,  /* IN: vdata key */
             Vtbufsize = (size_t)chunk * (size_t)hsize;
             if (Vtbuf)
                 HDfree(Vtbuf);
-            if ((Vtbuf = (uint8 *)HDmalloc(Vtbufsize)) == NULL)
+            if ((Vtbuf = (uint8 *)malloc(Vtbufsize)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
         }
 
@@ -337,7 +337,7 @@ VSread(int32 vkey,  /* IN: vdata key */
             Vtbufsize = (size_t)nelt * (size_t)hsize;
             if (Vtbuf)
                 HDfree(Vtbuf);
-            if ((Vtbuf = (uint8 *)HDmalloc(Vtbufsize)) == NULL)
+            if ((Vtbuf = (uint8 *)malloc(Vtbufsize)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
         }
 
@@ -577,7 +577,7 @@ VSwrite(int32       vkey,  /* IN: vdata key */
             Vtbufsize = (size_t)chunk * (size_t)hdf_size;
             if (Vtbuf)
                 HDfree(Vtbuf);
-            if ((Vtbuf = (uint8 *)HDmalloc(Vtbufsize)) == NULL)
+            if ((Vtbuf = (uint8 *)malloc(Vtbufsize)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
         }
 
@@ -643,7 +643,7 @@ VSwrite(int32       vkey,  /* IN: vdata key */
             Vtbufsize = (uint32)total_bytes;
             if (Vtbuf)
                 HDfree(Vtbuf);
-            if ((Vtbuf = (uint8 *)HDmalloc(Vtbufsize)) == NULL)
+            if ((Vtbuf = (uint8 *)malloc(Vtbufsize)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
         }
 

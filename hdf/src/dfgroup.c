@@ -92,11 +92,11 @@ DFdiread(int32 file_id, uint16 tag, uint16 ref)
         HRETURN_ERROR(DFE_INTERNAL, FAIL);
 
     /* allocate a new structure to hold the group */
-    new_list = (DIlist_ptr)HDmalloc((uint32)sizeof(DIlist));
+    new_list = (DIlist_ptr)malloc((uint32)sizeof(DIlist));
     if (!new_list)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-    new_list->DIlist = (uint8 *)HDmalloc((uint32)length);
+    new_list->DIlist = (uint8 *)malloc((uint32)length);
     if (!new_list->DIlist) {
         HDfree((VOIDP)new_list);
         HRETURN_ERROR(DFE_NOSPACE, FAIL)
@@ -192,12 +192,12 @@ DFdisetup(int maxsize)
 {
     DIlist_ptr new_list;
 
-    new_list = (DIlist_ptr)HDmalloc((uint32)sizeof(DIlist));
+    new_list = (DIlist_ptr)malloc((uint32)sizeof(DIlist));
 
     if (!new_list)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-    new_list->DIlist = (uint8 *)HDmalloc((uint32)(maxsize * 4));
+    new_list->DIlist = (uint8 *)malloc((uint32)(maxsize * 4));
     if (!new_list->DIlist) {
         HDfree((VOIDP)new_list);
         HRETURN_ERROR(DFE_NOSPACE, FAIL)

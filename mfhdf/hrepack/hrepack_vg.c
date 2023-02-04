@@ -53,7 +53,7 @@ copy_vgroup_attrs(int32 vg_in, int32 vg_out, char *path, options_t *options)
             printf("Failed to get attribute %d of <%s>\n", i, path);
             continue;
         }
-        if ((buf = (char *)HDmalloc((size_t)(size * n_values))) == NULL) {
+        if ((buf = (char *)malloc((size_t)(size * n_values))) == NULL) {
             printf("Failed to get memory for attribute %d of <%s>\n", i, path);
             continue;
         }

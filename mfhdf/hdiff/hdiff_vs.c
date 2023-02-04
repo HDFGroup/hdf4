@@ -218,8 +218,8 @@ vdata_cmp(int32 vs1, int32 vs2, char *gname, char *cname, diff_opt_t *opt)
 
     /* compare the data */
 
-    buf1 = (uint8 *)HDmalloc((unsigned)(nv1 * vsize1));
-    buf2 = (uint8 *)HDmalloc((unsigned)(nv2 * vsize2));
+    buf1 = (uint8 *)malloc((unsigned)(nv1 * vsize1));
+    buf2 = (uint8 *)malloc((unsigned)(nv2 * vsize2));
     if (!buf1 || !buf2) {
         printf("Out of memory!");
         opt->err_stat = 1;

@@ -113,7 +113,7 @@ parse_dumpvd_opts(dump_info_t *dumpvd_opts, intn *curr_arg, intn argc, char *arg
                         lastItem = 1;
                     else
                         *tempPtr = '\0';
-                    flds_chosen[i] = (char *)HDmalloc(sizeof(char) * (HDstrlen(ptr) + 1));
+                    flds_chosen[i] = (char *)malloc(sizeof(char) * (HDstrlen(ptr) + 1));
                     CHECK_ALLOC(flds_chosen[i], "flds_chosen[i]", "parse_dumpvd_opts");
 
                     /*

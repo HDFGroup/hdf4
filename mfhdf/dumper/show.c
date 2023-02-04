@@ -73,7 +73,7 @@ dumpvd(int32 vd, file_format_t ff, int data_only, FILE *fp, char separator[2], i
 
     done = 0;
     /* Allocate space for the buffer and terminate hdp if allocation fails. */
-    bb = (uint8 *)HDmalloc(bufsize);
+    bb = (uint8 *)malloc(bufsize);
     CHECK_ALLOC(bb, "bb", "dumpvd");
 
     if (FAIL == VSsetfields(vd, fields)) {
@@ -232,7 +232,7 @@ dumpvd(int32 vd, file_format_t ff, int data_only, FILE *fp, char separator[2], i
                 intn extfile_namelen = VSgetexternalfile(vd, 0, NULL, NULL);
                 if (extfile_namelen > 0) {
                     char *extfile_name = NULL;
-                    extfile_name       = (char *)HDmalloc(sizeof(char *) * (extfile_namelen + 1));
+                    extfile_name       = (char *)malloc(sizeof(char *) * (extfile_namelen + 1));
                     CHECK_ALLOC(extfile_name, "extfile_name", "dumpvd");
 
                     /* Get the external file info, we don't need offset here */
@@ -358,7 +358,7 @@ dumpvd(int32 vd, file_format_t ff, int data_only, FILE *fp, char separator[2], i
                 intn extfile_namelen = VSgetexternalfile(vd, 0, NULL, NULL);
                 if (extfile_namelen > 0) {
                     char *extfile_name = NULL;
-                    extfile_name       = (char *)HDmalloc(sizeof(char *) * (extfile_namelen + 1));
+                    extfile_name       = (char *)malloc(sizeof(char *) * (extfile_namelen + 1));
                     CHECK_ALLOC(extfile_name, "extfile_name", "dumpvd");
 
                     /* Get the external file info, we don't need offset here */
@@ -500,7 +500,7 @@ dumpattr(int32 vid, int32 findex, intn isvs, file_format_t ff, FILE *fp)
 
         /* we have two buffer sizes? */
         if (e_size > BUFFER) {
-            if (NULL == (buf = HDmalloc(e_size))) {
+            if (NULL == (buf = malloc(e_size))) {
                 fprintf(stderr, ">>>dumpattr:can't allocate buf for %d'th attribute.\n", i);
                 ret_value = FAIL;
                 goto done; /* do we want exit here? */

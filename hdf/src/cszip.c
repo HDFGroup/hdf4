@@ -176,7 +176,7 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
             old_way    = 1;
             good_bytes = in_length;
             in_length  = in_length + 5;
-            if ((in_buffer = (uint8 *)HDmalloc(in_length)) == NULL)
+            if ((in_buffer = (uint8 *)malloc(in_length)) == NULL)
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
             cp  = in_buffer;
             *cp = 0;
@@ -186,7 +186,7 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
         else {
             /*  V4.2r1: in_length is correct */
             old_way = 0;
-            if ((in_buffer = (uint8 *)HDmalloc(in_length)) == NULL)
+            if ((in_buffer = (uint8 *)malloc(in_length)) == NULL)
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
         }
 
@@ -196,7 +196,7 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
             bytes_per_pixel++;
 
         out_length = szip_info->pixels * bytes_per_pixel;
-        if ((out_buffer = (uint8 *)HDmalloc(out_length)) == NULL)
+        if ((out_buffer = (uint8 *)malloc(out_length)) == NULL)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
         /* Read the unompressed data */
@@ -366,7 +366,7 @@ HCIcszip_encode(compinfo_t *info, int32 length, const uint8 *buf)
             bytes_per_pixel = 4;
 
         buffer_size = szip_info->pixels * bytes_per_pixel;
-        if ((szip_info->buffer = HDmalloc(buffer_size)) == NULL)
+        if ((szip_info->buffer = malloc(buffer_size)) == NULL)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
         szip_info->buffer_size = buffer_size;
@@ -483,7 +483,7 @@ HCIcszip_term(compinfo_t *info)
        but there isn't any way to prevent it from getting here */
     if (out_buffer_size < 1024)
         out_buffer_size = 1024;
-    if ((out_buffer = HDmalloc(out_buffer_size)) == NULL)
+    if ((out_buffer = malloc(out_buffer_size)) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     /* set params */
@@ -564,7 +564,7 @@ HCIcszip_term(compinfo_t *info)
         /* need to have enough data to overwrite the existing data */
         /* allocate a buffer, fill in the good data. The rest must be
             zeroes */
-        if ((ob = HDmalloc(current_size)) == NULL)
+        if ((ob = malloc(current_size)) == NULL)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
         *ob = 0; /* data needs to be decompressed */
         cp  = ob;
@@ -761,7 +761,7 @@ HCPcszip_seek(accrec_t *access_rec, int32 offset, int origin)
             HRETURN_ERROR(DFE_CINIT, FAIL);
     } /* end if */
 
-    if ((tmp_buf = (uint8 *)HDmalloc(TMP_BUF_SIZE)) == NULL) /* get tmp buffer */
+    if ((tmp_buf = (uint8 *)malloc(TMP_BUF_SIZE)) == NULL) /* get tmp buffer */
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     while (szip_info->offset + TMP_BUF_SIZE < offset) /* grab chunks */

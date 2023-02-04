@@ -84,9 +84,9 @@ DFputcomp(int32 file_id, uint16 tag, uint16 ref, const uint8 *image, int32 xdim,
             crowsize = xdim * 121 / 120 + 128;
 
             /* allocate buffer for compression */
-            buffer = (uint8 *)HDmalloc((uint32)cisize);
+            buffer = (uint8 *)malloc((uint32)cisize);
             if (!buffer) {
-                buffer = (uint8 *)HDmalloc((uint32)crowsize);
+                buffer = (uint8 *)malloc((uint32)crowsize);
                 if (!buffer)
                     HRETURN_ERROR(DFE_NOSPACE, FAIL);
                 buftype = 2; /* compress and write out row by row */
@@ -137,7 +137,7 @@ DFputcomp(int32 file_id, uint16 tag, uint16 ref, const uint8 *image, int32 xdim,
                 HRETURN_ERROR(DFE_ARGS, FAIL);
             cisize = xdim * ydim / 4; /* IMCOMP always cuts to 1/4 */
 
-            buffer = (uint8 *)HDmalloc((uint32)cisize);
+            buffer = (uint8 *)malloc((uint32)cisize);
             if (!buffer)
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
@@ -209,9 +209,9 @@ DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim, int32
         case DFTAG_RLE:
             crowsize = xdim * 121 / 120 + 128; /* max size of a row */
 
-            buffer = (uint8 *)HDmalloc((uint32)cisize);
+            buffer = (uint8 *)malloc((uint32)cisize);
             if (!buffer) {
-                buffer = (uint8 *)HDmalloc((uint32)crowsize);
+                buffer = (uint8 *)malloc((uint32)crowsize);
                 if (!buffer) {
                     Hendaccess(aid);
                     HRETURN_ERROR(DFE_NOSPACE, FAIL)
@@ -257,9 +257,9 @@ DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim, int32
         case DFTAG_IMC:
             crowsize = xdim; /* size of compressed row */
 
-            buffer = (uint8 *)HDmalloc((uint32)cisize);
+            buffer = (uint8 *)malloc((uint32)cisize);
             if (!buffer) {
-                buffer = (uint8 *)HDmalloc((uint32)crowsize);
+                buffer = (uint8 *)malloc((uint32)crowsize);
                 if (!buffer) {
                     Hendaccess(aid);
                     HRETURN_ERROR(DFE_NOSPACE, FAIL)
