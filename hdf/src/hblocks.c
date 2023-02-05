@@ -722,7 +722,7 @@ HLIstaccess(accrec_t *access_rec, int16 acc_mode)
 
 done:
     if (ret_value == FAIL)
-            free(access_rec->special_info);
+        free(access_rec->special_info);
 
     return ret_value;
 } /* HLIstaccess */

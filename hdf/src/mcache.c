@@ -698,8 +698,7 @@ mcache_bkt(MCACHE *mp /* IN: MCACHE cookie */)
         } /* end if bp->flags */
 
     /* create a new page */
-    new : if ((bp = (BKT *)malloc(sizeof(BKT) + (uintn)mp->pagesize)) == NULL)
-              HGOTO_ERROR(DFE_NOSPACE, FAIL);
+    new : if ((bp = (BKT *)malloc(sizeof(BKT) + (uintn)mp->pagesize)) == NULL) HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
 #ifdef STATISTICS
     ++mp->pagealloc;

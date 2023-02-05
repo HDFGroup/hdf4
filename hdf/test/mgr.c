@@ -2738,12 +2738,11 @@ test_mgr_image_b2b1(int flag)
                 int32 start[2];
                 int32 stride[2];
 
-                img_data =
-                    malloc((size_t)(dimsizes[0] * dimsizes[1] * ncomp * DFKNTsize(nt | DFNT_NATIVE)));
+                img_data = malloc((size_t)(dimsizes[0] * dimsizes[1] * ncomp * DFKNTsize(nt | DFNT_NATIVE)));
                 CHECK_VOID(img_data, NULL, "malloc");
 
                 memset(img_data, 0,
-                         (size_t)(dimsizes[0] * dimsizes[1] * ncomp * DFKNTsize(nt | DFNT_NATIVE)));
+                       (size_t)(dimsizes[0] * dimsizes[1] * ncomp * DFKNTsize(nt | DFNT_NATIVE)));
 
                 start[0] = start[1] = 0;
                 stride[0] = stride[1] = 1;
@@ -3091,16 +3090,14 @@ test_mgr_interlace(int flag)
             for (j = (intn)MFGR_INTERLACE_PIXEL; j <= (intn)MFGR_INTERLACE_COMPONENT; j++) {
                 VOIDP pixel_buf;
 
-                img_data =
-                    malloc((size_t)(dimsizes[0] * dimsizes[1] * ncomp * DFKNTsize(nt | DFNT_NATIVE)));
+                img_data = malloc((size_t)(dimsizes[0] * dimsizes[1] * ncomp * DFKNTsize(nt | DFNT_NATIVE)));
                 CHECK_VOID(img_data, NULL, "malloc");
 
-                pixel_buf =
-                    malloc((size_t)(dimsizes[0] * dimsizes[1] * ncomp * DFKNTsize(nt | DFNT_NATIVE)));
+                pixel_buf = malloc((size_t)(dimsizes[0] * dimsizes[1] * ncomp * DFKNTsize(nt | DFNT_NATIVE)));
                 CHECK_VOID(pixel_buf, NULL, "malloc");
 
                 memset(img_data, 0,
-                         (size_t)(dimsizes[0] * dimsizes[1] * ncomp * DFKNTsize(nt | DFNT_NATIVE)));
+                       (size_t)(dimsizes[0] * dimsizes[1] * ncomp * DFKNTsize(nt | DFNT_NATIVE)));
 
                 ret = GRreqimageil(riid, j);
                 CHECK_VOID(ret, FAIL, "GRreqimageil");
@@ -3111,9 +3108,9 @@ test_mgr_interlace(int flag)
                 CHECK_VOID(ret, FAIL, "GRreadimage");
 
                 GRIil_convert(image, MFGR_INTERLACE_PIXEL, pixel_buf, (gr_interlace_t)j, dimsizes, ncomp, nt);
-                if (0 != memcmp(img_data, pixel_buf,
-                                  (size_t)(dimsizes[XDIM] * dimsizes[YDIM] * ncomp *
-                                           DFKNTsize(nt | DFNT_NATIVE)))) {
+                if (0 !=
+                    memcmp(img_data, pixel_buf,
+                           (size_t)(dimsizes[XDIM] * dimsizes[YDIM] * ncomp * DFKNTsize(nt | DFNT_NATIVE)))) {
                     MESSAGE(3, printf("Error reading data for image %d, j=%d\n", i, j););
                     num_errs++;
                 }
@@ -3269,7 +3266,7 @@ test_mgr_lut_a(int flag)
             GRIil_convert(pal_data, MFGR_INTERLACE_PIXEL, pixel_buf, (gr_interlace_t)j, dimsizes2, pal_ncomp,
                           pal_nt);
             if (0 != memcmp(tmp_data, pixel_buf,
-                              (size_t)(pal_entries * pal_ncomp * DFKNTsize(pal_nt | DFNT_NATIVE)))) {
+                            (size_t)(pal_entries * pal_ncomp * DFKNTsize(pal_nt | DFNT_NATIVE)))) {
                 MESSAGE(3, printf("Error reading data for palette j=%d\n", j););
                 num_errs++;
             }

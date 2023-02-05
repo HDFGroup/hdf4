@@ -537,8 +537,8 @@ HCIcszip_term(compinfo_t *info)
         szip_info->szip_dirty = SZIP_CLEAN;
         free(out_buffer);
         if (szip_info->buffer_size == 0) {
-                free(szip_info->buffer);
-                szip_info->buffer = NULL;
+            free(szip_info->buffer);
+            szip_info->buffer = NULL;
         }
         return (SUCCEED);
     }

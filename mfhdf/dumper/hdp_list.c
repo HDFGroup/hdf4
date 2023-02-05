@@ -984,9 +984,9 @@ do_list(intn curr_arg, intn argc, char *argv[], intn help)
                                        s, o_info->tag);
                                 last_tag = o_info->tag;
                                 printf("\tRef nos: ");
-                                free(s); /* free tagname string */
-                                s = NULL;  /* reset */
-                            }              /* end if */
+                                free(s);  /* free tagname string */
+                                s = NULL; /* reset */
+                            }             /* end if */
                             printf("%d ", o_info->ref);
                         } /* end if */
 

@@ -331,8 +331,8 @@ typedef intptr_t hdf_pint_t;
 /* Macro to free space and clear pointer to NULL */
 #define HDfreenclear(p)                                                                                      \
     {                                                                                                        \
-        free(p);                                                                                       \
-        (p) = NULL;                                                                                            \
+        free(p);                                                                                             \
+        (p) = NULL;                                                                                          \
     }
 
 /**************************************************************************

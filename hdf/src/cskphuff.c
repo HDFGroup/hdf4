@@ -164,8 +164,7 @@ HCIcskphuff_init(accrec_t *access_rec, uintn alloc_buf)
 
     if (alloc_buf == TRUE) {
         /* allocate pointers to the compression buffers */
-        if ((skphuff_info->left = (uintn **)malloc(sizeof(uintn *) * (uintn)skphuff_info->skip_size)) ==
-            NULL)
+        if ((skphuff_info->left = (uintn **)malloc(sizeof(uintn *) * (uintn)skphuff_info->skip_size)) == NULL)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
         if ((skphuff_info->right = (uintn **)malloc(sizeof(uintn *) * (uintn)skphuff_info->skip_size)) ==
             NULL)

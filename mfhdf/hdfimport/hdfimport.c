@@ -3193,13 +3193,11 @@ init_scales(struct Input *in)
 
         case 1: /* 64-bit float */
 
-            if ((in->fp64s.hscale = (float64 *)malloc((size_t)(in->dims[0] + 1) * sizeof(float64))) ==
-                NULL) {
+            if ((in->fp64s.hscale = (float64 *)malloc((size_t)(in->dims[0] + 1) * sizeof(float64))) == NULL) {
                 (void)fprintf(stderr, "%s", err1);
                 goto err;
             }
-            if ((in->fp64s.vscale = (float64 *)malloc((size_t)(in->dims[1] + 1) * sizeof(float64))) ==
-                NULL) {
+            if ((in->fp64s.vscale = (float64 *)malloc((size_t)(in->dims[1] + 1) * sizeof(float64))) == NULL) {
                 (void)fprintf(stderr, "%s", err1);
                 goto err;
             }
@@ -3221,8 +3219,7 @@ init_scales(struct Input *in)
                 goto err;
             }
             if (in->rank == 3) {
-                if ((in->in32s.dscale = (int32 *)malloc((size_t)(in->dims[2] + 1) * sizeof(int32))) ==
-                    NULL) {
+                if ((in->in32s.dscale = (int32 *)malloc((size_t)(in->dims[2] + 1) * sizeof(int32))) == NULL) {
                     (void)fprintf(stderr, "%s", err1);
                     goto err;
                 }
@@ -3239,8 +3236,7 @@ init_scales(struct Input *in)
                 goto err;
             }
             if (in->rank == 3) {
-                if ((in->in16s.dscale = (int16 *)malloc((size_t)(in->dims[2] + 1) * sizeof(int16))) ==
-                    NULL) {
+                if ((in->in16s.dscale = (int16 *)malloc((size_t)(in->dims[2] + 1) * sizeof(int16))) == NULL) {
                     (void)fprintf(stderr, "%s", err1);
                     goto err;
                 }
