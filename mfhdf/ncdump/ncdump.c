@@ -270,9 +270,6 @@ fixstr(char *str, bool fix_str)
 
 static void
 do_ncdump(char *path, struct fspec *specp)
-/*     char *path;
-     struct fspec* specp;
-*/
 {
     int          ndims;       /* number of dimensions */
     int          nvars;       /* number of variables */
@@ -330,8 +327,7 @@ do_ncdump(char *path, struct fspec *specp)
             (void)ncdiminq(ncid, dimid, dims[dimid].name, &dims[dimid].size);
             fixed_str = fixstr(dims[dimid].name, specp->fix_str);
 
-            if (!fixed_str && dims[dimid].name) {
-                /* strdup(3) failed */
+            if (fixed_str == NULL) {
                 (void)ncclose(ncid);
                 return;
             }
@@ -354,8 +350,7 @@ do_ncdump(char *path, struct fspec *specp)
         (void)ncvarinq(ncid, varid, var.name, &var.type, &var.ndims, var.dims, &var.natts);
         fixed_var = fixstr(var.name, specp->fix_str);
 
-        if (!fixed_var && var.name) {
-            /* strdup(3) failed */
+        if (fixed_var == NULL) {
             (void)ncclose(ncid);
             return;
         }
@@ -368,8 +363,7 @@ do_ncdump(char *path, struct fspec *specp)
         for (id = 0; id < var.ndims; id++) {
             char *fixed_dim = fixstr(dims[var.dims[id]].name, specp->fix_str);
 
-            if (!fixed_dim && dims[var.dims[id]].name) {
-                /* strdup(3) failed */
+            if (fixed_dim == NULL) {
                 (void)ncclose(ncid);
                 free(fixed_var);
                 return;

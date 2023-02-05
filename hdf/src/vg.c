@@ -506,8 +506,7 @@ VSsetname(int32       vkey, /* IN: Vdata key */
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
     /* get current length of vdata name */
-    if (vs->vsname != NULL)
-        curr_len = HDstrlen(vs->vsname);
+    curr_len = strnlen(vs->vsname, VSNAMELENMAX + 1);
 
     /* check length of new name against MAX length */
     if ((slen = HDstrlen(vsname)) > VSNAMELENMAX) { /* truncate name */
@@ -1315,7 +1314,7 @@ vscheckclass(int32 id, /* IN: vgroup id or file id */
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
     /* Make sure this vdata has a class name before checking */
-    if (vs->vsclass != NULL && HDstrlen(vs->vsclass) != 0) {
+    if (strnlen(vs->vsclass, VSNAMELENMAX + 1) != 0) {
         /* If user-created vdatas are being checked for, then set flag
            if this vdata is not internally created by the library */
         if (vsclass == NULL) {
