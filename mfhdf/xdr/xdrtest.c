@@ -111,9 +111,6 @@ main(int ac, char *av[])
     static encount encounts[5] = {ZERO_E, ONE_E, TWO_E, THREE_E, FOUR_E};
     encount       *ep, got_ep[5];
 
-#ifdef MDEBUG
-    malloc_debug(2);
-#endif
     fname = TESTFILE;
     if (ac > 1) {
         fname = av[1];
@@ -124,7 +121,7 @@ main(int ac, char *av[])
     F = fopen(fname, "wb");
     if (F == NULL) {
         perror("fopen failed");
-        exit(-1);
+        exit(EXIT_FAILURE);
     }
 
     /* fill the file so seeks will work even on non-virtual machines */
@@ -305,5 +302,5 @@ main(int ac, char *av[])
     putchar('\n');
     xdr_assert(poses[jj++] = xdr_getpos(xdrs));
 
-    exit(0);
+    exit(EXIT_SUCCESS);
 }

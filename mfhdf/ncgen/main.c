@@ -54,10 +54,6 @@ main(int argc, char *argv[])
     setlocale(LC_CTYPE, "");
 #endif
 
-#ifdef MDEBUG
-    malloc_debug(2); /* helps find malloc/free errors on Sun */
-#endif               /* MDEBUG */
-
     opterr   = 1; /* print error message if bad option */
     progname = argv[0];
     cdlname  = "-";
