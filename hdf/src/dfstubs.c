@@ -1194,9 +1194,9 @@ DF *dfile;
         CKMALLOC(dle, NULL);
         p->next   = dle; /* insert dle at end of list */
         dle->next = NULL;
-        HDmemcpy((char *)&dle->ddh, (char *)&ddh, sizeof(DFddh));
+        memcpy((char *)&dle->ddh, (char *)&ddh, sizeof(DFddh));
         for (j = 0; j < ddh.dds; j++)
-            HDmemcpy((char *)&dle->dd[j], (char *)&dd, sizeof(DFdd));
+            memcpy((char *)&dle->dd[j], (char *)&dd, sizeof(DFdd));
         return (&(dle->dd[0]));
     }
     return (NULL); /* dummy, for return value checking */

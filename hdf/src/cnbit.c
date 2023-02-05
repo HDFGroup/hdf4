@@ -334,7 +334,7 @@ HCIcnbit_decode(compinfo_t *info, int32 length, uint8 *buf)
         copy_length =
             (intn)((length > (buf_size - nbit_info->buf_pos)) ? (buf_size - nbit_info->buf_pos) : length);
 
-        HDmemcpy(buf, &(nbit_info->buffer[nbit_info->buf_pos]), copy_length);
+        memcpy(buf, &(nbit_info->buffer[nbit_info->buf_pos]), copy_length);
 
         buf += copy_length;
         length -= copy_length;

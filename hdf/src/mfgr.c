@@ -1330,7 +1330,7 @@ GRIil_convert(const void *inbuf, gr_interlace_t inil, void *outbuf, gr_interlace
     intn         i, j, k;              /* local counting variables */
 
     if (inil == outil) /* check for trivial input=output 'conversion' */
-        HDmemcpy(outbuf, inbuf, (size_t)dims[XDIM] * (size_t)dims[YDIM] * (size_t)pixel_size);
+        memcpy(outbuf, inbuf, (size_t)dims[XDIM] * (size_t)dims[YDIM] * (size_t)pixel_size);
     else {
         /* allocate pixel pointer arrays */
         if ((in_comp_ptr = malloc(sizeof(void *) * (size_t)ncomp)) == NULL)
@@ -1416,7 +1416,7 @@ GRIil_convert(const void *inbuf, gr_interlace_t inil, void *outbuf, gr_interlace
         for (i = 0; i < dims[YDIM]; i++) {
             for (j = 0; j < dims[XDIM]; j++) {
                 for (k = 0; k < ncomp; k++) {
-                    HDmemcpy(out_comp_ptr[k], in_comp_ptr[k], comp_size);
+                    memcpy(out_comp_ptr[k], in_comp_ptr[k], comp_size);
                     out_comp_ptr[k] = ((uint8 *)out_comp_ptr[k]) + out_pixel_add[k];
                     in_comp_ptr[k]  = ((const uint8 *)in_comp_ptr[k]) + in_pixel_add[k];
                 } /* end for */
@@ -3188,7 +3188,7 @@ GRreadimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], void
         GRIil_convert(data, MFGR_INTERLACE_PIXEL, pixel_buf, ri_ptr->im_il, count, ri_ptr->img_dim.ncomps,
                       ri_ptr->img_dim.nt);
 
-        HDmemcpy(data, pixel_buf, pixel_mem_size * (size_t)count[XDIM] * (size_t)count[YDIM]);
+        memcpy(data, pixel_buf, pixel_mem_size * (size_t)count[XDIM] * (size_t)count[YDIM]);
 
         free(pixel_buf);
     } /* end if */
@@ -3797,7 +3797,7 @@ GRreadlut(int32 lutid, void *data)
         GRIil_convert(data, MFGR_INTERLACE_PIXEL, pixel_buf, ri_ptr->lut_il, count, ri_ptr->lut_dim.ncomps,
                       ri_ptr->lut_dim.nt);
 
-        HDmemcpy(data, pixel_buf, pixel_mem_size * (size_t)ri_ptr->lut_dim.xdim);
+        memcpy(data, pixel_buf, pixel_mem_size * (size_t)ri_ptr->lut_dim.xdim);
 
         free(pixel_buf);
     } /* end if */
@@ -4017,7 +4017,7 @@ GRsetcompress(int32 riid, comp_coder_t comp_type, comp_info *cinfo)
     /* clear error stack and check validity of args */
     HEclear();
 
-    HDmemcpy(&cinfo_x, cinfo, sizeof(comp_info));
+    memcpy(&cinfo_x, cinfo, sizeof(comp_info));
     /* check the validity of the RI ID */
     if (HAatom_group(riid) != RIIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -4077,7 +4077,7 @@ GRsetcompress(int32 riid, comp_coder_t comp_type, comp_info *cinfo)
     /* Todo: Application may send in COMP_CODE_NONE -BMR 9/2010 */
 
     /* Store compression parameters */
-    HDmemcpy(&(ri_ptr->cinfo), &cinfo_x, sizeof(comp_info));
+    memcpy(&(ri_ptr->cinfo), &cinfo_x, sizeof(comp_info));
 
     /* Mark the image as needing to be a buffered special element */
     ri_ptr->use_buf_drvr = 1;
@@ -4504,7 +4504,7 @@ GRsetattr(int32 id, const char *name, int32 attr_nt, int32 count, const void *da
                 if ((at_ptr->data = malloc(new_at_size)) == NULL)
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
             } /* end if */
-            HDmemcpy(at_ptr->data, data, new_at_size);
+            memcpy(at_ptr->data, data, new_at_size);
 
             /* Update in-memory fields */
             at_ptr->len           = count;
@@ -4533,7 +4533,7 @@ GRsetattr(int32 id, const char *name, int32 attr_nt, int32 count, const void *da
             /* allocate space for the attribute name & copy it */
             if ((at_ptr->data = (char *)malloc(at_size)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
-            HDmemcpy(at_ptr->data, data, at_size);
+            memcpy(at_ptr->data, data, at_size);
             at_ptr->data_modified = TRUE;
             at_ptr->ref           = DFREF_WILDCARD;
         }      /* end if */
@@ -4744,7 +4744,7 @@ GRgetattr(int32 id, int32 index, void *data)
     } /* end if */
 
     /* Copy the attribute into the user's buffer */
-    HDmemcpy(data, at_ptr->data, at_size);
+    memcpy(data, at_ptr->data, at_size);
 
     /* If the attribute is too large to keep in memory, chuck it again */
     if ((uint32)at_size > gr_ptr->attr_cache)
@@ -5207,7 +5207,7 @@ GRsetchunk(int32         riid,      /* IN: raster access id */
             else
 #ifdef H4_HAVE_LIBSZ /* we have the library */
             {
-                HDmemcpy(&cinfo, &(cdef->comp.cinfo), sizeof(comp_info));
+                memcpy(&cinfo, &(cdef->comp.cinfo), sizeof(comp_info));
                 if (GRsetup_szip_parms(ri_ptr, &cinfo, cdims) == FAIL)
                     HGOTO_ERROR(DFE_INTERNAL, FAIL);
                 chunk[0].cinfo = &cinfo;
@@ -5841,7 +5841,7 @@ GRreadchunk(int32  riid,   /* IN: access aid to GR */
                                               info_block.cdims, ri_ptr->img_dim.ncomps, ri_ptr->img_dim.nt))
                         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-                    HDmemcpy(datap, pixel_buf, pixel_mem_size * csize);
+                    memcpy(datap, pixel_buf, pixel_mem_size * csize);
 
                     free(pixel_buf);
                 } /* end if */

@@ -328,7 +328,7 @@ get_RIindex_list(int32 gr_id, dump_info_t *dumpgr_opts,
        in the array gr_chosen */
     if (filter & DINDEX)
         for (i = 0; i < dumpgr_opts->by_index.num_items; i++) {
-            /* Note: Don't replace this with HDmemcpy unless you change the
+            /* Note: Don't replace this with memcpy unless you change the
                sizes of the objects correctly -QAK */
             (*gr_chosen)[ri_count] = dumpgr_opts->by_index.num_list[i];
             ri_count++;

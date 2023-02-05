@@ -302,7 +302,7 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
         INT32DECODE(b, dummy);   /* rfuD */
         INT32DECODE(b, dummy);   /* nextEndRecs */
 
-        HDmemcpy(name, b, CDF_VAR_NAME_LEN);
+        memcpy(name, b, CDF_VAR_NAME_LEN);
         name[CDF_VAR_NAME_LEN] = '\0';
         b += CDF_VAR_NAME_LEN;
 
@@ -483,7 +483,7 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
         INT32DECODE(b, dummy);    /* rfuD */
         INT32DECODE(b, dummy);    /* nextEndRecs */
 
-        HDmemcpy(name, b, CDF_VAR_NAME_LEN);
+        memcpy(name, b, CDF_VAR_NAME_LEN);
         name[CDF_VAR_NAME_LEN] = '\0';
         b += CDF_VAR_NAME_LEN;
 
@@ -652,7 +652,7 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
         INT32DECODE(b, dummy);    /* MaxZ */
         INT32DECODE(b, dummy);    /* rfuE */
 
-        HDmemcpy(name, b, CDF_ATTR_NAME_LEN);
+        memcpy(name, b, CDF_ATTR_NAME_LEN);
         name[CDF_ATTR_NAME_LEN] = '\0';
 
 #ifdef DEBUG

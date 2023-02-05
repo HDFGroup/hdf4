@@ -412,7 +412,7 @@ make_obj_list(int32 fid, uint32 options)
                         obj_ret->raw_obj_arr[n].is_special = 0;
                     }
                     else
-                        HDmemcpy(obj_ret->raw_obj_arr[n].spec_info, &info, sizeof(sp_info_block_t));
+                        memcpy(obj_ret->raw_obj_arr[n].spec_info, &info, sizeof(sp_info_block_t));
                 } /* end else */
             }     /* end if */
         }         /* end if */

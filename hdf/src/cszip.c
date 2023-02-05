@@ -233,20 +233,20 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
         if (in_buffer[0] == 1) {
             /* This byte means the data was not compressed -- just copy out */
             szip_info->szip_state = SZIP_RUN;
-            HDmemcpy(out_buffer, in_buffer + 5, good_bytes);
+            memcpy(out_buffer, in_buffer + 5, good_bytes);
             szip_info->buffer      = out_buffer;
             szip_info->buffer_pos  = 0;
             szip_info->buffer_size = good_bytes;
             szip_info->offset      = 0;
             if (good_bytes > length) {
                 /* partial read */
-                HDmemcpy(buf, in_buffer + 5, length);
+                memcpy(buf, in_buffer + 5, length);
                 szip_info->buffer_pos += length;
                 szip_info->buffer_size -= length;
             }
             else {
                 /* read the whole data block to the user buffer */
-                HDmemcpy(buf, in_buffer + 5, good_bytes);
+                memcpy(buf, in_buffer + 5, good_bytes);
                 szip_info->buffer_pos += good_bytes;
                 szip_info->buffer_size -= good_bytes;
             }
@@ -296,7 +296,7 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
         return (FAIL);
     }
 
-    HDmemcpy(buf, szip_info->buffer + szip_info->buffer_pos, length);
+    memcpy(buf, szip_info->buffer + szip_info->buffer_pos, length);
     szip_info->buffer_pos += length;
     szip_info->buffer_size -= length;
     szip_info->offset = szip_info->buffer_pos;
@@ -367,7 +367,7 @@ HCIcszip_encode(compinfo_t *info, int32 length, const uint8 *buf)
     }
 
     /* copy the data into the buffer.  This will be written in 'term' function */
-    HDmemcpy(szip_info->buffer + szip_info->buffer_pos, buf, length);
+    memcpy(szip_info->buffer + szip_info->buffer_pos, buf, length);
     szip_info->buffer_pos += length;
     szip_info->buffer_size -= length;
     szip_info->offset     = szip_info->buffer_pos;
@@ -499,7 +499,7 @@ HCIcszip_term(compinfo_t *info)
             cp          = out_buffer;
             cp++;
             INT32ENCODE(cp, szip_info->buffer_pos);
-            HDmemcpy((out_buffer + 5), szip_info->buffer, szip_info->buffer_pos);
+            memcpy((out_buffer + 5), szip_info->buffer, szip_info->buffer_pos);
             free(out_buffer);
             szip_info->szip_dirty = SZIP_CLEAN;
 
@@ -532,7 +532,7 @@ HCIcszip_term(compinfo_t *info)
         cp          = out_buffer;
         cp++;
         INT32ENCODE(cp, szip_info->buffer_pos);
-        HDmemcpy((out_buffer + 5), szip_info->buffer, szip_info->buffer_pos);
+        memcpy((out_buffer + 5), szip_info->buffer, szip_info->buffer_pos);
         Hwrite(info->aid, (szip_info->buffer_pos + 5), out_buffer);
         szip_info->szip_dirty = SZIP_CLEAN;
         free(out_buffer);
@@ -554,7 +554,7 @@ HCIcszip_term(compinfo_t *info)
         cp  = ob;
         cp++;
         INT32ENCODE(cp, size_out); /* how much to decompress  (< total size)*/
-        HDmemcpy((ob + 5), out_buffer + 5, size_out);
+        memcpy((ob + 5), out_buffer + 5, size_out);
         Hwrite(info->aid, current_size, ob); /* write out at least 'current_size' bytes */
         szip_info->szip_dirty = SZIP_CLEAN;
         free(out_buffer);

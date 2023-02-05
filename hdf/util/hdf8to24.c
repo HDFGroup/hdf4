@@ -115,7 +115,7 @@ magnify(uint8 *from_buffer, uint8 *to_buffer, int32 from_x0, int32 from_y0, int3
         } /* end if */
           /* this line is the same as the previous one, just copy it */
         else {
-            HDmemcpy(buf_off, last_buf, to_width); /* copy the previous line */
+            memcpy(buf_off, last_buf, to_width); /* copy the previous line */
             buf_off += to_width;                   /* advance the buffer offset pointer */
         }                                          /* end else */
     }                                              /* end for */

@@ -1495,12 +1495,12 @@ test_mgr_image_b2a1aa(int flag)
         for (i = 0; i < TEST_YDIM; i++) {
             for (j = 0; j < TEST_XDIM; j++) {
                 if ((j % 2) == 0)
-                    HDmemcpy(&image0[i][j][0], fill_pixel, sizeof(fill_pixel));
+                    memcpy(&image0[i][j][0], fill_pixel, sizeof(fill_pixel));
                 else
-                    HDmemcpy(&image0[i][j][0], fill_pixel2, sizeof(fill_pixel2));
+                    memcpy(&image0[i][j][0], fill_pixel2, sizeof(fill_pixel2));
             } /* end for */
         }     /* end for */
-        HDmemcpy(image, image0, sizeof(image0));
+        memcpy(image, image0, sizeof(image0));
 
         /* Create empty image with default fill value */
         riid = GRcreate(grid, "Test Image B2a1aa", TEST_NCOMP, TEST_NT, MFGR_INTERLACE_PIXEL, dims);
@@ -1651,10 +1651,10 @@ test_mgr_image_b2a1bb1(int flag)
                 if (((i > (TEST_YDIM / 3)) && (i < (2 * TEST_YDIM / 3))) &&
                     ((j > (TEST_XDIM / 4)) && (j < (3 * TEST_XDIM / 4)))) {
                     if ((j % 2) == 0)
-                        HDmemcpy(&image0[i][j][0], fill_pixel, sizeof(fill_pixel));
+                        memcpy(&image0[i][j][0], fill_pixel, sizeof(fill_pixel));
                     else
-                        HDmemcpy(&image0[i][j][0], fill_pixel2, sizeof(fill_pixel2));
-                    HDmemcpy(sub_ptr, &image0[i][j][0], TEST_NCOMP * sizeof(TEST_VARTYPE));
+                        memcpy(&image0[i][j][0], fill_pixel2, sizeof(fill_pixel2));
+                    memcpy(sub_ptr, &image0[i][j][0], TEST_NCOMP * sizeof(TEST_VARTYPE));
                     sub_ptr += TEST_NCOMP;
                 } /* end if */
             }     /* end for */
@@ -1822,12 +1822,12 @@ test_mgr_image_b2a1bb2(int flag)
         for (i = 0; i < TEST_YDIM; i++) {
             for (j = 0; j < TEST_XDIM; j++) {
                 if ((j % 2) == 0)
-                    HDmemcpy(&image0[i][j][0], fill_pixel, sizeof(fill_pixel));
+                    memcpy(&image0[i][j][0], fill_pixel, sizeof(fill_pixel));
                 else
-                    HDmemcpy(&image0[i][j][0], fill_pixel2, sizeof(fill_pixel2));
+                    memcpy(&image0[i][j][0], fill_pixel2, sizeof(fill_pixel2));
                 if (((i > (TEST_YDIM / 3)) && (i < (2 * TEST_YDIM / 3))) &&
                     ((j > (TEST_XDIM / 4)) && (j < (3 * TEST_XDIM / 4)))) {
-                    HDmemcpy(sub_ptr, &image0[i][j][0], TEST_NCOMP * sizeof(TEST_VARTYPE));
+                    memcpy(sub_ptr, &image0[i][j][0], TEST_NCOMP * sizeof(TEST_VARTYPE));
                     sub_ptr += TEST_NCOMP;
                 } /* end if */
             }     /* end for */
@@ -1996,10 +1996,10 @@ test_mgr_image_b2a1cc1(int flag)
             for (j = 0; j < TEST_XDIM; j++) {
                 if ((i % 2) != 0 && (j % 2) != 0) {
                     if ((j % 3) == 0)
-                        HDmemcpy(&image0[i][j][0], fill_pixel, sizeof(TEST_VARTYPE) * TEST_NCOMP);
+                        memcpy(&image0[i][j][0], fill_pixel, sizeof(TEST_VARTYPE) * TEST_NCOMP);
                     else
-                        HDmemcpy(&image0[i][j][0], fill_pixel2, sizeof(TEST_VARTYPE) * TEST_NCOMP);
-                    HDmemcpy(sub_ptr, &image0[i][j][0], TEST_NCOMP * sizeof(TEST_VARTYPE));
+                        memcpy(&image0[i][j][0], fill_pixel2, sizeof(TEST_VARTYPE) * TEST_NCOMP);
+                    memcpy(sub_ptr, &image0[i][j][0], TEST_NCOMP * sizeof(TEST_VARTYPE));
                     sub_ptr += TEST_NCOMP;
                 } /* end if */
             }     /* end for */
@@ -2166,11 +2166,11 @@ test_mgr_image_b2a1cc2(int flag)
         for (i = 0; i < TEST_YDIM; i++) {
             for (j = 0; j < TEST_XDIM; j++) {
                 if ((j % 2) == 0)
-                    HDmemcpy(&image0[i][j][0], fill_pixel, sizeof(fill_pixel));
+                    memcpy(&image0[i][j][0], fill_pixel, sizeof(fill_pixel));
                 else
-                    HDmemcpy(&image0[i][j][0], fill_pixel2, sizeof(fill_pixel2));
+                    memcpy(&image0[i][j][0], fill_pixel2, sizeof(fill_pixel2));
                 if ((i % 2) && (j % 2)) {
-                    HDmemcpy(sub_ptr, &image0[i][j][0], TEST_NCOMP * sizeof(TEST_VARTYPE));
+                    memcpy(sub_ptr, &image0[i][j][0], TEST_NCOMP * sizeof(TEST_VARTYPE));
                     sub_ptr += TEST_NCOMP;
                 } /* end if */
             }     /* end for */
@@ -2340,10 +2340,10 @@ test_mgr_image_b2a2bb(int flag)
                 if (((i > (TEST_YDIM / 3)) && (i < (2 * TEST_YDIM / 3))) &&
                     ((j > (TEST_XDIM / 4)) && (j < (3 * TEST_XDIM / 4)))) {
                     if ((j % 2) == 0)
-                        HDmemcpy(&image0[i][j][0], pixel, sizeof(pixel));
+                        memcpy(&image0[i][j][0], pixel, sizeof(pixel));
                     else
-                        HDmemcpy(&image0[i][j][0], pixel2, sizeof(pixel2));
-                    HDmemcpy(sub_ptr, &image0[i][j][0], TEST_NCOMP * sizeof(TEST_VARTYPE));
+                        memcpy(&image0[i][j][0], pixel2, sizeof(pixel2));
+                    memcpy(sub_ptr, &image0[i][j][0], TEST_NCOMP * sizeof(TEST_VARTYPE));
                     sub_ptr += TEST_NCOMP;
                 } /* end if */
             }     /* end for */
@@ -2520,10 +2520,10 @@ test_mgr_image_b2a2cc(int flag)
             for (j = 0; j < TEST_XDIM; j++) {
                 if ((i % 2) != 0 && (j % 2) != 0) {
                     if ((j % 3) == 0)
-                        HDmemcpy(&image0[i][j][0], pixel, sizeof(TEST_VARTYPE) * TEST_NCOMP);
+                        memcpy(&image0[i][j][0], pixel, sizeof(TEST_VARTYPE) * TEST_NCOMP);
                     else
-                        HDmemcpy(&image0[i][j][0], pixel2, sizeof(TEST_VARTYPE) * TEST_NCOMP);
-                    HDmemcpy(sub_ptr, &image0[i][j][0], TEST_NCOMP * sizeof(TEST_VARTYPE));
+                        memcpy(&image0[i][j][0], pixel2, sizeof(TEST_VARTYPE) * TEST_NCOMP);
+                    memcpy(sub_ptr, &image0[i][j][0], TEST_NCOMP * sizeof(TEST_VARTYPE));
                     sub_ptr += TEST_NCOMP;
                 } /* end if */
             }     /* end for */
@@ -2865,12 +2865,12 @@ test_mgr_image_chunk(int flag)
         for (i = 0; i < TEST_YDIM; i++) {
             for (j = 0; j < TEST_XDIM; j++) {
                 if ((j % 2) == 0)
-                    HDmemcpy(&image0[i][j][0], fill_pixel, sizeof(fill_pixel));
+                    memcpy(&image0[i][j][0], fill_pixel, sizeof(fill_pixel));
                 else
-                    HDmemcpy(&image0[i][j][0], fill_pixel2, sizeof(fill_pixel2));
+                    memcpy(&image0[i][j][0], fill_pixel2, sizeof(fill_pixel2));
             } /* end for */
         }     /* end for */
-        HDmemcpy(image, image0, sizeof(image0));
+        memcpy(image, image0, sizeof(image0));
 
         /* Create empty image with default fill value */
         riid = GRcreate(grid, "Test Chunk Image B2a1aa", TEST_NCOMP, TEST_NT, MFGR_INTERLACE_PIXEL, dims);

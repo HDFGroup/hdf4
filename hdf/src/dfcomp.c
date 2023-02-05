@@ -238,7 +238,7 @@ DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim, int32
                 bufleft -= n;
                 /* check if more bytes may be needed for next read */
                 if ((bufleft < crowsize) && (totalread < cisize)) {
-                    HDmemcpy(buffer, in, (size_t)bufleft);
+                    memcpy(buffer, in, (size_t)bufleft);
                     in = buffer;
                     if ((n = Hread(aid, buflen - bufleft, (uint8 *)&in[bufleft])) < 0) {
                         free(buffer);
@@ -295,7 +295,7 @@ DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim, int32
                 out += 4 * xdim;
                 bufleft -= xdim;
                 if ((bufleft < crowsize) && (totalread < cisize)) {
-                    HDmemcpy(buffer, in, (size_t)bufleft);
+                    memcpy(buffer, in, (size_t)bufleft);
                     in = buffer;
                     if ((n = Hread(aid, buflen - bufleft, (uint8 *)&in[bufleft])) < 0) {
                         free(buffer);

@@ -300,7 +300,7 @@ static int32
 fmtint(char *x)
 {
     int i = 0;
-    HDmemcpy(&i, x, sizeof(int32));
+    memcpy(&i, x, sizeof(int32));
     cn += printf("%d", i);
     return (1);
 }
@@ -310,7 +310,7 @@ static int32
 fmtfloat(char *x)
 {
     float f = (float)0.0;
-    HDmemcpy(&f, x, sizeof(float32));
+    memcpy(&f, x, sizeof(float32));
     cn += printf("%f", f);
     return (1);
 }
@@ -319,7 +319,7 @@ static int32
 fmtulong(char *x)
 {
     unsigned l = 0;
-    HDmemcpy(&l, x, sizeof(int32));
+    memcpy(&l, x, sizeof(int32));
     cn += printf("%u", l);
     return (1);
 }
@@ -328,7 +328,7 @@ static int32
 fmtlong(char *x)
 {
     long l = 0;
-    HDmemcpy(&l, x, sizeof(int32));
+    memcpy(&l, x, sizeof(int32));
     cn += printf("%ld", l);
     return (1);
 }
@@ -337,7 +337,7 @@ static int32
 fmtshort(char *x)
 {
     short s = 0;
-    HDmemcpy(&s, x, sizeof(int16));
+    memcpy(&s, x, sizeof(int16));
     cn += printf("%d", s);
     return (1);
 }
@@ -346,7 +346,7 @@ static int32
 fmtdouble(char *x)
 {
     double d = 0.0;
-    HDmemcpy(&d, x, sizeof(float64));
+    memcpy(&d, x, sizeof(float64));
     cn += printf("%f", d);
     return (1);
 }

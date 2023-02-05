@@ -214,7 +214,7 @@ typedef intptr_t hdf_pint_t;
 
 #define NBYTEENCODE(d, s, n)                                                                                 \
     {                                                                                                        \
-        HDmemcpy(d, s, n);                                                                                   \
+        memcpy(d, s, n);                                                                                     \
         p += n                                                                                               \
     }
 
@@ -270,7 +270,7 @@ typedef intptr_t hdf_pint_t;
 /*      in the spirit of the other DECODE macros */
 #define NBYTEDECODE(s, d, n)                                                                                 \
     {                                                                                                        \
-        HDmemcpy(d, s, n);                                                                                   \
+        memcpy(d, s, n);                                                                                     \
         p += n                                                                                               \
     }
 
@@ -324,9 +324,8 @@ typedef intptr_t hdf_pint_t;
 #endif
 
 /**************************************************************************
- *  Memory functions defined differently
+ *  Memory functions
  **************************************************************************/
-#define HDmemcpy(dst, src, n) (memcpy((void *)(dst), (const void *)(src), (size_t)(n)))
 
 /* Macro to free space and clear pointer to NULL */
 #define HDfreenclear(p)                                                                                      \

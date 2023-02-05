@@ -60,7 +60,7 @@ HDmemfill(void *dest, const void *src, uint32 item_size, uint32 num_items)
 
     /* minimal error check for 0 sized array or item size */
     if (num_items > 0 && item_size > 0) {
-        HDmemcpy(dest, src, item_size); /* copy first item */
+        memcpy(dest, src, item_size); /* copy first item */
 
         copy_size  = item_size;
         copy_items = 1;
@@ -70,7 +70,7 @@ HDmemfill(void *dest, const void *src, uint32 item_size, uint32 num_items)
         /* copy until we've copied at least half of the items */
         while (items_left >= copy_items) {
 
-            HDmemcpy(curr_dest, dest, copy_size); /* copy the current chunk */
+            memcpy(curr_dest, dest, copy_size); /* copy the current chunk */
             curr_dest += copy_size;               /* move the offset for the next chunk */
             items_left -= copy_items;             /* decrement the number of items left */
 
@@ -78,7 +78,7 @@ HDmemfill(void *dest, const void *src, uint32 item_size, uint32 num_items)
             copy_items *= 2; /* increase the count of items we are copying */
         }                    /* end while */
         if (items_left > 0)  /* if there are any items left to copy */
-            HDmemcpy(curr_dest, dest, items_left * item_size);
+            memcpy(curr_dest, dest, items_left * item_size);
     } /* end if */
     return (dest);
 } /* end HDmemfill() */

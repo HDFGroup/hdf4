@@ -169,7 +169,7 @@ HBconvert(int32 aid)
      * defined to support it.
      */
     tmp_access_rec = new_access_rec->next; /* preserve free list pointer */
-    HDmemcpy(new_access_rec, access_rec, sizeof(accrec_t));
+    memcpy(new_access_rec, access_rec, sizeof(accrec_t));
     new_access_rec->next = tmp_access_rec; /* restore free list pointer */
 
     /* Preserve the actual access record for the buffered element */
@@ -304,7 +304,7 @@ HBPread(accrec_t *access_rec, int32 length, void *data)
         HGOTO_ERROR(DFE_RANGE, FAIL);
 
     /* Copy data from buffer */
-    HDmemcpy(data, info->buf + access_rec->posn, length);
+    memcpy(data, info->buf + access_rec->posn, length);
 
     /* adjust access position */
     access_rec->posn += length;
@@ -367,7 +367,7 @@ HBPwrite(accrec_t *access_rec, int32 length, const void *data)
     } /* end if */
 
     /* Copy data to buffer */
-    HDmemcpy(info->buf + access_rec->posn, data, length);
+    memcpy(info->buf + access_rec->posn, data, length);
 
     /* Mark the buffer as modified */
     info->modified = TRUE;

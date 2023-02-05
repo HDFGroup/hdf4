@@ -79,7 +79,7 @@ fmtint16(VOIDP x, file_format_t ff, FILE *ofp)
 {
     int16 s;
 
-    HDmemcpy(&s, x, sizeof(int16));
+    memcpy(&s, x, sizeof(int16));
 
     if (ff == DASCII)
         return (fprintf(ofp, "%d", (int)s));
@@ -92,7 +92,7 @@ fmtuint16(VOIDP x, file_format_t ff, FILE *ofp)
 {
     uint16 s;
 
-    HDmemcpy(&s, x, sizeof(uint16));
+    memcpy(&s, x, sizeof(uint16));
 
     if (ff == DASCII)
         return (fprintf(ofp, "%u", (unsigned)s));
@@ -137,7 +137,7 @@ fmtint(VOIDP         x, /* assumption: int is same as 'intn' */
 {
     intn i;
 
-    HDmemcpy(&i, x, sizeof(intn));
+    memcpy(&i, x, sizeof(intn));
 
     if (ff == DASCII)
         return (fprintf(ofp, "%d", (int)i));
@@ -151,7 +151,7 @@ fmtfloat32(VOIDP x, file_format_t ff, FILE *ofp)
 {
     float32 fdata;
 
-    HDmemcpy(&fdata, x, sizeof(float32));
+    memcpy(&fdata, x, sizeof(float32));
 
     if (ff == DASCII) {
         if (fabs(fdata - FILL_FLOAT) <= FLOAT32_EPSILON)
@@ -169,7 +169,7 @@ fmtint32(VOIDP x, file_format_t ff, FILE *ofp)
 {
     int32 l;
 
-    HDmemcpy(&l, x, sizeof(int32));
+    memcpy(&l, x, sizeof(int32));
 
     if (ff == DASCII)
         return (fprintf(ofp, "%ld", (long)l));
@@ -182,7 +182,7 @@ fmtuint32(VOIDP x, file_format_t ff, FILE *ofp)
 {
     uint32 l;
 
-    HDmemcpy(&l, x, sizeof(uint32));
+    memcpy(&l, x, sizeof(uint32));
 
     if (ff == DASCII)
         return (fprintf(ofp, "%lu", (unsigned long)l));
@@ -195,7 +195,7 @@ fmtshort(VOIDP x, file_format_t ff, FILE *ofp)
 {
     short s;
 
-    HDmemcpy(&s, x, sizeof(short));
+    memcpy(&s, x, sizeof(short));
 
     if (ff == DASCII)
         return (fprintf(ofp, "%d", (int)s));
@@ -209,7 +209,7 @@ fmtfloat64(VOIDP x, file_format_t ff, FILE *ofp)
 {
     float64 d;
 
-    HDmemcpy(&d, x, sizeof(float64));
+    memcpy(&d, x, sizeof(float64));
 
     if (ff == DASCII) {
         if (fabs(d - FILL_DOUBLE) <= FLOAT64_EPSILON)

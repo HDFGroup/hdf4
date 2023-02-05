@@ -389,7 +389,7 @@ DFR8setpalette(uint8 *pal)
         Writerig.desclut.ncomponents = 0;
     }      /* end if */
     else { /* store palette */
-        HDmemcpy(paletteBuf, pal, 768);
+        memcpy(paletteBuf, pal, 768);
         Newpalette = 1;
     } /* end else */
 

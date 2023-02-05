@@ -403,7 +403,7 @@ DFconvert(uint8 *source, uint8 *dest, int ntype, int sourcetype, int desttype, i
     }
 
     if (sourcetype == desttype) {
-        HDmemcpy(dest, source, size);
+        memcpy(dest, source, size);
         return 0;
     }
 

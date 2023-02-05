@@ -110,7 +110,7 @@ test_GRgetcomptype()
     }
 
     /* Work around to pass "palette" into DFR8setpalette w/o compiler warning.*/
-    HDmemcpy(palette, temp_pal, N_ENTRIES * N_COMPONENTS);
+    memcpy(palette, temp_pal, N_ENTRIES * N_COMPONENTS);
 
     /* Write image0 to the HDF4 file with no compression and no palette
      * Note that the order of args 3 and 4 is width then height.  */
