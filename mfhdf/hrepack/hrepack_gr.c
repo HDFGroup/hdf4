@@ -101,7 +101,7 @@ copy_gr(int32 infile_id, int32 outfile_id, int32 gr_in, int32 gr_out, int32 tag,
      */
 
     comp_type_in = COMP_CODE_NONE; /* reset variables before retrieving information */
-    HDmemset(&c_info_in, 0, sizeof(comp_info));
+    memset(&c_info_in, 0, sizeof(comp_info));
     stat = GRgetcompinfo(ri_id, &comp_type_in, &c_info_in);
     if (stat == FAIL && comp_type_in > 0) {
         printf("Could not get compress information for GR <%s>\n", path);
@@ -341,8 +341,7 @@ copy_gr(int32 infile_id, int32 outfile_id, int32 gr_in, int32 gr_out, int32 tag,
 
     /* check inspection mode */
     if (options->trip == 0) {
-        if (path)
-            HDfree(path);
+        free(path);
         if (GRendaccess(ri_id) == FAIL) {
             printf("Could not close GR <%s>\n", path);
             return -1;
@@ -355,11 +354,10 @@ copy_gr(int32 infile_id, int32 outfile_id, int32 gr_in, int32 gr_out, int32 tag,
      */
 
     /* alloc */
-    if ((buf = (VOIDP)HDmalloc(data_size)) == NULL) {
+    if ((buf = (VOIDP)malloc(data_size)) == NULL) {
         printf("Failed to allocate %d elements of size %d\n", nelms, eltsz);
         GRendaccess(ri_id);
-        if (path)
-            HDfree(path);
+        free(path);
         return -1;
     }
 
@@ -367,8 +365,7 @@ copy_gr(int32 infile_id, int32 outfile_id, int32 gr_in, int32 gr_out, int32 tag,
     if (GRreqimageil(ri_id, interlace_mode) == FAIL) {
         printf("Could not set interlace for GR <%s>\n", path);
         GRendaccess(ri_id);
-        if (path)
-            HDfree(path);
+        free(path);
         return -1;
     }
 
@@ -376,8 +373,7 @@ copy_gr(int32 infile_id, int32 outfile_id, int32 gr_in, int32 gr_out, int32 tag,
     if (GRreadimage(ri_id, start, NULL, edges, buf) == FAIL) {
         printf("Could not read GR <%s>\n", path);
         GRendaccess(ri_id);
-        if (path)
-            HDfree(path);
+        free(path);
         return -1;
     }
 
@@ -555,10 +551,8 @@ out:
     if (GRendaccess(ri_out) == FAIL)
         printf("Failed to close SDS <%s>\n", path);
 
-    if (path)
-        HDfree(path);
-    if (buf)
-        HDfree(buf);
+    free(path);
+    free(buf);
 
     return ret;
 }
@@ -599,7 +593,7 @@ copy_gr_attrs(int32 ri_id, int32 ri_out, int32 nattrs, options_t *options)
         /* compute the number of the bytes for each value. */
         numtype = dtype & DFNT_MASK;
         eltsz   = DFKNTsize(numtype | DFNT_NATIVE);
-        if ((attr_buf = (VOIDP)HDmalloc(nelms * eltsz)) == NULL) {
+        if ((attr_buf = (VOIDP)malloc(nelms * eltsz)) == NULL) {
             printf("Error allocating %d values of size %d for attribute %s", nelms, numtype, attr_name);
             return -1;
         }
@@ -614,8 +608,7 @@ copy_gr_attrs(int32 ri_id, int32 ri_out, int32 nattrs, options_t *options)
             return -1;
         }
 
-        if (attr_buf)
-            HDfree(attr_buf);
+        free(attr_buf);
     }
 
     return 1;

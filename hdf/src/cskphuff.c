@@ -164,13 +164,12 @@ HCIcskphuff_init(accrec_t *access_rec, uintn alloc_buf)
 
     if (alloc_buf == TRUE) {
         /* allocate pointers to the compression buffers */
-        if ((skphuff_info->left = (uintn **)HDmalloc(sizeof(uintn *) * (uintn)skphuff_info->skip_size)) ==
+        if ((skphuff_info->left = (uintn **)malloc(sizeof(uintn *) * (uintn)skphuff_info->skip_size)) == NULL)
+            HRETURN_ERROR(DFE_NOSPACE, FAIL);
+        if ((skphuff_info->right = (uintn **)malloc(sizeof(uintn *) * (uintn)skphuff_info->skip_size)) ==
             NULL)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
-        if ((skphuff_info->right = (uintn **)HDmalloc(sizeof(uintn *) * (uintn)skphuff_info->skip_size)) ==
-            NULL)
-            HRETURN_ERROR(DFE_NOSPACE, FAIL);
-        if ((skphuff_info->up = (uint8 **)HDmalloc(sizeof(uint8 *) * (uintn)skphuff_info->skip_size)) == NULL)
+        if ((skphuff_info->up = (uint8 **)malloc(sizeof(uint8 *) * (uintn)skphuff_info->skip_size)) == NULL)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
 #ifdef TESTING
@@ -178,11 +177,11 @@ HCIcskphuff_init(accrec_t *access_rec, uintn alloc_buf)
 #endif /* TESTING */
         /* allocate compression buffer for each skipping byte */
         for (i = 0; i < skphuff_info->skip_size; i++) {
-            if ((skphuff_info->left[i] = (uintn *)HDmalloc(sizeof(uintn) * SUCCMAX)) == NULL)
+            if ((skphuff_info->left[i] = (uintn *)malloc(sizeof(uintn) * SUCCMAX)) == NULL)
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
-            if ((skphuff_info->right[i] = (uintn *)HDmalloc(sizeof(uintn) * SUCCMAX)) == NULL)
+            if ((skphuff_info->right[i] = (uintn *)malloc(sizeof(uintn) * SUCCMAX)) == NULL)
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
-            if ((skphuff_info->up[i] = (uint8 *)HDmalloc(sizeof(uint8) * TWICEMAX)) == NULL)
+            if ((skphuff_info->up[i] = (uint8 *)malloc(sizeof(uint8) * TWICEMAX)) == NULL)
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
         } /* end for */
     }     /* end if */
@@ -373,15 +372,15 @@ HCIcskphuff_term(compinfo_t *info)
 
     /* Free the buffers we allocated */
     for (i = 0; i < skphuff_info->skip_size; i++) {
-        HDfree(skphuff_info->left[i]);
-        HDfree(skphuff_info->right[i]);
-        HDfree(skphuff_info->up[i]);
-    } /* end for */
+        free(skphuff_info->left[i]);
+        free(skphuff_info->right[i]);
+        free(skphuff_info->up[i]);
+    }
 
     /* Free the buffer arrays */
-    HDfree(skphuff_info->left);
-    HDfree(skphuff_info->right);
-    HDfree(skphuff_info->up);
+    free(skphuff_info->left);
+    free(skphuff_info->right);
+    free(skphuff_info->up);
 
     return (SUCCEED);
 } /* end HCIcskphuff_term() */
@@ -540,23 +539,23 @@ HCPcskphuff_seek(accrec_t *access_rec, int32 offset, int origin)
     if (offset < skphuff_info->offset) { /* need to seek from the beginning */
         if (HCIcskphuff_init(access_rec, FALSE) == FAIL)
             HRETURN_ERROR(DFE_CINIT, FAIL);
-    } /* end if */
+    }
 
-    if ((tmp_buf = (uint8 *)HDmalloc(TMP_BUF_SIZE)) == NULL) /* get tmp buffer */
+    if ((tmp_buf = (uint8 *)malloc(TMP_BUF_SIZE)) == NULL) /* get tmp buffer */
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     while (skphuff_info->offset + TMP_BUF_SIZE < offset) /* grab chunks */
         if (HCIcskphuff_decode(info, TMP_BUF_SIZE, tmp_buf) == FAIL) {
-            HDfree(tmp_buf);
+            free(tmp_buf);
             HRETURN_ERROR(DFE_CDECODE, FAIL)
         }                              /* end if */
     if (skphuff_info->offset < offset) /* grab the last chunk */
         if (HCIcskphuff_decode(info, offset - skphuff_info->offset, tmp_buf) == FAIL) {
-            HDfree(tmp_buf);
+            free(tmp_buf);
             HRETURN_ERROR(DFE_CDECODE, FAIL)
-        } /* end if */
+        }
 
-    HDfree(tmp_buf);
+    free(tmp_buf);
     return (SUCCEED);
 } /* HCPcskphuff_seek() */
 

@@ -327,7 +327,7 @@ HCIcdeflate_staccess(accrec_t *access_rec, int16 acc_mode)
         HRETURN_ERROR(DFE_CODER, FAIL);
 
     /* Allocate compression I/O buffer */
-    if ((deflate_info->io_buf = HDmalloc(DEFLATE_BUF_SIZE)) == NULL)
+    if ((deflate_info->io_buf = malloc(DEFLATE_BUF_SIZE)) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     return (SUCCEED);
@@ -706,7 +706,7 @@ HCPcdeflate_endaccess(accrec_t *access_rec)
         HRETURN_ERROR(DFE_CTERM, FAIL);
 
     /* Get rid of the I/O buffer */
-    HDfree(deflate_info->io_buf);
+    free(deflate_info->io_buf);
 
     /* close the compressed data AID */
     if (Hendaccess(info->aid) == FAIL)

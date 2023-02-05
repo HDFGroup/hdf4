@@ -243,16 +243,16 @@ grdumpfull(int32 ri_id, dump_info_t *dumpgr_opts, int32 ncomps, /* "ncomps" is t
     CHECK_POS(eltsz, "eltsz", "grdumpfull");
     CHECK_POS(ncomps, "ncomps", "grdumpfull");
 
-    buf = (VOIDP)HDmalloc(read_nelts * eltsz);
+    buf = (VOIDP)malloc(read_nelts * eltsz);
     CHECK_ALLOC(buf, "buf", "grdumpfull");
 
-    start = (int32 *)HDmalloc(2 * sizeof(int32));
+    start = (int32 *)malloc(2 * sizeof(int32));
     CHECK_ALLOC(start, "start", "grdumpfull");
 
-    edge = (int32 *)HDmalloc(2 * sizeof(int32));
+    edge = (int32 *)malloc(2 * sizeof(int32));
     CHECK_ALLOC(edge, "edge", "grdumpfull");
 
-    stride = (int32 *)HDmalloc(2 * sizeof(int32));
+    stride = (int32 *)malloc(2 * sizeof(int32));
     CHECK_ALLOC(stride, "stride", "grdumpfull");
 
     start[0] = start[1] = 0;
@@ -283,14 +283,10 @@ grdumpfull(int32 ri_id, dump_info_t *dumpgr_opts, int32 ncomps, /* "ncomps" is t
         ERROR_GOTO_2("in %s: dumpfull failed for ri_id(%d)", "grdumpfull", (int)ri_id);
 
 done:
-    if (edge != NULL)
-        HDfree((VOIDP)edge);
-    if (start != NULL)
-        HDfree((VOIDP)start);
-    if (stride != NULL)
-        HDfree((VOIDP)stride);
-    if (buf != NULL)
-        HDfree((VOIDP)buf);
+    free(edge);
+    free(start);
+    free(stride);
+    free(buf);
 
     return ret_value;
 } /* grdumpfull */
@@ -424,7 +420,7 @@ print_GRattrs(int32 gr_id, int32 n_file_attrs, FILE *fp, dump_info_t *dumpgr_opt
             CHECK_POS(attr_buf_size, "attr_buf_size", "print_GRattrs");
 
             /* allocate space for the attribute's values */
-            attr_buf = (VOIDP)HDmalloc(attr_buf_size);
+            attr_buf = (VOIDP)malloc(attr_buf_size);
             CHECK_ALLOC(attr_buf, "attr_buf", "print_GRattrs");
 
             /* read the values of the attribute into the buffer */
@@ -453,7 +449,7 @@ print_GRattrs(int32 gr_id, int32 n_file_attrs, FILE *fp, dump_info_t *dumpgr_opt
                                  (int)attr_index);
             }
             /* free buffer and reset it to NULL */
-            HDfree(attr_buf);
+            free(attr_buf);
             attr_buf = NULL;
         } /* end of if no file attributes */
     }     /* for all attributes of GR */
@@ -505,7 +501,7 @@ print_RIattrs(int32 ri_id, intn ri_index, int32 nattrs, FILE *fp, dump_info_t *d
             CHECK_POS(attr_buf_size, "attr_buf_size", "print_RIattrs");
 
             /* allocate space for attribute's values */
-            attr_buf = (VOIDP)HDmalloc(attr_buf_size);
+            attr_buf = (VOIDP)malloc(attr_buf_size);
             CHECK_ALLOC(attr_buf, "attr_buf", "print_RIattrs");
 
             /* read the values of the attribute into buffer attr_buf */
@@ -534,7 +530,7 @@ print_RIattrs(int32 ri_id, intn ri_index, int32 nattrs, FILE *fp, dump_info_t *d
                     ERROR_CONT_3("in %s: dumpfull failed for %d'th attribute of %d'th RI", "print_RIattrs",
                                  (int)attr_index, (int)ri_index);
             }
-            HDfree(attr_buf);
+            free(attr_buf);
             attr_buf = NULL;
         } /* end of if no local attributes */
     }     /* for all attributes of an RI */
@@ -703,7 +699,7 @@ print_grcomp_info(FILE *fp, int32 ri_id)
     intn         status    = FAIL; /* returned status from a called function */
 
     /* Get compression info */
-    HDmemset(&c_info, 0, sizeof(c_info));
+    memset(&c_info, 0, sizeof(c_info));
     status = GRgetcompinfo(ri_id, &comp_type, &c_info);
 
     /* if getting comp info succeeds, proceed to print out appropriate
@@ -764,7 +760,7 @@ printGR_ASCII(int32 gr_id, dump_info_t *dumpgr_opts, int32 ndsets, /* number of 
         ri_count++; /* count the # of images being processed */
 
         /* Reset variables. */
-        HDmemset(dimsizes, 0, sizeof(int32) * MAXRANK);
+        memset(dimsizes, 0, sizeof(int32) * MAXRANK);
 
         /* get access to the current image */
         ri_id = GRselect(gr_id, ri_index);
@@ -922,7 +918,7 @@ printGR_BINARY(int32 gr_id, dump_info_t *dumpgr_opts, int32 num_ri_chosen, /* # 
         ri_count++; /* count the # of images being processed */
 
         /* Reset variables. */
-        HDmemset(dimsizes, 0, sizeof(int32) * MAXRANK);
+        memset(dimsizes, 0, sizeof(int32) * MAXRANK);
 
         /* get access to the current image */
         ri_id = GRselect(gr_id, ri_index);
@@ -991,10 +987,8 @@ closeGR(int32  *file_id,   /* will be returned as a FAIL */
         *file_id = FAIL; /* reset */
     }
 
-    if (*gr_chosen != NULL) {
-        HDfree(*gr_chosen);
-        *gr_chosen = NULL;
-    } /* end if */
+    free(*gr_chosen);
+    *gr_chosen = NULL;
 
 } /* end of closeGR */
 

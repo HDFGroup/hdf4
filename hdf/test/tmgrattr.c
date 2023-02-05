@@ -110,7 +110,7 @@ test_mgr_fillvalues()
         CHECK(riid, FAIL, "GRselect");
 
         /* Buffer to read image's data in */
-        HDmemset(image, 0, (size_t)(dims[0] * dims[1] * N_COMPS) * sizeof(float32));
+        memset(image, 0, (size_t)(dims[0] * dims[1] * N_COMPS) * sizeof(float32));
 
         /* Fill the memory-only with the default pixel fill-value */
         HDmemfill(image0, fill_pixel, sizeof(fill_pixel), sizeof(image0) / sizeof(fill_pixel));
@@ -121,7 +121,7 @@ test_mgr_fillvalues()
         ret                   = GRreadimage(riid, start, stride, dims, image);
         CHECK(ret, FAIL, "GRreadimage");
 
-        if (HDmemcmp(image, image0, sizeof(image0)) != 0) {
+        if (memcmp(image, image0, sizeof(image0)) != 0) {
             MESSAGE(3, printf("Error reading data for image with user defined fill-values\n"););
             num_errs++;
         }
@@ -139,7 +139,7 @@ test_mgr_fillvalues()
         VERIFY_CHAR(attr_name, FILL_ATTR, "GRattrinfo");
 
         /* Allocate a buffer to hold the attribute data. */
-        read_fill_vals = HDmalloc(n_values * sizeof(float32));
+        read_fill_vals = malloc(n_values * sizeof(float32));
         if (read_fill_vals == NULL) {
             fprintf(stderr, "Unable to allocate space for attribute data.\n");
             exit(1);
@@ -154,13 +154,12 @@ test_mgr_fillvalues()
         ret = GRgetattr(riid, attr_index, (VOIDP)read_fill_vals);
         CHECK(ret, FAIL, "GRgetattr");
 
-        if (HDmemcmp(fill_pixel, read_fill_vals, RI_ATT_N_VALUES) != 0) {
+        if (memcmp(fill_pixel, read_fill_vals, RI_ATT_N_VALUES) != 0) {
             MESSAGE(3, printf("Error reading values of attribute FILL_ATTR\n"););
             num_errs++;
         } /* end if */
 
-        if (read_fill_vals != NULL)
-            HDfree(read_fill_vals);
+        free(read_fill_vals);
 
         /* Close the empty image */
         ret = GRendaccess(riid);
@@ -302,7 +301,7 @@ test_mgr_userattr()
 
             switch (ntype) {
                 case DFNT_CHAR8:
-                    if (HDmemcmp(data_buf, F_ATT1_VAL, n_values) != 0) {
+                    if (memcmp(data_buf, F_ATT1_VAL, n_values) != 0) {
                         MESSAGE(3, printf("Error reading values of attribute %s\n", attr_name););
                         num_errs++;
                     } /* end if */
@@ -313,7 +312,7 @@ test_mgr_userattr()
                     VERIFY_CHAR(nt_info.type_name, "char8", "Hgetntinfo");
                     break;
                 case DFNT_UINT8:
-                    if (HDmemcmp(data_buf, file_attr_2, n_values) != 0) {
+                    if (memcmp(data_buf, file_attr_2, n_values) != 0) {
                         MESSAGE(3, printf("Error reading values of attribute %s\n", attr_name););
                         num_errs++;
                     } /* end if */
@@ -330,7 +329,7 @@ test_mgr_userattr()
             } /* switch */
 
             /* Free the space allocated for the data buffer. */
-            HDfree(data_buf);
+            free(data_buf);
 
         } /* for */
     }     /* if */
@@ -399,19 +398,19 @@ test_mgr_userattr()
              * the previous part of the test. */
             switch (ntype) {
                 case DFNT_FLOAT32:
-                    if (HDmemcmp(fill_pixel, data_buf, RI_ATT_N_VALUES) != 0) {
+                    if (memcmp(fill_pixel, data_buf, RI_ATT_N_VALUES) != 0) {
                         MESSAGE(3, printf("Error reading values of attribute FILL_ATTR\n"););
                         num_errs++;
                     } /* end if */
                     break;
                 case DFNT_CHAR8:
-                    if (HDmemcmp(RI_ATT1_VAL, data_buf, RI_ATT1_N_VALUES) != 0) {
+                    if (memcmp(RI_ATT1_VAL, data_buf, RI_ATT1_N_VALUES) != 0) {
                         MESSAGE(3, printf("Error reading values of attribute FILL_ATTR\n"););
                         num_errs++;
                     } /* end if */
                     break;
                 case DFNT_INT16:
-                    if (HDmemcmp(ri_attr_2, data_buf, RI_ATT2_N_VALUES) != 0) {
+                    if (memcmp(ri_attr_2, data_buf, RI_ATT2_N_VALUES) != 0) {
                         MESSAGE(3, printf("Error reading values of attribute FILL_ATTR\n"););
                         num_errs++;
                     } /* end if */
@@ -424,7 +423,7 @@ test_mgr_userattr()
             } /* switch */
 
             /* Free the space allocated for the data buffer. */
-            HDfree(data_buf);
+            free(data_buf);
 
         } /* for */
     }     /* if */

@@ -80,7 +80,7 @@ main(int argc, char *argv[])
 
     size = x_dim * y_dim;
 
-    if ((r24 = (UCHAR *)HDmalloc(size * 3)) == NULL) {
+    if ((r24 = (UCHAR *)malloc(size * 3)) == NULL) {
         fprintf(stderr, "error: malloc to hold r24 image failed\n");
         exit(-1);
     }
@@ -90,11 +90,11 @@ main(int argc, char *argv[])
         exit(-1);
     }
 
-    if ((r8 = (UCHAR *)HDmalloc(size)) == NULL) {
+    if ((r8 = (UCHAR *)malloc(size)) == NULL) {
         fprintf(stderr, "error: malloc to hold r8 image failed\n");
         exit(-1);
     }
-    if ((pal = (UCHAR *)HDmalloc(PALSIZE)) == NULL) {
+    if ((pal = (UCHAR *)malloc(PALSIZE)) == NULL) {
         fprintf(stderr, "error: malloc to hold palette failed\n");
         exit(-1);
     }
@@ -120,9 +120,9 @@ main(int argc, char *argv[])
         exit(-1);
     }
 
-    HDfree((char *)r24);
-    HDfree((char *)r8);
-    HDfree((char *)pal);
+    free(r24);
+    free(r8);
+    free(pal);
 
     return 0;
 }
@@ -139,7 +139,7 @@ r24r8(int32 xres, int32 yres, UCHAR *dat24, UCHAR *dat8, int cres, UCHAR *cdat)
     UINT  *cp, *np;
     UCHAR *dip, *dop, *rp, *gp, *bp;
 
-    if ((idat[0] = (UINT *)HDmalloc((size_t)(6 * xres) * sizeof(UINT))) == NULL) {
+    if ((idat[0] = (UINT *)malloc((size_t)(6 * xres) * sizeof(UINT))) == NULL) {
         fprintf(stderr, "error: Memory allocation fault\n");
         return -1;
     }
@@ -320,6 +320,6 @@ r24r8(int32 xres, int32 yres, UCHAR *dat24, UCHAR *dat8, int cres, UCHAR *cdat)
 
     *dop++ = (UCHAR)((rct * gres + gct) * bres + bct + coff);
 
-    HDfree(idat[0]);
+    free(idat[0]);
     return 0;
 }

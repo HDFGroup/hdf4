@@ -171,12 +171,12 @@ VIget_vgroup_node(void)
         vgroup_free_list = vgroup_free_list->next;
     } /* end if */
     else {
-        if ((ret_value = (VGROUP *)HDmalloc(sizeof(VGROUP))) == NULL)
+        if ((ret_value = (VGROUP *)malloc(sizeof(VGROUP))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
     } /* end else */
 
     /* Initialize to zeros */
-    HDmemset(ret_value, 0, sizeof(VGROUP));
+    memset(ret_value, 0, sizeof(VGROUP));
 
 done:
     return (ret_value);
@@ -226,12 +226,12 @@ VIget_vginstance_node(void)
         vginstance_free_list = vginstance_free_list->next;
     } /* end if */
     else {
-        if ((ret_value = (vginstance_t *)HDmalloc(sizeof(vginstance_t))) == NULL)
+        if ((ret_value = (vginstance_t *)malloc(sizeof(vginstance_t))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
     } /* end else */
 
     /* Initialize to zeros */
-    HDmemset(ret_value, 0, sizeof(vginstance_t));
+    memset(ret_value, 0, sizeof(vginstance_t));
 
 done:
     return (ret_value);
@@ -297,7 +297,7 @@ New_vfile(HFILEID f /* IN: file handle */)
     vfile_t *v = NULL;
 
     /* Allocate the vfile_t structure */
-    if (NULL == (v = (vfile_t *)HDcalloc(1, sizeof(vfile_t))))
+    if (NULL == (v = (vfile_t *)calloc(1, sizeof(vfile_t))))
         return (NULL);
 
     /* Assign the file ID & insert into the tree */
@@ -509,7 +509,7 @@ Remove_vfile(HFILEID f /* IN: file handle */)
 
     /* Delete the node and free the vfile_t structure */
     vf = tbbtrem((TBBT_NODE **)vtree, (TBBT_NODE *)t, NULL);
-    HDfree(vf);
+    free(vf);
 
 done:
     return ret_value;
@@ -576,21 +576,16 @@ vdestroynode(VOIDP n /* IN: node to free */)
     if (n != NULL) {
         vg = ((vginstance_t *)n)->vg;
         if (vg != NULL) {
-            HDfree((VOIDP)vg->tag);
-            HDfree((VOIDP)vg->ref);
+            free(vg->tag);
+            free(vg->ref);
 
-            if (vg->vgname != NULL)
-                HDfree((VOIDP)vg->vgname);
-
-            if (vg->vgclass != NULL)
-                HDfree((VOIDP)vg->vgclass);
-
-            if (vg->alist != NULL)
-                HDfree((VOIDP)vg->alist);
+            free(vg->vgname);
+            free(vg->vgclass);
+            free(vg->alist);
 
             /* Free the old-style attr list and reset associated fields */
             if (vg->old_alist != NULL) {
-                HDfree((VOIDP)vg->old_alist);
+                free(vg->old_alist);
                 vg->old_alist = NULL;
                 vg->noldattrs = 0;
             }
@@ -627,7 +622,7 @@ vfdestroynode(VOIDP n /* IN: vfile_t record to free */)
         tbbtdfree(vf->vgtree, vdestroynode, NULL);
         tbbtdfree(vf->vstree, vsdestroynode, NULL);
 
-        HDfree(vf);
+        free(vf);
     }
 } /* vfdestroynode */
 
@@ -923,8 +918,8 @@ vunpackvg(VGROUP *vg,    /* IN/OUT: */
         UINT16DECODE(bb, vg->nvelt);
 
         vg->msize = ((uintn)vg->nvelt > (uintn)MAXNVELT ? vg->nvelt : MAXNVELT);
-        vg->tag   = (uint16 *)HDmalloc(vg->msize * sizeof(uint16));
-        vg->ref   = (uint16 *)HDmalloc(vg->msize * sizeof(uint16));
+        vg->tag   = (uint16 *)malloc(vg->msize * sizeof(uint16));
+        vg->ref   = (uint16 *)malloc(vg->msize * sizeof(uint16));
 
         if ((vg->tag == NULL) || (vg->ref == NULL))
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -942,7 +937,7 @@ vunpackvg(VGROUP *vg,    /* IN/OUT: */
         if (uint16var == 0)
             vg->vgname = NULL;
         else {
-            vg->vgname = (char *)HDmalloc(uint16var + 1);
+            vg->vgname = (char *)malloc(uint16var + 1);
             HIstrncpy(vg->vgname, (char *)bb, (intn)uint16var + 1);
             bb += (size_t)uint16var;
         }
@@ -952,7 +947,7 @@ vunpackvg(VGROUP *vg,    /* IN/OUT: */
         if (uint16var == 0)
             vg->vgclass = NULL;
         else {
-            vg->vgclass = (char *)HDmalloc(uint16var + 1);
+            vg->vgclass = (char *)malloc(uint16var + 1);
             HIstrncpy(vg->vgclass, (char *)bb, (intn)uint16var + 1);
             bb += (size_t)uint16var;
         }
@@ -966,7 +961,7 @@ vunpackvg(VGROUP *vg,    /* IN/OUT: */
             if (vg->flags & VG_ATTR_SET) { /* the vg has attrs */
                 INT32DECODE(bb, vg->nattrs);
 
-                if (NULL == (vg->alist = HDmalloc(vg->nattrs * sizeof(vg_attr_t))))
+                if (NULL == (vg->alist = malloc(vg->nattrs * sizeof(vg_attr_t))))
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                 for (i = 0; i < vg->nattrs; i++) {
@@ -1012,12 +1007,11 @@ VPgetinfo(HFILEID f, /* IN: file handle */
     if (len > Vgbufsize) {
         Vgbufsize = len;
 
-        if (Vgbuf)
-            HDfree((VOIDP)Vgbuf);
+        free(Vgbuf);
 
-        if ((Vgbuf = (uint8 *)HDmalloc(Vgbufsize)) == NULL)
+        if ((Vgbuf = (uint8 *)malloc(Vgbufsize)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
-    } /* end if */
+    }
 
     /* Get the raw Vgroup info */
     if (Hgetelement(f, DFTAG_VG, (uint16)ref, Vgbuf) == (int32)FAIL)
@@ -1112,8 +1106,8 @@ Vattach(HFILEID     f,    /* IN: file handle */
 
         /* initialize new vg */
         vg->msize = MAXNVELT;
-        vg->tag   = (uint16 *)HDmalloc(vg->msize * sizeof(uint16));
-        vg->ref   = (uint16 *)HDmalloc(vg->msize * sizeof(uint16));
+        vg->tag   = (uint16 *)malloc(vg->msize * sizeof(uint16));
+        vg->ref   = (uint16 *)malloc(vg->msize * sizeof(uint16));
 
         vg->vgname  = NULL;
         vg->vgclass = NULL;
@@ -1247,10 +1241,9 @@ Vdetach(int32 vkey /* IN: vgroup key */)
         if (need > Vgbufsize) {
             Vgbufsize = need;
 
-            if (Vgbuf)
-                HDfree((VOIDP)Vgbuf);
+            free(Vgbuf);
 
-            if ((Vgbuf = (uint8 *)HDmalloc(Vgbufsize)) == NULL)
+            if ((Vgbuf = (uint8 *)malloc(Vgbufsize)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
         } /* end if */
 
@@ -1288,7 +1281,7 @@ Vdetach(int32 vkey /* IN: vgroup key */)
 
     /* Free the old-style attribute list and reset associated fields */
     if (vg->old_alist != NULL) {
-        HDfree((VOIDP)vg->old_alist);
+        free(vg->old_alist);
         vg->old_alist = NULL;
         vg->noldattrs = 0;
     }
@@ -1977,8 +1970,8 @@ vinsertpair(VGROUP *vg,  /* IN: vgroup struct */
     if ((intn)vg->nvelt >= vg->msize) {
         vg->msize *= 2;
 
-        vg->tag = (uint16 *)HDrealloc((VOIDP)vg->tag, vg->msize * sizeof(uint16));
-        vg->ref = (uint16 *)HDrealloc((VOIDP)vg->ref, vg->msize * sizeof(uint16));
+        vg->tag = (uint16 *)realloc((VOIDP)vg->tag, vg->msize * sizeof(uint16));
+        vg->ref = (uint16 *)realloc((VOIDP)vg->ref, vg->msize * sizeof(uint16));
 
         if ((vg->tag == NULL) || (vg->ref == NULL))
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -2076,11 +2069,10 @@ Vsetname(int32       vkey, /* IN: vgroup key */
     name_len = HDstrlen(vgname); /* shortcut of length of the given name */
 
     /* if name exists, release it */
-    if (vg->vgname != NULL)
-        HDfree(vg->vgname);
+    free(vg->vgname);
 
     /* allocate space for new name */
-    vg->vgname = (char *)HDmalloc(name_len + 1);
+    vg->vgname = (char *)malloc(name_len + 1);
 
     /* check for unsuccessful allocation */
     if (vg->vgname == NULL)
@@ -2145,11 +2137,10 @@ Vsetclass(int32       vkey, /* IN: vgroup key */
     classname_len = HDstrlen(vgclass); /* length of the given class name */
 
     /* if name exists, release it */
-    if (vg->vgclass != NULL)
-        HDfree(vg->vgclass);
+    free(vg->vgclass);
 
     /* allocate space for new name */
-    vg->vgclass = (char *)HDmalloc(classname_len + 1);
+    vg->vgclass = (char *)malloc(classname_len + 1);
 
     /* check for unsuccessful allocation */
     if (vg->vgclass == NULL)
@@ -2865,9 +2856,9 @@ VPshutdown(void)
             v                = vgroup_free_list;
             vgroup_free_list = vgroup_free_list->next;
             v->next          = NULL;
-            HDfree(v);
-        } /* end while */
-    }     /* end if */
+            free(v);
+        }
+    }
 
     /* Release the vginstance free-list if it exists */
     if (vginstance_free_list != NULL) {
@@ -2875,9 +2866,9 @@ VPshutdown(void)
             vg                   = vginstance_free_list;
             vginstance_free_list = vginstance_free_list->next;
             vg->next             = NULL;
-            HDfree(vg);
-        } /* end while */
-    }     /* end if */
+            free(vg);
+        }
+    }
 
     if (vtree != NULL) {
         /* Free the vfile tree */
@@ -2891,13 +2882,13 @@ VPshutdown(void)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
         vtree = NULL;
-    } /* end if */
+    }
 
     if (Vgbuf != NULL) {
-        HDfree(Vgbuf);
+        free(Vgbuf);
         Vgbuf     = NULL;
         Vgbufsize = 0;
-    } /* end if */
+    }
 
 done:
     return ret_value;

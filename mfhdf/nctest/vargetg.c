@@ -16,7 +16,6 @@
 #include "testcdf.h" /* defines in-memory test cdf structure */
 #include "error.h"
 #include "tests.h"
-#include "alloc.h"
 #include "emalloc.h"
 #ifdef HDF
 #include "hdf.h"
@@ -150,7 +149,7 @@ test_ncvargetg(char *path)
         error("%s: ncvargetg failed to report bad netcdf handle", pname);
         nerrs++;
     }
-    Free((char *)hc.vals);
+    free(hc.vals);
     if (nerrs > 0)
         (void)fprintf(stderr, "FAILED! ***\n");
     else

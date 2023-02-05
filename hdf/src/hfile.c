@@ -2111,7 +2111,7 @@ HIstart(void)
 
     if (cleanup_list == NULL) {
         /* allocate list to hold terminateion fcns */
-        if ((cleanup_list = HDmalloc(sizeof(Generic_list))) == NULL)
+        if ((cleanup_list = malloc(sizeof(Generic_list))) == NULL)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
         /* initialize list */
@@ -2196,7 +2196,7 @@ HPend(void)
     /* can't issue errors if you're free'ing the error stack. */
     HDGLdestroy_list(cleanup_list); /* clear the list of interface cleanup routines */
     /* free allocated list struct */
-    HDfree(cleanup_list);
+    free(cleanup_list);
     /* re-initialize */
     cleanup_list = NULL;
 
@@ -2591,7 +2591,7 @@ HIget_filerec_node(const char *path)
     filerec_t *ret_value = NULL;
 
     if ((ret_value = HAsearch_atom(FIDGROUP, HPcompare_filerec_path, path)) == NULL) {
-        if ((ret_value = (filerec_t *)HDcalloc(1, sizeof(filerec_t))) == NULL)
+        if ((ret_value = (filerec_t *)calloc(1, sizeof(filerec_t))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
 
         if ((ret_value->path = (char *)HDstrdup(path)) == NULL)
@@ -2632,9 +2632,8 @@ HIrelease_filerec_node(filerec_t *file_rec)
         HI_CLOSE(file_rec->file);
 
     /* Free all the components of the file record */
-    if (file_rec->path != NULL)
-        HDfree(file_rec->path);
-    HDfree(file_rec);
+    free(file_rec->path);
+    free(file_rec);
 
     return SUCCEED;
 } /* HIrelease_filerec_node */
@@ -2800,12 +2799,12 @@ HIget_access_rec(void)
         accrec_free_list = accrec_free_list->next;
     } /* end if */
     else {
-        if ((ret_value = (accrec_t *)HDmalloc(sizeof(accrec_t))) == NULL)
+        if ((ret_value = (accrec_t *)malloc(sizeof(accrec_t))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
     } /* end else */
 
     /* Initialize to zeros */
-    HDmemset(ret_value, 0, sizeof(accrec_t));
+    memset(ret_value, 0, sizeof(accrec_t));
 
 done:
     return ret_value;
@@ -2875,7 +2874,7 @@ HIupdate_version(int32 file_id)
         UINT32ENCODE(p, file_rec->version.release);
         HIstrncpy((char *)p, file_rec->version.string, LIBVSTR_LEN);
         i = (int)HDstrlen((char *)p);
-        HDmemset(&p[i], 0, LIBVSTR_LEN - i);
+        memset(&p[i], 0, LIBVSTR_LEN - i);
     }
 
     if (Hputelement(file_id, (uint16)DFTAG_VERSION, (uint16)1, lversion, (int32)LIBVER_LEN) == FAIL)
@@ -3152,11 +3151,11 @@ Hshutdown(void)
             curr             = accrec_free_list;
             accrec_free_list = accrec_free_list->next;
             curr->next       = NULL;
-            HDfree(curr);
-        } /* end while */
-    }     /* end if */
+            free(curr);
+        }
+    }
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* end Hshutdown() */
 
 /* #define HFILE_SEEKINFO */
@@ -3344,7 +3343,7 @@ HPread_drec(int32 file_id, atom_t data_id, uint8 **drec_buf)
     if (HTPinquire(data_id, &drec_tag, &drec_ref, NULL, &drec_len) == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-    if ((*drec_buf = (uint8 *)HDmalloc(drec_len)) == NULL)
+    if ((*drec_buf = (uint8 *)malloc(drec_len)) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* get the special info header */
@@ -3494,8 +3493,7 @@ HDcheck_empty(int32 file_id, uint16 tag, uint16 ref, intn *emptySDS /* TRUE if d
     }
 
 done:
-    if (local_ptbuf != NULL)
-        HDfree(local_ptbuf);
+    free(local_ptbuf);
 
     return ret_value;
 } /* end HDcheck_empty() */

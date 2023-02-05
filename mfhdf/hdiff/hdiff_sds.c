@@ -211,14 +211,14 @@ diff_sds(int32 sd1_id, int32 sd2_id, int32 ref1, int32 ref2, diff_opt_t *opt)
          *-------------------------------------------------------------------------
          */
 
-        fill1 = (VOIDP)HDmalloc(eltsz);
-        fill2 = (VOIDP)HDmalloc(eltsz);
+        fill1 = (VOIDP)malloc(eltsz);
+        fill2 = (VOIDP)malloc(eltsz);
         if (fill1 != NULL && SDgetfillvalue(sds1_id, fill1) < 0) {
-            HDfree(fill1);
+            free(fill1);
             fill1 = NULL;
         }
         if (fill2 != NULL && SDgetfillvalue(sds2_id, fill2) < 0) {
-            HDfree(fill2);
+            free(fill2);
             fill2 = NULL;
         }
 
@@ -235,8 +235,8 @@ diff_sds(int32 sd1_id, int32 sd2_id, int32 ref1, int32 ref2, diff_opt_t *opt)
         need = (size_t)(nelms * eltsz); /* bytes needed */
 
         if (need < H4TOOLS_MALLOCSIZE) {
-            buf1 = (VOIDP)HDmalloc(need);
-            buf2 = (VOIDP)HDmalloc(need);
+            buf1 = (VOIDP)malloc(need);
+            buf2 = (VOIDP)malloc(need);
         }
 
         /*-------------------------------------------------------------------------
@@ -307,11 +307,11 @@ diff_sds(int32 sd1_id, int32 sd2_id, int32 ref1, int32 ref2, diff_opt_t *opt)
                 assert(sm_nbytes > 0);
             }
 
-            sm_buf1 = HDmalloc((size_t)sm_nbytes);
-            sm_buf2 = HDmalloc((size_t)sm_nbytes);
+            sm_buf1 = malloc((size_t)sm_nbytes);
+            sm_buf2 = malloc((size_t)sm_nbytes);
 
             /* the stripmine loop */
-            HDmemset(hs_offset, 0, sizeof hs_offset);
+            memset(hs_offset, 0, sizeof hs_offset);
 
             for (elmtno = 0; elmtno < p_nelmts; elmtno += hs_nelmts) {
                 /* calculate the hyperslab size */
@@ -366,14 +366,10 @@ diff_sds(int32 sd1_id, int32 sd2_id, int32 ref1, int32 ref2, diff_opt_t *opt)
             }     /* elmtno */
 
             /* free */
-            if (sm_buf1 != NULL) {
-                HDfree(sm_buf1);
-                sm_buf1 = NULL;
-            }
-            if (sm_buf2 != NULL) {
-                HDfree(sm_buf2);
-                sm_buf2 = NULL;
-            }
+            free(sm_buf1);
+            sm_buf1 = NULL;
+            free(sm_buf2);
+            sm_buf2 = NULL;
 
         } /* hyperslab read */
 
@@ -393,14 +389,10 @@ do_nothing:
 
     SDendaccess(sds1_id);
     SDendaccess(sds2_id);
-    if (buf1)
-        HDfree(buf1);
-    if (buf2)
-        HDfree(buf2);
-    if (fill1)
-        HDfree(fill1);
-    if (fill2)
-        HDfree(fill2);
+    free(buf1);
+    free(buf2);
+    free(fill1);
+    free(fill2);
 
     return nfound;
 
@@ -413,14 +405,10 @@ out:
     if (sds2_id != -1)
         SDendaccess(sds2_id);
 
-    if (buf1)
-        HDfree(buf1);
-    if (buf2)
-        HDfree(buf2);
-    if (fill1)
-        HDfree(fill1);
-    if (fill2)
-        HDfree(fill2);
+    free(buf1);
+    free(buf2);
+    free(fill1);
+    free(fill2);
 
     return 0;
 }
@@ -473,13 +461,13 @@ diff_sds_attrs(int32 sds1_id, int32 nattrs1, int32 sds2_id, int32 nattrs2, char 
             continue;
         }
 
-        attr1_buf = (void *)HDmalloc((unsigned)nelms1 * DFKNTsize(dtype1 | DFNT_NATIVE));
+        attr1_buf = (void *)malloc((unsigned)nelms1 * DFKNTsize(dtype1 | DFNT_NATIVE));
         if (!attr1_buf) {
             printf("Out of memory!");
             goto out;
             ;
         }
-        attr2_buf = (void *)HDmalloc((unsigned)nelms2 * DFKNTsize(dtype2 | DFNT_NATIVE));
+        attr2_buf = (void *)malloc((unsigned)nelms2 * DFKNTsize(dtype2 | DFNT_NATIVE));
         if (!attr2_buf) {
             printf("Out of memory!");
             goto out;
@@ -494,7 +482,7 @@ diff_sds_attrs(int32 sds1_id, int32 nattrs1, int32 sds2_id, int32 nattrs2, char 
             goto out;
         }
 
-        cmp = HDmemcmp(attr1_buf, attr2_buf, nelms1 * DFKNTsize(dtype1 | DFNT_NATIVE));
+        cmp = memcmp(attr1_buf, attr2_buf, nelms1 * DFKNTsize(dtype1 | DFNT_NATIVE));
         if (cmp != 0) {
             printf("\n---------------------------\n");
             printf("%s:%s = \n", sds1_name, attr1_name);
@@ -508,20 +496,16 @@ diff_sds_attrs(int32 sds1_id, int32 nattrs1, int32 sds2_id, int32 nattrs2, char 
             nfound++;
         }
 
-        if (attr1_buf)
-            HDfree(attr1_buf);
-        if (attr2_buf)
-            HDfree(attr2_buf);
+        free(attr1_buf);
+        free(attr2_buf);
     }
 
     return nfound;
 
 out:
 
-    if (attr1_buf)
-        HDfree(attr1_buf);
-    if (attr2_buf)
-        HDfree(attr2_buf);
+    free(attr1_buf);
+    free(attr2_buf);
     opt->err_stat = 1;
     return 0;
 }

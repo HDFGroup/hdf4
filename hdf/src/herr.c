@@ -111,10 +111,8 @@ HEclear(void)
     /* error_top == 0 means no error in stack */
     /* clean out old descriptions if they exist */
     for (; error_top > 0; error_top--) {
-        if (error_stack[error_top - 1].desc) {
-            HDfree(error_stack[error_top - 1].desc);
-            error_stack[error_top - 1].desc = NULL;
-        }
+        free(error_stack[error_top - 1].desc);
+        error_stack[error_top - 1].desc = NULL;
     }
 
 done:
@@ -148,7 +146,7 @@ HEpush(hdf_err_code_t error_code, const char *function_name, const char *file_na
 
     /* if the stack is not allocated, then do it */
     if (!error_stack) {
-        error_stack = (error_t *)HDmalloc((uint32)sizeof(error_t) * ERR_STACK_SZ);
+        error_stack = (error_t *)malloc((uint32)sizeof(error_t) * ERR_STACK_SZ);
         if (!error_stack) {
             puts("HEpush cannot allocate space.  Unable to continue!!");
             exit(8);
@@ -165,10 +163,8 @@ HEpush(hdf_err_code_t error_code, const char *function_name, const char *file_na
         error_stack[error_top].file_name  = file_name;
         error_stack[error_top].line       = line;
         error_stack[error_top].error_code = error_code;
-        if (error_stack[error_top].desc) {
-            HDfree(error_stack[error_top].desc);
-            error_stack[error_top].desc = NULL;
-        }
+        free(error_stack[error_top].desc);
+        error_stack[error_top].desc = NULL;
         error_top++;
     }
 } /* HEpush */
@@ -196,14 +192,13 @@ HEreport(const char *format, ...)
     va_start(arg_ptr, format);
 
     if ((error_top < ERR_STACK_SZ + 1) && (error_top > 0)) {
-        tmp = (char *)HDmalloc(ERR_STRING_SIZE);
+        tmp = (char *)malloc(ERR_STRING_SIZE);
         if (!tmp) {
             HERROR(DFE_NOSPACE);
             goto done;
         }
         vsprintf(tmp, format, arg_ptr);
-        if (error_stack[error_top - 1].desc)
-            HDfree(error_stack[error_top - 1].desc);
+        free(error_stack[error_top - 1].desc);
         error_stack[error_top - 1].desc = tmp;
     }
 
@@ -293,9 +288,9 @@ intn
 HEshutdown(void)
 {
     if (error_stack != NULL) {
-        HDfree(error_stack);
+        free(error_stack);
         error_stack = NULL;
         error_top   = 0;
-    } /* end if */
-    return (SUCCEED);
+    }
+    return SUCCEED;
 } /* end HEshutdown() */

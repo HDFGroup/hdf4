@@ -92,13 +92,13 @@ DFdiread(int32 file_id, uint16 tag, uint16 ref)
         HRETURN_ERROR(DFE_INTERNAL, FAIL);
 
     /* allocate a new structure to hold the group */
-    new_list = (DIlist_ptr)HDmalloc((uint32)sizeof(DIlist));
+    new_list = (DIlist_ptr)malloc((uint32)sizeof(DIlist));
     if (!new_list)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-    new_list->DIlist = (uint8 *)HDmalloc((uint32)length);
+    new_list->DIlist = (uint8 *)malloc((uint32)length);
     if (!new_list->DIlist) {
-        HDfree((VOIDP)new_list);
+        free(new_list);
         HRETURN_ERROR(DFE_NOSPACE, FAIL)
     }
 
@@ -107,8 +107,8 @@ DFdiread(int32 file_id, uint16 tag, uint16 ref)
 
     /* read in group */
     if (Hgetelement(file_id, tag, ref, (uint8 *)new_list->DIlist) < 0) {
-        HDfree((VOIDP)new_list->DIlist);
-        HDfree((VOIDP)new_list);
+        free(new_list->DIlist);
+        free(new_list);
         HRETURN_ERROR(DFE_READERROR, FAIL)
     }
     return (int32)setgroupREC(new_list);
@@ -145,8 +145,8 @@ DFdiget(int32 list, uint16 *ptag, uint16 *pref)
     UINT16DECODE(p, *pref);
 
     if (list_rec->current == list_rec->num) {
-        HDfree((VOIDP)list_rec->DIlist); /*if all returned, free storage */
-        HDfree((VOIDP)list_rec);
+        free(list_rec->DIlist); /*if all returned, free storage */
+        free(list_rec);
         Group_list[list & 0xffff] = NULL; /* YUCK! BUG! */
     }
     return SUCCEED;
@@ -192,14 +192,14 @@ DFdisetup(int maxsize)
 {
     DIlist_ptr new_list;
 
-    new_list = (DIlist_ptr)HDmalloc((uint32)sizeof(DIlist));
+    new_list = (DIlist_ptr)malloc((uint32)sizeof(DIlist));
 
     if (!new_list)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-    new_list->DIlist = (uint8 *)HDmalloc((uint32)(maxsize * 4));
+    new_list->DIlist = (uint8 *)malloc((uint32)(maxsize * 4));
     if (!new_list->DIlist) {
-        HDfree((VOIDP)new_list);
+        free(new_list);
         HRETURN_ERROR(DFE_NOSPACE, FAIL)
     }
 
@@ -266,8 +266,8 @@ DFdiwrite(int32 file_id, int32 list, uint16 tag, uint16 ref)
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
     ret = Hputelement(file_id, tag, ref, list_rec->DIlist, (int32)list_rec->current * 4);
-    HDfree((VOIDP)list_rec->DIlist);
-    HDfree((VOIDP)list_rec);
+    free(list_rec->DIlist);
+    free(list_rec);
     Group_list[list & 0xffff] = NULL; /* YUCK! BUG! */
     return (intn)ret;
 }
@@ -304,7 +304,7 @@ DFdifree(int32 groupID)
     if (list_rec == NULL)
         return;
 
-    HDfree((void *)list_rec->DIlist);
-    HDfree((void *)list_rec);
+    free(list_rec->DIlist);
+    free(list_rec);
     Group_list[groupID & 0xffff] = NULL;
 }

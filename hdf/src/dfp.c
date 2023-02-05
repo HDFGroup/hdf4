@@ -276,7 +276,7 @@ DFPnpals(const char *filename)
     }
 
     /* Get space to store the palette offsets */
-    if ((pal_off = (int32 *)HDmalloc(npals * sizeof(int32))) == NULL)
+    if ((pal_off = (int32 *)malloc(npals * sizeof(int32))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* go through the IP8s */
@@ -307,7 +307,7 @@ DFPnpals(const char *filename)
             }                          /* end for */
     }                                  /* end for */
 
-    HDfree(pal_off); /* free offsets */
+    free(pal_off); /* free offsets */
 
     if (Hclose(file_id) == FAIL)
         HGOTO_ERROR(DFE_CANTCLOSE, FAIL);

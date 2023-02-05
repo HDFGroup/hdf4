@@ -100,12 +100,12 @@ VSIget_vdata_node(void)
     }
     else /* allocate a new node */
     {
-        if ((ret_value = (VDATA *)HDmalloc(sizeof(VDATA))) == NULL)
+        if ((ret_value = (VDATA *)malloc(sizeof(VDATA))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
     } /* end else */
 
     /* Initialize to zeros */
-    HDmemset(ret_value, 0, sizeof(VDATA));
+    memset(ret_value, 0, sizeof(VDATA));
 
 done:
     return (ret_value);
@@ -156,12 +156,12 @@ VSIget_vsinstance_node(void)
     }
     else /* allocate a new vsinstance record */
     {
-        if ((ret_value = (vsinstance_t *)HDmalloc(sizeof(vsinstance_t))) == NULL)
+        if ((ret_value = (vsinstance_t *)malloc(sizeof(vsinstance_t))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
     } /* end else */
 
     /* Initialize to zeros */
-    HDmemset(ret_value, 0, sizeof(vsinstance_t));
+    memset(ret_value, 0, sizeof(vsinstance_t));
 
 done:
     return (ret_value);
@@ -213,9 +213,9 @@ VSPhshutdown(void)
             v               = vdata_free_list;
             vdata_free_list = vdata_free_list->next;
             v->next         = NULL;
-            HDfree(v);
-        } /* end while */
-    }     /* end if */
+            free(v);
+        }
+    }
 
     /* Release the vsinstance free-list if it exists */
     if (vsinstance_free_list != NULL) {
@@ -223,16 +223,16 @@ VSPhshutdown(void)
             vs                   = vsinstance_free_list;
             vsinstance_free_list = vsinstance_free_list->next;
             vs->next             = NULL;
-            HDfree(vs);
-        } /* end while */
-    }     /* end if */
+            free(vs);
+        }
+    }
 
     /* free buffer */
     if (Vhbuf != NULL) {
-        HDfree(Vhbuf);
+        free(Vhbuf);
         Vhbuf     = NULL;
         Vhbufsize = 0;
-    } /* end if */
+    }
 
     /* free the parsing buffer */
     ret_value = VPparse_shutdown();
@@ -527,7 +527,7 @@ vunpackvs(VDATA *vs,    /* IN/OUT: */
             vs->wlist.name = NULL;
         }      /* end if */
         else { /* Allocate buffer to hold all the int16/uint16 arrays */
-            if (NULL == (vs->wlist.bptr = HDmalloc(sizeof(uint16) * (size_t)(vs->wlist.n * 5))))
+            if (NULL == (vs->wlist.bptr = malloc(sizeof(uint16) * (size_t)(vs->wlist.n * 5))))
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
             /* Use buffer to support the other arrays */
@@ -550,12 +550,12 @@ vunpackvs(VDATA *vs,    /* IN/OUT: */
                 UINT16DECODE(bb, vs->wlist.order[i]);
 
             /* retrieve the field names (and each field name's length)  */
-            if (NULL == (vs->wlist.name = HDmalloc(sizeof(char *) * (size_t)vs->wlist.n)))
+            if (NULL == (vs->wlist.name = malloc(sizeof(char *) * (size_t)vs->wlist.n)))
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
             for (i = 0; i < vs->wlist.n; i++) {
                 INT16DECODE(bb, int16var); /* this gives the length */
-                if (NULL == (vs->wlist.name[i] = HDmalloc((int16var + 1) * sizeof(char))))
+                if (NULL == (vs->wlist.name[i] = malloc((int16var + 1) * sizeof(char))))
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                 HIstrncpy(vs->wlist.name[i], (char *)bb, int16var + 1);
@@ -595,7 +595,7 @@ vunpackvs(VDATA *vs,    /* IN/OUT: */
             if (vs->flags & VS_ATTR_SET) { /* get attr info */
                 INT32DECODE(bb, vs->nattrs);
 
-                if (NULL == (vs->alist = (vs_attr_t *)HDmalloc(vs->nattrs * sizeof(vs_attr_t))))
+                if (NULL == (vs->alist = (vs_attr_t *)malloc(vs->nattrs * sizeof(vs_attr_t))))
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                 for (i = 0; i < vs->nattrs; i++) {
@@ -647,23 +647,21 @@ vsdestroynode(void *n /* IN: Node in TBBT-tree */)
         if (vs != NULL) {
             /* Free the dynamically allocated VData fields */
             for (i = 0; i < vs->wlist.n; i++)
-                HDfree(vs->wlist.name[i]);
+                free(vs->wlist.name[i]);
 
-            HDfree(vs->wlist.name);
-            HDfree(vs->wlist.bptr);
+            free(vs->wlist.name);
+            free(vs->wlist.bptr);
 
-            if (vs->rlist.item != NULL)
-                HDfree(vs->rlist.item);
+            free(vs->rlist.item);
 
-            if (vs->alist != NULL)
-                HDfree(vs->alist);
+            free(vs->alist);
 
             VSIrelease_vdata_node(vs);
-        } /* end if */
+        }
 
         /* release this instance to the free list ? */
         VSIrelease_vsinstance_node((vsinstance_t *)n);
-    } /* end if 'n' */
+    }
 
 } /* vsdestroynode */
 
@@ -704,11 +702,11 @@ VSPgetinfo(HFILEID f, /* IN: file handle */
         Vhbufsize = vh_length;
 
         if (Vhbuf != NULL)
-            HDfree(Vhbuf);
+            free(Vhbuf);
 
-        if ((Vhbuf = (uint8 *)HDmalloc(Vhbufsize)) == NULL)
+        if ((Vhbuf = (uint8 *)malloc(Vhbufsize)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
-    } /* end if */
+    }
 
     /* get Vdata header from file */
     if (Hgetelement(f, DFTAG_VH, ref, Vhbuf) == FAIL)
@@ -1021,12 +1019,11 @@ VSdetach(int32 vkey /* IN: vdata key? */)
 
             if (need > Vhbufsize) {
                 Vhbufsize = need;
-                if (Vhbuf)
-                    HDfree(Vhbuf);
+                free(Vhbuf);
 
-                if ((Vhbuf = HDmalloc(Vhbufsize)) == NULL)
+                if ((Vhbuf = malloc(Vhbufsize)) == NULL)
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
-            } /* end if */
+            }
 
             if (FAIL == vpackvs(vs, Vhbuf, &vspacksize))
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
@@ -1061,10 +1058,10 @@ VSdetach(int32 vkey /* IN: vdata key? */)
 
         /* remove all defined symbols */
         for (i = 0; i < vs->nusym; i++)
-            HDfree(vs->usym[i].name);
+            free(vs->usym[i].name);
 
         if (vs->usym != NULL)
-            HDfree(vs->usym); /* free the actual array */
+            free(vs->usym); /* free the actual array */
 
         vs->nusym = 0;
         vs->usym  = NULL;

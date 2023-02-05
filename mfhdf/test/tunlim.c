@@ -47,7 +47,7 @@
         - SDgetinfo to get the size of the unlimited dimension
         - SDreaddata to read the variable up to the unlimited dimension's size,
           that is the max number of records in the file
-        - HDmemcmp to verify that the read buffer is as expected
+        - memcmp to verify that the read buffer is as expected
 
         It is used by only test_1dim_singlevar, test_1dim_multivars, and
         test_1dim_multivars_addon because it only handles 1-dim dataset and
@@ -85,7 +85,7 @@ verify_info_data(int32 sds_id, int32 expected_dimsize, int16 *result)
     CHECK(status, FAIL, info);
 
     /* Verify read data by comparing the output buffer against expected data */
-    status = HDmemcmp(outdata, result, edges[0] * SIZE_INT16);
+    status = memcmp(outdata, result, edges[0] * SIZE_INT16);
     if (status != 0)
         fprintf(stderr, "For SDS %s: Read data doesn't match input\n", ds_name);
 
@@ -451,8 +451,8 @@ test_multidim_singlevar()
     status                         = SDreaddata(dset1, start, NULL, edges, (VOIDP)outdata);
     CHECK(status, FAIL, "SDreaddata");
 
-    status = HDmemcmp(outdata, result, edges[0] * DIM1 * DIM2 * sizeof(int16));
-    VERIFY(status, 0, "HDmemcmp");
+    status = memcmp(outdata, result, edges[0] * DIM1 * DIM2 * sizeof(int16));
+    VERIFY(status, 0, "memcmp");
 
     /* Close the dataset */
     status = SDendaccess(dset1);
@@ -494,8 +494,8 @@ test_multidim_singlevar()
     status   = SDreaddata(dset1, start, NULL, edges, (VOIDP)outdata);
     CHECK(status, FAIL, "SDreaddata");
 
-    status = HDmemcmp(outdata, result, edges[0] * DIM1 * DIM2 * sizeof(int16));
-    VERIFY(status, 0, "HDmemcmp");
+    status = memcmp(outdata, result, edges[0] * DIM1 * DIM2 * sizeof(int16));
+    VERIFY(status, 0, "memcmp");
 
     { /* Append data to the dataset at the end */
         int16 data[] = {800, 801, 802, 803, 804, 805};
@@ -523,8 +523,8 @@ test_multidim_singlevar()
     status   = SDreaddata(dset1, start, NULL, edges, (VOIDP)outdata);
     CHECK(status, FAIL, "SDreaddata");
 
-    status = HDmemcmp(outdata, result, edges[0] * DIM1 * DIM2 * sizeof(int16));
-    VERIFY(status, 0, "HDmemcmp");
+    status = memcmp(outdata, result, edges[0] * DIM1 * DIM2 * sizeof(int16));
+    VERIFY(status, 0, "memcmp");
 
     /* data should be
             300  -3     301  -3     302  -3     303  -3 ...

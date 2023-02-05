@@ -30,11 +30,11 @@ void
 options_table_init(options_table_t **tbl)
 {
     int              i;
-    options_table_t *op_tbl = (options_table_t *)HDmalloc(sizeof(options_table_t));
+    options_table_t *op_tbl = (options_table_t *)malloc(sizeof(options_table_t));
 
     op_tbl->size   = 3;
     op_tbl->nelems = 0;
-    op_tbl->objs   = (pack_info_t *)HDmalloc(op_tbl->size * sizeof(pack_info_t));
+    op_tbl->objs   = (pack_info_t *)malloc(op_tbl->size * sizeof(pack_info_t));
 
     for (i = 0; i < op_tbl->size; i++) {
         HDstrcpy(op_tbl->objs[i].objpath, "\0");
@@ -59,10 +59,8 @@ options_table_init(options_table_t **tbl)
 void
 options_table_free(options_table_t *op_tbl)
 {
-    if (op_tbl->objs != NULL)
-        HDfree(op_tbl->objs);
-    if (op_tbl != NULL)
-        HDfree(op_tbl);
+    free(op_tbl->objs);
+    free(op_tbl);
 }
 
 /*-------------------------------------------------------------------------
@@ -83,7 +81,7 @@ options_add_chunk(obj_list_t *obj_list, int n_objs, int32 *chunk_lengths, int ch
 
     if (op_tbl->nelems + n_objs >= op_tbl->size) {
         op_tbl->size += n_objs;
-        op_tbl->objs = (pack_info_t *)HDrealloc(op_tbl->objs, op_tbl->size * sizeof(pack_info_t));
+        op_tbl->objs = (pack_info_t *)realloc(op_tbl->objs, op_tbl->size * sizeof(pack_info_t));
         for (i = op_tbl->nelems; i < op_tbl->size; i++) {
             HDstrcpy(op_tbl->objs[i].objpath, "\0");
             op_tbl->objs[i].comp.info  = -1;
@@ -163,7 +161,7 @@ options_add_comp(obj_list_t *obj_list, int n_objs, comp_info_t comp, options_tab
 
     if (op_tbl->nelems + n_objs >= op_tbl->size) {
         op_tbl->size += n_objs;
-        op_tbl->objs = (pack_info_t *)HDrealloc(op_tbl->objs, op_tbl->size * sizeof(pack_info_t));
+        op_tbl->objs = (pack_info_t *)realloc(op_tbl->objs, op_tbl->size * sizeof(pack_info_t));
         for (i = op_tbl->nelems; i < op_tbl->size; i++) {
             HDstrcpy(op_tbl->objs[i].objpath, "\0");
             op_tbl->objs[i].comp.info  = -1;

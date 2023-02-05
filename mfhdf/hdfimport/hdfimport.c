@@ -877,7 +877,7 @@ gdimen(struct infilesformat infile_info, struct Input *in, FILE *strm)
             (void)fprintf(stderr, err5, sd_index);
             goto err;
         }
-        sds_name = (char *)HDmalloc(name_len + 1);
+        sds_name = (char *)malloc(name_len + 1);
         if (sds_name == NULL) {
             (void)fprintf(stderr, "%s", err6);
             goto err;
@@ -955,13 +955,11 @@ gdimen(struct infilesformat infile_info, struct Input *in, FILE *strm)
     (void)printf("\t%d %d %d\n\n", in->dims[2], in->dims[1], in->dims[0]);
 #endif /* DEBUG */
 
-    if (sds_name != NULL)
-        HDfree(sds_name);
+    free(sds_name);
     return (0);
 
 err:
-    if (sds_name != NULL)
-        HDfree(sds_name);
+    free(sds_name);
     return (1);
 }
 
@@ -1745,13 +1743,13 @@ gtype(char *infile, struct Input *in, FILE **strm)
             (void)fprintf(stderr, err2, infile);
             goto err;
         }
-        if (!HDmemcmp("TEXT", buf, 4) || !HDmemcmp("text", buf, 4)) {
+        if (!memcmp("TEXT", buf, 4) || !memcmp("text", buf, 4)) {
             in->is_text = TRUE;
             if (in->outtype == NO_NE)
                 in->outtype = FP_32;
         }
         else {
-            if (!HDmemcmp("FP64", buf, 4) || !HDmemcmp("fp64", buf, 4)) {
+            if (!memcmp("FP64", buf, 4) || !memcmp("fp64", buf, 4)) {
                 in->is_fp64 = TRUE;
                 if (in->outtype != FP_64)
                     if (in->outtype != NO_NE) {
@@ -1766,16 +1764,16 @@ gtype(char *infile, struct Input *in, FILE **strm)
                     (void)fprintf(stderr, err4, infile);
                     goto err;
                 }
-                if (!HDmemcmp("FP32", buf, 4) || !HDmemcmp("fp32", buf, 4)) {
+                if (!memcmp("FP32", buf, 4) || !memcmp("fp32", buf, 4)) {
                     in->is_fp32 = TRUE;
                     in->outtype = FP_32;
                 }
 
-                else if (!HDmemcmp("IN32", buf, 4) || !HDmemcmp("in32", buf, 4))
+                else if (!memcmp("IN32", buf, 4) || !memcmp("in32", buf, 4))
                     in->outtype = INT_32;
-                else if (!HDmemcmp("IN16", buf, 4) || !HDmemcmp("in16", buf, 4))
+                else if (!memcmp("IN16", buf, 4) || !memcmp("in16", buf, 4))
                     in->outtype = INT_16;
-                else if (!HDmemcmp("IN08", buf, 4) || !HDmemcmp("in08", buf, 4))
+                else if (!memcmp("IN08", buf, 4) || !memcmp("in08", buf, 4))
                     in->outtype = INT_8;
                 else {
                     (void)fprintf(stderr, err3, infile);
@@ -2015,7 +2013,7 @@ indexes(float32 *scale, int dim, int *idx, int res)
     /*
      * determine the midpoints between scale values
      */
-    if ((midpt = (float32 *)HDmalloc((size_t)dim * sizeof(float32))) == NULL) {
+    if ((midpt = (float32 *)malloc((size_t)dim * sizeof(float32))) == NULL) {
         (void)fprintf(stderr, "%s", err1);
         goto err;
     }
@@ -2044,7 +2042,7 @@ indexes(float32 *scale, int dim, int *idx, int res)
     /*
      * free dynamically allocated memory
      */
-    HDfree((char *)midpt);
+    free(midpt);
 
     return (0);
 
@@ -2114,16 +2112,16 @@ interp(struct Input *in, struct Raster *im)
     /*
      * allocate dynamic memory for the interpolation ratio buffers
      */
-    if ((hratio = (float32 *)HDmalloc((size_t)im->hres * sizeof(float32))) == NULL) {
+    if ((hratio = (float32 *)malloc((size_t)im->hres * sizeof(float32))) == NULL) {
         (void)fprintf(stderr, "%s", err1);
         goto err;
     }
-    if ((vratio = (float32 *)HDmalloc((unsigned int)im->vres * sizeof(float32))) == NULL) {
+    if ((vratio = (float32 *)malloc((unsigned int)im->vres * sizeof(float32))) == NULL) {
         (void)fprintf(stderr, "%s", err1);
         goto err;
     }
     if (in->rank == 3) {
-        if ((dratio = (float32 *)HDmalloc((unsigned int)im->dres * sizeof(float32))) == NULL) {
+        if ((dratio = (float32 *)malloc((unsigned int)im->dres * sizeof(float32))) == NULL) {
             (void)fprintf(stderr, "%s", err1);
             goto err;
         }
@@ -2133,16 +2131,16 @@ interp(struct Input *in, struct Raster *im)
      * allocate dynamic memory for the pixel location offset/increment
      * buffers
      */
-    if ((hinc = (int *)HDmalloc((unsigned int)im->hres * sizeof(int))) == NULL) {
+    if ((hinc = (int *)malloc((unsigned int)im->hres * sizeof(int))) == NULL) {
         (void)fprintf(stderr, "%s", err1);
         goto err;
     }
-    if ((voff = (int *)HDmalloc((unsigned int)(im->vres + 1) * sizeof(int))) == NULL) {
+    if ((voff = (int *)malloc((unsigned int)(im->vres + 1) * sizeof(int))) == NULL) {
         (void)fprintf(stderr, "%s", err1);
         goto err;
     }
     if (in->rank == 3) {
-        if ((doff = (int *)HDmalloc((unsigned int)(im->dres + 1) * sizeof(int))) == NULL) {
+        if ((doff = (int *)malloc((unsigned int)(im->dres + 1) * sizeof(int))) == NULL) {
             (void)fprintf(stderr, "%s", err1);
             goto err;
         }
@@ -2244,14 +2242,14 @@ interp(struct Input *in, struct Raster *im)
     /*
      * free dynamically allocated memory
      */
-    HDfree((char *)hratio);
-    HDfree((char *)vratio);
+    free(hratio);
+    free(vratio);
     if (in->rank == 3)
-        HDfree((char *)dratio);
-    HDfree((char *)hinc);
-    HDfree((char *)voff);
+        free(dratio);
+    free(hinc);
+    free(voff);
     if (in->rank == 3)
-        HDfree((char *)doff);
+        free(doff);
 
     return (0);
 
@@ -2423,7 +2421,7 @@ pixrep(struct Input *in, struct Raster *im)
     /*
      * determine the scale indexes of the horizontal pixel locations
      */
-    if ((hidx = (int *)HDmalloc((unsigned int)(im->hres + 1) * sizeof(int))) == NULL) {
+    if ((hidx = (int *)malloc((unsigned int)(im->hres + 1) * sizeof(int))) == NULL) {
         (void)fprintf(stderr, "%s", err1);
         goto err;
     }
@@ -2434,7 +2432,7 @@ pixrep(struct Input *in, struct Raster *im)
     /*
      * determine the scale indexes of the vertical pixel locations
      */
-    if ((vidx = (int *)HDmalloc((unsigned int)(im->vres + 1) * sizeof(int))) == NULL) {
+    if ((vidx = (int *)malloc((unsigned int)(im->vres + 1) * sizeof(int))) == NULL) {
         (void)fprintf(stderr, "%s", err1);
         goto err;
     }
@@ -2448,7 +2446,7 @@ pixrep(struct Input *in, struct Raster *im)
     dummy = 0;
     didx  = &dummy;
     if (in->rank == 3) {
-        if ((didx = (int *)HDmalloc((unsigned int)(im->dres + 1) * sizeof(int))) == NULL) {
+        if ((didx = (int *)malloc((unsigned int)(im->dres + 1) * sizeof(int))) == NULL) {
             (void)fprintf(stderr, "%s", err1);
             goto err;
         }
@@ -2460,7 +2458,7 @@ pixrep(struct Input *in, struct Raster *im)
     /*
      * compute the expanded image
      */
-    if ((pix = (unsigned char *)HDmalloc((unsigned int)(in->dims[0] + 1))) == NULL) {
+    if ((pix = (unsigned char *)malloc((unsigned int)(in->dims[0] + 1))) == NULL) {
         (void)fprintf(stderr, "%s", err1);
         goto err;
     }
@@ -2505,11 +2503,11 @@ pixrep(struct Input *in, struct Raster *im)
     /*
      * free dynamically allocated space
      */
-    HDfree((char *)hidx);
-    HDfree((char *)vidx);
+    free(hidx);
+    free(vidx);
     if (in->rank == 3)
-        HDfree((char *)didx);
-    HDfree((char *)pix);
+        free(didx);
+    free(pix);
 
     return (0);
 
@@ -2567,31 +2565,31 @@ alloc_data(VOIDP *data, int32 len, int outtype)
     switch (outtype) {
         case 0: /* 32-bit float */
         case 5: /* NO_NE */
-            if ((*data = (VOIDP)HDmalloc((size_t)len * sizeof(float32))) == NULL) {
+            if ((*data = (VOIDP)malloc((size_t)len * sizeof(float32))) == NULL) {
                 (void)fprintf(stderr, "%s", alloc_err);
                 return FAIL;
             }
             break;
         case 1: /* 64-bit float */
-            if ((*data = (VOIDP)HDmalloc((size_t)len * sizeof(float64))) == NULL) {
+            if ((*data = (VOIDP)malloc((size_t)len * sizeof(float64))) == NULL) {
                 (void)fprintf(stderr, "%s", alloc_err);
                 return FAIL;
             }
             break;
         case 2: /* 32-bit integer */
-            if ((*data = (VOIDP)HDmalloc((size_t)len * sizeof(int32))) == NULL) {
+            if ((*data = (VOIDP)malloc((size_t)len * sizeof(int32))) == NULL) {
                 (void)fprintf(stderr, "%s", alloc_err);
                 return FAIL;
             }
             break;
         case 3: /* 16-bit integer */
-            if ((*data = (VOIDP)HDmalloc((size_t)len * sizeof(int16))) == NULL) {
+            if ((*data = (VOIDP)malloc((size_t)len * sizeof(int16))) == NULL) {
                 (void)fprintf(stderr, "%s", alloc_err);
                 return FAIL;
             }
             break;
         case 4: /* 8-bit integer */
-            if ((*data = (VOIDP)HDmalloc((size_t)len * sizeof(int8))) == NULL) {
+            if ((*data = (VOIDP)malloc((size_t)len * sizeof(int8))) == NULL) {
                 (void)fprintf(stderr, "%s", alloc_err);
                 return FAIL;
             }
@@ -3032,7 +3030,7 @@ process(struct Options *opt)
                 }
             }
             len = im.hres * im.vres * im.dres;
-            if ((im.image = (unsigned char *)HDmalloc((unsigned int)len)) == NULL) {
+            if ((im.image = (unsigned char *)malloc((unsigned int)len)) == NULL) {
                 (void)fprintf(stderr, "%s", err2);
                 goto err;
             }
@@ -3117,47 +3115,47 @@ fpdeallocate(struct Input *in, struct Raster *im, struct Options *opt)
 {
     switch (in->outtype) {
         case 0:
-            HDfree((char *)in->hscale);
-            HDfree((char *)in->vscale);
+            free(in->hscale);
+            free(in->vscale);
             if (in->rank == 3)
-                HDfree((char *)in->dscale);
+                free(in->dscale);
 
             if (opt->to_image == TRUE)
-                HDfree((char *)im->image);
+                free(im->image);
             break;
 
         case 1:
-            HDfree((char *)in->fp64s.hscale);
-            HDfree((char *)in->fp64s.vscale);
+            free(in->fp64s.hscale);
+            free(in->fp64s.vscale);
             if (in->rank == 3)
-                HDfree((char *)in->fp64s.dscale);
+                free(in->fp64s.dscale);
 
             if (opt->to_image == TRUE)
-                HDfree((char *)im->image);
+                free(im->image);
             break;
 
         case 2:
-            HDfree((char *)in->in32s.hscale);
-            HDfree((char *)in->in32s.vscale);
+            free(in->in32s.hscale);
+            free(in->in32s.vscale);
             if (in->rank == 3)
-                HDfree((char *)in->in32s.dscale);
+                free(in->in32s.dscale);
             break;
 
         case 3:
-            HDfree((char *)in->in16s.hscale);
-            HDfree((char *)in->in16s.vscale);
+            free(in->in16s.hscale);
+            free(in->in16s.vscale);
             if (in->rank == 3)
-                HDfree((char *)in->in16s.dscale);
+                free(in->in16s.dscale);
             break;
 
         case 4:
-            HDfree((char *)in->in8s.hscale);
-            HDfree((char *)in->in8s.vscale);
+            free(in->in8s.hscale);
+            free(in->in8s.vscale);
             if (in->rank == 3)
-                HDfree((char *)in->in8s.dscale);
+                free(in->in8s.dscale);
             break;
     }
-    HDfree((char *)in->data);
+    free(in->data);
 }
 
 /*
@@ -3177,16 +3175,16 @@ init_scales(struct Input *in)
     switch (in->outtype) {
         case 0: /* 32-bit float */
         case 5: /* NO_NE */
-            if ((in->hscale = (float32 *)HDmalloc((size_t)(in->dims[0] + 1) * sizeof(float32))) == NULL) {
+            if ((in->hscale = (float32 *)malloc((size_t)(in->dims[0] + 1) * sizeof(float32))) == NULL) {
                 (void)fprintf(stderr, "%s", err1);
                 goto err;
             }
-            if ((in->vscale = (float32 *)HDmalloc((size_t)(in->dims[1] + 1) * sizeof(float32))) == NULL) {
+            if ((in->vscale = (float32 *)malloc((size_t)(in->dims[1] + 1) * sizeof(float32))) == NULL) {
                 (void)fprintf(stderr, "%s", err1);
                 goto err;
             }
             if (in->rank == 3) {
-                if ((in->dscale = (float32 *)HDmalloc((size_t)(in->dims[2] + 1) * sizeof(float32))) == NULL) {
+                if ((in->dscale = (float32 *)malloc((size_t)(in->dims[2] + 1) * sizeof(float32))) == NULL) {
                     (void)fprintf(stderr, "%s", err1);
                     goto err;
                 }
@@ -3195,18 +3193,16 @@ init_scales(struct Input *in)
 
         case 1: /* 64-bit float */
 
-            if ((in->fp64s.hscale = (float64 *)HDmalloc((size_t)(in->dims[0] + 1) * sizeof(float64))) ==
-                NULL) {
+            if ((in->fp64s.hscale = (float64 *)malloc((size_t)(in->dims[0] + 1) * sizeof(float64))) == NULL) {
                 (void)fprintf(stderr, "%s", err1);
                 goto err;
             }
-            if ((in->fp64s.vscale = (float64 *)HDmalloc((size_t)(in->dims[1] + 1) * sizeof(float64))) ==
-                NULL) {
+            if ((in->fp64s.vscale = (float64 *)malloc((size_t)(in->dims[1] + 1) * sizeof(float64))) == NULL) {
                 (void)fprintf(stderr, "%s", err1);
                 goto err;
             }
             if (in->rank == 3) {
-                if ((in->fp64s.dscale = (float64 *)HDmalloc((size_t)(in->dims[2] + 1) * sizeof(float64))) ==
+                if ((in->fp64s.dscale = (float64 *)malloc((size_t)(in->dims[2] + 1) * sizeof(float64))) ==
                     NULL) {
                     (void)fprintf(stderr, "%s", err1);
                     goto err;
@@ -3214,17 +3210,16 @@ init_scales(struct Input *in)
             }
             break;
         case 2: /* 32-bit integer */
-            if ((in->in32s.hscale = (int32 *)HDmalloc((size_t)(in->dims[0] + 1) * sizeof(int32))) == NULL) {
+            if ((in->in32s.hscale = (int32 *)malloc((size_t)(in->dims[0] + 1) * sizeof(int32))) == NULL) {
                 (void)fprintf(stderr, "%s", err1);
                 goto err;
             }
-            if ((in->in32s.vscale = (int32 *)HDmalloc((size_t)(in->dims[1] + 1) * sizeof(int32))) == NULL) {
+            if ((in->in32s.vscale = (int32 *)malloc((size_t)(in->dims[1] + 1) * sizeof(int32))) == NULL) {
                 (void)fprintf(stderr, "%s", err1);
                 goto err;
             }
             if (in->rank == 3) {
-                if ((in->in32s.dscale = (int32 *)HDmalloc((size_t)(in->dims[2] + 1) * sizeof(int32))) ==
-                    NULL) {
+                if ((in->in32s.dscale = (int32 *)malloc((size_t)(in->dims[2] + 1) * sizeof(int32))) == NULL) {
                     (void)fprintf(stderr, "%s", err1);
                     goto err;
                 }
@@ -3232,17 +3227,16 @@ init_scales(struct Input *in)
             break;
 
         case 3: /* 16-bit integer */
-            if ((in->in16s.hscale = (int16 *)HDmalloc((size_t)(in->dims[0] + 1) * sizeof(int16))) == NULL) {
+            if ((in->in16s.hscale = (int16 *)malloc((size_t)(in->dims[0] + 1) * sizeof(int16))) == NULL) {
                 (void)fprintf(stderr, "%s", err1);
                 goto err;
             }
-            if ((in->in16s.vscale = (int16 *)HDmalloc((size_t)(in->dims[1] + 1) * sizeof(int16))) == NULL) {
+            if ((in->in16s.vscale = (int16 *)malloc((size_t)(in->dims[1] + 1) * sizeof(int16))) == NULL) {
                 (void)fprintf(stderr, "%s", err1);
                 goto err;
             }
             if (in->rank == 3) {
-                if ((in->in16s.dscale = (int16 *)HDmalloc((size_t)(in->dims[2] + 1) * sizeof(int16))) ==
-                    NULL) {
+                if ((in->in16s.dscale = (int16 *)malloc((size_t)(in->dims[2] + 1) * sizeof(int16))) == NULL) {
                     (void)fprintf(stderr, "%s", err1);
                     goto err;
                 }
@@ -3250,16 +3244,16 @@ init_scales(struct Input *in)
             break;
 
         case 4: /* 8-bit integer */
-            if ((in->in8s.hscale = (int8 *)HDmalloc((size_t)(in->dims[0] + 1) * sizeof(int8))) == NULL) {
+            if ((in->in8s.hscale = (int8 *)malloc((size_t)(in->dims[0] + 1) * sizeof(int8))) == NULL) {
                 (void)fprintf(stderr, "%s", err1);
                 goto err;
             }
-            if ((in->in8s.vscale = (int8 *)HDmalloc((size_t)(in->dims[1] + 1) * sizeof(int8))) == NULL) {
+            if ((in->in8s.vscale = (int8 *)malloc((size_t)(in->dims[1] + 1) * sizeof(int8))) == NULL) {
                 (void)fprintf(stderr, "%s", err1);
                 goto err;
             }
             if (in->rank == 3) {
-                if ((in->in8s.dscale = (int8 *)HDmalloc((size_t)(in->dims[2] + 1) * sizeof(int8))) == NULL) {
+                if ((in->in8s.dscale = (int8 *)malloc((size_t)(in->dims[2] + 1) * sizeof(int8))) == NULL) {
                     (void)fprintf(stderr, "%s", err1);
                     goto err;
                 }

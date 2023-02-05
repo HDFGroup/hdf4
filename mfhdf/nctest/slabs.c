@@ -14,7 +14,6 @@
 #include "add.h"     /* functions to update in-memory netcdf */
 #include "error.h"
 #include "tests.h"
-#include "alloc.h"
 #include "emalloc.h"
 #ifdef HDF
 #include "hdf.h"
@@ -426,7 +425,7 @@ val_stuff(nc_type type, void *v, int ii, long val) /* v[ii] = val */
                         }
                     }
                 }
-                Free((char *)v);
+                free(v);
             }
             return nerrs;
         }

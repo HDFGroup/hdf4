@@ -100,7 +100,7 @@ annotate(const char *editor, int ann)
         else
             len--;
         writeToFile(file, buf, len + 1);
-        HDfree(buf);
+        free(buf);
     }
 
     /* make sure some editor will be used
@@ -163,9 +163,8 @@ annotate(const char *editor, int ann)
     ret = putAnn(ann, currTag, he_desc[he_currDesc].ref, buf, len);
     updateDesc();
 
-    /* clean up
-     */
-    HDfree(buf);
+    /* clean up */
+    free(buf);
     return ret;
 }
 
@@ -477,7 +476,7 @@ put(char *template, int verbose)
     if ((length <= 0) || (data == NULL))
         return HE_FAIL;
     ret = putWithTempl(template, he_currDesc, length, 1, data, length, verbose);
-    HDfree(data);
+    free(data);
 
     return ret;
 }
@@ -550,7 +549,7 @@ putR8(char *image, char *pal, int verbose)
         return HE_FAIL;
     }
     ret = putWithTempl(image, he_currDesc, (int)xdim, (int)ydim, raster, (int)(xdim * ydim), verbose);
-    HDfree(raster);
+    free(raster);
     if (ret < 0)
         return HE_FAIL;
     if (palette != NULL) {
@@ -563,7 +562,7 @@ putR8(char *image, char *pal, int verbose)
             p[2 * HE_COLOR_SZ + i] = *palette++;
         }
         ret = putWithTempl(pal, he_currDesc, (int)xdim, (int)ydim, p, HE_PALETTE_SZ, verbose);
-        HDfree(palette);
+        free(palette);
         if (ret < 0)
             return HE_FAIL;
     }

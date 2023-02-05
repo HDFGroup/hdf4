@@ -151,12 +151,10 @@ read_data(const char *fname)
     g_length_y = h;
     g_length_x = w;
 
-    if (g_image_data != NULL) {
-        HDfree(g_image_data);
-        g_image_data = NULL;
-    }
+    free(g_image_data);
+    g_image_data = NULL;
 
-    g_image_data = (unsigned char *)HDmalloc(w * h * color_planes * sizeof(unsigned char));
+    g_image_data = (unsigned char *)malloc(w * h * color_planes * sizeof(unsigned char));
 
     for (i = 0; i < h * w * color_planes; i++) {
         count = fscanf(f, "%d", &n);
@@ -214,7 +212,7 @@ vg_getngrpdep(HFILEID f)
             printf("Error: Could not get name length for group with ref <%d>\n", vgid);
             continue;
         }
-        vgname = (char *)HDmalloc(sizeof(char) * (name_len + 1));
+        vgname = (char *)malloc(sizeof(char) * (name_len + 1));
 
         Vinquire(vg, &n, vgname);
         VQuerytag(vg);
@@ -445,7 +443,7 @@ cmp_gr(int32 ri1_id, int32 ri2_id)
      */
 
     /* alloc */
-    if ((buf1 = (VOIDP)HDmalloc(data_size)) == NULL) {
+    if ((buf1 = (VOIDP)malloc(data_size)) == NULL) {
         printf("Failed to allocate %d elements of size %d\n", nelms, eltsz);
         goto out;
     }
@@ -462,7 +460,7 @@ cmp_gr(int32 ri1_id, int32 ri2_id)
      */
 
     /* alloc */
-    if ((buf2 = (VOIDP)HDmalloc(data_size)) == NULL) {
+    if ((buf2 = (VOIDP)malloc(data_size)) == NULL) {
         printf("Failed to allocate %d elements of size %d\n", nelms, eltsz);
         goto out;
     }
@@ -473,7 +471,7 @@ cmp_gr(int32 ri1_id, int32 ri2_id)
         goto out;
     }
 
-    cmp = HDmemcmp(buf1, buf2, data_size);
+    cmp = memcmp(buf1, buf2, data_size);
     if (cmp != 0)
         printf("Differences found\n");
     else
@@ -483,10 +481,8 @@ out:
     /* terminate access to the GRs */
     GRendaccess(ri1_id);
     GRendaccess(ri2_id);
-    if (buf1)
-        HDfree(buf1);
-    if (buf2)
-        HDfree(buf2);
+    free(buf1);
+    free(buf2);
     return cmp;
 }
 
@@ -525,7 +521,7 @@ sds_verifiy_comp(const char *sds_name, int32 in_comp_type, int32 in_comp_info)
      */
 
     comp_type = COMP_CODE_NONE; /* reset variables before retrieving info */
-    HDmemset(&comp_info, 0, sizeof(comp_info));
+    memset(&comp_info, 0, sizeof(comp_info));
     SDgetcompinfo(sds_id, &comp_type, &comp_info);
     if (comp_type != in_comp_type) {
         printf("Error: Compression type does not match ");
@@ -626,7 +622,7 @@ sds_verifiy_comp_all(comp_coder_t in_comp_type, int in_comp_info)
         if (empty_sds == 0) {
 
             comp_type = COMP_CODE_NONE; /* reset variables before retrieving info */
-            HDmemset(&comp_info, 0, sizeof(comp_info));
+            memset(&comp_info, 0, sizeof(comp_info));
 
             if (SDisrecord(sds_id))
                 is_record = 1;
@@ -987,10 +983,8 @@ add_gr_ffile(const char *name_file, int32 gr_id, const char *gr_name, int32 inte
 
     } /* read data */
 
-    if (g_image_data != NULL) {
-        HDfree(g_image_data);
-        g_image_data = NULL;
-    }
+    free(g_image_data);
+    g_image_data = NULL;
 
     return SUCCEED;
 }
@@ -1292,10 +1286,8 @@ add_r8(const char *image_file, const char *fname, int32 file_id, int32 vgroup_id
             return FAIL;
     }
 
-    if (g_image_data != NULL) {
-        HDfree(g_image_data);
-        g_image_data = NULL;
-    }
+    free(g_image_data);
+    g_image_data = NULL;
 
     return SUCCEED;
 }
@@ -1359,10 +1351,8 @@ add_r24(const char *image_file, const char *fname, int32 file_id, intn il, int32
 
     } /* read_data */
 
-    if (g_image_data != NULL) {
-        HDfree(g_image_data);
-        g_image_data = NULL;
-    }
+    free(g_image_data);
+    g_image_data = NULL;
 
     return SUCCEED;
 }

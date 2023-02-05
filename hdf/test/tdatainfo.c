@@ -64,10 +64,10 @@ typedef struct {
 intn
 alloc_info(t_hdf_datainfo_t *info, uintn info_count)
 {
-    info->offsets = (int32 *)HDmalloc(info_count * sizeof(int32));
+    info->offsets = (int32 *)malloc(info_count * sizeof(int32));
     if (info->offsets == NULL)
         return -1;
-    info->lengths = (int32 *)HDmalloc(info_count * sizeof(int32));
+    info->lengths = (int32 *)malloc(info_count * sizeof(int32));
     if (info->lengths == NULL)
         return -1;
     return 0;
@@ -77,10 +77,8 @@ void
 free_info(t_hdf_datainfo_t *info)
 {
     if (info != NULL) {
-        if (info->offsets != NULL)
-            HDfree(info->offsets);
-        if (info->lengths != NULL)
-            HDfree(info->lengths);
+        free(info->offsets);
+        free(info->lengths);
     }
 }
 
@@ -532,7 +530,7 @@ readnoHDF_char(const char *filename, const int32 offset, const int32 length, con
     }
 
     /* Allocate buffers for SDS' data */
-    readcbuf = (char *)HDmalloc(length * sizeof(char));
+    readcbuf = (char *)malloc(length * sizeof(char));
     if (readcbuf == NULL) {
         fprintf(stderr, "readnoHDF_char: allocation readcbuf failed\n");
         ret_value = FAIL;
@@ -548,7 +546,7 @@ readnoHDF_char(const char *filename, const int32 offset, const int32 length, con
                     "%s\n   >>> read = %s\n",
                     orig_buf, readcbuf);
     }
-    HDfree(readcbuf);
+    free(readcbuf);
     /* Close the file */
     if (fclose(fd) == -1) {
         fprintf(stderr, "readnoHDF_char: unable to close file %s", filename);
@@ -914,14 +912,14 @@ test_oneblock_ri()
     /* Create and write 3 more images: RLE, Deflate, and Skipping Huffman */
 
     /* No compression info for the RLE image */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
 
     /* Create and write the RLE compressed image to this file, starting the
        data values with the letter 'r' */
     status = make_comp_image(grid, RLE_IMAGE, 'r', COMP_CODE_RLE, &cinfo);
 
     /* Set the compression info for the image with Skipping Huffman method */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     cinfo.skphuff.skp_size = SKPHUFF_SKIPSIZE;
 
     /* Create and write the Skipping Huffman compressed image to this file,
@@ -929,7 +927,7 @@ test_oneblock_ri()
     status = make_comp_image(grid, SKPHUFF_IMAGE, 's', COMP_CODE_SKPHUFF, &cinfo);
 
     /* Set the compression info for the image with Deflate method */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     cinfo.deflate.level = DEFLATE_LEVEL;
 
     /* Create and write the Deflate compressed image to this file, starting the
@@ -937,7 +935,7 @@ test_oneblock_ri()
     status = make_comp_image(grid, DEFLATE_IMAGE, 'd', COMP_CODE_DEFLATE, &cinfo);
 
     /* Set the compression method for the image with JPEG method */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     cinfo.jpeg.quality        = 100;
     cinfo.jpeg.force_baseline = 1;
 
@@ -1375,7 +1373,7 @@ test_getpalinfo()
         n_pals = GRgetpalinfo(grid, 0, NULL);
         CHECK_VOID(n_pals, FAIL, "GRgetpalinfo");
 
-        palinfo_array = (hdf_ddinfo_t *)HDmalloc(n_pals * sizeof(hdf_ddinfo_t));
+        palinfo_array = (hdf_ddinfo_t *)malloc(n_pals * sizeof(hdf_ddinfo_t));
         CHECK_ALLOC(palinfo_array, "palinfo_array", "test_getpalinfo");
 
         n_pals = GRgetpalinfo(grid, n_pals, palinfo_array);
@@ -1383,39 +1381,39 @@ test_getpalinfo()
 
         /* Read and verify data of the first palette which is pointed to by both
            data identifiers 201/ref and 301/ref */
-        /* inbuf = (uint8 *) HDmalloc(palinfo_array[0].length * sizeof(uint8));
+        /* inbuf = (uint8 *) malloc(palinfo_array[0].length * sizeof(uint8));
          */
-        inbuf = (uint8 *)HDmalloc(palinfo_array[0].length);
+        inbuf = (uint8 *)malloc(palinfo_array[0].length);
         CHECK_ALLOC(inbuf, "inbuf", "test_getpalinfo");
         status = Hgetelement(fid, palinfo_array[0].tag, palinfo_array[0].ref, inbuf);
         CHECK_VOID(status, FAIL, "Hgetelement");
 
-        if (HDmemcmp(inbuf, paletteA, palinfo_array[0].length) != 0)
+        if (memcmp(inbuf, paletteA, palinfo_array[0].length) != 0)
             fprintf(stderr,
                     "palette data pointed by tag/ref = %d/%d at offset/length = %d/%d differs from written\n",
                     palinfo_array[0].tag, palinfo_array[0].ref, palinfo_array[0].offset,
                     palinfo_array[0].length);
-        HDfree(inbuf);
+        free(inbuf);
 
         /* Read and verify data of the palette pointed to by 301/4.  This is the
            data element that was not revealed by DFPgetpal because the tag/ref pair
            201/4 is associated with a different offset */
 
-        /* inbuf = (uint8 *) HDmalloc(palinfo_array[7].length * sizeof(uint8));
+        /* inbuf = (uint8 *) malloc(palinfo_array[7].length * sizeof(uint8));
          */
-        inbuf = (uint8 *)HDmalloc(palinfo_array[7].length);
+        inbuf = (uint8 *)malloc(palinfo_array[7].length);
         CHECK_ALLOC(inbuf, "inbuf", "test_getpalinfo");
         status = Hgetelement(fid, palinfo_array[7].tag, palinfo_array[7].ref, inbuf);
         CHECK_VOID(status, FAIL, "Hgetelement");
 
-        if (HDmemcmp(inbuf, palette_buf1, palinfo_array[7].length) != 0)
+        if (memcmp(inbuf, palette_buf1, palinfo_array[7].length) != 0)
             fprintf(stderr,
                     "palette data pointed by tag/ref = %d/%d at offset/length = %d/%d differs from written\n",
                     palinfo_array[7].tag, palinfo_array[7].ref, palinfo_array[7].offset,
                     palinfo_array[7].length);
-        HDfree(inbuf);
+        free(inbuf);
 
-        HDfree(palinfo_array);
+        free(palinfo_array);
     }
 
     /* Terminate access to the GR interface and close the file */

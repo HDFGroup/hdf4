@@ -226,7 +226,7 @@ nafannlist(intf *an_id, intf *atype, intf *etag, intf *eref, intf alist[])
 
     /* create annlist with true int32s to maintain compatibility
     ** with machines that allocate less than 32 bits per int. */
-    if ((tempanlist = (int32 *)HDmalloc(nanns * sizeof(int32))) == NULL)
+    if ((tempanlist = (int32 *)malloc(nanns * sizeof(int32))) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     /* Get list of annotation handles to return */
@@ -238,7 +238,7 @@ nafannlist(intf *an_id, intf *atype, intf *etag, intf *eref, intf alist[])
     for (i = 0; i < nanns; i++)
         alist[i] = tempanlist[i];
 
-    HDfree((VOIDP)tempanlist); /* free allocated space */
+    free(tempanlist);
 
     return ret;
 } /* nafannlist() */
@@ -280,7 +280,7 @@ nafwriteann(intf *ann_id, _fcd ann, intf *annlen)
 
     status = ANwriteann((int32)*ann_id, (char *)_fcdtocp(ann), (int32)*annlen);
 
-    HDfree(iann); /* free allocated space by HDf2cstring */
+    free(iann); /* free allocated space by HDf2cstring */
 
     return status;
 }
@@ -303,7 +303,7 @@ nafreadann(intf *ann_id, _fcd ann, intf *maxlen)
 
     /* Allocate space for fortran string */
     if (*maxlen)
-        iann = (char *)HDmalloc((uint32)*maxlen + 1);
+        iann = (char *)malloc((uint32)*maxlen + 1);
 
     if (!iann)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
@@ -313,8 +313,7 @@ nafreadann(intf *ann_id, _fcd ann, intf *maxlen)
     /* C-String to Fortran String */
     HDpackFstring(iann, _fcdtocp(ann), (intn)*maxlen);
 
-    if (iann)
-        HDfree(iann); /* free allocated space */
+    free(iann);
 
     return status;
 }

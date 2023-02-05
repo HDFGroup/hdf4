@@ -83,14 +83,14 @@ DAcreate_array(intn start_size, /* IN: Initial array size */
     if (start_size < 0 || incr_mult <= 0)
         HGOTO_ERROR(DFE_ARGS, NULL);
 
-    new_arr = (dynarr_t *)HDcalloc(1, sizeof(dynarr_t));
+    new_arr = (dynarr_t *)calloc(1, sizeof(dynarr_t));
     if (new_arr == NULL)
         HGOTO_ERROR(DFE_NOSPACE, NULL);
 
     new_arr->num_elems = start_size;
     new_arr->incr_mult = incr_mult;
     if (start_size > 0) { /* only allocate space if the initial size is positive */
-        new_arr->arr = (VOIDP *)HDcalloc(start_size, sizeof(VOIDP));
+        new_arr->arr = (VOIDP *)calloc(start_size, sizeof(VOIDP));
         if (new_arr->arr == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
     } /* end if */
@@ -100,9 +100,8 @@ DAcreate_array(intn start_size, /* IN: Initial array size */
 done:
     if (ret_value == NULL) { /* Error condition cleanup */
         if (new_arr != NULL) {
-            if (new_arr->arr != NULL)
-                HDfree(new_arr->arr);
-            HDfree(new_arr);
+            free(new_arr->arr);
+            free(new_arr);
         }
     }
 
@@ -138,13 +137,11 @@ DAdestroy_array(dynarr_p arr,      /* IN: Array to destroy */
     /* Chuck all the items stored in the array */
     if (free_elem != 0)
         for (i = 0; i < arr->num_elems; i++) {
-            if (arr->arr[i] != NULL)
-                HDfree(arr->arr[i]);
-        } /* end for */
+            free(arr->arr[i]);
+        }
 
-    if (dest_arr->arr != NULL)
-        HDfree(dest_arr->arr);
-    HDfree(dest_arr);
+    free(dest_arr->arr);
+    free(dest_arr);
 
 done:
     return ret_value;
@@ -247,15 +244,15 @@ DAset_elem(dynarr_p arr_ptr, /* IN: Array to access */
 
         new_size = ((elem / arr->incr_mult) + 1) * arr->incr_mult;
         if (arr->num_elems == 0) { /* array not currently allocated */
-            if ((arr->arr = (VOIDP *)HDcalloc(new_size, sizeof(VOIDP))) == NULL)
+            if ((arr->arr = (VOIDP *)calloc(new_size, sizeof(VOIDP))) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
         }                   /* end if */
         else {              /* extend the existing array */
             VOIDP *new_arr; /* storage for the new array of ptrs */
 
-            if ((new_arr = (VOIDP *)HDrealloc(arr->arr, new_size * sizeof(VOIDP))) == NULL)
+            if ((new_arr = (VOIDP *)realloc(arr->arr, new_size * sizeof(VOIDP))) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
-            HDmemset(&new_arr[arr->num_elems], 0, sizeof(VOIDP) * (uintn)(new_size - arr->num_elems));
+            memset(&new_arr[arr->num_elems], 0, sizeof(VOIDP) * (uintn)(new_size - arr->num_elems));
             arr->arr = new_arr;
         } /* end else */
         arr->num_elems = new_size;

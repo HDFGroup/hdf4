@@ -94,7 +94,7 @@ nd8igdim(_fcd filename, intf *xdim, intf *ydim, intf *ispal, intf *lenfn)
         *ydim  = tydim;
         *ispal = tispal;
     }
-    HDfree((VOIDP)fn);
+    free(fn);
     return (ret);
 }
 
@@ -121,7 +121,7 @@ nd8igimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, _fcd pal, intf *lenf
     if (!fn)
         return (-1);
     ret = DFR8getimage(fn, (uint8 *)_fcdtocp(image), *xdim, *ydim, (uint8 *)_fcdtocp(pal));
-    HDfree((VOIDP)fn);
+    free(fn);
     return (ret);
 }
 
@@ -148,7 +148,7 @@ nd8ipimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *compress, intf
     if (!fn)
         return (-1);
     ret = (intf)DFR8putimage(fn, (VOIDP)_fcdtocp(image), (int32)*xdim, (int32)*ydim, (uint16)*compress);
-    HDfree((VOIDP)fn);
+    free(fn);
     return (ret);
 }
 
@@ -175,7 +175,7 @@ nd8iaimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *compress, intf
     if (!fn)
         return (-1);
     ret = (intf)DFR8addimage(fn, (VOIDP)_fcdtocp(image), (int32)*xdim, (int32)*ydim, (uint16)*compress);
-    HDfree((VOIDP)fn);
+    free(fn);
     return (ret);
 }
 
@@ -203,7 +203,7 @@ nd8irref(_fcd filename, intf *ref, intf *fnlen)
     if (!fn)
         return -1;
     ret = DFR8readref(fn, Ref);
-    HDfree((VOIDP)fn);
+    free(fn);
     return ret;
 }
 
@@ -231,7 +231,7 @@ nd8iwref(_fcd filename, intf *ref, intf *fnlen)
     if (!fn)
         return (-1);
     ret = DFR8writeref(fn, Ref);
-    HDfree((VOIDP)fn);
+    free(fn);
     return (ret);
 }
 
@@ -256,7 +256,7 @@ nd8inims(_fcd filename, intf *fnlen)
     if (!fn)
         return (-1);
     ret = DFR8nimages(fn);
-    HDfree((VOIDP)fn);
+    free(fn);
     return (ret);
 }
 

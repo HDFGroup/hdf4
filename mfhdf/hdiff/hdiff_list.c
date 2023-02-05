@@ -170,7 +170,7 @@ hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface ide
          * use the nlones returned to allocate sufficient space for the
          * buffer ref_array to hold the reference numbers of all lone vgroups,
          */
-        ref_array = (int32 *)HDmalloc(sizeof(int32) * nlones);
+        ref_array = (int32 *)malloc(sizeof(int32) * nlones);
 
         /*
          * and call Vlone again to retrieve the reference numbers into
@@ -199,7 +199,7 @@ hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface ide
                 goto out;
             }
 
-            vg_name = (char *)HDmalloc(sizeof(char) * (name_len + 1));
+            vg_name = (char *)malloc(sizeof(char) * (name_len + 1));
 
             if (Vgetname(vg_id, vg_name) == FAIL) {
                 printf("Error: Could not get name for group with ref <%d>\n", ref);
@@ -211,7 +211,7 @@ hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface ide
                 goto out;
             }
 
-            vg_class = (char *)HDmalloc(sizeof(char) * (name_len + 1));
+            vg_class = (char *)malloc(sizeof(char) * (name_len + 1));
 
             if (Vgetclass(vg_id, vg_class) == FAIL) {
                 printf("Error: Could not get class for group with ref <%d>\n", ref);
@@ -257,16 +257,14 @@ hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface ide
             /* insert objects for this group */
             ntagrefs = Vntagrefs(vg_id);
             if (ntagrefs > 0) {
-                tags = (int32 *)HDmalloc(sizeof(int32) * ntagrefs);
-                refs = (int32 *)HDmalloc(sizeof(int32) * ntagrefs);
+                tags = (int32 *)malloc(sizeof(int32) * ntagrefs);
+                refs = (int32 *)malloc(sizeof(int32) * ntagrefs);
                 Vgettagrefs(vg_id, tags, refs, ntagrefs);
 
                 insert_vg(fname, file_id, sd_id, gr_id, vg_name, tags, refs, ntagrefs, table, td1, td2);
 
-                if (tags)
-                    HDfree(tags);
-                if (refs)
-                    HDfree(refs);
+                free(tags);
+                free(refs);
             }
 
             if (Vdetach(vg_id) == FAIL) {
@@ -274,13 +272,12 @@ hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface ide
                 goto out;
             }
 
-            HDfree(vg_name);
+            free(vg_name);
 
         } /* for */
 
         /* free the space allocated */
-        if (ref_array)
-            HDfree(ref_array);
+        free(ref_array);
     } /* if */
 
     /* terminate access to the V interface */
@@ -293,8 +290,7 @@ hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface ide
 out:
 
     Vend(file_id);
-    if (ref_array)
-        HDfree(ref_array);
+    free(ref_array);
     return FAIL;
 }
 
@@ -351,7 +347,7 @@ insert_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface identif
                     break;
                 }
 
-                vg_name = (char *)HDmalloc(sizeof(char) * (name_len + 1));
+                vg_name = (char *)malloc(sizeof(char) * (name_len + 1));
 
                 Vgetname(vg_id, vg_name);
 
@@ -360,7 +356,7 @@ insert_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface identif
                     break;
                 }
 
-                vg_class = (char *)HDmalloc(sizeof(char) * (name_len + 1));
+                vg_class = (char *)malloc(sizeof(char) * (name_len + 1));
 
                 Vgetclass(vg_id, vg_class);
 
@@ -387,21 +383,20 @@ insert_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface identif
                 /* get objects for this group */
                 ntagrefs = Vntagrefs(vg_id);
                 if (ntagrefs > 0) {
-                    tags = (int32 *)HDmalloc(sizeof(int32) * ntagrefs);
-                    refs = (int32 *)HDmalloc(sizeof(int32) * ntagrefs);
+                    tags = (int32 *)malloc(sizeof(int32) * ntagrefs);
+                    refs = (int32 *)malloc(sizeof(int32) * ntagrefs);
                     Vgettagrefs(vg_id, tags, refs, ntagrefs);
 
                     /* recurse */
                     insert_vg(fname, file_id, sd_id, gr_id, path, tags, refs, ntagrefs, table, td1, td2);
 
-                    HDfree(tags);
-                    HDfree(refs);
+                    free(tags);
+                    free(refs);
                 }
                 if (Vdetach(vg_id) == FAIL) {
                     printf("Error: Could not detach group <%s>\n", vg_name);
                 }
-                if (path)
-                    HDfree(path);
+                free(path);
 
                 break;
 
@@ -589,7 +584,7 @@ hdiff_list_vs(int32 file_id, dtable_t *table)
          * use the nlones returned to allocate sufficient space for the
          * buffer ref_array to hold the reference numbers of all lone vgroups,
          */
-        ref_array = (int32 *)HDmalloc(sizeof(int32) * nlones);
+        ref_array = (int32 *)malloc(sizeof(int32) * nlones);
 
         /*
          * and call VSlone again to retrieve the reference numbers into
@@ -619,8 +614,7 @@ hdiff_list_vs(int32 file_id, dtable_t *table)
         } /* for */
 
         /* free the space allocated */
-        if (ref_array)
-            HDfree(ref_array);
+        free(ref_array);
     } /* if */
 
     /* terminate access to the VS interface */
@@ -978,8 +972,7 @@ insert_sds(int32 file_id, int32 sd_id, int32 tag, /* tag of input SDS */
 
     SDendaccess(sds_id);
 
-    if (path)
-        HDfree(path);
+    free(path);
 
     return 0;
 }
@@ -1136,8 +1129,7 @@ insert_gr(int32 file_id, int32 gr_in, int32 tag, /* tag of input GR */
     /* terminate access to the GRs */
     GRendaccess(ri_id);
 
-    if (path)
-        HDfree(path);
+    free(path);
 
     return 0;
 }
@@ -1261,8 +1253,7 @@ insert_vs(int32 file_id, int32 ref, /* ref of input VS */
 out:
     VSdetach(vdata_id);
 
-    if (path)
-        HDfree(path);
+    free(path);
 
     return ret;
 }
@@ -1318,13 +1309,13 @@ get_path(char *path_name, char *obj_name)
     char *path = NULL;
     /* initialize path */
     if (path_name != NULL) {
-        path = (char *)HDmalloc(strlen(path_name) + strlen(obj_name) + 2);
+        path = (char *)malloc(strlen(path_name) + strlen(obj_name) + 2);
         HDstrcpy(path, path_name);
         HDstrcat(path, "/");
         HDstrcat(path, obj_name);
     }
     else {
-        path = (char *)HDmalloc(strlen(obj_name) + 1);
+        path = (char *)malloc(strlen(obj_name) + 1);
         HDstrcpy(path, obj_name);
     }
     return path;

@@ -40,7 +40,7 @@ nvsfcfdx(intf *vsid, _fcd fldnm, intf *findex, intf *fldnmlen)
     if (!fld)
         return (FAIL);
     ret = (intf)VSfindex((int32)*vsid, fld, (int32 *)findex);
-    HDfree(fld);
+    free(fld);
     return (ret);
 }
 
@@ -63,7 +63,7 @@ nvsfcsat(intf *vsid, intf *findex, _fcd attrnm, intf *dtype, intf *count, intf *
     cfindex = *findex;
     ret =
         (intf)VSsetattr((int32)*vsid, (int32)cfindex, attrname, (int32)*dtype, (int32)*count, (VOIDP)values);
-    HDfree(attrname);
+    free(attrname);
     return (ret);
 }
 
@@ -86,7 +86,7 @@ nvsfcsca(intf *vsid, intf *findex, _fcd attrnm, intf *dtype, intf *count, _fcd v
     cfindex = *findex;
     ret     = (intf)VSsetattr((int32)*vsid, (int32)cfindex, attrname, (int32)*dtype, (int32)*count,
                               (VOIDP)_fcdtocp(values));
-    HDfree(attrname);
+    free(attrname);
     return (ret);
 }
 
@@ -141,7 +141,7 @@ nvsfcfda(intf *vsid, intf *findex, _fcd attrnm, intf *attrnmlen)
     cfindex = *findex;
 
     ret = (intf)VSfindattr((int32)*vsid, (int32)cfindex, attrname);
-    HDfree(attrname);
+    free(attrname);
     return (ret);
 }
 
@@ -162,7 +162,7 @@ nvsfcain(intf *vsid, intf *findex, intf *aindex, _fcd attrname, intf *dtype, int
 
     cfindex = *findex;
     /* Allocate space for fortran strings */
-    tattrname = (char *)HDmalloc(*attrnamelen + 1);
+    tattrname = (char *)malloc(*attrnamelen + 1);
     if (!tattrname)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
@@ -175,7 +175,7 @@ nvsfcain(intf *vsid, intf *findex, intf *aindex, _fcd attrname, intf *dtype, int
         /* convert C-string results back to Fortran strings */
         HDpackFstring(tattrname, _fcdtocp(attrname), (intn)*attrnamelen);
     }
-    HDfree(tattrname);
+    free(tattrname);
     return (ret);
 }
 
@@ -239,7 +239,7 @@ nvfcsatt(intf *vgid, _fcd attrnm, intf *dtype, intf *count, intf *values, intf *
     if (!attrname)
         return (FAIL);
     ret = (intf)Vsetattr((int32)*vgid, attrname, (int32)*dtype, (int32)*count, (VOIDP)values);
-    HDfree(attrname);
+    free(attrname);
     return (ret);
 }
 
@@ -259,7 +259,7 @@ nvfcscat(intf *vgid, _fcd attrnm, intf *dtype, intf *count, _fcd values, intf *a
     if (!attrname)
         return (FAIL);
     ret = (intf)Vsetattr((int32)*vgid, attrname, (int32)*dtype, (int32)*count, (VOIDP)_fcdtocp(values));
-    HDfree(attrname);
+    free(attrname);
     return (ret);
 }
 
@@ -292,7 +292,7 @@ nvfcfdat(intf *vgid, _fcd attrnm, intf *attrnmlen)
     if (!attrname)
         return (FAIL);
     ret = (intf)Vfindattr((int32)*vgid, attrname);
-    HDfree(attrname);
+    free(attrname);
     return (ret);
 }
 

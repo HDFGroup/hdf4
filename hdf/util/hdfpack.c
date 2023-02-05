@@ -190,7 +190,7 @@ main(int argc, char *argv[])
     if (num_desc == FAIL)
         hdferror();
 
-    dlist = (mydd_t *)HDmalloc(num_desc * sizeof(*dlist));
+    dlist = (mydd_t *)malloc(num_desc * sizeof(*dlist));
     if (dlist == NULL)
         error("\tWow!  That file must be HUGE!\n\tThere isn't enough memory to hold the DD's.\n");
 
@@ -199,7 +199,7 @@ main(int argc, char *argv[])
      */
     data_size = 1048576; /* 1 MB */
     data      = NULL;
-    while ((data = (unsigned char *)HDmalloc(data_size)) == NULL)
+    while ((data = (unsigned char *)malloc(data_size)) == NULL)
         data_size /= 2; /* okay then, cut request by half */
 
     /*
@@ -312,7 +312,7 @@ main(int argc, char *argv[])
                         if ((aid = Hstartaccess(infile, dlist[i].tag, dlist[i].ref, DFACC_READ)) == FAIL)
                             continue;
                         HQuerylength(aid, &len);
-                        buf = HDmalloc(len);
+                        buf = malloc(len);
                         Hread(aid, len, buf);
                         Hendaccess(aid);
 
@@ -321,7 +321,7 @@ main(int argc, char *argv[])
                             continue;
                         Hwrite(aid, len, buf);
                         Hendaccess(aid);
-                        HDfree(buf);
+                        free(buf);
                     } break;
                     default:
                         merge_blocks(&dlist[i], infile, outfile);
@@ -345,14 +345,8 @@ main(int argc, char *argv[])
         oldoff = dlist[i].offset;
     }
 
-    /*
-     **   Rename any matching external elements
-     */
-    if (from_file && to_file) {
-    }
-
-    HDfree(data);
-    HDfree(dlist);
+    free(data);
+    free(dlist);
 
     /*
      **   done; close files

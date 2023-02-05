@@ -64,10 +64,10 @@ VSPshutdown(void)
 
     /* free global buffers */
     if (Vtbuf != NULL) {
-        HDfree(Vtbuf);
+        free(Vtbuf);
         Vtbuf     = NULL;
         Vtbufsize = 0;
-    } /* end if */
+    }
 
     /* Clear the local buffers in vio.c */
     ret_value = VSPhshutdown();
@@ -263,9 +263,8 @@ VSread(int32 vkey,  /* IN: vdata key */
 
             /* get a buffer big enough to hold the values */
             Vtbufsize = (size_t)chunk * (size_t)hsize;
-            if (Vtbuf)
-                HDfree(Vtbuf);
-            if ((Vtbuf = (uint8 *)HDmalloc(Vtbufsize)) == NULL)
+            free(Vtbuf);
+            if ((Vtbuf = (uint8 *)malloc(Vtbufsize)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
         }
 
@@ -335,9 +334,8 @@ VSread(int32 vkey,  /* IN: vdata key */
         /* alloc space (Vtbuf) for reading in the raw data from vdata */
         if (Vtbufsize < (size_t)nelt * (size_t)hsize) {
             Vtbufsize = (size_t)nelt * (size_t)hsize;
-            if (Vtbuf)
-                HDfree(Vtbuf);
-            if ((Vtbuf = (uint8 *)HDmalloc(Vtbufsize)) == NULL)
+            free(Vtbuf);
+            if ((Vtbuf = (uint8 *)malloc(Vtbufsize)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
         }
 
@@ -575,9 +573,8 @@ VSwrite(int32       vkey,  /* IN: vdata key */
 
             /* get a buffer big enough to hold the values */
             Vtbufsize = (size_t)chunk * (size_t)hdf_size;
-            if (Vtbuf)
-                HDfree(Vtbuf);
-            if ((Vtbuf = (uint8 *)HDmalloc(Vtbufsize)) == NULL)
+            free(Vtbuf);
+            if ((Vtbuf = (uint8 *)malloc(Vtbufsize)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
         }
 
@@ -641,9 +638,8 @@ VSwrite(int32       vkey,  /* IN: vdata key */
         /* alloc space (Vtbuf) for writing out the data */
         if (Vtbufsize < (uint32)total_bytes) {
             Vtbufsize = (uint32)total_bytes;
-            if (Vtbuf)
-                HDfree(Vtbuf);
-            if ((Vtbuf = (uint8 *)HDmalloc(Vtbufsize)) == NULL)
+            free(Vtbuf);
+            if ((Vtbuf = (uint8 *)malloc(Vtbufsize)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
         }
 

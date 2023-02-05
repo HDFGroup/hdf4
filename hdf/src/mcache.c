@@ -193,7 +193,7 @@ mcache_open(VOID *key,       /* IN: byte string used as handle to share buffers 
         maxcache = (int32)DEF_MAXCACHE;
 
     /* Allocate and initialize the MCACHE cookie. */
-    if ((mp = (MCACHE *)HDcalloc(1, sizeof(MCACHE))) == NULL)
+    if ((mp = (MCACHE *)calloc(1, sizeof(MCACHE))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     H4_CIRCLEQ_INIT(&mp->lqh);
@@ -214,7 +214,7 @@ mcache_open(VOID *key,       /* IN: byte string used as handle to share buffers 
     /* Initialize list hash chain */
     for (pageno = 1; pageno <= mp->npages; ++pageno) {
         lhead = &mp->lhqh[HASHKEY(pageno)];
-        if ((lp = (L_ELEM *)HDmalloc(sizeof(L_ELEM))) == NULL)
+        if ((lp = (L_ELEM *)malloc(sizeof(L_ELEM))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         lp->pgno = (int32)pageno; /* set page number */
 
@@ -251,13 +251,12 @@ mcache_open(VOID *key,       /* IN: byte string used as handle to share buffers 
 
 done:
     if (ret_value == RET_ERROR) { /* error cleanup */
-        if (mp != NULL)
-            HDfree(mp);
+        free(mp);
         /* free up list elements */
         for (entry = 0; entry < HASHSIZE; ++entry) {
             while ((lp = mp->lhqh[entry].cqh_first) != (VOID *)&mp->lhqh[entry]) {
                 H4_CIRCLEQ_REMOVE(&mp->lhqh[entry], mp->lhqh[entry].cqh_first, hl);
-                HDfree(lp);
+                free(lp);
             }
         } /* end for entry */
 #ifdef MCACHE_DEBUG
@@ -412,7 +411,7 @@ mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
      *  and insert into hash table */
     if (!list_hit) { /* NO hit, new list element
                       * no need to read this page from disk */
-        if ((lp = (L_ELEM *)HDmalloc(sizeof(L_ELEM))) == NULL)
+        if ((lp = (L_ELEM *)malloc(sizeof(L_ELEM))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
         lp->pgno   = pgno;
@@ -471,14 +470,13 @@ mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
 done:
     if (ret_value == RET_ERROR) { /* error cleanup */
 #ifdef MCACHE_DEBUG
-        (VOID) fprintf(stderr, "mcache_get: Error exiting \n");
+        fprintf(stderr, "mcache_get: Error exiting \n");
 #endif
-        if (lp != NULL)
-            HDfree(lp);
+        free(lp);
         return NULL;
     }
 #ifdef MCACHE_DEBUG
-    (VOID) fprintf(stderr, "mcache_get: Exiting \n");
+    fprintf(stderr, "mcache_get: Exiting \n");
 #endif
     return (bp->page);
 } /* mcache_get() */
@@ -571,14 +569,14 @@ mcache_close(MCACHE *mp /* IN: MCACHE cookie */)
     /* Free up any space allocated to the lru pages. */
     while ((bp = mp->lqh.cqh_first) != (VOID *)&mp->lqh) {
         H4_CIRCLEQ_REMOVE(&mp->lqh, mp->lqh.cqh_first, q);
-        HDfree(bp);
+        free(bp);
     }
 
     /* free up list elements */
     for (entry = 0; entry < HASHSIZE; ++entry) {
         while ((lp = mp->lhqh[entry].cqh_first) != (VOID *)&mp->lhqh[entry]) {
             H4_CIRCLEQ_REMOVE(&mp->lhqh[entry], mp->lhqh[entry].cqh_first, hl);
-            HDfree(lp);
+            free(lp);
             nelem++;
         }
     } /* end for entry */
@@ -589,10 +587,10 @@ done:
     }
 
     /* Free the MCACHE cookie. */
-    HDfree(mp);
+    free(mp);
 
 #ifdef MCACHE_DEBUG
-    (VOID) fprintf(stderr, "mcache_close: freed %d list elements\n\n", nelem);
+    fprintf(stderr, "mcache_close: freed %d list elements\n\n", nelem);
 #endif
     return ret_value;
 } /* mcache_close() */
@@ -700,8 +698,7 @@ mcache_bkt(MCACHE *mp /* IN: MCACHE cookie */)
         } /* end if bp->flags */
 
     /* create a new page */
-    new : if ((bp = (BKT *)HDmalloc(sizeof(BKT) + (uintn)mp->pagesize)) == NULL)
-              HGOTO_ERROR(DFE_NOSPACE, FAIL);
+    new : if ((bp = (BKT *)malloc(sizeof(BKT) + (uintn)mp->pagesize)) == NULL) HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
 #ifdef STATISTICS
     ++mp->pagealloc;
@@ -717,9 +714,7 @@ mcache_bkt(MCACHE *mp /* IN: MCACHE cookie */)
 
 done:
     if (ret_value == RET_ERROR) { /* error cleanup */
-        if (bp != NULL)
-            HDfree(bp);
-
+        free(bp);
         return NULL;
     }
 

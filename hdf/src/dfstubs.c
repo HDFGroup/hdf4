@@ -171,7 +171,7 @@ DFclose(DF *dfile)
 
     if (DFelstat == DFEL_RESIDENT) {
         Hputelement(DFid, acc_tag, acc_ref, (unsigned char *)DFelement, DFelsize);
-        HDfree(DFelement);
+        free(DFelement);
     }
     else
         Hendaccess(DFaid);
@@ -438,16 +438,6 @@ DFaccess(DF *dfile, uint16 tag, uint16 ref, char *acc_mode)
             return (-1);
     }
 
-    /* test
-       if (((tag != acc_tag) || (ref != acc_ref)) || (accmode != DFelaccmode))
-       if (DFelstat == DFEL_RESIDENT) {
-       Hputelement(DFid, acc_tag, acc_ref, DFelement, DFelsize);
-       HDfree(DFelement);
-       }
-       else
-       Hendaccess(DFaid);
-       test */
-
     acc_tag     = tag;
     acc_ref     = ref;
     DFelaccmode = accmode;
@@ -463,24 +453,6 @@ DFaccess(DF *dfile, uint16 tag, uint16 ref, char *acc_mode)
                 DFerror = (int)HEvalue(1);
                 return (-1);
             }
-            /* test
-               DFaid = Hstartread(DFid, acc_tag, acc_ref);
-               if (DFaid != FAIL) {
-               Hinquire(DFaid, (int32*)NULL, (uint16*)NULL, (uint16*)NULL,
-               &DFelsize, (int32*)NULL, (int32*)NULL,
-               (int32*)NULL, (int32*)NULL);
-               inq_accid(DFaid, &dle_num, &index, &(dfile->up_access));
-               Hendaccess(DFaid);
-               ptr = dfile->list;
-               for (i=0; i<dle_num; i++)
-               ptr = ptr->next;
-               dfile->up_dd = &(ptr->dd[index]);
-               } else {
-               DFIclearacc();
-               DFerror = HEvalue(1);
-               return(-1);
-               }
-               test */
             break;
             /* _maybe_ treat 'w' and 'a' in the same general 'a'-way */
         case 'w':
@@ -747,14 +719,6 @@ DFupdate(DF *dfile)
     else
         DFerror = DFE_NONE;
 
-    /* test
-       if (DFelstat == DFEL_RESIDENT) {
-       Hputelement(DFid, acc_tag, acc_ref, DFelement, DFelsize);
-       HDfree(DFelement);
-       DFIclearacc();
-       }
-       test */
-
     return (0);
 }
 
@@ -820,14 +784,6 @@ DFgetelement(DF *dfile, uint16 tag, uint16 ref, char *ptr)
     else
         DFerror = DFE_NONE;
 
-    /* test
-       if (DFelstat == DFEL_RESIDENT) {
-       Hputelement(DFid, acc_tag, acc_ref, DFelement, DFelsize);
-       HDfree(DFelement);
-       DFIclearacc();
-       }
-       test */
-
     if (Hgetelement(DFid, tag, ref, (unsigned char *)ptr) == -1) {
         DFerror = (int)HEvalue(1);
         return (-1);
@@ -864,14 +820,6 @@ DFputelement(DF *dfile, uint16 tag, uint16 ref, char *ptr, int32 len)
     }
     else
         DFerror = DFE_NONE;
-
-    /* test
-       if (DFelstat == DFEL_RESIDENT) {
-       Hputelement(DFid, acc_tag, acc_ref, DFelement, DFelsize);
-       HDfree(DFelement);
-       DFIclearacc();
-       }
-       test */
 
     if (Hputelement(DFid, tag, ref, (unsigned char *)ptr, len) == FAIL) {
         DFerror = (int)HEvalue(1);
@@ -1067,27 +1015,6 @@ DFIcheck(DF *dfile)
     }
     else
         return (0);
-
-    /* test
-       if (!dfile) {
-       DFerror = DFE_DFNULL;
-       return(-1);
-       }
-
-       if ((dfile->access & DFACC_ALL) != dfile->access)
-       DFerror = DFE_BADACC;
-
-       if ((dfile->type >1) || (dfile->type <-1))
-       DFerror = DFE_ILLTYPE;
-
-       if (!dfile->list)
-       DFerror= DFE_BADDDLIST;
-
-       if (DFerror)
-       return(-1);
-       else
-       return(0);
-       test */
 }
 
 #ifdef PERM_OUT
@@ -1344,7 +1271,7 @@ DFIgetspace(uint32 qty)
 {
     void *ret;
 
-    ret     = (void *)HDmalloc(qty);
+    ret     = (void *)malloc(qty);
     DFerror = (int)HEvalue(1);
     return (ret);
 }
@@ -1352,7 +1279,7 @@ DFIgetspace(uint32 qty)
 void *
 DFIfreespace(void *ptr)
 {
-    HDfree(ptr);
+    free(ptr);
     return (NULL);
 }
 

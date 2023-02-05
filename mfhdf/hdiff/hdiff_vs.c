@@ -218,8 +218,8 @@ vdata_cmp(int32 vs1, int32 vs2, char *gname, char *cname, diff_opt_t *opt)
 
     /* compare the data */
 
-    buf1 = (uint8 *)HDmalloc((unsigned)(nv1 * vsize1));
-    buf2 = (uint8 *)HDmalloc((unsigned)(nv2 * vsize2));
+    buf1 = (uint8 *)malloc((unsigned)(nv1 * vsize1));
+    buf2 = (uint8 *)malloc((unsigned)(nv2 * vsize2));
     if (!buf1 || !buf2) {
         printf("Out of memory!");
         opt->err_stat = 1;
@@ -249,7 +249,7 @@ vdata_cmp(int32 vs1, int32 vs2, char *gname, char *cname, diff_opt_t *opt)
 
     if (vsize1 == vsize2) {
         for (i = 0; i < nv1; i++) {
-            if (HDmemcmp(b1, b2, (size_t)vsize1) == 0) {
+            if (memcmp(b1, b2, (size_t)vsize1) == 0) {
                 b1 += vsize1;
                 b2 += vsize2;
                 continue;
@@ -327,10 +327,8 @@ vdata_cmp(int32 vs1, int32 vs2, char *gname, char *cname, diff_opt_t *opt)
         }
     }
 
-    if (buf1)
-        HDfree((char *)buf1);
-    if (buf2)
-        HDfree((char *)buf2);
+    free(buf1);
+    free(buf2);
 
     return nfound;
 }

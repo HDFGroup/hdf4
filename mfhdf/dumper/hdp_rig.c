@@ -138,7 +138,7 @@ parse_dumprig_opts(dump_info_t *dumprig_opts, intn *curr_arg, intn argc, char *a
                 if (*ptr != '\0') /* count the last item */
                     numItems++;
 
-                dumprig_opts->filter_num = (intn *)HDmalloc(sizeof(intn) * numItems);
+                dumprig_opts->filter_num = (intn *)malloc(sizeof(intn) * numItems);
                 if (dumprig_opts->filter_num == NULL) {
                     printf("Not enough memory!\n");
                     exit(-1);
@@ -229,7 +229,7 @@ drig(dump_info_t *dumprig_opts, intn curr_arg, intn argc, char *argv[], int mode
 
         num_rig_chosen = dumprig_opts->num_chosen;
         if (num_rig_chosen > 0) {
-            if ((rig_chosen = (int32 *)HDmalloc(sizeof(int32) * num_rig_chosen)) == NULL) {
+            if ((rig_chosen = (int32 *)malloc(sizeof(int32) * num_rig_chosen)) == NULL) {
                 fprintf(stderr, "Memory allocation error\n");
                 ret_value = FAIL;
                 goto done;
@@ -319,7 +319,7 @@ drig(dump_info_t *dumprig_opts, intn curr_arg, intn argc, char *argv[], int mode
                        8-bit image or 3 for a 24-bit image. */
                     eltsz      = DFKNTsize(DFNT_UINT8 | DFNT_NATIVE) * ncomps;
                     read_nelts = width * height; /* Number of elements to be read in. */
-                    if ((image = (VOIDP)HDmalloc(read_nelts * eltsz)) == NULL) {
+                    if ((image = (VOIDP)malloc(read_nelts * eltsz)) == NULL) {
                         fprintf(stderr, "Not enough memory!\n");
                         ret_value = FAIL;
                         goto done;
@@ -352,7 +352,7 @@ drig(dump_info_t *dumprig_opts, intn curr_arg, intn argc, char *argv[], int mode
 
                         if (!ref_found) { /* If no match, then the current image is
                                              not what the user wants and so skip it. */
-                            HDfree((VOIDP)image);
+                            free(image);
                             image = NULL; /* reset */
                             continue;
                         }
@@ -364,7 +364,7 @@ drig(dump_info_t *dumprig_opts, intn curr_arg, intn argc, char *argv[], int mode
                        skip the current image. */
                     if (((dumprig_opts->filter == DINDEX) && (i != rig_chosen[x])) ||
                         (((ncomps * 8) != model) && (model != 0))) {
-                        HDfree((VOIDP)image);
+                        free(image);
                         image = NULL; /* reset */
                         continue;
                     }
@@ -420,8 +420,8 @@ drig(dump_info_t *dumprig_opts, intn curr_arg, intn argc, char *argv[], int mode
                                 ret_value = FAIL;
                                 goto done;
                             }
-                            HDfree((VOIDP)image);
-                            image = NULL; /* reset */
+                            free(image);
+                            image = NULL;
                             break;
                         default:
                             printf("dumping RIG, unknown option \n");
@@ -502,7 +502,7 @@ drig(dump_info_t *dumprig_opts, intn curr_arg, intn argc, char *argv[], int mode
                        8-bit image or 3 for a 24-bit image. */
                     eltsz      = DFKNTsize(DFNT_UINT8 | DFNT_NATIVE) * ncomps;
                     read_nelts = width * height; /* Number of elements to be read in. */
-                    if ((image = (VOIDP)HDmalloc(read_nelts * eltsz)) == NULL) {
+                    if ((image = (VOIDP)malloc(read_nelts * eltsz)) == NULL) {
                         fprintf(stderr, "Not enough memory!\n");
                         ret_value = FAIL;
                         goto done;
@@ -533,8 +533,8 @@ drig(dump_info_t *dumprig_opts, intn curr_arg, intn argc, char *argv[], int mode
 
                         if (!ref_found) { /* If no match, then the current image is
                                              not what the user wants and so skip it. */
-                            HDfree((VOIDP)image);
-                            image = NULL; /* reset */
+                            free(image);
+                            image = NULL;
                             continue;
                         }
                     }
@@ -545,8 +545,8 @@ drig(dump_info_t *dumprig_opts, intn curr_arg, intn argc, char *argv[], int mode
                        skip the current image. */
                     if (((dumprig_opts->filter == DINDEX) && (i != rig_chosen[x])) ||
                         (((ncomps * 8) != model) && (model != 0))) {
-                        HDfree((VOIDP)image);
-                        image = NULL; /* reset */
+                        free(image);
+                        image = NULL;
                         continue;
                     }
 
@@ -556,7 +556,7 @@ drig(dump_info_t *dumprig_opts, intn curr_arg, intn argc, char *argv[], int mode
                         ret_value = FAIL;
                         goto done;
                     }
-                    HDfree((VOIDP)image);
+                    free(image);
                     image = NULL; /* reset */
 
                     if (dumpall != 1 && i == rig_chosen[x])
@@ -570,10 +570,8 @@ drig(dump_info_t *dumprig_opts, intn curr_arg, intn argc, char *argv[], int mode
                 goto done;
         } /* switch for output file   */
 
-        if (rig_chosen != NULL) {
-            HDfree(rig_chosen);
-            rig_chosen = NULL;
-        } /* end if */
+        free(rig_chosen);
+        rig_chosen = NULL;
 
         if (dumprig_opts->dump_to_file)
             fclose(fp);
@@ -581,10 +579,8 @@ drig(dump_info_t *dumprig_opts, intn curr_arg, intn argc, char *argv[], int mode
 
 done:
     if (ret_value == FAIL) { /* Failure cleanup */
-        if (image != NULL)
-            HDfree(image);
-        if (rig_chosen != NULL)
-            HDfree(rig_chosen);
+        free(image);
+        free(rig_chosen);
     }
 
     return ret_value;
@@ -618,8 +614,7 @@ do_dumprig(intn curr_arg, intn argc, char *argv[], intn help)
     }
 
 done:
-    if (dumprig_opts.filter_num != NULL)
-        HDfree(dumprig_opts.filter_num);
+    free(dumprig_opts.filter_num);
 
     return ret_value;
 } /* end do_dumprig() */

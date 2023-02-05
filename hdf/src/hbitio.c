@@ -668,13 +668,13 @@ Hendbitaccess(int32 bitfile_id, intn flushbit)
     if (bitfile_rec->mode == 'w')
         if (HIbitflush(bitfile_rec, flushbit, TRUE) == FAIL)
             HRETURN_ERROR(DFE_WRITEERROR, FAIL);
-    HDfree((VOIDP)bitfile_rec->bytea); /* free the space for the buffer */
+    free(bitfile_rec->bytea); /* free the space for the buffer */
 
     if (HAremove_atom(bitfile_id) == NULL)
         HRETURN_ERROR(DFE_WRITEERROR, FAIL);
     if (Hendaccess(bitfile_rec->acc_id) == FAIL)
         HRETURN_ERROR(DFE_CANTENDACCESS, FAIL);
-    HDfree(bitfile_rec);
+    free(bitfile_rec);
 
     return (SUCCEED);
 } /* end Hendbitaccess() */
@@ -789,9 +789,9 @@ HIget_bitfile_rec(void)
 {
     bitrec_t *ret_value = NULL;
 
-    if ((ret_value = HDcalloc(1, sizeof(bitrec_t))) == NULL)
+    if ((ret_value = calloc(1, sizeof(bitrec_t))) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, NULL);
-    if ((ret_value->bytea = HDcalloc(1, BITBUF_SIZE)) == NULL)
+    if ((ret_value->bytea = calloc(1, BITBUF_SIZE)) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, NULL);
 
     return ret_value;

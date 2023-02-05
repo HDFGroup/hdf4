@@ -71,7 +71,7 @@ parse_comp(const char *str, int *n_objs, comp_info_t *comp)
      */
 
     n++;
-    obj_list = HDmalloc(n * sizeof(obj_list_t));
+    obj_list = malloc(n * sizeof(obj_list_t));
     *n_objs  = n;
 
     /* get object list */
@@ -84,7 +84,7 @@ parse_comp(const char *str, int *n_objs, comp_info_t *comp)
             else
                 obj[k + 1] = '\0';
             HDstrcpy(obj_list[n].obj, obj);
-            HDmemset(obj, 0, sizeof(obj));
+            memset(obj, 0, sizeof(obj));
             n++;
             k = -1;
         }
@@ -283,8 +283,7 @@ parse_comp(const char *str, int *n_objs, comp_info_t *comp)
 
 out:
 
-    if (obj_list)
-        HDfree(obj_list);
+    free(obj_list);
 
     return NULL;
 }
@@ -336,7 +335,7 @@ parse_chunk(const char *str, int *n_objs, int32 *chunk_lengths, int *chunk_rank)
      */
 
     n++;
-    obj_list = HDmalloc(n * sizeof(obj_list_t));
+    obj_list = malloc(n * sizeof(obj_list_t));
     *n_objs  = n;
 
     /* get object list */
@@ -349,7 +348,7 @@ parse_chunk(const char *str, int *n_objs, int32 *chunk_lengths, int *chunk_rank)
             else
                 obj[k + 1] = '\0';
             HDstrcpy(obj_list[n].obj, obj);
-            HDmemset(obj, 0, sizeof(obj));
+            memset(obj, 0, sizeof(obj));
             n++;
             k = -1;
         }
@@ -406,8 +405,7 @@ parse_chunk(const char *str, int *n_objs, int32 *chunk_lengths, int *chunk_rank)
 
 out:
 
-    if (obj_list)
-        HDfree(obj_list);
+    free(obj_list);
 
     return NULL;
 }

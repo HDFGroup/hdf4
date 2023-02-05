@@ -80,7 +80,7 @@ HULcreate_list(HULfind_func_t find_func /* IN: object comparison function */
     HEclear();
 
     /* Allocate the head information */
-    if ((ret_value = (list_head_t *)HDcalloc(1, sizeof(list_head_t))) == NULL)
+    if ((ret_value = (list_head_t *)calloc(1, sizeof(list_head_t))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, NULL);
 
     /* Set the counter */
@@ -132,7 +132,7 @@ HULdestroy_list(list_head_t *lst /* IN: list to destroy */
     } /* end while */
 
     /* Chuck the list-head */
-    HDfree(lst);
+    free(lst);
 
 done:
     return ret_value;
@@ -366,7 +366,7 @@ HULIget_list_node(void)
         node_free_list = node_free_list->next;
     } /* end if */
     else {
-        if ((ret_value = (node_info_t *)HDmalloc(sizeof(node_info_t))) == NULL)
+        if ((ret_value = (node_info_t *)malloc(sizeof(node_info_t))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
     } /* end else */
 
@@ -420,8 +420,8 @@ HULshutdown(void)
         while (node_free_list != NULL) {
             curr           = node_free_list;
             node_free_list = node_free_list->next;
-            HDfree(curr);
-        } /* end while */
-    }     /* end if */
+            free(curr);
+        }
+    }
     return (SUCCEED);
 } /* end HULshutdown() */

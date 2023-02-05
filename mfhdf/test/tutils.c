@@ -32,9 +32,9 @@ make_datafilename(const char *basename, char *testfile, unsigned int size)
     char *srcdir   = getenv("srcdir");
     char *tempfile = NULL;
 
-    tempfile = (char *)HDmalloc(sizeof(char *) * (size + 1));
+    tempfile = (char *)malloc(sizeof(char *) * (size + 1));
     CHECK_ALLOC(tempfile, "tempfile", "make_datafilename");
-    HDmemset(tempfile, '\0', size + 1);
+    memset(tempfile, '\0', size + 1);
 
     /* Generate the correct name for the test file, by prepending the source path */
     if (srcdir && ((strlen(srcdir) + strlen(basename) + 1) < size)) {
@@ -63,7 +63,7 @@ make_datafilename(const char *basename, char *testfile, unsigned int size)
 
     /* File name is generated, return it */
     HDstrcpy(testfile, tempfile);
-    HDfree(tempfile);
+    free(tempfile);
     return SUCCEED;
 }
 
@@ -87,9 +87,9 @@ make_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, 
     intn   status, ii;
     intn   num_errs = 0; /* number of errors in compression test so far */
 
-    start = (int32 *)HDmalloc(sizeof(int32) * rank);
+    start = (int32 *)malloc(sizeof(int32) * rank);
     CHECK_ALLOC(start, "start", "make_SDS");
-    edges = (int32 *)HDmalloc(sizeof(int32) * rank);
+    edges = (int32 *)malloc(sizeof(int32) * rank);
     CHECK_ALLOC(edges, "edges", "make_SDS");
 
     /* Create the array with the name defined in SDS_NAME */
@@ -123,8 +123,8 @@ make_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, 
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "SDendaccess");
 
-    HDfree(edges);
-    HDfree(start);
+    free(edges);
+    free(start);
 
     return (sds_size);
 
@@ -151,9 +151,9 @@ make_CompSDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_siz
     intn         status   = 0, ii;
     intn         num_errs = 0; /* number of errors in compression test so far */
 
-    start = (int32 *)HDmalloc(sizeof(int32) * rank);
+    start = (int32 *)malloc(sizeof(int32) * rank);
     CHECK_ALLOC(start, "start", "make_CompSDS");
-    edges = (int32 *)HDmalloc(sizeof(int32) * rank);
+    edges = (int32 *)malloc(sizeof(int32) * rank);
     CHECK_ALLOC(edges, "edges", "make_CompSDS");
 
     /* Define dimensions of the array to be created */
@@ -194,8 +194,8 @@ make_CompSDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_siz
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "SDendaccess");
 
-    HDfree(edges);
-    HDfree(start);
+    free(edges);
+    free(start);
 
     return (sds_size);
 } /* make_CompSDS */
@@ -222,9 +222,9 @@ make_Ext3D_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_s
     intn   status   = 0, ii;
     intn   num_errs = 0; /* number of errors in compression test so far */
 
-    start = (int32 *)HDmalloc(sizeof(int32) * rank);
+    start = (int32 *)malloc(sizeof(int32) * rank);
     CHECK_ALLOC(start, "start", "make_Ext3D_SDS");
-    edges = (int32 *)HDmalloc(sizeof(int32) * rank);
+    edges = (int32 *)malloc(sizeof(int32) * rank);
     CHECK_ALLOC(edges, "edges", "make_Ext3D_SDS");
 
     /* Set the parameters start and edges to write */
@@ -255,8 +255,8 @@ make_Ext3D_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_s
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "SDendaccess");
 
-    HDfree(edges);
-    HDfree(start);
+    free(edges);
+    free(start);
 
     return sds_size;
 } /* make_Ext3D_SDS */

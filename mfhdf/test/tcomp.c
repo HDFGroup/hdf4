@@ -93,7 +93,7 @@ test_various_comps()
     CHECK(sds_id, FAIL, "SDcreate");
 
     /* Set data set SDS1_NAME to use GZIP compression. */
-    HDmemset(&c_info, 0, sizeof(c_info));
+    memset(&c_info, 0, sizeof(c_info));
     comp_type            = COMP_CODE_DEFLATE;
     c_info.deflate.level = 6;
     status               = SDsetcompress(sds_id, comp_type, &c_info);
@@ -112,7 +112,7 @@ test_various_comps()
     CHECK(sds_id, FAIL, "SDcreate");
 
     /* Set data set SDS2_NAME to use Skipping Huffman compression. */
-    HDmemset(&c_info, 0, sizeof(c_info));
+    memset(&c_info, 0, sizeof(c_info));
     comp_type               = COMP_CODE_SKPHUFF;
     c_info.skphuff.skp_size = 4;
     status                  = SDsetcompress(sds_id, comp_type, &c_info);
@@ -256,7 +256,7 @@ test_compressed_data()
      */
 #ifndef H4_NO_DEPRECATED_SYMBOLS   /* Jan 9, 2013 */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     status = SDgetcompress(newsds2, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompress");
     VERIFY(comp_type, COMP_CODE_SKPHUFF, "SDgetcompress");
@@ -264,7 +264,7 @@ test_compressed_data()
 #endif /* H4_NO_DEPRECATED_SYMBOLS */
 
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     status = SDgetcompinfo(newsds2, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompinfo");
     VERIFY(comp_type, COMP_CODE_SKPHUFF, "SDgetcompinfo");
@@ -612,14 +612,14 @@ test_compressed_data()
      */
 #ifndef H4_NO_DEPRECATED_SYMBOLS   /* Jan 9, 2013 */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     status = SDgetcompress(newsds2, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompress");
     VERIFY(comp_type, COMP_CODE_RLE, "SDgetcompress");
 #endif /* H4_NO_DEPRECATED_SYMBOLS */
 
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     status = SDgetcompinfo(newsds2, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompinfo");
     VERIFY(comp_type, COMP_CODE_RLE, "SDgetcompinfo");
@@ -698,14 +698,14 @@ test_compressed_data()
      */
 #ifndef H4_NO_DEPRECATED_SYMBOLS   /* Jan 9, 2013 */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     status = SDgetcompress(newsds2, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompress");
     VERIFY(comp_type, COMP_CODE_NONE, "SDgetcompress");
 #endif /* H4_NO_DEPRECATED_SYMBOLS */
 
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     status = SDgetcompinfo(newsds2, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompinfo");
     VERIFY(comp_type, COMP_CODE_NONE, "SDgetcompinfo");
@@ -785,7 +785,7 @@ test_compressed_data()
      */
 #ifndef H4_NO_DEPRECATED_SYMBOLS   /* Jan 9, 2013 */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     status = SDgetcompress(newsds2, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompress");
     VERIFY(comp_type, COMP_CODE_DEFLATE, "SDgetcompress");
@@ -793,7 +793,7 @@ test_compressed_data()
 #endif /* H4_NO_DEPRECATED_SYMBOLS */
 
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     status = SDgetcompinfo(newsds2, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompinfo");
     VERIFY(comp_type, COMP_CODE_DEFLATE, "SDgetcompinfo");

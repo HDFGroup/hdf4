@@ -157,7 +157,7 @@ HCIcrle_decode(compinfo_t *info, int32 length, uint8 *buf)
             dec_len = (uintn)length;
 
         if (rle_info->rle_state == RLE_RUN)
-            HDmemset(buf, rle_info->last_byte, dec_len); /* copy the run */
+            memset(buf, rle_info->last_byte, dec_len); /* copy the run */
         else {
             HDmemcpy(buf, &(rle_info->buffer[rle_info->buf_pos]), dec_len);
             rle_info->buf_pos += (intn)dec_len;
@@ -476,23 +476,23 @@ HCPcrle_seek(accrec_t *access_rec, int32 offset, int origin)
                 HRETURN_ERROR(DFE_CTERM, FAIL);
         if (HCIcrle_init(access_rec) == FAIL)
             HRETURN_ERROR(DFE_CINIT, FAIL);
-    } /* end if */
+    }
 
-    if ((tmp_buf = (uint8 *)HDmalloc(TMP_BUF_SIZE)) == NULL) /* get tmp buffer */
+    if ((tmp_buf = (uint8 *)malloc(TMP_BUF_SIZE)) == NULL) /* get tmp buffer */
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     while (rle_info->offset + TMP_BUF_SIZE < offset) /* grab chunks */
         if (HCIcrle_decode(info, TMP_BUF_SIZE, tmp_buf) == FAIL) {
-            HDfree(tmp_buf);
+            free(tmp_buf);
             HRETURN_ERROR(DFE_CDECODE, FAIL)
         }                          /* end if */
     if (rle_info->offset < offset) /* grab the last chunk */
         if (HCIcrle_decode(info, offset - rle_info->offset, tmp_buf) == FAIL) {
-            HDfree(tmp_buf);
+            free(tmp_buf);
             HRETURN_ERROR(DFE_CDECODE, FAIL)
-        } /* end if */
+        }
 
-    HDfree(tmp_buf);
+    free(tmp_buf);
     return (SUCCEED);
 } /* HCPcrle_seek() */
 

@@ -73,7 +73,7 @@ test_rank0()
     CHECK(sds2_id, FAIL, "test_rank0: SDcreate");
 
     /* Attempt to set chunk but should fail */
-    HDmemset(&c_def, 0, sizeof(HDF_CHUNK_DEF));
+    memset(&c_def, 0, sizeof(HDF_CHUNK_DEF));
     comp_flag = HDF_CHUNK;
     status    = SDsetchunk(sds2_id, c_def, comp_flag);
     VERIFY(status, FAIL, "test_rank0: SDsetchunk");

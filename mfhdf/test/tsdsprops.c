@@ -106,7 +106,7 @@ test_SDSnames()
     VERIFY(name_len, NAME_LEN1, "SDgetnamelen");
 
     /* Allocate buffer to get its name */
-    ds_name = (char *)HDmalloc(name_len + 1);
+    ds_name = (char *)malloc(name_len + 1);
     CHECK_ALLOC(ds_name, "ds_name", "test_SDSnames");
 
     /* Get information of the first dataset, and verify its name */
@@ -119,7 +119,7 @@ test_SDSnames()
     CHECK(status, FAIL, "SDendaccess");
 
     /* Release allocated memory */
-    HDfree(ds_name);
+    free(ds_name);
 
     /* Get access to the second dataset */
     dset2 = SDselect(fid, 1);
@@ -132,7 +132,7 @@ test_SDSnames()
     VERIFY(name_len, NAME_LEN2, "SDgetnamelen");
 
     /* Allocate buffer to get its name */
-    ds_name = (char *)HDmalloc(name_len + 1);
+    ds_name = (char *)malloc(name_len + 1);
     CHECK_ALLOC(ds_name, "ds_name", "test_SDSnames");
 
     /* Get information of the second dataset, and verify its name */
@@ -145,7 +145,7 @@ test_SDSnames()
     CHECK(status, FAIL, "SDendaccess");
 
     /* Release allocated memory */
-    HDfree(ds_name);
+    free(ds_name);
 
     /* Close the file */
     status = SDend(fid);

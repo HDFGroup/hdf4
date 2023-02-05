@@ -95,45 +95,41 @@ main(int argv, char *argc[])
         int32 ImageCount = (int32)(GifMemoryStruct.GifHeader)->ImageCount;
         for (i = 0; i < ImageCount; i++) {
             if (GifMemoryStruct.GifImageDesc[i] != NULL) {
-                if (GifMemoryStruct.GifImageDesc[i]->Image != NULL)
-                    HDfree(GifMemoryStruct.GifImageDesc[i]->Image);
-                HDfree(GifMemoryStruct.GifImageDesc[i]);
+                free(GifMemoryStruct.GifImageDesc[i]->Image);
+                free(GifMemoryStruct.GifImageDesc[i]);
             }
 
-            if (GifMemoryStruct.GifGraphicControlExtension[i] != NULL)
-                HDfree(GifMemoryStruct.GifGraphicControlExtension[i]);
+            free(GifMemoryStruct.GifGraphicControlExtension[i]);
         }
-        HDfree(GifMemoryStruct.GifImageDesc);
-        HDfree(GifMemoryStruct.GifGraphicControlExtension);
+        free(GifMemoryStruct.GifImageDesc);
+        free(GifMemoryStruct.GifGraphicControlExtension);
     }
 
     if (GifMemoryStruct.GifApplicationExtension != NULL) {
         int32 ExtCount = (int32)(GifMemoryStruct.GifHeader)->ApplicationCount;
         for (i = 0; i < ExtCount; i++) {
             if (GifMemoryStruct.GifApplicationExtension[i] != NULL) {
-                if (GifMemoryStruct.GifApplicationExtension[i]->ApplicationData != NULL)
-                    HDfree(GifMemoryStruct.GifApplicationExtension[i]->ApplicationData);
-                HDfree(GifMemoryStruct.GifApplicationExtension[i]);
+                free(GifMemoryStruct.GifApplicationExtension[i]->ApplicationData);
+                free(GifMemoryStruct.GifApplicationExtension[i]);
             }
         }
-        HDfree(GifMemoryStruct.GifApplicationExtension);
+        free(GifMemoryStruct.GifApplicationExtension);
     }
 
     if (GifMemoryStruct.GifPlainTextExtension != NULL) {
         int32 TextCount = (int32)(GifMemoryStruct.GifHeader)->PlainTextCount;
         for (i = 0; i < TextCount; i++) {
             if (GifMemoryStruct.GifPlainTextExtension[i] != NULL) {
-                if (GifMemoryStruct.GifPlainTextExtension[i]->PlainTextData != NULL)
-                    HDfree(GifMemoryStruct.GifPlainTextExtension[i]->PlainTextData);
-                HDfree(GifMemoryStruct.GifPlainTextExtension[i]);
+                free(GifMemoryStruct.GifPlainTextExtension[i]->PlainTextData);
+                free(GifMemoryStruct.GifPlainTextExtension[i]);
             }
         }
-        HDfree(GifMemoryStruct.GifPlainTextExtension);
+        free(GifMemoryStruct.GifPlainTextExtension);
     }
 
-    HDfree(StartPos);
+    free(StartPos);
 
-    HDfree(GifMemoryStruct.GifHeader);
+    free(GifMemoryStruct.GifHeader);
 
     return (0);
 }

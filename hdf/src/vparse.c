@@ -69,9 +69,8 @@ scanattrs(const char *attrs, int32 *attrc, char ***attrv)
 
     if (slen > Vpbufsize) {
         Vpbufsize = slen;
-        if (Vpbuf)
-            HDfree((VOIDP)Vpbuf);
-        if ((Vpbuf = (uint8 *)HDmalloc(Vpbufsize)) == NULL)
+        free(Vpbuf);
+        if ((Vpbuf = (uint8 *)malloc(Vpbufsize)) == NULL)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
     } /* end if */
 
@@ -154,13 +153,11 @@ scanattrs(const char *attrs, int32 *attrc, char ***attrv)
 intn
 VPparse_shutdown(void)
 {
-    intn ret_value = SUCCEED;
-
     if (Vpbuf != NULL) {
-        HDfree(Vpbuf);
+        free(Vpbuf);
         Vpbuf     = NULL;
         Vpbufsize = 0;
-    } /* end if */
+    }
 
-    return ret_value;
+    return SUCCEED;
 } /* end VSPhshutdown() */

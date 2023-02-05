@@ -17,7 +17,6 @@
 #include "add.h"     /* functions to update in-memory netcdf */
 #include "error.h"
 #include "tests.h"
-#include "alloc.h"
 #include "emalloc.h"
 #ifdef HDF
 #include "hdf.h"
@@ -259,7 +258,7 @@ test_ncredef(char *path)
         error("%s: ncredef failed to report bad cdf handle", pname);
         nerrs++;
     }
-    Free((char *)aa.dims);
+    free(aa.dims);
     if (nerrs > 0)
         (void)fprintf(stderr, "FAILED! ***\n");
     else

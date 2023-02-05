@@ -114,7 +114,7 @@ HCIcnbit_init(accrec_t *access_rec)
 #ifdef TESTING
     printf("HCIcnbit_init(): 0.4 - coder_func.write=%p\n", info->cinfo.coder_funcs.write);
 #endif
-    HDmemset(nbit_info->mask_buf, (nbit_info->fill_one == TRUE ? 0xff : 0), nbit_info->nt_size);
+    memset(nbit_info->mask_buf, (nbit_info->fill_one == TRUE ? 0xff : 0), nbit_info->nt_size);
 #ifdef TESTING
     printf("HCIcnbit_init(): 0.5 - fill_one=%d, sign_ext=%d\n", (int)nbit_info->fill_one,
            (int)nbit_info->sign_ext);
@@ -130,7 +130,7 @@ HCIcnbit_init(accrec_t *access_rec)
     printf("HCIcnbit_init(): 0.6 - mask_top=%d, mask_bot=%d, bits=%d, top_bit=%d, bot_bit=%d\n", mask_top,
            mask_bot, bits, top_bit, bot_bit);
 #endif
-    HDmemset(nbit_info->mask_info, 0, sizeof(nbit_info->mask_info)); /* set to 0 */
+    memset(nbit_info->mask_info, 0, sizeof(nbit_info->mask_info)); /* set to 0 */
 #ifdef TESTING
     printf("HCIcnbit_init(): before init'ing mask, nt_size=%d\n", nbit_info->nt_size);
     printf("HCIcnbit_init(): 1 - coder_func.write=%p\n", info->cinfo.coder_funcs.write);

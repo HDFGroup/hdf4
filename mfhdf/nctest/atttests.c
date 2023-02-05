@@ -16,7 +16,6 @@
 #include "testcdf.h" /* defines in-memory test cdf structure */
 #include "add.h"     /* functions to update in-memory netcdf */
 #include "error.h"
-#include "alloc.h"
 #include "emalloc.h"
 #include "tests.h"
 #include "val.h"
@@ -138,7 +137,7 @@ test_ncattput(char *path)
             error("%s: ncattget got bad values after put of NC_GLOBAL attrs", pname);
             nerrs++;
         }
-        Free((char *)tmp.val);
+        free(tmp.val);
     }
     /* add a variable, then variable attributes of every type */
     ww.dims = (int *)emalloc(sizeof(int) * ww.ndims);
@@ -181,7 +180,7 @@ test_ncattput(char *path)
             error("%s: ncattget got bad values after put of variable attrs", pname);
             nerrs++;
         }
-        Free((char *)tmp.val);
+        free(tmp.val);
     }
     /*
      * check that changing type of existing attribute, increasing
@@ -225,7 +224,7 @@ test_ncattput(char *path)
             error("%s: ncattget got bad values after put of larger attrs", pname);
             nerrs++;
         }
-        Free((char *)tmp.val);
+        free(tmp.val);
     }
     /* try with bad datatype, should fail */
     if (ncattput(cdfid, ww_id, "bogus_att1", BAD_TYPE, atts[0].len, atts[0].val) != -1) {
@@ -299,7 +298,7 @@ test_ncattput(char *path)
             error("%s: ncattget got bad values in data mode", pname);
             nerrs++;
         }
-        Free((char *)tmp.val);
+        free(tmp.val);
     }
     /* try with bad variable handle, should fail */
     if (ncattput(cdfid, test.nvars, atts[0].name, atts[0].type, atts[0].len, atts[0].val) != -1) {
@@ -317,7 +316,7 @@ test_ncattput(char *path)
         ncclose(cdfid);
         return;
     }
-    Free(tmp.name);
+    free(tmp.name);
     if (nerrs > 0)
         (void)fprintf(stderr, "FAILED! ***\n");
     else
@@ -528,7 +527,7 @@ test_ncattget(char *path)
             val_out(tmp.type, tmp.len, tmp.val);
             nerrs++;
         }
-        Free((char *)tmp.val);
+        free(tmp.val);
     }
     if (ncendef(cdfid) == -1) {
         error("%s: ncendef failed", pname);
@@ -571,7 +570,7 @@ test_ncattget(char *path)
             val_out(tmp.type, tmp.len, tmp.val);
             nerrs++;
         }
-        Free((char *)tmp.val);
+        free(tmp.val);
     }
     /* try with bad variable handle, should fail */
     if (ncattget(cdfid, test.nvars, vmax.name, vmax.val) != -1) {
@@ -744,7 +743,7 @@ test_ncattcopy(char *path1, char *path2)
         error("%s: ncattget got bad values after put of NC_GLOBAL attrs", pname);
         nerrs++;
     }
-    Free((char *)tmp.val);
+    free(tmp.val);
     /* try copying variable attribute from source to target */
     if (ncattcopy(cdfid, tt_id, att.name, cdfid2, tu2_id) == -1) {
         error("%s: ncattcopy failed", pname);
@@ -777,7 +776,7 @@ test_ncattcopy(char *path1, char *path2)
         error("%s: ncattget got bad values after copy of variable attrs", pname);
         nerrs++;
     }
-    Free((char *)tmp.val);
+    free(tmp.val);
 
     /*
      * check that old attribute put works with target in data mode,
@@ -829,7 +828,7 @@ test_ncattcopy(char *path1, char *path2)
         error("%s: ncattget got bad values after copy of variable attrs", pname);
         nerrs++;
     }
-    Free((char *)tmp.val);
+    free(tmp.val);
 
     /* try copying with same source and target netcdf, different variables */
     /* copy shorter attribute on existing attribute */
@@ -865,7 +864,7 @@ test_ncattcopy(char *path1, char *path2)
         error("%s: ncattget got bad values after copy of variable attrs", pname);
         nerrs++;
     }
-    Free((char *)tmp.val);
+    free(tmp.val);
 
     /* try with same cdfid for source and target, same variable */
     if (ncattcopy(cdfid, tu_id, att.name, cdfid, tu_id) == -1) {
@@ -1103,8 +1102,8 @@ test_ncattname(char *path)
         error("%s: ncattname shoul fail with bad cdfid", pname);
         nerrs++;
     }
-    Free(tmp.name);
-    Free(att.name);
+    free(tmp.name);
+    free(att.name);
     if (nerrs > 0)
         (void)fprintf(stderr, "FAILED! ***\n");
     else
@@ -1247,7 +1246,7 @@ test_ncattrename(char *path)
         error("%s: ncattget got bad values after data mode rename", pname);
         nerrs++;
     }
-    Free((char *)tmp.val);
+    free(tmp.val);
     if (ncclose(cdfid) == -1) {
         error("%s: ncclose failed", pname);
         return;
@@ -1433,9 +1432,9 @@ test_ncattdel(char *path)
         error("%s: ncattdel should fail on bad netcdf id", pname);
         nerrs++;
     }
-    Free((char *)vtmp.dims);
-    Free(vtmp.name);
-    Free((char *)yav.dims);
+    free(vtmp.dims);
+    free(vtmp.name);
+    free(yav.dims);
     if (nerrs > 0)
         (void)fprintf(stderr, "FAILED! ***\n");
     else

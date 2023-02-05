@@ -132,7 +132,7 @@ HBconvert(int32 aid)
     } /* end if */
 
     /* allocate special info struct for buffered element */
-    if ((info = HDmalloc((uint32)sizeof(bufinfo_t))) == NULL)
+    if ((info = malloc((uint32)sizeof(bufinfo_t))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* fill in special info struct */
@@ -142,7 +142,7 @@ HBconvert(int32 aid)
 
     /* Get space for buffer */
     if (data_len > 0) {
-        if ((info->buf = HDmalloc((uint32)data_len)) == NULL)
+        if ((info->buf = malloc((uint32)data_len)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
     } /* end if */
     else
@@ -350,13 +350,13 @@ HBPwrite(accrec_t *access_rec, int32 length, const void *data)
         /* Resize buffer in safe manner */
         /* Realloc should handle this, but the Sun is whining about it... -QAK */
         if (info->buf == NULL) {
-            if ((info->buf = HDmalloc((uint32)new_len)) == NULL)
+            if ((info->buf = malloc((uint32)new_len)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
         }
         else {
             uint8 *temp_buf = info->buf; /* temporary buffer pointer in case realloc fails */
 
-            if ((info->buf = HDrealloc(info->buf, (uint32)new_len)) == NULL) {
+            if ((info->buf = realloc(info->buf, (uint32)new_len)) == NULL) {
                 info->buf = temp_buf;
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
             } /* end if */
@@ -515,12 +515,12 @@ HBPcloseAID(accrec_t *access_rec)
         } /* end if */
 
         /* Free the memory buffer */
-        HDfree(info->buf);
+        free(info->buf);
 
         /* Close the dependent access record */
         Hendaccess(info->buf_aid);
 
-        HDfree(info);
+        free(info);
         access_rec->special_info = NULL;
     }
 

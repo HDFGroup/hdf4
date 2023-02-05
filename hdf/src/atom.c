@@ -102,7 +102,7 @@ HAinit_group(group_t grp,      /* IN: Group to initialize */
 #endif /* HASH_SIZE_POWER_2 */
 
     if (atom_group_list[grp] == NULL) { /* Allocate the group information */
-        grp_ptr = (atom_group_t *)HDcalloc(1, sizeof(atom_group_t));
+        grp_ptr = (atom_group_t *)calloc(1, sizeof(atom_group_t));
         if (grp_ptr == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         atom_group_list[grp] = grp_ptr;
@@ -114,7 +114,7 @@ HAinit_group(group_t grp,      /* IN: Group to initialize */
         grp_ptr->hash_size = hash_size;
         grp_ptr->atoms     = 0;
         grp_ptr->nextid    = 0;
-        if ((grp_ptr->atom_list = (atom_info_t **)HDcalloc(hash_size, sizeof(atom_info_t *))) == NULL)
+        if ((grp_ptr->atom_list = (atom_info_t **)calloc(hash_size, sizeof(atom_info_t *))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
     } /* end if */
 
@@ -124,9 +124,8 @@ HAinit_group(group_t grp,      /* IN: Group to initialize */
 done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (grp_ptr != NULL) {
-            if (grp_ptr->atom_list != NULL)
-                HDfree(grp_ptr->atom_list);
-            HDfree(grp_ptr);
+            free(grp_ptr->atom_list);
+            free(grp_ptr);
         }
     }
 
@@ -175,7 +174,7 @@ HAdestroy_group(group_t grp /* IN: Group to destroy */
                 } /* end if */
         }         /* end block */
 #endif            /* ATOMS_ARE_CACHED */
-        HDfree(grp_ptr->atom_list);
+        free(grp_ptr->atom_list);
         grp_ptr->atom_list = NULL;
     } /* end if */
 
@@ -534,7 +533,7 @@ HAIget_atom_node(void)
         atom_free_list = atom_free_list->next;
     } /* end if */
     else {
-        if ((ret_value = (atom_info_t *)HDmalloc(sizeof(atom_info_t))) == NULL)
+        if ((ret_value = (atom_info_t *)malloc(sizeof(atom_info_t))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
     } /* end else */
 
@@ -589,14 +588,14 @@ HAshutdown(void)
         while (atom_free_list != NULL) {
             curr           = atom_free_list;
             atom_free_list = atom_free_list->next;
-            HDfree(curr);
+            free(curr);
         } /* end while */
     }     /* end if */
 
     for (i = 0; i < (intn)MAXGROUP; i++)
         if (atom_group_list[i] != NULL) {
-            HDfree(atom_group_list[i]->atom_list);
-            HDfree(atom_group_list[i]);
+            free(atom_group_list[i]->atom_list);
+            free(atom_group_list[i]);
             atom_group_list[i] = NULL;
         } /* end if */
     return (SUCCEED);

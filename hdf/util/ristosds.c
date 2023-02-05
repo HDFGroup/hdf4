@@ -86,12 +86,12 @@ main(int argc, char *argv[])
 
     /* read in images from all input files.     */
 
-    outdata0 = outdata = (uint8 *)HDmalloc((size_t)(nimg * w * h) * (sizeof(uint8)));
+    outdata0 = outdata = (uint8 *)malloc((size_t)(nimg * w * h) * (sizeof(uint8)));
     if (outdata0 == NULL) {
         printf("Not enough space. \n\n\n");
         finishing();
     }
-    indata0 = indata = (uint8 *)HDmalloc((size_t)(nimg * w * h) * sizeof(uint8));
+    indata0 = indata = (uint8 *)malloc((size_t)(nimg * w * h) * sizeof(uint8));
     if (indata0 == NULL) {
         printf("Not enough space. \n\n\n");
         finishing();
@@ -133,8 +133,8 @@ main(int argc, char *argv[])
     if (DFSDsetNT(DFNT_UINT8) == FAIL)
         finishing();
     ret = DFSDadddata(outfile, 3, dimsizes, (VOIDP)outdata0);
-    HDfree(outdata0);
-    HDfree(indata0);
+    free(outdata0);
+    free(indata0);
     if (ret != 0)
         finishing();
     return (0);
