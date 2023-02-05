@@ -71,8 +71,8 @@ HDmemfill(void *dest, const void *src, uint32 item_size, uint32 num_items)
         while (items_left >= copy_items) {
 
             memcpy(curr_dest, dest, copy_size); /* copy the current chunk */
-            curr_dest += copy_size;               /* move the offset for the next chunk */
-            items_left -= copy_items;             /* decrement the number of items left */
+            curr_dest += copy_size;             /* move the offset for the next chunk */
+            items_left -= copy_items;           /* decrement the number of items left */
 
             copy_size *= 2;  /* increase the size of the chunk to copy */
             copy_items *= 2; /* increase the count of items we are copying */

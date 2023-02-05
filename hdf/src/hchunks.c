@@ -1609,7 +1609,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
 
         UINT16ENCODE(p, SPECIAL_CHUNKED);        /* 2 bytes */
         INT32ENCODE(p, info->sp_tag_header_len); /* 4 bytes */
-        memcpy(p, &info->version, 1);          /* 1 byte  */
+        memcpy(p, &info->version, 1);            /* 1 byte  */
         p = p + 1;
         INT32ENCODE(p, info->flag);        /* 4 bytes */
         INT32ENCODE(p, info->length);      /* 4 bytes */
@@ -1628,7 +1628,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
         }                                                  /* = 12 x ndims bytes */
 
         /* now for fill value */
-        INT32ENCODE(p, (info->fill_val_len));            /* 4 bytes */
+        INT32ENCODE(p, (info->fill_val_len));          /* 4 bytes */
         memcpy(p, info->fill_val, info->fill_val_len); /* fill_val_len bytes */
         p = p + fill_val_len;
 
