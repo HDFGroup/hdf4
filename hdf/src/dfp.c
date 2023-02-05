@@ -307,7 +307,7 @@ DFPnpals(const char *filename)
             }                          /* end for */
     }                                  /* end for */
 
-    HDfree(pal_off); /* free offsets */
+    free(pal_off); /* free offsets */
 
     if (Hclose(file_id) == FAIL)
         HGOTO_ERROR(DFE_CANTCLOSE, FAIL);

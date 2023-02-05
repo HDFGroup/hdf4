@@ -273,7 +273,7 @@ check_fann_rewrite(const char *fname)
 #endif
 
     /* Clean up */
-    HDfree(ann_label); /* free up space */
+    free(ann_label);
     ann_label = NULL;
 
     /* end access to annotations */
@@ -395,7 +395,7 @@ check_fann(const char *fname)
         printf("found ann_len=%d, file label=%s\n", strlen(ann_label), ann_label);
 #endif
 
-        HDfree(ann_label); /* free up space */
+        free(ann_label);
         ann_label = NULL;
     } /* end for nflabs */
 
@@ -443,15 +443,13 @@ check_fann(const char *fname)
         printf("found ann_len=%d, file desc=%s\n", strlen(ann_desc), ann_desc);
 #endif
 
-        HDfree(ann_desc); /* free up space */
+        free(ann_desc);
         ann_desc = NULL;
     } /* end for nfdescs */
 
     /* Clean up */
-    if (ann_label != NULL)
-        HDfree(ann_label);
-    if (ann_desc != NULL)
-        HDfree(ann_desc);
+    free(ann_label);
+    free(ann_desc);
 
     /* end access to annotations */
     ANend(an_handle);
@@ -590,7 +588,7 @@ check_lab_desc(const char *fname, uint16 tag, uint16 ref, const char *label[], c
         printf("found data_len=%d, data label=%s\n", strlen(ann_label), ann_label);
 #endif
 
-        HDfree(ann_label); /* free up space */
+        free(ann_label);
         ann_label = NULL;
     } /* end for labels */
 
@@ -634,19 +632,15 @@ check_lab_desc(const char *fname, uint16 tag, uint16 ref, const char *label[], c
         printf("found data desclen=%d, desc=%s\n", strlen(ann_desc), ann_desc);
 #endif
 
-        HDfree(ann_desc); /* free up space */
+        free(ann_desc);
         ann_desc = NULL;
     } /* end for descs */
 
     /* free space */
-    if (dlabels != NULL)
-        HDfree(dlabels);
-    if (ddescs != NULL)
-        HDfree(ddescs);
-    if (ann_label != NULL)
-        HDfree(ann_label);
-    if (ann_desc != NULL)
-        HDfree(ann_desc);
+    free(dlabels);
+    free(ddescs);
+    free(ann_label);
+    free(ann_desc);
 
     /* End annotation interface */
     ANend(an_handle);
@@ -863,7 +857,7 @@ test_man(void)
         return; /* end of test */
 
     /* free up space */
-    HDfree((VOIDP)data);
-    HDfree((VOIDP)image);
-    HDfree((VOIDP)newimage);
+    free(data);
+    free(image);
+    free(newimage);
 } /* test_man() */

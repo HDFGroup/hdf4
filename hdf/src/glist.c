@@ -302,7 +302,7 @@ HDGLdestroy_list(Generic_list *list)
     HDGLremove_all(*list);
 
     /* Free the info struct last */
-    HDfree((VOIDP)list->info);
+    free(list->info);
 } /* HDGLdestroy_list() */
 
 /******************************************************************************
@@ -475,7 +475,7 @@ HDGLremove_from_list(Generic_list list, VOIDP pointer)
     element->previous->next = element->next;
     element->next->previous = element->previous;
 
-    HDfree(element); /* free element */
+    free(element);
     list.info->num_of_elements--;
 
     ret_value = pointer; /* return ptr to original element */
@@ -518,7 +518,7 @@ HDGLremove_from_beginning(Generic_list list)
     list.info->pre_element.next = element->next;
     element->next->previous     = &list.info->pre_element;
 
-    HDfree(element);
+    free(element);
     list.info->num_of_elements--;
 
     ret_value = pointer; /* return the fist element */
@@ -560,7 +560,7 @@ HDGLremove_from_end(Generic_list list)
     list.info->post_element.previous = element->previous;
     element->previous->next          = &list.info->post_element;
 
-    HDfree(element);
+    free(element);
     list.info->num_of_elements--;
 
     ret_value = pointer; /* return last element */
@@ -604,7 +604,7 @@ HDGLremove_current(Generic_list list)
     element->next->previous = element->previous;
     element->previous->next = element->next;
 
-    HDfree(element);
+    free(element);
     list.info->num_of_elements--;
 
     ret_value = pointer; /* return current element */
@@ -636,7 +636,7 @@ HDGLremove_all(Generic_list list)
     element = list.info->pre_element.next;
     while (element != &list.info->post_element) {
         element = element->next;
-        HDfree(element->previous);
+        free(element->previous);
     }
 
     list.info->pre_element.next      = &list.info->post_element;

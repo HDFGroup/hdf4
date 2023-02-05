@@ -655,8 +655,7 @@ out:
             printf("Failed to close SDS <%s>\n", sds_name);
     }
 
-    if (buf)
-        HDfree(buf);
+    free(buf);
 
     return ret;
 }
@@ -757,8 +756,8 @@ match_dim_table_init(match_dim_table_t **tbl)
 static void
 match_dim_table_free(match_dim_table_t *mdim_tbl)
 {
-    HDfree(mdim_tbl->objs);
-    HDfree(mdim_tbl);
+    free(mdim_tbl->objs);
+    free(mdim_tbl);
 }
 
 /*-------------------------------------------------------------------------
@@ -842,6 +841,6 @@ dim_table_init(dim_table_t **tbl)
 void
 dim_table_free(dim_table_t *dim_tbl)
 {
-    HDfree(dim_tbl->objs);
-    HDfree(dim_tbl);
+    free(dim_tbl->objs);
+    free(dim_tbl);
 }

@@ -276,12 +276,12 @@ print_annots_by_object(const char *fname, int32 an_id, ann_type annot_type, uint
 
             /* reset id and free space for data label/description */
             ann_id = FAIL;
-            HDfree(buf);
+            free(buf);
             buf = NULL;
         } /* end for every data label/description */
 
         /* cleanup */
-        HDfree(ann_list);
+        free(ann_list);
         ann_list = NULL;
     } /* end if num_ann > 0 */
 
@@ -289,8 +289,7 @@ done:
     if (ret_value == FAIL) { /* Failure cleanup */
         if (ann_id != FAIL)
             ANendaccess(ann_id);
-        if (buf != NULL)
-            HDfree(buf);
+        free(buf);
     }
 
     return ret_value;
@@ -382,7 +381,7 @@ print_annots_in_file(int32 an_id, const char *fname, int32 n_annotations, ann_ty
 
         /* reset id and free space for annotation */
         ann_id = FAIL;
-        HDfree(annotation);
+        free(annotation);
         annotation = NULL;
     } /* end for every annotation in file */
 
@@ -390,8 +389,7 @@ done:
     if (ret_value == FAIL) { /* Failure cleanup */
         if (ann_id != FAIL)
             ANendaccess(ann_id);
-        if (annotation != NULL)
-            HDfree(annotation);
+        free(annotation);
     }
 
     return ret_value;
@@ -483,15 +481,14 @@ print_all_data_descs(const char *fname, int32 an_id)
 
         /* reset id and free space for desc */
         ann_id = FAIL;
-        HDfree(desc);
+        free(desc);
         desc = NULL;
     } /* end for every data desc */
 
 done:
     if (ann_id != FAIL)
         ANendaccess(ann_id);
-    if (desc != NULL)
-        HDfree(desc);
+    free(desc);
 
     return ret_value;
 } /* print_all_data_descs() */
@@ -556,15 +553,14 @@ print_all_file_labels(const char *fname, int32 an_id)
 
         /* reset id and free space for label */
         ann_id = FAIL;
-        HDfree(label);
+        free(label);
         label = NULL;
     } /* end for every file label */
 
 done:
     if (ann_id != FAIL)
         ANendaccess(ann_id);
-    if (label != NULL)
-        HDfree(label);
+    free(label);
 
     return ret_value;
 } /* end print_all_file_labels() */
@@ -638,7 +634,7 @@ print_all_file_descs(const char *fname, list_info_t *list_opts, /* for print_SDa
 
         /* reset id and free space for label */
         ann_id = FAIL;
-        HDfree(desc);
+        free(desc);
         desc = NULL;
     } /* end for every file desc */
 
@@ -667,12 +663,9 @@ done:
     if (ret_value == FAIL) { /* Failure cleanup */
         if (ann_id != FAIL)
             ANendaccess(ann_id);
-        if (desc != NULL)
-            HDfree(desc);
-        if (attr_nt_desc != NULL)
-            HDfree(attr_nt_desc);
-        if (attr_buf != NULL)
-            HDfree((VOIDP)attr_buf);
+        free(desc);
+        free(attr_nt_desc);
+        free(attr_buf);
     }
 
     return ret_value;
@@ -743,7 +736,7 @@ print_file_descs(const char *f_name, int32 an_id)
 
         /* reset id and free space for label */
         ann_id = FAIL;
-        HDfree(desc);
+        free(desc);
         desc = NULL;
     } /* end for every file desc */
 
@@ -751,8 +744,7 @@ done:
     if (ret_value == FAIL) { /* Failure cleanup */
         if (ann_id != FAIL)
             ANendaccess(ann_id);
-        if (desc != NULL)
-            HDfree(desc);
+        free(desc);
     }
 
     return ret_value;
@@ -777,7 +769,7 @@ print_list_obj(const char *fname, list_info_t *l_opts, objinfo_t *o_info, intn o
             printf("%*d%*s%*d%*d%*ld\n", NUM_FIELD_WIDTH, o_num, TAGNAME_FIELD_WIDTH,
                    ((s = HDgettagsname(o_info->tag)) == NULL ? HDstrdup("Unknown") : s), TAG_FIELD_WIDTH,
                    o_info->tag, REF_FIELD_WIDTH, o_info->ref, INDEX_FIELD_WIDTH, (long)o_info->index);
-            HDfree(s); /* free tagname string */
+            free(s); /* free tagname string */
             s = NULL;
             break;
 
@@ -786,7 +778,7 @@ print_list_obj(const char *fname, list_info_t *l_opts, objinfo_t *o_info, intn o
                    ((s = HDgettagsname(o_info->tag)) == NULL ? HDstrdup("Unknown") : s), TAG_FIELD_WIDTH,
                    o_info->tag, REF_FIELD_WIDTH, o_info->ref, INDEX_FIELD_WIDTH, (long)o_info->index,
                    OFFSET_FIELD_WIDTH, (long)o_info->offset, LENGTH_FIELD_WIDTH, (long)o_info->length);
-            HDfree(s); /* free tagname string */
+            free(s); /* free tagname string */
             s = NULL;
             break;
     } /* end switch */
@@ -855,7 +847,7 @@ print_list_obj(const char *fname, list_info_t *l_opts, objinfo_t *o_info, intn o
                 printf("\t\t%-30s: (tag=%6d) ref=%d\n",
                        ((s = HDgettagsname(g_obj->tag)) == NULL ? HDstrdup("Unknown") : s), g_obj->tag,
                        g_obj->ref);
-                HDfree(s); /* free tagname string */
+                free(s); /* free tagname string */
                 s     = NULL;
                 g_obj = get_next_group(o_info->group_info, 1);
             } /* end while */
@@ -864,10 +856,8 @@ print_list_obj(const char *fname, list_info_t *l_opts, objinfo_t *o_info, intn o
 
 done:
     if (ret_value == FAIL) { /* Failure cleanup */
-        if (s != NULL)
-            HDfree(s);
-        if (buf != NULL)
-            HDfree(buf);
+        free(s);
+        free(buf);
     }
 
     return ret_value;
@@ -994,7 +984,7 @@ do_list(intn curr_arg, intn argc, char *argv[], intn help)
                                        s, o_info->tag);
                                 last_tag = o_info->tag;
                                 printf("\tRef nos: ");
-                                HDfree(s); /* free tagname string */
+                                free(s); /* free tagname string */
                                 s = NULL;  /* reset */
                             }              /* end if */
                             printf("%d ", o_info->ref);
@@ -1069,8 +1059,7 @@ done:
             ANend(an_id);
             an_id = FAIL;
         }
-        if (s != NULL)
-            HDfree(s);
+        free(s);
         if (o_list != NULL)
             free_obj_list(o_list);
     }

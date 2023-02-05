@@ -18,7 +18,6 @@
 #include "add.h"     /* functions to update in-memory netcdf */
 #include "error.h"
 #include "tests.h"
-#include "alloc.h"
 #include "emalloc.h"
 #ifdef HDF
 #include "hdf.h"

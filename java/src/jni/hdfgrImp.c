@@ -222,8 +222,7 @@ Java_hdf_hdflib_HDFLibrary_GRgetiminfo(JNIEnv *env, jclass clss, jlong ri_id, jo
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (data)
-        HDfree(data);
+    free(data);
     if (theArgs)
         UNPIN_INT_ARRAY(ENVONLY, argv, theArgs, (rval = FAIL) ? JNI_ABORT : 0);
     if (dims)
@@ -458,8 +457,7 @@ Java_hdf_hdflib_HDFLibrary_GRattrinfo(JNIEnv *env, jclass clss, jlong gr_id, jin
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (data)
-        HDfree(data);
+    free(data);
     if (theArgs)
         UNPIN_INT_ARRAY(ENVONLY, argv, theArgs, (rval == FAIL) ? JNI_ABORT : 0);
 

@@ -587,7 +587,7 @@ print_SDSattrs(int32 sds_id, int32 nattrs, FILE *fp, dump_info_t *dumpsds_opts)
             /* read the values of the attribute into buffer attr_buf */
             status = SDreadattr(sds_id, attr_index, attr_buf);
             if (status == FAIL) {
-                HDfree(attr_buf);
+                free(attr_buf);
                 ERROR_CONT_2("in %s: SDreadattr failed for %d'th attribute", "print_SDSattrs",
                              (int)attr_index);
             }
@@ -600,7 +600,7 @@ print_SDSattrs(int32 sds_id, int32 nattrs, FILE *fp, dump_info_t *dumpsds_opts)
             if (dumpsds_opts->clean_output && attr_nt == DFNT_CHAR) {
                 status = dumpclean(attr_nt, dumpsds_opts, attr_count, attr_buf, fp);
                 if (status == FAIL) {
-                    HDfree(attr_buf);
+                    free(attr_buf);
                     ERROR_CONT_2("in %s: dumpclean failed for %d'th attribute", "print_SDSattrs",
                                  (int)attr_index);
                 }
@@ -610,7 +610,7 @@ print_SDSattrs(int32 sds_id, int32 nattrs, FILE *fp, dump_info_t *dumpsds_opts)
                 status =
                     dumpfull(attr_nt, dumpsds_opts, attr_count, attr_buf, fp, ATTR_INDENT, ATTR_CONT_INDENT);
                 if (status == FAIL) {
-                    HDfree(attr_buf);
+                    free(attr_buf);
                     ERROR_CONT_2("in %s: dumpfull failed for %d'th attribute", "print_SDSattrs",
                                  (int)attr_index);
                 }

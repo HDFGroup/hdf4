@@ -124,9 +124,8 @@ HAinit_group(group_t grp,      /* IN: Group to initialize */
 done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (grp_ptr != NULL) {
-            if (grp_ptr->atom_list != NULL)
-                HDfree(grp_ptr->atom_list);
-            HDfree(grp_ptr);
+            free(grp_ptr->atom_list);
+            free(grp_ptr);
         }
     }
 
@@ -175,7 +174,7 @@ HAdestroy_group(group_t grp /* IN: Group to destroy */
                 } /* end if */
         }         /* end block */
 #endif            /* ATOMS_ARE_CACHED */
-        HDfree(grp_ptr->atom_list);
+        free(grp_ptr->atom_list);
         grp_ptr->atom_list = NULL;
     } /* end if */
 
@@ -589,14 +588,14 @@ HAshutdown(void)
         while (atom_free_list != NULL) {
             curr           = atom_free_list;
             atom_free_list = atom_free_list->next;
-            HDfree(curr);
+            free(curr);
         } /* end while */
     }     /* end if */
 
     for (i = 0; i < (intn)MAXGROUP; i++)
         if (atom_group_list[i] != NULL) {
-            HDfree(atom_group_list[i]->atom_list);
-            HDfree(atom_group_list[i]);
+            free(atom_group_list[i]->atom_list);
+            free(atom_group_list[i]);
             atom_group_list[i] = NULL;
         } /* end if */
     return (SUCCEED);

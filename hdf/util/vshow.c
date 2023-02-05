@@ -219,8 +219,8 @@ main(int ac, char **av)
                     printf("  --:%d <%d/%d> %s\n", (int)t, (int)vstag, (int)vsid, "Unknown Tag");
                 else {
                     printf("  --:%d <%d/%d> %s\n", (int)t, (int)vstag, (int)vsid, name);
-                    HDfree(name);
-                } /* end else */
+                    free(name);
+                }
             }
         } /* while */
 
@@ -266,7 +266,7 @@ main(int ac, char **av)
             dumpattr(vs, full, 1);
             VSdetach(vs);
         }
-        HDfree(lonevs);
+        free(lonevs);
     }
 
     Vend(f);
@@ -489,7 +489,7 @@ vsdumpfull(int32 vs)
 
     /* ============================================ */
 
-    HDfree(bb);
+    free(bb);
     printf("\n");
 
     return (1);
@@ -632,8 +632,7 @@ dumpattr(int32 vid, intn full, intn isvs)
                 if (cn)
                     putchar('\n');
                 if (alloc_flag) {
-                    if (buf != NULL)
-                        HDfree(buf);
+                    free(buf);
                     alloc_flag = 0;
                 }
             } /*  attr */
@@ -742,8 +741,7 @@ dumpattr(int32 vid, intn full, intn isvs)
             if (cn)
                 putchar('\n');
             if (alloc_flag) {
-                if (buf != NULL)
-                    HDfree(buf);
+                free(buf);
                 alloc_flag = 0;
             }
         } /*  attr */

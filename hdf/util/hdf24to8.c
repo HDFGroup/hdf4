@@ -120,9 +120,9 @@ main(int argc, char *argv[])
         exit(-1);
     }
 
-    HDfree((char *)r24);
-    HDfree((char *)r8);
-    HDfree((char *)pal);
+    free(r24);
+    free(r8);
+    free(pal);
 
     return 0;
 }
@@ -320,6 +320,6 @@ r24r8(int32 xres, int32 yres, UCHAR *dat24, UCHAR *dat8, int cres, UCHAR *cdat)
 
     *dop++ = (UCHAR)((rct * gres + gct) * bres + bct + coff);
 
-    HDfree(idat[0]);
+    free(idat[0]);
     return 0;
 }

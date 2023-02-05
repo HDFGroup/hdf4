@@ -132,7 +132,7 @@ HULdestroy_list(list_head_t *lst /* IN: list to destroy */
     } /* end while */
 
     /* Chuck the list-head */
-    HDfree(lst);
+    free(lst);
 
 done:
     return ret_value;
@@ -420,8 +420,8 @@ HULshutdown(void)
         while (node_free_list != NULL) {
             curr           = node_free_list;
             node_free_list = node_free_list->next;
-            HDfree(curr);
-        } /* end while */
-    }     /* end if */
+            free(curr);
+        }
+    }
     return (SUCCEED);
 } /* end HULshutdown() */

@@ -80,7 +80,7 @@ print_item(int32 fid, dd_t *desc_list, intn n)
                 printf("\t  Unable to read label\n");
             else
                 printf("\t  Label: %s\n", label_str);
-            HDfree(label_str);
+            free(label_str);
         }
 
         /* read in all of the annotations */
@@ -93,7 +93,7 @@ print_item(int32 fid, dd_t *desc_list, intn n)
                 printf("\t  Unable to read description\n");
             else
                 printf("\t  Description: %s\n", label_str);
-            HDfree(label_str);
+            free(label_str);
         }
     }
 
@@ -141,7 +141,7 @@ print_item(int32 fid, dd_t *desc_list, intn n)
                 for (i = 0; i < info.ndims; i++)
                     printf("\t %ld", (long)info.cdims[i]);
                 printf("\n");
-                HDfree(info.cdims);
+                free(info.cdims);
                 break;
 
             default:
@@ -165,7 +165,7 @@ print_item(int32 fid, dd_t *desc_list, intn n)
                         printf("\t\t%-30s: (tag=%6d) ref=%d\n", "Unknown Tag", elmt.tag, elmt.ref);
                     else {
                         printf("\t\t%-30s: (tag=%6d) ref=%d\n", name, elmt.tag, elmt.ref);
-                        HDfree(name);
+                        free(name);
                     } /* end else */
                 }     /* end while */
             }         /* end if */
@@ -189,9 +189,9 @@ print_item(int32 fid, dd_t *desc_list, intn n)
                     tag_arr = (int32 *)malloc(sizeof(int32) * (size_t)ntagrefs);
                     ref_arr = (int32 *)malloc(sizeof(int32) * (size_t)ntagrefs);
                     if (tag_arr == NULL || ref_arr == NULL) {
-                        HDfree(tag_arr);
-                        HDfree(ref_arr);
-                    } /* end if */
+                        free(tag_arr);
+                        free(ref_arr);
+                    }
                     else {
                         if (Vgettagrefs(vkey, tag_arr, ref_arr, ntagrefs) != FAIL) {
                             for (i = 0; i < ntagrefs; i++) {
@@ -202,12 +202,12 @@ print_item(int32 fid, dd_t *desc_list, intn n)
                                 else {
                                     printf("\t\t%-30s: (tag=%6d) ref=%d\n", name, (int)tag_arr[i],
                                            (int)ref_arr[i]);
-                                    HDfree(name);
+                                    free(name);
                                 } /* end else */
                             }     /* end for */
                         }         /* end if */
-                        HDfree(tag_arr);
-                        HDfree(ref_arr);
+                        free(tag_arr);
+                        free(ref_arr);
                     } /* end else */
                 }     /* end if */
                 Vdetach(vkey);
@@ -247,8 +247,8 @@ lprint(int32 fid, dd_t *desc_tmp, int num)
             printf("\n%-30s: (tag %d)\n", "Unknown Tag", desc_tmp[j].tag);
         else {
             printf("\n%-30s: (tag %d)\n", name, desc_tmp[j].tag);
-            HDfree(name);
-        } /* end else */
+            free(name);
+        }
 
         /*
         ** Print out reference number information
@@ -413,7 +413,7 @@ dumpDD(void)
             }         /* end if */
 #endif                /* DISKBLOCK_DEBUG */
         }             /* end for */
-        HDfree(ddbuf);
+        free(ddbuf);
     } /* end while */
     HI_CLOSE(file_id);
     return (SUCCEED);
@@ -560,7 +560,7 @@ main(int argc, char *argv[])
             fprintf(stderr, "Warning:  File may have more DD's than hdfls can display\n");
     }
 
-    HDfree(desc_buf);
+    free(desc_buf);
 
     return (0);
 }

@@ -99,11 +99,11 @@ char    *GIFFileName;
         status = Vsetattr(vgroup_id, CommentName, DFNT_CHAR8,
                           (int32)(GifMemoryStruct.GifCommentExtension[i])->DataSize,
                           (VOIDP)(GifMemoryStruct.GifCommentExtension[i])->CommentData);
-        HDfree(GifMemoryStruct.GifCommentExtension[i]);
+        free(GifMemoryStruct.GifCommentExtension[i]);
         GifMemoryStruct.GifCommentExtension[i] = NULL;
     }
     gifHead.CommentCount = 0;
-    HDfree(GifMemoryStruct.GifCommentExtension);
+    free(GifMemoryStruct.GifCommentExtension);
     GifMemoryStruct.GifCommentExtension = NULL;
 
     for (i = 0; i < ApplicationCount; i++) {

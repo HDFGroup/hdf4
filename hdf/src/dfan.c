@@ -593,21 +593,19 @@ DFANIclear(void)
 
     for (p = DFANdir[0]; p != NULL; p = q) { /* free linked list space */
         q = p->next;
-        if (p->entries != NULL)
-            HDfree((VOIDP)p->entries);
+        free(p->entries);
         p->nentries = 0;
         p->entries  = NULL;
         p->next     = NULL;
-        HDfree((VOIDP)p);
+        free(p);
     }
     for (p = DFANdir[1]; p != NULL; p = q) {
         q = p->next;
-        if (p->entries != NULL)
-            HDfree((VOIDP)p->entries);
+        free(p->entries);
         p->nentries = 0;
         p->entries  = NULL;
         p->next     = NULL;
-        HDfree((VOIDP)p);
+        free(p);
     }
     DFANdir[0] = DFANdir[1] = NULL;
 
@@ -666,21 +664,19 @@ DFANIopen(const char *filename, intn acc_mode)
 
         for (p = DFANdir[0]; p != NULL; p = q) { /* free linked list space */
             q = p->next;
-            if (p->entries != NULL)
-                HDfree((VOIDP)p->entries);
+            free(p->entries);
             p->nentries = 0;
             p->entries  = NULL;
             p->next     = NULL;
-            HDfree((VOIDP)p);
+            free(p);
         }
         for (p = DFANdir[1]; p != NULL; p = q) {
             q = p->next;
-            if (p->entries != NULL)
-                HDfree((VOIDP)p->entries);
+            free(p->entries);
             p->nentries = 0;
             p->entries  = NULL;
             p->next     = NULL;
-            HDfree((VOIDP)p);
+            free(p);
         }
         DFANdir[0] = DFANdir[1] = NULL;
     }
@@ -1580,9 +1576,7 @@ DFANPshutdown(void)
 {
     DFANIclear(); /* frees the directory lists */
 
-    if (Lastfile != NULL) {
-        HDfree(Lastfile);
-        Lastfile = NULL;
-    } /* end if */
-    return (SUCCEED);
+    free(Lastfile);
+    Lastfile = NULL;
+    return SUCCEED;
 } /* end DFANPshutdown() */

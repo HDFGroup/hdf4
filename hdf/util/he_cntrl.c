@@ -128,8 +128,7 @@ HEnext(HE_CMD *cmd)
 
     /* replace this only if it is non-empty */
     if (predicates[0].key != 0) {
-        if (he_predicates)
-            HDfree(he_predicates);
+        free(he_predicates);
         he_predicates = predicates;
     }
 
@@ -174,8 +173,7 @@ HEprev(HE_CMD *cmd)
         return HE_FAIL;
 
     if (predicates[0].key != 0) {
-        if (he_predicates)
-            HDfree(he_predicates);
+        free(he_predicates);
         he_predicates = predicates;
     }
 
@@ -341,7 +339,7 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
                 }
             }
             printf("\n");
-            HDfree((VOIDP)idata);
+            free(idata);
         } break;
 
         case 'd': {
@@ -359,7 +357,7 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
                 }
             }
             printf("\n");
-            HDfree((VOIDP)idata);
+            free(idata);
         } break;
         case 'j': {
             int16 *sdata;
@@ -376,7 +374,7 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
                 }
             }
             printf("\n");
-            HDfree((VOIDP)sdata);
+            free(sdata);
         } break;
 
         case 's': {
@@ -394,7 +392,7 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
                 }
             }
             printf("\n");
-            HDfree((VOIDP)sdata);
+            free(sdata);
         } break;
 
         case 'b': {
@@ -411,7 +409,7 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
                 }
             }
             printf("\n");
-            HDfree((VOIDP)bdata);
+            free(bdata);
         } break;
 
         case 'x': {
@@ -431,7 +429,7 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
                 }
             }
             printf("\n");
-            HDfree((VOIDP)idata);
+            free(idata);
         } break;
 
         case 'o': {
@@ -451,7 +449,7 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
                 }
             }
             printf("\n");
-            HDfree((VOIDP)idata);
+            free(idata);
         } break;
 
         case 'a': {
@@ -487,7 +485,7 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
                 }
             }
             printf("\n");
-            HDfree((VOIDP)fdata);
+            free(fdata);
         } break;
 
         case 'e': {
@@ -506,7 +504,7 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
                 }
             }
             printf("\n");
-            HDfree((VOIDP)fdata);
+            free(fdata);
         } break;
 
         default:
@@ -514,7 +512,7 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
             break;
     }
 
-    HDfree(data);
+    free(data);
 
     return HE_OK;
 }
@@ -668,8 +666,8 @@ infoDesc(int desc, int longout, int label)
         printf("\t%-30s: (Tag %d)", "Unknown Tag", he_desc[desc].tag);
     else {
         printf("\t%-30s: (Tag %d)", name, he_desc[desc].tag);
-        HDfree(name);
-    } /* end else */
+        free(name);
+    }
 
     if (longout)
         printf("\n\tRef: %d, Offset: %ld, Length: %ld (bytes)\n", he_desc[desc].ref,
@@ -1200,8 +1198,7 @@ HE_PRED *he_predicates;
 int
 resetPred(void)
 {
-    if (he_predicates != NULL)
-        HDfree(he_predicates);
+    free(he_predicates);
 
     he_predicates        = (HE_PRED *)calloc(2, sizeof(HE_PRED));
     he_predicates[0].key = HEK_GROUP;
@@ -1289,10 +1286,10 @@ parsePred(int argc, char *argv[])
 
             if (state != 2) {
                 if ((key = findKey(tok)) == HE_NOTFOUND) {
-                    HDfree(pred);
+                    free(pred);
                     return NULL;
                 }
-                HDfree(tok);
+                free(tok);
             }
 
             switch (state) {
@@ -1300,7 +1297,7 @@ parsePred(int argc, char *argv[])
                     /* Ready to accept a predicate */
                     if (!(key & HE_PREDICATE)) {
                         fprintf(stderr, "Parse error: %s.\n", argv[i]);
-                        HDfree(pred);
+                        free(pred);
                         return NULL;
                     }
                     pred[++predNum].key = key & ~(HE_PREDICATE | HE_COMPARATOR);
@@ -1318,7 +1315,7 @@ parsePred(int argc, char *argv[])
                     }
                     else {
                         fprintf(stderr, "Parse error: %s.\n", argv[i]);
-                        HDfree(pred);
+                        free(pred);
                         return NULL;
                     }
                     break;

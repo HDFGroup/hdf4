@@ -63,7 +63,7 @@ make_datafilename(const char *basename, char *testfile, unsigned int size)
 
     /* File name is generated, return it */
     HDstrcpy(testfile, tempfile);
-    HDfree(tempfile);
+    free(tempfile);
     return SUCCEED;
 }
 
@@ -123,8 +123,8 @@ make_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, 
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "SDendaccess");
 
-    HDfree(edges);
-    HDfree(start);
+    free(edges);
+    free(start);
 
     return (sds_size);
 
@@ -194,8 +194,8 @@ make_CompSDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_siz
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "SDendaccess");
 
-    HDfree(edges);
-    HDfree(start);
+    free(edges);
+    free(start);
 
     return (sds_size);
 } /* make_CompSDS */
@@ -255,8 +255,8 @@ make_Ext3D_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_s
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "SDendaccess");
 
-    HDfree(edges);
-    HDfree(start);
+    free(edges);
+    free(start);
 
     return sds_size;
 } /* make_Ext3D_SDS */

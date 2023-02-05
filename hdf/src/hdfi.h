@@ -326,16 +326,13 @@ typedef intptr_t hdf_pint_t;
 /**************************************************************************
  *  Memory functions defined differently
  **************************************************************************/
-#define HDfree(p)   free(p)
-
 #define HDmemcpy(dst, src, n) (memcpy((void *)(dst), (const void *)(src), (size_t)(n)))
 
 /* Macro to free space and clear pointer to NULL */
 #define HDfreenclear(p)                                                                                      \
     {                                                                                                        \
-        if ((p) != NULL)                                                                                     \
-            HDfree(p);                                                                                       \
-        p = NULL;                                                                                            \
+        free(p);                                                                                       \
+        (p) = NULL;                                                                                            \
     }
 
 /**************************************************************************

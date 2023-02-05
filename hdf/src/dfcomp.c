@@ -128,7 +128,7 @@ DFputcomp(int32 file_id, uint16 tag, uint16 ref, const uint8 *image, int32 xdim,
 
             if (buftype == 1) { /* write out entire image */
                 ret = Hputelement(file_id, tag, ref, buffer, total);
-                HDfree((VOIDP)buffer);
+                free(buffer);
             }
             break;
 
@@ -144,7 +144,7 @@ DFputcomp(int32 file_id, uint16 tag, uint16 ref, const uint8 *image, int32 xdim,
             DFCIimcomp(xdim, ydim, image, buffer, palette, newpal, 0);
             ret = Hputelement(file_id, tag, ref, buffer, cisize);
 
-            HDfree((VOIDP)buffer);
+            free(buffer);
             break;
 
         case DFTAG_JPEG5:     /* JPEG compression (for 24-bit images) */
@@ -224,7 +224,7 @@ DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim, int32
             in  = buffer;
             out = image;
             if ((n = Hread(aid, buflen, in)) < 0) {
-                HDfree((VOIDP)buffer);
+                free(buffer);
                 Hendaccess(aid);
                 HRETURN_ERROR(DFE_READERROR, FAIL)
             } /* end if */
@@ -241,7 +241,7 @@ DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim, int32
                     HDmemcpy(buffer, in, (size_t)bufleft);
                     in = buffer;
                     if ((n = Hread(aid, buflen - bufleft, (uint8 *)&in[bufleft])) < 0) {
-                        HDfree((VOIDP)buffer);
+                        free(buffer);
                         Hendaccess(aid);
                         HRETURN_ERROR(DFE_READERROR, FAIL)
                     } /* end if */
@@ -251,7 +251,7 @@ DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim, int32
             }     /* end for */
 
             Hendaccess(aid);
-            HDfree((VOIDP)buffer);
+            free(buffer);
             break;
 
         case DFTAG_IMC:
@@ -270,21 +270,20 @@ DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim, int32
                 buflen = cisize;
             if (buflen >= cisize) {
                 if (Hread(aid, cisize, buffer) < cisize) {
-                    HDfree((VOIDP)buffer);
+                    free(buffer);
                     Hendaccess(aid);
                     HRETURN_ERROR(DFE_READERROR, FAIL)
-                } /* end if */
-                /* HDfree(buffer); */
+                }
                 Hendaccess(aid);
                 DFCIunimcomp(xdim, ydim, buffer, image);
-                HDfree((VOIDP)buffer);
+                free(buffer);
                 break; /* go to end of switch */
             }          /* end if */
 
             in  = buffer; /* if can only read piecemeal */
             out = image;
             if ((n = Hread(aid, buflen, in)) < 0) {
-                HDfree((VOIDP)buffer);
+                free(buffer);
                 Hendaccess(aid);
                 HRETURN_ERROR(DFE_READERROR, FAIL)
             } /* end if */
@@ -299,7 +298,7 @@ DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim, int32
                     HDmemcpy(buffer, in, (size_t)bufleft);
                     in = buffer;
                     if ((n = Hread(aid, buflen - bufleft, (uint8 *)&in[bufleft])) < 0) {
-                        HDfree((VOIDP)buffer);
+                        free(buffer);
                         Hendaccess(aid);
                         HRETURN_ERROR(DFE_READERROR, FAIL)
                     } /* end if */
@@ -308,7 +307,7 @@ DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim, int32
                 } /* end if */
             }     /* end for */
 
-            HDfree((VOIDP)buffer);
+            free(buffer);
             Hendaccess(aid);
             break;
 

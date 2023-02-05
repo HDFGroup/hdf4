@@ -119,12 +119,12 @@ hrepack_addcomp(const char *str, options_t *options)
             goto out;
     }
 
-    HDfree(obj_list);
+    free(obj_list);
     return SUCCEED;
 
 out:
 
-    HDfree(obj_list);
+    free(obj_list);
     return FAIL;
 }
 
@@ -183,12 +183,12 @@ hrepack_addchunk(const char *str, options_t *options)
             goto out;
     }
 
-    HDfree(obj_list);
+    free(obj_list);
     return SUCCEED;
 
 out:
 
-    HDfree(obj_list);
+    free(obj_list);
     return FAIL;
 }
 

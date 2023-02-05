@@ -96,14 +96,14 @@ test_little_read(void)
     if (dimsizes[0] != CDIM_Y || dimsizes[1] != CDIM_X) {
         fprintf(stderr, "Dimensions for INT8 data were incorrect\n");
         num_errs++;
-    } /* end if */
+    }
     else {
         ret = DFSDgetNT(&numbertype);
         RESULT("DFSDgetNT");
         if (numbertype != DFNT_LINT8) {
             fprintf(stderr, "Numbertype for INT8 data were incorrect\n");
             num_errs++;
-        } /* end if */
+        }
         else {
             data_i8 = (int8 *)malloc((size_t)(dimsizes[0] * dimsizes[1]) * sizeof(int8));
             ret     = DFSDgetdata(filename, rank, dimsizes, (VOIDP)data_i8);
@@ -112,10 +112,10 @@ test_little_read(void)
             if (memcmp(cdata_i8, data_i8, CDIM_X * CDIM_Y * sizeof(int8))) {
                 fprintf(stderr, "INT8 data was incorrect\n");
                 num_errs++;
-            } /* end if */
-            HDfree((VOIDP)data_i8);
-        } /* end else */
-    }     /* end else */
+            }
+            free(data_i8);
+        }
+    }
 
     MESSAGE(10, printf("Testing Little-Endian UINT8 Reading Routines\n"););
 
@@ -124,14 +124,14 @@ test_little_read(void)
     if (dimsizes[0] != CDIM_Y || dimsizes[1] != CDIM_X) {
         fprintf(stderr, "Dimensions for UINT8 data were incorrect\n");
         num_errs++;
-    } /* end if */
+    }
     else {
         ret = DFSDgetNT(&numbertype);
         RESULT("DFSDgetNT");
         if (numbertype != DFNT_LUINT8) {
             fprintf(stderr, "Numbertype for UINT8 data were incorrect\n");
             num_errs++;
-        } /* end if */
+        }
         else {
             data_u8 = (uint8 *)malloc((size_t)(dimsizes[0] * dimsizes[1]) * sizeof(uint8));
             ret     = DFSDgetdata(filename, rank, dimsizes, (VOIDP)data_u8);
@@ -140,10 +140,10 @@ test_little_read(void)
             if (memcmp(cdata_u8, data_u8, CDIM_X * CDIM_Y * sizeof(uint8))) {
                 fprintf(stderr, "UINT8 data was incorrect\n");
                 num_errs++;
-            } /* end if */
-            HDfree((VOIDP)data_u8);
-        } /* end else */
-    }     /* end else */
+            }
+            free(data_u8);
+        }
+    }
 
     MESSAGE(10, printf("Testing Little-Endian INT16 Reading Routines\n"););
 
@@ -152,14 +152,14 @@ test_little_read(void)
     if (dimsizes[0] != CDIM_Y || dimsizes[1] != CDIM_X) {
         fprintf(stderr, "Dimensions for INT16 data were incorrect\n");
         num_errs++;
-    } /* end if */
+    }
     else {
         ret = DFSDgetNT(&numbertype);
         RESULT("DFSDgetNT");
         if (numbertype != DFNT_LINT16) {
             fprintf(stderr, "Numbertype for INT16 data were incorrect\n");
             num_errs++;
-        } /* end if */
+        }
         else {
             data_i16 = (int16 *)malloc((size_t)(dimsizes[0] * dimsizes[1]) * sizeof(int16));
             ret      = DFSDgetdata(filename, rank, dimsizes, (VOIDP)data_i16);
@@ -168,10 +168,10 @@ test_little_read(void)
             if (memcmp(cdata_i16, data_i16, CDIM_X * CDIM_Y * sizeof(int16))) {
                 fprintf(stderr, "INT16 data was incorrect\n");
                 num_errs++;
-            } /* end if */
-            HDfree((VOIDP)data_i16);
-        } /* end else */
-    }     /* end else */
+            }
+            free(data_i16);
+        }
+    }
 
     MESSAGE(10, printf("Testing Little-Endian UINT16 Reading Routines\n"););
 
@@ -197,7 +197,7 @@ test_little_read(void)
                 fprintf(stderr, "UINT16 data was incorrect\n");
                 num_errs++;
             } /* end if */
-            HDfree((VOIDP)data_u16);
+            free(data_u16);
         } /* end else */
     }     /* end else */
 
@@ -225,7 +225,7 @@ test_little_read(void)
                 fprintf(stderr, "INT32 data was incorrect\n");
                 num_errs++;
             } /* end if */
-            HDfree((VOIDP)data_i32);
+            free(data_i32);
         } /* end else */
     }     /* end else */
 
@@ -253,7 +253,7 @@ test_little_read(void)
                 fprintf(stderr, "UINT32 data was incorrect\n");
                 num_errs++;
             } /* end if */
-            HDfree((VOIDP)data_u32);
+            free(data_u32);
         } /* end else */
     }     /* end else */
 
@@ -281,7 +281,7 @@ test_little_read(void)
                 fprintf(stderr, "FLOAT32 data was incorrect\n");
                 num_errs++;
             } /* end if */
-            HDfree((VOIDP)data_f32);
+            free(data_f32);
         } /* end else */
     }     /* end else */
 
@@ -309,7 +309,7 @@ test_little_read(void)
                 fprintf(stderr, "FLOAT64 data was incorrect\n");
                 num_errs++;
             } /* end if */
-            HDfree((VOIDP)data_f64);
+            free(data_f64);
         } /* end else */
     }     /* end else */
 } /* end test_little_read */
@@ -433,7 +433,7 @@ test_little_write(void)
                 fprintf(stderr, "INT8 data was incorrect\n");
                 num_errs++;
             } /* end if */
-            HDfree((VOIDP)data_i8);
+            free(data_i8);
         } /* end else */
     }     /* end else */
 
@@ -459,7 +459,7 @@ test_little_write(void)
                 fprintf(stderr, "UINT8 data was incorrect\n");
                 num_errs++;
             } /* end if */
-            HDfree((VOIDP)data_u8);
+            free(data_u8);
         } /* end else */
     }     /* end else */
 
@@ -485,7 +485,7 @@ test_little_write(void)
                 fprintf(stderr, "INT16 data was incorrect\n");
                 num_errs++;
             } /* end if */
-            HDfree((VOIDP)data_i16);
+            free(data_i16);
         } /* end else */
     }     /* end else */
 
@@ -511,7 +511,7 @@ test_little_write(void)
                 fprintf(stderr, "UINT16 data was incorrect\n");
                 num_errs++;
             } /* end if */
-            HDfree((VOIDP)data_u16);
+            free(data_u16);
         } /* end else */
     }     /* end else */
 
@@ -537,7 +537,7 @@ test_little_write(void)
                 fprintf(stderr, "INT32 data was incorrect\n");
                 num_errs++;
             } /* end if */
-            HDfree((VOIDP)data_i32);
+            free(data_i32);
         } /* end else */
     }     /* end else */
 
@@ -563,7 +563,7 @@ test_little_write(void)
                 fprintf(stderr, "UINT32 data was incorrect\n");
                 num_errs++;
             } /* end if */
-            HDfree((VOIDP)data_u32);
+            free(data_u32);
         } /* end else */
     }     /* end else */
 
@@ -589,7 +589,7 @@ test_little_write(void)
                 fprintf(stderr, "FLOAT32 data was incorrect\n");
                 num_errs++;
             } /* end if */
-            HDfree((VOIDP)data_f32);
+            free(data_f32);
         } /* end else */
     }     /* end else */
 
@@ -615,7 +615,7 @@ test_little_write(void)
                 fprintf(stderr, "FLOAT64 data was incorrect\n");
                 num_errs++;
             } /* end if */
-            HDfree((VOIDP)data_f64);
+            free(data_f64);
         } /* end else */
     }     /* end else */
 } /* end test_little_write */

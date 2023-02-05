@@ -652,7 +652,7 @@ HCIread_header(accrec_t *access_rec, compinfo_t *info, comp_info *c_info, model_
     /* Decode the compression header */
     if (HCPdecode_header(p, &(info->minfo.model_type), m_info, &(info->cinfo.coder_type), c_info) == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
-    HDfree(local_ptbuf);
+    free(local_ptbuf);
 
 done:
     return ret_value;
@@ -785,12 +785,9 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (access_rec != NULL)
             HIrelease_accrec_node(access_rec);
-        if (info != NULL)
-            HDfree(info);
+        free(info);
     }
-
-    if (buf != NULL)
-        HDfree(buf);
+    free(buf);
 
     return ret_value;
 } /* end HCcreate() */
@@ -1057,8 +1054,7 @@ HCIstaccess(accrec_t *access_rec, int16 acc_mode)
 
 done:
     if (ret_value == FAIL) { /* Error condition cleanup */
-        if (info != NULL)
-            HDfree(info);
+        free(info);
     }
 
     return ret_value;
@@ -1425,7 +1421,7 @@ HCPcloseAID(accrec_t *access_rec)
     /* BMR - reset special_info to NULL after memory is freed; problem shown
        by the failure when running hdp list with a large file on PC - 12/6/98 */
     if (--(info->attached) == 0) {
-        HDfree(info);
+        free(info);
         access_rec->special_info = NULL;
     }
     return (ret);
@@ -1665,8 +1661,7 @@ done:
             HERROR(DFE_CANTENDACCESS);
 
     /* release allocated memory */
-    if (local_ptbuf != NULL)
-        HDfree(local_ptbuf);
+    free(local_ptbuf);
 
     return ret_value;
 } /* HCPgetcomptype */
@@ -1790,8 +1785,7 @@ HCPgetdatasize(int32 file_id, uint16 data_tag, uint16 data_ref, /* IN: tag/ref o
         HGOTO_ERROR(DFE_CANTACCESS, FAIL);
 
 done:
-    if (local_ptbuf != NULL)
-        HDfree(local_ptbuf);
+    free(local_ptbuf);
 
     return ret_value;
 } /* HCPgetdatasize */

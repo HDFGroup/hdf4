@@ -331,8 +331,7 @@ HLcreate(int32 file_id, uint16 tag, uint16 ref, int32 block_length, int32 number
 
 done:
     if (ret_value == FAIL) { /* Error condition cleanup */
-        if (info != NULL)
-            HDfree(info);
+        free(info);
         if (access_rec != NULL)
             HIrelease_accrec_node(access_rec);
     }
@@ -518,8 +517,7 @@ HLconvert(int32 aid, int32 block_length, int32 number_blocks)
 
 done:
     if (ret_value == FAIL) { /* Error condition cleanup */
-        if (access_rec->special_info != NULL)
-            HDfree(access_rec->special_info);
+        free(access_rec->special_info);
         if (access_rec != NULL)
             HIrelease_accrec_node(access_rec);
     }
@@ -629,12 +627,11 @@ HLIstaccess(accrec_t *access_rec, int16 acc_mode)
             if (t_info->link != NULL) {
                 for (t_link = t_info->link; t_link; t_link = next) {
                     next = t_link->next;
-                    if (t_link->block_list != NULL)
-                        HDfree(t_link->block_list);
-                    HDfree(t_link);
+                    free(t_link->block_list);
+                    free(t_link);
                 }
-            } /* end if */
-            HDfree(t_info);
+            }
+            free(t_info);
             access_rec->special_info = NULL;
         }
     }
@@ -691,7 +688,7 @@ HLIstaccess(accrec_t *access_rec, int16 acc_mode)
     if (info->link->block_list[0].ref) {
         info->first_length = Hlength(access_rec->file_id, DFTAG_LINKED, info->link->block_list[0].ref);
         if (info->first_length == FAIL) {
-            HDfree(info->link);
+            free(info->link);
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
         }
     }
@@ -708,9 +705,8 @@ HLIstaccess(accrec_t *access_rec, int16 acc_mode)
 
             for (l = info->link; l; l = next) {
                 next = l->next;
-                if (l->block_list)
-                    HDfree(l->block_list);
-                HDfree(l);
+                free(l->block_list);
+                free(l);
             }
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
         }
@@ -725,10 +721,8 @@ HLIstaccess(accrec_t *access_rec, int16 acc_mode)
     ret_value = HAregister_atom(AIDGROUP, access_rec);
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-        if (access_rec->special_info != NULL)
-            HDfree(access_rec->special_info);
-    }
+    if (ret_value == FAIL)
+            free(access_rec->special_info);
 
     return ret_value;
 } /* HLIstaccess */
@@ -866,9 +860,8 @@ HLgetdatainfo(int32 file_id, uint8 *buf, /* IN: special header info */
         /* Free allocated memory before getting the next block table if
            there is one */
         if (link_info != NULL) {
-            if (link_info->block_list != NULL)
-                HDfree(link_info->block_list);
-            HDfree(link_info);
+            free(link_info->block_list);
+            free(link_info);
             link_info = NULL;
         }
         /* Get next block table */
@@ -883,9 +876,8 @@ HLgetdatainfo(int32 file_id, uint8 *buf, /* IN: special header info */
 done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (link_info != NULL)
-            if (link_info->block_list != NULL)
-                HDfree(link_info->block_list);
-        HDfree(link_info);
+            free(link_info->block_list);
+        free(link_info);
     }
 
     return ret_value;
@@ -1006,14 +998,11 @@ HLIgetlink(int32 file_id, uint16 ref, int32 number_blocks)
 
 done:
     if (ret_value == NULL) { /* Error condition cleanup */
-        if (new_link->block_list != NULL)
-            HDfree(new_link->block_list);
-        if (new_link != NULL)
-            HDfree(new_link);
+        free(new_link->block_list);
+        free(new_link);
     }
 
-    if (buffer != NULL)
-        HDfree(buffer);
+    free(buffer);
 
     return ret_value;
 } /* HLIgetlink */
@@ -1482,14 +1471,10 @@ HLInewlink(int32 file_id, int32 number_blocks, uint16 link_ref, uint16 first_blo
 
 done:
     if (ret_value == NULL) { /* Error condition cleanup */
-        if (t_link->block_list != NULL)
-            HDfree(t_link->block_list);
-        if (t_link != NULL)
-            HDfree(t_link);
+        free(t_link->block_list);
+        free(t_link);
     }
-
-    if (buf != NULL)
-        HDfree(buf);
+    free(buf);
 
     return ret_value;
 } /* HLInewlink */
@@ -1642,11 +1627,11 @@ HLPcloseAID(accrec_t *access_rec)
         /* free the linked list of links/block tables */
         for (t_link = info->link; t_link; t_link = next) {
             next = t_link->next;
-            HDfree(t_link->block_list);
-            HDfree(t_link);
+            free(t_link->block_list);
+            free(t_link);
         }
 
-        HDfree(info);
+        free(info);
         access_rec->special_info = NULL;
     }
 

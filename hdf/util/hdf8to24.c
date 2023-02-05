@@ -119,12 +119,12 @@ magnify(uint8 *from_buffer, uint8 *to_buffer, int32 from_x0, int32 from_y0, int3
             buf_off += to_width;                   /* advance the buffer offset pointer */
         }                                          /* end else */
     }                                              /* end for */
-    HDfree((char *)y_coor);
-    HDfree((char *)x_coor);
+    free(y_coor);
+    free(x_coor);
     return (TRUE);
 
 YCoorFailed: /* Failed to allocate memory for the Y coor. lookup table */
-    HDfree((VOIDP)x_coor);
+    free(x_coor);
 XCoorFailed: /* Failed to allocate memory for the X coor. lookup table */
     return (FALSE);
 } /* end magnify() */
@@ -268,8 +268,8 @@ main(int argc, char *argv[])
         if (!magnify(img_buf, scaled_image, 0, 0, xdim - 1, ydim - 1, xdim, ydim, new_xdim, new_ydim)) {
             printf("Error scaling image, out of memory or bad dimensions\n");
             return (1);
-        }                       /* end if */
-        HDfree((VOIDP)img_buf); /* free the old image */
+        }
+        free(img_buf); /* free the old image */
 
         img_buf = scaled_image; /* use the new image for further processing */
         xdim    = new_xdim;

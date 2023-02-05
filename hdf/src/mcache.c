@@ -251,13 +251,12 @@ mcache_open(VOID *key,       /* IN: byte string used as handle to share buffers 
 
 done:
     if (ret_value == RET_ERROR) { /* error cleanup */
-        if (mp != NULL)
-            HDfree(mp);
+        free(mp);
         /* free up list elements */
         for (entry = 0; entry < HASHSIZE; ++entry) {
             while ((lp = mp->lhqh[entry].cqh_first) != (VOID *)&mp->lhqh[entry]) {
                 H4_CIRCLEQ_REMOVE(&mp->lhqh[entry], mp->lhqh[entry].cqh_first, hl);
-                HDfree(lp);
+                free(lp);
             }
         } /* end for entry */
 #ifdef MCACHE_DEBUG
@@ -471,14 +470,13 @@ mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
 done:
     if (ret_value == RET_ERROR) { /* error cleanup */
 #ifdef MCACHE_DEBUG
-        (VOID) fprintf(stderr, "mcache_get: Error exiting \n");
+        fprintf(stderr, "mcache_get: Error exiting \n");
 #endif
-        if (lp != NULL)
-            HDfree(lp);
+        free(lp);
         return NULL;
     }
 #ifdef MCACHE_DEBUG
-    (VOID) fprintf(stderr, "mcache_get: Exiting \n");
+    fprintf(stderr, "mcache_get: Exiting \n");
 #endif
     return (bp->page);
 } /* mcache_get() */
@@ -571,14 +569,14 @@ mcache_close(MCACHE *mp /* IN: MCACHE cookie */)
     /* Free up any space allocated to the lru pages. */
     while ((bp = mp->lqh.cqh_first) != (VOID *)&mp->lqh) {
         H4_CIRCLEQ_REMOVE(&mp->lqh, mp->lqh.cqh_first, q);
-        HDfree(bp);
+        free(bp);
     }
 
     /* free up list elements */
     for (entry = 0; entry < HASHSIZE; ++entry) {
         while ((lp = mp->lhqh[entry].cqh_first) != (VOID *)&mp->lhqh[entry]) {
             H4_CIRCLEQ_REMOVE(&mp->lhqh[entry], mp->lhqh[entry].cqh_first, hl);
-            HDfree(lp);
+            free(lp);
             nelem++;
         }
     } /* end for entry */
@@ -589,10 +587,10 @@ done:
     }
 
     /* Free the MCACHE cookie. */
-    HDfree(mp);
+    free(mp);
 
 #ifdef MCACHE_DEBUG
-    (VOID) fprintf(stderr, "mcache_close: freed %d list elements\n\n", nelem);
+    fprintf(stderr, "mcache_close: freed %d list elements\n\n", nelem);
 #endif
     return ret_value;
 } /* mcache_close() */
@@ -717,9 +715,7 @@ mcache_bkt(MCACHE *mp /* IN: MCACHE cookie */)
 
 done:
     if (ret_value == RET_ERROR) { /* error cleanup */
-        if (bp != NULL)
-            HDfree(bp);
-
+        free(bp);
         return NULL;
     }
 

@@ -283,8 +283,7 @@ parse_comp(const char *str, int *n_objs, comp_info_t *comp)
 
 out:
 
-    if (obj_list)
-        HDfree(obj_list);
+    free(obj_list);
 
     return NULL;
 }
@@ -406,8 +405,7 @@ parse_chunk(const char *str, int *n_objs, int32 *chunk_lengths, int *chunk_rank)
 
 out:
 
-    if (obj_list)
-        HDfree(obj_list);
+    free(obj_list);
 
     return NULL;
 }

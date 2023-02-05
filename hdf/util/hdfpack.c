@@ -321,7 +321,7 @@ main(int argc, char *argv[])
                             continue;
                         Hwrite(aid, len, buf);
                         Hendaccess(aid);
-                        HDfree(buf);
+                        free(buf);
                     } break;
                     default:
                         merge_blocks(&dlist[i], infile, outfile);
@@ -345,14 +345,8 @@ main(int argc, char *argv[])
         oldoff = dlist[i].offset;
     }
 
-    /*
-     **   Rename any matching external elements
-     */
-    if (from_file && to_file) {
-    }
-
-    HDfree(data);
-    HDfree(dlist);
+    free(data);
+    free(dlist);
 
     /*
      **   done; close files

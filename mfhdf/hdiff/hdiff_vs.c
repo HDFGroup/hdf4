@@ -327,10 +327,8 @@ vdata_cmp(int32 vs1, int32 vs2, char *gname, char *cname, diff_opt_t *opt)
         }
     }
 
-    if (buf1)
-        HDfree((char *)buf1);
-    if (buf2)
-        HDfree((char *)buf2);
+    free(buf1);
+    free(buf2);
 
     return nfound;
 }

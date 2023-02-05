@@ -112,14 +112,14 @@ static intn ANIdestroy(void);
 void
 ANfreedata(void *data)
 {
-    HDfree(data);
+    free(data);
 } /* ANfreekey() */
 
 /* free key - used by tbbt routines */
 void
 ANfreekey(void *key)
 {
-    HDfree(key);
+    free(key);
 } /* ANfreekey() */
 
 #ifdef AN_DEBUG
@@ -388,12 +388,9 @@ ANIaddentry(int32    an_id, /* IN: annotation interface id */
 
 done:
     if (ret_value == FAIL) { /* Error condition cleanup */
-        if (ann_key != NULL)
-            HDfree(ann_key);
-        if (ann_entry != NULL)
-            HDfree(ann_entry);
-        if (ann_node != NULL)
-            HDfree(ann_node);
+        free(ann_key);
+        free(ann_entry);
+        free(ann_node);
     }
 
     return ret_value;
@@ -566,12 +563,9 @@ ANIcreate_ann_tree(int32    an_id,/* IN: annotation interface id */
 
 done:
     if (ret_value == FAIL) { /* Error condition cleanup */
-        if (ann_key != NULL)
-            HDfree(ann_key);
-        if (ann_entry != NULL)
-            HDfree(ann_entry);
-        if (ann_node != NULL)
-            HDfree(ann_node);
+        free(ann_key);
+        free(ann_entry);
+        free(ann_node);
         if (FAIL != aid)
             Hendaccess(aid);
     }
@@ -1357,9 +1351,8 @@ ANend(int32 an_id /* IN: Annotation ID of file to close */)
             if (NULL == (ann_node = HAremove_atom(ann_entry->ann_id)))
                 HE_REPORT_GOTO("Failed to remove annotation with ann_id", FAIL);
 
-            if (ann_node != NULL)
-                HDfree(ann_node); /* free node */
-        }                         /* end for 'entry */
+            free(ann_node);
+        }
         /* finally free tree */
         tbbtdfree(file_rec->an_tree[AN_FILE_LABEL], ANfreedata, ANfreekey);
     }
@@ -1375,8 +1368,7 @@ ANend(int32 an_id /* IN: Annotation ID of file to close */)
             if (NULL == (ann_node = HAremove_atom(ann_entry->ann_id)))
                 HE_REPORT_GOTO("Failed to remove annotation with ann_id", FAIL);
 
-            if (ann_node != NULL)
-                HDfree(ann_node); /* free node */
+            free(ann_node);
 
         } /* end for 'entry */
         /* finally free tree */
@@ -1394,9 +1386,8 @@ ANend(int32 an_id /* IN: Annotation ID of file to close */)
             if (NULL == (ann_node = HAremove_atom(ann_entry->ann_id)))
                 HE_REPORT_GOTO("Failed to remove annotation with ann_id", FAIL);
 
-            if (ann_node != NULL)
-                HDfree(ann_node); /* free node */
-        }                         /* end for 'entry */
+            free(ann_node);
+        }
         /* finally free tree */
         tbbtdfree(file_rec->an_tree[AN_DATA_LABEL], ANfreedata, ANfreekey);
     }
@@ -1412,8 +1403,7 @@ ANend(int32 an_id /* IN: Annotation ID of file to close */)
             if (NULL == (ann_node = HAremove_atom(ann_entry->ann_id)))
                 HE_REPORT_GOTO("Failed to remove annotation with ann_id", FAIL);
 
-            if (ann_node != NULL)
-                HDfree(ann_node); /* free node */
+            free(ann_node);
 
         } /* end for 'entry */
         /* finally free tree */

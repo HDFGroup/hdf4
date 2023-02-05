@@ -1062,7 +1062,7 @@ DFGRIgetimlut(const char *filename, void *imlut, int32 xdim, int32 ydim, int typ
                     }
                 }
                 Hendaccess(aid);
-                HDfree(buf);
+                free(buf);
                 HGOTO_DONE(Hclose(file_id));
             }
         }
@@ -1246,7 +1246,7 @@ DFGRIaddimlut(const char *filename, const void *imlut, int32 xdim, int32 ydim, i
 
     if ((type == LUT) && (filename == NULL)) { /* set call */
         if (Grlutdata) {
-            HDfree(Grlutdata);
+            free(Grlutdata);
             Grlutdata = NULL;
         }
         Ref.lut = -1;
@@ -1331,7 +1331,7 @@ DFGRIaddimlut(const char *filename, const void *imlut, int32 xdim, int32 ydim, i
 
     if (Grcompr == DFTAG_IMC) {
         Ref.lut = 0;
-        HDfree(newlut);
+        free(newlut);
         newlut = NULL;
     }
 
@@ -1416,9 +1416,8 @@ done:
 intn
 DFGRPshutdown(void)
 {
-    if (Grlastfile != NULL) {
-        HDfree(Grlastfile);
-        Grlastfile = NULL;
-    } /* end if */
+    free(Grlastfile);
+    Grlastfile = NULL;
+
     return (SUCCEED);
 } /* end DFGRPshutdown() */

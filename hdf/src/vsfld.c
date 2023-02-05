@@ -129,9 +129,9 @@ VSsetfields(int32 vkey, const char *fields)
                 wlist->order = wlist->isize + ac;
                 wlist->esize = wlist->order + ac;
                 if ((wlist->name = malloc(sizeof(char *) * (size_t)ac)) == NULL) {
-                    HDfree(wlist->bptr);
+                    free(wlist->bptr);
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
-                } /* end if */
+                }
 
                 for (i = 0; i < ac; i++) {
                     found = FALSE;
@@ -141,10 +141,10 @@ VSsetfields(int32 vkey, const char *fields)
                             found = TRUE;
 
                             if ((wlist->name[wlist->n] = HDstrdup(vs->usym[j].name)) == NULL) {
-                                HDfree(wlist->name);
-                                HDfree(wlist->bptr);
+                                free(wlist->name);
+                                free(wlist->bptr);
                                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
-                            } /* end if */
+                            }
                             order                  = vs->usym[j].order;
                             wlist->type[wlist->n]  = vs->usym[j].type;
                             wlist->order[wlist->n] = order;
@@ -175,10 +175,10 @@ VSsetfields(int32 vkey, const char *fields)
                                 found = TRUE;
 
                                 if ((wlist->name[wlist->n] = HDstrdup(rstab[j].name)) == NULL) {
-                                    HDfree(wlist->name);
-                                    HDfree(wlist->bptr);
+                                    free(wlist->name);
+                                    free(wlist->bptr);
                                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
-                                } /* end if */
+                                }
                                 order                  = rstab[j].order;
                                 wlist->type[wlist->n]  = rstab[j].type;
                                 wlist->order[wlist->n] = order;
@@ -218,8 +218,7 @@ VSsetfields(int32 vkey, const char *fields)
     if (vs->nvertices > 0) {
         rlist    = &(vs->rlist);
         rlist->n = 0;
-        if (rlist->item != NULL)
-            HDfree(rlist->item);
+        free(rlist->item);
         rlist->item = NULL;
 
         /* Allocate enough space for the read list */
@@ -1006,18 +1005,11 @@ VSfpack(int32 vsid, intn packtype, const char *fields_in_buf, void *buf, intn bu
     }
 
 done:
-    if (ret_value == FAIL) {
-    }
-    if (blist.idx != NULL)
-        HDfree(blist.idx);
-    if (blist.offs != NULL)
-        HDfree(blist.offs);
-    if (fmsizes != NULL)
-        HDfree(fmsizes);
-    if (foffs != NULL)
-        HDfree(foffs);
-    if (fbufps != NULL)
-        HDfree(fbufps);
+    free(blist.idx);
+    free(blist.offs);
+    free(fmsizes);
+    free(foffs);
+    free(fbufps);
 
     return ret_value;
 } /* VSfpack */

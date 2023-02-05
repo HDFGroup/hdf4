@@ -706,7 +706,7 @@ HCPcdeflate_endaccess(accrec_t *access_rec)
         HRETURN_ERROR(DFE_CTERM, FAIL);
 
     /* Get rid of the I/O buffer */
-    HDfree(deflate_info->io_buf);
+    free(deflate_info->io_buf);
 
     /* close the compressed data AID */
     if (Hendaccess(info->aid) == FAIL)

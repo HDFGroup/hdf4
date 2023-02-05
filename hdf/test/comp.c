@@ -227,19 +227,19 @@ free_buffers(void)
     intn i;
 
     for (i = 0; i < NUM_OUTBUFS; i++) {
-        HDfree(outbuf_int8[i]);
-        HDfree(outbuf_uint8[i]);
-        HDfree(outbuf_int16[i]);
-        HDfree(outbuf_uint16[i]);
-        HDfree(outbuf_int32[i]);
-        HDfree(outbuf_uint32[i]);
-    } /* end for */
-    HDfree(inbuf_int8);
-    HDfree(inbuf_uint8);
-    HDfree(inbuf_int16);
-    HDfree(inbuf_uint16);
-    HDfree(inbuf_int32);
-    HDfree(inbuf_uint32);
+        free(outbuf_int8[i]);
+        free(outbuf_uint8[i]);
+        free(outbuf_int16[i]);
+        free(outbuf_uint16[i]);
+        free(outbuf_int32[i]);
+        free(outbuf_uint32[i]);
+    }
+    free(inbuf_int8);
+    free(inbuf_uint8);
+    free(inbuf_int16);
+    free(inbuf_uint16);
+    free(inbuf_int32);
+    free(inbuf_uint32);
 } /* free_buffers() */
 
 static uint16
@@ -256,7 +256,7 @@ write_data(int32 fid, comp_model_t m_type, model_info *m_info, comp_coder_t c_ty
         char *s = HDgetNTdesc(ntype);
         printf("Writing data for test %d, ntype=%s, model_type=%d, coder_type=%d\n", (int)test_num,
                (s == NULL ? "Unknown" : s), (int)m_type, (int)c_type);
-        HDfree(s);
+        free(s);
     })
     ret_ref = Hnewref(fid);
     aid     = HCcreate(fid, COMP_TAG, ret_ref, m_type, m_info, c_type, c_info);
@@ -315,7 +315,7 @@ read_data(int32 fid, uint16 ref_num, intn test_num, int32 ntype)
     MESSAGE(8, {
         char *s = HDgetNTdesc(ntype);
         printf("Reading data for test %d, ntype=%s\n", (int)test_num, (s == NULL ? "Unknown" : s));
-        HDfree(s);
+        free(s);
     })
 
     aid = Hstartread(fid, COMP_TAG, ref_num);
@@ -373,9 +373,9 @@ read_data(int32 fid, uint16 ref_num, intn test_num, int32 ntype)
                 if (((char *)in_ptr)[i] != ((char *)out_ptr)[i])
                     printf("byte %i differs, written:%d, read in:%d\n", i, ((char *)out_ptr)[i],
                            ((char *)in_ptr)[i]);
-            } /* end for */
+            }
         )
-        HDfree(s);
+        free(s);
         num_errs++;
     } /* end if */
 

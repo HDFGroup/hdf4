@@ -998,7 +998,7 @@ DFR8nimages(const char *filename)
         }                          /* end for */
     }                              /* end for */
 
-    HDfree(img_off); /* free offsets */
+    free(img_off); /* free offsets */
     if (Hclose(file_id) == FAIL)
         HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
 
@@ -1453,9 +1453,8 @@ done:
 intn
 DFR8Pshutdown(void)
 {
-    if (paletteBuf != NULL) {
-        HDfree(paletteBuf);
-        paletteBuf = NULL;
-    } /* end if */
-    return (SUCCEED);
+    free(paletteBuf);
+    paletteBuf = NULL;
+
+    return SUCCEED;
 } /* end DFR8Pshutdown() */

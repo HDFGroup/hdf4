@@ -189,17 +189,16 @@ vimakecompat(HFILEID f)
         HQuerytagref(aid, &tag, &ref);
         HQuerylength(aid, &bsize);
         if (buf == NULL || bsize > old_bsize) {
-            if (buf != NULL)
-                HDfree((VOIDP)buf);
+            free(buf);
             if ((buf = (uint8 *)malloc(bsize)) == NULL)
                 HRETURN_ERROR(DFE_NOSPACE, 0);
             old_bsize = bsize;
-        } /* end if */
+        }
         ret = Hgetelement(f, (uint16)OLD_VGDESCTAG, ref, (uint8 *)buf);
         if (ret == FAIL) {
-            HDfree((VOIDP)buf);
+            free(buf);
             HRETURN_ERROR(DFE_READERROR, 0)
-        } /* end if */
+        }
 
         oldunpackvg(vg, buf, &bsize);
         /* add new items */
@@ -220,7 +219,7 @@ vimakecompat(HFILEID f)
         vpackvg(vg, buf, &bsize);
 
         ret = Hputelement(f, VGDESCTAG, ref, (uint8 *)buf, bsize);
-        HDfree((VOIDP)buf);
+        free(buf);
         if (ret == FAIL)
             HRETURN_ERROR(DFE_WRITEERROR, 0);
 
@@ -243,17 +242,16 @@ vimakecompat(HFILEID f)
         HQuerytagref(aid, &tag, &ref);
         HQuerylength(aid, &bsize);
         if (buf == NULL || bsize > old_bsize) {
-            if (buf != NULL)
-                HDfree((VOIDP)buf);
+            free(buf);
             if ((buf = (uint8 *)malloc(bsize)) == NULL)
                 HRETURN_ERROR(DFE_NOSPACE, 0);
             old_bsize = bsize;
-        } /* end if */
+        }
         ret = Hgetelement(f, tag, ref, (uint8 *)buf);
         if (ret == FAIL) {
-            HDfree((VOIDP)buf);
+            free(buf);
             HRETURN_ERROR(DFE_READERROR, 0)
-        } /* end if */
+        }
 
         oldunpackvs(vs, buf, &bsize);
 
@@ -267,13 +265,13 @@ vimakecompat(HFILEID f)
 
         ret = Hputelement(f, VSDESCTAG, ref, (uint8 *)buf, bsize);
         if (ret == FAIL) {
-            HDfree((VOIDP)buf);
+            free(buf);
             HRETURN_ERROR(DFE_WRITEERROR, 0)
-        } /* end if */
+        }
 
         /* duplicate a tag to point to vdata data */
         ret = Hdupdd(f, NEW_VSDATATAG, ref, (uint16)OLD_VSDATATAG, ref);
-        HDfree((VOIDP)buf);
+        free(buf);
         if (ret == FAIL)
             HRETURN_ERROR(DFE_DUPDD, 0);
         ret = Hnextread(aid, (uint16)OLD_VSDESCTAG, DFREF_WILDCARD, DF_CURRENT);

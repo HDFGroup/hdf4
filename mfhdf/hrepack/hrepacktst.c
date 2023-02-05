@@ -151,10 +151,8 @@ read_data(const char *fname)
     g_length_y = h;
     g_length_x = w;
 
-    if (g_image_data != NULL) {
-        HDfree(g_image_data);
-        g_image_data = NULL;
-    }
+    free(g_image_data);
+    g_image_data = NULL;
 
     g_image_data = (unsigned char *)malloc(w * h * color_planes * sizeof(unsigned char));
 
@@ -483,10 +481,8 @@ out:
     /* terminate access to the GRs */
     GRendaccess(ri1_id);
     GRendaccess(ri2_id);
-    if (buf1)
-        HDfree(buf1);
-    if (buf2)
-        HDfree(buf2);
+    free(buf1);
+    free(buf2);
     return cmp;
 }
 
@@ -987,10 +983,8 @@ add_gr_ffile(const char *name_file, int32 gr_id, const char *gr_name, int32 inte
 
     } /* read data */
 
-    if (g_image_data != NULL) {
-        HDfree(g_image_data);
-        g_image_data = NULL;
-    }
+    free(g_image_data);
+    g_image_data = NULL;
 
     return SUCCEED;
 }
@@ -1292,10 +1286,8 @@ add_r8(const char *image_file, const char *fname, int32 file_id, int32 vgroup_id
             return FAIL;
     }
 
-    if (g_image_data != NULL) {
-        HDfree(g_image_data);
-        g_image_data = NULL;
-    }
+    free(g_image_data);
+    g_image_data = NULL;
 
     return SUCCEED;
 }
@@ -1359,10 +1351,8 @@ add_r24(const char *image_file, const char *fname, int32 file_id, intn il, int32
 
     } /* read_data */
 
-    if (g_image_data != NULL) {
-        HDfree(g_image_data);
-        g_image_data = NULL;
-    }
+    free(g_image_data);
+    g_image_data = NULL;
 
     return SUCCEED;
 }

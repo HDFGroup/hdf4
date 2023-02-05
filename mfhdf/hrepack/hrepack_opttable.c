@@ -59,10 +59,8 @@ options_table_init(options_table_t **tbl)
 void
 options_table_free(options_table_t *op_tbl)
 {
-    if (op_tbl->objs != NULL)
-        HDfree(op_tbl->objs);
-    if (op_tbl != NULL)
-        HDfree(op_tbl);
+    free(op_tbl->objs);
+    free(op_tbl);
 }
 
 /*-------------------------------------------------------------------------

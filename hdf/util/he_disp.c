@@ -111,8 +111,7 @@ getSpace(void)
         oldx = xdim;
         oldy = ydim;
 
-        if (wheresmall)
-            HDfree(wheresmall);
+        free(wheresmall);
 
         if (NULL == (wheresmall = (uint8 *)malloc((size_t)(xdim * ydim)))) {
             printf(" Cannot allocate memory, fatal error\n");
@@ -271,7 +270,7 @@ rImage(int usepal)
      *  pause for the user
      */
 
-    HDfree(space);
+    free(space);
     return HE_OK;
 }
 

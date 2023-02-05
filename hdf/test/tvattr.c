@@ -772,7 +772,7 @@ test_readattrtwice(void)
                 num_errs++;
                 printf(">>> Reading attribute twice failed - (bugzilla 486)\n");
             }
-            HDfree(buffer);
+            free(buffer);
 
             nfields = VFnfields(vsid);
             CHECK_VOID(nfields, FAIL, "VFnfields");
@@ -797,7 +797,7 @@ test_readattrtwice(void)
                         printf(">>> Reading attribute twice failed - (bugzilla 486)\n");
                     }
 
-                    HDfree(buffer);
+                    free(buffer);
                 } /* for fattr_index */
             }     /* for findex */
         }         /* for k */

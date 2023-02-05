@@ -77,10 +77,8 @@ void
 free_info(t_hdf_datainfo_t *info)
 {
     if (info != NULL) {
-        if (info->offsets != NULL)
-            HDfree(info->offsets);
-        if (info->lengths != NULL)
-            HDfree(info->lengths);
+        free(info->offsets);
+        free(info->lengths);
     }
 }
 
@@ -548,7 +546,7 @@ readnoHDF_char(const char *filename, const int32 offset, const int32 length, con
                     "%s\n   >>> read = %s\n",
                     orig_buf, readcbuf);
     }
-    HDfree(readcbuf);
+    free(readcbuf);
     /* Close the file */
     if (fclose(fd) == -1) {
         fprintf(stderr, "readnoHDF_char: unable to close file %s", filename);
@@ -1395,7 +1393,7 @@ test_getpalinfo()
                     "palette data pointed by tag/ref = %d/%d at offset/length = %d/%d differs from written\n",
                     palinfo_array[0].tag, palinfo_array[0].ref, palinfo_array[0].offset,
                     palinfo_array[0].length);
-        HDfree(inbuf);
+        free(inbuf);
 
         /* Read and verify data of the palette pointed to by 301/4.  This is the
            data element that was not revealed by DFPgetpal because the tag/ref pair
@@ -1413,9 +1411,9 @@ test_getpalinfo()
                     "palette data pointed by tag/ref = %d/%d at offset/length = %d/%d differs from written\n",
                     palinfo_array[7].tag, palinfo_array[7].ref, palinfo_array[7].offset,
                     palinfo_array[7].length);
-        HDfree(inbuf);
+        free(inbuf);
 
-        HDfree(palinfo_array);
+        free(palinfo_array);
     }
 
     /* Terminate access to the GR interface and close the file */

@@ -138,10 +138,10 @@ list_table_free(list_table_t *list_tbl)
 
     for (i = 0; i < list_tbl->nobjs; i++) {
         assert(list_tbl->objs[i].path);
-        HDfree(list_tbl->objs[i].path);
+        free(list_tbl->objs[i].path);
     }
-    HDfree(list_tbl->objs);
-    HDfree(list_tbl);
+    free(list_tbl->objs);
+    free(list_tbl);
 }
 
 /*-------------------------------------------------------------------------

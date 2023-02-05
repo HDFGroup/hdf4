@@ -1287,7 +1287,7 @@ indexes(float32 *scale, int dim, int *idx, int res)
     /*
      * free dynamically allocated memory
      */
-    HDfree((char *)midpt);
+    free(midpt);
 
     return (0);
 
@@ -1487,14 +1487,14 @@ interp(struct Input *in, struct Raster *im)
     /*
      * free dynamically allocated memory
      */
-    HDfree((char *)hratio);
-    HDfree((char *)vratio);
+    free(hratio);
+    free(vratio);
     if (in->rank == 3)
-        HDfree((char *)dratio);
-    HDfree((char *)hinc);
-    HDfree((char *)voff);
+        free(dratio);
+    free(hinc);
+    free(voff);
     if (in->rank == 3)
-        HDfree((char *)doff);
+        free(doff);
 
     return (0);
 
@@ -1749,11 +1749,11 @@ pixrep(struct Input *in, struct Raster *im)
     /*
      * free dynamically allocated space
      */
-    HDfree((char *)hidx);
-    HDfree((char *)vidx);
+    free(hidx);
+    free(vidx);
     if (in->rank == 3)
-        HDfree((char *)didx);
-    HDfree((char *)pix);
+        free(didx);
+    free(pix);
 
     return (0);
 
@@ -2024,13 +2024,13 @@ process(struct Options *opt)
         /*
          * free dynamically allocated space
          */
-        HDfree((char *)in.hscale);
-        HDfree((char *)in.vscale);
+        free(in.hscale);
+        free(in.vscale);
         if (in.rank == 3)
-            HDfree((char *)in.dscale);
-        HDfree((char *)in.data);
+            free(in.dscale);
+        free(in.data);
         if (opt->to_image == TRUE)
-            HDfree((char *)im.image);
+            free(im.image);
     }
 
     return (0);

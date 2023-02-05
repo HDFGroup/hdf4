@@ -2196,7 +2196,7 @@ HPend(void)
     /* can't issue errors if you're free'ing the error stack. */
     HDGLdestroy_list(cleanup_list); /* clear the list of interface cleanup routines */
     /* free allocated list struct */
-    HDfree(cleanup_list);
+    free(cleanup_list);
     /* re-initialize */
     cleanup_list = NULL;
 
@@ -2632,9 +2632,8 @@ HIrelease_filerec_node(filerec_t *file_rec)
         HI_CLOSE(file_rec->file);
 
     /* Free all the components of the file record */
-    if (file_rec->path != NULL)
-        HDfree(file_rec->path);
-    HDfree(file_rec);
+    free(file_rec->path);
+    free(file_rec);
 
     return SUCCEED;
 } /* HIrelease_filerec_node */
@@ -3152,11 +3151,11 @@ Hshutdown(void)
             curr             = accrec_free_list;
             accrec_free_list = accrec_free_list->next;
             curr->next       = NULL;
-            HDfree(curr);
-        } /* end while */
-    }     /* end if */
+            free(curr);
+        }
+    }
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* end Hshutdown() */
 
 /* #define HFILE_SEEKINFO */
@@ -3494,8 +3493,7 @@ HDcheck_empty(int32 file_id, uint16 tag, uint16 ref, intn *emptySDS /* TRUE if d
     }
 
 done:
-    if (local_ptbuf != NULL)
-        HDfree(local_ptbuf);
+    free(local_ptbuf);
 
     return ret_value;
 } /* end HDcheck_empty() */

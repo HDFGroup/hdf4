@@ -100,9 +100,8 @@ DAcreate_array(intn start_size, /* IN: Initial array size */
 done:
     if (ret_value == NULL) { /* Error condition cleanup */
         if (new_arr != NULL) {
-            if (new_arr->arr != NULL)
-                HDfree(new_arr->arr);
-            HDfree(new_arr);
+            free(new_arr->arr);
+            free(new_arr);
         }
     }
 
@@ -138,13 +137,11 @@ DAdestroy_array(dynarr_p arr,      /* IN: Array to destroy */
     /* Chuck all the items stored in the array */
     if (free_elem != 0)
         for (i = 0; i < arr->num_elems; i++) {
-            if (arr->arr[i] != NULL)
-                HDfree(arr->arr[i]);
-        } /* end for */
+            free(arr->arr[i]);
+        }
 
-    if (dest_arr->arr != NULL)
-        HDfree(dest_arr->arr);
-    HDfree(dest_arr);
+    free(dest_arr->arr);
+    free(dest_arr);
 
 done:
     return ret_value;

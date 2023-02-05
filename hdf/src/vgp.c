@@ -509,7 +509,7 @@ Remove_vfile(HFILEID f /* IN: file handle */)
 
     /* Delete the node and free the vfile_t structure */
     vf = tbbtrem((TBBT_NODE **)vtree, (TBBT_NODE *)t, NULL);
-    HDfree(vf);
+    free(vf);
 
 done:
     return ret_value;
@@ -576,21 +576,16 @@ vdestroynode(VOIDP n /* IN: node to free */)
     if (n != NULL) {
         vg = ((vginstance_t *)n)->vg;
         if (vg != NULL) {
-            HDfree((VOIDP)vg->tag);
-            HDfree((VOIDP)vg->ref);
+            free(vg->tag);
+            free(vg->ref);
 
-            if (vg->vgname != NULL)
-                HDfree((VOIDP)vg->vgname);
-
-            if (vg->vgclass != NULL)
-                HDfree((VOIDP)vg->vgclass);
-
-            if (vg->alist != NULL)
-                HDfree((VOIDP)vg->alist);
+            free(vg->vgname);
+            free(vg->vgclass);
+            free(vg->alist);
 
             /* Free the old-style attr list and reset associated fields */
             if (vg->old_alist != NULL) {
-                HDfree((VOIDP)vg->old_alist);
+                free(vg->old_alist);
                 vg->old_alist = NULL;
                 vg->noldattrs = 0;
             }
@@ -627,7 +622,7 @@ vfdestroynode(VOIDP n /* IN: vfile_t record to free */)
         tbbtdfree(vf->vgtree, vdestroynode, NULL);
         tbbtdfree(vf->vstree, vsdestroynode, NULL);
 
-        HDfree(vf);
+        free(vf);
     }
 } /* vfdestroynode */
 
@@ -1012,12 +1007,11 @@ VPgetinfo(HFILEID f, /* IN: file handle */
     if (len > Vgbufsize) {
         Vgbufsize = len;
 
-        if (Vgbuf)
-            HDfree((VOIDP)Vgbuf);
+        free(Vgbuf);
 
         if ((Vgbuf = (uint8 *)malloc(Vgbufsize)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
-    } /* end if */
+    }
 
     /* Get the raw Vgroup info */
     if (Hgetelement(f, DFTAG_VG, (uint16)ref, Vgbuf) == (int32)FAIL)
@@ -1247,8 +1241,7 @@ Vdetach(int32 vkey /* IN: vgroup key */)
         if (need > Vgbufsize) {
             Vgbufsize = need;
 
-            if (Vgbuf)
-                HDfree((VOIDP)Vgbuf);
+            free(Vgbuf);
 
             if ((Vgbuf = (uint8 *)malloc(Vgbufsize)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -1288,7 +1281,7 @@ Vdetach(int32 vkey /* IN: vgroup key */)
 
     /* Free the old-style attribute list and reset associated fields */
     if (vg->old_alist != NULL) {
-        HDfree((VOIDP)vg->old_alist);
+        free(vg->old_alist);
         vg->old_alist = NULL;
         vg->noldattrs = 0;
     }
@@ -2076,8 +2069,7 @@ Vsetname(int32       vkey, /* IN: vgroup key */
     name_len = HDstrlen(vgname); /* shortcut of length of the given name */
 
     /* if name exists, release it */
-    if (vg->vgname != NULL)
-        HDfree(vg->vgname);
+    free(vg->vgname);
 
     /* allocate space for new name */
     vg->vgname = (char *)malloc(name_len + 1);
@@ -2145,8 +2137,7 @@ Vsetclass(int32       vkey, /* IN: vgroup key */
     classname_len = HDstrlen(vgclass); /* length of the given class name */
 
     /* if name exists, release it */
-    if (vg->vgclass != NULL)
-        HDfree(vg->vgclass);
+    free(vg->vgclass);
 
     /* allocate space for new name */
     vg->vgclass = (char *)malloc(classname_len + 1);
@@ -2865,9 +2856,9 @@ VPshutdown(void)
             v                = vgroup_free_list;
             vgroup_free_list = vgroup_free_list->next;
             v->next          = NULL;
-            HDfree(v);
-        } /* end while */
-    }     /* end if */
+            free(v);
+        }
+    }
 
     /* Release the vginstance free-list if it exists */
     if (vginstance_free_list != NULL) {
@@ -2875,9 +2866,9 @@ VPshutdown(void)
             vg                   = vginstance_free_list;
             vginstance_free_list = vginstance_free_list->next;
             vg->next             = NULL;
-            HDfree(vg);
-        } /* end while */
-    }     /* end if */
+            free(vg);
+        }
+    }
 
     if (vtree != NULL) {
         /* Free the vfile tree */
@@ -2891,13 +2882,13 @@ VPshutdown(void)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
         vtree = NULL;
-    } /* end if */
+    }
 
     if (Vgbuf != NULL) {
-        HDfree(Vgbuf);
+        free(Vgbuf);
         Vgbuf     = NULL;
         Vgbufsize = 0;
-    } /* end if */
+    }
 
 done:
     return ret_value;

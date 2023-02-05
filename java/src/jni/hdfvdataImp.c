@@ -116,8 +116,7 @@ Java_hdf_hdflib_HDFLibrary_VSgetclass(JNIEnv *env, jclass clss, jlong vdata_id, 
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (className)
-        HDfree(className);
+    free(className);
 
     return;
 }
@@ -152,8 +151,7 @@ Java_hdf_hdflib_HDFLibrary_VSgetname(JNIEnv *env, jclass clss, jlong vdata_id, j
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (data)
-        HDfree(data);
+    free(data);
 
     return;
 }
@@ -304,8 +302,7 @@ Java_hdf_hdflib_HDFLibrary_VSgetfields(JNIEnv *env, jclass clss, jlong vdata_id,
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (flds)
-        HDfree(flds);
+    free(flds);
 
     return rval;
 }
@@ -382,10 +379,8 @@ Java_hdf_hdflib_HDFLibrary_VSinquire(JNIEnv *env, jclass clss, jlong vdata_id, j
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (name)
-        HDfree(name);
-    if (flds)
-        HDfree(flds);
+    free(name);
+    free(flds);
 
     return JNI_TRUE;
 }
@@ -769,8 +764,7 @@ Java_hdf_hdflib_HDFLibrary_VSattrinfo(JNIEnv *env, jclass clss, jlong id, jint i
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (data)
-        HDfree(data);
+    free(data);
     if (theArgs)
         UNPIN_INT_ARRAY(ENVONLY, argv, theArgs, (rval == FAIL) ? JNI_ABORT : 0);
 

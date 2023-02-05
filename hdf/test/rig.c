@@ -793,7 +793,7 @@ test_r24(void)
         num_errs++;
     }
 
-    HDfree(jpeg_24bit_temp);
+    free(jpeg_24bit_temp);
 
     /* Test 24-bit images with JPEG compression */
     test_r24_jpeg();
@@ -988,7 +988,7 @@ test_r24_jpeg(void)
         num_errs++;
     }
 
-    HDfree(jpeg_24bit_temp);
+    free(jpeg_24bit_temp);
 
     /********************************************************************
       Verify raw data in HDF and NON-HDF files using offsets and lengths.
@@ -1046,8 +1046,8 @@ test_r24_jpeg(void)
             num_errs++;
         }
 
-        HDfree(nonhdf_buffer);
-        HDfree(hdf_buffer);
+        free(nonhdf_buffer);
+        free(hdf_buffer);
 
         /* Move forward to the next set of non-HDF data, equivalent to the next
            image in the HDF file JPEGFILE */
@@ -1345,16 +1345,16 @@ test_r8(void)
         num_errs++;
     }
 
-    HDfree(im1);
-    HDfree(ii1);
-    HDfree(im2);
-    HDfree(ii2);
-    HDfree(im3);
-    HDfree(ii3);
-    HDfree(pal1);
-    HDfree(pal2);
-    HDfree(ipal);
-    HDfree(jpeg_8bit_temp);
+    free(im1);
+    free(ii1);
+    free(im2);
+    free(ii2);
+    free(im3);
+    free(ii3);
+    free(pal1);
+    free(pal2);
+    free(ipal);
+    free(jpeg_8bit_temp);
 
     /* Temporarily call to test GRgetcomptype() for hmap project; these tests
        will need to be reformatted. Mar 13, 2011 -BMR */
@@ -1471,7 +1471,7 @@ test_pal(void)
         for (i = 0; i < 768; i++)
             if (ipal[i] != pal1[i])
                 printf("(%d) Error at %d, ipal %d pal1 %d\n", __LINE__, i, ipal[i], pal1[i]);
-    HDfree(pal1);
-    HDfree(pal2);
-    HDfree(ipal);
+    free(pal1);
+    free(pal2);
+    free(ipal);
 }

@@ -375,8 +375,8 @@ diff_match_dim_table_init(diff_match_dim_table_t **tbl)
 static void
 diff_match_dim_table_free(diff_match_dim_table_t *table)
 {
-    HDfree(table->objs);
-    HDfree(table);
+    free(table->objs);
+    free(table);
 }
 
 /*-------------------------------------------------------------------------
@@ -462,6 +462,6 @@ diff_dim_table_init(diff_dim_table_t **tbl)
 void
 diff_dim_table_free(diff_dim_table_t *table)
 {
-    HDfree(table->objs);
-    HDfree(table);
+    free(table->objs);
+    free(table);
 }

@@ -484,14 +484,11 @@ get_VGandInfo(int32 *vg_id, int32 file_id, int32 vg_ref, const char *file_name, 
 
 done:
     if (ret_value == FAIL) {
-        if (*vgname != NULL) {
-            HDfree((VOIDP)*vgname); /* free temp memory */
-            *vgname = NULL;
-        }
-        if (*vgclass != NULL) {
-            HDfree((VOIDP)*vgclass); /* free temp memory */
-            *vgclass = NULL;
-        }
+        free(*vgname); /* free temp memory */
+        *vgname = NULL;
+
+        free(*vgclass); /* free temp memory */
+        *vgclass = NULL;
     }
 
     return (ret_value);
@@ -1359,9 +1356,6 @@ dvg(dump_info_t *dumpvg_opts, intn curr_arg, intn argc, char *argv[])
                 fprintf(fp, "Entries:-\n");
                 status = vgdumpfull(vg_id, dumpvg_opts, file_id, n_entries, fp, list[curr_vg], &skipfile);
                 if (FAIL == status) {
-                    /*       HDfree(list[curr_vg]);
-                         list[curr_vg] = NULL;
-           */
                     ERROR_NOTIFY_3("in dvg: %s failed for vgroup with ref#=%d in file %s", "vgdumpfull",
                                    (int)vg_ref, file_name);
 

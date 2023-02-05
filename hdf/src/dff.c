@@ -65,7 +65,7 @@ ndfiopen(_fcd name, intf *acc_mode, intf *defdds, intf *namelen)
     fn = DFIf2cstring(name, (intn)*namelen);
     /* For compiler warning, see note above. */
     ret = (intf)DFopen(fn, (intn)*acc_mode, (intn)*defdds);
-    HDfree((VOIDP)fn);
+    free(fn);
     return (ret);
 }
 
@@ -115,7 +115,7 @@ ndfdesc(intf *dfile, intf ptr[][4], intf *begin, intf *num)
         ptr[i][3] = ptr1[i].length;
     }
 
-    HDfree((VOIDP)ptr1);
+    free(ptr1);
 
     return (num_desc);
 }
@@ -172,7 +172,7 @@ ndfiaccess(intf *dfile, intf *tag, intf *ref, _fcd acc_mode, intf *acclen)
 
     acc = DFIf2cstring(acc_mode, (intn)*acclen);
     ret = (intf)DFaccess((DF *)*dfile, (uint16)*tag, (uint16)*ref, acc);
-    HDfree((VOIDP)acc);
+    free(acc);
     return (ret);
 }
 
@@ -318,7 +318,7 @@ ndffind(intf *dfile, intf *itag, intf *iref, intf *len)
     *iref = (int32)(ptr1->ref);
     *len  = ptr1->length;
 
-    HDfree((VOIDP)ptr1);
+    free(ptr1);
 
     return (ret);
 }
@@ -403,6 +403,6 @@ ndfiishdf(_fcd name, intf *namelen)
 
     fn  = DFIf2cstring(name, (intn)*namelen);
     ret = DFishdf(fn);
-    HDfree((VOIDP)fn);
+    free(fn);
     return (ret);
 }

@@ -144,7 +144,7 @@ hdf_term_destination(struct jpeg_compress_struct *cinfo_ptr)
     Hendaccess(dest->aid);
 
     /* Free the output buffer */
-    HDfree(dest->buffer);
+    free(dest->buffer);
 
 } /* end hdf_term_destination() */
 
@@ -206,7 +206,7 @@ intn
 jpeg_HDF_dest_term(struct jpeg_compress_struct *cinfo_ptr)
 {
     /* all we need to do for now is to free up the dest. mgr structure */
-    HDfree(cinfo_ptr->dest);
+    free(cinfo_ptr->dest);
 
     return (SUCCEED);
 } /* end jpeg_HDF_dest_term() */
@@ -305,8 +305,8 @@ DFCIjpeg(int32 file_id, uint16 tag, uint16 ref, int32 xdim, int32 ydim, const vo
     jpeg_HDF_dest_term(cinfo_ptr);
 
     /* Free update memory allocated */
-    HDfree(jerr_ptr);
-    HDfree(cinfo_ptr);
+    free(jerr_ptr);
+    free(cinfo_ptr);
 
     return (SUCCEED); /* we must be ok... */
 } /* end DFCIjpeg() */

@@ -400,12 +400,12 @@ test_vdatavgroups()
             fprintf(stderr, "vg %d: name is %s, should be %s\n", ii, vg_name, check_vg_names[ii]);
 
         /* Release resource */
-        HDfree(vg_name);
+        free(vg_name);
         status = Vdetach(vgroup_id);
         CHECK(status, FAIL, "Vdetach");
     }
     /* Release resource */
-    HDfree(refarray);
+    free(refarray);
 
     /* Get the number of user-created vdatas */
     num_vdatas = VSgetvdatas(fid, 0, 0, NULL);
@@ -437,7 +437,7 @@ test_vdatavgroups()
         CHECK(status, FAIL, "VSdetach");
     }
     /* Release resource */
-    HDfree(refarray);
+    free(refarray);
 
     /* Terminate access to the Vxxx interface and close the file */
     status = Vend(fid);

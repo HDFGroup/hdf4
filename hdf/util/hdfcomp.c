@@ -110,7 +110,7 @@ main(int argc, char *argv[])
                     while ((annlen = DFANgetfidlen(old_fid, isfirst)) != FAIL) {
                         if (annbuflen == 0 || annlen > annbuflen) {
                             if (annbuflen != 0)
-                                HDfree(annbuf);
+                                free(annbuf);
                             if ((annbuf = (char *)malloc(annlen)) == NULL) {
                                 printf("Error allocating buffer for annotation, aborting!\n");
                                 exit(1);
@@ -131,7 +131,7 @@ main(int argc, char *argv[])
                     while ((annlen = DFANgetfdslen(old_fid, isfirst)) != FAIL) {
                         if (annbuflen == 0 || annlen > annbuflen) {
                             if (annbuflen != 0)
-                                HDfree(annbuf);
+                                free(annbuf);
                             if ((annbuf = (char *)malloc(annlen)) == NULL) {
                                 printf("Error allocating buffer for annotation, aborting!\n");
                                 exit(1);
@@ -187,7 +187,7 @@ main(int argc, char *argv[])
                         if ((annlen = DFANgetlablen(argv[i], image_tag, prevref)) != FAIL) {
                             if (annbuflen == 0 || annlen > annbuflen) {
                                 if (annbuflen != 0)
-                                    HDfree(annbuf);
+                                    free(annbuf);
                                 if ((annbuf = (char *)malloc(annlen)) == NULL) {
                                     printf("Error allocating buffer for annotation, aborting!\n");
                                     exit(1);
@@ -204,7 +204,7 @@ main(int argc, char *argv[])
                         if ((annlen = DFANgetdesclen(argv[i], image_tag, prevref)) != FAIL) {
                             if (annbuflen == 0 || annlen > annbuflen) {
                                 if (annbuflen != 0)
-                                    HDfree(annbuf);
+                                    free(annbuf);
                                 if ((annbuf = (char *)malloc(annlen)) == NULL) {
                                     printf("Error allocating buffer for annotation, aborting!\n");
                                     exit(1);
@@ -223,14 +223,14 @@ main(int argc, char *argv[])
                 DFR8readref(argv[i], prevref);
                 DFR8getdims(argv[i], &xdim, &ydim, &ispal);
 
-                HDfree((VOIDP)space);
+                free(space);
             }
         }
     }
 
     Hclose(out_fid);    /* remember to close the file */
     if (annbuflen != 0) /* and free the buffer space */
-        HDfree(annbuf);
+        free(annbuf);
 
     return (0);
 }

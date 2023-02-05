@@ -263,10 +263,8 @@ hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface ide
 
                 insert_vg(fname, file_id, sd_id, gr_id, vg_name, tags, refs, ntagrefs, table, td1, td2);
 
-                if (tags)
-                    HDfree(tags);
-                if (refs)
-                    HDfree(refs);
+                free(tags);
+                free(refs);
             }
 
             if (Vdetach(vg_id) == FAIL) {
@@ -274,13 +272,12 @@ hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface ide
                 goto out;
             }
 
-            HDfree(vg_name);
+            free(vg_name);
 
         } /* for */
 
         /* free the space allocated */
-        if (ref_array)
-            HDfree(ref_array);
+        free(ref_array);
     } /* if */
 
     /* terminate access to the V interface */
@@ -293,8 +290,7 @@ hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface ide
 out:
 
     Vend(file_id);
-    if (ref_array)
-        HDfree(ref_array);
+    free(ref_array);
     return FAIL;
 }
 
@@ -394,14 +390,13 @@ insert_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface identif
                     /* recurse */
                     insert_vg(fname, file_id, sd_id, gr_id, path, tags, refs, ntagrefs, table, td1, td2);
 
-                    HDfree(tags);
-                    HDfree(refs);
+                    free(tags);
+                    free(refs);
                 }
                 if (Vdetach(vg_id) == FAIL) {
                     printf("Error: Could not detach group <%s>\n", vg_name);
                 }
-                if (path)
-                    HDfree(path);
+                free(path);
 
                 break;
 
@@ -619,8 +614,7 @@ hdiff_list_vs(int32 file_id, dtable_t *table)
         } /* for */
 
         /* free the space allocated */
-        if (ref_array)
-            HDfree(ref_array);
+        free(ref_array);
     } /* if */
 
     /* terminate access to the VS interface */
@@ -978,8 +972,7 @@ insert_sds(int32 file_id, int32 sd_id, int32 tag, /* tag of input SDS */
 
     SDendaccess(sds_id);
 
-    if (path)
-        HDfree(path);
+    free(path);
 
     return 0;
 }
@@ -1136,8 +1129,7 @@ insert_gr(int32 file_id, int32 gr_in, int32 tag, /* tag of input GR */
     /* terminate access to the GRs */
     GRendaccess(ri_id);
 
-    if (path)
-        HDfree(path);
+    free(path);
 
     return 0;
 }
@@ -1261,8 +1253,7 @@ insert_vs(int32 file_id, int32 ref, /* ref of input VS */
 out:
     VSdetach(vdata_id);
 
-    if (path)
-        HDfree(path);
+    free(path);
 
     return ret;
 }

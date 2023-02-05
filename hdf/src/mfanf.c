@@ -238,7 +238,7 @@ nafannlist(intf *an_id, intf *atype, intf *etag, intf *eref, intf alist[])
     for (i = 0; i < nanns; i++)
         alist[i] = tempanlist[i];
 
-    HDfree((VOIDP)tempanlist); /* free allocated space */
+    free(tempanlist);
 
     return ret;
 } /* nafannlist() */
@@ -280,7 +280,7 @@ nafwriteann(intf *ann_id, _fcd ann, intf *annlen)
 
     status = ANwriteann((int32)*ann_id, (char *)_fcdtocp(ann), (int32)*annlen);
 
-    HDfree(iann); /* free allocated space by HDf2cstring */
+    free(iann); /* free allocated space by HDf2cstring */
 
     return status;
 }
@@ -313,8 +313,7 @@ nafreadann(intf *ann_id, _fcd ann, intf *maxlen)
     /* C-String to Fortran String */
     HDpackFstring(iann, _fcdtocp(ann), (intn)*maxlen);
 
-    if (iann)
-        HDfree(iann); /* free allocated space */
+    free(iann);
 
     return status;
 }

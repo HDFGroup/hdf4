@@ -544,8 +544,8 @@ main(int argc, char *argv[])
         remove(hfilename);
     }
 
-    HDfree(out_buf);
-    HDfree(in_buf);
+    free(out_buf);
+    free(in_buf);
 
     MESSAGE(6, printf("Finished buffered element test\n");)
     return num_errs;

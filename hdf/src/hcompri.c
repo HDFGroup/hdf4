@@ -448,7 +448,7 @@ HRPcloseAID(accrec_t *access_rec)
        If no more references to that, free the record */
 
     if (--(info->attached) == 0) {
-        HDfree(info);
+        free(info);
         access_rec->special_info = NULL;
     }
 

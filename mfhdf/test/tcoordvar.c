@@ -170,7 +170,7 @@ test_dim1_SDS1(void)
             }
         }
     }
-    HDfree(var_list);
+    free(var_list);
 
     sds_id = SDselect(file_id, index);
     CHECK(sds_id, FAIL, "SDselect");
@@ -584,7 +584,7 @@ test_named_vars(void)
     VERIFY(allvars[0].var_type, IS_SDSVAR, "SDnametoindices");
     VERIFY(allvars[1].var_type, IS_SDSVAR, "SDnametoindices");
     VERIFY(allvars[2].var_type, IS_CRDVAR, "SDnametoindices");
-    HDfree(allvars);
+    free(allvars);
 
     /* Compare file contents with predefined text to verify */
     for (idx = 0; idx < n_datasets; idx++) {

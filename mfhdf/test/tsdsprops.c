@@ -119,7 +119,7 @@ test_SDSnames()
     CHECK(status, FAIL, "SDendaccess");
 
     /* Release allocated memory */
-    HDfree(ds_name);
+    free(ds_name);
 
     /* Get access to the second dataset */
     dset2 = SDselect(fid, 1);
@@ -145,7 +145,7 @@ test_SDSnames()
     CHECK(status, FAIL, "SDendaccess");
 
     /* Release allocated memory */
-    HDfree(ds_name);
+    free(ds_name);
 
     /* Close the file */
     status = SDend(fid);

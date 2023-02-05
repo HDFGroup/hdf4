@@ -112,6 +112,6 @@ match_table_init(match_table_t **tbl)
 void
 match_table_free(match_table_t *table)
 {
-    HDfree(table->objs);
-    HDfree(table);
+    free(table->objs);
+    free(table);
 }

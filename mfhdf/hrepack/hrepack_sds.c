@@ -381,8 +381,7 @@ copy_sds(int32 sd_in, int32 sd_out, int32 tag, /* tag of input SDS */
                 goto out;
         }
 
-        if (path)
-            HDfree(path);
+        free(path);
         return SUCCEED;
     }
 
@@ -603,10 +602,8 @@ copy_sds(int32 sd_in, int32 sd_out, int32 tag, /* tag of input SDS */
             }     /* elmtno */
 
             /* free */
-            if (sm_buf != NULL) {
-                HDfree(sm_buf);
-                sm_buf = NULL;
-            }
+            free(sm_buf);
+            sm_buf = NULL;
 
         } /* hyperslab read */
 
@@ -681,7 +678,7 @@ copy_sds(int32 sd_in, int32 sd_out, int32 tag, /* tag of input SDS */
                     goto out;
                 }
             }
-            HDfree(dim_buf);
+            free(dim_buf);
         }
     }
 
@@ -738,10 +735,8 @@ copy_sds(int32 sd_in, int32 sd_out, int32 tag, /* tag of input SDS */
             goto out;
     }
 
-    if (path)
-        HDfree(path);
-    if (buf)
-        HDfree(buf);
+    free(path);
+    free(buf);
 
     return SUCCEED;
 
@@ -752,10 +747,8 @@ out:
         if (SDendaccess(sds_out) == FAIL)
             printf("Failed to close SDS <%s>\n", path);
     }
-    if (path)
-        HDfree(path);
-    if (buf)
-        HDfree(buf);
+    free(path);
+    free(buf);
 
     return FAIL;
 }
@@ -812,16 +805,14 @@ copy_sds_attrs(int32 id_in, int32 id_out, int32 nattrs, options_t *options)
             goto out;
         }
 
-        if (attr_buf)
-            HDfree(attr_buf);
+        free(attr_buf);
     }
 
     return SUCCEED;
 
 out:
 
-    if (attr_buf)
-        HDfree(attr_buf);
+    free(attr_buf);
 
     return FAIL;
 }

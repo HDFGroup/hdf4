@@ -159,8 +159,7 @@ test_mgr_fillvalues()
             num_errs++;
         } /* end if */
 
-        if (read_fill_vals != NULL)
-            HDfree(read_fill_vals);
+        free(read_fill_vals);
 
         /* Close the empty image */
         ret = GRendaccess(riid);
@@ -330,7 +329,7 @@ test_mgr_userattr()
             } /* switch */
 
             /* Free the space allocated for the data buffer. */
-            HDfree(data_buf);
+            free(data_buf);
 
         } /* for */
     }     /* if */
@@ -424,7 +423,7 @@ test_mgr_userattr()
             } /* switch */
 
             /* Free the space allocated for the data buffer. */
-            HDfree(data_buf);
+            free(data_buf);
 
         } /* for */
     }     /* if */

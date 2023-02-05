@@ -240,7 +240,7 @@ dumpvd(int32 vd, file_format_t ff, int data_only, FILE *fp, char separator[2], i
                     ERROR_GOTO_3("in %s: VSread failed for vd(%d) with external file %s.  Please verify the "
                                  "file exists in the same directory.",
                                  "dumpvd", (int)vd, extfile_name);
-                    HDfree(extfile_name);
+                    free(extfile_name);
                 }
                 else
                     ERROR_GOTO_2("in %s: VSread failed for vd(%d)", "dumpvd", (int)vd);
@@ -328,7 +328,7 @@ dumpvd(int32 vd, file_format_t ff, int data_only, FILE *fp, char separator[2], i
 
         /* ============================================ */
 
-        HDfree((VOIDP)bb);
+        free(bb);
         bb = NULL;
 
         fprintf(fp, "\n\n");
@@ -366,7 +366,7 @@ dumpvd(int32 vd, file_format_t ff, int data_only, FILE *fp, char separator[2], i
                     ERROR_GOTO_3("in %s: VSread failed for vd(%d) with external file %s.  Please verify the "
                                  "file exists in the same directory",
                                  "dumpvd", (int)vd, extfile_name);
-                    HDfree(extfile_name);
+                    free(extfile_name);
                 }
                 else
                     ERROR_GOTO_2("in %s: VSread failed for vd(%d)", "dumpvd", (int)vd);
@@ -417,14 +417,13 @@ dumpvd(int32 vd, file_format_t ff, int data_only, FILE *fp, char separator[2], i
 
         /* ============================================ */
 
-        HDfree((VOIDP)bb);
+        free(bb);
         bb = NULL;
     } /* binary file */
 
 done:
     if (ret_value == FAIL) { /* Failure cleanup */
-        if (bb != NULL)
-            HDfree((VOIDP)bb);
+        free(bb);
     }
 
     return ret_value;
@@ -597,8 +596,7 @@ dumpattr(int32 vid, int32 findex, intn isvs, file_format_t ff, FILE *fp)
 
         /* free allocated space if any */
         if (alloc_flag) {
-            if (buf != NULL)
-                HDfree(buf);
+            free(buf);
             alloc_flag = 0;
             buf        = NULL;
         }
@@ -606,8 +604,7 @@ dumpattr(int32 vid, int32 findex, intn isvs, file_format_t ff, FILE *fp)
 
 done:
     if (ret_value == FAIL) { /* Failure cleanup */
-        if (buf != NULL)
-            HDfree(buf);
+        free(buf);
     }
 
     return ret_value;

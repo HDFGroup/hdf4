@@ -109,8 +109,7 @@ test_vglongnames(void)
     CHECK_VOID(status, FAIL, "VSgetname");
     VERIFY_CHAR_VOID(vgname, VG_LONGNAME, "Vgetname");
 
-    if (vgname != NULL)
-        HDfree(vgname);
+    free(vgname);
 
     /* get the vgroup's class */
     status = Vgetclassnamelen(vg1, &name_len);
@@ -123,8 +122,7 @@ test_vglongnames(void)
     CHECK_VOID(status, FAIL, "VSgetclass");
     VERIFY_CHAR_VOID(vgclass, VG_LONGCLASS, "Vgetclass");
 
-    if (vgclass != NULL)
-        HDfree(vgclass);
+    free(vgclass);
 
     status = Vdetach(vg1);
     CHECK_VOID(status, FAIL, "Vdetach");
@@ -151,8 +149,7 @@ test_vglongnames(void)
         printf(">>> Got bogus Vgroup name : %s\n", vgname);
     }
 
-    if (vgname != NULL)
-        HDfree(vgname);
+    free(vgname);
 
     /* get the vgroup's class */
     status = Vgetclassnamelen(vg1, &name_len);
@@ -169,8 +166,7 @@ test_vglongnames(void)
         printf(">>> Got bogus Vgroup class : %s\n", vgclass);
     }
 
-    if (vgclass != NULL)
-        HDfree(vgclass);
+    free(vgclass);
 
     status = Vdetach(vg1);
     CHECK_VOID(status, FAIL, "Vdetach");

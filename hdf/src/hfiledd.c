@@ -221,8 +221,7 @@ HTPstart(filerec_t *file_rec /* IN:  File record to store info in */
 
         /* Allocate memory for the temporary buffer also */
         if (tbuf == NULL || ((uintn)ndds * DD_SZ) > tbuf_size) {
-            if (tbuf != (uint8 *)NULL)
-                HDfree(tbuf);
+            free(tbuf);
             tbuf_size = (uintn)ndds * DD_SZ;
             tbuf      = (uint8 *)malloc(tbuf_size);
             if (tbuf == (uint8 *)NULL)
@@ -286,8 +285,7 @@ HTPstart(filerec_t *file_rec /* IN:  File record to store info in */
     file_rec->f_end_off = end_off;
 
 done:
-    if (tbuf != NULL)
-        HDfree(tbuf);
+    free(tbuf);
 
     return ret_value;
 } /* end HTPstart() */
@@ -393,7 +391,7 @@ HTPinit(filerec_t *file_rec, /* IN: File record to store info in */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    HDfree(tbuf);
+    free(tbuf);
 
     return ret_value;
 } /* end HTPinit() */
@@ -445,8 +443,7 @@ HTPsync(filerec_t *file_rec /* IN:  File record to store info in */
             ndds = block->ndds;
             /* Allocate memory for the temporary buffer also */
             if (tbuf == NULL || ((uintn)ndds * DD_SZ) > tbuf_size) {
-                if (tbuf != (uint8 *)NULL)
-                    HDfree(tbuf);
+                free(tbuf);
                 tbuf_size = (uintn)ndds * DD_SZ;
                 tbuf      = (uint8 *)malloc(tbuf_size);
                 if (tbuf == (uint8 *)NULL)
@@ -468,8 +465,7 @@ HTPsync(filerec_t *file_rec /* IN:  File record to store info in */
     }                             /* end while */
 
 done:
-    if (tbuf != (uint8 *)NULL)
-        HDfree(tbuf);
+    free(tbuf);
 
     return ret_value;
 } /* end HTPsync() */
@@ -502,9 +498,8 @@ HTPend(filerec_t *file_rec /* IN:  File record to store info in */
 
     for (bl = file_rec->ddhead; bl != NULL; bl = next) {
         next = bl->next;
-        if (bl->ddlist)
-            HDfree((VOIDP)bl->ddlist);
-        HDfree((VOIDP)bl);
+        free(bl->ddlist);
+        free(bl);
     }
 
     /* Chuck the tag info tree too */
@@ -1431,8 +1426,8 @@ HTInew_dd_block(filerec_t *file_rec)
         if (HP_write(file_rec, tbuf, ndds * DD_SZ) == FAIL)
             HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
-        HDfree(tbuf);
-    } /* end if */
+        free(tbuf);
+    }
 
     /* update previously last ddblock to point to this new dd block */
     file_rec->ddlast->nextoffset = nextoffset;
@@ -2035,5 +2030,5 @@ tagdestroynode(VOIDP n)
         bv_delete(t->b);
     if (t->d != NULL)
         DAdestroy_array(t->d, 0);
-    HDfree((VOIDP)n);
+    free(n);
 } /* tagdestroynode */

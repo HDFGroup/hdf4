@@ -19,7 +19,6 @@
 
 #include "testcdf.h"
 #include "add.h"
-#include "alloc.h"
 #include "emalloc.h"
 #ifdef HDF
 #include "hdf.h"

@@ -88,8 +88,7 @@ Java_hdf_hdflib_HDFLibrary_VSQueryfields(JNIEnv *env, jclass clss, jlong vdata_i
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (data)
-        HDfree(data);
+    free(data);
 
     return JNI_TRUE;
 }
@@ -153,8 +152,7 @@ Java_hdf_hdflib_HDFLibrary_VSQueryname(JNIEnv *env, jclass clss, jlong vdata_id,
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (data)
-        HDfree(data);
+    free(data);
 
     return JNI_TRUE;
 }

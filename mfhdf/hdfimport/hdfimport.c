@@ -955,13 +955,11 @@ gdimen(struct infilesformat infile_info, struct Input *in, FILE *strm)
     (void)printf("\t%d %d %d\n\n", in->dims[2], in->dims[1], in->dims[0]);
 #endif /* DEBUG */
 
-    if (sds_name != NULL)
-        HDfree(sds_name);
+    free(sds_name);
     return (0);
 
 err:
-    if (sds_name != NULL)
-        HDfree(sds_name);
+    free(sds_name);
     return (1);
 }
 
@@ -2044,7 +2042,7 @@ indexes(float32 *scale, int dim, int *idx, int res)
     /*
      * free dynamically allocated memory
      */
-    HDfree((char *)midpt);
+    free(midpt);
 
     return (0);
 
@@ -2244,14 +2242,14 @@ interp(struct Input *in, struct Raster *im)
     /*
      * free dynamically allocated memory
      */
-    HDfree((char *)hratio);
-    HDfree((char *)vratio);
+    free(hratio);
+    free(vratio);
     if (in->rank == 3)
-        HDfree((char *)dratio);
-    HDfree((char *)hinc);
-    HDfree((char *)voff);
+        free(dratio);
+    free(hinc);
+    free(voff);
     if (in->rank == 3)
-        HDfree((char *)doff);
+        free(doff);
 
     return (0);
 
@@ -2505,11 +2503,11 @@ pixrep(struct Input *in, struct Raster *im)
     /*
      * free dynamically allocated space
      */
-    HDfree((char *)hidx);
-    HDfree((char *)vidx);
+    free(hidx);
+    free(vidx);
     if (in->rank == 3)
-        HDfree((char *)didx);
-    HDfree((char *)pix);
+        free(didx);
+    free(pix);
 
     return (0);
 
@@ -3117,47 +3115,47 @@ fpdeallocate(struct Input *in, struct Raster *im, struct Options *opt)
 {
     switch (in->outtype) {
         case 0:
-            HDfree((char *)in->hscale);
-            HDfree((char *)in->vscale);
+            free(in->hscale);
+            free(in->vscale);
             if (in->rank == 3)
-                HDfree((char *)in->dscale);
+                free(in->dscale);
 
             if (opt->to_image == TRUE)
-                HDfree((char *)im->image);
+                free(im->image);
             break;
 
         case 1:
-            HDfree((char *)in->fp64s.hscale);
-            HDfree((char *)in->fp64s.vscale);
+            free(in->fp64s.hscale);
+            free(in->fp64s.vscale);
             if (in->rank == 3)
-                HDfree((char *)in->fp64s.dscale);
+                free(in->fp64s.dscale);
 
             if (opt->to_image == TRUE)
-                HDfree((char *)im->image);
+                free(im->image);
             break;
 
         case 2:
-            HDfree((char *)in->in32s.hscale);
-            HDfree((char *)in->in32s.vscale);
+            free(in->in32s.hscale);
+            free(in->in32s.vscale);
             if (in->rank == 3)
-                HDfree((char *)in->in32s.dscale);
+                free(in->in32s.dscale);
             break;
 
         case 3:
-            HDfree((char *)in->in16s.hscale);
-            HDfree((char *)in->in16s.vscale);
+            free(in->in16s.hscale);
+            free(in->in16s.vscale);
             if (in->rank == 3)
-                HDfree((char *)in->in16s.dscale);
+                free(in->in16s.dscale);
             break;
 
         case 4:
-            HDfree((char *)in->in8s.hscale);
-            HDfree((char *)in->in8s.vscale);
+            free(in->in8s.hscale);
+            free(in->in8s.vscale);
             if (in->rank == 3)
-                HDfree((char *)in->in8s.dscale);
+                free(in->in8s.dscale);
             break;
     }
-    HDfree((char *)in->data);
+    free(in->data);
 }
 
 /*

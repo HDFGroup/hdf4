@@ -190,7 +190,7 @@ getElement(int desc, char **pdata)
         return FAIL;
     }
     if (Hgetelement(fid, he_desc[desc].tag, he_desc[desc].ref, (unsigned char *)(*pdata)) < 0) {
-        HDfree(*pdata);
+        free(*pdata);
         fprintf(stderr, "Cannot read element.\n");
         return FAIL;
     }
@@ -361,8 +361,7 @@ updateDesc(void)
 int
 initFile(char *file)
 {
-    if (he_file)
-        HDfree(he_file);
+    free(he_file);
     he_file = copyStr(file);
 
     if (updateDesc() < 0)
@@ -392,12 +391,12 @@ closeFile(int keep)
     if (he_backup && !keep) {
         back = backupName(he_file);
         (void)removeFile(back);
-        HDfree(back);
+        free(back);
     }
-    HDfree(he_file);
+    free(he_file);
     he_file = NULL;
     for (i = 0; i < he_numGrp; i++)
-        HDfree(he_grp[i].ddList);
+        free(he_grp[i].ddList);
 
     return HE_OK;
 }
@@ -435,7 +434,7 @@ getR8(int xdim, int ydim, char *image, char *pal, int compress)
         HEprint(stderr, 0);
         return FAIL;
     }
-    HDfree(buf);
+    free(buf);
 
     if (updateDesc() < 0)
         return FAIL;
@@ -570,7 +569,7 @@ putWithTempl(char *template, int n1, int n2, int n3, char *data, int length, int
     if (verbose)
         printf("Writing to file: %s\n", file);
     ret = writeToFile(file, data, length);
-    HDfree(file);
+    free(file);
 
     return ret;
 }
@@ -626,7 +625,7 @@ writeElt(char *file, uint16 ref, int elt)
         ntDesc->tag = ntTag;
         ntDesc->ref = ntRef;
         nt          = findDesc(ntDesc);
-        HDfree(ntDesc);
+        free(ntDesc);
         writeElt(file, ref, nt);
 
         p -= 2;
@@ -639,7 +638,7 @@ writeElt(char *file, uint16 ref, int elt)
     }
 
     ret = putElement(file, he_desc[elt].tag, ref, data, eltLength);
-    HDfree(data);
+    free(data);
     return ret;
 }
 
@@ -1032,9 +1031,8 @@ deleteCmd(HE_CMD *cmd)
     if (cmd->sub != NULL)
         deleteCmd(cmd->sub);
     for (i = 0; i < cmd->argc; i++)
-        if (cmd->argv[i] != NULL)
-            HDfree(cmd->argv[i]);
-    HDfree(cmd);
+        free(cmd->argv[i]);
+    free(cmd);
 }
 
 /* -------------- routines to manipulate templates --------------------- */

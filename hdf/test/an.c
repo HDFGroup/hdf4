@@ -119,9 +119,9 @@ test_an(void)
         check_lab_desc(DFTAG_RIG, refnum, labris, descris);
     }
 
-    HDfree((VOIDP)data);
-    HDfree((VOIDP)image);
-    HDfree((VOIDP)newimage);
+    free(data);
+    free(image);
+    free(newimage);
 }
 
 /****************************************************************
@@ -210,7 +210,7 @@ check_lab_desc(uint16 tag, uint16 ref, char *label, char *desc)
             printf("\n\tSHOULD BE: %s<<<\n", desc);
             num_errs++;
         }
-        HDfree((VOIDP)indesc);
+        free(indesc);
     }
 }
 
@@ -295,7 +295,7 @@ test_an_2(void)
         check_lab_desc(DFTAG_RIG, refnum, labris, descris);
     }
 
-    HDfree((VOIDP)data);
-    HDfree((VOIDP)image);
-    HDfree((VOIDP)newimage);
+    free(data);
+    free(image);
+    free(newimage);
 }

@@ -193,8 +193,8 @@ test_nbit1(int32 fid)
             errors++;
         }
     }
-    HDfree(outbuf);
-    HDfree(inbuf);
+    free(outbuf);
+    free(inbuf);
     num_errs += errors;
 }
 
@@ -252,8 +252,8 @@ test_nbit2(int32 fid)
             errors++;
         }
     }
-    HDfree(outbuf);
-    HDfree(inbuf);
+    free(outbuf);
+    free(inbuf);
     num_errs += errors;
 }
 
@@ -326,9 +326,9 @@ test_nbit3(int32 fid)
         printf("data at %d, out (%d)%d in (%d)%d\n", i, outbuf[i], test_out, inbuf[i], test_in);
 #endif
     }
-    HDfree(outbuf);
-    HDfree(inbuf);
-    HDfree(convbuf);
+    free(outbuf);
+    free(inbuf);
+    free(convbuf);
     num_errs += errors;
 }
 
@@ -404,9 +404,9 @@ test_nbit4(int32 fid)
         printf("data at %d, out (%d)%d in (%d)%d\n", i, outbuf[i], test_out, inbuf[i], test_in);
 #endif
     }
-    HDfree(outbuf);
-    HDfree(inbuf);
-    HDfree(convbuf);
+    free(outbuf);
+    free(inbuf);
+    free(convbuf);
     num_errs += errors;
 }
 
@@ -483,9 +483,9 @@ test_nbit5(int32 fid)
         printf("data at %d, out (%d)%d in (%d)%d\n", i, outbuf[i], test_out, inbuf[i], test_in);
 #endif
     }
-    HDfree(outbuf);
-    HDfree(inbuf);
-    HDfree(convbuf);
+    free(outbuf);
+    free(inbuf);
+    free(convbuf);
     num_errs += errors;
 }
 
@@ -562,9 +562,9 @@ test_nbit6(int32 fid)
         printf("data at %d, out (%d)%d in (%d)%d\n", i, outbuf[i], test_out, inbuf[i], test_in);
 #endif
     }
-    HDfree(outbuf);
-    HDfree(inbuf);
-    HDfree(convbuf);
+    free(outbuf);
+    free(inbuf);
+    free(convbuf);
     num_errs += errors;
 }
 
@@ -624,8 +624,8 @@ test_nbit7(int32 fid)
             errors++;
         }
     }
-    HDfree(outbuf);
-    HDfree(inbuf);
+    free(outbuf);
+    free(inbuf);
     num_errs += errors;
 }
 
@@ -686,8 +686,8 @@ test_nbit8(int32 fid)
             errors++;
         }
     }
-    HDfree(outbuf);
-    HDfree(inbuf);
+    free(outbuf);
+    free(inbuf);
     num_errs += errors;
 }
 
@@ -764,9 +764,9 @@ test_nbit9(int32 fid)
         printf("data at %d, out (%d)%d in (%d)%d\n", i, outbuf[i], test_val, inbuf[i], test_in);
 #endif
     }
-    HDfree(outbuf);
-    HDfree(inbuf);
-    HDfree(convbuf);
+    free(outbuf);
+    free(inbuf);
+    free(convbuf);
     num_errs += errors;
 }
 
@@ -858,9 +858,9 @@ test_nbit10(int32 fid)
         printf("data at %d, out (%d)%d in (%d)%d\n", i, outbuf[i], test_out, inbuf[i], test_in);
 #endif
     }
-    HDfree(outbuf);
-    HDfree(inbuf);
-    HDfree(convbuf);
+    free(outbuf);
+    free(inbuf);
+    free(convbuf);
     num_errs += errors;
 }
 
@@ -937,9 +937,9 @@ test_nbit11(int32 fid)
         printf("data at %d, out (%u)%u in (%u)%u\n", i, outbuf[i], test_out, inbuf[i], test_in);
 #endif
     }
-    HDfree(outbuf);
-    HDfree(inbuf);
-    HDfree(convbuf);
+    free(outbuf);
+    free(inbuf);
+    free(convbuf);
     num_errs += errors;
 }
 
@@ -1017,9 +1017,9 @@ test_nbit12(int32 fid)
         printf("data at %d, out (%d)%d in (%d)%d\n", i, outbuf[i], test_out, inbuf[i], test_in);
 #endif
     }
-    HDfree(outbuf);
-    HDfree(inbuf);
-    HDfree(convbuf);
+    free(outbuf);
+    free(inbuf);
+    free(convbuf);
     num_errs += errors;
 }
 

@@ -227,8 +227,7 @@ Java_hdf_hdflib_HDFLibrary_ANreadann(JNIEnv *env, jclass clss, jlong ann_id, job
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (data)
-        HDfree(data);
+    free(data);
 
     return JNI_TRUE;
 }

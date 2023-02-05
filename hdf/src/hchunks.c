@@ -333,14 +333,10 @@ create_dim_recs(DIM_REC **dptr, /* OUT: dimension record pointers */
 
 done:
     if (ret_value == FAIL) { /* Error condition cleanup */
-        if (*dptr != NULL)
-            HDfree(*dptr);
-        if (*sbi != NULL)
-            HDfree(*sbi);
-        if (*spb != NULL)
-            HDfree(*spb);
-        if (*sui != NULL)
-            HDfree(*sui);
+        free(*dptr);
+        free(*sbi);
+        free(*spb);
+        free(*sui);
     }
 
     return ret_value;
@@ -720,8 +716,7 @@ AUTHOR
 void
 chkfreekey(void *key /*IN: chunk key */)
 {
-    if (key != NULL)
-        HDfree(key);
+    free(key);
 } /* chkfreekey() */
 
 /* -------------------------------------------------------------------------
@@ -743,11 +738,10 @@ chkdestroynode(void *n /* IN: chunk record */)
 
     if (t != NULL) {
         /* free origin first */
-        if (t->origin != NULL)
-            HDfree(t->origin);
+        free(t->origin);
 
         /* free chunk record structure */
-        HDfree((void *)t);
+        free(t);
     }
 } /* chkdestroynode */
 
@@ -851,26 +845,19 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
             tbbtdfree(info->chk_tree, chkdestroynode, chkfreekey);
 
             /* free up stuff in special info */
-            if (tmpinfo->ddims != NULL)
-                HDfree(tmpinfo->ddims);
-            if (tmpinfo->seek_chunk_indices != NULL)
-                HDfree(tmpinfo->seek_chunk_indices);
-            if (tmpinfo->seek_pos_chunk != NULL)
-                HDfree(tmpinfo->seek_pos_chunk);
-            if (tmpinfo->seek_user_indices != NULL)
-                HDfree(tmpinfo->seek_user_indices);
+            free(tmpinfo->ddims);
+            free(tmpinfo->seek_chunk_indices);
+            free(tmpinfo->seek_pos_chunk);
+            free(tmpinfo->seek_user_indices);
 
-            if (tmpinfo->fill_val != NULL)
-                HDfree(tmpinfo->fill_val);
+            free(tmpinfo->fill_val);
 
-            if (tmpinfo->comp_sp_tag_header != NULL)
-                HDfree(tmpinfo->comp_sp_tag_header);
-            if (tmpinfo->cinfo != NULL)
-                HDfree(tmpinfo->cinfo);
-            if (tmpinfo->minfo != NULL)
-                HDfree(tmpinfo->minfo);
+            free(tmpinfo->comp_sp_tag_header);
+            free(tmpinfo->cinfo);
+            free(tmpinfo->minfo);
+
             /* free info struct last */
-            HDfree(tmpinfo);
+            free(tmpinfo);
 
             access_rec->special_info = NULL;
         }
@@ -1243,24 +1230,16 @@ done:
                 tbbtdfree(info->chk_tree, chkdestroynode, chkfreekey);
 
             /* free up stuff in special info */
-            if (info->ddims != NULL)
-                HDfree(info->ddims);
-            if (info->seek_chunk_indices != NULL)
-                HDfree(info->seek_chunk_indices);
-            if (info->seek_pos_chunk != NULL)
-                HDfree(info->seek_pos_chunk);
-            if (info->seek_user_indices != NULL)
-                HDfree(info->seek_user_indices);
-            if (info->fill_val != NULL)
-                HDfree(info->fill_val);
-            if (info->comp_sp_tag_header != NULL)
-                HDfree(info->comp_sp_tag_header);
-            if (info->cinfo != NULL)
-                HDfree(info->cinfo);
-            if (info->minfo != NULL)
-                HDfree(info->minfo);
+            free(info->ddims);
+            free(info->seek_chunk_indices);
+            free(info->seek_pos_chunk);
+            free(info->seek_user_indices);
+            free(info->fill_val);
+            free(info->comp_sp_tag_header);
+            free(info->cinfo);
+            free(info->minfo);
 
-            HDfree(info);
+            free(info);
 
             access_rec->special_info = NULL;
         }
@@ -1270,11 +1249,10 @@ done:
 #if 0 /* dynamic allocation causes a problem on HPUX, removed for now -GV */
     /* free special element header */
     if (c_sp_header != NULL)
-        HDfree(c_sp_header);
+        free(c_sp_header);
 #endif
     /* free allocated space for vdata record */
-    if (v_data != NULL)
-        HDfree(v_data);
+    free(v_data);
 
     return ret_value;
 } /* HMCIstaccess */
@@ -1762,21 +1740,15 @@ done:
                 tbbtdfree(info->chk_tree, chkdestroynode, chkfreekey);
 
             /* free up stuff in special info */
-            if (info->ddims != NULL)
-                HDfree(info->ddims);
-            if (info->seek_chunk_indices != NULL)
-                HDfree(info->seek_chunk_indices);
-            if (info->seek_pos_chunk != NULL)
-                HDfree(info->seek_pos_chunk);
-            if (info->fill_val != NULL)
-                HDfree(info->fill_val);
-            if (info->comp_sp_tag_header != NULL)
-                HDfree(info->comp_sp_tag_header);
-            if (info->cinfo != NULL)
-                HDfree(info->cinfo);
-            if (info->minfo != NULL)
-                HDfree(info->minfo);
-            HDfree(info); /* free special info last */
+            free(info->ddims);
+            free(info->seek_chunk_indices);
+            free(info->seek_pos_chunk);
+            free(info->fill_val);
+            free(info->comp_sp_tag_header);
+            free(info->cinfo);
+            free(info->minfo);
+
+            free(info); /* free special info last */
         }
 
         /* free access record */
@@ -1785,8 +1757,7 @@ done:
     } /* end if */
 
     /* free special element header */
-    if (c_sp_header != NULL)
-        HDfree(c_sp_header);
+    free(c_sp_header);
 
     return ret_value;
 } /* HMCcreate() */
@@ -1944,10 +1915,8 @@ HMCgetcomptype(int32         dd_aid,    /* IN: access id of header info */
 
 done:
     /* Free special element headers */
-    if (c_sp_header != NULL)
-        HDfree(c_sp_header);
-    if (comp_sp_tag_header != NULL)
-        HDfree(comp_sp_tag_header);
+    free(c_sp_header);
+    free(comp_sp_tag_header);
 
     return ret_value;
 } /* HMCgetcomptype() */
@@ -2390,12 +2359,10 @@ HMCgetdatasize(int32 file_id, uint8 *p, /* IN: access id of header info */
 
 done:
     /* Free allocated space for vdata record */
-    if (v_data != NULL)
-        HDfree(v_data);
+    free(v_data);
 
     /* Free special chunk info struct */
-    if (chkinfo != NULL)
-        HDfree(chkinfo);
+    free(chkinfo);
 
     return ret_value;
 } /* HMCgetdatasize */
@@ -3158,8 +3125,7 @@ done:
             Hendaccess(chk_id);
     }
 
-    if (v_data != NULL)
-        HDfree(v_data);
+    free(v_data);
 
 #ifdef CHK_DEBUG_4
     printf("HMCPchunkwrite exited with ret_value %d \n", ret_value);
@@ -3377,12 +3343,10 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         /* check chunk ptrs */
         if (chkptr != NULL) {
-            if (chkptr->origin != NULL)
-                HDfree(chkptr->origin);
-            HDfree(chkptr);
+            free(chkptr->origin);
+            free(chkptr);
         }
-        if (chk_key != NULL)
-            HDfree(chk_key);
+        free(chk_key);
     }
 
 #ifdef CHK_DEBUG_4
@@ -3616,12 +3580,10 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         /* check chunk ptrs */
         if (chkptr != NULL) {
-            if (chkptr->origin != NULL)
-                HDfree(chkptr->origin);
-            HDfree(chkptr);
+            free(chkptr->origin);
+            free(chkptr);
         }
-        if (chk_key != NULL)
-            HDfree(chk_key);
+        free(chk_key);
     }
 
 #ifdef CHK_DEBUG_4
@@ -3698,24 +3660,16 @@ HMCPcloseAID(accrec_t *access_rec /* IN:  access record of file to close */)
         tbbtdfree(info->chk_tree, chkdestroynode, chkfreekey);
 
         /* free up stuff in special info */
-        if (info->ddims != NULL)
-            HDfree(info->ddims);
-        if (info->seek_chunk_indices != NULL)
-            HDfree(info->seek_chunk_indices);
-        if (info->seek_pos_chunk != NULL)
-            HDfree(info->seek_pos_chunk);
-        if (info->seek_user_indices != NULL)
-            HDfree(info->seek_user_indices);
-        if (info->fill_val != NULL)
-            HDfree(info->fill_val);
-        if (info->comp_sp_tag_header != NULL)
-            HDfree(info->comp_sp_tag_header);
-        if (info->cinfo != NULL)
-            HDfree(info->cinfo);
-        if (info->minfo != NULL)
-            HDfree(info->minfo);
-        /* finally free up info */
-        HDfree(info);
+        free(info->ddims);
+        free(info->seek_chunk_indices);
+        free(info->seek_pos_chunk);
+        free(info->seek_user_indices);
+        free(info->fill_val);
+        free(info->comp_sp_tag_header);
+        free(info->cinfo);
+        free(info->minfo);
+
+        free(info);
         access_rec->special_info = NULL;
     } /* attached to info */
     else {
@@ -3836,10 +3790,8 @@ HMCPinfo(accrec_t        *access_rec, /* IN: access record of access element */
     }
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
-        if (info_chunk->cdims != NULL)
-            HDfree(info_chunk->cdims);
-    }
+    if (ret_value == FAIL)
+        free(info_chunk->cdims);
 
     return ret_value;
 } /* HMCPinfo */

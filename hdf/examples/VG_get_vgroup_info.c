@@ -84,10 +84,8 @@ main()
             fprintf(stderr, "   Vgroup name %s and class %s\n", vgroup_name, vgroup_class);
             if (Vdetach(vgroup_id) == FAIL)
                 printf("*** ERROR from Vdetach\n");
-            if (vgroup_name != NULL)
-                HDfree(vgroup_name);
-            if (vgroup_class != NULL)
-                HDfree(vgroup_class);
+            free(vgroup_name);
+            free(vgroup_class);
         } /* for */
     }     /* if */
 

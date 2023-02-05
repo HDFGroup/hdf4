@@ -167,10 +167,8 @@ DFCIimcomp(int32 xdim, int32 ydim, const uint8 *in, uint8 out[], uint8 in_pal[],
     }
 
     fillin_color(blocks);
-    if (color_pt) {
-        HDfree((VOIDP)color_pt);
-        color_pt = NULL;
-    } /* end if */
+    free(color_pt);
+    color_pt = NULL;
 
 } /* end of DFCIimcomp */
 
@@ -273,8 +271,7 @@ init_global(int32 xdim, int32 ydim, VOIDP out, VOIDP out_pal)
     /* allocate memory */
     image   = (unsigned char *)out;
     new_pal = (unsigned char *)out_pal;
-    if (color_pt)
-        HDfree((VOIDP)color_pt);
+    free(color_pt);
     color_pt = (struct rgb *)malloc((unsigned)((xdim * ydim) / 8) * sizeof(struct rgb));
 
     if (image == NULL || color_pt == NULL || new_pal == NULL) {
@@ -606,10 +603,8 @@ init(int blocks, int distinct, struct rgb *my_color_pt)
     struct box *dummy;
 
     /* alloc memory */
-    if (hist)
-        HDfree((VOIDP)hist);
-    if (distinct_pt)
-        HDfree((VOIDP)distinct_pt);
+    free(hist);
+    free(distinct_pt);
     hist        = (int *)malloc((unsigned)distinct * sizeof(int));
     distinct_pt = (struct rgb *)malloc((unsigned)distinct * sizeof(struct rgb));
 
@@ -666,8 +661,8 @@ init(int blocks, int distinct, struct rgb *my_color_pt)
     first->right    = NULL;
     dummy->nmbr_pts = 0;
 
-    HDfree((VOIDP)first);
-    HDfree((VOIDP)dummy);
+    free(first);
+    free(dummy);
 } /* end of init */
 
 /************************************************************************/
@@ -970,7 +965,7 @@ find_med(struct box *ptr, int dim)
     else
         median = (float32)distinct_pt[rank[prev - 1]].c[dim] + (float32)EPSILON;
 
-    HDfree((VOIDP)rank);
+    free(rank);
     return median;
 } /* end of find_med */
 
@@ -1026,7 +1021,7 @@ classify(struct box *ptr, struct box *child)
         child->pts           = NULL;
     }
 
-    HDfree((VOIDP)temp);
+    free(temp);
 
 } /* end of classify */
 

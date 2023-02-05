@@ -270,7 +270,7 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label, char *desc)
 
         indesc[indesclen] = '\0';
         VERIFY_CHAR(indesc, desc, "check_lab_desc: DFANgetdesc");
-        HDfree((VOIDP)indesc);
+        free(indesc);
     }
     return (num_errs);
 }
@@ -433,7 +433,7 @@ add_sdsNDG_annotations()
         /* Verify data of labels and descriptions */
         num_errs = check_lab_desc(DFAN_NDG_FILE, DFTAG_NDG, refnum, labels[jj], descs[jj]);
     }
-    HDfree((VOIDP)data);
+    free(data);
 
     return (num_errs);
 } /* add_sdsNDG_annotations */
@@ -496,7 +496,7 @@ add_sdsSDG_annotations()
         if ((j % 3) != 0) /* read in annotations for 2 out of every 3 */
             check_lab_desc(DFAN_SDG_FILE, DFTAG_SDG, refnum, labsds, descsds);
     }
-    HDfree((VOIDP)data);
+    free(data);
 
     return 0;
 }
@@ -534,8 +534,8 @@ get_ann_datainfo(int32 id, ann_type annot_type, int32 *chk_offsets, int32 *chk_l
             VERIFY(lengtharray[ii], chk_lengths[ii], "get_ann_datainfo: SDgetanndatainfo");
         }
 
-        HDfree(offsetarray);
-        HDfree(lengtharray);
+        free(offsetarray);
+        free(lengtharray);
     }
     return (num_errs);
 }
@@ -910,7 +910,7 @@ readnoHDF_char(const char *filename, const int32 offset, const int32 length, con
                     "%s\n   >>> read = %s\n",
                     orig_buf, readcbuf);
     }
-    HDfree(readcbuf);
+    free(readcbuf);
 
     /* Close the file */
     if (fclose(fd) == -1) {

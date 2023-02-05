@@ -213,9 +213,9 @@ VSPhshutdown(void)
             v               = vdata_free_list;
             vdata_free_list = vdata_free_list->next;
             v->next         = NULL;
-            HDfree(v);
-        } /* end while */
-    }     /* end if */
+            free(v);
+        }
+    }
 
     /* Release the vsinstance free-list if it exists */
     if (vsinstance_free_list != NULL) {
@@ -223,16 +223,16 @@ VSPhshutdown(void)
             vs                   = vsinstance_free_list;
             vsinstance_free_list = vsinstance_free_list->next;
             vs->next             = NULL;
-            HDfree(vs);
-        } /* end while */
-    }     /* end if */
+            free(vs);
+        }
+    }
 
     /* free buffer */
     if (Vhbuf != NULL) {
-        HDfree(Vhbuf);
+        free(Vhbuf);
         Vhbuf     = NULL;
         Vhbufsize = 0;
-    } /* end if */
+    }
 
     /* free the parsing buffer */
     ret_value = VPparse_shutdown();
@@ -647,23 +647,21 @@ vsdestroynode(void *n /* IN: Node in TBBT-tree */)
         if (vs != NULL) {
             /* Free the dynamically allocated VData fields */
             for (i = 0; i < vs->wlist.n; i++)
-                HDfree(vs->wlist.name[i]);
+                free(vs->wlist.name[i]);
 
-            HDfree(vs->wlist.name);
-            HDfree(vs->wlist.bptr);
+            free(vs->wlist.name);
+            free(vs->wlist.bptr);
 
-            if (vs->rlist.item != NULL)
-                HDfree(vs->rlist.item);
+            free(vs->rlist.item);
 
-            if (vs->alist != NULL)
-                HDfree(vs->alist);
+            free(vs->alist);
 
             VSIrelease_vdata_node(vs);
-        } /* end if */
+        }
 
         /* release this instance to the free list ? */
         VSIrelease_vsinstance_node((vsinstance_t *)n);
-    } /* end if 'n' */
+    }
 
 } /* vsdestroynode */
 
@@ -704,11 +702,11 @@ VSPgetinfo(HFILEID f, /* IN: file handle */
         Vhbufsize = vh_length;
 
         if (Vhbuf != NULL)
-            HDfree(Vhbuf);
+            free(Vhbuf);
 
         if ((Vhbuf = (uint8 *)malloc(Vhbufsize)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
-    } /* end if */
+    }
 
     /* get Vdata header from file */
     if (Hgetelement(f, DFTAG_VH, ref, Vhbuf) == FAIL)
@@ -1021,12 +1019,11 @@ VSdetach(int32 vkey /* IN: vdata key? */)
 
             if (need > Vhbufsize) {
                 Vhbufsize = need;
-                if (Vhbuf)
-                    HDfree(Vhbuf);
+                free(Vhbuf);
 
                 if ((Vhbuf = malloc(Vhbufsize)) == NULL)
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
-            } /* end if */
+            }
 
             if (FAIL == vpackvs(vs, Vhbuf, &vspacksize))
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
@@ -1061,10 +1058,10 @@ VSdetach(int32 vkey /* IN: vdata key? */)
 
         /* remove all defined symbols */
         for (i = 0; i < vs->nusym; i++)
-            HDfree(vs->usym[i].name);
+            free(vs->usym[i].name);
 
         if (vs->usym != NULL)
-            HDfree(vs->usym); /* free the actual array */
+            free(vs->usym); /* free the actual array */
 
         vs->nusym = 0;
         vs->usym  = NULL;

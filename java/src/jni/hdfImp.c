@@ -228,8 +228,7 @@ Java_hdf_hdflib_HDFLibrary_Hgetfileversion(JNIEnv *env, jclass clss, jlong file_
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (data)
-        HDfree(data);
+    free(data);
     if (theArgs)
         UNPIN_INT_ARRAY(ENVONLY, vers, theArgs, (rval == FAIL) ? JNI_ABORT : 0);
 
@@ -282,8 +281,7 @@ Java_hdf_hdflib_HDFLibrary_Hgetlibversion(JNIEnv *env, jclass clss, jintArray ve
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (data)
-        HDfree(data);
+    free(data);
     if (theArgs)
         UNPIN_INT_ARRAY(ENVONLY, vers, theArgs, (rval == FAIL) ? JNI_ABORT : 0);
 
@@ -414,8 +412,7 @@ Java_hdf_hdflib_HDFLibrary_HDgetNTdesc(JNIEnv *env, jclass clss, jint nt)
     rstring = ENVPTR->NewStringUTF(ENVONLY, rval);
 
 done:
-    if (rval)
-        HDfree(rval);
+    free(rval);
 
     return rstring;
 }

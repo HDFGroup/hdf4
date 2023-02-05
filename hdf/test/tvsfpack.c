@@ -309,7 +309,7 @@ funpack(void)
     VSdetach(vdata_id);
     Vend(file_id);
     Hclose(file_id);
-    HDfree(databuf);
+    free(databuf);
     return SUCCEED;
 }
 /* main test driver */

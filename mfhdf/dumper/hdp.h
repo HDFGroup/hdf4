@@ -17,7 +17,7 @@
 #include "hdf.h"
 #include "hfile.h"
 
-/* Global Variables (ick) */
+/* Global Variables */
 #ifndef HDP_MASTER
 extern
 #endif /* !HDP_MASTER */
@@ -47,13 +47,11 @@ extern
     16 /* # of spaces in front of dataset data                                                               \
                on a continuous line */
 
-/* Free a char pointer if it's not NULL, then set it to NULL */
+/* Free a pointer, then set it to NULL */
 #define SAFE_FREE(ptr)                                                                                       \
     {                                                                                                        \
-        if (ptr != NULL) {                                                                                   \
-            HDfree((VOIDP)ptr);                                                                              \
-            ptr = NULL;                                                                                      \
-        }                                                                                                    \
+        free(ptr);                                                                                           \
+        ptr = NULL;                                                                                          \
     }
 
 /* ERROR_GOTO_n macros are used to facilitate error printing.  Each

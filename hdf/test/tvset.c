@@ -536,8 +536,8 @@ write_vset_stuff(void)
     status = Hclose(fid);
     CHECK(status, FAIL, "Hclose:vs1");
 
-    HDfree(gbuf1);
-    HDfree(gbuf2);
+    free(gbuf1);
+    free(gbuf2);
 
     return SUCCEED;
 
@@ -615,16 +615,14 @@ read_vset_stuff(void)
         printf(">>> Got bogus Vgroup name : %s\n", vgname);
     }
 
-    if (vgname != NULL)
-        HDfree(vgname);
+    free(vgname);
 
     if (HDstrcmp(vgclass, "Test object")) {
         num_errs++;
         printf(">>> Got bogus Vgroup class : %s\n", vgclass);
     }
 
-    if (vgclass != NULL)
-        HDfree(vgclass);
+    free(vgclass);
 
     num    = 3;
     status = Vgettagrefs(vg1, tags, refs, 100);
@@ -1845,8 +1843,7 @@ test_vglongnames(void)
         printf(">>> Got bogus Vgroup name : %s\n", vgname);
     }
 
-    if (vgname != NULL)
-        HDfree(vgname);
+    free(vgname);
 
     /* get the vgroup's class */
     status = Vgetclassnamelen(vg1, &name_len);
@@ -1863,8 +1860,7 @@ test_vglongnames(void)
         printf(">>> Got bogus Vgroup class : %s\n", vgclass);
     }
 
-    if (vgclass != NULL)
-        HDfree(vgclass);
+    free(vgclass);
 
     status = Vdetach(vg1);
     CHECK_VOID(status, FAIL, "Vdetach");
@@ -1891,8 +1887,7 @@ test_vglongnames(void)
         printf(">>> Got bogus Vgroup name : %s\n", vgname);
     }
 
-    if (vgname != NULL)
-        HDfree(vgname);
+    free(vgname);
 
     /* get the vgroup's class */
     status = Vgetclassnamelen(vg1, &name_len);
@@ -1909,8 +1904,7 @@ test_vglongnames(void)
         printf(">>> Got bogus Vgroup class : %s\n", vgclass);
     }
 
-    if (vgclass != NULL)
-        HDfree(vgclass);
+    free(vgclass);
 
     status = Vdetach(vg1);
     CHECK_VOID(status, FAIL, "Vdetach");
@@ -2212,8 +2206,7 @@ test_getvgroups(void)
     n_vgs = Vgetvgroups(fid, 9, 3, refarray);
     VERIFY_VOID(n_vgs, FAIL, "Vgetvgroups with start_vg = 9");
 
-    if (refarray != NULL)
-        HDfree(refarray);
+    free(refarray);
 
     /* Close remaining vgroups  */
     status = Vdetach(vgroup0_id);
@@ -2263,8 +2256,7 @@ check_vgs(int32 id, uintn start_vg, uintn n_vgs, char *ident_text, /* just for d
             fprintf(stderr, "%s: at index %d - read value=%d, should be %d\n", ident_text, ii, refarray[ii],
                     resultarray[ii]);
 
-    if (refarray != NULL)
-        HDfree(refarray);
+    free(refarray);
 
     return ret_value;
 }
@@ -2304,8 +2296,7 @@ check_vds(int32 id, uintn start_vd, uintn n_vds, char *ident_text, /* just for d
             fprintf(stderr, "%s: at index %d - read value=%d, should be %d\n", ident_text, ii, refarray[ii],
                     resultarray[ii]);
 
-    if (refarray != NULL)
-        HDfree(refarray);
+    free(refarray);
 
     return ret_value;
 }
@@ -2739,7 +2730,7 @@ test_extfile(void)
     status_n = VSdetach(vdata1_id);
     CHECK_VOID(status_n, FAIL, "VSdetach");
 
-    HDfree(databuf);
+    free(databuf);
 
     status_n = Vend(fid);
     CHECK_VOID(status_n, FAIL, "Vend");
@@ -2775,7 +2766,7 @@ test_extfile(void)
         name_len = VSgetexternalfile(vdata1_id, name_len + 1, extfile_name, &offset);
         VERIFY_VOID(name_len, (intn)HDstrlen(EXTERNAL_FILE), "VSgetexternalfile");
         VERIFY_CHAR_VOID(extfile_name, EXTERNAL_FILE, "VSgetexternalfile");
-        HDfree(extfile_name);
+        free(extfile_name);
     } /* old test */
 
     /* Get the length of the external file name first */
@@ -2789,7 +2780,7 @@ test_extfile(void)
     name_len = VSgetexternalinfo(vdata1_id, name_len + 1, extfile_name, &offset, &length);
     VERIFY_VOID(name_len, (intn)HDstrlen(EXTERNAL_FILE), "VSgetexternalinfo");
     VERIFY_CHAR_VOID(extfile_name, EXTERNAL_FILE, "VSgetexternalinfo");
-    HDfree(extfile_name);
+    free(extfile_name);
 
     /* Test passing in smaller buffer for external file name than actual;
        name should be truncated */
@@ -2808,8 +2799,8 @@ test_extfile(void)
         name_len = VSgetexternalinfo(vdata1_id, name_len - 2, extfile_name, &offset, &length);
         VERIFY_VOID(name_len, (intn)HDstrlen(extfile_name), "VSgetexternalinfo");
         VERIFY_CHAR_VOID(extfile_name, short_name, "VSgetexternalinfo");
-        HDfree(short_name);
-        HDfree(extfile_name);
+        free(short_name);
+        free(extfile_name);
     }
 
     /* Release resources */
@@ -3287,7 +3278,7 @@ test_VSofclass()
     VERIFY_VOID(refarray[0], 3, "VSofclass");
     VERIFY_VOID(refarray[1], 0, "VSofclass");
 
-    HDfree(refarray);
+    free(refarray);
 
     /* Terminate access to the V interface and close the file. */
     status_n = Vend(fid);

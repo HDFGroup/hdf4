@@ -58,9 +58,9 @@ make_file_list(intn curr_arg, intn argc, char *argv[])
     ret->file_arr = (char **)malloc(sizeof(char *) * ((argc - curr_arg) + 1));
     if (ret->file_arr == NULL) {
         fprintf(stderr, "make_file_list: space allocation failed\n");
-        HDfree(ret);
+        free(ret);
         return (NULL);
-    } /* end if */
+    }
 
     ret->max_files = (argc - curr_arg);
     ret->curr_file = 0;
@@ -89,30 +89,28 @@ free_node_vg_info_t(vg_info_t *aNode)
         if (aNode->children != NULL) {
             for (i = 0; i < aNode->n_entries; i++)
                 if (aNode->children[i] != NULL) {
-                    HDfree(aNode->children[i]);
+                    free(aNode->children[i]);
                     aNode->children[i] = NULL;
                 }
-            HDfree(aNode->children);
+            free(aNode->children);
             aNode->children = NULL;
         }
         if (aNode->type != NULL) {
             for (i = 0; i < aNode->n_entries; i++)
                 if (aNode->type[i] != NULL) {
-                    HDfree(aNode->type[i]);
+                    free(aNode->type[i]);
                     aNode->type[i] = NULL;
                 }
-            HDfree(aNode->type);
+            free(aNode->type);
             aNode->type = NULL;
         }
-        if (aNode->vg_name != NULL) {
-            HDfree(aNode->vg_name);
-            aNode->vg_name = NULL;
-        }
+        free(aNode->vg_name);
+        aNode->vg_name = NULL;
     }
     return (aNode);
 } /* end of free_node_vg_info_t */
 
-/* free_struct_list use HDfree to free the list of vgroup info structs */
+/* free_struct_list use free() to free the list of vgroup info structs */
 vg_info_t **
 free_vginfo_list(vg_info_t **nodelist, int32 num_items)
 {
@@ -123,32 +121,30 @@ free_vginfo_list(vg_info_t **nodelist, int32 num_items)
         for (i = 0; i < num_items; i++)
             if (nodelist[i] != NULL) {
                 nodelist[i] = free_node_vg_info_t(nodelist[i]);
-                HDfree(nodelist[i]);
+                free(nodelist[i]);
                 nodelist[i] = NULL;
             }
-        HDfree(nodelist);
+        free(nodelist);
     }
     return (NULL);
 } /* end of free_vginfo_list */
 
-/* free_struct_list use HDfree to free the list of vgroup info structs */
+/* free_struct_list use free() to free the list of vgroup info structs */
 obj_chosen_t **
 free_node_obj_chosen_t(obj_chosen_t *aNode)
 {
     if (aNode != NULL) {
         if (aNode->name != NULL) {
             fprintf(stderr, " name = %s \n", aNode->name);
-            HDfree(aNode->name);
+            free(aNode->name);
         }
-        if (aNode->classname != NULL) {
-            HDfree(aNode->classname);
-        }
-        HDfree(aNode);
+        free(aNode->classname);
+        free(aNode);
     }
     return (NULL);
 } /* end of free_node_obj_chosen_t */
 
-/* free_struct_list use HDfree to free the list of vgroup info structs */
+/* free_struct_list use free() to free the list of vgroup info structs */
 void
 free_obj_chosen_t_list(obj_chosen_t **nodelist, int32 num_items)
 {
@@ -157,19 +153,15 @@ free_obj_chosen_t_list(obj_chosen_t **nodelist, int32 num_items)
     /* if the list is not NULL, free each node then reset the list to NULL */
     if ((*nodelist) != NULL) {
         for (i = 0; i < num_items; i++) {
-            if ((*nodelist)[i].name != NULL) {
-                HDfree((*nodelist)[i].name);
-            }
-            if ((*nodelist)[i].classname != NULL) {
-                HDfree((*nodelist)[i].classname);
-            }
+            free((*nodelist)[i].name);
+            free((*nodelist)[i].classname);
         }
-        HDfree((*nodelist));
+        free((*nodelist));
         (*nodelist) = NULL;
     }
 } /* end of free_obj_chosen_t_list */
 
-/* free_str_list use HDfree to free the list of strings of characters */
+/* free_str_list use free() to free the list of strings of characters */
 char **
 free_str_list(char **str_list, int32 num_items)
 {
@@ -177,20 +169,18 @@ free_str_list(char **str_list, int32 num_items)
 
     if (str_list != NULL) {
         for (i = 0; i < num_items; i++)
-            if (str_list[i] != NULL)
-                HDfree(str_list[i]);
-        HDfree(str_list);
+            free(str_list[i]);
+        free(str_list);
     }
     return (NULL);
 } /* end of free_str_list */
 
-/* free_num_list use HDfree to free the list of integers; this routine
+/* free_num_list use free() to free the list of integers; this routine
    is short but can be used in many different places and very convenient */
 int32 *
 free_num_list(int32 *num_list)
 {
-    if (num_list != NULL)
-        HDfree(num_list);
+    free(num_list);
     return (NULL);
 } /* end of free_num_list */
 
@@ -200,9 +190,9 @@ free_file_list(filelist_t *f_list)
     intn i;
 
     for (i = 0; i < f_list->max_files; i++)
-        HDfree(f_list->file_arr[i]);
-    HDfree(f_list->file_arr);
-    HDfree(f_list);
+        free(f_list->file_arr[i]);
+    free(f_list->file_arr);
+    free(f_list);
 } /* end free_file_list() */
 
 /*
@@ -230,22 +220,22 @@ make_group_list(int32 fid, uint16 tag, uint16 ref)
         if (nobj > 0) {
             if ((ret->dd_arr = (DFdi *)malloc(sizeof(DFdi) * nobj)) == NULL) {
                 fprintf(stderr, "make_group_list: space allocation failed\n");
-                HDfree(ret);
+                free(ret);
                 return (NULL);
-            } /* end if */
+            }
             for (i = 0; i < nobj; i++) {
                 if (DFdiget(gid, &ret->dd_arr[i].tag, &ret->dd_arr[i].ref) == FAIL) {
-                    HDfree(ret->dd_arr);
-                    HDfree(ret);
+                    free(ret->dd_arr);
+                    free(ret);
                     return (NULL);
-                } /* end if */
-            }     /* end for */
-        }         /* end if */
-        else {    /* paranoia sets in... */
+                }
+            }
+        }
+        else {
             ret->max_dds = ret->curr_dd = 0;
             ret->dd_arr                 = NULL;
-        }  /* end else */
-    }      /* end if */
+        }
+    }
     else { /* check for Vgroup? */
         int32 vkey;
 
@@ -270,14 +260,14 @@ make_group_list(int32 fid, uint16 tag, uint16 ref)
                         fprintf(stderr, "make_group_list: space allocation failed\n");
 
                         Vdetach(vkey);
-                        HDfree(temp_tag);
+                        free(temp_tag);
                         return (NULL);
                     } /* end if */
 
                     if (Vgettagrefs(vkey, temp_tag, temp_ref, nobj) == FAIL) {
                         Vdetach(vkey);
-                        HDfree(temp_tag);
-                        HDfree(temp_ref);
+                        free(temp_tag);
+                        free(temp_ref);
                         return (NULL);
                     } /* end if */
 
@@ -285,8 +275,8 @@ make_group_list(int32 fid, uint16 tag, uint16 ref)
                         fprintf(stderr, "make_group_list: space allocation failed\n");
 
                         Vdetach(vkey);
-                        HDfree(temp_tag);
-                        HDfree(temp_ref);
+                        free(temp_tag);
+                        free(temp_ref);
                         return (NULL);
                     } /* end if */
                     ret->max_dds = nobj;
@@ -295,9 +285,9 @@ make_group_list(int32 fid, uint16 tag, uint16 ref)
                         fprintf(stderr, "make_group_list: space allocation failed\n");
 
                         Vdetach(vkey);
-                        HDfree(temp_tag);
-                        HDfree(temp_ref);
-                        HDfree(ret);
+                        free(temp_tag);
+                        free(temp_ref);
+                        free(ret);
                         return (NULL);
                     } /* end if */
 
@@ -306,10 +296,10 @@ make_group_list(int32 fid, uint16 tag, uint16 ref)
                         ret->dd_arr[i].ref = (uint16)temp_ref[i];
                     } /* end for */
 
-                    HDfree(temp_tag);
-                    HDfree(temp_ref);
+                    free(temp_tag);
+                    free(temp_ref);
                 } /* if nobj > 0 */
-                /* BMR: 7/28/00 must add this one, otherwise, HDfree fails later */
+                /* BMR: 7/28/00 must add this one, otherwise, free fails later */
                 else /* nobj <= 0 */
                     return (NULL);
             }    /* end if */
@@ -347,9 +337,8 @@ void
 free_group_list(groupinfo_t *g_list)
 {
     if (g_list != NULL) {
-        if (g_list->dd_arr != NULL)
-            HDfree(g_list->dd_arr);
-        HDfree(g_list);
+        free(g_list->dd_arr);
+        free(g_list);
     }
 } /* end free_group_list() */
 
@@ -387,9 +376,9 @@ make_obj_list(int32 fid, uint32 options)
     /* should it exit on failure ??? */
     if (obj_ret->raw_obj_arr == NULL) {
         fprintf(stderr, "make_obj_list: space allocation failed\n");
-        HDfree(obj_ret);
+        free(obj_ret);
         return (NULL);
-    } /* end if */
+    }
 
     /* Clear array of dd/object information */
     memset(obj_ret->raw_obj_arr, 0, sizeof(objinfo_t) * nobj);
@@ -401,8 +390,8 @@ make_obj_list(int32 fid, uint32 options)
     aid = Hstartread(fid, DFTAG_WILDCARD, DFREF_WILDCARD);
     if (aid == FAIL) {
         HEprint(stderr, 0);
-        HDfree(obj_ret->raw_obj_arr);
-        HDfree(obj_ret);
+        free(obj_ret->raw_obj_arr);
+        free(obj_ret);
         return (NULL);
     } /* end if */
 
@@ -432,10 +421,10 @@ make_obj_list(int32 fid, uint32 options)
 
     if (Hendaccess(aid) == FAIL) {
         HEprint(stderr, 0);
-        HDfree(obj_ret->raw_obj_arr);
-        HDfree(obj_ret);
+        free(obj_ret->raw_obj_arr);
+        free(obj_ret);
         return (NULL);
-    } /* end if */
+    }
 
     /* Post-process the list of dd/objects, adding more information */
     /*  Also set up the pointers for the sorted list to be manipulated later */
@@ -443,10 +432,10 @@ make_obj_list(int32 fid, uint32 options)
     obj_ret->srt_obj_arr = (objinfo_t **)malloc(sizeof(objinfo_t *) * nobj);
     if (obj_ret->srt_obj_arr == NULL) {
         fprintf(stderr, "make_obj_list: space allocation failed\n");
-        HDfree(obj_ret->raw_obj_arr);
-        HDfree(obj_ret);
+        free(obj_ret->raw_obj_arr);
+        free(obj_ret);
         return (NULL);
-    } /* end if */
+    }
 
     /* Loop for more information */
     for (n = 0; n < nobj; n++) {
@@ -465,8 +454,8 @@ make_obj_list(int32 fid, uint32 options)
                     /* do not free these because even this element has no group
                        list, it still can be displayed */
                     /*
-                                   HDfree(obj_ret->raw_obj_arr);
-                                   HDfree(obj_ret);
+                                   free(obj_ret->raw_obj_arr);
+                                   free(obj_ret);
                                    return (NULL);
                     */
                 } /* end if */
@@ -531,11 +520,11 @@ free_obj_list(objlist_t *o_list)
             if (obj_ptr->is_group)
                 free_group_list(obj_ptr->group_info);
             if (obj_ptr->is_special)
-                HDfree(obj_ptr->spec_info);
+                free(obj_ptr->spec_info);
         } /* end for */
-        HDfree(o_list->srt_obj_arr);
-        HDfree(o_list->raw_obj_arr);
-        HDfree(o_list);
+        free(o_list->srt_obj_arr);
+        free(o_list->raw_obj_arr);
+        free(o_list);
     }
     else
         fprintf(stderr, ">>>free_obj_list failed - attempting to free a NULL list \n");
@@ -599,10 +588,8 @@ sort(int32 *chosen, int32 choices)
 void
 resetBuff(VOIDP *ptr)
 {
-    if (*ptr != NULL) {
-        HDfree(*ptr);
-        *ptr = NULL;
-    }
+    free(*ptr);
+    *ptr = NULL;
 }
 
 /* parse_number_opts take a list of numbers separated by commas then
@@ -649,7 +636,7 @@ parse_number_opts(char *argv[], int *curr_arg, number_filter_t *filter)
         if (filter->num_list != NULL) {
             for (i = 0; i < filter->num_items; i++)
                 newlist[i] = filter->num_list[i];
-            HDfree(filter->num_list);
+            free(filter->num_list);
         }
 
         /* Set _cdfs to the new list */

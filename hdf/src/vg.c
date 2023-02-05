@@ -786,7 +786,7 @@ VSlone(HFILEID f,       /* IN: file id */
     }
 
     /* free up locally allocated space */
-    HDfree((VOIDP)lonevdata);
+    free(lonevdata);
 
     ret_value = nlone; /* return the TOTAL # of lone vdatas */
 
@@ -854,7 +854,7 @@ Vlone(HFILEID f,       /* IN: file id */
     }
 
     /* free up locally allocated space */
-    HDfree((VOIDP)lonevg);
+    free(lonevg);
 
     ret_value = nlone; /* return the TOTAL # of lone vgroups */
 

@@ -212,15 +212,15 @@ HDgettagsname(uint16 tag)
 
                 t = (char *)malloc(HDstrlen(ret) + HDstrlen(tag_descriptions[i].name) + 2);
                 if (t == NULL) {
-                    HDfree(ret);
+                    free(ret);
                     HRETURN_ERROR(DFE_NOSPACE, NULL)
-                } /* end if */
+                }
                 HDstrcpy(t, ret);
                 HDstrcat(t, tag_descriptions[i].name);
-                HDfree(ret);
+                free(ret);
                 ret = t;
-            } /* end else */
-        }     /* end if */
+            }
+        }
     return (ret);
 } /* HDgettagsname */
 
@@ -285,17 +285,17 @@ HDgetNTdesc(int32 nt)
 
                 t = (char *)malloc(HDstrlen(ret_desc) + HDstrlen(nt_descriptions[i].desc) + 2);
                 if (t == NULL) {
-                    HDfree(ret_desc);
+                    free(ret_desc);
                     HRETURN_ERROR(DFE_NOSPACE, NULL)
-                } /* end if */
+                }
                 HDstrcpy(t, ret_desc);
                 HDstrcat(t, " ");
                 HDstrcat(t, nt_descriptions[i].desc);
-                HDfree(ret_desc);
+                free(ret_desc);
                 ret_desc = t;
-            } /* end else */
+            }
             return (ret_desc);
-        } /* end if */
+        }
     return (NULL);
 } /* end HDgetNTdesc() */
 

@@ -323,8 +323,7 @@ newSpace(int32 size)
     static char *oldSpace = NULL; /* must be static */
 
     if (size >= oldSize) {
-        if (oldSpace != NULL)
-            HDfree(oldSpace);
+        free(oldSpace);
         if ((oldSpace = (char *)malloc((uint32)size)) == NULL) {
             puts("Out of memory. Abort.");
             exit(1);

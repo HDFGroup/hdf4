@@ -171,7 +171,7 @@ imconv(char *outfile, char *imfile, uint16 compress)
         exit(1);
     }
 
-    HDfree(space);
+    free(space);
     fclose(fp);
     return (0);
 }

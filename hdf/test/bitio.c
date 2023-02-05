@@ -220,7 +220,7 @@ test_bitio_read(void)
         HEprint(stdout, 0);
         num_errs++;
     } /* end if */
-    HDfree(test_ptr);
+    free(test_ptr);
 
     ret = Hclose(fid);
     RESULT("Hclose");

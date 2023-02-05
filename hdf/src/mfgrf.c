@@ -147,7 +147,7 @@ nmgicreat(intf *grid, _fcd name, intf *ncomp, intf *nt, intf *il, intf dimsizes[
     cdims[XDIM] = (int32)dimsizes[XDIM];
     cdims[YDIM] = (int32)dimsizes[YDIM];
     ret         = (intf)GRcreate((int32)*grid, fn, (int32)*ncomp, (int32)*nt, (int32)*il, cdims);
-    HDfree(fn);
+    free(fn);
 
     return (ret);
 } /* end mgicreat() */
@@ -194,7 +194,7 @@ nmgin2ndx(intf *grid, _fcd name, intf *nlen)
 
     /* Copy the array of dimensions into an array of the proper type */
     ret = (intf)GRnametoindex((int32)*grid, fn);
-    HDfree(fn);
+    free(fn);
 
     return (ret);
 } /* end mgin2ndx() */
@@ -564,7 +564,7 @@ nmgisxfil(intf *riid, _fcd filename, intf *offset, intf *nlen)
         return FAIL;
 
     ret = (intf)GRsetexternalfile((int32)*riid, fn, (int32)*offset);
-    HDfree(fn);
+    free(fn);
 
     return (ret);
 } /* end mgisxfil() */
@@ -632,7 +632,7 @@ nmgisattr(intf *riid, _fcd name, intf *nt, intf *count, VOIDP data, intf *nlen)
         return FAIL;
 
     ret = (intf)GRsetattr((int32)*riid, fn, (int32)*nt, (int32)*count, data);
-    HDfree(fn);
+    free(fn);
 
     return (ret);
 } /* end mgisattr() */
@@ -743,7 +743,7 @@ nmgifndat(intf *riid, _fcd name, intf *nlen)
         return FAIL;
 
     ret = (intf)GRfindattr((int32)*riid, fn);
-    HDfree(fn);
+    free(fn);
 
     return (ret);
 } /* end mgifndat() */
@@ -866,7 +866,7 @@ nmgcrchnk(intf *id, intf *start, VOIDP num_data)
 
     /* Free memory */
 
-    HDfree((VOIDP)cstart);
+    free(cstart);
     return (ret);
 }
 
@@ -1040,7 +1040,7 @@ nmgcwchnk(intf *id, intf *start, VOIDP num_data)
 
     /* Free memory */
 
-    HDfree((VOIDP)cstart);
+    free(cstart);
 
     return (ret);
 }

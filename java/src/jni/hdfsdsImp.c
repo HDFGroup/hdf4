@@ -184,8 +184,7 @@ Java_hdf_hdflib_HDFLibrary_SDgetinfo(JNIEnv *env, jclass clss, jlong sdsid, jobj
     CHECK_JNI_EXCEPTION(ENVONLY, JNI_FALSE);
 
 done:
-    if (cname)
-        HDfree(cname);
+    free(cname);
     if (theArgs)
         UNPIN_INT_ARRAY(ENVONLY, argv, theArgs, (rval == FAIL) ? JNI_ABORT : 0);
     if (dims)
@@ -571,8 +570,7 @@ Java_hdf_hdflib_HDFLibrary_SDdiminfo(JNIEnv *env, jclass clss, jlong dimid, jobj
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (data)
-        HDfree(data);
+    free(data);
     if (theArgs)
         UNPIN_INT_ARRAY(ENVONLY, argv, theArgs, (rval == FAIL) ? JNI_ABORT : 0);
 
@@ -651,8 +649,7 @@ Java_hdf_hdflib_HDFLibrary_SDattrinfo(JNIEnv *env, jclass clss, jlong sdsid, jin
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (data)
-        HDfree(data);
+    free(data);
     if (theArgs)
         UNPIN_INT_ARRAY(ENVONLY, argv, theArgs, (rval == FAIL) ? JNI_ABORT : 0);
 
@@ -835,14 +832,10 @@ Java_hdf_hdflib_HDFLibrary_SDgetdatastrs(JNIEnv *env, jclass clss, jlong sdsid, 
     }
 
 done:
-    if (labVal != NULL)
-        HDfree(labVal);
-    if (unitVal != NULL)
-        HDfree(unitVal);
-    if (fmtVal != NULL)
-        HDfree(fmtVal);
-    if (coordsysVal != NULL)
-        HDfree(coordsysVal);
+    free(labVal);
+    free(unitVal);
+    free(fmtVal);
+    free(coordsysVal);
 
     return JNI_TRUE;
 }
@@ -907,12 +900,9 @@ Java_hdf_hdflib_HDFLibrary_SDgetdimstrs(JNIEnv *env, jclass clss, jlong dimid, j
     }
 
 done:
-    if (labVal != NULL)
-        HDfree(labVal);
-    if (unitVal != NULL)
-        HDfree(unitVal);
-    if (fmtVal != NULL)
-        HDfree(fmtVal);
+    free(labVal);
+    free(unitVal);
+    free(fmtVal);
 
     return JNI_TRUE;
 }

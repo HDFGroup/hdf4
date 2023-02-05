@@ -318,7 +318,7 @@ test_getexternal()
         name_len = SDgetexternalfile(sds_id, name_len + 1, extfile_name, &offset);
         VERIFY(name_len, (intn)HDstrlen(EXTFILE), "SDgetexternalfile");
         VERIFY_CHAR(EXTFILE, extfile_name, "SDgetexternalfile");
-        HDfree(extfile_name);
+        free(extfile_name);
     }
 
     /* Call SDgetexternalinfo the first time passing in 0 for external
@@ -361,9 +361,9 @@ test_getexternal()
         name_len = SDgetexternalinfo(sds_id, name_len - 2, extfile_name, &offset, &length);
         VERIFY(name_len, (intn)HDstrlen(extfile_name), "SDgetexternalinfo");
         VERIFY_CHAR(short_name, extfile_name, "SDgetexternalinfo");
-        HDfree(short_name);
+        free(short_name);
     }
-    HDfree(extfile_name);
+    free(extfile_name);
 
     /* Close the data set */
     status = SDendaccess(sds_id);
@@ -399,7 +399,7 @@ test_getexternal()
     name_len = SDgetexternalinfo(sds_id, name_len + 1, extfile_name, &offset, &length);
     VERIFY(name_len, (intn)HDstrlen(EXTFILE), "SDgetexternalinfo");
     VERIFY_CHAR(EXTFILE, extfile_name, "SDgetexternalinfo");
-    HDfree(extfile_name);
+    free(extfile_name);
 
     /*
      * Test getting external info on a non-external data set; should return
@@ -516,7 +516,7 @@ test_mult_setexternal()
     /* Read data of the data set and verify against the original */
     verify_data(sd_id, 0);
 
-    HDfree(extfile_name);
+    free(extfile_name);
 
     /* Close the file */
     status = SDend(sd_id);
@@ -807,7 +807,7 @@ verify_data(int32 sd_id, int32 sds_ind)
     }
 
     /* Release resource */
-    HDfree(outdata);
+    free(outdata);
 
     /* Terminate access to the data set, SD interface, and file. */
     status = SDendaccess(sds_id);

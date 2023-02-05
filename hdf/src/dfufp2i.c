@@ -208,11 +208,10 @@ process(Input *in, Output *out)
     /*
      *  free allocated space
      */
-    if (!in->is_hscale)
-        HDfree((char *)in->hscale);
-    if (!in->is_vscale)
-        HDfree((char *)in->vscale);
-    HDfree((char *)out->image);
+    free(in->hscale);
+    free(in->vscale);
+    free(out->image);
+
     return 0;
 } /* end of process */
 
@@ -464,10 +463,11 @@ convert_interp(Input *in, Output *out)
                 *p++ = (uint8)theval;
         }
     }
-    HDfree((char *)dxs);
-    HDfree((char *)dys);
-    HDfree((char *)xinc);
-    HDfree((char *)yoffs);
+    free(dxs);
+    free(dys);
+    free(xinc);
+    free(yoffs);
+
     return 0;
 } /* end of convert_interp */
 
@@ -544,9 +544,11 @@ pixrep_scaled(Input *in, Output *out)
         }
         prevoffset = voffsets[i];
     }
-    HDfree((char *)hoffsets);
-    HDfree((char *)voffsets);
-    HDfree((char *)pixvals);
+
+    free(hoffsets);
+    free(voffsets);
+    free(pixvals);
+
     return 0;
 } /* end of pixrep_scaled */
 
@@ -597,7 +599,7 @@ compute_offsets(float32 *scale, int32 dim, int32 *offsets, int32 res)
             j++;
         }
     }
-    HDfree((char *)midpt);
+    free(midpt);
     return 0;
 } /* end of compute_offsets */
 

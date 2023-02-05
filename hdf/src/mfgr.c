@@ -253,7 +253,7 @@ GRIgrdestroynode(void *n)
     tbbtdfree(gr_ptr->grtree, GRIridestroynode, NULL);
     tbbtdfree(gr_ptr->gattree, GRIattrdestroynode, NULL);
 
-    HDfree(gr_ptr);
+    free(gr_ptr);
 } /* GRIgrdestroynode */
 
 /*--------------------------------------------------------------------------
@@ -282,12 +282,10 @@ GRIattrdestroynode(void *n)
 {
     at_info_t *at_ptr = (at_info_t *)n;
 
-    if (at_ptr->name != NULL)
-        HDfree(at_ptr->name);
-    if (at_ptr->data != NULL)
-        HDfree(at_ptr->data);
+    free(at_ptr->name);
+    free(at_ptr->data);
 
-    HDfree(at_ptr);
+    free(at_ptr);
 } /* GRIattrdestroynode */
 
 /*--------------------------------------------------------------------------
@@ -316,15 +314,12 @@ GRIridestroynode(void *n)
 {
     ri_info_t *ri_ptr = (ri_info_t *)n;
 
-    if (ri_ptr->name != NULL)
-        HDfree(ri_ptr->name);
-    if (ri_ptr->ext_name != NULL)
-        HDfree(ri_ptr->ext_name);
+    free(ri_ptr->name);
+    free(ri_ptr->ext_name);
     tbbtdfree(ri_ptr->lattree, GRIattrdestroynode, NULL);
-    if (ri_ptr->fill_value != NULL)
-        HDfree(ri_ptr->fill_value);
+    free(ri_ptr->fill_value);
 
-    HDfree(ri_ptr);
+    free(ri_ptr);
 } /* GRIridestroynode */
 
 /* -------------------------- Get_grfile ------------------------ */
@@ -680,9 +675,9 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                             /* Make certain the attribute only has one field */
                             if (VFnfields(at_key) != 1) {
                                 VSdetach(at_key);
-                                HDfree(new_attr);
+                                free(new_attr);
                                 break;
-                            } /* end if */
+                            }
                             new_attr->nt  = VFfieldtype(at_key, 0);
                             new_attr->len = VFfieldorder(at_key, 0);
                             if (new_attr->len == 1)
@@ -693,19 +688,19 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                                 sprintf(textbuf, "Attribute #%d", (int)new_attr->index);
                                 if ((new_attr->name = (char *)malloc(HDstrlen(textbuf) + 1)) == NULL) {
                                     VSdetach(at_key);
-                                    HDfree(new_attr);
+                                    free(new_attr);
                                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
-                                } /* end if */
+                                }
                                 HDstrcpy(new_attr->name, textbuf);
-                            } /* end if */
+                            }
                             else {
                                 if ((new_attr->name = (char *)malloc(HDstrlen(fname) + 1)) == NULL) {
                                     VSdetach(at_key);
-                                    HDfree(new_attr);
+                                    free(new_attr);
                                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
-                                } /* end if */
+                                }
                                 HDstrcpy(new_attr->name, fname);
-                            } /* end else */
+                            }
 
                             /* insert the attr instance in B-tree */
                             tbbtdins(gr_ptr->gattree, new_attr, NULL);
@@ -849,10 +844,10 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                     if ((img_key = Vattach(file_id, (int32)img_info[i].grp_ref, "r")) != FAIL) {
                         uint16 name_len;
                         if ((new_image = (ri_info_t *)malloc(sizeof(ri_info_t))) == NULL) {
-                            HDfree(img_info); /* free offsets */
+                            free(img_info); /* free offsets */
                             Hclose(file_id);
                             HGOTO_ERROR(DFE_NOSPACE, FAIL);
-                        } /* end if */
+                        }
 
                         /* Initialize all the fields in the image structure to zeros */
                         memset(new_image, 0, sizeof(ri_info_t));
@@ -998,9 +993,9 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                                         /* Make certain the attribute only has one field */
                                         if (VFnfields(at_key) != 1) {
                                             VSdetach(at_key);
-                                            HDfree(new_attr);
+                                            free(new_attr);
                                             break;
-                                        } /* end if */
+                                        }
                                         new_attr->nt  = VFfieldtype(at_key, 0);
                                         new_attr->len = VFfieldorder(at_key, 0);
                                         if (new_attr->len == 1)
@@ -1012,20 +1007,20 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                                             if ((new_attr->name = (char *)malloc(HDstrlen(textbuf) + 1)) ==
                                                 NULL) {
                                                 VSdetach(at_key);
-                                                HDfree(new_attr);
+                                                free(new_attr);
                                                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
-                                            } /* end if */
+                                            }
                                             HDstrcpy(new_attr->name, textbuf);
-                                        } /* end if */
+                                        }
                                         else {
                                             if ((new_attr->name = (char *)malloc(HDstrlen(fname) + 1)) ==
                                                 NULL) {
                                                 VSdetach(at_key);
-                                                HDfree(new_attr);
+                                                free(new_attr);
                                                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
-                                            } /* end if */
+                                            }
                                             HDstrcpy(new_attr->name, fname);
-                                        } /* end else */
+                                        }
 
                                         tbbtdins(new_image->lattree, new_attr,
                                                  NULL); /* insert the attr instance in B-tree */
@@ -1066,10 +1061,10 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                         HGOTO_ERROR(DFE_READERROR, FAIL);
 
                     if ((new_image = (ri_info_t *)malloc(sizeof(ri_info_t))) == NULL) {
-                        HDfree(img_info); /* free offsets */
+                        free(img_info); /* free offsets */
                         Hclose(file_id);
                         HGOTO_ERROR(DFE_NOSPACE, FAIL);
-                    } /* end if */
+                    }
 
                     /* Initialize all the fields in the image structure to zeros */
                     memset(new_image, 0, sizeof(ri_info_t));
@@ -1212,10 +1207,10 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                     uint8      GRtbuf[64];                /* local buffer for reading RIG info */
 
                     if ((new_image = (ri_info_t *)malloc(sizeof(ri_info_t))) == NULL) {
-                        HDfree(img_info); /* free offsets */
+                        free(img_info); /* free offsets */
                         Hclose(file_id);
                         HGOTO_ERROR(DFE_NOSPACE, FAIL);
-                    } /* end if */
+                    }
 
                     /* Initialize all the fields in the image structure to zeros */
                     memset(new_image, 0, sizeof(ri_info_t));
@@ -1282,7 +1277,7 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
         }     /* end if */
     }         /* end for */
 
-    HDfree(img_info); /* free image info structures */
+    free(img_info); /* free image info structures */
 
 done:
     return ret_value;
@@ -1440,18 +1435,12 @@ GRIil_convert(const void *inbuf, gr_interlace_t inil, void *outbuf, gr_interlace
 done:
     /* Free arrays allocated during this routine */
     /* (common for both error and normal returns) */
-    if (in_comp_ptr != NULL)
-        HDfree((void *)in_comp_ptr);
-    if (out_comp_ptr != NULL)
-        HDfree(out_comp_ptr);
-    if (in_pixel_add != NULL)
-        HDfree(in_pixel_add);
-    if (out_pixel_add != NULL)
-        HDfree(out_pixel_add);
-    if (in_line_add != NULL)
-        HDfree(in_line_add);
-    if (out_line_add != NULL)
-        HDfree(out_line_add);
+    free(in_comp_ptr);
+    free(out_comp_ptr);
+    free(in_pixel_add);
+    free(out_pixel_add);
+    free(in_line_add);
+    free(out_line_add);
 
     return ret_value;
 } /* end GRIil_convert() */
@@ -2154,7 +2143,7 @@ GRend(int32 grid)
 
     /* Delete the node and free the gr_info_t structure */
     tbbtrem((TBBT_NODE **)gr_tree, (TBBT_NODE *)t1, NULL);
-    HDfree(gr_ptr);
+    free(gr_ptr);
 
     /* Close down the Vset routines we started */
     if (Vend(hdf_file_id) == FAIL)
@@ -2678,7 +2667,7 @@ GRwriteimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], voi
             DFKconvert(pixel_buf, img_data, ri_ptr->img_dim.nt,
                        ri_ptr->img_dim.ncomps * count[XDIM] * count[YDIM], DFACC_WRITE, 0, 0);
 
-            HDfree(pixel_buf);
+            free(pixel_buf);
         }    /* end if */
         else /* convert the pixel data into the HDF disk format */
             DFKconvert(data, img_data, ri_ptr->img_dim.nt, ri_ptr->img_dim.ncomps * count[XDIM] * count[YDIM],
@@ -2773,7 +2762,7 @@ GRwriteimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], voi
             if (ri_ptr->fill_value == NULL)
                 ri_ptr->fill_value = fill_pixel;
             else
-                HDfree(fill_pixel);
+                free(fill_pixel);
         } /* end if */
 
         tmp_data = img_data;
@@ -2923,15 +2912,14 @@ GRwriteimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], voi
             }     /* end else */
         }         /* end else */
 
-        if (fill_line != NULL) /* free the fill-value pixels if we used 'em */
-            HDfree(fill_line);
+        free(fill_line);
 
     } /* end else */
     ri_ptr->data_modified = TRUE;
 
     /* if we've allocated a temporary buffer, free it */
     if (convert || switch_interlace == TRUE)
-        HDfree(img_data);
+        free(img_data);
 
     /* mark the image as being modified */
     ri_ptr->data_modified = TRUE;
@@ -3105,7 +3093,7 @@ GRreadimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], void
 
         /* Fill the user's buffer with the fill value */
         HDmemfill(data, fill_pixel, pixel_mem_size, (uint32)(count[XDIM] * count[YDIM]));
-        HDfree(fill_pixel);
+        free(fill_pixel);
     }                  /* end if */
     else {             /* an image exists in the file */
         if (convert) { /* convert image data to HDF disk format */
@@ -3182,7 +3170,7 @@ GRreadimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], void
         if (convert) { /* convert the pixel data into the HDF disk format */
             DFKconvert(img_data, data, ri_ptr->img_dim.nt, ri_ptr->img_dim.ncomps * count[XDIM] * count[YDIM],
                        DFACC_READ, 0, 0);
-            HDfree(img_data);
+            free(img_data);
         } /* end if */
     }     /* end else */
 
@@ -3202,7 +3190,7 @@ GRreadimage(int32 riid, int32 start[2], int32 in_stride[2], int32 count[2], void
 
         HDmemcpy(data, pixel_buf, pixel_mem_size * (size_t)count[XDIM] * (size_t)count[YDIM]);
 
-        HDfree(pixel_buf);
+        free(pixel_buf);
     } /* end if */
 
 done:
@@ -3811,7 +3799,7 @@ GRreadlut(int32 lutid, void *data)
 
         HDmemcpy(data, pixel_buf, pixel_mem_size * (size_t)ri_ptr->lut_dim.xdim);
 
-        HDfree(pixel_buf);
+        free(pixel_buf);
     } /* end if */
 
 done:
@@ -4512,8 +4500,7 @@ GRsetattr(int32 id, const char *name, int32 attr_nt, int32 count, const void *da
         else {
             /* check if we need a bigger buffer */
             if (new_at_size > at_size || at_ptr->data == NULL) {
-                if (at_ptr->data != NULL)
-                    HDfree(at_ptr->data);
+                free(at_ptr->data);
                 if ((at_ptr->data = malloc(new_at_size)) == NULL)
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
             } /* end if */
@@ -5366,12 +5353,10 @@ GRsetchunk(int32         riid,      /* IN: raster access id */
 
 done:
     /* free fill value */
-    if (fill_pixel != NULL)
-        HDfree(fill_pixel);
+    free(fill_pixel);
 
     /* free chunk dims */
-    if (chunk[0].pdims != NULL)
-        HDfree(chunk[0].pdims);
+    free(chunk[0].pdims);
 
     return ret_value;
 } /* GRsetchunk */
@@ -5457,7 +5442,7 @@ GRgetchunkinfo(int32          riid,      /* IN: sds access id */
                 }
                 /* dont forget to free up info is special info block
                    This space was allocated by the library */
-                HDfree(info_block.cdims);
+                free(info_block.cdims);
 
                 /* Check to see if compressed */
                 switch (info_block.comp_type) {
@@ -5647,7 +5632,7 @@ GRwritechunk(int32       riid,   /* IN: access aid to GR */
                                                ri_ptr->img_dim.ncomps * csize, DFACC_WRITE, 0, 0))
                             HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-                        HDfree(pixel_buf);
+                        free(pixel_buf);
                     }    /* end if */
                     else /* convert the pixel data into the HDF disk format */
                     {
@@ -5673,12 +5658,10 @@ GRwritechunk(int32       riid,   /* IN: access aid to GR */
 done:
     /* dont forget to free up info is special info block
        This space was allocated by the library */
-    if (info_block.cdims != NULL)
-        HDfree(info_block.cdims);
+    free(info_block.cdims);
 
     /* free conversion buffers if we created them */
-    if (img_data != NULL)
-        HDfree(img_data);
+    free(img_data);
 
     return ret_value;
 } /* GRwritechunk() */
@@ -5860,7 +5843,7 @@ GRreadchunk(int32  riid,   /* IN: access aid to GR */
 
                     HDmemcpy(datap, pixel_buf, pixel_mem_size * csize);
 
-                    HDfree(pixel_buf);
+                    free(pixel_buf);
                 } /* end if */
 
             } /* end if get special info block */
@@ -5872,12 +5855,10 @@ GRreadchunk(int32  riid,   /* IN: access aid to GR */
 done:
     /* dont forget to free up info is special info block
        This space was allocated by the library */
-    if (info_block.cdims != NULL)
-        HDfree(info_block.cdims);
+    free(info_block.cdims);
 
     /* free conversion buffers if any */
-    if (img_data != NULL)
-        HDfree(img_data);
+    free(img_data);
 
     return ret_value;
 } /* GRreadchunk() */

@@ -2788,7 +2788,7 @@ test_mgr_image_b2b1(int flag)
 
                 } /* end switch */
 
-                HDfree(img_data);
+                free(img_data);
             } /* end block */
 
             /* End access to the image */
@@ -3116,12 +3116,12 @@ test_mgr_interlace(int flag)
                                            DFKNTsize(nt | DFNT_NATIVE)))) {
                     MESSAGE(3, printf("Error reading data for image %d, j=%d\n", i, j););
                     num_errs++;
-                } /* end if */
-                HDfree(img_data);
-                HDfree(pixel_buf);
+                }
+                free(img_data);
+                free(pixel_buf);
             } /* end for */
 
-            HDfree(image);
+            free(image);
 
             /* End access to the image */
             ret = GRendaccess(riid);
@@ -3272,12 +3272,12 @@ test_mgr_lut_a(int flag)
                               (size_t)(pal_entries * pal_ncomp * DFKNTsize(pal_nt | DFNT_NATIVE)))) {
                 MESSAGE(3, printf("Error reading data for palette j=%d\n", j););
                 num_errs++;
-            } /* end if */
-            HDfree(tmp_data);
-            HDfree(pixel_buf);
+            }
+            free(tmp_data);
+            free(pixel_buf);
         } /* end for */
 
-        HDfree(pal_data);
+        free(pal_data);
 
         /* This lutid should yield a valid reference number, which is not 0 - BMR */
         pal_ref = GRluttoref(lutid);

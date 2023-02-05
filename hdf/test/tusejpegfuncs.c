@@ -223,7 +223,7 @@ decomp_using_jpeglib(const char *filename,    /* file to read compressed data fr
 
     /* Copying values from local buffer to caller's buffer after success */
     memcpy(read_buffer, local_buf, im_height * im_width * im_ncomps);
-    HDfree(local_buf);
+    free(local_buf);
 
     /* Finish decompression */
     (void)jpeg_finish_decompress(&cinfo);

@@ -167,11 +167,11 @@ test_conv(void)
             printf("Error converting %s int8 values with strides!\n", test_name[t]);
             HEprint(stdout, 0);
             num_errs++;
-        } /* end if */
+        }
 
-        HDfree((VOIDP)src_int8);
-        HDfree((VOIDP)dst_int8);
-        HDfree((VOIDP)dst2_int8);
+        free(src_int8);
+        free(dst_int8);
+        free(dst2_int8);
 
         MESSAGE(6, printf("seeding %s uint8 array\n", test_name[t]););
         src_uint8 = (uint8 *)malloc(TEST_SIZE * sizeof(uint8));
@@ -249,11 +249,11 @@ test_conv(void)
             printf("Error converting %s uint8 values with strides!\n", test_name[t]);
             HEprint(stdout, 0);
             num_errs++;
-        } /* end if */
+        }
 
-        HDfree((VOIDP)src_uint8);
-        HDfree((VOIDP)dst_uint8);
-        HDfree((VOIDP)dst2_uint8);
+        free(src_uint8);
+        free(dst_uint8);
+        free(dst2_uint8);
 
         MESSAGE(6, printf("seeding %s int16 array\n", test_name[t]););
         src_int16 = (int16 *)malloc(TEST_SIZE * sizeof(int16));
@@ -332,9 +332,9 @@ test_conv(void)
             num_errs++;
         } /* end if */
 
-        HDfree((VOIDP)src_int16);
-        HDfree((VOIDP)dst_int16);
-        HDfree((VOIDP)dst2_int16);
+        free(src_int16);
+        free(dst_int16);
+        free(dst2_int16);
 
         MESSAGE(6, printf("seeding %s uint16 array\n", test_name[t]););
         src_uint16 = (uint16 *)malloc(TEST_SIZE * sizeof(uint16));
@@ -411,11 +411,11 @@ test_conv(void)
             printf("Error converting %s uint16 values with strides!\n", test_name[t]);
             HEprint(stdout, 0);
             num_errs++;
-        } /* end if */
+        }
 
-        HDfree((VOIDP)src_uint16);
-        HDfree((VOIDP)dst_uint16);
-        HDfree((VOIDP)dst2_uint16);
+        free(src_uint16);
+        free(dst_uint16);
+        free(dst2_uint16);
 
         MESSAGE(6, printf("seeding %s int32 array\n", test_name[t]););
         src_int32 = (int32 *)malloc(TEST_SIZE * sizeof(int32));
@@ -492,11 +492,11 @@ test_conv(void)
             printf("Error converting %s int32 values with strides!\n", test_name[t]);
             HEprint(stdout, 0);
             num_errs++;
-        } /* end if */
+        }
 
-        HDfree((VOIDP)src_int32);
-        HDfree((VOIDP)dst_int32);
-        HDfree((VOIDP)dst2_int32);
+        free(src_int32);
+        free(dst_int32);
+        free(dst2_int32);
 
         MESSAGE(6, printf("seeding %s uint32 array\n", test_name[t]););
         src_uint32 = (uint32 *)malloc(TEST_SIZE * sizeof(uint32));
@@ -573,11 +573,11 @@ test_conv(void)
             printf("Error converting %s uint32 values with strides!\n", test_name[t]);
             HEprint(stdout, 0);
             num_errs++;
-        } /* end if */
+        }
 
-        HDfree((VOIDP)src_uint32);
-        HDfree((VOIDP)dst_uint32);
-        HDfree((VOIDP)dst2_uint32);
+        free(src_uint32);
+        free(dst_uint32);
+        free(dst2_uint32);
 
         MESSAGE(6, printf("seeding %s float32 array\n", test_name[t]););
         src_float32 = (float32 *)malloc(TEST_SIZE * sizeof(float32));
@@ -664,11 +664,11 @@ test_conv(void)
             printf("Error converting %s float32 values with strides!\n", test_name[t]);
             HEprint(stdout, 0);
             num_errs++;
-        } /* end if */
+        }
 
-        HDfree((VOIDP)src_float32);
-        HDfree((VOIDP)dst_float32);
-        HDfree((VOIDP)dst2_float32);
+        free(src_float32);
+        free(dst_float32);
+        free(dst2_float32);
 
         MESSAGE(6, printf("seeding %s float64 array\n", test_name[t]););
         src_float64 = (float64 *)malloc(TEST_SIZE * sizeof(float64));
@@ -754,11 +754,11 @@ test_conv(void)
             printf("Error converting %s float64 values with strides!\n", test_name[t]);
             HEprint(stdout, 0);
             num_errs++;
-        } /* end if */
+        }
 
-        HDfree((VOIDP)src_float64);
-        HDfree((VOIDP)dst_float64);
-        HDfree((VOIDP)dst2_float64);
+        free(src_float64);
+        free(dst_float64);
+        free(dst2_float64);
     } /* end for */
 
 } /* end test_conv() */

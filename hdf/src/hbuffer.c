@@ -515,12 +515,12 @@ HBPcloseAID(accrec_t *access_rec)
         } /* end if */
 
         /* Free the memory buffer */
-        HDfree(info->buf);
+        free(info->buf);
 
         /* Close the dependent access record */
         Hendaccess(info->buf_aid);
 
-        HDfree(info);
+        free(info);
         access_rec->special_info = NULL;
     }
 

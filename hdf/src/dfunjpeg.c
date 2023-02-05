@@ -204,7 +204,7 @@ hdf_term_source(struct jpeg_decompress_struct *cinfo_ptr)
     Hendaccess(src->aid);
 
     /* Free the input buffer */
-    HDfree(src->buffer);
+    free(src->buffer);
 } /* end hdf_term_source() */
 
 /*-----------------------------------------------------------------------------
@@ -281,9 +281,9 @@ intn
 jpeg_HDF_src_term(struct jpeg_decompress_struct *cinfo_ptr)
 {
     /* all we need to do for now is to free up the dest. mgr structure */
-    HDfree(cinfo_ptr->src);
+    free(cinfo_ptr->src);
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* end jpeg_HDF_src_term() */
 
 /**********************************************************************/
@@ -354,8 +354,8 @@ DFCIunjpeg(int32 file_id, uint16 tag, uint16 ref, VOIDP image, int32 xdim, int32
     jpeg_HDF_src_term(cinfo_ptr);
 
     /* Free update memory allocated */
-    HDfree(jerr_ptr);
-    HDfree(cinfo_ptr);
+    free(jerr_ptr);
+    free(cinfo_ptr);
 
-    return (SUCCEED); /* we must be ok... */
+    return SUCCEED; /* we must be ok... */
 } /* end DFCIunjpeg() */

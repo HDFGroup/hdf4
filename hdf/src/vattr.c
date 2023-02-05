@@ -1035,8 +1035,7 @@ Vnoldattrs(int32 vgid)
         else if (vg->noldattrs != n_old_attrs) {
             /* List is outdated, i.e., more old style attributes had been added
                since the list was established, release it */
-            if (vg->old_alist != NULL)
-                HDfree(vg->old_alist);
+            free(vg->old_alist);
 
             /* Allocate new list */
             vg->old_alist = (vg_attr_t *)malloc(sizeof(vg_attr_t) * (n_old_attrs));
@@ -1056,8 +1055,7 @@ Vnoldattrs(int32 vgid)
     } /* there are some old attributes */
 
 done:
-    if (areflist != NULL)
-        HDfree(areflist);
+    free(areflist);
     return ret_value;
 } /* Vnoldattrs */
 

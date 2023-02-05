@@ -801,10 +801,8 @@ closeVD(int32      *file_id,   /* will be returned as a FAIL */
         *file_id = FAIL; /* reset */
     }
 
-    if (*vd_chosen != NULL) {
-        HDfree(*vd_chosen);
-        *vd_chosen = NULL;
-    } /* end if */
+    free(*vd_chosen);
+    *vd_chosen = NULL;
 
 } /* end of closeVD */
 
@@ -911,10 +909,8 @@ dvd(dump_info_t *dumpvd_opts, intn curr_arg, intn argc, char *argv[], char *flds
                 ret_value = FAIL;
         } /* switch for output file   */
 
-        if (vd_chosen != NULL) {
-            HDfree(vd_chosen);
-            vd_chosen = NULL;
-        }
+        free(vd_chosen);
+        vd_chosen = NULL;
 
         if (dumpvd_opts->dump_to_file)
             fclose(fp);
@@ -936,10 +932,8 @@ done:
             Hclose(file_id);
         }
 
-        if (vd_chosen != NULL) {
-            HDfree(vd_chosen);
-            vd_chosen = NULL;
-        }
+        free(vd_chosen);
+        vd_chosen = NULL;
     }
 
     return ret_value;

@@ -668,13 +668,13 @@ Hendbitaccess(int32 bitfile_id, intn flushbit)
     if (bitfile_rec->mode == 'w')
         if (HIbitflush(bitfile_rec, flushbit, TRUE) == FAIL)
             HRETURN_ERROR(DFE_WRITEERROR, FAIL);
-    HDfree((VOIDP)bitfile_rec->bytea); /* free the space for the buffer */
+    free(bitfile_rec->bytea); /* free the space for the buffer */
 
     if (HAremove_atom(bitfile_id) == NULL)
         HRETURN_ERROR(DFE_WRITEERROR, FAIL);
     if (Hendaccess(bitfile_rec->acc_id) == FAIL)
         HRETURN_ERROR(DFE_CANTENDACCESS, FAIL);
-    HDfree(bitfile_rec);
+    free(bitfile_rec);
 
     return (SUCCEED);
 } /* end Hendbitaccess() */

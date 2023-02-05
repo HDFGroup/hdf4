@@ -92,12 +92,9 @@ void
 free_info(t_hdf_datainfo_t *info)
 {
     if (info != NULL) {
-        if (info->offsets != NULL)
-            HDfree(info->offsets);
-        if (info->lengths != NULL)
-            HDfree(info->lengths);
-        if (info->dimsizes != NULL)
-            HDfree(info->dimsizes);
+        free(info->offsets);
+        free(info->lengths);
+        free(info->dimsizes);
     }
 }
 
@@ -390,8 +387,8 @@ test_nonspecial_SDSs()
                             readibuf_swapped[ii]);
             }
         }
-        HDfree(readibuf_swapped);
-        HDfree(readibuf);
+        free(readibuf_swapped);
+        free(readibuf);
 
         /* Forward to the position of the data of SDS at index 2 */
         if (lseek(fd, (off_t)sds2_info.offsets[0], SEEK_SET) == -1) {
@@ -422,8 +419,8 @@ test_nonspecial_SDSs()
                 if (kk < sds2_info.n_values)
                     kk++;
             }
-        HDfree(readfbuf_swapped);
-        HDfree(readfbuf);
+        free(readfbuf_swapped);
+        free(readfbuf);
 
         /* Forward to the position of the data of SDS at index 3 */
         if (lseek(fd, (off_t)sds3_info.offsets[0], SEEK_SET) == -1) {
@@ -451,8 +448,8 @@ test_nonspecial_SDSs()
                             readibuf_swapped[ii]);
             }
         }
-        HDfree(readibuf_swapped);
-        HDfree(readibuf);
+        free(readibuf_swapped);
+        free(readibuf);
 
         if (close(fd) == -1) {
             fprintf(stderr, "test_nonspecial_SDSs: unable to close file %s", SIMPLE_FILE);
@@ -1101,8 +1098,8 @@ test_chunked_partial()
                 fprintf(stderr, "At value# %d: written = %d read = %d\n", ii, chunk_1dim[ii],
                         readibuf_swapped[ii]);
         }
-        HDfree(readibuf_swapped);
-        HDfree(readibuf);
+        free(readibuf_swapped);
+        free(readibuf);
     }
     free_info(&sds_info);
 
