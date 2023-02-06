@@ -65,7 +65,7 @@ extern int test_external();
 extern int test_att_ann_datainfo();
 
 int
-main(int argc, char *argv[])
+main(void)
 {
     int32   f1, f2, fnbit;            /* File handles */
     int32   nt;                       /* Number type */
@@ -97,9 +97,6 @@ main(int argc, char *argv[])
     float32 data[1000], max, min, imax, imin;
     float64 cal, cale, ioff, ioffe;
     int     num_errs = 0; /* number of errors so far */
-
-    (void)argc;
-    (void)argv;
 
     ncopts = NC_VERBOSE;
 
@@ -1339,12 +1336,14 @@ main(int argc, char *argv[])
     /* status = test_sd(); */
     /* num_errs = num_errs + status; */
 
-    if (num_errs == 0)
+    if (num_errs == 0) {
         printf("*** HDF-SD test passes ***\n");
-    else
+        return EXIT_SUCCESS;
+    }
+    else {
         printf("*** HDF-SD test fails ***\n");
-
-    return num_errs;
+        return EXIT_FAILURE;
+    }
 }
 
 #endif /* HDF */
