@@ -340,9 +340,9 @@ write_vset_stuff(void)
     p = gbuf;
     for (i = 0, count = 100; i < count; i++) {
         float32 tf = (float32)(i * 2);
-        HDmemcpy(p, &tf, sizeof(float32));
+        memcpy(p, &tf, sizeof(float32));
         p += sizeof(float32);
-        HDmemcpy(p, &i, sizeof(int32));
+        memcpy(p, &i, sizeof(int32));
         p += sizeof(int32);
     }
 
@@ -387,22 +387,22 @@ write_vset_stuff(void)
     j = 0;
     f = (float32)15.5;
     for (i = 0, count = 10; i < count; i++) {
-        HDmemcpy(p, &c, sizeof(char8));
+        memcpy(p, &c, sizeof(char8));
         p += sizeof(char8);
         c++;
-        HDmemcpy(p, &c, sizeof(char8));
+        memcpy(p, &c, sizeof(char8));
         p += sizeof(char8);
         c++;
-        HDmemcpy(p, &j, sizeof(int32));
+        memcpy(p, &j, sizeof(int32));
         p += sizeof(int32);
         j++;
-        HDmemcpy(p, &j, sizeof(int32));
+        memcpy(p, &j, sizeof(int32));
         p += sizeof(int32);
         j++;
-        HDmemcpy(p, &j, sizeof(int32));
+        memcpy(p, &j, sizeof(int32));
         p += sizeof(int32);
         j++;
-        HDmemcpy(p, &f, sizeof(float32));
+        memcpy(p, &f, sizeof(float32));
         p += sizeof(float32);
         f += (float32)0.5;
     }
@@ -943,9 +943,9 @@ read_vset_stuff(void)
         float32 fl = (float32)0.0;
         int32   in = (int32)0;
 
-        HDmemcpy(&fl, p, sizeof(float32));
+        memcpy(&fl, p, sizeof(float32));
         p += sizeof(float32);
-        HDmemcpy(&in, p, sizeof(int32));
+        memcpy(&in, p, sizeof(int32));
         p += sizeof(int32);
 
         if (in != i) {
@@ -1030,7 +1030,7 @@ read_vset_stuff(void)
         char8   c  = (char8)0;
 
         /* read and verify characters */
-        HDmemcpy(&c, p, sizeof(char8));
+        memcpy(&c, p, sizeof(char8));
         p += sizeof(char8);
 
         if (c != c_expected) {
@@ -1039,7 +1039,7 @@ read_vset_stuff(void)
         }
         c_expected++;
 
-        HDmemcpy(&c, p, sizeof(char8));
+        memcpy(&c, p, sizeof(char8));
         p += sizeof(char8);
 
         if (c != c_expected) {
@@ -1049,7 +1049,7 @@ read_vset_stuff(void)
         c_expected++;
 
         /* read and verify integers */
-        HDmemcpy(&in, p, sizeof(int32));
+        memcpy(&in, p, sizeof(int32));
         p += sizeof(int32);
 
         if (in != in_expected) {
@@ -1058,7 +1058,7 @@ read_vset_stuff(void)
                    (int)in);
         }
         in_expected++;
-        HDmemcpy(&in, p, sizeof(int32));
+        memcpy(&in, p, sizeof(int32));
         p += sizeof(int32);
 
         if (in != in_expected) {
@@ -1067,7 +1067,7 @@ read_vset_stuff(void)
                    (int)in);
         }
         in_expected++;
-        HDmemcpy(&in, p, sizeof(int32));
+        memcpy(&in, p, sizeof(int32));
         p += sizeof(int32);
 
         if (in != in_expected) {
@@ -1078,7 +1078,7 @@ read_vset_stuff(void)
         in_expected++;
 
         /* read and verify floating point value */
-        HDmemcpy(&fl, p, sizeof(float32));
+        memcpy(&fl, p, sizeof(float32));
         p += sizeof(float32);
 
         if (fl != fl_expected) {
@@ -1112,7 +1112,7 @@ read_vset_stuff(void)
         char8 c = '\0';
 
         /* read and verify characters */
-        HDmemcpy(&c, p, sizeof(char8));
+        memcpy(&c, p, sizeof(char8));
         p += sizeof(char8);
 
         if (c != c_expected) {
@@ -1121,7 +1121,7 @@ read_vset_stuff(void)
         }
         c_expected++;
 
-        HDmemcpy(&c, p, sizeof(char8));
+        memcpy(&c, p, sizeof(char8));
         p += sizeof(char8);
 
         if (c != c_expected) {
@@ -1155,7 +1155,7 @@ read_vset_stuff(void)
         char8 c = '\0';
 
         /* read and verify characters */
-        HDmemcpy(&c, p, sizeof(char8));
+        memcpy(&c, p, sizeof(char8));
         p += sizeof(char8);
 
         if (c != c_expected) {
@@ -1164,7 +1164,7 @@ read_vset_stuff(void)
         }
         c_expected++;
 
-        HDmemcpy(&c, p, sizeof(char8));
+        memcpy(&c, p, sizeof(char8));
         p += sizeof(char8);
 
         if (c != c_expected) {

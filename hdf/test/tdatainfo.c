@@ -986,7 +986,7 @@ test_oneblock_ri()
                     buffer[kk][jj] = 'n' + jj;
 
             /* Work around to pass check_image into readnoHDF_char w/o warning*/
-            HDmemcpy(check_image, buffer, WIDTH * LENGTH);
+            memcpy(check_image, buffer, WIDTH * LENGTH);
 
             /* Open the file with fopen, read data at the offset obtained and verify
                the values */

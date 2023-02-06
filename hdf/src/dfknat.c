@@ -84,7 +84,7 @@ DFKnb1b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stri
 
     if (fast_processing) {
         if (!in_place) {
-            HDmemcpy(dest, source, num_elm);
+            memcpy(dest, source, num_elm);
             return 0;
         }
         else
@@ -133,7 +133,7 @@ DFKnb2b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stri
 
     if (fast_processing) {
         if (!in_place) {
-            HDmemcpy(dest, source, num_elm * 2);
+            memcpy(dest, source, num_elm * 2);
             return 0;
         }
         else { /* Nothing to do */
@@ -193,7 +193,7 @@ DFKnb4b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stri
 
     if (fast_processing) {
         if (!in_place) {
-            HDmemcpy(dest, source, num_elm * 4);
+            memcpy(dest, source, num_elm * 4);
             return 0;
         }
         else { /* Nothing to do */
@@ -259,7 +259,7 @@ DFKnb8b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stri
 
     if (fast_processing) {
         if (!in_place) {
-            HDmemcpy(dest, source, num_elm * 8);
+            memcpy(dest, source, num_elm * 8);
             return 0;
         }
         else {
@@ -270,14 +270,14 @@ DFKnb8b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stri
     /* Generic stride processing */
     if (!in_place)
         for (i = 0; i < num_elm; i++) {
-            HDmemcpy(dest, source, 8);
+            memcpy(dest, source, 8);
             dest += dest_stride;
             source += source_stride;
         }
     else
         for (i = 0; i < num_elm; i++) {
-            HDmemcpy(buf, source, 8);
-            HDmemcpy(dest, buf, 8);
+            memcpy(buf, source, 8);
+            memcpy(dest, buf, 8);
             dest += dest_stride;
             source += source_stride;
         }

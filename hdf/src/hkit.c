@@ -86,7 +86,7 @@ HDf2cstring(_fcd fdesc, intn len)
     if (!cstr)
         HRETURN_ERROR(DFE_NOSPACE, NULL);
     cstr[i + 1] = '\0';
-    HDmemcpy(cstr, str, i + 1);
+    memcpy(cstr, str, i + 1);
     return cstr;
 } /* HDf2cstring */
 /* ---------------------------- HDpackFstring ----------------------------- */

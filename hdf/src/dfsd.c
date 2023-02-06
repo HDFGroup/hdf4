@@ -547,7 +547,7 @@ DFSDgetdimscale(intn dim, int32 maxsize, VOIDP scale)
 
     p1 = (uint8 *)scale;
     p2 = (uint8 *)(Readsdg.dimscales[rdim]);
-    HDmemcpy(p1, p2, dimsize);
+    memcpy(p1, p2, dimsize);
 
 done:
     return ret_value;
@@ -606,10 +606,10 @@ DFSDgetrange(VOIDP pmax, VOIDP pmin)
     {
         p1 = (uint8 *)pmax;
         p2 = (uint8 *)&(Readsdg.max_min[0]);
-        HDmemcpy(p1, p2, localNTsize);
+        memcpy(p1, p2, localNTsize);
         p1 = (uint8 *)pmin;
         p2 = &(Readsdg.max_min[localNTsize]);
-        HDmemcpy(p1, p2, localNTsize);
+        memcpy(p1, p2, localNTsize);
         ret_value = SUCCEED;
         goto done;
     }
@@ -1082,7 +1082,7 @@ DFSDsetdimscale(intn dim, int32 dimsize, VOIDP scale)
     /* copy scale */
     p1 = (uint8 *)scale;
     p2 = (uint8 *)Writesdg.dimscales[rdim];
-    HDmemcpy(p2, p1, bytesize);
+    memcpy(p2, p1, bytesize);
 
     /* Indicate scales modified */
     Ref.scales = 0;
@@ -1145,8 +1145,8 @@ DFSDsetrange(VOIDP maxi, VOIDP mini)
     p1          = (uint8 *)maxi;
     p2          = (uint8 *)mini;
 
-    HDmemcpy((uint8 *)&(Writesdg.max_min[0]), p1, localNTsize);
-    HDmemcpy((uint8 *)&(Writesdg.max_min[localNTsize]), p2, localNTsize);
+    memcpy((uint8 *)&(Writesdg.max_min[0]), p1, localNTsize);
+    memcpy((uint8 *)&(Writesdg.max_min[localNTsize]), p2, localNTsize);
 
     Ref.maxmin = 0;
 
@@ -4374,7 +4374,7 @@ DFSDsetfillvalue(VOIDP fill_value)
 
         /* Set fill value in Writesdg struct, and set fill value flag  */
         Ref.fill_value = 0;
-        if (HDmemcpy(Writesdg.fill_value, fill_value, localNTsize) != NULL)
+        if (memcpy(Writesdg.fill_value, fill_value, localNTsize) != NULL)
             ret_value = SUCCEED;
         else
             ret_value = FAIL;
@@ -4424,7 +4424,7 @@ DFSDgetfillvalue(VOIDP fill_value)
     localNTsize = (uint32)DFKNTsize((numtype | DFNT_NATIVE) & (~DFNT_LITEND));
 
     /* Set return fill value  */
-    if (HDmemcpy(fill_value, Readsdg.fill_value, localNTsize) != NULL)
+    if (memcpy(fill_value, Readsdg.fill_value, localNTsize) != NULL)
         ret_value = SUCCEED;
     else
         ret_value = FAIL;
@@ -4583,13 +4583,13 @@ DFSDstartslab(const char *filename)
 
             /* Initialize buffer to fill value */
             for (i = 0; i < fill_bufsize; i = i + localNTsize)
-                HDmemcpy(&(fill_buf[i]), buf2, localNTsize);
+                memcpy(&(fill_buf[i]), buf2, localNTsize);
         }
         else /* no conversion */
         {
             /* Initialize buffer to fill value */
             for (i = 0; i < fill_bufsize; i = i + localNTsize)
-                HDmemcpy(&(fill_buf[i]), Writesdg.fill_value, localNTsize);
+                memcpy(&(fill_buf[i]), Writesdg.fill_value, localNTsize);
         }
 
         /* Write fill values */

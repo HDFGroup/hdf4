@@ -29,7 +29,7 @@ compute_hash(unsigned count, const char *str)
         return ret;
 
     while (count > sizeof(uint32)) {
-        HDmemcpy(&temp, str, sizeof(uint32));
+        memcpy(&temp, str, sizeof(uint32));
         ret += temp;
         str += sizeof(uint32);
         count -= sizeof(uint32);
@@ -37,7 +37,7 @@ compute_hash(unsigned count, const char *str)
 
     if (count > 0) {
         temp = 0;
-        HDmemcpy(&temp, str, count);
+        memcpy(&temp, str, count);
         ret += temp;
     } /* end if */
     return (ret);

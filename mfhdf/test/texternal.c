@@ -755,13 +755,13 @@ verify_data(int32 sd_id, int32 sds_ind)
         num_elems = Z_LENGTH * Y_LENGTH * X_LENGTH + 1 * Y_LENGTH * X_LENGTH;
 
         /* Copy buffer of first written data to data_wappended */
-        HDmemcpy(data_wappended, written_data, (Z_LENGTH * Y_LENGTH * X_LENGTH) * sizeof(int));
+        memcpy(data_wappended, written_data, (Z_LENGTH * Y_LENGTH * X_LENGTH) * sizeof(int));
 
         /* Forward to the end of first written data */
         ptr = &data_wappended[Z_LENGTH][0][0];
 
         /* Copy appended data to data_wappended */
-        HDmemcpy(ptr, ap_data, (1 * Y_LENGTH * X_LENGTH) * sizeof(int));
+        memcpy(ptr, ap_data, (1 * Y_LENGTH * X_LENGTH) * sizeof(int));
 
         /* Back to the beginning of data_wappended */
         ptr = &data_wappended[0][0][0];

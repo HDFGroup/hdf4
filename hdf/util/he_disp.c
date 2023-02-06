@@ -294,7 +294,7 @@ bigImg(unsigned char *targ, unsigned char *src)
                 *q++ = *p;
 
         for (i = 1; i < factor; i++) {
-            HDmemcpy(q, oldq, xsize); /* make one copy of the line */
+            memcpy(q, oldq, xsize); /* make one copy of the line */
             q += xsize;
         }
     }

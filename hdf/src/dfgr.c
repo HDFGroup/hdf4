@@ -1255,7 +1255,7 @@ DFGRIaddimlut(const char *filename, const void *imlut, int32 xdim, int32 ydim, i
         lutsize = Grwrite.datadesc[LUT].xdim * Grwrite.datadesc[LUT].ydim * Grwrite.datadesc[LUT].ncomponents;
         if ((Grlutdata = (uint8 *)malloc((uint32)lutsize)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
-        HDmemcpy(Grlutdata, imlut, (uint32)lutsize);
+        memcpy(Grlutdata, imlut, (uint32)lutsize);
         Ref.lut = 0;
         HGOTO_DONE(SUCCEED);
     }

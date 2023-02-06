@@ -120,7 +120,7 @@ HRPconvert(int32 fid, uint16 tag, uint16 ref, int32 xdim, int32 ydim, int16 sche
     info->ydim       = ydim;
     info->image_size = xdim * ydim * pixel_size;
     info->scheme     = scheme;
-    HDmemcpy(&(info->cinfo), cinfo, sizeof(comp_info));
+    memcpy(&(info->cinfo), cinfo, sizeof(comp_info));
 
     /* get empty access record */
     access_rec = HIget_access_rec();

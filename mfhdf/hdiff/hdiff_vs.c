@@ -361,27 +361,27 @@ fmt_print(uint8 *x, int32 type)
 
         case DFNT_UINT16:
         case DFNT_INT16:
-            HDmemcpy(&s, x, sizeof(int16));
+            memcpy(&s, x, sizeof(int16));
             printf("%d", s);
             break;
 
         case DFNT_UINT32:
-            HDmemcpy(&l, x, sizeof(int32));
+            memcpy(&l, x, sizeof(int32));
             printf("%u", l);
             break;
 
         case DFNT_INT32:
-            HDmemcpy(&l, x, sizeof(int32));
+            memcpy(&l, x, sizeof(int32));
             printf("%d", l);
             break;
 
         case DFNT_FLOAT32:
-            HDmemcpy(&f, x, sizeof(float32));
+            memcpy(&f, x, sizeof(float32));
             printf("%f", f);
             break;
 
         case DFNT_FLOAT64:
-            HDmemcpy(&d, x, sizeof(float64));
+            memcpy(&d, x, sizeof(float64));
             printf("%f", d);
             break;
 
