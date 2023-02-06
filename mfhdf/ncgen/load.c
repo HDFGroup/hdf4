@@ -132,7 +132,7 @@ gen_load_c(void *rec_start)
     float  *floatvalp  = NULL;
     double *doublevalp = NULL;
     char    stmnt[C_MAX_STMNT];
-    int     stmnt_len;
+    size_t  stmnt_len;
     char    s2[H4_MAX_NC_NAME + 2];
 
     /* initialize coords to upper left corner (rec_num,0,0,...) */
@@ -328,9 +328,10 @@ gen_load_c(void *rec_start)
 /* t     - string to be appended to source */
 /* slenp - pointer to length of source string */
 static void
-fstrcat(char *s, char *t, long *slenp)
+fstrcat(char *s, char *t, size_t *slenp)
 {
     *slenp += strlen(t);
+
     if (*slenp >= FORT_MAX_STMNT) {
         derror("FORTRAN statement too long: %s", s);
         fline(s);
@@ -353,7 +354,7 @@ gen_load_fortran(void *rec_start) /* make Fortran to put record */
     float  *floatvalp;
     double *doublevalp;
     char    stmnt[FORT_MAX_STMNT];
-    long    stmnt_len;
+    size_t  stmnt_len;
     char    s2[H4_MAX_NC_NAME + 2];
 
     /* initialize coords to upper left corner (1,1,...,rec_num) */
