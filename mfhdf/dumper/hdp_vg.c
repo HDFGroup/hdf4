@@ -285,9 +285,7 @@ Vstr_ref(int32 file_id, char *searched_str,          /* vg's class name */
     ret_value = FAIL;
 
 done:
-    if (ret_value == FAIL) { /* Failure cleanup */
-        SAFE_FREE(name);     /* free name and set it to NULL */
-    }
+    SAFE_FREE(name); /* free name and set it to NULL */
 
     return ret_value;
 } /* Vstr_ref() */
@@ -867,6 +865,10 @@ vgBuildGraph(int32 vg_id, int32 file_id, int32 num_entries, const char *file_nam
                 /* add the name and type of this element to the current graph */
                 aNode->children[entry_num] = alloc_strg_of_chars(vgname);
                 aNode->type[entry_num]     = alloc_strg_of_chars("vg");
+                free(vgname);
+                vgname = NULL;
+                free(vgclass);
+                vgclass = NULL;
 
             }                                 /* if current element is vgroup */
             else if (elem_tag == VSDESCTAG) { /* vdata */
@@ -1017,6 +1019,10 @@ vgdumpfull(int32 vg_id, dump_info_t *dumpvg_opts, int32 file_id, int32 num_entri
                 fprintf(fp, "reference = %d;\n", (int)elem_ref);
                 fprintf(fp, "\tnumber of entries = %d;\n", (int)elem_n_entries);
                 fprintf(fp, "\tname = %s; class = %s\n", vgname, vgclass);
+                free(vgname);
+                vgname = NULL;
+                free(vgclass);
+                vgclass = NULL;
 
                 /* dump attributes for vgroup */
                 status = dumpattr(vgt, 0, 0, dumpvg_opts->file_format, fp);
@@ -1118,8 +1124,10 @@ vgdumpfull(int32 vg_id, dump_info_t *dumpvg_opts, int32 file_id, int32 num_entri
                 /* add the name and type of this element to the current graph */
                 aNode->children[entry_num] = alloc_strg_of_chars("***");
 
-                if (!strcmp(name, "Unknown Tag"))
+                if (!strcmp(name, "Unknown Tag")) {
+                    free(name);
                     aNode->type[entry_num] = alloc_strg_of_chars("Unknown Object");
+                }
                 else
                     aNode->type[entry_num] = name;
 
@@ -1345,6 +1353,8 @@ dvg(dump_info_t *dumpvg_opts, intn curr_arg, intn argc, char *argv[])
                     ERROR_NOTIFY_3("in dvg: %s failed on vgroup with ref=%d in file %s", "dumpattr",
                                    (int)vg_ref, file_name);
             } /* not skipped */
+            free(vgclass);
+            vgclass = NULL;
 
             if (skipvg || dumpvg_opts->contents == DHEADER) {
                 status = vgBuildGraph(vg_id, file_id, n_entries, file_name, list[curr_vg], &skipfile);
@@ -1377,6 +1387,8 @@ dvg(dump_info_t *dumpvg_opts, intn curr_arg, intn argc, char *argv[])
             HDstrcpy(list[curr_vg]->vg_name, vgname);
             list[curr_vg]->displayed     = FALSE;
             list[curr_vg]->treedisplayed = FALSE; /* BMR - 01/16/99 */
+            free(vgname);
+            vgname = NULL;
 
             vg_ref = Vgetid(file_id, vg_ref);
             if (vg_ref != FAIL)
@@ -1404,7 +1416,7 @@ dvg(dump_info_t *dumpvg_opts, intn curr_arg, intn argc, char *argv[])
         }     /* if the file is not to be skipped */
 
         /* free allocated resources */
-        list = free_vginfo_list(list, curr_vg);
+        list = free_vginfo_list(list, curr_vg + 1);
 
         /* free vg_chosen, and terminate access to and close the input file */
         closeVG(&file_id, &vg_chosen, file_name);
@@ -1417,8 +1429,8 @@ dvg(dump_info_t *dumpvg_opts, intn curr_arg, intn argc, char *argv[])
 done:
     if (ret_value == FAIL) { /* Failure cleanup */
         resetVG(&vg_id, file_name);
-        closeVG(&file_id, &vg_chosen, file_name);
         list = free_vginfo_list(list, curr_vg);
+        closeVG(&file_id, &vg_chosen, file_name);
         SAFE_FREE(vgname);  /* free vg name and set it to NULL */
         SAFE_FREE(vgclass); /* free vg class name and set it to NULL */
     }
