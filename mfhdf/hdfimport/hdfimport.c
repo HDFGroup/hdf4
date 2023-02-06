@@ -2818,7 +2818,7 @@ process(struct Options *opt)
             goto err;
 
         /*
-         * initialise the scale variables according to the output type
+         * Initialize the scale variables according to the output type
          * of data set
          */
         if (init_scales(&in))
@@ -3114,7 +3114,8 @@ void
 fpdeallocate(struct Input *in, struct Raster *im, struct Options *opt)
 {
     switch (in->outtype) {
-        case 0:
+        case 0: /* 32-bit float */
+        case 5: /* NO_NE */
             free(in->hscale);
             free(in->vscale);
             if (in->rank == 3)
@@ -3124,7 +3125,7 @@ fpdeallocate(struct Input *in, struct Raster *im, struct Options *opt)
                 free(im->image);
             break;
 
-        case 1:
+        case 1: /* 64-bit float */
             free(in->fp64s.hscale);
             free(in->fp64s.vscale);
             if (in->rank == 3)
@@ -3134,21 +3135,21 @@ fpdeallocate(struct Input *in, struct Raster *im, struct Options *opt)
                 free(im->image);
             break;
 
-        case 2:
+        case 2: /* 32-bit integer */
             free(in->in32s.hscale);
             free(in->in32s.vscale);
             if (in->rank == 3)
                 free(in->in32s.dscale);
             break;
 
-        case 3:
+        case 3: /* 16-bit integer */
             free(in->in16s.hscale);
             free(in->in16s.vscale);
             if (in->rank == 3)
                 free(in->in16s.dscale);
             break;
 
-        case 4:
+        case 4: /* 8-bit integer */
             free(in->in8s.hscale);
             free(in->in8s.vscale);
             if (in->rank == 3)
