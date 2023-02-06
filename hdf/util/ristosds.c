@@ -28,7 +28,7 @@
 
 int  main(int, char *a[]);
 int  cntimage(char *filename, int32 *p_w, int32 *p_h, int *n_images);
-VOID finishing(void);
+void finishing(void);
 
 int
 main(int argc, char *argv[])
@@ -132,7 +132,7 @@ main(int argc, char *argv[])
     dimsizes[2] = w;
     if (DFSDsetNT(DFNT_UINT8) == FAIL)
         finishing();
-    ret = DFSDadddata(outfile, 3, dimsizes, (VOIDP)outdata0);
+    ret = DFSDadddata(outfile, 3, dimsizes, (void *)outdata0);
     free(outdata0);
     free(indata0);
     if (ret != 0)
@@ -140,7 +140,7 @@ main(int argc, char *argv[])
     return (0);
 }
 
-VOID
+void
 finishing(void)
 {
     printf("end of ristosds.\n");

@@ -57,7 +57,7 @@ main()
     /*
      * Read the data from the raster image array.
      */
-    if (GRreadimage(ri_id, start, NULL, edges, (VOIDP)entire_image) == FAIL)
+    if (GRreadimage(ri_id, start, NULL, edges, (void *)entire_image) == FAIL)
         printf("*** ERROR from GRreadimage\n");
 
     /*
@@ -82,7 +82,7 @@ main()
     /*
      * Read a subset of the raster image array.
      */
-    if (GRreadimage(ri_id, start, NULL, edges, (VOIDP)partial_image) == FAIL)
+    if (GRreadimage(ri_id, start, NULL, edges, (void *)partial_image) == FAIL)
         printf("*** ERROR from GRreadimage\n");
 
     /*
@@ -108,7 +108,7 @@ main()
     /*
      * Read all the odd rows and even columns of the image.
      */
-    if (GRreadimage(ri_id, start, stride, edges, (VOIDP)skipped_image) == FAIL)
+    if (GRreadimage(ri_id, start, stride, edges, (void *)skipped_image) == FAIL)
         printf("*** ERROR from GRreadimage\n");
 
     /*

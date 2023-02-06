@@ -85,7 +85,7 @@ main(int argc, char *argv[])
         exit(-1);
     }
 
-    if (DF24getimage(argv[1], (VOIDP)r24, x_dim, y_dim) < 0) {
+    if (DF24getimage(argv[1], (void *)r24, x_dim, y_dim) < 0) {
         fprintf(stderr, "error: DF24getimage failed\n");
         exit(-1);
     }
@@ -115,7 +115,7 @@ main(int argc, char *argv[])
         HEprint(stderr, 0);
         exit(-1);
     }
-    if (DFR8putimage(argv[2], (VOIDP)r8, x_dim, y_dim, COMPRESSION) == -1) {
+    if (DFR8putimage(argv[2], (void *)r8, x_dim, y_dim, COMPRESSION) == -1) {
         HEprint(stderr, 0);
         exit(-1);
     }

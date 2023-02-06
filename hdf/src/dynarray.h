@@ -36,7 +36,7 @@ typedef struct dynarray_tag *dynarr_p;
 typedef struct dynarray_tag {
     intn   num_elems; /* Number of elements in the array currently */
     intn   incr_mult; /* Multiple to increment the array size by */
-    VOIDP *arr;       /* Pointer to the actual array of void *'s */
+    void **arr;       /* Pointer to the actual array of void *'s */
 } dynarr_t;
 
 #endif /* DYNARRAY_MASTER | DYNARRAY_TESTER */
@@ -104,7 +104,7 @@ intn DAsize_array(dynarr_p arr /* IN: Array to get size of */
     Returns object ptr if successful and NULL otherwise
 
 *******************************************************************************/
-VOIDP DAget_elem(dynarr_p arr_ptr, /* IN: Array to access */
+void *DAget_elem(dynarr_p arr_ptr, /* IN: Array to access */
                  intn     elem     /* IN: Array element to retrieve */
 );
 
@@ -124,7 +124,7 @@ VOIDP DAget_elem(dynarr_p arr_ptr, /* IN: Array to access */
 *******************************************************************************/
 intn DAset_elem(dynarr_p arr_ptr, /* IN: Array to access */
                 intn     elem,    /* IN: Array element to set */
-                VOIDP    obj      /* IN: Pointer to the object to store */
+                void    *obj      /* IN: Pointer to the object to store */
 );
 
 /*****************************************************************************
@@ -140,7 +140,7 @@ intn DAset_elem(dynarr_p arr_ptr, /* IN: Array to access */
     Returns object ptr if successful and NULL otherwise
 
 *******************************************************************************/
-VOIDP DAdel_elem(dynarr_p arr_ptr, /* IN: Array to access */
+void *DAdel_elem(dynarr_p arr_ptr, /* IN: Array to access */
                  intn     elem     /* IN: Array element to retrieve */
 );
 

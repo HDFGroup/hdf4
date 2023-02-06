@@ -93,7 +93,7 @@ test_attrs()
 
     /* Set an attribute that describes the file contents. */
     n_values = 16;
-    status   = SDsetattr(sd_id, FILE_ATTR_NAME, DFNT_CHAR8, n_values, (VOIDP)file_values);
+    status   = SDsetattr(sd_id, FILE_ATTR_NAME, DFNT_CHAR8, n_values, (void *)file_values);
     CHECK(status, FAIL, "SDsetattr")
 
     /***************************************************************
@@ -117,7 +117,7 @@ test_attrs()
 
     starts[0] = 0;
     edges[0]  = LENGTH1_X;
-    status    = SDwritedata(sds_id, starts, NULL, edges, (VOIDP)data1);
+    status    = SDwritedata(sds_id, starts, NULL, edges, (void *)data1);
     CHECK(status, FAIL, "SDwritedata");
 
     status = SDendaccess(sds_id);
@@ -125,10 +125,10 @@ test_attrs()
 
     /* Assign two attributes to the first SDS. */
     n_values = 2;
-    status   = SDsetattr(sds_id, SDS_ATTR_NAME1, DFNT_FLOAT32, n_values, (VOIDP)sds_values);
+    status   = SDsetattr(sds_id, SDS_ATTR_NAME1, DFNT_FLOAT32, n_values, (void *)sds_values);
     CHECK(status, FAIL, "SDsetattr")
     n_values = 7;
-    status   = SDsetattr(sds_id, SDS_ATTR_NAME2, DFNT_CHAR8, n_values, (VOIDP)dim_values);
+    status   = SDsetattr(sds_id, SDS_ATTR_NAME2, DFNT_CHAR8, n_values, (void *)dim_values);
     CHECK(status, FAIL, "SDsetattr")
 
     /*
@@ -148,7 +148,7 @@ test_attrs()
     starts[1] = 0;
     edges[0]  = LENGTH2_X;
     edges[1]  = LENGTH2_Y;
-    status    = SDwritedata(sds_id, starts, NULL, edges, (VOIDP)data2);
+    status    = SDwritedata(sds_id, starts, NULL, edges, (void *)data2);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Get the the second dimension identifier of the SDS. */
@@ -158,7 +158,7 @@ test_attrs()
 
     /* Set an attribute of the dimension that specifies the dimension metric. */
     n_values = 7;
-    status   = SDsetattr(dim_id, DIM_ATTR_NAME, DFNT_CHAR8, n_values, (VOIDP)dim_values);
+    status   = SDsetattr(dim_id, DIM_ATTR_NAME, DFNT_CHAR8, n_values, (void *)dim_values);
     CHECK(status, FAIL, "SDsetattr")
 
     status = SDendaccess(sds_id);
@@ -219,7 +219,7 @@ test_attrs()
 
 /* Utility functions: */
 /* to generate data set's data */
-static VOID gen2Dfloat(int height, int width, float *data);
+static void gen2Dfloat(int height, int width, float *data);
 /* to verify data of labels and descriptions */
 static intn check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label, char *desc);
 
@@ -228,7 +228,7 @@ static intn check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label, cha
 **  gen2Dfloat:  generate 2-D data array
 **
 ****************************************************************/
-static VOID
+static void
 gen2Dfloat(int height, int width, float *data)
 {
     int    i, j;
@@ -412,7 +412,7 @@ add_sdsNDG_annotations()
     /* Write REPS data sets and add a label and a description to each data set */
     for (jj = 0; jj < REPS; jj++) {
         /* write out scientific data set */
-        ret = DFSDadddata(DFAN_NDG_FILE, 2, dimsizes, (VOIDP)data);
+        ret = DFSDadddata(DFAN_NDG_FILE, 2, dimsizes, (void *)data);
         CHECK(ret, FAIL, "add_sdsNDG_annotations: DFSDadddata");
         refnum = DFSDlastref();
 
@@ -478,7 +478,7 @@ add_sdsSDG_annotations()
     /********  Write labels and descriptions *********/
     for (j = 0; j < REPS; j++) {
         /* write out scientific data set */
-        DFSDadddata(DFAN_SDG_FILE, 2, dimsizes, (VOIDP)data);
+        DFSDadddata(DFAN_SDG_FILE, 2, dimsizes, (void *)data);
 
         /* write out annotations for 2 out of every 3 */
         refnum = DFSDlastref();
@@ -762,17 +762,17 @@ test_dfsdattrs()
 
     /* Set dimension scales */
     /*
-    ret = DFSDsetdimscale(1, dims[0], (VOIDP) scplnf32);
+    ret = DFSDsetdimscale(1, dims[0], (void *) scplnf32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(2, dims[1], (VOIDP) scrowf32);
+    ret = DFSDsetdimscale(2, dims[1], (void *) scrowf32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
     */
 
     /* Write/Read data to/from SDS */
-    ret = DFSDputdata(OLDATTFILE, rank, dims, (VOIDP)f32);
+    ret = DFSDputdata(OLDATTFILE, rank, dims, (void *)f32);
     CHECK(ret, FAIL, "DFSDputdata");
-    ret = DFSDgetdata(OLDATTFILE, rank, dims, (VOIDP)tf32);
+    ret = DFSDgetdata(OLDATTFILE, rank, dims, (void *)tf32);
     CHECK(ret, FAIL, "DFSDgetdata");
 
     /* Read attributes from the dataset and its dimensions */

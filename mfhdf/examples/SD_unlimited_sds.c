@@ -56,7 +56,7 @@ main()
     /*
      * Write the data.
      */
-    if (SDwritedata(sds_id, start, NULL, edges, (VOIDP)data) == FAIL)
+    if (SDwritedata(sds_id, start, NULL, edges, (void *)data) == FAIL)
         printf("*** ERROR from SDwritedata\n");
 
     /*
@@ -104,7 +104,7 @@ main()
         /*
          * Append data to the data set.
          */
-        if (SDwritedata(sds_id, start, NULL, edges, (VOIDP)append_data) == FAIL)
+        if (SDwritedata(sds_id, start, NULL, edges, (void *)append_data) == FAIL)
             printf("*** ERROR from SDwritedata\n");
     }
 

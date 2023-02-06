@@ -1834,7 +1834,7 @@ HMCgetcomptype(int32         dd_aid,    /* IN: access id of header info */
     uint8 *c_sp_header       = NULL;  /* special element header */
     int32  sp_tag_header_len = 0;     /* length of special header */
     int32  comp_sp_tag_head_len;      /* Compression header length */
-    VOID  *comp_sp_tag_header = NULL; /* compression header */
+    void  *comp_sp_tag_header = NULL; /* compression header */
     uint8  local_ptbuf[6];            /* 6 bytes for special header length */
     intn   ret_value = SUCCEED;
 

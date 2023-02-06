@@ -244,7 +244,7 @@ rigcompare(void *k1, void *k2, intn cmparg)
 
    *** Only called by B-tree routines, should _not_ be called externally ***
  */
-VOID
+void
 GRIgrdestroynode(void *n)
 {
     gr_info_t *gr_ptr = (gr_info_t *)n;
@@ -262,7 +262,7 @@ GRIgrdestroynode(void *n)
  PURPOSE
     Frees B-Tree attribute nodes.
  USAGE
-    VOID GRIattrdestroynode(n)
+    void GRIattrdestroynode(n)
         void * n;               IN: ptr to the attr node to delete
  RETURNS
     none
@@ -277,7 +277,7 @@ GRIgrdestroynode(void *n)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-VOID
+void
 GRIattrdestroynode(void *n)
 {
     at_info_t *at_ptr = (at_info_t *)n;
@@ -294,7 +294,7 @@ GRIattrdestroynode(void *n)
  PURPOSE
     Frees B-Tree raster-image nodes.
  USAGE
-    VOID GRIridestroynode(n)
+    void GRIridestroynode(n)
         void * n;               IN: ptr to the attr node to delete
  RETURNS
     none
@@ -309,7 +309,7 @@ GRIattrdestroynode(void *n)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-VOID
+void
 GRIridestroynode(void *n)
 {
     ri_info_t *ri_ptr = (ri_info_t *)n;
@@ -5328,7 +5328,7 @@ GRsetchunk(int32         riid,      /* IN: raster access id */
                           (uint16)ri_ptr->img_ref, /* Data ref */
                           nlevels,                 /* nlevels */
                           pixel_disk_size,         /* fill value length */
-                          (VOID *)fill_pixel,      /* fill value */
+                          (void *)fill_pixel,      /* fill value */
                           (HCHUNK_DEF *)chunk /* chunk definition */);
 
 #ifdef CHK_DEBUG
@@ -5499,12 +5499,12 @@ done:
 intn
 GRwritechunk(int32       riid,   /* IN: access aid to GR */
              int32      *origin, /* IN: origin of chunk to write */
-             const VOID *datap /* IN: buffer for data */)
+             const void *datap /* IN: buffer for data */)
 {
     ri_info_t *ri_ptr = NULL;        /* ptr to the image to work with */
     uintn      pixel_mem_size,       /* size of a pixel in memory */
         pixel_disk_size;             /* size of a pixel on disk */
-    VOID           *img_data = NULL; /* buffer used for conversion */
+    void           *img_data = NULL; /* buffer used for conversion */
     int16           special;         /* Special code */
     int32           csize;           /* physical chunk size */
     sp_info_block_t info_block;      /* special info block */
@@ -5622,7 +5622,7 @@ GRwritechunk(int32       riid,   /* IN: access aid to GR */
                         if ((pixel_buf = malloc(pixel_mem_size * csize)) == NULL)
                             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-                        if (FAIL == GRIil_convert((VOID *)datap, ri_ptr->img_dim.il, pixel_buf,
+                        if (FAIL == GRIil_convert((void *)datap, ri_ptr->img_dim.il, pixel_buf,
                                                   MFGR_INTERLACE_PIXEL, info_block.cdims,
                                                   ri_ptr->img_dim.ncomps, ri_ptr->img_dim.nt))
                             HGOTO_ERROR(DFE_INTERNAL, FAIL);
@@ -5636,7 +5636,7 @@ GRwritechunk(int32       riid,   /* IN: access aid to GR */
                     }    /* end if */
                     else /* convert the pixel data into the HDF disk format */
                     {
-                        if (FAIL == DFKconvert((VOID *)datap, img_data, ri_ptr->img_dim.nt,
+                        if (FAIL == DFKconvert((void *)datap, img_data, ri_ptr->img_dim.nt,
                                                ri_ptr->img_dim.ncomps * csize, DFACC_WRITE, 0, 0))
                             HGOTO_ERROR(DFE_INTERNAL, FAIL);
                     }
@@ -5695,12 +5695,12 @@ done:
 intn
 GRreadchunk(int32  riid,   /* IN: access aid to GR */
             int32 *origin, /* IN: origin of chunk to write */
-            VOID  *datap /* IN/OUT: buffer for data */)
+            void  *datap /* IN/OUT: buffer for data */)
 {
     ri_info_t      *ri_ptr = NULL;   /* ptr to the image to work with */
     uintn           pixel_mem_size;  /* size of a pixel in memory */
     uintn           pixel_disk_size; /* size of a pixel on disk */
-    VOID           *img_data = NULL; /* buffer used for conversion */
+    void           *img_data = NULL; /* buffer used for conversion */
     int16           special;         /* Special code */
     int32           csize;           /* physical chunk size */
     sp_info_block_t info_block;      /* special info block */

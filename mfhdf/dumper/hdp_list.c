@@ -582,7 +582,7 @@ print_all_file_descs(const char *fname, list_info_t *list_opts, /* for print_SDa
     int32 sd_fid = FAIL;
     int32 ndsets, nattrs;
     char *attr_nt_desc = NULL;
-    VOIDP attr_buf     = NULL;
+    void *attr_buf     = NULL;
     intn  ret_value    = SUCCEED;
 
     (void)list_opts;

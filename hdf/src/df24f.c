@@ -130,7 +130,7 @@ nd2igimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *fnlen)
     fn = HDf2cstring(filename, (intn)*fnlen);
     if (!fn)
         return (-1);
-    ret = DF24getimage(fn, (VOIDP)_fcdtocp(image), *xdim, *ydim);
+    ret = DF24getimage(fn, (void *)_fcdtocp(image), *xdim, *ydim);
     free(fn);
     return (ret);
 }
@@ -161,7 +161,7 @@ nd2iaimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *fnlen, intf *n
     fn = HDf2cstring(filename, (intn)*fnlen);
     if (!fn)
         return (-1);
-    ret = DFGRIaddimlut(fn, (VOIDP)_fcdtocp(image), *xdim, *ydim, IMAGE, 1, (intn)*newfile);
+    ret = DFGRIaddimlut(fn, (void *)_fcdtocp(image), *xdim, *ydim, IMAGE, 1, (intn)*newfile);
     free(fn);
     return (ret);
 }

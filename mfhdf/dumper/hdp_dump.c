@@ -21,7 +21,7 @@
 #define LINE_FEED       10
 #define HORIZONTAL_TAB  9
 
-typedef intn (*fmtfunct_t)(VOIDP, file_format_t, FILE *);
+typedef intn (*fmtfunct_t)(void *, file_format_t, FILE *);
 fmtfunct_t select_func(int32 nt);
 
 /*
@@ -47,7 +47,7 @@ fmtbyte(unsigned char *x, /* assumption: byte is the same as unsigned char */
 }
 
 intn
-fmtint8(VOIDP         x, /* assumption: int8 is same as signed char */
+fmtint8(void         *x, /* assumption: int8 is same as signed char */
         file_format_t ff, FILE *ofp)
 {
     int8 s;
@@ -61,7 +61,7 @@ fmtint8(VOIDP         x, /* assumption: int8 is same as signed char */
 }
 
 intn
-fmtuint8(VOIDP         x, /* assumption: uint8 is same as unsigned char */
+fmtuint8(void         *x, /* assumption: uint8 is same as unsigned char */
          file_format_t ff, FILE *ofp)
 {
     uint8 s;
@@ -75,7 +75,7 @@ fmtuint8(VOIDP         x, /* assumption: uint8 is same as unsigned char */
 }
 
 intn
-fmtint16(VOIDP x, file_format_t ff, FILE *ofp)
+fmtint16(void *x, file_format_t ff, FILE *ofp)
 {
     int16 s;
 
@@ -88,7 +88,7 @@ fmtint16(VOIDP x, file_format_t ff, FILE *ofp)
 }
 
 intn
-fmtuint16(VOIDP x, file_format_t ff, FILE *ofp)
+fmtuint16(void *x, file_format_t ff, FILE *ofp)
 {
     uint16 s;
 
@@ -101,7 +101,7 @@ fmtuint16(VOIDP x, file_format_t ff, FILE *ofp)
 }
 
 intn
-fmtchar(VOIDP x, file_format_t ff, FILE *ofp)
+fmtchar(void *x, file_format_t ff, FILE *ofp)
 {
     (void)ff;
 
@@ -116,7 +116,7 @@ fmtchar(VOIDP x, file_format_t ff, FILE *ofp)
 }
 
 intn
-fmtuchar8(VOIDP         x, /* assumption: uchar8 is same as unsigned char */
+fmtuchar8(void         *x, /* assumption: uchar8 is same as unsigned char */
           file_format_t ff, FILE *ofp)
 {
     uchar8 s;
@@ -132,7 +132,7 @@ fmtuchar8(VOIDP         x, /* assumption: uchar8 is same as unsigned char */
 }
 
 intn
-fmtint(VOIDP         x, /* assumption: int is same as 'intn' */
+fmtint(void         *x, /* assumption: int is same as 'intn' */
        file_format_t ff, FILE *ofp)
 {
     intn i;
@@ -147,7 +147,7 @@ fmtint(VOIDP         x, /* assumption: int is same as 'intn' */
 
 #define FLOAT32_EPSILON ((float32)1.0e-20)
 intn
-fmtfloat32(VOIDP x, file_format_t ff, FILE *ofp)
+fmtfloat32(void *x, file_format_t ff, FILE *ofp)
 {
     float32 fdata;
 
@@ -165,7 +165,7 @@ fmtfloat32(VOIDP x, file_format_t ff, FILE *ofp)
 }
 
 intn
-fmtint32(VOIDP x, file_format_t ff, FILE *ofp)
+fmtint32(void *x, file_format_t ff, FILE *ofp)
 {
     int32 l;
 
@@ -178,7 +178,7 @@ fmtint32(VOIDP x, file_format_t ff, FILE *ofp)
 }
 
 intn
-fmtuint32(VOIDP x, file_format_t ff, FILE *ofp)
+fmtuint32(void *x, file_format_t ff, FILE *ofp)
 {
     uint32 l;
 
@@ -191,7 +191,7 @@ fmtuint32(VOIDP x, file_format_t ff, FILE *ofp)
 }
 
 intn
-fmtshort(VOIDP x, file_format_t ff, FILE *ofp)
+fmtshort(void *x, file_format_t ff, FILE *ofp)
 {
     short s;
 
@@ -205,7 +205,7 @@ fmtshort(VOIDP x, file_format_t ff, FILE *ofp)
 
 #define FLOAT64_EPSILON ((float64)1.0e-20)
 intn
-fmtfloat64(VOIDP x, file_format_t ff, FILE *ofp)
+fmtfloat64(void *x, file_format_t ff, FILE *ofp)
 {
     float64 d;
 
@@ -265,11 +265,11 @@ select_func(int32 nt)
 
 intn
 dumpfull(int32 nt, dump_info_t *dump_opts, int32 cnt, /* number of items in 'databuf' ? */
-         VOIDP databuf, FILE *ofp, intn indent,       /* indentation on the first line */
+         void *databuf, FILE *ofp, intn indent,       /* indentation on the first line */
          intn cont_indent)                            /* indentation on the continuous lines */
 {
     intn          i;
-    VOIDP         bufptr   = NULL;
+    void         *bufptr   = NULL;
     fmtfunct_t    fmtfunct = NULL;
     int32         off;
     intn          cn;
@@ -354,10 +354,10 @@ done:
 
 intn
 dumpclean(int32 nt, dump_info_t *dump_opts, int32 cnt, /* number of items in 'databuf' ? */
-          VOIDP databuf, FILE *ofp)
+          void *databuf, FILE *ofp)
 {
     intn  i;
-    VOIDP bufptr = NULL;
+    void *bufptr = NULL;
     int32 off;
     intn  cn;                /* # of characters being printed on a line */
     intn  small_attr = TRUE; /* data buffer of the attribute is small */

@@ -5688,7 +5688,7 @@ SDwritechunk(int32       sdsid,  /* IN: access aid to SDS */
                             var->HDFsize, var->HDFtype);
 #endif
                     /* convert it */
-                    if (FAIL == DFKconvert((VOIDP)datap, tBuf, var->HDFtype, (byte_count / var->HDFsize),
+                    if (FAIL == DFKconvert((void *)datap, tBuf, var->HDFtype, (byte_count / var->HDFsize),
                                            DFACC_WRITE, 0, 0)) {
                         HGOTO_ERROR(DFE_INTERNAL, FAIL);
                     }

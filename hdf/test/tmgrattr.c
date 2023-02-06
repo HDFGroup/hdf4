@@ -66,7 +66,7 @@ test_mgr_fillvalues()
     uint16       ref;                   /* RI reference number */
     int32        ri_index;              /* RI index */
     float32      image[7][5][N_COMPS];  /* space for the image data */
-    VOIDP        read_fill_vals = NULL; /* space for fill values read from attr */
+    void        *read_fill_vals = NULL; /* space for fill values read from attr */
     float32      image0[7][5][N_COMPS]; /* space for the image data */
     int32        start[2];              /* start of image data to grab */
     int32        stride[2];             /* stride of image data to grab */
@@ -151,7 +151,7 @@ test_mgr_fillvalues()
         VERIFY_CHAR(nt_info.type_name, "float32", "Hgetntinfo");
 
         /* Read and verify the attribute's data */
-        ret = GRgetattr(riid, attr_index, (VOIDP)read_fill_vals);
+        ret = GRgetattr(riid, attr_index, (void *)read_fill_vals);
         CHECK(ret, FAIL, "GRgetattr");
 
         if (memcmp(fill_pixel, read_fill_vals, RI_ATT_N_VALUES) != 0) {
@@ -206,7 +206,7 @@ test_mgr_userattr()
     int32        dims[2];                         /* dimension sizes of the image */
     int32        n_attrs;                         /* number of attributes with each image */
     int16        ri_attr_2[RI_ATT2_N_VALUES] = {1, 2, 3, 4, 5, 6};
-    VOIDP        data_buf; /* buffer to hold the attribute values */
+    void        *data_buf; /* buffer to hold the attribute values */
     hdf_ntinfo_t nt_info;  /* struct containing name and byte order of a num type */
     intn         status;   /* status for functions returning an intn */
 
@@ -223,7 +223,7 @@ test_mgr_userattr()
     status = GRsetattr(grid, F_ATT1_NAME, DFNT_CHAR8, F_ATT1_N_VALUES, F_ATT1_VAL);
     CHECK(status, FAIL, "GRsetattr");
 
-    status = GRsetattr(grid, F_ATT2_NAME, DFNT_UINT8, F_ATT2_N_VALUES, (VOIDP)file_attr_2);
+    status = GRsetattr(grid, F_ATT2_NAME, DFNT_UINT8, F_ATT2_N_VALUES, (void *)file_attr_2);
     CHECK(status, FAIL, "GRsetattr");
 
     /* Obtain the index of the image named IMAGE1_NAME. */
@@ -238,7 +238,7 @@ test_mgr_userattr()
     status = GRsetattr(riid, RI_ATT1_NAME, DFNT_CHAR8, RI_ATT1_N_VALUES, RI_ATT1_VAL);
     CHECK(status, FAIL, "GRsetattr");
 
-    status = GRsetattr(riid, RI_ATT2_NAME, DFNT_INT16, RI_ATT2_N_VALUES, (VOIDP)ri_attr_2);
+    status = GRsetattr(riid, RI_ATT2_NAME, DFNT_INT16, RI_ATT2_N_VALUES, (void *)ri_attr_2);
     CHECK(status, FAIL, "GRsetattr");
 
     /* Terminate accesses, and close the HDF file. */
@@ -296,7 +296,7 @@ test_mgr_userattr()
             } /* switch */
 
             /* Read and verify the attribute values. */
-            status = GRgetattr(grid, f_att_index, (VOIDP)data_buf);
+            status = GRgetattr(grid, f_att_index, (void *)data_buf);
             CHECK(status, FAIL, "GRgetattr");
 
             switch (ntype) {
@@ -390,7 +390,7 @@ test_mgr_userattr()
             } /* switch */
 
             /* Read and verify the attribute values. */
-            status = GRgetattr(riid, ri_att_index, (VOIDP)data_buf);
+            status = GRgetattr(riid, ri_att_index, (void *)data_buf);
             CHECK(status, FAIL, "GRgetattr");
 
             /* Verify values from the attribute.

@@ -29,7 +29,7 @@ dumpvd(int32 vd, file_format_t ff, int data_only, FILE *fp, char separator[2], i
     uint8          *bb = NULL;
     uint8          *b  = NULL;
     DYN_VWRITELIST *w  = NULL;
-    intn (*vfmtfn[VSFIELDMAX])(VOIDP, file_format_t ff, FILE *);
+    intn (*vfmtfn[VSFIELDMAX])(void *, file_format_t ff, FILE *);
     int32 off[VSFIELDMAX];
     int32 order[VSFIELDMAX];
     int32 nattrs[VSFIELDMAX];
@@ -445,7 +445,7 @@ dumpattr(int32 vid, int32 findex, intn isvs, file_format_t ff, FILE *fp)
     int32  off;
     uint8 *buf = NULL;
     uint8 *ptr = NULL;
-    intn (*vfmtfn)(VOIDP, file_format_t ff, FILE *);
+    intn (*vfmtfn)(void *, file_format_t ff, FILE *);
     intn  status;
     intn  ret_value = SUCCEED;
     char  name[FIELDNAMELENMAX + 1];
@@ -509,10 +509,10 @@ dumpattr(int32 vid, int32 findex, intn isvs, file_format_t ff, FILE *fp)
 
             /* get attribute itself */
             if (isvs)
-                status = VSgetattr(vid, findex, i, (VOIDP)buf);
+                status = VSgetattr(vid, findex, i, (void *)buf);
             else
                 /* Changed to use updated func of Vgetattr - BMR, 1/7/2013 */
-                status = Vgetattr2(vid, i, (VOIDP)buf);
+                status = Vgetattr2(vid, i, (void *)buf);
 
             if (status == FAIL) {
                 fprintf(stderr, ">>>dympattr: failed in getting %d'th attr .\n", i);
@@ -523,10 +523,10 @@ dumpattr(int32 vid, int32 findex, intn isvs, file_format_t ff, FILE *fp)
         else {
             /* get attribute itself */
             if (isvs)
-                status = VSgetattr(vid, findex, i, (VOIDP)attrbuf);
+                status = VSgetattr(vid, findex, i, (void *)attrbuf);
             else
                 /* Changed to use updated func of Vgetattr - BMR, 1/7/2013 */
-                status = Vgetattr2(vid, i, (VOIDP)attrbuf);
+                status = Vgetattr2(vid, i, (void *)attrbuf);
 
             if (status == FAIL) {
                 fprintf(stderr, ">>>dympattr: failed in getting %d'th attr.\n", i);

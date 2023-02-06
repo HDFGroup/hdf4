@@ -100,7 +100,7 @@ test_various_comps()
     CHECK(status, FAIL, "SDsetcompress");
 
     /* Write the stored data to the 1st data set. */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)data);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the 1st data set. */
@@ -119,7 +119,7 @@ test_various_comps()
     CHECK(status, FAIL, "SDsetcompress");
 
     /* Write the stored data to the 2nd data set. */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)data);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the 2nd data set. */
@@ -149,7 +149,7 @@ test_various_comps()
     CHECK(status, FAIL, "SDsetcompress");
 
     /* Write the stored data to the 3rd data set. */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)data);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the 3rd data set. */
@@ -228,7 +228,7 @@ test_compressed_data()
     /* Write data to the dataset */
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDwritedata(newsds, start, NULL, end, (VOIDP)idata);
+    status          = SDwritedata(newsds, start, NULL, end, (void *)idata);
     CHECK(status, FAIL, "SDwritedata");
 
     /* End access to the dataset */
@@ -279,7 +279,7 @@ test_compressed_data()
     /* Read and verify the compressed data */
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDreaddata(newsds2, start, NULL, end, (VOIDP)rdata);
+    status          = SDreaddata(newsds2, start, NULL, end, (void *)rdata);
     CHECK(status, FAIL, "SDreaddata");
 
     for (i = 0; i < 25; i++)
@@ -312,7 +312,7 @@ test_compressed_data()
 
     /* Set fill value */
     fillval = 43;
-    status  = SDsetfillvalue(newsds, (VOIDP)&fillval);
+    status  = SDsetfillvalue(newsds, (void *)&fillval);
     CHECK(status, FAIL, "SDsetfillvalue");
 
     /* Set the dataset to be compressed with skipping huffman */
@@ -334,7 +334,7 @@ test_compressed_data()
     start[1] = 0;
     end[0]   = 3;
     end[1]   = 5;
-    status   = SDwritedata(newsds, start, NULL, end, (VOIDP)&idata[5]);
+    status   = SDwritedata(newsds, start, NULL, end, (void *)&idata[5]);
     CHECK(status, FAIL, "SDwritedata");
 
     /* End access to the datase */
@@ -363,7 +363,7 @@ test_compressed_data()
 
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDreaddata(newsds2, start, NULL, end, (VOIDP)rdata);
+    status          = SDreaddata(newsds2, start, NULL, end, (void *)rdata);
     CHECK(status, FAIL, "SDreaddata");
 
     for (i = 0; i < 25; i++)
@@ -395,7 +395,7 @@ test_compressed_data()
     }
 
     fillval = 56;
-    status  = SDsetfillvalue(newsds, (VOIDP)&fillval);
+    status  = SDsetfillvalue(newsds, (void *)&fillval);
     CHECK(status, FAIL, "SDsetfillvalue");
 
     cinfo.skphuff.skp_size = 4;
@@ -423,7 +423,7 @@ test_compressed_data()
 
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDreaddata(newsds2, start, NULL, end, (VOIDP)rdata);
+    status          = SDreaddata(newsds2, start, NULL, end, (void *)rdata);
     CHECK(status, FAIL, "SDreaddata");
 
     for (i = 0; i < 25; i++)
@@ -456,7 +456,7 @@ test_compressed_data()
     }
 
     fillval = 67;
-    status  = SDsetfillvalue(newsds, (VOIDP)&fillval);
+    status  = SDsetfillvalue(newsds, (void *)&fillval);
     CHECK(status, FAIL, "SDsetfillvalue");
 
     cinfo.skphuff.skp_size = 4;
@@ -484,7 +484,7 @@ test_compressed_data()
 
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDreaddata(newsds2, start, NULL, end, (VOIDP)rdata);
+    status          = SDreaddata(newsds2, start, NULL, end, (void *)rdata);
     CHECK(status, FAIL, "SDreaddata");
 
     for (i = 0; i < 25; i++)
@@ -525,7 +525,7 @@ test_compressed_data()
     start[1] = 0;
     end[0]   = 2;
     end[1]   = 5;
-    status   = SDwritedata(newsds, start, NULL, end, (VOIDP)&idata[10]);
+    status   = SDwritedata(newsds, start, NULL, end, (void *)&idata[10]);
     CHECK(status, FAIL, "SDwritedata");
 
     status = SDendaccess(newsds);
@@ -546,7 +546,7 @@ test_compressed_data()
 
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDreaddata(newsds2, start, NULL, end, (VOIDP)rdata);
+    status          = SDreaddata(newsds2, start, NULL, end, (void *)rdata);
     CHECK(status, FAIL, "SDreaddata");
 
     for (i = 0; i < 25; i++)
@@ -585,7 +585,7 @@ test_compressed_data()
 
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDwritedata(newsds, start, NULL, end, (VOIDP)idata);
+    status          = SDwritedata(newsds, start, NULL, end, (void *)idata);
     CHECK(status, FAIL, "SDwritedata");
 
     status = SDendaccess(newsds);
@@ -632,7 +632,7 @@ test_compressed_data()
 
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDreaddata(newsds2, start, NULL, end, (VOIDP)rdata);
+    status          = SDreaddata(newsds2, start, NULL, end, (void *)rdata);
     CHECK(status, FAIL, "SDreaddata");
 
     for (i = 0; i < 25; i++)
@@ -671,7 +671,7 @@ test_compressed_data()
 
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDwritedata(newsds, start, NULL, end, (VOIDP)idata);
+    status          = SDwritedata(newsds, start, NULL, end, (void *)idata);
     CHECK(status, FAIL, "SDwritedata");
 
     status = SDendaccess(newsds);
@@ -718,7 +718,7 @@ test_compressed_data()
 
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDreaddata(newsds2, start, NULL, end, (VOIDP)rdata);
+    status          = SDreaddata(newsds2, start, NULL, end, (void *)rdata);
     CHECK(status, FAIL, "SDreaddata");
 
     for (i = 0; i < 25; i++)
@@ -758,7 +758,7 @@ test_compressed_data()
 
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDwritedata(newsds, start, NULL, end, (VOIDP)idata);
+    status          = SDwritedata(newsds, start, NULL, end, (void *)idata);
     CHECK(status, FAIL, "SDwritedata");
 
     status = SDendaccess(newsds);
@@ -807,7 +807,7 @@ test_compressed_data()
 
     start[0] = start[1] = 0;
     end[0] = end[1] = 5;
-    status          = SDreaddata(newsds2, start, NULL, end, (VOIDP)rdata);
+    status          = SDreaddata(newsds2, start, NULL, end, (void *)rdata);
     CHECK(status, FAIL, "SDreaddata");
 
     for (i = 0; i < 25; i++)

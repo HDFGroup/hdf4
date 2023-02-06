@@ -108,7 +108,7 @@ test_setexternal()
     edges[0]            = dimsizes[0];
     edges[1]            = dimsizes[1];
 
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)idata);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)idata);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Promote the data set to an external data set by storing its data in
@@ -124,7 +124,7 @@ test_setexternal()
     start[0] = start[1] = 0;
     edges[0]            = 3;
     edges[1]            = dimsizes[1];
-    status              = SDwritedata(sds_id, start, NULL, edges, (VOIDP)idata);
+    status              = SDwritedata(sds_id, start, NULL, edges, (void *)idata);
     CHECK(status, FAIL, "SDwritedata");
 
     /* End access to the data set */
@@ -176,7 +176,7 @@ test_setexternal()
         start[0] = start[1] = 0;
         edges[0]            = 3;
         edges[1]            = 3;
-        status              = SDreaddata(sds_id, start, NULL, edges, (VOIDP)odata);
+        status              = SDreaddata(sds_id, start, NULL, edges, (void *)odata);
         CHECK(status, FAIL, "SDreaddata");
 
         /* Verify data read back in */
@@ -220,7 +220,7 @@ test_setexternal()
     start[0] = start[1] = 0;
     edges[0]            = dimsizes[0];
     edges[1]            = dimsizes[1];
-    status              = SDwritedata(sds_id, start, NULL, edges, (VOIDP)idata);
+    status              = SDwritedata(sds_id, start, NULL, edges, (void *)idata);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Close data sets */
@@ -287,7 +287,7 @@ test_getexternal()
     /* Write data to all of data set NOEXTSDS in main file */
     start[0] = start[1] = 0;
     edges[0] = edges[1] = DIM1;
-    status              = SDwritedata(noextsds, start, NULL, edges, (VOIDP)idata);
+    status              = SDwritedata(noextsds, start, NULL, edges, (void *)idata);
     CHECK(status, FAIL, NOEXTSDS);
     CHECK(status, FAIL, "SDwritedata");
 
@@ -461,7 +461,7 @@ test_mult_setexternal()
 
     /* Create data set SDS1 and write data to the external file; the returned
        value is the size of the data had been written for this sds */
-    make_Ext3D_SDS(sd_id, SDS1, DFNT_INT32, 3, dim_sizes, (VOIDP)written_data, OFFSET, EXTFILE2);
+    make_Ext3D_SDS(sd_id, SDS1, DFNT_INT32, 3, dim_sizes, (void *)written_data, OFFSET, EXTFILE2);
 
     /* Close the file to flush */
     status = SDend(sd_id);
@@ -570,8 +570,8 @@ test_special_combos()
 
     /* Create and write two unlimited-dimension data sets, SDS2 and SDS3,
        in the main file.  Z_LENGTH is passed for unlimited dimension. */
-    sds2_size = make_SDS(sd_id, SDS2, DFNT_INT32, 3, dim_sizes, Z_LENGTH, (VOIDP)written_data);
-    sds3_size = make_SDS(sd_id, SDS3, DFNT_INT32, 3, dim_sizes, Z_LENGTH, (VOIDP)written_data);
+    sds2_size = make_SDS(sd_id, SDS2, DFNT_INT32, 3, dim_sizes, Z_LENGTH, (void *)written_data);
+    sds3_size = make_SDS(sd_id, SDS3, DFNT_INT32, 3, dim_sizes, Z_LENGTH, (void *)written_data);
 
     /* Close the file to flush */
     status = SDend(sd_id);
@@ -596,7 +596,7 @@ test_special_combos()
 
     /* Append data to the unlimited-dimension data set SDS2.  This should */
     /* produce a linked-block element, because SDS3 had been written */
-    sds2_size = append_Data2SDS(sd_id, SDS2, ap_start, ap_edges, (VOIDP)ap_data);
+    sds2_size = append_Data2SDS(sd_id, SDS2, ap_start, ap_edges, (void *)ap_data);
     CHECK(status, FAIL, "append_Data2SDS");
 
     /* Select the named data set, id is checked by callee */
@@ -630,7 +630,7 @@ test_special_combos()
     /* Attempt to move a compressed data set to an external file; should fail */
 
     /* Create and write to a compressed data set */
-    sds4_size = make_SDS(sd_id, SDS4, DFNT_INT32, 3, dim_sizes, Z_LENGTH, (VOIDP)written_data);
+    sds4_size = make_SDS(sd_id, SDS4, DFNT_INT32, 3, dim_sizes, Z_LENGTH, (void *)written_data);
 
     /* Select the named data set, id is checked by callee */
     sds4_id = get_SDSbyName(sd_id, SDS4);
@@ -790,7 +790,7 @@ verify_data(int32 sd_id, int32 sds_ind)
     CHECK_ALLOC(outdata, "outdata", "verify_data");
 
     /* Read the entire sds and verify that the data is as the original buffer */
-    status = SDreaddata(sds_id, start, NULL, edges, (VOIDP)outdata);
+    status = SDreaddata(sds_id, start, NULL, edges, (void *)outdata);
     CHECK(status, FAIL, "SDreaddata");
 
     /* Verify that data is correct comparing against the written data */

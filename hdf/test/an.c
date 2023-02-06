@@ -32,11 +32,11 @@
 #define COLS        10
 #define REPS        32 /*2*/ /* number of data sets to write to file */
 
-static VOID gen2Dfloat(int height, int width, float *data);
+static void gen2Dfloat(int height, int width, float *data);
 
-static VOID genimage(int height, int width, float *data, uint8 *image);
+static void genimage(int height, int width, float *data, uint8 *image);
 
-static VOID check_lab_desc(uint16 tag, uint16 ref, char *label, char *desc);
+static void check_lab_desc(uint16 tag, uint16 ref, char *label, char *desc);
 
 void
 test_an(void)
@@ -80,7 +80,7 @@ test_an(void)
     for (j = 0; j < REPS; j++) {
 
         /* write out scientific data set */
-        ret = DFSDadddata(TESTFILE, 2, dimsizes, (VOIDP)data);
+        ret = DFSDadddata(TESTFILE, 2, dimsizes, (void *)data);
         RESULT("DFSDadddata");
 
         if ((j % 3) != 0) { /* write out annotations for 2 out of every 3 */
@@ -91,7 +91,7 @@ test_an(void)
             RESULT("DFANputdesc");
         }
 
-        ret = DFR8addimage(TESTFILE, (VOIDP)image, COLS, ROWS, 0);
+        ret = DFR8addimage(TESTFILE, (void *)image, COLS, ROWS, 0);
         RESULT("DFR8addimage");
         refnum = DFR8lastref();
         ret    = DFANputlabel(TESTFILE, DFTAG_RIG, refnum, labris);
@@ -129,7 +129,7 @@ test_an(void)
 **  gen2Dfloat:  generate 2-D data array
 **
 ****************************************************************/
-static VOID
+static void
 gen2Dfloat(int height, int width, float *data)
 {
     int    i, j;
@@ -147,7 +147,7 @@ gen2Dfloat(int height, int width, float *data)
 **  genimage:  generate image from 2-D float array
 **
 ****************************************************************/
-static VOID
+static void
 genimage(int height, int width, float *data, uint8 *image)
 {
     int    i, limit;
@@ -173,7 +173,7 @@ genimage(int height, int width, float *data, uint8 *image)
 **                   with expected ones
 **
 ****************************************************************/
-static VOID
+static void
 check_lab_desc(uint16 tag, uint16 ref, char *label, char *desc)
 {
     int32 inlablen, indesclen, ret;
@@ -256,7 +256,7 @@ test_an_2(void)
     for (j = 0; j < REPS; j++) {
 
         /* write out scientific data set */
-        ret = DFSDadddata(TESTFILE, 2, dimsizes, (VOIDP)data);
+        ret = DFSDadddata(TESTFILE, 2, dimsizes, (void *)data);
         RESULT("DFSDadddata");
 
         if ((j % 3) != 0) { /* write out annotations for 2 out of every 3 */
@@ -267,7 +267,7 @@ test_an_2(void)
             RESULT("DFANputdesc");
         }
 
-        ret = DFR8addimage(TESTFILE, (VOIDP)image, COLS, ROWS, 0);
+        ret = DFR8addimage(TESTFILE, (void *)image, COLS, ROWS, 0);
         RESULT("DFR8addimage");
         refnum = DFR8lastref();
         ret    = DFANputlabel(TESTFILE, DFTAG_RIG, refnum, labris);

@@ -604,7 +604,7 @@ HTPselect(filerec_t *file_rec, /* IN: File record to store info in */
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Try to find the regular tag in the tag info tree */
-    if ((tip_ptr = (tag_info **)tbbtdfind(file_rec->tag_tree, (VOIDP)&base_tag, NULL)) == NULL)
+    if ((tip_ptr = (tag_info **)tbbtdfind(file_rec->tag_tree, (void *)&base_tag, NULL)) == NULL)
         HGOTO_DONE(FAIL); /* Not an error, we just didn't find the object */
 
     tinfo_ptr = *tip_ptr; /* get the pointer to the tag info */
@@ -999,7 +999,7 @@ Htagnewref(int32  file_id, /* IN: File ID the tag/refs are in */
     if (BADFREC(file_rec))
         HGOTO_ERROR(DFE_ARGS, 0);
 
-    if ((tip_ptr = (tag_info **)tbbtdfind(file_rec->tag_tree, (VOIDP)&base_tag, NULL)) == NULL)
+    if ((tip_ptr = (tag_info **)tbbtdfind(file_rec->tag_tree, (void *)&base_tag, NULL)) == NULL)
         ret_value = 1;        /* The first available ref */
     else {                    /* found an existing tag */
         tinfo_ptr = *tip_ptr; /* get the pointer to the tag info */
@@ -1114,7 +1114,7 @@ HDcheck_tagref(int32  file_id, /* IN: id of file */
     base_tag = BASETAG(tag);
 
     /* Try to find the regular tag in the tag info tree */
-    if ((tip_ptr = (tag_info **)tbbtdfind(file_rec->tag_tree, (VOIDP)&base_tag, NULL)) == NULL)
+    if ((tip_ptr = (tag_info **)tbbtdfind(file_rec->tag_tree, (void *)&base_tag, NULL)) == NULL)
         HGOTO_DONE(0); /* Not an error, we just didn't find the object */
 
     tinfo_ptr = *tip_ptr; /* get the pointer to the tag info */
@@ -1287,9 +1287,9 @@ HTPdump_dds(int32 file_id, FILE *fout)
 
     /* Dump the tag tree */
     {
-        VOIDP *t;
+        void **t;
 
-        if (NULL != (t = (VOIDP *)tbbtfirst(
+        if (NULL != (t = (void **)tbbtfirst(
                          (TBBT_NODE *)*(file_rec->tag_tree)))) { /* found at least one node in the tree */
             tag_info *tinfo_ptr;                                 /* pointer to the info for a tag */
 
@@ -1302,7 +1302,7 @@ HTPdump_dds(int32 file_id, FILE *fout)
 
                 /* Dump the ref # dynarray */
                 if ((size = DAsize_array(tinfo_ptr->d)) != FAIL) {
-                    VOIDP elem;
+                    void *elem;
 
                     fprintf(fout, "dynarray size=%d\n", size);
                     for (i = 0; i < size; i++) {
@@ -1327,7 +1327,7 @@ HTPdump_dds(int32 file_id, FILE *fout)
                 } /* end if */
 
                 /* Get the next tag node */
-                t = (VOIDP *)tbbtnext((TBBT_NODE *)t);
+                t = (void **)tbbtnext((TBBT_NODE *)t);
             } while (t != NULL);
         }
         else
@@ -1499,7 +1499,7 @@ HTIfind_dd(filerec_t *file_rec, uint16 look_tag, uint16 look_ref, dd_t **pdd, in
         uint16     base_tag = BASETAG(look_tag); /* corresponding base tag (if the tag is special) */
 
         /* Try to find the regular tag in the tag info tree */
-        if ((tip_ptr = (tag_info **)tbbtdfind(file_rec->tag_tree, (VOIDP)&base_tag, NULL)) == NULL)
+        if ((tip_ptr = (tag_info **)tbbtdfind(file_rec->tag_tree, (void *)&base_tag, NULL)) == NULL)
             HGOTO_DONE(FAIL); /* Not an error, we just didn't find the object */
 
         tinfo_ptr = *tip_ptr; /* get the pointer to the tag info */
@@ -1899,14 +1899,14 @@ HTIregister_tag_ref(filerec_t *file_rec, dd_t *dd_ptr)
 
     HEclear();
     /* Add to the tag info tree */
-    if ((tip_ptr = (tag_info **)tbbtdfind(file_rec->tag_tree, (VOIDP)&base_tag, NULL)) ==
+    if ((tip_ptr = (tag_info **)tbbtdfind(file_rec->tag_tree, (void *)&base_tag, NULL)) ==
         NULL) { /* a new tag was found */
         if ((tinfo_ptr = (tag_info *)calloc(1, sizeof(tag_info))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         tinfo_ptr->tag = base_tag;
 
         /* Insert the tag node into the tree */
-        tbbtdins(file_rec->tag_tree, (VOIDP)tinfo_ptr, NULL);
+        tbbtdins(file_rec->tag_tree, (void *)tinfo_ptr, NULL);
 
         /* Take care of the bit-vector */
         if ((tinfo_ptr->b = bv_new(-1)) == NULL)
@@ -1935,7 +1935,7 @@ HTIregister_tag_ref(filerec_t *file_rec, dd_t *dd_ptr)
         HGOTO_ERROR(DFE_BVSET, FAIL);
 
     /* Insert the DD info into the dynarray for later use */
-    if (DAset_elem(tinfo_ptr->d, (intn)dd_ptr->ref, (VOIDP)dd_ptr) == FAIL)
+    if (DAset_elem(tinfo_ptr->d, (intn)dd_ptr->ref, (void *)dd_ptr) == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
@@ -1971,7 +1971,7 @@ HTIunregister_tag_ref(filerec_t *file_rec, dd_t *dd_ptr)
 
     HEclear();
     /* Add to the tag info tree */
-    if ((tip_ptr = (tag_info **)tbbtdfind(file_rec->tag_tree, (VOIDP)&base_tag, NULL)) == NULL) {
+    if ((tip_ptr = (tag_info **)tbbtdfind(file_rec->tag_tree, (void *)&base_tag, NULL)) == NULL) {
         HGOTO_ERROR(DFE_BADTAG, FAIL);
     }                 /* end if */
     else {            /* found an existing tag */
@@ -2004,7 +2004,7 @@ done:
    *** Only called by B-tree routines, should _not_ be called externally ***
  */
 intn
-tagcompare(VOIDP k1, VOIDP k2, intn cmparg)
+tagcompare(void *k1, void *k2, intn cmparg)
 {
     intn ret_value;
 
@@ -2021,8 +2021,8 @@ tagcompare(VOIDP k1, VOIDP k2, intn cmparg)
 
    *** Only called by B-tree routines, should _not_ be called externally ***
  */
-VOID
-tagdestroynode(VOIDP n)
+void
+tagdestroynode(void *n)
 {
     tag_info *t = (tag_info *)n;
 

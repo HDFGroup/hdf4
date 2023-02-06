@@ -606,7 +606,7 @@ VSwrite(int32       vkey,  /* IN: vdata key */
                 order = (intn)w->order[j];
 
                 for (index = 0; index < order; index++) {
-                    DFKconvert((VOIDP)src, dest, type, (uint32)chunk, DFACC_WRITE, (uint32)int_size,
+                    DFKconvert((void *)src, dest, type, (uint32)chunk, DFACC_WRITE, (uint32)int_size,
                                (uint32)hdf_size);
                     dest += isize / order;
                     src += esize / order;
@@ -656,7 +656,7 @@ VSwrite(int32       vkey,  /* IN: vdata key */
                 order = (intn)w->order[j];
 
                 for (index = 0; index < order; index++) {
-                    DFKconvert((VOIDP)src, dest, type, (uint32)nelt, DFACC_WRITE, (uint32)esize,
+                    DFKconvert((void *)src, dest, type, (uint32)nelt, DFACC_WRITE, (uint32)esize,
                                (uint32)hdf_size);
                     src += esize / order;
                     dest += isize / order;
@@ -679,7 +679,7 @@ VSwrite(int32       vkey,  /* IN: vdata key */
                 order = (intn)w->order[j];
 
                 for (index = 0; index < order; index++) {
-                    DFKconvert((VOIDP)src, dest, type, (uint32)nelt, DFACC_WRITE, (uint32)esize,
+                    DFKconvert((void *)src, dest, type, (uint32)nelt, DFACC_WRITE, (uint32)esize,
                                (uint32)isize);
                     dest += isize / order;
                     src += esize / order;
@@ -702,7 +702,7 @@ VSwrite(int32       vkey,  /* IN: vdata key */
                 order = (intn)w->order[j];
 
                 for (index = 0; index < order; index++) {
-                    DFKconvert((VOIDP)src, dest, type, (uint32)nelt, DFACC_WRITE, (uint32)int_size,
+                    DFKconvert((void *)src, dest, type, (uint32)nelt, DFACC_WRITE, (uint32)int_size,
                                (uint32)isize);
                     dest += isize / order;
                     src += esize / order;

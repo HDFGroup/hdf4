@@ -173,7 +173,7 @@ main(int argc, char *argv[])
 
                 if (compress)
                     DFR8setcompress((int32)compress, &cinfo);
-                if (DFR8addimage(outfile, (VOIDP)space, xdim, ydim, compress) < 0) {
+                if (DFR8addimage(outfile, (void *)space, xdim, ydim, compress) < 0) {
                     printf("Error writing image to file %s\n", outfile);
                     exit(1);
                 }

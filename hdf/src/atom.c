@@ -200,7 +200,7 @@ done:
 *******************************************************************************/
 atom_t
 HAregister_atom(group_t grp,   /* IN: Group to register the object in */
-                VOIDP   object /* IN: Object to attach to atom */
+                void   *object /* IN: Object to attach to atom */
 )
 {
     atom_group_t *grp_ptr = NULL; /* ptr to the atomic group */
@@ -254,11 +254,11 @@ done:
 
 *******************************************************************************/
 #ifdef ATOMS_CACHE_INLINE
-VOIDP
+void *
 HAPatom_object(atom_t atm /* IN: Atom to retrieve object for */
 )
 #else  /* ATOMS_CACHE_INLINE */
-VOIDP
+void *
 HAatom_object(atom_t atm /* IN: Atom to retrieve object for */
 )
 #endif /* ATOMS_CACHE_INLINE */
@@ -269,7 +269,7 @@ HAatom_object(atom_t atm /* IN: Atom to retrieve object for */
 #endif                             /* ATOMS_ARE_CACHED */
 #endif                             /* ATOMS_CACHE_INLINE */
     atom_info_t *atm_ptr   = NULL; /* ptr to the new atom */
-    VOIDP        ret_value = NULL;
+    void        *ret_value = NULL;
 
     HEclear();
 
@@ -281,7 +281,7 @@ HAatom_object(atom_t atm /* IN: Atom to retrieve object for */
             ret_value = atom_obj_cache[i];
             if (i > 0) { /* Implement a simple "move forward" caching scheme */
                 atom_t t_atom = atom_id_cache[i - 1];
-                VOIDP  t_obj  = atom_obj_cache[i - 1];
+                void  *t_obj  = atom_obj_cache[i - 1];
 
                 atom_id_cache[i - 1]  = atom_id_cache[i];
                 atom_obj_cache[i - 1] = atom_obj_cache[i];
@@ -342,7 +342,7 @@ done:
     Returns atom's object if successful and NULL otherwise
 
 *******************************************************************************/
-VOIDP
+void *
 HAremove_atom(atom_t atm /* IN: Atom to remove */
 )
 {
@@ -354,7 +354,7 @@ HAremove_atom(atom_t atm /* IN: Atom to remove */
 #ifdef ATOMS_ARE_CACHED
     uintn i; /* local counting variable */
 #endif       /* ATOMS_ARE_CACHED */
-    VOIDP ret_value = NULL;
+    void *ret_value = NULL;
 
     HEclear();
     grp = ATOM_TO_GROUP(atm);

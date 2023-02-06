@@ -66,25 +66,25 @@ static struct rgb *color_pt = (struct rgb *)NULL; /*contains the hi-lo */
 static uint8 *image;           /* contains the compressed image            */
 static int    trans[MAXCOLOR]; /* color translation table                  */
 
-static VOID        compress(unsigned char raster[], int block);
-static VOID        init_global(int32 xdim, int32 ydim, VOIDP out, VOIDP out_pal);
+static void        compress(unsigned char raster[], int block);
+static void        init_global(int32 xdim, int32 ydim, void *out, void *out_pal);
 static int         cnt_color(int blocks);
-static VOID        set_palette(int blocks);
-static VOID        fillin_color(int blocks);
+static void        set_palette(int blocks);
+static void        fillin_color(int blocks);
 static int         indx(unsigned char r, unsigned char g, unsigned char b);
-static VOID        map(int blocks);
+static void        map(int blocks);
 static int         nearest_color(uint8 r, uint8 g, uint8 b);
 static uint32      sqr(int16 x);
-static VOID        sel_palette(int blocks, int distinct, struct rgb *my_color_pt);
-static VOID        init(int blocks, int distinct, struct rgb *my_color_pt);
-static VOID        sort(int l, int r, int dim, int rank[]);
+static void        sel_palette(int blocks, int distinct, struct rgb *my_color_pt);
+static void        init(int blocks, int distinct, struct rgb *my_color_pt);
+static void        sort(int l, int r, int dim, int rank[]);
 static int         partition(int l, int r, int dim, int rank[]);
 static struct box *find_box(void);
-static VOID        split_box(struct box *ptr);
-static VOID        assign_color(void);
+static void        split_box(struct box *ptr);
+static void        assign_color(void);
 static int         select_dim(struct box *ptr);
 static float       find_med(struct box *ptr, int dim);
-static VOID        classify(struct box *ptr, struct box *child);
+static void        classify(struct box *ptr, struct box *child);
 static int         next_pt(int dim, int i, int rank[], int distinct);
 
 /************************************************************************/
@@ -109,14 +109,14 @@ static int         next_pt(int dim, int i, int rank[], int distinct);
 /*        sel_palette(), map()                                          */
 /************************************************************************/
 
-VOID
+void
 DFCIimcomp(int32 xdim, int32 ydim, const uint8 *in, uint8 out[], uint8 in_pal[], uint8 out_pal[], int mode)
 {
     unsigned char raster[48];
     int           blocks, nmbr;
     int32         i, j, k, l, x, y;
 
-    init_global(xdim, ydim, (VOIDP)out, (VOIDP)out_pal);
+    init_global(xdim, ydim, (void *)out, (void *)out_pal);
 
     /* compress pixel blocks */
     blocks = 0;
@@ -188,7 +188,7 @@ DFCIimcomp(int32 xdim, int32 ydim, const uint8 *in, uint8 out[], uint8 in_pal[],
 /*  Calls       : none                                                  */
 /************************************************************************/
 
-static VOID
+static void
 compress(unsigned char raster[], int block)
 {
     float32 y[16], y_av;
@@ -263,8 +263,8 @@ compress(unsigned char raster[], int block)
 /*  Calls       : none                          */
 /************************************************************************/
 
-static VOID
-init_global(int32 xdim, int32 ydim, VOIDP out, VOIDP out_pal)
+static void
+init_global(int32 xdim, int32 ydim, void *out, void *out_pal)
 {
     int32 i, j;
 
@@ -339,7 +339,7 @@ cnt_color(int blocks)
 /*  Calls       : indx()                        */
 /************************************************************************/
 
-static VOID
+static void
 set_palette(int blocks)
 {
     int ent, i, k;
@@ -368,7 +368,7 @@ set_palette(int blocks)
 /*  Calls       : none                          */
 /************************************************************************/
 
-static VOID
+static void
 fillin_color(int blocks)
 {
     int i, j, k;
@@ -412,7 +412,7 @@ indx(unsigned char r, unsigned char g, unsigned char b)
 /*  Calls       : nearest_color()                   */
 /************************************************************************/
 
-static VOID
+static void
 map(int blocks)
 {
     int   i, k;
@@ -495,7 +495,7 @@ sqr(int16 x)
 /*  Calls       : none                          */
 /************************************************************************/
 
-VOID
+void
 DFCIunimcomp(int32 xdim, int32 ydim, uint8 in[], uint8 out[])
 {
     int   bitmap, temp;
@@ -547,7 +547,7 @@ DFCIunimcomp(int32 xdim, int32 ydim, uint8 in[], uint8 out[])
 /*  Calls       : init(), split_box(), find_box(), assign_color()   */
 /************************************************************************/
 
-static VOID
+static void
 sel_palette(int blocks, int distinct, struct rgb *my_color_pt)
 {
     int boxes;
@@ -594,7 +594,7 @@ sel_palette(int blocks, int distinct, struct rgb *my_color_pt)
 /*  Calls       : none                          */
 /************************************************************************/
 
-static VOID
+static void
 init(int blocks, int distinct, struct rgb *my_color_pt)
 {
     int         i, j, k, l;
@@ -679,7 +679,7 @@ init(int blocks, int distinct, struct rgb *my_color_pt)
 /*  Calls       : partition()                       */
 /************************************************************************/
 
-static VOID
+static void
 sort(int l, int r, int dim, int rank[])
 {
     int i;
@@ -790,7 +790,7 @@ find_box(void)
 /*  Calls       : find_med(), select_dim(), classify()          */
 /************************************************************************/
 
-static VOID
+static void
 split_box(struct box *ptr)
 {
     int         dim, j, i;
@@ -837,7 +837,7 @@ split_box(struct box *ptr)
 /*  Calls       : none                          */
 /************************************************************************/
 
-static VOID
+static void
 assign_color(void)
 {
     struct box *temp;
@@ -981,7 +981,7 @@ find_med(struct box *ptr, int dim)
 /*  Calls       : none                          */
 /************************************************************************/
 
-static VOID
+static void
 classify(struct box *ptr, struct box *child)
 {
     int  i, j;

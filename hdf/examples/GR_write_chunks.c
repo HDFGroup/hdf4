@@ -63,7 +63,7 @@ main()
      */
     origin[0] = 0;
     origin[1] = 0;
-    if (GRwritechunk(ri_id, origin, (VOIDP)chunk00) == FAIL)
+    if (GRwritechunk(ri_id, origin, (void *)chunk00) == FAIL)
         printf("*** ERROR from GRwritechunk\n");
 
     /*
@@ -71,7 +71,7 @@ main()
      */
     origin[0] = 0;
     origin[1] = 1;
-    if (GRwritechunk(ri_id, origin, (VOIDP)chunk01) == FAIL)
+    if (GRwritechunk(ri_id, origin, (void *)chunk01) == FAIL)
         printf("*** ERROR from GRwritechunk\n");
 
     /*
@@ -79,7 +79,7 @@ main()
      */
     origin[0] = 1;
     origin[1] = 4;
-    if (GRwritechunk(ri_id, origin, (VOIDP)chunk14) == FAIL)
+    if (GRwritechunk(ri_id, origin, (void *)chunk14) == FAIL)
         printf("*** ERROR from GRwritechunk\n");
 
     /*

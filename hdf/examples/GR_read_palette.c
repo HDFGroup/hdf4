@@ -52,7 +52,7 @@ main()
     /*
      * Read the palette data.
      */
-    if (GRreadlut(pal_id, (VOIDP)palette_data) == FAIL)
+    if (GRreadlut(pal_id, (void *)palette_data) == FAIL)
         printf("*** ERROR from GRreadlut\n");
 
     /*

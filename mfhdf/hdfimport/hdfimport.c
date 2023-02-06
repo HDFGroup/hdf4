@@ -313,7 +313,7 @@ struct Input {
     struct int16set in16s;
     struct int8set  in8s;
     struct fp64set  fp64s;
-    VOIDP           data; /* input data */
+    void           *data; /* input data */
     int             outtype;
 };
 
@@ -2558,38 +2558,38 @@ create_SDS(int32 sd_id, int32 nt, struct Input *in)
  *    Returns SUCCEED or FAIL. (bmribler - 2006/8/18)
  */
 static intn
-alloc_data(VOIDP *data, int32 len, int outtype)
+alloc_data(void **data, int32 len, int outtype)
 {
     const char *alloc_err = "Unable to dynamically allocate memory.\n";
 
     switch (outtype) {
         case 0: /* 32-bit float */
         case 5: /* NO_NE */
-            if ((*data = (VOIDP)malloc((size_t)len * sizeof(float32))) == NULL) {
+            if ((*data = (void *)malloc((size_t)len * sizeof(float32))) == NULL) {
                 (void)fprintf(stderr, "%s", alloc_err);
                 return FAIL;
             }
             break;
         case 1: /* 64-bit float */
-            if ((*data = (VOIDP)malloc((size_t)len * sizeof(float64))) == NULL) {
+            if ((*data = (void *)malloc((size_t)len * sizeof(float64))) == NULL) {
                 (void)fprintf(stderr, "%s", alloc_err);
                 return FAIL;
             }
             break;
         case 2: /* 32-bit integer */
-            if ((*data = (VOIDP)malloc((size_t)len * sizeof(int32))) == NULL) {
+            if ((*data = (void *)malloc((size_t)len * sizeof(int32))) == NULL) {
                 (void)fprintf(stderr, "%s", alloc_err);
                 return FAIL;
             }
             break;
         case 3: /* 16-bit integer */
-            if ((*data = (VOIDP)malloc((size_t)len * sizeof(int16))) == NULL) {
+            if ((*data = (void *)malloc((size_t)len * sizeof(int16))) == NULL) {
                 (void)fprintf(stderr, "%s", alloc_err);
                 return FAIL;
             }
             break;
         case 4: /* 8-bit integer */
-            if ((*data = (VOIDP)malloc((size_t)len * sizeof(int8))) == NULL) {
+            if ((*data = (void *)malloc((size_t)len * sizeof(int8))) == NULL) {
                 (void)fprintf(stderr, "%s", alloc_err);
                 return FAIL;
             }
@@ -2618,7 +2618,7 @@ write_SDS(int32 sds_id, struct Input *in)
         edges[1] = in->dims[0];
         start[0] = 0;
         start[1] = 0;
-        if (SDwritedata(sds_id, start, NULL, edges, (VOIDP)in->data) != 0) {
+        if (SDwritedata(sds_id, start, NULL, edges, (void *)in->data) != 0) {
             (void)fprintf(stderr, "%s", write_err);
             return FAIL;
         }
@@ -2631,7 +2631,7 @@ write_SDS(int32 sds_id, struct Input *in)
         start[0] = 0;
         start[1] = 0;
         start[2] = 0;
-        if (SDwritedata(sds_id, start, NULL, edges, (VOIDP)in->data) != 0) {
+        if (SDwritedata(sds_id, start, NULL, edges, (void *)in->data) != 0) {
             (void)fprintf(stderr, "%s", write_err);
             return FAIL;
         }
@@ -2650,7 +2650,7 @@ write_SDS(int32 sds_id, struct Input *in)
  *    Returns SUCCEED or FAIL. (bmribler - 2006/8/18)
  */
 static intn
-set_dimensions(int32 sds_id, struct Input *in, int32 nt, VOIDP dscale, VOIDP vscale, VOIDP hscale)
+set_dimensions(int32 sds_id, struct Input *in, int32 nt, void *dscale, void *vscale, void *hscale)
 {
     int32       dim_id, dim_index;
     const char *dim_err = "Unable to set dimension scales\n";
@@ -2664,7 +2664,7 @@ set_dimensions(int32 sds_id, struct Input *in, int32 nt, VOIDP dscale, VOIDP vsc
         dim_index = 0;
         dim_id    = SDgetdimid(sds_id, dim_index);
 
-        if (SDsetdimscale(dim_id, edges[0], nt, (VOIDP)vscale) == FAIL) {
+        if (SDsetdimscale(dim_id, edges[0], nt, (void *)vscale) == FAIL) {
             (void)fprintf(stderr, "%s, dim index %d\n", dim_err, dim_index);
             return FAIL;
         }
@@ -2864,8 +2864,8 @@ process(struct Options *opt)
                         }
 
                         /* set dimension scale */
-                        status = set_dimensions(sds_id, &in, DFNT_FLOAT32, (VOIDP)in.dscale, (VOIDP)in.vscale,
-                                                (VOIDP)in.hscale);
+                        status = set_dimensions(sds_id, &in, DFNT_FLOAT32, (void *)in.dscale,
+                                                (void *)in.vscale, (void *)in.hscale);
                         if (status == FAIL)
                             goto err;
                     }
@@ -2890,8 +2890,8 @@ process(struct Options *opt)
                         }
 
                         /* set dimension scale */
-                        status = set_dimensions(sds_id, &in, DFNT_FLOAT64, (VOIDP)in.fp64s.dscale,
-                                                (VOIDP)in.fp64s.vscale, (VOIDP)in.fp64s.hscale);
+                        status = set_dimensions(sds_id, &in, DFNT_FLOAT64, (void *)in.fp64s.dscale,
+                                                (void *)in.fp64s.vscale, (void *)in.fp64s.hscale);
                         if (status == FAIL)
                             goto err;
                     }
@@ -2916,8 +2916,8 @@ process(struct Options *opt)
                         }
 
                         /* set dimension scale */
-                        status = set_dimensions(sds_id, &in, DFNT_INT32, (VOIDP)in.in32s.dscale,
-                                                (VOIDP)in.in32s.vscale, (VOIDP)in.in32s.hscale);
+                        status = set_dimensions(sds_id, &in, DFNT_INT32, (void *)in.in32s.dscale,
+                                                (void *)in.in32s.vscale, (void *)in.in32s.hscale);
                         if (status == FAIL)
                             goto err;
                     }
@@ -2941,8 +2941,8 @@ process(struct Options *opt)
                         }
 
                         /* set dimension scale */
-                        status = set_dimensions(sds_id, &in, DFNT_INT16, (VOIDP)in.in16s.dscale,
-                                                (VOIDP)in.in16s.vscale, (VOIDP)in.in16s.hscale);
+                        status = set_dimensions(sds_id, &in, DFNT_INT16, (void *)in.in16s.dscale,
+                                                (void *)in.in16s.vscale, (void *)in.in16s.hscale);
                         if (status == FAIL)
                             goto err;
                     }
@@ -2966,8 +2966,8 @@ process(struct Options *opt)
                         }
 
                         /* set dimension scale */
-                        status = set_dimensions(sds_id, &in, DFNT_INT8, (VOIDP)in.in8s.dscale,
-                                                (VOIDP)in.in8s.vscale, (VOIDP)in.in8s.hscale);
+                        status = set_dimensions(sds_id, &in, DFNT_INT8, (void *)in.in8s.dscale,
+                                                (void *)in.in8s.vscale, (void *)in.in8s.hscale);
                         if (status == FAIL)
                             goto err;
                     }

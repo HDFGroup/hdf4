@@ -75,7 +75,7 @@ copy_gr(int32 infile_id, int32 outfile_id, int32 gr_in, int32 gr_out, int32 tag,
         eltsz,              /* element size */
         nelms,              /* number of elements */
         data_size;
-    VOIDP buf = NULL;
+    void *buf = NULL;
     uint8 pal_data[256 * 3];
     int   can_compress = 1; /* flag to tell if a compression is supported */
     char *pal_path     = "palette";
@@ -354,7 +354,7 @@ copy_gr(int32 infile_id, int32 outfile_id, int32 gr_in, int32 gr_out, int32 tag,
      */
 
     /* alloc */
-    if ((buf = (VOIDP)malloc(data_size)) == NULL) {
+    if ((buf = (void *)malloc(data_size)) == NULL) {
         printf("Failed to allocate %d elements of size %d\n", nelms, eltsz);
         GRendaccess(ri_id);
         free(path);
@@ -507,7 +507,7 @@ copy_gr(int32 infile_id, int32 outfile_id, int32 gr_in, int32 gr_out, int32 tag,
         }
 
         /* Write the palette to file. */
-        if (GRwritelut(pal_out, r_ncomp, r_data_type, r_interlace_mode, r_num_entries, (VOIDP)pal_data) ==
+        if (GRwritelut(pal_out, r_ncomp, r_data_type, r_interlace_mode, r_num_entries, (void *)pal_data) ==
             FAIL) {
             printf("Failed to write palette for <%s>\n", path);
         }
@@ -579,7 +579,7 @@ copy_gr_attrs(int32 ri_id, int32 ri_out, int32 nattrs, options_t *options)
         eltsz,   /* element size */
         nelms;   /* number of elements */
     char  attr_name[H4_MAX_NC_NAME];
-    VOIDP attr_buf = NULL;
+    void *attr_buf = NULL;
     int   i;
 
     (void)options;
@@ -593,7 +593,7 @@ copy_gr_attrs(int32 ri_id, int32 ri_out, int32 nattrs, options_t *options)
         /* compute the number of the bytes for each value. */
         numtype = dtype & DFNT_MASK;
         eltsz   = DFKNTsize(numtype | DFNT_NATIVE);
-        if ((attr_buf = (VOIDP)malloc(nelms * eltsz)) == NULL) {
+        if ((attr_buf = (void *)malloc(nelms * eltsz)) == NULL) {
             printf("Error allocating %d values of size %d for attribute %s", nelms, numtype, attr_name);
             return -1;
         }

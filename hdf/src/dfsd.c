@@ -494,7 +494,7 @@ done:
        int DFSDgetdimscale(dim, maxsize, scale)
        int   dim;      IN: Dimension this scale corresponds to
        int32 size;     IN:  size of scale
-       VOIDP scale;    OUT: the scale
+       void *scale;    OUT: the scale
  RETURN
        Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
  DESCRIPTION
@@ -505,7 +505,7 @@ done:
        multi-file SD interface.
 ---------------------------------------------------------------------------*/
 intn
-DFSDgetdimscale(intn dim, int32 maxsize, VOIDP scale)
+DFSDgetdimscale(intn dim, int32 maxsize, void *scale)
 {
     uint32 dimsize;
     int32  numtype;
@@ -558,8 +558,8 @@ done:
        DFSDgetrange
  USAGE
        int DFSDgetrange(max, min)
-       VOIDP max;    OUT: High value stored with the scientific data set
-       VOIDP min;    OUT: Low value stored with the scientific data set
+       void *max;    OUT: High value stored with the scientific data set
+       void *min;    OUT: Low value stored with the scientific data set
  RETURNS
        Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
  DESCRIPTION
@@ -579,7 +579,7 @@ done:
        values may actually lie outside the range of values in the data set.
 ---------------------------------------------------------------------------*/
 int
-DFSDgetrange(VOIDP pmax, VOIDP pmin)
+DFSDgetrange(void *pmax, void *pmin)
 {
     int32  numtype;
     uint32 localNTsize;
@@ -629,7 +629,7 @@ done:
       intn  rank;        IN:  number of dimensions of array "data"
       int32 maxsizes;    IN:  Array that holds dimensions of buffer that will
                               hold the data
-      VOIDP data;        OUT: Array for holding the data
+      void *data;        OUT: Array for holding the data
 
  RETURN
        Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
@@ -652,7 +652,7 @@ done:
 
 ---------------------------------------------------------------------------*/
 intn
-DFSDgetdata(const char *filename, intn rank, int32 maxsizes[], VOIDP data)
+DFSDgetdata(const char *filename, intn rank, int32 maxsizes[], void *data)
 {
     intn ret_value;
 
@@ -993,7 +993,7 @@ done:
        int DFSDsetdimscale(dim, dimsize, scale)
        int   dim;        IN: dimension the is scale corresponds to
        int32 dimsize;    IN: size of scale in the dimension
-       VOID  *scale;     IN: the scale
+       void  *scale;     IN: the scale
  RETURNS
        Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
  DESCRIPTION
@@ -1004,7 +1004,7 @@ done:
        latitude, and the other points of longitude.
 -----------------------------------------------------------------------------*/
 intn
-DFSDsetdimscale(intn dim, int32 dimsize, VOIDP scale)
+DFSDsetdimscale(intn dim, int32 dimsize, void *scale)
 {
     int32  i;
     intn   rdim;
@@ -1096,8 +1096,8 @@ done:
        DFSDsetrange
  USAGE
        int DFSDsetrange(max, min)
-       VOIDP max;    IN: High value in the scientific data set
-       VOIDP min;    IN: Low value in the scientific data set
+       void * max;    IN: High value in the scientific data set
+       void * min;    IN: Low value in the scientific data set
  RETURNS
        Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
  DESCRIPTION
@@ -1117,7 +1117,7 @@ done:
        cleared aftera a call to either "DFSDputdata" or "DFSDaddadata".
 -----------------------------------------------------------------------------*/
 intn
-DFSDsetrange(VOIDP maxi, VOIDP mini)
+DFSDsetrange(void *maxi, void *mini)
 {
     int32  numtype;
     uint32 localNTsize;
@@ -1162,7 +1162,7 @@ done:
        char  *filename;     IN: name of file to store scientific data set in
        int   rank;          IN: number of dimensions of data array to be stored
        int32 dimsizes[];    IN: array that holds sizes of dimensions
-       VOID  *data;         IN: array holding data to be stored
+       void  *data;         IN: array holding data to be stored
  RETURNS
        Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
  DESCRIPTION
@@ -1175,7 +1175,7 @@ done:
 -----------------------------------------------------------------------------*/
 
 intn
-DFSDputdata(const char *filename, intn rank, int32 dimsizes[], VOIDP data)
+DFSDputdata(const char *filename, intn rank, int32 dimsizes[], void *data)
 {
     intn ret_value;
 
@@ -1193,7 +1193,7 @@ USAGE
       char  *filename;    IN: Name of HDF file to store the data set
       intn  rank;         IN: Number of dimensions in the data array to be written
       int32 dimsizes[];   IN: Array holding the size of each dimension
-      VOIDP data;         IN: Array holding the data to be stored
+      void *data;         IN: Array holding the data to be stored
 
 RETURNS
       SUCCEED(0) if successful and FAIL(-1) otherwise.
@@ -1210,7 +1210,7 @@ DESCRIPTION
       file, along with the data array itself.
 -----------------------------------------------------------------------------*/
 intn
-DFSDadddata(const char *filename, intn rank, int32 dimsizes[], VOIDP data)
+DFSDadddata(const char *filename, intn rank, int32 dimsizes[], void *data)
 {
     intn ret_value;
 
@@ -1415,7 +1415,7 @@ done:
        int32 winst[];         IN:  array containing the coordinates for the start
                                    of the slice
        int32 windims[];       IN:  array containing the dimensions of the slice
-       VOID  *data;           OUT: array for returning the slice
+       void  *data;           OUT: array for returning the slice
        int32 dims[];          OUT: dimensions of array data
  RETURNS
        Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
@@ -1443,7 +1443,7 @@ done:
        on earlier versions of the library.
 ----------------------------------------------------------------------------*/
 intn
-DFSDgetslice(const char *filename, int32 winst[], int32 windims[], VOIDP data, int32 dims[])
+DFSDgetslice(const char *filename, int32 winst[], int32 windims[], void *data, int32 dims[])
 {
     intn ret_value;
 
@@ -1532,7 +1532,7 @@ done:
        int DFSDputslice(winend, data, dims)
        int32 winend[];    IN: dimensions that specify the size of slice to be
                               written
-       VOID  *data;       IN: array containing slice to be written
+       void  *data;       IN: array containing slice to be written
        int32 dims[];      IN: dimensions of array data
  RETURNS
        Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
@@ -1556,7 +1556,7 @@ done:
        of the library.
 -----------------------------------------------------------------------------*/
 intn
-DFSDputslice(int32 winend[], VOIDP data, int32 dims[])
+DFSDputslice(int32 winend[], void *data, int32 dims[])
 {
     intn ret_value;
 
@@ -2498,8 +2498,8 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg *sdg)
                         p = buf;
 
                         /* convert, all at once */
-                        DFKconvert((VOIDP)p, (VOIDP)sdg->dimscales[i], numtype, sdg->dimsizes[i], DFACC_READ,
-                                   0, 0);
+                        DFKconvert((void *)p, (void *)sdg->dimscales[i], numtype, sdg->dimsizes[i],
+                                   DFACC_READ, 0, 0);
 
                         free(buf);
                     }
@@ -2551,7 +2551,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg *sdg)
                         HGOTO_ERROR(DFE_GETELEM, FAIL);
                     }
 
-                    DFKconvert((VOIDP)buf, (VOIDP) & (sdg->max_min[0]), numtype, 2, DFACC_READ, 0, 0);
+                    DFKconvert((void *)buf, (void *)&(sdg->max_min[0]), numtype, 2, DFACC_READ, 0, 0);
 
                     free(buf);
                 }
@@ -2618,17 +2618,18 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg *sdg)
                     if (eltSize == 36) {
                         /* element is new, double based type */
                         /* read in the 64bit float factors */
-                        DFKconvert((VOIDP)buf, (VOIDP)&sdg->cal, DFNT_FLOAT64, 4, DFACC_READ, 0, 0);
+                        DFKconvert((void *)buf, (void *)&sdg->cal, DFNT_FLOAT64, 4, DFACC_READ, 0, 0);
 
                         /* read in the 32bit integer number type */
-                        DFKconvert((VOIDP)(buf + 32), (VOIDP)&sdg->cal_type, DFNT_INT32, 1, DFACC_READ, 0, 0);
+                        DFKconvert((void *)(buf + 32), (void *)&sdg->cal_type, DFNT_INT32, 1, DFACC_READ, 0,
+                                   0);
                     }
                     else {
                         /* element is old float based type */
                         float32 buf2[4];
 
                         /* convert calibration factors */
-                        DFKconvert((VOIDP)buf, (VOIDP)buf2, DFNT_FLOAT32, 4, DFACC_READ, 0, 0);
+                        DFKconvert((void *)buf, (void *)buf2, DFNT_FLOAT32, 4, DFACC_READ, 0, 0);
 
                         /* move 'em over */
                         sdg->ioff     = (float64)buf2[0];
@@ -2681,7 +2682,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg *sdg)
                     }
 
                     /* convert the fill value  */
-                    DFKconvert((VOIDP)buf, (VOIDP)sdg->fill_value, numtype, 1, DFACC_READ, 0, 0);
+                    DFKconvert((void *)buf, (void *)sdg->fill_value, numtype, 1, DFACC_READ, 0, 0);
 
                     free(buf);
                 }
@@ -2910,7 +2911,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg *sdg)
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
                 }
                 /* convert, all at once */
-                DFKconvert((VOIDP)sdg->dimscales[j], (VOIDP)buf, numtype, sdg->dimsizes[j], DFACC_WRITE, 0,
+                DFKconvert((void *)sdg->dimscales[j], (void *)buf, numtype, sdg->dimsizes[j], DFACC_WRITE, 0,
                            0);
                 /* write it all out */
                 if (Hwrite(aid, (int32)(fileNTsize * sdg->dimsizes[j]), buf) == FAIL) {
@@ -2960,7 +2961,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg *sdg)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
             /* convert */
-            DFKconvert((VOIDP) & (sdg->max_min[0]), (VOIDP)buf, numtype, 2, DFACC_WRITE, 0, 0);
+            DFKconvert((void *)&(sdg->max_min[0]), (void *)buf, numtype, 2, DFACC_WRITE, 0, 0);
 
             /* write */
             if (Hputelement(file_id, DFTAG_SDM, ref, buf, (int32)(2 * fileNTsize)) == FAIL) {
@@ -2990,10 +2991,10 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg *sdg)
             uint8 buf2[4 * sizeof(float64) + sizeof(int32)];
 
             /* convert doubles */
-            DFKconvert((VOIDP)&sdg->cal, (VOIDP)buf2, DFNT_FLOAT64, 4, DFACC_WRITE, 0, 0);
+            DFKconvert((void *)&sdg->cal, (void *)buf2, DFNT_FLOAT64, 4, DFACC_WRITE, 0, 0);
 
             /* convert int */
-            DFKconvert((VOIDP)&sdg->cal_type, (VOIDP)(buf2 + 32), DFNT_INT32, 1, DFACC_WRITE, 0, 0);
+            DFKconvert((void *)&sdg->cal_type, (void *)(buf2 + 32), DFNT_INT32, 1, DFACC_WRITE, 0, 0);
 
             /* write it into the file */
             if (Hputelement(file_id, DFTAG_CAL, ref, (unsigned char *)buf2, (int32)36) < 0)
@@ -3021,7 +3022,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg *sdg)
             uint8 buf2[DFSD_MAXFILL_LEN];
 
             /* Convert from native to IEEE  */
-            DFKconvert((VOIDP)sdg->fill_value, (VOIDP)buf2, numtype, 1, DFACC_WRITE, 0, 0);
+            DFKconvert((void *)sdg->fill_value, (void *)buf2, numtype, 1, DFACC_WRITE, 0, 0);
 
             /* Write it into the file  */
             if (Hputelement(file_id, DFTAG_FV, ref, (unsigned char *)buf2, (int32)fileNTsize) == FAIL)
@@ -3533,7 +3534,7 @@ done:
  *          User sets maxsizes before call.
  *---------------------------------------------------------------------------*/
 intn
-DFSDIgetdata(const char *filename, intn rank, int32 maxsizes[], VOIDP data, intn isfortran)
+DFSDIgetdata(const char *filename, intn rank, int32 maxsizes[], void *data, intn isfortran)
 {
     intn   i;
     int32 *winst;
@@ -3598,7 +3599,7 @@ done:
  * Method:  Create file if necessary, allocate arrays, call slice routines
  *---------------------------------------------------------------------------*/
 intn
-DFSDIputdata(const char *filename, intn rank, int32 *dimsizes, VOIDP data, intn accmode, intn isfortran)
+DFSDIputdata(const char *filename, intn rank, int32 *dimsizes, void *data, intn accmode, intn isfortran)
 {
     int32 file_id;
     intn  ret_value = SUCCEED;
@@ -3676,7 +3677,7 @@ done:
  */
 /*****************************************************************************/
 intn
-DFSDIgetslice(const char *filename, int32 winst[], int32 windims[], VOIDP data, int32 dims[], intn isfortran)
+DFSDIgetslice(const char *filename, int32 winst[], int32 windims[], void *data, int32 dims[], intn isfortran)
 {
     intn  rank;        /* number of dimensions in data[] */
     int32 leastsig;    /* fastest varying subscript in the array */
@@ -3903,7 +3904,7 @@ DFSDIgetslice(const char *filename, int32 winst[], int32 windims[], VOIDP data, 
                     error = 1;
                     break;
                 }
-                DFKconvert((VOIDP)buf, transposed ? (VOIDP)scatterbuf : (VOIDP)datap, numtype, numelements,
+                DFKconvert((void *)buf, transposed ? (void *)scatterbuf : (void *)datap, numtype, numelements,
                            DFACC_READ, 0, 0);
             }
             else {
@@ -3991,7 +3992,7 @@ done:
  *          of the Fortorder variable - row major if 0, column major if 1
  *--------------------------------------------------------------------------*/
 intn
-DFSDIputslice(int32 windims[], VOIDP data, int32 dims[], intn isfortran)
+DFSDIputslice(int32 windims[], void *data, int32 dims[], intn isfortran)
 {
     intn   rank;            /* number of dimensions in data[] */
     int32  leastsig;        /* fastest varying subscript in the array */
@@ -4113,7 +4114,7 @@ DFSDIputslice(int32 windims[], VOIDP data, int32 dims[], intn isfortran)
             if (buf == NULL)
                 HCLOSE_GOTO_ERROR(Sfile_id, DFE_NOSPACE, FAIL);
             for (i = 0; i < j; i++, datap += datastride) {
-                DFKconvert((VOIDP)datap, (VOIDP)buf, numtype, numelements, DFACC_WRITE, 0, 0);
+                DFKconvert((void *)datap, (void *)buf, numtype, numelements, DFACC_WRITE, 0, 0);
                 ret = Hwrite(Writesdg.aid, writesize, buf); /* done */
                 if (ret == FAIL) {
                     free(buf);
@@ -4333,7 +4334,7 @@ done:
        DFSDsetfillvalue
  USAGE
        int DFSDsetfillvalue(fill_value)
-       VOID *fill_value;     IN: number to be stored in any unwritten locations
+       void *fill_value;     IN: number to be stored in any unwritten locations
                                  of the scientific data set
  RETURNS
        Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
@@ -4349,7 +4350,7 @@ done:
        Memory bug on SGI's if you try to free allocated space for fill values.
 -----------------------------------------------------------------------------*/
 intn
-DFSDsetfillvalue(VOIDP fill_value)
+DFSDsetfillvalue(void *fill_value)
 {
     int32  numtype;     /* current number type  */
     uint32 localNTsize; /* size of this NT on as it is on this machine  */
@@ -4389,7 +4390,7 @@ done:
        DFSDgetfillvalue
  USAGE
        int DFSDgetfillvalue(fill_value)
-       VOID *fill_value;    OUT: Number to be stored in any unwritten
+       void *fill_value;    OUT: Number to be stored in any unwritten
                                  locations of the scientific data set
  RETURNS
        Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
@@ -4401,7 +4402,7 @@ done:
       "DFSDgetfillvalue" does not take a file name as an argument.
 -----------------------------------------------------------------------------*/
 intn
-DFSDgetfillvalue(VOIDP fill_value)
+DFSDgetfillvalue(void *fill_value)
 {
     int32  numtype;     /* current number type  */
     uint32 localNTsize; /* size of this NT on as it is on this machine  */
@@ -4444,7 +4445,7 @@ done:
        int32 slab_size[];    IN: array of size rank containing the size of
                                  each dimension in the slab of data
        int32 stride[];       IN: sub-sampling stride(not implemented)
-       VOIDP buffer;         OUT: buffer to hold the extracted slab of data
+       void * buffer;         OUT: buffer to hold the extracted slab of data
        int32 buffer_size[];  OUT: array containing the dimensions of the buffer
  RETURNS
        Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
@@ -4467,7 +4468,7 @@ done:
        the slab size as {3,1,4}.
 -----------------------------------------------------------------------------*/
 intn
-DFSDreadslab(const char *filename, int32 start[], int32 slab_size[], int32 stride[], VOIDP buffer,
+DFSDreadslab(const char *filename, int32 start[], int32 slab_size[], int32 stride[], void *buffer,
              int32 buffer_size[])
 {
     intn ret_value = SUCCEED;
@@ -4579,7 +4580,7 @@ DFSDstartslab(const char *filename)
             uint8 buf2[DFSD_MAXFILL_LEN];
 
             /* Convert from native to IEEE  */
-            DFKconvert((VOIDP)&Writesdg.fill_value, (VOIDP)buf2, Writesdg.numbertype, 1, DFACC_WRITE, 0, 0);
+            DFKconvert((void *)&Writesdg.fill_value, (void *)buf2, Writesdg.numbertype, 1, DFACC_WRITE, 0, 0);
 
             /* Initialize buffer to fill value */
             for (i = 0; i < fill_bufsize; i = i + localNTsize)
@@ -4630,7 +4631,7 @@ done:
                               of the slab in the HDF file
        int32 stride[];    IN: array containing the dimensions of data[]
        int32 count[];     IN: array containing the size of the slab
-       VOID  *data;       IN: array to hold the floating point data to write
+       void  *data;       IN: array to hold the floating point data to write
  RETURNS
        Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
  DESCRIPTION
@@ -4650,7 +4651,7 @@ done:
        is written.
 ----------------------------------------------------------------------------*/
 intn
-DFSDwriteslab(int32 start[], int32 stride[], int32 count[], VOIDP data)
+DFSDwriteslab(int32 start[], int32 stride[], int32 count[], void *data)
 {
     intn  rank; /* number of dimensions in data[] */
     int32 i;    /* temporary loop index */
@@ -4848,7 +4849,7 @@ DFSDwriteslab(int32 start[], int32 stride[], int32 count[], VOIDP data)
             /*  If convert and write one contiguous block of data */
             /*  Else write one contiguous block of data */
             if (convert) {
-                DFKconvert((VOIDP)datap, (VOIDP)buf, numtype, numelements, DFACC_WRITE, 0, 0);
+                DFKconvert((void *)datap, (void *)buf, numtype, numelements, DFACC_WRITE, 0, 0);
                 if (rowsize != Hwrite(aid, rowsize, buf)) {
                     r_error = 1;
                     break;

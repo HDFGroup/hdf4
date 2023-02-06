@@ -586,7 +586,7 @@ sort(int32 *chosen, int32 choices)
    if it is not NULL.  Its purpose is to make cleaning up simpler
    throughout the entire dumper */
 void
-resetBuff(VOIDP *ptr)
+resetBuff(void **ptr)
 {
     free(*ptr);
     *ptr = NULL;

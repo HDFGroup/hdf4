@@ -30,7 +30,7 @@ static intn magnify(uint8 *from_buffer, uint8 *to_buffer, int32 from_x0, int32 f
 
 static intn convert8to24(uint8 *img8_buf, uint8 *img24_buf, int32 img_xdim, int32 img_ydim);
 
-static VOID usage(void);
+static void usage(void);
 
 /**********************************************************************
  *  Function :   magnify
@@ -163,7 +163,7 @@ convert8to24(uint8 *img8_buf, uint8 *img24_buf, int32 img_xdim, int32 img_ydim)
     return (TRUE);
 } /* end convert8to24() */
 
-static VOID
+static void
 usage(void)
 {
     printf("USAGE: make24 [-s<scale>] [-j] <input HDF file> <output HDF file>\n");
@@ -310,7 +310,7 @@ main(int argc, char *argv[])
     }                                       /* end if */
 
     /* store 24-bit image */
-    if (DF24putimage(argv[file + 1], (VOIDP)img24_buf, xdim, ydim) == FAIL) {
+    if (DF24putimage(argv[file + 1], (void *)img24_buf, xdim, ydim) == FAIL) {
         printf("Error storing 24-bit image\n");
         HEprint(stdout, 0);
         return (1);

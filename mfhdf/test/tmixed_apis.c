@@ -272,7 +272,7 @@ test_vdatavgroups()
     /* Set attribute to first dimension of first data set */
     dimid = SDgetdimid(dset1, 0);
     CHECK(dimid, FAIL, "SDgetdimid");
-    status = SDsetattr(dimid, ATTR1_NAME, DFNT_FLOAT32, 2, (VOIDP)att1_values);
+    status = SDsetattr(dimid, ATTR1_NAME, DFNT_FLOAT32, 2, (void *)att1_values);
     CHECK(status, FAIL, "SDsetattr");
 
     /* Create another X_LENGTH by Y_LENGTH dataset, called DataSet_2 */
@@ -282,7 +282,7 @@ test_vdatavgroups()
     /* Set attribute to second dimension of second data set */
     dimid = SDgetdimid(dset2, 1);
     CHECK(dimid, FAIL, "SDgetdimid");
-    status = SDsetattr(dimid, ATTR2_NAME, DFNT_CHAR, 7, (VOIDP)att2_values);
+    status = SDsetattr(dimid, ATTR2_NAME, DFNT_CHAR, 7, (void *)att2_values);
     CHECK(status, FAIL, "SDsetattr");
 
     /* Create another X_LENGTH by Y_LENGTH dataset, called DataSet_2 */

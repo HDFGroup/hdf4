@@ -68,9 +68,9 @@ static const char *descris[2] = {"Object Descr #2:   A B C D E F G H I J K L \n"
                                  "                 M N O **END IMAGE DESCR **\n"};
 
 /* fcn Prototypes */
-static VOID genimage(int height, int width, float32 *data, uint8 *image);
+static void genimage(int height, int width, float32 *data, uint8 *image);
 
-static VOID gen2Dfloat(int height, int width, float32 *data);
+static void gen2Dfloat(int height, int width, float32 *data);
 
 static int32 check_fann(const char *fname);
 
@@ -82,7 +82,7 @@ static int32 check_lab_desc(const char *fname, uint16 tag, uint16 ref, const cha
 **  gen2Dfloat:  generate 2-D data array
 **
 ****************************************************************/
-static VOID
+static void
 gen2Dfloat(int height, int width, float32 *data)
 {
     int      i, j;
@@ -101,7 +101,7 @@ gen2Dfloat(int height, int width, float32 *data)
 **  genimage:  generate image from 2-D float array
 **
 ****************************************************************/
-static VOID
+static void
 genimage(int height, int width, float32 *data, uint8 *image)
 {
     int      i, limit;
@@ -757,7 +757,7 @@ test_man(void)
         RESULT("DFSDsetNT");
 
         /* write out scientific data set first */
-        ret = DFSDadddata(TESTFILE, 2, dimsizes, (VOIDP)data);
+        ret = DFSDadddata(TESTFILE, 2, dimsizes, (void *)data);
         RESULT("DFSDadddata");
 
         /* write out annotations for 2 out of every 3 SDS */
@@ -786,7 +786,7 @@ test_man(void)
         }
 
         /* Write image out */
-        ret = DFR8addimage(TESTFILE, (VOIDP)image, COLS, ROWS, 0);
+        ret = DFR8addimage(TESTFILE, (void *)image, COLS, ROWS, 0);
         RESULT("DFR8addimage");
 
         refnum = DFR8lastref(); /* get ref of image */

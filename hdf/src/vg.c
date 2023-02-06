@@ -459,7 +459,7 @@ DESCRIPTION
 RETURNS
    No return codes.
 -------------------------------------------------------------------*/
-VOID
+void
 VSdump(int32 vkey /* IN: vdata key */)
 {
     (void)vkey;
@@ -1590,7 +1590,7 @@ done:
 /*
  * Vsetzap: Useless now. Maintained for back compatibility.
  */
-VOID
+void
 Vsetzap(void)
 {
 }

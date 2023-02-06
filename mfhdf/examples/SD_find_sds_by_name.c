@@ -53,7 +53,7 @@ main()
     /*
      * Read the entire data into the buffer named data.
      */
-    if (SDreaddata(sds_id, start, NULL, edges, (VOIDP)data) == FAIL)
+    if (SDreaddata(sds_id, start, NULL, edges, (void *)data) == FAIL)
         printf("*** ERROR from SDreaddata\n");
 
     /*

@@ -180,7 +180,7 @@ sdsdumpfull(int32 sds_id, dump_info_t *dumpsds_opts, int32 rank, int32 dimsizes[
     /* "rank" is the number of dimensions and
        "dimsizes[i]" is size of dimension "i". */
     int32         j, i;
-    VOIDP         buf = NULL; /* holds one row of data */
+    void         *buf = NULL; /* holds one row of data */
     int32         numtype;
     int32         eltsz;
     int32         read_nelts; /* number of elements in one row */
@@ -208,7 +208,7 @@ sdsdumpfull(int32 sds_id, dump_info_t *dumpsds_opts, int32 rank, int32 dimsizes[
     CHECK_POS(eltsz, "eltsz", "sdsdumpfull");
     CHECK_POS(rank, "rank", "sdsdumpfull");
 
-    buf = (VOIDP)malloc(read_nelts * eltsz);
+    buf = (void *)malloc(read_nelts * eltsz);
     CHECK_ALLOC(buf, "buf", "sdsdumpfull");
 
     left = (int32 *)malloc(rank * sizeof(int32));
@@ -457,7 +457,7 @@ print_SDattrs(int32 sd_id, FILE *fp, int32 n_file_attrs, dump_info_t *dumpsds_op
 {
     int32 attr_index, attr_count, attr_nt, attr_buf_size;
     char  attr_name[MAXNAMELEN], *attr_nt_desc = NULL;
-    VOIDP attr_buf = NULL;
+    void *attr_buf = NULL;
     intn  printed  = FALSE; /* whether file attr title has been printed */
     intn  status   = FAIL,  /* status from a called routine */
         ret_value  = SUCCEED;
@@ -484,7 +484,7 @@ print_SDattrs(int32 sd_id, FILE *fp, int32 n_file_attrs, dump_info_t *dumpsds_op
         /* display the attribute's information */
         fprintf(fp, "\t Attr%i: Name = %s\n", (int)attr_index, attr_name);
         fprintf(fp, "\t\t Type = %s \n\t\t Count= %i\n", attr_nt_desc, (int)attr_count);
-        resetBuff((VOIDP)&attr_nt_desc);
+        resetBuff((void *)&attr_nt_desc);
 
         /* display the attribute's values unless user chose to suppress them or
           there are no values stored */
@@ -501,7 +501,7 @@ print_SDattrs(int32 sd_id, FILE *fp, int32 n_file_attrs, dump_info_t *dumpsds_op
             CHECK_POS(attr_buf_size, "attr_buf_size", "print_SDattrs");
 
             /* allocate space for the attribute's values */
-            attr_buf = (VOIDP)malloc(attr_buf_size);
+            attr_buf = (void *)malloc(attr_buf_size);
 
             /* if allocation fails, handle the failure */
             CHECK_ALLOC(attr_buf, "attr_buf", "print_SDattrs");
@@ -543,7 +543,7 @@ print_SDSattrs(int32 sds_id, int32 nattrs, FILE *fp, dump_info_t *dumpsds_opts)
 {
     int32 attr_index, attr_count, attr_nt, attr_buf_size;
     char  attr_name[MAXNAMELEN], *attr_nt_desc = NULL;
-    VOIDP attr_buf = NULL;
+    void *attr_buf = NULL;
     intn  status   = FAIL,    /* status returned from a called routine */
         ret_value  = SUCCEED; /* returned value of print_SDSattrs */
 
@@ -571,7 +571,7 @@ print_SDSattrs(int32 sds_id, int32 nattrs, FILE *fp, dump_info_t *dumpsds_opts)
         fprintf(fp, "\t\t Type = %s \n\t\t Count= %d\n", attr_nt_desc, (int)attr_count);
 
         /* free buffer and reset it to NULL */
-        resetBuff((VOIDP)&attr_nt_desc);
+        resetBuff((void *)&attr_nt_desc);
 
         /* display the attribute's values unless user chose to suppress them
            or there are no values stored */
@@ -581,7 +581,7 @@ print_SDSattrs(int32 sds_id, int32 nattrs, FILE *fp, dump_info_t *dumpsds_opts)
             resetBuff(&attr_buf);
 
             /* allocate space for attribute's values */
-            attr_buf = (VOIDP)malloc(attr_buf_size);
+            attr_buf = (void *)malloc(attr_buf_size);
             CHECK_ALLOC(attr_buf, "attr_buf", "print_SDSattrs");
 
             /* read the values of the attribute into buffer attr_buf */
@@ -872,7 +872,7 @@ printSDS_ASCII(int32 sd_id, dump_info_t *dumpsds_opts, int32 sds_index, /* index
                 fprintf(fp, "%d\n\t Type= %s\n", (int)sds_index, nt_desc);
             }
 
-            resetBuff((VOIDP)&nt_desc); /* done with nt_desc */
+            resetBuff((void *)&nt_desc); /* done with nt_desc */
 
             /* If the current file is not a netCDF, print the SDS' ref#
                and compression information */
@@ -925,7 +925,7 @@ printSDS_ASCII(int32 sd_id, dump_info_t *dumpsds_opts, int32 sds_index, /* index
 
                     fprintf(fp, "\t\t Scale Type = %s\n", attr_nt_desc);
                     fprintf(fp, "\t\t Number of attributes = %d\n", (int)dimnattr[j]);
-                    resetBuff((VOIDP)&attr_nt_desc);
+                    resetBuff((void *)&attr_nt_desc);
                 }
             } /* end each for dimension */
 

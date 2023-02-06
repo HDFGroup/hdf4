@@ -55,8 +55,8 @@ diff_gr(int32 gr1_id, int32 gr2_id, int32 ref1, int32 ref2, diff_opt_t *opt)
     char   gr1_name[H4_MAX_NC_NAME];
     char   gr2_name[H4_MAX_NC_NAME];
     int    dim_diff = 0; /* dimensions are different */
-    VOIDP  buf1     = NULL;
-    VOIDP  buf2     = NULL;
+    void  *buf1     = NULL;
+    void  *buf2     = NULL;
     uint32 max_err_cnt;
     int    i, cmp;
     uint32 nfound  = 0;
@@ -183,7 +183,7 @@ diff_gr(int32 gr1_id, int32 gr2_id, int32 ref1, int32 ref2, diff_opt_t *opt)
          */
 
         /* alloc */
-        if ((buf1 = (VOIDP)malloc(data_size)) == NULL) {
+        if ((buf1 = (void *)malloc(data_size)) == NULL) {
             printf("Failed to allocate %u elements of size %d\n", nelms, eltsz);
             goto out;
         }
@@ -206,7 +206,7 @@ diff_gr(int32 gr1_id, int32 gr2_id, int32 ref1, int32 ref2, diff_opt_t *opt)
          */
 
         /* alloc */
-        if ((buf2 = (VOIDP)malloc(data_size)) == NULL) {
+        if ((buf2 = (void *)malloc(data_size)) == NULL) {
             printf("Failed to allocate %u elements of size %d\n", nelms, eltsz);
             goto out;
         }

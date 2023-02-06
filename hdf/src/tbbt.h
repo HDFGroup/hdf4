@@ -27,8 +27,8 @@ typedef struct tbbt_node TBBT_NODE;
 
 /* Threaded node structure */
 struct tbbt_node {
-    VOIDP data; /* Pointer to user data to be associated with node */
-    VOIDP key;  /* Field to sort nodes on */
+    void *data; /* Pointer to user data to be associated with node */
+    void *key;  /* Field to sort nodes on */
 
 #ifdef TBBT_INTERNALS
 #define PARENT 0
@@ -76,7 +76,7 @@ struct tbbt_tree {
     TBBT_NODE    *root;
     unsigned long count;        /* The number of nodes in the tree currently */
     uintn         fast_compare; /* use a faster in-line compare (with casts) instead of function call */
-    intn (*compar)(VOIDP k1, VOIDP k2, intn cmparg);
+    intn (*compar)(void *k1, void *k2, intn cmparg);
     intn cmparg;
 #endif /* TBBT_INTERNALS */
 };
@@ -143,7 +143,7 @@ typedef TBBT_NODE **TBBT_TREE;
 extern "C" {
 #endif
 
-HDFLIBAPI TBBT_TREE *tbbtdmake(intn (*compar)(VOIDP, VOIDP, intn), intn arg, uintn fast_compare);
+HDFLIBAPI TBBT_TREE *tbbtdmake(intn (*compar)(void *, void *, intn), intn arg, uintn fast_compare);
 /* Allocates and initializes an empty threaded, balanced, binary tree and
  * returns a pointer to the control structure for it.  You can also create
  * empty trees without this function as long as you never use tbbtd* routines
@@ -204,11 +204,11 @@ HDFLIBAPI TBBT_TREE *tbbtdmake(intn (*compar)(VOIDP, VOIDP, intn), intn arg, uin
  * of ANY tree.  Never use tbbtdfree() except on a tbbtdmake()d tree.
  */
 
-HDFLIBAPI TBBT_NODE *tbbtdfind(TBBT_TREE *tree, VOIDP key, TBBT_NODE **pp);
-HDFLIBAPI TBBT_NODE *tbbtfind(TBBT_NODE *root, VOIDP key, intn (*cmp)(VOIDP, VOIDP, intn), intn arg,
+HDFLIBAPI TBBT_NODE *tbbtdfind(TBBT_TREE *tree, void *key, TBBT_NODE **pp);
+HDFLIBAPI TBBT_NODE *tbbtfind(TBBT_NODE *root, void *key, intn (*cmp)(void *, void *, intn), intn arg,
                               TBBT_NODE **pp);
-HDFLIBAPI TBBT_NODE *tbbtdless(TBBT_TREE *tree, VOIDP key, TBBT_NODE **pp);
-HDFLIBAPI TBBT_NODE *tbbtless(TBBT_NODE *root, VOIDP key, intn (*cmp)(VOIDP, VOIDP, intn), intn arg,
+HDFLIBAPI TBBT_NODE *tbbtdless(TBBT_TREE *tree, void *key, TBBT_NODE **pp);
+HDFLIBAPI TBBT_NODE *tbbtless(TBBT_NODE *root, void *key, intn (*cmp)(void *, void *, intn), intn arg,
                               TBBT_NODE **pp);
 /* Locate a node based on the key given.  A pointer to the node in the tree
  * with a key value matching `key' is returned.  If no such node exists, NULL
@@ -231,8 +231,8 @@ HDFLIBAPI TBBT_NODE *tbbtindx(TBBT_NODE *root, int32 indx);
  * as fast as) `tbbtfirst(root)'.
  */
 
-HDFLIBAPI TBBT_NODE *tbbtdins(TBBT_TREE *tree, VOIDP item, VOIDP key);
-HDFLIBAPI TBBT_NODE *tbbtins(TBBT_NODE **root, VOIDP item, VOIDP key, intn (*cmp)(VOIDP, VOIDP, intn),
+HDFLIBAPI TBBT_NODE *tbbtdins(TBBT_TREE *tree, void *item, void *key);
+HDFLIBAPI TBBT_NODE *tbbtins(TBBT_NODE **root, void *item, void *key, intn (*cmp)(void *, void *, intn),
                              intn arg);
 /* Insert a new node to the tree having a key value of `key' and a data pointer
  * of `item'.  If a node already exists in the tree with key value `key' or if
@@ -240,7 +240,7 @@ HDFLIBAPI TBBT_NODE *tbbtins(TBBT_NODE **root, VOIDP item, VOIDP key, intn (*cmp
  * to the inserted node is returned.  `cmp' and `arg' are as for tbbtfind().
  */
 
-HDFLIBAPI VOIDP tbbtrem(TBBT_NODE **root, TBBT_NODE *node, VOIDP *kp);
+HDFLIBAPI void *tbbtrem(TBBT_NODE **root, TBBT_NODE *node, void **kp);
 /* Remove the node pointed to by `node' from the tree with root `root'.  The
  * data pointer for the deleted node is returned.  If the second argument is
  * NULL, NULL is returned.  If `kp' is not NULL, `*kp' is set to point to the
@@ -267,8 +267,8 @@ HDFLIBAPI TBBT_NODE *tbbtprev(TBBT_NODE *node);
  * points the last (first) node of the tree, NULL is returned.
  */
 
-HDFLIBAPI TBBT_TREE *tbbtdfree(TBBT_TREE *tree, VOID (*fd)(VOIDP), VOID (*fk)(VOIDP));
-HDFLIBAPI VOID       tbbtfree(TBBT_NODE **root, VOID (*fd)(VOIDP), VOID (*fk)(VOIDP));
+HDFLIBAPI TBBT_TREE *tbbtdfree(TBBT_TREE *tree, void (*fd)(void *), void (*fk)(void *));
+HDFLIBAPI void       tbbtfree(TBBT_NODE **root, void (*fd)(void *), void (*fk)(void *));
 /* Frees up an entire tree.  `fd' is a pointer to a function that frees/
  * destroys data items, and `fk' is the same for key values.
  *     void free();
@@ -281,10 +281,10 @@ HDFLIBAPI VOID       tbbtfree(TBBT_NODE **root, VOID (*fd)(VOIDP), VOID (*fk)(VO
  * tbbtfree() always sets `root' to be NULL.
  */
 
-HDFLIBAPI VOID tbbtprint(TBBT_NODE *node);
+HDFLIBAPI void tbbtprint(TBBT_NODE *node);
 /* Prints out the data in a node */
 
-HDFLIBAPI VOID tbbtdump(TBBT_TREE *tree, intn method);
+HDFLIBAPI void tbbtdump(TBBT_TREE *tree, intn method);
 /* Prints an entire tree.  The method variable determines which sort of
  * traversal is used:
  *      -1 : Pre-Order Traversal

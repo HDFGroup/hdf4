@@ -50,7 +50,7 @@ ndpigpal(_fcd filename, _fcd pal, intf *fnlen)
     fn = HDf2cstring(filename, (intn)*fnlen);
     if (!fn)
         return (-1);
-    ret = DFPgetpal(fn, (VOIDP)_fcdtocp(pal));
+    ret = DFPgetpal(fn, (void *)_fcdtocp(pal));
     free(fn);
     return (ret);
 }
@@ -81,7 +81,7 @@ ndpippal(_fcd filename, _fcd pal, intf *overwrite, _fcd filemode, intf *fnlen)
     fn = HDf2cstring(filename, (intn)*fnlen);
     if (!fn)
         return (-1);
-    ret = DFPputpal(fn, (VOIDP)_fcdtocp(pal), (intn)*overwrite, (char *)_fcdtocp(filemode));
+    ret = DFPputpal(fn, (void *)_fcdtocp(pal), (intn)*overwrite, (char *)_fcdtocp(filemode));
     free(fn);
     return (ret);
 }

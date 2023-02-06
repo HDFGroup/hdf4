@@ -104,14 +104,14 @@ intn make_datafilename(const char *basename, char *testfile, unsigned int size);
 
 /* Calls SDcreate, SDwritedata, and SDendaccess */
 int32 make_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, int32 unlim_dim,
-               VOIDP written_data);
+               void *written_data);
 
 /* Calls SDcreate, SDsetcompress, SDwritedata, and SDendaccess */
-int32 make_CompSDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, VOIDP written_data);
+int32 make_CompSDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, void *written_data);
 
 /* Calls SDcreate, SDsetexternalfile, SDwritedata, and SDendaccess */
 int32 make_Ext3D_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes,
-                     VOIDP written_data, int32 offset, char *ext_file_name);
+                     void *written_data, int32 offset, char *ext_file_name);
 
 /* Calls SDnametoindex and SDselect */
 int32 get_SDSbyName(int32 sd_id, char *sds_name);

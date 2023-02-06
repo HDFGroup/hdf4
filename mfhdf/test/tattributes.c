@@ -187,7 +187,7 @@ test_count(void)
     CHECK(status, FAIL, "SDsetattr");
 
     /* Write data to the SDS */
-    status = SDwritedata(sds_id, &start, &stride, dimsize, (VOIDP)sds1_data);
+    status = SDwritedata(sds_id, &start, &stride, dimsize, (void *)sds1_data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Close dataset and file. */

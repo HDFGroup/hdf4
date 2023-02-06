@@ -62,12 +62,12 @@ diff_sds(int32 sd1_id, int32 sd2_id, int32 ref1, int32 ref2, diff_opt_t *opt)
     int    dim_diff = 0; /* dimensions are different */
     intn   empty1_sds;
     intn   empty2_sds;
-    VOIDP  buf1 = NULL;
-    VOIDP  buf2 = NULL;
+    void  *buf1 = NULL;
+    void  *buf2 = NULL;
     uint32 max_err_cnt;
     int    i;
-    VOIDP  fill1   = NULL;
-    VOIDP  fill2   = NULL;
+    void  *fill1   = NULL;
+    void  *fill2   = NULL;
     uint32 nfound  = 0;
     void  *sm_buf1 = NULL;
     void  *sm_buf2 = NULL;
@@ -211,8 +211,8 @@ diff_sds(int32 sd1_id, int32 sd2_id, int32 ref1, int32 ref2, diff_opt_t *opt)
          *-------------------------------------------------------------------------
          */
 
-        fill1 = (VOIDP)malloc(eltsz);
-        fill2 = (VOIDP)malloc(eltsz);
+        fill1 = (void *)malloc(eltsz);
+        fill2 = (void *)malloc(eltsz);
         if (fill1 != NULL && SDgetfillvalue(sds1_id, fill1) < 0) {
             free(fill1);
             fill1 = NULL;
@@ -235,8 +235,8 @@ diff_sds(int32 sd1_id, int32 sd2_id, int32 ref1, int32 ref2, diff_opt_t *opt)
         need = (size_t)(nelms * eltsz); /* bytes needed */
 
         if (need < H4TOOLS_MALLOCSIZE) {
-            buf1 = (VOIDP)malloc(need);
-            buf2 = (VOIDP)malloc(need);
+            buf1 = (void *)malloc(need);
+            buf2 = (void *)malloc(need);
         }
 
         /*-------------------------------------------------------------------------
@@ -434,8 +434,8 @@ diff_sds_attrs(int32 sds1_id, int32 nattrs1, int32 sds2_id, int32 nattrs2, char 
         nelms2;   /* number of elements */
     char   attr1_name[H4_MAX_NC_NAME];
     char   attr2_name[H4_MAX_NC_NAME];
-    VOIDP  attr1_buf = NULL;
-    VOIDP  attr2_buf = NULL;
+    void  *attr1_buf = NULL;
+    void  *attr2_buf = NULL;
     int    i, cmp;
     uint32 nfound = 0;
 

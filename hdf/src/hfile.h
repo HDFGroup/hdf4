@@ -459,7 +459,7 @@ HDFLIBAPI int32 HPread_drec(int32 file_id, atom_t data_id, uint8 **drec_buf);
 
 HDFLIBAPI intn tagcompare(void *k1, void *k2, intn cmparg);
 
-HDFLIBAPI VOID tagdestroynode(void *n);
+HDFLIBAPI void tagdestroynode(void *n);
 
 /*
  ** from hblocks.c

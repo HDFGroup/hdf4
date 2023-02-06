@@ -31,14 +31,14 @@
 #define HUL_SORTED_LIST   0x0001
 
 /* Type of the function to compare objects & keys */
-typedef intn (*HULsearch_func_t)(const VOIDP obj, const VOIDP key);
+typedef intn (*HULsearch_func_t)(const void *obj, const void *key);
 
 /* Type of the function to compare two objects */
-typedef intn (*HULfind_func_t)(const VOIDP obj1, const VOIDP obj2);
+typedef intn (*HULfind_func_t)(const void *obj1, const void *obj2);
 
 /* Linked list information structure used */
 typedef struct node_info_struct_tag {
-    VOIDP                       *obj_ptr; /* pointer associated with the linked list node */
+    void                       **obj_ptr; /* pointer associated with the linked list node */
     struct node_info_struct_tag *next;    /* link to list node */
 } node_info_t;
 
@@ -114,7 +114,7 @@ intn HULdestroy_list(list_head_t *lst /* IN: list to destroy */
 
 *******************************************************************************/
 intn HULadd_node(list_head_t *lst, /* IN: list to modify */
-                 VOIDP        obj  /* IN: object to add to the list */
+                 void        *obj  /* IN: object to add to the list */
 );
 
 /******************************************************************************
@@ -128,9 +128,9 @@ intn HULadd_node(list_head_t *lst, /* IN: list to modify */
     Returns a pointer to the object found in the list, or NULL on failure.
 
 *******************************************************************************/
-VOIDP HULsearch_node(list_head_t     *lst,       /* IN: list to search */
+void *HULsearch_node(list_head_t     *lst,       /* IN: list to search */
                      HULsearch_func_t srch_func, /* IN: function to use to find node */
-                     VOIDP            key        /* IN: key of object to search for */
+                     void            *key        /* IN: key of object to search for */
 );
 
 /******************************************************************************
@@ -145,7 +145,7 @@ VOIDP HULsearch_node(list_head_t     *lst,       /* IN: list to search */
     Returns a pointer to the first object found in the list, or NULL on failure.
 
 *******************************************************************************/
-VOIDP HULfirst_node(list_head_t *lst /* IN: list to search */
+void *HULfirst_node(list_head_t *lst /* IN: list to search */
 );
 
 /******************************************************************************
@@ -159,7 +159,7 @@ VOIDP HULfirst_node(list_head_t *lst /* IN: list to search */
     Returns a pointer to the next object found in the list, or NULL on failure.
 
 *******************************************************************************/
-VOIDP HULnext_node(list_head_t *lst /* IN: list to search */
+void *HULnext_node(list_head_t *lst /* IN: list to search */
 );
 
 /******************************************************************************
@@ -174,9 +174,9 @@ VOIDP HULnext_node(list_head_t *lst /* IN: list to search */
     Returns a pointer to the object deleted from the list, or NULL on failure.
 
 *******************************************************************************/
-VOIDP HULremove_node(list_head_t     *lst,       /* IN: list to modify */
+void *HULremove_node(list_head_t     *lst,       /* IN: list to modify */
                      HULsearch_func_t srch_func, /* IN: function to use to find node to remove */
-                     VOIDP            key        /* IN: object to add to the list */
+                     void            *key        /* IN: object to add to the list */
 );
 
 /*--------------------------------------------------------------------------

@@ -104,13 +104,13 @@ get_2bytes(FILE *f)
     return (a << 8) + jgetc(f);
 }
 
-static VOID
+static void
 get_sof(FILE *f)
 /* Process a SOFn marker */
 {
     short ci;
 
-    (VOID) get_2bytes(f);
+    (void)get_2bytes(f);
 
     jgetc(f); /* data_precision */
     image_height   = get_2bytes(f);
@@ -124,7 +124,7 @@ get_sof(FILE *f)
     }
 }
 
-static VOID
+static void
 skip_variable(FILE *f)
 /* Skip over an unknown or uninteresting variable-length marker */
 {
@@ -133,7 +133,7 @@ skip_variable(FILE *f)
     length = get_2bytes(f);
 
     for (length -= 2; length > 0; length--)
-        (VOID) jgetc(f);
+        (void)jgetc(f);
 }
 
 static intn
@@ -284,7 +284,7 @@ DFJPEGaddrig(int32 file_id, uint16 ref, uint16 ctag)
     return (DFdiwrite(file_id, GroupID, DFTAG_RIG, ref));
 }
 
-static VOID
+static void
 usage(void)
 {
     printf("USAGE: jpeg2hdf <input JPEG file> <output HDF file>\n");

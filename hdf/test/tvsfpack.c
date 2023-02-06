@@ -33,7 +33,7 @@ struct {
 
 int32  file_id, vdata_id, istat, msize = 0;
 uint8 *databuf, *pntr;
-VOIDP  databufptr[10]; /* make sure its size can hold all fields */
+void  *databufptr[10]; /* make sure its size can hold all fields */
 
 float32 tempdata[NRECORDS], itemp[NRECORDS];
 float32 heightdata[NRECORDS], iheight[NRECORDS];

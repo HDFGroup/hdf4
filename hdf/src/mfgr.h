@@ -134,11 +134,11 @@ typedef struct ri_info {
 HDFLIBAPI intn GRIil_convert(const void *inbuf, gr_interlace_t inil, void *outbuf, gr_interlace_t outil,
                              int32 dims[2], int32 ncomp, int32 nt);
 
-HDFLIBAPI VOID GRIgrdestroynode(void *n);
+HDFLIBAPI void GRIgrdestroynode(void *n);
 
-HDFLIBAPI VOID GRIattrdestroynode(void *n);
+HDFLIBAPI void GRIattrdestroynode(void *n);
 
-HDFLIBAPI VOID GRIridestroynode(void *n);
+HDFLIBAPI void GRIridestroynode(void *n);
 
 #endif /* MFGR_MASTER | MFGR_TESTER */
 

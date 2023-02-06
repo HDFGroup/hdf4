@@ -69,7 +69,7 @@ test_szip_SDS8bit()
     }
 
     /* Fill the SDS array with the fill value */
-    status = SDsetfillvalue(sds_id, (VOIDP)&fill_value);
+    status = SDsetfillvalue(sds_id, (void *)&fill_value);
     CHECK(status, FAIL, "SDsetfillvalue");
 
     /* Initialization for SZIP */
@@ -86,7 +86,7 @@ test_szip_SDS8bit()
     CHECK(status, FAIL, "SDsetcompress");
 
     /* Write data to the SDS */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)in_data);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)in_data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the data set */
@@ -129,7 +129,7 @@ test_szip_SDS8bit()
     start[1] = 0;
     edges[0] = LENGTH;
     edges[1] = WIDTH;
-    status   = SDreaddata(sds_id, start, NULL, edges, (VOIDP)out_data);
+    status   = SDreaddata(sds_id, start, NULL, edges, (void *)out_data);
     CHECK(status, FAIL, "SDreaddata");
 
     /* Compare read data against input data */
@@ -193,7 +193,7 @@ test_szip_SDS16bit()
     }
 
     /* Fill the SDS array with the fill value */
-    status = SDsetfillvalue(sds_id, (VOIDP)&fill_value);
+    status = SDsetfillvalue(sds_id, (void *)&fill_value);
     CHECK(status, FAIL, "SDsetfillvalue");
 
     /* Initialize for SZIP */
@@ -210,7 +210,7 @@ test_szip_SDS16bit()
     CHECK(status, FAIL, "SDsetcompress");
 
     /* Write data to the SDS */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)in_data);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)in_data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the data set */
@@ -245,7 +245,7 @@ test_szip_SDS16bit()
     start[1] = 0;
     edges[0] = LENGTH;
     edges[1] = WIDTH;
-    status   = SDreaddata(sds_id, start, NULL, edges, (VOIDP)out_data);
+    status   = SDreaddata(sds_id, start, NULL, edges, (void *)out_data);
     CHECK(status, FAIL, "SDreaddata");
 
     /* Compare read data against input data */
@@ -309,7 +309,7 @@ test_szip_SDS32bit()
     }
 
     /* Fill the SDS array with the fill value */
-    status = SDsetfillvalue(sds_id, (VOIDP)&fill_value);
+    status = SDsetfillvalue(sds_id, (void *)&fill_value);
     CHECK(status, FAIL, "SDsetfillvalue");
 
     /* Initialize for SZIP */
@@ -326,7 +326,7 @@ test_szip_SDS32bit()
     CHECK(status, FAIL, "SDsetcompress");
 
     /* Write data to the SDS */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)in_data);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)in_data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the data set */
@@ -361,7 +361,7 @@ test_szip_SDS32bit()
     start[1] = 0;
     edges[0] = LENGTH;
     edges[1] = WIDTH;
-    status   = SDreaddata(sds_id, start, NULL, edges, (VOIDP)out_data);
+    status   = SDreaddata(sds_id, start, NULL, edges, (void *)out_data);
     CHECK(status, FAIL, "SDreaddata");
 
     /* Compare read data against input data */
@@ -427,7 +427,7 @@ test_szip_SDSfl32bit()
     }
 
     /* Fill the SDS array with the fill value */
-    status = SDsetfillvalue(sds_id, (VOIDP)&fill_value);
+    status = SDsetfillvalue(sds_id, (void *)&fill_value);
     CHECK(status, FAIL, "SDsetfillvalue");
 
     /* Initialize for SZIP */
@@ -444,7 +444,7 @@ test_szip_SDSfl32bit()
     CHECK(status, FAIL, "SDsetcompress");
 
     /* Write data to the SDS */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)in_data);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)in_data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the data set */
@@ -479,7 +479,7 @@ test_szip_SDSfl32bit()
     start[1] = 0;
     edges[0] = LENGTH;
     edges[1] = WIDTH;
-    status   = SDreaddata(sds_id, start, NULL, edges, (VOIDP)out_data);
+    status   = SDreaddata(sds_id, start, NULL, edges, (void *)out_data);
     CHECK(status, FAIL, "SDreaddata");
 
     /* Compare read data against input data */
@@ -545,7 +545,7 @@ test_szip_SDSfl64bit()
     }
 
     /* Fill the SDS array with the fill value */
-    status = SDsetfillvalue(sds_id, (VOIDP)&fill_value);
+    status = SDsetfillvalue(sds_id, (void *)&fill_value);
     CHECK(status, FAIL, "SDsetfillvalue");
 
     /* Initialization for SZIP */
@@ -562,7 +562,7 @@ test_szip_SDSfl64bit()
     CHECK(status, FAIL, "SDsetcompress");
 
     /* Write data to the SDS */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)in_data);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)in_data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the data set */
@@ -597,7 +597,7 @@ test_szip_SDSfl64bit()
     start[1] = 0;
     edges[0] = LENGTH;
     edges[1] = WIDTH;
-    status   = SDreaddata(sds_id, start, NULL, edges, (VOIDP)out_data);
+    status   = SDreaddata(sds_id, start, NULL, edges, (void *)out_data);
     CHECK(status, FAIL, "SDreaddata");
 
     /* Compare read data against input data */
@@ -686,7 +686,7 @@ test_szip_chunk()
     CHECK(sds_id, FAIL, "SDcreate:Failed to create a data set for chunking/szip compression testing");
 
     /* Fill the SDS array with the fill value. */
-    status = SDsetfillvalue(sds_id, (VOIDP)&fill_value);
+    status = SDsetfillvalue(sds_id, (void *)&fill_value);
     CHECK(status, FAIL, "SDsetfillvalue");
 
     /* Set parameters for Chunking/SZIP */
@@ -723,19 +723,19 @@ test_szip_chunk()
     /* Write the chunk with the coordinates (0,0). */
     origin[0] = 0;
     origin[1] = 0;
-    status    = SDwritechunk(sds_id, origin, (VOIDP)chunk1);
+    status    = SDwritechunk(sds_id, origin, (void *)chunk1);
     CHECK(status, FAIL, "SDwritechunk");
 
     /* Write the chunk with the coordinates (1,0). */
     origin[0] = 1;
     origin[1] = 0;
-    status    = SDwritechunk(sds_id, origin, (VOIDP)chunk3);
+    status    = SDwritechunk(sds_id, origin, (void *)chunk3);
     CHECK(status, FAIL, "SDwritechunk");
 
     /* Write the chunk with the coordinates (0,1). */
     origin[0] = 0;
     origin[1] = 1;
-    status    = SDwritechunk(sds_id, origin, (VOIDP)chunk2);
+    status    = SDwritechunk(sds_id, origin, (void *)chunk2);
     CHECK(status, FAIL, "SDwritechunk");
 
     /* Write chunk with the coordinates (1,2) using SDwritedata function. */
@@ -743,7 +743,7 @@ test_szip_chunk()
     start[1] = 2;
     edges[0] = 3;
     edges[1] = 2;
-    status   = SDwritedata(sds_id, start, NULL, edges, (VOIDP)chunk6);
+    status   = SDwritedata(sds_id, start, NULL, edges, (void *)chunk6);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Fill second column in the chunk with the coordinates (1,1) using
@@ -752,7 +752,7 @@ test_szip_chunk()
     start[1] = 3;
     edges[0] = 3;
     edges[1] = 1;
-    status   = SDwritedata(sds_id, start, NULL, edges, (VOIDP)column);
+    status   = SDwritedata(sds_id, start, NULL, edges, (void *)column);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Fill second row in the chunk with the coordinates (0,2) using
@@ -761,7 +761,7 @@ test_szip_chunk()
     start[1] = 0;
     edges[0] = 1;
     edges[1] = 2;
-    status   = SDwritedata(sds_id, start, NULL, edges, (VOIDP)row);
+    status   = SDwritedata(sds_id, start, NULL, edges, (void *)row);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the data set. */
@@ -801,7 +801,7 @@ test_szip_chunk()
     start[1] = 0;
     edges[0] = LENGTH_CH;
     edges[1] = WIDTH_CH;
-    status   = SDreaddata(sds_id, start, NULL, edges, (VOIDP)all_data);
+    status   = SDreaddata(sds_id, start, NULL, edges, (void *)all_data);
     CHECK(status, FAIL, "SDreaddata");
 
     /*
@@ -929,7 +929,7 @@ test_szip_chunk_3d()
     CHECK(sds_id0, FAIL, "SDcreate:Failed to create a data set for chunking/szip compression testing");
 
     /* Fill the SDS array with the fill value. */
-    status = SDsetfillvalue(sds_id, (VOIDP)&fill_value);
+    status = SDsetfillvalue(sds_id, (void *)&fill_value);
     CHECK(status, FAIL, "SDsetfillvalue");
 
     /* Set parameters for Chunking/SZIP */
@@ -952,7 +952,7 @@ test_szip_chunk_3d()
     edges[0] = SDS_DIM0;
     edges[1] = SDS_DIM1;
     edges[2] = SDS_DIM2;
-    status   = SDwritedata(sds_id, start, NULL, edges, (VOIDP)out_data);
+    status   = SDwritedata(sds_id, start, NULL, edges, (void *)out_data);
     CHECK(status, FAIL, "SDwritedata");
 
     memset(&c_def_out, 0, sizeof(HDF_CHUNK_DEF));
@@ -1010,7 +1010,7 @@ test_szip_chunk_3d()
     edges[0] = SDS_DIM0;
     edges[1] = SDS_DIM1;
     edges[2] = SDS_DIM2;
-    status   = SDreaddata(sds_id, start, NULL, edges, (VOIDP)all_data);
+    status   = SDreaddata(sds_id, start, NULL, edges, (void *)all_data);
     CHECK(status, FAIL, "SDreaddata");
 
     for (i = 0; i < SDS_DIM0; i++) {
@@ -1084,7 +1084,7 @@ test_szip_unlimited()
     edges[1] = WIDTH;
 
     /* Fill the SDS array with the fill value */
-    status = SDsetfillvalue(sds_id, (VOIDP)&fill_value);
+    status = SDsetfillvalue(sds_id, (void *)&fill_value);
     CHECK(status, FAIL, "SDsetfillvalue");
 
     /* Initialize for SZIP */
@@ -1102,7 +1102,7 @@ test_szip_unlimited()
     VERIFY(status, FAIL, "SDsetcompress");
 
     /* Write data to the SDS; data will be uncompressed */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)in_data);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)in_data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the data set */
@@ -1138,7 +1138,7 @@ test_szip_unlimited()
     start[1] = 0;
     edges[0] = LENGTH;
     edges[1] = WIDTH;
-    status   = SDreaddata(sds_id, start, NULL, edges, (VOIDP)out_data);
+    status   = SDreaddata(sds_id, start, NULL, edges, (void *)out_data);
     CHECK(status, FAIL, "SDreaddata");
 
     /* Compare read data against input data */
@@ -1347,7 +1347,7 @@ test_getszipdata()
     memset(&out_data, 0, sizeof(out_data));
 
     /* Read the data set */
-    status = SDreaddata(sds_id, start, NULL, edges, (VOIDP)out_data);
+    status = SDreaddata(sds_id, start, NULL, edges, (void *)out_data);
     CHECK(status, FAIL, "SDreaddata");
 
     /* Compare read data against input data */
