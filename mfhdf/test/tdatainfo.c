@@ -75,7 +75,8 @@ typedef struct {
 intn
 alloc_info(t_hdf_datainfo_t *info, uintn info_count, int32 n_dims)
 {
-    memset(info, 0, sizeof(info));
+    memset(info, 0, sizeof(*info));
+
     info->offsets = (int32 *)malloc(info_count * sizeof(int32));
     if (info->offsets == NULL)
         return -1;
