@@ -323,7 +323,7 @@ typedef struct error_messages_t {
     const char    *str;
 } error_messages_t;
 
-PRIVATE const struct error_messages_t error_messages[] = {
+static const struct error_messages_t error_messages[] = {
     {DFE_NONE, "No error"},
     /* Low-level I/O errors */
     {DFE_FNF, "File not found"},
@@ -340,7 +340,7 @@ PRIVATE const struct error_messages_t error_messages[] = {
     {DFE_SEEKERROR, "Error performing seek operation"},
     {DFE_RDONLY, "Attempt to write to read-only HDF file"},
     {DFE_BADSEEK, "Attempt to seek past end of element"},
-    {DFE_INVFILE, "File is supported, must be either hdf, cdf, netcdf"},
+    {DFE_INVFILE, "File is not supported, must be either hdf, cdf, netcdf"},
 
     /* Low-level HDF I/O errors */
     {DFE_PUTELEM, "Hputelement failed in some way"},

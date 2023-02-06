@@ -351,7 +351,7 @@ IV. Further considerations
           Shared Fortran is not supported, build static:
             BUILD_SHARED_LIBS:BOOL=OFF
           Additional options:
-            CMAKE_ANSI_CFLAGS:STRING=-fPIC
+            BUILD_JPEG_WITH_PIC:BOOL=ON
             CTEST_USE_LAUNCHERS:BOOL=ON
             CMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=OFF
 

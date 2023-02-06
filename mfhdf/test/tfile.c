@@ -97,7 +97,7 @@ test_file_inuse()
         }
 
         /* Write data to the data set */
-        statusn = SDwritedata(sds_id[i], start, NULL, edges, (VOIDP)array_data);
+        statusn = SDwritedata(sds_id[i], start, NULL, edges, (void *)array_data);
         if (i == 0) {
             CHECK(statusn, FAIL, "SDwritedata");
         } /* 1st SDwritedata must pass */

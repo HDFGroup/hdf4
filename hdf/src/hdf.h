@@ -14,7 +14,6 @@
 #ifndef H4_HDF_H
 #define H4_HDF_H
 
-#include "h4config.h"
 #include "hdfi.h"
 #include "hlimits.h"
 
@@ -100,17 +99,6 @@ typedef enum {
 /* macros */
 #define STREQ(s, t)     (HDstrcmp((s), (t)) == 0)
 #define NSTREQ(s, t, n) (HDstrncmp((s), (t), (n)) == 0)
-
-/*
- * Macros used for variable and function scoping in code.....
- */
-#ifndef EXPORT
-#define EXPORT
-#endif
-
-#ifndef PRIVATE
-#define PRIVATE static
-#endif
 
 /* Include the Number-type definitions */
 #include "hntdefs.h"

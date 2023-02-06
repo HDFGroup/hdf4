@@ -18,7 +18,7 @@ set (hdiff_SRCS
     ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/hdiff_table.c
     ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/hdiff_vs.c
     ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/hdiff_dim.c
-    ${HDF4_SOURCE_DIR}/mfhdf/util/getopt.c
+    ${HDF4_MFHDFSOURCE_DIR}/getopt.c
 )
 
 if (NOT ONLY_SHARED_LIBS)

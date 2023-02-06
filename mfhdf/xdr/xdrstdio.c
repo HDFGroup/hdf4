@@ -35,17 +35,9 @@
  * XDR_ENCODE serializes onto the stream, XDR_DECODE de-serializes
  * from the stream.
  */
-#if !defined(lint) && defined(SCCSIDS)
-static char sccsid[] = "@(#)xdr_stdio.c 1.16 87/08/11 Copyr 1984 Sun Micro";
-#endif
-
 #include "h4config.h"
 
 #include <stdio.h>
-
-#ifdef _MSC_VER
-#include <Winsock2.h>
-#endif
 
 #ifdef H4_HAVE_ARPA_INET_H
 #include <arpa/inet.h>
@@ -129,15 +121,13 @@ xdrstdio_putlong(XDR *xdrs, const long *lp)
 {
     int32_t mycopy;
 
-#if defined(_LP64)
-    if ((*lp > UINT32_MAX) || (*lp < INT32_MIN))
-        return (FALSE);
-#endif
+    if ((*lp > INT32_MAX) || (*lp < INT32_MIN))
+        return FALSE;
 
     mycopy = (int32_t)htonl((int32_t)*lp);
     if (fwrite(&mycopy, sizeof(int32_t), 1, (FILE *)xdrs->x_private) != 1)
-        return (FALSE);
-    return (TRUE);
+        return FALSE;
+    return TRUE;
 }
 
 static bool_t

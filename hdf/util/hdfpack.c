@@ -50,14 +50,14 @@ typedef struct mydd_t {
 /* Static function prototypes */
 int promptblocks(mydd_t *dd);
 
-VOID copy_blocks(mydd_t *dd, int32 infile, int32 outfile);
+void copy_blocks(mydd_t *dd, int32 infile, int32 outfile);
 
-VOID merge_blocks(mydd_t *dd, int32 infile, int32 outfile);
+void merge_blocks(mydd_t *dd, int32 infile, int32 outfile);
 
 int         main(int, char *a[]);
-static VOID usage(char *);
-static VOID hdferror(void);
-static VOID error(const char *);
+static void usage(char *);
+static void hdferror(void);
+static void error(const char *);
 int         desc_comp(const void *d1, const void *d2);
 
 unsigned char *data;
@@ -190,7 +190,7 @@ main(int argc, char *argv[])
     if (num_desc == FAIL)
         hdferror();
 
-    dlist = (mydd_t *)HDmalloc(num_desc * sizeof(*dlist));
+    dlist = (mydd_t *)malloc(num_desc * sizeof(*dlist));
     if (dlist == NULL)
         error("\tWow!  That file must be HUGE!\n\tThere isn't enough memory to hold the DD's.\n");
 
@@ -199,7 +199,7 @@ main(int argc, char *argv[])
      */
     data_size = 1048576; /* 1 MB */
     data      = NULL;
-    while ((data = (unsigned char *)HDmalloc(data_size)) == NULL)
+    while ((data = (unsigned char *)malloc(data_size)) == NULL)
         data_size /= 2; /* okay then, cut request by half */
 
     /*
@@ -306,13 +306,13 @@ main(int argc, char *argv[])
                                           way and not expand it */
                     {
                         int32  aid, len;
-                        VOIDP *buf;
+                        void **buf;
 
                         /* Read in old compressed data description */
                         if ((aid = Hstartaccess(infile, dlist[i].tag, dlist[i].ref, DFACC_READ)) == FAIL)
                             continue;
                         HQuerylength(aid, &len);
-                        buf = HDmalloc(len);
+                        buf = malloc(len);
                         Hread(aid, len, buf);
                         Hendaccess(aid);
 
@@ -321,7 +321,7 @@ main(int argc, char *argv[])
                             continue;
                         Hwrite(aid, len, buf);
                         Hendaccess(aid);
-                        HDfree(buf);
+                        free(buf);
                     } break;
                     default:
                         merge_blocks(&dlist[i], infile, outfile);
@@ -345,11 +345,8 @@ main(int argc, char *argv[])
         oldoff = dlist[i].offset;
     }
 
-    /*
-     **   Rename any matching external elements
-     */
-    if (from_file && to_file) {
-    }
+    free(data);
+    free(dlist);
 
     /*
      **   done; close files
@@ -382,7 +379,7 @@ promptblocks(mydd_t *dd)
  ** NAME
  **      copy_blocks -- move a linked-block element; preserve blocking
  */
-VOID
+void
 copy_blocks(mydd_t *dd, int32 infile, int32 outfile)
 {
     int32           inaid, ret, rdret, outaid;
@@ -453,7 +450,7 @@ copy_blocks(mydd_t *dd, int32 infile, int32 outfile)
  ** NAME
  **      merge_blocks
  */
-VOID
+void
 merge_blocks(mydd_t *dd, int32 infile, int32 outfile)
 {
     int32 inaid, outaid, ret, len;
@@ -509,7 +506,7 @@ merge_blocks(mydd_t *dd, int32 infile, int32 outfile)
  ** COMMENTS, BUGS, ASSUMPTIONS
  ** EXAMPLES
  */
-static VOID
+static void
 usage(char *name)
 {
     fprintf(stderr, "Usage:  %s [-i | -b] [-d#] [-t#] [-x] [-r <from> <to>] <infile> <outfile>\n", name);
@@ -536,7 +533,7 @@ usage(char *name)
  **   This routine terminates the program with code 1.
  ** EXAMPLES
  */
-static VOID
+static void
 hdferror(void)
 {
     HEprint(stderr, 0);
@@ -558,7 +555,7 @@ hdferror(void)
  **   This routine terminates the program with code 1.
  ** EXAMPLES
  */
-static VOID
+static void
 error(const char *string)
 {
     fprintf(stderr, "%s: %s\n", invoke, string);

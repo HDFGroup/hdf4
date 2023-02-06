@@ -27,6 +27,7 @@ extern "C" {
 #include <jni.h>
 #include "hdf.h"
 #include "h4jni.h"
+#include "hdfvdataImp.h"
 
 JNIEXPORT jlong JNICALL
 Java_hdf_hdflib_HDFLibrary_VSattach(JNIEnv *env, jclass clss, jlong fid, jint vdata_ref, jstring accessmode)
@@ -91,7 +92,7 @@ Java_hdf_hdflib_HDFLibrary_VSgetclass(JNIEnv *env, jclass clss, jlong vdata_id, 
 
     UNUSED(clss);
 
-    if (NULL == (className = (char *)HDmalloc(VSNAMELENMAX + 1)))
+    if (NULL == (className = (char *)malloc(VSNAMELENMAX + 1)))
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "VSgetclass: failed to allocate data buffer");
 
     if (hdfclass == NULL)
@@ -115,8 +116,7 @@ Java_hdf_hdflib_HDFLibrary_VSgetclass(JNIEnv *env, jclass clss, jlong vdata_id, 
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (className)
-        HDfree(className);
+    free(className);
 
     return;
 }
@@ -130,7 +130,7 @@ Java_hdf_hdflib_HDFLibrary_VSgetname(JNIEnv *env, jclass clss, jlong vdata_id, j
 
     UNUSED(clss);
 
-    if (NULL == (data = (char *)HDmalloc(sizeof(char) * (size_t)VSNAMELENMAX + 1)))
+    if (NULL == (data = (char *)malloc(sizeof(char) * (size_t)VSNAMELENMAX + 1)))
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "VSgetname: failed to allocate data buffer");
 
     if (hdfname == NULL)
@@ -151,8 +151,7 @@ Java_hdf_hdflib_HDFLibrary_VSgetname(JNIEnv *env, jclass clss, jlong vdata_id, j
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (data)
-        HDfree(data);
+    free(data);
 
     return;
 }
@@ -282,7 +281,7 @@ Java_hdf_hdflib_HDFLibrary_VSgetfields(JNIEnv *env, jclass clss, jlong vdata_id,
 
     UNUSED(clss);
 
-    if (NULL == (flds = (char *)HDmalloc(sizeof(char) * (size_t)25600)))
+    if (NULL == (flds = (char *)malloc(sizeof(char) * (size_t)25600)))
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "VSgetfields: failed to allocate data buffer");
 
     if (fields == NULL)
@@ -303,8 +302,7 @@ Java_hdf_hdflib_HDFLibrary_VSgetfields(JNIEnv *env, jclass clss, jlong vdata_id,
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (flds)
-        HDfree(flds);
+    free(flds);
 
     return rval;
 }
@@ -348,10 +346,10 @@ Java_hdf_hdflib_HDFLibrary_VSinquire(JNIEnv *env, jclass clss, jlong vdata_id, j
     if (ENVPTR->GetArrayLength(ENVONLY, sargs) < 2)
         H4_BAD_ARGUMENT_ERROR(ENVONLY, "VSinquire: output array sargs < order 2");
 
-    if (NULL == (flds = (char *)HDmalloc(sizeof(char) * (size_t)MAX_FIELD_SIZE + 1)))
+    if (NULL == (flds = (char *)malloc(sizeof(char) * (size_t)MAX_FIELD_SIZE + 1)))
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "VSinquire: failed to allocate data buffer");
 
-    if (NULL == (name = (char *)HDmalloc(sizeof(char) * (size_t)H4_MAX_NC_NAME + 1)))
+    if (NULL == (name = (char *)malloc(sizeof(char) * (size_t)H4_MAX_NC_NAME + 1)))
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "VSinquire: failed to allocate data buffer");
 
     PIN_INT_ARRAY(ENVONLY, iargs, theArgs, &isCopy, "VSinquire:  iargs not pinned");
@@ -381,10 +379,8 @@ Java_hdf_hdflib_HDFLibrary_VSinquire(JNIEnv *env, jclass clss, jlong vdata_id, j
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (name)
-        HDfree(name);
-    if (flds)
-        HDfree(flds);
+    free(name);
+    free(flds);
 
     return JNI_TRUE;
 }
@@ -606,8 +602,8 @@ Java_hdf_hdflib_HDFLibrary_VSfpack(JNIEnv *env, jclass clss, jlong vdata_id, jin
 
     /*
         VSfpack((int32) vdata_id, (intn) action, char
-            *fields_in_buf, VOIDP buf, intn buf_size, intn
-            n_records, char *fields, VOIDP bufptrs[]);
+            *fields_in_buf, void * buf, intn buf_size, intn
+            n_records, char *fields, void * bufptrs[]);
     */
     H4_UNIMPLEMENTED(ENVONLY, "VSfpack");
 
@@ -736,7 +732,7 @@ Java_hdf_hdflib_HDFLibrary_VSattrinfo(JNIEnv *env, jclass clss, jlong id, jint i
 
     UNUSED(clss);
 
-    if ((data = (char *)HDmalloc(256)) == NULL)
+    if ((data = (char *)malloc(256)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "VSattrinfo: failed to allocate data buffer");
 
     if (name == NULL)
@@ -768,8 +764,7 @@ Java_hdf_hdflib_HDFLibrary_VSattrinfo(JNIEnv *env, jclass clss, jlong id, jint i
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (data)
-        HDfree(data);
+    free(data);
     if (theArgs)
         UNPIN_INT_ARRAY(ENVONLY, argv, theArgs, (rval == FAIL) ? JNI_ABORT : 0);
 
@@ -859,7 +854,7 @@ Java_hdf_hdflib_HDFLibrary_VSgetattr(JNIEnv *env, jclass clss, jlong id, jint fi
 
     PIN_BYTE_ARRAY(ENVONLY, values, arr, &isCopy, "VSgetattr:  values not pinned");
 
-    if ((rval = VSgetattr((int32)id, (int32)field_index, (int32)attr_index, (VOIDP)arr)) == FAIL)
+    if ((rval = VSgetattr((int32)id, (int32)field_index, (int32)attr_index, (void *)arr)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -920,7 +915,7 @@ Java_hdf_hdflib_HDFLibrary_VSsetattr__JILjava_lang_String_2JILjava_lang_String_2
     PIN_JAVA_STRING(ENVONLY, values, val, NULL, "VSsetattr:  values not pinned");
 
     if ((rval = VSsetattr((int32)id, (int32)index, (char *)str, (int32)data_type, (int32)count,
-                          (VOIDP)val)) == FAIL)
+                          (void *)val)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -955,7 +950,7 @@ Java_hdf_hdflib_HDFLibrary_VSsetattr__JILjava_lang_String_2JI_3B(JNIEnv *env, jc
     PIN_JAVA_STRING(ENVONLY, attr_name, str, NULL, "VSsetattr:  attr_name not pinned");
 
     if ((rval = VSsetattr((int32)id, (int32)index, (char *)str, (int32)data_type, (int32)count,
-                          (VOIDP)arr)) == FAIL)
+                          (void *)arr)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:

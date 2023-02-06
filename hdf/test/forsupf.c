@@ -55,7 +55,7 @@ nhisystem(_fcd cmd, intf *cmdlen)
     if (!fn)
         return (FAIL);
     ret = (intf)system(fn);
-    HDfree(fn);
+    free(fn);
     return (ret);
 } /* end nhisystem() */
 
@@ -95,6 +95,6 @@ nfixnamec(_fcd name, intf *name_len, _fcd name_out, intf *name_len_out)
     HDpackFstring(testfile, _fcdtocp(name_out), *name_len_out);
 
     ret = 0;
-    HDfree(c_name);
+    free(c_name);
     return (ret);
 } /* end nfixname() */

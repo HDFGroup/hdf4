@@ -28,6 +28,7 @@ extern "C" {
 #include "hdf.h"
 #include "hfile.h"
 #include "h4jni.h"
+#include "hdfImp.h"
 
 /*
  * Class:     hdf_hdflib_HDFLibrary
@@ -204,7 +205,7 @@ Java_hdf_hdflib_HDFLibrary_Hgetfileversion(JNIEnv *env, jclass clss, jlong file_
 
     UNUSED(clss);
 
-    if ((data = (char *)HDmalloc(LIBVSTR_LEN + 1)) == NULL)
+    if ((data = (char *)malloc(LIBVSTR_LEN + 1)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "Hgetfileversion: failed to allocate data buffer");
 
     if (fvstring == NULL)
@@ -227,8 +228,7 @@ Java_hdf_hdflib_HDFLibrary_Hgetfileversion(JNIEnv *env, jclass clss, jlong file_
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (data)
-        HDfree(data);
+    free(data);
     if (theArgs)
         UNPIN_INT_ARRAY(ENVONLY, vers, theArgs, (rval == FAIL) ? JNI_ABORT : 0);
 
@@ -251,7 +251,7 @@ Java_hdf_hdflib_HDFLibrary_Hgetlibversion(JNIEnv *env, jclass clss, jintArray ve
 
     UNUSED(clss);
 
-    if ((data = (char *)HDmalloc(LIBVSTR_LEN + 1)) == NULL)
+    if ((data = (char *)malloc(LIBVSTR_LEN + 1)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "Hgetlibversion: failed to allocate data buffer");
 
     if (lvstring == NULL)
@@ -281,8 +281,7 @@ Java_hdf_hdflib_HDFLibrary_Hgetlibversion(JNIEnv *env, jclass clss, jintArray ve
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (data)
-        HDfree(data);
+    free(data);
     if (theArgs)
         UNPIN_INT_ARRAY(ENVONLY, vers, theArgs, (rval == FAIL) ? JNI_ABORT : 0);
 
@@ -413,8 +412,7 @@ Java_hdf_hdflib_HDFLibrary_HDgetNTdesc(JNIEnv *env, jclass clss, jint nt)
     rstring = ENVPTR->NewStringUTF(ENVONLY, rval);
 
 done:
-    if (rval)
-        HDfree(rval);
+    free(rval);
 
     return rstring;
 }

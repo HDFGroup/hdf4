@@ -63,7 +63,7 @@ LOCAL ROUTINES
 #include "mfprivate.h"
 #endif
 
-PRIVATE intn get_attr_tag(char *attr_name, uint16 *attr_tag);
+static intn get_attr_tag(char *attr_name, uint16 *attr_tag);
 
 /******************************************************************************
  NAME
@@ -410,7 +410,7 @@ done:
     application can use tag/ref to read the attribute string.
 
  ******************************************************************************/
-PRIVATE intn
+static intn
 get_attr_tag(char *attr_name, uint16 *attr_tag)
 {
     intn ret_value = SUCCEED;
@@ -571,7 +571,7 @@ SDgetoldattdatainfo(int32 dim_id, int32 sdsid, char *attr_name, int32 *offset, i
         lufbuf = malloc(len + 1);
         if (lufbuf == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
-        Hgetelement(handle->hdf_file, att_tag, att_ref, lufbuf);
+        Hgetelement(handle->hdf_file, att_tag, att_ref, (uint8 *)lufbuf);
 
         /*
          * Parse the luf string to obtain the offset/length of the requested luf

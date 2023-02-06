@@ -17,7 +17,6 @@
 #include "add.h"     /* functions to update in-memory netcdf */
 #include "error.h"
 #include "tests.h"
-#include "alloc.h"
 #include "emalloc.h"
 #ifdef HDF
 #include "hdf.h"
@@ -223,8 +222,8 @@ test_ncvarinq(char *path)
             nerrs++;
         }
     }
-    Free((char *)var.dims);
-    Free(var.name);
+    free(var.dims);
+    free(var.name);
     if (nerrs > 0)
         (void)fprintf(stderr, "FAILED! ***\n");
     else
@@ -667,8 +666,8 @@ test_ncvarrename(char *path)
         error("%s: ncvarrename failed to report bad netcdf handle ", pname);
         nerrs++;
     }
-    Free(var.name);
-    Free((char *)var.dims);
+    free(var.name);
+    free(var.dims);
     if (nerrs > 0)
         (void)fprintf(stderr, "FAILED! ***\n");
     else

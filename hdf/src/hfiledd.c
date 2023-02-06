@@ -152,7 +152,7 @@ HTPstart(filerec_t *file_rec /* IN:  File record to store info in */
 
     HEclear();
     /* Alloc start of linked list of ddblocks. */
-    file_rec->ddhead = (ddblock_t *)HDmalloc(sizeof(ddblock_t));
+    file_rec->ddhead = (ddblock_t *)malloc(sizeof(ddblock_t));
     if (file_rec->ddhead == (ddblock_t *)NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
@@ -215,16 +215,15 @@ HTPstart(filerec_t *file_rec /* IN:  File record to store info in */
 
         /* Now that we know how many dd's are in this block,
            alloc memory for the records. */
-        ddcurr->ddlist = (dd_t *)HDmalloc((uint32)ndds * sizeof(dd_t));
+        ddcurr->ddlist = (dd_t *)malloc((uint32)ndds * sizeof(dd_t));
         if (ddcurr->ddlist == (dd_t *)NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
         /* Allocate memory for the temporary buffer also */
         if (tbuf == NULL || ((uintn)ndds * DD_SZ) > tbuf_size) {
-            if (tbuf != (uint8 *)NULL)
-                HDfree(tbuf);
+            free(tbuf);
             tbuf_size = (uintn)ndds * DD_SZ;
-            tbuf      = (uint8 *)HDmalloc(tbuf_size);
+            tbuf      = (uint8 *)malloc(tbuf_size);
             if (tbuf == (uint8 *)NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
         } /* end if */
@@ -260,7 +259,7 @@ HTPstart(filerec_t *file_rec /* IN:  File record to store info in */
             ddblock_t *ddnew;          /* ptr to the new DD block */
 
             /* extend the linked list */
-            ddcurr->next = ddnew = (ddblock_t *)HDmalloc((uint32)sizeof(ddblock_t));
+            ddcurr->next = ddnew = (ddblock_t *)malloc((uint32)sizeof(ddblock_t));
             if (ddnew == (ddblock_t *)NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
@@ -286,8 +285,7 @@ HTPstart(filerec_t *file_rec /* IN:  File record to store info in */
     file_rec->f_end_off = end_off;
 
 done:
-    if (tbuf != NULL)
-        HDfree(tbuf);
+    free(tbuf);
 
     return ret_value;
 } /* end HTPstart() */
@@ -328,7 +326,7 @@ HTPinit(filerec_t *file_rec, /* IN: File record to store info in */
         ndds = MIN_NDDS;
 
     /* allocate the dd block in memory and initialize it */
-    file_rec->ddhead = (ddblock_t *)HDmalloc(sizeof(ddblock_t));
+    file_rec->ddhead = (ddblock_t *)malloc(sizeof(ddblock_t));
     if (file_rec->ddhead == (ddblock_t *)NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     block = file_rec->ddlast = file_rec->ddhead;
@@ -350,7 +348,7 @@ HTPinit(filerec_t *file_rec, /* IN: File record to store info in */
         HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
     /* allocate and initialize dd list */
-    list = block->ddlist = (dd_t *)HDmalloc((uint32)ndds * sizeof(dd_t));
+    list = block->ddlist = (dd_t *)malloc((uint32)ndds * sizeof(dd_t));
     if (list == (dd_t *)NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
@@ -362,7 +360,7 @@ HTPinit(filerec_t *file_rec, /* IN: File record to store info in */
     list[0].blk    = block;
     HDmemfill(&list[1], &list[0], sizeof(dd_t), (uint32)(ndds - 1));
 
-    tbuf = (uint8 *)HDmalloc(ndds * DD_SZ);
+    tbuf = (uint8 *)malloc(ndds * DD_SZ);
     if (tbuf == NULL) /* check for DD list */
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
@@ -393,7 +391,7 @@ HTPinit(filerec_t *file_rec, /* IN: File record to store info in */
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    HDfree(tbuf);
+    free(tbuf);
 
     return ret_value;
 } /* end HTPinit() */
@@ -445,10 +443,9 @@ HTPsync(filerec_t *file_rec /* IN:  File record to store info in */
             ndds = block->ndds;
             /* Allocate memory for the temporary buffer also */
             if (tbuf == NULL || ((uintn)ndds * DD_SZ) > tbuf_size) {
-                if (tbuf != (uint8 *)NULL)
-                    HDfree(tbuf);
+                free(tbuf);
                 tbuf_size = (uintn)ndds * DD_SZ;
-                tbuf      = (uint8 *)HDmalloc(tbuf_size);
+                tbuf      = (uint8 *)malloc(tbuf_size);
                 if (tbuf == (uint8 *)NULL)
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
             } /* end if */
@@ -468,8 +465,7 @@ HTPsync(filerec_t *file_rec /* IN:  File record to store info in */
     }                             /* end while */
 
 done:
-    if (tbuf != (uint8 *)NULL)
-        HDfree(tbuf);
+    free(tbuf);
 
     return ret_value;
 } /* end HTPsync() */
@@ -502,9 +498,8 @@ HTPend(filerec_t *file_rec /* IN:  File record to store info in */
 
     for (bl = file_rec->ddhead; bl != NULL; bl = next) {
         next = bl->next;
-        if (bl->ddlist)
-            HDfree((VOIDP)bl->ddlist);
-        HDfree((VOIDP)bl);
+        free(bl->ddlist);
+        free(bl);
     }
 
     /* Chuck the tag info tree too */
@@ -609,7 +604,7 @@ HTPselect(filerec_t *file_rec, /* IN: File record to store info in */
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Try to find the regular tag in the tag info tree */
-    if ((tip_ptr = (tag_info **)tbbtdfind(file_rec->tag_tree, (VOIDP)&base_tag, NULL)) == NULL)
+    if ((tip_ptr = (tag_info **)tbbtdfind(file_rec->tag_tree, (void *)&base_tag, NULL)) == NULL)
         HGOTO_DONE(FAIL); /* Not an error, we just didn't find the object */
 
     tinfo_ptr = *tip_ptr; /* get the pointer to the tag info */
@@ -1004,13 +999,13 @@ Htagnewref(int32  file_id, /* IN: File ID the tag/refs are in */
     if (BADFREC(file_rec))
         HGOTO_ERROR(DFE_ARGS, 0);
 
-    if ((tip_ptr = (tag_info **)tbbtdfind(file_rec->tag_tree, (VOIDP)&base_tag, NULL)) == NULL)
+    if ((tip_ptr = (tag_info **)tbbtdfind(file_rec->tag_tree, (void *)&base_tag, NULL)) == NULL)
         ret_value = 1;        /* The first available ref */
     else {                    /* found an existing tag */
         tinfo_ptr = *tip_ptr; /* get the pointer to the tag info */
-        if ((ret_value = (uint16)bv_find(tinfo_ptr->b, -1, BV_FALSE)) == (uint16)FAIL)
+        if ((ret_value = (uint16)bv_find_next_zero(tinfo_ptr->b)) == (uint16)FAIL)
             HGOTO_ERROR(DFE_BVFIND, 0);
-    } /* end else */
+    }
 
 done:
     return ret_value;
@@ -1119,7 +1114,7 @@ HDcheck_tagref(int32  file_id, /* IN: id of file */
     base_tag = BASETAG(tag);
 
     /* Try to find the regular tag in the tag info tree */
-    if ((tip_ptr = (tag_info **)tbbtdfind(file_rec->tag_tree, (VOIDP)&base_tag, NULL)) == NULL)
+    if ((tip_ptr = (tag_info **)tbbtdfind(file_rec->tag_tree, (void *)&base_tag, NULL)) == NULL)
         HGOTO_DONE(0); /* Not an error, we just didn't find the object */
 
     tinfo_ptr = *tip_ptr; /* get the pointer to the tag info */
@@ -1292,9 +1287,9 @@ HTPdump_dds(int32 file_id, FILE *fout)
 
     /* Dump the tag tree */
     {
-        VOIDP *t;
+        void **t;
 
-        if (NULL != (t = (VOIDP *)tbbtfirst(
+        if (NULL != (t = (void **)tbbtfirst(
                          (TBBT_NODE *)*(file_rec->tag_tree)))) { /* found at least one node in the tree */
             tag_info *tinfo_ptr;                                 /* pointer to the info for a tag */
 
@@ -1307,7 +1302,7 @@ HTPdump_dds(int32 file_id, FILE *fout)
 
                 /* Dump the ref # dynarray */
                 if ((size = DAsize_array(tinfo_ptr->d)) != FAIL) {
-                    VOIDP elem;
+                    void *elem;
 
                     fprintf(fout, "dynarray size=%d\n", size);
                     for (i = 0; i < size; i++) {
@@ -1332,7 +1327,7 @@ HTPdump_dds(int32 file_id, FILE *fout)
                 } /* end if */
 
                 /* Get the next tag node */
-                t = (VOIDP *)tbbtnext((TBBT_NODE *)t);
+                t = (void **)tbbtnext((TBBT_NODE *)t);
             } while (t != NULL);
         }
         else
@@ -1378,7 +1373,7 @@ HTInew_dd_block(filerec_t *file_rec)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     /* allocate new dd block record and fill in data */
-    if ((block = (ddblock_t *)HDmalloc(sizeof(ddblock_t))) == NULL)
+    if ((block = (ddblock_t *)malloc(sizeof(ddblock_t))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     block->ndds       = (int16)(ndds = (intn)file_rec->ddhead->ndds); /* snarf from first block */
     block->next       = (ddblock_t *)NULL;
@@ -1405,7 +1400,7 @@ HTInew_dd_block(filerec_t *file_rec)
 
     /* set up the dd list of this dd block and put it in the file
      after the dd block header */
-    list = block->ddlist = (dd_t *)HDmalloc((uint32)ndds * sizeof(dd_t));
+    list = block->ddlist = (dd_t *)malloc((uint32)ndds * sizeof(dd_t));
     if (list == (dd_t *)NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
@@ -1420,7 +1415,7 @@ HTInew_dd_block(filerec_t *file_rec)
     if (file_rec->cache != 0) { /* if we are caching, wait to update previous DD block */
         uint8 *tbuf;            /* temporary buffer */
 
-        tbuf = (uint8 *)HDmalloc(ndds * DD_SZ);
+        tbuf = (uint8 *)malloc(ndds * DD_SZ);
         if (tbuf == (uint8 *)NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
@@ -1431,8 +1426,8 @@ HTInew_dd_block(filerec_t *file_rec)
         if (HP_write(file_rec, tbuf, ndds * DD_SZ) == FAIL)
             HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
-        HDfree(tbuf);
-    } /* end if */
+        free(tbuf);
+    }
 
     /* update previously last ddblock to point to this new dd block */
     file_rec->ddlast->nextoffset = nextoffset;
@@ -1504,7 +1499,7 @@ HTIfind_dd(filerec_t *file_rec, uint16 look_tag, uint16 look_ref, dd_t **pdd, in
         uint16     base_tag = BASETAG(look_tag); /* corresponding base tag (if the tag is special) */
 
         /* Try to find the regular tag in the tag info tree */
-        if ((tip_ptr = (tag_info **)tbbtdfind(file_rec->tag_tree, (VOIDP)&base_tag, NULL)) == NULL)
+        if ((tip_ptr = (tag_info **)tbbtdfind(file_rec->tag_tree, (void *)&base_tag, NULL)) == NULL)
             HGOTO_DONE(FAIL); /* Not an error, we just didn't find the object */
 
         tinfo_ptr = *tip_ptr; /* get the pointer to the tag info */
@@ -1904,17 +1899,17 @@ HTIregister_tag_ref(filerec_t *file_rec, dd_t *dd_ptr)
 
     HEclear();
     /* Add to the tag info tree */
-    if ((tip_ptr = (tag_info **)tbbtdfind(file_rec->tag_tree, (VOIDP)&base_tag, NULL)) ==
+    if ((tip_ptr = (tag_info **)tbbtdfind(file_rec->tag_tree, (void *)&base_tag, NULL)) ==
         NULL) { /* a new tag was found */
-        if ((tinfo_ptr = (tag_info *)HDcalloc(1, sizeof(tag_info))) == NULL)
+        if ((tinfo_ptr = (tag_info *)calloc(1, sizeof(tag_info))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         tinfo_ptr->tag = base_tag;
 
         /* Insert the tag node into the tree */
-        tbbtdins(file_rec->tag_tree, (VOIDP)tinfo_ptr, NULL);
+        tbbtdins(file_rec->tag_tree, (void *)tinfo_ptr, NULL);
 
         /* Take care of the bit-vector */
-        if ((tinfo_ptr->b = bv_new(-1, BV_EXTENDABLE)) == NULL)
+        if ((tinfo_ptr->b = bv_new(-1)) == NULL)
             HGOTO_ERROR(DFE_BVNEW, FAIL);
         /* Set the 0'th bit in the bit-vector (cannot be stored in HDF files) */
         /* Yes, this is a kludge due to ref # zero not being used -QAK */
@@ -1940,7 +1935,7 @@ HTIregister_tag_ref(filerec_t *file_rec, dd_t *dd_ptr)
         HGOTO_ERROR(DFE_BVSET, FAIL);
 
     /* Insert the DD info into the dynarray for later use */
-    if (DAset_elem(tinfo_ptr->d, (intn)dd_ptr->ref, (VOIDP)dd_ptr) == FAIL)
+    if (DAset_elem(tinfo_ptr->d, (intn)dd_ptr->ref, (void *)dd_ptr) == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
@@ -1976,7 +1971,7 @@ HTIunregister_tag_ref(filerec_t *file_rec, dd_t *dd_ptr)
 
     HEclear();
     /* Add to the tag info tree */
-    if ((tip_ptr = (tag_info **)tbbtdfind(file_rec->tag_tree, (VOIDP)&base_tag, NULL)) == NULL) {
+    if ((tip_ptr = (tag_info **)tbbtdfind(file_rec->tag_tree, (void *)&base_tag, NULL)) == NULL) {
         HGOTO_ERROR(DFE_BADTAG, FAIL);
     }                 /* end if */
     else {            /* found an existing tag */
@@ -2009,7 +2004,7 @@ done:
    *** Only called by B-tree routines, should _not_ be called externally ***
  */
 intn
-tagcompare(VOIDP k1, VOIDP k2, intn cmparg)
+tagcompare(void *k1, void *k2, intn cmparg)
 {
     intn ret_value;
 
@@ -2026,8 +2021,8 @@ tagcompare(VOIDP k1, VOIDP k2, intn cmparg)
 
    *** Only called by B-tree routines, should _not_ be called externally ***
  */
-VOID
-tagdestroynode(VOIDP n)
+void
+tagdestroynode(void *n)
 {
     tag_info *t = (tag_info *)n;
 
@@ -2035,5 +2030,5 @@ tagdestroynode(VOIDP n)
         bv_delete(t->b);
     if (t->d != NULL)
         DAdestroy_array(t->d, 0);
-    HDfree((VOIDP)n);
+    free(n);
 } /* tagdestroynode */

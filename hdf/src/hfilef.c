@@ -46,7 +46,7 @@ nhiopen(_fcd name, intf *acc_mode, intf *defdds, intf *namelen)
     if (!fn)
         return (FAIL);
     ret = (intf)Hopen(fn, (intn)*acc_mode, (int16)*defdds);
-    HDfree(fn);
+    free(fn);
     return (ret);
 }
 
@@ -100,7 +100,7 @@ nhxisdir(_fcd dir, intf *dirlen)
     if (!fn)
         return (FAIL);
     ret = (intf)HXsetdir(fn);
-    HDfree(fn);
+    free(fn);
     return (ret);
 }
 
@@ -124,7 +124,7 @@ nhxiscdir(_fcd dir, intf *dirlen)
     if (!fn)
         return (FAIL);
     ret = (intf)HXsetcreatedir(fn);
-    HDfree(fn);
+    free(fn);
     return (ret);
 }
 
@@ -163,13 +163,12 @@ nhglibverc(intf *major_v, intf *minor_v, intf *release, _fcd string, intf *len)
 
     cstring = NULL;
     if (*len)
-        cstring = (char *)HDmalloc((uint32)*len + 1);
+        cstring = (char *)malloc((uint32)*len + 1);
     status = Hgetlibversion(&cmajor_v, &cminor_v, &crelease, cstring);
 
     HDpackFstring(cstring, _fcdtocp(string), *len);
 
-    if (cstring)
-        HDfree((VOIDP)cstring);
+    free(cstring);
 
     *major_v = (intf)cmajor_v;
     *minor_v = (intf)cminor_v;
@@ -198,13 +197,12 @@ nhgfilverc(intf *file_id, intf *major_v, intf *minor_v, intf *release, _fcd stri
 
     cstring = NULL;
     if (*len)
-        cstring = (char *)HDmalloc((uint32)*len + 1);
+        cstring = (char *)malloc((uint32)*len + 1);
     status = Hgetfileversion((int32)*file_id, &cmajor_v, &cminor_v, &crelease, cstring);
 
     HDpackFstring(cstring, _fcdtocp(string), *len);
 
-    if (cstring)
-        HDfree((VOIDP)cstring);
+    free(cstring);
 
     *major_v = (intf)cmajor_v;
     *minor_v = (intf)cminor_v;
@@ -232,7 +230,7 @@ nhiishdf(_fcd name, intf *namelen)
     if (!fn)
         return (FAIL);
     ret = (intf)Hishdf(fn);
-    HDfree(fn);
+    free(fn);
     return (ret);
 }
 /*-----------------------------------------------------------------------------

@@ -68,7 +68,7 @@ main()
     /*
      * Fill the SDS array with the fill value.
      */
-    if (SDsetfillvalue(sds_id, (VOIDP)&fill_value) == FAIL)
+    if (SDsetfillvalue(sds_id, (void *)&fill_value) == FAIL)
         printf("*** ERROR from SDsetfillvalue\n");
 
     /*
@@ -125,7 +125,7 @@ main()
      */
     origin[0] = 0;
     origin[1] = 0;
-    if (SDwritechunk(sds_id, origin, (VOIDP)chunk1) == FAIL)
+    if (SDwritechunk(sds_id, origin, (void *)chunk1) == FAIL)
         printf("*** ERROR from SDwritechunk\n");
 
     /*
@@ -133,7 +133,7 @@ main()
      */
     origin[0] = 1;
     origin[1] = 0;
-    if (SDwritechunk(sds_id, origin, (VOIDP)chunk3) == FAIL)
+    if (SDwritechunk(sds_id, origin, (void *)chunk3) == FAIL)
         printf("*** ERROR from SDwritechunk\n");
 
     /*
@@ -141,7 +141,7 @@ main()
      */
     origin[0] = 0;
     origin[1] = 1;
-    if (SDwritechunk(sds_id, origin, (VOIDP)chunk2) == FAIL)
+    if (SDwritechunk(sds_id, origin, (void *)chunk2) == FAIL)
         printf("*** ERROR from SDwritechunk\n");
 
     /*
@@ -152,7 +152,7 @@ main()
     start[1] = 2;
     edges[0] = 3;
     edges[1] = 2;
-    if (SDwritedata(sds_id, start, NULL, edges, (VOIDP)chunk6) == FAIL)
+    if (SDwritedata(sds_id, start, NULL, edges, (void *)chunk6) == FAIL)
         printf("*** ERROR from SDwritedata\n");
 
     /*
@@ -163,7 +163,7 @@ main()
     start[1] = 3;
     edges[0] = 3;
     edges[1] = 1;
-    if (SDwritedata(sds_id, start, NULL, edges, (VOIDP)column) == FAIL)
+    if (SDwritedata(sds_id, start, NULL, edges, (void *)column) == FAIL)
         printf("*** ERROR from SDwritedata\n");
 
     /*
@@ -174,7 +174,7 @@ main()
     start[1] = 0;
     edges[0] = 1;
     edges[1] = 2;
-    if (SDwritedata(sds_id, start, NULL, edges, (VOIDP)row) == FAIL)
+    if (SDwritedata(sds_id, start, NULL, edges, (void *)row) == FAIL)
         printf("*** ERROR from SDwritedata\n");
 
     /*
@@ -220,7 +220,7 @@ main()
     start[1] = 0;
     edges[0] = 9;
     edges[1] = 4;
-    if (SDreaddata(sds_id, start, NULL, edges, (VOIDP)all_data) == FAIL)
+    if (SDreaddata(sds_id, start, NULL, edges, (void *)all_data) == FAIL)
         printf("*** ERROR from SDreaddata\n");
 
     /*

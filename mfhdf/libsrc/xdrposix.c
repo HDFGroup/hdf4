@@ -10,6 +10,7 @@
  * corrects some performance problems with xdrstdio_getpos() and
  * xdrstdio_getpos() in the xdr_stdio implementation.
  */
+#include "h4config.h"
 
 #include <inttypes.h>
 #include <string.h>
@@ -36,6 +37,14 @@
 #include "local_nc.h"
 
 #include "mfhdf.h"
+
+#ifdef H4_HAVE_ARPA_INET_H
+#include <arpa/inet.h>
+#endif
+
+#ifdef H4_HAVE_NETINET_IN_H
+#include <netinet/in.h> /* for htonl() */
+#endif
 
 /* 32-bit integer on the host architecture */
 typedef int32_t netlong;
@@ -93,7 +102,7 @@ rdbuf(biobuf *biop)
             if (lseek(biop->fd, biop->page * BIOBUFSIZ, SEEK_SET) == ((off_t)-1))
                 return -1;
         }
-        biop->nread = biop->cnt = read(biop->fd, (VOIDP)biop->base, BIOBUFSIZ);
+        biop->nread = biop->cnt = read(biop->fd, (void *)biop->base, BIOBUFSIZ);
     }
     biop->ptr = biop->base;
     return biop->cnt;
@@ -112,7 +121,7 @@ wrbuf(biobuf *biop)
             if (lseek(biop->fd, biop->page * BIOBUFSIZ, SEEK_SET) == ((off_t)-1))
                 return -1;
         }
-        biop->nwrote = write(biop->fd, (VOIDP)biop->base, biop->cnt);
+        biop->nwrote = write(biop->fd, (void *)biop->base, biop->cnt);
     }
     biop->isdirty = 0;
 
@@ -203,17 +212,17 @@ biowrite(biobuf *biop, unsigned char *ptr, int nbytes)
     return nwrote;
 }
 
-static bool_t   xdrposix_getlong();
-static bool_t   xdrposix_putlong();
-static bool_t   xdrposix_getbytes();
-static bool_t   xdrposix_putbytes();
-static ncpos_t  xdrposix_getpos();
-static bool_t   xdrposix_setpos();
-static netlong *xdrposix_inline();
-static void     xdrposix_destroy();
+static bool_t   xdrposix_getlong(XDR *xdrs, long *lp);
+static bool_t   xdrposix_putlong(XDR *xdrs, const long *lp);
+static bool_t   xdrposix_getbytes(XDR *xdrs, char *addr, u_int len);
+static bool_t   xdrposix_putbytes(XDR *xdrs, const char *addr, u_int len);
+static ncpos_t  xdrposix_getpos(XDR *xdrs);
+static bool_t   xdrposix_setpos(XDR *xdrs, ncpos_t pos);
+static netlong *xdrposix_inline(XDR *xdrs, u_int len);
+static void     xdrposix_destroy(XDR *xdrs);
 #if (defined __sun && defined _LP64)
-static bool_t xdrposix_getint();
-static bool_t xdrposix_putint();
+static bool_t xdrposix_getint(XDR *xdrs, int *lp);
+static bool_t xdrposix_putint(XDR *xdrs, const int *lp);
 #endif
 
 /*
@@ -254,7 +263,7 @@ hdf_xdrfile_create(XDR *xdrs, int ncop)
         xdrs->x_op = XDR_DECODE;
 
     xdrs->x_ops     = &xdrposix_ops;
-    xdrs->x_private = (caddr_t)biop;
+    xdrs->x_private = (char *)biop;
 
 } /* hdf_xdrfile_create */
 
@@ -273,7 +282,7 @@ xdrposix_create(XDR *xdrs, int fd, int fmode, enum xdr_op op)
 #endif
     xdrs->x_op      = op;
     xdrs->x_ops     = &xdrposix_ops;
-    xdrs->x_private = (caddr_t)biop;
+    xdrs->x_private = (char *)biop;
     /* unused */
     xdrs->x_handy = 0;
     xdrs->x_base  = 0;
@@ -349,7 +358,7 @@ xdrposix_getlong(XDR *xdrs, long *lp)
 }
 
 static bool_t
-xdrposix_putlong(XDR *xdrs, long *lp)
+xdrposix_putlong(XDR *xdrs, const long *lp)
 {
 
     unsigned char *up = (unsigned char *)lp;
@@ -367,7 +376,7 @@ xdrposix_putlong(XDR *xdrs, long *lp)
 }
 
 static bool_t
-xdrposix_getbytes(XDR *xdrs, caddr_t addr, u_int len)
+xdrposix_getbytes(XDR *xdrs, char *addr, u_int len)
 {
     if ((len != 0) && (bioread((biobuf *)xdrs->x_private, (unsigned char *)addr, (int)len) != len))
         return FALSE;
@@ -375,7 +384,7 @@ xdrposix_getbytes(XDR *xdrs, caddr_t addr, u_int len)
 }
 
 static bool_t
-xdrposix_putbytes(XDR *xdrs, caddr_t addr, u_int len)
+xdrposix_putbytes(XDR *xdrs, const char *addr, u_int len)
 {
     if ((len != 0) && (biowrite((biobuf *)xdrs->x_private, (unsigned char *)addr, (int)len) != len))
         return FALSE;
@@ -423,6 +432,8 @@ xdrposix_setpos(XDR *xdrs, ncpos_t pos)
 static netlong *
 xdrposix_inline(XDR *xdrs, u_int len)
 {
+    (void)xdrs;
+    (void)len;
     /*
      * Must do some work to implement this: must insure
      * enough data in the underlying posix buffer,
@@ -447,7 +458,7 @@ xdrposix_getint(XDR *xdrs, int *lp)
 }
 
 static bool_t
-xdrposix_putint(XDR *xdrs, int *lp)
+xdrposix_putint(XDR *xdrs, const int *lp)
 {
     unsigned char *up = (unsigned char *)lp;
 #ifndef H4_WORDS_BIGENDIAN

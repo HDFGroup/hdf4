@@ -86,12 +86,12 @@
 /*
  *  Important Internal Variables
  */
-PRIVATE DF *DFlist = NULL; /* pointer to list of open DFs */
+static DF *DFlist = NULL; /* pointer to list of open DFs */
 #ifdef PERM_OUT
-PRIVATE int            DFinuse    = 0;    /* How many are currently in use */
-PRIVATE uint16         DFmaxref   = 0;    /* which is the largest ref used? */
-PRIVATE unsigned char *DFreflist  = NULL; /* list of refs in use */
-PRIVATE char           patterns[] = {0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01};
+static int            DFinuse    = 0;    /* How many are currently in use */
+static uint16         DFmaxref   = 0;    /* which is the largest ref used? */
+static unsigned char *DFreflist  = NULL; /* list of refs in use */
+static char           patterns[] = {0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01};
 #endif /* PERM_OUT */
 
 /*
@@ -171,7 +171,7 @@ DFclose(DF *dfile)
 
     if (DFelstat == DFEL_RESIDENT) {
         Hputelement(DFid, acc_tag, acc_ref, (unsigned char *)DFelement, DFelsize);
-        HDfree(DFelement);
+        free(DFelement);
     }
     else
         Hendaccess(DFaid);
@@ -438,16 +438,6 @@ DFaccess(DF *dfile, uint16 tag, uint16 ref, char *acc_mode)
             return (-1);
     }
 
-    /* test
-       if (((tag != acc_tag) || (ref != acc_ref)) || (accmode != DFelaccmode))
-       if (DFelstat == DFEL_RESIDENT) {
-       Hputelement(DFid, acc_tag, acc_ref, DFelement, DFelsize);
-       HDfree(DFelement);
-       }
-       else
-       Hendaccess(DFaid);
-       test */
-
     acc_tag     = tag;
     acc_ref     = ref;
     DFelaccmode = accmode;
@@ -463,24 +453,6 @@ DFaccess(DF *dfile, uint16 tag, uint16 ref, char *acc_mode)
                 DFerror = (int)HEvalue(1);
                 return (-1);
             }
-            /* test
-               DFaid = Hstartread(DFid, acc_tag, acc_ref);
-               if (DFaid != FAIL) {
-               Hinquire(DFaid, (int32*)NULL, (uint16*)NULL, (uint16*)NULL,
-               &DFelsize, (int32*)NULL, (int32*)NULL,
-               (int32*)NULL, (int32*)NULL);
-               inq_accid(DFaid, &dle_num, &index, &(dfile->up_access));
-               Hendaccess(DFaid);
-               ptr = dfile->list;
-               for (i=0; i<dle_num; i++)
-               ptr = ptr->next;
-               dfile->up_dd = &(ptr->dd[index]);
-               } else {
-               DFIclearacc();
-               DFerror = HEvalue(1);
-               return(-1);
-               }
-               test */
             break;
             /* _maybe_ treat 'w' and 'a' in the same general 'a'-way */
         case 'w':
@@ -505,7 +477,7 @@ DFaccess(DF *dfile, uint16 tag, uint16 ref, char *acc_mode)
     return (0);
 }
 
-PRIVATE int
+static int
 DFIclearacc(void)
 {
     Hendaccess(DFaid);
@@ -747,14 +719,6 @@ DFupdate(DF *dfile)
     else
         DFerror = DFE_NONE;
 
-    /* test
-       if (DFelstat == DFEL_RESIDENT) {
-       Hputelement(DFid, acc_tag, acc_ref, DFelement, DFelsize);
-       HDfree(DFelement);
-       DFIclearacc();
-       }
-       test */
-
     return (0);
 }
 
@@ -820,14 +784,6 @@ DFgetelement(DF *dfile, uint16 tag, uint16 ref, char *ptr)
     else
         DFerror = DFE_NONE;
 
-    /* test
-       if (DFelstat == DFEL_RESIDENT) {
-       Hputelement(DFid, acc_tag, acc_ref, DFelement, DFelsize);
-       HDfree(DFelement);
-       DFIclearacc();
-       }
-       test */
-
     if (Hgetelement(DFid, tag, ref, (unsigned char *)ptr) == -1) {
         DFerror = (int)HEvalue(1);
         return (-1);
@@ -864,14 +820,6 @@ DFputelement(DF *dfile, uint16 tag, uint16 ref, char *ptr, int32 len)
     }
     else
         DFerror = DFE_NONE;
-
-    /* test
-       if (DFelstat == DFEL_RESIDENT) {
-       Hputelement(DFid, acc_tag, acc_ref, DFelement, DFelsize);
-       HDfree(DFelement);
-       DFIclearacc();
-       }
-       test */
 
     if (Hputelement(DFid, tag, ref, (unsigned char *)ptr, len) == FAIL) {
         DFerror = (int)HEvalue(1);
@@ -1051,7 +999,7 @@ DFerrno(void)
  * Users:   HDF systems programmers, several routines in this file
  *---------------------------------------------------------------------------*/
 
-PRIVATE int
+static int
 DFIcheck(DF *dfile)
 {
     DFerror = DFE_NONE;
@@ -1067,27 +1015,6 @@ DFIcheck(DF *dfile)
     }
     else
         return (0);
-
-    /* test
-       if (!dfile) {
-       DFerror = DFE_DFNULL;
-       return(-1);
-       }
-
-       if ((dfile->access & DFACC_ALL) != dfile->access)
-       DFerror = DFE_BADACC;
-
-       if ((dfile->type >1) || (dfile->type <-1))
-       DFerror = DFE_ILLTYPE;
-
-       if (!dfile->list)
-       DFerror= DFE_BADDDLIST;
-
-       if (DFerror)
-       return(-1);
-       else
-       return(0);
-       test */
 }
 
 #ifdef PERM_OUT
@@ -1267,9 +1194,9 @@ DF *dfile;
         CKMALLOC(dle, NULL);
         p->next   = dle; /* insert dle at end of list */
         dle->next = NULL;
-        HDmemcpy((char *)&dle->ddh, (char *)&ddh, sizeof(DFddh));
+        memcpy((char *)&dle->ddh, (char *)&ddh, sizeof(DFddh));
         for (j = 0; j < ddh.dds; j++)
-            HDmemcpy((char *)&dle->dd[j], (char *)&dd, sizeof(DFdd));
+            memcpy((char *)&dle->dd[j], (char *)&dd, sizeof(DFdd));
         return (&(dle->dd[0]));
     }
     return (NULL); /* dummy, for return value checking */
@@ -1344,7 +1271,7 @@ DFIgetspace(uint32 qty)
 {
     void *ret;
 
-    ret     = (void *)HDmalloc(qty);
+    ret     = (void *)malloc(qty);
     DFerror = (int)HEvalue(1);
     return (ret);
 }
@@ -1352,7 +1279,7 @@ DFIgetspace(uint32 qty)
 void *
 DFIfreespace(void *ptr)
 {
-    HDfree(ptr);
+    free(ptr);
     return (NULL);
 }
 

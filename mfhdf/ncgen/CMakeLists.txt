@@ -19,7 +19,7 @@ set (ncgen_SRCS
     ${HDF4_MFHDF_NCGEN_SOURCE_DIR}/ncgentab.c
 )
 if (WIN32)
-  set (ncgen_SRCS ${ncgen_SRCS} ${HDF4_SOURCE_DIR}/mfhdf/util/getopt.c)
+  set (ncgen_SRCS ${ncgen_SRCS} ${HDF4_MFHDFSOURCE_DIR}/getopt.c)
 endif ()
 
 if (NOT ONLY_SHARED_LIBS)

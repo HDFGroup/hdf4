@@ -333,18 +333,34 @@ fi
 AC_PROG_INSTALL
 AC_PROG_LN_S
 
-AC_CHECK_PROGS([AR], [ar xar], [:], [$PATH])
+
+## ----------------------------------------------------------------------
+## Check which archiving tool to use. This needs to be done before
+## the LT_INIT macro.
+##
+if test -z "$AR"; then
+  AC_CHECK_PROGS([AR], [ar xar], [:], [$PATH])
+fi
+AC_SUBST([AR])
+
+# Set the default ar flags to cr
+# The Automake default is to use cru and the 'u' causes ar
+# to emit warnings on some platforms.
+AR_FLAGS=cr
+
+## Export the AR macro so that it will be placed in the libtool file
+## correctly.
+export AR
+
 
 AC_CHECK_PROGS([YACC], ['bison -y' byacc yacc], [none], [])
-
 if test "$YACC" = "none"; then
-  AC_MSG_ERROR([cannot find yacc utility])
+  AC_MSG_ERROR([cannot find bison/yacc utility])
 fi
 
 AC_CHECK_PROGS([LEX], [flex lex], [none], [])
-
 if test "$LEX" = "none"; then
-  AC_MSG_ERROR([cannot find lex utility])
+  AC_MSG_ERROR([cannot find flex/lex utility])
 fi
 
 AC_CHECK_PROG([DIFF],     [diff],     [diff -w])
@@ -352,7 +368,6 @@ AC_CHECK_PROG([MAKEINFO], [makeinfo], [makeinfo])
 AC_CHECK_PROG([NEQN],     [neqn],     [neqn])
 AC_CHECK_PROG([TBL],      [tbl],      [tbl])
 
-AC_SUBST([AR])
 AC_SUBST([DIFF])
 AC_SUBST([STATIC_SHARED])
 AC_SUBST([SHARED_EXTENSION])
@@ -711,6 +726,7 @@ case "$enableval" in
     ;;
   no)
     BUILD_XDR="no"
+    AC_MSG_RESULT([using system XDR]);
     ;;
 esac
 
@@ -770,7 +786,7 @@ if test "X$BUILD_XDR" != "Xyes"; then
 
   AC_LINK_IFELSE([AC_LANG_PROGRAM([[
   #include <rpc/types.h>
-  #include <rpc/xdr.h>]], [[xdr_int]])],[AC_MSG_RESULT([yes]); BUILD_XDR="no"],[AC_MSG_RESULT([no]); BUILD_XDR="yes"])
+  #include <rpc/xdr.h>]], [[xdr_int]])],[BUILD_XDR="no"],[BUILD_XDR="yes"])
 fi
 
 if test "X$BUILD_XDR" != "Xno"; then
@@ -811,26 +827,6 @@ AC_PROG_CC_C_O
 
 if test "X$BUILD_FORTRAN" = "Xyes"; then
   AC_PROG_F77_C_O
-fi
-
-## This is a bit of a hack. The AC_CHECK_SIZEOF macro is supposed to
-## #define a value in a header file. However, we don't use a generated
-## header file. So I check the value left over from autoconf's test  is
-## >= 8.
-AC_CHECK_SIZEOF([int*])
-
-if test $ac_cv_sizeof_intp -ge 8; then
-#  CPPFLAGS="$CPPFLAGS -DBIG_LONGS"
-  AC_DEFINE([BIG_LONGS], [1], [int* greater or equal to 8 bytes])
-
-  ## Define super secret special flag for AIX machines in 64-bit mode.
-  case "${host}" in
-    *-ibm-aix*) CPPFLAGS="$CPPFLAGS -DAIX5L64" ;;
-    *)          ;;
-  esac
-#  if test "X$BUILD_XDR" = "Xyes"; then
-#    AC_MSG_ERROR([--enable-hdf4-xdr is not supported for 64 bit mode.])
-#  fi
 fi
 
 ## ----------------------------------------------------------------------
@@ -1144,10 +1140,10 @@ AC_CONFIG_FILES([Makefile
                  hdf/util/h4redeploy
                  hdf/util/testutil.sh
                  man/Makefile
-        mfhdf/fortran/ftest.f
-        mfhdf/fortran/jackets.c
-        mfhdf/fortran/netcdf.inc
-        mfhdf/libsrc/netcdf.h
+                 mfhdf/fortran/ftest.f
+                 mfhdf/fortran/jackets.c
+                 mfhdf/fortran/netcdf.inc
+                 mfhdf/libsrc/netcdf.h
                  mfhdf/Makefile
                  mfhdf/dumper/Makefile
                  mfhdf/dumper/testhdp.sh

@@ -172,7 +172,7 @@ struct vdata_desc {
 /* .................................................................. */
 /* Private data structures. Unlikely to be of interest to applications */
 /*
- * These are just typedefs. Actual vfile_ts are declared PRIVATE and
+ * These are just typedefs. Actual vfile_ts are declared static and
  * are not accessible by applications. However, you may change VFILEMAX
  * to allow however many files to be opened.
  *

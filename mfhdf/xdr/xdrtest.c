@@ -111,9 +111,6 @@ main(int ac, char *av[])
     static encount encounts[5] = {ZERO_E, ONE_E, TWO_E, THREE_E, FOUR_E};
     encount       *ep, got_ep[5];
 
-#ifdef MDEBUG
-    malloc_debug(2);
-#endif
     fname = TESTFILE;
     if (ac > 1) {
         fname = av[1];
@@ -124,7 +121,7 @@ main(int ac, char *av[])
     F = fopen(fname, "wb");
     if (F == NULL) {
         perror("fopen failed");
-        exit(-1);
+        exit(EXIT_FAILURE);
     }
 
     /* fill the file so seeks will work even on non-virtual machines */
@@ -139,7 +136,7 @@ main(int ac, char *av[])
     poses[jj++] = xdr_getpos(xdrs);
 
     xdr_assert(xdr_setpos(xdrs, seeks[jj]));
-    xdr_assert(xdr_opaque(xdrs, (caddr_t)bytes, sizeof(bytes)));
+    xdr_assert(xdr_opaque(xdrs, (char *)bytes, sizeof(bytes)));
 
     /* no setpos, just for variety */
     szof  = sizeof(int);
@@ -210,7 +207,7 @@ main(int ac, char *av[])
     printf("string: %s\n", got_s);
 
     xdr_assert(xdr_setpos(xdrs, seeks[jj]));
-    xdr_assert(xdr_opaque(xdrs, (caddr_t)got_ab, sizeof(bytes)));
+    xdr_assert(xdr_opaque(xdrs, (char *)got_ab, sizeof(bytes)));
     printf("unsigned bytes: ");
     for (ii = 0, bp = got_ab; ii < (int)sizeof(bytes); ii++, bp++) {
         printf("%u ", *bp);
@@ -305,5 +302,5 @@ main(int ac, char *av[])
     putchar('\n');
     xdr_assert(poses[jj++] = xdr_getpos(xdrs));
 
-    exit(0);
+    exit(EXIT_SUCCESS);
 }

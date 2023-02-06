@@ -9,10 +9,7 @@ set (HDF_PREFIX "H4")
 option (HDF4_ENABLE_NETCDF "Build HDF4 versions of NetCDF-3 APIS" ON)
 if (HDF4_ENABLE_NETCDF)
   set (${HDF_PREFIX}_HAVE_NETCDF 1)
-endif ()
-
-if (${CMAKE_SIZEOF_VOID_P} GREATER_EQUAL 8)
-  set (${HDF_PREFIX}_BIG_LONGS 1)
+  set (${HDF_PREFIX}_BUILD_NETCDF 1)
 endif ()
 
 #-----------------------------------------------------------------------------

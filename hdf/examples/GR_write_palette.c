@@ -67,7 +67,7 @@ main()
     /*
      * Write the data in the buffer into the image array.
      */
-    if (GRwriteimage(ri_id, start, NULL, edges, (VOIDP)image_buf) == FAIL)
+    if (GRwriteimage(ri_id, start, NULL, edges, (void *)image_buf) == FAIL)
         printf("*** ERROR from GRwriteimage\n");
 
     /*
@@ -92,7 +92,7 @@ main()
     /*
      * Write data to the palette.
      */
-    if (GRwritelut(pal_id, N_COMPS_PAL, DFNT_UINT8, interlace_mode, N_ENTRIES, (VOIDP)palette_buf) == FAIL)
+    if (GRwritelut(pal_id, N_COMPS_PAL, DFNT_UINT8, interlace_mode, N_ENTRIES, (void *)palette_buf) == FAIL)
         printf("*** ERROR from GRwritelut\n");
 
     /*

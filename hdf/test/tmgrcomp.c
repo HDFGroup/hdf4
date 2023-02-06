@@ -36,10 +36,9 @@
 static int
 test_mgr_compress_a()
 {
-    int32 fid;          /* HDF file ID */
-    int32 grid;         /* GRID for the interface */
-    int32 ret;          /* generic return value */
-    int   num_errs = 0; /* number of errors so far */
+    int32 fid;  /* HDF file ID */
+    int32 grid; /* GRID for the interface */
+    int32 ret;  /* generic return value */
 
     MESSAGE(8, printf("Operate on gzip compressed images\n"););
 
@@ -101,7 +100,7 @@ test_mgr_compress_a()
         CHECK(ret, FAIL, "GRreadimage");
 
         /* Verify correct image contents */
-        if (HDmemcmp(image, image0, 10 * 10) != 0) {
+        if (memcmp(image, image0, 10 * 10) != 0) {
             MESSAGE(3, printf("Error reading data for gzip compressed image\n"););
             num_errs++;
         } /* end if */
@@ -144,7 +143,7 @@ test_mgr_compress_a()
         CHECK(ret, FAIL, "GRendaccess");
 
         /* Check that the image made it out correctly */
-        HDmemset(image, 0, 10 * 10);
+        memset(image, 0, 10 * 10);
 
         /* Get the second image in this file */
         riid = GRselect(grid, 1);
@@ -157,7 +156,7 @@ test_mgr_compress_a()
         CHECK(ret, FAIL, "GRreadimage");
 
         /* Verify correct image contents */
-        if (HDmemcmp(image, image0, 10 * 10) != 0) {
+        if (memcmp(image, image0, 10 * 10) != 0) {
             MESSAGE(3, printf("Error reading 2nd data for gzip compressed image\n"););
             num_errs++;
         } /* end if */
@@ -183,10 +182,9 @@ test_mgr_compress_a()
 static int
 test_mgr_compress_b()
 {
-    int32 fid;          /* HDF file ID */
-    int32 grid;         /* GRID for the interface */
-    int32 ret;          /* generic return value */
-    int   num_errs = 0; /* number of errors so far */
+    int32 fid;  /* HDF file ID */
+    int32 grid; /* GRID for the interface */
+    int32 ret;  /* generic return value */
 
     MESSAGE(8, printf("Operate on 8-bit JPEG compressed images\n"););
 
@@ -288,7 +286,7 @@ test_mgr_compress_b()
         CHECK(ret, FAIL, "GRreadimage");
 
         /* Verify correct image contents */
-        if (HDmemcmp(image, image0, 10 * 10) != 0) {
+        if (memcmp(image, image0, 10 * 10) != 0) {
             MESSAGE(3, printf("Error reading data for gzip compressed image\n"););
             num_errs++;
         } /* end if */
@@ -333,7 +331,7 @@ test_mgr_compress_b()
         CHECK(ret, FAIL, "GRendaccess");
 
         /* Check that the image made it out correctly */
-        HDmemset(image, 0, 10 * 10);
+        memset(image, 0, 10 * 10);
 
         /* Get the second image in this file */
         riid = GRselect(grid, 1);
@@ -346,7 +344,7 @@ test_mgr_compress_b()
         CHECK(ret, FAIL, "GRreadimage");
 
         /* Verify correct image contents */
-        if (HDmemcmp(image, image0, 10 * 10) != 0) {
+        if (memcmp(image, image0, 10 * 10) != 0) {
             MESSAGE(3, printf("Error reading 2nd data for gzip compressed image\n"););
             num_errs++;
         } /* end if */
@@ -388,7 +386,6 @@ test_mgr_compress_c()
     comp_info c_info;
     char      gname[60];
     int32     n_comps, dt, im, dims[2], na;
-    int       num_errs = 0; /* number of errors so far */
 
     MESSAGE(8, printf("Operate on 24-bit JPEG compressed images\n"););
 
@@ -427,7 +424,7 @@ test_mgr_compress_c()
     start[0] = start[1] = 0;
     edges[0]            = 128;
     edges[1]            = 128;
-    status              = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)image_buf);
+    status              = GRwriteimage(ri_id, start, NULL, edges, (void *)image_buf);
     CHECK(status, FAIL, "GRwriteimage");
 
     /* Terminate access to raster image and to GR interface */
@@ -457,7 +454,7 @@ test_mgr_compress_c()
     start[0] = start[1] = 0;
     edges[0]            = 128;
     edges[1]            = 128;
-    status              = GRreadimage(ri_id, start, NULL, edges, (VOIDP)read_buf);
+    status              = GRreadimage(ri_id, start, NULL, edges, (void *)read_buf);
     CHECK(status, FAIL, "GRreadimage");
 
     /* Verify correct image contents */
@@ -568,7 +565,6 @@ test_get_compress()
     comp_info    cinfo;        /* Compression parameters - union */
     char         err_func[80]; /* name of the functions where failure occurs */
     intn         status;       /* generic return value */
-    int          num_errs = 0; /* number of errors so far */
 
     /* D - Retrieve compression information of compressed images */
     MESSAGE(8, printf("Verify the compression information of compressed images\n"););
@@ -589,7 +585,7 @@ test_get_compress()
        and JPEG compression methods. */
 
     /* No compression info for the RLE image */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
 
     /* Create and write the first compressed image in this file */
     status = make_comp_image(grid, RLE_IMAGE, COMP_CODE_RLE, &cinfo, err_func);
@@ -597,7 +593,7 @@ test_get_compress()
 
     /* Set the compression info for the second image with skipping
        huffman method */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     cinfo.skphuff.skp_size = SKPHUFF_SKIPSIZE;
 
     /* Create and write the second compressed image in this file */
@@ -605,7 +601,7 @@ test_get_compress()
     CHECK(status, FAIL, err_func);
 
     /* Set the compression info for the third image with deflate method */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     cinfo.deflate.level = DEFLATE_LEVEL;
 
     /* Create and write the third compressed image in this file */
@@ -613,7 +609,7 @@ test_get_compress()
     CHECK(status, FAIL, err_func);
 
     /* Set the compression method for the fourth image */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     cinfo.jpeg.quality        = 100; /* won't be able to retrieved anyway */
     cinfo.jpeg.force_baseline = 1;
 
@@ -662,7 +658,7 @@ test_get_compress()
     CHECK(riid, FAIL, "GRselect");
 
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     status = GRgetcompinfo(riid, &comp_type, &cinfo);
     CHECK(status, FAIL, "GRgetcompinfo");
     VERIFY(comp_type, COMP_CODE_SKPHUFF, "GRgetcompinfo");
@@ -683,7 +679,7 @@ test_get_compress()
     CHECK(riid, FAIL, "GRselect");
 
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     status = GRgetcompinfo(riid, &comp_type, &cinfo);
     CHECK(status, FAIL, "GRgetcompinfo");
     VERIFY(comp_type, COMP_CODE_DEFLATE, "GRgetcompinfo");
@@ -701,7 +697,7 @@ test_get_compress()
        the compression type value against that being set earlier
        ('quality' and 'force_baseline' are currently not retrievable) */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo, 0, sizeof(cinfo));
     status = GRgetcompinfo(riid, &comp_type, &cinfo);
     CHECK(status, FAIL, "GRgetcompinfo");
     VERIFY(comp_type, COMP_CODE_JPEG, "GRgetcompinfo");
@@ -766,8 +762,7 @@ test_mgr_chunk_compress()
         comp_flag,       /* compression flag */
         index, img_num;
     int32     start[2], stride[2], edge[2];
-    comp_info cinfo;        /* Compression parameters - union */
-    int       num_errs = 0; /* number of errors so far */
+    comp_info cinfo; /* Compression parameters - union */
 
     comp_coder_t  comp_type;
     int16         data_out[3 * Y_LENGTH * X_LENGTH];
@@ -872,25 +867,25 @@ test_mgr_chunk_compress()
 
         /* Write first data chunk ( 0, 0 ). */
         origin[0] = origin[1] = 0;
-        status                = GRwritechunk(ri_id[img_num], origin, (VOIDP)chunk00);
+        status                = GRwritechunk(ri_id[img_num], origin, (void *)chunk00);
         CHECK(status, FAIL, "GRwritechunk");
 
         /* Write second data chunk ( 0, 1 ). */
         origin[0] = 0;
         origin[1] = 1;
-        status    = GRwritechunk(ri_id[img_num], origin, (VOIDP)chunk01);
+        status    = GRwritechunk(ri_id[img_num], origin, (void *)chunk01);
         CHECK(status, FAIL, "GRwritechunk");
 
         /* Write third data chunk ( 1, 4 ). */
         origin[0] = 1;
         origin[1] = 4;
-        status    = GRwritechunk(ri_id[img_num], origin, (VOIDP)chunk14);
+        status    = GRwritechunk(ri_id[img_num], origin, (void *)chunk14);
         CHECK(status, FAIL, "GRwritechunk");
 
         /* Read third chunk back. */
         origin[0] = 1;
         origin[1] = 4;
-        status    = GRreadchunk(ri_id[img_num], origin, (VOIDP)chunk_buf);
+        status    = GRreadchunk(ri_id[img_num], origin, (void *)chunk_buf);
         CHECK(status, FAIL, "GRreadchunk");
 
         /* Terminate access to the GR interface and close the HDF file. */
@@ -924,7 +919,7 @@ test_mgr_chunk_compress()
 
         /* Get and verify the image's compression information */
         comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-        HDmemset(&cinfo, 0, sizeof(cinfo));
+        memset(&cinfo, 0, sizeof(cinfo));
 
         status = GRgetcompinfo(ri_id[img_num], &comp_type, &cinfo);
         CHECK(status, FAIL, "GRgetcompinfo");
@@ -958,9 +953,9 @@ test_mgr_chunk_compress()
         /* Read third chunk back. */
         origin[0] = 1;
         origin[1] = 4;
-        status    = GRreadchunk(ri_id[img_num], origin, (VOIDP)chunk_buf);
+        status    = GRreadchunk(ri_id[img_num], origin, (void *)chunk_buf);
         CHECK(status, FAIL, "GRreadchunk");
-        if (0 != HDmemcmp(chunk_buf, chunk14, sizeof(chunk14))) {
+        if (0 != memcmp(chunk_buf, chunk14, sizeof(chunk14))) {
             MESSAGE(3, printf("Error in reading chunk at line %d\n", __LINE__););
             MESSAGE(3, printf("Image #%d\n", (int)img_num););
             num_errs++;
@@ -971,9 +966,9 @@ test_mgr_chunk_compress()
         stride[0] = stride[1] = 1;
         edge[0]               = Y_LENGTH;
         edge[1]               = X_LENGTH;
-        status                = GRreadimage(ri_id[img_num], start, stride, edge, (VOIDP)data_out);
+        status                = GRreadimage(ri_id[img_num], start, stride, edge, (void *)data_out);
         CHECK(status, FAIL, "GRreadimage");
-        if (0 != HDmemcmp(data_out, data, sizeof(data))) {
+        if (0 != memcmp(data_out, data, sizeof(data))) {
             MESSAGE(3, printf("%d: Error reading data for the whole image\n", __LINE__););
             MESSAGE(3, printf("%d: Compression method\n", (int)img_num););
             num_errs++;
@@ -1009,8 +1004,6 @@ test_mgr_chunk_compress()
 extern void
 test_mgr_compress()
 {
-    int num_errs = 0;
-
     /* Output message about test being performed */
     MESSAGE(5, printf("Testing Multi-file Raster Compression Functions\n"););
 

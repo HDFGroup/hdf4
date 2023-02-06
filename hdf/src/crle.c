@@ -48,15 +48,15 @@
 /* #define TESTING */
 
 /* declaration of the functions provided in this module */
-PRIVATE int32 HCIcrle_staccess(accrec_t *access_rec, int16 acc_mode);
+static int32 HCIcrle_staccess(accrec_t *access_rec, int16 acc_mode);
 
-PRIVATE int32 HCIcrle_init(accrec_t *access_rec);
+static int32 HCIcrle_init(accrec_t *access_rec);
 
-PRIVATE int32 HCIcrle_decode(compinfo_t *info, int32 length, uint8 *buf);
+static int32 HCIcrle_decode(compinfo_t *info, int32 length, uint8 *buf);
 
-PRIVATE int32 HCIcrle_encode(compinfo_t *info, int32 length, const uint8 *buf);
+static int32 HCIcrle_encode(compinfo_t *info, int32 length, const uint8 *buf);
 
-PRIVATE int32 HCIcrle_term(compinfo_t *info);
+static int32 HCIcrle_term(compinfo_t *info);
 
 /*--------------------------------------------------------------------------
  NAME
@@ -77,7 +77,7 @@ PRIVATE int32 HCIcrle_term(compinfo_t *info);
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcrle_init(accrec_t *access_rec)
 {
     compinfo_t            *info;     /* special element information */
@@ -120,7 +120,7 @@ HCIcrle_init(accrec_t *access_rec)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcrle_decode(compinfo_t *info, int32 length, uint8 *buf)
 {
     comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
@@ -157,9 +157,9 @@ HCIcrle_decode(compinfo_t *info, int32 length, uint8 *buf)
             dec_len = (uintn)length;
 
         if (rle_info->rle_state == RLE_RUN)
-            HDmemset(buf, rle_info->last_byte, dec_len); /* copy the run */
+            memset(buf, rle_info->last_byte, dec_len); /* copy the run */
         else {
-            HDmemcpy(buf, &(rle_info->buffer[rle_info->buf_pos]), dec_len);
+            memcpy(buf, &(rle_info->buffer[rle_info->buf_pos]), dec_len);
             rle_info->buf_pos += (intn)dec_len;
         } /* end else */
 
@@ -195,7 +195,7 @@ HCIcrle_decode(compinfo_t *info, int32 length, uint8 *buf)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcrle_encode(compinfo_t *info, int32 length, const uint8 *buf)
 {
     comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
@@ -305,7 +305,7 @@ HCIcrle_encode(compinfo_t *info, int32 length, const uint8 *buf)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcrle_term(compinfo_t *info)
 {
     comp_coder_rle_info_t *rle_info; /* ptr to RLE info */
@@ -358,7 +358,7 @@ HCIcrle_term(compinfo_t *info)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcrle_staccess(accrec_t *access_rec, int16 acc_mode)
 {
     compinfo_t *info; /* special element information */
@@ -476,23 +476,23 @@ HCPcrle_seek(accrec_t *access_rec, int32 offset, int origin)
                 HRETURN_ERROR(DFE_CTERM, FAIL);
         if (HCIcrle_init(access_rec) == FAIL)
             HRETURN_ERROR(DFE_CINIT, FAIL);
-    } /* end if */
+    }
 
-    if ((tmp_buf = (uint8 *)HDmalloc(TMP_BUF_SIZE)) == NULL) /* get tmp buffer */
+    if ((tmp_buf = (uint8 *)malloc(TMP_BUF_SIZE)) == NULL) /* get tmp buffer */
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     while (rle_info->offset + TMP_BUF_SIZE < offset) /* grab chunks */
         if (HCIcrle_decode(info, TMP_BUF_SIZE, tmp_buf) == FAIL) {
-            HDfree(tmp_buf);
+            free(tmp_buf);
             HRETURN_ERROR(DFE_CDECODE, FAIL)
         }                          /* end if */
     if (rle_info->offset < offset) /* grab the last chunk */
         if (HCIcrle_decode(info, offset - rle_info->offset, tmp_buf) == FAIL) {
-            HDfree(tmp_buf);
+            free(tmp_buf);
             HRETURN_ERROR(DFE_CDECODE, FAIL)
-        } /* end if */
+        }
 
-    HDfree(tmp_buf);
+    free(tmp_buf);
     return (SUCCEED);
 } /* HCPcrle_seek() */
 

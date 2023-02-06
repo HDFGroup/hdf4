@@ -151,12 +151,10 @@ read_data(const char *fname)
     g_length_y = h;
     g_length_x = w;
 
-    if (g_image_data != NULL) {
-        HDfree(g_image_data);
-        g_image_data = NULL;
-    }
+    free(g_image_data);
+    g_image_data = NULL;
 
-    g_image_data = (unsigned char *)HDmalloc(w * h * color_planes * sizeof(unsigned char));
+    g_image_data = (unsigned char *)malloc(w * h * color_planes * sizeof(unsigned char));
 
     for (i = 0; i < h * w * color_planes; i++) {
         count = fscanf(f, "%d", &n);
@@ -214,7 +212,7 @@ vg_getngrpdep(HFILEID f)
             printf("Error: Could not get name length for group with ref <%d>\n", vgid);
             continue;
         }
-        vgname = (char *)HDmalloc(sizeof(char) * (name_len + 1));
+        vgname = (char *)malloc(sizeof(char) * (name_len + 1));
 
         Vinquire(vg, &n, vgname);
         VQuerytag(vg);
@@ -399,8 +397,9 @@ cmp_gr(int32 ri1_id, int32 ri2_id)
         eltsz,      /* element size */
         nelms,      /* number of elements */
         data_size;
-    VOIDP buf1 = NULL, buf2 = NULL;
-    int   cmp = -1;
+    void *buf1 = NULL;
+    void *buf2 = NULL;
+    int   cmp  = -1;
 
     GRgetiminfo(ri1_id, gr_name, &n_comps, &dtype, &interlace_mode1, dimsizes, &n_attrs);
     GRgetiminfo(ri2_id, gr_name, &n_comps, &dtype, &interlace_mode2, dimsizes, &n_attrs);
@@ -445,7 +444,7 @@ cmp_gr(int32 ri1_id, int32 ri2_id)
      */
 
     /* alloc */
-    if ((buf1 = (VOIDP)HDmalloc(data_size)) == NULL) {
+    if ((buf1 = (void *)malloc(data_size)) == NULL) {
         printf("Failed to allocate %d elements of size %d\n", nelms, eltsz);
         goto out;
     }
@@ -462,7 +461,7 @@ cmp_gr(int32 ri1_id, int32 ri2_id)
      */
 
     /* alloc */
-    if ((buf2 = (VOIDP)HDmalloc(data_size)) == NULL) {
+    if ((buf2 = (void *)malloc(data_size)) == NULL) {
         printf("Failed to allocate %d elements of size %d\n", nelms, eltsz);
         goto out;
     }
@@ -473,7 +472,7 @@ cmp_gr(int32 ri1_id, int32 ri2_id)
         goto out;
     }
 
-    cmp = HDmemcmp(buf1, buf2, data_size);
+    cmp = memcmp(buf1, buf2, data_size);
     if (cmp != 0)
         printf("Differences found\n");
     else
@@ -483,10 +482,8 @@ out:
     /* terminate access to the GRs */
     GRendaccess(ri1_id);
     GRendaccess(ri2_id);
-    if (buf1)
-        HDfree(buf1);
-    if (buf2)
-        HDfree(buf2);
+    free(buf1);
+    free(buf2);
     return cmp;
 }
 
@@ -525,7 +522,7 @@ sds_verifiy_comp(const char *sds_name, int32 in_comp_type, int32 in_comp_info)
      */
 
     comp_type = COMP_CODE_NONE; /* reset variables before retrieving info */
-    HDmemset(&comp_info, 0, sizeof(comp_info));
+    memset(&comp_info, 0, sizeof(comp_info));
     SDgetcompinfo(sds_id, &comp_type, &comp_info);
     if (comp_type != in_comp_type) {
         printf("Error: Compression type does not match ");
@@ -626,7 +623,7 @@ sds_verifiy_comp_all(comp_coder_t in_comp_type, int in_comp_info)
         if (empty_sds == 0) {
 
             comp_type = COMP_CODE_NONE; /* reset variables before retrieving info */
-            HDmemset(&comp_info, 0, sizeof(comp_info));
+            memset(&comp_info, 0, sizeof(comp_info));
 
             if (SDisrecord(sds_id))
                 is_record = 1;
@@ -953,13 +950,13 @@ add_gr_ffile(const char *name_file, int32 gr_id, const char *gr_name, int32 inte
         edges[1]            = g_length_y;
 
         /* write the data in the buffer into the image array */
-        if (GRwriteimage(ri_id, start, NULL, edges, (VOIDP)g_image_data) == FAIL) {
+        if (GRwriteimage(ri_id, start, NULL, edges, (void *)g_image_data) == FAIL) {
             printf("Error: Could not write GR <%s>\n", gr_name);
         }
 
         /* assign an attribute to the SDS */
         n_values = 2;
-        if (GRsetattr(ri_id, "Myattr", DFNT_UINT8, n_values, (VOIDP)attr_values) == FAIL) {
+        if (GRsetattr(ri_id, "Myattr", DFNT_UINT8, n_values, (void *)attr_values) == FAIL) {
             printf("Error: Could not write attributes for GR <%s>\n", gr_name);
             return FAIL;
         }
@@ -987,10 +984,8 @@ add_gr_ffile(const char *name_file, int32 gr_id, const char *gr_name, int32 inte
 
     } /* read data */
 
-    if (g_image_data != NULL) {
-        HDfree(g_image_data);
-        g_image_data = NULL;
-    }
+    free(g_image_data);
+    g_image_data = NULL;
 
     return SUCCEED;
 }
@@ -1157,7 +1152,7 @@ add_gr(const char  *gr_name,     /* gr name */
     edges[1]            = X_DIM_GR;
 
     /* write the data in the buffer into the image array */
-    if (GRwriteimage(ri_id, start, NULL, edges, (VOIDP)data) == FAIL) {
+    if (GRwriteimage(ri_id, start, NULL, edges, (void *)data) == FAIL) {
         printf("Error: Could not set write GR <%s>\n", gr_name);
         return FAIL;
     }
@@ -1214,7 +1209,7 @@ add_glb_attrs(const char *fname, int32 file_id, int32 sd_id, int32 gr_id)
      *-------------------------------------------------------------------------
      */
     /* assign an attribute to the SD */
-    if (SDsetattr(sd_id, "MySDgattr", DFNT_UINT8, n_values, (VOIDP)attr_values) == FAIL) {
+    if (SDsetattr(sd_id, "MySDgattr", DFNT_UINT8, n_values, (void *)attr_values) == FAIL) {
         printf("Could not set SDS attr\n");
         return FAIL;
     }
@@ -1225,7 +1220,7 @@ add_glb_attrs(const char *fname, int32 file_id, int32 sd_id, int32 gr_id)
      */
 
     /* assign an attribute to the GR */
-    if (GRsetattr(gr_id, "MyGRgattr", DFNT_UINT8, n_values, (VOIDP)attr_values) == FAIL) {
+    if (GRsetattr(gr_id, "MyGRgattr", DFNT_UINT8, n_values, (void *)attr_values) == FAIL) {
         printf("Could not set GR attr\n");
         return FAIL;
     }
@@ -1292,10 +1287,8 @@ add_r8(const char *image_file, const char *fname, int32 file_id, int32 vgroup_id
             return FAIL;
     }
 
-    if (g_image_data != NULL) {
-        HDfree(g_image_data);
-        g_image_data = NULL;
-    }
+    free(g_image_data);
+    g_image_data = NULL;
 
     return SUCCEED;
 }
@@ -1359,10 +1352,8 @@ add_r24(const char *image_file, const char *fname, int32 file_id, intn il, int32
 
     } /* read_data */
 
-    if (g_image_data != NULL) {
-        HDfree(g_image_data);
-        g_image_data = NULL;
-    }
+    free(g_image_data);
+    g_image_data = NULL;
 
     return SUCCEED;
 }
@@ -1487,7 +1478,7 @@ add_sd(const char  *fname,       /* file name */
     }
 
     /* set a fill value */
-    if (SDsetfillvalue(sds_id, (VOIDP)&fill_value) == FAIL) {
+    if (SDsetfillvalue(sds_id, (void *)&fill_value) == FAIL) {
         printf("Failed to set fillvaclue for SDS <%s>\n", sds_name);
         goto fail;
     }
@@ -1499,14 +1490,14 @@ add_sd(const char  *fname,       /* file name */
     edges[1] = X_DIM;
 
     /* write the stored data to the data set */
-    if (SDwritedata(sds_id, start, NULL, edges, (VOIDP)data) == FAIL) {
+    if (SDwritedata(sds_id, start, NULL, edges, (void *)data) == FAIL) {
         printf("Failed to set write for SDS <%s>\n", sds_name);
         goto fail;
     }
 
     /* assign an attribute to the SDS */
     n_values = 2;
-    if (SDsetattr(sds_id, "Valid_range", DFNT_FLOAT32, n_values, (VOIDP)sds_values) == FAIL) {
+    if (SDsetattr(sds_id, "Valid_range", DFNT_FLOAT32, n_values, (void *)sds_values) == FAIL) {
         printf("Failed to set attr for SDS <%s>\n", sds_name);
         goto fail;
     }
@@ -1530,7 +1521,7 @@ add_sd(const char  *fname,       /* file name */
                     printf("Failed to set dims for SDS <%s>\n", sds_name);
                     goto fail;
                 }
-                if (SDsetdimscale(dim_id, n_values, DFNT_FLOAT64, (VOIDP)data_Y) == FAIL) {
+                if (SDsetdimscale(dim_id, n_values, DFNT_FLOAT64, (void *)data_Y) == FAIL) {
                     printf("Failed to set dims for SDS <%s>\n", sds_name);
                     goto fail;
                 }
@@ -1546,7 +1537,7 @@ add_sd(const char  *fname,       /* file name */
                     printf("Failed to set dims for SDS <%s>\n", sds_name);
                     goto fail;
                 }
-                if (SDsetdimscale(dim_id, n_values, DFNT_INT16, (VOIDP)data_X) == FAIL) {
+                if (SDsetdimscale(dim_id, n_values, DFNT_INT16, (void *)data_X) == FAIL) {
                     printf("Failed to set dims for SDS <%s>\n", sds_name);
                     goto fail;
                 }
@@ -1674,7 +1665,7 @@ add_sd3d(const char  *fname,       /* file name */
     }
 
     /* set a fill value */
-    if (SDsetfillvalue(sds_id, (VOIDP)&fill_value) == FAIL) {
+    if (SDsetfillvalue(sds_id, (void *)&fill_value) == FAIL) {
         printf("Failed to set fill for SDS <%s>\n", sds_name);
         goto fail;
     }
@@ -1685,7 +1676,7 @@ add_sd3d(const char  *fname,       /* file name */
     start[2] = 0;
 
     /* write the stored data to the data set */
-    if (SDwritedata(sds_id, start, NULL, dim_sds, (VOIDP)data) == FAIL) {
+    if (SDwritedata(sds_id, start, NULL, dim_sds, (void *)data) == FAIL) {
         printf("Failed to write SDS <%s>\n", sds_name);
         goto fail;
     }
@@ -1800,7 +1791,7 @@ add_unl_sd(int32       sd_id,    /* SD id */
         edges[1] = X_DIM;
 
         /* write the stored data to the data set */
-        if (SDwritedata(sds_id, start, NULL, edges, (VOIDP)buf) == FAIL) {
+        if (SDwritedata(sds_id, start, NULL, edges, (void *)buf) == FAIL) {
             printf("Failed to set write for SDS <%s>\n", sds_name);
             goto fail;
         }
@@ -2174,7 +2165,7 @@ add_sd_szip(const char *fname,          /* file name */
     }
 
     /* write the stored data to the data set */
-    if (SDwritedata(sds_id, start, NULL, edges, (VOIDP)data) == FAIL) {
+    if (SDwritedata(sds_id, start, NULL, edges, (void *)data) == FAIL) {
         printf("Failed to writer SDS <%s>\n", sds_name);
         goto fail;
     }
@@ -2635,7 +2626,7 @@ do_file_hyperslab(char *fname)
     edges[0] = DIM0; /* 10 */
     edges[1] = DIM1; /* 5 */
 
-    if (SDwritedata(sds_id, start, NULL, edges, (VOIDP)array_data) == FAIL)
+    if (SDwritedata(sds_id, start, NULL, edges, (void *)array_data) == FAIL)
         goto error;
 
     /* terminate access to the datasets and SD interface */
@@ -2665,7 +2656,7 @@ do_file_hyperslab(char *fname)
         edges[1] = DIM1; /* 5 elements */
 
         /* append data to file */
-        if (SDwritedata(sds_id, start, NULL, edges, (VOIDP)append_data) == FAIL)
+        if (SDwritedata(sds_id, start, NULL, edges, (void *)append_data) == FAIL)
             goto error;
     }
 

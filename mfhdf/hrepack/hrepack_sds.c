@@ -71,8 +71,8 @@ copy_sds(int32 sd_in, int32 sd_out, int32 tag, /* tag of input SDS */
     char          sds_name[H4_MAX_NC_NAME];
     char          dim_name[H4_MAX_NC_NAME];
     char         *path    = NULL;
-    VOIDP         buf     = NULL;
-    VOIDP         dim_buf = NULL;
+    void         *buf     = NULL;
+    void         *dim_buf = NULL;
     int           i, j;
     int           info;           /* temporary int compression information */
     comp_coder_t  comp_type;      /* compression type requested  */
@@ -148,7 +148,7 @@ copy_sds(int32 sd_in, int32 sd_out, int32 tag, /* tag of input SDS */
     chunk_flags = chunk_flags_in = HDF_NONE;
 
     if (empty_sds == 0) {
-        HDmemset(&c_info_in, 0, sizeof(comp_info));
+        memset(&c_info_in, 0, sizeof(comp_info));
         if (SDgetcompinfo(sds_id, &comp_type_in, &c_info_in) == FAIL) {
             printf("Could not get compression information for SDS <%s>\n", path);
             goto out;
@@ -381,8 +381,7 @@ copy_sds(int32 sd_in, int32 sd_out, int32 tag, /* tag of input SDS */
                 goto out;
         }
 
-        if (path)
-            HDfree(path);
+        free(path);
         return SUCCEED;
     }
 
@@ -505,7 +504,7 @@ copy_sds(int32 sd_in, int32 sd_out, int32 tag, /* tag of input SDS */
         if (need < H4TOOLS_MALLOCSIZE ||
             /* for compressed datasets do one operation I/O, but allow hyperslab for chunked */
             (chunk_flags == HDF_NONE && comp_type > COMP_CODE_NONE)) {
-            buf = (VOIDP)HDmalloc(need);
+            buf = (void *)malloc(need);
         }
 
         /*-------------------------------------------------------------------------
@@ -563,10 +562,10 @@ copy_sds(int32 sd_in, int32 sd_out, int32 tag, /* tag of input SDS */
                 assert(sm_nbytes > 0);
             }
 
-            sm_buf = HDmalloc((size_t)sm_nbytes);
+            sm_buf = malloc((size_t)sm_nbytes);
 
             /* the stripmine loop */
-            HDmemset(hs_offset, 0, sizeof hs_offset);
+            memset(hs_offset, 0, sizeof hs_offset);
 
             for (elmtno = 0; elmtno < p_nelmts; elmtno += hs_nelmts) {
                 /* calculate the hyperslab size */
@@ -603,10 +602,8 @@ copy_sds(int32 sd_in, int32 sd_out, int32 tag, /* tag of input SDS */
             }     /* elmtno */
 
             /* free */
-            if (sm_buf != NULL) {
-                HDfree(sm_buf);
-                sm_buf = NULL;
-            }
+            free(sm_buf);
+            sm_buf = NULL;
 
         } /* hyperslab read */
 
@@ -667,7 +664,7 @@ copy_sds(int32 sd_in, int32 sd_out, int32 tag, /* tag of input SDS */
             numtype = dtype & DFNT_MASK;
             eltsz   = DFKNTsize(numtype | DFNT_NATIVE);
 
-            if ((dim_buf = (VOIDP)HDmalloc(dimsizes[i] * eltsz)) == NULL) {
+            if ((dim_buf = (void *)malloc(dimsizes[i] * eltsz)) == NULL) {
                 printf("Failed to alloc %d for dimension scale\n", dimsizes[i]);
                 goto out;
             }
@@ -681,7 +678,7 @@ copy_sds(int32 sd_in, int32 sd_out, int32 tag, /* tag of input SDS */
                     goto out;
                 }
             }
-            HDfree(dim_buf);
+            free(dim_buf);
         }
     }
 
@@ -738,10 +735,8 @@ copy_sds(int32 sd_in, int32 sd_out, int32 tag, /* tag of input SDS */
             goto out;
     }
 
-    if (path)
-        HDfree(path);
-    if (buf)
-        HDfree(buf);
+    free(path);
+    free(buf);
 
     return SUCCEED;
 
@@ -752,10 +747,8 @@ out:
         if (SDendaccess(sds_out) == FAIL)
             printf("Failed to close SDS <%s>\n", path);
     }
-    if (path)
-        HDfree(path);
-    if (buf)
-        HDfree(buf);
+    free(path);
+    free(buf);
 
     return FAIL;
 }
@@ -783,7 +776,7 @@ copy_sds_attrs(int32 id_in, int32 id_out, int32 nattrs, options_t *options)
         eltsz,   /* element size */
         nelms;   /* number of elements */
     char  attr_name[H4_MAX_NC_NAME];
-    VOIDP attr_buf = NULL;
+    void *attr_buf = NULL;
     int   i;
 
     (void)options;
@@ -797,7 +790,7 @@ copy_sds_attrs(int32 id_in, int32 id_out, int32 nattrs, options_t *options)
         /* compute the number of the bytes for each value. */
         numtype = dtype & DFNT_MASK;
         eltsz   = DFKNTsize(numtype | DFNT_NATIVE);
-        if ((attr_buf = (VOIDP)HDmalloc(nelms * eltsz)) == NULL) {
+        if ((attr_buf = (void *)malloc(nelms * eltsz)) == NULL) {
             printf("Error allocating %d values of size %d for attribute %s", nelms, numtype, attr_name);
             goto out;
         }
@@ -812,16 +805,14 @@ copy_sds_attrs(int32 id_in, int32 id_out, int32 nattrs, options_t *options)
             goto out;
         }
 
-        if (attr_buf)
-            HDfree(attr_buf);
+        free(attr_buf);
     }
 
     return SUCCEED;
 
 out:
 
-    if (attr_buf)
-        HDfree(attr_buf);
+    free(attr_buf);
 
     return FAIL;
 }
@@ -858,7 +849,7 @@ get_print_info(int chunk_flags, HDF_CHUNK_DEF *chunk_def, /* chunk definition */
     if (SDendaccess(sds_id) == FAIL)
         goto out;
 
-    HDmemset(comp_str, 0, 255);
+    memset(comp_str, 0, 255);
 
     /* unlimited dimensions don't work with compression */
     if (is_record) {

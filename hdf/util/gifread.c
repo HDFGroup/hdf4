@@ -232,7 +232,9 @@ ReadGifImageDesc(GIFIMAGEDESC *GifImageDesc, BYTE **MemGif2)
 int
 ReadGifGraphicControl(GIFGRAPHICCONTROL *GifGraphicControl, BYTE **MemGif2)
 {
-    for (int i = 0; i < 5; i++) {
+    int i;
+
+    for (i = 0; i < 5; i++) {
         GifGraphicControl->GCEDump[i] = *(*MemGif2)++;
     }
 
@@ -253,7 +255,9 @@ ReadGifGraphicControl(GIFGRAPHICCONTROL *GifGraphicControl, BYTE **MemGif2)
 int
 ReadGifPlainText(GIFPLAINTEXT *GifPlainText, BYTE **MemGif2)
 {
-    for (int i = 0; i < 13; i++) {
+    int i;
+
+    for (i = 0; i < 13; i++) {
         GifPlainText->PTEDump[i] = *(*MemGif2)++;
     }
 
@@ -288,7 +292,9 @@ if (ferror(FpGif))
 int
 ReadGifApplication(GIFAPPLICATION *GifApplication, BYTE **MemGif2)
 {
-    for (int i = 0; i < 12; i++) {
+    int i;
+
+    for (i = 0; i < 12; i++) {
         GifApplication->AEDump[i] = *(*MemGif2)++;
     }
 

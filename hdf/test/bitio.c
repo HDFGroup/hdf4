@@ -120,7 +120,7 @@ test_bitio_write(void)
         ret = Hbitread(bitid1, (intn)outbuf[i], &inbuf2[i]);
         VERIFY_VOID((uint8)ret, outbuf[i], "Hbitread");
     } /* end for */
-    if (HDmemcmp(outbuf2, inbuf2, sizeof(int32) * BUFSIZE)) {
+    if (memcmp(outbuf2, inbuf2, sizeof(int32) * BUFSIZE)) {
         printf("Error in writing/reading bit I/O data\n");
         HEprint(stdout, 0);
         num_errs++;
@@ -208,19 +208,19 @@ test_bitio_read(void)
     ret = Hendbitaccess(bitid1, 0);
     RESULT("Hbitendaccess");
 
-    test_ptr = (uint8 *)HDmalloc((size_t)((DATASIZE / 4) * DFKNTsize(DFNT_UINT32)));
-    CHECK_VOID(test_ptr, NULL, "HDmalloc");
+    test_ptr = (uint8 *)malloc((size_t)((DATASIZE / 4) * DFKNTsize(DFNT_UINT32)));
+    CHECK_VOID(test_ptr, NULL, "malloc");
 
     ret = DFKconvert(inbuf2, test_ptr, DFNT_UINT32, (DATASIZE / 4), DFACC_WRITE, 0, 0);
     RESULT("DFKconvert");
 
     /* check the data */
-    if (HDmemcmp(inbuf, test_ptr, DATASIZE) != 0) {
+    if (memcmp(inbuf, test_ptr, DATASIZE) != 0) {
         printf("Error in reading bit I/O data\n");
         HEprint(stdout, 0);
         num_errs++;
     } /* end if */
-    HDfree(test_ptr);
+    free(test_ptr);
 
     ret = Hclose(fid);
     RESULT("Hclose");

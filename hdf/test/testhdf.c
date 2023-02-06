@@ -50,14 +50,14 @@ struct TestStruct {
     char Description[64];
     int  SkipFlag;
     char Name[16];
-    VOID (*Call)(void);
+    void (*Call)(void);
 } Test[MAXNUMOFTESTS];
 
-static void InitTest(const char *TheName, VOID (*TheCall)(void), const char *TheDescr);
+static void InitTest(const char *TheName, void (*TheCall)(void), const char *TheDescr);
 static void usage(void);
 
 static void
-InitTest(const char *TheName, VOID (*TheCall)(void), const char *TheDescr)
+InitTest(const char *TheName, void (*TheCall)(void), const char *TheDescr)
 {
     if (Index >= MAXNUMOFTESTS) {
         printf("Uh-oh, too many tests added, increase MAXNUMOFTEST!\n");

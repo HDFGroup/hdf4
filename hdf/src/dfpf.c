@@ -50,8 +50,8 @@ ndpigpal(_fcd filename, _fcd pal, intf *fnlen)
     fn = HDf2cstring(filename, (intn)*fnlen);
     if (!fn)
         return (-1);
-    ret = DFPgetpal(fn, (VOIDP)_fcdtocp(pal));
-    HDfree((VOIDP)fn);
+    ret = DFPgetpal(fn, (void *)_fcdtocp(pal));
+    free(fn);
     return (ret);
 }
 
@@ -81,8 +81,8 @@ ndpippal(_fcd filename, _fcd pal, intf *overwrite, _fcd filemode, intf *fnlen)
     fn = HDf2cstring(filename, (intn)*fnlen);
     if (!fn)
         return (-1);
-    ret = DFPputpal(fn, (VOIDP)_fcdtocp(pal), (intn)*overwrite, (char *)_fcdtocp(filemode));
-    HDfree((VOIDP)fn);
+    ret = DFPputpal(fn, (void *)_fcdtocp(pal), (intn)*overwrite, (char *)_fcdtocp(filemode));
+    free(fn);
     return (ret);
 }
 
@@ -105,7 +105,7 @@ ndpinpal(_fcd filename, intf *fnlen)
     if (!fn)
         return (-1);
     ret = DFPnpals(fn);
-    HDfree((VOIDP)fn);
+    free(fn);
     return (ret);
 }
 
@@ -130,7 +130,7 @@ ndpirref(_fcd filename, intf *ref, intf *fnlen)
     if (!fn)
         return (-1);
     ret = DFPreadref(fn, (uint16)*ref);
-    HDfree((VOIDP)fn);
+    free(fn);
     return (ret);
 }
 
@@ -156,7 +156,7 @@ ndpiwref(_fcd filename, intf *ref, intf *fnlen)
     if (!fn)
         return (-1);
     ret = DFPreadref(fn, (uint16)*ref);
-    HDfree((VOIDP)fn);
+    free(fn);
     return (ret);
 }
 

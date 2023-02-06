@@ -27,13 +27,13 @@
 
 #define ISCOMMA(c) ((c == ',') ? 1 : 0)
 
-PRIVATE char *symptr[VSFIELDMAX];                   /* array of ptrs to tokens  ? */
-PRIVATE char  sym[VSFIELDMAX][FIELDNAMELENMAX + 1]; /* array of tokens ? */
-PRIVATE intn  nsym;                                 /* token index ? */
+static char *symptr[VSFIELDMAX];                   /* array of ptrs to tokens  ? */
+static char  sym[VSFIELDMAX][FIELDNAMELENMAX + 1]; /* array of tokens ? */
+static intn  nsym;                                 /* token index ? */
 
 /* Temporary buffer for I/O */
-PRIVATE uint32 Vpbufsize = 0;
-PRIVATE uint8 *Vpbuf     = NULL;
+static uint32 Vpbufsize = 0;
+static uint8 *Vpbuf     = NULL;
 
 /*******************************************************************************
  NAME
@@ -69,9 +69,8 @@ scanattrs(const char *attrs, int32 *attrc, char ***attrv)
 
     if (slen > Vpbufsize) {
         Vpbufsize = slen;
-        if (Vpbuf)
-            HDfree((VOIDP)Vpbuf);
-        if ((Vpbuf = (uint8 *)HDmalloc(Vpbufsize)) == NULL)
+        free(Vpbuf);
+        if ((Vpbuf = (uint8 *)malloc(Vpbufsize)) == NULL)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
     } /* end if */
 
@@ -154,13 +153,11 @@ scanattrs(const char *attrs, int32 *attrc, char ***attrv)
 intn
 VPparse_shutdown(void)
 {
-    intn ret_value = SUCCEED;
-
     if (Vpbuf != NULL) {
-        HDfree(Vpbuf);
+        free(Vpbuf);
         Vpbuf     = NULL;
         Vpbufsize = 0;
-    } /* end if */
+    }
 
-    return ret_value;
+    return SUCCEED;
 } /* end VSPhshutdown() */

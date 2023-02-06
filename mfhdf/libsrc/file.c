@@ -14,18 +14,23 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <string.h>
+#include <errno.h>
+#include "h4config.h"
+#include "local_nc.h"
+#include "herr.h"
+
 #ifdef DEBUG
 #include <assert.h>
 #endif /* DEBUG */
 
 #ifdef H4_HAVE_UNISTD_H
-#include <unistd.h> /* access(), F_OK */
+#include <unistd.h> /* getpid(), access(), F_OK */
 #endif
 
-#include <string.h>
-#include <errno.h>
-#include "local_nc.h"
-#include "herr.h"
+#if defined H4_HAVE_WIN32_API && !defined __MINGW32__
+typedef int                               pid_t;
+#endif
 
 /* obtain the maximum number of open files allowed, at the same time,
    on the current system */
@@ -62,8 +67,8 @@ static NC **_cdfs;
 #define HNDLE(id) (((id) >= 0 && (id) < _ncdf) ? _cdfs[(id)] : NULL)
 #define STASH(id) (((id) >= 0 && (id) < _ncdf) ? HNDLE(_cdfs[(id)]->redefid) : NULL)
 
-#ifdef DOS_FS
-#define SEP '\\' /* this separates path components on DOS */
+#ifdef H4_HAVE_WIN32_API
+#define SEP '\\' /* this separates path components on Windows */
 #endif
 #ifndef SEP
 #define SEP '/' /* default, unix */
@@ -75,7 +80,7 @@ static intn max_NC_open = H4_MAX_NC_OPEN; /* current netCDF default */
  * Resets _cdfs
  */
 static void
-ncreset_cdflist()
+ncreset_cdflist(void)
 {
     if (_cdfs != NULL) {
         free(_cdfs);
@@ -173,7 +178,7 @@ done:
  *  Returns the current # of open files allowed
  */
 intn
-NC_get_maxopenfiles()
+NC_get_maxopenfiles(void)
 {
     return (max_NC_open);
 } /* NC_get_maxopenfiles */
@@ -182,7 +187,7 @@ NC_get_maxopenfiles()
  *  Returns the maximum number of open files the system allows.
  */
 intn
-NC_get_systemlimit()
+NC_get_systemlimit(void)
 {
     return (MAX_AVAIL_OPENFILES);
 } /* NC_get_systemlimit */
@@ -191,7 +196,7 @@ NC_get_systemlimit()
  *  Returns the number of files currently being opened.
  */
 int
-NC_get_numopencdfs()
+NC_get_numopencdfs(void)
 {
     return (_curr_opened);
 } /* NC_get_numopencdfs */
@@ -501,23 +506,9 @@ ncnobuf(int cdfid)
 static char *
 NCtempname(const char *proto)
 {
-/* NO_ACCESS defined if the OS lacks the access() function */
-#ifndef NO_ACCESS
-#define TN_NACCES 1
-#else
-#define TN_NACCES 0
-#endif /* !NO_ACCESS */
-/* NO_GETPID defined if the OS lacks the getpid() function */
-#ifndef NO_GETPID
+#define TN_NACCES  1
 #define TN_NDIGITS 4
-#if defined H4_HAVE_WIN32_API
-    typedef int pid_t;
-#endif
-    pid_t        getpid(void);
     unsigned int pid; /* OS/2 DOS (MicroSoft Lib) allows "negative" int pids */
-#else
-#define TN_NDIGITS 0
-#endif /* !NO_GETPID */
 
     static char seed[] = {'a', 'a', 'a', '\0'};
 #define TN_NSEED (sizeof(seed) - 1)
@@ -545,17 +536,13 @@ NCtempname(const char *proto)
     *begin = '\0';
     (void)strcat(begin, seed);
 
-    cp = begin + TN_NSEED + TN_NACCES + TN_NDIGITS;
-#ifndef NO_GETPID
+    cp  = begin + TN_NSEED + TN_NACCES + TN_NDIGITS;
     *cp = '\0';
     pid = getpid();
     while (--cp >= begin + TN_NSEED + TN_NACCES) {
         *cp = (pid % 10) + '0';
         pid /= 10;
     }
-#else
-    *cp-- = '\0';
-#endif /* !NO_GETPID */
 
     /* update seed for next call */
     sp = seed;
@@ -564,7 +551,6 @@ NCtempname(const char *proto)
     if (*sp != '\0')
         ++*sp;
 
-#ifndef NO_ACCESS
     for (*cp = 'a'; access(tnbuf, 0) == 0;) {
         if (++*cp > 'z') {
             /* ran out of tries */
@@ -572,7 +558,6 @@ NCtempname(const char *proto)
             return tnbuf;
         }
     }
-#endif /* !NO_ACCESS */
 
     return tnbuf;
 }
@@ -878,7 +863,7 @@ NC_endef(int cdfid, NC *handle)
 
         /* close stash */
 /*                NC_free_cdf(stash) ; */
-#ifdef DOS_FS
+#ifdef H4_HAVE_WIN32_API
         xdr_destroy(handle->xdrs); /* close handle */
         if (remove(realpath) != 0)
             nc_serror("couldn't remove filename \"%s\"", realpath);
@@ -900,7 +885,7 @@ NC_endef(int cdfid, NC *handle)
             return (-1);
         }
         (void)strncpy(handle->path, realpath, FILENAME_MAX);
-#ifdef DOS_FS
+#ifdef H4_HAVE_WIN32_API
         if (NCxdrfile_create(handle->xdrs, handle->path, NC_WRITE) < 0)
             return -1;
 #endif

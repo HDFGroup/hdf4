@@ -28,7 +28,7 @@ main()
     }
 
     /* Add file attribute to note about the file's history */
-    istat = SDsetattr(sd_id, "file_contents", DFNT_CHAR8, 116, (VOIDP)file_attr);
+    istat = SDsetattr(sd_id, "file_contents", DFNT_CHAR8, 116, (void *)file_attr);
     if (istat == FAIL) {
         fprintf(stderr, "manySDSs: SDsetattr returns status: %d\n", istat);
         exit(-1);

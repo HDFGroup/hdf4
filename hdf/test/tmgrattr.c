@@ -66,15 +66,14 @@ test_mgr_fillvalues()
     uint16       ref;                   /* RI reference number */
     int32        ri_index;              /* RI index */
     float32      image[7][5][N_COMPS];  /* space for the image data */
-    VOIDP        read_fill_vals = NULL; /* space for fill values read from attr */
+    void        *read_fill_vals = NULL; /* space for fill values read from attr */
     float32      image0[7][5][N_COMPS]; /* space for the image data */
     int32        start[2];              /* start of image data to grab */
     int32        stride[2];             /* stride of image data to grab */
     char         attr_name[H4_MAX_GR_NAME];
     int32        ntype, n_values;
-    hdf_ntinfo_t nt_info;      /* struct containing name and byte order of a num type */
-    int32        ret;          /* generic return value */
-    int          num_errs = 0; /* number of errors so far */
+    hdf_ntinfo_t nt_info; /* struct containing name and byte order of a num type */
+    int32        ret;     /* generic return value */
 
     MESSAGE(8, printf("Reading fill-value attribute\n"););
 
@@ -111,7 +110,7 @@ test_mgr_fillvalues()
         CHECK(riid, FAIL, "GRselect");
 
         /* Buffer to read image's data in */
-        HDmemset(image, 0, (size_t)(dims[0] * dims[1] * N_COMPS) * sizeof(float32));
+        memset(image, 0, (size_t)(dims[0] * dims[1] * N_COMPS) * sizeof(float32));
 
         /* Fill the memory-only with the default pixel fill-value */
         HDmemfill(image0, fill_pixel, sizeof(fill_pixel), sizeof(image0) / sizeof(fill_pixel));
@@ -122,7 +121,7 @@ test_mgr_fillvalues()
         ret                   = GRreadimage(riid, start, stride, dims, image);
         CHECK(ret, FAIL, "GRreadimage");
 
-        if (HDmemcmp(image, image0, sizeof(image0)) != 0) {
+        if (memcmp(image, image0, sizeof(image0)) != 0) {
             MESSAGE(3, printf("Error reading data for image with user defined fill-values\n"););
             num_errs++;
         }
@@ -140,7 +139,7 @@ test_mgr_fillvalues()
         VERIFY_CHAR(attr_name, FILL_ATTR, "GRattrinfo");
 
         /* Allocate a buffer to hold the attribute data. */
-        read_fill_vals = HDmalloc(n_values * sizeof(float32));
+        read_fill_vals = malloc(n_values * sizeof(float32));
         if (read_fill_vals == NULL) {
             fprintf(stderr, "Unable to allocate space for attribute data.\n");
             exit(1);
@@ -152,16 +151,15 @@ test_mgr_fillvalues()
         VERIFY_CHAR(nt_info.type_name, "float32", "Hgetntinfo");
 
         /* Read and verify the attribute's data */
-        ret = GRgetattr(riid, attr_index, (VOIDP)read_fill_vals);
+        ret = GRgetattr(riid, attr_index, (void *)read_fill_vals);
         CHECK(ret, FAIL, "GRgetattr");
 
-        if (HDmemcmp(fill_pixel, read_fill_vals, RI_ATT_N_VALUES) != 0) {
+        if (memcmp(fill_pixel, read_fill_vals, RI_ATT_N_VALUES) != 0) {
             MESSAGE(3, printf("Error reading values of attribute FILL_ATTR\n"););
             num_errs++;
         } /* end if */
 
-        if (read_fill_vals != NULL)
-            HDfree(read_fill_vals);
+        free(read_fill_vals);
 
         /* Close the empty image */
         ret = GRendaccess(riid);
@@ -208,10 +206,9 @@ test_mgr_userattr()
     int32        dims[2];                         /* dimension sizes of the image */
     int32        n_attrs;                         /* number of attributes with each image */
     int16        ri_attr_2[RI_ATT2_N_VALUES] = {1, 2, 3, 4, 5, 6};
-    VOIDP        data_buf;     /* buffer to hold the attribute values */
-    hdf_ntinfo_t nt_info;      /* struct containing name and byte order of a num type */
-    intn         status;       /* status for functions returning an intn */
-    int          num_errs = 0; /* number of errors so far */
+    void        *data_buf; /* buffer to hold the attribute values */
+    hdf_ntinfo_t nt_info;  /* struct containing name and byte order of a num type */
+    intn         status;   /* status for functions returning an intn */
 
     MESSAGE(8, printf("Reading user-defined attribute\n"););
 
@@ -226,7 +223,7 @@ test_mgr_userattr()
     status = GRsetattr(grid, F_ATT1_NAME, DFNT_CHAR8, F_ATT1_N_VALUES, F_ATT1_VAL);
     CHECK(status, FAIL, "GRsetattr");
 
-    status = GRsetattr(grid, F_ATT2_NAME, DFNT_UINT8, F_ATT2_N_VALUES, (VOIDP)file_attr_2);
+    status = GRsetattr(grid, F_ATT2_NAME, DFNT_UINT8, F_ATT2_N_VALUES, (void *)file_attr_2);
     CHECK(status, FAIL, "GRsetattr");
 
     /* Obtain the index of the image named IMAGE1_NAME. */
@@ -241,7 +238,7 @@ test_mgr_userattr()
     status = GRsetattr(riid, RI_ATT1_NAME, DFNT_CHAR8, RI_ATT1_N_VALUES, RI_ATT1_VAL);
     CHECK(status, FAIL, "GRsetattr");
 
-    status = GRsetattr(riid, RI_ATT2_NAME, DFNT_INT16, RI_ATT2_N_VALUES, (VOIDP)ri_attr_2);
+    status = GRsetattr(riid, RI_ATT2_NAME, DFNT_INT16, RI_ATT2_N_VALUES, (void *)ri_attr_2);
     CHECK(status, FAIL, "GRsetattr");
 
     /* Terminate accesses, and close the HDF file. */
@@ -299,12 +296,12 @@ test_mgr_userattr()
             } /* switch */
 
             /* Read and verify the attribute values. */
-            status = GRgetattr(grid, f_att_index, (VOIDP)data_buf);
+            status = GRgetattr(grid, f_att_index, (void *)data_buf);
             CHECK(status, FAIL, "GRgetattr");
 
             switch (ntype) {
                 case DFNT_CHAR8:
-                    if (HDmemcmp(data_buf, F_ATT1_VAL, n_values) != 0) {
+                    if (memcmp(data_buf, F_ATT1_VAL, n_values) != 0) {
                         MESSAGE(3, printf("Error reading values of attribute %s\n", attr_name););
                         num_errs++;
                     } /* end if */
@@ -315,7 +312,7 @@ test_mgr_userattr()
                     VERIFY_CHAR(nt_info.type_name, "char8", "Hgetntinfo");
                     break;
                 case DFNT_UINT8:
-                    if (HDmemcmp(data_buf, file_attr_2, n_values) != 0) {
+                    if (memcmp(data_buf, file_attr_2, n_values) != 0) {
                         MESSAGE(3, printf("Error reading values of attribute %s\n", attr_name););
                         num_errs++;
                     } /* end if */
@@ -332,7 +329,7 @@ test_mgr_userattr()
             } /* switch */
 
             /* Free the space allocated for the data buffer. */
-            HDfree(data_buf);
+            free(data_buf);
 
         } /* for */
     }     /* if */
@@ -393,7 +390,7 @@ test_mgr_userattr()
             } /* switch */
 
             /* Read and verify the attribute values. */
-            status = GRgetattr(riid, ri_att_index, (VOIDP)data_buf);
+            status = GRgetattr(riid, ri_att_index, (void *)data_buf);
             CHECK(status, FAIL, "GRgetattr");
 
             /* Verify values from the attribute.
@@ -401,19 +398,19 @@ test_mgr_userattr()
              * the previous part of the test. */
             switch (ntype) {
                 case DFNT_FLOAT32:
-                    if (HDmemcmp(fill_pixel, data_buf, RI_ATT_N_VALUES) != 0) {
+                    if (memcmp(fill_pixel, data_buf, RI_ATT_N_VALUES) != 0) {
                         MESSAGE(3, printf("Error reading values of attribute FILL_ATTR\n"););
                         num_errs++;
                     } /* end if */
                     break;
                 case DFNT_CHAR8:
-                    if (HDmemcmp(RI_ATT1_VAL, data_buf, RI_ATT1_N_VALUES) != 0) {
+                    if (memcmp(RI_ATT1_VAL, data_buf, RI_ATT1_N_VALUES) != 0) {
                         MESSAGE(3, printf("Error reading values of attribute FILL_ATTR\n"););
                         num_errs++;
                     } /* end if */
                     break;
                 case DFNT_INT16:
-                    if (HDmemcmp(ri_attr_2, data_buf, RI_ATT2_N_VALUES) != 0) {
+                    if (memcmp(ri_attr_2, data_buf, RI_ATT2_N_VALUES) != 0) {
                         MESSAGE(3, printf("Error reading values of attribute FILL_ATTR\n"););
                         num_errs++;
                     } /* end if */
@@ -426,7 +423,7 @@ test_mgr_userattr()
             } /* switch */
 
             /* Free the space allocated for the data buffer. */
-            HDfree(data_buf);
+            free(data_buf);
 
         } /* for */
     }     /* if */
@@ -460,8 +457,6 @@ test_mgr_userattr()
 extern void
 test_mgr_attr()
 {
-    int num_errs = 0;
-
     /* Output message about test being performed */
     MESSAGE(5, printf("Testing Multi-file Raster Attribute routines\n"););
 

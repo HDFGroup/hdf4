@@ -28,6 +28,7 @@ extern "C" {
 #include "hdf.h"
 #include "mfhdf.h"
 #include "h4jni.h"
+#include "hdfsdsImp.h"
 
 extern jboolean makeChunkInfo(JNIEnv *env, jobject chunkobj, int32 flgs, HDF_CHUNK_DEF *cinf);
 extern jboolean getNewCompInfo(JNIEnv *env, jobject ciobj, comp_info *cinf);
@@ -153,7 +154,7 @@ Java_hdf_hdflib_HDFLibrary_SDgetinfo(JNIEnv *env, jclass clss, jlong sdsid, jobj
 
     UNUSED(clss);
 
-    if ((cname = (char *)HDmalloc(H4_MAX_NC_NAME + 1)) == NULL)
+    if ((cname = (char *)malloc(H4_MAX_NC_NAME + 1)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "SDgetinfo: failed to allocate data buffer");
 
     if (name == NULL)
@@ -183,8 +184,7 @@ Java_hdf_hdflib_HDFLibrary_SDgetinfo(JNIEnv *env, jclass clss, jlong sdsid, jobj
     CHECK_JNI_EXCEPTION(ENVONLY, JNI_FALSE);
 
 done:
-    if (cname)
-        HDfree(cname);
+    free(cname);
     if (theArgs)
         UNPIN_INT_ARRAY(ENVONLY, argv, theArgs, (rval == FAIL) ? JNI_ABORT : 0);
     if (dims)
@@ -541,7 +541,7 @@ Java_hdf_hdflib_HDFLibrary_SDdiminfo(JNIEnv *env, jclass clss, jlong dimid, jobj
 
     UNUSED(clss);
 
-    if ((data = (char *)HDmalloc(256)) == NULL)
+    if ((data = (char *)malloc(256)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "SDdiminfo: failed to allocate data buffer");
 
     if (dimname == NULL)
@@ -570,8 +570,7 @@ Java_hdf_hdflib_HDFLibrary_SDdiminfo(JNIEnv *env, jclass clss, jlong dimid, jobj
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (data)
-        HDfree(data);
+    free(data);
     if (theArgs)
         UNPIN_INT_ARRAY(ENVONLY, argv, theArgs, (rval == FAIL) ? JNI_ABORT : 0);
 
@@ -621,7 +620,7 @@ Java_hdf_hdflib_HDFLibrary_SDattrinfo(JNIEnv *env, jclass clss, jlong sdsid, jin
 
     UNUSED(clss);
 
-    if ((data = (char *)HDmalloc(256)) == NULL)
+    if ((data = (char *)malloc(256)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "SDattrinfo: failed to allocate data buffer");
 
     if (name == NULL)
@@ -650,8 +649,7 @@ Java_hdf_hdflib_HDFLibrary_SDattrinfo(JNIEnv *env, jclass clss, jlong sdsid, jin
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (data)
-        HDfree(data);
+    free(data);
     if (theArgs)
         UNPIN_INT_ARRAY(ENVONLY, argv, theArgs, (rval == FAIL) ? JNI_ABORT : 0);
 
@@ -673,7 +671,7 @@ Java_hdf_hdflib_HDFLibrary_SDreadattr(JNIEnv *env, jclass clss, jlong sdsid, jin
 
     PIN_BYTE_ARRAY(ENVONLY, dat, arr, &isCopy, "SDreadattr:  dat not pinned");
 
-    if ((rval = SDreadattr(id, (int32)index, (VOIDP)arr)) == FAIL)
+    if ((rval = SDreadattr(id, (int32)index, (void *)arr)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -781,25 +779,25 @@ Java_hdf_hdflib_HDFLibrary_SDgetdatastrs(JNIEnv *env, jclass clss, jlong sdsid, 
 
     if ((label = (jstring)ENVPTR->GetObjectArrayElement(ENVONLY, strings, 0)) != NULL) {
         /* allocate space */
-        if ((labVal = (char *)HDmalloc(len + 1)) == NULL)
+        if ((labVal = (char *)malloc(len + 1)) == NULL)
             H4_OUT_OF_MEMORY_ERROR(ENVONLY, "SDgetdatastrs");
     }
     ENVPTR->DeleteLocalRef(ENVONLY, label);
 
     if ((unit = (jstring)ENVPTR->GetObjectArrayElement(ENVONLY, strings, 1)) != NULL) {
-        if ((unitVal = (char *)HDmalloc(len + 1)) == NULL)
+        if ((unitVal = (char *)malloc(len + 1)) == NULL)
             H4_OUT_OF_MEMORY_ERROR(ENVONLY, "SDgetdatastrs");
     }
     ENVPTR->DeleteLocalRef(ENVONLY, unit);
 
     if ((format = (jstring)ENVPTR->GetObjectArrayElement(ENVONLY, strings, 2)) != NULL) {
-        if ((fmtVal = (char *)HDmalloc(len + 1)) == NULL)
+        if ((fmtVal = (char *)malloc(len + 1)) == NULL)
             H4_OUT_OF_MEMORY_ERROR(ENVONLY, "SDgetdatastrs");
     }
     ENVPTR->DeleteLocalRef(ENVONLY, format);
 
     if ((coordsys = (jstring)ENVPTR->GetObjectArrayElement(ENVONLY, strings, 3)) != NULL) {
-        if ((coordsysVal = (char *)HDmalloc(len + 1)) == NULL)
+        if ((coordsysVal = (char *)malloc(len + 1)) == NULL)
             H4_OUT_OF_MEMORY_ERROR(ENVONLY, "SDgetdatastrs");
     }
     ENVPTR->DeleteLocalRef(ENVONLY, coordsys);
@@ -834,14 +832,10 @@ Java_hdf_hdflib_HDFLibrary_SDgetdatastrs(JNIEnv *env, jclass clss, jlong sdsid, 
     }
 
 done:
-    if (labVal != NULL)
-        HDfree(labVal);
-    if (unitVal != NULL)
-        HDfree(unitVal);
-    if (fmtVal != NULL)
-        HDfree(fmtVal);
-    if (coordsysVal != NULL)
-        HDfree(coordsysVal);
+    free(labVal);
+    free(unitVal);
+    free(fmtVal);
+    free(coordsysVal);
 
     return JNI_TRUE;
 }
@@ -866,19 +860,19 @@ Java_hdf_hdflib_HDFLibrary_SDgetdimstrs(JNIEnv *env, jclass clss, jlong dimid, j
 
     if ((label = (jstring)ENVPTR->GetObjectArrayElement(ENVONLY, strings, 0)) != NULL) {
         /* allocate space */
-        if ((labVal = (char *)HDmalloc(len + 1)) == NULL)
+        if ((labVal = (char *)malloc(len + 1)) == NULL)
             H4_OUT_OF_MEMORY_ERROR(ENVONLY, "SDgetdimstrs");
     }
     ENVPTR->DeleteLocalRef(ENVONLY, label);
 
     if ((unit = (jstring)ENVPTR->GetObjectArrayElement(ENVONLY, strings, 1)) != NULL) {
-        if ((unitVal = (char *)HDmalloc(len + 1)) == NULL)
+        if ((unitVal = (char *)malloc(len + 1)) == NULL)
             H4_OUT_OF_MEMORY_ERROR(ENVONLY, "SDgetdimstrs");
     }
     ENVPTR->DeleteLocalRef(ENVONLY, unit);
 
     if ((format = (jstring)ENVPTR->GetObjectArrayElement(ENVONLY, strings, 2)) != NULL) {
-        if ((fmtVal = (char *)HDmalloc(len + 1)) == NULL)
+        if ((fmtVal = (char *)malloc(len + 1)) == NULL)
             H4_OUT_OF_MEMORY_ERROR(ENVONLY, "SDgetdimstrs");
     }
     ENVPTR->DeleteLocalRef(ENVONLY, format);
@@ -906,12 +900,9 @@ Java_hdf_hdflib_HDFLibrary_SDgetdimstrs(JNIEnv *env, jclass clss, jlong dimid, j
     }
 
 done:
-    if (labVal != NULL)
-        HDfree(labVal);
-    if (unitVal != NULL)
-        HDfree(unitVal);
-    if (fmtVal != NULL)
-        HDfree(fmtVal);
+    free(labVal);
+    free(unitVal);
+    free(fmtVal);
 
     return JNI_TRUE;
 }
@@ -1071,7 +1062,7 @@ Java_hdf_hdflib_HDFLibrary_SDsetattr(JNIEnv *env, jclass clss, jlong s_id, jstri
     PIN_JAVA_STRING(ENVONLY, attr_name, str, NULL, "SDsetattr:  attr_name not pinned");
     PIN_BYTE_ARRAY(ENVONLY, values, arr, &isCopy, "SDsetattr:  values not pinned");
 
-    if ((rval = SDsetattr(id, str, (int32)num_type, (int32)count, (VOIDP)arr)) == FAIL)
+    if ((rval = SDsetattr(id, str, (int32)num_type, (int32)count, (void *)arr)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -1183,7 +1174,7 @@ Java_hdf_hdflib_HDFLibrary_SDsetdimscale(JNIEnv *env, jclass clss, jlong dim_id,
 
     PIN_BYTE_ARRAY(ENVONLY, data, d, &isCopy, "SDsetdimscale:  data not pinned");
 
-    if ((rval = SDsetdimscale((int32)dim_id, (int32)count, (int32)number_type, (VOIDP)d)) == FAIL)
+    if ((rval = SDsetdimscale((int32)dim_id, (int32)count, (int32)number_type, (void *)d)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -1271,7 +1262,7 @@ Java_hdf_hdflib_HDFLibrary_SDsetfillvalue(JNIEnv *env, jclass clss, jlong sds_id
 
     PIN_BYTE_ARRAY(ENVONLY, fill_val, d, &isCopy, "SDsetfillvalue:  fill_val not pinned");
 
-    if ((rval = SDsetfillvalue(id, (VOIDP)d)) == FAIL)
+    if ((rval = SDsetfillvalue(id, (void *)d)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -1346,7 +1337,7 @@ Java_hdf_hdflib_HDFLibrary_SDwritedata(JNIEnv *env, jclass clss, jlong sdsid, ji
     if (stride != NULL)
         PIN_INT_ARRAY(ENVONLY, stride, strd, &isCopy, "SDwritedata:  stride not pinned");
 
-    if ((rval = SDwritedata(id, strt, strd, e, (VOIDP)d)) == FAIL)
+    if ((rval = SDwritedata(id, strt, strd, e, (void *)d)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:

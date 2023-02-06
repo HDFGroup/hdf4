@@ -225,7 +225,7 @@ grdumpfull(int32 ri_id, dump_info_t *dumpgr_opts, int32 ncomps, /* "ncomps" is t
            int32 dimsizes[],                                    /*  size of dimension "i". */
            int32 nt, FILE *fp)
 {
-    VOIDP buf = NULL;
+    void *buf = NULL;
     int32 numtype, eltsz, read_nelts, *start = NULL,          /* starting location to be read */
                                           *edge       = NULL, /* # of values to be read in each dim */
                                               *stride = NULL; /* # of values to be skipped b/w readings */
@@ -243,16 +243,16 @@ grdumpfull(int32 ri_id, dump_info_t *dumpgr_opts, int32 ncomps, /* "ncomps" is t
     CHECK_POS(eltsz, "eltsz", "grdumpfull");
     CHECK_POS(ncomps, "ncomps", "grdumpfull");
 
-    buf = (VOIDP)HDmalloc(read_nelts * eltsz);
+    buf = (void *)malloc(read_nelts * eltsz);
     CHECK_ALLOC(buf, "buf", "grdumpfull");
 
-    start = (int32 *)HDmalloc(2 * sizeof(int32));
+    start = (int32 *)malloc(2 * sizeof(int32));
     CHECK_ALLOC(start, "start", "grdumpfull");
 
-    edge = (int32 *)HDmalloc(2 * sizeof(int32));
+    edge = (int32 *)malloc(2 * sizeof(int32));
     CHECK_ALLOC(edge, "edge", "grdumpfull");
 
-    stride = (int32 *)HDmalloc(2 * sizeof(int32));
+    stride = (int32 *)malloc(2 * sizeof(int32));
     CHECK_ALLOC(stride, "stride", "grdumpfull");
 
     start[0] = start[1] = 0;
@@ -283,14 +283,10 @@ grdumpfull(int32 ri_id, dump_info_t *dumpgr_opts, int32 ncomps, /* "ncomps" is t
         ERROR_GOTO_2("in %s: dumpfull failed for ri_id(%d)", "grdumpfull", (int)ri_id);
 
 done:
-    if (edge != NULL)
-        HDfree((VOIDP)edge);
-    if (start != NULL)
-        HDfree((VOIDP)start);
-    if (stride != NULL)
-        HDfree((VOIDP)stride);
-    if (buf != NULL)
-        HDfree((VOIDP)buf);
+    free(edge);
+    free(start);
+    free(stride);
+    free(buf);
 
     return ret_value;
 } /* grdumpfull */
@@ -332,7 +328,7 @@ get_RIindex_list(int32 gr_id, dump_info_t *dumpgr_opts,
        in the array gr_chosen */
     if (filter & DINDEX)
         for (i = 0; i < dumpgr_opts->by_index.num_items; i++) {
-            /* Note: Don't replace this with HDmemcpy unless you change the
+            /* Note: Don't replace this with memcpy unless you change the
                sizes of the objects correctly -QAK */
             (*gr_chosen)[ri_count] = dumpgr_opts->by_index.num_list[i];
             ri_count++;
@@ -381,7 +377,7 @@ print_GRattrs(int32 gr_id, int32 n_file_attrs, FILE *fp, dump_info_t *dumpgr_opt
 {
     int32 attr_index, attr_count, attr_nt, attr_buf_size;
     char  attr_name[MAXNAMELEN], *attr_nt_desc = NULL;
-    VOIDP attr_buf = NULL;
+    void *attr_buf = NULL;
     intn  printed  = FALSE; /* whether file attr title has been printed */
     intn  status,           /* status from called routine */
         ret_value = SUCCEED;
@@ -408,7 +404,7 @@ print_GRattrs(int32 gr_id, int32 n_file_attrs, FILE *fp, dump_info_t *dumpgr_opt
         /* display the attribute's information then free buffer */
         fprintf(fp, "\t Attr%d: Name = %s\n", (int)attr_index, attr_name);
         fprintf(fp, "\t\t Type = %s \n\t\t Count= %d\n", attr_nt_desc, (int)attr_count);
-        resetBuff((VOIDP *)&attr_nt_desc);
+        resetBuff((void **)&attr_nt_desc);
 
         /* display the attribute's values unless user chose to suppress them */
         if (dumpgr_opts->no_gattr_data == FALSE) {
@@ -424,7 +420,7 @@ print_GRattrs(int32 gr_id, int32 n_file_attrs, FILE *fp, dump_info_t *dumpgr_opt
             CHECK_POS(attr_buf_size, "attr_buf_size", "print_GRattrs");
 
             /* allocate space for the attribute's values */
-            attr_buf = (VOIDP)HDmalloc(attr_buf_size);
+            attr_buf = (void *)malloc(attr_buf_size);
             CHECK_ALLOC(attr_buf, "attr_buf", "print_GRattrs");
 
             /* read the values of the attribute into the buffer */
@@ -453,6 +449,8 @@ print_GRattrs(int32 gr_id, int32 n_file_attrs, FILE *fp, dump_info_t *dumpgr_opt
                                  (int)attr_index);
             }
             /* free buffer and reset it to NULL */
+            free(attr_buf);
+            attr_buf = NULL;
         } /* end of if no file attributes */
     }     /* for all attributes of GR */
 
@@ -464,7 +462,7 @@ print_RIattrs(int32 ri_id, intn ri_index, int32 nattrs, FILE *fp, dump_info_t *d
 {
     int32 attr_index, attr_count, attr_nt, attr_buf_size;
     char  attr_name[MAXNAMELEN], *attr_nt_desc = NULL;
-    VOIDP attr_buf = NULL;
+    void *attr_buf = NULL;
     intn  status,            /* status returned from a called routine */
         ret_value = SUCCEED; /* returned value of print_RIattrs */
 
@@ -487,7 +485,7 @@ print_RIattrs(int32 ri_id, intn ri_index, int32 nattrs, FILE *fp, dump_info_t *d
         fprintf(fp, "\t\t Type = %s \n\t\t Count= %d\n", attr_nt_desc, (int)attr_count);
 
         /* free buffer and reset it to NULL */
-        resetBuff((VOIDP *)&attr_nt_desc);
+        resetBuff((void **)&attr_nt_desc);
 
         /* display the attribute's values unless user chose to suppress them */
         if (dumpgr_opts->no_lattr_data == FALSE) {
@@ -503,7 +501,7 @@ print_RIattrs(int32 ri_id, intn ri_index, int32 nattrs, FILE *fp, dump_info_t *d
             CHECK_POS(attr_buf_size, "attr_buf_size", "print_RIattrs");
 
             /* allocate space for attribute's values */
-            attr_buf = (VOIDP)HDmalloc(attr_buf_size);
+            attr_buf = (void *)malloc(attr_buf_size);
             CHECK_ALLOC(attr_buf, "attr_buf", "print_RIattrs");
 
             /* read the values of the attribute into buffer attr_buf */
@@ -532,6 +530,8 @@ print_RIattrs(int32 ri_id, intn ri_index, int32 nattrs, FILE *fp, dump_info_t *d
                     ERROR_CONT_3("in %s: dumpfull failed for %d'th attribute of %d'th RI", "print_RIattrs",
                                  (int)attr_index, (int)ri_index);
             }
+            free(attr_buf);
+            attr_buf = NULL;
         } /* end of if no local attributes */
     }     /* for all attributes of an RI */
 
@@ -624,7 +624,7 @@ print_Palette(int32 ri_id, int32 num_pals, /* number of palettes, currently only
                 ERROR_CONT_2("in %s: GRgetlutid failed for palette #%d", "print_Palette", (int)pal_index);
 
             /* Read the palette data. */
-            status = GRreadlut(pal_id, (VOIDP)palette_data);
+            status = GRreadlut(pal_id, (void *)palette_data);
             if (status == FAIL) { /* continue to the next palette */
                 ERROR_CONT_2("in %s: GRreadlut failed for palette #%d", "print_Palette", (int)pal_index);
             }
@@ -699,7 +699,7 @@ print_grcomp_info(FILE *fp, int32 ri_id)
     intn         status    = FAIL; /* returned status from a called function */
 
     /* Get compression info */
-    HDmemset(&c_info, 0, sizeof(c_info));
+    memset(&c_info, 0, sizeof(c_info));
     status = GRgetcompinfo(ri_id, &comp_type, &c_info);
 
     /* if getting comp info succeeds, proceed to print out appropriate
@@ -760,7 +760,7 @@ printGR_ASCII(int32 gr_id, dump_info_t *dumpgr_opts, int32 ndsets, /* number of 
         ri_count++; /* count the # of images being processed */
 
         /* Reset variables. */
-        HDmemset(dimsizes, 0, sizeof(int32) * MAXRANK);
+        memset(dimsizes, 0, sizeof(int32) * MAXRANK);
 
         /* get access to the current image */
         ri_id = GRselect(gr_id, ri_index);
@@ -806,7 +806,7 @@ printGR_ASCII(int32 gr_id, dump_info_t *dumpgr_opts, int32 ndsets, /* number of 
                     fprintf(fp, "\n\t Image  Name = %s\n\t Index = ", name);
                     fprintf(fp, "%d\n\t Type= %s\n", (int)ri_index, nt_desc);
 
-                    resetBuff((VOIDP *)&nt_desc);
+                    resetBuff((void **)&nt_desc);
 
                     /* get the image's ref# from its id */
                     if ((ri_ref = GRidtoref(ri_id)) == FAIL)
@@ -865,7 +865,7 @@ printGR_ASCII(int32 gr_id, dump_info_t *dumpgr_opts, int32 ndsets, /* number of 
         ri_id = FAIL; /* reset image id */
     }                 /* for ndsets  */
 
-    resetBuff((VOIDP *)&nt_desc);
+    resetBuff((void **)&nt_desc);
 
     return ret_value; /* status of calls */
 } /* end of printGR_ASCII */
@@ -918,7 +918,7 @@ printGR_BINARY(int32 gr_id, dump_info_t *dumpgr_opts, int32 num_ri_chosen, /* # 
         ri_count++; /* count the # of images being processed */
 
         /* Reset variables. */
-        HDmemset(dimsizes, 0, sizeof(int32) * MAXRANK);
+        memset(dimsizes, 0, sizeof(int32) * MAXRANK);
 
         /* get access to the current image */
         ri_id = GRselect(gr_id, ri_index);
@@ -987,10 +987,8 @@ closeGR(int32  *file_id,   /* will be returned as a FAIL */
         *file_id = FAIL; /* reset */
     }
 
-    if (*gr_chosen != NULL) {
-        HDfree(*gr_chosen);
-        *gr_chosen = NULL;
-    } /* end if */
+    free(*gr_chosen);
+    *gr_chosen = NULL;
 
 } /* end of closeGR */
 

@@ -73,27 +73,27 @@ print_item(int32 fid, dd_t *desc_list, intn n)
     if (labels) { /* read in all of the labels */
         len = DFANgetlablen(file_name, desc_list[n].tag, desc_list[n].ref);
         if (len != FAIL) {
-            label_str      = (char *)HDmalloc((uint32)len + 1);
+            label_str      = (char *)malloc((uint32)len + 1);
             status         = DFANgetlabel(file_name, desc_list[n].tag, desc_list[n].ref, label_str, len + 1);
             label_str[len] = '\0';
             if (status == FAIL)
                 printf("\t  Unable to read label\n");
             else
                 printf("\t  Label: %s\n", label_str);
-            HDfree(label_str);
+            free(label_str);
         }
 
         /* read in all of the annotations */
         len = DFANgetdesclen(file_name, desc_list[n].tag, desc_list[n].ref);
         if (len != FAIL) {
-            label_str      = (char *)HDmalloc((uint32)len + 1);
+            label_str      = (char *)malloc((uint32)len + 1);
             status         = DFANgetdesc(file_name, desc_list[n].tag, desc_list[n].ref, label_str, len + 1);
             label_str[len] = '\0';
             if (status == FAIL)
                 printf("\t  Unable to read description\n");
             else
                 printf("\t  Description: %s\n", label_str);
-            HDfree(label_str);
+            free(label_str);
         }
     }
 
@@ -141,7 +141,7 @@ print_item(int32 fid, dd_t *desc_list, intn n)
                 for (i = 0; i < info.ndims; i++)
                     printf("\t %ld", (long)info.cdims[i]);
                 printf("\n");
-                HDfree(info.cdims);
+                free(info.cdims);
                 break;
 
             default:
@@ -165,7 +165,7 @@ print_item(int32 fid, dd_t *desc_list, intn n)
                         printf("\t\t%-30s: (tag=%6d) ref=%d\n", "Unknown Tag", elmt.tag, elmt.ref);
                     else {
                         printf("\t\t%-30s: (tag=%6d) ref=%d\n", name, elmt.tag, elmt.ref);
-                        HDfree(name);
+                        free(name);
                     } /* end else */
                 }     /* end while */
             }         /* end if */
@@ -186,12 +186,12 @@ print_item(int32 fid, dd_t *desc_list, intn n)
                 ntagrefs = Vntagrefs(vkey);
                 printf("\tContents: %d items\n", (int)ntagrefs);
                 if (ntagrefs > 0) {
-                    tag_arr = (int32 *)HDmalloc(sizeof(int32) * (size_t)ntagrefs);
-                    ref_arr = (int32 *)HDmalloc(sizeof(int32) * (size_t)ntagrefs);
+                    tag_arr = (int32 *)malloc(sizeof(int32) * (size_t)ntagrefs);
+                    ref_arr = (int32 *)malloc(sizeof(int32) * (size_t)ntagrefs);
                     if (tag_arr == NULL || ref_arr == NULL) {
-                        HDfree(tag_arr);
-                        HDfree(ref_arr);
-                    } /* end if */
+                        free(tag_arr);
+                        free(ref_arr);
+                    }
                     else {
                         if (Vgettagrefs(vkey, tag_arr, ref_arr, ntagrefs) != FAIL) {
                             for (i = 0; i < ntagrefs; i++) {
@@ -202,12 +202,12 @@ print_item(int32 fid, dd_t *desc_list, intn n)
                                 else {
                                     printf("\t\t%-30s: (tag=%6d) ref=%d\n", name, (int)tag_arr[i],
                                            (int)ref_arr[i]);
-                                    HDfree(name);
+                                    free(name);
                                 } /* end else */
                             }     /* end for */
                         }         /* end if */
-                        HDfree(tag_arr);
-                        HDfree(ref_arr);
+                        free(tag_arr);
+                        free(ref_arr);
                     } /* end else */
                 }     /* end if */
                 Vdetach(vkey);
@@ -247,8 +247,8 @@ lprint(int32 fid, dd_t *desc_tmp, int num)
             printf("\n%-30s: (tag %d)\n", "Unknown Tag", desc_tmp[j].tag);
         else {
             printf("\n%-30s: (tag %d)\n", name, desc_tmp[j].tag);
-            HDfree(name);
-        } /* end else */
+            free(name);
+        }
 
         /*
         ** Print out reference number information
@@ -355,7 +355,7 @@ dumpDD(void)
         printf(" size of block: %ld, number of DDs:%d, next block: %ld\n",
                (long)(NDDS_SZ + OFFSET_SZ + (n_dds * DD_SZ)), (int)n_dds, (long)next_block);
 
-        ddbuf = (uint8 *)HDmalloc(n_dds * DD_SZ);
+        ddbuf = (uint8 *)malloc(n_dds * DD_SZ);
         if (HI_READ(file_id, ddbuf, n_dds * DD_SZ) == FAIL) {
             printf("Error reading in file: %s\n", file_name);
             return (FAIL);
@@ -384,7 +384,7 @@ dumpDD(void)
                     printf("Error reading in file: %s\n", file_name);
                     return (FAIL);
                 } /* end if */
-                if (HDmemcmp(block_head, diskblock_header, DISKBLOCK_HSIZE) != 0) {
+                if (memcmp(block_head, diskblock_header, DISKBLOCK_HSIZE) != 0) {
                     intn k;
 
                     printf("Header wrong for disk block!\n");
@@ -401,7 +401,7 @@ dumpDD(void)
                     printf("Error reading in file: %s\n", file_name);
                     return (FAIL);
                 } /* end if */
-                if (HDmemcmp(block_tail, diskblock_tail, DISKBLOCK_TSIZE) != 0) {
+                if (memcmp(block_tail, diskblock_tail, DISKBLOCK_TSIZE) != 0) {
                     intn k;
 
                     printf("Tail wrong for disk block!\n");
@@ -413,7 +413,7 @@ dumpDD(void)
             }         /* end if */
 #endif                /* DISKBLOCK_DEBUG */
         }             /* end for */
-        HDfree(ddbuf);
+        free(ddbuf);
     } /* end while */
     HI_CLOSE(file_id);
     return (SUCCEED);
@@ -487,7 +487,7 @@ main(int argc, char *argv[])
         exit(1);
     }
 
-    desc_buf = (dd_t *)HDcalloc(MAXBUFF, sizeof(dd_t));
+    desc_buf = (dd_t *)calloc(MAXBUFF, sizeof(dd_t));
 
     while (i < argc) {
         file_name = argv[i];
@@ -560,7 +560,7 @@ main(int argc, char *argv[])
             fprintf(stderr, "Warning:  File may have more DD's than hdfls can display\n");
     }
 
-    HDfree(desc_buf);
+    free(desc_buf);
 
     return (0);
 }

@@ -10,6 +10,7 @@
 #ifdef __hpux
 #include <locale.h>
 #endif
+#include "getopt.h"
 
 #include "ncgen.h"
 #include "genlib.h"
@@ -44,21 +45,14 @@ usage()
 int
 main(int argc, char *argv[])
 {
-    extern int   optind;
-    extern int   opterr;
-    extern char *optarg;
-    int          c;
-    FILE        *fp;
+    int   c;
+    FILE *fp;
 
     yyin  = stdin;
     yyout = stdout;
 #ifdef __hpux
     setlocale(LC_CTYPE, "");
 #endif
-
-#ifdef MDEBUG
-    malloc_debug(2); /* helps find malloc/free errors on Sun */
-#endif               /* MDEBUG */
 
     opterr   = 1; /* print error message if bad option */
     progname = argv[0];

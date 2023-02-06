@@ -279,7 +279,7 @@ read_test(int32 aid)
         }
 
         /* Clear input buffer */
-        HDmemset(in_buf, 0, elemsize);
+        memset(in_buf, 0, elemsize);
 
         /* Increment the total I/O time */
         acc_time += (end_time.tv_sec - start_time.tv_sec) * FACTOR + (end_time.tv_usec - start_time.tv_usec);
@@ -402,7 +402,7 @@ write_test(int32 aid, intn num_timings)
         }
 
         /* Clear input buffer */
-        HDmemset(in_buf, 0, elemsize);
+        memset(in_buf, 0, elemsize);
 
         /* Increment the total I/O time */
         acc_time += (end_time.tv_sec - start_time.tv_sec) * FACTOR + (end_time.tv_usec - start_time.tv_usec);
@@ -443,8 +443,8 @@ main(int argc, char *argv[])
         exit(1);
     }
 
-    out_buf = HDmalloc((size_t)elemsize * sizeof(uint8));
-    in_buf  = HDmalloc((size_t)elemsize * sizeof(uint8));
+    out_buf = malloc((size_t)elemsize * sizeof(uint8));
+    in_buf  = malloc((size_t)elemsize * sizeof(uint8));
 
     Verbosity = 4; /* Default Verbosity is Low */
 
@@ -544,8 +544,8 @@ main(int argc, char *argv[])
         remove(hfilename);
     }
 
-    HDfree(out_buf);
-    HDfree(in_buf);
+    free(out_buf);
+    free(in_buf);
 
     MESSAGE(6, printf("Finished buffered element test\n");)
     return num_errs;

@@ -18,7 +18,6 @@
 #include "val.h"
 #include "error.h"
 #include "tests.h"
-#include "alloc.h"
 #include "emalloc.h"
 #ifdef HDF
 #include "hdf.h"
@@ -119,8 +118,8 @@ test_varputget(int cdfid)
                     }
                 }
             }
-            Free((char *)hc[ie].vals);
-            Free((char *)tmp.vals);
+            free(hc[ie].vals);
+            free(tmp.vals);
         }
     }
     return nerrs;

@@ -1,20 +1,68 @@
 HDF version 4.2.15-post0 currently under development
-===================================================
 
-Information about HDF
----------------------
+![HDF Logo](doc/img/HDF.png)
 
- The HDF (or HDF4) home page is located here:
+[![master build status](https://img.shields.io/github/actions/workflow/status/HDFGroup/hdf4/main.yml?branch=master&label=master)](https://github.com/HDFGroup/hdf4/actions?query=branch%3Amaster)
+[![BSD](https://img.shields.io/badge/License-BSD-blue.svg)](https://github.com/HDFGroup/hdf4/blob/develop/COPYING)
 
-    https://support.hdfgroup.org/products/hdf4/
+DOCUMENTATION
+-------------
+Full Documentation and Programming Resources for this release can be found at
 
- The most recent version of the software can be obtained from:
+   https://portal.hdfgroup.org/display/HDF4
 
-    https://support.hdfgroup.org/release4/obtain.html
+See the RELEASE.txt file in the release\_notes/ directory for information specific
+to the features and updates included in this release of the library.
 
- The HDF documentation can be found in:
+Several more files are located within the release\_notes/ directory with specific
+details for several common platforms and configurations.
 
-    https://support.hdfgroup.org/release4/doc/index.html
+    INSTALL - Start Here. General instructions for compiling and installing the library
+    INSTALL_CMAKE  - instructions for building with CMake (Kitware.com)
+    INSTALL_WINDOWS and INSTALL_CYGWIN - MS Windows installations.
+
+
+FORUM and NEWS
+--------------
+The following public forums are provided for public announcements and discussions
+of interest to the general HDF5 Community.
+
+   - Homepage of the Forum
+   https://forum.hdfgroup.org
+
+   - News and Announcement
+   https://forum.hdfgroup.org/c/news-and-announcements-from-the-hdf-group
+
+   - HDF4 Topics
+   https://forum.hdfgroup.org/c/hdf4
+
+These forums are provided as an open and public service for searching and reading.
+Posting requires completing a simple registration and allows one to join in the
+conversation.  Please read the following instructions pertaining to the Forum's
+use and configuration
+    https://forum.hdfgroup.org/t/quickstart-guide-welcome-to-the-new-hdf-forum
+
+
+RELEASE SCHEDULE
+----------------
+
+![HDF4 release schedule](doc/img/release-schedule.png) 
+
+HDF4 does not release on a regular schedule. Instead, releases are driven by
+new features and bug fixes, though we try to have at least one release of each
+maintenance branch per year. Future HDF4 releases indicated on this schedule
+are tentative.
+
+
+SNAPSHOTS, PREVIOUS RELEASES AND SOURCE CODE
+--------------------------------------------
+Source packages for current and previous releases are located at:
+    
+   https://portal.hdfgroup.org/display/support/Download+HDF4
+
+Development code is available at our Github location:
+    
+   https://github.com/HDFGroup/hdf4.git
 
 
 Source Distribution Layout
@@ -62,10 +110,3 @@ System Requirements
 
    * C and Fortran compilers. For a list of the supported compilers,
      see release_notes/RELEASE.txt file.
-
-
-Configuring/Testing/Installing 
-------------------------------
- See the file release\_notes/INSTALL for instructions on configuring, testing,
- and installing this software on Unix and non-UNIX systems.
-

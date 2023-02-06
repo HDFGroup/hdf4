@@ -76,7 +76,7 @@ Gif2Mem(BYTE *MemGif)
     /* Allocate memory for the GIF structures           */
     /* Plug the structs into GifMemoryStruct at the end */
     /****************************************************/
-    if (!(gifHead = (GIFHEAD *)malloc(sizeof(GIFHEAD)))) {
+    if (!(gifHead = (GIFHEAD *)calloc(1, sizeof(GIFHEAD)))) {
         printf("Could not allocate memory for gifHead\n");
         exit(-1);
     }
@@ -186,7 +186,7 @@ if (ferror(fpGif))
                 ** Decompress the Image
                 */
                 gifImageDesc[ImageCount - 1]->Image = Decompress(gifImageDesc[ImageCount - 1], gifHead);
-                HDfree(gifImageDesc[ImageCount - 1]->GIFImage);
+                free(gifImageDesc[ImageCount - 1]->GIFImage);
 
                 /*
                 ** Convert the local palette into an HDF compatible palette

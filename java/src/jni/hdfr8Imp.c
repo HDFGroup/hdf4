@@ -27,6 +27,7 @@ extern "C" {
 #include <jni.h>
 #include "hdf.h"
 #include "h4jni.h"
+#include "hdfr8Imp.h"
 
 extern jboolean getOldCompInfo(JNIEnv *env, jobject ciobj, comp_info *cinf);
 
@@ -212,7 +213,7 @@ Java_hdf_hdflib_HDFLibrary_DFR8addimage(JNIEnv *env, jclass clss, jstring filena
     PIN_BYTE_ARRAY(ENVONLY, image, dat, &isCopy, "DFR8addimage:  image not pinned");
     PIN_JAVA_STRING(ENVONLY, filename, fstr, NULL, "DFR8addimage:  filename not pinned");
 
-    if ((rval = DFR8addimage((char *)fstr, (VOIDP)dat, (int32)width, (int32)height, (uint16)compress)) ==
+    if ((rval = DFR8addimage((char *)fstr, (void *)dat, (int32)width, (int32)height, (uint16)compress)) ==
         FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
@@ -245,7 +246,7 @@ Java_hdf_hdflib_HDFLibrary_DFR8putimage(JNIEnv *env, jclass clss, jstring filena
     PIN_BYTE_ARRAY(ENVONLY, image, dat, &isCopy, "DFR8putimage:  image not pinned");
     PIN_JAVA_STRING(ENVONLY, filename, fstr, NULL, "DFR8putimage:  filename not pinned");
 
-    if ((rval = DFR8putimage((char *)fstr, (VOIDP)dat, (int32)width, (int32)height, (uint16)compress)) ==
+    if ((rval = DFR8putimage((char *)fstr, (void *)dat, (int32)width, (int32)height, (uint16)compress)) ==
         FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 

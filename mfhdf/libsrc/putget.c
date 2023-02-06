@@ -27,13 +27,13 @@ static intn hdf_xdr_NCvdata(NC *handle, NC_var *vp, u_long where, nc_type type, 
 
 static intn hdf_xdr_NCv1data(NC *handle, NC_var *vp, u_long where, nc_type type, void *values);
 
-int32 hdf_get_vp_aid(NC *handle, NC_var *vp);
-
 static intn SDIresizebuf(void **buf, int32 *buf_size, int32 size_wanted);
 
 #endif /* HDF */
 
 static const long *NCvcmaxcontig(NC *, NC_var *, const long *, const long *);
+
+int NC_fill_buffer(NC *handle, int varid, const long *edges, void *values);
 
 /*
  * If you use ./xdrstdio.c rather than ./xdrposix.c as
@@ -515,7 +515,7 @@ xdr_NCvshort(XDR *xdrs, unsigned which, short *values)
         xdrs->x_op = XDR_DECODE;
     }
 
-    if (!xdr_opaque(xdrs, (caddr_t)buf, 4)) {
+    if (!xdr_opaque(xdrs, (char *)buf, 4)) {
         /* get failed, assume we are trying to read off the end */
 #ifdef XDRSTDIO
         /* See N.B. 2 above */
@@ -549,7 +549,7 @@ xdr_NCvshort(XDR *xdrs, unsigned which, short *values)
 
         if (!xdr_setpos(xdrs, origin))
             return (FALSE);
-        if (!xdr_opaque(xdrs, (caddr_t)buf, 4))
+        if (!xdr_opaque(xdrs, (char *)buf, 4))
             return (FALSE);
     }
     else {
@@ -590,7 +590,7 @@ xdr_NCv1data(XDR *xdrs, u_long where, nc_type type, Void *values)
         case NC_SHORT:
             return (xdr_NCvshort(xdrs, (unsigned)rem / 2, (short *)values));
         case NC_LONG:
-#if (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__
+#ifdef H4_HAVE_LP64
             return (xdr_int(xdrs, (nclong *)values));
 #else
             return (xdr_long(xdrs, (nclong *)values));
@@ -633,17 +633,17 @@ xdr_NCv1data(XDR *xdrs, u_long where, nc_type type, Void *values)
 
 #ifdef HDF
 
-PRIVATE int32 tBuf_size    = 0;
-PRIVATE int32 tValues_size = 0;
-PRIVATE int8 *tBuf         = NULL;
-PRIVATE int8 *tValues      = NULL;
+static int32 tBuf_size    = 0;
+static int32 tValues_size = 0;
+static int8 *tBuf         = NULL;
+static int8 *tValues      = NULL;
 
 /* ------------------------------ SDPfreebuf ------------------------------ */
 /*
     Throw away the temporary buffer we've allocated
 */
 intn
-SDPfreebuf()
+SDPfreebuf(void)
 {
     if (tBuf != NULL) {
         free(tBuf);

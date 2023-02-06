@@ -41,7 +41,7 @@ main()
     /*
      * Read entire data into data array.
      */
-    if (SDreaddata(sds_id, start, NULL, edges, (VOIDP)data) == FAIL)
+    if (SDreaddata(sds_id, start, NULL, edges, (void *)data) == FAIL)
         printf("*** ERROR from SDreaddata\n");
 
     /*

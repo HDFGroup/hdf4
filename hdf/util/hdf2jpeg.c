@@ -17,11 +17,11 @@
 /* Size of the file buffer to copy through */
 #define MAX_FILE_BUF 16384
 
-PRIVATE uint8 file_buf[MAX_FILE_BUF]; /* size of the buffer to copy through */
+static uint8 file_buf[MAX_FILE_BUF]; /* size of the buffer to copy through */
 
-static VOID usage(void);
+static void usage(void);
 
-static VOID
+static void
 usage(void)
 {
     printf("USAGE: hdf2jpeg <input HDF file> <output JPEG file template>\n");
@@ -294,6 +294,9 @@ main(int argc, char *argv[])
         } while (status == SUCCEED);
         Hendaccess(aid);
     } /* end if */
+
+    /* Close the HDF file */
+    status = Hclose(fid);
 
     if (n == 0)
         printf("Error, no JPEG images found in HDF file\n");

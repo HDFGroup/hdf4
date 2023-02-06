@@ -136,8 +136,8 @@ endif ()
 #-----------------------------------------------------------------------------
 # Compiler specific flags : Shouldn't there be compiler tests for these
 #-----------------------------------------------------------------------------
-if (CMAKE_COMPILER_IS_GNUCC)
-  set (CMAKE_C_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_C_FLAGS} -std=c99 -fomit-frame-pointer -finline-functions -fno-common")
+if (CMAKE_C_COMPILER_ID MATCHES "IntelLLVM" OR CMAKE_C_COMPILER_ID MATCHES "[Cc]lang")
+   set (CMAKE_C_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_C_FLAGS} -Wno-deprecated-non-prototype")
 endif ()
 
 #-----------------------------------------------------------------------------
@@ -349,9 +349,8 @@ endif ()
 if (NOT LIBAEC_EXTERNALLY_CONFIGURED)
   install (
       FILES
-          ${LIBAEC_SOURCE_DIR}/Copyright.txt
           ${LIBAEC_SOURCE_DIR}/README.md
-          ${LIBAEC_SOURCE_DIR}/INSTALL
+          ${LIBAEC_SOURCE_DIR}/INSTALL.md
           ${LIBAEC_SOURCE_DIR}/CHANGELOG.md
       DESTINATION ${LIBAEC_INSTALL_DATA_DIR}
       COMPONENT documents

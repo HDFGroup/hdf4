@@ -55,15 +55,15 @@ static const uint32 mask_arr32[33] = {/* array of values with [n] bits set */
                                       0x3FFFFFFF, 0x7FFFFFFF, 0xFFFFFFFFUL};
 
 /* declaration of the functions provided in this module */
-PRIVATE int32 HCIcnbit_staccess(accrec_t *access_rec, int16 acc_mode);
+static int32 HCIcnbit_staccess(accrec_t *access_rec, int16 acc_mode);
 
-PRIVATE int32 HCIcnbit_init(accrec_t *access_rec);
+static int32 HCIcnbit_init(accrec_t *access_rec);
 
-PRIVATE int32 HCIcnbit_decode(compinfo_t *info, int32 length, uint8 *buf);
+static int32 HCIcnbit_decode(compinfo_t *info, int32 length, uint8 *buf);
 
-PRIVATE int32 HCIcnbit_encode(compinfo_t *info, int32 length, const uint8 *buf);
+static int32 HCIcnbit_encode(compinfo_t *info, int32 length, const uint8 *buf);
 
-PRIVATE int32 HCIcnbit_term(compinfo_t *info);
+static int32 HCIcnbit_term(compinfo_t *info);
 
 /*--------------------------------------------------------------------------
  NAME
@@ -84,7 +84,7 @@ PRIVATE int32 HCIcnbit_term(compinfo_t *info);
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcnbit_init(accrec_t *access_rec)
 {
     compinfo_t             *info;               /* special element information */
@@ -114,7 +114,7 @@ HCIcnbit_init(accrec_t *access_rec)
 #ifdef TESTING
     printf("HCIcnbit_init(): 0.4 - coder_func.write=%p\n", info->cinfo.coder_funcs.write);
 #endif
-    HDmemset(nbit_info->mask_buf, (nbit_info->fill_one == TRUE ? 0xff : 0), nbit_info->nt_size);
+    memset(nbit_info->mask_buf, (nbit_info->fill_one == TRUE ? 0xff : 0), nbit_info->nt_size);
 #ifdef TESTING
     printf("HCIcnbit_init(): 0.5 - fill_one=%d, sign_ext=%d\n", (int)nbit_info->fill_one,
            (int)nbit_info->sign_ext);
@@ -130,7 +130,7 @@ HCIcnbit_init(accrec_t *access_rec)
     printf("HCIcnbit_init(): 0.6 - mask_top=%d, mask_bot=%d, bits=%d, top_bit=%d, bot_bit=%d\n", mask_top,
            mask_bot, bits, top_bit, bot_bit);
 #endif
-    HDmemset(nbit_info->mask_info, 0, sizeof(nbit_info->mask_info)); /* set to 0 */
+    memset(nbit_info->mask_info, 0, sizeof(nbit_info->mask_info)); /* set to 0 */
 #ifdef TESTING
     printf("HCIcnbit_init(): before init'ing mask, nt_size=%d\n", nbit_info->nt_size);
     printf("HCIcnbit_init(): 1 - coder_func.write=%p\n", info->cinfo.coder_funcs.write);
@@ -216,7 +216,7 @@ HCIcnbit_init(accrec_t *access_rec)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcnbit_decode(compinfo_t *info, int32 length, uint8 *buf)
 {
     comp_coder_nbit_info_t *nbit_info;   /* ptr to n-bit info */
@@ -334,7 +334,7 @@ HCIcnbit_decode(compinfo_t *info, int32 length, uint8 *buf)
         copy_length =
             (intn)((length > (buf_size - nbit_info->buf_pos)) ? (buf_size - nbit_info->buf_pos) : length);
 
-        HDmemcpy(buf, &(nbit_info->buffer[nbit_info->buf_pos]), copy_length);
+        memcpy(buf, &(nbit_info->buffer[nbit_info->buf_pos]), copy_length);
 
         buf += copy_length;
         length -= copy_length;
@@ -366,7 +366,7 @@ HCIcnbit_decode(compinfo_t *info, int32 length, uint8 *buf)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcnbit_encode(compinfo_t *info, int32 length, const uint8 *buf)
 {
     comp_coder_nbit_info_t *nbit_info;   /* ptr to n-bit info */
@@ -431,7 +431,7 @@ HCIcnbit_encode(compinfo_t *info, int32 length, const uint8 *buf)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcnbit_term(compinfo_t *info)
 {
     (void)info;
@@ -462,7 +462,7 @@ HCIcnbit_term(compinfo_t *info)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcnbit_staccess(accrec_t *access_rec, int16 acc_mode)
 {
     compinfo_t *info; /* special element information */

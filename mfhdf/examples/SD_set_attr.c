@@ -33,7 +33,7 @@ main()
      * Set an attribute that describes the file contents.
      */
     n_values = 16;
-    if (SDsetattr(sd_id, FILE_ATTR_NAME, DFNT_CHAR, n_values, (VOIDP)file_values) == FAIL)
+    if (SDsetattr(sd_id, FILE_ATTR_NAME, DFNT_CHAR, n_values, (void *)file_values) == FAIL)
         printf("*** ERROR from SDsetattr\n");
 
     /*
@@ -47,7 +47,7 @@ main()
      * may have different data type than SDS data.
      */
     n_values = 2;
-    if (SDsetattr(sds_id, SDS_ATTR_NAME, DFNT_FLOAT32, n_values, (VOIDP)sds_values) == FAIL)
+    if (SDsetattr(sds_id, SDS_ATTR_NAME, DFNT_FLOAT32, n_values, (void *)sds_values) == FAIL)
         printf("*** ERROR from SDsetattr\n");
 
     /*
@@ -60,7 +60,7 @@ main()
      * Set an attribute of the dimension that specifies the dimension metric.
      */
     n_values = 7;
-    if (SDsetattr(dim_id, DIM_ATTR_NAME, DFNT_CHAR, n_values, (VOIDP)dim_values) == FAIL)
+    if (SDsetattr(dim_id, DIM_ATTR_NAME, DFNT_CHAR, n_values, (void *)dim_values) == FAIL)
         printf("*** ERROR from SDsetattr\n");
 
     /*

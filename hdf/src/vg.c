@@ -72,7 +72,7 @@ const char *HDF_INTERNAL_VDS[] = {DIM_VALS,    DIM_VALS01,      _HDF_ATTRIBUTE, 
 
 /* Private functions */
 #ifdef VDATA_FIELDS_ALL_UPPER
-PRIVATE int32 matchnocase(char *strx, char *stry);
+static int32 matchnocase(char *strx, char *stry);
 #endif /* VDATA_FIELDS_ALL_UPPER */
 
 #ifdef VDATA_FIELDS_ALL_UPPER
@@ -87,7 +87,7 @@ RETURNS
    if strings match return TRUE,
    else FALSE
 --------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 matchnocase(char *strx, /* IN: first string to be compared */
             char *stry /* IN: second string to be compared */)
 {
@@ -459,7 +459,7 @@ DESCRIPTION
 RETURNS
    No return codes.
 -------------------------------------------------------------------*/
-VOID
+void
 VSdump(int32 vkey /* IN: vdata key */)
 {
     (void)vkey;
@@ -482,9 +482,9 @@ int32
 VSsetname(int32       vkey, /* IN: Vdata key */
           const char *vsname /* IN: name to set for vdata*/)
 {
-    vsinstance_t *w  = NULL;
-    VDATA        *vs = NULL;
-    int32         curr_len;
+    vsinstance_t *w        = NULL;
+    VDATA        *vs       = NULL;
+    int32         curr_len = 0;
     int32         slen;
     int32         ret_value = SUCCEED;
 
@@ -506,8 +506,7 @@ VSsetname(int32       vkey, /* IN: Vdata key */
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
     /* get current length of vdata name */
-    if (vs->vsname != NULL)
-        curr_len = HDstrlen(vs->vsname);
+    curr_len = strnlen(vs->vsname, VSNAMELENMAX + 1);
 
     /* check length of new name against MAX length */
     if ((slen = HDstrlen(vsname)) > VSNAMELENMAX) { /* truncate name */
@@ -754,7 +753,7 @@ VSlone(HFILEID f,       /* IN: file id */
     int32  ret_value = SUCCEED;
 
     /* -- allocate local space for vdata refs, init to zeros -- */
-    if (NULL == (lonevdata = (uint8 *)HDcalloc(MAX_REF, sizeof(uint8))))
+    if (NULL == (lonevdata = (uint8 *)calloc(MAX_REF, sizeof(uint8))))
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* -- look for all vdatas in the file, and flag (1) each -- */
@@ -786,7 +785,7 @@ VSlone(HFILEID f,       /* IN: file id */
     }
 
     /* free up locally allocated space */
-    HDfree((VOIDP)lonevdata);
+    free(lonevdata);
 
     ret_value = nlone; /* return the TOTAL # of lone vdatas */
 
@@ -821,7 +820,7 @@ Vlone(HFILEID f,       /* IN: file id */
     int32  ret_value = SUCCEED;
 
     /* -- allocate space for vgroup refs, init to zeroes -- */
-    if (NULL == (lonevg = (uint8 *)HDcalloc(MAX_REF, sizeof(uint8))))
+    if (NULL == (lonevg = (uint8 *)calloc(MAX_REF, sizeof(uint8))))
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* -- look for all vgroups in the file, and flag (1) each -- */
@@ -854,7 +853,7 @@ Vlone(HFILEID f,       /* IN: file id */
     }
 
     /* free up locally allocated space */
-    HDfree((VOIDP)lonevg);
+    free(lonevg);
 
     ret_value = nlone; /* return the TOTAL # of lone vgroups */
 
@@ -1294,7 +1293,7 @@ RETURNS
    return TRUE, else FALSE.
    BMR - 2010/11/30
 *******************************************************************************/
-PRIVATE intn
+static intn
 vscheckclass(int32 id, /* IN: vgroup id or file id */
 	    uint16 vs_ref, /* IN: reference number of vdata being checked */
 	    const char *vsclass  /* IN: class name to be queried or NULL for
@@ -1315,7 +1314,7 @@ vscheckclass(int32 id, /* IN: vgroup id or file id */
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
     /* Make sure this vdata has a class name before checking */
-    if (vs->vsclass != NULL && HDstrlen(vs->vsclass) != 0) {
+    if (strnlen(vs->vsclass, VSNAMELENMAX + 1) != 0) {
         /* If user-created vdatas are being checked for, then set flag
            if this vdata is not internally created by the library */
         if (vsclass == NULL) {
@@ -1591,7 +1590,7 @@ done:
 /*
  * Vsetzap: Useless now. Maintained for back compatibility.
  */
-VOID
+void
 Vsetzap(void)
 {
 }

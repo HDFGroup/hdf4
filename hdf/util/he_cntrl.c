@@ -128,8 +128,7 @@ HEnext(HE_CMD *cmd)
 
     /* replace this only if it is non-empty */
     if (predicates[0].key != 0) {
-        if (he_predicates)
-            HDfree(he_predicates);
+        free(he_predicates);
         he_predicates = predicates;
     }
 
@@ -174,8 +173,7 @@ HEprev(HE_CMD *cmd)
         return HE_FAIL;
 
     if (predicates[0].key != 0) {
-        if (he_predicates)
-            HDfree(he_predicates);
+        free(he_predicates);
         he_predicates = predicates;
     }
 
@@ -328,10 +326,10 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
 
         case 'i': {
             int32 *idata;
-            idata = (int32 *)HDmalloc(length / 4 * sizeof(int32));
+            idata = (int32 *)malloc(length / 4 * sizeof(int32));
 
-            DFKconvert((VOIDP)(data + offset), (VOIDP)idata, DFNT_INT32 | raw_flag, length / 4, DFACC_READ, 0,
-                       0);
+            DFKconvert((void *)(data + offset), (void *)idata, DFNT_INT32 | raw_flag, length / 4, DFACC_READ,
+                       0, 0);
             printf("%8d: ", offset);
             for (i = 0; i < length / 4; i++) {
                 printf("%11d ", (int)idata[i]);
@@ -341,14 +339,14 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
                 }
             }
             printf("\n");
-            HDfree((VOIDP)idata);
+            free(idata);
         } break;
 
         case 'd': {
             uint32 *idata;
-            idata = (uint32 *)HDmalloc(length / 4 * sizeof(int32));
+            idata = (uint32 *)malloc(length / 4 * sizeof(int32));
 
-            DFKconvert((VOIDP)(data + offset), (VOIDP)idata, DFNT_UINT32 | raw_flag, length / 4, DFACC_READ,
+            DFKconvert((void *)(data + offset), (void *)idata, DFNT_UINT32 | raw_flag, length / 4, DFACC_READ,
                        0, 0);
             printf("%8d: ", offset);
             for (i = 0; i < length / 4; i++) {
@@ -359,13 +357,13 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
                 }
             }
             printf("\n");
-            HDfree((VOIDP)idata);
+            free(idata);
         } break;
         case 'j': {
             int16 *sdata;
-            sdata = (int16 *)HDmalloc(length / 2 * sizeof(int16));
-            DFKconvert((VOIDP)(data + offset), (VOIDP)sdata, DFNT_INT16 | raw_flag, length / 2, DFACC_READ, 0,
-                       0);
+            sdata = (int16 *)malloc(length / 2 * sizeof(int16));
+            DFKconvert((void *)(data + offset), (void *)sdata, DFNT_INT16 | raw_flag, length / 2, DFACC_READ,
+                       0, 0);
 
             printf("%8d: ", offset);
             for (i = 0; i < length / 2; i++) {
@@ -376,14 +374,14 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
                 }
             }
             printf("\n");
-            HDfree((VOIDP)sdata);
+            free(sdata);
         } break;
 
         case 's': {
             uint16 *sdata;
-            sdata = (uint16 *)HDmalloc(length / 2 * sizeof(uint16));
+            sdata = (uint16 *)malloc(length / 2 * sizeof(uint16));
 
-            DFKconvert((VOIDP)(data + offset), (VOIDP)sdata, DFNT_UINT16 | raw_flag, length / 2, DFACC_READ,
+            DFKconvert((void *)(data + offset), (void *)sdata, DFNT_UINT16 | raw_flag, length / 2, DFACC_READ,
                        0, 0);
             printf("%8d: ", offset);
             for (i = 0; i < length / 2; i++) {
@@ -394,14 +392,15 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
                 }
             }
             printf("\n");
-            HDfree((VOIDP)sdata);
+            free(sdata);
         } break;
 
         case 'b': {
             uint8 *bdata;
-            bdata = (uint8 *)HDmalloc(length);
+            bdata = (uint8 *)malloc(length);
 
-            DFKconvert((VOIDP)(data + offset), (VOIDP)bdata, DFNT_UINT8 | raw_flag, length, DFACC_READ, 0, 0);
+            DFKconvert((void *)(data + offset), (void *)bdata, DFNT_UINT8 | raw_flag, length, DFACC_READ, 0,
+                       0);
             printf("%8d: ", offset);
             for (i = 0; i < length; i++) {
                 printf("%6d ", bdata[i]);
@@ -411,7 +410,7 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
                 }
             }
             printf("\n");
-            HDfree((VOIDP)bdata);
+            free(bdata);
         } break;
 
         case 'x': {
@@ -419,8 +418,8 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
             intn  sizeintn;
 
             sizeintn = sizeof(intn);
-            idata    = (intn *)HDmalloc((size_t)(length / 4 * sizeintn));
-            DFKconvert((VOIDP)(data + offset), (VOIDP)idata, DFNT_NINT32 | raw_flag, length / 4, DFACC_READ,
+            idata    = (intn *)malloc((size_t)(length / 4 * sizeintn));
+            DFKconvert((void *)(data + offset), (void *)idata, DFNT_NINT32 | raw_flag, length / 4, DFACC_READ,
                        0, 0);
             printf("%8d: ", offset);
             for (i = 0; i < length / sizeintn; i++) {
@@ -431,7 +430,7 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
                 }
             }
             printf("\n");
-            HDfree((VOIDP)idata);
+            free(idata);
         } break;
 
         case 'o': {
@@ -439,8 +438,8 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
             intn  sizeintn;
 
             sizeintn = sizeof(intn);
-            idata    = (intn *)HDmalloc((size_t)(length / 4 * sizeintn));
-            DFKconvert((VOIDP)(data + offset), (VOIDP)idata, DFNT_NINT32 | raw_flag, length / 4, DFACC_READ,
+            idata    = (intn *)malloc((size_t)(length / 4 * sizeintn));
+            DFKconvert((void *)(data + offset), (void *)idata, DFNT_NINT32 | raw_flag, length / 4, DFACC_READ,
                        0, 0);
             printf("%8d: ", offset);
             for (i = 0; i < length / sizeintn; i++) {
@@ -451,7 +450,7 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
                 }
             }
             printf("\n");
-            HDfree((VOIDP)idata);
+            free(idata);
         } break;
 
         case 'a': {
@@ -473,10 +472,10 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
 
         case 'f': {
             float32 *fdata;
-            fdata = (float32 *)HDmalloc(length / 4 * sizeof(float32));
+            fdata = (float32 *)malloc(length / 4 * sizeof(float32));
 
-            DFKconvert((VOIDP)(data + offset), (VOIDP)fdata, DFNT_FLOAT32 | raw_flag, length / 4, DFACC_READ,
-                       0, 0);
+            DFKconvert((void *)(data + offset), (void *)fdata, DFNT_FLOAT32 | raw_flag, length / 4,
+                       DFACC_READ, 0, 0);
 
             printf("%8d: ", offset);
             for (i = 0; i < length / 4; i++) {
@@ -487,15 +486,15 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
                 }
             }
             printf("\n");
-            HDfree((VOIDP)fdata);
+            free(fdata);
         } break;
 
         case 'e': {
             float64 *fdata;
-            fdata = (float64 *)HDmalloc(length / 8 * sizeof(float64));
+            fdata = (float64 *)malloc(length / 8 * sizeof(float64));
 
-            DFKconvert((VOIDP)(data + offset), (VOIDP)fdata, DFNT_FLOAT64 | raw_flag, length / 8, DFACC_READ,
-                       0, 0);
+            DFKconvert((void *)(data + offset), (void *)fdata, DFNT_FLOAT64 | raw_flag, length / 8,
+                       DFACC_READ, 0, 0);
 
             printf("%8d: ", offset);
             for (i = 0; i < length / 8; i++) {
@@ -506,7 +505,7 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
                 }
             }
             printf("\n");
-            HDfree((VOIDP)fdata);
+            free(fdata);
         } break;
 
         default:
@@ -514,7 +513,7 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
             break;
     }
 
-    HDfree(data);
+    free(data);
 
     return HE_OK;
 }
@@ -611,7 +610,7 @@ info(int all, int longout, int group, int label)
             printf("Empty (tag %d) : %d slots.\n", DFTAG_NULL, empty);
     }
     else {
-        mark = (int *)HDcalloc(he_numDesc, sizeof(int));
+        mark = (int *)calloc(he_numDesc, sizeof(int));
 
         if (all) {
             start = 0;
@@ -668,8 +667,8 @@ infoDesc(int desc, int longout, int label)
         printf("\t%-30s: (Tag %d)", "Unknown Tag", he_desc[desc].tag);
     else {
         printf("\t%-30s: (Tag %d)", name, he_desc[desc].tag);
-        HDfree(name);
-    } /* end else */
+        free(name);
+    }
 
     if (longout)
         printf("\n\tRef: %d, Offset: %ld, Length: %ld (bytes)\n", he_desc[desc].ref,
@@ -951,7 +950,7 @@ nextWord(char **p)
         s++;
     len = (unsigned)(s - q);
 
-    word = (char *)HDmalloc(len + 1);
+    word = (char *)malloc(len + 1);
     HDstrncpy(word, q, len);
     word[len] = '\0';
 
@@ -973,7 +972,7 @@ parseCmd(char **p)
     if (!(**p))
         return NULL;
 
-    cmd       = (HE_CMD *)HDcalloc(1, sizeof(HE_CMD));
+    cmd       = (HE_CMD *)calloc(1, sizeof(HE_CMD));
     cmd->next = cmd->sub = (HE_CMD *)NULL;
     cmd->argc            = 1;
     cmd->argv[0]         = nextWord(p);
@@ -1098,7 +1097,7 @@ mkDupCmd(HE_CMD *cmd)
     int     i;
     HE_CMD *dupCmd;
 
-    dupCmd       = (HE_CMD *)HDcalloc(1, sizeof(HE_CMD));
+    dupCmd       = (HE_CMD *)calloc(1, sizeof(HE_CMD));
     dupCmd->func = cmd->func;
     dupCmd->argc = cmd->argc;
     dupCmd->next = dupCmd->sub = (HE_CMD *)NULL;
@@ -1200,10 +1199,9 @@ HE_PRED *he_predicates;
 int
 resetPred(void)
 {
-    if (he_predicates != NULL)
-        HDfree(he_predicates);
+    free(he_predicates);
 
-    he_predicates        = (HE_PRED *)HDcalloc(2, sizeof(HE_PRED));
+    he_predicates        = (HE_PRED *)calloc(2, sizeof(HE_PRED));
     he_predicates[0].key = HEK_GROUP;
     he_predicates[1].key = 0;
 
@@ -1275,7 +1273,7 @@ parsePred(int argc, char *argv[])
     char    *s;
     char    *tok;
 
-    pred = (HE_PRED *)HDcalloc(HE_PRED_SZ, sizeof(HE_PRED));
+    pred = (HE_PRED *)calloc(HE_PRED_SZ, sizeof(HE_PRED));
 
     for (i = 1; i < argc; i++) {
         s = argv[i];
@@ -1289,10 +1287,10 @@ parsePred(int argc, char *argv[])
 
             if (state != 2) {
                 if ((key = findKey(tok)) == HE_NOTFOUND) {
-                    HDfree(pred);
+                    free(pred);
                     return NULL;
                 }
-                HDfree(tok);
+                free(tok);
             }
 
             switch (state) {
@@ -1300,7 +1298,7 @@ parsePred(int argc, char *argv[])
                     /* Ready to accept a predicate */
                     if (!(key & HE_PREDICATE)) {
                         fprintf(stderr, "Parse error: %s.\n", argv[i]);
-                        HDfree(pred);
+                        free(pred);
                         return NULL;
                     }
                     pred[++predNum].key = key & ~(HE_PREDICATE | HE_COMPARATOR);
@@ -1318,7 +1316,7 @@ parsePred(int argc, char *argv[])
                     }
                     else {
                         fprintf(stderr, "Parse error: %s.\n", argv[i]);
-                        HDfree(pred);
+                        free(pred);
                         return NULL;
                     }
                     break;
@@ -1409,7 +1407,7 @@ nextToken(char **p)
         while (*s && !isalnum((int)*s))
             s++;
 
-    q = tok = (char *)HDmalloc((s - (*p)) + 1);
+    q = tok = (char *)malloc((s - (*p)) + 1);
     while (*p != s)
         *q++ = *(*p)++;
     *q = '\0';

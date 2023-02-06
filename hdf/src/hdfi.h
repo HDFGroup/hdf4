@@ -14,6 +14,8 @@
 #ifndef H4_HDFI_H
 #define H4_HDFI_H
 
+#include "H4api_adpt.h"
+
 /*--------------------------------------------------------------------------*/
 /*                              MT/NT constants                             */
 /*  Four MT nibbles represent double, float, int, uchar (from most          */
@@ -66,6 +68,7 @@
 #define FILELIB UNIXBUFIO
 
 /* Standard C library headers */
+#include <assert.h>
 #include <ctype.h>
 #include <inttypes.h>
 #include <limits.h>
@@ -103,9 +106,8 @@
 #ifdef H4_HAVE_WIN32_API
 #include <windows.h>
 #include <io.h>
+#include <process.h>
 #endif
-
-#include "H4api_adpt.h"
 
 /*-------------------------------------------------------------------------
  * Pre-C99 platform-independent type scheme
@@ -113,9 +115,6 @@
  * These types were added long before C99 was widely supported (or even
  * existed). They were formerly mapped to native C types on a machine-specific
  * basis, but they are now mapped to their equivalent C99 types.
- *
- * XXX: Some cruft remains (e.g. VOID) and this should be removed, if
- *      possible.
  *-------------------------------------------------------------------------*/
 
 /* Floating-point types */
@@ -140,12 +139,12 @@ typedef uint32_t uint32;
 typedef int          intn;
 typedef unsigned int uintn;
 
-/* void and pointers to void */
-#ifndef VOID
-/* winnt.h defines VOID to `void` via a macro */
-typedef void VOID;
+/*-------------------------------------------------------------------------
+ * Is this an LP64 system?
+ *-------------------------------------------------------------------------*/
+#if LONG_MAX == INT64_MAX
+#define H4_HAVE_LP64
 #endif
-typedef void *VOIDP;
 
 /*-------------------------------------------------------------------------
  * Fortran definitions
@@ -205,7 +204,7 @@ typedef intptr_t hdf_pint_t;
 
 #define NBYTEENCODE(d, s, n)                                                                                 \
     {                                                                                                        \
-        HDmemcpy(d, s, n);                                                                                   \
+        memcpy(d, s, n);                                                                                     \
         p += n                                                                                               \
     }
 
@@ -261,7 +260,7 @@ typedef intptr_t hdf_pint_t;
 /*      in the spirit of the other DECODE macros */
 #define NBYTEDECODE(s, d, n)                                                                                 \
     {                                                                                                        \
-        HDmemcpy(d, s, n);                                                                                   \
+        memcpy(d, s, n);                                                                                     \
         p += n                                                                                               \
     }
 
@@ -315,19 +314,14 @@ typedef intptr_t hdf_pint_t;
 #endif
 
 /**************************************************************************
- *  Allocation functions defined differently
+ *  Memory functions
  **************************************************************************/
-#define HDmalloc(s)     malloc(s)
-#define HDcalloc(a, b)  calloc(a, b)
-#define HDfree(p)       free(p)
-#define HDrealloc(p, s) realloc(p, s)
 
 /* Macro to free space and clear pointer to NULL */
 #define HDfreenclear(p)                                                                                      \
     {                                                                                                        \
-        if ((p) != NULL)                                                                                     \
-            HDfree(p);                                                                                       \
-        p = NULL;                                                                                            \
+        free(p);                                                                                             \
+        (p) = NULL;                                                                                          \
     }
 
 /**************************************************************************
@@ -343,14 +337,6 @@ typedef intptr_t hdf_pint_t;
 #define HDstrchr(s, c)       (strchr((s), (c)))
 #define HDstrrchr(s, c)      (strrchr((s), (c)))
 #define HDstrtol(s, e, b)    (strtol((s), (e), (b)))
-
-/**************************************************************************
- *  Memory functions defined differently
- **************************************************************************/
-
-#define HDmemcpy(dst, src, n) (memcpy((void *)(dst), (const void *)(src), (size_t)(n)))
-#define HDmemset(dst, c, n)   (memset((void *)(dst), (intn)(c), (size_t)(n)))
-#define HDmemcmp(dst, src, n) (memcmp((const void *)(dst), (const void *)(src), (size_t)(n)))
 
 /**************************************************************************
  *  JPEG #define's - Look in the JPEG docs before changing - (Q)

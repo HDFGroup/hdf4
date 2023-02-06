@@ -27,6 +27,7 @@ extern "C" {
 #include <jni.h>
 #include "hdf.h"
 #include "h4jni.h"
+#include "hdfvgroupImp.h"
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_Vstart(JNIEnv *env, jclass clss, jlong fid)
@@ -119,7 +120,7 @@ Java_hdf_hdflib_HDFLibrary_Vgetclass(JNIEnv *env, jclass clss, jlong vgroup_id, 
 
     UNUSED(clss);
 
-    if ((data = (char *)HDmalloc(H4_MAX_NC_CLASS + 1)) == NULL)
+    if ((data = (char *)malloc(H4_MAX_NC_CLASS + 1)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "Vgetclass: failed to allocate data buffer");
 
     if (hdfclassname == NULL)
@@ -143,8 +144,7 @@ Java_hdf_hdflib_HDFLibrary_Vgetclass(JNIEnv *env, jclass clss, jlong vgroup_id, 
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (data)
-        HDfree(data);
+    free(data);
 
     return;
 }
@@ -158,7 +158,7 @@ Java_hdf_hdflib_HDFLibrary_Vgetname(JNIEnv *env, jclass clss, jlong vgroup_id, j
 
     UNUSED(clss);
 
-    if ((data = (char *)HDmalloc(H4_MAX_GR_NAME + 1)) == NULL)
+    if ((data = (char *)malloc(H4_MAX_GR_NAME + 1)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "Vgetname: failed to allocate data buffer");
 
     if (hdfname == NULL)
@@ -181,8 +181,7 @@ Java_hdf_hdflib_HDFLibrary_Vgetname(JNIEnv *env, jclass clss, jlong vgroup_id, j
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (data)
-        HDfree(data);
+    free(data);
 
     return;
 }
@@ -475,7 +474,7 @@ Java_hdf_hdflib_HDFLibrary_Vinquire(JNIEnv *env, jclass clss, jlong vgroup_id, j
 
     UNUSED(clss);
 
-    if ((data = (char *)HDmalloc(H4_MAX_NC_NAME + 1)) == NULL)
+    if ((data = (char *)malloc(H4_MAX_NC_NAME + 1)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "Vinquire: failed to allocate data buffer");
 
     if (n_entries == NULL)
@@ -506,8 +505,7 @@ Java_hdf_hdflib_HDFLibrary_Vinquire(JNIEnv *env, jclass clss, jlong vgroup_id, j
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (data)
-        HDfree(data);
+    free(data);
     if (theArg)
         UNPIN_INT_ARRAY(ENVONLY, n_entries, theArg, (rval == FAIL) ? JNI_ABORT : 0);
 
@@ -623,7 +621,7 @@ Java_hdf_hdflib_HDFLibrary_Vattrinfo(JNIEnv *env, jclass clss, jlong id, jint in
 
     UNUSED(clss);
 
-    if ((data = (char *)HDmalloc(256)) == NULL)
+    if ((data = (char *)malloc(256)) == NULL)
         H4_OUT_OF_MEMORY_ERROR(ENVONLY, "Vattrinfo2: failed to allocate data buffer");
 
     if (name == NULL)
@@ -655,8 +653,7 @@ Java_hdf_hdflib_HDFLibrary_Vattrinfo(JNIEnv *env, jclass clss, jlong id, jint in
     ENVPTR->DeleteLocalRef(ENVONLY, rstring);
 
 done:
-    if (data)
-        HDfree(data);
+    free(data);
     if (theArgs)
         UNPIN_INT_ARRAY(ENVONLY, argv, theArgs, (rval == FAIL) ? JNI_ABORT : 0);
 
@@ -700,7 +697,7 @@ Java_hdf_hdflib_HDFLibrary_Vgetattr(JNIEnv *env, jclass clss, jlong gr_id, jint 
 
     PIN_BYTE_ARRAY(ENVONLY, values, arr, &isCopy, "Vgetattr:  values not pinned");
 
-    if ((rval = Vgetattr2((int32)gr_id, (int32)attr_index, (VOIDP)arr)) == FAIL)
+    if ((rval = Vgetattr2((int32)gr_id, (int32)attr_index, (void *)arr)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -759,7 +756,7 @@ Java_hdf_hdflib_HDFLibrary_Vsetattr__JLjava_lang_String_2JILjava_lang_String_2(J
     PIN_JAVA_STRING(ENVONLY, attr_name, str, NULL, "Vsetattr:  attr_name not pinned");
     PIN_JAVA_STRING(ENVONLY, values, val, NULL, "Vsetattr:  values not pinned");
 
-    if ((rval = Vsetattr((int32)gr_id, (char *)str, (int32)data_type, (int32)count, (VOIDP)val)) == FAIL)
+    if ((rval = Vsetattr((int32)gr_id, (char *)str, (int32)data_type, (int32)count, (void *)val)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -792,7 +789,7 @@ Java_hdf_hdflib_HDFLibrary_Vsetattr__JLjava_lang_String_2JI_3B(JNIEnv *env, jcla
     PIN_JAVA_STRING(ENVONLY, attr_name, str, NULL, "Vsetattr:  attr_name not pinned");
     PIN_BYTE_ARRAY(ENVONLY, values, arr, &isCopy, "Vsetattr:  values not pinned");
 
-    if ((rval = Vsetattr((int32)id, (char *)str, (int32)data_type, (int32)count, (VOIDP)arr)) == FAIL)
+    if ((rval = Vsetattr((int32)id, (char *)str, (int32)data_type, (int32)count, (void *)arr)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:

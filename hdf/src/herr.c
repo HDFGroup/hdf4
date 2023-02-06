@@ -52,7 +52,7 @@ typedef struct error_t {
 } error_t;
 
 /* pointer to the structure to hold error messages */
-PRIVATE error_t *error_stack = NULL;
+static error_t *error_stack = NULL;
 
 #ifndef DEFAULT_MESG
 #define DEFAULT_MESG "Unknown error"
@@ -95,14 +95,14 @@ HEstring(hdf_err_code_t error_code)
 NAME
    HEclear -- clear the error stack
 USAGE
-   VOID HEclear(VOID)
+   void HEclear(void)
 RETURNS
    NONE
 DESCRIPTION
    Remove all currently reported errors from the error stack
 
 ---------------------------------------------------------------------------*/
-VOID
+void
 HEclear(void)
 {
     if (!error_top)
@@ -111,10 +111,8 @@ HEclear(void)
     /* error_top == 0 means no error in stack */
     /* clean out old descriptions if they exist */
     for (; error_top > 0; error_top--) {
-        if (error_stack[error_top - 1].desc) {
-            HDfree(error_stack[error_top - 1].desc);
-            error_stack[error_top - 1].desc = NULL;
-        }
+        free(error_stack[error_top - 1].desc);
+        error_stack[error_top - 1].desc = NULL;
     }
 
 done:
@@ -125,7 +123,7 @@ done:
 NAME
    HEpush -- push an error onto the stack
 USAGE
-   VOID HEpush(error_code, func_name, file_name, line)
+   void HEpush(error_code, func_name, file_name, line)
    int16  error_code;      IN: the numerical value of this error
    char * func_name;       IN: function where the error happened
    char * file_name;       IN: file name of offending function
@@ -141,14 +139,14 @@ DESCRIPTION
    that a description is reported  only if REreport is called
 
 ---------------------------------------------------------------------------*/
-VOID
+void
 HEpush(hdf_err_code_t error_code, const char *function_name, const char *file_name, intn line)
 {
     intn i;
 
     /* if the stack is not allocated, then do it */
     if (!error_stack) {
-        error_stack = (error_t *)HDmalloc((uint32)sizeof(error_t) * ERR_STACK_SZ);
+        error_stack = (error_t *)malloc((uint32)sizeof(error_t) * ERR_STACK_SZ);
         if (!error_stack) {
             puts("HEpush cannot allocate space.  Unable to continue!!");
             exit(8);
@@ -165,10 +163,8 @@ HEpush(hdf_err_code_t error_code, const char *function_name, const char *file_na
         error_stack[error_top].file_name  = file_name;
         error_stack[error_top].line       = line;
         error_stack[error_top].error_code = error_code;
-        if (error_stack[error_top].desc) {
-            HDfree(error_stack[error_top].desc);
-            error_stack[error_top].desc = NULL;
-        }
+        free(error_stack[error_top].desc);
+        error_stack[error_top].desc = NULL;
         error_top++;
     }
 } /* HEpush */
@@ -177,7 +173,7 @@ HEpush(hdf_err_code_t error_code, const char *function_name, const char *file_na
 NAME
    HEreport -- give a more detailed error description
 USAGE
-   VOID HEreport(format, ....)
+   void HEreport(format, ....)
    char * format;           IN: printf style print statement
 RETURNS
    NONE
@@ -187,7 +183,7 @@ DESCRIPTION
    error condition
 
 ---------------------------------------------------------------------------*/
-VOID
+void
 HEreport(const char *format, ...)
 {
     va_list arg_ptr;
@@ -196,14 +192,13 @@ HEreport(const char *format, ...)
     va_start(arg_ptr, format);
 
     if ((error_top < ERR_STACK_SZ + 1) && (error_top > 0)) {
-        tmp = (char *)HDmalloc(ERR_STRING_SIZE);
+        tmp = (char *)malloc(ERR_STRING_SIZE);
         if (!tmp) {
             HERROR(DFE_NOSPACE);
             goto done;
         }
         vsprintf(tmp, format, arg_ptr);
-        if (error_stack[error_top - 1].desc)
-            HDfree(error_stack[error_top - 1].desc);
+        free(error_stack[error_top - 1].desc);
         error_stack[error_top - 1].desc = tmp;
     }
 
@@ -217,7 +212,7 @@ done:
 NAME
    HEprint -- print values from the error stack
 USAGE
-   VOID HEprint(stream, levels)
+   void HEprint(stream, levels)
    FILE * stream;      IN: file to print error message to
    int32  level;       IN: level at which to start printing
 RETURNS
@@ -228,7 +223,7 @@ DESCRIPTION
    added (via HEreport) it is printed too.
 
 ---------------------------------------------------------------------------*/
-VOID
+void
 HEprint(FILE *stream, int32 print_levels)
 {
     if (print_levels == 0 || print_levels > error_top) /* print all errors */
@@ -293,9 +288,9 @@ intn
 HEshutdown(void)
 {
     if (error_stack != NULL) {
-        HDfree(error_stack);
+        free(error_stack);
         error_stack = NULL;
         error_top   = 0;
-    } /* end if */
-    return (SUCCEED);
+    }
+    return SUCCEED;
 } /* end HEshutdown() */

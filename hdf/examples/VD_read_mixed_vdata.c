@@ -20,7 +20,7 @@ main()
     float32 itemp[N_RECORDS];     /* buffer to hold values of first field     */
     char    idents[N_RECORDS];    /* buffer to hold values of fourth field    */
     uint8   databuf[BUFFER_SIZE]; /* buffer to hold read data, still packed   */
-    VOIDP   fldbufptrs[N_FIELDS]; /*pointers to be pointing to the field buffers*/
+    void   *fldbufptrs[N_FIELDS]; /*pointers to be pointing to the field buffers*/
     int     i;
 
     /********************** End of variable declaration **********************/
@@ -73,8 +73,8 @@ main()
      * Note that the second parameter is _HDF_VSUNPACK for unpacking and the
      * number of records is the one returned by VSread.
      */
-    if (VSfpack(vdata_id, _HDF_VSUNPACK, FIELDNAME_LIST, (VOIDP)databuf, BUFFER_SIZE, num_of_records, NULL,
-                (VOIDP)fldbufptrs) == FAIL)
+    if (VSfpack(vdata_id, _HDF_VSUNPACK, FIELDNAME_LIST, (void *)databuf, BUFFER_SIZE, num_of_records, NULL,
+                (void *)fldbufptrs) == FAIL)
         printf("*** ERROR from VSfpack\n");
 
     /*

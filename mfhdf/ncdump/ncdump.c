@@ -9,8 +9,9 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include "local_nc.h"
-
 #include "ncdump.h"
+
+#include "getopt.h"
 #include "dumplib.h"
 #include "vardata.h"
 
@@ -231,34 +232,31 @@ pr_att_vals(nc_type type, int len, void *vals)
 }
 
 /*
- * fixstr
+ * sanitize_string
  *
  * 	If the string contains characters other than alpha-numerics,
  * 	an underscore, or a hyphen, convert it to an underscore.
- *
- * Modification:
- *	- Added "fix_str" to determine whether the conversion should be
- *	  carried out, based on user's request. - bug #934, BMR 7/3/2005
  */
 char *
-fixstr(char *str, bool fix_str)
+sanitize_string(char *str, bool sanitize)
 {
-#ifndef __GNUC__
-    char *strdup(const char *);
-#endif /* linux */
-    char *new_str, *ptr;
+    char *new_str = NULL;
 
     if (!str)
         return NULL;
 
-    ptr = new_str = strdup(str);
-
-    if (!ptr) {
+    new_str = HDstrdup(str);
+    if (NULL == new_str) {
         error("Out of memory!");
         return NULL;
     }
 
-    if (fix_str) {
+    if (sanitize) {
+        char *ptr = new_str;
+
+        /* Convert all non-alpha, non-numeric, non-hyphen, non-underscore
+         * characters to underscores
+         */
         for (; *ptr; ptr++)
             if (!isalnum(*ptr) && *ptr != '_' && *ptr != '-')
                 *ptr = '_';
@@ -269,9 +267,6 @@ fixstr(char *str, bool fix_str)
 
 static void
 do_ncdump(char *path, struct fspec *specp)
-/*     char *path;
-     struct fspec* specp;
-*/
 {
     int          ndims;       /* number of dimensions */
     int          nvars;       /* number of variables */
@@ -324,13 +319,13 @@ do_ncdump(char *path, struct fspec *specp)
         Printf("dimensions:\n");
 
         for (dimid = 0; dimid < ndims; dimid++) {
-            char *fixed_str;
+            char *fixed_str = NULL;
 
-            (void)ncdiminq(ncid, dimid, dims[dimid].name, &dims[dimid].size);
-            fixed_str = fixstr(dims[dimid].name, specp->fix_str);
+            if (ncdiminq(ncid, dimid, dims[dimid].name, &dims[dimid].size) < 0)
+                fprintf(stderr, "Error calling ncdiminq on dimid = %d\n", dimid);
 
-            if (!fixed_str && dims[dimid].name) {
-                /* strdup(3) failed */
+            fixed_str = sanitize_string(dims[dimid].name, specp->fix_str);
+            if (fixed_str == NULL) {
                 (void)ncclose(ncid);
                 return;
             }
@@ -351,10 +346,9 @@ do_ncdump(char *path, struct fspec *specp)
         char *fixed_var;
 
         (void)ncvarinq(ncid, varid, var.name, &var.type, &var.ndims, var.dims, &var.natts);
-        fixed_var = fixstr(var.name, specp->fix_str);
+        fixed_var = sanitize_string(var.name, specp->fix_str);
 
-        if (!fixed_var && var.name) {
-            /* strdup(3) failed */
+        if (fixed_var == NULL) {
             (void)ncclose(ncid);
             return;
         }
@@ -365,10 +359,9 @@ do_ncdump(char *path, struct fspec *specp)
             Printf("(");
 
         for (id = 0; id < var.ndims; id++) {
-            char *fixed_dim = fixstr(dims[var.dims[id]].name, specp->fix_str);
+            char *fixed_dim = sanitize_string(dims[var.dims[id]].name, specp->fix_str);
 
-            if (!fixed_dim && dims[var.dims[id]].name) {
-                /* strdup(3) failed */
+            if (fixed_dim == NULL) {
                 (void)ncclose(ncid);
                 free(fixed_var);
                 return;
@@ -385,7 +378,7 @@ do_ncdump(char *path, struct fspec *specp)
             char *fixed_att;
 
             (void)ncattname(ncid, varid, ia, att.name);
-            fixed_att = fixstr(att.name, specp->fix_str);
+            fixed_att = sanitize_string(att.name, specp->fix_str);
 
             if (!fixed_att) {
                 (void)ncclose(ncid);
@@ -423,7 +416,7 @@ do_ncdump(char *path, struct fspec *specp)
         char *fixed_att;
 
         (void)ncattname(ncid, NC_GLOBAL, ia, att.name);
-        fixed_att = fixstr(att.name, specp->fix_str);
+        fixed_att = sanitize_string(att.name, specp->fix_str);
 
         if (!fixed_att) {
             (void)ncclose(ncid);
@@ -607,9 +600,6 @@ set_sigdigs(char *optarg)
 int
 main(int argc, char *argv[])
 {
-    extern int          optind;
-    extern int          opterr;
-    extern char        *optarg;
     static struct fspec fspec = /* defaults, overridden on command line */
         {
             0,         /* construct netcdf name from file name */
@@ -709,5 +699,6 @@ main(int argc, char *argv[])
         if (argc > 0)
             do_ncdump(argv[i], &fspec);
     } while (++i < argc);
+
     return EXIT_SUCCESS;
 }

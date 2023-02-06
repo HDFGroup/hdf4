@@ -134,7 +134,7 @@ test_dim1_SDS1(void)
     VERIFY(n_datasets, 2, "SDfileinfo");
 
     /* Write data to the SDS */
-    status = SDwritedata(sds_id, &start, &stride, dimsize, (VOIDP)sds1_data);
+    status = SDwritedata(sds_id, &start, &stride, dimsize, (void *)sds1_data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Close dataset and file. */
@@ -159,7 +159,7 @@ test_dim1_SDS1(void)
     }
     else {
         /* Get the list of all variables of named VAR1_NAME */
-        var_list = (hdf_varlist_t *)HDmalloc(n_vars * sizeof(hdf_varlist_t));
+        var_list = (hdf_varlist_t *)malloc(n_vars * sizeof(hdf_varlist_t));
         status   = SDnametoindices(file_id, VAR1_NAME, var_list);
 
         /* In this case, the first variable is a dataset */
@@ -170,7 +170,7 @@ test_dim1_SDS1(void)
             }
         }
     }
-    HDfree(var_list);
+    free(var_list);
 
     sds_id = SDselect(file_id, index);
     CHECK(sds_id, FAIL, "SDselect");
@@ -578,13 +578,13 @@ test_named_vars(void)
     CHECK(status, FAIL, "SDgetnumvars_byname");
     VERIFY(n_vars, 3, "SDgetnumvars_byname");
 
-    allvars = (hdf_varlist_t *)HDmalloc(n_vars * sizeof(hdf_varlist_t));
+    allvars = (hdf_varlist_t *)malloc(n_vars * sizeof(hdf_varlist_t));
     status  = SDnametoindices(file_id, COMMON_NAME, allvars);
     CHECK(status, FAIL, "SDnametoindices");
     VERIFY(allvars[0].var_type, IS_SDSVAR, "SDnametoindices");
     VERIFY(allvars[1].var_type, IS_SDSVAR, "SDnametoindices");
     VERIFY(allvars[2].var_type, IS_CRDVAR, "SDnametoindices");
-    HDfree(allvars);
+    free(allvars);
 
     /* Compare file contents with predefined text to verify */
     for (idx = 0; idx < n_datasets; idx++) {

@@ -60,7 +60,7 @@ case $CC in
             grep 'GCC' | sed 's/\(.*(GCC) [-a-z0-9\. ]*\).*/\1/'`
         ;;
 
-    *icc*)
+    *icc*|*icx*)
         cc_version_info=`$CC $CCFLAGS $H5_CCFLAGS -V 2>&1 | grep 'Version' |\
             sed 's/\(Intel.* Compiler\).*\( Version [a-z0-9\.]*\).*\( Build [0-9]*\)/\1\2\3/'`
         ;;
@@ -89,7 +89,7 @@ case $F77 in
         fi
         ;;
 
-    *ifc*|*ifort*)
+    *ifc*|*ifort*|*ifx*)
         fc_version_info=`$F77 $FFLAGS -V 2>&1 | grep 'Version' |\
             sed 's/\(Intel.* Compiler\).*\( Version [a-z0-9\.]*\).*\( Build [0-9]*\)/\1\2\3/'`
         fc_version="`$F77 $FFLAGS -V 2>&1 |grep '^Intel'`"

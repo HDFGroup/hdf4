@@ -93,7 +93,7 @@ test_attrs()
 
     /* Set an attribute that describes the file contents. */
     n_values = 16;
-    status   = SDsetattr(sd_id, FILE_ATTR_NAME, DFNT_CHAR8, n_values, (VOIDP)file_values);
+    status   = SDsetattr(sd_id, FILE_ATTR_NAME, DFNT_CHAR8, n_values, (void *)file_values);
     CHECK(status, FAIL, "SDsetattr")
 
     /***************************************************************
@@ -117,7 +117,7 @@ test_attrs()
 
     starts[0] = 0;
     edges[0]  = LENGTH1_X;
-    status    = SDwritedata(sds_id, starts, NULL, edges, (VOIDP)data1);
+    status    = SDwritedata(sds_id, starts, NULL, edges, (void *)data1);
     CHECK(status, FAIL, "SDwritedata");
 
     status = SDendaccess(sds_id);
@@ -125,10 +125,10 @@ test_attrs()
 
     /* Assign two attributes to the first SDS. */
     n_values = 2;
-    status   = SDsetattr(sds_id, SDS_ATTR_NAME1, DFNT_FLOAT32, n_values, (VOIDP)sds_values);
+    status   = SDsetattr(sds_id, SDS_ATTR_NAME1, DFNT_FLOAT32, n_values, (void *)sds_values);
     CHECK(status, FAIL, "SDsetattr")
     n_values = 7;
-    status   = SDsetattr(sds_id, SDS_ATTR_NAME2, DFNT_CHAR8, n_values, (VOIDP)dim_values);
+    status   = SDsetattr(sds_id, SDS_ATTR_NAME2, DFNT_CHAR8, n_values, (void *)dim_values);
     CHECK(status, FAIL, "SDsetattr")
 
     /*
@@ -148,7 +148,7 @@ test_attrs()
     starts[1] = 0;
     edges[0]  = LENGTH2_X;
     edges[1]  = LENGTH2_Y;
-    status    = SDwritedata(sds_id, starts, NULL, edges, (VOIDP)data2);
+    status    = SDwritedata(sds_id, starts, NULL, edges, (void *)data2);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Get the the second dimension identifier of the SDS. */
@@ -158,7 +158,7 @@ test_attrs()
 
     /* Set an attribute of the dimension that specifies the dimension metric. */
     n_values = 7;
-    status   = SDsetattr(dim_id, DIM_ATTR_NAME, DFNT_CHAR8, n_values, (VOIDP)dim_values);
+    status   = SDsetattr(dim_id, DIM_ATTR_NAME, DFNT_CHAR8, n_values, (void *)dim_values);
     CHECK(status, FAIL, "SDsetattr")
 
     status = SDendaccess(sds_id);
@@ -219,7 +219,7 @@ test_attrs()
 
 /* Utility functions: */
 /* to generate data set's data */
-static VOID gen2Dfloat(int height, int width, float *data);
+static void gen2Dfloat(int height, int width, float *data);
 /* to verify data of labels and descriptions */
 static intn check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label, char *desc);
 
@@ -228,7 +228,7 @@ static intn check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label, cha
 **  gen2Dfloat:  generate 2-D data array
 **
 ****************************************************************/
-static VOID
+static void
 gen2Dfloat(int height, int width, float *data)
 {
     int    i, j;
@@ -264,13 +264,13 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label, char *desc)
     indesclen = DFANgetdesclen(fname, tag, ref);
     CHECK(indesclen, FAIL, "check_lab_desc: DFANgetdesclen");
     if (indesclen >= 0) {
-        indesc = (char *)HDmalloc(indesclen + 1);
+        indesc = (char *)malloc(indesclen + 1);
         ret    = DFANgetdesc(fname, tag, ref, indesc, MAXLEN_DESC);
         CHECK(ret, FAIL, "check_lab_desc: DFANgetdesc");
 
         indesc[indesclen] = '\0';
         VERIFY_CHAR(indesc, desc, "check_lab_desc: DFANgetdesc");
-        HDfree((VOIDP)indesc);
+        free(indesc);
     }
     return (num_errs);
 }
@@ -397,7 +397,7 @@ add_sdsNDG_annotations()
 
     /***** generate float array *****/
 
-    data        = (float *)HDmalloc(ROWS * COLS * sizeof(float));
+    data        = (float *)malloc(ROWS * COLS * sizeof(float));
     dimsizes[0] = ROWS;
     dimsizes[1] = COLS;
 
@@ -412,7 +412,7 @@ add_sdsNDG_annotations()
     /* Write REPS data sets and add a label and a description to each data set */
     for (jj = 0; jj < REPS; jj++) {
         /* write out scientific data set */
-        ret = DFSDadddata(DFAN_NDG_FILE, 2, dimsizes, (VOIDP)data);
+        ret = DFSDadddata(DFAN_NDG_FILE, 2, dimsizes, (void *)data);
         CHECK(ret, FAIL, "add_sdsNDG_annotations: DFSDadddata");
         refnum = DFSDlastref();
 
@@ -433,7 +433,7 @@ add_sdsNDG_annotations()
         /* Verify data of labels and descriptions */
         num_errs = check_lab_desc(DFAN_NDG_FILE, DFTAG_NDG, refnum, labels[jj], descs[jj]);
     }
-    HDfree((VOIDP)data);
+    free(data);
 
     return (num_errs);
 } /* add_sdsNDG_annotations */
@@ -466,7 +466,7 @@ add_sdsSDG_annotations()
 
     /***** generate float array and image *****/
 
-    data = (float *)HDmalloc(ROWS * COLS * sizeof(float));
+    data = (float *)malloc(ROWS * COLS * sizeof(float));
 
     dimsizes[0] = ROWS;
     dimsizes[1] = COLS;
@@ -478,7 +478,7 @@ add_sdsSDG_annotations()
     /********  Write labels and descriptions *********/
     for (j = 0; j < REPS; j++) {
         /* write out scientific data set */
-        DFSDadddata(DFAN_SDG_FILE, 2, dimsizes, (VOIDP)data);
+        DFSDadddata(DFAN_SDG_FILE, 2, dimsizes, (void *)data);
 
         /* write out annotations for 2 out of every 3 */
         refnum = DFSDlastref();
@@ -496,7 +496,7 @@ add_sdsSDG_annotations()
         if ((j % 3) != 0) /* read in annotations for 2 out of every 3 */
             check_lab_desc(DFAN_SDG_FILE, DFTAG_SDG, refnum, labsds, descsds);
     }
-    HDfree((VOIDP)data);
+    free(data);
 
     return 0;
 }
@@ -518,10 +518,10 @@ get_ann_datainfo(int32 id, ann_type annot_type, int32 *chk_offsets, int32 *chk_l
     CHECK(num_annots, FAIL, "get_ann_datainfo: SDgetanndatainfo annot_type with NULL buffers");
 
     if (num_annots > 0) {
-        offsetarray = (int32 *)HDmalloc(num_annots * sizeof(int32));
+        offsetarray = (int32 *)malloc(num_annots * sizeof(int32));
         if (offsetarray == NULL)
             exit(-1);
-        lengtharray = (int32 *)HDmalloc(num_annots * sizeof(int32));
+        lengtharray = (int32 *)malloc(num_annots * sizeof(int32));
         if (lengtharray == NULL)
             exit(-1);
 
@@ -534,8 +534,8 @@ get_ann_datainfo(int32 id, ann_type annot_type, int32 *chk_offsets, int32 *chk_l
             VERIFY(lengtharray[ii], chk_lengths[ii], "get_ann_datainfo: SDgetanndatainfo");
         }
 
-        HDfree(offsetarray);
-        HDfree(lengtharray);
+        free(offsetarray);
+        free(lengtharray);
     }
     return (num_errs);
 }
@@ -762,17 +762,17 @@ test_dfsdattrs()
 
     /* Set dimension scales */
     /*
-    ret = DFSDsetdimscale(1, dims[0], (VOIDP) scplnf32);
+    ret = DFSDsetdimscale(1, dims[0], (void *) scplnf32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(2, dims[1], (VOIDP) scrowf32);
+    ret = DFSDsetdimscale(2, dims[1], (void *) scrowf32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
     */
 
     /* Write/Read data to/from SDS */
-    ret = DFSDputdata(OLDATTFILE, rank, dims, (VOIDP)f32);
+    ret = DFSDputdata(OLDATTFILE, rank, dims, (void *)f32);
     CHECK(ret, FAIL, "DFSDputdata");
-    ret = DFSDgetdata(OLDATTFILE, rank, dims, (VOIDP)tf32);
+    ret = DFSDgetdata(OLDATTFILE, rank, dims, (void *)tf32);
     CHECK(ret, FAIL, "DFSDgetdata");
 
     /* Read attributes from the dataset and its dimensions */
@@ -897,7 +897,7 @@ readnoHDF_char(const char *filename, const int32 offset, const int32 length, con
     }
 
     /* Allocate buffers for SDS' data */
-    readcbuf = (char *)HDmalloc(length * sizeof(char));
+    readcbuf = (char *)malloc(length * sizeof(char));
     CHECK_ALLOC(readcbuf, "readcbuf", "readnoHDF_char");
 
     /* Read in this block of data */
@@ -910,7 +910,7 @@ readnoHDF_char(const char *filename, const int32 offset, const int32 length, con
                     "%s\n   >>> read = %s\n",
                     orig_buf, readcbuf);
     }
-    HDfree(readcbuf);
+    free(readcbuf);
 
     /* Close the file */
     if (fclose(fd) == -1) {
