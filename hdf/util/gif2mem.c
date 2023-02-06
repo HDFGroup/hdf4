@@ -187,7 +187,7 @@ if (ferror(fpGif))
                 */
                 gifImageDesc[ImageCount - 1]->Image = Decompress(gifImageDesc[ImageCount - 1], gifHead);
                 free(gifImageDesc[ImageCount - 1]->GIFImage);
-
+                gifImageDesc[ImageCount - 1]->GIFImage = NULL;
                 /*
                 ** Convert the local palette into an HDF compatible palette
                 ** In case the local color table is present, it is written out as the HDFPalette
@@ -288,7 +288,7 @@ if (ferror(fpGif))
                         if (ReadGifGraphicControl(gifGraphicControl[ImageCount - 1], &MemGif))
                             fprintf(stderr, "Error reading Graphic Control Extension information\n");
 
-                        if (!*MemGif++ == 0)
+                        if (!(*MemGif++ == 0))
                             fprintf(stderr, "Error reading Graphic Control Extension\n");
 
                         break;

@@ -99,12 +99,7 @@ char    *GIFFileName;
         status = Vsetattr(vgroup_id, CommentName, DFNT_CHAR8,
                           (int32)(GifMemoryStruct.GifCommentExtension[i])->DataSize,
                           (void *)(GifMemoryStruct.GifCommentExtension[i])->CommentData);
-        free(GifMemoryStruct.GifCommentExtension[i]);
-        GifMemoryStruct.GifCommentExtension[i] = NULL;
     }
-    gifHead.CommentCount = 0;
-    free(GifMemoryStruct.GifCommentExtension);
-    GifMemoryStruct.GifCommentExtension = NULL;
 
     for (i = 0; i < ApplicationCount; i++) {
         sprintf(ApplicationName, "Application Extension Data %d", (int)i);
