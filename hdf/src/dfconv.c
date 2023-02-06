@@ -19,7 +19,7 @@
 
  Invokes:
 
- PRIVATE conversion functions: All of these are now in separate files!
+ Static conversion functions: All of these are now in separate files!
     dfknat.c
     DFKnb1b -  Native mode for 8 bit integers
     DFKnb2b -  Native mode for 16 bit integers
@@ -49,7 +49,7 @@
 
 /*****************************************************************************/
 /*                                                                           */
-/*    All the routines in this file marked as PRIVATE have been marked so    */
+/*    All the routines in this file marked as static have been marked so    */
 /*  for a reason.  *ANY* of these routines may or may nor be supported in    */
 /*  the next version of HDF (4.00).  Furthurmore, the names, parameters, or   */
 /*  functionality is *NOT* guaranteed to remain the same.                    */
@@ -70,30 +70,30 @@
 /*
  **  Static function prototypes
  */
-PRIVATE int DFKInoset(VOIDP source, VOIDP dest, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
+static int DFKInoset(void *source, void *dest, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
 /* Prototypes */
 extern int32 DFKqueryNT(void);
-extern int   DFKsetcustom(int (*DFKcustin)(VOIDP source, VOIDP dest, uint32 num_elm, uint32 source_stride,
+extern int   DFKsetcustom(int (*DFKcustin)(void *source, void *dest, uint32 num_elm, uint32 source_stride,
                                          uint32 dest_stride),
-                          int (*DFKcustout)(VOIDP source, VOIDP dest, uint32 num_elm, uint32 source_stride,
+                          int (*DFKcustout)(void *source, void *dest, uint32 num_elm, uint32 source_stride,
                                           uint32 dest_stride));
 extern int   DFconvert(uint8 *source, uint8 *dest, int ntype, int sourcetype, int desttype, int32 size);
 
 /*
  **  Conversion Routine Pointer Definitions
  */
-static int (*DFKnumin)(VOIDP source, VOIDP dest, uint32 num_elm, uint32 source_stride,
+static int (*DFKnumin)(void *source, void *dest, uint32 num_elm, uint32 source_stride,
                        uint32 dest_stride)  = DFKInoset;
-static int (*DFKnumout)(VOIDP source, VOIDP dest, uint32 num_elm, uint32 source_stride,
+static int (*DFKnumout)(void *source, void *dest, uint32 num_elm, uint32 source_stride,
                         uint32 dest_stride) = DFKInoset;
 
 /************************************************************
  * If the programmer forgot to call DFKsetntype, then let
  * them know about it.
  ************************************************************/
-PRIVATE int
-DFKInoset(VOIDP source, VOIDP dest, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
+static int
+DFKInoset(void *source, void *dest, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
 {
     (void)source;
     (void)dest;
@@ -112,8 +112,8 @@ DFKInoset(VOIDP source, VOIDP dest, uint32 num_elm, uint32 source_stride, uint32
  * Routines that depend on the above information
  *****************************************************************************/
 
-PRIVATE int32 g_ntype = DFNT_NONE; /* Holds current number type. */
-                                   /* Initially not set.         */
+static int32 g_ntype = DFNT_NONE; /* Holds current number type. */
+                                  /* Initially not set.         */
 
 /************************************************************
  * DFKqueryNT()
@@ -330,9 +330,9 @@ DFKsetNT(int32 ntype)
  * conversion routines....
  *****************************************************************************/
 int
-DFKsetcustom(int (*DFKcustin)(VOIDP /* source */, VOIDP /* dest */, uint32 /* num_elm */,
+DFKsetcustom(int (*DFKcustin)(void * /* source */, void * /* dest */, uint32 /* num_elm */,
                               uint32 /* source_stride */, uint32 /* dest_stride */),
-             int (*DFKcustout)(VOIDP /* source */, VOIDP /* dest */, uint32 /* num_elm */,
+             int (*DFKcustout)(void * /* source */, void * /* dest */, uint32 /* num_elm */,
                                uint32 /* source_stride */, uint32 /* dest_stride */))
 {
     DFKnumin  = DFKcustin;
@@ -403,7 +403,7 @@ DFconvert(uint8 *source, uint8 *dest, int ntype, int sourcetype, int desttype, i
     }
 
     if (sourcetype == desttype) {
-        HDmemcpy(dest, source, size);
+        memcpy(dest, source, size);
         return 0;
     }
 
@@ -411,12 +411,12 @@ DFconvert(uint8 *source, uint8 *dest, int ntype, int sourcetype, int desttype, i
 
     /* Check to see if they want to convert numbers in from the disk */
     if (sourcetype == DFNTF_IEEE && (desttype == DFNTF_VAX || desttype == DFNTF_CRAY || desttype == DFNTF_PC))
-        return (DFKnumin)((VOIDP)source, (VOIDP)dest, num_elm, 0, 0);
+        return (DFKnumin)((void *)source, (void *)dest, num_elm, 0, 0);
 
     /* Check to see if they want to convert numbers out to disk */
     if (desttype == DFNTF_IEEE &&
         (sourcetype == DFNTF_VAX || sourcetype == DFNTF_CRAY || sourcetype == DFNTF_PC))
-        return DFKnumout((VOIDP)source, (VOIDP)dest, num_elm, 0, 0);
+        return DFKnumout((void *)source, (void *)dest, num_elm, 0, 0);
 
     /* Return an error because they did not specify valid translation codes */
     HERROR(DFE_BADCONV);
@@ -485,7 +485,7 @@ DFKgetPNSC(int32 numbertype, int32 machinetype)
  * Method:  Calls DFKsetNT, then call DFnumin or DFnumout
  *---------------------------------------------------------------------------*/
 int32
-DFKconvert(VOIDP source, VOIDP dest, int32 ntype, int32 num_elm, int16 acc_mode, int32 source_stride,
+DFKconvert(void *source, void *dest, int32 ntype, int32 num_elm, int16 acc_mode, int32 source_stride,
            int32 dest_stride)
 {
     int ret;

@@ -761,8 +761,8 @@ test_readattrtwice(void)
             ret = VSattrinfo(vsid, _HDF_VDATA, k, name, &data_type, &count, &size);
             CHECK_VOID(ret, FAIL, "VSattrinfo");
 
-            buffer = HDmalloc(size + 1);
-            CHECK_VOID(buffer, NULL, "HDmalloc");
+            buffer = malloc(size + 1);
+            CHECK_VOID(buffer, NULL, "malloc");
 
             ret = VSgetattr(vsid, _HDF_VDATA, k, buffer);
             CHECK_VOID(ret, FAIL, "VSgetattr");
@@ -772,7 +772,7 @@ test_readattrtwice(void)
                 num_errs++;
                 printf(">>> Reading attribute twice failed - (bugzilla 486)\n");
             }
-            HDfree(buffer);
+            free(buffer);
 
             nfields = VFnfields(vsid);
             CHECK_VOID(nfields, FAIL, "VFnfields");
@@ -785,8 +785,8 @@ test_readattrtwice(void)
                     ret = VSattrinfo(vsid, findex, fattr_index, name, &data_type, &count, &size);
                     CHECK_VOID(ret, FAIL, "VSattrinfo");
 
-                    buffer = HDmalloc(size);
-                    CHECK_VOID(buffer, NULL, "HDmalloc");
+                    buffer = malloc(size);
+                    CHECK_VOID(buffer, NULL, "malloc");
 
                     ret = VSgetattr(vsid, findex, fattr_index, buffer);
                     CHECK_VOID(ret, FAIL, "VSgetattr");
@@ -797,7 +797,7 @@ test_readattrtwice(void)
                         printf(">>> Reading attribute twice failed - (bugzilla 486)\n");
                     }
 
-                    HDfree(buffer);
+                    free(buffer);
                 } /* for fattr_index */
             }     /* for findex */
         }         /* for k */

@@ -633,10 +633,10 @@ xdr_NCv1data(XDR *xdrs, u_long where, nc_type type, Void *values)
 
 #ifdef HDF
 
-PRIVATE int32 tBuf_size    = 0;
-PRIVATE int32 tValues_size = 0;
-PRIVATE int8 *tBuf         = NULL;
-PRIVATE int8 *tValues      = NULL;
+static int32 tBuf_size    = 0;
+static int32 tValues_size = 0;
+static int8 *tBuf         = NULL;
+static int8 *tValues      = NULL;
 
 /* ------------------------------ SDPfreebuf ------------------------------ */
 /*

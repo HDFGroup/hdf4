@@ -16,7 +16,6 @@
 #include "val.h"
 #include "error.h"
 #include "tests.h"
-#include "alloc.h"
 #include "emalloc.h"
 #ifdef HDF
 #include "hdf.h"
@@ -443,8 +442,8 @@ test_ncrecput(char *path)
         nerrs++;
     }
     for (iv = 0; iv < nrvars; iv++) {
-        Free(datap[iv]);
-        Free(datar[iv]);
+        free(datap[iv]);
+        free(datar[iv]);
     }
 
     if (nerrs > 0)
@@ -575,8 +574,8 @@ test_ncrecget(char *path)
         nerrs++;
     }
     for (iv = 0; iv < nrvars; iv++) {
-        Free(datap[iv]);
-        Free(datar[iv]);
+        free(datap[iv]);
+        free(datar[iv]);
     }
 
     if (nerrs > 0)

@@ -15,22 +15,22 @@
 /* Extended from (added threads to) Knuth 6.2.3, Algorithm A (AVL trees) */
 /* Basic tree structure by Adel'son-Vel'skii and Landis */
 
-#include <stdio.h> /* NULL */
+#include <stdio.h>
+
 #include "hdf.h"
+
 #define TBBT_INTERNALS
 #include "tbbt.h"
-#define Alloc(cnt, typ) (typ *)HDmalloc((cnt) * sizeof(typ))
-#define Free(x)         (HDfree((VOIDP)x))
 
 #define KEYcmp(k1, k2, a)                                                                                    \
-    ((NULL != compar) ? (*compar)(k1, k2, a) : HDmemcmp(k1, k2, 0 < (a) ? (a) : (intn)HDstrlen(k1)))
+    ((NULL != compar) ? (*compar)(k1, k2, a) : memcmp(k1, k2, 0 < (a) ? (a) : (intn)HDstrlen(k1)))
 
-VOID tbbt1dump(TBBT_NODE *node, intn method);
+void tbbt1dump(TBBT_NODE *node, intn method);
 
 /* Function Prototypes */
-extern VOID tbbt_printNode(TBBT_NODE *node, VOID (*key_dump)(VOID *, VOID *));
-extern VOID tbbt_dumpNode(TBBT_NODE *node, VOID (*key_dump)(VOID *, VOID *), intn method);
-extern VOID tbbt_dump(TBBT_TREE *ptree, VOID (*key_dump)(VOID *, VOID *), intn method);
+extern void tbbt_printNode(TBBT_NODE *node, void (*key_dump)(void *, void *));
+extern void tbbt_dumpNode(TBBT_NODE *node, void (*key_dump)(void *, void *), intn method);
+extern void tbbt_dump(TBBT_TREE *ptree, void (*key_dump)(void *, void *), intn method);
 
 static TBBT_NODE *tbbt_get_node(void);
 static void       tbbt_release_node(TBBT_NODE *nod);
@@ -109,7 +109,7 @@ tbbtprev(TBBT_NODE *node)
 /* tbbtffind is based on this routine - fix bugs in both places! */
 /* Returns a pointer to the found node (or NULL) */
 TBBT_NODE *
-tbbtfind(TBBT_NODE *root, VOIDP key, intn (*compar)(VOIDP, VOIDP, intn), intn arg, TBBT_NODE **pp)
+tbbtfind(TBBT_NODE *root, void *key, intn (*compar)(void *, void *, intn), intn arg, TBBT_NODE **pp)
 {
     TBBT_NODE *ptr    = root;
     TBBT_NODE *parent = NULL;
@@ -135,7 +135,7 @@ tbbtfind(TBBT_NODE *root, VOIDP key, intn (*compar)(VOIDP, VOIDP, intn), intn ar
 /* This routine is based on tbbtfind (fix bugs in both places!) */
 /* Returns a pointer to the found node (or NULL) */
 static TBBT_NODE *
-tbbtffind(TBBT_NODE *root, VOIDP key, uintn fast_compare, TBBT_NODE **pp)
+tbbtffind(TBBT_NODE *root, void *key, uintn fast_compare, TBBT_NODE **pp)
 {
     TBBT_NODE *ptr    = root;
     TBBT_NODE *parent = NULL;
@@ -182,7 +182,7 @@ tbbtffind(TBBT_NODE *root, VOIDP key, uintn fast_compare, TBBT_NODE **pp)
 /* tbbtdfind -- Look up a node in a "described" tree based on a key value */
 /* Returns a pointer to the found node (or NULL) */
 TBBT_NODE *
-tbbtdfind(TBBT_TREE *tree, VOIDP key, TBBT_NODE **pp)
+tbbtdfind(TBBT_TREE *tree, void *key, TBBT_NODE **pp)
 {
     if (tree == NULL)
         return (NULL);
@@ -196,7 +196,7 @@ tbbtdfind(TBBT_TREE *tree, VOIDP key, TBBT_NODE **pp)
 /*  based on a key value */
 /* Returns a pointer to the found node (or NULL) */
 TBBT_NODE *
-tbbtless(TBBT_NODE *root, VOIDP key, intn (*compar)(VOIDP, VOIDP, intn), intn arg, TBBT_NODE **pp)
+tbbtless(TBBT_NODE *root, void *key, intn (*compar)(void *, void *, intn), intn arg, TBBT_NODE **pp)
 {
     TBBT_NODE *ptr    = root;
     TBBT_NODE *parent = NULL;
@@ -235,7 +235,7 @@ tbbtless(TBBT_NODE *root, VOIDP key, intn (*compar)(VOIDP, VOIDP, intn), intn ar
 /* tbbtdless -- Find a node less than a key in a "described" tree */
 /* Returns a pointer to the found node (or NULL) */
 TBBT_NODE *
-tbbtdless(TBBT_TREE *tree, VOIDP key, TBBT_NODE **pp)
+tbbtdless(TBBT_TREE *tree, void *key, TBBT_NODE **pp)
 {
     if (tree == NULL)
         return (NULL);
@@ -351,7 +351,7 @@ swapkid(TBBT_NODE **root, TBBT_NODE *ptr, intn side)
  * and looking for unbalanced ancestors.  Adjust all balance factors and re-
  * balance through "rotation"s when needed.
  */
-static VOID
+static void
 balance(TBBT_NODE **root, TBBT_NODE *ptr, intn side, intn added)
 {
     intn deeper = added; /* 1 if sub-tree got longer; -1 if got shorter */
@@ -476,8 +476,8 @@ balance(TBBT_NODE **root, TBBT_NODE *ptr, intn side, intn added)
 
 /* Returns pointer to inserted node (or NULL) */
 TBBT_NODE *
-tbbtins(TBBT_NODE **root, VOIDP item, VOIDP key,
-        intn (*compar)(VOIDP /* k1 */, VOIDP /* k2 */, intn /* arg */), intn arg)
+tbbtins(TBBT_NODE **root, void *item, void *key,
+        intn (*compar)(void * /* k1 */, void * /* k2 */, intn /* arg */), intn arg)
 {
     intn       cmp;
     TBBT_NODE *ptr, *parent;
@@ -513,7 +513,7 @@ tbbtins(TBBT_NODE **root, VOIDP item, VOIDP key,
 /* tbbtdins -- Insert a node into a "described" tree */
 /* Returns a pointer to the inserted node */
 TBBT_NODE *
-tbbtdins(TBBT_TREE *tree, VOIDP item, VOIDP key)
+tbbtdins(TBBT_TREE *tree, void *item, void *key)
 {
     TBBT_NODE *ret_node; /* the node to return */
 
@@ -536,14 +536,14 @@ tbbtdins(TBBT_TREE *tree, VOIDP item, VOIDP key)
  * node is placed in the buffer that it points to.
  */
 /* Data item pointer of deleted node is returned */
-VOIDP
-tbbtrem(TBBT_NODE **root, TBBT_NODE *node, VOIDP *kp)
+void *
+tbbtrem(TBBT_NODE **root, TBBT_NODE *node, void **kp)
 {
     TBBT_NODE *leaf; /* Node with one or zero children */
     TBBT_NODE *par;  /* Parent of `leaf' */
     TBBT_NODE *next; /* Next/prev node near `leaf' (`leaf's `side' thread) */
     intn       side; /* `leaf' is `side' child of `par' */
-    VOIDP      data; /* Saved pointer to data item of deleted node */
+    void      *data; /* Saved pointer to data item of deleted node */
 
     if (NULL == root || NULL == node)
         return (NULL); /* Argument couldn't find node to delete */
@@ -647,18 +647,19 @@ tbbtrem(TBBT_NODE **root, TBBT_NODE *node, VOIDP *kp)
 /* tbbtdmake - Allocate a new tree description record for an empty tree */
 /* Returns a pointer to the description record */
 TBBT_TREE *
-tbbtdmake(intn (*cmp)(VOIDP /* k1 */, VOIDP /* k2 */, intn /* arg */), intn arg, uintn fast_compare)
+tbbtdmake(intn (*cmp)(void * /* k1 */, void * /* k2 */, intn /* arg */), intn arg, uintn fast_compare)
 {
-    TBBT_TREE *tree = Alloc(1, TBBT_TREE);
-
+    TBBT_TREE *tree = malloc(sizeof(TBBT_TREE));
     if (NULL == tree)
-        return (NULL);
+        return NULL;
+
     tree->root         = NULL;
     tree->count        = 0;
     tree->fast_compare = fast_compare;
     tree->compar       = cmp;
     tree->cmparg       = arg;
-    return (tree);
+
+    return tree;
 }
 
 #ifdef WASTE_STACK
@@ -666,8 +667,8 @@ tbbtdmake(intn (*cmp)(VOIDP /* k1 */, VOIDP /* k2 */, intn /* arg */), intn arg,
  * space, this next less-simple recursive version that wastes less stack space,
  * or the last non-recursive version which isn't simple but saves stack space.
  */
-static VOID (*FD)(VOIDP item), (*FK)(VOIDP key);
-static VOID
+static void (*FD)(void *item), (*FK)(void *key);
+static void
 tbbt1free(TBBT_NODE *node)
 {
     if (HasChild(node, LEFT))
@@ -681,8 +682,8 @@ tbbt1free(TBBT_NODE *node)
     tbbt_release_node(node);
 }
 
-VOID
-tbbtfree(TBBT_NODE **root, VOID (*fd)(VOIDP item), VOID (*fk)(VOIDP key))
+void
+tbbtfree(TBBT_NODE **root, void (*fd)(void *item), void (*fk)(void *key))
 {
     if (NULL == *root)
         return;
@@ -694,8 +695,8 @@ tbbtfree(TBBT_NODE **root, VOID (*fd)(VOIDP item), VOID (*fk)(VOIDP key))
 #else  /* WASTE_STACK */
 
 /* tbbtfree() - Free an entire tree not allocated with tbbtdmake(). */
-VOID
-tbbtfree(TBBT_NODE **root, VOID (*fd)(VOIDP /* item */), VOID (*fk)(VOIDP /* key */))
+void
+tbbtfree(TBBT_NODE **root, void (*fd)(void * /* item */), void (*fk)(void * /* key */))
 {
     TBBT_NODE *par, *node = *root;
 
@@ -733,7 +734,7 @@ tbbtfree(TBBT_NODE **root, VOID (*fd)(VOIDP /* item */), VOID (*fk)(VOIDP /* key
 }
 #endif /* WASTE_STACK */
 
-VOID
+void
 tbbtprint(TBBT_NODE *node)
 {
     if (node == NULL)
@@ -746,7 +747,7 @@ tbbtprint(TBBT_NODE *node)
            (void *)node->Parent);
 } /* end tbbtprint() */
 
-VOID
+void
 tbbt1dump(TBBT_NODE *node, intn method)
 {
     if (node == NULL)
@@ -780,7 +781,7 @@ tbbt1dump(TBBT_NODE *node, intn method)
     } /* end switch() */
 } /* end tbbt1dump() */
 
-VOID
+void
 tbbtdump(TBBT_TREE *tree, intn method)
 {
     if (tree != NULL && *(TBBT_NODE **)tree != NULL) {
@@ -791,8 +792,8 @@ tbbtdump(TBBT_TREE *tree, intn method)
         printf("Tree is empty\n");
 } /* end tbbtdump() */
 
-VOID
-tbbt_printNode(TBBT_NODE *node, VOID (*key_dump)(VOID *, VOID *))
+void
+tbbt_printNode(TBBT_NODE *node, void (*key_dump)(void *, void *))
 {
 
     if (node == NULL) {
@@ -809,8 +810,8 @@ tbbt_printNode(TBBT_NODE *node, VOID (*key_dump)(VOID *, VOID *))
     fflush(stdout);
 } /* end tbbt_printNode() */
 
-VOID
-tbbt_dumpNode(TBBT_NODE *node, VOID (*key_dump)(VOID *, VOID *), intn method)
+void
+tbbt_dumpNode(TBBT_NODE *node, void (*key_dump)(void *, void *), intn method)
 {
     if (node == NULL)
         return;
@@ -843,8 +844,8 @@ tbbt_dumpNode(TBBT_NODE *node, VOID (*key_dump)(VOID *, VOID *), intn method)
     } /* end switch() */
 } /* end tbbt_dumpNode() */
 
-VOID
-tbbt_dump(TBBT_TREE *ptree, VOID (*key_dump)(VOID *, VOID *), intn method)
+void
+tbbt_dump(TBBT_TREE *ptree, void (*key_dump)(void *, void *), intn method)
 {
     TBBT_TREE *tree;
 
@@ -858,14 +859,14 @@ tbbt_dump(TBBT_TREE *ptree, VOID (*key_dump)(VOID *, VOID *), intn method)
 
 /* Always returns NULL */
 TBBT_TREE *
-tbbtdfree(TBBT_TREE *tree, VOID (*fd)(VOIDP /* item */), VOID (*fk)(VOIDP /* key */))
+tbbtdfree(TBBT_TREE *tree, void (*fd)(void * /* item */), void (*fk)(void * /* key */))
 {
     if (tree == NULL)
-        return (NULL);
+        return NULL;
 
     tbbtfree(&tree->root, fd, fk);
-    Free(tree);
-    return (NULL);
+    free(tree);
+    return NULL;
 }
 
 /* returns the number of nodes in the tree */
@@ -873,9 +874,9 @@ long
 tbbtcount(TBBT_TREE *tree)
 {
     if (tree == NULL)
-        return (-1);
+        return -1;
     else
-        return ((long)tree->count);
+        return (long)tree->count;
 }
 
 /******************************************************************************
@@ -898,9 +899,9 @@ tbbt_get_node(void)
     if (tbbt_free_list != NULL) {
         ret_value      = tbbt_free_list;
         tbbt_free_list = tbbt_free_list->Lchild;
-    } /* end if */
+    }
     else
-        ret_value = (TBBT_NODE *)Alloc(1, TBBT_NODE);
+        ret_value = malloc(sizeof(TBBT_NODE));
 
     return ret_value;
 } /* end tbbt_get_node() */
@@ -951,8 +952,8 @@ tbbt_shutdown(void)
         while (tbbt_free_list != NULL) {
             curr           = tbbt_free_list;
             tbbt_free_list = tbbt_free_list->Lchild;
-            Free(curr);
-        } /* end while */
-    }     /* end if */
-    return (SUCCEED);
+            free(curr);
+        }
+    }
+    return SUCCEED;
 } /* end tbbt_shutdown() */

@@ -75,7 +75,7 @@ main()
          * Note that the 3rd parameter is NULL which indicates that consecutive
          * slabs in the Y direction are written.
          */
-        if (SDwritedata(sds_id, start, NULL, edges, (VOIDP)zx_data) == FAIL)
+        if (SDwritedata(sds_id, start, NULL, edges, (void *)zx_data) == FAIL)
             printf("*** ERROR from SDwritedata\n");
     }
 

@@ -30,10 +30,10 @@
 #ifdef HDF
 
 FRETVAL(intf) nsfscfill(intf *id, _fcd val);
-FRETVAL(intf) nsfsfill(intf *id, VOIDP val);
-FRETVAL(intf) nsfgfill(intf *id, VOIDP val);
-FRETVAL(intf) nsfrnatt(intf *id, intf *index, VOIDP buf);
-FRETVAL(intf) nscsnatt(intf *id, _fcd name, intf *nt, intf *count, VOIDP data, intf *len);
+FRETVAL(intf) nsfsfill(intf *id, void *val);
+FRETVAL(intf) nsfgfill(intf *id, void *val);
+FRETVAL(intf) nsfrnatt(intf *id, intf *index, void *buf);
+FRETVAL(intf) nscsnatt(intf *id, _fcd name, intf *nt, intf *count, void *data, intf *len);
 FRETVAL(intf) nsfsflmd(intf *id, intf *fillmode);
 
 #if defined H4_HAVE_WIN32_API && !defined CMAKE_INTDIR
@@ -166,7 +166,7 @@ nscscal(intf *id, float64 *cal, float64 *cale, float64 *ioff, float64 *ioffe, in
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-nscsdscale(intf *id, intf *count, intf *nt, VOIDP values)
+nscsdscale(intf *id, intf *count, intf *nt, void *values)
 {
     return (SDsetdimscale(*id, *count, *nt, values));
 }
@@ -180,7 +180,7 @@ nscsdscale(intf *id, intf *count, intf *nt, VOIDP values)
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-nscgdscale(intf *id, VOIDP values)
+nscgdscale(intf *id, void *values)
 {
     return (SDgetdimscale(*id, values));
 }
@@ -196,7 +196,7 @@ nscgdscale(intf *id, VOIDP values)
 FRETVAL(intf)
 nscscfill(intf *id, _fcd val)
 {
-    return (nscsfill(id, (VOIDP)_fcdtocp(val)));
+    return (nscsfill(id, (void *)_fcdtocp(val)));
 }
 
 /*------------------------------------------------------------
@@ -210,7 +210,7 @@ nscscfill(intf *id, _fcd val)
 FRETVAL(intf)
 nscgcfill(intf *id, _fcd val)
 {
-    return (nscgfill(id, (VOIDP)_fcdtocp(val)));
+    return (nscgfill(id, (void *)_fcdtocp(val)));
 }
 
 /*---------------------------------------------------------
@@ -222,7 +222,7 @@ nscgcfill(intf *id, _fcd val)
  * Users:   HDF Fortran programmers
  *------------------------------------------------------------*/
 FRETVAL(intf)
-nscsfill(intf *id, VOIDP val)
+nscsfill(intf *id, void *val)
 {
     return (SDsetfillvalue(*id, val));
 }
@@ -236,7 +236,7 @@ nscsfill(intf *id, VOIDP val)
  * Users:   HDF Fortran programmers
  *------------------------------------------------------*/
 FRETVAL(intf)
-nscgfill(intf *id, VOIDP val)
+nscgfill(intf *id, void *val)
 {
     return (SDgetfillvalue(*id, val));
 }
@@ -251,7 +251,7 @@ nscgfill(intf *id, VOIDP val)
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-nscgrange(intf *id, VOIDP max, VOIDP min)
+nscgrange(intf *id, void *max, void *min)
 {
     return (SDgetrange(*id, max, min));
 }
@@ -266,7 +266,7 @@ nscgrange(intf *id, VOIDP max, VOIDP min)
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-nscsrange(intf *id, VOIDP max, VOIDP min)
+nscsrange(intf *id, void *max, void *min)
 {
     return (SDsetrange(*id, max, min));
 }
@@ -283,7 +283,7 @@ nscsrange(intf *id, VOIDP max, VOIDP min)
 FRETVAL(intf)
 nscrcatt(intf *id, intf *index, _fcd buf)
 {
-    return (nscrnatt(id, index, (VOIDP)_fcdtocp(buf)));
+    return (nscrnatt(id, index, (void *)_fcdtocp(buf)));
 }
 
 /*-----------------------------------------------------------------------------
@@ -296,7 +296,7 @@ nscrcatt(intf *id, intf *index, _fcd buf)
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-nscrnatt(intf *id, intf *index, VOIDP buf)
+nscrnatt(intf *id, intf *index, void *buf)
 {
     return (SDreadattr(*id, *index, buf));
 }
@@ -311,7 +311,7 @@ nscrnatt(intf *id, intf *index, VOIDP buf)
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-nscrattr(intf *id, intf *index, VOIDP buf)
+nscrattr(intf *id, intf *index, void *buf)
 {
     return (nscrnatt(id, index, buf));
 }
@@ -329,7 +329,7 @@ nscrattr(intf *id, intf *index, VOIDP buf)
  * Returns: 0 on success, -1 on failure with error set
  *----------------------------------------------------------*/
 FRETVAL(intf)
-nscrdata(intf *id, intf *start, intf *stride, intf *end, VOIDP values)
+nscrdata(intf *id, intf *start, intf *stride, intf *end, void *values)
 {
     intf  ret;
     int32 i, rank, dims[100], nt, nattrs, status;
@@ -366,7 +366,7 @@ nscrdata(intf *id, intf *start, intf *stride, intf *end, VOIDP values)
  * Returns: 0 on success, -1 on failure with error set
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-nscwdata(intf *id, intf *start, intf *stride, intf *end, VOIDP values)
+nscwdata(intf *id, intf *start, intf *stride, intf *end, void *values)
 {
     intf  ret;
     int32 i, rank, dims[100], nt, nattrs, status;
@@ -405,7 +405,7 @@ nscwdata(intf *id, intf *start, intf *stride, intf *end, VOIDP values)
 FRETVAL(intf)
 nscrcdata(intf *id, intf *start, intf *stride, intf *end, _fcd values)
 {
-    return (nscrdata(id, start, stride, end, (VOIDP)_fcdtocp(values)));
+    return (nscrdata(id, start, stride, end, (void *)_fcdtocp(values)));
 }
 
 /*--------------------------------------------------------
@@ -423,7 +423,7 @@ nscrcdata(intf *id, intf *start, intf *stride, intf *end, _fcd values)
 FRETVAL(intf)
 nscwcdata(intf *id, intf *start, intf *stride, intf *end, _fcd values)
 {
-    return (nscwdata(id, start, stride, end, (VOIDP)_fcdtocp(values)));
+    return (nscwdata(id, start, stride, end, (void *)_fcdtocp(values)));
 }
 
 /*-----------------------------------------------------------------------------
@@ -590,7 +590,7 @@ nscstart(_fcd name, intf *access, intf *namelen)
     fn = HDf2cstring(name, *namelen);
 
     ret = (intf)SDstart(fn, *access);
-    HDfree((VOIDP)fn);
+    free(fn);
 
     return (ret);
 }
@@ -697,7 +697,7 @@ nscginfo(intf *id, _fcd name, intf *rank, intf *dimsizes, intf *nt, intf *nattr,
 
     iname = NULL;
     if (*len)
-        iname = (char *)HDmalloc((uint32)*len + 1);
+        iname = (char *)malloc((uint32)*len + 1);
 
     status = SDgetinfo((int32)*id, iname, &rank32, cdims, &nt32, &nattr32);
 
@@ -706,8 +706,7 @@ nscginfo(intf *id, _fcd name, intf *rank, intf *dimsizes, intf *nt, intf *nattr,
 
     HDpackFstring(iname, _fcdtocp(name), *len);
 
-    if (iname)
-        HDfree((VOIDP)iname);
+    free(iname);
 
     *rank  = (intf)rank32;
     *nt    = (intf)nt32;
@@ -763,7 +762,7 @@ nsfscal(intf *id, float64 *cal, float64 *cale, float64 *ioff, float64 *ioffe, in
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-nsfsdscale(intf *id, intf *count, intf *nt, VOIDP values)
+nsfsdscale(intf *id, intf *count, intf *nt, void *values)
 {
     return (SDsetdimscale(*id, *count, *nt, values));
 }
@@ -777,7 +776,7 @@ nsfsdscale(intf *id, intf *count, intf *nt, VOIDP values)
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-nsfgdscale(intf *id, VOIDP values)
+nsfgdscale(intf *id, void *values)
 {
     return (SDgetdimscale(*id, values));
 }
@@ -793,7 +792,7 @@ nsfgdscale(intf *id, VOIDP values)
 FRETVAL(intf)
 nsfscfill(intf *id, _fcd val)
 {
-    return (nsfsfill(id, (VOIDP)_fcdtocp(val)));
+    return (nsfsfill(id, (void *)_fcdtocp(val)));
 }
 
 /*------------------------------------------------------------
@@ -807,7 +806,7 @@ nsfscfill(intf *id, _fcd val)
 FRETVAL(intf)
 nsfgcfill(intf *id, _fcd val)
 {
-    return (nsfgfill(id, (VOIDP)_fcdtocp(val)));
+    return (nsfgfill(id, (void *)_fcdtocp(val)));
 }
 
 /*---------------------------------------------------------
@@ -819,7 +818,7 @@ nsfgcfill(intf *id, _fcd val)
  * Users:   HDF Fortran programmers
  *------------------------------------------------------------*/
 FRETVAL(intf)
-nsfsfill(intf *id, VOIDP val)
+nsfsfill(intf *id, void *val)
 {
     return (SDsetfillvalue(*id, val));
 }
@@ -833,7 +832,7 @@ nsfsfill(intf *id, VOIDP val)
  * Users:   HDF Fortran programmers
  *------------------------------------------------------*/
 FRETVAL(intf)
-nsfgfill(intf *id, VOIDP val)
+nsfgfill(intf *id, void *val)
 {
     return (SDgetfillvalue(*id, val));
 }
@@ -848,7 +847,7 @@ nsfgfill(intf *id, VOIDP val)
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-nsfgrange(intf *id, VOIDP max, VOIDP min)
+nsfgrange(intf *id, void *max, void *min)
 {
     return (SDgetrange(*id, max, min));
 }
@@ -863,7 +862,7 @@ nsfgrange(intf *id, VOIDP max, VOIDP min)
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-nsfsrange(intf *id, VOIDP max, VOIDP min)
+nsfsrange(intf *id, void *max, void *min)
 {
     return (SDsetrange(*id, max, min));
 }
@@ -884,7 +883,7 @@ nscn2index(intf *id, _fcd name, intf *namelen)
 
     fn  = HDf2cstring(name, *namelen);
     ret = (intf)SDnametoindex(*id, fn);
-    HDfree((VOIDP)fn);
+    free(fn);
     return (ret);
 }
 
@@ -909,7 +908,7 @@ nsccreate(intf *id, _fcd name, intf *nt, intf *rank, intf *dims, intf *namelen)
     int32 *cdims, i;
 
     fn    = HDf2cstring(name, *namelen);
-    cdims = (int32 *)HDmalloc(sizeof(int32) * (*rank));
+    cdims = (int32 *)malloc(sizeof(int32) * (*rank));
     if (!cdims)
         return FAIL;
 
@@ -918,8 +917,8 @@ nsccreate(intf *id, _fcd name, intf *nt, intf *rank, intf *dims, intf *namelen)
 
     ret = (intf)SDcreate(*id, fn, *nt, *rank, cdims);
 
-    HDfree((VOIDP)fn);
-    HDfree((VOIDP)cdims);
+    free(fn);
+    free(cdims);
     return (ret);
 }
 
@@ -955,11 +954,11 @@ nscsdimstr(intf *id, _fcd l, _fcd u, _fcd f, intf *ll, intf *ul, intf *fl)
 
     ret = (intf)SDsetdimstrs(*id, lstr, ustr, fstr);
     if (ll)
-        HDfree((VOIDP)lstr);
+        free(lstr);
     if (ul)
-        HDfree((VOIDP)ustr);
+        free(ustr);
     if (fl)
-        HDfree((VOIDP)fstr);
+        free(fstr);
     return (ret);
 }
 
@@ -983,7 +982,7 @@ nscsdimname(intf *id, _fcd name, intf *len)
 
     ret = (intf)SDsetdimname(*id, nstr);
     if (len)
-        HDfree((VOIDP)nstr);
+        free(nstr);
     return (ret);
 }
 
@@ -1025,13 +1024,13 @@ nscsdatstr(intf *id, _fcd l, _fcd u, _fcd f, _fcd c, intf *ll, intf *ul, intf *f
 
     ret = (intf)SDsetdatastrs(*id, lstr, ustr, fstr, cstr);
     if (ll)
-        HDfree((VOIDP)lstr);
+        free(lstr);
     if (ul)
-        HDfree((VOIDP)ustr);
+        free(ustr);
     if (fl)
-        HDfree((VOIDP)fstr);
+        free(fstr);
     if (cl)
-        HDfree((VOIDP)cstr);
+        free(cstr);
     return (ret);
 }
 
@@ -1047,7 +1046,7 @@ nscsdatstr(intf *id, _fcd l, _fcd u, _fcd f, _fcd c, intf *ll, intf *ul, intf *f
 FRETVAL(intf)
 nsfrcatt(intf *id, intf *index, _fcd buf)
 {
-    return (nsfrnatt(id, index, (VOIDP)_fcdtocp(buf)));
+    return (nsfrnatt(id, index, (void *)_fcdtocp(buf)));
 }
 
 /*-----------------------------------------------------------------------------
@@ -1060,7 +1059,7 @@ nsfrcatt(intf *id, intf *index, _fcd buf)
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-nsfrnatt(intf *id, intf *index, VOIDP buf)
+nsfrnatt(intf *id, intf *index, void *buf)
 {
     return (SDreadattr(*id, *index, buf));
 }
@@ -1075,7 +1074,7 @@ nsfrnatt(intf *id, intf *index, VOIDP buf)
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-nsfrattr(intf *id, intf *index, VOIDP buf)
+nsfrattr(intf *id, intf *index, void *buf)
 {
     return (nsfrnatt(id, index, buf));
 }
@@ -1093,7 +1092,7 @@ nsfrattr(intf *id, intf *index, VOIDP buf)
  * Returns: 0 on success, -1 on failure with error set
  *----------------------------------------------------------*/
 FRETVAL(intf)
-nsfrdata(intf *id, intf *start, intf *stride, intf *end, VOIDP values)
+nsfrdata(intf *id, intf *start, intf *stride, intf *end, void *values)
 {
     intf  ret;
     int32 i, rank, dims[100], nt, nattrs, status;
@@ -1130,7 +1129,7 @@ nsfrdata(intf *id, intf *start, intf *stride, intf *end, VOIDP values)
  * Returns: 0 on success, -1 on failure with error set
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-nsfwdata(intf *id, intf *start, intf *stride, intf *end, VOIDP values)
+nsfwdata(intf *id, intf *start, intf *stride, intf *end, void *values)
 {
     intf  ret;
     int32 i, rank, dims[100], nt, nattrs, status;
@@ -1170,11 +1169,11 @@ nscgdimstrs(intf *dim, _fcd label, _fcd unit, _fcd format, intf *llabel, intf *l
     iunit = ilabel = iformat = NULL;
 
     if (*llabel)
-        ilabel = (char *)HDmalloc((uint32)*llabel + 1);
+        ilabel = (char *)malloc((uint32)*llabel + 1);
     if (*lunit)
-        iunit = (char *)HDmalloc((uint32)*lunit + 1);
+        iunit = (char *)malloc((uint32)*lunit + 1);
     if (*lformat)
-        iformat = (char *)HDmalloc((uint32)*lformat + 1);
+        iformat = (char *)malloc((uint32)*lformat + 1);
 
     ret = (intf)SDgetdimstrs(*dim, ilabel, iunit, iformat, *mlen);
 
@@ -1182,12 +1181,9 @@ nscgdimstrs(intf *dim, _fcd label, _fcd unit, _fcd format, intf *llabel, intf *l
     HDpackFstring(iunit, _fcdtocp(unit), *lunit);
     HDpackFstring(iformat, _fcdtocp(format), *lformat);
 
-    if (ilabel)
-        HDfree((VOIDP)ilabel);
-    if (iunit)
-        HDfree((VOIDP)iunit);
-    if (iformat)
-        HDfree((VOIDP)iformat);
+    free(ilabel);
+    free(iunit);
+    free(iformat);
 
     return ret;
 }
@@ -1207,7 +1203,7 @@ nscgdimstrs(intf *dim, _fcd label, _fcd unit, _fcd format, intf *llabel, intf *l
 FRETVAL(intf)
 nsfrcdata(intf *id, intf *start, intf *stride, intf *end, _fcd values)
 {
-    return (nsfrdata(id, start, stride, end, (VOIDP)_fcdtocp(values)));
+    return (nsfrdata(id, start, stride, end, (void *)_fcdtocp(values)));
 }
 
 /*--------------------------------------------------------
@@ -1225,7 +1221,7 @@ nsfrcdata(intf *id, intf *start, intf *stride, intf *end, _fcd values)
 FRETVAL(intf)
 nsfwcdata(intf *id, intf *start, intf *stride, intf *end, _fcd values)
 {
-    return (nsfwdata(id, start, stride, end, (VOIDP)_fcdtocp(values)));
+    return (nsfwdata(id, start, stride, end, (void *)_fcdtocp(values)));
 }
 
 /*-----------------------------------------------------------------------------
@@ -1245,13 +1241,13 @@ nscgdatstrs(intf *id, _fcd label, _fcd unit, _fcd format, _fcd coord, intf *llab
     iunit = ilabel = iformat = NULL;
 
     if (*llabel)
-        ilabel = (char *)HDmalloc((uint32)*llabel + 1);
+        ilabel = (char *)malloc((uint32)*llabel + 1);
     if (*lunit)
-        iunit = (char *)HDmalloc((uint32)*lunit + 1);
+        iunit = (char *)malloc((uint32)*lunit + 1);
     if (*lformat)
-        iformat = (char *)HDmalloc((uint32)*lformat + 1);
+        iformat = (char *)malloc((uint32)*lformat + 1);
     if (*lcoord)
-        icoord = (char *)HDmalloc((uint32)*lcoord + 1);
+        icoord = (char *)malloc((uint32)*lcoord + 1);
 
     ret = (intf)SDgetdatastrs(*id, ilabel, iunit, iformat, icoord, *len);
 
@@ -1260,14 +1256,10 @@ nscgdatstrs(intf *id, _fcd label, _fcd unit, _fcd format, _fcd coord, intf *llab
     HDpackFstring(iformat, _fcdtocp(format), *lformat);
     HDpackFstring(icoord, _fcdtocp(coord), *lcoord);
 
-    if (ilabel)
-        HDfree((VOIDP)ilabel);
-    if (iunit)
-        HDfree((VOIDP)iunit);
-    if (iformat)
-        HDfree((VOIDP)iformat);
-    if (icoord)
-        HDfree((VOIDP)icoord);
+    free(ilabel);
+    free(iunit);
+    free(iformat);
+    free(icoord);
 
     return ret;
 }
@@ -1292,14 +1284,13 @@ nscgainfo(intf *id, intf *number, _fcd name, intf *nt, intf *count, intf *len)
 
     iname = NULL;
     if (*len)
-        iname = (char *)HDmalloc((uint32)*len + 1);
+        iname = (char *)malloc((uint32)*len + 1);
 
     status = SDattrinfo(*id, *number, iname, &nt32, &cnt32);
 
     HDpackFstring(iname, _fcdtocp(name), *len);
 
-    if (iname)
-        HDfree((VOIDP)iname);
+    free(iname);
 
     *nt    = (intf)nt32;
     *count = (intf)cnt32;
@@ -1326,14 +1317,13 @@ nscgdinfo(intf *id, _fcd name, intf *sz, intf *nt, intf *nattr, intf *len)
 
     iname = NULL;
     if (*len)
-        iname = (char *)HDmalloc((uint32)*len + 1);
+        iname = (char *)malloc((uint32)*len + 1);
 
     status = SDdiminfo(*id, iname, &sz32, &nt32, &nattr32);
 
     HDpackFstring(iname, _fcdtocp(name), *len);
 
-    if (iname)
-        HDfree((VOIDP)iname);
+    free(iname);
 
     *nt    = (intf)nt32;
     *sz    = (intf)sz32;
@@ -1357,7 +1347,7 @@ nscgdinfo(intf *id, _fcd name, intf *sz, intf *nt, intf *nattr, intf *len)
 FRETVAL(intf)
 nscscatt(intf *id, _fcd name, intf *nt, intf *count, _fcd data, intf *len)
 {
-    return (nscsnatt(id, name, nt, count, (VOIDP)_fcdtocp(data), len));
+    return (nscsnatt(id, name, nt, count, (void *)_fcdtocp(data), len));
 }
 
 /*-------------------------------------------------------------
@@ -1373,7 +1363,7 @@ nscscatt(intf *id, _fcd name, intf *nt, intf *count, _fcd data, intf *len)
  * Returns: 0 on success, -1 on failure with error set
  *--------------------------------------------------------------------*/
 FRETVAL(intf)
-nscsnatt(intf *id, _fcd name, intf *nt, intf *count, VOIDP data, intf *len)
+nscsnatt(intf *id, _fcd name, intf *nt, intf *count, void *data, intf *len)
 {
     char *an;
     intf  ret;
@@ -1382,7 +1372,7 @@ nscsnatt(intf *id, _fcd name, intf *nt, intf *count, VOIDP data, intf *len)
 
     ret = (intf)SDsetattr(*id, an, *nt, *count, data);
 
-    HDfree((VOIDP)an);
+    free(an);
     return (ret);
 }
 
@@ -1399,17 +1389,17 @@ nscsnatt(intf *id, _fcd name, intf *nt, intf *count, VOIDP data, intf *len)
  * Returns: 0 on success, -1 on failure with error set
  * Remarks: This routine and sfsattr should be phased out.
  *          sfsattr declairs data as char *, scscatt assumes
- *          data as VOIDP.
+ *          data as void *.
  *--------------------------------------------------------------------*/
 FRETVAL(intf)
-nscsattr(intf *id, _fcd name, intf *nt, intf *count, VOIDP data, intf *len)
+nscsattr(intf *id, _fcd name, intf *nt, intf *count, void *data, intf *len)
 {
     char *an;
     intf  ret;
 
     an  = HDf2cstring(name, *len);
     ret = (intf)SDsetattr(*id, an, *nt, *count, data);
-    HDfree((VOIDP)an);
+    free(an);
     return (ret);
 }
 
@@ -1429,7 +1419,7 @@ nscfattr(intf *id, _fcd name, intf *namelen)
     fn = HDf2cstring(name, *namelen);
 
     ret = (intf)SDfindattr(*id, fn);
-    HDfree((VOIDP)fn);
+    free(fn);
 
     return (ret);
 }
@@ -1493,7 +1483,7 @@ nscsextf(intf *id, _fcd name, intf *offset, intf *namelen)
     if (!fn)
         return (FAIL);
     ret = (intf)SDsetexternalfile(*id, fn, *offset);
-    HDfree((VOIDP)fn);
+    free(fn);
     return (ret);
 }
 
@@ -1683,7 +1673,7 @@ nscgichnk(intf *id, intf *dim_length, intf *flags)
  * Returns:  0 on success, -1 on failure with error set
  *----------------------------------------------------------------------------*/
 FRETVAL(intf)
-nscrchnk(intf *id, intf *start, VOIDP num_data)
+nscrchnk(intf *id, intf *start, void *num_data)
 {
     intf   ret;
     int32  rank, status, i;
@@ -1699,7 +1689,7 @@ nscrchnk(intf *id, intf *start, VOIDP num_data)
     /* Allocate memory for cstart array; use static array, if performance
            becomes an issue */
 
-    cstart = (int32 *)HDmalloc(sizeof(int32) * rank);
+    cstart = (int32 *)malloc(sizeof(int32) * rank);
     if (!cstart)
         return FAIL;
 
@@ -1714,7 +1704,7 @@ nscrchnk(intf *id, intf *start, VOIDP num_data)
 
     /* Free memory */
 
-    HDfree((VOIDP)cstart);
+    free(cstart);
     return (ret);
 }
 
@@ -1733,7 +1723,7 @@ nscrcchnk(intf *id, intf *start, _fcd char_data)
 {
     intf ret;
 
-    ret = nscrchnk(id, start, (VOIDP)_fcdtocp(char_data));
+    ret = nscrchnk(id, start, (void *)_fcdtocp(char_data));
 
     return (ret);
 }
@@ -1887,7 +1877,7 @@ nscschnk(intf *id, intf *dim_length, intf *comp_type, intf *comp_prm)
  * Returns:  0 on success, -1 on failure with error set
  *----------------------------------------------------------------------------*/
 FRETVAL(intf)
-nscwchnk(intf *id, intf *start, VOIDP num_data)
+nscwchnk(intf *id, intf *start, void *num_data)
 {
     intf   ret;
     int32  rank, status, i;
@@ -1903,7 +1893,7 @@ nscwchnk(intf *id, intf *start, VOIDP num_data)
     /* Allocate memory for cstart array; use static array, if performance
            becomes an issue */
 
-    cstart = (int32 *)HDmalloc(sizeof(int32) * rank);
+    cstart = (int32 *)malloc(sizeof(int32) * rank);
     if (!cstart)
         return FAIL;
 
@@ -1918,7 +1908,7 @@ nscwchnk(intf *id, intf *start, VOIDP num_data)
 
     /* Free memory */
 
-    HDfree((VOIDP)cstart);
+    free(cstart);
 
     return (ret);
 }
@@ -1938,7 +1928,7 @@ nscwcchnk(intf *id, intf *start, _fcd char_data)
 {
     intf ret;
 
-    ret = nscwchnk(id, start, (VOIDP)_fcdtocp(char_data));
+    ret = nscwchnk(id, start, (void *)_fcdtocp(char_data));
 
     return (ret);
 }
@@ -2163,13 +2153,12 @@ nscgetfname(intf *file_id, _fcd name, intf *namelen)
 
     fn = NULL;
     if (*namelen)
-        fn = (char *)HDmalloc((uint32)*namelen + 1);
+        fn = (char *)malloc((uint32)*namelen + 1);
 
     ret = (intn)SDgetfilename(*file_id, fn);
     HDpackFstring(fn, _fcdtocp(name), *namelen);
 
-    if (fn)
-        HDfree((VOIDP)fn);
+    free(fn);
     return (ret);
 }
 
@@ -2295,7 +2284,7 @@ nscn2indices(intf *sd_id, _fcd name, intf *namelen, intf *var_list, intf *type_l
     fn = HDf2cstring(name, *namelen);
     if (!fn)
         return (FAIL);
-    c_var_list = (hdf_varlist_t *)HDmalloc(*n_vars * sizeof(hdf_varlist_t));
+    c_var_list = (hdf_varlist_t *)malloc(*n_vars * sizeof(hdf_varlist_t));
     if (!c_var_list)
         return (FAIL);
 
@@ -2307,8 +2296,8 @@ nscn2indices(intf *sd_id, _fcd name, intf *namelen, intf *var_list, intf *type_l
             type_list[idx] = (intf)c_var_list[idx].var_type;
         }
     } /*endif*/
-    HDfree(c_var_list);
-    HDfree((VOIDP)fn);
+    free(c_var_list);
+    free(fn);
     return (ret);
 }
 
@@ -2334,7 +2323,7 @@ nscgnvars_byname(intf *sd_id, _fcd name, intf *namelen, intf *n_vars)
 
     ret = (intn)SDgetnumvars_byname(*sd_id, fn, &c_n_vars);
 
-    HDfree((VOIDP)fn);
+    free(fn);
     if (ret == FAIL)
         return FAIL;
     *n_vars = (intf)c_n_vars;

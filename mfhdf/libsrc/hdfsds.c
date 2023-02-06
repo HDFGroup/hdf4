@@ -78,17 +78,17 @@
 #define SDG_MAX_INITIAL 100
 
 /* local variables */
-PRIVATE intn    sdgCurrent;
-PRIVATE intn    sdgMax;
-PRIVATE uint16 *sdgTable = NULL;
-PRIVATE uint8  *ptbuf    = NULL;
+static intn    sdgCurrent;
+static intn    sdgMax;
+static uint16 *sdgTable = NULL;
+static uint8  *ptbuf    = NULL;
 
 /* Local routines */
-PRIVATE intn hdf_query_seen_sdg(uint16 ndgRef);
+static intn hdf_query_seen_sdg(uint16 ndgRef);
 
-PRIVATE intn hdf_register_seen_sdg(uint16 ndgRef);
+static intn hdf_register_seen_sdg(uint16 ndgRef);
 
-PRIVATE intn hdf_read_ndgs(NC *handle);
+static intn hdf_read_ndgs(NC *handle);
 
 uint8 *hdf_get_pred_str_attr(NC *handle, uint16 stratt_tag, uint16 satt_ref, int null_count);
 
@@ -107,7 +107,7 @@ uint8 *hdf_get_pred_str_attr(NC *handle, uint16 stratt_tag, uint16 satt_ref, int
    TRUE / FALSE
 
 ******************************************************************************/
-PRIVATE intn
+static intn
 hdf_query_seen_sdg(uint16 ndgRef)
 {
     intn i;
@@ -135,7 +135,7 @@ hdf_query_seen_sdg(uint16 ndgRef)
    SUCCEED / FAIL
 
 ******************************************************************************/
-PRIVATE intn
+static intn
 hdf_register_seen_sdg(uint16 sdgRef)
 {
     intn ret_value = SUCCEED;
@@ -180,7 +180,7 @@ done:
    SUCCEED / FAIL
 
 ******************************************************************************/
-PRIVATE intn
+static intn
 hdf_check_nt(uint8 *ntstring, int32 *type)
 {
     intn ret_value = SUCCEED;
@@ -212,7 +212,7 @@ hdf_check_nt(uint8 *ntstring, int32 *type)
    DFE_NONE / <error code>
 
 ******************************************************************************/
-PRIVATE hdf_err_code_t
+static hdf_err_code_t
 hdf_read_rank(int32 acc_id, int16 *rank)
 {
     uint8         *p, *local_buf = NULL;
@@ -260,7 +260,7 @@ done:
    DFE_NONE / <error code>
 
 ******************************************************************************/
-PRIVATE hdf_err_code_t
+static hdf_err_code_t
 hdf_read_dimsizes(int32 acc_id, int16 rank, int32 *dimsizes)
 {
     uint8         *p, *local_buf = NULL;
@@ -309,7 +309,7 @@ done:
    DFE_NONE / <error code>
 
 ******************************************************************************/
-PRIVATE hdf_err_code_t
+static hdf_err_code_t
 hdf_read_NT(int32 acc_id, NC *handle, uint8 *ntstring_buf)
 {
     uint16         ntTag;
@@ -356,7 +356,7 @@ done:
    DFE_NONE / <error code>
 
 ******************************************************************************/
-PRIVATE hdf_err_code_t
+static hdf_err_code_t
 hdf_get_sdc(NC *handle, uint16 tmpRef, NC_attr **tmp_attr, intn *curr_attr)
 {
     uint8         *coordbuf = NULL; /* buffer to store coord system info */
@@ -466,7 +466,7 @@ done:
    DFE_NONE / <error code>
 
 ******************************************************************************/
-PRIVATE hdf_err_code_t
+static hdf_err_code_t
 hdf_get_desc_annot(NC *handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr, intn *curr_attr)
 {
     intn           i;
@@ -567,7 +567,7 @@ done:
    DFE_NONE / <error code>
 
 ******************************************************************************/
-PRIVATE hdf_err_code_t
+static hdf_err_code_t
 hdf_get_label_annot(NC *handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr, intn *curr_attr)
 {
     intn           i;
@@ -669,7 +669,7 @@ done:
    DFE_NONE / <error code>
 
 ******************************************************************************/
-PRIVATE hdf_err_code_t
+static hdf_err_code_t
 hdf_luf_to_attrs(char *labelstr, char *unitstr, char *formatstr, NC_attr **tmp_attr, intn *curr_attr)
 {
     hdf_err_code_t ret_value = DFE_NONE;
@@ -738,14 +738,14 @@ done:
    DFE_NONE / <error code>
 
 ******************************************************************************/
-PRIVATE hdf_err_code_t
+static hdf_err_code_t
 hdf_get_rangeinfo(nc_type nctype, int32 hdftype, NC_attr **tmp_attr, intn *curr_attr)
 {
     uint8          tBuf[128] = "";
     intn           idx       = 0; /* index for tBuf */
     hdf_err_code_t ret_value = DFE_NONE;
 
-    if (FAIL == DFKconvert((VOIDP)ptbuf, (VOIDP)tBuf, hdftype, 2, DFACC_READ, 0, 0)) {
+    if (FAIL == DFKconvert((void *)ptbuf, (void *)tBuf, hdftype, 2, DFACC_READ, 0, 0)) {
         HGOTO_ERROR(DFE_BADCONV, FAIL);
     }
 
@@ -794,7 +794,7 @@ done:
    DFE_NONE / <error code>
 
 ******************************************************************************/
-PRIVATE hdf_err_code_t
+static hdf_err_code_t
 hdf_get_cal(nc_type nctype, int32 hdftype, NC_attr **tmp_attr, intn *curr_attr)
 {
     uint8          tBuf[128] = "";
@@ -813,7 +813,7 @@ hdf_get_cal(nc_type nctype, int32 hdftype, NC_attr **tmp_attr, intn *curr_attr)
         nt_nctype  = NC_LONG;
     }
 
-    if (FAIL == DFKconvert((VOIDP)ptbuf, (VOIDP)tBuf, hdftype, 4, DFACC_READ, 0, 0)) {
+    if (FAIL == DFKconvert((void *)ptbuf, (void *)tBuf, hdftype, 4, DFACC_READ, 0, 0)) {
         HGOTO_ERROR(DFE_BADCONV, FAIL);
     }
 
@@ -869,7 +869,7 @@ hdf_get_cal(nc_type nctype, int32 hdftype, NC_attr **tmp_attr, intn *curr_attr)
     }
 
     /* don't forget number_type  */
-    if (FAIL == DFKconvert((VOIDP)(ptbuf + idx + incr), (VOIDP)tBuf, nt_hdftype, 1, DFACC_READ, 0, 0)) {
+    if (FAIL == DFKconvert((void *)(ptbuf + idx + incr), (void *)tBuf, nt_hdftype, 1, DFACC_READ, 0, 0)) {
         HGOTO_ERROR(DFE_BADCONV, FAIL);
     }
 
@@ -904,7 +904,7 @@ done:
    SUCCEED / FAIL
 
 ******************************************************************************/
-PRIVATE intn
+static intn
 hdf_read_ndgs(NC *handle)
 {
     char  tmpname[80] = "";

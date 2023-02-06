@@ -199,7 +199,7 @@ test_chunks(void)
         outbuf[i] = (char)(i % 256);
 
     /* allocate space for chunk dimensions */
-    if ((chunk[0].pdims = (DIM_DEF *)HDmalloc(5 * sizeof(DIM_DEF))) == NULL) {
+    if ((chunk[0].pdims = (DIM_DEF *)malloc(5 * sizeof(DIM_DEF))) == NULL) {
         printf("test_chunks: error allocatin space for chunk dims\n");
         errors++;
         goto done;
@@ -344,7 +344,7 @@ test_chunks(void)
         }
 
         /* free allocated space by routine */
-        HDfree(info_block.cdims);
+        free(info_block.cdims);
     }
     else {
         fprintf(stderr, "ERROR: HDget_specail_info does not return the correct values \n");
@@ -704,7 +704,7 @@ test_chunks(void)
         }
 
         /* free allocated space by routine */
-        HDfree(info_block.cdims);
+        free(info_block.cdims);
     }
     else {
         fprintf(stderr, "ERROR: HDget_specail_info does not return the correct values \n");
@@ -1055,7 +1055,7 @@ test_chunks(void)
         }
 
         /* free allocated space by routine */
-        HDfree(info_block.cdims);
+        free(info_block.cdims);
     }
     else {
         fprintf(stderr, "ERROR: HDget_specail_info does not return the correct values \n");
@@ -2030,7 +2030,7 @@ test_chunks(void)
         }
 
         /* free allocated space by routine */
-        HDfree(info_block.cdims);
+        free(info_block.cdims);
     }
     else {
         fprintf(stderr, "ERROR: HDget_specail_info does not return the correct values \n");
@@ -2195,8 +2195,7 @@ test_chunks(void)
 
 done:
     /* Don't forget to free dimensions allocate for chunk definition */
-    if (chunk[0].pdims != NULL)
-        HDfree(chunk[0].pdims);
+    free(chunk[0].pdims);
 
     num_errs += errors; /* increment global error count */
 } /* test_chunks() */

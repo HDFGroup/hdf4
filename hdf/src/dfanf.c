@@ -98,7 +98,7 @@ ndaiganl(_fcd filename, intf *tag, intf *ref, intf *type, intf *fnlen)
     if (!fn)
         return (-1);
     ret = DFANIgetannlen(fn, (uint16)*tag, (uint16)*ref, (intn)*type);
-    HDfree((VOIDP)fn);
+    free(fn);
 
     return (ret);
 }
@@ -128,7 +128,7 @@ ndaigann(_fcd filename, intf *tag, intf *ref, _fcd annotation, intf *maxlen, int
         return (-1);
     ret = DFANIgetann(fn, (uint16)*tag, (uint16)*ref, (uint8 *)_fcdtocp(annotation), (int32)*maxlen,
                       (intn)*type, 1);
-    HDfree((VOIDP)fn);
+    free(fn);
 
     return (ret);
 }
@@ -158,7 +158,7 @@ ndaipann(_fcd filename, intf *tag, intf *ref, _fcd annotation, intf *annlen, int
         return (-1);
     ret = DFANIputann(fn, (uint16)*tag, (uint16)*ref, (uint8 *)_fcdtocp(annotation), (int32)*annlen,
                       (intn)*type);
-    HDfree((VOIDP)fn);
+    free(fn);
     return (ret);
 }
 
@@ -197,7 +197,7 @@ ndailist(_fcd filename, intf *tag, intf reflist[], _fcd labellist, intf *listsiz
     /* create reflist with true uint16s to maintain compatibility
      ** with machines that allocate more than 16 bits per uint16.
      */
-    tempreflist = (uint16 *)HDmalloc((size_t)(*listsize) * sizeof(uint16));
+    tempreflist = (uint16 *)malloc((size_t)(*listsize) * sizeof(uint16));
     /* 1 for isfortran */
     nrefs = DFANIlablist(fn, (uint16)*tag, tempreflist, (uint8 *)_fcdtocp(labellist), (int)*listsize,
                          (int)*maxlen, (int)*startpos, 1);
@@ -208,8 +208,8 @@ ndailist(_fcd filename, intf *tag, intf reflist[], _fcd labellist, intf *listsiz
     for (i = 0; i < *listsize; i++)
         reflist[i] = (intf)tempreflist[i];
 
-    HDfree((VOIDP)fn);
-    HDfree((VOIDP)tempreflist);
+    free(fn);
+    free(tempreflist);
 
     return (nrefs);
 }

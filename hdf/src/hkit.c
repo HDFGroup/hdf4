@@ -82,11 +82,11 @@ HDf2cstring(_fcd fdesc, intn len)
     /* This should be equivalent to the above test -QAK */
     for (i = len - 1; i >= 0 && !isgraph((int)str[i]); i--)
         /*EMPTY*/;
-    cstr = (char *)HDmalloc((uint32)(i + 2));
+    cstr = (char *)malloc((uint32)(i + 2));
     if (!cstr)
         HRETURN_ERROR(DFE_NOSPACE, NULL);
     cstr[i + 1] = '\0';
-    HDmemcpy(cstr, str, i + 1);
+    memcpy(cstr, str, i + 1);
     return cstr;
 } /* HDf2cstring */
 /* ---------------------------- HDpackFstring ----------------------------- */
@@ -210,17 +210,17 @@ HDgettagsname(uint16 tag)
             else {
                 char *t;
 
-                t = (char *)HDmalloc(HDstrlen(ret) + HDstrlen(tag_descriptions[i].name) + 2);
+                t = (char *)malloc(HDstrlen(ret) + HDstrlen(tag_descriptions[i].name) + 2);
                 if (t == NULL) {
-                    HDfree(ret);
+                    free(ret);
                     HRETURN_ERROR(DFE_NOSPACE, NULL)
-                } /* end if */
+                }
                 HDstrcpy(t, ret);
                 HDstrcat(t, tag_descriptions[i].name);
-                HDfree(ret);
+                free(ret);
                 ret = t;
-            } /* end else */
-        }     /* end if */
+            }
+        }
     return (ret);
 } /* HDgettagsname */
 
@@ -283,19 +283,19 @@ HDgetNTdesc(int32 nt)
             else {
                 char *t;
 
-                t = (char *)HDmalloc(HDstrlen(ret_desc) + HDstrlen(nt_descriptions[i].desc) + 2);
+                t = (char *)malloc(HDstrlen(ret_desc) + HDstrlen(nt_descriptions[i].desc) + 2);
                 if (t == NULL) {
-                    HDfree(ret_desc);
+                    free(ret_desc);
                     HRETURN_ERROR(DFE_NOSPACE, NULL)
-                } /* end if */
+                }
                 HDstrcpy(t, ret_desc);
                 HDstrcat(t, " ");
                 HDstrcat(t, nt_descriptions[i].desc);
-                HDfree(ret_desc);
+                free(ret_desc);
                 ret_desc = t;
-            } /* end else */
+            }
             return (ret_desc);
-        } /* end if */
+        }
     return (NULL);
 } /* end HDgetNTdesc() */
 

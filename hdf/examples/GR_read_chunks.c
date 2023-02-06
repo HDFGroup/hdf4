@@ -49,7 +49,7 @@ main()
     edges[1]            = dims[1];
 
     /* Read the data in the image array. */
-    if (GRreadimage(ri_id, start, NULL, edges, (VOIDP)image_data) == FAIL)
+    if (GRreadimage(ri_id, start, NULL, edges, (void *)image_data) == FAIL)
         printf("*** ERROR from GRreadimage\n");
 
     printf("Image Data:\n");

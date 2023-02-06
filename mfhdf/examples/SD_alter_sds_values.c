@@ -41,7 +41,7 @@ main()
     /*
      * Write the new values.
      */
-    if (SDwritedata(sds_id, start, NULL, edges, (VOIDP)new_data) == FAIL)
+    if (SDwritedata(sds_id, start, NULL, edges, (void *)new_data) == FAIL)
         printf("*** ERROR from SDwritedata\n");
 
     /*

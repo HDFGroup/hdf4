@@ -145,7 +145,7 @@ main(int argc, char **argv)
 
         if (has_local_palette) {
             status = GRgetlutinfo(pal_id, &ncomp, &data_type, &interlace_mode, &num_entries);
-            status = GRreadlut(pal_id, (VOIDP)&GlobalPalette);
+            status = GRreadlut(pal_id, (void *)&GlobalPalette);
         }
 
         status = GRgetiminfo(ri_id, gr_name, &ncomp, &data_type, &interlace_mode, dim_sizes, &num_attrs);

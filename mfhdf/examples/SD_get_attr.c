@@ -42,7 +42,7 @@ main()
         /*
          * Allocate a buffer to hold the attribute data.
          */
-        fileattr_data = (char *)HDmalloc(n_values * sizeof(char));
+        fileattr_data = (char *)malloc(n_values * sizeof(char));
 
         /*
          * Read the file attribute data.
@@ -83,7 +83,7 @@ main()
         /*
          * Allocate a buffer to hold the data set attribute data.
          */
-        sds_data = (float32 *)HDmalloc(n_values * sizeof(float32));
+        sds_data = (float32 *)malloc(n_values * sizeof(float32));
 
         /*
          * Read the SDS attribute data.
@@ -127,7 +127,7 @@ main()
         /*
          * Allocate a buffer to hold the dimension attribute data.
          */
-        dimattr_data = (char *)HDmalloc(n_values * sizeof(char));
+        dimattr_data = (char *)malloc(n_values * sizeof(char));
 
         /*
          * Read the dimension attribute data.

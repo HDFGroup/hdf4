@@ -216,6 +216,7 @@ test_4(void)
     bv_ptr b;
     int32  size;
     int32  bit_num;
+    int    i;
     intn   ret;
 
     MESSAGE(6, printf("Testing pathologic bit-vector set & get\n"););
@@ -229,7 +230,7 @@ test_4(void)
     VERIFY_VOID(size, 16, "bv_size");
 
     /* Set all the bits to 1 */
-    for (int i = 0; i < 16; i++) {
+    for (i = 0; i < 16; i++) {
         ret = bv_set(b, i, BV_TRUE);
         CHECK_VOID(ret, FAIL, "bv_set");
     }

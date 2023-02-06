@@ -29,15 +29,15 @@
 #define TMP_BUF_SIZE 8192 /* size of throw-away buffer */
 
 /* declaration of the functions provided in this module */
-PRIVATE int32 HCIcszip_staccess(accrec_t *access_rec, int16 acc_mode);
+static int32 HCIcszip_staccess(accrec_t *access_rec, int16 acc_mode);
 
-PRIVATE int32 HCIcszip_init(accrec_t *access_rec);
+static int32 HCIcszip_init(accrec_t *access_rec);
 
-PRIVATE int32 HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf);
+static int32 HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf);
 
-PRIVATE int32 HCIcszip_encode(compinfo_t *info, int32 length, const uint8 *buf);
+static int32 HCIcszip_encode(compinfo_t *info, int32 length, const uint8 *buf);
 
-PRIVATE int32 HCIcszip_term(compinfo_t *info);
+static int32 HCIcszip_term(compinfo_t *info);
 
 /*--------------------------------------------------------------------------
  NAME
@@ -58,7 +58,7 @@ PRIVATE int32 HCIcszip_term(compinfo_t *info);
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcszip_init(accrec_t *access_rec)
 {
     compinfo_t             *info;      /* special element information */
@@ -87,10 +87,8 @@ HCIcszip_init(accrec_t *access_rec)
     szip_info->szip_state = SZIP_INIT; /* start in initial state */
     if (szip_info->buffer_size != 0) {
         szip_info->buffer_size = 0; /* offset into the file */
-        if (szip_info->buffer != NULL) {
-            HDfree(szip_info->buffer);
-            szip_info->buffer = NULL;
-        }
+        free(szip_info->buffer);
+        szip_info->buffer = NULL;
     }
     szip_info->offset     = 0; /* offset into the file */
     szip_info->szip_dirty = SZIP_CLEAN;
@@ -120,7 +118,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
 {
 #ifdef H4_HAVE_LIBSZ
@@ -176,7 +174,7 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
             old_way    = 1;
             good_bytes = in_length;
             in_length  = in_length + 5;
-            if ((in_buffer = (uint8 *)HDmalloc(in_length)) == NULL)
+            if ((in_buffer = (uint8 *)malloc(in_length)) == NULL)
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
             cp  = in_buffer;
             *cp = 0;
@@ -186,7 +184,7 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
         else {
             /*  V4.2r1: in_length is correct */
             old_way = 0;
-            if ((in_buffer = (uint8 *)HDmalloc(in_length)) == NULL)
+            if ((in_buffer = (uint8 *)malloc(in_length)) == NULL)
                 HRETURN_ERROR(DFE_NOSPACE, FAIL);
         }
 
@@ -196,7 +194,7 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
             bytes_per_pixel++;
 
         out_length = szip_info->pixels * bytes_per_pixel;
-        if ((out_buffer = (uint8 *)HDmalloc(out_length)) == NULL)
+        if ((out_buffer = (uint8 *)malloc(out_length)) == NULL)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
         /* Read the unompressed data */
@@ -204,28 +202,28 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
             /* this is encoded in V4.2r0 */
             /* the preamble isn't in the file, so read only the data */
             if ((rbytes = Hread(info->aid, in_length - 5, in_buffer + 5)) == FAIL) {
-                HDfree(out_buffer);
-                HDfree(in_buffer);
+                free(out_buffer);
+                free(in_buffer);
                 HRETURN_ERROR(DFE_READERROR, FAIL);
             }
             if (rbytes == 0 || rbytes != (in_length - 5)) {
                 /* is this possible? */
-                HDfree(out_buffer);
-                HDfree(in_buffer);
+                free(out_buffer);
+                free(in_buffer);
                 HRETURN_ERROR(DFE_READERROR, FAIL);
             }
         }
         else {
             /* HDF4.2R1: read the data plus preamble */
             if ((rbytes = Hread(info->aid, in_length, in_buffer)) == FAIL) {
-                HDfree(out_buffer);
-                HDfree(in_buffer);
+                free(out_buffer);
+                free(in_buffer);
                 HRETURN_ERROR(DFE_READERROR, FAIL);
             }
             if (rbytes == 0 || rbytes != in_length) {
                 /* is this possible? */
-                HDfree(out_buffer);
-                HDfree(in_buffer);
+                free(out_buffer);
+                free(in_buffer);
                 HRETURN_ERROR(DFE_READERROR, FAIL);
             }
         }
@@ -235,30 +233,28 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
         if (in_buffer[0] == 1) {
             /* This byte means the data was not compressed -- just copy out */
             szip_info->szip_state = SZIP_RUN;
-            HDmemcpy(out_buffer, in_buffer + 5, good_bytes);
+            memcpy(out_buffer, in_buffer + 5, good_bytes);
             szip_info->buffer      = out_buffer;
             szip_info->buffer_pos  = 0;
             szip_info->buffer_size = good_bytes;
             szip_info->offset      = 0;
             if (good_bytes > length) {
                 /* partial read */
-                HDmemcpy(buf, in_buffer + 5, length);
+                memcpy(buf, in_buffer + 5, length);
                 szip_info->buffer_pos += length;
                 szip_info->buffer_size -= length;
             }
             else {
                 /* read the whole data block to the user buffer */
-                HDmemcpy(buf, in_buffer + 5, good_bytes);
+                memcpy(buf, in_buffer + 5, good_bytes);
                 szip_info->buffer_pos += good_bytes;
                 szip_info->buffer_size -= good_bytes;
             }
             szip_info->offset = szip_info->buffer_pos;
-            HDfree(in_buffer);
+            free(in_buffer);
             if (szip_info->buffer_size == 0) {
-                if (szip_info->buffer != NULL) {
-                    HDfree(szip_info->buffer);
-                    szip_info->buffer = NULL;
-                }
+                free(szip_info->buffer);
+                szip_info->buffer = NULL;
             }
             return (SUCCEED);
         }
@@ -273,8 +269,8 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
         size_out                     = out_length;
         if (SZ_OK != (status = SZ_BufftoBuffDecompress(out_buffer, &size_out, (in_buffer + 5), good_bytes,
                                                        &sz_param))) {
-            HDfree(out_buffer);
-            HDfree(in_buffer);
+            free(out_buffer);
+            free(in_buffer);
             HRETURN_ERROR(DFE_CDECODE, FAIL);
         }
 
@@ -284,7 +280,7 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
         }
 
         /* The data is successfully decompressed. Put into the szip struct */
-        HDfree(in_buffer);
+        free(in_buffer);
         szip_info->szip_state  = SZIP_RUN;
         szip_info->buffer      = out_buffer;
         szip_info->buffer_pos  = 0;
@@ -295,23 +291,19 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
     /* copy the data into the return buffer */
     if (length > szip_info->buffer_size) {
         /*  can't happen?? panic?? */
-        if (szip_info->buffer != NULL) {
-            HDfree(szip_info->buffer);
-            szip_info->buffer = NULL;
-        }
+        free(szip_info->buffer);
+        szip_info->buffer = NULL;
         return (FAIL);
     }
 
-    HDmemcpy(buf, szip_info->buffer + szip_info->buffer_pos, length);
+    memcpy(buf, szip_info->buffer + szip_info->buffer_pos, length);
     szip_info->buffer_pos += length;
     szip_info->buffer_size -= length;
     szip_info->offset = szip_info->buffer_pos;
 
     if (szip_info->buffer_size == 0) {
-        if (szip_info->buffer != NULL) {
-            HDfree(szip_info->buffer);
-            szip_info->buffer = NULL;
-        }
+        free(szip_info->buffer);
+        szip_info->buffer = NULL;
     }
 
     return (SUCCEED);
@@ -347,7 +339,7 @@ HCIcszip_decode(compinfo_t *info, int32 length, uint8 *buf)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcszip_encode(compinfo_t *info, int32 length, const uint8 *buf)
 {
 #ifdef H4_HAVE_SZIP_ENCODER
@@ -366,7 +358,7 @@ HCIcszip_encode(compinfo_t *info, int32 length, const uint8 *buf)
             bytes_per_pixel = 4;
 
         buffer_size = szip_info->pixels * bytes_per_pixel;
-        if ((szip_info->buffer = HDmalloc(buffer_size)) == NULL)
+        if ((szip_info->buffer = malloc(buffer_size)) == NULL)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
         szip_info->buffer_size = buffer_size;
@@ -375,7 +367,7 @@ HCIcszip_encode(compinfo_t *info, int32 length, const uint8 *buf)
     }
 
     /* copy the data into the buffer.  This will be written in 'term' function */
-    HDmemcpy(szip_info->buffer + szip_info->buffer_pos, buf, length);
+    memcpy(szip_info->buffer + szip_info->buffer_pos, buf, length);
     szip_info->buffer_pos += length;
     szip_info->buffer_size -= length;
     szip_info->offset     = szip_info->buffer_pos;
@@ -412,7 +404,7 @@ HCIcszip_encode(compinfo_t *info, int32 length, const uint8 *buf)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcszip_term(compinfo_t *info)
 {
 #ifdef H4_HAVE_SZIP_ENCODER
@@ -438,10 +430,8 @@ HCIcszip_term(compinfo_t *info)
     if (szip_info->szip_dirty != SZIP_DIRTY) /* Should never happen?? */
     {
         if (szip_info->buffer_size == 0) {
-            if (szip_info->buffer != NULL) {
-                HDfree(szip_info->buffer);
-                szip_info->buffer = NULL;
-            }
+            free(szip_info->buffer);
+            szip_info->buffer = NULL;
         }
         return (SUCCEED);
     }
@@ -483,7 +473,7 @@ HCIcszip_term(compinfo_t *info)
        but there isn't any way to prevent it from getting here */
     if (out_buffer_size < 1024)
         out_buffer_size = 1024;
-    if ((out_buffer = HDmalloc(out_buffer_size)) == NULL)
+    if ((out_buffer = malloc(out_buffer_size)) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     /* set params */
@@ -509,27 +499,23 @@ HCIcszip_term(compinfo_t *info)
             cp          = out_buffer;
             cp++;
             INT32ENCODE(cp, szip_info->buffer_pos);
-            HDmemcpy((out_buffer + 5), szip_info->buffer, szip_info->buffer_pos);
-            HDfree(out_buffer);
+            memcpy((out_buffer + 5), szip_info->buffer, szip_info->buffer_pos);
+            free(out_buffer);
             szip_info->szip_dirty = SZIP_CLEAN;
 
             if (szip_info->buffer_size == 0) {
-                if (szip_info->buffer != NULL) {
-                    HDfree(szip_info->buffer);
-                    szip_info->buffer = NULL;
-                }
+                free(szip_info->buffer);
+                szip_info->buffer = NULL;
             }
             return (SUCCEED);
         }
 
         /* compress failed, return error */
         szip_info->szip_dirty = SZIP_CLEAN;
-        HDfree(out_buffer);
+        free(out_buffer);
         if (szip_info->buffer_size == 0) {
-            if (szip_info->buffer != NULL) {
-                HDfree(szip_info->buffer);
-                szip_info->buffer = NULL;
-            }
+            free(szip_info->buffer);
+            szip_info->buffer = NULL;
         }
         HRETURN_ERROR(DFE_CENCODE, FAIL);
     }
@@ -546,15 +532,13 @@ HCIcszip_term(compinfo_t *info)
         cp          = out_buffer;
         cp++;
         INT32ENCODE(cp, szip_info->buffer_pos);
-        HDmemcpy((out_buffer + 5), szip_info->buffer, szip_info->buffer_pos);
+        memcpy((out_buffer + 5), szip_info->buffer, szip_info->buffer_pos);
         Hwrite(info->aid, (szip_info->buffer_pos + 5), out_buffer);
         szip_info->szip_dirty = SZIP_CLEAN;
-        HDfree(out_buffer);
+        free(out_buffer);
         if (szip_info->buffer_size == 0) {
-            if (szip_info->buffer != NULL) {
-                HDfree(szip_info->buffer);
-                szip_info->buffer = NULL;
-            }
+            free(szip_info->buffer);
+            szip_info->buffer = NULL;
         }
         return (SUCCEED);
     }
@@ -564,22 +548,20 @@ HCIcszip_term(compinfo_t *info)
         /* need to have enough data to overwrite the existing data */
         /* allocate a buffer, fill in the good data. The rest must be
             zeroes */
-        if ((ob = HDmalloc(current_size)) == NULL)
+        if ((ob = malloc(current_size)) == NULL)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
         *ob = 0; /* data needs to be decompressed */
         cp  = ob;
         cp++;
         INT32ENCODE(cp, size_out); /* how much to decompress  (< total size)*/
-        HDmemcpy((ob + 5), out_buffer + 5, size_out);
+        memcpy((ob + 5), out_buffer + 5, size_out);
         Hwrite(info->aid, current_size, ob); /* write out at least 'current_size' bytes */
         szip_info->szip_dirty = SZIP_CLEAN;
-        HDfree(out_buffer);
-        HDfree(ob);
+        free(out_buffer);
+        free(ob);
         if (szip_info->buffer_size == 0) {
-            if (szip_info->buffer != NULL) {
-                HDfree(szip_info->buffer);
-                szip_info->buffer = NULL;
-            }
+            free(szip_info->buffer);
+            szip_info->buffer = NULL;
         }
         return (SUCCEED);
     }
@@ -593,12 +575,10 @@ HCIcszip_term(compinfo_t *info)
 
     szip_info->szip_dirty = SZIP_CLEAN;
     if (szip_info->buffer_size == 0) {
-        if (szip_info->buffer != NULL) {
-            HDfree(szip_info->buffer);
-            szip_info->buffer = NULL;
-        }
+        free(szip_info->buffer);
+        szip_info->buffer = NULL;
     }
-    HDfree(out_buffer);
+    free(out_buffer);
 
     return (SUCCEED);
 
@@ -630,7 +610,7 @@ HCIcszip_term(compinfo_t *info)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIcszip_staccess(accrec_t *access_rec, int16 acc_mode)
 {
     compinfo_t *info; /* special element information */
@@ -761,25 +741,25 @@ HCPcszip_seek(accrec_t *access_rec, int32 offset, int origin)
             HRETURN_ERROR(DFE_CINIT, FAIL);
     } /* end if */
 
-    if ((tmp_buf = (uint8 *)HDmalloc(TMP_BUF_SIZE)) == NULL) /* get tmp buffer */
+    if ((tmp_buf = (uint8 *)malloc(TMP_BUF_SIZE)) == NULL) /* get tmp buffer */
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
     while (szip_info->offset + TMP_BUF_SIZE < offset) /* grab chunks */
     {
         if (HCIcszip_decode(info, TMP_BUF_SIZE, tmp_buf) == FAIL) {
-            HDfree(tmp_buf);
+            free(tmp_buf);
             HRETURN_ERROR(DFE_CDECODE, FAIL)
-        } /* end if */
+        }
     }
     if (szip_info->offset < offset) /* grab the last chunk */
     {
         if (HCIcszip_decode(info, offset - szip_info->offset, tmp_buf) == FAIL) {
-            HDfree(tmp_buf);
+            free(tmp_buf);
             HRETURN_ERROR(DFE_CDECODE, FAIL)
-        } /* end if */
+        }
     }
 
-    HDfree(tmp_buf);
+    free(tmp_buf);
     return (SUCCEED);
 } /* HCPcszip_seek() */
 

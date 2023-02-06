@@ -113,7 +113,7 @@ parse_dumpvd_opts(dump_info_t *dumpvd_opts, intn *curr_arg, intn argc, char *arg
                         lastItem = 1;
                     else
                         *tempPtr = '\0';
-                    flds_chosen[i] = (char *)HDmalloc(sizeof(char) * (HDstrlen(ptr) + 1));
+                    flds_chosen[i] = (char *)malloc(sizeof(char) * (HDstrlen(ptr) + 1));
                     CHECK_ALLOC(flds_chosen[i], "flds_chosen[i]", "parse_dumpvd_opts");
 
                     /*
@@ -342,7 +342,7 @@ choose_vd(dump_info_t *dumpvd_opts, int32 **vd_chosen, int32 file_id, int *index
                 if (vd_count < num_vd_chosen)
                     (*vd_chosen)[vd_count] = index;
                 else {
-                    *vd_chosen = (int32 *)HDrealloc(*vd_chosen, sizeof(int32) * (num_vd_chosen + 1));
+                    *vd_chosen = (int32 *)realloc(*vd_chosen, sizeof(int32) * (num_vd_chosen + 1));
                     if (*vd_chosen == NULL) {
                         fprintf(stderr, "Failure in choose_vd: Memory re-allocation error\n");
                         exit(1);
@@ -416,7 +416,7 @@ printHeader(FILE *fp, char *fldstring, char *fields, vd_info_t *curr_vd)
         fprintf(fp, "   name = %s;", curr_vd->name);
 
     /* print class name - Note that vdclass can be NULL */
-    if (curr_vd->clss[0] == '\0' || curr_vd->clss == NULL)
+    if (curr_vd->clss[0] == '\0')
         fprintf(fp, " class = <Undefined>;\n");
     else
         fprintf(fp, " class = %s;\n", curr_vd->clss);
@@ -801,10 +801,8 @@ closeVD(int32      *file_id,   /* will be returned as a FAIL */
         *file_id = FAIL; /* reset */
     }
 
-    if (*vd_chosen != NULL) {
-        HDfree(*vd_chosen);
-        *vd_chosen = NULL;
-    } /* end if */
+    free(*vd_chosen);
+    *vd_chosen = NULL;
 
 } /* end of closeVD */
 
@@ -911,10 +909,8 @@ dvd(dump_info_t *dumpvd_opts, intn curr_arg, intn argc, char *argv[], char *flds
                 ret_value = FAIL;
         } /* switch for output file   */
 
-        if (vd_chosen != NULL) {
-            HDfree(vd_chosen);
-            vd_chosen = NULL;
-        }
+        free(vd_chosen);
+        vd_chosen = NULL;
 
         if (dumpvd_opts->dump_to_file)
             fclose(fp);
@@ -936,10 +932,8 @@ done:
             Hclose(file_id);
         }
 
-        if (vd_chosen != NULL) {
-            HDfree(vd_chosen);
-            vd_chosen = NULL;
-        }
+        free(vd_chosen);
+        vd_chosen = NULL;
     }
 
     return ret_value;

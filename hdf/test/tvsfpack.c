@@ -33,7 +33,7 @@ struct {
 
 int32  file_id, vdata_id, istat, msize = 0;
 uint8 *databuf, *pntr;
-VOIDP  databufptr[10]; /* make sure its size can hold all fields */
+void  *databufptr[10]; /* make sure its size can hold all fields */
 
 float32 tempdata[NRECORDS], itemp[NRECORDS];
 float32 heightdata[NRECORDS], iheight[NRECORDS];
@@ -73,7 +73,7 @@ fpack(void)
     istat    = VSsetfields(vdata_id, FIELD_NAMES);
     rec_size = 2 * sizeof(float32) + sizeof(int16) + sizeof(char);
 
-    databuf = (uint8 *)HDmalloc(((2 * sizeof(float32)) + sizeof(int16) + sizeof(char)) * NRECORDS);
+    databuf = (uint8 *)malloc(((2 * sizeof(float32)) + sizeof(int16) + sizeof(char)) * NRECORDS);
 
     pntr = databuf;
     /* pack a record at a time */
@@ -309,7 +309,7 @@ funpack(void)
     VSdetach(vdata_id);
     Vend(file_id);
     Hclose(file_id);
-    HDfree(databuf);
+    free(databuf);
     return SUCCEED;
 }
 /* main test driver */

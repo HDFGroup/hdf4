@@ -262,7 +262,7 @@ test_hblocks(void)
     ret = Hclose(fid);
     CHECK_VOID(ret, FAIL, "Hclose");
 
-    if (HDmemcmp(inbuf, outbuf, 512)) {
+    if (memcmp(inbuf, outbuf, 512)) {
         fprintf(stderr, "Error when reading data from HLconvert buffer\n");
         errors++;
     }

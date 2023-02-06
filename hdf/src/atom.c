@@ -102,7 +102,7 @@ HAinit_group(group_t grp,      /* IN: Group to initialize */
 #endif /* HASH_SIZE_POWER_2 */
 
     if (atom_group_list[grp] == NULL) { /* Allocate the group information */
-        grp_ptr = (atom_group_t *)HDcalloc(1, sizeof(atom_group_t));
+        grp_ptr = (atom_group_t *)calloc(1, sizeof(atom_group_t));
         if (grp_ptr == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         atom_group_list[grp] = grp_ptr;
@@ -114,7 +114,7 @@ HAinit_group(group_t grp,      /* IN: Group to initialize */
         grp_ptr->hash_size = hash_size;
         grp_ptr->atoms     = 0;
         grp_ptr->nextid    = 0;
-        if ((grp_ptr->atom_list = (atom_info_t **)HDcalloc(hash_size, sizeof(atom_info_t *))) == NULL)
+        if ((grp_ptr->atom_list = (atom_info_t **)calloc(hash_size, sizeof(atom_info_t *))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
     } /* end if */
 
@@ -124,9 +124,8 @@ HAinit_group(group_t grp,      /* IN: Group to initialize */
 done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (grp_ptr != NULL) {
-            if (grp_ptr->atom_list != NULL)
-                HDfree(grp_ptr->atom_list);
-            HDfree(grp_ptr);
+            free(grp_ptr->atom_list);
+            free(grp_ptr);
         }
     }
 
@@ -175,7 +174,7 @@ HAdestroy_group(group_t grp /* IN: Group to destroy */
                 } /* end if */
         }         /* end block */
 #endif            /* ATOMS_ARE_CACHED */
-        HDfree(grp_ptr->atom_list);
+        free(grp_ptr->atom_list);
         grp_ptr->atom_list = NULL;
     } /* end if */
 
@@ -201,7 +200,7 @@ done:
 *******************************************************************************/
 atom_t
 HAregister_atom(group_t grp,   /* IN: Group to register the object in */
-                VOIDP   object /* IN: Object to attach to atom */
+                void   *object /* IN: Object to attach to atom */
 )
 {
     atom_group_t *grp_ptr = NULL; /* ptr to the atomic group */
@@ -255,11 +254,11 @@ done:
 
 *******************************************************************************/
 #ifdef ATOMS_CACHE_INLINE
-VOIDP
+void *
 HAPatom_object(atom_t atm /* IN: Atom to retrieve object for */
 )
 #else  /* ATOMS_CACHE_INLINE */
-VOIDP
+void *
 HAatom_object(atom_t atm /* IN: Atom to retrieve object for */
 )
 #endif /* ATOMS_CACHE_INLINE */
@@ -270,7 +269,7 @@ HAatom_object(atom_t atm /* IN: Atom to retrieve object for */
 #endif                             /* ATOMS_ARE_CACHED */
 #endif                             /* ATOMS_CACHE_INLINE */
     atom_info_t *atm_ptr   = NULL; /* ptr to the new atom */
-    VOIDP        ret_value = NULL;
+    void        *ret_value = NULL;
 
     HEclear();
 
@@ -282,7 +281,7 @@ HAatom_object(atom_t atm /* IN: Atom to retrieve object for */
             ret_value = atom_obj_cache[i];
             if (i > 0) { /* Implement a simple "move forward" caching scheme */
                 atom_t t_atom = atom_id_cache[i - 1];
-                VOIDP  t_obj  = atom_obj_cache[i - 1];
+                void  *t_obj  = atom_obj_cache[i - 1];
 
                 atom_id_cache[i - 1]  = atom_id_cache[i];
                 atom_obj_cache[i - 1] = atom_obj_cache[i];
@@ -343,7 +342,7 @@ done:
     Returns atom's object if successful and NULL otherwise
 
 *******************************************************************************/
-VOIDP
+void *
 HAremove_atom(atom_t atm /* IN: Atom to remove */
 )
 {
@@ -355,7 +354,7 @@ HAremove_atom(atom_t atm /* IN: Atom to remove */
 #ifdef ATOMS_ARE_CACHED
     uintn i; /* local counting variable */
 #endif       /* ATOMS_ARE_CACHED */
-    VOIDP ret_value = NULL;
+    void *ret_value = NULL;
 
     HEclear();
     grp = ATOM_TO_GROUP(atm);
@@ -534,7 +533,7 @@ HAIget_atom_node(void)
         atom_free_list = atom_free_list->next;
     } /* end if */
     else {
-        if ((ret_value = (atom_info_t *)HDmalloc(sizeof(atom_info_t))) == NULL)
+        if ((ret_value = (atom_info_t *)malloc(sizeof(atom_info_t))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
     } /* end else */
 
@@ -589,14 +588,14 @@ HAshutdown(void)
         while (atom_free_list != NULL) {
             curr           = atom_free_list;
             atom_free_list = atom_free_list->next;
-            HDfree(curr);
+            free(curr);
         } /* end while */
     }     /* end if */
 
     for (i = 0; i < (intn)MAXGROUP; i++)
         if (atom_group_list[i] != NULL) {
-            HDfree(atom_group_list[i]->atom_list);
-            HDfree(atom_group_list[i]);
+            free(atom_group_list[i]->atom_list);
+            free(atom_group_list[i]);
             atom_group_list[i] = NULL;
         } /* end if */
     return (SUCCEED);

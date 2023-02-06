@@ -90,18 +90,18 @@
 
 /* Whether we've installed the library termination function yet for this
    interface */
-PRIVATE intn library_terminate = FALSE;
+static intn library_terminate = FALSE;
 
-/* Function Prototypes for fcns used by TBBT. Can not be PRIVATE. */
+/* Function Prototypes for fcns used by TBBT. Can not be static. */
 extern void ANfreedata(void *data);
 extern void ANfreekey(void *key);
 extern void dumpentryKey(void *key, void *data);
 extern intn ANIanncmp(void *i, void *j, intn value);
 
 /* private initialization routine */
-PRIVATE intn ANIstart(void);
+static intn ANIstart(void);
 /* private destroy routine */
-PRIVATE intn ANIdestroy(void);
+static intn ANIdestroy(void);
 
 /*-----------------------------------------------------------------------------
  *                          Internal Routines
@@ -112,14 +112,14 @@ PRIVATE intn ANIdestroy(void);
 void
 ANfreedata(void *data)
 {
-    HDfree(data);
+    free(data);
 } /* ANfreekey() */
 
 /* free key - used by tbbt routines */
 void
 ANfreekey(void *key)
 {
-    HDfree(key);
+    free(key);
 } /* ANfreekey() */
 
 #ifdef AN_DEBUG
@@ -217,7 +217,7 @@ ANIdestroy(void)
     GeorgeV.
 
 --------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 ANIstart(void)
 {
     intn ret_value = SUCCEED;
@@ -249,7 +249,7 @@ done:
     GeorgeV.
 
 --------------------------------------------------------------------------- */
-PRIVATE int32
+static int32
 ANIinit(void)
 {
     int32 ret_value = SUCCEED;
@@ -285,7 +285,7 @@ done:
     GeorgeV.
 
  -------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 ANIaddentry(int32    an_id, /* IN: annotation interface id */
             ann_type type,  /* IN: annotation type
                                    AN_DATA_LABEL for data labels,
@@ -340,7 +340,7 @@ ANIaddentry(int32    an_id, /* IN: annotation interface id */
     }
 
     /* allocate space for key */
-    if ((ann_key = (int32 *)HDmalloc(sizeof(int32))) == NULL)
+    if ((ann_key = (int32 *)malloc(sizeof(int32))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* Create 32bit key from type/ref
@@ -350,7 +350,7 @@ ANIaddentry(int32    an_id, /* IN: annotation interface id */
     *ann_key = AN_CREATE_KEY(type, ann_ref);
 
     /* Initialize annotation node for insertion in annotation atom group*/
-    if ((ann_node = HDmalloc(sizeof(ANnode))) == NULL)
+    if ((ann_node = malloc(sizeof(ANnode))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     ann_node->file_id = an_id;
@@ -358,7 +358,7 @@ ANIaddentry(int32    an_id, /* IN: annotation interface id */
     ann_node->new_ann = new_ann;
 
     /* Initialize annotation entry for insertion into corresponding TBBT */
-    if ((ann_entry = HDmalloc(sizeof(ANentry))) == NULL)
+    if ((ann_entry = malloc(sizeof(ANentry))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* register annotation with atom group ANIDGROUP */
@@ -388,12 +388,9 @@ ANIaddentry(int32    an_id, /* IN: annotation interface id */
 
 done:
     if (ret_value == FAIL) { /* Error condition cleanup */
-        if (ann_key != NULL)
-            HDfree(ann_key);
-        if (ann_entry != NULL)
-            HDfree(ann_entry);
-        if (ann_node != NULL)
-            HDfree(ann_node);
+        free(ann_key);
+        free(ann_entry);
+        free(ann_node);
     }
 
     return ret_value;
@@ -414,7 +411,7 @@ done:
     GeorgeV.
 
  -------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 ANIcreate_ann_tree(int32    an_id,/* IN: annotation interface id */
                    ann_type type  /* IN: AN_DATA_LABEL for data labels,
                                          AN_DATA_DESC for data descriptions,
@@ -508,7 +505,7 @@ ANIcreate_ann_tree(int32    an_id,/* IN: annotation interface id */
         }
 
         /* allocate space for key */
-        if ((ann_key = (int32 *)HDmalloc(sizeof(int32))) == NULL)
+        if ((ann_key = (int32 *)malloc(sizeof(int32))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
         /* Create key from tag/ref pair
@@ -518,7 +515,7 @@ ANIcreate_ann_tree(int32    an_id,/* IN: annotation interface id */
         *ann_key = AN_CREATE_KEY(type, ann_ref);
 
         /* Initialize annotation node for insertion in annotation atom group*/
-        if ((ann_node = HDmalloc(sizeof(ANnode))) == NULL)
+        if ((ann_node = malloc(sizeof(ANnode))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
         ann_node->file_id = an_id;
@@ -527,7 +524,7 @@ ANIcreate_ann_tree(int32    an_id,/* IN: annotation interface id */
 
         /* Initialize annotation entry for insertion into corresponding TBBT */
         /* and  decode data tag/ref */
-        if ((ann_entry = HDmalloc(sizeof(ANentry))) == NULL)
+        if ((ann_entry = malloc(sizeof(ANentry))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
         ann_entry->annref = ann_ref;
@@ -566,12 +563,9 @@ ANIcreate_ann_tree(int32    an_id,/* IN: annotation interface id */
 
 done:
     if (ret_value == FAIL) { /* Error condition cleanup */
-        if (ann_key != NULL)
-            HDfree(ann_key);
-        if (ann_entry != NULL)
-            HDfree(ann_entry);
-        if (ann_node != NULL)
-            HDfree(ann_node);
+        free(ann_key);
+        free(ann_entry);
+        free(ann_node);
         if (FAIL != aid)
             Hendaccess(aid);
     }
@@ -594,7 +588,7 @@ done:
     GeorgeV.
 
  -------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 ANIfind(int32    an_id, /* IN: annotation interface id */
         ann_type type,  /* IN: AN_DATA_LABEL for data labels,
                                AN_DATA_DESC for data descriptions,
@@ -663,7 +657,7 @@ done:
     GeorgeV.
 
  -------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 ANInumann(int32    an_id,  /* IN: annotation interface id */
           ann_type type,   /* IN: AN_DATA_LABEL for data labels,
                                   AN_DATA_DESC for data descriptions,
@@ -723,7 +717,7 @@ done:
     GeorgeV.
 
  ------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 ANIannlist(int32    an_id,  /* IN: annotation interface id */
            ann_type type,   /* IN: AN_DATA_LABEL for data labels,
                                    AN_DATA_DESC for data descriptions,
@@ -783,7 +777,7 @@ done:
     GeorgeV.
 
  ------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 ANIannlen(int32 ann_id /*  IN: annotation id */)
 {
     ANnode *ann_node = NULL;
@@ -865,7 +859,7 @@ done:
     GeorgeV.
 
  ------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 ANIreadann(int32 ann_id, /* IN: annotation id (handle) */
            char *ann,    /* OUT: space to return annotation in */
            int32 maxlen /* IN: size of space to return annotation in */)
@@ -991,7 +985,7 @@ done:
     GeorgeV.
 
  ------------------------------------------------------------------------*/
-PRIVATE intn
+static intn
 ANIwriteann(int32       ann_id, /* IN: annotation id */
             const char *ann,    /* IN: annotation to write */
             int32       ann_len /* IN: length of annotation */)
@@ -1138,7 +1132,7 @@ done:
     GeorgeV.
 
 --------------------------------------------------------------------------- */
-PRIVATE intn
+static intn
 ANIcreate(int32    file_id,  /* IN: file ID */
           uint16   elem_tag, /* IN: tag of item to be assigned annotation */
           uint16   elem_ref, /* IN: reference number of itme to be assigned ann */
@@ -1220,7 +1214,7 @@ done:
     GeorgeV.
 
 --------------------------------------------------------------------------- */
-EXPORT int32
+int32
 ANstart(int32 file_id /* IN: file to start annotation access on*/)
 {
     filerec_t *file_rec  = NULL; /* file record pointer */
@@ -1261,7 +1255,7 @@ done:
     GeorgeV.
 
 --------------------------------------------------------------------------*/
-EXPORT intn
+intn
 ANfileinfo(int32  an_id,        /* IN:  annotation interface id */
            int32 *n_file_label, /* OUT: the # of file labels */
            int32 *n_file_desc,  /* OUT: the # of file descriptions */
@@ -1325,7 +1319,7 @@ done:
  RETURNS
     SUCCEED / FAIL
 --------------------------------------------------------------------------- */
-EXPORT int32
+int32
 ANend(int32 an_id /* IN: Annotation ID of file to close */)
 {
     filerec_t *file_rec  = NULL; /* file record pointer */
@@ -1357,9 +1351,8 @@ ANend(int32 an_id /* IN: Annotation ID of file to close */)
             if (NULL == (ann_node = HAremove_atom(ann_entry->ann_id)))
                 HE_REPORT_GOTO("Failed to remove annotation with ann_id", FAIL);
 
-            if (ann_node != NULL)
-                HDfree(ann_node); /* free node */
-        }                         /* end for 'entry */
+            free(ann_node);
+        }
         /* finally free tree */
         tbbtdfree(file_rec->an_tree[AN_FILE_LABEL], ANfreedata, ANfreekey);
     }
@@ -1375,8 +1368,7 @@ ANend(int32 an_id /* IN: Annotation ID of file to close */)
             if (NULL == (ann_node = HAremove_atom(ann_entry->ann_id)))
                 HE_REPORT_GOTO("Failed to remove annotation with ann_id", FAIL);
 
-            if (ann_node != NULL)
-                HDfree(ann_node); /* free node */
+            free(ann_node);
 
         } /* end for 'entry */
         /* finally free tree */
@@ -1394,9 +1386,8 @@ ANend(int32 an_id /* IN: Annotation ID of file to close */)
             if (NULL == (ann_node = HAremove_atom(ann_entry->ann_id)))
                 HE_REPORT_GOTO("Failed to remove annotation with ann_id", FAIL);
 
-            if (ann_node != NULL)
-                HDfree(ann_node); /* free node */
-        }                         /* end for 'entry */
+            free(ann_node);
+        }
         /* finally free tree */
         tbbtdfree(file_rec->an_tree[AN_DATA_LABEL], ANfreedata, ANfreekey);
     }
@@ -1412,8 +1403,7 @@ ANend(int32 an_id /* IN: Annotation ID of file to close */)
             if (NULL == (ann_node = HAremove_atom(ann_entry->ann_id)))
                 HE_REPORT_GOTO("Failed to remove annotation with ann_id", FAIL);
 
-            if (ann_node != NULL)
-                HDfree(ann_node); /* free node */
+            free(ann_node);
 
         } /* end for 'entry */
         /* finally free tree */
@@ -1450,7 +1440,7 @@ done:
     GeorgeV.
 
 --------------------------------------------------------------------------- */
-EXPORT int32
+int32
 ANcreate(int32    an_id,    /* IN: annotation interface ID */
          uint16   elem_tag, /* IN: tag of item to be assigned annotation */
          uint16   elem_ref, /* IN: reference number of itme to be assigned ann */
@@ -1479,7 +1469,7 @@ ANcreate(int32    an_id,    /* IN: annotation interface ID */
     GeorgeV.
 
 --------------------------------------------------------------------------- */
-EXPORT int32
+int32
 ANcreatef(int32    an_id,/* IN: annotation interface ID */
           ann_type type  /* IN:  AN_FILE_LABEL for file labels,
                                  AN_FILE_DESC for file descriptions.*/)
@@ -1524,7 +1514,7 @@ done:
     GeorgeV.
 
 --------------------------------------------------------------------------- */
-EXPORT int32
+int32
 ANselect(int32    an_id, /* IN: annotation interface ID */
          int32    index, /* IN: index of annottion to get ID for */
          ann_type type   /* IN: AN_DATA_LABEL for data labels,
@@ -1587,7 +1577,7 @@ done:
     GeorgeV.
 
  ------------------------------------------------------------------------*/
-EXPORT intn
+intn
 ANnumann(int32    an_id,  /* IN: annotation interface id */
          ann_type type,   /* IN: AN_DATA_LABEL for data labels,
                                  AN_DATA_DESC for data descriptions,
@@ -1625,7 +1615,7 @@ done:
     GeorgeV.
 
  ------------------------------------------------------------------------*/
-EXPORT intn
+intn
 ANannlist(int32    an_id,  /* IN: annotation interface id */
           ann_type type,   /* IN: AN_DATA_LABEL for data labels,
                                   AN_DATA_DESC for data descriptions,
@@ -1661,7 +1651,7 @@ done:
     GeorgeV.
 
  ------------------------------------------------------------------------*/
-EXPORT int32
+int32
 ANannlen(int32 ann_id /* IN: annotation id */)
 {
     int32 ret_value;
@@ -1685,7 +1675,7 @@ ANannlen(int32 ann_id /* IN: annotation id */)
     GeorgeV.
 
  ------------------------------------------------------------------------*/
-EXPORT int32
+int32
 ANwriteann(int32       ann_id, /* IN: annotation id */
            const char *ann,    /* IN: annotation to write */
            int32       annlen /* IN: length of annotation */)
@@ -1711,7 +1701,7 @@ ANwriteann(int32       ann_id, /* IN: annotation id */
     GeorgeV.
 
  ------------------------------------------------------------------------*/
-EXPORT int32
+int32
 ANreadann(int32 ann_id, /* IN: annotation id (handle) */
           char *ann,    /* OUT: space to return annotation in */
           int32 maxlen /* IN: size of space to return annotation in */)
@@ -1736,7 +1726,7 @@ ANreadann(int32 ann_id, /* IN: annotation id (handle) */
     GeorgeV.
 
 --------------------------------------------------------------------------- */
-EXPORT intn
+intn
 ANendaccess(int32 ann_id /* IN: annotation id */)
 {
     intn ret_value = SUCCEED;
@@ -1762,7 +1752,7 @@ ANendaccess(int32 ann_id /* IN: annotation id */)
     GeorgeV.
 
 --------------------------------------------------------------------------- */
-EXPORT int32
+int32
 ANget_tagref(int32    an_id, /* IN: annotation interface ID */
              int32    index, /* IN: index of annotation to get tag/ref for */
              ann_type type,  /* IN: AN_DATA_LABEL for data labels,
@@ -1989,7 +1979,7 @@ done:
     GeorgeV.
 
 --------------------------------------------------------------------*/
-EXPORT uint16
+uint16
 ANatype2tag(ann_type atype /* IN: Annotation type */)
 { /* Switch on annotation type "atype" */
     uint16 ann_tag;
@@ -2027,7 +2017,7 @@ ANatype2tag(ann_type atype /* IN: Annotation type */)
     GeorgeV.
 
 --------------------------------------------------------------------*/
-EXPORT ann_type
+ann_type
 ANtag2atype(uint16 atag /* IN: annotation tag */)
 { /* Switch on annotation tag */
     ann_type atype;

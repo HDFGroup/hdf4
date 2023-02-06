@@ -98,7 +98,7 @@ jobs:
             jpegfc: ON
             libaecfc: ON
             zlibfc: ON
-            toolchain: "$GITHUB_WORKSPACE/config/toolchain/GCC.cmake"
+            toolchain: "$GITHUB_WORKSPACE/config/toolchain/gcc.cmake"
             cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G Ninja"
             run_tests: true
@@ -197,7 +197,7 @@ jobs:
             jpegfc: ON
             libaecfc: ON
             zlibfc: ON
-            toolchain: "$GITHUB_WORKSPACE/config/toolchain/GCC.cmake"
+            toolchain: "$GITHUB_WORKSPACE/config/toolchain/gcc.cmake"
             cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G Ninja"
             run_tests: true

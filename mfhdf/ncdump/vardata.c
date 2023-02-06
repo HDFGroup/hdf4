@@ -23,7 +23,7 @@
  * Function from ncdump.c. "Fixes" variable names to remove spaces and other
  * "illegal" characters.
  */
-extern char *fixstr(char *str, bool fix_str);
+extern char *sanitize_string(char *str, bool fix_str);
 
 static void annotate(struct ncvar *vp, struct fspec *fsp, long cor[], long iel);
 
@@ -505,7 +505,7 @@ vardata(struct ncvar *vp, long vdims[], int ncid, int varid, struct fspec *fsp)
         nels *= vdims[id]; /* total number of values for variable */
     }
 
-    fixed_var = fixstr(vp->name, fsp->fix_str);
+    fixed_var = sanitize_string(vp->name, fsp->fix_str);
 
     if (vrank <= 1) {
         Printf("\n %s = ", fixed_var);

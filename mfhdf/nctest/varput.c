@@ -17,7 +17,6 @@
 #include "val.h"
 #include "error.h"
 #include "tests.h"
-#include "alloc.h"
 #include "emalloc.h"
 #ifdef HDF
 #include "hdf.h"
@@ -151,8 +150,7 @@ test_ncvarput(char *path)
         error("%s: ncvarput failed to report bad netcdf handle", pname);
         nerrs++;
     }
-    if (hc.vals)
-        Free((char *)hc.vals);
+    free(hc.vals);
     if (nerrs > 0)
         (void)fprintf(stderr, "FAILED! ***\n");
     else

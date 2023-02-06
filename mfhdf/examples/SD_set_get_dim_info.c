@@ -70,13 +70,13 @@ main()
                 if (SDsetdimname(dim_id, DIM_NAME_Y) == FAIL)
                     printf("*** ERROR from SDsetdimname\n");
                 n_values = Y_LENGTH;
-                SDsetdimscale(dim_id, n_values, DFNT_FLOAT64, (VOIDP)data_Y);
+                SDsetdimscale(dim_id, n_values, DFNT_FLOAT64, (void *)data_Y);
                 break;
             case 1:
                 if (SDsetdimname(dim_id, DIM_NAME_X) == FAIL)
                     printf("*** ERROR from SDsetdimname\n");
                 n_values = X_LENGTH;
-                SDsetdimscale(dim_id, n_values, DFNT_INT16, (VOIDP)data_X);
+                SDsetdimscale(dim_id, n_values, DFNT_INT16, (void *)data_X);
                 break;
             default:
                 break;
@@ -122,7 +122,7 @@ main()
         printf("Scale values are :\n");
         switch (dim_index) {
             case 0:
-                if (SDgetdimscale(dim_id, (VOIDP)data_Y_out) == FAIL)
+                if (SDgetdimscale(dim_id, (void *)data_Y_out) == FAIL)
                     printf("*** ERROR from SDgetdimscale\n");
                 nrow = 4;
                 for (i = 0; i < n_values / nrow; i++) {
@@ -132,7 +132,7 @@ main()
                 }
                 break;
             case 1:
-                if (SDgetdimscale(dim_id, (VOIDP)data_X_out) == FAIL)
+                if (SDgetdimscale(dim_id, (void *)data_X_out) == FAIL)
                     printf("*** ERROR from SDgetdimscale\n");
                 for (i = 0; i < n_values; i++)
                     printf("  %d", data_X_out[i]);

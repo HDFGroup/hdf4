@@ -346,10 +346,10 @@ VSsetattr(int32 vsid, int32 findex, const char *attrname, int32 datatype, int32 
     if (vs->alist == NULL) {
         if (vs->nattrs > 0)
             HGOTO_ERROR(DFE_BADATTR, FAIL);
-        vs->alist = (vs_attr_t *)HDmalloc(sizeof(vs_attr_t));
+        vs->alist = (vs_attr_t *)malloc(sizeof(vs_attr_t));
     }
     else
-        vs->alist = HDrealloc(vs->alist, (vs->nattrs + 1) * sizeof(vs_attr_t));
+        vs->alist = realloc(vs->alist, (vs->nattrs + 1) * sizeof(vs_attr_t));
     if (vs->alist == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     vs->alist[vs->nattrs].findex = findex;
@@ -839,10 +839,10 @@ Vsetattr(int32 vgid, const char *attrname, int32 datatype, int32 count, const vo
         HGOTO_ERROR(DFE_VSCANTCREATE, FAIL);
     /* add the attr to attr list */
     if (vg->alist == NULL)
-        vg->alist = (vg_attr_t *)HDmalloc(sizeof(vg_attr_t));
+        vg->alist = (vg_attr_t *)malloc(sizeof(vg_attr_t));
     else
         /* not exist */
-        vg->alist = HDrealloc(vg->alist, (vg->nattrs + 1) * sizeof(vg_attr_t));
+        vg->alist = realloc(vg->alist, (vg->nattrs + 1) * sizeof(vg_attr_t));
     if (vg->alist == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     vg->nattrs++;
@@ -1016,7 +1016,7 @@ Vnoldattrs(int32 vgid)
            or if it is outdated. */
 
         /* temporary list of attr refs to pass into VSofclass */
-        areflist = (uint16 *)HDmalloc(sizeof(uint16) * n_old_attrs);
+        areflist = (uint16 *)malloc(sizeof(uint16) * n_old_attrs);
         if (areflist == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
@@ -1035,11 +1035,10 @@ Vnoldattrs(int32 vgid)
         else if (vg->noldattrs != n_old_attrs) {
             /* List is outdated, i.e., more old style attributes had been added
                since the list was established, release it */
-            if (vg->old_alist != NULL)
-                HDfree(vg->old_alist);
+            free(vg->old_alist);
 
             /* Allocate new list */
-            vg->old_alist = (vg_attr_t *)HDmalloc(sizeof(vg_attr_t) * (n_old_attrs));
+            vg->old_alist = (vg_attr_t *)malloc(sizeof(vg_attr_t) * (n_old_attrs));
             if (vg->old_alist == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
@@ -1056,8 +1055,7 @@ Vnoldattrs(int32 vgid)
     } /* there are some old attributes */
 
 done:
-    if (areflist != NULL)
-        HDfree(areflist);
+    free(areflist);
     return ret_value;
 } /* Vnoldattrs */
 

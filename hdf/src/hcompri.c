@@ -108,7 +108,7 @@ HRPconvert(int32 fid, uint16 tag, uint16 ref, int32 xdim, int32 ydim, int16 sche
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* allocate special info struct for buffered element */
-    if ((info = HDmalloc((uint32)sizeof(crinfo_t))) == NULL)
+    if ((info = malloc((uint32)sizeof(crinfo_t))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* fill in special info struct */
@@ -120,7 +120,7 @@ HRPconvert(int32 fid, uint16 tag, uint16 ref, int32 xdim, int32 ydim, int16 sche
     info->ydim       = ydim;
     info->image_size = xdim * ydim * pixel_size;
     info->scheme     = scheme;
-    HDmemcpy(&(info->cinfo), cinfo, sizeof(comp_info));
+    memcpy(&(info->cinfo), cinfo, sizeof(comp_info));
 
     /* get empty access record */
     access_rec = HIget_access_rec();
@@ -448,7 +448,7 @@ HRPcloseAID(accrec_t *access_rec)
        If no more references to that, free the record */
 
     if (--(info->attached) == 0) {
-        HDfree(info);
+        free(info);
         access_rec->special_info = NULL;
     }
 

@@ -24,7 +24,7 @@ emalloc(int size)
     if (size == 0)
         return 0;
 #ifdef HDF
-    p = (void *)HDmalloc((uint32)size);
+    p = (void *)malloc((uint32)size);
 #else
     p = (void *)malloc((unsigned)size);
 #endif
@@ -46,7 +46,7 @@ erealloc(void *ptr, int size)
         return 0;
     }
 #ifdef HDF
-    p = (void *)HDrealloc((VOIDP)ptr, (uint32)size);
+    p = (void *)realloc((void *)ptr, (uint32)size);
 #else
     p = (void *)realloc((char *)ptr, (unsigned)size);
 #endif

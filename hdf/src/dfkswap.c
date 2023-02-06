@@ -58,7 +58,7 @@
 /* -->Byte swapping for 2 byte data items                   */
 /************************************************************/
 int
-DFKsb2b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
+DFKsb2b(void *s, void *d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
 {
     int    fast_processing = 0; /* Default is not fast processing */
     int    in_place        = 0; /* Inplace must be detected */
@@ -130,7 +130,7 @@ DFKsb2b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stri
 /* -->Byte swapping for 4 byte data items                   */
 /************************************************************/
 int
-DFKsb4b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
+DFKsb4b(void *s, void *d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
 {
     int    fast_processing = 0; /* Default is not fast processing */
     int    in_place        = 0; /* Inplace must be detected */
@@ -296,7 +296,7 @@ DFKsb4b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stri
 /* -->Byte swapping for 8 byte data items                   */
 /************************************************************/
 int
-DFKsb8b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
+DFKsb8b(void *s, void *d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
 {
     int    fast_processing = 0; /* Default is not fast processing */
     int    in_place        = 0; /* Inplace must be detected */

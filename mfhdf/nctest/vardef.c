@@ -18,7 +18,6 @@
 #include "add.h"     /* functions to update in-memory netcdf */
 #include "error.h"
 #include "tests.h"
-#include "alloc.h"
 #include "emalloc.h"
 #ifdef HDF
 #include "hdf.h"
@@ -282,11 +281,10 @@ test_ncvardef(char *path)
         error("%s: ncclose failed", pname);
         return;
     }
-    Free((char *)tmp.dims);
-    Free(tmp.name);
+    free(tmp.dims);
+    free(tmp.name);
     for (iv = 0; iv < nv; iv++)
-        if (va[iv].dims)
-            Free((char *)va[iv].dims);
+        free(va[iv].dims);
     if (nerrs > 0)
         (void)fprintf(stderr, "FAILED! ***\n");
     else

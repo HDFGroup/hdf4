@@ -351,7 +351,7 @@ static int   ntotal = 0;
 
 /* scanf functions */
 static int32
-inplong(VOIDP x)
+inplong(void *x)
 {
     int32 val, ret;
 
@@ -361,7 +361,7 @@ inplong(VOIDP x)
 }
 
 static int32
-inpshort(VOIDP x)
+inpshort(void *x)
 {
     int ret, val;
 
@@ -371,7 +371,7 @@ inpshort(VOIDP x)
 }
 
 static int32
-inpbyte(VOIDP x)
+inpbyte(void *x)
 {
     int ret;
     int val;
@@ -382,7 +382,7 @@ inpbyte(VOIDP x)
 }
 
 static int32
-inpfloat(VOIDP x)
+inpfloat(void *x)
 {
     int   ret;
     float val;
@@ -393,7 +393,7 @@ inpfloat(VOIDP x)
 }
 
 static int32
-inpchar(VOIDP x)
+inpchar(void *x)
 {
     return (scanf("%c ", (char *)x));
 }
@@ -407,7 +407,7 @@ inpdata(unsigned char **bp)
     int32          totalsize, nread, t, i, j, k;
     unsigned char *b;
     int32          maxrec;
-    int32 (*inpfn[MAXVAR])(VOIDP);
+    int32 (*inpfn[MAXVAR])(void *);
     int32 inpsiz[MAXVAR];
 
     for (i = 0; i < ntotal; i++) {

@@ -23,29 +23,15 @@
  */
 
 #include <stdio.h>
-#if defined TEST_PC || defined TEST_WIN
-FILE                          *dbg_file;
-#endif
 
 #include <stdlib.h>
 #include <string.h> /* to remove warnings, HDFFR-1434 */
 
 int
-main(int argc, char *argv[])
+main(void)
 {
     static char testfile[]            = "test.nc";
     static char unlim_testfile_name[] = "test_unlim.nc";
-
-    (void)argc;
-    (void)argv;
-
-#if defined TEST_PC || defined TEST_WIN
-    dbg_file = fopen("test.dbg", "w+");
-#endif
-
-#ifdef MDEBUG
-    malloc_debug(2);
-#endif /* MDEBUG */
 
     ncopts &= ~NC_FATAL;   /* make errors nonfatal */
     ncopts &= ~NC_VERBOSE; /* turn off error messages */
@@ -120,9 +106,5 @@ main(int argc, char *argv[])
 
     test_nctypelen();
 
-#if defined TEST_PC || defined TEST_WIN
-    fclose(dbg_file);
-#endif
-#define EXIT_SUCCESS 0
     return EXIT_SUCCESS;
 }

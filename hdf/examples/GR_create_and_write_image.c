@@ -72,7 +72,7 @@ main()
     /*
      * Write the data in the buffer into the image array.
      */
-    if (GRwriteimage(ri_id, start, NULL, edges, (VOIDP)image_buf) == FAIL)
+    if (GRwriteimage(ri_id, start, NULL, edges, (void *)image_buf) == FAIL)
         printf("*** ERROR from GRwriteimage\n");
 
     /*

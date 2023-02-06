@@ -333,18 +333,34 @@ fi
 AC_PROG_INSTALL
 AC_PROG_LN_S
 
-AC_CHECK_PROGS([AR], [ar xar], [:], [$PATH])
+
+## ----------------------------------------------------------------------
+## Check which archiving tool to use. This needs to be done before
+## the LT_INIT macro.
+##
+if test -z "$AR"; then
+  AC_CHECK_PROGS([AR], [ar xar], [:], [$PATH])
+fi
+AC_SUBST([AR])
+
+# Set the default ar flags to cr
+# The Automake default is to use cru and the 'u' causes ar
+# to emit warnings on some platforms.
+AR_FLAGS=cr
+
+## Export the AR macro so that it will be placed in the libtool file
+## correctly.
+export AR
+
 
 AC_CHECK_PROGS([YACC], ['bison -y' byacc yacc], [none], [])
-
 if test "$YACC" = "none"; then
-  AC_MSG_ERROR([cannot find yacc utility])
+  AC_MSG_ERROR([cannot find bison/yacc utility])
 fi
 
 AC_CHECK_PROGS([LEX], [flex lex], [none], [])
-
 if test "$LEX" = "none"; then
-  AC_MSG_ERROR([cannot find lex utility])
+  AC_MSG_ERROR([cannot find flex/lex utility])
 fi
 
 AC_CHECK_PROG([DIFF],     [diff],     [diff -w])
@@ -352,7 +368,6 @@ AC_CHECK_PROG([MAKEINFO], [makeinfo], [makeinfo])
 AC_CHECK_PROG([NEQN],     [neqn],     [neqn])
 AC_CHECK_PROG([TBL],      [tbl],      [tbl])
 
-AC_SUBST([AR])
 AC_SUBST([DIFF])
 AC_SUBST([STATIC_SHARED])
 AC_SUBST([SHARED_EXTENSION])
@@ -711,6 +726,7 @@ case "$enableval" in
     ;;
   no)
     BUILD_XDR="no"
+    AC_MSG_RESULT([using system XDR]);
     ;;
 esac
 
@@ -770,7 +786,7 @@ if test "X$BUILD_XDR" != "Xyes"; then
 
   AC_LINK_IFELSE([AC_LANG_PROGRAM([[
   #include <rpc/types.h>
-  #include <rpc/xdr.h>]], [[xdr_int]])],[AC_MSG_RESULT([yes]); BUILD_XDR="no"],[AC_MSG_RESULT([no]); BUILD_XDR="yes"])
+  #include <rpc/xdr.h>]], [[xdr_int]])],[BUILD_XDR="no"],[BUILD_XDR="yes"])
 fi
 
 if test "X$BUILD_XDR" != "Xno"; then

@@ -75,14 +75,15 @@ typedef struct {
 intn
 alloc_info(t_hdf_datainfo_t *info, uintn info_count, int32 n_dims)
 {
-    HDmemset(info, 0, sizeof(info));
-    info->offsets = (int32 *)HDmalloc(info_count * sizeof(int32));
+    memset(info, 0, sizeof(*info));
+
+    info->offsets = (int32 *)malloc(info_count * sizeof(int32));
     if (info->offsets == NULL)
         return -1;
-    info->lengths = (int32 *)HDmalloc(info_count * sizeof(int32));
+    info->lengths = (int32 *)malloc(info_count * sizeof(int32));
     if (info->lengths == NULL)
         return -1;
-    info->dimsizes = (int32 *)HDmalloc(n_dims * sizeof(int32));
+    info->dimsizes = (int32 *)malloc(n_dims * sizeof(int32));
     if (info->dimsizes == NULL)
         return -1;
     return 0;
@@ -92,12 +93,9 @@ void
 free_info(t_hdf_datainfo_t *info)
 {
     if (info != NULL) {
-        if (info->offsets != NULL)
-            HDfree(info->offsets);
-        if (info->lengths != NULL)
-            HDfree(info->lengths);
-        if (info->dimsizes != NULL)
-            HDfree(info->dimsizes);
+        free(info->offsets);
+        free(info->lengths);
+        free(info->dimsizes);
     }
 }
 
@@ -197,7 +195,7 @@ test_nonspecial_SDSs()
 
     starts[0] = 0;
     edges[0]  = LENGTH1_X;
-    status    = SDwritedata(sds_id, starts, NULL, edges, (VOIDP)data1);
+    status    = SDwritedata(sds_id, starts, NULL, edges, (void *)data1);
     CHECK(status, FAIL, "test_nonspecial_SDSs: SDwritedata");
 
     status = SDendaccess(sds_id);
@@ -220,7 +218,7 @@ test_nonspecial_SDSs()
     starts[1] = 0;
     edges[0]  = LENGTH2_X;
     edges[1]  = LENGTH2_Y;
-    status    = SDwritedata(sds_id, starts, NULL, edges, (VOIDP)data2);
+    status    = SDwritedata(sds_id, starts, NULL, edges, (void *)data2);
     CHECK(status, FAIL, "test_nonspecial_SDSs: SDwritedata");
 
     status = SDendaccess(sds_id);
@@ -238,7 +236,7 @@ test_nonspecial_SDSs()
 
     starts[0] = 0;
     edges[0]  = LENGTH3_X;
-    status    = SDwritedata(sds_id, starts, NULL, edges, (VOIDP)data3);
+    status    = SDwritedata(sds_id, starts, NULL, edges, (void *)data3);
     CHECK(status, FAIL, "test_nonspecial_SDSs: SDwritedata");
 
     status = SDendaccess(sds_id);
@@ -372,10 +370,10 @@ test_nonspecial_SDSs()
         }
 
         /* Allocate buffers for SDS' data */
-        readibuf         = (int32 *)HDmalloc(sds1_info.n_values * sizeof(int32));
-        readibuf_swapped = (int32 *)HDmalloc(sds1_info.n_values * sizeof(int32));
+        readibuf         = (int32 *)malloc(sds1_info.n_values * sizeof(int32));
+        readibuf_swapped = (int32 *)malloc(sds1_info.n_values * sizeof(int32));
         /* Read in this block of data */
-        readlen = read(fd, (VOIDP)readibuf, (size_t)sds1_info.lengths[0]);
+        readlen = read(fd, (void *)readibuf, (size_t)sds1_info.lengths[0]);
         CHECK(readlen, FAIL, "DFKconvert");
 
         ret32 = DFKconvert(readibuf, readibuf_swapped, sds1_info.numtype, (uint32)sds1_info.n_values,
@@ -390,8 +388,8 @@ test_nonspecial_SDSs()
                             readibuf_swapped[ii]);
             }
         }
-        HDfree(readibuf_swapped);
-        HDfree(readibuf);
+        free(readibuf_swapped);
+        free(readibuf);
 
         /* Forward to the position of the data of SDS at index 2 */
         if (lseek(fd, (off_t)sds2_info.offsets[0], SEEK_SET) == -1) {
@@ -401,10 +399,10 @@ test_nonspecial_SDSs()
         }
 
         /* Allocate buffers for SDS' data */
-        readfbuf         = (float32 *)HDmalloc(sds2_info.n_values * sizeof(float32));
-        readfbuf_swapped = (float32 *)HDmalloc(sds2_info.n_values * sizeof(float32));
+        readfbuf         = (float32 *)malloc(sds2_info.n_values * sizeof(float32));
+        readfbuf_swapped = (float32 *)malloc(sds2_info.n_values * sizeof(float32));
         /* Read in this block of data */
-        readlen = read(fd, (VOIDP)readfbuf, (size_t)sds2_info.lengths[0]);
+        readlen = read(fd, (void *)readfbuf, (size_t)sds2_info.lengths[0]);
         CHECK(readlen, FAIL, "DFKconvert");
 
         ret32 = DFKconvert(readfbuf, readfbuf_swapped, sds2_info.numtype, (uint32)sds2_info.n_values,
@@ -422,8 +420,8 @@ test_nonspecial_SDSs()
                 if (kk < sds2_info.n_values)
                     kk++;
             }
-        HDfree(readfbuf_swapped);
-        HDfree(readfbuf);
+        free(readfbuf_swapped);
+        free(readfbuf);
 
         /* Forward to the position of the data of SDS at index 3 */
         if (lseek(fd, (off_t)sds3_info.offsets[0], SEEK_SET) == -1) {
@@ -433,10 +431,10 @@ test_nonspecial_SDSs()
         }
 
         /* Allocate buffers for SDS' data */
-        readibuf         = (int32 *)HDmalloc(sds3_info.n_values * sizeof(int32));
-        readibuf_swapped = (int32 *)HDmalloc(sds3_info.n_values * sizeof(int32));
+        readibuf         = (int32 *)malloc(sds3_info.n_values * sizeof(int32));
+        readibuf_swapped = (int32 *)malloc(sds3_info.n_values * sizeof(int32));
         /* Read in this block of data */
-        readlen = read(fd, (VOIDP)readibuf, (size_t)sds3_info.lengths[0]);
+        readlen = read(fd, (void *)readibuf, (size_t)sds3_info.lengths[0]);
         CHECK(readlen, FAIL, "DFKconvert");
 
         ret32 = DFKconvert(readibuf, readibuf_swapped, sds3_info.numtype, (uint32)sds3_info.n_values,
@@ -451,8 +449,8 @@ test_nonspecial_SDSs()
                             readibuf_swapped[ii]);
             }
         }
-        HDfree(readibuf_swapped);
-        HDfree(readibuf);
+        free(readibuf_swapped);
+        free(readibuf);
 
         if (close(fd) == -1) {
             fprintf(stderr, "test_nonspecial_SDSs: unable to close file %s", SIMPLE_FILE);
@@ -538,7 +536,7 @@ test_compressed_SDSs()
     CHECK(sds_id, FAIL, "test_compressed_SDSs: SDcreate 'Deflate-Data'");
 
     comp_type = COMP_CODE_DEFLATE;
-    HDmemset(&c_info, 0, sizeof(c_info));
+    memset(&c_info, 0, sizeof(c_info));
     c_info.deflate.level = 6;
     status               = SDsetcompress(sds_id, comp_type, &c_info);
     CHECK(status, FAIL, "test_compressed_SDSs: SDsetcompress 'Deflate-Data'");
@@ -548,7 +546,7 @@ test_compressed_SDSs()
 
     starts[0] = 0;
     edges[0]  = LENGTH1_X;
-    status    = SDwritedata(sds_id, starts, NULL, edges, (VOIDP)data1);
+    status    = SDwritedata(sds_id, starts, NULL, edges, (void *)data1);
     CHECK(status, FAIL, "test_compressed_SDSs: SDwritedata 'Deflate-Data'");
 
     status = SDendaccess(sds_id);
@@ -569,7 +567,7 @@ test_compressed_SDSs()
     CHECK(sds_id, FAIL, "test_compressed_SDSs: SDcreate 'SZIP-Data'");
 
     comp_type = COMP_CODE_SZIP;
-    HDmemset(&c_info, 0, sizeof(c_info));
+    memset(&c_info, 0, sizeof(c_info));
     pixels_per_scanline = dimsizes[1];
     c_info.szip.pixels  = dimsizes[0] * dimsizes[1];
     ;
@@ -588,7 +586,7 @@ test_compressed_SDSs()
     starts[0] = starts[1] = 0;
     edges[0]              = LENGTH2_X;
     edges[1]              = LENGTH2_Y;
-    status                = SDwritedata(sds_id, starts, NULL, edges, (VOIDP)data2);
+    status                = SDwritedata(sds_id, starts, NULL, edges, (void *)data2);
     CHECK(status, FAIL, "test_compressed_SDSs: SDwritedata 'SZIP-Data'");
 
     status = SDendaccess(sds_id);
@@ -616,7 +614,7 @@ test_compressed_SDSs()
     starts[0] = starts[1] = 0;
     edges[0]              = LENGTH2_X;
     edges[1]              = LENGTH2_Y;
-    status                = SDwritedata(sds_id, starts, NULL, edges, (VOIDP)data2);
+    status                = SDwritedata(sds_id, starts, NULL, edges, (void *)data2);
     CHECK(status, FAIL, "test_compressed_SDSs: SDwritedata");
 
     status = SDendaccess(sds_id);
@@ -631,7 +629,7 @@ test_compressed_SDSs()
     sds_id      = SDcreate(sd_id, "SKPHUFF-Data", DFNT_CHAR, RANK1, dimsizes);
     CHECK(sds_id, FAIL, "test_compressed_SDSs: SDcreate 'SKPHUFF-Data'");
 
-    HDmemset(&c_info, 0, sizeof(c_info));
+    memset(&c_info, 0, sizeof(c_info));
     comp_type               = COMP_CODE_SKPHUFF;
     c_info.skphuff.skp_size = 4;
     status                  = SDsetcompress(sds_id, comp_type, &c_info);
@@ -641,7 +639,7 @@ test_compressed_SDSs()
 
     starts[0] = 0;
     edges[0]  = LENGTH3_X;
-    status    = SDwritedata(sds_id, starts, NULL, edges, (VOIDP)data3);
+    status    = SDwritedata(sds_id, starts, NULL, edges, (void *)data3);
     CHECK(status, FAIL, "test_compressed_SDSs: SDwritedata 'SKPHUFF-Data'");
 
     status = SDendaccess(sds_id);
@@ -855,7 +853,7 @@ test_empty_SDSs()
     sds_id = SDcreate(sd_id, "Compressed-No-Data", DFNT_INT16, RANK, dimsizes);
     CHECK(sds_id, FAIL, "test_empty_SDSs: SDcreate 'Compressed-No-Data'");
 
-    HDmemset(&c_info, 0, sizeof(c_info));
+    memset(&c_info, 0, sizeof(c_info));
     comp_type               = COMP_CODE_SKPHUFF;
     c_info.skphuff.skp_size = 4;
     status                  = SDsetcompress(sds_id, comp_type, &c_info);
@@ -956,7 +954,7 @@ test_chunked_partial()
     CHECK(sd_id, FAIL, "test_chunked_partial: SDstart");
 
     /* Initialize chunk size */
-    HDmemset(&c_def, 0, sizeof(c_def));
+    memset(&c_def, 0, sizeof(c_def));
     c_def.chunk_lengths[0] = 10;
 
     /*
@@ -972,7 +970,7 @@ test_chunked_partial()
     CHECK(sds_id, FAIL, "test_chunked_partial: SDcreate");
 
     /* Fill the SDS array with fill value */
-    /*  status = SDsetfillvalue(sds_id, (VOIDP)&fill_value);
+    /*  status = SDsetfillvalue(sds_id, (void *)&fill_value);
      CHECK(status, FAIL, "test_chunked_partial: SDsetfillvalue");
      */
 
@@ -984,12 +982,12 @@ test_chunked_partial()
 
     /* Write the chunk with the coordinates (0) */
     origin[0] = 0;
-    status    = SDwritechunk(sds_id, origin, (VOIDP)chunk_1dim);
+    status    = SDwritechunk(sds_id, origin, (void *)chunk_1dim);
     CHECK(status, FAIL, "test_chunked_partial: SDwritechunk");
 
     /* Write the chunk with the coordinates (4) */
     origin[0] = 4;
-    status    = SDwritechunk(sds_id, origin, (VOIDP)chunk_1dim);
+    status    = SDwritechunk(sds_id, origin, (void *)chunk_1dim);
     CHECK(status, FAIL, "test_chunked_partial: SDwritechunk");
 
     /* Terminate access to 'Chunked-Partial-Data' */
@@ -1012,7 +1010,7 @@ test_chunked_partial()
     starts[0] = starts[1] = 0;
     edges[0]              = dimsizes[0];
     edges[1]              = dimsizes[1];
-    status                = SDwritedata(sds_id, starts, NULL, edges, (VOIDP)data);
+    status                = SDwritedata(sds_id, starts, NULL, edges, (void *)data);
     CHECK(status, FAIL, "test_chunked_partial: SDwritedata");
 
     /* Get access to the chunked SDS that was written partially earlier */
@@ -1025,7 +1023,7 @@ test_chunked_partial()
 
     /* Write another chunk at the coordinate (6) */
     origin[0] = 6;
-    status    = SDwritechunk(sds_id, origin, (VOIDP)chunk_1dim);
+    status    = SDwritechunk(sds_id, origin, (void *)chunk_1dim);
     CHECK(status, FAIL, "test_chunked_partial: SDwritechunk");
 
     status = SDendaccess(sds_id);
@@ -1081,13 +1079,13 @@ test_chunked_partial()
         }
 
         /* Allocate buffers for SDS' data */
-        readibuf         = (int32 *)HDmalloc(sds_info.lengths[chk_num]);
-        readibuf_swapped = (int32 *)HDmalloc(sds_info.lengths[chk_num]);
-        /* readibuf = (int32 *) HDmalloc(sds_info.n_values * sizeof(int32));
-         readibuf_swapped = (int32 *) HDmalloc(sds_info.n_values * sizeof(int32));
+        readibuf         = (int32 *)malloc(sds_info.lengths[chk_num]);
+        readibuf_swapped = (int32 *)malloc(sds_info.lengths[chk_num]);
+        /* readibuf = (int32 *) malloc(sds_info.n_values * sizeof(int32));
+         readibuf_swapped = (int32 *) malloc(sds_info.n_values * sizeof(int32));
          */
         /* Read in this block of data */
-        readlen = read(fd, (VOIDP)readibuf, (size_t)sds_info.lengths[chk_num]);
+        readlen = read(fd, (void *)readibuf, (size_t)sds_info.lengths[chk_num]);
         CHECK(readlen, FAIL, "test_chunked_partial: read");
 
         ret32 = DFKconvert(readibuf, readibuf_swapped, sds_info.numtype, 10, DFACC_WRITE, 0, 0);
@@ -1101,8 +1099,8 @@ test_chunked_partial()
                 fprintf(stderr, "At value# %d: written = %d read = %d\n", ii, chunk_1dim[ii],
                         readibuf_swapped[ii]);
         }
-        HDfree(readibuf_swapped);
-        HDfree(readibuf);
+        free(readibuf_swapped);
+        free(readibuf);
     }
     free_info(&sds_info);
 
@@ -1145,7 +1143,7 @@ test_chkcmp_SDSs()
     int32 chunk2[CHK_X][CHK_Y] = {{2, 2}, {2, 2}, {2, 2}};
 
     /* Initialize chunk size */
-    HDmemset(&c_def, 0, sizeof(c_def));
+    memset(&c_def, 0, sizeof(c_def));
     c_def.chunk_lengths[0] = CHK_X;
     c_def.chunk_lengths[1] = CHK_Y;
 
@@ -1163,14 +1161,14 @@ test_chkcmp_SDSs()
     CHECK(sds_id, FAIL, "test_chkcmp_SDSs: SDcreate");
 
     /* Fill the SDS array with the fill value */
-    status = SDsetfillvalue(cmpsds_id, (VOIDP)&fill_value);
+    status = SDsetfillvalue(cmpsds_id, (void *)&fill_value);
     CHECK(status, FAIL, "test_chkcmp_SDSs: SDsetfillvalue");
 
-    status = SDsetfillvalue(sds_id, (VOIDP)&fill_value);
+    status = SDsetfillvalue(sds_id, (void *)&fill_value);
     CHECK(status, FAIL, "test_chkcmp_SDSs: SDsetfillvalue");
 
     /* Set info for chunking and compression */
-    HDmemset(&c_def, 0, sizeof(c_def));
+    memset(&c_def, 0, sizeof(c_def));
     c_def.chunk_lengths[0] = CHK_X;
     c_def.chunk_lengths[1] = CHK_Y;
 
@@ -1180,7 +1178,7 @@ test_chkcmp_SDSs()
     status                         = SDsetchunk(cmpsds_id, c_def, flag);
     CHECK(status, FAIL, "test_chkcmp_SDSs: SDsetchunk");
 
-    HDmemset(&c_def, 0, sizeof(c_def));
+    memset(&c_def, 0, sizeof(c_def));
     c_def.chunk_lengths[0] = CHK_X;
     c_def.chunk_lengths[1] = CHK_Y;
 
@@ -1221,25 +1219,25 @@ test_chkcmp_SDSs()
     /* Write the chunk with the coordinates (0,0) */
     origin[0] = 0;
     origin[1] = 0;
-    status    = SDwritechunk(cmpsds_id, origin, (VOIDP)chunk1);
+    status    = SDwritechunk(cmpsds_id, origin, (void *)chunk1);
     CHECK(status, FAIL, "test_chkcmp_SDSs: SDwritechunk");
-    status = SDwritechunk(sds_id, origin, (VOIDP)chunk1);
+    status = SDwritechunk(sds_id, origin, (void *)chunk1);
     CHECK(status, FAIL, "test_chkcmp_SDSs: SDwritechunk");
 
     /* Write the chunk with the coordinates (1,0) */
     origin[0] = 1;
     origin[1] = 0;
-    status    = SDwritechunk(cmpsds_id, origin, (VOIDP)chunk3);
+    status    = SDwritechunk(cmpsds_id, origin, (void *)chunk3);
     CHECK(status, FAIL, "test_chkcmp_SDSs: SDwritechunk");
-    status = SDwritechunk(sds_id, origin, (VOIDP)chunk3);
+    status = SDwritechunk(sds_id, origin, (void *)chunk3);
     CHECK(status, FAIL, "test_chkcmp_SDSs: SDwritechunk");
 
     /* Write the chunk with the coordinates (0,1) */
     origin[0] = 0;
     origin[1] = 1;
-    status    = SDwritechunk(cmpsds_id, origin, (VOIDP)chunk2);
+    status    = SDwritechunk(cmpsds_id, origin, (void *)chunk2);
     CHECK(status, FAIL, "test_chkcmp_SDSs: SDwritechunk");
-    status = SDwritechunk(sds_id, origin, (VOIDP)chunk2);
+    status = SDwritechunk(sds_id, origin, (void *)chunk2);
     CHECK(status, FAIL, "test_chkcmp_SDSs: SDwritechunk");
 
     /* Terminate access to the datasets */
@@ -1384,7 +1382,7 @@ test_extend_SDSs()
     starts[0] = starts[1] = 0;
     edges[0]              = Y_LENGTH;
     edges[1]              = X_LENGTH;
-    status                = SDwritedata(sds_id, starts, NULL, edges, (VOIDP)data1);
+    status                = SDwritedata(sds_id, starts, NULL, edges, (void *)data1);
     CHECK(status, FAIL, "test_extend_SDSs: SDwritedata");
 
     /* Get the block size of "Extend-Data 1" right after writing data */
@@ -1393,8 +1391,8 @@ test_extend_SDSs()
     VERIFY(block_size, BLOCK_SIZE, "SDgetblocksize");
 
     /* Check data. */
-    HDmemset(&output, 0, sizeof(output));
-    status = SDreaddata(sds_id, starts, NULL, edges, (VOIDP)output);
+    memset(&output, 0, sizeof(output));
+    status = SDreaddata(sds_id, starts, NULL, edges, (void *)output);
     CHECK(status, FAIL, "test_extend_SDSs: SDreaddata");
 
     /* Verify first batch of data in the unlimited dimension SDS */
@@ -1417,7 +1415,7 @@ test_extend_SDSs()
     edges1[0] = Y_LENGTH;
 
     /* Write the stored data to 'Extend-Data 2' */
-    status = SDwritedata(sds_id, start1, NULL, edges1, (VOIDP)fdata);
+    status = SDwritedata(sds_id, start1, NULL, edges1, (void *)fdata);
     CHECK(status, FAIL, "test_extend_SDSs: SDwritedata");
 
     /* Close this SDS */
@@ -1446,7 +1444,7 @@ test_extend_SDSs()
     starts[1] = 0;
     edges[0]  = Y_LENGTH;
     edges[1]  = X_LENGTH;
-    status    = SDwritedata(sds_id, starts, NULL, edges, (VOIDP)data2);
+    status    = SDwritedata(sds_id, starts, NULL, edges, (void *)data2);
     CHECK(status, FAIL, "test_extend_SDSs: SDwritedata");
 
     /* Initialize third batch of data for the extendable dataset */
@@ -1458,7 +1456,7 @@ test_extend_SDSs()
     starts[1] = 0;
     edges[0]  = Y_LENGTH;
     edges[1]  = X_LENGTH;
-    status    = SDwritedata(sds_id, starts, NULL, edges, (VOIDP)data3);
+    status    = SDwritedata(sds_id, starts, NULL, edges, (void *)data3);
     CHECK(status, FAIL, "test_extend_SDSs: SDwritedata");
 
     /* Close this SDS */
@@ -1473,8 +1471,8 @@ test_extend_SDSs()
     starts[1] = 0;
     edges[0]  = Y_LENGTH + Y_LENGTH + Y_LENGTH;
     edges[1]  = X_LENGTH;
-    HDmemset(&output, 0, sizeof(output));
-    status = SDreaddata(sds_id, starts, NULL, edges, (VOIDP)output);
+    memset(&output, 0, sizeof(output));
+    status = SDreaddata(sds_id, starts, NULL, edges, (void *)output);
     CHECK(status, FAIL, "test_extend_SDSs: SDreaddata");
 
     /* Check data against first batch */

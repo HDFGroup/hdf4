@@ -114,7 +114,7 @@ NOTE: This file needs to have the comments cleaned up for most of the
 intn SDsetup_szip_parms(int32 id, NC *handle, comp_info *c_info, int32 *cdims);
 
 /* Whether we've installed the library termination function yet for this interface */
-PRIVATE intn library_terminate = FALSE;
+static intn library_terminate = FALSE;
 
 #ifdef MFSD_INTERNAL
 /******************************************************************************
@@ -598,7 +598,7 @@ SDgetinfo(int32  sdsid,    /* IN:  dataset ID */
 
     /* get sds name if it's requested */
     if (name != NULL) {
-        HDmemcpy(name, var->name->values, var->name->len);
+        memcpy(name, var->name->values, var->name->len);
         name[var->name->len] = '\0';
     }
 
@@ -1030,8 +1030,8 @@ SDgetrange(int32 sdsid, /* IN:  dataset ID */
     if ((attr != NULL) && ((*attr)->data->type == var->type)) {
         /* BUG: this may be a pointer to a pointer */
         array = (NC_array *)(*attr)->data;
-        HDmemcpy(pmin, array->values, array->szof);
-        HDmemcpy(pmax, array->values + array->szof, array->szof);
+        memcpy(pmin, array->values, array->szof);
+        memcpy(pmax, array->values + array->szof, array->szof);
     }
     else {
         attr1 = (NC_attr **)NC_findattr(&(var->attrs), "valid_max");
@@ -1642,8 +1642,8 @@ SDsetrange(int32 sdsid, /* IN: dataset ID */
         HGOTO_ERROR(DFE_ARGS, FAIL);
     }
 
-    HDmemcpy(data, pmin, sz);
-    HDmemcpy(data + sz, pmax, sz);
+    memcpy(data, pmin, sz);
+    memcpy(data + sz, pmax, sz);
 
     /* call common code */
     if (SDIputattr(&var->attrs, _HDF_ValidRange, var->HDFtype, (intn)2, data) == FAIL) {
@@ -1876,7 +1876,7 @@ SDattrinfo(int32  id,    /* IN:  object ID */
 
     /* move the information over */
     if (name != NULL) {
-        HDmemcpy(name, (*atp)->name->values, (*atp)->name->len);
+        memcpy(name, (*atp)->name->values, (*atp)->name->len);
         name[(*atp)->name->len] = '\0';
     }
 
@@ -1942,7 +1942,7 @@ SDreadattr(int32 id,    /* IN:  object ID */
     }
 
     /* move the information over */
-    HDmemcpy(buf, (*atp)->data->values, (*atp)->data->count * (*atp)->data->szof);
+    memcpy(buf, (*atp)->data->values, (*atp)->data->count * (*atp)->data->szof);
 
 done:
     return ret_value;
@@ -3052,14 +3052,14 @@ SDdiminfo(int32  id,   /* IN:  dimension ID */
     }
 
     if (name != NULL) {
-        /* GeorgeV switched to use HDmemcpy in r2739.  Trying back to HDstrncpy because
+        /* GeorgeV switched to use memcpy in r2739.  Trying back to HDstrncpy because
            it should be used to copy a string (emailed with QK 5/27/2016), but tests
            failed.  Some strings are stored with NC_string, more time is needed to
-           figure out the whole scheme.  Switch back to using HDmemcpy for now.
+           figure out the whole scheme.  Switch back to using memcpy for now.
            -BMR, 5/30/2016
         */
 
-        HDmemcpy(name, dim->name->values, dim->name->len);
+        memcpy(name, dim->name->values, dim->name->len);
         name[dim->name->len] = '\0';
     }
     else
@@ -3854,7 +3854,7 @@ SDsetcompress(int32        id,        /* IN: dataset ID */
         /* encoder not present?? */
         HGOTO_ERROR(DFE_NOENCODER, FAIL);
     }
-    HDmemcpy(&c_info_x, c_info, sizeof(comp_info));
+    memcpy(&c_info_x, c_info, sizeof(comp_info));
 
     handle = SDIhandle_from_id(id, SDSTYPE);
     if (handle == NULL || handle->file_type != HDF_FILE) {
@@ -5079,7 +5079,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
                 chunk[0].comp_type  = (comp_coder_t)cdef->comp.comp_type;
                 chunk[0].model_type = COMP_MODEL_STDIO; /* Default */
                 chunk[0].minfo      = &minfo;           /* dummy */
-                HDmemcpy(&cinfo, &(cdef->comp.cinfo), sizeof(comp_info));
+                memcpy(&cinfo, &(cdef->comp.cinfo), sizeof(comp_info));
                 if (SDsetup_szip_parms(sdsid, handle, &cinfo, cdims) == FAIL) {
                     HGOTO_ERROR(DFE_INTERNAL, FAIL);
                 }
@@ -5525,7 +5525,7 @@ SDgetchunkinfo(int32          sdsid,     /* IN: sds access id */
                             } /* end switch */
                         }
                         else {
-                            HDmemcpy(&(chunk_def->comp.cinfo), &c_info, sizeof(comp_info));
+                            memcpy(&(chunk_def->comp.cinfo), &c_info, sizeof(comp_info));
                             chunk_def->comp.comp_type = (int32)comp_type;
                         }
                     }      /* chunk_def != NULL */
@@ -5688,7 +5688,7 @@ SDwritechunk(int32       sdsid,  /* IN: access aid to SDS */
                             var->HDFsize, var->HDFtype);
 #endif
                     /* convert it */
-                    if (FAIL == DFKconvert((VOIDP)datap, tBuf, var->HDFtype, (byte_count / var->HDFsize),
+                    if (FAIL == DFKconvert((void *)datap, tBuf, var->HDFtype, (byte_count / var->HDFsize),
                                            DFACC_WRITE, 0, 0)) {
                         HGOTO_ERROR(DFE_INTERNAL, FAIL);
                     }
@@ -6338,7 +6338,7 @@ SDgetfilename(int32 fid, /* IN:  file ID */
 
     len = HDstrlen(handle->path);
     if (filename != NULL) {
-        HDmemcpy(filename, handle->path, len);
+        memcpy(filename, handle->path, len);
         filename[len] = '\0';
     }
     ret_value = len;

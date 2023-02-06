@@ -132,7 +132,7 @@ HBconvert(int32 aid)
     } /* end if */
 
     /* allocate special info struct for buffered element */
-    if ((info = HDmalloc((uint32)sizeof(bufinfo_t))) == NULL)
+    if ((info = malloc((uint32)sizeof(bufinfo_t))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* fill in special info struct */
@@ -142,7 +142,7 @@ HBconvert(int32 aid)
 
     /* Get space for buffer */
     if (data_len > 0) {
-        if ((info->buf = HDmalloc((uint32)data_len)) == NULL)
+        if ((info->buf = malloc((uint32)data_len)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
     } /* end if */
     else
@@ -169,7 +169,7 @@ HBconvert(int32 aid)
      * defined to support it.
      */
     tmp_access_rec = new_access_rec->next; /* preserve free list pointer */
-    HDmemcpy(new_access_rec, access_rec, sizeof(accrec_t));
+    memcpy(new_access_rec, access_rec, sizeof(accrec_t));
     new_access_rec->next = tmp_access_rec; /* restore free list pointer */
 
     /* Preserve the actual access record for the buffered element */
@@ -304,7 +304,7 @@ HBPread(accrec_t *access_rec, int32 length, void *data)
         HGOTO_ERROR(DFE_RANGE, FAIL);
 
     /* Copy data from buffer */
-    HDmemcpy(data, info->buf + access_rec->posn, length);
+    memcpy(data, info->buf + access_rec->posn, length);
 
     /* adjust access position */
     access_rec->posn += length;
@@ -350,13 +350,13 @@ HBPwrite(accrec_t *access_rec, int32 length, const void *data)
         /* Resize buffer in safe manner */
         /* Realloc should handle this, but the Sun is whining about it... -QAK */
         if (info->buf == NULL) {
-            if ((info->buf = HDmalloc((uint32)new_len)) == NULL)
+            if ((info->buf = malloc((uint32)new_len)) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
         }
         else {
             uint8 *temp_buf = info->buf; /* temporary buffer pointer in case realloc fails */
 
-            if ((info->buf = HDrealloc(info->buf, (uint32)new_len)) == NULL) {
+            if ((info->buf = realloc(info->buf, (uint32)new_len)) == NULL) {
                 info->buf = temp_buf;
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
             } /* end if */
@@ -367,7 +367,7 @@ HBPwrite(accrec_t *access_rec, int32 length, const void *data)
     } /* end if */
 
     /* Copy data to buffer */
-    HDmemcpy(info->buf + access_rec->posn, data, length);
+    memcpy(info->buf + access_rec->posn, data, length);
 
     /* Mark the buffer as modified */
     info->modified = TRUE;
@@ -515,12 +515,12 @@ HBPcloseAID(accrec_t *access_rec)
         } /* end if */
 
         /* Free the memory buffer */
-        HDfree(info->buf);
+        free(info->buf);
 
         /* Close the dependent access record */
         Hendaccess(info->buf_aid);
 
-        HDfree(info);
+        free(info);
         access_rec->special_info = NULL;
     }
 

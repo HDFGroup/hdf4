@@ -66,6 +66,8 @@ TESTING() {
 # Run a test and print PASS or *FAIL*.  If a test fails then increment
 # the `nerrors' global variable
 #
+# XXX: This test is almost worthless since ncdump always returns EXIT_SUCCESS.
+#
 RUN() {
    # Run test.
 

@@ -111,10 +111,9 @@ getSpace(void)
         oldx = xdim;
         oldy = ydim;
 
-        if (wheresmall)
-            HDfree(wheresmall);
+        free(wheresmall);
 
-        if (NULL == (wheresmall = (uint8 *)HDmalloc((size_t)(xdim * ydim)))) {
+        if (NULL == (wheresmall = (uint8 *)malloc((size_t)(xdim * ydim)))) {
             printf(" Cannot allocate memory, fatal error\n");
             exit(1);
         }
@@ -230,7 +229,7 @@ rImage(int usepal)
      *  Send the data for the image with RLE encoding for efficiency.
      *  Encode each line and send it.
      */
-    space    = (int8 *)HDmalloc(ydim + 128);
+    space    = (int8 *)malloc(ydim + 128);
     thisline = (int8 *)wheresmall;
 
     for (i = 0; i < ydim; i++) {
@@ -271,7 +270,7 @@ rImage(int usepal)
      *  pause for the user
      */
 
-    HDfree(space);
+    free(space);
     return HE_OK;
 }
 
@@ -295,7 +294,7 @@ bigImg(unsigned char *targ, unsigned char *src)
                 *q++ = *p;
 
         for (i = 1; i < factor; i++) {
-            HDmemcpy(q, oldq, xsize); /* make one copy of the line */
+            memcpy(q, oldq, xsize); /* make one copy of the line */
             q += xsize;
         }
     }

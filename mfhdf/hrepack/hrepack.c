@@ -94,7 +94,7 @@ hrepack_addcomp(const char *str, options_t *options)
     }
 
     /* initialize parse struct to FAIL */
-    HDmemset(&comp, FAIL, sizeof(comp_info_t));
+    memset(&comp, FAIL, sizeof(comp_info_t));
 
     /* parse the -t option */
     if ((obj_list = parse_comp(str, &n_objs, &comp)) == NULL)
@@ -119,12 +119,12 @@ hrepack_addcomp(const char *str, options_t *options)
             goto out;
     }
 
-    HDfree(obj_list);
+    free(obj_list);
     return SUCCEED;
 
 out:
 
-    HDfree(obj_list);
+    free(obj_list);
     return FAIL;
 }
 
@@ -183,12 +183,12 @@ hrepack_addchunk(const char *str, options_t *options)
             goto out;
     }
 
-    HDfree(obj_list);
+    free(obj_list);
     return SUCCEED;
 
 out:
 
-    HDfree(obj_list);
+    free(obj_list);
     return FAIL;
 }
 
@@ -203,7 +203,7 @@ out:
 void
 hrepack_init(options_t *options, int verbose)
 {
-    HDmemset(options, 0, sizeof(options_t));
+    memset(options, 0, sizeof(options_t));
     options->threshold = 1024;
     options->verbose   = verbose;
     options_table_init(&(options->op_tbl));

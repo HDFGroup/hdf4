@@ -55,7 +55,7 @@ main()
     } source[N_RECORDS];
 
     /* pointers to be pointing to the fields in the struct buffer */
-    VOIDP fldbufptrs[N_FIELDS];
+    void *fldbufptrs[N_FIELDS];
 
     /********************** End of variable declaration **********************/
 
@@ -135,7 +135,7 @@ main()
          * Pack the data in the field buffers into the data buffer at the
          * current record, i.e. indicated by "pntr".
          */
-        if (VSfpack(vdata_id, _HDF_VSPACK, NULL, (VOIDP)pntr, RECORD_SIZE, 1, NULL, fldbufptrs) == FAIL)
+        if (VSfpack(vdata_id, _HDF_VSPACK, NULL, (void *)pntr, RECORD_SIZE, 1, NULL, fldbufptrs) == FAIL)
             printf("*** ERROR from VSfpack\n");
 
         /*

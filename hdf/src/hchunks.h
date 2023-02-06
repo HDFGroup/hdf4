@@ -128,10 +128,10 @@ typedef struct chunkinfo_t {
     int32    ndims;             /* number of dimensions of chunk */
     DIM_REC *ddims;             /* array of dimension records */
     int32    fill_val_len;      /* fill value number of bytes */
-    VOID    *fill_val;          /* fill value */
+    void    *fill_val;          /* fill value */
     /* For each specialness, only one for now SPECIAL_COMP */
     int32 comp_sp_tag_head_len; /* Compression header length */
-    VOID *comp_sp_tag_header;   /* compression header */
+    void *comp_sp_tag_header;   /* compression header */
 
     /* For Compression info */
     comp_coder_t comp_type;  /* Compression type */
@@ -166,7 +166,7 @@ HDFLIBAPI int32 HMCcreate
          uint16 ref,          /* IN: ref of element */
          uint8 nlevels,       /* IN: number of levels of chunks */
          int32 fill_val_len,  /* IN: fill value length in bytes */
-         VOID  *fill_val,     /* IN: fill value */
+         void  *fill_val,     /* IN: fill value */
          HCHUNK_DEF *chk_array /* IN: structure describing chunk distribution
                                  can be an array? but we only handle 1 level */);
 
@@ -196,11 +196,11 @@ HDFLIBAPI int32 HMCsetMaxcache(int32 access_id, /* IN: access aid to mess with *
 
 HDFLIBAPI int32 HMCwriteChunk(int32       access_id, /* IN: access aid to mess with */
                               int32      *origin,    /* IN: origin of chunk to write */
-                              const VOID *datap /* IN: buffer for data */);
+                              const void *datap /* IN: buffer for data */);
 
 HDFLIBAPI int32 HMCreadChunk(int32  access_id, /* IN: access aid to mess with */
                              int32 *origin,    /* IN: origin of chunk to read */
-                             VOID  *datap /* IN: buffer for data */);
+                             void  *datap /* IN: buffer for data */);
 
 HDFLIBAPI int32 HMCPcloseAID(accrec_t *access_rec /* IN:  access record of file to close */);
 
@@ -226,17 +226,17 @@ extern int32 HMCPseek(accrec_t *access_rec, /* IN: access record to mess with */
                       int32     offset,     /* IN: seek offset */
                       int       origin /* IN: where we should calc the offset from */);
 
-extern int32 HMCPchunkread(VOID *cookie,    /* IN: access record to mess with */
+extern int32 HMCPchunkread(void *cookie,    /* IN: access record to mess with */
                            int32 chunk_num, /* IN: chunk to read */
-                           VOID *datap /* OUT: buffer for data */);
+                           void *datap /* OUT: buffer for data */);
 
 extern int32 HMCPread(accrec_t *access_rec, /* IN: access record to mess with */
                       int32     length,     /* IN: number of bytes to read */
                       void     *data /* OUT: buffer for data */);
 
-extern int32 HMCPchunkwrite(VOID       *cookie,    /* IN: access record to mess with */
+extern int32 HMCPchunkwrite(void       *cookie,    /* IN: access record to mess with */
                             int32       chunk_num, /* IN: chunk number */
-                            const VOID *datap /* IN: buffer for data */);
+                            const void *datap /* IN: buffer for data */);
 
 extern int32 HMCPwrite(accrec_t   *access_rec, /* IN: access record to mess with */
                        int32       length,     /* IN: number of bytes to write */

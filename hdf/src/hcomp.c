@@ -87,18 +87,18 @@ MODIFICATION HISTORY
 #define COMP_START_BLOCK    0
 
 /* declaration of the functions provided in this module */
-PRIVATE int32 HCIstaccess(accrec_t *access_rec, int16 acc_mode);
+static int32 HCIstaccess(accrec_t *access_rec, int16 acc_mode);
 
-PRIVATE int32 HCIinit_coder(int16 acc_mode, comp_coder_info_t *cinfo, comp_coder_t coder_type,
-                            comp_info *coder_info);
+static int32 HCIinit_coder(int16 acc_mode, comp_coder_info_t *cinfo, comp_coder_t coder_type,
+                           comp_info *coder_info);
 
-PRIVATE int32 HCIread_header(accrec_t *access_rec, compinfo_t *info, comp_info *c_info, model_info *m_info);
+static int32 HCIread_header(accrec_t *access_rec, compinfo_t *info, comp_info *c_info, model_info *m_info);
 
-PRIVATE int32 HCIwrite_header(atom_t file_id, compinfo_t *info, uint16 special_tag, uint16 ref,
-                              comp_info *c_info, model_info *m_info);
+static int32 HCIwrite_header(atom_t file_id, compinfo_t *info, uint16 special_tag, uint16 ref,
+                             comp_info *c_info, model_info *m_info);
 
-PRIVATE int32 HCIinit_model(int16 acc_mode, comp_model_info_t *minfo, comp_model_t model_type,
-                            model_info *m_info);
+static int32 HCIinit_model(int16 acc_mode, comp_model_info_t *minfo, comp_model_t model_type,
+                           model_info *m_info);
 
 /* comp_funcs -- struct of accessing functions for the compressed
    data element function modules.  The position of each function in
@@ -137,7 +137,7 @@ funclist_t comp_funcs = {
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIinit_coder(int16 acc_mode, comp_coder_info_t *cinfo, comp_coder_t coder_type, comp_info *c_info)
 {
     uint32 comp_config_info;
@@ -257,7 +257,7 @@ HCIinit_coder(int16 acc_mode, comp_coder_info_t *cinfo, comp_coder_t coder_type,
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIinit_model(int16 acc_mode, comp_model_info_t *minfo, comp_model_t model_type, model_info *m_info)
 {
     (void)acc_mode;
@@ -576,7 +576,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIwrite_header(atom_t file_id, compinfo_t *info, uint16 special_tag, uint16 ref, comp_info *c_info,
                 model_info *m_info)
 {
@@ -630,7 +630,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIread_header(accrec_t *access_rec, compinfo_t *info, comp_info *c_info, model_info *m_info)
 {
     uint16 header_version; /* version of the compression header */
@@ -652,7 +652,7 @@ HCIread_header(accrec_t *access_rec, compinfo_t *info, comp_info *c_info, model_
     /* Decode the compression header */
     if (HCPdecode_header(p, &(info->minfo.model_type), m_info, &(info->cinfo.coder_type), c_info) == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
-    HDfree(local_ptbuf);
+    free(local_ptbuf);
 
 done:
     return ret_value;
@@ -724,7 +724,7 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type, model_i
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
         } /* end if */
 
-        if ((buf = HDmalloc((uint32)data_len)) == NULL)
+        if ((buf = malloc((uint32)data_len)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         if (Hgetelement(file_id, tag, ref, buf) == FAIL)
             HGOTO_ERROR(DFE_READERROR, FAIL);
@@ -735,7 +735,7 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type, model_i
     } /* end if */
 
     /* set up the special element information and write it to file */
-    info                     = (compinfo_t *)HDmalloc(sizeof(compinfo_t));
+    info                     = (compinfo_t *)malloc(sizeof(compinfo_t));
     access_rec->special_info = info;
     if (info == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -785,12 +785,9 @@ done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         if (access_rec != NULL)
             HIrelease_accrec_node(access_rec);
-        if (info != NULL)
-            HDfree(info);
+        free(info);
     }
-
-    if (buf != NULL)
-        HDfree(buf);
+    free(buf);
 
     return ret_value;
 } /* end HCcreate() */
@@ -1018,7 +1015,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-PRIVATE int32
+static int32
 HCIstaccess(accrec_t *access_rec, int16 acc_mode)
 {
     compinfo_t *info = NULL; /* special element information */
@@ -1038,7 +1035,7 @@ HCIstaccess(accrec_t *access_rec, int16 acc_mode)
     access_rec->access  = (uint32)(acc_mode | DFACC_READ);
 
     /* get the special info record */
-    access_rec->special_info = HDmalloc(sizeof(compinfo_t));
+    access_rec->special_info = malloc(sizeof(compinfo_t));
     info                     = (compinfo_t *)access_rec->special_info;
     if (info == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -1057,8 +1054,7 @@ HCIstaccess(accrec_t *access_rec, int16 acc_mode)
 
 done:
     if (ret_value == FAIL) { /* Error condition cleanup */
-        if (info != NULL)
-            HDfree(info);
+        free(info);
     }
 
     return ret_value;
@@ -1425,7 +1421,7 @@ HCPcloseAID(accrec_t *access_rec)
     /* BMR - reset special_info to NULL after memory is freed; problem shown
        by the failure when running hdp list with a large file on PC - 12/6/98 */
     if (--(info->attached) == 0) {
-        HDfree(info);
+        free(info);
         access_rec->special_info = NULL;
     }
     return (ret);
@@ -1600,7 +1596,7 @@ HCPgetcomptype(int32 file_id, uint16 data_tag, uint16 data_ref, /* IN: tag/ref o
         }
 
         /* element is special, proceed with reading special info header */
-        if ((local_ptbuf = (uint8 *)HDmalloc(data_len)) == NULL)
+        if ((local_ptbuf = (uint8 *)malloc(data_len)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
         /* Get the special info header */
@@ -1665,8 +1661,7 @@ done:
             HERROR(DFE_CANTENDACCESS);
 
     /* release allocated memory */
-    if (local_ptbuf != NULL)
-        HDfree(local_ptbuf);
+    free(local_ptbuf);
 
     return ret_value;
 } /* HCPgetcomptype */
@@ -1790,8 +1785,7 @@ HCPgetdatasize(int32 file_id, uint16 data_tag, uint16 data_ref, /* IN: tag/ref o
         HGOTO_ERROR(DFE_CANTACCESS, FAIL);
 
 done:
-    if (local_ptbuf != NULL)
-        HDfree(local_ptbuf);
+    free(local_ptbuf);
 
     return ret_value;
 } /* HCPgetdatasize */

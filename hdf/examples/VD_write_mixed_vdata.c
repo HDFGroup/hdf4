@@ -27,7 +27,7 @@ main()
     int16   height[N_RECORDS];    /* buffer to hold values of second field  */
     float32 speed[N_RECORDS];     /* buffer to hold values of third field   */
     char8   ident[N_RECORDS];     /* buffer to hold values of fourth field  */
-    VOIDP   fldbufptrs[N_FIELDS]; /*pointers to be pointing to the field buffers*/
+    void   *fldbufptrs[N_FIELDS]; /*pointers to be pointing to the field buffers*/
     uint16  databuf[BUF_SIZE];    /* buffer to hold the data after being packed*/
     int     i;
 
@@ -101,8 +101,8 @@ main()
      * pointers fldbufptrs, and store the packed data into the buffer
      * databuf.  Note that the second parameter is _HDF_VSPACK for packing.
      */
-    if (VSfpack(vdata_id, _HDF_VSPACK, NULL, (VOIDP)databuf, BUF_SIZE, N_RECORDS, NULL, (VOIDP)fldbufptrs) ==
-        FAIL)
+    if (VSfpack(vdata_id, _HDF_VSPACK, NULL, (void *)databuf, BUF_SIZE, N_RECORDS, NULL,
+                (void *)fldbufptrs) == FAIL)
         printf("*** ERROR from VSfpack\n");
 
     /*

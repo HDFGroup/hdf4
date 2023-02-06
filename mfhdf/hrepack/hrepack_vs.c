@@ -72,7 +72,7 @@ copy_vs(int32 infile_id, int32 outfile_id, int32 tag, /* tag of input VS */
     }
 
     /* ignore reserved HDF groups/vdatas; they are lone ones */
-    if (is_lone == 1 && vdata_class != NULL) {
+    if (is_lone == 1 && vdata_class[0] == '\0') {
         if (is_reserved(vdata_class)) {
             if (VSdetach(vdata_id) == FAIL)
                 printf("Failed to detach vdata <%s>\n", path_name);
@@ -94,8 +94,7 @@ copy_vs(int32 infile_id, int32 outfile_id, int32 tag, /* tag of input VS */
     if (options->trip == 0) {
         if (VSdetach(vdata_id) == FAIL)
             printf("Failed to detach vdata <%s>\n", path_name);
-        if (path)
-            HDfree(path);
+        free(path);
         return 0;
     }
 
@@ -106,8 +105,7 @@ copy_vs(int32 infile_id, int32 outfile_id, int32 tag, /* tag of input VS */
 
     if (VSinquire(vdata_id, &n_records, &interlace_mode, fieldname_list, &vdata_size, vdata_name) == FAIL) {
         printf("Failed to get info for vdata ref %d\n", ref);
-        if (path)
-            HDfree(path);
+        free(path);
         return -1;
     }
 
@@ -120,8 +118,7 @@ copy_vs(int32 infile_id, int32 outfile_id, int32 tag, /* tag of input VS */
     if ((vdata_out = VSattach(outfile_id, -1, "w")) == FAIL) {
         printf("Failed to create new VS <%s>\n", path);
         VSdetach(vdata_id);
-        if (path)
-            HDfree(path);
+        free(path);
         return -1;
     }
     if (VSsetname(vdata_out, vdata_name) == FAIL) {
@@ -181,7 +178,7 @@ copy_vs(int32 infile_id, int32 outfile_id, int32 tag, /* tag of input VS */
         goto out;
     }
     if (n_records > 0) {
-        if ((buf = (uint8 *)HDmalloc((size_t)(n_records * vdata_size))) == NULL) {
+        if ((buf = (uint8 *)malloc((size_t)(n_records * vdata_size))) == NULL) {
             printf("Failed to get memory for new VS <%s>\n", path);
             ret = -1;
             goto out;
@@ -260,10 +257,8 @@ out:
         printf("Could not detach VG in <%s>\n", path);
     }
 
-    if (path)
-        HDfree(path);
-    if (buf)
-        HDfree(buf);
+    free(path);
+    free(buf);
 
     return ret;
 }
@@ -287,13 +282,13 @@ copy_vdata_attribute(int32 in, int32 out, int32 findex, intn attrindex)
 {
     char   attr_name[H4_MAX_NC_NAME];
     int32  n_values, attr_size, attr_type;
-    VOIDP *values = NULL;
+    void **values = NULL;
 
     /* Get attribute information */
     VSattrinfo(in, findex, attrindex, attr_name, &attr_type, &n_values, &attr_size);
 
     /* Allocate space for attribute values */
-    if ((values = (VOIDP)HDmalloc((size_t)(attr_size * n_values))) == NULL) {
+    if ((values = (void *)malloc((size_t)(attr_size * n_values))) == NULL) {
         printf("Cannot allocate %d values of size %d for attribute %s", n_values, attr_size, attr_name);
         return -1;
     }
@@ -301,21 +296,18 @@ copy_vdata_attribute(int32 in, int32 out, int32 findex, intn attrindex)
     /* Read attribute from input object */
     if (VSgetattr(in, findex, attrindex, values) == FAIL) {
         printf("Cannot read attribute %s\n", attr_name);
-        if (values)
-            HDfree(values);
+        free(values);
         return -1;
     }
 
     /* Write attribute to output object */
     if (VSsetattr(out, findex, attr_name, attr_type, n_values, values) == FAIL) {
         printf("Cannot write attribute %s\n", attr_name);
-        if (values)
-            HDfree(values);
+        free(values);
         return -1;
     }
 
-    if (values)
-        HDfree(values);
+    free(values);
 
     return 1;
 }
