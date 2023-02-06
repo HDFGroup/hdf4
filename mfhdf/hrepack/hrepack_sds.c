@@ -71,8 +71,8 @@ copy_sds(int32 sd_in, int32 sd_out, int32 tag, /* tag of input SDS */
     char          sds_name[H4_MAX_NC_NAME];
     char          dim_name[H4_MAX_NC_NAME];
     char         *path    = NULL;
-    VOIDP         buf     = NULL;
-    VOIDP         dim_buf = NULL;
+    void         *buf     = NULL;
+    void         *dim_buf = NULL;
     int           i, j;
     int           info;           /* temporary int compression information */
     comp_coder_t  comp_type;      /* compression type requested  */
@@ -504,7 +504,7 @@ copy_sds(int32 sd_in, int32 sd_out, int32 tag, /* tag of input SDS */
         if (need < H4TOOLS_MALLOCSIZE ||
             /* for compressed datasets do one operation I/O, but allow hyperslab for chunked */
             (chunk_flags == HDF_NONE && comp_type > COMP_CODE_NONE)) {
-            buf = (VOIDP)malloc(need);
+            buf = (void *)malloc(need);
         }
 
         /*-------------------------------------------------------------------------
@@ -664,7 +664,7 @@ copy_sds(int32 sd_in, int32 sd_out, int32 tag, /* tag of input SDS */
             numtype = dtype & DFNT_MASK;
             eltsz   = DFKNTsize(numtype | DFNT_NATIVE);
 
-            if ((dim_buf = (VOIDP)malloc(dimsizes[i] * eltsz)) == NULL) {
+            if ((dim_buf = (void *)malloc(dimsizes[i] * eltsz)) == NULL) {
                 printf("Failed to alloc %d for dimension scale\n", dimsizes[i]);
                 goto out;
             }
@@ -776,7 +776,7 @@ copy_sds_attrs(int32 id_in, int32 id_out, int32 nattrs, options_t *options)
         eltsz,   /* element size */
         nelms;   /* number of elements */
     char  attr_name[H4_MAX_NC_NAME];
-    VOIDP attr_buf = NULL;
+    void *attr_buf = NULL;
     int   i;
 
     (void)options;
@@ -790,7 +790,7 @@ copy_sds_attrs(int32 id_in, int32 id_out, int32 nattrs, options_t *options)
         /* compute the number of the bytes for each value. */
         numtype = dtype & DFNT_MASK;
         eltsz   = DFKNTsize(numtype | DFNT_NATIVE);
-        if ((attr_buf = (VOIDP)malloc(nelms * eltsz)) == NULL) {
+        if ((attr_buf = (void *)malloc(nelms * eltsz)) == NULL) {
             printf("Error allocating %d values of size %d for attribute %s", nelms, numtype, attr_name);
             goto out;
         }

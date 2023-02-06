@@ -250,7 +250,7 @@ write_data(int32 fid, comp_model_t m_type, model_info *m_info, comp_coder_t c_ty
     uint16 ret_ref;
     int32  err_ret;
     int32  write_size;
-    VOIDP  data_ptr;
+    void  *data_ptr;
 
     MESSAGE(8, {
         char *s = HDgetNTdesc(ntype);
@@ -266,22 +266,22 @@ write_data(int32 fid, comp_model_t m_type, model_info *m_info, comp_coder_t c_ty
 
     switch (ntype) {
         case DFNT_INT8:
-            data_ptr = (VOIDP)outbuf_int8[test_num];
+            data_ptr = (void *)outbuf_int8[test_num];
             break;
         case DFNT_UINT8:
-            data_ptr = (VOIDP)outbuf_uint8[test_num];
+            data_ptr = (void *)outbuf_uint8[test_num];
             break;
         case DFNT_INT16:
-            data_ptr = (VOIDP)outbuf_int16[test_num];
+            data_ptr = (void *)outbuf_int16[test_num];
             break;
         case DFNT_UINT16:
-            data_ptr = (VOIDP)outbuf_uint16[test_num];
+            data_ptr = (void *)outbuf_uint16[test_num];
             break;
         case DFNT_INT32:
-            data_ptr = (VOIDP)outbuf_int32[test_num];
+            data_ptr = (void *)outbuf_int32[test_num];
             break;
         case DFNT_UINT32:
-            data_ptr = (VOIDP)outbuf_uint32[test_num];
+            data_ptr = (void *)outbuf_uint32[test_num];
             break;
         default:
             return (0);
@@ -307,8 +307,8 @@ read_data(int32 fid, uint16 ref_num, intn test_num, int32 ntype)
     int32           aid;
     int32           err_ret;
     int32           read_size;
-    VOIDP           out_ptr;
-    VOIDP           in_ptr;
+    void           *out_ptr;
+    void           *in_ptr;
     sp_info_block_t info_block;
     intn            i;
 
@@ -325,28 +325,28 @@ read_data(int32 fid, uint16 ref_num, intn test_num, int32 ntype)
 
     switch (ntype) {
         case DFNT_INT8:
-            out_ptr = (VOIDP)outbuf_int8[test_num];
-            in_ptr  = (VOIDP)inbuf_int8;
+            out_ptr = (void *)outbuf_int8[test_num];
+            in_ptr  = (void *)inbuf_int8;
             break;
         case DFNT_UINT8:
-            out_ptr = (VOIDP)outbuf_uint8[test_num];
-            in_ptr  = (VOIDP)inbuf_uint8;
+            out_ptr = (void *)outbuf_uint8[test_num];
+            in_ptr  = (void *)inbuf_uint8;
             break;
         case DFNT_INT16:
-            out_ptr = (VOIDP)outbuf_int16[test_num];
-            in_ptr  = (VOIDP)inbuf_int16;
+            out_ptr = (void *)outbuf_int16[test_num];
+            in_ptr  = (void *)inbuf_int16;
             break;
         case DFNT_UINT16:
-            out_ptr = (VOIDP)outbuf_uint16[test_num];
-            in_ptr  = (VOIDP)inbuf_uint16;
+            out_ptr = (void *)outbuf_uint16[test_num];
+            in_ptr  = (void *)inbuf_uint16;
             break;
         case DFNT_INT32:
-            out_ptr = (VOIDP)outbuf_int32[test_num];
-            in_ptr  = (VOIDP)inbuf_int32;
+            out_ptr = (void *)outbuf_int32[test_num];
+            in_ptr  = (void *)inbuf_int32;
             break;
         case DFNT_UINT32:
-            out_ptr = (VOIDP)outbuf_uint32[test_num];
-            in_ptr  = (VOIDP)inbuf_uint32;
+            out_ptr = (void *)outbuf_uint32[test_num];
+            in_ptr  = (void *)inbuf_uint32;
             break;
         default:
             return;

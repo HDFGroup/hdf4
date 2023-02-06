@@ -191,7 +191,7 @@ test_szip_RI8bit()
         return;
     }
 
-    status = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)in_data);
+    status = GRwriteimage(ri_id, start, NULL, edges, (void *)in_data);
     CHECK_VOID(status, FAIL, "GRwriteimage");
 
     /* Terminate access to the raster image */
@@ -239,7 +239,7 @@ test_szip_RI8bit()
     start[0] = start[1] = 0;
     edges[0]            = WIDTH;
     edges[1]            = LENGTH;
-    status              = GRreadimage(ri_id, start, NULL, edges, (VOIDP)out_data);
+    status              = GRreadimage(ri_id, start, NULL, edges, (void *)out_data);
     CHECK_VOID(status, FAIL, "GRreadimage");
 
     /* Compare read data against input data */
@@ -401,7 +401,7 @@ test_szip_RI16bit()
         return;
     }
 
-    status = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)in_data);
+    status = GRwriteimage(ri_id, start, NULL, edges, (void *)in_data);
     CHECK_VOID(status, FAIL, "SDwritedata");
 
     /* Terminate access to the raster image */
@@ -449,7 +449,7 @@ test_szip_RI16bit()
     start[0] = start[1] = 0;
     edges[0]            = WIDTH;
     edges[1]            = LENGTH;
-    status              = GRreadimage(ri_id, start, NULL, edges, (VOIDP)out_data);
+    status              = GRreadimage(ri_id, start, NULL, edges, (void *)out_data);
     CHECK_VOID(status, FAIL, "GRreadimage");
 
     /* Compare read data against input data */
@@ -611,7 +611,7 @@ test_szip_RI32bit()
         return;
     }
 
-    status = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)in_data);
+    status = GRwriteimage(ri_id, start, NULL, edges, (void *)in_data);
     CHECK_VOID(status, FAIL, "GRwriteimage");
 
     /* Terminate access to the raster image */
@@ -659,7 +659,7 @@ test_szip_RI32bit()
     start[0] = start[1] = 0;
     edges[0]            = WIDTH;
     edges[1]            = LENGTH;
-    status              = GRreadimage(ri_id, start, NULL, edges, (VOIDP)out_data);
+    status              = GRreadimage(ri_id, start, NULL, edges, (void *)out_data);
     CHECK_VOID(status, FAIL, "GRreadimage");
 
     /* Compare read data against input data */
@@ -823,7 +823,7 @@ test_szip_RIfl32bit()
         return;
     }
 
-    status = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)in_data);
+    status = GRwriteimage(ri_id, start, NULL, edges, (void *)in_data);
     CHECK_VOID(status, FAIL, "GRwriteimage");
 
     /* Terminate access to the raster image */
@@ -871,7 +871,7 @@ test_szip_RIfl32bit()
     start[0] = start[1] = 0;
     edges[0]            = WIDTH;
     edges[1]            = LENGTH;
-    status              = GRreadimage(ri_id, start, NULL, edges, (VOIDP)out_data);
+    status              = GRreadimage(ri_id, start, NULL, edges, (void *)out_data);
     CHECK_VOID(status, FAIL, "GRreadimage");
 
     /* Compare read data against input data */
@@ -1035,7 +1035,7 @@ test_szip_RIfl64bit()
         return;
     }
 
-    status = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)in_data);
+    status = GRwriteimage(ri_id, start, NULL, edges, (void *)in_data);
     CHECK_VOID(status, FAIL, "GRwriteimage");
 
     /* Terminate access to the raster image */
@@ -1083,7 +1083,7 @@ test_szip_RIfl64bit()
     start[0] = start[1] = 0;
     edges[0]            = WIDTH;
     edges[1]            = LENGTH;
-    status              = GRreadimage(ri_id, start, NULL, edges, (VOIDP)out_data);
+    status              = GRreadimage(ri_id, start, NULL, edges, (void *)out_data);
     CHECK_VOID(status, FAIL, "GRreadimage");
 
     /* Compare read data against input data */
@@ -1213,19 +1213,19 @@ test_szip_chunk()
 
     /* Write first data chunk ( 0, 0 ). */
     origin[0] = origin[1] = 0;
-    status                = GRwritechunk(ri_id, origin, (VOIDP)chunk00);
+    status                = GRwritechunk(ri_id, origin, (void *)chunk00);
     CHECK_VOID(status, FAIL, "GRwritechunk");
 
     /* Write second data chunk ( 0, 1 ). */
     origin[0] = 0;
     origin[1] = 1;
-    status    = GRwritechunk(ri_id, origin, (VOIDP)chunk01);
+    status    = GRwritechunk(ri_id, origin, (void *)chunk01);
     CHECK_VOID(status, FAIL, "GRwritechunk");
 
     /* Write third data chunk ( 1, 4 ). */
     origin[0] = 1;
     origin[1] = 4;
-    status    = GRwritechunk(ri_id, origin, (VOIDP)chunk14);
+    status    = GRwritechunk(ri_id, origin, (void *)chunk14);
     CHECK_VOID(status, FAIL, "GRwritechunk");
 
     /* Terminate accesses and close the HDF file. */
@@ -1267,7 +1267,7 @@ test_szip_chunk()
     /* Read first chunk back and compare with input chunk. */
     origin[0] = 0;
     origin[1] = 0;
-    status    = GRreadchunk(ri_id, origin, (VOIDP)chunk_buf);
+    status    = GRreadchunk(ri_id, origin, (void *)chunk_buf);
     CHECK_VOID(status, FAIL, "GRreadchunk");
     if (0 != memcmp(chunk_buf, chunk00, sizeof(chunk00))) {
         printf("Error in reading chunk 00\n");
@@ -1277,7 +1277,7 @@ test_szip_chunk()
     /* Read second chunk back and compare with input chunk. */
     origin[0] = 0;
     origin[1] = 1;
-    status    = GRreadchunk(ri_id, origin, (VOIDP)chunk_buf);
+    status    = GRreadchunk(ri_id, origin, (void *)chunk_buf);
     CHECK_VOID(status, FAIL, "GRreadchunk");
     if (0 != memcmp(chunk_buf, chunk01, sizeof(chunk01))) {
         printf("Error in reading chunk 01\n");
@@ -1287,7 +1287,7 @@ test_szip_chunk()
     /* Read third chunk back and compare with input chunk. */
     origin[0] = 1;
     origin[1] = 4;
-    status    = GRreadchunk(ri_id, origin, (VOIDP)chunk_buf);
+    status    = GRreadchunk(ri_id, origin, (void *)chunk_buf);
     CHECK_VOID(status, FAIL, "GRreadchunk");
     if (0 != memcmp(chunk_buf, chunk14, sizeof(chunk14))) {
         printf("Error in reading chunk 14\n");
@@ -1299,7 +1299,7 @@ test_szip_chunk()
     stride[0] = stride[1] = 1;
     edge[0]               = LENGTH_CH;
     edge[1]               = WIDTH_CH;
-    status                = GRreadimage(ri_id, start, stride, edge, (VOIDP)data_out);
+    status                = GRreadimage(ri_id, start, stride, edge, (void *)data_out);
     CHECK_VOID(status, FAIL, "GRreadimage");
     if (0 != memcmp(data_out, data, sizeof(data))) {
         printf("Error in reading the whole image \n");

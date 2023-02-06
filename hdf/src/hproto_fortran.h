@@ -753,13 +753,13 @@ HDFLIBAPI intn ANdestroy(void); */
 /* Multi-file GR C-stubs for FORTRAN interface found in mfgrf.c */
 
 HDFFCLIBAPI FRETVAL(intf) /* !sl */
-    nmgiwimg(intf *riid, intf *start, intf *stride, intf *count, VOIDP data);
+    nmgiwimg(intf *riid, intf *start, intf *stride, intf *count, void *data);
 
 HDFFCLIBAPI FRETVAL(intf) /* !sl */
-    nmgirimg(intf *riid, intf *start, intf *stride, intf *count, VOIDP data);
+    nmgirimg(intf *riid, intf *start, intf *stride, intf *count, void *data);
 
 HDFFCLIBAPI FRETVAL(intf) /* !sl */
-    nmgignat(intf *riid, intf *idx, VOIDP data);
+    nmgignat(intf *riid, intf *idx, void *data);
 
 HDFFCLIBAPI FRETVAL(intf) nmgstart(intf *fid);
 
@@ -829,14 +829,14 @@ HDFFCLIBAPI FRETVAL(intf) nmgcgichnk(intf *id, intf *dim_length, intf *flags);
 
 HDFFCLIBAPI FRETVAL(intf) nmgcrcchnk(intf *id, intf *start, _fcd char_data);
 
-HDFFCLIBAPI FRETVAL(intf) nmgcrchnk(intf *id, intf *start, VOIDP num_data);
+HDFFCLIBAPI FRETVAL(intf) nmgcrchnk(intf *id, intf *start, void *num_data);
 
 HDFFCLIBAPI FRETVAL(intf) nmgcscchnk(intf *id, intf *maxcache, intf *flags);
 
 HDFFCLIBAPI FRETVAL(intf) nmgcschnk(intf *id, intf *dim_length, intf *comp_type, intf *comp_prm);
 HDFFCLIBAPI FRETVAL(intf) nmgcwcchnk(intf *id, intf *start, _fcd char_data);
 
-HDFFCLIBAPI FRETVAL(intf) nmgcwchnk(intf *id, intf *start, VOIDP num_data);
+HDFFCLIBAPI FRETVAL(intf) nmgcwchnk(intf *id, intf *start, void *num_data);
 
 HDFFCLIBAPI FRETVAL(intf) nmgcscompress(intf *id, intf *comp_type, intf *comp_prm);
 

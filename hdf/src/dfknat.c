@@ -59,7 +59,7 @@
 /*   Native mode for 1 byte data items                      */
 /************************************************************/
 int
-DFKnb1b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
+DFKnb1b(void *s, void *d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
 {
     int    fast_processing = 0;
     int    in_place        = 0;
@@ -107,7 +107,7 @@ DFKnb1b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stri
 /* -->Native mode for 2 byte data items                     */
 /************************************************************/
 int
-DFKnb2b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
+DFKnb2b(void *s, void *d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
 {
     int    fast_processing = 0; /* Default is not fast processing */
     int    in_place        = 0; /* Inplace must be detected */
@@ -167,7 +167,7 @@ DFKnb2b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stri
 /* -->Native mode for 4 byte items                          */
 /************************************************************/
 int
-DFKnb4b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
+DFKnb4b(void *s, void *d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
 {
     int    fast_processing = 0; /* Default is not fast processing */
     int    in_place        = 0; /* Inplace must be detected */
@@ -233,7 +233,7 @@ DFKnb4b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stri
 /* -->Native mode for 8 byte items                          */
 /************************************************************/
 int
-DFKnb8b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
+DFKnb8b(void *s, void *d, uint32 num_elm, uint32 source_stride, uint32 dest_stride)
 {
     int    fast_processing = 0; /* Default is not fast processing */
     int    in_place        = 0; /* Inplace must be detected */

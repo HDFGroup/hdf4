@@ -134,7 +134,7 @@ test_dim1_SDS1(void)
     VERIFY(n_datasets, 2, "SDfileinfo");
 
     /* Write data to the SDS */
-    status = SDwritedata(sds_id, &start, &stride, dimsize, (VOIDP)sds1_data);
+    status = SDwritedata(sds_id, &start, &stride, dimsize, (void *)sds1_data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Close dataset and file. */

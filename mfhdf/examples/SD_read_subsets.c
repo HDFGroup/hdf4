@@ -47,7 +47,7 @@ main()
     /*
      * Read the data from the file into sub1_data array.
      */
-    if (SDreaddata(sds_id, start, stride, edges, (VOIDP)sub1_data) == FAIL)
+    if (SDreaddata(sds_id, start, stride, edges, (void *)sub1_data) == FAIL)
         printf("*** ERROR from SDreaddata\n");
 
     /*
@@ -74,7 +74,7 @@ main()
      * Read data from the file into sub2_data array. Note that the third
      * parameter is set to NULL for contiguous reading.
      */
-    if (SDreaddata(sds_id, start, NULL, edges, (VOIDP)sub2_data) == FAIL)
+    if (SDreaddata(sds_id, start, NULL, edges, (void *)sub2_data) == FAIL)
         printf("*** ERROR from SDreaddata\n");
 
     /*
@@ -105,7 +105,7 @@ main()
     /*
      * Read the data from the file into sub3_data array.
      */
-    if (SDreaddata(sds_id, start, stride, edges, (VOIDP)sub3_data) == FAIL)
+    if (SDreaddata(sds_id, start, stride, edges, (void *)sub3_data) == FAIL)
         printf("*** ERROR from SDreaddata\n");
 
     /*

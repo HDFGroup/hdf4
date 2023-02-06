@@ -115,9 +115,6 @@
  * These types were added long before C99 was widely supported (or even
  * existed). They were formerly mapped to native C types on a machine-specific
  * basis, but they are now mapped to their equivalent C99 types.
- *
- * XXX: Some cruft remains (e.g. VOID) and this should be removed, if
- *      possible.
  *-------------------------------------------------------------------------*/
 
 /* Floating-point types */
@@ -141,13 +138,6 @@ typedef uint32_t uint32;
 /* Native integer types */
 typedef int          intn;
 typedef unsigned int uintn;
-
-/* void and pointers to void */
-#ifndef VOID
-/* winnt.h defines VOID to `void` via a macro */
-typedef void VOID;
-#endif
-typedef void *VOIDP;
 
 /*-------------------------------------------------------------------------
  * Is this an LP64 system?

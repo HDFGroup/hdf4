@@ -95,14 +95,14 @@ HEstring(hdf_err_code_t error_code)
 NAME
    HEclear -- clear the error stack
 USAGE
-   VOID HEclear(VOID)
+   void HEclear(void)
 RETURNS
    NONE
 DESCRIPTION
    Remove all currently reported errors from the error stack
 
 ---------------------------------------------------------------------------*/
-VOID
+void
 HEclear(void)
 {
     if (!error_top)
@@ -123,7 +123,7 @@ done:
 NAME
    HEpush -- push an error onto the stack
 USAGE
-   VOID HEpush(error_code, func_name, file_name, line)
+   void HEpush(error_code, func_name, file_name, line)
    int16  error_code;      IN: the numerical value of this error
    char * func_name;       IN: function where the error happened
    char * file_name;       IN: file name of offending function
@@ -139,7 +139,7 @@ DESCRIPTION
    that a description is reported  only if REreport is called
 
 ---------------------------------------------------------------------------*/
-VOID
+void
 HEpush(hdf_err_code_t error_code, const char *function_name, const char *file_name, intn line)
 {
     intn i;
@@ -173,7 +173,7 @@ HEpush(hdf_err_code_t error_code, const char *function_name, const char *file_na
 NAME
    HEreport -- give a more detailed error description
 USAGE
-   VOID HEreport(format, ....)
+   void HEreport(format, ....)
    char * format;           IN: printf style print statement
 RETURNS
    NONE
@@ -183,7 +183,7 @@ DESCRIPTION
    error condition
 
 ---------------------------------------------------------------------------*/
-VOID
+void
 HEreport(const char *format, ...)
 {
     va_list arg_ptr;
@@ -212,7 +212,7 @@ done:
 NAME
    HEprint -- print values from the error stack
 USAGE
-   VOID HEprint(stream, levels)
+   void HEprint(stream, levels)
    FILE * stream;      IN: file to print error message to
    int32  level;       IN: level at which to start printing
 RETURNS
@@ -223,7 +223,7 @@ DESCRIPTION
    added (via HEreport) it is printed too.
 
 ---------------------------------------------------------------------------*/
-VOID
+void
 HEprint(FILE *stream, int32 print_levels)
 {
     if (print_levels == 0 || print_levels > error_top) /* print all errors */

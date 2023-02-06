@@ -79,7 +79,7 @@ make_datafilename(const char *basename, char *testfile, unsigned int size)
 *********************************************************************/
 int32
 make_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, int32 unlim_dim,
-         VOIDP written_data)
+         void *written_data)
 {
     int32  sds_id;
     int32 *start, *edges;
@@ -141,7 +141,7 @@ make_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, 
 
 *********************************************************************/
 int32
-make_CompSDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, VOIDP written_data)
+make_CompSDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, void *written_data)
 {
     int32        sds_id;
     int32       *start, *edges;
@@ -213,7 +213,7 @@ make_CompSDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_siz
 
 *********************************************************************/
 int32
-make_Ext3D_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, VOIDP written_data,
+make_Ext3D_SDS(int32 sd_id, char *sds_name, int32 type, int32 rank, int32 *dim_sizes, void *written_data,
                int32 offset, char *ext_file_name)
 {
     int32  sds_id;
@@ -319,7 +319,7 @@ append_Data2SDS(int32 sd_id, char *sds_name, int32 *start, int32 *edges, void *a
     CHECK(status, FAIL, "SDgetdatasize");
 
     /* Append data to it */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)ap_data);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)ap_data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Calculate data set's size to verify later */

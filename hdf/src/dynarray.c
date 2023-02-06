@@ -90,7 +90,7 @@ DAcreate_array(intn start_size, /* IN: Initial array size */
     new_arr->num_elems = start_size;
     new_arr->incr_mult = incr_mult;
     if (start_size > 0) { /* only allocate space if the initial size is positive */
-        new_arr->arr = (VOIDP *)calloc(start_size, sizeof(VOIDP));
+        new_arr->arr = (void **)calloc(start_size, sizeof(void *));
         if (new_arr->arr == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
     } /* end if */
@@ -189,13 +189,13 @@ done:
     Returns object ptr if successful and NULL otherwise
 
 *******************************************************************************/
-VOIDP
+void *
 DAget_elem(dynarr_p arr_ptr, /* IN: Array to access */
            intn     elem     /* IN: Array element to retrieve */
 )
 {
     dynarr_t *arr; /* ptr to the dynarray */
-    VOIDP     ret_value = NULL;
+    void     *ret_value = NULL;
 
     HEclear();
     arr = (dynarr_t *)arr_ptr;
@@ -228,7 +228,7 @@ done:
 intn
 DAset_elem(dynarr_p arr_ptr, /* IN: Array to access */
            intn     elem,    /* IN: Array element to set */
-           VOIDP    obj      /* IN: Pointer to the object to store */
+           void    *obj      /* IN: Pointer to the object to store */
 )
 {
     dynarr_t *arr; /* ptr to the dynarray */
@@ -244,15 +244,15 @@ DAset_elem(dynarr_p arr_ptr, /* IN: Array to access */
 
         new_size = ((elem / arr->incr_mult) + 1) * arr->incr_mult;
         if (arr->num_elems == 0) { /* array not currently allocated */
-            if ((arr->arr = (VOIDP *)calloc(new_size, sizeof(VOIDP))) == NULL)
+            if ((arr->arr = (void **)calloc(new_size, sizeof(void *))) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
         }                   /* end if */
         else {              /* extend the existing array */
-            VOIDP *new_arr; /* storage for the new array of ptrs */
+            void **new_arr; /* storage for the new array of ptrs */
 
-            if ((new_arr = (VOIDP *)realloc(arr->arr, new_size * sizeof(VOIDP))) == NULL)
+            if ((new_arr = (void **)realloc(arr->arr, new_size * sizeof(void *))) == NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
-            memset(&new_arr[arr->num_elems], 0, sizeof(VOIDP) * (uintn)(new_size - arr->num_elems));
+            memset(&new_arr[arr->num_elems], 0, sizeof(void *) * (uintn)(new_size - arr->num_elems));
             arr->arr = new_arr;
         } /* end else */
         arr->num_elems = new_size;
@@ -278,13 +278,13 @@ done:
     Returns object ptr if successful and NULL otherwise
 
 *******************************************************************************/
-VOIDP
+void *
 DAdel_elem(dynarr_p arr_ptr, /* IN: Array to access */
            intn     elem     /* IN: Array element to retrieve */
 )
 {
     dynarr_t *arr; /* ptr to the dynarray */
-    VOIDP     ret_value = NULL;
+    void     *ret_value = NULL;
 
     HEclear();
     arr = (dynarr_t *)arr_ptr;

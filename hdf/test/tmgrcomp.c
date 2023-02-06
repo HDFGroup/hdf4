@@ -424,7 +424,7 @@ test_mgr_compress_c()
     start[0] = start[1] = 0;
     edges[0]            = 128;
     edges[1]            = 128;
-    status              = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)image_buf);
+    status              = GRwriteimage(ri_id, start, NULL, edges, (void *)image_buf);
     CHECK(status, FAIL, "GRwriteimage");
 
     /* Terminate access to raster image and to GR interface */
@@ -454,7 +454,7 @@ test_mgr_compress_c()
     start[0] = start[1] = 0;
     edges[0]            = 128;
     edges[1]            = 128;
-    status              = GRreadimage(ri_id, start, NULL, edges, (VOIDP)read_buf);
+    status              = GRreadimage(ri_id, start, NULL, edges, (void *)read_buf);
     CHECK(status, FAIL, "GRreadimage");
 
     /* Verify correct image contents */
@@ -867,25 +867,25 @@ test_mgr_chunk_compress()
 
         /* Write first data chunk ( 0, 0 ). */
         origin[0] = origin[1] = 0;
-        status                = GRwritechunk(ri_id[img_num], origin, (VOIDP)chunk00);
+        status                = GRwritechunk(ri_id[img_num], origin, (void *)chunk00);
         CHECK(status, FAIL, "GRwritechunk");
 
         /* Write second data chunk ( 0, 1 ). */
         origin[0] = 0;
         origin[1] = 1;
-        status    = GRwritechunk(ri_id[img_num], origin, (VOIDP)chunk01);
+        status    = GRwritechunk(ri_id[img_num], origin, (void *)chunk01);
         CHECK(status, FAIL, "GRwritechunk");
 
         /* Write third data chunk ( 1, 4 ). */
         origin[0] = 1;
         origin[1] = 4;
-        status    = GRwritechunk(ri_id[img_num], origin, (VOIDP)chunk14);
+        status    = GRwritechunk(ri_id[img_num], origin, (void *)chunk14);
         CHECK(status, FAIL, "GRwritechunk");
 
         /* Read third chunk back. */
         origin[0] = 1;
         origin[1] = 4;
-        status    = GRreadchunk(ri_id[img_num], origin, (VOIDP)chunk_buf);
+        status    = GRreadchunk(ri_id[img_num], origin, (void *)chunk_buf);
         CHECK(status, FAIL, "GRreadchunk");
 
         /* Terminate access to the GR interface and close the HDF file. */
@@ -953,7 +953,7 @@ test_mgr_chunk_compress()
         /* Read third chunk back. */
         origin[0] = 1;
         origin[1] = 4;
-        status    = GRreadchunk(ri_id[img_num], origin, (VOIDP)chunk_buf);
+        status    = GRreadchunk(ri_id[img_num], origin, (void *)chunk_buf);
         CHECK(status, FAIL, "GRreadchunk");
         if (0 != memcmp(chunk_buf, chunk14, sizeof(chunk14))) {
             MESSAGE(3, printf("Error in reading chunk at line %d\n", __LINE__););
@@ -966,7 +966,7 @@ test_mgr_chunk_compress()
         stride[0] = stride[1] = 1;
         edge[0]               = Y_LENGTH;
         edge[1]               = X_LENGTH;
-        status                = GRreadimage(ri_id[img_num], start, stride, edge, (VOIDP)data_out);
+        status                = GRreadimage(ri_id[img_num], start, stride, edge, (void *)data_out);
         CHECK(status, FAIL, "GRreadimage");
         if (0 != memcmp(data_out, data, sizeof(data))) {
             MESSAGE(3, printf("%d: Error reading data for the whole image\n", __LINE__););

@@ -688,7 +688,7 @@ nvssextfc(intf *id, _fcd name, intf *offset, intf *namelen)
     if (!fn)
         return (FAIL);
     ret = (intf)VSsetexternalfile(*id, fn, *offset);
-    free((VOIDP)fn);
+    free((void *)fn);
     return (ret);
 }
 
@@ -1345,7 +1345,7 @@ nvsfccpk(intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz, intf *nr
     char *flds_in_buf;
     char *afield;
     intf  ret;
-    VOIDP fldbufpt[1];
+    void *fldbufpt[1];
 
     flds_in_buf = HDf2cstring(buflds, (intn)*buflds_len);
     if (!flds_in_buf) {
@@ -1365,7 +1365,7 @@ nvsfccpk(intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz, intf *nr
         afield = NULL;
     }
     fldbufpt[0] = _fcdtocp(fldbuf);
-    ret = VSfpack((int32)*vs, (intn)*packtype, flds_in_buf, (VOIDP)buf, (intn)*bufsz, (intn)*nrecs, afield,
+    ret = VSfpack((int32)*vs, (intn)*packtype, flds_in_buf, (void *)buf, (intn)*bufsz, (intn)*nrecs, afield,
                   fldbufpt);
 
     free(flds_in_buf);
@@ -1382,7 +1382,7 @@ nvsfncpk(intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz, intf *nr
     char *flds_in_buf;
     char *afield;
     intf  ret;
-    VOIDP fldbufpt[1];
+    void *fldbufpt[1];
 
     flds_in_buf = HDf2cstring(buflds, (intn)*buflds_len);
     if (!flds_in_buf) {
@@ -1402,7 +1402,7 @@ nvsfncpk(intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz, intf *nr
         afield = NULL;
     }
     fldbufpt[0] = fldbuf;
-    ret = VSfpack((int32)*vs, (intn)*packtype, flds_in_buf, (VOIDP)buf, (intn)*bufsz, (intn)*nrecs, afield,
+    ret = VSfpack((int32)*vs, (intn)*packtype, flds_in_buf, (void *)buf, (intn)*bufsz, (intn)*nrecs, afield,
                   fldbufpt);
 
     free(flds_in_buf);

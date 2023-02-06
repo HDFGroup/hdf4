@@ -77,7 +77,7 @@ palconv(char *palfile, char *outfile)
         *p++ = blues[j];
     }
 
-    ret = DFPaddpal(outfile, (VOIDP)palspace);
+    ret = DFPaddpal(outfile, (void *)palspace);
     if (ret < 0) {
         printf(" Error: %d, in writing palette %s\n", ret, palfile);
         exit(1);

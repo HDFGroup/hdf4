@@ -95,9 +95,9 @@ test_1dim_multivars()
     CHECK(dset2, FAIL, "SDcreate");
 
     /* Data sets will be filled with fill-values when data is missing */
-    status = SDsetfillvalue(dset1, (VOIDP)&fillval1);
+    status = SDsetfillvalue(dset1, (void *)&fillval1);
     CHECK(status, FAIL, "SDsetfillvalue");
-    status = SDsetfillvalue(dset2, (VOIDP)&fillval2);
+    status = SDsetfillvalue(dset2, (void *)&fillval2);
     CHECK(status, FAIL, "SDsetfillvalue");
 
     { /* Add data */
@@ -108,20 +108,20 @@ test_1dim_multivars()
         /* Write 4 elements to first data set starting at index 0 */
         start[0] = 0;
         edges[0] = 4;
-        status   = SDwritedata(dset1, start, NULL, edges, (VOIDP)data);
+        status   = SDwritedata(dset1, start, NULL, edges, (void *)data);
         CHECK(status, FAIL, "SDwritedata");
 
         /* Write 2 elements to second data set starting at index 0 */
         start[0] = 0;
         edges[0] = 2;
-        status   = SDwritedata(dset2, start, NULL, edges, (VOIDP)data2);
+        status   = SDwritedata(dset2, start, NULL, edges, (void *)data2);
         CHECK(status, FAIL, "SDwritedata");
 
         /* Add 2 more elements to first dataset starting at index 6, i.e.,
            skipping 2 elements, which will be filled with fill-values. */
         start[0] = 6;
         edges[0] = 2;
-        status   = SDwritedata(dset1, start, NULL, edges, (VOIDP)appdata);
+        status   = SDwritedata(dset1, start, NULL, edges, (void *)appdata);
         CHECK(status, FAIL, "SDwritedata");
     }
 
@@ -304,11 +304,11 @@ test_multidims()
     CHECK(dset3, FAIL, "SDcreate");
 
     /* Datasets will be filled with fill values when data is missing */
-    status = SDsetfillvalue(dset1, (VOIDP)&fillval1);
+    status = SDsetfillvalue(dset1, (void *)&fillval1);
     CHECK(status, FAIL, "SDsetfillvalue");
-    status = SDsetfillvalue(dset2, (VOIDP)&fillval2);
+    status = SDsetfillvalue(dset2, (void *)&fillval2);
     CHECK(status, FAIL, "SDsetfillvalue");
-    status = SDsetfillvalue(dset3, (VOIDP)&fillval3);
+    status = SDsetfillvalue(dset3, (void *)&fillval3);
     CHECK(status, FAIL, "SDsetfillvalue");
 
     { /* Add data to first data set */
@@ -319,7 +319,7 @@ test_multidims()
         edges[0]                       = 4; /* 4x1x1 slab */
         edges[1]                       = 1;
         edges[2]                       = 1;
-        status                         = SDwritedata(dset1, start, NULL, edges, (VOIDP)data);
+        status                         = SDwritedata(dset1, start, NULL, edges, (void *)data);
         CHECK(status, FAIL, "SDwritedata");
     }
 
@@ -334,7 +334,7 @@ test_multidims()
     edges[1]                       = dimsizes3D[1];
     edges[2]                       = dimsizes3D[2];
     outdata3                       = (int16 *)malloc(edges[0] * edges[1] * edges[2] * sizeof(int16));
-    status                         = SDreaddata(dset1, start, NULL, edges, (VOIDP)outdata3);
+    status                         = SDreaddata(dset1, start, NULL, edges, (void *)outdata3);
     CHECK(status, FAIL, "SDreaddata");
 
     status = memcmp(outdata3, result3D, edges[0] * edges[1] * edges[2] * sizeof(int16));
@@ -346,7 +346,7 @@ test_multidims()
         /* Write 4 elements starting at index 2 */
         start[0] = 2; /* skip first two elements */
         edges[0] = 4; /* write 4 elements */
-        status   = SDwritedata(dset2, start, NULL, edges, (VOIDP)data);
+        status   = SDwritedata(dset2, start, NULL, edges, (void *)data);
         CHECK(status, FAIL, "SDwritedata");
     }
 
@@ -379,7 +379,7 @@ test_multidims()
         edges[2]            = DIM2;
 
         /* Write 1 slab starting at index 7 */
-        status = SDwritedata(dset1, start, NULL, edges, (VOIDP)data);
+        status = SDwritedata(dset1, start, NULL, edges, (void *)data);
         CHECK(status, FAIL, "SDwritedata");
     }
 
@@ -395,7 +395,7 @@ test_multidims()
     edges[0]                       = dimsizes3D[0];
     edges[1]                       = dimsizes3D[1];
     edges[2]                       = dimsizes3D[2];
-    status                         = SDreaddata(dset1, start, NULL, edges, (VOIDP)outdata3D);
+    status                         = SDreaddata(dset1, start, NULL, edges, (void *)outdata3D);
     CHECK(status, FAIL, "SDreaddata");
 
     status = memcmp(outdata3D, result3D, edges[0] * edges[1] * edges[2] * sizeof(int16));
@@ -422,7 +422,7 @@ test_multidims()
     /* Read and verify data of the dataset.  Data should be: -1 -1 300 301 302 303 */
     start[0] = 0;
     edges[0] = dimsize1D[0];
-    status   = SDreaddata(dset2, start, NULL, edges, (VOIDP)outdata1D);
+    status   = SDreaddata(dset2, start, NULL, edges, (void *)outdata1D);
     CHECK(status, FAIL, "SDreaddata");
 
     status = memcmp(outdata1D, sdresult1D, edges[0] * sizeof(int16));
@@ -448,7 +448,7 @@ test_multidims()
         /* Write 12 elements starting at index 0 */
         start[0] = 0;
         edges[0] = 12;
-        status   = SDwritedata(dset1, start, NULL, edges, (VOIDP)data);
+        status   = SDwritedata(dset1, start, NULL, edges, (void *)data);
         CHECK(status, FAIL, "SDwritedata");
     }
 

@@ -203,7 +203,7 @@ gen_dim(char *name, /* name of SDS */
         eltsz,                     /* element size */
         nelms;                     /* number of elements */
     char          sds_name[H4_MAX_NC_NAME];
-    VOIDP         buf = NULL;
+    void         *buf = NULL;
     int           i, j, ret = 1;
     int           info;           /* temporary int compression information */
     comp_coder_t  comp_type;      /* compression type requested  */
@@ -614,7 +614,7 @@ gen_dim(char *name, /* name of SDS */
          */
 
         /* alloc */
-        if ((buf = (VOIDP)malloc(nelms * eltsz)) == NULL) {
+        if ((buf = (void *)malloc(nelms * eltsz)) == NULL) {
             printf("Failed to allocate %d elements of size %d\n", nelms, eltsz);
             ret = -1;
             goto out;

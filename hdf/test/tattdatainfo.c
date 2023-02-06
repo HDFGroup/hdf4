@@ -552,7 +552,7 @@ test_grattrs()
     edges[1]            = Y_LENGTH;
 
     /* Write the data into the image array and terminate access to the RI. */
-    status = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)image_buf);
+    status = GRwriteimage(ri_id, start, NULL, edges, (void *)image_buf);
     CHECK_VOID(status, FAIL, "GRwriteimage");
     status = GRendaccess(ri_id);
     CHECK_VOID(status, FAIL, "GRendaccess");
@@ -574,7 +574,7 @@ test_grattrs()
     status = GRsetattr(ri_id, RI_ATT1_NAME, DFNT_CHAR8, RI_ATT1_COUNT, RI_ATT1_VAL);
     CHECK_VOID(status, FAIL, "GRsetattr RI_ATT1_NAME");
 
-    status = GRsetattr(ri_id, RI_ATT2_NAME, DFNT_INT16, RI_ATT2_COUNT, (VOIDP)ri_att2_val);
+    status = GRsetattr(ri_id, RI_ATT2_NAME, DFNT_INT16, RI_ATT2_COUNT, (void *)ri_att2_val);
     CHECK_VOID(status, FAIL, "GRsetattr RI_ATT2_NAME");
 
     /* Terminate access to the raster image and to the GR interface and

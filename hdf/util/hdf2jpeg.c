@@ -19,9 +19,9 @@
 
 static uint8 file_buf[MAX_FILE_BUF]; /* size of the buffer to copy through */
 
-static VOID usage(void);
+static void usage(void);
 
-static VOID
+static void
 usage(void)
 {
     printf("USAGE: hdf2jpeg <input HDF file> <output JPEG file template>\n");

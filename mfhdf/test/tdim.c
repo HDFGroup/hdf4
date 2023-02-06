@@ -129,7 +129,7 @@ test_basic_dim()
         start[i] = 0;
         edges[i] = dims[i];
     }
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)array1_data);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)array1_data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the array. */
@@ -331,7 +331,7 @@ test_dim_scales()
         start[i] = 0;
         edges[i] = dims[i];
     }
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)array1_data);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)array1_data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the array. */
@@ -420,7 +420,7 @@ test_dim_scales()
     }
 
     /* Write the data stored in the array 'array2_data' to the dataset */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)array2_data);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)array2_data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Get info of the dataset and verify its type */
@@ -469,7 +469,7 @@ test_dim_scales()
     VERIFY(dim_data_type, DFNT_CHAR, "SDdiminfo");
 
     /* Read dimension scale values and verify them */
-    status = SDgetdimscale(dim0_id, (VOIDP)scale2_out);
+    status = SDgetdimscale(dim0_id, (void *)scale2_out);
     CHECK(status, FAIL, "SDgetdimscale");
     for (i = 0; i < LENGTH2; i++)
         VERIFY(scale2_out[i], scale2[i], "SDgetdimscale");
@@ -588,7 +588,7 @@ test_dim_strs()
         edges[i] = dims[i];
     }
 
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)array1_data);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)array1_data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the array. */
@@ -692,7 +692,7 @@ test_dim_strs()
     }
 
     /* Write the data stored in the array 'array2_data' to the dataset */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)array2_data);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)array2_data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Get the first dimension id */

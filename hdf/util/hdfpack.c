@@ -50,14 +50,14 @@ typedef struct mydd_t {
 /* Static function prototypes */
 int promptblocks(mydd_t *dd);
 
-VOID copy_blocks(mydd_t *dd, int32 infile, int32 outfile);
+void copy_blocks(mydd_t *dd, int32 infile, int32 outfile);
 
-VOID merge_blocks(mydd_t *dd, int32 infile, int32 outfile);
+void merge_blocks(mydd_t *dd, int32 infile, int32 outfile);
 
 int         main(int, char *a[]);
-static VOID usage(char *);
-static VOID hdferror(void);
-static VOID error(const char *);
+static void usage(char *);
+static void hdferror(void);
+static void error(const char *);
 int         desc_comp(const void *d1, const void *d2);
 
 unsigned char *data;
@@ -306,7 +306,7 @@ main(int argc, char *argv[])
                                           way and not expand it */
                     {
                         int32  aid, len;
-                        VOIDP *buf;
+                        void **buf;
 
                         /* Read in old compressed data description */
                         if ((aid = Hstartaccess(infile, dlist[i].tag, dlist[i].ref, DFACC_READ)) == FAIL)
@@ -379,7 +379,7 @@ promptblocks(mydd_t *dd)
  ** NAME
  **      copy_blocks -- move a linked-block element; preserve blocking
  */
-VOID
+void
 copy_blocks(mydd_t *dd, int32 infile, int32 outfile)
 {
     int32           inaid, ret, rdret, outaid;
@@ -450,7 +450,7 @@ copy_blocks(mydd_t *dd, int32 infile, int32 outfile)
  ** NAME
  **      merge_blocks
  */
-VOID
+void
 merge_blocks(mydd_t *dd, int32 infile, int32 outfile)
 {
     int32 inaid, outaid, ret, len;
@@ -506,7 +506,7 @@ merge_blocks(mydd_t *dd, int32 infile, int32 outfile)
  ** COMMENTS, BUGS, ASSUMPTIONS
  ** EXAMPLES
  */
-static VOID
+static void
 usage(char *name)
 {
     fprintf(stderr, "Usage:  %s [-i | -b] [-d#] [-t#] [-x] [-r <from> <to>] <infile> <outfile>\n", name);
@@ -533,7 +533,7 @@ usage(char *name)
  **   This routine terminates the program with code 1.
  ** EXAMPLES
  */
-static VOID
+static void
 hdferror(void)
 {
     HEprint(stderr, 0);
@@ -555,7 +555,7 @@ hdferror(void)
  **   This routine terminates the program with code 1.
  ** EXAMPLES
  */
-static VOID
+static void
 error(const char *string)
 {
     fprintf(stderr, "%s: %s\n", invoke, string);

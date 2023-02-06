@@ -225,7 +225,7 @@ struct Input {
     float32 *hscale;    /* horizontal scales */
     float32 *vscale;    /* vertical scales */
     float32 *dscale;    /* depth scales */
-    VOIDP    data;      /* input data */
+    void    *data;      /* input data */
 };
 
 /*
@@ -1859,7 +1859,7 @@ process(struct Options *opt)
          * get the input data
          */
         len = in.dims[0] * in.dims[1] * in.dims[2];
-        if ((in.data = (VOIDP)malloc((size_t)len * sizeof(float32))) == NULL) {
+        if ((in.data = (void *)malloc((size_t)len * sizeof(float32))) == NULL) {
             (void)fprintf(stderr, "%s", err2);
             goto err;
         }

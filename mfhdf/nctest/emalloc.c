@@ -46,7 +46,7 @@ erealloc(void *ptr, int size)
         return 0;
     }
 #ifdef HDF
-    p = (void *)realloc((VOIDP)ptr, (uint32)size);
+    p = (void *)realloc((void *)ptr, (uint32)size);
 #else
     p = (void *)realloc((char *)ptr, (unsigned)size);
 #endif

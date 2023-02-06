@@ -81,15 +81,15 @@ HDFLIBAPI int DFSDIclear(DFSsdg *sdg);
 
 HDFLIBAPI int DFSDIclearNT(DFSsdg *sdg);
 
-HDFLIBAPI int DFSDIgetdata(const char *filename, intn rank, int32 maxsizes[], VOIDP data, int isfortran);
+HDFLIBAPI int DFSDIgetdata(const char *filename, intn rank, int32 maxsizes[], void *data, int isfortran);
 
-HDFLIBAPI int DFSDIputdata(const char *filename, intn rank, int32 *dimsizes, VOIDP data, int accmode,
+HDFLIBAPI int DFSDIputdata(const char *filename, intn rank, int32 *dimsizes, void *data, int accmode,
                            int isfortran);
 
-HDFLIBAPI int DFSDIgetslice(const char *filename, int32 winst[], int32 windims[], VOIDP data, int32 dims[],
+HDFLIBAPI int DFSDIgetslice(const char *filename, int32 winst[], int32 windims[], void *data, int32 dims[],
                             int isfortran);
 
-HDFLIBAPI int DFSDIputslice(int32 windims[], VOIDP data, int32 dims[], int isfortran);
+HDFLIBAPI int DFSDIputslice(int32 windims[], void *data, int32 dims[], int isfortran);
 
 HDFLIBAPI int DFSDIendslice(int isfortran);
 

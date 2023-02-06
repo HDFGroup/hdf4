@@ -17,7 +17,7 @@ main()
     int32  n_rimages;                 /* number of raster images in the file */
     int32  n_file_attrs;              /* number of file attributes */
     char   attr_name[H4_MAX_GR_NAME]; /* buffer to hold the attribute name     */
-    VOIDP  data_buf = NULL;           /* buffer to hold the attribute values   */
+    void  *data_buf = NULL;           /* buffer to hold the attribute values   */
     int16 *int_ptr;                   /* int16 pointer to point to a void data buffer     */
     char8 *char_ptr;                  /* char8 pointer to point to a void data buffer     */
 
@@ -70,7 +70,7 @@ main()
             /*
              * Read and display the attribute values.
              */
-            if (GRgetattr(gr_id, f_att_index, (VOIDP)data_buf) == FAIL)
+            if (GRgetattr(gr_id, f_att_index, (void *)data_buf) == FAIL)
                 printf("*** ERROR from GRgetattr\n");
 
             char_ptr = (char8 *)data_buf;
@@ -118,7 +118,7 @@ main()
     /*
      * Read and display the attribute values.
      */
-    if (GRgetattr(ri_id, ri_att_index, (VOIDP)data_buf) == FAIL)
+    if (GRgetattr(ri_id, ri_att_index, (void *)data_buf) == FAIL)
         printf("*** ERROR from GRgetattr\n");
 
     printf("\nAttribute %s: ", RI_ATTR_NAME);

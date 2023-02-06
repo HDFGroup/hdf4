@@ -61,7 +61,7 @@ extern boolean hdf_fill_input_buffer(struct jpeg_decompress_struct *cinfo_ptr);
 extern void    hdf_skip_input_data(struct jpeg_decompress_struct *cinfo_ptr, long num_bytes);
 extern void    hdf_term_source(struct jpeg_decompress_struct *cinfo_ptr);
 extern intn    jpeg_HDF_src(struct jpeg_decompress_struct *cinfo_ptr, int32 file_id, uint16 tag, uint16 ref,
-                            VOIDP image, int32 xdim, int32 ydim, int16 scheme);
+                            void *image, int32 xdim, int32 ydim, int16 scheme);
 extern intn    jpeg_HDF_src_term(struct jpeg_decompress_struct *cinfo_ptr);
 
 /*-----------------------------------------------------------------------------
@@ -225,7 +225,7 @@ hdf_term_source(struct jpeg_decompress_struct *cinfo_ptr)
  *          These routines will be called by the JPEG routines to input
  *---------------------------------------------------------------------------*/
 intn
-jpeg_HDF_src(struct jpeg_decompress_struct *cinfo_ptr, int32 file_id, uint16 tag, uint16 ref, VOIDP image,
+jpeg_HDF_src(struct jpeg_decompress_struct *cinfo_ptr, int32 file_id, uint16 tag, uint16 ref, void *image,
              int32 xdim, int32 ydim, int16 scheme)
 {
     hdf_src_ptr src;
@@ -301,7 +301,7 @@ jpeg_HDF_src_term(struct jpeg_decompress_struct *cinfo_ptr)
  *---------------------------------------------------------------------------*/
 
 intn
-DFCIunjpeg(int32 file_id, uint16 tag, uint16 ref, VOIDP image, int32 xdim, int32 ydim, int16 scheme)
+DFCIunjpeg(int32 file_id, uint16 tag, uint16 ref, void *image, int32 xdim, int32 ydim, int16 scheme)
 {
     /* These three structs contain JPEG parameters and working data.
      * They must survive for the duration of parameter setup and one

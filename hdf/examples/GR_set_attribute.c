@@ -39,10 +39,10 @@ main()
      * Set two file attributes to the file with names, data types, numbers of
      * values, and values of the attributes specified.
      */
-    if (GRsetattr(gr_id, F_ATT1_NAME, DFNT_CHAR8, F_ATT1_N_VALUES, (VOIDP)F_ATT1_VAL) == FAIL)
+    if (GRsetattr(gr_id, F_ATT1_NAME, DFNT_CHAR8, F_ATT1_N_VALUES, (void *)F_ATT1_VAL) == FAIL)
         printf("*** ERROR from GRsetattr\n");
 
-    if (GRsetattr(gr_id, F_ATT2_NAME, DFNT_CHAR8, F_ATT2_N_VALUES, (VOIDP)F_ATT2_VAL) == FAIL)
+    if (GRsetattr(gr_id, F_ATT2_NAME, DFNT_CHAR8, F_ATT2_N_VALUES, (void *)F_ATT2_VAL) == FAIL)
         printf("*** ERROR from GRsetattr\n");
 
     /*
@@ -59,10 +59,10 @@ main()
      * Set two attributes to the image with names, data types, numbers of
      * values, and values of the attributes specified.
      */
-    if (GRsetattr(ri_id, RI_ATT1_NAME, DFNT_CHAR8, RI_ATT1_N_VALUES, (VOIDP)RI_ATT1_VAL) == FAIL)
+    if (GRsetattr(ri_id, RI_ATT1_NAME, DFNT_CHAR8, RI_ATT1_N_VALUES, (void *)RI_ATT1_VAL) == FAIL)
         printf("*** ERROR from GRsetattr\n");
 
-    if (GRsetattr(ri_id, RI_ATT2_NAME, DFNT_INT16, RI_ATT2_N_VALUES, (VOIDP)ri_attr_2) == FAIL)
+    if (GRsetattr(ri_id, RI_ATT2_NAME, DFNT_INT16, RI_ATT2_N_VALUES, (void *)ri_attr_2) == FAIL)
         printf("*** ERROR from GRsetattr\n");
 
     /*

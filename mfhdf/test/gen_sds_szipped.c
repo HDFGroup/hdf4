@@ -99,7 +99,7 @@ main()
     CHECK(status, FAIL, "SDsetcompress");
 
     /* Write the stored data to the 3rd data set. */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)data);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)data);
     CHECK(status, FAIL, "SDwritedata");
 
     /* Terminate access to the 3rd data set. */

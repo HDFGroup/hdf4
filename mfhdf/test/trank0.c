@@ -104,7 +104,7 @@ test_rank0()
     edges[1] = X_LENGTH;
 
     /* Write the stored data to the dataset */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)buf);
+    status = SDwritedata(sds_id, start, NULL, edges, (void *)buf);
     VERIFY(status, FAIL, "test_rank0:SDwritedata");
 
     /* Close the SDS */
@@ -124,7 +124,7 @@ test_rank0()
     start[1] = 0;
     edges[0] = Y_LENGTH;
     edges[1] = X_LENGTH;
-    status   = SDreaddata(sds_id, start, NULL, edges, (VOIDP)buf);
+    status   = SDreaddata(sds_id, start, NULL, edges, (void *)buf);
     CHECK(status, FAIL, "test_rank0: SDreaddata");
 
     /* Close the SDS */

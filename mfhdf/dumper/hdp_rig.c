@@ -216,7 +216,7 @@ drig(dump_info_t *dumprig_opts, intn curr_arg, intn argc, char *argv[], int mode
     intn          i, k, x;
     char          file_name[MAXFNLEN];
     FILE         *fp      = NULL;
-    VOIDP         image   = NULL;
+    void         *image   = NULL;
     int           dumpall = 0;
     int           ncomps;
     int           il;
@@ -319,7 +319,7 @@ drig(dump_info_t *dumprig_opts, intn curr_arg, intn argc, char *argv[], int mode
                        8-bit image or 3 for a 24-bit image. */
                     eltsz      = DFKNTsize(DFNT_UINT8 | DFNT_NATIVE) * ncomps;
                     read_nelts = width * height; /* Number of elements to be read in. */
-                    if ((image = (VOIDP)malloc(read_nelts * eltsz)) == NULL) {
+                    if ((image = (void *)malloc(read_nelts * eltsz)) == NULL) {
                         fprintf(stderr, "Not enough memory!\n");
                         ret_value = FAIL;
                         goto done;
@@ -502,7 +502,7 @@ drig(dump_info_t *dumprig_opts, intn curr_arg, intn argc, char *argv[], int mode
                        8-bit image or 3 for a 24-bit image. */
                     eltsz      = DFKNTsize(DFNT_UINT8 | DFNT_NATIVE) * ncomps;
                     read_nelts = width * height; /* Number of elements to be read in. */
-                    if ((image = (VOIDP)malloc(read_nelts * eltsz)) == NULL) {
+                    if ((image = (void *)malloc(read_nelts * eltsz)) == NULL) {
                         fprintf(stderr, "Not enough memory!\n");
                         ret_value = FAIL;
                         goto done;

@@ -72,7 +72,7 @@ main()
      * must be explicitly cast to a generic pointer since SDwritedata
      * is designed to write generic data.
      */
-    if (SDwritedata(sds_id, start, NULL, edges, (VOIDP)data) == FAIL)
+    if (SDwritedata(sds_id, start, NULL, edges, (void *)data) == FAIL)
         printf("*** ERROR from SDwritedata\n");
 
     /*

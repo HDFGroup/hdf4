@@ -1220,7 +1220,7 @@ test_getpalinfo()
     edges[1]            = LENGTH;
 
     /* Write the data in the buffer into the image array */
-    status = GRwriteimage(riid, start, NULL, edges, (VOIDP)image_buf);
+    status = GRwriteimage(riid, start, NULL, edges, (void *)image_buf);
 
     /* Initialize the palette data */
     for (ii = 0; ii < N_ENTRIES; ii++) {
@@ -1233,7 +1233,7 @@ test_getpalinfo()
     palid = GRgetlutid(riid, 0);
 
     /* Write data to the palette. */
-    status = GRwritelut(palid, N_COMPS_PAL, DFNT_UINT8, interlace_mode, N_ENTRIES, (VOIDP)palette_buf1);
+    status = GRwritelut(palid, N_COMPS_PAL, DFNT_UINT8, interlace_mode, N_ENTRIES, (void *)palette_buf1);
 
     /* DFPnpals now sees another palette */
     n_pals = DFPnpals(IMAGE_DFPAL_FILE);
@@ -1247,7 +1247,7 @@ test_getpalinfo()
     riid = GRcreate(grid, IMAGE2_WITH_PAL, N_COMPS_IMG, DFNT_UINT8, interlace_mode, dim_sizes);
 
     /* Write the data in the buffer into the image array */
-    status = GRwriteimage(riid, start, NULL, edges, (VOIDP)image_buf);
+    status = GRwriteimage(riid, start, NULL, edges, (void *)image_buf);
 
     /* Get the id of the palette attached to the image IMAGE2_WITH_PAL */
     palid = GRgetlutid(riid, 0);
@@ -1260,7 +1260,7 @@ test_getpalinfo()
     }
 
     /* Write data to the palette */
-    status = GRwritelut(palid, N_COMPS_PAL, DFNT_UINT8, interlace_mode, N_ENTRIES, (VOIDP)palette_buf2);
+    status = GRwritelut(palid, N_COMPS_PAL, DFNT_UINT8, interlace_mode, N_ENTRIES, (void *)palette_buf2);
 
     /* DFPnpals now sees another palette */
     n_pals = DFPnpals(IMAGE_DFPAL_FILE);
@@ -1276,7 +1276,7 @@ test_getpalinfo()
     CHECK_VOID(riid, FAIL, "GRcreate");
 
     /* Write the data in the buffer into the image array */
-    status = GRwriteimage(riid, start, NULL, edges, (VOIDP)image_buf);
+    status = GRwriteimage(riid, start, NULL, edges, (void *)image_buf);
     CHECK_VOID(status, FAIL, "GRwriteimage");
 
     /* Terminate access to the image */
@@ -1318,7 +1318,7 @@ test_getpalinfo()
     CHECK_VOID(riid, FAIL, "GRcreate");
 
     /* Write the data in the buffer into the image array. */
-    status = GRwriteimage(riid, start, NULL, edges, (VOIDP)image_buf);
+    status = GRwriteimage(riid, start, NULL, edges, (void *)image_buf);
     CHECK_VOID(status, FAIL, "GRwriteimage");
 
     /* Get the identifier of the palette attached to the image ANO_IMAGE_NAME */
@@ -1326,7 +1326,7 @@ test_getpalinfo()
     CHECK_VOID(palid, FAIL, "GRgetlutid");
 
     /* Write data to the palette. */
-    status = GRwritelut(palid, N_COMPS_PAL, DFNT_UINT8, interlace_mode, N_ENTRIES, (VOIDP)palette_buf2);
+    status = GRwritelut(palid, N_COMPS_PAL, DFNT_UINT8, interlace_mode, N_ENTRIES, (void *)palette_buf2);
 
     n_pals = DFPnpals(IMAGE_DFPAL_FILE);
     CHECK_VOID(n_pals, FAIL, "DFPnpals");

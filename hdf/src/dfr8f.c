@@ -147,7 +147,7 @@ nd8ipimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *compress, intf
     fn = HDf2cstring(filename, (intn)*lenfn);
     if (!fn)
         return (-1);
-    ret = (intf)DFR8putimage(fn, (VOIDP)_fcdtocp(image), (int32)*xdim, (int32)*ydim, (uint16)*compress);
+    ret = (intf)DFR8putimage(fn, (void *)_fcdtocp(image), (int32)*xdim, (int32)*ydim, (uint16)*compress);
     free(fn);
     return (ret);
 }
@@ -174,7 +174,7 @@ nd8iaimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *compress, intf
     fn = HDf2cstring(filename, (intn)*lenfn);
     if (!fn)
         return (-1);
-    ret = (intf)DFR8addimage(fn, (VOIDP)_fcdtocp(image), (int32)*xdim, (int32)*ydim, (uint16)*compress);
+    ret = (intf)DFR8addimage(fn, (void *)_fcdtocp(image), (int32)*xdim, (int32)*ydim, (uint16)*compress);
     free(fn);
     return (ret);
 }

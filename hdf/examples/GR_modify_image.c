@@ -70,7 +70,7 @@ main()
     /*
      * Write the data in the buffer into the image array.
      */
-    if (GRwriteimage(ri1_id, start1, NULL, edges1, (VOIDP)image1_buf) == FAIL)
+    if (GRwriteimage(ri1_id, start1, NULL, edges1, (void *)image1_buf) == FAIL)
         printf("*** ERROR from GRwriteimage\n");
 
     /*
@@ -109,7 +109,7 @@ main()
     /*
      * Write the data in the buffer into the second image array.
      */
-    if (GRwriteimage(ri2_id, start2, NULL, edges2, (VOIDP)image2_buf) == FAIL)
+    if (GRwriteimage(ri2_id, start2, NULL, edges2, (void *)image2_buf) == FAIL)
         printf("*** ERROR from GRwriteimage\n");
 
     /*

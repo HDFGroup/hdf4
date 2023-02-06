@@ -102,7 +102,7 @@ rdbuf(biobuf *biop)
             if (lseek(biop->fd, biop->page * BIOBUFSIZ, SEEK_SET) == ((off_t)-1))
                 return -1;
         }
-        biop->nread = biop->cnt = read(biop->fd, (VOIDP)biop->base, BIOBUFSIZ);
+        biop->nread = biop->cnt = read(biop->fd, (void *)biop->base, BIOBUFSIZ);
     }
     biop->ptr = biop->base;
     return biop->cnt;
@@ -121,7 +121,7 @@ wrbuf(biobuf *biop)
             if (lseek(biop->fd, biop->page * BIOBUFSIZ, SEEK_SET) == ((off_t)-1))
                 return -1;
         }
-        biop->nwrote = write(biop->fd, (VOIDP)biop->base, biop->cnt);
+        biop->nwrote = write(biop->fd, (void *)biop->base, biop->cnt);
     }
     biop->isdirty = 0;
 

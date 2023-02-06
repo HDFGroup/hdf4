@@ -705,7 +705,7 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
             tBuf  = malloc((uint32)bsize);
 
             /* convert attribute values and create attr object */
-            DFKconvert((VOIDP)b, (VOIDP)tBuf, hdftype, count, DFACC_READ, 0, 0);
+            DFKconvert((void *)b, (void *)tBuf, hdftype, count, DFACC_READ, 0, 0);
             attr[0] = NC_new_attr(name, nctype, count, tBuf);
             free(tBuf);
 
@@ -790,7 +790,7 @@ nssdc_read_cdf(XDR *xdrs, NC **handlep)
             tBuf  = malloc((uint32)bsize);
 
             /* convert attribute values and create attr object */
-            DFKconvert((VOIDP)b, (VOIDP)tBuf, hdftype, count, DFACC_READ, 0, 0);
+            DFKconvert((void *)b, (void *)tBuf, hdftype, count, DFACC_READ, 0, 0);
             attr[0] = NC_new_attr(name, nctype, count, tBuf);
             free(tBuf);
 

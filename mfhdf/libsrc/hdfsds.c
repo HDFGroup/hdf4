@@ -745,7 +745,7 @@ hdf_get_rangeinfo(nc_type nctype, int32 hdftype, NC_attr **tmp_attr, intn *curr_
     intn           idx       = 0; /* index for tBuf */
     hdf_err_code_t ret_value = DFE_NONE;
 
-    if (FAIL == DFKconvert((VOIDP)ptbuf, (VOIDP)tBuf, hdftype, 2, DFACC_READ, 0, 0)) {
+    if (FAIL == DFKconvert((void *)ptbuf, (void *)tBuf, hdftype, 2, DFACC_READ, 0, 0)) {
         HGOTO_ERROR(DFE_BADCONV, FAIL);
     }
 
@@ -813,7 +813,7 @@ hdf_get_cal(nc_type nctype, int32 hdftype, NC_attr **tmp_attr, intn *curr_attr)
         nt_nctype  = NC_LONG;
     }
 
-    if (FAIL == DFKconvert((VOIDP)ptbuf, (VOIDP)tBuf, hdftype, 4, DFACC_READ, 0, 0)) {
+    if (FAIL == DFKconvert((void *)ptbuf, (void *)tBuf, hdftype, 4, DFACC_READ, 0, 0)) {
         HGOTO_ERROR(DFE_BADCONV, FAIL);
     }
 
@@ -869,7 +869,7 @@ hdf_get_cal(nc_type nctype, int32 hdftype, NC_attr **tmp_attr, intn *curr_attr)
     }
 
     /* don't forget number_type  */
-    if (FAIL == DFKconvert((VOIDP)(ptbuf + idx + incr), (VOIDP)tBuf, nt_hdftype, 1, DFACC_READ, 0, 0)) {
+    if (FAIL == DFKconvert((void *)(ptbuf + idx + incr), (void *)tBuf, nt_hdftype, 1, DFACC_READ, 0, 0)) {
         HGOTO_ERROR(DFE_BADCONV, FAIL);
     }
 

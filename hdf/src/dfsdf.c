@@ -84,7 +84,7 @@
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndsgdisc(intf *dim, intf *maxsize, VOIDP scale)
+ndsgdisc(intf *dim, intf *maxsize, void *scale)
 {
     intn rank, cdim;
     intn isndg;
@@ -113,7 +113,7 @@ ndsgdisc(intf *dim, intf *maxsize, VOIDP scale)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndsgrang(VOIDP pmax, VOIDP pmin)
+ndsgrang(void *pmax, void *pmin)
 {
     return (DFSDgetrange(pmax, pmin));
 }
@@ -160,7 +160,7 @@ ndssdims(intf *rank, intf dimsizes[])
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndssdisc(intf *dim, intf *dimsize, VOIDP scale)
+ndssdisc(intf *dim, intf *dimsize, void *scale)
 {
     int  cdim;
     intn rank;
@@ -184,7 +184,7 @@ ndssdisc(intf *dim, intf *dimsize, VOIDP scale)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndssrang(VOIDP max, VOIDP min)
+ndssrang(void *max, void *min)
 {
     return (DFSDsetrange(max, min));
 }
@@ -309,7 +309,7 @@ ndsfirst(void)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndspslc(intf windims[], VOIDP data, intf dims[])
+ndspslc(intf windims[], void *data, intf dims[])
 {
     int32 *cdims, *cwindims, *p, *wp;
     intn   i, rank;
@@ -438,7 +438,7 @@ ndsigdim(_fcd filename, intf *prank, intf sizes[], intf *maxrank, intf *lenfn)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndsigdat(_fcd filename, intf *rank, intf maxsizes[], VOIDP data, intf *fnlen)
+ndsigdat(_fcd filename, intf *rank, intf maxsizes[], void *data, intf *fnlen)
 {
     int32  i;
     intn   isndg;
@@ -487,7 +487,7 @@ ndsigdat(_fcd filename, intf *rank, intf maxsizes[], VOIDP data, intf *fnlen)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndsipdat(_fcd filename, intf *rank, intf dimsizes[], VOIDP data, intf *fnlen)
+ndsipdat(_fcd filename, intf *rank, intf dimsizes[], void *data, intf *fnlen)
 {
     char *fn;
     int32 i, *cdims, *p;
@@ -529,7 +529,7 @@ ndsipdat(_fcd filename, intf *rank, intf dimsizes[], VOIDP data, intf *fnlen)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndsiadat(_fcd filename, intf *rank, intf dimsizes[], VOIDP data, intf *fnlen)
+ndsiadat(_fcd filename, intf *rank, intf dimsizes[], void *data, intf *fnlen)
 {
     char *fn;
     int32 i, *cdims, *p;
@@ -572,7 +572,7 @@ ndsiadat(_fcd filename, intf *rank, intf dimsizes[], VOIDP data, intf *fnlen)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndsigslc(_fcd filename, intf winst[], intf windims[], VOIDP data, intf dims[], intf *fnlen)
+ndsigslc(_fcd filename, intf winst[], intf windims[], void *data, intf dims[], intf *fnlen)
 {
     char  *fn;
     intf   ret;
@@ -800,7 +800,7 @@ ndfsdgetdimstrs(intf *dim, _fcd label, _fcd unit, _fcd format)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndfsdgetdimscale(intf *dim, intf *maxsize, VOIDP scale)
+ndfsdgetdimscale(intf *dim, intf *maxsize, void *scale)
 {
 
     intn isndg;
@@ -830,7 +830,7 @@ ndfsdgetdimscale(intf *dim, intf *maxsize, VOIDP scale)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndfsdgetrange(VOIDP pmax, VOIDP pmin)
+ndfsdgetrange(void *pmax, void *pmin)
 {
     return (DFSDgetrange(pmax, pmin));
 }
@@ -878,7 +878,7 @@ ndfsdsetdims(intf *rank, intf dimsizes[])
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndfsdsetdimscale(intf *dim, intf *dimsize, VOIDP scale)
+ndfsdsetdimscale(intf *dim, intf *dimsize, void *scale)
 {
     intn rank, cdim;
 
@@ -901,7 +901,7 @@ ndfsdsetdimscale(intf *dim, intf *dimsize, VOIDP scale)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndfsdsetrange(VOIDP max, VOIDP min)
+ndfsdsetrange(void *max, void *min)
 {
     return (DFSDsetrange(max, min));
 }
@@ -1027,7 +1027,7 @@ ndfsdrestart(void)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndfsdputslice(intf windims[], VOIDP data, intf dims[])
+ndfsdputslice(intf windims[], void *data, intf dims[])
 {
     intn   rank, i;
     intf   ret;
@@ -1394,7 +1394,7 @@ ndsiwref(_fcd filename, intf *fnlen, intf *ref)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndssfill(VOIDP fill_value)
+ndssfill(void *fill_value)
 {
     return DFSDsetfillvalue(fill_value);
 }
@@ -1409,7 +1409,7 @@ ndssfill(VOIDP fill_value)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndsgfill(VOIDP fill_value)
+ndsgfill(void *fill_value)
 {
     return DFSDgetfillvalue(fill_value);
 }
@@ -1452,7 +1452,7 @@ ndsisslab(_fcd filename, intf *fnlen)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndswslab(intf start[], intf stride[], intf count[], VOIDP data)
+ndswslab(intf start[], intf stride[], intf count[], void *data)
 {
     int32 *lstart, *lstride, *lcount, *aptr, *bptr, *cptr;
     intn   i, rank;
@@ -1521,7 +1521,7 @@ ndseslab(void)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-ndsirslab(_fcd filename, intf *fnlen, intf start[], intf slab_size[], intf stride[], VOIDP buffer,
+ndsirslab(_fcd filename, intf *fnlen, intf start[], intf slab_size[], intf stride[], void *buffer,
           intf buffer_size[])
 {
     char  *fn;

@@ -457,7 +457,7 @@ const uint8 jpeg_24bit_orig[JPEGY * JPEGX * 3] = {
 
 void test_GRgetcomptype(void); /* in "tdfr8.c" */
 
-static VOID check_im_pal(int32 oldx, int32 oldy, int32 newx, int32 newy, uint8 *oldim, uint8 *newim,
+static void check_im_pal(int32 oldx, int32 oldy, int32 newx, int32 newy, uint8 *oldim, uint8 *newim,
                          uint8 *oldpal, uint8 *newpal);
 
 /* These two functions are in tusejpegfuncs.c.  They use JPEG functions directly
@@ -1065,7 +1065,7 @@ test_r24_jpeg(void)
     CHECK_VOID(status, FAIL, "Hclose");
 }
 
-static VOID
+static void
 check_im_pal(int32 oldx, int32 oldy, int32 newx, int32 newy, uint8 *oldim, uint8 *newim, uint8 *oldpal,
              uint8 *newpal)
 {

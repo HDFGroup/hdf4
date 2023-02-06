@@ -282,13 +282,13 @@ copy_vdata_attribute(int32 in, int32 out, int32 findex, intn attrindex)
 {
     char   attr_name[H4_MAX_NC_NAME];
     int32  n_values, attr_size, attr_type;
-    VOIDP *values = NULL;
+    void **values = NULL;
 
     /* Get attribute information */
     VSattrinfo(in, findex, attrindex, attr_name, &attr_type, &n_values, &attr_size);
 
     /* Allocate space for attribute values */
-    if ((values = (VOIDP)malloc((size_t)(attr_size * n_values))) == NULL) {
+    if ((values = (void *)malloc((size_t)(attr_size * n_values))) == NULL) {
         printf("Cannot allocate %d values of size %d for attribute %s", n_values, attr_size, attr_name);
         return -1;
     }

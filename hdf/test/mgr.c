@@ -2673,7 +2673,7 @@ test_mgr_image_b2b1(int flag)
             int32 il;                 /* interlace of the image data */
             int32 dimsizes[2];        /* dimension sizes of the image */
             int32 n_attr;             /* number of attributes with each image */
-            VOIDP img_data;           /* buffer for the image data */
+            void *img_data;           /* buffer for the image data */
 
             /* Attach to the image */
             riid = GRselect(grid, i);
@@ -3036,7 +3036,7 @@ test_mgr_interlace(int flag)
     int32 n_datasets; /* number of datasets */
     int32 n_attrs;    /* number of attributes */
     int32 ret;        /* generic return value */
-    VOIDP image;      /* image to retrieve */
+    void *image;      /* image to retrieve */
 
     /* Output message about test being performed */
     MESSAGE(6, printf("Testing Multi-file Raster Interlace routines\n"););
@@ -3068,7 +3068,7 @@ test_mgr_interlace(int flag)
             int32 stride[2];
             int32 dimsizes[2]; /* dimension sizes of the image */
             int32 n_attr;      /* number of attributes with each image */
-            VOIDP img_data;    /* buffer for the image data */
+            void *img_data;    /* buffer for the image data */
 
             /* Attach to the image */
             riid = GRselect(grid, i);
@@ -3088,7 +3088,7 @@ test_mgr_interlace(int flag)
 
             /* Check the image data itself */
             for (j = (intn)MFGR_INTERLACE_PIXEL; j <= (intn)MFGR_INTERLACE_COMPONENT; j++) {
-                VOIDP pixel_buf;
+                void *pixel_buf;
 
                 img_data = malloc((size_t)(dimsizes[0] * dimsizes[1] * ncomp * DFKNTsize(nt | DFNT_NATIVE)));
                 CHECK_VOID(img_data, NULL, "malloc");
@@ -3183,7 +3183,7 @@ test_mgr_lut_a(int flag)
         int32  pal_entries;        /* number of entries in the palette */
         int32  n_attr;             /* number of attributes with each image */
         uint8 *tmp_data;           /* temporary buffer pointer */
-        VOIDP  pal_data;           /* buffer for the palette data */
+        void  *pal_data;           /* buffer for the palette data */
         uint16 pal_ref;            /* reference number of the palette */
 
         /* Attach to the image */
@@ -3245,7 +3245,7 @@ test_mgr_lut_a(int flag)
 
         /* Check the image data itself */
         for (j = (intn)MFGR_INTERLACE_PIXEL; j <= (intn)MFGR_INTERLACE_COMPONENT; j++) {
-            VOIDP pixel_buf;
+            void *pixel_buf;
             int32 dimsizes2[2];
 
             tmp_data = malloc((size_t)(pal_entries * pal_ncomp * DFKNTsize(pal_nt | DFNT_NATIVE)));
@@ -3355,7 +3355,7 @@ test_mgr_lut_b(int flag)
     CHECK_VOID(pal_id, FAIL, "GRgetlutid");
 
     /* Write the palette to file. */
-    status = GRwritelut(pal_id, num_comp, data_type, interlace_mode, num_entries, (VOIDP)palette_data);
+    status = GRwritelut(pal_id, num_comp, data_type, interlace_mode, num_entries, (void *)palette_data);
     CHECK_VOID(status, FAIL, "GRgetlutid");
 
     status = GRendaccess(ri_id);
@@ -3383,7 +3383,7 @@ test_mgr_lut_b(int flag)
     CHECK_VOID(pal_id, FAIL, "GRgetlutid");
 
     /* Read the palette data. */
-    status = GRreadlut(pal_id, (VOIDP)r_palette_data);
+    status = GRreadlut(pal_id, (void *)r_palette_data);
     CHECK_VOID(status, FAIL, "GRreadlut");
 
     /* Verify correct palette contents */
@@ -4112,9 +4112,9 @@ test_mgr_r8_a(int flag)
     }
 
     /* Write out the test data */
-    ret = DFR8setpalette((VOIDP)palette);
+    ret = DFR8setpalette((void *)palette);
     CHECK_VOID(ret, FAIL, "DFR8setpalette");
-    ret = DFR8putimage(GR_R8FILE, (VOIDP)picture, GR_R8XDIM, GR_R8YDIM, COMP_RLE);
+    ret = DFR8putimage(GR_R8FILE, (void *)picture, GR_R8XDIM, GR_R8YDIM, COMP_RLE);
     CHECK_VOID(ret, FAIL, "DFR8putimage");
 
     /* Open up the existing datafile and get the image information from it */
@@ -4479,7 +4479,7 @@ test_mgr_chunkwr_pixelone()
          * Write first data chunk ( 0, 0 ).
          */
         origin[0] = origin[1] = 0;
-        status                = GRwritechunk(ri_id[i], origin, (VOIDP)chunk00);
+        status                = GRwritechunk(ri_id[i], origin, (void *)chunk00);
         CHECK_VOID(status, FAIL, "GRwritechunk");
 
         /*
@@ -4487,7 +4487,7 @@ test_mgr_chunkwr_pixelone()
          */
         origin[0] = 0;
         origin[1] = 1;
-        status    = GRwritechunk(ri_id[i], origin, (VOIDP)chunk01);
+        status    = GRwritechunk(ri_id[i], origin, (void *)chunk01);
         CHECK_VOID(status, FAIL, "GRwritechunk");
 
         /*
@@ -4495,14 +4495,14 @@ test_mgr_chunkwr_pixelone()
          */
         origin[0] = 1;
         origin[1] = 4;
-        status    = GRwritechunk(ri_id[i], origin, (VOIDP)chunk14);
+        status    = GRwritechunk(ri_id[i], origin, (void *)chunk14);
         CHECK_VOID(status, FAIL, "GRwritechunk");
         /*
          * Read third chunk back.
          */
         origin[0] = 1;
         origin[1] = 4;
-        status    = GRreadchunk(ri_id[i], origin, (VOIDP)chunk_buf);
+        status    = GRreadchunk(ri_id[i], origin, (void *)chunk_buf);
         CHECK_VOID(status, FAIL, "GRreadchunk");
 
         /*
@@ -4548,7 +4548,7 @@ test_mgr_chunkwr_pixelone()
          */
         origin[0] = 1;
         origin[1] = 4;
-        status    = GRreadchunk(ri_id[i], origin, (VOIDP)chunk_buf);
+        status    = GRreadchunk(ri_id[i], origin, (void *)chunk_buf);
         CHECK_VOID(status, FAIL, "GRreadchunk");
         if (0 != memcmp(chunk_buf, chunk14, sizeof(chunk14))) {
             MESSAGE(3, printf("%d: Error in reading chunk\n", __LINE__););
@@ -4562,7 +4562,7 @@ test_mgr_chunkwr_pixelone()
         stride[0] = stride[1] = 1;
         edge[0]               = Y_LENGTH;
         edge[1]               = X_LENGTH;
-        status                = GRreadimage(ri_id[i], start, stride, edge, (VOIDP)data_out);
+        status                = GRreadimage(ri_id[i], start, stride, edge, (void *)data_out);
         CHECK_VOID(status, FAIL, "GRreadimage");
         if (0 != memcmp(data_out, data, sizeof(data))) {
             MESSAGE(3, printf("%d: Error reading data for the whole image\n", __LINE__););
@@ -4725,7 +4725,7 @@ test_mgr_chunkwr_pixel(int flag)
      * Write first data chunk ( 0, 0 ).
      */
     origin[0] = origin[1] = 0;
-    status                = GRwritechunk(ri_id[i], origin, (VOIDP)chunk00);
+    status                = GRwritechunk(ri_id[i], origin, (void *)chunk00);
     CHECK_VOID(status, FAIL, "GRwritechunk");
 
     /*
@@ -4733,7 +4733,7 @@ test_mgr_chunkwr_pixel(int flag)
      */
     origin[0] = 0;
     origin[1] = 1;
-    status    = GRwritechunk(ri_id[i], origin, (VOIDP)chunk01);
+    status    = GRwritechunk(ri_id[i], origin, (void *)chunk01);
     CHECK_VOID(status, FAIL, "GRwritechunk");
 
     /*
@@ -4741,14 +4741,14 @@ test_mgr_chunkwr_pixel(int flag)
      */
     origin[0] = 1;
     origin[1] = 4;
-    status    = GRwritechunk(ri_id[i], origin, (VOIDP)chunk14);
+    status    = GRwritechunk(ri_id[i], origin, (void *)chunk14);
     CHECK_VOID(status, FAIL, "GRwritechunk");
     /*
      * Read third chunk back.
      */
     origin[0] = 1;
     origin[1] = 4;
-    status    = GRreadchunk(ri_id[i], origin, (VOIDP)chunk_buf);
+    status    = GRreadchunk(ri_id[i], origin, (void *)chunk_buf);
 
     /*
      * Terminate access to the GR interface and close the HDF file.
@@ -4796,7 +4796,7 @@ test_mgr_chunkwr_pixel(int flag)
      */
     origin[0] = 1;
     origin[1] = 4;
-    status    = GRreadchunk(ri_id[i], origin, (VOIDP)chunk_buf);
+    status    = GRreadchunk(ri_id[i], origin, (void *)chunk_buf);
     CHECK_VOID(status, FAIL, "GRreadchunk");
     if (0 != memcmp(chunk_buf, chunk14, sizeof(chunk14))) {
         MESSAGE(3, printf("%d: Error in reading chunk\n", __LINE__););
@@ -4810,7 +4810,7 @@ test_mgr_chunkwr_pixel(int flag)
     stride[0] = stride[1] = 1;
     edge[0]               = Y_LENGTH;
     edge[1]               = X_LENGTH;
-    status                = GRreadimage(ri_id[i], start, stride, edge, (VOIDP)data_out);
+    status                = GRreadimage(ri_id[i], start, stride, edge, (void *)data_out);
     CHECK_VOID(status, FAIL, "GRreadimage");
     if (0 != memcmp(data_out, data, sizeof(data))) {
         MESSAGE(3, printf("%d: Error reading data for the whole image\n", __LINE__););

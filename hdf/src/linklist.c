@@ -153,7 +153,7 @@ done:
 *******************************************************************************/
 intn
 HULadd_node(list_head_t *lst, /* IN: list to modify */
-            VOIDP        obj  /* IN: object to add to the list */
+            void        *obj  /* IN: object to add to the list */
 )
 {
     node_info_t *new_node;            /* new node to insert into the list */
@@ -214,14 +214,14 @@ done:
     Returns a pointer to the object found in the list, or NULL on failure.
 
 *******************************************************************************/
-VOIDP
+void *
 HULsearch_node(list_head_t     *lst,       /* IN: list to search */
                HULsearch_func_t srch_func, /* IN: function to use to find node */
-               VOIDP            key        /* IN: key of object to search for */
+               void            *key        /* IN: key of object to search for */
 )
 {
     node_info_t *curr_node;        /* current node we are on */
-    VOIDP        ret_value = NULL; /* default return value */
+    void        *ret_value = NULL; /* default return value */
 
     HEclear();
     if (lst == NULL || srch_func == NULL || key == NULL)
@@ -249,11 +249,11 @@ done:
     Returns a pointer to the first object found in the list, or NULL on failure.
 
 *******************************************************************************/
-VOIDP
+void *
 HULfirst_node(list_head_t *lst /* IN: list to search */
 )
 {
-    VOIDP ret_value = NULL; /* default return value */
+    void *ret_value = NULL; /* default return value */
 
     HEclear();
     if (lst == NULL)
@@ -279,11 +279,11 @@ done:
     Returns a pointer to the next object found in the list, or NULL on failure.
 
 *******************************************************************************/
-VOIDP
+void *
 HULnext_node(list_head_t *lst /* IN: list to search */
 )
 {
-    VOIDP ret_value = NULL; /* default return value */
+    void *ret_value = NULL; /* default return value */
 
     HEclear();
     if (lst == NULL)
@@ -311,15 +311,15 @@ done:
     Returns a pointer to the object deleted from the list, or NULL on failure.
 
 *******************************************************************************/
-VOIDP
+void *
 HULremove_node(list_head_t     *lst,       /* IN: list to modify */
                HULsearch_func_t srch_func, /* IN: function to use to find node to remove */
-               VOIDP            key        /* IN: object to add to the list */
+               void            *key        /* IN: object to add to the list */
 )
 {
     node_info_t *curr_node, /* current node we are on */
         *prev_node;         /* previous node we looked at */
-    VOIDP ret_value = NULL; /* default return value */
+    void *ret_value = NULL; /* default return value */
 
     HEclear();
     if (lst == NULL || srch_func == NULL || key == NULL)

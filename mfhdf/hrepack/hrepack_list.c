@@ -1261,7 +1261,7 @@ list_pal(const char *infname, const char *outfname, list_table_t *list_tbl, opti
     }
 
     for (j = 0; j < nPals; j++) {
-        if (DFPgetpal(infname, (VOIDP)palette_data) == FAIL) {
+        if (DFPgetpal(infname, (void *)palette_data) == FAIL) {
             printf("Failed to read palette <%d> in <%s>\n", j, infname);
             return FAIL;
         }

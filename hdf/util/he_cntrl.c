@@ -328,8 +328,8 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
             int32 *idata;
             idata = (int32 *)malloc(length / 4 * sizeof(int32));
 
-            DFKconvert((VOIDP)(data + offset), (VOIDP)idata, DFNT_INT32 | raw_flag, length / 4, DFACC_READ, 0,
-                       0);
+            DFKconvert((void *)(data + offset), (void *)idata, DFNT_INT32 | raw_flag, length / 4, DFACC_READ,
+                       0, 0);
             printf("%8d: ", offset);
             for (i = 0; i < length / 4; i++) {
                 printf("%11d ", (int)idata[i]);
@@ -346,7 +346,7 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
             uint32 *idata;
             idata = (uint32 *)malloc(length / 4 * sizeof(int32));
 
-            DFKconvert((VOIDP)(data + offset), (VOIDP)idata, DFNT_UINT32 | raw_flag, length / 4, DFACC_READ,
+            DFKconvert((void *)(data + offset), (void *)idata, DFNT_UINT32 | raw_flag, length / 4, DFACC_READ,
                        0, 0);
             printf("%8d: ", offset);
             for (i = 0; i < length / 4; i++) {
@@ -362,8 +362,8 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
         case 'j': {
             int16 *sdata;
             sdata = (int16 *)malloc(length / 2 * sizeof(int16));
-            DFKconvert((VOIDP)(data + offset), (VOIDP)sdata, DFNT_INT16 | raw_flag, length / 2, DFACC_READ, 0,
-                       0);
+            DFKconvert((void *)(data + offset), (void *)sdata, DFNT_INT16 | raw_flag, length / 2, DFACC_READ,
+                       0, 0);
 
             printf("%8d: ", offset);
             for (i = 0; i < length / 2; i++) {
@@ -381,7 +381,7 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
             uint16 *sdata;
             sdata = (uint16 *)malloc(length / 2 * sizeof(uint16));
 
-            DFKconvert((VOIDP)(data + offset), (VOIDP)sdata, DFNT_UINT16 | raw_flag, length / 2, DFACC_READ,
+            DFKconvert((void *)(data + offset), (void *)sdata, DFNT_UINT16 | raw_flag, length / 2, DFACC_READ,
                        0, 0);
             printf("%8d: ", offset);
             for (i = 0; i < length / 2; i++) {
@@ -399,7 +399,8 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
             uint8 *bdata;
             bdata = (uint8 *)malloc(length);
 
-            DFKconvert((VOIDP)(data + offset), (VOIDP)bdata, DFNT_UINT8 | raw_flag, length, DFACC_READ, 0, 0);
+            DFKconvert((void *)(data + offset), (void *)bdata, DFNT_UINT8 | raw_flag, length, DFACC_READ, 0,
+                       0);
             printf("%8d: ", offset);
             for (i = 0; i < length; i++) {
                 printf("%6d ", bdata[i]);
@@ -418,7 +419,7 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
 
             sizeintn = sizeof(intn);
             idata    = (intn *)malloc((size_t)(length / 4 * sizeintn));
-            DFKconvert((VOIDP)(data + offset), (VOIDP)idata, DFNT_NINT32 | raw_flag, length / 4, DFACC_READ,
+            DFKconvert((void *)(data + offset), (void *)idata, DFNT_NINT32 | raw_flag, length / 4, DFACC_READ,
                        0, 0);
             printf("%8d: ", offset);
             for (i = 0; i < length / sizeintn; i++) {
@@ -438,7 +439,7 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
 
             sizeintn = sizeof(intn);
             idata    = (intn *)malloc((size_t)(length / 4 * sizeintn));
-            DFKconvert((VOIDP)(data + offset), (VOIDP)idata, DFNT_NINT32 | raw_flag, length / 4, DFACC_READ,
+            DFKconvert((void *)(data + offset), (void *)idata, DFNT_NINT32 | raw_flag, length / 4, DFACC_READ,
                        0, 0);
             printf("%8d: ", offset);
             for (i = 0; i < length / sizeintn; i++) {
@@ -473,8 +474,8 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
             float32 *fdata;
             fdata = (float32 *)malloc(length / 4 * sizeof(float32));
 
-            DFKconvert((VOIDP)(data + offset), (VOIDP)fdata, DFNT_FLOAT32 | raw_flag, length / 4, DFACC_READ,
-                       0, 0);
+            DFKconvert((void *)(data + offset), (void *)fdata, DFNT_FLOAT32 | raw_flag, length / 4,
+                       DFACC_READ, 0, 0);
 
             printf("%8d: ", offset);
             for (i = 0; i < length / 4; i++) {
@@ -492,8 +493,8 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
             float64 *fdata;
             fdata = (float64 *)malloc(length / 8 * sizeof(float64));
 
-            DFKconvert((VOIDP)(data + offset), (VOIDP)fdata, DFNT_FLOAT64 | raw_flag, length / 8, DFACC_READ,
-                       0, 0);
+            DFKconvert((void *)(data + offset), (void *)fdata, DFNT_FLOAT64 | raw_flag, length / 8,
+                       DFACC_READ, 0, 0);
 
             printf("%8d: ", offset);
             for (i = 0; i < length / 8; i++) {

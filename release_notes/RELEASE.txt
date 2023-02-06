@@ -38,6 +38,13 @@ New features and changes
 ========================
     Configuration:
     -------------
+    - Removed VOID and VOIDP from hdfi.h
+
+      These were typedef'd to void and void *, respectively. Although they did
+      not appear in the public API, they were used in the examples.
+
+      (DER - 2023/02/05)
+
     - Added Intel OneAPI compiler support to the configuration files
 
       The CMake toolchain file for Intel was updated to allow the
