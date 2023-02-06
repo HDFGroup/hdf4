@@ -796,8 +796,14 @@ fi
 AM_CONDITIONAL([HDF_BUILD_XDR], [test "X$BUILD_XDR" = "Xyes"])
 
 ## ======================================================================
-## Checks for types
+## Set POSIX level
 ## ======================================================================
+
+## This is needed so strdup, etc. are exposed properly
+##
+## POSIX feature information can be found in the gcc manual at:
+## http://www.gnu.org/s/libc/manual/html_node/Feature-Test-Macros.html
+CPPFLAGS="-D_POSIX_C_SOURCE=200809L $CPPFLAGS"
 
 ## ======================================================================
 ## Checks for endianness functions
