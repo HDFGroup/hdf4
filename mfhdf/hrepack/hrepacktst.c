@@ -399,7 +399,7 @@ cmp_gr(int32 ri1_id, int32 ri2_id)
         data_size;
     void *buf1 = NULL;
     void *buf2 = NULL;
-    int   cmp = -1;
+    int   cmp  = -1;
 
     GRgetiminfo(ri1_id, gr_name, &n_comps, &dtype, &interlace_mode1, dimsizes, &n_attrs);
     GRgetiminfo(ri2_id, gr_name, &n_comps, &dtype, &interlace_mode2, dimsizes, &n_attrs);

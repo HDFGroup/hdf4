@@ -110,7 +110,7 @@ get_sof(FILE *f)
 {
     short ci;
 
-    (void) get_2bytes(f);
+    (void)get_2bytes(f);
 
     jgetc(f); /* data_precision */
     image_height   = get_2bytes(f);
@@ -133,7 +133,7 @@ skip_variable(FILE *f)
     length = get_2bytes(f);
 
     for (length -= 2; length > 0; length--)
-        (void) jgetc(f);
+        (void)jgetc(f);
 }
 
 static intn
