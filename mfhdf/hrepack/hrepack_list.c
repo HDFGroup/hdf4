@@ -322,8 +322,8 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
     int32  vgroup_id_out = 0;    /* vgroup identifier */
     int32  tag_vg;
     int32  ref_vg;
-    char  *vg_name;
-    char  *vg_class;
+    char  *vg_name = NULL;
+    char  *vg_class = NULL;
     uint16 name_len;
     int32  i;
 
@@ -386,6 +386,9 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
                 printf("Error: Could not get name length for group with ref <%d>\n", ref);
                 goto out;
             }
+
+            if (vg_name != NULL)
+                free(vg_name);
             vg_name = (char *)malloc(sizeof(char) * (name_len + 1));
 
             if (Vgetname(vg_id, vg_name) == FAIL) {
@@ -399,6 +402,8 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
                 goto out;
             }
 
+            if (vg_class != NULL)
+                free(vg_class);
             vg_class = (char *)malloc(sizeof(char) * (name_len + 1));
 
             if (Vgetclass(vg_id, vg_class) == FAIL) {
@@ -493,8 +498,10 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
                 }
             }
 
+            free(vg_class);
+            vg_class = NULL;
             free(vg_name);
-
+            vg_name = NULL;
         } /* for nlones */
 
         /* free the space allocated */
@@ -502,6 +509,8 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
 
     } /* if  nlones */
 
+    free(vg_class);
+    free(vg_name);
     /*-------------------------------------------------------------------------
      * terminate access to the V interface
      *-------------------------------------------------------------------------
@@ -521,12 +530,13 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
     return SUCCEED;
 
 out:
-
     Vend(infile_id);
     if (options->trip == 1)
         Vend(outfile_id);
 
     /* free the space allocated */
+    free(vg_class);
+    free(vg_name);
     free(ref_array);
     free(tags);
     free(refs);
@@ -561,8 +571,8 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
     int32 *tags          = NULL; /* buffer to hold the tag numbers of vgroups   */
     int32 *refs          = NULL; /* buffer to hold the ref numbers of vgroups   */
     int32  vgroup_id_out = -1;   /* vgroup identifier for the created group in output */
-    char  *vg_name;
-    char  *vg_class;
+    char  *vg_name = NULL;
+    char  *vg_class = NULL;
     char  *path = NULL;
     uint16 name_len;
     int    visited;
@@ -595,6 +605,8 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
                     printf("Error: Could not get name length for group with ref <%d>\n", ref);
                     goto out;
                 }
+                if (vg_name != NULL)
+                    free(vg_name);
                 vg_name = (char *)malloc(sizeof(char) * (name_len + 1));
                 if (Vgetname(vg_id, vg_name) == FAIL) {
                     printf("Could not get name for group\n");
@@ -607,6 +619,9 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
                     goto out;
                 }
 
+
+                if (vg_class != NULL)
+                    free(vg_class);
                 vg_class = (char *)malloc(sizeof(char) * (name_len + 1));
                 if (Vgetclass(vg_id, vg_class) == FAIL) {
                     printf("Could not get class for group\n");
@@ -633,13 +648,8 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
                  * create the group in output or create the link
                  *-------------------------------------------------------------------------
                  */
-
                 if (options->trip == 1) {
-
-                    if (visited < 0)
-
-                    {
-
+                    if (visited < 0) {
                         /*
                          * create the group in the output file.  the vgroup reference number
                          * is set to -1 for creating and the access mode is "w" for writing
@@ -660,9 +670,7 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
                             goto out;
                     }
 
-                    else
-
-                    {
+                    else {
                         /* open previously visited group */
                         vgroup_id_out = Vattach(outfile_id, ref, "r");
                     }
@@ -715,6 +723,7 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
                     } /* ntagrefs > 0 */
 
                     free(path);
+                    path = NULL;
 
                 } /* check if already visited */
 
@@ -741,8 +750,9 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
             case DFTAG_NDG: /* Numeric Data Group */
                 /* copy dataset */
                 if (copy_sds(sd_id, sd_out, tag, ref, vgroup_id_out_par, path_name, options, list_tbl, td1,
-                             td2, infile_id, outfile_id) < 0)
-                    return FAIL;
+                             td2, infile_id, outfile_id) < 0) {
+                    goto out;
+                }
 
                 break;
 
@@ -759,8 +769,9 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
             case DFTAG_II8: /* IMCOMP compressed 8-bit image */
                 /* copy GR  */
                 if (copy_gr(infile_id, outfile_id, gr_id, gr_out, tag, ref, vgroup_id_out_par, path_name,
-                            options, list_tbl) < 0)
-                    return FAIL;
+                            options, list_tbl) < 0) {
+                    goto out;
+                }
                 break;
 
                 /*-------------------------------------------------------------------------
@@ -770,19 +781,25 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
 
             case DFTAG_VH: /* Vdata Header */
                 if (copy_vs(infile_id, outfile_id, tag, ref, vgroup_id_out_par, path_name, options, list_tbl,
-                            0) < 0)
-                    return FAIL;
+                            0) < 0) {
+                    goto out;
+                }
                 break;
         } /* switch */
-
+        free(vg_name);
+        vg_name = NULL;
     } /* i */
+    free(vg_class);
+    free(vg_name);
 
     return SUCCEED;
 
 out:
-
+    free(vg_class);
+    free(vg_name);
     free(tags);
     free(refs);
+    free(path);
 
     return FAIL;
 }
