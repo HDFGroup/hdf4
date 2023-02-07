@@ -147,8 +147,8 @@ hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface ide
     int32 *refs      = NULL; /* buffer to hold the ref numbers of vgroups   */
     int32  tag_vg;
     int32  ref_vg;
-    char  *vg_name= NULL;
-    char  *vg_class= NULL;
+    char  *vg_name  = NULL;
+    char  *vg_class = NULL;
     uint16 name_len;
     int32  i;
 
@@ -277,9 +277,9 @@ hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface ide
             }
 
             free(vg_name);
-            vg_name= NULL;
+            vg_name = NULL;
             free(vg_class);
-            vg_class= NULL;
+            vg_class = NULL;
         } /* for */
 
         /* free the space allocated */
@@ -326,16 +326,16 @@ insert_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface identif
           diff_dim_table_t *td2)                         /* dimension table 2 */
 
 {
-    int32 vg_id,  /* vgroup identifier */
-        ntagrefs, /* number of tag/ref pairs in a vgroup */
-        tag,      /* temporary tag */
-        ref;      /* temporary ref */
-    int32 *tags = NULL;    /* buffer to hold the tag numbers of vgroups   */
-    int32 *refs = NULL;    /* buffer to hold the ref numbers of vgroups   */
-    char  *vg_name = NULL;
+    int32 vg_id,            /* vgroup identifier */
+        ntagrefs,           /* number of tag/ref pairs in a vgroup */
+        tag,                /* temporary tag */
+        ref;                /* temporary ref */
+    int32 *tags     = NULL; /* buffer to hold the tag numbers of vgroups   */
+    int32 *refs     = NULL; /* buffer to hold the ref numbers of vgroups   */
+    char  *vg_name  = NULL;
     char  *vg_class = NULL;
-    char  *path = NULL;
-    int   i;
+    char  *path     = NULL;
+    int    i;
     uint16 name_len;
 
     for (i = 0; i < npairs; i++) {
