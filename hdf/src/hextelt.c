@@ -344,6 +344,8 @@ done:
         if (info != NULL) {
             free(info->extern_file_name);
             free(info);
+
+            access_rec->special_info = NULL;
         }
         free(fname);
         if (data_id != FAIL)
@@ -458,8 +460,7 @@ HXIstaccess(accrec_t *access_rec, int16 acc_mode)
     /* get the special info record */
     access_rec->special_info = HIgetspinfo(access_rec);
     if (access_rec->special_info) { /* found it from other access records */
-        info = (extinfo_t *)access_rec->special_info;
-        info->attached++;
+        ((extinfo_t *)access_rec->special_info)->attached++;
     }
     else { /* look for information in the file */
         if (HPseek(file_rec, data_off + 2) == FAIL)
@@ -501,6 +502,8 @@ done:
         if (info != NULL) { /* free file name first */
             free(info->extern_file_name);
             free(info);
+            /* info will only be null if creating a new special_info struct */
+            access_rec->special_info = NULL;
         }
     }
 
@@ -1028,10 +1031,8 @@ HXPreset(accrec_t *access_rec, sp_info_block_t *info_block)
 
 done:
     if (ret_value == FAIL) { /* Error condition cleanup */
-        if (info != NULL) {
-            free(info->extern_file_name);
-            free(info);
-        }
+        /* info changes are not reversible and
+            access_rec->special_info was not created here */
     }
 
     return ret_value;
