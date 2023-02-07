@@ -328,7 +328,7 @@ gen_load_c(void *rec_start)
 /* t     - string to be appended to source */
 /* slenp - pointer to length of source string */
 static void
-fstrcat(char *s, char *t, size_t *slenp)
+fstrcat(char *s, const char *t, size_t *slenp)
 {
     *slenp += strlen(t);
 
@@ -459,7 +459,7 @@ gen_load_fortran(void *rec_start) /* make Fortran to put record */
                 vars[varnum].name);
     }
     else { /* for strings, call ncvptc() */
-        int dimprod = 1;
+        long dimprod = 1;
 
         val_string = fstrstr((char *)rec_start, var_len);
         sprintf(stmnt, "%s = %s", vars[varnum].name, val_string);
@@ -472,7 +472,7 @@ gen_load_fortran(void *rec_start) /* make Fortran to put record */
         if (vars[varnum].dims[0] != rec_dim)
             dimprod *= dims[vars[varnum].dims[0]].size;
 
-        sprintf(stmnt, "call ncvptc(ncid, %sid, corner, edges, %s, %d, iret)", vars[varnum].name,
+        sprintf(stmnt, "call ncvptc(ncid, %sid, corner, edges, %s, %ld, iret)", vars[varnum].name,
                 vars[varnum].name, dimprod);
     }
     fline(stmnt);
