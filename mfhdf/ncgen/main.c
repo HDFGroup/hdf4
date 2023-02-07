@@ -7,9 +7,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-#ifdef __hpux
-#include <locale.h>
-#endif
 #include "getopt.h"
 
 #include "ncgen.h"
@@ -23,16 +20,12 @@ int   fortran_flag;
 int   netcdf_flag;
 char *netcdf_name = NULL; /* name of output netCDF file to write */
 
-extern FILE *yyin, *yyout;
+extern FILE *yyin;
+extern FILE *yyout;
 
 void
 usage()
 {
-    /* derror("Usage: %s [-V] [ -b ] [ -c ] [ -f ] [ -o outfile]  [ file ... ]",
-           progname); */
-
-    /* Replaced the above line with the more detailed lines below.
-       -BMR, HDFFR-1459, 2015/01/19 */
     fprintf(stderr, "Usage: %s [-V] [ -b ] [ -c ] [ -f ] [ -o outfile] [ file ... ]\n", progname);
     fprintf(stderr, "  [-V]\t\t   Display version of the HDF4 library and exit\n");
     fprintf(stderr, "  [-b]\t\t   For binary netCDF output, '.nc' extension\n");
@@ -50,9 +43,6 @@ main(int argc, char *argv[])
 
     yyin  = stdin;
     yyout = stdout;
-#ifdef __hpux
-    setlocale(LC_CTYPE, "");
-#endif
 
     opterr   = 1; /* print error message if bad option */
     progname = argv[0];
