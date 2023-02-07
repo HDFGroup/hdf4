@@ -5,11 +5,7 @@
 
 #include <stdio.h>
 
-#ifndef NO_STDARG
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
 
 #include "h4config.h"
 #ifdef H4_HAVE_NETCDF
