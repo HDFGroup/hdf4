@@ -26,8 +26,8 @@
 
 #include "h4config.h"
 
-#if H4_HAVE_GETOPT
-#if H4_HAVE_UNISTD_H
+#ifdef H4_HAVE_GETOPT
+#ifdef H4_HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #else
