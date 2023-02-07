@@ -131,9 +131,6 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #cmakedefine H4_HAVE_UNISTD_H @H4_HAVE_UNISTD_H@
 
-/* Define to 1 if you have the `vfork' function. */
-#cmakedefine H4_HAVE_VFORK @H4_HAVE_VFORK@
-
 /* Define to 1 if you have the `wait' function. */
 #cmakedefine H4_HAVE_WAIT @H4_HAVE_WAIT@
 
