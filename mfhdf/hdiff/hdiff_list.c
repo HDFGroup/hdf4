@@ -199,8 +199,7 @@ hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface ide
                 goto out;
             }
 
-            if (vg_name != NULL)
-                free(vg_name);
+            free(vg_name);
             vg_name = (char *)malloc(sizeof(char) * (name_len + 1));
 
             if (Vgetname(vg_id, vg_name) == FAIL) {
@@ -213,8 +212,7 @@ hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface ide
                 goto out;
             }
 
-            if (vg_class != NULL)
-                free(vg_class);
+            free(vg_class);
             vg_class = (char *)malloc(sizeof(char) * (name_len + 1));
 
             if (Vgetclass(vg_id, vg_class) == FAIL) {
@@ -360,8 +358,7 @@ insert_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface identif
                     break;
                 }
 
-                if (vg_name != NULL)
-                    free(vg_name);
+                free(vg_name);
                 vg_name = (char *)malloc(sizeof(char) * (name_len + 1));
 
                 Vgetname(vg_id, vg_name);
@@ -371,8 +368,7 @@ insert_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface identif
                     break;
                 }
 
-                if (vg_class != NULL)
-                    free(vg_class);
+                free(vg_class);
                 vg_class = (char *)malloc(sizeof(char) * (name_len + 1));
 
                 Vgetclass(vg_id, vg_class);
