@@ -152,10 +152,10 @@ HRPconvert(int32 fid, uint16 tag, uint16 ref, int32 xdim, int32 ydim, int16 sche
 
 done:
     if (ret_value == FAIL) { /* Error condition cleanup */
-        free (info);
+        free(info);
 
         access_rec->special_info = NULL;
-    }                        /* end if */
+    } /* end if */
 
     return ret_value;
 } /* HRPconvert */
