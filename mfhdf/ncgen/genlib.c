@@ -52,36 +52,36 @@ va_dcl                                      /* variable number of error args, if
 }
 
 void *
-emalloc(int size) /* check return from malloc */
+emalloc(size_t size)
 {
-    void *p;
+    void *p = NULL;
 
-    if (size < 0) {
-        derror("negative arg to emalloc: %d", size);
-        return 0;
-    }
-    p = (void *)malloc((unsigned)size);
-    if (p == 0) {
+    if (size == 0)
+        return NULL;
+
+    p = (void *)malloc(size);
+    if (p == NULL) {
         derror("out of memory\n");
         exit(3);
     }
+
     return p;
 }
 
+/* Check return from realloc
+ *
+ * NOTE: realloc(NULL, 0) behavior is implementation-defined
+ */
 void *
-erealloc(void *ptr, int size) /* check return from realloc */
+erealloc(void *ptr, size_t size)
 {
-    void *p;
+    void *p = NULL;
 
-    if (size < 0) {
-        derror("negative arg to realloc");
-        return 0;
-    }
-    p = (void *)realloc((char *)ptr, (unsigned)size);
-
-    if (p == 0) {
+    p = (void *)realloc(ptr, size);
+    if (p == NULL) {
         derror("out of memory");
         exit(3);
     }
+
     return p;
 }

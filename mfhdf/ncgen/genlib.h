@@ -26,8 +26,8 @@ extern void	derror		(
                                        );
 */
 
-extern void *emalloc(int size);
-extern void *erealloc(void *ptr, int size);
+extern void *emalloc(size_t size);
+extern void *erealloc(void *ptr, size_t size);
 extern void  usage(void);
 
 extern void yyerror(char *);
@@ -41,8 +41,8 @@ void        cline(const char *stmnt);
 void        fline(const char *stmnt);
 const char *nctype(nc_type);
 const char *ncctype(nc_type);
-char       *cstrstr(char *, long);
-char       *fstrstr(char *, long);
+char       *cstrstr(char *, size_t);
+char       *fstrstr(char *, size_t);
 char       *fstring(nc_type, void *, int);
 void        define_netcdf(char *netcdfname);
 
