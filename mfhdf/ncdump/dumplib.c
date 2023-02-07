@@ -8,7 +8,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 #include "h4config.h"
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h"
