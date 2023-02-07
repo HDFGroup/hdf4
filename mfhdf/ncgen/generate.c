@@ -247,7 +247,7 @@ gen_c(char *filename)
         cline("   /* assign attributes */");
         for (iatt = 0; iatt < natts; iatt++) {
             if (atts[iatt].type == NC_CHAR && atts[iatt].len > 1) { /* string */
-                val_string = cstrstr((char *)atts[iatt].val, (long)atts[iatt].len);
+                val_string = cstrstr((char *)atts[iatt].val, atts[iatt].len);
                 sprintf(stmnt, "   ncattput (ncid, %s%s, \"%s\", NC_CHAR, %d, (void *)%s);",
                         atts[iatt].var == -1 ? "NC_GLOBAL" : vars[atts[iatt].var].name,
                         atts[iatt].var == -1 ? "" : "_id", atts[iatt].name, atts[iatt].len, val_string);
@@ -299,7 +299,7 @@ void
 fline(const char *stmnt)
 {
     FILE       *fout   = stdout;
-    int         len    = strlen(stmnt);
+    int         len    = (int)strlen(stmnt); /* type must allow negative values */
     int         line   = 0;
     static char cont[] = {/* continuation characters */
                           ' ', '1', '2', '3', '4', '5', '6', '7', '8', '9',
@@ -446,14 +446,14 @@ gen_fortran(char *filename)
                 }
             }
             else { /* for strings, declare multi-char variable */
-                int dimprod = 1;
+                long dimprod = 1;
                 for (idim = vars[ivar].ndims - 1; idim > 0; idim--)
                     dimprod *= dims[vars[ivar].dims[idim]].size;
                 if (vars[ivar].ndims != 0) { /* not a scalar */
                     if (vars[ivar].dims[0] != rec_dim)
                         dimprod *= dims[vars[ivar].dims[0]].size;
                 }
-                sprintf(stmnt, "%s*%d %s", ncftype(vars[ivar].type), dimprod, vars[ivar].name);
+                sprintf(stmnt, "%s*%ld %s", ncftype(vars[ivar].type), dimprod, vars[ivar].name);
                 fline(stmnt);
             }
         }
@@ -834,7 +834,7 @@ fstring(nc_type type, void *valp, int num)
 /* valp - pointer to vector of characters*/
 /* len  - number of characters in valp */
 char *
-cstrstr(char *valp, long len)
+cstrstr(char *valp, size_t len)
 {
     static char *sp;
     char        *cp;
@@ -844,11 +844,11 @@ cstrstr(char *valp, long len)
         derror("too much character data!");
         exit(9);
     }
-    istr0 = istr = (char *)emalloc((int)len + 1);
-    strncpy(istr, (char *)valp, (int)len);
+    istr0 = istr = (char *)emalloc(len + 1);
+    strncpy(istr, valp, len);
     istr[len] = '\0';
 
-    sp = cp = (char *)emalloc(4 * (int)len + 3);
+    sp = cp = (char *)emalloc(4 * len + 3);
 
     *cp++ = '"';
     while (*istr != '\0') {
@@ -919,22 +919,22 @@ cstrstr(char *valp, long len)
 /* str  - pointer to vector of characters */
 /* ilen - number of characters in istr */
 char *
-fstrstr(char *str, long ilen)
+fstrstr(char *str, size_t ilen)
 {
     static char *ostr;
     char        *cp, tstr[12];
     int          was_print = 0; /* true if last character was printable */
     char        *istr, *istr0;  /* for null-terminated copy */
 
-    if (12 * ilen != (unsigned)(12 * ilen)) {
+    if (12 * ilen > UINT_MAX) {
         derror("too much character data!");
         exit(9);
     }
-    istr0 = istr = (char *)emalloc((int)ilen + 1);
-    strncpy(istr, (char *)str, (int)ilen);
+    istr0 = istr = (char *)emalloc(ilen + 1);
+    strncpy(istr, str, ilen);
     istr[ilen] = '\0';
 
-    ostr = cp = (char *)emalloc(12 * (int)ilen);
+    ostr = cp = (char *)emalloc(12 * ilen);
     *ostr     = '\0';
     if (*istr == '\0') { /* empty string input, not legal in FORTRAN */
         strcat(ostr, "' '");
