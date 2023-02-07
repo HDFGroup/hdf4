@@ -322,7 +322,7 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
     int32  vgroup_id_out = 0;    /* vgroup identifier */
     int32  tag_vg;
     int32  ref_vg;
-    char  *vg_name = NULL;
+    char  *vg_name  = NULL;
     char  *vg_class = NULL;
     uint16 name_len;
     int32  i;
@@ -571,9 +571,9 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
     int32 *tags          = NULL; /* buffer to hold the tag numbers of vgroups   */
     int32 *refs          = NULL; /* buffer to hold the ref numbers of vgroups   */
     int32  vgroup_id_out = -1;   /* vgroup identifier for the created group in output */
-    char  *vg_name = NULL;
-    char  *vg_class = NULL;
-    char  *path = NULL;
+    char  *vg_name       = NULL;
+    char  *vg_class      = NULL;
+    char  *path          = NULL;
     uint16 name_len;
     int    visited;
     int32  tag;
@@ -618,7 +618,6 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
                     printf("Error: Could not get name length for group with ref <%d>\n", ref);
                     goto out;
                 }
-
 
                 if (vg_class != NULL)
                     free(vg_class);
