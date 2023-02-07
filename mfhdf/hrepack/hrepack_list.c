@@ -387,8 +387,7 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
                 goto out;
             }
 
-            if (vg_name != NULL)
-                free(vg_name);
+            free(vg_name);
             vg_name = (char *)malloc(sizeof(char) * (name_len + 1));
 
             if (Vgetname(vg_id, vg_name) == FAIL) {
@@ -402,8 +401,7 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
                 goto out;
             }
 
-            if (vg_class != NULL)
-                free(vg_class);
+            free(vg_class);
             vg_class = (char *)malloc(sizeof(char) * (name_len + 1));
 
             if (Vgetclass(vg_id, vg_class) == FAIL) {
@@ -605,8 +603,7 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
                     printf("Error: Could not get name length for group with ref <%d>\n", ref);
                     goto out;
                 }
-                if (vg_name != NULL)
-                    free(vg_name);
+                free(vg_name);
                 vg_name = (char *)malloc(sizeof(char) * (name_len + 1));
                 if (Vgetname(vg_id, vg_name) == FAIL) {
                     printf("Could not get name for group\n");
@@ -619,8 +616,7 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
                     goto out;
                 }
 
-                if (vg_class != NULL)
-                    free(vg_class);
+                free(vg_class);
                 vg_class = (char *)malloc(sizeof(char) * (name_len + 1));
                 if (Vgetclass(vg_id, vg_class) == FAIL) {
                     printf("Could not get class for group\n");
