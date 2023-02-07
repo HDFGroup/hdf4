@@ -147,8 +147,8 @@ hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface ide
     int32 *refs      = NULL; /* buffer to hold the ref numbers of vgroups   */
     int32  tag_vg;
     int32  ref_vg;
-    char  *vg_name;
-    char  *vg_class;
+    char  *vg_name= NULL;
+    char  *vg_class= NULL;
     uint16 name_len;
     int32  i;
 
@@ -199,6 +199,8 @@ hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface ide
                 goto out;
             }
 
+            if (vg_name != NULL)
+                free(vg_name);
             vg_name = (char *)malloc(sizeof(char) * (name_len + 1));
 
             if (Vgetname(vg_id, vg_name) == FAIL) {
@@ -211,6 +213,8 @@ hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface ide
                 goto out;
             }
 
+            if (vg_class != NULL)
+                free(vg_class);
             vg_class = (char *)malloc(sizeof(char) * (name_len + 1));
 
             if (Vgetclass(vg_id, vg_class) == FAIL) {
@@ -273,12 +277,16 @@ hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface ide
             }
 
             free(vg_name);
-
+            vg_name= NULL;
+            free(vg_class);
+            vg_class= NULL;
         } /* for */
 
         /* free the space allocated */
         free(ref_array);
     } /* if */
+    free(vg_name);
+    free(vg_class);
 
     /* terminate access to the V interface */
     if (Vend(file_id) == FAIL) {
@@ -288,9 +296,13 @@ hdiff_list_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface ide
     return 0;
 
 out:
+    free(vg_name);
+    free(vg_class);
+    free(tags);
+    free(refs);
+    free(ref_array);
 
     Vend(file_id);
-    free(ref_array);
     return FAIL;
 }
 
@@ -317,12 +329,13 @@ insert_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface identif
     int32 vg_id,  /* vgroup identifier */
         ntagrefs, /* number of tag/ref pairs in a vgroup */
         tag,      /* temporary tag */
-        ref,      /* temporary ref */
-        *tags,    /* buffer to hold the tag numbers of vgroups   */
-        *refs;    /* buffer to hold the ref numbers of vgroups   */
-    char  *vg_name, *vg_class;
+        ref;      /* temporary ref */
+    int32 *tags = NULL;    /* buffer to hold the tag numbers of vgroups   */
+    int32 *refs = NULL;    /* buffer to hold the ref numbers of vgroups   */
+    char  *vg_name = NULL;
+    char  *vg_class = NULL;
     char  *path = NULL;
-    int    i;
+    int   i;
     uint16 name_len;
 
     for (i = 0; i < npairs; i++) {
@@ -347,6 +360,8 @@ insert_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface identif
                     break;
                 }
 
+                if (vg_name != NULL)
+                    free(vg_name);
                 vg_name = (char *)malloc(sizeof(char) * (name_len + 1));
 
                 Vgetname(vg_id, vg_name);
@@ -356,6 +371,8 @@ insert_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface identif
                     break;
                 }
 
+                if (vg_class != NULL)
+                    free(vg_class);
                 vg_class = (char *)malloc(sizeof(char) * (name_len + 1));
 
                 Vgetclass(vg_id, vg_class);
@@ -439,6 +456,8 @@ insert_vg(const char *fname, int32 file_id, int32 sd_id, /* SD interface identif
                 break;
         }
     }
+    free(vg_name);
+    free(vg_class);
 
     return 0;
 }
