@@ -13,26 +13,13 @@ extern char *cdlname;  /* for error messages */
 extern "C" {
 #endif
 
-#ifndef NO_STDARG
-extern void derror(const char *fmt, ...);
-#else
-extern void derror();
-#endif
-
-/*
-extern void	derror		(
-                                       char *fmt,
-                                       ...
-                                       );
-*/
-
+extern void  derror(const char *fmt, ...);
 extern void *emalloc(size_t size);
 extern void *erealloc(void *ptr, size_t size);
 extern void  usage(void);
 
 extern void yyerror(char *);
-
-extern int yyparse(void);
+extern int  yyparse(void);
 
 extern void put_variable(void *);
 
