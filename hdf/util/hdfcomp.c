@@ -147,6 +147,7 @@ main(int argc, char *argv[])
                         isfirst = 0; /* get the next label from the file */
                     }                /* end while */
                 }                    /* end if */
+                Hclose(old_fid);     /* remember to close the file */
             }                        /* end if */
 
             /* copy the images over */
