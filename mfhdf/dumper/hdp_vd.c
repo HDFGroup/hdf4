@@ -116,13 +116,6 @@ parse_dumpvd_opts(dump_info_t *dumpvd_opts, intn *curr_arg, intn argc, char *arg
                     flds_chosen[i] = (char *)malloc(sizeof(char) * (HDstrlen(ptr) + 1));
                     CHECK_ALLOC(flds_chosen[i], "flds_chosen[i]", "parse_dumpvd_opts");
 
-                    /*
-                                    if (flds_chosen[i] == NULL)
-                                    {
-                                       fprintf(stderr,"Failure in parse_dumpvd_opts: Not enough memory!\n");
-                                       exit(1);
-                                    }
-                    */
                     HDstrcpy(flds_chosen[i], ptr);
                     ptr = tempPtr + 1;
                 }
@@ -947,6 +940,7 @@ do_dumpvd(intn curr_arg, intn argc, char *argv[], intn help)
     char       *flds_chosen[MAXCHOICES];
     int         dumpallfields;
     intn        status, ret_value = SUCCEED;
+    int         i;
 
     flds_chosen[0] = NULL;
     dumpallfields  = 1;
@@ -985,6 +979,9 @@ done:
     free_num_list(dumpvd_opts.by_ref.num_list);
     free_str_list(dumpvd_opts.by_name.str_list, dumpvd_opts.by_name.num_items);
     free_str_list(dumpvd_opts.by_class.str_list, dumpvd_opts.by_class.num_items);
+
+    for (i = 0; flds_chosen[i] != NULL; i++)
+        free(flds_chosen[i]);
 
     return ret_value;
 } /* end do_dumpvd() */

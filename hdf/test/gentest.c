@@ -183,13 +183,10 @@ gen_nbit_test(void)
 } /* end gen_nbit_test() */
 
 int
-main(int argc, char *argv[])
+main(void)
 {
-    (void)argc;
-    (void)argv;
-
     gen_bitio_test();
     gen_nbit_test();
 
-    return (0);
+    return EXIT_SUCCESS;
 } /* end main() */

@@ -35,7 +35,7 @@
  *      data element value = row value + column value [+ plane value, if rank=3]
  */
 int
-main(int argc, char *argv[])
+main(void)
 {
     int   nrow = 3, ncol = 4, npln = 5, ione = 1;
     int   i, j, k;
@@ -77,9 +77,6 @@ main(int argc, char *argv[])
     const char *in32 = "IN32";
     const char *in16 = "IN16";
     const char *in8  = "IN08";
-
-    (void)argv;
-    (void)argc;
 
     /*
      * initialize the row, column, and plane vectors
@@ -441,5 +438,6 @@ main(int argc, char *argv[])
             for (j = 0; j < ncol; j++)
                 (void)fwrite((char *)&b64r3[k][i][j], sizeof(float64), 1, sp);
     (void)fclose(sp);
-    return (0);
+
+    return EXIT_SUCCESS;
 }

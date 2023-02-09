@@ -139,6 +139,13 @@ typedef uint32_t uint32;
 typedef int          intn;
 typedef unsigned int uintn;
 
+/* These are no longer used in the library, but other software uses them */
+#ifndef VOID
+/* winnt.h defines VOID to `void` via a macro */
+typedef void VOID;
+#endif
+typedef void *VOIDP;
+
 /*-------------------------------------------------------------------------
  * Is this an LP64 system?
  *-------------------------------------------------------------------------*/

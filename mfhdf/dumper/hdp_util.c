@@ -734,7 +734,7 @@ parse_value_opts(char *argv[], int *curr_arg, dump_info_t **dump_opts, info_type
     int32         numItems = 0, i;
     char         *tempPtr  = NULL;
     char         *ptr      = NULL;
-    obj_chosen_t *newlist;
+    obj_chosen_t *newlist  = NULL;
 
     /* put a temp ptr at the beginning of the given list of numbers,
        separated by commas, for example, 1,2,3 */
@@ -756,21 +756,23 @@ parse_value_opts(char *argv[], int *curr_arg, dump_info_t **dump_opts, info_type
 
     if ((*dump_opts)->all_types != NULL) {
         /* Update number of chosen SDSs so far */
-        numItems = numItems + (*dump_opts)->num_chosen;
+        int32 newItems = numItems + (*dump_opts)->num_chosen;
 
         /* Allocate a new list */
-        newlist = (obj_chosen_t *)malloc(sizeof(obj_chosen_t) * numItems);
+        newlist = (obj_chosen_t *)malloc(sizeof(obj_chosen_t) * newItems);
         CHECK_ALLOC(newlist, "newlist", "parse_value_opts");
 
         /* transfer pointers from (*dump_opts)->all_types over to the new list
            and deallocate the old list of pointers */
         for (i = 0; i < (*dump_opts)->num_chosen; i++)
             newlist[i] = (*dump_opts)->all_types[i];
-        for (i = (*dump_opts)->num_chosen; i < numItems; i++)
+        for (i = (*dump_opts)->num_chosen; i < newItems; i++)
             init_obj_chosen_node(&newlist[i]);
 
+        free((*dump_opts)->all_types);
         /* Set (*dump_opts)->all_types to the new list */
         (*dump_opts)->all_types = newlist;
+        numItems                = newItems;
         newlist                 = NULL;
     }
     else {

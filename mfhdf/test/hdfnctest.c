@@ -20,13 +20,10 @@ extern int test_ncunlim();
 extern int test_ncvargetfill();
 
 int
-main(int argc, char *argv[])
+main(void)
 {
     intn status;       /* status flag */
     int  num_errs = 0; /* number of errors so far */
-
-    (void)argc;
-    (void)argv;
 
     /* Tests reading/writing datasets with unlimited dimension via HDF API */
     status   = test_unlim(); /* in tunlim.c */
@@ -40,9 +37,12 @@ main(int argc, char *argv[])
     status   = test_ncvargetfill(); /* in tncvargetfill.c */
     num_errs = num_errs + status;
 
-    if (num_errs == 0)
+    if (num_errs == 0) {
         printf("*** HDF-nc test passes ***\n");
-    else
+        return EXIT_SUCCESS;
+    }
+    else {
         printf("*** HDF-nc test fails ***\n");
-    return num_errs;
+        return EXIT_FAILURE;
+    }
 }

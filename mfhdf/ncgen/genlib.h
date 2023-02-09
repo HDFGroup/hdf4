@@ -13,26 +13,13 @@ extern char *cdlname;  /* for error messages */
 extern "C" {
 #endif
 
-#ifndef NO_STDARG
-extern void derror(const char *fmt, ...);
-#else
-extern void derror();
-#endif
-
-/*
-extern void	derror		(
-                                       char *fmt,
-                                       ...
-                                       );
-*/
-
-extern void *emalloc(int size);
-extern void *erealloc(void *ptr, int size);
+extern void  derror(const char *fmt, ...);
+extern void *emalloc(size_t size);
+extern void *erealloc(void *ptr, size_t size);
 extern void  usage(void);
 
 extern void yyerror(char *);
-
-extern int yyparse(void);
+extern int  yyparse(void);
 
 extern void put_variable(void *);
 
@@ -41,8 +28,8 @@ void        cline(const char *stmnt);
 void        fline(const char *stmnt);
 const char *nctype(nc_type);
 const char *ncctype(nc_type);
-char       *cstrstr(char *, long);
-char       *fstrstr(char *, long);
+char       *cstrstr(char *, size_t);
+char       *fstrstr(char *, size_t);
 char       *fstring(nc_type, void *, int);
 void        define_netcdf(char *netcdfname);
 
