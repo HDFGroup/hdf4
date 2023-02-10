@@ -27,7 +27,6 @@
  * SUCH DAMAGE.
  */
 
-
 #ifndef H5_HAVE_UNISTD_H
 
 #include <stdio.h>

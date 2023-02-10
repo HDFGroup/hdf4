@@ -119,5 +119,4 @@ getopt(int argc, char *const argv[], const char *optstring)
     return (optopt); /* return option letter */
 }
 
-
 #endif /* H4_HAVE_UNISTD_H */
