@@ -26,10 +26,8 @@
 
 #include "h4config.h"
 
-#ifdef H4_HAVE_GETOPT
 #ifdef H4_HAVE_UNISTD_H
 #include <unistd.h>
-#endif
 #else
 
 int          getopt(int argc, char *const argv[], const char *optstring);

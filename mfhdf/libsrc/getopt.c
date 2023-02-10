@@ -27,10 +27,13 @@
  * SUCH DAMAGE.
  */
 
-#include "getopt.h"
+
+#ifndef H5_HAVE_UNISTD_H
 
 #include <stdio.h>
 #include <string.h>
+
+#include "getopt.h"
 
 int opterr = 1, /* if error message should be printed */
     optind = 1, /* index into parent argv vector */
@@ -116,3 +119,5 @@ getopt(int argc, char *const argv[], const char *optstring)
     }
     return (optopt); /* return option letter */
 }
+
+#endif /* H4_HAVE_UNISTD_H */
