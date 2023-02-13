@@ -215,7 +215,7 @@ test_1dim_multivars()
                         outdata[ii], ncresult2[ii], ii);
         }
 
-        ncclose (ncid);
+        ncclose(ncid);
     } /* end read data */
 
     return 0;
@@ -342,7 +342,7 @@ test_multidims()
     status = memcmp(outdata3, result3D, edges[0] * edges[1] * edges[2] * sizeof(int16));
     VERIFY(status, 0, "memcmp");
 
-    free (outdata3);
+    free(outdata3);
     { /* Add data to second data set, i.e. 1-D var */
         int16 data[] = {300, 301, 302, 303};
 
@@ -580,7 +580,7 @@ test_multidims()
         status = memcmp(outdata1D, ncresult1Ddozen, edges[0] * sizeof(int16));
         VERIFY(status, 0, "memcmp");
 
-        ncclose (ncid);
+        ncclose(ncid);
     } /* end read data with nc API */
 
     return 0;
@@ -732,7 +732,7 @@ test_readings(long max_numrecs)
     status = ncvarget(ncid, var2id, start, edges, outdata1D);
     VERIFY(status, -1, "ncvarget");
 
-    ncclose (ncid);
+    ncclose(ncid);
 
     return 0;
 }

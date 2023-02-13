@@ -1064,7 +1064,7 @@ done:
         if (o_list != NULL)
             free_obj_list(o_list);
     }
-    free (list_opts.limit_name);
+    free(list_opts.limit_name);
     if (f_list != NULL)
         free_file_list(f_list);
 
