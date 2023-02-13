@@ -163,7 +163,7 @@ NC_var *
 SDIget_var(NC   *handle, /* IN: the handle for this file */
            int32 sdsid /* IN: a dataset ID */)
 {
-    int32      varid;
+    int32      varid     = -1;
     NC_array **ap        = NULL;
     NC_var    *ret_value = NULL;
 
@@ -655,7 +655,7 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
 {
     NC          *handle = NULL;
     NC_dim      *dim    = NULL;
-    intn         varid;
+    intn         varid  = -1;
     int32        status;
     comp_coder_t comp_type = COMP_CODE_INVALID;
     uint32       comp_config;
@@ -1685,10 +1685,10 @@ SDIapfromid(int32       id,      /* IN:  object ID */
             NC        **handlep, /* IN:  handle for this file */
             NC_array ***app /* OUT: attribute list */)
 {
-    NC     *handle = NULL;
-    NC_var *var    = NULL;
-    NC_dim *dim    = NULL;
-    int32   varid;
+    NC     *handle    = NULL;
+    NC_var *var       = NULL;
+    NC_dim *dim       = NULL;
+    int32   varid     = -1;
     intn    ret_value = SUCCEED;
 
     /* see if its a variable ID */
@@ -1977,7 +1977,7 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
             int32 *end,    /* IN: number of values to write per dimension */
             void  *data /* IN: data buffer */)
 {
-    intn         varid;
+    intn         varid = -1;
     int32        status;
     comp_coder_t comp_type;
     uint32       comp_config;
@@ -2734,7 +2734,7 @@ SDsetdimstrs(int32       id, /* IN: dimension ID */
              const char *u,  /* IN: units string ("units") */
              const char *f /* IN: format string ("format") */)
 {
-    intn    varid;
+    intn    varid     = -1;
     NC     *handle    = NULL;
     NC_dim *dim       = NULL;
     NC_var *var       = NULL;
@@ -2864,7 +2864,7 @@ SDsetdimscale(int32 id,    /* IN: dimension ID */
     NC     *handle = NULL;
     NC_dim *dim    = NULL;
     int32   status;
-    intn    varid;
+    intn    varid = -1;
     long    start[1];
     long    end[1];
     intn    ret_value = SUCCEED;
@@ -2946,7 +2946,7 @@ SDgetdimscale(int32 id, /* IN:  dimension ID */
     NC_dim *dim    = NULL;
     NC_var *vp     = NULL;
     int32   status;
-    intn    varid;
+    intn    varid = -1;
     long    start[1];
     long    end[1];
     intn    ret_value = SUCCEED;
