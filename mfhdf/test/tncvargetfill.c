@@ -214,6 +214,8 @@ test_1dim_multivars()
                 fprintf(stderr, "test_1dim_multivars: Read data %d doesn't match input %d at index %d\n",
                         outdata[ii], ncresult2[ii], ii);
         }
+
+        ncclose (ncid);
     } /* end read data */
 
     return 0;
@@ -340,6 +342,7 @@ test_multidims()
     status = memcmp(outdata3, result3D, edges[0] * edges[1] * edges[2] * sizeof(int16));
     VERIFY(status, 0, "memcmp");
 
+    free (outdata3);
     { /* Add data to second data set, i.e. 1-D var */
         int16 data[] = {300, 301, 302, 303};
 
@@ -439,7 +442,7 @@ test_multidims()
        number of records in the file. */
     dimsize1D[0] = SD_UNLIMITED;
     dset1        = SDcreate(fid, VARDOZEN, DFNT_INT16, RANK1, dimsize1D);
-    CHECK(dset3, FAIL, "SDcreate");
+    CHECK(dset1, FAIL, "SDcreate");
 
     { /* Write data to the fourth dataset, exceeding the current number of
          records in the file */
@@ -576,6 +579,8 @@ test_multidims()
         /* Verify data */
         status = memcmp(outdata1D, ncresult1Ddozen, edges[0] * sizeof(int16));
         VERIFY(status, 0, "memcmp");
+
+        ncclose (ncid);
     } /* end read data with nc API */
 
     return 0;
@@ -726,6 +731,8 @@ test_readings(long max_numrecs)
     memset(outdata1D, 0, edges[0] * sizeof(int16));
     status = ncvarget(ncid, var2id, start, edges, outdata1D);
     VERIFY(status, -1, "ncvarget");
+
+    ncclose (ncid);
 
     return 0;
 }

@@ -794,6 +794,15 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
         ret_value = SUCCEED;
 
 done:
+    /* free the AID */
+    status = SDIfreevarAID(handle, varid);
+    if (status == FAIL) {
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+    }
+
+    /* make sure it gets reflected in the file */
+    handle->flags |= NC_HDIRTY;
+
     return ret_value;
 } /* SDreaddata */
 
@@ -2114,6 +2123,15 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
         ret_value = SUCCEED;
 
 done:
+    /* free the AID */
+    status = SDIfreevarAID(handle, varid);
+    if (status == FAIL) {
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+    }
+
+    /* make sure it gets reflected in the file */
+    handle->flags |= NC_HDIRTY;
+
     return ret_value;
 } /* SDwritedata */
 
@@ -2894,6 +2912,7 @@ SDsetdimscale(int32 id,    /* IN: dimension ID */
         HGOTO_ERROR(DFE_ARGS, FAIL);
     }
 
+done:
     /* free the AID */
     status = SDIfreevarAID(handle, varid);
     if (status == FAIL) {
@@ -2903,7 +2922,6 @@ SDsetdimscale(int32 id,    /* IN: dimension ID */
     /* make sure it gets reflected in the file */
     handle->flags |= NC_HDIRTY;
 
-done:
     return ret_value;
 } /* SDsetdimscale */
 
@@ -2991,13 +3009,13 @@ SDgetdimscale(int32 id, /* IN:  dimension ID */
         HGOTO_ERROR(DFE_ARGS, FAIL);
     }
 
+done:
     /* free the AID */
     status = SDIfreevarAID(handle, varid);
     if (status == FAIL) {
         HGOTO_ERROR(DFE_ARGS, FAIL);
     }
 
-done:
     return ret_value;
 } /* SDgetdimscale */
 
