@@ -833,16 +833,16 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
             /* free old info from Chunk tables ..etc*/
 
             /* Sync chunk cache */
-            mcache_sync(info->chk_cache);
+            mcache_sync(tmpinfo->chk_cache);
 
             /* close/free chunk cache */
-            mcache_close(info->chk_cache);
+            mcache_close(tmpinfo->chk_cache);
 
             /* Use Vxxx interface to free Vdata info */
-            VSdetach(info->aid);
+            VSdetach(tmpinfo->aid);
 
             /* free chunk tree */
-            tbbtdfree(info->chk_tree, chkdestroynode, chkfreekey);
+            tbbtdfree(tmpinfo->chk_tree, chkdestroynode, chkfreekey);
 
             /* free up stuff in special info */
             free(tmpinfo->ddims);
@@ -1749,6 +1749,8 @@ done:
             free(info->minfo);
 
             free(info); /* free special info last */
+
+            access_rec->special_info = NULL;
         }
 
         /* free access record */

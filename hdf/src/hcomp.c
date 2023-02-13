@@ -786,6 +786,8 @@ done:
         if (access_rec != NULL)
             HIrelease_accrec_node(access_rec);
         free(info);
+
+        access_rec->special_info = NULL;
     }
     free(buf);
 
@@ -1055,6 +1057,8 @@ HCIstaccess(accrec_t *access_rec, int16 acc_mode)
 done:
     if (ret_value == FAIL) { /* Error condition cleanup */
         free(info);
+
+        access_rec->special_info = NULL;
     }
 
     return ret_value;

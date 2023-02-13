@@ -98,8 +98,8 @@ HRPconvert(int32 fid, uint16 tag, uint16 ref, int32 xdim, int32 ydim, int16 sche
 {
     filerec_t *file_rec;          /* file record */
     accrec_t  *access_rec = NULL; /* access element record */
-    crinfo_t  *info;              /* information for the compressed raster element */
-    int32      ret_value = SUCCEED;
+    crinfo_t  *info       = NULL; /* information for the compressed raster element */
+    int32      ret_value  = SUCCEED;
 
     HEclear();
 
@@ -152,7 +152,10 @@ HRPconvert(int32 fid, uint16 tag, uint16 ref, int32 xdim, int32 ydim, int16 sche
 
 done:
     if (ret_value == FAIL) { /* Error condition cleanup */
-    }                        /* end if */
+        free(info);
+
+        access_rec->special_info = NULL;
+    } /* end if */
 
     return ret_value;
 } /* HRPconvert */

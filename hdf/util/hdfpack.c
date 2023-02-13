@@ -444,6 +444,7 @@ copy_blocks(mydd_t *dd, int32 infile, int32 outfile)
         }
     }
     Hendaccess(outaid);
+    Hendaccess(inaid);
 }
 
 /*
