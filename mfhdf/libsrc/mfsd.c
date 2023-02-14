@@ -135,6 +135,10 @@ SDIhandle_from_id(int32 id, /* IN: an object (file, dim, dataset) ID */
     int32 tmp;
     NC   *ret_value = NULL;
 
+    /* check that it is a valid id */
+    if (id == -1)
+        HGOTO_ERROR(DFE_ARGS, NULL);
+
     /* check that it is the proper type of id */
     tmp = (id >> 16) & 0x0f;
     if (tmp != typ)
@@ -2739,7 +2743,6 @@ SDsetdimstrs(int32       id, /* IN: dimension ID */
 #ifdef SDDEBUG
     fprintf(stderr, "SDsetdimstrs: I've been called\n");
 #endif
-
     /* clear error stack */
     HEclear();
 
@@ -2911,12 +2914,9 @@ SDsetdimscale(int32 id,    /* IN: dimension ID */
 done:
     /* free the AID */
     status = SDIfreevarAID(handle, varid);
-    if (status == FAIL) {
-        HGOTO_ERROR(DFE_ARGS, FAIL);
+    if (status != FAIL) {
+        handle->flags |= NC_HDIRTY;
     }
-
-    /* make sure it gets reflected in the file */
-    handle->flags |= NC_HDIRTY;
 
     return ret_value;
 } /* SDsetdimscale */
@@ -3008,8 +3008,8 @@ SDgetdimscale(int32 id, /* IN:  dimension ID */
 done:
     /* free the AID */
     status = SDIfreevarAID(handle, varid);
-    if (status == FAIL) {
-        HGOTO_ERROR(DFE_ARGS, FAIL);
+    if (status != FAIL) {
+        handle->flags |= NC_HDIRTY;
     }
 
     return ret_value;
