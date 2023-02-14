@@ -659,7 +659,7 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
     int32        status;
     comp_coder_t comp_type = COMP_CODE_INVALID;
     uint32       comp_config;
-    NC_var      *var;
+    NC_var      *var = NULL;
 #ifdef H4_HAVE_LP64
     long Start[H4_MAX_VAR_DIMS];
     long End[H4_MAX_VAR_DIMS];
@@ -794,14 +794,12 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
         ret_value = SUCCEED;
 
 done:
-    /* free the AID */
-    status = SDIfreevarAID(handle, varid);
-    if (status == FAIL) {
-        HGOTO_ERROR(DFE_ARGS, FAIL);
+    if (ret_value == FAIL) {
+        if (var && var->aid != 0 && var->aid != FAIL) {
+            Hendaccess(var->aid);
+            var->aid = FAIL;
+        }
     }
-
-    /* make sure it gets reflected in the file */
-    handle->flags |= NC_HDIRTY;
 
     return ret_value;
 } /* SDreaddata */
@@ -1981,7 +1979,7 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
     int32        status;
     comp_coder_t comp_type;
     uint32       comp_config;
-    NC_var      *var;
+    NC_var      *var    = NULL;
     NC          *handle = NULL;
     NC_dim      *dim    = NULL;
 #ifdef H4_HAVE_LP64
@@ -2123,14 +2121,12 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
         ret_value = SUCCEED;
 
 done:
-    /* free the AID */
-    status = SDIfreevarAID(handle, varid);
-    if (status == FAIL) {
-        HGOTO_ERROR(DFE_ARGS, FAIL);
+    if (ret_value == FAIL) {
+        if (var && var->aid != 0 && var->aid != FAIL) {
+            Hendaccess(var->aid);
+            var->aid = FAIL;
+        }
     }
-
-    /* make sure it gets reflected in the file */
-    handle->flags |= NC_HDIRTY;
 
     return ret_value;
 } /* SDwritedata */
@@ -2830,7 +2826,7 @@ SDIfreevarAID(NC   *handle, /* IN: file handle */
 
     var = (NC_var *)*ap;
 
-    if (var->aid != 0 && var->aid != FAIL) {
+    if (var && var->aid != 0 && var->aid != FAIL) {
         if (Hendaccess(var->aid) == FAIL) {
             HGOTO_ERROR(DFE_ARGS, FAIL);
         }
@@ -3367,7 +3363,7 @@ SDsetexternalfile(int32       id,       /* IN: dataset ID */
                                 length);
     }
     if (status != FAIL) {
-        if ((var->aid != 0) && (var->aid != FAIL)) {
+        if (var && (var->aid != 0) && (var->aid != FAIL)) {
             if (Hendaccess(var->aid) == FAIL) {
                 HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
             }
@@ -3751,7 +3747,7 @@ SDsetnbitdataset(int32 id,        /* IN: dataset ID */
     printf("SDsetnbitdata(): HCcreate() status=%d\n", (intn)status);
 #endif
     if (status != FAIL) {
-        if ((var->aid != 0) && (var->aid != FAIL)) {
+        if (var && (var->aid != 0) && (var->aid != FAIL)) {
             if (Hendaccess(var->aid) == FAIL) {
                 HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
             }
@@ -3789,7 +3785,7 @@ SDsetup_szip_parms(int32 id, NC *handle, comp_info *c_info, int32 *cdims)
 {
     NC_dim *dim;      /* to check if the dimension is unlimited */
     int32   dimindex; /* to obtain the NC_dim record */
-    NC_var *var;
+    NC_var *var = NULL;
     int32   ndims;
     int     i;
     int32   xdims[H4_MAX_VAR_DIMS];
@@ -3846,7 +3842,7 @@ SDsetcompress(int32        id,        /* IN: dataset ID */
               comp_info *c_info /* IN: ptr to compression info struct*/)
 {
     NC        *handle;
-    NC_var    *var;
+    NC_var    *var = NULL;
     NC_dim    *dim;      /* to check if the dimension is unlimited */
     int32      dimindex; /* to obtain the NC_dim record */
     model_info m_info;   /* modeling information for the HCcreate() call */
@@ -3953,7 +3949,7 @@ SDsetcompress(int32        id,        /* IN: dataset ID */
 #endif /* SDDEBUG */
 
     if (status != FAIL) {
-        if ((var->aid != 0) && (var->aid != FAIL)) {
+        if (var && (var->aid != 0) && (var->aid != FAIL)) {
             if (Hendaccess(var->aid) == FAIL) {
                 HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
             }
@@ -4019,7 +4015,7 @@ SDgetcompress(
 )
 {
     NC     *handle;
-    NC_var *var;
+    NC_var *var       = NULL;
     intn    status    = FAIL;
     intn    ret_value = SUCCEED;
 
@@ -4088,7 +4084,7 @@ SDgetcompinfo(int32         sdsid,     /* IN: dataset ID */
 )
 {
     NC     *handle;
-    NC_var *var;
+    NC_var *var       = NULL;
     intn    status    = FAIL;
     intn    ret_value = SUCCEED;
 
@@ -4155,7 +4151,7 @@ SDgetcomptype(int32         sdsid, /* IN: dataset ID */
               comp_coder_t *comp_type /* OUT: the type of compression */)
 {
     NC     *handle;
-    NC_var *var;
+    NC_var *var       = NULL;
     intn    status    = FAIL;
     intn    ret_value = SUCCEED;
 
@@ -4219,10 +4215,11 @@ SDgetdatasize(int32  sdsid,     /* IN: dataset ID */
 
 {
     NC     *handle;
-    NC_var *var;
-    int32  *comp_size_tmp = NULL, *orig_size_tmp = NULL;
-    intn    status    = FAIL;
-    intn    ret_value = SUCCEED;
+    NC_var *var           = NULL;
+    intn    status        = FAIL;
+    intn    ret_value     = SUCCEED;
+    int32  *comp_size_tmp = NULL;
+    int32  *orig_size_tmp = NULL;
 
     /* clear error stack */
     HEclear();
@@ -4271,6 +4268,13 @@ SDgetdatasize(int32  sdsid,     /* IN: dataset ID */
 done:
     free(comp_size_tmp);
     free(orig_size_tmp);
+
+    if (ret_value == FAIL) {
+        if (var && var->aid != 0 && var->aid != FAIL) {
+            Hendaccess(var->aid);
+            var->aid = FAIL;
+        }
+    }
 
     return ret_value;
 } /* SDgetdatasize */
@@ -4444,7 +4448,7 @@ int32
 SDisrecord(int32 id /* IN: dataset ID */)
 {
     NC     *handle;
-    NC_var *var;
+    NC_var *var       = NULL;
     int32   ret_value = TRUE;
 
 #ifdef SDDEBUG
@@ -4737,7 +4741,7 @@ SDgetblocksize(int32  sdsid, /* IN: dataset ID */
         Hendaccess(temp_aid);
 done:
     if (ret_value == FAIL) { /* Failure cleanup */
-        if (var->aid == FAIL && temp_aid != FAIL)
+        if (var && var->aid == FAIL && temp_aid != FAIL)
             Hendaccess(temp_aid);
     }
 
@@ -5934,7 +5938,7 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
 done:
     if (ret_value == FAIL) { /* Failure cleanup */
         /* End access to the aid if necessary */
-        if (var->aid != FAIL) {
+        if (var && var->aid != FAIL) {
             Hendaccess(var->aid);
             var->aid = FAIL;
         }
