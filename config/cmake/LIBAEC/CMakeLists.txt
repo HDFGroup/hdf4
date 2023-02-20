@@ -151,7 +151,7 @@ endif ()
 #-----------------------------------------------------------------------------
 # Generate the aec_config.h file containing user settings needed by compilation
 #-----------------------------------------------------------------------------
-configure_file (${LIBAEC_RESOURCES_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/aec_config.h)
+configure_file (${LIBAEC_RESOURCES_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
 #-----------------------------------------------------------------------------
 # All libs/tests/examples need the main include directories
