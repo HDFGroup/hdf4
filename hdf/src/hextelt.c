@@ -94,6 +94,12 @@ EXPORTED ROUTINES
 #define DIR_PATH_SEPC 124
 #define DIR_PATH_SEPS "|"
 
+static char *extcreatedir    = NULL;
+static char *HDFEXTCREATEDIR = NULL;
+static char *extdir          = NULL;
+static char *HDFEXTDIR       = NULL;
+static intn  extdir_changed  = FALSE;
+
 /* extinfo_t -- external elt information structure */
 
 typedef struct {
@@ -631,9 +637,16 @@ HXPread(accrec_t *access_rec, int32 length, void *data)
     else if (length < 0)
         HGOTO_ERROR(DFE_RANGE, FAIL);
 
-    /* see if the file is open, if not open it */
-    if (!info->file_open) {
+    /* if the file is open but external directory is changed (by HXsetdir),
+       then close the file first before making the new file path */
+    if (!info->file_open || (info->file_open && extdir_changed)) {
         char *fname;
+
+        /* if the file is open, close it first */
+        if (info->file_open) {
+            HI_CLOSE(info->file_external);
+            info->file_open = FALSE;
+        }
 
         /* build the customized external file name. */
         if ((fname = HXIbuildfilename(info->extern_file_name, DFACC_OLD)) == NULL)
@@ -701,9 +714,16 @@ HXPwrite(accrec_t *access_rec, int32 length, const void *data)
     if (length < 0)
         HGOTO_ERROR(DFE_RANGE, FAIL);
 
-    /* see if the file is open, if not open it */
-    if (!info->file_open) {
+    /* if the file is open but external directory is changed (by HXsetdir),
+       then close the file first before making the new file path */
+    if (!info->file_open || (info->file_open && extdir_changed)) {
         char *fname;
+
+        /* if the file is open, close it first */
+        if (info->file_open) {
+            HI_CLOSE(info->file_external);
+            info->file_open = FALSE;
+        }
 
         /* build the customized external file name. */
         if ((fname = HXIbuildfilename(info->extern_file_name, DFACC_OLD)) == NULL)
@@ -1039,11 +1059,6 @@ done:
 
 } /* HXPreset */
 
-static char *extcreatedir    = NULL;
-static char *HDFEXTCREATEDIR = NULL;
-static char *extdir          = NULL;
-static char *HDFEXTDIR       = NULL;
-
 /*------------------------------------------------------------------------
 NAME
    HXsetcreatedir -- set the directory variable for creating external file
@@ -1105,21 +1120,36 @@ FORTRAN
 
 --------------------------------------------------------------------------*/
 intn
-HXsetdir(const char *dir)
+HXsetdir(const char *newdir)
 {
-    char *pt;
+    char *pt = NULL;
     intn  ret_value = SUCCEED;
 
-    if (dir) {
-        if (!(pt = HDstrdup(dir)))
-            HGOTO_ERROR(DFE_NOSPACE, FAIL);
+    if (newdir == NULL) {
+        if (extdir != NULL) {
+            free(extdir);
+            extdir = NULL;
+            extdir_changed = TRUE;
+        }
     }
-    else
-        pt = NULL; /* will reset extdir to NULL */
+    else {
+        if (!(pt = HDstrdup(newdir)))
+            HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-    free(extdir);
-
-    extdir = pt;
+        if (extdir != NULL) {
+            if (!HDstrcmp(newdir, extdir))
+                extdir_changed = FALSE;
+            else {
+                free(extdir);
+                extdir = pt;
+                extdir_changed = TRUE;
+            }
+        }
+        else {
+            extdir = pt;
+            extdir_changed = TRUE;
+        }
+    }
 
 done:
     return ret_value;
