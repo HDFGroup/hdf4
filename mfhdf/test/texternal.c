@@ -760,18 +760,21 @@ test_change_extdir(void)
     status = HXsetdir(NULL);
     CHECK(status, FAIL, "HXsetdir NULL");
     status = SDreaddata(sds_id, &start, &stride, &edge, sds1_out);
+  fprintf(stderr, "external dir: <NULL>\n");
     VERIFY(status, FAIL, "SDreaddata");
 
     /* Set the target directory to the location of the external file and read the dataset */
     status = HXsetdir(dir_name);
     CHECK(status, FAIL, "HXsetdir dir_name");
     status = SDreaddata(sds_id, &start, &stride, &edge, sds1_out);
+  fprintf(stderr, "external dir: <%s>\n", dir_name);
     VERIFY(status, SUCCEED, "SDreaddata");
 
     /* Unset the target directory again and read the variable */
     status = HXsetdir(".");
     CHECK(status, FAIL, "HXsetdir .");
     status = SDreaddata(sds_id, &start, &stride, &edge, sds1_out);
+  fprintf(stderr, "external dir: <.>\n");
     VERIFY(status, FAIL, "SDreaddata");
 
     dir_name_len = strlen(dir_name);
@@ -781,12 +784,14 @@ test_change_extdir(void)
     status = HXsetdir(another_path);
     CHECK(status, FAIL, "HXsetdir another_path");
     status = SDreaddata(sds_id, &start, &stride, &edge, sds1_out);
+  fprintf(stderr, "external dir: <%s>\n", dir_name);
     VERIFY(status, FAIL, "SDreaddata");
     free(another_path);
 
     status = HXsetdir(dir_name);
     CHECK(status, FAIL, "HXsetdir dir_name");
     status = SDreaddata(sds_id, &start, &stride, &edge, sds1_out);
+  fprintf(stderr, "external dir: <%s>\n", dir_name);
     VERIFY(status, SUCCEED, "SDreaddata");
 
     status = HXsetdir(NULL);
