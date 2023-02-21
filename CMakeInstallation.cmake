@@ -237,19 +237,6 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED)
   endif ()
 endif ()
 
-if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  if (CMAKE_HOST_UNIX)
-    set (CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/HDF_Group/${HDF4_PACKAGE_NAME}/${HDF4_PACKAGE_VERSION}"
-      CACHE PATH "Install path prefix, prepended onto install directories." FORCE)
-  else ()
-    GetDefaultWindowsPrefixBase(CMAKE_GENERIC_PROGRAM_FILES)
-    set (CMAKE_INSTALL_PREFIX
-      "${CMAKE_GENERIC_PROGRAM_FILES}/HDF_Group/${HDF4_PACKAGE_NAME}/${HDF4_PACKAGE_VERSION}"
-      CACHE PATH "Install path prefix, prepended onto install directories." FORCE)
-    set (CMAKE_GENERIC_PROGRAM_FILES)
-  endif ()
-endif ()
-
 #-----------------------------------------------------------------------------
 # Set the cpack variables
 #-----------------------------------------------------------------------------
@@ -363,15 +350,15 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
     set (CPACK_PACKAGING_INSTALL_PREFIX "/${CPACK_PACKAGE_INSTALL_DIRECTORY}")
     set (CPACK_COMPONENTS_ALL_IN_ONE_PACKAGE ON)
 
-    option (HDF4_PACK_CREATE_DEB  "Package the HDF Library in a DEB package" OFF)
-    if (HDF4_PACK_CREATE_DEB)
+    find_program (DPKGSHLIB_EXE dpkg-shlibdeps)
+    if (DPKGSHLIB_EXE)
       list (APPEND CPACK_GENERATOR "DEB")
       set (CPACK_DEBIAN_PACKAGE_SECTION "Libraries")
       set (CPACK_DEBIAN_PACKAGE_MAINTAINER "${HDF4_PACKAGE_BUGREPORT}")
     endif ()
 
-    option (HDF4_PACK_CREATE_RPM  "Package the HDF Library in a RPM package" OFF)
-    if (HDF4_PACK_CREATE_RPM)
+    find_program (RPMBUILD_EXE rpmbuild)
+    if (RPMBUILD_EXE)
       list (APPEND CPACK_GENERATOR "RPM")
       set (CPACK_RPM_PACKAGE_RELEASE "1")
       set (CPACK_RPM_PACKAGE_RELEASE_DIST ON)
