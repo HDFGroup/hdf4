@@ -402,7 +402,7 @@ test_szip_RI16bit()
     }
 
     status = GRwriteimage(ri_id, start, NULL, edges, (void *)in_data);
-    CHECK_VOID(status, FAIL, "SDwritedata");
+    CHECK_VOID(status, FAIL, "GRwriteimage");
 
     /* Terminate access to the raster image */
     status = GRendaccess(ri_id);

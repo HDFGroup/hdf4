@@ -85,7 +85,7 @@ init_dumprig_opts(dump_info_t *dumprig_opts)
     dumprig_opts->no_lattr_data = FALSE;
 
     HDstrcpy(dumprig_opts->file_name, "\0");
-} /* end init_list_opts() */
+} /* end init_dumprig_opts() */
 
 static intn
 parse_dumprig_opts(dump_info_t *dumprig_opts, intn *curr_arg, intn argc, char *argv[], int *model)
