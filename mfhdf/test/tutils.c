@@ -29,8 +29,8 @@
 intn
 make_sourcepath(char *src_path, unsigned int size)
 {
-    char *srcdir   = getenv("srcdir");
-    char *tempdir  = NULL;
+    char *srcdir  = getenv("srcdir");
+    char *tempdir = NULL;
 
     tempdir = (char *)malloc(size * sizeof(char));
     CHECK_ALLOC(tempdir, "tempdir", "make_datafilename");

@@ -692,27 +692,27 @@ test_special_combos()
     The number of errors occurred in this routine.
 
 *********************************************************************/
-#define MAIN_FILE   "tmainfile.hdf" /* file where the SDS is created */
-#define EXT_FILE    "textfile.txt"  /* file where the external data is stored */
-#define SDS_NAME    "ExternalDS"    /* dataset will have data in an external file */
-#define RANK        1
+#define MAIN_FILE "tmainfile.hdf" /* file where the SDS is created */
+#define EXT_FILE  "textfile.txt"  /* file where the external data is stored */
+#define SDS_NAME  "ExternalDS"    /* dataset will have data in an external file */
+#define RANK      1
 
 static int
 test_change_extdir(void)
 {
-	int32   sd_id;
-	int32   sds_id;
-    float   sds1_data[] = {0.1, 2.3, 4.5, 6.7, 8.9};
-    float   sds1_out[5];
-    int32   start = 0, stride = 1, edge;
-    float   out_data[5];
-    int32   dimsize[RANK];
-    char    dir_name[MAX_PATH_LEN];
-    intn    dir_name_len;
-    char    *another_path;
-	int32 access_mode = DFACC_READ;
+    int32 sd_id;
+    int32 sds_id;
+    float sds1_data[] = {0.1, 2.3, 4.5, 6.7, 8.9};
+    float sds1_out[5];
+    int32 start = 0, stride = 1, edge;
+    float out_data[5];
+    int32 dimsize[RANK];
+    char  dir_name[MAX_PATH_LEN];
+    intn  dir_name_len;
+    char *another_path;
+    int32 access_mode = DFACC_READ;
     int32 sds_index;
-    intn    status = 0;
+    intn  status   = 0;
     intn  num_errs = 0; /* number of errors in compression test so far */
 
     status = make_sourcepath(dir_name, MAX_PATH_LEN);
@@ -726,7 +726,7 @@ test_change_extdir(void)
 
     /* Create a one-dim dataset named SDS_NAME */
     dimsize[0] = 5;
-    edge = dimsize[0];
+    edge       = dimsize[0];
     sds_id     = SDcreate(sd_id, SDS_NAME, DFNT_FLOAT32, RANK, dimsize);
     CHECK(sds_id, FAIL, "SDcreate");
 
@@ -745,15 +745,15 @@ test_change_extdir(void)
     CHECK(status, FAIL, "SDend");
 
     /* Open the file to read */
-	sd_id = SDstart(MAIN_FILE, DFACC_READ);
+    sd_id = SDstart(MAIN_FILE, DFACC_READ);
     CHECK(sd_id, FAIL, "SDstart");
 
     /* Determine the index of the dataset */
-	sds_index =  SDnametoindex(sd_id, SDS_NAME);
+    sds_index = SDnametoindex(sd_id, SDS_NAME);
     CHECK(sds_index, FAIL, "SDnametoindex");
 
     /* Dataset identifier */
-    sds_id = SDselect (sd_id, sds_index);
+    sds_id = SDselect(sd_id, sds_index);
     CHECK(sds_id, FAIL, "SDselect");
 
     /* Unset the target directory and read the variable */
@@ -775,7 +775,7 @@ test_change_extdir(void)
     VERIFY(status, FAIL, "SDreaddata");
 
     dir_name_len = strlen(dir_name);
-    another_path = (char *) malloc(sizeof(char) * dir_name_len+20);
+    another_path = (char *)malloc(sizeof(char) * dir_name_len + 20);
     strcpy(another_path, dir_name);
     strcat(another_path, "non-existing-dir");
     status = HXsetdir(another_path);

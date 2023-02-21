@@ -1122,13 +1122,13 @@ FORTRAN
 intn
 HXsetdir(const char *newdir)
 {
-    char *pt = NULL;
+    char *pt        = NULL;
     intn  ret_value = SUCCEED;
 
     if (newdir == NULL) {
         if (extdir != NULL) {
             free(extdir);
-            extdir = NULL;
+            extdir         = NULL;
             extdir_changed = TRUE;
         }
     }
@@ -1141,12 +1141,12 @@ HXsetdir(const char *newdir)
                 extdir_changed = FALSE;
             else {
                 free(extdir);
-                extdir = pt;
+                extdir         = pt;
                 extdir_changed = TRUE;
             }
         }
         else {
-            extdir = pt;
+            extdir         = pt;
             extdir_changed = TRUE;
         }
     }
