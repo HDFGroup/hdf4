@@ -723,9 +723,9 @@ test_change_extdir(void)
     sd_id = SDstart(MAIN_FILE, DFACC_CREATE);
     CHECK(sd_id, FAIL, "SDstart");
 
-#ifdef WIN32
+#if defined _WIN32 || defined _WINDOWS
     _mkdir(win_dir_name);
-    strcpy(dir_name, ".\\");
+    strcpy(dir_name, "./");
     strcat(dir_name, win_dir_name);
     fprintf(stderr, "dir_name on windows for creating: %s\n", dir_name);
 #endif
