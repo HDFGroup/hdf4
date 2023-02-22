@@ -185,7 +185,7 @@ HDF_README_PROPERTIES(HDF4_BUILD_FORTRAN)
 # Configure the COPYING.txt file for the windows binary package
 #-----------------------------------------------------------------------------
 if (WIN32 OR MINGW)
-  configure_file (${HDF4_SOURCE_DIR}/COPYING ${HDF4_BINARY_DIR}/COPYING.txt @ONLY)
+  configure_file (${HDF4_SOURCE_DIR}/COPYING ${HDF5_BINARY_DIR}/COPYING.txt @ONLY)
 endif ()
 
 #-----------------------------------------------------------------------------
