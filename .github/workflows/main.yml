@@ -305,6 +305,7 @@ jobs:
           mkdir "${{ runner.workspace }}/build"
           cd "${{ runner.workspace }}/build"
           ${{ matrix.flags }} $GITHUB_WORKSPACE/configure --${{ matrix.build_mode.autotools }} --${{ matrix.xdr }}-hdf4-xdr --${{ matrix.netcdf.enabled }}-netcdf --${{ matrix.java }}-java --${{ matrix.shared }}-shared
+          cat ./hdf/src/h4config.h
         shell: bash
         if: (matrix.generator == 'autogen')
 
@@ -317,6 +318,7 @@ jobs:
           mkdir "${{ runner.workspace }}/build"
           cd "${{ runner.workspace }}/build"
           cmake ${{ matrix.cacheinit }} ${{ matrix.generator }} --log-level=VERBOSE -DCMAKE_BUILD_TYPE=${{ matrix.build_mode.cmake }} -DCMAKE_TOOLCHAIN_FILE=${{ matrix.toolchain }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.shared }} -DHDF4_BUILD_EXAMPLES=ON -DBUILD_JPEG_WITH_PIC:BOOL=ON -DHDF4_BUILD_XDR_LIB:BOOL=${{ matrix.xdr }} -DHDF4_ENABLE_NETCDF:BOOL=${{ matrix.netcdf.cmake }} -DHDF4_BUILD_JAVA=${{ matrix.java }} -DBUILD_JPEG_WITH_FETCHCONTENT=${{ matrix.jpegfc }} -DBUILD_SZIP_WITH_FETCHCONTENT=${{ matrix.libaecfc }} -DBUILD_ZLIB_WITH_FETCHCONTENT=${{ matrix.zlibfc }} $GITHUB_WORKSPACE
+          cat ./h4config.h
         shell: bash
         if: (matrix.generator != 'autogen') && ! ((matrix.name == 'Ubuntu mingw CMake') && (matrix.build_mode.cmake == 'Debug'))
 
