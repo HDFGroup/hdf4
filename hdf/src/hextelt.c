@@ -1179,12 +1179,11 @@ DESCRIPTION
 static char *
 HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 {
-    int        fname_len;        /* string length of the ext_fname */
-    int        path_len;         /* string length of prepend pathname */
-    static int firstinvoked = 1; /* true if invoked the first time */
-
-    char       *finalpath = NULL; /* Final pathname to return */
-    const char *fname     = NULL;
+    int         fname_len;           /* string length of the ext_fname */
+    int         path_len;            /* string length of prepend pathname */
+    static int  firstinvoked = 1;    /* true if invoked the first time */
+    char       *finalpath    = NULL; /* Final pathname to return */
+    const char *fname        = NULL;
     struct stat filestat;         /* for checking pathname existence */
     char       *ret_value = NULL; /* FAIL */
 
