@@ -712,8 +712,8 @@ test_change_extdir(void)
     char *another_path;
     int32 access_mode = DFACC_READ;
     int32 sds_index;
-    intn  status   = 0;
-    intn  num_errs = 0; /* number of errors in compression test so far */
+    intn  status       = 0;
+    intn  num_errs     = 0; /* number of errors in compression test so far */
     char *win_dir_name = "EXT_tempdir";
 
     status = make_sourcepath(dir_name, MAX_PATH_LEN);
