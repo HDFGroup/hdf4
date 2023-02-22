@@ -693,7 +693,7 @@ test_special_combos()
 
 *********************************************************************/
 #define MAIN_FILE "tmainfile.hdf" /* file where the SDS is created */
-#define EXT_FILE  "textfile.txt"  /* file where the external data is stored */
+#define EXT_FILE  "texternalfile.txt"  /* file where the external data is stored */
 #define SDS_NAME  "ExternalDS"    /* dataset will have data in an external file */
 #define RANK      1
 #define TMP_DIR   "EXT_tempdir/"  /* temporary dir to create the external file in */
