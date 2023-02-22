@@ -26,11 +26,11 @@
 
 #include "h4config.h"
 
-#ifdef H4_HAVE_GETOPT
 #ifdef H4_HAVE_UNISTD_H
 #include <unistd.h>
-#endif
 #else
+
+/* Alternative implementation for Windows */
 
 int          getopt(int argc, char *const argv[], const char *optstring);
 extern char *optarg;
