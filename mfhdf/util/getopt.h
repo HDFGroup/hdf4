@@ -26,11 +26,11 @@
 
 #include "h4config.h"
 
-#ifdef H4_HAVE_UNISTD_H
+#if defined(H4_HAVE_UNISTD_H) && !(defined(__MINGW32__) || defined(__MINGW64__))
 #include <unistd.h>
 #else
 
-/* Alternative implementation for Windows */
+/* Alternative implementation for Windows, including MinGW */
 
 int          getopt(int argc, char *const argv[], const char *optstring);
 extern char *optarg;
