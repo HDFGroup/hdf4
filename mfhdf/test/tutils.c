@@ -54,6 +54,8 @@ make_sourcepath(char *src_path, unsigned int size)
         strcpy(tempdir, "./");
 #endif /* _WIN32 */
 
+    fprintf(stderr, "make_sourcepath: tempdir = %s\n", tempdir);
+
     /* Verify that source path is not NULL */
     if (tempdir == NULL || tempdir[0] == '\0')
         return FAIL;
