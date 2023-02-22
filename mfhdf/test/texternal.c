@@ -812,6 +812,7 @@ test_change_extdir(void)
 
     /* Remove data file created */
     strcat(dir_name, EXT_FILE);
+    fprintf(stderr, " removing %s\n   %s\n   %s\n", dir_name, MAIN_FILE, TMP_DIR);
     remove(dir_name);
     remove(MAIN_FILE);
     remove(TMP_DIR);
