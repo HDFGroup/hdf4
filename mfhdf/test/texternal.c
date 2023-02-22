@@ -714,6 +714,7 @@ test_change_extdir(void)
     int32 sds_index;
     intn  status   = 0;
     intn  num_errs = 0; /* number of errors in compression test so far */
+    char *win_dir_name = "EXT_tempdir";
 
     status = make_sourcepath(dir_name, MAX_PATH_LEN);
     CHECK(status, FAIL, "make_datafilename");
@@ -722,7 +723,12 @@ test_change_extdir(void)
     sd_id = SDstart(MAIN_FILE, DFACC_CREATE);
     CHECK(sd_id, FAIL, "SDstart");
 
+#ifdef H4_HAVE_WIN32_API
+    _mkdir(win_dir_name);
+    HXsetcreatedir(win_dir_name);
+#else
     HXsetcreatedir(dir_name);
+#endif
 
     /* Create a one-dim dataset named SDS_NAME */
     dimsize[0] = 5;
@@ -760,21 +766,21 @@ test_change_extdir(void)
     status = HXsetdir(NULL);
     CHECK(status, FAIL, "HXsetdir NULL");
     status = SDreaddata(sds_id, &start, &stride, &edge, sds1_out);
-  fprintf(stderr, "external dir: <NULL>\n");
+    fprintf(stderr, "external dir: <NULL>\n");
     VERIFY(status, FAIL, "SDreaddata");
 
     /* Set the target directory to the location of the external file and read the dataset */
     status = HXsetdir(dir_name);
     CHECK(status, FAIL, "HXsetdir dir_name");
     status = SDreaddata(sds_id, &start, &stride, &edge, sds1_out);
-  fprintf(stderr, "external dir: <%s>\n", dir_name);
+    fprintf(stderr, "external dir: <%s>\n", dir_name);
     VERIFY(status, SUCCEED, "SDreaddata");
 
     /* Unset the target directory again and read the variable */
     status = HXsetdir(".");
     CHECK(status, FAIL, "HXsetdir .");
     status = SDreaddata(sds_id, &start, &stride, &edge, sds1_out);
-  fprintf(stderr, "external dir: <.>\n");
+    fprintf(stderr, "external dir: <.>\n");
     VERIFY(status, FAIL, "SDreaddata");
 
     dir_name_len = strlen(dir_name);
@@ -784,14 +790,14 @@ test_change_extdir(void)
     status = HXsetdir(another_path);
     CHECK(status, FAIL, "HXsetdir another_path");
     status = SDreaddata(sds_id, &start, &stride, &edge, sds1_out);
-  fprintf(stderr, "external dir: <%s>\n", dir_name);
+    fprintf(stderr, "external dir: <%s>\n", dir_name);
     VERIFY(status, FAIL, "SDreaddata");
     free(another_path);
 
     status = HXsetdir(dir_name);
     CHECK(status, FAIL, "HXsetdir dir_name");
     status = SDreaddata(sds_id, &start, &stride, &edge, sds1_out);
-  fprintf(stderr, "external dir: <%s>\n", dir_name);
+    fprintf(stderr, "external dir: <%s>\n", dir_name);
     VERIFY(status, SUCCEED, "SDreaddata");
 
     status = HXsetdir(NULL);
