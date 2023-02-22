@@ -700,21 +700,21 @@ test_special_combos()
 static int
 test_change_extdir(void)
 {
-    int32 sd_id;
-    int32 sds_id;
-    float sds1_data[] = {0.1, 2.3, 4.5, 6.7, 8.9};
-    float sds1_out[5];
-    int32 start = 0, stride = 1, edge;
-    float out_data[5];
-    int32 dimsize[RANK];
-    char  dir_name[MAX_PATH_LEN];
-    intn  dir_name_len;
-    char *another_path;
-    int32 access_mode = DFACC_READ;
-    int32 sds_index;
-    intn  status       = 0;
-    intn  num_errs     = 0; /* number of errors in compression test so far */
-    char *win_dir_name = "EXT_tempdir";
+    int32       sd_id;
+    int32       sds_id;
+    float       sds1_data[] = {0.1, 2.3, 4.5, 6.7, 8.9};
+    float       sds1_out[5];
+    int32       start = 0, stride = 1, edge;
+    float       out_data[5];
+    int32       dimsize[RANK];
+    char        dir_name[MAX_PATH_LEN];
+    intn        dir_name_len;
+    char       *another_path;
+    int32       access_mode = DFACC_READ;
+    int32       sds_index;
+    intn        status       = 0;
+    intn        num_errs     = 0; /* number of errors in compression test so far */
+    const char *win_dir_name = "EXT_tempdir";
 
     status = make_sourcepath(dir_name, MAX_PATH_LEN);
     CHECK(status, FAIL, "make_datafilename");
@@ -725,10 +725,13 @@ test_change_extdir(void)
 
 #ifdef H4_HAVE_WIN32_API
     _mkdir(win_dir_name);
-    HXsetcreatedir(win_dir_name);
-#else
-    HXsetcreatedir(dir_name);
+    strcpy(dir_name, ".\\");
+    strcat(dir_name, win_dir_name);
 #endif
+
+    fprintf(stderr, "dir_name for creating: %s\n", dir_name);
+
+    HXsetcreatedir(dir_name);
 
     /* Create a one-dim dataset named SDS_NAME */
     dimsize[0] = 5;
