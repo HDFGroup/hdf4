@@ -185,7 +185,7 @@ HDF_README_PROPERTIES(HDF4_BUILD_FORTRAN)
 # Configure the COPYING.txt file for the windows binary package
 #-----------------------------------------------------------------------------
 if (WIN32 OR MINGW)
-  configure_file (${HDF4_SOURCE_DIR}/COPYING ${HDF5_BINARY_DIR}/COPYING.txt @ONLY)
+  configure_file (${HDF4_SOURCE_DIR}/COPYING ${HDF4_BINARY_DIR}/COPYING.txt @ONLY)
 endif ()
 
 #-----------------------------------------------------------------------------
@@ -303,7 +303,7 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
     endif ()
 #WiX variables
     set (CPACK_WIX_UNINSTALL "1")
-    set (CPACK_RESOURCE_FILE_LICENSE "${HDF5_BINARY_DIR}/COPYING.txt")
+    set (CPACK_RESOURCE_FILE_LICENSE "${HDF4_BINARY_DIR}/COPYING.txt")
     set(CPACK_WIX_PRODUCT_ICON "${HDF_RESOURCES_DIR}\\\\hdf.ico")
     set(CPACK_WIX_PROPERTY_ARPCOMMENTS "Hierarchical Data Format (HDF) Software Library and Utilities")
     set(CPACK_WIX_PROPERTY_ARPURLINFOABOUT "${HDF4_PACKAGE_URL}")
