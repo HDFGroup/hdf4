@@ -728,7 +728,7 @@ test_change_extdir(void)
         temp_dir = (char *)malloc(strlen(TMP_DIR)+1);
         strcpy(temp_dir, TMP_DIR);
 
-#if defined H4_HAVE_WIN32_API && !defined __MINGW32__
+#if defined H4_HAVE_WIN32_API && defined __MINGW32__
         command_ret = _mkdir(temp_dir);
 #else
         command_ret = mkdir(temp_dir, 0755);
