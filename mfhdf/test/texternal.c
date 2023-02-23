@@ -11,6 +11,7 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <sys/stat.h>
 #include "mfhdf.h"
 
 #ifdef HDF
@@ -722,7 +723,8 @@ test_change_extdir(void)
     /* When srcdir is not available, make up a directory to create the external
        file to complicate the subsequent reads */
     if (!strcmp(dir_name, "./")) {
-        mkdir(TMP_DIR, 0755);
+        int ret = mkdir(TMP_DIR, 0755);
+        CHECK(ret, FAIL, "mkdir");
         strcat(dir_name, TMP_DIR);
     }
 
