@@ -696,25 +696,25 @@ test_special_combos()
 #define EXT_FILE  "textfile.txt"  /* file where the external data is stored */
 #define SDS_NAME  "ExternalDS"    /* dataset will have data in an external file */
 #define RANK      1
-#define TMP_DIR   "EXT_tempdir/"  /* temporary dir to create the external file in */
+#define TMP_DIR   "EXT_tempdir/" /* temporary dir to create the external file in */
 
 static int
 test_change_extdir(void)
 {
-    int32       sd_id;
-    int32       sds_id;
-    float       sds1_data[] = {0.1, 2.3, 4.5, 6.7, 8.9};
-    float       sds1_out[5];
-    int32       start = 0, stride = 1, edge;
-    float       out_data[5];
-    int32       dimsize[RANK];
-    char        dir_name[MAX_PATH_LEN];
-    intn        dir_name_len;
-    char       *another_path;
-    int32       access_mode = DFACC_READ;
-    int32       sds_index;
-    intn        status       = 0;
-    intn        num_errs     = 0; /* number of errors in compression test so far */
+    int32 sd_id;
+    int32 sds_id;
+    float sds1_data[] = {0.1, 2.3, 4.5, 6.7, 8.9};
+    float sds1_out[5];
+    int32 start = 0, stride = 1, edge;
+    float out_data[5];
+    int32 dimsize[RANK];
+    char  dir_name[MAX_PATH_LEN];
+    intn  dir_name_len;
+    char *another_path;
+    int32 access_mode = DFACC_READ;
+    int32 sds_index;
+    intn  status   = 0;
+    intn  num_errs = 0; /* number of errors in compression test so far */
 
     status = make_sourcepath(dir_name, MAX_PATH_LEN);
     CHECK(status, FAIL, "make_datafilename");
