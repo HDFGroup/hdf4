@@ -725,7 +725,7 @@ test_change_extdir(void)
     if (!strcmp(dir_name, "./")) {
 
         /* Facilitate the removal of the temporary directory later */
-        temp_dir = (char *)malloc(strlen(TMP_DIR)+1);
+        temp_dir = (char *)malloc(strlen(TMP_DIR) + 1);
         strcpy(temp_dir, TMP_DIR);
 
 #if defined H4_HAVE_WIN32_API && defined __MINGW32__
@@ -821,7 +821,7 @@ test_change_extdir(void)
     CHECK(status, FAIL, "SDend");
 
     /* Remove external data file */
-    created_file_path = (char *)malloc(strlen(dir_name) + strlen(EXT_FILE)+1);
+    created_file_path = (char *)malloc(strlen(dir_name) + strlen(EXT_FILE) + 1);
     CHECK_ALLOC(created_file_path, "created_file_path", "test_change_extdir");
     strcpy(created_file_path, dir_name);
     strcat(created_file_path, EXT_FILE);
