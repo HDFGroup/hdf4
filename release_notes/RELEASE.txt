@@ -38,6 +38,15 @@ New features and changes
 ========================
     Configuration:
     -------------
+    - Removed checks for flex/lex and bison/yacc in the Autotools
+
+      flex and bison are only needed to regenerate the ncgen parser files.
+      This is done via bin/genparser and not using Makefiles, so the checks
+      for these programs have been removed from configure (they were never
+      checked for in CMake).
+
+      (DER - 2023/02/23)
+
     - Removed VOID and VOIDP from hdfi.h
 
       These were typedef'd to void and void *, respectively. Although they did
