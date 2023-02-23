@@ -676,10 +676,152 @@ test_special_combos()
     return num_errs;
 } /* test_special_combos() */
 
+/********************************************************************
+   Name: test_change_extdir() - tests re-setting external directory
+                with valid and invalid values.
+   Description:
+    The main contents include:
+    - Create an HDF file and a dataset in it
+    - Set create external directory to the source test directory
+    - Promote the dataset to an external element
+    - Try setting the external directory to various values and verify
+      the behavior of SDreaddata each time
+    - Remove the data file and the external file
+
+   Return value:
+    The number of errors occurred in this routine.
+
+*********************************************************************/
+#define MAIN_FILE "tmainfile.hdf" /* file where the SDS is created */
+#define EXT_FILE  "textfile.txt"  /* file where the external data is stored */
+#define SDS_NAME  "ExternalDS"    /* dataset will have data in an external file */
+#define RANK      1
+#define TMP_DIR   "EXT_tempdir/"  /* temporary dir to create the external file in */
+
+static int
+test_change_extdir(void)
+{
+    int32       sd_id;
+    int32       sds_id;
+    float       sds1_data[] = {0.1, 2.3, 4.5, 6.7, 8.9};
+    float       sds1_out[5];
+    int32       start = 0, stride = 1, edge;
+    float       out_data[5];
+    int32       dimsize[RANK];
+    char        dir_name[MAX_PATH_LEN];
+    intn        dir_name_len;
+    char       *another_path;
+    int32       access_mode = DFACC_READ;
+    int32       sds_index;
+    intn        status       = 0;
+    intn        num_errs     = 0; /* number of errors in compression test so far */
+
+    status = make_sourcepath(dir_name, MAX_PATH_LEN);
+    CHECK(status, FAIL, "make_datafilename");
+
+    /* When srcdir is not available, make up a directory to create the external
+       file to complicate the subsequent reads */
+    if (!strcmp(dir_name, "./")) {
+        mkdir(TMP_DIR, 0755);
+        strcat(dir_name, TMP_DIR);
+    }
+
+    /* Create the main file */
+    sd_id = SDstart(MAIN_FILE, DFACC_CREATE);
+    CHECK(sd_id, FAIL, "SDstart");
+
+    /* Set the directory to put the external file in */
+    HXsetcreatedir(dir_name);
+
+    /* Create a one-dim dataset named SDS_NAME */
+    dimsize[0] = 5;
+    edge       = dimsize[0];
+    sds_id     = SDcreate(sd_id, SDS_NAME, DFNT_FLOAT32, RANK, dimsize);
+    CHECK(sds_id, FAIL, "SDcreate");
+
+    /* Promote the data set to an external data set by storing its data in
+       the external file EXT_FILE */
+    status = SDsetexternalfile(sds_id, EXT_FILE, 0);
+    CHECK(status, FAIL, "SDsetexternalfile");
+
+    /* Write to the dataset, the data will be stored in the external file EXT_FILE */
+    status = SDwritedata(sds_id, &start, &stride, &edge, sds1_data);
+    CHECK(status, FAIL, "SDwritedata");
+
+    status = SDendaccess(sds_id);
+    CHECK(status, FAIL, "SDendaccess");
+    status = SDend(sd_id);
+    CHECK(status, FAIL, "SDend");
+
+    /* Open the file to read */
+    sd_id = SDstart(MAIN_FILE, DFACC_READ);
+    CHECK(sd_id, FAIL, "SDstart");
+
+    /* Determine the index of the dataset */
+    sds_index = SDnametoindex(sd_id, SDS_NAME);
+    CHECK(sds_index, FAIL, "SDnametoindex");
+
+    /* Dataset identifier */
+    sds_id = SDselect(sd_id, sds_index);
+    CHECK(sds_id, FAIL, "SDselect");
+
+    /* Unset the target directory and read the variable */
+    status = HXsetdir(NULL);
+    CHECK(status, FAIL, "HXsetdir NULL");
+    status = SDreaddata(sds_id, &start, &stride, &edge, sds1_out);
+    VERIFY(status, FAIL, "SDreaddata");
+
+    /* Set the target directory to the location of the external file and read the dataset */
+    status = HXsetdir(dir_name);
+    CHECK(status, FAIL, "HXsetdir dir_name");
+    status = SDreaddata(sds_id, &start, &stride, &edge, sds1_out);
+    VERIFY(status, SUCCEED, "SDreaddata");
+
+    /* Unset the target directory again and read the variable */
+    status = HXsetdir(".");
+    CHECK(status, FAIL, "HXsetdir .");
+    status = SDreaddata(sds_id, &start, &stride, &edge, sds1_out);
+    VERIFY(status, FAIL, "SDreaddata");
+
+    dir_name_len = strlen(dir_name);
+    another_path = (char *)malloc(sizeof(char) * dir_name_len + 20);
+    strcpy(another_path, dir_name);
+    strcat(another_path, "non-existing-dir");
+    status = HXsetdir(another_path);
+    CHECK(status, FAIL, "HXsetdir another_path");
+    status = SDreaddata(sds_id, &start, &stride, &edge, sds1_out);
+    VERIFY(status, FAIL, "SDreaddata");
+    free(another_path);
+
+    status = HXsetdir(dir_name);
+    CHECK(status, FAIL, "HXsetdir dir_name");
+    status = SDreaddata(sds_id, &start, &stride, &edge, sds1_out);
+    VERIFY(status, SUCCEED, "SDreaddata");
+
+    status = HXsetdir(NULL);
+    CHECK(status, FAIL, "HXsetdir NULL");
+    status = SDreaddata(sds_id, &start, &stride, &edge, sds1_out);
+    VERIFY(status, FAIL, "SDreaddata");
+
+    /* Terminates access to the SD interface and closes the file */
+    status = SDendaccess(sds_id);
+    CHECK(status, FAIL, "SDendaccess");
+    status = SDend(sd_id);
+    CHECK(status, FAIL, "SDend");
+
+    /* Remove data file created */
+    strcat(dir_name, EXT_FILE);
+    remove(dir_name);
+    remove(MAIN_FILE);
+    remove(TMP_DIR);
+
+    /* Return the number of errors that's been kept track of so far */
+    return num_errs;
+
+} /* test_change_extdir */
+
 /* Test driver for testing external file functions */
-/* extern int test_external()
- */
-int
+extern int
 test_external()
 {
     int  ii, jj, kk;
@@ -706,8 +848,15 @@ test_external()
     /* Test multiple specialness */
     num_errs = num_errs + test_special_combos();
 
-    if (num_errs == 0)
+    /* Test reading external elements with multiple HXsetdir calls */
+    num_errs = num_errs + test_change_extdir();
+
+    if (num_errs == 0) {
         PASSED();
+    }
+    else {
+        H4_FAILED();
+    }
     return num_errs;
 }
 
