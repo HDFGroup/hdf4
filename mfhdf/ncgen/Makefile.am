@@ -48,16 +48,6 @@ ctest0_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
 
 ftest0_SOURCES=
 
-## Recipe for building the ncgentab.c file
-##ncgentab.c ncgentab.h: ncgen.h ncgen.y ncgenyy.c
-##	$(YACC) -d $(srcdir)/ncgen.y
-##	mv y.tab.c ncgentab.c
-##	mv y.tab.h ncgentab.h
-
-##ncgenyy.c: ncgen.l
-##	$(LEX) $(srcdir)/ncgen.l
-##	mv lex.yy.c ncgenyy.c
-
 #############################################################################
 ##                            Documentation                                ##
 #############################################################################

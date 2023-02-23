@@ -352,17 +352,6 @@ AR_FLAGS=cr
 ## correctly.
 export AR
 
-
-AC_CHECK_PROGS([YACC], ['bison -y' byacc yacc], [none], [])
-if test "$YACC" = "none"; then
-  AC_MSG_ERROR([cannot find bison/yacc utility])
-fi
-
-AC_CHECK_PROGS([LEX], [flex lex], [none], [])
-if test "$LEX" = "none"; then
-  AC_MSG_ERROR([cannot find flex/lex utility])
-fi
-
 AC_CHECK_PROG([DIFF],     [diff],     [diff -w])
 AC_CHECK_PROG([MAKEINFO], [makeinfo], [makeinfo])
 AC_CHECK_PROG([NEQN],     [neqn],     [neqn])
