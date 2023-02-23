@@ -11,7 +11,6 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include <sys/stat.h>
 #include "mfhdf.h"
 
 #ifdef HDF
@@ -707,15 +706,16 @@ test_change_extdir(void)
     float sds1_data[] = {0.1, 2.3, 4.5, 6.7, 8.9};
     float sds1_out[5];
     int32 start = 0, stride = 1, edge;
-    float out_data[5];
     int32 dimsize[RANK];
-    char  dir_name[MAX_PATH_LEN];
+    char  dir_name[MAX_PATH_LEN]; /* directory from srcdir */
     intn  dir_name_len;
-    char *another_path;
-    int32 access_mode = DFACC_READ;
+    char *another_path      = NULL; /* another path to test reading external file */
+    char *temp_dir          = NULL; /* temp dir to create the external file in */
+    char *created_file_path = NULL; /* path to the created external file */
     int32 sds_index;
-    intn  status   = 0;
-    intn  num_errs = 0; /* number of errors in compression test so far */
+    int   command_ret = 0; /* retvalue from system commands */
+    intn  status      = 0;
+    intn  num_errs    = 0; /* number of errors in compression test so far */
 
     status = make_sourcepath(dir_name, MAX_PATH_LEN);
     CHECK(status, FAIL, "make_datafilename");
@@ -723,9 +723,18 @@ test_change_extdir(void)
     /* When srcdir is not available, make up a directory to create the external
        file to complicate the subsequent reads */
     if (!strcmp(dir_name, "./")) {
-        int ret = mkdir(TMP_DIR, 0755);
-        CHECK(ret, FAIL, "mkdir");
-        strcat(dir_name, TMP_DIR);
+
+        /* Facilitate the removal of the temporary directory later */
+        temp_dir = (char *)malloc(strlen(TMP_DIR));
+        strcpy(temp_dir, TMP_DIR);
+
+#if defined H4_HAVE_WIN32_API && !defined __MINGW32__
+        command_ret = _mkdir(temp_dir);
+#else
+        command_ret = mkdir(temp_dir, 0755);
+#endif
+        CHECK(command_ret, FAIL, "mkdir");
+        strcat(dir_name, temp_dir);
     }
 
     /* Create the main file */
@@ -811,11 +820,24 @@ test_change_extdir(void)
     status = SDend(sd_id);
     CHECK(status, FAIL, "SDend");
 
-    /* Remove data file created */
-    strcat(dir_name, EXT_FILE);
-    remove(dir_name);
-    remove(MAIN_FILE);
-    remove(TMP_DIR);
+    /* Remove external data file */
+    created_file_path = (char *)malloc(strlen(dir_name) + strlen(EXT_FILE));
+    CHECK_ALLOC(created_file_path, "created_file_path", "test_change_extdir");
+    strcpy(created_file_path, dir_name);
+    strcat(created_file_path, EXT_FILE);
+    command_ret = remove(created_file_path);
+    CHECK(command_ret, FAIL, "remove created_file_path");
+
+    /* Remove hdf file */
+    command_ret = remove(MAIN_FILE);
+    CHECK(command_ret, FAIL, "remove MAIN_FILE");
+
+    /* Remove temporary directory used in case no src_dir */
+    if (temp_dir) {
+        command_ret = remove(temp_dir);
+        CHECK(command_ret, FAIL, "remove temp_dir");
+        free(temp_dir);
+    }
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
