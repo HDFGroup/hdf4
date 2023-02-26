@@ -43,9 +43,7 @@ make_sourcepath(char *src_path, unsigned int size)
         strcat(tempdir, "\0");
     }
 
-    /* This is to get to the file when the library was built without srcdir
-       option and the test is ran by ./hdftest in the test src directory
-       instead of by make check.  - BMR 2007/08/09 */
+    /* No srcdir option */
     if (srcdir == NULL)
         strcpy(tempdir, "./");
 
