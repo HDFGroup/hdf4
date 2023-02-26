@@ -834,7 +834,7 @@ test_change_extdir(void)
 
     /* Remove temporary directory used in case no src_dir */
     if (temp_dir) {
-        command_ret = remove(temp_dir);
+        command_ret = rmdir(temp_dir);
         CHECK(command_ret, FAIL, "remove temp_dir");
         free(temp_dir);
     }

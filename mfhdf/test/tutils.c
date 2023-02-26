@@ -34,6 +34,7 @@ make_sourcepath(char *src_path, unsigned int size)
 
     tempdir = (char *)malloc(size * sizeof(char));
     CHECK_ALLOC(tempdir, "tempdir", "make_datafilename");
+    memset(tempdir, 0, size);
 
     /* Generate the source path */
     if (srcdir && ((strlen(srcdir)) + 1) < size) {
@@ -42,17 +43,11 @@ make_sourcepath(char *src_path, unsigned int size)
         strcat(tempdir, "\0");
     }
 
-    /* Windows doesn't set srcdir, and generates files in a different relative
-       path, so we need to special case here.  It is best to look for the
-       testfile in the same path, and the Windows test script will make sure
-       to put it there first.  - SJW 2007/09/19 (from tnetcdf.c) */
-#if !defined _WIN32
     /* This is to get to the file when the library was built without srcdir
        option and the test is ran by ./hdftest in the test src directory
        instead of by make check.  - BMR 2007/08/09 */
     if (srcdir == NULL)
         strcpy(tempdir, "./");
-#endif /* _WIN32 */
 
     /* Verify that source path is not NULL */
     if (tempdir == NULL || tempdir[0] == '\0')
