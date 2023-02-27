@@ -7,6 +7,7 @@ include $(top_srcdir)/config/commence.am
 ## Setup the different includes and preprocessor #defines we need.
 ncdump_INCLUDES=-I$(top_srcdir)/hdf/src   \
          -I$(top_srcdir)/mfhdf/libsrc     \
+         -I$(top_srcdir)/mfhdf/util       \
          -I$(top_builddir)/mfhdf/libsrc
 DEFINES=-DNDEBUG -DHDF
 AM_CPPFLAGS=$(ncdump_INCLUDES) $(XDRINC) $(DEFINES)
@@ -24,8 +25,8 @@ bin_PROGRAMS = ncdump
 man1_MANS = ncdump.1
 
 ## Information for building the "ncdump" program
-ncdump_SOURCES = dumplib.c ncdump.c vardata.c
-ncdump_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB) $(XDRLIB)
+ncdump_SOURCES = dumplib.c ncdump.c vardata.c $(top_srcdir)/mfhdf/util/getopt.c
+ncdump_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
 ncdump_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
 
 #############################################################################
