@@ -26,18 +26,16 @@
 
 #include "h4config.h"
 
-#if defined(H4_HAVE_UNISTD_H) && !(defined(__MINGW32__) || defined(__MINGW64__))
-#include <unistd.h>
-#else
+/* Instead of relying on the system getopt(), HDF4 includes its own, with all
+ * symbols prefixed with 'h4'. Be careful replacing this! Getting the ifdefs
+ * correct for Windows-y POSIX platforms like MinGW and Cygwin is tricky.
+ */
 
-/* Alternative implementation for Windows, including MinGW */
-
-int          getopt(int argc, char *const argv[], const char *optstring);
-extern char *optarg;
-extern int   opterr;
-extern int   optind;
-extern int   optopt;
-
-#endif
+int          h4getopt(int argc, char *const argv[], const char *optstring);
+extern char *h4optarg;
+extern int   h4opterr;
+extern int   h4optind;
+extern int   h4optopt;
+extern int   h4optreset;
 
 #endif /* ifndef H4GETOPT_H_ */
