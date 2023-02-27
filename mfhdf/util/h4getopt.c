@@ -49,8 +49,8 @@ char *h4optarg   = NULL; /* argument associated with option */
 int
 h4getopt(int argc, char *const argv[], const char *optstring)
 {
-    static char *place = EMSG; /* option letter processing */
-    char        *oli;          /* option letter list index */
+    static const char *place = EMSG; /* option letter processing */
+    char              *oli;          /* option letter list index */
 
     if (h4optreset || *place == 0) { /* update scanning pointer */
         h4optreset = 0;
@@ -58,14 +58,14 @@ h4getopt(int argc, char *const argv[], const char *optstring)
         if (h4optind >= argc || *place++ != '-') {
             /* Argument is absent or is not an option */
             place = EMSG;
-            return (-1);
+            return -1;
         }
         h4optopt = *place++;
         if (h4optopt == '-' && *place == 0) {
             /* "--" => end of options */
             ++h4optind;
             place = EMSG;
-            return (-1);
+            return -1;
         }
         if (h4optopt == 0) {
             /* Solitary '-', treat as a '-' option
@@ -85,7 +85,7 @@ h4getopt(int argc, char *const argv[], const char *optstring)
             ++h4optind;
         if (h4opterr && *optstring != ':')
             (void)fprintf(stderr, "unknown option -- %c\n", h4optopt);
-        return (BADCH);
+        return BADCH;
     }
 
     /* Does this option need an argument? */
@@ -106,13 +106,13 @@ h4getopt(int argc, char *const argv[], const char *optstring)
             /* option-argument absent */
             place = EMSG;
             if (*optstring == ':')
-                return (BADARG);
+                return BADARG;
             if (h4opterr)
                 (void)fprintf(stderr, "option requires an argument -- %c\n", h4optopt);
-            return (BADCH);
+            return BADCH;
         }
         place = EMSG;
         ++h4optind;
     }
-    return (h4optopt); /* return option letter */
+    return h4optopt; /* return option letter */
 }
