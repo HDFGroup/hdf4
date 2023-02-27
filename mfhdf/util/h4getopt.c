@@ -36,7 +36,7 @@ int   h4opterr   = 1;    /* if error message should be printed */
 int   h4optind   = 1;    /* index into parent argv vector */
 int   h4optopt   = 0;    /* character checked for validity */
 int   h4optreset = 0;    /* reset getopt */
-char *h4optarg = NULL; /* argument associated with option */
+char *h4optarg   = NULL; /* argument associated with option */
 
 #define BADCH  (int)'?'
 #define BADARG (int)':'
