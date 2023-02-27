@@ -622,7 +622,7 @@ main(int argc, char *argv[])
     if (1 == argc) /* if no arguments given, print help and exit */
         usage();
 
-    while ((c = getopt(argc, argv, "b:cf:hul:n:v:d:V")) != EOF)
+    while ((c = h4getopt(argc, argv, "b:cf:hul:n:v:d:V")) != EOF)
         switch (c) {
             case 'V': /* display version of the library */
                 printf("%s, %s\n\n", argv[0], LIBVER_STRING);

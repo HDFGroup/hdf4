@@ -47,7 +47,7 @@ char *optarg = NULL; /* argument associated with option */
  *  Parse argc/argv argument vector.
  */
 int
-getopt(int argc, char *const argv[], const char *optstring)
+h4getopt(int argc, char *const argv[], const char *optstring)
 {
     static char *place = EMSG; /* option letter processing */
     char        *oli;          /* option letter list index */

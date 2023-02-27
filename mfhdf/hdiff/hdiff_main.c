@@ -101,7 +101,7 @@ main(int argc, char *argv[])
     if (argc < 2)
         usage();
 
-    while ((c = getopt(argc, argv, "VbgsdSDe:t:v:u:p:")) != EOF) {
+    while ((c = h4getopt(argc, argv, "VbgsdSDe:t:v:u:p:")) != EOF) {
         switch (c) {
             case 'V': /* display version of the library */
                 printf("%s, %s\n\n", argv[0], LIBVER_STRING);

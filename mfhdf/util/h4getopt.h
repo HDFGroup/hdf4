@@ -31,7 +31,7 @@
  * platforms like MinGW and Cygwin is tricky.
  */
 
-int          getopt(int argc, char *const argv[], const char *optstring);
+int          h4getopt(int argc, char *const argv[], const char *optstring);
 extern char *optarg;
 extern int   opterr;
 extern int   optind;

@@ -52,7 +52,7 @@ main(int argc, char *argv[])
     fortran_flag = 0;
     netcdf_flag  = 0;
 
-    while ((c = getopt(argc, argv, "Vbcfno:")) != EOF)
+    while ((c = h4getopt(argc, argv, "Vbcfno:")) != EOF)
         switch (c) {
             case 'V': /* for c output */
                 printf("%s, %s\n\n", argv[0], LIBVER_STRING);
