@@ -54,7 +54,7 @@ h4getopt(int argc, char *const argv[], const char *optstring)
 
     if (h4optreset || *place == 0) { /* update scanning pointer */
         h4optreset = 0;
-        place    = argv[h4optind];
+        place      = argv[h4optind];
         if (h4optind >= argc || *place++ != '-') {
             /* Argument is absent or is not an option */
             place = EMSG;
