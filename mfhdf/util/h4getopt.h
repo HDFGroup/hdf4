@@ -26,18 +26,16 @@
 
 #include "h4config.h"
 
-#if defined(H4_HAVE_UNISTD_H) && !(defined(__MINGW32__) || defined(__MINGW64__))
-#include <unistd.h>
-#else
-
-/* Alternative implementation for Windows, including MinGW */
+/* Instead of relying on the system getopt(), HDF4 includes its own. Be
+ * careful replacing this! Getting the ifdefs correct for Windows-y POSIX
+ * platforms like MinGW and Cygwin is tricky.
+ */
 
 int          getopt(int argc, char *const argv[], const char *optstring);
 extern char *optarg;
 extern int   opterr;
 extern int   optind;
 extern int   optopt;
-
-#endif
+extern int   optreset;
 
 #endif /* ifndef H4GETOPT_H_ */
