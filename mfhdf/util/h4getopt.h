@@ -26,16 +26,16 @@
 
 #include "h4config.h"
 
-/* Instead of relying on the system getopt(), HDF4 includes its own. Be
- * careful replacing this! Getting the ifdefs correct for Windows-y POSIX
- * platforms like MinGW and Cygwin is tricky.
+/* Instead of relying on the system getopt(), HDF4 includes its own, with all
+ * symbols prefixed with 'h4'. Be careful replacing this! Getting the ifdefs
+ * correct for Windows-y POSIX platforms like MinGW and Cygwin is tricky.
  */
 
 int          h4getopt(int argc, char *const argv[], const char *optstring);
-extern char *optarg;
-extern int   opterr;
-extern int   optind;
-extern int   optopt;
-extern int   optreset;
+extern char *h4optarg;
+extern int   h4opterr;
+extern int   h4optind;
+extern int   h4optopt;
+extern int   h4optreset;
 
 #endif /* ifndef H4GETOPT_H_ */

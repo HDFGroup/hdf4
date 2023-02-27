@@ -32,11 +32,11 @@
 #include <stdio.h>
 #include <string.h>
 
-int opterr   = 1;    /* if error message should be printed */
-int optind   = 1;    /* index into parent argv vector */
-int optopt   = 0;    /* character checked for validity */
-int optreset = 0;    /* reset getopt */
-char *optarg = NULL; /* argument associated with option */
+int   h4opterr   = 1;    /* if error message should be printed */
+int   h4optind   = 1;    /* index into parent argv vector */
+int   h4optopt   = 0;    /* character checked for validity */
+int   h4optreset = 0;    /* reset getopt */
+char *h4optarg = NULL; /* argument associated with option */
 
 #define BADCH  (int)'?'
 #define BADARG (int)':'
@@ -52,67 +52,67 @@ h4getopt(int argc, char *const argv[], const char *optstring)
     static char *place = EMSG; /* option letter processing */
     char        *oli;          /* option letter list index */
 
-    if (optreset || *place == 0) { /* update scanning pointer */
-        optreset = 0;
-        place    = argv[optind];
-        if (optind >= argc || *place++ != '-') {
+    if (h4optreset || *place == 0) { /* update scanning pointer */
+        h4optreset = 0;
+        place    = argv[h4optind];
+        if (h4optind >= argc || *place++ != '-') {
             /* Argument is absent or is not an option */
             place = EMSG;
             return (-1);
         }
-        optopt = *place++;
-        if (optopt == '-' && *place == 0) {
+        h4optopt = *place++;
+        if (h4optopt == '-' && *place == 0) {
             /* "--" => end of options */
-            ++optind;
+            ++h4optind;
             place = EMSG;
             return (-1);
         }
-        if (optopt == 0) {
+        if (h4optopt == 0) {
             /* Solitary '-', treat as a '-' option
                if the program (eg su) is looking for it. */
             place = EMSG;
             if (strchr(optstring, '-') == NULL)
                 return -1;
-            optopt = '-';
+            h4optopt = '-';
         }
     }
     else
-        optopt = *place++;
+        h4optopt = *place++;
 
     /* See if option letter is one the caller wanted... */
-    if (optopt == ':' || (oli = strchr(optstring, optopt)) == NULL) {
+    if (h4optopt == ':' || (oli = strchr(optstring, h4optopt)) == NULL) {
         if (*place == 0)
-            ++optind;
-        if (opterr && *optstring != ':')
-            (void)fprintf(stderr, "unknown option -- %c\n", optopt);
+            ++h4optind;
+        if (h4opterr && *optstring != ':')
+            (void)fprintf(stderr, "unknown option -- %c\n", h4optopt);
         return (BADCH);
     }
 
     /* Does this option need an argument? */
     if (oli[1] != ':') {
         /* don't need argument */
-        optarg = NULL;
+        h4optarg = NULL;
         if (*place == 0)
-            ++optind;
+            ++h4optind;
     }
     else {
         /* Option-argument is either the rest of this argument or the
            entire next argument. */
         if (*place)
-            optarg = place;
-        else if (argc > ++optind)
-            optarg = argv[optind];
+            h4optarg = place;
+        else if (argc > ++h4optind)
+            h4optarg = argv[h4optind];
         else {
             /* option-argument absent */
             place = EMSG;
             if (*optstring == ':')
                 return (BADARG);
-            if (opterr)
-                (void)fprintf(stderr, "option requires an argument -- %c\n", optopt);
+            if (h4opterr)
+                (void)fprintf(stderr, "option requires an argument -- %c\n", h4optopt);
             return (BADCH);
         }
         place = EMSG;
-        ++optind;
+        ++h4optind;
     }
-    return (optopt); /* return option letter */
+    return (h4optopt); /* return option letter */
 }

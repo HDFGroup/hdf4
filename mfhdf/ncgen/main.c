@@ -44,7 +44,7 @@ main(int argc, char *argv[])
     yyin  = stdin;
     yyout = stdout;
 
-    opterr   = 1; /* print error message if bad option */
+    h4opterr = 1; /* print error message if bad option */
     progname = argv[0];
     cdlname  = "-";
 
@@ -72,12 +72,12 @@ main(int argc, char *argv[])
                 break;
             case 'o': /* to explicitly specify output name */
                 netcdf_flag = 1;
-                netcdf_name = (char *)emalloc(strlen(optarg) + 1);
+                netcdf_name = (char *)emalloc(strlen(h4optarg) + 1);
                 if (!netcdf_name) {
                     derror("%s: out of memory", progname);
                     exit(1);
                 }
-                strcpy(netcdf_name, optarg);
+                strcpy(netcdf_name, h4optarg);
                 break;
             case '?':
                 usage();
@@ -89,8 +89,8 @@ main(int argc, char *argv[])
         exit(8);
     }
 
-    argc -= optind;
-    argv += optind;
+    argc -= h4optind;
+    argv += h4optind;
 
     if (argc > 1) {
         derror("%s: only one input file argument permitted", progname);
