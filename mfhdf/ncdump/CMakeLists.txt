@@ -14,7 +14,7 @@ set (ncdump_SRCS
 
 if (NOT ONLY_SHARED_LIBS)
   add_executable (ncdump ${ncdump_SRCS})
-  target_include_directories (ncdump PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};$<$<BOOL:${HDF4_BUILD_XDR_LIB}>:${HDF4_MFHDF_XDR_DIR}>")
+  target_include_directories (ncdump PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_MFHDF_UTIL_DIR};$<$<BOOL:${HDF4_BUILD_XDR_LIB}>:${HDF4_MFHDF_XDR_DIR}>")
   TARGET_C_PROPERTIES (ncdump STATIC)
   target_link_libraries (ncdump PRIVATE ${HDF4_MF_LIB_TARGET})
   set_target_properties (ncdump PROPERTIES COMPILE_DEFINITIONS "HDF")
@@ -24,7 +24,7 @@ endif ()
 
 if (BUILD_SHARED_LIBS)
   add_executable (ncdump-shared ${ncdump_SRCS})
-  target_include_directories (ncdump-shared PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};$<$<BOOL:${HDF4_BUILD_XDR_LIB}>:${HDF4_MFHDF_XDR_DIR}>")
+  target_include_directories (ncdump-shared PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_MFHDF_UTIL_DIR};$<$<BOOL:${HDF4_BUILD_XDR_LIB}>:${HDF4_MFHDF_XDR_DIR}>")
   TARGET_C_PROPERTIES (ncdump-shared SHARED)
   target_link_libraries (ncdump-shared PRIVATE ${HDF4_MF_LIBSH_TARGET})
   set_target_properties (ncdump-shared PROPERTIES COMPILE_DEFINITIONS "HDF")
