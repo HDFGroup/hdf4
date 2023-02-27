@@ -49,8 +49,8 @@ char *h4optarg   = NULL; /* argument associated with option */
 int
 h4getopt(int argc, char *const argv[], const char *optstring)
 {
-    static const char *place = EMSG; /* option letter processing */
-    char              *oli;          /* option letter list index */
+    static char *place = EMSG; /* option letter processing */
+    char        *oli;          /* option letter list index */
 
     if (h4optreset || *place == 0) { /* update scanning pointer */
         h4optreset = 0;
