@@ -39,7 +39,7 @@ endif
 
 ## Information for building the "ncgen" program
 ncgen_SOURCES = close.c escapes.c generate.c genlib.c getfill.c init.c      \
-                load.c main.c ncgentab.c $(top_srcdir)/mfhdf/util/getopt.c
+                load.c main.c ncgentab.c $(top_srcdir)/mfhdf/util/h4getopt.c
 ncgen_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
 ncgen_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
 

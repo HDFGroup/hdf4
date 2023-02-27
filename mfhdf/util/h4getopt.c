@@ -27,7 +27,7 @@
  * SUCH DAMAGE.
  */
 
-#include "getopt.h"
+#include "h4getopt.h"
 
 #include <stdio.h>
 #include <string.h>

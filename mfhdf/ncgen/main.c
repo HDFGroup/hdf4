@@ -7,7 +7,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "getopt.h"
+#include "h4getopt.h"
 
 #include "ncgen.h"
 #include "genlib.h"

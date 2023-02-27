@@ -17,7 +17,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-#include "getopt.h"
+#include "h4getopt.h"
 #include "hdf.h"
 #include "hfile.h"
 #include "mfhdf.h"

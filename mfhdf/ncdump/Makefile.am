@@ -25,7 +25,7 @@ bin_PROGRAMS = ncdump
 man1_MANS = ncdump.1
 
 ## Information for building the "ncdump" program
-ncdump_SOURCES = dumplib.c ncdump.c vardata.c $(top_srcdir)/mfhdf/util/getopt.c
+ncdump_SOURCES = dumplib.c ncdump.c vardata.c $(top_srcdir)/mfhdf/util/h4getopt.c
 ncdump_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
 ncdump_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
 

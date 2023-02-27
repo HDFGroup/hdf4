@@ -17,7 +17,7 @@ set (ncgen_SRCS
     ${HDF4_MFHDF_NCGEN_SOURCE_DIR}/load.c
     ${HDF4_MFHDF_NCGEN_SOURCE_DIR}/main.c
     ${HDF4_MFHDF_NCGEN_SOURCE_DIR}/ncgentab.c
-    ${HDF4_MFHDF_UTIL_DIR}/getopt.c
+    ${HDF4_MFHDF_UTIL_DIR}/h4getopt.c
 )
 
 if (NOT ONLY_SHARED_LIBS)

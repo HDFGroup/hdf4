@@ -24,7 +24,7 @@ bin_PROGRAMS = hdiff
 ## Information for building the "hdiff" program
 hdiff_SOURCES = hdiff.c hdiff_array.c hdiff_gr.c hdiff_list.c hdiff_main.c  \
                 hdiff_mattbl.c hdiff_gattr.c hdiff_misc.c hdiff_sds.c       \
-                hdiff_table.c hdiff_vs.c hdiff_dim.c $(top_srcdir)/mfhdf/util/getopt.c
+                hdiff_table.c hdiff_vs.c hdiff_dim.c $(top_srcdir)/mfhdf/util/h4getopt.c
 hdiff_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB) -lm
 hdiff_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
 
