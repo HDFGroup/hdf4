@@ -16,10 +16,10 @@ else
 FORTRAN_DIR =
 endif
 
-if HDF_BUILD_NETCDF
+if HDF_BUILD_NETCDF_TOOLS
 NETCDF_DIRS = ncdump ncgen nctest
 else
-NETCDF_DIRS =
+NETCDF_DIRS = nctest
 endif
 
 # src folder in root Makefile, build other folders now
