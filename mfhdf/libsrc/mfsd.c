@@ -5553,18 +5553,17 @@ SDgetchunkinfo(int32          sdsid,     /* IN: sds access id */
             free(info_block.cdims);
         }
     }
-    else /* not special chunked element */
+    else                   /* not special chunked element */
         *flags = HDF_NONE; /* regular SDS */
 
     /* End access to the access id */
-    if(Hendaccess(var->aid)==FAIL)
+    if (Hendaccess(var->aid) == FAIL)
         HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
     var->aid = FAIL;
 
 done:
-    if (ret_value == FAIL)
-    { /* Failure cleanup */
-        /* End access to the aid if neccessary */
+    if (ret_value == FAIL) { /* Failure cleanup */
+        /* End access to the aid if necessary */
         if (var && var->aid != FAIL) {
             Hendaccess(var->aid);
             var->aid = FAIL;
