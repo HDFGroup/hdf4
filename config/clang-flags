@@ -21,7 +21,7 @@ if test "X-" = "X-$cc_flags_set"; then
     if test -n "$cc_version"; then
         cc_vendor="clang"
     else
-        cc_version="`$CC $CFLAGS $H5_CFLAGS -v 2>&1 |\
+        cc_version="`$CC $CFLAGS $H4_CFLAGS -v 2>&1 |\
             grep 'Apple LLVM version' | sed 's/.*Apple LLVM version \([-a-z0-9\.]*\).*/\1/'`"
         if test -n "$cc_version"; then
             cc_vendor="Apple LLVM"
