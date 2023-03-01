@@ -38,6 +38,21 @@ New features and changes
 ========================
     Configuration:
     -------------
+    - The Autotools no longer strip -g from production CFLAGS
+
+      configure would strip -g from CFLAGS when --enable-production was
+      specified. This is no longer the case.
+
+      (DER - 2023/03/01)
+
+    - The Autotools now set -DNDEBUG/-UNDEBUG via build mode
+
+      Several makefiles set -DNDEBUG for all build modes. This is now set
+      via the build mode configure options. Production sets -DNDEBUG and
+      development sets -UNDEBUG.
+
+      (DER - 2023/03/01)
+
     - Tools are now built by default in CMake
 
       The option to build and test the HDF4 tools hdiff, hrepack, hdfimport,

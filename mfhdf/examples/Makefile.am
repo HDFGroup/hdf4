@@ -4,7 +4,7 @@
 
 include $(top_srcdir)/config/commence.am
 
-DEFINES=-DNDEBUG -DHDF
+DEFINES=-DHDF
 
 #############################################################################
 ##                          Programs to build                              ##

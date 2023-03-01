@@ -9,7 +9,7 @@ hdiff_INCLUDES=-I$(top_srcdir)/hdf/src   \
          -I$(top_srcdir)/mfhdf/libsrc    \
          -I$(top_srcdir)/mfhdf/util      \
          -I$(top_builddir)/mfhdf/libsrc
-DEFINES=-DNDEBUG -DHDF
+DEFINES=-DHDF
 AM_CPPFLAGS=$(hdiff_INCLUDES) $(XDRINC) $(DEFINES)
 
 ## Add hdiff specific linker flags here
