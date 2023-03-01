@@ -38,4 +38,5 @@ Languages:
 Features:
 ---------
                SZIP compression: @SZIP_INFO@
-   Support for netCDF API 2.3.2: @HDF4_ENABLE_NETCDF@
+ Export HDF4-built netCDF-2 API: @HDF4_ENABLE_NETCDF@ (ON: export undecorated netCDF names, OFF: prefix with 'sd_')
+    HDF4-built ncdump and ncgen: @HDF4_BUILD_NETCDF_TOOLS@
