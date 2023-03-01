@@ -298,9 +298,21 @@ New features and changes
       (ADB - 2020/04/22, OESS-65)
 
 
-
 Support for new platforms and compilers
 =======================================
+
+    - CMake added support for clang 12.0.0 with MSVC-like command line in VS2019,
+          and for VS2022 with clang 15.0.1 and with Intel oneAPI 2022
+
+    - Ubuntu 22.04, Linux 5.15.0 with GCC 11.3.0 and clang version 14.0.0-1
+
+    - Ubuntu 20.04, Linux 5.13.0 with GCC 9.4.0 and clang version 10.0.0-4
+
+    - macOS M1 11.7.3, Darwin 20.6.0 with Apple clang version 13.0.0 and
+                                     Intel icc/icpc/ifort version 2021.8.0
+
+    - macOS Big Sur 11.7.3, Darwin 20.4.0 with Apple clang version 12.0.5 and
+                                          Intel icc/icpc/ifort version 2021.7.1
 
 
 Bugs fixed since HDF 4.2.15
