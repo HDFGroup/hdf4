@@ -135,6 +135,10 @@ SDIhandle_from_id(int32 id, /* IN: an object (file, dim, dataset) ID */
     int32 tmp;
     NC   *ret_value = NULL;
 
+    /* check that it is a valid id */
+    if (id == -1)
+        HGOTO_ERROR(DFE_ARGS, NULL);
+
     /* check that it is the proper type of id */
     tmp = (id >> 16) & 0x0f;
     if (tmp != typ)
@@ -163,7 +167,7 @@ NC_var *
 SDIget_var(NC   *handle, /* IN: the handle for this file */
            int32 sdsid /* IN: a dataset ID */)
 {
-    int32      varid;
+    int32      varid     = -1;
     NC_array **ap        = NULL;
     NC_var    *ret_value = NULL;
 
@@ -228,6 +232,7 @@ done:
 
  RETURNS
     SUCCEED/FAIL
+
 ******************************************************************************/
 static intn
 SDIstart(void)
@@ -655,11 +660,11 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
 {
     NC          *handle = NULL;
     NC_dim      *dim    = NULL;
-    intn         varid;
+    intn         varid  = -1;
     int32        status;
     comp_coder_t comp_type = COMP_CODE_INVALID;
     uint32       comp_config;
-    NC_var      *var;
+    NC_var      *var = NULL;
 #ifdef H4_HAVE_LP64
     long Start[H4_MAX_VAR_DIMS];
     long End[H4_MAX_VAR_DIMS];
@@ -794,6 +799,13 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
         ret_value = SUCCEED;
 
 done:
+    if (ret_value == FAIL) {
+        if (var && var->aid != 0 && var->aid != FAIL) {
+            Hendaccess(var->aid);
+            var->aid = FAIL;
+        }
+    }
+
     return ret_value;
 } /* SDreaddata */
 
@@ -866,8 +878,6 @@ done:
  RETURNS
         SUCCEED / FAIL
 
- MODIFICATION
-
 ******************************************************************************/
 intn
 SDgetnumvars_byname(int32       fid,  /* IN: file ID */
@@ -928,8 +938,6 @@ done:
 
  RETURNS
         SUCCEED / FAIL
-
- MODIFICATION
 
 ******************************************************************************/
 intn
@@ -1676,10 +1684,10 @@ SDIapfromid(int32       id,      /* IN:  object ID */
             NC        **handlep, /* IN:  handle for this file */
             NC_array ***app /* OUT: attribute list */)
 {
-    NC     *handle = NULL;
-    NC_var *var    = NULL;
-    NC_dim *dim    = NULL;
-    int32   varid;
+    NC     *handle    = NULL;
+    NC_var *var       = NULL;
+    NC_dim *dim       = NULL;
+    int32   varid     = -1;
     intn    ret_value = SUCCEED;
 
     /* see if its a variable ID */
@@ -1830,6 +1838,7 @@ done:
 
  RETURNS
         On error FAIL else SUCCEED.
+
 ******************************************************************************/
 intn
 SDattrinfo(int32  id,    /* IN:  object ID */
@@ -1968,11 +1977,11 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
             int32 *end,    /* IN: number of values to write per dimension */
             void  *data /* IN: data buffer */)
 {
-    intn         varid;
+    intn         varid = -1;
     int32        status;
     comp_coder_t comp_type;
     uint32       comp_config;
-    NC_var      *var;
+    NC_var      *var    = NULL;
     NC          *handle = NULL;
     NC_dim      *dim    = NULL;
 #ifdef H4_HAVE_LP64
@@ -2114,6 +2123,13 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
         ret_value = SUCCEED;
 
 done:
+    if (ret_value == FAIL) {
+        if (var && var->aid != 0 && var->aid != FAIL) {
+            Hendaccess(var->aid);
+            var->aid = FAIL;
+        }
+    }
+
     return ret_value;
 } /* SDwritedata */
 
@@ -2716,7 +2732,7 @@ SDsetdimstrs(int32       id, /* IN: dimension ID */
              const char *u,  /* IN: units string ("units") */
              const char *f /* IN: format string ("format") */)
 {
-    intn    varid;
+    intn    varid     = -1;
     NC     *handle    = NULL;
     NC_dim *dim       = NULL;
     NC_var *var       = NULL;
@@ -2725,7 +2741,6 @@ SDsetdimstrs(int32       id, /* IN: dimension ID */
 #ifdef SDDEBUG
     fprintf(stderr, "SDsetdimstrs: I've been called\n");
 #endif
-
     /* clear error stack */
     HEclear();
 
@@ -2812,7 +2827,7 @@ SDIfreevarAID(NC   *handle, /* IN: file handle */
 
     var = (NC_var *)*ap;
 
-    if (var->aid != 0 && var->aid != FAIL) {
+    if (var && var->aid != 0 && var->aid != FAIL) {
         if (Hendaccess(var->aid) == FAIL) {
             HGOTO_ERROR(DFE_ARGS, FAIL);
         }
@@ -2846,7 +2861,7 @@ SDsetdimscale(int32 id,    /* IN: dimension ID */
     NC     *handle = NULL;
     NC_dim *dim    = NULL;
     int32   status;
-    intn    varid;
+    intn    varid = -1;
     long    start[1];
     long    end[1];
     intn    ret_value = SUCCEED;
@@ -2894,16 +2909,13 @@ SDsetdimscale(int32 id,    /* IN: dimension ID */
         HGOTO_ERROR(DFE_ARGS, FAIL);
     }
 
+done:
     /* free the AID */
     status = SDIfreevarAID(handle, varid);
-    if (status == FAIL) {
-        HGOTO_ERROR(DFE_ARGS, FAIL);
+    if (status != FAIL) {
+        handle->flags |= NC_HDIRTY;
     }
 
-    /* make sure it gets reflected in the file */
-    handle->flags |= NC_HDIRTY;
-
-done:
     return ret_value;
 } /* SDsetdimscale */
 
@@ -2928,7 +2940,7 @@ SDgetdimscale(int32 id, /* IN:  dimension ID */
     NC_dim *dim    = NULL;
     NC_var *vp     = NULL;
     int32   status;
-    intn    varid;
+    intn    varid = -1;
     long    start[1];
     long    end[1];
     intn    ret_value = SUCCEED;
@@ -2991,13 +3003,13 @@ SDgetdimscale(int32 id, /* IN:  dimension ID */
         HGOTO_ERROR(DFE_ARGS, FAIL);
     }
 
+done:
     /* free the AID */
     status = SDIfreevarAID(handle, varid);
-    if (status == FAIL) {
-        HGOTO_ERROR(DFE_ARGS, FAIL);
+    if (status != FAIL) {
+        handle->flags |= NC_HDIRTY;
     }
 
-done:
     return ret_value;
 } /* SDgetdimscale */
 
@@ -3349,7 +3361,7 @@ SDsetexternalfile(int32       id,       /* IN: dataset ID */
                                 length);
     }
     if (status != FAIL) {
-        if ((var->aid != 0) && (var->aid != FAIL)) {
+        if (var && (var->aid != 0) && (var->aid != FAIL)) {
             if (Hendaccess(var->aid) == FAIL) {
                 HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
             }
@@ -3733,7 +3745,7 @@ SDsetnbitdataset(int32 id,        /* IN: dataset ID */
     printf("SDsetnbitdata(): HCcreate() status=%d\n", (intn)status);
 #endif
     if (status != FAIL) {
-        if ((var->aid != 0) && (var->aid != FAIL)) {
+        if (var && (var->aid != 0) && (var->aid != FAIL)) {
             if (Hendaccess(var->aid) == FAIL) {
                 HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
             }
@@ -3771,7 +3783,7 @@ SDsetup_szip_parms(int32 id, NC *handle, comp_info *c_info, int32 *cdims)
 {
     NC_dim *dim;      /* to check if the dimension is unlimited */
     int32   dimindex; /* to obtain the NC_dim record */
-    NC_var *var;
+    NC_var *var = NULL;
     int32   ndims;
     int     i;
     int32   xdims[H4_MAX_VAR_DIMS];
@@ -3828,7 +3840,7 @@ SDsetcompress(int32        id,        /* IN: dataset ID */
               comp_info *c_info /* IN: ptr to compression info struct*/)
 {
     NC        *handle;
-    NC_var    *var;
+    NC_var    *var = NULL;
     NC_dim    *dim;      /* to check if the dimension is unlimited */
     int32      dimindex; /* to obtain the NC_dim record */
     model_info m_info;   /* modeling information for the HCcreate() call */
@@ -3935,7 +3947,7 @@ SDsetcompress(int32        id,        /* IN: dataset ID */
 #endif /* SDDEBUG */
 
     if (status != FAIL) {
-        if ((var->aid != 0) && (var->aid != FAIL)) {
+        if (var && (var->aid != 0) && (var->aid != FAIL)) {
             if (Hendaccess(var->aid) == FAIL) {
                 HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
             }
@@ -4001,7 +4013,7 @@ SDgetcompress(
 )
 {
     NC     *handle;
-    NC_var *var;
+    NC_var *var       = NULL;
     intn    status    = FAIL;
     intn    ret_value = SUCCEED;
 
@@ -4070,7 +4082,7 @@ SDgetcompinfo(int32         sdsid,     /* IN: dataset ID */
 )
 {
     NC     *handle;
-    NC_var *var;
+    NC_var *var       = NULL;
     intn    status    = FAIL;
     intn    ret_value = SUCCEED;
 
@@ -4137,7 +4149,7 @@ SDgetcomptype(int32         sdsid, /* IN: dataset ID */
               comp_coder_t *comp_type /* OUT: the type of compression */)
 {
     NC     *handle;
-    NC_var *var;
+    NC_var *var       = NULL;
     intn    status    = FAIL;
     intn    ret_value = SUCCEED;
 
@@ -4191,8 +4203,6 @@ done:
  RETURNS
     SUCCEED/FAIL
 
- MODIFICATION
-
 ******************************************************************************/
 intn
 SDgetdatasize(int32  sdsid,     /* IN: dataset ID */
@@ -4201,10 +4211,11 @@ SDgetdatasize(int32  sdsid,     /* IN: dataset ID */
 
 {
     NC     *handle;
-    NC_var *var;
-    int32  *comp_size_tmp = NULL, *orig_size_tmp = NULL;
-    intn    status    = FAIL;
-    intn    ret_value = SUCCEED;
+    NC_var *var           = NULL;
+    intn    status        = FAIL;
+    intn    ret_value     = SUCCEED;
+    int32  *comp_size_tmp = NULL;
+    int32  *orig_size_tmp = NULL;
 
     /* clear error stack */
     HEclear();
@@ -4253,6 +4264,13 @@ SDgetdatasize(int32  sdsid,     /* IN: dataset ID */
 done:
     free(comp_size_tmp);
     free(orig_size_tmp);
+
+    if (ret_value == FAIL) {
+        if (var && var->aid != 0 && var->aid != FAIL) {
+            Hendaccess(var->aid);
+            var->aid = FAIL;
+        }
+    }
 
     return ret_value;
 } /* SDgetdatasize */
@@ -4426,7 +4444,7 @@ int32
 SDisrecord(int32 id /* IN: dataset ID */)
 {
     NC     *handle;
-    NC_var *var;
+    NC_var *var       = NULL;
     int32   ret_value = TRUE;
 
 #ifdef SDDEBUG
@@ -4719,7 +4737,7 @@ SDgetblocksize(int32  sdsid, /* IN: dataset ID */
         Hendaccess(temp_aid);
 done:
     if (ret_value == FAIL) { /* Failure cleanup */
-        if (var->aid == FAIL && temp_aid != FAIL)
+        if (var && var->aid == FAIL && temp_aid != FAIL)
             Hendaccess(temp_aid);
     }
 
@@ -5535,12 +5553,23 @@ SDgetchunkinfo(int32          sdsid,     /* IN: sds access id */
             free(info_block.cdims);
         }
     }
-    else /* not special chunked element */
-    {
+    else                   /* not special chunked element */
         *flags = HDF_NONE; /* regular SDS */
-    }
+
+    /* End access to the access id */
+    if (Hendaccess(var->aid) == FAIL)
+        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+    var->aid = FAIL;
 
 done:
+    if (ret_value == FAIL) { /* Failure cleanup */
+        /* End access to the aid if necessary */
+        if (var && var->aid != FAIL) {
+            Hendaccess(var->aid);
+            var->aid = FAIL;
+        }
+    }
+    /* Normal cleanup */
     return ret_value;
 } /* SDgetchunkinfo() */
 
@@ -5716,10 +5745,8 @@ SDwritechunk(int32       sdsid,  /* IN: access aid to SDS */
     } /* end if Hinquire */
 
 done:
-    /* dont forget to free up info is special info block
-       This space was allocated by the library */
+    /* Release resource */
     free(info_block.cdims);
-
     free(tBuf);
 
     return ret_value;
@@ -5916,16 +5943,14 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
 done:
     if (ret_value == FAIL) { /* Failure cleanup */
         /* End access to the aid if necessary */
-        if (var->aid != FAIL) {
+        if (var && var->aid != FAIL) {
             Hendaccess(var->aid);
             var->aid = FAIL;
         }
     }
 
-    /* dont forget to free up info in special info block
-       This space was allocated by the library */
+    /* Release resource */
     free(info_block.cdims);
-
     free(tBuf);
 
     return ret_value;
@@ -6045,17 +6070,6 @@ done:
  RETURNS
     SUCCEED/FAIL
 
- PROGRAMMER
-    bmribler - 9-01-98
-
- MODIFICATION
-    bmribler - 9/29/2004
-        When the SDS is not a special element, we only need to check
-        its data ref# to decide whether it has data written, but
-        when the SDS is a special element, it still has a valid
-        data ref# even though it doesn't have data, we'll then need
-        to perform a more detailed check.  Added more detailed checks.
-
 ******************************************************************************/
 int32
 SDcheckempty(int32 sdsid, /* IN: dataset ID */
@@ -6127,11 +6141,6 @@ done:
     A value of type hdf_idtype_t, which can be either of the following:
     SD_ID, SDS_ID, DIM_ID, NOT_SDAPI_ID.
 
- PROGRAMMER
-    bmribler - 1-19-2005
-
- MODIFICATION
-
 ******************************************************************************/
 hdf_idtype_t
 SDidtype(int32 an_id)
@@ -6188,11 +6197,6 @@ SDidtype(int32 an_id)
     The current maximum number of opened files allowed, or FAIL, if
     unable to reset it.
 
- PROGRAMMER
-    bmribler - 9-06-2005
-
- MODIFICATION
-
 ******************************************************************************/
 intn
 SDreset_maxopenfiles(intn req_max)
@@ -6227,11 +6231,6 @@ done:
 
  RETURNS
     SUCCEED/FAIL
-
- PROGRAMMER
-    bmribler - 9-06-2005
-
- MODIFICATION
 
 ******************************************************************************/
 intn
@@ -6275,11 +6274,6 @@ done:
  RETURNS
     The number of files currently being opened or FAIL.
 
- PROGRAMMER
-    bmribler - 9-06-2005
-
- MODIFICATION
-
 ******************************************************************************/
 intn
 SDget_numopenfiles(void)
@@ -6309,11 +6303,6 @@ SDget_numopenfiles(void)
 
  RETURNS
     Length of the file name, without '\0', on success, and FAIL, otherwise.
-
- PROGRAMMER
-    bmribler - 9-06-2005
-
- MODIFICATION
 
 ******************************************************************************/
 intn
@@ -6357,11 +6346,6 @@ DESCRIPTION
 
 RETURNS
    SUCCEED/FAIL
-
- PROGRAMMER
-    bmribler - 9-14-2006
-
- MODIFICATION
 
 ******************************************************************************/
 intn

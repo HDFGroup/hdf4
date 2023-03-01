@@ -192,7 +192,7 @@ if test "X$host_config" != "Xnone"; then
 fi
 
 ## ======================================================================
-## Checks for NetCDF-2.3.2 support
+## Checks for netCDF-2.3.2 support
 ## ======================================================================
 
 # We disable Fortran netCDF APIs and their testing when --disable-netcdf is used.
@@ -202,13 +202,21 @@ AC_SUBST(TEST_FORTRAN_NETCDF) TEST_FORTRAN_NETCDF="yes"
 
 AC_ARG_ENABLE([netcdf],
               [AS_HELP_STRING([--enable-netcdf],
-                              [Build HDF4 versions of NetCDF APIs (version 2.3.2) [default=yes]])],,
+                              [HDF4 builds replacement netCDF 2.3.2 API calls that are exported (e.g., ncopen()).
+                               Enabling this option uses the original netCDF names when building these functions.
+                               Disable prefixes them with 'sd_' to avoid name clashes.
+                               This does NOT affect building the HDF4-built netCDF tools ncdump and ncgen,
+                               nor does it disable any HDF4 functionality - this option only affects
+                               API call names.
+                               Disabling this option disables building the netCDF Fortran wrappers (they
+                               will not be built with either the original or sd_ prefixed names).
+                               [default=yes (HDF4-built netCDF API calls will be exported undecorated)]])],,
               [enableval="yes"])
 
 case "$enableval" in
   yes)
     BUILD_NETCDF="yes"
-    AC_DEFINE([HAVE_NETCDF], [1], [Define if we support HDF NetCDF APIs version 2.3.2])
+    AC_DEFINE([HAVE_NETCDF], [1], [Define if we export HDF4-built unmangled netCDF 2.3.2 API calls])
     ;;
   no)
     BUILD_NETCDF="no"
@@ -217,6 +225,25 @@ case "$enableval" in
 esac
 AM_CONDITIONAL([HDF_BUILD_NETCDF], [test "X$BUILD_NETCDF" = "Xyes"])
 AC_SUBST([BUILD_NETCDF])
+
+# It is also possible to disable building the netCDF tools ncdump and ncgen.
+# Some users may want to do this since our tools will conflict with netCDF's
+# if they are installed. This will also disable building nctest.
+AC_ARG_ENABLE([netcdf-tools],
+              [AS_HELP_STRING([--enable-netcdf-tools],
+                              [Build HDF4 versions of NetCDF tools (ncgen, ncdump) [default=yes]])],,
+              [enableval="yes"])
+
+case "$enableval" in
+  yes)
+    BUILD_NETCDF_TOOLS="yes"
+    ;;
+  no)
+    BUILD_NETCDF_TOOLS="no"
+    ;;
+esac
+AM_CONDITIONAL([HDF_BUILD_NETCDF_TOOLS], [test "X$BUILD_NETCDF_TOOLS" = "Xyes"])
+AC_SUBST([BUILD_NETCDF_TOOLS])
 
 ## ======================================================================
 ## Checks for programs
@@ -351,17 +378,6 @@ AR_FLAGS=cr
 ## Export the AR macro so that it will be placed in the libtool file
 ## correctly.
 export AR
-
-
-AC_CHECK_PROGS([YACC], ['bison -y' byacc yacc], [none], [])
-if test "$YACC" = "none"; then
-  AC_MSG_ERROR([cannot find bison/yacc utility])
-fi
-
-AC_CHECK_PROGS([LEX], [flex lex], [none], [])
-if test "$LEX" = "none"; then
-  AC_MSG_ERROR([cannot find flex/lex utility])
-fi
 
 AC_CHECK_PROG([DIFF],     [diff],     [diff -w])
 AC_CHECK_PROG([MAKEINFO], [makeinfo], [makeinfo])
@@ -911,7 +927,7 @@ esac
 AC_MSG_CHECKING([for math library support])
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <math.h>]], [[sinh(37.927)]])],[AC_MSG_RESULT([yes])],[AC_MSG_RESULT([no]); LIBS="$LIBS -lm"])
 
-AC_CHECK_FUNCS([getopt fork system wait])
+AC_CHECK_FUNCS([fork system wait])
 
 
 ## ======================================================================

@@ -55,15 +55,16 @@ list_usage(intn argc, char *argv[])
 static void
 init_list_opts(list_info_t *list_opts)
 {
-    list_opts->order     = OTAG;   /* default ordering is by tag */
-    list_opts->verbosity = VSHORT; /* default verbosity is a short list */
-    list_opts->limit     = LNONE;  /* default is all the tag/refs */
-    list_opts->class     = FALSE;  /* don't dump class information */
-    list_opts->name      = FALSE;  /* don't dump name information */
-    list_opts->desc      = FALSE;  /* don't dump annotation information */
-    list_opts->spec      = FALSE;  /* don't dump special element information */
-    list_opts->group     = FALSE;  /* don't dump group information */
-    list_opts->limit_tag = 0;      /* initialize... */
+    list_opts->order      = OTAG;   /* default ordering is by tag */
+    list_opts->verbosity  = VSHORT; /* default verbosity is a short list */
+    list_opts->limit      = LNONE;  /* default is all the tag/refs */
+    list_opts->class      = FALSE;  /* don't dump class information */
+    list_opts->name       = FALSE;  /* don't dump name information */
+    list_opts->desc       = FALSE;  /* don't dump annotation information */
+    list_opts->spec       = FALSE;  /* don't dump special element information */
+    list_opts->group      = FALSE;  /* don't dump group information */
+    list_opts->limit_name = NULL;   /* initialize... */
+    list_opts->limit_tag  = 0;      /* initialize... */
 } /* end init_list_opts() */
 
 static intn
@@ -1063,6 +1064,7 @@ done:
         if (o_list != NULL)
             free_obj_list(o_list);
     }
+    free(list_opts.limit_name);
     if (f_list != NULL)
         free_file_list(f_list);
 

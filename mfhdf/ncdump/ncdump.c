@@ -11,7 +11,7 @@
 #include "local_nc.h"
 #include "ncdump.h"
 
-#include "getopt.h"
+#include "h4getopt.h"
 #include "dumplib.h"
 #include "vardata.h"
 
@@ -532,9 +532,9 @@ do_ncdump(char *path, struct fspec *specp)
 }
 
 static void
-make_lvars(char *optarg, struct fspec *fspecp)
+make_lvars(char *arg, struct fspec *fspecp)
 {
-    char  *cp    = optarg;
+    char  *cp    = arg;
     int    nvars = 1;
     char **cpp;
 
@@ -552,7 +552,7 @@ make_lvars(char *optarg, struct fspec *fspecp)
 
     cpp = fspecp->lvars;
     /* copy variable names into list */
-    for (cp = strtok(optarg, ","); cp != NULL; cp = strtok((char *)NULL, ",")) {
+    for (cp = strtok(arg, ","); cp != NULL; cp = strtok((char *)NULL, ",")) {
 
         *cpp = (char *)malloc(strlen(cp) + 1);
         if (!*cpp) {
@@ -570,17 +570,17 @@ make_lvars(char *optarg, struct fspec *fspecp)
  * command-line and update the default data formats appropriately.
  */
 static void
-set_sigdigs(char *optarg)
+set_sigdigs(char *arg)
 {
-    char *ptr        = optarg;
+    char *ptr        = arg;
     char *ptr2       = 0;
     long  flt_digits = 7;  /* default floating-point digits */
     long  dbl_digits = 15; /* default double-precision digits */
     char  flt_fmt[6];
     char  dbl_fmt[6];
 
-    if (optarg != 0 && strlen(optarg) > 0 && optarg[0] != ',')
-        flt_digits = strtol(optarg, &ptr, 10);
+    if (arg != 0 && strlen(arg) > 0 && arg[0] != ',')
+        flt_digits = strtol(arg, &ptr, 10);
 
     if (flt_digits < 1 || flt_digits > 10) {
         error("unreasonable value for float significant digits: %d", flt_digits);
@@ -616,13 +616,13 @@ main(int argc, char *argv[])
     int i;
     int max_len = 80; /* default maximum line length */
 
-    opterr   = 1;
+    h4opterr = 1;
     progname = argv[0];
 
     if (1 == argc) /* if no arguments given, print help and exit */
         usage();
 
-    while ((c = getopt(argc, argv, "b:cf:hul:n:v:d:V")) != EOF)
+    while ((c = h4getopt(argc, argv, "b:cf:hul:n:v:d:V")) != EOF)
         switch (c) {
             case 'V': /* display version of the library */
                 printf("%s, %s\n\n", argv[0], LIBVER_STRING);
@@ -637,14 +637,14 @@ main(int argc, char *argv[])
                        * provide different name than derived from
                        * file name
                        */
-                fspec.name = optarg;
+                fspec.name = h4optarg;
                 break;
             case 'u': /* replace nonalpha-numerics with underscores */
                 fspec.fix_str = true;
                 break;
             case 'b': /* brief comments in data section */
                 fspec.brief_data_cmnts = true;
-                switch (tolower(optarg[0])) {
+                switch (tolower(h4optarg[0])) {
                     case 'c':
                         fspec.data_lang = LANG_C;
                         break;
@@ -652,13 +652,13 @@ main(int argc, char *argv[])
                         fspec.data_lang = LANG_F;
                         break;
                     default:
-                        error("invalid value for -b option: %s", optarg);
+                        error("invalid value for -b option: %s", h4optarg);
                         exit(EXIT_FAILURE);
                 }
                 break;
             case 'f': /* full comments in data section */
                 fspec.full_data_cmnts = true;
-                switch (tolower(optarg[0])) {
+                switch (tolower(h4optarg[0])) {
                     case 'c':
                         fspec.data_lang = LANG_C;
                         break;
@@ -666,12 +666,12 @@ main(int argc, char *argv[])
                         fspec.data_lang = LANG_F;
                         break;
                     default:
-                        error("invalid value for -b option: %s", optarg);
+                        error("invalid value for -b option: %s", h4optarg);
                         exit(EXIT_FAILURE);
                 }
                 break;
             case 'l': /* maximum line length */
-                max_len = strtol(optarg, 0, 0);
+                max_len = strtol(h4optarg, 0, 0);
                 if (max_len < 10) {
                     error("unreasonably small line length specified: %d", max_len);
                     exit(EXIT_FAILURE);
@@ -679,10 +679,10 @@ main(int argc, char *argv[])
                 break;
             case 'v': /* variable names */
                 /* make list of names of variables specified */
-                make_lvars(optarg, &fspec);
+                make_lvars(h4optarg, &fspec);
                 break;
             case 'd': /* specify precision for floats */
-                set_sigdigs(optarg);
+                set_sigdigs(h4optarg);
                 break;
             case '?':
                 usage();
@@ -691,8 +691,8 @@ main(int argc, char *argv[])
 
     set_max_len(max_len);
 
-    argc -= optind;
-    argv += optind;
+    argc -= h4optind;
+    argv += h4optind;
 
     i = 0;
     do {

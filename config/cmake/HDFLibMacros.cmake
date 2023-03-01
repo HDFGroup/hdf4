@@ -1,31 +1,32 @@
 #-------------------------------------------------------------------------------
 macro (ORIGINAL_ZLIB_LIBRARY compress_type)
   if (${compress_type} MATCHES "GIT")
-    FetchContent_Declare (ZLIB
+    FetchContent_Declare (HDF4_ZLIB
         GIT_REPOSITORY ${ZLIB_URL}
         GIT_TAG ${ZLIB_BRANCH}
     )
   elseif (${compress_type} MATCHES "TGZ")
-    FetchContent_Declare (ZLIB
+    FetchContent_Declare (HDF4_ZLIB
         URL ${ZLIB_URL}
         URL_HASH ""
     )
   endif ()
-  FetchContent_GetProperties(ZLIB)
-  if(NOT zlib_POPULATED)
-    FetchContent_Populate(ZLIB)
+  FetchContent_GetProperties(HDF4_ZLIB)
+  if(NOT hdf4_zlib_POPULATED)
+    FetchContent_Populate(HDF4_ZLIB)
 
     # Copy an additional/replacement files into the populated source
-    file(COPY ${HDF_RESOURCES_DIR}/ZLIB/CMakeLists.txt DESTINATION ${zlib_SOURCE_DIR})
+    file(COPY ${HDF_RESOURCES_DIR}/ZLIB/CMakeLists.txt DESTINATION ${hdf4_zlib_SOURCE_DIR})
 
-    add_subdirectory(${zlib_SOURCE_DIR} ${zlib_BINARY_DIR})
+    add_subdirectory(${hdf4_zlib_SOURCE_DIR} ${hdf4_zlib_BINARY_DIR})
   endif()
 
-  set (ZLIB_STATIC_LIBRARY "zlib-static")
+  add_library(${HDF_PACKAGE_NAMESPACE}zlib-static ALIAS zlib-static)
+  set (ZLIB_STATIC_LIBRARY "${HDF_PACKAGE_NAMESPACE}zlib-static")
   set (ZLIB_LIBRARIES ${ZLIB_STATIC_LIBRARY})
 
-  set (ZLIB_INCLUDE_DIR_GEN "${zlib_BINARY_DIR}")
-  set (ZLIB_INCLUDE_DIR "${zlib_SOURCE_DIR}")
+  set (ZLIB_INCLUDE_DIR_GEN "${hdf4_zlib_BINARY_DIR}")
+  set (ZLIB_INCLUDE_DIR "${hdf4_zlib_SOURCE_DIR}")
   set (ZLIB_FOUND 1)
   set (ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIR_GEN} ${ZLIB_INCLUDE_DIR})
 endmacro ()
@@ -53,7 +54,8 @@ macro (ORIGINAL_JPEG_LIBRARY compress_type jpeg_pic)
     add_subdirectory(${jpeg_SOURCE_DIR} ${jpeg_BINARY_DIR})
   endif()
 
-  set (JPEG_STATIC_LIBRARY "jpeg-static")
+  add_library(${HDF_PACKAGE_NAMESPACE}jpeg-static ALIAS jpeg-static)
+  set (JPEG_STATIC_LIBRARY "${HDF_PACKAGE_NAMESPACE}jpeg-static")
   set (JPEG_LIBRARIES ${JPEG_STATIC_LIBRARY})
 
   set (JPEG_INCLUDE_DIR_GEN "${jpeg_BINARY_DIR}")
@@ -87,10 +89,12 @@ macro (ORIGINAL_SZIP_LIBRARY compress_type encoding)
   endif()
 
   set (USE_LIBAEC ON CACHE BOOL "Use libaec szip replacement" FORCE)
-  set (SZIP_STATIC_LIBRARY "szaec-static;aec-static")
+  add_library (${HDF_PACKAGE_NAMESPACE}szaec-static ALIAS szaec-static)
+  add_library (${HDF_PACKAGE_NAMESPACE}aec-static ALIAS aec-static)
+  set (SZIP_STATIC_LIBRARY "${HDF_PACKAGE_NAMESPACE}szaec-static;${HDF_PACKAGE_NAMESPACE}aec-static")
   set (SZIP_LIBRARIES ${SZIP_STATIC_LIBRARY})
 
-  set (SZIP_INCLUDE_DIR_GEN "${BINARY_DIR}")
+  set (SZIP_INCLUDE_DIR_GEN "${szip_BINARY_DIR}")
   set (SZIP_INCLUDE_DIR "${szip_SOURCE_DIR}/include")
   set (SZIP_FOUND 1)
   set (SZIP_INCLUDE_DIRS ${SZIP_INCLUDE_DIR_GEN} ${SZIP_INCLUDE_DIR})
@@ -223,13 +227,13 @@ macro (EXTERNAL_SZIP_LIBRARY compress_type encoding)
 ##include (${BINARY_DIR}/${SZIP_PACKAGE_NAME}${HDF_PACKAGE_EXT}-targets.cmake)
 # Create imported target szip-static
   if (USE_LIBAEC)
-    add_library(${HDF_PACKAGE_NAMESPACE}sz-static STATIC IMPORTED)
-    HDF_IMPORT_SET_LIB_OPTIONS (${HDF_PACKAGE_NAMESPACE}sz-static "szaec" STATIC "")
-    add_dependencies (${HDF_PACKAGE_NAMESPACE}sz-static SZIP)
+    add_library(${HDF_PACKAGE_NAMESPACE}szaec-static STATIC IMPORTED)
+    HDF_IMPORT_SET_LIB_OPTIONS (${HDF_PACKAGE_NAMESPACE}szaec-static "szaec" STATIC "")
+    add_dependencies (${HDF_PACKAGE_NAMESPACE}szaec-static SZIP)
     add_library(${HDF_PACKAGE_NAMESPACE}aec-static STATIC IMPORTED)
     HDF_IMPORT_SET_LIB_OPTIONS (${HDF_PACKAGE_NAMESPACE}aec-static "aec" STATIC "")
     add_dependencies (${HDF_PACKAGE_NAMESPACE}aec-static SZIP)
-    set (SZIP_STATIC_LIBRARY "${HDF_PACKAGE_NAMESPACE}sz-static;${HDF_PACKAGE_NAMESPACE}aec-static")
+    set (SZIP_STATIC_LIBRARY "${HDF_PACKAGE_NAMESPACE}szaec-static;${HDF_PACKAGE_NAMESPACE}aec-static")
   else ()
     add_library(${HDF_PACKAGE_NAMESPACE}szip-static STATIC IMPORTED)
     HDF_IMPORT_SET_LIB_OPTIONS (${HDF_PACKAGE_NAMESPACE}szip-static "szip" STATIC "")

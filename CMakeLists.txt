@@ -215,6 +215,7 @@ set (HDF4_HDFSOURCE_DIR       ${HDF4_SOURCE_DIR}/hdf/src)
 set (HDF4_HDF_TESTSOURCE_DIR  ${HDF4_SOURCE_DIR}/hdf/test)
 set (HDF4_MFHDFSOURCE_DIR     ${HDF4_SOURCE_DIR}/mfhdf/libsrc)
 set (HDF4_MFHDF_TEST_DIR      ${HDF4_SOURCE_DIR}/mfhdf/test)
+set (HDF4_MFHDF_UTIL_DIR      ${HDF4_SOURCE_DIR}/mfhdf/util)
 set (HDF4_MFHDF_FORTRAN_DIR   ${HDF4_SOURCE_DIR}/mfhdf/fortran)
 set (HDF4_MFHDF_XDR_DIR       ${HDF4_SOURCE_DIR}/mfhdf/xdr)
 set (HDF4_JAVA_JNI_SRC_DIR         ${HDF4_SOURCE_DIR}/java/src/jni)
@@ -476,6 +477,21 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED)
 endif ()
 
 #-----------------------------------------------------------------------------
+# Options to build tools
+#-----------------------------------------------------------------------------
+option (HDF4_BUILD_TOOLS  "Build HDF4 Tools" ON)
+option (HDF4_BUILD_NETCDF_TOOLS "Build HDF4 versions of ncdump and ncgen" ON)
+
+#-----------------------------------------------------------------------------
+# Option to Build HDF4 versions of NetCDF-3 APIS
+#-----------------------------------------------------------------------------
+option (HDF4_ENABLE_NETCDF "Build HDF4 versions of NetCDF-3 APIS" ON)
+if (HDF4_ENABLE_NETCDF)
+  set (${HDF_PREFIX}_HAVE_NETCDF 1)
+  set (${HDF_PREFIX}_BUILD_NETCDF 1)
+endif ()
+
+#-----------------------------------------------------------------------------
 # Option to build HDF4 xdr Library
 #-----------------------------------------------------------------------------
 option (HDF4_BUILD_XDR_LIB  "Build HDF4 XDR Library" OFF)
@@ -509,28 +525,12 @@ add_subdirectory (hdf/src)
 add_subdirectory (mfhdf/libsrc)
 
 if (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "GIT" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
-  if (JPEG_FOUND AND JPEG_USE_EXTERNAL AND NOT BUILD_JPEG_WITH_FETCHCONTENT)
+  if ((JPEG_FOUND AND JPEG_USE_EXTERNAL) OR (ZLIB_FOUND AND ZLIB_USE_EXTERNAL) OR (SZIP_FOUND AND SZIP_USE_EXTERNAL))
     if (NOT ONLY_SHARED_LIBS)
-      add_dependencies (${HDF4_SRC_LIB_TARGET} JPEG)
+      add_dependencies (${HDF5_LIB_TARGET} ${LINK_COMP_LIBS})
     endif ()
     if (BUILD_SHARED_LIBS)
-      add_dependencies (${HDF4_SRC_LIBSH_TARGET} JPEG)
-    endif ()
-  endif ()
-  if (ZLIB_FOUND AND ZLIB_USE_EXTERNAL AND NOT BUILD_ZLIB_WITH_FETCHCONTENT)
-    if (NOT ONLY_SHARED_LIBS)
-      add_dependencies (${HDF4_SRC_LIB_TARGET} HDF4_ZLIB)
-    endif ()
-    if (BUILD_SHARED_LIBS)
-      add_dependencies (${HDF4_SRC_LIBSH_TARGET} HDF4_ZLIB)
-    endif ()
-  endif ()
-  if (SZIP_FOUND AND SZIP_USE_EXTERNAL AND NOT BUILD_SZIP_WITH_FETCHCONTENT)
-    if (NOT ONLY_SHARED_LIBS)
-      add_dependencies (${HDF4_SRC_LIB_TARGET} SZIP)
-    endif ()
-    if (BUILD_SHARED_LIBS)
-      add_dependencies (${HDF4_SRC_LIBSH_TARGET} SZIP)
+      add_dependencies (${HDF5_LIBSH_TARGET} ${LINK_COMP_LIBS})
     endif ()
   endif ()
 endif ()
