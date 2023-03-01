@@ -4,8 +4,6 @@ project (HDF4_MFHDF)
 #-----------------------------------------------------------------------------
 # Option to build HDF4 Tools
 #-----------------------------------------------------------------------------
-option (HDF4_BUILD_TOOLS  "Build HDF4 Tools" ON)
-option (HDF4_BUILD_NETCDF_TOOLS "Build HDF4 versions of ncdump and ncgen" ON)
 if (HDF4_BUILD_TOOLS)
   set (NCGEN_UTILITY 0)
   add_subdirectory (dumper)

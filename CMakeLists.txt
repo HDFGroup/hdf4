@@ -477,6 +477,21 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED)
 endif ()
 
 #-----------------------------------------------------------------------------
+# Options to build tools
+#-----------------------------------------------------------------------------
+option (HDF4_BUILD_TOOLS  "Build HDF4 Tools" ON)
+option (HDF4_BUILD_NETCDF_TOOLS "Build HDF4 versions of ncdump and ncgen" ON)
+
+#-----------------------------------------------------------------------------
+# Option to Build HDF4 versions of NetCDF-3 APIS
+#-----------------------------------------------------------------------------
+option (HDF4_ENABLE_NETCDF "Build HDF4 versions of NetCDF-3 APIS" ON)
+if (HDF4_ENABLE_NETCDF)
+  set (${HDF_PREFIX}_HAVE_NETCDF 1)
+  set (${HDF_PREFIX}_BUILD_NETCDF 1)
+endif ()
+
+#-----------------------------------------------------------------------------
 # Option to build HDF4 xdr Library
 #-----------------------------------------------------------------------------
 option (HDF4_BUILD_XDR_LIB  "Build HDF4 XDR Library" OFF)
