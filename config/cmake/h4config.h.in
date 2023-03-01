@@ -65,7 +65,7 @@
 /* Define to 1 if you have the <memory.h> header file. */
 #cmakedefine H4_HAVE_MEMORY_H @H4_HAVE_MEMORY_H@
 
-/* Define if we support HDF NetCDF APIs version 2.3.2 */
+/* Define if we export HDF4-built unmangled netCDF 2.3.2 API calls */
 #cmakedefine H4_HAVE_NETCDF @H4_HAVE_NETCDF@
 
 /* Define to 1 if you have the <netdb.h> header file. */
