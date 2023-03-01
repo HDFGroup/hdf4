@@ -360,7 +360,7 @@ if [ "$cmd" = "all" -o -n "$cmdtest" -o -n "$cmddiff" ]; then
 	if (${DIFF} -c ${PREVIOUS}/MANIFEST ${CURRENT}/MANIFEST); then
 	    snapshot=no
 	    for src in `grep '^\.' ${CURRENT}/MANIFEST|expand|cut -f1 -d' '`; do
-		if ${DIFF} -I H5_VERS_RELEASE -I " released on " \
+		if ${DIFF} -I H4_VERS_RELEASE -I " released on " \
 		    -I " currently under development" \
 		    ${PREVIOUS}/$src ${CURRENT}/$src
 		then

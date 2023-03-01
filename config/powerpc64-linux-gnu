@@ -35,7 +35,7 @@ fi
 case $CC in
 
     *gcc*)
-        cc_version_info=`$CC $CFLAGS $H5_CFLAGS --version 2>&1 | grep -v 'PathScale' |\
+        cc_version_info=`$CC $CFLAGS $H4_CFLAGS --version 2>&1 | grep -v 'PathScale' |\
             grep 'GCC' | sed 's/\(.*(GCC) [-a-z0-9\. ]*\).*/\1/'`
         ;;
 

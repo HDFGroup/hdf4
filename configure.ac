@@ -39,7 +39,7 @@ AM_INIT_AUTOMAKE([foreign])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])]) # use silent rules where available - automake 1.11
 
 ## AM_MAINTAINER_MODE determines the behavior of "rebuild rules" that contain
-## dependencies for Makefile.in files, configure, src/H5config.h, etc. If
+## dependencies for Makefile.in files, configure, config.h, etc. If
 ## AM_MAINTAINER_MODE is enabled, these files will be rebuilt if out of date.
 ## When disabled, the autotools build files can get out of sync and the build
 ## system will not complain or try to regenerate downstream files.

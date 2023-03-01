@@ -505,7 +505,7 @@ NCxdrfile_create(XDR *xdrs, const char *path, int ncmode)
             return -1;
     }
 
-#ifdef H5_HAVE_WIN32_API
+#ifdef H4_HAVE_WIN32_API
     /* Set default mode to binary to suppress the expansion of 0x0f into CRLF */
     _fmode |= O_BINARY;
 #endif
