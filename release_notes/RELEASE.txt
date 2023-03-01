@@ -30,7 +30,7 @@ CONTENTS
   -- Library
   -- Utilities
 - Documentation
-- Platforms tested
+- Platforms Tested
 - Known problems
 
 
@@ -38,13 +38,6 @@ New features and changes
 ========================
     Configuration:
     -------------
-    - Removed VOID and VOIDP from hdfi.h
-
-      These were typedef'd to void and void *, respectively. Although they did
-      not appear in the public API, they were used in the examples.
-
-      (DER - 2023/02/05)
-
     - Added Intel OneAPI compiler support to the configuration files
 
       The CMake toolchain file for Intel was updated to allow the
@@ -331,7 +324,7 @@ Documentation
 =============
 
 
-Platforms tested
+Platforms Tested
 ================
 This version has been tested in the following platforms:
 
@@ -339,63 +332,66 @@ This version has been tested in the following platforms:
    uname -s, uname -r
    uname -v, uname -p, uname -m)
 
-
-
-   Linux 2.6.32-754.11.1.el6.x86_64  gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-16)
-   #1 SMP, x86_64                    GNU Fortran (GCC) 4.4.7 20120313 (Red Hat 4.4.7-16)
-   (mayll/platypus)                  icc (ICC) 17.0.0.098 Build 20160721
-                                     ifort (IFORT) 17.0.0.098 Build 20160721
-                                     pgcc and pgf90 17.10-0 64-bit target
-                                         on x86-64 Linux -tp nehalem
-
-   Linux, 3.10.0-327.18.2.el7.x86_64 GNU C (gcc) and Fortran (gfortran) compilers:
-   #1 SMP x86_64, GNU/Linux             Version 4.8.5 20150623 (Red Hat 4.8.5-4)
-   jelly/moohan)                        Version 4.9.3, 5.3.0, 6.2.0, 7.1.0, 8.3.0
-                                     Intel(R) C (icc) and Fortran (ifort) compilers:
-                                        Version 17.0.0.098 Build 20160721
-                                     pgcc and pgf90 17.10-0 64-bit target
-                                         on x86-64 Linux -tp haswell
-
-   Linux, 2.6.32-573.18.1.el6.ppc64  GNU C (gcc) and Fortran (gfortran) compilers:
-   #1 SMP, ppc64 (ostrich)             Version 4.4.7 20120313 (Red Hat 4.4.7-18)
-                                     Fortran (xlf)  for Linux Version 15.1
-
-   SunOS 5.11 (32- and 64-bit)       Sun C 5.12 SunOS_sparc 2011/11/16
-   11.1, sparc, sun4v (emu)          Sun Fortran 95 8.6 SunOS_sparc 2011/11/16
-
-   Mac OS X 10.11.5, Darwin, 15.6.0  Apple clang version 7.3 from Xcode 7.3
-   x86_64                            gfortran GNU Fortran (GCC) 5.2.0
-   (osx1011test)                     Intel icc and ifort version 15.0.3
-
-   macOS Sierra 10.12.5, Darwin,     Apple clang version 8.1.0 from Xcode 8.3
-   16.6.0, x86_64                    gfortran GNU Fortran (GCC) 7.4.0
-   (kite)                            Intel icc and ifort version 17.0.2
-
-   macOS 10.14.6, Darwin,            Apple clang LLVM version 10.0.1
-   18.7.0, x86_64                    gfortran GNU Fortran (GCC) 6.3.0
-   (bobcat)                          Intel icc version 19.0.4
-
-    Linux 5.13.0                     GNU gcc (GCC) 9.4.0
-    Ubuntu SMP x86_64 GNU/Linux      GNU Fortran (GCC) 9.4.0
-    Ubuntu 20.04                     Ubuntu clang version 10.0.0-4
+    Linux 5.15.0-1026-aws            gcc (Ubuntu 11.3.0-1ubuntu1~22.04) 11.3.0
+    #30-Ubuntu SMP x86_64 GNU/Linux  GNU Fortran (Ubuntu 11.3.0-1ubuntu1~22.04) 11.3.0
+    Ubuntu 22.04                     Ubuntu clang version 14.0.0-1ubuntu1
                                      (cmake and autotools)
 
     Linux 5.15.0                     GNU gcc (GCC) 11.3.0
     Ubuntu SMP x86_64 GNU/Linux      GNU Fortran (GCC) 11.3.0-
     Ubuntu 22.04                     Ubuntu clang version 10.0.0-4
+      (mingw64)                      (cmake and autotools)
+
+    Linux 5.13.0-1031-aws            GNU gcc (GCC) 9.4.0-1ubuntu1
+    #35-Ubuntu SMP x86_64 GNU/Linux  GNU Fortran (GCC) 9.4.0-1ubuntu1
+    Ubuntu 20.04                     clang version 10.0.0-4ubuntu1
                                      (cmake and autotools)
 
-    macOS Apple M1 11.6              Apple clang version 12.0.5 (clang-1205.0.22.11)
-    Darwin 20.6.0 arm64              gfortran GNU Fortran (Homebrew GCC 11.2.0) 11.1.0
-    (macmini-m1)                     Intel icc/icpc/ifort version 2021.3.0 202106092021.3.0 20210609
+    Linux 4.18.0-348.7.1.el8_5       gcc (GCC) 8.5.0 20210514 (Red Hat 8.5.0-4)
+    #1 SMP x86_64 GNU/Linux          GNU Fortran (GCC) 8.5.0 20210514 (Red Hat 8.5.0-4)
+    CentOS8                          clang version 12.0.1 (Red Hat 12.0.1)
+                                     (cmake and autotools)
 
-    macOS Big Sur 11.3.1             Apple clang version 12.0.5 (clang-1205.0.22.9)
-    Darwin 20.4.0 x86_64             gfortran GNU Fortran (Homebrew GCC 10.2.0_3) 10.2.0
-    (bigsur-1)                       Intel icc/icpc/ifort version 2021.2.0 20210228
+    Linux 3.10.0-1160.36.2.el7.ppc64 gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-39)
+    #1 SMP ppc64 GNU/Linux           g++ (GCC) 4.8.5 20150623 (Red Hat 4.8.5-39)
+    (echidna)                        GNU Fortran (GCC) 4.8.5 20150623 (Red Hat 4.8.5-39)
+                                     IBM XL C/C++ V13.1
+                                     IBM XL Fortran V15.1
+ 
+    Linux 3.10.0-327.18.2.el7.x86_64 GNU C (gcc) and Fortran (gfortran) compilers:
+    #1 SMP x86_64, GNU/Linux             Version 4.8.5 20150623 (Red Hat 4.8.5-4)
+    jelly/moohan)                        Version 4.9.3, 5.3.0, 6.2.0, 7.1.0, 8.3.0
+                                     Intel(R) C (icc) and Fortran (ifort) compilers:
+                                        Version 17.0.0.098 Build 20160721
+                                     pgcc and pgf90 17.10-0 64-bit target
+                                         on x86-64 Linux -tp haswell
+
+    Linux 2.6.32-754.11.1.el6.x86_64  gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-16)
+    #1 SMP, x86_64                    GNU Fortran (GCC) 4.4.7 20120313 (Red Hat 4.4.7-16)
+    (platypus)                        icc (ICC) 17.0.0.098 Build 20160721
+                                      ifort (IFORT) 17.0.0.098 Build 20160721
+                                      pgcc and pgf90 17.10-0 64-bit target
+                                         on x86-64 Linux -tp nehalem
+
+    macOS Apple M1 11.7.3            Apple clang version 13.0.0 (clang-1300.0.29.30)
+    Darwin 20.6.0 arm64              gfortran GNU Fortran (Homebrew GCC 12.2.0) 12.2.0
+    (macmini-m1)                     Intel icc/icpc/ifort version 2021.8.0 20221120
+
+    macOS Big Sur 11.7.3             Apple clang version 12.0.5 (clang-1205.0.22.9)
+    Darwin 20.4.0 x86_64             gfortran GNU Fortran (Homebrew GCC 12.2.0) 12.2.0
+    (bigsur-1)                       Intel icc/icpc/ifort version 2021.7.1 20221019
 
     macOS High Sierra 10.13.6        Apple LLVM version 10.0.0 (clang-1000.10.44.4)
     64-bit                           gfortran GNU Fortran (GCC) 6.3.0
-    (bear)                           Intel icc/icpc/ifort version 19.0.4.233 20190416
+    (bear)                           Intel icc/icpc/ifort version 18.0.4.233 20190416
+
+    macOS Sierra 10.12.6              Apple LLVM version 9.0.0 (clang-900.39.2)
+    64-bit                            gfortran GNU Fortran (GCC) 7.4.0
+    (kite)                            Intel icc/icpc/ifort version 17.0.2
+
+    Mac OS X El Capitan 10.11.5      Apple clang version 7.3 from Xcode 7.3
+    Darwin 15.6.0 x86_64             gfortran GNU Fortran (GCC) 5.2.0
+    (osx1011test)                    Intel icc and ifort version 15.0.3
 
     Windows 10 x64                  Visual Studio 2015 (cmake)
                                     Visual Studio 2017 w/ Intel C/C++/Fortran 19 (cmake)
