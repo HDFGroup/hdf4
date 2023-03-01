@@ -232,6 +232,7 @@ done:
 
  RETURNS
     SUCCEED/FAIL
+
 ******************************************************************************/
 static intn
 SDIstart(void)
@@ -877,8 +878,6 @@ done:
  RETURNS
         SUCCEED / FAIL
 
- MODIFICATION
-
 ******************************************************************************/
 intn
 SDgetnumvars_byname(int32       fid,  /* IN: file ID */
@@ -939,8 +938,6 @@ done:
 
  RETURNS
         SUCCEED / FAIL
-
- MODIFICATION
 
 ******************************************************************************/
 intn
@@ -1841,6 +1838,7 @@ done:
 
  RETURNS
         On error FAIL else SUCCEED.
+
 ******************************************************************************/
 intn
 SDattrinfo(int32  id,    /* IN:  object ID */
@@ -4205,8 +4203,6 @@ done:
  RETURNS
     SUCCEED/FAIL
 
- MODIFICATION
-
 ******************************************************************************/
 intn
 SDgetdatasize(int32  sdsid,     /* IN: dataset ID */
@@ -5557,12 +5553,23 @@ SDgetchunkinfo(int32          sdsid,     /* IN: sds access id */
             free(info_block.cdims);
         }
     }
-    else /* not special chunked element */
-    {
+    else                   /* not special chunked element */
         *flags = HDF_NONE; /* regular SDS */
-    }
+
+    /* End access to the access id */
+    if (Hendaccess(var->aid) == FAIL)
+        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+    var->aid = FAIL;
 
 done:
+    if (ret_value == FAIL) { /* Failure cleanup */
+        /* End access to the aid if necessary */
+        if (var && var->aid != FAIL) {
+            Hendaccess(var->aid);
+            var->aid = FAIL;
+        }
+    }
+    /* Normal cleanup */
     return ret_value;
 } /* SDgetchunkinfo() */
 
@@ -5738,10 +5745,8 @@ SDwritechunk(int32       sdsid,  /* IN: access aid to SDS */
     } /* end if Hinquire */
 
 done:
-    /* dont forget to free up info is special info block
-       This space was allocated by the library */
+    /* Release resource */
     free(info_block.cdims);
-
     free(tBuf);
 
     return ret_value;
@@ -5944,10 +5949,8 @@ done:
         }
     }
 
-    /* dont forget to free up info in special info block
-       This space was allocated by the library */
+    /* Release resource */
     free(info_block.cdims);
-
     free(tBuf);
 
     return ret_value;
@@ -6067,17 +6070,6 @@ done:
  RETURNS
     SUCCEED/FAIL
 
- PROGRAMMER
-    bmribler - 9-01-98
-
- MODIFICATION
-    bmribler - 9/29/2004
-        When the SDS is not a special element, we only need to check
-        its data ref# to decide whether it has data written, but
-        when the SDS is a special element, it still has a valid
-        data ref# even though it doesn't have data, we'll then need
-        to perform a more detailed check.  Added more detailed checks.
-
 ******************************************************************************/
 int32
 SDcheckempty(int32 sdsid, /* IN: dataset ID */
@@ -6149,11 +6141,6 @@ done:
     A value of type hdf_idtype_t, which can be either of the following:
     SD_ID, SDS_ID, DIM_ID, NOT_SDAPI_ID.
 
- PROGRAMMER
-    bmribler - 1-19-2005
-
- MODIFICATION
-
 ******************************************************************************/
 hdf_idtype_t
 SDidtype(int32 an_id)
@@ -6210,11 +6197,6 @@ SDidtype(int32 an_id)
     The current maximum number of opened files allowed, or FAIL, if
     unable to reset it.
 
- PROGRAMMER
-    bmribler - 9-06-2005
-
- MODIFICATION
-
 ******************************************************************************/
 intn
 SDreset_maxopenfiles(intn req_max)
@@ -6249,11 +6231,6 @@ done:
 
  RETURNS
     SUCCEED/FAIL
-
- PROGRAMMER
-    bmribler - 9-06-2005
-
- MODIFICATION
 
 ******************************************************************************/
 intn
@@ -6297,11 +6274,6 @@ done:
  RETURNS
     The number of files currently being opened or FAIL.
 
- PROGRAMMER
-    bmribler - 9-06-2005
-
- MODIFICATION
-
 ******************************************************************************/
 intn
 SDget_numopenfiles(void)
@@ -6331,11 +6303,6 @@ SDget_numopenfiles(void)
 
  RETURNS
     Length of the file name, without '\0', on success, and FAIL, otherwise.
-
- PROGRAMMER
-    bmribler - 9-06-2005
-
- MODIFICATION
 
 ******************************************************************************/
 intn
@@ -6379,11 +6346,6 @@ DESCRIPTION
 
 RETURNS
    SUCCEED/FAIL
-
- PROGRAMMER
-    bmribler - 9-14-2006
-
- MODIFICATION
 
 ******************************************************************************/
 intn
