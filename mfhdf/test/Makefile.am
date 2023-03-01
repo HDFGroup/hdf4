@@ -8,7 +8,7 @@ include $(top_srcdir)/config/commence.am
 test_INCLUDES=-I$(top_srcdir)/hdf/src         \
               -I$(top_srcdir)/mfhdf/libsrc    \
               -I$(top_builddir)/mfhdf/libsrc
-DEFINES=-DNDEBUG -DHDF
+DEFINES=-DHDF
 AM_CPPFLAGS=$(test_INCLUDES) $(XDRINC) $(DEFINES)
 
 if HDF_BUILD_XDR

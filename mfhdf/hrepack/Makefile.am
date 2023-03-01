@@ -9,7 +9,7 @@ hrepack_INCLUDES=-I$(top_srcdir)/hdf/src   \
          -I$(top_srcdir)/mfhdf/hdiff       \
          -I$(top_srcdir)/mfhdf/libsrc      \
          -I$(top_builddir)/mfhdf/libsrc
-DEFINES=-DNDEBUG -DHDF
+DEFINES=-DHDF
 AM_CPPFLAGS=$(hrepack_INCLUDES) $(XDRINC) $(DEFINES)
 
 ## Add hrepack specific linker flags here

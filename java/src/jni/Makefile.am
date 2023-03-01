@@ -6,7 +6,7 @@ include $(top_srcdir)/config/commence.am
 
 # Mark this directory as part of the JNI API
 JAVA_API=yes
-AM_CFLAGS=-DNDEBUG -fPIC
+AM_CFLAGS=-fPIC
 
 # Include src directory and JNI flags
 AM_CPPFLAGS=-I$(top_srcdir)/hdf/src        \

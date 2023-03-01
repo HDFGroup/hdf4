@@ -7,7 +7,7 @@ include $(top_srcdir)/config/commence.am
 ## Setup the different includes and preprocessor #defines we need.
 lib_INCLUDES = -I$(top_srcdir)/hdf/src        \
                -I$(top_srcdir)/mfhdf/libsrc
-DEFINES = -DNDEBUG -DHDF
+DEFINES = -DHDF
 AM_CPPFLAGS = $(lib_INCLUDES) $(XDRINC) $(DEFINES)
 
 #############################################################################

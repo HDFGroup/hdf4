@@ -871,8 +871,7 @@ AC_SUBST([CONFIG_MODE])
 
 AC_C_BIGENDIAN
 
-## Are we building this in debug or production mode? (Remove the -g flag
-## in production mode.)
+## Are we building this in debug or production mode?
 AC_MSG_CHECKING([for build mode])
 AC_ARG_ENABLE([production],
               [AS_HELP_STRING([--enable-production],
@@ -882,37 +881,16 @@ case "X-$enable_production" in
   X-|X-yes)
     AC_MSG_RESULT([production])
     CONFIG_MODE=production
-    ## Remove the "-g" flag from compile line if it's in there.
-    CFLAGS_temp=""
-    if test -n "$CFLAGS"; then
-      for d in $CFLAGS ; do
-        if test "X$d" != "X-g"; then
-          CFLAGS_temp="$CFLAGS_temp $d"
-        fi
-      done
-      CFLAGS=$CFLAGS_temp
-    fi
-
-    FFLAGS_temp=""
-    if test -n "$FFLAGS"; then
-      for d in $FFLAGS ; do
-        if test "X$d" != "X-g"; then
-          FFLAGS_temp="$FFLAGS_temp $d"
-        fi
-      done
-      FFLAGS=$FFLAGS_temp
-    fi
-
     CFLAGS="$CFLAGS $PROD_CFLAGS"
     FFLAGS="$FFLAGS $PROD_FFLAGS"
-    CPPFLAGS="$CPPFLAGS $PROD_CPPFLAGS"
+    CPPFLAGS="$CPPFLAGS -DNDEBUG $PROD_CPPFLAGS"
     ;;
   X-no)
     AC_MSG_RESULT([development])
     CONFIG_MODE=development
     CFLAGS="$CFLAGS $DEBUG_CFLAGS"
     FFLAGS="$FFLAGS $DEBUG_FFLAGS"
-    CPPFLAGS="$CPPFLAGS $DEBUG_CPPFLAGS"
+    CPPFLAGS="$CPPFLAGS -UNDEBUG $DEBUG_CPPFLAGS"
     ;;
   *)
     AC_MSG_RESULT([user-defined])
