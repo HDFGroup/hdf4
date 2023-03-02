@@ -330,10 +330,10 @@ typedef intptr_t hdf_pint_t;
  * only kept here to avoid breakage in programs that unwisely used
  * them.
  */
-#define HDmalloc(s)    malloc(s)
-#define HDcalloc(a,b)  calloc(a,b)
-#define HDfree(p)      free(p)
-#define HDrealloc(p,s) realloc(p,s)
+#define HDmalloc(s)     malloc(s)
+#define HDcalloc(a, b)  calloc(a, b)
+#define HDfree(p)       free(p)
+#define HDrealloc(p, s) realloc(p, s)
 
 /* Macro to free space and clear pointer to NULL */
 #define HDfreenclear(p)                                                                                      \
