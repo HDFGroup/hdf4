@@ -232,7 +232,7 @@ my (@curver) = getvers $contents;
 # Determine the new version number.
 my @newver; #new version
 if ($set) {
-  if ($set =~ /(\d+)\.(\d+)\.(\d+)(-([a-zA-Z]\w*))?/) {
+  if ($set =~ /(\d+)\.(\d+)\.(\d+)(-([\da-zA-Z]\w*))?/) {
     @newver = ($1, $2, $3, $5);
   } elsif ($set =~ /(\d+)\D+(\d+)\D+(\d+)(\s*\(([a-zA-Z]\w*)\))?\D*$/) {
     @newver = ($1, $2, $3, $5);
@@ -493,12 +493,12 @@ sub gen_configure {
   $conf =~ /^(.*?)\/?configure.ac$/;
 
   if ($1) {
-    $rc = system("cd $1 && bin/reconfigure >/dev/null 2>/dev/null && rm -rf autom4te.cache");
+    $rc = system("cd $1 && ./autogen.sh >/dev/null 2>/dev/null && rm -rf autom4te.cache");
   } else {
-    $rc = system("bin/reconfigure >/dev/null 2>/dev/null && rm -rf autom4te.cache");
+    $rc = system("./autogen.sh >/dev/null 2>/dev/null && rm -rf autom4te.cache");
   }
   if ($rc) {
-    printf("bin/reconfigure failed with exit code %d. Aborted.\n", $rc);
+    printf("./autogen.sh failed with exit code %d. Aborted.\n", $rc);
     exit 1;
   }
 }
