@@ -351,7 +351,7 @@ if ($H4_TESTJAVA) {
   my $data = read_file($H4_TESTJAVA);
   my $version_string = sprintf("%d, %d, %d", @newver[0,1,2]);
 
-  $data =~ s/    int LIB_VERSION\[\] = { \d*, \d*, \d* };/    int LIB_VERSION\[\] = { $version_string };/;
+  $data =~ s/        int LIB_VERSION\[\] = \{.*\};/        int LIB_VERSION\[\] = \{$version_string\};/;
 
   write_file($H4_TESTJAVA, $data);
 }
