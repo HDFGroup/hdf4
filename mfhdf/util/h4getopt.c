@@ -98,10 +98,14 @@ h4getopt(int argc, char *const argv[], const char *optstring)
     else {
         /* Option-argument is either the rest of this argument or the
            entire next argument. */
-        if (*place)
-            h4optarg = place;
-        else if (argc > ++h4optind)
-            h4optarg = argv[h4optind];
+        if (*place) {
+            h4optarg = (char *)malloc(strlen(place) + 1);
+            strcpy(h4optarg, place);
+        }
+        else if (argc > ++h4optind) {
+            h4optarg = (char *)malloc(strlen(argv[h4optind]) + 1);
+            strcpy(h4optarg, argv[h4optind]);
+        }
         else {
             /* option-argument absent */
             place = EMSG;
