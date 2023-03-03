@@ -27,10 +27,10 @@
  * SUCH DAMAGE.
  */
 
-#include "h4getopt.h"
-
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include "h4getopt.h"
 
 int   h4opterr   = 1;    /* if error message should be printed */
 int   h4optind   = 1;    /* index into parent argv vector */
