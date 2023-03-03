@@ -827,6 +827,7 @@ test_change_extdir(void)
     strcat(created_file_path, EXT_FILE);
     command_ret = remove(created_file_path);
     CHECK(command_ret, FAIL, "remove created_file_path");
+    free(created_file_path);
 
     /* Remove hdf file */
     command_ret = remove(MAIN_FILE);
