@@ -612,9 +612,10 @@ main(int argc, char *argv[])
             0,         /* if -v specified, number of variables */
             0          /* if -v specified, list of variable names */
         };
-    int c;
-    int i;
-    int max_len = 80; /* default maximum line length */
+    int   c;
+    int   i;
+    char *ptr;
+    int   max_len = 80; /* default maximum line length */
 
     h4opterr = 1;
     progname = argv[0];
@@ -699,6 +700,12 @@ main(int argc, char *argv[])
         if (argc > 0)
             do_ncdump(argv[i], &fspec);
     } while (++i < argc);
+
+    /* Release resources */
+    free(fspec.name);
+    for (i = 0, ptr = fspec.lvars; i < fspec.nlvars; i++, ptr++)
+        free(ptr);
+    free(fspec.lvars);
 
     return EXIT_SUCCESS;
 }
