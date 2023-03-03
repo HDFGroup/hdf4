@@ -389,14 +389,11 @@ Bugs fixed since HDF 4.2.15
 
     - A segfault is replaced by a failure
 
-      Mathworks reported that a segfault had occurred when reading a
-      user's file.  Examining the file contents showed that the value
-      for the number of fields in one of the vdata had been corrupted
-      and became larger than the maximum number of fields allowed in
-      a vdata.
-
-      We now ensure that the library detects such value and fail instead
-      of producing segfault.
+      A segfault had occurred when reading a user's file.  Examining the file
+      contents showed that the value for the number of fields in one of the
+      vdata had been corrupted and became larger than the maximum number of
+      fields allowed in a vdata.  The library now detects such situation and
+      fail instead of producing segfault.
 
       (BMR - 2023/01/19, HDFFR-1593)
 
