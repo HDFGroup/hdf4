@@ -529,6 +529,9 @@ do_ncdump(char *path, struct fspec *specp)
 
     Printf("}\n");
     (void)ncclose(ncid);
+
+    /* Release resource */
+    free(vlist);
 }
 
 static void
@@ -614,6 +617,7 @@ main(int argc, char *argv[])
         };
     int c;
     int i;
+    char *ptr;
     int max_len = 80; /* default maximum line length */
 
     h4opterr = 1;
@@ -699,6 +703,12 @@ main(int argc, char *argv[])
         if (argc > 0)
             do_ncdump(argv[i], &fspec);
     } while (++i < argc);
+
+    /* Release resources */
+    free(fspec.name);
+    for (i = 0, ptr=fspec.lvars; i < fspec.nlvars; i++, ptr++)
+        free(ptr);
+    free(fspec.lvars);
 
     return EXIT_SUCCESS;
 }
