@@ -615,10 +615,10 @@ main(int argc, char *argv[])
             0,         /* if -v specified, number of variables */
             0          /* if -v specified, list of variable names */
         };
-    int c;
-    int i;
+    int   c;
+    int   i;
     char *ptr;
-    int max_len = 80; /* default maximum line length */
+    int   max_len = 80; /* default maximum line length */
 
     h4opterr = 1;
     progname = argv[0];
@@ -706,7 +706,7 @@ main(int argc, char *argv[])
 
     /* Release resources */
     free(fspec.name);
-    for (i = 0, ptr=fspec.lvars; i < fspec.nlvars; i++, ptr++)
+    for (i = 0, ptr = fspec.lvars; i < fspec.nlvars; i++, ptr++)
         free(ptr);
     free(fspec.lvars);
 
