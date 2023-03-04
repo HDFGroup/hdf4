@@ -1,4 +1,4 @@
-HDF version 4.2.16-1 currently under development
+HDF version 4.2.16 currently under development
 ====================================================
 
 INTRODUCTION

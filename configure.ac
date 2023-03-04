@@ -23,7 +23,7 @@
 ## NOTE: Do not forget to change the version number here when we do a
 ## release!!!
 ##
-AC_INIT([HDF], [4.2.16-1], [help@hdfgroup.org])
+AC_INIT([HDF], [4.2.16], [help@hdfgroup.org])
 AC_CONFIG_SRCDIR([hdf/src/atom.c])
 AC_CONFIG_AUX_DIR([bin])
 AC_CONFIG_HEADERS([hdf/src/h4config.h])
@@ -77,7 +77,7 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])]) # use silent rules where a
 ##
 ## By default, maintainer mode is enabled in development branches and disabled
 ## in release branches.
-AM_MAINTAINER_MODE([enable])
+AM_MAINTAINER_MODE([disable])
 
 ## ----------------------------------------------------------------------
 ## Set prefix default (install directory) to a directory in the build area.
