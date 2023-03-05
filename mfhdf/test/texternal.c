@@ -728,8 +728,16 @@ test_change_extdir(void)
         temp_dir = (char *)malloc(strlen(TMP_DIR) + 1);
         strcpy(temp_dir, TMP_DIR);
 
+#ifdef H4_HAVE_SYS_STAT_H
+#include <sys/stat.h>
+#endif
+#ifdef H4_HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+
 #if defined H4_HAVE_WIN32_API
-        command_ret = _mkdir(temp_dir);
+        if ((command_ret = _mkdir(temp_dir)) == FAIL)
+            command_ret = mkdir(temp_dir, 0755);
 #else
         command_ret = mkdir(temp_dir, 0755);
 #endif
