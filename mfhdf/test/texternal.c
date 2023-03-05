@@ -729,11 +729,11 @@ test_change_extdir(void)
         strcpy(temp_dir, TMP_DIR);
 
 #if defined H4_HAVE_WIN32_API
-        command_ret = _mkdir(temp_dir);
+        command_ret = mkdir(temp_dir);
 #else
         command_ret = mkdir(temp_dir, 0755);
 #endif
-        CHECK(command_ret, FAIL, "mkdir");
+        CHECK(command_ret, (-1), "mkdir temp_dir");
         strcat(dir_name, temp_dir);
     }
 
@@ -836,7 +836,7 @@ test_change_extdir(void)
     /* Remove temporary directory used in case no src_dir */
     if (temp_dir) {
         command_ret = rmdir(temp_dir);
-        CHECK(command_ret, FAIL, "remove temp_dir");
+        CHECK(command_ret, (-1), "remove temp_dir");
         free(temp_dir);
     }
 
