@@ -503,6 +503,12 @@ o  Builds with the autotools option --enable-hdf4-xdr fail on Solaris and
    on IBM ppc64 with the xlc compiler.  The option should not be used on
    those platforms.
 
+o  A number of tools and tests fail to free small amounts of memory if they
+   are just going to exit anyway.  This doesn't appear to be a memory leak
+   in the core library.  We're planning to fix these leaks in future releases,
+   likely by modifying these tools to have a single point of return, where
+   resource cleanup will be carried out. 
+
 o  CMake files do not behave correctly with paths containing spaces.
    Do not use spaces in paths because the required escaping for handling spaces
    results in very complex and fragile build files.
@@ -596,3 +602,4 @@ o  In order for the API SDgetdatasize to get the correct compressed size
    of the data, the dataset needs to be closed (SDendaccess) or read
    (SDreaddata) after being written and before SDgetdatasize is called.
    BMR - 2008/11/22
+
