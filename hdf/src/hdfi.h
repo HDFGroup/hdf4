@@ -105,6 +105,7 @@
 /* Windows headers */
 #ifdef H4_HAVE_WIN32_API
 #include <windows.h>
+#include <direct.h>
 #include <io.h>
 #include <process.h>
 #endif

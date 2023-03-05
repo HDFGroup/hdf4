@@ -20,8 +20,6 @@
 
 #include "H4api_adpt.h"
 
-/* change this back if it causes problems on other machines than the Alhpa-QAK */
-/* Reverse back to the previous way. AKC */
 #include "hdf.h"
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h"
