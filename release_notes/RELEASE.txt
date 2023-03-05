@@ -533,22 +533,8 @@ o  CMake does not install these man pages:
     hdf.1, ncdump.1, ncgen.1
    AKC/BMR - 2014/02/02
 
-o  For Mac OS X 10.7 Lion, 10.8 Mountain Lion, 10.9 Mavericks, 10.10 Yosemite,
-   and 10.11 El Capitan, when compiling with -O2, some xdr functions might cause
-   memory corruption.  This happened for GCC, Intel and Clang compilers.
-   Currently, -O0 level optimization is used to avoid this problem.
-   (HDFFR-1318,1327,1358,1425) EIP - 2013/02/05, BMR - 2016/06/24
-   Update: This issue has been addressed in 4.2.15. BMR - 2020/02/24
-
 o  On IBM PowerPC 64, hdftest fails when gcc 4.4.6 is used with -O3 optimization
    level.
-
-o  When building in AIX systems, if CC is xlc with -qlanglvl=ansi, configure
-   will fail when checking for the jpeglib.h header due to the duplicated
-   macro definition of HAVE_STDLIB_H.  This is because some newer builds
-   of the jpeg library have HAVE_STDLIB_H defined in the jconfig.h header file.
-   Without the -qlanglvl=ansi, some older xlc versions (e.g., V7.0) still
-   fail, but newer xlc versions (e.g., V9.0) pass.  AKC - 2010/02/17
 
 o  When building on Linux/UNIX platforms, the szip shared library files must
    be in the system library path.  This can be done by adding a link to
