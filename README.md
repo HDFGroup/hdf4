@@ -1,4 +1,4 @@
-HDF version 4.2.16 currently under development
+HDF version 4.2.16 released on 2023-03-06
 
 ![HDF Logo](doc/img/HDF.png)
 

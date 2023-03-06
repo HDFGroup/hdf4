@@ -1,10 +1,10 @@
-HDF version 4.2.16 currently under development
+HDF version 4.2.16 released on 2023-03-06
 ====================================================
 
 INTRODUCTION
 
 This document describes the differences between this release and the
-HDF 4.2.14 release.  It is written for people who are familiar with
+HDF 4.2.15 release.  It is written for people who are familiar with
 previous releases of HDF and wish to migrate to this version of HDF.
 
 Note that the HDF4 documentation will be updated at the time of
