@@ -503,9 +503,12 @@ o  Builds with the autotools option --enable-hdf4-xdr fail on Solaris and
    on IBM ppc64 with the xlc compiler.  The option should not be used on
    those platforms.
 
-o  When building HDF4 in 32 bit mode on Linux platforms with the -m32 flag, 
-   many tests fail with errors converting data.  The problem will be 
-   investigated;  the -m32 flag should not be used with this HDF4 release.  
+o  When building HDF4 in 32-bit mode on 64-bit Linux platforms with the -m32
+   flag, many tests fail with errors converting data.  We have not seen these
+   test failures building on 32-bit systems.  The problem seems to be caused
+   specifically by building with the -m32 flag on 64-bit systems.  It will be
+   investigated;  the -m32 flag on 64-bit systems should not be used with this
+   HDF4 release.  
 
 o  A number of tools and tests fail to free small amounts of memory if they
    are just going to exit anyway.  This doesn't appear to be a memory leak
