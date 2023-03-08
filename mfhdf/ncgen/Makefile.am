@@ -13,8 +13,9 @@ endif
 ## Setup the different includes and preprocessor #defines we need.
 ncgen_INCLUDES=-I$(top_srcdir)/hdf/src   \
          -I$(top_srcdir)/mfhdf/libsrc    \
+         -I$(top_srcdir)/mfhdf/util      \
          -I$(top_builddir)/mfhdf/libsrc
-DEFINES=-DNDEBUG -DHDF
+DEFINES=-DHDF
 AM_CPPFLAGS=$(ncgen_INCLUDES) $(XDRINC) $(DEFINES)
 
 ## Add ncgen specific linker flags here
@@ -38,7 +39,7 @@ endif
 
 ## Information for building the "ncgen" program
 ncgen_SOURCES = close.c escapes.c generate.c genlib.c getfill.c init.c      \
-                load.c main.c ncgentab.c
+                load.c main.c ncgentab.c $(top_srcdir)/mfhdf/util/h4getopt.c
 ncgen_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
 ncgen_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
 
@@ -47,16 +48,6 @@ ctest0_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
 ctest0_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
 
 ftest0_SOURCES=
-
-## Recipe for building the ncgentab.c file
-##ncgentab.c ncgentab.h: ncgen.h ncgen.y ncgenyy.c
-##	$(YACC) -d $(srcdir)/ncgen.y
-##	mv y.tab.c ncgentab.c
-##	mv y.tab.h ncgentab.h
-
-##ncgenyy.c: ncgen.l
-##	$(LEX) $(srcdir)/ncgen.l
-##	mv lex.yy.c ncgenyy.c
 
 #############################################################################
 ##                            Documentation                                ##

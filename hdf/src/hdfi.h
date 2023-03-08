@@ -105,6 +105,7 @@
 /* Windows headers */
 #ifdef H4_HAVE_WIN32_API
 #include <windows.h>
+#include <direct.h>
 #include <io.h>
 #include <process.h>
 #endif
@@ -323,6 +324,17 @@ typedef intptr_t hdf_pint_t;
 /**************************************************************************
  *  Memory functions
  **************************************************************************/
+
+/* DO NOT USE THESE MACROS */
+
+/* These will be removed from a future version of the library and are
+ * only kept here to avoid breakage in programs that unwisely used
+ * them.
+ */
+#define HDmalloc(s)     malloc(s)
+#define HDcalloc(a, b)  calloc(a, b)
+#define HDfree(p)       free(p)
+#define HDrealloc(p, s) realloc(p, s)
 
 /* Macro to free space and clear pointer to NULL */
 #define HDfreenclear(p)                                                                                      \

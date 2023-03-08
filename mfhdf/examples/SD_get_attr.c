@@ -42,13 +42,14 @@ main()
         /*
          * Allocate a buffer to hold the attribute data.
          */
-        fileattr_data = (char *)malloc(n_values * sizeof(char));
+        fileattr_data = (char *)malloc((n_values + 1) * DFKNTsize(data_type));
 
         /*
          * Read the file attribute data.
          */
         if (SDreadattr(sd_id, attr_index, fileattr_data) == FAIL)
             printf("*** ERROR from SDreadattr\n");
+        fileattr_data[n_values] = '\0';
 
         /*
          * Print out file attribute value and free buffer.
@@ -83,7 +84,7 @@ main()
         /*
          * Allocate a buffer to hold the data set attribute data.
          */
-        sds_data = (float32 *)malloc(n_values * sizeof(float32));
+        sds_data = (float32 *)malloc(n_values * DFKNTsize(data_type));
 
         /*
          * Read the SDS attribute data.
@@ -127,14 +128,14 @@ main()
         /*
          * Allocate a buffer to hold the dimension attribute data.
          */
-        dimattr_data = (char *)malloc(n_values * sizeof(char));
+        dimattr_data = (char *)malloc((n_values + 1) * DFKNTsize(data_type));
 
         /*
          * Read the dimension attribute data.
          */
         if (SDreadattr(dim_id, attr_index, dimattr_data) == FAIL)
             printf("*** ERROR from SDreadattr\n");
-        dimattr_data[n_values - 1] = '\0';
+        dimattr_data[n_values] = '\0';
 
         /*
          * Print out dimension attribute value and free buffer.

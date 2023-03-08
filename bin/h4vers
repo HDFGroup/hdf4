@@ -232,7 +232,7 @@ my (@curver) = getvers $contents;
 # Determine the new version number.
 my @newver; #new version
 if ($set) {
-  if ($set =~ /(\d+)\.(\d+)\.(\d+)(-([a-zA-Z]\w*))?/) {
+  if ($set =~ /(\d+)\.(\d+)\.(\d+)(-([\da-zA-Z]\w*))?/) {
     @newver = ($1, $2, $3, $5);
   } elsif ($set =~ /(\d+)\D+(\d+)\D+(\d+)(\s*\(([a-zA-Z]\w*)\))?\D*$/) {
     @newver = ($1, $2, $3, $5);
@@ -351,7 +351,7 @@ if ($H4_TESTJAVA) {
   my $data = read_file($H4_TESTJAVA);
   my $version_string = sprintf("%d, %d, %d", @newver[0,1,2]);
 
-  $data =~ s/    int LIB_VERSION\[\] = { \d*, \d*, \d* };/    int LIB_VERSION\[\] = { $version_string };/;
+  $data =~ s/        int LIB_VERSION\[\] = \{.*\};/        int LIB_VERSION\[\] = \{$version_string\};/;
 
   write_file($H4_TESTJAVA, $data);
 }
@@ -493,12 +493,12 @@ sub gen_configure {
   $conf =~ /^(.*?)\/?configure.ac$/;
 
   if ($1) {
-    $rc = system("cd $1 && bin/reconfigure >/dev/null 2>/dev/null && rm -rf autom4te.cache");
+    $rc = system("cd $1 && ./autogen.sh >/dev/null 2>/dev/null && rm -rf autom4te.cache");
   } else {
-    $rc = system("bin/reconfigure >/dev/null 2>/dev/null && rm -rf autom4te.cache");
+    $rc = system("./autogen.sh >/dev/null 2>/dev/null && rm -rf autom4te.cache");
   }
   if ($rc) {
-    printf("bin/reconfigure failed with exit code %d. Aborted.\n", $rc);
+    printf("./autogen.sh failed with exit code %d. Aborted.\n", $rc);
     exit 1;
   }
 }

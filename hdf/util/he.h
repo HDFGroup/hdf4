@@ -171,7 +171,7 @@ extern HE_GROUP he_grp[];
 
 #define unkOpt(st)   fprintf(stderr, "Unknown option: %s.\n", st)
 #define unkArg(st)   fprintf(stderr, "Unknown argument: %s.\n", st)
-#define ambigOpt(st) fprintf(stderr, "Ambigupus option: %s.\n", st)
+#define ambigOpt(st) fprintf(stderr, "Ambiguous option: %s.\n", st)
 #define irrOpt(st)   fprintf(stderr, "Irrelevant option: %s.\n", st)
 #define noFile()     fprintf(stderr, "No file is opened.\n")
 

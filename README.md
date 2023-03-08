@@ -1,4 +1,4 @@
-HDF version 4.2.15-post0 currently under development
+HDF version 4.2.16-1 currently under development
 
 ![HDF Logo](doc/img/HDF.png)
 
@@ -25,7 +25,7 @@ details for several common platforms and configurations.
 FORUM and NEWS
 --------------
 The following public forums are provided for public announcements and discussions
-of interest to the general HDF5 Community.
+of interest to the general HDF4 Community.
 
    - Homepage of the Forum
    https://forum.hdfgroup.org

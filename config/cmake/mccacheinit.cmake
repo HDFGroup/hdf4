@@ -14,8 +14,6 @@ set (HDF_PACKAGE_NAMESPACE "hdf4::" CACHE STRING "Name for HDF package namespace
 
 set (HDF4_BUILD_EXAMPLES ON CACHE BOOL "Build HDF4 Library Examples" FORCE)
 
-set (HDF4_BUILD_TOOLS ON CACHE BOOL "Build HDF4 Tools" FORCE)
-
 set (HDF4_BUILD_UTILS ON CACHE BOOL "Build HDF4 Library Utilities" FORCE)
 
 set (HDF4_BUILD_GENERATORS OFF CACHE BOOL "Build Test Generators" FORCE)

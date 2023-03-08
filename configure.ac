@@ -23,7 +23,7 @@
 ## NOTE: Do not forget to change the version number here when we do a
 ## release!!!
 ##
-AC_INIT([HDF],[4.2.15-post0],[help@hdfgroup.org])
+AC_INIT([HDF], [4.2.16-1], [help@hdfgroup.org])
 AC_CONFIG_SRCDIR([hdf/src/atom.c])
 AC_CONFIG_AUX_DIR([bin])
 AC_CONFIG_HEADERS([hdf/src/h4config.h])
@@ -39,7 +39,7 @@ AM_INIT_AUTOMAKE([foreign])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])]) # use silent rules where available - automake 1.11
 
 ## AM_MAINTAINER_MODE determines the behavior of "rebuild rules" that contain
-## dependencies for Makefile.in files, configure, src/H5config.h, etc. If
+## dependencies for Makefile.in files, configure, config.h, etc. If
 ## AM_MAINTAINER_MODE is enabled, these files will be rebuilt if out of date.
 ## When disabled, the autotools build files can get out of sync and the build
 ## system will not complain or try to regenerate downstream files.
@@ -192,7 +192,7 @@ if test "X$host_config" != "Xnone"; then
 fi
 
 ## ======================================================================
-## Checks for NetCDF-2.3.2 support
+## Checks for netCDF-2.3.2 support
 ## ======================================================================
 
 # We disable Fortran netCDF APIs and their testing when --disable-netcdf is used.
@@ -202,13 +202,21 @@ AC_SUBST(TEST_FORTRAN_NETCDF) TEST_FORTRAN_NETCDF="yes"
 
 AC_ARG_ENABLE([netcdf],
               [AS_HELP_STRING([--enable-netcdf],
-                              [Build HDF4 versions of NetCDF APIs (version 2.3.2) [default=yes]])],,
+                              [HDF4 builds replacement netCDF 2.3.2 API calls that are exported (e.g., ncopen()).
+                               Enabling this option uses the original netCDF names when building these functions.
+                               Disable prefixes them with 'sd_' to avoid name clashes.
+                               This does NOT affect building the HDF4-built netCDF tools ncdump and ncgen,
+                               nor does it disable any HDF4 functionality - this option only affects
+                               API call names.
+                               Disabling this option disables building the netCDF Fortran wrappers (they
+                               will not be built with either the original or sd_ prefixed names).
+                               [default=yes (HDF4-built netCDF API calls will be exported undecorated)]])],,
               [enableval="yes"])
 
 case "$enableval" in
   yes)
     BUILD_NETCDF="yes"
-    AC_DEFINE([HAVE_NETCDF], [1], [Define if we support HDF NetCDF APIs version 2.3.2])
+    AC_DEFINE([HAVE_NETCDF], [1], [Define if we export HDF4-built unmangled netCDF 2.3.2 API calls])
     ;;
   no)
     BUILD_NETCDF="no"
@@ -217,6 +225,25 @@ case "$enableval" in
 esac
 AM_CONDITIONAL([HDF_BUILD_NETCDF], [test "X$BUILD_NETCDF" = "Xyes"])
 AC_SUBST([BUILD_NETCDF])
+
+# It is also possible to disable building the netCDF tools ncdump and ncgen.
+# Some users may want to do this since our tools will conflict with netCDF's
+# if they are installed. This will also disable building nctest.
+AC_ARG_ENABLE([netcdf-tools],
+              [AS_HELP_STRING([--enable-netcdf-tools],
+                              [Build HDF4 versions of NetCDF tools (ncgen, ncdump) [default=yes]])],,
+              [enableval="yes"])
+
+case "$enableval" in
+  yes)
+    BUILD_NETCDF_TOOLS="yes"
+    ;;
+  no)
+    BUILD_NETCDF_TOOLS="no"
+    ;;
+esac
+AM_CONDITIONAL([HDF_BUILD_NETCDF_TOOLS], [test "X$BUILD_NETCDF_TOOLS" = "Xyes"])
+AC_SUBST([BUILD_NETCDF_TOOLS])
 
 ## ======================================================================
 ## Checks for programs
@@ -351,17 +378,6 @@ AR_FLAGS=cr
 ## Export the AR macro so that it will be placed in the libtool file
 ## correctly.
 export AR
-
-
-AC_CHECK_PROGS([YACC], ['bison -y' byacc yacc], [none], [])
-if test "$YACC" = "none"; then
-  AC_MSG_ERROR([cannot find bison/yacc utility])
-fi
-
-AC_CHECK_PROGS([LEX], [flex lex], [none], [])
-if test "$LEX" = "none"; then
-  AC_MSG_ERROR([cannot find flex/lex utility])
-fi
 
 AC_CHECK_PROG([DIFF],     [diff],     [diff -w])
 AC_CHECK_PROG([MAKEINFO], [makeinfo], [makeinfo])
@@ -855,8 +871,7 @@ AC_SUBST([CONFIG_MODE])
 
 AC_C_BIGENDIAN
 
-## Are we building this in debug or production mode? (Remove the -g flag
-## in production mode.)
+## Are we building this in debug or production mode?
 AC_MSG_CHECKING([for build mode])
 AC_ARG_ENABLE([production],
               [AS_HELP_STRING([--enable-production],
@@ -866,37 +881,16 @@ case "X-$enable_production" in
   X-|X-yes)
     AC_MSG_RESULT([production])
     CONFIG_MODE=production
-    ## Remove the "-g" flag from compile line if it's in there.
-    CFLAGS_temp=""
-    if test -n "$CFLAGS"; then
-      for d in $CFLAGS ; do
-        if test "X$d" != "X-g"; then
-          CFLAGS_temp="$CFLAGS_temp $d"
-        fi
-      done
-      CFLAGS=$CFLAGS_temp
-    fi
-
-    FFLAGS_temp=""
-    if test -n "$FFLAGS"; then
-      for d in $FFLAGS ; do
-        if test "X$d" != "X-g"; then
-          FFLAGS_temp="$FFLAGS_temp $d"
-        fi
-      done
-      FFLAGS=$FFLAGS_temp
-    fi
-
     CFLAGS="$CFLAGS $PROD_CFLAGS"
     FFLAGS="$FFLAGS $PROD_FFLAGS"
-    CPPFLAGS="$CPPFLAGS $PROD_CPPFLAGS"
+    CPPFLAGS="$CPPFLAGS -DNDEBUG $PROD_CPPFLAGS"
     ;;
   X-no)
     AC_MSG_RESULT([development])
     CONFIG_MODE=development
     CFLAGS="$CFLAGS $DEBUG_CFLAGS"
     FFLAGS="$FFLAGS $DEBUG_FFLAGS"
-    CPPFLAGS="$CPPFLAGS $DEBUG_CPPFLAGS"
+    CPPFLAGS="$CPPFLAGS -UNDEBUG $DEBUG_CPPFLAGS"
     ;;
   *)
     AC_MSG_RESULT([user-defined])
@@ -911,7 +905,7 @@ esac
 AC_MSG_CHECKING([for math library support])
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <math.h>]], [[sinh(37.927)]])],[AC_MSG_RESULT([yes])],[AC_MSG_RESULT([no]); LIBS="$LIBS -lm"])
 
-AC_CHECK_FUNCS([getopt fork system wait])
+AC_CHECK_FUNCS([fork system wait])
 
 
 ## ======================================================================
