@@ -1090,7 +1090,7 @@ Vattach(HFILEID     f,    /* IN: file handle */
     else
         HGOTO_ERROR(DFE_BADACC, FAIL);
 
-    /* convert file id to file rec and check for validity */
+    /* convert file id to file record and check for validity */
     file_rec = HAatom_object(f);
     if (BADFREC(file_rec))
         HGOTO_ERROR(DFE_ARGS, FAIL);
