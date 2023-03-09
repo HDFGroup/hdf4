@@ -117,8 +117,8 @@ pr_att_vals(nc_type type, int len, void *vals)
         char    *cp;
         int16   *sp;
         int32   *lp;
-        float32 *fp;
-        float64 *dp;
+        float *fp;
+        double *dp;
     } gp;
     char         *sp;
     unsigned char uc;
@@ -188,7 +188,7 @@ pr_att_vals(nc_type type, int len, void *vals)
                 Printf("%d%s", *gp.lp++, iel < len - 1 ? ", " : "");
             break;
         case DFNT_FLOAT:
-            gp.fp = (float32 *)vals;
+            gp.fp = (float *)vals;
             for (iel = 0; iel < len; iel++) {
                 int ll;
                 (void)sprintf(gps, f_fmt, *gp.fp++);
@@ -201,7 +201,7 @@ pr_att_vals(nc_type type, int len, void *vals)
             }
             break;
         case DFNT_DOUBLE:
-            gp.dp = (float64 *)vals;
+            gp.dp = (double *)vals;
             for (iel = 0; iel < len; iel++) {
                 (void)sprintf(gps, d_fmt, *gp.dp++);
                 tztrim(gps); /* trim trailing 0's after '.' */

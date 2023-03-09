@@ -129,7 +129,7 @@ nscdimid(intf *id, intf *index)
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-nscgcal(intf *id, float64 *cal, float64 *cale, float64 *ioff, float64 *ioffe, intf *nt)
+nscgcal(intf *id, double *cal, double *cale, double *ioff, double *ioffe, intf *nt)
 {
     int32 nt32, status;
 
@@ -150,7 +150,7 @@ nscgcal(intf *id, float64 *cal, float64 *cale, float64 *ioff, float64 *ioffe, in
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-nscscal(intf *id, float64 *cal, float64 *cale, float64 *ioff, float64 *ioffe, intf *nt)
+nscscal(intf *id, double *cal, double *cale, double *ioff, double *ioffe, intf *nt)
 {
     return (SDsetcal(*id, *cal, *cale, *ioff, *ioffe, *nt));
 }
@@ -725,7 +725,7 @@ nscginfo(intf *id, _fcd name, intf *rank, intf *dimsizes, intf *nt, intf *nattr,
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-nsfgcal(intf *id, float64 *cal, float64 *cale, float64 *ioff, float64 *ioffe, intf *nt)
+nsfgcal(intf *id, double *cal, double *cale, double *ioff, double *ioffe, intf *nt)
 {
     int32 nt32, status;
 
@@ -746,7 +746,7 @@ nsfgcal(intf *id, float64 *cal, float64 *cale, float64 *ioff, float64 *ioffe, in
  * Users:   HDF Fortran programmers
  *---------------------------------------------------------------------------*/
 FRETVAL(intf)
-nsfscal(intf *id, float64 *cal, float64 *cale, float64 *ioff, float64 *ioffe, intf *nt)
+nsfscal(intf *id, double *cal, double *cale, double *ioff, double *ioffe, intf *nt)
 {
     return (SDsetcal(*id, *cal, *cale, *ioff, *ioffe, *nt));
 }

@@ -310,7 +310,7 @@ static int32
 fmtfloat(char *x)
 {
     float f = (float)0.0;
-    memcpy(&f, x, sizeof(float32));
+    memcpy(&f, x, sizeof(float));
     cn += printf("%f", f);
     return (1);
 }
@@ -346,7 +346,7 @@ static int32
 fmtdouble(char *x)
 {
     double d = 0.0;
-    memcpy(&d, x, sizeof(float64));
+    memcpy(&d, x, sizeof(double));
     cn += printf("%f", d);
     return (1);
 }

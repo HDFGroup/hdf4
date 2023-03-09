@@ -295,10 +295,10 @@ HDFFCLIBAPI FRETVAL(intf) ndsigdas(_fcd label, _fcd unit, _fcd format, _fcd coor
                                    intf *lunit, intf *lformat, intf *lcoord);
 
 HDFFCLIBAPI FRETVAL(intf)
-    ndsscal(float64 *cal, float64 *cal_err, float64 *ioff, float64 *ioff_err, intf *cal_type);
+    ndsscal(double *cal, double *cal_err, double *ioff, double *ioff_err, intf *cal_type);
 
 HDFFCLIBAPI FRETVAL(intf)
-    ndsgcal(float64 *cal, float64 *cal_err, float64 *ioff, float64 *ioff_err, intf *cal_type);
+    ndsgcal(double *cal, double *cal_err, double *ioff, double *ioff_err, intf *cal_type);
 
 HDFFCLIBAPI FRETVAL(intf) ndswref(_fcd filename, intf *fnlen, intf *ref);
 
@@ -547,12 +547,12 @@ HDFFCLIBAPI FRETVAL(intf) nhconfinfc(intf *coder_type, intf *info);
  */
 #define nduif2i H4_F77_FUNC(duif2i, DUIF2I)
 
-HDFFCLIBAPI FRETVAL(int) nduif2i(int32 *hdim, int32 *vdim, float32 *max, float32 *min, float32 hscale[],
-                                 float32 vscale[], float32 data[], _fcd palette, _fcd outfile, int *ct_method,
+HDFFCLIBAPI FRETVAL(int) nduif2i(int32 *hdim, int32 *vdim, float *max, float *min, float hscale[],
+                                 float vscale[], float data[], _fcd palette, _fcd outfile, int *ct_method,
                                  int32 *hres, int32 *vres, int *compress, int *lenfn);
 
-HDFFCLIBAPI int DFUfptoimage(int32 hdim, int32 vdim, float32 max, float32 min, float32 *hscale,
-                             float32 *vscale, float32 *data, uint8 *palette, char *outfile, int ct_method,
+HDFFCLIBAPI int DFUfptoimage(int32 hdim, int32 vdim, float max, float min, float *hscale,
+                             float *vscale, float *data, uint8 *palette, char *outfile, int ct_method,
                              int32 hres, int32 vres, int compress);
 
 /* for Multi-file fortran Annotation interface */
@@ -1258,8 +1258,8 @@ HDFFCLIBAPI FRETVAL(intf) nvfcgver(intf *vgid);
 
 #define nduif2i H4_F77_FUNC(duif2i, DUIF2I)
 
-HDFFCLIBAPI FRETVAL(int) nduif2i(int32 *hdim, int32 *vdim, float32 *max, float32 *min, float32 hscale[],
-                                 float32 vscale[], float32 data[], _fcd palette, _fcd outfile, int *ct_method,
+HDFFCLIBAPI FRETVAL(int) nduif2i(int32 *hdim, int32 *vdim, float *max, float *min, float hscale[],
+                                 float vscale[], float data[], _fcd palette, _fcd outfile, int *ct_method,
                                  int32 *hres, int32 *vres, int *compress, int *lenfn);
 
 #ifdef __cplusplus

@@ -61,7 +61,7 @@ typedef struct {        /* selection for comparison  */
     uint32 max_err_cnt; /*
                          * max. no of difference to be printed
                          */
-    float32 err_limit;  /*
+    float err_limit;  /*
                          * limit of difference for the comparison
                          */
     int nlvars;         /*
@@ -81,7 +81,7 @@ typedef struct {        /* selection for comparison  */
                          * option on command line
                          */
     int     statistics;
-    float32 err_rel; /*
+    float err_rel; /*
                       * relative diff for the comparison
                       */
 
@@ -115,7 +115,7 @@ uint32 gattr_diff(int32 sdid1, int32 sdid2, diff_opt_t *opt);
 void   pr_att_vals(nc_type type, int len, void *vals);
 
 uint32 array_diff(void *buf1, void *buf2, uint32 tot_cnt, const char *name1, const char *name2, int rank,
-                  int32 *dims, int32 type, float32 err_limit, float32 err_rel, uint32 max_err_cnt,
+                  int32 *dims, int32 type, float err_limit, float err_rel, uint32 max_err_cnt,
                   int32 statistics, void *fill1, void *fill2);
 
 uint32 match(uint32 nobjects1, dtable_t *list1, uint32 nobjects2, dtable_t *list2, int32 sd1_id, int32 gr1_id,

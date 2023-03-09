@@ -13,15 +13,15 @@
 
 #include "tproto.h"
 
-static float64 f64[10][10], tf64[10][10];
-static float64 f64scale[10], tf64scale[10];
-static float64 f64max = (float64)40.0, f64min = (float64)0.0;
-static float64 tf64max, tf64min;
+static double f64[10][10], tf64[10][10];
+static double f64scale[10], tf64scale[10];
+static double f64max = (double)40.0, f64min = (double)0.0;
+static double tf64max, tf64min;
 
-static float32 f32[10][10], tf32[10][10];
-static float32 f32scale[10], tf32scale[10];
-static float32 f32max = (float32)40.0, f32min = (float32)0.0;
-static float32 tf32max, tf32min;
+static float f32[10][10], tf32[10][10];
+static float f32scale[10], tf32scale[10];
+static float f32max = (float)40.0, f32min = (float)0.0;
+static float tf32max, tf32min;
 
 static int8 i8[10][10], ti8[10][10];
 static int8 i8scale[10], ti8scale[10];
@@ -69,9 +69,9 @@ test_sdnmms(void)
     for (i = 0; i < 10; i++) {
         for (j = 0; j < 10; j++) {
 
-            f64[i][j] = (float64)((i * 40) + j); /* range: 0 ~ 4-billion */
+            f64[i][j] = (double)((i * 40) + j); /* range: 0 ~ 4-billion */
 
-            f32[i][j] = (float32)((i * 40) + j); /* range: 0 ~ 4-billion */
+            f32[i][j] = (float)((i * 40) + j); /* range: 0 ~ 4-billion */
 
             i8[i][j]  = (int8)((i * 10) + j);  /* range: 0 ~ 100 */
             ui8[i][j] = (uint8)((i * 20) + j); /* range: 0 ~ 200 */
@@ -83,9 +83,9 @@ test_sdnmms(void)
             ui32[i][j] = (uint32)((i * 40) + j); /* range: 0 ~ 4-billion */
         }
 
-        f64scale[i] = (float64)((i * 40) + j); /* range: 0 ~ 4-billion */
+        f64scale[i] = (double)((i * 40) + j); /* range: 0 ~ 4-billion */
 
-        f32scale[i] = (float32)((i * 40) + j); /* range: 0 ~ 4-billion */
+        f32scale[i] = (float)((i * 40) + j); /* range: 0 ~ 4-billion */
 
         i8scale[i]  = (int8)((i * 10) + j);  /* range: 0 ~ 100 */
         ui8scale[i] = (uint8)((i * 20) + j); /* range: 0 ~ 200 */
@@ -248,12 +248,12 @@ test_sdnmms(void)
         err1 = 1;
 
     num_errs += err + err1 + err2;
-    MESSAGE(5, if (err == 1) printf(">>> Test failed for float64 array.\n");
-            else printf("Test passed for float64 array.\n"););
-    MESSAGE(5, if (err2 == 1) printf(">>> Test failed for float64 scales.\n");
-            else printf("Test passed for float64 scales.\n"););
-    MESSAGE(5, if (err1 == 1) printf(">>> Test failed for float64 max/min.\n");
-            else printf("Test passed for float64 max/min.\n"););
+    MESSAGE(5, if (err == 1) printf(">>> Test failed for double array.\n");
+            else printf("Test passed for double array.\n"););
+    MESSAGE(5, if (err2 == 1) printf(">>> Test failed for double scales.\n");
+            else printf("Test passed for double scales.\n"););
+    MESSAGE(5, if (err1 == 1) printf(">>> Test failed for double max/min.\n");
+            else printf("Test passed for double max/min.\n"););
 
     err  = 0;
     err1 = 0;
@@ -269,12 +269,12 @@ test_sdnmms(void)
         err1 = 1;
 
     num_errs += err + err1 + err2;
-    MESSAGE(5, if (err == 1) printf(">>> Test failed for float32 array.\n");
-            else printf("Test passed for float32 array.\n"););
-    MESSAGE(5, if (err2 == 1) printf(">>> Test failed for float32 scales.\n");
-            else printf("Test passed for float32 scales.\n"););
-    MESSAGE(5, if (err1 == 1) printf(">>> Test failed for float32 max/min.\n");
-            else printf("Test passed for float32 max/min.\n"););
+    MESSAGE(5, if (err == 1) printf(">>> Test failed for float array.\n");
+            else printf("Test passed for float array.\n"););
+    MESSAGE(5, if (err2 == 1) printf(">>> Test failed for float scales.\n");
+            else printf("Test passed for float scales.\n"););
+    MESSAGE(5, if (err1 == 1) printf(">>> Test failed for float max/min.\n");
+            else printf("Test passed for float max/min.\n"););
 
     err  = 0;
     err1 = 0;

@@ -145,13 +145,13 @@ fmtint(void         *x, /* assumption: int is same as 'intn' */
         return (fwrite(&i, sizeof(intn), 1, ofp));
 }
 
-#define FLOAT32_EPSILON ((float32)1.0e-20)
+#define FLOAT32_EPSILON ((float)1.0e-20)
 intn
 fmtfloat32(void *x, file_format_t ff, FILE *ofp)
 {
-    float32 fdata;
+    float fdata;
 
-    memcpy(&fdata, x, sizeof(float32));
+    memcpy(&fdata, x, sizeof(float));
 
     if (ff == DASCII) {
         if (fabs(fdata - FILL_FLOAT) <= FLOAT32_EPSILON)
@@ -160,7 +160,7 @@ fmtfloat32(void *x, file_format_t ff, FILE *ofp)
             return (fprintf(ofp, "%f", fdata));
     }
     else {
-        return (fwrite(&fdata, sizeof(float32), 1, ofp));
+        return (fwrite(&fdata, sizeof(float), 1, ofp));
     }
 }
 
@@ -203,13 +203,13 @@ fmtshort(void *x, file_format_t ff, FILE *ofp)
         return (fwrite(&s, sizeof(short), 1, ofp));
 }
 
-#define FLOAT64_EPSILON ((float64)1.0e-20)
+#define FLOAT64_EPSILON ((double)1.0e-20)
 intn
 fmtfloat64(void *x, file_format_t ff, FILE *ofp)
 {
-    float64 d;
+    double d;
 
-    memcpy(&d, x, sizeof(float64));
+    memcpy(&d, x, sizeof(double));
 
     if (ff == DASCII) {
         if (fabs(d - FILL_DOUBLE) <= FLOAT64_EPSILON)
@@ -218,7 +218,7 @@ fmtfloat64(void *x, file_format_t ff, FILE *ofp)
             return (fprintf(ofp, "%f", d));
     }
     else {
-        return (fwrite(&d, sizeof(float64), 1, ofp));
+        return (fwrite(&d, sizeof(double), 1, ofp));
     }
 }
 

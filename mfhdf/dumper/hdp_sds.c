@@ -834,7 +834,7 @@ printSDS_ASCII(int32 sd_id, dump_info_t *dumpsds_opts, int32 sds_index, /* index
        type of dim0, all the other info will be discarded */
     isdimvar = (SDiscoordvar(sds_id)) ? TRUE : FALSE;
     if (isdimvar) { /* use dim0 nt instead of dimvar nt, because when no dim values
-                       dimvar nt was set to float32 by default */
+                       dimvar nt was set to float by default */
         int32 size, num_attrs;
 
         /* get dimension id for accessing */

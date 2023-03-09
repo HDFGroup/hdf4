@@ -24,13 +24,13 @@
 /* Internal variables */
 static int32 rank = 3;
 
-static float64 maxf64  = 123.0;
-static float64 minf64  = -1.0;
-static float64 fillf64 = 1.0;
+static double maxf64  = 123.0;
+static double minf64  = -1.0;
+static double fillf64 = 1.0;
 
-static float32 maxf32  = (float32)123.0;
-static float32 minf32  = (float32)-1.0;
-static float32 fillf32 = (float32)1.0;
+static float maxf32  = (float)123.0;
+static float minf32  = (float)-1.0;
+static float fillf32 = (float)1.0;
 
 static int32 maxin  = 123;
 static int32 minin  = -1;
@@ -82,13 +82,13 @@ static const char *ucol = "Cm";
 static const char *fcol = "Int32";
 
 /* scales for planes, rows, and cols */
-static float64 scplnf64[2] = {0.0, 100.0};
-static float64 scrowf64[3] = {0.0, 10.0, 20.0};
-static float64 sccolf64[4] = {0.0, 1.0, 2.0, 3.0};
+static double scplnf64[2] = {0.0, 100.0};
+static double scrowf64[3] = {0.0, 10.0, 20.0};
+static double sccolf64[4] = {0.0, 1.0, 2.0, 3.0};
 
-static float32 scplnf32[2] = {(float32)0.0, (float32)100.0};
-static float32 scrowf32[3] = {(float32)0.0, (float32)10.0, (float32)20.0};
-static float32 sccolf32[4] = {(float32)0.0, (float32)1.0, (float32)2.0, (float32)3.0};
+static float scplnf32[2] = {(float)0.0, (float)100.0};
+static float scrowf32[3] = {(float)0.0, (float)10.0, (float)20.0};
+static float sccolf32[4] = {(float)0.0, (float)1.0, (float)2.0, (float)3.0};
 
 static int32 scplnin[2] = {0, 100};
 static int32 scrowin[3] = {0, 10, 20};
@@ -123,20 +123,20 @@ static uint8 scrowui8[3] = {0, 10, 20};
 static uint8 sccolui8[4] = {0, 1, 2, 3};
 
 /* Slabs for slabw(), slab1w(), slab2w() */
-static float32 slabw1[1][1][3] = {{{(float32)110.0, (float32)111.0, (float32)112.0}}};
-static float32 slabw2[2][1][3] = {{{(float32)20.0, (float32)21.0, (float32)22.0}},
-                                  {{(float32)120.0, (float32)121.0, (float32)122.0}}};
-static float32 slabw3[1][2][3] = {
-    {{(float32)0.0, (float32)1.0, (float32)2.0}, {(float32)10.0, (float32)11.0, (float32)12.0}}};
-static float32 slabw4[1][1][3] = {{{(float32)100.0, (float32)101.0, (float32)102.0}}};
-static float32 slabw5[2][3][1] = {{{(float32)3.0}, {(float32)13.0}, {(float32)23.0}},
-                                  {{(float32)103.0}, {(float32)113.0}, {(float32)123.0}}};
+static float slabw1[1][1][3] = {{{(float)110.0, (float)111.0, (float)112.0}}};
+static float slabw2[2][1][3] = {{{(float)20.0, (float)21.0, (float)22.0}},
+                                  {{(float)120.0, (float)121.0, (float)122.0}}};
+static float slabw3[1][2][3] = {
+    {{(float)0.0, (float)1.0, (float)2.0}, {(float)10.0, (float)11.0, (float)12.0}}};
+static float slabw4[1][1][3] = {{{(float)100.0, (float)101.0, (float)102.0}}};
+static float slabw5[2][3][1] = {{{(float)3.0}, {(float)13.0}, {(float)23.0}},
+                                  {{(float)103.0}, {(float)113.0}, {(float)123.0}}};
 
-static float64 slabw1f64[1][1][3] = {{{110.0, 111.0, 112.0}}};
-static float64 slabw2f64[2][1][3] = {{{20.0, 21.0, 22.0}}, {{120.0, 121.0, 122.0}}};
-static float64 slabw3f64[1][2][3] = {{{0.0, 1.0, 2.0}, {10.0, 11.0, 12.0}}};
-static float64 slabw4f64[1][1][3] = {{{100.0, 101.0, 102.0}}};
-static float64 slabw5f64[2][3][1] = {{{3.0}, {13.0}, {23.0}}, {{103.0}, {113.0}, {123.0}}};
+static double slabw1f64[1][1][3] = {{{110.0, 111.0, 112.0}}};
+static double slabw2f64[2][1][3] = {{{20.0, 21.0, 22.0}}, {{120.0, 121.0, 122.0}}};
+static double slabw3f64[1][2][3] = {{{0.0, 1.0, 2.0}, {10.0, 11.0, 12.0}}};
+static double slabw4f64[1][1][3] = {{{100.0, 101.0, 102.0}}};
+static double slabw5f64[2][3][1] = {{{3.0}, {13.0}, {23.0}}, {{103.0}, {113.0}, {123.0}}};
 
 static int32 slabw1in[1][1][3] = {{{110, 111, 112}}};
 static int32 slabw2in[2][1][3] = {{{20, 21, 22}}, {{120, 121, 122}}};
@@ -186,39 +186,39 @@ static uint8 slabw3ui8[1][2][3] = {{{0, 1, 2}, {10, 11, 12}}};
 static uint8 slabw4ui8[1][1][3] = {{{100, 101, 102}}};
 static uint8 slabw5ui8[2][3][1] = {{{3}, {13}, {23}}, {{103}, {113}, {123}}};
 /* Slabs for slab3w() */
-static float32 slab1[1][1][1]  = {{{(float32)0.0}}};
-static float32 slab2[1][1][1]  = {{{(float32)1.0}}};
-static float32 slab3[1][1][1]  = {{{(float32)2.0}}};
-static float32 slab4[1][1][1]  = {{{(float32)3.0}}};
-static float32 slab5[1][1][1]  = {{{(float32)10.0}}};
-static float32 slab6[1][1][1]  = {{{(float32)11.0}}};
-static float32 slab7[1][1][1]  = {{{(float32)12.0}}};
-static float32 slab8[1][1][1]  = {{{(float32)13.0}}};
-static float32 slab9[1][1][1]  = {{{(float32)20.0}}};
-static float32 slab10[1][1][1] = {{{(float32)21.0}}};
-static float32 slab11[1][1][1] = {{{(float32)22.0}}};
-static float32 slab12[1][1][1] = {{{(float32)23.0}}};
-static float32 slab13[1][1][1] = {{{(float32)100.0}}};
-static float32 slab14[1][1][1] = {{{(float32)101.0}}};
-static float32 slab15[1][1][1] = {{{(float32)102.0}}};
-static float32 slab16[1][1][1] = {{{(float32)103.0}}};
-static float32 slab17[1][1][1] = {{{(float32)110.0}}};
-static float32 slab18[1][1][1] = {{{(float32)111.0}}};
-static float32 slab19[1][1][1] = {{{(float32)112.0}}};
-static float32 slab20[1][1][1] = {{{(float32)113.0}}};
-static float32 slab21[1][1][1] = {{{(float32)120.0}}};
-static float32 slab22[1][1][1] = {{{(float32)121.0}}};
-static float32 slab23[1][1][1] = {{{(float32)122.0}}};
-static float32 slab24[1][1][1] = {{{(float32)123.0}}};
+static float slab1[1][1][1]  = {{{(float)0.0}}};
+static float slab2[1][1][1]  = {{{(float)1.0}}};
+static float slab3[1][1][1]  = {{{(float)2.0}}};
+static float slab4[1][1][1]  = {{{(float)3.0}}};
+static float slab5[1][1][1]  = {{{(float)10.0}}};
+static float slab6[1][1][1]  = {{{(float)11.0}}};
+static float slab7[1][1][1]  = {{{(float)12.0}}};
+static float slab8[1][1][1]  = {{{(float)13.0}}};
+static float slab9[1][1][1]  = {{{(float)20.0}}};
+static float slab10[1][1][1] = {{{(float)21.0}}};
+static float slab11[1][1][1] = {{{(float)22.0}}};
+static float slab12[1][1][1] = {{{(float)23.0}}};
+static float slab13[1][1][1] = {{{(float)100.0}}};
+static float slab14[1][1][1] = {{{(float)101.0}}};
+static float slab15[1][1][1] = {{{(float)102.0}}};
+static float slab16[1][1][1] = {{{(float)103.0}}};
+static float slab17[1][1][1] = {{{(float)110.0}}};
+static float slab18[1][1][1] = {{{(float)111.0}}};
+static float slab19[1][1][1] = {{{(float)112.0}}};
+static float slab20[1][1][1] = {{{(float)113.0}}};
+static float slab21[1][1][1] = {{{(float)120.0}}};
+static float slab22[1][1][1] = {{{(float)121.0}}};
+static float slab23[1][1][1] = {{{(float)122.0}}};
+static float slab24[1][1][1] = {{{(float)123.0}}};
 
 /* data array in memory  */
-static float32 fdata[2][3][4]   = {{{(float32)0.0, (float32)1.0, (float32)2.0, (float32)3.0},
-                                  {(float32)10.0, (float32)11.0, (float32)12.0, (float32)13.0},
-                                  {(float32)20.0, (float32)21.0, (float32)22.0, (float32)23.0}},
-                                 {{(float32)100.0, (float32)101.0, (float32)102.0, (float32)103.0},
-                                  {(float32)110.0, (float32)111.0, (float32)112.0, (float32)113.0},
-                                  {(float32)120.0, (float32)121.0, (float32)122.0, (float32)123.0}}};
-static float64 f64data[2][3][4] = {
+static float fdata[2][3][4]   = {{{(float)0.0, (float)1.0, (float)2.0, (float)3.0},
+                                  {(float)10.0, (float)11.0, (float)12.0, (float)13.0},
+                                  {(float)20.0, (float)21.0, (float)22.0, (float)23.0}},
+                                 {{(float)100.0, (float)101.0, (float)102.0, (float)103.0},
+                                  {(float)110.0, (float)111.0, (float)112.0, (float)113.0},
+                                  {(float)120.0, (float)121.0, (float)122.0, (float)123.0}}};
+static double f64data[2][3][4] = {
     {{0.0, 1.0, 2.0, 3.0}, {10.0, 11.0, 12.0, 13.0}, {20.0, 21.0, 22.0, 23.0}},
     {{100.0, 101.0, 102.0, 103.0}, {110.0, 111.0, 112.0, 113.0}, {120.0, 121.0, 122.0, 123.0}}};
 static int32  indata[2][3][4]   = {{{0, 1, 2, 3}, {10, 11, 12, 13}, {20, 21, 22, 23}},
@@ -276,8 +276,8 @@ slabwf32(void)
     int32   i, j, k;
     int32   ret     = 0;
     int32   num_err = 0;
-    float32 sdata[2][3][4]; /* Data array read from from file */
-    float32 lfill = (float32)0.0;
+    float sdata[2][3][4]; /* Data array read from from file */
+    float lfill = (float)0.0;
 
     MESSAGE(10, printf("\n slabwf32:  Writing 5 slabs to slabwf32.hdf \n"););
 
@@ -413,7 +413,7 @@ slabwf32(void)
 }
 
 /*
- ** Write float64 data set to slabw.hdf as 5 hyperslabs.
+ ** Write double data set to slabw.hdf as 5 hyperslabs.
  */
 static int
 slabwf64(void)
@@ -421,8 +421,8 @@ slabwf64(void)
     int32   i, j, k;
     int32   ret     = 0;
     int32   num_err = 0;
-    float64 sdata[2][3][4]; /* Data array read from from file */
-    float64 lfill = (float64)0.0;
+    double sdata[2][3][4]; /* Data array read from from file */
+    double lfill = (double)0.0;
 
     MESSAGE(10, printf("\n slabwf64:  Writing 5 slabs to slabwf64.hdf \n"););
 
@@ -1840,8 +1840,8 @@ slab2w(void)
     int32   i, j, k;
     int32   ret     = 0;
     int32   num_err = 0;
-    float32 sdata[2][3][4]; /* Data array read from from file */
-    float32 lfill = (float32)0.0;
+    float sdata[2][3][4]; /* Data array read from from file */
+    float lfill = (float)0.0;
     intn    trank;
 
     MESSAGE(10, printf("\n slab2w:  Writing the last 2 of 5 slabs to slab1w.hdf \n"););
@@ -1928,7 +1928,7 @@ slab3w(void)
     int32   i, j, k;
     int32   ret     = 0;
     int32   num_err = 0;
-    float32 adata[2][3][4]; /* Data array read from from file */
+    float adata[2][3][4]; /* Data array read from from file */
 
     MESSAGE(10, printf("\n slab3w: Writing all 24 elements of data as slabs to slab3w.hdf \n"););
 
@@ -2229,7 +2229,7 @@ slab4w(void)
     int32   i, j, k;
     int32   ret     = 0;
     int32   num_err = 0;
-    float32 bdata[2][3][4]; /* Data array read from from file */
+    float bdata[2][3][4]; /* Data array read from from file */
 
     MESSAGE(10, printf("\n slab4w: Writing data as 1 slab to slab4w.hdf \n"););
 

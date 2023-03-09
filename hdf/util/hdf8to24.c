@@ -68,7 +68,7 @@ magnify(uint8 *from_buffer, uint8 *to_buffer, int32 from_x0, int32 from_y0, int3
         *y_off,       /* the y offset into the data block */
         *last_y_coor, /* pointer to the last line copied */
         **y_coor;     /* pointers to image data */
-    float64 temp_val, /* temporary value for holding double results */
+    double temp_val, /* temporary value for holding double results */
         wind_width,   /* the width of the window to magnify */
         wind_height;  /* the height of the window to magnify */
     int32  u, v;      /* local unsigned counting variables */
@@ -83,22 +83,22 @@ magnify(uint8 *from_buffer, uint8 *to_buffer, int32 from_x0, int32 from_y0, int3
         return (FALSE);
 
     /* find width and height of the window to magnify */
-    wind_width  = (float64)((from_x1 - from_x0) + 1);
-    wind_height = (float64)((from_y1 - from_y0) + 1);
+    wind_width  = (double)((from_x1 - from_x0) + 1);
+    wind_height = (double)((from_y1 - from_y0) + 1);
 
     /* allocate room for the x coordinate lookup table */
     x_coor = (int32 *)malloc((int32)((size_t)to_width * sizeof(int32)));
     EXCHECK(x_coor == NULL, XCoorFailed); /* check if malloc() failed */
-    temp_val = wind_width / (float64)to_width;
+    temp_val = wind_width / (double)to_width;
     for (u = 0; u < to_width; u++) /* calculate the x coordinate lookup table */
-        x_coor[u] = ((uint16)((float64)u * temp_val) + from_x0);
+        x_coor[u] = ((uint16)((double)u * temp_val) + from_x0);
 
     /* allocate room for the array of pointers */
     y_coor = (uint8 **)malloc((int32)((size_t)to_height * sizeof(uint8 *)));
     EXCHECK(y_coor == NULL, YCoorFailed); /* check if malloc() failed */
-    temp_val = wind_height / (float64)to_height;
+    temp_val = wind_height / (double)to_height;
     for (u = 0; u < to_height; u++) /* calculate the y coordinates */
-        y_coor[u] = from_buffer + ((uint32)((float64)u * temp_val) + (uint32)from_y0) * (uint32)from_width;
+        y_coor[u] = from_buffer + ((uint32)((double)u * temp_val) + (uint32)from_y0) * (uint32)from_width;
 
     last_buf    = to_buffer; /* set the previous line pointer */
     buf_off     = to_buffer; /* set the pointer to the "to" image */
@@ -184,7 +184,7 @@ main(int argc, char *argv[])
     intn    do_jpeg   = FALSE;        /* flag to indicate JPEG compression */
     intn    jpeg_qual = 75;           /* JPEG quality factor */
     intn    do_scale  = FALSE;        /* flag to indicate whether to scale images */
-    float32 img_scale = (float32)1.0; /* scaling factor */
+    float img_scale = (float)1.0; /* scaling factor */
     int32   xdim, ydim;               /* dimensions of the image to convert */
     intn    ispal;                    /* whether there's a palette with the image */
     uint8  *img_buf;                  /* buffer to store the image in */
@@ -203,8 +203,8 @@ main(int argc, char *argv[])
         while (argv[file][0] == '-' || argv[file][0] == '/') {
             switch (argv[file][1]) {
                 case 's':
-                    if ((img_scale = (float32)atof(&argv[file][2])) <=
-                        (float32)0.0) { /* check for valid scale */
+                    if ((img_scale = (float)atof(&argv[file][2])) <=
+                        (float)0.0) { /* check for valid scale */
                         printf("Bad scale, must be greater than 0\n");
                         return (1);
                     } /* end if */
@@ -259,8 +259,8 @@ main(int argc, char *argv[])
         uint8 *scaled_image;       /* storage for the scaled image */
         int32  new_xdim, new_ydim; /* the new image's x and y dim. */
 
-        new_xdim = (int32)(img_scale * (float32)xdim); /* calc. new image's dimensions */
-        new_ydim = (int32)(img_scale * (float32)ydim);
+        new_xdim = (int32)(img_scale * (float)xdim); /* calc. new image's dimensions */
+        new_ydim = (int32)(img_scale * (float)ydim);
         if ((scaled_image = (uint8 *)malloc((size_t)(new_xdim * new_ydim))) == NULL) {
             printf("Error, cannot allocate space for %dx%d scaled image\n", (int)new_xdim, (int)new_ydim);
             return (1);

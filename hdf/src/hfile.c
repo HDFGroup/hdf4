@@ -3545,10 +3545,10 @@ Hgetntinfo(const int32 numbertype, hdf_ntinfo_t *nt_info)
             HDstrcpy(nt_info->type_name, "char8");
             break;
         case DFNT_FLOAT32:
-            HDstrcpy(nt_info->type_name, "float32");
+            HDstrcpy(nt_info->type_name, "float");
             break;
         case DFNT_FLOAT64:
-            HDstrcpy(nt_info->type_name, "float64");
+            HDstrcpy(nt_info->type_name, "double");
             break;
         case DFNT_FLOAT128:
             HDstrcpy(nt_info->type_name, "float128");

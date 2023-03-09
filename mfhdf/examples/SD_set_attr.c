@@ -16,7 +16,7 @@ main()
                        dimension attribute         */
     char8 file_values[] = "Storm_track_data";
     /* values of the file attribute */
-    float32 sds_values[2] = {2., 10.};
+    float sds_values[2] = {2., 10.};
     /* values of the SDS attribute  */
     char8 dim_values[] = "Seconds";
     /* values of the dimension attribute */

@@ -65,12 +65,12 @@ static DFGRrig Grread = {
     NULL,
     0,
     0,
-    (float32)0.0,
-    (float32)0.0,
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    {(float32)0.0, (float32)0.0, (float32)0.0},
+    (float)0.0,
+    (float)0.0,
+    {(float)0.0, (float)0.0, (float)0.0},
+    {(float)0.0, (float)0.0, (float)0.0},
+    {(float)0.0, (float)0.0, (float)0.0},
+    {(float)0.0, (float)0.0, (float)0.0},
     {
         {0, 0},
         {0, 0},
@@ -87,12 +87,12 @@ static DFGRrig Grwrite = {
     NULL,
     0,
     0,
-    (float32)0.0,
-    (float32)0.0,
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    {(float32)0.0, (float32)0.0, (float32)0.0},
+    (float)0.0,
+    (float)0.0,
+    {(float)0.0, (float)0.0, (float)0.0},
+    {(float)0.0, (float)0.0, (float)0.0},
+    {(float)0.0, (float)0.0, (float)0.0},
+    {(float)0.0, (float)0.0, (float)0.0},
     {
         {0, 0},
         {0, 0},
@@ -109,12 +109,12 @@ static DFGRrig Grzrig = {
     NULL,
     0,
     0,
-    (float32)0.0,
-    (float32)0.0,
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    {(float32)0.0, (float32)0.0, (float32)0.0},
-    {(float32)0.0, (float32)0.0, (float32)0.0},
+    (float)0.0,
+    (float)0.0,
+    {(float)0.0, (float)0.0, (float)0.0},
+    {(float)0.0, (float)0.0, (float)0.0},
+    {(float)0.0, (float)0.0, (float)0.0},
+    {(float)0.0, (float)0.0, (float)0.0},
     {
         {0, 0},
         {0, 0},
@@ -1292,7 +1292,7 @@ DFGRIaddimlut(const char *filename, const void *imlut, int32 xdim, int32 ydim, i
             HGOTO_ERROR(DFE_PUTELEM, FAIL);
     }
     Grwrite.data[type].ref = wref;
-    Grwrite.aspectratio    = (float32)1.0;
+    Grwrite.aspectratio    = (float)1.0;
 
     /* Write out Raster-8 tags for those who want it */
     if (is8bit) {

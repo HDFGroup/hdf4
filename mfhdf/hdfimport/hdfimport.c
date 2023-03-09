@@ -249,7 +249,7 @@ struct Options {
     int                  vres;    /* vertical resolution of output image */
     int                  dres;    /* depth resolution of output image */
     int                  mean;    /* scale image around a mean */
-    float32              meanval; /* mean value to scale the image around */
+    float              meanval; /* mean value to scale the image around */
 };
 
 /* Additional Structures to handle different data types */
@@ -273,11 +273,11 @@ struct int32set /* variables for an INT 32 data set */
 
 struct fp64set /* variables for a FLOAT 64 data set */
 {
-    float64  max;
-    float64  min;
-    float64 *hscale;
-    float64 *vscale;
-    float64 *dscale;
+    double  max;
+    double  min;
+    double *hscale;
+    double *vscale;
+    double *dscale;
 };
 
 struct int8set /* variables for an INT 8 data set */
@@ -304,11 +304,11 @@ struct Input {
     int             is_vscale; /* vertical axis scales in the input */
     int             is_hscale; /* horizontal axis scales in the input */
     int             is_dscale; /* depth axis scales in the input */
-    float32         max;       /* maximum value of the data */
-    float32         min;       /* minimum value of the data */
-    float32        *hscale;    /* horizontal scales for fp32*/
-    float32        *vscale;    /* vertical scales for fp32*/
-    float32        *dscale;    /* depth scales for fp32*/
+    float         max;       /* maximum value of the data */
+    float         min;       /* minimum value of the data */
+    float        *hscale;    /* horizontal scales for fp32*/
+    float        *vscale;    /* vertical scales for fp32*/
+    float        *dscale;    /* depth scales for fp32*/
     struct int32set in32s;
     struct int16set in16s;
     struct int8set  in8s;
@@ -428,7 +428,7 @@ static int state_table[19][12] = {
 /* static local functions */
 static int gtoken(char *s);
 static int process(struct Options *opt);
-static int gfloat(char *infile, FILE *strm, float32 *fp32, struct Input *in);
+static int gfloat(char *infile, FILE *strm, float *fp32, struct Input *in);
 static int gint(char *infile, FILE *strm, int32 *ival, struct Input *in);
 static int isnum(char *s);
 static int gdata(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_maxmin);
@@ -436,7 +436,7 @@ static int gdimen(struct infilesformat infile_info, struct Input *in, FILE *strm
 static int gmaxmin(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_maxmin);
 static int gscale(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_scale);
 static int gtype(char *infile, struct Input *in, FILE **strm);
-static int indexes(float32 *scale, int dim, int *idx, int res);
+static int indexes(float *scale, int dim, int *idx, int res);
 static int interp(struct Input *in, struct Raster *im);
 static int palette(char *palfile);
 static int pixrep(struct Input *in, struct Raster *im);
@@ -451,7 +451,7 @@ void usage(char *);
 /*
  * Additional functions defined to incorporate the revisions (pkamat)
  */
-static int gfloat64(char *infile, FILE *strm, float64 *fp64, struct Input *in);
+static int gdouble(char *infile, FILE *strm, double *fp64, struct Input *in);
 static int gint32(char *infile, FILE *strm, int32 *ival, struct Input *in);
 static int gint16(char *infile, FILE *strm, int16 *ival, struct Input *in);
 static int gint8(char *infile, FILE *strm, int8 *ival, struct Input *in);
@@ -575,7 +575,7 @@ main(int argc, char *argv[])
                 opt.mean = TRUE;
                 break;
             case 16: /* mean value */
-                opt.meanval = (float32)atof(argv[i]);
+                opt.meanval = (float)atof(argv[i]);
                 break;
             case 17: /* -t found */
                 i++;
@@ -644,10 +644,10 @@ static int
 gdata(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_maxmin)
 {
     int32       i, j, k;
-    float32    *fp32;
+    float    *fp32;
     int32      *in32;
     int16      *in16;
-    float64    *fp64;
+    double    *fp64;
     int8       *in8;
     int32       hdfdims[3], start[3]; /* order: ZYX or YX */
     int32       sd_id, sds_id, sd_index;
@@ -689,7 +689,7 @@ gdata(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_ma
     }
     else {
         if (in->outtype == FP_32) {
-            for (k = 0, fp32 = (float32 *)in->data; k < in->dims[2]; k++) {
+            for (k = 0, fp32 = (float *)in->data; k < in->dims[2]; k++) {
                 for (j = 0; j < in->dims[1]; j++) {
                     for (i = 0; i < in->dims[0]; i++, fp32++) {
                         if (gfloat(infile, strm, fp32, in)) {
@@ -700,12 +700,12 @@ gdata(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_ma
                 }
             }
             if (*is_maxmin == FALSE) {
-                in->min = in->max = *(float32 *)in->data;
+                in->min = in->max = *(float *)in->data;
                 for (i = 1; i < len; i++) {
-                    if (((float32 *)in->data)[i] > in->max)
-                        in->max = ((float32 *)in->data)[i];
-                    if (((float32 *)in->data)[i] < in->min)
-                        in->min = ((float32 *)in->data)[i];
+                    if (((float *)in->data)[i] > in->max)
+                        in->max = ((float *)in->data)[i];
+                    if (((float *)in->data)[i] < in->min)
+                        in->min = ((float *)in->data)[i];
                 }
                 *is_maxmin = TRUE;
             }
@@ -779,10 +779,10 @@ gdata(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_ma
         }
 
         if (in->outtype == FP_64) {
-            for (k = 0, fp64 = (float64 *)in->data; k < in->dims[2]; k++) {
+            for (k = 0, fp64 = (double *)in->data; k < in->dims[2]; k++) {
                 for (j = 0; j < in->dims[1]; j++) {
                     for (i = 0; i < in->dims[0]; i++, fp64++) {
-                        if (gfloat64(infile, strm, fp64, in)) {
+                        if (gdouble(infile, strm, fp64, in)) {
                             (void)fprintf(stderr, err1, infile);
                             goto err;
                         }
@@ -790,12 +790,12 @@ gdata(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_ma
                 }
             }
             if (*is_maxmin == FALSE) {
-                in->fp64s.min = in->fp64s.max = *(float64 *)in->data;
+                in->fp64s.min = in->fp64s.max = *(double *)in->data;
                 for (i = 1; i < len; i++) {
-                    if (((float64 *)in->data)[i] > in->fp64s.max)
-                        in->fp64s.max = ((float64 *)in->data)[i];
-                    if (((float64 *)in->data)[i] < in->fp64s.min)
-                        in->fp64s.min = ((float64 *)in->data)[i];
+                    if (((double *)in->data)[i] > in->fp64s.max)
+                        in->fp64s.max = ((double *)in->data)[i];
+                    if (((double *)in->data)[i] < in->fp64s.min)
+                        in->fp64s.min = ((double *)in->data)[i];
                 }
                 *is_maxmin = TRUE;
             }
@@ -973,9 +973,9 @@ err:
  *      or 64-bit native floating point.
  */
 static int
-gfloat(char *infile, FILE *strm, float32 *fp32, struct Input *in)
+gfloat(char *infile, FILE *strm, float *fp32, struct Input *in)
 {
-    float64 fp64 = 0.0;
+    double fp64 = 0.0;
 
     const char *err1 = "Unable to get 'float' value from file: %s.\n";
 
@@ -986,17 +986,17 @@ gfloat(char *infile, FILE *strm, float32 *fp32, struct Input *in)
         }
     }
     else if (in->is_fp32 == TRUE) {
-        if (fread((char *)fp32, sizeof(float32), 1, strm) != 1) {
+        if (fread((char *)fp32, sizeof(float), 1, strm) != 1) {
             (void)fprintf(stderr, err1, infile);
             goto err;
         }
     }
     else {
-        if (fread((char *)&fp64, sizeof(float64), 1, strm) != 1) {
+        if (fread((char *)&fp64, sizeof(double), 1, strm) != 1) {
             (void)fprintf(stderr, err1, infile);
             goto err;
         }
-        *fp32 = (float32)fp64;
+        *fp32 = (float)fp64;
     }
 
     return (0);
@@ -1007,7 +1007,7 @@ err:
 
 /*
  * Name: (pkamat - New function)
- *      gfloat64
+ *      gdouble
  *
  * Purpose:
  *      Read in a double floating point value from the input stream.  The
@@ -1016,7 +1016,7 @@ err:
  */
 
 static int
-gfloat64(char *infile, FILE *strm, float64 *fp64, struct Input *in)
+gdouble(char *infile, FILE *strm, double *fp64, struct Input *in)
 {
     const char *err1 = "Unable to get 'float' value from file: %s.\n";
 
@@ -1027,7 +1027,7 @@ gfloat64(char *infile, FILE *strm, float64 *fp64, struct Input *in)
         }
     }
     else {
-        if (fread((char *)fp64, sizeof(float64), 1, strm) != 1) {
+        if (fread((char *)fp64, sizeof(double), 1, strm) != 1) {
             (void)fprintf(stderr, err1, infile);
             goto err;
         }
@@ -1236,11 +1236,11 @@ gmaxmin(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_
                 *is_maxmin = TRUE;
         }
         if (in->outtype == FP_64) {
-            if (gfloat64(infile, strm, &in->fp64s.max, in)) {
+            if (gdouble(infile, strm, &in->fp64s.max, in)) {
                 (void)fprintf(stderr, err1, infile);
                 goto err;
             }
-            if (gfloat64(infile, strm, &in->fp64s.min, in)) {
+            if (gdouble(infile, strm, &in->fp64s.min, in)) {
                 (void)fprintf(stderr, err1, infile);
                 goto err;
             }
@@ -1430,14 +1430,14 @@ gscale(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_s
             case 1: /* 64-bit float */
                 if (in->rank == 2) {
                     for (i = 0; i < hdfdims[0]; i++) {
-                        if (gfloat64(infile, strm, &in->fp64s.vscale[i], in)) {
+                        if (gdouble(infile, strm, &in->fp64s.vscale[i], in)) {
                             (void)fprintf(stderr, err1, infile);
                             goto err;
                         }
                     }
                     in->fp64s.vscale[i] = in->fp64s.vscale[i - 1];
                     for (i = 0; i < hdfdims[1]; i++) {
-                        if (gfloat64(infile, strm, &in->fp64s.hscale[i], in)) {
+                        if (gdouble(infile, strm, &in->fp64s.hscale[i], in)) {
                             (void)fprintf(stderr, err1, infile);
                             goto err;
                         }
@@ -1446,7 +1446,7 @@ gscale(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_s
                 }
                 else {
                     for (i = 0; i < hdfdims[0]; i++) {
-                        if (gfloat64(infile, strm, &in->fp64s.dscale[i], in)) {
+                        if (gdouble(infile, strm, &in->fp64s.dscale[i], in)) {
                             (void)fprintf(stderr, err1, infile);
                             goto err;
                         }
@@ -1454,7 +1454,7 @@ gscale(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_s
                     in->fp64s.dscale[i] = in->fp64s.dscale[i - 1];
 
                     for (i = 0; i < hdfdims[1]; i++) {
-                        if (gfloat64(infile, strm, &in->fp64s.vscale[i], in)) {
+                        if (gdouble(infile, strm, &in->fp64s.vscale[i], in)) {
                             (void)fprintf(stderr, err1, infile);
                             goto err;
                         }
@@ -1462,7 +1462,7 @@ gscale(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_s
                     in->fp64s.vscale[i] = in->fp64s.vscale[i - 1];
 
                     for (i = 0; i < hdfdims[2]; i++) {
-                        if (gfloat64(infile, strm, &in->fp64s.hscale[i], in)) {
+                        if (gdouble(infile, strm, &in->fp64s.hscale[i], in)) {
                             (void)fprintf(stderr, err1, infile);
                             goto err;
                         }
@@ -2002,29 +2002,29 @@ help(char *name)
  *      array.
  */
 static int
-indexes(float32 *scale, int dim, int *idx, int res)
+indexes(float *scale, int dim, int *idx, int res)
 {
     int      i, j;
-    float32 *midpt;
-    float32  loc;
-    float32  delta;
+    float *midpt;
+    float  loc;
+    float  delta;
 
     const char *err1 = "Unable to allocate dynamic memory.\n";
     /*
      * determine the midpoints between scale values
      */
-    if ((midpt = (float32 *)malloc((size_t)dim * sizeof(float32))) == NULL) {
+    if ((midpt = (float *)malloc((size_t)dim * sizeof(float))) == NULL) {
         (void)fprintf(stderr, "%s", err1);
         goto err;
     }
     for (i = 0; i < dim - 1; i++)
-        midpt[i] = (scale[i] + scale[i + 1]) * (float32)0.5;
+        midpt[i] = (scale[i] + scale[i + 1]) * (float)0.5;
     midpt[dim - 1] = scale[dim - 1] + (scale[dim - 1] - midpt[dim - 2]);
 
     /*
      * determine the distance between pixel locations
      */
-    delta = (scale[dim - 1] - scale[0]) / (float32)(res - 1);
+    delta = (scale[dim - 1] - scale[0]) / (float)(res - 1);
 
     /*
      * compute indexes, keeping the index the same until the location
@@ -2078,15 +2078,15 @@ interp(struct Input *in, struct Raster *im)
 {
     int            i, j, k, m;
     int           *hinc, *voff, *doff = NULL;
-    float32        pix;
-    float32        loc;
-    float32        range;
-    float32        ratio;
-    float32        hrange, vrange, drange = (float32)0.0;
-    float32        hdelta, vdelta, ddelta = (float32)0.0;
-    float32        t1, t2, t3, t4, t5, t6;
-    float32       *hratio, *vratio, *dratio = NULL;
-    float32       *pt[8];
+    float        pix;
+    float        loc;
+    float        range;
+    float        ratio;
+    float        hrange, vrange, drange = (float)0.0;
+    float        hdelta, vdelta, ddelta = (float)0.0;
+    float        t1, t2, t3, t4, t5, t6;
+    float       *hratio, *vratio, *dratio = NULL;
+    float       *pt[8];
     unsigned char *ip = im->image;
 
     const char *err1 = "Unable to allocate dynamic memory.\n";
@@ -2095,7 +2095,7 @@ interp(struct Input *in, struct Raster *im)
      * determine the range of pixel locations
      */
     range  = in->max - in->min;
-    ratio  = (float32)237.9 / range;
+    ratio  = (float)237.9 / range;
     hrange = in->hscale[in->dims[0] - 1] - in->hscale[0];
     vrange = in->vscale[in->dims[1] - 1] - in->vscale[0];
     if (in->rank == 3)
@@ -2104,24 +2104,24 @@ interp(struct Input *in, struct Raster *im)
     /*
      * determine the distance between pixel locations
      */
-    hdelta = hrange / (float32)(im->hres - 1);
-    vdelta = vrange / (float32)(im->vres - 1);
+    hdelta = hrange / (float)(im->hres - 1);
+    vdelta = vrange / (float)(im->vres - 1);
     if (in->rank == 3)
-        ddelta = drange / (float32)(im->dres - 1);
+        ddelta = drange / (float)(im->dres - 1);
 
     /*
      * allocate dynamic memory for the interpolation ratio buffers
      */
-    if ((hratio = (float32 *)malloc((size_t)im->hres * sizeof(float32))) == NULL) {
+    if ((hratio = (float *)malloc((size_t)im->hres * sizeof(float))) == NULL) {
         (void)fprintf(stderr, "%s", err1);
         goto err;
     }
-    if ((vratio = (float32 *)malloc((unsigned int)im->vres * sizeof(float32))) == NULL) {
+    if ((vratio = (float *)malloc((unsigned int)im->vres * sizeof(float))) == NULL) {
         (void)fprintf(stderr, "%s", err1);
         goto err;
     }
     if (in->rank == 3) {
-        if ((dratio = (float32 *)malloc((unsigned int)im->dres * sizeof(float32))) == NULL) {
+        if ((dratio = (float *)malloc((unsigned int)im->dres * sizeof(float))) == NULL) {
             (void)fprintf(stderr, "%s", err1);
             goto err;
         }
@@ -2154,7 +2154,7 @@ interp(struct Input *in, struct Raster *im)
         loc     = hdelta * (float)i + in->hscale[0];
         hinc[i] = 0;
         while ((j < (in->dims[0] - 2)) &&
-               ((hrange > (float32)0.0) ? (in->hscale[j + 1] < loc) : (in->hscale[j + 1] > loc))) {
+               ((hrange > (float)0.0) ? (in->hscale[j + 1] < loc) : (in->hscale[j + 1] > loc))) {
             hinc[i] += 1;
             j += 1;
         }
@@ -2163,7 +2163,7 @@ interp(struct Input *in, struct Raster *im)
     for (i = 0, j = 0, voff[0] = 0; i < im->vres; i++) {
         loc = vdelta * (float)i + in->vscale[0];
         while ((j < (in->dims[1] - 2)) &&
-               ((vrange > (float32)0.0) ? (in->vscale[j + 1] < loc) : (in->vscale[j + 1] > loc))) {
+               ((vrange > (float)0.0) ? (in->vscale[j + 1] < loc) : (in->vscale[j + 1] > loc))) {
             voff[i] += 1;
             j += 1;
         }
@@ -2174,7 +2174,7 @@ interp(struct Input *in, struct Raster *im)
         for (i = 0, j = 0, doff[0] = 0; i < im->dres; i++) {
             loc = ddelta * (float)i + in->dscale[0];
             while ((j < (in->dims[2] - 2)) &&
-                   ((drange > (float32)0.0) ? (in->dscale[j + 1] < loc) : (in->dscale[j + 1] > loc))) {
+                   ((drange > (float)0.0) ? (in->dscale[j + 1] < loc) : (in->dscale[j + 1] > loc))) {
                 doff[i] += 1;
                 j += 1;
             }
@@ -2190,7 +2190,7 @@ interp(struct Input *in, struct Raster *im)
      */
     if (in->rank == 2) {
         for (i = 0; i < im->vres; i++) {
-            pt[0] = (float32 *)in->data + (in->dims[0] * voff[i]);
+            pt[0] = (float *)in->data + (in->dims[0] * voff[i]);
             pt[1] = pt[0] + 1;
             pt[2] = pt[0] + in->dims[0];
             pt[3] = pt[2] + 1;
@@ -2204,14 +2204,14 @@ interp(struct Input *in, struct Raster *im)
                     pix = in->max; /* clip (bug fix) */
                 if (pix < in->min)
                     pix = in->min; /* ditto */
-                *ip++ = (unsigned char)((ratio * (pix - in->min)) + (float32)1.5);
+                *ip++ = (unsigned char)((ratio * (pix - in->min)) + (float)1.5);
             }
         }
     }
     else { /* rank == 3 */
         for (i = 0; i < im->dres; i++) {
             for (j = 0; j < im->vres; j++) {
-                pt[0] = (float32 *)in->data + (in->dims[0] * voff[j]) + (in->dims[0] * in->dims[1] * doff[i]);
+                pt[0] = (float *)in->data + (in->dims[0] * voff[j]) + (in->dims[0] * in->dims[1] * doff[i]);
                 pt[1] = pt[0] + 1;
                 pt[2] = pt[0] + in->dims[0];
                 pt[3] = pt[2] + 1;
@@ -2233,7 +2233,7 @@ interp(struct Input *in, struct Raster *im)
                         pix = in->max; /* clip (bug fix) */
                     if (pix < in->min)
                         pix = in->min; /* ditto */
-                    *ip++ = (unsigned char)((ratio * (pix - in->min)) + (float32)1.5);
+                    *ip++ = (unsigned char)((ratio * (pix - in->min)) + (float)1.5);
                 }
             }
         }
@@ -2304,10 +2304,10 @@ isnum(char *s)
 void
 mean(struct Input *in, struct Options *opt)
 {
-    float32 delta, delta_max, delta_min;
+    float delta, delta_max, delta_min;
 
-    delta_max = (float32)fabs((double)(in->max - opt->meanval));
-    delta_min = (float32)fabs((double)(opt->meanval - in->min));
+    delta_max = (float)fabs((double)(in->max - opt->meanval));
+    delta_min = (float)fabs((double)(opt->meanval - in->min));
     delta     = (delta_max > delta_min) ? delta_max : delta_min;
 
     in->max = opt->meanval + delta;
@@ -2407,16 +2407,16 @@ pixrep(struct Input *in, struct Raster *im)
     int            ovidx, odidx;
     int            dummy;
     int32          i, j, k;
-    float32       *dp;
-    float32        range;
-    float32        ratio;
+    float       *dp;
+    float        range;
+    float        ratio;
     unsigned char *ip, *plane, *row, *pix;
 
     const char *err1 = "Unable to dynamically allocate memory.\n";
-    dp               = (float32 *)in->data;
+    dp               = (float *)in->data;
     ip               = im->image;
     range            = in->max - in->min;
-    ratio            = (float32)237.9 / range;
+    ratio            = (float)237.9 / range;
 
     /*
      * determine the scale indexes of the horizontal pixel locations
@@ -2473,7 +2473,7 @@ pixrep(struct Input *in, struct Raster *im)
                  */
                 if (vidx[j] > ovidx) {
                     for (i = 0; i < in->dims[0]; i++)
-                        pix[i] = (unsigned char)((ratio * (*dp++ - in->min)) + (float32)1.5);
+                        pix[i] = (unsigned char)((ratio * (*dp++ - in->min)) + (float)1.5);
                     for (i = 0; i < im->hres; i++)
                         *ip++ = pix[hidx[i]];
                     /*
@@ -2565,13 +2565,13 @@ alloc_data(void **data, int32 len, int outtype)
     switch (outtype) {
         case 0: /* 32-bit float */
         case 5: /* NO_NE */
-            if ((*data = (void *)malloc((size_t)len * sizeof(float32))) == NULL) {
+            if ((*data = (void *)malloc((size_t)len * sizeof(float))) == NULL) {
                 (void)fprintf(stderr, "%s", alloc_err);
                 return FAIL;
             }
             break;
         case 1: /* 64-bit float */
-            if ((*data = (void *)malloc((size_t)len * sizeof(float64))) == NULL) {
+            if ((*data = (void *)malloc((size_t)len * sizeof(double))) == NULL) {
                 (void)fprintf(stderr, "%s", alloc_err);
                 return FAIL;
             }
@@ -3176,16 +3176,16 @@ init_scales(struct Input *in)
     switch (in->outtype) {
         case 0: /* 32-bit float */
         case 5: /* NO_NE */
-            if ((in->hscale = (float32 *)malloc((size_t)(in->dims[0] + 1) * sizeof(float32))) == NULL) {
+            if ((in->hscale = (float *)malloc((size_t)(in->dims[0] + 1) * sizeof(float))) == NULL) {
                 (void)fprintf(stderr, "%s", err1);
                 goto err;
             }
-            if ((in->vscale = (float32 *)malloc((size_t)(in->dims[1] + 1) * sizeof(float32))) == NULL) {
+            if ((in->vscale = (float *)malloc((size_t)(in->dims[1] + 1) * sizeof(float))) == NULL) {
                 (void)fprintf(stderr, "%s", err1);
                 goto err;
             }
             if (in->rank == 3) {
-                if ((in->dscale = (float32 *)malloc((size_t)(in->dims[2] + 1) * sizeof(float32))) == NULL) {
+                if ((in->dscale = (float *)malloc((size_t)(in->dims[2] + 1) * sizeof(float))) == NULL) {
                     (void)fprintf(stderr, "%s", err1);
                     goto err;
                 }
@@ -3194,16 +3194,16 @@ init_scales(struct Input *in)
 
         case 1: /* 64-bit float */
 
-            if ((in->fp64s.hscale = (float64 *)malloc((size_t)(in->dims[0] + 1) * sizeof(float64))) == NULL) {
+            if ((in->fp64s.hscale = (double *)malloc((size_t)(in->dims[0] + 1) * sizeof(double))) == NULL) {
                 (void)fprintf(stderr, "%s", err1);
                 goto err;
             }
-            if ((in->fp64s.vscale = (float64 *)malloc((size_t)(in->dims[1] + 1) * sizeof(float64))) == NULL) {
+            if ((in->fp64s.vscale = (double *)malloc((size_t)(in->dims[1] + 1) * sizeof(double))) == NULL) {
                 (void)fprintf(stderr, "%s", err1);
                 goto err;
             }
             if (in->rank == 3) {
-                if ((in->fp64s.dscale = (float64 *)malloc((size_t)(in->dims[2] + 1) * sizeof(float64))) ==
+                if ((in->fp64s.dscale = (double *)malloc((size_t)(in->dims[2] + 1) * sizeof(double))) ==
                     NULL) {
                     (void)fprintf(stderr, "%s", err1);
                     goto err;

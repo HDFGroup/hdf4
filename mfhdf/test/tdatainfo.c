@@ -117,9 +117,9 @@ comp_n_values(int32 rank, int32 *dimsizes)
  This routine creates and writes data to non-special SDSs and verifies
  data and data information with SDgetdatainfo.  The tests include
  the following SDSs:
- - a 2-dim 5x8 element SDS, float32, with no data
+ - a 2-dim 5x8 element SDS, float, with no data
  - a 1-dim 10-element SDS, int32, with 10 values
- - a 2-dim 5x8 element SDS, float32, with 5x8 values
+ - a 2-dim 5x8 element SDS, float, with 5x8 values
  - a 1-dim 20-element SDS, char, with 20 values
  SDgetdatainfo will retrieve the number of blocks in the datasets
  and the offsets and lengths of the blocks.  Then the data will be read
@@ -130,7 +130,7 @@ comp_n_values(int32 rank, int32 *dimsizes)
  BMR - Jul 2010
  ****************************************************************************/
 #define SDS1_NAME "Simple_data_1dim_int32"
-#define SDS2_NAME "Simple_data_2dims_float32"
+#define SDS2_NAME "Simple_data_2dims_float"
 #define SDS3_NAME "Simple_data_1dim_char"
 #define RANK1     1
 #define RANK2     2
@@ -202,7 +202,7 @@ test_nonspecial_SDSs()
     CHECK(status, FAIL, "test_nonspecial_SDSs: SDendaccess");
 
     /*
-     * Create a 2-dim 5x8 element SDS, type float32, then write 5x8 values
+     * Create a 2-dim 5x8 element SDS, type float, then write 5x8 values
      * to it
      */
     dimsizes[0] = LENGTH2_X;
@@ -399,8 +399,8 @@ test_nonspecial_SDSs()
         }
 
         /* Allocate buffers for SDS' data */
-        readfbuf         = (float32 *)malloc(sds2_info.n_values * sizeof(float32));
-        readfbuf_swapped = (float32 *)malloc(sds2_info.n_values * sizeof(float32));
+        readfbuf         = (float *)malloc(sds2_info.n_values * sizeof(float));
+        readfbuf_swapped = (float *)malloc(sds2_info.n_values * sizeof(float));
         /* Read in this block of data */
         readlen = read(fd, (void *)readfbuf, (size_t)sds2_info.lengths[0]);
         CHECK(readlen, FAIL, "DFKconvert");
@@ -473,9 +473,9 @@ test_nonspecial_SDSs()
  This routine creates and writes data to compressed SDSs and verifies
  data and data information with SDgetdatainfo.  The tests include
  the following SDSs:
- - a 2-dim 5x8 element SDS, float32, NBIT compression, no data
+ - a 2-dim 5x8 element SDS, float, NBIT compression, no data
  - a 1-dim 10-element SDS, int32, Deflate compression, with 10 values
- - a 2-dim 5x8 element SDS, float32, SZIP compression, with 5x8 values
+ - a 2-dim 5x8 element SDS, float, SZIP compression, with 5x8 values
  - a 1-dim 20-element SDS, char, Skipping Huffman compression,
  with 20 values
 
@@ -558,7 +558,7 @@ test_compressed_SDSs()
 
 #ifdef H4_HAVE_SZIP_ENCODER
     /*
-     * Create a 2-dim 5x8 element SDS, type float32, set SZIP compression,
+     * Create a 2-dim 5x8 element SDS, type float, set SZIP compression,
      * then write 5x8 values to it
      */
     dimsizes[0] = LENGTH2_X;
@@ -593,7 +593,7 @@ test_compressed_SDSs()
     CHECK(status, FAIL, "test_compressed_SDSs: SDendaccess 'SZIP-Data'");
 #else  /* SZIP lib not available */
     /*
-     * Create a 2-dim 5x8 element SDS, type float32, set SZIP compression,
+     * Create a 2-dim 5x8 element SDS, type float, set SZIP compression,
      * then write 5x8 values to it
      */
     dimsizes[0] = LENGTH2_X;
@@ -917,9 +917,9 @@ test_empty_SDSs()
  This routine creates and writes data to compressed SDSs and verifies
  data and data information with SDgetdatainfo.  The tests include
  the following SDSs:
- - a 2-dim 5x8 element SDS, float32, NBIT compression, no data
+ - a 2-dim 5x8 element SDS, float, NBIT compression, no data
  - a 1-dim 10-element SDS, int32, Deflate compression, with 10 values
- - a 2-dim 5x8 element SDS, float32, SZIP compression, with 5x8 values
+ - a 2-dim 5x8 element SDS, float, SZIP compression, with 5x8 values
  - a 1-dim 20-element SDS, char, Skipping Huffman compression,
  with 20 values
 

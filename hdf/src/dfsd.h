@@ -42,13 +42,13 @@ typedef struct DFSsdg {
     uint8 **dimscales;   /* scales for each dimension */
     uint8   max_min[16]; /* max, min values of data, */
     /*  currently atmost 8 bytes each   */
-    int32   numbertype;                   /* default is float32      */
+    int32   numbertype;                   /* default is float      */
     uint8   filenumsubclass;              /* number format in the file, default is IEEE */
     int32   aid;                          /* access id     */
     int32   compression;                  /* 0 -- not compressed  */
     int32   isndg;                        /* 0 -- pure sdg, written by 3.1 else ndg */
-    float64 cal, cal_err;                 /* calibration multiplier stuff          */
-    float64 ioff, ioff_err;               /* calibration offset stuff              */
+    double cal, cal_err;                 /* calibration multiplier stuff          */
+    double ioff, ioff_err;               /* calibration offset stuff              */
     int32   cal_type;                     /* number type of data after calibration */
     uint8   fill_value[DFSD_MAXFILL_LEN]; /* fill value if any specified  */
     intn    fill_fixed;                   /* whether the fill value is a fixed value, or it can change */

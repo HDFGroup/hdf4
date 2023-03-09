@@ -122,10 +122,10 @@ static DFSsdg Readsdg = /* struct for reading */
      (int32)-1,
      (int32)0,
      (int32)0,
-     (float64)1.0,
-     (float64)0.0,
-     (float64)0.0,
-     (float64)0.0,
+     (double)1.0,
+     (double)0.0,
+     (double)0.0,
+     (double)0.0,
      (int32)-1,
      {0},
      0};
@@ -144,10 +144,10 @@ static DFSsdg Writesdg = /* struct for writing */
      (int32)-1,
      (int32)0,
      (int32)0,
-     (float64)1.0,
-     (float64)0.0,
-     (float64)0.0,
-     (float64)0.0,
+     (double)1.0,
+     (double)0.0,
+     (double)0.0,
+     (double)0.0,
      (int32)-1,
      {0},
      0};
@@ -1203,7 +1203,7 @@ DESCRIPTION
       file, "DFSDaddata" automatically stores any information pertinent to the
       data set. It will not overwrite existing data in the file. The array
       "data" can be of any valid type. However if no number type has been set
-      by "DFSDsetNT", it is assumed that the data type is of type "float32".
+      by "DFSDsetNT", it is assumed that the data type is of type "float".
       The invocation of "DFSDadddata" triggers the writing of the entire
       scientific data set. That is, when "DFSDadddat" is called, all
       information that has been set by "DFSDset* " calls is written to the
@@ -1501,7 +1501,7 @@ DFSDstartslice(const char *filename)
         HGOTO_ERROR(DFE_BADREF, FAIL);
     Writesdg.data.ref = Writeref;
 
-    if (Writesdg.numbertype == DFNT_NONE) /* if NT not set,default to float32 */
+    if (Writesdg.numbertype == DFNT_NONE) /* if NT not set,default to float */
         DFSDsetNT(DFNT_FLOAT32);
 
     /* set up to write data */
@@ -1605,7 +1605,7 @@ DFSDendslice(void)
  DESCRIPTION
        Sets the number type for the data to be written in the next write
        operation. "DFSDsetNT" must be called if a number type other than
-       "float32" is to be stored. "DFSDsetNT" and "DFSDsetdims" can be called
+       "float" is to be stored. "DFSDsetNT" and "DFSDsetdims" can be called
        in any order, but they should be called before any other "DFSDset*"
        functions and before "DFSDputdata" or "DFSDadddata". Valid values for
        "DFSDgetNT" are of the general form "DFNT_<numbertype>". If you include
@@ -1822,7 +1822,7 @@ done:
  * Purpose: Set up the NDG/SDG table. Each node has two
             fields: the 1st field is NDG or SDG, the 2nd
             field has value only when it is a special
-            NDG, i.e. the data set is float32 and not
+            NDG, i.e. the data set is float and not
             compressed.
  * Inputs:  file_id: pointer to HDF file containing SDG
  * Returns: 0 on success, FAIL on failure with error set
@@ -2148,7 +2148,7 @@ done:
  *      Call DFSDgetsdg to read in the rest info.
  *          Mallocs space for these, freeing
  *          previously allocated space.
- * Remarks: This accepts non-float32 data
+ * Remarks: This accepts non-float data
  *---------------------------------------------------------------------------*/
 static intn
 DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg *sdg)
@@ -2576,7 +2576,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg *sdg)
                     }
                     else {
                         /* element is old float based type */
-                        float32 buf2[4];
+                        float buf2[4];
 
                         /* allocate input buffer */
                         if (Hgetelement(file_id, elmt.tag, elmt.ref, (unsigned char *)buf2) < 0) {
@@ -2585,10 +2585,10 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg *sdg)
                         }
 
                         /* move 'em over */
-                        sdg->ioff     = (float64)buf2[0];
-                        sdg->ioff_err = (float64)buf2[1];
-                        sdg->cal      = (float64)buf2[2];
-                        sdg->cal_err  = (float64)buf2[3];
+                        sdg->ioff     = (double)buf2[0];
+                        sdg->ioff_err = (double)buf2[1];
+                        sdg->cal      = (double)buf2[2];
+                        sdg->cal_err  = (double)buf2[3];
                         sdg->cal_type = DFNT_INT16;
                     }
                 }
@@ -2626,16 +2626,16 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg *sdg)
                     }
                     else {
                         /* element is old float based type */
-                        float32 buf2[4];
+                        float buf2[4];
 
                         /* convert calibration factors */
                         DFKconvert((void *)buf, (void *)buf2, DFNT_FLOAT32, 4, DFACC_READ, 0, 0);
 
                         /* move 'em over */
-                        sdg->ioff     = (float64)buf2[0];
-                        sdg->ioff_err = (float64)buf2[1];
-                        sdg->cal      = (float64)buf2[2];
-                        sdg->cal_err  = (float64)buf2[3];
+                        sdg->ioff     = (double)buf2[0];
+                        sdg->ioff_err = (double)buf2[1];
+                        sdg->cal      = (double)buf2[2];
+                        sdg->cal_err  = (double)buf2[3];
                         sdg->cal_type = DFNT_INT16;
                     }
                     free(buf);
@@ -2763,7 +2763,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg *sdg)
 
     /* set number type and subclass     */
     if (sdg->numbertype == DFNT_NONE)
-        DFSDsetNT(DFNT_FLOAT32); /* default is float32  */
+        DFSDsetNT(DFNT_FLOAT32); /* default is float  */
     numtype         = sdg->numbertype;
     fileNTsize      = DFKNTsize(numtype);
     scaleNTsize     = fileNTsize; /* for now, assume same. MAY CHANGE */
@@ -2988,7 +2988,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg *sdg)
         }
         else {
             /* allocate buffer */
-            uint8 buf2[4 * sizeof(float64) + sizeof(int32)];
+            uint8 buf2[4 * sizeof(double) + sizeof(int32)];
 
             /* convert doubles */
             DFKconvert((void *)&sdg->cal, (void *)buf2, DFNT_FLOAT64, 4, DFACC_WRITE, 0, 0);
@@ -3049,7 +3049,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg *sdg)
             HGOTO_ERROR(DFE_PUTGROUP, FAIL);
     }
 
-    if (numtype == DFNT_FLOAT32) { /* if float32, add a DFTAG_SDLNK   */
+    if (numtype == DFNT_FLOAT32) { /* if float, add a DFTAG_SDLNK   */
         DFdi lnkdd[2];
 
         issdg        = 1;
@@ -4141,10 +4141,10 @@ done:
        DFSDgetcal
  USAGE
        int DFSDgetcal(pcal, pcal_err, pioff, pioff_err, cal_nt)
-       float64 *pcal;       OUT: calibration factor
-       float64 *pcal_err;   OUT: calibration error value
-       float64 *pioff;      OUT: uncalibrated offset value
-       float64 *pioff_err;  OUT: uncalibrated offset error value
+       double *pcal;       OUT: calibration factor
+       double *pcal_err;   OUT: calibration error value
+       double *pioff;      OUT: uncalibrated offset value
+       double *pioff_err;  OUT: uncalibrated offset error value
        int32   *cal_nt;     OUT: Number type of uncalibrated data
 
  RETURNS
@@ -4174,7 +4174,7 @@ done:
 
 ----------------------------------------------------------------------------*/
 intn
-DFSDgetcal(float64 *pcal, float64 *pcal_err, float64 *pioff, float64 *pioff_err, int32 *cal_nt)
+DFSDgetcal(double *pcal, double *pcal_err, double *pioff, double *pioff_err, int32 *cal_nt)
 {
     intn ret_value = SUCCEED;
 
@@ -4208,10 +4208,10 @@ done:
        DFSDsetcal
  USAGE
        intn DFSDsetcal(cal, cal_err, ioff, ioff_err, cal_nt)
-       float64 cal;         IN: calibration factor
-       float64 cal_err;     IN: calibration error
-       float64 ioff;        IN: uncalibrated offset
-       float64 ioff_err;    IN: uncalibrated offset error
+       double cal;         IN: calibration factor
+       double cal_err;     IN: calibration error
+       double ioff;        IN: uncalibrated offset
+       double ioff_err;    IN: uncalibrated offset error
        int32   cal_nt;      IN: number type of uncalibrated data
  RETURNS
        Returns SUCCEED(0) if successful and FAIL(-1) otherwise.
@@ -4242,7 +4242,7 @@ done:
        must be called anew for each data set that is to be written.
 ----------------------------------------------------------------------------*/
 intn
-DFSDsetcal(float64 cal, float64 cal_err, float64 ioff, float64 ioff_err, int32 cal_nt)
+DFSDsetcal(double cal, double cal_err, double ioff, double ioff_err, int32 cal_nt)
 {
     intn ret_value = SUCCEED;
 
@@ -4253,10 +4253,10 @@ DFSDsetcal(float64 cal, float64 cal_err, float64 ioff, float64 ioff_err, int32 c
         if (DFSDIstart() == FAIL)
             HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
-    Writesdg.cal      = (float64)cal;
-    Writesdg.cal_err  = (float64)cal_err;
-    Writesdg.ioff     = (float64)ioff;
-    Writesdg.ioff_err = (float64)ioff_err;
+    Writesdg.cal      = (double)cal;
+    Writesdg.cal_err  = (double)cal_err;
+    Writesdg.ioff     = (double)ioff;
+    Writesdg.ioff_err = (double)ioff_err;
     Writesdg.cal_type = (int32)cal_nt;
 
     Ref.cal = 0;
@@ -4522,7 +4522,7 @@ DFSDstartslab(const char *filename)
     if (!Writesdg.rank)
         HGOTO_ERROR(DFE_BADDIM, FAIL);
 
-    /* If NT not set(i.e. DFSDsetNT() not called), default to float32  */
+    /* If NT not set(i.e. DFSDsetNT() not called), default to float  */
     if (Writesdg.numbertype == DFNT_NONE)
         DFSDsetNT(DFNT_FLOAT32);
 

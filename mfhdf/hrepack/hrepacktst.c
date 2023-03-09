@@ -1397,9 +1397,9 @@ add_sd(const char  *fname,       /* file name */
         edges[2],       /* write edges */
         fill_value = 2, /* fill value */
         data[Y_DIM][X_DIM], bits_per_pixel = 32;
-    float32       sds_values[2] = {2., 10.}; /* values of the SDS attribute  */
+    float       sds_values[2] = {2., 10.}; /* values of the SDS attribute  */
     int16         data_X[X_DIM];             /* X dimension dimension scale */
-    float64       data_Y[Y_DIM];             /* Y dimension dimension scale */
+    double       data_Y[Y_DIM];             /* Y dimension dimension scale */
     int           i, j;
     HDF_CHUNK_DEF chunk_def; /* Chunking definitions */
 
@@ -1837,7 +1837,7 @@ add_vs(const char *vs_name, int32 file_id, int32 vgroup_id)
     int32   field_n_values = 4;                  /* number of values in the field attribute */
     char    vd_attr[3]     = {'A', 'B', 'C'};    /* vdata attribute values*/
     int32   fld_attr[4]    = {2, 4, 6, 8};       /* field attribute values*/
-    float32 data_buf[N_RECORDS][N_VALS_PER_REC]; /* buffer for vdata values */
+    float data_buf[N_RECORDS][N_VALS_PER_REC]; /* buffer for vdata values */
     int     i;
 
     /* Initialize the VS interface */
@@ -1874,10 +1874,10 @@ add_vs(const char *vs_name, int32 file_id, int32 vgroup_id)
      * elements contain the two values of the third field.
      */
     for (i = 0; i < N_RECORDS; i++) {
-        data_buf[i][0] = (float32)1.0 * i;
-        data_buf[i][1] = (float32)2.0 * i;
-        data_buf[i][2] = (float32)3.0 * i;
-        data_buf[i][3] = (float32)0.1 + i;
+        data_buf[i][0] = (float)1.0 * i;
+        data_buf[i][1] = (float)2.0 * i;
+        data_buf[i][2] = (float)3.0 * i;
+        data_buf[i][3] = (float)0.1 + i;
         data_buf[i][4] = 0.0;
         data_buf[i][5] = 65.0;
     }

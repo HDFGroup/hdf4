@@ -22,7 +22,7 @@
 
 /* for those machines with imprecise IEEE<-> conversions, this should be */
 /* close enough */
-#define FLOAT64_FUDGE ((float64)0.00000001)
+#define FLOAT64_FUDGE ((double)0.00000001)
 
 static int8    cdata_i8[CDIM_Y][CDIM_X];
 static uint8   cdata_u8[CDIM_Y][CDIM_X];
@@ -30,8 +30,8 @@ static int16   cdata_i16[CDIM_Y][CDIM_X];
 static uint16  cdata_u16[CDIM_Y][CDIM_X];
 static int32   cdata_i32[CDIM_Y][CDIM_X];
 static uint32  cdata_u32[CDIM_Y][CDIM_X];
-static float32 cdata_f32[CDIM_Y][CDIM_X];
-static float64 cdata_f64[CDIM_Y][CDIM_X];
+static float cdata_f32[CDIM_Y][CDIM_X];
+static double cdata_f64[CDIM_Y][CDIM_X];
 
 static void init_cdata(void);
 static void wrapup_cdata(void);
@@ -51,8 +51,8 @@ init_cdata(void)
             cdata_u16[i][j] = (uint16)(i * 10 + j);
             cdata_i32[i][j] = (int32)(i * 10 + j);
             cdata_u32[i][j] = (uint32)(i * 10 + j);
-            cdata_f32[i][j] = (float32)(i * 10 + j);
-            cdata_f64[i][j] = (float64)(i * 10 + j);
+            cdata_f32[i][j] = (float)(i * 10 + j);
+            cdata_f64[i][j] = (double)(i * 10 + j);
         } /* end for */
 } /* end init_cdata() */
 
@@ -73,8 +73,8 @@ test_little_read(void)
     uint16  *data_u16;
     int32   *data_i32;
     uint32  *data_u32;
-    float32 *data_f32;
-    float64 *data_f64;
+    float *data_f32;
+    double *data_f64;
     int      ret;
 
     char  filename[512] = "";
@@ -273,11 +273,11 @@ test_little_read(void)
             num_errs++;
         } /* end if */
         else {
-            data_f32 = (float32 *)malloc((size_t)(dimsizes[0] * dimsizes[1]) * sizeof(float32));
+            data_f32 = (float *)malloc((size_t)(dimsizes[0] * dimsizes[1]) * sizeof(float));
             ret      = DFSDgetdata(filename, rank, dimsizes, (void *)data_f32);
             RESULT("DFSDgetdata");
 
-            if (memcmp(cdata_f32, data_f32, CDIM_X * CDIM_Y * sizeof(float32))) {
+            if (memcmp(cdata_f32, data_f32, CDIM_X * CDIM_Y * sizeof(float))) {
                 fprintf(stderr, "FLOAT32 data was incorrect\n");
                 num_errs++;
             } /* end if */
@@ -301,11 +301,11 @@ test_little_read(void)
             num_errs++;
         } /* end if */
         else {
-            data_f64 = (float64 *)malloc((size_t)(dimsizes[0] * dimsizes[1]) * sizeof(float64));
+            data_f64 = (double *)malloc((size_t)(dimsizes[0] * dimsizes[1]) * sizeof(double));
             ret      = DFSDgetdata(filename, rank, dimsizes, (void *)data_f64);
             RESULT("DFSDgetdata");
 
-            if (memcmp(cdata_f64, data_f64, CDIM_X * CDIM_Y * sizeof(float64))) {
+            if (memcmp(cdata_f64, data_f64, CDIM_X * CDIM_Y * sizeof(double))) {
                 fprintf(stderr, "FLOAT64 data was incorrect\n");
                 num_errs++;
             } /* end if */
@@ -326,8 +326,8 @@ test_little_write(void)
     uint16  *data_u16;
     int32   *data_i32;
     uint32  *data_u32;
-    float32 *data_f32;
-    float64 *data_f64;
+    float *data_f32;
+    double *data_f64;
     int      ret;
 
     MESSAGE(5, printf("Testing Little-Endian Write Routines\n"););
@@ -581,11 +581,11 @@ test_little_write(void)
             num_errs++;
         } /* end if */
         else {
-            data_f32 = (float32 *)malloc((size_t)(dimsizes[0] * dimsizes[1]) * sizeof(float32));
+            data_f32 = (float *)malloc((size_t)(dimsizes[0] * dimsizes[1]) * sizeof(float));
             ret      = DFSDgetdata(TMPFILE, rank, dimsizes, (void *)data_f32);
             RESULT("DFSDgetdata");
 
-            if (memcmp(cdata_f32, data_f32, CDIM_X * CDIM_Y * sizeof(float32))) {
+            if (memcmp(cdata_f32, data_f32, CDIM_X * CDIM_Y * sizeof(float))) {
                 fprintf(stderr, "FLOAT32 data was incorrect\n");
                 num_errs++;
             } /* end if */
@@ -607,11 +607,11 @@ test_little_write(void)
             num_errs++;
         } /* end if */
         else {
-            data_f64 = (float64 *)malloc((size_t)(dimsizes[0] * dimsizes[1]) * sizeof(float64));
+            data_f64 = (double *)malloc((size_t)(dimsizes[0] * dimsizes[1]) * sizeof(double));
             ret      = DFSDgetdata(TMPFILE, rank, dimsizes, (void *)data_f64);
             RESULT("DFSDgetdata");
 
-            if (memcmp(cdata_f64, data_f64, CDIM_X * CDIM_Y * sizeof(float64))) {
+            if (memcmp(cdata_f64, data_f64, CDIM_X * CDIM_Y * sizeof(double))) {
                 fprintf(stderr, "FLOAT64 data was incorrect\n");
                 num_errs++;
             } /* end if */

@@ -1451,13 +1451,13 @@ test_getntinfo()
     /* Native */
     status = Hgetntinfo(DFNT_NFLOAT32, &nt_info);
     CHECK_VOID(status, FAIL, "Hgetntinfo DFNT_NFLOAT32");
-    VERIFY_CHAR_VOID(nt_info.type_name, "float32", "Hgetntinfo DFNT_NFLOAT32");
+    VERIFY_CHAR_VOID(nt_info.type_name, "float", "Hgetntinfo DFNT_NFLOAT32");
     VERIFY_CHAR_VOID(nt_info.byte_order, "bigEndian", "Hgetntinfo DFNT_NFLOAT32");
 
     /* Little endian */
     status = Hgetntinfo(DFNT_LFLOAT32, &nt_info);
     CHECK_VOID(status, FAIL, "Hgetntinfo DFNT_LFLOAT32");
-    VERIFY_CHAR_VOID(nt_info.type_name, "float32", "Hgetntinfo DFNT_LFLOAT32");
+    VERIFY_CHAR_VOID(nt_info.type_name, "float", "Hgetntinfo DFNT_LFLOAT32");
     VERIFY_CHAR_VOID(nt_info.byte_order, "littleEndian", "Hgetntinfo DFNT_LFLOAT32");
 
     /* Little endian backward compatible */
@@ -1469,7 +1469,7 @@ test_getntinfo()
     /* Backward compatible */
     status = Hgetntinfo(DFNT_DOUBLE, &nt_info);
     CHECK_VOID(status, FAIL, "Hgetntinfo DFNT_DOUBLE");
-    VERIFY_CHAR_VOID(nt_info.type_name, "float64", "Hgetntinfo DFNT_DOUBLE");
+    VERIFY_CHAR_VOID(nt_info.type_name, "double", "Hgetntinfo DFNT_DOUBLE");
     VERIFY_CHAR_VOID(nt_info.byte_order, "bigEndian", "Hgetntinfo DFNT_DOUBLE");
 
     /* Native backward compatible */

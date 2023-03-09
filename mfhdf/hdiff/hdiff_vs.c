@@ -346,8 +346,8 @@ fmt_print(uint8 *x, int32 type)
 {
     int16   s = 0;
     int32   l = 0;
-    float32 f = 0;
-    float64 d = 0;
+    float f = 0;
+    double d = 0;
 
     switch (type) {
         case DFNT_CHAR:
@@ -376,12 +376,12 @@ fmt_print(uint8 *x, int32 type)
             break;
 
         case DFNT_FLOAT32:
-            memcpy(&f, x, sizeof(float32));
+            memcpy(&f, x, sizeof(float));
             printf("%f", f);
             break;
 
         case DFNT_FLOAT64:
-            memcpy(&d, x, sizeof(float64));
+            memcpy(&d, x, sizeof(double));
             printf("%f", d);
             break;
 

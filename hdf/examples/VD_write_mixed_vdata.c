@@ -14,7 +14,7 @@
 
 /* number of bytes of the data to be written, i.e., the size of all the
    field values combined times the number of records */
-#define BUF_SIZE (2 * sizeof(float32) + sizeof(int16) + sizeof(char)) * N_RECORDS
+#define BUF_SIZE (2 * sizeof(float) + sizeof(int16) + sizeof(char)) * N_RECORDS
 
 int
 main()
@@ -23,9 +23,9 @@ main()
 
     int32   file_id, vdata_id;
     int32   vdata_ref = -1;       /* vdata's reference number, set to -1 to create */
-    float32 temp[N_RECORDS];      /* buffer to hold values of first field   */
+    float temp[N_RECORDS];      /* buffer to hold values of first field   */
     int16   height[N_RECORDS];    /* buffer to hold values of second field  */
-    float32 speed[N_RECORDS];     /* buffer to hold values of third field   */
+    float speed[N_RECORDS];     /* buffer to hold values of third field   */
     char8   ident[N_RECORDS];     /* buffer to hold values of fourth field  */
     void   *fldbufptrs[N_FIELDS]; /*pointers to be pointing to the field buffers*/
     uint16  databuf[BUF_SIZE];    /* buffer to hold the data after being packed*/

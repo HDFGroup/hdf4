@@ -46,9 +46,9 @@ intn readnoHDF_char(const char *filename, const int32 offset, const int32 length
         This routine creates and writes data to non-special SDSs and verifies
         data and data information with SDgetattdatainfo.  The tests include
         the following SDSs:
-        - a 2-dim 5x8 element SDS, float32, with no data
+        - a 2-dim 5x8 element SDS, float, with no data
         - a 1-dim 10-element SDS, int32, with 10 values
-        - a 2-dim 5x8 element SDS, float32, with 5x8 values
+        - a 2-dim 5x8 element SDS, float, with 5x8 values
         - a 1-dim 20-element SDS, char, with 20 values
         SDgetattdatainfo will retrieve the number of blocks in the data sets
         and the offsets and lengths of the blocks.  Then the data will be read
@@ -81,7 +81,7 @@ test_attrs()
     int32   n_values, nattrs;
     int32   offset = 0, length = 0;
     char8   file_values[] = "Storm_track_data";
-    float32 sds_values[2] = {2., 10.};
+    float sds_values[2] = {2., 10.};
     char8   dim_values[]  = "Seconds";
     intn    status;
     int     ii, jj;
@@ -132,7 +132,7 @@ test_attrs()
     CHECK(status, FAIL, "SDsetattr")
 
     /*
-     * Create a 2-dim 5x8 element SDS, type float32, then write 5x8 values
+     * Create a 2-dim 5x8 element SDS, type float, then write 5x8 values
      * to it
      */
     dimsizes[0] = LENGTH2_X;
@@ -698,7 +698,7 @@ test_dfsdattrs()
     int         i, j, ret;
     intn        rank;
     int32       dims[2];
-    float32     f32[XX][YY], tf32[XX][YY];
+    float     f32[XX][YY], tf32[XX][YY];
     intn        info_count = 0;
     int32       offset = 0, length = 0;
     int32       fid = -1, sdsid = -1, dimid = -1;
@@ -710,10 +710,10 @@ test_dfsdattrs()
     const char *dimlabels[2], *dimunits[2], *dimfmts[2];
     char        in_dimlabels[2][256], in_dimunits[2][256], in_dimfmts[2][256];
     /*
-    float32  scplnf32[XX] = {(float32) 0.0, (float32) 100.0, (float32) 0.1,
-                        (float32) 101.0, (float32) 0.2, (float32) 102.0};
-    float32  scrowf32[YY] = {(float32) 0.0, (float32) 10.0, (float32) 20.0,
-                        (float32) 1.0, (float32) 11.0, (float32) 21.0};
+    float  scplnf32[XX] = {(float) 0.0, (float) 100.0, (float) 0.1,
+                        (float) 101.0, (float) 0.2, (float) 102.0};
+    float  scrowf32[YY] = {(float) 0.0, (float) 10.0, (float) 20.0,
+                        (float) 1.0, (float) 11.0, (float) 21.0};
     uncomment these when the calls to DFSDsetdimscale are uncommented.
     */
 
@@ -731,7 +731,7 @@ test_dfsdattrs()
 
     for (i = 0; i < XX; i++) {
         for (j = 0; j < YY; j++) {
-            f32[i][j] = (float32)((i * XX) + j); /* range: 0 ~ 4-billion */
+            f32[i][j] = (float)((i * XX) + j); /* range: 0 ~ 4-billion */
         }
     }
 

@@ -68,8 +68,8 @@ static const char *test_name[] = {"Big-Endian", "Little-Endian", "Native"};
 
 /* for those machines with imprecise IEEE<-> conversions, this should be */
 /* close enough */
-#define EPS64 ((float64)1.0E-14)
-#define EPS32 ((float32)1.0E-7)
+#define EPS64 ((double)1.0E-14)
+#define EPS32 ((float)1.0E-7)
 void
 test_conv(void)
 {
@@ -80,8 +80,8 @@ test_conv(void)
     int8    *src_int8, *dst_int8, *dst2_int8;
     int16   *src_int16, *dst_int16, *dst2_int16;
     int32   *src_int32, *dst_int32, *dst2_int32;
-    float32 *src_float32, *dst_float32, *dst2_float32;
-    float64 *src_float64, *dst_float64, *dst2_float64;
+    float *src_float, *dst_float, *dst2_float;
+    double *src_double, *dst_double, *dst2_double;
     intn     i, r;
     intn     t;
     int32    ret;
@@ -579,188 +579,188 @@ test_conv(void)
         free(dst_uint32);
         free(dst2_uint32);
 
-        MESSAGE(6, printf("seeding %s float32 array\n", test_name[t]););
-        src_float32 = (float32 *)malloc(TEST_SIZE * sizeof(float32));
-        if (src_float32 == NULL) {
-            CHECK_VOID(src_float32, NULL, "malloc");
+        MESSAGE(6, printf("seeding %s float array\n", test_name[t]););
+        src_float = (float *)malloc(TEST_SIZE * sizeof(float));
+        if (src_float == NULL) {
+            CHECK_VOID(src_float, NULL, "malloc");
             return;
         } /* end if */
-        dst_float32 = (float32 *)malloc(TEST_SIZE * sizeof(float32));
-        if (dst_float32 == NULL) {
-            CHECK_VOID(dst_float32, NULL, "malloc");
+        dst_float = (float *)malloc(TEST_SIZE * sizeof(float));
+        if (dst_float == NULL) {
+            CHECK_VOID(dst_float, NULL, "malloc");
             return;
         } /* end if */
-        dst2_float32 = (float32 *)malloc(TEST_SIZE * sizeof(float32));
-        if (dst2_float32 == NULL) {
-            CHECK_VOID(dst2_float32, NULL, "malloc");
-            return;
-        } /* end if */
-
-        /* Seed arrays with random values */
-        for (i = 0; i < TEST_SIZE; i++) {
-            src_float32[i] = (float32)(RAND() - RAND_MAX / 2);
-            while ((r = RAND()) == 0) /* don't divide by zero */
-                r = RAND();
-            src_float32[i] /= (float32)r;
-        } /* end for */
-
-        MESSAGE(6, printf("converting %s float32 array\n", test_name[t]););
-        c1  = clock();
-        ret = DFKconvert((void *)src_float32, (void *)dst_float32, test_type[t] | DFNT_FLOAT32, TEST_SIZE,
-                         DFACC_WRITE, 0, 0);
-        c2  = clock();
-        RESULT("DFKconvert");
-        MESSAGE(6, printf("%d/%d seconds to convert %d %s float32 values\n", (int)(c2 - c1),
-                          (int)CLOCKS_PER_SEC, (int)TEST_SIZE, test_name[t]););
-
-        MESSAGE(6, printf("re-converting %s float32 array\n", test_name[t]););
-        c3  = clock();
-        ret = DFKconvert((void *)dst_float32, (void *)dst2_float32, test_type[t] | DFNT_FLOAT32, TEST_SIZE,
-                         DFACC_READ, 0, 0);
-        c4  = clock();
-        RESULT("DFKconvert");
-        MESSAGE(6, printf("%d/%d seconds to convert %d %s float32 values\n", (int)(c4 - c3),
-                          (int)CLOCKS_PER_SEC, (int)TEST_SIZE, test_name[t]););
-
-        if (memcmp(src_float32, dst2_float32, TEST_SIZE * sizeof(float32))) {
-            printf("Error converting %s float32 values!\n", test_name[t]);
-            HEprint(stdout, 0);
-            num_errs++;
-        } /* end if */
-
-        /* clear arrays for next test */
-        memset(src_float32, 0xae, TEST_SIZE * sizeof(float32));
-        memset(dst_float32, 0xae, TEST_SIZE * sizeof(float32));
-        memset(dst2_float32, 0xae, TEST_SIZE * sizeof(float32));
-        /* Seed arrays with random values */
-        for (i = 0; i < TEST_SIZE; i += SOURCE_STRIDE) {
-            src_float32[i] = (float32)(RAND() - RAND_MAX / 2);
-            while ((r = RAND()) == 0) /* don't divide by zero */
-                r = RAND();
-            src_float32[i] /= (float32)r;
-        } /* end for */
-
-        MESSAGE(6, printf("converting %s float32 array with %d/%d stride\n", test_name[t], SOURCE_STRIDE,
-                          DEST_STRIDE););
-        c1  = clock();
-        ret = DFKconvert((void *)src_float32, (void *)dst_float32, test_type[t] | DFNT_FLOAT32, TEST_SIZE / 4,
-                         DFACC_WRITE, SOURCE_STRIDE * sizeof(float32), DEST_STRIDE * sizeof(float32));
-        c2  = clock();
-        RESULT("DFKconvert");
-        MESSAGE(6, printf("%d/%d seconds to convert %d %s float32 values with %d/%d stride\n", (int)(c2 - c1),
-                          (int)CLOCKS_PER_SEC, (int)TEST_SIZE, test_name[t], SOURCE_STRIDE, DEST_STRIDE););
-
-        MESSAGE(6, printf("re-converting %s float32 array with %d/%d stride\n", test_name[t], DEST_STRIDE,
-                          SOURCE_STRIDE););
-        c3 = clock();
-        ret =
-            DFKconvert((void *)dst_float32, (void *)dst2_float32, test_type[t] | DFNT_FLOAT32, TEST_SIZE / 4,
-                       DFACC_READ, DEST_STRIDE * sizeof(float32), SOURCE_STRIDE * sizeof(float32));
-        c4 = clock();
-        RESULT("DFKconvert");
-        MESSAGE(6, printf("%d/%d seconds to convert %d %s float32 values with %d/%d stride\n", (int)(c4 - c3),
-                          (int)CLOCKS_PER_SEC, (int)TEST_SIZE, test_name[t], DEST_STRIDE, SOURCE_STRIDE););
-
-        if (memcmp(src_float32, dst2_float32, (TEST_SIZE / 2) * sizeof(float32))) {
-            printf("Error converting %s float32 values with strides!\n", test_name[t]);
-            HEprint(stdout, 0);
-            num_errs++;
-        }
-
-        free(src_float32);
-        free(dst_float32);
-        free(dst2_float32);
-
-        MESSAGE(6, printf("seeding %s float64 array\n", test_name[t]););
-        src_float64 = (float64 *)malloc(TEST_SIZE * sizeof(float64));
-        if (src_float64 == NULL) {
-            CHECK_VOID(src_float64, NULL, "malloc");
-            return;
-        } /* end if */
-        dst_float64 = (float64 *)malloc(TEST_SIZE * sizeof(float64));
-        if (dst_float64 == NULL) {
-            CHECK_VOID(dst_float64, NULL, "malloc");
-            return;
-        } /* end if */
-        dst2_float64 = (float64 *)malloc(TEST_SIZE * sizeof(float64));
-        if (dst2_float64 == NULL) {
-            CHECK_VOID(dst2_float64, NULL, "malloc");
+        dst2_float = (float *)malloc(TEST_SIZE * sizeof(float));
+        if (dst2_float == NULL) {
+            CHECK_VOID(dst2_float, NULL, "malloc");
             return;
         } /* end if */
 
         /* Seed arrays with random values */
         for (i = 0; i < TEST_SIZE; i++) {
-            src_float64[i] = (float64)(RAND() - RAND_MAX / 2);
+            src_float[i] = (float)(RAND() - RAND_MAX / 2);
             while ((r = RAND()) == 0) /* don't divide by zero */
                 r = RAND();
-            src_float64[i] /= (float64)r;
+            src_float[i] /= (float)r;
         } /* end for */
 
-        MESSAGE(6, printf("converting %s float64 array\n", test_name[t]););
+        MESSAGE(6, printf("converting %s float array\n", test_name[t]););
         c1  = clock();
-        ret = DFKconvert((void *)src_float64, (void *)dst_float64, test_type[t] | DFNT_FLOAT64, TEST_SIZE,
+        ret = DFKconvert((void *)src_float, (void *)dst_float, test_type[t] | DFNT_FLOAT32, TEST_SIZE,
                          DFACC_WRITE, 0, 0);
         c2  = clock();
         RESULT("DFKconvert");
-        MESSAGE(6, printf("%d/%d seconds to convert %d %s float64 values\n", (int)(c2 - c1),
+        MESSAGE(6, printf("%d/%d seconds to convert %d %s float values\n", (int)(c2 - c1),
                           (int)CLOCKS_PER_SEC, (int)TEST_SIZE, test_name[t]););
 
-        MESSAGE(6, printf("re-converting %s float64 array\n", test_name[t]););
+        MESSAGE(6, printf("re-converting %s float array\n", test_name[t]););
         c3  = clock();
-        ret = DFKconvert((void *)dst_float64, (void *)dst2_float64, test_type[t] | DFNT_FLOAT64, TEST_SIZE,
+        ret = DFKconvert((void *)dst_float, (void *)dst2_float, test_type[t] | DFNT_FLOAT32, TEST_SIZE,
                          DFACC_READ, 0, 0);
         c4  = clock();
         RESULT("DFKconvert");
-        MESSAGE(6, printf("%d/%d seconds to convert %d %s float64 values\n", (int)(c4 - c3),
+        MESSAGE(6, printf("%d/%d seconds to convert %d %s float values\n", (int)(c4 - c3),
                           (int)CLOCKS_PER_SEC, (int)TEST_SIZE, test_name[t]););
 
-        if (memcmp(src_float64, dst2_float64, TEST_SIZE * sizeof(float64))) {
-            printf("Error converting %s float64 values!\n", test_name[t]);
+        if (memcmp(src_float, dst2_float, TEST_SIZE * sizeof(float))) {
+            printf("Error converting %s float values!\n", test_name[t]);
             HEprint(stdout, 0);
             num_errs++;
         } /* end if */
 
         /* clear arrays for next test */
-        memset(src_float64, 0xae, TEST_SIZE * sizeof(float64));
-        memset(dst_float64, 0xae, TEST_SIZE * sizeof(float64));
-        memset(dst2_float64, 0xae, TEST_SIZE * sizeof(float64));
+        memset(src_float, 0xae, TEST_SIZE * sizeof(float));
+        memset(dst_float, 0xae, TEST_SIZE * sizeof(float));
+        memset(dst2_float, 0xae, TEST_SIZE * sizeof(float));
         /* Seed arrays with random values */
         for (i = 0; i < TEST_SIZE; i += SOURCE_STRIDE) {
-            src_float64[i] = (float64)(RAND() - RAND_MAX / 2);
+            src_float[i] = (float)(RAND() - RAND_MAX / 2);
             while ((r = RAND()) == 0) /* don't divide by zero */
                 r = RAND();
-            src_float64[i] /= (float64)r;
+            src_float[i] /= (float)r;
         } /* end for */
 
-        MESSAGE(6, printf("converting %s float64 array with %d/%d stride\n", test_name[t], SOURCE_STRIDE,
+        MESSAGE(6, printf("converting %s float array with %d/%d stride\n", test_name[t], SOURCE_STRIDE,
                           DEST_STRIDE););
         c1  = clock();
-        ret = DFKconvert((void *)src_float64, (void *)dst_float64, test_type[t] | DFNT_FLOAT64, TEST_SIZE / 4,
-                         DFACC_WRITE, SOURCE_STRIDE * sizeof(float64), DEST_STRIDE * sizeof(float64));
+        ret = DFKconvert((void *)src_float, (void *)dst_float, test_type[t] | DFNT_FLOAT32, TEST_SIZE / 4,
+                         DFACC_WRITE, SOURCE_STRIDE * sizeof(float), DEST_STRIDE * sizeof(float));
         c2  = clock();
         RESULT("DFKconvert");
-        MESSAGE(6, printf("%d/%d seconds to convert %d %s float64 values with %d/%d stride\n", (int)(c2 - c1),
+        MESSAGE(6, printf("%d/%d seconds to convert %d %s float values with %d/%d stride\n", (int)(c2 - c1),
                           (int)CLOCKS_PER_SEC, (int)TEST_SIZE, test_name[t], SOURCE_STRIDE, DEST_STRIDE););
 
-        MESSAGE(6, printf("re-converting %s float64 array with %d/%d stride\n", test_name[t], DEST_STRIDE,
+        MESSAGE(6, printf("re-converting %s float array with %d/%d stride\n", test_name[t], DEST_STRIDE,
                           SOURCE_STRIDE););
         c3 = clock();
         ret =
-            DFKconvert((void *)dst_float64, (void *)dst2_float64, test_type[t] | DFNT_FLOAT64, TEST_SIZE / 4,
-                       DFACC_READ, DEST_STRIDE * sizeof(float64), SOURCE_STRIDE * sizeof(float64));
+            DFKconvert((void *)dst_float, (void *)dst2_float, test_type[t] | DFNT_FLOAT32, TEST_SIZE / 4,
+                       DFACC_READ, DEST_STRIDE * sizeof(float), SOURCE_STRIDE * sizeof(float));
         c4 = clock();
         RESULT("DFKconvert");
-        MESSAGE(6, printf("%d/%d seconds to convert %d %s float64 values with %d/%d stride\n", (int)(c4 - c3),
+        MESSAGE(6, printf("%d/%d seconds to convert %d %s float values with %d/%d stride\n", (int)(c4 - c3),
                           (int)CLOCKS_PER_SEC, (int)TEST_SIZE, test_name[t], DEST_STRIDE, SOURCE_STRIDE););
-        if (memcmp(src_float64, dst2_float64, (TEST_SIZE / 2) * sizeof(float64))) {
-            printf("Error converting %s float64 values with strides!\n", test_name[t]);
+
+        if (memcmp(src_float, dst2_float, (TEST_SIZE / 2) * sizeof(float))) {
+            printf("Error converting %s float values with strides!\n", test_name[t]);
             HEprint(stdout, 0);
             num_errs++;
         }
 
-        free(src_float64);
-        free(dst_float64);
-        free(dst2_float64);
+        free(src_float);
+        free(dst_float);
+        free(dst2_float);
+
+        MESSAGE(6, printf("seeding %s double array\n", test_name[t]););
+        src_double = (double *)malloc(TEST_SIZE * sizeof(double));
+        if (src_double == NULL) {
+            CHECK_VOID(src_double, NULL, "malloc");
+            return;
+        } /* end if */
+        dst_double = (double *)malloc(TEST_SIZE * sizeof(double));
+        if (dst_double == NULL) {
+            CHECK_VOID(dst_double, NULL, "malloc");
+            return;
+        } /* end if */
+        dst2_double = (double *)malloc(TEST_SIZE * sizeof(double));
+        if (dst2_double == NULL) {
+            CHECK_VOID(dst2_double, NULL, "malloc");
+            return;
+        } /* end if */
+
+        /* Seed arrays with random values */
+        for (i = 0; i < TEST_SIZE; i++) {
+            src_double[i] = (double)(RAND() - RAND_MAX / 2);
+            while ((r = RAND()) == 0) /* don't divide by zero */
+                r = RAND();
+            src_double[i] /= (double)r;
+        } /* end for */
+
+        MESSAGE(6, printf("converting %s double array\n", test_name[t]););
+        c1  = clock();
+        ret = DFKconvert((void *)src_double, (void *)dst_double, test_type[t] | DFNT_FLOAT64, TEST_SIZE,
+                         DFACC_WRITE, 0, 0);
+        c2  = clock();
+        RESULT("DFKconvert");
+        MESSAGE(6, printf("%d/%d seconds to convert %d %s double values\n", (int)(c2 - c1),
+                          (int)CLOCKS_PER_SEC, (int)TEST_SIZE, test_name[t]););
+
+        MESSAGE(6, printf("re-converting %s double array\n", test_name[t]););
+        c3  = clock();
+        ret = DFKconvert((void *)dst_double, (void *)dst2_double, test_type[t] | DFNT_FLOAT64, TEST_SIZE,
+                         DFACC_READ, 0, 0);
+        c4  = clock();
+        RESULT("DFKconvert");
+        MESSAGE(6, printf("%d/%d seconds to convert %d %s double values\n", (int)(c4 - c3),
+                          (int)CLOCKS_PER_SEC, (int)TEST_SIZE, test_name[t]););
+
+        if (memcmp(src_double, dst2_double, TEST_SIZE * sizeof(double))) {
+            printf("Error converting %s double values!\n", test_name[t]);
+            HEprint(stdout, 0);
+            num_errs++;
+        } /* end if */
+
+        /* clear arrays for next test */
+        memset(src_double, 0xae, TEST_SIZE * sizeof(double));
+        memset(dst_double, 0xae, TEST_SIZE * sizeof(double));
+        memset(dst2_double, 0xae, TEST_SIZE * sizeof(double));
+        /* Seed arrays with random values */
+        for (i = 0; i < TEST_SIZE; i += SOURCE_STRIDE) {
+            src_double[i] = (double)(RAND() - RAND_MAX / 2);
+            while ((r = RAND()) == 0) /* don't divide by zero */
+                r = RAND();
+            src_double[i] /= (double)r;
+        } /* end for */
+
+        MESSAGE(6, printf("converting %s double array with %d/%d stride\n", test_name[t], SOURCE_STRIDE,
+                          DEST_STRIDE););
+        c1  = clock();
+        ret = DFKconvert((void *)src_double, (void *)dst_double, test_type[t] | DFNT_FLOAT64, TEST_SIZE / 4,
+                         DFACC_WRITE, SOURCE_STRIDE * sizeof(double), DEST_STRIDE * sizeof(double));
+        c2  = clock();
+        RESULT("DFKconvert");
+        MESSAGE(6, printf("%d/%d seconds to convert %d %s double values with %d/%d stride\n", (int)(c2 - c1),
+                          (int)CLOCKS_PER_SEC, (int)TEST_SIZE, test_name[t], SOURCE_STRIDE, DEST_STRIDE););
+
+        MESSAGE(6, printf("re-converting %s double array with %d/%d stride\n", test_name[t], DEST_STRIDE,
+                          SOURCE_STRIDE););
+        c3 = clock();
+        ret =
+            DFKconvert((void *)dst_double, (void *)dst2_double, test_type[t] | DFNT_FLOAT64, TEST_SIZE / 4,
+                       DFACC_READ, DEST_STRIDE * sizeof(double), SOURCE_STRIDE * sizeof(double));
+        c4 = clock();
+        RESULT("DFKconvert");
+        MESSAGE(6, printf("%d/%d seconds to convert %d %s double values with %d/%d stride\n", (int)(c4 - c3),
+                          (int)CLOCKS_PER_SEC, (int)TEST_SIZE, test_name[t], DEST_STRIDE, SOURCE_STRIDE););
+        if (memcmp(src_double, dst2_double, (TEST_SIZE / 2) * sizeof(double))) {
+            printf("Error converting %s double values with strides!\n", test_name[t]);
+            HEprint(stdout, 0);
+            num_errs++;
+        }
+
+        free(src_double);
+        free(dst_double);
+        free(dst2_double);
     } /* end for */
 
 } /* end test_conv() */

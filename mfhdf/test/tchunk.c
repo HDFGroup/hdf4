@@ -65,12 +65,12 @@ static uint8 chunk6_u8[4] = {120, 121, 122, 123};
 
 /* data arrays laid out in memory  */
 /* for comparison */
-static float32 f32_data[2][3][4] = {{{(float32)0.0, (float32)1.0, (float32)2.0, (float32)3.0},
-                                     {(float32)10.0, (float32)11.0, (float32)12.0, (float32)13.0},
-                                     {(float32)20.0, (float32)21.0, (float32)22.0, (float32)23.0}},
-                                    {{(float32)100.0, (float32)101.0, (float32)102.0, (float32)103.0},
-                                     {(float32)110.0, (float32)111.0, (float32)112.0, (float32)113.0},
-                                     {(float32)120.0, (float32)121.0, (float32)122.0, (float32)123.0}}};
+static float f32_data[2][3][4] = {{{(float)0.0, (float)1.0, (float)2.0, (float)3.0},
+                                     {(float)10.0, (float)11.0, (float)12.0, (float)13.0},
+                                     {(float)20.0, (float)21.0, (float)22.0, (float)23.0}},
+                                    {{(float)100.0, (float)101.0, (float)102.0, (float)103.0},
+                                     {(float)110.0, (float)111.0, (float)112.0, (float)113.0},
+                                     {(float)120.0, (float)121.0, (float)122.0, (float)123.0}}};
 
 static uint16 u16_data[2][3][4] = {{{0, 1, 2, 3}, {10, 11, 12, 13}, {20, 21, 22, 23}},
                                    {{100, 101, 102, 103}, {110, 111, 112, 113}, {120, 121, 122, 123}}};
@@ -85,7 +85,7 @@ test_chunk()
     int32   nt;                                                                     /* Number type */
     int32   dimsize[10];                                                            /* dimension sizes */
     int32   newsds1, newsds2, newsds3, newsds4, newsds5, newsds6, newsds7, newsds8; /* Chunked SDS ids */
-    float32 inbuf_f32[2][3][4];       /* float32 Data array read from from file */
+    float inbuf_f32[2][3][4];       /* float Data array read from from file */
     uint16  inbuf_u16[2][3][4];       /* uint16 Data array read from from file */
     uint16  inbuf1_2u16[9][4];        /* Data array read for Example 1 */
     uint16  inbuf_2u16[5][2];         /* Data array read for Example 1 */
@@ -107,7 +107,7 @@ test_chunk()
     int32         start[10], end[10]; /* start, end, stride arrays */
     int32         idata[100];
     int32         rdata[100];
-    float32       max;
+    float       max;
     int           num_errs = 0; /* number of errors so far */
 
     /* Output message about test being performed */
@@ -377,14 +377,14 @@ test2:
      */
 test3:
     /*
-     * Test 3. create a new chunked SDS of float32 in file 1
+     * Test 3. create a new chunked SDS of float in file 1
      */
     d_dims[0] = 2;
     d_dims[1] = 3;
     d_dims[2] = 4;
     newsds3   = SDcreate(fchk, "DataSetChunked_3D_1", DFNT_FLOAT32, 3, d_dims);
     if (newsds3 == FAIL) {
-        fprintf(stderr, "Chunk Test 3. Failed to create a new 3D float32 data set \n");
+        fprintf(stderr, "Chunk Test 3. Failed to create a new 3D float data set \n");
         num_errs++;
         goto test4;
     }

@@ -79,12 +79,12 @@ main()
      * The data type should be DFNT_FLOAT32, from SD_set_attr.c.
      */
     if (data_type == DFNT_FLOAT32) {
-        float32 *sds_data;
+        float *sds_data;
 
         /*
          * Allocate a buffer to hold the data set attribute data.
          */
-        sds_data = (float32 *)malloc(n_values * DFKNTsize(data_type));
+        sds_data = (float *)malloc(n_values * DFKNTsize(data_type));
 
         /*
          * Read the SDS attribute data.
@@ -95,7 +95,7 @@ main()
         /*
          * Print out SDS attribute data type and values and free buffer.
          */
-        printf("SDS attribute data type is : float32\n");
+        printf("SDS attribute data type is : float\n");
         printf("SDS attribute values are :  ");
         for (i = 0; i < n_values; i++)
             printf(" %f", sds_data[i]);
@@ -156,7 +156,7 @@ main()
     /*   Output of this program is :
      *
      *    File attribute value is : Storm_track_data
-     *    SDS attribute data type is : float32
+     *    SDS attribute data type is : float
      *    SDS attribute values are :   2.000000 10.000000
      *    Dimensional attribute values is : Seconds
      */

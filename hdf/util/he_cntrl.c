@@ -471,8 +471,8 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
         } break;
 
         case 'f': {
-            float32 *fdata;
-            fdata = (float32 *)malloc(length / 4 * sizeof(float32));
+            float *fdata;
+            fdata = (float *)malloc(length / 4 * sizeof(float));
 
             DFKconvert((void *)(data + offset), (void *)fdata, DFNT_FLOAT32 | raw_flag, length / 4,
                        DFACC_READ, 0, 0);
@@ -490,8 +490,8 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
         } break;
 
         case 'e': {
-            float64 *fdata;
-            fdata = (float64 *)malloc(length / 8 * sizeof(float64));
+            double *fdata;
+            fdata = (double *)malloc(length / 8 * sizeof(double));
 
             DFKconvert((void *)(data + offset), (void *)fdata, DFNT_FLOAT64 | raw_flag, length / 8,
                        DFACC_READ, 0, 0);

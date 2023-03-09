@@ -32,14 +32,14 @@ main()
     int32   dim2_sizes[2];                            /* sizes of the 2-dim SDS dimensions */
     int32   dim3_sizes[3];                            /* sizes of the 3-dim SDS dimensions */
     int32   start2[2], start3[3];                     /* start arrays for both SDSs */
-    float32 in2_data[X_LENGTH][Y_LENGTH]           = {/* input for 2-dim SDS */
+    float in2_data[X_LENGTH][Y_LENGTH]           = {/* input for 2-dim SDS */
                                             {100.0, 100.0, 200.0, 200.0, 300.0, 400.0, 100.0, 100.0, 200.0},
                                             {200.0, 300.0, 400.0, 100.0, 100.0, 200.0, 200.0, 300.0, 400.0},
                                             {300.0, 300.0, 0.0, 400.0, 300.0, 400.0, 300.0, 300.0, 0.0},
                                             {400.0, 300.0, 400.0, 300.0, 300.0, 0.0, 400.0, 300.0, 400.0},
                                             {0.0, 0.0, 600.0, 600.0, 300.0, 400.0, 500.0, 500.0, 600.0},
                                             {600.0, 300.0, 400.0, 0.0, 0.0, 600.0, 600.0, 300.0, 400.0}};
-    float32 in3_data[X_LENGTH][Y_LENGTH][Z_LENGTH] = {/* input for 3-dim SDS */
+    float in3_data[X_LENGTH][Y_LENGTH][Z_LENGTH] = {/* input for 3-dim SDS */
                                                       {{100.0, 100.0},
                                                        {200.0, 200.0},
                                                        {300.0, 400.0},

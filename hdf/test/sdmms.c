@@ -13,10 +13,10 @@
 
 #include "tproto.h"
 
-static float32 f32[10][10], tf32[10][10];
-static float32 f32scale[10], tf32scale[10];
-static float32 f32max = (float32)40.0, f32min = (float32)0.0;
-static float32 tf32max, tf32min;
+static float f32[10][10], tf32[10][10];
+static float f32scale[10], tf32scale[10];
+static float f32max = (float)40.0, f32min = (float)0.0;
+static float tf32max, tf32min;
 
 static int8 i8[10][10], ti8[10][10];
 static int8 i8scale[10], ti8scale[10];
@@ -48,10 +48,10 @@ static uint32 ui32scale[10], tui32scale[10];
 static uint32 ui32max = 999999999, ui32min = 0;
 static uint32 tui32max, tui32min;
 
-static float64 cal1, cal2, cal3, cal4;
+static double cal1, cal2, cal3, cal4;
 static int32   cal5;
 
-static float64 ical1, ical2, ical3, ical4;
+static double ical1, ical2, ical3, ical4;
 static int32   ical5;
 
 void
@@ -70,7 +70,7 @@ test_sdmms(void)
 
     for (i = 0; i < 10; i++) {
         for (j = 0; j < 10; j++) {
-            f32[i][j] = (float32)((i * 40) + j); /* range: 0 ~ 4-billion */
+            f32[i][j] = (float)((i * 40) + j); /* range: 0 ~ 4-billion */
 
             i8[i][j]  = (int8)((i * 20) - 100 + j); /* range: 0 ~ 100 */
             ui8[i][j] = (uint8)((i * 20) + j);      /* range: 0 ~ 200 */
@@ -82,7 +82,7 @@ test_sdmms(void)
             ui32[i][j] = (uint32)((i * 400000000U) + j);    /* range: 0 ~ 4-billion */
         }
 
-        f32scale[i] = (float32)((i * 40) + j); /* range: 0 ~ 4-billion */
+        f32scale[i] = (float)((i * 40) + j); /* range: 0 ~ 4-billion */
 
         i8scale[i]  = (int8)((i * 20) - 100 + j); /* range: 0 ~ 100 */
         ui8scale[i] = (uint8)((i * 20) + j);      /* range: 0 ~ 200 */
@@ -94,10 +94,10 @@ test_sdmms(void)
         ui32scale[i] = (uint32)((i * 400000000U) + j);    /* range: 0 ~ 4-billion */
     }
 
-    cal1 = (float64)10.0;
-    cal2 = (float64)0.0;
-    cal3 = (float64)27.0;
-    cal4 = (float64)1.5;
+    cal1 = (double)10.0;
+    cal2 = (double)0.0;
+    cal3 = (double)27.0;
+    cal4 = (double)1.5;
     cal5 = (int32)DFNT_INT16;
 
     ret = DFSDsetdims(rank, dims);
@@ -245,22 +245,22 @@ test_sdmms(void)
     num_errs += err + err1 + err2;
     MESSAGE(5, {
         if (err == 1)
-            printf(">>> Test failed for float32 array.\n");
+            printf(">>> Test failed for float array.\n");
         else
-            printf("Test passed for float32 array.\n");
+            printf("Test passed for float array.\n");
     });
-    MESSAGE(5, if (err2 == 1) printf(">>> Test failed for float32 scales.\n");
-            else printf("Test passed for float32 scales.\n"););
-    MESSAGE(5, if (err1 == 1) printf(">>> Test failed for float32 max/min.\n");
-            else printf("Test passed for float32 max/min.\n"););
+    MESSAGE(5, if (err2 == 1) printf(">>> Test failed for float scales.\n");
+            else printf("Test passed for float scales.\n"););
+    MESSAGE(5, if (err1 == 1) printf(">>> Test failed for float max/min.\n");
+            else printf("Test passed for float max/min.\n"););
 
     if ((cal1 != ical1) || (cal2 != ical2) || (cal3 != ical3) || (cal4 != ical4) || (cal5 != ical5)) {
-        MESSAGE(5, printf(">>> Test failed for float32 calibration.\n"););
+        MESSAGE(5, printf(">>> Test failed for float calibration.\n"););
         MESSAGE(5, printf(" Is %f %f %f %f %d\n", ical1, ical2, ical3, ical4, (int)ical5););
         MESSAGE(5, printf(" sld be %f %f %f %f %d\n", cal1, cal2, cal3, cal4, (int)cal5););
     }
     else
-        MESSAGE(5, printf("Test passed for float32 calibration.\n"););
+        MESSAGE(5, printf("Test passed for float calibration.\n"););
 
     err  = 0;
     err1 = 0;

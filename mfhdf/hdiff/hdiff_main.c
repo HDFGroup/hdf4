@@ -137,7 +137,7 @@ main(int argc, char *argv[])
                 opt.max_err_cnt = atoi(h4optarg);
                 break;
             case 't': /* range of difference to be printed */
-                opt.err_limit = (float32)atof(h4optarg);
+                opt.err_limit = (float)atof(h4optarg);
                 break;
             case 'v': /* variable names */
                 /* make list of names of variables specified */
@@ -151,7 +151,7 @@ main(int argc, char *argv[])
                 opt.statistics = 1;
                 break;
             case 'p':
-                opt.err_rel = (float32)atof(h4optarg);
+                opt.err_rel = (float)atof(h4optarg);
                 break;
         }
     }

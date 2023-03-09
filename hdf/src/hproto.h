@@ -752,9 +752,9 @@ HDFLIBAPI int DFSDgetNT(int32 *pnumbertype);
 
 HDFLIBAPI intn DFSDpre32sdg(char *filename, uint16 ref, intn *ispre32);
 
-HDFLIBAPI int DFSDsetcal(float64 cal, float64 cal_err, float64 ioff, float64 ioff_err, int32 cal_nt);
+HDFLIBAPI int DFSDsetcal(double cal, double cal_err, double ioff, double ioff_err, int32 cal_nt);
 
-HDFLIBAPI int DFSDgetcal(float64 *pcal, float64 *pcal_err, float64 *pioff, float64 *pioff_err, int32 *cal_nt);
+HDFLIBAPI int DFSDgetcal(double *pcal, double *pcal_err, double *pioff, double *pioff_err, int32 *cal_nt);
 
 HDFLIBAPI int DFSDwriteref(const char *filename, uint16 ref);
 

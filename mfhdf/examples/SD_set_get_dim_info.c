@@ -19,8 +19,8 @@ main()
     int32   n_values, data_type, n_attrs;
     int16   data_X[X_LENGTH]; /* X dimension dimension scale */
     int16   data_X_out[X_LENGTH];
-    float64 data_Y[Y_LENGTH]; /* Y dimension dimension scale */
-    float64 data_Y_out[Y_LENGTH];
+    double data_Y[Y_LENGTH]; /* Y dimension dimension scale */
+    double data_Y_out[Y_LENGTH];
     char    dim_name[NAME_LENGTH + 1];
     int     i, j, nrow;
 
@@ -89,7 +89,7 @@ main()
          *         Information about 1 dimension:
          *         dimension name is Y_Axis
          *         number of scale values is 16
-         *         dimension scale data type is float64
+         *         dimension scale data type is double
          *         number of dimension attributes is 0
          *
          *         Scale values are :
@@ -114,7 +114,7 @@ main()
         printf("dimension name is %s\n", dim_name);
         printf("number of scale values is %d\n", n_values);
         if (data_type == DFNT_FLOAT64)
-            printf("dimension scale data type is float64\n");
+            printf("dimension scale data type is double\n");
         if (data_type == DFNT_INT16)
             printf("dimension scale data type is int16\n");
         printf("number of dimension attributes is %d\n", n_attrs);

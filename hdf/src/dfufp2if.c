@@ -25,8 +25,8 @@
  *---------------------------------------------------------------------------*/
 
 FRETVAL(int)
-nduif2i(int32 *hdim, int32 *vdim, float32 *max, float32 *min, float32 hscale[], float32 vscale[],
-        float32 data[], _fcd palette, _fcd outfile, int *ct_method, int32 *hres, int32 *vres, int *compress,
+nduif2i(int32 *hdim, int32 *vdim, float *max, float *min, float hscale[], float vscale[],
+        float data[], _fcd palette, _fcd outfile, int *ct_method, int32 *hres, int32 *vres, int *compress,
         int *lenfn)
 {
     char *fn;
@@ -35,7 +35,7 @@ nduif2i(int32 *hdim, int32 *vdim, float32 *max, float32 *min, float32 hscale[], 
     fn = HDf2cstring(outfile, *lenfn);
     if (!fn)
         return (FAIL);
-    ret = DFUfptoimage(*hdim, *vdim, (float32)*max, (float32)*min, hscale, vscale, data,
+    ret = DFUfptoimage(*hdim, *vdim, (float)*max, (float)*min, hscale, vscale, data,
                        (uint8 *)_fcdtocp(palette), fn, *ct_method, *hres, *vres, *compress);
     free(fn);
     return (ret);

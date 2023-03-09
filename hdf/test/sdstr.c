@@ -32,7 +32,7 @@ test_tsdstr(void)
     int         i, j, ret;
     intn        rank;
     int32       dims[2];
-    float32     f32[10][10], tf32[10][10];
+    float     f32[10][10], tf32[10][10];
     const char *datalabel = "Datalabel", *dataunit = "Dataunit", *datafmt = "Datafmt", *coordsys = "coordsys";
     char        in_datalabel[256], in_dataunit[256], in_datafmt[256], in_coordsys[256];
 
@@ -55,7 +55,7 @@ test_tsdstr(void)
 
     for (i = 0; i < 10; i++) {
         for (j = 0; j < 10; j++) {
-            f32[i][j] = (float32)((i * 10) + j); /* range: 0 ~ 4-billion */
+            f32[i][j] = (float)((i * 10) + j); /* range: 0 ~ 4-billion */
         }
     }
 

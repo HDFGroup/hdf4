@@ -2224,10 +2224,10 @@ done:
 ******************************************************************************/
 intn
 SDsetcal(int32   sdsid, /* IN: dataset ID */
-         float64 cal,   /* IN: multiplicative factor */
-         float64 cale,  /* IN: multiplicative factor error */
-         float64 ioff,  /* IN: integer offset */
-         float64 ioffe, /* IN: integer offset error */
+         double cal,   /* IN: multiplicative factor */
+         double cale,  /* IN: multiplicative factor error */
+         double ioff,  /* IN: integer offset */
+         double ioffe, /* IN: integer offset error */
          int32   nt /* IN: number type of uncalibrated data */)
 {
     NC     *handle    = NULL;
@@ -2513,10 +2513,10 @@ done:
 ******************************************************************************/
 intn
 SDgetcal(int32    sdsid, /* IN:  dataset ID */
-         float64 *cal,   /* OUT: multiplicative factor */
-         float64 *cale,  /* OUT: multiplicative factor error */
-         float64 *ioff,  /* OUT: integer offset  */
-         float64 *ioffe, /* OUT: integer offset error */
+         double *cal,   /* OUT: multiplicative factor */
+         double *cale,  /* OUT: multiplicative factor error */
+         double *ioff,  /* OUT: integer offset  */
+         double *ioffe, /* OUT: integer offset error */
          int32   *nt /* OUT: number type of uncalibrated data */)
 {
     NC       *handle    = NULL;
@@ -5251,10 +5251,10 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
                 *((int32 *)p) = FILL_LONG;
                 break;
             case DFNT_FLOAT32:
-                *((float32 *)p) = FILL_FLOAT;
+                *((float *)p) = FILL_FLOAT;
                 break;
             case DFNT_FLOAT64:
-                *((float64 *)p) = FILL_DOUBLE;
+                *((double *)p) = FILL_DOUBLE;
                 break;
             default:
                 HGOTO_ERROR(DFE_ARGS, FAIL);

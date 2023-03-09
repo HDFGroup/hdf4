@@ -118,7 +118,7 @@ showfmttypes(void)
     fprintf(stderr, "\t  b - byte    (int8 in HDF file)    \n");
     fprintf(stderr, "\t  s - short   (int16 in HDF file)   \n");
     fprintf(stderr, "\t  l - long    (int32 in HDF file)   \n");
-    fprintf(stderr, "\t  f - float   (float32 in HDF file) \n");
+    fprintf(stderr, "\t  f - float   (float in HDF file) \n");
 }
 
 int
@@ -388,7 +388,7 @@ inpfloat(void *x)
     float val;
 
     ret           = scanf("%f ", &val);
-    *(float32 *)x = (float32)val;
+    *(float *)x = (float)val;
     return (ret);
 }
 

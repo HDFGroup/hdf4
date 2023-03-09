@@ -743,8 +743,8 @@ Java_hdf_hdflib_HDFLibrary_SDgetcal(JNIEnv *env, jclass clss, jlong sdsid, jdoub
     PIN_INT_ARRAY(ENVONLY, nt, theNT, &isCopy, "SDgetcal:  nt not pinned");
     PIN_DOUBLE_ARRAY(ENVONLY, argv, theArgs, &isCopy, "SDgetcal:  argv not pinned");
 
-    if ((rval = SDgetcal(id, (float64 *)&(theArgs[0]), (float64 *)&(theArgs[1]), (float64 *)&(theArgs[2]),
-                         (float64 *)&(theArgs[3]), (int32 *)&(theNT[0]))) == FAIL)
+    if ((rval = SDgetcal(id, (double *)&(theArgs[0]), (double *)&(theArgs[1]), (double *)&(theArgs[2]),
+                         (double *)&(theArgs[3]), (int32 *)&(theNT[0]))) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 
 done:
@@ -1083,7 +1083,7 @@ Java_hdf_hdflib_HDFLibrary_SDsetcal(JNIEnv *env, jclass clss, jlong sds_id, jdou
 
     UNUSED(clss);
 
-    if ((rval = SDsetcal(id, (float64)cal, (float64)cal_err, (float64)offset, (float64)offset_err,
+    if ((rval = SDsetcal(id, (double)cal, (double)cal_err, (double)offset, (double)offset_err,
                          (int32)number_type)) == FAIL)
         H4_LIBRARY_ERROR(ENVONLY);
 

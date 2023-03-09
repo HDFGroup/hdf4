@@ -886,10 +886,10 @@ hdf_write_attr(XDR *xdrs, NC *handle, NC_attr **attr)
             fprintf(stderr, " (int32) %d\n", (int *)values);
             break;
         case DFNT_FLOAT32:
-            fprintf(stderr, " (float32) %f\n", (float *)values);
+            fprintf(stderr, " (float) %f\n", (float *)values);
             break;
         case DFNT_FLOAT64:
-            fprintf(stderr, " (float64) %f\n", (double *)values);
+            fprintf(stderr, " (double) %f\n", (double *)values);
             break;
         default:
             fprintf(stderr, "???\n");

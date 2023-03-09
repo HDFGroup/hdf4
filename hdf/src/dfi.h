@@ -50,7 +50,7 @@
 #define uint16                  unsigned short int
 #define int32                   long int
 #define uint32                  unsigned long int
-#define float32                 float
+#define float                 float
 #define DFmovmem(from, to, len) memcpy(to, from, len)
 #ifndef DF_STRUCTOK
 #define UINT16READ(p, x)                                                                                     \
