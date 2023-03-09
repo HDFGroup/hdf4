@@ -2776,7 +2776,7 @@ Vdelete(int32 f, /* IN: file handle */
     if (vgid < 0)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* convert file id to file rec and check for validity */
+    /* convert file id to file record and check for validity */
     file_rec = HAatom_object(f);
     if (BADFREC(file_rec))
         HGOTO_ERROR(DFE_ARGS, FAIL);
