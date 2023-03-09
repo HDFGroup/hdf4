@@ -1090,9 +1090,13 @@ Vattach(HFILEID     f,    /* IN: file handle */
     else
         HGOTO_ERROR(DFE_BADACC, FAIL);
 
-    /* convert file id to file record and check for write-permission */
+    /* convert file id to file record and check for validity */
     file_rec = HAatom_object(f);
-    if ((file_rec == NULL || acc_mode == 'w') && !(file_rec->access & DFACC_WRITE))
+    if (BADFREC(file_rec))
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* check for write-permission */
+    if (acc_mode == 'w' && !(file_rec->access & DFACC_WRITE))
         HGOTO_ERROR(DFE_BADACC, FAIL);
 
     if (vgid == -1) {
@@ -2772,9 +2776,10 @@ Vdelete(int32 f, /* IN: file handle */
     if (vgid < 0)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* convert file id to file record */
-    if ((file_rec = HAatom_object(f)) == NULL)
-        HGOTO_ERROR(DFE_BADACC, FAIL);
+    /* convert file id to file record and check for validity */
+    file_rec = HAatom_object(f);
+    if (BADFREC(file_rec))
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* check for write-permission to file*/
     if (!(file_rec->access & DFACC_WRITE))

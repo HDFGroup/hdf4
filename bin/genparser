@@ -19,7 +19,7 @@
 #
 # There is NO dependency in either the autotools or CMake to regenerate
 # the parser code. If you modify ncgen.l or ncgen.y, you will need to run
-# this scrpit manually on a system with a suitable lexer and parser generator.
+# this script manually on a system with a suitable lexer and parser generator.
 #
 # IMPORTANT OS X NOTE
 #
