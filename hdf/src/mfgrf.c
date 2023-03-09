@@ -423,7 +423,7 @@ nmgrimil(intf *riid, intf *il)
  * Inputs:
  *      riid: RI ID of the image
  *      lut_index: index of the palette to select
- * Returns: valud LUT ID on success, FAIL on failure
+ * Returns: value LUT ID on success, FAIL on failure
  * Users:   HDF Fortran programmers
  * Invokes: GRgetlutid
  *---------------------------------------------------------------------------*/

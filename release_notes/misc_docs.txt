@@ -1603,7 +1603,7 @@ Fortran: afannlist(an_id,type, tag, ref, alist[])
 
 /*--------------------------------------------------------------------------
  NAME
-       ANannlen -- get length of annotation givne annotation id
+       ANannlen -- get length of annotation given annotation id
  USAGE
        int32 ANannlen(ann_id)
        int32 ann_id;   IN: annotation id
