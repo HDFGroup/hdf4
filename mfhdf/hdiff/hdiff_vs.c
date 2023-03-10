@@ -344,9 +344,9 @@ vdata_cmp(int32 vs1, int32 vs2, char *gname, char *cname, diff_opt_t *opt)
 void
 fmt_print(uint8 *x, int32 type)
 {
-    int16   s = 0;
-    int32   l = 0;
-    float f = 0;
+    int16  s = 0;
+    int32  l = 0;
+    float  f = 0;
     double d = 0;
 
     switch (type) {

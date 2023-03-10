@@ -24,13 +24,13 @@
 /* close enough */
 #define FLOAT64_FUDGE ((double)0.00000001)
 
-static int8    cdata_i8[CDIM_Y][CDIM_X];
-static uint8   cdata_u8[CDIM_Y][CDIM_X];
-static int16   cdata_i16[CDIM_Y][CDIM_X];
-static uint16  cdata_u16[CDIM_Y][CDIM_X];
-static int32   cdata_i32[CDIM_Y][CDIM_X];
-static uint32  cdata_u32[CDIM_Y][CDIM_X];
-static float cdata_f32[CDIM_Y][CDIM_X];
+static int8   cdata_i8[CDIM_Y][CDIM_X];
+static uint8  cdata_u8[CDIM_Y][CDIM_X];
+static int16  cdata_i16[CDIM_Y][CDIM_X];
+static uint16 cdata_u16[CDIM_Y][CDIM_X];
+static int32  cdata_i32[CDIM_Y][CDIM_X];
+static uint32 cdata_u32[CDIM_Y][CDIM_X];
+static float  cdata_f32[CDIM_Y][CDIM_X];
 static double cdata_f64[CDIM_Y][CDIM_X];
 
 static void init_cdata(void);
@@ -64,18 +64,18 @@ wrapup_cdata(void)
 static void
 test_little_read(void)
 {
-    intn     rank;
-    int32    dimsizes[2];
-    int32    numbertype;
-    int8    *data_i8;
-    uint8   *data_u8;
-    int16   *data_i16;
-    uint16  *data_u16;
-    int32   *data_i32;
-    uint32  *data_u32;
-    float *data_f32;
+    intn    rank;
+    int32   dimsizes[2];
+    int32   numbertype;
+    int8   *data_i8;
+    uint8  *data_u8;
+    int16  *data_i16;
+    uint16 *data_u16;
+    int32  *data_i32;
+    uint32 *data_u32;
+    float  *data_f32;
     double *data_f64;
-    int      ret;
+    int     ret;
 
     char  filename[512] = "";
     char *srcdir        = getenv("srcdir");
@@ -317,18 +317,18 @@ test_little_read(void)
 static void
 test_little_write(void)
 {
-    intn     rank;
-    int32    dimsizes[2];
-    int32    numbertype;
-    int8    *data_i8;
-    uint8   *data_u8;
-    int16   *data_i16;
-    uint16  *data_u16;
-    int32   *data_i32;
-    uint32  *data_u32;
-    float *data_f32;
+    intn    rank;
+    int32   dimsizes[2];
+    int32   numbertype;
+    int8   *data_i8;
+    uint8  *data_u8;
+    int16  *data_i16;
+    uint16 *data_u16;
+    int32  *data_i32;
+    uint32 *data_u32;
+    float  *data_f32;
     double *data_f64;
-    int      ret;
+    int     ret;
 
     MESSAGE(5, printf("Testing Little-Endian Write Routines\n"););
 

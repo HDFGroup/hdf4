@@ -137,10 +137,8 @@ HDFFCLIBAPI FRETVAL(intf) nsfendacc(intf *id);
 HDFFCLIBAPI FRETVAL(intf) nsffinfo(intf *file_id, intf *datasets, intf *gattr);
 HDFFCLIBAPI FRETVAL(intf) nsfselect(intf *file_id, intf *index);
 HDFFCLIBAPI FRETVAL(intf) nsfdimid(intf *id, intf *index);
-HDFFCLIBAPI FRETVAL(intf)
-    nsfgcal(intf *id, double *cal, double *cale, double *ioff, double *ioffe, intf *nt);
-HDFFCLIBAPI FRETVAL(intf)
-    nsfscal(intf *id, double *cal, double *cale, double *ioff, double *ioffe, intf *nt);
+HDFFCLIBAPI FRETVAL(intf) nsfgcal(intf *id, double *cal, double *cale, double *ioff, double *ioffe, intf *nt);
+HDFFCLIBAPI FRETVAL(intf) nsfscal(intf *id, double *cal, double *cale, double *ioff, double *ioffe, intf *nt);
 HDFFCLIBAPI FRETVAL(intf) nsfsdscale(intf *id, intf *count, intf *nt, void *values);
 HDFFCLIBAPI FRETVAL(intf) nsfgdscale(intf *id, void *values);
 HDFFCLIBAPI FRETVAL(intf) nsfscfill(intf *id, _fcd val);

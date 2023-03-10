@@ -44,13 +44,13 @@
 /*--------------------------------------------------------------------------*/
 
 #include <sys/file.h> /* for unbuffered i/o stuff */
-#define int8                    char
-#define uint8                   unsigned char
-#define int16                   short int
-#define uint16                  unsigned short int
-#define int32                   long int
-#define uint32                  unsigned long int
-#define float                 float
+#define int8   char
+#define uint8  unsigned char
+#define int16  short int
+#define uint16 unsigned short int
+#define int32  long int
+#define uint32 unsigned long int
+#define float float
 #define DFmovmem(from, to, len) memcpy(to, from, len)
 #ifndef DF_STRUCTOK
 #define UINT16READ(p, x)                                                                                     \

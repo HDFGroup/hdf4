@@ -387,7 +387,7 @@ inpfloat(void *x)
     int   ret;
     float val;
 
-    ret           = scanf("%f ", &val);
+    ret         = scanf("%f ", &val);
     *(float *)x = (float)val;
     return (ret);
 }

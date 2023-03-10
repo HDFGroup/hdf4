@@ -114,10 +114,10 @@ pr_att_vals(nc_type type, int len, void *vals)
 {
     int iel;
     union {
-        char    *cp;
-        int16   *sp;
-        int32   *lp;
-        float *fp;
+        char   *cp;
+        int16  *sp;
+        int32  *lp;
+        float  *fp;
         double *dp;
     } gp;
     char         *sp;

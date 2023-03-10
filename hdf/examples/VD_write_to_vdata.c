@@ -20,9 +20,9 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    int32   file_id, vdata_id;
-    int32   vdata_ref = -1;                      /* ref number of a vdata, set to -1 to create  */
-    int16   rec_num;                             /* current record number */
+    int32 file_id, vdata_id;
+    int32 vdata_ref = -1;                      /* ref number of a vdata, set to -1 to create  */
+    int16 rec_num;                             /* current record number */
     float data_buf[N_RECORDS][N_VALS_PER_REC]; /* buffer for vdata values */
 
     /********************** End of variable declaration **********************/

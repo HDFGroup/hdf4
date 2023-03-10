@@ -331,9 +331,9 @@ test_unlim_inloop()
     char  sds_name[20];
     int   i, n_writes; /* number of times writing to the data sets */
     /*int32   n,m, mm;*/
-    intn    status;
+    intn   status;
     double array_data[SIZE];
-    intn    num_errs = 0; /* number of errors so far */
+    intn   num_errs = 0; /* number of errors so far */
 
     /* Create a file */
     fid = SDstart(UDIL_FILE_NAME, DFACC_CREATE);
@@ -603,15 +603,15 @@ makeSDS(int32 sd_id, char *name, int32 dtype, int32 rank, int32 *dimsizes, int32
 static intn
 test_valid_args2()
 {
-    int32   sd_id, sds_id;
-    int32   dim[1], dims2[2], dims3[3], d1start[1], d2start[2], d3start[3];
-    int32   d1count[1], d2count[2], d3count[3];
-    int32   d1stride[1], d2stride[2], d3stride[3];
+    int32 sd_id, sds_id;
+    int32 dim[1], dims2[2], dims3[3], d1start[1], d2start[2], d3start[3];
+    int32 d1count[1], d2count[2], d3count[3];
+    int32 d1stride[1], d2stride[2], d3stride[3];
     float data1 = 32.0, outdata1;
-    int32   data2[D2_X][D2_Y], outdata2[D2_X][D2_Y];
-    int16   data3[D3_X][D3_Y][D3_Z], outdata3[D3_X][D3_Y][D3_Z];
-    intn    i, j, k, status;
-    intn    num_errs = 0; /* number of errors so far */
+    int32 data2[D2_X][D2_Y], outdata2[D2_X][D2_Y];
+    int16 data3[D3_X][D3_Y][D3_Z], outdata3[D3_X][D3_Y][D3_Z];
+    intn  i, j, k, status;
+    intn  num_errs = 0; /* number of errors so far */
 
     /* Create and open the file and initiate the SD interface. */
     sd_id = SDstart("b150.hdf", DFACC_CREATE);

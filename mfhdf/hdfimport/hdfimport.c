@@ -249,7 +249,7 @@ struct Options {
     int                  vres;    /* vertical resolution of output image */
     int                  dres;    /* depth resolution of output image */
     int                  mean;    /* scale image around a mean */
-    float              meanval; /* mean value to scale the image around */
+    float                meanval; /* mean value to scale the image around */
 };
 
 /* Additional Structures to handle different data types */
@@ -304,11 +304,11 @@ struct Input {
     int             is_vscale; /* vertical axis scales in the input */
     int             is_hscale; /* horizontal axis scales in the input */
     int             is_dscale; /* depth axis scales in the input */
-    float         max;       /* maximum value of the data */
-    float         min;       /* minimum value of the data */
-    float        *hscale;    /* horizontal scales for fp32*/
-    float        *vscale;    /* vertical scales for fp32*/
-    float        *dscale;    /* depth scales for fp32*/
+    float           max;       /* maximum value of the data */
+    float           min;       /* minimum value of the data */
+    float          *hscale;    /* horizontal scales for fp32*/
+    float          *vscale;    /* vertical scales for fp32*/
+    float          *dscale;    /* depth scales for fp32*/
     struct int32set in32s;
     struct int16set in16s;
     struct int8set  in8s;
@@ -644,10 +644,10 @@ static int
 gdata(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_maxmin)
 {
     int32       i, j, k;
-    float    *fp32;
+    float      *fp32;
     int32      *in32;
     int16      *in16;
-    double    *fp64;
+    double     *fp64;
     int8       *in8;
     int32       hdfdims[3], start[3]; /* order: ZYX or YX */
     int32       sd_id, sds_id, sd_index;
@@ -2004,7 +2004,7 @@ help(char *name)
 static int
 indexes(float *scale, int dim, int *idx, int res)
 {
-    int      i, j;
+    int    i, j;
     float *midpt;
     float  loc;
     float  delta;
@@ -2078,15 +2078,15 @@ interp(struct Input *in, struct Raster *im)
 {
     int            i, j, k, m;
     int           *hinc, *voff, *doff = NULL;
-    float        pix;
-    float        loc;
-    float        range;
-    float        ratio;
-    float        hrange, vrange, drange = (float)0.0;
-    float        hdelta, vdelta, ddelta = (float)0.0;
-    float        t1, t2, t3, t4, t5, t6;
-    float       *hratio, *vratio, *dratio = NULL;
-    float       *pt[8];
+    float          pix;
+    float          loc;
+    float          range;
+    float          ratio;
+    float          hrange, vrange, drange = (float)0.0;
+    float          hdelta, vdelta, ddelta = (float)0.0;
+    float          t1, t2, t3, t4, t5, t6;
+    float         *hratio, *vratio, *dratio = NULL;
+    float         *pt[8];
     unsigned char *ip = im->image;
 
     const char *err1 = "Unable to allocate dynamic memory.\n";
@@ -2407,9 +2407,9 @@ pixrep(struct Input *in, struct Raster *im)
     int            ovidx, odidx;
     int            dummy;
     int32          i, j, k;
-    float       *dp;
-    float        range;
-    float        ratio;
+    float         *dp;
+    float          range;
+    float          ratio;
     unsigned char *ip, *plane, *row, *pix;
 
     const char *err1 = "Unable to dynamically allocate memory.\n";

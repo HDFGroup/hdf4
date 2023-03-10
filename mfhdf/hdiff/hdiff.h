@@ -61,7 +61,7 @@ typedef struct {        /* selection for comparison  */
     uint32 max_err_cnt; /*
                          * max. no of difference to be printed
                          */
-    float err_limit;  /*
+    float err_limit;    /*
                          * limit of difference for the comparison
                          */
     int nlvars;         /*
@@ -80,10 +80,10 @@ typedef struct {        /* selection for comparison  */
                          * list of variable names specified with -u
                          * option on command line
                          */
-    int     statistics;
+    int   statistics;
     float err_rel; /*
-                      * relative diff for the comparison
-                      */
+                    * relative diff for the comparison
+                    */
 
     int err_stat;
     /* an error occurred (1, error, 0, no error) */

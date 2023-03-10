@@ -85,7 +85,7 @@ static int32 check_lab_desc(const char *fname, uint16 tag, uint16 ref, const cha
 static void
 gen2Dfloat(int height, int width, float *data)
 {
-    int      i, j;
+    int    i, j;
     float *pdata = NULL;
 
     /* store one value per row, increasing by one for each row */
@@ -104,7 +104,7 @@ gen2Dfloat(int height, int width, float *data)
 static void
 genimage(int height, int width, float *data, uint8 *image)
 {
-    int      i, limit;
+    int    i, limit;
     float *pdata = NULL;
     float  max, min, multiplier;
 
@@ -680,18 +680,18 @@ check_lab_desc(const char *fname, uint16 tag, uint16 ref, const char *label[], c
 void
 test_man(void)
 {
-    uint8    pal[768];
-    uint8   *image    = NULL;
-    uint8   *newimage = NULL;
-    uint16   refnum;
-    int32    ret;
-    intn     rank;
-    int      i, j;
-    int32    dimsizes[2];
+    uint8  pal[768];
+    uint8 *image    = NULL;
+    uint8 *newimage = NULL;
+    uint16 refnum;
+    int32  ret;
+    intn   rank;
+    int    i, j;
+    int32  dimsizes[2];
     float *data = NULL;
-    int32    file_handle; /* file handle */
-    int32    an_handle;   /* annotation interface handle */
-    int32    ann_handle;  /* annotation handle */
+    int32  file_handle; /* file handle */
+    int32  an_handle;   /* annotation interface handle */
+    int32  ann_handle;  /* annotation handle */
 
     /***** generate float array and image *****/
     if ((data = (float *)malloc(ROWS * COLS * sizeof(float))) == NULL) {

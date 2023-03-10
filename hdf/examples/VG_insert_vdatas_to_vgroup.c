@@ -25,9 +25,9 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    int32   file_id, vgroup_id;
-    int32   vdata1_id, vdata2_id, vdata3_id;
-    int8    i, j, k = 0;
+    int32 file_id, vgroup_id;
+    int32 vdata1_id, vdata2_id, vdata3_id;
+    int8  i, j, k = 0;
     float pxy[N_RECORDS][2] = /* buffer for data of the first vdata */
         {{-1.5, 2.3},  {-1.5, 1.98}, {-2.4, .67},   {-3.4, 1.46}, {-.65, 3.1},  {-.62, 1.23},
          {-.4, 3.8},   {-3.55, 2.3}, {-1.43, 2.44}, {.23, 1.13},  {-1.4, 5.43}, {-1.4, 5.8},
@@ -35,7 +35,7 @@ main()
          {-.4, 2.32},  {-.87, 1.99}, {-.54, 4.11},  {-1.5, 1.35}, {-1.4, 2.21}, {-.22, 1.8},
          {-1.1, 4.55}, {-.44, .54},  {-1.11, 3.93}, {-.76, 1.9},  {-2.34, 1.7}, {-2.2, 1.21}};
     float tmp[N_RECORDS];      /* buffer for data of the second vdata */
-    int16   plist[N_RECORDS][3]; /* buffer for data of the third vdata */
+    int16 plist[N_RECORDS][3]; /* buffer for data of the third vdata */
 
     /********************** End of variable declaration ***********************/
 

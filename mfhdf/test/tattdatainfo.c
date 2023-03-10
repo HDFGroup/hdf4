@@ -73,19 +73,19 @@ intn readnoHDF_char(const char *filename, const int32 offset, const int32 length
 static intn
 test_attrs()
 {
-    int32   sd_id, sds_id, dim_id, dim_idx, att_idx;
-    int32   dimsizes[2], starts[2], edges[2];
-    int32   data1[LENGTH1_X];
-    float   data2[LENGTH2_X][LENGTH2_Y];
-    char    sds_name[20];
-    int32   n_values, nattrs;
-    int32   offset = 0, length = 0;
-    char8   file_values[] = "Storm_track_data";
+    int32 sd_id, sds_id, dim_id, dim_idx, att_idx;
+    int32 dimsizes[2], starts[2], edges[2];
+    int32 data1[LENGTH1_X];
+    float data2[LENGTH2_X][LENGTH2_Y];
+    char  sds_name[20];
+    int32 n_values, nattrs;
+    int32 offset = 0, length = 0;
+    char8 file_values[] = "Storm_track_data";
     float sds_values[2] = {2., 10.};
-    char8   dim_values[]  = "Seconds";
-    intn    status;
-    int     ii, jj;
-    intn    num_errs = 0; /* number of errors so far */
+    char8 dim_values[]  = "Seconds";
+    intn  status;
+    int   ii, jj;
+    intn  num_errs = 0; /* number of errors so far */
 
     /* Create the file and initialize the SD interface */
     sd_id = SDstart(ATTR_FILE, DFACC_CREATE);
@@ -698,7 +698,7 @@ test_dfsdattrs()
     int         i, j, ret;
     intn        rank;
     int32       dims[2];
-    float     f32[XX][YY], tf32[XX][YY];
+    float       f32[XX][YY], tf32[XX][YY];
     intn        info_count = 0;
     int32       offset = 0, length = 0;
     int32       fid = -1, sdsid = -1, dimid = -1;

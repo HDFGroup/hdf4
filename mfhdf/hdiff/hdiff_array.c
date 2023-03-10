@@ -34,14 +34,14 @@
 #define PRINT_FSTATS(T)                                                                                      \
     {                                                                                                        \
         printf("Type: %s  Npts: %u  Ndiff: %u (%f%%)\n", T, tot_cnt, n_diff,                                 \
-               100. * (double)n_diff / (double)tot_cnt);                                                   \
+               100. * (double)n_diff / (double)tot_cnt);                                                     \
         printf("Avg Diff: %.3e  Max Diff: %.3e\n", d_avg_diff / n_stats, d_max_diff);                        \
         printf("Range File1: %f/%f  File2: %f/%f\n", d_min_val1, d_max_val1, d_min_val2, d_max_val2);        \
     }
 #define PRINT_ISTATS(T)                                                                                      \
     {                                                                                                        \
         printf("Type: %s  Npts: %u  Ndiff: %u (%f%%)\n", T, tot_cnt, n_diff,                                 \
-               100. * (double)n_diff / (double)tot_cnt);                                                   \
+               100. * (double)n_diff / (double)tot_cnt);                                                     \
         printf("Avg Diff: %e   Max. Diff: %d\n", (d_avg_diff / n_stats), i4_max_diff);                       \
         printf("Range File1: %d/%d  File2: %d/%d\n", i4_min_val1, i4_max_val1, i4_min_val2, i4_max_val2);    \
     }
@@ -109,34 +109,34 @@ array_diff(void *buf1, void *buf2, uint32 tot_cnt, const char *name1, const char
            void *fill1, void *fill2)
 
 {
-    uint32   i;
-    int8    *i1ptr1, *i1ptr2;
-    int16   *i2ptr1, *i2ptr2;
-    int32   *i4ptr1, *i4ptr2;
-    float *fptr1, *fptr2;
+    uint32  i;
+    int8   *i1ptr1, *i1ptr2;
+    int16  *i2ptr1, *i2ptr2;
+    int32  *i4ptr1, *i4ptr2;
+    float  *fptr1, *fptr2;
     double *dptr1, *dptr2;
     double  d_diff, d_avg_diff = 0., d_max_diff = 0.;
     double  d_max_val1 = 0, d_min_val1 = 0, d_max_val2 = 0, d_min_val2 = 0;
     double  d_val1, d_val2;
     double  d_sumx = 0., d_sumy = 0., d_sumx2 = 0., d_sumy2 = 0., d_sumxy = 0.;
     double  slope, intercept, correlation;
-    float  f_diff;
-    int32    i4_diff, i4_max_diff = 0;
-    int32    i4_max_val1 = 0, i4_min_val1 = 0, i4_max_val2 = 0, i4_min_val2 = 0;
-    int16    i2_diff;
-    int8     c_diff;
-    int      is_fill1, is_fill2;
-    int      n_stats = 0;
-    char    *debug;
-    FILE    *fp = NULL;
-    int32    acc[H4_MAX_VAR_DIMS]; /* accumulator position */
-    int32    pos[H4_MAX_VAR_DIMS]; /* matrix position */
-    int      ph = 1;               /* print header  */
-    int      j;
-    double   per;
-    int      both_zero;
-    int      not_comparable;
-    uint32   n_diff = 0;
+    float   f_diff;
+    int32   i4_diff, i4_max_diff = 0;
+    int32   i4_max_val1 = 0, i4_min_val1 = 0, i4_max_val2 = 0, i4_min_val2 = 0;
+    int16   i2_diff;
+    int8    c_diff;
+    int     is_fill1, is_fill2;
+    int     n_stats = 0;
+    char   *debug;
+    FILE   *fp = NULL;
+    int32   acc[H4_MAX_VAR_DIMS]; /* accumulator position */
+    int32   pos[H4_MAX_VAR_DIMS]; /* matrix position */
+    int     ph = 1;               /* print header  */
+    int     j;
+    double  per;
+    int     both_zero;
+    int     not_comparable;
+    uint32  n_diff = 0;
 
     acc[rank - 1] = 1;
     for (j = (rank - 2); j >= 0; j--) {
@@ -614,11 +614,11 @@ array_diff(void *buf1, void *buf2, uint32 tot_cnt, const char *name1, const char
     if (statistics) {
         double sqrt_arg;
         if ((double)n_stats * d_sumx2 - d_sumx * d_sumx != 0.0) {
-            slope = ((double)n_stats * d_sumxy - d_sumx * d_sumy) /
-                    ((double)n_stats * d_sumx2 - d_sumx * d_sumx);
+            slope =
+                ((double)n_stats * d_sumxy - d_sumx * d_sumy) / ((double)n_stats * d_sumx2 - d_sumx * d_sumx);
             intercept = (d_sumy - slope * d_sumx) / (double)n_stats;
-            sqrt_arg  = ((double)n_stats * d_sumx2 - d_sumx * d_sumx) /
-                       ((double)n_stats * d_sumy2 - d_sumy * d_sumy);
+            sqrt_arg =
+                ((double)n_stats * d_sumx2 - d_sumx * d_sumx) / ((double)n_stats * d_sumy2 - d_sumy * d_sumy);
             correlation = slope * sqrt(sqrt_arg);
             printf("Regression  N: %d  Slope: %e  Intercept: %e  R: %e\n", n_stats, slope, intercept,
                    correlation);

@@ -2223,12 +2223,12 @@ done:
 
 ******************************************************************************/
 intn
-SDsetcal(int32   sdsid, /* IN: dataset ID */
+SDsetcal(int32  sdsid, /* IN: dataset ID */
          double cal,   /* IN: multiplicative factor */
          double cale,  /* IN: multiplicative factor error */
          double ioff,  /* IN: integer offset */
          double ioffe, /* IN: integer offset error */
-         int32   nt /* IN: number type of uncalibrated data */)
+         int32  nt /* IN: number type of uncalibrated data */)
 {
     NC     *handle    = NULL;
     NC_var *var       = NULL;
@@ -2512,12 +2512,12 @@ done:
 
 ******************************************************************************/
 intn
-SDgetcal(int32    sdsid, /* IN:  dataset ID */
+SDgetcal(int32   sdsid, /* IN:  dataset ID */
          double *cal,   /* OUT: multiplicative factor */
          double *cale,  /* OUT: multiplicative factor error */
          double *ioff,  /* OUT: integer offset  */
          double *ioffe, /* OUT: integer offset error */
-         int32   *nt /* OUT: number type of uncalibrated data */)
+         int32  *nt /* OUT: number type of uncalibrated data */)
 {
     NC       *handle    = NULL;
     NC_var   *var       = NULL;

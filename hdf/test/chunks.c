@@ -147,11 +147,11 @@ static uint8 chunk6[4] = {120, 121, 122, 123};
 /* datay layout of arrays in memory */
 /* for comparison in Test 8 */
 static float f32_data[2][3][4] = {{{(float)0.0, (float)1.0, (float)2.0, (float)3.0},
-                                     {(float)10.0, (float)11.0, (float)12.0, (float)13.0},
-                                     {(float)20.0, (float)21.0, (float)22.0, (float)23.0}},
-                                    {{(float)100.0, (float)101.0, (float)102.0, (float)103.0},
-                                     {(float)110.0, (float)111.0, (float)112.0, (float)113.0},
-                                     {(float)120.0, (float)121.0, (float)122.0, (float)123.0}}};
+                                   {(float)10.0, (float)11.0, (float)12.0, (float)13.0},
+                                   {(float)20.0, (float)21.0, (float)22.0, (float)23.0}},
+                                  {{(float)100.0, (float)101.0, (float)102.0, (float)103.0},
+                                   {(float)110.0, (float)111.0, (float)112.0, (float)113.0},
+                                   {(float)120.0, (float)121.0, (float)122.0, (float)123.0}}};
 
 /* for comparison in Test 7 */
 static uint16 u16_data[2][3][4] = {{{0, 1, 2, 3}, {10, 11, 12, 13}, {20, 21, 22, 23}},
@@ -183,12 +183,12 @@ test_chunks(void)
     HCHUNK_DEF      chunk[1]; /* Chunk definition, see 'hchunks.h' */
     int32           dims[5];
     int32           fill_val_len = 1;
-    uint8           fill_val_u8  = 0;            /* test 6 */
-    uint16          fill_val_u16 = 0;            /* test 7 */
-    float         fill_val_f32 = (float)0.0; /* test 8 */
+    uint8           fill_val_u8  = 0;          /* test 6 */
+    uint16          fill_val_u16 = 0;          /* test 7 */
+    float           fill_val_f32 = (float)0.0; /* test 8 */
     uint8           inbuf_u8[2][3][4];
     uint16          inbuf_u16[2][3][4]; /* input data buffer */
-    float         inbuf_f32[2][3][4]; /* input data buffer */
+    float           inbuf_f32[2][3][4]; /* input data buffer */
     sp_info_block_t info_block;         /* special info block */
     comp_info       cinfo;
     model_info      minfo;

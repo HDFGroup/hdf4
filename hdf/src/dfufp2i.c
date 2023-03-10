@@ -108,9 +108,8 @@
  *----------------------------------------------------------------------------*/
 
 int
-DFUfptoimage(int32 hdim, int32 vdim, float max, float min, float *hscale, float *vscale,
-             float *data, uint8 *palette, char *outfile, int ct_method, int32 hres, int32 vres,
-             int compress)
+DFUfptoimage(int32 hdim, int32 vdim, float max, float min, float *hscale, float *vscale, float *data,
+             uint8 *palette, char *outfile, int ct_method, int32 hres, int32 vres, int compress)
 {
     Input  in;
     Output out;
@@ -340,11 +339,11 @@ printoutput(Output *out)
 int
 convert_interp(Input *in, Output *out)
 {
-    int      j, theval;
+    int    j, theval;
     float *f, *dxs, *dys, *xv, *yv, *lim, delx, dely, pt, xrange, yrange, range, zy, *z1, *z2, *z3, *z4, z;
-    uint8   *p;
-    uint8   *xinc;
-    int32    i, *yoffs;
+    uint8 *p;
+    uint8 *xinc;
+    int32  i, *yoffs;
 
     p = (uint8 *)out->image; /* space for interpolated image */
 
@@ -370,7 +369,7 @@ convert_interp(Input *in, Output *out)
     lim = in->vscale + in->vdim - 2;
 
     if (yrange > (float)0.0) {
-        for (i = 0; i < out->vres; i++) {         /* fill in dy's */
+        for (i = 0; i < out->vres; i++) {       /* fill in dy's */
             pt = dely * (float)i + *in->vscale; /* scaled pos in new image */
 
             while (*(yv + 1) < pt && yv < lim) { /* move y pointer */
@@ -575,7 +574,7 @@ pixrep_scaled(Input *in, Output *out)
 int
 compute_offsets(float *scale, int32 dim, int32 *offsets, int32 res)
 {
-    int32    i, j;
+    int32  i, j;
     float *midpt, pt, delta;
 
     midpt = (float *)malloc(sizeof(float) * (size_t)dim);
@@ -620,9 +619,9 @@ compute_offsets(float *scale, int32 dim, int32 *offsets, int32 res)
 int
 pixrep_simple(Input *in, Output *out)
 {
-    int32    i, j;
-    uint8    raster_val;
-    uint8   *image, *row_buf;
+    int32  i, j;
+    uint8  raster_val;
+    uint8 *image, *row_buf;
     float *in_row_ptr, *in_buf;
     float  ratio, delh, delv, hblockend, vblockend;
 

@@ -73,18 +73,18 @@ static const char *test_name[] = {"Big-Endian", "Little-Endian", "Native"};
 void
 test_conv(void)
 {
-    clock_t  c1, c2, c3, c4;
-    uint8   *src_uint8, *dst_uint8, *dst2_uint8;
-    uint16  *src_uint16, *dst_uint16, *dst2_uint16;
-    uint32  *src_uint32, *dst_uint32, *dst2_uint32;
-    int8    *src_int8, *dst_int8, *dst2_int8;
-    int16   *src_int16, *dst_int16, *dst2_int16;
-    int32   *src_int32, *dst_int32, *dst2_int32;
-    float *src_float, *dst_float, *dst2_float;
+    clock_t c1, c2, c3, c4;
+    uint8  *src_uint8, *dst_uint8, *dst2_uint8;
+    uint16 *src_uint16, *dst_uint16, *dst2_uint16;
+    uint32 *src_uint32, *dst_uint32, *dst2_uint32;
+    int8   *src_int8, *dst_int8, *dst2_int8;
+    int16  *src_int16, *dst_int16, *dst2_int16;
+    int32  *src_int32, *dst_int32, *dst2_int32;
+    float  *src_float, *dst_float, *dst2_float;
     double *src_double, *dst_double, *dst2_double;
-    intn     i, r;
-    intn     t;
-    int32    ret;
+    intn    i, r;
+    intn    t;
+    int32   ret;
 
     SEED((int)time(NULL)); /* seed with effectively random number */
 
@@ -652,11 +652,10 @@ test_conv(void)
 
         MESSAGE(6, printf("re-converting %s float array with %d/%d stride\n", test_name[t], DEST_STRIDE,
                           SOURCE_STRIDE););
-        c3 = clock();
-        ret =
-            DFKconvert((void *)dst_float, (void *)dst2_float, test_type[t] | DFNT_FLOAT32, TEST_SIZE / 4,
-                       DFACC_READ, DEST_STRIDE * sizeof(float), SOURCE_STRIDE * sizeof(float));
-        c4 = clock();
+        c3  = clock();
+        ret = DFKconvert((void *)dst_float, (void *)dst2_float, test_type[t] | DFNT_FLOAT32, TEST_SIZE / 4,
+                         DFACC_READ, DEST_STRIDE * sizeof(float), SOURCE_STRIDE * sizeof(float));
+        c4  = clock();
         RESULT("DFKconvert");
         MESSAGE(6, printf("%d/%d seconds to convert %d %s float values with %d/%d stride\n", (int)(c4 - c3),
                           (int)CLOCKS_PER_SEC, (int)TEST_SIZE, test_name[t], DEST_STRIDE, SOURCE_STRIDE););
@@ -744,11 +743,10 @@ test_conv(void)
 
         MESSAGE(6, printf("re-converting %s double array with %d/%d stride\n", test_name[t], DEST_STRIDE,
                           SOURCE_STRIDE););
-        c3 = clock();
-        ret =
-            DFKconvert((void *)dst_double, (void *)dst2_double, test_type[t] | DFNT_FLOAT64, TEST_SIZE / 4,
-                       DFACC_READ, DEST_STRIDE * sizeof(double), SOURCE_STRIDE * sizeof(double));
-        c4 = clock();
+        c3  = clock();
+        ret = DFKconvert((void *)dst_double, (void *)dst2_double, test_type[t] | DFNT_FLOAT64, TEST_SIZE / 4,
+                         DFACC_READ, DEST_STRIDE * sizeof(double), SOURCE_STRIDE * sizeof(double));
+        c4  = clock();
         RESULT("DFKconvert");
         MESSAGE(6, printf("%d/%d seconds to convert %d %s double values with %d/%d stride\n", (int)(c4 - c3),
                           (int)CLOCKS_PER_SEC, (int)TEST_SIZE, test_name[t], DEST_STRIDE, SOURCE_STRIDE););

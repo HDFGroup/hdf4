@@ -14,15 +14,15 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    int32   sd_id, sds_id, sds_index;
-    int32   dim_index, dim_id;
-    int32   n_values, data_type, n_attrs;
-    int16   data_X[X_LENGTH]; /* X dimension dimension scale */
-    int16   data_X_out[X_LENGTH];
+    int32  sd_id, sds_id, sds_index;
+    int32  dim_index, dim_id;
+    int32  n_values, data_type, n_attrs;
+    int16  data_X[X_LENGTH]; /* X dimension dimension scale */
+    int16  data_X_out[X_LENGTH];
     double data_Y[Y_LENGTH]; /* Y dimension dimension scale */
     double data_Y_out[Y_LENGTH];
-    char    dim_name[NAME_LENGTH + 1];
-    int     i, j, nrow;
+    char   dim_name[NAME_LENGTH + 1];
+    int    i, j, nrow;
 
     /********************* End of variable declaration ***********************/
 

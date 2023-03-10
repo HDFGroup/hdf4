@@ -15,10 +15,10 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    int32   file_id, vdata_id;
-    int32   vdata_ref;                          /* vdata's reference number */
-    int32   num_of_records;                     /* number of records actually written to the vdata */
-    int16   rec_num;                            /* current record number in the vdata */
+    int32 file_id, vdata_id;
+    int32 vdata_ref;                          /* vdata's reference number */
+    int32 num_of_records;                     /* number of records actually written to the vdata */
+    int16 rec_num;                            /* current record number in the vdata */
     float databuf[N_RECORDS][N_VALS_PER_REC]; /* buffer for vdata values */
 
     /********************** End of variable declaration **********************/

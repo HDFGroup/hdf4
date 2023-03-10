@@ -14,14 +14,14 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    int32   file_id, vdata_id;
-    int32   num_of_records;       /* number of records actually read */
-    int32   vdata_ref;            /* reference number of the vdata to be read */
+    int32 file_id, vdata_id;
+    int32 num_of_records;       /* number of records actually read */
+    int32 vdata_ref;            /* reference number of the vdata to be read */
     float itemp[N_RECORDS];     /* buffer to hold values of first field     */
-    char    idents[N_RECORDS];    /* buffer to hold values of fourth field    */
-    uint8   databuf[BUFFER_SIZE]; /* buffer to hold read data, still packed   */
-    void   *fldbufptrs[N_FIELDS]; /*pointers to be pointing to the field buffers*/
-    int     i;
+    char  idents[N_RECORDS];    /* buffer to hold values of fourth field    */
+    uint8 databuf[BUFFER_SIZE]; /* buffer to hold read data, still packed   */
+    void *fldbufptrs[N_FIELDS]; /*pointers to be pointing to the field buffers*/
+    int   i;
 
     /********************** End of variable declaration **********************/
 

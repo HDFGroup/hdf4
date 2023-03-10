@@ -66,11 +66,11 @@ static uint8 chunk6_u8[4] = {120, 121, 122, 123};
 /* data arrays laid out in memory  */
 /* for comparison */
 static float f32_data[2][3][4] = {{{(float)0.0, (float)1.0, (float)2.0, (float)3.0},
-                                     {(float)10.0, (float)11.0, (float)12.0, (float)13.0},
-                                     {(float)20.0, (float)21.0, (float)22.0, (float)23.0}},
-                                    {{(float)100.0, (float)101.0, (float)102.0, (float)103.0},
-                                     {(float)110.0, (float)111.0, (float)112.0, (float)113.0},
-                                     {(float)120.0, (float)121.0, (float)122.0, (float)123.0}}};
+                                   {(float)10.0, (float)11.0, (float)12.0, (float)13.0},
+                                   {(float)20.0, (float)21.0, (float)22.0, (float)23.0}},
+                                  {{(float)100.0, (float)101.0, (float)102.0, (float)103.0},
+                                   {(float)110.0, (float)111.0, (float)112.0, (float)113.0},
+                                   {(float)120.0, (float)121.0, (float)122.0, (float)123.0}}};
 
 static uint16 u16_data[2][3][4] = {{{0, 1, 2, 3}, {10, 11, 12, 13}, {20, 21, 22, 23}},
                                    {{100, 101, 102, 103}, {110, 111, 112, 113}, {120, 121, 122, 123}}};
@@ -81,18 +81,18 @@ static uint8 u8_data[2][3][4] = {{{0, 1, 2, 3}, {10, 11, 12, 13}, {20, 21, 22, 2
 extern int
 test_chunk()
 {
-    int32   fchk;                                                                   /* File handles */
-    int32   nt;                                                                     /* Number type */
-    int32   dimsize[10];                                                            /* dimension sizes */
-    int32   newsds1, newsds2, newsds3, newsds4, newsds5, newsds6, newsds7, newsds8; /* Chunked SDS ids */
-    float inbuf_f32[2][3][4];       /* float Data array read from from file */
-    uint16  inbuf_u16[2][3][4];       /* uint16 Data array read from from file */
-    uint16  inbuf1_2u16[9][4];        /* Data array read for Example 1 */
-    uint16  inbuf_2u16[5][2];         /* Data array read for Example 1 */
-    uint8   inbuf_u8[2][3][4];        /* uint8 Data array read from from file */
-    uint8   ru8_data[4];              /* chunk input buffer */
-    int32  *rcdims;                   /* for SDgetchunkinfo() */
-    uint16  fill_u16 = 0;             /* fill value */
+    int32  fchk;                                                                   /* File handles */
+    int32  nt;                                                                     /* Number type */
+    int32  dimsize[10];                                                            /* dimension sizes */
+    int32  newsds1, newsds2, newsds3, newsds4, newsds5, newsds6, newsds7, newsds8; /* Chunked SDS ids */
+    float  inbuf_f32[2][3][4];        /* float Data array read from from file */
+    uint16 inbuf_u16[2][3][4];        /* uint16 Data array read from from file */
+    uint16 inbuf1_2u16[9][4];         /* Data array read for Example 1 */
+    uint16 inbuf_2u16[5][2];          /* Data array read for Example 1 */
+    uint8  inbuf_u8[2][3][4];         /* uint8 Data array read from from file */
+    uint8  ru8_data[4];               /* chunk input buffer */
+    int32 *rcdims;                    /* for SDgetchunkinfo() */
+    uint16 fill_u16 = 0;              /* fill value */
     HDF_CHUNK_DEF chunk_def;          /* Chunk definition set */
     HDF_CHUNK_DEF chunk_def_out;      /* Chunk definition set */
     HDF_CHUNK_DEF rchunk_def;         /* Chunk definition read */
@@ -107,7 +107,7 @@ test_chunk()
     int32         start[10], end[10]; /* start, end, stride arrays */
     int32         idata[100];
     int32         rdata[100];
-    float       max;
+    float         max;
     int           num_errs = 0; /* number of errors so far */
 
     /* Output message about test being performed */

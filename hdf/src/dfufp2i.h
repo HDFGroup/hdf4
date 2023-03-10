@@ -18,12 +18,12 @@
 
 /* Input structure */
 typedef struct {
-    int32    hdim;      /* horizontal dimension of input data */
-    int32    vdim;      /* vertical dimension of input data */
-    intn     is_pal;    /* flag to tell whether there is a palette */
-    intn     is_vscale; /* flag telling whether vertical scale included  */
-    intn     is_hscale; /* flag telling whether horizonatal scale included */
-    intn     ct_method; /* color transform method: EXPAND or INTERP */
+    int32  hdim;      /* horizontal dimension of input data */
+    int32  vdim;      /* vertical dimension of input data */
+    intn   is_pal;    /* flag to tell whether there is a palette */
+    intn   is_vscale; /* flag telling whether vertical scale included  */
+    intn   is_hscale; /* flag telling whether horizonatal scale included */
+    intn   ct_method; /* color transform method: EXPAND or INTERP */
     float  max;       /* max value of data */
     float  min;       /* min value of the data */
     float *hscale;    /* horizontal scale */
@@ -57,8 +57,8 @@ HDFLIBAPI int pixrep_scaled(Input *in, Output *out);
 HDFLIBAPI int compute_offsets(float *scale, int32 dim, int32 *offsets, int32 res);
 HDFLIBAPI int pixrep_simple(Input *in, Output *out);
 HDFLIBAPI int DFUfptoimage(int32 hdim, int32 vdim, float max, float min, float *hscale, float *vscale,
-                           float *data, uint8 *palette, char *outfile, int ct_method, int32 hres,
-                           int32 vres, int compress);
+                           float *data, uint8 *palette, char *outfile, int ct_method, int32 hres, int32 vres,
+                           int compress);
 
 #ifdef __cplusplus
 }

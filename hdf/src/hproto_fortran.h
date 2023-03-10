@@ -547,13 +547,13 @@ HDFFCLIBAPI FRETVAL(intf) nhconfinfc(intf *coder_type, intf *info);
  */
 #define nduif2i H4_F77_FUNC(duif2i, DUIF2I)
 
-HDFFCLIBAPI FRETVAL(int) nduif2i(int32 *hdim, int32 *vdim, float *max, float *min, float hscale[],
-                                 float vscale[], float data[], _fcd palette, _fcd outfile, int *ct_method,
-                                 int32 *hres, int32 *vres, int *compress, int *lenfn);
+HDFFCLIBAPI FRETVAL(int)
+    nduif2i(int32 *hdim, int32 *vdim, float *max, float *min, float hscale[], float vscale[], float data[],
+            _fcd palette, _fcd outfile, int *ct_method, int32 *hres, int32 *vres, int *compress, int *lenfn);
 
-HDFFCLIBAPI int DFUfptoimage(int32 hdim, int32 vdim, float max, float min, float *hscale,
-                             float *vscale, float *data, uint8 *palette, char *outfile, int ct_method,
-                             int32 hres, int32 vres, int compress);
+HDFFCLIBAPI int DFUfptoimage(int32 hdim, int32 vdim, float max, float min, float *hscale, float *vscale,
+                             float *data, uint8 *palette, char *outfile, int ct_method, int32 hres,
+                             int32 vres, int compress);
 
 /* for Multi-file fortran Annotation interface */
 
@@ -1258,9 +1258,9 @@ HDFFCLIBAPI FRETVAL(intf) nvfcgver(intf *vgid);
 
 #define nduif2i H4_F77_FUNC(duif2i, DUIF2I)
 
-HDFFCLIBAPI FRETVAL(int) nduif2i(int32 *hdim, int32 *vdim, float *max, float *min, float hscale[],
-                                 float vscale[], float data[], _fcd palette, _fcd outfile, int *ct_method,
-                                 int32 *hres, int32 *vres, int *compress, int *lenfn);
+HDFFCLIBAPI FRETVAL(int)
+    nduif2i(int32 *hdim, int32 *vdim, float *max, float *min, float hscale[], float vscale[], float data[],
+            _fcd palette, _fcd outfile, int *ct_method, int32 *hres, int32 *vres, int *compress, int *lenfn);
 
 #ifdef __cplusplus
 }

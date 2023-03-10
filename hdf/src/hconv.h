@@ -148,7 +148,7 @@ union fpx {
 };
 
 union float_uint_uchar {
-    float       f;
+    float         f;
     int32         i;
     unsigned char c[4];
 };

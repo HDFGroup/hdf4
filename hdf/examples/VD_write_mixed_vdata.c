@@ -21,15 +21,15 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    int32   file_id, vdata_id;
-    int32   vdata_ref = -1;       /* vdata's reference number, set to -1 to create */
-    float temp[N_RECORDS];      /* buffer to hold values of first field   */
-    int16   height[N_RECORDS];    /* buffer to hold values of second field  */
-    float speed[N_RECORDS];     /* buffer to hold values of third field   */
-    char8   ident[N_RECORDS];     /* buffer to hold values of fourth field  */
-    void   *fldbufptrs[N_FIELDS]; /*pointers to be pointing to the field buffers*/
-    uint16  databuf[BUF_SIZE];    /* buffer to hold the data after being packed*/
-    int     i;
+    int32  file_id, vdata_id;
+    int32  vdata_ref = -1;       /* vdata's reference number, set to -1 to create */
+    float  temp[N_RECORDS];      /* buffer to hold values of first field   */
+    int16  height[N_RECORDS];    /* buffer to hold values of second field  */
+    float  speed[N_RECORDS];     /* buffer to hold values of third field   */
+    char8  ident[N_RECORDS];     /* buffer to hold values of fourth field  */
+    void  *fldbufptrs[N_FIELDS]; /*pointers to be pointing to the field buffers*/
+    uint16 databuf[BUF_SIZE];    /* buffer to hold the data after being packed*/
+    int    i;
 
     /********************** End of variable declaration **********************/
 

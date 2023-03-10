@@ -1313,7 +1313,7 @@ ndsigdas(_fcd label, _fcd unit, _fcd format, _fcd coordsys, intf *llabel, intf *
 FRETVAL(intf)
 ndsscal(double *cal, double *cal_err, double *ioff, double *ioff_err, intf *cal_type)
 {
-    intf    ret;
+    intf   ret;
     double dcal      = 0.0;
     double dcal_err  = 0.0;
     double dioff     = 0.0;
@@ -1324,8 +1324,8 @@ ndsscal(double *cal, double *cal_err, double *ioff, double *ioff_err, intf *cal_
     memcpy(&dioff, ioff, sizeof(double));
     memcpy(&dioff_err, ioff_err, sizeof(double));
 
-    ret = (intf)DFSDsetcal((double)dcal, (double)dcal_err, (double)dioff, (double)dioff_err,
-                           (int32)*cal_type);
+    ret =
+        (intf)DFSDsetcal((double)dcal, (double)dcal_err, (double)dioff, (double)dioff_err, (int32)*cal_type);
     return ret;
 } /* ndsscal */
 
@@ -1343,7 +1343,7 @@ ndsscal(double *cal, double *cal_err, double *ioff, double *ioff_err, intf *cal_
 FRETVAL(intf)
 ndsgcal(double *cal, double *cal_err, double *ioff, double *ioff_err, intf *cal_type)
 {
-    intf    ret;
+    intf   ret;
     double dcal;
     double dcal_err;
     double dioff;

@@ -125,12 +125,12 @@ static uint8 sccolui8[4] = {0, 1, 2, 3};
 /* Slabs for slabw(), slab1w(), slab2w() */
 static float slabw1[1][1][3] = {{{(float)110.0, (float)111.0, (float)112.0}}};
 static float slabw2[2][1][3] = {{{(float)20.0, (float)21.0, (float)22.0}},
-                                  {{(float)120.0, (float)121.0, (float)122.0}}};
+                                {{(float)120.0, (float)121.0, (float)122.0}}};
 static float slabw3[1][2][3] = {
     {{(float)0.0, (float)1.0, (float)2.0}, {(float)10.0, (float)11.0, (float)12.0}}};
 static float slabw4[1][1][3] = {{{(float)100.0, (float)101.0, (float)102.0}}};
 static float slabw5[2][3][1] = {{{(float)3.0}, {(float)13.0}, {(float)23.0}},
-                                  {{(float)103.0}, {(float)113.0}, {(float)123.0}}};
+                                {{(float)103.0}, {(float)113.0}, {(float)123.0}}};
 
 static double slabw1f64[1][1][3] = {{{110.0, 111.0, 112.0}}};
 static double slabw2f64[2][1][3] = {{{20.0, 21.0, 22.0}}, {{120.0, 121.0, 122.0}}};
@@ -212,12 +212,12 @@ static float slab23[1][1][1] = {{{(float)122.0}}};
 static float slab24[1][1][1] = {{{(float)123.0}}};
 
 /* data array in memory  */
-static float fdata[2][3][4]   = {{{(float)0.0, (float)1.0, (float)2.0, (float)3.0},
-                                  {(float)10.0, (float)11.0, (float)12.0, (float)13.0},
-                                  {(float)20.0, (float)21.0, (float)22.0, (float)23.0}},
-                                 {{(float)100.0, (float)101.0, (float)102.0, (float)103.0},
-                                  {(float)110.0, (float)111.0, (float)112.0, (float)113.0},
-                                  {(float)120.0, (float)121.0, (float)122.0, (float)123.0}}};
+static float  fdata[2][3][4]   = {{{(float)0.0, (float)1.0, (float)2.0, (float)3.0},
+                                {(float)10.0, (float)11.0, (float)12.0, (float)13.0},
+                                {(float)20.0, (float)21.0, (float)22.0, (float)23.0}},
+                               {{(float)100.0, (float)101.0, (float)102.0, (float)103.0},
+                                {(float)110.0, (float)111.0, (float)112.0, (float)113.0},
+                                {(float)120.0, (float)121.0, (float)122.0, (float)123.0}}};
 static double f64data[2][3][4] = {
     {{0.0, 1.0, 2.0, 3.0}, {10.0, 11.0, 12.0, 13.0}, {20.0, 21.0, 22.0, 23.0}},
     {{100.0, 101.0, 102.0, 103.0}, {110.0, 111.0, 112.0, 113.0}, {120.0, 121.0, 122.0, 123.0}}};
@@ -273,9 +273,9 @@ static int slab4w(void);
 static int
 slabwf32(void)
 {
-    int32   i, j, k;
-    int32   ret     = 0;
-    int32   num_err = 0;
+    int32 i, j, k;
+    int32 ret     = 0;
+    int32 num_err = 0;
     float sdata[2][3][4]; /* Data array read from from file */
     float lfill = (float)0.0;
 
@@ -418,9 +418,9 @@ slabwf32(void)
 static int
 slabwf64(void)
 {
-    int32   i, j, k;
-    int32   ret     = 0;
-    int32   num_err = 0;
+    int32  i, j, k;
+    int32  ret     = 0;
+    int32  num_err = 0;
     double sdata[2][3][4]; /* Data array read from from file */
     double lfill = (double)0.0;
 
@@ -1837,12 +1837,12 @@ slab1w(void)
 static int
 slab2w(void)
 {
-    int32   i, j, k;
-    int32   ret     = 0;
-    int32   num_err = 0;
+    int32 i, j, k;
+    int32 ret     = 0;
+    int32 num_err = 0;
     float sdata[2][3][4]; /* Data array read from from file */
     float lfill = (float)0.0;
-    intn    trank;
+    intn  trank;
 
     MESSAGE(10, printf("\n slab2w:  Writing the last 2 of 5 slabs to slab1w.hdf \n"););
 
@@ -1925,9 +1925,9 @@ slab2w(void)
 static int
 slab3w(void)
 {
-    int32   i, j, k;
-    int32   ret     = 0;
-    int32   num_err = 0;
+    int32 i, j, k;
+    int32 ret     = 0;
+    int32 num_err = 0;
     float adata[2][3][4]; /* Data array read from from file */
 
     MESSAGE(10, printf("\n slab3w: Writing all 24 elements of data as slabs to slab3w.hdf \n"););
@@ -2226,9 +2226,9 @@ slab3w(void)
 static int
 slab4w(void)
 {
-    int32   i, j, k;
-    int32   ret     = 0;
-    int32   num_err = 0;
+    int32 i, j, k;
+    int32 ret     = 0;
+    int32 num_err = 0;
     float bdata[2][3][4]; /* Data array read from from file */
 
     MESSAGE(10, printf("\n slab4w: Writing data as 1 slab to slab4w.hdf \n"););

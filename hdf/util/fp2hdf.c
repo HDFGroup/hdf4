@@ -189,43 +189,43 @@
  * structure definition for command line options
  */
 struct Options {
-    char  **infiles;     /* pointer to list of input file names */
-    char    outfile[32]; /* output file name */
-    char    palfile[32]; /* palette file name, if any */
-    int     fcount;      /* number of input files */
-    int     to_float;    /* float output is desired */
-    int     to_image;    /* image output is desired */
-    int     pal;         /* output palette with image */
-    int     ctm;         /* color transform method: EXPAND or INTERP */
-    int     exh;         /* horizontal expansion factor */
-    int     exv;         /* vertical expansion factor */
-    int     exd;         /* depth expansion factor */
-    int     hres;        /* horizontal resolution of output image */
-    int     vres;        /* vertical resolution of output image */
-    int     dres;        /* depth resolution of output image */
-    int     mean;        /* scale image around a mean */
-    float meanval;     /* mean value to scale the image around */
+    char **infiles;     /* pointer to list of input file names */
+    char   outfile[32]; /* output file name */
+    char   palfile[32]; /* palette file name, if any */
+    int    fcount;      /* number of input files */
+    int    to_float;    /* float output is desired */
+    int    to_image;    /* image output is desired */
+    int    pal;         /* output palette with image */
+    int    ctm;         /* color transform method: EXPAND or INTERP */
+    int    exh;         /* horizontal expansion factor */
+    int    exv;         /* vertical expansion factor */
+    int    exd;         /* depth expansion factor */
+    int    hres;        /* horizontal resolution of output image */
+    int    vres;        /* vertical resolution of output image */
+    int    dres;        /* depth resolution of output image */
+    int    mean;        /* scale image around a mean */
+    float  meanval;     /* mean value to scale the image around */
 };
 
 /*
  * structure definition for the input data
  */
 struct Input {
-    int      is_hdf;    /* HDF file format flag */
-    int      is_text;   /* ASCII text format flag */
-    int      is_fp32;   /* 32-bit native floating point format flag */
-    int      is_fp64;   /* 64-bit native floating point format flag */
-    int      rank;      /* number of input data dimensions */
-    int      dims[3];   /* input dimensions - ncols, nrows, nplanes */
-    int      is_vscale; /* vertical axis scales in the input */
-    int      is_hscale; /* horizontal axis scales in the input */
-    int      is_dscale; /* depth axis scales in the input */
+    int    is_hdf;    /* HDF file format flag */
+    int    is_text;   /* ASCII text format flag */
+    int    is_fp32;   /* 32-bit native floating point format flag */
+    int    is_fp64;   /* 64-bit native floating point format flag */
+    int    rank;      /* number of input data dimensions */
+    int    dims[3];   /* input dimensions - ncols, nrows, nplanes */
+    int    is_vscale; /* vertical axis scales in the input */
+    int    is_hscale; /* horizontal axis scales in the input */
+    int    is_dscale; /* depth axis scales in the input */
     float  max;       /* maximum value of the data */
     float  min;       /* minimum value of the data */
     float *hscale;    /* horizontal scales */
     float *vscale;    /* vertical scales */
     float *dscale;    /* depth scales */
-    void    *data;      /* input data */
+    void  *data;      /* input data */
 };
 
 /*
@@ -488,10 +488,10 @@ err:
 static int
 gdata(char *infile, struct Input *in, FILE *strm, int *is_maxmin)
 {
-    int32    i, j, k;
+    int32  i, j, k;
     float *fp32;
-    int32    hdfdims[3]; /* order: ZYX or YX */
-    int32    len = in->dims[0] * in->dims[1] * in->dims[2];
+    int32  hdfdims[3]; /* order: ZYX or YX */
+    int32  len = in->dims[0] * in->dims[1] * in->dims[2];
 
     const char *err1 = "Unable to get input data from file: %s.\n";
 
@@ -1248,7 +1248,7 @@ help(char *name)
 static int
 indexes(float *scale, int dim, int *idx, int res)
 {
-    int      i, j;
+    int    i, j;
     float *midpt;
     float  loc;
     float  delta;
@@ -1323,15 +1323,15 @@ interp(struct Input *in, struct Raster *im)
 {
     int            i, j, k, m;
     int           *hinc, *voff, *doff = NULL;
-    float        pix;
-    float        loc;
-    float        range;
-    float        ratio;
-    float        hrange, vrange, drange = (float)0.0;
-    float        hdelta, vdelta, ddelta = (float)0.0;
-    float        t1, t2, t3, t4, t5, t6;
-    float       *hratio, *vratio, *dratio = NULL;
-    float       *pt[8];
+    float          pix;
+    float          loc;
+    float          range;
+    float          ratio;
+    float          hrange, vrange, drange = (float)0.0;
+    float          hdelta, vdelta, ddelta = (float)0.0;
+    float          t1, t2, t3, t4, t5, t6;
+    float         *hratio, *vratio, *dratio = NULL;
+    float         *pt[8];
     unsigned char *ip = im->image;
 
     const char *err1 = "Unable to allocate dynamic memory.\n";
@@ -1652,9 +1652,9 @@ pixrep(struct Input *in, struct Raster *im)
     int            ovidx, odidx;
     int            dummy;
     int32          i, j, k;
-    float       *dp;
-    float        range;
-    float        ratio;
+    float         *dp;
+    float          range;
+    float          ratio;
     unsigned char *ip, *plane, *row, *pix;
 
     const char *err1 = "Unable to dynamically allocate memory.\n";

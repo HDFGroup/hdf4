@@ -67,36 +67,36 @@ extern int test_att_ann_datainfo();
 int
 main(void)
 {
-    int32   f1, f2, fnbit;            /* File handles */
-    int32   nt;                       /* Number type */
-    int32   dimsize[10];              /* dimension sizes */
-    int32   newsds, newsds2, newsds3; /* SDS handles */
-    int32   sdsid;                    /* SDS handle */
-    int32   dimid, dimid1, dimid2;    /* Dimension handles */
-    int32   num_sds;                  /* number of SDS in file */
-    int32   num_gattr;                /* Number of global attributes */
-    int32   index;                    /* Index of dataset in file */
-    int32   ival;
-    int32   sdid;   /* another SDS handle */
-    int32   rank;   /* rank of SDS */
-    intn    status; /* status flag */
-    intn    i;      /* loop variables */
-    intn    nattrs; /* Number of attributes again? */
-    char    name[90];
-    char    text[256];
-    int32   start[10], end[10], stride[10]; /* start, end, stride arrays */
-    int32   scale[10];
-    char    l[80], u[80], fmt[80], c[80];
-    int32   count;
-    int32   fillval = 0, readval = 0;
-    int32   idata[100];
-    int32   rdata[100];
-    int16   sdata[100], outdata[100];
-    int32   ndg_saved_ref; /* used to save a ref of an SDS in one of the test */
-    uint8   iuval;
-    float data[1000], max, min, imax, imin;
+    int32  f1, f2, fnbit;            /* File handles */
+    int32  nt;                       /* Number type */
+    int32  dimsize[10];              /* dimension sizes */
+    int32  newsds, newsds2, newsds3; /* SDS handles */
+    int32  sdsid;                    /* SDS handle */
+    int32  dimid, dimid1, dimid2;    /* Dimension handles */
+    int32  num_sds;                  /* number of SDS in file */
+    int32  num_gattr;                /* Number of global attributes */
+    int32  index;                    /* Index of dataset in file */
+    int32  ival;
+    int32  sdid;   /* another SDS handle */
+    int32  rank;   /* rank of SDS */
+    intn   status; /* status flag */
+    intn   i;      /* loop variables */
+    intn   nattrs; /* Number of attributes again? */
+    char   name[90];
+    char   text[256];
+    int32  start[10], end[10], stride[10]; /* start, end, stride arrays */
+    int32  scale[10];
+    char   l[80], u[80], fmt[80], c[80];
+    int32  count;
+    int32  fillval = 0, readval = 0;
+    int32  idata[100];
+    int32  rdata[100];
+    int16  sdata[100], outdata[100];
+    int32  ndg_saved_ref; /* used to save a ref of an SDS in one of the test */
+    uint8  iuval;
+    float  data[1000], max, min, imax, imin;
     double cal, cale, ioff, ioffe;
-    int     num_errs = 0; /* number of errors so far */
+    int    num_errs = 0; /* number of errors so far */
 
     ncopts = NC_VERBOSE;
 

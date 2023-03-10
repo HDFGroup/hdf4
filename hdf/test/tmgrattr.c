@@ -42,7 +42,7 @@
 
 /* Pixel with fill values */
 static float fill_pixel[RI_ATT_N_VALUES]  = {1.3, -2.4, 1000.3, .25};
-static uint8   file_attr_2[F_ATT2_N_VALUES] = {1, 2, 3, 4, 5};
+static uint8 file_attr_2[F_ATT2_N_VALUES] = {1, 2, 3, 4, 5};
 
 /********************************************************************
    Name: test_mgr_fillvalues()
@@ -65,9 +65,9 @@ test_mgr_fillvalues()
     int32        dims[2] = {5, 7};      /* dimensions used on all images */
     uint16       ref;                   /* RI reference number */
     int32        ri_index;              /* RI index */
-    float      image[7][5][N_COMPS];  /* space for the image data */
+    float        image[7][5][N_COMPS];  /* space for the image data */
     void        *read_fill_vals = NULL; /* space for fill values read from attr */
-    float      image0[7][5][N_COMPS]; /* space for the image data */
+    float        image0[7][5][N_COMPS]; /* space for the image data */
     int32        start[2];              /* start of image data to grab */
     int32        stride[2];             /* stride of image data to grab */
     char         attr_name[H4_MAX_GR_NAME];
@@ -360,9 +360,8 @@ test_mgr_userattr()
                 case DFNT_FLOAT32:
                     data_buf = malloc(n_values * sizeof(float));
                     if (data_buf == NULL) {
-                        fprintf(
-                            stderr,
-                            "test_mgr_userattr: Failed to allocate memory for data buffer for float.\n");
+                        fprintf(stderr,
+                                "test_mgr_userattr: Failed to allocate memory for data buffer for float.\n");
                         exit(1);
                     }
                     break;

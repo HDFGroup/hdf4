@@ -39,21 +39,21 @@ typedef struct {
 
 /* structure to hold RIG info */
 typedef struct {
-    char   *cf;               /* color format */
-    int32   xpos;             /* X position of image on screen */
-    int32   ypos;             /* Y position of image on screen */
+    char *cf;               /* color format */
+    int32 xpos;             /* X position of image on screen */
+    int32 ypos;             /* Y position of image on screen */
     float aspectratio;      /* ratio of pixel height to width */
     float ccngamma;         /* gamma color correction parameters */
     float ccnred[3];        /* red color correction parameters */
     float ccngrren[3];      /* green color correction parameters */
     float ccnblue[3];       /* blue color correction parameters */
     float ccnwhite[3];      /* white color correction parameters */
-    DFdi    image;            /* image */
-    DFRdr   descimage;        /* image data description */
-    DFdi    lut;              /* color look-up table (palette) */
-    DFRdr   desclut;          /* look-up table description */
-    DFdi    mattechannel;     /* matte? */
-    DFRdr   descmattechannel; /* Description of matte? */
+    DFdi  image;            /* image */
+    DFRdr descimage;        /* image data description */
+    DFdi  lut;              /* color look-up table (palette) */
+    DFRdr desclut;          /* look-up table description */
+    DFdi  mattechannel;     /* matte? */
+    DFRdr descmattechannel; /* Description of matte? */
 } DFRrig;
 
 /* dimensions of raster-8 image */

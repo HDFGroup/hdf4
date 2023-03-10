@@ -32,7 +32,7 @@ test_tsdstr(void)
     int         i, j, ret;
     intn        rank;
     int32       dims[2];
-    float     f32[10][10], tf32[10][10];
+    float       f32[10][10], tf32[10][10];
     const char *datalabel = "Datalabel", *dataunit = "Dataunit", *datafmt = "Datafmt", *coordsys = "coordsys";
     char        in_datalabel[256], in_dataunit[256], in_datafmt[256], in_coordsys[256];
 

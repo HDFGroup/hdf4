@@ -25,9 +25,8 @@
  *---------------------------------------------------------------------------*/
 
 FRETVAL(int)
-nduif2i(int32 *hdim, int32 *vdim, float *max, float *min, float hscale[], float vscale[],
-        float data[], _fcd palette, _fcd outfile, int *ct_method, int32 *hres, int32 *vres, int *compress,
-        int *lenfn)
+nduif2i(int32 *hdim, int32 *vdim, float *max, float *min, float hscale[], float vscale[], float data[],
+        _fcd palette, _fcd outfile, int *ct_method, int32 *hres, int32 *vres, int *compress, int *lenfn)
 {
     char *fn;
     int   ret;

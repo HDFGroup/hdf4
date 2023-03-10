@@ -25,9 +25,9 @@
 #define FIELD_NAMES "Ident,Temp,Speed,Height"
 #define FILENAME    "tvpack.hdf"
 struct {
-    char    ident;
+    char  ident;
     float temp;
-    int16   speed;
+    int16 speed;
     float height;
 } source[NRECORDS];
 
@@ -37,11 +37,11 @@ void  *databufptr[10]; /* make sure its size can hold all fields */
 
 float tempdata[NRECORDS], itemp[NRECORDS];
 float heightdata[NRECORDS], iheight[NRECORDS];
-int16   speeddata[NRECORDS], ispeed[NRECORDS];
-char    identdata[NRECORDS], iident[NRECORDS];
-int     i, j, rec_size;
-int32   vdata_ref, in_recs, iil, irec_size;
-char    ifields[256];
+int16 speeddata[NRECORDS], ispeed[NRECORDS];
+char  identdata[NRECORDS], iident[NRECORDS];
+int   i, j, rec_size;
+int32 vdata_ref, in_recs, iil, irec_size;
+char  ifields[256];
 
 static int32 fpack(void);
 static int32 funpack(void);

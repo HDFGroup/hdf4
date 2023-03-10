@@ -249,7 +249,7 @@ test_vdatavgroups()
     int32       num_allvdatas;
     intn        num_vgroups, num_vdatas;
     int32       dimsize[RANK];
-    float     att1_values[2] = {2., 10.};
+    float       att1_values[2] = {2., 10.};
     char8       att2_values[]  = "Seconds";
     uint16     *refarray       = NULL;
     uint16      name_len       = 0;

@@ -45,7 +45,7 @@ struct rgb {
 };
 
 struct box {
-    float     bnd[3][2];
+    float       bnd[3][2];
     int        *pts;
     int         nmbr_pts;
     int         nmbr_distinct;
@@ -192,10 +192,10 @@ static void
 compress(unsigned char raster[], int block)
 {
     float y[16], y_av;
-    int     i, j, k, l;
-    uint8   bit;
-    int     high, hi, lo;
-    int     c_hi[3], c_lo[3];
+    int   i, j, k, l;
+    uint8 bit;
+    int   high, hi, lo;
+    int   c_hi[3], c_lo[3];
 
     /* calculate luminance */
     y_av = (float)0.0;
@@ -933,8 +933,8 @@ select_dim(struct box *ptr)
 static float
 find_med(struct box *ptr, int dim)
 {
-    int     i, j, count, next, prev;
-    int    *rank;
+    int   i, j, count, next, prev;
+    int  *rank;
     float median;
 
     rank = (int *)malloc((unsigned)ptr->nmbr_distinct * sizeof(int));

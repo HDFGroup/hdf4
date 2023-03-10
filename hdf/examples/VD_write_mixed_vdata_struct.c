@@ -49,9 +49,9 @@ main()
 
     struct {
         float temp;   /* to hold value of the first field of the vdata */
-        int16   height; /* to hold value of the second field of the vdata */
+        int16 height; /* to hold value of the second field of the vdata */
         float speed;  /* to hold value of the third field of the vdata */
-        char    ident;  /* to hold value of the fourth field of the vdata */
+        char  ident;  /* to hold value of the fourth field of the vdata */
     } source[N_RECORDS];
 
     /* pointers to be pointing to the fields in the struct buffer */

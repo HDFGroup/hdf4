@@ -77,14 +77,14 @@ write_vset_stuff(void)
     int32       vs1;
     int32       count, i, j, num, max_order;
     int32       ibuf[2000];   /* integer buffer */
-    float     fbuf[2000];   /* floating point buffer */
+    float       fbuf[2000];   /* floating point buffer */
     char        gbuf[2000];   /* generic buffer */
     uint8      *gbuf1 = NULL; /* buffer for uint8 */
-    float    *gbuf2 = NULL; /* buffer for float */
+    float      *gbuf2 = NULL; /* buffer for float */
     const char *name;
     char       *p;
     char8       c;
-    float     f;
+    float       f;
 
     /* allocate these buffers dynamically and not off the stack
        as they were previously handled */
@@ -547,22 +547,22 @@ write_vset_stuff(void)
 static int32
 read_vset_stuff(void)
 {
-    int32   ibuf[2000]; /* integer buffer */
-    float fbuf[2000]; /* floating point buffer */
-    char    gbuf[2000]; /* generic buffer */
-    int32   list[50];
-    int32   tags[100], refs[100], tag, ref;
-    char    vsname[512], vsclass[512], fields[512];
-    char   *vgname, *vgclass;
-    char   *p;
-    int32   fid;
-    int32   vg1;
-    int32   vs1;
-    int32   status, num, i, count, intr, sz;
-    float fl_expected;
-    int32   in_expected;
-    char8   c_expected;
-    uint16  name_len;
+    int32  ibuf[2000]; /* integer buffer */
+    float  fbuf[2000]; /* floating point buffer */
+    char   gbuf[2000]; /* generic buffer */
+    int32  list[50];
+    int32  tags[100], refs[100], tag, ref;
+    char   vsname[512], vsclass[512], fields[512];
+    char  *vgname, *vgclass;
+    char  *p;
+    int32  fid;
+    int32  vg1;
+    int32  vs1;
+    int32  status, num, i, count, intr, sz;
+    float  fl_expected;
+    int32  in_expected;
+    char8  c_expected;
+    uint16 name_len;
 
     fid = Hopen(FNAME0, DFACC_RDONLY, 0);
     if (fid == FAIL) {
@@ -941,7 +941,7 @@ read_vset_stuff(void)
     p = gbuf;
     for (i = 0; i < count; i++) {
         float fl = (float)0.0;
-        int32   in = (int32)0;
+        int32 in = (int32)0;
 
         memcpy(&fl, p, sizeof(float));
         p += sizeof(float);
@@ -1026,8 +1026,8 @@ read_vset_stuff(void)
 
     for (i = 0; i < count; i++) {
         float fl = (float)0.0;
-        int32   in = (int32)0;
-        char8   c  = (char8)0;
+        int32 in = (int32)0;
+        char8 c  = (char8)0;
 
         /* read and verify characters */
         memcpy(&c, p, sizeof(char8));
@@ -2645,21 +2645,21 @@ Tables_External_File.
 static void
 test_extfile(void)
 {
-    int32   fid, vdata1_id, vdata_ref = -1; /* ref number of a vdata, set to -1 to create  */
-    int32   vdata1_ref;
-    int32   offset = -1, length = -1;
-    char    hibuf[2]  = "hi";
-    char    byebuf[3] = "bye";
-    char   *extfile_name;
-    void   *columnPtrs[3];
-    int     bufsize;
-    void   *databuf;
-    intn    name_len = 0;
-    intn    status_n; /* returned status for functions returning an intn  */
-    int32   status;   /* returned status for functions returning an int32 */
-    char8   col1buf[NROWS][2] = {{'A', 'B'}, {'B', 'C'}, {'C', 'D'}, {'D', 'E'}, {'E', 'F'}};
-    uint16  col2buf[NROWS]    = {1, 2, 3, 4, 5};
-    float col3buf[NROWS][2] = {{.01, .1}, {.02, .2}, {.03, .3}, {.04, .4}, {.05, .5}};
+    int32  fid, vdata1_id, vdata_ref = -1; /* ref number of a vdata, set to -1 to create  */
+    int32  vdata1_ref;
+    int32  offset = -1, length = -1;
+    char   hibuf[2]  = "hi";
+    char   byebuf[3] = "bye";
+    char  *extfile_name;
+    void  *columnPtrs[3];
+    int    bufsize;
+    void  *databuf;
+    intn   name_len = 0;
+    intn   status_n; /* returned status for functions returning an intn  */
+    int32  status;   /* returned status for functions returning an int32 */
+    char8  col1buf[NROWS][2] = {{'A', 'B'}, {'B', 'C'}, {'C', 'D'}, {'D', 'E'}, {'E', 'F'}};
+    uint16 col2buf[NROWS]    = {1, 2, 3, 4, 5};
+    float  col3buf[NROWS][2] = {{.01, .1}, {.02, .2}, {.03, .3}, {.04, .4}, {.05, .5}};
 
     /* Create the HDF file for data used in this test routine */
     fid = Hopen(EXTFILE, DFACC_CREATE, 0);

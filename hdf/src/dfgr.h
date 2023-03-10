@@ -39,17 +39,17 @@ typedef struct {
 
 /* structure to hold RIG info */
 typedef struct {
-    char   *cf;          /* color format */
-    int32   xpos;        /* X position of image on screen */
-    int32   ypos;        /* Y position of image on screen */
-    float aspectratio; /* ratio of pixel height to width */
-    float ccngamma;    /* gamma color correction parameter */
-    float ccnred[3];   /* red color correction parameter */
-    float ccngrren[3]; /* green color correction parameter */
-    float ccnblue[3];  /* blue color correction parameter */
-    float ccnwhite[3]; /* white color correction parameter */
-    DFdi    data[3];     /* image/lut/mattechannel */
-    DFGRdr  datadesc[3]; /* description of image/lut/mattechannel */
+    char  *cf;          /* color format */
+    int32  xpos;        /* X position of image on screen */
+    int32  ypos;        /* Y position of image on screen */
+    float  aspectratio; /* ratio of pixel height to width */
+    float  ccngamma;    /* gamma color correction parameter */
+    float  ccnred[3];   /* red color correction parameter */
+    float  ccngrren[3]; /* green color correction parameter */
+    float  ccnblue[3];  /* blue color correction parameter */
+    float  ccnwhite[3]; /* white color correction parameter */
+    DFdi   data[3];     /* image/lut/mattechannel */
+    DFGRdr datadesc[3]; /* description of image/lut/mattechannel */
 } DFGRrig;
 
 #ifdef __cplusplus
