@@ -43,7 +43,7 @@ if test "X-clang" = "X-$cc_vendor" -o "X-Apple LLVM" = "X-$cc_vendor"; then
     echo "compiler '$CC' is $cc_vendor-$cc_version"
 
     CFLAGS="$CFLAGS -Wno-error=implicit-function-declaration"
-    CFLAGS="$CFLAGS -std=c99 -ansi -Wall -pedantic"
+    CFLAGS="$CFLAGS -std=c99 -Wall -pedantic"
 
     DEBUG_CFLAGS="$CFLAGS -g"
     DEBUG_CPPFLAGS=
