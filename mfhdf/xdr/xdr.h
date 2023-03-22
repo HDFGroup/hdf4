@@ -120,23 +120,23 @@ typedef struct __rpc_xdr {
 } XDR;
 
 /*                                                                               
-* A xdrproc_t exists for each data type which is to be encoded or decoded.      
-*                                                                               
-* The second argument to the xdrproc_t is a pointer to an opaque pointer.       
-* The opaque pointer generally points to a structure of the data type           
-* to be decoded.  If this pointer is 0, then the type routines should           
-* allocate dynamic storage of the appropriate size and return it.               
-*                                                                               
-* This typedef has caused problems in the past. Most compilers flag the         
-* signature as incompatible and this can result in undefined behavior           
-* according to the C99 standard.                                                
-*                                                                               
-* The current typedef used here works on all tested platforms, but be           
-* aware that future compilers could have trouble with it. Failures              
-* will most often be raised in xdr_vector calls in xdrtest.c. We've             
-* papered over the incompatible pointer warnings with casts for the             
-* time being.                                                                   
-*/
+ * A xdrproc_t exists for each data type which is to be encoded or decoded.      
+ *                                                                               
+ * The second argument to the xdrproc_t is a pointer to an opaque pointer.       
+ * The opaque pointer generally points to a structure of the data type           
+ * to be decoded.  If this pointer is 0, then the type routines should           
+ * allocate dynamic storage of the appropriate size and return it.               
+ *                                                                               
+ * This typedef has caused problems in the past. Most compilers flag the         
+ * signature as incompatible and this can result in undefined behavior           
+ * according to the C99 standard.                                                
+ *                                                                               
+ * The current typedef used here works on all tested platforms, but be           
+ * aware that future compilers could have trouble with it. Failures              
+ * will most often be raised in xdr_vector calls in xdrtest.c. We've             
+ * papered over the incompatible pointer warnings with casts for the             
+ * time being.                                                                   
+ */
 typedef bool_t (*xdrproc_t)(XDR *, void *, ...);
 
 /*
