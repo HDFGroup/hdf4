@@ -128,7 +128,7 @@ typedef struct __rpc_xdr {
  * allocate dynamic storage of the appropriate size and return it.
  * bool_t    (*xdrproc_t)(XDR *, char **);
  */
-typedef bool_t (*xdrproc_t)(XDR *, ...);
+typedef bool_t (*xdrproc_t)(XDR *, void *, ...);
 
 /*
  * Operations defined on a XDR handle
