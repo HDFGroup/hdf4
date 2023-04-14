@@ -69,7 +69,7 @@ case $F77_BASENAME in
         FFLAGS="$FFLAGS"
     fi
     DEBUG_FFLAGS="-g"
-    PROD_FFLAGS="-O"
+    PROD_FFLAGS="-O3"
     PROFILE_FFLAGS="-pg"
     ;;
 

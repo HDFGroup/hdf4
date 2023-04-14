@@ -33,7 +33,8 @@
 /* Do we have system XDR files */
 #ifndef H4_NO_SYS_XDR_INC
 
-#ifdef __CYGWIN__
+#include <rpc/types.h>
+#include <rpc/xdr.h>
 #ifndef __u_char_defined
 typedef unsigned char u_char;
 #define __u_char_defined
@@ -50,13 +51,12 @@ typedef unsigned int u_int;
 typedef unsigned long u_long;
 #define __u_long_defined
 #endif
-#endif /* __CYGWIN__ */
 
-#include <rpc/types.h>
-#include <rpc/xdr.h>
 #else /* H4_NO_SYS_XDR_INC */
+
 #include "types.h"
 #include "xdr.h"
+
 #endif /* H4_NO_SYS_XDR_INC */
 
 #ifdef H4_HAVE_NETCDF

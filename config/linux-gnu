@@ -67,9 +67,6 @@ else
     esac
 fi
 
-# Figure out GNU FC compiler flags
-. $srcdir/config/gnu-fflags
-
 # compiler version strings
 
 # check if the compiler_version_info is already set
@@ -160,6 +157,9 @@ if test X != "X$fc_version"; then
     # Get the compiler version numbers
     fc_vers_major=`echo $fc_version | cut -f1 -d.`
 fi
+
+# Figure out GNU FC compiler flags
+. $srcdir/config/gnu-fflags
 
 # Overriding Configure Tests
 # --------------------------

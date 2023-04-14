@@ -263,8 +263,8 @@ AC_PROG_CPP
 AC_ARG_ENABLE([fortran],
               [AS_HELP_STRING([--enable-fortran],
                               [Build Fortran into library. This interface
-                               is unsafe on 64-bit systems. [default=no]])],,
-              [enableval="no"])
+                               is unsafe on 64-bit systems. [default=yes]])],,
+              [enableval="yes"])
 
 case "$enableval" in
   yes)
