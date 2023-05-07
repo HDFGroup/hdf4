@@ -35,11 +35,6 @@ static const long *NCvcmaxcontig(NC *, NC_var *, const long *, const long *);
 
 int NC_fill_buffer(NC *handle, int varid, const long *edges, void *values);
 
-/*
- * If you use ./xdrstdio.c rather than ./xdrposix.c as
- * your bottom layer, the you may need to #define XDRSTDIO
- */
-
 #ifndef HDF
 #define MIN(mm, nn) (((mm) < (nn)) ? (mm) : (nn))
 #define MAX(mm, nn) (((mm) > (nn)) ? (mm) : (nn))
@@ -430,44 +425,14 @@ xdr_NCvbyte(XDR *xdrs, unsigned rem, unsigned count, char *values)
          * We will read in the word to change one byte in it.
          */
         origin = xdr_getpos(xdrs);
-#ifdef XDRSTDIO
-        /*
-         * N.B. : "a file positioning function must be called between
-         * a write and a read or vice versa"
-         *        - limitations of stdio, open for update
-         */
-        if (!xdr_setpos(xdrs, origin))
-            return (FALSE);
-#endif /* XDRSTDIO */
-        /* next op is a get */
+
+        /* Next op is a get */
         xdrs->x_op = XDR_DECODE;
     }
 
     if (!xdr_opaque(xdrs, buf, 4)) {
-        /* get failed, assume we are trying to read off the end */
-#ifdef XDRSTDIO
-        /*
-         * N.B. 2 : Violates layering,
-         * assumes stdio under xdr.
-         * This clause could be safely replaced with
-         * just the 'memset' line.
-         */
-        if (feof((FILE *)xdrs->x_private)) /* NC_NOFILL */
-        {
-            /* failed because we tried to read
-             * beyond EOF
-             */
-            clearerr((FILE *)xdrs->x_private);
-            memset(buf, 0, sizeof(buf));
-        }
-        else {
-            NCadvise(NC_EXDR, "xdr_NCvbyte");
-            xdrs->x_op = x_op;
-            return (FALSE);
-        }
-#else
+        /* Get failed, assume we are trying to read off the end */
         memset(buf, 0, sizeof(buf));
-#endif /* XDRSTDIO */
     }
 
     if (x_op == XDR_ENCODE) /* back to encode */
@@ -506,35 +471,14 @@ xdr_NCvshort(XDR *xdrs, unsigned which, short *values)
 
     if (x_op == XDR_ENCODE) {
         origin = xdr_getpos(xdrs);
-#ifdef XDRSTDIO
-        /* See N.B. above */
-        if (!xdr_setpos(xdrs, origin))
-            return (FALSE);
-#endif /* XDRSTDIO */
-        /* next op is a get */
+
+        /* Next op is a get */
         xdrs->x_op = XDR_DECODE;
     }
 
     if (!xdr_opaque(xdrs, (char *)buf, 4)) {
-        /* get failed, assume we are trying to read off the end */
-#ifdef XDRSTDIO
-        /* See N.B. 2 above */
-        if (feof((FILE *)xdrs->x_private)) /* NC_NOFILL */
-        {
-            /* failed because we tried to read
-             * beyond EOF
-             */
-            clearerr((FILE *)xdrs->x_private);
-            memset(buf, 0, sizeof(buf));
-        }
-        else {
-            NCadvise(NC_EXDR, "xdr_NCvbyte");
-            xdrs->x_op = x_op;
-            return (FALSE);
-        }
-#else
+        /* Get failed, assume we are trying to read off the end */
         memset(buf, 0, sizeof(buf));
-#endif /* XDRSTDIO */
     }
 
     if (x_op == XDR_ENCODE) /* back to encode */
