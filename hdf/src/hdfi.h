@@ -216,11 +216,11 @@ typedef intptr_t hdf_pint_t;
         p += n                                                                                               \
     }
 
-/* DECODE converts big endian bytes pointed by p to integer values and store
- * it in i.  For signed values, need to do sign-extension when converting
+/* DECODE converts big endian bytes pointed by p to integer values and stores
+ * it in i.  For signed values, we need to do sign-extension when converting
  * the 1st byte which carries the sign bit.
- * The macros does not require i be of a certain byte sizes.  It just requires
- * i be big enough to hold the intended value range.  E.g. INT16DECODE works
+ * The macros do not require i be of a certain byte size.  They just require
+ * i to be big enough to hold the intended value range.  e.g., INT16DECODE works
  * correctly even if i is actually a 64bit int like in a Cray.
  */
 
