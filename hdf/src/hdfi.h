@@ -226,7 +226,7 @@ typedef intptr_t hdf_pint_t;
 
 #define INT16DECODE(p, i)                                                                                    \
     {                                                                                                        \
-        (i) = ((*(p)&0x80) ? ~0xffff : 0x00) | ((int16)(*(p)&0xff) << 8);                                    \
+        (i) = (int16)((*(p)&0x80) ? ~0xffff : 0x00) | ((int16)(*(p)&0xff) << 8);                             \
         (p)++;                                                                                               \
         (i) |= (int16)((*(p)&0xff));                                                                         \
         (p)++;                                                                                               \
