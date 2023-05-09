@@ -761,7 +761,7 @@ HLgetdatainfo(int32 file_id, uint8 *buf, /* IN: special header info */
               int32 *lengtharray)        /* OUT: array to hold lengths */
 {
     link_t *link_info = NULL; /* link information, to get block ref#s*/
-    intn    num_data_blocks;  /* number of blocks that actually have data */
+    uintn   num_data_blocks;  /* number of blocks that actually have data */
     uint16  link_ref;         /* ref# pointing to a block table */
     uint8  *p = NULL;         /* pointer to special info buffer */
     int32   num_blocks,       /* number of blocks in each table */
@@ -871,7 +871,9 @@ HLgetdatainfo(int32 file_id, uint8 *buf, /* IN: special header info */
          are not full yet */
 
     /* Return the number of blocks with actual data */
-    ret_value = num_data_blocks;
+    if (num_data_blocks > INT_MAX)
+        HGOTO_DONE(FAIL);
+    ret_value = (intn)num_data_blocks;
 
 done:
     if (ret_value == FAIL) { /* Error condition cleanup */
