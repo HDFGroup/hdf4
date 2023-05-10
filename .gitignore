@@ -41,3 +41,5 @@ m4/lt~obsolete.m4
 /cmake*.sh
 /config*.sh
 /redeploy*.sh
+/CMakeUserPresets.json
+/log.txt
