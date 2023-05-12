@@ -427,7 +427,7 @@ Java_hdf_hdflib_HDFLibrary_SDreaddata_1float(JNIEnv *env, jclass clss, jlong sds
     if (count == NULL)
         H4_NULL_ARGUMENT_ERROR(ENVONLY, "SDreaddata:  count is NULL");
 
-    PIN_FLOAT_ARRAY_CRITICAL(ENVONLY, data, d, &isCopy, "SDreaddata:  data not pinned");
+    PIN_FLOAT_ARRAY(ENVONLY, data, d, &isCopy, "SDreaddata:  data not pinned");
     PIN_INT_ARRAY(ENVONLY, start, strt, &isCopy, "SDreaddata:  start not pinned");
     PIN_INT_ARRAY(ENVONLY, count, cnt, &isCopy, "SDreaddata:  count not pinned");
 
@@ -476,7 +476,7 @@ Java_hdf_hdflib_HDFLibrary_SDreaddata_1double(JNIEnv *env, jclass clss, jlong sd
     if (count == NULL)
         H4_NULL_ARGUMENT_ERROR(ENVONLY, "SDreaddata:  count is NULL");
 
-    PIN_DOUBLE_ARRAY_CRITICAL(ENVONLY, data, d, &isCopy, "SDreaddata:  data not pinned");
+    PIN_DOUBLE_ARRAY(ENVONLY, data, d, &isCopy, "SDreaddata:  data not pinned");
     PIN_INT_ARRAY(ENVONLY, start, strt, &isCopy, "SDreaddata:  start not pinned");
     PIN_INT_ARRAY(ENVONLY, count, cnt, &isCopy, "SDreaddata:  count not pinned");
 
