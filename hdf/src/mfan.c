@@ -765,7 +765,7 @@ done:
 
 /*--------------------------------------------------------------------------
  NAME
-   ANIannlen -- get length of annotation givne annotation id
+   ANIannlen -- get length of annotation given annotation id
 
  DESCRIPTION
    Uses the annotation id to find ann_key & file_id
@@ -1639,7 +1639,7 @@ done:
 
 /*--------------------------------------------------------------------------
  NAME
-   ANannlen -- get length of annotation givne annotation id
+   ANannlen -- get length of annotation given annotation id
 
  DESCRIPTION
    Uses the annotation id to find ann_key & file_id

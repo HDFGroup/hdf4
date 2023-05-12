@@ -1090,7 +1090,7 @@ Vattach(HFILEID     f,    /* IN: file handle */
     else
         HGOTO_ERROR(DFE_BADACC, FAIL);
 
-    /* convert file id to file record and check for write-permission */
+    /* convert file id to file record and check for validity */
     file_rec = HAatom_object(f);
     if ((file_rec == NULL || acc_mode == 'w') && !(file_rec->access & DFACC_WRITE))
         HGOTO_ERROR(DFE_BADACC, FAIL);

@@ -340,7 +340,7 @@ Bugs fixed since HDF 4.2.15
       free() call to use an invalid pointer.
 
       Change the macros PIN_DOUBLE_ARRAY_CRITICAL to PIN_DOUBLE_ARRAY and
-      PIN_FLOAT_ARRAY_CRITICAL to PIN_DOUBLE_ARRAY.
+      PIN_FLOAT_ARRAY_CRITICAL to PIN_FLOAT_ARRAY.
 
       Github issue #355
 
