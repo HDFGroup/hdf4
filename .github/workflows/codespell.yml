@@ -11,5 +11,5 @@ jobs:
       - uses: actions/checkout@v3
       - uses: codespell-project/actions-codespell@master
         with:
-          skip: ./config/sanitizer/sanitizers.cmake,./hdf/util/testfiles/*.raw,./hdf/util/testfiles/head.r8,./mfhdf/ncdump/*,./mfhdf/ncgen/*,./mfhdf/nctest/*,./mfhdf/xdr/*,./mfhdf/README,./mfhdf/THANKS,./mfhdf/FAQ
+          skip: ./config/sanitizer/sanitizers.cmake,./hdf/util/testfiles/*.raw,./hdf/util/testfiles/head.r8,./mfhdf/ncdump/*,./mfhdf/ncgen/*,./mfhdf/nctest/*,./mfhdf/xdr/*,./mfhdf/README,./mfhdf/THANKS,./mfhdf/FAQ,./configure,./bin/config.guess,./bin/depcomp,./bin/ltmain.sh,./autom4te.cache,./m4/libtool.m4
           ignore_words_list: acount,anid,ans,clude,isnt,fo,msdos,nam,nd,pres,sav,shs,siz,varn,vlone
