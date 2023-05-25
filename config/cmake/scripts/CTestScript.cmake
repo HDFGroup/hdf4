@@ -255,6 +255,10 @@ if (NOT DEFINED MODEL)
   set (MODEL "Experimental")
 endif ()
 
+set (ENV{CI_SITE_NAME} ${CTEST_SITE})
+set (ENV{CI_BUILD_NAME} ${CTEST_BUILD_NAME})
+set (ENV{CI_MODEL} ${MODEL})
+
 #-----------------------------------------------------------------------------
   ## NORMAL process
   ## -- LOCAL_UPDATE updates the source folder from svn
@@ -305,6 +309,9 @@ endif ()
       if (LOCAL_SUBMIT)
         ctest_submit (PARTS Coverage)
       endif ()
+    endif ()
+    if (LOCAL_SUBMIT)
+      ctest_submit (PARTS Done)
     endif ()
   endif ()
 
