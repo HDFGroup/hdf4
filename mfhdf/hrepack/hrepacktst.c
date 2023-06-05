@@ -301,13 +301,8 @@ vg_verifygrpdep(char *name1, char *name2)
  *
  * Return: void
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: September 15, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 static void
 set_chunk_def(comp_coder_t comp_type, int32 *dim, int32 ncomps, int32 bits_per_pixel, /* for szip */
               HDF_CHUNK_DEF *chunk_def)
@@ -840,13 +835,8 @@ sds_verifiy_chunk_all(int32 in_chunk_flags, int rank, int32 *in_chunk_lengths, c
  *
  * Return: SUCCEED, FAIL
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: August 19, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 static int
 add_an(int32 file_id, int32 tag, int32 ref)
 {
@@ -903,10 +893,6 @@ add_an(int32 file_id, int32 tag, int32 ref)
  *  optionally inserting the image into the group VGROUP_ID
  *
  * Return: SUCCEED, FAIL
- *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 3, 2003
  *
  *-------------------------------------------------------------------------
  */
@@ -999,13 +985,8 @@ add_gr_ffile(const char *name_file, int32 gr_id, const char *gr_name, int32 inte
  *
  * Return: SUCCEED, FAIL
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: August 18, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 static int
 add_gr(const char  *gr_name,     /* gr name */
        int32        file_id,     /* file ID */
@@ -1188,10 +1169,6 @@ add_gr(const char  *gr_name,     /* gr name */
  *
  * Return: SUCCEED, FAIL
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 30, 2003
- *
  *-------------------------------------------------------------------------
  */
 static int
@@ -1237,13 +1214,8 @@ add_glb_attrs(const char *fname, int32 file_id, int32 sd_id, int32 gr_id)
  *
  * Return: SUCCEED, FAIL
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 3, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 static int
 add_r8(const char *image_file, const char *fname, int32 file_id, int32 vgroup_id)
 {
@@ -1301,10 +1273,6 @@ add_r8(const char *image_file, const char *fname, int32 file_id, int32 vgroup_id
  *  optionally inserting the image into the group VGROUP_ID
  *
  * Return: SUCCEED, FAIL
- *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 3, 2003
  *
  *-------------------------------------------------------------------------
  */
@@ -1368,10 +1336,6 @@ add_r24(const char *image_file, const char *fname, int32 file_id, intn il, int32
  *   2)making the dataset chunked and/or compressed
  *
  * Return: SUCCEED, FAIL
- *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 3, 2003
  *
  *-------------------------------------------------------------------------
  */
@@ -1589,13 +1553,8 @@ fail:
  *
  * Return: SUCCEED, FAIL
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 3, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 static int
 add_sd3d(const char  *fname,       /* file name */
          int32        file_id,     /* file ID */
@@ -1820,13 +1779,8 @@ fail:
  *
  * Return: SUCCEED, FAIL
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 3, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 static int
 add_vs(const char *vs_name, int32 file_id, int32 vgroup_id)
 {
@@ -1938,13 +1892,8 @@ add_vs(const char *vs_name, int32 file_id, int32 vgroup_id)
  *
  * Return: SUCCEED, FAIL
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 30, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 static int
 add_file_an(int32 file_id)
 {
@@ -2035,7 +1984,7 @@ add_file_an(int32 file_id)
     }
 
     /* Terminate access to the AN interface */
-    if (ANend(an_id) == FAIL == FAIL) {
+    if (ANend(an_id) == FAIL) {
         printf("Could not end AN\n");
         return FAIL;
     }
@@ -2050,13 +1999,8 @@ add_file_an(int32 file_id)
  *
  * Return: SUCCEED, FAIL
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: August 19, 2003
- *
  *-------------------------------------------------------------------------
  */
-
 static int
 add_pal(const char *fname)
 {
@@ -2088,10 +2032,6 @@ add_pal(const char *fname)
  *  SD - Multifile Scientific Data Interface,
  *
  * Return: SUCCEED, FAIL
- *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: September 15, 2003
  *
  *-------------------------------------------------------------------------
  */
@@ -2583,7 +2523,6 @@ out:
  * write a big file for hyperslab reading
  *-------------------------------------------------------------------------
  */
-
 static int
 do_file_hyperslab(char *fname)
 {
@@ -2687,7 +2626,6 @@ error:
  *
  *-------------------------------------------------------------------------
  */
-
 static int
 do_file_groups(char *name)
 {
@@ -2799,7 +2737,6 @@ out:
  *
  *-------------------------------------------------------------------------
  */
-
 static int
 generate_files(void)
 {
@@ -2845,17 +2782,8 @@ generate_files(void)
  * D) In each test the verifiy_comp_chunk function is called to compare
  *  the input and output compression and chunking parameters
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: August 3, 2003
- *
- * Modifications:
- *  July 7, 2007. Add test for hyperslab repacking in HREPACK_FILE2
- *  September 12, 2007. Add test for duplicate vgroup insertions in HREPACK_FILE3
- *
  *-------------------------------------------------------------------------
  */
-
 int
 main(void)
 {

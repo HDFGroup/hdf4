@@ -1,0 +1,184 @@
+{
+  "version": 6,
+  "configurePresets": [
+    {
+      "name": "my-base-tgz",
+      "hidden": true,
+      "inherits": "ci-base",
+      "cacheVariables": {
+        "HDF4_ALLOW_EXTERNAL_SUPPORT": {"type": "STRING", "value": "TGZ"},
+        "TGZPATH": {"type": "STRING", "value": "${sourceParentDir}/temp"}
+      }
+    },
+    {
+      "name": "my-StdCompression",
+      "hidden": true,
+      "inherits": "my-base-tgz",
+      "cacheVariables": {
+        "BUILD_JPEG_WITH_FETCHCONTENT": "ON",
+        "JPEG_PACKAGE_NAME": {"type": "STRING", "value": "jpeg"},
+        "JPEG_TGZ_ORIGNAME": {"type": "STRING", "value": "jpegsrc.v9e.tar.gz"},
+        "JPEG_USE_LOCALCONTENT": "ON",
+        "BUILD_ZLIB_WITH_FETCHCONTENT": "ON",
+        "ZLIB_PACKAGE_NAME": {"type": "STRING", "value": "zlib"},
+        "ZLIB_TGZ_ORIGNAME": {"type": "STRING", "value": "zlib-1.2.13.tar.gz"},
+        "ZLIB_USE_LOCALCONTENT": "ON",
+        "BUILD_SZIP_WITH_FETCHCONTENT": "ON",
+        "LIBAEC_PACKAGE_NAME": {"type": "STRING", "value": "libaec"},
+        "LIBAEC_TGZ_ORIGNAME": {"type": "STRING", "value": "libaec-1.0.6.tar.gz"},
+        "LIBAEC_USE_LOCALCONTENT": "ON"
+      }
+    },
+    {
+      "name": "my-StdExamples",
+      "hidden": true,
+      "inherits": "ci-base",
+      "cacheVariables": {
+        "HDF4_PACK_EXAMPLES": "ON",
+        "HDF4_EXAMPLES_COMPRESSED": {"type": "STRING", "value": "hdf4-examples-0.3.10.tar.gz"},
+        "HDF4_EXAMPLES_COMPRESSED_DIR": {"type": "STRING", "value": "${sourceParentDir}/temp"},
+        "EXAMPLES_TGZ_ORIGPATH": {"type": "STRING", "value": "https://github.com/HDFGroup/hdf4-examples/archive/refs/tags/"},
+        "EXAMPLES_TGZ_ORIGNAME": {"type": "STRING", "value": "v0.3.10.tar.gz"},
+        "EXAMPLES_DOWNLOAD": "ON"
+      }
+    },
+    {
+      "name": "my-StdShar",
+      "hidden": true,
+      "inherits": "my-StdCompression",
+      "cacheVariables": {
+        "HDF_PACKAGE_NAMESPACE": {"type": "STRING", "value": "hdf4::"},
+        "HDF4_BUILD_XDR_LIB": "ON",
+        "HDF4_BUILD_GENERATORS": "ON",
+        "HDF4_ENABLE_ALL_WARNINGS": "ON",
+        "HDF4_MINGW_STATIC_GCC_LIBS": "ON"
+      }
+    },
+    {
+      "name": "my-StdShar-MSVC",
+      "description": "MSVC Standard Config for x64 (Release)",
+      "inherits": [
+        "ci-x64-Release-MSVC",
+        "ci-Java",
+        "my-StdShar",
+        "my-StdExamples"
+      ]
+    },
+    {
+      "name": "my-StdShar-Clang",
+      "description": "Clang Standard Config for x64 (Release)",
+      "inherits": [
+        "ci-x64-Release-Clang",
+        "ci-Java",
+        "my-StdShar",
+        "my-StdExamples"
+      ]
+    },
+    {
+      "name": "my-StdShar-GNUC",
+      "description": "GNUC Standard Config for x64 (Release)",
+      "inherits": [
+        "ci-x64-Release-GNUC",
+        "ci-Java",
+        "my-StdShar",
+        "my-StdExamples"
+      ]
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "my-StdShar-MSVC",
+      "description": "MSVC Standard Build for x64 (Release)",
+      "configurePreset": "my-StdShar-MSVC",
+      "inherits": [
+        "ci-x64-Release-MSVC"
+      ]
+    },
+    {
+      "name": "my-StdShar-Clang",
+      "description": "Clang Standard Build for x64 (Release)",
+      "configurePreset": "my-StdShar-Clang",
+      "inherits": [
+        "ci-x64-Release-Clang"
+      ]
+    },
+    {
+      "name": "my-StdShar-GNUC",
+      "description": "GNUC Standard Build for x64 (Release)",
+      "configurePreset": "my-StdShar-GNUC",
+      "verbose": true,
+      "inherits": [
+        "ci-x64-Release-GNUC"
+      ]
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "my-StdShar-MSVC",
+      "configurePreset": "my-StdShar-MSVC",
+      "inherits": [
+        "ci-x64-Release-MSVC"
+      ]
+    },
+    {
+      "name": "my-StdShar-Clang",
+      "configurePreset": "my-StdShar-Clang",
+      "inherits": [
+        "ci-x64-Release-Clang"
+      ]
+    },
+    {
+      "name": "my-StdShar-GNUC",
+      "configurePreset": "my-StdShar-GNUC",
+      "inherits": [
+        "ci-x64-Release-GNUC"
+      ]
+    }
+  ],
+  "packagePresets": [
+    {
+      "name": "my-StdShar-MSVC",
+      "configurePreset": "my-StdShar-MSVC",
+      "inherits": "ci-x64-Release-MSVC"
+    },
+    {
+      "name": "my-StdShar-Clang",
+      "configurePreset": "my-StdShar-Clang",
+      "inherits": "ci-x64-Release-Clang"
+    },
+    {
+      "name": "my-StdShar-GNUC",
+      "configurePreset": "my-StdShar-GNUC",
+      "inherits": "ci-x64-Release-GNUC"
+    }
+  ],
+  "workflowPresets": [
+    {
+      "name": "my-StdShar-MSVC",
+      "steps": [
+        {"type": "configure", "name": "my-StdShar-MSVC"},
+        {"type": "build", "name": "my-StdShar-MSVC"},
+        {"type": "test", "name": "my-StdShar-MSVC"},
+        {"type": "package", "name": "my-StdShar-MSVC"}
+      ]
+    },
+    {
+      "name": "my-StdShar-Clang",
+      "steps": [
+        {"type": "configure", "name": "my-StdShar-Clang"},
+        {"type": "build", "name": "my-StdShar-Clang"},
+        {"type": "test", "name": "my-StdShar-Clang"},
+        {"type": "package", "name": "my-StdShar-Clang"}
+      ]
+    },
+    {
+      "name": "my-StdShar-GNUC",
+      "steps": [
+        {"type": "configure", "name": "my-StdShar-GNUC"},
+        {"type": "build", "name": "my-StdShar-GNUC"},
+        {"type": "test", "name": "my-StdShar-GNUC"},
+        {"type": "package", "name": "my-StdShar-GNUC"}
+      ]
+    }
+  ]
+}

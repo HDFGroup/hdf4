@@ -332,6 +332,18 @@ Support for new platforms and compilers
 
 Bugs fixed since HDF 4.2.15
 ===========================
+    - JNI SDSreaddata functions for float and double used mismatched buffer macros
+
+      The SDreaddata_double and SDreaddata_float function created data buffers with
+      PIN_DOUBLE_ARRAY_CRITICAL and PIN_FLOAT_ARRAY_CRITICAL macros then tried to
+      free the buffers with UNPIN_DOUBLE_ARRAY and UNPIN_FLOAT_ARRAY macros. This caused
+      free() call to use an invalid pointer.
+
+      Change the macros PIN_DOUBLE_ARRAY_CRITICAL to PIN_DOUBLE_ARRAY and
+      PIN_FLOAT_ARRAY_CRITICAL to PIN_FLOAT_ARRAY.
+
+      Github issue #355
+
     - Applied a user's patch to fix a failure with SDwritedata
 
       The access to an internal element was not terminated in one of the SD
