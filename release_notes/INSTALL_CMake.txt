@@ -11,6 +11,7 @@ Section IV:   Further considerations
 Section V:    Options for building HDF4 Libraries with CMake command line
 Section VI:   CMake option defaults for HDF4
 Section VII:  User Defined Options for HDF4 Libraries with CMake
+Section VIII: Using CMakePresets.json for compiling
 
 ************************************************************************
 
@@ -682,13 +683,16 @@ BUILD_SHARED_LIBS "Build Shared Libraries"     ON
 BUILD_TESTING      "Build HDF4 Unit Testing"   ON
 
 ---------------- HDF4 Build Options ---------------------
-HDF4_BUILD_EXAMPLES        "Build HDF4 Library Examples"          OFF
-HDF4_BUILD_FORTRAN         "Build FORTRAN support"                OFF
-HDF4_BUILD_TOOLS           "Build HDF4 Tools"                     OFF
-HDF4_BUILD_UTILS           "Build HDF4 Utilities"                 OFF
-HDF4_BUILD_XDR_LIB         "Build HDF4 XDR Library"               OFF
-HDF4_ENABLE_NETCDF         "Build HDF4 versions of NetCDF-3 APIS" ON
-HDF4_BUILD_JAVA            "Build Java HDF Library"               OFF
+HDF4_BUILD_EXAMPLES        "Build HDF4 Library Examples"              OFF
+HDF4_BUILD_FORTRAN         "Build FORTRAN support"                    OFF
+HDF4_BUILD_TOOLS           "Build HDF4 Tools"                         ON
+HDF4_BUILD_UTILS           "Build HDF4 Utilities"                     OFF
+HDF4_BUILD_XDR_LIB         "Build HDF4 XDR Library"                   OFF
+if (WIN32 OR MINGW OR APPLE)
+  HDF4_BUILD_XDR_LIB       "Build HDF4 XDR Library"                   ON
+HDF4_ENABLE_NETCDF         "Build HDF4 versions of NetCDF-3 APIS"     ON
+HDF4_BUILD_JAVA            "Build Java HDF Library"                   OFF
+HDF4_BUILD_NETCDF_TOOLS    "Build HDF4 versions of ncdump and ncgen"  ON
 
 ---------------- HDF4 Folder Build Options ---------------------
 Defaults relative to $<INSTALL_PREFIX>
@@ -771,6 +775,94 @@ users for linking libraries to the static CRT - Windows_MT.cmake.
 Copy the contents of the file, both macro and option, into the
 UserMacros.cmake file. Then enable the option to the CMake configuration,
 build and test process.
+
+========================================================================
+VIII:    Using CMakePresets.json for compiling
+========================================================================
+
+One problem that CMake users often face is sharing settings with other people for common
+ways to configure a project. This may be done to support CI builds, or for users who
+frequently use the same build. CMake supports two main files, CMakePresets.json and CMakeUserPresets.json,
+that allow users to specify common configure options and share them with others. CMake also supports
+files included with the include field.
+
+CMakePresets.json and CMakeUserPresets.json live in the project's root directory. They
+both have exactly the same format, and both are optional (though at least one must be
+present if --preset is specified). CMakePresets.json is meant to specify project-wide build
+details, while CMakeUserPresets.json is meant for developers to specify their own local build details.
+
+See CMake documentation for details: https://cmake.org/cmake/help/latest/manual/cmake-presets.7.html
+
+HDF-provided CMakePresets.json
+-------------------------------
+The CMakePresets.json provided by HDF requires CMake version 3.25, which supports package
+and workflow presets, and ninja build system. The top-level configuration group is intended to be
+a standard set of options to produce a package of shared and staic libraries and tools. Other configurations
+used for inheriting settings are in the included json file in "config/cmake-presets/hidden-presets.json".
+
+Available configurations presets can be displayed by executing:
+    cmake -S <path-to-source> --list-presets
+
+Using individual command presets (where <compiler-type> is  GNUC or MSVC or Clang):
+    change directory to the hdf4 source folder
+    cmake --presets=ci-StdShar-<compiler-type>
+    cmake --build --presets=ci-StdShar-<compiler-type>
+    ctest --presets=ci-StdShar-<compiler-type>
+    cpack --presets=ci-StdShar-<compiler-type>
+
+
+Using the workflow preset to configure, build, test and package the standard configuration is:
+    change directory to the hdf5 source folder
+    execute "cmake --workflow --presets=ci-StdShar-<compiler-type> --fresh"
+          where <compiler-type> is  GNUC or MSVC or Clang
+
+Creating your own configurations
+--------------------------------
+The quickest way is to copy CMakePresets.json to CMakeUserPresets.json and
+edit CMakeUserPresets.json configuration names from ci-* to my-*. Change the
+"configurePresets" section "inherits" field only for those that you have alternate
+options. Then change the "configurePreset" field entries in the "buildPresets",
+"testPresets", "packagePresets" sections to match your my-StdShar-<compiler-type>.
+And finally the names settings in the "workflowPresets" steps will also need the ci-* to my-* change.
+
+For instance, to change the support files to use a local directory, edit CMakeUserPresets.json:
+......
+    {
+      "name": "my-base-tgz",
+      "hidden": true,
+      "inherits": "ci-base",
+      "cacheVariables": {
+        "HDF4_ALLOW_EXTERNAL_SUPPORT": {"type": "STRING", "value": "TGZ"},
+        "TGZPATH": {"type": "STRING", "value": "${sourceParentDir}/temp"}
+      }
+    },
+    {
+      "name": "my-StdCompression",
+      "hidden": true,
+      "inherits": "my-base-tgz",
+      "cacheVariables": {
+......
+   {
+      "name": "my-StdShar",
+      "hidden": true,
+      "inherits": "my-StdCompression",
+      "cacheVariables": {
+......
+    {
+      "name": "my-StdShar-GNUC",
+      "description": "GNUC Standard Config for x64 (Release)",
+      "inherits": [
+        "ci-x64-Release-GNUC",
+        "ci-Java",
+        "my-StdShar",
+        "my-StdExamples"
+      ]
+    }
+......
+
+
+Then you can change or add options for your specific case.
+
 
 ========================================================================
 For further assistance, send email to help@hdfgroup.org

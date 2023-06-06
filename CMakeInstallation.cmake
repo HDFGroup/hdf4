@@ -137,7 +137,7 @@ install (
 option (HDF4_PACK_EXAMPLES  "Package the HDF4 Library Examples Compressed File" OFF)
 if (HDF4_PACK_EXAMPLES)
   configure_file (
-      ${HDF_RESOURCES_DIR}/HDF4_Examples.cmake.in
+      ${HDF_RESOURCES_DIR}/examples/HDF4_Examples.cmake.in
       ${HDF4_BINARY_DIR}/HDF4_Examples.cmake @ONLY
   )
   install (
@@ -145,17 +145,54 @@ if (HDF4_PACK_EXAMPLES)
       DESTINATION ${HDF4_INSTALL_DATA_DIR}
       COMPONENT hdfdocuments
   )
-  if (EXISTS "${HDF4_EXAMPLES_COMPRESSED_DIR}/${HDF4_EXAMPLES_COMPRESSED}")
+
+  option (EXAMPLES_USE_RELEASE_NAME "Use the released examples artifact name" OFF)
+  option (EXAMPLES_DOWNLOAD "Download to use released examples files" OFF)
+  if (EXAMPLES_DOWNLOAD)
+    if (NOT EXAMPLES_USE_LOCALCONTENT)
+      set (EXAMPLES_URL ${EXAMPLES_TGZ_ORIGPATH}/${EXAMPLES_TGZ_ORIGNAME})
+    else ()
+      set (EXAMPLES_URL ${TGZPATH}/${EXAMPLES_TGZ_ORIGNAME})
+    endif ()
+    message (VERBOSE "Examples file is ${EXAMPLES_URL}")
+    file (DOWNLOAD ${EXAMPLES_URL} ${HDF4_BINARY_DIR}/${HDF4_EXAMPLES_COMPRESSED})
+    if (EXISTS "${HDF4_BINARY_DIR}/${HDF4_EXAMPLES_COMPRESSED}")
+      execute_process(
+          COMMAND ${CMAKE_COMMAND} -E tar xzf ${HDF4_EXAMPLES_COMPRESSED}
+          WORKING_DIRECTORY ${HDF4_BINARY_DIR}
+          COMMAND_ECHO STDOUT
+      )
+    endif ()
+    set (EXAMPLES_USE_RELEASE_NAME ON CACHE BOOL "" FORCE)
+  else ()
+    if (EXISTS "${HDF4_EXAMPLES_COMPRESSED_DIR}/${HDF4_EXAMPLES_COMPRESSED}")
+      execute_process(
+          COMMAND ${CMAKE_COMMAND} -E tar xzf ${HDF4_EXAMPLES_COMPRESSED_DIR}/${HDF4_EXAMPLES_COMPRESSED}
+          WORKING_DIRECTORY ${HDF4_BINARY_DIR}
+          COMMAND_ECHO STDOUT
+      )
+    endif ()
+  endif ()
+  if (EXAMPLES_USE_RELEASE_NAME)
+    get_filename_component (EX_LAST_EXT ${HDF4_EXAMPLES_COMPRESSED} LAST_EXT)
+    if (${EX_LAST_EXT} STREQUAL ".zip")
+      get_filename_component (EX_DIR_NAME ${HDF4_EXAMPLES_COMPRESSED} NAME_WLE)
+    else ()
+      get_filename_component (EX_DIR_NAME ${HDF4_EXAMPLES_COMPRESSED} NAME_WLE)
+      get_filename_component (EX_DIR_NAME ${EX_DIR_NAME} NAME_WLE)
+    endif ()
     execute_process(
-        COMMAND ${CMAKE_COMMAND} -E tar xzf ${HDF4_EXAMPLES_COMPRESSED_DIR}/${HDF4_EXAMPLES_COMPRESSED}
-    )
-    install (
-      DIRECTORY ${HDF4_BINARY_DIR}/HDF4Examples
-      DESTINATION ${HDF4_INSTALL_DATA_DIR}
-      USE_SOURCE_PERMISSIONS
-      COMPONENT hdfdocuments
+        COMMAND ${CMAKE_COMMAND} -E rename ${EX_DIR_NAME} HDF4Examples
+        WORKING_DIRECTORY ${HDF4_BINARY_DIR}
+        COMMAND_ECHO STDOUT
     )
   endif ()
+  install (
+    DIRECTORY ${HDF4_BINARY_DIR}/HDF4Examples
+    DESTINATION ${HDF4_INSTALL_DATA_DIR}
+    USE_SOURCE_PERMISSIONS
+    COMPONENT hdfdocuments
+  )
   install (
       FILES
           ${HDF4_SOURCE_DIR}/release_notes/USING_CMake_Examples.txt
@@ -170,7 +207,7 @@ if (HDF4_PACK_EXAMPLES)
   )
   install (
       FILES
-          ${HDF_RESOURCES_DIR}/HDF4_Examples_options.cmake
+          ${HDF_RESOURCES_DIR}/examples/HDF4_Examples_options.cmake
       DESTINATION ${HDF4_INSTALL_DATA_DIR}
       COMPONENT hdfdocuments
   )

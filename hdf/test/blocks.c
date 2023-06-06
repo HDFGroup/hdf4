@@ -33,7 +33,7 @@ test_hblocks(void)
     intn   errors = 0;
 
     for (i = 0; i < BUFSIZE; i++)
-        outbuf[i] = (char)(i % 256);
+        outbuf[i] = (uint8)(i % 256);
 
     MESSAGE(5, printf("Creating a file %s\n", TESTFILE_NAME););
     fid = Hopen(TESTFILE_NAME, DFACC_CREATE, 0);
