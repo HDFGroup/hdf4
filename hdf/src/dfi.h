@@ -43,6 +43,7 @@
 /*                      Machine dependencies                                */
 /*--------------------------------------------------------------------------*/
 
+#ifdef APOLLO
 #include <sys/file.h> /* for unbuffered i/o stuff */
 #define int8                    char
 #define uint8                   unsigned char
