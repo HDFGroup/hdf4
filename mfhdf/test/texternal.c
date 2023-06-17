@@ -873,8 +873,8 @@ test_HDFFR_1609(void)
     int32 start = 0, stride = 1, edge;
     int32 dimsize[RANK];
     char  dir_name[MAX_PATH_LEN]; /* directory from srcdir */
-    char *temp_dir          = NULL; /* temp dir to create the external file in */
-    int   command_ret = 0; /* retvalue from system commands */
+    char *temp_dir    = NULL;     /* temp dir to create the external file in */
+    int   command_ret = 0;        /* retvalue from system commands */
     intn  status      = 0;
     intn  num_errs    = 0; /* number of errors in compression test so far */
 
