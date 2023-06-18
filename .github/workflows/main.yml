@@ -317,7 +317,7 @@ jobs:
           sh ./autogen.sh
           mkdir "${{ runner.workspace }}/build"
           cd "${{ runner.workspace }}/build"
-          ${{ matrix.flags }} $GITHUB_WORKSPACE/configure --${{ matrix.build_mode.autotools }} --${{ matrix.xdr }}-hdf4-xdr --${{ matrix.netcdf.enabled }}-netcdf --${{ matrix.xdr }}-fortran --${{ matrix.java }}-java --${{ matrix.shared }}-shared
+          ${{ matrix.flags }} $GITHUB_WORKSPACE/configure --${{ matrix.build_mode.autotools }} --${{ matrix.xdr }}-hdf4-xdr --${{ matrix.netcdf.enabled }}-netcdf --${{ matrix.fortran }}-fortran --${{ matrix.java }}-java --${{ matrix.shared }}-shared
           echo
           echo "*** h4config.h ***"
           echo
