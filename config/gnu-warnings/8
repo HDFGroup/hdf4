@@ -1,3 +1,5 @@
 -Wattribute-alias
 -Wcast-align=strict
+-Wcast-function-type
+-Wmaybe-uninitialized
 -Wshift-overflow=2
