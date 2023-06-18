@@ -725,7 +725,8 @@ test_change_extdir(void)
     if (!strcmp(dir_name, "./")) {
 
         /* Facilitate the removal of the temporary directory later */
-        temp_dir = (char *)malloc(strlen(TMP_DIR) + 1);
+        temp_dir = (char *)calloc(strlen(TMP_DIR)+1, sizeof(char));
+        CHECK_ALLOC(temp_dir, "temp_dir", "test_change_extdir");
         strcpy(temp_dir, TMP_DIR);
 
 #if defined H4_HAVE_WIN32_API
@@ -843,7 +844,6 @@ test_change_extdir(void)
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
-
 } /* test_change_extdir */
 
 /********************************************************************
@@ -851,7 +851,7 @@ test_change_extdir(void)
                              and without specifying external dir
    Description:
     The main contents include:
-    - HXsetdir to a location other that the directory where the external file
+    - HXsetdir to a location other than the directory where the external file
       is going to be created
     - Create a new hdf file and a new dataset
     - Set create external directory to the source test directory
@@ -886,7 +886,8 @@ test_HDFFR_1609(void)
     if (!strcmp(dir_name, "./")) {
 
         /* Facilitate the removal of the temporary directory later */
-        temp_dir = (char *)malloc(strlen(TMP_DIR) + 1);
+        temp_dir = (char *)calloc(strlen(TMP_DIR)+1, sizeof(char));
+        CHECK_ALLOC(temp_dir, "temp_dir", "test_HDFFR_1609");
         strcpy(temp_dir, TMP_DIR);
 
 #if defined H4_HAVE_WIN32_API
@@ -900,7 +901,7 @@ test_HDFFR_1609(void)
 
     /* Unset the target directory and read the variable */
     status = HXsetdir(NULL);
-    CHECK(status, FAIL, "HXsetdir NULL");
+    CHECK(status, FAIL, "HXsetdir");
 
     /* Create the main file */
     sd_id = SDstart(MAIN_FILE, DFACC_CREATE);
@@ -939,7 +940,6 @@ test_HDFFR_1609(void)
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
-
 } /* test_HDFFR_1609 */
 
 /* Test driver for testing external file functions */
