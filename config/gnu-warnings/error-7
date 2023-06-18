@@ -1,1 +1,6 @@
--Werror=restrict
+#
+# HDF code should not trigger the following warnings under any
+# circumstances, so ask the compiler to treat them as errors:
+#
+# Don't use this inane scheme. It should be removed from a
+# library this messy.
