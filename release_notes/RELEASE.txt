@@ -53,8 +53,14 @@ Support for new platforms and compilers
 =======================================
 
 
-Bugs fixed since HDF 4.2.15
+Bugs fixed since HDF 4.2.16
 ===========================
+    - Build fortran with -fallow-argument-mismatch w/ gcc 10+
+
+      The gfortran configuration checks checked the version via a variable that
+      was never set, preventing -fallow-argument-mismatch from being set w/
+      gcc 10+, which would prevent building the fortran interface.
+
     - JNI SDSreaddata functions for float and double used mismatched buffer macros
 
       The SDreaddata_double and SDreaddata_float function created data buffers with
