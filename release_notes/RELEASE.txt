@@ -61,6 +61,8 @@ Bugs fixed since HDF 4.2.16
       was never set, preventing -fallow-argument-mismatch from being set w/
       gcc 10+, which would prevent building the fortran interface.
 
+      Fixes HDFFR-1582
+
     - JNI SDSreaddata functions for float and double used mismatched buffer macros
 
       The SDreaddata_double and SDreaddata_float function created data buffers with
