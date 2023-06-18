@@ -1,6 +1,3 @@
-
-
-
 # general clang warnings flags
 -Wall
 -Warray-bounds
