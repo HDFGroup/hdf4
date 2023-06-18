@@ -725,7 +725,7 @@ test_change_extdir(void)
     if (!strcmp(dir_name, "./")) {
 
         /* Facilitate the removal of the temporary directory later */
-        temp_dir = (char *)calloc(strlen(TMP_DIR)+1, sizeof(char));
+        temp_dir = (char *)calloc(strlen(TMP_DIR) + 1, sizeof(char));
         CHECK_ALLOC(temp_dir, "temp_dir", "test_change_extdir");
         strcpy(temp_dir, TMP_DIR);
 
@@ -886,7 +886,7 @@ test_HDFFR_1609(void)
     if (!strcmp(dir_name, "./")) {
 
         /* Facilitate the removal of the temporary directory later */
-        temp_dir = (char *)calloc(strlen(TMP_DIR)+1, sizeof(char));
+        temp_dir = (char *)calloc(strlen(TMP_DIR) + 1, sizeof(char));
         CHECK_ALLOC(temp_dir, "temp_dir", "test_HDFFR_1609");
         strcpy(temp_dir, TMP_DIR);
 
