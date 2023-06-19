@@ -73,26 +73,26 @@ typedef struct {
 
 /* alloc_info is a utility function that allocates hdf_datainfo_t's members*/
 static int
-alloc_info(t_hdf_datainfo_t *info, uintn info_count, int32 n_dims)
+alloc_info(t_hdf_datainfo_t *info, unsigned info_count, int32 n_dims)
 {
     memset(info, 0, sizeof(*info));
 
-    /* info_count can be zero! */
-    if (info_count > 0) {
+    /* info_count can be zero, which is a special "don't care"
+     * case. In this case, we just set the arrays to NULL
+     */
+    if (0 == info_count) {
+        info->offsets = NULL;
+        info->lengths = NULL;
+    }
+    else {
         info->offsets = (int32 *)malloc(info_count * sizeof(int32));
         if (info->offsets == NULL)
             return -1;
-    }
-    else
-        info->offsets = NULL;
 
-    if (info_count > 0) {
         info->lengths = (int32 *)malloc(info_count * sizeof(int32));
         if (info->lengths == NULL)
             return -1;
     }
-    else
-        info->lengths = NULL;
 
     info->dimsizes = (int32 *)malloc(n_dims * sizeof(int32));
     if (info->dimsizes == NULL)
