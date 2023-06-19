@@ -46,12 +46,6 @@
 #include <netinet/in.h> /* for htonl() */
 #endif
 
-/* 32-bit integer on the host architecture */
-typedef int32_t netlong;
-
-/* Stream position type */
-typedef u_int ncpos_t;
-
 typedef struct {
     int            fd;   /* the file descriptor */
     int            mode; /* file access mode, O_RDONLY, etc */
@@ -216,9 +210,9 @@ static bool_t   xdrposix_getlong(XDR *xdrs, long *lp);
 static bool_t   xdrposix_putlong(XDR *xdrs, const long *lp);
 static bool_t   xdrposix_getbytes(XDR *xdrs, char *addr, u_int len);
 static bool_t   xdrposix_putbytes(XDR *xdrs, const char *addr, u_int len);
-static ncpos_t  xdrposix_getpos(XDR *xdrs);
-static bool_t   xdrposix_setpos(XDR *xdrs, ncpos_t pos);
-static netlong *xdrposix_inline(XDR *xdrs, u_int len);
+static u_int    xdrposix_getpos(XDR *xdrs);
+static bool_t   xdrposix_setpos(XDR *xdrs, u_int pos);
+static int32_t *xdrposix_inline(XDR *xdrs, u_int len);
 static void     xdrposix_destroy(XDR *xdrs);
 #if (defined __sun && defined _LP64)
 static bool_t xdrposix_getint(XDR *xdrs, int *lp);
@@ -363,7 +357,7 @@ xdrposix_putlong(XDR *xdrs, const long *lp)
 
     unsigned char *up = (unsigned char *)lp;
 #ifndef H4_WORDS_BIGENDIAN
-    netlong mycopy = htonl(*lp);
+    int32_t mycopy = htonl(*lp);
     up             = (unsigned char *)&mycopy;
 #endif
 #if (defined AIX5L64 || defined __powerpc64__)
@@ -391,7 +385,7 @@ xdrposix_putbytes(XDR *xdrs, const char *addr, u_int len)
     return TRUE;
 }
 
-static ncpos_t
+static u_int
 xdrposix_getpos(XDR *xdrs)
 {
     biobuf *biop = (biobuf *)xdrs->x_private;
@@ -399,7 +393,7 @@ xdrposix_getpos(XDR *xdrs)
 }
 
 static bool_t
-xdrposix_setpos(XDR *xdrs, ncpos_t pos)
+xdrposix_setpos(XDR *xdrs, u_int pos)
 {
     biobuf *biop = (biobuf *)xdrs->x_private;
     if (biop != NULL) {
@@ -429,7 +423,7 @@ xdrposix_setpos(XDR *xdrs, ncpos_t pos)
         return FALSE;
 }
 
-static netlong *
+static int32_t *
 xdrposix_inline(XDR *xdrs, u_int len)
 {
     (void)xdrs;
@@ -438,7 +432,7 @@ xdrposix_inline(XDR *xdrs, u_int len)
      * Must do some work to implement this: must insure
      * enough data in the underlying posix buffer,
      * that the buffer is aligned so that we can indirect through a
-     * netlong *, and stuff this pointer in xdrs->x_buf.
+     * int32_t *, and stuff this pointer in xdrs->x_buf.
      */
     return NULL;
 }
@@ -462,7 +456,7 @@ xdrposix_putint(XDR *xdrs, const int *lp)
 {
     unsigned char *up = (unsigned char *)lp;
 #ifndef H4_WORDS_BIGENDIAN
-    netlong mycopy = htonl(*lp);
+    int32_t mycopy = htonl(*lp);
     up             = (unsigned char *)&mycopy;
 #endif
     if (biowrite((biobuf *)xdrs->x_private, up, 4) < 4)
