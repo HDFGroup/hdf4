@@ -315,26 +315,9 @@ XDRLIBAPI bool_t      xdr_netobj(XDR *, struct netobj *);
 #ifdef __cplusplus
 extern "C" {
 #endif
-/* XDR using memory buffers */
-XDRLIBAPI void xdrmem_create(XDR *, char *, u_int, enum xdr_op);
 
 /* XDR using stdio library */
 XDRLIBAPI void xdrstdio_create(XDR *, FILE *, enum xdr_op);
-
-/* XDR pseudo records for tcp */
-XDRLIBAPI void xdrrec_create(XDR *, u_int, u_int, void *, int (*)(void *, void *, int),
-                             int (*)(void *, void *, int));
-
-/* make end of xdr record */
-XDRLIBAPI bool_t xdrrec_endofrecord(XDR *, int);
-
-/* move to beginning of next record */
-XDRLIBAPI bool_t xdrrec_skiprecord(XDR *);
-
-/* true if no more input */
-XDRLIBAPI bool_t xdrrec_eof(XDR *);
-
-XDRLIBAPI u_int xdrrec_readbytes(XDR *, char *, u_int);
 
 #ifdef __cplusplus
 }
