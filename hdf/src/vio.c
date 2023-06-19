@@ -550,6 +550,8 @@ vunpackvs(VDATA *vs,    /* IN/OUT: */
                 UINT16DECODE(bb, vs->wlist.order[i]);
 
             /* retrieve the field names (and each field name's length)  */
+            if (vs->wlist.n < 0)
+                HGOTO_ERROR(DFE_NOSPACE, FAIL);
             if (NULL == (vs->wlist.name = malloc(sizeof(char *) * (size_t)vs->wlist.n)))
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 

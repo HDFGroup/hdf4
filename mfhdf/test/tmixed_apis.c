@@ -413,7 +413,7 @@ test_vdatavgroups()
     VERIFY(num_vdatas, NUM_VDS, "VSgetvdatas");
 
     /* Allocate sufficient memory to hold the list of user-created vd refs */
-    refarray = (uint16 *)malloc(sizeof(uint16) * num_vdatas);
+    refarray = (uint16 *)malloc(sizeof(uint16) * (unsigned)num_vdatas);
     CHECK_ALLOC(refarray, "refarray", "test_vdatavgroups");
 
     /* Now, get the user-created vdata refs */
