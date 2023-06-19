@@ -517,9 +517,10 @@ HLconvert(int32 aid, int32 block_length, int32 number_blocks)
 
 done:
     if (ret_value == FAIL) { /* Error condition cleanup */
-        free(access_rec->special_info);
-        if (access_rec != NULL)
+        if (access_rec != NULL) {
+            free(access_rec->special_info);
             HIrelease_accrec_node(access_rec);
+        }
     }
 
     return ret_value;

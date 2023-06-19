@@ -893,6 +893,9 @@ select_dim(struct box *ptr)
     uint8 low[3], high[3];
     uint8 max;
 
+    if ((NULL == ptr) || (NULL == ptr->pts))
+        return -1;
+
     for (j = RED; j <= BLUE; j++) {
         low[j]  = distinct_pt[ptr->pts[0]].c[j];
         high[j] = distinct_pt[ptr->pts[0]].c[j];
@@ -937,15 +940,17 @@ find_med(struct box *ptr, int dim)
     int    *rank;
     float32 median;
 
+    /* There's really no way to recover from this, given the API, but
+     * at least we won't segfault...
+     */
+    if ((NULL == ptr) || (NULL == ptr->pts))
+        return -9999999.99;
+
     rank = (int *)malloc((unsigned)ptr->nmbr_distinct * sizeof(int));
     for (i = 0; i < ptr->nmbr_distinct; i++)
         rank[i] = ptr->pts[i];
 
     sort(0, ptr->nmbr_distinct - 1, dim, rank);
-    /*
-       for (i=0; i<ptr->nmbr_distinct; i++)
-       printf("find_med: sorted list is %d\n",distinct_pt[rank[i]].c[dim]);
-     */
 
     count = 0;
     prev = i = 0;
