@@ -514,8 +514,16 @@ vunpackvs(VDATA *vs,    /* IN/OUT: */
         INT16DECODE(bb, int16var);
         vs->wlist.n = (intn)int16var;
 
-        if (vs->wlist.n == 0) { /* Special case for Vdata with 0 fields defined */
-            /* Initialize buffer to NULL & carry over to other arrays */
+        if (vs->wlist.n < 0) {
+            /* Negative numbers are an error and would cause enormous buffers
+             * to be allocated.
+             */
+            HGOTO_ERROR(DFE_NOSPACE, FAIL);
+        }
+        else if (vs->wlist.n == 0) {
+            /* Special case for Vdata with 0 fields defined
+             * Initialize buffer to NULL & carry over to other arrays
+             */
             vs->wlist.bptr  = NULL;
             vs->wlist.type  = NULL;
             vs->wlist.off   = NULL;
@@ -525,8 +533,9 @@ vunpackvs(VDATA *vs,    /* IN/OUT: */
 
             /* Initialize the array of pointers to field names to NULL also */
             vs->wlist.name = NULL;
-        }      /* end if */
-        else { /* Allocate buffer to hold all the int16/uint16 arrays */
+        }
+        else {
+            /* Allocate buffer to hold all the int16/uint16 arrays */
             if (NULL == (vs->wlist.bptr = malloc(sizeof(uint16) * (size_t)(vs->wlist.n * 5))))
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
