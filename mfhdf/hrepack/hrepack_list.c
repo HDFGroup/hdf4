@@ -324,7 +324,6 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
     int32  ref_vg;
     char  *vg_name  = NULL;
     char  *vg_class = NULL;
-    uint16 name_len;
     int32  i;
 
     /*-------------------------------------------------------------------------
@@ -507,23 +506,24 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
 
     } /* if  nlones */
 
-    free(vg_class);
-    free(vg_name);
     /*-------------------------------------------------------------------------
      * terminate access to the V interface
      *-------------------------------------------------------------------------
      */
 
     if (Vend(infile_id) == FAIL) {
-        printf("Error: Could not end group interface in <%s>\n", vg_name);
+        printf("Error: Could not end infile group interface\n");
         return FAIL;
     }
     if (options->trip == 1) {
         if (Vend(outfile_id) == FAIL) {
-            printf("Error: Could not end group interface in <%s>\n", vg_name);
+            printf("Error: Could not end outfile group interface\n");
             return FAIL;
         }
     }
+
+    free(vg_class);
+    free(vg_name);
 
     return SUCCEED;
 

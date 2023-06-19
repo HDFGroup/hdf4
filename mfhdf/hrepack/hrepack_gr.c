@@ -43,18 +43,22 @@ copy_gr(int32 infile_id, int32 outfile_id, int32 gr_in, int32 gr_out, int32 tag,
         char      *path_name, /* absolute path for input group name */
         options_t *options, list_table_t *list_tbl)
 {
-    int32 ri_id,        /* raster image identifier */
-        ri_out,         /* raster image identifier */
-        ri_index,       /* index of a image */
-        dimsizes[2],    /* dimensions of an image */
-        n_comps,        /* number of components an image contains */
-        interlace_mode, /* interlace mode of an image */
-        dtype,          /* number type of an image */
-        n_attrs,        /* number of attributes belong to an image */
-        gr_ref,         /* reference number of the output data set */
-        pal_id,         /* palette identifier */
-        pal_out,        /* palette identifier */
-        pal_ref, r_num_entries, r_data_type, r_ncomp, r_interlace_mode;
+    int32         ri_id;          /* raster image identifier */
+    int32         ri_out = FAIL;  /* raster image identifier */
+    int32         ri_index;       /* index of a image */
+    int32         dimsizes[2];    /* dimensions of an image */
+    int32         n_comps;        /* number of components an image contains */
+    int32         interlace_mode; /* interlace mode of an image */
+    int32         dtype;          /* number type of an image */
+    int32         n_attrs;        /* number of attributes belong to an image */
+    int32         gr_ref;         /* reference number of the output data set */
+    int32         pal_id;         /* palette identifier */
+    int32         pal_out;        /* palette identifier */
+    int32         pal_ref;
+    int32         r_num_entries;
+    int32         r_data_type;
+    int32         r_ncomp;
+    int32         r_interlace_mode;
     char          gr_name[H4_MAX_GR_NAME];
     char         *path = NULL;
     int           info;           /* temporary int compression information */
@@ -546,10 +550,18 @@ copy_gr(int32 infile_id, int32 outfile_id, int32 gr_in, int32 gr_out, int32 tag,
 out:
 
     /* terminate access to the GRs */
-    if (GRendaccess(ri_id) == FAIL)
-        printf("Failed to close SDS <%s>\n", path);
-    if (GRendaccess(ri_out) == FAIL)
-        printf("Failed to close SDS <%s>\n", path);
+    if (GRendaccess(ri_id) == FAIL) {
+        if (path)
+            printf("Failed to close SDS <%s>\n", path);
+        else
+            printf("Failed to close SDS\n");
+    }
+    if (GRendaccess(ri_out) == FAIL) {
+        if (path)
+            printf("Failed to close SDS <%s>\n", path);
+        else
+            printf("Failed to close SDS\n");
+    }
 
     free(path);
     free(buf);
