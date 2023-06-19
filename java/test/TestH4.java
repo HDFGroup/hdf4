@@ -103,7 +103,7 @@ public class TestH4 {
     }
 
     /**
-     * Test method for {@link hdf.hdflib.HDFLibrary#Hgetlibversion(int[], Strin[])}.
+     * Test method for {@link hdf.hdflib.HDFLibrary#Hgetlibversion(int[], String[])}.
      */
     @Test
     public void testHgetlibversion()
