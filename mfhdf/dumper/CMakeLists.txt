@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.12)
-project (HDF4_MFHDF_DUMPER)
+project (HDF4_MFHDF_DUMPER C)
 
 set (hdp_SRCS
     ${HDF4_MFHDF_DUMPER_SOURCE_DIR}/hdp.c
