@@ -91,10 +91,8 @@ HAinit_group(group_t grp,      /* IN: Group to initialize */
     if ((grp <= BADGROUP || grp >= MAXGROUP) && hash_size > 0)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-#ifdef ATOMS_CACHE_INLINE
     /* Assertion necessary for faster pointer swapping */
     assert(sizeof(hdf_pint_t) == sizeof(void *));
-#endif /* ATOMS_CACHE_INLINE */
 
 #ifdef HASH_SIZE_POWER_2
     if (hash_size & (hash_size - 1))
@@ -163,17 +161,13 @@ HAdestroy_group(group_t grp /* IN: Group to destroy */
 
     /* Decrement the number of users of the atomic group */
     if ((--(grp_ptr->count)) == 0) {
-#ifdef ATOMS_ARE_CACHED
-        {
-            uintn i;
+        uintn i;
 
-            for (i = 0; i < ATOM_CACHE_SIZE; i++)
-                if (ATOM_TO_GROUP(atom_id_cache[i]) == grp) {
-                    atom_id_cache[i]  = (-1);
-                    atom_obj_cache[i] = NULL;
-                } /* end if */
-        }         /* end block */
-#endif            /* ATOMS_ARE_CACHED */
+        for (i = 0; i < ATOM_CACHE_SIZE; i++)
+            if (ATOM_TO_GROUP(atom_id_cache[i]) == grp) {
+                atom_id_cache[i]  = (-1);
+                atom_obj_cache[i] = NULL;
+            } /* end if */
         free(grp_ptr->atom_list);
         grp_ptr->atom_list = NULL;
     } /* end if */
@@ -253,45 +247,14 @@ done:
     Returns object ptr if successful and NULL otherwise
 
 *******************************************************************************/
-#ifdef ATOMS_CACHE_INLINE
 void *
 HAPatom_object(atom_t atm /* IN: Atom to retrieve object for */
 )
-#else  /* ATOMS_CACHE_INLINE */
-void *
-HAatom_object(atom_t atm /* IN: Atom to retrieve object for */
-)
-#endif /* ATOMS_CACHE_INLINE */
 {
-#ifndef ATOMS_CACHE_INLINE
-#ifdef ATOMS_ARE_CACHED
-    uintn i;                       /* local counter */
-#endif                             /* ATOMS_ARE_CACHED */
-#endif                             /* ATOMS_CACHE_INLINE */
     atom_info_t *atm_ptr   = NULL; /* ptr to the new atom */
     void        *ret_value = NULL;
 
     HEclear();
-
-#ifndef ATOMS_CACHE_INLINE
-#ifdef ATOMS_ARE_CACHED
-    /* Look for the atom in the cache first */
-    for (i = 0; i < ATOM_CACHE_SIZE; i++)
-        if (atom_id_cache[i] == atm) {
-            ret_value = atom_obj_cache[i];
-            if (i > 0) { /* Implement a simple "move forward" caching scheme */
-                atom_t t_atom = atom_id_cache[i - 1];
-                void  *t_obj  = atom_obj_cache[i - 1];
-
-                atom_id_cache[i - 1]  = atom_id_cache[i];
-                atom_obj_cache[i - 1] = atom_obj_cache[i];
-                atom_id_cache[i]      = t_atom;
-                atom_obj_cache[i]     = t_obj;
-            } /* end if */
-            HGOTO_DONE(ret_value);
-        } /* end if */
-#endif    /* ATOMS_ARE_CACHED */
-#endif    /* ATOMS_CACHE_INLINE */
 
     /* General lookup of the atom */
     if ((atm_ptr = HAIfind_atom(atm)) == NULL)
@@ -351,10 +314,8 @@ HAremove_atom(atom_t atm /* IN: Atom to remove */
         *last_atm;                /* ptr to the last atom */
     group_t grp;                  /* atom's atomic group */
     uintn   hash_loc;             /* atom's hash table location */
-#ifdef ATOMS_ARE_CACHED
-    uintn i; /* local counting variable */
-#endif       /* ATOMS_ARE_CACHED */
-    void *ret_value = NULL;
+    uintn   i;                    /* local counting variable */
+    void   *ret_value = NULL;
 
     HEclear();
     grp = ATOM_TO_GROUP(atm);
@@ -390,15 +351,13 @@ HAremove_atom(atom_t atm /* IN: Atom to remove */
     else /* couldn't find the atom in the proper place */
         HGOTO_ERROR(DFE_INTERNAL, NULL);
 
-#ifdef ATOMS_ARE_CACHED
     /* Delete object from cache */
     for (i = 0; i < ATOM_CACHE_SIZE; i++)
         if (atom_id_cache[i] == atm) {
             atom_id_cache[i]  = (-1);
             atom_obj_cache[i] = NULL;
             break; /* we assume there is only one instance in the cache */
-        }          /* end if */
-#endif             /* ATOMS_ARE_CACHED */
+        }
 
     /* Decrement the number of atoms in the group */
     (grp_ptr->atoms)--;
@@ -496,13 +455,11 @@ HAIfind_atom(atom_t atm /* IN: Atom to retrieve atom for */
         atm_ptr = atm_ptr->next;
     } /* end while */
 
-#ifdef ATOMS_ARE_CACHED
     if (atm_ptr) {
         /* if found, add it to the end of the cached list */
         atom_id_cache[ATOM_CACHE_SIZE - 1]  = atm;
         atom_obj_cache[ATOM_CACHE_SIZE - 1] = atm_ptr->obj_ptr;
     }
-#endif /* ATOMS_ARE_CACHED */
 
     ret_value = atm_ptr;
 

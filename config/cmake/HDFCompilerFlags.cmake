@@ -137,14 +137,12 @@ else ()
     # Add general CFlags for GCC versions 4.8 and above
     if (CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL 4.8)
       ADD_H4_FLAGS (HDF4_CMAKE_C_FLAGS "${HDF4_SOURCE_DIR}/config/gnu-warnings/general")
-      ADD_H4_FLAGS (H4_CFLAGS "${HDF4_SOURCE_DIR}/config/gnu-warnings/error-general")
     endif ()
     # gcc automatically inlines based on the optimization level
     # this is just a failsafe
     list (APPEND H4_CFLAGS "-finline-functions")
   elseif (CMAKE_C_COMPILER_ID MATCHES "IntelLLVM" OR CMAKE_C_COMPILER_ID MATCHES "[Cc]lang")
     ADD_H4_FLAGS (HDF4_CMAKE_C_FLAGS "${HDF4_SOURCE_DIR}/config/clang-warnings/general")
-    ADD_H4_FLAGS (H4_CFLAGS "${HDF4_SOURCE_DIR}/config/clang-warnings/error-general")
   elseif (CMAKE_C_COMPILER_ID STREQUAL "PGI")
     list (APPEND HDF4_CMAKE_C_FLAGS "-Minform=inform")
   endif ()
@@ -206,7 +204,6 @@ if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
   # Append more extra warning flags that only gcc 5.x+ knows about
   if (NOT CMAKE_C_COMPILER_VERSION VERSION_LESS 5.0)
     ADD_H4_FLAGS (H4_CFLAGS "${HDF4_SOURCE_DIR}/config/gnu-warnings/5")
-    ADD_H4_FLAGS (H4_CFLAGS "${HDF4_SOURCE_DIR}/config/gnu-warnings/error-5")
   endif ()
 
   # Append more extra warning flags that only gcc 6.x+ knows about
@@ -217,7 +214,6 @@ if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
   # Append more extra warning flags that only gcc 7.x+ knows about
   if (NOT CMAKE_C_COMPILER_VERSION VERSION_LESS 7.0)
     ADD_H4_FLAGS (H4_CFLAGS "${HDF4_SOURCE_DIR}/config/gnu-warnings/7")
-    ADD_H4_FLAGS (H4_CFLAGS "${HDF4_SOURCE_DIR}/config/gnu-warnings/error-7")
     if (HDF4_ENABLE_DEV_WARNINGS)
       ADD_H4_FLAGS (H4_CFLAGS "${HDF4_SOURCE_DIR}/config/gnu-warnings/developer-7")
     #else ()
@@ -228,7 +224,6 @@ if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
   # Append more extra warning flags that only gcc 8.x+ knows about
   if (NOT CMAKE_C_COMPILER_VERSION VERSION_LESS 8.0)
     ADD_H4_FLAGS (H4_CFLAGS "${HDF4_SOURCE_DIR}/config/gnu-warnings/8")
-    ADD_H4_FLAGS (H4_CFLAGS "${HDF4_SOURCE_DIR}/config/gnu-warnings/error-8")
     if (HDF4_ENABLE_DEV_WARNINGS)
       ADD_H4_FLAGS (H4_CFLAGS "${HDF4_SOURCE_DIR}/config/gnu-warnings/developer-8")
     else ()

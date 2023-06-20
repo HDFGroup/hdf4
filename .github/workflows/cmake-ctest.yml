@@ -9,6 +9,9 @@ on:
         required: true
         type: string
 
+permissions:
+  contents: read
+
 # A workflow run is made up of one or more jobs that can run sequentially or
 # in parallel
 jobs:
@@ -65,7 +68,6 @@ jobs:
           mkdir "${{ runner.workspace }}/build"
           mkdir "${{ runner.workspace }}/build/hdf4"
           Copy-Item -Path ${{ runner.workspace }}/hdf4/hdfsrc/COPYING -Destination ${{ runner.workspace }}/build/hdf4/
-          Copy-Item -Path ${{ runner.workspace }}/hdf4/hdfsrc/COPYING_LBNL_HDF5 -Destination ${{ runner.workspace }}/build/hdf4/
           Copy-Item -Path ${{ runner.workspace }}/hdf4/hdfsrc/README.md -Destination ${{ runner.workspace }}/build/hdf4/
           Copy-Item -Path ${{ runner.workspace }}/hdf4/build/ci-StdShar-MSVC/* -Destination ${{ runner.workspace }}/build/hdf4/ -Include *.zip
           cd "${{ runner.workspace }}/build"
@@ -110,7 +112,7 @@ jobs:
 
       - name: List files for the space (Linux)
         run: |
-              ls ${{ github.workspace }}
+              ls -l ${{ github.workspace }}
               ls ${{ runner.workspace }}
 
       - name: Uncompress source (Linux)
@@ -128,7 +130,6 @@ jobs:
           mkdir "${{ runner.workspace }}/build"
           mkdir "${{ runner.workspace }}/build/hdf4"
           cp ${{ runner.workspace }}/hdf4/hdfsrc/COPYING ${{ runner.workspace }}/build/hdf4
-          cp ${{ runner.workspace }}/hdf4/hdfsrc/COPYING_LBNL_HDF5 ${{ runner.workspace }}/build/hdf4
           cp ${{ runner.workspace }}/hdf4/hdfsrc/README.md ${{ runner.workspace }}/build/hdf4
           cp ${{ runner.workspace }}/hdf4/build/ci-StdShar-GNUC/*.tar.gz ${{ runner.workspace }}/build/hdf4
           cd "${{ runner.workspace }}/build"
@@ -138,7 +139,7 @@ jobs:
       - name: List files in the space (Linux)
         run: |
               ls ${{ github.workspace }}
-              ls ${{ runner.workspace }}
+              ls -l ${{ runner.workspace }}
 
       # Save files created by ctest script
       - name: Save published binary (Linux)
@@ -195,7 +196,6 @@ jobs:
           mkdir "${{ runner.workspace }}/build"
           mkdir "${{ runner.workspace }}/build/hdf4"
           cp ${{ runner.workspace }}/hdf4/hdfsrc/COPYING ${{ runner.workspace }}/build/hdf4
-          cp ${{ runner.workspace }}/hdf4/hdfsrc/COPYING_LBNL_HDF5 ${{ runner.workspace }}/build/hdf4
           cp ${{ runner.workspace }}/hdf4/hdfsrc/README.md ${{ runner.workspace }}/build/hdf4
           cp ${{ runner.workspace }}/hdf4/build/ci-StdShar-Clang/*.tar.gz ${{ runner.workspace }}/build/hdf4
           cd "${{ runner.workspace }}/build"
@@ -205,7 +205,7 @@ jobs:
       - name: List files in the space (MacOS)
         run: |
               ls ${{ github.workspace }}
-              ls ${{ runner.workspace }}
+              ls -l ${{ runner.workspace }}
 
       # Save files created by ctest script
       - name: Save published binary (MacOS)
