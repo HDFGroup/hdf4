@@ -7,24 +7,6 @@
 #
 
 #
-# For now, do not promote any warnings to errors.
-#
-WARNINGS_AS_ERRORS_DFLT=no
-
-#
-# This filter rewrites -Werror= as -W, in that way demoting warnings
-# promoted to errors back to warnings, if WARNINGS_AS_ERRORS is no.
-#
-demote_errors()
-{
-    if [ ${WARNINGS_AS_ERRORS:-${WARNINGS_AS_ERRORS_DFLT}} = no ]; then
-        sed 's,-Werror=,-W,g'
-    else
-        cat
-    fi
-}
-
-#
 # Prepend `$srcdir/config/gnu-warnings/` to the filename suffix(es) given as
 # subroutine argument(s), remove comments starting with # and ending
 # at EOL, replace spans of whitespace (including newlines) with spaces,
@@ -33,7 +15,7 @@ demote_errors()
 load_gnu_arguments()
 {
     set -- $(for arg; do
-        sed 's,#.*$,,' $srcdir/config/gnu-warnings/${arg} | demote_errors
+        sed 's,#.*$,,' $srcdir/config/gnu-warnings/${arg}
     done)
     IFS=' ' echo "$*"
 }
