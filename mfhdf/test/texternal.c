@@ -721,7 +721,7 @@ test_change_extdir(void)
     CHECK(status, FAIL, "make_datafilename");
 
     /* When srcdir is not available, make up a directory to create the external
-       file to complicate the subsequent reads */
+       file to cause subsequent reads to look outside of the current directory */
     if (!strcmp(dir_name, "./")) {
 
         /* Facilitate the removal of the temporary directory later */
@@ -882,7 +882,7 @@ test_HDFFR_1609(void)
     CHECK(status, FAIL, "make_datafilename");
 
     /* When srcdir is not available, make up a directory to create the external
-       file to complicate the subsequent reads */
+       file to cause subsequent reads to look outside of the current directory */
     if (!strcmp(dir_name, "./")) {
 
         /* Facilitate the removal of the temporary directory later */
