@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.12)
-project (HDF4_MFHDF_NCGEN)
+project (HDF4_MFHDF_NCGEN C)
 
 INCLUDE_DIRECTORIES (
     ${HDF4_MFHDF_NCGEN_SOURCE_DIR}

@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.12)
-project (HDF4_MFHDF_NCDUMP)
+project (HDF4_MFHDF_NCDUMP C)
 
 if (HDF4_BUILD_XDR_LIB)
   INCLUDE_DIRECTORIES (${HDF4_MFHDF_XDR_DIR})
