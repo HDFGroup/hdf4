@@ -701,21 +701,21 @@ test_special_combos()
 static int
 test_change_extdir(void)
 {
-    int32 sd_id;
-    int32 sds_id;
-    float sds1_data[] = {0.1, 2.3, 4.5, 6.7, 8.9};
-    float sds1_out[5];
-    int32 start = 0, stride = 1, edge;
-    int32 dimsize[RANK];
-    char  dir_name[MAX_PATH_LEN]; /* directory from srcdir */
-    intn  dir_name_len;
-    char *another_path      = NULL; /* another path to test reading external file */
-    char *temp_dir          = NULL; /* temp dir to create the external file in */
-    char *created_file_path = NULL; /* path to the created external file */
-    int32 sds_index;
-    int   command_ret = 0; /* retvalue from system commands */
-    intn  status      = 0;
-    intn  num_errs    = 0; /* number of errors in compression test so far */
+    int32  sd_id;
+    int32  sds_id;
+    float  sds_data[] = {0.1f, 2.3f, 4.5f, 6.7f, 8.9f};
+    float  sds1_out[5];
+    int32  start = 0, stride = 1, edge;
+    int32  dimsize[RANK];
+    char   dir_name[MAX_PATH_LEN]; /* directory from srcdir */
+    size_t dir_name_len;
+    char  *another_path      = NULL; /* another path to test reading external file */
+    char  *temp_dir          = NULL; /* temp dir to create the external file in */
+    char  *created_file_path = NULL; /* path to the created external file */
+    int32  sds_index;
+    int    command_ret = 0; /* retvalue from system commands */
+    intn   status      = 0;
+    intn   num_errs    = 0; /* number of errors in compression test so far */
 
     status = make_sourcepath(dir_name, MAX_PATH_LEN);
     CHECK(status, FAIL, "make_datafilename");
@@ -725,7 +725,7 @@ test_change_extdir(void)
     if (!strcmp(dir_name, "./")) {
 
         /* Facilitate the removal of the temporary directory later */
-        temp_dir = (char *)calloc(strlen(TMP_DIR)+1, sizeof(char));
+        temp_dir = (char *)calloc(strlen(TMP_DIR) + 1, sizeof(char));
         CHECK_ALLOC(temp_dir, "temp_dir", "test_change_extdir");
         strcpy(temp_dir, TMP_DIR);
 
@@ -758,7 +758,7 @@ test_change_extdir(void)
     CHECK(status, FAIL, "SDsetexternalfile");
 
     /* Write to the dataset, the data will be stored in the external file EXT_FILE */
-    status = SDwritedata(sds_id, &start, &stride, &edge, sds1_data);
+    status = SDwritedata(sds_id, &start, &stride, &edge, sds_data);
     CHECK(status, FAIL, "SDwritedata");
 
     status = SDendaccess(sds_id);
@@ -868,15 +868,15 @@ test_HDFFR_1609(void)
 {
     int32 sd_id;
     int32 sds_id;
-    float sds_data[] = {0.1, 2.3, 4.5, 6.7, 8.9};
-    float sds_out[5];
+    float sds_data[] = {0.1f, 2.3f, 4.5f, 6.7f, 8.9f};
     int32 start = 0, stride = 1, edge;
     int32 dimsize[RANK];
-    char  dir_name[MAX_PATH_LEN]; /* directory from srcdir */
-    char *temp_dir    = NULL;     /* temp dir to create the external file in */
-    int   command_ret = 0;        /* retvalue from system commands */
-    intn  status      = 0;
-    intn  num_errs    = 0; /* number of errors in compression test so far */
+    char  dir_name[MAX_PATH_LEN];   /* directory from srcdir */
+    char *temp_dir          = NULL; /* temp dir to create the external file in */
+    char *created_file_path = NULL; /* path to the created external file */
+    int   command_ret       = 0;    /* retvalue from system commands */
+    intn  status            = 0;
+    intn  num_errs          = 0; /* number of errors in compression test so far */
 
     status = make_sourcepath(dir_name, MAX_PATH_LEN);
     CHECK(status, FAIL, "make_datafilename");
@@ -886,7 +886,7 @@ test_HDFFR_1609(void)
     if (!strcmp(dir_name, "./")) {
 
         /* Facilitate the removal of the temporary directory later */
-        temp_dir = (char *)calloc(strlen(TMP_DIR)+1, sizeof(char));
+        temp_dir = (char *)calloc(strlen(TMP_DIR) + 1, sizeof(char));
         CHECK_ALLOC(temp_dir, "temp_dir", "test_HDFFR_1609");
         strcpy(temp_dir, TMP_DIR);
 
@@ -930,6 +930,19 @@ test_HDFFR_1609(void)
     CHECK(status, FAIL, "SDendaccess");
     status = SDend(sd_id);
     CHECK(status, FAIL, "SDend");
+
+    /* Remove external data file */
+    created_file_path = (char *)malloc(strlen(dir_name) + strlen(EXT_FILE) + 1);
+    CHECK_ALLOC(created_file_path, "created_file_path", "test_HDFFR_1609");
+    strcpy(created_file_path, dir_name);
+    strcat(created_file_path, EXT_FILE);
+    command_ret = remove(created_file_path);
+    CHECK(command_ret, FAIL, "remove created_file_path");
+    free(created_file_path);
+
+    /* Remove hdf file */
+    command_ret = remove(MAIN_FILE);
+    CHECK(command_ret, FAIL, "remove MAIN_FILE");
 
     /* Remove temporary directory used in case no src_dir */
     if (temp_dir) {
