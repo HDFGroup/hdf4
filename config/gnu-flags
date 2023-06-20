@@ -5,6 +5,26 @@
 # the various compilation modes.
 
 #
+
+#
+# For now, do not promote any warnings to errors.
+#
+WARNINGS_AS_ERRORS_DFLT=no
+
+#
+# This filter rewrites -Werror= as -W, in that way demoting warnings
+# promoted to errors back to warnings, if WARNINGS_AS_ERRORS is no.
+#
+demote_errors()
+{
+    if [ ${WARNINGS_AS_ERRORS:-${WARNINGS_AS_ERRORS_DFLT}} = no ]; then
+        sed 's,-Werror=,-W,g'
+    else
+        cat
+    fi
+}
+
+#
 # Prepend `$srcdir/config/gnu-warnings/` to the filename suffix(es) given as
 # subroutine argument(s), remove comments starting with # and ending
 # at EOL, replace spans of whitespace (including newlines) with spaces,
@@ -13,7 +33,7 @@
 load_gnu_arguments()
 {
     set -- $(for arg; do
-        sed 's,#.*$,,' $srcdir/config/gnu-warnings/${arg}
+        sed 's,#.*$,,' $srcdir/config/gnu-warnings/${arg} | demote_errors
     done)
     IFS=' ' echo "$*"
 }
@@ -28,11 +48,11 @@ if test "X-" = "X-$cc_flags_set"; then
     # PathScale compiler spits out gcc version string too. Need to
     # filter it out.
     # icc beginning with version 12 includes a "gcc version compatibility"
-    # string, causing the gcc CFLAGS to be erroneously added.  The line
+    # string, causing the gcc H4_CFLAGS to be erroneously added.  The line
     # "grep -v 'icc version'" causes the discarding of any output
     # containing 'icc version'.  The cc_version for icc is correctly determined
     # and flags added in the intel-flags script.
-    cc_version="`$CC $CFLAGS -v 2>&1 | grep -v 'PathScale' |\
+    cc_version="`$CC $CFLAGS $H4_CFLAGS -v 2>&1 | grep -v 'PathScale' |\
         grep -v '^icc.*version' |\
         grep 'gcc version' | sed 's/.*gcc version \([-a-z0-9\.]*\).*/\1/'`"
     cc_vendor=`echo $cc_version |sed 's/\([a-z]*\).*/\1/'`
@@ -53,77 +73,111 @@ if test "X-" = "X-$cc_flags_set"; then
     test -n "$cc_vers_patch" || cc_vers_patch=0
 fi
 
-# C and Fortran Compiler and Preprocessor Flags
-# ---------------------------------------------------
-#
-# - Flags that end with `_CFLAGS' are always passed to the C compiler.
-# - Flags that end with `_FFLAGS' are always passed to the Fortran
-#   compiler.
-# - Flags that end with `_CPPFLAGS' are passed to the C compiler
-#   when compiling but not when linking.
-#
-#   DEBUG_CFLAGS
-#   DEBUG_FFLAGS
-#   DEBUG_CPPFLAGS  - Flags to pass to the compiler to create a
-#                     library suitable for use with debugging
-#                      tools. Usually this list will exclude
-#                     optimization switches (like `-O') and include
-#                     switches that turn on symbolic debugging support
-#                     (like `-g').
-#
-#   PROD_CFLAGS
-#   PROD_FFLAGS
-#   PROD_CPPFLAGS   - Flags to pass to the compiler to create a
-#                     production version of the library. These
-#                     usually exclude symbolic debugging switches (like
-#                     `-g') and include optimization switches (like
-#                     `-O').
-#
-#   PROFILE_CFLAGS
-#   PROFILE_FFLAGS
-#   PROFILE_CPPFLAGS- Flags to pass to the compiler to create a
-#                     library suitable for performance testing (like
-#                     `-pg').  This may or may not include debugging or
-#                     production flags.
-#
-#   FFLAGS
-#   CFLAGS          - Flags can be added to these variable which
-#                     might already be partially initialized. These
-#                     flags will always be passed to the compiler and
-#                     should include switches to turn on full warnings.
-#
-#                     WARNING: flags do not have to be added to the CFLAGS
-#                     or FFLAGS variable if the compiler is the GNU gcc
-#                     and gfortran compiler.
-#
-#                     FFLAGS and CFLAGS should contain *something* or else
-#                     configure will probably add `-g'. For most systems
-#                     this isn't a problem but some systems will disable
-#                     optimizations in favor of the `-g'. The configure
-#                     script will remove the `-g' flag in production mode
-#                     only.
-#
-# These flags should be set according to the compiler being used.
-# There are two ways to check the compiler. You can try using `-v' or
-# `--version' to see if the compiler will print a version string.  You
-# can use the value of $FOO_BASENAME which is the base name of the
-# first word in $FOO, where FOO is either CC or F77 (note that the
-# value of CC may have changed above).
-
 if test "X-gcc" = "X-$cc_vendor"; then
 
-    CFLAGS="$CFLAGS -std=c99"
+    case "$host_os-$host_cpu" in
+        # Cygwin needs the "-std=c99" flag removed.
+        cygwin-*)
+            ;;
+        # On Solaris, gcc needs the gnu99 standard to pick up certain POSIX
+        # things. Do NOT use this as the gcc norm as this encourages the use
+        # of non-standard gcc extensions.
+        *solaris*)
+            H4_CFLAGS="$H4_CFLAGS -std=gnu99"
+            ;;
+        # Everybody else gets c99 as the standard.
+        *)
+            H4_CFLAGS="$H4_CFLAGS -std=c99"
+            ;;
+    esac
+
     if test $cc_vers_major -ge 10; then
-        CFLAGS="$CFLAGS -Wno-error=implicit-function-declaration"
+        H4_CFLAGS="$H4_CFLAGS -Wno-error=implicit-function-declaration"
     else
-        CFLAGS="$CFLAGS"
+        H4_CFLAGS="$H4_CFLAGS"
     fi
-    DEBUG_CFLAGS="-g -fverbose-asm"
-    DEBUG_CPPFLAGS=
-    PROD_CFLAGS="-O3 -fomit-frame-pointer"
-    PROD_CPPFLAGS=
+
+    ##############
+    # Production #
+    ##############
+
+    # NDEBUG is handled explicitly by the configure script
+    if test $cc_vers_major -le 4; then
+        PROD_CFLAGS=
+    else
+        PROD_CFLAGS="-fstdarg-opt"
+    fi
+
+    #########
+    # Debug #
+    #########
+
+    # NDEBUG is handled explicitly by the configure script
+    # -g is handled by the symbols flags
+    if test $cc_vers_major -le 4; then
+        DEBUG_CFLAGS=
+    else
+        DEBUG_CFLAGS="-ftrapv -fno-common"
+    fi
+
+    ########################
+    # Enhanced Diagnostics #
+    ########################
+
+    if test $cc_vers_major -ge 10; then
+        NO_DIAGS_CFLAGS="-fdiagnostics-urls=never -fno-diagnostics-color"
+    fi
+    DIAGS_CFLAGS=
+
+    ###########
+    # Symbols #
+    ###########
+
+    NO_SYMBOLS_CFLAGS="-s"
+    SYMBOLS_CFLAGS="-g -fno-omit-frame-pointer"
+
+    #############
+    # Profiling #
+    #############
+
     PROFILE_CFLAGS="-pg"
-    PROFILE_CPPFLAGS=
+
+    ################
+    # Optimization #
+    ################
+
+    if test $cc_vers_major -le 4; then
+        HIGH_OPT_CFLAGS="-O3"
+        DEBUG_OPT_CFLAGS=
+    else
+        HIGH_OPT_CFLAGS="-O3"
+        DEBUG_OPT_CFLAGS="-Og"
+    fi
+    NO_OPT_CFLAGS="-O0"
+
+    ############
+    # Warnings #
+    ############
+
+    ###########
+    # General #
+    ###########
+
+    # Add various general warning flags in gnu-warnings for gcc versions 4.8 and later.
+    if test $cc_vers_major -eq 4 -a $cc_vers_minor -ge 8 -o $cc_vers_major -gt 4; then
+        H4_CFLAGS="$H4_CFLAGS $(load_gnu_arguments general)"
+        H4_ECFLAGS="$H4_ECFLAGS $(load_gnu_arguments error-general)"
+
+    fi
+
+    #######################
+    # gcc 4 special cases #
+    #######################
+
+    # GCC 4.8 through the end of GCC 4 series
+    if test $cc_vers_major -eq 4 -a $cc_vers_minor -ge 8; then
+        H4_CFLAGS="$H4_CFLAGS $(load_gnu_arguments 4.8-4.last)"
+    fi
 
     #############################
     # Version-specific warnings #
@@ -131,44 +185,43 @@ if test "X-gcc" = "X-$cc_vendor"; then
 
     # gcc >= 4.8
     if test $cc_vers_major -ge 5 -o $cc_vers_major -eq 4 -a $cc_vers_minor -ge 8; then
-        CFLAGS="$CFLAGS $(load_gnu_arguments 4.8)"
-        CFLAGS="$CFLAGS $(load_gnu_arguments no-developer-4.8)"
+        H4_CFLAGS="$H4_CFLAGS $(load_gnu_arguments 4.8)"
     fi
 
     # gcc >= 4.9
     if test $cc_vers_major -ge 5 -o $cc_vers_major -eq 4 -a $cc_vers_minor -ge 9; then
-        CFLAGS="$CFLAGS $(load_gnu_arguments 4.9)"
+        H4_CFLAGS="$H4_CFLAGS $(load_gnu_arguments 4.9)"
     fi
 
     # gcc >= 5
     if test $cc_vers_major -ge 5; then
-        CFLAGS="$CFLAGS $(load_gnu_arguments 5)"
+        H4_CFLAGS="$H4_CFLAGS $(load_gnu_arguments 5)"
     fi
 
     # gcc >= 6
     if test $cc_vers_major -ge 6; then
-        CFLAGS="$CFLAGS $(load_gnu_arguments 6)"
+        H4_CFLAGS="$H4_CFLAGS $(load_gnu_arguments 6)"
     fi
 
     # gcc >= 7
     if test $cc_vers_major -ge 7; then
-        CFLAGS="$CFLAGS $(load_gnu_arguments 7)"
+        H4_CFLAGS="$H4_CFLAGS $(load_gnu_arguments 7)"
     fi
 
     # gcc 8
     if test $cc_vers_major -ge 8; then
-        CFLAGS="$CFLAGS $(load_gnu_arguments 8)"
-        CFLAGS="$CFLAGS $(load_gnu_arguments no-developer-8)"
+        H4_CFLAGS="$H4_CFLAGS $(load_gnu_arguments 8)"
+        H4_CFLAGS="$H4_CFLAGS $(load_gnu_arguments no-developer-8)"
     fi
 
     # gcc 9
     if test $cc_vers_major -ge 9; then
-        CFLAGS="$CFLAGS $(load_gnu_arguments 9)"
+        H4_CFLAGS="$H4_CFLAGS $(load_gnu_arguments 9)"
     fi
 
     # gcc >= 9.3
     if test $cc_vers_major -ge 10 -o $cc_vers_major -eq 9 -a $cc_vers_minor -ge 3; then
-        CFLAGS="$CFLAGS $(load_gnu_arguments 9.3)"
+        H4_CFLAGS="$H4_CFLAGS $(load_gnu_arguments 9.3)"
     fi
 
     #################
@@ -182,3 +235,4 @@ if test "X$cc_flags_set" = "X"; then
     cc_vendor=
     cc_version=
 fi
+

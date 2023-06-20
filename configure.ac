@@ -108,12 +108,72 @@ AC_CONFIG_COMMANDS([h4config], [
 ## Information on the package
 ## ======================================================================
 
+AC_CANONICAL_HOST
+AC_SUBST([CPPFLAGS])
+AC_SUBST([JNIFLAGS])
+AC_SUBST([AR_FLAGS])
+
+## H4_CFLAGS (and company) are for CFLAGS that should be used on HDF4, but
+## not exported to h4cc (or h4fc, etc.)
+##
+AC_SUBST([H4_CFLAGS])
+AC_SUBST([H4_CPPFLAGS])
+AC_SUBST([H4_FCFLAGS])
+AC_SUBST([H4_JNIFLAGS])
+AC_SUBST([H4_JAVACFLAGS])
+AC_SUBST([H4_JAVAFLAGS])
+AC_SUBST([H4_LDFLAGS])
+
+## AM_CFLAGS (and company) are for CFLAGS that should be used on HDF5,
+## and WILL be exported to h5cc (or h5fc, etc) if set by configure.
+AC_SUBST([AM_CFLAGS])
+AC_SUBST([AM_FCFLAGS])
+AC_SUBST([AM_CPPFLAGS])
+AC_SUBST([AM_JNIFLAGS])
+AC_SUBST([AM_JAVACFLAGS])
+AC_SUBST([AM_JAVAFLAGS])
+AC_SUBST([AM_LDFLAGS])
+
+## Make sure flags are initialized.
+AM_CFLAGS="${AM_CFLAGS}"
+AM_FCFLAGS="${AM_FCFLAGS}"
+AM_CPPFLAGS="${AM_CPPFLAGS}"
+AM_JNIFLAGS="${AM_JNIFLAGS}"
+AM_JAVACFLAGS="${AM_JAVACFLAGS}"
+AM_JAVAFLAGS="${AM_JAVAFLAGS}"
+AM_LDFLAGS="${AM_LDFLAGS}"
+
+## Flags passed in by the user
+CFLAGS="${CFLAGS}"
+FCFLAGS="${FCFLAGS}"
+CPPFLAGS="${CPPFLAGS}"
+JNIFLAGS="${JNIFLAGS}"
+JAVACFLAGS="${JAVACFLAGS}"
+JAVAFLAGS="${JAVAFLAGS}"
+LDFLAGS="${LDFLAGS}"
+AR_FLAGS="${AR_FLAGS}"
+
+## Configure may need to alter any of the *FLAGS variables in order for
+## various checks to work correctly. Save the user's value here so it
+## can be restored once all configure checks are complete.
+saved_user_CFLAGS="$CFLAGS"
+saved_user_FCFLAGS="$FCFLAGS"
+saved_user_JAVACFLAGS="$JAVACFLAGS"
+saved_user_JAVAFLAGS="$JAVAFLAGS"
+saved_user_LDFLAGS="$LDFLAGS"
+saved_user_CPPFLAGS="$CPPFLAGS"
+
+## Strip out -Werror from CFLAGS since that can cause checks to fail when
+## compiling the test program fails due to warnings
+CFLAGS="`echo $CFLAGS | sed -e 's/-Werror//g'`"
+FCFLAGS="`echo $FCFLAGS | sed -e 's/-Werror//g'`"
+JAVACFLAGS="`echo $JAVACFLAGS | sed -e 's/-Werror//g'`"
+CPPFLAGS="`echo $CPPFLAGS | sed -e 's/-Werror//g'`"
+
 ## Dump all shell variables values.
 AC_MSG_CHECKING([shell variables initial values])
 set >&AS_MESSAGE_LOG_FD
 AC_MSG_RESULT([done])
-
-AC_CANONICAL_HOST
 
 ## ----------------------------------------------------------------------
 ## Some platforms have broken basename, and/or xargs programs. Check
@@ -307,7 +367,7 @@ AC_ARG_ENABLE([java],
 
 if test "X$HDF_JAVA" = "Xyes"; then
   if test "X${enable_shared}" != "Xno"; then
-    echo "yes"
+    AC_MSG_RESULT([yes])
     if test "X$CLASSPATH" = "X"; then
       H4_CLASSPATH=".:$srcdir/java/lib"
     else
@@ -881,16 +941,16 @@ case "X-$enable_production" in
   X-|X-yes)
     AC_MSG_RESULT([production])
     CONFIG_MODE=production
-    CFLAGS="$CFLAGS $PROD_CFLAGS"
-    FFLAGS="$FFLAGS $PROD_FFLAGS"
-    CPPFLAGS="$CPPFLAGS -DNDEBUG $PROD_CPPFLAGS"
+    H4_CFLAGS="$H4_CFLAGS $PROD_CFLAGS"
+    H4_FCFLAGS="$H4_FCFLAGS $PROD_FFLAGS"
+    H4_CPPFLAGS="$H4_CPPFLAGS -DNDEBUG $PROD_CPPFLAGS"
     ;;
   X-no)
     AC_MSG_RESULT([development])
     CONFIG_MODE=development
-    CFLAGS="$CFLAGS $DEBUG_CFLAGS"
-    FFLAGS="$FFLAGS $DEBUG_FFLAGS"
-    CPPFLAGS="$CPPFLAGS -UNDEBUG $DEBUG_CPPFLAGS"
+    H4_CFLAGS="$H4_CFLAGS $DEBUG_CFLAGS"
+    H4_FCFLAGS="$H4_FCFLAGS $DEBUG_FFLAGS"
+    H4_CPPFLAGS="$H4_CPPFLAGS -UNDEBUG $DEBUG_CPPFLAGS"
     ;;
   *)
     AC_MSG_RESULT([user-defined])

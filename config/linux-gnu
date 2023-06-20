@@ -36,14 +36,47 @@ fi
 . $srcdir/config/clang-flags
 
 # Use default Fortran compiler according to what C compiler is used.
-if test "X-$F77" = "X-"; then
-  F77=gfortran
-  F77_BASENAME=gfortran
-
+if test "X-" = "X-$F77"; then
+    case $CC_BASENAME in
+        gcc*)
+            F77=gfortran
+            F77_BASENAME=gfortran
+            ;;
+        pgcc*)
+            F77=pgf90
+            F77_BASENAME=pgf90
+            ;;
+        icc*)
+            F77=ifort
+            F77_BASENAME=ifort
+            ;;
+        clang*)
+            # clang has no fortran compiler. Use gfortran.
+            F77=gfortran
+            F77_BASENAME=gfortran
+            ;;
+    esac
 else
     case $F77 in
         # The PGI and Intel compilers are automatically detected below
-        f95*|pgf90*)
+        ifc*|ifort*|pgf90*)
+            ;;
+
+        *f95*)
+            # Figure out which compiler we are using: pgf90 or Absoft f95
+            RM='rm -f'
+            tmpfile=/tmp/cmpver.$$
+            $FC -V >$tmpfile
+            if test -s "$tmpfile"; then 
+                if( grep -s 'Absoft' $tmpfile > /dev/null) then
+                    FC_BASENAME=f95
+                fi 
+                if( grep -s 'pgf90' $tmpfile > /dev/null) then
+                    FC_BASENAME=pgf90
+                fi 
+            fi
+            $RM $tmpfile
+            fc_version_info=`$FC -V | grep Absoft`
             ;;
 
         *)
@@ -69,6 +102,50 @@ fi
 
 # Figure out GNU FC compiler flags
 . $srcdir/config/gnu-fflags
+
+# Figure out PGI FC compiler flags
+#. $srcdir/config/pgi-fflags
+
+# Figure out CCE FC compiler flags
+#. $srcdir/config/cce-fflags
+
+# Figure out Intel FC compiler flags
+#. $srcdir/config/intel-fflags
+
+case $F77_BASENAME in
+    #
+    # Absoft compiler
+    #
+    f95)
+        # Set required flag for compiling C stubs
+        H4_CFLAGS="$H4_CFLAGS"
+
+# We force compiler to use upper case for external names
+# (just in case since this should be a default EIP)
+        H4_FCFLAGS="$H4_FCFLAGS"
+        FSEARCH_DIRS=""
+
+        # Production
+        PROD_FCFLAGS=
+
+        # Debug
+        DEBUG_FCFLAGS=
+
+        # Symbols
+        SYMBOLS_FCFLAGS="-g"
+        NO_SYMBOLS_FCFLAGS="-s"
+
+        # Profiling
+        PROFILE_FCFLAGS="-pg"
+
+        # Optimization
+        HIGH_OPT_FCFLAGS="-O"
+        DEBUG_OPT_FCFLAGS=
+        NO_OPT_FCFLAGS=
+
+        f9x_flags_set=yes
+        ;;
+esac  
 
 # compiler version strings
 
@@ -104,6 +181,8 @@ esac
 fi
 
 # get fortran version info
+# check if the compiler_version_info is already set
+if test -z "$fc_version_info"; then
 case $F77 in
     *gfortran*)
         fc_version_info=`$F77 $FFLAGS --version 2>&1 |\

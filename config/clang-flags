@@ -16,7 +16,7 @@ if test "X-" = "X-$cc_flags_set"; then
     # Note that the Xcode reported LLVM version doesn't match the canonical
     # LLVM version, so you'll need to do different version checks for
     # Xcode.
-    cc_version="`$CC $CFLAGS -v 2>&1 |\
+    cc_version="`$CC $CFLAGS $H4_CFLAGS -v 2>&1 |\
         grep 'clang version' | sed 's/.*clang version \([-a-z0-9\.]*\).*/\1/'`"
     if test -n "$cc_version"; then
         cc_vendor="clang"
@@ -41,16 +41,61 @@ fi
 
 if test "X-clang" = "X-$cc_vendor" -o "X-Apple LLVM" = "X-$cc_vendor"; then
     echo "compiler '$CC' is $cc_vendor-$cc_version"
+    ###############################
+    # Architecture-specific flags #
+    ###############################
 
-    CFLAGS="$CFLAGS -Wno-error=implicit-function-declaration"
-    CFLAGS="$CFLAGS -std=c99 -Wall -pedantic"
+    case "$host_os-$host_cpu" in
+        # cygwin needs the "-std=c99" flag removed, so make
+        # a specific case for Cygwin without the flag and a default
+        # case to add the flag everywhere else
+        cygwin-*)
+            ;;
 
-    DEBUG_CFLAGS="-g"
-    DEBUG_CPPFLAGS=
+        *)
+            H4_CFLAGS="$H4_CFLAGS -std=c99"
+            ;;
+    esac
+
+    ##############
+    # Production #
+    ##############
+
+    # NDEBUG is handled explicitly by the configure script
     PROD_CFLAGS="-O2"
-    PROD_CPPFLAGS=
+
+    #########
+    # Debug #
+    #########
+
+    # NDEBUG is handled explicitly by the configure script
+    # -g is handled by the symbols flags
+    DEBUG_CFLAGS="-ftrapv -fno-common"
+
+    ###########
+    # Symbols #
+    ###########
+
+    NO_SYMBOLS_CFLAGS=
+    SYMBOLS_CFLAGS="-g"
+
+    #############
+    # Profiling #
+    #############
+
     PROFILE_CFLAGS="-pg"
-    PROFILE_CPPFLAGS=
+
+    ############
+    # Warnings #
+    ############
+
+    ###########
+    # General #
+    ###########
+
+    H4_CFLAGS="$H4_CFLAGS $(load_clang_arguments general)"
+
+    H4_CFLAGS="$H4_CFLAGS -Wno-error=implicit-function-declaration"
 
     #################
     # Flags are set #
