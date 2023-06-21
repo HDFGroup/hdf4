@@ -55,6 +55,16 @@ Support for new platforms and compilers
 
 Bugs fixed since HDF 4.2.16
 ===========================
+
+    - Fixed an external file bug introduced in 4.2.16
+
+      Fixing HDFFR-1607 introduced a bug where the flag that indicates whether
+      the external file directory has been changed from the previous location
+      was not reset properly.
+      Reset the flag after building a filename path for an external element.
+
+      Fixes HDFFR-1609
+
     - Build fortran with -fallow-argument-mismatch w/ gcc 10+
 
       The gfortran configuration checks checked the version via a variable that

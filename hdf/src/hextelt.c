@@ -264,6 +264,7 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
             HGOTO_ERROR(DFE_BADOPEN, FAIL);
     }
     free(fname);
+    extdir_changed = FALSE; /* set to TRUE when HXsetdir is called */
 
     /* Get a bare access record and special info structure */
     access_rec = HIget_access_rec();
@@ -408,6 +409,7 @@ HXPsetaccesstype(accrec_t *access_rec)
             }
             free(fname);
             info->file_external = file_external;
+            extdir_changed      = FALSE; /* set to TRUE when HXsetdir is called again */
             break;
 
         default:
@@ -660,6 +662,7 @@ HXPread(accrec_t *access_rec, int32 length, void *data)
             HGOTO_DONE(FAIL);
         }
         info->file_open = TRUE;
+        extdir_changed  = FALSE; /* set to TRUE when HXsetdir is called again */
     }
 
     /* read it in from the file */
@@ -737,6 +740,7 @@ HXPwrite(accrec_t *access_rec, int32 length, const void *data)
             HGOTO_DONE(FAIL);
         }
         info->file_open = TRUE;
+        extdir_changed  = FALSE; /* set to TRUE when HXsetdir is called again */
     }
 
     /* write the data onto file */
