@@ -242,7 +242,7 @@ typedef intptr_t hdf_pint_t;
 
 #define INT32DECODE(p, i)                                                                                    \
     {                                                                                                        \
-        (i) = (int32)(((int32) * (p)&0x80) ? ~0xffffffff : 0x00) | ((int32)(*(p)&0xff) << 24);               \
+        (i) = ((int32)(((*(p)&0x80) ? ~0xffffffffULL : 0x0ULL)) | ((*(p) & (unsigned)0xff) << 24));          \
         (p)++;                                                                                               \
         (i) |= ((int32)(*(p)&0xff) << 16);                                                                   \
         (p)++;                                                                                               \
