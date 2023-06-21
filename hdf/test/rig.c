@@ -1202,16 +1202,6 @@ test_r8(void)
     num_images++;
     ref2 = DFR8lastref();
 
-#ifdef DONT_TEST_IMCOMP /* QAK */
-    ret = DFR8setpalette(pal2);
-    RESULT("DFR8setpalette");
-    MESSAGE(5, printf("Putting image IMCOMP compression\n"););
-    ret = DFR8addimage(TESTFILE_R8, im3, XD3, YD3, DFTAG_IMCOMP);
-    RESULT("DFR8addimage");
-    num_images++;
-    ref3 = DFR8lastref();
-#endif /* DONT_TEST_IMCOMP */ /* QAK */
-
     ret = DFR8nimages(TESTFILE_R8);
     if (ret != num_images) {
         fprintf(stderr, "        >>> WRONG NUMBER OF IMAGES <<<\n");
@@ -1235,15 +1225,6 @@ test_r8(void)
 
     ret = DFR8getdims(TESTFILE_R8, &xd, &yd, &ispal);
     RESULT("DFR8getdims");
-
-#ifdef DONT_TEST_IMCOMP /* QAK */
-    MESSAGE(5, printf("Verifying IMCOMP compressed image\n"););
-
-    ret = DFR8getdims(TESTFILE_R8, &xd, &yd, &ispal);
-    RESULT("DFR8getdims");
-    ret = DFR8getimage(TESTFILE_R8, (uint8 *)ii3, (int32)XD3, (int32)YD3, ipal);
-    RESULT("DFR8getimage");
-#endif /* DONT_TEST_IMCOMP */ /* QAK */
 
     MESSAGE(5, printf("Rechecking RLE image\n"););
 
