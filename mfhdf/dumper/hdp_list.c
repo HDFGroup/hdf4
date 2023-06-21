@@ -118,7 +118,7 @@ parse_list_opts(list_info_t *list_opts, intn curr_arg, intn argc, char *argv[])
                     list_opts->verbosity = VDEBUG; /* verbosity is debug */
                     break;
 
-                case 'g': /* print only groups */
+                case 'g':                    /* print only groups */
                     list_opts->group = TRUE; /* dump group info */
                     if (list_opts->verbosity == VSHORT)
                         list_opts->verbosity = VLONG; /* verbosity is long */
