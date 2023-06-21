@@ -55,14 +55,7 @@
 #define EXTFILE_NAME  "tbuffer.dat"
 
 /* Size of data elements to create */
-#ifdef __CRAY_XT3__
-/* Use a smaller test size as small unbuffered IO is expensive in XT3. */
-/* This runs much faster in Lustre file system like /scratchN. elemsize 1000 */
-/* takes 3 minutes to run in /scratch3. 2006/6/20, -AKC- */
-#define ELEMSIZE 1000
-#else
 #define ELEMSIZE 16384
-#endif
 
 /* define aliases for random number generation */
 #define RAND    rand

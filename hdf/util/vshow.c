@@ -36,10 +36,6 @@ static int32 vsdumpfull(int32 vs);
 static int32 fmtbyte(char *x);
 static int32 fmtchar(char *x);
 
-#ifdef UNUSED
-static int32 fmtint(char *x);
-#endif /* UNUSED */
-
 static int32 fmtfloat(char *x);
 
 static int32 fmtulong(char *x);
@@ -294,17 +290,6 @@ fmtchar(char *x)
     putchar(*x);
     return (1);
 }
-
-#ifdef UNUSED
-static int32
-fmtint(char *x)
-{
-    int i = 0;
-    memcpy(&i, x, sizeof(int32));
-    cn += printf("%d", i);
-    return (1);
-}
-#endif /* UNUSED */
 
 static int32
 fmtfloat(char *x)

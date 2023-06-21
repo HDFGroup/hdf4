@@ -323,9 +323,6 @@ mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
     BKT          *bp        = NULL; /* bucket element */
     L_ELEM       *lp        = NULL;
     intn          ret_value = RET_SUCCESS;
-#ifdef UNUSED
-    int32 rpagesize; /* pagesize to read */
-#endif               /* UNUSED */
     intn list_hit;   /* hit flag */
 
     (void)flags;
@@ -431,10 +428,6 @@ mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
 #ifdef STATISTICS
         ++mp->pageread;
 #endif
-
-#ifdef UNUSED
-        rpagesize = mp->pagesize;
-#endif /* UNUSED */
 
         /* Run through the user's filter.
            we use this fcn to read in the data chunk/page.
@@ -738,10 +731,6 @@ mcache_write(MCACHE *mp, /* IN: MCACHE cookie */
     struct _lhqh *lhead     = NULL; /* head of an entry in list hash chain */
     L_ELEM       *lp        = NULL;
     intn          ret_value = RET_SUCCESS;
-#ifdef UNUSED
-    int32 wpagesize; /* page size to write */
-#endif               /* UNUSED */
-
 #ifdef MCACHE_DEBUG
     (void)fprintf(stderr, "mcache_write: entering \n");
 #endif
@@ -784,10 +773,6 @@ mcache_write(MCACHE *mp, /* IN: MCACHE cookie */
 #ifdef MCACHE_DEBUG
     (void)fprintf(stderr, "mcache_write: npages=%u\n", mp->npages);
 #endif
-
-#ifdef UNUSED
-    wpagesize = mp->pagesize;
-#endif /* UNUSED */
 
     /* mark page as clean */
     bp->flags &= ~MCACHE_DIRTY;

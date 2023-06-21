@@ -26,7 +26,6 @@
 
 /* This is the master HDF driver (taking the place of df.c), so... */
 #define DFMASTER
-#undef PERM_OUT /* used to "comment out" code */
 
 #include "df.h"
 #undef DFMASTER

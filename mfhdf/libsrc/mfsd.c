@@ -1227,11 +1227,7 @@ SDcreate(int32       fid,  /* IN: file ID */
 
     var->cdf = handle; /* set cdf before calling NC_var_shape */
     /* get a new NDG ref for this sucker */
-#ifdef NOT_YET
-    var->ndg_ref = Htagnewref(handle->hdf_file, DFTAG_NDG);
-#else  /* NOT_YET */
     var->ndg_ref = Hnewref(handle->hdf_file);
-#endif /* NOT_YET */
 
     /* set ragged status. Why is this still here -GV */
     var->is_ragged = is_ragged;
@@ -2684,11 +2680,7 @@ SDIgetcoordvar(NC     *handle, /* IN: file handle */
     var->HDFtype = nt;
 
     /* get a new NDG ref for this sucker */
-#ifdef NOT_YET
-    var->ndg_ref = Htagnewref(handle->hdf_file, DFTAG_NDG);
-#else  /* NOT_YET */
     var->ndg_ref = Hnewref(handle->hdf_file);
-#endif /* NOT_YET */
 
     /* add it to the handle */
     if (handle->vars->count >= H4_MAX_NC_VARS) {
@@ -3347,11 +3339,7 @@ SDsetexternalfile(int32       id,       /* IN: dataset ID */
         length = var->len;
 
         /* element doesn't exist so we need a reference number */
-#ifdef NOT_YET
-        var->data_ref = Htagnewref(handle->hdf_file, DATA_TAG);
-#else  /* NOT_YET */
         var->data_ref = Hnewref(handle->hdf_file);
-#endif /* NOT_YET */
         if (var->data_ref == 0) {
             HGOTO_ERROR(DFE_NOREF, FAIL);
         }
@@ -3728,11 +3716,7 @@ SDsetnbitdataset(int32 id,        /* IN: dataset ID */
 #endif
 
         /* element doesn't exist so we need a reference number */
-#ifdef NOT_YET
-        var->data_ref = Htagnewref(handle->hdf_file, DATA_TAG);
-#else  /* NOT_YET */
         var->data_ref = Hnewref(handle->hdf_file);
-#endif /* NOT_YET */
         if (var->data_ref == 0) {
             HGOTO_ERROR(DFE_ARGS, FAIL);
         }
@@ -3927,11 +3911,7 @@ SDsetcompress(int32        id,        /* IN: dataset ID */
 #endif /* SDDEBUG */
 
         /* element doesn't exist so we need a reference number */
-#ifdef NOT_YET
-        var->data_ref = Htagnewref(handle->hdf_file, DATA_TAG);
-#else  /* NOT_YET */
         var->data_ref = Hnewref(handle->hdf_file);
-#endif /* NOT_YET */
         if (var->data_ref == 0) {
             HGOTO_ERROR(DFE_ARGS, FAIL);
         }

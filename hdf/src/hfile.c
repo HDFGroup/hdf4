@@ -273,7 +273,6 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
                provide for write, then try to reopen file for writing.
                This cannot be done on OS (such as the SXOS) where only one
                open is allowed per file at any time. */
-#ifndef NO_MULTI_OPEN
             hdf_file_t f;
 
             /* Sync. the file before throwing away the old file handle */
@@ -293,9 +292,6 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
             file_rec->file      = f;
             file_rec->f_cur_off = 0;
             file_rec->last_op   = H4_OP_UNKNOWN;
-#else  /* NO_MULTI_OPEN */
-            HGOTO_ERROR(DFE_DENIED, FAIL);
-#endif /* NO_MULTI_OPEN */
         }
 
         /* There is now one more open to this file. */
@@ -317,11 +313,6 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
                     HGOTO_ERROR(DFE_BADOPEN, FAIL);
             }
             else {
-#ifdef STDIO_BUF
-                /* Testing stdio buffered i/o */
-                if (HDsetvbuf(file_rec->file, my_stdio_buf, _IOFBF, MY_STDIO_BUF_SIZE) != 0)
-                    HGOTO_ERROR(DFE_BADOPEN, FAIL);
-#endif /* STDIO_BUF */
                 /* Open existing file successfully. */
                 file_rec->access = acc_mode | DFACC_READ;
 
@@ -357,11 +348,7 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
 
             file_rec->f_cur_off = 0;
             file_rec->last_op   = H4_OP_UNKNOWN;
-#ifdef STDIO_BUF
-            /* Testing stdio buffered i/o */
-            if (HDsetvbuf(file_rec->file, my_stdio_buf, _IOFBF, MY_STDIO_BUF_SIZE) != 0)
-                HGOTO_ERROR(DFE_BADOPEN, FAIL);
-#endif /* STDIO_BUF */
+
             /* set up the newly created (and empty) file with
                the magic cookie and initial data descriptor records */
             if (HP_write(file_rec, HDFMAGIC, MAGICLEN) == FAIL)

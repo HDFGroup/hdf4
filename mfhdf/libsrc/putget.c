@@ -728,11 +728,7 @@ hdf_get_data(NC *handle, NC_var *vp)
      * --------------------------------------
      */
 
-#ifdef NOT_YET
-    vsid = Htagnewref(handle->hdf_file, DATA_TAG);
-#else  /* NOT_YET */
     vsid = Hnewref(handle->hdf_file);
-#endif /* NOT_YET */
 #ifdef DEBUG
     fprintf(stderr, "--- Allocating new data storage szof=%d, to_do=%d\n", (int)vp->szof, (int)to_do);
     fprintf(stderr, "byte_count=%d\n", (int)byte_count);
