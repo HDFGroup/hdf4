@@ -1653,14 +1653,10 @@ GRIupdatemeta(int32 hdf_file_id, ri_info_t *img_ptr)
         UINT16ENCODE(p, img_ptr->lut_dim.nt_tag);
         UINT16ENCODE(p, img_ptr->lut_dim.nt_ref);
         INT16ENCODE(p, img_ptr->lut_dim.ncomps);
-/* Currently all data is written out in 'pixel' interlace, so force the */
-/* interlace stored on disk to match, instead of the interlacing that the */
-/* user created the image with. -QAK  */
-#ifdef LATER
-        INT16ENCODE(p, img_ptr->lut_dim.il);
-#else  /* LATER */
+        /* Currently all data is written out in 'pixel' interlace, so force the */
+        /* interlace stored on disk to match, instead of the interlacing that the */
+        /* user created the image with. -QAK  */
         INT16ENCODE(p, (int16)MFGR_INTERLACE_PIXEL);
-#endif /* LATER */
         UINT16ENCODE(p, img_ptr->lut_dim.comp_tag);
         UINT16ENCODE(p, img_ptr->lut_dim.comp_ref);
         if (img_ptr->lut_dim.dim_ref == DFREF_WILDCARD)
@@ -1676,14 +1672,10 @@ GRIupdatemeta(int32 hdf_file_id, ri_info_t *img_ptr)
     UINT16ENCODE(p, img_ptr->img_dim.nt_tag);
     UINT16ENCODE(p, img_ptr->img_dim.nt_ref);
     INT16ENCODE(p, img_ptr->img_dim.ncomps);
-/* Currently all data is written out in 'pixel' interlace, so force the */
-/* interlace stored on disk to match, instead of the interlacing that the */
-/* user created the image with. -QAK  */
-#ifdef LATER
-    INT16ENCODE(p, img_ptr->img_dim.il);
-#else  /* LATER */
+    /* Currently all data is written out in 'pixel' interlace, so force the */
+    /* interlace stored on disk to match, instead of the interlacing that the */
+    /* user created the image with. -QAK  */
     INT16ENCODE(p, (int16)MFGR_INTERLACE_PIXEL);
-#endif /* LATER */
     UINT16ENCODE(p, img_ptr->img_dim.comp_tag);
     UINT16ENCODE(p, img_ptr->img_dim.comp_ref);
     if (img_ptr->img_dim.dim_ref == DFREF_WILDCARD)

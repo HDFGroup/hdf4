@@ -128,9 +128,6 @@ main(int argc, char *argv[])
     InitTest("extelt", test_hextelt, "EXTERNAL ELEMENTS");
     InitTest("comp", test_comp, "COMPRESSED ELEMENTS");
     InitTest("chunks", test_chunks, "Chunks");
-#ifdef LATER
-    InitTest("vblocks", test_hvblocks, "Variable Length Linked Blocks");
-#endif
     InitTest("bitio", test_bitio, "BIT I/O");
     InitTest("8bit", test_r8, "8BIT RASTER IMAGE INTERFACE");
     InitTest("pal", test_pal, "PALETTE INTERFACE");

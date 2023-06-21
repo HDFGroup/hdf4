@@ -168,9 +168,6 @@ functab_t functab[] = {
     {SPECIAL_EXT, &ext_funcs},
     {SPECIAL_COMP, &comp_funcs},
     {SPECIAL_CHUNKED, &chunked_funcs},
-#ifdef LATER
-    {SPECIAL_VLINKED, &vlnk_funcs},
-#endif
     {SPECIAL_BUFFERED, &buf_funcs},
     {SPECIAL_COMPRAS, &cr_funcs},
     {0, NULL} /* terminating record; add new record */
