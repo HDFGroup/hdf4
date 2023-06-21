@@ -266,16 +266,6 @@ test_simple_vs()
     CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
     VERIFY_VOID(n_blocks, 1, "VSgetdatainfo NONSPECIAL_VS");
 
-#ifdef NOTUSED
-    /* Allocate space to record the vdata's data info */
-    if (alloc_info(&vs_info, n_blocks) == -1)
-        exit(1);
-
-    /* Record various info */
-    vs_info.n_values = 5;
-    vs_info.numtype  = DFNT_CHAR;
-#endif
-
     /* Get offset/length */
     n_blocks = VSgetdatainfo(vsid, 0, n_blocks, &offset, &length);
     CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");

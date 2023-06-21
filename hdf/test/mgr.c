@@ -3946,18 +3946,8 @@ test_mgr_old(int flag)
     /* Output message about test being performed */
     MESSAGE(6, printf("Testing Multi-file Raster Old-Style Access\n"););
     test_mgr_old_a(flag);
-#ifdef NOT_IMPLEMENTED
-    test_mgr_old_b(flag);
-#endif
     test_mgr_old_c(flag);
-#ifdef NOT_IMPLEMENTED
-    test_mgr_old_d(flag);
-#endif
     test_mgr_old_e(flag);
-#ifdef NOT_IMPLEMENTED
-    test_mgr_old_f(flag);
-#endif
-
 } /* end test_mgr_old() */
 
 #define GR_R24FILE "test_files/gr_r24.dat"

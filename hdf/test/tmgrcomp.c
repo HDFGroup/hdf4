@@ -210,10 +210,7 @@ test_mgr_compress_b()
         int32        interlace_mode, n_comps, n_attrs, datatype; /* Image information */
         char         name[30];                                   /* Buffer for retrieving image name */
         uint8        attr;                                       /* Attribute data */
-#ifdef NOT_IMPLEMENTED
-        int32 count[2]; /* Size of image data to operate on */
-#endif
-        intn i, j; /* indices */
+        intn         i, j;                                       /* indices */
 
         /* Initialize data we are going to write out */
         for (i = 0; i < 10; i++)
@@ -294,65 +291,6 @@ test_mgr_compress_b()
         /* Close the image */
         ret = GRendaccess(riid);
         CHECK(ret, FAIL, "GRendaccess");
-
-#ifdef NOT_IMPLEMENTED
-        /* Check for compressing image in the middle of writing data */
-
-        /* Get the first image in this file */
-        riid = GRcreate(grid, "image2", 1, DFNT_UINT8, MFGR_INTERLACE_PIXEL, dims);
-        CHECK(riid, FAIL, "GRcreate");
-
-        /* Write half of the image out */
-        start[0] = start[1] = 0;
-        stride[0] = stride[1] = 1;
-        count[0]              = 10;
-        count[1]              = 5;
-        ret                   = GRwriteimage(riid, start, stride, count, image0);
-        CHECK(ret, FAIL, "GRwriteimage");
-
-        /* Set the compression method for the image */
-        comp_type                 = COMP_CODE_JPEG;
-        cinfo.jpeg.quality        = 100;
-        cinfo.jpeg.force_baseline = 1;
-        ret                       = GRsetcompress(riid, comp_type, &cinfo);
-        CHECK(ret, FAIL, "GRsetcompress");
-
-        /* Write the second half of the image out */
-        start[0]  = 0;
-        start[1]  = 5;
-        stride[0] = stride[1] = 1;
-        count[0]              = 10;
-        count[1]              = 5;
-        ret                   = GRwriteimage(riid, start, stride, count, &image0[5][0]);
-        CHECK(ret, FAIL, "GRwriteimage");
-
-        /* Close the empty image */
-        ret = GRendaccess(riid);
-        CHECK(ret, FAIL, "GRendaccess");
-
-        /* Check that the image made it out correctly */
-        memset(image, 0, 10 * 10);
-
-        /* Get the second image in this file */
-        riid = GRselect(grid, 1);
-        CHECK(riid, FAIL, "GRselect");
-
-        /* Read the whole image in */
-        start[0] = start[1] = 0;
-        stride[0] = stride[1] = 1;
-        ret                   = GRreadimage(riid, start, stride, dims, image);
-        CHECK(ret, FAIL, "GRreadimage");
-
-        /* Verify correct image contents */
-        if (memcmp(image, image0, 10 * 10) != 0) {
-            MESSAGE(3, printf("Error reading 2nd data for gzip compressed image\n"););
-            num_errs++;
-        } /* end if */
-
-        /* Close the image */
-        ret = GRendaccess(riid);
-        CHECK(ret, FAIL, "GRendaccess");
-#endif /* NOT_IMPLEMENTED */
     }
 
     /* Shut down the GR interface */
@@ -844,18 +782,6 @@ test_mgr_chunk_compress()
                 chunk_def[img_num].comp.comp_type           = COMP_CODE_DEFLATE;
                 chunk_def[img_num].comp.cinfo.deflate.level = 6;
                 break;
-#ifdef NOT_WORKING
-            /* JPEG compression for chunked images is not working correctly
-               yet.  Add test here when it is */
-            case 4:
-                comp_flag                                         = HDF_CHUNK | HDF_COMP;
-                chunk_def[img_num].comp.chunk_lengths[0]          = 3;
-                chunk_def[img_num].comp.chunk_lengths[1]          = 2;
-                chunk_def[img_num].comp.comp_type                 = COMP_CODE_JPEG;
-                chunk_def[img_num].comp.cinfo.jpeg.quality        = 5;
-                chunk_def[img_num].comp.cinfo.jpeg.force_baseline = 8;
-                break;
-#endif
             default:
                 printf("Error\n");
                 break;
@@ -939,12 +865,6 @@ test_mgr_chunk_compress()
                 VERIFY(comp_type, COMP_CODE_DEFLATE, "GRgetcompinfo");
                 VERIFY(cinfo.deflate.level, chunk_def[img_num].comp.cinfo.deflate.level, "GRgetcompinfo");
                 break;
-#ifdef NOT_WORKING
-            /* JPEG is not working correctly yet.  Add test here when it is */
-            case 4: /* only return comp type for JPEG */
-                VERIFY(comp_type, COMP_CODE_JPEG, "GRgetcompinfo");
-                break;
-#endif
             default:
                 printf("Error\n");
                 break;
