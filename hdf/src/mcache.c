@@ -323,7 +323,7 @@ mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
     BKT          *bp        = NULL; /* bucket element */
     L_ELEM       *lp        = NULL;
     intn          ret_value = RET_SUCCESS;
-    intn list_hit;   /* hit flag */
+    intn          list_hit; /* hit flag */
 
     (void)flags;
 

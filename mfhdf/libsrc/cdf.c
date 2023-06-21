@@ -1100,7 +1100,7 @@ hdf_write_var(XDR *xdrs, NC *handle, NC_var **var)
             : ((*var)->HDFtype & DFNT_LITEND) ? DFNTF_PC
                                               : DFNTF_IEEE;
 
-    ref = Hnewref(handle->hdf_file);
+    ref         = Hnewref(handle->hdf_file);
     ntstring[0] = DFNT_VERSION;                    /* version */
     ntstring[1] = (uint8)((*var)->HDFtype & 0xff); /* type */
     ntstring[2] = (uint8)((*var)->HDFsize * 8);    /* width (in bits) */

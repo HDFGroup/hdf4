@@ -1352,7 +1352,7 @@ hdf_read_ndgs(NC *handle)
                     vars[current_var]->data_tag = DFTAG_SDS; /* not normal data */
                     vars[current_var]->data_ref = sRef;
                     vars[current_var]->HDFtype  = scaletypes[dim];
-                    vars[current_var]->ndg_ref = Hnewref(handle->hdf_file);
+                    vars[current_var]->ndg_ref  = Hnewref(handle->hdf_file);
                     /* Indicate that it is unknown whether the current
                        variable is an SDS or a coordinate variable.
                        bugzilla 624 - BMR - 05/16/2007 */

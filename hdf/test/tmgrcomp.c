@@ -210,7 +210,7 @@ test_mgr_compress_b()
         int32        interlace_mode, n_comps, n_attrs, datatype; /* Image information */
         char         name[30];                                   /* Buffer for retrieving image name */
         uint8        attr;                                       /* Attribute data */
-        intn i, j; /* indices */
+        intn         i, j;                                       /* indices */
 
         /* Initialize data we are going to write out */
         for (i = 0; i < 10; i++)

@@ -2617,16 +2617,16 @@ HMCreadChunk(int32  access_id, /* IN: access aid to mess with */
              int32 *origin,    /* IN: origin of chunk to read */
              void  *datap /* IN: buffer for data */)
 {
-    accrec_t *access_rec = NULL; /* access record */
-    filerec_t   *file_rec = NULL; /* file record */
-    chunkinfo_t *info     = NULL; /* chunked element information record */
-    uint8       *bptr     = NULL; /* data buffer pointer */
-    void        *chk_data = NULL; /* chunk data */
-    uint8       *chk_dptr = NULL; /* chunk data pointer */
-    int32        relative_posn;   /* relative position in chunked element */
-    int32        bytes_read = 0;  /* total #bytes read  */
-    int32        read_len   = 0;  /* bytes to read next */
-    int32        chunk_num  = -1; /* chunk number */
+    accrec_t    *access_rec = NULL; /* access record */
+    filerec_t   *file_rec   = NULL; /* file record */
+    chunkinfo_t *info       = NULL; /* chunked element information record */
+    uint8       *bptr       = NULL; /* data buffer pointer */
+    void        *chk_data   = NULL; /* chunk data */
+    uint8       *chk_dptr   = NULL; /* chunk data pointer */
+    int32        relative_posn;     /* relative position in chunked element */
+    int32        bytes_read = 0;    /* total #bytes read  */
+    int32        read_len   = 0;    /* bytes to read next */
+    int32        chunk_num  = -1;   /* chunk number */
     int32        ret_value  = SUCCEED;
     intn         i;
 
@@ -2926,25 +2926,25 @@ HMCPchunkwrite(void       *cookie,    /* IN: access record to mess with */
                int32       chunk_num, /* IN: chunk number */
                const void *datap /* IN: buffer for data */)
 {
-    accrec_t    *access_rec = (accrec_t *)cookie; /* access record */
-    chunkinfo_t *info       = NULL;               /* chunked element information record */
-    CHUNK_REC   *chk_rec    = NULL;               /* current chunk */
-    TBBT_NODE   *entry      = NULL;               /* node off of  chunk tree */
-    uint8       *v_data     = NULL;               /* chunk table record i.e Vdata record */
-    CHUNK_REC   *chkptr     = NULL;               /* Chunk record to inserted in TBBT  */
-    const void  *bptr       = NULL;               /* data buffer pointer */
-    int32        chk_id     = FAIL;               /* chunkd access id */
-    int32 bytes_written = 0; /* total #bytes written by HMCIwrite */
-    int32 write_len     = 0; /* nbytes to write next */
-    int32 ret_value     = SUCCEED;
-    intn  k; /* loop index */
+    accrec_t    *access_rec    = (accrec_t *)cookie; /* access record */
+    chunkinfo_t *info          = NULL;               /* chunked element information record */
+    CHUNK_REC   *chk_rec       = NULL;               /* current chunk */
+    TBBT_NODE   *entry         = NULL;               /* node off of  chunk tree */
+    uint8       *v_data        = NULL;               /* chunk table record i.e Vdata record */
+    CHUNK_REC   *chkptr        = NULL;               /* Chunk record to inserted in TBBT  */
+    const void  *bptr          = NULL;               /* data buffer pointer */
+    int32        chk_id        = FAIL;               /* chunkd access id */
+    int32        bytes_written = 0;                  /* total #bytes written by HMCIwrite */
+    int32        write_len     = 0;                  /* nbytes to write next */
+    int32        ret_value     = SUCCEED;
+    intn         k; /* loop index */
 
     /* Check args */
     if (access_rec == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Set inputs */
-    info = (chunkinfo_t *)(access_rec->special_info);
+    info          = (chunkinfo_t *)(access_rec->special_info);
     write_len     = (info->chunk_size * info->nt_size);
     bytes_written = 0;
     bptr          = datap;
@@ -3075,14 +3075,14 @@ HMCwriteChunk(int32       access_id, /* IN: access aid to mess with */
               int32      *origin,    /* IN: origin of chunk to write */
               const void *datap /* IN: buffer for data */)
 {
-    accrec_t *access_rec = NULL; /* access record */
-    filerec_t   *file_rec = NULL;    /* file record */
-    chunkinfo_t *info     = NULL;    /* chunked element information record */
-    CHUNK_REC   *chkptr   = NULL;    /* Chunk record to inserted in TBBT  */
-    int32       *chk_key  = NULL;    /* Chunk record key for insertion in TBBT */
-    const void  *bptr     = NULL;    /* data buffer pointer */
-    void        *chk_data = NULL;    /* chunk data */
-    uint8       *chk_dptr = NULL;    /* chunk data pointer */
+    accrec_t    *access_rec = NULL;  /* access record */
+    filerec_t   *file_rec   = NULL;  /* file record */
+    chunkinfo_t *info       = NULL;  /* chunked element information record */
+    CHUNK_REC   *chkptr     = NULL;  /* Chunk record to inserted in TBBT  */
+    int32       *chk_key    = NULL;  /* Chunk record key for insertion in TBBT */
+    const void  *bptr       = NULL;  /* data buffer pointer */
+    void        *chk_data   = NULL;  /* chunk data */
+    uint8       *chk_dptr   = NULL;  /* chunk data pointer */
     int32        relative_posn;      /* relative position in chunked element */
     int32        bytes_written = 0;  /* total #bytes written by HMCIwrite */
     int32        write_len     = 0;  /* bytes to write next */
@@ -3280,8 +3280,8 @@ HMCPwrite(accrec_t   *access_rec, /* IN: access record to mess with */
           int32       length,     /* IN: number of bytes to write */
           const void *datap /* IN: buffer for data */)
 {
-    filerec_t   *file_rec = NULL; /* file record */
-    chunkinfo_t *info     = NULL; /* chunked element information record */
+    filerec_t   *file_rec = NULL;   /* file record */
+    chunkinfo_t *info     = NULL;   /* chunked element information record */
     CHUNK_REC   *chkptr   = NULL;   /* Chunk record to inserted in TBBT  */
     int32       *chk_key  = NULL;   /* Chunk record key for insertion in TBBT */
     const uint8 *bptr     = NULL;   /* data buffer pointer */
@@ -3306,7 +3306,7 @@ HMCPwrite(accrec_t   *access_rec, /* IN: access record to mess with */
     if (access_rec == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-        /* Set inputs */
+    /* Set inputs */
     file_rec      = HAatom_object(access_rec->file_id);
     info          = (chunkinfo_t *)(access_rec->special_info);
     relative_posn = access_rec->posn;
@@ -3394,12 +3394,12 @@ HMCPwrite(accrec_t   *access_rec, /* IN: access record to mess with */
             chkptr  = NULL;
             chk_key = NULL;
         }
-            /* would be nice to get Chunk record from TBBT based on chunk number
-               and then get chunk data base on chunk vdata number but
-               currently the chunk calculations return chunk
-               numbers and not Vdata record numbers.
-               This would reduce some overhead in the number of chunks
-               dealt with in the cache */
+        /* would be nice to get Chunk record from TBBT based on chunk number
+           and then get chunk data base on chunk vdata number but
+           currently the chunk calculations return chunk
+           numbers and not Vdata record numbers.
+           This would reduce some overhead in the number of chunks
+           dealt with in the cache */
 #ifdef CHK_DEBUG_4
         printf("  getting chunk %d from cache\n", chunk_num);
 #endif
