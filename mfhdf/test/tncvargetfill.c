@@ -141,6 +141,8 @@ read_verify_nc_api_1dim(void)
     }
 
     ncclose(ncid);
+
+    return num_errs;
 } /* end read data */
 
 static int
