@@ -1,6 +1,8 @@
 # general clang warnings flags
 -Wall
 -Warray-bounds
+-Wbad-function-cast
+-Wcast-align
 -Wcast-qual
 -Wconversion
 -Wdouble-promotion
@@ -8,11 +10,22 @@
 -Wformat=2
 -Wframe-larger-than=16384
 -Wimplicit-fallthrough
+-Wimplicit-function-declaration
+-Wincompatible-pointer-types
+-Wincompatible-pointer-types-discards-qualifiers
+-Wmissing-declarations
 -Wnull-dereference
--Wunused-const-variable
--Wwrite-strings
+-Wpacked
 -Wpedantic
+-Wshadow
+-Wswitch
+-Wunused-const-variable
+-Wunused-function
+-Wunused-variable
+-Wunused-parameter
+-Wwrite-strings
 -Wvolatile-register-var
+
 # NOTE: Due to the divergence in the C and C++, we're dropping support for
 # compiling the C library with a C++ compiler and dropping the -Wc++-compat
 # warning.

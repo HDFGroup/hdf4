@@ -291,11 +291,7 @@ ncvardef(int cdfid, const char *name, nc_type type, int ndims, const int dims[])
 #endif
     if (NC_var_shape(*var, handle->dims) != -1) {
 #ifdef HDF
-#ifdef NOT_YET
-        (*var)->ndg_ref = Htagnewref(handle->hdf_file, DFTAG_NDG);
-#else  /* NOT_YET */
         (*var)->ndg_ref = Hnewref(handle->hdf_file);
-#endif /* NOT_YET */
 #endif
         return (handle->vars->count - 1);
     }

@@ -2,19 +2,10 @@
 # Each line is a file pattern followed by one or more owners.
 
 # These owners will be the default owners for everything in the repo.
-*       @lrknox @byrnHDF @bmribler @derobins
+* @lrknox @derobins @byrnHDF @fortnern @jhendersonHDF @qkoziol @vchoi-hdfgroup @bmribler @glennsong09 @mattjala @brtnfld @schwehr
 
 # Order is important. The last matching pattern has the most precedence.
 # So if a pull request only touches javascript files, only these owners
 # will be requested to review.
-*.cmake           @byrnHDF @bmribler @derobins
-CMakeLists.txt    @byrnHDF @bmribler @derobins
-CMakeTests.*      @byrnHDF @bmribler @derobins
-
-/bin/             @lrknox @bmribler @derobins
-
-/config/          @lrknox @bmribler @byrnHDF @derobins
-
-/m4/              @lrknox @bmribler @derobins
-
-/release_notes/   @lrknox @bmribler @byrnHDF @derobins
+/fortran/         @brtnfld @derobins @epourmal
+/java/            @jhendersonHDF @byrnHDF @derobins

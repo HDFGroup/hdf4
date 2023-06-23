@@ -74,12 +74,12 @@ jobs:
 
           # Windows w/ MSVC + CMake
           #
-          # No Fortran, parallel, or VFDs that rely on POSIX things
           - name: "Windows MSVC CMake"
             os: windows-2022
             toolchain: ""
             shared: ON
             xdr: ON
+            fortran: OFF
             java: ON
             jpegfc: ON
             libaecfc: ON
@@ -97,6 +97,7 @@ jobs:
             os: ubuntu-latest
             shared: ON
             xdr: ON
+            fortran: OFF
             java: ON
             jpegfc: ON
             libaecfc: ON
@@ -115,6 +116,7 @@ jobs:
             os: ubuntu-latest
             shared: enable
             xdr: enable
+            fortran: disable
             java: enable
             toolchain: ""
             generator: "autogen"
@@ -130,6 +132,7 @@ jobs:
             os: ubuntu-latest
             shared: enable
             xdr: disable
+            fortran: disable
             java: enable
             toolchain: ""
             generator: "autogen"
@@ -142,9 +145,10 @@ jobs:
           # We could also build with the Autotools via brew installing them,
           # but that seems unnecessary
           - name: "MacOS Clang CMake"
-            os: macos-latest
+            os: macos-13
             shared: ON
             xdr: ON
+            fortran: OFF
             java: ON
             jpegfc: ON
             libaecfc: ON
@@ -161,6 +165,7 @@ jobs:
             os: ubuntu-latest
             shared: ON
             xdr: ON
+            fortran: OFF
             java: OFF
             jpegfc: ON
             libaecfc: ON
@@ -173,12 +178,12 @@ jobs:
 
           # Windows w/ MSVC + CMake
           #
-          # No Fortran, parallel, or VFDs that rely on POSIX things
           - name: "Windows static MSVC CMake"
             os: windows-2022
             toolchain: ""
             shared: OFF
             xdr: ON
+            fortran: OFF
             java: OFF
             jpegfc: ON
             libaecfc: ON
@@ -196,6 +201,7 @@ jobs:
             os: ubuntu-latest
             shared: OFF
             xdr: ON
+            fortran: ON
             java: OFF
             jpegfc: ON
             libaecfc: ON
@@ -213,7 +219,9 @@ jobs:
           - name: "Ubuntu static gcc Autotools"
             os: ubuntu-latest
             shared: disable
+            # NOTE: Fortran and HDF4 XDR have linking problems w/ Autotools
             xdr: enable
+            fortran: disable
             java: disable
             toolchain: ""
             generator: "autogen"
@@ -226,9 +234,10 @@ jobs:
           # We could also build with the Autotools via brew installing them,
           # but that seems unnecessary
           - name: "MacOS static Clang CMake"
-            os: macos-latest
+            os: macos-13
             shared: OFF
             xdr: ON
+            fortran: OFF
             java: OFF
             jpegfc: ON
             libaecfc: ON
@@ -273,9 +282,9 @@ jobs:
         run: |
            sudo apt update
            sudo apt install automake autoconf libtool libtool-bin
-           sudo apt install gcc-11 g++-11 gfortran-11
-           echo "CC=gcc-11" >> $GITHUB_ENV
-           echo "CXX=g++-11" >> $GITHUB_ENV
+           sudo apt install gcc-12 g++-12 gfortran-12
+           echo "CC=gcc-12" >> $GITHUB_ENV
+           echo "CXX=g++-12" >> $GITHUB_ENV
         if: (matrix.generator == 'autogen')
 
       - name: Install Dependencies (Windows)
@@ -285,7 +294,7 @@ jobs:
 
       - name: Install Dependencies (macOS)
         run: brew install ninja
-        if: matrix.os == 'macos-latest'
+        if: matrix.os == 'macos-13'
 
       - name: Set environment for MSVC (Windows)
         run: |
@@ -307,7 +316,7 @@ jobs:
           sh ./autogen.sh
           mkdir "${{ runner.workspace }}/build"
           cd "${{ runner.workspace }}/build"
-          ${{ matrix.flags }} $GITHUB_WORKSPACE/configure --${{ matrix.build_mode.autotools }} --${{ matrix.xdr }}-hdf4-xdr --${{ matrix.netcdf.enabled }}-netcdf --${{ matrix.java }}-java --${{ matrix.shared }}-shared
+          ${{ matrix.flags }} $GITHUB_WORKSPACE/configure --${{ matrix.build_mode.autotools }} --${{ matrix.xdr }}-hdf4-xdr --${{ matrix.netcdf.enabled }}-netcdf --${{ matrix.fortran }}-fortran --${{ matrix.java }}-java --${{ matrix.shared }}-shared
           echo
           echo "*** h4config.h ***"
           echo
@@ -323,7 +332,7 @@ jobs:
         run: |
           mkdir "${{ runner.workspace }}/build"
           cd "${{ runner.workspace }}/build"
-          cmake ${{ matrix.cacheinit }} ${{ matrix.generator }} --log-level=VERBOSE -DCMAKE_BUILD_TYPE=${{ matrix.build_mode.cmake }} -DCMAKE_TOOLCHAIN_FILE=${{ matrix.toolchain }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.shared }} -DHDF4_BUILD_EXAMPLES=ON -DBUILD_JPEG_WITH_PIC:BOOL=ON -DHDF4_BUILD_XDR_LIB:BOOL=${{ matrix.xdr }} -DHDF4_ENABLE_NETCDF:BOOL=${{ matrix.netcdf.cmake }} -DHDF4_BUILD_JAVA=${{ matrix.java }} -DBUILD_JPEG_WITH_FETCHCONTENT=${{ matrix.jpegfc }} -DBUILD_SZIP_WITH_FETCHCONTENT=${{ matrix.libaecfc }} -DBUILD_ZLIB_WITH_FETCHCONTENT=${{ matrix.zlibfc }} $GITHUB_WORKSPACE
+          cmake ${{ matrix.cacheinit }} ${{ matrix.generator }} --log-level=VERBOSE -DCMAKE_BUILD_TYPE=${{ matrix.build_mode.cmake }} -DCMAKE_TOOLCHAIN_FILE=${{ matrix.toolchain }} -DBUILD_SHARED_LIBS:BOOL=${{ matrix.shared }} -DHDF4_BUILD_EXAMPLES=ON -DBUILD_JPEG_WITH_PIC:BOOL=ON -DHDF4_BUILD_XDR_LIB:BOOL=${{ matrix.xdr }} -DHDF4_ENABLE_NETCDF:BOOL=${{ matrix.netcdf.cmake }} -DHDF4_BUILD_FORTRAN=${{ matrix.fortran }} -DHDF4_BUILD_JAVA=${{ matrix.java }} -DBUILD_JPEG_WITH_FETCHCONTENT=${{ matrix.jpegfc }} -DBUILD_SZIP_WITH_FETCHCONTENT=${{ matrix.libaecfc }} -DBUILD_ZLIB_WITH_FETCHCONTENT=${{ matrix.zlibfc }} $GITHUB_WORKSPACE
           echo
           echo "*** h4config.h ***"
           echo

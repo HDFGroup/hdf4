@@ -151,11 +151,11 @@ HRPconvert(int32 fid, uint16 tag, uint16 ref, int32 xdim, int32 ydim, int16 sche
     ret_value = HAregister_atom(AIDGROUP, access_rec); /* return access id */
 
 done:
-    if (ret_value == FAIL) { /* Error condition cleanup */
+    if (ret_value == FAIL) {
         free(info);
-
-        access_rec->special_info = NULL;
-    } /* end if */
+        if (NULL != access_rec)
+            access_rec->special_info = NULL;
+    }
 
     return ret_value;
 } /* HRPconvert */

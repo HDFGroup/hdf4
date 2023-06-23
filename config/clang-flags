@@ -45,9 +45,9 @@ if test "X-clang" = "X-$cc_vendor" -o "X-Apple LLVM" = "X-$cc_vendor"; then
     CFLAGS="$CFLAGS -Wno-error=implicit-function-declaration"
     CFLAGS="$CFLAGS -std=c99 -Wall -pedantic"
 
-    DEBUG_CFLAGS="$CFLAGS -g"
+    DEBUG_CFLAGS="-g"
     DEBUG_CPPFLAGS=
-    PROD_CFLAGS="$CFLAGS -O2"
+    PROD_CFLAGS="-O2"
     PROD_CPPFLAGS=
     PROFILE_CFLAGS="-pg"
     PROFILE_CPPFLAGS=

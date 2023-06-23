@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.12)
-project (HDF4_MFHDF_NCTEST)
+project (HDF4_MFHDF_NCTEST C)
 
 set (nctest_SRCS
     ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/add.c

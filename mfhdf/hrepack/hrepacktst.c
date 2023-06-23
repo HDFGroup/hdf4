@@ -413,9 +413,11 @@ add_gr(const char  *gr_name,     /* gr name */
         edges[2],       /* number of elements to be written along each dimension */
         dim_gr[2],      /* dimension sizes of the image array */
         interlace_mode, /* interlace mode of the image */
-        data_type,      /* data type of the image data */
-        data[Y_DIM_GR][X_DIM_GR];
-    int           i, j, n = 0, ncomps = 1;
+        data_type;      /* data type of the image data */
+
+    int32        *data   = NULL; /* [Y_DIM_GR][X_DIM_GR] */
+    int           n      = 0;
+    int           ncomps = 1;
     HDF_CHUNK_DEF chunk_def; /* Chunking definitions */
 
     /* set the data type, interlace mode, and dimensions of the image */
@@ -425,9 +427,11 @@ add_gr(const char  *gr_name,     /* gr name */
     dim_gr[1]      = X_DIM_GR;
 
     /* data set data initialization */
-    for (j = 0; j < Y_DIM_GR; j++) {
-        for (i = 0; i < X_DIM_GR; i++)
-            data[j][i] = n++;
+    if (NULL == (data = (int32 *)malloc(Y_DIM_GR * X_DIM_GR * sizeof(int32))))
+        goto fail;
+    for (int j = 0; j < Y_DIM_GR; j++) {
+        for (int i = 0; i < X_DIM_GR; i++)
+            data[(j * X_DIM_GR) + i] = n++;
     }
 
     /*define some compression specific parameters */
@@ -471,7 +475,7 @@ add_gr(const char  *gr_name,     /* gr name */
     /* create the raster image array */
     if ((ri_id = GRcreate(gr_id, gr_name, ncomps, data_type, interlace_mode, dim_gr)) == FAIL) {
         printf("Error: Could not create GR <%s>\n", gr_name);
-        return FAIL;
+        goto fail;
     }
 
     /* set chunk */
@@ -525,7 +529,7 @@ add_gr(const char  *gr_name,     /* gr name */
         }
         if (GRsetchunk(ri_id, chunk_def, chunk_flags) == FAIL) {
             printf("Error: Could not set chunk for GR <%s>\n", gr_name);
-            return FAIL;
+            goto fail;
         }
     }
 
@@ -534,7 +538,7 @@ add_gr(const char  *gr_name,     /* gr name */
              comp_type < COMP_CODE_INVALID) {
         if (GRsetcompress(ri_id, comp_type, c_info) == FAIL) {
             printf("Error: Could not set compress for GR <%s>\n", gr_name);
-            return FAIL;
+            goto fail;
         }
     }
 
@@ -546,7 +550,7 @@ add_gr(const char  *gr_name,     /* gr name */
     /* write the data in the buffer into the image array */
     if (GRwriteimage(ri_id, start, NULL, edges, (void *)data) == FAIL) {
         printf("Error: Could not set write GR <%s>\n", gr_name);
-        return FAIL;
+        goto fail;
     }
 
     /* obtain the reference number of the GR using its identifier */
@@ -556,21 +560,26 @@ add_gr(const char  *gr_name,     /* gr name */
     if (vgroup_id) {
         if (Vaddtagref(vgroup_id, TAG_GRP_IMAGE, gr_ref) == FAIL) {
             printf("Error: Could not add GR <%s> to group\n", gr_name);
-            return FAIL;
+            goto fail;
         }
     }
 
     /* terminate access to the raster image */
     if (GRendaccess(ri_id) == FAIL) {
         printf("Error: Could not close GR <%s>\n", gr_name);
-        return FAIL;
+        goto fail;
     }
 
     /* add an annotation and label to the object */
     if (add_an(file_id, DFTAG_RI, gr_ref) < 0)
-        return FAIL;
+        goto fail;
 
+    free(data);
     return SUCCEED;
+
+fail:
+    free(data);
+    return FAIL;
 }
 
 /*-------------------------------------------------------------------------
@@ -760,22 +769,22 @@ add_sd(int32        file_id,     /* file ID */
        comp_info   *c_info /* compression structure */)
 
 {
-    int32 sds_id,       /* data set identifier */
-        sds_ref,        /* reference number of the data set */
-        dim_sds[2],     /* dimension of the data set */
-        rank = 2,       /* rank of the data set array */
-        n_values,       /* number of values of attribute */
-        dim_index,      /* dimension index */
-        dim_id,         /* dimension ID */
-        start[2],       /* write start */
-        edges[2],       /* write edges */
-        fill_value = 2, /* fill value */
-        data[Y_DIM][X_DIM], bits_per_pixel = 32;
-    float32       sds_values[2] = {2., 10.}; /* values of the SDS attribute  */
-    int16         data_X[X_DIM];             /* X dimension dimension scale */
-    float64       data_Y[Y_DIM];             /* Y dimension dimension scale */
-    int           i, j;
-    HDF_CHUNK_DEF chunk_def; /* Chunking definitions */
+    int32 sds_id = FAIL;                 /* data set identifier */
+    int32 sds_ref,                       /* reference number of the data set */
+        dim_sds[2],                      /* dimension of the data set */
+        rank = 2,                        /* rank of the data set array */
+        n_values,                        /* number of values of attribute */
+        dim_index,                       /* dimension index */
+        dim_id,                          /* dimension ID */
+        start[2],                        /* write start */
+        edges[2],                        /* write edges */
+        fill_value               = 2;    /* fill value */
+    int32        *data           = NULL; /* [Y_DIM][X_DIM] */
+    int32         bits_per_pixel = 32;
+    float32       sds_values[2]  = {2., 10.}; /* values of the SDS attribute  */
+    int16        *data_X         = NULL;      /* X dimension dimension scale */
+    float64      *data_Y         = NULL;      /* Y dimension dimension scale */
+    HDF_CHUNK_DEF chunk_def;                  /* Chunking definitions */
 
     /* set the size of the SDS's dimension */
     dim_sds[0] = Y_DIM;
@@ -816,20 +825,27 @@ add_sd(int32        file_id,     /* file ID */
     }
 
     /* data set data initialization */
-    for (j = 0; j < Y_DIM; j++) {
-        for (i = 0; i < X_DIM; i++)
-            data[j][i] = (i + j) + 1;
+    if (NULL == (data = (int32 *)malloc(Y_DIM * X_DIM * sizeof(int32))))
+        goto fail;
+    for (int j = 0; j < Y_DIM; j++) {
+        for (int i = 0; i < X_DIM; i++)
+            data[(j * X_DIM) + i] = (i + j) + 1;
     }
     /* initialize dimension scales */
-    for (i = 0; i < X_DIM; i++)
-        data_X[i] = (int16)i;
-    for (i = 0; i < Y_DIM; i++)
+    if (NULL == (data_X = (int16 *)malloc(X_DIM * sizeof(int16))))
+        goto fail;
+    for (int16 i = 0; i < X_DIM; i++)
+        data_X[i] = i;
+
+    if (NULL == (data_Y = (float64 *)malloc(Y_DIM * sizeof(float64))))
+        goto fail;
+    for (int i = 0; i < Y_DIM; i++)
         data_Y[i] = 0.1 * i;
 
     /* create the SDS */
     if ((sds_id = SDcreate(sd_id, sds_name, DFNT_INT32, rank, dim_sds)) < 0) {
         printf("Could not create SDS <%s>\n", sds_name);
-        return FAIL;
+        goto fail;
     }
 
     /* set chunk */
@@ -943,9 +959,15 @@ add_sd(int32        file_id,     /* file ID */
         goto fail;
     }
 
+    free(data);
+    free(data_X);
+    free(data_Y);
     return SUCCEED;
 
 fail:
+    free(data);
+    free(data_X);
+    free(data_Y);
     SDendaccess(sds_id);
     return FAIL;
 }
@@ -973,15 +995,14 @@ add_sd3d(int32        file_id,     /* file ID */
          comp_info   *c_info /* compression structure */)
 
 {
-    int32 sds_id,       /* data set identifier */
-        sds_ref,        /* reference number of the data set */
-        dim_sds[3],     /* dimension of the data set */
-        rank = 3,       /* rank of the data set array */
-        start[3],       /* write start */
-        fill_value = 2, /* fill value */
-        data[Z_DIM][Y_DIM][X_DIM];
-    int           i, j, k;
-    HDF_CHUNK_DEF chunk_def; /* Chunking definitions */
+    int32 sds_id = FAIL;       /* data set identifier */
+    int32 sds_ref,             /* reference number of the data set */
+        dim_sds[3],            /* dimension of the data set */
+        rank = 3,              /* rank of the data set array */
+        start[3],              /* write start */
+        fill_value     = 2;    /* fill value */
+    int32        *data = NULL; /* [Z_DIM][Y_DIM][X_DIM] */
+    HDF_CHUNK_DEF chunk_def;   /* Chunking definitions */
 
     /* Define chunk's dimensions */
     chunk_def.chunk_lengths[0] = Z_DIM / 2;
@@ -997,10 +1018,14 @@ add_sd3d(int32        file_id,     /* file ID */
     chunk_def.comp.cinfo.deflate.level = 6;
 
     /* data set data initialization */
-    for (k = 0; k < Z_DIM; k++) {
-        for (j = 0; j < Y_DIM; j++)
-            for (i = 0; i < X_DIM; i++)
-                data[k][j][i] = (i + j) + 1;
+    if (NULL == (data = (int32 *)malloc(Z_DIM * Y_DIM * X_DIM * sizeof(int32))))
+        goto fail;
+    for (int k = 0; k < Z_DIM; k++) {
+        for (int j = 0; j < Y_DIM; j++)
+            for (int i = 0; i < X_DIM; i++) {
+                int32 idx = (k * Y_DIM * X_DIM) + (j * X_DIM) + i;
+                data[idx] = (i + j) + 1;
+            }
     }
 
     /* set the size of the SDS's dimension */
@@ -1011,7 +1036,7 @@ add_sd3d(int32        file_id,     /* file ID */
     /* create the SDS */
     if ((sds_id = SDcreate(sd_id, sds_name, DFNT_INT32, rank, dim_sds)) < 0) {
         printf("Could not create SDS <%s>\n", sds_name);
-        return FAIL;
+        goto fail;
     }
 
     /* set chunk */
@@ -1067,10 +1092,12 @@ add_sd3d(int32        file_id,     /* file ID */
         goto fail;
     }
 
+    free(data);
     return SUCCEED;
 
 fail:
     SDendaccess(sds_id);
+    free(data);
     return FAIL;
 }
 
@@ -1139,15 +1166,17 @@ add_unl_sd(int32       sd_id,    /* SD id */
 
     if (do_write) {
 
-        int32 start[2], /* write start */
-            edges[2],   /* write edges */
-            buf[Y_DIM][X_DIM];
-        int i, j;
+        int32  start[2]; /* write start */
+        int32  edges[2]; /* write edges */
+        int32 *buf = NULL;
+
+        if (NULL == (buf = calloc(1, Y_DIM * X_DIM * sizeof(int32))))
+            goto fail;
 
         /* data set data initialization */
-        for (j = 0; j < Y_DIM; j++) {
-            for (i = 0; i < X_DIM; i++) {
-                buf[j][i] = (i + j) + 1;
+        for (int j = 0; j < Y_DIM; j++) {
+            for (int i = 0; i < X_DIM; i++) {
+                buf[(j * X_DIM) + i] = (i + j) + 1;
             }
         }
         /* define the location and size of the data to be written to the data set */
@@ -1159,8 +1188,11 @@ add_unl_sd(int32       sd_id,    /* SD id */
         /* write the stored data to the data set */
         if (SDwritedata(sds_id, start, NULL, edges, (void *)buf) == FAIL) {
             printf("Failed to set write for SDS <%s>\n", sds_name);
+            free(buf);
             goto fail;
         }
+
+        free(buf);
     }
 
     /* terminate access to the SDS */

@@ -564,7 +564,9 @@ tbbtrem(TBBT_NODE **root, TBBT_NODE *node, void **kp)
             side = (0x10 & *(short *)&node) ? LEFT : RIGHT; /* balance" */
         }
         leaf = tbbt_nbr(next = node, Other(side));
-        par  = leaf->Parent;
+        if (NULL == leaf)
+            return NULL; /* Badness */
+        par = leaf->Parent;
         if (par == next) {      /* Case 2x: `node' had exactly 2 descendants */
             side = Other(side); /* Transform this to Case 2 */
             next = leaf->link[side];

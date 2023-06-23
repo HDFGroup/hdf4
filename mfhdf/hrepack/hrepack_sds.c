@@ -833,7 +833,7 @@ get_print_info(int chunk_flags, HDF_CHUNK_DEF *chunk_def, /* chunk definition */
     int32  sds_idx;
     int32  sds_id;
     double a, b, r = 0;
-    char   comp_str[255];
+    char  *comp_str  = NULL;
     int    is_record = 0;
 
     if ((sds_idx = SDnametoindex(sd_id, sds_name)) == FAIL)
@@ -849,7 +849,11 @@ get_print_info(int chunk_flags, HDF_CHUNK_DEF *chunk_def, /* chunk definition */
     if (SDendaccess(sds_id) == FAIL)
         goto out;
 
-    memset(comp_str, 0, 255);
+    /* Has to hold a double, which can have a LOT of digits. Even if that
+     * isn't realistic in practice, the compiler will complain.
+     */
+    if (NULL == (comp_str = calloc(1, 512)))
+        goto out;
 
     /* unlimited dimensions don't work with compression */
     if (is_record) {
@@ -870,9 +874,12 @@ get_print_info(int chunk_flags, HDF_CHUNK_DEF *chunk_def, /* chunk definition */
 
     print_info(chunk_flags, chunk_def, comp_type, path, comp_str);
 
+    free(comp_str);
+
     return SUCCEED;
 
 out:
+    free(comp_str);
     return FAIL;
 }
 

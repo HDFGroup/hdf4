@@ -342,7 +342,7 @@ int
 read_info(const char *filename, options_t *options)
 {
     char  stype[10];
-    char  comp_info[1024];
+    char  info[1024]; /* compression info */
     FILE *fp = NULL;
     char  c;
     int   i;
@@ -379,12 +379,12 @@ read_info(const char *filename, options_t *options)
                 count = fscanf(fp, "%c", &c);
                 if (count != 1)
                     goto out;
-                comp_info[i] = c;
+                info[i] = c;
                 i++;
             }
-            comp_info[i - 1] = '\0'; /*cut the last " */
+            info[i - 1] = '\0'; /*cut the last " */
 
-            if (hrepack_addcomp(comp_info, options) < 0)
+            if (hrepack_addcomp(info, options) < 0)
                 goto out;
         }
         /*-------------------------------------------------------------------------
@@ -407,12 +407,12 @@ read_info(const char *filename, options_t *options)
                 count = fscanf(fp, "%c", &c);
                 if (count != 1)
                     goto out;
-                comp_info[i] = c;
+                info[i] = c;
                 i++;
             }
-            comp_info[i - 1] = '\0'; /*cut the last " */
+            info[i - 1] = '\0'; /*cut the last " */
 
-            if (hrepack_addchunk(comp_info, options) < 0)
+            if (hrepack_addchunk(info, options) < 0)
                 goto out;
         }
         /*-------------------------------------------------------------------------

@@ -24,17 +24,10 @@ dumprig_usage(intn argc, char *argv[])
     (void)argc;
 
     printf("Usage:\n");
-#ifdef LATER
-    printf("%s dumprig [-a|-i <indices>|-n <names>|-r <refs>] [-dhvc] [-o <filename> [-bx]] <filelist>\n",
-           argv[0]);
-#endif
     printf("%s dumprig [-a|-i <indices>|-m <n>|-r <refs>] [-dhv] [-o <filename> [-bx]] <filelist>\n",
            argv[0]);
     printf("\t-a\tDump all RIGs in the file (default)\n");
     printf("\t-i <indices>\tDump the RIGs at positions listed in <indices>\n");
-#ifdef LATER
-    printf("\t-n <names>\tDump the RIGs with name listed in <names>\n");
-#endif
     printf("\t-m <n>\tDump the 8- or 24-bit RIGs only, <n> may be 8 or 24 \n");
     printf("\t-r <refs>\tDump the RIGs with reference number listed in <refs>\n");
     printf("\t-d\tDump data only, no tag/ref, formatted to input to hp2hdf\n");

@@ -1941,7 +1941,7 @@ HTIregister_tag_ref(filerec_t *file_rec, dd_t *dd_ptr)
 done:
     if (ret_value == FAIL) { /* Error condition cleanup */
 
-        if (tinfo_ptr->d != NULL)
+        if ((tinfo_ptr != NULL) && (tinfo_ptr->d != NULL))
             DAdestroy_array(tinfo_ptr->d, 0);
     }
 

@@ -389,67 +389,6 @@ update_chunk_indices_seek(int32    sloc,    /* IN: physical Seek loc in element 
 #endif
 } /* update_chunk_indices_seek()*/
 
-#ifdef UNUSED
-/* -------------------------------------------------------------------------
-NAME
-    compute_chunk_to_seek -- translate chunk coordinates to chunk seek position
-DESCRIPTION
-    Calculate new chunk seek position given seek chunk array and seek position
-    within that chunk array.
-RETURNS
-    Nothing
-AUTHOR
-   -GeorgeV - 9/3/96
----------------------------------------------------------------------------*/
-static void
-compute_chunk_to_seek(int32   *chunk_seek, /* OUT: new physical chunk seek pos in element*/
-                      int32    ndims,      /* IN: number of dims */
-                      int32    nt_size,    /* IN: number type size */
-                      int32   *sbi,        /* IN: seek chunk array */
-                      int32   *spb,        /* IN; seek pos w/ chunk array */
-                      DIM_REC *ddims,      /* IN: dim record ptrs */
-                      int32    chunk_size /* IN: physical size of chunk */)
-{
-    int32 j;
-    int32 new_seek;
-    int32 l_chunk_size = 0;
-
-    /* Adjust physical chunk_size -> logical chunk size by size of number type */
-    l_chunk_size = chunk_size / nt_size;
-
-    /* Calculate Seek Location in element
-     * First calculste seek-chunk position in element
-     * i.e seek position according to chunk first */
-    *chunk_seek = sbi[ndims - 1];
-    for (j = ndims - 1; j; j--) {
-        *chunk_seek = (*chunk_seek * ddims[j - 1].num_chunks) + sbi[j - 1];
-    }
-
-    /* must get chunk_size from somewhere else
-     * to give us position in file relative to chunk.
-     * Next comes adjustment of seek for position inside chunk*/
-    *chunk_seek *= l_chunk_size;
-#ifdef CHK_DEBUG_1
-    printf("ccs:  chunk_seek = %d(chunk# %d)\n", *chunk_seek, *chunk_seek / l_chunk_size);
-#endif
-    /* Calculate seek position in chunk */
-    new_seek = spb[ndims - 1];
-    for (j = ndims - 1; j; j--) {
-        new_seek = (new_seek * ddims[j - 1].chunk_length) + spb[j - 1];
-    }
-
-    /* add seek position in chunk to seek-chunk offset */
-    new_seek += *chunk_seek;
-#ifdef CHK_DEBUG_1
-    printf("ccs:   calculated seek position in file is %d\n", new_seek);
-#endif
-
-    /* multiply by number type size to get new physical seek position */
-    *chunk_seek = new_seek * nt_size;
-
-} /* compute_chunk_to_seek() */
-#endif /* UNUSED */
-
 /* -------------------------------------------------------------------------
 NAME
     compute_chunk_to_array -- translate chunk arrays to user array
@@ -2678,19 +2617,16 @@ HMCreadChunk(int32  access_id, /* IN: access aid to mess with */
              int32 *origin,    /* IN: origin of chunk to read */
              void  *datap /* IN: buffer for data */)
 {
-    accrec_t *access_rec = NULL; /* access record */
-#ifdef UNUSED
-    uint8 *data = NULL;           /* data buffer */
-#endif                            /* UNUSED */
-    filerec_t   *file_rec = NULL; /* file record */
-    chunkinfo_t *info     = NULL; /* chunked element information record */
-    uint8       *bptr     = NULL; /* data buffer pointer */
-    void        *chk_data = NULL; /* chunk data */
-    uint8       *chk_dptr = NULL; /* chunk data pointer */
-    int32        relative_posn;   /* relative position in chunked element */
-    int32        bytes_read = 0;  /* total #bytes read  */
-    int32        read_len   = 0;  /* bytes to read next */
-    int32        chunk_num  = -1; /* chunk number */
+    accrec_t    *access_rec = NULL; /* access record */
+    filerec_t   *file_rec   = NULL; /* file record */
+    chunkinfo_t *info       = NULL; /* chunked element information record */
+    uint8       *bptr       = NULL; /* data buffer pointer */
+    void        *chk_data   = NULL; /* chunk data */
+    uint8       *chk_dptr   = NULL; /* chunk data pointer */
+    int32        relative_posn;     /* relative position in chunked element */
+    int32        bytes_read = 0;    /* total #bytes read  */
+    int32        read_len   = 0;    /* bytes to read next */
+    int32        chunk_num  = -1;   /* chunk number */
     int32        ret_value  = SUCCEED;
     intn         i;
 
@@ -2718,9 +2654,6 @@ HMCreadChunk(int32  access_id, /* IN: access aid to mess with */
        need to check if this access id is special CHUNKED */
     if (access_rec->special == SPECIAL_CHUNKED) {
         /* Set inputs */
-#ifdef UNUSED
-        data = (uint8 *)datap;
-#endif /* UNUSED */
         info          = (chunkinfo_t *)(access_rec->special_info);
         relative_posn = access_rec->posn;
         read_len      = (info->chunk_size * info->nt_size);
@@ -2827,9 +2760,6 @@ HMCPread(accrec_t *access_rec, /* IN: access record to mess with */
          int32     length,     /* IN: number of bytes to read */
          void     *datap /* OUT: buffer for data */)
 {
-#ifdef UNUSED
-    uint8 *data = NULL;                /* data buffer */
-#endif                                 /* UNUSED */
     chunkinfo_t *info          = NULL; /* information record for this special data elt */
     int32        relative_posn = 0;    /* relative position in chunk of data elt */
     int32        bytes_read    = 0;    /* total # bytes read for this call of HMCIread */
@@ -2858,9 +2788,6 @@ HMCPread(accrec_t *access_rec, /* IN: access record to mess with */
 #endif
 
     /* set inputs */
-#ifdef UNUSED
-    data = (uint8 *)datap;
-#endif /* UNUSED */
     info          = (chunkinfo_t *)(access_rec->special_info);
     relative_posn = access_rec->posn; /* current seek position in element */
 
@@ -2999,33 +2926,25 @@ HMCPchunkwrite(void       *cookie,    /* IN: access record to mess with */
                int32       chunk_num, /* IN: chunk number */
                const void *datap /* IN: buffer for data */)
 {
-    accrec_t    *access_rec = (accrec_t *)cookie; /* access record */
-    chunkinfo_t *info       = NULL;               /* chunked element information record */
-    CHUNK_REC   *chk_rec    = NULL;               /* current chunk */
-    TBBT_NODE   *entry      = NULL;               /* node off of  chunk tree */
-    uint8       *v_data     = NULL;               /* chunk table record i.e Vdata record */
-    CHUNK_REC   *chkptr     = NULL;               /* Chunk record to inserted in TBBT  */
-    const void  *bptr       = NULL;               /* data buffer pointer */
-    int32        chk_id     = FAIL;               /* chunkd access id */
-#ifdef UNUSED
-    uint8 *data = NULL;      /* data buffer */
-    int32  relative_posn;    /* relative position in chunked element */
-#endif                       /* UNUSED */
-    int32 bytes_written = 0; /* total #bytes written by HMCIwrite */
-    int32 write_len     = 0; /* nbytes to write next */
-    int32 ret_value     = SUCCEED;
-    intn  k; /* loop index */
+    accrec_t    *access_rec    = (accrec_t *)cookie; /* access record */
+    chunkinfo_t *info          = NULL;               /* chunked element information record */
+    CHUNK_REC   *chk_rec       = NULL;               /* current chunk */
+    TBBT_NODE   *entry         = NULL;               /* node off of  chunk tree */
+    uint8       *v_data        = NULL;               /* chunk table record i.e Vdata record */
+    CHUNK_REC   *chkptr        = NULL;               /* Chunk record to inserted in TBBT  */
+    const void  *bptr          = NULL;               /* data buffer pointer */
+    int32        chk_id        = FAIL;               /* chunkd access id */
+    int32        bytes_written = 0;                  /* total #bytes written by HMCIwrite */
+    int32        write_len     = 0;                  /* nbytes to write next */
+    int32        ret_value     = SUCCEED;
+    intn         k; /* loop index */
 
     /* Check args */
     if (access_rec == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Set inputs */
-    info = (chunkinfo_t *)(access_rec->special_info);
-#ifdef UNUSED
-    data          = (uint8 *)datap;
-    relative_posn = access_rec->posn;
-#endif /* UNUSED */
+    info          = (chunkinfo_t *)(access_rec->special_info);
     write_len     = (info->chunk_size * info->nt_size);
     bytes_written = 0;
     bptr          = datap;
@@ -3156,19 +3075,14 @@ HMCwriteChunk(int32       access_id, /* IN: access aid to mess with */
               int32      *origin,    /* IN: origin of chunk to write */
               const void *datap /* IN: buffer for data */)
 {
-    accrec_t *access_rec = NULL; /* access record */
-#ifdef UNUSED
-    uint8     *data    = NULL;       /* data buffer */
-    CHUNK_REC *chk_rec = NULL;       /* current chunk */
-    TBBT_NODE *entry   = NULL;       /* node off of  chunk tree */
-#endif                               /* UNUSED */
-    filerec_t   *file_rec = NULL;    /* file record */
-    chunkinfo_t *info     = NULL;    /* chunked element information record */
-    CHUNK_REC   *chkptr   = NULL;    /* Chunk record to inserted in TBBT  */
-    int32       *chk_key  = NULL;    /* Chunk record key for insertion in TBBT */
-    const void  *bptr     = NULL;    /* data buffer pointer */
-    void        *chk_data = NULL;    /* chunk data */
-    uint8       *chk_dptr = NULL;    /* chunk data pointer */
+    accrec_t    *access_rec = NULL;  /* access record */
+    filerec_t   *file_rec   = NULL;  /* file record */
+    chunkinfo_t *info       = NULL;  /* chunked element information record */
+    CHUNK_REC   *chkptr     = NULL;  /* Chunk record to inserted in TBBT  */
+    int32       *chk_key    = NULL;  /* Chunk record key for insertion in TBBT */
+    const void  *bptr       = NULL;  /* data buffer pointer */
+    void        *chk_data   = NULL;  /* chunk data */
+    uint8       *chk_dptr   = NULL;  /* chunk data pointer */
     int32        relative_posn;      /* relative position in chunked element */
     int32        bytes_written = 0;  /* total #bytes written by HMCIwrite */
     int32        write_len     = 0;  /* bytes to write next */
@@ -3201,9 +3115,6 @@ HMCwriteChunk(int32       access_id, /* IN: access aid to mess with */
        need to check if this access id is special CHUNKED */
     if (access_rec->special == SPECIAL_CHUNKED) {
         /* Set inputs */
-#ifdef UNUSED
-        data = (uint8 *)datap;
-#endif /* UNUSED */
         info          = (chunkinfo_t *)(access_rec->special_info);
         relative_posn = access_rec->posn;
         write_len     = (info->chunk_size * info->nt_size);
@@ -3271,20 +3182,10 @@ HMCwriteChunk(int32       access_id, /* IN: access aid to mess with */
             /* add to TBBT tree based on chunk number as the key */
             tbbtdins(info->chk_tree, chkptr, chk_key);
 
-#ifdef UNUSED
-            /* assign over new chk */
-            chk_rec = chkptr;
-#endif /* UNUSED */
-
             /* re-initialize ptrs to allow for error-failure check */
             chkptr  = NULL;
             chk_key = NULL;
         }
-#ifdef UNUSED
-        else                                    /* already in TBBT tree */
-            chk_rec = (CHUNK_REC *)entry->data; /* get file entry from node */
-#endif                                          /* UNUSED */
-
         /* would be nice to get Chunk record from TBBT based on chunk number
            and then get chunk data base on chunk vdata number but
            currently the chunk calculations return chunk
@@ -3379,13 +3280,8 @@ HMCPwrite(accrec_t   *access_rec, /* IN: access record to mess with */
           int32       length,     /* IN: number of bytes to write */
           const void *datap /* IN: buffer for data */)
 {
-    filerec_t   *file_rec = NULL; /* file record */
-    chunkinfo_t *info     = NULL; /* chunked element information record */
-#ifdef UNUSED
-    CHUNK_REC *chk_rec = NULL;      /* current chunk */
-    uint8     *data    = NULL;      /* data buffer */
-    TBBT_NODE *entry   = NULL;      /* node off of  chunk tree */
-#endif                              /* UNUSED */
+    filerec_t   *file_rec = NULL;   /* file record */
+    chunkinfo_t *info     = NULL;   /* chunked element information record */
     CHUNK_REC   *chkptr   = NULL;   /* Chunk record to inserted in TBBT  */
     int32       *chk_key  = NULL;   /* Chunk record key for insertion in TBBT */
     const uint8 *bptr     = NULL;   /* data buffer pointer */
@@ -3410,10 +3306,7 @@ HMCPwrite(accrec_t   *access_rec, /* IN: access record to mess with */
     if (access_rec == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-        /* Set inputs */
-#ifdef UNUSED
-    data = (uint8 *)datap;
-#endif /* UNUSED */
+    /* Set inputs */
     file_rec      = HAatom_object(access_rec->file_id);
     info          = (chunkinfo_t *)(access_rec->special_info);
     relative_posn = access_rec->posn;
@@ -3497,26 +3390,16 @@ HMCPwrite(accrec_t   *access_rec, /* IN: access record to mess with */
             /* add to TBBT tree based on chunk number as the key */
             tbbtdins(info->chk_tree, chkptr, chk_key);
 
-#ifdef UNUSED
-            /* assign over new chk */
-            chk_rec = chkptr;
-#endif /* UNUSED */
-
             /* re-initialize ptrs to allow for error-failure check */
             chkptr  = NULL;
             chk_key = NULL;
         }
-#ifdef UNUSED
-        else                                    /* already in TBBT tree */
-            chk_rec = (CHUNK_REC *)entry->data; /* get file entry from node */
-#endif                                          /* UNUSED */
-
-            /* would be nice to get Chunk record from TBBT based on chunk number
-               and then get chunk data base on chunk vdata number but
-               currently the chunk calculations return chunk
-               numbers and not Vdata record numbers.
-               This would reduce some overhead in the number of chunks
-               dealt with in the cache */
+        /* would be nice to get Chunk record from TBBT based on chunk number
+           and then get chunk data base on chunk vdata number but
+           currently the chunk calculations return chunk
+           numbers and not Vdata record numbers.
+           This would reduce some overhead in the number of chunks
+           dealt with in the cache */
 #ifdef CHK_DEBUG_4
         printf("  getting chunk %d from cache\n", chunk_num);
 #endif
