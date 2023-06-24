@@ -497,7 +497,7 @@ test_multidims()
     outdata3                       = (int16 *)calloc(edges[0] * edges[1] * edges[2], sizeof(int16));
     CHECK_ALLOC(outdata3, "outdata3", "test_multidims");
 
-    status                         = SDreaddata(dset1, start, NULL, edges, (void *)outdata3);
+    status = SDreaddata(dset1, start, NULL, edges, (void *)outdata3);
     CHECK(status, FAIL, "SDreaddata");
 
     /* Verify against the result buffer within the size of the read data */
