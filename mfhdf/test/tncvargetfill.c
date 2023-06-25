@@ -140,7 +140,8 @@ read_verify_nc_api_1dim(void)
                     outdata[i], ncresult2[i], i);
     }
 
-    ncclose(ncid);
+    status = ncclose(ncid);
+    CHECK(status, -1, "ncclose");
 
     return num_errs;
 } /* end read data */
@@ -406,7 +407,8 @@ read_verify_nc_api_multidims(void)
     status = memcmp(outdata1D, ncresult1Ddozen, edges[0] * sizeof(int16));
     VERIFY(status, 0, "memcmp");
 
-    ncclose(ncid);
+    status = ncclose(ncid);
+    CHECK(status, -1, "ncclose");
 
     return num_errs;
 } /* end read data with nc API */
@@ -783,7 +785,8 @@ test_readings(long max_numrecs)
     status = ncvarget(ncid, var2id, start, edges, outdata1D);
     VERIFY(status, -1, "ncvarget");
 
-    ncclose(ncid);
+    status = ncclose(ncid);
+    CHECK(status, -1, "ncclose");
 
     return num_errs;
 }
