@@ -118,9 +118,9 @@ if test "X-gcc" = "X-$cc_vendor"; then
     else
         CFLAGS="$CFLAGS"
     fi
-    DEBUG_CFLAGS="$CFLAGS -g -fverbose-asm"
+    DEBUG_CFLAGS="-g -fverbose-asm"
     DEBUG_CPPFLAGS=
-    PROD_CFLAGS="$CFLAGS -O3 -fomit-frame-pointer"
+    PROD_CFLAGS="-O3 -fomit-frame-pointer"
     PROD_CPPFLAGS=
     PROFILE_CFLAGS="-pg"
     PROFILE_CPPFLAGS=
