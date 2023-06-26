@@ -63,7 +63,7 @@
 
 case $F77_BASENAME in
   gfortran)
-    if test $fc_vers_major -ge 10; then
+    if test $cc_vers_major -ge 10; then
         FFLAGS="$FFLAGS -fallow-argument-mismatch"
     else
         FFLAGS="$FFLAGS"
