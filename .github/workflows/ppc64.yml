@@ -1,0 +1,39 @@
+name: PowerPC
+
+on:
+  push:
+    paths:
+      - "**/CMakeLists.txt"
+      - "**.cmake"
+      - "**.c"
+      - ".github/workflows/ppc64.yml"
+
+
+jobs:
+  powerpc:
+    # The host should always be Linux
+    runs-on: ubuntu-latest
+    name: Ubuntu PowerPC
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: uraimo/run-on-arch-action@v2
+        name: Run commands
+        id: runcmd
+        with:
+          arch: ppc64le
+          distro: ubuntu_latest
+
+          # Not required, but speeds up builds by storing container images in
+          # a GitHub package registry.
+          githubToken: ${{ github.token }}
+
+          install: |
+            apt-get update -q -y
+            apt-get install -q -y --no-install-recommends cmake make gcc libc6-dev
+
+          run: |
+            cmake --preset default
+            cmake --build --preset default
+            ctest --preset default
