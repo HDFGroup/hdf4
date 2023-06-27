@@ -34,6 +34,7 @@ jobs:
             apt-get install -q -y --no-install-recommends cmake make gcc libc6-dev
 
           run: |
-            cmake --preset default
-            cmake --build --preset default
-            ctest --preset default
+            ./autogen.sh
+            ./configure --prefix=/usr/local --enable-shared --enable-hdf4-xdr -disable-fortran --disable-netcdf
+            make
+            sudo make install
