@@ -326,7 +326,7 @@ if ($HDF4CONFIGCMAKE) {
   my $sub_rel_ver_str = (
      $newver[3] eq ""
      ? sprintf("\"%s\"", "")
-     : sprintf("\"%s\"", "-".$newver[3].)
+     : sprintf("\"%s\"", "-".$newver[3])
      );
   my $version_string = sprintf("\"%d.%d.%d\"", @newver[0,1,2]);
 
