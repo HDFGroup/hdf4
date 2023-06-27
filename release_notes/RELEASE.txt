@@ -513,14 +513,12 @@ This version has been tested in the following platforms:
     Darwin 15.6.0 x86_64             gfortran GNU Fortran (GCC) 5.2.0
     (osx1011test)                    Intel icc and ifort version 15.0.3
 
-    Windows 10 x64                  Visual Studio 2015 (cmake)
-                                    Visual Studio 2017 w/ Intel C/C++/Fortran 19 (cmake)
-                                    Visual Studio 2019 w/ clang 12.0.0
+    Windows 10 x64                  Visual Studio 2019 w/ clang 12.0.0
                                         with MSVC-like command-line (C/C++ only - cmake)
-                                    Visual Studio 2019 w/ Intel C/C++/Fortran oneAPI 2022 (cmake)
+                                    Visual Studio 2019 w/ Intel C/C++/Fortran oneAPI 2023 (cmake)
                                     Visual Studio 2022 w/ clang 15.0.1
                                         with MSVC-like command-line (C/C++ only - cmake)
-                                    Visual Studio 2022 w/ Intel C/C++/Fortran oneAPI 2022 (cmake)
+                                    Visual Studio 2022 w/ Intel C/C++/Fortran oneAPI 2023 (cmake)
 
 Known problems
 ==============
