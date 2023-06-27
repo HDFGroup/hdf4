@@ -1,4 +1,4 @@
-name: ppc64le Ubuntu Autotools
+name: ppc64le Autotools
 
 on:
   workflow_dispatch:
@@ -34,14 +34,14 @@ jobs:
           install: |
             apt-get update -q -y
             apt-get install -q -y --no-install-recommends \
-            automake autoconf gcc gfortran \
+            automake autoconf gcc \
             libc6-dev libjpeg-dev libtool libtool-bin \
             make sudo zlib1g zlib1g-dev
 
           run: |
             ./autogen.sh
             ./configure --prefix=/usr/local \
-            --enable-shared --enable-hdf4-xdr --enable-fortran \
-            --disable-netcdf
+            --enable-shared --enable-hdf4-xdr \
+            --disable-fortran --disable-netcdf
             make
             sudo make install
