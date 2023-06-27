@@ -1,13 +1,15 @@
-name: PowerPC
+name: ppc64le Ubuntu Autotools
 
 on:
+  workflow_dispatch:
   push:
-    paths:
-      - "**/CMakeLists.txt"
-      - "**.cmake"
-      - "**.c"
-      - ".github/workflows/ppc64.yml"
-
+  pull_request:
+    branches: [ master ]
+    paths-ignore:
+    - '.github/CODEOWNERS'
+    - 'release_notes/**'
+    - 'COPYING'
+    - '**.md'
 
 jobs:
   powerpc:
@@ -31,10 +33,14 @@ jobs:
 
           install: |
             apt-get update -q -y
-            apt-get install -q -y --no-install-recommends cmake make gcc libc6-dev automake autoconf libtool libtool-bin libjpeg-dev zlib1g zlib1g-dev sudo
+            apt-get install -q -y --no-install-recommends \
+            automake autoconf gcc libc6-dev libjpeg-dev libtool libtool-bin \
+            make sudo zlib1g zlib1g-dev
 
           run: |
             ./autogen.sh
-            ./configure --prefix=/usr/local --enable-shared --enable-hdf4-xdr -disable-fortran --disable-netcdf
+            ./configure --prefix=/usr/local \
+            --enable-shared --enable-hdf4-xdr \
+            -disable-fortran --disable-netcdf
             make
             sudo make install
