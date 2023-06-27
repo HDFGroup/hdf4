@@ -98,8 +98,7 @@ jobs:
           if [ ${{ inputs.use_environ }} == 'snapshots' && ${{ needs.check_commits.outputs.has_changes }} == 'true' ]; then
             FILE_NAME_BASE=$(echo "hdf4-${{ needs.check_commits.outputs.branch_ref }}-${{ needs.check_commits.outputs.branch_sha }}")
           else
-            echo "version=bin/h4vers" >> $GITHUB_OUTPUT
-            FILE_NAME_BASE=$(echo "hdf4-${{ version }}")
+            FILE_NAME_BASE=$(echo "hdf4-")$(echo "bin/h4vers")
           fi
           echo "FILE_BASE=$FILE_NAME_BASE" >> $GITHUB_OUTPUT
         shell: bash
