@@ -92,7 +92,7 @@ tar2zip()
         echo "usage: tar2zip <tarfilename> <zipfilename>"
         return 1
     fi
-    ztmpdir=/tmp/tmpdir$$
+    ztmpdir=/tmp/ztmpdir$$
     mkdir -p $ztmpdir
     version=$1
     tarfile=$2
