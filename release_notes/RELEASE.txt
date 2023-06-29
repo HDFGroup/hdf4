@@ -25,6 +25,7 @@ CONTENTS
 - New features and changes
   -- Configuration
 - Support for new platforms and compilers
+- Bugs fixed since HDF 4.2.16
 - Bugs fixed since HDF 4.2.15
   -- Configuration
   -- Library
@@ -361,6 +362,10 @@ Bugs fixed since HDF 4.2.16
       PIN_FLOAT_ARRAY_CRITICAL to PIN_FLOAT_ARRAY.
 
       Github issue #355
+
+
+Bugs fixed since HDF 4.2.15
+===========================
 
     - Applied a user's patch to fix a failure with SDwritedata
 

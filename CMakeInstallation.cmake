@@ -203,7 +203,7 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED)
         ${HDF4_SOURCE_DIR}/release_notes/USING_HDF4_CMake.txt
         ${HDF4_SOURCE_DIR}/release_notes/RELEASE.txt
     )
-    if (WIN32 OR MINGW)
+    if (WIN32)
       set (release_files
           ${release_files}
           ${HDF4_SOURCE_DIR}/release_notes/USING_HDF4_VS.txt
@@ -216,7 +216,7 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED)
           ${HDF4_SOURCE_DIR}/release_notes/HISTORY.txt
           ${HDF4_SOURCE_DIR}/release_notes/INSTALL
       )
-      if (WIN32 OR MINGW)
+      if (WIN32)
         set (release_files
             ${release_files}
             ${HDF4_SOURCE_DIR}/release_notes/INSTALL_Windows.txt
