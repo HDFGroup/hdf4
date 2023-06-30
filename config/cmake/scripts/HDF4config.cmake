@@ -1,7 +1,7 @@
 #############################################################################################
 ### ${CTEST_SCRIPT_ARG} is of the form OPTION=VALUE                                       ###
 ### BUILD_GENERATOR required [Unix, VS2022, VS202264, VS2019, VS201964]                   ###
-### ctest -S HDF4config.cmake,BUILD_GENERATOR=VS201764 -C Release -VV -O hdf5.log         ###
+### ctest -S HDF4config.cmake,BUILD_GENERATOR=VS201764 -C Release -VV -O hdf4.log         ###
 #############################################################################################
 
 cmake_minimum_required (VERSION 3.12)
