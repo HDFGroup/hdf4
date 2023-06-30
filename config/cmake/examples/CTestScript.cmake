@@ -51,14 +51,12 @@ else()
 endif()
 
 #-----------------------------------------------------------------------------
-# MacOS machines need special options
+# MAC machines need special option
 #-----------------------------------------------------------------------------
 if (APPLE)
   # Compiler choice
   execute_process (COMMAND xcrun --find cc OUTPUT_VARIABLE XCODE_CC OUTPUT_STRIP_TRAILING_WHITESPACE)
-  execute_process (COMMAND xcrun --find c++ OUTPUT_VARIABLE XCODE_CXX OUTPUT_STRIP_TRAILING_WHITESPACE)
   set (ENV{CC} "${XCODE_CC}")
-  set (ENV{CXX} "${XCODE_CXX}")
 
   if (NOT NO_MAC_FORTRAN)
     # Shared fortran is not supported, build static
