@@ -41,6 +41,8 @@ jobs:
 
   create-files-ctest:
     needs: log-the-inputs
+    runs-on: ubuntu-latest
+    steps:
       - name: Set file base name
         id: set-file-base
         run: |
