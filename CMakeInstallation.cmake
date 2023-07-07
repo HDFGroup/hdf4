@@ -221,7 +221,7 @@ HDF_README_PROPERTIES(HDF4_BUILD_FORTRAN)
 #-----------------------------------------------------------------------------
 # Configure the COPYING.txt file for the windows binary package
 #-----------------------------------------------------------------------------
-if (WIN32 OR MINGW)
+if (WIN32)
   configure_file (${HDF4_SOURCE_DIR}/COPYING ${HDF4_BINARY_DIR}/COPYING.txt @ONLY)
 endif ()
 
@@ -240,7 +240,7 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED)
         ${HDF4_SOURCE_DIR}/release_notes/USING_HDF4_CMake.txt
         ${HDF4_SOURCE_DIR}/release_notes/RELEASE.txt
     )
-    if (WIN32 OR MINGW)
+    if (WIN32)
       set (release_files
           ${release_files}
           ${HDF4_SOURCE_DIR}/release_notes/USING_HDF4_VS.txt
@@ -253,7 +253,7 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED)
           ${HDF4_SOURCE_DIR}/release_notes/HISTORY.txt
           ${HDF4_SOURCE_DIR}/release_notes/INSTALL
       )
-      if (WIN32 OR MINGW)
+      if (WIN32)
         set (release_files
             ${release_files}
             ${HDF4_SOURCE_DIR}/release_notes/INSTALL_Windows.txt
