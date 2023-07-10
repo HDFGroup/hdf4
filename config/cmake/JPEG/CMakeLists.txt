@@ -408,7 +408,7 @@ endif ()
 # Configure the README file for the windows binary package
 #-----------------------------------------------------------------------------
 if (WIN32)
-  configure_file (${JPEG_SOURCE_DIR}/README ${JPEG_BINARY_DIR}/README @ONLY)
+  configure_file (${JPEG_SOURCE_DIR}/README ${JPEG_BINARY_DIR}/JPEG_README @ONLY)
 endif ()
 
 #-----------------------------------------------------------------------------
