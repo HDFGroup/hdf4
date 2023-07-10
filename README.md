@@ -56,6 +56,10 @@ are tentative.
 
 SNAPSHOTS, PREVIOUS RELEASES AND SOURCE CODE
 --------------------------------------------
+Periodically development code snapshots are provided at the following URL:
+    
+   https://github.com/HDFGroup/hdf4/releases/tag/snapshot
+
 Source packages for current and previous releases are located at:
     
    https://portal.hdfgroup.org/display/support/Download+HDF4

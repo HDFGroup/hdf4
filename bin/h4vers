@@ -79,7 +79,6 @@ use strict;
 # (which it probably has).
 ##############################################################################
 
-
 sub getvers {
   local ($_) = @_;
   my (@vers);
@@ -319,6 +318,34 @@ if ($newver[0]!=$curver[0] ||
 #  close FILE;
 #}
 
+# Update the README file
+if ($README) {
+  open FILE, $README or die "$README: $!\n";
+  my @contents = <FILE>;
+  close FILE;
+  $contents[0] = sprintf("HDF version %d.%d.%d%s %s",
+            @newver[0,1,2],
+            $newver[3] eq "" ? "" : "-".$newver[3],
+            "currently under development\n");
+  open FILE, ">$README" or die "$README: $!\n";
+  print FILE @contents;
+  close FILE;
+}
+
+# Update the release_notes/RELEASE.txt file
+if ($RELEASE) {
+  open FILE, $RELEASE or die "$RELEASE: $!\n";
+  my @contents = <FILE>;
+  close FILE;
+  $contents[0] = sprintf("HDF version %d.%d.%d%s %s",
+            @newver[0,1,2],
+            $newver[3] eq "" ? "" : "-".$newver[3],
+            "currently under development\n");
+  open FILE, ">$RELEASE" or die "$RELEASE: $!\n";
+  print FILE @contents;
+  close FILE;
+}
+
 # Update the config/cmake/scripts/HDF4config.cmake file
 if ($HDF4CONFIGCMAKE) {
   my $data = read_file($HDF4CONFIGCMAKE);
@@ -354,34 +381,6 @@ if ($H4_TESTJAVA) {
   $data =~ s/        int LIB_VERSION\[\] = \{.*\};/        int LIB_VERSION\[\] = \{$version_string\};/;
 
   write_file($H4_TESTJAVA, $data);
-}
-
-# Update the README file
-if ($README) {
-  open FILE, $README or die "$README: $!\n";
-  my @contents = <FILE>;
-  close FILE;
-  $contents[0] = sprintf("HDF version %d.%d.%d%s %s",
-            @newver[0,1,2],
-            $newver[3] eq "" ? "" : "-".$newver[3],
-            "currently under development\n");
-  open FILE, ">$README" or die "$README: $!\n";
-  print FILE @contents;
-  close FILE;
-}
-
-# Update the release_notes/RELEASE.txt file
-if ($RELEASE) {
-  open FILE, $RELEASE or die "$RELEASE: $!\n";
-  my @contents = <FILE>;
-  close FILE;
-  $contents[0] = sprintf("HDF version %d.%d.%d%s %s",
-            @newver[0,1,2],
-            $newver[3] eq "" ? "" : "-".$newver[3],
-            "currently under development\n");
-  open FILE, ">$RELEASE" or die "$RELEASE: $!\n";
-  print FILE @contents;
-  close FILE;
 }
 
 # Update the man/hdf.1 file
