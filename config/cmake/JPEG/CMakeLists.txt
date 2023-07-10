@@ -405,11 +405,9 @@ if (WIN32)
 endif ()
 
 #-----------------------------------------------------------------------------
-# Configure the README file for the windows binary package
+# Configure the README file for the binary package
 #-----------------------------------------------------------------------------
-if (WIN32)
-  configure_file (${JPEG_SOURCE_DIR}/README ${JPEG_BINARY_DIR}/JPEG_README @ONLY)
-endif ()
+configure_file (${JPEG_SOURCE_DIR}/README ${JPEG_BINARY_DIR}/JPEG_README @ONLY)
 
 #-----------------------------------------------------------------------------
 # Set the cpack variables
