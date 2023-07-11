@@ -92,7 +92,7 @@ tar2zip()
         echo "usage: tar2zip <tarfilename> <zipfilename>"
         return 1
     fi
-    ztmpdir=/tmp/ztmpdir$$
+    ztmpdir=./ztmpdir$$
     mkdir -p $ztmpdir
     version=$1
     tarfile=$2
@@ -169,7 +169,7 @@ tar2cmakezip()
         echo "usage: tar2cmakezip <tarfilename> <zipfilename>"
         return 1
     fi
-    cmziptmpdir=/tmp/cmziptmpdir$$
+    cmziptmpdir=./cmziptmpdir$$
     cmziptmpsubdir=$cmziptmpdir/CMake-$HDF4_VERS
     mkdir -p $cmziptmpsubdir
     version=$1
@@ -268,7 +268,7 @@ tar2cmaketgz()
         echo "usage: tar2cmaketgz <tarfilename> <tgzfilename>"
         return 1
     fi
-    cmgztmpdir=/tmp/cmgztmpdir$$
+    cmgztmpdir=./cmgztmpdir$$
     cmgztmpsubdir=$cmgztmpdir/CMake-$HDF4_VERS
     mkdir -p $cmgztmpsubdir
     version=$1
