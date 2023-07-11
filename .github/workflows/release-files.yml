@@ -105,6 +105,10 @@ jobs:
               name: tgz-ubuntu-2204-binary
               path: ${{ github.workspace }}
 
+      - name: Store snapshot name
+        run: |
+          echo "${{ steps.get-file-base.outputs.FILE_BASE }}" > ./last-file.txt
+
       - name: PreRelease tag
         id: create_prerelease
         if: ${{ (inputs.use_environ == 'snapshots') }}
@@ -113,6 +117,8 @@ jobs:
           tag_name: "${{ inputs.use_tag }}"
           prerelease: true
           files: |
+              last-file.txt
+              ${{ steps.get-file-base.outputs.FILE_BASE }}.doxygen.zip
               ${{ steps.get-file-base.outputs.FILE_BASE }}.tar.gz
               ${{ steps.get-file-base.outputs.FILE_BASE }}.zip
               ${{ steps.get-file-base.outputs.FILE_BASE }}-osx12.tar.gz
@@ -135,15 +141,6 @@ jobs:
               ${{ steps.get-file-base.outputs.FILE_BASE }}-ubuntu-2204.tar.gz
               ${{ steps.get-file-base.outputs.FILE_BASE }}-win_vs2022.zip
               if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
-
-      - name: Store snapshot name
-        run: |
-          echo "${{ steps.get-file-base.outputs.FILE_BASE }}" > ./last-file.txt
-
-      - uses: actions/upload-artifact@v3
-        with:
-          path: ./last-file.txt
-          name: last-file
 
       - name: List files for the space (Linux)
         run: |
