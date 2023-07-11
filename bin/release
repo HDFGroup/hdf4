@@ -99,7 +99,7 @@ tar2zip()
     zipfile=$3
 
     # step 1: untar tarball in ztmpdir
-    (cd $ztmpdir; tar xf -) < $tarfile
+    (cd $ztmpdir; tar xf) < $tarfile
     # sanity check
     if [ ! -d $ztmpdir/$version ]; then
         echo "untar did not create $ztmpdir/$version source dir"
