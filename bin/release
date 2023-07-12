@@ -471,7 +471,7 @@ for comp in $methods; do
             ;;
         cmake-tgz)
             test "$verbose" && echo "   Creating CMake tar.gz file..." 1>&2
-            tar2cmaketgz $HDF4_VERS $tmpdir/$HDF4_VERS.tar $DEST/CMake-$HDF4_VERS.tar.gz 1>&2
+            tar2cmaketgz $HDF4_IN_VERS $tmpdir/$HDF4_VERS.tar $DEST/CMake-$HDF4_VERS.tar.gz 1>&2
             (cd $DEST; sha256sum CMake-$HDF4_VERS.tar.gz >> $SHA256)
             ;;
         bzip2)
@@ -481,12 +481,12 @@ for comp in $methods; do
             ;;
         zip)
             test "$verbose" && echo "   Creating zip ball..." 1>&2
-            tar2zip $HDF4_VERS $tmpdir/$HDF4_VERS.tar $DEST/$HDF4_VERS.zip 1>&2
+            tar2zip $HDF4_IN_VERS $tmpdir/$HDF4_VERS.tar $DEST/$HDF4_VERS.zip 1>&2
             (cd $DEST; sha256sum $HDF4_VERS.zip >> $SHA256)
             ;;
         cmake-zip)
             test "$verbose" && echo "   Creating CMake-zip ball..." 1>&2
-            tar2cmakezip $HDF4_VERS $tmpdir/$HDF4_VERS.tar $DEST/CMake-$HDF4_VERS.zip 1>&2
+            tar2cmakezip $HDF4_IN_VERS $tmpdir/$HDF4_VERS.tar $DEST/CMake-$HDF4_VERS.zip 1>&2
             (cd $DEST; sha256sum CMake-$HDF4_VERS.zip >> $SHA256)
             ;;
         *)
