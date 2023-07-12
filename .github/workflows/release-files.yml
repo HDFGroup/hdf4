@@ -118,7 +118,6 @@ jobs:
           prerelease: true
           files: |
               last-file.txt
-              ${{ steps.get-file-base.outputs.FILE_BASE }}.doxygen.zip
               ${{ steps.get-file-base.outputs.FILE_BASE }}.tar.gz
               ${{ steps.get-file-base.outputs.FILE_BASE }}.zip
               ${{ steps.get-file-base.outputs.FILE_BASE }}-osx12.tar.gz
