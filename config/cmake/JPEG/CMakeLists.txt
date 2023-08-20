@@ -405,11 +405,9 @@ if (WIN32)
 endif ()
 
 #-----------------------------------------------------------------------------
-# Configure the README file for the windows binary package
+# Configure the README file for the binary package
 #-----------------------------------------------------------------------------
-if (WIN32)
-  configure_file (${JPEG_SOURCE_DIR}/README ${JPEG_BINARY_DIR}/README @ONLY)
-endif ()
+configure_file (${JPEG_SOURCE_DIR}/README ${JPEG_BINARY_DIR}/JPEG_README @ONLY)
 
 #-----------------------------------------------------------------------------
 # Set the cpack variables
@@ -425,9 +423,9 @@ if (NOT JPEG_EXTERNALLY_CONFIGURED)
   set (CPACK_PACKAGE_VERSION_MAJOR "${JPEG_PACKAGE_VERSION_MAJOR}")
   set (CPACK_PACKAGE_VERSION_MINOR "${JPEG_PACKAGE_VERSION_MINOR}")
   set (CPACK_PACKAGE_VERSION_PATCH "")
-  set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/README")
-  set (CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README")
-  set (CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README")
+  set (CPACK_RESOURCE_FILE_LICENSE "${JPEG_BINARY_DIR}/JPEG_README")
+  set (CPACK_PACKAGE_DESCRIPTION_FILE "${JPEG_BINARY_DIR}/JPEG_README")
+  set (CPACK_RESOURCE_FILE_README "${JPEG_BINARY_DIR}/JPEG_README")
   set (CPACK_PACKAGE_RELOCATABLE TRUE)
   set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "jpeg9e Installation")
   set (CPACK_PACKAGE_INSTALL_DIRECTORY "${CPACK_PACKAGE_VENDOR}/${CPACK_PACKAGE_NAME}/${CPACK_PACKAGE_VERSION}")
@@ -461,7 +459,7 @@ if (NOT JPEG_EXTERNALLY_CONFIGURED)
     endif ()
 #WiX variables
     set (CPACK_WIX_UNINSTALL "1")
-    set (CPACK_RESOURCE_FILE_LICENSE "${JPEG_BINARY_DIR}/README")
+    set (CPACK_RESOURCE_FILE_LICENSE "${JPEG_BINARY_DIR}/JPEG_README")
   elseif (APPLE)
     list (APPEND CPACK_GENERATOR "STGZ")
     list (APPEND CPACK_GENERATOR "DragNDrop")
