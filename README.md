@@ -3,6 +3,7 @@ HDF version 4.2.17-1 currently under development
 ![HDF Logo](doc/img/HDF.png)
 
 [![master build status](https://img.shields.io/github/actions/workflow/status/HDFGroup/hdf4/main.yml?branch=master&label=master)](https://github.com/HDFGroup/hdf4/actions?query=branch%3Amaster)
+[![HDF-EOS build status](https://img.shields.io/github/actions/workflow/status/HDFGroup/hdf4/hdfeos2.yml?branch=master&label=HDF-EOS)](https://github.com/HDFGroup/hdf4/actions?query=branch%3Amaster)
 [![BSD](https://img.shields.io/badge/License-BSD-blue.svg)](https://github.com/HDFGroup/hdf4/blob/develop/COPYING)
 
 DOCUMENTATION
