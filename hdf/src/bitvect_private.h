@@ -12,49 +12,30 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /*-----------------------------------------------------------------------------
- * File:    bitvect.h
- * Purpose: header file for bit-vector API
+ * File:    bitvect_private.h
+ * Purpose: private header file for bit-vector API
  *---------------------------------------------------------------------------*/
 
-#ifndef H4_BITVECT_H
-#define H4_BITVECT_H
+#ifndef H4_BITVECT_PRIVATE_H
+#define H4_BITVECT_PRIVATE_H
 
-#include "H4api_adpt.h"
+/* Base type of the array used to store the bits */
+typedef uint8 bv_base;
 
-#include "hdf.h"
+/* # of bits in the base type of the array used to store the bits */
+#define BV_BASE_BITS 8
 
-/* Boolean values used */
-typedef enum { BV_FALSE = 0, BV_TRUE = 1 } bv_bool;
+/* bit-vector structure used
+ *
+ * All values are set to be 32-bit signed integers since that's what the
+ * API accepts (negative values are reserved for errors). Bit vectors
+ * larger than 2Gbits would require an internal API change.
+ */
+typedef struct bv_struct_tag {
+    int32    bits_used;  /* The actual number of bits current in use */
+    int32    array_size; /* The number of bv_base elements in the bit-vector */
+    int32    last_zero;  /* The last location we know had a zero bit */
+    bv_base *buffer;     /* Pointer to the buffer used to store the bits */
+} bv_struct;
 
-/* Default size of a bit-vector */
-#define BV_DEFAULT_BITS 128
-
-/* Define the size of the chunks bits are allocated in */
-#define BV_CHUNK_SIZE 64
-
-/* Create the external interface data structures needed */
-typedef struct bv_struct_tag *bv_ptr;
-
-/* Useful routines for generally private use */
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-HDFLIBAPI bv_ptr bv_new(int32 num_bits);
-
-HDFLIBAPI intn bv_delete(bv_ptr b);
-
-HDFLIBAPI intn bv_set(bv_ptr b, int32 bit_num, bv_bool value);
-
-HDFLIBAPI intn bv_get(bv_ptr b, int32 bit_num);
-
-HDFLIBAPI int32 bv_size(bv_ptr b);
-
-HDFLIBAPI int32 bv_find_next_zero(bv_ptr b);
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* H4_BITVECT_H */
+#endif /* H4_BITVECT_PRIVATE_H */
