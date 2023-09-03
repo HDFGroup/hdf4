@@ -67,6 +67,7 @@ set (HDF4_HDF_SRC_CSRCS
 
 set (HDF4_HDF_SRC_CHDRS
     ${HDF4_HDF_SRC_SOURCE_DIR}/atom.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/atom_private.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/bitvect.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/cdeflate.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/cnbit.h

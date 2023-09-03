@@ -53,10 +53,21 @@ MODIFICATION HISTORY
    1/7/96  - Finished coding prototype
 */
 
-#define ATOM_MASTER
 #include "hdf.h"
 #include "atom.h"
+#include "atom_private.h"
+
 #include <assert.h>
+
+/* Array of pointers to atomic groups */
+static atom_group_t *atom_group_list[MAXGROUP] = {NULL};
+
+/* Pointer to the atom node free list */
+static atom_info_t *atom_free_list = NULL;
+
+/* Array of pointers to atomic groups */
+atom_t atom_id_cache[ATOM_CACHE_SIZE]  = {-1, -1, -1, -1};
+void  *atom_obj_cache[ATOM_CACHE_SIZE] = {NULL};
 
 /* Private function prototypes */
 static atom_info_t *HAIfind_atom(atom_t atm);

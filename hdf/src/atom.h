@@ -70,76 +70,13 @@ typedef int32 atom_t;
 /* Type of the function to compare objects & keys */
 typedef intn (*HAsearch_func_t)(const void *obj, const void *key);
 
-#if defined ATOM_MASTER | defined ATOM_TESTER
-
-/* # of bits to use for Group ID in each atom (change if MAXGROUP>16) */
-#define GROUP_BITS 4
-#define GROUP_MASK 0x0F
-
-/* # of bits to use for the Atom index in each atom (change if MAXGROUP>16) */
-#define ATOM_BITS 28
-#define ATOM_MASK 0x0FFFFFFF
-
-/* # of previous atoms cached, change inline caching macros (HAatom_object & HAIswap_cache) if this changes */
-#define ATOM_CACHE_SIZE 4
-
-/* Map an atom to a Group number */
-#define ATOM_TO_GROUP(a) ((group_t)((((atom_t)(a)) >> ((sizeof(atom_t) * 8) - GROUP_BITS)) & GROUP_MASK))
-
-#ifdef HASH_SIZE_POWER_2
-/* Map an atom to a hash location (assumes s is a power of 2 and smaller than the ATOM_MASK constant) */
-#define ATOM_TO_LOC(a, s) ((atom_t)(a) & ((s)-1))
-#else /* HASH_SIZE_POWER_2 */
-/* Map an atom to a hash location */
-#define ATOM_TO_LOC(a, s) (((atom_t)(a)&ATOM_MASK) % (s))
-#endif /* HASH_SIZE_POWER_2 */
-
-/* Combine a Group number and an atom index into an atom */
-#define MAKE_ATOM(g, i)                                                                                      \
-    ((((atom_t)(g)&GROUP_MASK) << ((sizeof(atom_t) * 8) - GROUP_BITS)) | ((atom_t)(i)&ATOM_MASK))
-
-/* Atom information structure used */
-typedef struct atom_info_struct_tag {
-    atom_t                       id;      /* atom ID for this info */
-    void                       **obj_ptr; /* pointer associated with the atom */
-    struct atom_info_struct_tag *next;    /* link to next atom (in case of hash-clash) */
-} atom_info_t;
-
-/* Atom group structure used */
-typedef struct atom_group_struct_tag {
-    uintn         count;     /* # of times this group has been initialized */
-    intn          hash_size; /* size of the hash table to store the atoms in */
-    uintn         atoms;     /* current number of atoms held */
-    uintn         nextid;    /* atom ID to use for the next atom */
-    atom_info_t **atom_list; /* pointer to an array of ptrs to atoms */
-} atom_group_t;
-
-/* Define this in only one place */
-#ifdef ATOM_MASTER
-
-/* Array of pointers to atomic groups */
-static atom_group_t *atom_group_list[MAXGROUP] = {NULL};
-
-/* Pointer to the atom node free list */
-static atom_info_t *atom_free_list = NULL;
-
-/* Array of pointers to atomic groups */
-HDFPUBLIC atom_t atom_id_cache[ATOM_CACHE_SIZE]  = {-1, -1, -1, -1};
-HDFPUBLIC void  *atom_obj_cache[ATOM_CACHE_SIZE] = {NULL};
-#endif /* ATOM_MASTER */
-
-/* Useful routines for generally private use */
-
-#endif /* ATOM_MASTER | ATOM_TESTER */
-
-#ifndef ATOM_MASTER
-HDFLIBAPI atom_t atom_id_cache[];
-HDFLIBAPI void  *atom_obj_cache[];
-#endif /* ATOM_MASTER */
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/* Global variables exposed by HAatom_object */
+HDFLIBAPI atom_t atom_id_cache[];
+HDFLIBAPI void  *atom_obj_cache[];
 
 /******************************************************************************
  NAME
