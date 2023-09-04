@@ -51,9 +51,11 @@ MODIFICATION HISTORY
    2/12/96  - Finished writing specs & coding prototype, start testing
 */
 
-#define LIST_MASTER
 #include "hdf.h"
 #include "linklist.h"
+
+/* Pointer to the list node free list */
+static node_info_t *node_free_list = NULL;
 
 /* Private function prototypes */
 static node_info_t *HULIget_list_node(void);
