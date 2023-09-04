@@ -25,9 +25,16 @@
 #ifndef H4_MSTDIO_H
 #define H4_MSTDIO_H
 
+/* model information about stdio model */
+typedef struct {
+    int32 pos; /* position ? */
+} comp_model_stdio_info_t;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+HDFLIBAPI funclist_t mstdio_funcs;
 
 /*
  ** from mstdio.c
@@ -51,25 +58,6 @@ HDFLIBAPI intn HCPmstdio_endaccess(accrec_t *access_rec);
 
 #ifdef __cplusplus
 }
-#endif
-
-/* model information about stdio model */
-typedef struct {
-    int32 pos; /* position ? */
-} comp_model_stdio_info_t;
-
-#ifndef MSTDIO_MASTER
-extern funclist_t mstdio_funcs;
-#else
-funclist_t mstdio_funcs = {HCPmstdio_stread,
-                           HCPmstdio_stwrite,
-                           HCPmstdio_seek,
-                           HCPmstdio_inquire,
-                           HCPmstdio_read,
-                           HCPmstdio_write,
-                           HCPmstdio_endaccess,
-                           NULL,
-                           NULL};
 #endif
 
 #endif /* H4_MSTDIO_H */

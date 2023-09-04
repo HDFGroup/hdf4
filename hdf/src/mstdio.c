@@ -49,12 +49,20 @@ MODIFICATION HISTORY
 #include "hdf.h"
 #include "hfile.h"
 
-#define MSTDIO_MASTER
-#define MODEL_CLIENT
 /* HDF compression includes */
 #include "hcompi.h" /* Internal definitions for compression */
 
 /* #define TESTING */
+
+funclist_t mstdio_funcs = {HCPmstdio_stread,
+                           HCPmstdio_stwrite,
+                           HCPmstdio_seek,
+                           HCPmstdio_inquire,
+                           HCPmstdio_read,
+                           HCPmstdio_write,
+                           HCPmstdio_endaccess,
+                           NULL,
+                           NULL};
 
 /*--------------------------------------------------------------------------
  NAME
