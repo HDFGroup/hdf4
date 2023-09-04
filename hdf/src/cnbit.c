@@ -41,8 +41,7 @@
 /* #define TESTING */
 
 /* functions to perform N-bit encoding */
-funclist_t cnbit_funcs = {
-                          HCPcnbit_stread,
+funclist_t cnbit_funcs = {HCPcnbit_stread,
                           HCPcnbit_stwrite,
                           HCPcnbit_seek,
                           HCPcnbit_inquire,

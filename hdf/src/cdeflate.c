@@ -41,8 +41,7 @@
 /* #define TESTING */
 
 /* functions to perform gzip encoding */
-funclist_t cdeflate_funcs = {
-                             HCPcdeflate_stread,
+funclist_t cdeflate_funcs = {HCPcdeflate_stread,
                              HCPcdeflate_stwrite,
                              HCPcdeflate_seek,
                              HCPcdeflate_inquire,

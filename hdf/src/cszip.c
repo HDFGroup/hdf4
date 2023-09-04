@@ -27,8 +27,7 @@
 #define TMP_BUF_SIZE 8192 /* size of throw-away buffer */
 
 /* functions to perform szip encoding */
-funclist_t cszip_funcs = {
-                          HCPcszip_stread,
+funclist_t cszip_funcs = {HCPcszip_stread,
                           HCPcszip_stwrite,
                           HCPcszip_seek,
                           HCPcszip_inquire,

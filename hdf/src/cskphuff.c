@@ -47,8 +47,7 @@
 #define TMP_BUF_SIZE 8192 /* size of throw-away buffer */
 
 /* functions to perform skipping huffman encoding */
-funclist_t cskphuff_funcs = {
-                             HCPcskphuff_stread,
+funclist_t cskphuff_funcs = {HCPcskphuff_stread,
                              HCPcskphuff_stwrite,
                              HCPcskphuff_seek,
                              HCPcskphuff_inquire,

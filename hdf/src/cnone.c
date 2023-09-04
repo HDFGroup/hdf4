@@ -40,8 +40,7 @@
 #include "hcompi.h" /* Internal definitions for compression */
 
 /* functions to perform run-length encoding */
-funclist_t cnone_funcs = {
-                          HCPcnone_stread,
+funclist_t cnone_funcs = {HCPcnone_stread,
                           HCPcnone_stwrite,
                           HCPcnone_seek,
                           HCPcnone_inquire,

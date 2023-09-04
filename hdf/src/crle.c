@@ -46,8 +46,7 @@
 /* #define TESTING */
 
 /* functions to perform run-length encoding */
-funclist_t crle_funcs = {
-                         HCPcrle_stread,
+funclist_t crle_funcs = {HCPcrle_stread,
                          HCPcrle_stwrite,
                          HCPcrle_seek,
                          HCPcrle_inquire,
