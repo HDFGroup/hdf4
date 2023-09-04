@@ -80,7 +80,6 @@ set (HDF4_HDF_SRC_CHDRS
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfrig.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfi.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfsd.h
-    ${HDF4_HDF_SRC_SOURCE_DIR}/dfstubs.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfufp2i.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/dynarray.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/glist.h

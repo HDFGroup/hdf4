@@ -21,8 +21,8 @@ CSOURCES = atom.c bitvect.c cdeflate.c cnbit.c cnone.c crle.c cskphuff.c    \
 	   vgp.c vhi.c vio.c vparse.c vrw.c vsfld.c
 
 CHEADERS = atom.h bitvect.h cdeflate.h cnbit.h cnone.h cskphuff.h crle.h    \
-           cszip.h df.h dfan.h dfi.h dfgr.h dfrig.h dfsd.h dfstubs.h        \
-           dfufp2i.h dynarray.h H4api_adpt.h h4config.h hbitio.h hchunks.h hcomp.h       \
+           cszip.h df.h dfan.h dfi.h dfgr.h dfrig.h dfsd.h dfufp2i.h        \
+           dynarray.h H4api_adpt.h h4config.h hbitio.h hchunks.h hcomp.h    \
            hcompi.h hconv.h hdf.h hdfi.h herr.h hfile.h hkit.h hlimits.h    \
            hproto.h hntdefs.h htags.h linklist.h mfan.h mfgr.h mstdio.h     \
            tbbt.h vg.h hdatainfo.h
