@@ -112,10 +112,7 @@
 
 #include <string.h>
 
-#define HMASTER
 #include "hdf.h"
-#undef HMASTER
-#define HFILE_MASTER
 #include "hfile.h"
 #include <errno.h>
 #include "glist.h" /* for double-linked lists, stacks and queues */
@@ -131,6 +128,14 @@ static Generic_list *cleanup_list      = NULL;
 
 /* Whether to install the atexit routine */
 static intn install_atexit = TRUE;
+
+/* Pointer to the access record node free list */
+static accrec_t *accrec_free_list = NULL;
+
+#ifdef DISKBLOCK_DEBUG
+const uint8 diskblock_header[4] = {0xde, 0xad, 0xbe, 0xef};
+const uint8 diskblock_tail[4]   = {0xfe, 0xeb, 0xda, 0xed};
+#endif
 
 /*--------------------- Externally defined Globals --------------------------*/
 /* Function tables declarations.  These function tables contain pointers

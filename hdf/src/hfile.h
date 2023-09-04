@@ -43,6 +43,14 @@
 #define INVALID_OFFSET -1
 #define INVALID_LENGTH -1
 
+/* #define DISKBLOCK_DEBUG */
+#ifdef DISKBLOCK_DEBUG
+
+#define DISKBLOCK_HSIZE sizeof(diskblock_header)
+#define DISKBLOCK_TSIZE sizeof(diskblock_tail)
+
+#endif
+
 /* ----------------------------- Version Tags ----------------------------- */
 /* Library version numbers */
 
@@ -308,11 +316,6 @@ typedef struct accrec_t {
     struct accrec_t   *next;         /* for free-list linking */
 } accrec_t;
 
-#ifdef HFILE_MASTER
-/* Pointer to the access record node free list */
-static accrec_t *accrec_free_list = NULL;
-#endif /* HFILE_MASTER */
-
 /* this type is returned to applications programs or other special
    interfaces when they need to know information about a given
    special element.  This is all information that would not be returned
@@ -426,6 +429,14 @@ typedef struct functab_t {
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#ifdef DISKBLOCK_DEBUG
+
+HDFLIBAPI const uint8 diskblock_header[4];
+
+HDFLIBAPI const uint8 diskblock_tail[4];
+
+#endif /* DISKBLOCK_DEBUG */
 
 HDFLIBAPI accrec_t *HIget_access_rec(void);
 
@@ -793,30 +804,5 @@ intn HTPdump_dds(int32 file_id, /* IN: file ID of HDF file to dump info for */
 #ifdef __cplusplus
 }
 #endif
-
-/* #define DISKBLOCK_DEBUG */
-#ifdef DISKBLOCK_DEBUG
-
-#ifndef HFILE_MASTER
-extern
-#endif /* HFILE_MASTER */
-    const uint8 diskblock_header[4]
-#ifdef HFILE_MASTER
-    = {0xde, 0xad, 0xbe, 0xef}
-#endif /* HFILE_MASTER */
-;
-
-#ifndef HFILE_MASTER
-extern
-#endif /* HFILE_MASTER */
-    const uint8 diskblock_tail[4]
-#ifdef HFILE_MASTER
-    = {0xfe, 0xeb, 0xda, 0xed}
-#endif /* HFILE_MASTER */
-;
-#define DISKBLOCK_HSIZE sizeof(diskblock_header)
-#define DISKBLOCK_TSIZE sizeof(diskblock_tail)
-
-#endif /* DISKBLOCK_DEBUG */
 
 #endif /* H4_HFILE_H */
