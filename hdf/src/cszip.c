@@ -20,7 +20,6 @@
 #include "szlib.h"
 #endif
 
-#define CODER_CLIENT
 /* HDF compression includes */
 #include "hcompi.h" /* Internal definitions for compression */
 

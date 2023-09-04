@@ -36,10 +36,20 @@
 /* General HDF includes */
 #include "hdf.h"
 
-#define CNONE_MASTER
-#define CODER_CLIENT
 /* HDF compression includes */
 #include "hcompi.h" /* Internal definitions for compression */
+
+/* functions to perform run-length encoding */
+funclist_t cnone_funcs = {
+                          HCPcnone_stread,
+                          HCPcnone_stwrite,
+                          HCPcnone_seek,
+                          HCPcnone_inquire,
+                          HCPcnone_read,
+                          HCPcnone_write,
+                          HCPcnone_endaccess,
+                          NULL,
+                          NULL};
 
 /* declaration of the functions provided in this module */
 static int32 HCIcnone_staccess(accrec_t *access_rec, int16 acc_mode);
