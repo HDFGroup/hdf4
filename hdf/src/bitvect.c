@@ -37,7 +37,25 @@ DESIGN
  */
 
 #include "bitvect.h"
-#include "bitvect_private.h"
+
+/* Base type of the array used to store the bits */
+typedef uint8 bv_base;
+
+/* # of bits in the base type of the array used to store the bits */
+#define BV_BASE_BITS 8
+
+/* bit-vector structure used
+ *
+ * All values are set to be 32-bit signed integers since that's what the
+ * API accepts (negative values are reserved for errors). Bit vectors
+ * larger than 2Gbits would require an internal API change.
+ */
+typedef struct bv_struct_tag {
+    int32    bits_used;  /* The actual number of bits current in use */
+    int32    array_size; /* The number of bv_base elements in the bit-vector */
+    int32    last_zero;  /* The last location we know had a zero bit */
+    bv_base *buffer;     /* Pointer to the buffer used to store the bits */
+} bv_struct;
 
 /* Table of bits for each bit position */
 /*  (This will need to be changed/expanded if another base type is used) */
