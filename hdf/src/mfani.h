@@ -63,4 +63,3 @@ typedef struct ANentry {
 #define AN_KEY2TYPE(k) ((int32)((int32)k >> 16))
 
 #endif /* H4_MFANI_H */
-
