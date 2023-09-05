@@ -48,13 +48,10 @@ LOW-LEVEL ROUTINES
 #define MFGR_MASTER /* for GRgetdatainfo and GRgetattdatainfo */
 #endif              /* mfgr.h had been included in hdf.h */
 
-#ifndef MFAN_MASTER
-#define MFAN_MASTER /* for ANgetdatainfo */
-#endif              /* mfan.h is included here */
-
 #include "hdf.h"
 #include "hlimits.h"
 #include "vgint.h"
+#include "mfani.h"
 #include "mfan.h"
 
 #ifdef H4_HAVE_LIBSZ /* we have the szip library */

@@ -81,9 +81,7 @@
  *
  *---------------------------------------------------------------------------*/
 
-#ifndef MFAN_MASTER /* define main annotation source file */
-#define MFAN_MASTER
-
+#include "mfani.h"
 #include "mfan.h"
 #include "atom.h"
 #include "hfile.h" /* needed for filerec_t */
@@ -2041,5 +2039,3 @@ ANtag2atype(uint16 atag /* IN: annotation tag */)
     } /* switch */
     return atype;
 } /* ANtag2atype */
-
-#endif /* MFAN_MASTER */

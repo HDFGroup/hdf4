@@ -104,6 +104,7 @@ set (HDF4_HDF_SRC_CHDRS
     ${HDF4_HDF_SRC_SOURCE_DIR}/linklist.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/mcache.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/mfan.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/mfani.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/mfgr.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/mstdio.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/tbbt.h
