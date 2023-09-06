@@ -31,11 +31,14 @@
    4/25/94     Starting writing specs & coding prototype
  */
 
+/*
+ *   This piece of code uses Semi-Splay trees to Huffman encode a raster
+ *   image file.
+ */
+
 /* General HDF includes */
 #include "hdf.h"
 
-#define CSKPHUFF_MASTER
-#define CODER_CLIENT
 /* HDF compression includes */
 #include "hcompi.h" /* Internal definitions for compression */
 
@@ -43,10 +46,16 @@
 /* #define TESTING */
 #define TMP_BUF_SIZE 8192 /* size of throw-away buffer */
 
-/*
- *   This piece of code uses Semi-Splay trees to Huffman encode a raster
- *   image file.
- */
+/* functions to perform skipping huffman encoding */
+funclist_t cskphuff_funcs = {HCPcskphuff_stread,
+                             HCPcskphuff_stwrite,
+                             HCPcskphuff_seek,
+                             HCPcskphuff_inquire,
+                             HCPcskphuff_read,
+                             HCPcskphuff_write,
+                             HCPcskphuff_endaccess,
+                             NULL,
+                             NULL};
 
 /* declaration of the functions provided in this module */
 static int32 HCIcskphuff_init(accrec_t *access_rec, uintn alloc_buf);

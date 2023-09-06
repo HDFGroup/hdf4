@@ -34,7 +34,7 @@ H_HDRS=hfile.h hdf.h hdfi.h herr.h hproto.h hcomp.h hconv.h hbitio.h \
        hlimits.h hntdefs.h htags.h hkit.h hcompi.h bitvect.h atom.h \
        dynarray.h linklist.h hchunks.h cszip.h
 
-DF_HDRS=df.h dfi.h dfstubs.h dfufp2i.h
+DF_HDRS=df.h dfi.h dfufp2i.h
 DFAN_HDRS=dfan.h
 DFRI_HDRS=dfrig.h dfgr.h
 DFSD_HDRS=dfsd.h

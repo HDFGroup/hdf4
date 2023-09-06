@@ -34,13 +34,22 @@
 /* General HDF includes */
 #include "hdf.h"
 
-#define CDEFLATE_MASTER
-#define CODER_CLIENT
 /* HDF compression includes */
 #include "hcompi.h" /* Internal definitions for compression */
 
 /* Internal Defines */
 /* #define TESTING */
+
+/* functions to perform gzip encoding */
+funclist_t cdeflate_funcs = {HCPcdeflate_stread,
+                             HCPcdeflate_stwrite,
+                             HCPcdeflate_seek,
+                             HCPcdeflate_inquire,
+                             HCPcdeflate_read,
+                             HCPcdeflate_write,
+                             HCPcdeflate_endaccess,
+                             NULL,
+                             NULL};
 
 /* declaration of the functions provided in this module */
 static int32 HCIcdeflate_init(compinfo_t *info);

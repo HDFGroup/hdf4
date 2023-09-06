@@ -161,9 +161,9 @@ MODIFICATION HISTORY
     3/ 8/96  - Modifications to remove compiled limits on the # of files
  */
 
-#define MFGR_MASTER
 #include "hdf.h"
 #include "hlimits.h"
+#include "mfgri.h"
 
 #ifdef H4_HAVE_LIBSZ /* we have the library */
 #include "szlib.h"

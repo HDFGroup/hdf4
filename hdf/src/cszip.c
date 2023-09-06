@@ -20,13 +20,22 @@
 #include "szlib.h"
 #endif
 
-#define CSZIP_MASTER
-#define CODER_CLIENT
 /* HDF compression includes */
 #include "hcompi.h" /* Internal definitions for compression */
 
 /* internal defines */
 #define TMP_BUF_SIZE 8192 /* size of throw-away buffer */
+
+/* functions to perform szip encoding */
+funclist_t cszip_funcs = {HCPcszip_stread,
+                          HCPcszip_stwrite,
+                          HCPcszip_seek,
+                          HCPcszip_inquire,
+                          HCPcszip_read,
+                          HCPcszip_write,
+                          HCPcszip_endaccess,
+                          NULL,
+                          NULL};
 
 /* declaration of the functions provided in this module */
 static int32 HCIcszip_staccess(accrec_t *access_rec, int16 acc_mode);

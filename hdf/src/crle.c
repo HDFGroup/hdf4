@@ -35,8 +35,6 @@
 /* General HDF includes */
 #include "hdf.h"
 
-#define CRLE_MASTER
-#define CODER_CLIENT
 /* HDF compression includes */
 #include "hcompi.h" /* Internal definitions for compression */
 
@@ -46,6 +44,17 @@
 #define COUNT_MASK   0x7f /* bit mask for count of run or mix */
 
 /* #define TESTING */
+
+/* functions to perform run-length encoding */
+funclist_t crle_funcs = {HCPcrle_stread,
+                         HCPcrle_stwrite,
+                         HCPcrle_seek,
+                         HCPcrle_inquire,
+                         HCPcrle_read,
+                         HCPcrle_write,
+                         HCPcrle_endaccess,
+                         NULL,
+                         NULL};
 
 /* declaration of the functions provided in this module */
 static int32 HCIcrle_staccess(accrec_t *access_rec, int16 acc_mode);

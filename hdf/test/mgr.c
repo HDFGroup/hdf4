@@ -23,9 +23,9 @@
 #define TESTFILE2 "tmgrchk.hdf"
 #define DATAFILE  "test_files/tmgr.dat"
 
-#define MFGR_TESTER
 #include "tproto.h"
 #include "mfgr.h"
+#include "mfgri.h"
 
 /* Local pre-processor macros */
 #define XDIM         0

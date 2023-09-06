@@ -72,7 +72,6 @@ MODIFICATION HISTORY
  */
 
 /* General HDF includes */
-#define COMPRESS_MASTER
 #include "hdf.h"
 
 #ifdef H4_HAVE_LIBSZ
@@ -85,6 +84,23 @@ MODIFICATION HISTORY
 /* Local defines */
 #define COMP_HEADER_VERSION 0
 #define COMP_START_BLOCK    0
+
+/* Mapping from compression types to tags */
+uint16 compress_map[COMP_MAX_COMP + 1] = {
+    0,           /* No corresponding tag for un-compressed data */
+    0,           /* (1) */
+    DFTAG_JPEG5, /* COMP_JPEG -> DFTAG_JPEG5 (for JPEG compression) */
+    0,           /* (3) */
+    0,           /* (4) */
+    0,           /* (5) */
+    0,           /* (6) */
+    0,           /* (7) */
+    0,           /* (8) */
+    0,           /* (9) */
+    0,           /* (10) */
+    DFTAG_RLE,   /* COMP_RLE -> DFTAG_RLE (for Run-length compression) */
+    DFTAG_IMC    /* COMP_IMCOMP -> DFTAG_IMC (for IMCOMP compression) */
+};
 
 /* declaration of the functions provided in this module */
 static int32 HCIstaccess(accrec_t *access_rec, int16 acc_mode);

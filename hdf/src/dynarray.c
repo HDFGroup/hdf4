@@ -52,12 +52,14 @@ MODIFICATION HISTORY
    1/7/96  - Starting writing specs & coding prototype
 */
 
-#define DYNARRAY_MASTER
 #include "hdf.h"
 #include "dynarray.h"
 
-/* Private function prototypes */
-/* <none yet> */
+typedef struct dynarray_tag {
+    intn   num_elems; /* Number of elements in the array currently */
+    intn   incr_mult; /* Multiple to increment the array size by */
+    void **arr;       /* Pointer to the actual array of void *'s */
+} dynarr_t;
 
 /******************************************************************************
  NAME

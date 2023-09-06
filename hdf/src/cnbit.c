@@ -34,13 +34,22 @@
 /* General HDF includes */
 #include "hdf.h"
 
-#define CNBIT_MASTER
-#define CODER_CLIENT
 /* HDF compression includes */
 #include "hcompi.h" /* Internal definitions for compression */
 
 /* Internal Defines */
 /* #define TESTING */
+
+/* functions to perform N-bit encoding */
+funclist_t cnbit_funcs = {HCPcnbit_stread,
+                          HCPcnbit_stwrite,
+                          HCPcnbit_seek,
+                          HCPcnbit_inquire,
+                          HCPcnbit_read,
+                          HCPcnbit_write,
+                          HCPcnbit_endaccess,
+                          NULL,
+                          NULL};
 
 /* Local Variables */
 static const uint8 mask_arr8[9] = {/* array of values with [n] bits set */

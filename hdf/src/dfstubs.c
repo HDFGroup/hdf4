@@ -40,8 +40,13 @@
  **   Doug Ilg
  */
 
-#include "dfstubs.h"
 #include "df.h"
+
+#define DFACC_APPEND  8
+#define DFEL_ABSENT   0
+#define DFEL_RESIDENT 1
+#define DFSRCH_OLD    0
+#define DFSRCH_NEW    1
 
 #define CKMALLOC(x, ret)                                                                                     \
     {                                                                                                        \
@@ -87,6 +92,27 @@
  *  Important Internal Variables
  */
 static DF *DFlist = NULL; /* pointer to list of open DFs */
+
+static int32  DFid        = 0;
+static int32  DFaid       = 0;
+static int    DFaccmode   = 0;
+static int    DFelaccmode = 0;
+static uint16 search_tag  = 0;
+static uint16 search_ref  = 0;
+static int    search_stat = DFSRCH_NEW;
+static int32  search_aid  = 0;
+static int    DFelstat    = DFEL_ABSENT;
+static int32  DFelsize    = 0;
+static int32  DFelseekpos = 0;
+static uint16 acc_tag     = 0;
+static uint16 acc_ref     = 0;
+static char  *DFelement   = NULL;
+
+int DFerror = 0; /* Error code for DF routines */
+
+/* prototypes for internal routines */
+static int DFIclearacc(void);
+static int DFIcheck(DF *dfile);
 
 /*
  ** NAME

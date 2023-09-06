@@ -14,11 +14,6 @@
 /*-----------------------------------------------------------------------------
  * File:    linklist.h
  * Purpose: header file for linked list API
- * Dependencies:
- * Invokes:
- * Contents:
- * Structure definitions:
- * Constant definitions:
  *---------------------------------------------------------------------------*/
 
 #ifndef H4_LINKLIST_H
@@ -50,19 +45,6 @@ typedef struct list_head_struct_tag {
     node_info_t   *node_list; /* pointer to a linked list of nodes */
     node_info_t   *curr_node; /* pointer to the current node when iterating */
 } list_head_t;
-
-#if defined LIST_MASTER | defined LIST_TESTER
-
-/* Define this in only one place */
-#ifdef LIST_MASTER
-/* Pointer to the list node free list */
-static node_info_t *node_free_list = NULL;
-
-#endif /* LIST_MASTER */
-
-/* Useful routines for generally private use */
-
-#endif /* LIST_MASTER | LIST_TESTER */
 
 #ifdef __cplusplus
 extern "C" {

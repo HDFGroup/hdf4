@@ -263,15 +263,152 @@ LOCAL ROUTINES
 #define STATISTICS
 */
 
-#define _HCHUNKS_MAIN_ /* Master chunk handling file */
 #include "hdf.h"
 #include "hfile.h"
 #include "mcache.h" /* cache */
 #include "hchunks.h"
 
+#include "tbbt.h"   /* TBBT stuff */
+#include "mcache.h" /* caching routines */
+#include "hcomp.h"  /* For Compression */
+
+/* Define class, class version and name(partial) for chunk table i.e. Vdata */
+#define _HDF_CHK_TBL_NAME "_HDF_CHK_TBL_" /* 13 bytes */
+
+/* Define field name for each chunk record i.e. Vdata record */
+#define _HDF_CHK_FIELD_1     "origin"                 /* 6 bytes */
+#define _HDF_CHK_FIELD_2     "chk_tag"                /* 7 bytes */
+#define _HDF_CHK_FIELD_3     "chk_ref"                /* 7 bytes */
+#define _HDF_CHK_FIELD_NAMES "origin,chk_tag,chk_ref" /* 22 bytes */
+
+/* Define version number for chunked header format */
+#define _HDF_CHK_HDR_VER 0 /* zero version for format header */
+
+/* Structure for each Data array dimension */
+typedef struct dim_rec_struct {
+    /* fields stored in chunked header */
+    int32 flag;         /* distrib_type(low 8 bits 0-7)
+                           - Data distribution along this dimension
+                           other(medium low 8 bits 8-15)
+                           - regular/unlimited dimension? */
+    int32 dim_length;   /* length of this dimension */
+    int32 chunk_length; /* chunk length along this dimension */
+
+    /* info determined from 'flag' field */
+    int32 distrib_type; /* Data distribution along this dimension */
+    int32 unlimited;    /* regular(0) or unlimited dimension(1) */
+
+    /* computed fields */
+    int32 last_chunk_length; /* last chunk length along this dimension */
+    int32 num_chunks;        /* i.e. "dim_length / chunk_length" */
+} DIM_REC, *DIM_REC_PTR;
+
+/* Structure for each Chunk */
+typedef struct chunk_rec_struct {
+    int32 chunk_number; /* chunk number from coordinates i.e. origin */
+    int32 chk_vnum;     /* chunk vdata record number i.e. position in table*/
+
+    /* chunk record fields stored in Vdata Table */
+    int32 *origin;  /* origin -> position of chunk */
+    uint16 chk_tag; /* DFTAG_CHUNK or another Chunked element? */
+    uint16 chk_ref; /* reference number of this chunk */
+} CHUNK_REC, *CHUNK_REC_PTR;
+
+/* information on this special chunk data elt */
+typedef struct chunkinfo_t {
+    intn  attached; /* how many access records refer to this elt */
+    int32 aid;      /* Access id of chunk table i.e. Vdata */
+
+    /* chunked element format header  fields */
+    int32    sp_tag_header_len; /* length of the special element header */
+    uint8    version;           /* Version of this Chunked element */
+    int32    flag;              /* flag for multiply specialness ...*/
+    int32    length;            /* the actual length of the data elt */
+    int32    chunk_size;        /* the logical size of the chunks */
+    int32    nt_size;           /* number type size i.e. size of data type */
+    uint16   chktbl_tag;        /* DFTAG_VH - Vdata header */
+    uint16   chktbl_ref;        /* ref of the first chunk table structure(VDATA) */
+    uint16   sp_tag;            /* For future use.. */
+    uint16   sp_ref;            /* For future use.. */
+    int32    ndims;             /* number of dimensions of chunk */
+    DIM_REC *ddims;             /* array of dimension records */
+    int32    fill_val_len;      /* fill value number of bytes */
+    void    *fill_val;          /* fill value */
+    /* For each specialness, only one for now SPECIAL_COMP */
+    int32 comp_sp_tag_head_len; /* Compression header length */
+    void *comp_sp_tag_header;   /* compression header */
+
+    /* For Compression info */
+    comp_coder_t comp_type;  /* Compression type */
+    comp_model_t model_type; /* Compression model type */
+    comp_info   *cinfo;      /* Compression info struct */
+    model_info  *minfo;      /* Compression model info struct */
+
+    /* additional memory resident data structures to be used */
+    int32 *seek_chunk_indices;    /* chunk array indices relative
+                                     to the other chunks */
+    int32     *seek_pos_chunk;    /* position within the current chunk */
+    int32     *seek_user_indices; /* user position within the element  */
+    TBBT_TREE *chk_tree;          /* TBBT tree of all accessed table entries
+                                     i.e. CHUNK_REC's read/written/modified */
+    MCACHE *chk_cache;            /* chunk cache */
+    int32   num_recs;             /* number of Table(Vdata) records */
+} chunkinfo_t;
+
 /* private functions */
 static int32 HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
                           int16     acc_mode /* IN: access mode */);
+/* tbbt.h helper routines */
+static intn chkcompare(void *k1, /* IN: first key */
+                       void *k2, /* IN: second key */
+                       intn  cmparg /* IN: not sure? */);
+static void chkfreekey(void *key /*IN: chunk key */);
+static void chkdestroynode(void *n /* IN: chunk record */);
+
+static int32 HMCPstread(accrec_t *access_rec /* IN: access record to fill in */);
+
+static int32 HMCPstwrite(accrec_t *access_rec /* IN: access record to fill in */);
+
+static int32 HMCPseek(accrec_t *access_rec, /* IN: access record to mess with */
+                      int32     offset,     /* IN: seek offset */
+                      int       origin /* IN: where we should calc the offset from */);
+
+static int32 HMCPchunkread(void *cookie,    /* IN: access record to mess with */
+                           int32 chunk_num, /* IN: chunk to read */
+                           void *datap /* OUT: buffer for data */);
+
+static int32 HMCPread(accrec_t *access_rec, /* IN: access record to mess with */
+                      int32     length,     /* IN: number of bytes to read */
+                      void     *data /* OUT: buffer for data */);
+
+static int32 HMCPchunkwrite(void       *cookie,    /* IN: access record to mess with */
+                            int32       chunk_num, /* IN: chunk number */
+                            const void *datap /* IN: buffer for data */);
+
+static int32 HMCPwrite(accrec_t   *access_rec, /* IN: access record to mess with */
+                       int32       length,     /* IN: number of bytes to write */
+                       const void *data /* IN: buffer for data */);
+
+static intn HMCPendaccess(accrec_t *access_rec /* IN:  access record to close */);
+
+static int32 HMCPinfo(accrec_t        *access_rec, /* IN: access record of access element */
+                      sp_info_block_t *info_chunk /* OUT: information about the special element */);
+
+static int32 HMCPinquire(accrec_t *access_rec, /* IN:  access record to return info about */
+                         int32    *pfile_id,   /* OUT: file ID; */
+                         uint16   *ptag,       /* OUT: tag of info record; */
+                         uint16   *pref,       /* OUT: ref of info record; */
+                         int32    *plength,    /* OUT: length of element; */
+                         int32    *poffset,    /* OUT: offset of element -- meaningless */
+                         int32    *pposn,      /* OUT: current position in element; */
+                         int16    *paccess,    /* OUT: access mode; */
+                         int16    *pspecial /* OUT: special code; */);
+
+/* the accessing special function table for chunks */
+funclist_t chunked_funcs = {
+    HMCPstread, HMCPstwrite,   HMCPseek, HMCPinquire, HMCPread,
+    HMCPwrite,  HMCPendaccess, HMCPinfo, NULL /* no routine registered */
+};
 
 /* -------------------------------------------------------------------------
 NAME
@@ -623,7 +760,7 @@ RETURNS
 AUTHOR
    -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
-intn
+static intn
 chkcompare(void *k1, /* IN: first key */
            void *k2, /* IN: second key */
            intn  cmparg /* IN: not sure? */)
@@ -652,7 +789,7 @@ RETURNS
 AUTHOR
    -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
-void
+static void
 chkfreekey(void *key /*IN: chunk key */)
 {
     free(key);
@@ -670,7 +807,7 @@ RETURNS
 AUTHOR
    -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
-void
+static void
 chkdestroynode(void *n /* IN: chunk record */)
 {
     CHUNK_REC *t = (CHUNK_REC *)n;
@@ -2394,7 +2531,7 @@ RETURNS
 AUTHOR
    -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
-int32
+static int32
 HMCPstread(accrec_t *access_rec /* IN: access record to fill in */)
 {
     int32 ret_value;
@@ -2417,7 +2554,7 @@ RETURNS
 AUTHOR
    -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
-int32
+static int32
 HMCPstwrite(accrec_t *access_rec /* IN: access record to fill in */)
 {
     int32 ret_value;
@@ -2439,7 +2576,7 @@ RETURNS
 AUTHOR
    -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
-int32
+static int32
 HMCPseek(accrec_t *access_rec, /* IN: access record to mess with */
          int32     offset,     /* IN: seek offset */
          int       origin /* IN: where we should calc the offset from */)
@@ -2502,7 +2639,7 @@ RETURNS
 AUTHOR
    -GeorgeV - 9/3/96
 --------------------------------------------------------------------------- */
-int32
+static int32
 HMCPchunkread(void *cookie,    /* IN: access record to mess with */
               int32 chunk_num, /* IN: chunk to read */
               void *datap /* OUT: buffer for data */)
@@ -2755,7 +2892,7 @@ RETURNS
 AUTHOR
    -GeorgeV - 9/3/96
 --------------------------------------------------------------------------- */
-int32
+static int32
 HMCPread(accrec_t *access_rec, /* IN: access record to mess with */
          int32     length,     /* IN: number of bytes to read */
          void     *datap /* OUT: buffer for data */)
@@ -2921,7 +3058,7 @@ RETURNS
 AUTHOR
    -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
-int32
+static int32
 HMCPchunkwrite(void       *cookie,    /* IN: access record to mess with */
                int32       chunk_num, /* IN: chunk number */
                const void *datap /* IN: buffer for data */)
@@ -3275,7 +3412,7 @@ RETURNS
 AUTHOR
    -GeorgeV - 9/3/96
 ---------------------------------------------------------------------------*/
-int32
+static int32
 HMCPwrite(accrec_t   *access_rec, /* IN: access record to mess with */
           int32       length,     /* IN: number of bytes to write */
           const void *datap /* IN: buffer for data */)
@@ -3582,7 +3719,7 @@ RETURNS
 AUTHOR
    -GeorgeV - 9/3/96
 --------------------------------------------------------------------------- */
-intn
+static intn
 HMCPendaccess(accrec_t *access_rec /* IN:  access record to close */)
 {
     filerec_t *file_rec  = NULL; /* file record */
@@ -3634,7 +3771,7 @@ RETURNS
 AUTHOR
    -GeorgeV - 9/3/96
 --------------------------------------------------------------------------- */
-int32
+static int32
 HMCPinfo(accrec_t        *access_rec, /* IN: access record of access element */
          sp_info_block_t *info_chunk /* OUT: information about the special element */)
 {
@@ -3695,7 +3832,7 @@ RETURNS
 AUTHOR
    -GeorgeV - 9/3/96
 --------------------------------------------------------------------------- */
-int32
+static int32
 HMCPinquire(accrec_t *access_rec, /* IN:  access record to return info about */
             int32    *pfile_id,   /* OUT: file ID; */
             uint16   *ptag,       /* OUT: tag of info record; */
