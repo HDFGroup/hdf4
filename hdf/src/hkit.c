@@ -213,7 +213,7 @@ HDgettagsname(uint16 tag)
                 t = (char *)malloc(HDstrlen(ret) + HDstrlen(tag_descriptions[i].name) + 2);
                 if (t == NULL) {
                     free(ret);
-                    HRETURN_ERROR(DFE_NOSPACE, NULL)
+                    HRETURN_ERROR(DFE_NOSPACE, NULL);
                 }
                 HDstrcpy(t, ret);
                 HDstrcat(t, tag_descriptions[i].name);
@@ -286,7 +286,7 @@ HDgetNTdesc(int32 nt)
                 t = (char *)malloc(HDstrlen(ret_desc) + HDstrlen(nt_descriptions[i].desc) + 2);
                 if (t == NULL) {
                     free(ret_desc);
-                    HRETURN_ERROR(DFE_NOSPACE, NULL)
+                    HRETURN_ERROR(DFE_NOSPACE, NULL);
                 }
                 HDstrcpy(t, ret_desc);
                 HDstrcat(t, " ");

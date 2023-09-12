@@ -516,12 +516,12 @@ HCPcdeflate_seek(accrec_t *access_rec, int32 offset, int origin)
 
     while (deflate_info->offset + DEFLATE_TMP_BUF_SIZE < offset) { /* grab chunks */
         if (HCIcdeflate_decode(info, DEFLATE_TMP_BUF_SIZE, tmp_buf) == FAIL) {
-            HRETURN_ERROR(DFE_CDECODE, FAIL)
+            HRETURN_ERROR(DFE_CDECODE, FAIL);
         }                                /* end if */
     }                                    /* end if */
     if (deflate_info->offset < offset) { /* grab the last chunk */
         if (HCIcdeflate_decode(info, offset - deflate_info->offset, tmp_buf) == FAIL) {
-            HRETURN_ERROR(DFE_CDECODE, FAIL)
+            HRETURN_ERROR(DFE_CDECODE, FAIL);
         } /* end if */
     }     /* end if */
 

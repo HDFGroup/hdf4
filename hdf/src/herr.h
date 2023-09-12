@@ -27,21 +27,21 @@
    a return from the calling routine */
 
 #define HRETURN_ERROR(err, ret_val)                                                                          \
-    {                                                                                                        \
+    do {                                                                                                     \
         HERROR(err);                                                                                         \
         return (ret_val);                                                                                    \
-    }
+    } while (0)
 
 /* HCLOSE_RETURN_ERROR macro, used to facilitate error reporting.  Makes
    same assumptions as HRETURN_ERROR.  IN ADDITION, this macro causes
    the file specified by the id "fid" to be closed */
 
 #define HCLOSE_RETURN_ERROR(hfid, err, ret_val)                                                              \
-    {                                                                                                        \
+    do {                                                                                                     \
         HERROR(err);                                                                                         \
         Hclose(hfid);                                                                                        \
         return (ret_val);                                                                                    \
-    }
+    } while (0)
 
 /* HGOTO_ERROR macro, used to facilitate error reporting.  Makes
    same assumptions as HERROR.  IN ADDITION, this macro causes
@@ -49,11 +49,11 @@
    Also there is an assumption of a variable 'ret_value' */
 
 #define HGOTO_ERROR(err, ret_val)                                                                            \
-    {                                                                                                        \
+    do {                                                                                                     \
         HERROR(err);                                                                                         \
         ret_value = ret_val;                                                                                 \
         goto done;                                                                                           \
-    }
+    } while (0)
 
 /* HGOTO_FAIL macro, used to facilitate error reporting.  This one
    is added in 2019 to tidy the code.  It is similar to HGOTO_ERROR,
@@ -61,10 +61,10 @@
    behavior as the original code. */
 
 #define HGOTO_FAIL(ret_val)                                                                                  \
-    {                                                                                                        \
+    do {                                                                                                     \
         ret_value = ret_val;                                                                                 \
         goto done;                                                                                           \
-    }
+    } while (0)
 
 /* HCLOSE_RETURN_ERROR macro, used to facilitate error reporting.  Makes
    same assumptions as HRETURN_ERROR.  IN ADDITION, this macro causes
@@ -73,50 +73,50 @@
    be in every function. There is an assumption of a variable 'ret_value' */
 
 #define HCLOSE_GOTO_ERROR(hfid, err, ret_val)                                                                \
-    {                                                                                                        \
+    do {                                                                                                     \
         HERROR(err);                                                                                         \
         Hclose(hfid);                                                                                        \
         ret_value = ret_val;                                                                                 \
         goto done;                                                                                           \
-    }
+    } while (0)
 
 /* HGOTO_DONE macro, used to facilitate the new error reporting model.
    This macro is just a wrapper to set the return value and jump to the 'done'
    label.  Also assumption of a variable 'ret_value' */
 
 #define HGOTO_DONE(ret_val)                                                                                  \
-    {                                                                                                        \
+    do {                                                                                                     \
         ret_value = ret_val;                                                                                 \
         goto done;                                                                                           \
-    }
+    } while (0)
 
 /* For further error reporting */
 #define HE_REPORT(msg) HEreport(msg)
 #define HE_REPORT_RETURN(msg, ret_val)                                                                       \
-    {                                                                                                        \
+    do {                                                                                                     \
         HEreport(msg);                                                                                       \
         return (ret_val);                                                                                    \
-    }
+    } while (0)
 #define HE_CLOSE_REPORT_RETURN(hfid, msg, ret_val)                                                           \
-    {                                                                                                        \
+    do {                                                                                                     \
         HEreport(msg);                                                                                       \
         Hclose(hfid);                                                                                        \
         return (ret_val);                                                                                    \
-    }
+    } while (0)
 
 #define HE_REPORT_GOTO(msg, ret_val)                                                                         \
-    {                                                                                                        \
+    do {                                                                                                     \
         HEreport(msg);                                                                                       \
         ret_value = ret_val;                                                                                 \
         goto done;                                                                                           \
-    }
+    } while (0)
 #define HE_CLOSE_REPORT_GOTO(hfid, msg, ret_val)                                                             \
-    {                                                                                                        \
+    do {                                                                                                     \
         HEreport(msg);                                                                                       \
         Hclose(hfid);                                                                                        \
         ret_value = ret_val;                                                                                 \
         goto done;                                                                                           \
-    }
+    } while (0)
 
 /*
    ======================================================================

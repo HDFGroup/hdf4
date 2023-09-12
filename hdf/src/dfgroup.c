@@ -61,7 +61,7 @@ setgroupREC(DIlist_ptr list_rec)
             return (int32)GSLOT2ID(i);
         }
 
-    HRETURN_ERROR(DFE_INTERNAL, FAIL)
+    HRETURN_ERROR(DFE_INTERNAL, FAIL);
 } /* setgroupREC */
 
 /*-----------------------------------------------------------------------------
@@ -99,7 +99,7 @@ DFdiread(int32 file_id, uint16 tag, uint16 ref)
     new_list->DIlist = (uint8 *)malloc((uint32)length);
     if (!new_list->DIlist) {
         free(new_list);
-        HRETURN_ERROR(DFE_NOSPACE, FAIL)
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
     }
 
     new_list->num     = (intn)(length / 4);
@@ -109,7 +109,7 @@ DFdiread(int32 file_id, uint16 tag, uint16 ref)
     if (Hgetelement(file_id, tag, ref, (uint8 *)new_list->DIlist) < 0) {
         free(new_list->DIlist);
         free(new_list);
-        HRETURN_ERROR(DFE_READERROR, FAIL)
+        HRETURN_ERROR(DFE_READERROR, FAIL);
     }
     return (int32)setgroupREC(new_list);
 }
@@ -200,7 +200,7 @@ DFdisetup(int maxsize)
     new_list->DIlist = (uint8 *)malloc((uint32)(maxsize * 4));
     if (!new_list->DIlist) {
         free(new_list);
-        HRETURN_ERROR(DFE_NOSPACE, FAIL)
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
     }
 
     new_list->num     = maxsize;

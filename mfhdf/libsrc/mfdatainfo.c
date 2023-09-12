@@ -801,7 +801,7 @@ SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32 *offsetarra
             /* Get number of data descs or labels with this tag/ref */
             num_annots = ANnumann(an_id, annot_type, elem_tag, elem_ref);
             if (num_annots == FAIL)
-                HGOTO_ERROR(DFE_INTERNAL, FAIL)
+                HGOTO_ERROR(DFE_INTERNAL, FAIL);
             else if (num_annots == 0) /* then try SDG */
             {
                 elem_tag   = DFTAG_SDG;

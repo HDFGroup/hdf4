@@ -320,7 +320,7 @@ DFKsetNT(int32 ntype)
             g_ntype = DFNT_CUSTOM;
             break;
         default:
-            HRETURN_ERROR(DFE_BADCONV, FAIL)
+            HRETURN_ERROR(DFE_BADCONV, FAIL);
     }
     return 0;
 }

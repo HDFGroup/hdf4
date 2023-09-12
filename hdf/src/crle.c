@@ -287,7 +287,7 @@ HCIcrle_encode(compinfo_t *info, int32 length, const uint8 *buf)
                 break;
 
             default:
-                HRETURN_ERROR(DFE_INTERNAL, FAIL)
+                HRETURN_ERROR(DFE_INTERNAL, FAIL);
         } /* end switch */
     }     /* end while */
 
@@ -339,7 +339,7 @@ HCIcrle_term(compinfo_t *info)
             break;
 
         default:
-            HRETURN_ERROR(DFE_INTERNAL, FAIL)
+            HRETURN_ERROR(DFE_INTERNAL, FAIL);
     } /* end switch */
     rle_info->rle_state   = RLE_INIT;
     rle_info->second_byte = rle_info->last_byte = (uintn)RLE_NIL;
@@ -493,12 +493,12 @@ HCPcrle_seek(accrec_t *access_rec, int32 offset, int origin)
     while (rle_info->offset + TMP_BUF_SIZE < offset) /* grab chunks */
         if (HCIcrle_decode(info, TMP_BUF_SIZE, tmp_buf) == FAIL) {
             free(tmp_buf);
-            HRETURN_ERROR(DFE_CDECODE, FAIL)
+            HRETURN_ERROR(DFE_CDECODE, FAIL);
         }                          /* end if */
     if (rle_info->offset < offset) /* grab the last chunk */
         if (HCIcrle_decode(info, offset - rle_info->offset, tmp_buf) == FAIL) {
             free(tmp_buf);
-            HRETURN_ERROR(DFE_CDECODE, FAIL)
+            HRETURN_ERROR(DFE_CDECODE, FAIL);
         }
 
     free(tmp_buf);

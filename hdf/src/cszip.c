@@ -757,14 +757,14 @@ HCPcszip_seek(accrec_t *access_rec, int32 offset, int origin)
     {
         if (HCIcszip_decode(info, TMP_BUF_SIZE, tmp_buf) == FAIL) {
             free(tmp_buf);
-            HRETURN_ERROR(DFE_CDECODE, FAIL)
+            HRETURN_ERROR(DFE_CDECODE, FAIL);
         }
     }
     if (szip_info->offset < offset) /* grab the last chunk */
     {
         if (HCIcszip_decode(info, offset - szip_info->offset, tmp_buf) == FAIL) {
             free(tmp_buf);
-            HRETURN_ERROR(DFE_CDECODE, FAIL)
+            HRETURN_ERROR(DFE_CDECODE, FAIL);
         }
     }
 
