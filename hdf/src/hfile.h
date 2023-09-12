@@ -116,7 +116,6 @@ typedef short hdf_file_t;
 #define HI_SEEK(x, y)     mlseek(x, (int32)y, 0)
 #define HI_SEEKEND(x)     mlseek(x, 0L, 2)
 #define HI_TELL(x)        mlseek(x, 0L, 1)
-#define DF_OPENERR(f)     ((f) == -1)
 #define OPENERR(f)        (f < 0)
 #endif /* FILELIB == MACIO */
 
