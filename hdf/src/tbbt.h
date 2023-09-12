@@ -19,10 +19,6 @@
 
 #include "H4api_adpt.h"
 
-#ifdef lint            /* lint always complains but may complain more if... */
-#define TBBT_INTERNALS /* TBBT_INTERNALS not always defined */
-#endif                 /* lint */
-
 typedef struct tbbt_node TBBT_NODE;
 
 /* Threaded node structure */

@@ -664,38 +664,6 @@ tbbtdmake(intn (*cmp)(void * /* k1 */, void * /* k2 */, intn /* arg */), intn ar
     return tree;
 }
 
-#ifdef WASTE_STACK
-/* You can have a very simple recursive version that wastes lots of stack
- * space, this next less-simple recursive version that wastes less stack space,
- * or the last non-recursive version which isn't simple but saves stack space.
- */
-static void (*FD)(void *item), (*FK)(void *key);
-static void
-tbbt1free(TBBT_NODE *node)
-{
-    if (HasChild(node, LEFT))
-        tbbt1free(node->Lchild);
-    if (HasChild(node, RIGHT))
-        tbbt1free(node->Rchild);
-    if (NULL != FD)
-        (*FD)(node->data);
-    if (NULL != FK)
-        (*FK)(node->key);
-    tbbt_release_node(node);
-}
-
-void
-tbbtfree(TBBT_NODE **root, void (*fd)(void *item), void (*fk)(void *key))
-{
-    if (NULL == *root)
-        return;
-    FD = fd;
-    FK = fk;
-    tbbt1free(*root);
-    *root = NULL;
-}
-#else  /* WASTE_STACK */
-
 /* tbbtfree() - Free an entire tree not allocated with tbbtdmake(). */
 void
 tbbtfree(TBBT_NODE **root, void (*fd)(void * /* item */), void (*fk)(void * /* key */))
@@ -734,7 +702,6 @@ tbbtfree(TBBT_NODE **root, void (*fd)(void * /* item */), void (*fk)(void * /* k
         } while (NULL != par); /* While moving back up tree */
     }
 }
-#endif /* WASTE_STACK */
 
 void
 tbbtprint(TBBT_NODE *node)
