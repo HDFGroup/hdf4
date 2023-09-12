@@ -468,7 +468,7 @@ nvsinqc(intf *vkey, intf *nelt, intf *interlace, _fcd fields, intf *eltsize, _fc
     tvsname = (char *)malloc(*vsnamelen + 1);
     if (!tvsname) {
         free(tfields);
-        HRETURN_ERROR(DFE_NOSPACE, FAIL)
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
     }
 
     /* the following contains error for nelt, interlace and eltsize */
