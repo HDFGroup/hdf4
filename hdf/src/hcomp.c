@@ -165,7 +165,7 @@ HCIinit_coder(int16 acc_mode, comp_coder_info_t *cinfo, comp_coder_t coder_type,
      */
     if ((comp_config_info & COMP_DECODER_ENABLED | COMP_ENCODER_ENABLED) == 0) {
         /* coder not present?? */
-        HRETURN_ERROR(DFE_BADCODER, FAIL)
+        HRETURN_ERROR(DFE_BADCODER, FAIL);
     }
 
     switch (coder_type) {                        /* determine the type of encoding */
@@ -195,7 +195,7 @@ HCIinit_coder(int16 acc_mode, comp_coder_info_t *cinfo, comp_coder_t coder_type,
 
         case COMP_CODE_SKPHUFF: /* Skipping Huffman encoding */
             if (c_info->skphuff.skp_size < 1)
-                HRETURN_ERROR(DFE_BADCODER, FAIL)
+                HRETURN_ERROR(DFE_BADCODER, FAIL);
 
             /* set the coding type and the skipping huffman func. ptrs */
             cinfo->coder_type  = COMP_CODE_SKPHUFF;
@@ -211,7 +211,7 @@ HCIinit_coder(int16 acc_mode, comp_coder_info_t *cinfo, comp_coder_t coder_type,
                                 if(c_info->deflate.level<1 || c_info->deflate.level>9)
                                 */
             if (c_info->deflate.level < 0 || c_info->deflate.level > 9)
-                HRETURN_ERROR(DFE_BADCODER, FAIL)
+                HRETURN_ERROR(DFE_BADCODER, FAIL);
 
             /* set the coding type and the gzip 'deflate' func. ptrs */
             cinfo->coder_type  = COMP_CODE_DEFLATE;
@@ -248,7 +248,7 @@ HCIinit_coder(int16 acc_mode, comp_coder_info_t *cinfo, comp_coder_t coder_type,
             break;
 
         default:
-            HRETURN_ERROR(DFE_BADCODER, FAIL)
+            HRETURN_ERROR(DFE_BADCODER, FAIL);
     } /* end switch */
     return (SUCCEED);
 } /* end HCIinit_coder() */
@@ -286,7 +286,7 @@ HCIinit_model(int16 acc_mode, comp_model_info_t *minfo, comp_model_t model_type,
             break;
 
         default:
-            HRETURN_ERROR(DFE_BADMODEL, FAIL)
+            HRETURN_ERROR(DFE_BADMODEL, FAIL);
     } /* end switch */
 
     return (SUCCEED);
@@ -422,7 +422,7 @@ HCPencode_header(uint8 *p, comp_model_t model_type, model_info *m_info, comp_cod
 
         case COMP_CODE_SKPHUFF: /* Skipping Huffman coding needs info */
             if (c_info->skphuff.skp_size < 1)
-                HRETURN_ERROR(DFE_BADCODER, FAIL)
+                HRETURN_ERROR(DFE_BADCODER, FAIL);
 
             /* specify skipping unit size */
             UINT32ENCODE(p, (uint32)c_info->skphuff.skp_size);
@@ -435,7 +435,7 @@ HCPencode_header(uint8 *p, comp_model_t model_type, model_info *m_info, comp_cod
             if(c_info->deflate.level<1 || c_info->deflate.level>9)
             */
             if (c_info->deflate.level < 0 || c_info->deflate.level > 9)
-                HRETURN_ERROR(DFE_BADCODER, FAIL)
+                HRETURN_ERROR(DFE_BADCODER, FAIL);
 
             /* specify deflation level */
             UINT16ENCODE(p, (uint16)c_info->deflate.level);
@@ -1551,7 +1551,7 @@ HCget_config_info(comp_coder_t coder_type, /* IN: compression type */
             break;
         default:
             *compression_config_info = 0;
-            HRETURN_ERROR(DFE_BADCODER, FAIL)
+            HRETURN_ERROR(DFE_BADCODER, FAIL);
     }
     return SUCCEED;
 }

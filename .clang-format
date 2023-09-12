@@ -64,29 +64,6 @@ ObjCBlockIndentWidth: 4
 #llvm11: ObjCBreakBeforeNestedBlockParam: true
 ReflowComments:  true
 SortIncludes:    false
-StatementMacros:
-  - FUNC_ENTER_API
-  - FUNC_LEAVE_API
-  - FUNC_ENTER_NOAPI_NOINIT_NOERR
-  - FUNC_LEAVE_NOAPI
-  - H5_BEGIN_TAG
-  - HGOTO_DONE_TAG
-  - H5_END_TAG
-  - HSYS_DONE_ERROR
-  - HSYS_GOTO_ERROR
-  - HDONE_ERROR
-  - HERROR
-  - H5_LEAVE
-  - H5E_PRINTF
-  - H5E_THROW
-  - HGOTO_DONE
-  - HGOTO_ERROR
-  - HMPI_ERROR
-  - HMPI_DONE_ERROR
-  - HMPI_GOTO_ERROR
-  - H5_GCC_DIAG_OFF
-  - H5_GCC_DIAG_ON
-  - CATCH
 #llvm10: TypenameMacros:
 #llvm10:   - STACK_OF
 #llvm10:   - LIST

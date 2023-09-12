@@ -633,7 +633,7 @@ Hgetbit(int32 bitid)
     uint32 data;
 
     if (Hbitread(bitid, 1, &data) == FAIL)
-        HRETURN_ERROR(DFE_BITREAD, FAIL)
+        HRETURN_ERROR(DFE_BITREAD, FAIL);
     return ((intn)data);
 } /* end Hgetbit() */
 

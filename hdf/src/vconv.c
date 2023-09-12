@@ -197,7 +197,7 @@ vimakecompat(HFILEID f)
         ret = Hgetelement(f, (uint16)OLD_VGDESCTAG, ref, (uint8 *)buf);
         if (ret == FAIL) {
             free(buf);
-            HRETURN_ERROR(DFE_READERROR, 0)
+            HRETURN_ERROR(DFE_READERROR, 0);
         }
 
         oldunpackvg(vg, buf, &bsize);
@@ -250,7 +250,7 @@ vimakecompat(HFILEID f)
         ret = Hgetelement(f, tag, ref, (uint8 *)buf);
         if (ret == FAIL) {
             free(buf);
-            HRETURN_ERROR(DFE_READERROR, 0)
+            HRETURN_ERROR(DFE_READERROR, 0);
         }
 
         oldunpackvs(vs, buf, &bsize);
@@ -266,7 +266,7 @@ vimakecompat(HFILEID f)
         ret = Hputelement(f, VSDESCTAG, ref, (uint8 *)buf, bsize);
         if (ret == FAIL) {
             free(buf);
-            HRETURN_ERROR(DFE_WRITEERROR, 0)
+            HRETURN_ERROR(DFE_WRITEERROR, 0);
         }
 
         /* duplicate a tag to point to vdata data */

@@ -3181,7 +3181,7 @@ SDgetdimstrs(int32 id, /* IN:  dataset ID */
                     /* because a dim was given, make sure that this is a coord var */
                     /* if it is an SDS, the function will fail */
                     if ((*dp)->var_type == IS_SDSVAR) {
-                        HGOTO_ERROR(DFE_ARGS, FAIL)
+                        HGOTO_ERROR(DFE_ARGS, FAIL);
                     }
                     /* only proceed if this variable is a coordinate var or when
                     its status is unknown due to its being created prior to
@@ -3451,7 +3451,7 @@ SDgetexternalinfo(int32  id,           /* IN: dataset ID */
 
             /* Some failure occurred in HDget_special_info */
             else
-                HGOTO_ERROR(DFE_ARGS, FAIL)
+                HGOTO_ERROR(DFE_ARGS, FAIL);
         }
 
         /* If the SDS has external element, get the external info */

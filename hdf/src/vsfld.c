@@ -643,13 +643,13 @@ VSgetexternalfile(int32 vkey, uintn buf_size, char *ext_filename, int32 *offset)
 
     /* Vdata should have an aid */
     if (vs->aid == 0 || vs->aid == FAIL)
-        HGOTO_ERROR(DFE_ARGS, FAIL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     else {
         memset(&info_block, 0, sizeof(sp_info_block_t));
 
         /* HDget_special_info gets the special type and the special info */
         if (HDget_special_info(vs->aid, &info_block) == FAIL)
-            HGOTO_ERROR(DFE_INTERNAL, FAIL)
+            HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
         /* If the vdata has external element, return the external file info */
         if (info_block.key == SPECIAL_EXT) {
@@ -744,7 +744,7 @@ VSgetexternalinfo(int32 vkey, uintn buf_size, char *ext_filename, int32 *offset,
 
     /* Vdata should have an aid */
     if (vs->aid == 0 || vs->aid == FAIL)
-        HGOTO_ERROR(DFE_ARGS, FAIL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     else {
         intn            retcode = 0;
         sp_info_block_t info_block;
@@ -762,7 +762,7 @@ VSgetexternalinfo(int32 vkey, uintn buf_size, char *ext_filename, int32 *offset,
 
             /* Some failure occurred in HDget_special_info */
             else
-                HGOTO_ERROR(DFE_ARGS, FAIL)
+                HGOTO_ERROR(DFE_ARGS, FAIL);
         }
 
         /* If the vdata has external element, get the external info */
