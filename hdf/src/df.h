@@ -14,7 +14,7 @@
 /*-----------------------------------------------------------------------------
  * File:    df.h
  * Purpose: header file for HDF routines
- * Invokes: dfi.h
+ * Invokes:
  * Contents:
  *  Structure definitions: DFddh, DFdd, DFdesc, DFdle, DF, DFdi, DFdata
  *  Procedure type definitions

@@ -18,7 +18,7 @@
     Routines for input and output of numeric data group
 
  Invokes:
-    df.c dfgroup.c dfkit.c dfi.h df.h dfsd.h
+    df.c dfgroup.c dfkit.c df.h dfsd.h
 
  Public functions:
     DFSDgetdims      - get rank and dim sizes
