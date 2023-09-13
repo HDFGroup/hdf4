@@ -43,8 +43,6 @@
 #define RUN_MASK     0x80 /* bit mask for run-length control bytes */
 #define COUNT_MASK   0x7f /* bit mask for count of run or mix */
 
-/* #define TESTING */
-
 /* functions to perform run-length encoding */
 funclist_t crle_funcs = {HCPcrle_stread,
                          HCPcrle_stwrite,

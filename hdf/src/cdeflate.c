@@ -37,9 +37,6 @@
 /* HDF compression includes */
 #include "hcompi.h" /* Internal definitions for compression */
 
-/* Internal Defines */
-/* #define TESTING */
-
 /* functions to perform gzip encoding */
 funclist_t cdeflate_funcs = {HCPcdeflate_stread,
                              HCPcdeflate_stwrite,
