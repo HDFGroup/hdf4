@@ -26,10 +26,6 @@
 
 #include "H4api_adpt.h"
 
-/* Atom Features control */
-/* Define the following macro for fast hash calculations (but limited hash sizes) */
-#define HASH_SIZE_POWER_2
-
 /* Do swap using XOR operator. Ugly but fast... -QAK */
 #define HAIswap_cache(i, j)                                                                                  \
     atom_id_cache[i] ^= atom_id_cache[j],                                                                    \
@@ -86,6 +82,8 @@ HDFLIBAPI void  *atom_obj_cache[];
     Creates an atomic group to store atoms in.  If the group has already been
     initialized, this routine just increments the count of # of initializations
     and returns without trying to change the size of the hash table.
+
+    NOTE: The hash size MUST be a power of 2 (checked in code)
 
  RETURNS
     Returns SUCCEED if successful and FAIL otherwise
