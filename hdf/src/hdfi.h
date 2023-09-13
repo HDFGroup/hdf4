@@ -62,7 +62,6 @@
 /* I/O library constants */
 #define UNIXUNBUFIO 1
 #define UNIXBUFIO   2
-#define MACIO       3
 
 /* The library always uses UNIXBUFIO */
 #define FILELIB UNIXBUFIO
