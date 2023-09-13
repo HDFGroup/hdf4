@@ -125,8 +125,6 @@ funclist_t comp_funcs = {
     HCPwrite,  HCPendaccess, HCPinfo, NULL /* no routine registered */
 };
 
-/* #define TESTING */
-
 /*--------------------------------------------------------------------------
  NAME
     HCIinit_coder -- Set the coder function pointers

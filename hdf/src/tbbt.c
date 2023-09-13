@@ -35,8 +35,6 @@ extern void tbbt_dump(TBBT_TREE *ptree, void (*key_dump)(void *, void *), intn m
 static TBBT_NODE *tbbt_get_node(void);
 static void       tbbt_release_node(TBBT_NODE *nod);
 
-/* #define TESTING */
-
 /* Returns pointer to end-most (to LEFT or RIGHT) node of tree: */
 static TBBT_NODE *
 tbbt_end(TBBT_NODE *root, intn side)
