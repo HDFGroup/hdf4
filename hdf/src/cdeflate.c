@@ -37,9 +37,6 @@
 /* HDF compression includes */
 #include "hcompi.h" /* Internal definitions for compression */
 
-/* Internal Defines */
-/* #define TESTING */
-
 /* Define the [default] size of the buffer to interact with the file */
 #define DEFLATE_BUF_SIZE     4096
 #define DEFLATE_TMP_BUF_SIZE 16384

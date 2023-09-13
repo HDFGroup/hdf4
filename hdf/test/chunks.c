@@ -1423,8 +1423,8 @@ test_chunks(void)
         for (j = 0; j < 3; j++) {
             for (k = 0; k < 4; k++) {
                 if (inbuf_f32[i][j][k] != f32_data[i][j][k]) {
-                    printf("Wrong data at inbuf_f32[%d][%d][%d], out %f in %f\n", i, j, k, f32_data[i][j][k],
-                           inbuf_f32[i][j][k]);
+                    printf("Wrong data at inbuf_f32[%d][%d][%d], out %f in %f\n", i, j, k,
+                           (double)f32_data[i][j][k], (double)inbuf_f32[i][j][k]);
                     errors++;
                 }
             }

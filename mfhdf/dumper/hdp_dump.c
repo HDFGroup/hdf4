@@ -154,10 +154,10 @@ fmtfloat32(void *x, file_format_t ff, FILE *ofp)
     memcpy(&fdata, x, sizeof(float32));
 
     if (ff == DASCII) {
-        if (fabs(fdata - FILL_FLOAT) <= FLOAT32_EPSILON)
+        if (fabsf(fdata - FILL_FLOAT) <= FLOAT32_EPSILON)
             return (fprintf(ofp, "FloatInf"));
         else
-            return (fprintf(ofp, "%f", fdata));
+            return (fprintf(ofp, "%f", (double)fdata));
     }
     else {
         return (fwrite(&fdata, sizeof(float32), 1, ofp));

@@ -345,7 +345,8 @@ test_varputget1(int cdfid)
                     break;
                 case NC_FLOAT:
                     if (elm[ie].val.fl != flval) {
-                        error("%s: ncvarget1 returned float %g, expected %g", pname, flval, elm[ie].val.fl);
+                        error("%s: ncvarget1 returned float %g, expected %g", pname, (double)flval,
+                              (double)elm[ie].val.fl);
                         nerrs++;
                     }
                     break;

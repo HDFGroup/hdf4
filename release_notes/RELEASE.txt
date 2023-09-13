@@ -52,6 +52,28 @@ New features and changes
       * dfi.h - Declared private, unused, undocumented in UG/RM/DG, has been
                 removed from the library entirely.
 
+    - Dropped support for MacFS I/O
+
+      MacFS was an obscure I/O system from the late 90s used to access HFS
+      volumes on MacOS 9 and earlier (publication CMU-CS-98-145 can be
+      found via an internet search).
+
+      HDF4 allows a library builder to manually specify the FILELIB symbol
+      found in hdfi.h to use C standard library buffered I/O (fopen, etc.),
+      POSIX unbuffered I/O (open, etc.), or MacFS I/O (mopen, etc.). The
+      library default is to use C buffered I/O and there is no obvious
+      build-time or run-time option to change that. The FILELIB value is
+      then used to map HI_OPEN, etc. to appropriate I/O calls.
+
+      The "alternative" I/O schemes (POSIX unbuffered and MacFS) are not
+      tested. Due to its age and obscurity, MacFS support is being dropped.
+      The POSIX unbuffered I/O scheme will remain in place for now since it
+      might be interesting to profile that vs C stdio.h calls.
+
+      This change will have *NO IMPACT* on modern Macs. Files created using
+      MacFS in the 90s and early 2000s can be accessed using C standard
+      library I/O.
+
 Support for new platforms and compilers
 =======================================
 

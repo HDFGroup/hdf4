@@ -745,7 +745,7 @@ read_vset_stuff(void)
     for (i = 0; i < count; i++) {
         if (fbuf[i] != (float32)i) {
             num_errs++;
-            printf(">>> Float value %d was expecting %d got %f\n", (int)i, (int)i, fbuf[i]);
+            printf(">>> Float value %d was expecting %d got %f\n", (int)i, (int)i, (double)fbuf[i]);
         }
     }
 
@@ -955,7 +955,7 @@ read_vset_stuff(void)
 
         if (fl != (float32)(i * 2)) {
             num_errs++;
-            printf(">>> Mixed float value %d was expecting %d got %f\n", (int)i, (int)i, fl);
+            printf(">>> Mixed float value %d was expecting %d got %f\n", (int)i, (int)i, (double)fl);
         }
     }
 
@@ -1083,7 +1083,8 @@ read_vset_stuff(void)
 
         if (fl != fl_expected) {
             num_errs++;
-            printf(">>> Multi-order float value %d was expecting %f got %f\n", (int)i, fl_expected, fl);
+            printf(">>> Multi-order float value %d was expecting %f got %f\n", (int)i, (double)fl_expected,
+                   (double)fl);
         }
         fl_expected += (float32)0.5;
     }

@@ -66,7 +66,6 @@ static intn HIread2write(bitrec_t *bitfile_rec);
 
 static intn HIbitstart(void);
 
-/* #define TESTING */
 /* Actual Function Definitions */
 
 /*--------------------------------------------------------------------------

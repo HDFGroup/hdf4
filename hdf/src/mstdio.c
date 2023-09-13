@@ -52,8 +52,6 @@ MODIFICATION HISTORY
 /* HDF compression includes */
 #include "hcompi.h" /* Internal definitions for compression */
 
-/* #define TESTING */
-
 funclist_t mstdio_funcs = {HCPmstdio_stread,
                            HCPmstdio_stwrite,
                            HCPmstdio_seek,
@@ -94,9 +92,6 @@ HCPmstdio_stread(accrec_t *access_rec)
     /* set the offset */
     info->minfo.model_info.stdio_info.pos = 0;
 
-#ifdef TESTING
-    printf("%s(): info=%p\n", __func__, info);
-#endif
     if ((*(info->cinfo.coder_funcs.stread))(access_rec) == FAIL)
         HRETURN_ERROR(DFE_CODER, FAIL);
     return (SUCCEED);
@@ -129,20 +124,11 @@ HCPmstdio_stwrite(accrec_t *access_rec)
 
     info = (compinfo_t *)access_rec->special_info;
 
-#ifdef TESTING
-    printf("%s(): info=%p\n", __func__, info);
-#endif
     /* set the offset */
     info->minfo.model_info.stdio_info.pos = 0;
 
-#ifdef TESTING
-    printf("%s(): before coder_funcs.write=%p\n", __func__, info->cinfo.coder_funcs.write);
-#endif
     if ((*(info->cinfo.coder_funcs.stwrite))(access_rec) == FAIL)
         HRETURN_ERROR(DFE_CODER, FAIL);
-#ifdef TESTING
-    printf("%s(): after coder_funcs.write=%p\n", __func__, info->cinfo.coder_funcs.write);
-#endif
     return (SUCCEED);
 } /* HCPmstdio_stwrite() */
 
@@ -256,14 +242,9 @@ HCPmstdio_write(accrec_t *access_rec, int32 length, const void *data)
     /* adjust model position */
     info->minfo.model_info.stdio_info.pos += length;
 
-#ifdef TESTING
-    printf("%s(): before function ptr call func_ptr=%p\n", __func__, info->cinfo.coder_funcs.write);
-#endif
     if ((ret = (*(info->cinfo.coder_funcs.write))(access_rec, length, data)) == FAIL)
         HRETURN_ERROR(DFE_CODER, FAIL);
-#ifdef TESTING
-    printf("%s(): after function ptr call, ret=%d\n", __func__, (int)ret);
-#endif
+
     return (ret);
 } /* HCPmstdio_write() */
 

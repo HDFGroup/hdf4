@@ -204,8 +204,6 @@ static intn HIsync(filerec_t *file_rec);
 
 static intn HIstart(void);
 
-/* #define TESTING */
-
 /*--------------------------------------------------------------------------
 NAME
    Hopen -- Opens a HDF file.

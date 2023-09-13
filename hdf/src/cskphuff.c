@@ -43,7 +43,6 @@
 #include "hcompi.h" /* Internal definitions for compression */
 
 /* Internal Defines */
-/* #define TESTING */
 #define TMP_BUF_SIZE 8192 /* size of throw-away buffer */
 
 /* functions to perform skipping huffman encoding */
@@ -156,15 +155,9 @@ HCIcskphuff_init(accrec_t *access_rec, uintn alloc_buf)
 
     info = (compinfo_t *)access_rec->special_info;
 
-#ifdef TESTING
-    printf("HCIcskphuff_init(): before Hbitseek() call\n");
-#endif                                     /* TESTING */
     if (Hbitseek(info->aid, 0, 0) == FAIL) /* seek to beginning of element */
         HRETURN_ERROR(DFE_SEEKERROR, FAIL);
 
-#ifdef TESTING
-    printf("HCIcskphuff_init(): after Hbitseek() call\n");
-#endif /* TESTING */
     skphuff_info = &(info->cinfo.coder_info.skphuff_info);
 
     /* Initialize RLE state information */
@@ -181,9 +174,6 @@ HCIcskphuff_init(accrec_t *access_rec, uintn alloc_buf)
         if ((skphuff_info->up = (uint8 **)malloc(sizeof(uint8 *) * (uintn)skphuff_info->skip_size)) == NULL)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
-#ifdef TESTING
-        printf("HCIcskphuff_init(): halfway through allocating space\n");
-#endif /* TESTING */
         /* allocate compression buffer for each skipping byte */
         for (i = 0; i < skphuff_info->skip_size; i++) {
             if ((skphuff_info->left[i] = (uintn *)malloc(sizeof(uintn) * SUCCMAX)) == NULL)
@@ -195,9 +185,6 @@ HCIcskphuff_init(accrec_t *access_rec, uintn alloc_buf)
         } /* end for */
     }     /* end if */
 
-#ifdef TESTING
-    printf("HCIcskphuff_init(): after allocating space\n");
-#endif /* TESTING */
     for (k = 0; k < skphuff_info->skip_size; k++) {
         for (i = 0; i < TWICEMAX; i++) /* initialize the up pointers to point to their parent in the tree */
             skphuff_info->up[k][i] = (uint8)(i >> 1);
@@ -208,9 +195,6 @@ HCIcskphuff_init(accrec_t *access_rec, uintn alloc_buf)
         } /* end for */
     }     /* end for */
 
-#ifdef TESTING
-    printf("HCIcskphuff_init(): after initializing arrays\n");
-#endif /* TESTING */
     return (SUCCEED);
 } /* end HCIcskphuff_init() */
 
@@ -248,16 +232,9 @@ HCIcskphuff_decode(compinfo_t *info, int32 length, uint8 *buf)
 
     orig_length = length; /* save this for later */
     while (length > 0) {  /* decode until we have all the bytes we need */
-#ifdef TESTING
-        printf("length=%ld\n", (long)length);
-#endif            /* TESTING */
-        a = ROOT; /* start at the root of the tree and find the leaf we need */
+        a = ROOT;         /* start at the root of the tree and find the leaf we need */
 
         do { /* walk down once for each bit on the path */
-#ifdef TESTING
-            intn bitcount = 0;
-            printf("bitcount=%d\n", ++bitcount);
-#endif /* TESTING */
             if (Hbitread(info->aid, 1, &bit) == FAIL)
                 HRETURN_ERROR(DFE_CDECODE, FAIL);
             a = ((bit == 0) ? (skphuff_info->left[skphuff_info->skip_pos][a])
@@ -421,9 +398,6 @@ HCIcskphuff_staccess(accrec_t *access_rec, int16 acc_mode)
 
     info = (compinfo_t *)access_rec->special_info;
 
-#ifdef TESTING
-    printf("HCIcskphuff_staccess(): before bitio calls\n");
-#endif /* TESTING */
     /* need to check for not writing, as opposed to read access */
     /* because of the way the access works */
     if (!(acc_mode & DFACC_WRITE))
@@ -433,9 +407,6 @@ HCIcskphuff_staccess(accrec_t *access_rec, int16 acc_mode)
         Hbitappendable(info->aid);
     } /* end else */
 
-#ifdef TESTING
-    printf("HCIcskphuff_staccess(): after bitio calls\n");
-#endif /* TESTING */
     if (info->aid == FAIL)
         HRETURN_ERROR(DFE_DENIED, FAIL);
     if ((acc_mode & DFACC_WRITE) && Hbitappendable(info->aid) == FAIL)
@@ -498,14 +469,8 @@ HCPcskphuff_stwrite(accrec_t *access_rec)
 {
     int32 ret;
 
-#ifdef TESTING
-    printf("HCPcskphuff_stwrite(): before call to HCIcskphuff_staccess()\n");
-#endif
     if ((ret = HCIcskphuff_staccess(access_rec, DFACC_WRITE)) == FAIL)
         HRETURN_ERROR(DFE_CINIT, FAIL);
-#ifdef TESTING
-    printf("HCPcskphuff_stwrite(): after call to HCIcskphuff_staccess(), ret=%d\n", (int)ret);
-#endif
     return (ret);
 } /* HCPcskphuff_stwrite() */
 

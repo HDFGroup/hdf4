@@ -71,7 +71,7 @@
 
 #if !NC_OLD_FILLVALUES
 
-#   define FILL_FLOAT    9.9692099683868690e+36 /* near 15 * 2^119 */
+#   define FILL_FLOAT     9.9692099683868690e+36F /* near 15 * 2^119 */
 #   define FILL_DOUBLE    9.9692099683868690e+36
 
 #else    /* NC_OLD_FILLVALUES below */

@@ -210,7 +210,7 @@ gen_load_c(void *rec_start)
                             sprintf(s2, "%d, ", (int)*longvalp++);
                             break;
                         case NC_FLOAT:
-                            sprintf(s2, "%.8g, ", *floatvalp++);
+                            sprintf(s2, "%.8g, ", (double)(*floatvalp++));
                             break;
                         case NC_DOUBLE:
                             sprintf(s2, "%#.16g", *doublevalp++);
@@ -241,7 +241,7 @@ gen_load_c(void *rec_start)
                             sprintf(s2, "%d", (int)*longvalp);
                             break;
                         case NC_FLOAT:
-                            sprintf(s2, "%.8g", *floatvalp);
+                            sprintf(s2, "%.8g", (double)(*floatvalp));
                             break;
                         case NC_DOUBLE:
                             sprintf(s2, "%#.16g", *doublevalp++);
@@ -296,7 +296,7 @@ gen_load_c(void *rec_start)
                 break;
             case NC_FLOAT:
                 floatvalp = (float *)rec_start;
-                sprintf(s2, "%.8g", *floatvalp);
+                sprintf(s2, "%.8g", (double)(*floatvalp));
                 strcat(stmnt, s2);
                 break;
             case NC_DOUBLE:
@@ -431,10 +431,10 @@ gen_load_fortran(void *rec_start) /* make Fortran to put record */
             case NC_FLOAT:
                 floatvalp = (float *)rec_start;
                 for (ival = 0; ival < var_len - 1; ival++) {
-                    sprintf(s2, "%.8g, ", *floatvalp++);
+                    sprintf(s2, "%.8g, ", (double)(*floatvalp++));
                     fstrcat(stmnt, s2, &stmnt_len);
                 }
-                sprintf(s2, "%.8g", *floatvalp);
+                sprintf(s2, "%.8g", (double)(*floatvalp));
                 fstrcat(stmnt, s2, &stmnt_len);
                 break;
             case NC_DOUBLE:

@@ -163,7 +163,7 @@ pr_vals(struct ncvar *vp, long len, char *fmt, bool more, bool lastrow, void *va
                 if (*gp.fp >= fill_float)
                     (void)sprintf(sout, "FloatInf, ");
                 else {
-                    (void)sprintf(sout, fmt, *gp.fp);
+                    (void)sprintf(sout, fmt, (double)*gp.fp);
                     (void)strcat(sout, ", ");
                 }
                 lput(sout);
@@ -172,7 +172,7 @@ pr_vals(struct ncvar *vp, long len, char *fmt, bool more, bool lastrow, void *va
             if (*gp.fp >= fill_float)
                 (void)sprintf(sout, "FloatInf");
             else
-                (void)sprintf(sout, fmt, *gp.fp);
+                (void)sprintf(sout, fmt, (double)*gp.fp);
             lput(sout);
             gp.fp++;
             break;
@@ -406,7 +406,7 @@ pr_cvals(struct ncvar *vp, long len, char *fmt, bool more, bool lastrow, void *v
                 if (*gp.fp >= fill_float)
                     Printf("FloatInf");
                 else
-                    Printf(fmt, *gp.fp);
+                    Printf(fmt, (double)*gp.fp);
                 Printf(",");
                 annotate(vp, fsp, cor, iel);
                 gp.fp++;
@@ -414,7 +414,7 @@ pr_cvals(struct ncvar *vp, long len, char *fmt, bool more, bool lastrow, void *v
             if (*gp.fp >= fill_float)
                 Printf("FloatInf");
             else
-                Printf(fmt, *gp.fp);
+                Printf(fmt, (double)*gp.fp);
             lastdelim(more, lastrow);
             annotate(vp, fsp, cor, iel);
             gp.fp++;

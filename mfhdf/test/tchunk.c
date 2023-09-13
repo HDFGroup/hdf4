@@ -432,8 +432,9 @@ test3:
         for (j = 0; j < d_dims[1]; j++) {
             for (k = 0; k < d_dims[2]; k++) {
                 if (inbuf_f32[i][j][k] != f32_data[i][j][k]) {
-                    fprintf(stderr, "Chunk Test 3. inbuf_f32[%d][%d][%d]=%f,", i, j, k, inbuf_f32[i][j][k]);
-                    fprintf(stderr, "f32_data[%d][%d][%d]=%f,", i, j, k, f32_data[i][j][k]);
+                    fprintf(stderr, "Chunk Test 3. inbuf_f32[%d][%d][%d]=%f,", i, j, k,
+                            (double)inbuf_f32[i][j][k]);
+                    fprintf(stderr, "f32_data[%d][%d][%d]=%f,", i, j, k, (double)f32_data[i][j][k]);
                     fprintf(stderr, "\n");
                     num_errs++;
                 }

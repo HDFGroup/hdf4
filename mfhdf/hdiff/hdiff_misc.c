@@ -191,7 +191,7 @@ pr_att_vals(nc_type type, int len, void *vals)
             gp.fp = (float32 *)vals;
             for (iel = 0; iel < len; iel++) {
                 int ll;
-                (void)sprintf(gps, f_fmt, *gp.fp++);
+                (void)sprintf(gps, f_fmt, (double)*gp.fp++);
                 /* append a trailing "f" for floating-point attributes */
                 ll          = strlen(gps);
                 gps[ll + 1] = '\0';
