@@ -15,10 +15,16 @@
 #include "hdp.h"
 #include "local_nc.h" /* to use some definitions */
 
+/********************/
 /* Global Variables */
+/********************/
 
 /* indicates Vsets have been initialized for the current file */
 intn vinit_done = FALSE;
+
+/********************************/
+/* Local variables and typedefs */
+/********************************/
 
 /* hdp commands (stored as (value, name) pairs to keep them in sync) */
 typedef enum { HELP, LIST, DUMPSDS, DUMPRIG, DUMPVG, DUMPVD, DUMPGR, BAD_COMMAND } command_value_t;
@@ -113,7 +119,7 @@ main(int argc, char *argv[])
 
     if (argc < 2) {
         usage(argc, argv);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     curr_arg = 1;
@@ -127,7 +133,7 @@ main(int argc, char *argv[])
                 }
             default:
                 usage(argc, argv); /* Display the general usage. */
-                exit(1);
+                exit(EXIT_FAILURE);
         }
         curr_arg++;
     }
@@ -138,18 +144,22 @@ main(int argc, char *argv[])
             break;
         }
     }
+    if (cmd == BAD_COMMAND) {
+        printf("Invalid command: %s\n", argv[curr_arg]);
+        exit(EXIT_FAILURE);
+    }
 
     curr_arg++;
 
     switch (cmd) {
         case LIST:
             if (FAIL == do_list(curr_arg, argc, argv, glob_opts.help))
-                exit(1);
+                exit(EXIT_FAILURE);
             break;
 
         case DUMPSDS:
             if (FAIL == do_dumpsds(curr_arg, argc, argv, glob_opts.help))
-                exit(1);
+                exit(EXIT_FAILURE);
             break;
 
         case DUMPRIG:
@@ -159,36 +169,37 @@ main(int argc, char *argv[])
                           fprintf( stderr, ">>> Please make a note that dumprig is no longer available.\n");
                           fprintf( stderr, "    The command dumpgr is and should be used in its place.\n" );
                           if (FAIL == do_dumpgr(curr_arg, argc, argv, glob_opts.help)) */
-                exit(1);
+                exit(EXIT_FAILURE);
             break;
 
         case DUMPVG:
             if (FAIL == do_dumpvg(curr_arg, argc, argv, glob_opts.help))
-                exit(1);
+                exit(EXIT_FAILURE);
             break;
 
         case DUMPVD:
             if (FAIL == do_dumpvd(curr_arg, argc, argv, glob_opts.help))
-                exit(1);
+                exit(EXIT_FAILURE);
             break;
 
         case DUMPGR:
             if (FAIL == do_dumpgr(curr_arg, argc, argv, glob_opts.help))
-                exit(1);
+                exit(EXIT_FAILURE);
             break;
 
         case HELP:
             usage(argc, argv);
             break;
 
+        /* Should not get here - invalid commands are handled earlier */
         case BAD_COMMAND:
         default:
-            printf("Invalid command!, cmd=%d\n", (int)cmd);
-            exit(1);
+            printf("Invalid command!\n");
+            exit(EXIT_FAILURE);
             break;
     }
 
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 /* -----------------------------------------------------------------
