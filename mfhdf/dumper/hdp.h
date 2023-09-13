@@ -18,20 +18,15 @@
 #include "hfile.h"
 
 /* Global Variables */
-#ifndef HDP_MASTER
-extern
-#endif /* !HDP_MASTER */
-    intn vinit_done
-#ifdef HDP_MASTER
-    = FALSE /* indicates Vsets have been init'ed for the current file */
-#endif      /* HDP_MASTER */
-    ;
+extern intn vinit_done;
 
 /* Global Definitions */
 #define MAXCHOICES 50
+
 #ifndef MAXNAMELEN
 #define MAXNAMELEN 100
-#endif /* !MAXNAMELEN */
+#endif
+
 #define MAXCLASSLEN 100
 #define MAXPERLINE  65 /* max # of chars per line in the output */
 #define MAXRANK     100
@@ -282,18 +277,6 @@ extern
             exit(1);                                                                                         \
         }                                                                                                    \
     }
-
-/* Add enum and string for new commands to both of the variables below. */
-/* Preserve the correct/corresponding ordering */
-typedef enum { HELP, LIST, DUMPSDS, DUMPRIG, DUMPVG, DUMPVD, DUMPGR, NONE } command_t;
-#ifndef HDP_MASTER
-extern
-#endif /* !HDP_MASTER */
-    const char *commands[]
-#ifdef HDP_MASTER
-    = {"help", "list", "dumpsds", "dumprig", "dumpvg", "dumpvd", "dumpgr"}
-#endif /* HDP_MASTER */
-;
 
 /* Global options structure */
 typedef struct {
