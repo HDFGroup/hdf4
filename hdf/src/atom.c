@@ -72,13 +72,8 @@ MODIFICATION HISTORY
 /* Map an atom to a Group number */
 #define ATOM_TO_GROUP(a) ((group_t)((((atom_t)(a)) >> ((sizeof(atom_t) * 8) - GROUP_BITS)) & GROUP_MASK))
 
-#ifdef HASH_SIZE_POWER_2
 /* Map an atom to a hash location (assumes s is a power of 2 and smaller than the ATOM_MASK constant) */
 #define ATOM_TO_LOC(a, s) ((atom_t)(a) & ((s)-1))
-#else
-/* Map an atom to a hash location */
-#define ATOM_TO_LOC(a, s) (((atom_t)(a)&ATOM_MASK) % (s))
-#endif
 
 /* Combine a Group number and an atom index into an atom */
 #define MAKE_ATOM(g, i)                                                                                      \
@@ -127,6 +122,8 @@ static void HAIrelease_atom_node(atom_info_t *atm);
     initializations and returns without trying to change the size of the hash
     table.
 
+    NOTE: The hash size MUST be a power of 2 (checked in code)
+
  RETURNS
     Returns SUCCEED if successful and FAIL otherwise
 
@@ -146,10 +143,11 @@ HAinit_group(group_t grp,      /* IN: Group to initialize */
     /* Assertion necessary for faster pointer swapping */
     assert(sizeof(hdf_pint_t) == sizeof(void *));
 
-#ifdef HASH_SIZE_POWER_2
+    /* Ensure hash_size is not zero and a power of two */
+    if (hash_size == 0)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     if (hash_size & (hash_size - 1))
         HGOTO_ERROR(DFE_ARGS, FAIL);
-#endif /* HASH_SIZE_POWER_2 */
 
     if (atom_group_list[grp] == NULL) { /* Allocate the group information */
         grp_ptr = (atom_group_t *)calloc(1, sizeof(atom_group_t));
