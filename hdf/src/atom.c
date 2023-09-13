@@ -265,9 +265,9 @@ HAregister_atom(group_t grp,   /* IN: Group to register the object in */
 
     /* Create the atom & it's ID */
     const atom_t atm_id = MAKE_ATOM(grp, grp_ptr->nextid);
-    atm_ptr->id      = atm_id;
-    atm_ptr->obj_ptr = object;
-    atm_ptr->next    = NULL;
+    atm_ptr->id         = atm_id;
+    atm_ptr->obj_ptr    = object;
+    atm_ptr->next       = NULL;
 
     /* hash bucket already full, prepend to front of chain */
     /* new item's hash table location */
@@ -360,7 +360,7 @@ HAremove_atom(atom_t atm /* IN: Atom to remove */
     void *ret_value = NULL;
 
     HEclear();
-    group_t grp;                  /* atom's atomic group */
+    group_t grp; /* atom's atomic group */
     grp = ATOM_TO_GROUP(atm);
     if (grp <= BADGROUP || grp >= MAXGROUP)
         HGOTO_ERROR(DFE_ARGS, NULL);
@@ -371,7 +371,7 @@ HAremove_atom(atom_t atm /* IN: Atom to remove */
         HGOTO_ERROR(DFE_INTERNAL, NULL);
 
     /* Get the location in which the atom is located */
-    const uintn hash_loc = (uintn)ATOM_TO_LOC(atm, grp_ptr->hash_size);
+    const uintn  hash_loc = (uintn)ATOM_TO_LOC(atm, grp_ptr->hash_size);
     atom_info_t *curr_atm = grp_ptr->atom_list[hash_loc];
     if (curr_atm == NULL)
         HGOTO_ERROR(DFE_INTERNAL, NULL);
@@ -442,7 +442,7 @@ HAsearch_atom(group_t         grp,  /* IN: Group to search for the object in */
 
     /* Start at the beginning of the array */
     for (intn i = 0; i < grp_ptr->hash_size; i++) {
-        atom_info_t  *atm_ptr = grp_ptr->atom_list[i];
+        atom_info_t *atm_ptr = grp_ptr->atom_list[i];
         while (atm_ptr != NULL) {
             if ((*func)(atm_ptr->obj_ptr, key))
                 HGOTO_DONE(atm_ptr->obj_ptr); /* found the item we are looking for */
@@ -477,13 +477,13 @@ HAIfind_atom(atom_t atm /* IN: Atom to retrieve atom for */
         HGOTO_ERROR(DFE_ARGS, NULL);
 
     atom_group_t *grp_ptr = NULL; /* ptr to the atomic group */
-    grp_ptr = atom_group_list[grp];
+    grp_ptr               = atom_group_list[grp];
     if (grp_ptr == NULL || grp_ptr->count <= 0)
         HGOTO_ERROR(DFE_INTERNAL, NULL);
 
     /* Get the location in which the atom is located */
-    const uintn hash_loc = (uintn)ATOM_TO_LOC(atm, grp_ptr->hash_size);
-    atom_info_t *atm_ptr = grp_ptr->atom_list[hash_loc];
+    const uintn  hash_loc = (uintn)ATOM_TO_LOC(atm, grp_ptr->hash_size);
+    atom_info_t *atm_ptr  = grp_ptr->atom_list[hash_loc];
     if (atm_ptr == NULL)
         HGOTO_ERROR(DFE_INTERNAL, NULL);
 
