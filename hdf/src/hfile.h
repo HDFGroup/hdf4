@@ -70,7 +70,7 @@
 
 #ifndef FILELIB
 #define FILELIB UNIXBUFIO /* UNIX buffered I/O is the default */
-#endif                    /* FILELIB */
+#endif
 
 #if (FILELIB == UNIXBUFIO)
 /* using C buffered file I/O routines to access files */
@@ -103,21 +103,6 @@ typedef int hdf_file_t;
 #define HI_TELL(f)        (lseek((f), (off_t)0, SEEK_CUR))
 #define OPENERR(f)        (f < 0)
 #endif /* FILELIB == UNIXUNBUFIO */
-
-#if (FILELIB == MACIO)
-/* using special routines to redirect to Mac Toolkit I/O */
-typedef short hdf_file_t;
-#define HI_OPEN(x, y)     mopen(x, y)
-#define HI_CREATE(name)   mopen(name, DFACC_CREATE)
-#define HI_CLOSE(x)       (((x = ((mclose(x) == 0) ? NULL : x)) == NULL) ? SUCCEED : FAIL)
-#define HI_FLUSH(a)       (SUCCEED)
-#define HI_READ(a, b, c)  mread(a, (char *)b, (int32)c)
-#define HI_WRITE(a, b, c) mwrite(a, (char *)b, (int32)c)
-#define HI_SEEK(x, y)     mlseek(x, (int32)y, 0)
-#define HI_SEEKEND(x)     mlseek(x, 0L, 2)
-#define HI_TELL(x)        mlseek(x, 0L, 1)
-#define OPENERR(f)        (f < 0)
-#endif /* FILELIB == MACIO */
 
 /* ----------------------- Internal Data Structures ----------------------- */
 /* The internal structure used to keep track of the files opened: an
