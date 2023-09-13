@@ -232,7 +232,7 @@ HCIcskphuff_decode(compinfo_t *info, int32 length, uint8 *buf)
 
     orig_length = length; /* save this for later */
     while (length > 0) {  /* decode until we have all the bytes we need */
-        a = ROOT; /* start at the root of the tree and find the leaf we need */
+        a = ROOT;         /* start at the root of the tree and find the leaf we need */
 
         do { /* walk down once for each bit on the path */
             if (Hbitread(info->aid, 1, &bit) == FAIL)

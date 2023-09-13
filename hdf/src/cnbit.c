@@ -119,9 +119,9 @@ HCIcnbit_init(accrec_t *access_rec)
     top_bit = bits - 1; /* set the initial top and bottom bits */
     bot_bit = bits - 8;
     memset(nbit_info->mask_info, 0, sizeof(nbit_info->mask_info)); /* set to 0 */
-    for (i = 0; i < nbit_info->nt_size; i++) { /* initialize the bitmask info */
-        if (mask_top >= top_bit) {     /* mask offset is above current top bit */
-            if (mask_bot <= bot_bit) { /* entire byte is in mask */
+    for (i = 0; i < nbit_info->nt_size; i++) {                     /* initialize the bitmask info */
+        if (mask_top >= top_bit) {                                 /* mask offset is above current top bit */
+            if (mask_bot <= bot_bit) {                             /* entire byte is in mask */
                 nbit_info->mask_info[i].offset = 7;
                 nbit_info->mask_info[i].length = 8;
                 nbit_info->mask_info[i].mask   = mask_arr8[8];
@@ -217,8 +217,8 @@ HCIcnbit_decode(compinfo_t *info, int32 length, uint8 *buf)
     buf_items   = buf_size / nbit_info->nt_size; /* compute # of items in buffer */
     orig_length = length;                        /* save this for later */
     while (length > 0) {                         /* decode until we have all the bytes */
-        if (nbit_info->buf_pos >= buf_size) {  /* re-fill buffer */
-            rbuf = (uint8 *)nbit_info->buffer; /* get a ptr to the buffer */
+        if (nbit_info->buf_pos >= buf_size) {    /* re-fill buffer */
+            rbuf = (uint8 *)nbit_info->buffer;   /* get a ptr to the buffer */
 
             /* get initial copy of the mask */
             HDmemfill(rbuf, nbit_info->mask_buf, (uint32)nbit_info->nt_size, (uint32)buf_items);
@@ -228,7 +228,7 @@ HCIcnbit_decode(compinfo_t *info, int32 length, uint8 *buf)
                 mask_info = &(nbit_info->mask_info[0]);
 
                 if (nbit_info->sign_ext) { /* special code for expanding sign extended data */
-                    rbuf2 = rbuf; /* set temporary pointer into buffer */
+                    rbuf2 = rbuf;          /* set temporary pointer into buffer */
                     for (j = 0; j < nbit_info->nt_size; j++, mask_info++, rbuf2++) {
                         if (mask_info->length > 0) { /* check if we need to read bits */
                             Hbitread(info->aid, mask_info->length, &input_bits);
@@ -323,7 +323,7 @@ HCIcnbit_encode(compinfo_t *info, int32 length, const uint8 *buf)
 
     orig_length = length;                 /* save this for later */
     for (; length > 0; length--, buf++) { /* encode until we store all the bytes */
-        if (mask_info->length > 0) { /* check if we need to output bits */
+        if (mask_info->length > 0) {      /* check if we need to output bits */
             output_bits =
                 (uint32)(((*buf) & (mask_info->mask)) >> ((mask_info->offset - mask_info->length) + 1));
             Hbitwrite(info->aid, mask_info->length, output_bits);
