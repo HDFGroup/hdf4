@@ -296,7 +296,7 @@ fmtfloat(char *x)
 {
     float f = (float)0.0;
     memcpy(&f, x, sizeof(float32));
-    cn += printf("%f", f);
+    cn += printf("%f", (double)f);
     return (1);
 }
 

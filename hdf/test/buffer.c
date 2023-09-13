@@ -519,10 +519,10 @@ main(int argc, char *argv[])
         CHECK(ret, FAIL, "Hendaccess");
 
         MESSAGE(3, {
-            printf("Unbuffered read time=%f seconds\n", ((float)read_time[test_num][0] / FACTOR));
-            printf("Unbuffered write time=%f seconds\n", ((float)write_time[test_num][0] / FACTOR));
-            printf("Buffered read time=%f seconds\n", ((float)read_time[test_num][1] / FACTOR));
-            printf("Buffered write time=%f seconds\n", ((float)write_time[test_num][1] / FACTOR));
+            printf("Unbuffered read time=%f seconds\n", ((double)read_time[test_num][0] / FACTOR));
+            printf("Unbuffered write time=%f seconds\n", ((double)write_time[test_num][0] / FACTOR));
+            printf("Buffered read time=%f seconds\n", ((double)read_time[test_num][1] / FACTOR));
+            printf("Buffered write time=%f seconds\n", ((double)write_time[test_num][1] / FACTOR));
         })
 
     } /* end for */

@@ -666,7 +666,7 @@ read_vattrs(void)
         num_errs++;
         printf(">>> Wrong values for attname4  of vsname1; \
                      got %f, should be %f.\n",
-               iattr4[0], attr4[0]);
+               (double)iattr4[0], (double)attr4[0]);
     }
     if (FALSE != VSisattr(vsid)) {
         num_errs++;

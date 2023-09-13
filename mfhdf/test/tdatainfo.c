@@ -427,8 +427,8 @@ test_nonspecial_SDSs()
             for (ii = 0; ii < sds2_info.dimsizes[1]; ii++) {
                 /* Flag if the two numbers are not close enough */
                 if (fabs(readfbuf_swapped[kk] - data2[jj][ii]) > 0.00001)
-                    fprintf(stderr, "At value# %d: written = %f read = %f\n", ii, data2[jj][ii],
-                            readfbuf_swapped[kk]);
+                    fprintf(stderr, "At value# %d: written = %f read = %f\n", ii, (double)data2[jj][ii],
+                            (double)readfbuf_swapped[kk]);
                 if (kk < sds2_info.n_values)
                     kk++;
             }
