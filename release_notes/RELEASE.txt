@@ -47,7 +47,10 @@ New features and changes
       Also added a section to INSTALL_CMake.txt with very basic explanation of the
       process to use CMakePresets.
 
+    - Private headers are no longer deployed
 
+      * dfi.h - Declared private, unused, undocumented in UG/RM/DG, has been
+                removed from the library entirely.
 
 Support for new platforms and compilers
 =======================================

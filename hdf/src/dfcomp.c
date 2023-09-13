@@ -52,8 +52,7 @@
  *          Note that rseq does its own compression, because that is part of
  *          the interactive color raster protocol
  *          The space needed for compression and decompression can be allocated
- *          statically or dynamically, depending on the DF_DYNAMIC flag, and
- *          for entire image or part of it (reused) depending on availability
+ *          for the entire image or part of it (reused) depending on availability
  *          Accordingly, writing out is whole image, or row by row
  *          Note that compression is always row by row for RLE.
  *---------------------------------------------------------------------------*/

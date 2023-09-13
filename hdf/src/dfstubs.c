@@ -48,46 +48,6 @@
 #define DFSRCH_OLD    0
 #define DFSRCH_NEW    1
 
-#define CKMALLOC(x, ret)                                                                                     \
-    {                                                                                                        \
-        if (!x) {                                                                                            \
-            DFerror = DFE_NOSPACE;                                                                           \
-            return (ret);                                                                                    \
-        }                                                                                                    \
-    }
-
-#define CKSEEK(x, y, z, ret)                                                                                 \
-    {                                                                                                        \
-        if (DF_SEEK(x, (long)y, z) < 0) {                                                                    \
-            DFerror = DFE_SEEKERROR;                                                                         \
-            return (ret);                                                                                    \
-        }                                                                                                    \
-    }
-
-#define CKSEEKEND(x, y, z, ret)                                                                              \
-    {                                                                                                        \
-        if (DF_SKEND(x, (long)y, z) < 0) {                                                                   \
-            DFerror = DFE_SEEKERROR;                                                                         \
-            return (ret);                                                                                    \
-        }                                                                                                    \
-    }
-
-#define CKREAD(x, y, z, f, ret)                                                                              \
-    {                                                                                                        \
-        if (DF_READ((char *)x, (int)(y), (int)(z), (f)) < 0) {                                               \
-            DFerror = DFE_READERROR;                                                                         \
-            return (ret);                                                                                    \
-        }                                                                                                    \
-    }
-
-#define CKWRITE(x, y, z, f, ret)                                                                             \
-    {                                                                                                        \
-        if (DF_WRITE((char *)x, (int)y, (int)z, f) < 0) {                                                    \
-            DFerror = DFE_WRITEERROR;                                                                        \
-            return (ret);                                                                                    \
-        }                                                                                                    \
-    }
-
 /*
  *  Important Internal Variables
  */
