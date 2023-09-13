@@ -314,7 +314,7 @@ check_fill_seq(int id)
                 val = ii;
                 if (val != got.fl[0]) {
                     parray("indices", (unsigned)NUM_DIMS, vindices);
-                    printf("\t%f != %f\n", val, got.fl[0]);
+                    printf("\t%f != %f\n", (double)val, (double)got.fl[0]);
                 }
                 (*cc)++;
                 ii++;
@@ -585,7 +585,7 @@ main(void)
     printf("got val = %f\n", got.dbl);
 
     cdf_assert(ncvarget1(id, Float_id, indices[2], (ncvoid *)&got) != -1);
-    printf("got val = %f\n", got.fl[0]);
+    printf("got val = %f\n", (double)got.fl[0]);
 
     cdf_assert(ncvarget1(id, Long_id, indices[3], (ncvoid *)&got) != -1);
     printf("got val = %ld\n", (long)got.lng[0]);

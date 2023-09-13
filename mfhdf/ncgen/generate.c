@@ -748,7 +748,7 @@ cstring(nc_type type, void *valp, int num)
         case NC_FLOAT:
             cp     = (char *)emalloc(20);
             floatp = (float *)valp;
-            (void)sprintf(cp, "%.8g", *(floatp + num));
+            (void)sprintf(cp, "%.8g", (double)(*(floatp + num)));
             return cp;
 
         case NC_DOUBLE:
@@ -812,7 +812,7 @@ fstring(nc_type type, void *valp, int num)
         case NC_FLOAT:
             cp     = (char *)emalloc(20);
             floatp = (float *)valp;
-            (void)sprintf(cp, "%.8g", *(floatp + num));
+            (void)sprintf(cp, "%.8g", (double)(*(floatp + num)));
             return cp;
 
         case NC_DOUBLE:

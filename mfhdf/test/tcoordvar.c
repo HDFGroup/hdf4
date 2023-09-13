@@ -228,8 +228,8 @@ test_dim1_SDS1(void)
 
     for (idx1 = 0; idx1 < dimsize[0]; idx1++)
         if (out_data[idx1] != sds1_data[idx1]) {
-            fprintf(stderr, "Read value (%f) differs from written (%f) at [%d]\n", out_data[idx1],
-                    sds1_data[idx1], idx1);
+            fprintf(stderr, "Read value (%f) differs from written (%f) at [%d]\n", (double)out_data[idx1],
+                    (double)sds1_data[idx1], idx1);
             num_errs++;
         }
 
@@ -398,7 +398,7 @@ test_dim1_SDS2(void)
         for (idx2 = 0; idx2 < dimsize2[1]; idx2++) {
             if (out_data2[idx1][idx2] != sds2_data[idx1][idx2]) {
                 fprintf(stderr, "Read value (%f) differs from written (%f) at [%d][%d]\n",
-                        out_data2[idx1][idx2], sds2_data[idx1][idx2], idx1, idx2);
+                        (double)out_data2[idx1][idx2], (double)sds2_data[idx1][idx2], idx1, idx2);
                 num_errs++;
             }
         }

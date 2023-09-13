@@ -277,7 +277,7 @@ slabwf32(void)
     int32   ret     = 0;
     int32   num_err = 0;
     float32 sdata[2][3][4]; /* Data array read from from file */
-    float32 lfill = (float32)0.0;
+    float32 lfill = 0.0F;
 
     MESSAGE(10, printf("\n slabwf32:  Writing 5 slabs to slabwf32.hdf \n"););
 
@@ -390,7 +390,7 @@ slabwf32(void)
     CHECK(ret, FAIL, "DFSDgetfillvalue");
     if (lfill != fillf32)
         num_err++;
-    MESSAGE(10, printf("\n       fill value =: %f \n", lfill););
+    MESSAGE(10, printf("\n       fill value =: %f \n", (double)lfill););
 
     if (num_err != 0)
         MESSAGE(10, printf("\n      slabwf32:  %d failures.  \n", (int)num_err););
@@ -402,7 +402,7 @@ slabwf32(void)
             for (k = 0; k < d_dims[2]; k++) {
                 if (sdata[i][j][k] != fdata[i][j][k])
                     num_err++;
-                MESSAGE(10, printf("%f, ", sdata[i][j][k]););
+                MESSAGE(10, printf("%f, ", (double)sdata[i][j][k]););
             }
     if (num_err == 0)
         MESSAGE(10, printf("\n       >>> All tests passed for slabwf32 <<< \n");)
@@ -538,7 +538,7 @@ slabwf64(void)
     CHECK(ret, FAIL, "DFSDgetfillvalue");
     if (lfill != fillf64)
         num_err += 1;
-    MESSAGE(10, printf("\n       fill value =: %f \n", (float)lfill););
+    MESSAGE(10, printf("\n       fill value =: %f \n", (double)lfill););
 
     if (num_err != 0)
         MESSAGE(10, printf("\n      slabwf64:  %d failures.  \n", (int)num_err););
@@ -550,7 +550,7 @@ slabwf64(void)
             for (k = 0; k < d_dims[2]; k++) {
                 if (sdata[i][j][k] != f64data[i][j][k])
                     num_err++;
-                MESSAGE(10, printf("%f, ", (float)sdata[i][j][k]););
+                MESSAGE(10, printf("%f, ", (double)sdata[i][j][k]););
             }
     if (num_err == 0)
         MESSAGE(10, printf("\n       >>> All tests passed for slabwf64 <<< \n");)
@@ -1783,7 +1783,7 @@ slab1w(void)
     /* Set fill value */
     ret = DFSDsetfillvalue((void *)&fillf32);
     CHECK(ret, FAIL, "DFSDsetfillvalue");
-    MESSAGE(10, printf("\n        slab1w: Setting fill value =%f \n", fillf32););
+    MESSAGE(10, printf("\n        slab1w: Setting fill value =%f \n", (double)fillf32););
 
     /*
      ** write each slab in different order
@@ -1857,7 +1857,7 @@ slab2w(void)
     ret = DFSDgetfillvalue((void *)&lfill);
     CHECK(ret, FAIL, "DFSDgetfillvalue");
 
-    MESSAGE(10, printf("\n       fill value =: %f \n", lfill););
+    MESSAGE(10, printf("\n       fill value =: %f \n", (double)lfill););
 
     /* Call Writeref() first */
     ret = DFSDwriteref(sw1, 2);
@@ -2212,7 +2212,7 @@ slab3w(void)
             for (k = 0; k < d_dims[2]; k++) {
                 if (adata[i][j][k] != fdata[i][j][k])
                     num_err++;
-                MESSAGE(10, printf("%f, ", adata[i][j][k]););
+                MESSAGE(10, printf("%f, ", (double)adata[i][j][k]););
             }
 
     if (num_err == 0)

@@ -479,7 +479,7 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
 
             printf("%8d: ", offset);
             for (i = 0; i < length / 4; i++) {
-                printf("%15e", fdata[i]);
+                printf("%15e", (double)fdata[i]);
                 if (++len > 3) {
                     len = 0;
                     printf("\n%8d: ", (int)(offset + (i + 1) * 4));
