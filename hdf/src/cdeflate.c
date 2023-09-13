@@ -40,6 +40,10 @@
 /* Internal Defines */
 /* #define TESTING */
 
+/* Define the [default] size of the buffer to interact with the file */
+#define DEFLATE_BUF_SIZE     4096
+#define DEFLATE_TMP_BUF_SIZE 16384
+
 /* functions to perform gzip encoding */
 funclist_t cdeflate_funcs = {HCPcdeflate_stread,
                              HCPcdeflate_stwrite,
@@ -484,9 +488,10 @@ HCPcdeflate_stwrite(accrec_t *access_rec)
 int32
 HCPcdeflate_seek(accrec_t *access_rec, int32 offset, int origin)
 {
-    compinfo_t                *info;                          /* special element information */
-    comp_coder_deflate_info_t *deflate_info;                  /* ptr to gzip 'deflate' info */
-    uint8                      tmp_buf[DEFLATE_TMP_BUF_SIZE]; /* temporary buffer */
+    compinfo_t                *info;             /* special element information */
+    comp_coder_deflate_info_t *deflate_info;     /* ptr to gzip 'deflate' info */
+    uint8                     *tmp_buf   = NULL; /* temporary buffer */
+    int32                      ret_value = SUCCEED;
 
     (void)origin;
 
@@ -496,36 +501,47 @@ HCPcdeflate_seek(accrec_t *access_rec, int32 offset, int origin)
     /* Check if second stage of initialization has been performed */
     if (deflate_info->acc_init == 0) {
         if (HCIcdeflate_staccess2(access_rec, DFACC_READ) == FAIL)
-            HRETURN_ERROR(DFE_CINIT, FAIL);
-    } /* end if */
+            HGOTO_ERROR(DFE_CINIT, FAIL);
+    }
 
-    if (offset < deflate_info->offset) { /* need to seek from the beginning */
+    if (offset < deflate_info->offset) {
+
+        /* need to seek from the beginning */
+
         /* Terminate the previous method of access */
         if (HCIcdeflate_term(info, deflate_info->acc_mode) == FAIL)
-            HRETURN_ERROR(DFE_CTERM, FAIL);
+            HGOTO_ERROR(DFE_CTERM, FAIL);
 
         /* Restart access */
-        /* if (HCIcdeflate_staccess2(access_rec, deflate_info->acc_mode) == FAIL) */
         if (HCIcdeflate_staccess2(access_rec, DFACC_READ) == FAIL)
-            HRETURN_ERROR(DFE_CINIT, FAIL);
+            HGOTO_ERROR(DFE_CINIT, FAIL);
 
         /* Go back to the beginning of the data-stream */
         if (Hseek(info->aid, 0, 0) == FAIL)
-            HRETURN_ERROR(DFE_SEEKERROR, FAIL);
-    } /* end if */
+            HGOTO_ERROR(DFE_SEEKERROR, FAIL);
+    }
 
-    while (deflate_info->offset + DEFLATE_TMP_BUF_SIZE < offset) { /* grab chunks */
+    /* Allocate a temporary buffer for decompression */
+    if ((tmp_buf = (uint8 *)malloc(sizeof(uint8) * DEFLATE_TMP_BUF_SIZE)) == NULL)
+        HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+    while (deflate_info->offset + DEFLATE_TMP_BUF_SIZE < offset) {
+        /* grab chunks */
         if (HCIcdeflate_decode(info, DEFLATE_TMP_BUF_SIZE, tmp_buf) == FAIL) {
-            HRETURN_ERROR(DFE_CDECODE, FAIL);
-        }                                /* end if */
-    }                                    /* end if */
-    if (deflate_info->offset < offset) { /* grab the last chunk */
+            HGOTO_ERROR(DFE_CDECODE, FAIL);
+        }
+    }
+    if (deflate_info->offset < offset) {
+        /* grab the last chunk */
         if (HCIcdeflate_decode(info, offset - deflate_info->offset, tmp_buf) == FAIL) {
-            HRETURN_ERROR(DFE_CDECODE, FAIL);
-        } /* end if */
-    }     /* end if */
+            HGOTO_ERROR(DFE_CDECODE, FAIL);
+        }
+    }
 
-    return (SUCCEED);
+done:
+    free(tmp_buf);
+
+    return ret_value;
 } /* HCPcdeflate_seek() */
 
 /*--------------------------------------------------------------------------
