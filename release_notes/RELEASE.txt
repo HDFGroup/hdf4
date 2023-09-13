@@ -71,7 +71,7 @@ New features and changes
       might be interesting to profile that vs C stdio.h calls.
 
       This change will have *NO IMPACT* on modern Macs. Files created using
-      MacFS in the 90s and early 2000s can be accessed using C stanadard
+      MacFS in the 90s and early 2000s can be accessed using C standard
       library I/O.
 
 Support for new platforms and compilers
