@@ -610,8 +610,6 @@ DFSDgetrange(void *pmax, void *pmin)
         p1 = (uint8 *)pmin;
         p2 = &(Readsdg.max_min[localNTsize]);
         memcpy(p1, p2, localNTsize);
-        ret_value = SUCCEED;
-        goto done;
     }
     else
         HGOTO_ERROR(DFE_NOVALS, FAIL);
