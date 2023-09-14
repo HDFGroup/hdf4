@@ -86,16 +86,6 @@ static uint16 *inbuf_uint16;
 static int32  *inbuf_int32;
 static uint32 *inbuf_uint32;
 
-/* local function prototypes */
-static void   init_model_info(comp_model_t m_type, model_info *m_info, int32 test_ntype);
-static void   init_coder_info(comp_coder_t c_type, comp_info *c_info, int32 test_ntype);
-static void   allocate_buffers(void);
-static void   init_buffers(void);
-static void   free_buffers(void);
-static uint16 write_data(int32 fid, comp_model_t m_type, model_info *m_info, comp_coder_t c_type,
-                         comp_info *c_info, intn test_num, int32 ntype);
-static void   read_data(int32 fid, uint16 ref_num, intn test_num, int32 ntype);
-
 static void
 init_model_info(comp_model_t m_type, model_info *m_info, int32 test_ntype)
 {

@@ -54,19 +54,6 @@
 #define VG_LONGCLASS     "Very long class name to classify all Vgroups with more than 64 characters in name"
 #define APPENDABLE_VDATA "Appendable"
 
-static int32 write_vset_stuff(void);
-static int32 read_vset_stuff(void);
-static void  test_vsdelete(void);
-static void  test_vdelete(void);
-static void  test_vdeletetagref(void);
-static void  test_emptyvdata(void);
-static void  test_vglongnames(void);
-static void  test_getvgroups(void);
-static void  test_getvdatas(void);
-static void  test_blockinfo_oneLB(void);
-static void  test_blockinfo_multLBs(void);
-static void  test_VSofclass(void);
-
 /* write some stuff to the file */
 static int32
 write_vset_stuff(void)

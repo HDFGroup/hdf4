@@ -20,11 +20,6 @@
 #include "tproto.h"
 #include "bitvect.h"
 
-static void test_1(void);
-static void test_2(void);
-static void test_3(void);
-static void test_4(void);
-
 /* Basic creation & deletion tests */
 static void
 test_1(void)

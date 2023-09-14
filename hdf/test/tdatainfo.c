@@ -29,14 +29,6 @@
 #include "tdatainfo.h"
 #include "tproto.h"
 
-static void test_simple_vs();
-static void test_append_vs();
-static void test_annotation();
-static void test_oneblock_ri();
-static void test_dfr8_24();
-static void test_getntinfo();
-static void test_getpalinfo();
-
 /***********************************************************************
   NOTE: At this time, some of the offsets in these tests are verified
         by hard-coding.  When adding new data to the files in exiting

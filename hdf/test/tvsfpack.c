@@ -43,9 +43,6 @@ int     i, j, rec_size;
 int32   vdata_ref, in_recs, iil, irec_size;
 char    ifields[256];
 
-static int32 fpack(void);
-static int32 funpack(void);
-
 static int32
 fpack(void)
 {

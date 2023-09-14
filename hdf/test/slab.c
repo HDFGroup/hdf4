@@ -252,21 +252,6 @@ static const char *sw1    = "s1w.hdf";
 static const char *sw3    = "s3w.hdf";
 static const char *sw4    = "s4w.hdf";
 
-static int slabwf32(void);
-static int slabwf64(void);
-static int slabwin(void);
-static int slabwuin(void);
-static int slabwi32(void);
-static int slabwui32(void);
-static int slabwi16(void);
-static int slabwui16(void);
-static int slabwi8(void);
-static int slabwui8(void);
-static int slab1w(void);
-static int slab2w(void);
-static int slab3w(void);
-static int slab4w(void);
-
 /*
  ** Write data set to slabw.hdf as 5 hyperslabs.
  */

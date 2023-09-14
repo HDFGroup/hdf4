@@ -41,10 +41,6 @@
 #define SEED(s)       (srand(s))
 #define RandInt(a, b) ((rand() % (((b) - (a)) + 1)) + (a))
 
-static void swap_arr(int32 *arr, intn a, intn b);
-
-intn tcompare(void *k1, void *k2, intn cmparg);
-
 static void
 swap_arr(int32 *arr, intn a, intn b)
 {

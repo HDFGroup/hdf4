@@ -67,16 +67,6 @@ static const char *descris[2] = {"Object Descr #2:   A B C D E F G H I J K L \n"
                                  "Object Descr #2.1: A B C D E F G H I J K L \n"
                                  "                 M N O **END IMAGE DESCR **\n"};
 
-/* fcn Prototypes */
-static void genimage(int height, int width, float32 *data, uint8 *image);
-
-static void gen2Dfloat(int height, int width, float32 *data);
-
-static int32 check_fann(const char *fname);
-
-static int32 check_lab_desc(const char *fname, uint16 tag, uint16 ref, const char *label[],
-                            const char *desc[]);
-
 /****************************************************************
 **
 **  gen2Dfloat:  generate 2-D data array

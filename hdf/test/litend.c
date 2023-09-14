@@ -33,11 +33,6 @@ static uint32  cdata_u32[CDIM_Y][CDIM_X];
 static float32 cdata_f32[CDIM_Y][CDIM_X];
 static float64 cdata_f64[CDIM_Y][CDIM_X];
 
-static void init_cdata(void);
-static void wrapup_cdata(void);
-static void test_little_read(void);
-static void test_little_write(void);
-
 static void
 init_cdata(void)
 {

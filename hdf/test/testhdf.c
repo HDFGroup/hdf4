@@ -53,9 +53,6 @@ struct TestStruct {
     void (*Call)(void);
 } Test[MAXNUMOFTESTS];
 
-static void InitTest(const char *TheName, void (*TheCall)(void), const char *TheDescr);
-static void usage(void);
-
 static void
 InitTest(const char *TheName, void (*TheCall)(void), const char *TheDescr)
 {

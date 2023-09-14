@@ -75,10 +75,6 @@ static uint32 maskbuf[] = {0x00000000,   0x00000001,   0x00000003,  0x00000007, 
                            0x00ffffff,   0x01ffffff,   0x03ffffff,  0x07ffffff, 0x0fffffff, 0x1fffffffUL,
                            0x3fffffffUL, 0x7fffffffUL, 0xffffffffUL};
 
-static void test_bitio_write(void);
-static void test_bitio_read(void);
-static void test_bitio_seek(void);
-
 static void
 test_bitio_write(void)
 {

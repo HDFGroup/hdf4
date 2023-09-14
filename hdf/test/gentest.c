@@ -52,9 +52,6 @@
 #define NBIT_SIZE1 4096
 #define NBIT_BITS1 6
 
-static int gen_bitio_test(void);
-static int gen_nbit_test(void);
-
 /*--------------------------------------------------------------------------
 
  NAME

@@ -24,9 +24,6 @@
 static int32 files[BIG];
 static int32 accs[BIG];
 
-static void test_file_limits(void);
-static void test_ref_limits(void);
-
 static void
 test_file_limits(void)
 {

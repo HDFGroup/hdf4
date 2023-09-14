@@ -124,19 +124,6 @@
 #define NBIT_MASK12A 0x0000001f
 #define NBIT_MASK12B 0xffffffffUL
 
-static void test_nbit1(int32 fid);
-static void test_nbit2(int32 fid);
-static void test_nbit3(int32 fid);
-static void test_nbit4(int32 fid);
-static void test_nbit5(int32 fid);
-static void test_nbit6(int32 fid);
-static void test_nbit7(int32 fid);
-static void test_nbit8(int32 fid);
-static void test_nbit9(int32 fid);
-static void test_nbit10(int32 fid);
-static void test_nbit11(int32 fid);
-static void test_nbit12(int32 fid);
-
 static void
 test_nbit1(int32 fid)
 {

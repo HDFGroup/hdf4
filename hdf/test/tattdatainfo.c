@@ -26,10 +26,6 @@
 #include "tdatainfo.h"
 #include "tutils.h"
 
-static void test_vvsattrs();
-static void test_vgmixedattrs();
-static void test_grattrs();
-
 /****************************************************************************
    Name: test_vvsattrs() - tests getting attribute data information from
                            vdatas and vgroups

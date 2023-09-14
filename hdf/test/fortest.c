@@ -18,8 +18,6 @@
 #include "fortest.h"
 #define NUMOFTESTS 20
 
-static int InitTest(const char *TheName, const char *TheCall, const char *TheDescr);
-
 struct TestStruct {
     int  NumErrors;
     char Description[64];

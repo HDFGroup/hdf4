@@ -1036,26 +1036,6 @@ const float64 image4[19][17][2] = {{{6.0, 6.0},
                                     {0.0, 0.0},
                                     {0.0, 0.0}}};
 
-static void test_mgr_init(void);
-static void test_mgr_image_b1a(int flag);
-static void test_mgr_image_b1b(int flag);
-static void test_mgr_image_b2a1aa(int flag);
-static void test_mgr_image_b2a1bb1(int flag);
-static void test_mgr_image_b2a1bb2(int flag);
-static void test_mgr_image_b2a1cc1(int flag);
-static void test_mgr_image_b2a1cc2(int flag);
-static void test_mgr_image_b2a2bb(int flag);
-static void test_mgr_image_b2a2cc(int flag);
-static void test_mgr_image_b2b1(int flag);
-static void test_mgr_image(int flag);
-static void test_mgr_index(int flag);
-static void test_mgr_interlace(int flag);
-static void test_mgr_lut(int flag);
-static void test_mgr_special(int flag);
-extern void test_mgr_attr();
-extern void test_mgr_compress();
-extern void test_mgr_dup_images();
-
 /* Test outline:
     I. Interface Initialization
         A. GRstart

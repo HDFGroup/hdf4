@@ -71,11 +71,6 @@ char    attr3[6] = {'m', 'N', 'p', 'S', 't', '\0'}, iattr3[6];
 float32 attr4[2] = {(float32)32.001, (float32)-34.002}, iattr4[2];
 float64 attr5[2] = {64.12345, -64.12345}, iattr5[2];
 
-static intn create_vset_stuff(void);
-static intn write_vattrs(void);
-static intn read_vattrs(void);
-static void test_readattrtwice(void);
-
 /* create vdatas and vgroups */
 
 static intn
