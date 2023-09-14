@@ -44,8 +44,8 @@ main(int argv, char *argc[])
         return (-1);
     }
 
-    HDstrncpy(GIFFileName, argc[1], VSNAMELENMAX - 1);
-    HDstrncpy(HDFFileName, argc[2], VSNAMELENMAX - 1);
+    strncpy(GIFFileName, argc[1], VSNAMELENMAX - 1);
+    strncpy(HDFFileName, argc[2], VSNAMELENMAX - 1);
     GIFFileName[VSNAMELENMAX - 1] = '\0';
     HDFFileName[VSNAMELENMAX - 1] = '\0';
 

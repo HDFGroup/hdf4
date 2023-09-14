@@ -345,7 +345,7 @@ HEpush(hdf_err_code_t error_code, const char *function_name, const char *file_na
     /* otherwise, push error details onto stack */
 
     if (error_top < ERR_STACK_SZ) {
-        HDstrcpy(error_stack[error_top].function_name, function_name);
+        strcpy(error_stack[error_top].function_name, function_name);
         error_stack[error_top].file_name  = file_name;
         error_stack[error_top].line       = line;
         error_stack[error_top].error_code = error_code;

@@ -17,7 +17,7 @@ C
 C
 C This program tests correctness of writing and read datastrings
 C and dimension strings.
-C To avoid the '\0' inserted by HDstrncpy, compare the first 14
+C To avoid the '\0' inserted by strncpy, compare the first 14
 C characters of output and input strings in subroutine compare()
       integer num_failed
       character*20 myname

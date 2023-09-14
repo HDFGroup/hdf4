@@ -55,7 +55,7 @@ trimendblanks(char *ss)
 {
     int32 i, n;
 
-    n = (int32)HDstrlen(ss);
+    n = (int32)strlen(ss);
     for (i = n - 1; i >= 0; i--) {
         if (ss[i] != ' ') {
             ss[i + 1] = '\0';
@@ -716,7 +716,7 @@ nvffnamec(intf *vkey, intf *index, _fcd fname, intf *len)
     char *fieldname = NULL;
 
     if ((fieldname = VFfieldname((int32)*vkey, (int32)*index)) != NULL) {
-        /* HDstrcpy(_fcdtocp(fname),fieldname);*/
+        /* strcpy(_fcdtocp(fname),fieldname);*/
         HDpackFstring(fieldname, _fcdtocp(fname), (intn)*len);
         /* free(fieldname); */
         return (SUCCEED);

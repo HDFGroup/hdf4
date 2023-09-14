@@ -63,8 +63,8 @@ InitTest(const char *TheName, void (*TheCall)(void), const char *TheDescr)
         printf("Uh-oh, too many tests added, increase MAXNUMOFTEST!\n");
         exit(0);
     } /* end if */
-    HDstrcpy(Test[Index].Description, TheDescr);
-    HDstrcpy(Test[Index].Name, TheName);
+    strcpy(Test[Index].Description, TheDescr);
+    strcpy(Test[Index].Name, TheName);
     Test[Index].Call      = TheCall;
     Test[Index].NumErrors = -1;
     Test[Index].SkipFlag  = 0;
@@ -160,7 +160,7 @@ main(int argc, char *argv[])
            (unsigned)lrelease, lstring);
     for (CLLoop = 1; CLLoop < argc; CLLoop++) {
         if ((argc > CLLoop + 1) &&
-            ((HDstrcmp(argv[CLLoop], "-verbose") == 0) || (HDstrcmp(argv[CLLoop], "-v") == 0))) {
+            ((strcmp(argv[CLLoop], "-verbose") == 0) || (strcmp(argv[CLLoop], "-v") == 0))) {
             if (argv[CLLoop + 1][0] == 'l')
                 Verbosity = 4;
             else if (argv[CLLoop + 1][0] == 'm')
@@ -170,55 +170,52 @@ main(int argc, char *argv[])
             else
                 Verbosity = atoi(argv[CLLoop + 1]);
         } /* end if */
-        if ((argc > CLLoop) &&
-            ((HDstrcmp(argv[CLLoop], "-summary") == 0) || (HDstrcmp(argv[CLLoop], "-s") == 0)))
+        if ((argc > CLLoop) && ((strcmp(argv[CLLoop], "-summary") == 0) || (strcmp(argv[CLLoop], "-s") == 0)))
             Summary = 1;
 
-        if ((argc > CLLoop) &&
-            ((HDstrcmp(argv[CLLoop], "-help") == 0) || (HDstrcmp(argv[CLLoop], "-h") == 0))) {
+        if ((argc > CLLoop) && ((strcmp(argv[CLLoop], "-help") == 0) || (strcmp(argv[CLLoop], "-h") == 0))) {
             usage();
             exit(0);
         }
 
         if ((argc > CLLoop) &&
-            ((HDstrcmp(argv[CLLoop], "-cleanoff") == 0) || (HDstrcmp(argv[CLLoop], "-c") == 0)))
+            ((strcmp(argv[CLLoop], "-cleanoff") == 0) || (strcmp(argv[CLLoop], "-c") == 0)))
             CleanUp = 0;
 
-        if ((argc > CLLoop) &&
-            ((HDstrcmp(argv[CLLoop], "-nocache") == 0) || (HDstrcmp(argv[CLLoop], "-n") == 0)))
+        if ((argc > CLLoop) && ((strcmp(argv[CLLoop], "-nocache") == 0) || (strcmp(argv[CLLoop], "-n") == 0)))
             Cache = 0;
 
         if ((argc > CLLoop + 1) &&
-            ((HDstrcmp(argv[CLLoop], "-exclude") == 0) || (HDstrcmp(argv[CLLoop], "-x") == 0))) {
+            ((strcmp(argv[CLLoop], "-exclude") == 0) || (strcmp(argv[CLLoop], "-x") == 0))) {
             Loop = CLLoop + 1;
             while ((Loop < argc) && (argv[Loop][0] != '-')) {
                 for (Loop1 = 0; Loop1 < Index; Loop1++)
-                    if (HDstrcmp(argv[Loop], Test[Loop1].Name) == 0)
+                    if (strcmp(argv[Loop], Test[Loop1].Name) == 0)
                         Test[Loop1].SkipFlag = 1;
                 Loop++;
             } /* end while */
         }     /* end if */
         if ((argc > CLLoop + 1) &&
-            ((HDstrcmp(argv[CLLoop], "-begin") == 0) || (HDstrcmp(argv[CLLoop], "-b") == 0))) {
+            ((strcmp(argv[CLLoop], "-begin") == 0) || (strcmp(argv[CLLoop], "-b") == 0))) {
             Loop = CLLoop + 1;
             while ((Loop < argc) && (argv[Loop][0] != '-')) {
                 for (Loop1 = 0; Loop1 < Index; Loop1++) {
-                    if (HDstrcmp(argv[Loop], Test[Loop1].Name) != 0)
+                    if (strcmp(argv[Loop], Test[Loop1].Name) != 0)
                         Test[Loop1].SkipFlag = 1;
-                    if (HDstrcmp(argv[Loop], Test[Loop1].Name) == 0)
+                    if (strcmp(argv[Loop], Test[Loop1].Name) == 0)
                         Loop1 = Index;
                 } /* end for */
                 Loop++;
             } /* end while */
         }     /* end if */
         if ((argc > CLLoop + 1) &&
-            ((HDstrcmp(argv[CLLoop], "-only") == 0) || (HDstrcmp(argv[CLLoop], "-o") == 0))) {
+            ((strcmp(argv[CLLoop], "-only") == 0) || (strcmp(argv[CLLoop], "-o") == 0))) {
             for (Loop = 0; Loop < Index; Loop++)
                 Test[Loop].SkipFlag = 1;
             Loop = CLLoop + 1;
             while ((Loop < argc) && (argv[Loop][0] != '-')) {
                 for (Loop1 = 0; Loop1 < Index; Loop1++)
-                    if (HDstrcmp(argv[Loop], Test[Loop1].Name) == 0)
+                    if (strcmp(argv[Loop], Test[Loop1].Name) == 0)
                         Test[Loop1].SkipFlag = 0;
                 Loop++;
             } /* end while */

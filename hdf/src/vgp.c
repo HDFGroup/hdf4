@@ -816,23 +816,23 @@ vpackvg(VGROUP *vg,    /* IN: */
 
     /* save the vgnamelen and vgname - omit the null */
     if (vg->vgname != NULL)
-        slen = HDstrlen(vg->vgname);
+        slen = strlen(vg->vgname);
     temp_len = slen > 0 ? slen : 0;
     UINT16ENCODE(bb, temp_len);
 
     if (vg->vgname != NULL)
-        HDstrcpy((char *)bb, vg->vgname);
+        strcpy((char *)bb, vg->vgname);
     bb += temp_len;
 
     /* save the vgclasslen and vgclass- omit the null */
     slen = 0;
     if (vg->vgclass != NULL)
-        slen = HDstrlen(vg->vgclass);
+        slen = strlen(vg->vgclass);
     temp_len = slen > 0 ? slen : 0;
     UINT16ENCODE(bb, temp_len);
 
     if (vg->vgclass != NULL)
-        HDstrcpy((char *)bb, vg->vgclass);
+        strcpy((char *)bb, vg->vgclass);
     bb += temp_len;
 
     /* save the expansion tag/ref pair */
@@ -2070,7 +2070,7 @@ Vsetname(int32       vkey, /* IN: vgroup key */
 
     /* copy the name over; if name exists, overwrite it */
 
-    name_len = HDstrlen(vgname); /* shortcut of length of the given name */
+    name_len = strlen(vgname); /* shortcut of length of the given name */
 
     /* if name exists, release it */
     free(vg->vgname);
@@ -2138,7 +2138,7 @@ Vsetclass(int32       vkey, /* IN: vgroup key */
      * copy the class over; if class exists, overwrite it
      */
 
-    classname_len = HDstrlen(vgclass); /* length of the given class name */
+    classname_len = strlen(vgclass); /* length of the given class name */
 
     /* if name exists, release it */
     free(vg->vgclass);
@@ -2451,7 +2451,7 @@ Vgetnamelen(int32   vkey, /* IN: vgroup key */
         *name_len = 0;
     /* if name had been set... */
     else {
-        size_t temp_len = HDstrlen(vg->vgname); /* shortcut */
+        size_t temp_len = strlen(vg->vgname); /* shortcut */
 
         /* return name's length if it is a valid value */
         if (temp_len >= 0)
@@ -2505,7 +2505,7 @@ Vgetclassnamelen(int32   vkey, /* IN: vgroup key */
         *classname_len = 0;
     /* if name had been set... */
     else {
-        size_t temp_len = HDstrlen(vg->vgclass); /* shortcut */
+        size_t temp_len = strlen(vg->vgclass); /* shortcut */
 
         /* return class name's length if it is a valid value */
         if (temp_len >= 0)
@@ -2557,7 +2557,7 @@ Vgetname(int32 vkey, /* IN: vgroup key */
 
     /* copy vgroup name over if it had been set */
     if (vg->vgname != NULL)
-        HDstrcpy(vgname, vg->vgname);
+        strcpy(vgname, vg->vgname);
     else
         vgname[0] = '\0';
 
@@ -2604,7 +2604,7 @@ Vgetclass(int32 vkey, /* IN: vgroup key */
 
     /* copy class over if it had been set */
     if (vg->vgclass != NULL)
-        HDstrcpy(vgclass, vg->vgclass);
+        strcpy(vgclass, vg->vgclass);
     else
         vgclass[0] = '\0';
 
@@ -2658,7 +2658,7 @@ Vinquire(int32  vkey,     /* IN: vgroup key */
 
     /* copy vgroup name if requested.  Assumes 'vgname' has sufficient space */
     if (vgname != NULL)
-        HDstrcpy(vgname, vg->vgname);
+        strcpy(vgname, vg->vgname);
 
     /* set number of entries in vgroup if requested */
     if (nentries != NULL)
@@ -2948,8 +2948,8 @@ Vgisinternal(int32 vkey /* vgroup's identifier */)
            TRUE, otherwise, return FALSE */
         ii = 0;
         while (ii < HDF_NUM_INTERNAL_VGS && is_internal == FALSE) {
-            size_t len = HDstrlen(HDF_INTERNAL_VGS[ii]);
-            if (HDstrncmp(HDF_INTERNAL_VGS[ii], vg->vgclass, len) == 0)
+            size_t len = strlen(HDF_INTERNAL_VGS[ii]);
+            if (strncmp(HDF_INTERNAL_VGS[ii], vg->vgclass, len) == 0)
                 is_internal = TRUE;
             ii++;
         }
@@ -2961,7 +2961,7 @@ Vgisinternal(int32 vkey /* vgroup's identifier */)
            details. -BMR 2012/1/6 */
         /* Check vgroup name */
         if (vg->vgname != NULL)
-            if (HDstrncmp(vg->vgname, GR_NAME, HDstrlen(GR_NAME)) == 0)
+            if (strncmp(vg->vgname, GR_NAME, strlen(GR_NAME)) == 0)
                 is_internal = TRUE;
     }
     ret_value = is_internal;
@@ -2990,7 +2990,7 @@ Visinternal(const char *classname /* vgroup's class name */)
     /* Check if this class name is one of the internal class name and return
         TRUE, otherwise, return FALSE */
     for (i = 0; i < HDF_NUM_INTERNAL_VGS; i++) {
-        if (HDstrncmp(HDF_INTERNAL_VGS[i], classname, HDstrlen(HDF_INTERNAL_VGS[i])) == 0) {
+        if (strncmp(HDF_INTERNAL_VGS[i], classname, strlen(HDF_INTERNAL_VGS[i])) == 0) {
             ret_value = TRUE;
             break;
         }

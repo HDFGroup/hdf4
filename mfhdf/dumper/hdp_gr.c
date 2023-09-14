@@ -166,7 +166,7 @@ parse_dumpgr_opts(dump_info_t *dumpgr_opts, intn *curr_arg, intn argc, char *arg
                 dumpgr_opts->dump_to_file = TRUE;
 
                 /* Get file name */
-                HDstrcpy(dumpgr_opts->file_name, argv[++(*curr_arg)]);
+                strcpy(dumpgr_opts->file_name, argv[++(*curr_arg)]);
 
                 (*curr_arg)++;
                 break;
@@ -737,7 +737,7 @@ printGR_ASCII(int32 gr_id, dump_info_t *dumpgr_opts, int32 ndsets, /* number of 
         ret_value = SUCCEED;      /* returned value of printGR_ASCII */
 
     /* temp. name for curr input file name for ease of use */
-    HDstrcpy(curr_file_name, dumpgr_opts->ifile_name);
+    strcpy(curr_file_name, dumpgr_opts->ifile_name);
 
     /* when there are no images specified, dumper dumps all images */
     if (num_ri_chosen == NO_SPECIFIC) /* NO_SPECIFIC = -1 */
@@ -891,7 +891,7 @@ printGR_BINARY(int32 gr_id, dump_info_t *dumpgr_opts, int32 num_ri_chosen, /* # 
         ret_value = SUCCEED;      /* return value of printGR_ASCII */
 
     /* temp. name for curr input file name for ease of use */
-    HDstrcpy(curr_file_name, dumpgr_opts->ifile_name);
+    strcpy(curr_file_name, dumpgr_opts->ifile_name);
 
     /* default content option to DDATA when output is binary because
        no header info will be printed in binary format */
@@ -1017,9 +1017,9 @@ dgr(dump_info_t *dumpgr_opts, intn curr_arg, intn argc, char *argv[])
     while (curr_arg < argc) {
         intn isHDF = TRUE; /* FALSE, if current file is not HDF file */
 
-        HDstrcpy(file_name, argv[curr_arg]);          /* get file name */
-        HDstrcpy(dumpgr_opts->ifile_name, file_name); /* record file name */
-        curr_arg++;                                   /* forward the pointer to the current argument */
+        strcpy(file_name, argv[curr_arg]);          /* get file name */
+        strcpy(dumpgr_opts->ifile_name, file_name); /* record file name */
+        curr_arg++;                                 /* forward the pointer to the current argument */
 
         /* ensure that file_id, gr_id, and gr_chosen are all reset before
            using because sometimes we have to break out a cycle; this'll

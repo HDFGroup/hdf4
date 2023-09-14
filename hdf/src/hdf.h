@@ -97,8 +97,8 @@ typedef enum {
 #endif
 
 /* macros */
-#define STREQ(s, t)     (HDstrcmp((s), (t)) == 0)
-#define NSTREQ(s, t, n) (HDstrncmp((s), (t), (n)) == 0)
+#define STREQ(s, t)     (strcmp((s), (t)) == 0)
+#define NSTREQ(s, t, n) (strncmp((s), (t), (n)) == 0)
 
 /* Include the Number-type definitions */
 #include "hntdefs.h"

@@ -344,13 +344,13 @@ SDgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
             /* current vdata represents an attribute */
-            if (!HDstrcmp(vsclass, _HDF_ATTRIBUTE)) {
+            if (!strcmp(vsclass, _HDF_ATTRIBUTE)) {
                 /* get the vdata's name */
                 if (VSgetname(vs_id, vsname) == FAIL)
                     HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
                 /* the searched attribute if found */
-                if (!HDstrcmp(attrname, vsname)) {
+                if (!strcmp(attrname, vsname)) {
                     intn info_count = 0;
 
                     /* get offset/length of attribute's data */
@@ -415,22 +415,22 @@ get_attr_tag(char *attr_name, uint16 *attr_tag)
 {
     intn ret_value = SUCCEED;
 
-    if (HDstrcmp(_HDF_LongName, attr_name) == 0)
+    if (strcmp(_HDF_LongName, attr_name) == 0)
         *attr_tag = DFTAG_SDL;
-    else if (HDstrcmp(_HDF_Units, attr_name) == 0)
+    else if (strcmp(_HDF_Units, attr_name) == 0)
         *attr_tag = DFTAG_SDU;
-    else if (HDstrcmp(_HDF_Format, attr_name) == 0)
+    else if (strcmp(_HDF_Format, attr_name) == 0)
         *attr_tag = DFTAG_SDF;
-    else if (HDstrcmp(_HDF_CoordSys, attr_name) == 0)
+    else if (strcmp(_HDF_CoordSys, attr_name) == 0)
         *attr_tag = DFTAG_SDC;
-    else if ((HDstrcmp(_HDF_ValidMin, attr_name) == 0) || (HDstrcmp(_HDF_ValidMax, attr_name) == 0) ||
-             (HDstrcmp(_HDF_ValidRange, attr_name) == 0))
+    else if ((strcmp(_HDF_ValidMin, attr_name) == 0) || (strcmp(_HDF_ValidMax, attr_name) == 0) ||
+             (strcmp(_HDF_ValidRange, attr_name) == 0))
         *attr_tag = DFTAG_SDM;
-    else if (HDstrcmp(_FillValue, attr_name) == 0)
+    else if (strcmp(_FillValue, attr_name) == 0)
         *attr_tag = DFTAG_FV;
-    else if ((HDstrcmp(_HDF_CalibratedNt, attr_name) == 0) || (HDstrcmp(_HDF_ScaleFactor, attr_name) == 0) ||
-             (HDstrcmp(_HDF_ScaleFactorErr, attr_name) == 0) || (HDstrcmp(_HDF_AddOffset, attr_name) == 0) ||
-             (HDstrcmp(_HDF_AddOffsetErr, attr_name) == 0))
+    else if ((strcmp(_HDF_CalibratedNt, attr_name) == 0) || (strcmp(_HDF_ScaleFactor, attr_name) == 0) ||
+             (strcmp(_HDF_ScaleFactorErr, attr_name) == 0) || (strcmp(_HDF_AddOffset, attr_name) == 0) ||
+             (strcmp(_HDF_AddOffsetErr, attr_name) == 0))
         *attr_tag = DFTAG_CAL;
     /* We need to decide how to handle this attribute when we see it...
     else
@@ -580,7 +580,7 @@ SDgetoldattdatainfo(int32 dim_id, int32 sdsid, char *attr_name, int32 *offset, i
         lufp = lufbuf;
 
         /* Get the length of the data set's luf */
-        sdsluf_len = HDstrlen(lufbuf);
+        sdsluf_len = strlen(lufbuf);
 
         /* If data set's attribute is being inquired, then return with offset
          and length of the SDS' attribute's data only */
@@ -614,18 +614,18 @@ SDgetoldattdatainfo(int32 dim_id, int32 sdsid, char *attr_name, int32 *offset, i
                      empty attributes are covered -BMR */
 
                 /* If dimension doesn't have attribute, its attr len is 0 */
-                if (HDstrlen(lufp) == 0)
+                if (strlen(lufp) == 0)
                     dim_att_len = 0;
                 /* If dimension has attribute, calculate its attr length */
                 else {
-                    dim_att = malloc(HDstrlen(lufp) + 1);
+                    dim_att = malloc(strlen(lufp) + 1);
                     if (dim_att == NULL)
                         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                     /* Extract current dimension's attribute */
-                    HDstrcpy(dim_att, (char *)lufp);
-                    dim_att[HDstrlen(lufp)] = 0;
-                    dim_att_len             = HDstrlen(dim_att);
+                    strcpy(dim_att, (char *)lufp);
+                    dim_att[strlen(lufp)] = 0;
+                    dim_att_len           = strlen(dim_att);
                 }
 
                 /* Move forward if this is not the dim we're looking for */

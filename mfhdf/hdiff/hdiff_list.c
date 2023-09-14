@@ -1300,7 +1300,7 @@ is_reserved(char *vg_class)
         }
 
         /* class and name(partial) for chunk table i.e. Vdata */
-        if ((HDstrncmp(vg_class, "_HDF_CHK_TBL_", 13) == 0)) {
+        if ((strncmp(vg_class, "_HDF_CHK_TBL_", 13) == 0)) {
             ret = 1;
         }
     }
@@ -1325,13 +1325,13 @@ get_path(char *path_name, char *obj_name)
     /* initialize path */
     if (path_name != NULL) {
         path = (char *)malloc(strlen(path_name) + strlen(obj_name) + 2);
-        HDstrcpy(path, path_name);
-        HDstrcat(path, "/");
-        HDstrcat(path, obj_name);
+        strcpy(path, path_name);
+        strcat(path, "/");
+        strcat(path, obj_name);
     }
     else {
         path = (char *)malloc(strlen(obj_name) + 1);
-        HDstrcpy(path, obj_name);
+        strcpy(path, obj_name);
     }
     return path;
 }

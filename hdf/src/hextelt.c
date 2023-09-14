@@ -300,11 +300,11 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
     info->file_open        = TRUE;
     info->file_external    = file_external;
     info->extern_offset    = offset;
-    info->extern_file_name = (char *)HDstrdup(extern_file_name);
+    info->extern_file_name = (char *)strdup(extern_file_name);
     if (!info->extern_file_name)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-    info->length_file_name = (int32)HDstrlen(extern_file_name);
+    info->length_file_name = (int32)strlen(extern_file_name);
     {
         uint8 *p = local_ptbuf;
 
@@ -312,7 +312,7 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
         INT32ENCODE(p, info->length);
         INT32ENCODE(p, info->extern_offset);
         INT32ENCODE(p, info->length_file_name);
-        HDstrcpy((char *)p, extern_file_name);
+        strcpy((char *)p, extern_file_name);
     }
 
     /* Free up the current DD */
@@ -1021,10 +1021,10 @@ HXPreset(accrec_t *access_rec, sp_info_block_t *info_block)
     /* update our internal pointers */
     info->extern_offset = info_block->offset;
     free(info->extern_file_name);
-    info->extern_file_name = (char *)HDstrdup(info_block->path);
+    info->extern_file_name = (char *)strdup(info_block->path);
     if (!info->extern_file_name)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
-    info->length_file_name = (int32)HDstrlen(info->extern_file_name);
+    info->length_file_name = (int32)strlen(info->extern_file_name);
 
     /*
      * delete the existing tag / ref object
@@ -1042,7 +1042,7 @@ HXPreset(accrec_t *access_rec, sp_info_block_t *info_block)
         INT32ENCODE(p, info->length);
         INT32ENCODE(p, info->extern_offset);
         INT32ENCODE(p, info->length_file_name);
-        HDstrcpy((char *)p, (char *)info->extern_file_name);
+        strcpy((char *)p, (char *)info->extern_file_name);
     }
 
     /* write out the new external file record */
@@ -1089,7 +1089,7 @@ HXsetcreatedir(const char *dir)
     intn  ret_value = SUCCEED;
 
     if (dir) {
-        if (!(pt = HDstrdup(dir)))
+        if (!(pt = strdup(dir)))
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
     }
     else
@@ -1137,11 +1137,11 @@ HXsetdir(const char *newdir)
         }
     }
     else {
-        if (!(pt = HDstrdup(newdir)))
+        if (!(pt = strdup(newdir)))
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
         if (extdir != NULL) {
-            if (!HDstrcmp(newdir, extdir))
+            if (!strcmp(newdir, extdir))
                 extdir_changed = FALSE;
             else {
                 free(extdir);
@@ -1177,8 +1177,8 @@ DESCRIPTION
 /* the following can be sped up by doing my own copying instead of scanning */
 /* for end-of-line two extra times, or even use memcpy since the string lengths */
 /* are calculated already.  For now, it works. */
-#define HDstrcpy3(s1, s2, s3, s4)     (HDstrcat(HDstrcat(HDstrcpy(s1, s2), s3), s4))
-#define HDstrcpy4(s1, s2, s3, s4, s5) (HDstrcat(HDstrcat(HDstrcat(HDstrcpy(s1, s2), s3), s4), s5))
+#define strcpy3(s1, s2, s3, s4)     (strcat(strcat(strcpy(s1, s2), s3), s4))
+#define strcpy4(s1, s2, s3, s4, s5) (strcat(strcat(strcat(strcpy(s1, s2), s3), s4), s5))
 
 static char *
 HXIbuildfilename(const char *ext_fname, const intn acc_mode)
@@ -1206,34 +1206,34 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
     if (!(finalpath = malloc(MAX_PATH_LEN)))
         HGOTO_ERROR(DFE_NOSPACE, NULL);
 
-    fname_len = (int)HDstrlen(fname);
+    fname_len = (int)strlen(fname);
 
     switch (acc_mode) {
         case DFACC_CREATE: {          /* Creating a new external element */
             if (*fname == DIR_SEPC) { /* Absolute Pathname */
-                ret_value = (HDstrcpy(finalpath, fname));
+                ret_value = (strcpy(finalpath, fname));
                 goto done;
             }
             else { /* Relative Pathname */
 
                 /* try function variable */
                 if (extcreatedir) {
-                    path_len = (int)HDstrlen(extcreatedir);
+                    path_len = (int)strlen(extcreatedir);
 
                     if (fname_len + 1 + path_len + 1 > MAX_PATH_LEN)
                         HGOTO_ERROR(DFE_NOSPACE, NULL);
-                    ret_value = (HDstrcpy3(finalpath, extcreatedir, DIR_SEPS, fname));
+                    ret_value = (strcpy3(finalpath, extcreatedir, DIR_SEPS, fname));
                     goto done;
                 }
 
                 /* try Environment Variable */
                 if (HDFEXTCREATEDIR) {
-                    path_len = (int)HDstrlen(HDFEXTCREATEDIR);
+                    path_len = (int)strlen(HDFEXTCREATEDIR);
 
                     if (fname_len + 1 + path_len + 1 > MAX_PATH_LEN)
                         HGOTO_ERROR(DFE_NOSPACE, NULL);
 
-                    ret_value = (HDstrcpy3(finalpath, HDFEXTCREATEDIR, DIR_SEPS, fname));
+                    ret_value = (strcpy3(finalpath, HDFEXTCREATEDIR, DIR_SEPS, fname));
                     goto done;
                 }
 
@@ -1241,7 +1241,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
                 /* Don't have Head File information now.  Continue */
 
                 /* Just return the ext_fname */
-                ret_value = (HDstrcpy(finalpath, fname));
+                ret_value = (strcpy(finalpath, fname));
                 goto done;
             }
             /* break; */
@@ -1249,15 +1249,15 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
         case DFACC_OLD: {             /* Locating an old external element */
             if (*fname == DIR_SEPC) { /* Absolute Pathname */
                 if (stat(fname, &filestat) == 0) {
-                    ret_value = (HDstrcpy(finalpath, fname));
+                    ret_value = (strcpy(finalpath, fname));
                     goto done;
                 }
                 else if (!extdir && !HDFEXTDIR) {
                     HGOTO_ERROR(DFE_FNF, NULL);
                 }
                 /* strip the pathname component */
-                fname     = HDstrrchr(fname, DIR_SEPC) + 1;
-                fname_len = (int)HDstrlen(fname);
+                fname     = strrchr(fname, DIR_SEPC) + 1;
+                fname_len = (int)strlen(fname);
                 /* continue to Relative Pathname */
             }
 
@@ -1287,7 +1287,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
                         if (fname_len + path_len + 1 > MAX_PATH_LEN)
                             HGOTO_ERROR(DFE_NOSPACE, NULL);
 
-                        HDstrcpy(path_pt, fname);
+                        strcpy(path_pt, fname);
                         if (stat(finalpath, &filestat) == 0) {
                             ret_value = finalpath;
                             goto done;
@@ -1317,7 +1317,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
                         if (fname_len + path_len + 1 > MAX_PATH_LEN)
                             HGOTO_ERROR(DFE_NOSPACE, NULL);
 
-                        HDstrcpy(path_pt, fname);
+                        strcpy(path_pt, fname);
                         if (stat(finalpath, &filestat) == 0) {
                             ret_value = finalpath;
                             goto done;
@@ -1330,7 +1330,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 
                 /* See if the file exists */
                 if (stat(fname, &filestat) == 0) {
-                    ret_value = (HDstrcpy(finalpath, fname));
+                    ret_value = (strcpy(finalpath, fname));
                     goto done;
                 }
 

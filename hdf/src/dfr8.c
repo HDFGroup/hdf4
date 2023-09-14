@@ -1219,7 +1219,7 @@ DFR8Iopen(const char *filename, intn acc_mode)
     int32 ret_value = SUCCEED;
 
     /* use reopen if same file as last time - more efficient */
-    if (HDstrncmp(Lastfile, filename, DF_MAXFNLEN) || (acc_mode == DFACC_CREATE)) {
+    if (strncmp(Lastfile, filename, DF_MAXFNLEN) || (acc_mode == DFACC_CREATE)) {
         /* treat create as different file */
         if ((file_id = Hopen(filename, acc_mode, 0)) == FAIL)
             HGOTO_ERROR(DFE_BADOPEN, FAIL);
@@ -1237,7 +1237,7 @@ DFR8Iopen(const char *filename, intn acc_mode)
     } /* end else */
 
     /* remember filename, so reopen may be used next time if same file */
-    HDstrncpy(Lastfile, filename, DF_MAXFNLEN);
+    strncpy(Lastfile, filename, DF_MAXFNLEN);
 
     ret_value = file_id;
 

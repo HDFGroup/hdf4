@@ -293,7 +293,7 @@ fillStr(const char **template, char **stringOut, char *string, char specialChar)
 
     for (templateLen = 1; *(++(*template)) == specialChar; templateLen++)
         ;
-    stringLen = (int)HDstrlen(string);
+    stringLen = (int)strlen(string);
 
     for (i = templateLen - stringLen; i > 0; i--)
         *(*stringOut)++ = '0';

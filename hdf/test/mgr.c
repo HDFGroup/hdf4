@@ -2685,7 +2685,7 @@ test_mgr_image_b2b1(int flag)
             CHECK_VOID(ret, FAIL, "GRgetiminfo");
 
             /* Check the name for correctness */
-            if (HDstrcmp(name, datafile_info[i].name)) {
+            if (strcmp(name, datafile_info[i].name)) {
                 MESSAGE(3, printf("Error! Name for image %d is: %s, should be %s\n", i, name,
                                   datafile_info[i].name););
                 num_errs++;

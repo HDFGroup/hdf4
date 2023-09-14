@@ -2581,7 +2581,7 @@ HIget_filerec_node(const char *path)
         if ((ret_value = (filerec_t *)calloc(1, sizeof(filerec_t))) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
 
-        if ((ret_value->path = (char *)HDstrdup(path)) == NULL)
+        if ((ret_value->path = (char *)strdup(path)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, NULL);
 
         /* Initialize annotation stuff */
@@ -2682,7 +2682,7 @@ HPcompare_filerec_path(const void *obj, const void *key)
         if (BADFREC(frec))
             ret_value = FALSE;
         else {
-            if (!HDstrcmp(frec->path, fname))
+            if (!strcmp(frec->path, fname))
                 ret_value = TRUE;
             else
                 ret_value = FALSE;
@@ -2860,7 +2860,7 @@ HIupdate_version(int32 file_id)
         UINT32ENCODE(p, file_rec->version.minorv);
         UINT32ENCODE(p, file_rec->version.release);
         HIstrncpy((char *)p, file_rec->version.string, LIBVSTR_LEN);
-        i = (int)HDstrlen((char *)p);
+        i = (int)strlen((char *)p);
         memset(&p[i], 0, LIBVSTR_LEN - i);
     }
 
@@ -2908,7 +2908,7 @@ HIread_version(int32 file_id)
         file_rec->version.majorv  = 0;
         file_rec->version.minorv  = 0;
         file_rec->version.release = 0;
-        HDstrcpy(file_rec->version.string, "");
+        strcpy(file_rec->version.string, "");
         file_rec->version.modified = 0;
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
     }
@@ -3517,64 +3517,64 @@ Hgetntinfo(const int32 numbertype, hdf_ntinfo_t *nt_info)
 
     /* Get byte order string */
     if ((DFNT_LITEND & numbertype) > 0) {
-        HDstrcpy(nt_info->byte_order, "littleEndian");
+        strcpy(nt_info->byte_order, "littleEndian");
     }
     else
-        HDstrcpy(nt_info->byte_order, "bigEndian");
+        strcpy(nt_info->byte_order, "bigEndian");
 
     /* Get type name string; must mask native and little-endian to make
        sure we get standard type */
     switch ((numbertype & ~DFNT_NATIVE) & ~DFNT_LITEND) {
         case DFNT_UCHAR8:
-            HDstrcpy(nt_info->type_name, "uchar8");
+            strcpy(nt_info->type_name, "uchar8");
             break;
         case DFNT_CHAR8:
-            HDstrcpy(nt_info->type_name, "char8");
+            strcpy(nt_info->type_name, "char8");
             break;
         case DFNT_FLOAT32:
-            HDstrcpy(nt_info->type_name, "float32");
+            strcpy(nt_info->type_name, "float32");
             break;
         case DFNT_FLOAT64:
-            HDstrcpy(nt_info->type_name, "float64");
+            strcpy(nt_info->type_name, "float64");
             break;
         case DFNT_FLOAT128:
-            HDstrcpy(nt_info->type_name, "float128");
+            strcpy(nt_info->type_name, "float128");
             break;
         case DFNT_INT8:
-            HDstrcpy(nt_info->type_name, "int8");
+            strcpy(nt_info->type_name, "int8");
             break;
         case DFNT_UINT8:
-            HDstrcpy(nt_info->type_name, "uint8");
+            strcpy(nt_info->type_name, "uint8");
             break;
         case DFNT_INT16:
-            HDstrcpy(nt_info->type_name, "int16");
+            strcpy(nt_info->type_name, "int16");
             break;
         case DFNT_UINT16:
-            HDstrcpy(nt_info->type_name, "uint16");
+            strcpy(nt_info->type_name, "uint16");
             break;
         case DFNT_INT32:
-            HDstrcpy(nt_info->type_name, "int32");
+            strcpy(nt_info->type_name, "int32");
             break;
         case DFNT_UINT32:
-            HDstrcpy(nt_info->type_name, "uint32");
+            strcpy(nt_info->type_name, "uint32");
             break;
         case DFNT_INT64:
-            HDstrcpy(nt_info->type_name, "int64");
+            strcpy(nt_info->type_name, "int64");
             break;
         case DFNT_UINT64:
-            HDstrcpy(nt_info->type_name, "uint64");
+            strcpy(nt_info->type_name, "uint64");
             break;
         case DFNT_INT128:
-            HDstrcpy(nt_info->type_name, "int128");
+            strcpy(nt_info->type_name, "int128");
             break;
         case DFNT_UINT128:
-            HDstrcpy(nt_info->type_name, "uint128");
+            strcpy(nt_info->type_name, "uint128");
             break;
         case DFNT_CHAR16:
-            HDstrcpy(nt_info->type_name, "char16");
+            strcpy(nt_info->type_name, "char16");
             break;
         case DFNT_UCHAR16:
-            HDstrcpy(nt_info->type_name, "uchar16");
+            strcpy(nt_info->type_name, "uchar16");
             break;
         default:
             return FAIL;

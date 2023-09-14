@@ -137,10 +137,10 @@ VSsetfields(int32 vkey, const char *fields)
                     found = FALSE;
                     /* --- first look in the user's symbol table --- */
                     for (j = 0; j < vs->nusym; j++)
-                        if (!HDstrcmp(av[i], vs->usym[j].name)) {
+                        if (!strcmp(av[i], vs->usym[j].name)) {
                             found = TRUE;
 
-                            if ((wlist->name[wlist->n] = HDstrdup(vs->usym[j].name)) == NULL) {
+                            if ((wlist->name[wlist->n] = strdup(vs->usym[j].name)) == NULL) {
                                 free(wlist->name);
                                 free(wlist->bptr);
                                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -171,10 +171,10 @@ VSsetfields(int32 vkey, const char *fields)
                     /* --- now look in the reserved symbol table --- */
                     if (!found) {
                         for (j = 0; j < (intn)NRESERVED; j++)
-                            if (!HDstrcmp(av[i], rstab[j].name)) {
+                            if (!strcmp(av[i], rstab[j].name)) {
                                 found = TRUE;
 
-                                if ((wlist->name[wlist->n] = HDstrdup(rstab[j].name)) == NULL) {
+                                if ((wlist->name[wlist->n] = strdup(rstab[j].name)) == NULL) {
                                     free(wlist->name);
                                     free(wlist->bptr);
                                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -227,7 +227,7 @@ VSsetfields(int32 vkey, const char *fields)
         for (i = 0; i < ac; i++) {
             found = FALSE;
             for (j = 0; j < vs->wlist.n; j++)
-                if (!HDstrcmp(av[i], vs->wlist.name[j])) { /*  see if field exist */
+                if (!strcmp(av[i], vs->wlist.name[j])) { /*  see if field exist */
                     found = TRUE;
 
                     rlist->item[rlist->n] = j; /* save as index into wlist->name */
@@ -287,7 +287,7 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
 
     /* --- then look in the user's symbol table --- */
     for (replacesym = 0, j = 0; j < vs->nusym; j++)
-        if (!HDstrcmp(av[0], vs->usym[j].name)) {
+        if (!strcmp(av[0], vs->usym[j].name)) {
             if (localtype != rstab[j].type && order != rstab[j].order) {
                 replacesym = 1;
                 break;
@@ -316,7 +316,7 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
        type sizes are smaller than max(int16) */
 
     /* Copy the symbol [field] information */
-    if ((vs->usym[usymid].name = (char *)HDstrdup(av[0])) == NULL)
+    if ((vs->usym[usymid].name = (char *)strdup(av[0])) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     vs->usym[usymid].type  = (int16)localtype;
     vs->usym[usymid].order = (uint16)order;
@@ -655,10 +655,10 @@ VSgetexternalfile(int32 vkey, uintn buf_size, char *ext_filename, int32 *offset)
         if (info_block.key == SPECIAL_EXT) {
             /* If the file name is not available, the file is probably
                 corrupted, so we need to report it. */
-            if (info_block.path == NULL || HDstrlen(info_block.path) <= 0)
+            if (info_block.path == NULL || strlen(info_block.path) <= 0)
                 ret_value = FAIL;
             else {
-                size_t ext_file_len = HDstrlen(info_block.path);
+                size_t ext_file_len = strlen(info_block.path);
 
                 /* If caller requests the length of the external file name
                    only, return the length */
@@ -670,7 +670,7 @@ VSgetexternalfile(int32 vkey, uintn buf_size, char *ext_filename, int32 *offset)
                         HGOTO_ERROR(DFE_ARGS, FAIL);
 
                     /* Get the name and its length */
-                    HDstrncpy(ext_filename, info_block.path, buf_size);
+                    strncpy(ext_filename, info_block.path, buf_size);
                     actual_len = buf_size < ext_file_len ? buf_size : ext_file_len;
 
                     /* Get the offset in the external file if it's requested */
@@ -769,7 +769,7 @@ VSgetexternalinfo(int32 vkey, uintn buf_size, char *ext_filename, int32 *offset,
         else if (info_block.key == SPECIAL_EXT) {
             /* If the file name is not available, the file is probably
                 corrupted, so we need to report it. */
-            if (info_block.path == NULL || HDstrlen(info_block.path) <= 0)
+            if (info_block.path == NULL || strlen(info_block.path) <= 0)
                 ret_value = FAIL;
             else {
                 intn tmp_len = (intn)info_block.length_file_name;
@@ -790,7 +790,7 @@ VSgetexternalinfo(int32 vkey, uintn buf_size, char *ext_filename, int32 *offset,
                     actual_fname_len = (intn)buf_size < tmp_len ? (intn)buf_size : tmp_len;
 
                     /* Get the name */
-                    HDstrncpy(ext_filename, info_block.path, buf_size);
+                    strncpy(ext_filename, info_block.path, buf_size);
 
                     /* Get offset/length of the external data if requested */
                     if (offset != NULL)
@@ -910,7 +910,7 @@ VSfpack(int32 vsid, intn packtype, const char *fields_in_buf, void *buf, intn bu
                     break;
                 }
 #else
-                if (HDstrcmp(s, w->name[j]) == 0) {
+                if (strcmp(s, w->name[j]) == 0) {
                     found = 1;
                     break;
                 }
@@ -960,7 +960,7 @@ VSfpack(int32 vsid, intn packtype, const char *fields_in_buf, void *buf, intn bu
                     break;
                 }
 #else
-                if (HDstrcmp(s, w->name[blist.idx[j]]) == 0) {
+                if (strcmp(s, w->name[blist.idx[j]]) == 0) {
                     found = 1;
                     break;
                 }

@@ -321,7 +321,7 @@ typedef intptr_t hdf_pint_t;
 #endif
 
 /**************************************************************************
- *  Memory functions
+ *  Memory and string functions
  **************************************************************************/
 
 /* DO NOT USE THESE MACROS */
@@ -330,6 +330,7 @@ typedef intptr_t hdf_pint_t;
  * only kept here to avoid breakage in programs that unwisely used
  * them.
  */
+
 #define HDmalloc(s)     malloc(s)
 #define HDcalloc(a, b)  calloc(a, b)
 #define HDfree(p)       free(p)
@@ -341,10 +342,6 @@ typedef intptr_t hdf_pint_t;
         free(p);                                                                                             \
         (p) = NULL;                                                                                          \
     }
-
-/**************************************************************************
- *  String functions defined differently
- **************************************************************************/
 
 #define HDstrcat(s1, s2)     (strcat((s1), (s2)))
 #define HDstrcmp(s, t)       (strcmp((s), (t)))

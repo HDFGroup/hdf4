@@ -37,7 +37,7 @@ options_table_init(options_table_t **tbl)
     op_tbl->objs   = (pack_info_t *)malloc(op_tbl->size * sizeof(pack_info_t));
 
     for (i = 0; i < op_tbl->size; i++) {
-        HDstrcpy(op_tbl->objs[i].objpath, "\0");
+        strcpy(op_tbl->objs[i].objpath, "\0");
         op_tbl->objs[i].comp.info  = -1;
         op_tbl->objs[i].comp.type  = COMP_CODE_NONE;
         op_tbl->objs[i].chunk.rank = -1;
@@ -83,7 +83,7 @@ options_add_chunk(obj_list_t *obj_list, int n_objs, int32 *chunk_lengths, int ch
         op_tbl->size += n_objs;
         op_tbl->objs = (pack_info_t *)realloc(op_tbl->objs, op_tbl->size * sizeof(pack_info_t));
         for (i = op_tbl->nelems; i < op_tbl->size; i++) {
-            HDstrcpy(op_tbl->objs[i].objpath, "\0");
+            strcpy(op_tbl->objs[i].objpath, "\0");
             op_tbl->objs[i].comp.info  = -1;
             op_tbl->objs[i].comp.type  = COMP_CODE_NONE;
             op_tbl->objs[i].chunk.rank = -1;
@@ -97,7 +97,7 @@ options_add_chunk(obj_list_t *obj_list, int n_objs, int32 *chunk_lengths, int ch
             /* linear table search */
             for (i = 0; i < op_tbl->nelems; i++) {
                 /*already on the table */
-                if (HDstrcmp(obj_list[j].obj, op_tbl->objs[i].objpath) == 0) {
+                if (strcmp(obj_list[j].obj, op_tbl->objs[i].objpath) == 0) {
                     /* already chunk info inserted for this one; exit */
                     if (op_tbl->objs[i].chunk.rank > 0) {
                         printf("Input Error: chunk information already inserted for <%s>\n", obj_list[j].obj);
@@ -118,7 +118,7 @@ options_add_chunk(obj_list_t *obj_list, int n_objs, int32 *chunk_lengths, int ch
                 /* keep the grow in a temp var */
                 I = op_tbl->nelems + added;
                 added++;
-                HDstrcpy(op_tbl->objs[I].objpath, obj_list[j].obj);
+                strcpy(op_tbl->objs[I].objpath, obj_list[j].obj);
                 op_tbl->objs[I].chunk.rank = chunk_rank;
                 for (k = 0; k < chunk_rank; k++)
                     op_tbl->objs[I].chunk.chunk_lengths[k] = chunk_lengths[k];
@@ -132,7 +132,7 @@ options_add_chunk(obj_list_t *obj_list, int n_objs, int32 *chunk_lengths, int ch
         for (j = 0; j < n_objs; j++) {
             I = op_tbl->nelems + added;
             added++;
-            HDstrcpy(op_tbl->objs[I].objpath, obj_list[j].obj);
+            strcpy(op_tbl->objs[I].objpath, obj_list[j].obj);
             op_tbl->objs[I].chunk.rank = chunk_rank;
             for (k = 0; k < chunk_rank; k++)
                 op_tbl->objs[I].chunk.chunk_lengths[k] = chunk_lengths[k];
@@ -163,7 +163,7 @@ options_add_comp(obj_list_t *obj_list, int n_objs, comp_info_t comp, options_tab
         op_tbl->size += n_objs;
         op_tbl->objs = (pack_info_t *)realloc(op_tbl->objs, op_tbl->size * sizeof(pack_info_t));
         for (i = op_tbl->nelems; i < op_tbl->size; i++) {
-            HDstrcpy(op_tbl->objs[i].objpath, "\0");
+            strcpy(op_tbl->objs[i].objpath, "\0");
             op_tbl->objs[i].comp.info  = -1;
             op_tbl->objs[i].comp.type  = COMP_CODE_NONE;
             op_tbl->objs[i].chunk.rank = -1;
@@ -177,7 +177,7 @@ options_add_comp(obj_list_t *obj_list, int n_objs, comp_info_t comp, options_tab
             /* linear table search */
             for (i = 0; i < op_tbl->nelems; i++) {
                 /*already on the table */
-                if (HDstrcmp(obj_list[j].obj, op_tbl->objs[i].objpath) == 0) {
+                if (strcmp(obj_list[j].obj, op_tbl->objs[i].objpath) == 0) {
                     /* already COMP info inserted for this one; exit */
                     if (op_tbl->objs[i].comp.type > 0) {
                         printf("Input Error: compression information already inserted for <%s>\n",
@@ -197,7 +197,7 @@ options_add_comp(obj_list_t *obj_list, int n_objs, comp_info_t comp, options_tab
                 /* keep the grow in a temp var */
                 I = op_tbl->nelems + added;
                 added++;
-                HDstrcpy(op_tbl->objs[I].objpath, obj_list[j].obj);
+                strcpy(op_tbl->objs[I].objpath, obj_list[j].obj);
                 op_tbl->objs[I].comp = comp;
             }
         } /* j */
@@ -209,7 +209,7 @@ options_add_comp(obj_list_t *obj_list, int n_objs, comp_info_t comp, options_tab
         for (j = 0; j < n_objs; j++) {
             I = op_tbl->nelems + added;
             added++;
-            HDstrcpy(op_tbl->objs[I].objpath, obj_list[j].obj);
+            strcpy(op_tbl->objs[I].objpath, obj_list[j].obj);
             op_tbl->objs[I].comp = comp;
         }
     }
@@ -236,7 +236,7 @@ options_get_object(char *path, options_table_t *op_tbl)
 
     for (i = 0; i < op_tbl->nelems; i++) {
         /* found it */
-        if (HDstrcmp(op_tbl->objs[i].objpath, path) == 0) {
+        if (strcmp(op_tbl->objs[i].objpath, path) == 0) {
             return (&op_tbl->objs[i]);
         }
     }

@@ -102,7 +102,7 @@ hrepack_addcomp(const char *str, options_t *options)
 
     /* searh for the "*" all objects character */
     for (i = 0; i < n_objs; i++) {
-        if (HDstrcmp("*", obj_list[i].obj) == 0) {
+        if (strcmp("*", obj_list[i].obj) == 0) {
             /* if we are compressing all set the global comp type */
             options->all_comp = 1;
             options->comp_g   = comp;
@@ -164,7 +164,7 @@ hrepack_addchunk(const char *str, options_t *options)
 
     /* searh for the "*" all objects character */
     for (i = 0; i < n_objs; i++) {
-        if (HDstrcmp("*", obj_list[i].obj) == 0) {
+        if (strcmp("*", obj_list[i].obj) == 0) {
             /* if we are chunking all set the global chunking type */
             options->all_chunk    = 1;
             options->chunk_g.rank = chunk_rank;
@@ -363,7 +363,7 @@ read_info(const char *filename, options_t *options)
          * comp
          *-------------------------------------------------------------------------
          */
-        if (HDstrcmp(stype, "-t") == 0) {
+        if (strcmp(stype, "-t") == 0) {
 
             /* find beginning of info */
             i = 0;
@@ -391,7 +391,7 @@ read_info(const char *filename, options_t *options)
          * chunk
          *-------------------------------------------------------------------------
          */
-        else if (HDstrcmp(stype, "-c") == 0) {
+        else if (strcmp(stype, "-c") == 0) {
 
             /* find beginning of info */
             i = 0;

@@ -363,7 +363,7 @@ DFANputlabel(const char *filename, uint16 tag, uint16 ref, char *label)
 {
     intn ret_value;
 
-    ret_value = (DFANIputann(filename, tag, ref, (uint8 *)label, (int32)HDstrlen(label), DFAN_LABEL));
+    ret_value = (DFANIputann(filename, tag, ref, (uint8 *)label, (int32)strlen(label), DFAN_LABEL));
 
     return ret_value;
 }
@@ -426,7 +426,7 @@ DFANaddfid(int32 file_id, char *id)
 {
     intn ret_value;
 
-    ret_value = (DFANIaddfann(file_id, id, (int32)HDstrlen(id), DFAN_LABEL));
+    ret_value = (DFANIaddfann(file_id, id, (int32)strlen(id), DFAN_LABEL));
 
     return ret_value;
 }
@@ -657,7 +657,7 @@ DFANIopen(const char *filename, intn acc_mode)
     }
 
     /* use reopen if same file as last time - more efficient */
-    if (HDstrncmp(Lastfile, filename, DF_MAXFNLEN) || (acc_mode == DFACC_CREATE)) {
+    if (strncmp(Lastfile, filename, DF_MAXFNLEN) || (acc_mode == DFACC_CREATE)) {
         /* treat create as different file */
         if ((file_id = Hopen(filename, acc_mode, 0)) == FAIL)
             HGOTO_ERROR(DFE_BADOPEN, FAIL);

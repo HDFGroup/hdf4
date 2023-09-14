@@ -340,7 +340,7 @@ test_vgmixedattrs()
         char  aname[20];
         int32 atype, acount, asize;
         status = Vattrinfo(vgroup_id, ii, aname, &atype, &acount, &asize);
-        /* HDstrncmp(iattrname, ATTNAME1, HDstrlen(ATTNAME1)) != 0) */
+        /* strncmp(iattrname, ATTNAME1, strlen(ATTNAME1)) != 0) */
     }
     n_attrs = Vnoldattrs(vgroup_id);
     VERIFY_VOID(n_attrs, 0, "Vnoldattrs");

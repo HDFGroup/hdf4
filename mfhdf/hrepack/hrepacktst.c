@@ -324,10 +324,10 @@ add_gr_ffile(const char *name_file, int32 gr_id, const char *gr_name, int32 inte
 
     /* compose the name of the file to open, using the srcdir, if appropriate */
     if (srcdir) {
-        HDstrcpy(data_file, srcdir);
-        HDstrcat(data_file, "/");
+        strcpy(data_file, srcdir);
+        strcat(data_file, "/");
     }
-    HDstrcat(data_file, name_file);
+    strcat(data_file, name_file);
 
     if (read_data(data_file) > 0) {
         /* set the data type, interlace mode, and dimensions of the image */
@@ -645,10 +645,10 @@ add_r8(const char *image_file, const char *fname, int32 file_id, int32 vgroup_id
 
     /* compose the name of the file to open, using the srcdir, if appropriate */
     if (srcdir) {
-        HDstrcpy(data_file, srcdir);
-        HDstrcat(data_file, "/");
+        strcpy(data_file, srcdir);
+        strcat(data_file, "/");
     }
-    HDstrcat(data_file, image_file);
+    strcat(data_file, image_file);
 
     if (read_data(data_file) > 0) {
         /* add a palette */
@@ -705,10 +705,10 @@ add_r24(const char *image_file, const char *fname, int32 file_id, intn il, int32
 
     /* compose the name of the file to open, using the srcdir, if appropriate */
     if (srcdir) {
-        HDstrcpy(data_file, srcdir);
-        HDstrcat(data_file, "/");
+        strcpy(data_file, srcdir);
+        strcat(data_file, "/");
     }
-    HDstrcat(data_file, image_file);
+    strcat(data_file, image_file);
 
     if (read_data(data_file) > 0) {
         /* set interlace */

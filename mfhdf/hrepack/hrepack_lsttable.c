@@ -80,7 +80,7 @@ list_table_add(list_table_t *list_tbl, int tag, int ref, char *path)
     list_tbl->objs[i].ref = ref;
 
     /* copy the path over */
-    path_len               = HDstrlen(path);
+    path_len               = strlen(path);
     list_tbl->objs[i].path = (char *)malloc(path_len + 1);
     HIstrncpy(list_tbl->objs[i].path, path, path_len + 1);
 }
@@ -165,7 +165,7 @@ list_table_check(list_table_t *list_tbl, char *obj_name)
     int32 tag;
 
     for (i = 0; i < list_tbl->nobjs; i++) {
-        if (HDstrcmp(list_tbl->objs[i].path, obj_name) == 0) {
+        if (strcmp(list_tbl->objs[i].path, obj_name) == 0) {
             /* found the name; check if it is an SDS or Image */
             tag = list_tbl->objs[i].tag;
             if (tag == DFTAG_SD || tag == DFTAG_SDG || tag == DFTAG_NDG || tag == DFTAG_RI ||

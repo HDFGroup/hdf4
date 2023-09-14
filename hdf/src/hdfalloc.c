@@ -19,7 +19,7 @@ LOCAL ROUTINES
 EXPORTED ROUTINES
   HDmemfill    -- copy a chunk of memory repetitively into another chunk
   HIstrncpy    -- string copy with termination
-  HDstrdup     -- in-library replacement for non-ANSI strdup()
+  strdup     -- in-library replacement for non-ANSI strdup()
 */
 
 /*--------------------------------------------------------------------------
@@ -123,9 +123,9 @@ HIstrncpy(char *dest, const char *source, intn len)
 
 /*--------------------------------------------------------------------------
  NAME
-    HDstrdup -- in-library replacement for non-ANSI strdup()
+    strdup -- in-library replacement for non-ANSI strdup()
  USAGE
-    char *HDstrdup(s)
+    char *strdup(s)
         const char *s;          IN: pointer to the string to duplicate
  RETURNS
     Pointer to the duplicated string, or NULL on failure.
@@ -138,7 +138,7 @@ HIstrncpy(char *dest, const char *source, intn len)
  REVISION LOG
 --------------------------------------------------------------------------*/
 char *
-HDstrdup(const char *s)
+strdup(const char *s)
 {
     char *ret;
 
@@ -147,11 +147,11 @@ HDstrdup(const char *s)
         return (NULL);
 
     /* Allocate space */
-    ret = (char *)malloc((uint32)HDstrlen(s) + 1);
+    ret = (char *)malloc((uint32)strlen(s) + 1);
     if (ret == NULL)
         return (NULL);
 
     /* Copy the original string and return it */
-    HDstrcpy(ret, s);
+    strcpy(ret, s);
     return (ret);
-} /* end HDstrdup() */
+} /* end strdup() */

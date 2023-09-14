@@ -526,7 +526,7 @@ readnoHDF_char(const char *filename, const int32 offset, const int32 length, con
     readlen = fread((void *)readcbuf, 1, length, fd);
     if (readlen > 0) {
         /* Compare data read without HDF4 lib against the original buffer */
-        if (HDstrncmp(readcbuf, orig_buf, readlen) != 0)
+        if (strncmp(readcbuf, orig_buf, readlen) != 0)
             fprintf(stderr,
                     "Failure: non-HDF reading got different values than written values\n   >>> written = "
                     "%s\n   >>> read = %s\n",
@@ -587,7 +587,7 @@ get_annot_datainfo(int32 an_id, ann_type annot_type, int32 num_anns, t_ann_info_
 
         /* Store annotation text for later checking against data read from
            the file without HDF4 library */
-        HDstrcpy(ann_info[ann_info_num].anntext, ann_text);
+        strcpy(ann_info[ann_info_num].anntext, ann_text);
 
         /* Terminate access to the current annotation. */
         status_n = ANendaccess(ann_id);

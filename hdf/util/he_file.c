@@ -129,7 +129,7 @@ annotate(const char *editor, int ann)
 #elif defined(H4_HAVE_SYSTEM)
     {
         char cmd[256];
-        if (HDstrlen(editor) > 100) {
+        if (strlen(editor) > 100) {
             fprintf(stderr, "Environment variable EDITOR too big\n");
         }
         else {
@@ -342,7 +342,7 @@ writ(char *file, uint16 tag, uint16 ref)
         noFile();
         return HE_FAIL;
     }
-    if (!HDstrcmp(file, he_file)) {
+    if (!strcmp(file, he_file)) {
         fprintf(stderr, "Cannot write to self.\n");
         return HE_FAIL;
     }

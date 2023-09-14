@@ -245,7 +245,7 @@ sanitize_string(char *str, bool sanitize)
     if (!str)
         return NULL;
 
-    new_str = HDstrdup(str);
+    new_str = strdup(str);
     if (NULL == new_str) {
         error("Out of memory!");
         return NULL;

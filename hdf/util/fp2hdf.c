@@ -404,7 +404,7 @@ main(int argc, char *argv[])
             case 2: /* -o found; look for outfile */
                 break;
             case 3: /* get outfile name */
-                (void)HDstrcpy(opt.outfile, argv[i]);
+                (void)strcpy(opt.outfile, argv[i]);
                 outfile_named = TRUE;
                 break;
             case 4: /* -r found */
@@ -429,7 +429,7 @@ main(int argc, char *argv[])
                 opt.pal = TRUE;
                 break;
             case 11: /* get pal filename */
-                (void)HDstrcpy(opt.palfile, argv[i]);
+                (void)strcpy(opt.palfile, argv[i]);
                 break;
             case 12: /* -f found (after a -r) */
             case 13: /* -f found (no -r yet) */
@@ -946,38 +946,38 @@ gtoken(char *s)
      */
     if (s[0] == '-') { /* option name (or negative number) */
         token = ERR;
-        len   = HDstrlen(&s[1]);
+        len   = strlen(&s[1]);
         switch (s[1]) {
             case 'o':
-                if (!HDstrncmp("outfile", &s[1], len))
+                if (!strncmp("outfile", &s[1], len))
                     token = OPT_o;
                 break;
             case 'r':
-                if (!HDstrncmp("raster", &s[1], len))
+                if (!strncmp("raster", &s[1], len))
                     token = OPT_r;
                 break;
             case 'e':
-                if (!HDstrncmp("expand", &s[1], len))
+                if (!strncmp("expand", &s[1], len))
                     token = OPT_e;
                 break;
             case 'i':
-                if (!HDstrncmp("interp", &s[1], len))
+                if (!strncmp("interp", &s[1], len))
                     token = OPT_i;
                 break;
             case 'p':
-                if (!HDstrncmp("palfile", &s[1], len))
+                if (!strncmp("palfile", &s[1], len))
                     token = OPT_p;
                 break;
             case 'f':
-                if (!HDstrncmp("float", &s[1], len))
+                if (!strncmp("float", &s[1], len))
                     token = OPT_f;
                 break;
             case 'h':
-                if (!HDstrncmp("help", &s[1], len))
+                if (!strncmp("help", &s[1], len))
                     token = OPT_h;
                 break;
             case 'm':
-                if (!HDstrncmp("mean", &s[1], len))
+                if (!strncmp("mean", &s[1], len))
                     token = OPT_m;
                 break;
             default:

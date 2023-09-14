@@ -50,7 +50,7 @@ HDc2fstr(char *str, intn len)
 {
     int i;
 
-    i = (int)HDstrlen(str);
+    i = (int)strlen(str);
     for (; i < len; i++)
         str[i] = ' ';
     return SUCCEED;
@@ -201,22 +201,22 @@ HDgettagsname(uint16 tag)
     intn  i;
 
     if (SPECIALTAG(tag))
-        ret = (char *)HDstrdup("Special ");
+        ret = (char *)strdup("Special ");
     tag = BASETAG(tag);
     for (i = 0; i < (intn)(sizeof(tag_descriptions) / sizeof(tag_descript_t)); i++)
         if (tag_descriptions[i].tag == tag) {
             if (ret == NULL)
-                ret = (char *)HDstrdup(tag_descriptions[i].name);
+                ret = (char *)strdup(tag_descriptions[i].name);
             else {
                 char *t;
 
-                t = (char *)malloc(HDstrlen(ret) + HDstrlen(tag_descriptions[i].name) + 2);
+                t = (char *)malloc(strlen(ret) + strlen(tag_descriptions[i].name) + 2);
                 if (t == NULL) {
                     free(ret);
                     HRETURN_ERROR(DFE_NOSPACE, NULL);
                 }
-                HDstrcpy(t, ret);
-                HDstrcat(t, tag_descriptions[i].name);
+                strcpy(t, ret);
+                strcat(t, tag_descriptions[i].name);
                 free(ret);
                 ret = t;
             }
@@ -243,7 +243,7 @@ HDgettagnum(const char *tag_name)
     intn i;
 
     for (i = 0; i < (intn)(sizeof(tag_descriptions) / sizeof(tag_descript_t)); i++)
-        if (0 == HDstrcmp(tag_descriptions[i].name, tag_name))
+        if (0 == strcmp(tag_descriptions[i].name, tag_name))
             return ((intn)tag_descriptions[i].tag);
     return (FAIL);
 } /* HDgettagnum */
@@ -269,28 +269,28 @@ HDgetNTdesc(int32 nt)
 
     /* evil hard-coded values */
     if (nt & DFNT_NATIVE)
-        ret_desc = (char *)HDstrdup(nt_descriptions[0].desc);
+        ret_desc = (char *)strdup(nt_descriptions[0].desc);
     else if (nt & DFNT_CUSTOM)
-        ret_desc = (char *)HDstrdup(nt_descriptions[1].desc);
+        ret_desc = (char *)strdup(nt_descriptions[1].desc);
     else if (nt & DFNT_LITEND)
-        ret_desc = (char *)HDstrdup(nt_descriptions[2].desc);
+        ret_desc = (char *)strdup(nt_descriptions[2].desc);
 
     nt &= DFNT_MASK; /* mask off unusual format types */
     for (i = 3; i < (intn)(sizeof(nt_descriptions) / sizeof(nt_descript_t)); i++)
         if (nt_descriptions[i].nt == nt) {
             if (ret_desc == NULL)
-                ret_desc = (char *)HDstrdup(nt_descriptions[i].desc);
+                ret_desc = (char *)strdup(nt_descriptions[i].desc);
             else {
                 char *t;
 
-                t = (char *)malloc(HDstrlen(ret_desc) + HDstrlen(nt_descriptions[i].desc) + 2);
+                t = (char *)malloc(strlen(ret_desc) + strlen(nt_descriptions[i].desc) + 2);
                 if (t == NULL) {
                     free(ret_desc);
                     HRETURN_ERROR(DFE_NOSPACE, NULL);
                 }
-                HDstrcpy(t, ret_desc);
-                HDstrcat(t, " ");
-                HDstrcat(t, nt_descriptions[i].desc);
+                strcpy(t, ret_desc);
+                strcat(t, " ");
+                strcat(t, nt_descriptions[i].desc);
                 free(ret_desc);
                 ret_desc = t;
             }

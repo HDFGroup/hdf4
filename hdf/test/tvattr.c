@@ -499,7 +499,7 @@ read_vattrs(void)
         printf("not %d.\n", iattrindex);
     }
     if (FAIL == Vattrinfo(vgid, 0, iattrname, &i_type, &i_count, &i_size) ||
-        HDstrncmp(iattrname, ATTNAME1, HDstrlen(ATTNAME1)) != 0 || i_type != DFNT_UINT32 || i_count != 2 ||
+        strncmp(iattrname, ATTNAME1, strlen(ATTNAME1)) != 0 || i_type != DFNT_UINT32 || i_count != 2 ||
         i_size != i_count * DFKNTsize(DFNT_UINT32 | DFNT_NATIVE)) {
         num_errs++;
         printf(">>> Wrong attrinfo for attname1 of vgname0; \
@@ -514,7 +514,7 @@ read_vattrs(void)
     }
 
     if (FAIL == Vattrinfo(vgid, 1, iattrname, &i_type, &i_count, &i_size) ||
-        HDstrncmp(iattrname, ATTNAME2, HDstrlen(ATTNAME2)) != 0 || i_type != DFNT_UINT16 || i_count != 2 ||
+        strncmp(iattrname, ATTNAME2, strlen(ATTNAME2)) != 0 || i_type != DFNT_UINT16 || i_count != 2 ||
         i_size != i_count * DFKNTsize(DFNT_UINT16 | DFNT_NATIVE)) {
         num_errs++;
         printf(">>> Wrong attrinfo for attname2 of vgname0; \
@@ -577,7 +577,7 @@ read_vattrs(void)
     }
     /* read the 3rd attr of fld 0. The attr is char type. */
     if ((FAIL == VSattrinfo(vsid, 0, 2, iattrname, &i_type, &i_count, &i_size)) ||
-        (HDstrcmp(iattrname, ATTNAME9) != 0) || (i_type != DFNT_CHAR8) || (i_count != 5) || (i_size != 5)) {
+        (strcmp(iattrname, ATTNAME9) != 0) || (i_type != DFNT_CHAR8) || (i_count != 5) || (i_size != 5)) {
         num_errs++;
         printf(">>> Wrong attrinfo for attname9 of vsname0 fld0; ");
         printf(" got  %s %d %d %d.\n", iattrname, (int)i_type, (int)i_count, (int)i_size);
@@ -655,7 +655,7 @@ read_vattrs(void)
         printf(">>> attname4 should be index 1 of vsname1, not %d.\n", iattrindex);
     }
     if ((FAIL == VSattrinfo(vsid, _HDF_VDATA, iattrindex, iattrname, &i_type, &i_count, &i_size)) ||
-        (HDstrcmp(iattrname, ATTNAME4) != 0) || (i_type != DFNT_FLOAT32) || (i_count != 1) ||
+        (strcmp(iattrname, ATTNAME4) != 0) || (i_type != DFNT_FLOAT32) || (i_count != 1) ||
         (i_size != DFKNTsize(DFNT_FLOAT | DFNT_NATIVE))) {
         num_errs++;
         printf(">>> Wrong attrinfo for attname4 of vdata vsname1; ");
@@ -679,7 +679,7 @@ read_vattrs(void)
         printf("  not %d.\n", iattrindex);
     }
     if ((FAIL == VSattrinfo(vsid, 0, iattrindex, iattrname, &i_type, &i_count, &i_size)) ||
-        (HDstrcmp(iattrname, VSNAME1) != 0) || (i_type != DFNT_FLOAT64) || (i_count != 1) ||
+        (strcmp(iattrname, VSNAME1) != 0) || (i_type != DFNT_FLOAT64) || (i_count != 1) ||
         (i_size != DFKNTsize(DFNT_FLOAT64 | DFNT_NATIVE))) {
         num_errs++;
         printf(">>> Wrong attrinfo for VSNAME1 of fld 0 of vdata vsname1; ");
