@@ -233,7 +233,8 @@
       "hidden": true,
       "inherits": [
         "ci-base"
-      ]
+      ],
+      "configuration": "Debug"
     },
     {
       "name": "ci-x64-Release-MSVC",
@@ -241,7 +242,8 @@
       "hidden": true,
       "inherits": [
         "ci-base"
-      ]
+      ],
+      "configuration": "RelWithDebInfo"
     },
     {
       "name": "ci-x64-Debug-Clang",
