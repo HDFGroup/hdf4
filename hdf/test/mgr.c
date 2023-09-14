@@ -1036,6 +1036,8 @@ const float64 image4[19][17][2] = {{{6.0, 6.0},
                                     {0.0, 0.0},
                                     {0.0, 0.0}}};
 
+extern void test_mgr_dup_images();
+
 /* Test outline:
     I. Interface Initialization
         A. GRstart
