@@ -27,10 +27,6 @@
 #include "zlib.h"
 #undef zintf
 
-/* Define the [default] size of the buffer to interact with the file. */
-#define DEFLATE_BUF_SIZE     4096
-#define DEFLATE_TMP_BUF_SIZE 16384
-
 /* gzip [en|de]coding information */
 typedef struct {
     intn     deflate_level;   /* how hard to try to compress this data */
