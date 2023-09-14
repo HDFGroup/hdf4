@@ -53,12 +53,12 @@ test_an(void)
 
     /* set up object labels and descriptions */
 
-    HDstrcpy(labsds, "Object label #1: sds");
-    HDstrcpy(labris, "Object label #2: image");
-    HDstrcpy(descsds, "Object Descr #1: 1  2  3  4  5  6  7  8  9 10 11 12 \n");
-    HDstrcat(descsds, "             13 14 15 16 17 18 19 20 **END SDS DESCR**\n");
-    HDstrcpy(descris, "Object Descr #2: A B C D E F G H I J K L \n");
-    HDstrcat(descris, "                M N O **END IMAGE DESCR **\n");
+    strcpy(labsds, "Object label #1: sds");
+    strcpy(labris, "Object label #2: image");
+    strcpy(descsds, "Object Descr #1: 1  2  3  4  5  6  7  8  9 10 11 12 \n");
+    strcat(descsds, "             13 14 15 16 17 18 19 20 **END SDS DESCR**\n");
+    strcpy(descris, "Object Descr #2: A B C D E F G H I J K L \n");
+    strcat(descris, "                M N O **END IMAGE DESCR **\n");
 
     /***** generate float array and image *****/
 
@@ -87,7 +87,7 @@ test_an(void)
             refnum = DFSDlastref();
             ret    = DFANputlabel(TESTFILE, DFTAG_SDG, refnum, labsds);
             RESULT("DFANputlabel");
-            ret = DFANputdesc(TESTFILE, DFTAG_SDG, refnum, descsds, (int32)HDstrlen(descsds));
+            ret = DFANputdesc(TESTFILE, DFTAG_SDG, refnum, descsds, (int32)strlen(descsds));
             RESULT("DFANputdesc");
         }
 
@@ -96,7 +96,7 @@ test_an(void)
         refnum = DFR8lastref();
         ret    = DFANputlabel(TESTFILE, DFTAG_RIG, refnum, labris);
         RESULT("DFANputlabel");
-        ret = DFANputdesc(TESTFILE, DFTAG_RIG, refnum, descris, (int32)HDstrlen(descris));
+        ret = DFANputdesc(TESTFILE, DFTAG_RIG, refnum, descris, (int32)strlen(descris));
         RESULT("DFANputdesc");
     }
 
@@ -181,23 +181,23 @@ check_lab_desc(uint16 tag, uint16 ref, char *label, char *desc)
 
     inlablen = ret = DFANgetlablen(TESTFILE, tag, ref);
     RESULT("DFANgetlablen");
-    if (inlablen != (int32)HDstrlen(label)) {
+    if (inlablen != (int32)strlen(label)) {
         printf("\t>>>BAD LABEL LENGTH.\n\t       IS: %d\n\tSHOULD BE: %d<<<\n", (int)inlablen,
-               (int)HDstrlen(label));
+               (int)strlen(label));
         num_errs++;
     }
     ret = DFANgetlabel(TESTFILE, tag, ref, inlabel, MAXLEN_LAB);
     RESULT("DFANgetlabel");
-    if (HDstrcmp(inlabel, label) != 0) {
+    if (strcmp(inlabel, label) != 0) {
         printf("\t>>>BAD LABEL. \n\t       IS: %s; \n\tSHOULD BE: %s<<<\n", inlabel, label);
         num_errs++;
     }
 
     indesclen = ret = DFANgetdesclen(TESTFILE, tag, ref);
     RESULT("DFANgetdesclen");
-    if (indesclen != (int32)HDstrlen(desc)) {
+    if (indesclen != (int32)strlen(desc)) {
         printf("\t>>>BAD DESCRIPTION LENGTH. \n\t       IS: %d", (int)indesclen);
-        printf("\n\tSHOULD BE: %d<<<\n", (int)HDstrlen(desc));
+        printf("\n\tSHOULD BE: %d<<<\n", (int)strlen(desc));
         num_errs++;
     }
     else {
@@ -205,7 +205,7 @@ check_lab_desc(uint16 tag, uint16 ref, char *label, char *desc)
         ret    = DFANgetdesc(TESTFILE, tag, ref, indesc, MAXLEN_DESC);
         RESULT("DFANgetdesc");
         indesc[indesclen] = '\0';
-        if (HDstrcmp(indesc, desc) != 0) {
+        if (strcmp(indesc, desc) != 0) {
             printf("\t>>>BAD DESCRIPTION.\n\t      IS: %s", indesc);
             printf("\n\tSHOULD BE: %s<<<\n", desc);
             num_errs++;
@@ -229,12 +229,12 @@ test_an_2(void)
 
     /* set up object labels and descriptions */
 
-    HDstrcpy(labsds, "Object label #1: sds");
-    HDstrcpy(labris, "Object label #2: image");
-    HDstrcpy(descsds, "Object Descr #1: 1  2  3  4  5  6  7  8  9 10 11 12 \n");
-    HDstrcat(descsds, "             13 14 15 16 17 18 19 20 **END SDS DESCR**\n");
-    HDstrcpy(descris, "Object Descr #2: A B C D E F G H I J K L \n");
-    HDstrcat(descris, "                M N O **END IMAGE DESCR **\n");
+    strcpy(labsds, "Object label #1: sds");
+    strcpy(labris, "Object label #2: image");
+    strcpy(descsds, "Object Descr #1: 1  2  3  4  5  6  7  8  9 10 11 12 \n");
+    strcat(descsds, "             13 14 15 16 17 18 19 20 **END SDS DESCR**\n");
+    strcpy(descris, "Object Descr #2: A B C D E F G H I J K L \n");
+    strcat(descris, "                M N O **END IMAGE DESCR **\n");
 
     /***** generate float array and image *****/
 
@@ -263,7 +263,7 @@ test_an_2(void)
             refnum = DFSDlastref();
             ret    = DFANputlabel(TESTFILE, DFTAG_SDG, refnum, labsds);
             RESULT("DFANputlabel");
-            ret = DFANputdesc(TESTFILE, DFTAG_SDG, refnum, descsds, (int32)HDstrlen(descsds));
+            ret = DFANputdesc(TESTFILE, DFTAG_SDG, refnum, descsds, (int32)strlen(descsds));
             RESULT("DFANputdesc");
         }
 
@@ -272,7 +272,7 @@ test_an_2(void)
         refnum = DFR8lastref();
         ret    = DFANputlabel(TESTFILE, DFTAG_RIG, refnum, labris);
         RESULT("DFANputlabel");
-        ret = DFANputdesc(TESTFILE, DFTAG_RIG, refnum, descris, (int32)HDstrlen(descris));
+        ret = DFANputdesc(TESTFILE, DFTAG_RIG, refnum, descris, (int32)strlen(descris));
         RESULT("DFANputdesc");
     }
 

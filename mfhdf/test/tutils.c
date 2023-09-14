@@ -51,7 +51,7 @@ make_sourcepath(char *src_path, unsigned int size)
     if (tempdir == NULL || tempdir[0] == '\0')
         return FAIL;
 
-    HDstrcpy(src_path, tempdir);
+    strcpy(src_path, tempdir);
     free(tempdir);
     return SUCCEED;
 }
@@ -86,7 +86,7 @@ make_datafilename(const char *basename, char *testfile, unsigned int size)
     strcat(tempfile, basename);
 
     /* File name is generated, return it */
-    HDstrcpy(testfile, tempfile);
+    strcpy(testfile, tempfile);
     free(tempfile);
     return SUCCEED;
 }

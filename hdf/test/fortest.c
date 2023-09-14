@@ -38,9 +38,9 @@ InitTest(const char *TheName, const char *TheCall, const char *TheDescr)
         printf("\tRequest (%s) ignored.\n", TheName);
     }
     else {
-        HDstrcpy(Test[Index].Description, TheDescr);
-        HDstrcpy(Test[Index].Name, TheName);
-        HDstrcpy(Test[Index].Call, TheCall);
+        strcpy(Test[Index].Description, TheDescr);
+        strcpy(Test[Index].Name, TheName);
+        strcpy(Test[Index].Call, TheCall);
         Test[Index].NumErrors = -1;
         Test[Index].SkipFlag  = 0;
         Index++;
@@ -102,7 +102,7 @@ main(int argc, char *argv[])
 
     for (CLLoop = 1; CLLoop < argc; CLLoop++) {
         if ((argc > CLLoop + 1) &&
-            ((HDstrcmp(argv[CLLoop], "-verbose") == 0) || (HDstrcmp(argv[CLLoop], "-v") == 0))) {
+            ((strcmp(argv[CLLoop], "-verbose") == 0) || (strcmp(argv[CLLoop], "-v") == 0))) {
             if (argv[CLLoop + 1][0] == 'l')
                 Verbosity = 5;
             else if (argv[CLLoop + 1][0] == 'm')
@@ -114,10 +114,10 @@ main(int argc, char *argv[])
             fprintf(cmdfile, "%s %d\n", VERBOSITY_STR, Verbosity);
         }
         if ((argc > CLLoop) &&
-            ((HDstrcmp(argv[CLLoop], "-summary") == 0) || (HDstrcmp(argv[CLLoop], "-s") == 0))) {
+            ((strcmp(argv[CLLoop], "-summary") == 0) || (strcmp(argv[CLLoop], "-s") == 0))) {
             Summary = 1;
         }
-        if ((argc > CLLoop) && (HDstrcmp(argv[CLLoop], "-help") == 0)) {
+        if ((argc > CLLoop) && (strcmp(argv[CLLoop], "-help") == 0)) {
             printf("Usage: fortest [-v[erbose] (l[ow]|m[edium]|h[igh]|0-9)] \n");
             printf("               [-[e]x[clude] name+] \n");
             printf("               [-o[nly] name+] \n");
@@ -142,43 +142,43 @@ main(int argc, char *argv[])
             exit(0);
         }
         if ((argc > CLLoop) &&
-            ((HDstrcmp(argv[CLLoop], "-cleanno") == 0) || (HDstrcmp(argv[CLLoop], "-c") == 0))) {
+            ((strcmp(argv[CLLoop], "-cleanno") == 0) || (strcmp(argv[CLLoop], "-c") == 0))) {
             CleanUp = 0;
             fprintf(cmdfile, "%s %s\n", CLEAN_STR, "No");
         }
         if ((argc > CLLoop + 1) &&
-            ((HDstrcmp(argv[CLLoop], "-exclude") == 0) || (HDstrcmp(argv[CLLoop], "-x") == 0))) {
+            ((strcmp(argv[CLLoop], "-exclude") == 0) || (strcmp(argv[CLLoop], "-x") == 0))) {
             Loop = CLLoop + 1;
             while ((Loop < argc) && (argv[Loop][0] != '-')) {
                 for (Loop1 = 0; Loop1 < num_tests; Loop1++) {
-                    if (HDstrcmp(argv[Loop], Test[Loop1].Name) == 0)
+                    if (strcmp(argv[Loop], Test[Loop1].Name) == 0)
                         Test[Loop1].SkipFlag = 1;
                 }
                 Loop++;
             }
         }
         if ((argc > CLLoop + 1) &&
-            ((HDstrcmp(argv[CLLoop], "-begin") == 0) || (HDstrcmp(argv[CLLoop], "-b") == 0))) {
+            ((strcmp(argv[CLLoop], "-begin") == 0) || (strcmp(argv[CLLoop], "-b") == 0))) {
             Loop = CLLoop + 1;
             while ((Loop < argc) && (argv[Loop][0] != '-')) {
                 for (Loop1 = 0; Loop1 < num_tests; Loop1++) {
-                    if (HDstrcmp(argv[Loop], Test[Loop1].Name) != 0)
+                    if (strcmp(argv[Loop], Test[Loop1].Name) != 0)
                         Test[Loop1].SkipFlag = 1;
-                    if (HDstrcmp(argv[Loop], Test[Loop1].Name) == 0)
+                    if (strcmp(argv[Loop], Test[Loop1].Name) == 0)
                         Loop1 = num_tests;
                 }
                 Loop++;
             }
         }
         if ((argc > CLLoop + 1) &&
-            ((HDstrcmp(argv[CLLoop], "-only") == 0) || (HDstrcmp(argv[CLLoop], "-o") == 0))) {
+            ((strcmp(argv[CLLoop], "-only") == 0) || (strcmp(argv[CLLoop], "-o") == 0))) {
             for (Loop = 0; Loop < num_tests; Loop++) {
                 Test[Loop].SkipFlag = 1;
             }
             Loop = CLLoop + 1;
             while ((Loop < argc) && (argv[Loop][0] != '-')) {
                 for (Loop1 = 0; Loop1 < num_tests; Loop1++) {
-                    if (HDstrcmp(argv[Loop], Test[Loop1].Name) == 0)
+                    if (strcmp(argv[Loop], Test[Loop1].Name) == 0)
                         Test[Loop1].SkipFlag = 0;
                 }
                 Loop++;

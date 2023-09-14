@@ -702,7 +702,7 @@ match_dim_table_add(match_dim_table_t *mdim_tbl, unsigned *flags, char *dim_name
 
     i                     = mdim_tbl->nobjs++;
     mdim_tbl->objs[i].ref = ref;
-    HDstrcpy(mdim_tbl->objs[i].dim_name, dim_name);
+    strcpy(mdim_tbl->objs[i].dim_name, dim_name);
     mdim_tbl->objs[i].flags[0] = flags[0];
     mdim_tbl->objs[i].flags[1] = flags[1];
 }
@@ -790,7 +790,7 @@ dim_table_add(dim_table_t *dim_tbl, int ref, char *name)
 
     i                    = dim_tbl->nobjs++;
     dim_tbl->objs[i].ref = ref;
-    HDstrcpy(dim_tbl->objs[i].dim_name, name);
+    strcpy(dim_tbl->objs[i].dim_name, name);
 }
 
 /*-------------------------------------------------------------------------

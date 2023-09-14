@@ -134,7 +134,7 @@ parse_list_opts(list_info_t *list_opts, intn curr_arg, intn argc, char *argv[])
                     }                                     /* end if */
                     else {                                /* must be a tag name */
                         list_opts->limit      = LTAGNAME; /* limit to tag name output */
-                        list_opts->limit_name = HDstrdup(argv[curr_arg]);
+                        list_opts->limit_name = strdup(argv[curr_arg]);
                         list_opts->limit_tag  = tagname_to_num(list_opts->limit_name);
                         if (list_opts->limit_tag == DFTAG_NULL) {
                             printf("ERROR: invalid tag name: %s\n", list_opts->limit_name);
@@ -765,7 +765,7 @@ print_list_obj(const char *fname, list_info_t *l_opts, objinfo_t *o_info, intn o
 
         case VLONG: /* long output */
             printf("%*d%*s%*d%*d%*ld\n", NUM_FIELD_WIDTH, o_num, TAGNAME_FIELD_WIDTH,
-                   ((s = HDgettagsname(o_info->tag)) == NULL ? HDstrdup("Unknown") : s), TAG_FIELD_WIDTH,
+                   ((s = HDgettagsname(o_info->tag)) == NULL ? strdup("Unknown") : s), TAG_FIELD_WIDTH,
                    o_info->tag, REF_FIELD_WIDTH, o_info->ref, INDEX_FIELD_WIDTH, (long)o_info->index);
             free(s); /* free tagname string */
             s = NULL;
@@ -773,7 +773,7 @@ print_list_obj(const char *fname, list_info_t *l_opts, objinfo_t *o_info, intn o
 
         case VDEBUG: /* debugging output */
             printf("%*d%*s%*d%*d%*ld%*ld%*ld\n", NUM_FIELD_WIDTH, o_num, TAGNAME_FIELD_WIDTH,
-                   ((s = HDgettagsname(o_info->tag)) == NULL ? HDstrdup("Unknown") : s), TAG_FIELD_WIDTH,
+                   ((s = HDgettagsname(o_info->tag)) == NULL ? strdup("Unknown") : s), TAG_FIELD_WIDTH,
                    o_info->tag, REF_FIELD_WIDTH, o_info->ref, INDEX_FIELD_WIDTH, (long)o_info->index,
                    OFFSET_FIELD_WIDTH, (long)o_info->offset, LENGTH_FIELD_WIDTH, (long)o_info->length);
             free(s); /* free tagname string */
@@ -843,7 +843,7 @@ print_list_obj(const char *fname, list_info_t *l_opts, objinfo_t *o_info, intn o
             g_obj = get_next_group(o_info->group_info, 0);
             while (g_obj != NULL) {
                 printf("\t\t%-30s: (tag=%6d) ref=%d\n",
-                       ((s = HDgettagsname(g_obj->tag)) == NULL ? HDstrdup("Unknown") : s), g_obj->tag,
+                       ((s = HDgettagsname(g_obj->tag)) == NULL ? strdup("Unknown") : s), g_obj->tag,
                        g_obj->ref);
                 free(s); /* free tagname string */
                 s     = NULL;
@@ -976,7 +976,7 @@ do_list(intn curr_arg, intn argc, char *argv[], intn help)
                             if (o_info->tag != last_tag) {
                                 s = HDgettagsname(o_info->tag);
                                 if (s == NULL)
-                                    s = HDstrdup("Unknown");
+                                    s = strdup("Unknown");
 
                                 printf("%s%-*s: (tag %d)\n", (last_tag == 0 ? "" : "\n"), TAGNAME_FIELD_WIDTH,
                                        s, o_info->tag);

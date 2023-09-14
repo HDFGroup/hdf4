@@ -27,7 +27,7 @@ HEif(HE_CMD *cmd)
     HE_PRED *pred;    /* predicates */
     HE_CMD  *cmdTail; /* last cmd we've seen in the sublist */
 
-    if (cmd->argc == 2 && !HDstrcmp(cmd->argv[1], "-help")) {
+    if (cmd->argc == 2 && !strcmp(cmd->argv[1], "-help")) {
         puts("if [<predicates>]");
         puts("  <commands>*");
         puts("end");
@@ -43,7 +43,7 @@ HEif(HE_CMD *cmd)
     /* execute the sub list only is the predicates are satisfied */
     if (satPred(currDesc, pred)) {
         /* go through sub-list until an end is encountered */
-        for (cmdTail = cmd->sub; cmdTail && HDstrcmp(cmdTail->argv[0], "end"); cmdTail = cmdTail->next)
+        for (cmdTail = cmd->sub; cmdTail && strcmp(cmdTail->argv[0], "end"); cmdTail = cmdTail->next)
             if (cmdTail->func)
                 he_status = (*cmdTail->func)(cmdTail);
             else {
@@ -63,7 +63,7 @@ HEselect(HE_CMD *cmd)
     HE_PRED *pred;       /* predicate structure */
     HE_CMD  *cmdTail;    /* last cmd we've seen in the sublist */
 
-    if (cmd->argc == 2 && !HDstrcmp(cmd->argv[1], "-help")) {
+    if (cmd->argc == 2 && !strcmp(cmd->argv[1], "-help")) {
         puts("select [<predicates>]");
         puts("  <commands>*");
         puts("end");
@@ -83,7 +83,7 @@ HEselect(HE_CMD *cmd)
     /* step through all elements */
     for (he_currDesc = 0; he_currDesc < he_numDesc; he_currDesc++)
         if (currTag != DFTAG_NULL && satPred(currDesc, pred)) {
-            for (cmdTail = cmd->sub; HDstrcmp(cmdTail->argv[0], "end"); cmdTail = cmdTail->next)
+            for (cmdTail = cmd->sub; strcmp(cmdTail->argv[0], "end"); cmdTail = cmdTail->next)
                 if (cmdTail->func)
                     he_status = (*cmdTail->func)(cmdTail);
                 else {
@@ -108,7 +108,7 @@ HEnext(HE_CMD *cmd)
     int      tmp;
     HE_PRED *predicates;
 
-    if (cmd->argc == 2 && !HDstrcmp(cmd->argv[1], "-help")) {
+    if (cmd->argc == 2 && !strcmp(cmd->argv[1], "-help")) {
         puts("next [<predicates>]");
         puts("\tMove to the next element that satisfies the predicate");
         return HE_OK;
@@ -154,7 +154,7 @@ HEprev(HE_CMD *cmd)
     int      tmp;
     HE_PRED *predicates;
 
-    if (cmd->argc == 2 && !HDstrcmp(cmd->argv[1], "-help")) {
+    if (cmd->argc == 2 && !strcmp(cmd->argv[1], "-help")) {
         puts("prev [<predicates>]");
         puts("\tMove to the next element that satisfies the predicate");
         return HE_OK;
@@ -232,34 +232,34 @@ HEdump(HE_CMD *cmd)
                     }
                     break;
                 case HE_DECIMAL:
-                    HDstrcpy(format, "-i");
+                    strcpy(format, "-i");
                     break;
                 case HE_UDECIMAL:
-                    HDstrcpy(format, "-d");
+                    strcpy(format, "-d");
                     break;
                 case HE_SHORT:
-                    HDstrcpy(format, "-j");
+                    strcpy(format, "-j");
                     break;
                 case HE_USHORT:
-                    HDstrcpy(format, "-s");
+                    strcpy(format, "-s");
                     break;
                 case HE_BYTE:
-                    HDstrcpy(format, "-b");
+                    strcpy(format, "-b");
                     break;
                 case HE_OCTAL:
-                    HDstrcpy(format, "-o");
+                    strcpy(format, "-o");
                     break;
                 case HE_HEX:
-                    HDstrcpy(format, "-x");
+                    strcpy(format, "-x");
                     break;
                 case HE_FLOAT:
-                    HDstrcpy(format, "-f");
+                    strcpy(format, "-f");
                     break;
                 case HE_DOUBLE:
-                    HDstrcpy(format, "-e");
+                    strcpy(format, "-e");
                     break;
                 case HE_ASCII:
-                    HDstrcpy(format, "-a");
+                    strcpy(format, "-a");
                     break;
                 case HE_RAW:
                     raw = DFNT_NATIVE;
@@ -823,12 +823,12 @@ findFunc(char *fword)
     int      found = -1;
     uintn    i;
 
-    len = HDstrlen((const char *)fword);
+    len = strlen((const char *)fword);
 
     for (i = 0; i < sizeof(he_funcTab) / sizeof(he_funcTab[0]); i++)
-        if (!HDstrncmp(he_funcTab[i].str, (const char *)fword, len)) {
+        if (!strncmp(he_funcTab[i].str, (const char *)fword, len)) {
             /* check for exact match */
-            if (HDstrlen(he_funcTab[i].str) == len)
+            if (strlen(he_funcTab[i].str) == len)
                 return he_funcTab[i].func;
 
             if (found < 0)
@@ -951,7 +951,7 @@ nextWord(char **p)
     len = (unsigned)(s - q);
 
     word = (char *)malloc(len + 1);
-    HDstrncpy(word, q, len);
+    strncpy(word, q, len);
     word[len] = '\0';
 
     *p = s;
@@ -994,7 +994,7 @@ parseCmd(char **p)
         while (cmdTail->next)
             cmdTail = cmdTail->next;
 
-        for (word = nextWord(p); word && HDstrcmp(word, ";"); word = nextWord(p), cmdTail->argc++)
+        for (word = nextWord(p); word && strcmp(word, ";"); word = nextWord(p), cmdTail->argc++)
             cmdTail->argv[cmdTail->argc] = word;
 
         while (**p && (isspace((int)**p) || (**p == ';')))
@@ -1053,7 +1053,7 @@ getCmd(void)
         he_nestLevel++;
 
         cmd->sub = getCmd();
-        for (cmdTail = cmd->sub; cmdTail && HDstrcmp(cmdTail->argv[0], "end"); /* while != "end" */
+        for (cmdTail = cmd->sub; cmdTail && strcmp(cmdTail->argv[0], "end"); /* while != "end" */
              cmdTail = cmdTail->next)
             cmdTail->next = getCmd();
 
@@ -1077,7 +1077,7 @@ setAlias(char *str, HE_CMD *cmd)
     int i;
 
     for (i = 0; i < he_numAlias; i++)
-        if (!HDstrcmp(str, he_aliasTab[i].str)) {
+        if (!strcmp(str, he_aliasTab[i].str)) {
             he_aliasTab[i].cmd = cmd;
             return HE_OK;
         }
@@ -1116,7 +1116,7 @@ findAlias(char *str)
     HE_CMD *cmdTail;
 
     for (i = 0; i < he_numAlias; i++)
-        if (!HDstrcmp(str, he_aliasTab[i].str)) {
+        if (!strcmp(str, he_aliasTab[i].str)) {
             cmd    = he_aliasTab[i].cmd;
             dupCmd = mkDupCmd(cmd);
 
@@ -1136,7 +1136,7 @@ HEunalias(HE_CMD *cmd)
 
     for (a = 1; a < cmd->argc; a++)
         for (i = 0; i < he_numAlias; i++)
-            if (!HDstrcmp(cmd->argv[a], he_aliasTab[i].str)) {
+            if (!strcmp(cmd->argv[a], he_aliasTab[i].str)) {
                 he_numAlias--;
                 for (j = i; j < he_numAlias; j++) {
                     he_aliasTab[j].str = he_aliasTab[j + 1].str;
@@ -1229,12 +1229,12 @@ findKey(char *word)
     unsigned len;
     int      found = -1;
 
-    len = HDstrlen(word);
+    len = strlen(word);
 
     for (i = 0; i < sizeof(he_keyTab) / sizeof(he_keyTab[0]); i++)
-        if (!HDstrncmp(he_keyTab[i].str, word, len)) {
+        if (!strncmp(he_keyTab[i].str, word, len)) {
             /* if this is an exact match, just return */
-            if (HDstrlen(he_keyTab[i].str) == len)
+            if (strlen(he_keyTab[i].str) == len)
                 return he_keyTab[i].key;
             if (found < 0)
                 found = (int)i;

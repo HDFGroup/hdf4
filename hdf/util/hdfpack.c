@@ -85,10 +85,10 @@ main(int argc, char *argv[])
      **   Get invocation name of program
      */
     tmp = (char *)NULL;
-    HDstrcpy(invoke, strtok(argv[0], "/]\\\0"));
+    strcpy(invoke, strtok(argv[0], "/]\\\0"));
     for (;;) {
         if (tmp != NULL)
-            HDstrcpy(invoke, tmp);
+            strcpy(invoke, tmp);
         if ((tmp = strtok((char *)NULL, "/]\\\0")) == NULL)
             break;
     }
@@ -145,7 +145,7 @@ main(int argc, char *argv[])
         }
         else {
             if (fnum < 2) {
-                HDstrcpy(fname[fnum], argv[i]);
+                strcpy(fname[fnum], argv[i]);
                 fnum++;
             }
         }
@@ -155,7 +155,7 @@ main(int argc, char *argv[])
     /*
      **   Enough [unique] file arguments?
      */
-    if ((fnum != 2) || (HDstrcmp(fname[0], fname[1]) == 0)) {
+    if ((fnum != 2) || (strcmp(fname[0], fname[1]) == 0)) {
         error("need 2 unique file names");
     }
 
@@ -284,7 +284,7 @@ main(int argc, char *argv[])
                                 continue;
 
                             /* see if should be renamed */
-                            if (from_file && !HDstrcmp(info.path, from_file))
+                            if (from_file && !strcmp(info.path, from_file))
                                 name = to_file;
                             else
                                 name = info.path;

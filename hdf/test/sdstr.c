@@ -15,7 +15,7 @@
 **
 ** This program tests correctness of writing and read datastrings
 ** and dimension strings.
-** To avoid the '\0' inserted by HDstrncpy, compare the first 14
+** To avoid the '\0' inserted by strncpy, compare the first 14
 ** characters of output and input strings in subroutine compare()
 **
 ****************************************************************/
@@ -114,7 +114,7 @@ test_tsdstr(void)
 static void
 compare(const char *outstring, const char *instring)
 {
-    if (0 == HDstrcmp(outstring, instring))
+    if (0 == strcmp(outstring, instring))
         MESSAGE(5, printf("Test passed for %s\n", outstring);)
     else {
         MESSAGE(5, printf(">>> Test failed for %s\n", outstring););

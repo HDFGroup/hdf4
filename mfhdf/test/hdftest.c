@@ -186,7 +186,7 @@ main(void)
     CHECK(status, FAIL, "SDreadattr");
 
     /* Compare value reterieved to what was written */
-    if (HDstrncmp(text, "TRUE", count)) {
+    if (strncmp(text, "TRUE", count)) {
         fprintf(stderr, "SDreadattr: Invalid dimension attribute read <%s>\n", text);
         num_errs++;
     }
@@ -382,19 +382,19 @@ main(void)
     status = SDgetdatastrs(newsds, l, u, fmt, c, 80);
     CHECK(status, FAIL, "SDgetdatastrs");
 
-    if (HDstrcmp(l, "TheLabel")) {
+    if (strcmp(l, "TheLabel")) {
         fprintf(stderr, "Bogus label returned (%s)\n", l);
         num_errs++;
     }
-    if (HDstrcmp(u, "TheUnits")) {
+    if (strcmp(u, "TheUnits")) {
         fprintf(stderr, "Bogus units returned (%s)\n", u);
         num_errs++;
     }
-    if (HDstrcmp(fmt, "")) {
+    if (strcmp(fmt, "")) {
         fprintf(stderr, "Bogus format returned\n");
         num_errs++;
     }
-    if (HDstrcmp(c, "TheCordsys")) {
+    if (strcmp(c, "TheCordsys")) {
         fprintf(stderr, "Bogus cordsys returned\n");
         num_errs++;
     }
@@ -426,7 +426,7 @@ main(void)
     status = SDreadattr(f1, 0, text);
     CHECK(status, FAIL, "SDreadattr");
 
-    if (HDstrncmp(text, "globulator", count)) {
+    if (strncmp(text, "globulator", count)) {
         fprintf(stderr, "Invalid global attribute read <%s>\n", text);
         num_errs++;
     }

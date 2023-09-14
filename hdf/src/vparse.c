@@ -65,7 +65,7 @@ scanattrs(const char *attrs, int32 *attrc, char ***attrv)
 {
     char  *s, *s0, *ss;
     intn   len;
-    size_t slen = HDstrlen(attrs) + 1;
+    size_t slen = strlen(attrs) + 1;
 
     if (slen > Vpbufsize) {
         Vpbufsize = slen;
@@ -74,7 +74,7 @@ scanattrs(const char *attrs, int32 *attrc, char ***attrv)
             HRETURN_ERROR(DFE_NOSPACE, FAIL);
     } /* end if */
 
-    HDstrcpy((char *)Vpbuf, attrs);
+    strcpy((char *)Vpbuf, attrs);
     s    = (char *)Vpbuf;
     nsym = 0;
 

@@ -57,7 +57,7 @@ match_table_add(match_table_t *table, unsigned *flags, char *path, int32 tag1, i
     table->objs[i].ref1 = ref1;
     table->objs[i].tag2 = tag2;
     table->objs[i].ref2 = ref2;
-    HDstrcpy(table->objs[i].obj_name, path);
+    strcpy(table->objs[i].obj_name, path);
     table->objs[i].flags[0] = flags[0];
     table->objs[i].flags[1] = flags[1];
 }

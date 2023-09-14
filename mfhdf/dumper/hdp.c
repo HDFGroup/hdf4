@@ -104,7 +104,7 @@ init_dump_opts(dump_info_t *dump_opts)
     /* GR & SD only, print data of local attributes unless -l is given */
     dump_opts->no_lattr_data = FALSE;
 
-    HDstrcpy(dump_opts->file_name, "\0");
+    strcpy(dump_opts->file_name, "\0");
 } /* end init_dump_opts() */
 
 int
@@ -139,7 +139,7 @@ main(int argc, char *argv[])
     }
 
     for (j = 0; j < (sizeof(commands) / sizeof(command_t)); j++) {
-        if (HDstrcmp(argv[curr_arg], commands[j].name) == 0) {
+        if (strcmp(argv[curr_arg], commands[j].name) == 0) {
             cmd = commands[j].value;
             break;
         }
@@ -255,7 +255,7 @@ VShdfsize(int32 vkey, /* IN vdata key */
 
         for (i = 0; i < ac; i++) { /* check fields in vs */
             for (found = 0, j = 0; j < vs->wlist.n; j++)
-                if (!HDstrcmp(av[i], vs->wlist.name[j])) {
+                if (!strcmp(av[i], vs->wlist.name[j])) {
                     totalsize += vs->wlist.isize[j];
                     found = 1;
                     break;
@@ -341,12 +341,12 @@ VSattrhdfsize(int32 vsid, int32 findex, intn attrindex, int32 *size)
 
     /* If this vdata is not storing an attribute, it shouldn't have been passed
        to this function */
-    if (HDstrcmp(attr_vs->vsclass, _HDF_ATTRIBUTE) != 0)
+    if (strcmp(attr_vs->vsclass, _HDF_ATTRIBUTE) != 0)
         HGOTO_ERROR(DFE_BADATTR, FAIL);
 
     w = &(attr_vs->wlist);
     /* This vdata should have only 1 field */
-    /* if (w->n != 1 || HDstrcmp(w->name[0], ATTR_FIELD_NAME)) <- commented out
+    /* if (w->n != 1 || strcmp(w->name[0], ATTR_FIELD_NAME)) <- commented out
        Note: ATTR_FIELD_NAME cannot be used here because hdfeos sets fieldname
        to "AttrValues", not ATTR_FIELD_NAME. -BMR, 2014/12/01 */
     if (w->n != 1)
@@ -438,12 +438,12 @@ Vattrhdfsize(int32 vgid, intn attrindex, int32 *size)
 
     /* If this vdata is not storing an attribute, it shouldn't have been passed
        to this function */
-    if (HDstrcmp(vs->vsclass, _HDF_ATTRIBUTE) != 0)
+    if (strcmp(vs->vsclass, _HDF_ATTRIBUTE) != 0)
         HGOTO_ERROR(DFE_BADATTR, FAIL);
 
     w = &(vs->wlist);
     /* This vdata should have only 1 field */
-    /* if (w->n != 1 || HDstrcmp(w->name[0], ATTR_FIELD_NAME)) <- commented out
+    /* if (w->n != 1 || strcmp(w->name[0], ATTR_FIELD_NAME)) <- commented out
        Note: ATTR_FIELD_NAME cannot be used here because hdfeos sets fieldname
        to "AttrValues", not ATTR_FIELD_NAME. -BMR, 2014/12/01 */
     if (w->n != 1)

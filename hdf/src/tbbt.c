@@ -23,7 +23,7 @@
 #include "tbbt.h"
 
 #define KEYcmp(k1, k2, a)                                                                                    \
-    ((NULL != compar) ? (*compar)(k1, k2, a) : memcmp(k1, k2, 0 < (a) ? (a) : (intn)HDstrlen(k1)))
+    ((NULL != compar) ? (*compar)(k1, k2, a) : memcmp(k1, k2, 0 < (a) ? (a) : (intn)strlen(k1)))
 
 void tbbt1dump(TBBT_NODE *node, intn method);
 

@@ -120,8 +120,8 @@ main(int ac, char **av)
             return (0);
         }
         Vinquire(vg, &n, vgname);
-        if (HDstrlen(vgname) == 0)
-            HDstrcat(vgname, "NoName");
+        if (strlen(vgname) == 0)
+            strcat(vgname, "NoName");
 
         vgotag = VQuerytag(vg);
         vgoref = VQueryref(vg);
@@ -134,8 +134,8 @@ main(int ac, char **av)
             return (0);
         }
         Vgetclass(vg, vgclass);
-        if (HDstrlen(vgclass) == 0)
-            HDstrcat(vgclass, "NoClass");
+        if (strlen(vgclass) == 0)
+            strcat(vgclass, "NoClass");
 
         printf("\nvg:%d <%d/%d> (%s {%s}) has %d entries:\n", (int)nvg, (int)vgotag, (int)vgoref, vgname,
                vgclass, (int)n);
@@ -155,8 +155,8 @@ main(int ac, char **av)
                 VSinquire(vs, &nv, &interlace, fields, &vsize, vsname);
                 vsotag = VSQuerytag(vs);
                 vsoref = VSQueryref(vs);
-                if (HDstrlen(vsname) == 0)
-                    HDstrcat(vsname, "NoName");
+                if (strlen(vsname) == 0)
+                    strcat(vsname, "NoName");
                 VSgetclass(vs, vsclass);
                 printf("  vs:%d <%d/%d> nv=%d i=%d fld [%s] vsize=%d (%s {%s})\n", (int)t, (int)vsotag,
                        (int)vsoref, (int)nv, (int)interlace, fields, (int)vsize, vsname, vsclass);
@@ -188,8 +188,8 @@ main(int ac, char **av)
                     return (0);
                 }
                 Vgetclass(vg, vgclass);
-                if (HDstrlen(vgclass) == 0)
-                    HDstrcat(vgclass, "NoClass");
+                if (strlen(vgclass) == 0)
+                    strcat(vgclass, "NoClass");
 
                 /* get length of the vgname to allocate enough space */
                 Vgetnamelen(vgt, &name_len);
@@ -199,8 +199,8 @@ main(int ac, char **av)
                     return (0);
                 }
                 Vinquire(vgt, &ne, vgname);
-                if (HDstrlen(vgname) == 0)
-                    HDstrcat(vgname, "NoName");
+                if (strlen(vgname) == 0)
+                    strcat(vgname, "NoName");
                 vgotag = VQuerytag(vgt);
                 vgoref = VQueryref(vgt);
                 Vgetclass(vgt, vgclass);
@@ -247,8 +247,8 @@ main(int ac, char **av)
                 continue;
             }
             VSinquire(vs, &nv, &interlace, fields, &vsize, vsname);
-            if (HDstrlen(vsname) == 0)
-                HDstrcat(vsname, "NoName");
+            if (strlen(vsname) == 0)
+                strcat(vsname, "NoName");
             vsotag = VSQuerytag(vs);
             vsoref = VSQueryref(vs);
             VSgetclass(vs, vsclass);

@@ -358,12 +358,12 @@ NC_new_cdf(const char *name, int mode)
 
             /* copy filename only up to its length instead of FILENAME_MAX as
                used to be */
-            HDstrncpy(cdf->path, name, strlen(name) + 1);
+            strncpy(cdf->path, name, strlen(name) + 1);
             cdf->path[strlen(name)] = '\0';
             break;
         case netCDF_FILE:
             /* Nothing */
-            HDstrncpy(cdf->path, name, strlen(name) + 1);
+            strncpy(cdf->path, name, strlen(name) + 1);
             cdf->path[strlen(name)] = '\0';
             break;
         case CDF_FILE:
@@ -958,10 +958,10 @@ hdf_write_dim(XDR *xdrs, NC *handle, NC_dim **dim, int32 cnt)
     else
         class = _HDF_DIMENSION;
 
-    if (HDstrncmp((*dim)->name->values, "fakeDim", 7) == 0)
+    if (strncmp((*dim)->name->values, "fakeDim", 7) == 0)
         sprintf(name, "fakeDim%d", (int)cnt);
     else
-        HDstrcpy(name, (*dim)->name->values);
+        strcpy(name, (*dim)->name->values);
 
     /* write out the dimension group? */
     (*dim)->vgid = VHmakegroup(handle->hdf_file, tags, refs, count, name, class);
@@ -1491,7 +1491,7 @@ hdf_read_dims(XDR *xdrs, NC *handle, int32 vg)
             if (Vgetclass(dim, vgclass) == FAIL)
                 HGOTO_FAIL(FAIL);
 
-            if (!HDstrcmp(vgclass, _HDF_DIMENSION) || !HDstrcmp(vgclass, _HDF_UDIMENSION)) {
+            if (!strcmp(vgclass, _HDF_DIMENSION) || !strcmp(vgclass, _HDF_UDIMENSION)) {
                 int is_dimval, is_dimval01;
 
                 /* init both flags to FALSE  */
@@ -1515,16 +1515,16 @@ hdf_read_dims(XDR *xdrs, NC *handle, int32 vg)
                         if (VSgetclass(vs, vsclass) == FAIL)
                             HGOTO_FAIL(FAIL);
 
-                        if (!HDstrcmp(vsclass, DIM_VALS)) {
+                        if (!strcmp(vsclass, DIM_VALS)) {
                             is_dimval = TRUE;
-                            if (HDstrcmp(vgclass, _HDF_UDIMENSION)) /* not unlimited dim */
+                            if (strcmp(vgclass, _HDF_UDIMENSION)) /* not unlimited dim */
                             {
                                 if (VSQuerycount(vs, &dim_size) == FAIL)
                                     HGOTO_FAIL(FAIL);
                             }
                         }
-                        if ((!HDstrcmp(vsclass, DIM_VALS01)) ||
-                            (!HDstrcmp(vgclass, _HDF_UDIMENSION))) { /* DIM_VALS && _HDF_UDIMENSION */
+                        if ((!strcmp(vsclass, DIM_VALS01)) ||
+                            (!strcmp(vgclass, _HDF_UDIMENSION))) { /* DIM_VALS && _HDF_UDIMENSION */
                             int32 val; /* needs a temp var since handle->numrecs */
                                        /* may not be an int32 */
                                        /*
@@ -1549,7 +1549,7 @@ hdf_read_dims(XDR *xdrs, NC *handle, int32 vg)
                              */
                             if (VSread(vs, (uint8 *)&val, 1, FULL_INTERLACE) != 1)
                                 HGOTO_FAIL(FAIL);
-                            if (!HDstrcmp(vgclass, _HDF_UDIMENSION)) {
+                            if (!strcmp(vgclass, _HDF_UDIMENSION)) {
                                 dim_size        = NC_UNLIMITED;
                                 handle->numrecs = val;
                             }
@@ -1557,7 +1557,7 @@ hdf_read_dims(XDR *xdrs, NC *handle, int32 vg)
                                 dim_size = val;
                         } /* DIM_VALS && _HDF_UDIMENSION */
 
-                        if (!HDstrcmp(vsclass, DIM_VALS01)) /* dimval01  */
+                        if (!strcmp(vsclass, DIM_VALS01)) /* dimval01  */
                             is_dimval01 = TRUE;
 
                         if (VSdetach(vs) == FAIL)
@@ -1566,7 +1566,7 @@ hdf_read_dims(XDR *xdrs, NC *handle, int32 vg)
                         /* Is it the second dim vs of a compatible dim? */
                         found = FALSE;
                         for (i = count - 1; ((i >= 0) && (!found)); i--) {
-                            if (!HDstrcmp(vgname, dimension[i]->name->values) &&
+                            if (!strcmp(vgname, dimension[i]->name->values) &&
                                 (dim_size == dimension[i]->size)) {
                                 /* vgname is the dim name and may be diff from vsname */
                                 if (is_dimval01 == TRUE && is_dimval == TRUE)
@@ -1587,7 +1587,7 @@ hdf_read_dims(XDR *xdrs, NC *handle, int32 vg)
 #ifdef DEBUG
                             fprintf(stderr, "Dimension <%s> has size %d\n", vgname, dim_size);
 #endif
-                            if (!HDstrcmp(vsclass, DIM_VALS01)) /* dimvals01 only  */
+                            if (!strcmp(vsclass, DIM_VALS01)) /* dimvals01 only  */
                                 dimension[count]->dim00_compat = 0;
 
                             /* record vgroup id here so we can use later */
@@ -1683,7 +1683,7 @@ hdf_num_attrs(NC   *handle, /* IN: handle to SDS */
             if (VSgetclass(vs, class) == FAIL)
                 HGOTO_FAIL(FAIL);
 
-            if (!HDstrcmp(class, _HDF_ATTRIBUTE))
+            if (!strcmp(class, _HDF_ATTRIBUTE))
                 count++;
 
             if (VSdetach(vs) == FAIL)
@@ -1769,7 +1769,7 @@ hdf_read_attrs(XDR *xdrs, NC *handle, int32 vg)
             if (VSgetclass(vs, class) == FAIL)
                 HGOTO_FAIL(NULL);
 
-            if (!HDstrcmp(class, _HDF_ATTRIBUTE)) {
+            if (!strcmp(class, _HDF_ATTRIBUTE)) {
                 if (VSinquire(vs, &attr_size, NULL, fields, &vsize, vsname) == FAIL)
                     HGOTO_FAIL(NULL);
 
@@ -1937,7 +1937,7 @@ hdf_read_vars(XDR *xdrs, NC *handle, int32 vg)
 
             /* Process as below if this VGroup represents a Variable or
             a Coordinate Variable */
-            if (!HDstrcmp(class, _HDF_VARIABLE)) {
+            if (!strcmp(class, _HDF_VARIABLE)) {
 
                 /*
                  * We have found a VGroup representing a Variable or a
@@ -1987,9 +1987,9 @@ hdf_read_vars(XDR *xdrs, NC *handle, int32 vg)
                                 HGOTO_FAIL(FAIL);
                             }
 
-                            if (!HDstrcmp(dimclass, _HDF_DIMENSION) || !HDstrcmp(dimclass, _HDF_UDIMENSION)) {
+                            if (!strcmp(dimclass, _HDF_DIMENSION) || !strcmp(dimclass, _HDF_UDIMENSION)) {
 
-                                if (!HDstrcmp(dimclass, _HDF_UDIMENSION))
+                                if (!strcmp(dimclass, _HDF_UDIMENSION))
                                     is_rec_var = TRUE;
 
                                 if (FAIL == Vinquire(sub, &entries, subname)) {
@@ -2026,9 +2026,9 @@ hdf_read_vars(XDR *xdrs, NC *handle, int32 vg)
                             if (FAIL == VSgetclass(sub, vsclass))
                                 HGOTO_FAIL(FAIL);
 
-                            if (!HDstrcmp(vsclass, _HDF_SDSVAR))
+                            if (!strcmp(vsclass, _HDF_SDSVAR))
                                 var_type = IS_SDSVAR;
-                            else if (!HDstrcmp(vsclass, _HDF_CRDVAR))
+                            else if (!strcmp(vsclass, _HDF_CRDVAR))
                                 var_type = IS_CRDVAR;
                             else
                                 var_type = UNKNOWN;
@@ -2711,7 +2711,7 @@ hdf_close(NC *handle)
                 }
 
                 /* look for proper vgroup */
-                if (!HDstrcmp(class, _HDF_UDIMENSION)) {
+                if (!strcmp(class, _HDF_UDIMENSION)) {
                     sub_id = -1;
                     /* look for vdata in vgroup */
                     while ((sub_id = Vgetnext(dim, sub_id)) != FAIL) {
@@ -2733,7 +2733,7 @@ hdf_close(NC *handle)
                             }
 
                             /* are these dimension vdatas? */
-                            if (!HDstrcmp(class, DIM_VALS) || !HDstrcmp(class, DIM_VALS01)) { /* yes */
+                            if (!strcmp(class, DIM_VALS) || !strcmp(class, DIM_VALS01)) { /* yes */
                                 int32 val = handle->numrecs;
 
                                 if (FAIL == VSsetfields(vs, "Values")) {

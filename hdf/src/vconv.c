@@ -366,7 +366,7 @@ oldunpackvg(VGROUP *vg, uint8 buf[], int32 *size)
         UINT16DECODE(bb, vg->ref[i]);
 
     /* retrieve vgname */
-    HDstrcpy(vg->vgname, (char *)bb);
+    strcpy(vg->vgname, (char *)bb);
 } /* oldunpackvg */
 
 /* ================================================================= */
@@ -404,12 +404,12 @@ oldunpackvs(VDATA *vs, uint8 buf[], int32 *size)
         UINT16DECODE(bb, vs->wlist.order[i]);
 
     for (i = 0; i < vs->wlist.n; i++) {
-        HDstrcpy(vs->wlist.name[i], (char *)bb);
-        bb += (HDstrlen(vs->wlist.name[i]) + 1);
+        strcpy(vs->wlist.name[i], (char *)bb);
+        bb += (strlen(vs->wlist.name[i]) + 1);
     }
 
-    HDstrcpy(vs->vsname, (char *)bb);
-    bb += (HDstrlen(vs->vsname) + 1);
+    strcpy(vs->vsname, (char *)bb);
+    bb += (strlen(vs->vsname) + 1);
 
     /* **EXTRA**  fill in the machine-dependent size fields */
     for (i = 0; i < vs->wlist.n; i++) /* FAIL check on VSIZEOF()? */

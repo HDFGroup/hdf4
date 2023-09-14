@@ -175,7 +175,7 @@ check_fann_rewrite(const char *fname)
     RESULT("ANget_tagref");
 
     /* rewrite it with 3rd label entry */
-    ret = ANwriteann(ann_handle, file_lab[2], (int32)HDstrlen(file_lab[2]));
+    ret = ANwriteann(ann_handle, file_lab[2], (int32)strlen(file_lab[2]));
     RESULT("ANwriteann");
 
     ret = ANendaccess(ann_handle);
@@ -239,9 +239,9 @@ check_fann_rewrite(const char *fname)
     }
 
     /* check ann length against 3rd label */
-    if (ann_len != (int32)HDstrlen(file_lab[2])) {
+    if (ann_len != (int32)strlen(file_lab[2])) {
         printf("\t>>>BAD FILE LABEL LENGTH.\n\t    IS: %d\n\tSHOULD BE: %d<<<\n", (int)ann_len,
-               (int)HDstrlen(file_lab[2]));
+               (int)strlen(file_lab[2]));
         num_errs++;
     }
 
@@ -263,7 +263,7 @@ check_fann_rewrite(const char *fname)
     RESULT("ANendaccess");
 
     /* check read label against 3rd label*/
-    if (HDstrncmp((const char *)ann_label, (const char *)file_lab[2], (size_t)(ann_len + 1)) != 0) {
+    if (strncmp((const char *)ann_label, (const char *)file_lab[2], (size_t)(ann_len + 1)) != 0) {
         printf("\t>>>BAD FILE LABEL. \n\t       IS: %s; \n\tSHOULD BE: %s<<<\n", ann_label, file_lab[2]);
         num_errs++;
     }
@@ -362,9 +362,9 @@ check_fann(const char *fname)
         }
 
         /* check ann length */
-        if (ann_len != (int32)HDstrlen(file_lab[i])) {
+        if (ann_len != (int32)strlen(file_lab[i])) {
             printf("\t>>>BAD FILE LABEL LENGTH.\n\t    IS: %d\n\tSHOULD BE: %d<<<\n", (int)ann_len,
-                   (int)HDstrlen(file_lab[i]));
+                   (int)strlen(file_lab[i]));
             num_errs++;
         }
 
@@ -386,7 +386,7 @@ check_fann(const char *fname)
         RESULT("ANendaccess");
 
         /* check label */
-        if (HDstrncmp((const char *)ann_label, (const char *)file_lab[i], (size_t)(ann_len + 1)) != 0) {
+        if (strncmp((const char *)ann_label, (const char *)file_lab[i], (size_t)(ann_len + 1)) != 0) {
             printf("\t>>>BAD FILE LABEL. \n\t       IS: %s; \n\tSHOULD BE: %s<<<\n", ann_label, file_lab[i]);
             num_errs++;
         }
@@ -410,9 +410,9 @@ check_fann(const char *fname)
         RESULT("ANannlen");
 
         /* check ann length */
-        if (ann_len != (int32)HDstrlen(file_desc[i])) {
+        if (ann_len != (int32)strlen(file_desc[i])) {
             printf("\t>>>BAD FILE DESC LENGTH.\n\t    IS: %d\n\tSHOULD BE: %d<<<\n", (int)ann_len,
-                   (int)HDstrlen(file_desc[i]));
+                   (int)strlen(file_desc[i]));
             num_errs++;
         }
 
@@ -434,7 +434,7 @@ check_fann(const char *fname)
         RESULT("ANendaccess");
 
         /* check desc */
-        if (HDstrncmp((const char *)ann_desc, (const char *)file_desc[i], (size_t)(ann_len + 1)) != 0) {
+        if (strncmp((const char *)ann_desc, (const char *)file_desc[i], (size_t)(ann_len + 1)) != 0) {
             printf("\t>>>BAD FILE DESC. \n\t       IS: %s; \n\tSHOULD BE: %s<<<\n", ann_desc, file_desc[i]);
             num_errs++;
         }
@@ -555,9 +555,9 @@ check_lab_desc(const char *fname, uint16 tag, uint16 ref, const char *label[], c
         RESULT("ANannlen");
 
         /* check ann length */
-        if (ann_len != (int32)HDstrlen(label[i])) {
+        if (ann_len != (int32)strlen(label[i])) {
             printf("\t>>>BAD DATA LABEL LENGTH.\n\t    IS: %d\n\tSHOULD BE: %d<<<\n", (int)ann_len,
-                   (int)HDstrlen(label[i]));
+                   (int)strlen(label[i]));
             num_errs++;
         }
 
@@ -579,7 +579,7 @@ check_lab_desc(const char *fname, uint16 tag, uint16 ref, const char *label[], c
         RESULT("ANendaccess");
 
         /* check label */
-        if (HDstrncmp((const char *)ann_label, (const char *)label[i], (size_t)(ann_len + 1)) != 0) {
+        if (strncmp((const char *)ann_label, (const char *)label[i], (size_t)(ann_len + 1)) != 0) {
             printf("\t>>>BAD DATA LABEL. \n\t       IS: %s; \n\tSHOULD BE: %s<<<\n", ann_label, label[i]);
             num_errs++;
         }
@@ -599,9 +599,9 @@ check_lab_desc(const char *fname, uint16 tag, uint16 ref, const char *label[], c
         RESULT("ANannlen");
 
         /* check desc length */
-        if (ann_len != (int32)HDstrlen(desc[i])) {
+        if (ann_len != (int32)strlen(desc[i])) {
             printf("\t>>>BAD DATA DESC LENGTH.\n\t    IS: %d\n\tSHOULD BE: %d<<<\n", (int)ann_len,
-                   (int)HDstrlen(desc[i]));
+                   (int)strlen(desc[i]));
             num_errs++;
         }
 
@@ -623,7 +623,7 @@ check_lab_desc(const char *fname, uint16 tag, uint16 ref, const char *label[], c
         RESULT("ANendaccess");
 
         /* check desc */
-        if (HDstrncmp((const char *)ann_desc, (const char *)desc[i], (size_t)ann_len) != 0) {
+        if (strncmp((const char *)ann_desc, (const char *)desc[i], (size_t)ann_len) != 0) {
             printf("\t>>>BAD DATA DESC. \n\t       IS: %s; \n\tSHOULD BE: %s<<<\n", ann_desc, desc[i]);
             num_errs++;
         }
@@ -728,7 +728,7 @@ test_man(void)
     for (i = 1; i >= 0; i--) {
         ret = ann_handle = ANcreatef(an_handle, AN_FILE_LABEL);
         RESULT("ANcreatef");
-        ret = ANwriteann(ann_handle, file_lab[i], (int32)HDstrlen(file_lab[i]));
+        ret = ANwriteann(ann_handle, file_lab[i], (int32)strlen(file_lab[i]));
         RESULT("ANwriteann");
         ret = ANendaccess(ann_handle);
         RESULT("ANendaccess");
@@ -738,7 +738,7 @@ test_man(void)
     for (i = 1; i >= 0; i--) {
         ret = ann_handle = ANcreatef(an_handle, AN_FILE_DESC);
         RESULT("ANcreatef");
-        ret = ANwriteann(ann_handle, file_desc[i], (int32)HDstrlen(file_desc[i]));
+        ret = ANwriteann(ann_handle, file_desc[i], (int32)strlen(file_desc[i]));
         RESULT("ANwriteann");
         ret = ANendaccess(ann_handle);
         RESULT("ANendaccess");
@@ -768,7 +768,7 @@ test_man(void)
             for (i = 1; i >= 0; i--) {
                 ret = ann_handle = ANcreate(an_handle, DFTAG_NDG, refnum, AN_DATA_LABEL);
                 RESULT("ANcreate");
-                ret = ANwriteann(ann_handle, labsds[i], (int32)HDstrlen(labsds[i]));
+                ret = ANwriteann(ann_handle, labsds[i], (int32)strlen(labsds[i]));
                 RESULT("ANwriteann");
                 ret = ANendaccess(ann_handle);
                 RESULT("ANendaccess");
@@ -778,7 +778,7 @@ test_man(void)
             for (i = 1; i >= 0; i--) {
                 ret = ann_handle = ANcreate(an_handle, DFTAG_NDG, refnum, AN_DATA_DESC);
                 RESULT("ANcreate");
-                ret = ANwriteann(ann_handle, descsds[i], (int32)HDstrlen(descsds[i]));
+                ret = ANwriteann(ann_handle, descsds[i], (int32)strlen(descsds[i]));
                 RESULT("ANwriteann");
                 ret = ANendaccess(ann_handle);
                 RESULT("ANendaccess");
@@ -795,7 +795,7 @@ test_man(void)
         for (i = 1; i >= 0; i--) {
             ret = ann_handle = ANcreate(an_handle, DFTAG_RIG, refnum, AN_DATA_LABEL);
             RESULT("ANcreate");
-            ret = ANwriteann(ann_handle, labris[i], (int32)HDstrlen(labris[i]));
+            ret = ANwriteann(ann_handle, labris[i], (int32)strlen(labris[i]));
             RESULT("ANwriteann");
             ret = ANendaccess(ann_handle);
             RESULT("ANendaccess");
@@ -805,7 +805,7 @@ test_man(void)
         for (i = 1; i >= 0; i--) {
             ret = ann_handle = ANcreate(an_handle, DFTAG_RIG, refnum, AN_DATA_DESC);
             RESULT("ANcreate");
-            ret = ANwriteann(ann_handle, descris[i], (int32)HDstrlen(descris[i]));
+            ret = ANwriteann(ann_handle, descris[i], (int32)strlen(descris[i]));
             RESULT("ANwriteann");
             ret = ANendaccess(ann_handle);
             RESULT("ANendaccess");

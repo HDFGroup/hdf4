@@ -850,10 +850,10 @@ SDnametoindex(int32       fid, /* IN: file ID */
         HGOTO_ERROR(DFE_ARGS, FAIL);
     }
 
-    len = HDstrlen(name);
+    len = strlen(name);
     dp  = (NC_var **)handle->vars->values;
     for (ii = 0; ii < handle->vars->count; ii++, dp++) {
-        if (len == (*dp)->name->len && HDstrncmp(name, (*dp)->name->values, HDstrlen(name)) == 0) {
+        if (len == (*dp)->name->len && strncmp(name, (*dp)->name->values, strlen(name)) == 0) {
             HGOTO_DONE((int32)ii);
         }
     }
@@ -908,10 +908,10 @@ SDgetnumvars_byname(int32       fid,  /* IN: file ID */
         HGOTO_ERROR(DFE_ARGS, FAIL);
     }
 
-    len = HDstrlen(name);
+    len = strlen(name);
     dp  = (NC_var **)handle->vars->values;
     for (ii = 0; ii < handle->vars->count; ii++, dp++) {
-        if (len == (*dp)->name->len && HDstrncmp(name, (*dp)->name->values, HDstrlen(name)) == 0)
+        if (len == (*dp)->name->len && strncmp(name, (*dp)->name->values, strlen(name)) == 0)
             count++;
     }
     *n_vars = count;
@@ -969,11 +969,11 @@ SDnametoindices(int32          fid,  /* IN: file ID */
         HGOTO_ERROR(DFE_ARGS, FAIL);
     }
 
-    len      = HDstrlen(name);
+    len      = strlen(name);
     dp       = (NC_var **)handle->vars->values;
     varlistp = var_list;
     for (ii = 0; ii < handle->vars->count; ii++, dp++) {
-        if (len == (*dp)->name->len && HDstrncmp(name, (*dp)->name->values, HDstrlen(name)) == 0) {
+        if (len == (*dp)->name->len && strncmp(name, (*dp)->name->values, strlen(name)) == 0) {
             varlistp->var_index = (int32)ii;
             varlistp->var_type  = (*dp)->var_type;
             varlistp++;
@@ -1401,10 +1401,10 @@ SDsetdimname(int32       id, /* IN: dataset ID */
     }
 
     /* check for name in use */
-    len = HDstrlen(name);
+    len = strlen(name);
     dp  = (NC_dim **)handle->dims->values;
     for (ii = 0; ii < handle->dims->count; ii++, dp++) {
-        if (len == (*dp)->name->len && HDstrncmp(name, (*dp)->name->values, HDstrlen(name)) == 0) {
+        if (len == (*dp)->name->len && strncmp(name, (*dp)->name->values, strlen(name)) == 0) {
             if (dim != (*dp)) {
                 /* a dimension with this name already exists */
                 /* so change to point to it */
@@ -1424,7 +1424,7 @@ SDsetdimname(int32       id, /* IN: dataset ID */
 
     /* throw out the old name if it exists and create a new one */
     old = dim->name;
-    new = NC_new_string((unsigned)HDstrlen(name), name);
+    new = NC_new_string((unsigned)strlen(name), name);
     if (new == NULL) {
         HGOTO_ERROR(DFE_ARGS, FAIL);
     }
@@ -2176,25 +2176,25 @@ SDsetdatastrs(int32       sdsid, /* IN: dataset ID */
     }
 
     if (l && l[0] != '\0') {
-        if (SDIputattr(&var->attrs, _HDF_LongName, DFNT_CHAR, (intn)HDstrlen(l), l) == FAIL) {
+        if (SDIputattr(&var->attrs, _HDF_LongName, DFNT_CHAR, (intn)strlen(l), l) == FAIL) {
             HGOTO_ERROR(DFE_CANTSETATTR, FAIL);
         }
     }
 
     if (u && u[0] != '\0') {
-        if (SDIputattr(&var->attrs, _HDF_Units, DFNT_CHAR, (intn)HDstrlen(u), u) == FAIL) {
+        if (SDIputattr(&var->attrs, _HDF_Units, DFNT_CHAR, (intn)strlen(u), u) == FAIL) {
             HGOTO_ERROR(DFE_CANTSETATTR, FAIL);
         }
     }
 
     if (f && f[0] != '\0') {
-        if (SDIputattr(&var->attrs, _HDF_Format, DFNT_CHAR, (intn)HDstrlen(f), f) == FAIL) {
+        if (SDIputattr(&var->attrs, _HDF_Format, DFNT_CHAR, (intn)strlen(f), f) == FAIL) {
             HGOTO_ERROR(DFE_CANTSETATTR, FAIL);
         }
     }
 
     if (c && c[0] != '\0') {
-        if (SDIputattr(&var->attrs, _HDF_CoordSys, DFNT_CHAR, (intn)HDstrlen(c), c) == FAIL) {
+        if (SDIputattr(&var->attrs, _HDF_CoordSys, DFNT_CHAR, (intn)strlen(c), c) == FAIL) {
             HGOTO_ERROR(DFE_CANTSETATTR, FAIL);
         }
     }
@@ -2440,11 +2440,11 @@ SDgetdatastrs(int32 sdsid, /* IN:  dataset ID */
         attr = (NC_attr **)NC_findattr(&(var->attrs), _HDF_LongName);
         if (attr != NULL) {
             if ((*attr)->data->count < (unsigned)len) {
-                HDstrncpy((char *)l, (*attr)->data->values, (*attr)->data->count);
+                strncpy((char *)l, (*attr)->data->values, (*attr)->data->count);
                 l[(*attr)->data->count] = '\0';
             }
             else
-                HDstrncpy((char *)l, (*attr)->data->values, len);
+                strncpy((char *)l, (*attr)->data->values, len);
         }
         else
             l[0] = '\0';
@@ -2454,11 +2454,11 @@ SDgetdatastrs(int32 sdsid, /* IN:  dataset ID */
         attr = (NC_attr **)NC_findattr(&(var->attrs), _HDF_Units);
         if (attr != NULL) {
             if ((*attr)->data->count < (unsigned)len) {
-                HDstrncpy((char *)u, (*attr)->data->values, (*attr)->data->count);
+                strncpy((char *)u, (*attr)->data->values, (*attr)->data->count);
                 u[(*attr)->data->count] = '\0';
             }
             else
-                HDstrncpy((char *)u, (*attr)->data->values, len);
+                strncpy((char *)u, (*attr)->data->values, len);
         }
         else
             u[0] = '\0';
@@ -2468,11 +2468,11 @@ SDgetdatastrs(int32 sdsid, /* IN:  dataset ID */
         attr = (NC_attr **)NC_findattr(&(var->attrs), _HDF_Format);
         if (attr != NULL) {
             if ((*attr)->data->count < (unsigned)len) {
-                HDstrncpy((char *)f, (*attr)->data->values, (*attr)->data->count);
+                strncpy((char *)f, (*attr)->data->values, (*attr)->data->count);
                 f[(*attr)->data->count] = '\0';
             }
             else
-                HDstrncpy((char *)f, (*attr)->data->values, len);
+                strncpy((char *)f, (*attr)->data->values, len);
         }
         else
             f[0] = '\0';
@@ -2482,11 +2482,11 @@ SDgetdatastrs(int32 sdsid, /* IN:  dataset ID */
         attr = (NC_attr **)NC_findattr(&(var->attrs), _HDF_CoordSys);
         if (attr != NULL) {
             if ((*attr)->data->count < (unsigned)len) {
-                HDstrncpy((char *)c, (*attr)->data->values, (*attr)->data->count);
+                strncpy((char *)c, (*attr)->data->values, (*attr)->data->count);
                 c[(*attr)->data->count] = '\0';
             }
             else
-                HDstrncpy((char *)c, (*attr)->data->values, len);
+                strncpy((char *)c, (*attr)->data->values, len);
         }
         else
             c[0] = '\0';
@@ -2616,7 +2616,7 @@ SDIgetcoordvar(NC     *handle, /* IN: file handle */
     for (ii = 0; ii < handle->vars->count; ii++, dp++) {
         /* eliminate vars with rank > 1, coord vars only have rank 1 */
         if ((*dp)->assoc->count == 1)
-            if (len == (*dp)->name->len && HDstrncmp(name->values, (*dp)->name->values, (size_t)len) == 0)
+            if (len == (*dp)->name->len && strncmp(name->values, (*dp)->name->values, (size_t)len) == 0)
                 /* only proceed if the file is a netCDF file (bugz 1644)
                 or if this variable is a coordinate var or when
                 the status is unknown due to its being created prior to
@@ -2762,19 +2762,19 @@ SDsetdimstrs(int32       id, /* IN: dimension ID */
 
     /* set the attributes */
     if (l && l[0] != '\0') {
-        if (SDIputattr(&var->attrs, _HDF_LongName, DFNT_CHAR, (intn)HDstrlen(l), l) == FAIL) {
+        if (SDIputattr(&var->attrs, _HDF_LongName, DFNT_CHAR, (intn)strlen(l), l) == FAIL) {
             HGOTO_ERROR(DFE_CANTSETATTR, FAIL);
         }
     }
 
     if (u && u[0] != '\0') {
-        if (SDIputattr(&var->attrs, _HDF_Units, DFNT_CHAR, (intn)HDstrlen(u), u) == FAIL) {
+        if (SDIputattr(&var->attrs, _HDF_Units, DFNT_CHAR, (intn)strlen(u), u) == FAIL) {
             HGOTO_ERROR(DFE_CANTSETATTR, FAIL);
         }
     }
 
     if (f && f[0] != '\0') {
-        if (SDIputattr(&var->attrs, _HDF_Format, DFNT_CHAR, (intn)HDstrlen(f), f) == FAIL) {
+        if (SDIputattr(&var->attrs, _HDF_Format, DFNT_CHAR, (intn)strlen(f), f) == FAIL) {
             HGOTO_ERROR(DFE_CANTSETATTR, FAIL);
         }
     }
@@ -3056,7 +3056,7 @@ SDdiminfo(int32  id,   /* IN:  dimension ID */
     }
 
     if (name != NULL) {
-        /* GeorgeV switched to use memcpy in r2739.  Trying back to HDstrncpy because
+        /* GeorgeV switched to use memcpy in r2739.  Trying back to strncpy because
            it should be used to copy a string (emailed with QK 5/27/2016), but tests
            failed.  Some strings are stored with NC_string, more time is needed to
            figure out the whole scheme.  Switch back to using memcpy for now.
@@ -3087,7 +3087,7 @@ SDdiminfo(int32  id,   /* IN:  dimension ID */
             /* eliminate vars with rank > 1, coord vars only have rank 1 */
             if ((*dp)->assoc->count == 1) {
                 /* check if this variable matches the searched name */
-                if (len == (*dp)->name->len && HDstrncmp(name, (*dp)->name->values, (*dp)->name->len) == 0) {
+                if (len == (*dp)->name->len && strncmp(name, (*dp)->name->values, (*dp)->name->len) == 0) {
                     if (handle->file_type == HDF_FILE) /* HDF file */
                     {
                         /* only proceed if this variable is a coordinate var or
@@ -3172,12 +3172,12 @@ SDgetdimstrs(int32 id, /* IN:  dataset ID */
     var = NULL;
     if (handle->vars) {
         name    = dim->name->values;
-        namelen = HDstrlen(name);
+        namelen = strlen(name);
         dp      = (NC_var **)handle->vars->values;
         for (ii = 0; ii < handle->vars->count; ii++, dp++) {
             /* eliminate vars with rank > 1, coord vars only have rank 1 */
             if ((*dp)->assoc->count == 1)
-                if (namelen == (*dp)->name->len && HDstrncmp(name, (*dp)->name->values, HDstrlen(name)) == 0)
+                if (namelen == (*dp)->name->len && strncmp(name, (*dp)->name->values, strlen(name)) == 0)
                     /* because a dim was given, make sure that this is a coord var */
                     /* if it is an SDS, the function will fail */
                     if ((*dp)->var_type == IS_SDSVAR) {
@@ -3201,7 +3201,7 @@ SDgetdimstrs(int32 id, /* IN:  dataset ID */
             if (attr != NULL) {
                 intn minlen;
                 minlen = ((unsigned)len > (*attr)->data->count) ? (*attr)->data->count : (unsigned)len;
-                HDstrncpy((char *)l, (*attr)->data->values, minlen);
+                strncpy((char *)l, (*attr)->data->values, minlen);
                 if ((*attr)->data->count < (unsigned)len)
                     l[(*attr)->data->count] = '\0';
             }
@@ -3214,7 +3214,7 @@ SDgetdimstrs(int32 id, /* IN:  dataset ID */
             if (attr != NULL) {
                 intn minlen;
                 minlen = (len > (*attr)->data->count) ? (*attr)->data->count : (unsigned)len;
-                HDstrncpy((char *)u, (*attr)->data->values, minlen);
+                strncpy((char *)u, (*attr)->data->values, minlen);
                 if ((*attr)->data->count < (unsigned)len)
                     u[(*attr)->data->count] = '\0';
             }
@@ -3227,7 +3227,7 @@ SDgetdimstrs(int32 id, /* IN:  dataset ID */
             if (attr != NULL) {
                 intn minlen;
                 minlen = (len > (*attr)->data->count) ? (*attr)->data->count : (unsigned)len;
-                HDstrncpy((char *)f, (*attr)->data->values, minlen);
+                strncpy((char *)f, (*attr)->data->values, minlen);
                 if ((*attr)->data->count < (unsigned)len)
                     f[(*attr)->data->count] = '\0';
             }
@@ -3458,7 +3458,7 @@ SDgetexternalinfo(int32  id,           /* IN: dataset ID */
         else if (info_block.key == SPECIAL_EXT) {
             /* If the file name is not available, something must be wrong,
             so we need to report it. */
-            if (info_block.path == NULL || HDstrlen(info_block.path) <= 0)
+            if (info_block.path == NULL || strlen(info_block.path) <= 0)
                 ret_value = FAIL;
             else {
                 intn tmp_len = info_block.length_file_name;
@@ -3479,7 +3479,7 @@ SDgetexternalinfo(int32  id,           /* IN: dataset ID */
                     actual_fname_len = (intn)buf_size < tmp_len ? (intn)buf_size : tmp_len;
 
                     /* Get the name */
-                    HDstrncpy(ext_filename, info_block.path, actual_fname_len);
+                    strncpy(ext_filename, info_block.path, actual_fname_len);
 
                     /* Get offset/length of the external data if requested */
                     if (offset != NULL)
@@ -3589,10 +3589,10 @@ SDgetexternalfile(int32  id,           /* IN: dataset ID */
         if (info_block.key == SPECIAL_EXT) {
             /* If the file name is not available, the file is probably
             corrupted, so we need to report it. */
-            if (info_block.path == NULL || HDstrlen(info_block.path) <= 0)
+            if (info_block.path == NULL || strlen(info_block.path) <= 0)
                 ret_value = FAIL;
             else {
-                size_t ext_file_len = HDstrlen(info_block.path);
+                size_t ext_file_len = strlen(info_block.path);
 
                 /* If caller requests the length of the external file name
                    only, return the length */
@@ -3604,7 +3604,7 @@ SDgetexternalfile(int32  id,           /* IN: dataset ID */
                         HGOTO_ERROR(DFE_ARGS, FAIL);
 
                     /* Get the name and its length */
-                    HDstrncpy(ext_filename, info_block.path, buf_size);
+                    strncpy(ext_filename, info_block.path, buf_size);
                     actual_len = buf_size < ext_file_len ? buf_size : ext_file_len;
 
                     /* Get the offset in the external file if it's requested */
@@ -4299,11 +4299,10 @@ SDfindattr(int32       id, /* IN: object ID */
      */
 
     attr = (NC_attr **)ap->values;
-    len  = HDstrlen(attrname);
+    len  = strlen(attrname);
 
     for (attrid = 0; attrid < ap->count; attrid++, attr++) {
-        if (len == (*attr)->name->len &&
-            HDstrncmp(attrname, (*attr)->name->values, HDstrlen(attrname)) == 0) {
+        if (len == (*attr)->name->len && strncmp(attrname, (*attr)->name->values, strlen(attrname)) == 0) {
             /* found it */
             HGOTO_DONE(attrid);
         }
@@ -4530,7 +4529,7 @@ SDiscoordvar(int32 id /* IN: dataset ID */)
             HGOTO_ERROR(DFE_ARGS, FALSE);
         }
 
-        if (HDstrcmp(var->name->values, dim->name->values)) {
+        if (strcmp(var->name->values, dim->name->values)) {
             HGOTO_ERROR(DFE_ARGS, FALSE);
         }
 
@@ -6305,7 +6304,7 @@ SDgetfilename(int32 fid, /* IN:  file ID */
     if (handle == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    len = HDstrlen(handle->path);
+    len = strlen(handle->path);
     if (filename != NULL) {
         memcpy(filename, handle->path, len);
         filename[len] = '\0';
@@ -6349,7 +6348,7 @@ SDgetnamelen(int32   id, /* IN:  object ID */
 
     /* If it is, obtain the file name's length */
     if (handle != NULL)
-        *name_len = (uint16)HDstrlen(handle->path);
+        *name_len = (uint16)strlen(handle->path);
 
     /* otherwise, check further... */
     else {

@@ -143,7 +143,7 @@ parse_dumpsds_opts(dump_info_t *dumpsds_opts, intn *curr_arg, intn argc, char *a
                 dumpsds_opts->dump_to_file = TRUE;
 
                 /* Get file name */
-                HDstrcpy(dumpsds_opts->file_name, argv[++(*curr_arg)]);
+                strcpy(dumpsds_opts->file_name, argv[++(*curr_arg)]);
 
                 (*curr_arg)++;
                 break;
@@ -985,7 +985,7 @@ printSDS_BINARY(int32 sd_id, dump_info_t *dumpsds_opts, int32 sds_index, /* inde
     intn         status = FAIL, ret_value = SUCCEED;
 
     /* temp. names for file type and curr input file name for ease of use */
-    HDstrcpy(curr_file_name, dumpsds_opts->ifile_name);
+    strcpy(curr_file_name, dumpsds_opts->ifile_name);
 
     /* Reset variable */
     memset(dimsizes, 0, sizeof(int32) * MAXRANK);
@@ -1045,9 +1045,9 @@ dsd(dump_info_t *dumpsds_opts, intn curr_arg, intn argc, char *argv[])
        of indices of the SDSs in the file that are requested, then read and
        display information and data of each SDS in the specified manner */
     while (curr_arg < argc) {
-        HDstrcpy(file_name, argv[curr_arg]);           /* get current file name */
-        HDstrcpy(dumpsds_opts->ifile_name, file_name); /* record file name */
-        curr_arg++;                                    /* move argument pointer forward */
+        strcpy(file_name, argv[curr_arg]);           /* get current file name */
+        strcpy(dumpsds_opts->ifile_name, file_name); /* record file name */
+        curr_arg++;                                  /* move argument pointer forward */
 
         /* HDF4 doesn't process netCDF 64-bit files */
         if (HDisnetcdf64(file_name)) {

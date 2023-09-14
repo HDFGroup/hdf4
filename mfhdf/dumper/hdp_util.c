@@ -27,7 +27,7 @@ tagnum_to_name(intn num)
     else
         ret = HDgettagsname((uint16)num);
     if (ret == NULL)
-        ret = HDstrdup(unknown_tag);
+        ret = strdup(unknown_tag);
     return (ret);
 } /* end tagnum_to_name() */
 
@@ -65,7 +65,7 @@ make_file_list(intn curr_arg, intn argc, char *argv[])
     ret->max_files = (argc - curr_arg);
     ret->curr_file = 0;
     for (i = 0; curr_arg < argc; i++, curr_arg++)
-        ret->file_arr[i] = HDstrdup(argv[curr_arg]);
+        ret->file_arr[i] = strdup(argv[curr_arg]);
     return (ret);
 } /* end make_file_list() */
 
@@ -616,7 +616,7 @@ parse_number_opts(char *argv[], int *curr_arg, number_filter_t *filter)
     }
 
     /* then traverse the list and count the number of items in it */
-    while ((tempPtr = HDstrchr(ptr, ',')) != NULL) {
+    while ((tempPtr = strchr(ptr, ',')) != NULL) {
         numItems++;        /* count number of items in the list */
         ptr = tempPtr + 1; /* forward pointer to next item, after a comma */
     }                      /* end while */
@@ -654,7 +654,7 @@ parse_number_opts(char *argv[], int *curr_arg, number_filter_t *filter)
     ptr = argv[*curr_arg];
     i   = 0; /* index of the list */
     while (i < numItems) {
-        tempPtr = HDstrchr(ptr, ',');
+        tempPtr = strchr(ptr, ',');
         if (tempPtr != NULL)
             *tempPtr = '\0';             /* end the string of digits */
         filter->num_list[i] = atoi(ptr); /* convert string to digits */
@@ -687,7 +687,7 @@ parse_string_opts(char *argv[], int *curr_arg, char_filter_t *filter)
     }
 
     /* then traverse the list and count the number of strings in it */
-    while ((tempPtr = HDstrchr(ptr, ',')) != NULL) {
+    while ((tempPtr = strchr(ptr, ',')) != NULL) {
         numItems++;
         ptr = tempPtr + 1;
     }                 /* end while */
@@ -702,15 +702,15 @@ parse_string_opts(char *argv[], int *curr_arg, char_filter_t *filter)
     ptr = argv[*curr_arg];
     i   = 0; /* init the index of the list */
     while (i < numItems) {
-        tempPtr = HDstrchr(ptr, ','); /* find the end of a string */
+        tempPtr = strchr(ptr, ','); /* find the end of a string */
         if (tempPtr != NULL)
             *tempPtr = '\0'; /* end the string with a NULL char */
 
         /* allocate space for each string */
-        filter->str_list[i] = (char *)malloc(sizeof(char) * (HDstrlen(ptr) + 1));
+        filter->str_list[i] = (char *)malloc(sizeof(char) * (strlen(ptr) + 1));
         CHECK_ALLOC(filter->str_list[i], "filter->str_list[i]", "parse_string_opts");
-        HDstrcpy(filter->str_list[i], ptr); /* get the current string */
-        ptr = tempPtr + 1;                  /* move pointer to next item or end of list */
+        strcpy(filter->str_list[i], ptr); /* get the current string */
+        ptr = tempPtr + 1;                /* move pointer to next item or end of list */
         i++;
     } /* end while */
 
@@ -747,7 +747,7 @@ parse_value_opts(char *argv[], int *curr_arg, dump_info_t **dump_opts, info_type
     }
 
     /* then traverse the list and count the number of items in it */
-    while ((tempPtr = HDstrchr(ptr, ',')) != NULL) {
+    while ((tempPtr = strchr(ptr, ',')) != NULL) {
         numItems++;        /* count number of items in the list */
         ptr = tempPtr + 1; /* forward pointer to next item, after a comma */
     }                      /* end while */
@@ -791,7 +791,7 @@ parse_value_opts(char *argv[], int *curr_arg, dump_info_t **dump_opts, info_type
     /* index of the list, it should start at 0 or at the number of SDSs chosen so far */
     i = (*dump_opts)->num_chosen != NO_SPECIFIC ? (*dump_opts)->num_chosen : 0;
     while (i < numItems) {
-        tempPtr = HDstrchr(ptr, ',');
+        tempPtr = strchr(ptr, ',');
         if (tempPtr != NULL)
             *tempPtr = '\0'; /* end the string of digits */
         switch (info_type) {
@@ -807,18 +807,18 @@ parse_value_opts(char *argv[], int *curr_arg, dump_info_t **dump_opts, info_type
 
             case IS_NAME:
                 /* get the current string of characters for name */
-                (*dump_opts)->all_types[i].name = (char *)malloc(sizeof(char) * (HDstrlen(ptr) + 1));
+                (*dump_opts)->all_types[i].name = (char *)malloc(sizeof(char) * (strlen(ptr) + 1));
                 CHECK_ALLOC((*dump_opts)->all_types[i].name, "(*dump_opts)->all_types[i].name",
                             "parse_string_opts");
-                HDstrcpy((*dump_opts)->all_types[i].name, ptr);
+                strcpy((*dump_opts)->all_types[i].name, ptr);
                 break;
 
             case IS_CLASS:
                 /* get the current string of characters for class name */
-                (*dump_opts)->all_types[i].classname = (char *)malloc(sizeof(char) * (HDstrlen(ptr) + 1));
+                (*dump_opts)->all_types[i].classname = (char *)malloc(sizeof(char) * (strlen(ptr) + 1));
                 CHECK_ALLOC((*dump_opts)->all_types[i].classname, "(*dump_opts)->all_types[i].classname",
                             "parse_string_opts");
-                HDstrcpy((*dump_opts)->all_types[i].classname, ptr);
+                strcpy((*dump_opts)->all_types[i].classname, ptr);
                 break;
 
             default:

@@ -94,8 +94,8 @@ matchnocase(char *strx, /* IN: first string to be compared */
     int32 i;
     int32 nx, ny; /* length of strings */
 
-    nx = HDstrlen(strx);
-    ny = HDstrlen(stry);
+    nx = strlen(strx);
+    ny = strlen(stry);
 
     if (nx != ny)
         return (FALSE); /* different lengths */
@@ -285,9 +285,9 @@ VSgetfields(int32 vkey, /* IN: vdata key */
     fields[0] = '\0';
     /* No special handling for 0-field vdatas, this algorithm should work fine. */
     for (i = 0; i < vs->wlist.n; i++) { /* build the comma-separated string */
-        HDstrcat(fields, vs->wlist.name[i]);
+        strcat(fields, vs->wlist.name[i]);
         if (i < vs->wlist.n - 1)
-            HDstrcat(fields, ",");
+            strcat(fields, ",");
     }
 
     /* return number of fields */
@@ -358,7 +358,7 @@ VSfexist(int32 vkey, /* IN: vdata key */
                 break;
             }
 #else
-            if (HDstrcmp(s, w->name[j]) == 0) {
+            if (strcmp(s, w->name[j]) == 0) {
                 found = 1;
                 break;
             }
@@ -431,7 +431,7 @@ VSsizeof(int32 vkey, /* IN vdata key */
 
         for (i = 0; i < ac; i++) { /* check fields in vs */
             for (found = 0, j = 0; j < vs->wlist.n; j++)
-                if (!HDstrcmp(av[i], vs->wlist.name[j])) {
+                if (!strcmp(av[i], vs->wlist.name[j])) {
                     totalsize += vs->wlist.esize[j];
                     found = 1;
                     break;
@@ -509,12 +509,12 @@ VSsetname(int32       vkey, /* IN: Vdata key */
     curr_len = strnlen(vs->vsname, VSNAMELENMAX + 1);
 
     /* check length of new name against MAX length */
-    if ((slen = HDstrlen(vsname)) > VSNAMELENMAX) { /* truncate name */
-        HDstrncpy(vs->vsname, vsname, VSNAMELENMAX);
+    if ((slen = strlen(vsname)) > VSNAMELENMAX) { /* truncate name */
+        strncpy(vs->vsname, vsname, VSNAMELENMAX);
         vs->vsname[VSNAMELENMAX] = '\0';
     }
     else /* copy whole name */
-        HDstrcpy(vs->vsname, vsname);
+        strcpy(vs->vsname, vsname);
 
     vs->marked = TRUE; /* mark vdata as being modified */
 
@@ -566,15 +566,15 @@ VSsetclass(int32       vkey, /* IN: vdata key */
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
     /* get current length of vdata class name */
-    curr_len = (intn)HDstrlen(vs->vsclass);
+    curr_len = (intn)strlen(vs->vsclass);
 
     /* check length of new class name against MAX length */
-    if ((slen = (intn)HDstrlen(vsclass)) > VSNAMELENMAX) {
-        HDstrncpy(vs->vsclass, vsclass, VSNAMELENMAX);
+    if ((slen = (intn)strlen(vsclass)) > VSNAMELENMAX) {
+        strncpy(vs->vsclass, vsclass, VSNAMELENMAX);
         vs->vsclass[VSNAMELENMAX] = '\0';
     }
     else
-        HDstrcpy(vs->vsclass, vsclass);
+        strcpy(vs->vsclass, vsclass);
 
     vs->marked = TRUE; /* mark vdata as being modified */
 
@@ -622,7 +622,7 @@ VSgetname(int32 vkey, /* IN: vdata key */
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
     /* copy vdata name over */
-    HDstrcpy(vsname, vs->vsname);
+    strcpy(vsname, vs->vsname);
 
 done:
     return ret_value;
@@ -665,7 +665,7 @@ VSgetclass(int32 vkey, /* IN: vdata key */
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
     /* copy class name over */
-    HDstrcpy(vsclass, vs->vsclass);
+    strcpy(vsclass, vs->vsclass);
 
 done:
     return ret_value;
@@ -899,7 +899,7 @@ Vfind(HFILEID     f, /* IN: file id */
 
         /* compare vgroup name to 'vgname' if it had been set */
         if (vg->vgname != NULL)
-            if (!HDstrcmp(vgname, vg->vgname))
+            if (!strcmp(vgname, vg->vgname))
                 HGOTO_DONE((int32)(vg->oref)); /* found the vgroup */
     }
 
@@ -944,7 +944,7 @@ VSfind(HFILEID     f, /* IN: file id */
             HGOTO_DONE(0);
 
         /* compare vdata name to 'vsname' if it had been set */
-        if (!HDstrcmp(vsname, vs->vsname))
+        if (!strcmp(vsname, vs->vsname))
             HGOTO_DONE((int32)(vs->oref)); /* found the vdata */
     }
 
@@ -992,7 +992,7 @@ Vfindclass(HFILEID     f, /* IN: file id */
 
         /* compare vgroup class to 'vgclass' if it had been set */
         if (vg->vgclass != NULL)
-            if (!HDstrcmp(vgclass, vg->vgclass))
+            if (!strcmp(vgclass, vg->vgclass))
                 HGOTO_DONE((int32)(vg->oref)); /* found the vgroup */
     }
 
@@ -1037,7 +1037,7 @@ VSfindclass(HFILEID     f, /* IN: file id */
             HGOTO_DONE(0);
 
         /* compare vdata class to 'vsclass' if it had been set */
-        if (!HDstrcmp(vsclass, vs->vsclass))
+        if (!strcmp(vsclass, vs->vsclass))
             HGOTO_DONE((int32)(vs->oref)); /* found the vdata */
     }
 
@@ -1213,7 +1213,7 @@ VSisinternal(const char *classname)
     /* Check if this class name is one of the internal class name and return
         TRUE, otherwise, return FALSE */
     for (i = 0; i < HDF_NUM_INTERNAL_VDS; i++) {
-        if (HDstrncmp(HDF_INTERNAL_VDS[i], classname, HDstrlen(HDF_INTERNAL_VDS[i])) == 0) {
+        if (strncmp(HDF_INTERNAL_VDS[i], classname, strlen(HDF_INTERNAL_VDS[i])) == 0) {
             ret_value = TRUE;
             break;
         }
@@ -1324,7 +1324,7 @@ vscheckclass(int32 id, /* IN: vgroup id or file id */
         /* If a specific class is searched, set flag if this
            vdata has that same class */
         else {
-            size_t len = HDstrlen(_HDF_CHK_TBL_CLASS);
+            size_t len = strlen(_HDF_CHK_TBL_CLASS);
 
             /* Explanation of the comparison below:
                Because a class name that starts with _HDF_CHK_TBL_CLASS
@@ -1338,10 +1338,10 @@ vscheckclass(int32 id, /* IN: vgroup id or file id */
                will need to be modified properly */
 
             /* vsclass != _HDF_CHK_TBL_CLASS..., compare entire string*/
-            if (HDstrncmp(vsclass, _HDF_CHK_TBL_CLASS, len))
-                ret_value = HDstrcmp(vsclass, vs->vsclass) ? FALSE : TRUE;
+            if (strncmp(vsclass, _HDF_CHK_TBL_CLASS, len))
+                ret_value = strcmp(vsclass, vs->vsclass) ? FALSE : TRUE;
             else
-                ret_value = HDstrncmp(vsclass, vs->vsclass, len) ? FALSE : TRUE;
+                ret_value = strncmp(vsclass, vs->vsclass, len) ? FALSE : TRUE;
         }
     }
     /* This vd doesn't have a class name, so it must be a user-created vd */

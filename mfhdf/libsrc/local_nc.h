@@ -137,7 +137,7 @@ typedef struct {
 
 */
 #ifdef HDF
-#define NC_compare_string(s1, s2) ((s1)->hash != (s2)->hash ? 1 : HDstrcmp((s1)->values, (s2)->values))
+#define NC_compare_string(s1, s2) ((s1)->hash != (s2)->hash ? 1 : strcmp((s1)->values, (s2)->values))
 #endif /* HDF */
 
 typedef struct {

@@ -108,15 +108,15 @@ parse_dumpvd_opts(dump_info_t *dumpvd_opts, intn *curr_arg, intn argc, char *arg
                 lastItem = 0;
                 ptr      = argv[*curr_arg];
                 for (i = 0; !lastItem; i++) {
-                    tempPtr = HDstrchr(ptr, ',');
+                    tempPtr = strchr(ptr, ',');
                     if (tempPtr == NULL)
                         lastItem = 1;
                     else
                         *tempPtr = '\0';
-                    flds_chosen[i] = (char *)malloc(sizeof(char) * (HDstrlen(ptr) + 1));
+                    flds_chosen[i] = (char *)malloc(sizeof(char) * (strlen(ptr) + 1));
                     CHECK_ALLOC(flds_chosen[i], "flds_chosen[i]", "parse_dumpvd_opts");
 
-                    HDstrcpy(flds_chosen[i], ptr);
+                    strcpy(flds_chosen[i], ptr);
                     ptr = tempPtr + 1;
                 }
                 flds_chosen[i] = NULL;
@@ -142,7 +142,7 @@ parse_dumpvd_opts(dump_info_t *dumpvd_opts, intn *curr_arg, intn argc, char *arg
                 dumpvd_opts->dump_to_file = TRUE;
 
                 /* Get file name */
-                HDstrcpy(dumpvd_opts->file_name, argv[++(*curr_arg)]);
+                strcpy(dumpvd_opts->file_name, argv[++(*curr_arg)]);
 
                 (*curr_arg)++;
                 break;
@@ -231,7 +231,7 @@ VSstr_index(int32 file_id, char *filter_str, /* searched vd's name or class */
 
         /* if the vd's name or vd's class is the given string, return the
            index of the vdata found */
-        if (HDstrcmp(vdata_name, filter_str) == 0) {
+        if (strcmp(vdata_name, filter_str) == 0) {
             /* store the current index to return first */
             ret_value = (*index);
 
@@ -432,7 +432,7 @@ getFieldIndices(char *fields, char *flds_chosen[MAXCHOICES], int32 *flds_indices
 
     /* make copy of the field name list retrieved by VSinquire to use
        in processing the field names */
-    HDstrcpy(tempflds, fields);
+    strcpy(tempflds, fields);
 
     ptr = tempflds; /* used to forward the field names */
 
@@ -443,7 +443,7 @@ getFieldIndices(char *fields, char *flds_chosen[MAXCHOICES], int32 *flds_indices
        current record. */
     for (fld_name_idx = 0; !lastItem; fld_name_idx++) {
         /* look for a comma in the fields */
-        tempPtr = HDstrchr(ptr, ',');
+        tempPtr = strchr(ptr, ',');
 
         /* if no comma is found, that means the last field name is reached */
         if (tempPtr == NULL)
@@ -454,7 +454,7 @@ getFieldIndices(char *fields, char *flds_chosen[MAXCHOICES], int32 *flds_indices
             *tempPtr = '\0';
 
         /* extract that field into fldstring */
-        HDstrcpy(fldstring, ptr);
+        strcpy(fldstring, ptr);
 
         /* forward the pointer to the next field name in the list */
         ptr = tempPtr + 1;
@@ -462,7 +462,7 @@ getFieldIndices(char *fields, char *flds_chosen[MAXCHOICES], int32 *flds_indices
         /* Compare the extracted field name with each of the names
            of the fields having been chosen. */
         for (i = 0; flds_chosen[i] != NULL; i++) {
-            if (!HDstrcmp(flds_chosen[i], fldstring)) {
+            if (!strcmp(flds_chosen[i], fldstring)) {
                 flds_indices[idx] = fld_name_idx;
                 idx++;
                 flds_match = 1;
@@ -596,14 +596,14 @@ dumpvd_ascii(dump_info_t *dumpvd_opts, int32 file_id, const char *file_name, FIL
                 case DHEADER:  /* header only, no attributes, annotations
                                   or data */
                     /* store the vdata info into the vd_info_t struct for convenience */
-                    curr_vd.index     = i;           /* vdata index */
-                    curr_vd.nvf       = nvf;         /* number of records in the vdata */
-                    curr_vd.interlace = interlace;   /* interlace mode of the vdata */
-                    curr_vd.vsize     = vsize;       /* record size of the vdata */
-                    curr_vd.ref       = vdata_ref;   /* vdata ref# */
-                    curr_vd.tag       = vdata_tag;   /* vdata tag */
-                    HDstrcpy(curr_vd.clss, vdclass); /* vdata class */
-                    HDstrcpy(curr_vd.name, vdname);  /* vdata name */
+                    curr_vd.index     = i;         /* vdata index */
+                    curr_vd.nvf       = nvf;       /* number of records in the vdata */
+                    curr_vd.interlace = interlace; /* interlace mode of the vdata */
+                    curr_vd.vsize     = vsize;     /* record size of the vdata */
+                    curr_vd.ref       = vdata_ref; /* vdata ref# */
+                    curr_vd.tag       = vdata_tag; /* vdata tag */
+                    strcpy(curr_vd.clss, vdclass); /* vdata class */
+                    strcpy(curr_vd.name, vdname);  /* vdata name */
                     printHeader(fp, fldstring, fields, &curr_vd);
 
                     /* proceed to printing data if not printing header only */
@@ -634,11 +634,11 @@ dumpvd_ascii(dump_info_t *dumpvd_opts, int32 file_id, const char *file_name, FIL
                 case DDATA: /* data only */
                     if (dumpvd_opts->contents == DDATA) {
                         data_only = 1;
-                        HDstrcpy(sep, "");
+                        strcpy(sep, "");
                     }
                     else {
                         data_only = 0;
-                        HDstrcpy(sep, ";");
+                        strcpy(sep, ";");
                     }
 
                     /* Only the chosen or all fields will be dumped out. */
@@ -756,7 +756,7 @@ dumpvd_binary(dump_info_t *dumpvd_opts, int32 file_id, const char *file_name, FI
                 /* BMR: removed the if statement to determine if data_only
                    should be set; set data_only in either case */
                 data_only = 1;
-                HDstrcpy(sep, "");
+                strcpy(sep, "");
 
                 /* Only the chosen or all fields will be dumped out. */
                 if (FAIL == dumpvd(vd_id, ff, data_only, fp, sep, flds_indices, dumpallfields))
@@ -822,10 +822,10 @@ dvd(dump_info_t *dumpvd_opts, intn curr_arg, intn argc, char *argv[], char *flds
         intn isHDF = TRUE; /* FALSE, if current file is not HDF file */
 
         /* get file name */
-        HDstrcpy(file_name, argv[curr_arg]);
+        strcpy(file_name, argv[curr_arg]);
 
         /* record for later use */
-        HDstrcpy(dumpvd_opts->ifile_name, file_name);
+        strcpy(dumpvd_opts->ifile_name, file_name);
         curr_arg++;
 
         closeVD(&file_id, &vd_chosen, file_name);

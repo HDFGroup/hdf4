@@ -400,26 +400,26 @@ vpackvs(VDATA *vs,    /* IN/OUT: */
 
         /* save each field length and name - omit the null */
         for (i = 0; i < vs->wlist.n; i++) {
-            slen = HDstrlen(vs->wlist.name[i]);
+            slen = strlen(vs->wlist.name[i]);
             INT16ENCODE(bb, slen);
 
-            HDstrcpy((char *)bb, vs->wlist.name[i]);
+            strcpy((char *)bb, vs->wlist.name[i]);
             bb += slen;
         }
     } /* end if */
 
     /* save the vsnamelen and vsname - omit the null */
-    slen = HDstrlen(vs->vsname);
+    slen = strlen(vs->vsname);
     INT16ENCODE(bb, slen);
 
-    HDstrcpy((char *)bb, vs->vsname);
+    strcpy((char *)bb, vs->vsname);
     bb += slen;
 
     /* save the vsclasslen and vsclass- omit the null */
-    slen = HDstrlen(vs->vsclass);
+    slen = strlen(vs->vsclass);
     INT16ENCODE(bb, slen);
 
-    HDstrcpy((char *)bb, vs->vsclass);
+    strcpy((char *)bb, vs->vsclass);
     bb += slen;
 
     /* save the expansion tag/ref pair */

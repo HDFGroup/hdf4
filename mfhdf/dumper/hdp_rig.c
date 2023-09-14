@@ -77,7 +77,7 @@ init_dumprig_opts(dump_info_t *dumprig_opts)
     /* GR & SD only, print data of local attributes unless -l is given */
     dumprig_opts->no_lattr_data = FALSE;
 
-    HDstrcpy(dumprig_opts->file_name, "\0");
+    strcpy(dumprig_opts->file_name, "\0");
 } /* end init_dumprig_opts() */
 
 static intn
@@ -124,7 +124,7 @@ parse_dumprig_opts(dump_info_t *dumprig_opts, intn *curr_arg, intn argc, char *a
                     exit(1);
                 }
                 numItems = 0;
-                while ((tempPtr = HDstrchr(ptr, ',')) != NULL) {
+                while ((tempPtr = strchr(ptr, ',')) != NULL) {
                     numItems++;
                     ptr = tempPtr + 1;
                 }                 /* end while */
@@ -139,7 +139,7 @@ parse_dumprig_opts(dump_info_t *dumprig_opts, intn *curr_arg, intn argc, char *a
 
                 ptr = argv[*curr_arg];
                 i   = 0;
-                while ((tempPtr = HDstrchr(ptr, ',')) != NULL) {
+                while ((tempPtr = strchr(ptr, ',')) != NULL) {
                     *tempPtr                    = '\0';
                     dumprig_opts->filter_num[i] = atoi(ptr);
                     ptr                         = tempPtr + 1;
@@ -175,7 +175,7 @@ parse_dumprig_opts(dump_info_t *dumprig_opts, intn *curr_arg, intn argc, char *a
                 dumprig_opts->dump_to_file = TRUE;
 
                 /* Get file name */
-                HDstrcpy(dumprig_opts->file_name, argv[++(*curr_arg)]);
+                strcpy(dumprig_opts->file_name, argv[++(*curr_arg)]);
 
                 (*curr_arg)++;
                 break;
@@ -217,7 +217,7 @@ drig(dump_info_t *dumprig_opts, intn curr_arg, intn argc, char *argv[], int mode
     intn          ret_value = SUCCEED;
 
     while (curr_arg < argc) { /* Examine all files. */
-        HDstrcpy(file_name, argv[curr_arg]);
+        strcpy(file_name, argv[curr_arg]);
         curr_arg++;
 
         num_rig_chosen = dumprig_opts->num_chosen;

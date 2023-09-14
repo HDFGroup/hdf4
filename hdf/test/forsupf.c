@@ -31,7 +31,7 @@ ngetverb(void)
     verb_str         = getenv(FOR_VERB);
 
     if (verb_str != NULL)
-        verb_level = (intn)HDstrtol(verb_str, NULL, 0); /* convert whole string using base 10 */
+        verb_level = (intn)strtol(verb_str, NULL, 0); /* convert whole string using base 10 */
     return ((intf)verb_level);
 } /* end getverb() */
 

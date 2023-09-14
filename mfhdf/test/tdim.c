@@ -215,7 +215,7 @@ test_basic_dim()
 
     status = SDdiminfo(dim0_id, dim_name, &size, &dim_data_type, &dim_num_attrs);
     CHECK(status, FAIL, "SDdiminfo");
-    VERIFY(HDstrcmp(dim_name, "fakeDim2"), 0, "SDdiminfo");
+    VERIFY(strcmp(dim_name, "fakeDim2"), 0, "SDdiminfo");
 
     /* Set the first dimension name to DIM2_NAME */
     status = SDsetdimname(dim0_id, DIM2_NAME);

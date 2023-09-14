@@ -416,7 +416,7 @@ list_vg(int32 infile_id, int32 outfile_id, int32 sd_id, int32 sd_out, int32 gr_i
                 }
                 continue;
             }
-            if (HDstrcmp(vg_name, GR_NAME) == 0) {
+            if (strcmp(vg_name, GR_NAME) == 0) {
                 if (Vdetach(vg_id) == FAIL) {
                     printf("Could not detach group\n");
                     goto out;
@@ -631,7 +631,7 @@ vgroup_insert(int32 infile_id, int32 outfile_id, int32 sd_id, /* SD interface id
                     }
                     continue;
                 }
-                if (HDstrcmp(vg_name, GR_NAME) == 0) {
+                if (strcmp(vg_name, GR_NAME) == 0) {
                     if (Vdetach(vg_id) == FAIL) {
                         printf("Could not detach group\n");
                         goto out;

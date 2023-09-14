@@ -630,8 +630,7 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                     case DFTAG_VG: /* should be an image */
                         if ((img_key = Vattach(file_id, grp_ref, "r")) != FAIL) {
                             if (Vgetclass(img_key, textbuf) != FAIL) {
-                                if (!HDstrcmp(textbuf,
-                                              RI_NAME)) { /* it is an image, get the image's tag/ref */
+                                if (!strcmp(textbuf, RI_NAME)) { /* it is an image, get the image's tag/ref */
                                     for (j = 0; j < Vntagrefs(img_key); j++) {
                                         if (Vgettagref(img_key, j, &img_tag, &img_ref) == FAIL)
                                             continue;
@@ -686,20 +685,20 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                             /* Get the name of the attribute */
                             if ((fname = VFfieldname(at_key, 0)) == NULL) {
                                 sprintf(textbuf, "Attribute #%d", (int)new_attr->index);
-                                if ((new_attr->name = (char *)malloc(HDstrlen(textbuf) + 1)) == NULL) {
+                                if ((new_attr->name = (char *)malloc(strlen(textbuf) + 1)) == NULL) {
                                     VSdetach(at_key);
                                     free(new_attr);
                                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
                                 }
-                                HDstrcpy(new_attr->name, textbuf);
+                                strcpy(new_attr->name, textbuf);
                             }
                             else {
-                                if ((new_attr->name = (char *)malloc(HDstrlen(fname) + 1)) == NULL) {
+                                if ((new_attr->name = (char *)malloc(strlen(fname) + 1)) == NULL) {
                                     VSdetach(at_key);
                                     free(new_attr);
                                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
                                 }
-                                HDstrcpy(new_attr->name, fname);
+                                strcpy(new_attr->name, fname);
                             }
 
                             /* insert the attr instance in B-tree */
@@ -1004,22 +1003,22 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
                                         /* Get the name of the attribute */
                                         if ((fname = VFfieldname(at_key, 0)) == NULL) {
                                             sprintf(textbuf, "Attribute #%d", (int)new_attr->index);
-                                            if ((new_attr->name = (char *)malloc(HDstrlen(textbuf) + 1)) ==
+                                            if ((new_attr->name = (char *)malloc(strlen(textbuf) + 1)) ==
                                                 NULL) {
                                                 VSdetach(at_key);
                                                 free(new_attr);
                                                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
                                             }
-                                            HDstrcpy(new_attr->name, textbuf);
+                                            strcpy(new_attr->name, textbuf);
                                         }
                                         else {
-                                            if ((new_attr->name = (char *)malloc(HDstrlen(fname) + 1)) ==
+                                            if ((new_attr->name = (char *)malloc(strlen(fname) + 1)) ==
                                                 NULL) {
                                                 VSdetach(at_key);
                                                 free(new_attr);
                                                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
                                             }
-                                            HDstrcpy(new_attr->name, fname);
+                                            strcpy(new_attr->name, fname);
                                         }
 
                                         tbbtdins(new_image->lattree, new_attr,
@@ -1071,9 +1070,9 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
 
                     /* Get the name of the image */
                     sprintf(textbuf, "Raster Image #%d", (int)i);
-                    if ((new_image->name = (char *)malloc(HDstrlen(textbuf) + 1)) == NULL)
+                    if ((new_image->name = (char *)malloc(strlen(textbuf) + 1)) == NULL)
                         HGOTO_ERROR(DFE_NOSPACE, FAIL);
-                    HDstrcpy(new_image->name, textbuf);
+                    strcpy(new_image->name, textbuf);
                     new_image->name_generated = TRUE;
 
                     /* Initialize the local attribute tree */
@@ -1217,9 +1216,9 @@ GRIget_image_list(int32 file_id, gr_info_t *gr_ptr)
 
                     /* Get the name of the image */
                     sprintf(textbuf, "Raster Image #%d", (int)i);
-                    if ((new_image->name = (char *)malloc(HDstrlen(textbuf) + 1)) == NULL)
+                    if ((new_image->name = (char *)malloc(strlen(textbuf) + 1)) == NULL)
                         HGOTO_ERROR(DFE_NOSPACE, FAIL);
-                    HDstrcpy(new_image->name, textbuf);
+                    strcpy(new_image->name, textbuf);
                     new_image->name_generated = TRUE;
 
                     /* Initialize the local attribute tree */
@@ -2263,9 +2262,9 @@ GRcreate(int32 grid, const char *name, int32 ncomp, int32 nt, int32 il, int32 di
     memset(ri_ptr, 0, sizeof(ri_info_t));
 
     /* Allocate space for the name and copy it */
-    if ((ri_ptr->name = (char *)malloc(HDstrlen(name) + 1)) == NULL)
+    if ((ri_ptr->name = (char *)malloc(strlen(name) + 1)) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
-    HDstrcpy(ri_ptr->name, name);
+    strcpy(ri_ptr->name, name);
 
     /* Assign image information */
     ri_ptr->index = gr_ptr->gr_count;
@@ -2370,7 +2369,7 @@ GRnametoindex(int32 grid, const char *name)
         HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
     do {
         ri_ptr = (ri_info_t *)*t;
-        if (ri_ptr != NULL && HDstrcmp(ri_ptr->name, name) == 0) /* ie. the name matches */
+        if (ri_ptr != NULL && strcmp(ri_ptr->name, name) == 0) /* ie. the name matches */
             HGOTO_DONE(ri_ptr->index);
     } while ((t = (void **)tbbtnext((TBBT_NODE *)t)) != NULL);
 
@@ -2428,7 +2427,7 @@ GRgetiminfo(int32 riid, char *name, int32 *ncomp, int32 *nt, int32 *il, int32 di
         HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
 
     if (name != NULL)
-        HDstrcpy(name, ri_ptr->name);
+        strcpy(name, ri_ptr->name);
 
     if (ncomp != NULL)
         *ncomp = ri_ptr->img_dim.ncomps;
@@ -3840,12 +3839,12 @@ GRsetexternalfile(int32 riid, const char *filename, int32 offset)
     if (NULL == (ri_ptr = (ri_info_t *)HAatom_object(riid)))
         HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
 
-    if ((ri_ptr->ext_name = (char *)malloc(HDstrlen(filename) + 1)) == NULL)
+    if ((ri_ptr->ext_name = (char *)malloc(strlen(filename) + 1)) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* Mark the image as external and cache parameters */
     ri_ptr->ext_img = TRUE;
-    HDstrcpy(ri_ptr->ext_name, filename);
+    strcpy(ri_ptr->ext_name, filename);
     ri_ptr->ext_offset = offset;
 
     /* Create the image tag/ref if it's a new image */
@@ -4443,7 +4442,7 @@ GRsetattr(int32 id, const char *name, int32 attr_nt, int32 count, const void *da
     if ((t = (void **)tbbtfirst((TBBT_NODE *)*search_tree)) != NULL) {
         do {
             at_ptr = (at_info_t *)*t;
-            if (at_ptr != NULL && HDstrcmp(at_ptr->name, name) == 0) /* ie. the name matches */
+            if (at_ptr != NULL && strcmp(at_ptr->name, name) == 0) /* ie. the name matches */
             {
                 found = TRUE;
                 break;
@@ -4515,9 +4514,9 @@ GRsetattr(int32 id, const char *name, int32 attr_nt, int32 count, const void *da
         at_ptr->len   = count;
 
         /* allocate space for the attribute name & copy it */
-        if ((at_ptr->name = (char *)malloc(HDstrlen(name) + 1)) == NULL)
+        if ((at_ptr->name = (char *)malloc(strlen(name) + 1)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
-        HDstrcpy(at_ptr->name, name);
+        strcpy(at_ptr->name, name);
 
         /* calc. the attr size to see if it is worth caching */
         at_size = at_ptr->len * DFKNTsize((at_ptr->nt | DFNT_NATIVE) & (~DFNT_LITEND));
@@ -4628,7 +4627,7 @@ GRattrinfo(int32 id, int32 index, char *name, int32 *attr_nt, int32 *count)
     at_ptr = (at_info_t *)*t;
 
     if (name != NULL)
-        HDstrcpy(name, at_ptr->name);
+        strcpy(name, at_ptr->name);
     if (attr_nt != NULL)
         *attr_nt = at_ptr->nt;
     if (count != NULL)
@@ -4807,7 +4806,7 @@ GRfindattr(int32 id, const char *name)
         HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
     do {
         at_ptr = (at_info_t *)*t;
-        if (at_ptr != NULL && HDstrcmp(at_ptr->name, name) == 0) /* ie. the name matches */
+        if (at_ptr != NULL && strcmp(at_ptr->name, name) == 0) /* ie. the name matches */
             HGOTO_DONE(at_ptr->index);
     } while ((t = (void **)tbbtnext((TBBT_NODE *)t)) != NULL);
 

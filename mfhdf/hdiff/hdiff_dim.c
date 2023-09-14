@@ -321,7 +321,7 @@ diff_match_dim_table_add(diff_match_dim_table_t *table, unsigned *flags, char *d
 
     i                  = table->nobjs++;
     table->objs[i].ref = ref;
-    HDstrcpy(table->objs[i].dim_name, dim_name);
+    strcpy(table->objs[i].dim_name, dim_name);
     table->objs[i].flags[0] = flags[0];
     table->objs[i].flags[1] = flags[1];
 }
@@ -411,7 +411,7 @@ diff_dim_table_add(diff_dim_table_t *table, int ref, char *name)
 
     i                  = table->nobjs++;
     table->objs[i].ref = ref;
-    HDstrcpy(table->objs[i].dim_name, name);
+    strcpy(table->objs[i].dim_name, name);
 }
 
 /*-------------------------------------------------------------------------

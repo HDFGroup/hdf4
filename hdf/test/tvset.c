@@ -610,14 +610,14 @@ read_vset_stuff(void)
     status = Vgetclass(vg1, vgclass);
     CHECK(status, FAIL, "Vgetclass:vg1");
 
-    if (HDstrcmp(vgname, "Second Vgroup")) {
+    if (strcmp(vgname, "Second Vgroup")) {
         num_errs++;
         printf(">>> Got bogus Vgroup name : %s\n", vgname);
     }
 
     free(vgname);
 
-    if (HDstrcmp(vgclass, "Test object")) {
+    if (strcmp(vgclass, "Test object")) {
         num_errs++;
         printf(">>> Got bogus Vgroup class : %s\n", vgclass);
     }
@@ -688,12 +688,12 @@ read_vset_stuff(void)
     status = VSgetclass(vs1, vsclass);
     CHECK(status, FAIL, "VSgetclass:vs1");
 
-    if (HDstrcmp(vsname, "Float Vdata")) {
+    if (strcmp(vsname, "Float Vdata")) {
         num_errs++;
         printf(">>> Got bogus Vdata name (VSgetname) : %s\n", vsname);
     }
 
-    if (HDstrcmp(vsclass, "Test object")) {
+    if (strcmp(vsclass, "Test object")) {
         num_errs++;
         printf(">>> Got bogus Vdata class : %s\n", vsclass);
     }
@@ -704,7 +704,7 @@ read_vset_stuff(void)
         printf(">>> VSinquire failed on float Vdata\n");
     }
 
-    if (HDstrcmp(vsname, "Float Vdata")) {
+    if (strcmp(vsname, "Float Vdata")) {
         num_errs++;
         printf(">>> Got bogus Float Vdata name (VSinquire) : %s\n", vsname);
     }
@@ -720,12 +720,12 @@ read_vset_stuff(void)
     }
 
 #ifndef VDATA_FIELDS_ALL_UPPER
-    if (HDstrcmp(fields, FIELD1)) {
+    if (strcmp(fields, FIELD1)) {
         num_errs++;
         printf(">>> Got bogus field name %s\n", fields);
     }
 #else
-    if (HDstrcmp(fields, FIELD1_UPPER)) {
+    if (strcmp(fields, FIELD1_UPPER)) {
         num_errs++;
         printf(">>> Got bogus field name %s\n", fields);
     }
@@ -769,12 +769,12 @@ read_vset_stuff(void)
     status = VSgetclass(vs1, vsclass);
     CHECK(status, FAIL, "VSgetclass:vs1");
 
-    if (HDstrcmp(vsname, "Integer Vdata")) {
+    if (strcmp(vsname, "Integer Vdata")) {
         num_errs++;
         printf(">>> Got bogus Vdata name (VSgetname) : %s\n", vsname);
     }
 
-    if (HDstrcmp(vsclass, "Test object")) {
+    if (strcmp(vsclass, "Test object")) {
         num_errs++;
         printf(">>> Got bogus Vdata class : %s\n", vsclass);
     }
@@ -785,7 +785,7 @@ read_vset_stuff(void)
         printf(">>> VSinquire failed on float Vdata\n");
     }
 
-    if (HDstrcmp(vsname, "Integer Vdata")) {
+    if (strcmp(vsname, "Integer Vdata")) {
         num_errs++;
         printf(">>> Got bogus Integer Vdata name (VSinquire) : %s\n", vsname);
     }
@@ -800,7 +800,7 @@ read_vset_stuff(void)
         printf(">>> Got wrong data size %d should be 2 * sizeof(int32)\n", (int)sz);
     }
 
-    if (HDstrcmp(fields, FIELD2)) {
+    if (strcmp(fields, FIELD2)) {
         num_errs++;
         printf(">>> Got bogus field name %s\n", fields);
     }
@@ -891,12 +891,12 @@ read_vset_stuff(void)
     status = VSgetclass(vs1, vsclass);
     CHECK(status, FAIL, "VSgetclass:vs1");
 
-    if (HDstrcmp(vsname, "Mixed Vdata")) {
+    if (strcmp(vsname, "Mixed Vdata")) {
         num_errs++;
         printf(">>> Got bogus Vdata name (VSgetname) : %s\n", vsname);
     }
 
-    if (HDstrcmp(vsclass, "No class specified")) {
+    if (strcmp(vsclass, "No class specified")) {
         num_errs++;
         printf(">>> Got bogus Vdata class : %s\n", vsclass);
     }
@@ -907,7 +907,7 @@ read_vset_stuff(void)
         printf(">>> VSinquire failed on float Vdata\n");
     }
 
-    if (HDstrcmp(vsname, "Mixed Vdata")) {
+    if (strcmp(vsname, "Mixed Vdata")) {
         num_errs++;
         printf(">>> Got bogus Mixed Vdata name (VSinquire) : %s\n", vsname);
     }
@@ -922,7 +922,7 @@ read_vset_stuff(void)
         printf(">>> Got wrong data size %d should be sizeof(int32) + sizeof(float32)\n", (int)sz);
     }
 
-    if (HDstrcmp(fields, "A,B")) {
+    if (strcmp(fields, "A,B")) {
         num_errs++;
         printf(">>> Got bogus field name %s\n", fields);
     }
@@ -979,12 +979,12 @@ read_vset_stuff(void)
     status = VSgetclass(vs1, vsclass);
     CHECK(status, FAIL, "VSgetclass:vs1");
 
-    if (HDstrcmp(vsname, "Multi-Order Vdata")) {
+    if (strcmp(vsname, "Multi-Order Vdata")) {
         num_errs++;
         printf(">>> Got bogus Vdata name (VSgetname) : %s\n", vsname);
     }
 
-    if (HDstrcmp(vsclass, "No class specified")) {
+    if (strcmp(vsclass, "No class specified")) {
         num_errs++;
         printf(">>> Got bogus Vdata class : %s\n", vsclass);
     }
@@ -1000,7 +1000,7 @@ read_vset_stuff(void)
         printf(">>> Got wrong count %d expecting 10\n", (int)count);
     }
 
-    if (HDstrcmp(fields, MX)) {
+    if (strcmp(fields, MX)) {
         num_errs++;
         printf(">>> Got bogus field name %s\n", fields);
     }
@@ -1655,7 +1655,7 @@ test_emptyvdata(void)
     status = VSgetname(vs1, vsname);
     CHECK_VOID(status, FAIL, "VSgetname");
 
-    if (HDstrcmp(vsname, EMPTY_VDATA)) {
+    if (strcmp(vsname, EMPTY_VDATA)) {
         num_errs++;
         printf(">>> Got bogus Vdata name : %s\n", vsname);
     }
@@ -1672,7 +1672,7 @@ test_emptyvdata(void)
     status = VSgetfields(vs1, fields);
     CHECK_VOID(status, FAIL, "VSgetfields");
 
-    if (HDstrcmp(fields, "")) {
+    if (strcmp(fields, "")) {
         num_errs++;
         printf(">>> Got bogus field names : %s\n", fields);
     }
@@ -1748,7 +1748,7 @@ test_emptyvdata(void)
     status = VSgetfields(vs1, fields);
     CHECK_VOID(status, FAIL, "VSgetfields");
 
-    if (HDstrcmp(fields, FIELD1 "," FIELD2)) {
+    if (strcmp(fields, FIELD1 "," FIELD2)) {
         num_errs++;
         printf(">>> Got bogus field names : %s\n", fields);
     }
@@ -1839,7 +1839,7 @@ test_vglongnames(void)
     status = Vgetname(vg1, vgname);
     CHECK_VOID(status, FAIL, "VSgetname");
 
-    if (HDstrcmp(vgname, VG_LONGNAME)) {
+    if (strcmp(vgname, VG_LONGNAME)) {
         num_errs++;
         printf(">>> Got bogus Vgroup name : %s\n", vgname);
     }
@@ -1856,7 +1856,7 @@ test_vglongnames(void)
     status = Vgetclass(vg1, vgclass);
     CHECK_VOID(status, FAIL, "VSgetclass");
 
-    if (HDstrcmp(vgclass, VG_LONGCLASS)) {
+    if (strcmp(vgclass, VG_LONGCLASS)) {
         num_errs++;
         printf(">>> Got bogus Vgroup class : %s\n", vgclass);
     }
@@ -1883,7 +1883,7 @@ test_vglongnames(void)
     status = Vgetname(vg1, vgname);
     CHECK_VOID(status, FAIL, "VSgetname");
 
-    if (HDstrcmp(vgname, VGROUP1)) {
+    if (strcmp(vgname, VGROUP1)) {
         num_errs++;
         printf(">>> Got bogus Vgroup name : %s\n", vgname);
     }
@@ -1900,7 +1900,7 @@ test_vglongnames(void)
     status = Vgetclass(vg1, vgclass);
     CHECK_VOID(status, FAIL, "VSgetclass");
 
-    if (HDstrcmp(vgclass, VG_LONGCLASS)) {
+    if (strcmp(vgclass, VG_LONGCLASS)) {
         num_errs++;
         printf(">>> Got bogus Vgroup class : %s\n", vgclass);
     }
@@ -2232,8 +2232,8 @@ check_vgs(int32 id, uintn start_vg, uintn n_vgs, char *ident_text, /* just for d
     char    message[30];
     intn    ret_value = SUCCEED;
 
-    HDstrcpy(message, "Vgetvgroups: ");
-    HDstrcat(message, ident_text);
+    strcpy(message, "Vgetvgroups: ");
+    strcat(message, ident_text);
 
     /* Get and verify the number of vgroups in the file */
     count = Vgetvgroups(id, start_vg, n_vgs, NULL);
@@ -2272,8 +2272,8 @@ check_vds(int32 id, uintn start_vd, uintn n_vds, char *ident_text, /* just for d
     char    message[30];
     intn    ret_value = SUCCEED;
 
-    HDstrcpy(message, "VSgetvdatas: ");
-    HDstrcat(message, ident_text);
+    strcpy(message, "VSgetvdatas: ");
+    strcat(message, ident_text);
 
     /* Get and verify the number of vdatas in the file */
     count = VSgetvdatas(id, start_vd, n_vds, NULL);
@@ -2757,7 +2757,7 @@ test_extfile(void)
         /* Get the length of the external file name first - VSgetexternalfile
            is deprecated as of 4.2.7 */
         name_len = VSgetexternalfile(vdata1_id, 0, NULL, NULL);
-        VERIFY_VOID(name_len, (intn)HDstrlen(EXTERNAL_FILE), "VSgetexternalfile");
+        VERIFY_VOID(name_len, (intn)strlen(EXTERNAL_FILE), "VSgetexternalfile");
 
         extfile_name = (char *)malloc(sizeof(char *) * (name_len + 1));
         CHECK_ALLOC(extfile_name, "extfile_name", "test_extfile");
@@ -2765,21 +2765,21 @@ test_extfile(void)
         /* Old function: Get the external file name - VSgetexternalfile
            is deprecated as of 4.2.7 */
         name_len = VSgetexternalfile(vdata1_id, name_len + 1, extfile_name, &offset);
-        VERIFY_VOID(name_len, (intn)HDstrlen(EXTERNAL_FILE), "VSgetexternalfile");
+        VERIFY_VOID(name_len, (intn)strlen(EXTERNAL_FILE), "VSgetexternalfile");
         VERIFY_CHAR_VOID(extfile_name, EXTERNAL_FILE, "VSgetexternalfile");
         free(extfile_name);
     } /* old test */
 
     /* Get the length of the external file name first */
     name_len = VSgetexternalinfo(vdata1_id, 0, NULL, NULL, NULL);
-    VERIFY_VOID(name_len, (intn)HDstrlen(EXTERNAL_FILE), "VSgetexternalinfo");
+    VERIFY_VOID(name_len, (intn)strlen(EXTERNAL_FILE), "VSgetexternalinfo");
 
     extfile_name = (char *)malloc(sizeof(char *) * (name_len + 1));
     CHECK_ALLOC(extfile_name, "extfile_name", "test_extfile");
 
     /* Get the external file name */
     name_len = VSgetexternalinfo(vdata1_id, name_len + 1, extfile_name, &offset, &length);
-    VERIFY_VOID(name_len, (intn)HDstrlen(EXTERNAL_FILE), "VSgetexternalinfo");
+    VERIFY_VOID(name_len, (intn)strlen(EXTERNAL_FILE), "VSgetexternalinfo");
     VERIFY_CHAR_VOID(extfile_name, EXTERNAL_FILE, "VSgetexternalinfo");
     free(extfile_name);
 
@@ -2789,7 +2789,7 @@ test_extfile(void)
         /* Make a shorter string to verify later */
         char *short_name = (char *)malloc(sizeof(char *) * (name_len));
         memset(short_name, '\0', name_len);
-        HDstrncpy(short_name, EXTERNAL_FILE, name_len - 2);
+        strncpy(short_name, EXTERNAL_FILE, name_len - 2);
 
         /* Prepare buffer for external file name in the following test */
         extfile_name = (char *)malloc(sizeof(char *) * (name_len - 1));
@@ -2798,7 +2798,7 @@ test_extfile(void)
         /* Call VSgetexternalinfo again with smaller buffer size and make sure
            VSgetexternalinfo reads the name truncated to the given buffer size*/
         name_len = VSgetexternalinfo(vdata1_id, name_len - 2, extfile_name, &offset, &length);
-        VERIFY_VOID(name_len, (intn)HDstrlen(extfile_name), "VSgetexternalinfo");
+        VERIFY_VOID(name_len, (intn)strlen(extfile_name), "VSgetexternalinfo");
         VERIFY_CHAR_VOID(extfile_name, short_name, "VSgetexternalinfo");
         free(short_name);
         free(extfile_name);

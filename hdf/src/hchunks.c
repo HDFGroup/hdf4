@@ -1157,10 +1157,10 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
 
         /* verify class and version */
         sprintf(v_class, "%s%d", _HDF_CHK_TBL_CLASS, _HDF_CHK_TBL_CLASS_VER);
-        if (HDstrncmp(class, v_class, HDstrlen(v_class)) != 0) {
+        if (strncmp(class, v_class, strlen(v_class)) != 0) {
 #ifdef CHK_DEBUG_2
-            fprintf(stderr, " error, wrong class=%s, %d \n", class, HDstrlen(class));
-            fprintf(stderr, "            v_class=%s, %d \n", v_class, HDstrlen(v_class));
+            fprintf(stderr, " error, wrong class=%s, %d \n", class, strlen(class));
+            fprintf(stderr, "            v_class=%s, %d \n", v_class, strlen(v_class));
 #endif
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
         }
@@ -2336,7 +2336,7 @@ HMCgetdatasize(int32 file_id, uint8 *p, /* IN: access id of header info */
 
                     /* Verify class and version */
                     sprintf(v_class, "%s%d", _HDF_CHK_TBL_CLASS, _HDF_CHK_TBL_CLASS_VER);
-                    if (HDstrncmp(vsclass, v_class, HDstrlen(v_class)) != 0) {
+                    if (strncmp(vsclass, v_class, strlen(v_class)) != 0) {
                         HGOTO_ERROR(DFE_INTERNAL, FAIL);
                     }
 

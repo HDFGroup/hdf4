@@ -289,7 +289,7 @@ test_max_open_files()
         CHECK(status, FAIL, "test_maxopenfiles: SDgetfilename");
 
         /* Verify the file name retrieved against the original */
-        if (HDstrcmp(readfname, filename[index])) {
+        if (strcmp(readfname, filename[index])) {
             fprintf(stderr, "SDgetfilename: incorrect file being opened - expected <%s>, retrieved <%s>\n",
                     filename[index], readfname);
         }

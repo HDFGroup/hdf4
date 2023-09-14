@@ -435,10 +435,10 @@ DFSDgetdatalen(intn *llabel, intn *lunit, intn *lformat, intn *lcoordsys)
     if (Newdata < 0)
         HGOTO_ERROR(DFE_BADCALL, FAIL);
 
-    *llabel    = (intn)(Readsdg.dataluf[LABEL] ? HDstrlen(Readsdg.dataluf[LABEL]) : 0);
-    *lunit     = (intn)(Readsdg.dataluf[UNIT] ? HDstrlen(Readsdg.dataluf[UNIT]) : 0);
-    *lformat   = (intn)(Readsdg.dataluf[FORMAT] ? HDstrlen(Readsdg.dataluf[FORMAT]) : 0);
-    *lcoordsys = (intn)(Readsdg.coordsys ? HDstrlen(Readsdg.coordsys) : 0);
+    *llabel    = (intn)(Readsdg.dataluf[LABEL] ? strlen(Readsdg.dataluf[LABEL]) : 0);
+    *lunit     = (intn)(Readsdg.dataluf[UNIT] ? strlen(Readsdg.dataluf[UNIT]) : 0);
+    *lformat   = (intn)(Readsdg.dataluf[FORMAT] ? strlen(Readsdg.dataluf[FORMAT]) : 0);
+    *lcoordsys = (intn)(Readsdg.coordsys ? strlen(Readsdg.coordsys) : 0);
 
 done:
     return ret_value;
@@ -479,9 +479,9 @@ DFSDgetdimlen(intn dim, intn *llabel, intn *lunit, intn *lformat)
     if (dim > Readsdg.rank)
         HGOTO_ERROR(DFE_BADDIM, FAIL);
 
-    *llabel  = (intn)(Readsdg.dimluf[LABEL][dim - 1] ? HDstrlen(Readsdg.dimluf[LABEL][dim - 1]) : 0);
-    *lunit   = (intn)(Readsdg.dimluf[UNIT][dim - 1] ? HDstrlen(Readsdg.dimluf[UNIT][dim - 1]) : 0);
-    *lformat = (intn)(Readsdg.dimluf[FORMAT][dim - 1] ? HDstrlen(Readsdg.dimluf[FORMAT][dim - 1]) : 0);
+    *llabel  = (intn)(Readsdg.dimluf[LABEL][dim - 1] ? strlen(Readsdg.dimluf[LABEL][dim - 1]) : 0);
+    *lunit   = (intn)(Readsdg.dimluf[UNIT][dim - 1] ? strlen(Readsdg.dimluf[UNIT][dim - 1]) : 0);
+    *lformat = (intn)(Readsdg.dimluf[FORMAT][dim - 1] ? strlen(Readsdg.dimluf[FORMAT][dim - 1]) : 0);
 
 done:
     return ret_value;
@@ -850,7 +850,7 @@ DFSDIsetdatastrs(const char *label, const char *unit, const char *format, const 
 
         /* copy string */
         if (lufp) {
-            Writesdg.dataluf[luf] = (char *)HDstrdup(lufp);
+            Writesdg.dataluf[luf] = (char *)strdup(lufp);
             if (Writesdg.dataluf[luf] == NULL) {
                 ret_value = FAIL;
                 goto done;
@@ -861,7 +861,7 @@ DFSDIsetdatastrs(const char *label, const char *unit, const char *format, const 
     HDfreenclear(Writesdg.coordsys);
 
     if (coordsys) {
-        Writesdg.coordsys = (char *)HDstrdup(coordsys);
+        Writesdg.coordsys = (char *)strdup(coordsys);
         if (Writesdg.coordsys == NULL) {
             ret_value = FAIL;
             goto done;
@@ -970,7 +970,7 @@ DFSDIsetdimstrs(intn dim, const char *label, const char *unit, const char *forma
         */
         /* copy string */
         if (lufp) {
-            Writesdg.dimluf[luf][rdim] = (char *)HDstrdup(lufp);
+            Writesdg.dimluf[luf][rdim] = (char *)strdup(lufp);
             if (Writesdg.dimluf[luf][rdim] == NULL) {
                 ret_value = FAIL;
                 goto done;
@@ -2380,7 +2380,7 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg *sdg)
                 p = buf;
 
                 /* allocate data luf space */
-                sdg->dataluf[luf] = (char *)malloc((uint32)HDstrlen((char *)p) + 1);
+                sdg->dataluf[luf] = (char *)malloc((uint32)strlen((char *)p) + 1);
 
                 if (sdg->dataluf[luf] == NULL) {
                     DFdifree(GroupID);
@@ -2389,8 +2389,8 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg *sdg)
                 }
 
                 /* extract data luf */
-                HDstrcpy(sdg->dataluf[luf], (char *)p);
-                p += HDstrlen(sdg->dataluf[luf]) + 1;
+                strcpy(sdg->dataluf[luf], (char *)p);
+                p += strlen(sdg->dataluf[luf]) + 1;
 
                 /* get space for dimluf array */
                 sdg->dimluf[luf] = (char **)malloc((uint32)sdg->rank * sizeof(char *));
@@ -2402,14 +2402,14 @@ DFSDIgetndg(int32 file_id, uint16 tag, uint16 ref, DFSsdg *sdg)
 
                 /* extract dimension lufs */
                 for (i = 0; i < sdg->rank; i++) {
-                    sdg->dimluf[luf][i] = (char *)malloc((uint32)HDstrlen((char *)p) + 1);
+                    sdg->dimluf[luf][i] = (char *)malloc((uint32)strlen((char *)p) + 1);
                     if (sdg->dimluf[luf][i] == NULL) {
                         DFdifree(GroupID);
                         free(buf);
                         HGOTO_ERROR(DFE_NOSPACE, FAIL);
                     }
-                    HDstrcpy(sdg->dimluf[luf][i], (char *)p);
-                    p += HDstrlen(sdg->dimluf[luf][i]) + 1;
+                    strcpy(sdg->dimluf[luf][i], (char *)p);
+                    p += strlen(sdg->dimluf[luf][i]) + 1;
                 }
                 free(buf);
                 break;
@@ -2823,8 +2823,8 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg *sdg)
 
             /* if dataluf non-NULL, set up to write */
             if (sdg->dataluf[luf] && sdg->dataluf[luf][0]) {
-                HDstrcpy((char *)bufp, sdg->dataluf[luf]);
-                bufp += HDstrlen(bufp) + 1;
+                strcpy((char *)bufp, sdg->dataluf[luf]);
+                bufp += strlen(bufp) + 1;
             }
             else { /* dataluf NULL */
                 *bufp++ = '\0';
@@ -2833,8 +2833,8 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg *sdg)
             /* for each dimluf, if non-NULL, set up to write */
             for (i = 0; i < sdg->rank; i++) {
                 if (sdg->dimluf[luf] && sdg->dimluf[luf][i] && sdg->dimluf[luf][i][0]) { /* dimluf not NULL */
-                    HDstrcpy((char *)bufp, sdg->dimluf[luf][i]);
-                    bufp += HDstrlen(bufp) + 1;
+                    strcpy((char *)bufp, sdg->dimluf[luf][i]);
+                    bufp += strlen(bufp) + 1;
                 }
                 else { /* dimluf NULL */
                     *bufp++ = '\0';
@@ -2935,7 +2935,7 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg *sdg)
         Ref.coordsys = (-1);
     if (!Ref.coordsys) {
         if (Hputelement(file_id, DFTAG_SDC, ref, (uint8 *)sdg->coordsys,
-                        (int32)(HDstrlen(sdg->coordsys) + 1)) == FAIL)
+                        (int32)(strlen(sdg->coordsys) + 1)) == FAIL)
             HGOTO_ERROR(DFE_PUTELEM, FAIL);
         Ref.coordsys = (intn)ref;
     }
@@ -3201,7 +3201,7 @@ DFSDIopen(const char *filename, intn acc_mode)
         if ((file_id = Hopen(filename, acc_mode, (int16)0)) == FAIL)
             HGOTO_ERROR(DFE_BADOPEN, FAIL);
     }
-    else if ((HDstrcmp(Lastfile, filename)) ||
+    else if ((strcmp(Lastfile, filename)) ||
              (acc_mode == DFACC_CREATE)) { /* open a new file, delete nsdg table and reset lastnsdg  */
         if (nsdghdr != NULL) {
             if (nsdghdr->nsdg_t != NULL) {

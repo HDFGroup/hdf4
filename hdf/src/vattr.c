@@ -229,7 +229,7 @@ VSfindex(int32 vsid, const char *fieldname, int32 *findex)
             break;
         }
 #else
-        if (HDstrcmp(fieldname, w->name[i]) == 0) {
+        if (strcmp(fieldname, w->name[i]) == 0) {
             found   = 1;
             *findex = i;
             break;
@@ -318,7 +318,7 @@ VSsetattr(int32 vsid, int32 findex, const char *attrname, int32 datatype, int32 
                     HGOTO_ERROR(DFE_NOVS, FAIL);
                 if (NULL == (attr_vs = attr_inst->vs))
                     HGOTO_ERROR(DFE_BADPTR, FAIL);
-                if (HDstrcmp(attr_vs->vsname, attrname) == 0) {
+                if (strcmp(attr_vs->vsname, attrname) == 0) {
                     attr_w = &attr_vs->wlist;
                     if (attr_w->n != 1 || datatype != attr_w->type[0] || count != attr_w->order[0]) {
                         VSdetach(attr_vsid);
@@ -513,11 +513,11 @@ VSfindattr(int32 vsid, int32 findex, const char *attrname)
                 HGOTO_ERROR(DFE_NOVS, FAIL);
             }
             if (NULL == (attr_vs = attr_inst->vs) ||
-                HDstrncmp(attr_vs->vsclass, _HDF_ATTRIBUTE, HDstrlen(_HDF_ATTRIBUTE))) {
+                strncmp(attr_vs->vsclass, _HDF_ATTRIBUTE, strlen(_HDF_ATTRIBUTE))) {
                 VSdetach(attr_vsid);
                 HGOTO_ERROR(DFE_BADATTR, FAIL);
             }
-            if (!HDstrcmp(attr_vs->vsname, attrname)) {
+            if (!strcmp(attr_vs->vsname, attrname)) {
                 ret_value = a_index;
                 found     = 1;
             }
@@ -600,16 +600,16 @@ VSattrinfo(int32 vsid, int32 findex, intn attrindex, char *name, int32 *datatype
         HGOTO_ERROR(DFE_CANTATTACH, FAIL);
     if (NULL == (attr_inst = (vsinstance_t *)HAatom_object(attr_vsid)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
-    if (NULL == (attr_vs = attr_inst->vs) || HDstrcmp(attr_vs->vsclass, _HDF_ATTRIBUTE) != 0)
+    if (NULL == (attr_vs = attr_inst->vs) || strcmp(attr_vs->vsclass, _HDF_ATTRIBUTE) != 0)
         HGOTO_ERROR(DFE_BADATTR, FAIL);
     if (name) {
-        HDstrncpy(name, attr_vs->vsname, HDstrlen(attr_vs->vsname));
-        name[HDstrlen(attr_vs->vsname)] = '\0';
+        strncpy(name, attr_vs->vsname, strlen(attr_vs->vsname));
+        name[strlen(attr_vs->vsname)] = '\0';
     }
     w       = &(attr_vs->wlist);
     fldname = w->name[0];
     /* this vdata has 1 field */
-    if (w->n != 1 || HDstrcmp(fldname, ATTR_FIELD_NAME))
+    if (w->n != 1 || strcmp(fldname, ATTR_FIELD_NAME))
         HGOTO_ERROR(DFE_BADATTR, FAIL);
     if (datatype)
         *datatype = (int32)w->type[0];
@@ -690,11 +690,11 @@ VSgetattr(int32 vsid, int32 findex, intn attrindex, void *values)
     /* check correctness of attr vdata */
     if (NULL == (attr_inst = (vsinstance_t *)HAatom_object(attr_vsid)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
-    if (NULL == (attr_vs = attr_inst->vs) || HDstrcmp(attr_vs->vsclass, _HDF_ATTRIBUTE) != 0)
+    if (NULL == (attr_vs = attr_inst->vs) || strcmp(attr_vs->vsclass, _HDF_ATTRIBUTE) != 0)
         HGOTO_ERROR(DFE_BADATTR, FAIL);
     if (FAIL == VSinquire(attr_vsid, &n_recs, &il, fields, NULL, NULL))
         HGOTO_ERROR(DFE_BADATTR, FAIL);
-    if (HDstrcmp(fields, ATTR_FIELD_NAME) != 0)
+    if (strcmp(fields, ATTR_FIELD_NAME) != 0)
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
     /* ready to read */
     if (FAIL == VSsetfields(attr_vsid, fields))
@@ -736,7 +736,7 @@ VSisattr(int32 vsid)
         HGOTO_ERROR(DFE_NOVS, FALSE);
     if (NULL == (vs = vs_inst->vs))
         HGOTO_ERROR(DFE_NOVS, FALSE);
-    if (HDstrcmp(vs->vsclass, _HDF_ATTRIBUTE) == 0)
+    if (strcmp(vs->vsclass, _HDF_ATTRIBUTE) == 0)
         ret_value = TRUE;
 done:
     return ret_value;
@@ -814,7 +814,7 @@ Vsetattr(int32 vgid, const char *attrname, int32 datatype, int32 count, const vo
                 HGOTO_ERROR(DFE_NOVS, FAIL);
             if (NULL == (vs = vs_inst->vs))
                 HGOTO_ERROR(DFE_BADPTR, FAIL);
-            if (HDstrcmp(vs->vsname, attrname) == 0) {
+            if (strcmp(vs->vsname, attrname) == 0) {
                 w = &vs->wlist;
                 if (w->n != 1 || w->type[0] != datatype || w->order[0] != count) {
                     VSdetach(vsid);
@@ -1158,9 +1158,9 @@ Vfindattr(int32 vgid, const char *attrname)
             HGOTO_ERROR(DFE_ARGS, FAIL);
         if (NULL == (vs_inst = (vsinstance_t *)HAatom_object(vsid)))
             HGOTO_ERROR(DFE_NOVS, FAIL);
-        if (NULL == (vs = vs_inst->vs) || HDstrcmp(vs->vsclass, _HDF_ATTRIBUTE) != 0)
+        if (NULL == (vs = vs_inst->vs) || strcmp(vs->vsclass, _HDF_ATTRIBUTE) != 0)
             HGOTO_ERROR(DFE_BADATTR, FAIL);
-        if (0 == HDstrcmp(vs->vsname, attrname)) {
+        if (0 == strcmp(vs->vsname, attrname)) {
             ret_value = i;
             found     = 1;
         }
@@ -1227,16 +1227,16 @@ Vattrinfo(int32 vgid, intn attrindex, char *name, int32 *datatype, int32 *count,
         HGOTO_ERROR(DFE_ARGS, FAIL);
     if (NULL == (vs_inst = (vsinstance_t *)HAatom_object(vsid)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
-    if (NULL == (vs = vs_inst->vs) || HDstrcmp(vs->vsclass, _HDF_ATTRIBUTE) != 0)
+    if (NULL == (vs = vs_inst->vs) || strcmp(vs->vsclass, _HDF_ATTRIBUTE) != 0)
         HGOTO_ERROR(DFE_BADATTR, FAIL);
     if (name) {
-        HDstrncpy(name, vs->vsname, HDstrlen(vs->vsname));
-        name[HDstrlen(vs->vsname)] = '\0';
+        strncpy(name, vs->vsname, strlen(vs->vsname));
+        name[strlen(vs->vsname)] = '\0';
     }
     w       = &(vs->wlist);
     fldname = w->name[0];
     /* this vdata has 1 field */
-    if (w->n != 1 || HDstrcmp(fldname, ATTR_FIELD_NAME))
+    if (w->n != 1 || strcmp(fldname, ATTR_FIELD_NAME))
         /*    if (w->n != 1 )   */
         HGOTO_ERROR(DFE_BADATTR, FAIL);
     if (datatype)
@@ -1350,11 +1350,11 @@ Vattrinfo2(int32 vgid, intn attrindex, char *name, int32 *datatype, int32 *count
         HGOTO_ERROR(DFE_ARGS, FAIL);
     if (NULL == (vs_inst = (vsinstance_t *)HAatom_object(vsid)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
-    if (NULL == (vs = vs_inst->vs) || HDstrcmp(vs->vsclass, _HDF_ATTRIBUTE) != 0)
+    if (NULL == (vs = vs_inst->vs) || strcmp(vs->vsclass, _HDF_ATTRIBUTE) != 0)
         HGOTO_ERROR(DFE_BADATTR, FAIL);
     if (name) {
-        HDstrncpy(name, vs->vsname, HDstrlen(vs->vsname));
-        name[HDstrlen(vs->vsname)] = '\0';
+        strncpy(name, vs->vsname, strlen(vs->vsname));
+        name[strlen(vs->vsname)] = '\0';
     }
     w = &(vs->wlist);
     if (datatype)
@@ -1422,11 +1422,11 @@ Vgetattr(int32 vgid, intn attrindex, void *values)
     /* check correctness of attr vdata */
     if (NULL == (vs_inst = (vsinstance_t *)HAatom_object(vsid)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
-    if (NULL == (vs = vs_inst->vs) || HDstrcmp(vs->vsclass, _HDF_ATTRIBUTE) != 0)
+    if (NULL == (vs = vs_inst->vs) || strcmp(vs->vsclass, _HDF_ATTRIBUTE) != 0)
         HGOTO_ERROR(DFE_BADATTR, FAIL);
     if (FAIL == VSinquire(vsid, &n_recs, &il, fields, NULL, NULL))
         HGOTO_ERROR(DFE_BADATTR, FAIL);
-    /*    if (HDstrcmp(fields, ATTR_FIELD_NAME) != 0)
+    /*    if (strcmp(fields, ATTR_FIELD_NAME) != 0)
             HGOTO_ERROR(DFE_BADFIELDS, FAIL);
     */
     /* ready to read */
@@ -1524,7 +1524,7 @@ Vgetattr2(int32 vgid, intn attrindex, void *values)
     /* Check correctness of attr vdata */
     if (NULL == (vs_inst = (vsinstance_t *)HAatom_object(vsid)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
-    if (NULL == (vs = vs_inst->vs) || HDstrcmp(vs->vsclass, _HDF_ATTRIBUTE) != 0)
+    if (NULL == (vs = vs_inst->vs) || strcmp(vs->vsclass, _HDF_ATTRIBUTE) != 0)
         HGOTO_ERROR(DFE_BADATTR, FAIL);
 
     /* Get vdata information */

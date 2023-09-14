@@ -212,12 +212,12 @@ getTmpName(char **pname)
     (void)sprintf(s, "%she%d.%d", TDIR, pid, count);
     count++;
 
-    length = (int)HDstrlen(s);
+    length = (int)strlen(s);
     if (length <= 0)
         return FAIL;
 
     *pname = (char *)malloc(length + 1);
-    HDstrcpy(*pname, s);
+    strcpy(*pname, s);
 
     return length;
 }
@@ -880,12 +880,12 @@ findOpt(char *word)
     int      found = -1;
     uintn    i;
 
-    len = HDstrlen(word);
+    len = strlen(word);
 
     for (i = 0; i < sizeof(he_optTab) / sizeof(he_optTab[0]); i++)
-        if (!HDstrncmp(he_optTab[i].str, word, len)) {
+        if (!strncmp(he_optTab[i].str, word, len)) {
             /* exact match */
-            if (HDstrlen(he_optTab[i].str) == len)
+            if (strlen(he_optTab[i].str) == len)
                 return he_optTab[i].key;
 
             if (found < 0)
@@ -905,9 +905,9 @@ catStr(const char *s, const char *s1)
 {
     char *t;
 
-    t = (char *)malloc(HDstrlen(s) + HDstrlen(s1) + 1);
-    HDstrcpy(t, s);
-    HDstrcat(t, s1);
+    t = (char *)malloc(strlen(s) + strlen(s1) + 1);
+    strcpy(t, s);
+    strcat(t, s1);
     return t;
 }
 
@@ -916,8 +916,8 @@ copyStr(char *s)
 {
     char *t;
 
-    t = (char *)malloc(HDstrlen(s) + 1);
-    HDstrcpy(t, s);
+    t = (char *)malloc(strlen(s) + 1);
+    strcpy(t, s);
     return t;
 }
 
@@ -1051,7 +1051,7 @@ convertTemplate(char *template, int n1, int n2, int n3, char **pname)
     sprintf(s2, "%1d", n2);
     sprintf(s3, "%1d", n3);
 
-    *pname = t = (char *)malloc(HDstrlen(template) + 61);
+    *pname = t = (char *)malloc(strlen(template) + 61);
 
     while (*template)
         switch (*template) {
@@ -1078,7 +1078,7 @@ fillTemplate(char **template, char **pout, char *s, char templateChar)
     /* count length of template to replace */
     for (templateLen = 0; **template == templateChar; (*template)++, templateLen++)
         ;
-    sLen = (int)HDstrlen(s);
+    sLen = (int)strlen(s);
 
     /* fill with zero's if the space reserved in template is
        longer than the length of s */

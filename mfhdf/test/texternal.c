@@ -308,7 +308,7 @@ test_getexternal()
     deprecated as of 4.2.7 because it missed the length argument */
     { /* deprecated */
         name_len = SDgetexternalfile(sds_id, 0, NULL, NULL);
-        VERIFY(name_len, (intn)HDstrlen(EXTFILE), "SDgetexternalfile");
+        VERIFY(name_len, (intn)strlen(EXTFILE), "SDgetexternalfile");
 
         extfile_name = (char *)malloc(sizeof(char *) * (name_len + 1));
         CHECK_ALLOC(extfile_name, "extfile_name", "SDgetexternalfile");
@@ -316,7 +316,7 @@ test_getexternal()
 
         /* Call SDgetexternalfile again and get the external file info */
         name_len = SDgetexternalfile(sds_id, name_len + 1, extfile_name, &offset);
-        VERIFY(name_len, (intn)HDstrlen(EXTFILE), "SDgetexternalfile");
+        VERIFY(name_len, (intn)strlen(EXTFILE), "SDgetexternalfile");
         VERIFY_CHAR(EXTFILE, extfile_name, "SDgetexternalfile");
         free(extfile_name);
     }
@@ -324,7 +324,7 @@ test_getexternal()
     /* Call SDgetexternalinfo the first time passing in 0 for external
     file name length to get the actual length */
     name_len = SDgetexternalinfo(sds_id, 0, NULL, NULL, NULL);
-    VERIFY(name_len, (intn)HDstrlen(EXTFILE), "SDgetexternalinfo");
+    VERIFY(name_len, (intn)strlen(EXTFILE), "SDgetexternalinfo");
 
     /* Test passing in NULL pointer for external file name buffer, should
     fail gracefully */
@@ -343,7 +343,7 @@ test_getexternal()
 
     /* Call SDgetexternalinfo again and get the external file info */
     name_len = SDgetexternalinfo(sds_id, name_len + 1, extfile_name, &offset, &length);
-    VERIFY(name_len, (intn)HDstrlen(EXTFILE), "SDgetexternalinfo");
+    VERIFY(name_len, (intn)strlen(EXTFILE), "SDgetexternalinfo");
     VERIFY_CHAR(EXTFILE, extfile_name, "SDgetexternalinfo");
 
     /* Test passing in smaller buffer for external file name than actual;
@@ -352,14 +352,14 @@ test_getexternal()
         char *short_name = (char *)malloc(sizeof(char *) * (name_len));
         CHECK_ALLOC(short_name, "short_name", "test_getexternal");
         memset(short_name, '\0', name_len);
-        HDstrncpy(short_name, EXTFILE, name_len - 2);
+        strncpy(short_name, EXTFILE, name_len - 2);
         memset(extfile_name, '\0', name_len);
 
         /* Call SDgetexternalinfo again with smaller buffer size and verify
            that SDgetexternalinfo reads the name truncated to the given
            buffer size*/
         name_len = SDgetexternalinfo(sds_id, name_len - 2, extfile_name, &offset, &length);
-        VERIFY(name_len, (intn)HDstrlen(extfile_name), "SDgetexternalinfo");
+        VERIFY(name_len, (intn)strlen(extfile_name), "SDgetexternalinfo");
         VERIFY_CHAR(short_name, extfile_name, "SDgetexternalinfo");
         free(short_name);
     }
@@ -380,7 +380,7 @@ test_getexternal()
     /* Call SDgetexternalinfo the first time passing in 0 for external
     file name length to get the actual length */
     name_len = SDgetexternalinfo(sds_id, 0, NULL, NULL, NULL);
-    VERIFY(name_len, (intn)HDstrlen(EXTFILE), "SDgetexternalinfo");
+    VERIFY(name_len, (intn)strlen(EXTFILE), "SDgetexternalinfo");
 
     /* Test passing in NULL pointer for external file name buffer, should
     fail gracefully */
@@ -397,7 +397,7 @@ test_getexternal()
 
     /* Call SDgetexternalinfo again and get the external file info */
     name_len = SDgetexternalinfo(sds_id, name_len + 1, extfile_name, &offset, &length);
-    VERIFY(name_len, (intn)HDstrlen(EXTFILE), "SDgetexternalinfo");
+    VERIFY(name_len, (intn)strlen(EXTFILE), "SDgetexternalinfo");
     VERIFY_CHAR(EXTFILE, extfile_name, "SDgetexternalinfo");
     free(extfile_name);
 
@@ -500,7 +500,7 @@ test_mult_setexternal()
 
     /* Call SDgetexternalinfo again and get the external file info */
     name_len = SDgetexternalinfo(sds1_id, name_len + 1, extfile_name, NULL, NULL);
-    VERIFY(name_len, (intn)HDstrlen(EXTFILE2), "SDgetexternalinfo");
+    VERIFY(name_len, (intn)strlen(EXTFILE2), "SDgetexternalinfo");
     VERIFY_CHAR(EXTFILE2, extfile_name, "SDgetexternalinfo");
 
     /* Close the data set and the file */
@@ -1037,7 +1037,7 @@ verify_data(int32 sd_id, int32 sds_ind)
 
     /* The data set SDS2 has appended data so the written data is different
     from the rest of the data sets in the file */
-    if (!HDstrncmp(name, SDS2, HDstrlen(SDS2))) {
+    if (!strncmp(name, SDS2, strlen(SDS2))) {
         /* Number of elements in first written data + appended data */
         num_elems = Z_LENGTH * Y_LENGTH * X_LENGTH + 1 * Y_LENGTH * X_LENGTH;
 

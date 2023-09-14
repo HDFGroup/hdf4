@@ -144,7 +144,7 @@ test_vglongnames(void)
     status = Vgetname(vg1, vgname);
     CHECK_VOID(status, FAIL, "VSgetname");
 
-    if (HDstrcmp(vgname, VGROUP1)) {
+    if (strcmp(vgname, VGROUP1)) {
         num_errs++;
         printf(">>> Got bogus Vgroup name : %s\n", vgname);
     }
@@ -161,7 +161,7 @@ test_vglongnames(void)
     status = Vgetclass(vg1, vgclass);
     CHECK_VOID(status, FAIL, "VSgetclass");
 
-    if (HDstrcmp(vgclass, VG_LONGCLASS)) {
+    if (strcmp(vgclass, VG_LONGCLASS)) {
         num_errs++;
         printf(">>> Got bogus Vgroup class : %s\n", vgclass);
     }
@@ -249,7 +249,7 @@ test_undefined(void)
        This shows that bug HDFFR-1288 is fixed. */
     status = Vgetclass(vg1, vgclass);
     CHECK_VOID(status, FAIL, "Vgetclass");
-    VERIFY_VOID(HDstrlen(vgclass), 0, "VSgetclass");
+    VERIFY_VOID(strlen(vgclass), 0, "VSgetclass");
 
     /* The length of the class name should be 0 */
     status = Vgetclassnamelen(vg1, &name_len);
@@ -270,7 +270,7 @@ test_undefined(void)
        Similar to class name in bug HDFFR-1288. */
     status = Vgetname(vg1, vgname);
     CHECK_VOID(status, FAIL, "Vgetname");
-    VERIFY_VOID(HDstrlen(vgname), 0, "VSgetname");
+    VERIFY_VOID(strlen(vgname), 0, "VSgetname");
 
     /* The length of the name should be 0 */
     status = Vgetnamelen(vg1, &name_len);

@@ -158,7 +158,7 @@ DFPputpal(const char *filename, const void *palette, intn overwrite, const char 
     if (!palette)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    if (overwrite && HDstrcmp(filename, Lastfile))
+    if (overwrite && strcmp(filename, Lastfile))
         HGOTO_ERROR(DFE_BADCALL, FAIL);
 
     file_id = DFPIopen(filename, (*filemode == 'w') ? DFACC_CREATE : DFACC_WRITE);
@@ -486,7 +486,7 @@ DFPIopen(const char *filename, intn acc_mode)
     int32 ret_value = SUCCEED;
 
     /* use reopen if same file as last time - more efficient */
-    if (HDstrncmp(Lastfile, filename, DF_MAXFNLEN) || (acc_mode == DFACC_CREATE)) {
+    if (strncmp(Lastfile, filename, DF_MAXFNLEN) || (acc_mode == DFACC_CREATE)) {
         /* treat create as different file */
         if ((file_id = Hopen(filename, acc_mode, 0)) == FAIL)
             HGOTO_ERROR(DFE_BADOPEN, FAIL);
@@ -497,7 +497,7 @@ DFPIopen(const char *filename, intn acc_mode)
         HGOTO_ERROR(DFE_BADOPEN, FAIL);
 
     /* remember filename, so reopen may be used next time if same file */
-    HDstrncpy(Lastfile, filename, DF_MAXFNLEN);
+    strncpy(Lastfile, filename, DF_MAXFNLEN);
 
     ret_value = (file_id);
 

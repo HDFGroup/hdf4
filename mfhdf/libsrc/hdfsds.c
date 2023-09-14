@@ -380,7 +380,7 @@ hdf_get_sdc(NC *handle, uint16 tmpRef, NC_attr **tmp_attr, intn *curr_attr)
 
     coordbuf[len] = '\0';
     if (coordbuf[0] != '\0') {
-        *tmp_attr = (NC_attr *)NC_new_attr(_HDF_CoordSys, NC_CHAR, HDstrlen(coordbuf), coordbuf);
+        *tmp_attr = (NC_attr *)NC_new_attr(_HDF_CoordSys, NC_CHAR, strlen(coordbuf), coordbuf);
         if (*tmp_attr == NULL) {
             HGOTO_ERROR(DFE_INTERNAL, DFE_INTERNAL);
         }
@@ -522,7 +522,7 @@ hdf_get_desc_annot(NC *handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr,
             sprintf(hremark, "%s-%d", _HDF_Remarks, i + 1);
 
             /* add it as an attribute */
-            *tmp_attr = (NC_attr *)NC_new_attr(hremark, NC_CHAR, HDstrlen(ann_desc), ann_desc);
+            *tmp_attr = (NC_attr *)NC_new_attr(hremark, NC_CHAR, strlen(ann_desc), ann_desc);
 
             if (NULL == *tmp_attr) {
                 HGOTO_ERROR(DFE_INTERNAL, DFE_INTERNAL);
@@ -624,7 +624,7 @@ hdf_get_label_annot(NC *handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr
             sprintf(hlabel, "%s-%d", _HDF_AnnoLabel, i + 1);
 
             /* add as attribute */
-            *tmp_attr = (NC_attr *)NC_new_attr(hlabel, NC_CHAR, HDstrlen(ann_label), ann_label);
+            *tmp_attr = (NC_attr *)NC_new_attr(hlabel, NC_CHAR, strlen(ann_label), ann_label);
 
             if (NULL == tmp_attr) {
                 HGOTO_ERROR(DFE_ANAPIERROR, DFE_ANAPIERROR);
@@ -677,7 +677,7 @@ hdf_luf_to_attrs(char *labelstr, char *unitstr, char *formatstr, NC_attr **tmp_a
     /* label => "long_name"  */
     if (labelstr && (labelstr[0] != '\0') > 0) {
         *tmp_attr =
-            (NC_attr *)NC_new_attr(_HDF_LongName, NC_CHAR, HDstrlen((char *)labelstr), (Void *)labelstr);
+            (NC_attr *)NC_new_attr(_HDF_LongName, NC_CHAR, strlen((char *)labelstr), (Void *)labelstr);
 
         if (NULL == *tmp_attr) {
             HGOTO_ERROR(DFE_INTERNAL, DFE_INTERNAL);
@@ -691,7 +691,7 @@ hdf_luf_to_attrs(char *labelstr, char *unitstr, char *formatstr, NC_attr **tmp_a
 
     /* Units => 'units' */
     if (unitstr && (unitstr[0] != '\0') > 0) {
-        *tmp_attr = (NC_attr *)NC_new_attr(_HDF_Units, NC_CHAR, HDstrlen((char *)unitstr), (Void *)unitstr);
+        *tmp_attr = (NC_attr *)NC_new_attr(_HDF_Units, NC_CHAR, strlen((char *)unitstr), (Void *)unitstr);
 
         if (NULL == *tmp_attr) {
             HGOTO_ERROR(DFE_INTERNAL, DFE_INTERNAL);
@@ -706,7 +706,7 @@ hdf_luf_to_attrs(char *labelstr, char *unitstr, char *formatstr, NC_attr **tmp_a
     /* Format => 'format' */
     if (formatstr && (formatstr[0] != '\0') > 0) {
         *tmp_attr =
-            (NC_attr *)NC_new_attr(_HDF_Format, NC_CHAR, HDstrlen((char *)formatstr), (Void *)formatstr);
+            (NC_attr *)NC_new_attr(_HDF_Format, NC_CHAR, strlen((char *)formatstr), (Void *)formatstr);
 
         if (NULL == *tmp_attr) {
             HGOTO_ERROR(DFE_INTERNAL, DFE_INTERNAL);
@@ -1277,7 +1277,7 @@ hdf_read_ndgs(NC *handle)
                 if (lRef) {
                     labelvalue = (char *)labelbuf;
                     for (i = 0; i < dim + 1; i++)
-                        labelvalue += HDstrlen(labelvalue) + 1;
+                        labelvalue += strlen(labelvalue) + 1;
                     if (labelvalue[0] != '\0')
                         new_dim = SUCCEED;
                 }
@@ -1285,7 +1285,7 @@ hdf_read_ndgs(NC *handle)
                 if (uRef) {
                     unitvalue = (char *)unitbuf;
                     for (i = 0; i < dim + 1; i++)
-                        unitvalue += HDstrlen(unitvalue) + 1;
+                        unitvalue += strlen(unitvalue) + 1;
                     if (unitvalue[0] != '\0')
                         new_dim = SUCCEED;
                 }
@@ -1293,7 +1293,7 @@ hdf_read_ndgs(NC *handle)
                 if (fRef) {
                     formatvalue = (char *)formatbuf;
                     for (i = 0; i < dim + 1; i++)
-                        formatvalue += HDstrlen(formatvalue) + 1;
+                        formatvalue += strlen(formatvalue) + 1;
                     if (formatvalue[0] != '\0')
                         new_dim = SUCCEED;
                 }

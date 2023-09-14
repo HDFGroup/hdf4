@@ -692,7 +692,7 @@ DFGRIopen(const char *filename, int acc_mode)
     }
 
     /* use reopen if same file as last time - more efficient */
-    if (HDstrncmp(Grlastfile, filename, DF_MAXFNLEN) || (acc_mode == DFACC_CREATE)) {
+    if (strncmp(Grlastfile, filename, DF_MAXFNLEN) || (acc_mode == DFACC_CREATE)) {
         /* treat create as different file */
         Grrefset  = 0; /* no ref to get set for this file */
         Grnewdata = 0;
@@ -710,7 +710,7 @@ DFGRIopen(const char *filename, int acc_mode)
     }
 
     /* remember filename, so reopen may be used next time if same file */
-    HDstrncpy(Grlastfile, filename, DF_MAXFNLEN);
+    strncpy(Grlastfile, filename, DF_MAXFNLEN);
 
     ret_value = file_id;
 
@@ -1226,7 +1226,7 @@ DFGRIaddimlut(const char *filename, const void *imlut, int32 xdim, int32 ydim, i
         *Grlastfile = '\0'; /* initialize to a 0-length string */
     }
 
-    if (0 != HDstrcmp(Grlastfile, filename)) { /* if new file, reset dims */
+    if (0 != strcmp(Grlastfile, filename)) { /* if new file, reset dims */
         Grwrite.datadesc[type].xdim = xdim;
         Grwrite.datadesc[type].ydim = ydim;
         Ref.dims[type]              = 0; /* indicate set & not written */

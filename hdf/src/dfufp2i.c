@@ -126,8 +126,8 @@ DFUfptoimage(int32 hdim, int32 vdim, float32 max, float32 min, float32 *hscale, 
     in.data      = data;
     in.is_pal    = (palette == NULL) ? FALSE : TRUE;
     in.ct_method = ct_method;
-    HDstrcpy(out.outfile, outfile); /* get outfile name */
-    out.palette  = palette;         /* get palette address (may be NULL) */
+    strcpy(out.outfile, outfile); /* get outfile name */
+    out.palette  = palette;       /* get palette address (may be NULL) */
     out.hres     = hres;
     out.vres     = vres;
     out.compress = compress ? 11 : 0; /* 0=>don't; 11=>RLE compression */

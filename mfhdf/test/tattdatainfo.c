@@ -292,12 +292,12 @@ add_sdfile_annotations()
 
     /* set up file labels and descriptions */
 
-    HDstrcpy(labels[0], "File Label #1");
-    HDstrcpy(labels[1], "File Label #2");
-    HDstrcpy(descs[0], "File Descr #1: This is a file label, added\n");
-    HDstrcat(descs[0], "       by the DFAN interface...**END SDS 1 DESCR**\n");
-    HDstrcpy(descs[1], "File Descr #2: This is another file label added\n");
-    HDstrcat(descs[1], "       by the DFAN API as well.**END SDS 2 DESCR**\n");
+    strcpy(labels[0], "File Label #1");
+    strcpy(labels[1], "File Label #2");
+    strcpy(descs[0], "File Descr #1: This is a file label, added\n");
+    strcat(descs[0], "       by the DFAN interface...**END SDS 1 DESCR**\n");
+    strcpy(descs[1], "File Descr #2: This is another file label added\n");
+    strcat(descs[1], "       by the DFAN API as well.**END SDS 2 DESCR**\n");
 
     /********  Write file labels and descriptions *********/
 
@@ -311,10 +311,10 @@ add_sdfile_annotations()
     ret = DFANaddfid(file_id, labels[1]);
     CHECK(ret, FAIL, "DFANaddfid");
 
-    ret = DFANaddfds(file_id, descs[0], (int32)HDstrlen(descs[0]));
+    ret = DFANaddfds(file_id, descs[0], (int32)strlen(descs[0]));
     CHECK(ret, FAIL, "DFANaddfds");
 
-    ret = DFANaddfds(file_id, descs[1], (int32)HDstrlen(descs[1]));
+    ret = DFANaddfds(file_id, descs[1], (int32)strlen(descs[1]));
     CHECK(ret, FAIL, "DFANaddfds");
 
     if (FAIL == Hclose(file_id))
@@ -388,12 +388,12 @@ add_sdsNDG_annotations()
 
     /* set up object labels and descriptions */
 
-    HDstrcpy(labels[0], "Object label #1: sds");
-    HDstrcpy(labels[1], "Object label #2: sds");
-    HDstrcpy(descs[0], "Object Descr #1: 1 2 3 4 5 6 7 8 9 10 11 12 \n");
-    HDstrcat(descs[0], "       13 14 15 16 17 18 19 20 **END SDS 1 DESCR**\n");
-    HDstrcpy(descs[1], "Object Descr #2: a b c d e f g h i j k l m n o p \n");
-    HDstrcat(descs[1], "       q r s t u v w x y z ??? **END SDS 2 DESCR**\n");
+    strcpy(labels[0], "Object label #1: sds");
+    strcpy(labels[1], "Object label #2: sds");
+    strcpy(descs[0], "Object Descr #1: 1 2 3 4 5 6 7 8 9 10 11 12 \n");
+    strcat(descs[0], "       13 14 15 16 17 18 19 20 **END SDS 1 DESCR**\n");
+    strcpy(descs[1], "Object Descr #2: a b c d e f g h i j k l m n o p \n");
+    strcat(descs[1], "       q r s t u v w x y z ??? **END SDS 2 DESCR**\n");
 
     /***** generate float array *****/
 
@@ -420,7 +420,7 @@ add_sdsNDG_annotations()
         ret = DFANputlabel(DFAN_NDG_FILE, DFTAG_NDG, refnum, labels[jj]);
         CHECK(ret, FAIL, "add_sdsNDG_annotations: DFANputlabel");
 
-        ret = DFANputdesc(DFAN_NDG_FILE, DFTAG_NDG, refnum, descs[jj], (int32)HDstrlen(descs[jj]));
+        ret = DFANputdesc(DFAN_NDG_FILE, DFTAG_NDG, refnum, descs[jj], (int32)strlen(descs[jj]));
         CHECK(ret, FAIL, "add_sdsNDG_annotations: DFANputdesc");
     }
 
@@ -458,11 +458,11 @@ add_sdsSDG_annotations()
 
     /* set up object labels and descriptions */
 
-    HDstrcpy(labsds, "sdsSDG label #1: sds");
-    HDstrcpy(descsds, "sdsSDG Descr #1: 1  2  3  4  5  6  7  8  9 10 11 12 \n");
-    HDstrcat(descsds, "             13 14 15 16 17 18 19 20 **END SDS DESCR**\n");
-    HDstrcpy(descris, "sdsSDG Descr #2: A B C D E F G H I J K L \n");
-    HDstrcat(descris, "                M N O **END IMAGE DESCR **\n");
+    strcpy(labsds, "sdsSDG label #1: sds");
+    strcpy(descsds, "sdsSDG Descr #1: 1  2  3  4  5  6  7  8  9 10 11 12 \n");
+    strcat(descsds, "             13 14 15 16 17 18 19 20 **END SDS DESCR**\n");
+    strcpy(descris, "sdsSDG Descr #2: A B C D E F G H I J K L \n");
+    strcat(descris, "                M N O **END IMAGE DESCR **\n");
 
     /***** generate float array and image *****/
 
@@ -484,7 +484,7 @@ add_sdsSDG_annotations()
         refnum = DFSDlastref();
 
         DFANputlabel(DFAN_SDG_FILE, DFTAG_SDG, refnum, labsds);
-        DFANputdesc(DFAN_SDG_FILE, DFTAG_SDG, refnum, descsds, (int32)HDstrlen(descsds));
+        DFANputdesc(DFAN_SDG_FILE, DFTAG_SDG, refnum, descsds, (int32)strlen(descsds));
     }
 
     /********  Read labels and descriptions *********/
@@ -847,7 +847,7 @@ intn
 compare(const char *outstring, const char *instring)
 {
     intn status = 0;
-    if (HDstrcmp(outstring, instring) != 0) {
+    if (strcmp(outstring, instring) != 0) {
         fprintf(stderr, ">>> Test failed for %s\n", outstring);
         fprintf(stderr, "    Input string =  %s\n", instring);
         status = -1;
@@ -904,7 +904,7 @@ readnoHDF_char(const char *filename, const int32 offset, const int32 length, con
     readlen = fread((void *)readcbuf, 1, length, fd);
     if (readlen > 0) {
         /* Compare data read without HDF4 lib against the original buffer */
-        if (HDstrncmp(readcbuf, orig_buf, readlen) != 0)
+        if (strncmp(readcbuf, orig_buf, readlen) != 0)
             fprintf(stderr,
                     "Failure: non-HDF reading got different values than written values\n   >>> written = "
                     "%s\n   >>> read = %s\n",
