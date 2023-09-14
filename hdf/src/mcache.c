@@ -51,7 +51,9 @@
 /*
 #define MCACHE_DEBUG
 */
+/*
 #define STATISTICS
+*/
 
 #include "hdf.h"    /* number types ..etc */
 #include "hqueue.h" /* Circular queue functions(Macros) */
