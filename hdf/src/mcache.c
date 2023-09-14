@@ -51,9 +51,7 @@
 /*
 #define MCACHE_DEBUG
 */
-/*
 #define STATISTICS
-*/
 
 #include "hdf.h"    /* number types ..etc */
 #include "hqueue.h" /* Circular queue functions(Macros) */
@@ -843,6 +841,9 @@ done:
 
 #ifdef STATISTICS
 #ifdef H4_HAVE_GETRUSAGE
+
+#include <sys/resource.h>
+
 /******************************************************************************
 NAME
    myrusage - print some process usage statistics
@@ -862,10 +863,10 @@ myrusage()
     double        timespent();
 
     getrusage(RUSAGE_SELF, &r);
-    fprintf(stderr, "USAGE: shmem=%d,unshdata=%d,unshstack=%d\n", r.ru_ixrss, r.ru_idrss, r.ru_isrss);
-    fprintf(stderr, "       pager=%d,pagef=%d,nswap=%d\n", r.ru_minflt, r.ru_majflt, r.ru_nswap);
-    fprintf(stderr, "       block_in=%d,block_out=%d,nioch=%d\n", r.ru_inblock, r.ru_oublock, r.ru_ioch);
-    fprintf(stderr, "       mesgs=%d,mesgr=%d,nsignals=%d\n", r.ru_msgsnd, r.ru_msgrcv, r.ru_nsignals);
+    fprintf(stderr, "USAGE: shmem=%ld, unshdata=%ld, unshstack=%ld\n", r.ru_ixrss, r.ru_idrss, r.ru_isrss);
+    fprintf(stderr, "       pager=%ld, pagef=%ld, nswap=%ld\n", r.ru_minflt, r.ru_majflt, r.ru_nswap);
+    fprintf(stderr, "       block_in=%ld, block_out=%ld\n", r.ru_inblock, r.ru_oublock);
+    fprintf(stderr, "       mesgs=%ld, mesgr=%ld, nsignals=%ld\n", r.ru_msgsnd, r.ru_msgrcv, r.ru_nsignals);
 }
 #endif /* H4_HAVE_GETRUSAGE */
 
@@ -908,7 +909,7 @@ mcache_stat(MCACHE *mp /* IN: MCACHE cookie */)
                           mp->cachemiss);
         (void)fprintf(stderr, "%u page reads, %u page writes\n", mp->pageread, mp->pagewrite);
         (void)fprintf(stderr, "%u listhits, %u listallocs\n", mp->listhit, mp->listalloc);
-        (void)fprintf(stderr, "sizeof(MCACHE)=%d, sizeof(BKT)=%d, sizeof(L_ELEM)=%d\n", sizeof(MCACHE),
+        (void)fprintf(stderr, "sizeof(MCACHE)=%zu, sizeof(BKT)=%zu, sizeof(L_ELEM)=%zu\n", sizeof(MCACHE),
                       sizeof(BKT), sizeof(L_ELEM));
         (void)fprintf(stderr, "memory pool used %u bytes\n",
                       (int32)(sizeof(MCACHE) + (sizeof(BKT) + mp->pagesize) * mp->curcache +
