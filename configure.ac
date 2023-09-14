@@ -904,7 +904,7 @@ esac
 AC_MSG_CHECKING([for math library support])
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <math.h>]], [[sinh(37.927)]])],[AC_MSG_RESULT([yes])],[AC_MSG_RESULT([no]); LIBS="$LIBS -lm"])
 
-AC_CHECK_FUNCS([fork system wait])
+AC_CHECK_FUNCS([fork getrusage system wait])
 
 
 ## ======================================================================

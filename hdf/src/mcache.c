@@ -55,7 +55,6 @@
 #define STATISTICS
 */
 
-#define __MCACHEINTERFACE_PRIVATE
 #include "hdf.h"    /* number types ..etc */
 #include "hqueue.h" /* Circular queue functions(Macros) */
 #include "mcache.h"
@@ -843,7 +842,7 @@ done:
 } /* mcache_look() */
 
 #ifdef STATISTICS
-#ifdef HAVE_GETRUSAGE
+#ifdef H4_HAVE_GETRUSAGE
 /******************************************************************************
 NAME
    myrusage - print some process usage statistics
@@ -868,7 +867,7 @@ myrusage()
     fprintf(stderr, "       block_in=%d,block_out=%d,nioch=%d\n", r.ru_inblock, r.ru_oublock, r.ru_ioch);
     fprintf(stderr, "       mesgs=%d,mesgr=%d,nsignals=%d\n", r.ru_msgsnd, r.ru_msgrcv, r.ru_nsignals);
 }
-#endif /* HAVE_GETRUSAGE */
+#endif /* H4_HAVE_GETRUSAGE */
 
 /******************************************************************************
 NAME
@@ -891,7 +890,7 @@ mcache_stat(MCACHE *mp /* IN: MCACHE cookie */)
     intn          cnt;
     intn          hitcnt;
 
-#ifdef HAVE_GETRUSAGE
+#ifdef H4_HAVE_GETRUSAGE
     myrusage();
 #endif
 
