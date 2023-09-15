@@ -24,7 +24,17 @@
 
 static int number_failed = 0;
 
-static void compare(const char *outstring, const char *instring);
+static void
+compare(const char *outstring, const char *instring)
+{
+    if (0 == strcmp(outstring, instring))
+        MESSAGE(5, printf("Test passed for %s\n", outstring);)
+    else {
+        MESSAGE(5, printf(">>> Test failed for %s\n", outstring););
+        MESSAGE(5, printf("    Input string =  %s\n", instring););
+        number_failed++;
+    }
+}
 
 void
 test_tsdstr(void)
@@ -109,16 +119,4 @@ test_tsdstr(void)
         MESSAGE(7, printf("\n\t>>> ALL TESTS PASSED <<<\n\n");)
 
     num_errs = num_errs + number_failed;
-}
-
-static void
-compare(const char *outstring, const char *instring)
-{
-    if (0 == strcmp(outstring, instring))
-        MESSAGE(5, printf("Test passed for %s\n", outstring);)
-    else {
-        MESSAGE(5, printf(">>> Test failed for %s\n", outstring););
-        MESSAGE(5, printf("    Input string =  %s\n", instring););
-        number_failed++;
-    }
 }

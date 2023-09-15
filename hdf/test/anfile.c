@@ -19,9 +19,33 @@
 #define MAXLEN_LAB  50
 #define MAXLEN_DESC 1000
 
-static int checkannlen(int32 ret, const char *oldstr, const char *type, int32 testflag);
+static int
+checkannlen(int32 ret, const char *oldstr, const char *type, int32 testflag)
+{
+    (void)testflag;
 
-static int checkann(const char *oldstr, const char *newstr, int32 ret, const char *type, int32 testflag);
+    if ((ret >= 0) && (ret != (int32)strlen(oldstr))) {
+        printf("Length of %s is INCORRECT\n", type);
+        printf("It is:  %d\n", (int)ret);
+        printf("It should be: %d\n", (int)strlen(oldstr));
+        return FAIL;
+    }
+    return SUCCEED;
+}
+
+static int
+checkann(const char *oldstr, const char *newstr, int32 ret, const char *type, int32 testflag)
+{
+    (void)testflag;
+
+    if ((ret >= 0) && (0 != strcmp(oldstr, newstr))) {
+        printf("%s is INCORRECT.\n", type);
+        printf("It is:  %s\n", newstr);
+        printf("It should be: %s\n", oldstr);
+        return (FAIL);
+    }
+    return (SUCCEED);
+}
 
 void
 test_anfile(void)
@@ -108,32 +132,4 @@ test_anfile(void)
 
     if (FAIL == Hclose(file_id))
         printf("\n\nUnable to close file %s after reading.\n\n", TESTFILE);
-}
-
-static int
-checkannlen(int32 ret, const char *oldstr, const char *type, int32 testflag)
-{
-    (void)testflag;
-
-    if ((ret >= 0) && (ret != (int32)strlen(oldstr))) {
-        printf("Length of %s is INCORRECT\n", type);
-        printf("It is:  %d\n", (int)ret);
-        printf("It should be: %d\n", (int)strlen(oldstr));
-        return FAIL;
-    }
-    return SUCCEED;
-}
-
-static int
-checkann(const char *oldstr, const char *newstr, int32 ret, const char *type, int32 testflag)
-{
-    (void)testflag;
-
-    if ((ret >= 0) && (0 != strcmp(oldstr, newstr))) {
-        printf("%s is INCORRECT.\n", type);
-        printf("It is:  %s\n", newstr);
-        printf("It should be: %s\n", oldstr);
-        return (FAIL);
-    }
-    return (SUCCEED);
 }
