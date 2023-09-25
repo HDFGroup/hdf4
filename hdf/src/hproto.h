@@ -324,8 +324,6 @@ HDFLIBAPI char *HIstrncpy(char *dest, const char *source, intn len);
 
 HDFLIBAPI int32 HDspaceleft(void);
 
-HDFPUBLIC char *strdup(const char *s);
-
 HDFLIBAPI intn HDc2fstr(char *str, intn len);
 
 HDFLIBAPI char *HDf2cstring(_fcd fdesc, intn len);
