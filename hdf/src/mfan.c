@@ -137,7 +137,6 @@ dumpentryKey(void *key, void *data)
     }
     else
         printf("(NULL)\n");
-    return;
 } /* dumpentryKey() */
 #endif /* AN_DEBUG */
 
