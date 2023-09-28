@@ -11,6 +11,7 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <stdlib.h>
 #include "tproto.h"
 
 #define XSIZE    13
@@ -812,24 +813,24 @@ read_binary_block(const char *filename, /* file to be read */
                   size_t      nitems,   /* number of bytes to read */
                   uint8      *buffer)        /* buffer to store the binary data in */
 {
-    FILE  *fd;
-    size_t readlen = 0; /* number of bytes actually read */
-
     /* Open the file to read binary data */
-    if ((fd = fopen(filename, "rb")) == NULL) {
+    FILE *fd = fopen(filename, "rb");
+    if (fd == NULL) {
         fprintf(stderr, "can't open %s\n", filename);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     /* Forward to the specified offset to start reading */
     if (fseek(fd, (off_t)offset, SEEK_SET) == -1) {
         fprintf(stderr, "can't seek offset %d\n", (int)offset);
-        exit(1);
+        fclose(fd);
+        exit(EXIT_FAILURE);
     }
 
     /* Read in the specified block of data */
-    readlen = fread((void *)buffer, 1, nitems, fd);
-    return (readlen);
+    const size_t readlen = fread((void *)buffer, 1, nitems, fd);
+    fclose(fd);
+    return readlen;
 }
 
 /* ------------------------------- test_r24_jpeg ------------------------------- */
