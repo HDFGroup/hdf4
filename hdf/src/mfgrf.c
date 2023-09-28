@@ -481,7 +481,7 @@ FRETVAL(intf)
 nmgwclut(intf *lutid, intf *ncomp, intf *nt, intf *il, intf *nentries, _fcd data)
 {
     return (intf)GRwritelut((int32)*lutid, (int32)*ncomp, (int32)*nt, (int32)*il, (int32)*nentries,
-                             (void *)_fcdtocp(data));
+                            (void *)_fcdtocp(data));
 } /* end mgwrlut() */
 
 /*-----------------------------------------------------------------------------

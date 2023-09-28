@@ -544,7 +544,7 @@ tbbtrem(TBBT_NODE **root, TBBT_NODE *node, void **kp)
     void      *data; /* Saved pointer to data item of deleted node */
 
     if (NULL == root || NULL == node)
-        return NULL; /* Argument couldn't find node to delete */
+        return NULL;   /* Argument couldn't find node to delete */
     data = node->data; /* Save pointer to data item to be returned at end */
     if (NULL != kp)
         *kp = node->key;

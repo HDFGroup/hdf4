@@ -1039,7 +1039,7 @@ nvhscdc(intf *f, _fcd field, _fcd cbuf, intf *n, intf *datatype, _fcd vsname, _f
     if ((*datatype != DFNT_CHAR) && (*datatype != DFNT_UCHAR))
         return FAIL;
     return nvhsdc(f, field, (uint8 *)_fcdtocp(cbuf), n, datatype, vsname, vsclass, fieldlen, vsnamelen,
-                   vsclasslen);
+                  vsclasslen);
 }
 
 /* ------------------------------------------------------------------ */
@@ -1055,7 +1055,7 @@ nvhscdmc(intf *f, _fcd field, _fcd cbuf, intf *n, intf *datatype, _fcd vsname, _
     if ((*datatype != DFNT_CHAR) && (*datatype != DFNT_UCHAR))
         return FAIL;
     return nvhsdmc(f, field, (uint8 *)_fcdtocp(cbuf), n, datatype, vsname, vsclass, order, fieldlen,
-                    vsnamelen, vsclasslen);
+                   vsnamelen, vsclasslen);
 }
 
 /* ------------------------------------------------------------------ */

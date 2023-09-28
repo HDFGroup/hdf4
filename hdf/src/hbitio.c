@@ -127,7 +127,7 @@ Hstartbitread(int32 file_id, uint16 tag, uint16 ref)
 
         read_size = MIN((bitfile_rec->max_offset - bitfile_rec->byte_offset), BITBUF_SIZE);
         if ((n = Hread(bitfile_rec->acc_id, read_size, bitfile_rec->bytea)) == FAIL)
-            return FAIL;                          /* EOF? somebody pulled the rug out from under us! */
+            return FAIL;                            /* EOF? somebody pulled the rug out from under us! */
         bitfile_rec->buf_read = (intn)n;            /* keep track of the number of bytes in buffer */
         bitfile_rec->bytep    = bitfile_rec->bytea; /* set to the beginning of the buffer */
     }                                               /* end if */
