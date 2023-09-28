@@ -568,7 +568,7 @@ test_nbit7(int32 fid)
     c_info.nbit.fill_one  = TRUE;
     c_info.nbit.start_bit = NBIT_OFF7;
     c_info.nbit.bit_len   = NBIT_BITS7;
-    model_info m_info;
+    model_info  m_info;
     const int32 aid1 = HCcreate(fid, NBIT_TAG7, ref1, COMP_MODEL_STDIO, &m_info, COMP_CODE_NBIT, &c_info);
     CHECK_VOID(aid1, FAIL, "HCcreate");
 
