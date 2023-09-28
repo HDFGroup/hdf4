@@ -29,31 +29,34 @@ static void test_4(void);
 static void
 test_1(void)
 {
-    bv_ptr b;
-    int32  size;
-    intn   ret;
-
     MESSAGE(6, printf("Testing basic bit-vector creation & deletion\n"););
 
     /* Test basic default creation */
     MESSAGE(7, printf("Create a bit-vector with all defaults\n"););
-    b = bv_new(-1);
-    CHECK_VOID(b, NULL, "bv_new");
-    size = bv_size(b);
-    MESSAGE(8, printf("Bit-vector size=%" PRId32 "\n", size););
-    VERIFY_VOID(size, BV_DEFAULT_BITS, "bv_size");
-    ret = bv_delete(b);
-    CHECK_VOID(ret, FAIL, "bv_delete");
+    bv_ptr b1 = bv_new(-1);
+    CHECK_VOID(b1, NULL, "bv_new");
+    const int32 size1 = bv_size(b1);
+    MESSAGE(8, printf("Bit-vector size=%" PRId32 "\n", size1););
+    if (size1 != BV_DEFAULT_BITS) {
+        bv_delete(b1);
+    }
+    VERIFY_VOID(size1, BV_DEFAULT_BITS, "bv_size");
+    const int ret1 = bv_delete(b1);
+    CHECK_VOID(ret1, FAIL, "bv_delete");
 
     /* Test creating a bit-vector w/ size >> defaults */
     MESSAGE(7, printf("Create an extendable bit-vector with large # of bits\n"););
-    b = bv_new(80000);
-    CHECK_VOID(b, NULL, "bv_new");
-    size = bv_size(b);
-    MESSAGE(8, printf("Bit-vector size=%" PRId32 "\n", size););
-    VERIFY_VOID(size, 80000, "bv_size");
-    ret = bv_delete(b);
-    CHECK_VOID(ret, FAIL, "bv_delete");
+    const int32 request_size = 80000;
+    bv_ptr b2 = bv_new(request_size);
+    CHECK_VOID(b2, NULL, "bv_new");
+    const int32 size2 = bv_size(b2);
+    MESSAGE(8, printf("Bit-vector size=%" PRId32 "\n", size2););
+    if (size2 != request_size) {
+        bv_delete(b2);
+    }
+    VERIFY_VOID(size2, request_size, "bv_size");
+    const int ret2 = bv_delete(b2);
+    CHECK_VOID(ret2, FAIL, "bv_delete");
 } /* end test_1 */
 
 /* Basic set & get tests */
