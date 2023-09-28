@@ -71,5 +71,5 @@ DFfindnextref(int32 file_id, uint16 tag, uint16 lref)
         return (uint16)FAIL;
 
     Hendaccess(aid);
-    return (newref);
+    return newref;
 }

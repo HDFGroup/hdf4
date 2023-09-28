@@ -34,9 +34,9 @@ nduif2i(int32 *hdim, int32 *vdim, float32 *max, float32 *min, float32 hscale[], 
 
     fn = HDf2cstring(outfile, *lenfn);
     if (!fn)
-        return (FAIL);
+        return FAIL;
     ret = DFUfptoimage(*hdim, *vdim, (float32)*max, (float32)*min, hscale, vscale, data,
                        (uint8 *)_fcdtocp(palette), fn, *ct_method, *hres, *vres, *compress);
     free(fn);
-    return (ret);
+    return ret;
 }

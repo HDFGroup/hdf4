@@ -38,10 +38,10 @@ nvsfcfdx(intf *vsid, _fcd fldnm, intf *findex, intf *fldnmlen)
 
     fld = HDf2cstring(fldnm, (intn)*fldnmlen);
     if (!fld)
-        return (FAIL);
+        return FAIL;
     ret = (intf)VSfindex((int32)*vsid, fld, (int32 *)findex);
     free(fld);
-    return (ret);
+    return ret;
 }
 
 /* -------------------------------------------------
@@ -59,12 +59,12 @@ nvsfcsat(intf *vsid, intf *findex, _fcd attrnm, intf *dtype, intf *count, intf *
 
     attrname = HDf2cstring(attrnm, (intn)*attrnmlen);
     if (!attrname)
-        return (FAIL);
+        return FAIL;
     cfindex = *findex;
     ret =
         (intf)VSsetattr((int32)*vsid, (int32)cfindex, attrname, (int32)*dtype, (int32)*count, (void *)values);
     free(attrname);
-    return (ret);
+    return ret;
 }
 
 /* ----------------------------------------------------
@@ -82,12 +82,12 @@ nvsfcsca(intf *vsid, intf *findex, _fcd attrnm, intf *dtype, intf *count, _fcd v
 
     attrname = HDf2cstring(attrnm, (intn)*attrnmlen);
     if (!attrname)
-        return (FAIL);
+        return FAIL;
     cfindex = *findex;
     ret     = (intf)VSsetattr((int32)*vsid, (int32)cfindex, attrname, (int32)*dtype, (int32)*count,
                               (void *)_fcdtocp(values));
     free(attrname);
-    return (ret);
+    return ret;
 }
 
 /* -------------------------------------------------------
@@ -102,7 +102,7 @@ nvsfnats(intf *vsid)
     intf ret;
 
     ret = (intf)VSnattrs((int32)*vsid);
-    return (ret);
+    return ret;
 }
 
 /* -------------------------------------------------------
@@ -119,7 +119,7 @@ nvsffnas(intf *vsid, intf *findex)
 
     cfindex = *findex;
     ret     = (intf)VSfnattrs((int32)*vsid, (int32)cfindex);
-    return (ret);
+    return ret;
 }
 
 /* ---------------------------------------------------------
@@ -137,12 +137,12 @@ nvsfcfda(intf *vsid, intf *findex, _fcd attrnm, intf *attrnmlen)
 
     attrname = HDf2cstring(attrnm, (intn)*attrnmlen);
     if (!attrname)
-        return (FAIL);
+        return FAIL;
     cfindex = *findex;
 
     ret = (intf)VSfindattr((int32)*vsid, (int32)cfindex, attrname);
     free(attrname);
-    return (ret);
+    return ret;
 }
 
 /* ---------------------------------------------------------
@@ -176,7 +176,7 @@ nvsfcain(intf *vsid, intf *findex, intf *aindex, _fcd attrname, intf *dtype, int
         HDpackFstring(tattrname, _fcdtocp(attrname), (intn)*attrnamelen);
     }
     free(tattrname);
-    return (ret);
+    return ret;
 }
 
 /* ---------------------------------------------------------
@@ -192,7 +192,7 @@ nvsfgnat(intf *vsid, intf *findex, intf *aindex, intf *values)
 
     cfindex = *findex;
     ret     = (intf)VSgetattr((int32)*vsid, (int32)cfindex, (int32)*aindex, (void *)values);
-    return (ret);
+    return ret;
 }
 
 /* --------------------------------------------------------
@@ -208,7 +208,7 @@ nvsfgcat(intf *vsid, intf *findex, intf *aindex, _fcd values)
 
     cfindex = *findex;
     ret     = (intf)VSgetattr((int32)*vsid, cfindex, (int32)*aindex, (void *)_fcdtocp(values));
-    return (ret);
+    return ret;
 }
 
 /* ---------------------------------------------------------
@@ -221,7 +221,7 @@ nvsfisat(intf *vsid)
 {
     intf ret;
     ret = (intf)VSisattr((int32)*vsid);
-    return (ret);
+    return ret;
 }
 
 /* ---------------------------------------------------------
@@ -237,10 +237,10 @@ nvfcsatt(intf *vgid, _fcd attrnm, intf *dtype, intf *count, intf *values, intf *
 
     attrname = HDf2cstring(attrnm, (intn)*attrnmlen);
     if (!attrname)
-        return (FAIL);
+        return FAIL;
     ret = (intf)Vsetattr((int32)*vgid, attrname, (int32)*dtype, (int32)*count, (void *)values);
     free(attrname);
-    return (ret);
+    return ret;
 }
 
 /* ----------------------------------------------------
@@ -257,10 +257,10 @@ nvfcscat(intf *vgid, _fcd attrnm, intf *dtype, intf *count, _fcd values, intf *a
 
     attrname = HDf2cstring(attrnm, (intn)*attrnmlen);
     if (!attrname)
-        return (FAIL);
+        return FAIL;
     ret = (intf)Vsetattr((int32)*vgid, attrname, (int32)*dtype, (int32)*count, (void *)_fcdtocp(values));
     free(attrname);
-    return (ret);
+    return ret;
 }
 
 /* -------------------------------------------------------
@@ -274,7 +274,7 @@ nvfnatts(intf *vgid)
     intf ret;
 
     ret = (intf)Vnattrs((int32)*vgid);
-    return (ret);
+    return ret;
 }
 
 /* ---------------------------------------------------------
@@ -290,10 +290,10 @@ nvfcfdat(intf *vgid, _fcd attrnm, intf *attrnmlen)
 
     attrname = HDf2cstring(attrnm, (intn)*attrnmlen);
     if (!attrname)
-        return (FAIL);
+        return FAIL;
     ret = (intf)Vfindattr((int32)*vgid, attrname);
     free(attrname);
-    return (ret);
+    return ret;
 }
 
 /* ---------------------------------------------------------
@@ -307,7 +307,7 @@ nvfainfo(intf *vgid, intf *aindex, _fcd attrname, intf *dtype, intf *count, intf
     intf ret;
     ret = (intf)Vattrinfo((int32)*vgid, (int32)*aindex, _fcdtocp(attrname), (int32 *)dtype, (int32 *)count,
                           (int32 *)size);
-    return (ret);
+    return ret;
 }
 
 /* ---------------------------------------------------------
@@ -320,7 +320,7 @@ nvfgnatt(intf *vgid, intf *aindex, intf *values)
 {
     intf ret;
     ret = (intf)Vgetattr((int32)*vgid, *aindex, (void *)values);
-    return (ret);
+    return ret;
 }
 
 /* --------------------------------------------------------
@@ -333,7 +333,7 @@ nvfgcatt(intf *vgid, intf *aindex, _fcd values)
 {
     intf ret;
     ret = (intf)Vgetattr((int32)*vgid, (int32)*aindex, (void *)_fcdtocp(values));
-    return (ret);
+    return ret;
 }
 
 /* ---------------------------------------------------------
@@ -346,5 +346,5 @@ nvfgver(intf *vgid)
 {
     intf ret;
     ret = (intf)Vgetversion((int32)*vgid);
-    return (ret);
+    return ret;
 }

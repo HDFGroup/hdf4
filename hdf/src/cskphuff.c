@@ -195,7 +195,7 @@ HCIcskphuff_init(accrec_t *access_rec, uintn alloc_buf)
         } /* end for */
     }     /* end for */
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* end HCIcskphuff_init() */
 
 /*--------------------------------------------------------------------------
@@ -248,7 +248,7 @@ HCIcskphuff_decode(compinfo_t *info, int32 length, uint8 *buf)
         length--;
     }                                    /* end while */
     skphuff_info->offset += orig_length; /* incr. abs. offset into the file */
-    return (SUCCEED);
+    return SUCCEED;
 } /* end HCIcskphuff_decode() */
 
 /*--------------------------------------------------------------------------
@@ -323,7 +323,7 @@ HCIcskphuff_encode(compinfo_t *info, int32 length, const uint8 *buf)
     } /* end while */
 
     skphuff_info->offset += orig_length; /* incr. abs. offset into the file */
-    return (SUCCEED);
+    return SUCCEED;
 } /* end HCIcskphuff_encode() */
 
 /*--------------------------------------------------------------------------
@@ -368,7 +368,7 @@ HCIcskphuff_term(compinfo_t *info)
     free(skphuff_info->right);
     free(skphuff_info->up);
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* end HCIcskphuff_term() */
 
 /*--------------------------------------------------------------------------
@@ -411,7 +411,7 @@ HCIcskphuff_staccess(accrec_t *access_rec, int16 acc_mode)
         HRETURN_ERROR(DFE_DENIED, FAIL);
     if ((acc_mode & DFACC_WRITE) && Hbitappendable(info->aid) == FAIL)
         HRETURN_ERROR(DFE_DENIED, FAIL);
-    return (HCIcskphuff_init(access_rec, TRUE)); /* initialize the skip-Huffman info */
+    return HCIcskphuff_init(access_rec, TRUE); /* initialize the skip-Huffman info */
 } /* end HCIcskphuff_staccess() */
 
 /*--------------------------------------------------------------------------
@@ -441,7 +441,7 @@ HCPcskphuff_stread(accrec_t *access_rec)
 
     if ((ret = HCIcskphuff_staccess(access_rec, DFACC_READ)) == FAIL)
         HRETURN_ERROR(DFE_CINIT, FAIL);
-    return (ret);
+    return ret;
 } /* HCPcskphuff_stread() */
 
 /*--------------------------------------------------------------------------
@@ -471,7 +471,7 @@ HCPcskphuff_stwrite(accrec_t *access_rec)
 
     if ((ret = HCIcskphuff_staccess(access_rec, DFACC_WRITE)) == FAIL)
         HRETURN_ERROR(DFE_CINIT, FAIL);
-    return (ret);
+    return ret;
 } /* HCPcskphuff_stwrite() */
 
 /*--------------------------------------------------------------------------
@@ -530,7 +530,7 @@ HCPcskphuff_seek(accrec_t *access_rec, int32 offset, int origin)
         }
 
     free(tmp_buf);
-    return (SUCCEED);
+    return SUCCEED;
 } /* HCPcskphuff_seek() */
 
 /*--------------------------------------------------------------------------
@@ -564,7 +564,7 @@ HCPcskphuff_read(accrec_t *access_rec, int32 length, void *data)
     if (HCIcskphuff_decode(info, length, data) == FAIL)
         HRETURN_ERROR(DFE_CDECODE, FAIL);
 
-    return (length);
+    return length;
 } /* HCPcskphuff_read() */
 
 /*--------------------------------------------------------------------------
@@ -606,7 +606,7 @@ HCPcskphuff_write(accrec_t *access_rec, int32 length, const void *data)
     if (HCIcskphuff_encode(info, length, data) == FAIL)
         HRETURN_ERROR(DFE_CENCODE, FAIL);
 
-    return (length);
+    return length;
 } /* HCPcskphuff_write() */
 
 /*--------------------------------------------------------------------------
@@ -652,7 +652,7 @@ HCPcskphuff_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 
     (void)paccess;
     (void)pspecial;
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* HCPcskphuff_inquire() */
 
 /*--------------------------------------------------------------------------
@@ -689,5 +689,5 @@ HCPcskphuff_endaccess(accrec_t *access_rec)
     if (Hendbitaccess(info->aid, 0) == FAIL)
         HRETURN_ERROR(DFE_CANTCLOSE, FAIL);
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* HCPcskphuff_endaccess() */

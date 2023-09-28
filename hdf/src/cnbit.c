@@ -164,7 +164,7 @@ HCIcnbit_init(accrec_t *access_rec)
             nbit_info->mask_buf[i] &= ~(nbit_info->mask_info[i].mask);
     } /* end if */
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* end HCIcnbit_init() */
 
 /*--------------------------------------------------------------------------
@@ -283,7 +283,7 @@ HCIcnbit_decode(compinfo_t *info, int32 length, uint8 *buf)
     } /* end for */
 
     nbit_info->offset += orig_length; /* incr. abs. offset into the file */
-    return (SUCCEED);
+    return SUCCEED;
 } /* end HCIcnbit_decode() */
 
 /*--------------------------------------------------------------------------
@@ -339,7 +339,7 @@ HCIcnbit_encode(compinfo_t *info, int32 length, const uint8 *buf)
     }                                                 /* end for */
 
     nbit_info->offset += orig_length; /* incr. abs. offset into the file */
-    return (SUCCEED);
+    return SUCCEED;
 } /* end HCIcnbit_encode() */
 
 /*--------------------------------------------------------------------------
@@ -366,7 +366,7 @@ HCIcnbit_term(compinfo_t *info)
 {
     (void)info;
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* end HCIcnbit_term() */
 
 /*--------------------------------------------------------------------------
@@ -405,7 +405,7 @@ HCIcnbit_staccess(accrec_t *access_rec, int16 acc_mode)
         HRETURN_ERROR(DFE_DENIED, FAIL);
     if ((acc_mode & DFACC_WRITE) && Hbitappendable(info->aid) == FAIL)
         HRETURN_ERROR(DFE_DENIED, FAIL);
-    return (HCIcnbit_init(access_rec)); /* initialize the N-bit info */
+    return HCIcnbit_init(access_rec); /* initialize the N-bit info */
 } /* end HCIcnbit_staccess() */
 
 /*--------------------------------------------------------------------------
@@ -434,7 +434,7 @@ HCPcnbit_stread(accrec_t *access_rec)
 
     if ((ret = HCIcnbit_staccess(access_rec, DFACC_READ)) == FAIL)
         HRETURN_ERROR(DFE_CINIT, FAIL);
-    return (ret);
+    return ret;
 } /* HCPcnbit_stread() */
 
 /*--------------------------------------------------------------------------
@@ -463,7 +463,7 @@ HCPcnbit_stwrite(accrec_t *access_rec)
 
     if ((ret = HCIcnbit_staccess(access_rec, DFACC_WRITE)) == FAIL)
         HRETURN_ERROR(DFE_CINIT, FAIL);
-    return (ret);
+    return ret;
 } /* HCPcnbit_stwrite() */
 
 /*--------------------------------------------------------------------------
@@ -515,7 +515,7 @@ HCPcnbit_seek(accrec_t *access_rec, int32 offset, int origin)
     nbit_info->nt_pos  = 0;             /* start at the first byte of the mask */
     nbit_info->offset  = offset;        /* set abs. offset into the file */
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* HCPcnbit_seek() */
 
 /*--------------------------------------------------------------------------
@@ -583,7 +583,7 @@ HCPcnbit_write(accrec_t *access_rec, int32 length, const void *data)
     if (HCIcnbit_encode(info, length, data) == FAIL)
         HRETURN_ERROR(DFE_CENCODE, FAIL);
 
-    return (length);
+    return length;
 } /* HCPcnbit_write() */
 
 /*--------------------------------------------------------------------------
@@ -629,7 +629,7 @@ HCPcnbit_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pr
     (void)paccess;
     (void)pspecial;
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* HCPcnbit_inquire() */
 
 /*--------------------------------------------------------------------------
@@ -667,5 +667,5 @@ HCPcnbit_endaccess(accrec_t *access_rec)
     if (Hendbitaccess(info->aid, 0) == FAIL)
         HRETURN_ERROR(DFE_CANTCLOSE, FAIL);
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* HCPcnbit_endaccess() */

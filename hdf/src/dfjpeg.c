@@ -189,7 +189,7 @@ jpeg_HDF_dest(struct jpeg_compress_struct *cinfo_ptr, int32 file_id, uint16 tag,
     dest->ydim    = ydim;
     dest->scheme  = scheme;
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* end jpeg_HDF_dest() */
 
 /*-----------------------------------------------------------------------------
@@ -208,7 +208,7 @@ jpeg_HDF_dest_term(struct jpeg_compress_struct *cinfo_ptr)
     /* all we need to do for now is to free up the dest. mgr structure */
     free(cinfo_ptr->dest);
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* end jpeg_HDF_dest_term() */
 
 /***********************************************************************/
@@ -308,5 +308,5 @@ DFCIjpeg(int32 file_id, uint16 tag, uint16 ref, int32 xdim, int32 ydim, const vo
     free(jerr_ptr);
     free(cinfo_ptr);
 
-    return (SUCCEED); /* we must be ok... */
+    return SUCCEED; /* we must be ok... */
 } /* end DFCIjpeg() */

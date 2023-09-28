@@ -108,7 +108,7 @@ VSIget_vdata_node(void)
     memset(ret_value, 0, sizeof(VDATA));
 
 done:
-    return (ret_value);
+    return ret_value;
 } /* VSIget_vdata_node */
 
 /******************************************************************************
@@ -164,7 +164,7 @@ VSIget_vsinstance_node(void)
     memset(ret_value, 0, sizeof(vsinstance_t));
 
 done:
-    return (ret_value);
+    return ret_value;
 } /* VSIget_vsinstance_node */
 
 /******************************************************************************
@@ -296,7 +296,7 @@ int32
 vexistvs(HFILEID f, /* IN: file handle */
          uint16  vsid /* IN: vdata id i.e. ref */)
 {
-    return ((NULL == vsinst(f, vsid)) ? FAIL : TRUE);
+    return (NULL == vsinst(f, vsid)) ? FAIL : TRUE;
 } /* vexistvs */
 
 /* ------------------------------------------------------------------ */

@@ -98,14 +98,14 @@ matchnocase(char *strx, /* IN: first string to be compared */
     ny = strlen(stry);
 
     if (nx != ny)
-        return (FALSE); /* different lengths */
+        return FALSE; /* different lengths */
 
     for (i = 0; i < nx; i++, strx++, stry++) {
         if (toupper(*strx) != toupper(*stry))
-            return (FALSE); /* not identical */
+            return FALSE; /* not identical */
     }
 
-    return (TRUE);
+    return TRUE;
 } /* matchnocase */
 #endif /* VDATA_FIELDS_ALL_UPPER */
 

@@ -138,55 +138,55 @@ DFKNTsize(int32 number_type)
     switch (number_type & (~DFNT_LITEND)) {
         /* native types */
         case DFNT_NUCHAR:
-            return (SIZE_NUCHAR);
+            return SIZE_NUCHAR;
         case DFNT_NCHAR:
-            return (SIZE_NCHAR);
+            return SIZE_NCHAR;
         case DFNT_NINT8:
-            return (SIZE_NINT8);
+            return SIZE_NINT8;
         case DFNT_NUINT8:
-            return (SIZE_NUINT8);
+            return SIZE_NUINT8;
 
         case DFNT_NINT16:
-            return (SIZE_NINT16);
+            return SIZE_NINT16;
         case DFNT_NUINT16:
-            return (SIZE_NUINT16);
+            return SIZE_NUINT16;
 
         case DFNT_NINT32:
-            return (SIZE_NINT32);
+            return SIZE_NINT32;
         case DFNT_NUINT32:
-            return (SIZE_NUINT32);
+            return SIZE_NUINT32;
 
         case DFNT_NFLOAT32:
-            return (SIZE_NFLOAT32);
+            return SIZE_NFLOAT32;
 
         case DFNT_NFLOAT64:
-            return (SIZE_NFLOAT64);
+            return SIZE_NFLOAT64;
 
         /* HDF types */
         case DFNT_UCHAR:
-            return (SIZE_UCHAR);
+            return SIZE_UCHAR;
         case DFNT_CHAR:
-            return (SIZE_CHAR);
+            return SIZE_CHAR;
         case DFNT_INT8:
-            return (SIZE_INT8);
+            return SIZE_INT8;
         case DFNT_UINT8:
-            return (SIZE_UINT8);
+            return SIZE_UINT8;
 
         case DFNT_INT16:
-            return (SIZE_INT16);
+            return SIZE_INT16;
         case DFNT_UINT16:
-            return (SIZE_UINT16);
+            return SIZE_UINT16;
 
         case DFNT_INT32:
-            return (SIZE_INT32);
+            return SIZE_INT32;
         case DFNT_UINT32:
-            return (SIZE_UINT32);
+            return SIZE_UINT32;
 
         case DFNT_FLOAT32:
-            return (SIZE_FLOAT32);
+            return SIZE_FLOAT32;
 
         case DFNT_FLOAT64:
-            return (SIZE_FLOAT64);
+            return SIZE_FLOAT64;
 
         /* Unknown types */
         default:
@@ -354,7 +354,7 @@ DFKsetcustom(int (*DFKcustin)(void * /* source */, void * /* dest */, uint32 /* 
 int32
 DFKisnativeNT(int32 numbertype)
 {
-    return ((DFNT_NATIVE & numbertype) > 0 ? 1 : 0);
+    return (DFNT_NATIVE & numbertype) > 0 ? 1 : 0;
 }
 
 /*------------------------------------------------------------------
@@ -370,7 +370,7 @@ DFKisnativeNT(int32 numbertype)
 int32
 DFKislitendNT(int32 numbertype)
 {
-    return ((DFNT_LITEND & numbertype) > 0 ? 1 : 0);
+    return (DFNT_LITEND & numbertype) > 0 ? 1 : 0;
 }
 
 /************************************************************
@@ -492,14 +492,14 @@ DFKconvert(void *source, void *dest, int32 ntype, int32 num_elm, int16 acc_mode,
 
     /* Check args (minimally) */
     if (source == NULL || dest == NULL)
-        return (-1);
+        return -1;
 
     DFKsetNT(ntype);
     if (acc_mode == DFACC_READ)
         ret = DFKnumin(source, dest, (uint32)num_elm, (uint32)source_stride, (uint32)dest_stride);
     else
         ret = DFKnumout(source, dest, (uint32)num_elm, (uint32)source_stride, (uint32)dest_stride);
-    return (ret);
+    return ret;
 }
 
 /*****************************************************************************

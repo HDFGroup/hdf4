@@ -1873,7 +1873,7 @@ HTIcount_dd(filerec_t *file_rec, uint16 cnt_tag, uint16 cnt_ref, uintn *all_cnt,
 
     *all_cnt  = t_all_cnt;
     *real_cnt = t_real_cnt;
-    return (SUCCEED);
+    return SUCCEED;
 } /* HTIcount_dd */
 
 /*--------------------------------------------------------------------------

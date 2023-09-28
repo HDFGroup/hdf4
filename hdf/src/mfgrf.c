@@ -74,7 +74,7 @@
 FRETVAL(intf)
 nmgstart(intf *fid)
 {
-    return ((intf)GRstart((int32)*fid));
+    return (intf)GRstart((int32)*fid);
 } /* end mgstart() */
 
 /*-----------------------------------------------------------------------------
@@ -97,7 +97,7 @@ nmgfinfo(intf *grid, intf *n_datasets, intf *n_attrs)
     ret         = (intf)GRfileinfo((int32)*grid, &n_data, &n_attr);
     *n_datasets = (intf)n_data;
     *n_attrs    = (intf)n_attr;
-    return (ret);
+    return ret;
 } /* end mgfinfo() */
 
 /*-----------------------------------------------------------------------------
@@ -112,7 +112,7 @@ nmgfinfo(intf *grid, intf *n_datasets, intf *n_attrs)
 FRETVAL(intf)
 nmgend(intf *grid)
 {
-    return ((intf)GRend((int32)*grid));
+    return (intf)GRend((int32)*grid);
 } /* end mgend() */
 
 /*-----------------------------------------------------------------------------
@@ -149,7 +149,7 @@ nmgicreat(intf *grid, _fcd name, intf *ncomp, intf *nt, intf *il, intf dimsizes[
     ret         = (intf)GRcreate((int32)*grid, fn, (int32)*ncomp, (int32)*nt, (int32)*il, cdims);
     free(fn);
 
-    return (ret);
+    return ret;
 } /* end mgicreat() */
 
 /*-----------------------------------------------------------------------------
@@ -166,7 +166,7 @@ nmgicreat(intf *grid, _fcd name, intf *ncomp, intf *nt, intf *il, intf dimsizes[
 FRETVAL(intf)
 nmgselct(intf *grid, intf *index)
 {
-    return ((intf)GRselect((int32)*grid, (int32)*index));
+    return (intf)GRselect((int32)*grid, (int32)*index);
 } /* end mgselct() */
 
 /*-----------------------------------------------------------------------------
@@ -196,7 +196,7 @@ nmgin2ndx(intf *grid, _fcd name, intf *nlen)
     ret = (intf)GRnametoindex((int32)*grid, fn);
     free(fn);
 
-    return (ret);
+    return ret;
 } /* end mgin2ndx() */
 
 /*-----------------------------------------------------------------------------
@@ -231,7 +231,7 @@ nmggiinf(intf *riid, _fcd name, intf *ncomp, intf *nt, intf *il, intf *dimsizes,
     dimsizes[YDIM] = t_dimsizes[YDIM];
     *nattr         = (intf)t_nattr;
 
-    return (ret);
+    return ret;
 } /* end mggiinf() */
 
 /*-----------------------------------------------------------------------------
@@ -251,7 +251,7 @@ nmggiinf(intf *riid, _fcd name, intf *ncomp, intf *nt, intf *il, intf *dimsizes,
 FRETVAL(intf)
 nmgwcimg(intf *riid, intf *start, intf *stride, intf *count, _fcd data)
 {
-    return (nmgwrimg(riid, start, stride, count, (void *)_fcdtocp(data)));
+    return nmgwrimg(riid, start, stride, count, (void *)_fcdtocp(data));
 } /* end mgwcimg() */
 
 /*-----------------------------------------------------------------------------
@@ -281,7 +281,7 @@ nmgwrimg(intf *riid, intf *start, intf *stride, intf *count, void *data)
     t_count[XDIM]  = (int32)count[XDIM];
     t_count[YDIM]  = (int32)count[YDIM];
 
-    return ((intf)GRwriteimage((int32)*riid, t_start, t_stride, t_count, data));
+    return (intf)GRwriteimage((int32)*riid, t_start, t_stride, t_count, data);
 } /* end mgwrimg() */
 
 /*-----------------------------------------------------------------------------
@@ -301,7 +301,7 @@ nmgwrimg(intf *riid, intf *start, intf *stride, intf *count, void *data)
 FRETVAL(intf)
 nmgrcimg(intf *riid, intf *start, intf *stride, intf *count, _fcd data)
 {
-    return (nmgrdimg(riid, start, stride, count, (void *)_fcdtocp(data)));
+    return nmgrdimg(riid, start, stride, count, (void *)_fcdtocp(data));
 } /* end mgrcimg() */
 
 /*-----------------------------------------------------------------------------
@@ -331,7 +331,7 @@ nmgrdimg(intf *riid, intf *start, intf *stride, intf *count, void *data)
     t_count[XDIM]  = (int32)count[XDIM];
     t_count[YDIM]  = (int32)count[YDIM];
 
-    return ((intf)GRreadimage((int32)*riid, t_start, t_stride, t_count, data));
+    return (intf)GRreadimage((int32)*riid, t_start, t_stride, t_count, data);
 } /* end mgrdimg() */
 
 /*-----------------------------------------------------------------------------
@@ -347,7 +347,7 @@ nmgrdimg(intf *riid, intf *start, intf *stride, intf *count, void *data)
 FRETVAL(intf)
 nmgendac(intf *riid)
 {
-    return ((intf)GRendaccess((int32)*riid));
+    return (intf)GRendaccess((int32)*riid);
 } /* end mgendac() */
 
 /*-----------------------------------------------------------------------------
@@ -363,7 +363,7 @@ nmgendac(intf *riid)
 FRETVAL(intf)
 nmgid2rf(intf *riid)
 {
-    return ((intf)GRidtoref((int32)*riid));
+    return (intf)GRidtoref((int32)*riid);
 } /* end mgid2rf() */
 
 /*-----------------------------------------------------------------------------
@@ -380,7 +380,7 @@ nmgid2rf(intf *riid)
 FRETVAL(intf)
 nmgr2idx(intf *grid, intf *ref)
 {
-    return ((intf)GRreftoindex((int32)*grid, (uint16)*ref));
+    return (intf)GRreftoindex((int32)*grid, (uint16)*ref);
 } /* end mgr2idx() */
 
 /*-----------------------------------------------------------------------------
@@ -397,7 +397,7 @@ nmgr2idx(intf *grid, intf *ref)
 FRETVAL(intf)
 nmgrltil(intf *riid, intf *il)
 {
-    return ((intf)GRreqlutil((int32)*riid, (intn)*il));
+    return (intf)GRreqlutil((int32)*riid, (intn)*il);
 } /* end mgrltil() */
 
 /*-----------------------------------------------------------------------------
@@ -414,7 +414,7 @@ nmgrltil(intf *riid, intf *il)
 FRETVAL(intf)
 nmgrimil(intf *riid, intf *il)
 {
-    return ((intf)GRreqimageil((int32)*riid, (intn)*il));
+    return (intf)GRreqimageil((int32)*riid, (intn)*il);
 } /* end mgrimil() */
 
 /*-----------------------------------------------------------------------------
@@ -431,7 +431,7 @@ nmgrimil(intf *riid, intf *il)
 FRETVAL(intf)
 nmggltid(intf *riid, intf *lut_index)
 {
-    return ((intf)GRgetlutid((int32)*riid, (intn)*lut_index));
+    return (intf)GRgetlutid((int32)*riid, (intn)*lut_index);
 } /* end mggltid() */
 
 /*-----------------------------------------------------------------------------
@@ -459,7 +459,7 @@ nmgglinf(intf *lutid, intf *ncomp, intf *nt, intf *il, intf *nentries)
     *nt       = (intf)t_nt;
     *il       = (intf)t_il;
     *nentries = (intf)t_nentries;
-    return (status);
+    return status;
 } /* end mgglinf() */
 
 /*-----------------------------------------------------------------------------
@@ -480,8 +480,8 @@ nmgglinf(intf *lutid, intf *ncomp, intf *nt, intf *il, intf *nentries)
 FRETVAL(intf)
 nmgwclut(intf *lutid, intf *ncomp, intf *nt, intf *il, intf *nentries, _fcd data)
 {
-    return ((intf)GRwritelut((int32)*lutid, (int32)*ncomp, (int32)*nt, (int32)*il, (int32)*nentries,
-                             (void *)_fcdtocp(data)));
+    return (intf)GRwritelut((int32)*lutid, (int32)*ncomp, (int32)*nt, (int32)*il, (int32)*nentries,
+                             (void *)_fcdtocp(data));
 } /* end mgwrlut() */
 
 /*-----------------------------------------------------------------------------
@@ -502,7 +502,7 @@ nmgwclut(intf *lutid, intf *ncomp, intf *nt, intf *il, intf *nentries, _fcd data
 FRETVAL(intf)
 nmgwrlut(intf *lutid, intf *ncomp, intf *nt, intf *il, intf *nentries, void *data)
 {
-    return ((intf)GRwritelut((int32)*lutid, (int32)*ncomp, (int32)*nt, (int32)*il, (int32)*nentries, data));
+    return (intf)GRwritelut((int32)*lutid, (int32)*ncomp, (int32)*nt, (int32)*il, (int32)*nentries, data);
 } /* end mgwrlut() */
 
 /*-----------------------------------------------------------------------------
@@ -519,7 +519,7 @@ nmgwrlut(intf *lutid, intf *ncomp, intf *nt, intf *il, intf *nentries, void *dat
 FRETVAL(intf)
 nmgrclut(intf *lutid, _fcd data)
 {
-    return ((intf)GRreadlut((int32)*lutid, (void *)_fcdtocp(data)));
+    return (intf)GRreadlut((int32)*lutid, (void *)_fcdtocp(data));
 } /* end mgrclut() */
 
 /*-----------------------------------------------------------------------------
@@ -536,7 +536,7 @@ nmgrclut(intf *lutid, _fcd data)
 FRETVAL(intf)
 nmgrdlut(intf *lutid, void *data)
 {
-    return ((intf)GRreadlut((int32)*lutid, data));
+    return (intf)GRreadlut((int32)*lutid, data);
 } /* end mgrdlut() */
 
 /*-----------------------------------------------------------------------------
@@ -566,7 +566,7 @@ nmgisxfil(intf *riid, _fcd filename, intf *offset, intf *nlen)
     ret = (intf)GRsetexternalfile((int32)*riid, fn, (int32)*offset);
     free(fn);
 
-    return (ret);
+    return ret;
 } /* end mgisxfil() */
 
 /*-----------------------------------------------------------------------------
@@ -583,7 +583,7 @@ nmgisxfil(intf *riid, _fcd filename, intf *offset, intf *nlen)
 FRETVAL(intf)
 nmgsactp(intf *riid, intf *accesstype)
 {
-    return ((intf)GRsetaccesstype((int32)*riid, (uintn)*accesstype));
+    return (intf)GRsetaccesstype((int32)*riid, (uintn)*accesstype);
 } /* end mgsactp() */
 
 /*-----------------------------------------------------------------------------
@@ -603,7 +603,7 @@ nmgsactp(intf *riid, intf *accesstype)
 FRETVAL(intf)
 nmgiscatt(intf *riid, _fcd name, intf *nt, intf *count, _fcd data, intf *nlen)
 {
-    return (nmgisattr(riid, name, nt, count, (void *)_fcdtocp(data), nlen));
+    return nmgisattr(riid, name, nt, count, (void *)_fcdtocp(data), nlen);
 } /* end mgiscatt() */
 /*-----------------------------------------------------------------------------
  * Name:    mgisattr
@@ -634,7 +634,7 @@ nmgisattr(intf *riid, _fcd name, intf *nt, intf *count, void *data, intf *nlen)
     ret = (intf)GRsetattr((int32)*riid, fn, (int32)*nt, (int32)*count, data);
     free(fn);
 
-    return (ret);
+    return ret;
 } /* end mgisattr() */
 
 /*-----------------------------------------------------------------------------
@@ -661,7 +661,7 @@ nmgatinf(intf *riid, intf *index, _fcd name, intf *nt, intf *count)
     *nt    = (intf)t_nt;
     *count = (intf)t_count;
 
-    return (ret);
+    return ret;
 } /* end mgatinf() */
 
 /*-----------------------------------------------------------------------------
@@ -679,7 +679,7 @@ nmgatinf(intf *riid, intf *index, _fcd name, intf *nt, intf *count)
 FRETVAL(intf)
 nmggcatt(intf *riid, intf *index, _fcd data)
 {
-    return (nmggnatt(riid, index, (void *)_fcdtocp(data)));
+    return nmggnatt(riid, index, (void *)_fcdtocp(data));
 } /* end mggcatt() */
 
 /*-----------------------------------------------------------------------------
@@ -697,7 +697,7 @@ nmggcatt(intf *riid, intf *index, _fcd data)
 FRETVAL(intf)
 nmggnatt(intf *riid, intf *index, void *data)
 {
-    return ((intf)GRgetattr((int32)*riid, (int32)*index, data));
+    return (intf)GRgetattr((int32)*riid, (int32)*index, data);
 } /* end mggnatt() */
 
 /*-----------------------------------------------------------------------------
@@ -716,7 +716,7 @@ nmggnatt(intf *riid, intf *index, void *data)
 FRETVAL(intf)
 nmggattr(intf *riid, intf *index, void *data)
 {
-    return ((intf)GRgetattr((int32)*riid, (int32)*index, data));
+    return (intf)GRgetattr((int32)*riid, (int32)*index, data);
 } /* end mggattr() */
 
 /*-----------------------------------------------------------------------------
@@ -745,7 +745,7 @@ nmgifndat(intf *riid, _fcd name, intf *nlen)
     ret = (intf)GRfindattr((int32)*riid, fn);
     free(fn);
 
-    return (ret);
+    return ret;
 } /* end mgifndat() */
 
 /*-------------------------------------------------------------------------
@@ -785,7 +785,7 @@ nmgcgichnk(intf *id, intf *dim_length, intf *flags)
 
             *flags = -1;
             ret    = 0;
-            return (ret);
+            return ret;
 
         case HDF_CHUNK: /* Chunked, noncompressed GR */
 
@@ -793,7 +793,7 @@ nmgcgichnk(intf *id, intf *dim_length, intf *flags)
             for (i = 0; i < rank; i++)
                 dim_length[rank - i - 1] = chunk_def.chunk_lengths[i];
             ret = 0;
-            return (ret);
+            return ret;
 
         case (HDF_CHUNK | HDF_COMP): /* Chunked and compressed GR */
 
@@ -801,7 +801,7 @@ nmgcgichnk(intf *id, intf *dim_length, intf *flags)
             for (i = 0; i < rank; i++)
                 dim_length[rank - i - 1] = chunk_def.comp.chunk_lengths[i];
             ret = 0;
-            return (ret);
+            return ret;
 
         default:
 
@@ -825,7 +825,7 @@ nmgcrcchnk(intf *id, intf *start, _fcd char_data)
 
     ret = nmgcrchnk(id, start, (void *)_fcdtocp(char_data));
 
-    return (ret);
+    return ret;
 }
 
 /*-----------------------------------------------------------------------------
@@ -867,7 +867,7 @@ nmgcrchnk(intf *id, intf *start, void *num_data)
     /* Free memory */
 
     free(cstart);
-    return (ret);
+    return ret;
 }
 
 /*-----------------------------------------------------------------------------
@@ -887,7 +887,7 @@ nmgcscchnk(intf *id, intf *maxcache, intf *flags)
 
     ret = GRsetchunkcache(*id, *maxcache, *flags);
 
-    return (ret);
+    return ret;
 }
 
 /*-------------------------------------------------------------------------
@@ -980,7 +980,7 @@ nmgcschnk(intf *id, intf *dim_length, intf *comp_type, intf *comp_prm)
 
     ret = GRsetchunk(riid, chunk_def, cflags);
 
-    return (ret);
+    return ret;
 }
 /*-----------------------------------------------------------------------------
  * Name:     mgcwcchnk
@@ -999,7 +999,7 @@ nmgcwcchnk(intf *id, intf *start, _fcd char_data)
 
     ret = nmgcwchnk(id, start, (void *)_fcdtocp(char_data));
 
-    return (ret);
+    return ret;
 }
 
 /*-----------------------------------------------------------------------------
@@ -1042,7 +1042,7 @@ nmgcwchnk(intf *id, intf *start, void *num_data)
 
     free(cstart);
 
-    return (ret);
+    return ret;
 }
 /*-------------------------------------------------------------------------
  * Name:    mgcscompress
@@ -1107,7 +1107,7 @@ nmgcscompress(intf *id, intf *comp_type, intf *comp_prm)
     }
 
     ret = GRsetcompress(riid, c_type, &c_info);
-    return (ret);
+    return ret;
 }
 /*-------------------------------------------------------------------------
  * Name:    mgcgcompress
@@ -1175,7 +1175,7 @@ nmgcgcompress(intf *id, intf *comp_type, intf *comp_prm)
 
         } /*end CASE */
     }     /*end if */
-    return (ret);
+    return ret;
 }
 /*-------------------------------------------------------------------------
  * Name:    mglt2rf
@@ -1191,7 +1191,7 @@ nmglt2rf(intf *id)
     intf ret;
 
     ret = GRluttoref(*id);
-    return (ret);
+    return ret;
 }
 /*-------------------------------------------------------------------------
  * Name:    mgcgnluts
@@ -1209,5 +1209,5 @@ nmgcgnluts(intf *id)
     c_ret = GRgetnluts(*id);
     if (c_ret >= 0)
         ret = c_ret;
-    return (ret);
+    return ret;
 }

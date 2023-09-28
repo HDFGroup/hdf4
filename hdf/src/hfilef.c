@@ -44,10 +44,10 @@ nhiopen(_fcd name, intf *acc_mode, intf *defdds, intf *namelen)
 
     fn = HDf2cstring(name, (intn)*namelen);
     if (!fn)
-        return (FAIL);
+        return FAIL;
     ret = (intf)Hopen(fn, (intn)*acc_mode, (int16)*defdds);
     free(fn);
-    return (ret);
+    return ret;
 }
 
 /*-----------------------------------------------------------------------------
@@ -62,7 +62,7 @@ nhiopen(_fcd name, intf *acc_mode, intf *defdds, intf *namelen)
 FRETVAL(intf)
 nhclose(intf *file_id)
 {
-    return (Hclose(*file_id));
+    return Hclose(*file_id);
 }
 
 /*-----------------------------------------------------------------------------
@@ -77,7 +77,7 @@ nhclose(intf *file_id)
 FRETVAL(intf)
 nhnumber(intf *file_id, intf *tag)
 {
-    return (Hnumber((int32)*file_id, (uint16)*tag));
+    return Hnumber((int32)*file_id, (uint16)*tag);
 }
 
 /*-----------------------------------------------------------------------------
@@ -98,10 +98,10 @@ nhxisdir(_fcd dir, intf *dirlen)
 
     fn = HDf2cstring(dir, (intn)*dirlen);
     if (!fn)
-        return (FAIL);
+        return FAIL;
     ret = (intf)HXsetdir(fn);
     free(fn);
-    return (ret);
+    return ret;
 }
 
 /*-----------------------------------------------------------------------------
@@ -122,10 +122,10 @@ nhxiscdir(_fcd dir, intf *dirlen)
 
     fn = HDf2cstring(dir, (intn)*dirlen);
     if (!fn)
-        return (FAIL);
+        return FAIL;
     ret = (intf)HXsetcreatedir(fn);
     free(fn);
-    return (ret);
+    return ret;
 }
 
 /*-----------------------------------------------------------------------------
@@ -140,7 +140,7 @@ nhxiscdir(_fcd dir, intf *dirlen)
 FRETVAL(intf)
 nhddontatexit(void)
 {
-    return ((intf)(HDdont_atexit()));
+    return (intf)(HDdont_atexit());
 }
 /*-----------------------------------------------------------------------------
  * Name: hglibverc
@@ -174,7 +174,7 @@ nhglibverc(intf *major_v, intf *minor_v, intf *release, _fcd string, intf *len)
     *minor_v = (intf)cminor_v;
     *release = (intf)crelease;
 
-    return ((intf)status);
+    return (intf)status;
 }
 /*-----------------------------------------------------------------------------
  * Name: hgfilverc
@@ -208,7 +208,7 @@ nhgfilverc(intf *file_id, intf *major_v, intf *minor_v, intf *release, _fcd stri
     *minor_v = (intf)cminor_v;
     *release = (intf)crelease;
 
-    return ((intf)status);
+    return (intf)status;
 }
 /*-----------------------------------------------------------------------------
  * Name:    hiishdf
@@ -228,10 +228,10 @@ nhiishdf(_fcd name, intf *namelen)
 
     fn = HDf2cstring(name, (intn)*namelen);
     if (!fn)
-        return (FAIL);
+        return FAIL;
     ret = (intf)Hishdf(fn);
     free(fn);
-    return (ret);
+    return ret;
 }
 /*-----------------------------------------------------------------------------
  * Name:    hconfinfc
@@ -254,7 +254,7 @@ nhconfinfc(intf *coder_type, intf *info)
     coder_type_c = (comp_coder_t)*coder_type;
     status       = HCget_config_info(coder_type_c, &info_c);
     if (status == FAIL)
-        return (FAIL);
+        return FAIL;
     *info = (intf)info_c;
-    return (status);
+    return status;
 }

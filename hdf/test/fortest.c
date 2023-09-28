@@ -45,7 +45,7 @@ InitTest(const char *TheName, const char *TheCall, const char *TheDescr)
         Test[Index].SkipFlag  = 0;
         Index++;
     }
-    return (Index);
+    return Index;
 }
 
 int
@@ -92,7 +92,7 @@ main(int argc, char *argv[])
 
     if ((cmdfile = fopen(cmdfilename, "w")) == NULL) {
         printf("***Can't write to cmdfile(%s)***\n", cmdfilename);
-        return (-1);
+        return -1;
     }
 
     /* Default setting */
@@ -201,7 +201,7 @@ main(int argc, char *argv[])
     fflush(stdout);
 
 #ifndef CMAKE_INTDIR /* not built with cmake */
-    return (system("./fortestF"));
+    return system("./fortestF");
 #else
     return 0; /*(system("./fortestF"));*/
 #endif

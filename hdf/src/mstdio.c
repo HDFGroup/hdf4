@@ -94,7 +94,7 @@ HCPmstdio_stread(accrec_t *access_rec)
 
     if ((*(info->cinfo.coder_funcs.stread))(access_rec) == FAIL)
         HRETURN_ERROR(DFE_CODER, FAIL);
-    return (SUCCEED);
+    return SUCCEED;
 } /* HCPmstdio_stread() */
 
 /*--------------------------------------------------------------------------
@@ -129,7 +129,7 @@ HCPmstdio_stwrite(accrec_t *access_rec)
 
     if ((*(info->cinfo.coder_funcs.stwrite))(access_rec) == FAIL)
         HRETURN_ERROR(DFE_CODER, FAIL);
-    return (SUCCEED);
+    return SUCCEED;
 } /* HCPmstdio_stwrite() */
 
 /*--------------------------------------------------------------------------
@@ -169,7 +169,7 @@ HCPmstdio_seek(accrec_t *access_rec, int32 offset, int origin)
 
     if ((ret = (*(info->cinfo.coder_funcs.seek))(access_rec, offset, origin)) == FAIL)
         HRETURN_ERROR(DFE_CODER, FAIL);
-    return (ret);
+    return ret;
 } /* HCPmstdio_seek() */
 
 /*--------------------------------------------------------------------------
@@ -207,7 +207,7 @@ HCPmstdio_read(accrec_t *access_rec, int32 length, void *data)
 
     if ((ret = (*(info->cinfo.coder_funcs.read))(access_rec, length, data)) == FAIL)
         HRETURN_ERROR(DFE_CODER, FAIL);
-    return (ret);
+    return ret;
 } /* HCPmstdio_read() */
 
 /*--------------------------------------------------------------------------
@@ -245,7 +245,7 @@ HCPmstdio_write(accrec_t *access_rec, int32 length, const void *data)
     if ((ret = (*(info->cinfo.coder_funcs.write))(access_rec, length, data)) == FAIL)
         HRETURN_ERROR(DFE_CODER, FAIL);
 
-    return (ret);
+    return ret;
 } /* HCPmstdio_write() */
 
 /*--------------------------------------------------------------------------
@@ -288,7 +288,7 @@ HCPmstdio_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *p
     if ((ret = (*(info->cinfo.coder_funcs.inquire))(access_rec, pfile_id, ptag, pref, plength, poffset, pposn,
                                                     paccess, pspecial)) == FAIL)
         HRETURN_ERROR(DFE_CODER, FAIL);
-    return (ret);
+    return ret;
 } /* HCPmstdio_inquire() */
 
 /*--------------------------------------------------------------------------
@@ -319,5 +319,5 @@ HCPmstdio_endaccess(accrec_t *access_rec)
     info = (compinfo_t *)access_rec->special_info;
     if ((ret = (*(info->cinfo.coder_funcs.endaccess))(access_rec)) == FAIL)
         HRETURN_ERROR(DFE_CODER, FAIL);
-    return (ret);
+    return ret;
 } /* HCPmstdio_endaccess() */

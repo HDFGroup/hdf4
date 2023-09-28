@@ -264,7 +264,7 @@ jpeg_HDF_src(struct jpeg_decompress_struct *cinfo_ptr, int32 file_id, uint16 tag
     src->pub.bytes_in_buffer = 0;
     src->pub.next_input_byte = NULL;
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* end jpeg_HDF_src() */
 
 /*-----------------------------------------------------------------------------

@@ -172,7 +172,7 @@ DFdinobj(int32 list)
     if (!list_rec)
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
-    return (list_rec->num);
+    return list_rec->num;
 } /* DFdinobj() */
 
 /*-----------------------------------------------------------------------------

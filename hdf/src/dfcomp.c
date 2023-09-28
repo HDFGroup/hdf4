@@ -154,7 +154,7 @@ DFputcomp(int32 file_id, uint16 tag, uint16 ref, const uint8 *image, int32 xdim,
         default: /* unknown compression scheme */
             HRETURN_ERROR(DFE_BADSCHEME, FAIL);
     }
-    return ((intn)ret);
+    return (intn)ret;
 } /* end DFputcomp() */
 
 /*-----------------------------------------------------------------------------
@@ -194,7 +194,7 @@ DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim, int32
     /* code easier to follow */
     if (scheme == DFTAG_JPEG5 || scheme == DFTAG_GREYJPEG5 || scheme == DFTAG_JPEG ||
         scheme == DFTAG_GREYJPEG)
-        return (DFCIunjpeg(file_id, tag, ref, (void *)image, xdim, ydim, (int16)scheme));
+        return DFCIunjpeg(file_id, tag, ref, (void *)image, xdim, ydim, (int16)scheme);
 
     /* Only do this stuff for non-JPEG compressed images */
     aid = Hstartread(file_id, tag, ref);

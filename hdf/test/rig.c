@@ -829,7 +829,7 @@ read_binary_block(const char *filename, /* file to be read */
 
     /* Read in the specified block of data */
     readlen = fread((void *)buffer, 1, nitems, fd);
-    return (readlen);
+    return readlen;
 }
 
 /* ------------------------------- test_r24_jpeg ------------------------------- */

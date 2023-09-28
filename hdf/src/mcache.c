@@ -273,7 +273,7 @@ done:
 #endif
 #endif
 
-    return (mp);
+    return mp;
 } /* mcache_open () */
 
 /******************************************************************************
@@ -470,7 +470,7 @@ done:
 #ifdef MCACHE_DEBUG
     fprintf(stderr, "mcache_get: Exiting \n");
 #endif
-    return (bp->page);
+    return bp->page;
 } /* mcache_get() */
 
 /******************************************************************************
@@ -710,7 +710,7 @@ done:
         return NULL;
     }
 
-    return (bp); /* return only the pagesize fragment */
+    return bp; /* return only the pagesize fragment */
 } /* mcache_bkt() */
 
 /******************************************************************************
@@ -838,7 +838,7 @@ mcache_look(MCACHE *mp, /* IN: MCACHE cookie */
     ++mp->cachemiss;
 #endif
 done:
-    return (bp);
+    return bp;
 } /* mcache_look() */
 
 #ifdef STATISTICS

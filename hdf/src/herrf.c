@@ -63,17 +63,17 @@ nheprntc(_fcd filename, intf *print_levels, intf *namelen)
     c_len = *namelen;
     if (c_len == 0) {
         HEprint(stderr, *print_levels);
-        return (ret);
+        return ret;
     }
     c_name = HDf2cstring(filename, c_len);
     if (!c_name)
-        return (FAIL);
+        return FAIL;
     err_file = fopen(c_name, "a");
     if (!err_file)
-        return (FAIL);
+        return FAIL;
     HEprint(err_file, *print_levels);
     fclose(err_file);
-    return (ret);
+    return ret;
 }
 /*-----------------------------------------------------------------------------
  * Name: hestringc

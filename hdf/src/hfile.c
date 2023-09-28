@@ -2045,7 +2045,7 @@ HDdont_atexit(void)
     if (install_atexit == TRUE)
         install_atexit = FALSE;
 
-    return (ret_value);
+    return ret_value;
 } /* end HDdont_atexit() */
 
 /*==========================================================================
@@ -2107,7 +2107,7 @@ HIstart(void)
     }
 
 done:
-    return (ret_value);
+    return ret_value;
 } /* end HIstart() */
 
 /*--------------------------------------------------------------------------
@@ -2142,7 +2142,7 @@ HPregister_term_func(hdf_termfunc_t term_func)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-    return (ret_value);
+    return ret_value;
 } /* end HPregister_term_func() */
 
 /*--------------------------------------------------------------------------
@@ -2317,7 +2317,7 @@ HIunlock(filerec_t *file_rec)
     /* unlock the file record */
     file_rec->attach--;
 
-    return (SUCCEED);
+    return SUCCEED;
 }
 
 /* ------------------------- SPECIAL TAG ROUTINES ------------------------- */
@@ -2454,7 +2454,7 @@ Hgetlibversion(uint32 *majorv, uint32 *minorv, uint32 *releasev, char *string)
     *releasev = LIBVER_RELEASE;
     HIstrncpy(string, LIBVER_STRING, LIBVSTR_LEN + 1);
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* HDgetlibversion */
 
 /*--------------------------------------------------------------------------
@@ -2725,7 +2725,7 @@ HPcompare_accrec_tagref(const void *rec1, const void *rec2)
     } /* end if */
 
 done:
-    return (ret_value);
+    return ret_value;
 } /* HPcompare_accrec_tagref */
 
 /*--------------------------------------------------------------------------

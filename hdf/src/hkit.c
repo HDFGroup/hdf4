@@ -176,8 +176,8 @@ HDgettagdesc(uint16 tag)
 
     for (i = 0; i < (intn)(sizeof(tag_descriptions) / sizeof(tag_descript_t)); i++)
         if (tag_descriptions[i].tag == tag)
-            return (tag_descriptions[i].desc);
-    return (NULL);
+            return tag_descriptions[i].desc;
+    return NULL;
 } /* HDgettagdesc */
 
 /* ----------------------------- HDgettagsname ----------------------------- */
@@ -221,7 +221,7 @@ HDgettagsname(uint16 tag)
                 ret = t;
             }
         }
-    return (ret);
+    return ret;
 } /* HDgettagsname */
 
 /* ----------------------------- HDgettagnum ------------------------------ */
@@ -244,8 +244,8 @@ HDgettagnum(const char *tag_name)
 
     for (i = 0; i < (intn)(sizeof(tag_descriptions) / sizeof(tag_descript_t)); i++)
         if (0 == strcmp(tag_descriptions[i].name, tag_name))
-            return ((intn)tag_descriptions[i].tag);
-    return (FAIL);
+            return (intn)tag_descriptions[i].tag;
+    return FAIL;
 } /* HDgettagnum */
 
 /* ----------------------------- HDgetNTdesc ----------------------------- */
@@ -294,9 +294,9 @@ HDgetNTdesc(int32 nt)
                 free(ret_desc);
                 ret_desc = t;
             }
-            return (ret_desc);
+            return ret_desc;
         }
-    return (NULL);
+    return NULL;
 } /* end HDgetNTdesc() */
 
 /* ------------------------------- HDfidtoname ------------------------------ */
@@ -322,5 +322,5 @@ HDfidtoname(int32 file_id)
     if ((file_rec = HAatom_object(file_id)) == NULL)
         HRETURN_ERROR(DFE_ARGS, NULL);
 
-    return (file_rec->path);
+    return file_rec->path;
 } /* HDfidtoname */

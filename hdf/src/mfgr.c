@@ -235,7 +235,7 @@ rigcompare(void *k1, void *k2, intn cmparg)
 {
     (void)cmparg;
 
-    return ((intn)((*(int32 *)k1) - (*(int32 *)k2))); /* valid for integer keys */
+    return (intn)((*(int32 *)k1) - (*(int32 *)k2)); /* valid for integer keys */
 } /* rigcompare */
 
 /* ---------------------------- GRIgrdestroynode ------------------------- */
@@ -334,7 +334,7 @@ Get_grfile(HFILEID f)
     int32  key = (int32)f;
 
     t = (void **)tbbtdfind(gr_tree, &key, NULL);
-    return ((gr_info_t *)(t == NULL ? NULL : *t));
+    return (gr_info_t *)(t == NULL ? NULL : *t);
 } /* end Get_grfile() */
 
 /*--------------------------------------------------------------------------
@@ -427,13 +427,13 @@ New_grfile(HFILEID f)
 
     /* Allocate the gr_info_t structure */
     if (NULL == (g = (gr_info_t *)calloc(1, sizeof(gr_info_t))))
-        return (NULL);
+        return NULL;
 
     /* Assign the file ID & insert into the tree */
     g->hdf_file_id = f;
     tbbtdins(gr_tree, g, NULL); /* insert the vg instance in B-tree */
 
-    return (g);
+    return g;
 } /* end New_grfile() */
 
 /* -------------------------- Store_imginfo ------------------------ */
@@ -3968,7 +3968,7 @@ GRsetup_szip_parms(ri_info_t *ri_ptr, comp_info *c_info, int32 *cdims)
     ret_value = HCPsetup_szip_parms(c_info, nt, ncomp, ndims, xdims, cdims);
 
 done:
-    return (ret_value);
+    return ret_value;
 }
 #endif
 
@@ -4845,7 +4845,7 @@ GRIstart(void)
         HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
 done:
-    return (ret_value);
+    return ret_value;
 } /* end GRIstart() */
 
 /*--------------------------------------------------------------------------
@@ -4982,7 +4982,7 @@ GRPshutdown(void)
 
         gr_tree = NULL;
     } /* end if */
-    return (SUCCEED);
+    return SUCCEED;
 } /* end GRPshutdown() */
 
 /*====================== Chunking Routines ================================*/

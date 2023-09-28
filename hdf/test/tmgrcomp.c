@@ -175,7 +175,7 @@ test_mgr_compress_a()
     CHECK(ret, FAIL, "Hclose");
 
     /* Return the number of errors that's been kept track of so far */
-    return (num_errs);
+    return num_errs;
 } /* end test_mgr_compress_a() */
 
 /* Create/Write/Read 8-bit JPEG compressed image */
@@ -302,7 +302,7 @@ test_mgr_compress_b()
     CHECK(ret, FAIL, "Hclose");
 
     /* Return the number of errors that's been kept track of so far */
-    return (num_errs);
+    return num_errs;
 } /* end test_mgr_compress_b() */
 
 /* Create/Write/Read 24-bit JPEG compressed image */
@@ -413,7 +413,7 @@ test_mgr_compress_c()
     CHECK(status, FAIL, "Hclose");
 
     /* Return the number of errors that's been kept track of so far */
-    return (num_errs);
+    return num_errs;
 } /* end test_mgr_compress_c() */
 
 /*--------------------------------------------------------------------------
@@ -653,7 +653,7 @@ test_get_compress()
     CHECK(status, FAIL, "Hclose");
 
     /* Return the number of errors that's been kept track of so far */
-    return (num_errs);
+    return num_errs;
 } /* end test_get_compress */
 
 /*--------------------------------------------------------------------------
@@ -906,7 +906,7 @@ test_mgr_chunk_compress()
     CHECK(status, FAIL, "Hclose");
 
     /* Return the number of errors that's been kept track of so far */
-    return (num_errs);
+    return num_errs;
 } /* end of test_mgr_chunk_compress */
 
 /****************************************************************

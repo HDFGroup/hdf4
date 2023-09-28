@@ -605,5 +605,5 @@ HAshutdown(void)
             free(atom_group_list[i]);
             atom_group_list[i] = NULL;
         } /* end if */
-    return (SUCCEED);
+    return SUCCEED;
 } /* end HAshutdown() */

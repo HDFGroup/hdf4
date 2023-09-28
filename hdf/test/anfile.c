@@ -133,7 +133,7 @@ checkann(const char *oldstr, const char *newstr, int32 ret, const char *type, in
         printf("%s is INCORRECT.\n", type);
         printf("It is:  %s\n", newstr);
         printf("It should be: %s\n", oldstr);
-        return (FAIL);
+        return FAIL;
     }
-    return (SUCCEED);
+    return SUCCEED;
 }

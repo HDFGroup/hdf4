@@ -32,7 +32,7 @@ ngetverb(void)
 
     if (verb_str != NULL)
         verb_level = (intn)strtol(verb_str, NULL, 0); /* convert whole string using base 10 */
-    return ((intf)verb_level);
+    return (intf)verb_level;
 } /* end getverb() */
 
 /*-----------------------------------------------------------------------------
@@ -53,10 +53,10 @@ nhisystem(_fcd cmd, intf *cmdlen)
 
     fn = HDf2cstring(cmd, (intn)*cmdlen);
     if (!fn)
-        return (FAIL);
+        return FAIL;
     ret = (intf)system(fn);
     free(fn);
-    return (ret);
+    return ret;
 } /* end nhisystem() */
 
 /*-----------------------------------------------------------------------------
@@ -82,7 +82,7 @@ nfixnamec(_fcd name, intf *name_len, _fcd name_out, intf *name_len_out)
 
     c_name = HDf2cstring(name, (intn)*name_len);
     if (!c_name)
-        return (FAIL);
+        return FAIL;
 
     /* Here comes Bill's code */
     /* Generate the correct name for the test file, by prepending the source path */
@@ -96,5 +96,5 @@ nfixnamec(_fcd name, intf *name_len, _fcd name_out, intf *name_len_out)
 
     ret = 0;
     free(c_name);
-    return (ret);
+    return ret;
 } /* end nfixname() */

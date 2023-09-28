@@ -1375,5 +1375,5 @@ HXPshutdown(void)
     HDFEXTCREATEDIR = NULL;
     HDFEXTDIR       = NULL;
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* end HXPshutdown() */

@@ -262,7 +262,7 @@ write_data(int32 fid, comp_model_t m_type, model_info *m_info, comp_coder_t c_ty
     aid     = HCcreate(fid, COMP_TAG, ret_ref, m_type, m_info, c_type, c_info);
     CHECK(aid, FAIL, "HCcreate");
     if (aid == FAIL)
-        return (0);
+        return 0;
 
     switch (ntype) {
         case DFNT_INT8:
@@ -284,7 +284,7 @@ write_data(int32 fid, comp_model_t m_type, model_info *m_info, comp_coder_t c_ty
             data_ptr = (void *)outbuf_uint32[test_num];
             break;
         default:
-            return (0);
+            return 0;
     } /* end switch */
 
     write_size = BUFSIZE * DFKNTsize(ntype);
@@ -298,7 +298,7 @@ write_data(int32 fid, comp_model_t m_type, model_info *m_info, comp_coder_t c_ty
     err_ret = Hendaccess(aid);
     CHECK(err_ret, FAIL, "Hendaccess");
 
-    return (ret_ref);
+    return ret_ref;
 } /* end write_data() */
 
 static void

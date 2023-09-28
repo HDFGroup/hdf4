@@ -61,7 +61,7 @@ intn
 tcompare(void *k1, void *k2, intn cmparg)
 {
     (void)cmparg;
-    return ((intn)((*(int32 *)k1) - (*(int32 *)k2)));
+    return (intn)((*(int32 *)k1) - (*(int32 *)k2));
 }
 
 void

@@ -436,7 +436,7 @@ test_mgr_userattr()
     CHECK(status, FAIL, "Hclose");
 
     /* Return the number of errors that's been kept track of so far */
-    return (num_errs);
+    return num_errs;
 } /* test_mgr_userattr */
 
 /****************************************************************
