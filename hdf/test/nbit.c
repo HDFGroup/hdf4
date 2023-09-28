@@ -124,19 +124,6 @@
 #define NBIT_MASK12A 0x0000001f
 #define NBIT_MASK12B 0xffffffffUL
 
-static void test_nbit1(int32 fid);
-static void test_nbit2(int32 fid);
-static void test_nbit3(int32 fid);
-static void test_nbit4(int32 fid);
-static void test_nbit5(int32 fid);
-static void test_nbit6(int32 fid);
-static void test_nbit7(int32 fid);
-static void test_nbit8(int32 fid);
-static void test_nbit9(int32 fid);
-static void test_nbit10(int32 fid);
-static void test_nbit11(int32 fid);
-static void test_nbit12(int32 fid);
-
 static void
 test_nbit1(int32 fid)
 {
@@ -571,35 +558,27 @@ test_nbit6(int32 fid)
 static void
 test_nbit7(int32 fid)
 {
-    int32      aid1;
-    uint16     ref1;
-    int        i;
-    int32      ret;
-    intn       errors = 0;
-    model_info m_info;
-    comp_info  c_info;
-    uint8     *outbuf, *inbuf;
-    uint8      test_val;
-
-    outbuf = (uint8 *)malloc(NBIT_SIZE7 * sizeof(uint8));
-    inbuf  = (uint8 *)malloc(NBIT_SIZE7 * sizeof(uint8));
-
-    for (i = 0; i < NBIT_SIZE7; i++) /* fill with pseudo-random data */
-        outbuf[i] = (uint8)(i * 3);
-
-    ref1 = Hnewref(fid);
+    const uint16 ref1 = Hnewref(fid);
     CHECK_VOID(ref1, 0, "Hnewref");
 
     MESSAGE(5, printf("Create a new element as a unsigned 8-bit n-bit element with filled ones\n"););
+    comp_info c_info;
     c_info.nbit.nt        = DFNT_UINT8;
     c_info.nbit.sign_ext  = FALSE;
     c_info.nbit.fill_one  = TRUE;
     c_info.nbit.start_bit = NBIT_OFF7;
     c_info.nbit.bit_len   = NBIT_BITS7;
-    aid1 = HCcreate(fid, NBIT_TAG7, ref1, COMP_MODEL_STDIO, &m_info, COMP_CODE_NBIT, &c_info);
+    model_info m_info;
+    const int32 aid1 = HCcreate(fid, NBIT_TAG7, ref1, COMP_MODEL_STDIO, &m_info, COMP_CODE_NBIT, &c_info);
     CHECK_VOID(aid1, FAIL, "HCcreate");
 
-    ret = Hwrite(aid1, NBIT_SIZE7, outbuf);
+    intn errors = 0;
+
+    uint8 *outbuf = (uint8 *)malloc(NBIT_SIZE7 * sizeof(uint8));
+    for (int i = 0; i < NBIT_SIZE7; i++) /* fill with pseudo-random data */
+        outbuf[i] = (uint8)(i * 3);
+
+    int32 ret = Hwrite(aid1, NBIT_SIZE7, outbuf);
     if (ret != NBIT_SIZE7) {
         fprintf(stderr, "ERROR(%d): Hwrite returned the wrong length: %d\n", __LINE__, (int)ret);
         HEprint(stdout, 0);
@@ -607,18 +586,23 @@ test_nbit7(int32 fid)
     }
 
     ret = Hendaccess(aid1);
+    if (ret == FAIL) {
+        free(outbuf);
+    }
     CHECK_VOID(ret, FAIL, "Hendaccess");
 
+    uint8 *inbuf = (uint8 *)malloc(NBIT_SIZE7 * sizeof(uint8));
+
     MESSAGE(5, printf("Verifying data\n"););
-    ret = Hgetelement(fid, NBIT_TAG7, (uint16)ref1, inbuf);
+    ret = Hgetelement(fid, NBIT_TAG7, ref1, inbuf);
     if (ret != NBIT_SIZE7) {
         HEprint(stderr, 0);
         fprintf(stderr, "ERROR: (%d) Hgetelement returned the wrong length: %d\n", __LINE__, (int)ret);
         errors++;
     }
 
-    for (i = 0; i < ret; i++) {
-        test_val = (uint8)((outbuf[i] & NBIT_MASK7A) | NBIT_MASK7B);
+    for (int i = 0; i < ret; i++) {
+        const uint8 test_val = (uint8)((outbuf[i] & NBIT_MASK7A) | NBIT_MASK7B);
         if ((uint8)inbuf[i] != (uint8)test_val) {
             printf("test_nbit7: Wrong data at %d, out (%d)%d in %d\n", i, outbuf[i], test_val, inbuf[i]);
             errors++;
