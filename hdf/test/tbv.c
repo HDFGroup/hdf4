@@ -47,7 +47,7 @@ test_1(void)
     /* Test creating a bit-vector w/ size >> defaults */
     MESSAGE(7, printf("Create an extendable bit-vector with large # of bits\n"););
     const int32 request_size = 80000;
-    bv_ptr b2 = bv_new(request_size);
+    bv_ptr      b2           = bv_new(request_size);
     CHECK_VOID(b2, NULL, "bv_new");
     const int32 size2 = bv_size(b2);
     MESSAGE(8, printf("Bit-vector size=%" PRId32 "\n", size2););
