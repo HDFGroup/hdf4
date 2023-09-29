@@ -5006,7 +5006,7 @@ DFSDIstart(void)
         HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
 done:
-    return (ret_value);
+    return ret_value;
 } /* end DFSDIstart() */
 
 /*--------------------------------------------------------------------------
@@ -5057,5 +5057,5 @@ DFSDPshutdown(void)
     free(Lastfile);
     Lastfile = NULL;
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* end DFSDPshutdown() */

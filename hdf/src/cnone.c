@@ -89,7 +89,7 @@ HCIcnone_staccess(accrec_t *access_rec, int16 acc_mode)
         HRETURN_ERROR(DFE_DENIED, FAIL);
     if ((acc_mode & DFACC_WRITE) && Happendable(info->aid) == FAIL)
         HRETURN_ERROR(DFE_DENIED, FAIL);
-    return (SUCCEED);
+    return SUCCEED;
 } /* end HCIcnone_staccess() */
 
 /*--------------------------------------------------------------------------
@@ -118,7 +118,7 @@ HCPcnone_stread(accrec_t *access_rec)
 
     if ((ret = HCIcnone_staccess(access_rec, DFACC_READ)) == FAIL)
         HRETURN_ERROR(DFE_CINIT, FAIL);
-    return (ret);
+    return ret;
 } /* HCPcnone_stread() */
 
 /*--------------------------------------------------------------------------
@@ -147,7 +147,7 @@ HCPcnone_stwrite(accrec_t *access_rec)
 
     if ((ret = HCIcnone_staccess(access_rec, DFACC_WRITE)) == FAIL)
         HRETURN_ERROR(DFE_CINIT, FAIL);
-    return (ret);
+    return ret;
 } /* HCPcnone_stwrite() */
 
 /*--------------------------------------------------------------------------
@@ -184,7 +184,7 @@ HCPcnone_seek(accrec_t *access_rec, int32 offset, int origin)
     if (Hseek(info->aid, offset, origin) == FAIL)
         HRETURN_ERROR(DFE_CSEEK, FAIL);
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* HCPcnone_seek() */
 
 /*--------------------------------------------------------------------------
@@ -218,7 +218,7 @@ HCPcnone_read(accrec_t *access_rec, int32 length, void *data)
     if (Hread(info->aid, length, data) == FAIL)
         HRETURN_ERROR(DFE_CDECODE, FAIL);
 
-    return (length);
+    return length;
 } /* HCPcnone_read() */
 
 /*--------------------------------------------------------------------------
@@ -252,7 +252,7 @@ HCPcnone_write(accrec_t *access_rec, int32 length, const void *data)
     if (Hwrite(info->aid, length, data) == FAIL)
         HRETURN_ERROR(DFE_CENCODE, FAIL);
 
-    return (length);
+    return length;
 } /* HCPcnone_write() */
 
 /*--------------------------------------------------------------------------
@@ -298,7 +298,7 @@ HCPcnone_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pr
     (void)paccess;
     (void)pspecial;
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* HCPcnone_inquire() */
 
 /*--------------------------------------------------------------------------
@@ -331,5 +331,5 @@ HCPcnone_endaccess(accrec_t *access_rec)
     if (Hendaccess(info->aid) == FAIL)
         HRETURN_ERROR(DFE_CANTCLOSE, FAIL);
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* HCPcnone_endaccess() */

@@ -425,5 +425,5 @@ HULshutdown(void)
             free(curr);
         }
     }
-    return (SUCCEED);
+    return SUCCEED;
 } /* end HULshutdown() */

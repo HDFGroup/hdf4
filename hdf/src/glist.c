@@ -816,7 +816,7 @@ HDGLnum_of_objects(Generic_list list)
 intn
 HDGLis_empty(Generic_list list)
 {
-    return (list.info->num_of_elements == 0);
+    return list.info->num_of_elements == 0;
 } /* HDGLis_empty() */
 
 /******************************************************************************
@@ -838,7 +838,7 @@ HDGLis_in_list(Generic_list list, void *pointer)
     while (element != &list.info->post_element && element->pointer != pointer)
         element = element->next;
 
-    return (element != &list.info->post_element);
+    return element != &list.info->post_element;
 } /* HDGLis_in_list() */
 
 /******************************************************************************

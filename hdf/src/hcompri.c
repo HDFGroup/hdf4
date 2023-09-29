@@ -179,7 +179,7 @@ HRPstread(accrec_t *rec)
     (void)rec;
 
     assert(0 && "Should never be called");
-    return (FAIL);
+    return FAIL;
 } /* HRPstread */
 
 /* ------------------------------ HRPstwrite ------------------------------- */
@@ -201,7 +201,7 @@ HRPstwrite(accrec_t *rec)
     (void)rec;
 
     assert(0 && "Should never be called");
-    return (FAIL);
+    return FAIL;
 } /* HRPstwrite */
 
 /* ------------------------------ HRPseek ------------------------------- */
@@ -273,7 +273,7 @@ HRPread(accrec_t *access_rec, int32 length, void *data)
     ret_value = length;
 
 done:
-    return (ret_value);
+    return ret_value;
 } /* HRPread */
 
 /* ------------------------------ HRPwrite ------------------------------- */
@@ -314,7 +314,7 @@ HRPwrite(accrec_t *access_rec, int32 length, const void *data)
     ret_value = length; /* return length of bytes written */
 
 done:
-    return (ret_value);
+    return ret_value;
 } /* HRPwrite */
 
 /* ------------------------------ HRPinquire ------------------------------ */
@@ -455,7 +455,7 @@ HRPcloseAID(accrec_t *access_rec)
         access_rec->special_info = NULL;
     }
 
-    return (ret_value);
+    return ret_value;
 } /* HRPcloseAID */
 
 /* ------------------------------- HRPinfo -------------------------------- */
@@ -486,5 +486,5 @@ HRPinfo(accrec_t *access_rec, sp_info_block_t *info_block)
     info_block->key = SPECIAL_COMPRAS;
 
 done:
-    return (ret_value);
+    return ret_value;
 } /* HRPinfo */

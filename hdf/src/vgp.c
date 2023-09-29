@@ -179,7 +179,7 @@ VIget_vgroup_node(void)
     memset(ret_value, 0, sizeof(VGROUP));
 
 done:
-    return (ret_value);
+    return ret_value;
 } /* VIget_vgroup_node */
 
 /******************************************************************************
@@ -234,7 +234,7 @@ VIget_vginstance_node(void)
     memset(ret_value, 0, sizeof(vginstance_t));
 
 done:
-    return (ret_value);
+    return ret_value;
 } /* VIget_vginstance_node */
 
 /******************************************************************************
@@ -277,7 +277,7 @@ Get_vfile(HFILEID f /* IN: file handle */)
     /* find file record */
     t = (void **)tbbtdfind(vtree, (void *)&key, NULL);
 
-    return ((vfile_t *)(t == NULL ? NULL : *t));
+    return (vfile_t *)(t == NULL ? NULL : *t);
 } /* end Get_vfile() */
 
 /*******************************************************************************
@@ -298,7 +298,7 @@ New_vfile(HFILEID f /* IN: file handle */)
 
     /* Allocate the vfile_t structure */
     if (NULL == (v = (vfile_t *)calloc(1, sizeof(vfile_t))))
-        return (NULL);
+        return NULL;
 
     /* Assign the file ID & insert into the tree */
     v->f = f;
@@ -307,7 +307,7 @@ New_vfile(HFILEID f /* IN: file handle */)
     tbbtdins(vtree, (void *)v, NULL);
 
     /* return vfile_t struct */
-    return (v);
+    return v;
 } /* end New_vfile() */
 
 /*******************************************************************************
@@ -2834,7 +2834,7 @@ VIstart(void)
         HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
 done:
-    return (ret_value);
+    return ret_value;
 } /* end VIstart() */
 
 /*******************************************************************************

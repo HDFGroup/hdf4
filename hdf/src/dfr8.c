@@ -1430,7 +1430,7 @@ DFR8Istart(void)
         HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
 done:
-    return (ret_value);
+    return ret_value;
 } /* end DFR8Istart() */
 
 /*--------------------------------------------------------------------------

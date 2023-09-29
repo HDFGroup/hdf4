@@ -79,11 +79,11 @@ gen_bitio_test(void)
     intn   i;        /* local counting variable */
 
     if ((fid = Hopen(BITIO_NAME, DFACC_CREATE, 0)) == FAIL)
-        return (FAIL);
+        return FAIL;
 
     if ((bit_data = (uint8 *)malloc(BITIO_SIZE1 * sizeof(uint8))) == NULL) {
         Hclose(fid);
-        return (FAIL);
+        return FAIL;
     } /* end if */
 
     for (i = 0; i < BITIO_SIZE1; i++) /* fill with pseudo-random data */
@@ -92,15 +92,15 @@ gen_bitio_test(void)
     if (FAIL == Hputelement(fid, BITIO_TAG1, BITIO_REF1, bit_data, BITIO_SIZE1)) {
         free(bit_data);
         Hclose(fid);
-        return (FAIL);
+        return FAIL;
     }
 
     free(bit_data);
 
     if (FAIL == Hclose(fid))
-        return (FAIL);
+        return FAIL;
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* end gen_bitio_test() */
 
 /*--------------------------------------------------------------------------
@@ -131,17 +131,17 @@ gen_nbit_test(void)
     intn   i;          /* local counting variable */
 
     if ((fid = Hopen(NBIT_NAME, DFACC_CREATE, 0)) == FAIL)
-        return (FAIL);
+        return FAIL;
 
     if ((nbit_data = (uint8 *)malloc(NBIT_SIZE1 * sizeof(uint8))) == NULL) {
         Hclose(fid);
-        return (FAIL);
+        return FAIL;
     }
 
     if ((out_data = (uint8 *)malloc(NBIT_SIZE1 * sizeof(uint8))) == NULL) {
         free(nbit_data);
         Hclose(fid);
-        return (FAIL);
+        return FAIL;
     }
 
     for (i = 0; i < NBIT_SIZE1; i++) /* fill with pseudo-random data */
@@ -170,16 +170,16 @@ gen_nbit_test(void)
         free(nbit_data);
         free(out_data);
         Hclose(fid);
-        return (FAIL);
+        return FAIL;
     } /* end if */
 
     free(nbit_data);
     free(out_data);
 
     if (FAIL == Hclose(fid))
-        return (FAIL);
+        return FAIL;
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* end gen_nbit_test() */
 
 int

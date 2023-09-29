@@ -103,7 +103,7 @@ HCIcrle_init(accrec_t *access_rec)
     rle_info->second_byte = (uintn)RLE_NIL; /* start with no code here too */
     rle_info->offset      = 0;              /* offset into the file */
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* end HCIcrle_init() */
 
 /*--------------------------------------------------------------------------
@@ -178,7 +178,7 @@ HCIcrle_decode(compinfo_t *info, int32 length, uint8 *buf)
     }                                       /* end while */
 
     rle_info->offset += orig_length; /* incr. abs. offset into the file */
-    return (SUCCEED);
+    return SUCCEED;
 } /* end HCIcrle_decode() */
 
 /*--------------------------------------------------------------------------
@@ -290,7 +290,7 @@ HCIcrle_encode(compinfo_t *info, int32 length, const uint8 *buf)
     }     /* end while */
 
     rle_info->offset += orig_length; /* incr. abs. offset into the file */
-    return (SUCCEED);
+    return SUCCEED;
 } /* end HCIcrle_encode() */
 
 /*--------------------------------------------------------------------------
@@ -342,7 +342,7 @@ HCIcrle_term(compinfo_t *info)
     rle_info->rle_state   = RLE_INIT;
     rle_info->second_byte = rle_info->last_byte = (uintn)RLE_NIL;
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* end HCIcrle_term() */
 
 /*--------------------------------------------------------------------------
@@ -380,7 +380,7 @@ HCIcrle_staccess(accrec_t *access_rec, int16 acc_mode)
 
     if (info->aid == FAIL)
         HRETURN_ERROR(DFE_DENIED, FAIL);
-    return (HCIcrle_init(access_rec)); /* initialize the RLE info */
+    return HCIcrle_init(access_rec); /* initialize the RLE info */
 } /* end HCIcrle_staccess() */
 
 /*--------------------------------------------------------------------------
@@ -409,7 +409,7 @@ HCPcrle_stread(accrec_t *access_rec)
 
     if ((ret = HCIcrle_staccess(access_rec, DFACC_READ)) == FAIL)
         HRETURN_ERROR(DFE_CINIT, FAIL);
-    return (ret);
+    return ret;
 } /* HCPcrle_stread() */
 
 /*--------------------------------------------------------------------------
@@ -438,7 +438,7 @@ HCPcrle_stwrite(accrec_t *access_rec)
 
     if ((ret = HCIcrle_staccess(access_rec, DFACC_WRITE)) == FAIL)
         HRETURN_ERROR(DFE_CINIT, FAIL);
-    return (ret);
+    return ret;
 } /* HCPcrle_stwrite() */
 
 /*--------------------------------------------------------------------------
@@ -500,7 +500,7 @@ HCPcrle_seek(accrec_t *access_rec, int32 offset, int origin)
         }
 
     free(tmp_buf);
-    return (SUCCEED);
+    return SUCCEED;
 } /* HCPcrle_seek() */
 
 /*--------------------------------------------------------------------------
@@ -534,7 +534,7 @@ HCPcrle_read(accrec_t *access_rec, int32 length, void *data)
     if (HCIcrle_decode(info, length, data) == FAIL)
         HRETURN_ERROR(DFE_CDECODE, FAIL);
 
-    return (length);
+    return length;
 } /* HCPcrle_read() */
 
 /*--------------------------------------------------------------------------
@@ -577,7 +577,7 @@ HCPcrle_write(accrec_t *access_rec, int32 length, const void *data)
     if (HCIcrle_encode(info, length, data) == FAIL)
         HRETURN_ERROR(DFE_CENCODE, FAIL);
 
-    return (length);
+    return length;
 } /* HCPcrle_write() */
 
 /*--------------------------------------------------------------------------
@@ -623,7 +623,7 @@ HCPcrle_inquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pre
     (void)paccess;
     (void)pspecial;
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* HCPcrle_inquire() */
 
 /*--------------------------------------------------------------------------
@@ -663,5 +663,5 @@ HCPcrle_endaccess(accrec_t *access_rec)
     if (Hendaccess(info->aid) == FAIL)
         HRETURN_ERROR(DFE_CANTCLOSE, FAIL);
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* HCPcrle_endaccess() */

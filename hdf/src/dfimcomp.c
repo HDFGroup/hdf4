@@ -479,7 +479,7 @@ nearest_color(uint8 r, uint8 g, uint8 b)
 static uint32
 sqr(int16 x)
 {
-    return ((uint32)x * (uint32)x);
+    return (uint32)x * (uint32)x;
 }
 
 /************************************************************************/
@@ -773,7 +773,7 @@ find_box(void)
             temp = temp->right;
 
     if (max == NULL) {
-        return (NULL); /* punt! */
+        return NULL; /* punt! */
     }
 
     return max;

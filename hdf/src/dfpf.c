@@ -49,10 +49,10 @@ ndpigpal(_fcd filename, _fcd pal, intf *fnlen)
 
     fn = HDf2cstring(filename, (intn)*fnlen);
     if (!fn)
-        return (-1);
+        return -1;
     ret = DFPgetpal(fn, (void *)_fcdtocp(pal));
     free(fn);
-    return (ret);
+    return ret;
 }
 
 /*-----------------------------------------------------------------------------
@@ -80,10 +80,10 @@ ndpippal(_fcd filename, _fcd pal, intf *overwrite, _fcd filemode, intf *fnlen)
 
     fn = HDf2cstring(filename, (intn)*fnlen);
     if (!fn)
-        return (-1);
+        return -1;
     ret = DFPputpal(fn, (void *)_fcdtocp(pal), (intn)*overwrite, (char *)_fcdtocp(filemode));
     free(fn);
-    return (ret);
+    return ret;
 }
 
 /*-----------------------------------------------------------------------------
@@ -103,10 +103,10 @@ ndpinpal(_fcd filename, intf *fnlen)
 
     fn = HDf2cstring(filename, (intn)*fnlen);
     if (!fn)
-        return (-1);
+        return -1;
     ret = DFPnpals(fn);
     free(fn);
-    return (ret);
+    return ret;
 }
 
 /*-----------------------------------------------------------------------------
@@ -128,10 +128,10 @@ ndpirref(_fcd filename, intf *ref, intf *fnlen)
 
     fn = HDf2cstring(filename, (intn)*fnlen);
     if (!fn)
-        return (-1);
+        return -1;
     ret = DFPreadref(fn, (uint16)*ref);
     free(fn);
-    return (ret);
+    return ret;
 }
 
 /*-----------------------------------------------------------------------------
@@ -154,10 +154,10 @@ ndpiwref(_fcd filename, intf *ref, intf *fnlen)
 
     fn = HDf2cstring(filename, (intn)*fnlen);
     if (!fn)
-        return (-1);
+        return -1;
     ret = DFPreadref(fn, (uint16)*ref);
     free(fn);
-    return (ret);
+    return ret;
 }
 
 /*-----------------------------------------------------------------------------
@@ -172,8 +172,7 @@ ndpiwref(_fcd filename, intf *ref, intf *fnlen)
 FRETVAL(intf)
 ndprest(void)
 {
-
-    return (DFPrestart());
+    return DFPrestart();
 }
 
 /*-----------------------------------------------------------------------------
@@ -190,8 +189,7 @@ ndprest(void)
 FRETVAL(intf)
 ndplref(void)
 {
-
-    return ((intf)DFPlastref());
+    return (intf)DFPlastref();
 }
 
 /*-----------------------------------------------------------------------------
@@ -206,8 +204,7 @@ ndplref(void)
 FRETVAL(intf)
 ndfprestart(void)
 {
-
-    return (DFPrestart());
+    return DFPrestart();
 }
 
 /*-----------------------------------------------------------------------------
@@ -224,6 +221,5 @@ ndfprestart(void)
 FRETVAL(intf)
 ndfplastref(void)
 {
-
-    return ((intf)DFPlastref());
+    return (intf)DFPlastref();
 }

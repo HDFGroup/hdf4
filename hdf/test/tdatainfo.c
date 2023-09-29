@@ -596,7 +596,7 @@ get_annot_datainfo(int32 an_id, ann_type annot_type, int32 num_anns, t_ann_info_
         /* Number of annotations whose datainfo is retrieved */
         ret_value++;
     }
-    return (ret_value);
+    return ret_value;
 } /* get_annot_datainfo */
 
 /****************************************************************************

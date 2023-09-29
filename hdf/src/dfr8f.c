@@ -47,7 +47,7 @@
 FRETVAL(intf)
 nd8spal(_fcd pal)
 {
-    return (DFR8setpalette((uint8 *)_fcdtocp(pal)));
+    return DFR8setpalette((uint8 *)_fcdtocp(pal));
 }
 
 /*-----------------------------------------------------------------------------
@@ -62,7 +62,7 @@ nd8spal(_fcd pal)
 FRETVAL(intf)
 nd8first(void)
 {
-    return (DFR8restart());
+    return DFR8restart();
 }
 
 /*-----------------------------------------------------------------------------
@@ -87,7 +87,7 @@ nd8igdim(_fcd filename, intf *xdim, intf *ydim, intf *ispal, intf *lenfn)
 
     fn = HDf2cstring(filename, (intn)*lenfn);
     if (!fn)
-        return (-1);
+        return -1;
     ret = DFR8getdims(fn, &txdim, &tydim, &tispal);
     if (ret != FAIL) {
         *xdim  = txdim;
@@ -95,7 +95,7 @@ nd8igdim(_fcd filename, intf *xdim, intf *ydim, intf *ispal, intf *lenfn)
         *ispal = tispal;
     }
     free(fn);
-    return (ret);
+    return ret;
 }
 
 /*-----------------------------------------------------------------------------
@@ -119,10 +119,10 @@ nd8igimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, _fcd pal, intf *lenf
 
     fn = HDf2cstring(filename, (intn)*lenfn);
     if (!fn)
-        return (-1);
+        return -1;
     ret = DFR8getimage(fn, (uint8 *)_fcdtocp(image), *xdim, *ydim, (uint8 *)_fcdtocp(pal));
     free(fn);
-    return (ret);
+    return ret;
 }
 
 /*-----------------------------------------------------------------------------
@@ -146,10 +146,10 @@ nd8ipimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *compress, intf
 
     fn = HDf2cstring(filename, (intn)*lenfn);
     if (!fn)
-        return (-1);
+        return -1;
     ret = (intf)DFR8putimage(fn, (void *)_fcdtocp(image), (int32)*xdim, (int32)*ydim, (uint16)*compress);
     free(fn);
-    return (ret);
+    return ret;
 }
 
 /*-----------------------------------------------------------------------------
@@ -173,10 +173,10 @@ nd8iaimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *compress, intf
 
     fn = HDf2cstring(filename, (intn)*lenfn);
     if (!fn)
-        return (-1);
+        return -1;
     ret = (intf)DFR8addimage(fn, (void *)_fcdtocp(image), (int32)*xdim, (int32)*ydim, (uint16)*compress);
     free(fn);
-    return (ret);
+    return ret;
 }
 
 /*-----------------------------------------------------------------------------
@@ -229,10 +229,10 @@ nd8iwref(_fcd filename, intf *ref, intf *fnlen)
 
     fn = HDf2cstring(filename, (intn)*fnlen);
     if (!fn)
-        return (-1);
+        return -1;
     ret = DFR8writeref(fn, Ref);
     free(fn);
-    return (ret);
+    return ret;
 }
 
 /*-----------------------------------------------------------------------------
@@ -254,10 +254,10 @@ nd8inims(_fcd filename, intf *fnlen)
 
     fn = HDf2cstring(filename, (intn)*fnlen);
     if (!fn)
-        return (-1);
+        return -1;
     ret = DFR8nimages(fn);
     free(fn);
-    return (ret);
+    return ret;
 }
 
 /*-----------------------------------------------------------------------------
@@ -272,7 +272,7 @@ nd8inims(_fcd filename, intf *fnlen)
 FRETVAL(intf)
 nd8lref(void)
 {
-    return ((intf)DFR8lastref());
+    return (intf)DFR8lastref();
 }
 
 /*-----------------------------------------------------------------------------
@@ -297,7 +297,7 @@ nd8scomp(intf *scheme)
         cinfo.jpeg.quality        = 75;
         cinfo.jpeg.force_baseline = 1;
     } /* end if */
-    return (DFR8setcompress((int32)*scheme, &cinfo));
+    return DFR8setcompress((int32)*scheme, &cinfo);
 } /* end d8scomp() */
 
 /*-----------------------------------------------------------------------------
@@ -319,7 +319,7 @@ nd8sjpeg(intf *quality, intf *force_baseline)
 
     cinfo.jpeg.quality        = (intn)*quality;
     cinfo.jpeg.force_baseline = (intn)*force_baseline;
-    return (DFR8setcompress((int32)COMP_JPEG, &cinfo));
+    return DFR8setcompress((int32)COMP_JPEG, &cinfo);
 } /* end d8sjpeg() */
 
 /*-----------------------------------------------------------------------------
@@ -335,7 +335,7 @@ nd8sjpeg(intf *quality, intf *force_baseline)
 FRETVAL(intf)
 ndfr8lastref(void)
 {
-    return ((intf)DFR8lastref());
+    return (intf)DFR8lastref();
 }
 
 /*-----------------------------------------------------------------------------
@@ -350,8 +350,7 @@ ndfr8lastref(void)
 FRETVAL(intf)
 ndfr8setpalette(_fcd pal)
 {
-
-    return (DFR8setpalette((uint8 *)_fcdtocp(pal)));
+    return DFR8setpalette((uint8 *)_fcdtocp(pal));
 }
 
 /*-----------------------------------------------------------------------------
@@ -366,8 +365,7 @@ ndfr8setpalette(_fcd pal)
 FRETVAL(intf)
 ndfr8restart(void)
 {
-
-    return (DFR8restart());
+    return DFR8restart();
 }
 
 /*-----------------------------------------------------------------------------
@@ -392,7 +390,7 @@ ndfr8scompress(intf *scheme)
         cinfo.jpeg.quality        = 75;
         cinfo.jpeg.force_baseline = 1;
     } /* end if */
-    return (DFR8setcompress((int32)*scheme, &cinfo));
+    return DFR8setcompress((int32)*scheme, &cinfo);
 } /* end dfr8setcompress() */
 
 /*-----------------------------------------------------------------------------
@@ -414,5 +412,5 @@ ndfr8sjpeg(intf *quality, intf *force_baseline)
 
     cinfo.jpeg.quality        = (intn)*quality;
     cinfo.jpeg.force_baseline = (intn)*force_baseline;
-    return (DFR8setcompress((int32)COMP_JPEG, &cinfo));
+    return DFR8setcompress((int32)COMP_JPEG, &cinfo);
 } /* end dfr8setjpeg() */

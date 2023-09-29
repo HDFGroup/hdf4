@@ -80,7 +80,7 @@ HDmemfill(void *dest, const void *src, uint32 item_size, uint32 num_items)
         if (items_left > 0)  /* if there are any items left to copy */
             memcpy(curr_dest, dest, items_left * item_size);
     } /* end if */
-    return (dest);
+    return dest;
 } /* end HDmemfill() */
 
 /*--------------------------------------------------------------------------
@@ -112,9 +112,9 @@ HIstrncpy(char *dest, const char *source, intn len)
 
     destp = dest;
     if (len == 0)
-        return (destp);
+        return destp;
     for (; (len > 1) && (*source != '\0'); len--)
         *dest++ = *source++;
     *dest = '\0'; /* Force the last byte be '\0'   */
-    return (destp);
+    return destp;
 } /* end HIstrncpy() */

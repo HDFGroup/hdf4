@@ -923,7 +923,7 @@ GRgetpalinfo(int32 gr_id, uintn pal_count, hdf_ddinfo_t *palinfo_array)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
         }
         else
-            return (n_IP8s + n_LUTs);
+            return n_IP8s + n_LUTs;
     }
 
     /* Application requests data info of palettes.  Start checking tags in

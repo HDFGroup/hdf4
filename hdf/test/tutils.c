@@ -26,9 +26,9 @@ fuzzy_memcmp(const void *s1, const void *s2, int32 len, intn fuzz_factor)
         len--;
     } /* end while */
     if (len == 0)
-        return (0);
+        return 0;
     else {
-        return ((intn)(*t1 - *t2));
+        return (intn)(*t1 - *t2);
     }
 } /* end fuzzy_memcmp() */
 

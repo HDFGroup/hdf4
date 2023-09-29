@@ -79,10 +79,10 @@ static int16
 VSIZEOF(int16 x)
 {
     if (x < 0 || x > (int16)(LOCALSIZETAB_SIZE - 1)) {
-        return (FAIL);
+        return FAIL;
     }
     else {
-        return (local_sizetab[x]);
+        return local_sizetab[x];
     }
 } /* VSIZEOF */
 
@@ -144,12 +144,12 @@ vicheckcompat(HFILEID f)
 
     HEclear();         /* clear the stack to remove faux failures - bug #655 */
     if (foundold == 0) /* has no old vset elements */
-        return (1);    /* just assume compatible */
+        return 1;      /* just assume compatible */
 
     if (foundnew > 0)
-        return (1); /* file is already compatible */
+        return 1; /* file is already compatible */
     else
-        return (0); /* file is not compatible */
+        return 0; /* file is not compatible */
 } /* vicheckcompat */
 
 /* ------------------------------------------------------------------ */
@@ -280,7 +280,7 @@ vimakecompat(HFILEID f)
     Hendaccess(aid);
     VSIrelease_vdata_node(vs);
 
-    return (1);
+    return 1;
 
 } /* vimakecompat */
 
@@ -311,7 +311,7 @@ vcheckcompat(char *fs)
     ret = vicheckcompat(f);
     Hclose(f);
 
-    return (ret);
+    return ret;
 } /* vcheckcompat */
 
 /* ================================================================== */
@@ -337,7 +337,7 @@ vmakecompat(char *fs)
         HRETURN_ERROR(DFE_BADOPEN, FAIL);
     ret = vimakecompat(f);
     Hclose(f);
-    return (ret);
+    return ret;
 } /* vmakecompat */
 
 /* ==================================================================== */

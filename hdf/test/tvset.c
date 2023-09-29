@@ -2244,7 +2244,7 @@ check_vgs(int32 id, uintn start_vg, uintn n_vgs, char *ident_text, /* just for d
     refarray = (uint16 *)malloc(sizeof(uint16) * count);
     if (refarray == NULL) {
         fprintf(stderr, "check_vgs: Allocation refarray failed\n");
-        return (-1);
+        return -1;
     }
 
     /* Get all the vgroups in the file */
@@ -2284,7 +2284,7 @@ check_vds(int32 id, uintn start_vd, uintn n_vds, char *ident_text, /* just for d
     refarray = (uint16 *)malloc(sizeof(uint16) * count);
     if (refarray == NULL) {
         fprintf(stderr, "check_vds: Allocation refarray failed\n");
-        return (-1);
+        return -1;
     }
 
     /* Get all the vdatas in the file */

@@ -278,7 +278,7 @@ read_test(int32 aid)
         acc_time += (end_time.tv_sec - start_time.tv_sec) * FACTOR + (end_time.tv_usec - start_time.tv_usec);
     } /* end for */
 
-    return (acc_time);
+    return acc_time;
 } /* end read_test() */
 
 static long
@@ -401,7 +401,7 @@ write_test(int32 aid, intn num_timings)
         acc_time += (end_time.tv_sec - start_time.tv_sec) * FACTOR + (end_time.tv_usec - start_time.tv_usec);
     } /* end for */
 
-    return (acc_time);
+    return acc_time;
 } /* end read_test() */
 
 int

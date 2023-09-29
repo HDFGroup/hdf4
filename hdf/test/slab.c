@@ -2309,7 +2309,7 @@ slab4w(void)
     else
         MESSAGE(10, printf("\n          slab4w:  %d wrong values in slab.  \n", (int)num_err););
 
-    return (int)(num_err);
+    return (int)num_err;
 }
 
 /*

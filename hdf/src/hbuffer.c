@@ -209,7 +209,7 @@ HBPstread(accrec_t *rec)
     (void)rec;
 
     assert(0 && "Should never be called");
-    return (FAIL);
+    return FAIL;
 } /* HBPstread */
 
 /* ------------------------------ HBPstwrite ------------------------------- */
@@ -231,7 +231,7 @@ HBPstwrite(accrec_t *rec)
     (void)rec;
 
     assert(0 && "Should never be called");
-    return (FAIL);
+    return FAIL;
 } /* HBPstwrite */
 
 /* ------------------------------ HBPseek ------------------------------- */
@@ -312,7 +312,7 @@ HBPread(accrec_t *access_rec, int32 length, void *data)
     ret_value = length;
 
 done:
-    return (ret_value);
+    return ret_value;
 } /* HBPread */
 
 /* ------------------------------ HBPwrite ------------------------------- */
@@ -378,7 +378,7 @@ HBPwrite(accrec_t *access_rec, int32 length, const void *data)
     ret_value = length; /* return length of bytes written */
 
 done:
-    return (ret_value);
+    return ret_value;
 } /* HBPwrite */
 
 /* ------------------------------ HBPinquire ------------------------------ */
@@ -525,7 +525,7 @@ HBPcloseAID(accrec_t *access_rec)
     }
 
 done:
-    return (ret_value);
+    return ret_value;
 } /* HBPcloseAID */
 
 /* ------------------------------- HBPinfo -------------------------------- */
@@ -560,5 +560,5 @@ HBPinfo(accrec_t *access_rec, sp_info_block_t *info_block)
     info_block->buf_aid = info->buf_aid;
 
 done:
-    return (ret_value);
+    return ret_value;
 } /* HBPinfo */

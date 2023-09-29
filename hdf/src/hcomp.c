@@ -248,7 +248,7 @@ HCIinit_coder(int16 acc_mode, comp_coder_info_t *cinfo, comp_coder_t coder_type,
         default:
             HRETURN_ERROR(DFE_BADCODER, FAIL);
     } /* end switch */
-    return (SUCCEED);
+    return SUCCEED;
 } /* end HCIinit_coder() */
 
 /*--------------------------------------------------------------------------
@@ -287,7 +287,7 @@ HCIinit_model(int16 acc_mode, comp_model_info_t *minfo, comp_model_t model_type,
             HRETURN_ERROR(DFE_BADMODEL, FAIL);
     } /* end switch */
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* end HCIinit_model() */
 
 /*--------------------------------------------------------------------------
@@ -1352,7 +1352,7 @@ HCPinquire(accrec_t *access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref, in
     if (pspecial != NULL)
         *pspecial = (int16)access_rec->special;
 
-    return (SUCCEED);
+    return SUCCEED;
 } /* end HCPinquire() */
 
 /*--------------------------------------------------------------------------
@@ -1442,7 +1442,7 @@ HCPcloseAID(accrec_t *access_rec)
         free(info);
         access_rec->special_info = NULL;
     }
-    return (ret);
+    return ret;
 } /* end HCPcloseAID() */
 
 /* ------------------------------- HCPinfo -------------------------------- */

@@ -89,10 +89,10 @@ ndfivopn(_fcd name, intf *acc_mode, intf *defdds, intf *namelen)
 
     fn = HDf2cstring(name, (intn)*namelen);
     if (!fn)
-        return (FAIL);
+        return FAIL;
     ret = (intf)Vopen(fn, (intn)*acc_mode, (int16)*defdds);
     free(fn);
-    return (ret);
+    return ret;
 } /* end ndfivopn() */
 
 /*-----------------------------------------------------------------------------
@@ -107,7 +107,7 @@ ndfivopn(_fcd name, intf *acc_mode, intf *defdds, intf *namelen)
 FRETVAL(intf)
 ndfvclos(intf *file_id)
 {
-    return (Vclose((int32)*file_id));
+    return Vclose((int32)*file_id);
 } /* ndfvclos() */
 
 /*
@@ -123,12 +123,12 @@ nvatchc(intf *f, intf *vgid, _fcd accesstype)
 
     acc = HDf2cstring(accesstype, 1);
     if (!acc)
-        return (FAIL);
+        return FAIL;
 
     vkey = Vattach((int32)*f, *vgid, acc);
     free(acc);
 
-    return ((intf)vkey);
+    return (intf)vkey;
 }
 
 /* ------------------------------------------------------------------ */
@@ -141,7 +141,7 @@ nvatchc(intf *f, intf *vgid, _fcd accesstype)
 FRETVAL(intf)
 nvdtchc(intf *vkey)
 {
-    return (Vdetach(*vkey));
+    return Vdetach(*vkey);
 }
 /* ------------------------------------------------------------------ */
 
@@ -153,7 +153,7 @@ nvdtchc(intf *vkey)
 FRETVAL(intf)
 nvgnamc(intf *vkey, _fcd vgname)
 {
-    return (Vgetname(*vkey, _fcdtocp(vgname)));
+    return Vgetname(*vkey, _fcdtocp(vgname));
 } /* VGNAMC */
 
 /* ------------------------------------------------------------------ */
@@ -165,7 +165,7 @@ nvgnamc(intf *vkey, _fcd vgname)
 FRETVAL(intf)
 nvgclsc(intf *vkey, _fcd vgclass)
 {
-    return (Vgetclass(*vkey, _fcdtocp(vgclass)));
+    return Vgetclass(*vkey, _fcdtocp(vgclass));
 } /* VGCLSC */
 
 /* ------------------------------------------------------------------ */
@@ -177,7 +177,7 @@ nvgclsc(intf *vkey, _fcd vgclass)
 FRETVAL(intf)
 nvinqc(intf *vkey, intf *nentries, _fcd vgname)
 {
-    return ((intf)Vinquire(*vkey, (int32 *)nentries, _fcdtocp(vgname)));
+    return (intf)Vinquire(*vkey, (int32 *)nentries, _fcdtocp(vgname));
 } /* VINQC */
 
 /* ------------------------------------------------------------------ */
@@ -189,7 +189,7 @@ nvinqc(intf *vkey, intf *nentries, _fcd vgname)
 FRETVAL(intf)
 nvdelete(intf *f, intf *vkey)
 {
-    return ((intf)Vdelete((int32)*f, (int32)*vkey));
+    return (intf)Vdelete((int32)*f, (int32)*vkey);
 } /* nvdelete */
 
 /* ------------------------------------------------------------------ */
@@ -201,7 +201,7 @@ nvdelete(intf *f, intf *vkey)
 FRETVAL(intf)
 nvgidc(intf *f, intf *vgid)
 {
-    return ((intf)Vgetid((int32)*f, *vgid));
+    return (intf)Vgetid((int32)*f, *vgid);
 }
 
 /* ------------------------------------------------------------------ */
@@ -213,7 +213,7 @@ nvgidc(intf *f, intf *vgid)
 FRETVAL(intf)
 nvgnxtc(intf *vkey, intf *id)
 {
-    return (Vgetnext(*vkey, *id));
+    return Vgetnext(*vkey, *id);
 }
 
 /* ------------------------------------------------------------------ */
@@ -230,12 +230,12 @@ nvsnamc(intf *vkey, _fcd vgname, intf *vgnamelen)
 
     name = HDf2cstring(vgname, (intn)*vgnamelen);
     if (!name)
-        return (FAIL);
+        return FAIL;
     /* trimendblanks(name); */
     ret = (intf)Vsetname(*vkey, name);
     free(name);
 
-    return (ret);
+    return ret;
 }
 
 /* ------------------------------------------------------------------ */
@@ -252,12 +252,12 @@ nvsclsc(intf *vkey, _fcd vgclass, intf *vgclasslen)
 
     tclass = HDf2cstring(vgclass, (intn)*vgclasslen);
     if (!tclass)
-        return (FAIL);
+        return FAIL;
     /* trimendblanks(tclass); */
     ret = (intf)Vsetclass(*vkey, tclass);
     free(tclass);
 
-    return (ret);
+    return ret;
 }
 
 /* ------------------------------------------------------------------ */
@@ -269,7 +269,7 @@ nvsclsc(intf *vkey, _fcd vgclass, intf *vgclasslen)
 FRETVAL(intf)
 nvinsrtc(intf *vkey, intf *vobjptr)
 {
-    return ((intf)Vinsert(*vkey, *vobjptr));
+    return (intf)Vinsert(*vkey, *vobjptr);
 }
 
 /* ------------------------------------------------------------------ */
@@ -281,7 +281,7 @@ nvinsrtc(intf *vkey, intf *vobjptr)
 FRETVAL(intf)
 nvisvgc(intf *vkey, intf *id)
 {
-    return ((intf)Visvg(*vkey, *id));
+    return (intf)Visvg(*vkey, *id);
 }
 
 /* ------------------------------------------------------------------ */
@@ -292,7 +292,7 @@ nvisvgc(intf *vkey, intf *id)
 FRETVAL(intf)
 nvfstart(intf *f)
 {
-    return (Vstart((int32)*f));
+    return Vstart((int32)*f);
 } /* nvfstart */
 
 /* ------------------------------------------------------------------ */
@@ -303,7 +303,7 @@ nvfstart(intf *f)
 FRETVAL(intf)
 nvfend(intf *f)
 {
-    return ((intf)Vend((int32)*f));
+    return (intf)Vend((int32)*f);
 } /* nvfend */
 
 /* ------------------------------------------------------------------ */
@@ -315,7 +315,7 @@ nvfend(intf *f)
 FRETVAL(intf)
 nvisvsc(intf *vkey, intf *id)
 {
-    return ((intf)Visvs(*vkey, *id));
+    return (intf)Visvs(*vkey, *id);
 }
 
 /* ================================================== */
@@ -331,7 +331,7 @@ FRETVAL(intf)
 nvsatchc(intf *f, intf *vsid, _fcd accesstype)
 {
     /* need not HDf2cstring since only first char is accessed. */
-    return (VSattach((int32)*f, *vsid, _fcdtocp(accesstype)));
+    return VSattach((int32)*f, *vsid, _fcdtocp(accesstype));
 }
 
 /* ------------------------------------------------------------------ */
@@ -343,7 +343,7 @@ nvsatchc(intf *f, intf *vsid, _fcd accesstype)
 FRETVAL(intf)
 nvsdtchc(intf *vkey)
 {
-    return (VSdetach(*vkey));
+    return VSdetach(*vkey);
 }
 
 /* ------------------------------------------------------------------ */
@@ -355,7 +355,7 @@ nvsdtchc(intf *vkey)
 FRETVAL(intf)
 nvsqref(intf *vkey)
 {
-    return ((intf)VSQueryref((int32)*vkey));
+    return (intf)VSQueryref((int32)*vkey);
 }
 
 /* ------------------------------------------------------------------ */
@@ -367,7 +367,7 @@ nvsqref(intf *vkey)
 FRETVAL(intf)
 nvsqtag(intf *vkey)
 {
-    return ((intf)VSQuerytag((int32)*vkey));
+    return (intf)VSQuerytag((int32)*vkey);
 }
 
 /* ----------------------------------------------------------------- */
@@ -379,7 +379,7 @@ nvsqtag(intf *vkey)
 FRETVAL(intf)
 nvsgver(intf *vkey)
 {
-    return ((intf)VSgetversion((int32)*vkey));
+    return (intf)VSgetversion((int32)*vkey);
 }
 
 /* ------------------------------------------------------------------ */
@@ -391,7 +391,7 @@ nvsgver(intf *vkey)
 FRETVAL(intf)
 nvsseekc(intf *vkey, intf *eltpos)
 {
-    return ((intf)VSseek(*vkey, *eltpos));
+    return (intf)VSseek(*vkey, *eltpos);
 }
 
 /* ------------------------------------------------------------------ */
@@ -417,7 +417,7 @@ nvsgnamc(intf *vkey, _fcd vsname, intf *vsnamelen)
     HDpackFstring(tvsname, _fcdtocp(vsname), (intn)*vsnamelen);
     free(tvsname);
 
-    return (status);
+    return status;
 } /* VSGNAMC */
 
 /* ------------------------------------------------------------------ */
@@ -443,7 +443,7 @@ nvsgclsc(intf *vkey, _fcd vsclass, intf *vsclasslen)
     HDpackFstring(tvsclass, _fcdtocp(vsclass), (intn)*vsclasslen);
     free(tvsclass);
 
-    return (status);
+    return status;
 } /* VSGCLSC */
 
 /* ------------------------------------------------------------------ */
@@ -502,12 +502,12 @@ nvsfexc(intf *vkey, _fcd fields, intf *fieldslen)
 
     flds = HDf2cstring(fields, (intn)*fieldslen);
     if (!flds)
-        return (FAIL);
+        return FAIL;
     /* trimendblanks(flds); */
     ret = (int32)VSfexist(*vkey, flds);
     free(flds);
 
-    return (ret);
+    return ret;
 }
 
 /* ------------------------------------------------------------------ */
@@ -524,12 +524,12 @@ nvsfndc(intf *f, _fcd name, intf *namelen)
 
     cname = HDf2cstring(name, (intn)*namelen);
     if (!cname)
-        return (FAIL);
+        return FAIL;
     /* trimendblanks(flds); */
     ret = (intf)VSfind(*f, cname);
     free(cname);
 
-    return (ret);
+    return ret;
 }
 
 /* ------------------------------------------------------------------ */
@@ -541,7 +541,7 @@ nvsfndc(intf *f, _fcd name, intf *namelen)
 FRETVAL(intf)
 nvsgidc(intf *f, intf *vsid)
 {
-    return ((intf)VSgetid(*f, *vsid));
+    return (intf)VSgetid(*f, *vsid);
 }
 
 /* ------------------------------------------------------------------ */
@@ -553,7 +553,7 @@ nvsgidc(intf *f, intf *vsid)
 FRETVAL(intf)
 nvsdltc(intf *f, intf *vsid)
 {
-    return ((intf)VSdelete(*f, *vsid));
+    return (intf)VSdelete(*f, *vsid);
 }
 
 /* ------------------------------------------------------------------ */
@@ -565,7 +565,7 @@ nvsdltc(intf *f, intf *vsid)
 FRETVAL(intf)
 nvsapp(intf *vkey, intf *blk)
 {
-    return ((intf)VSappendable((int32)*vkey, (int32)*blk));
+    return (intf)VSappendable((int32)*vkey, (int32)*blk);
 }
 
 /* ------------------------------------------------------------------ */
@@ -582,12 +582,12 @@ nvssnamc(intf *vkey, _fcd vsname, intf *vsnamelen)
 
     name = HDf2cstring(vsname, (intn)*vsnamelen);
     if (!name)
-        return (FAIL);
+        return FAIL;
     /* trimendblanks (name); */
     ret = (intf)VSsetname(*vkey, name);
     free(name);
 
-    return (ret);
+    return ret;
 }
 
 /* ------------------------------------------------------------------ */
@@ -604,12 +604,12 @@ nvssclsc(intf *vkey, _fcd vsclass, intf *vsclasslen)
 
     tclass = HDf2cstring(vsclass, (intn)*vsclasslen);
     if (!tclass)
-        return (FAIL);
+        return FAIL;
     /* trimendblanks(tclass); */
     ret = (intf)VSsetclass(*vkey, tclass);
     free(tclass);
 
-    return (ret);
+    return ret;
 }
 
 /* ------------------------------------------------------------------ */
@@ -626,12 +626,12 @@ nvssfldc(intf *vkey, _fcd fields, intf *fieldslen)
 
     flds = HDf2cstring(fields, (intn)*fieldslen);
     if (!flds)
-        return (FAIL);
+        return FAIL;
     /* trimendblanks(flds); */
     ret = (int32)VSsetfields(*vkey, flds);
     free(flds);
 
-    return (ret);
+    return ret;
 }
 
 /* ------------------------------------------------------------------ */
@@ -643,7 +643,7 @@ nvssfldc(intf *vkey, _fcd fields, intf *fieldslen)
 FRETVAL(intf)
 nvssintc(intf *vkey, intf *interlace)
 {
-    return ((intf)VSsetinterlace(*vkey, *interlace));
+    return (intf)VSsetinterlace(*vkey, *interlace);
 }
 
 /* ------------------------------------------------------------------ */
@@ -660,11 +660,11 @@ nvsfdefc(intf *vkey, _fcd field, intf *localtype, intf *order, intf *fieldlen)
 
     fld = HDf2cstring(field, (intn)*fieldlen);
     if (!fld)
-        return (FAIL);
+        return FAIL;
     /* trimendblanks(fld); */
     ret = (int32)VSfdefine(*vkey, fld, *localtype, *order);
     free(fld);
-    return (ret);
+    return ret;
 }
 
 /*-----------------------------------------------------------------------------
@@ -686,10 +686,10 @@ nvssextfc(intf *id, _fcd name, intf *offset, intf *namelen)
 
     fn = HDf2cstring(name, *namelen);
     if (!fn)
-        return (FAIL);
+        return FAIL;
     ret = (intf)VSsetexternalfile(*id, fn, *offset);
     free((void *)fn);
-    return (ret);
+    return ret;
 }
 
 /* ------------------------------------------------------------------ */
@@ -701,7 +701,7 @@ nvssextfc(intf *id, _fcd name, intf *offset, intf *namelen)
 FRETVAL(intf)
 nvfnflds(intf *vkey)
 {
-    return ((intf)VFnfields((int32)*vkey));
+    return (intf)VFnfields((int32)*vkey);
 }
 
 /* ------------------------------------------------------------------ */
@@ -719,10 +719,10 @@ nvffnamec(intf *vkey, intf *index, _fcd fname, intf *len)
         /* strcpy(_fcdtocp(fname),fieldname);*/
         HDpackFstring(fieldname, _fcdtocp(fname), (intn)*len);
         /* free(fieldname); */
-        return (SUCCEED);
+        return SUCCEED;
     }
     else
-        return (FAIL);
+        return FAIL;
 } /* vffnamec */
 
 /* ------------------------------------------------------------------ */
@@ -734,7 +734,7 @@ nvffnamec(intf *vkey, intf *index, _fcd fname, intf *len)
 FRETVAL(intf)
 nvfftype(intf *vkey, intf *index)
 {
-    return ((intf)VFfieldtype((int32)*vkey, (int32)*index));
+    return (intf)VFfieldtype((int32)*vkey, (int32)*index);
 } /* vfftype */
 
 /* ------------------------------------------------------------------ */
@@ -746,7 +746,7 @@ nvfftype(intf *vkey, intf *index)
 FRETVAL(intf)
 nvffisiz(intf *vkey, intf *index)
 {
-    return ((intf)VFfieldisize((int32)*vkey, (int32)*index));
+    return (intf)VFfieldisize((int32)*vkey, (int32)*index);
 } /* vffisiz */
 
 /* ------------------------------------------------------------------ */
@@ -758,7 +758,7 @@ nvffisiz(intf *vkey, intf *index)
 FRETVAL(intf)
 nvffesiz(intf *vkey, intf *index)
 {
-    return ((intf)VFfieldesize((int32)*vkey, (int32)*index));
+    return (intf)VFfieldesize((int32)*vkey, (int32)*index);
 } /* vffesiz */
 
 /* ------------------------------------------------------------------ */
@@ -770,7 +770,7 @@ nvffesiz(intf *vkey, intf *index)
 FRETVAL(intf)
 nvffordr(intf *vkey, intf *index)
 {
-    return ((intf)VFfieldorder((int32)*vkey, (int32)*index));
+    return (intf)VFfieldorder((int32)*vkey, (int32)*index);
 } /* vffordr */
 
 /* ------------------------------------------------------------------ */
@@ -782,7 +782,7 @@ nvffordr(intf *vkey, intf *index)
 FRETVAL(intf)
 nvsfrdc(intf *vkey, _fcd cbuf, intf *nelt, intf *interlace)
 {
-    return ((intf)VSread(*vkey, (uint8 *)_fcdtocp(cbuf), *nelt, *interlace));
+    return (intf)VSread(*vkey, (uint8 *)_fcdtocp(cbuf), *nelt, *interlace);
 }
 /* ------------------------------------------------------------------ */
 /*
@@ -793,7 +793,7 @@ nvsfrdc(intf *vkey, _fcd cbuf, intf *nelt, intf *interlace)
 FRETVAL(intf)
 nvsfrd(intf *vkey, intf *buf, intf *nelt, intf *interlace)
 {
-    return ((intf)VSread(*vkey, (uint8 *)buf, *nelt, *interlace));
+    return (intf)VSread(*vkey, (uint8 *)buf, *nelt, *interlace);
 }
 
 /* ------------------------------------------------------------------ */
@@ -805,7 +805,7 @@ nvsfrd(intf *vkey, intf *buf, intf *nelt, intf *interlace)
 FRETVAL(intf)
 nvsreadc(intf *vkey, uint8 *buf, intf *nelt, intf *interlace)
 {
-    return ((intf)VSread(*vkey, buf, *nelt, *interlace));
+    return (intf)VSread(*vkey, buf, *nelt, *interlace);
 }
 
 /* ------------------------------------------------------------------ */
@@ -817,7 +817,7 @@ nvsreadc(intf *vkey, uint8 *buf, intf *nelt, intf *interlace)
 FRETVAL(intf)
 nvsfwrtc(intf *vkey, _fcd cbuf, intf *nelt, intf *interlace)
 {
-    return ((intf)VSwrite(*vkey, (uint8 *)_fcdtocp(cbuf), *nelt, *interlace));
+    return (intf)VSwrite(*vkey, (uint8 *)_fcdtocp(cbuf), *nelt, *interlace);
 }
 
 /* ------------------------------------------------------------------ */
@@ -829,7 +829,7 @@ nvsfwrtc(intf *vkey, _fcd cbuf, intf *nelt, intf *interlace)
 FRETVAL(intf)
 nvsfwrt(intf *vkey, intf *buf, intf *nelt, intf *interlace)
 {
-    return ((intf)VSwrite(*vkey, (uint8 *)buf, *nelt, *interlace));
+    return (intf)VSwrite(*vkey, (uint8 *)buf, *nelt, *interlace);
 }
 
 /* ------------------------------------------------------------------ */
@@ -841,7 +841,7 @@ nvsfwrt(intf *vkey, intf *buf, intf *nelt, intf *interlace)
 FRETVAL(intf)
 nvswritc(intf *vkey, uint8 *buf, intf *nelt, intf *interlace)
 {
-    return ((intf)VSwrite(*vkey, buf, *nelt, *interlace));
+    return (intf)VSwrite(*vkey, buf, *nelt, *interlace);
 }
 
 /* ======================================== */
@@ -858,7 +858,7 @@ nvswritc(intf *vkey, uint8 *buf, intf *nelt, intf *interlace)
 FRETVAL(intf)
 nvsgintc(intf *vkey)
 {
-    return ((intf)VSgetinterlace(*vkey));
+    return (intf)VSgetinterlace(*vkey);
 }
 
 /* ------------------------------------------------------------------ */
@@ -870,7 +870,7 @@ nvsgintc(intf *vkey)
 FRETVAL(intf)
 nvseltsc(intf *vkey)
 {
-    return ((intf)VSelts(*vkey));
+    return (intf)VSelts(*vkey);
 }
 
 /* ------------------------------------------------------------------ */
@@ -882,7 +882,7 @@ nvseltsc(intf *vkey)
 FRETVAL(intf)
 nvsgfldc(intf *vkey, _fcd fields)
 {
-    return ((intf)VSgetfields(*vkey, _fcdtocp(fields)));
+    return (intf)VSgetfields(*vkey, _fcdtocp(fields));
 } /* VSGFLDC */
 
 /* ------------------------------------------------------------------ */
@@ -899,11 +899,11 @@ nvssizc(intf *vkey, _fcd fields, intf *fieldslen)
 
     flds = HDf2cstring(fields, (intn)*fieldslen);
     if (!flds)
-        return (FAIL);
+        return FAIL;
     /* trimendblanks(flds); */
     ret = VSsizeof(*vkey, flds);
     free(flds);
-    return (ret);
+    return ret;
 }
 
 /* ------------------------------------------------------------------ */
@@ -915,7 +915,7 @@ nvssizc(intf *vkey, _fcd fields, intf *fieldslen)
 FRETVAL(intf)
 nventsc(intf *f, intf *vgid)
 {
-    return ((intf)Ventries(*f, *vgid));
+    return (intf)Ventries(*f, *vgid);
 }
 
 /* ------------------------------------------------------------------ */
@@ -927,7 +927,7 @@ nventsc(intf *f, intf *vgid)
 FRETVAL(intf)
 nvlonec(intf *f, intf *idarray, intf *asize)
 {
-    return ((intf)Vlone(*f, (int32 *)idarray, (int32)*asize));
+    return (intf)Vlone(*f, (int32 *)idarray, (int32)*asize);
 }
 
 /* ------------------------------------------------------------------ */
@@ -939,7 +939,7 @@ nvlonec(intf *f, intf *idarray, intf *asize)
 FRETVAL(intf)
 nvslonec(intf *f, intf *idarray, intf *asize)
 {
-    return (VSlone(*f, (int32 *)idarray, (int32)*asize));
+    return VSlone(*f, (int32 *)idarray, (int32)*asize);
 }
 
 /* ------------------------------------------------------------------ */
@@ -956,12 +956,12 @@ nvfindc(intf *f, _fcd name, intf *namelen)
 
     tmp_name = HDf2cstring(name, (intn)*namelen);
     if (!tmp_name)
-        return (FAIL);
+        return FAIL;
 
     ret = (intf)Vfind((int32)*f, tmp_name);
     free(tmp_name);
 
-    return (ret);
+    return ret;
 } /* end nvfindc() */
 
 /* ------------------------------------------------------------------ */
@@ -978,12 +978,12 @@ nvfndclsc(intf *f, _fcd vgclass, intf *classlen)
 
     t_class = HDf2cstring(vgclass, (intn)*classlen);
     if (!t_class)
-        return (FAIL);
+        return FAIL;
 
     ret = (intf)Vfindclass((int32)*f, t_class);
     free(t_class);
 
-    return (ret);
+    return ret;
 } /* end nvfndclsc() */
 
 /*
@@ -1006,17 +1006,17 @@ nvhsdc(intf *f, _fcd field, uint8 *buf, intf *n, intf *datatype, _fcd vsname, _f
 
     fld = HDf2cstring(field, (intn)*fieldlen);
     if (!fld)
-        return (FAIL);
+        return FAIL;
     name = HDf2cstring(vsname, (intn)*vsnamelen);
     if (!name) {
         free(fld);
-        return (FAIL);
+        return FAIL;
     }
     tclass = HDf2cstring(vsclass, (intn)*vsclasslen);
     if (!tclass) {
         free(fld);
         free(name);
-        return (FAIL);
+        return FAIL;
     }
 
     ret_val = (intf)VHstoredata(*f, fld, buf, *n, *datatype, name, tclass);
@@ -1024,7 +1024,7 @@ nvhsdc(intf *f, _fcd field, uint8 *buf, intf *n, intf *datatype, _fcd vsname, _f
     free(name);
     free(tclass);
 
-    return (ret_val);
+    return ret_val;
 }
 
 /*----------------------------------------------------------
@@ -1038,8 +1038,8 @@ nvhscdc(intf *f, _fcd field, _fcd cbuf, intf *n, intf *datatype, _fcd vsname, _f
 {
     if ((*datatype != DFNT_CHAR) && (*datatype != DFNT_UCHAR))
         return FAIL;
-    return (nvhsdc(f, field, (uint8 *)_fcdtocp(cbuf), n, datatype, vsname, vsclass, fieldlen, vsnamelen,
-                   vsclasslen));
+    return nvhsdc(f, field, (uint8 *)_fcdtocp(cbuf), n, datatype, vsname, vsclass, fieldlen, vsnamelen,
+                  vsclasslen);
 }
 
 /* ------------------------------------------------------------------ */
@@ -1054,8 +1054,8 @@ nvhscdmc(intf *f, _fcd field, _fcd cbuf, intf *n, intf *datatype, _fcd vsname, _
 {
     if ((*datatype != DFNT_CHAR) && (*datatype != DFNT_UCHAR))
         return FAIL;
-    return (nvhsdmc(f, field, (uint8 *)_fcdtocp(cbuf), n, datatype, vsname, vsclass, order, fieldlen,
-                    vsnamelen, vsclasslen));
+    return nvhsdmc(f, field, (uint8 *)_fcdtocp(cbuf), n, datatype, vsname, vsclass, order, fieldlen,
+                   vsnamelen, vsclasslen);
 }
 
 /* ------------------------------------------------------------------ */
@@ -1073,17 +1073,17 @@ nvhsdmc(intf *f, _fcd field, uint8 *buf, intf *n, intf *datatype, _fcd vsname, _
 
     fld = HDf2cstring(field, (intn)*fieldlen);
     if (!fld)
-        return (FAIL);
+        return FAIL;
     name = HDf2cstring(vsname, (intn)*vsnamelen);
     if (!name) {
         free(fld);
-        return (FAIL);
+        return FAIL;
     }
     tclass = HDf2cstring(vsclass, (intn)*vsclasslen);
     if (!tclass) {
         free(fld);
         free(name);
-        return (FAIL);
+        return FAIL;
     }
 
     ret_val = (intf)VHstoredatam(*f, fld, buf, *n, *datatype, name, tclass, *order);
@@ -1091,7 +1091,7 @@ nvhsdmc(intf *f, _fcd field, uint8 *buf, intf *n, intf *datatype, _fcd vsname, _
     free(name);
     free(tclass);
 
-    return (ret_val);
+    return ret_val;
 }
 
 /* ------------------------------------------------------------------ */
@@ -1109,18 +1109,18 @@ nvhmkgpc(intf *f, intf *tagarray, intf *refarray, intf *n, _fcd vgname, _fcd vgc
 
     gname = HDf2cstring(vgname, (intn)*vgnamelen);
     if (!gname)
-        return (FAIL);
+        return FAIL;
     gclass = HDf2cstring(vgclass, (intn)*vgclasslen);
     if (!gclass) {
         free(gname);
-        return (FAIL);
+        return FAIL;
     }
 
     ret_val = (intf)VHmakegroup(*f, (int32 *)tagarray, (int32 *)refarray, *n, gname, gclass);
     free(gname);
     free(gclass);
 
-    return (ret_val);
+    return ret_val;
 }
 
 /* ================================================================== */
@@ -1137,12 +1137,12 @@ nvflocc(intf *vkey, _fcd field, intf *fieldlen)
 
     fld = HDf2cstring(field, (intn)*fieldlen);
     if (!fld)
-        return (FAIL);
+        return FAIL;
     /* trimendblanks(fld); */
     ret = (int32)Vflocate(*vkey, fld);
     free(fld);
 
-    return (ret);
+    return ret;
 }
 
 /* ------------------------------------------------------------------ */
@@ -1154,7 +1154,7 @@ nvflocc(intf *vkey, _fcd field, intf *fieldlen)
 FRETVAL(intf)
 nvinqtrc(intf *vkey, intf *tag, intf *ref)
 {
-    return ((intf)Vinqtagref(*vkey, *tag, *ref));
+    return (intf)Vinqtagref(*vkey, *tag, *ref);
 }
 /* ------------------------------------------------------------------ */
 /*
@@ -1165,7 +1165,7 @@ nvinqtrc(intf *vkey, intf *tag, intf *ref)
 FRETVAL(intf)
 nvntrc(intf *vkey)
 {
-    return ((intf)Vntagrefs(*vkey));
+    return (intf)Vntagrefs(*vkey);
 }
 
 /* ------------------------------------------------------------------ */
@@ -1177,7 +1177,7 @@ nvntrc(intf *vkey)
 FRETVAL(intf)
 nvnrefs(intf *vkey, intf *tag)
 {
-    return ((intf)Vnrefs((int32)*vkey, (int32)*tag));
+    return (intf)Vnrefs((int32)*vkey, (int32)*tag);
 } /* end nvnrefs() */
 
 /* ------------------------------------------------------------------ */
@@ -1189,7 +1189,7 @@ nvnrefs(intf *vkey, intf *tag)
 FRETVAL(intf)
 nvqref(intf *vkey)
 {
-    return ((intf)VQueryref((int32)*vkey));
+    return (intf)VQueryref((int32)*vkey);
 } /* end nvqref() */
 
 /* ------------------------------------------------------------------ */
@@ -1201,7 +1201,7 @@ nvqref(intf *vkey)
 FRETVAL(intf)
 nvqtag(intf *vkey)
 {
-    return ((intf)VQuerytag((int32)*vkey));
+    return (intf)VQuerytag((int32)*vkey);
 } /* end nvqtag() */
 
 /* ------------------------------------------------------------------ */
@@ -1214,7 +1214,7 @@ nvqtag(intf *vkey)
 FRETVAL(intf)
 nvgttrsc(intf *vkey, intf *tagarray, intf *refarray, intf *n)
 {
-    return ((intf)Vgettagrefs(*vkey, (int32 *)tagarray, (int32 *)refarray, *n));
+    return (intf)Vgettagrefs(*vkey, (int32 *)tagarray, (int32 *)refarray, *n);
 }
 
 /* ------------------------------------------------------------------ */
@@ -1226,7 +1226,7 @@ nvgttrsc(intf *vkey, intf *tagarray, intf *refarray, intf *n)
 FRETVAL(intf)
 nvgttrc(intf *vkey, intf *which, intf *tag, intf *ref)
 {
-    return ((intf)Vgettagref(*vkey, *which, (int32 *)tag, (int32 *)ref));
+    return (intf)Vgettagref(*vkey, *which, (int32 *)tag, (int32 *)ref);
 }
 /* ------------------------------------------------------------------ */
 
@@ -1238,7 +1238,7 @@ nvgttrc(intf *vkey, intf *which, intf *tag, intf *ref)
 FRETVAL(intf)
 nvadtrc(intf *vkey, intf *tag, intf *ref)
 {
-    return ((intf)Vaddtagref(*vkey, *tag, *ref));
+    return (intf)Vaddtagref(*vkey, *tag, *ref);
 }
 /* ------------------------------------------------------------------ */
 
@@ -1256,7 +1256,7 @@ nvsqfnelt(intf *vkey, intf *nelt)
     stat = VSQuerycount((int32)*vkey, &ret_nelt);
 
     *nelt = (intf)ret_nelt;
-    return ((intf)stat);
+    return (intf)stat;
 }
 /* ------------------------------------------------------------------ */
 
@@ -1274,7 +1274,7 @@ nvsqfintr(intf *vkey, intf *interlace)
     stat = VSQueryinterlace((int32)*vkey, &ret_inter);
 
     *interlace = (intf)ret_inter;
-    return ((intf)stat);
+    return (intf)stat;
 }
 /* ------------------------------------------------------------------ */
 
@@ -1291,11 +1291,11 @@ nvsqfldsc(intf *vkey, _fcd fields, intf *fieldslen)
 
     fld = HDf2cstring(fields, (intn)*fieldslen);
     if (!fld)
-        return (FAIL);
+        return FAIL;
     ret = (intf)VSQueryfields((int32)*vkey, fld);
     free(fld);
 
-    return (ret);
+    return ret;
 }
 /* ------------------------------------------------------------------ */
 
@@ -1313,7 +1313,7 @@ nvsqfvsiz(intf *vkey, intf *size)
     stat = VSQueryvsize((int32)*vkey, &ret_size);
 
     *size = (intf)ret_size;
-    return ((intf)stat);
+    return (intf)stat;
 }
 /* ------------------------------------------------------------------ */
 
@@ -1330,11 +1330,11 @@ nvsqnamec(intf *vkey, _fcd name, intf *namelen)
 
     nam = HDf2cstring(name, (intn)*namelen);
     if (!nam)
-        return (FAIL);
+        return FAIL;
     ret = (intf)VSQueryname((int32)*vkey, nam);
     free(nam);
 
-    return (ret);
+    return ret;
 }
 
 /* ------------------------------------------------------------------ */
@@ -1349,12 +1349,12 @@ nvsfccpk(intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz, intf *nr
 
     flds_in_buf = HDf2cstring(buflds, (intn)*buflds_len);
     if (!flds_in_buf) {
-        return (FAIL);
+        return FAIL;
     }
     afield = HDf2cstring(pckfld, (intn)*fld_len);
     if (!afield) {
         free(flds_in_buf);
-        return (FAIL);
+        return FAIL;
     }
     if (*flds_in_buf == '\0') {
         free(flds_in_buf);
@@ -1371,7 +1371,7 @@ nvsfccpk(intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz, intf *nr
     free(flds_in_buf);
     free(afield);
 
-    return (ret);
+    return ret;
 }
 
 /* ------------------------------------------------------------------ */
@@ -1386,12 +1386,12 @@ nvsfncpk(intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz, intf *nr
 
     flds_in_buf = HDf2cstring(buflds, (intn)*buflds_len);
     if (!flds_in_buf) {
-        return (FAIL);
+        return FAIL;
     }
     afield = HDf2cstring(pckfld, (intn)*fld_len);
     if (!afield) {
         free(flds_in_buf);
-        return (FAIL);
+        return FAIL;
     }
     if (*flds_in_buf == '\0') {
         free(flds_in_buf);
@@ -1408,7 +1408,7 @@ nvsfncpk(intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz, intf *nr
     free(flds_in_buf);
     free(afield);
 
-    return (ret);
+    return ret;
 }
 
 /*
@@ -1420,7 +1420,7 @@ nvsfncpk(intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz, intf *nr
 FRETVAL(intf)
 nvdtrc(intf *vkey, intf *tag, intf *ref)
 {
-    return ((intf)Vdeletetagref(*vkey, *tag, *ref));
+    return (intf)Vdeletetagref(*vkey, *tag, *ref);
 }
 
 /*------------------------------------------------------------------------
@@ -1443,11 +1443,11 @@ nvscfcls(intf *id, _fcd name, intf *namelen)
     fi_id      = *id;
     class_name = HDf2cstring(name, (intn)*namelen);
     if (!class_name)
-        return (FAIL);
+        return FAIL;
 
     ret = VSfindclass(fi_id, class_name);
     free(class_name);
-    return (ret);
+    return ret;
 }
 /*------------------------------------------------------------------------
  *       Name:      vscsetblsz
@@ -1466,7 +1466,7 @@ nvscsetblsz(intf *id, intf *block_size)
     c_ret = VSsetblocksize(*id, *block_size);
     if (c_ret == 0)
         ret = 0;
-    return (ret);
+    return ret;
 }
 /*------------------------------------------------------------------------
  *       Name:      vscsetnmbl
@@ -1485,7 +1485,7 @@ nvscsetnmbl(intf *id, intf *num_blocks)
     c_ret = VSsetnumblocks(*id, *num_blocks);
     if (c_ret == 0)
         ret = 0;
-    return (ret);
+    return ret;
 }
 /*------------------------------------------------------------------------
  *       Name:      vscgblinfo
@@ -1510,7 +1510,7 @@ nvscgblinfo(intf *id, intf *block_size, intf *num_blocks)
         *num_blocks = c_num_blocks;
         ret         = 0;
     }
-    return (ret);
+    return ret;
 }
 /*------------------------------------------------------------------------
  *       Name:      vcgvgrp
@@ -1543,7 +1543,7 @@ nvcgvgrp(intf *id, intf *start_vg, intf *vg_count, intf *refarray)
 
         free(c_refarray);
     }
-    return (ret);
+    return ret;
 }
 /*------------------------------------------------------------------------
  *       Name:      vscgvdatas
@@ -1577,5 +1577,5 @@ nvscgvdatas(intf *id, intf *start_vd, intf *vd_count, intf *refarray)
         free(c_refarray);
     }
 
-    return (ret);
+    return ret;
 }
