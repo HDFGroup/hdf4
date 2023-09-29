@@ -821,7 +821,6 @@ tbbt_dump(TBBT_TREE *ptree, void (*key_dump)(void *, void *), intn method)
     printf("capacity = %ld\n", (long)tree->count);
     printf("\n");
     tbbt_dumpNode(tree->root, key_dump, method);
-    return;
 }
 
 /* Always returns NULL */
