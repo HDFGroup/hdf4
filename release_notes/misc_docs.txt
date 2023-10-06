@@ -1499,12 +1499,12 @@ Fortran: afend(an_id)
 
 /* ------------------------------ ANcreate ---------------------------- 
  NAME
-	ANcreate - create a new data annotation and return an id
+	ANcreate - create a new data annotation for the specified item
  USAGE
 	int32 ANcreate(an_id, tag, ref, type )
         int32 an_id;    IN: annotation interface ID
-        uint16 tag;     IN: tag of item to be assigned annotation
-        uint16 ref;     IN: reference number of itme to be assigned ann
+        uint16 tag;     IN: tag of the item
+        uint16 ref;     IN: reference number of the item
         ann_type  type: IN: AN_DATA_LABEL for data labels, 
                             AN_DATA_DESC for data descriptions,
  RETURNS

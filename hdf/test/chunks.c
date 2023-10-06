@@ -28,7 +28,7 @@
  *       The rest of he data should contain fill values.
  *
  *    3. Create a new element but now there will be partial chunks
- *       because chunk lengths are not an even multiple of dimesion lengths.
+ *       because chunk lengths are not an even multiple of dimension lengths.
  *       Set dimension to 4x4 array with 4 chunks where each chunk is
  *       3x2 = 6 bytes. Real data size is 16 bytes, size with chunks is
  *       6 bytes x 4 chunks = 24 bytes
@@ -483,7 +483,7 @@ test_chunks(void)
 
     /*
        3. Create a new element but now there will be partial chunks
-       because chunk lengths are not an even multiple of dimesion lengths.
+       because chunk lengths are not an even multiple of dimension lengths.
        Set dimension to 4x4 array with 4 chunks where each chunk is 3x2 = 6 bytes.
        Real data size is 16 bytes, size with chunks is
        6 bytes x 4 chunks = 24 bytes
