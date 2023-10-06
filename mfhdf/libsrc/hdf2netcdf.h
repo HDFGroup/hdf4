@@ -20,7 +20,7 @@
    (--disable-netcdf configure flag; the old way was to use -DHAVE_NETCDF compilation flag)
  ) we need to rename all the relevant function names
    In this version we exclude renaming the netCDF fortran API so
-   the MFHDF side must be compilied without fortran support. */
+   the MFHDF side must be compiled without fortran support. */
 #ifndef H4_HAVE_NETCDF
 #define HNAME(x) sd_##x /* pre-append 'sd_' to all netCDF fcn names */
 #else                   /* !H4_HAVE_NETCDF i.e NOT USING HDF NETCDF */
