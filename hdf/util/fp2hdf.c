@@ -246,7 +246,7 @@ struct Raster {
 #define OPT_r    2  /* convert to image */
 #define OPT_e    3  /* expand image via pixel replication */
 #define OPT_i    4  /* make interpolated image */
-#define NUMBR    5  /* resolution of enlarged image */
+#define OPT_num  5  /* resolution of enlarged image */
 #define OPT_p    6  /* palette filename */
 #define OPT_f    7  /* convert to float (default) */
 #define OPT_h    8  /* request for explanation */
@@ -259,7 +259,7 @@ struct Raster {
 static int state_table[17][10] = {
 
     /* token ordering:
-       FILENAME     OPT_o   OPT_r   OPT_e   OPT_i   NUMBR   OPT_p   OPT_f
+       FILENAME     OPT_o   OPT_r   OPT_e   OPT_i   OPT_num   OPT_p   OPT_f
        OPT_h        OPT_m   */
 
     /* state 0: start */
@@ -982,13 +982,13 @@ gtoken(char *s)
                 break;
             default:
                 if (isnum(s)) /* negative number? */
-                    token = NUMBR;
+                    token = OPT_num;
         }
         if (token == ERR)
             (void)fprintf(stderr, err1, s);
     }
     else if (isnum(s)) /* positive number */
-        token = NUMBR;
+        token = OPT_num;
     else /* filename */
         token = FILENAME;
 

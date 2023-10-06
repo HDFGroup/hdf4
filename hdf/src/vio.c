@@ -1037,7 +1037,7 @@ VSdetach(int32 vkey /* IN: vdata key? */)
             if (FAIL == vpackvs(vs, Vhbuf, &vspacksize))
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-            /* if VH size changed we need to re-use the tag/ref
+            /* if VH size changed we need to reuse the tag/ref
              * for new header. This will cause the pointer to the
              * original vdata header to be lost but this is okay.  */
             if (vs->new_h_sz) {

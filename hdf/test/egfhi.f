@@ -40,7 +40,7 @@ c     ===========================================================
       subroutine DOIT
 
 c     Remove this fortran directive if your compiler doesn't support it.
-c     It forces an error message whenever a variable is not decalred.
+c     It forces an error message whenever a variable is not declared.
 
       IMPLICIT	NONE
 

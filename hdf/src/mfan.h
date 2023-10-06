@@ -72,7 +72,7 @@ HDFLIBAPI int32 ANend(int32 an_id /* IN: Annotation ID of file to close */);
 
 /******************************************************************************
  NAME
-   ANcreate - create a new element annotation and return a handle(id)
+   ANcreate - create a new annotation for the specified item
 
  DESCRIPTION
    Creates a data annotation, returns an 'an_id' to work with the new
@@ -84,8 +84,8 @@ HDFLIBAPI int32 ANend(int32 an_id /* IN: Annotation ID of file to close */);
         An ID to an annotation which can either be a label or description.
 *******************************************************************************/
 HDFLIBAPI int32 ANcreate(int32    an_id,    /* IN: annotation interface ID */
-                         uint16   elem_tag, /* IN: tag of item to be assigned annotation */
-                         uint16   elem_ref, /* IN: reference number of itme to be assigned ann*/
+                         uint16   elem_tag, /* IN: tag of the item */
+                         uint16   elem_ref, /* IN: ref of the item */
                          ann_type type /* IN: annotation type */);
 
 /******************************************************************************

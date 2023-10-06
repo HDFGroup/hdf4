@@ -378,7 +378,7 @@ DFKislitendNT(int32 numbertype)
  *
  * This routine is called by HDF version 3.0 compatibility
  * routines.  It serves as a jump point to the new version 4.0
- * comversion functions.  DFconvert() CANNOT be used by Vdata
+ * conversion functions.  DFconvert() CANNOT be used by Vdata
  * applications because it assumes a stride of 1 (for
  * compatibility). Vdata routines should call DFnum_in() and
  * DFKnumout() (depending on which translation is needed)

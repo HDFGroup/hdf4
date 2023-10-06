@@ -1095,7 +1095,7 @@ hdf_write_var(XDR *xdrs, NC *handle, NC_var **var)
      *   machine type in the NT object
      */
 
-    /* somone unwrap this statement....*/
+    /* someone unwrap this statement....*/
     outNT = ((*var)->HDFtype & DFNT_NATIVE)   ? DFKgetPNSC((*var)->HDFtype, DF_MT)
             : ((*var)->HDFtype & DFNT_LITEND) ? DFNTF_PC
                                               : DFNTF_IEEE;
@@ -2631,7 +2631,7 @@ done:
 /* -------------------------- hdf_close --------------------- */
 /*
   We're about to close the file, do last minute HDF cleanup
-  Also dump the number of records currently instatiated into the
+  Also dump the number of records currently instantiated into the
   unlimited dimensions.
 
   BUG:  All unlimited dimensions will have the same size

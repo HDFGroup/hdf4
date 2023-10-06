@@ -463,60 +463,60 @@
 
  ***** ALL TESTS SUCCESSFUL *****
  Setting palette 1
- d8spal  SUCEESSFUL
+ d8spal  SUCCESSFUL
  Putting image 1 with pal 1, no compression
- d8pimg  SUCEESSFUL
+ d8pimg  SUCCESSFUL
  Getting ref1
  ref1 is  2
  Putting image 2 with pal 1, REL compression
- d8aimg  SUCEESSFUL
+ d8aimg  SUCCESSFUL
  Getting ref2
  ref2 is  3
  Setting palette 2
- d8spal  SUCEESSFUL
+ d8spal  SUCCESSFUL
  Putting image 2 with pal 2, IMCOMP  compression
- d8aimg  SUCEESSFUL
+ d8aimg  SUCCESSFUL
  Getting ref3
  ref3 is  4
  Getting number of images
  3 images in the file
  Restarting file
- d8first  SUCEESSFUL
+ d8first  SUCCESSFUL
  Getting dimensions of first image
- d8gdims  SUCEESSFUL
+ d8gdims  SUCCESSFUL
  Getting image 1
- d8gimg  SUCEESSFUL
+ d8gimg  SUCCESSFUL
  Checking image and palette
  Image is correct
  Palette is correct
  Getting dimensions of image2
- d8gdims  SUCEESSFUL
+ d8gdims  SUCCESSFUL
  d1=  321 d2=  111 ispal=  1
  Getting dimensions of image 3
-  d8gdims  SUCEESSFUL
+  d8gdims  SUCCESSFUL
  d1=  321 d2=  111 ispal=  1
  Getting image 3
- d8gimg  SUCEESSFUL
+ d8gimg  SUCCESSFUL
  setting read ref2
- d8rref  SUCEESSFUL
+ d8rref  SUCCESSFUL
  Getting image 2
- d8gimg  SUCEESSFUL
+ d8gimg  SUCCESSFUL
  Checking image and palette
  Image is correct
  Palette is correct
  Setting write ref1
- d8wref  SUCEESSFUL
+ d8wref  SUCCESSFUL
  Setting palette 2
- d8spal  SUCEESSFUL
+ d8spal  SUCCESSFUL
  Putting image 1 with pal 2, RLE
- d8aimg  SUCEESSFUL
+ d8aimg  SUCCESSFUL
  Setting read ref1
- d8rref  SUCEESSFUL
+ d8rref  SUCCESSFUL
  Getting dimensions of first image
- d8gdims  SUCEESSFUL
+ d8gdims  SUCCESSFUL
  d1=  100 d2=  100 ispal=  1
  Getting image 1
- d8gimg  SUCEESSFUL
+ d8gimg  SUCCESSFUL
  Checking image and palette
  Image is correct
  Palette is correct

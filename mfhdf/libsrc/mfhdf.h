@@ -191,7 +191,7 @@ HDFLIBAPI intn SDgetnamelen(int32 sdsid, uint16 *name_len);
       The dataset currently cannot be special already.  i.e. NBIT,
       COMPRESSED, or EXTERNAL. This is an Error.
 
-      The definition of the HDF_CHUNK_DEF union with relvant fields is:
+      The definition of the HDF_CHUNK_DEF union with relevant fields is:
 
       typedef union hdf_chunk_def_u
       {
