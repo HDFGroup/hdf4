@@ -855,7 +855,7 @@ nmgcrchnk(intf *id, intf *start, void *num_data)
     if (!cstart)
         return FAIL;
 
-    /* Flip an array to account for array odering in Fortran and C */
+    /* Flip an array to account for array ordering in Fortran and C */
 
     for (i = 0; i < rank; i++)
         cstart[i] = start[rank - i - 1] - 1;

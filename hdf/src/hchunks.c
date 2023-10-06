@@ -258,7 +258,7 @@ LOCAL ROUTINES
 */
 
 /* For Statistics from the chunk cache.
-   Note thate 'mache.c' must be compilied with -DSTATISTICS */
+   Note thate 'mache.c' must be compiled with -DSTATISTICS */
 /*
 #define STATISTICS
 */
@@ -723,7 +723,7 @@ calculate_chunk_for_chunk(int32   *chunk_size,     /* OUT: chunk size for this c
                           int32    ndims,          /* IN: number of dims */
                           int32    nt_size,        /* IN: number type size */
                           int32    len,            /* IN: total length to operate on */
-                          int32    bytes_finished, /* IN: bytes already operted on*/
+                          int32    bytes_finished, /* IN: bytes already operated on*/
                           int32   *sbi,            /* IN: seek chunk array */
                           int32   *spb,            /* IN: seek pos w/ chunk array */
                           DIM_REC *ddims /* IN: dim record ptrs */)
@@ -1179,7 +1179,7 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
                NOTE: Should change this to a single VSread() but then
                would have to store all the v_data rec's somewhere
                before inserting them into the TBBT tree...
-               ....for somone to do later if performance of VSread() is bad.
+               ....for someone to do later if performance of VSread() is bad.
                Technically a B+-Tree should have been used instead or
                better yet the Vdata implementation should be re-written to use one.
                Note that chunk tag DTAG_CHUNK is not verified here.
@@ -3790,7 +3790,7 @@ HMCPinfo(accrec_t        *access_rec, /* IN: access record of access element */
     /* fill in the info_chunk */
     info                   = (chunkinfo_t *)access_rec->special_info;
     info_chunk->key        = SPECIAL_CHUNKED;
-    info_chunk->chunk_size = (info->chunk_size * info->nt_size); /* phsyical size */
+    info_chunk->chunk_size = (info->chunk_size * info->nt_size); /* physical size */
     info_chunk->ndims      = info->ndims;
     if ((info->flag & 0xff) == SPECIAL_COMP) /* only using 8bits for now */
     {

@@ -1357,11 +1357,11 @@ Macintosh version of the HDF library to:
  ==================================================================== 
 
  These routines are for accessing file labels, file descriptions, data
-labels and data descriptions(i.e. all are annotations). General access
+labels and data descriptions (i.e. all are annotations). General access
 requires the routines Hopen() and ANstart() to be called first and the 
 last call to be ANend() and Hclose() which ends annotation handling on the file
-and closes the file. Basic annotation manipulation involes dealing
-with  handles(ann_id's) foreach annotation and annotation interface 
+and closes the file. Basic annotation manipulation involves dealing
+with handles(ann_id's) for each annotation and annotation interface 
 handle(an_id). 
 
 
@@ -1435,11 +1435,11 @@ NOTE: You could also call ANcreatef() like this
  ANselect    - returns an annotation id(ann_id) from index for 
                a particular annotation TYPE. This id is then used for
                calls like ANwriteann(), ANreadann(), ANannlen(),..etc
- ANnumann:   - return number of annotations that match TYPE/tag/ref
- ANannlist:  - return list of id's(ann_id's) that match TYPE/tag/ref
- ANannlen:   - get length of annotation given id(ann_id)
- ANreadann:  - read annotation given id(ann_id)
- ANwriteann: - write annotation given id(ann_id)
+ ANnumann    - return number of annotations that match TYPE/tag/ref
+ ANannlist   - return list of id's(ann_id's) that match TYPE/tag/ref
+ ANannlen    - get length of annotation given id(ann_id)
+ ANreadann   - read annotation given id(ann_id)
+ ANwriteann  - write annotation given id(ann_id)
  ANendaccess - end access to annotation using id(ann_id)
 
 

@@ -41,7 +41,7 @@ typedef enum { LANG_NONE, LANG_C, LANG_F } Nclang;
 
 typedef struct {        /* selection for comparison  */
     int verbose;        /*
-                         * if true, print cuurent interface comparison
+                         * if true, print current interface comparison
                          */
     int ga;             /*
                          * if true, compare global attributes only

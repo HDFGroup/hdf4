@@ -284,7 +284,7 @@ DFdiwrite(int32 file_id, int32 list, uint16 tag, uint16 ref)
  *		that info is kept in a global array called Group_List. the size of Group_List
  *		is fixed, and contains MAX_GROUPS pointers. When DFdiget() has returned
  *		the last tag-ref pair from a given group's info, that info is freed, and
- *		the corresponding slot in the Group_List array is available for re-use.
+ *		the corresponding slot in the Group_List array is available for reuse.
  *
  *		If DFdiget() is NOT called for every pair in the group, the group info is
  *		never freed, except by the use of this routine. So when a loop based on

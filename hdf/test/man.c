@@ -670,7 +670,7 @@ check_lab_desc(const char *fname, uint16 tag, uint16 ref, const char *label[], c
 **  6. Close annotation interface
 **  7. Close file
 **  8. For 'REPs' count do
-**     A. Get dimesion and ref of SDS
+**     A. Get dimension and ref of SDS
 **     B. Verify label and descriptions for SDS ->check_lab_desc()
 **     C. Get image ref and image
 **     D. Verify label and descriptions for Image->check_lab_desc()
