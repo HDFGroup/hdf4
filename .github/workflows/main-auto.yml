@@ -33,7 +33,7 @@ jobs:
   # Linux (Ubuntu) w/ gcc + Autotools
   #
   Autotools_build_and_test:
-    name: "GCC-${{ inputs.build_mode }}-NC=${{ inputs.netcdf }}d-XDR=${{ inputs.xdr }}d""
+    name: "GCC-${{ inputs.build_mode }}-NC=${{ inputs.netcdf }}d-XDR=${{ inputs.xdr }}d"
     # Don't run the action if the commit message says to skip CI
     if: "!contains(github.event.head_commit.message, 'skip-ci')"
 
