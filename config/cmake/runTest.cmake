@@ -111,6 +111,10 @@ if (NOT TEST_RESULT EQUAL TEST_EXPECT)
       file (READ ${TEST_FOLDER}/${TEST_OUTPUT} TEST_STREAM)
       message (STATUS "Output :\n${TEST_STREAM}")
     endif ()
+    if (EXISTS "${TEST_FOLDER}/${TEST_OUTPUT}.err")
+      file (READ ${TEST_FOLDER}/${TEST_OUTPUT}.err TEST_STREAM)
+      message (STATUS "Error Output :\n${TEST_STREAM}")
+    endif ()
   endif ()
   message (FATAL_ERROR "Failed: Test program ${TEST_PROGRAM} exited != ${TEST_EXPECT}.\n${TEST_ERROR}")
 endif ()
@@ -363,6 +367,22 @@ if (TEST_SKIP_COMPARE AND NOT TEST_NO_DISPLAY)
       COMMAND ${CMAKE_COMMAND} -E echo ${TEST_STREAM}
       RESULT_VARIABLE TEST_RESULT
   )
+endif ()
+
+if (NOT DEFINED ENV{HDF4_NOCLEANUP})
+  if (EXISTS "${TEST_FOLDER}/${TEST_OUTPUT}" AND NOT TEST_SAVE)
+    file (REMOVE ${TEST_FOLDER}/${TEST_OUTPUT})
+  endif ()
+
+  if (EXISTS "${TEST_FOLDER}/${TEST_OUTPUT}.err")
+    file (REMOVE ${TEST_FOLDER}/${TEST_OUTPUT}.err)
+  endif ()
+
+  if (TEST_DELETE_LIST)
+    foreach (dfile in ${TEST_DELETE_LIST})
+      file (REMOVE ${dfile})
+    endforeach ()
+  endif ()
 endif ()
 
 # everything went fine...
