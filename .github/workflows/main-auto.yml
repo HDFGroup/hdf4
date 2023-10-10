@@ -74,7 +74,6 @@ jobs:
           echo
           cat ./hdf/src/h4config.h
         shell: bash
-        if: (inputs.generator == 'autogen')
 
       # BUILD
       - name: Autotools Build
@@ -96,4 +95,3 @@ jobs:
 #      - name: Autotools Verify Install
 #        run: make installcheck
 #        working-directory: ${{ runner.workspace }}/build
-#        if: (matrix.generator == 'autogen')

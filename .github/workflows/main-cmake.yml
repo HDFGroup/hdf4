@@ -162,7 +162,7 @@ jobs:
             use_mingw: false
 
     # Sets the job's name from the properties
-    name: "${{ matrix.name }}-${{ inputs.build_mode }}-NC=${{ inputs.netcdf }}d"
+    name: "${{ matrix.name }}-${{ inputs.build_mode }}-NC=${{ inputs.netcdf }}"
 
     # Don't run the action if the commit message says to skip CI
     if: "!contains(github.event.head_commit.message, 'skip-ci')"
