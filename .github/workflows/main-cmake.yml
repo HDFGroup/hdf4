@@ -1,0 +1,259 @@
+name: hdf4 dev CI
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+on:
+  workflow_call:
+    inputs:
+      build_mode:
+        description: "release vs. debug build"
+        required: true
+        type: string
+      shared:
+        description: "shared enable/disable"
+        required: true
+        type: string
+      netcdf:
+        description: "netcdf enable/disable"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+# A workflow run is made up of one or more jobs that can run sequentially or
+# in parallel. We just have one job, but the matrix items defined below will
+# run in parallel.
+jobs:
+
+  # A workflow that builds the library and runs all the tests
+  CMake_build_and_test:
+    strategy:
+      # The current matrix has one dimensions:
+      #
+      # * config name
+      #
+      # Most configuration information is added via the 'include' mechanism,
+      # which will append the key-value pairs in the configuration where the
+      # names match.
+      matrix:
+        name:
+          - "Windows MSVC"
+          - "Ubuntu gcc"
+          - "MacOS Clang"
+
+        # This is where we list the bulk of the options for each configuration.
+        # The key-value pair values are usually appropriate for being CMake or
+        # Autotools configure values, so be aware of that.
+
+        include:
+
+          # Windows w/ MSVC + CMake
+          #
+          - name: "Windows MSVC"
+            os: windows-2022
+            toolchain: ""
+            xdr: ON
+            fortran: OFF
+            jpegfc: ON
+            libaecfc: ON
+            zlibfc: ON
+            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
+            generator: "-G \"Visual Studio 17 2022\" -A x64"
+            run_tests: true
+            use_mingw: false
+
+          # Linux (Ubuntu) w/ gcc + CMake
+          #
+          # We might think about adding Clang, but MacOS already tests that
+          # so it's not critical
+          - name: "Ubuntu gcc"
+            os: ubuntu-latest
+            xdr: ON
+            fortran: OFF
+            jpegfc: ON
+            libaecfc: ON
+            zlibfc: ON
+            toolchain: "$GITHUB_WORKSPACE/config/toolchain/gcc.cmake"
+            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
+            generator: "-G Ninja"
+            run_tests: true
+            use_mingw: false
+
+
+          # MacOS w/ Clang + CMake
+          #
+          # We could also build with the Autotools via brew installing them,
+          # but that seems unnecessary
+          - name: "MacOS Clang"
+            os: macos-13
+            xdr: ON
+            fortran: OFF
+            jpegfc: ON
+            libaecfc: ON
+            zlibfc: ON
+            toolchain: "$GITHUB_WORKSPACE/config/toolchain/clang.cmake"
+            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
+            generator: "-G Ninja"
+            run_tests: true
+            use_mingw: false
+
+          # Linux (Ubuntu) w/ mingw + CMake
+          #
+          - name: "Ubuntu mingw CMake"
+            os: ubuntu-latest
+            xdr: ON
+            fortran: OFF
+            jpegfc: ON
+            libaecfc: ON
+            zlibfc: ON
+            toolchain: "$GITHUB_WORKSPACE/config/toolchain/mingw64.cmake"
+            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
+            generator: "-G Ninja"
+            run_tests: false
+            use_mingw: true
+
+          # Windows w/ MSVC + CMake
+          #
+          - name: "Windows static MSVC CMake"
+            os: windows-2022
+            toolchain: ""
+            xdr: ON
+            fortran: OFF
+            jpegfc: ON
+            libaecfc: ON
+            zlibfc: ON
+            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
+            generator: "-G \"Visual Studio 17 2022\" -A x64"
+            run_tests: true
+            use_mingw: false
+
+          # Linux (Ubuntu) w/ gcc + CMake
+          #
+          # We might think about adding Clang, but MacOS already tests that
+          # so it's not critical
+          - name: "Ubuntu static gcc CMake"
+            os: ubuntu-latest
+            xdr: ON
+            fortran: ON
+            jpegfc: ON
+            libaecfc: ON
+            zlibfc: ON
+            toolchain: "$GITHUB_WORKSPACE/config/toolchain/gcc.cmake"
+            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
+            generator: "-G Ninja"
+            run_tests: true
+            use_mingw: false
+
+          # MacOS w/ Clang + CMake
+          #
+          # We could also build with the Autotools via brew installing them,
+          # but that seems unnecessary
+          - name: "MacOS static Clang CMake"
+            os: macos-13
+            xdr: ON
+            fortran: OFF
+            jpegfc: ON
+            libaecfc: ON
+            zlibfc: ON
+            toolchain: "$GITHUB_WORKSPACE/config/toolchain/clang.cmake"
+            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
+            generator: "-G Ninja"
+            run_tests: true
+            use_mingw: false
+
+    # Sets the job's name from the properties
+    name: "${{ matrix.name }}-${{ inputs.build_mode }}-NC=${{ inputs.netcdf }}d"
+
+    # Don't run the action if the commit message says to skip CI
+    if: "!contains(github.event.head_commit.message, 'skip-ci')"
+
+    # The type of runner that the job will run on
+    runs-on: ${{ matrix.os }}
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+
+      #
+      # SETUP
+      #
+
+      #Useful for debugging
+      - name: Dump matrix context
+        run: echo '${{ toJSON(matrix) }}'
+
+      - name: Install CMake Dependencies (Linux)
+        run: sudo apt-get install -y ninja-build libtirpc-dev
+        if: matrix.os == 'ubuntu-latest'
+
+      - name: Install MinGW Dependencies (Linux)
+        uses: egor-tensin/setup-mingw@v2
+        with:
+          platform: x64
+        if: (matrix.use_mingw)
+
+      - name: Install Dependencies (Windows)
+        run: choco install ninja
+        if: matrix.os == 'windows-latest'
+
+      - name: Install Dependencies (macOS)
+        run: brew install ninja
+        if: matrix.os == 'macos-13'
+
+      - name: Set environment for MSVC (Windows)
+        run: |
+          # Set these environment variables so CMake picks the correct compiler
+          echo "CXX=cl.exe" >> $GITHUB_ENV
+          echo "CC=cl.exe" >> $GITHUB_ENV
+        if:  matrix.os == 'windows-latest'
+    
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Get Sources
+        uses: actions/checkout@v4
+
+      #
+      # AUTOTOOLS CONFIGURE
+      #
+
+      - name: CMake Configure
+        run: |
+          mkdir "${{ runner.workspace }}/build"
+          cd "${{ runner.workspace }}/build"
+          cmake ${{ matrix.cacheinit }} ${{ matrix.generator }} \
+            --log-level=VERBOSE \
+            -DCMAKE_BUILD_TYPE=${{ inputs.build_mode }} \
+            -DCMAKE_TOOLCHAIN_FILE=${{ matrix.toolchain }} \
+            -DBUILD_SHARED_LIBS:BOOL=${{ inputs.shared }} \
+            -DHDF4_BUILD_EXAMPLES=ON \
+            -DBUILD_JPEG_WITH_PIC:BOOL=ON \
+            -DHDF4_BUILD_XDR_LIB:BOOL=${{ matrix.xdr }} \
+            -DHDF4_ENABLE_NETCDF:BOOL=${{ inputs.netcdf }} \
+            -DHDF4_BUILD_FORTRAN=${{ matrix.fortran }} \
+            -DHDF4_BUILD_JAVA=${{ inputs.shared }} \
+            -DBUILD_JPEG_WITH_FETCHCONTENT=${{ matrix.jpegfc }} \
+            -DBUILD_SZIP_WITH_FETCHCONTENT=${{ matrix.libaecfc }} \
+            -DBUILD_ZLIB_WITH_FETCHCONTENT=${{ matrix.zlibfc }} \
+            $GITHUB_WORKSPACE
+          echo
+          echo "*** h4config.h ***"
+          echo
+          cat ./h4config.h
+        shell: bash
+
+
+      #
+      # BUILD
+      #
+
+      - name: CMake Build
+        run: cmake --build . --config ${{ matrix.build_mode.cmake }}
+        working-directory: ${{ runner.workspace }}/build
+        if: (! ((matrix.name == 'Ubuntu mingw CMake') && (inputs.build_mode == 'Debug'))
+
+      #
+      # RUN TESTS
+      #
+
+      - name: CMake Run Tests
+        run: ctest --build . -C ${{ matrix.build_mode.cmake }} -V
+        working-directory: ${{ runner.workspace }}/build
+        if: (matrix.run_tests) && ! ((matrix.name == 'Ubuntu mingw CMake') && (inputs.build_mode == 'Debug'))
