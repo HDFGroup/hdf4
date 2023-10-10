@@ -247,7 +247,7 @@ jobs:
       - name: CMake Build
         run: cmake --build . --config ${{ inputs.build_mode }}
         working-directory: ${{ runner.workspace }}/build
-        if: ! ((matrix.name == 'Ubuntu mingw CMake') && (inputs.build_mode == 'Debug'))
+        if: "! ((matrix.name == 'Ubuntu mingw CMake') && (inputs.build_mode == 'Debug'))"
 
       #
       # RUN TESTS
