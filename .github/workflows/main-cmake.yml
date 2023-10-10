@@ -232,6 +232,9 @@ jobs:
             -DBUILD_JPEG_WITH_FETCHCONTENT=${{ matrix.jpegfc }} \
             -DBUILD_SZIP_WITH_FETCHCONTENT=${{ matrix.libaecfc }} \
             -DBUILD_ZLIB_WITH_FETCHCONTENT=${{ matrix.zlibfc }} \
+            -DJPEG_USE_LOCALCONTENT=OFF \
+            -DLIBAEC_USE_LOCALCONTENT=OFF \
+            -DZLIB_USE_LOCALCONTENT=OFF \
             $GITHUB_WORKSPACE
           echo
           echo "*** h4config.h ***"
