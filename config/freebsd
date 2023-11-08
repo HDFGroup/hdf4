@@ -26,7 +26,7 @@ if test -z "$CC"; then
   CC_BASENAME=cc
 fi
 
-# Figure out Clang C compiler flags
+# Figure out clang C compiler flags
 . $srcdir/config/clang-flags
 
 # Figure out GNU C compiler flags

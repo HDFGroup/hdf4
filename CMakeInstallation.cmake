@@ -144,9 +144,9 @@ if (HDF4_PACK_EXAMPLES)
       COMPONENT hdfdocuments
   )
 
-  option (EXAMPLES_USE_RELEASE_NAME "Use the released examples artifact name" OFF)
   option (EXAMPLES_DOWNLOAD "Download to use released examples files" OFF)
   if (EXAMPLES_DOWNLOAD)
+    option (EXAMPLES_USE_RELEASE_NAME "Use the released examples artifact name" OFF)
     if (EXAMPLES_USE_RELEASE_NAME)
       set (EXAMPLES_NAME ${EXAMPLES_TGZ_ORIGNAME})
     else ()
@@ -203,7 +203,7 @@ if (HDF4_PACK_EXAMPLES)
   )
   install (
       FILES
-          ${HDF_RESOURCES_DIR}/CTestScript.cmake
+          ${HDF_RESOURCES_DIR}/examples/CTestScript.cmake
       DESTINATION ${HDF4_INSTALL_DATA_DIR}
       COMPONENT hdfdocuments
   )
@@ -282,10 +282,10 @@ endif ()
 if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
   set (CPACK_PACKAGE_VENDOR "HDF_Group")
   set (CPACK_PACKAGE_NAME "${HDF4_PACKAGE_NAME}")
-  if (CDASH_LOCAL)
-    set (CPACK_PACKAGE_VERSION "${HDF4_PACKAGE_VERSION}")
-  else ()
+  if (NOT WIN32 OR HDF4_VERS_SUBRELEASE MATCHES "^[0-9]+$")
     set (CPACK_PACKAGE_VERSION "${HDF4_PACKAGE_VERSION_STRING}")
+  else ()
+    set (CPACK_PACKAGE_VERSION "${HDF4_PACKAGE_VERSION}")
   endif ()
   set (CPACK_PACKAGE_VERSION_MAJOR "${HDF4_PACKAGE_VERSION_MAJOR}")
   set (CPACK_PACKAGE_VERSION_MINOR "${HDF4_PACKAGE_VERSION_MINOR}")

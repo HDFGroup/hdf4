@@ -10,30 +10,30 @@ endif ()
 #-----------------------------------------------------------------------------
 # Compiler specific flags : Shouldn't there be compiler tests for these
 #-----------------------------------------------------------------------------
-if(WIN32 AND CMAKE_C_COMPILER_ID STREQUAL "Intel")
-  set(_INTEL_WINDOWS 1)
-endif()
+if (WIN32 AND (CMAKE_C_COMPILER_ID STREQUAL "Intel" OR CMAKE_C_COMPILER_ID MATCHES "IntelLLVM"))
+  set (_INTEL_WINDOWS 1)
+endif ()
 
-if(WIN32 AND CMAKE_C_COMPILER_ID MATCHES "[Cc]lang" AND "x${CMAKE_C_SIMULATE_ID}" STREQUAL "xMSVC")
-  set(_CLANG_MSVC_WINDOWS 1)
-endif()
+if (WIN32 AND CMAKE_C_COMPILER_ID MATCHES "[Cc]lang" AND "x${CMAKE_C_SIMULATE_ID}" STREQUAL "xMSVC")
+  set (_CLANG_MSVC_WINDOWS 1)
+endif ()
 
 # Disable deprecation warnings for standard C functions.
 # really only needed for newer versions of VS, but should
 # not hurt other versions, and this will work into the
 # future
-if(MSVC OR _INTEL_WINDOWS OR _CLANG_MSVC_WINDOWS)
-  add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE)
-endif()
+if (MSVC OR _INTEL_WINDOWS OR _CLANG_MSVC_WINDOWS)
+  add_definitions (-D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE)
+endif ()
 
-if(MSVC)
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stack:10000000")
-endif()
+if (MSVC)
+  set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stack:10000000")
+endif ()
 
 # MSVC 14.28 enables C5105, but the Windows SDK 10.0.18362.0 triggers it.
-if(CMAKE_C_COMPILER_ID STREQUAL "MSVC" AND NOT CMAKE_C_COMPILER_VERSION VERSION_LESS 19.28)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -wd5105")
-endif()
+if (CMAKE_C_COMPILER_ID STREQUAL "MSVC" AND NOT CMAKE_C_COMPILER_VERSION VERSION_LESS 19.28)
+  set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -wd5105")
+endif ()
 
 if(_CLANG_MSVC_WINDOWS AND "x${CMAKE_C_COMPILER_FRONTEND_VARIANT}" STREQUAL "xGNU")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Xlinker -stack:20000000")
@@ -46,7 +46,9 @@ if (CMAKE_COMPILER_IS_GNUCC)
       set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Og -ftrapv -fno-common")
     endif ()
   else ()
-    if (CMAKE_C_COMPILER_ID STREQUAL "GNU" AND NOT CMAKE_C_COMPILER_VERSION VERSION_LESS 5.0)
+    if (CMAKE_C_COMPILER_ID STREQUAL "GNU" AND NOT CMAKE_C_COMPILER_VERSION VERSION_LESS 5.0 AND
+        NOT CMAKE_C_CLANG_TIDY)
+      # `clang-tidy` does not understand -fstdarg-opt
       set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fstdarg-opt")
     endif ()
     if (CMAKE_C_COMPILER_ID STREQUAL "GNU" AND NOT CMAKE_C_COMPILER_VERSION VERSION_LESS 10.0)
@@ -56,6 +58,7 @@ if (CMAKE_COMPILER_IS_GNUCC)
       # This should NOT be on by default as it can cause process issues.
       #-----------------------------------------------------------------------------
       option (HDF4_ENABLE_BUILD_DIAGS "Enable color and URL extended diagnostic messages" OFF)
+      mark_as_advanced (HDF4_ENABLE_BUILD_DIAGS)
       if (HDF4_ENABLE_BUILD_DIAGS)
         message (STATUS "... default color and URL extended diagnostic messages enabled")
       else ()
@@ -90,7 +93,7 @@ if (HDF4_DISABLE_COMPILER_WARNINGS)
 endif ()
 
 #-----------------------------------------------------------------------------
-# HDF4 library compile options
+# HDF4 library compile options - to be made available to all targets
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -119,20 +122,20 @@ else ()
   # warnings that are emitted. If you need it, add it at configure time.
   if (CMAKE_C_COMPILER_ID STREQUAL "Intel")
     if (_INTEL_WINDOWS)
-      ADD_H4_FLAGS (HDF4_CMAKE_C_FLAGS "${HDF4_SOURCE_DIR}/config/intel-warnings/win-general")
+      ADD_H4_FLAGS (HDF4_CMAKE_C_FLAGS "${HDF4_SOURCE_DIR}/config/intel-warnings/classic/win-general")
     else ()
-      ADD_H4_FLAGS (HDF4_CMAKE_C_FLAGS "${HDF4_SOURCE_DIR}/config/intel-warnings/general")
+      ADD_H4_FLAGS (HDF4_CMAKE_C_FLAGS "${HDF4_SOURCE_DIR}/config/intel-warnings/classic/general")
     endif()
     if (NOT _INTEL_WINDOWS)
-      if(NOT CMAKE_C_COMPILER_VERSION VERSION_LESS 15.0)
-        ADD_H4_FLAGS (H4_CFLAGS "${HDF4_SOURCE_DIR}/config/intel-warnings/15")
-      endif()
+      if (NOT CMAKE_C_COMPILER_VERSION VERSION_LESS 15.0)
+        ADD_H4_FLAGS (H4_CFLAGS "${HDF4_SOURCE_DIR}/config/intel-warnings/classic/15")
+      endif ()
       # this is just a failsafe
       list (APPEND H4_CFLAGS "-finline-functions")
-      if(NOT CMAKE_C_COMPILER_VERSION VERSION_LESS 18.0)
-        ADD_H4_FLAGS (H4_CFLAGS "${HDF4_SOURCE_DIR}/config/intel-warnings/18")
-      endif()
-    endif()
+      if (NOT CMAKE_C_COMPILER_VERSION VERSION_LESS 18.0)
+        ADD_H4_FLAGS (H4_CFLAGS "${HDF4_SOURCE_DIR}/config/intel-warnings/classic/18")
+      endif ()
+    endif ()
   elseif (CMAKE_C_COMPILER_ID STREQUAL "GNU")
     # Add general CFlags for GCC versions 4.8 and above
     if (CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL 4.8)
@@ -141,8 +144,16 @@ else ()
     # gcc automatically inlines based on the optimization level
     # this is just a failsafe
     list (APPEND H4_CFLAGS "-finline-functions")
-  elseif (CMAKE_C_COMPILER_ID MATCHES "IntelLLVM" OR CMAKE_C_COMPILER_ID MATCHES "[Cc]lang")
-    ADD_H4_FLAGS (HDF4_CMAKE_C_FLAGS "${HDF4_SOURCE_DIR}/config/clang-warnings/general")
+  elseif (CMAKE_C_COMPILER_ID MATCHES "IntelLLVM")
+    if (_INTEL_WINDOWS)
+      ADD_H4_FLAGS (HDF5_CMAKE_C_FLAGS "${HDF4_SOURCE_DIR}/config/intel-warnings/oneapi/win-general")
+    else ()
+      # this is just a failsafe
+      list (APPEND H4_CFLAGS "-finline-functions")
+      ADD_H4_FLAGS (HDF5_CMAKE_C_FLAGS "${HDF4_SOURCE_DIR}/config/intel-warnings/oneapi/general")
+    endif ()
+  elseif (CMAKE_C_COMPILER_ID MATCHES "[Cc]lang")
+    ADD_H4_FLAGS (HDF5_CMAKE_C_FLAGS "${HDF4_SOURCE_DIR}/config/clang-warnings/general")
   elseif (CMAKE_C_COMPILER_ID STREQUAL "PGI")
     list (APPEND HDF4_CMAKE_C_FLAGS "-Minform=inform")
   endif ()
@@ -162,19 +173,25 @@ if (HDF4_ENABLE_DEV_WARNINGS)
   message (STATUS "....HDF4 developer group warnings are enabled")
   if (CMAKE_C_COMPILER_ID STREQUAL "Intel")
     if (_INTEL_WINDOWS)
-      ADD_H4_FLAGS (H4_CFLAGS "${HDF4_SOURCE_DIR}/config/intel-warnings/win-developer-general")
+      ADD_H4_FLAGS (H4_CFLAGS "${HDF4_SOURCE_DIR}/config/intel-warnings/classic/win-developer-general")
     else ()
-      ADD_H4_FLAGS (H4_CFLAGS "${HDF4_SOURCE_DIR}/config/intel-warnings/developer-general")
+      ADD_H4_FLAGS (H4_CFLAGS "${HDF4_SOURCE_DIR}/config/intel-warnings/classic/developer-general")
     endif ()
   elseif (CMAKE_C_COMPILER_ID STREQUAL "GNU" AND CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL 4.8)
     ADD_H4_FLAGS (H4_CFLAGS "${HDF4_SOURCE_DIR}/config/gnu-warnings/developer-general")
-  elseif (CMAKE_C_COMPILER_ID MATCHES "IntelLLVM" OR CMAKE_C_COMPILER_ID MATCHES "[Cc]lang")
+  elseif (CMAKE_C_COMPILER_ID MATCHES "IntelLLVM")
+    if (_INTEL_WINDOWS)
+      ADD_H4_FLAGS (H4_CFLAGS "${HDF4_SOURCE_DIR}/config/intel-warnings/oneapi/win-developer-general")
+    else ()
+      ADD_H4_FLAGS (H4_CFLAGS "${HDF4_SOURCE_DIR}/config/intel-warnings/oneapi/developer-general")
+    endif ()
+  elseif (CMAKE_C_COMPILER_ID MATCHES "[Cc]lang")
     ADD_H4_FLAGS (H4_CFLAGS "${HDF4_SOURCE_DIR}/config/clang-warnings/developer-general")
   endif ()
 else ()
   if (CMAKE_C_COMPILER_ID STREQUAL "GNU" AND CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL 4.8)
     ADD_H4_FLAGS (H4_CFLAGS "${HDF4_SOURCE_DIR}/config/gnu-warnings/no-developer-general")
-  elseif (CMAKE_C_COMPILER_ID MATCHES "IntelLLVM" OR CMAKE_C_COMPILER_ID MATCHES "[Cc]lang")
+  elseif (CMAKE_C_COMPILER_ID MATCHES "[Cc]lang")
     ADD_H4_FLAGS (H4_CFLAGS "${HDF4_SOURCE_DIR}/config/clang-warnings/no-developer-general")
   endif ()
 endif ()

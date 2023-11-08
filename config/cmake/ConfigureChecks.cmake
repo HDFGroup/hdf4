@@ -16,6 +16,8 @@ include (CheckVariableExists)
 include (TestBigEndian)
 include (CheckStructHasMember)
 
+set (HDF_PREFIX "H4")
+
 # Check for Darwin (not just Apple - we also want to catch OpenDarwin)
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set (${HDF_PREFIX}_HAVE_DARWIN 1)
@@ -157,7 +159,7 @@ CHECK_INCLUDE_FILE_CONCAT ("sys/param.h"     ${HDF_PREFIX}_HAVE_PARAM_H)
 ## Check for non-standard extension quadmath.h
 
 CHECK_INCLUDE_FILES(quadmath.h C_HAVE_QUADMATH)
-if (${C_HAVE_QUADMATH})
+if (C_HAVE_QUADMATH)
   set(${HDF_PREFIX}_HAVE_QUADMATH_H 1)
 else ()
   set(${HDF_PREFIX}_HAVE_QUADMATH_H 0)
