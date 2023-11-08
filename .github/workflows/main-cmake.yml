@@ -228,7 +228,7 @@ jobs:
             -DHDF4_BUILD_XDR_LIB:BOOL=${{ matrix.xdr }} \
             -DHDF4_ENABLE_NETCDF:BOOL=${{ inputs.netcdf }} \
             -DHDF4_BUILD_FORTRAN=${{ matrix.fortran }} \
-            -DHDF4_BUILD_JAVA=${{ inputs.shared || !matrix.use_mingw }} \
+            -DHDF4_BUILD_JAVA=${{ inputs.shared && !matrix.use_mingw }} \
             -DJPEG_USE_LOCALCONTENT=${{ matrix.localjpeg }} \
             -DLIBAEC_USE_LOCALCONTENT=${{ matrix.locallibaec }} \
             -DZLIB_USE_LOCALCONTENT=${{ matrix.localzlib }} \
