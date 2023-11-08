@@ -134,7 +134,7 @@ jobs:
           - name: "Ubuntu static gcc CMake"
             os: ubuntu-latest
             xdr: ON
-            fortran: ON
+            fortran: OFF
             localjpeg: OFF
             locallibaec: OFF
             localzlib: OFF
