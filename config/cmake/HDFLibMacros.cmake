@@ -32,6 +32,7 @@ macro (EXTERNAL_ZLIB_LIBRARY compress_type)
   set (ZLIB_INCLUDE_DIR "${hdf4_zlib_SOURCE_DIR}")
   set (ZLIB_FOUND 1)
   set (ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIR_GEN} ${ZLIB_INCLUDE_DIR})
+  message (STATUS "ZLIB link libs: ${ZLIB_LIBRARIES}")
 endmacro ()
 
 #-------------------------------------------------------------------------------
@@ -68,6 +69,7 @@ macro (EXTERNAL_JPEG_LIBRARY compress_type)
   set (JPEG_INCLUDE_DIR "${jpeg_SOURCE_DIR}")
   set (JPEG_FOUND 1)
   set (JPEG_INCLUDE_DIRS ${JPEG_INCLUDE_DIR_GEN} ${JPEG_INCLUDE_DIR})
+  message (STATUS "JPEG link libs: ${JPEG_LIBRARIES}")
 endmacro ()
 
 #-------------------------------------------------------------------------------
@@ -106,4 +108,5 @@ macro (EXTERNAL_SZIP_LIBRARY compress_type encoding)
   set (SZIP_INCLUDE_DIR "${szip_SOURCE_DIR}/include")
   set (SZIP_FOUND 1)
   set (SZIP_INCLUDE_DIRS ${SZIP_INCLUDE_DIR_GEN} ${SZIP_INCLUDE_DIR})
+  message (STATUS "SZIP link libs: ${SZIP_LIBRARIES}")
 endmacro ()

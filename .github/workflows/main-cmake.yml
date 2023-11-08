@@ -233,10 +233,6 @@ jobs:
             -DLIBAEC_USE_LOCALCONTENT=${{ matrix.locallibaec }} \
             -DZLIB_USE_LOCALCONTENT=${{ matrix.localzlib }} \
             $GITHUB_WORKSPACE
-          echo
-          echo "*** h4config.h ***"
-          echo
-          cat ./h4config.h
         shell: bash
 
 
