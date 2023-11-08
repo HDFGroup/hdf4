@@ -35,7 +35,7 @@ macro (EXTERNAL_ZLIB_LIBRARY compress_type)
 endmacro ()
 
 #-------------------------------------------------------------------------------
-macro (EXTERNAL_JPEG_LIBRARY compress_type jpeg_pic)
+macro (EXTERNAL_JPEG_LIBRARY compress_type)
   if (${compress_type} MATCHES "GIT")
     FetchContent_Declare (JPEG
         GIT_REPOSITORY ${JPEG_URL}

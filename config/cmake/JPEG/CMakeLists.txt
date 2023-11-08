@@ -6,7 +6,6 @@ PROJECT (JPEG C)
 #-----------------------------------------------------------------------------
 
 set (JPEG_PACKAGE_EXT ${HDF_PACKAGE_EXT})
-set (CMAKE_ANSI_CFLAGS ${jpeg_pic})
 set (HDF_USE_GNU_DIRS ${HDF4_USE_GNU_DIRS})
 set (CMAKE_OSX_ARCHITECTURES ${CMAKE_OSX_ARCHITECTURES})
 set (CMAKE_TOOLCHAIN_FILE ${CMAKE_TOOLCHAIN_FILE})
