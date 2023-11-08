@@ -1,4 +1,4 @@
-name: hdf4 dev CI
+name: hdf4 dev CMake CI
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 on:
@@ -211,7 +211,7 @@ jobs:
         uses: actions/checkout@v4
 
       #
-      # AUTOTOOLS CONFIGURE
+      # CMAKE CONFIGURE
       #
 
       - name: CMake Configure
@@ -228,9 +228,9 @@ jobs:
             -DHDF4_BUILD_XDR_LIB:BOOL=${{ matrix.xdr }} \
             -DHDF4_ENABLE_NETCDF:BOOL=${{ inputs.netcdf }} \
             -DHDF4_BUILD_FORTRAN=${{ matrix.fortran }} \
-            -DHDF4_BUILD_JAVA=${{ inputs.shared }} \
+            -DHDF4_BUILD_JAVA=${{ inputs.shared || !matrix.use_mingw }} \
             -DJPEG_USE_LOCALCONTENT=${{ matrix.localjpeg }} \
-            -DLIBAEC_USE_LOCALCONTENT=${{ matrix.localaec }} \
+            -DLIBAEC_USE_LOCALCONTENT=${{ matrix.locallibaec }} \
             -DZLIB_USE_LOCALCONTENT=${{ matrix.localzlib }} \
             $GITHUB_WORKSPACE
           echo

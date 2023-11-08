@@ -11,7 +11,7 @@ permissions:
 # in parallel. We just have one job, but the matrix items defined below will
 # run in parallel.
 jobs:
-    call-workflow-nonetcdf-autotools:
+    call-workflow-nonetcdf-cmake:
         name: "CMake Release NetCDF Off Workflows"
         uses: ./.github/workflows/main-cmake.yml
         with:
