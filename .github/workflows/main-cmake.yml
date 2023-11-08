@@ -54,9 +54,9 @@ jobs:
             toolchain: ""
             xdr: ON
             fortran: OFF
-            jpegfc: ON
-            libaecfc: ON
-            zlibfc: ON
+            localjpeg: ON
+            locallibaec: ON
+            localzlib: ON
             cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G \"Visual Studio 17 2022\" -A x64"
             run_tests: true
@@ -70,9 +70,9 @@ jobs:
             os: ubuntu-latest
             xdr: ON
             fortran: OFF
-            jpegfc: ON
-            libaecfc: ON
-            zlibfc: ON
+            localjpeg: ON
+            locallibaec: ON
+            localzlib: ON
             toolchain: "$GITHUB_WORKSPACE/config/toolchain/gcc.cmake"
             cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G Ninja"
@@ -88,9 +88,9 @@ jobs:
             os: macos-13
             xdr: ON
             fortran: OFF
-            jpegfc: ON
-            libaecfc: ON
-            zlibfc: ON
+            localjpeg: ON
+            locallibaec: ON
+            localzlib: ON
             toolchain: "$GITHUB_WORKSPACE/config/toolchain/clang.cmake"
             cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G Ninja"
@@ -103,9 +103,9 @@ jobs:
             os: ubuntu-latest
             xdr: ON
             fortran: OFF
-            jpegfc: ON
-            libaecfc: ON
-            zlibfc: ON
+            localjpeg: ON
+            locallibaec: ON
+            localzlib: ON
             toolchain: "$GITHUB_WORKSPACE/config/toolchain/mingw64.cmake"
             cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G Ninja"
@@ -119,9 +119,9 @@ jobs:
             toolchain: ""
             xdr: ON
             fortran: OFF
-            jpegfc: ON
-            libaecfc: ON
-            zlibfc: ON
+            localjpeg: ON
+            locallibaec: ON
+            localzlib: ON
             cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G \"Visual Studio 17 2022\" -A x64"
             run_tests: true
@@ -135,9 +135,9 @@ jobs:
             os: ubuntu-latest
             xdr: ON
             fortran: ON
-            jpegfc: ON
-            libaecfc: ON
-            zlibfc: ON
+            localjpeg: ON
+            locallibaec: ON
+            localzlib: ON
             toolchain: "$GITHUB_WORKSPACE/config/toolchain/gcc.cmake"
             cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G Ninja"
@@ -152,9 +152,9 @@ jobs:
             os: macos-13
             xdr: ON
             fortran: OFF
-            jpegfc: ON
-            libaecfc: ON
-            zlibfc: ON
+            localjpeg: ON
+            locallibaec: ON
+            localzlib: ON
             toolchain: "$GITHUB_WORKSPACE/config/toolchain/clang.cmake"
             cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G Ninja"
@@ -229,12 +229,9 @@ jobs:
             -DHDF4_ENABLE_NETCDF:BOOL=${{ inputs.netcdf }} \
             -DHDF4_BUILD_FORTRAN=${{ matrix.fortran }} \
             -DHDF4_BUILD_JAVA=${{ inputs.shared }} \
-            -DBUILD_JPEG_WITH_FETCHCONTENT=${{ matrix.jpegfc }} \
-            -DBUILD_SZIP_WITH_FETCHCONTENT=${{ matrix.libaecfc }} \
-            -DBUILD_ZLIB_WITH_FETCHCONTENT=${{ matrix.zlibfc }} \
-            -DJPEG_USE_LOCALCONTENT=OFF \
-            -DLIBAEC_USE_LOCALCONTENT=OFF \
-            -DZLIB_USE_LOCALCONTENT=OFF \
+            -DJPEG_USE_LOCALCONTENT=${{ matrix.localjpeg }} \
+            -DLIBAEC_USE_LOCALCONTENT=${{ matrix.localaec }} \
+            -DZLIB_USE_LOCALCONTENT=${{ matrix.localzlib }} \
             $GITHUB_WORKSPACE
           echo
           echo "*** h4config.h ***"
