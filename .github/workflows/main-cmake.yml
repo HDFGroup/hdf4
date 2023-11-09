@@ -214,7 +214,7 @@ jobs:
       # CMAKE CONFIGURE
       #
       - name: Get Java setting
-        run: echo "useJava=${{ inputs.shared=='true' && matrix.use_mingw=='false' }}" >> $GITHUB_ENV
+        run: echo "useJava=${{ inputs.shared=='true' && !matrix.use_mingw }}" >> $GITHUB_ENV
 
       - name: CMake Configure
         run: |
