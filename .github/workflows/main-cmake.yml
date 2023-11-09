@@ -1,6 +1,6 @@
 name: hdf4 dev CMake CI
 
-# Controls when the action will run. Triggers the workflow on push or pull request
+# Controls when the action will run. Triggers the workflow on a call
 on:
   workflow_call:
     inputs:
@@ -243,7 +243,7 @@ jobs:
       #
 
       - name: CMake Build
-        run: cmake --build . --config ${{ inputs.build_mode }}
+        run: cmake --build . --parallel 3 --config ${{ inputs.build_mode }}
         working-directory: ${{ runner.workspace }}/build
         if: "! ((matrix.name == 'Ubuntu mingw CMake') && (inputs.build_mode == 'Debug'))"
 
@@ -252,6 +252,6 @@ jobs:
       #
 
       - name: CMake Run Tests
-        run: ctest --build . -C ${{ inputs.build_mode }} -V
+        run: ctest . --parallel 2 -C ${{ inputs.build_mode }} -V
         working-directory: ${{ runner.workspace }}/build
         if: (matrix.run_tests) && ! ((matrix.name == 'Ubuntu mingw CMake') && (inputs.build_mode == 'Debug'))

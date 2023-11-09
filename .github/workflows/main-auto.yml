@@ -1,6 +1,6 @@
 name: hdf4 dev CI
 
-# Controls when the action will run. Triggers the workflow on push or pull request
+# Controls when the action will run. Triggers the workflow on a call
 on:
   workflow_call:
     inputs:
@@ -69,10 +69,6 @@ jobs:
             --disable-fortran \
             --${{ inputs.shared }}-java \
             --${{ inputs.shared }}-shared
-          echo
-          echo "*** h4config.h ***"
-          echo
-          cat ./hdf/src/h4config.h
         shell: bash
 
       # BUILD
