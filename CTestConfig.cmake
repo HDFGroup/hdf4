@@ -20,6 +20,8 @@ else ()
 endif ()
 set (CTEST_DROP_SITE_CDASH TRUE)
 
+set(CTEST_LABELS_FOR_SUBPROJECTS HDF MFHDF JAVA)
+
 set (UPDATE_TYPE git)
 set (VALGRIND_COMMAND "/usr/bin/valgrind")
 set (VALGRIND_COMMAND_OPTIONS "-v --tool=memcheck --leak-check=full --track-fds=yes --num-callers=50 --show-reachable=yes --track-origins=yes --malloc-fill=0xff --free-fill=0xfe")

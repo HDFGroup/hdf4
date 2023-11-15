@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 3.12)
 project (HDF4_HDF C)
 
+set(CMAKE_DIRECTORY_LABELS “HDF”)
+
 #-----------------------------------------------------------------------------
 # Option to build HDF4 Utilities
 #-----------------------------------------------------------------------------
