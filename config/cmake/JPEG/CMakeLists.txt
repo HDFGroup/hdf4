@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.2.2)
+cmake_minimum_required (VERSION 3.12)
 PROJECT (JPEG C)
 
 #-----------------------------------------------------------------------------
@@ -6,7 +6,6 @@ PROJECT (JPEG C)
 #-----------------------------------------------------------------------------
 
 set (JPEG_PACKAGE_EXT ${HDF_PACKAGE_EXT})
-set (CMAKE_ANSI_CFLAGS ${jpeg_pic})
 set (HDF_USE_GNU_DIRS ${HDF4_USE_GNU_DIRS})
 set (CMAKE_OSX_ARCHITECTURES ${CMAKE_OSX_ARCHITECTURES})
 set (CMAKE_TOOLCHAIN_FILE ${CMAKE_TOOLCHAIN_FILE})
@@ -415,10 +414,10 @@ configure_file (${JPEG_SOURCE_DIR}/README ${JPEG_BINARY_DIR}/JPEG_README @ONLY)
 if (NOT JPEG_EXTERNALLY_CONFIGURED)
   set (CPACK_PACKAGE_VENDOR "HDF_Group")
   set (CPACK_PACKAGE_NAME "${JPEG_PACKAGE_NAME}")
-  if (CDASH_LOCAL)
-    set (CPACK_PACKAGE_VERSION "${JPEG_PACKAGE_VERSION}")
-  else ()
+  if (NOT WIN32 OR JPEG_VERS_SUBRELEASE MATCHES "^[0-9]+$")
     set (CPACK_PACKAGE_VERSION "${JPEG_PACKAGE_VERSION_STRING}")
+  else ()
+    set (CPACK_PACKAGE_VERSION "${JPEG_PACKAGE_VERSION}")
   endif ()
   set (CPACK_PACKAGE_VERSION_MAJOR "${JPEG_PACKAGE_VERSION_MAJOR}")
   set (CPACK_PACKAGE_VERSION_MINOR "${JPEG_PACKAGE_VERSION_MINOR}")

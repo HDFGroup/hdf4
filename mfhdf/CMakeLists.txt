@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 3.12)
 project (HDF4_MFHDF C)
 
+set(CMAKE_DIRECTORY_LABELS “MFHDF”)
+
 #-----------------------------------------------------------------------------
 # Option to build HDF4 Tools
 #-----------------------------------------------------------------------------

@@ -1,17 +1,20 @@
 cmake_minimum_required (VERSION 3.12)
 project (HDF4_JAVA C Java)
 
+set(CMAKE_DIRECTORY_LABELS “JAVA”)
+
 set (CMAKE_MODULE_PATH "${HDF_RESOURCES_DIR}")
 find_package (Java)
+
 #-----------------------------------------------------------------------------
 # Include some macros for reusable code
 #-----------------------------------------------------------------------------
 include (${HDF_RESOURCES_DIR}/UseJava.cmake)
 
-message (STATUS "JAVA: JAVA_HOME=$ENV{JAVA_HOME} JAVA_ROOT=$ENV{JAVA_ROOT}")
+message (VERBOSE "JAVA: JAVA_HOME=$ENV{JAVA_HOME} JAVA_ROOT=$ENV{JAVA_ROOT}")
 find_package (JNI)
-message (STATUS "JNI_LIBRARIES=${JNI_LIBRARIES}")
-message (STATUS "JNI_INCLUDE_DIRS=${JNI_INCLUDE_DIRS}")
+message (VERBOSE "JNI_LIBRARIES=${JNI_LIBRARIES}")
+message (VERBOSE "JNI_INCLUDE_DIRS=${JNI_INCLUDE_DIRS}")
 
 
 if (WIN32)

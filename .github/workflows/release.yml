@@ -1,4 +1,4 @@
-name: hdf4 release build
+name: hdf4 dev release build
 
 # Controls when the action will run. Triggers the workflow on a manual run
 on:
@@ -50,7 +50,7 @@ jobs:
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Get Sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: hdfsrc
 

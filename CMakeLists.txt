@@ -302,6 +302,12 @@ include (${HDF_RESOURCES_DIR}/ConfigureChecks.cmake)
 set (CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE ON)
 
 #-----------------------------------------------------------------------------
+# Include directories in the source or build tree should come before other
+# directories to prioritize headers in the sources over installed ones.
+#-----------------------------------------------------------------------------
+set(CMAKE_INCLUDE_DIRECTORIES_PROJECT_BEFORE ON)
+
+#-----------------------------------------------------------------------------
 # Mac OS X Options
 #-----------------------------------------------------------------------------
 if (HDF4_BUILD_FRAMEWORKS AND NOT BUILD_SHARED_LIBS)
@@ -311,28 +317,30 @@ endif ()
 #-----------------------------------------------------------------------------
 # Option to Build Shared and Static libs, default is both
 #-----------------------------------------------------------------------------
+option (ONLY_SHARED_LIBS "Only Build Shared Libraries" OFF)
+mark_as_advanced (ONLY_SHARED_LIBS)
 option (BUILD_STATIC_LIBS "Build Static Libraries" ON)
 set (H4_ENABLE_STATIC_LIB NO)
 option (BUILD_SHARED_LIBS "Build Shared Libraries" ON)
 set (H4_ENABLE_SHARED_LIB NO)
-option (ONLY_SHARED_LIBS "Only Build Shared Libraries" OFF)
-mark_as_advanced (ONLY_SHARED_LIBS)
+
+# only shared libraries is true if user forces static OFF
+if (NOT BUILD_STATIC_LIBS)
+  set (ONLY_SHARED_LIBS ON CACHE BOOL "Only Build Shared Libraries" FORCE)
+endif ()
+
+# only shared libraries is set ON by user then force settings
+if (ONLY_SHARED_LIBS)
+  set (H4_ENABLE_STATIC_LIB NO)
+  set (BUILD_SHARED_LIBS ON CACHE BOOL "Build Shared Libraries" FORCE)
+  set (BUILD_STATIC_LIBS OFF CACHE BOOL "Build Static Libraries" FORCE)
+endif ()
 
 if (BUILD_STATIC_LIBS)
   set (H4_ENABLE_STATIC_LIB YES)
 endif ()
 if (BUILD_SHARED_LIBS)
   set (H4_ENABLE_SHARED_LIB YES)
-endif ()
-
-# Force only shared libraries if all OFF
-if (NOT BUILD_STATIC_LIBS AND NOT BUILD_SHARED_LIBS)
-  set (ONLY_SHARED_LIBS ON CACHE BOOL "Only Build Shared Libraries" FORCE)
-endif ()
-
-if (ONLY_SHARED_LIBS)
-  set (H4_ENABLE_STATIC_LIB NO)
-  set (BUILD_SHARED_LIBS ON CACHE BOOL "Build Shared Libraries")
 endif ()
 
 set (CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -358,9 +366,13 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin" OR CYGWIN)
   endforeach ()
 endif ()
 
+option (HDF4_ENABLE_ANALYZER_TOOLS "enable the use of Clang tools" OFF)
+mark_as_advanced (HDF4_ENABLE_ANALYZER_TOOLS)
 if (HDF4_ENABLE_ANALYZER_TOOLS)
   include (${HDF4_SOURCE_DIR}/config/sanitizer/tools.cmake)
 endif ()
+option (HDF4_ENABLE_SANITIZERS "execute the Clang sanitizer" OFF)
+mark_as_advanced (HDF4_ENABLE_SANITIZERS)
 if (HDF4_ENABLE_SANITIZERS)
   include (${HDF4_SOURCE_DIR}/config/sanitizer/sanitizers.cmake)
 endif ()
@@ -446,27 +458,6 @@ include (UserMacros.cmake)
 include (CMakeFilters.cmake)
 
 #-----------------------------------------------------------------------------
-# Option for external libraries on windows
-#-----------------------------------------------------------------------------
-option (HDF4_PACKAGE_EXTLIBS "CPACK - include external libraries" OFF)
-if (NOT HDF4_EXTERNALLY_CONFIGURED)
-  if (HDF4_PACKAGE_EXTLIBS)
-    set (HDF4_NO_PACKAGES OFF CACHE BOOL "CPACK - Disable packaging" FORCE)
-    if (HDF4_ENABLE_JPEG_LIB_SUPPORT AND JPEG_FOUND AND NOT BUILD_JPEG_WITH_FETCHCONTENT)
-      PACKAGE_JPEG_LIBRARY (${HDF4_ALLOW_EXTERNAL_SUPPORT})
-    endif ()
-
-    if (HDF4_ENABLE_Z_LIB_SUPPORT AND ZLIB_FOUND AND NOT BUILD_ZLIB_WITH_FETCHCONTENT)
-      PACKAGE_ZLIB_LIBRARY (${HDF4_ALLOW_EXTERNAL_SUPPORT})
-    endif ()
-
-    if (HDF4_ENABLE_SZIP_SUPPORT AND SZIP_FOUND AND NOT BUILD_SZIP_WITH_FETCHCONTENT)
-      PACKAGE_SZIP_LIBRARY (${HDF4_ALLOW_EXTERNAL_SUPPORT})
-    endif ()
-  endif ()
-endif ()
-
-#-----------------------------------------------------------------------------
 # Options to build tools
 #-----------------------------------------------------------------------------
 option (HDF4_BUILD_TOOLS  "Build HDF4 Tools" ON)
@@ -513,17 +504,6 @@ endif ()
 #-----------------------------------------------------------------------------
 add_subdirectory (hdf/src)
 add_subdirectory (mfhdf/libsrc)
-
-if (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "GIT" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
-  if ((JPEG_FOUND AND JPEG_USE_EXTERNAL) OR (ZLIB_FOUND AND ZLIB_USE_EXTERNAL) OR (SZIP_FOUND AND SZIP_USE_EXTERNAL))
-    if (NOT ONLY_SHARED_LIBS AND NOT BUILD_JPEG_WITH_FETCHCONTENT)
-      add_dependencies (${HDF4_LIB_TARGET} ${LINK_COMP_LIBS})
-    endif ()
-    if (BUILD_SHARED_LIBS AND NOT BUILD_JPEG_WITH_FETCHCONTENT)
-      add_dependencies (${HDF4_LIBSH_TARGET} ${LINK_COMP_LIBS})
-    endif ()
-  endif ()
-endif ()
 
 if (HDF4_BUILD_XDR_LIB)
   if (NOT ONLY_SHARED_LIBS)
