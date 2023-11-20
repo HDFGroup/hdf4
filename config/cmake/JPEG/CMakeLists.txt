@@ -233,7 +233,7 @@ TARGET_C_PROPERTIES (${JPEG_LIB_TARGET} STATIC)
 target_link_libraries (${JPEG_LIB_TARGET} PRIVATE ${LINK_LIBS})
 H4_SET_LIB_OPTIONS (${JPEG_LIB_TARGET} ${JPEG_LIB_NAME} STATIC)
 set_target_properties(${JPEG_LIB_TARGET} PROPERTIES
-    PUBLIC_HEADER "${JPEG_PUBLIC_HEADERS}"
+    PUBLIC_HEADER ""
     LINKER_LANGUAGE C
     INTERFACE_INCLUDE_DIRECTORIES "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>"
 )
@@ -276,17 +276,6 @@ if (WIN32)
     file(TO_CMAKE_PATH "$ENV{WIX}" CPACK_WIX_ROOT)
   endif ()
   find_program (WIX_EXECUTABLE candle  PATHS "${CPACK_WIX_ROOT}/bin")
-endif ()
-
-#-----------------------------------------------------------------------------
-# Add file(s) to CMake Install
-#-----------------------------------------------------------------------------
-if (NOT JPEG_INSTALL_NO_DEVELOPMENT)
-  install (
-      FILES ${PROJECT_BINARY_DIR}/jconfig.h
-      DESTINATION ${JPEG_INSTALL_INCLUDE_DIR}
-      COMPONENT headers
-  )
 endif ()
 
 #-----------------------------------------------------------------------------
@@ -374,20 +363,6 @@ if (NOT JPEG_EXTERNALLY_CONFIGURED)
       FILES ${JPEG_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${JPEG_PACKAGE}${JPEG_PACKAGE_EXT}-config-version.cmake
       DESTINATION ${JPEG_INSTALL_CMAKE_DIR}
       COMPONENT configinstall
-  )
-endif ()
-
-#-----------------------------------------------------------------------------
-# Add Document File(s) to CMake Install
-#-----------------------------------------------------------------------------
-if (NOT JPEG_EXTERNALLY_CONFIGURED)
-  install (
-      FILES
-          ${JPEG_SOURCE_DIR}/README
-          ${JPEG_SOURCE_DIR}/libjpeg.txt
-          ${JPEG_SOURCE_DIR}/install.txt
-      DESTINATION ${JPEG_INSTALL_DATA_DIR}
-      COMPONENT documents
   )
 endif ()
 
@@ -510,7 +485,6 @@ if (NOT JPEG_EXTERNALLY_CONFIGURED)
   include (InstallRequiredSystemLibraries)
 
   set (CPACK_INSTALL_CMAKE_PROJECTS "${JPEG_BINARY_DIR};JPEG;libraries;/")
-  set (CPACK_INSTALL_CMAKE_PROJECTS "${JPEG_BINARY_DIR};JPEG;headers;/")
   set (CPACK_INSTALL_CMAKE_PROJECTS "${JPEG_BINARY_DIR};JPEG;configinstall;/")
 
   set (CPACK_ALL_INSTALL_TYPES Full Developer User)
@@ -522,32 +496,11 @@ if (NOT JPEG_EXTERNALLY_CONFIGURED)
 
   cpack_add_component_group(Runtime)
 
-  cpack_add_component_group(Documents
-      EXPANDED
-      DESCRIPTION "Release notes for jpeg9d"
-  )
-
-  cpack_add_component_group(Development
-      EXPANDED
-      DESCRIPTION "All of the tools you'll need to develop applications"
-  )
-
   cpack_add_component (libraries
       DISPLAY_NAME "JPEG Libraries"
       REQUIRED
       GROUP Runtime
       INSTALL_TYPES Full Developer User
-  )
-  cpack_add_component (headers
-      DISPLAY_NAME "JPEG Headers"
-      DEPENDS libraries
-      GROUP Development
-      INSTALL_TYPES Full Developer
-  )
-  cpack_add_component (documents
-      DISPLAY_NAME "JPEG Documents"
-      GROUP Documents
-      INSTALL_TYPES Full Developer
   )
   cpack_add_component (configinstall
       DISPLAY_NAME "JPEG CMake files"
