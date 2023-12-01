@@ -1404,8 +1404,6 @@ NAME
 DESCRIPTION
    Checks to see if the given field exists in a vdata belonging to this vgroup.
 
-   28-MAR-91 Jason Ng NCSA
-
 RETURNS
    If found, returns the ref of the vdata.
    If not found, or error, returns FAIL
@@ -1468,7 +1466,6 @@ NAME
 
 DESCRIPTION
     Checks whether the given tag/ref pair already exists in the vgroup.
-    28-MAR-91 Jason Ng NCSA
 
 RETURNS
     RETURNS TRUE if exist
@@ -1619,7 +1616,6 @@ NAME
 DESCRIPTION
     Returns the number (0 or +ve integer) of tag/ref pairs in a vgroup.
     If error, returns FAIL
-    28-MAR-91 Jason Ng NCSA.
 
 RETURNS
 
@@ -1708,7 +1704,6 @@ DESCRIPTION
     Returns n tag/ref pairs from the vgroup into the caller-supplied arrays
     tagrarray and refarray.
     n can be any +ve number, but arrays must be this big.
-    28-MAR-91 Jason Ng NCSA.
 
     NOTE: Do not confuse with Vgettagref().
 
@@ -1764,7 +1759,6 @@ NAME
 DESCRIPTION
    Returns a specified tag/ref pair from the vgroup.
    User specifies an index.
-   12-MAY-91 Jason Ng NCSA.
 
    NOTE: Do not confuse with Vgettagrefs().
 
@@ -1901,7 +1895,6 @@ DESCRIPTION
    a 3D SDS can have dimensions "time", "pressure" and "pressure".)
   If error, returns FAIL or tag/ref is not inserted.
   If OK, returns the total number of tag/refs in the vgroup (a +ve integer).
-  28-MAR-91 Jason Ng NCSA.
 
 RETURNS
 

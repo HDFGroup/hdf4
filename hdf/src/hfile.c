@@ -2323,11 +2323,11 @@ HIunlock(filerec_t *file_rec)
 /* ------------------------- SPECIAL TAG ROUTINES ------------------------- */
 /*
    The HDF tag space is divided as follows based on the 2 highest bits:
-   00: NCSA reserved ordinary tags
-   01: NCSA reserved special tags
+   00: Library reserved ordinary tags
+   01: Library reserved special tags
    10, 11: User tags.
 
-   It is relatively cheap to operate with special tags within the NCSA
+   It is relatively cheap to operate with special tags within the library
    reserved tags range.  For users to specify special tags and their
    corresponding ordinary tag, the pair has to be added to the
    special_table.

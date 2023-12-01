@@ -864,7 +864,7 @@ nssdc_write_cdf(XDR *xdrs, NC **handlep)
 #ifdef DEBUG
     fprintf(stderr, "We are sorry, we currently do not support writing to\n");
     fprintf(stderr, "CDF files.  If you would like to see this capabilities\n");
-    fprintf(stderr, "please contact the HDF group at NCSA.\n");
+    fprintf(stderr, "please contact the HDFG helpdesk: help at hdfgroup dot org.\n");
 #endif
 
     return (FALSE);

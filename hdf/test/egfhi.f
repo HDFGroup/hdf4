@@ -15,7 +15,6 @@ C
 C==========================================================
 c
 c     HDF VSET Sample Program
-c     Jason NG NCSA FEB-28-92
 c
 c     EGFHI.F
 c     Uses High-Level routines
