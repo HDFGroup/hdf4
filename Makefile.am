@@ -4,6 +4,9 @@
 
 include $(top_srcdir)/config/commence.am
 
+# include Doxygen rules (requires autoconf-archive >2016-03-20)
+@DX_RULES@
+
 if BUILD_JAVA_CONDITIONAL
    JAVA_DIR=java
 else
