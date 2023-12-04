@@ -20,7 +20,7 @@ Navigate back: \ref index "Contents" / \ref UG
 \section sec_appendc Attributes in HDF
 
 \subsection subsec_appendc_attr Attribute Overview
-\subsection subsec_appendc_store Underlaying storage issues
+\subsection subsec_appendc_store Underlying storage issues
     <ul>
         \subsubsection subsubsec_appendc_store_attr Predefined Attributes in DFSD API
         \subsubsection subsubsec_appendc_store_vg Vgroup Attribute Without Vsetattr
