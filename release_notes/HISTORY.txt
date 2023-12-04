@@ -304,13 +304,13 @@ New features and changes
 
     - Removed all references to C++
 
-      HDF4 does not have a C++ wrapper and, like HDF4, we do not support
+      HDF4 does not have a C++ wrapper and, like HDF5, we do not support
       building the library with a C++ compiler since the languages are
       diverging.
 
       Despite this, some parts of the build system checked for a C++ compiler,
       manipulated CXXFLAGS, etc. This was mainly in files that were brought
-      over from HDF4. This build system code has been removed.
+      over from HDF5. This build system code has been removed.
 
       As a part of this C++ cleanup, the extern "C" ifdefs in the header files
       no longer test for c_plusplus.
@@ -1010,7 +1010,7 @@ New features and changes
 
       Added new configuration macros to use new HDF_BUILD_TYPE variable. This
       variable is set correctly for the type of generator being used for the build.
-      Changes follow from hdf4.
+      Changes follow from hdf5.
 
       (ADB - 2018/01/08, HDFFV-10385, HDFFV-10296)
 
@@ -1043,7 +1043,7 @@ Bugs fixed since HDF 4.2.13
       A number of improvements were made to the CMake commands. Most
       changes simplify usage or eliminate unused constructs. Also,
       some changes support better cross-platform support. Changes
-      follow from hdf4.
+      follow from hdf5.
 
       (ADB - 2018/02/01, HDFFV-10398)
 
@@ -1057,7 +1057,7 @@ Bugs fixed since HDF 4.2.13
         GLOBAL PROPERTY -> GENERATOR_IS_MULTI_CONFIG
       Created two new HDF variable, HDF_BUILD_TYPE and HDF_CFG_BUILD_TYPE.
       Defaults for these variables is "Release". Changes
-      follow from hdf4.
+      follow from hdf5.
 
     Library:
     --------
