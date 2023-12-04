@@ -143,26 +143,6 @@
  *      available by the National Center for Supercomputing Applications,
  *      University of Illinois, Urbana-Champaign (ftp.ncsa.uiuc.edu).
  *
- * History:
- *      Beta version:                                           17-May-89
- *              (by Mike Folk mfolk@ncsa.uiuc.edu)
- *      Revision to put in the mean option:                     15-Sep-89
- *              (by Glen Mortensen gam@inel.gov)
- *      Officially released:                                    01-Dec-89
- *              (by NCSA ftp.ncsa.uiuc.edu)
- *      Revision to fix some bugs:                              16-Mar-90
- *              (by Mike Folk mfolk@ncsa.uiuc.edu)
- *      Revision to support 3D and native fp input:             15-May-90
- *              (by Bob Weaver baw@inel.gov)
- *      Revision to fix bug in interp() :                    17-Oct-90
- *              (by Fred Walsteijn nwalstyn@fys.ruu.n)
- *      Revision to fix bug in interp() :                    23-Nov-90
- *              Now it clips values outside of max and min.
- *              (by Fred Walsteijn nwalstyn@fys.ruu.n)
- *      Revision to start to use HDF 3.2 (and 3.3) library:  22-Jun-93
- *              Still lots to do to support other number types.
- *              (by Chris Houck chouck@ncsa.uiuc.edu)
- *
  */
 
 #include "hdf.h"

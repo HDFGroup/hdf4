@@ -31,9 +31,6 @@
  *                             i.e. 8-bit image, dimensions, and
  *                             RGB palette.
  *
- * by:           NCSA
- * date(s):        May 89, Jun 89, Aug 89, May 90
- *
  ****************************************************************************/
 
 typedef unsigned char UCHAR;

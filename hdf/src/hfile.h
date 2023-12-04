@@ -130,20 +130,20 @@ typedef int hdf_file_t;
         tag/ref (unique data identifier in file)
 
    Tag  -- identifies the type of data, 16 bit unsigned integer whose
-           value ranges from 1 - 65535. Tags are assigned by NCSA.
+           value ranges from 1 - 65535. Tags are assigned by the library.
            The HDF tag space is divided as follows based on the 2 highest bits:
 
-              00: NCSA reserved ordinary tags
-              01: NCSA reserved special tags(i.e. regular tags made into
+              00: Library reserved ordinary tags
+              01: Library reserved special tags(i.e. regular tags made into
                                                   linked-block, external,
                                                   compressed or chunked.)
               10, 11: User tags.
 
            Current tag assignments are:
-           00001 - 32767  - reserved for NCSA use
-                            00001 - 16383 - NCSA regular tags
-                            16384 - 32767 - NCSA special tags
-           32768 - 64999  - user definable
+           00001 - 32767  - reserved for library use
+                            00001 - 16383 - library use regular tags
+                            16384 - 32767 - library use special tags
+           32768 - 64999  - user definable tags
            65000 - 65535  - reserved for expansion of format
 
    Reference number - 16 bit unsigned integer whose assignment is not
@@ -380,11 +380,11 @@ typedef struct functab_t {
 
 /* --------------------------- Special Elements --------------------------- */
 /* The HDF tag space is divided as follows based on the 2 highest bits:
-   00: NCSA reserved ordinary tags
-   01: NCSA reserved special tags(e.g. linked-block, external, compressed,..)
+   00: Library reserved ordinary tags
+   01: Library reserved special tags(e.g. linked-block, external, compressed,..)
    10, 11: User tags.
 
-   It is relatively cheap to operate with special tags within the NCSA
+   It is relatively cheap to operate with special tags within the library
    reserved tags range. For users to specify special tags and their
    corresponding ordinary tag, the pair has to be added to the
    special_table in hfile.c and SPECIAL_TABLE must be defined. */
