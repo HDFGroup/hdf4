@@ -15,6 +15,11 @@ SUBDIRS = hdf mfhdf $(JAVA_DIR) man
 settingsdir = $(libdir)
 settings_DATA = libhdf4.settings
 
+# doxygen support
+if BUILD_DOXYGEN_CONDITIONAL
+doxygen: doxygen-doc
+endif
+
 # 'make install' will now install examples, the same as 'make install-all'.
 # 'make-install-all' will be redundant but will still work.
 install: install-recursive install-examples

@@ -60,7 +60,7 @@ are tentative.
 
 HDF4 4.3.0 will clean up some long-standing issues in the library
 * The problematic XDR library will be replaced with a thin I/O layer that correctly handles long integer data on all platforms
-* We will drop support for FORTRAN 77 so the wrappers can be built like they are in HDF5
+* We will drop support for FORTRAN 77 so the wrappers can be built like they are in HDF4
 * We will also no longer deploy undocumented, internal header files (the public, documented HDF4 API will not be affected)
 
 The 4.2 maintenance line will be retired when 4.3.0 releases. There are no

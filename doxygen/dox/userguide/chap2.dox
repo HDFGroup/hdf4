@@ -1,0 +1,322 @@
+/** @page CH2_UG HDF Fundamentals
+
+Navigate back: \ref index "Contents" / \ref UG
+<hr>
+
+\section sec_fund HDF Fundamentals
+
+\subsection subsec_fund_overview Chapter Overview
+This chapter provides necessary information for the creation and manipulation of HDF files. It
+includes an overview of the HDF file format, basic operations on HDF files, and programming
+language issues pertaining to the use of Fortran and ANSI C in HDF programming.
+
+\subsection subsec_fund_format HDF File Format
+An HDF file contains a file header, at least one data descriptor block, and zero or more data elements as depicted in Figure 2a.
+
+  <table>
+  <tr>
+  <td>
+  \image html .gif "The Physical Layout of an HDF File Containing One Data Object"
+  </td>
+  </tr>
+  </table>
+
+The file header identifies the file as an HDF file. A data descriptor block contains a number of
+data descriptors. A data descriptor and a data element together form a data object, which is the
+basic conglomerate structure for encapsulating data in the HDF file. Each of these terms is
+described in the following sections.
+
+\subsubsection subsubsec_fund_format_head File Header
+The first component of an HDF file is the file header, which takes up the first four bytes of the
+HDF file. Specifically, it consists of four one-byte values that are ASCII representations of control
+characters: the first is a control-N, the second is a control-C , the third is a control-S and the fourth
+is a control-A (^N^C^S^A).
+
+Note that, on some machines, the order of bytes in the file header might be swapped when the
+header is written to an HDF file, causing these characters to be written in little-endian order. To
+maintain the portability of HDF file header data when developing software for such machines, this
+byte swapping must be counteracted by ensuring the characters are read and written in the desired
+order.
+
+\subsubsection subsubsec_fund_format_object Data Object
+A data object is comprised of a data descriptor and a data element. The data descriptor consists of
+information about the type, location, and size of the data element. The data element contains the
+actual data. This organization of HDF data makes HDF files self-describing. Figure 2b shows two
+examples of data objects.
+
+  <table>
+  <tr>
+  <td>
+  \image html .gif "Two Data Objects"
+  </td>
+  </tr>
+  </table>
+
+<h4>Data Descriptor</h4>
+All data descriptors are twelve bytes long and contain four fields, as depicted in Figure 2c. These
+fields are: a 16-bit tag, a 16-bit reference number, a 32-bit data offset and a 32-bit data length.
+
+  <table>
+  <tr>
+  <td>
+  \image html .gif "The Contents of a Data Descriptor"
+  </td>
+  </tr>
+  </table>
+
+<h4>Tag</h4>
+A tag is the data descriptor field that identifies the type of data stored in the corresponding data
+element. A tag is a 16-bit unsigned integer between 1 and 65,535, and is associated with a mnemonic
+name to promote ease to use and the readability of user programs.
+
+If a data descriptor has no corresponding data element, the value of its tag is DFTAG_NULL (or 0).
+
+Tags are assigned by The HDF Group as part of the HDF specification. The following are the
+ranges of tag values and their descriptions:
+\li 1 to 32,767 - Tags reserved for HDF Group use
+\li 32,768 to 64,999 - User-definable tags
+\li 65,000 to 65,535 - Tags reserved for expansion of the HDF specification
+
+A list of commonly-used tags and their descriptions is included in \ref sec_appenda of this document.
+
+<h4>Reference Number</h4>
+For each occurrence of a tag in an HDF file, a unique reference number is assigned by the library
+with the tag in the data descriptor. A reference number is a 16-bit unsigned integer and can not be
+changed during the life of the data object that the reference number specifies.
+
+The combination of a tag and a reference number uniquely identifies the corresponding data
+object in the file.
+
+Reference numbers are not necessarily assigned consecutively, so it cannot be assumed that the
+value of a reference number has any meaning beyond providing a way of distinguishing among
+objects with the same tag. While application programmers may find it convenient to impart some
+additional meaning to reference numbers in their code, it is emphasized that the HDF library will
+not internally recognize any such meaning.
+
+<h4>Data Offset and Length</h4>
+The data offset field points to the location of the data element in the file by storing the number of
+bytes from the beginning of the file to the beginning of the data element. The length field contains
+the size of the data element in bytes. The data offset and the length are both 32-bit signed integers.
+This results in a file-size limit of 2 gigabytes.
+
+<h4>Data Elements</h4>
+The data element is the raw data portion of a data object.
+
+\subsubsection subsubsec_fund_format_descrip Data Descriptor Block
+Data descriptors are physically stored in a linked list of blocks called data descriptor blocks. The
+relationship between the data descriptor block to the other components of an HDF file is illustrated in Figure 2a on page 7. The individual components of a data descriptor block are depicted
+in Figure 2d on page 10. Each data descriptor in a data descriptor block is assumed to be associated with a data element unless it contains the tag DFTAG_NULL (or 0),which indicates that there is
+no associated data element. By default, a data descriptor block contains 16 (defined as DEF_NDDS)
+data descriptors. The user may reset this limit when creating the HDF file. Refer to Section 2.3.2
+on page 11 for more details.
+
+In addition to data descriptors, each data descriptor block contains a data descriptor header. The
+data descriptor header contains two fields: block size and next block. The block size field is a 16-
+bit unsigned integer indicating the number of data descriptors in the data descriptor block. The
+next block field is a 32-bit unsigned integer indicating the offset of the next data descriptor block,
+if one exists. The last data descriptor header in the list contains a value of 0 in its next block field.
+
+Figure 2d illustrates the layout of a data descriptor block.
+
+  <table>
+  <tr>
+  <td>
+  \image html .gif "Data Descriptor Block"
+  </td>
+  </tr>
+  </table>
+
+\subsubsection subsubsec_fund_format_group Grouping Data Objects in an HDF File
+Data objects containing related data in HDF files are usually grouped together by the library.
+These groups of data objects are called data sets. The HDF user uses the application interface to
+manipulate data sets in a file. As an example, an 8-bit raster image data set requires three objects:
+a group object identifying the members of the set, an image object containing the image data, and
+a dimension object indicating the size of the image.
+
+Data objects are individually accessible even if they are included in a set, therefore data objects
+can belong to more than one set and sets can be included in larger groups. For example, a palette
+object included in one raster image set may also be a part of another raster image set if its tag and
+reference number are included in a data descriptor within that second set.
+
+Additional information about data objects, including the options available for storing them, can be
+found in the <a href="http://www.hdfgroup.org/doc.html">HDF Specifications and Developer’s Guide</a> from the HDF web site.
+
+\subsection subsec_fund_basic Basic Operations on HDF Files Using the Multifile Interfaces
+This section describes the basic file operations, some of which are required in working with HDF
+files using the multifile interfaces. Except for the SD interface, all applications using other multifile
+interfaces must explicitly use the routines Hopen and Hclose to control accesses to the HDF
+files. In an application using the HDF file format, the file is accessed via its identifier, referred to
+as file identifier. The following subsections describe the file identifier and the basic file operations
+common to most multifile interfaces.
+
+\subsubsection subsubsec_fund_basic_file File Identifiers
+The HDF programming model specifies that a data file is first explicitly created or opened by an
+application, manipulated, then explicitly closed by the application. A file identifier is a unique
+number that the HDF library assigns to an HDF file when creating or opening the file. The HDF
+library creates the file identifier for an HDF file when given its file name, as represented in the
+native file system. Interface routines use only the file identifier to access and manipulate the file.
+When all operations on the file are complete, the file identifier must be discarded by explicitly
+closing the file before terminating the application.
+
+As every file is assigned its own identifier, the order in which files are accessed is very flexible.
+For example, it is valid to open a file and obtain an identifier for it, then open a second file without
+closing the first file or disposing of the first file identifier. The only requirement made by HDF is
+that all file identifiers be individually discarded before the termination of the calling program.
+
+File identifiers created by the routine of one HDF interface can be used by the routines of any
+other interfaces, except SD’s.
+
+\subsubsection subsubsec_fund_basic_open Opening HDF Files: Hopen
+<table>
+<tr>
+<th><strong>C</strong></th>
+<td>file_id = Hopen(filename, access_mode, num_dds_block);
+</td>
+</tr>
+<tr>
+<th><strong>FORTRAN</strong></th>
+<td>file_id = hopen(filename, access_mode, num_dds_block)
+</td>
+</tr>
+</table>
+
+  <table>
+  <tr>
+  <td>
+  \image html .gif "Hopen Parameter List"
+  </td>
+  </tr>
+  </table>
+
+  <table>
+  <tr>
+  <td>
+  \image html .gif "File Access Code Flags"
+  </td>
+  </tr>
+  </table>
+
+\subsubsection subsubsec_fund_basic_close  Closing HDF Files: Hclose
+
+  <table>
+  <tr>
+  <td>
+  \image html .gif "Hclose Parameter List"
+  </td>
+  </tr>
+  </table>
+
+\subsubsection subsubsec_fund_basic_get Getting the HDF Library and File Versions: Hgetlibversion and Hgetfileversion
+
+  <table>
+  <tr>
+  <td>
+  \image html .gif "Hgetlibversion and Hgetfileversion Parameter Lists"
+  </td>
+  </tr>
+  </table>
+
+\subsection subsec_fund_file Determining whether a File Is an HDF File: Hishdf/hishdff
+
+  <table>
+  <tr>
+  <td>
+  \image html .gif "Hishdf/hishdff Parameter List"
+  </td>
+  </tr>
+  </table>
+
+\subsection subsec_fund_prog Programming Issues
+
+\subsubsection subsubsec_fund_prog_head Header File Information
+
+\subsubsection subsubsec_fund_prog_defs HDF Definitions
+The HDF library provides several sets of definitions which can be used easily in the user applications.
+These sets include the definitions of the data types, the data type flags, and the limits that set
+various maximum values. The definitions of the data types supported by HDF are located in the
+hdf.h header file, and the data type flags are located in the hntdefs.h header file. Both are also
+included in (See Table 2F on page 14), (See Table 2G on page 15), and (See Table 2H on
+page 15). HDF data types are used for portability in the declaration of variables, and data type
+flags are used as parameters in various HDF interface routines.
+
+<h4>Standard HDF Data Types</h4>
+
+  <table>
+  <tr>
+  <td>
+  \image html .gif "Standard HDF Data Types and Flags"
+  </td>
+  </tr>
+  </table>
+
+<h4>Native Format Data Types</h4>
+
+  <table>
+  <tr>
+  <td>
+  \image html .gif "Native Format Data Type Definitions"
+  </td>
+  </tr>
+  </table>
+
+<h4>Little-Endian Data Types</h4>
+
+  <table>
+  <tr>
+  <td>
+  \image html .gif "Little-Endian Format Data Type Definitions"
+  </td>
+  </tr>
+  </table>
+
+<h4>Tag Definitions</h4>
+
+<h4>Limit Definitions</h4>
+
+  <table>
+  <tr>
+  <td>
+  \image html .gif "Limit Definitions"
+  </td>
+  </tr>
+  </table>
+
+\subsubsection subsubsec_fund_prog_lang  FORTRAN-77 and C Language Issues
+HDF provides both FORTRAN-77 and C versions of most of its interface routines. In order to
+make the FORTRAN-77 and C versions of each routine as similar as possible, some compromises
+have been made in the process of simplifying the interface for both programming languages.
+
+<h4>FORTRAN-77-to-C Translation</h4>
+
+  <table>
+  <tr>
+  <td>
+  \image html .gif "Use of a Function Call Converter to Route FORTRAN-77 HDF Calls to the C Library"
+  </td>
+  </tr>
+  </table>
+
+<h4>Case Sensitivity</h4>
+
+<h4>Name Length</h4>
+
+<h4>Header Files</h4>
+
+<h4>Data Type Specifications</h4>
+
+  <table>
+  <tr>
+  <td>
+  \image html .gif "Correspondence Between Fortran and HDF C Data Types"
+  </td>
+  </tr>
+  </table>
+
+<h4>String and Array Specifications</h4>
+
+<h4>FORTRAN-77 and ANSI C</h4>
+
+<hr>
+Navigate back: \ref index "Contents" / \ref UG
+
+*/

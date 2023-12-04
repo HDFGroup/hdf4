@@ -1,0 +1,79 @@
+/** @page GettingStarted Getting Started with HDF4
+
+Navigate back: \ref index "Main"
+<hr>
+
+\section sec_learn Learning HDF4
+There are several resources for learning about HDF4. The HDF Group provides an on-line HDF4 tutorial,
+documentation, examples, and videos. There are also tutorials provided by other organizations that are very useful for learning about HDF4.
+
+\subsection subsec_learn_intro The HDF Group Resources
+For a quick introduction to HDF4 see the following:
+<table>
+<tr>
+<td style="background-color:#F5F5F5">
+@ref IntroHDF4
+</td>
+<td>
+A very brief introduction to HDF4 and the HDF4 programming model and APIs
+</td>
+</tr>
+<tr>
+<td style="background-color:#F5F5F5">
+@ref LearnHDFView
+</td>
+<td>
+A tutorial for learning how to use HDFView. NO programming involved!
+</td>
+</tr>
+<tr>
+<td style="background-color:#F5F5F5">
+@ref LearnBasics
+</td>
+<td>
+Step by step instructions for learning HDF4 that include programming examples
+</td>
+</tr>
+</table>
+
+\subsection subsec_learn_tutor The HDF Group Tutorials and Examples
+These tutorials and examples are available for learning about the HDF4 features:
+<table>
+<tr>
+<td style="background-color:#F5F5F5">
+\ref IntroParHDF4
+</td>
+<td>
+A brief introduction to Parallel HDF4. If you are new to HDF4 please see the @ref LearnBasics topic first.
+</td>
+</tr>
+<tr>
+<td style="background-color:#F5F5F5">
+\ref ViewTools
+</td>
+<td>
+\li @ref LearnHDFView
+\li @ref ViewToolsCommand
+</td>
+</tr>
+<tr>
+<td style="background-color:#F5F5F5">
+HDF4.2.16 New Features
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td style="background-color:#F5F5F5">
+Example Programs
+</td>
+<td>
+\ref HDF4Examples
+</td>
+</tr>
+</table>
+
+<hr>
+Navigate back: \ref index "Main"
+
+*/

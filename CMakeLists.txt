@@ -225,6 +225,7 @@ set (HDF4_JAVA_LIB_DIR             ${HDF4_SOURCE_DIR}/java/lib)
 set (HDF4_JAVA_LOGGING_JAR         ${HDF4_SOURCE_DIR}/java/lib/slf4j-api-1.7.33.jar)
 set (HDF4_JAVA_LOGGING_NOP_JAR     ${HDF4_SOURCE_DIR}/java/lib/ext/slf4j-nop-1.7.33.jar)
 set (HDF4_JAVA_LOGGING_SIMPLE_JAR  ${HDF4_SOURCE_DIR}/java/lib/ext/slf4j-simple-1.7.33.jar)
+set (HDF4_DOXYGEN_DIR              ${HDF4_SOURCE_DIR}/doxygen)
 
 set (CMAKE_MODULE_PATH ${HDF_RESOURCES_DIR} ${CMAKE_MODULE_PATH})
 
@@ -511,6 +512,28 @@ if (HDF4_BUILD_XDR_LIB)
   endif ()
   if (BUILD_SHARED_LIBS)
     add_dependencies (${HDF4_MF_LIBSH_TARGET} ${HDF4_MF_XDR_LIBSH_TARGET})
+  endif ()
+endif ()
+
+#-----------------------------------------------------------------------------
+# Option to build documentation
+#-----------------------------------------------------------------------------
+option (HDF4_BUILD_DOC "Build documentation" OFF)
+if (HDF4_BUILD_DOC AND EXISTS "${HDF4_DOXYGEN_DIR}" AND IS_DIRECTORY "${HDF4_DOXYGEN_DIR}")
+# check if Doxygen is installed
+  find_package(Doxygen)
+  if (DOXYGEN_FOUND)
+    option (HDF4_ENABLE_DOXY_WARNINGS "Enable fail if doxygen parsing has warnings." ON)
+    mark_as_advanced (HDF4_ENABLE_DOXY_WARNINGS)
+    if (HDF4_ENABLE_DOXY_WARNINGS)
+      set (HDF4_DOXY_WARNINGS "FAIL_ON_WARNINGS")
+    else ()
+      set (HDF4_DOXY_WARNINGS "NO")
+    endif ()
+    message(STATUS "Doxygen version: ${DOXYGEN_VERSION}")
+    add_subdirectory (doxygen)
+  else ()
+    message(STATUS "Doxygen needs to be installed to generate the doxygen documentation")
   endif ()
 endif ()
 

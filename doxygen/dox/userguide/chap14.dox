@@ -1,0 +1,36 @@
+/** @page CH14_UG HDF Performance Issues
+
+Navigate back: \ref index "Contents" / \ref UG
+<hr>
+
+\section sec_perf HDF Performance Issues
+
+\subsection subsec_perf_overview
+\subsection subsec_perf_enhance
+    <ul>
+        \subsubsection subsubsec_perf_enhance_large
+        \subsubsection subsubsec_perf_enhance_share
+        \subsubsection subsubsec_perf_enhance_fill
+        \subsubsection subsubsec_perf_enhance_fake
+    </ul>
+\subsection subsec_perf_chunk
+    <ul>
+        \subsubsection subsubsec_perf_chunk_what
+        \subsubsection subsubsec_perf_chunk_rw
+        \subsubsection subsubsec_perf_chunk_nocomp
+        \subsubsection subsubsec_perf_chunk_compress
+        \subsubsection subsubsec_perf_chunk_size
+        \subsubsection subsubsec_perf_chunk_space
+    </ul>
+\subsection subsec_perf_tune
+    <ul>
+        \subsubsection subsubsec_perf_tune_data
+        \subsubsection subsubsec_perf_tune_linked
+        \subsubsection subsubsec_perf_tune_unlim
+    </ul>
+
+
+<hr>
+Navigate back: \ref index "Contents" / \ref UG
+
+*/

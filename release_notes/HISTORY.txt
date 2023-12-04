@@ -251,7 +251,7 @@ New features and changes
       HDF4 uses pre-defined machine configurations instead of configure tests
       to include header files, set up typedefs, etc. In the future, the
       library will be adapted to use a flexible configure test scheme like
-      HDF5, but in the meantime we have simplified the machine configuration
+      HDF4, but in the meantime we have simplified the machine configuration
       header by dropping configurations for the following platforms:
 
         - Irix / MIPS
@@ -304,13 +304,13 @@ New features and changes
 
     - Removed all references to C++
 
-      HDF4 does not have a C++ wrapper and, like HDF5, we do not support
+      HDF4 does not have a C++ wrapper and, like HDF4, we do not support
       building the library with a C++ compiler since the languages are
       diverging.
 
       Despite this, some parts of the build system checked for a C++ compiler,
       manipulated CXXFLAGS, etc. This was mainly in files that were brought
-      over from HDF5. This build system code has been removed.
+      over from HDF4. This build system code has been removed.
 
       As a part of this C++ cleanup, the extern "C" ifdefs in the header files
       no longer test for c_plusplus.
@@ -357,9 +357,9 @@ New features and changes
     - CMake option to use AEC (open source SZip) library instead of SZip
 
       The open source AEC library is a replacement library for SZip. In
-      order to use it for hdf5 the libaec CMake source was changed to add
+      order to use it for hdf4 the libaec CMake source was changed to add
       "-fPIC" and exclude test files. Autotools does not build the
-      compression libraries within hdf5 builds. New option USE_LIBAEC is
+      compression libraries within hdf4 builds. New option USE_LIBAEC is
       required to compensate for the different files produced by AEC build.
 
       (ADB - 2020/04/22, OESS-65)
@@ -1010,7 +1010,7 @@ New features and changes
 
       Added new configuration macros to use new HDF_BUILD_TYPE variable. This
       variable is set correctly for the type of generator being used for the build.
-      Changes follow from hdf5.
+      Changes follow from hdf4.
 
       (ADB - 2018/01/08, HDFFV-10385, HDFFV-10296)
 
@@ -1043,7 +1043,7 @@ Bugs fixed since HDF 4.2.13
       A number of improvements were made to the CMake commands. Most
       changes simplify usage or eliminate unused constructs. Also,
       some changes support better cross-platform support. Changes
-      follow from hdf5.
+      follow from hdf4.
 
       (ADB - 2018/02/01, HDFFV-10398)
 
@@ -1057,7 +1057,7 @@ Bugs fixed since HDF 4.2.13
         GLOBAL PROPERTY -> GENERATOR_IS_MULTI_CONFIG
       Created two new HDF variable, HDF_BUILD_TYPE and HDF_CFG_BUILD_TYPE.
       Defaults for these variables is "Release". Changes
-      follow from hdf5.
+      follow from hdf4.
 
     Library:
     --------
