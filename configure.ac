@@ -477,7 +477,7 @@ if test "X$HDF4_DOXYGEN" = "Xyes"; then
   DOXYGEN_VERSION_STRING=${PACKAGE_VERSION}
   DOXYGEN_DIR='$(SRCDIR)/doxygen'
   DOXYGEN_INCLUDE_ALIASES_PATH='$(SRCDIR)/doxygen'
-  DOXYGEN_INCLUDE_ALIASES='4'
+  DOXYGEN_INCLUDE_ALIASES=''
   DOXYGEN_VERBATIM_VARS='DOXYGEN_INCLUDE_ALIASES'
   DOXYGEN_PROJECT_LOGO='$(SRCDIR)/doxygen/img/HDFG-logo.png'
   DOXYGEN_PROJECT_BRIEF='API Reference'
@@ -502,6 +502,7 @@ if test "X$HDF4_DOXYGEN" = "Xyes"; then
 
   DX_INIT_DOXYGEN([HDF4], [./doxygen/Doxyfile], [hdf4lib_docs])
 fi
+AM_CONDITIONAL([BUILD_DOXYGEN_CONDITIONAL], [test "X$HDF4_DOXYGEN" = "Xyes"])
 
 
 ## ======================================================================
@@ -1237,6 +1238,7 @@ case "X-$DEPREC_SYMBOLS" in
 esac
 
 AC_CONFIG_FILES([Makefile
+                 doxygen/Doxyfile
                  libhdf4.settings
                  hdf/Makefile
                  hdf/examples/Makefile

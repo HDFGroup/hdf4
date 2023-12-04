@@ -215,9 +215,8 @@ endif ()
 if (DOXYGEN_FOUND)
   # This custom target and doxygen/configure work together
   # Replace variables inside @@ with the current values
-  add_custom_target (hdf4lib_doc ALL
+  add_custom_target (hdf4mflib_doc ALL
         COMMAND ${DOXYGEN_EXECUTABLE} ${HDF4_BINARY_DIR}/Doxyfile
-        DEPENDS ${HDF4_BINARY_DIR}/libhdf4.settings
         WORKING_DIRECTORY ${HDF4_MFHDFSOURCE_DIR}
         COMMENT "Generating HDF4 library Source API documentation with Doxygen"
         VERBATIM )
