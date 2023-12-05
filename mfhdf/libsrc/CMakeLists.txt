@@ -225,6 +225,6 @@ if (DOXYGEN_FOUND)
     add_custom_target (doxygen)
   endif ()
 
-  add_dependencies (doxygen hdf4lib_doc)
+  add_dependencies (doxygen hdf4mflib_doc)
 
 endif ()
