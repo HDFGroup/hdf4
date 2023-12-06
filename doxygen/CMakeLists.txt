@@ -41,9 +41,17 @@ if (DOXYGEN_FOUND)
       DESTINATION ${HDF4_INSTALL_DOC_DIR}
       COMPONENT hdfdocuments
   )
+  
+  add_custom_target (hdf4_doc ALL
+        COMMAND ${DOXYGEN_EXECUTABLE} ${HDF4_BINARY_DIR}/Doxyfile
+        WORKING_DIRECTORY ${HDF4_DOXYGEN_DIR}
+        COMMENT "Generating HDF4 documentation with Doxygen"
+        VERBATIM )
 
   if (NOT TARGET doxygen)
     add_custom_target (doxygen)
   endif ()
+
+  add_dependencies (doxygen hdf4_doc)
 
 endif ()
