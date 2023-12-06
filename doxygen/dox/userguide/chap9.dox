@@ -8,25 +8,17 @@ Navigate back: \ref index "Contents" / \ref UG
 \subsection subsec_dfpapi_overview
 \subsection subsec_dfpapi_model
 \subsection subsec_dfpapi_api
-    <ul>
-        \subsubsection subsubsec_dfpapi_api_lib
-    </ul>
+\subsubsection subsubsec_dfpapi_api_lib
 \subsection subsec_dfpapi_write
-    <ul>
-        \subsubsection subsubsec_dfpapi_write_pal
-        \subsubsection subsubsec_dfpapi_write_ref
-    </ul>
+\subsubsection subsubsec_dfpapi_write_pal
+\subsubsection subsubsec_dfpapi_write_ref
 \subsection subsec_dfpapi_read
-    <ul>
-        \subsubsection subsubsec_dfpapi_read_get
-        \subsubsection subsubsec_dfpapi_read_ref
-        \subsubsection subsubsec_dfpapi_read_next
-    </ul>
+\subsubsection subsubsec_dfpapi_read_get
+\subsubsection subsubsec_dfpapi_read_ref
+\subsubsection subsubsec_dfpapi_read_next
 \subsection subsec_dfpapi_other
-    <ul>
-        \subsubsection subsubsec_dfpapi_other_query
-        \subsubsection subsubsec_dfpapi_other_num
-    </ul>
+\subsubsection subsubsec_dfpapi_other_query
+\subsubsection subsubsec_dfpapi_other_num
 \subsection subsec_dfpapi_back
 
 

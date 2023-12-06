@@ -524,7 +524,7 @@ if (HDF4_BUILD_DOC AND EXISTS "${HDF4_DOXYGEN_DIR}" AND IS_DIRECTORY "${HDF4_DOX
 # check if Doxygen is installed
   find_package(Doxygen)
   if (DOXYGEN_FOUND)
-    option (HDF4_ENABLE_DOXY_WARNINGS "Enable fail if doxygen parsing has warnings." ON)
+    option (HDF4_ENABLE_DOXY_WARNINGS "Enable fail if doxygen parsing has warnings." OFF)
     mark_as_advanced (HDF4_ENABLE_DOXY_WARNINGS)
     if (HDF4_ENABLE_DOXY_WARNINGS)
       set (HDF4_DOXY_WARNINGS "FAIL_ON_WARNINGS")

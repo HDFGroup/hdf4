@@ -7,35 +7,25 @@ Navigate back: \ref index "Contents" / \ref UG
 
 \subsection subsec_dfanapi_overview
 \subsection subsec_dfanapi_interface
-    <ul>
-        \subsubsection subsubsec_dfanapi_interface_lib
-        \subsubsection subsubsec_dfanapi_interface_tags
-    </ul>
+\subsubsection subsubsec_dfanapi_interface_lib
+\subsubsection subsubsec_dfanapi_interface_tags
 \subsection subsec_dfanapi_model
 \subsection subsec_dfanapi_write
-    <ul>
-        \subsubsection subsubsec_dfanapi_write_label
-        \subsubsection subsubsec_dfanapi_write_descr
-        \subsubsection subsubsec_dfanapi_write_obj_label
-        \subsubsection subsubsec_dfanapi_write_obj_descr
-    </ul>
+\subsubsection subsubsec_dfanapi_write_label
+\subsubsection subsubsec_dfanapi_write_descr
+\subsubsection subsubsec_dfanapi_write_obj_label
+\subsubsection subsubsec_dfanapi_write_obj_descr
 \subsection subsec_dfanapi_read
-    <ul>
-        \subsubsection subsubsec_dfanapi_read_label
-        \subsubsection subsubsec_dfanapi_read_descr
-        \subsubsection subsubsec_dfanapi_read_obj_label
-        \subsubsection subsubsec_dfanapi_read_obj_descr
-    </ul>
+\subsubsection subsubsec_dfanapi_read_label
+\subsubsection subsubsec_dfanapi_read_descr
+\subsubsection subsubsec_dfanapi_read_obj_label
+\subsubsection subsubsec_dfanapi_read_obj_descr
 \subsection subsec_dfanapi_maint
-    <ul>
-        \subsubsection subsubsec_dfanapi_maint_clear
-    </ul>
+\subsubsection subsubsec_dfanapi_maint_clear
 \subsection subsec_dfanapi_ref_num
-    <ul>
-        \subsubsection subsubsec_dfanapi_ref_num_last
-        \subsubsection subsubsec_dfanapi_ref_num_query
-        \subsubsection subsubsec_dfanapi_ref_num_locate
-    </ul>
+\subsubsection subsubsec_dfanapi_ref_num_last
+\subsubsection subsubsec_dfanapi_ref_num_query
+\subsubsection subsubsec_dfanapi_ref_num_locate
 
 
 <hr>

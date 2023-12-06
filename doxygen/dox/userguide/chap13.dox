@@ -8,12 +8,10 @@ Navigate back: \ref index "Contents" / \ref UG
 \subsection subsec_error_overview
 \subsection subsec_error_api
 \subsection subsec_error_report
-    <ul>
-        \subsubsection subsubsec_error_report_print
-        \subsubsection subsubsec_error_report_recent
-        \subsubsection subsubsec_error_report_descr
-        \subsubsection subsubsec_error_report_clear
-    </ul>
+\subsubsection subsubsec_error_report_print
+\subsubsection subsubsec_error_report_recent
+\subsubsection subsubsec_error_report_descr
+\subsubsection subsubsec_error_report_clear
 
 
 <hr>

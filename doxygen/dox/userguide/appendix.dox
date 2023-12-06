@@ -12,20 +12,15 @@ Navigate back: \ref index "Contents" / \ref UG
 \section sec_appendb HDF Installation Overview
 
 \subsection subsec_appendb_install General HDF Installation Overview
-    <ul>
-        \subsubsection subsubsec_appendb_install_source Acquiring the HDF Library Source
-        \subsubsection subsubsec_appendb_install_build Building the HDF Library Source
-    </ul>
+\subsubsection subsubsec_appendb_install_source Acquiring the HDF Library Source
+\subsubsection subsubsec_appendb_install_build Building the HDF Library Source
 
 \section sec_appendc Attributes in HDF
 
 \subsection subsec_appendc_attr Attribute Overview
 \subsection subsec_appendc_store Underlying storage issues
-    <ul>
-        \subsubsection subsubsec_appendc_store_attr Predefined Attributes in DFSD API
-        \subsubsection subsubsec_appendc_store_vg Vgroup Attribute Without Vsetattr
-    </ul>
-
+\subsubsection subsubsec_appendc_store_attr Predefined Attributes in DFSD API
+\subsubsection subsubsec_appendc_store_vg Vgroup Attribute Without Vsetattr
 
 
 <hr>
