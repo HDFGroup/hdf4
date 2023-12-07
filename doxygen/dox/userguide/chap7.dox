@@ -1,0 +1,32 @@
+/** @page CH7_UG 24-bit Raster Images (DF24 API)
+
+Navigate back: \ref index "Contents" / \ref UG
+<hr>
+
+\section sec_df 24api 24-bit Raster Images (DF24 API)
+
+\subsection subsec_df24api_overview
+\subsection subsec_df24api_data_model
+\subsubsection subsubsec_df24api_data_model_req
+\subsubsection subsubsec_df24api_data_model_opt
+\subsection subsec_df24api_interface
+\subsubsection subsubsec_df24api_interface_lib
+\subsection subsec_df24api_write
+\subsubsection subsubsec_df24api_write_put
+\subsubsection subsubsec_df24api_write_set
+\subsubsection subsubsec_df24api_write_comp
+\subsection subsec_df24api_read
+\subsubsection subsubsec_df24api_read_data
+\subsubsection subsubsec_df24api_read_dims
+\subsubsection subsubsec_df24api_read_mod
+\subsubsection subsubsec_df24api_read_24
+\subsubsection subsubsec_df24api_read_info
+\subsection subsec_df24api_info
+\subsubsection subsubsec_df24api_info_num
+\subsubsection subsubsec_df24api_info_ref
+
+
+<hr>
+Navigate back: \ref index "Contents" / \ref UG
+
+*/

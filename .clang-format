@@ -73,5 +73,5 @@ SortIncludes:    false
 ---
 Language:      Java
 BreakAfterJavaFieldAnnotations: true
-JavaImportGroups: ['java', 'hdf', 'hdf.hdf5lib', 'org']
+JavaImportGroups: ['java', 'hdf', 'hdf.hdf4lib', 'org']
 ...

@@ -24,7 +24,7 @@ Usage: $0 -d <dir> [-h] [--private] [--revision [--branch BRANCHNAME]] <methods>
    -d DIR       The name of the directory where the release(s) should be
                 placed.
    --branch BRANCHNAME  This is to get the correct version of the branch name from the
-                        repository.  BRANCHNAME for v1.8 should be hdf5_1_8.
+                        repository.  BRANCHNAME for v4.2.16 should be hdf4_2_16.
    -h           print the help page.
    --private    Make a private release with today's date in version information.
    --revision   Make a private release with the code revision number in version information.

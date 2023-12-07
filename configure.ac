@@ -393,6 +393,118 @@ AC_SUBST([UNAME_INFO]) UNAME_INFO=`uname -a`
 AC_SUBST([STATIC_EXEC]) STATIC_EXEC=no
 AC_SUBST([LT_STATIC_EXEC])
 
+## ----------------------------------------------------------------------
+## Check if they would like to enable building doxygen files
+##
+
+## This needs to be exposed for the library info file.
+AC_SUBST([HDF4_DOXYGEN])
+
+## Default is to not build DOXYGEN
+HDF4_DOXYGEN=no
+
+AC_MSG_CHECKING([if building doxygen is enabled])
+
+AC_ARG_ENABLE([doxygen],
+              [AS_HELP_STRING([--enable-doxygen],
+                              [Compile the HDF4 doxygen files [default=no]])],
+              [HDF4_DOXYGEN=$enableval])
+
+AC_MSG_RESULT([$HDF4_DOXYGEN])
+
+## Check if they would like to enable doxygen warnings as errors
+##
+
+## This needs to be exposed for the library info file.
+AC_SUBST([HDF4_DOXY_WARNINGS])
+
+## Default is to consider doxygen warnings as errors
+DOXY_ERR=yes
+
+AC_MSG_CHECKING([if doxygen warnings as errors is enabled])
+
+AC_ARG_ENABLE([doxygen-errors],
+              [AS_HELP_STRING([--enable-doxygen-errors],
+                              [Error on HDF4 doxygen warnings [default=yes]])],
+              [DOXY_ERR=$enableval])
+
+if test "X$DOXY_ERR" = "Xyes"; then
+    HDF4_DOXY_WARNINGS="FAIL_ON_WARNINGS"
+else
+    HDF4_DOXY_WARNINGS="NO"
+
+fi
+AC_MSG_RESULT([$HDF4_DOXY_WARNINGS])
+
+if test "X$HDF4_DOXYGEN" = "Xyes"; then
+  DX_DOXYGEN_FEATURE(ON)
+  DX_DOT_FEATURE(OFF)
+  DX_HTML_FEATURE(ON)
+  DX_CHM_FEATURE(OFF)
+  DX_CHI_FEATURE(OFF)
+  DX_MAN_FEATURE(ON)
+  DX_RTF_FEATURE(OFF)
+  DX_XML_FEATURE(OFF)
+  DX_PDF_FEATURE(OFF)
+  DX_PS_FEATURE(OFF)
+
+  AC_SUBST([DOXYGEN_PACKAGE])
+  AC_SUBST([DOXYGEN_VERSION_STRING])
+  AC_SUBST([DOXYGEN_DIR])
+  AC_SUBST([DOXYGEN_INCLUDE_ALIASES])
+  AC_SUBST([DOXYGEN_PROJECT_LOGO])
+  AC_SUBST([DOXYGEN_PROJECT_BRIEF])
+  AC_SUBST([DOXYGEN_INPUT_DIRECTORY])
+  AC_SUBST([DOXYGEN_OPTIMIZE_OUTPUT_FOR_C])
+  AC_SUBST([DOXYGEN_MACRO_EXPANSION])
+  AC_SUBST([DOXYGEN_OUTPUT_DIRECTORY])
+  AC_SUBST([DOXYGEN_EXAMPLES_DIRECTORY])
+  AC_SUBST([DOXYGEN_LAYOUT_FILE])
+  AC_SUBST([DOXYGEN_HTML_HEADER])
+  AC_SUBST([DOXYGEN_HTML_FOOTER])
+  AC_SUBST([DOXYGEN_HTML_EXTRA_STYLESHEET])
+  AC_SUBST([DOXYGEN_HTML_EXTRA_FILES])
+  AC_SUBST([DOXYGEN_TAG_FILE])
+  AC_SUBST([DOXYGEN_SERVER_BASED_SEARCH])
+  AC_SUBST([DOXYGEN_EXTERNAL_SEARCH])
+  AC_SUBST([DOXYGEN_SEARCHENGINE_URL])
+  AC_SUBST([DOXYGEN_STRIP_FROM_PATH])
+  AC_SUBST([DOXYGEN_STRIP_FROM_INC_PATH])
+  AC_SUBST([DOXYGEN_PREDEFINED])
+
+# SRCDIR Environment variables used inside doxygen macro for the source location:
+  DOXYGEN_PACKAGE=${PACKAGE_NAME}
+  DOXYGEN_VERSION_STRING=${PACKAGE_VERSION}
+  DOXYGEN_DIR='$(SRCDIR)/doxygen'
+  DOXYGEN_INCLUDE_ALIASES_PATH='$(SRCDIR)/doxygen'
+  DOXYGEN_INCLUDE_ALIASES='$(SRCDIR)/doxygen/aliases'
+  DOXYGEN_VERBATIM_VARS='DOXYGEN_INCLUDE_ALIASES'
+  DOXYGEN_PROJECT_LOGO='$(SRCDIR)/doxygen/img/HDFG-logo.png'
+  DOXYGEN_PROJECT_BRIEF='API Reference'
+  DOXYGEN_INPUT_DIRECTORY='$(SRCDIR) $(SRCDIR)/doxygen/dox'
+  DOXYGEN_OPTIMIZE_OUTPUT_FOR_C=YES
+  DOXYGEN_MACRO_EXPANSION=YES
+  DOXYGEN_OUTPUT_DIRECTORY=hdf4lib_docs
+  DOXYGEN_EXAMPLES_DIRECTORY='$(SRCDIR)'
+  DOXYGEN_LAYOUT_FILE='$(SRCDIR)/doxygen/hdf4doxy_layout.xml'
+  DOXYGEN_HTML_HEADER='$(SRCDIR)/doxygen/hdf4_header.html'
+  DOXYGEN_HTML_FOOTER='$(SRCDIR)/doxygen/hdf4_footer.html'
+  DOXYGEN_HTML_EXTRA_STYLESHEET='$(SRCDIR)/doxygen/hdf4doxy.css'
+  DOXYGEN_HTML_EXTRA_FILES='$(SRCDIR)/doxygen/hdf4_navtree_hacks.js'
+  DOXYGEN_TAG_FILE=hdf4.tag
+  DOXYGEN_SERVER_BASED_SEARCH=NO
+  DOXYGEN_EXTERNAL_SEARCH=NO
+  DOXYGEN_SEARCHENGINE_URL=
+  DOXYGEN_STRIP_FROM_PATH='$(SRCDIR)'
+  DOXYGEN_STRIP_FROM_INC_PATH='$(SRCDIR)'
+  DOXYGEN_PREDEFINED='H4_DOXYGEN'
+  DOXYGEN_WARN_AS_ERROR=${HDF4_DOXY_WARNINGS}
+
+  DX_INIT_DOXYGEN([HDF4], [./doxygen/Doxyfile], [hdf4lib_docs])
+fi
+AM_CONDITIONAL([BUILD_DOXYGEN_CONDITIONAL], [test "X$HDF4_DOXYGEN" = "Xyes"])
+
+
 ## ======================================================================
 ## Libtool initialization
 ## ======================================================================
@@ -1126,6 +1238,7 @@ case "X-$DEPREC_SYMBOLS" in
 esac
 
 AC_CONFIG_FILES([Makefile
+                 doxygen/Doxyfile
                  libhdf4.settings
                  hdf/Makefile
                  hdf/examples/Makefile

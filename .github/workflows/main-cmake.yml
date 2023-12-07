@@ -54,6 +54,8 @@ jobs:
             toolchain: ""
             xdr: ON
             fortran: OFF
+            java: ON
+            docs: OFF
             localjpeg: OFF
             locallibaec: OFF
             localzlib: OFF
@@ -70,6 +72,8 @@ jobs:
             os: ubuntu-latest
             xdr: ON
             fortran: OFF
+            java: ON
+            docs: ON
             localjpeg: OFF
             locallibaec: OFF
             localzlib: OFF
@@ -88,6 +92,8 @@ jobs:
             os: macos-13
             xdr: ON
             fortran: OFF
+            java: ON
+            docs: OFF
             localjpeg: OFF
             locallibaec: OFF
             localzlib: OFF
@@ -103,6 +109,8 @@ jobs:
             os: ubuntu-latest
             xdr: ON
             fortran: OFF
+            java: OFF
+            docs: OFF
             localjpeg: OFF
             locallibaec: OFF
             localzlib: OFF
@@ -119,6 +127,8 @@ jobs:
             toolchain: ""
             xdr: ON
             fortran: OFF
+            java: OFF
+            docs: OFF
             localjpeg: OFF
             locallibaec: OFF
             localzlib: OFF
@@ -135,6 +145,8 @@ jobs:
             os: ubuntu-latest
             xdr: ON
             fortran: OFF
+            java: OFF
+            docs: OFF
             localjpeg: OFF
             locallibaec: OFF
             localzlib: OFF
@@ -152,6 +164,8 @@ jobs:
             os: macos-13
             xdr: ON
             fortran: OFF
+            java: OFF
+            docs: OFF
             localjpeg: OFF
             locallibaec: OFF
             localzlib: OFF
@@ -182,7 +196,9 @@ jobs:
         run: echo '${{ toJSON(matrix) }}'
 
       - name: Install CMake Dependencies (Linux)
-        run: sudo apt-get install -y ninja-build libtirpc-dev
+        run: |
+           sudo apt update
+           sudo apt-get install -y ninja-build libtirpc-dev doxygen graphviz
         if: matrix.os == 'ubuntu-latest'
 
       - name: Install MinGW Dependencies (Linux)
@@ -196,7 +212,7 @@ jobs:
         if: matrix.os == 'windows-latest'
 
       - name: Install Dependencies (macOS)
-        run: brew install ninja
+        run: brew install ninja doxygen
         if: matrix.os == 'macos-13'
 
       - name: Set environment for MSVC (Windows)
@@ -231,6 +247,7 @@ jobs:
             -DHDF4_ENABLE_NETCDF:BOOL=${{ inputs.netcdf }} \
             -DHDF4_BUILD_FORTRAN=${{ matrix.fortran }} \
             -DHDF4_BUILD_JAVA=${{ env.useJava }} \
+            -DHDF4_BUILD_DOC=${{ matrix.docs }} \
             -DJPEG_USE_LOCALCONTENT=${{ matrix.localjpeg }} \
             -DLIBAEC_USE_LOCALCONTENT=${{ matrix.locallibaec }} \
             -DZLIB_USE_LOCALCONTENT=${{ matrix.localzlib }} \

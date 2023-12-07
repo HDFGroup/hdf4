@@ -210,6 +210,7 @@ set (HDF4_TOOLS_LIBSH_TARGET        "${HDF4_TOOLS_LIB_CORENAME}-shared")
 #-----------------------------------------------------------------------------
 # Define some CMake variables for use later in the project
 #-----------------------------------------------------------------------------
+set (HDF_CONFIG_DIR           ${HDF4_SOURCE_DIR}/config)
 set (HDF_RESOURCES_DIR        ${HDF4_SOURCE_DIR}/config/cmake)
 set (HDF4_HDFSOURCE_DIR       ${HDF4_SOURCE_DIR}/hdf/src)
 set (HDF4_HDF_TESTSOURCE_DIR  ${HDF4_SOURCE_DIR}/hdf/test)
@@ -225,6 +226,7 @@ set (HDF4_JAVA_LIB_DIR             ${HDF4_SOURCE_DIR}/java/lib)
 set (HDF4_JAVA_LOGGING_JAR         ${HDF4_SOURCE_DIR}/java/lib/slf4j-api-1.7.33.jar)
 set (HDF4_JAVA_LOGGING_NOP_JAR     ${HDF4_SOURCE_DIR}/java/lib/ext/slf4j-nop-1.7.33.jar)
 set (HDF4_JAVA_LOGGING_SIMPLE_JAR  ${HDF4_SOURCE_DIR}/java/lib/ext/slf4j-simple-1.7.33.jar)
+set (HDF4_DOXYGEN_DIR              ${HDF4_SOURCE_DIR}/doxygen)
 
 set (CMAKE_MODULE_PATH ${HDF_RESOURCES_DIR} ${CMAKE_MODULE_PATH})
 
@@ -515,6 +517,28 @@ if (HDF4_BUILD_XDR_LIB)
 endif ()
 
 #-----------------------------------------------------------------------------
+# Option to build documentation
+#-----------------------------------------------------------------------------
+option (HDF4_BUILD_DOC "Build documentation" OFF)
+if (HDF4_BUILD_DOC AND EXISTS "${HDF4_DOXYGEN_DIR}" AND IS_DIRECTORY "${HDF4_DOXYGEN_DIR}")
+# check if Doxygen is installed
+  find_package(Doxygen)
+  if (DOXYGEN_FOUND)
+    option (HDF4_ENABLE_DOXY_WARNINGS "Enable fail if doxygen parsing has warnings." OFF)
+    mark_as_advanced (HDF4_ENABLE_DOXY_WARNINGS)
+    if (HDF4_ENABLE_DOXY_WARNINGS)
+      set (HDF4_DOXY_WARNINGS "FAIL_ON_WARNINGS")
+    else ()
+      set (HDF4_DOXY_WARNINGS "NO")
+    endif ()
+    message(STATUS "Doxygen version: ${DOXYGEN_VERSION}")
+    add_subdirectory (doxygen)
+  else ()
+    message(STATUS "Doxygen needs to be installed to generate the doxygen documentation")
+  endif ()
+endif ()
+
+#-----------------------------------------------------------------------------
 # Dashboard and Testing Settings
 #-----------------------------------------------------------------------------
 option (BUILD_TESTING "Build HDF4 Unit Testing" ON)
@@ -545,7 +569,7 @@ endif ()
 # Option to build Fortran bindings/tests/examples
 # Make sure this appears before the CONFIGURE_FILE step
 # so that fortran name mangling is detected before writing H4config.h
-#
+# NOTE:
 # This interface is UNSAFE on 64-bit systems as the interface attempts to
 # store pointers in 32-bit integers.
 #-----------------------------------------------------------------------------

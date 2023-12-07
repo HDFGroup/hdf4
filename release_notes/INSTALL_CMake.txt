@@ -715,6 +715,7 @@ HDF4_INSTALL_MODULE_DIR   "HDF4_INSTALL_INCLUDE_DIR/mod"
 HDF4_INSTALL_CMAKE_DIR    "HDF4_INSTALL_LIB_DIR/cmake"
 HDF4_INSTALL_DATA_DIR     "share"
 HDF4_INSTALL_DOC_DIR      "HDF4_INSTALL_DATA_DIR/doc/hdf"
+HDF4_BUILD_DOC            "Build documentation"                                OFF
 
 ---------------- HDF4 Advanced Options ---------------------
 HDF4_USE_GNU_DIRS              "TRUE to use GNU Coding Standard install directory variables,
@@ -812,7 +813,7 @@ Using individual command presets (where <compiler-type> is  GNUC or MSVC or Clan
 
 
 Using the workflow preset to configure, build, test and package the standard configuration is:
-    change directory to the hdf5 source folder
+    change directory to the hdf4 source folder
     execute "cmake --workflow --presets=ci-StdShar-<compiler-type> --fresh"
           where <compiler-type> is  GNUC or MSVC or Clang
 

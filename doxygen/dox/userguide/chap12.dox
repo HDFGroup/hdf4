@@ -1,0 +1,41 @@
+/** @page CH12_UG Single-File Scientific Data Sets (DFSD API)
+
+Navigate back: \ref index "Contents" / \ref UG
+<hr>
+
+\section sec_dfsdapi Single-File Scientific Data Sets (DFSD API)
+
+\subsection subsec_dfsdapi_overview
+\subsection subsec_dfsdapi_model
+\subsubsection subsubsec_dfsdapi_model_req
+\subsubsection subsubsec_dfsdapi_model_opt
+\subsection subsec_dfsdapi_single
+\subsubsection subsubsec_dfsdapi_single_lib
+\subsubsection subsubsec_dfsdapi_single_ids
+\subsection subsec_dfsdapi_write
+\subsubsection subsubsec_dfsdapi_write_create
+\subsubsection subsubsec_dfsdapi_write_type
+\subsubsection subsubsec_dfsdapi_write_overwrite
+\subsubsection subsubsec_dfsdapi_write_multi
+\subsubsection subsubsec_dfsdapi_write_prevent
+\subsubsection subsubsec_dfsdapi_write_reset
+\subsection subsec_dfsdapi_read
+\subsubsection subsubsec_dfsdapi_read_get
+\subsubsection subsubsec_dfsdapi_read_type
+\subsubsection subsubsec_dfsdapi_read_num
+\subsubsection subsubsec_dfsdapi_read_ref
+\subsection subsec_dfsdapi_slabs
+\subsubsection subsubsec_dfsdapi_slabs_access
+\subsubsection subsubsec_dfsdapi_slabs_write
+\subsubsection subsubsec_dfsdapi_slabs_read
+\subsection subsec_dfsdapi_predine
+\subsubsection subsubsec_dfsdapi_predine_write
+\subsubsection subsubsec_dfsdapi_predine_read
+\subsubsection subsubsec_dfsdapi_predine_write_dims
+\subsubsection subsubsec_dfsdapi_predine_read_dims
+
+
+<hr>
+Navigate back: \ref index "Contents" / \ref UG
+
+*/

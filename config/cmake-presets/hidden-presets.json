@@ -36,7 +36,8 @@
     {
       "name": "ci-Release",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "HDF4_BUILD_DOC": "ON"
       },
       "hidden": true
     },

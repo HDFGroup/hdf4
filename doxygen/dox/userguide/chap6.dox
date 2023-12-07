@@ -1,0 +1,36 @@
+/** @page CH6_UG 8-Bit Raster Images (DFR8 API)
+
+Navigate back: \ref index "Contents" / \ref UG
+<hr>
+
+\section sec_dfr8api 8-Bit Raster Images (DFR8 API)
+
+\subsection subsec_dfr8api_overview
+\subsubsection subsubsec_dfr8api_overview_req
+\subsubsection subsubsec_dfr8api_overview_opt
+\subsubsection subsubsec_dfr8api_overview_comp
+\subsection subsec_dfr8api_interface
+\subsubsection subsubsec_dfr8api_interface_lib
+\subsection subsec_dfr8api_write
+\subsubsection subsubsec_dfr8api_write_store
+\subsubsection subsubsec_dfr8api_write_add
+\subsubsection subsubsec_dfr8api_write_comp
+\subsubsection subsubsec_dfr8api_write_ref
+\subsection subsec_dfr8api_read
+\subsubsection subsubsec_dfr8api_read_data
+\subsubsection subsubsec_dfr8api_read_query
+\subsubsection subsubsec_dfr8api_read_ref
+\subsubsection subsubsec_dfr8api_read_next
+\subsection subsec_dfr8api_info
+\subsubsection subsubsec_dfr8api_info_query
+\subsubsection subsubsec_dfr8api_info_ref
+\subsubsection subsubsec_dfr8api_info_refpal
+\subsection subsec_dfr8api_back
+\subsubsection subsubsec_dfr8api_back_long_name
+\subsubsection subsubsec_dfr8api_back_new_tag
+
+
+<hr>
+Navigate back: \ref index "Contents" / \ref UG
+
+*/

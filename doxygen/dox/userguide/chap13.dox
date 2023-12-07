@@ -1,0 +1,20 @@
+/** @page CH13_UG Error Reporting
+
+Navigate back: \ref index "Contents" / \ref UG
+<hr>
+
+\section sec_error Error Reporting
+
+\subsection subsec_error_overview
+\subsection subsec_error_api
+\subsection subsec_error_report
+\subsubsection subsubsec_error_report_print
+\subsubsection subsubsec_error_report_recent
+\subsubsection subsubsec_error_report_descr
+\subsubsection subsubsec_error_report_clear
+
+
+<hr>
+Navigate back: \ref index "Contents" / \ref UG
+
+*/

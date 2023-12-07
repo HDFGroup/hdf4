@@ -1,0 +1,724 @@
+/** \page UG HDF User Guide
+
+<center>
+HDF Release 4.2.16
+
+\image html HDFG-logo.png "The HDF Group"
+
+</center>
+
+\ref sec_intro
+\li \ref subsec_intro_overview
+\li \ref subsec_intro_what
+\li \ref subsec_intro_why
+\li \ref subsec_intro_apis
+\li \ref subsec_intro_tools
+\li \ref subsec_intro_platforms
+\li \ref subsec_intro_hdf5
+
+\ref sec_fund
+\li \ref subsec_fund_overview
+\li \ref subsec_fund_format
+    <ul>
+        <li> \ref subsubsec_fund_format_head
+        <li> \ref subsubsec_fund_format_object
+        <li> \ref subsubsec_fund_format_descrip
+        <li> \ref subsubsec_fund_format_group
+    </ul>
+\li \ref subsec_fund_basic
+    <ul>
+        <li> \ref subsubsec_fund_basic_file
+        <li> \ref subsubsec_fund_basic_open
+        <li> \ref subsubsec_fund_basic_close
+        <li> \ref subsubsec_fund_basic_get
+    </ul>
+\li \ref subsec_fund_file
+\li \ref subsec_fund_prog
+    <ul>
+        <li> \ref subsubsec_fund_prog_head
+        <li> \ref subsubsec_fund_prog_defs
+        <li> \ref subsubsec_fund_prog_lang
+    </ul>
+
+\ref sec_sdapi
+\li \ref subsec_sdapi_overview
+\li \ref subsec_sdapi_data_model
+    <ul>
+        <li> \ref subsubsec_sdapi_data_model_req
+        <li> \ref subsubsec_sdapi_data_model_opt
+        <li> \ref subsubsec_sdapi_data_model_annot
+    </ul>
+\li \ref subsec_sdapi_interface
+    <ul>
+        <li> \ref subsubsec_sdapi_interface_head
+        <li> \ref subsubsec_sdapi_interface_lib
+        <li> \ref subsubsec_sdapi_interface_tags
+    </ul>
+\li \ref subsec_sdapi_model
+    <ul>
+        <li> \ref subsubsec_sdapi_model_start
+        <li> \ref subsubsec_sdapi_model_term
+    </ul>
+\li \ref subsec_sdapi_write
+    <ul>
+        <li> \ref subsubsec_sdapi_write_data
+        <li> \ref subsubsec_sdapi_write_comp
+        <li> \ref subsubsec_sdapi_write_ext
+    </ul>
+\li \ref subsec_sdapi_read
+\li \ref subsec_sdapi_info
+    <ul>
+        <li> \ref subsubsec_sdapi_info_file
+        <li> \ref subsubsec_sdapi_info_get
+        <li> \ref subsubsec_sdapi_info_comp
+        <li> \ref subsubsec_sdapi_info_locate
+        <li> \ref subsubsec_sdapi_info_multi
+        <li> \ref subsubsec_sdapi_info_num
+        <li> \ref subsubsec_sdapi_info_index
+        <li> \ref subsubsec_sdapi_info_ref
+        <li> \ref subsubsec_sdapi_info_type
+        <li> \ref subsubsec_sdapi_info_empty
+        <li> \ref subsubsec_sdapi_info_array
+    </ul>
+\li \ref subsec_sdapi_dims
+    <ul>
+        <li> \ref subsubsec_sdapi_dims_set
+        <li> \ref subsubsec_sdapi_dims_name
+        <li> \ref subsubsec_sdapi_dims_dims
+        <li> \ref subsubsec_sdapi_dims_dimscale
+        <li> \ref subsubsec_sdapi_dims_data
+    </ul>
+\li \ref subsec_sdapi_ud
+    <ul>
+        <li> \ref subsubsec_sdapi_ud_set
+        <li> \ref subsubsec_sdapi_ud_info
+        <li> \ref subsubsec_sdapi_ud_read
+    </ul>
+\li \ref subsec_sdapi_predef
+    <ul>
+        <li> \ref subsubsec_sdapi_predef_get
+        <li> \ref subsubsec_sdapi_predef_string
+        <li> \ref subsubsec_sdapi_predef_dims
+        <li> \ref subsubsec_sdapi_predef_range
+        <li> \ref subsubsec_sdapi_predef_fill
+        <li> \ref subsubsec_sdapi_predef_cal
+    </ul>
+\li \ref subsec_sdapi_ops
+    <ul>
+        <li> \ref subsubsec_sdapi_ops_file
+        <li> \ref subsubsec_sdapi_ops_object
+        <li> \ref subsubsec_sdapi_ops_max
+        <li> \ref subsubsec_sdapi_ops_limits
+        <li> \ref subsubsec_sdapi_ops_open
+        <li> \ref subsubsec_sdapi_ops_array
+    </ul>
+\li \ref subsec_sdapi_chunk
+    <ul>
+        <li> \ref subsubsec_sdapi_chunk_set
+        <li> \ref subsubsec_sdapi_chunk_cache
+        <li> \ref subsubsec_sdapi_chunk_write
+        <li> \ref subsubsec_sdapi_chunk_read
+        <li> \ref subsubsec_sdapi_chunk_info
+    </ul>
+\li \ref subsec_sdapi_ghost
+\li \ref subsec_sdapi_cdf
+    <ul>
+        <li> \ref subsubsec_sdapi_cdf_interface
+        <li> \ref subsubsec_sdapi_cdf_nc
+    </ul>
+
+\ref sec_vsapi
+\li \ref subsec_vsapi_overview
+\li \ref subsec_vsapi_data_model
+    <ul>
+        <li> \ref subsubsec_vsapi_data_model_fields
+    </ul>
+\li \ref subsec_vsapi_interface
+    <ul>
+        <li> \ref subsubsec_vsapi_interface_head
+        <li> \ref subsubsec_vsapi_interface_lib
+        <li> \ref subsubsec_vsapi_interface_ids
+        <li> \ref subsubsec_vsapi_interface_model
+        <li> \ref subsubsec_vsapi_interface_start
+        <li> \ref subsubsec_vsapi_interface_term
+    </ul>
+\li \ref subsec_vsapi_create
+\li \ref subsec_vsapi_write
+    <ul>
+        <li> \ref subsubsec_vsapi_write_create
+        <li> \ref subsubsec_vsapi_write_data
+    </ul>
+\li \ref subsec_vsapi_read
+    <ul>
+        <li> \ref subsubsec_vsapi_read_init
+        <li> \ref subsubsec_vsapi_read_data
+    </ul>
+\li \ref subsec_vsapi_search
+    <ul>
+        <li> \ref subsubsec_vsapi_search_find
+        <li> \ref subsubsec_vsapi_search_getid
+        <li> \ref subsubsec_vsapi_search_num
+        <li> \ref subsubsec_vsapi_search_exist
+        <li> \ref subsubsec_vsapi_search_get
+        <li> \ref subsubsec_vsapi_search_internal
+        <li> \ref subsubsec_vsapi_search_file
+    </ul>
+\li \ref subsec_vsapi_attr
+    <ul>
+        <li> \ref subsubsec_vsapi_attr_query
+        <li> \ref subsubsec_vsapi_attr_set
+        <li> \ref subsubsec_vsapi_attr_get
+        <li> \ref subsubsec_vsapi_attr_total_num
+        <li> \ref subsubsec_vsapi_attr_num
+        <li> \ref subsubsec_vsapi_attr_find
+        <li> \ref subsubsec_vsapi_attr_info
+        <li> \ref subsubsec_vsapi_attr_isattr
+    </ul>
+\li \ref subsec_vsapi_info
+    <ul>
+        <li> \ref subsubsec_vsapi_info_inquire
+        <li> \ref subsubsec_vsapi_info_getblock
+        <li> \ref subsubsec_vsapi_info_query
+        <li> \ref subsubsec_vsapi_info_other
+        <li> \ref subsubsec_vsapi_info_field
+    </ul>
+
+\ref sec_vapi
+\li \ref subsec_vapi_overview
+\li \ref subsec_vapi_data_model
+    <ul>
+        <li> \ref subsubsec_data_model_class
+        <li> \ref subsubsec_data_model_org
+        <li> \ref subsubsec_data_model_ex
+    </ul>
+\li \ref subsec_vapi_interface
+    <ul>
+        <li> \ref subsubsec_vapi_interface_lib
+        <li> \ref subsubsec_vapi_interface_id
+    </ul>
+\li \ref subsec_vapi_model
+    <ul>
+        <li> \ref subsubsec_vapi_model_start
+        <li> \ref subsubsec_vapi_model_term
+    </ul>
+\li \ref subsec_vapi_write
+    <ul>
+        <li> \ref subsubsec_vapi_write_set
+        <li> \ref subsubsec_vapi_write_add
+        <li> \ref subsubsec_vapi_write_insert
+        <li> \ref subsubsec_vapi_write_group
+    </ul>
+\li \ref subsec_vapi_read
+    <ul>
+        <li> \ref subsubsec_vapi_read_locate
+        <li> \ref subsubsec_vapi_read_data
+    </ul>
+\li \ref subsec_vapi_delete
+    <ul>
+        <li> \ref subsubsec_vapi_delete_file
+        <li> \ref subsubsec_vapi_delete_obj
+    </ul>
+\li \ref subsec_vapi_attr
+    <ul>
+        <li> \ref subsubsec_vapi_attr_getvers
+        <li> \ref subsubsec_vapi_attr_set
+        <li> \ref subsubsec_vapi_attr_find
+        <li> \ref subsubsec_vapi_attr_num
+        <li> \ref subsubsec_vapi_attr_info1
+        <li> \ref subsubsec_vapi_attr_info2
+        <li> \ref subsubsec_vapi_attr_get1
+        <li> \ref subsubsec_vapi_attr_get2
+    </ul>
+\li \ref subsec_vapi_obsolete
+    <ul>
+        <li> \ref subsubsec_vapi_obsolete_next
+        <li> \ref subsubsec_vapi_obsolete_inquire
+    </ul>
+
+\ref sec_dfr8api
+\li \ref subsec_dfr8api_overview
+    <ul>
+        <li> \ref subsubsec_dfr8api_overview_req
+        <li> \ref subsubsec_dfr8api_overview_opt
+        <li> \ref subsubsec_dfr8api_overview_comp
+    </ul>
+\li \ref subsec_dfr8api_interface
+    <ul>
+        <li> \ref subsubsec_dfr8api_interface_lib
+    </ul>
+\li \ref subsec_dfr8api_write
+    <ul>
+        <li> \ref subsubsec_dfr8api_write_store
+        <li> \ref subsubsec_dfr8api_write_add
+        <li> \ref subsubsec_dfr8api_write_comp
+        <li> \ref subsubsec_dfr8api_write_ref
+    </ul>
+\li \ref subsec_dfr8api_read
+    <ul>
+        <li> \ref subsubsec_dfr8api_read_data
+        <li> \ref subsubsec_dfr8api_read_query
+        <li> \ref subsubsec_dfr8api_read_ref
+        <li> \ref subsubsec_dfr8api_read_next
+    </ul>
+\li \ref subsec_dfr8api_info
+    <ul>
+        <li> \ref subsubsec_dfr8api_info_query
+        <li> \ref subsubsec_dfr8api_info_ref
+        <li> \ref subsubsec_dfr8api_info_refpal
+    </ul>
+\li \ref subsec_dfr8api_back
+    <ul>
+        <li> \ref subsubsec_dfr8api_back_long_name
+        <li> \ref subsubsec_dfr8api_back_new_tag
+    </ul>
+
+\ref sec_df24api
+\li \ref subsec_df24api_overview
+\li \ref subsec_df24api_data_model
+    <ul>
+        <li> \ref subsubsec_df24api_data_model_req
+        <li> \ref subsubsec_df24api_data_model_opt
+    </ul>
+\li \ref subsec_df24api_interface
+    <ul>
+        <li> \ref subsubsec_df24api_interface_lib
+    </ul>
+\li \ref subsec_df24api_write
+    <ul>
+        <li> \ref subsubsec_df24api_write_put
+        <li> \ref subsubsec_df24api_write_set
+        <li> \ref subsubsec_df24api_write_comp
+    </ul>
+\li \ref subsec_df24api_read
+    <ul>
+        <li> \ref subsubsec_df24api_read_data
+        <li> \ref subsubsec_df24api_read_dims
+        <li> \ref subsubsec_df24api_read_mod
+        <li> \ref subsubsec_df24api_read_24
+        <li> \ref subsubsec_df24api_read_info
+    </ul>
+\li \ref subsec_df24api_info
+    <ul>
+        <li> \ref subsubsec_df24api_info_num
+        <li> \ref subsubsec_df24api_info_ref
+    </ul>
+
+\ref sec_grapi
+\li \ref subsec_grapi_overview
+\li \ref subsec_grapi_data_model
+    <ul>
+        <li> \ref subsubsec_grapi_data_model_req
+        <li> \ref subsubsec_grapi_data_model_opt
+    </ul>
+\li \ref subsec_grapi_interface
+    <ul>
+        <li> \ref subsubsec_lib
+    </ul>
+\li \ref subsec_grapi_head
+\li \ref subsec_grapi_model
+    <ul>
+        <li> \ref subsubsec_grapi_model_start
+        <li> \ref subsubsec_grapi_model_term
+    </ul>
+\li \ref subsec_grapi_write
+    <ul>
+        <li> \ref subsubsec_grapi_write_data
+        <li> \ref subsubsec_grapi_write_comp
+        <li> \ref subsubsec_grapi_write_set
+        <li> \ref subsubsec_grapi_write_ext
+    </ul>
+\li \ref subsec_grapi_read
+    <ul>
+        <li> \ref subsubsec_grapi_read_data
+        <li> \ref subsubsec_grapi_read_set
+    </ul>
+\li \ref subsec_grapi_diff
+\li \ref subsec_grapi_info
+    <ul>
+        <li> \ref subsubsec_grapi_info_file
+        <li> \ref subsubsec_grapi_info_getim
+        <li> \ref subsubsec_grapi_info_idtoref
+        <li> \ref subsubsec_grapi_info_reftoindex
+        <li> \ref subsubsec_grapi_info_nametoindex
+        <li> \ref subsubsec_grapi_info_getcomp
+        <li> \ref subsubsec_grapi_info_bemap
+    </ul>
+\li \ref subsec_grapi_attr
+    <ul>
+        <li> \ref subsubsec_grapi_attr_predefine
+        <li> \ref subsubsec_grapi_attr_set
+        <li> \ref subsubsec_grapi_attr_query
+        <li> \ref subsubsec_grapi_attr_read
+    </ul>
+\li \ref subsec_grapi_data
+    <ul>
+        <li> \ref subsubsec_grapi_data_getlutid
+        <li> \ref subsubsec_grapi_data_getnluts
+        <li> \ref subsubsec_grapi_data_luttoref
+        <li> \ref subsubsec_grapi_data_getlutinfo
+        <li> \ref subsubsec_grapi_data_writelut
+        <li> \ref subsubsec_grapi_data_reqlut
+        <li> \ref subsubsec_grapi_data_readlut
+    </ul>
+\li \ref subsec_grapi_image
+    <ul>
+        <li> \ref subsubsec_grapi_image_diff
+        <li> \ref subsubsec_grapi_image_setchunk
+        <li> \ref subsubsec_grapi_image_writechunk
+        <li> \ref subsubsec_grapi_image_readchunk
+        <li> \ref subsubsec_grapi_image_getchunk
+        <li> \ref subsubsec_grapi_image_chunkcache
+    </ul>
+
+\ref sec_dfpapi
+\li \ref subsec_dfpapi_overview
+\li \ref subsec_dfpapi_model
+\li \ref subsec_dfpapi_api
+    <ul>
+        <li> \ref subsubsec_dfpapi_api_lib
+    </ul>
+\li \ref subsec_dfpapi_write
+    <ul>
+        <li> \ref subsubsec_dfpapi_write_pal
+        <li> \ref subsubsec_dfpapi_write_ref
+    </ul>
+\li \ref subsec_dfpapi_read
+    <ul>
+        <li> \ref subsubsec_dfpapi_read_get
+        <li> \ref subsubsec_dfpapi_read_ref
+        <li> \ref subsubsec_dfpapi_read_next
+    </ul>
+\li \ref subsec_dfpapi_other
+    <ul>
+        <li> \ref subsubsec_dfpapi_other_query
+        <li> \ref subsubsec_dfpapi_other_num
+    </ul>
+\li \ref subsec_dfpapi_back
+
+\ref sec_anapi
+\li \ref subsec_anapi_overview
+\li \ref subsec_anapi_model
+    <ul>
+        <li> \ref subsubsec_anapi_model_desc
+        <li> \ref subsubsec_anapi_model_file
+        <li> \ref subsubsec_anapi_model_object
+        <li> \ref subsubsec_anapi_model_term
+    </ul>
+\li \ref subsec_anapi_interface
+    <ul>
+        <li> \ref subsubsec_anapi_interface_lib
+        <li> \ref subsubsec_anapi_interface_type
+        <li> \ref subsubsec_anapi_interface_model
+        <li> \ref subsubsec_anapi_interface_access
+        <li> \ref subsubsec_anapi_interface_term
+    </ul>
+\li \ref subsec_anapi_write
+\li \ref subsec_anapi_read
+    <ul>
+        <li> \ref subsubsec_anapi_read_select
+        <li> \ref subsubsec_anapi_read_read
+    </ul>
+\li \ref subsec_anapi_info
+    <ul>
+        <li> \ref subsubsec_anapi_info_num
+        <li> \ref subsubsec_anapi_info_len
+        <li> \ref subsubsec_anapi_info_type_num
+        <li> \ref subsubsec_anapi_info_list
+        <li> \ref subsubsec_anapi_info_tag
+        <li> \ref subsubsec_anapi_info_tag_ref
+        <li> \ref subsubsec_anapi_info_id
+        <li> \ref subsubsec_anapi_info_tag_type
+        <li> \ref subsubsec_anapi_info_obj
+    </ul>
+
+\ref sec_dfanapi
+\li \ref subsec_dfanapi_overview
+\li \ref subsec_dfanapi_interface
+    <ul>
+        <li> \ref subsubsec_dfanapi_interface_lib
+        <li> \ref subsubsec_dfanapi_interface_tags
+    </ul>
+\li \ref subsec_dfanapi_model
+\li \ref subsec_dfanapi_write
+    <ul>
+        <li> \ref subsubsec_dfanapi_write_label
+        <li> \ref subsubsec_dfanapi_write_descr
+        <li> \ref subsubsec_dfanapi_write_obj_label
+        <li> \ref subsubsec_dfanapi_write_obj_descr
+    </ul>
+\li \ref subsec_dfanapi_read
+    <ul>
+        <li> \ref subsubsec_dfanapi_read_label
+        <li> \ref subsubsec_dfanapi_read_descr
+        <li> \ref subsubsec_dfanapi_read_obj_label
+        <li> \ref subsubsec_dfanapi_read_obj_descr
+    </ul>
+\li \ref subsec_dfanapi_maint
+    <ul>
+        <li> \ref subsubsec_dfanapi_maint_clear
+    </ul>
+\li \ref subsec_dfanapi_ref_num
+    <ul>
+        <li> \ref subsubsec_dfanapi_ref_num_last
+        <li> \ref subsubsec_dfanapi_ref_num_query
+        <li> \ref subsubsec_dfanapi_ref_num_locate
+    </ul>
+
+\ref sec_dfsdapi
+\li \ref subsec_dfsdapi_overview
+\li \ref subsec_dfsdapi_model
+    <ul>
+        <li> \ref subsubsec_dfsdapi_model_req
+        <li> \ref subsubsec_dfsdapi_model_opt
+    </ul>
+\li \ref subsec_dfsdapi_single
+    <ul>
+        <li> \ref subsubsec_dfsdapi_single_lib
+        <li> \ref subsubsec_dfsdapi_single_ids
+    </ul>
+\li \ref subsec_dfsdapi_write
+    <ul>
+        <li> \ref subsubsec_dfsdapi_write_create
+        <li> \ref subsubsec_dfsdapi_write_type
+        <li> \ref subsubsec_dfsdapi_write_overwrite
+        <li> \ref subsubsec_dfsdapi_write_multi
+        <li> \ref subsubsec_dfsdapi_write_prevent
+        <li> \ref subsubsec_dfsdapi_write_reset
+    </ul>
+\li \ref subsec_dfsdapi_read
+    <ul>
+        <li> \ref subsubsec_dfsdapi_read_get
+        <li> \ref subsubsec_dfsdapi_read_type
+        <li> \ref subsubsec_dfsdapi_read_num
+        <li> \ref subsubsec_dfsdapi_read_ref
+    </ul>
+\li \ref subsec_dfsdapi_slabs
+    <ul>
+        <li> \ref subsubsec_dfsdapi_slabs_access
+        <li> \ref subsubsec_dfsdapi_slabs_write
+        <li> \ref subsubsec_dfsdapi_slabs_read
+    </ul>
+\li \ref subsec_dfsdapi_predine
+    <ul>
+        <li> \ref subsubsec_dfsdapi_predine_write
+        <li> \ref subsubsec_dfsdapi_predine_read
+        <li> \ref subsubsec_dfsdapi_predine_write_dims
+        <li> \ref subsubsec_dfsdapi_predine_read_dims
+    </ul>
+
+\ref sec_error
+\li \ref subsec_error_overview
+\li \ref subsec_error_api
+\li \ref subsec_error_report
+    <ul>
+        <li> \ref subsubsec_error_report_print
+        <li> \ref subsubsec_error_report_recent
+        <li> \ref subsubsec_error_report_descr
+        <li> \ref subsubsec_error_report_clear
+    </ul>
+
+\ref sec_perf
+\li \ref subsec_perf_overview
+\li \ref subsec_perf_enhance
+    <ul>
+        <li> \ref subsubsec_perf_enhance_large
+        <li> \ref subsubsec_perf_enhance_share
+        <li> \ref subsubsec_perf_enhance_fill
+        <li> \ref subsubsec_perf_enhance_fake
+    </ul>
+\li \ref subsec_perf_chunk
+    <ul>
+        <li> \ref subsubsec_perf_chunk_what
+        <li> \ref subsubsec_perf_chunk_rw
+        <li> \ref subsubsec_perf_chunk_nocomp
+        <li> \ref subsubsec_perf_chunk_compress
+        <li> \ref subsubsec_perf_chunk_size
+        <li> \ref subsubsec_perf_chunk_space
+    </ul>
+\li \ref subsec_perf_tune
+    <ul>
+        <li> \ref subsubsec_perf_tune_data
+        <li> \ref subsubsec_perf_tune_linked
+        <li> \ref subsubsec_perf_tune_unlim
+    </ul>
+
+\ref sec_utils
+\li \ref subsec_utils_overview
+\li \ref subsec_utils_dump
+    <ul>
+        <li> \ref subsubsec_utils_dump_desc
+        <li> \ref subsubsec_utils_dump_cl
+    </ul>
+\li \ref subsec_utils_hdiff
+    <ul>
+        <li> \ref subsubsec_utils_hdiff_desc
+        <li> \ref subsubsec_utils_hdiff_cl
+        <li> \ref subsubsec_utils_hdiff_ex
+    </ul>
+\li \ref subsec_utils_vshow
+    <ul>
+        <li> \ref subsubsec_utils_vshow_desc
+        <li> \ref subsubsec_utils_vshow_cl
+        <li> \ref subsubsec_utils_vshow_ex
+    </ul>
+\li \ref subsec_utils_import
+    <ul>
+        <li> \ref subsubsec_utils_import_desc
+        <li> \ref subsubsec_utils_import_cl
+        <li> \ref subsubsec_utils_import_struct
+    </ul>
+\li \ref subsec_utils_r8tohdf
+    <ul>
+        <li> \ref subsubsec_utils_r8tohdf_desc
+        <li> \ref subsubsec_utils_r8tohdf_cl
+        <li> \ref subsubsec_utils_r8tohdf_ex
+    </ul>
+\li \ref subsec_utils_r24df8
+    <ul>
+        <li> \ref subsubsec_utils_r24df8_desc
+        <li> \ref subsubsec_utils_r24df8_cl
+        <li> \ref subsubsec_utils_r24df8_ex
+    </ul>
+\li \ref subsec_utils_paltohdf
+    <ul>
+        <li> \ref subsubsec_utils_paltohdf_desc
+        <li> \ref subsubsec_utils_paltohdf_cl
+    </ul>
+\li \ref subsec_utils_hdftor8
+    <ul>
+        <li> \ref subsubsec_utils_hdftor8_desc
+        <li> \ref subsubsec_utils_hdftor8_cl
+        <li> \ref subsubsec_utils_hdftor8_ex
+    </ul>
+\li \ref subsec_utils_hdftopal
+    <ul>
+        <li> \ref subsubsec_utils_hdftopal_desc
+        <li> \ref subsubsec_utils_hdftopal_cl
+    </ul>
+\li \ref subsec_utils_ristosds
+    <ul>
+        <li> \ref subsubsec_utils_ristosds_desc
+        <li> \ref subsubsec_utils_ristosds_cl
+        <li> \ref subsubsec_utils_ristosds_ex
+    </ul>
+\li \ref subsec_utils_hdf24hdf8
+    <ul>
+        <li> \ref subsubsec_utils_hdf24hdf8_desc
+        <li> \ref subsubsec_utils_hdf24hdf8_cl
+    </ul>
+\li \ref subsec_utils_hdfcomp
+    <ul>
+        <li> \ref subsubsec_utils_hdfcomp_desc
+        <li> \ref subsubsec_utils_hdfcomp_cl
+        <li> \ref subsubsec_utils_hdfcomp_ex
+    </ul>
+\li \ref subsec_utils_hdfpack
+    <ul>
+        <li> \ref subsubsec_utils_hdfpack_desc
+        <li> \ref subsubsec_utils_hdfpack_cl
+        <li> \ref subsubsec_utils_hdfpack_ex
+    </ul>
+\li \ref subsec_utils_hrepack
+    <ul>
+        <li> \ref subsubsec_utils_hrepack_desc
+        <li> \ref subsubsec_utils_hrepack_cl
+    </ul>
+\li \ref subsec_utils_vmake
+    <ul>
+        <li> \ref subsubsec_utils_vmake_desc
+        <li> \ref subsubsec_utils_vmake_cl
+        <li> \ref subsubsec_utils_vmake_ex
+    </ul>
+\li \ref subsec_utils_hdfls
+    <ul>
+        <li> \ref subsubsec_utils_hdfls_desc
+        <li> \ref subsubsec_utils_hdfls_cl
+        <li> \ref subsubsec_utils_hdfls_ex
+    </ul>
+\li \ref subsec_utils_hdfed
+    <ul>
+        <li> \ref subsubsec_utils_hdfed_desc
+        <li> \ref subsubsec_utils_hdfed_cl
+    </ul>
+\li \ref subsec_utils_formats
+\li \ref subsec_utils_hdf2gif
+    <ul>
+        <li> \ref subsubsec_utils_hdf2gif_desc
+        <li> \ref subsubsec_utils_hdf2gif_cl
+        <li> \ref subsubsec_utils_hdf2gif_struct
+        <li> \ref subsubsec_utils_hdf2gif_build
+    </ul>
+\li \ref subsec_utils_h4cc
+    <ul>
+        <li> \ref subsubsec_utils_h4cc_desc
+        <li> \ref subsubsec_utils_h4cc_cl
+        <li> \ref subsubsec_utils_h4cc_ex
+    </ul>
+\li \ref subsec_utils_h4fc
+    <ul>
+        <li> \ref subsubsec_utils_h4fc_desc
+        <li> \ref subsubsec_utils_h4fc_cl
+        <li> \ref subsubsec_utils_h4fc_ex
+    </ul>
+\li \ref subsec_utils_h4redploy
+    <ul>
+        <li> \ref subsubsec_utils_h4redploy_desc
+        <li> \ref subsubsec_utils_h4redploy_cl
+    </ul>
+
+\ref sec_raw
+\li \ref subsec_raw_overview
+\li \ref subsec_raw_retrieve
+\li \ref subsec_raw_add_an
+    <ul>
+        <li> \ref subsubsec_add_an_data
+    </ul>
+\li \ref subsec_raw_add_sd
+    <ul>
+        <li> \ref subsubsec_add_sd_data
+        <li> \ref subsubsec_add_sd_attr
+        <li> \ref subsubsec_add_sd_dfsd
+        <li> \ref subsubsec_add_sd_sds
+    </ul>
+\li \ref subsec_raw_add_gr
+    <ul>
+        <li> \ref subsubsec_add_gr_img
+        <li> \ref subsubsec_add_gr_attr
+    </ul>
+\li \ref subsec_raw_add_v
+    <ul>
+        <li> \ref subsubsec_raw_add_v_data
+    </ul>
+\li \ref subsec_raw_add_vs
+    <ul>
+        <li> \ref subsubsec_add_vs_data
+        <li> \ref subsubsec_add_vs_attr
+    </ul>
+
+\ref sec_appenda
+\li \ref subsec_appenda_overview
+\li \ref subsec_appenda_type
+
+\ref sec_appendb
+\li \ref subsec_appendb_install
+    <ul>
+        <li> \ref subsubsec_appendb_install_source
+        <li> \ref subsubsec_appendb_install_build
+    </ul>
+
+\ref sec_appendc
+\li \ref subsec_appendc_attr
+\li \ref subsec_appendc_store
+    <ul>
+        <li> \ref subsubsec_appendc_store_attr
+        <li> \ref subsubsec_appendc_store_vg
+    </ul>
+
+
+\par Don't like what you see? - You can help to improve this User Guide
+     Complete the survey linked near the top of this page!\n
+     We treat documentation like code: Fork the
+     <a href="https://github.com/HDFGroup/hdf4">HDF4 repo</a>, make changes, and create a
+     <a href="https://github.com/HDFGroup/hdf4/pulls">pull request</a> !\n
+
+*/

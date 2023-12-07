@@ -198,3 +198,23 @@ if (HDF4_EXPORTED_TARGETS)
       INCLUDES DESTINATION include
   )
 endif ()
+
+#-----------------------------------------------------------------------------
+# Option to build documentation
+#-----------------------------------------------------------------------------
+if (DOXYGEN_FOUND)
+  # This custom target and doxygen/configure work together
+  # Replace variables inside @@ with the current values
+  add_custom_target (hdf4lib_doc ALL
+        COMMAND ${DOXYGEN_EXECUTABLE} ${HDF4_BINARY_DIR}/Doxyfile
+        WORKING_DIRECTORY ${HDF4_HDFSOURCE_DIR}
+        COMMENT "Generating HDF4 library Source API documentation with Doxygen"
+        VERBATIM )
+
+  if (NOT TARGET doxygen)
+    add_custom_target (doxygen)
+  endif ()
+
+  add_dependencies (doxygen hdf4lib_doc)
+
+endif ()

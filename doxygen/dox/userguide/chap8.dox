@@ -1,0 +1,60 @@
+/** @page CH8_UG General Raster Images (GR API)
+
+Navigate back: \ref index "Contents" / \ref UG
+<hr>
+
+\section sec_grapi General Raster Images (GR API)
+
+\subsection subsec_grapi_overview
+\subsection subsec_grapi_data_model
+\subsubsection subsubsec_grapi_data_model_req
+\subsubsection subsubsec_grapi_data_model_opt
+\subsection subsec_grapi_interface
+\subsubsection subsubsec_lib
+\subsection subsec_grapi_head
+\subsection subsec_grapi_model
+\subsubsection subsubsec_grapi_model_start
+\subsubsection subsubsec_grapi_model_term
+\subsection subsec_grapi_write
+\subsubsection subsubsec_grapi_write_data
+\subsubsection subsubsec_grapi_write_comp
+\subsubsection subsubsec_grapi_write_set
+\subsubsection subsubsec_grapi_write_ext
+\subsection subsec_grapi_read
+\subsubsection subsubsec_grapi_read_data
+\subsubsection subsubsec_grapi_read_set
+\subsection subsec_grapi_diff
+\subsection subsec_grapi_info
+\subsubsection subsubsec_grapi_info_file
+\subsubsection subsubsec_grapi_info_getim
+\subsubsection subsubsec_grapi_info_idtoref
+\subsubsection subsubsec_grapi_info_reftoindex
+\subsubsection subsubsec_grapi_info_nametoindex
+\subsubsection subsubsec_grapi_info_getcomp
+\subsubsection subsubsec_grapi_info_bemap
+\subsection subsec_grapi_attr
+\subsubsection subsubsec_grapi_attr_predefine
+\subsubsection subsubsec_grapi_attr_set
+\subsubsection subsubsec_grapi_attr_query
+\subsubsection subsubsec_grapi_attr_read
+\subsection subsec_grapi_data
+\subsubsection subsubsec_grapi_data_getlutid
+\subsubsection subsubsec_grapi_data_getnluts
+\subsubsection subsubsec_grapi_data_luttoref
+\subsubsection subsubsec_grapi_data_getlutinfo
+\subsubsection subsubsec_grapi_data_writelut
+\subsubsection subsubsec_grapi_data_reqlut
+\subsubsection subsubsec_grapi_data_readlut
+\subsection subsec_grapi_image
+\subsubsection subsubsec_grapi_image_diff
+\subsubsection subsubsec_grapi_image_setchunk
+\subsubsection subsubsec_grapi_image_writechunk
+\subsubsection subsubsec_grapi_image_readchunk
+\subsubsection subsubsec_grapi_image_getchunk
+\subsubsection subsubsec_grapi_image_chunkcache
+
+
+<hr>
+Navigate back: \ref index "Contents" / \ref UG
+
+*/

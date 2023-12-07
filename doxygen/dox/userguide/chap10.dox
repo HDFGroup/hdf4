@@ -1,0 +1,39 @@
+/** @page CH10_UG Annotations (AN API)
+
+Navigate back: \ref index "Contents" / \ref UG
+<hr>
+
+\section sec_anapi Annotations (AN API)
+
+\subsection subsec_anapi_overview
+\subsection subsec_anapi_model
+\subsubsection subsubsec_anapi_model_desc
+\subsubsection subsubsec_anapi_model_file
+\subsubsection subsubsec_anapi_model_object
+\subsubsection subsubsec_anapi_model_term
+\subsection subsec_anapi_interface
+\subsubsection subsubsec_anapi_interface_lib
+\subsubsection subsubsec_anapi_interface_type
+\subsubsection subsubsec_anapi_interface_model
+\subsubsection subsubsec_anapi_interface_access
+\subsubsection subsubsec_anapi_interface_term
+\subsection subsec_anapi_write
+\subsection subsec_anapi_read
+\subsubsection subsubsec_anapi_read_select
+\subsubsection subsubsec_anapi_read_read
+\subsection subsec_anapi_info
+\subsubsection subsubsec_anapi_info_num
+\subsubsection subsubsec_anapi_info_len
+\subsubsection subsubsec_anapi_info_type_num
+\subsubsection subsubsec_anapi_info_list
+\subsubsection subsubsec_anapi_info_tag
+\subsubsection subsubsec_anapi_info_tag_ref
+\subsubsection subsubsec_anapi_info_id
+\subsubsection subsubsec_anapi_info_tag_type
+\subsubsection subsubsec_anapi_info_obj
+
+
+<hr>
+Navigate back: \ref index "Contents" / \ref UG
+
+*/

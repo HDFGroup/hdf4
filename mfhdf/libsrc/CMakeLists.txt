@@ -208,3 +208,23 @@ if (NOT WIN32)
       COMPONENT libraries
   )
 endif ()
+
+#-----------------------------------------------------------------------------
+# Option to build documentation
+#-----------------------------------------------------------------------------
+if (DOXYGEN_FOUND)
+  # This custom target and doxygen/configure work together
+  # Replace variables inside @@ with the current values
+  add_custom_target (hdf4mflib_doc ALL
+        COMMAND ${DOXYGEN_EXECUTABLE} ${HDF4_BINARY_DIR}/Doxyfile
+        WORKING_DIRECTORY ${HDF4_MFHDFSOURCE_DIR}
+        COMMENT "Generating HDF4 library Source API documentation with Doxygen"
+        VERBATIM )
+
+  if (NOT TARGET doxygen)
+    add_custom_target (doxygen)
+  endif ()
+
+  add_dependencies (doxygen hdf4mflib_doc)
+
+endif ()

@@ -74,6 +74,15 @@ jobs:
           echo "FILE_BASE=$FILE_NAME_BASE" >> $GITHUB_OUTPUT
 
       # Get files created by tarball script
+      - name: Get doxygen (Linux)
+        uses: actions/download-artifact@v3
+        with:
+              name: docs-doxygen
+              path: ${{ github.workspace }}/${{ steps.get-file-base.outputs.FILE_BASE }}.doxygen
+
+      - name: Zip Folder
+        run: zip -r ${{ steps.get-file-base.outputs.FILE_BASE }}.doxygen.zip ./${{ steps.get-file-base.outputs.FILE_BASE }}.doxygen
+
       - name: Get tgz-tarball (Linux)
         uses: actions/download-artifact@v3
         with:
@@ -118,6 +127,7 @@ jobs:
           prerelease: true
           files: |
               last-file.txt
+              ${{ steps.get-file-base.outputs.FILE_BASE }}.doxygen.zip
               ${{ steps.get-file-base.outputs.FILE_BASE }}.tar.gz
               ${{ steps.get-file-base.outputs.FILE_BASE }}.zip
               ${{ steps.get-file-base.outputs.FILE_BASE }}-osx12.tar.gz
@@ -134,6 +144,7 @@ jobs:
           prerelease: false
           #body_path: ${{ github.workspace }}-CHANGELOG.txt
           files: |
+              ${{ steps.get-file-base.outputs.FILE_BASE }}.doxygen.zip
               ${{ steps.get-file-base.outputs.FILE_BASE }}.tar.gz
               ${{ steps.get-file-base.outputs.FILE_BASE }}.zip
               ${{ steps.get-file-base.outputs.FILE_BASE }}-osx12.tar.gz
@@ -145,3 +156,11 @@ jobs:
         run: |
               ls -l ${{ github.workspace }}
               ls ${{ runner.workspace }}
+
+      - name: dev-only-docs
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ${{ github.workspace }}/${{ steps.get-file-base.outputs.FILE_BASE }}.doxygen
+          destination_dir: develop
+

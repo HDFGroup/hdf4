@@ -101,7 +101,7 @@ endif ()
 #-----------------------------------------------------------------------------
 if (NOT HDF4_EXTERNALLY_CONFIGURED)
   configure_file (
-      ${HDF_RESOURCES_DIR}/hdf4-config-version.cmake.in
+      ${HDF_RESOURCES_DIR}/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config-version.cmake.in
       ${HDF4_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config-version.cmake @ONLY
   )
   install (
@@ -134,6 +134,10 @@ install (
 #-----------------------------------------------------------------------------
 option (HDF4_PACK_EXAMPLES  "Package the HDF4 Library Examples Compressed File" OFF)
 if (HDF4_PACK_EXAMPLES)
+  if (DEFINED CMAKE_TOOLCHAIN_FILE)
+    get_filename_component(TOOLCHAIN ${CMAKE_TOOLCHAIN_FILE} NAME)
+    set(CTEST_TOOLCHAIN_FILE "\${CTEST_SOURCE_DIRECTORY}/config/toolchain/${TOOLCHAIN}")
+  endif ()
   configure_file (
       ${HDF_RESOURCES_DIR}/examples/HDF4_Examples.cmake.in
       ${HDF4_BINARY_DIR}/HDF4_Examples.cmake @ONLY
@@ -232,8 +236,7 @@ endif ()
 #-----------------------------------------------------------------------------
 if (NOT HDF4_EXTERNALLY_CONFIGURED)
   install (
-      FILES
-          ${HDF4_SOURCE_DIR}/COPYING
+      FILES ${HDF4_SOURCE_DIR}/COPYING
       DESTINATION ${HDF4_INSTALL_DATA_DIR}
       COMPONENT hdfdocuments
   )
