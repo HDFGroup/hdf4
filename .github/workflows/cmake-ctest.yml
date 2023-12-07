@@ -77,7 +77,7 @@ jobs:
       - name: List files in the space (Windows)
         run: |
               Get-ChildItem -Path ${{ github.workspace }}
-              Get-ChildItem -Path ${{ runner.woFixing issues with integrated examplesrkspace }}
+              Get-ChildItem -Path ${{ runner.workspace }}
         shell: pwsh
 
       # Save files created by ctest script
