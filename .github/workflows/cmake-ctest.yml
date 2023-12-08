@@ -154,7 +154,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
               name: docs-doxygen
-              path: ${{ runner.workspace }}/hdf5/build/ci-StdShar-GNUC/hdf4lib_docs/html
+              path: ${{ runner.workspace }}/hdf4/build/ci-StdShar-GNUC/hdf4lib_docs/html
               if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
 
   build_and_test_mac:
