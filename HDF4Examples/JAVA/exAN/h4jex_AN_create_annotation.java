@@ -126,7 +126,7 @@ private static String  DATA_DESC_TXT = "This is a vgroup that is used to test da
                                 e.printStackTrace();
                                 System.err.println("Cannot create a new data label annotation.");
                             }
-                            // Teminate access to the vgroup and to the V interface.
+                            // Terminate access to the vgroup and to the V interface.
                             HDFLibrary.Vdetach(vgroup_id);
                         }
                         catch (Exception e) {

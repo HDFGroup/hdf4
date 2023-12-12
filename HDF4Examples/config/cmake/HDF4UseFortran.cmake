@@ -6,7 +6,7 @@ enable_language (Fortran)
 set (HDF_PREFIX "H4")
 
 #-------------------------------------------------------------------------------
-#  Fix Fortran flags if we are compiling staticly on Windows using
+#  Fix Fortran flags if we are compiling statically on Windows using
 #  Windows_MT.cmake from config/cmake/UserMacros
 #-------------------------------------------------------------------------------
 if (BUILD_STATIC_CRT_LIBS)

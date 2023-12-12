@@ -128,7 +128,7 @@ int main() {
                                 status_n = ANendaccess(data_label_id);
                             }
                             /*
-                            * Teminate access to the vgroup and to the V interface.
+                            * Terminate access to the vgroup and to the V interface.
                             */
                             status_32 = Vdetach(vgroup_id);
                         }

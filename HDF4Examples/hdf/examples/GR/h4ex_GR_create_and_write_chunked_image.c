@@ -13,7 +13,7 @@ main( )
          ri_id,          /* raster image identifier */
          dims[2],        /* dimension sizes of the image array */
          start[2];       /* interlace mode of the image */
-   HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */
+   HDF_CHUNK_DEF chunk_def;     /* Chunk definition set */
    int32 chunk00[] = {110, 111, 112, 120, 121, 122,
                       130, 131, 132, 140, 141, 142,
                       150, 151, 152, 160, 161, 162
