@@ -132,13 +132,8 @@ main()
                                 status_n = ANendaccess(data_label_id);
                             }
                             /*
-<<<<<<< HEAD
-                            * Terminate access to the vgroup and to the V interface.
-                            */
-=======
                              * Teminate access to the vgroup and to the V interface.
                              */
->>>>>>> branch 'master-merge-ex' of https://github.com/byrnHDF/hdf4.git
                             status_32 = Vdetach(vgroup_id);
                         }
                         status_n = Vend(file_id);

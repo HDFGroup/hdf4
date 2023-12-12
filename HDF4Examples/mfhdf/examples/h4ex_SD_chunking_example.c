@@ -9,27 +9,6 @@ main()
 {
     /************************* Variable declaration **************************/
 
-<<<<<<< HEAD
-   int32         sd_id, sds_id, sds_index;
-   intn          status;
-   int32         flag, maxcache, new_maxcache;
-   int32         dim_sizes[2], origin[2];
-   HDF_CHUNK_DEF c_def, c_def_out; /* Chunking definitions */
-   int32         comp_flag, c_flags;
-   int16         all_data[9][4];
-   int32         start[2], edges[2];
-   int16         chunk_out[3][2];
-   int16         row[2] = { 5, 5 };
-   int16         column[3] = { 4, 4, 4 };
-   int16         fill_value = 0;   /* Fill value */
-   int           i,j;
-   /*
-   * Declare chunks data type and initialize some of them.
-   */
-          int16 chunk1[3][2] = { 1, 1,
-                                 1, 1,
-                                 1, 1 };
-=======
     int32         sd_id, sds_id, sds_index;
     intn          status;
     int32         flag, maxcache, new_maxcache;
@@ -47,45 +26,15 @@ main()
      * Declare chunks data type and initialize some of them.
      */
     int16 chunk1[3][2] = {1, 1, 1, 1, 1, 1};
->>>>>>> branch 'master-merge-ex' of https://github.com/byrnHDF/hdf4.git
 
-<<<<<<< HEAD
-          int16 chunk2[3][2] = { 2, 2,
-                                 2, 2,
-                                 2, 2 };
-=======
     int16 chunk2[3][2] = {2, 2, 2, 2, 2, 2};
->>>>>>> branch 'master-merge-ex' of https://github.com/byrnHDF/hdf4.git
 
-<<<<<<< HEAD
-          int16 chunk3[3][2] = { 3, 3,
-                                 3, 3,
-                                 3, 3 };
-=======
     int16 chunk3[3][2] = {3, 3, 3, 3, 3, 3};
->>>>>>> branch 'master-merge-ex' of https://github.com/byrnHDF/hdf4.git
 
     int16 chunk6[3][2] = {6, 6, 6, 6, 6, 6};
 
     /********************* End of variable declaration ***********************/
     /*
-<<<<<<< HEAD
-    * Define chunk's dimensions.
-    *
-    *         In this example we do not use compression.
-    *         To use chunking with RLE, Skipping Huffman, and GZIP
-    *         compression, initialize
-    *
-    *                c_def.comp.chunk_lengths[0] = 3;
-    *                c_def.comp.chunk_lengths[1] = 2;
-    *
-    *         To use chunking with NBIT, initialize
-    *
-    *                c_def.nbit.chunk_lengths[0] = 3;
-    *                c_def.nbit.chunk_lengths[1] = 2;
-    *
-    */
-=======
      * Define chunk's dimensions.
      *
      *         In this example we do not use compression.
@@ -101,7 +50,6 @@ main()
      *                c_def.nbit.chunk_lengths[1] = 2;
      *
      */
->>>>>>> branch 'master-merge-ex' of https://github.com/byrnHDF/hdf4.git
     c_def.chunk_lengths[0] = 3;
     c_def.chunk_lengths[1] = 2;
 
@@ -123,40 +71,6 @@ main()
     status = SDsetfillvalue(sds_id, (VOIDP)&fill_value);
 
     /*
-<<<<<<< HEAD
-    * Create chunked SDS.
-    * In this example we do not use compression ( third
-    * parameter of SDsetchunk is set to HDF_CHUNK).
-    *
-    * To use RLE compression, set compression type and flag
-    *
-    *            c_def.comp.comp_type = COMP_CODE_RLE;
-    *            comp_flag = HDF_CHUNK | HDF_COMP;
-    *
-    * To use Skipping Huffman compression, set compression type, flag
-    * and skipping size skp_size
-    *
-    *            c_def.comp.comp_type = COMP_CODE_SKPHUFF;
-    *            c_def.comp.cinfo.skphuff.skp_size = value;
-    *            comp_flag = HDF_CHUNK | HDF_COMP;
-    *
-    * To use GZIP compression, set compression type, flag and
-    * deflate level
-    *
-    *            c_def.comp.comp_type = COMP_CODE_DEFLATE;
-    *            c_def.comp.cinfo.deflate.level = value;
-    *            comp_flag = HDF_CHUNK | HDF_COMP;
-    *
-    * To use NBIT compression, set compression flag and
-    * compression parameters
-    *
-    *            comp_flag = HDF_CHUNK | HDF_NBIT;
-    *            c_def.nbit.start_bit = value1;
-    *            c_def.nbit.bit_len   = value2;
-    *            c_def.nbit.sign_ext  = value3;
-    *            c_def.nbit.fill_one  = value4;
-    */
-=======
      * Create chunked SDS.
      * In this example we do not use compression ( third
      * parameter of SDsetchunk is set to HDF_CHUNK).
@@ -189,7 +103,6 @@ main()
      *            c_def.nbit.sign_ext  = value3;
      *            c_def.nbit.fill_one  = value4;
      */
->>>>>>> branch 'master-merge-ex' of https://github.com/byrnHDF/hdf4.git
     comp_flag = HDF_CHUNK;
     status    = SDsetchunk(sds_id, c_def, comp_flag);
 
@@ -201,116 +114,60 @@ main()
     new_maxcache = SDsetchunkcache(sds_id, maxcache, flag);
 
     /*
-<<<<<<< HEAD
-    * Write chunks using SDwritechunk function.
-    * Chunks can be written in any order.
-    */
-=======
      * Write chunks using SDwritechunk function.
      * Chunks can be written in any order.
      */
->>>>>>> branch 'master-merge-ex' of https://github.com/byrnHDF/hdf4.git
 
     /*
-<<<<<<< HEAD
-    * Write the chunk with the coordinates (0,0).
-    */
-=======
      * Write the chunk with the coordinates (0,0).
      */
->>>>>>> branch 'master-merge-ex' of https://github.com/byrnHDF/hdf4.git
     origin[0] = 0;
     origin[1] = 0;
     status    = SDwritechunk(sds_id, origin, (VOIDP)chunk1);
 
     /*
-<<<<<<< HEAD
-    * Write the chunk with the coordinates (1,0).
-    */
-=======
      * Write the chunk with the coordinates (1,0).
      */
->>>>>>> branch 'master-merge-ex' of https://github.com/byrnHDF/hdf4.git
     origin[0] = 1;
     origin[1] = 0;
     status    = SDwritechunk(sds_id, origin, (VOIDP)chunk3);
 
     /*
-<<<<<<< HEAD
-    * Write the chunk with the coordinates (0,1).
-    */
-=======
      * Write the chunk with the coordinates (0,1).
      */
->>>>>>> branch 'master-merge-ex' of https://github.com/byrnHDF/hdf4.git
     origin[0] = 0;
     origin[1] = 1;
     status    = SDwritechunk(sds_id, origin, (VOIDP)chunk2);
 
     /*
-<<<<<<< HEAD
-    * Write chunk with the coordinates (1,2) using
-    * SDwritedata function.
-    */
-=======
      * Write chunk with the coordinates (1,2) using
      * SDwritedata function.
      */
->>>>>>> branch 'master-merge-ex' of https://github.com/byrnHDF/hdf4.git
     start[0] = 6;
     start[1] = 2;
     edges[0] = 3;
     edges[1] = 2;
-<<<<<<< HEAD
-    status = SDwritedata (sds_id, start, NULL, edges, (VOIDP) chunk6);
-=======
     status   = SDwritedata(sds_id, start, NULL, edges, (VOIDP)chunk6);
->>>>>>> branch 'master-merge-ex' of https://github.com/byrnHDF/hdf4.git
 
     /*
-<<<<<<< HEAD
-    * Fill second column in the chunk with the coordinates (1,1)
-    * using SDwritedata function.
-    */
-=======
      * Fill second column in the chunk with the coordinates (1,1)
      * using SDwritedata function.
      */
->>>>>>> branch 'master-merge-ex' of https://github.com/byrnHDF/hdf4.git
     start[0] = 3;
     start[1] = 3;
     edges[0] = 3;
     edges[1] = 1;
-<<<<<<< HEAD
-    status = SDwritedata (sds_id, start, NULL, edges, (VOIDP) column);
-=======
     status   = SDwritedata(sds_id, start, NULL, edges, (VOIDP)column);
->>>>>>> branch 'master-merge-ex' of https://github.com/byrnHDF/hdf4.git
 
     /*
-<<<<<<< HEAD
-    * Fill second row in the chunk with the coordinates (0,2)
-    * using SDwritedata function.
-    */
-=======
      * Fill second row in the chunk with the coordinates (0,2)
      * using SDwritedata function.
      */
->>>>>>> branch 'master-merge-ex' of https://github.com/byrnHDF/hdf4.git
     start[0] = 7;
     start[1] = 0;
     edges[0] = 1;
     edges[1] = 2;
-<<<<<<< HEAD
-    status = SDwritedata (sds_id, start, NULL, edges, (VOIDP) row);
-
-    /*
-    * Terminate access to the data set.
-    */
-    status = SDendaccess (sds_id);
-=======
     status   = SDwritedata(sds_id, start, NULL, edges, (VOIDP)row);
->>>>>>> branch 'master-merge-ex' of https://github.com/byrnHDF/hdf4.git
 
     /*
      * Terminate access to the data set.
@@ -355,27 +212,6 @@ main()
     status   = SDreaddata(sds_id, start, NULL, edges, (VOIDP)all_data);
 
     /*
-<<<<<<< HEAD
-    * Print out what we have read.
-    * The following information should be displayed:
-    *
-    * SDS is chunked
-    * Chunk's dimensions 3x2
-    *          1 1 2
-    *          1 1 2 2
-    *          1 1 2 2
-    *          3 3 0 4
-    *          3 3 0 4
-    *          3 3 0 4
-    *          0 0 6 6
-    *          5 5 6 6
-    *          0 0 6 6
-    */
-    for (j=0; j<9; j++)
-    {
-         for (i=0; i<4; i++) printf (" %d", all_data[j][i]);
-         printf ("\n");
-=======
      * Print out what we have read.
      * The following information should be displayed:
      *
@@ -395,81 +231,35 @@ main()
         for (i = 0; i < 4; i++)
             printf(" %d", all_data[j][i]);
         printf("\n");
->>>>>>> branch 'master-merge-ex' of https://github.com/byrnHDF/hdf4.git
     }
 
     /*
-<<<<<<< HEAD
-    * Read chunk with the coordinates (2,0) and display it.
-    */
-=======
      * Read chunk with the coordinates (2,0) and display it.
      */
->>>>>>> branch 'master-merge-ex' of https://github.com/byrnHDF/hdf4.git
     origin[0] = 2;
     origin[1] = 0;
-<<<<<<< HEAD
-    status = SDreadchunk (sds_id, origin, chunk_out);
-    printf (" Chunk (2,0) \n");
-    for (j=0; j<3; j++)
-    {
-         for (i=0; i<2; i++) printf (" %d", chunk_out[j][i]);
-         printf ("\n");
-=======
     status    = SDreadchunk(sds_id, origin, chunk_out);
     printf(" Chunk (2,0) \n");
     for (j = 0; j < 3; j++) {
         for (i = 0; i < 2; i++)
             printf(" %d", chunk_out[j][i]);
         printf("\n");
->>>>>>> branch 'master-merge-ex' of https://github.com/byrnHDF/hdf4.git
     }
 
     /*
-<<<<<<< HEAD
-    * Read chunk with the coordinates (1,1) and display it.
-    */
-=======
      * Read chunk with the coordinates (1,1) and display it.
      */
->>>>>>> branch 'master-merge-ex' of https://github.com/byrnHDF/hdf4.git
     origin[0] = 1;
     origin[1] = 1;
-<<<<<<< HEAD
-    status = SDreadchunk (sds_id, origin, chunk_out);
-    printf (" Chunk (1,1) \n");
-    for (j=0; j<3; j++)
-    {
-         for (i=0; i<2; i++) printf (" %d", chunk_out[j][i]);
-         printf ("\n");
-=======
     status    = SDreadchunk(sds_id, origin, chunk_out);
     printf(" Chunk (1,1) \n");
     for (j = 0; j < 3; j++) {
         for (i = 0; i < 2; i++)
             printf(" %d", chunk_out[j][i]);
         printf("\n");
->>>>>>> branch 'master-merge-ex' of https://github.com/byrnHDF/hdf4.git
     }
 
     /*  The following information is displayed:
-<<<<<<< HEAD
-    *
-    *   Chunk (2,0)
-    *   0 0
-    *   5 5
-    *   0 0
-    *   Chunk (1,1)
-    *   0 4
-    *   0 4
-    *   0 4
-    */
-
-    /*
-    * Terminate access to the data set.
-    */
-    status = SDendaccess (sds_id);
-=======
      *
      *   Chunk (2,0)
      *   0 0
@@ -480,7 +270,6 @@ main()
      *   0 4
      *   0 4
      */
->>>>>>> branch 'master-merge-ex' of https://github.com/byrnHDF/hdf4.git
 
     /*
      * Terminate access to the data set.
