@@ -148,51 +148,6 @@ if (HDF4_PACK_EXAMPLES)
       COMPONENT hdfdocuments
   )
 
-  option (EXAMPLES_DOWNLOAD "Download to use released examples files" OFF)
-  if (EXAMPLES_DOWNLOAD)
-    option (EXAMPLES_USE_RELEASE_NAME "Use the released examples artifact name" OFF)
-    if (EXAMPLES_USE_RELEASE_NAME)
-      set (EXAMPLES_NAME ${EXAMPLES_TGZ_ORIGNAME})
-    else ()
-      set (EXAMPLES_NAME ${HDF4_EXAMPLES_COMPRESSED})
-    endif ()
-    if (NOT EXAMPLES_USE_LOCALCONTENT)
-      set (EXAMPLES_URL ${EXAMPLES_TGZ_ORIGPATH}/${EXAMPLES_NAME})
-      file (DOWNLOAD ${EXAMPLES_URL} ${HDF4_BINARY_DIR}/${HDF4_EXAMPLES_COMPRESSED} STATUS EX_DL)
-      message (STATUS "Examples file is ${EXAMPLES_URL} STATUS=${EX_DL}")
-    else ()
-      set (EXAMPLES_URL ${TGZPATH}/${EXAMPLES_NAME})
-      file (COPY_FILE ${EXAMPLES_URL} ${HDF4_BINARY_DIR}/${HDF4_EXAMPLES_COMPRESSED} RESULT EX_DL)
-      message (STATUS "Examples file is ${EXAMPLES_URL} RESULT=${EX_DL}")
-    endif ()
-    if (EXISTS "${HDF4_BINARY_DIR}/${HDF4_EXAMPLES_COMPRESSED}")
-      execute_process(
-          COMMAND ${CMAKE_COMMAND} -E tar xzf ${HDF4_EXAMPLES_COMPRESSED}
-          WORKING_DIRECTORY ${HDF4_BINARY_DIR}
-          COMMAND_ECHO STDOUT
-      )
-    endif ()
-  else ()
-    if (EXISTS "${HDF4_EXAMPLES_COMPRESSED_DIR}/${HDF4_EXAMPLES_COMPRESSED}")
-      execute_process(
-          COMMAND ${CMAKE_COMMAND} -E tar xzf ${HDF4_EXAMPLES_COMPRESSED_DIR}/${HDF4_EXAMPLES_COMPRESSED}
-          WORKING_DIRECTORY ${HDF4_BINARY_DIR}
-          COMMAND_ECHO STDOUT
-      )
-    endif ()
-  endif ()
-  get_filename_component (EX_LAST_EXT ${HDF4_EXAMPLES_COMPRESSED} LAST_EXT)
-  if (${EX_LAST_EXT} STREQUAL ".zip")
-    get_filename_component (EX_DIR_NAME ${HDF4_EXAMPLES_COMPRESSED} NAME_WLE)
-  else ()
-    get_filename_component (EX_DIR_NAME ${HDF4_EXAMPLES_COMPRESSED} NAME_WLE)
-    get_filename_component (EX_DIR_NAME ${EX_DIR_NAME} NAME_WLE)
-  endif ()
-  execute_process(
-      COMMAND ${CMAKE_COMMAND} -E rename ${EX_DIR_NAME} HDF4Examples
-      WORKING_DIRECTORY ${HDF4_BINARY_DIR}
-      COMMAND_ECHO STDOUT
-  )
   install (
     DIRECTORY ${HDF4_BINARY_DIR}/HDF4Examples
     DESTINATION ${HDF4_INSTALL_DATA_DIR}
