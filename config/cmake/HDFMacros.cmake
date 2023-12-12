@@ -469,9 +469,7 @@ macro (HDF_DIR_PATHS package_prefix)
   endif ()
 
   SET_HDF_BUILD_TYPE()
-#-----------------------------------------------------------------------------
-# Setup output Directories
-#-----------------------------------------------------------------------------
+
   SET_HDF_OUTPUT_DIRS(${package_prefix})
 
   include (FetchContent)
@@ -491,19 +489,15 @@ endmacro ()
 
 macro (ADD_H4_FLAGS h4_flag_var infile)
   file (STRINGS ${infile} TEST_FLAG_STREAM)
-  #message (TRACE "TEST_FLAG_STREAM=${TEST_FLAG_STREAM}")
   list (LENGTH TEST_FLAG_STREAM len_flag)
   if (len_flag GREATER 0)
     math (EXPR _FP_LEN "${len_flag} - 1")
     foreach (line RANGE 0 ${_FP_LEN})
       list (GET TEST_FLAG_STREAM ${line} str_flag)
       string (REGEX REPLACE "^#.*" "" str_flag "${str_flag}")
-      #message (TRACE "str_flag=${str_flag}")
       if (str_flag)
         list (APPEND ${h4_flag_var} "${str_flag}")
       endif ()
     endforeach ()
   endif ()
-  #message (TRACE "h4_flag_var=${${h4_flag_var}}")
 endmacro ()
-

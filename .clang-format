@@ -24,17 +24,6 @@ AllowShortFunctionsOnASingleLine: None
 AlwaysBreakAfterReturnType: AllDefinitions
 # Can enable the following section when llvm 12.x is out
 #AttributeMacros:
-#  - H5_ATTR_FORMAT
-#  - H5_ATTR_UNUSED
-#  - H5_ATTR_DEPRECATED_USED
-#  - H5_ATTR_NDEBUG_UNUSED
-#  - H5_ATTR_DEBUG_API_USED
-#  - H5_ATTR_PARALLEL_UNUSED
-#  - H5_ATTR_PARALLEL_USED
-#  - H5_ATTR_NORETURN
-#  - H5_ATTR_CONST
-#  - H5_ATTR_PURE
-#  - H5_ATTR_FALLTHROUGH
 ForEachMacros: ['ALL_MEMBERS', 'UNIQUE_MEMBERS']
 IncludeCategories:
   - Regex:           '^"(llvm|llvm-c|clang|clang-c)/'
@@ -46,7 +35,7 @@ IncludeCategories:
   - Regex:           '.*'
     Priority:        0
     SortPriority:    0
-  - Regex:           '^H5*.*'
+  - Regex:           '^H4*.*'
     Priority:        1
     SortPriority:    0
   - Regex:           'private.*'
@@ -58,8 +47,6 @@ IndentCaseLabels: true
 IndentGotoLabels: false
 #llvm11: IndentExternBlock: AfterExternBlock
 #llvm11: InsertTrailingCommas: None
-MacroBlockBegin: "^BEGIN_FUNC"
-MacroBlockEnd: "^END_FUNC"
 ObjCBlockIndentWidth: 4
 #llvm11: ObjCBreakBeforeNestedBlockParam: true
 ReflowComments:  true
