@@ -15,22 +15,23 @@ import hdf.hdflib.HDFLibrary;
 
 public class h4jex_AN_create_annotation {
 
-private static String  FILE_NAME =     "h4jex_AN_create_annotation.hdf";
-private static String  VG_NAME =       "AN Vgroup";
-private static String  FILE_LABEL_TXT = "General HDF objects";
-private static String  FILE_DESC_TXT = "This is an HDF file that contains general HDF objects";
-private static String  DATA_LABEL_TXT = "Common AN Vgroup";
-private static String  DATA_DESC_TXT = "This is a vgroup that is used to test data annotations";
+    private static String FILE_NAME      = "h4jex_AN_create_annotation.hdf";
+    private static String VG_NAME        = "AN Vgroup";
+    private static String FILE_LABEL_TXT = "General HDF objects";
+    private static String FILE_DESC_TXT  = "This is an HDF file that contains general HDF objects";
+    private static String DATA_LABEL_TXT = "Common AN Vgroup";
+    private static String DATA_DESC_TXT  = "This is a vgroup that is used to test data annotations";
 
-    public static void main(String args[]) throws Exception {
+    public static void main(String args[]) throws Exception
+    {
         //************************* Variable declaration **************************
 
-        long file_id; // HDF file identifier
-        long an_id; // AN interface identifier
+        long file_id;       // HDF file identifier
+        long an_id;         // AN interface identifier
         long file_label_id; // file label identifier
-        long file_desc_id; // file description identifier
+        long file_desc_id;  // file description identifier
         long data_label_id; // data label identifier
-        long data_desc_id; // data description identifier
+        long data_desc_id;  // data description identifier
         long vgroup_id;
         int vgroup_tag;
         int vgroup_ref;
@@ -92,11 +93,13 @@ private static String  DATA_DESC_TXT = "This is a vgroup that is used to test da
 
                                 // Create the data label for the vgroup identified by its tag
                                 // and ref number.
-                                data_label_id = HDFLibrary.ANcreate(an_id, (short)vgroup_tag, (short)vgroup_ref, HDFConstants.AN_DATA_LABEL);
+                                data_label_id = HDFLibrary.ANcreate(
+                                    an_id, (short)vgroup_tag, (short)vgroup_ref, HDFConstants.AN_DATA_LABEL);
                                 try {
                                     // Write the annotation text to the data label.
 
-                                    HDFLibrary.ANwriteann(data_label_id, DATA_LABEL_TXT, DATA_LABEL_TXT.length());
+                                    HDFLibrary.ANwriteann(data_label_id, DATA_LABEL_TXT,
+                                                          DATA_LABEL_TXT.length());
                                 }
                                 catch (Exception e) {
                                     e.printStackTrace();
@@ -105,10 +108,13 @@ private static String  DATA_DESC_TXT = "This is a vgroup that is used to test da
                                 try {
                                     // Create the data description for the vgroup identified by its tag
                                     // and ref number.
-                                    data_desc_id = HDFLibrary.ANcreate(an_id, (short)vgroup_tag, (short)vgroup_ref, HDFConstants.AN_DATA_DESC);
+                                    data_desc_id =
+                                        HDFLibrary.ANcreate(an_id, (short)vgroup_tag, (short)vgroup_ref,
+                                                            HDFConstants.AN_DATA_DESC);
                                     try {
                                         // Write the annotation text to the data description.
-                                        HDFLibrary.ANwriteann(data_desc_id, DATA_DESC_TXT, DATA_DESC_TXT.length());
+                                        HDFLibrary.ANwriteann(data_desc_id, DATA_DESC_TXT,
+                                                              DATA_DESC_TXT.length());
                                     }
                                     catch (Exception e) {
                                         e.printStackTrace();
