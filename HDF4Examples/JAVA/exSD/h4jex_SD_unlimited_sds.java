@@ -15,23 +15,24 @@ import hdf.hdflib.HDFLibrary;
 
 public class h4jex_SD_unlimited_sds {
 
-private static String  FILE_NAME =     "h4jex_SD_unlimited_sds.hdf";
-private static String  SDS_NAME =      "AppendableData";
-private static int     X_LENGTH = 10;
-private static int     Y_LENGTH = 10;
-private static int     RANK = 2;
+    private static String FILE_NAME = "h4jex_SD_unlimited_sds.hdf";
+    private static String SDS_NAME  = "AppendableData";
+    private static int X_LENGTH     = 10;
+    private static int Y_LENGTH     = 10;
+    private static int RANK         = 2;
 
-    public static void main(String args[]) throws Exception {
+    public static void main(String args[]) throws Exception
+    {
         //************************* Variable declaration **************************
 
         long sd_id;
         long sds_id;
         int sds_index;
-        int[] dim_sizes = new int[2];
-        int[][] data = new int[Y_LENGTH][X_LENGTH];
+        int[] dim_sizes   = new int[2];
+        int[][] data      = new int[Y_LENGTH][X_LENGTH];
         int[] append_data = new int[X_LENGTH];
-        int[] start = new int[2];
-        int[] edges = new int[2];
+        int[] start       = new int[2];
+        int[] edges       = new int[2];
 
         //********************** End of variable declaration **********************
 
@@ -63,8 +64,8 @@ private static int     RANK = 2;
             // Define the location and the size of the data to be written
             // to the data set.
             start[0] = start[1] = 0;
-            edges[0] = Y_LENGTH;
-            edges[1] = X_LENGTH;
+            edges[0]            = Y_LENGTH;
+            edges[1]            = X_LENGTH;
 
             try {
                 // Write the data.
