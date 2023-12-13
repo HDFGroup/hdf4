@@ -611,20 +611,12 @@ add_subdirectory (mfhdf)
 #-----------------------------------------------------------------------------
 # Option to build HDF4 Examples
 #-----------------------------------------------------------------------------
-if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/examples")
-  option (HDF4_BUILD_EXAMPLES  "Build HDF4 Examples" OFF)
+if (EXISTS "${HDF4_SOURCE_DIR}/HDF4Examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/HDF4Examples")
+  option (HDF4_BUILD_EXAMPLES  "Build HDF4 Library Examples" ON)
   if (HDF4_BUILD_EXAMPLES)
-    if (HDF4_BUILD_FORTRAN)
-      if (EXISTS "${HDF4_SOURCE_DIR}/hdf/fortran/examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/hdf/fortran/examples")
-        add_subdirectory (hdf/fortran/examples)
-      endif ()
-      if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/fortran/examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/fortran/examples")
-        add_subdirectory (mfhdf/fortran/examples)
-      endif ()
-    endif ()
-
-    add_subdirectory (hdf/examples)
-    add_subdirectory (mfhdf/examples)
+    include (${HDF_RESOURCES_DIR}/HDF4ExampleCache.cmake)
+    set (HDF4_VERSION ${HDF4_PACKAGE_VERSION})
+    add_subdirectory (HDF4Examples)
   endif ()
 endif ()
 
