@@ -609,6 +609,16 @@ add_subdirectory (hdf)
 add_subdirectory (mfhdf)
 
 #-----------------------------------------------------------------------------
+# Option to build HDF4 Java Library
+#-----------------------------------------------------------------------------
+if (EXISTS "${HDF4_SOURCE_DIR}/java" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/java")
+  option (HDF4_BUILD_JAVA  "Build Java HDF Library" OFF)
+  if (HDF4_BUILD_JAVA)
+    add_subdirectory (java)
+  endif ()
+endif ()
+
+#-----------------------------------------------------------------------------
 # Option to build HDF4 Examples
 #-----------------------------------------------------------------------------
 if (EXISTS "${HDF4_SOURCE_DIR}/HDF4Examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/HDF4Examples")
@@ -617,16 +627,6 @@ if (EXISTS "${HDF4_SOURCE_DIR}/HDF4Examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR
     include (${HDF_RESOURCES_DIR}/HDF4ExampleCache.cmake)
     set (HDF4_VERSION ${HDF4_PACKAGE_VERSION})
     add_subdirectory (HDF4Examples)
-  endif ()
-endif ()
-
-#-----------------------------------------------------------------------------
-# Option to build HDF4 Java Library
-#-----------------------------------------------------------------------------
-if (EXISTS "${HDF4_SOURCE_DIR}/java" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/java")
-  option (HDF4_BUILD_JAVA  "Build Java HDF Library" OFF)
-  if (HDF4_BUILD_JAVA)
-    add_subdirectory (java)
   endif ()
 endif ()
 
