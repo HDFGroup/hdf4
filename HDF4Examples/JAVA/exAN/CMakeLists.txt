@@ -20,7 +20,7 @@ else ()
 endif ()
 
 set (CMAKE_JAVA_INCLUDE_PATH "${HDF4_JAVA_INCLUDE_DIRS}")
-set (CMD_ARGS "-Dhdf.hdflib.H4.loadLibraryName=${H4EX_JAVA_LIBRARY}$<$<OR:$<CONFIG:Debug>,$<CONFIG:Developer>>:${CMAKE_DEBUG_POSTFIX}>;")
+set (CMD_ARGS "-Dhdf.hdflib.HDFLibrary.loadLibraryName=${H4EX_JAVA_LIBRARY}$<$<CONFIG:Debug>:${CMAKE_DEBUG_POSTFIX}>;")
 
 set (CMAKE_JAVA_CLASSPATH ".")
 foreach (CMAKE_INCLUDE_PATH ${CMAKE_JAVA_INCLUDE_PATH})
@@ -95,5 +95,4 @@ if (H4EX_BUILD_TESTING)
     set (last_test "${EXAMPLE_VARNAME}_jnative-h4-${example_name}-copy-objects")
     ADD_H4_TEST (${example_name} 0)
   endforeach ()
-
 endif ()
