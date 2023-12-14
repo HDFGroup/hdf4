@@ -47,8 +47,8 @@ if (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "GIT" OR HDF4_ALLOW_EXTERNAL_SUPPORT MAT
     set (JPEG_BRANCH ${JPEG_GIT_BRANCH})
     set (ZLIB_URL ${ZLIB_GIT_URL} CACHE STRING "Path to zlib git repository")
     set (ZLIB_BRANCH ${ZLIB_GIT_BRANCH})
-    set (SZIP_URL ${SZIP_GIT_URL} CACHE STRING "Path to szip git repository")
-    set (SZIP_BRANCH ${SZIP_GIT_BRANCH})
+    set (SZIP_URL ${LIBAEC_GIT_URL} CACHE STRING "Path to szip git repository")
+    set (SZIP_BRANCH ${LIBAEC_GIT_BRANCH})
   elseif (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
     if (NOT TGZPATH)
       set (TGZPATH ${HDF4_SOURCE_DIR})
@@ -90,7 +90,7 @@ endif ()
 #-----------------------------------------------------------------------------
 # Option for LibJpeg support
 #-----------------------------------------------------------------------------
-option (HDF4_ENABLE_JPEG_LIB_SUPPORT "Enable libjpeg" OFF)
+option (HDF4_ENABLE_JPEG_LIB_SUPPORT "Enable libjpeg required" ON)
 if (HDF4_ENABLE_JPEG_LIB_SUPPORT)
   if (NOT H4_JPEGLIB_HEADER)
     if (NOT JPEG_USE_EXTERNAL)
@@ -127,8 +127,10 @@ if (HDF4_ENABLE_JPEG_LIB_SUPPORT)
     endif ()
   else ()
     set (HDF4_ENABLE_JPEG_LIB_SUPPORT OFF CACHE BOOL "" FORCE)
-    message (FATAL_ERROR " JPEG support in HDF4 was requested but not found")
+    message (FATAL_ERROR " JPEG support in HDF4 was requested and required but not found")
   endif ()
+else ()
+  message (FATAL_ERROR " JPEG support in HDF4 is required")
 endif ()
 
 #-----------------------------------------------------------------------------
