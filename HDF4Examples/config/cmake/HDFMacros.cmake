@@ -28,7 +28,7 @@ macro (SET_HDF_OUTPUT_DIRS package_prefix)
     endif ()
   else ()
     # if we are externally configured, but the project uses old cmake scripts
-    # this may not be set and utilities like H5detect will fail
+    # this may not be set and some utilities may fail
     if (NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
       set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
     endif ()
@@ -80,8 +80,8 @@ macro (HDFTEST_COPY_FILE src dest target)
 endmacro ()
 
 macro (HDF_DIR_PATHS package_prefix)
-  option (H5EX_USE_GNU_DIRS "TRUE to use GNU Coding Standard install directory variables, FALSE to use historical settings" FALSE)
-  if (H5EX_USE_GNU_DIRS)
+  option (H4EX_USE_GNU_DIRS "TRUE to use GNU Coding Standard install directory variables, FALSE to use historical settings" FALSE)
+  if (H4EX_USE_GNU_DIRS)
     include(GNUInstallDirs)
     if (NOT ${package_prefix}_INSTALL_BIN_DIR)
       set (${package_prefix}_INSTALL_BIN_DIR ${CMAKE_INSTALL_BINDIR})

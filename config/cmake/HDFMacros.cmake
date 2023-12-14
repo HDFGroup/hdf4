@@ -28,7 +28,7 @@ macro (SET_HDF_OUTPUT_DIRS package_prefix)
     endif ()
   else ()
     # if we are externally configured, but the project uses old cmake scripts
-    # this may not be set and utilities like H5detect will fail
+    # this may not be set and some utilities may fail
     if (NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
       set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
     endif ()

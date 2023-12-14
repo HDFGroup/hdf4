@@ -9,9 +9,9 @@
       "hidden": true,
       "cacheVariables": {
         "CPACK_PACKAGE_VERSION": "3.10.2",
-        "HDF4_NAMESPACE": {"type": "STRING", "value": "hdf5::"},
-        "HDF4_PACKAGE_NAME": {"type": "STRING", "value": "hdf5"},
-        "H5EX_BUILD_TESTING": "ON"
+        "HDF4_NAMESPACE": {"type": "STRING", "value": "hdf4::"},
+        "HDF4_PACKAGE_NAME": {"type": "STRING", "value": "hdf4"},
+        "H4EX_BUILD_TESTING": "ON"
       }
     },
     {
