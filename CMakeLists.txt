@@ -264,6 +264,13 @@ set (HDF4_PACKAGE_SOVERSION "${H4_VERS_MAJOR}.${H4_VERS_RELEASE}.${H4_VERS_MINOR
 set (HDF4_PACKAGE_SOVERSION_MAJOR "${H4_VERS_MAJOR}")
 
 #-----------------------------------------------------------------------------
+# Set variables needed for installation
+#-----------------------------------------------------------------------------
+set (HDF4_VERSION_STRING ${HDF4_PACKAGE_VERSION})
+set (HDF4_VERSION_MAJOR  ${HDF4_PACKAGE_VERSION_MAJOR})
+set (HDF4_VERSION_MINOR  ${HDF4_PACKAGE_VERSION_MINOR})
+
+#-----------------------------------------------------------------------------
 # Include some macros for reusable code
 #-----------------------------------------------------------------------------
 include (${HDF_RESOURCES_DIR}/HDFMacros.cmake)
@@ -447,7 +454,7 @@ if (MSVC)
 endif ()
 
 include (${HDF_RESOURCES_DIR}/HDFCompilerFlags.cmake)
-set (CMAKE_MODULE_PATH ${HDF_RESOURCES_DIR} ${HDF_RESOURCES_DIR} ${CMAKE_MODULE_PATH})
+set (CMAKE_MODULE_PATH ${HDF_RESOURCES_DIR} ${CMAKE_MODULE_PATH})
 
 #-----------------------------------------------------------------------------
 # Include user macros
@@ -602,32 +609,24 @@ add_subdirectory (hdf)
 add_subdirectory (mfhdf)
 
 #-----------------------------------------------------------------------------
-# Option to build HDF4 Examples
-#-----------------------------------------------------------------------------
-if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/examples")
-  option (HDF4_BUILD_EXAMPLES  "Build HDF4 Examples" OFF)
-  if (HDF4_BUILD_EXAMPLES)
-    if (HDF4_BUILD_FORTRAN)
-      if (EXISTS "${HDF4_SOURCE_DIR}/hdf/fortran/examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/hdf/fortran/examples")
-        add_subdirectory (hdf/fortran/examples)
-      endif ()
-      if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/fortran/examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/fortran/examples")
-        add_subdirectory (mfhdf/fortran/examples)
-      endif ()
-    endif ()
-
-    add_subdirectory (hdf/examples)
-    add_subdirectory (mfhdf/examples)
-  endif ()
-endif ()
-
-#-----------------------------------------------------------------------------
 # Option to build HDF4 Java Library
 #-----------------------------------------------------------------------------
 if (EXISTS "${HDF4_SOURCE_DIR}/java" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/java")
   option (HDF4_BUILD_JAVA  "Build Java HDF Library" OFF)
   if (HDF4_BUILD_JAVA)
     add_subdirectory (java)
+  endif ()
+endif ()
+
+#-----------------------------------------------------------------------------
+# Option to build HDF4 Examples
+#-----------------------------------------------------------------------------
+if (EXISTS "${HDF4_SOURCE_DIR}/HDF4Examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/HDF4Examples")
+  option (HDF4_BUILD_EXAMPLES  "Build HDF4 Library Examples" ON)
+  if (HDF4_BUILD_EXAMPLES)
+    include (${HDF_RESOURCES_DIR}/HDF4ExampleCache.cmake)
+    set (HDF4_VERSION ${HDF4_PACKAGE_VERSION})
+    add_subdirectory (HDF4Examples)
   endif ()
 endif ()
 

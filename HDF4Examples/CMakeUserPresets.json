@@ -1,0 +1,240 @@
+{
+  "version": 6,
+  "configurePresets": [
+    {
+      "name": "my-HDF4216",
+      "hidden": true,
+      "environment": {
+        "HDF4_ROOT": "${sourceParentDir}/temp/HDF_Group/HDF/4.2.16",
+      },
+      "cacheVariables": {
+        "HDF4_ROOT": {"type": "STRING", "value": "${sourceParentDir}/temp/HDF_Group/HDF/4.2.16"},
+        "HDF_BUILD_FORTRAN": "ON",
+        "HDF_BUILD_JAVA": "ON",
+        "H4EX_BUILD_TESTING": "ON"
+      }
+    },
+    {
+      "name": "my-HDF4Dev",
+      "hidden": true,
+      "environment": {
+        "HDF4_ROOT": "${sourceParentDir}/temp/HDF_Group/HDF/4.2.17",
+      },
+      "cacheVariables": {
+        "HDF4_ROOT": {"type": "STRING", "value": "${sourceParentDir}/temp/HDF_Group/HDF/4.2.17"},
+        "HDF_BUILD_FORTRAN": "ON",
+        "HDF_BUILD_JAVA": "ON",
+        "H4EX_BUILD_TESTING": "ON"
+      }
+    },
+    {
+      "name": "my-StdShar",
+      "hidden": true,
+      "inherits": ["ci-base", "ci-base-examples", "ci-StdPlugins"],
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": "ON",
+        "USE_SHARED_LIBS": "ON"
+      }
+    },
+    {
+      "name": "my-StdShar-MSVC",
+      "description": "MSVC Standard Config for x64 (Release)",
+      "inherits": [
+        "ci-x64-Release-MSVC",
+        "my-StdShar",
+        "my-HDF4Dev"
+      ]
+    },
+    {
+      "name": "my-StdShar-Clang",
+      "description": "Clang Standard Config for x64 (Release)",
+      "inherits": [
+        "ci-x64-Release-Clang",
+        "my-StdShar",
+        "my-HDF4Dev"
+      ]
+    },
+    {
+      "name": "my-StdShar-GNUC",
+      "description": "GNUC Standard Config for x64 (Release)",
+      "inherits": [
+        "ci-x64-Release-GNUC",
+        "my-StdShar",
+        "my-HDF4Dev"
+      ]
+    },
+    {
+      "name": "my-4216Shar-MSVC",
+      "description": "MSVC 4.2.16 Config for x64 (Release)",
+      "inherits": [
+        "ci-x64-Release-MSVC",
+        "my-StdShar",
+        "my-HDF4216"
+      ]
+    },
+    {
+      "name": "my-4216Shar-Clang",
+      "description": "Clang 4.2.16 Config for x64 (Release)",
+      "inherits": [
+        "ci-x64-Release-Clang",
+        "my-StdShar",
+        "my-HDF4216"
+      ]
+    },
+    {
+      "name": "my-4216Shar-GNUC",
+      "description": "GNUC 4.2.16 Config for x64 (Release)",
+      "inherits": [
+        "ci-x64-Release-GNUC",
+        "my-StdShar",
+        "my-HDF4216"
+      ]
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "my-StdShar-MSVC",
+      "description": "MSVC Standard Build for x64 (Release)",
+      "configurePreset": "my-StdShar-MSVC",
+      "inherits": [
+        "ci-x64-Release-MSVC"
+      ]
+    },
+    {
+      "name": "my-StdShar-Clang",
+      "description": "Clang Standard Build for x64 (Release)",
+      "configurePreset": "my-StdShar-Clang",
+      "inherits": [
+        "ci-x64-Release-Clang"
+      ]
+    },
+    {
+      "name": "my-StdShar-GNUC",
+      "description": "GNUC Standard Build for x64 (Release)",
+      "configurePreset": "my-StdShar-GNUC",
+      "verbose": true,
+      "inherits": [
+        "ci-x64-Release-GNUC"
+      ]
+    },
+    {
+      "name": "my-4216Shar-MSVC",
+      "description": "MSVC 4.2.16 Build for x64 (Release)",
+      "configurePreset": "my-4216Shar-MSVC",
+      "inherits": [
+        "ci-x64-Release-MSVC"
+      ]
+    },
+    {
+      "name": "my-4216Shar-Clang",
+      "description": "Clang 4.2.16 Build for x64 (Release)",
+      "configurePreset": "my-4216Shar-Clang",
+      "inherits": [
+        "ci-x64-Release-Clang"
+      ]
+    },
+    {
+      "name": "my-4216Shar-GNUC",
+      "description": "GNUC 4.2.16 Build for x64 (Release)",
+      "configurePreset": "my-4216Shar-GNUC",
+      "verbose": true,
+      "inherits": [
+        "ci-x64-Release-GNUC"
+      ]
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "my-StdShar-MSVC",
+      "configurePreset": "my-StdShar-MSVC",
+      "inherits": [
+        "ci-x64-Release-MSVC"
+      ]
+    },
+    {
+      "name": "my-StdShar-Clang",
+      "configurePreset": "my-StdShar-Clang",
+      "inherits": [
+        "ci-x64-Release-Clang"
+      ]
+    },
+    {
+      "name": "my-StdShar-GNUC",
+      "configurePreset": "my-StdShar-GNUC",
+      "inherits": [
+        "ci-x64-Release-GNUC"
+      ]
+    },
+    {
+      "name": "my-4216Shar-MSVC",
+      "configurePreset": "my-4216Shar-MSVC",
+      "inherits": [
+        "ci-x64-Release-MSVC"
+      ]
+    },
+    {
+      "name": "my-4216Shar-Clang",
+      "configurePreset": "my-4216Shar-Clang",
+      "inherits": [
+        "ci-x64-Release-Clang"
+      ]
+    },
+    {
+      "name": "my-4216Shar-GNUC",
+      "configurePreset": "my-4216Shar-GNUC",
+      "inherits": [
+        "ci-x64-Release-GNUC"
+      ]
+    }
+  ],
+  "workflowPresets": [
+    {
+      "name": "my-StdShar-MSVC",
+      "steps": [
+        {"type": "configure", "name": "my-StdShar-MSVC"},
+        {"type": "build", "name": "my-StdShar-MSVC"},
+        {"type": "test", "name": "my-StdShar-MSVC"}
+      ]
+    },
+    {
+      "name": "my-StdShar-Clang",
+      "steps": [
+        {"type": "configure", "name": "my-StdShar-Clang"},
+        {"type": "build", "name": "my-StdShar-Clang"},
+        {"type": "test", "name": "my-StdShar-Clang"}
+      ]
+    },
+    {
+      "name": "my-StdShar-GNUC",
+      "steps": [
+        {"type": "configure", "name": "my-StdShar-GNUC"},
+        {"type": "build", "name": "my-StdShar-GNUC"},
+        {"type": "test", "name": "my-StdShar-GNUC"}
+      ]
+    },
+    {
+      "name": "my-4216Shar-MSVC",
+      "steps": [
+        {"type": "configure", "name": "my-4216Shar-MSVC"},
+        {"type": "build", "name": "my-4216Shar-MSVC"},
+        {"type": "test", "name": "my-4216Shar-MSVC"}
+      ]
+    },
+    {
+      "name": "my-4216Shar-Clang",
+      "steps": [
+        {"type": "configure", "name": "my-4216Shar-Clang"},
+        {"type": "build", "name": "my-4216Shar-Clang"},
+        {"type": "test", "name": "my-4216Shar-Clang"}
+      ]
+    },
+    {
+      "name": "my-4216Shar-GNUC",
+      "steps": [
+        {"type": "configure", "name": "my-4216Shar-GNUC"},
+        {"type": "build", "name": "my-4216Shar-GNUC"},
+        {"type": "test", "name": "my-4216Shar-GNUC"}
+      ]
+    }
+  ]
+}
