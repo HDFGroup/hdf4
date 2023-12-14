@@ -737,7 +737,7 @@ if (WIN32)
 HDF4_ENABLE_NETCDF             "Build HDF4 versions of NetCDF-3 APIS"        ON
 ---------------- External Library Options ---------------------
 HDF4_ALLOW_EXTERNAL_SUPPORT  "Allow External Library Building"        "NO"
-HDF4_ENABLE_JPEG_LIB_SUPPORT "Enable libjpeg"                         ON
+HDF4_ENABLE_JPEG_LIB_SUPPORT "Enable libjpeg required"                ON
 HDF4_ENABLE_SZIP_SUPPORT     "Use SZip Filter"                        OFF
 HDF4_ENABLE_Z_LIB_SUPPORT    "Enable Zlib Filters"                    ON
 JPEG_USE_EXTERNAL            "Use External Library Building for JPEG" 0
