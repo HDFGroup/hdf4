@@ -1,5 +1,5 @@
 *************************************************************************
-* Build and Install HDF4 C, C++, Fortran Libraries and tools with CMake *
+* Build and Install HDF4 C and Fortran Libraries and tools with CMake *
 *************************************************************************
 
                      Table of Contents
@@ -44,7 +44,7 @@ Note:
 II. Quick Step Building HDF4 Libraries with CMake Script Mode
 ========================================================================
 This short set of instructions is written for users who want to quickly
-build the HDF4 C, C++, and Fortran shared libraries and tools
+build the HDF4 C and Fortran shared libraries and tools
 from the HDF4 source code package using the CMake tools. This procedure
 will use the default settings in the config/cmake/cacheinit.cmake file.
 HDF Group recommends using the ctest script mode to build HDF4.
@@ -80,10 +80,10 @@ To build HDF4 with the SZIP, ZLIB and JPEG external libraries you will need to:
 
    1. Change to the development directory "myhdfstuff".
 
-   2. Download the CMake-hdf-2.4.X.zip(.tar.gz) file to "myhdfstuff".
+   2. Download the CMake-hdf-4.2.X.zip(.tar.gz) file to "myhdfstuff".
       Uncompress the file.
 
-   3. Change to the source directory "hdf-2.4.x".
+   3. Change to the source directory "hdf-4.2.x".
       CTestScript.cmake file should not be modified.
 
    4. Edit the platform configuration file, HDF4options.cmake, if you want to change
