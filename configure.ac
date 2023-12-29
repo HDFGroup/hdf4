@@ -124,8 +124,8 @@ AC_SUBST([H4_JAVACFLAGS])
 AC_SUBST([H4_JAVAFLAGS])
 AC_SUBST([H4_LDFLAGS])
 
-## AM_CFLAGS (and company) are for CFLAGS that should be used on HDF5,
-## and WILL be exported to h5cc (or h5fc, etc) if set by configure.
+## AM_CFLAGS (and company) are for CFLAGS that should be used on HDF4,
+## and WILL be exported to h4cc (or h4fc, etc) if set by configure.
 AC_SUBST([AM_CFLAGS])
 AC_SUBST([AM_FCFLAGS])
 AC_SUBST([AM_CPPFLAGS])

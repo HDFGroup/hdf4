@@ -127,7 +127,7 @@ fi
 
 
 # Create the update commands
-CMDFILE=/tmp/h5redeploy.$$
+CMDFILE=/tmp/h4redeploy.$$
 touch $CMDFILE
 chmod 0600 $CMDFILE
 echo "/^prefix/c"                 >> $CMDFILE
