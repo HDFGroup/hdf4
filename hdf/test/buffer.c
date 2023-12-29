@@ -455,7 +455,7 @@ main(int argc, char *argv[])
 
     MESSAGE(6, printf("Starting buffered element test (elemsize=%d)\n", elemsize);)
 
-    if (Cache) /* turn on caching, unless we were instucted not to */
+    if (Cache) /* turn on caching, unless we were instructed not to */
         Hcache(CACHE_ALL_FILES, TRUE);
 
     /* fill the buffer with interesting data to compress */
