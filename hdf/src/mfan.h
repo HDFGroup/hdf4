@@ -138,7 +138,7 @@ HDFLIBAPI int32 ANend(int32 an_id /* IN: Annotation ID of file to close */);
 *******************************************************************************/
 HDFLIBAPI int32 ANcreate(int32    an_id,    /* IN: annotation interface ID */
                          uint16   elem_tag, /* IN: tag of item to be assigned annotation */
-                         uint16   elem_ref, /* IN: reference number of itme to be assigned ann*/
+                         uint16   elem_ref, /* IN: reference number of item to be assigned ann*/
                          ann_type type /* IN: annotation type */);
 
 /******************************************************************************
@@ -169,7 +169,7 @@ HDFLIBAPI int32 ANcreatef(int32    an_id, /* IN: annotation interface ID */
     An ID to an annotation type which can either be a label or description
 *******************************************************************************/
 HDFLIBAPI int32 ANselect(int32    an_id, /* IN: annotation interface ID */
-                         int32    index, /* IN: index of annottion to get ID for */
+                         int32    index, /* IN: index of annotation to get ID for */
                          ann_type type /* IN: annotation type */);
 
 /******************************************************************************
@@ -275,7 +275,7 @@ HDFLIBAPI intn ANendaccess(int32 ann_id /* IN: annotation id */);
    annotation. The position index is zero based
 
  RETURNS
-   A tag/ref pairt to an annotation type which can either be a
+   A tag/ref pair to an annotation type which can either be a
    label or description.
 
 *******************************************************************************/
@@ -322,7 +322,7 @@ HDFLIBAPI int32 ANtagref2id(int32  an_id,   /* IN  Annotation interface id */
    Translate annotation type to corresponding TAG.
 
  RETURNS
-   Returns TAG corresponding to annotatin type.
+   Returns TAG corresponding to annotation type.
 *******************************************************************************/
 HDFLIBAPI uint16 ANatype2tag(ann_type atype /* IN: Annotation type */);
 
@@ -334,7 +334,7 @@ HDFLIBAPI uint16 ANatype2tag(ann_type atype /* IN: Annotation type */);
    Translate annotation TAG to corresponding atype
 
  RETURNS
-   Returns type corresponding to annotatin TAG.
+   Returns type corresponding to annotation TAG.
 *******************************************************************************/
 HDFLIBAPI ann_type ANtag2atype(uint16 atag /* IN: annotation tag */);
 

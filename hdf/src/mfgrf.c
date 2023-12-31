@@ -29,7 +29,7 @@
  *  mggdid:     Call GRgetdimid to get a dimension ID for an image [Later]
  *  mgsdnam:    Call GRsetdimname to set a dimension's name [Later]
  *  mggdinf:    Call GRgetdiminfo to get information about a dimension [Later]
- *  mgid2rf:    Call GRidtoref to map an RI ID into a ref. # for annotating
+ *  mgid2rf:    Call GRidtoref to map an RI ID into a ref. # for annotationg
  *  mgr2idx:    Call GRreftoindex to map a ref. # into an index for the image
  *  mgrltil:    Call GRreqlutil to request the interlace of the next LUT read
  *  mgrimil:    Call GRreqimageil to request the interlace of the next image read
@@ -855,7 +855,7 @@ nmgcrchnk(intf *id, intf *start, void *num_data)
     if (!cstart)
         return FAIL;
 
-    /* Flip an array to account for array odering in Fortran and C */
+    /* Flip an array to account for array ordering in Fortran and C */
 
     for (i = 0; i < rank; i++)
         cstart[i] = start[rank - i - 1] - 1;

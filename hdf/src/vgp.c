@@ -1898,7 +1898,7 @@ DESCRIPTION
    design required the uniqueness. However, the current code allows
    duplication if NO_DUPLICATES is not defined. The SD interface needs
    this feature to create SDS's with duplicated dimensions. For example
-   a 3D SDS has dimensions "time", "presure" and "presure".)
+   a 3D SDS has dimensions "time", "pressure" and "pressure".)
   If error, returns FAIL or tag/ref is not inserted.
   If OK, returns the total number of tag/refs in the vgroup (a +ve integer).
   28-MAR-91 Jason Ng NCSA.

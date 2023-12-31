@@ -80,7 +80,24 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 stride[2],int32 count[2],void 
     - Writes image data to an RI.  Partial dataset writing and subsampling is
         allowed, but only with the dimensions of the dataset (ie. no UNLIMITED
         dimension support)
-intn GRreadimage(int32 riid,int32 start[2],int32 stride[2],int32 count[2],void * data)
+intn GRreadimage(int32 riid,int32 start[2],int32 stride[2],int32 count[2],void * data)-- Error Output :
+HDF5-DIAG: Error detected in HDF5 (1.15.0) thread 0:
+  #000: /home/buildbot/worker/hdf5trunk-StdShar-change-ubuntu2004/build/hdfsrc/src/H5O.c line 1770 in H5Ovisit3(): object iteration failed
+    major: Object header
+    minor: Iteration failed
+  #001: /home/buildbot/worker/hdf5trunk-StdShar-change-ubuntu2004/build/hdfsrc/src/H5VLcallback.c line 6095 in H5VL_object_specific(): object specific failed
+    major: Virtual Object Layer
+    minor: Can't operate on object
+  #002: /home/buildbot/worker/hdf5trunk-StdShar-change-ubuntu2004/build/hdfsrc/src/H5VLcallback.c line 6061 in H5VL__object_specific(): object specific failed
+    major: Virtual Object Layer
+    minor: Can't operate on object
+  #003: /home/buildbot/worker/hdf5trunk-StdShar-change-ubuntu2004/build/hdfsrc/src/H5VLnative_object.c line 397 in H5VL__native_object_specific(): object visitation failed
+    major: Object header
+    minor: Iteration failed
+  #004: /home/buildbot/worker/hdf5trunk-StdShar-change-ubuntu2004/build/hdfsrc/src/H5Oint.c line 2658 in H5O__visit(): can't visit objects
+    major: Object header
+    minor: Iteration failed
+
     - Read image data from an RI.  Partial reads and subsampling are allowed.
 intn GRendaccess(int32 riid)
     - End access to an RI.
@@ -95,7 +112,7 @@ int32 GRdiminfo(int32 dimid,char *name,int32 *size,int32 *n_attr)
 
 ID/Ref/Index Functions:
 uint16 GRidtoref(int32 riid)
-    - Maps an riid to a reference # for annotating or including in a Vgroup.
+    - Maps an riid to a reference # for annotationg or including in a Vgroup.
 int32 GRreftoindex(int32 hdf_file_id,uint16 ref)
     - Maps the reference # of an RI into an index which can be used with
         GRselect.
@@ -110,7 +127,7 @@ LUT/Palette I/O Functions:
 int32 GRgetlutid(int32 riid,int32 index)
     - Get a palette id ('palid') for an RI.
 uint16 GRluttoref(int32 lutid)
-    - Maps a lutid to a reference # for annotating of including in a Vgroup.
+    - Maps a lutid to a reference # for annotationg of including in a Vgroup.
 intn GRgetlutinfo(int32 lutid,int32 *ncomp,int32 *nt,int32 *il,int32 *nentries)
     - Gets information about a palette.
 intn GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,void * data)
@@ -3275,7 +3292,7 @@ done:
     GRidtoref
 
  PURPOSE
-    Maps an RI ID to a reference # for annotating or including in a Vgroup.
+    Maps an RI ID to a reference # for annotationg or including in a Vgroup.
 
  USAGE
     uint16 GRidtoref(riid)
@@ -3285,7 +3302,7 @@ done:
     A valid reference # on success or 0
 
  DESCRIPTION
-    Maps an riid to a reference # for annotating or including in a Vgroup.
+    Maps an riid to a reference # for annotationg or including in a Vgroup.
 
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
@@ -5012,7 +5029,7 @@ GRPshutdown(void)
       The image currently cannot be special already.  i.e. NBIT,
       COMPRESSED, or EXTERNAL. This is an Error.
 
-      The definition of the HDF_CHUNK_DEF union with relvant fields is:
+      The definition of the HDF_CHUNK_DEF union with relevant fields is:
 
       typedef union hdf_chunk_def_u
       {
@@ -5027,7 +5044,7 @@ GRPshutdown(void)
 
       } HDF_CHUNK_DEF
 
-      The variable agruement 'flags' is a bit-or'd value which can currently be
+      The variable argument 'flags' is a bit-or'd value which can currently be
       'HDF_CHUNK' or 'HDF_CHUNK | HDF_COMP'.
 
       The simplest is the 'chunk_lengths' array specifying chunk
@@ -5656,7 +5673,7 @@ GRwritechunk(int32       riid,   /* IN: access aid to GR */
     } /* end if Hinquire */
 
 done:
-    /* dont forget to free up info is special info block
+    /* don't forget to free up info is special info block
        This space was allocated by the library */
     free(info_block.cdims);
 
@@ -5853,7 +5870,7 @@ GRreadchunk(int32  riid,   /* IN: access aid to GR */
     } /* end if Hinquire */
 
 done:
-    /* dont forget to free up info is special info block
+    /* don't forget to free up info is special info block
        This space was allocated by the library */
     free(info_block.cdims);
 

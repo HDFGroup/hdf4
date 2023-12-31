@@ -1061,11 +1061,11 @@ ANIwriteann(int32       ann_id, /* IN: annotation id */
         ann_node->new_ann = 0; /* set new annotation entry to false */
     }
 
-    /* If annotation exists, re-used the DD and rewrite new annotation
+    /* If annotation exists, reused the DD and rewrite new annotation
        while preserving tag/ref. We assume annotations are not stored
        as linked-blocks for now. */
     if (newflag == 0) { /* annotation exists in file, re-writing */
-        /* Not new, re-used the tag/ref(i.e. DD) for new annotation.
+        /* Not new, reused the tag/ref(i.e. DD) for new annotation.
            pointer to old annotation is lost. */
         if (HDreuse_tagref(file_id, ann_tag, ann_ref) == FAIL)
             HE_REPORT_GOTO("Unable to replace old annotation", FAIL);

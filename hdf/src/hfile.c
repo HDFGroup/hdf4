@@ -71,7 +71,7 @@
    Hgetlibversion  -- return version info on current HDF library
    Hgetfileversion -- return version info on HDF file
    HPgetdiskblock  -- Get the offset of a free block in the file.
-   HPfreediskblock -- Release a block in a file to be re-used.
+   HPfreediskblock -- Release a block in a file to be reused.
    HDread_drec -- reads a description record
    HDcheck_empty   -- determines if an element has been written with data
    HDget_special_info -- get information about a special element
@@ -2453,7 +2453,7 @@ done:
     returns SUCCEED (0).
  DESCRIPTION
     Copies values from #defines in hfile.h to provided buffers. This
-        information is statistically compilied into the HDF library, so
+        information is statistically compiled into the HDF library, so
         it is not necessary to have any files open to get this information.
 
 --------------------------------------------------------------------------*/
@@ -3020,7 +3020,7 @@ done:
 
 /*-----------------------------------------------------------------------
 NAME
-   HPfreediskblock --- Release a block in a file to be re-used.
+   HPfreediskblock --- Release a block in a file to be reused.
 USAGE
    intn HPfreediskblock(file_rec, block_off, block_size)
    filerec_t *file_rec;     IN: ptr to the file record

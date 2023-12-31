@@ -1504,7 +1504,7 @@ Fortran: afend(an_id)
 	int32 ANcreate(an_id, tag, ref, type )
         int32 an_id;    IN: annotation interface ID
         uint16 tag;     IN: tag of item to be assigned annotation
-        uint16 ref;     IN: reference number of itme to be assigned ann
+        uint16 ref;     IN: reference number of item to be assigned ann
         ann_type  type: IN: AN_DATA_LABEL for data labels, 
                             AN_DATA_DESC for data descriptions,
  RETURNS
@@ -1991,7 +1991,7 @@ int32 GRdiminfo(int32 dimid,char *name,int32 *size,int32 *n_attr)
 
 ID/Ref/Index Functions:
 uint16 GRidtoref(int32 riid)
-    - Maps an riid to a reference # for annotating or including in a Vgroup.
+    - Maps an riid to a reference # for annotationg or including in a Vgroup.
 int32 GRreftoindex(int32 hdf_file_id,uint16 ref)
     - Maps the reference # of an RI into an index which can be used with
         GRselect.
@@ -2268,7 +2268,7 @@ ID/Ref/Index Functions
 
 GRidtoref
 ---------
-    Maps an RI ID to a reference # for annotating or including in a Vgroup.
+    Maps an RI ID to a reference # for annotationg or including in a Vgroup.
 
  USAGE
     uint16 GRidtoref(riid)
@@ -2278,7 +2278,7 @@ GRidtoref
     A valid reference # on success or FAIL
 
  DESCRIPTION
-    Maps an riid to a reference # for annotating or including in a Vgroup.
+    Maps an riid to a reference # for annotationg or including in a Vgroup.
 
 
 GRreftoindex

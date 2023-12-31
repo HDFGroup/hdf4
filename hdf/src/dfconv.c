@@ -51,7 +51,7 @@
 /*                                                                           */
 /*    All the routines in this file marked as static have been marked so    */
 /*  for a reason.  *ANY* of these routines may or may nor be supported in    */
-/*  the next version of HDF (4.00).  Furthurmore, the names, parameters, or   */
+/*  the next version of HDF (4.00).  Furthermore, the names, parameters, or   */
 /*  functionality is *NOT* guaranteed to remain the same.                    */
 /*    The *ONLY* guarantee possible is that DFKnumin(), and DFKnumout()      */
 /*  will not change.  They are *NOT* guaranteed to be implemented in the     */
@@ -378,7 +378,7 @@ DFKislitendNT(int32 numbertype)
  *
  * This routine is called by HDF version 3.0 compatibility
  * routines.  It serves as a jump point to the new version 4.0
- * comversion functions.  DFconvert() CANNOT be used by Vdata
+ * conversion functions.  DFconvert() CANNOT be used by Vdata
  * applications because it assumes a stride of 1 (for
  * compatibility). Vdata routines should call DFnum_in() and
  * DFKnumout() (depending on which translation is needed)
