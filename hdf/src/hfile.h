@@ -147,7 +147,7 @@ typedef short hdf_file_t;
                                                   compressed or chunked.)
               10, 11: User tags.
 
-           Current tag assingments are:
+           Current tag assignments are:
            00001 - 32767  - reserved for NCSA use
                             00001 - 16383 - NCSA regular tags
                             16384 - 32767 - NCSA special tags

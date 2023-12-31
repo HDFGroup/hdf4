@@ -228,7 +228,7 @@ main(int argc, char *argv[])
         }     /* end if */
     }         /* end for */
 
-    if (Cache) /* turn on caching, unless we were instucted not to */
+    if (Cache) /* turn on caching, unless we were instructed not to */
         Hcache(CACHE_ALL_FILES, TRUE);
 
     for (Loop = 0; Loop < Index; Loop++) {

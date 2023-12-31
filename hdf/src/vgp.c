@@ -1255,7 +1255,7 @@ Vdetach(int32 vkey /* IN: vgroup key */)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
         /*
-         *  If vgroup already exists, try to re-use the same
+         *  If vgroup already exists, try to reuse the same
          *  tag/ref. This will cause the pointer to the original
          *  vgroup to be lost but this is okay.
          */

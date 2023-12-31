@@ -832,7 +832,7 @@ USAGE
          fields in buf.
     void * fldbufpt[]; IN: array of pointers to field buffers.
 RETURNS
-    SUCCEED(0) on success; FIAL(-1) otherwise.
+    SUCCEED(0) on success; FAIL(-1) otherwise.
 DESCRIPTION
     1. This pack/unpack routine is convenient for users. It also
        serves for FORTRAN programs to pack/unpack numeric and

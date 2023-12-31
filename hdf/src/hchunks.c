@@ -258,7 +258,7 @@ LOCAL ROUTINES
 */
 
 /* For Statistics from the chunk cache.
-   Note thate 'mache.c' must be compilied with -DSTATISTICS */
+   Note that 'mache.c' must be compiled with -DSTATISTICS */
 /*
 #define STATISTICS
 */
@@ -279,7 +279,7 @@ NAME
 DESCRIPTION
     Given number of dimensions create the following 3 arrays.
     1. Dimension record array contains a record for each dimension.
-    2. Seek chunk indice array contains the seek position relative to
+    2. Seek chunk indices array contains the seek position relative to
        the logical representation of the chunked array.
     3. The seek position chunk array contains the seek position
        relative to the chunk itself.
@@ -418,7 +418,7 @@ compute_chunk_to_seek(int32   *chunk_seek, /* OUT: new physical chunk seek pos i
     l_chunk_size = chunk_size / nt_size;
 
     /* Calculate Seek Location in element
-     * First calculste seek-chunk position in element
+     * First calculate seek-chunk position in element
      * i.e seek position according to chunk first */
     *chunk_seek = sbi[ndims - 1];
     for (j = ndims - 1; j; j--) {
@@ -647,7 +647,7 @@ calculate_chunk_for_chunk(int32   *chunk_size,     /* OUT: chunk size for this c
                           int32    ndims,          /* IN: number of dims */
                           int32    nt_size,        /* IN: number type size */
                           int32    len,            /* IN: total length to operate on */
-                          int32    bytes_finished, /* IN: bytes already operted on*/
+                          int32    bytes_finished, /* IN: bytes already operated on*/
                           int32   *sbi,            /* IN: seek chunk array */
                           int32   *spb,            /* IN: seek pos w/ chunk array */
                           DIM_REC *ddims /* IN: dim record ptrs */)
@@ -1103,7 +1103,7 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
                NOTE: Should change this to a single VSread() but then
                would have to store all the v_data rec's somewhere
                before inserting them into the TBBT tree...
-               ....for somone to do later if performance of VSread() is bad.
+               ....for someone to do later if performance of VSread() is bad.
                Technically a B+-Tree should have been used instead or
                better yet the Vdata implementation should be re-written to use one.
                Note that chunk tag DTAG_CHUNK is not verified here.
@@ -1590,7 +1590,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
        total length of this special object header - 6 bytes.
        because the length of the fields 'sp_tag_desc'(2 bytes) and
        'sp_tag_head_len' (4 bytes) which are not included
-       If also multiply special need to subtract another 6 byts plus
+       If also multiply special need to subtract another 6 bytes plus
        length for multiply specialness headers */
     switch (info->flag & 0xff) /* only using 8bits for now */
     {
@@ -1932,7 +1932,7 @@ DESCRIPTION
        will return one pair of offset/length of the data.
      - If the chunk's data is compressed only, then HMCgetdatainfo will also
        return one pair of offset/length to the compressed data
-     - If the chunk's data is compessed and is stored in linked-blocks, then
+     - If the chunk's data is compressed and is stored in linked-blocks, then
        HMCgetdatainfo will return a number of offset/length pairs for the
        the data's blocks.
 
@@ -2376,7 +2376,7 @@ NAME
 DESCRIPTION
      Set the maximum number of chunks to cache.
 
-     The values set here affects the current object's caching behaviour.
+     The values set here affects the current object's caching behavior.
 
      If the chunk cache is full and 'maxcache' is greater then the
      current 'maxcache' value, then the chunk cache is reset to the new
@@ -2467,7 +2467,7 @@ HMCPstread(accrec_t *access_rec /* IN: access record to fill in */)
 
 /* ------------------------------ HMCPstwrite ------------------------------
 NAME
-   HMCPstwrite -- open an access record of a chunked elmenent for writing
+   HMCPstwrite -- open an access record of a chunked element for writing
 
 DESCRIPTION
    Calls to HMCIstaccess to fill in the access rec for
@@ -2490,7 +2490,7 @@ HMCPstwrite(accrec_t *access_rec /* IN: access record to fill in */)
 
 /* ------------------------------- HMCPseek --------------------------------
 NAME
-   HMCPseek -- set the seek posn in the chunked elemnent
+   HMCPseek -- set the seek posn in the chunked element
 
 DESCRIPTION
    Set the seek posn in the given chunked element
@@ -3770,7 +3770,7 @@ HMCPinfo(accrec_t        *access_rec, /* IN: access record of access element */
     /* fill in the info_chunk */
     info                   = (chunkinfo_t *)access_rec->special_info;
     info_chunk->key        = SPECIAL_CHUNKED;
-    info_chunk->chunk_size = (info->chunk_size * info->nt_size); /* phsyical size */
+    info_chunk->chunk_size = (info->chunk_size * info->nt_size); /* Physical size */
     info_chunk->ndims      = info->ndims;
     if ((info->flag & 0xff) == SPECIAL_COMP) /* only using 8bits for now */
     {

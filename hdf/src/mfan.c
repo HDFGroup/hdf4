@@ -1135,7 +1135,7 @@ done:
 static intn
 ANIcreate(int32    file_id,  /* IN: file ID */
           uint16   elem_tag, /* IN: tag of item to be assigned annotation */
-          uint16   elem_ref, /* IN: reference number of itme to be assigned ann */
+          uint16   elem_ref, /* IN: reference number of item to be assigned ann */
           ann_type type      /* IN: AN_DATA_LABEL for data labels,
                                     AN_DATA_DESC for data descriptions,
                                     AN_FILE_LABEL for file labels,
@@ -1394,7 +1394,7 @@ ANend(int32 an_id /* IN: Annotation ID of file to close */)
 
     /* free desc annotation rb tree */
     if (file_rec->an_tree[AN_DATA_DESC] !=
-        NULL) { /* Traverse tree puling ann_id's to delete from annotation atom group */
+        NULL) { /* Traverse tree pulling ann_id's to delete from annotation atom group */
         for (aentry = tbbtfirst((TBBT_NODE *)*(file_rec->an_tree[AN_DATA_DESC])); aentry != NULL;
              aentry = tbbtnext(aentry)) { /* get annotation entry from node */
             ann_entry = (ANentry *)aentry->data;
@@ -1443,7 +1443,7 @@ done:
 int32
 ANcreate(int32    an_id,    /* IN: annotation interface ID */
          uint16   elem_tag, /* IN: tag of item to be assigned annotation */
-         uint16   elem_ref, /* IN: reference number of itme to be assigned ann */
+         uint16   elem_ref, /* IN: reference number of item to be assigned ann */
          ann_type type      /* IN: AN_DATA_LABEL for data labels,
                                   AN_DATA_DESC for data descriptions*/)
 {
@@ -1516,7 +1516,7 @@ done:
 --------------------------------------------------------------------------- */
 int32
 ANselect(int32    an_id, /* IN: annotation interface ID */
-         int32    index, /* IN: index of annottion to get ID for */
+         int32    index, /* IN: index of annotation to get ID for */
          ann_type type   /* IN: AN_DATA_LABEL for data labels,
                                 AN_DATA_DESC for data descriptions,
                                 AN_FILE_LABEL for file labels,
@@ -1973,7 +1973,7 @@ done:
      Translate annotation type to corresponding TAG
 
  RETURNS
-     Returns TAG corresponding to annotatin type
+     Returns TAG corresponding to annotation type
 
  AUTHOR
     GeorgeV.
@@ -2011,7 +2011,7 @@ ANatype2tag(ann_type atype /* IN: Annotation type */)
      Translate annotation TAG to corresponding atype
 
  RETURNS
-     Returns type corresponding to annotatin TAG
+     Returns type corresponding to annotation TAG
 
  AUTHOR
     GeorgeV.
