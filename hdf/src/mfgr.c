@@ -82,21 +82,16 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 stride[2],int32 count[2],void 
         dimension support)
 intn GRreadimage(int32 riid,int32 start[2],int32 stride[2],int32 count[2],void * data)-- Error Output :
 HDF5-DIAG: Error detected in HDF5 (1.15.0) thread 0:
-  #000: /home/buildbot/worker/hdf5trunk-StdShar-change-ubuntu2004/build/hdfsrc/src/H5O.c line 1770 in H5Ovisit3(): object iteration failed
-    major: Object header
-    minor: Iteration failed
-  #001: /home/buildbot/worker/hdf5trunk-StdShar-change-ubuntu2004/build/hdfsrc/src/H5VLcallback.c line 6095 in H5VL_object_specific(): object specific failed
-    major: Virtual Object Layer
-    minor: Can't operate on object
-  #002: /home/buildbot/worker/hdf5trunk-StdShar-change-ubuntu2004/build/hdfsrc/src/H5VLcallback.c line 6061 in H5VL__object_specific(): object specific failed
-    major: Virtual Object Layer
-    minor: Can't operate on object
-  #003: /home/buildbot/worker/hdf5trunk-StdShar-change-ubuntu2004/build/hdfsrc/src/H5VLnative_object.c line 397 in H5VL__native_object_specific(): object visitation failed
-    major: Object header
-    minor: Iteration failed
-  #004: /home/buildbot/worker/hdf5trunk-StdShar-change-ubuntu2004/build/hdfsrc/src/H5Oint.c line 2658 in H5O__visit(): can't visit objects
-    major: Object header
-    minor: Iteration failed
+  #000: /home/buildbot/worker/hdf5trunk-StdShar-change-ubuntu2004/build/hdfsrc/src/H5O.c line 1770 in
+H5Ovisit3(): object iteration failed major: Object header minor: Iteration failed #001:
+/home/buildbot/worker/hdf5trunk-StdShar-change-ubuntu2004/build/hdfsrc/src/H5VLcallback.c line 6095 in
+H5VL_object_specific(): object specific failed major: Virtual Object Layer minor: Can't operate on object
+  #002: /home/buildbot/worker/hdf5trunk-StdShar-change-ubuntu2004/build/hdfsrc/src/H5VLcallback.c line 6061 in
+H5VL__object_specific(): object specific failed major: Virtual Object Layer minor: Can't operate on object
+  #003: /home/buildbot/worker/hdf5trunk-StdShar-change-ubuntu2004/build/hdfsrc/src/H5VLnative_object.c line
+397 in H5VL__native_object_specific(): object visitation failed major: Object header minor: Iteration failed
+  #004: /home/buildbot/worker/hdf5trunk-StdShar-change-ubuntu2004/build/hdfsrc/src/H5Oint.c line 2658 in
+H5O__visit(): can't visit objects major: Object header minor: Iteration failed
 
     - Read image data from an RI.  Partial reads and subsampling are allowed.
 intn GRendaccess(int32 riid)
