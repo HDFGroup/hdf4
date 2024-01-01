@@ -644,7 +644,7 @@ SDgetoldattdatainfo(int32 dim_id, int32 sdsid, char *attr_name, int32 *offset, i
             /* Calculate offset and length of the requested dimension's luf   */
             /* - off: offset where luf string starts, returned by Hoffset     */
             /* - sdsluf_len: length of the dataset luf + 1 for the null space */
-            /* - offp: offset accummulated of all dimension lufs before the   */
+            /* - offp: offset accumulated of all dimension lufs before the   */
             /*   requested one */
             *offset = off + sdsluf_len + 1 + offp;
             *length = dim_att_len;

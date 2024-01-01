@@ -768,7 +768,7 @@ HLgetdatainfo(int32 file_id, uint8 *buf, /* IN: special header info */
     int32   num_blocks,       /* number of blocks in each table */
         block_length,         /* length of each block */
         total_length,         /* total data length of the element */
-        accum_length;         /* accummulative length of actual data in blocks */
+        accum_length;         /* accumulative length of actual data in blocks */
     int  ii;
     intn ret_value = SUCCEED;
 
