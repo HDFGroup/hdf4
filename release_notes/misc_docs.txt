@@ -1360,7 +1360,7 @@ Macintosh version of the HDF library to:
 labels and data descriptions(i.e. all are annotations). General access
 requires the routines Hopen() and ANstart() to be called first and the 
 last call to be ANend() and Hclose() which ends annotation handling on the file
-and closes the file. Basic annotation manipulation involes dealing
+and closes the file. Basic annotation manipulation involves dealing
 with  handles(ann_id's) foreach annotation and annotation interface 
 handle(an_id). 
 

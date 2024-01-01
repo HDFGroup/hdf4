@@ -5021,7 +5021,7 @@ New Features and Changes:
     * New API HCget_config_info added
     * The default chunk cache size was changed for 2D and higher
       chunks
-    * Pablo instumentation was removed
+    * Pablo instrumentation was removed
    
     Utilities
     ========= 
@@ -7717,7 +7717,7 @@ Contents
       MAX_NC_NAME maximum length of a name of a dataset 
           (defined in netcdf.h included by mfhdf.h) 
 
-   Other Convensions / Issues
+   Other Conventions / Issues
    --------------------------
       Some utility programs (e.g. ncgen) expect dataset names to be 
       composed of only alphanumeric, '-' and '_' characters. 
