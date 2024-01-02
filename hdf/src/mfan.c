@@ -1058,11 +1058,11 @@ ANIwriteann(int32       ann_id, /* IN: annotation id */
         ann_node->new_ann = 0; /* set new annotation entry to false */
     }
 
-    /* If annotation exists, re-used the DD and rewrite new annotation
+    /* If annotation exists, reused the DD and rewrite new annotation
        while preserving tag/ref. We assume annotations are not stored
        as linked-blocks for now. */
     if (newflag == 0) { /* annotation exists in file, re-writing */
-        /* Not new, re-used the tag/ref(i.e. DD) for new annotation.
+        /* Not new, reused the tag/ref(i.e. DD) for new annotation.
            pointer to old annotation is lost. */
         if (HDreuse_tagref(file_id, ann_tag, ann_ref) == FAIL)
             HE_REPORT_GOTO("Unable to replace old annotation", FAIL);
@@ -1391,7 +1391,7 @@ ANend(int32 an_id /* IN: Annotation ID of file to close */)
 
     /* free desc annotation rb tree */
     if (file_rec->an_tree[AN_DATA_DESC] !=
-        NULL) { /* Traverse tree puling ann_id's to delete from annotation atom group */
+        NULL) { /* Traverse tree pulling ann_id's to delete from annotation atom group */
         for (aentry = tbbtfirst((TBBT_NODE *)*(file_rec->an_tree[AN_DATA_DESC])); aentry != NULL;
              aentry = tbbtnext(aentry)) { /* get annotation entry from node */
             ann_entry = (ANentry *)aentry->data;
@@ -1513,7 +1513,7 @@ done:
 --------------------------------------------------------------------------- */
 int32
 ANselect(int32    an_id, /* IN: annotation interface ID */
-         int32    index, /* IN: index of annottion to get ID for */
+         int32    index, /* IN: index of annotation to get ID for */
          ann_type type   /* IN: AN_DATA_LABEL for data labels,
                                 AN_DATA_DESC for data descriptions,
                                 AN_FILE_LABEL for file labels,
@@ -1970,7 +1970,7 @@ done:
      Translate annotation type to corresponding TAG
 
  RETURNS
-     Returns TAG corresponding to annotatin type
+     Returns TAG corresponding to annotation type
 
  AUTHOR
     GeorgeV.
@@ -2008,7 +2008,7 @@ ANatype2tag(ann_type atype /* IN: Annotation type */)
      Translate annotation TAG to corresponding atype
 
  RETURNS
-     Returns type corresponding to annotatin TAG
+     Returns type corresponding to annotation TAG
 
  AUTHOR
     GeorgeV.

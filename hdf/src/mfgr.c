@@ -5018,7 +5018,7 @@ GRPshutdown(void)
 
       } HDF_CHUNK_DEF
 
-      The variable agruement 'flags' is a bit-or'd value which can currently be
+      The variable argument 'flags' is a bit-or'd value which can currently be
       'HDF_CHUNK' or 'HDF_CHUNK | HDF_COMP'.
 
       The simplest is the 'chunk_lengths' array specifying chunk
@@ -5647,7 +5647,7 @@ GRwritechunk(int32       riid,   /* IN: access aid to GR */
     } /* end if Hinquire */
 
 done:
-    /* dont forget to free up info is special info block
+    /* don't forget to free up info is special info block
        This space was allocated by the library */
     free(info_block.cdims);
 
@@ -5844,7 +5844,7 @@ GRreadchunk(int32  riid,   /* IN: access aid to GR */
     } /* end if Hinquire */
 
 done:
-    /* dont forget to free up info is special info block
+    /* don't forget to free up info is special info block
        This space was allocated by the library */
     free(info_block.cdims);
 
