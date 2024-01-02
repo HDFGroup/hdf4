@@ -258,7 +258,7 @@ LOCAL ROUTINES
 */
 
 /* For Statistics from the chunk cache.
-   Note thate 'mache.c' must be compiled with -DSTATISTICS */
+   Note that 'mache.c' must be compiled with -DSTATISTICS */
 /*
 #define STATISTICS
 */
@@ -416,7 +416,7 @@ NAME
 DESCRIPTION
     Given number of dimensions create the following 3 arrays.
     1. Dimension record array contains a record for each dimension.
-    2. Seek chunk indice array contains the seek position relative to
+    2. Seek chunk indices array contains the seek position relative to
        the logical representation of the chunked array.
     3. The seek position chunk array contains the seek position
        relative to the chunk itself.
@@ -1666,7 +1666,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
        total length of this special object header - 6 bytes.
        because the length of the fields 'sp_tag_desc'(2 bytes) and
        'sp_tag_head_len' (4 bytes) which are not included
-       If also multiply special need to subtract another 6 byts plus
+       If also multiply special need to subtract another 6 bytes plus
        length for multiply specialness headers */
     switch (info->flag & 0xff) /* only using 8bits for now */
     {
@@ -2008,7 +2008,7 @@ DESCRIPTION
        will return one pair of offset/length of the data.
      - If the chunk's data is compressed only, then HMCgetdatainfo will also
        return one pair of offset/length to the compressed data
-     - If the chunk's data is compessed and is stored in linked-blocks, then
+     - If the chunk's data is compressed and is stored in linked-blocks, then
        HMCgetdatainfo will return a number of offset/length pairs for the
        the data's blocks.
 
@@ -2452,7 +2452,7 @@ NAME
 DESCRIPTION
      Set the maximum number of chunks to cache.
 
-     The values set here affects the current object's caching behaviour.
+     The values set here affects the current object's caching behavior.
 
      If the chunk cache is full and 'maxcache' is greater then the
      current 'maxcache' value, then the chunk cache is reset to the new
@@ -2543,7 +2543,7 @@ HMCPstread(accrec_t *access_rec /* IN: access record to fill in */)
 
 /* ------------------------------ HMCPstwrite ------------------------------
 NAME
-   HMCPstwrite -- open an access record of a chunked elmenent for writing
+   HMCPstwrite -- open an access record of a chunked element for writing
 
 DESCRIPTION
    Calls to HMCIstaccess to fill in the access rec for
@@ -2566,7 +2566,7 @@ HMCPstwrite(accrec_t *access_rec /* IN: access record to fill in */)
 
 /* ------------------------------- HMCPseek --------------------------------
 NAME
-   HMCPseek -- set the seek posn in the chunked elemnent
+   HMCPseek -- set the seek posn in the chunked element
 
 DESCRIPTION
    Set the seek posn in the given chunked element

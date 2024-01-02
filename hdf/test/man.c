@@ -17,7 +17,7 @@
  *
  * This program stores annotations in a file using Multi-file interface ANxxx
  * It tests writing/reading file labels/descriptions and reading/writing
- * anntotations to SDS's and RIS. The old interfaces for these elements
+ * annotations to SDS's and RIS. The old interfaces for these elements
  * are used to write several SDSs and corresponding RISs to a file.
  * It doesn't test writing annotations for Vgroups or Vdata.
  *
