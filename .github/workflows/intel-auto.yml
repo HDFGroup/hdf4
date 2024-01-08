@@ -16,7 +16,7 @@ jobs:
     name: "Intel ${{ inputs.build_mode }}"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.1.1
 
       - name: Install Dependencies
         run: |
@@ -39,9 +39,9 @@ jobs:
           sudo apt install -y intel-oneapi-compiler-dpcpp-cpp
           sudo apt install -y intel-oneapi-compiler-fortran
           sudo apt install -y intel-oneapi-mpi-devel
-           echo "CC=icx" >> $GITHUB_ENV
-           echo "CXX=icpx" >> $GITHUB_ENV
-           echo "FC=ifx" >> $GITHUB_ENV
+          echo "CC=icx" >> $GITHUB_ENV
+          echo "CXX=icpx" >> $GITHUB_ENV
+          echo "FC=ifx" >> $GITHUB_ENV
 
       - name: Install oneAPI MKL library
         shell: bash

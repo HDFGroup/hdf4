@@ -50,7 +50,7 @@ jobs:
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Get Sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.1
         with:
           path: hdfsrc
 
@@ -66,14 +66,14 @@ jobs:
 
       # Save files created by release script
       - name: Save tgz-tarball
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
               name: tgz-tarball
               path: ${{ steps.set-file-base.outputs.FILE_BASE }}.tar.gz
               if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
 
       - name: Save zip-tarball
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
               name: zip-tarball
               path: ${{ steps.set-file-base.outputs.FILE_BASE }}.zip
