@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.12)
-project (HDF4Examples_MFHDF)
+project (HDF4Examples_MFHDF C)
 
 #-----------------------------------------------------------------------------
 # Build the mfhdf examples
