@@ -162,7 +162,9 @@ endif ()
 #-----------------------------------------------------------------------------
 # All libs/tests/examples need the main include directories
 #-----------------------------------------------------------------------------
-INCLUDE_DIRECTORIES (${JPEG_BINARY_DIR} ${JPEG_SOURCE_DIR} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+set_directory_properties(PROPERTIES INCLUDE_DIRECTORIES 
+    "${JPEG_BINARY_DIR};${JPEG_SOURCE_DIR};${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
+)
 
 set (JPEG_SRCS
     ${JPEG_SRC_DIR}/jaricom.c

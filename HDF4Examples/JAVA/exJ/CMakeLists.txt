@@ -1,12 +1,18 @@
 cmake_minimum_required (VERSION 3.12)
-project (HDF4Examples_JAVA_GR Java)
+project (HDF4Examples_JAVA_J Java)
 
 set (CMAKE_VERBOSE_MAKEFILE 1)
 
 #-----------------------------------------------------------------------------
 # Define Sources
 #-----------------------------------------------------------------------------
-include (Java_sourcefiles.cmake)
+set (HDF_JAVA_EXAMPLES
+    HDF4FileCreate.java
+    HDF4GroupCreate.java
+    HDF4DatasetCreate.java
+    VDWriteToVdata.java
+    VDReadFromVdata.java
+)
 
 if (WIN32)
   set (CMAKE_JAVA_INCLUDE_FLAG_SEP ";")

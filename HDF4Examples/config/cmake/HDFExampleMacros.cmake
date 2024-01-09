@@ -9,23 +9,10 @@ macro (BASIC_SETTINGS varname)
   set (CMAKE_NO_SYSTEM_FROM_IMPORTED 1)
 
   #-----------------------------------------------------------------------------
-  # Define some CMake variables for use later in the project
-  #-----------------------------------------------------------------------------
-  set (${EXAMPLE_PACKAGE_NAME}_RESOURCES_DIR           ${${EXAMPLE_PACKAGE_NAME}_SOURCE_DIR}/config/cmake)
-  set (${EXAMPLE_PACKAGE_NAME}_SRC_DIR                 ${${EXAMPLE_PACKAGE_NAME}_SOURCE_DIR}/src)
-
-  #-----------------------------------------------------------------------------
   # Setup output Directories
   #-----------------------------------------------------------------------------
   SET_HDF_OUTPUT_DIRS(${EXAMPLE_PACKAGE_NAME})
 
-  #-----------------------------------------------------------------------------
-  # Option to use Shared/Static libs, default is static
-  #-----------------------------------------------------------------------------
-  set (LIB_TYPE STATIC)
-  if (BUILD_SHARED_LIBS)
-    set (LIB_TYPE SHARED)
-  endif ()
   set (CMAKE_POSITION_INDEPENDENT_CODE ON)
 
   if (MSVC)
@@ -104,24 +91,10 @@ macro (BASIC_SETTINGS varname)
   set (${EXAMPLE_PACKAGE_NAME}_INCLUDES_BUILD_TIME
       ${${EXAMPLE_PACKAGE_NAME}_SRC_DIR} ${${EXAMPLE_PACKAGE_NAME}_BINARY_DIR}
   )
-
-  #-----------------------------------------------------------------------------
-  # Option to build JAVA examples
-  #-----------------------------------------------------------------------------
-  option (HDF_BUILD_JAVA "Build JAVA support" OFF)
-  if (HDF_BUILD_JAVA)
-    find_package (Java)
-    INCLUDE_DIRECTORIES (
-        ${JAVA_INCLUDE_PATH}
-        ${JAVA_INCLUDE_PATH2}
-    )
-
-    include (${${EXAMPLE_PACKAGE_NAME}_RESOURCES_DIR}/UseJava.cmake)
-  endif ()
 endmacro ()
 
 macro (HDF4_SUPPORT)
-  set (CMAKE_MODULE_PATH ${${EXAMPLE_PACKAGE_NAME}_RESOURCES_DIR} ${CMAKE_MODULE_PATH})
+  set (CMAKE_MODULE_PATH ${H4_RESOURCES_DIR} ${CMAKE_MODULE_PATH})
   option (USE_SHARED_LIBS "Use Shared Libraries" ON)
 
   if (NOT H4EX_HDF4_HEADER)
@@ -215,7 +188,7 @@ macro (HDF4_SUPPORT)
             set (CMAKE_JAVA_INCLUDE_PATH "${CMAKE_JAVA_INCLUDE_PATH};${HDF4_JAVA_INCLUDE_DIRS}")
             set (H4EX_JAVA_LIBRARY ${HDF4_JAVA_LIBRARY})
             set (H4EX_JAVA_LIBRARIES ${HDF4_JAVA_LIBRARY})
-            message (STATUS "HDF4 jars:${HDF4_JAVA_INCLUDE_DIRS}}")
+            message (STATUS "HDF4 lib:${H4EX_JAVA_LIBRARY} jars:${HDF4_JAVA_INCLUDE_DIRS}}")
           else ()
             set (HDF_BUILD_JAVA OFF CACHE BOOL "Build Java support" FORCE)
             message (STATUS "HDF4 Java libs not found - disable build of Java examples")
@@ -261,71 +234,4 @@ macro (HDF4_SUPPORT)
     list (APPEND H4EX_HDF4_INCLUDE_DIRS ${HDF4_INCLUDE_DIR_FORTRAN})
   endif ()
   message (STATUS "HDF4 link libs: ${H4EX_HDF4_LINK_LIBS} Includes: ${H4EX_HDF4_INCLUDE_DIRS}")
-
-  if (USE_SHARED_LIBS)
-    set (H4_LIB_TYPE SHARED)
-  else ()
-    set (H4_LIB_TYPE STATIC)
-  endif ()
-endmacro ()
-
-#-------------------------------------------------------------------------------
-macro (SET_HDF_BUILD_TYPE)
-  get_property (_isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
-  if (_isMultiConfig)
-    # HDF_CFG_BUILD_TYPE is used in the Fortran install commands for the build location of the .mod files
-    set (HDF_CFG_BUILD_TYPE \${CMAKE_INSTALL_CONFIG_NAME})
-    if (CMAKE_BUILD_TYPE)
-      # set the default to the specified command line define
-      set (HDF_CFG_NAME ${CMAKE_BUILD_TYPE})
-    else ()
-      # set the default to the MultiConfig variable
-      set (HDF_CFG_NAME "$<CONFIG>")
-    endif ()
-  else ()
-    set (HDF_CFG_BUILD_TYPE ".")
-    if (CMAKE_BUILD_TYPE)
-      set (HDF_CFG_NAME ${CMAKE_BUILD_TYPE})
-    else ()
-      set (HDF_CFG_NAME "Release")
-    endif ()
-  endif ()
-endmacro ()
-
-#-------------------------------------------------------------------------------
-macro (TARGET_C_PROPERTIES wintarget libtype)
-  target_compile_options(${wintarget} PRIVATE
-      "$<$<C_COMPILER_ID:MSVC>:${WIN_COMPILE_FLAGS}>"
-  )
-  if(MSVC)
-    set_property(TARGET ${wintarget} APPEND PROPERTY LINK_FLAGS "${WIN_LINK_FLAGS}")
-  endif()
-endmacro ()
-
-macro (HDFTEST_COPY_FILE src dest target)
-    add_custom_command(
-        OUTPUT  "${dest}"
-        COMMAND "${CMAKE_COMMAND}"
-        ARGS     -E copy_if_different "${src}" "${dest}"
-        DEPENDS "${src}"
-    )
-    list (APPEND ${target}_list "${dest}")
-endmacro ()
-
-macro (ADD_H4_FLAGS h4_flag_var infile)
-  file (STRINGS ${infile} TEST_FLAG_STREAM)
-  #message (TRACE "TEST_FLAG_STREAM=${TEST_FLAG_STREAM}")
-  list (LENGTH TEST_FLAG_STREAM len_flag)
-  if (len_flag GREATER 0)
-    math (EXPR _FP_LEN "${len_flag} - 1")
-    foreach (line RANGE 0 ${_FP_LEN})
-      list (GET TEST_FLAG_STREAM ${line} str_flag)
-      string (REGEX REPLACE "^#.*" "" str_flag "${str_flag}")
-      #message (TRACE "str_flag=${str_flag}")
-      if (str_flag)
-        list (APPEND ${h4_flag_var} "${str_flag}")
-      endif ()
-    endforeach ()
-  endif ()
-  #message (TRACE "h4_flag_var=${${h4_flag_var}}")
 endmacro ()

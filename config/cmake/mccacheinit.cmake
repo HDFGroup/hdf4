@@ -1,10 +1,8 @@
 # This is the CMakeCache file.
 
-########################
+#########################
 # EXTERNAL cache entries
-########################
-
-set (BUILD_SHARED_LIBS OFF CACHE BOOL "Build Shared Libraries" FORCE)
+#########################
 
 set (BUILD_TESTING ON CACHE BOOL "Build HDF4 Unit Testing" FORCE)
 
@@ -32,7 +30,7 @@ set (HDF4_DISABLE_COMPILER_WARNINGS OFF CACHE BOOL "Disable compiler warnings" F
 
 set (HDF4_ENABLE_DEPRECATED_SYMBOLS ON CACHE BOOL "Enable deprecated public API symbols" FORCE)
 
-set (HDF4_PACKAGE_EXTLIBS OFF CACHE BOOL "(WINDOWS)CPACK - include external libraries" FORCE)
+set (HDF4_PACKAGE_EXTLIBS OFF CACHE BOOL "CPACK - include external libraries" FORCE)
 
 set (HDF4_NO_PACKAGES ON CACHE BOOL "CPACK - Disable packaging" FORCE)
 
