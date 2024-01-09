@@ -175,7 +175,12 @@
       "configurePreset": "ci-StdShar-Intel",
       "inherits": [
         "ci-x64-Release-Intel"
-      ]
+      ],
+      "filter": {
+        "exclude": {
+          "name": "HDP-dumpv"
+        }
+      }
     }
   ],
   "packagePresets": [

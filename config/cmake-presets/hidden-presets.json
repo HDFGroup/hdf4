@@ -372,7 +372,7 @@
       "execution": {
         "noTestsAction": "error",
         "timeout": 180,
-        "jobs": 8
+        "jobs": 4
       }
     },
     {
