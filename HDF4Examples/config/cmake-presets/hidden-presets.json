@@ -194,52 +194,6 @@
         "ci-Release",
         "ci-Intel"
       ]
-    },
-    {
-      "name": "ci-x64-Debug-MSVC-asan",
-      "description": "x64-Debug-MSVC with /fsanitize=address",
-      "hidden": true,
-      "inherits": "ci-x64-Debug-MSVC",
-      "cacheVariables": {
-        "USE_SANITIZER": "Address",
-        "HDF4_ENABLE_SANITIZERS": "ON"
-      }
-    },
-    {
-      "name": "ci-x64-Debug-GNUC-asan",
-      "hidden": true,
-      "inherits": "ci-x64-Debug-GNUC",
-      "cacheVariables": {
-        "USE_SANITIZER": "Address",
-        "HDF4_ENABLE_SANITIZERS": "ON"
-      }
-    },
-    {
-      "name": "ci-x64-Debug-GNUC-tsan",
-      "hidden": true,
-      "inherits": "ci-x64-Debug-GNUC",
-      "cacheVariables": {
-        "USE_SANITIZER": "Thread",
-        "HDF4_ENABLE_SANITIZERS": "ON"
-      }
-    },
-    {
-      "name": "ci-x64-Debug-GNUC-lsan",
-      "hidden": true,
-      "inherits": "ci-x64-Debug-GNUC",
-      "cacheVariables": {
-        "USE_SANITIZER": "Leak",
-        "HDF4_ENABLE_SANITIZERS": "ON"
-      }
-    },
-    {
-      "name": "ci-x64-Debug-GNUC-ubsan",
-      "hidden": true,
-      "inherits": "ci-x64-Debug-GNUC",
-      "cacheVariables": {
-        "USE_SANITIZER": "Undefined",
-        "HDF4_ENABLE_SANITIZERS": "ON"
-      }
     }
   ],
   "buildPresets": [
@@ -317,46 +271,6 @@
         "ci-base"
       ],
       "configuration": "RelWithDebInfo"
-    },
-    {
-      "name": "ci-x64-Debug-MSVC-asan",
-      "configurePreset": "ci-x64-Debug-MSVC-asan",
-      "hidden": true,
-      "inherits": [
-        "ci-base"
-      ]
-    },
-    {
-      "name": "ci-x64-Debug-GNUC-asan",
-      "configurePreset": "ci-x64-Debug-GNUC-asan",
-      "hidden": true,
-      "inherits": [
-        "ci-base"
-      ]
-    },
-    {
-      "name": "ci-x64-Debug-GNUC-tsan",
-      "configurePreset": "ci-x64-Debug-GNUC-tsan",
-      "hidden": true,
-      "inherits": [
-        "ci-base"
-      ]
-    },
-    {
-      "name": "ci-x64-Debug-GNUC-lsan",
-      "configurePreset": "ci-x64-Debug-GNUC-lsan",
-      "hidden": true,
-      "inherits": [
-        "ci-base"
-      ]
-    },
-    {
-      "name": "ci-x64-Debug-GNUC-ubsan",
-      "configurePreset": "ci-x64-Debug-GNUC-ubsan",
-      "hidden": true,
-      "inherits": [
-        "ci-base"
-      ]
     }
   ],
   "testPresets": [
@@ -372,7 +286,7 @@
       "execution": {
         "noTestsAction": "error",
         "timeout": 180,
-        "jobs": 8
+        "jobs": 4
       }
     },
     {
@@ -437,45 +351,6 @@
       "name": "ci-x64-Release-Intel",
       "configurePreset": "ci-x64-Release-Intel",
       "hidden": true,
-      "inherits": [
-        "ci-base"
-      ]
-    },
-    {
-      "name": "ci-x64-Debug-MSVC-asan",
-      "configurePreset": "ci-x64-Debug-MSVC-asan",
-      "hidden": true,
-      "inherits": [
-        "ci-base"
-      ]
-    },
-    {
-      "name": "ci-x64-Debug-GNUC-asan",
-      "configurePreset": "ci-x64-Debug-GNUC-asan",
-      "hidden": true,
-      "inherits": [
-        "ci-base"
-      ]
-    },
-    {
-      "name": "ci-x64-Debug-GNUC-tsan",
-      "configurePreset": "ci-x64-Debug-GNUC-tsan",
-      "hidden": true,
-      "inherits": [
-        "ci-base"
-      ]
-    },
-    {
-      "name": "ci-x64-Debug-GNUC-lsan",
-      "configurePreset": "ci-x64-Debug-GNUC-lsan",
-      "hidden": true,
-      "inherits": [
-        "ci-base"
-      ]
-    },
-    {
-      "name": "ci-x64-Debug-GNUC-ubsan",
-      "configurePreset": "ci-x64-Debug-GNUC-ubsan",
       "inherits": [
         "ci-base"
       ]
