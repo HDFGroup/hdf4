@@ -294,7 +294,7 @@ jobs:
               name: zip-vs2022_cl-${{ inputs.build_mode }}-binary
               path: ${{ runner.workspace }}/build/HDF-*-win64.zip
               if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
-        if:  ${{ (matrix.os == 'windows-latest') && (matrix.name != 'Ubuntu mingw CMake') && (netcdf == 'true') && (shared == 'true') }}
+        if:  ${{ (matrix.os == 'windows-latest') && (matrix.name != 'Ubuntu mingw CMake') && (inputs.netcdf == 'true') && (inputs.shared == 'true') }}
 
       - name: Save published binary (linux)
         uses: actions/upload-artifact@v4
@@ -302,7 +302,7 @@ jobs:
               name: tgz-ubuntu-2204_gcc-${{ inputs.build_mode }}-binary
               path: ${{ runner.workspace }}/build/HDF-*-Linux.tar.gz
               if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
-        if:  ${{ (matrix.os == 'ubuntu-latest') && (matrix.name != 'Ubuntu mingw CMake') && (netcdf == 'true') && (shared == 'true') }}
+        if:  ${{ (matrix.os == 'ubuntu-latest') && (matrix.name != 'Ubuntu mingw CMake') && (inputs.netcdf == 'true') && (inputs.shared == 'true') }}
 
       - name: Save published binary (Mac)
         uses: actions/upload-artifact@v4
@@ -310,5 +310,5 @@ jobs:
               name: tgz-osx12-${{ inputs.build_mode }}-binary
               path: ${{ runner.workspace }}/build/HDF-*-Darwin.tar.gz
               if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
-        if: ${{ (matrix.os == 'macos-13') && (netcdf == 'true') && (shared == 'true') }}
+        if: ${{ (matrix.os == 'macos-13') && (inputs.netcdf == 'true') && (inputs.shared == 'true') }}
         
