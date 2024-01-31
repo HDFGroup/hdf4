@@ -42,13 +42,6 @@ set (CMAKE_JAVA_INCLUDE_PATH "")
 add_subdirectory (src)
 
 #-----------------------------------------------------------------------------
-# Build the Java Examples
-#-----------------------------------------------------------------------------
-if (HDF4_BUILD_EXAMPLES)
-  add_subdirectory (examples)
-endif ()
-
-#-----------------------------------------------------------------------------
 # Testing
 #-----------------------------------------------------------------------------
 if (NOT HDF4_EXTERNALLY_CONFIGURED AND BUILD_TESTING)

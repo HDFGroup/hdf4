@@ -10,8 +10,6 @@ set (H4EX_BUILD_TESTING ON CACHE BOOL "Build HDF4 Unit Testing" FORCE)
 
 set (COMPARE_TESTING ON CACHE BOOL "Compare HDF4 Unit Testing to Reference" FORCE)
 
-set (PACK_EXAMPLE_SOURCE ON CACHE BOOL "Package the source" FORCE)
-
 set (HDF_BUILD_C ON CACHE BOOL "Build C support" FORCE)
 
 set (HDF_BUILD_FORTRAN OFF CACHE BOOL "Build FORTRAN support" FORCE)

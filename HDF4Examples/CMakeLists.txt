@@ -4,29 +4,41 @@ project (H4EXAMPLES C)
 #-----------------------------------------------------------------------------
 # Define some CMake variables for use later in the project
 #-----------------------------------------------------------------------------
-set (HDF4EX_HDFSRC_DIR          ${H4EXAMPLES_SOURCE_DIR}/hdf)
-set (HDF4EX_HDF_FORTRAN_DIR     ${H4EXAMPLES_SOURCE_DIR}/hdf/fortran)
-set (HDF4EX_MFHDFSRC_DIR        ${H4EXAMPLES_SOURCE_DIR}/mfhdf)
-set (HDF4EX_MFHDF_FORTRAN_DIR   ${H4EXAMPLES_SOURCE_DIR}/mfhdf/fortran)
-set (HDF4EX_JAVA_DIR            ${H4EXAMPLES_SOURCE_DIR}/JAVA)
-set (HDF4EX_RESOURCES_DIR       ${H4EXAMPLES_SOURCE_DIR}/config/cmake)
+set (H4EX_C_DIR              ${H4EXAMPLES_SOURCE_DIR}/C)
+set (H4EX_HDF_FORTRAN_DIR    ${H4EXAMPLES_SOURCE_DIR}/hdf/FORTRAN)
+set (H4EX_MFHDF_FORTRAN_DIR  ${H4EXAMPLES_SOURCE_DIR}/mfhdf/FORTRAN)
+set (H4EX_JAVA_DIR           ${H4EXAMPLES_SOURCE_DIR}/JAVA)
 
 #-----------------------------------------------------------------------------
 # Basic HDF4Examples stuff here
 #-----------------------------------------------------------------------------
-include (${HDF4EX_RESOURCES_DIR}/HDFMacros.cmake)
-include (${HDF4EX_RESOURCES_DIR}/HDFExampleMacros.cmake)
-set (CMAKE_JAVA_INCLUDE_PATH "")
+if (NOT EXAMPLES_EXTERNALLY_CONFIGURED)
+  set (H4EX_RESOURCES_DIR       ${H4EXAMPLES_SOURCE_DIR}/config/cmake)
 
-SET_HDF_BUILD_TYPE()
+  include (${H4EX_RESOURCES_DIR}/HDFMacros.cmake)
+  include (${H4EX_RESOURCES_DIR}/HDFExampleMacros.cmake)
+  set (CMAKE_JAVA_INCLUDE_PATH "")
 
-BASIC_SETTINGS (EXAMPLES)
+  SET_HDF_BUILD_TYPE()
 
-#-----------------------------------------------------------------------------
-# HDF4 support
-#-----------------------------------------------------------------------------
-HDF4_SUPPORT (TRUE)
+  BASIC_SETTINGS (EX)
+
+  #-----------------------------------------------------------------------------
+  # HDF4 support
+  #-----------------------------------------------------------------------------
+  HDF4_SUPPORT (TRUE)
+endif ()
 message (STATUS "HDF4 link libs: ${H4EX_HDF4_LINK_LIBS}")
+
+#-----------------------------------------------------------------------------
+# Option to build JAVA examples
+#-----------------------------------------------------------------------------
+option (HDF_BUILD_JAVA "Build JAVA support" OFF)
+if (HDF_BUILD_JAVA)
+  find_package (Java)
+
+  include (${H4EX_RESOURCES_DIR}/UseJava.cmake)
+endif ()
 
 if (WIN32)
   set(CMAKE_TEST_LIB_DIRECTORY "${HDF4_TOOLS_DIR}")
@@ -37,7 +49,9 @@ endif ()
 #-----------------------------------------------------------------------------
 # All examples need the main include directories
 #-----------------------------------------------------------------------------
-INCLUDE_DIRECTORIES (${H4EX_HDF4_INCLUDE_DIRS})
+set_directory_properties(PROPERTIES INCLUDE_DIRECTORIES 
+    "${H4EX_HDF4_INCLUDE_DIRS}"
+)
 
 #-----------------------------------------------------------------------------
 # Dashboard and Testing Settings
@@ -50,7 +64,7 @@ if (H4EX_BUILD_TESTING)
   enable_testing ()
   include (CTest)
   include (${PROJECT_SOURCE_DIR}/CTestConfig.cmake)
-  configure_file (${HDF4EX_RESOURCES_DIR}/CTestCustom.cmake ${PROJECT_BINARY_DIR}/CTestCustom.ctest @ONLY)
+  configure_file (${H4EX_RESOURCES_DIR}/CTestCustom.cmake ${PROJECT_BINARY_DIR}/CTestCustom.ctest @ONLY)
 endif ()
 
 #-----------------------------------------------------------------------------
@@ -61,10 +75,10 @@ endif ()
 # Set default name mangling : overridden by Fortran detection in fortran dir
 set (H4_F77_FUNC "H4_F77_FUNC(name,NAME) name ## _")
 set (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) name ## __")
-if (EXISTS "${H4EXAMPLES_SOURCE_DIR}/mfhdf/fortran" AND IS_DIRECTORY "${H4EXAMPLES_SOURCE_DIR}/mfhdf/fortran")
+if (EXISTS "${H4EXAMPLES_SOURCE_DIR}/mfhdf/FORTRAN" AND IS_DIRECTORY "${H4EXAMPLES_SOURCE_DIR}/mfhdf/FORTRAN")
   option (HDF_BUILD_FORTRAN "Build FORTRAN support" OFF)
   if (HDF_BUILD_FORTRAN AND HDF4_BUILD_FORTRAN)
-      set (H4EX_LINK_Fortran_LIBS ${H4EX_HDF4_LINK_LIBS})
+    set (H4EX_LINK_Fortran_LIBS ${H4EX_HDF4_LINK_LIBS})
 
     if (WIN32)
       set (H4_F77_FUNC "H4_F77_FUNC(name,NAME) NAME")
@@ -90,13 +104,12 @@ endif ()
 # Build examples
 #-----------------------------------------------------------------------------
 if (HDF_BUILD_C)
-  add_subdirectory (hdf/examples)
-  add_subdirectory (mfhdf/examples)
+  add_subdirectory (C)
 endif ()
 if (HDF_BUILD_FORTRAN AND HDF4_BUILD_FORTRAN)
-    add_subdirectory (mfhdf/fortran)
-    add_subdirectory (hdf/fortran)
+    add_subdirectory (FORTRAN)
 endif ()
 if (HDF_BUILD_JAVA AND HDF4_BUILD_JAVA)
   add_subdirectory (JAVA)
 endif ()
+
