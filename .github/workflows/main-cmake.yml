@@ -9,11 +9,11 @@ on:
         required: true
         type: string
       shared:
-        description: "shared enable/disable"
+        description: "shared true/false"
         required: true
         type: string
       netcdf:
-        description: "netcdf enable/disable"
+        description: "netcdf true/false"
         required: true
         type: string
 
@@ -119,61 +119,6 @@ jobs:
             generator: "-G Ninja"
             run_tests: false
             use_mingw: true
-
-          # Windows w/ MSVC + CMake
-          #
-          - name: "Windows static MSVC CMake"
-            os: windows-2022
-            toolchain: ""
-            xdr: ON
-            fortran: OFF
-            java: OFF
-            docs: ON
-            localjpeg: OFF
-            locallibaec: OFF
-            localzlib: OFF
-            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
-            generator: "-G \"Visual Studio 17 2022\" -A x64"
-            run_tests: true
-            use_mingw: false
-
-          # Linux (Ubuntu) w/ gcc + CMake
-          #
-          # We might think about adding Clang, but MacOS already tests that
-          # so it's not critical
-          - name: "Ubuntu static gcc CMake"
-            os: ubuntu-latest
-            xdr: ON
-            fortran: OFF
-            java: OFF
-            docs: ON
-            localjpeg: OFF
-            locallibaec: OFF
-            localzlib: OFF
-            toolchain: "$GITHUB_WORKSPACE/config/toolchain/gcc.cmake"
-            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
-            generator: "-G Ninja"
-            run_tests: true
-            use_mingw: false
-
-          # MacOS w/ Clang + CMake
-          #
-          # We could also build with the Autotools via brew installing them,
-          # but that seems unnecessary
-          - name: "MacOS static Clang CMake"
-            os: macos-13
-            xdr: ON
-            fortran: OFF
-            java: OFF
-            docs: ON
-            localjpeg: OFF
-            locallibaec: OFF
-            localzlib: OFF
-            toolchain: "$GITHUB_WORKSPACE/config/toolchain/clang.cmake"
-            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
-            generator: "-G Ninja"
-            run_tests: true
-            use_mingw: false
 
     # Sets the job's name from the properties
     name: "${{ matrix.name }}-${{ inputs.build_mode }}-NC=${{ inputs.netcdf }}"
