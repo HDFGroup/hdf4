@@ -77,7 +77,7 @@ jobs:
             localjpeg: OFF
             locallibaec: OFF
             localzlib: OFF
-            toolchain: "$GITHUB_WORKSPACE/config/toolchain/gcc.cmake"
+            toolchain: "-DCMAKE_TOOLCHAIN_FILE=config/toolchain/gcc.cmake"
             cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G Ninja"
             run_tests: true
@@ -97,7 +97,7 @@ jobs:
             localjpeg: OFF
             locallibaec: OFF
             localzlib: OFF
-            toolchain: "$GITHUB_WORKSPACE/config/toolchain/clang.cmake"
+            toolchain: "-DCMAKE_TOOLCHAIN_FILE=config/toolchain/clang.cmake"
             cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G Ninja"
             run_tests: true
@@ -114,7 +114,7 @@ jobs:
             localjpeg: OFF
             locallibaec: OFF
             localzlib: OFF
-            toolchain: "$GITHUB_WORKSPACE/config/toolchain/mingw64.cmake"
+            toolchain: "-DCMAKE_TOOLCHAIN_FILE=config/toolchain/mingw64.cmake"
             cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G Ninja"
             run_tests: false
@@ -186,10 +186,11 @@ jobs:
         run: |
           mkdir "${{ runner.workspace }}/build"
           cd "${{ runner.workspace }}/build"
-          cmake ${{ matrix.cacheinit }} ${{ matrix.generator }} \
+          cmake -C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake \
+            ${{ matrix.generator }} \
             --log-level=VERBOSE \
             -DCMAKE_BUILD_TYPE=${{ inputs.build_mode }} \
-            -DCMAKE_TOOLCHAIN_FILE=${{ matrix.toolchain }} \
+            ${{ matrix.toolchain }} \
             -DBUILD_SHARED_LIBS:BOOL=${{ inputs.shared }} \
             -DHDF4_BUILD_EXAMPLES=ON \
             -DBUILD_JPEG_WITH_PIC:BOOL=ON \
