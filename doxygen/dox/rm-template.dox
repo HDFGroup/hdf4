@@ -23,9 +23,9 @@ the <a href="https://www.oreilly.com/library/view/97-things-every/9780596809515/
 \par RM entry elements
 
 1. Module indication
-   - Indicate the HDF5 module in which the function will appear.
+   - Indicate the HDF4 module in which the function will appear.
      \verbatim
-     * \ingroup H5XYZ
+     * \ingroup H4XYZ
      \endverbatim
 2. Synopsis
    - A phrase or sentence that summarizes the function's purpose

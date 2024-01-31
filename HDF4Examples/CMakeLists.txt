@@ -10,7 +10,7 @@ set (H4EX_MFHDF_FORTRAN_DIR  ${H4EXAMPLES_SOURCE_DIR}/mfhdf/FORTRAN)
 set (H4EX_JAVA_DIR           ${H4EXAMPLES_SOURCE_DIR}/JAVA)
 
 #-----------------------------------------------------------------------------
-# Basic HDF5Examples stuff here
+# Basic HDF4Examples stuff here
 #-----------------------------------------------------------------------------
 if (NOT EXAMPLES_EXTERNALLY_CONFIGURED)
   set (H4EX_RESOURCES_DIR       ${H4EXAMPLES_SOURCE_DIR}/config/cmake)
