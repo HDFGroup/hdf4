@@ -15,7 +15,7 @@ jobs:
   powerpc-autotools:
     # The host should always be Linux
     runs-on: ubuntu-latest
-    name: Ubuntu PowerPC
+    name: Ubuntu PowerPC Autotools
 
     steps:
       - uses: actions/checkout@v3
@@ -55,7 +55,7 @@ jobs:
   powerpc-cmake:
     # The host should always be Linux
     runs-on: ubuntu-latest
-    name: Ubuntu PowerPC
+    name: Ubuntu PowerPC CMake
 
     steps:
       - uses: actions/checkout@v3

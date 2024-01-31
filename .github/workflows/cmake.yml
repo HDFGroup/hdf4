@@ -15,24 +15,24 @@ jobs:
         name: "CMake Release NetCDF Off Workflows"
         uses: ./.github/workflows/main-cmake.yml
         with:
-            netcdf: false
-            shared: true
+            netcdf: "false"
+            shared: "true"
             build_mode: "Release"
 
     call-debug-netcdf-cmake:
         name: "CMake Debug NetCDF Workflows"
         uses: ./.github/workflows/main-cmake.yml
         with:
-            netcdf: true
-            shared: true
+            netcdf: "true"
+            shared: "true"
             build_mode: "Debug"
 
     call-release-netcdf-cmake:
         name: "CMake Release NetCDF Workflows"
         uses: ./.github/workflows/main-cmake.yml
         with:
-            netcdf: true
-            shared: true
+            netcdf: "true"
+            shared: "true"
             build_mode: "Release"
 
     call-release-bintest:
@@ -46,16 +46,16 @@ jobs:
         name: "CMake Debug Static Workflows"
         uses: ./.github/workflows/main-cmake.yml
         with:
-            netcdf: false
-            shared: false
+            netcdf: "false"
+            shared: "false"
             build_mode: "Debug"
 
     call-release-static-cmake:
         name: "CMake Release Static Workflows"
         uses: ./.github/workflows/main-cmake.yml
         with:
-            netcdf: false
-            shared: false
+            netcdf: "false"
+            shared: "false"
             build_mode: "Release"
 
     call-release-cmake-intel:
