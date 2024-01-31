@@ -12,7 +12,7 @@ on:
     - '**.md'
 
 jobs:
-  powerpc:
+  powerpc-autotools:
     # The host should always be Linux
     runs-on: ubuntu-latest
     name: Ubuntu PowerPC
@@ -39,9 +39,67 @@ jobs:
             make sudo zlib1g zlib1g-dev
 
           run: |
-            ./autogen.sh
-            ./configure --prefix=/usr/local \
-            --enable-shared --enable-hdf4-xdr \
-            --disable-fortran --disable-netcdf
+            sh ./autogen.sh
+            mkdir "build"
+            cd "build"
+            ../configure \
+                --enable-build-mode=production \
+                --enable-hdf4-xdr \
+                --enable-netcdf \
+                --disable-fortran \
+                --enable-java \
+                --enable-shared
             make
+            make check
             sudo make install
+  powerpc-cmake:
+    # The host should always be Linux
+    runs-on: ubuntu-latest
+    name: Ubuntu PowerPC
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: uraimo/run-on-arch-action@v2
+        name: Run commands
+        id: runcmd
+        with:
+          arch: ppc64le
+          distro: ubuntu_latest
+
+          # Not required, but speeds up builds by storing container images in
+          # a GitHub package registry.
+          githubToken: ${{ github.token }}
+
+          install: |
+            apt-get update -q -y
+            apt-get install -q -y --no-install-recommends \
+            ninja-build libtirpc-dev graphviz gcc \
+            libc6-dev libjpeg-dev \
+            make sudo zlib1g zlib1g-dev
+
+          run: |
+            mkdir "build"
+            cd "build"
+            cmake -C ../config/cmake/cacheinit.cmake \
+                -G Ninja \
+                --log-level=VERBOSE \
+                -DCMAKE_BUILD_TYPE=Release \
+                -DCMAKE_TOOLCHAIN_FILE=../config/toolchain/gcc.cmake \
+                -DBUILD_SHARED_LIBS:BOOL=ON \
+                -DHDF4_BUILD_EXAMPLES=ON \
+                -DBUILD_JPEG_WITH_PIC:BOOL=ON \
+                -DHDF4_BUILD_XDR_LIB:BOOL=ON \
+                -DHDF4_ENABLE_NETCDF:BOOL=ON \
+                -DHDF4_BUILD_FORTRAN=OFF \
+                -DHDF4_BUILD_JAVA=ON \
+                -DHDF4_BUILD_DOC=OFF \
+                -DJPEG_USE_LOCALCONTENT=OFF \
+                -DLIBAEC_USE_LOCALCONTENT=OFF \
+                -DZLIB_USE_LOCALCONTENT=OFF \
+                -DHDF4_PACK_EXAMPLES:BOOL=ON \
+                -DHDF4_PACKAGE_EXTLIBS:BOOL=ON \
+                ..
+            cmake --build . --config Release
+            ctest . -C Release -V
+            cpack -C Release -V

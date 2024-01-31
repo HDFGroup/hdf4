@@ -10,7 +10,7 @@ jobs:
     name: Check for spelling errors
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4.1.1
       - uses: codespell-project/actions-codespell@master
         with:
           skip: ./config/sanitizer/sanitizers.cmake,./hdf/util/testfiles/*.raw,./hdf/util/testfiles/head.r8,./mfhdf/ncdump/*,./mfhdf/ncgen/*,./mfhdf/nctest/*,./mfhdf/xdr/*,./mfhdf/README,./mfhdf/THANKS,./mfhdf/FAQ

@@ -35,8 +35,15 @@ jobs:
             shared: true
             build_mode: "Release"
 
+    call-release-bintest:
+        name: "CMake Test Release Binaries"
+        needs: call-release-netcdf-cmake
+        uses: ./.github/workflows/cmake-bintest.yml
+        with:
+            build_mode: "Release"
+
     call-debug-static-cmake:
-        name: "CMake Debug Workflows"
+        name: "CMake Debug Static Workflows"
         uses: ./.github/workflows/main-cmake.yml
         with:
             netcdf: false
@@ -44,7 +51,7 @@ jobs:
             build_mode: "Debug"
 
     call-release-static-cmake:
-        name: "CMake Release Workflows"
+        name: "CMake Release Static Workflows"
         uses: ./.github/workflows/main-cmake.yml
         with:
             netcdf: false
