@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['word_7706',['WORD',['../gif_8h.html#a0bb5fece38dce03dd4a5674751ac4557',1,'gif.h']]]
+  ['word_7704',['WORD',['../gif_8h.html#a0bb5fece38dce03dd4a5674751ac4557',1,'gif.h']]]
 ];
