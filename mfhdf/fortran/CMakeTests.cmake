@@ -14,7 +14,7 @@ if (HDF4_ENABLE_NETCDF)
   #-- Adding test for ftest
   add_executable (ftest ${HDF4_BINARY_DIR}/ftest.f ${HDF4_HDF_TESTSOURCE_DIR}/forsupff.f ${HDF4_BINARY_DIR}/netcdf.inc)
   target_include_directories (ftest
-      PRIVATE "${HDF4_HDF_BINARY_DIR};${HDF4_MFHDF_FORTRAN_BINARY_DIR};${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_HDF_TESTSOURCE_DIR}"
+      PRIVATE "${HDF4_HDF_BINARY_DIR};${HDF4_BINARY_DIR};${HDF4_MFHDF_FORTRAN_BINARY_DIR};${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_HDF_TESTSOURCE_DIR}"
   )
   target_compile_options(ftest
       PRIVATE $<$<STREQUAL:"x${CMAKE_Fortran_SIMULATE_ID}","xMSVC">:${WIN_COMPILE_FLAGS}>
@@ -45,7 +45,7 @@ endif ()
 #-- Adding test for f_hdftest
 add_executable (f_hdftest hdftest.f)
 target_include_directories (f_hdftest
-    PRIVATE "${HDF4_HDF_BINARY_DIR};${HDF4_MFHDF_FORTRAN_BINARY_DIR};${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_HDF_TESTSOURCE_DIR}"
+    PRIVATE "${HDF4_HDF_BINARY_DIR};${HDF4_BINARY_DIR};${HDF4_MFHDF_FORTRAN_BINARY_DIR};${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_HDF_TESTSOURCE_DIR}"
 )
 target_compile_options(f_hdftest
     PRIVATE $<$<STREQUAL:"x${CMAKE_Fortran_SIMULATE_ID}","xMSVC">:${WIN_COMPILE_FLAGS}>
@@ -63,7 +63,7 @@ endif ()
 #-- Adding test for f_hdftest1
 add_executable (f_hdftest1 hdftest1.f)
 target_include_directories (f_hdftest1
-    PRIVATE "${HDF4_HDF_BINARY_DIR};${HDF4_MFHDF_FORTRAN_BINARY_DIR};${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_HDF_TESTSOURCE_DIR}"
+    PRIVATE "${HDF4_HDF_BINARY_DIR};${HDF4_BINARY_DIR};${HDF4_MFHDF_FORTRAN_BINARY_DIR};${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_HDF_TESTSOURCE_DIR}"
 )
 target_compile_options(f_hdftest1
     PRIVATE $<$<STREQUAL:"x${CMAKE_Fortran_SIMULATE_ID}","xMSVC">:${WIN_COMPILE_FLAGS}>
@@ -81,7 +81,7 @@ endif ()
 #-- Adding test for f_tszip
 add_executable (f_tszip tszip.f)
 target_include_directories (f_tszip
-    PRIVATE "${HDF4_HDF_BINARY_DIR};${HDF4_MFHDF_FORTRAN_BINARY_DIR};${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_HDF_TESTSOURCE_DIR}"
+    PRIVATE "${HDF4_HDF_BINARY_DIR};${HDF4_BINARY_DIR};${HDF4_MFHDF_FORTRAN_BINARY_DIR};${HDF4_HDFSOURCE_DIR};${HDF4_MFHDFSOURCE_DIR};${HDF4_HDF_TESTSOURCE_DIR}"
 )
 target_compile_options(f_tszip
     PRIVATE $<$<STREQUAL:"x${CMAKE_Fortran_SIMULATE_ID}","xMSVC">:${WIN_COMPILE_FLAGS}>

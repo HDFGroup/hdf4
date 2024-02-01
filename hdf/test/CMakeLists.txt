@@ -48,7 +48,7 @@ set (testhdf_SRCS
 
 #-- Adding test for testhdf
 add_executable (testhdf ${testhdf_SRCS})
-target_include_directories(testhdf PRIVATE "${HDF4_HDF_BINARY_DIR};${HDF4_HDFSOURCE_DIR}")
+target_include_directories(testhdf PRIVATE "${HDF4_HDF_BINARY_DIR};${HDF4_BINARY_DIR};${HDF4_COMP_INCLUDE_DIRECTORIES};${HDF4_HDFSOURCE_DIR}")
 if (NOT BUILD_SHARED_LIBS)
   TARGET_C_PROPERTIES (testhdf STATIC)
   target_link_libraries (testhdf PRIVATE ${HDF4_SRC_LIB_TARGET} ${LINK_COMP_LIBS})
@@ -61,7 +61,7 @@ set_target_properties (testhdf PROPERTIES FOLDER test)
 #-- Adding test for buffer
 if (NOT WIN32)
   add_executable (buffer ${HDF4_HDF_TEST_SOURCE_DIR}/buffer.c)
-  target_include_directories(buffer PRIVATE "${HDF4_HDF_BINARY_DIR};${HDF4_HDFSOURCE_DIR}")
+  target_include_directories(buffer PRIVATE "${HDF4_HDF_BINARY_DIR};${HDF4_BINARY_DIR};${HDF4_HDFSOURCE_DIR}")
   if (NOT BUILD_SHARED_LIBS)
     TARGET_C_PROPERTIES (buffer STATIC)
     target_link_libraries (buffer PRIVATE ${HDF4_SRC_LIB_TARGET})

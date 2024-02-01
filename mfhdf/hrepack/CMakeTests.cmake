@@ -22,6 +22,7 @@ add_custom_target(hrepack_files ALL COMMENT "Copying files needed by hrepack tes
 
 #-- Adding test for test_hrepack for generating testfiles
 add_executable (test_hrepack ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepacktst.c)
+target_include_directories(test_hrepack PRIVATE "${HDF4_HDF_BINARY_DIR};${HDF4_BINARY_DIR};${HDF4_COMP_INCLUDE_DIRECTORIES}")
 if (NOT BUILD_SHARED_LIBS)
   TARGET_C_PROPERTIES (test_hrepack STATIC)
   target_link_libraries (test_hrepack PRIVATE ${HDF4_MF_LIB_TARGET} ${LINK_COMP_LIBS})

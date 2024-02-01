@@ -228,6 +228,8 @@ set (HDF4_JAVA_LOGGING_NOP_JAR     ${HDF4_SOURCE_DIR}/java/lib/ext/slf4j-nop-1.7
 set (HDF4_JAVA_LOGGING_SIMPLE_JAR  ${HDF4_SOURCE_DIR}/java/lib/ext/slf4j-simple-1.7.33.jar)
 set (HDF4_DOXYGEN_DIR              ${HDF4_SOURCE_DIR}/doxygen)
 
+set (HDF4_SRC_INCLUDE_DIRS ${HDF4_HDFSOURCE_DIR} ${HDF4_MFHDFSOURCE_DIR})
+
 set (CMAKE_MODULE_PATH ${HDF_RESOURCES_DIR} ${CMAKE_MODULE_PATH})
 
 #-----------------------------------------------------------------------------
@@ -314,7 +316,8 @@ set (CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE ON)
 # Include directories in the source or build tree should come before other
 # directories to prioritize headers in the sources over installed ones.
 #-----------------------------------------------------------------------------
-set(CMAKE_INCLUDE_DIRECTORIES_PROJECT_BEFORE ON)
+set (CMAKE_INCLUDE_DIRECTORIES_PROJECT_BEFORE ON)
+set (HDF4_COMP_INCLUDE_DIRECTORIES)
 
 #-----------------------------------------------------------------------------
 # Mac OS X Options
@@ -419,18 +422,6 @@ if (HDF4_ENABLE_DEPRECATED_SYMBOLS)
 else ()
   set (H4_NO_DEPRECATED_SYMBOLS 1)
 endif ()
-
-#-----------------------------------------------------------------------------
-# Include the main src and config directories
-#-----------------------------------------------------------------------------
-set (HDF4_INCLUDE_DIRECTORIES
-    ${HDF4_HDFSOURCE_DIR}
-    ${HDF4_MFHDFSOURCE_DIR}
-    ${HDF4_SOURCE_DIR}
-    ${HDF4_BINARY_DIR}
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-)
-INCLUDE_DIRECTORIES (${HDF4_INCLUDE_DIRECTORIES} )
 
 #-----------------------------------------------------------------------------
 # When building utility executables that generate other (source) files :
@@ -619,7 +610,12 @@ if (EXISTS "${HDF4_SOURCE_DIR}/java" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/java")
 endif ()
 
 #-----------------------------------------------------------------------------
-# Option to build HDF4 Examples
+# Generate the H4config.h file containing user settings needed by compilation
+#-----------------------------------------------------------------------------
+configure_file (${HDF_RESOURCES_DIR}/h4config.h.in ${PROJECT_BINARY_DIR}/h4config.h @ONLY)
+
+#-----------------------------------------------------------------------------
+# Option to build examples
 #-----------------------------------------------------------------------------
 if (EXISTS "${HDF4_SOURCE_DIR}/HDF4Examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/HDF4Examples")
   option (HDF4_BUILD_EXAMPLES  "Build HDF4 Library Examples" ON)
@@ -629,10 +625,5 @@ if (EXISTS "${HDF4_SOURCE_DIR}/HDF4Examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR
     add_subdirectory (HDF4Examples)
   endif ()
 endif ()
-
-#-----------------------------------------------------------------------------
-# Generate the H4config.h file containing user settings needed by compilation
-#-----------------------------------------------------------------------------
-configure_file (${HDF_RESOURCES_DIR}/h4config.h.in      ${PROJECT_BINARY_DIR}/h4config.h @ONLY)
 
 include (CMakeInstallation.cmake)

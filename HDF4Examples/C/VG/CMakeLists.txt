@@ -47,7 +47,7 @@ if (H4EX_BUILD_TESTING)
           NAME ${testprefix}_HDP-${testname}
           COMMAND "${CMAKE_COMMAND}"
               -D "TEST_PROGRAM=${H4EX_HDF4_DUMP_EXECUTABLE}"
-              -D "TEST_ARGS:STRING=${dumparg};${testprefix}_${testname}.hdf"
+              -D "TEST_ARGS:STRING=${dumparg};${testname}.hdf"
               -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
               -D "TEST_OUTPUT=${testprefix}_${testname}.ddl.out"
               -D "TEST_EXPECT=0"
