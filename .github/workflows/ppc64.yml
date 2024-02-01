@@ -103,5 +103,5 @@ jobs:
                 -DHDF4_PACKAGE_EXTLIBS:BOOL=ON \
                 ..
             cmake --build . --config Release
-            ctest . -C Release -V -E {MFHDF_TEST-hdftest | HDP-dumpsds-18}
+            ctest . -C Release -V -E {MFHDF_TEST-hdftest | HDP-dumpsds-18)
             cpack -C Release -V
