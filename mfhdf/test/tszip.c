@@ -1089,8 +1089,7 @@ test_szip_unlimited()
 
     /* Initialize for SZIP */
     c_info.szip.pixels_per_block = 2;
-
-    c_info.szip.options_mask = SZ_EC_OPTION_MASK;
+    c_info.szip.options_mask     = SZ_EC_OPTION_MASK;
     c_info.szip.options_mask |= SZ_RAW_OPTION_MASK;
     c_info.szip.bits_per_pixel      = 0;
     c_info.szip.pixels              = 0;

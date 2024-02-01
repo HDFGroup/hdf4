@@ -4098,9 +4098,15 @@ SDgetcompinfo(int32         sdsid,     /* IN: dataset ID */
 
     /* use lower-level routine to get the compression information */
     status = HCPgetcompinfo(handle->hdf_file, var->data_tag, var->data_ref, comp_type, c_info);
-
     if (status == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+    /* remove the szip special bit if necessary */
+    if (*comp_type == COMP_CODE_SZIP) {
+        status = HCPrm_szip_special_bit(c_info);
+        if (status == FAIL)
+            HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    }
 
 done:
     return ret_value;

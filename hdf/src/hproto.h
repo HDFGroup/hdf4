@@ -393,6 +393,7 @@ HDFLIBAPI intn HCPdecode_header(uint8 *p, comp_model_t *model_type, model_info *
 
 HDFLIBAPI intn HCPsetup_szip_parms(comp_info *c_info, int32 nt, int32 ncomp, int32 ndims, int32 *dims,
                                    int32 *cdims);
+HDFLIBAPI intn HCPrm_szip_special_bit(comp_info *c_info);
 /*
  ** from hbuffer.c
  */
