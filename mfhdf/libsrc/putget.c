@@ -20,12 +20,13 @@
 #include "hfile.h" /* Ugh!  We need the defs for HI_READ and HI_SEEK */
 
 /* Local function prototypes */
-static bool_t nssdc_xdr_NCvdata(NC *handle, NC_var *vp, u_long where, nc_type type, uint32 count,
+static bool_t nssdc_xdr_NCvdata(NC *handle, NC_var *vp, unsigned long where, nc_type type, uint32 count,
                                 void *values);
 
-static intn hdf_xdr_NCvdata(NC *handle, NC_var *vp, u_long where, nc_type type, uint32 count, void *values);
+static intn hdf_xdr_NCvdata(NC *handle, NC_var *vp, unsigned long where, nc_type type, uint32 count,
+                            void *values);
 
-static intn hdf_xdr_NCv1data(NC *handle, NC_var *vp, u_long where, nc_type type, void *values);
+static intn hdf_xdr_NCv1data(NC *handle, NC_var *vp, unsigned long where, nc_type type, void *values);
 
 static intn SDIresizebuf(void **buf, int32 *buf_size, int32 size_wanted);
 
@@ -324,10 +325,10 @@ bad:
 /*
  * Translate the (variable, coords) pair into a seek index
  */
-static u_long
+static unsigned long
 NC_varoffset(NC *handle, NC_var *vp, const long *coords)
 {
-    u_long         offset;
+    unsigned long  offset;
     const long    *ip;
     unsigned long *up;
     const long    *boundary;
@@ -415,9 +416,9 @@ NC_varoffset(NC *handle, NC_var *vp, const long *coords)
 static bool_t
 xdr_NCvbyte(XDR *xdrs, unsigned rem, unsigned count, char *values)
 {
-    char        buf[4];
-    u_long      origin = 0;
-    enum xdr_op x_op   = xdrs->x_op; /* save state */
+    char          buf[4];
+    unsigned long origin = 0;
+    enum xdr_op   x_op   = xdrs->x_op; /* save state */
 
     if (x_op == XDR_ENCODE) {
         /*
@@ -466,7 +467,7 @@ bool_t
 xdr_NCvshort(XDR *xdrs, unsigned which, short *values)
 {
     unsigned char buf[4]; /* unsigned is important here */
-    u_long        origin = 0;
+    unsigned long origin = 0;
     enum xdr_op   x_op   = xdrs->x_op; /* save state */
 
     if (x_op == XDR_ENCODE) {
@@ -510,9 +511,9 @@ xdr_NCvshort(XDR *xdrs, unsigned which, short *values)
  * xdr a single datum of type 'type' at 'where'
  */
 static bool_t
-xdr_NCv1data(XDR *xdrs, u_long where, nc_type type, Void *values)
+xdr_NCv1data(XDR *xdrs, unsigned long where, nc_type type, Void *values)
 {
-    u_long rem = 0;
+    unsigned long rem = 0;
 
     switch (type) {
         case NC_BYTE:
@@ -874,7 +875,7 @@ done:
  * The calling routine is responsible for calling DFKsetNT() as required.
  */
 static intn
-hdf_xdr_NCvdata(NC *handle, NC_var *vp, u_long where, nc_type type, uint32 count, void *values)
+hdf_xdr_NCvdata(NC *handle, NC_var *vp, unsigned long where, nc_type type, uint32 count, void *values)
 {
     NC_attr **attr = NULL; /* pointer to the fill-value attribute */
     int32     status;
@@ -1432,7 +1433,7 @@ done:
  * Return TRUE if everything worked, else FALSE
  */
 static intn
-hdf_xdr_NCv1data(NC *handle, NC_var *vp, u_long where, nc_type type, void *values)
+hdf_xdr_NCv1data(NC *handle, NC_var *vp, unsigned long where, nc_type type, void *values)
 {
 
     intn ret_value = SUCCEED;
@@ -1459,7 +1460,7 @@ done:
  *       it 100 percent -GV
  */
 static bool_t
-nssdc_xdr_NCvdata(NC *handle, NC_var *vp, u_long where, nc_type type, uint32 count, void *values)
+nssdc_xdr_NCvdata(NC *handle, NC_var *vp, unsigned long where, nc_type type, uint32 count, void *values)
 {
     int32 status;
     int32 byte_count;
@@ -1501,8 +1502,8 @@ nssdc_xdr_NCvdata(NC *handle, NC_var *vp, u_long where, nc_type type, uint32 cou
 static int
 NCvar1io(NC *handle, int varid, const long *coords, Void *value)
 {
-    NC_var *vp;
-    u_long  offset;
+    NC_var       *vp;
+    unsigned long offset;
 
     if (handle->flags & NC_INDEF)
         return (-1);
@@ -1601,9 +1602,9 @@ ncvarget1(int cdfid, int varid, const long *coords, ncvoid *value)
  * xdr 'count' items of contiguous data of type 'type' at 'where'
  */
 static bool_t
-xdr_NCvdata(XDR *xdrs, u_long where, nc_type type, unsigned count, Void *values)
+xdr_NCvdata(XDR *xdrs, unsigned long where, nc_type type, unsigned count, Void *values)
 {
-    u_long rem = 0;
+    unsigned long rem = 0;
     bool_t (*xdr_NC_fnct)();
     bool_t stat;
     size_t szof;
@@ -1879,11 +1880,11 @@ NCvario(NC *handle, int varid, const long *start, const long *edges, void *value
     /* now edp = edp0 - 1 */
 
     { /* inline */
-        long        coords[H4_MAX_VAR_DIMS], upper[H4_MAX_VAR_DIMS];
-        long       *cc;
-        const long *mm;
-        u_long      offset;
-        size_t      szof = nctypelen(vp->type);
+        long          coords[H4_MAX_VAR_DIMS], upper[H4_MAX_VAR_DIMS];
+        long         *cc;
+        const long   *mm;
+        unsigned long offset;
+        size_t        szof = nctypelen(vp->type);
 
         /* copy in starting indices */
         cc = coords;
@@ -2208,12 +2209,12 @@ ncrecinq(int cdfid, int *nrecvars, int *recvarids, long *recsizes)
 static int
 NCrecio(NC *handle, long recnum, Void **datap)
 {
-    int      nrvars;
-    NC_var  *rvp[H4_MAX_NC_VARS];
-    int      ii;
-    long     coords[H4_MAX_VAR_DIMS];
-    u_long   offset;
-    unsigned iocount;
+    int           nrvars;
+    NC_var       *rvp[H4_MAX_NC_VARS];
+    int           ii;
+    long          coords[H4_MAX_VAR_DIMS];
+    unsigned long offset;
+    unsigned      iocount;
 
     nrvars = NCnumrecvars(handle, rvp, (int *)NULL);
     if (nrvars == -1)

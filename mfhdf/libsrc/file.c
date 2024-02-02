@@ -646,10 +646,10 @@ ncredef(int cdfid)
 static void
 NC_begins(NC *handle)
 {
-    unsigned ii;
-    u_long   index = 0;
-    NC_var **vpp;
-    NC_var  *last = NULL;
+    unsigned      ii;
+    unsigned long index = 0;
+    NC_var      **vpp;
+    NC_var       *last = NULL;
 
     if (handle->vars == NULL)
         return;

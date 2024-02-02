@@ -44,10 +44,10 @@
  * > xdr_elem: routine to XDR each element
  */
 bool_t
-xdr_vector(XDR *xdrs, char *basep, u_int nelem, u_int elemsize, xdrproc_t xdr_elem)
+xdr_vector(XDR *xdrs, char *basep, unsigned nelem, unsigned elemsize, xdrproc_t xdr_elem)
 {
-    u_int i;
-    char *elptr;
+    unsigned i;
+    char    *elptr;
 
     elptr = basep;
     for (i = 0; i < nelem; i++) {
@@ -67,10 +67,10 @@ main(int ac, char *av[])
     FILE       *F;
     XDR         xdrs[1];
     size_t      count;
-    u_int       szof;
+    unsigned    szof;
 
     /* some random numbers, divisible by 4 and less than 32k */
-    static u_int seeks[] = {
+    static unsigned seeks[] = {
         16828,
         8448,
         20632,
@@ -90,8 +90,8 @@ main(int ac, char *av[])
         12556,
     };
 
-    u_int poses[8];
-    int   jj = 0;
+    unsigned poses[8];
+    int      jj = 0;
 
     static char text[32] = {"Hiya sailor. New in town?"};
     char        got_s[32];

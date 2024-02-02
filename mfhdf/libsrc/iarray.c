@@ -67,9 +67,9 @@ NC_free_iarray(NC_iarray *iarray)
 bool_t
 xdr_NC_iarray(XDR *xdrs, NC_iarray **ipp)
 {
-    int   *ip;
-    u_long count = 0;
-    bool_t stat  = TRUE;
+    int          *ip;
+    unsigned long count = 0;
+    bool_t        stat  = TRUE;
 
     switch (xdrs->x_op) {
         case XDR_FREE:

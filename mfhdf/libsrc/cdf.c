@@ -548,7 +548,7 @@ xdr_cdf(XDR *xdrs, NC **handlep)
 static bool_t
 NC_xdr_cdf(XDR *xdrs, NC **handlep)
 {
-    u_long magic;
+    unsigned long magic;
 
     if (xdrs->x_op == XDR_FREE) {
         NC_free_xcdf(*handlep);
@@ -2863,8 +2863,8 @@ xdr_NC_fill(XDR *xdrs, NC_var *vp)
     char   fillp[2 * sizeof(double)];
     bool_t stat;
     bool_t (*xdr_NC_fnct)();
-    u_long    alen = vp->len;
-    NC_attr **attr = NULL;
+    unsigned long alen = vp->len;
+    NC_attr     **attr = NULL;
 
     /*
      * set up fill value

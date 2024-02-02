@@ -208,10 +208,10 @@ biowrite(biobuf *biop, unsigned char *ptr, int nbytes)
 
 static bool_t   xdrposix_getlong(XDR *xdrs, long *lp);
 static bool_t   xdrposix_putlong(XDR *xdrs, const long *lp);
-static bool_t   xdrposix_getbytes(XDR *xdrs, char *addr, u_int len);
-static bool_t   xdrposix_putbytes(XDR *xdrs, const char *addr, u_int len);
-static u_int    xdrposix_getpos(XDR *xdrs);
-static bool_t   xdrposix_setpos(XDR *xdrs, u_int pos);
+static bool_t   xdrposix_getbytes(XDR *xdrs, char *addr, unsigned len);
+static bool_t   xdrposix_putbytes(XDR *xdrs, const char *addr, unsigned len);
+static unsigned xdrposix_getpos(XDR *xdrs);
+static bool_t   xdrposix_setpos(XDR *xdrs, unsigned pos);
 static void     xdrposix_destroy(XDR *xdrs);
 #if (defined __sun && defined _LP64)
 static bool_t xdrposix_getint(XDR *xdrs, int *lp);
@@ -266,7 +266,7 @@ hdf_xdrfile_create(XDR *xdrs, int ncop)
 static int
 xdrposix_create(XDR *xdrs, int fd, int fmode, enum xdr_op op)
 {
-    biobuf *biop = new_biobuf(fd, fmode);
+    biobuf *biop    = new_biobuf(fd, fmode);
     xdrs->x_op      = op;
     xdrs->x_ops     = &xdrposix_ops;
     xdrs->x_private = (char *)biop;
@@ -357,7 +357,7 @@ xdrposix_putlong(XDR *xdrs, const long *lp)
 }
 
 static bool_t
-xdrposix_getbytes(XDR *xdrs, char *addr, u_int len)
+xdrposix_getbytes(XDR *xdrs, char *addr, unsigned len)
 {
     if ((len != 0) && (bioread((biobuf *)xdrs->x_private, (unsigned char *)addr, (int)len) != len))
         return FALSE;
@@ -365,14 +365,14 @@ xdrposix_getbytes(XDR *xdrs, char *addr, u_int len)
 }
 
 static bool_t
-xdrposix_putbytes(XDR *xdrs, const char *addr, u_int len)
+xdrposix_putbytes(XDR *xdrs, const char *addr, unsigned len)
 {
     if ((len != 0) && (biowrite((biobuf *)xdrs->x_private, (unsigned char *)addr, (int)len) != len))
         return FALSE;
     return TRUE;
 }
 
-static u_int
+static unsigned
 xdrposix_getpos(XDR *xdrs)
 {
     biobuf *biop = (biobuf *)xdrs->x_private;
@@ -380,7 +380,7 @@ xdrposix_getpos(XDR *xdrs)
 }
 
 static bool_t
-xdrposix_setpos(XDR *xdrs, u_int pos)
+xdrposix_setpos(XDR *xdrs, unsigned pos)
 {
     biobuf *biop = (biobuf *)xdrs->x_private;
     if (biop != NULL) {

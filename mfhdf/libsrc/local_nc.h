@@ -443,7 +443,7 @@ HDFLIBAPI bool_t NCcktype(nc_type datatype);
 HDFLIBAPI bool_t NC_indefine(int cdfid, bool_t iserr);
 HDFLIBAPI bool_t xdr_cdf(XDR *xdrs, NC **handlep);
 HDFLIBAPI bool_t xdr_numrecs(XDR *xdrs, NC *handle);
-HDFLIBAPI bool_t xdr_shorts(XDR *xdrs, short *sp, u_int cnt);
+HDFLIBAPI bool_t xdr_shorts(XDR *xdrs, short *sp, unsigned cnt);
 HDFLIBAPI bool_t xdr_NC_array(XDR *xdrs, NC_array **app);
 HDFLIBAPI bool_t xdr_NC_attr(XDR *xdrs, NC_attr **app);
 HDFLIBAPI bool_t xdr_NC_dim(XDR *xdrs, NC_dim **dpp);

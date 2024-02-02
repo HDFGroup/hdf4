@@ -45,13 +45,6 @@
 #include <sys/types.h>
 #endif
 
-#ifndef u_int
-typedef uint32_t u_int;
-#endif
-#ifndef u_long
-typedef unsigned long u_long;
-#endif
-
 #ifndef TRUE
 #define TRUE 1
 #endif
@@ -115,11 +108,11 @@ typedef struct xinfo {
         bool_t (*x_getlong)(struct xinfo *, long *);
         bool_t (*x_putlong)(struct xinfo *, const long *);
         /* Get/put bytes. */
-        bool_t (*x_getbytes)(struct xinfo *, char *, u_int);
-        bool_t (*x_putbytes)(struct xinfo *, const char *, u_int);
+        bool_t (*x_getbytes)(struct xinfo *, char *, unsigned);
+        bool_t (*x_putbytes)(struct xinfo *, const char *, unsigned);
         /* Get or seek within the stream (offsets from beginning of stream). */
-        u_int (*x_getpostn)(struct xinfo *);
-        bool_t (*x_setpostn)(struct xinfo *, u_int);
+        unsigned (*x_getpostn)(struct xinfo *);
+        bool_t (*x_setpostn)(struct xinfo *, unsigned);
         /* Free the stream. */
         void (*x_destroy)(struct xinfo *);
     } * x_ops;
@@ -151,9 +144,9 @@ typedef bool_t (*xdrproc_t)(XDR *, void *, ...);
  *
  * XDR        *xdrs;
  * long       *longp;
- * char *      addr;
- * u_int       len;
- * u_int       pos;
+ * char       *addr;
+ * unsigned    len;
+ * unsigned    pos;
  */
 #define xdr_getlong(xdrs, longp) (*(xdrs)->x_ops->x_getlong)(xdrs, longp)
 #define xdr_putlong(xdrs, longp) (*(xdrs)->x_ops->x_putlong)(xdrs, longp)
@@ -181,12 +174,12 @@ xdr_putint32(XDR *xdrs, int32_t *ip)
 #define xdr_getbytes(xdrs, addr, len) (*(xdrs)->x_ops->x_getbytes)(xdrs, addr, len)
 #define xdr_putbytes(xdrs, addr, len) (*(xdrs)->x_ops->x_putbytes)(xdrs, addr, len)
 
-#define xdr_getpos(xdrs) (*(xdrs)->x_ops->x_getpostn)(xdrs)
+#define xdr_getpos(xdrs)      (*(xdrs)->x_ops->x_getpostn)(xdrs)
 #define xdr_setpos(xdrs, pos) (*(xdrs)->x_ops->x_setpostn)(xdrs, pos)
 
 #define xdr_destroy(xdrs)                                                                                    \
     if ((xdrs)->x_ops->x_destroy)                                                                            \
-        (*(xdrs)->x_ops->x_destroy)(xdrs)
+    (*(xdrs)->x_ops->x_destroy)(xdrs)
 
 #ifdef __cplusplus
 extern "C" {
@@ -196,13 +189,13 @@ extern "C" {
  * These are the "generic" xdr routines.
  */
 HDFLIBAPI bool_t xdr_int(XDR *, int *);
-HDFLIBAPI bool_t xdr_u_int(XDR *, u_int *);
+HDFLIBAPI bool_t xdr_u_int(XDR *, unsigned *);
 
 HDFLIBAPI bool_t xdr_long(XDR *, long *);
-HDFLIBAPI bool_t xdr_u_long(XDR *, u_long *);
+HDFLIBAPI bool_t xdr_u_long(XDR *, unsigned long *);
 
-HDFLIBAPI bool_t xdr_bytes(XDR *, char **, u_int *, u_int);
-HDFLIBAPI bool_t xdr_opaque(XDR *, char *, u_int);
+HDFLIBAPI bool_t xdr_bytes(XDR *, char **, unsigned *, unsigned);
+HDFLIBAPI bool_t xdr_opaque(XDR *, char *, unsigned);
 
 HDFLIBAPI bool_t xdr_float(XDR *, float *);
 HDFLIBAPI bool_t xdr_double(XDR *, double *);

@@ -80,20 +80,20 @@ xdr_int(XDR *xdrs, int *ip)
  * XDR unsigned integers
  */
 bool_t
-xdr_u_int(XDR *xdrs, u_int *up)
+xdr_u_int(XDR *xdrs, unsigned *up)
 {
-    u_long l;
+    unsigned long l;
 
     switch (xdrs->x_op) {
 
         case XDR_ENCODE:
-            l = (u_long)*up;
+            l = (unsigned long)*up;
             return xdr_putlong(xdrs, (long *)&l);
 
         case XDR_DECODE:
             if (!xdr_getlong(xdrs, (long *)&l))
                 return FALSE;
-            *up = (u_int)l;
+            *up = (unsigned)l;
             return TRUE;
 
         case XDR_FREE:
@@ -125,7 +125,7 @@ xdr_long(XDR *xdrs, long *lp)
  * XDR unsigned long integers
  */
 bool_t
-xdr_u_long(XDR *xdrs, u_long *ulp)
+xdr_u_long(XDR *xdrs, unsigned long *ulp)
 {
     switch (xdrs->x_op) {
         case XDR_ENCODE:
@@ -145,9 +145,9 @@ xdr_u_long(XDR *xdrs, u_long *ulp)
  * cp points to the opaque object and cnt gives the byte length.
  */
 bool_t
-xdr_opaque(XDR *xdrs, char *cp, u_int cnt)
+xdr_opaque(XDR *xdrs, char *cp, unsigned cnt)
 {
-    u_int      rndup;
+    unsigned   rndup;
     static int crud[BYTES_PER_XDR_UNIT];
 
     /*
@@ -179,9 +179,8 @@ xdr_opaque(XDR *xdrs, char *cp, u_int cnt)
         return xdr_putbytes(xdrs, xdr_zero, rndup);
     }
 
-    if (xdrs->x_op == XDR_FREE) {
+    if (xdrs->x_op == XDR_FREE)
         return TRUE;
-    }
 
     return FALSE;
 }
@@ -192,22 +191,21 @@ xdr_opaque(XDR *xdrs, char *cp, u_int cnt)
  * If *cpp is NULL maxsize bytes are allocated
  */
 bool_t
-xdr_bytes(XDR *xdrs, char **cpp, u_int *sizep, u_int maxsize)
+xdr_bytes(XDR *xdrs, char **cpp, unsigned *sizep, unsigned maxsize)
 {
-    char  *sp = *cpp; /* sp is the actual string pointer */
-    u_int  nodesize;
-    bool_t ret, allocated = FALSE;
+    char    *sp = *cpp; /* sp is the actual string pointer */
+    unsigned nodesize;
+    bool_t   ret;
+    bool_t   allocated = FALSE;
 
     /*
      * first deal with the length since xdr bytes are counted
      */
-    if (!xdr_u_int(xdrs, sizep)) {
+    if (!xdr_u_int(xdrs, sizep))
         return FALSE;
-    }
     nodesize = *sizep;
-    if ((nodesize > maxsize) && (xdrs->x_op != XDR_FREE)) {
+    if ((nodesize > maxsize) && (xdrs->x_op != XDR_FREE))
         return FALSE;
-    }
 
     /*
      * now deal with the actual bytes
@@ -215,9 +213,8 @@ xdr_bytes(XDR *xdrs, char **cpp, u_int *sizep, u_int maxsize)
     switch (xdrs->x_op) {
 
         case XDR_DECODE:
-            if (nodesize == 0) {
-                return (TRUE);
-            }
+            if (nodesize == 0)
+                return TRUE;
             if (sp == NULL) {
                 *cpp = sp = calloc(1, nodesize);
                 allocated = TRUE;
@@ -255,10 +252,10 @@ xdr_float(XDR *xdrs, float *fp)
     switch (xdrs->x_op) {
 
         case XDR_ENCODE:
-            return (xdr_putint32(xdrs, (int32_t *)fp));
+            return xdr_putint32(xdrs, (int32_t *)fp);
 
         case XDR_DECODE:
-            return (xdr_getint32(xdrs, (int32_t *)fp));
+            return xdr_getint32(xdrs, (int32_t *)fp);
 
         case XDR_FREE:
             return TRUE;

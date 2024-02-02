@@ -56,10 +56,10 @@
 static void     xdrstdio_destroy(XDR *);
 static bool_t   xdrstdio_getlong(XDR *, long *);
 static bool_t   xdrstdio_putlong(XDR *, const long *);
-static bool_t   xdrstdio_getbytes(XDR *, char *, u_int);
-static bool_t   xdrstdio_putbytes(XDR *, const char *, u_int);
-static u_int    xdrstdio_getpos(XDR *);
-static bool_t   xdrstdio_setpos(XDR *, u_int);
+static bool_t   xdrstdio_getbytes(XDR *, char *, unsigned);
+static bool_t   xdrstdio_putbytes(XDR *, const char *, unsigned);
+static unsigned xdrstdio_getpos(XDR *);
+static bool_t   xdrstdio_setpos(XDR *, unsigned);
 
 /*
  * Ops vector for stdio type XDR
@@ -107,7 +107,7 @@ xdrstdio_getlong(XDR *xdrs, long *lp)
         return (FALSE);
 
     *lp = (long)ntohl(mycopy);
-    return (TRUE);
+    return TRUE;
 }
 
 static bool_t
@@ -125,33 +125,33 @@ xdrstdio_putlong(XDR *xdrs, const long *lp)
 }
 
 static bool_t
-xdrstdio_getbytes(XDR *xdrs, char *addr, u_int len)
+xdrstdio_getbytes(XDR *xdrs, char *addr, unsigned len)
 {
 
     if ((len != 0) && (fread(addr, (size_t)len, 1, (FILE *)xdrs->x_private) != 1))
-        return (FALSE);
-    return (TRUE);
+        return FALSE;
+    return TRUE;
 }
 
 static bool_t
-xdrstdio_putbytes(XDR *xdrs, const char *addr, u_int len)
+xdrstdio_putbytes(XDR *xdrs, const char *addr, unsigned len)
 {
 
     if ((len != 0) && (fwrite(addr, (size_t)len, 1, (FILE *)xdrs->x_private) != 1))
-        return (FALSE);
-    return (TRUE);
+        return FALSE;
+    return TRUE;
 }
 
-static u_int
+static unsigned
 xdrstdio_getpos(XDR *xdrs)
 {
 
-    return ((u_int)ftell((FILE *)xdrs->x_private));
+    return (unsigned)ftell((FILE *)xdrs->x_private);
 }
 
 static bool_t
-xdrstdio_setpos(XDR *xdrs, u_int pos)
+xdrstdio_setpos(XDR *xdrs, unsigned pos)
 {
 
-    return ((fseek((FILE *)xdrs->x_private, (long)pos, 0) < 0) ? FALSE : TRUE);
+    return (fseek((FILE *)xdrs->x_private, (long)pos, 0) < 0) ? FALSE : TRUE;
 }

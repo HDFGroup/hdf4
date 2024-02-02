@@ -131,8 +131,8 @@ NC_re_string(NC_string *old, unsigned count, const char *str)
 bool_t
 xdr_NC_string(XDR *xdrs, NC_string **spp)
 {
-    u_long count = 0;
-    int    status;
+    unsigned long count = 0;
+    int           status;
 
     switch (xdrs->x_op) {
         case XDR_FREE:
