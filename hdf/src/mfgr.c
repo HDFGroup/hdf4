@@ -4348,6 +4348,13 @@ GRgetcompinfo(int32 riid, comp_coder_t *comp_type, comp_info *cinfo)
         ret_value = HCPgetcompinfo(file_id, ri_ptr->img_tag, ri_ptr->img_ref, comp_type, cinfo);
         if (ret_value == FAIL)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+        /* remove the szip special bit if necessary */
+        if (*comp_type == COMP_CODE_SZIP) {
+            ret_value = HCPrm_szip_special_bit(cinfo);
+            if (ret_value == FAIL)
+                HGOTO_ERROR(DFE_INTERNAL, FAIL);
+        }
     }
 
 done:
