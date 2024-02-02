@@ -197,24 +197,24 @@ xdr_putint32(XDR *xdrs, int32_t *ip)
 #ifdef __cplusplus
 extern "C" {
 #endif
-XDRLIBAPI bool_t xdr_int(XDR *, int *);
-XDRLIBAPI bool_t xdr_u_int(XDR *, u_int *);
-XDRLIBAPI bool_t xdr_long(XDR *, long *);
-XDRLIBAPI bool_t xdr_u_long(XDR *, u_long *);
-XDRLIBAPI bool_t xdr_int64_t(XDR *, int64_t *);
-XDRLIBAPI bool_t xdr_uint64_t(XDR *, uint64_t *);
-XDRLIBAPI bool_t xdr_bytes(XDR *, char **, u_int *, u_int);
-XDRLIBAPI bool_t xdr_opaque(XDR *, char *, u_int);
-XDRLIBAPI bool_t xdr_float(XDR *, float *);
-XDRLIBAPI bool_t xdr_double(XDR *, double *);
-XDRLIBAPI void   xdr_free(xdrproc_t, void *);
+HDFLIBAPI bool_t xdr_int(XDR *, int *);
+HDFLIBAPI bool_t xdr_u_int(XDR *, u_int *);
+HDFLIBAPI bool_t xdr_long(XDR *, long *);
+HDFLIBAPI bool_t xdr_u_long(XDR *, u_long *);
+HDFLIBAPI bool_t xdr_int64_t(XDR *, int64_t *);
+HDFLIBAPI bool_t xdr_uint64_t(XDR *, uint64_t *);
+HDFLIBAPI bool_t xdr_bytes(XDR *, char **, u_int *, u_int);
+HDFLIBAPI bool_t xdr_opaque(XDR *, char *, u_int);
+HDFLIBAPI bool_t xdr_float(XDR *, float *);
+HDFLIBAPI bool_t xdr_double(XDR *, double *);
+HDFLIBAPI void   xdr_free(xdrproc_t, void *);
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /* XDR using stdio library (only used in xdrtest.c) */
-XDRLIBAPI void xdrstdio_create(XDR *, FILE *, enum xdr_op);
+HDFLIBAPI void xdrstdio_create(XDR *, FILE *, enum xdr_op);
 
 #ifdef __cplusplus
 }
