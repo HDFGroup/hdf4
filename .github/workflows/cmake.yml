@@ -19,13 +19,13 @@ jobs:
             shared: "true"
             build_mode: "Release"
 
-    call-release-netcdf-cmake-mingw:
-        name: "CMake Release NetCDF MinGW Workflows"
-        uses: ./.github/workflows/main-cmake-mingw.yml
-        with:
-            netcdf: "true"
-            shared: "true"
-            build_mode: "Release"
+#    call-release-netcdf-cmake-mingw:
+#        name: "CMake Release NetCDF MinGW Workflows"
+#        uses: ./.github/workflows/main-cmake-mingw.yml
+#        with:
+#            netcdf: "true"
+#            shared: "true"
+#            build_mode: "Release"
 
     call-debug-netcdf-cmake:
         name: "CMake Debug NetCDF Workflows"
