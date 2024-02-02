@@ -73,12 +73,11 @@ xdr_int(XDR *xdrs, int *ip)
 
         case XDR_ENCODE:
             l = (long)*ip;
-            return (xdr_putlong(xdrs, &l));
+            return xdr_putlong(xdrs, &l);
 
         case XDR_DECODE:
-            if (!xdr_getlong(xdrs, &l)) {
+            if (!xdr_getlong(xdrs, &l))
                 return FALSE;
-            }
             *ip = (int)l;
             return TRUE;
 
@@ -101,12 +100,11 @@ xdr_u_int(XDR *xdrs, u_int *up)
 
         case XDR_ENCODE:
             l = (u_long)*up;
-            return (xdr_putlong(xdrs, (long *)&l));
+            return xdr_putlong(xdrs, (long *)&l);
 
         case XDR_DECODE:
-            if (!xdr_getlong(xdrs, (long *)&l)) {
+            if (!xdr_getlong(xdrs, (long *)&l))
                 return FALSE;
-            }
             *up = (u_int)l;
             return TRUE;
 
@@ -125,9 +123,9 @@ xdr_long(XDR *xdrs, long *lp)
 {
     switch (xdrs->x_op) {
         case XDR_ENCODE:
-            return (xdr_putlong(xdrs, lp));
+            return xdr_putlong(xdrs, lp);
         case XDR_DECODE:
-            return (xdr_getlong(xdrs, lp));
+            return xdr_getlong(xdrs, lp);
         case XDR_FREE:
             return TRUE;
     }
@@ -143,9 +141,9 @@ xdr_u_long(XDR *xdrs, u_long *ulp)
 {
     switch (xdrs->x_op) {
         case XDR_ENCODE:
-            return (xdr_putlong(xdrs, (long *)ulp));
+            return xdr_putlong(xdrs, (long *)ulp);
         case XDR_DECODE:
-            return (xdr_getlong(xdrs, (long *)ulp));
+            return xdr_getlong(xdrs, (long *)ulp);
         case XDR_FREE:
             return TRUE;
     }
@@ -178,21 +176,19 @@ xdr_opaque(XDR *xdrs, char *cp, u_int cnt)
         rndup = BYTES_PER_XDR_UNIT - rndup;
 
     if (xdrs->x_op == XDR_DECODE) {
-        if (!xdr_getbytes(xdrs, cp, cnt)) {
+        if (!xdr_getbytes(xdrs, cp, cnt))
             return FALSE;
-        }
         if (rndup == 0)
             return TRUE;
-        return (xdr_getbytes(xdrs, (char *)crud, rndup));
+        return xdr_getbytes(xdrs, (char *)crud, rndup);
     }
 
     if (xdrs->x_op == XDR_ENCODE) {
-        if (!xdr_putbytes(xdrs, cp, cnt)) {
+        if (!xdr_putbytes(xdrs, cp, cnt))
             return FALSE;
-        }
         if (rndup == 0)
             return TRUE;
-        return (xdr_putbytes(xdrs, xdr_zero, rndup));
+        return xdr_putbytes(xdrs, xdr_zero, rndup);
     }
 
     if (xdrs->x_op == XDR_FREE) {
@@ -252,7 +248,7 @@ xdr_bytes(XDR *xdrs, char **cpp, u_int *sizep, u_int maxsize)
                     *cpp = NULL;
                 }
             }
-            return (ret);
+            return ret;
 
         case XDR_FREE:
             if (sp != NULL) {
@@ -297,12 +293,12 @@ xdr_double(XDR *xdrs, double *dp)
 #ifdef H4_WORDS_BIGENDIAN
             rv = xdr_putint32(xdrs, i32p);
             if (!rv)
-                return (rv);
+                return rv;
             rv = xdr_putint32(xdrs, i32p + 1);
 #else
             rv = xdr_putint32(xdrs, i32p + 1);
             if (!rv)
-                return (rv);
+                return rv;
             rv = xdr_putint32(xdrs, i32p);
 #endif
             return rv;
@@ -313,15 +309,15 @@ xdr_double(XDR *xdrs, double *dp)
 #ifdef H4_WORDS_BIGENDIAN
             rv = xdr_getint32(xdrs, i32p);
             if (!rv)
-                return (rv);
+                return rv;
             rv = xdr_getint32(xdrs, i32p + 1);
 #else
             rv = xdr_getint32(xdrs, i32p + 1);
             if (!rv)
-                return (rv);
+                return rv;
             rv = xdr_getint32(xdrs, i32p);
 #endif
-            return (rv);
+            return rv;
             break;
 
         case XDR_FREE:
@@ -330,45 +326,6 @@ xdr_double(XDR *xdrs, double *dp)
 
     return FALSE;
 }
-
-/*
- * xdr_vector():
- *
- * XDR a fixed length array. Unlike variable-length arrays,
- * the storage of fixed length arrays is static and unfreeable.
- * > basep: base of the array
- * > size: size of the array
- * > elemsize: size of each element
- * > xdr_elem: routine to XDR each element
- */
-bool_t
-xdr_vector(XDR *xdrs, char *basep, u_int nelem, u_int elemsize, xdrproc_t xdr_elem)
-{
-    u_int i;
-    char *elptr;
-
-    elptr = basep;
-    for (i = 0; i < nelem; i++) {
-        if (!(*xdr_elem)(xdrs, elptr)) {
-            return FALSE;
-        }
-        elptr += elemsize;
-    }
-    return TRUE;
-}
-
-/*
- * Non-portable xdr primitives.
- * Care should be taken when moving these routines to new architectures.
- */
-
-/*
- * NOTE: xdr_longlong_t() and xdr_u_longlong_t()
- * are in the "non-portable" section because they require that a `long long'
- * be a 64-bit type.
- *
- *    --thorpej@netbsd.org, November 30, 1999
- */
 
 /*
  * XDR 64-bit integers
@@ -383,13 +340,13 @@ xdr_int64_t(XDR *xdrs, int64_t *llp)
             ul[0] = (u_long)((uint64_t)*llp >> 32) & 0xffffffff;
             ul[1] = (u_long)((uint64_t)*llp) & 0xffffffff;
             if (xdr_putlong(xdrs, (long *)&ul[0]) == FALSE)
-                return (FALSE);
+                return FALSE;
             return (xdr_putlong(xdrs, (long *)&ul[1]));
         case XDR_DECODE:
             if (xdr_getlong(xdrs, (long *)&ul[0]) == FALSE)
-                return (FALSE);
+                return FALSE;
             if (xdr_getlong(xdrs, (long *)&ul[1]) == FALSE)
-                return (FALSE);
+                return FALSE;
             *llp = (int64_t)(((uint64_t)ul[0] << 32) | ((uint64_t)(ul[1]) & 0xffffffff));
             return TRUE;
         case XDR_FREE:

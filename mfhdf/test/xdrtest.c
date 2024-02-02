@@ -33,6 +33,32 @@
 #define EPSILON .0005
 #endif
 
+/*
+ * xdr_vector():
+ *
+ * XDR a fixed length array. Unlike variable-length arrays,
+ * the storage of fixed length arrays is static and unfreeable.
+ * > basep: base of the array
+ * > size: size of the array
+ * > elemsize: size of each element
+ * > xdr_elem: routine to XDR each element
+ */
+bool_t
+xdr_vector(XDR *xdrs, char *basep, u_int nelem, u_int elemsize, xdrproc_t xdr_elem)
+{
+    u_int i;
+    char *elptr;
+
+    elptr = basep;
+    for (i = 0; i < nelem; i++) {
+        if (!(*xdr_elem)(xdrs, elptr)) {
+            return FALSE;
+        }
+        elptr += elemsize;
+    }
+    return TRUE;
+}
+
 int
 main(int ac, char *av[])
 {

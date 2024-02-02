@@ -209,9 +209,6 @@ XDRLIBAPI bool_t xdr_float(XDR *, float *);
 XDRLIBAPI bool_t xdr_double(XDR *, double *);
 XDRLIBAPI void   xdr_free(xdrproc_t, void *);
 
-/* Only used in xdrtest.c */
-XDRLIBAPI bool_t xdr_vector(XDR *, char *, u_int, u_int, xdrproc_t);
-
 #ifdef __cplusplus
 extern "C" {
 #endif
