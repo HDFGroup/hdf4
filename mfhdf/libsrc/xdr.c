@@ -39,6 +39,7 @@
 #include "h4config.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "xdr.h"
@@ -47,19 +48,6 @@
  * for unit alignment
  */
 static const char xdr_zero[BYTES_PER_XDR_UNIT] = {0, 0, 0, 0};
-
-/*
- * Free a data structure using XDR
- * Not a filter, but a convenient utility nonetheless
- */
-void
-xdr_free(xdrproc_t proc, void *objp)
-{
-    XDR x;
-
-    x.x_op = XDR_FREE;
-    (*proc)(&x, objp);
-}
 
 /*
  * XDR integers
@@ -322,11 +310,14 @@ xdr_double(XDR *xdrs, double *dp)
 
         case XDR_FREE:
             return TRUE;
-    } /* switch xdrs->x_op */
+    }
 
     return FALSE;
 }
 
+/* XXX: Keep this code around in case it's needed when handling longs */
+
+#if 0
 /*
  * XDR 64-bit integers
  */
@@ -384,3 +375,4 @@ xdr_uint64_t(XDR *xdrs, uint64_t *ullp)
     /* NOTREACHED */
     return FALSE;
 }
+#endif
