@@ -7,22 +7,22 @@ project (HDF4Examples_VG C)
 include (C_sourcefiles.cmake)
 
 foreach (example_name ${h4examples})
-  add_executable (hdf_${example_name} ${PROJECT_SOURCE_DIR}/h4ex_${example_name}.c)
-  target_link_libraries (hdf_${example_name} ${H4EX_HDF4_LINK_LIBS})
+  add_executable (hdf_h4ex_${example_name} ${PROJECT_SOURCE_DIR}/h4ex_${example_name}.c)
+  target_link_libraries (hdf_h4ex_${example_name} ${H4EX_HDF4_LINK_LIBS})
 endforeach ()
 
 foreach (example_name ${h4examples_use})
-  add_executable (hdf_${example_name} ${PROJECT_SOURCE_DIR}/h4ex_${example_name}.c)
-  target_link_libraries (hdf_${example_name} ${H4EX_HDF4_LINK_LIBS})
+  add_executable (hdf_h4ex_${example_name} ${PROJECT_SOURCE_DIR}/h4ex_${example_name}.c)
+  target_link_libraries (hdf_h4ex_${example_name} ${H4EX_HDF4_LINK_LIBS})
 endforeach ()
 
 foreach (example_name ${h4examples_mf})
-  add_executable (mf_${example_name} ${PROJECT_SOURCE_DIR}/h4ex_${example_name}.c)
-  target_link_libraries (mf_${example_name} ${H4EX_HDF4_LINK_LIBS})
+  add_executable (mf_h4ex_${example_name} ${PROJECT_SOURCE_DIR}/h4ex_${example_name}.c)
+  target_link_libraries (mf_h4ex_${example_name} ${H4EX_HDF4_LINK_LIBS})
 endforeach ()
 
 if (H4EX_BUILD_TESTING)
-  macro (ADD_H4_TEST testname testcreate testprefix)
+  macro (ADD_H4_TEST testname testddl dumparg testprefix)
     add_test (
         NAME ${testprefix}_${testname}-clearall
         COMMAND    ${CMAKE_COMMAND}
@@ -36,24 +36,24 @@ if (H4EX_BUILD_TESTING)
             -D "TEST_ARGS:STRING="
             -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
             -D "TEST_EXPECT=0"
-            -D "TEST_OUTPUT=${testname}.out"
-            -D "TEST_REFERENCE=${testname}.tst"
+            -D "TEST_OUTPUT=${testprefix}_${testname}.out"
+            -D "TEST_REFERENCE=${testprefix}_${testname}.tst"
             -D "TEST_LIBRARY_DIRECTORY=${CMAKE_TEST_LIB_DIRECTORY}"
-            -P "${HDF4EX_RESOURCES_DIR}/runTest.cmake"
+            -P "${H4EX_RESOURCES_DIR}/runTest.cmake"
     )
     set_tests_properties (${testprefix}_${testname} PROPERTIES DEPENDS ${testprefix}_${testname}-clearall)
-    if (HDF4_BUILD_TOOLS AND ${testcreate} STREQUAL "1")
+    if (HDF4_BUILD_TOOLS AND ${testddl} STREQUAL "1")
       add_test (
           NAME ${testprefix}_HDP-${testname}
           COMMAND "${CMAKE_COMMAND}"
               -D "TEST_PROGRAM=${H4EX_HDF4_DUMP_EXECUTABLE}"
-              -D "TEST_ARGS:STRING=${ARGN};${testname}.hdf"
+              -D "TEST_ARGS:STRING=${dumparg};${testname}.hdf"
               -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
-              -D "TEST_OUTPUT=${testname}.ddl.out"
+              -D "TEST_OUTPUT=${testprefix}_${testname}.ddl.out"
               -D "TEST_EXPECT=0"
-              -D "TEST_REFERENCE=${testname}.ddl"
+              -D "TEST_REFERENCE=${testprefix}_${testname}.ddl"
               -D "TEST_LIBRARY_DIRECTORY=${CMAKE_TEST_LIB_DIRECTORY}"
-              -P "${HDF4EX_RESOURCES_DIR}/runTest.cmake"
+              -P "${H4EX_RESOURCES_DIR}/runTest.cmake"
       )
       set_tests_properties (${testprefix}_HDP-${testname} PROPERTIES DEPENDS ${testprefix}_${testname})
     endif ()
@@ -129,14 +129,14 @@ if (H4EX_BUILD_TESTING)
                     DEPENDS ${HDF4Examples_VG_TEST_FILES})
 
   foreach (example_name ${h4examples})
-    ADD_H4_TEST (${example_name} 1 dumpvg hdf)
+    ADD_H4_TEST (h4ex_${example_name} 1 dumpvg hdf)
   endforeach ()
 
   foreach (example_name ${h4examples_use})
-    ADD_H4_TEST (${example_name} 0 dumpvg hdf)
+    ADD_H4_TEST (h4ex_${example_name} 0 dumpvg hdf)
   endforeach ()
 
   foreach (example_name ${h4examples_mf})
-    ADD_H4_MF_TEST (${example_name} 1 dumpvg mf)
+    ADD_H4_TEST (h4ex_${example_name} 1 dumpvg mf)
   endforeach ()
 endif ()

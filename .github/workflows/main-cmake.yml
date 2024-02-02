@@ -9,11 +9,11 @@ on:
         required: true
         type: string
       shared:
-        description: "shared enable/disable"
+        description: "shared true/false"
         required: true
         type: string
       netcdf:
-        description: "netcdf enable/disable"
+        description: "netcdf true/false"
         required: true
         type: string
 
@@ -50,19 +50,18 @@ jobs:
           # Windows w/ MSVC + CMake
           #
           - name: "Windows MSVC"
-            os: windows-2022
+            os: windows-latest
             toolchain: ""
             xdr: ON
             fortran: OFF
             java: ON
-            docs: OFF
+            docs: ON
             localjpeg: OFF
             locallibaec: OFF
             localzlib: OFF
             cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G \"Visual Studio 17 2022\" -A x64"
             run_tests: true
-            use_mingw: false
 
           # Linux (Ubuntu) w/ gcc + CMake
           #
@@ -77,11 +76,10 @@ jobs:
             localjpeg: OFF
             locallibaec: OFF
             localzlib: OFF
-            toolchain: "$GITHUB_WORKSPACE/config/toolchain/gcc.cmake"
+            toolchain: "-DCMAKE_TOOLCHAIN_FILE=config/toolchain/gcc.cmake"
             cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G Ninja"
             run_tests: true
-            use_mingw: false
 
 
           # MacOS w/ Clang + CMake
@@ -93,87 +91,14 @@ jobs:
             xdr: ON
             fortran: OFF
             java: ON
-            docs: OFF
+            docs: ON
             localjpeg: OFF
             locallibaec: OFF
             localzlib: OFF
-            toolchain: "$GITHUB_WORKSPACE/config/toolchain/clang.cmake"
+            toolchain: "-DCMAKE_TOOLCHAIN_FILE=config/toolchain/clang.cmake"
             cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
             generator: "-G Ninja"
             run_tests: true
-            use_mingw: false
-
-          # Linux (Ubuntu) w/ mingw + CMake
-          #
-          - name: "Ubuntu mingw CMake"
-            os: ubuntu-latest
-            xdr: ON
-            fortran: OFF
-            java: OFF
-            docs: OFF
-            localjpeg: OFF
-            locallibaec: OFF
-            localzlib: OFF
-            toolchain: "$GITHUB_WORKSPACE/config/toolchain/mingw64.cmake"
-            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
-            generator: "-G Ninja"
-            run_tests: false
-            use_mingw: true
-
-          # Windows w/ MSVC + CMake
-          #
-          - name: "Windows static MSVC CMake"
-            os: windows-2022
-            toolchain: ""
-            xdr: ON
-            fortran: OFF
-            java: OFF
-            docs: OFF
-            localjpeg: OFF
-            locallibaec: OFF
-            localzlib: OFF
-            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
-            generator: "-G \"Visual Studio 17 2022\" -A x64"
-            run_tests: true
-            use_mingw: false
-
-          # Linux (Ubuntu) w/ gcc + CMake
-          #
-          # We might think about adding Clang, but MacOS already tests that
-          # so it's not critical
-          - name: "Ubuntu static gcc CMake"
-            os: ubuntu-latest
-            xdr: ON
-            fortran: OFF
-            java: OFF
-            docs: OFF
-            localjpeg: OFF
-            locallibaec: OFF
-            localzlib: OFF
-            toolchain: "$GITHUB_WORKSPACE/config/toolchain/gcc.cmake"
-            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
-            generator: "-G Ninja"
-            run_tests: true
-            use_mingw: false
-
-          # MacOS w/ Clang + CMake
-          #
-          # We could also build with the Autotools via brew installing them,
-          # but that seems unnecessary
-          - name: "MacOS static Clang CMake"
-            os: macos-13
-            xdr: ON
-            fortran: OFF
-            java: OFF
-            docs: OFF
-            localjpeg: OFF
-            locallibaec: OFF
-            localzlib: OFF
-            toolchain: "$GITHUB_WORKSPACE/config/toolchain/clang.cmake"
-            cacheinit: "-C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake"
-            generator: "-G Ninja"
-            run_tests: true
-            use_mingw: false
 
     # Sets the job's name from the properties
     name: "${{ matrix.name }}-${{ inputs.build_mode }}-NC=${{ inputs.netcdf }}"
@@ -198,22 +123,21 @@ jobs:
       - name: Install CMake Dependencies (Linux)
         run: |
            sudo apt update
-           sudo apt-get install -y ninja-build libtirpc-dev doxygen graphviz
+           sudo apt-get install -y ninja-build libtirpc-dev graphviz
         if: matrix.os == 'ubuntu-latest'
-
-      - name: Install MinGW Dependencies (Linux)
-        uses: egor-tensin/setup-mingw@v2
-        with:
-          platform: x64
-        if: (matrix.use_mingw)
 
       - name: Install Dependencies (Windows)
         run: choco install ninja
         if: matrix.os == 'windows-latest'
 
       - name: Install Dependencies (macOS)
-        run: brew install ninja doxygen
+        run: brew install ninja
         if: matrix.os == 'macos-13'
+
+      - name: Install Dependencies
+        uses: ssciwr/doxygen-install@v1
+        with:
+          version: "1.9.7"
 
       - name: Set environment for MSVC (Windows)
         run: |
@@ -221,7 +145,7 @@ jobs:
           echo "CXX=cl.exe" >> $GITHUB_ENV
           echo "CC=cl.exe" >> $GITHUB_ENV
         if:  matrix.os == 'windows-latest'
-    
+
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Get Sources
         uses: actions/checkout@v4.1.1
@@ -230,27 +154,30 @@ jobs:
       # CMAKE CONFIGURE
       #
       - name: Get Java setting
-        run: echo "useJava=${{ inputs.shared=='true' && !matrix.use_mingw }}" >> $GITHUB_ENV
+        run: echo "useJava=${{ inputs.shared=='true' }}" >> $GITHUB_ENV
 
       - name: CMake Configure
         run: |
           mkdir "${{ runner.workspace }}/build"
           cd "${{ runner.workspace }}/build"
-          cmake ${{ matrix.cacheinit }} ${{ matrix.generator }} \
+          cmake -C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake \
+            ${{ matrix.generator }} \
             --log-level=VERBOSE \
             -DCMAKE_BUILD_TYPE=${{ inputs.build_mode }} \
-            -DCMAKE_TOOLCHAIN_FILE=${{ matrix.toolchain }} \
+            ${{ matrix.toolchain }} \
             -DBUILD_SHARED_LIBS:BOOL=${{ inputs.shared }} \
-            -DHDF4_BUILD_EXAMPLES=ON \
+            -DHDF4_BUILD_EXAMPLES:BOOL=ON \
             -DBUILD_JPEG_WITH_PIC:BOOL=ON \
             -DHDF4_BUILD_XDR_LIB:BOOL=${{ matrix.xdr }} \
             -DHDF4_ENABLE_NETCDF:BOOL=${{ inputs.netcdf }} \
-            -DHDF4_BUILD_FORTRAN=${{ matrix.fortran }} \
-            -DHDF4_BUILD_JAVA=${{ env.useJava }} \
-            -DHDF4_BUILD_DOC=${{ matrix.docs }} \
-            -DJPEG_USE_LOCALCONTENT=${{ matrix.localjpeg }} \
-            -DLIBAEC_USE_LOCALCONTENT=${{ matrix.locallibaec }} \
-            -DZLIB_USE_LOCALCONTENT=${{ matrix.localzlib }} \
+            -DHDF4_BUILD_FORTRAN:BOOL=${{ matrix.fortran }} \
+            -DHDF4_BUILD_JAVA:BOOL=${{ env.useJava }} \
+            -DHDF4_BUILD_DOC:BOOL=${{ matrix.docs }} \
+            -DJPEG_USE_LOCALCONTENT:BOOL=${{ matrix.localjpeg }} \
+            -DLIBAEC_USE_LOCALCONTENT:BOOL=${{ matrix.locallibaec }} \
+            -DZLIB_USE_LOCALCONTENT:BOOL=${{ matrix.localzlib }} \
+            -DHDF4_PACK_EXAMPLES:BOOL=ON \
+            -DHDF4_PACKAGE_EXTLIBS:BOOL=ON \
             $GITHUB_WORKSPACE
         shell: bash
 
@@ -262,7 +189,6 @@ jobs:
       - name: CMake Build
         run: cmake --build . --parallel 3 --config ${{ inputs.build_mode }}
         working-directory: ${{ runner.workspace }}/build
-        if: "! ((matrix.name == 'Ubuntu mingw CMake') && (inputs.build_mode == 'Debug'))"
 
       #
       # RUN TESTS
@@ -271,4 +197,38 @@ jobs:
       - name: CMake Run Tests
         run: ctest . --parallel 2 -C ${{ inputs.build_mode }} -V
         working-directory: ${{ runner.workspace }}/build
-        if: (matrix.run_tests) && ! ((matrix.name == 'Ubuntu mingw CMake') && (inputs.build_mode == 'Debug'))
+        if: ${{ (matrix.run_tests) && (matrix.name != 'Ubuntu mingw CMake') }}
+
+      - name: CMake Run Package
+        run: cpack -C ${{ inputs.build_mode }} -V
+        working-directory: ${{ runner.workspace }}/build
+
+      - name: List files in the space
+        run: |
+              ls -l ${{ runner.workspace }}/build
+
+      # Save files created by ctest script
+      - name: Save published binary (Windows)
+        uses: actions/upload-artifact@v4
+        with:
+              name: zip-vs2022_cl-${{ inputs.build_mode }}-binary
+              path: ${{ runner.workspace }}/build/HDF-*-win64.zip
+              if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
+        if:  ${{ (matrix.os == 'windows-latest') && (matrix.name != 'Ubuntu mingw CMake') && (inputs.netcdf == 'true') && (inputs.shared == 'true') }}
+
+      - name: Save published binary (linux)
+        uses: actions/upload-artifact@v4
+        with:
+              name: tgz-ubuntu-2204_gcc-${{ inputs.build_mode }}-binary
+              path: ${{ runner.workspace }}/build/HDF-*-Linux.tar.gz
+              if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
+        if:  ${{ (matrix.os == 'ubuntu-latest') && (matrix.name != 'Ubuntu mingw CMake') && (inputs.netcdf == 'true') && (inputs.shared == 'true') }}
+
+      - name: Save published binary (Mac)
+        uses: actions/upload-artifact@v4
+        with:
+              name: tgz-osx12-${{ inputs.build_mode }}-binary
+              path: ${{ runner.workspace }}/build/HDF-*-Darwin.tar.gz
+              if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
+        if: ${{ (matrix.os == 'macos-13') && (inputs.netcdf == 'true') && (inputs.shared == 'true') }}
+        

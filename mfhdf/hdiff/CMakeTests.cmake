@@ -15,6 +15,7 @@ if (HDF4_BUILD_GENERATORS AND NOT ONLY_SHARED_LIBS)
   )
 
   add_executable (hdifftst ${hdifftst_SRCS})
+  target_include_directories(hdifftst PRIVATE "${HDF4_HDF_BINARY_DIR};${HDF4_BINARY_DIR}")
   if (BUILD_SHARED_LIBS)
     TARGET_C_PROPERTIES (hdifftst STATIC)
     target_link_libraries (hdifftst PRIVATE ${HDF4_MF_LIB_TARGET})

@@ -4,6 +4,8 @@
 #define X_LENGTH   6  /* number of rows in the image */
 #define Y_LENGTH   10 /* number of columns in the image */
 #define NCOMPS     3  /* number of components in the image */
+
+int
 main()
 {
     /************************* Variable declaration **************************/

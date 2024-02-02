@@ -134,6 +134,7 @@ set_tests_properties (MFHDF_TEST-hdfnctest PROPERTIES
 #-- Adding test for xdrtest
 if (HDF4_BUILD_XDR_LIB)
   add_executable (xdrtest ${HDF4_MFHDF_XDR_DIR}/xdrtest.c)
+  target_include_directories(xdrtest PRIVATE "${HDF4_HDFSOURCE_DIR};${HDF4_MFHDF_XDR_SOURCE_DIR};${HDF4_BINARY_DIR}")
   if (NOT BUILD_SHARED_LIBS)
     TARGET_C_PROPERTIES (xdrtest STATIC)
     target_link_libraries (xdrtest PRIVATE ${HDF4_MF_XDR_LIB_TARGET})
