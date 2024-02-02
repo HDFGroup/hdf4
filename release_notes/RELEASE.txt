@@ -38,16 +38,23 @@ New features and changes
 ========================
     Configuration:
     -------------
-    - Removed XDR configuration options
+    - XDR changes
 
       We now only support building HDF4 with the XDR implementation packaged
-      with the HDF4 source. This is the first step of completely removing
-      XDR from the HDF4 library (to be replaced with a simplified I/O layer).
+      with the HDF4 source, which is always built with the mfhdf library.
 
       The following options have been removed:
 
         Autotools:  --enable-hdf4-xdr
         CMake:      HDF4_BUILD_XDR_LIB
+
+      The following header files are no longer deployed:
+
+        types.h, xdr.h
+
+      The XDR functionality has been incorporated into the mfhdf library,
+      so a separate XDR library is no longer distributed with either build
+      system.
 
     - Incorporated HDF4 examples repository into HDF4 library.
 

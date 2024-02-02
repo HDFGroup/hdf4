@@ -131,23 +131,10 @@ set_tests_properties (MFHDF_TEST-hdfnctest PROPERTIES
     LABELS ${PROJECT_NAME}
 )
 
-#-- Adding test for xdrtest
-add_executable (xdrtest ${HDF4_MFHDF_XDR_DIR}/xdrtest.c)
-if (NOT BUILD_SHARED_LIBS)
-  TARGET_C_PROPERTIES (xdrtest STATIC)
-  target_link_libraries (xdrtest PRIVATE ${HDF4_MF_XDR_LIB_TARGET})
-else ()
-  TARGET_C_PROPERTIES (xdrtest SHARED)
-  target_link_libraries (xdrtest PRIVATE ${HDF4_MF_XDR_LIBSH_TARGET})
-endif ()
-if (CMAKE_C_COMPILER_ID MATCHES "IntelLLVM")
-  target_compile_options(xdrtest PRIVATE "-Wno-incompatible-function-pointer-types")
-endif ()
-
 if (MSVC_VERSION LESS 1900)
-  HDFTEST_COPY_FILE("${HDF4_MFHDF_XDR_DIR}/xdrtest.out" "${PROJECT_BINARY_DIR}/TEST/xdrtest.out" "xdrtest_files")
+  HDFTEST_COPY_FILE("${HDF4_MFHDF_TEST_DIR}/xdrtest.out" "${PROJECT_BINARY_DIR}/TEST/xdrtest.out" "xdrtest_files")
 else ()
-  HDFTEST_COPY_FILE("${HDF4_MFHDF_XDR_DIR}/xdrtest.cyg" "${PROJECT_BINARY_DIR}/TEST/xdrtest.out" "xdrtest_files")
+  HDFTEST_COPY_FILE("${HDF4_MFHDF_TEST_DIR}/xdrtest.cyg" "${PROJECT_BINARY_DIR}/TEST/xdrtest.out" "xdrtest_files")
 endif ()
 add_custom_target(xdrtest_files ALL COMMENT "Copying files needed by xdrtest tests" DEPENDS ${xdrtest_files_list})
 

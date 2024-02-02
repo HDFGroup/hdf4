@@ -1193,7 +1193,6 @@ AC_CONFIG_FILES([Makefile
                  mfhdf/nctest/Makefile
                  mfhdf/test/Makefile
                  mfhdf/test/testmfhdf.sh
-                 mfhdf/xdr/Makefile
                  java/Makefile
                  java/src/Makefile
                  java/src/jni/Makefile
