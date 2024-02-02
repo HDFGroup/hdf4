@@ -210,31 +210,6 @@ xdr_u_short(XDR *xdrs, u_short *usp)
 }
 
 /*
- * XDR enumerations
- */
-bool_t
-xdr_enum(XDR *xdrs, enum_t *ep)
-{
-    enum sizecheck { SIZEVAL }; /* used to find the size of an enum */
-
-    /*
-     * enums are treated as ints
-     */
-    if (sizeof(enum sizecheck) == sizeof(long)) {
-        return xdr_long(xdrs, (long *)(void *)ep);
-    }
-    else if (sizeof(enum sizecheck) == sizeof(int)) {
-        return xdr_int(xdrs, (int *)(void *)ep);
-    }
-    else if (sizeof(enum sizecheck) == sizeof(short)) {
-        return xdr_short(xdrs, (short *)(void *)ep);
-    }
-    else {
-        return FALSE;
-    }
-}
-
-/*
  * XDR opaque data
  * Allows the specification of a fixed size sequence of opaque bytes.
  * cp points to the opaque object and cnt gives the byte length.

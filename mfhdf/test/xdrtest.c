@@ -64,7 +64,7 @@ main(int ac, char *av[])
         12556,
     };
 
-    u_int poses[9];
+    u_int poses[8];
     int   jj = 0;
 
     static char text[32] = {"Hiya sailor. New in town?"};
@@ -96,10 +96,6 @@ main(int ac, char *av[])
     static double doubles[5] = {8388608.25, 4194304.125, 2097152.0625, 1048576.03125, 524288.015625};
 
     double *dp, got_ad[5];
-
-    typedef enum { ZERO_E, ONE_E, TWO_E, THREE_E, FOUR_E } encount;
-    static encount encounts[5] = {ZERO_E, ONE_E, TWO_E, THREE_E, FOUR_E};
-    encount       *ep, got_ep[5];
 
     fname = TESTFILE;
     if (ac > 1) {
@@ -166,12 +162,6 @@ main(int ac, char *av[])
     szof  = sizeof(double);
     count = sizeof(doubles) / sizeof(double);
     xdr_assert(xdr_vector(xdrs, (char *)doubles, count, szof, (xdrproc_t)xdr_double));
-    poses[jj++] = xdr_getpos(xdrs);
-
-    /* again no setpos  */
-    szof  = sizeof(encount);
-    count = sizeof(encounts) / sizeof(encount);
-    xdr_assert(xdr_vector(xdrs, (char *)encounts, count, szof, (xdrproc_t)xdr_enum));
     poses[jj++] = xdr_getpos(xdrs);
 
     /* flush, rewind  and reopen */
@@ -281,15 +271,6 @@ main(int ac, char *av[])
     }
     putchar('\n');
 
-    szof  = sizeof(encount);
-    count = sizeof(encounts) / sizeof(encount);
-    xdr_assert(xdr_vector(xdrs, (char *)got_ep, count, szof, (xdrproc_t)xdr_enum));
-    printf("enums: ");
-    for (ii = 0, ep = got_ep; ii < (int)count; ii++, ep++) {
-        printf("%d ", (int)*ep);
-        xdr_assert(*ep == encounts[ii]);
-    }
-    putchar('\n');
     xdr_assert(poses[jj++] = xdr_getpos(xdrs));
 
     exit(EXIT_SUCCESS);

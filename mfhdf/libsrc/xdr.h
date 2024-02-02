@@ -217,7 +217,6 @@ XDRLIBAPI bool_t xdr_short(XDR *, short *);
 XDRLIBAPI bool_t xdr_u_short(XDR *, u_short *);
 XDRLIBAPI bool_t xdr_int64_t(XDR *, int64_t *);
 XDRLIBAPI bool_t xdr_uint64_t(XDR *, uint64_t *);
-XDRLIBAPI bool_t xdr_enum(XDR *, enum_t *);
 XDRLIBAPI bool_t xdr_bytes(XDR *, char **, u_int *, u_int);
 XDRLIBAPI bool_t xdr_opaque(XDR *, char *, u_int);
 XDRLIBAPI bool_t xdr_vector(XDR *, char *, u_int, u_int, xdrproc_t);
