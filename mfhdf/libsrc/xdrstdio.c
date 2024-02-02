@@ -74,8 +74,7 @@ static const struct xdr_ops xdrstdio_ops = {
     xdrstdio_getpos,   /* get offset in the stream */
     xdrstdio_setpos,   /* set offset in the stream */
     xdrstdio_inline,   /* prime stream for inline macros */
-    xdrstdio_destroy,  /* destroy stream */
-    NULL               /* control */
+    xdrstdio_destroy   /* destroy stream */
 };
 
 /*
@@ -89,8 +88,6 @@ xdrstdio_create(XDR *xdrs, FILE *file, enum xdr_op op)
     xdrs->x_op      = op;
     xdrs->x_ops     = &xdrstdio_ops;
     xdrs->x_private = file;
-    xdrs->x_handy   = 0;
-    xdrs->x_base    = 0;
 }
 
 /*

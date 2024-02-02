@@ -231,7 +231,6 @@ static struct xdr_ops xdrposix_ops = {
     xdrposix_setpos,   /* set offset in the stream */
     xdrposix_inline,   /* prime stream for inline macros */
     xdrposix_destroy,  /* destroy stream */
-    NULL,              /* no xdr_control function defined */
 #if defined(__sun) && defined(_LP64)
     /* Solaris 64-bit (arch=v9 and arch=amd64) differentiates between
      * 32-bit integers and 64-bit longs via two extra callbacks for
@@ -277,9 +276,6 @@ xdrposix_create(XDR *xdrs, int fd, int fmode, enum xdr_op op)
     xdrs->x_op      = op;
     xdrs->x_ops     = &xdrposix_ops;
     xdrs->x_private = (char *)biop;
-    /* unused */
-    xdrs->x_handy = 0;
-    xdrs->x_base  = 0;
     if (biop == NULL)
         return -1;
 
