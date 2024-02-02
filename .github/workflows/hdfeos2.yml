@@ -16,7 +16,7 @@ jobs:
       - name: Install HDF4
         run: |
           ./autogen.sh
-          ./configure --prefix=/usr/local --enable-shared --enable-hdf4-xdr -disable-fortran --disable-netcdf
+          ./configure --prefix=/usr/local --enable-shared --disable-fortran --disable-netcdf
           make
           sudo make install
       - name: Install HDF-EOS2

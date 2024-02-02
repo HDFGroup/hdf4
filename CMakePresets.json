@@ -69,7 +69,6 @@
       "inherits": ["ci-StdCompression", "ci-StdExamples"],
       "cacheVariables": {
         "HDF_PACKAGE_NAMESPACE": {"type": "STRING", "value": "hdf4::"},
-        "HDF4_BUILD_XDR_LIB": "ON",
         "HDF4_BUILD_GENERATORS": "ON",
         "HDF4_ENABLE_ALL_WARNINGS": "ON",
         "HDF4_MINGW_STATIC_GCC_LIBS": "ON"

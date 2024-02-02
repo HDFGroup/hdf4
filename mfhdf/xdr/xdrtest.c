@@ -25,13 +25,9 @@
         }                                                                                                    \
     }
 
-#ifndef H4_NO_SYS_XDR_INC
-#include <types.h>
-#include <xdr.h>
-#else
+/* Local XDR files */
 #include "types.h"
 #include "xdr.h"
-#endif
 
 #define TESTFILE "test.xdr"
 /* if this is NOT defined, then the program just reads the file */

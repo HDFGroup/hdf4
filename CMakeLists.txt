@@ -482,45 +482,17 @@ if (HDF4_ENABLE_NETCDF)
 endif ()
 
 #-----------------------------------------------------------------------------
-# Option to build HDF4 xdr Library
-#-----------------------------------------------------------------------------
-option (HDF4_BUILD_XDR_LIB  "Build HDF4 XDR Library" OFF)
-if (WIN32 OR MINGW OR APPLE)
-  set (HDF4_BUILD_XDR_LIB ON CACHE BOOL "Build HDF4 XDR Library" FORCE)
-else ()
-  if (NOT HDF4_BUILD_XDR_LIB)
-    include (FindXDR)
-    if (XDR_FOUND)
-      set (CMAKE_REQUIRED_LIBRARIES "${XDR_LIBRARIES}" )
-      message (STATUS "HDF4 XDR Library found: ${XDR_LIBRARIES}")
-      set (LINK_LIBS ${LINK_LIBS} ${XDR_LIBRARIES})
-      set (LINK_SHARED_LIBS ${LINK_SHARED_LIBS} ${XDR_LIBRARIES})
-      include_directories(${XDR_INCLUDE_DIRS})
-    else ()
-      set (HDF4_BUILD_XDR_LIB ON CACHE BOOL "Build HDF4 XDR Library" FORCE)
-      message (STATUS "HDF4 XDR Library will be built")
-    endif ()
-  endif ()
-endif ()
-
-if (HDF4_BUILD_XDR_LIB)
-  set (H4_NO_SYS_XDR_INC 1)
-  add_subdirectory (mfhdf/xdr)
-endif ()
-
-#-----------------------------------------------------------------------------
 # Add the HDF4 Library Target to the build
 #-----------------------------------------------------------------------------
 add_subdirectory (hdf/src)
 add_subdirectory (mfhdf/libsrc)
+add_subdirectory (mfhdf/xdr)
 
-if (HDF4_BUILD_XDR_LIB)
-  if (NOT ONLY_SHARED_LIBS)
-    add_dependencies (${HDF4_MF_LIB_TARGET} ${HDF4_MF_XDR_LIB_TARGET})
-  endif ()
-  if (BUILD_SHARED_LIBS)
-    add_dependencies (${HDF4_MF_LIBSH_TARGET} ${HDF4_MF_XDR_LIBSH_TARGET})
-  endif ()
+if (NOT ONLY_SHARED_LIBS)
+  add_dependencies (${HDF4_MF_LIB_TARGET} ${HDF4_MF_XDR_LIB_TARGET})
+endif ()
+if (BUILD_SHARED_LIBS)
+  add_dependencies (${HDF4_MF_LIBSH_TARGET} ${HDF4_MF_XDR_LIBSH_TARGET})
 endif ()
 
 #-----------------------------------------------------------------------------

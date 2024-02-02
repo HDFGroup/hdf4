@@ -52,7 +52,6 @@ jobs:
           - name: "Windows MSVC"
             os: windows-2022
             toolchain: ""
-            xdr: ON
             fortran: OFF
             java: ON
             docs: OFF
@@ -70,7 +69,6 @@ jobs:
           # so it's not critical
           - name: "Ubuntu gcc"
             os: ubuntu-latest
-            xdr: ON
             fortran: OFF
             java: ON
             docs: ON
@@ -90,7 +88,6 @@ jobs:
           # but that seems unnecessary
           - name: "MacOS Clang"
             os: macos-13
-            xdr: ON
             fortran: OFF
             java: ON
             docs: OFF
@@ -107,7 +104,6 @@ jobs:
           #
           - name: "Ubuntu mingw CMake"
             os: ubuntu-latest
-            xdr: ON
             fortran: OFF
             java: OFF
             docs: OFF
@@ -125,7 +121,6 @@ jobs:
           - name: "Windows static MSVC CMake"
             os: windows-2022
             toolchain: ""
-            xdr: ON
             fortran: OFF
             java: OFF
             docs: OFF
@@ -143,7 +138,6 @@ jobs:
           # so it's not critical
           - name: "Ubuntu static gcc CMake"
             os: ubuntu-latest
-            xdr: ON
             fortran: OFF
             java: OFF
             docs: OFF
@@ -162,7 +156,6 @@ jobs:
           # but that seems unnecessary
           - name: "MacOS static Clang CMake"
             os: macos-13
-            xdr: ON
             fortran: OFF
             java: OFF
             docs: OFF
@@ -243,7 +236,6 @@ jobs:
             -DBUILD_SHARED_LIBS:BOOL=${{ inputs.shared }} \
             -DHDF4_BUILD_EXAMPLES=ON \
             -DBUILD_JPEG_WITH_PIC:BOOL=ON \
-            -DHDF4_BUILD_XDR_LIB:BOOL=${{ matrix.xdr }} \
             -DHDF4_ENABLE_NETCDF:BOOL=${{ inputs.netcdf }} \
             -DHDF4_BUILD_FORTRAN=${{ matrix.fortran }} \
             -DHDF4_BUILD_JAVA=${{ env.useJava }} \

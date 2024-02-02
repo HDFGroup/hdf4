@@ -16,10 +16,6 @@ on:
         description: "netcdf enable/disable"
         required: true
         type: string
-      xdr:
-        description: "xdr enable/disable(system)"
-        required: true
-        type: string
 
 permissions:
   contents: read
@@ -33,7 +29,7 @@ jobs:
   # Linux (Ubuntu) w/ gcc + Autotools
   #
   Autotools_build_and_test:
-    name: "GCC-${{ inputs.build_mode }}-NC=${{ inputs.netcdf }}d-XDR=${{ inputs.xdr }}d"
+    name: "GCC-${{ inputs.build_mode }}-NC=${{ inputs.netcdf }}d"
     # Don't run the action if the commit message says to skip CI
     if: "!contains(github.event.head_commit.message, 'skip-ci')"
 
@@ -64,7 +60,6 @@ jobs:
           cd "${{ runner.workspace }}/build"
           $GITHUB_WORKSPACE/configure \
             --enable-build-mode=${{ inputs.build_mode }} \
-            --${{ inputs.xdr }}-hdf4-xdr \
             --${{ inputs.netcdf }}-netcdf \
             --disable-fortran \
             --${{ inputs.shared }}-java \

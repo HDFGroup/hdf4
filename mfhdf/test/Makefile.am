@@ -11,9 +11,7 @@ test_INCLUDES=-I$(top_srcdir)/hdf/src         \
 DEFINES=-DHDF
 AM_CPPFLAGS=$(test_INCLUDES) $(XDRINC) $(DEFINES)
 
-if HDF_BUILD_XDR
 XDRLIB = $(top_builddir)/mfhdf/xdr/libxdr.la
-endif
 
 #############################################################################
 ##                              Testing                                    ##

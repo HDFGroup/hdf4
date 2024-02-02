@@ -41,7 +41,7 @@ jobs:
           run: |
             ./autogen.sh
             ./configure --prefix=/usr/local \
-            --enable-shared --enable-hdf4-xdr \
+            --enable-shared \
             --disable-fortran --disable-netcdf
             make
             sudo make install

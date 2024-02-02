@@ -27,9 +27,7 @@ LIBMFHDF = $(top_builddir)/mfhdf/libsrc/libmfhdf.la
 H4CC = ${DESTDIR}$(bindir)/h4cc
 H4FC = ${DESTDIR}$(bindir)/h4fc
 
-if HDF_BUILD_XDR
-    XDR_ADD = -R$(abs_top_builddir)/mfhdf/xdr/.libs
-endif
+XDR_ADD = -R$(abs_top_builddir)/mfhdf/xdr/.libs
 
 if HDF_BUILD_SHARED
     AM_LDFLAGS = -R$(abs_top_builddir)/mfhdf/libsrc/.libs -R$(abs_top_builddir)/hdf/src/.libs $(XDR_ADD)
