@@ -35,6 +35,11 @@ jobs:
       #
       # SETUP
       #
+      - name: Install CMake Dependencies (Linux)
+        run: |
+           sudo apt update
+           sudo apt-get install -y ninja-build libtirpc-dev graphviz
+
       - name: Install MinGW Dependencies (Linux)
         uses: egor-tensin/setup-mingw@v2
         with:
@@ -44,13 +49,6 @@ jobs:
         uses: ssciwr/doxygen-install@v1
         with:
           version: "1.9.7"
-
-      - name: Set environment for MSVC (Windows)
-        run: |
-          # Set these environment variables so CMake picks the correct compiler
-          echo "CXX=cl.exe" >> $GITHUB_ENV
-          echo "CC=cl.exe" >> $GITHUB_ENV
-        if:  matrix.os == 'windows-latest'
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Get Sources
@@ -64,7 +62,7 @@ jobs:
           mkdir "${{ runner.workspace }}/build"
           cd "${{ runner.workspace }}/build"
           cmake -C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake \
-            -G "MinGW Makefiles" \
+            -G Ninja \
             --log-level=VERBOSE \
             -DCMAKE_BUILD_TYPE=${{ inputs.build_mode }} \
             -DCMAKE_TOOLCHAIN_FILE=config/toolchain/mingw64.cmake \
