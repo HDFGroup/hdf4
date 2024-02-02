@@ -93,7 +93,7 @@ typedef int32_t enum_t;
  */
 
 /*
- * Xdr operations.  XDR_ENCODE causes the type to be encoded into the
+ * XDR operations.  XDR_ENCODE causes the type to be encoded into the
  * stream.  XDR_DECODE causes the type to be extracted from the stream.
  * XDR_FREE can be used to release the space allocated by an XDR_DECODE
  * request.
@@ -111,20 +111,20 @@ enum xdr_op { XDR_ENCODE = 0, XDR_DECODE = 1, XDR_FREE = 2 };
  * an operations vector for the particular implementation (e.g. see xdr_mem.c),
  * and two private fields for the use of the particular implementation.
  */
-typedef struct __rpc_xdr {
+typedef struct xinfo {
     enum xdr_op x_op; /* operation; fast additional param */
     struct xdr_ops {
         /* Get/put long from underlying stream */
-        bool_t (*x_getlong)(struct __rpc_xdr *, long *);
-        bool_t (*x_putlong)(struct __rpc_xdr *, const long *);
+        bool_t (*x_getlong)(struct xinfo *, long *);
+        bool_t (*x_putlong)(struct xinfo *, const long *);
         /* Get/put bytes. */
-        bool_t (*x_getbytes)(struct __rpc_xdr *, char *, u_int);
-        bool_t (*x_putbytes)(struct __rpc_xdr *, const char *, u_int);
+        bool_t (*x_getbytes)(struct xinfo *, char *, u_int);
+        bool_t (*x_putbytes)(struct xinfo *, const char *, u_int);
         /* Get or seek within the stream (offsets from beginning of stream). */
-        u_int (*x_getpostn)(struct __rpc_xdr *);
-        bool_t (*x_setpostn)(struct __rpc_xdr *, u_int);
+        u_int (*x_getpostn)(struct xinfo *);
+        bool_t (*x_setpostn)(struct xinfo *, u_int);
         /* Free the stream. */
-        void (*x_destroy)(struct __rpc_xdr *);
+        void (*x_destroy)(struct xinfo *);
     } * x_ops;
     void *x_private; /* pointer to private data */
 } XDR;
@@ -158,24 +158,21 @@ typedef bool_t (*xdrproc_t)(XDR *, void *, ...);
  * u_int       len;
  * u_int       pos;
  */
-#define XDR_GETLONG(xdrs, longp) (*(xdrs)->x_ops->x_getlong)(xdrs, longp)
 #define xdr_getlong(xdrs, longp) (*(xdrs)->x_ops->x_getlong)(xdrs, longp)
-
-#define XDR_PUTLONG(xdrs, longp) (*(xdrs)->x_ops->x_putlong)(xdrs, longp)
 #define xdr_putlong(xdrs, longp) (*(xdrs)->x_ops->x_putlong)(xdrs, longp)
 
-static __inline int
+static inline int
 xdr_getint32(XDR *xdrs, int32_t *ip)
 {
     long l;
 
     if (!xdr_getlong(xdrs, &l))
-        return (FALSE);
+        return FALSE;
     *ip = (int32_t)l;
-    return (TRUE);
+    return TRUE;
 }
 
-static __inline int
+static inline int
 xdr_putint32(XDR *xdrs, int32_t *ip)
 {
     long l;
@@ -184,13 +181,7 @@ xdr_putint32(XDR *xdrs, int32_t *ip)
     return xdr_putlong(xdrs, &l);
 }
 
-#define XDR_GETINT32(xdrs, int32p) xdr_getint32(xdrs, int32p)
-#define XDR_PUTINT32(xdrs, int32p) xdr_putint32(xdrs, int32p)
-
-#define XDR_GETBYTES(xdrs, addr, len) (*(xdrs)->x_ops->x_getbytes)(xdrs, addr, len)
 #define xdr_getbytes(xdrs, addr, len) (*(xdrs)->x_ops->x_getbytes)(xdrs, addr, len)
-
-#define XDR_PUTBYTES(xdrs, addr, len) (*(xdrs)->x_ops->x_putbytes)(xdrs, addr, len)
 #define xdr_putbytes(xdrs, addr, len) (*(xdrs)->x_ops->x_putbytes)(xdrs, addr, len)
 
 #define xdr_getpos(xdrs) (*(xdrs)->x_ops->x_getpostn)(xdrs)
@@ -198,7 +189,7 @@ xdr_putint32(XDR *xdrs, int32_t *ip)
 
 #define xdr_destroy(xdrs)                                                                                    \
     if ((xdrs)->x_ops->x_destroy)                                                                            \
-    (*(xdrs)->x_ops->x_destroy)(xdrs)
+        (*(xdrs)->x_ops->x_destroy)(xdrs)
 
 /*
  * These are the "generic" xdr routines.
@@ -214,20 +205,18 @@ XDRLIBAPI bool_t xdr_int64_t(XDR *, int64_t *);
 XDRLIBAPI bool_t xdr_uint64_t(XDR *, uint64_t *);
 XDRLIBAPI bool_t xdr_bytes(XDR *, char **, u_int *, u_int);
 XDRLIBAPI bool_t xdr_opaque(XDR *, char *, u_int);
-XDRLIBAPI bool_t xdr_vector(XDR *, char *, u_int, u_int, xdrproc_t);
 XDRLIBAPI bool_t xdr_float(XDR *, float *);
 XDRLIBAPI bool_t xdr_double(XDR *, double *);
 XDRLIBAPI void   xdr_free(xdrproc_t, void *);
 
-/*
- * These are the public routines for the various implementations of
- * xdr streams.
- */
+/* Only used in xdrtest.c */
+XDRLIBAPI bool_t xdr_vector(XDR *, char *, u_int, u_int, xdrproc_t);
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/* XDR using stdio library */
+/* XDR using stdio library (only used in xdrtest.c) */
 XDRLIBAPI void xdrstdio_create(XDR *, FILE *, enum xdr_op);
 
 #ifdef __cplusplus

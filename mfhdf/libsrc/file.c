@@ -701,9 +701,6 @@ NC_begins(NC *handle)
  * Copy nbytes bytes from source to target.
  * Streams target and source should be positioned before the call.
  * opaque I/O, no XDR conversion performed (or needed).
- * The Macros XDR_GETBYTES and XDR_PUTBYTES may not be
- * supported on your xdr implementation. If not, calls
- * to xdr_opaque may be used.
  */
 bool_t
 NC_dcpy(XDR *target, XDR *source, long nbytes)
@@ -713,16 +710,16 @@ NC_dcpy(XDR *target, XDR *source, long nbytes)
     char buf[NC_DCP_BUFSIZE];
 
     while (nbytes > sizeof(buf)) {
-        if (!XDR_GETBYTES(source, buf, sizeof(buf)))
+        if (!xdr_getbytes(source, buf, sizeof(buf)))
             goto err;
-        if (!XDR_PUTBYTES(target, buf, sizeof(buf)))
+        if (!xdr_putbytes(target, buf, sizeof(buf)))
             goto err;
         nbytes -= sizeof(buf);
     }
     /* we know nbytes <= sizeof(buf) at this point */
-    if (!XDR_GETBYTES(source, buf, nbytes))
+    if (!xdr_getbytes(source, buf, nbytes))
         goto err;
-    if (!XDR_PUTBYTES(target, buf, nbytes))
+    if (!xdr_putbytes(target, buf, nbytes))
         goto err;
     return (TRUE);
 err:
