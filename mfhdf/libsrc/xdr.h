@@ -105,12 +105,8 @@ typedef struct __rpc_xdr {
         /* Get or seek within the stream (offsets from beginning of stream). */
         u_int (*x_getpostn)(struct __rpc_xdr *);
         bool_t (*x_setpostn)(struct __rpc_xdr *, u_int);
-        /* Returns a pointer to the next n bytes in the stream. */
-        int32_t *(*x_inline)(struct __rpc_xdr *, u_int);
         /* Free the stream. */
         void (*x_destroy)(struct __rpc_xdr *);
-        /* Control */
-        bool_t (*x_control)(struct __rpc_xdr *, int, void *);
     } * x_ops;
     void *x_private; /* pointer to private data */
 } XDR;
@@ -181,7 +177,6 @@ xdr_putint32(XDR *xdrs, int32_t *ip)
 
 #define xdr_getpos(xdrs) (*(xdrs)->x_ops->x_getpostn)(xdrs)
 #define xdr_setpos(xdrs, pos) (*(xdrs)->x_ops->x_setpostn)(xdrs, pos)
-#define xdr_inline(xdrs, len) (*(xdrs)->x_ops->x_inline)(xdrs, len)
 
 #define xdr_destroy(xdrs)                                                                                    \
     if ((xdrs)->x_ops->x_destroy)                                                                            \

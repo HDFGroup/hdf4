@@ -61,7 +61,6 @@ static bool_t   xdrstdio_getbytes(XDR *, char *, u_int);
 static bool_t   xdrstdio_putbytes(XDR *, const char *, u_int);
 static u_int    xdrstdio_getpos(XDR *);
 static bool_t   xdrstdio_setpos(XDR *, u_int);
-static int32_t *xdrstdio_inline(XDR *, u_int);
 
 /*
  * Ops vector for stdio type XDR
@@ -73,7 +72,6 @@ static const struct xdr_ops xdrstdio_ops = {
     xdrstdio_putbytes, /* serialize counted bytes */
     xdrstdio_getpos,   /* get offset in the stream */
     xdrstdio_setpos,   /* set offset in the stream */
-    xdrstdio_inline,   /* prime stream for inline macros */
     xdrstdio_destroy   /* destroy stream */
 };
 
@@ -157,21 +155,4 @@ xdrstdio_setpos(XDR *xdrs, u_int pos)
 {
 
     return ((fseek((FILE *)xdrs->x_private, (long)pos, 0) < 0) ? FALSE : TRUE);
-}
-
-static int32_t *
-xdrstdio_inline(XDR *xdrs, u_int len)
-{
-    (void)xdrs;
-    (void)len;
-    /*
-     * Must do some work to implement this: must insure
-     * enough data in the underlying stdio buffer,
-     * that the buffer is aligned so that we can indirect through a
-     * long *, and stuff this pointer in xdrs->x_buf.  Doing
-     * a fread or fwrite to a scratch buffer would defeat
-     * most of the gains to be had here and require storage
-     * management on this buffer, so we don't do this.
-     */
-    return (NULL);
 }

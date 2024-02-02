@@ -229,7 +229,6 @@ static struct xdr_ops xdrposix_ops = {
     xdrposix_putbytes, /* serialize counted bytes */
     xdrposix_getpos,   /* get offset in the stream */
     xdrposix_setpos,   /* set offset in the stream */
-    xdrposix_inline,   /* prime stream for inline macros */
     xdrposix_destroy,  /* destroy stream */
 #if defined(__sun) && defined(_LP64)
     /* Solaris 64-bit (arch=v9 and arch=amd64) differentiates between
