@@ -45,12 +45,8 @@
 #include <sys/types.h>
 #endif
 
-#ifndef TRUE
-#define TRUE 1
-#endif
-#ifndef FALSE
-#define FALSE 0
-#endif
+#include "mfhdf.h"
+
 typedef int32_t bool_t;
 
 /*
