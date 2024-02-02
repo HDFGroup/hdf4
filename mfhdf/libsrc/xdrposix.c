@@ -212,7 +212,6 @@ static bool_t   xdrposix_getbytes(XDR *xdrs, char *addr, u_int len);
 static bool_t   xdrposix_putbytes(XDR *xdrs, const char *addr, u_int len);
 static u_int    xdrposix_getpos(XDR *xdrs);
 static bool_t   xdrposix_setpos(XDR *xdrs, u_int pos);
-static int32_t *xdrposix_inline(XDR *xdrs, u_int len);
 static void     xdrposix_destroy(XDR *xdrs);
 #if (defined __sun && defined _LP64)
 static bool_t xdrposix_getint(XDR *xdrs, int *lp);
@@ -409,20 +408,6 @@ xdrposix_setpos(XDR *xdrs, u_int pos)
     }
     else
         return FALSE;
-}
-
-static int32_t *
-xdrposix_inline(XDR *xdrs, u_int len)
-{
-    (void)xdrs;
-    (void)len;
-    /*
-     * Must do some work to implement this: must insure
-     * enough data in the underlying posix buffer,
-     * that the buffer is aligned so that we can indirect through a
-     * int32_t *, and stuff this pointer in xdrs->x_buf.
-     */
-    return NULL;
 }
 
 #if (defined __sun && defined _LP64)
