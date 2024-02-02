@@ -31,7 +31,6 @@
 #endif
 
 /* Local XDR files */
-#include "types.h"
 #include "xdr.h"
 
 #ifdef H4_HAVE_NETCDF

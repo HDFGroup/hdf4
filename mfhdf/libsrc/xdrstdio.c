@@ -51,7 +51,6 @@
 #endif
 #endif
 
-#include "types.h"
 #include "xdr.h"
 
 static void     xdrstdio_destroy(XDR *);

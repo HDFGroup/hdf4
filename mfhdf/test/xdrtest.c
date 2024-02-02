@@ -5,6 +5,9 @@
 
 #include "h4config.h"
 
+#include <stdlib.h>
+#include <stdio.h>
+
 /*
  * This program tests only the xdr library functionality required by netCDF.
  *  'xdr_vector' is not used by the netCDF, it is used here for convenience.
@@ -26,7 +29,6 @@
     }
 
 /* Local XDR files */
-#include "types.h"
 #include "xdr.h"
 
 #define TESTFILE "test.xdr"

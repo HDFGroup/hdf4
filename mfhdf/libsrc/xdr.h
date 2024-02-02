@@ -43,7 +43,46 @@
 
 #include "H4api_adpt.h"
 
+#include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
+
+#ifdef H4_HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+
+#ifndef u_char
+typedef unsigned char u_char;
+#endif
+#ifndef u_short
+typedef uint16_t u_short;
+#endif
+#ifndef u_int
+typedef uint32_t u_int;
+#endif
+#ifndef u_long
+typedef unsigned long u_long;
+#endif
+#ifndef u_quad_t
+typedef uint64_t u_quad_t;
+#endif
+#ifndef quad_t
+typedef int64_t quad_t;
+#endif
+#ifndef caddr_t
+typedef char *caddr_t;
+#endif
+
+#ifndef TRUE
+#define TRUE 1
+#endif
+#ifndef FALSE
+#define FALSE 0
+#endif
+typedef int32_t bool_t;
+
+/* Define the enumerated type in the wire protocol. */
+typedef int32_t enum_t;
 
 /*
  * XDR provides a conventional way for converting between C data
