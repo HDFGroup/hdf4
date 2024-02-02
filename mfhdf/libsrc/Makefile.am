@@ -17,9 +17,9 @@ AM_CPPFLAGS = $(lib_INCLUDES) $(DEFINES)
 lib_LTLIBRARIES = libmfhdf.la
 
 ## Information for building the "libmfhdf.la" library
-CSOURCES = array.c attr.c cdf.c dim.c file.c hdfsds.c iarray.c error.c    \
-         globdef.c mfsd.c mfdatainfo.c nssdc.c putget.c putgetg.c	\
-	 sharray.c string.c var.c xdrposix.c xdr.c xdrfloat.c xdrstdio.c xdrarray.c
+CSOURCES = array.c attr.c cdf.c dim.c file.c hdfsds.c iarray.c error.c	\
+           globdef.c mfsd.c mfdatainfo.c nssdc.c putget.c putgetg.c		\
+           sharray.c string.c var.c xdr.c xdrposix.c xdrstdio.c
 
 if HDF_BUILD_NETCDF
 FSOURCES = $(top_builddir)/mfhdf/fortran/jackets.c $(top_srcdir)/mfhdf/fortran/mfsdf.c $(top_srcdir)/mfhdf/fortran/mfsdff.f

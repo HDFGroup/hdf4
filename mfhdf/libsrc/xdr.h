@@ -86,7 +86,6 @@ enum xdr_op { XDR_ENCODE = 0, XDR_DECODE = 1, XDR_FREE = 2 };
  * This is the number of bytes per unit of external data.
  */
 #define BYTES_PER_XDR_UNIT (4)
-#define RNDUP(x)           ((((x) + BYTES_PER_XDR_UNIT - 1) / BYTES_PER_XDR_UNIT) * BYTES_PER_XDR_UNIT)
 
 /*
  * The XDR handle.
@@ -183,72 +182,13 @@ xdr_putint32(XDR *xdrs, int32_t *ip)
 #define XDR_PUTBYTES(xdrs, addr, len) (*(xdrs)->x_ops->x_putbytes)(xdrs, addr, len)
 #define xdr_putbytes(xdrs, addr, len) (*(xdrs)->x_ops->x_putbytes)(xdrs, addr, len)
 
-#define XDR_GETPOS(xdrs) (*(xdrs)->x_ops->x_getpostn)(xdrs)
 #define xdr_getpos(xdrs) (*(xdrs)->x_ops->x_getpostn)(xdrs)
-
-#define XDR_SETPOS(xdrs, pos) (*(xdrs)->x_ops->x_setpostn)(xdrs, pos)
 #define xdr_setpos(xdrs, pos) (*(xdrs)->x_ops->x_setpostn)(xdrs, pos)
-
-#define XDR_INLINE(xdrs, len) (*(xdrs)->x_ops->x_inline)(xdrs, len)
 #define xdr_inline(xdrs, len) (*(xdrs)->x_ops->x_inline)(xdrs, len)
 
-#define XDR_DESTROY(xdrs)                                                                                    \
-    if ((xdrs)->x_ops->x_destroy)                                                                            \
-    (*(xdrs)->x_ops->x_destroy)(xdrs)
 #define xdr_destroy(xdrs)                                                                                    \
     if ((xdrs)->x_ops->x_destroy)                                                                            \
     (*(xdrs)->x_ops->x_destroy)(xdrs)
-
-/*
- * Support struct for discriminated unions.
- * You create an array of xdrdiscrim structures, terminated with
- * an entry with a null procedure pointer.  The xdr_union routine gets
- * the discriminant value and then searches the array of structures
- * for a matching value.  If a match is found the associated xdr routine
- * is called to handle that part of the union.  If there is
- * no match, then a default routine may be called.
- * If there is no match and no default routine it is an error.
- */
-#define NULL_xdrproc_t ((xdrproc_t)0)
-struct xdr_discrim {
-    int       value;
-    xdrproc_t proc;
-};
-
-/*
- * In-line routines for fast encode/decode of primitive data types.
- * Caveat emptor: these use single memory cycles to get the
- * data from the underlying buffer, and will fail to operate
- * properly if the data is not aligned.  The standard way to use these
- * is to say:
- *    if ((buf = XDR_INLINE(xdrs, count)) == NULL)
- *        return (FALSE);
- *    <<< macro calls >>>
- * where ``count'' is the number of bytes of data occupied
- * by the primitive data types.
- *
- * N.B. and frozen for all time: each data type here uses 4 bytes
- * of external representation.
- */
-#define IXDR_GET_INT32(buf)      ((int32_t)ntohl((uint32_t) * (buf)++))
-#define IXDR_PUT_INT32(buf, v)   (*(buf)++ = (int32_t)htonl((uint32_t)v))
-#define IXDR_GET_U_INT32(buf)    ((uint32_t)IXDR_GET_INT32(buf))
-#define IXDR_PUT_U_INT32(buf, v) IXDR_PUT_INT32((buf), ((int32_t)(v)))
-
-#define IXDR_GET_LONG(buf)    ((long)ntohl((uint32_t) * (buf)++))
-#define IXDR_PUT_LONG(buf, v) (*(buf)++ = (int32_t)htonl((uint32_t)v))
-
-#define IXDR_GET_BOOL(buf)    ((bool_t)IXDR_GET_LONG(buf))
-#define IXDR_GET_ENUM(buf, t) ((t)IXDR_GET_LONG(buf))
-#define IXDR_GET_U_LONG(buf)  ((u_long)IXDR_GET_LONG(buf))
-#define IXDR_GET_SHORT(buf)   ((short)IXDR_GET_LONG(buf))
-#define IXDR_GET_U_SHORT(buf) ((u_short)IXDR_GET_LONG(buf))
-
-#define IXDR_PUT_BOOL(buf, v)    IXDR_PUT_LONG((buf), (v))
-#define IXDR_PUT_ENUM(buf, v)    IXDR_PUT_LONG((buf), (v))
-#define IXDR_PUT_U_LONG(buf, v)  IXDR_PUT_LONG((buf), (v))
-#define IXDR_PUT_SHORT(buf, v)   IXDR_PUT_LONG((buf), (v))
-#define IXDR_PUT_U_SHORT(buf, v) IXDR_PUT_LONG((buf), (v))
 
 /*
  * These are the "generic" xdr routines.
@@ -256,57 +196,21 @@ struct xdr_discrim {
 #ifdef __cplusplus
 extern "C" {
 #endif
-XDRLIBAPI bool_t xdr_void(void);
 XDRLIBAPI bool_t xdr_int(XDR *, int *);
 XDRLIBAPI bool_t xdr_u_int(XDR *, u_int *);
 XDRLIBAPI bool_t xdr_long(XDR *, long *);
 XDRLIBAPI bool_t xdr_u_long(XDR *, u_long *);
 XDRLIBAPI bool_t xdr_short(XDR *, short *);
 XDRLIBAPI bool_t xdr_u_short(XDR *, u_short *);
-XDRLIBAPI bool_t xdr_int8_t(XDR *, int8_t *);
-XDRLIBAPI bool_t xdr_uint8_t(XDR *, uint8_t *);
-XDRLIBAPI bool_t xdr_int16_t(XDR *, int16_t *);
-XDRLIBAPI bool_t xdr_uint16_t(XDR *, uint16_t *);
-XDRLIBAPI bool_t xdr_int32_t(XDR *, int32_t *);
-XDRLIBAPI bool_t xdr_uint32_t(XDR *, uint32_t *);
 XDRLIBAPI bool_t xdr_int64_t(XDR *, int64_t *);
 XDRLIBAPI bool_t xdr_uint64_t(XDR *, uint64_t *);
-XDRLIBAPI bool_t xdr_quad_t(XDR *, int64_t *);
-XDRLIBAPI bool_t xdr_u_quad_t(XDR *, uint64_t *);
-XDRLIBAPI bool_t xdr_bool(XDR *, bool_t *);
 XDRLIBAPI bool_t xdr_enum(XDR *, enum_t *);
-XDRLIBAPI bool_t xdr_array(XDR *, char **, u_int *, u_int, u_int, xdrproc_t);
 XDRLIBAPI bool_t xdr_bytes(XDR *, char **, u_int *, u_int);
 XDRLIBAPI bool_t xdr_opaque(XDR *, char *, u_int);
-XDRLIBAPI bool_t xdr_string(XDR *, char **, u_int);
-XDRLIBAPI bool_t xdr_union(XDR *, enum_t *, char *, const struct xdr_discrim *, xdrproc_t);
-XDRLIBAPI bool_t xdr_char(XDR *, char *);
-XDRLIBAPI bool_t xdr_u_char(XDR *, u_char *);
 XDRLIBAPI bool_t xdr_vector(XDR *, char *, u_int, u_int, xdrproc_t);
 XDRLIBAPI bool_t xdr_float(XDR *, float *);
 XDRLIBAPI bool_t xdr_double(XDR *, double *);
-XDRLIBAPI bool_t xdr_quadruple(XDR *, long double *);
-XDRLIBAPI bool_t xdr_reference(XDR *, char **, u_int, xdrproc_t);
-XDRLIBAPI bool_t xdr_pointer(XDR *, char **, u_int, xdrproc_t);
-XDRLIBAPI bool_t xdr_wrapstring(XDR *, char **);
 XDRLIBAPI void   xdr_free(xdrproc_t, void *);
-XDRLIBAPI bool_t xdr_hyper(XDR *, quad_t *);
-XDRLIBAPI bool_t xdr_u_hyper(XDR *, u_quad_t *);
-XDRLIBAPI bool_t xdr_longlong_t(XDR *, quad_t *);
-XDRLIBAPI bool_t xdr_u_longlong_t(XDR *, u_quad_t *);
-XDRLIBAPI u_long xdr_sizeof(xdrproc_t, void *);
-
-/*
- * Common opaque bytes objects used by many rpc protocols;
- * declared here due to commonality.
- */
-#define MAX_NETOBJ_SZ 1024
-struct netobj {
-    u_int n_len;
-    char *n_bytes;
-};
-typedef struct netobj netobj;
-XDRLIBAPI bool_t      xdr_netobj(XDR *, struct netobj *);
 
 /*
  * These are the public routines for the various implementations of
