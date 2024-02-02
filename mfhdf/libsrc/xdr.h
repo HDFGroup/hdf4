@@ -45,9 +45,6 @@
 #include <sys/types.h>
 #endif
 
-#ifndef u_short
-typedef uint16_t u_short;
-#endif
 #ifndef u_int
 typedef uint32_t u_int;
 #endif
@@ -213,8 +210,6 @@ XDRLIBAPI bool_t xdr_int(XDR *, int *);
 XDRLIBAPI bool_t xdr_u_int(XDR *, u_int *);
 XDRLIBAPI bool_t xdr_long(XDR *, long *);
 XDRLIBAPI bool_t xdr_u_long(XDR *, u_long *);
-XDRLIBAPI bool_t xdr_short(XDR *, short *);
-XDRLIBAPI bool_t xdr_u_short(XDR *, u_short *);
 XDRLIBAPI bool_t xdr_int64_t(XDR *, int64_t *);
 XDRLIBAPI bool_t xdr_uint64_t(XDR *, uint64_t *);
 XDRLIBAPI bool_t xdr_bytes(XDR *, char **, u_int *, u_int);

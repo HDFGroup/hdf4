@@ -154,62 +154,6 @@ xdr_u_long(XDR *xdrs, u_long *ulp)
 }
 
 /*
- * XDR short integers
- */
-bool_t
-xdr_short(XDR *xdrs, short *sp)
-{
-    long l;
-
-    switch (xdrs->x_op) {
-
-        case XDR_ENCODE:
-            l = (long)*sp;
-            return (XDR_PUTLONG(xdrs, &l));
-
-        case XDR_DECODE:
-            if (!XDR_GETLONG(xdrs, &l)) {
-                return (FALSE);
-            }
-            *sp = (short)l;
-            return (TRUE);
-
-        case XDR_FREE:
-            return (TRUE);
-    }
-    /* NOTREACHED */
-    return (FALSE);
-}
-
-/*
- * XDR unsigned short integers
- */
-bool_t
-xdr_u_short(XDR *xdrs, u_short *usp)
-{
-    u_long l;
-
-    switch (xdrs->x_op) {
-
-        case XDR_ENCODE:
-            l = (u_long)*usp;
-            return (XDR_PUTLONG(xdrs, (long *)&l));
-
-        case XDR_DECODE:
-            if (!XDR_GETLONG(xdrs, (long *)&l)) {
-                return (FALSE);
-            }
-            *usp = (u_short)l;
-            return (TRUE);
-
-        case XDR_FREE:
-            return (TRUE);
-    }
-    /* NOTREACHED */
-    return (FALSE);
-}
-
-/*
  * XDR opaque data
  * Allows the specification of a fixed size sequence of opaque bytes.
  * cp points to the opaque object and cnt gives the byte length.
