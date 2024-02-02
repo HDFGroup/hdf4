@@ -35,24 +35,10 @@ jobs:
       #
       # SETUP
       #
-      - name: Install CMake Dependencies (Linux)
-        run: |
-           sudo apt update
-           sudo apt-get install -y ninja-build libtirpc-dev graphviz
-        if: matrix.os == 'ubuntu-latest'
-
       - name: Install MinGW Dependencies (Linux)
         uses: egor-tensin/setup-mingw@v2
         with:
           platform: x64
-
-      - name: Install Dependencies (Windows)
-        run: choco install ninja
-        if: matrix.os == 'windows-latest'
-
-      - name: Install Dependencies (macOS)
-        run: brew install ninja
-        if: matrix.os == 'macos-13'
 
       - name: Install Dependencies
         uses: ssciwr/doxygen-install@v1
@@ -78,7 +64,7 @@ jobs:
           mkdir "${{ runner.workspace }}/build"
           cd "${{ runner.workspace }}/build"
           cmake -C $GITHUB_WORKSPACE/config/cmake/cacheinit.cmake \
-            -G Ninja \
+            -G "MinGW Makefiles" \
             --log-level=VERBOSE \
             -DCMAKE_BUILD_TYPE=${{ inputs.build_mode }} \
             -DCMAKE_TOOLCHAIN_FILE=config/toolchain/mingw64.cmake \
