@@ -55,18 +55,18 @@ test_szip_RI8bit()
 {
     /************************* Variable declaration **************************/
 
-    intn  status;              /* status for functions returning an intn */
-    int32 file_id,             /* HDF file identifier */
-              gr_id,           /* GR interface identifier */
-              ri_id,           /* raster image identifier */
-              dim_sizes[2],    /* dimension sizes of the image array */
-              interlace_mode,  /* interlace mode of the image */
-              data_type,       /* data type of the image data */
-              index;
-    int32     start[2], edges[2];
-    uint32    comp_config;
-    comp_info cinfo;           /* Compression parameters - union */
-    comp_info cinfo_out;       /* Compression parameters read - union */
+    intn  status;       /* status for functions returning an intn */
+    int32 file_id,      /* HDF file identifier */
+        gr_id,          /* GR interface identifier */
+        ri_id,          /* raster image identifier */
+        dim_sizes[2],   /* dimension sizes of the image array */
+        interlace_mode, /* interlace mode of the image */
+        data_type,      /* data type of the image data */
+        index;
+    int32        start[2], edges[2];
+    uint32       comp_config;
+    comp_info    cinfo;     /* Compression parameters - union */
+    comp_info    cinfo_out; /* Compression parameters read - union */
     comp_coder_t comp_type;
 
     int8 out_data[LENGTH][WIDTH][N_COMPS];
@@ -234,7 +234,6 @@ test_szip_RI8bit()
     VERIFY_VOID(cinfo.szip.options_mask, cinfo_out.szip.options_mask, "GRgetcompinfo");
     VERIFY_VOID(cinfo.szip.pixels_per_block, cinfo_out.szip.pixels_per_block, "GRgetcompinfo");
 
-
     /* Wipe out the output buffer */
     memset(&out_data, 0, sizeof(out_data));
 
@@ -269,18 +268,18 @@ test_szip_RI16bit()
 {
     /************************* Variable declaration **************************/
 
-    intn  status;              /* status for functions returning an intn */
-    int32 file_id,             /* HDF file identifier */
-              gr_id,           /* GR interface identifier */
-              ri_id,           /* raster image identifier */
-              dim_sizes[2],    /* dimension sizes of the image array */
-              interlace_mode,  /* interlace mode of the image */
-              data_type,       /* data type of the image data */
-              index;
-    int32     start[2], edges[2];
-    uint32    comp_config;
-    comp_info cinfo;           /* Compression parameters - union */
-    comp_info cinfo_out;       /* Compression parameters read - union */
+    intn  status;       /* status for functions returning an intn */
+    int32 file_id,      /* HDF file identifier */
+        gr_id,          /* GR interface identifier */
+        ri_id,          /* raster image identifier */
+        dim_sizes[2],   /* dimension sizes of the image array */
+        interlace_mode, /* interlace mode of the image */
+        data_type,      /* data type of the image data */
+        index;
+    int32        start[2], edges[2];
+    uint32       comp_config;
+    comp_info    cinfo;     /* Compression parameters - union */
+    comp_info    cinfo_out; /* Compression parameters read - union */
     comp_coder_t comp_type;
 
     int16 out_data[LENGTH][WIDTH][N_COMPS];
@@ -482,18 +481,18 @@ test_szip_RI32bit()
 {
     /************************* Variable declaration **************************/
 
-    intn  status;              /* status for functions returning an intn */
-    int32 file_id,             /* HDF file identifier */
-              gr_id,           /* GR interface identifier */
-              ri_id,           /* raster image identifier */
-              dim_sizes[2],    /* dimension sizes of the image array */
-              interlace_mode,  /* interlace mode of the image */
-              data_type,       /* data type of the image data */
-              index;
-    int32     start[2], edges[2];
-    uint32    comp_config;
-    comp_info cinfo;           /* Compression parameters - union */
-    comp_info cinfo_out;       /* Compression parameters read - union */
+    intn  status;       /* status for functions returning an intn */
+    int32 file_id,      /* HDF file identifier */
+        gr_id,          /* GR interface identifier */
+        ri_id,          /* raster image identifier */
+        dim_sizes[2],   /* dimension sizes of the image array */
+        interlace_mode, /* interlace mode of the image */
+        data_type,      /* data type of the image data */
+        index;
+    int32        start[2], edges[2];
+    uint32       comp_config;
+    comp_info    cinfo;     /* Compression parameters - union */
+    comp_info    cinfo_out; /* Compression parameters read - union */
     comp_coder_t comp_type;
 
     int32 out_data[LENGTH][WIDTH][N_COMPS];
@@ -695,18 +694,18 @@ test_szip_RIfl32bit()
 {
     /************************* Variable declaration **************************/
 
-    intn  status;              /* status for functions returning an intn */
-    int32 file_id,             /* HDF file identifier */
-              gr_id,           /* GR interface identifier */
-              ri_id,           /* raster image identifier */
-              dim_sizes[2],    /* dimension sizes of the image array */
-              interlace_mode,  /* interlace mode of the image */
-              data_type,       /* data type of the image data */
-              index;
-    int32     start[2], edges[2];
-    uint32    comp_config;
-    comp_info cinfo;           /* Compression parameters - union */
-    comp_info cinfo_out;       /* Compression parameters read - union */
+    intn  status;       /* status for functions returning an intn */
+    int32 file_id,      /* HDF file identifier */
+        gr_id,          /* GR interface identifier */
+        ri_id,          /* raster image identifier */
+        dim_sizes[2],   /* dimension sizes of the image array */
+        interlace_mode, /* interlace mode of the image */
+        data_type,      /* data type of the image data */
+        index;
+    int32        start[2], edges[2];
+    uint32       comp_config;
+    comp_info    cinfo;     /* Compression parameters - union */
+    comp_info    cinfo_out; /* Compression parameters read - union */
     comp_coder_t comp_type;
 
     float32 out_data[LENGTH][WIDTH][N_COMPS];
@@ -909,18 +908,18 @@ test_szip_RIfl64bit()
 {
     /************************* Variable declaration **************************/
 
-    intn  status;              /* status for functions returning an intn */
-    int32 file_id,             /* HDF file identifier */
-              gr_id,           /* GR interface identifier */
-              ri_id,           /* raster image identifier */
-              dim_sizes[2],    /* dimension sizes of the image array */
-              interlace_mode,  /* interlace mode of the image */
-              data_type,       /* data type of the image data */
-              index;
-    int32     start[2], edges[2];
-    uint32    comp_config;
-    comp_info cinfo;           /* Compression parameters - union */
-    comp_info cinfo_out;       /* Compression parameters read - union */
+    intn  status;       /* status for functions returning an intn */
+    int32 file_id,      /* HDF file identifier */
+        gr_id,          /* GR interface identifier */
+        ri_id,          /* raster image identifier */
+        dim_sizes[2],   /* dimension sizes of the image array */
+        interlace_mode, /* interlace mode of the image */
+        data_type,      /* data type of the image data */
+        index;
+    int32        start[2], edges[2];
+    uint32       comp_config;
+    comp_info    cinfo;     /* Compression parameters - union */
+    comp_info    cinfo_out; /* Compression parameters read - union */
     comp_coder_t comp_type;
 
     float64 out_data[LENGTH][WIDTH][N_COMPS];
@@ -1130,18 +1129,18 @@ test_szip_chunk()
 
     /************************* Variable declaration **************************/
 
-    intn          status;         /* status for functions returning an intn */
-    int32         file_id,        /* HDF file identifier */
-                  gr_id,          /* GR interface identifier */
-                  ri_id,          /* raster image identifier */
-                  origin[2],      /* start position to write for each dimension */
-                  dim_sizes[2],   /* dimension sizes of the image array */
-                  interlace_mode, /* interlace mode of the image */
-                  data_type,      /* data type of the image data */
-                  comp_flag,      /* compression flag */
-                  index;
+    intn  status;       /* status for functions returning an intn */
+    int32 file_id,      /* HDF file identifier */
+        gr_id,          /* GR interface identifier */
+        ri_id,          /* raster image identifier */
+        origin[2],      /* start position to write for each dimension */
+        dim_sizes[2],   /* dimension sizes of the image array */
+        interlace_mode, /* interlace mode of the image */
+        data_type,      /* data type of the image data */
+        comp_flag,      /* compression flag */
+        index;
     int32         start[2], stride[2], edge[2];
-    comp_info     cinfo_out;      /* Compression parameters read - union */
+    comp_info     cinfo_out; /* Compression parameters read - union */
     uint32        comp_config;
     comp_coder_t  comp_type;
     int8          data_out[N_COMPS * LENGTH_CH * WIDTH_CH];
