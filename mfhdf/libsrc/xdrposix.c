@@ -269,10 +269,6 @@ static int
 xdrposix_create(XDR *xdrs, int fd, int fmode, enum xdr_op op)
 {
     biobuf *biop = new_biobuf(fd, fmode);
-#ifdef XDRDEBUG
-    fprintf(stderr, "xdrposix_create(): xdrs=%p, fd=%d, fmode=%d, op=%d\n", xdrs, fd, fmode, (int)op);
-    fprintf(stderr, "xdrposix_create(): after new_biobuf(), biop=%p\n", biop);
-#endif
     xdrs->x_op      = op;
     xdrs->x_ops     = &xdrposix_ops;
     xdrs->x_private = (char *)biop;
@@ -283,9 +279,6 @@ xdrposix_create(XDR *xdrs, int fd, int fmode, enum xdr_op op)
     if ((biop->mode & O_WRONLY) || (biop->mode & O_CREAT))
         return 0;
 
-#ifdef XDRDEBUG
-    fprintf(stderr, "xdrposix_create(): before rdbuf()\n");
-#endif
     /* else, read the first bufferful */
     return rdbuf(biop);
 }
@@ -474,9 +467,6 @@ NCxdrfile_create(XDR *xdrs, const char *path, int ncmode)
     int         fd;
     enum xdr_op op;
 
-#ifdef XDRDEBUG
-    fprintf(stderr, "NCxdrfile_create(): XDR=%p, path=%s, ncmode=%d\n", xdrs, path, ncmode);
-#endif
     switch (ncmode & 0x0f) {
         case NC_NOCLOBBER:
             fmode = O_RDWR | O_CREAT | O_EXCL;
@@ -501,9 +491,6 @@ NCxdrfile_create(XDR *xdrs, const char *path, int ncmode)
 #endif
 
     fd = open(path, fmode, 0666);
-#ifdef XDRDEBUG
-    fprintf(stderr, "NCxdrfile_create(): fmode=%d, fd=%d\n", fmode, fd);
-#endif
     if (fd == -1) {
         nc_serror("filename \"%s\"", path);
         return -1;
@@ -516,13 +503,8 @@ NCxdrfile_create(XDR *xdrs, const char *path, int ncmode)
         op = XDR_DECODE;
     }
 
-#ifdef XDRDEBUG
-    fprintf(stderr, "NCxdrfile_create(): before xdrposix_create()\n");
-#endif
     if (xdrposix_create(xdrs, fd, fmode, op) < 0)
         return -1;
-#ifdef XDRDEBUG
-    fprintf(stderr, "NCxdrfile_create(): after xdrposix_create()\n");
-#endif
-    return fd;
+    else
+        return fd;
 }
