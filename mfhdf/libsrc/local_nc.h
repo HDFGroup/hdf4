@@ -30,7 +30,6 @@
 #define FILENAME_MAX 255
 #endif
 
-/* Local XDR files */
 #include "xdr.h"
 
 #ifdef H4_HAVE_NETCDF

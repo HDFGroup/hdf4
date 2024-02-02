@@ -1,5 +1,3 @@
-/*	$NetBSD: xdr.h,v 1.19 2000/07/17 05:00:45 matt Exp $	*/
-
 /*
  * Copyright (c) 2009, Sun Microsystems, Inc.
  * All rights reserved.
@@ -26,10 +24,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- *
- *	from: @(#)xdr.h 1.19 87/04/22 SMI
- *	from: @(#)xdr.h	2.2 88/07/29 4.0 RPCSRC
- * $FreeBSD: src/include/rpc/xdr.h,v 1.23 2003/03/07 13:19:40 nectar Exp $
  */
 
 /*
@@ -51,9 +45,6 @@
 #include <sys/types.h>
 #endif
 
-#ifndef u_char
-typedef unsigned char u_char;
-#endif
 #ifndef u_short
 typedef uint16_t u_short;
 #endif
@@ -62,15 +53,6 @@ typedef uint32_t u_int;
 #endif
 #ifndef u_long
 typedef unsigned long u_long;
-#endif
-#ifndef u_quad_t
-typedef uint64_t u_quad_t;
-#endif
-#ifndef quad_t
-typedef int64_t quad_t;
-#endif
-#ifndef caddr_t
-typedef char *caddr_t;
 #endif
 
 #ifndef TRUE

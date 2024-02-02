@@ -13,14 +13,6 @@
  *  'xdr_vector' is not used by the netCDF, it is used here for convenience.
  */
 
-#ifdef H4_HAVE_NETINET_IN_H
-#include <netinet/in.h> /* for htonl() */
-#else
-#ifdef H4_HAVE_WINSOCK2_H
-#include <winsock2.h>
-#endif
-#endif
-
 #define xdr_assert(ex)                                                                                       \
     {                                                                                                        \
         if (!(ex)) {                                                                                         \
@@ -28,18 +20,18 @@
         }                                                                                                    \
     }
 
-/* Local XDR files */
 #include "xdr.h"
 
 #define TESTFILE "test.xdr"
+
 /* if this is NOT defined, then the program just reads the file */
 #define CREATE
 
 #ifdef __FreeBSD__
 #define EPSILON .005
-#else /* __FreeBSD__ */
+#else
 #define EPSILON .0005
-#endif /* __FreeBSD__ */
+#endif
 
 int
 main(int ac, char *av[])

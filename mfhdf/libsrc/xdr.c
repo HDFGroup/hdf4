@@ -35,9 +35,6 @@
  * most common data items.  See xdr.h for more info on the interface to
  * xdr.
  */
-#if !defined(lint) && defined(SCCSIDS)
-static char sccsid[] = "@(#)xdr.c 1.35 87/08/12";
-#endif
 
 #include "h4config.h"
 
@@ -45,16 +42,6 @@ static char sccsid[] = "@(#)xdr.c 1.35 87/08/12";
 #include <string.h>
 
 #include "xdr.h"
-
-typedef quad_t   longlong_t;   /* ANSI long long type */
-typedef u_quad_t u_longlong_t; /* ANSI unsigned long long type */
-
-/*
- * constants specific to the xdr "protocol"
- */
-#define XDR_FALSE    ((long)0)
-#define XDR_TRUE     ((long)1)
-#define LASTUNSIGNED ((u_int)0 - 1)
 
 /*
  * for unit alignment
