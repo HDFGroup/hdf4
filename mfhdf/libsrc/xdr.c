@@ -75,18 +75,6 @@ static void     xdrposix_destroy(XDR *xdrs);
  * Operations defined on an XDR handle
  */
 bool_t
-xdr_getlong(XDR *xdrs, long *lp)
-{
-    return xdrposix_getlong(xdrs, lp);
-}
-
-bool_t
-xdr_putlong(XDR *xdrs, long *lp)
-{
-    return xdrposix_putlong(xdrs, lp);
-}
-
-bool_t
 xdr_getbytes(XDR *xdrs, char *addr, unsigned len)
 {
     return xdrposix_getbytes(xdrs, addr, len);
@@ -128,10 +116,10 @@ xdr_int(XDR *xdrs, int *ip)
 
         case XDR_ENCODE:
             l = (long)*ip;
-            return xdr_putlong(xdrs, &l);
+            return xdrposix_putlong(xdrs, &l);
 
         case XDR_DECODE:
-            if (!xdr_getlong(xdrs, &l))
+            if (!xdrposix_getlong(xdrs, &l))
                 return FALSE;
             *ip = (int)l;
             return TRUE;
@@ -155,10 +143,10 @@ xdr_u_int(XDR *xdrs, unsigned *up)
 
         case XDR_ENCODE:
             l = (unsigned long)*up;
-            return xdr_putlong(xdrs, (long *)&l);
+            return xdrposix_putlong(xdrs, (long *)&l);
 
         case XDR_DECODE:
-            if (!xdr_getlong(xdrs, (long *)&l))
+            if (!xdrposix_getlong(xdrs, (long *)&l))
                 return FALSE;
             *up = (unsigned)l;
             return TRUE;
@@ -178,9 +166,9 @@ xdr_long(XDR *xdrs, long *lp)
 {
     switch (xdrs->x_op) {
         case XDR_ENCODE:
-            return xdr_putlong(xdrs, lp);
+            return xdrposix_putlong(xdrs, lp);
         case XDR_DECODE:
-            return xdr_getlong(xdrs, lp);
+            return xdrposix_getlong(xdrs, lp);
         case XDR_FREE:
             return TRUE;
     }
@@ -196,9 +184,9 @@ xdr_u_long(XDR *xdrs, unsigned long *ulp)
 {
     switch (xdrs->x_op) {
         case XDR_ENCODE:
-            return xdr_putlong(xdrs, (long *)ulp);
+            return xdrposix_putlong(xdrs, (long *)ulp);
         case XDR_DECODE:
-            return xdr_getlong(xdrs, (long *)ulp);
+            return xdrposix_getlong(xdrs, (long *)ulp);
         case XDR_FREE:
             return TRUE;
     }

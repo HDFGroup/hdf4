@@ -74,9 +74,6 @@ extern "C" {
 /*
  * Operations defined on an XDR handle
  */
-HDFLIBAPI bool_t xdr_getlong(XDR *, long *);
-HDFLIBAPI bool_t xdr_putlong(XDR *, long *);
-
 HDFLIBAPI bool_t xdr_getbytes(XDR *, char *, unsigned);
 HDFLIBAPI bool_t xdr_putbytes(XDR *, const char *, unsigned);
 
