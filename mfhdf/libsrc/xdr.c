@@ -379,68 +379,6 @@ xdr_double(XDR *xdrs, double *dp)
     return FALSE;
 }
 
-/* XXX: Keep this code around in case it's needed when handling longs */
-
-#if 0
-/*
- * XDR 64-bit integers
- */
-bool_t
-xdr_int64_t(XDR *xdrs, int64_t *llp)
-{
-    u_long ul[2];
-
-    switch (xdrs->x_op) {
-        case XDR_ENCODE:
-            ul[0] = (u_long)((uint64_t)*llp >> 32) & 0xffffffff;
-            ul[1] = (u_long)((uint64_t)*llp) & 0xffffffff;
-            if (xdr_putlong(xdrs, (long *)&ul[0]) == FALSE)
-                return FALSE;
-            return (xdr_putlong(xdrs, (long *)&ul[1]));
-        case XDR_DECODE:
-            if (xdr_getlong(xdrs, (long *)&ul[0]) == FALSE)
-                return FALSE;
-            if (xdr_getlong(xdrs, (long *)&ul[1]) == FALSE)
-                return FALSE;
-            *llp = (int64_t)(((uint64_t)ul[0] << 32) | ((uint64_t)(ul[1]) & 0xffffffff));
-            return TRUE;
-        case XDR_FREE:
-            return TRUE;
-    }
-    /* NOTREACHED */
-    return FALSE;
-}
-
-/*
- * XDR unsigned 64-bit integers
- */
-bool_t
-xdr_uint64_t(XDR *xdrs, uint64_t *ullp)
-{
-    u_long ul[2];
-
-    switch (xdrs->x_op) {
-        case XDR_ENCODE:
-            ul[0] = (u_long)(*ullp >> 32) & 0xffffffff;
-            ul[1] = (u_long)(*ullp) & 0xffffffff;
-            if (xdr_putlong(xdrs, (long *)&ul[0]) == FALSE)
-                return (FALSE);
-            return (xdr_putlong(xdrs, (long *)&ul[1]));
-        case XDR_DECODE:
-            if (xdr_getlong(xdrs, (long *)&ul[0]) == FALSE)
-                return FALSE;
-            if (xdr_getlong(xdrs, (long *)&ul[1]) == FALSE)
-                return FALSE;
-            *ullp = (uint64_t)(((uint64_t)ul[0] << 32) | ((uint64_t)(ul[1]) & 0xffffffff));
-            return TRUE;
-        case XDR_FREE:
-            return TRUE;
-    }
-    /* NOTREACHED */
-    return FALSE;
-}
-#endif
-
 /*********************/
 /* FORMER xdrposix.c */
 /*********************/
