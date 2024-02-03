@@ -71,6 +71,8 @@ typedef struct xinfo {
 extern "C" {
 #endif
 
+/* NOTE! There are additional netCDF XDR ops scattered throughout the code! */
+
 /*
  * Operations defined on an XDR handle
  */

@@ -74,6 +74,10 @@ static void     xdrposix_destroy(XDR *xdrs);
 /*
  * Operations defined on an XDR handle
  */
+
+/* NOTE: These deal with raw bytes, not "counted bytes", like xdr_bytes()
+ *       does, below!
+ */
 bool_t
 xdr_getbytes(XDR *xdrs, char *addr, unsigned len)
 {
@@ -86,6 +90,9 @@ xdr_putbytes(XDR *xdrs, const char *addr, unsigned len)
     return xdrposix_putbytes(xdrs, addr, len);
 }
 
+/*
+ * Set/Get the file position
+ */
 unsigned
 xdr_getpos(XDR *xdrs)
 {
@@ -98,6 +105,9 @@ xdr_setpos(XDR *xdrs, unsigned pos)
     return xdrposix_setpos(xdrs, pos);
 }
 
+/*
+ * Close the file
+ */
 void
 xdr_destroy(XDR *xdrs)
 {
