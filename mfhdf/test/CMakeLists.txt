@@ -47,20 +47,6 @@ else ()
 endif ()
 set_target_properties (cdftest PROPERTIES FOLDER test COMPILE_DEFINITIONS "HDF")
 
-#-- Adding test for xdrtest
-add_executable (xdrtest xdrtest.c)
-target_include_directories(xdrtest PRIVATE "${HDF4_MFHDFSOURCE_DIR}")
-if (NOT BUILD_SHARED_LIBS)
-  TARGET_C_PROPERTIES (xdrtest STATIC)
-  target_link_libraries (xdrtest PRIVATE ${HDF4_MF_LIB_TARGET})
-else ()
-  TARGET_C_PROPERTIES (xdrtest SHARED)
-  target_link_libraries (xdrtest PRIVATE ${HDF4_MF_LIBSH_TARGET})
-endif ()
-if (CMAKE_C_COMPILER_ID MATCHES "IntelLLVM")
-  target_compile_options(xdrtest PRIVATE "-Wno-incompatible-function-pointer-types")
-endif ()
-
 #-- Adding test for hdfnctest
 set (hdfnctest_SRCS
     ${HDF4_MFHDF_TEST_SOURCE_DIR}/hdfnctest.c

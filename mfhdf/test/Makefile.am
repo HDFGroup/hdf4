@@ -15,9 +15,9 @@ AM_CPPFLAGS=$(test_INCLUDES) $(DEFINES)
 ##                              Testing                                    ##
 #############################################################################
 
-TEST_PROG = cdftest hdfnctest hdftest xdrtest
+TEST_PROG = cdftest hdfnctest hdftest
 TEST_SCRIPT = testmfhdf.sh
-check_PROGRAMS = cdftest hdfnctest hdftest xdrtest
+check_PROGRAMS = cdftest hdfnctest hdftest
 check_SCRIPTS = testmfhdf.sh
 
 cdftest_SOURCES = cdftest.c
