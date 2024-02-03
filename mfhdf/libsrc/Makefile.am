@@ -3,6 +3,7 @@
 #############################################################################
 
 include $(top_srcdir)/config/commence.am
+include $(top_srcdir)/config/lt_vers.am
 
 ## Setup the different includes and preprocessor #defines we need.
 lib_INCLUDES = -I$(top_srcdir)/hdf/src        \
@@ -15,6 +16,9 @@ AM_CPPFLAGS = $(lib_INCLUDES) $(XDRINC) $(DEFINES)
 #############################################################################
 
 lib_LTLIBRARIES = libmfhdf.la
+
+# Add libtool numbers to the HDF4 library (from config/lt_vers.am)
+libmfhdf_la_LDFLAGS= -version-info $(LT_MF_VERS_INTERFACE):$(LT_MF_VERS_REVISION):$(LT_MF_VERS_AGE) $(AM_LDFLAGS)
 
 ## Information for building the "libmfhdf.la" library
 CSOURCES = array.c attr.c cdf.c dim.c file.c hdfsds.c iarray.c error.c    \

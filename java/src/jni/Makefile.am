@@ -3,6 +3,7 @@
 #
 
 include $(top_srcdir)/config/commence.am
+include $(top_srcdir)/config/lt_vers.am
 
 # Mark this directory as part of the JNI API
 JAVA_API=yes
@@ -17,6 +18,9 @@ AM_CPPFLAGS=-I$(top_srcdir)/hdf/src        \
 
 # This is our main target
 lib_LTLIBRARIES=libhdf_java.la
+
+# Add libtool numbers to the HDF4 library (from config/lt_vers.am)
+libhdf_java_la_LDFLAGS= -version-info $(LT_JAVA_VERS_INTERFACE):$(LT_JAVA_VERS_REVISION):$(LT_JAVA_VERS_AGE) $(AM_LDFLAGS)
 
 # Source files for the library
 libhdf_java_la_SOURCES=hdfanImp.c hdfdfpalImp.c \

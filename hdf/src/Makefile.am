@@ -3,8 +3,12 @@
 #############################################################################
 
 include $(top_srcdir)/config/commence.am
+include $(top_srcdir)/config/lt_vers.am
 
 lib_LTLIBRARIES = libdf.la
+
+# Add libtool numbers to the HDF4 library (from config/lt_vers.am)
+libdf_la_LDFLAGS= -version-info $(LT_VERS_INTERFACE):$(LT_VERS_REVISION):$(LT_VERS_AGE) $(AM_LDFLAGS)
 
 FSOURCES = df24ff.f dfanf.c dfanff.f dff.c dfff.f dfpf.c dfpff.f dfr8f.c    \
            dfr8ff.f dfsdf.c dfsdff.f dfufp2iff.f dfutilf.c herrf.c hfilef.c  \
