@@ -43,10 +43,9 @@ typedef struct {
 static biobuf *
 new_biobuf(int fd, int fmode)
 {
-    biobuf *biop;
+    biobuf *biop = NULL;
 
-    biop = malloc(sizeof(biobuf));
-    if (biop == NULL)
+    if (NULL == (biop = malloc(sizeof(biobuf))))
         return NULL;
     biop->fd = fd;
 
@@ -195,15 +194,8 @@ static unsigned xdrposix_getpos(XDR *xdrs);
 static bool_t   xdrposix_setpos(XDR *xdrs, unsigned pos);
 static void     xdrposix_destroy(XDR *xdrs);
 
-#if 0
-#if (defined __sun && defined _LP64)
-static bool_t xdrposix_getint(XDR *xdrs, int *lp);
-static bool_t xdrposix_putint(XDR *xdrs, const int *lp);
-#endif
-#endif
-
 /*
- * Ops vector for posix type XDR
+ * POSIX XDR operations
  */
 static struct xdr_ops xdrposix_ops = {
     xdrposix_getlong,  /* deserialize a 32-bit int */
@@ -213,17 +205,6 @@ static struct xdr_ops xdrposix_ops = {
     xdrposix_getpos,   /* get offset in the stream */
     xdrposix_setpos,   /* set offset in the stream */
     xdrposix_destroy,  /* destroy stream */
-#if 0
-#if defined(__sun) && defined(_LP64)
-    /* Solaris 64-bit (arch=v9 and arch=amd64) differentiates between
-     * 32-bit integers and 64-bit longs via two extra callbacks for
-     * int here. These are not present on other XDR implementations
-     * like TI-RPC.
-     */
-    xdrposix_getint, /* deserialize a 32-bit int */
-    xdrposix_putint  /* serialize a 32-bit int */
-#endif
-#endif
 };
 
 /*
@@ -395,33 +376,3 @@ xdrposix_setpos(XDR *xdrs, unsigned pos)
     else
         return FALSE;
 }
-
-#if 0
-#if (defined __sun && defined _LP64)
-
-static bool_t
-xdrposix_getint(XDR *xdrs, int *lp)
-{
-    unsigned char *up = (unsigned char *)lp;
-    if (bioread((biobuf *)xdrs->x_private, up, 4) < 4)
-        return FALSE;
-#ifndef H4_WORDS_BIGENDIAN
-    *lp = ntohl(*lp);
-#endif
-    return TRUE;
-}
-
-static bool_t
-xdrposix_putint(XDR *xdrs, const int *lp)
-{
-    unsigned char *up = (unsigned char *)lp;
-#ifndef H4_WORDS_BIGENDIAN
-    int32_t mycopy = htonl(*lp);
-    up             = (unsigned char *)&mycopy;
-#endif
-    if (biowrite((biobuf *)xdrs->x_private, up, 4) < 4)
-        return FALSE;
-    return TRUE;
-}
-#endif /* end of xdrposix_put(get)int */
-#endif
