@@ -45,9 +45,37 @@
 #include "xdr.h"
 
 /*
+ * This is the number of bytes per unit of external data.
+ */
+#define BYTES_PER_XDR_UNIT (4)
+
+/*
  * for unit alignment
  */
 static const char xdr_zero[BYTES_PER_XDR_UNIT] = {0, 0, 0, 0};
+
+/*
+ * Utility functions for 32-bit ints
+ */
+static int
+xdr_getint32(XDR *xdrs, int32_t *ip)
+{
+    long l;
+
+    if (!xdr_getlong(xdrs, &l))
+        return FALSE;
+    *ip = (int32_t)l;
+    return TRUE;
+}
+
+static int
+xdr_putint32(XDR *xdrs, int32_t *ip)
+{
+    long l;
+
+    l = (long)*ip;
+    return xdr_putlong(xdrs, &l);
+}
 
 /*
  * XDR integers

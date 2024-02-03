@@ -87,11 +87,6 @@ typedef int32_t bool_t;
 enum xdr_op { XDR_ENCODE = 0, XDR_DECODE = 1, XDR_FREE = 2 };
 
 /*
- * This is the number of bytes per unit of external data.
- */
-#define BYTES_PER_XDR_UNIT (4)
-
-/*
  * The XDR handle.
  * Contains operation which is being applied to the stream,
  * an operations vector for the particular implementation (e.g. see xdr_mem.c),
@@ -103,37 +98,20 @@ typedef struct xinfo {
         /* Get/put long from underlying stream */
         bool_t (*x_getlong)(struct xinfo *, long *);
         bool_t (*x_putlong)(struct xinfo *, const long *);
-        /* Get/put bytes. */
+
+        /* Get/put bytes */
         bool_t (*x_getbytes)(struct xinfo *, char *, unsigned);
         bool_t (*x_putbytes)(struct xinfo *, const char *, unsigned);
-        /* Get or seek within the stream (offsets from beginning of stream). */
+
+        /* Get or seek within the stream (offsets from beginning of stream) */
         unsigned (*x_getpostn)(struct xinfo *);
         bool_t (*x_setpostn)(struct xinfo *, unsigned);
-        /* Free the stream. */
+
+        /* Free the stream */
         void (*x_destroy)(struct xinfo *);
     } * x_ops;
     void *x_private; /* pointer to private data */
 } XDR;
-
-/*                                                                               
- * A xdrproc_t exists for each data type which is to be encoded or decoded.      
- *                                                                               
- * The second argument to the xdrproc_t is a pointer to an opaque pointer.       
- * The opaque pointer generally points to a structure of the data type           
- * to be decoded.  If this pointer is 0, then the type routines should           
- * allocate dynamic storage of the appropriate size and return it.               
- *                                                                               
- * This typedef has caused problems in the past. Most compilers flag the         
- * signature as incompatible and this can result in undefined behavior           
- * according to the C99 standard.                                                
- *                                                                               
- * The current typedef used here works on all tested platforms, but be           
- * aware that future compilers could have trouble with it. Failures              
- * will most often be raised in xdr_vector calls in xdrtest.c. We've             
- * papered over the incompatible pointer warnings with casts for the             
- * time being.                                                                   
- */
-typedef bool_t (*xdrproc_t)(XDR *, void *, ...);
 
 /*
  * Operations defined on a XDR handle
@@ -146,26 +124,6 @@ typedef bool_t (*xdrproc_t)(XDR *, void *, ...);
  */
 #define xdr_getlong(xdrs, longp) (*(xdrs)->x_ops->x_getlong)(xdrs, longp)
 #define xdr_putlong(xdrs, longp) (*(xdrs)->x_ops->x_putlong)(xdrs, longp)
-
-static inline int
-xdr_getint32(XDR *xdrs, int32_t *ip)
-{
-    long l;
-
-    if (!xdr_getlong(xdrs, &l))
-        return FALSE;
-    *ip = (int32_t)l;
-    return TRUE;
-}
-
-static inline int
-xdr_putint32(XDR *xdrs, int32_t *ip)
-{
-    long l;
-
-    l = (long)*ip;
-    return xdr_putlong(xdrs, &l);
-}
 
 #define xdr_getbytes(xdrs, addr, len) (*(xdrs)->x_ops->x_getbytes)(xdrs, addr, len)
 #define xdr_putbytes(xdrs, addr, len) (*(xdrs)->x_ops->x_putbytes)(xdrs, addr, len)
