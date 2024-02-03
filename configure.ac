@@ -870,6 +870,16 @@ AC_CHECK_HEADERS([sys/types.h])
 AC_CHECK_HEADERS([io.h])
 AC_CHECK_HEADERS([arpa/inet.h netinet/in.h])
 
+## ----------------------------------------------------------------------
+## XDR grew up in a world where long integers were 32 bits in size. Now
+## that many platforms have 64-bit longs, we need some hacks to paper
+## over the differences in sizes, particularly on big-endian machines.
+##
+
+AC_CHECK_SIZEOF([long])
+
+## ----------------------------------------------------------------------
+
 AC_PROG_CC_C_O
 
 if test "X$BUILD_FORTRAN" = "Xyes"; then
