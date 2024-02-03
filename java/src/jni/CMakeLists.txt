@@ -36,7 +36,14 @@ if (BUILD_SHARED_LIBS)
   target_link_libraries (${HDF4_JAVA_JNI_LIB_TARGET} PUBLIC ${HDF4_MF_LIBSH_TARGET} ${HDF4_SRC_LIBSH_TARGET})
   set_target_properties (${HDF4_JAVA_JNI_LIB_TARGET} PROPERTIES FOLDER libraries/jni)
   SET_GLOBAL_VARIABLE (HDF4_LIBRARIES_TO_EXPORT "${HDF4_LIBRARIES_TO_EXPORT};${HDF4_JAVA_JNI_LIB_TARGET}")
-  H4_SET_LIB_OPTIONS (${HDF4_JAVA_JNI_LIB_TARGET} ${HDF4_JAVA_JNI_LIB_NAME} SHARED)
+  H4_SET_LIB_OPTIONS (${HDF4_JAVA_JNI_LIB_TARGET} ${HDF4_JAVA_JNI_LIB_NAME} SHARED "JAVA")
+endif ()
+
+#-----------------------------------------------------------------------------
+# Add Target to clang-format
+#-----------------------------------------------------------------------------
+if (HDF4_ENABLE_FORMATTERS)
+  clang_format (HDF4_JNI_SRC_FORMAT ${HDF4_JAVA_JNI_LIB_TARGET})
 endif ()
 
 #-----------------------------------------------------------------------------

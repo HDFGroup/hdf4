@@ -1,201 +1,88 @@
+*************************************************************************
+*          Installation Instructions for HDF4                           *
+*************************************************************************
 
-    Installation Instructions for HDF4 on Unix and Mac OSX Platforms
-    ===================================================================
+                     Table of Contents
 
-CONTENTS
+Section I:    Preconditions
+Section II:   HDF4 Precompiled Binaries
+Section III:  Additional Third-party Software Requirements
 
-1. Third-party Software Requirements
-2. Optional Szip Compression Library
-3. HDF4 Source Code and Precompiled Binaries 
-4. Unix and Mac OSX Configuration and Build
-5. Using HDF/MFHDF Libraries with the netCDF Library (libnetcdf.a)
-
-
-
-1. Third-party Software Requirements
-   =================================
-
-C and Fortran compilers. If a Fortran compiler is not available, use 
-the --disable-fortran configure flag to build the HDF4 C library and 
-utilities. For the list of the supported compilers see RELEASE.txt in the 
-release_notes directory.
-
-JPEG Distribution Release 6b or later (libjpeg.a(so)). The source code can 
-be downloaded from http://www.ijg.org/.
-
-ZLIB 1.1.4(libz.a) or later. The software can be downloaded from: https://zlib.net/ 
+************************************************************************
 
 
+========================================================================
+I. Preconditions
+========================================================================
+Obtaining HDF4 source code
+   1. Create a directory for your development; for example, "myhdfstuff".
 
-2. Optional Szip Compression Library
-   =================================
+   2. Obtain HDF4 source from Github
+         development branch:  https://github.com/HDFGroup/hdf4
+         last release:        https://github.com/HDFGroup/hdf4/releases/latest
+             hdf-4_2_"X".tar.gz or hdf-4_2_"X".zip
 
-HDF4 may be configured to use the Szip compression library. For more 
-information about the Szip library, see:
+      and put it in "myhdfstuff".
+      Uncompress the file. There should be a hdf-4.2."X" folder.
 
-   https://portal.hdfgroup.org/display/HDF4/Szip+Compression+in+HDF+Products 
+   3. Compilers
+        C
+        Java
+        Fortran
 
-The Szip compression library is free for non-commercial use. For information 
-regarding commercial use, see: 
+   4. Third-party Software Requirements
+      JPEG Distribution Release 6b or later. The source code can 
+      be downloaded from:
+          jpegsrc.v9e.tar.gz: https://www.ijg.org/filesz
+          git branch: jpeg-9e https://github.com/libjpeg-turbo/libjpeg-turbo.git
 
-   https://portal.hdfgroup.org/display/HDF4/Szip+Copyright+and+License+Statement%2C+as+Distributed+in+the+HDF+Source+Code
+     ZLIB 1.1.4 or later. The software can be downloaded from:
+          zlib-1.3.tar.gz:     https://github.com/madler/zlib/releases/download/v1.3
+          git branch: develop: https://github.com/madler/zlib.git
+
+     Optional SZip Compression Library. The software can be downloaded from:
+          libaec-1.0.6.tar.gz: https://github.com/MathisRosenhauer/libaec/releases/download/v1.0.6
+          git branch: v1.0.6:  https://github.com/MathisRosenhauer/libaec.git
 
 
+========================================================================
+II. HDF4 Precompiled Binaries
+========================================================================
+The HDF Group provides pre-compiled binaries from the Github Releases page:
+    development snapshots:  https://github.com/HDFGroup/hdf4/releases/tag/snapshot
+    last release:           https://github.com/HDFGroup/hdf4/releases/latest
 
-3. HDF4 Source Code and Precompiled Binaries
-   =========================================
+    OSX 12 with clang:                *-osx12.tar.gz
+    Ubuntu 22.04 with gcc:            *-ubuntu-2204_gcc.tar.gz
+    Ubuntu 22.04 with Intel OneAPI:   *-ubuntu-2204_intel.tar.gz
+    Windows VS2022 with msvc:         *-win-vs2022_cl.zip
+    Windows VS2022 with Intel OneAPI: *-win-vs2022_intel.zip
 
-The HDF Group provides source code and pre-compiled binaries from the
-HDF4 download page:
+    Documentation:                    *.doxygen.zip
 
-   https://portal.hdfgroup.org/display/support/Download+HDF4 
+
+========================================================================
+III. Additional Third-party Software Requirements
+========================================================================
+   1.  Flex and Bison programs are required to regenerate the ncgen parsers.
+       This is not required to build the library and is only necessary if you
+       change the input files.
    
-As of HDF 4.2.6, binaries are packed with the ZLIB, JPEG, and Szip libraries
-that were used to build the binaries. 
-
-HDF4 pre-built utilities come with Szip compression. To use these binaries, 
-you must install the Szip library on your system. 
-
-To build the Szip library, follow the instructions in the Szip source code
-distribution, which can be obtained from:
-
-    https://portal.hdfgroup.org/display/HDF4/Szip+Compression+in+HDF+Products
-
-
-
-4. Unix and Mac OSX Configuration and Build
-   =======================================
-
-See RELEASE.txt in the release_notes/ directory for the list of platforms 
-tested for this release.
-
-Before You Start:
-
-   1)  Make sure that the ZLIB and JPEG libraries are installed on your
-       system.
-
-   2)  Optional: Install the Szip version 2.1 library (you may use
-       Szip 2.0 binaries). 
-
-   3)  Extract the source from the hdf-X.Y.Z.tar file and change
-       directory to hdf-X.Y.Z.
-
-   4)  Fortran Notes:
-         4.a)  g77 may require compiler flag, FFLAGS, "-fno-second-underscore"
-
-To Configure:
-
-   4)  Use the configure command in the top level HDF4 directory hdf-X.Y.Z:
-
-       Note: On macOS platforms version 10.13 or newer, XDR functions from the 
-       system libraries do not work with HDF4.  It is therefore necessary
-       to build the internal HDF4 XDR library, using --enable-hdf4-xdr for 
-       autotools configure, or adding the corresponding CMake option:
-       set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_XDR_LIB:BOOL=ON")
-       to HDF4options.cmake.  The options may also be used but are not required
-       on Linux platforms. 
-
-       ./configure --with-zlib=/path_to_ZLIB_install_directory 
-                   --with-jpeg=/path_to_JPEG_install_directory 
-                   [--with-szlib=/path_to_SZIP_install_directory]
-                   [--enable-hdf4-xdr]
-                   --prefix=/path_to_HDF4_install_directory
-
-       * Please note that when the szlib option is not used, the Szip 
-         library will not be configured in and Szip compression will not 
-         be enabled.
-       * If your system has the ZLIB and/or JPEG libraries installed under a
-         system library directory (such as /usr/lib), configure will
-         automatically find the library. In this case, the corresponding
-         configure flag may be omitted.
-       * Note that --prefix defines where the installation path is.
-         The default is set as <hdf4_build_directory>/hdf4.
-
-To Build and Test:
-
-   5)  To build the library:
-
-       gmake >& gmake.out
-
-   6)  To build and run the tests:
-
-       gmake check >& check.out
-
-To Install:
-
-   7)  To install the HDF4 library and tools:
-
-       gmake install
-
-   8)  To install C and Fortran examples:
+       A.  The Win flex-bison project, a port of Flex & Bison tools 
+           to the Windows platform, is recommended. Download from:
+               http://sourceforge.net/projects/winflexbison
     
-       gmake install-examples
+       B.  CMake version 3.12 or higher is needed to use Win flex-bison. 
+           Using an earlier version of CMake will require renaming the executables
+           without the "win_" prefix.
 
-   9)  To test the installation:
-
-       gmake installcheck
-
-   10) By default, the current configuration uses vendor compilers; to use
-       another compiler, run the following commands before running configure: 
-
-       setenv CC   "foo -flags"
-       setenv F77  "fffoo -flags"
-
-       See the configure help page (configure --help) for a list of
-       environment variables that have an affect on building the library.
-
-   11) You may build HDF4 in a directory other than hdf-X.Y.Z by using
-       the "srcdir" option. Simply create a build directory and type:
-
-       <path_to_hdf-X.Y.Z>/configure ...
-
-       where "..." are your configuration options.
-
-
-
-5. Using HDF/MFHDF Libraries with the netCDF Library (libnetcdf.a)
-   ===============================================================
-
-   To use the HDF/MFHDF libraries (libdf.a, libmfhdf.a) with the 
-   netCDF library (libnetcdf.a), the HDF4 distribution must be configured 
-   with the --disable-netcdf configuration flag. 
-
-   When this flag is used, the HDF versions of the C netCDF functions 
-   (as of netCDF version 2.3.2) are renamed from ncxxx to sd_ncxxx, 
-   and HDF Fortran netCDF wrappers are disabled to avoid name clashes with 
-   the netCDF C and Fortran functions from libnetcdf.a.
-
-   Please report all problems to help@hdfgroup.org.
-
-
-6. Windows Configuration and Build
-   ===============================
 
 See RELEASE.txt in the release_notes/ directory for the list of platforms 
 tested for this release.
-
-We now recommend that users build, test, and install HDF4 using CMake.
 
 Instructions for building and testing HDF4 using CMake can be found in the
 INSTALL_CMake.txt file found in this folder.
 
-For instructions on building and testing an application with HDF4, see the 
-USING_HDF4_CMake.txt file found in this folder.
-
-Users who want to build and run an application with HDF4 in Visual Studio
-without using CMake should consult the USING_HDF4_VS.txt file.
-
-Additional Third-party Software Requirements:
-
-   1)  Flex and Bison programs are required to regenerate the ncgen parsers.
-       This is not required to build the library and is only necessary if you
-       change the input files.
-   
-   2)  The Win flex-bison project, a port of Flex & Bison tools 
-       to the Windows platform, is recommended. Download from:
-           http://sourceforge.net/projects/winflexbison
-
-   3)  CMake version 2.8.11.1 or higher is needed to use Win flex-bison. 
-       Using an earlier version of CMake will require renaming the executables
-       without the "win_" prefix.
+Instructions for building and testing HDF4 using autotools can be found in the
+INSTALL_Auto.txt file found in this folder.
 

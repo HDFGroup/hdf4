@@ -56,13 +56,6 @@ set (HDF4_INCLUDES_BUILD_TIME
 )
 
 #-----------------------------------------------------------------------------
-# Set variables needed for installation
-#-----------------------------------------------------------------------------
-set (HDF4_VERSION_STRING ${HDF4_PACKAGE_VERSION})
-set (HDF4_VERSION_MAJOR  ${HDF4_PACKAGE_VERSION_MAJOR})
-set (HDF4_VERSION_MINOR  ${HDF4_PACKAGE_VERSION_MINOR})
-
-#-----------------------------------------------------------------------------
 # Configure the hdf4-config.cmake file for the build directory
 #-----------------------------------------------------------------------------
 set (INCLUDE_INSTALL_DIR ${HDF4_INSTALL_INCLUDE_DIR})
@@ -100,9 +93,10 @@ endif ()
 # Configure the hdf4-config-version .cmake file for the install directory
 #-----------------------------------------------------------------------------
 if (NOT HDF4_EXTERNALLY_CONFIGURED)
-  configure_file (
-      ${HDF_RESOURCES_DIR}/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config-version.cmake.in
-      ${HDF4_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config-version.cmake @ONLY
+  write_basic_package_version_file (
+    "${HDF4_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config-version.cmake"
+    VERSION ${HDF4_PACKAGE_VERSION}
+    COMPATIBILITY SameMinorVersion
   )
   install (
       FILES ${HDF4_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config-version.cmake

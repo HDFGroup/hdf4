@@ -12,6 +12,7 @@ Section V:    Options for building HDF4 Libraries with CMake command line
 Section VI:   CMake option defaults for HDF4
 Section VII:  User Defined Options for HDF4 Libraries with CMake
 Section VIII: Using CMakePresets.json for compiling
+Section IX:   Autotools Configuration and Build
 
 ************************************************************************
 
@@ -22,8 +23,11 @@ I. Preconditions
 Obtaining HDF4 source code
    1. Create a directory for your development; for example, "myhdfstuff".
 
-   2. Obtain compressed (*.tar or *.zip) HDF4 source from
-         https://portal.hdfgroup.org/display/support/Building+HDF4+with+CMake
+   2. Obtain HDF4 source from Github
+         development branch:  https://github.com/HDFGroup/hdf4
+         last release:        https://github.com/HDFGroup/hdf4/releases/latest
+             hdf-4_2_"X".tar.gz or hdf-4_2_"X".zip
+
       and put it in "myhdfstuff".
       Uncompress the file. There should be a hdf-4.2."X" folder.
 
@@ -863,6 +867,16 @@ For instance, to change the support files to use a local directory, edit CMakeUs
 
 
 Then you can change or add options for your specific case.
+
+
+========================================================================
+III. Autotools Configuration and Build
+========================================================================
+See RELEASE.txt in the release_notes/ directory for the list of platforms 
+tested for this release.
+
+Instructions for building and testing HDF4 using autotools can be found in the
+INSTALL_Auto.txt file found in this folder.
 
 
 ========================================================================
