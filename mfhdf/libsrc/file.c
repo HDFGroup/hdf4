@@ -1030,3 +1030,58 @@ ncsetfill(int id, int fillmode)
 
     return ret;
 }
+
+int
+NCxdrfile_sync(XDR *xdrs)
+{
+    return xdrposix_sync(xdrs);
+}
+
+int
+NCxdrfile_create(XDR *xdrs, const char *path, int ncmode)
+{
+    int         fmode;
+    int         fd;
+    enum xdr_op op;
+
+    switch (ncmode & 0x0f) {
+        case NC_NOCLOBBER:
+            fmode = O_RDWR | O_CREAT | O_EXCL;
+            break;
+        case NC_CLOBBER:
+            fmode = O_RDWR | O_CREAT | O_TRUNC;
+            break;
+        case NC_WRITE:
+            fmode = O_RDWR;
+            break;
+        case NC_NOWRITE:
+            fmode = O_RDONLY;
+            break;
+        default:
+            NCadvise(NC_EINVAL, "Bad flag %0x", ncmode & 0x0f);
+            return -1;
+    }
+
+#ifdef H4_HAVE_WIN32_API
+    /* Set default mode to binary to suppress the expansion of 0x0f into CRLF */
+    _fmode |= O_BINARY;
+#endif
+
+    fd = open(path, fmode, 0666);
+    if (fd == -1) {
+        nc_serror("filename \"%s\"", path);
+        return -1;
+    }
+
+    if (ncmode & NC_CREAT) {
+        op = XDR_ENCODE;
+    }
+    else {
+        op = XDR_DECODE;
+    }
+
+    if (xdrposix_create(xdrs, fd, fmode, op) < 0)
+        return -1;
+    else
+        return fd;
+}

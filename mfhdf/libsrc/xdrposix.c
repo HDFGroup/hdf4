@@ -15,36 +15,17 @@
 #include <inttypes.h>
 #include <string.h>
 
-#ifdef H4_HAVE_FCNTL_H
-#include <fcntl.h>
-#endif
-
-#ifdef H4_HAVE_IO_H
-#include <io.h>
-#endif
-
-#ifdef H4_HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-
-#ifdef H4_HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-
-/* prototypes for NCadvis, nc_error also obtains <stdio.h>, <rpc/types.h>, &
- * <rpc/xdr.h>
- */
-#include "local_nc.h"
-
-#include "mfhdf.h"
-
 #ifdef H4_HAVE_ARPA_INET_H
 #include <arpa/inet.h>
 #endif
-
 #ifdef H4_HAVE_NETINET_IN_H
 #include <netinet/in.h> /* for htonl() */
 #endif
+
+#include "mfhdf.h"
+#include "xdr.h"
+
+/* NOTE: "bio" == Buffered I/O */
 
 typedef struct {
     int            fd;   /* the file descriptor */
@@ -213,9 +194,12 @@ static bool_t   xdrposix_putbytes(XDR *xdrs, const char *addr, unsigned len);
 static unsigned xdrposix_getpos(XDR *xdrs);
 static bool_t   xdrposix_setpos(XDR *xdrs, unsigned pos);
 static void     xdrposix_destroy(XDR *xdrs);
+
+#if 0
 #if (defined __sun && defined _LP64)
 static bool_t xdrposix_getint(XDR *xdrs, int *lp);
 static bool_t xdrposix_putint(XDR *xdrs, const int *lp);
+#endif
 #endif
 
 /*
@@ -229,6 +213,7 @@ static struct xdr_ops xdrposix_ops = {
     xdrposix_getpos,   /* get offset in the stream */
     xdrposix_setpos,   /* set offset in the stream */
     xdrposix_destroy,  /* destroy stream */
+#if 0
 #if defined(__sun) && defined(_LP64)
     /* Solaris 64-bit (arch=v9 and arch=amd64) differentiates between
      * 32-bit integers and 64-bit longs via two extra callbacks for
@@ -237,6 +222,7 @@ static struct xdr_ops xdrposix_ops = {
      */
     xdrposix_getint, /* deserialize a 32-bit int */
     xdrposix_putint  /* serialize a 32-bit int */
+#endif
 #endif
 };
 
@@ -263,7 +249,7 @@ hdf_xdrfile_create(XDR *xdrs, int ncop)
  * Sets the xdr stream handle xdrs for use on the file descriptor fd.
  * Operation flag is set to op.
  */
-static int
+int
 xdrposix_create(XDR *xdrs, int fd, int fmode, enum xdr_op op)
 {
     biobuf *biop    = new_biobuf(fd, fmode);
@@ -284,7 +270,7 @@ xdrposix_create(XDR *xdrs, int fd, int fmode, enum xdr_op op)
 /*
  * "sync" a posix xdr stream.
  */
-static int
+int
 xdrposix_sync(XDR *xdrs)
 {
     biobuf *biop = (biobuf *)xdrs->x_private;
@@ -410,6 +396,7 @@ xdrposix_setpos(XDR *xdrs, unsigned pos)
         return FALSE;
 }
 
+#if 0
 #if (defined __sun && defined _LP64)
 
 static bool_t
@@ -437,58 +424,4 @@ xdrposix_putint(XDR *xdrs, const int *lp)
     return TRUE;
 }
 #endif /* end of xdrposix_put(get)int */
-
-int
-NCxdrfile_sync(XDR *xdrs)
-{
-    return xdrposix_sync(xdrs);
-}
-
-int
-NCxdrfile_create(XDR *xdrs, const char *path, int ncmode)
-{
-    int         fmode;
-    int         fd;
-    enum xdr_op op;
-
-    switch (ncmode & 0x0f) {
-        case NC_NOCLOBBER:
-            fmode = O_RDWR | O_CREAT | O_EXCL;
-            break;
-        case NC_CLOBBER:
-            fmode = O_RDWR | O_CREAT | O_TRUNC;
-            break;
-        case NC_WRITE:
-            fmode = O_RDWR;
-            break;
-        case NC_NOWRITE:
-            fmode = O_RDONLY;
-            break;
-        default:
-            NCadvise(NC_EINVAL, "Bad flag %0x", ncmode & 0x0f);
-            return -1;
-    }
-
-#ifdef H4_HAVE_WIN32_API
-    /* Set default mode to binary to suppress the expansion of 0x0f into CRLF */
-    _fmode |= O_BINARY;
 #endif
-
-    fd = open(path, fmode, 0666);
-    if (fd == -1) {
-        nc_serror("filename \"%s\"", path);
-        return -1;
-    }
-
-    if (ncmode & NC_CREAT) {
-        op = XDR_ENCODE;
-    }
-    else {
-        op = XDR_DECODE;
-    }
-
-    if (xdrposix_create(xdrs, fd, fmode, op) < 0)
-        return -1;
-    else
-        return fd;
-}

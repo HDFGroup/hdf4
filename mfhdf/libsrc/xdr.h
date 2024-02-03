@@ -86,14 +86,16 @@ typedef int32_t bool_t;
  */
 enum xdr_op { XDR_ENCODE = 0, XDR_DECODE = 1, XDR_FREE = 2 };
 
-/*
- * The XDR handle.
- * Contains operation which is being applied to the stream,
- * an operations vector for the particular implementation (e.g. see xdr_mem.c),
- * and two private fields for the use of the particular implementation.
+/* The XDR handle
+ *
+ * Contains operation which is being applied to the stream, an operations
+ * vector for the particular implementation (e.g. see xdr_mem.c), and a
+ * private field for the use of the particular implementation.
  */
 typedef struct xinfo {
-    enum xdr_op x_op; /* operation; fast additional param */
+    enum xdr_op x_op; /* Operation */
+
+    /* XDR functions */
     struct xdr_ops {
         /* Get/put long from underlying stream */
         bool_t (*x_getlong)(struct xinfo *, long *);
@@ -110,37 +112,31 @@ typedef struct xinfo {
         /* Free the stream */
         void (*x_destroy)(struct xinfo *);
     } * x_ops;
-    void *x_private; /* pointer to private data */
+
+    void *x_private; /* Pointer to private data */
 } XDR;
-
-/*
- * Operations defined on a XDR handle
- *
- * XDR        *xdrs;
- * long       *longp;
- * char       *addr;
- * unsigned    len;
- * unsigned    pos;
- */
-#define xdr_getlong(xdrs, longp) (*(xdrs)->x_ops->x_getlong)(xdrs, longp)
-#define xdr_putlong(xdrs, longp) (*(xdrs)->x_ops->x_putlong)(xdrs, longp)
-
-#define xdr_getbytes(xdrs, addr, len) (*(xdrs)->x_ops->x_getbytes)(xdrs, addr, len)
-#define xdr_putbytes(xdrs, addr, len) (*(xdrs)->x_ops->x_putbytes)(xdrs, addr, len)
-
-#define xdr_getpos(xdrs)      (*(xdrs)->x_ops->x_getpostn)(xdrs)
-#define xdr_setpos(xdrs, pos) (*(xdrs)->x_ops->x_setpostn)(xdrs, pos)
-
-#define xdr_destroy(xdrs)                                                                                    \
-    if ((xdrs)->x_ops->x_destroy)                                                                            \
-    (*(xdrs)->x_ops->x_destroy)(xdrs)
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /*
- * These are the "generic" xdr routines.
+ * Operations defined on an XDR handle
+ */
+HDFLIBAPI bool_t xdr_getlong(XDR *, long *);
+HDFLIBAPI bool_t xdr_putlong(XDR *, long *);
+
+HDFLIBAPI bool_t xdr_getbytes(XDR *, char *, unsigned);
+HDFLIBAPI bool_t xdr_putbytes(XDR *, const char *, unsigned);
+
+HDFLIBAPI unsigned xdr_getpos(XDR *);
+HDFLIBAPI bool_t   xdr_setpos(XDR *, unsigned);
+
+HDFLIBAPI void xdr_destroy(XDR *);
+
+
+/*
+ * "Generic type" XDR routines
  */
 HDFLIBAPI bool_t xdr_int(XDR *, int *);
 HDFLIBAPI bool_t xdr_u_int(XDR *, unsigned *);
@@ -156,6 +152,10 @@ HDFLIBAPI bool_t xdr_double(XDR *, double *);
 
 /* XDR using stdio library (only used in xdrtest.c) */
 HDFLIBAPI void xdrstdio_create(XDR *, FILE *, enum xdr_op);
+
+/* POSIX implementation of XDR */
+HDFLIBAPI int xdrposix_create(XDR *xdrs, int fd, int fmode, enum xdr_op op);
+HDFLIBAPI int xdrposix_sync(XDR *xdrs);
 
 #ifdef __cplusplus
 }

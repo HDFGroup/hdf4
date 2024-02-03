@@ -55,6 +55,52 @@
 static const char xdr_zero[BYTES_PER_XDR_UNIT] = {0, 0, 0, 0};
 
 /*
+ * Operations defined on an XDR handle
+ */
+bool_t
+xdr_getlong(XDR *xdrs, long *lp)
+{
+    return (*(xdrs)->x_ops->x_getlong)(xdrs, lp);
+}
+
+bool_t
+xdr_putlong(XDR *xdrs, long *lp)
+{
+    return (*(xdrs)->x_ops->x_putlong)(xdrs, lp);
+}
+
+bool_t
+xdr_getbytes(XDR *xdrs, char *addr, unsigned len)
+{
+    return (*(xdrs)->x_ops->x_getbytes)(xdrs, addr, len);
+}
+
+bool_t
+xdr_putbytes(XDR *xdrs, const char *addr, unsigned len)
+{
+    return (*(xdrs)->x_ops->x_putbytes)(xdrs, addr, len);
+}
+
+unsigned
+xdr_getpos(XDR *xdrs)
+{
+    return (*(xdrs)->x_ops->x_getpostn)(xdrs);
+}
+
+bool_t
+xdr_setpos(XDR *xdrs, unsigned pos)
+{
+    return (*(xdrs)->x_ops->x_setpostn)(xdrs, pos);
+}
+
+void
+xdr_destroy(XDR *xdrs)
+{
+    if ((xdrs)->x_ops->x_destroy)
+        (*(xdrs)->x_ops->x_destroy)(xdrs);
+}
+
+/*
  * Utility functions for 32-bit ints
  */
 static int
