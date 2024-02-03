@@ -321,8 +321,8 @@ xdr_float(XDR *xdrs, float *fp)
 bool_t
 xdr_double(XDR *xdrs, double *dp)
 {
-    int     *ip;
-    bool_t   rv;
+    int   *ip;
+    bool_t rv;
 
     if (!dp)
         return FALSE;

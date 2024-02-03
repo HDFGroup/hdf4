@@ -63,8 +63,8 @@ enum xdr_op { XDR_ENCODE = 0, XDR_DECODE = 1, XDR_FREE = 2 };
  * private field for the use of the particular implementation.
  */
 typedef struct xinfo {
-    enum xdr_op x_op; /* Operation */
-    void *x_private; /* Pointer to private data */
+    enum xdr_op x_op;      /* Operation */
+    void       *x_private; /* Pointer to private data */
 } XDR;
 
 #ifdef __cplusplus
@@ -81,7 +81,6 @@ HDFLIBAPI unsigned xdr_getpos(XDR *);
 HDFLIBAPI bool_t   xdr_setpos(XDR *, unsigned);
 
 HDFLIBAPI void xdr_destroy(XDR *);
-
 
 /*
  * "Generic type" XDR routines
