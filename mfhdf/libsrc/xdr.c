@@ -117,29 +117,6 @@ xdr_destroy(XDR *xdrs)
 }
 
 /*
- * Utility functions for 32-bit ints
- */
-static int
-xdr_getint32(XDR *xdrs, int32_t *ip)
-{
-    long l;
-
-    if (!xdr_getlong(xdrs, &l))
-        return FALSE;
-    *ip = (int32_t)l;
-    return TRUE;
-}
-
-static int
-xdr_putint32(XDR *xdrs, int32_t *ip)
-{
-    long l;
-
-    l = (long)*ip;
-    return xdr_putlong(xdrs, &l);
-}
-
-/*
  * XDR integers
  */
 bool_t
@@ -342,10 +319,10 @@ xdr_float(XDR *xdrs, float *fp)
     switch (xdrs->x_op) {
 
         case XDR_ENCODE:
-            return xdr_putint32(xdrs, (int32_t *)fp);
+            return xdr_int(xdrs, (int *)fp);
 
         case XDR_DECODE:
-            return xdr_getint32(xdrs, (int32_t *)fp);
+            return xdr_int(xdrs, (int *)fp);
 
         case XDR_FREE:
             return TRUE;
@@ -356,7 +333,7 @@ xdr_float(XDR *xdrs, float *fp)
 bool_t
 xdr_double(XDR *xdrs, double *dp)
 {
-    int32_t *i32p;
+    int     *ip;
     bool_t   rv;
 
     if (!dp)
@@ -364,33 +341,33 @@ xdr_double(XDR *xdrs, double *dp)
 
     switch (xdrs->x_op) {
         case XDR_ENCODE:
-            i32p = (int32_t *)(void *)dp;
+            ip = (int *)(void *)dp;
 #ifdef H4_WORDS_BIGENDIAN
-            rv = xdr_putint32(xdrs, i32p);
+            rv = xdr_int(xdrs, ip);
             if (!rv)
                 return rv;
-            rv = xdr_putint32(xdrs, i32p + 1);
+            rv = xdr_int(xdrs, ip + 1);
 #else
-            rv = xdr_putint32(xdrs, i32p + 1);
+            rv = xdr_int(xdrs, ip + 1);
             if (!rv)
                 return rv;
-            rv = xdr_putint32(xdrs, i32p);
+            rv = xdr_int(xdrs, ip);
 #endif
             return rv;
             break;
 
         case XDR_DECODE:
-            i32p = (int32_t *)(void *)dp;
+            ip = (int *)(void *)dp;
 #ifdef H4_WORDS_BIGENDIAN
-            rv = xdr_getint32(xdrs, i32p);
+            rv = xdr_int(xdrs, ip);
             if (!rv)
                 return rv;
-            rv = xdr_getint32(xdrs, i32p + 1);
+            rv = xdr_int(xdrs, ip + 1);
 #else
-            rv = xdr_getint32(xdrs, i32p + 1);
+            rv = xdr_int(xdrs, ip + 1);
             if (!rv)
                 return rv;
-            rv = xdr_getint32(xdrs, i32p);
+            rv = xdr_int(xdrs, ip);
 #endif
             return rv;
             break;
