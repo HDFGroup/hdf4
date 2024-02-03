@@ -630,19 +630,6 @@ biowrite(biobuf *biop, unsigned char *ptr, int nbytes)
 }
 
 /*
- * POSIX XDR operations
- */
-static struct xdr_ops xdrposix_ops = {
-    xdrposix_getlong,  /* deserialize a 32-bit int */
-    xdrposix_putlong,  /* serialize a 32-bit int */
-    xdrposix_getbytes, /* deserialize counted bytes */
-    xdrposix_putbytes, /* serialize counted bytes */
-    xdrposix_getpos,   /* get offset in the stream */
-    xdrposix_setpos,   /* set offset in the stream */
-    xdrposix_destroy,  /* destroy stream */
-};
-
-/*
  * Fake an XDR initialization for HDF files
  */
 void
@@ -655,7 +642,6 @@ hdf_xdrfile_create(XDR *xdrs, int ncop)
     else
         xdrs->x_op = XDR_DECODE;
 
-    xdrs->x_ops     = &xdrposix_ops;
     xdrs->x_private = (char *)biop;
 
 } /* hdf_xdrfile_create */
@@ -670,7 +656,6 @@ xdrposix_create(XDR *xdrs, int fd, int fmode, enum xdr_op op)
 {
     biobuf *biop    = new_biobuf(fd, fmode);
     xdrs->x_op      = op;
-    xdrs->x_ops     = &xdrposix_ops;
     xdrs->x_private = (char *)biop;
     if (biop == NULL)
         return -1;
