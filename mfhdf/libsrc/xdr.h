@@ -150,9 +150,6 @@ HDFLIBAPI bool_t xdr_opaque(XDR *, char *, unsigned);
 HDFLIBAPI bool_t xdr_float(XDR *, float *);
 HDFLIBAPI bool_t xdr_double(XDR *, double *);
 
-/* XDR using stdio library (only used in xdrtest.c) */
-HDFLIBAPI void xdrstdio_create(XDR *, FILE *, enum xdr_op);
-
 /* POSIX implementation of XDR */
 HDFLIBAPI int xdrposix_create(XDR *xdrs, int fd, int fmode, enum xdr_op op);
 HDFLIBAPI int xdrposix_sync(XDR *xdrs);

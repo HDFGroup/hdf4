@@ -19,7 +19,7 @@ lib_LTLIBRARIES = libmfhdf.la
 ## Information for building the "libmfhdf.la" library
 CSOURCES = array.c attr.c cdf.c dim.c file.c hdfsds.c iarray.c error.c	\
            globdef.c mfsd.c mfdatainfo.c nssdc.c putget.c putgetg.c		\
-           sharray.c string.c var.c xdr.c xdrposix.c
+           sharray.c string.c var.c xdr.c
 
 if HDF_BUILD_NETCDF
 FSOURCES = $(top_builddir)/mfhdf/fortran/jackets.c $(top_srcdir)/mfhdf/fortran/mfsdf.c $(top_srcdir)/mfhdf/fortran/mfsdff.f
