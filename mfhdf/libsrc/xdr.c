@@ -47,7 +47,10 @@
 #include <arpa/inet.h>
 #endif
 #ifdef H4_HAVE_NETINET_IN_H
-#include <netinet/in.h> /* for htonl() */
+#include <netinet/in.h> /* htonl() on POSIX */
+#endif
+#ifdef H4_HAVE_WINSOCK2_H
+#include <winsock2.h> /* htonl() on Win32 */
 #endif
 
 #include "mfhdf.h"
