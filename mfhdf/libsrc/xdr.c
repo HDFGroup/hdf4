@@ -764,7 +764,7 @@ xdr_sync(XDR *xdrs)
 /*
  * Destroy a POSIX XDR stream
  *
- * Cleans up after xdrposix_create()
+ * Cleans up after xdr_create()
  */
 void
 xdr_destroy(XDR *xdrs)
