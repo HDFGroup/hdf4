@@ -578,8 +578,8 @@ bio_write(biobuf *biop, unsigned char *ptr, int nbytes)
  *
  * XDR grew up at a time when all longs were 4 bytes, so we have to awkwardly
  * hack around 32/64 and BE/LE differences in this call. Essentially, anything
- * over (2^32 - 1) will be silently truncated. The 64-bit BE hack is to ensure
- * we clip the bits that represent values > (2^32 - 1).
+ * over a 4-byte boundary will be silently truncated. The 64-bit BE hack is to
+ * ensure we clip the 32 least significant bits.
  */
 
 static bool_t
@@ -589,8 +589,12 @@ xdr_getlong(XDR *xdrs, long *lp)
 
 #if defined(H4_WORDS_BIGENDIAN)
 #if H4_SIZEOF_LONG > 4
-    /* Need to move the pointer on BE systems w/ 64-bit longs */
+    /* Zero out the returned bytes */
     *lp = 0;
+
+    /* Need to move the pointer on BE systems w/ 64-bit longs so we
+     * get the 4 lowest-order bytes
+     */
     up += (sizeof(long) - 4);
 #endif
 #endif
@@ -599,6 +603,7 @@ xdr_getlong(XDR *xdrs, long *lp)
         return FALSE;
 
 #ifndef H4_WORDS_BIGENDIAN
+    /* Reminder that ntohl returns a uint32_t on modern systems */
     *lp = ntohl(*lp);
 #endif
 
@@ -612,13 +617,16 @@ xdr_putlong(XDR *xdrs, const long *lp)
     unsigned char *up = (unsigned char *)lp;
 
 #ifndef H4_WORDS_BIGENDIAN
+    /* Reminder that htonl returns a uint32_t on modern systems */
     int32_t mycopy = htonl(*lp);
     up             = (unsigned char *)&mycopy;
 #endif
 
 #if defined(H4_WORDS_BIGENDIAN)
 #if H4_SIZEOF_LONG > 4
-    /* Need to move the pointer on BE systems w/ 64-bit longs */
+    /* Need to move the pointer on BE systems w/ 64-bit longs so we
+     * get the 4 lowest-order bytes
+     */
     up += (sizeof(long) - 4);
 #endif
 #endif
