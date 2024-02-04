@@ -41,7 +41,7 @@ macro (CHECK_LIBRARY_EXISTS_CONCAT LIBRARY SYMBOL VARIABLE)
 endmacro ()
 
 # ----------------------------------------------------------------------
-# WINDOWS Hard code Values
+# WINDOWS hard-coded values
 # ----------------------------------------------------------------------
 set (WINDOWS)
 
@@ -85,7 +85,7 @@ if (WINDOWS)
 endif ()
 
 # ----------------------------------------------------------------------
-# END of WINDOWS Hard code Values
+# END of WINDOWS hard-coded values
 # ----------------------------------------------------------------------
 
 if (NOT WINDOWS)
@@ -450,10 +450,6 @@ CHECK_FUNCTION_EXISTS (tmpfile           ${HDF_PREFIX}_HAVE_TMPFILE)
 CHECK_FUNCTION_EXISTS (asprintf          ${HDF_PREFIX}_HAVE_ASPRINTF)
 CHECK_FUNCTION_EXISTS (vasprintf         ${HDF_PREFIX}_HAVE_VASPRINTF)
 CHECK_FUNCTION_EXISTS (waitpid           ${HDF_PREFIX}_HAVE_WAITPID)
-
-if (WINDOWS)
-  set (CMAKE_REQUIRED_LIBRARIES "ws2_32")
-endif ()
 
 #-----------------------------------------------------------------------------
 # Check how to print a Long Long integer
