@@ -113,15 +113,8 @@ NCcoordck(NC *handle, NC_var *vp, const long *coords)
         up = vp->shape + vp->assoc->count - 1; /* pointer for dimension sizes */
         ip = coords + vp->assoc->count - 1;    /* pointer for start coords */
 
-#ifdef CDEBUG
-        fprintf(stderr, "    NCcoordck: coords %p, *coords %ld, count %ld, ip %p, boundary %p, *ip %ld\n",
-                coords, *coords, vp->assoc->count, ip, boundary, *ip);
-#endif /* CDEBUG */
         /* for each dimension, check if starting coord is within dim size */
         for (; ip >= boundary; ip--, up--) {
-#ifdef CDEBUG
-            fprintf(stderr, "    NCcoordck: ip %p, *ip %ld, up %p, *up %lu\n", ip, *ip, up, *up);
-#endif /* CDEBUG */
             if (*ip < 0 || *ip >= (long)*up)
                 goto bad;
         }

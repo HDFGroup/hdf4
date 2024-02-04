@@ -65,9 +65,7 @@ HDFLIBAPI int32 SDselect(int32 fid, int32 idx);
 
 HDFLIBAPI intn SDgetinfo(int32 sdsid, char *name, int32 *rank, int32 *dimsizes, int32 *nt, int32 *nattr);
 
-#ifndef __CSTAR__
 HDFLIBAPI intn SDreaddata(int32 sdsid, int32 *start, int32 *stride, int32 *end, void *data);
-#endif
 
 HDFLIBAPI uint16 SDgerefnumber(int32 sdsid);
 
@@ -95,9 +93,7 @@ HDFLIBAPI intn SDattrinfo(int32 id, int32 idx, char *name, int32 *nt, int32 *cou
 
 HDFLIBAPI intn SDreadattr(int32 id, int32 idx, void *buf);
 
-#ifndef __CSTAR__
 HDFLIBAPI intn SDwritedata(int32 sdsid, int32 *start, int32 *stride, int32 *end, void *data);
-#endif
 
 HDFLIBAPI intn SDsetdatastrs(int32 sdsid, const char *l, const char *u, const char *f, const char *c);
 

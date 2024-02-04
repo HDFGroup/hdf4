@@ -20,8 +20,6 @@ file - mfsd.c
   with SD.  Routines beginning with SDI are internal routines and
   should not be used outside of this module.
 
-  Defining SDDEBUG will print status messages to stderr
-
 SD interface:
 ------------------
 
@@ -96,10 +94,6 @@ NOTE: This file needs to have the comments cleaned up for most of the
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 #endif
 #endif
-/* for Chunk debugging */
-/*
-#define CHK_DEBUG
-*/
 
 #ifndef MFSD_INTERNAL
 #define MFSD_INTERNAL
@@ -389,8 +383,6 @@ SDend(int32 id /* IN: file ID of file to close */)
     /* get id? */
     cdfid = (intn)id & 0xffff;
 
-#ifndef SYNC_ON_EACC
-
     /* get the handle */
     handle = SDIhandle_from_id(id, CDFTYPE);
     if (handle == NULL)
@@ -421,8 +413,6 @@ SDend(int32 id /* IN: file ID of file to close */)
             }
         }
     }
-
-#endif /* SYNC_ON_EACC */
 
     /* call netCDF close */
     ret_value = ncclose(cdfid);
@@ -1384,10 +1374,6 @@ done:
  DESCRIPTION
     Close down this access ID to a data object
 
-    Usually, this will do nothing.  However, if the meta-data
-    has changed and SYNC_ON_EACC is defined flush it all out
-    to disk.
-
  RETURNS
         SUCCEED / FAIL
 
@@ -1407,38 +1393,8 @@ SDendaccess(int32 id /* IN: dataset ID */)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     }
 
-#ifdef SYNC_ON_EACC
-
-    /* make sure we can write to the file */
-    if (handle->flags & NC_RDWR) {
-        handle->xdrs->x_op = XDR_ENCODE;
-
-        /* see if the meta-data needs to be updated */
-        if (handle->flags & NC_HDIRTY) {
-            if (!xdr_cdf(handle->xdrs, &handle)) {
-                HGOTO_ERROR(DFE_XDRERROR, FAIL);
-            }
-
-            handle->flags &= ~(NC_NDIRTY | NC_HDIRTY);
-        }
-        else {
-            /* see if the numrecs info needs updating */
-            if (handle->flags & NC_NDIRTY) {
-                if (!xdr_numrecs(handle->xdrs, handle)) {
-                    HGOTO_ERROR(DFE_XDRERROR, FAIL);
-                }
-
-                handle->flags &= ~(NC_NDIRTY);
-            }
-        }
-    }
-
-#else
-
     /* free the AID */
-    ret_value    = SDIfreevarAID(handle, id & 0xffff);
-
-#endif /* SYNC_ON_EACC */
+    ret_value = SDIfreevarAID(handle, id & 0xffff);
 
 done:
     return ret_value;
