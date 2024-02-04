@@ -53,6 +53,9 @@
 #ifdef H4_HAVE_ARPA_INET_H
 #include <arpa/inet.h>
 #endif
+#ifdef H4_HAVE_NETINET_IN_H
+#include <netinet/in.h> /* for htonl() */
+#endif
 #endif
 
 #include "mfhdf.h"

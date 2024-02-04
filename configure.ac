@@ -855,7 +855,7 @@ AC_CHECK_HEADERS([sys/file.h sys/resource.h sys/stat.h sys/time.h sys/wait.h])
 AC_CHECK_HEADERS([sys/types.h])
 
 AC_CHECK_HEADERS([io.h])
-AC_CHECK_HEADERS([arpa/inet.h])
+AC_CHECK_HEADERS([arpa/inet.h netinet/in.h])
 
 ## Special MinGW checks
 case "`uname`" in

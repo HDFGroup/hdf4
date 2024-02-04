@@ -41,12 +41,6 @@
 /* Define to 1 if you have the <winsock2.h> header file. */
 #cmakedefine H4_HAVE_WINSOCK2_H @H4_HAVE_WINSOCK2_H@
 
-/* Define to 1 if you have the `htonl' function. */
-#cmakedefine H4_HAVE_HTONL @H4_HAVE_HTONL@
-
-/* Define to 1 if you have the `htons' function. */
-#cmakedefine H4_HAVE_HTONS @H4_HAVE_HTONS@
-
 /* Define to 1 if you have the <inttypes.h> header file. */
 #cmakedefine H4_HAVE_INTTYPES_H @H4_HAVE_INTTYPES_H@
 
@@ -76,12 +70,6 @@
 
 /* Define to 1 if you have the <netinet/in.h> header file. */
 #cmakedefine H4_HAVE_NETINET_IN_H @H4_HAVE_NETINET_IN_H@
-
-/* Define to 1 if you have the `ntohl' function. */
-#cmakedefine H4_HAVE_NTOHL @H4_HAVE_NTOHL@
-
-/* Define to 1 if you have the `ntohs' function. */
-#cmakedefine H4_HAVE_NTOHS @H4_HAVE_NTOHS@
 
 /* Define to 1 if you have the <resolv.h> header file. */
 #cmakedefine H4_HAVE_RESOLV_H @H4_HAVE_RESOLV_H@
