@@ -191,6 +191,14 @@ if test "X$host_config" != "Xnone"; then
   . $host_config
 fi
 
+## Special MinGW checks
+case "`uname`" in
+    MINGW*)
+      # Check for Winsock library
+      AC_CHECK_LIB([ws2_32]), [htonl])
+      ;;
+esac
+
 ## ======================================================================
 ## Checks for netCDF-2.3.2 support
 ## ======================================================================
@@ -869,6 +877,9 @@ AC_CHECK_HEADERS([sys/types.h])
 
 AC_CHECK_HEADERS([io.h])
 AC_CHECK_HEADERS([arpa/inet.h netinet/in.h])
+
+## MinGW (for htonl, etc.)
+AC_CHECK_HEADERS([winsock2.h])
 
 ## ----------------------------------------------------------------------
 ## XDR grew up in a world where long integers were 32 bits in size. Now

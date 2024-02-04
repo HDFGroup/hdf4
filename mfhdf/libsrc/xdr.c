@@ -43,14 +43,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef H4_HAVE_ARPA_INET_H
-#include <arpa/inet.h>
-#endif
-#ifdef H4_HAVE_NETINET_IN_H
-#include <netinet/in.h> /* htonl() on POSIX */
-#endif
-#ifdef H4_HAVE_WINSOCK2_H
-#include <winsock2.h> /* htonl() on Win32 */
+#ifdef H4_HAVE_WIN32_API
+#   ifdef H4_HAVE_WINSOCK2_H
+#       include <winsock2.h> /* htonl() on Win32 */
+#   endif
+#else
+#   ifdef H4_HAVE_ARPA_INET_H
+#       include <arpa/inet.h>
+#   endif
+#   ifdef H4_HAVE_NETINET_IN_H
+#       include <netinet/in.h> /* htonl() on POSIX */
+#   endif
 #endif
 
 #include "mfhdf.h"
