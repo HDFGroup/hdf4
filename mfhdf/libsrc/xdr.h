@@ -51,11 +51,11 @@
  *
  * This is not a normal XDR implementation!
  *
- * XDR has caused a lot of problems due to the waning availablity of the
+ * XDR has caused a lot of problems due to the waning availability of the
  * library (removed from libc some time ago) and the variable size of long
  * integers and the way various XDR implementations handled that.
  *
- * What we have here is a stripped-down implentation of XDR that only
+ * What we have here is a stripped-down implementation of XDR that only
  * performs POSIX I/O to a file and assumes the put/get_long functions
  * only care about 4 bytes (truncating when a long is larger).
  *
