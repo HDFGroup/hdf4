@@ -131,7 +131,7 @@ typedef struct {
 /* NC dimension structure */
 typedef struct {
     NC_string *name;
-    long       size;
+    int32      size;
 #ifdef HDF
     int32 dim00_compat; /* compatible with Dim0.0 */
     int32 vgid;         /* id of the Vgroup representing this dimension */
@@ -157,10 +157,10 @@ typedef struct {
     unsigned long recsize;   /* length of 'record' */
     int           redefid;
     /* below gets xdr'd */
-    unsigned long numrecs; /* number of 'records' allocated */
-    NC_array     *dims;
-    NC_array     *attrs;
-    NC_array     *vars;
+    unsigned  numrecs; /* number of 'records' allocated */
+    NC_array *dims;
+    NC_array *attrs;
+    NC_array *vars;
 #ifdef HDF
     int32      hdf_file;
     int        file_type;

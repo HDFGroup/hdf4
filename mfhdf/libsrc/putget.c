@@ -535,11 +535,8 @@ xdr_NCv1data(XDR *xdrs, unsigned long where, nc_type type, Void *values)
         case NC_SHORT:
             return (xdr_NCvshort(xdrs, (unsigned)rem / 2, (short *)values));
         case NC_LONG:
-#ifdef H4_HAVE_LP64
+            /* nclong is defined to a 32-bit integer type in netcdf.h */
             return (xdr_int(xdrs, (nclong *)values));
-#else
-            return (xdr_long(xdrs, (nclong *)values));
-#endif
         case NC_FLOAT:
             return (xdr_float(xdrs, (float *)values));
         case NC_DOUBLE:

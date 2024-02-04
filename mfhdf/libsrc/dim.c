@@ -295,7 +295,7 @@ xdr_NC_dim(XDR *xdrs, NC_dim **dpp)
 
     if (!xdr_NC_string(xdrs, &((*dpp)->name)))
         return (FALSE);
-    return (xdr_long(xdrs, &((*dpp)->size)));
+    return (xdr_int(xdrs, &((*dpp)->size)));
 }
 
 /*

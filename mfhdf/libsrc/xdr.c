@@ -72,8 +72,8 @@
 static const char xdr_zero[BYTES_PER_XDR_UNIT] = {0, 0, 0, 0};
 
 /* Forward declarations */
-static bool_t xdr_getlong(XDR *xdrs, long *lp);
-static bool_t xdr_putlong(XDR *xdrs, const long *lp);
+static bool_t xdr_get32(XDR *xdrs, uint32_t *up);
+static bool_t xdr_put32(XDR *xdrs, const uint32_t *up);
 
 /******************/
 /* XDR Type Calls */
@@ -90,19 +90,13 @@ static bool_t xdr_putlong(XDR *xdrs, const long *lp);
 bool_t
 xdr_int(XDR *xdrs, int *ip)
 {
-    long l;
-
     switch (xdrs->x_op) {
 
         case XDR_ENCODE:
-            l = (long)*ip;
-            return xdr_putlong(xdrs, &l);
+            return xdr_put32(xdrs, (uint32_t *)ip);
 
         case XDR_DECODE:
-            if (!xdr_getlong(xdrs, &l))
-                return FALSE;
-            *ip = (int)l;
-            return TRUE;
+            return xdr_get32(xdrs, (uint32_t *)ip);
 
         case XDR_FREE:
             return TRUE;
@@ -117,56 +111,14 @@ xdr_int(XDR *xdrs, int *ip)
 bool_t
 xdr_u_int(XDR *xdrs, unsigned *up)
 {
-    unsigned long l;
-
     switch (xdrs->x_op) {
 
         case XDR_ENCODE:
-            l = (unsigned long)*up;
-            return xdr_putlong(xdrs, (long *)&l);
+            return xdr_put32(xdrs, up);
 
         case XDR_DECODE:
-            if (!xdr_getlong(xdrs, (long *)&l))
-                return FALSE;
-            *up = (unsigned)l;
-            return TRUE;
+            return xdr_get32(xdrs, up);
 
-        case XDR_FREE:
-            return TRUE;
-    }
-    /* NOTREACHED */
-    return FALSE;
-}
-
-/*
- * XDR long integers
- */
-bool_t
-xdr_long(XDR *xdrs, long *lp)
-{
-    switch (xdrs->x_op) {
-        case XDR_ENCODE:
-            return xdr_putlong(xdrs, lp);
-        case XDR_DECODE:
-            return xdr_getlong(xdrs, lp);
-        case XDR_FREE:
-            return TRUE;
-    }
-    /* NOTREACHED */
-    return FALSE;
-}
-
-/*
- * XDR unsigned long integers
- */
-bool_t
-xdr_u_long(XDR *xdrs, unsigned long *ulp)
-{
-    switch (xdrs->x_op) {
-        case XDR_ENCODE:
-            return xdr_putlong(xdrs, (long *)ulp);
-        case XDR_DECODE:
-            return xdr_getlong(xdrs, (long *)ulp);
         case XDR_FREE:
             return TRUE;
     }
@@ -570,68 +522,39 @@ bio_write(biobuf *biop, unsigned char *ptr, int nbytes)
 /***********************/
 
 /*
- * Read/write the number of bytes in a C long to the XDR file. 'long' is
- * being used in the sense of 'n bytes' and not a long integer value.
- *
- * This obviously depends on the number of bytes in a long, which is 8 on most
- * POSIX systems and 4 on Windows.
- *
- * XDR grew up at a time when all longs were 4 bytes, so we have to awkwardly
- * hack around 32/64 and BE/LE differences in this call. Essentially, anything
- * over a 4-byte boundary will be silently truncated. The 64-bit BE hack is to
- * ensure we clip the 32 least significant bits.
+ * Read/write the number of bytes in a C long to the XDR file. 'uint32_t' is
+ * being used in the sense of '4 bytes' and not a long integer value.
  */
 
 static bool_t
-xdr_getlong(XDR *xdrs, long *lp)
+xdr_get32(XDR *xdrs, uint32_t *up)
 {
-    unsigned char *up = (unsigned char *)lp;
+    uint8_t *p = (uint8_t *)up;
 
-#if defined(H4_WORDS_BIGENDIAN)
-#if H4_SIZEOF_LONG > 4
-    /* Zero out the returned bytes */
-    *lp = 0;
-
-    /* Need to move the pointer on BE systems w/ 64-bit longs so we
-     * get the 4 lowest-order bytes
-     */
-    up += (sizeof(long) - 4);
-#endif
-#endif
-
-    if (bio_read((biobuf *)xdrs->x_private, up, 4) < 4)
+    if (bio_read((biobuf *)xdrs->x_private, p, 4) < 4)
         return FALSE;
 
 #ifndef H4_WORDS_BIGENDIAN
     /* Reminder that ntohl returns a uint32_t on modern systems */
-    *lp = ntohl(*lp);
+    *up = ntohl(*up);
 #endif
 
     return TRUE;
 }
 
 static bool_t
-xdr_putlong(XDR *xdrs, const long *lp)
+xdr_put32(XDR *xdrs, const uint32_t *up)
 {
 
-    unsigned char *up = (unsigned char *)lp;
+    uint8_t *p = (uint8_t *)up;
 
 #ifndef H4_WORDS_BIGENDIAN
     /* Reminder that htonl returns a uint32_t on modern systems */
-    int32_t mycopy = htonl(*lp);
-    up             = (unsigned char *)&mycopy;
+    uint32_t mycopy = htonl(*up);
+    p               = (uint8_t *)&mycopy;
 #endif
 
-#if defined(H4_WORDS_BIGENDIAN)
-#if H4_SIZEOF_LONG > 4
-    /* Need to move the pointer on BE systems w/ 64-bit longs so we
-     * get the 4 lowest-order bytes
-     */
-    up += (sizeof(long) - 4);
-#endif
-#endif
-
-    if (bio_write((biobuf *)xdrs->x_private, up, 4) < 4)
+    if (bio_write((biobuf *)xdrs->x_private, p, 4) < 4)
         return FALSE;
     return TRUE;
 }
@@ -735,7 +658,7 @@ xdr_create(XDR *xdrs, int fd, int fmode, enum xdr_op op)
 {
     biobuf *biop    = bio_get_new(fd, fmode);
     xdrs->x_op      = op;
-    xdrs->x_private = (char *)biop;
+    xdrs->x_private = biop;
     if (biop == NULL)
         return -1;
 

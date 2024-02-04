@@ -2839,7 +2839,7 @@ xdr_numrecs(XDR *xdrs, NC *handle)
         fprintf(stderr, "\txdr_numrecs %ld = %d + %ld * %d\n", xdr_getpos(xdrs), handle->begin_rec,
                 handle->numrecs, handle->recsize);
 #endif /*  RDEBUG */
-        if (!xdr_u_long(xdrs, &(handle->numrecs)))
+        if (!xdr_u_int(xdrs, &(handle->numrecs)))
             return (FALSE);
     }
 
@@ -2847,7 +2847,7 @@ xdr_numrecs(XDR *xdrs, NC *handle)
         nc_serror("Can't set position to RECPOS");
         return (FALSE);
     }
-    return (xdr_u_long(xdrs, &(handle->numrecs)));
+    return (xdr_u_int(xdrs, &(handle->numrecs)));
 }
 
 static bool_t

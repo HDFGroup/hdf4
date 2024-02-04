@@ -56,11 +56,11 @@
  * integers and the way various XDR implementations handled that.
  *
  * What we have here is a stripped-down implementation of XDR that only
- * performs POSIX I/O to a file and assumes the put/get_long functions
- * only care about 4 bytes (truncating when a long is larger).
+ * performs POSIX I/O to a file and removes the problematic XDR "long"
+ * operations.
  *
  * In the future, this implementation will be replaced with something
- * simpler.
+ * even simpler.
  *
  * NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE
  */
@@ -112,9 +112,6 @@ HDFLIBAPI bool_t   xdr_setpos(XDR *, unsigned);
  */
 HDFLIBAPI bool_t xdr_int(XDR *, int *);
 HDFLIBAPI bool_t xdr_u_int(XDR *, unsigned *);
-
-HDFLIBAPI bool_t xdr_long(XDR *, long *);
-HDFLIBAPI bool_t xdr_u_long(XDR *, unsigned long *);
 
 HDFLIBAPI bool_t xdr_bytes(XDR *, char **, unsigned *, unsigned);
 HDFLIBAPI bool_t xdr_opaque(XDR *, char *, unsigned);
