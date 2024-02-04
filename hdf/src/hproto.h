@@ -1189,56 +1189,6 @@ HDFLIBAPI intn GRsetchunkcache(int32 riid,     /* IN: raster access id */
                                int32 maxcache, /* IN: max number of chunks to cache */
                                int32 flags /* IN: flags = 0, HDF_CACHEALL */);
 
-#ifdef HAVE_FMPOOL
-/******************************************************************************
-NAME
-     Hmpset - set pagesize and maximum number of pages to cache on next open/create
-
-DESCRIPTION
-     Set the pagesize and maximum number of pages to cache on the next
-     open/create of a file. A pagesize that is a power of 2 is recommended.
-
-     The values set here only affect the next open/creation of a file and
-     do not change a particular file's paging behaviour after it has been
-     opened or created. This maybe changed in a later release.
-
-     Use flags argument of 'MP_PAGEALL' if the whole file is to be cached
-     in memory otherwise pass in zero.
-
-RETURNS
-     Returns SUCCEED if successful and FAIL otherwise
-
-NOTE
-     This calls the real routine MPset().
-     Currently 'maxcache' has to be greater than 1. Maybe use special
-     case of 0 to specify you want to turn page buffering off or use
-     the flags argument.
-
-******************************************************************************/
-HDFLIBAPI int Hmpset(int pagesize, /* IN: pagesize to use for next open/create */
-                     int maxcache, /* IN: max number of pages to cache */
-                     int flags /* IN: flags = 0, MP_PAGEALL */);
-
-/******************************************************************************
-NAME
-     Hmpget - get last pagesize and max number of pages cached for open/create
-
-DESCRIPTION
-     This gets the last pagesize and maximum number of pages cached for
-     the last open/create of a file.
-
-RETURNS
-     Returns SUCCEED.
-
-NOTES
-     This routine calls the real routine MPget().
-******************************************************************************/
-HDFLIBAPI int Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
-                     int *maxcache, /*OUT: max number of pages cached in last open/create */
-                     int  flags /* IN: */);
-
-#endif /* HAVE_FMPOOL */
-
 /* Vset interface functions (used to be in vproto.h) */
 
 /* Useful macros, which someday might become actual functions */
