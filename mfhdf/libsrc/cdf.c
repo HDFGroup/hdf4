@@ -282,7 +282,7 @@ NC_new_cdf(const char *name, int mode)
      */
     switch (cdf->file_type) {
         case HDF_FILE:
-            hdf_xdrfile_create(cdf->xdrs, mode); /* return type is 'void' */
+            xdr_setup_nofile(cdf->xdrs, mode); /* return type is 'void' */
             break;
         case netCDF_FILE:
             if (NCxdrfile_create(cdf->xdrs, name, mode) < 0)
@@ -291,7 +291,7 @@ NC_new_cdf(const char *name, int mode)
         case CDF_FILE:
             /* CDF_xdrfile_create(); */
             /* try this, I bet it will be sufficient */
-            hdf_xdrfile_create(cdf->xdrs, mode);
+            xdr_setup_nofile(cdf->xdrs, mode);
             break;
     }
 

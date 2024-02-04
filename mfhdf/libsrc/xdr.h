@@ -47,24 +47,48 @@
 
 #include "mfhdf.h"
 
+/* NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE
+ *
+ * This is not a normal XDR implementation!
+ *
+ * XDR has caused a lot of problems due to the waning availablity of the
+ * library (removed from libc some time ago) and the variable size of long
+ * integers and the way various XDR implementations handled that.
+ *
+ * What we have here is a stripped-down implentation of XDR that only
+ * performs POSIX I/O to a file and assumes the put/get_long functions
+ * only care about 4 bytes (truncating when a long is larger).
+ *
+ * In the future, this implementation will be replaced with something
+ * simpler.
+ *
+ * NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE
+ */
+
+/* XDR Boolean type */
 typedef int32_t bool_t;
 
 /*
- * XDR operations.  XDR_ENCODE causes the type to be encoded into the
- * stream.  XDR_DECODE causes the type to be extracted from the stream.
- * XDR_FREE can be used to release the space allocated by an XDR_DECODE
- * request.
+ * XDR operations
+ *
+ * - XDR_ENCODE causes the type to be encoded into the stream
+ * - XDR_DECODE causes the type to be extracted from the stream
+ * - XDR_FREE can be used to release the space allocated by an XDR_DECODE request
  */
 enum xdr_op { XDR_ENCODE = 0, XDR_DECODE = 1, XDR_FREE = 2 };
 
-/* The XDR handle
+/* Forward declaration */
+struct biobuf;
+
+/*
+ * The XDR handle
  *
  * Contains the operation which is being applied to the stream and a
- * private field for the use of the particular implementation.
+ * private field.
  */
 typedef struct xinfo {
-    enum xdr_op x_op;      /* Operation */
-    void       *x_private; /* Pointer to private data */
+    enum xdr_op    x_op;      /* Operation */
+    struct biobuf *x_private; /* Pointer to private data */
 } XDR;
 
 #ifdef __cplusplus
@@ -82,10 +106,9 @@ HDFLIBAPI bool_t xdr_putbytes(XDR *, const char *, unsigned);
 HDFLIBAPI unsigned xdr_getpos(XDR *);
 HDFLIBAPI bool_t   xdr_setpos(XDR *, unsigned);
 
-HDFLIBAPI void xdr_destroy(XDR *);
-
 /*
- * "Generic type" XDR routines
+ * "Data type" XDR routines that read/write/free depending on the op
+ * parameter of the XDR struct
  */
 HDFLIBAPI bool_t xdr_int(XDR *, int *);
 HDFLIBAPI bool_t xdr_u_int(XDR *, unsigned *);
@@ -99,9 +122,12 @@ HDFLIBAPI bool_t xdr_opaque(XDR *, char *, unsigned);
 HDFLIBAPI bool_t xdr_float(XDR *, float *);
 HDFLIBAPI bool_t xdr_double(XDR *, double *);
 
-/* POSIX implementation of XDR */
-HDFLIBAPI int xdrposix_create(XDR *xdrs, int fd, int fmode, enum xdr_op op);
-HDFLIBAPI int xdrposix_sync(XDR *xdrs);
+/* XDR file manipulation */
+HDFLIBAPI int  xdr_create(XDR *xdrs, int fd, int fmode, enum xdr_op op);
+HDFLIBAPI int  xdr_sync(XDR *xdrs);
+HDFLIBAPI void xdr_destroy(XDR *);
+
+HDFLIBAPI void xdr_setup_nofile(XDR *xdrs, int ncop);
 
 #ifdef __cplusplus
 }

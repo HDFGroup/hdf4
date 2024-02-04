@@ -1034,7 +1034,7 @@ ncsetfill(int id, int fillmode)
 int
 NCxdrfile_sync(XDR *xdrs)
 {
-    return xdrposix_sync(xdrs);
+    return xdr_sync(xdrs);
 }
 
 int
@@ -1080,7 +1080,7 @@ NCxdrfile_create(XDR *xdrs, const char *path, int ncmode)
         op = XDR_DECODE;
     }
 
-    if (xdrposix_create(xdrs, fd, fmode, op) < 0)
+    if (xdr_create(xdrs, fd, fmode, op) < 0)
         return -1;
     else
         return fd;

@@ -476,9 +476,6 @@ HDFLIBAPI int        NCxdrfile_sync(XDR *xdrs);
 HDFLIBAPI int NCxdrfile_create(XDR *xdrs, const char *path, int ncmode);
 
 #ifdef HDF
-/* this routine is found in 'xdrposix.c' */
-HDFLIBAPI void hdf_xdrfile_create(XDR *xdrs, int ncop);
-
 HDFLIBAPI intn hdf_fill_array(Void *storage, int32 len, Void *value, int32 type);
 
 HDFLIBAPI intn hdf_get_data(NC *handle, NC_var *vp);

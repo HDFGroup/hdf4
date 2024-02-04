@@ -71,56 +71,18 @@
  */
 static const char xdr_zero[BYTES_PER_XDR_UNIT] = {0, 0, 0, 0};
 
-static bool_t   xdrposix_getlong(XDR *xdrs, long *lp);
-static bool_t   xdrposix_putlong(XDR *xdrs, const long *lp);
-static bool_t   xdrposix_getbytes(XDR *xdrs, char *addr, unsigned len);
-static bool_t   xdrposix_putbytes(XDR *xdrs, const char *addr, unsigned len);
-static unsigned xdrposix_getpos(XDR *xdrs);
-static bool_t   xdrposix_setpos(XDR *xdrs, unsigned pos);
-static void     xdrposix_destroy(XDR *xdrs);
+/* Forward declarations */
+static bool_t xdr_getlong(XDR *xdrs, long *lp);
+static bool_t xdr_putlong(XDR *xdrs, const long *lp);
 
-/*
- * Operations defined on an XDR handle
+/******************/
+/* XDR Type Calls */
+/******************/
+
+/* These per-type API calls encode/decode/free depending on the op field
+ * in the XDR struct. They use the lower-level XDR calls found after the
+ * I/O buffering code, below.
  */
-
-/* NOTE: These deal with raw bytes, not "counted bytes", like xdr_bytes()
- *       does, below!
- */
-bool_t
-xdr_getbytes(XDR *xdrs, char *addr, unsigned len)
-{
-    return xdrposix_getbytes(xdrs, addr, len);
-}
-
-bool_t
-xdr_putbytes(XDR *xdrs, const char *addr, unsigned len)
-{
-    return xdrposix_putbytes(xdrs, addr, len);
-}
-
-/*
- * Set/Get the file position
- */
-unsigned
-xdr_getpos(XDR *xdrs)
-{
-    return xdrposix_getpos(xdrs);
-}
-
-bool_t
-xdr_setpos(XDR *xdrs, unsigned pos)
-{
-    return xdrposix_setpos(xdrs, pos);
-}
-
-/*
- * Close the file
- */
-void
-xdr_destroy(XDR *xdrs)
-{
-    xdrposix_destroy(xdrs);
-}
 
 /*
  * XDR integers
@@ -134,10 +96,10 @@ xdr_int(XDR *xdrs, int *ip)
 
         case XDR_ENCODE:
             l = (long)*ip;
-            return xdrposix_putlong(xdrs, &l);
+            return xdr_putlong(xdrs, &l);
 
         case XDR_DECODE:
-            if (!xdrposix_getlong(xdrs, &l))
+            if (!xdr_getlong(xdrs, &l))
                 return FALSE;
             *ip = (int)l;
             return TRUE;
@@ -161,10 +123,10 @@ xdr_u_int(XDR *xdrs, unsigned *up)
 
         case XDR_ENCODE:
             l = (unsigned long)*up;
-            return xdrposix_putlong(xdrs, (long *)&l);
+            return xdr_putlong(xdrs, (long *)&l);
 
         case XDR_DECODE:
-            if (!xdrposix_getlong(xdrs, (long *)&l))
+            if (!xdr_getlong(xdrs, (long *)&l))
                 return FALSE;
             *up = (unsigned)l;
             return TRUE;
@@ -184,9 +146,9 @@ xdr_long(XDR *xdrs, long *lp)
 {
     switch (xdrs->x_op) {
         case XDR_ENCODE:
-            return xdrposix_putlong(xdrs, lp);
+            return xdr_putlong(xdrs, lp);
         case XDR_DECODE:
-            return xdrposix_getlong(xdrs, lp);
+            return xdr_getlong(xdrs, lp);
         case XDR_FREE:
             return TRUE;
     }
@@ -202,9 +164,9 @@ xdr_u_long(XDR *xdrs, unsigned long *ulp)
 {
     switch (xdrs->x_op) {
         case XDR_ENCODE:
-            return xdrposix_putlong(xdrs, (long *)ulp);
+            return xdr_putlong(xdrs, (long *)ulp);
         case XDR_DECODE:
-            return xdrposix_getlong(xdrs, (long *)ulp);
+            return xdr_getlong(xdrs, (long *)ulp);
         case XDR_FREE:
             return TRUE;
     }
@@ -214,6 +176,7 @@ xdr_u_long(XDR *xdrs, unsigned long *ulp)
 
 /*
  * XDR opaque data
+ *
  * Allows the specification of a fixed size sequence of opaque bytes.
  * cp points to the opaque object and cnt gives the byte length.
  */
@@ -260,6 +223,12 @@ xdr_opaque(XDR *xdrs, char *cp, unsigned cnt)
 
 /*
  * XDR counted bytes
+ *
+ * This is a special data structure that starts with the size, followed
+ * by the raw bytes (as an opaque XDR type).
+ *
+ * For raw, uninterpreted byte I/O, see the xdr_put/getbytes() calls.
+ *
  * *cpp is a pointer to the bytes, *sizep is the count.
  * If *cpp is NULL maxsize bytes are allocated
  */
@@ -319,6 +288,9 @@ xdr_bytes(XDR *xdrs, char **cpp, unsigned *sizep, unsigned maxsize)
     return FALSE;
 }
 
+/*
+ * XDR 4-byte floats
+ */
 bool_t
 xdr_float(XDR *xdrs, float *fp)
 {
@@ -336,6 +308,12 @@ xdr_float(XDR *xdrs, float *fp)
     return FALSE;
 }
 
+/*
+ * XDR 8-byte doubles
+ *
+ * Performed in two 32-bit operations because XDR does not have a 64-bit
+ * I/O operation.
+ */
 bool_t
 xdr_double(XDR *xdrs, double *dp)
 {
@@ -385,69 +363,100 @@ xdr_double(XDR *xdrs, double *dp)
     return FALSE;
 }
 
-/*********************/
-/* FORMER xdrposix.c */
-/*********************/
+/****************************/
+/* I/O Buffer Functionality */
+/****************************/
 
-/* NOTE: "bio" == Buffered I/O */
+/* As an optimization, the XDR I/O layer uses a single I/O buffer to
+ * speed up nearby reads and writes ("bio" == Buffered I/O).
+ *
+ * TODO: This is not a very big cache! Bumping it might enhance I/O
+ *       performance.
+ */
 
-typedef struct {
-    int            fd;   /* the file descriptor */
-    int            mode; /* file access mode, O_RDONLY, etc */
-    int            isdirty;
-    off_t          page;
-    int            nread;  /* number of bytes successfully read */
-    int            nwrote; /* number of bytes last write */
-    int            cnt;    /* number of valid bytes in buffer */
-    unsigned char *ptr;    /* next byte */
+/* Size of the I/O buffer in bytes */
 #define BIOBUFSIZ 8192
-    unsigned char base[BIOBUFSIZ]; /* the data buffer */
+
+/* # of valid bytes in the buffer */
+#define CNT(p) ((p)->ptr - (p)->base)
+
+/* # of unread bytes in buffer */
+#define REM(p) ((p)->cnt - CNT(p))
+
+/* Available space for write in buffer */
+#define BREM(p) (BIOBUFSIZ - CNT(p))
+
+/* POSIX and I/O buffer info
+ *
+ * Stored in the XDR struct's private data
+ *
+ * NOTE: off_t is 32-bits on Windows, but that shouldn't be a problem since
+ *       HDF4 files are limited to 4 GB.
+ */
+typedef struct biobuf {
+    int      fd;              /* POSIX file descriptor */
+    int      mode;            /* File access mode, O_RDONLY, etc */
+    int      isdirty;         /* Dirty buffer flag */
+    off_t    page;            /* Location in the file */
+    int      nread;           /* Number of bytes successfully read */
+    int      nwrote;          /* Number of bytes last written */
+    int      cnt;             /* Number of valid bytes in buffer */
+    uint8_t *ptr;             /* Next byte (pointer into base) */
+    uint8_t  base[BIOBUFSIZ]; /* Data buffer */
 } biobuf;
 
+/*
+ * Initialize the POSIX/buffer XDR state
+ */
 static biobuf *
-new_biobuf(int fd, int fmode)
+bio_get_new(int fd, int fmode)
 {
     biobuf *biop = NULL;
 
-    if (NULL == (biop = malloc(sizeof(biobuf))))
+    if (NULL == (biop = (biobuf *)calloc(1, sizeof(biobuf))))
         return NULL;
-    biop->fd = fd;
 
+    biop->fd   = fd;
     biop->mode = fmode;
-
-    biop->isdirty = 0;
-    biop->page    = 0;
-    biop->nread   = 0;
-    biop->nwrote  = 0;
-    biop->cnt     = 0;
-    memset(biop->base, 0, ((size_t)(BIOBUFSIZ)));
-    biop->ptr = biop->base;
+    biop->ptr  = biop->base;
 
     return biop;
 }
 
+/*
+ * Read a page from the file into the buffer
+ */
 static int
-rdbuf(biobuf *biop)
+bio_read_page(biobuf *biop)
 {
-    memset(biop->base, 0, ((size_t)(BIOBUFSIZ)));
+    /* Clear out the buffer */
+    memset(biop->base, 0, BIOBUFSIZ);
 
     if (biop->mode & O_WRONLY) {
+        /* If we're only writing, the buffer is empty */
         biop->cnt = 0;
     }
     else {
         if (biop->nwrote != BIOBUFSIZ) {
-            /* last write wasn't a full block, adjust position ahead */
+            /* Last write wasn't a full block, adjust position ahead */
             if (lseek(biop->fd, biop->page * BIOBUFSIZ, SEEK_SET) == ((off_t)-1))
                 return -1;
         }
+
+        /* Read from storage into the buffer */
         biop->nread = biop->cnt = read(biop->fd, (void *)biop->base, BIOBUFSIZ);
     }
+
     biop->ptr = biop->base;
+
     return biop->cnt;
 }
 
+/*
+ * Write a page from the buffer to the file
+ */
 static int
-wrbuf(biobuf *biop)
+bio_write_page(biobuf *biop)
 {
 
     if (!((biop->mode & O_WRONLY) || (biop->mode & O_RDWR)) || biop->cnt == 0) {
@@ -455,7 +464,7 @@ wrbuf(biobuf *biop)
     }
     else {
         if (biop->nread != 0) {
-            /* if we read something, we have to adjust position back */
+            /* If we read something, we have to adjust position back */
             if (lseek(biop->fd, biop->page * BIOBUFSIZ, SEEK_SET) == ((off_t)-1))
                 return -1;
         }
@@ -466,33 +475,34 @@ wrbuf(biobuf *biop)
     return biop->nwrote;
 }
 
+/*
+ * Get the next page from the file
+ *
+ * Returns the number of valid bytes in the buffer
+ */
 static int
-nextbuf(biobuf *biop)
+bio_get_next_page(biobuf *biop)
 {
+    /* Flush if dirty */
     if (biop->isdirty) {
-        if (wrbuf(biop) < 0)
+        if (bio_write_page(biop) < 0)
             return -1;
     }
 
     biop->page++;
 
-    /* read it in */
-    if (rdbuf(biop) < 0)
+    /* Read in the next page */
+    if (bio_read_page(biop) < 0)
         return -1;
 
     return biop->cnt;
 }
 
-#define CNT(p) ((p)->ptr - (p)->base)
-
-/* # of unread bytes in buffer */
-#define REM(p) ((p)->cnt - CNT(p))
-
-/* available space for write in buffer */
-#define BREM(p) (BIOBUFSIZ - CNT(p))
-
+/*
+ * Read bytes from the file through the buffer
+ */
 static int
-bioread(biobuf *biop, unsigned char *ptr, int nbytes)
+bio_read(biobuf *biop, unsigned char *ptr, int nbytes)
 {
     int    ngot = 0;
     size_t rem;
@@ -507,18 +517,22 @@ bioread(biobuf *biop, unsigned char *ptr, int nbytes)
             nbytes -= rem;
             ngot += rem;
         }
-        if (nextbuf(biop) <= 0)
+        if (bio_get_next_page(biop) <= 0)
             return ngot;
     }
-    /* we know nbytes <= REM at this point */
+
+    /* We know nbytes <= REM at this point */
     (void)memcpy(ptr, biop->ptr, (size_t)nbytes);
     biop->ptr += nbytes;
     ngot += nbytes;
     return ngot;
 }
 
+/*
+ * Write bytes to the file through the buffer
+ */
 static int
-biowrite(biobuf *biop, unsigned char *ptr, int nbytes)
+bio_write(biobuf *biop, unsigned char *ptr, int nbytes)
 {
     size_t rem;
     int    nwrote = 0;
@@ -536,10 +550,11 @@ biowrite(biobuf *biop, unsigned char *ptr, int nbytes)
             nbytes -= rem;
             nwrote += rem;
         }
-        if (nextbuf(biop) < 0)
+        if (bio_get_next_page(biop) < 0)
             return nwrote;
     }
-    /* we know nbytes <= BREM at this point */
+
+    /* We know nbytes <= BREM at this point */
     (void)memcpy(biop->ptr, ptr, (size_t)nbytes);
     biop->isdirty = !0;
     biop->ptr += nbytes;
@@ -550,88 +565,25 @@ biowrite(biobuf *biop, unsigned char *ptr, int nbytes)
     return nwrote;
 }
 
-/*
- * Fake an XDR initialization for HDF files
- */
-void
-hdf_xdrfile_create(XDR *xdrs, int ncop)
-{
-    biobuf *biop = new_biobuf(-1, 0);
-
-    if (ncop & NC_CREAT)
-        xdrs->x_op = XDR_ENCODE;
-    else
-        xdrs->x_op = XDR_DECODE;
-
-    xdrs->x_private = (char *)biop;
-
-} /* hdf_xdrfile_create */
+/***********************/
+/* Low-Level XDR Calls */
+/***********************/
 
 /*
- * Initialize a posix xdr stream.
- * Sets the xdr stream handle xdrs for use on the file descriptor fd.
- * Operation flag is set to op.
+ * Read/write the number of bytes in a C long to the XDR file. 'long' is
+ * being used in the sense of 'n bytes' and not a long integer value.
+ *
+ * This obviously depends on the number of bytes in a long, which is 8 on most
+ * POSIX systems and 4 on Windows.
+ *
+ * XDR grew up at a time when all longs were 4 bytes, so we have to awkwardly
+ * hack around 32/64 and BE/LE differences in this call. Essentially, anything
+ * over (2^32 - 1) will be silently truncated. The 64-bit BE hack is to ensure
+ * we clip the bits that represent values > (2^32 - 1).
  */
-int
-xdrposix_create(XDR *xdrs, int fd, int fmode, enum xdr_op op)
-{
-    biobuf *biop    = new_biobuf(fd, fmode);
-    xdrs->x_op      = op;
-    xdrs->x_private = (char *)biop;
-    if (biop == NULL)
-        return -1;
-
-    /* if write only, or just created (empty), done */
-    if ((biop->mode & O_WRONLY) || (biop->mode & O_CREAT))
-        return 0;
-
-    /* else, read the first bufferful */
-    return rdbuf(biop);
-}
-
-/*
- * "sync" a posix xdr stream.
- */
-int
-xdrposix_sync(XDR *xdrs)
-{
-    biobuf *biop = (biobuf *)xdrs->x_private;
-    if (biop->isdirty) {
-        /* flush */
-        if (wrbuf(biop) < 0)
-            return -1;
-    }
-
-    biop->nwrote = 0; /* force seek in rdbuf */
-
-    /* read it in */
-    if (rdbuf(biop) < 0)
-        return -1;
-
-    return biop->cnt;
-}
-
-/*
- * Destroy a posix xdr stream.
- * Cleans up the xdr stream handle xdrs previously set up by xdrposix_create.
- */
-static void
-xdrposix_destroy(XDR *xdrs)
-{
-    /* flush */
-    biobuf *biop = (biobuf *)xdrs->x_private;
-    if (biop != NULL) {
-        if (biop->isdirty) {
-            (void)wrbuf(biop);
-        }
-        if (biop->fd != -1)
-            (void)close(biop->fd);
-        free(biop);
-    }
-}
 
 static bool_t
-xdrposix_getlong(XDR *xdrs, long *lp)
+xdr_getlong(XDR *xdrs, long *lp)
 {
     unsigned char *up = (unsigned char *)lp;
 
@@ -643,7 +595,7 @@ xdrposix_getlong(XDR *xdrs, long *lp)
 #endif
 #endif
 
-    if (bioread((biobuf *)xdrs->x_private, up, 4) < 4)
+    if (bio_read((biobuf *)xdrs->x_private, up, 4) < 4)
         return FALSE;
 
 #ifndef H4_WORDS_BIGENDIAN
@@ -654,7 +606,7 @@ xdrposix_getlong(XDR *xdrs, long *lp)
 }
 
 static bool_t
-xdrposix_putlong(XDR *xdrs, const long *lp)
+xdr_putlong(XDR *xdrs, const long *lp)
 {
 
     unsigned char *up = (unsigned char *)lp;
@@ -671,36 +623,46 @@ xdrposix_putlong(XDR *xdrs, const long *lp)
 #endif
 #endif
 
-    if (biowrite((biobuf *)xdrs->x_private, up, 4) < 4)
+    if (bio_write((biobuf *)xdrs->x_private, up, 4) < 4)
         return FALSE;
     return TRUE;
 }
 
-static bool_t
-xdrposix_getbytes(XDR *xdrs, char *addr, unsigned len)
+/*
+ * Read/Write a bunch of bytes to/from an XDR file
+ *
+ * NOTE: These deal with raw bytes, not "counted bytes", like xdr_bytes() does!
+ */
+
+bool_t
+xdr_getbytes(XDR *xdrs, char *addr, unsigned len)
 {
-    if ((len != 0) && (bioread((biobuf *)xdrs->x_private, (unsigned char *)addr, (int)len) != len))
+    if ((len != 0) && (bio_read((biobuf *)xdrs->x_private, (unsigned char *)addr, (int)len) != len))
         return FALSE;
     return TRUE;
 }
 
-static bool_t
-xdrposix_putbytes(XDR *xdrs, const char *addr, unsigned len)
+bool_t
+xdr_putbytes(XDR *xdrs, const char *addr, unsigned len)
 {
-    if ((len != 0) && (biowrite((biobuf *)xdrs->x_private, (unsigned char *)addr, (int)len) != len))
+    if ((len != 0) && (bio_write((biobuf *)xdrs->x_private, (unsigned char *)addr, (int)len) != len))
         return FALSE;
     return TRUE;
 }
 
-static unsigned
-xdrposix_getpos(XDR *xdrs)
+/*
+ * Get/set the position in an XDR file. Goes through the I/O buffer.
+ */
+
+unsigned
+xdr_getpos(XDR *xdrs)
 {
     biobuf *biop = (biobuf *)xdrs->x_private;
     return BIOBUFSIZ * biop->page + CNT(biop);
 }
 
-static bool_t
-xdrposix_setpos(XDR *xdrs, unsigned pos)
+bool_t
+xdr_setpos(XDR *xdrs, unsigned pos)
 {
     biobuf *biop = (biobuf *)xdrs->x_private;
     if (biop != NULL) {
@@ -711,15 +673,15 @@ xdrposix_setpos(XDR *xdrs, unsigned pos)
         index = pos % BIOBUFSIZ;
         if (page != biop->page) {
             if (biop->isdirty) {
-                if (wrbuf(biop) < 0)
+                if (bio_write_page(biop) < 0)
                     return FALSE;
             }
             if (page != biop->page + 1)
-                biop->nwrote = 0; /* force seek in rdbuf */
+                biop->nwrote = 0; /* force seek in bio_read_page */
 
             biop->page = page;
 
-            nread = rdbuf(biop);
+            nread = bio_read_page(biop);
             if (nread < 0 || ((biop->mode & O_RDONLY) && nread < index))
                 return FALSE;
         }
@@ -728,4 +690,93 @@ xdrposix_setpos(XDR *xdrs, unsigned pos)
     }
     else
         return FALSE;
+}
+
+/************************/
+/* XDR File State Calls */
+/************************/
+
+/*
+ * Set up the I/O buffer in the passed-in XDR struct
+ *
+ * This is used in the netCDF code, which has a different way of setting
+ * up the file.
+ */
+void
+xdr_setup_nofile(XDR *xdrs, int ncop)
+{
+    biobuf *biop = bio_get_new(-1, 0);
+
+    if (ncop & NC_CREAT)
+        xdrs->x_op = XDR_ENCODE;
+    else
+        xdrs->x_op = XDR_DECODE;
+
+    xdrs->x_private = biop;
+}
+
+/*
+ * Initialize a POSIX XDR file
+ *
+ * Sets up XDR to use the POSIX file descriptor fd
+ *
+ * Operation flag is initialized to op
+ */
+int
+xdr_create(XDR *xdrs, int fd, int fmode, enum xdr_op op)
+{
+    biobuf *biop    = bio_get_new(fd, fmode);
+    xdrs->x_op      = op;
+    xdrs->x_private = (char *)biop;
+    if (biop == NULL)
+        return -1;
+
+    /* If write only, or just created (empty), done */
+    if ((biop->mode & O_WRONLY) || (biop->mode & O_CREAT))
+        return 0;
+
+    /* Else, read the first bufferful */
+    return bio_read_page(biop);
+}
+
+/*
+ * Flush the I/O buffer to the file
+ */
+int
+xdr_sync(XDR *xdrs)
+{
+    biobuf *biop = (biobuf *)xdrs->x_private;
+    if (biop->isdirty) {
+        /* Flush */
+        if (bio_write_page(biop) < 0)
+            return -1;
+    }
+
+    biop->nwrote = 0; /* Force seek in bio_read_page */
+
+    /* Read it in */
+    if (bio_read_page(biop) < 0)
+        return -1;
+
+    return biop->cnt;
+}
+
+/*
+ * Destroy a POSIX XDR stream
+ *
+ * Cleans up after xdrposix_create()
+ */
+void
+xdr_destroy(XDR *xdrs)
+{
+    /* Flush */
+    biobuf *biop = (biobuf *)xdrs->x_private;
+    if (biop != NULL) {
+        if (biop->isdirty) {
+            (void)bio_write_page(biop);
+        }
+        if (biop->fd != -1)
+            (void)close(biop->fd);
+        free(biop);
+    }
 }
