@@ -506,7 +506,7 @@ xdr_NC_array(XDR *xdrs, NC_array **app)
     }
 
     if (!xdr_u_int(xdrs, &temp_count)) {
-        NCadvise(NC_EXDR, "xdr_NC_array:xdr_u_long");
+        NCadvise(NC_EXDR, "xdr_NC_array:xdr_u_int");
         return (FALSE);
     }
     *countp = temp_count;
