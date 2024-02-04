@@ -33,6 +33,7 @@
       "hidden": true,
       "inherits": ["ci-base-tgz", "ci-CompressionVars"],
       "cacheVariables": {
+        "HDF4_PACKAGE_EXTLIBS": "ON",
         "HDF4_ENABLE_JPEG_LIB_SUPPORT": "ON",
         "HDF4_ENABLE_Z_LIB_SUPPORT": "ON",
         "HDF4_ENABLE_SZIP_SUPPORT": "ON",
@@ -43,22 +44,10 @@
       }
     },
     {
-      "name": "ci-ExamplesVars",
-      "hidden": true,
-      "cacheVariables": {
-        "HDF4_EXAMPLES_COMPRESSED": {"type": "STRING", "value": "hdf4-examples-0.3.10.tar.gz"},
-        "HDF4_EXAMPLES_COMPRESSED_DIR": {"type": "PATH", "value": "${sourceParentDir}/temp"},
-        "EXAMPLES_TGZ_ORIGPATH": {"type": "STRING", "value": "https://github.com/HDFGroup/hdf4-examples/archive/refs/tags"},
-        "EXAMPLES_TGZ_ORIGNAME": {"type": "STRING", "value": "v0.3.10.tar.gz"}
-      }
-    },
-    {
       "name": "ci-StdExamples",
       "hidden": true,
-      "inherits": ["ci-base", "ci-ExamplesVars", "ci-base-tgz"],
+      "inherits": ["ci-base", "ci-base-tgz"],
       "cacheVariables": {
-        "EXAMPLES_USE_RELEASE_NAME": "ON",
-        "EXAMPLES_USE_LOCALCONTENT": "OFF",
         "HDF4_PACK_EXAMPLES": "ON",
         "EXAMPLES_DOWNLOAD": "ON"
       }

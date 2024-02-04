@@ -7,17 +7,17 @@ project (HDF4Examples_AN C)
 include (C_sourcefiles.cmake)
 
 foreach (example_name ${h4examples})
-  add_executable (hdf_${example_name} ${PROJECT_SOURCE_DIR}/h4ex_${example_name}.c)
-  target_link_libraries (hdf_${example_name} ${H4EX_HDF4_LINK_LIBS})
+  add_executable (hdf_h4ex_${example_name} ${PROJECT_SOURCE_DIR}/h4ex_${example_name}.c)
+  target_link_libraries (hdf_h4ex_${example_name} ${H4EX_HDF4_LINK_LIBS})
 endforeach ()
 
 foreach (example_name ${h4examples_use})
-  add_executable (hdf_${example_name} ${PROJECT_SOURCE_DIR}/h4ex_${example_name}.c)
-  target_link_libraries (hdf_${example_name} ${H4EX_HDF4_LINK_LIBS})
+  add_executable (hdf_h4ex_${example_name} ${PROJECT_SOURCE_DIR}/h4ex_${example_name}.c)
+  target_link_libraries (hdf_h4ex_${example_name} ${H4EX_HDF4_LINK_LIBS})
 endforeach ()
 
 if (H4EX_BUILD_TESTING)
-  macro (ADD_H4_TEST testname testcreate)
+  macro (ADD_H4_TEST testname testddl dumparg)
     add_test (
         NAME hdf_${testname}-clearall
         COMMAND    ${CMAKE_COMMAND}
@@ -34,21 +34,21 @@ if (H4EX_BUILD_TESTING)
             -D "TEST_OUTPUT=${testname}.out"
             -D "TEST_REFERENCE=${testname}.tst"
             -D "TEST_LIBRARY_DIRECTORY=${CMAKE_TEST_LIB_DIRECTORY}"
-            -P "${HDF4EX_RESOURCES_DIR}/runTest.cmake"
+            -P "${H4EX_RESOURCES_DIR}/runTest.cmake"
     )
     set_tests_properties (hdf_${testname} PROPERTIES DEPENDS hdf_${testname}-clearall)
-    if (HDF4_BUILD_TOOLS AND ${testcreate} STREQUAL "1")
+    if (HDF4_BUILD_TOOLS AND ${testddl} STREQUAL "1")
       add_test (
           NAME hdf_HDP-${testname}
           COMMAND "${CMAKE_COMMAND}"
               -D "TEST_PROGRAM=${H4EX_HDF4_DUMP_EXECUTABLE}"
-              -D "TEST_ARGS:STRING=${ARGN};${testname}.hdf"
+              -D "TEST_ARGS:STRING=${dumparg};${testname}.hdf"
               -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
               -D "TEST_OUTPUT=${testname}.ddl.out"
               -D "TEST_EXPECT=0"
               -D "TEST_REFERENCE=${testname}.ddl"
               -D "TEST_LIBRARY_DIRECTORY=${CMAKE_TEST_LIB_DIRECTORY}"
-              -P "${HDF4EX_RESOURCES_DIR}/runTest.cmake"
+              -P "${H4EX_RESOURCES_DIR}/runTest.cmake"
       )
       set_tests_properties (hdf_HDP-${testname} PROPERTIES DEPENDS hdf_${testname})
     endif ()
@@ -103,10 +103,10 @@ if (H4EX_BUILD_TESTING)
                     DEPENDS ${HDF4Examples_AN_TEST_FILES})
 
   foreach (example_name ${h4examples})
-    ADD_H4_TEST (${example_name} 1 dumpvg)
+    ADD_H4_TEST (h4ex_${example_name} 1 dumpvg)
   endforeach ()
 
   foreach (example_name ${h4examples_use})
-    ADD_H4_TEST (${example_name} 0 dumpvg)
+    ADD_H4_TEST (h4ex_${example_name} 0 dumpvg)
   endforeach ()
 endif ()

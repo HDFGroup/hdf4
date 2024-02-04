@@ -13,7 +13,7 @@ AM_CPPFLAGS=-I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/mfhdf/libsrc      \
          -I$(top_builddir)/mfhdf/libsrc    \
          -I$(top_srcdir)/java/src/jni      \
-          $(JNIFLAGS) $(XDRINC)
+          $(JNIFLAGS)
 
 # This is our main target
 lib_LTLIBRARIES=libhdf_java.la
@@ -25,12 +25,12 @@ libhdf_java_la_SOURCES=hdfanImp.c hdfdfpalImp.c \
    hdfvhImp.c hdfvqImp.c hdfvsqImp.c
 
 # HDF Java (JNI) library depends on HDF Library.
-libhdf_java_la_LIBADD=$(LIBMFHDF) $(LIBHDF) $(XDRLIB) @LIBS@
-libhdf_java_la_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
+libhdf_java_la_LIBADD=$(LIBMFHDF) $(LIBHDF) @LIBS@
+libhdf_java_la_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
 libhdf_java_la_INCLUDES=-I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/mfhdf/libsrc                  \
          -I$(top_builddir)/mfhdf/libsrc                \
          -I$(top_srcdir)/java/src/jni                  \
-          $(JNIFLAGS) $(XDRINC)
+          $(JNIFLAGS)
 
 include $(top_srcdir)/config/conclude.am

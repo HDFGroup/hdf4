@@ -61,15 +61,6 @@ Preconditions:
         tirpc           : RPC library
         zlib            : Zlib compression library
 
-    Back in 2005, the SunRPC of the glibc has been replaced by a TI-RPC
-    (Transport Independent RPC) library to support IPv6. Note that HDF4 configure 
-    expects to find the library with the name libtirpc.a, since Cygwin 1.7.7.
-
-    HDF4 also requires xdr support which is not provided by the Cygwin
-    version of tirpc.  HDF4 provides a library for xdr support when the
-    configure flag --enable-hdf4-xdr is specified (see note 3 in the section
-    "Build, Test and Install HDF4 on Cygwin").
-
     HDF4 may be configured to use the SZIP compression library.
     For more information about the SZIP library, see
 
@@ -114,7 +105,6 @@ Build, Test and Install HDF4 on Cygwin
 3. To configure 
      
        ./configure <--disable-fortran> 
-                   --enable-hdf4-xdr
                    --with-zlib=/path_to_ZLIB_install_directory 
                    --with-jpeg=/path_to_JPEG_install_directory 
                    <--with-szlib=/path_to_SZIP_install_directory>

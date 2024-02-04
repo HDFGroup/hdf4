@@ -10,7 +10,7 @@ ncdump_INCLUDES=-I$(top_srcdir)/hdf/src   \
          -I$(top_srcdir)/mfhdf/util       \
          -I$(top_builddir)/mfhdf/libsrc
 DEFINES=-DHDF
-AM_CPPFLAGS=$(ncdump_INCLUDES) $(XDRINC) $(DEFINES)
+AM_CPPFLAGS=$(ncdump_INCLUDES) $(DEFINES)
 
 ## Add ncdump specific linker flags here
 ncdump_LDFLAGS = $(LT_STATIC_EXEC) $(AM_LDFLAGS)
@@ -26,8 +26,8 @@ man1_MANS = ncdump.1
 
 ## Information for building the "ncdump" program
 ncdump_SOURCES = dumplib.c ncdump.c vardata.c $(top_srcdir)/mfhdf/util/h4getopt.c
-ncdump_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
-ncdump_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
+ncdump_LDADD = $(LIBMFHDF) $(LIBHDF)
+ncdump_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
 
 #############################################################################
 ##                          And the cleanup                                ##

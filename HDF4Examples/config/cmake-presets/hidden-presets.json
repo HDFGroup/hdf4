@@ -7,6 +7,9 @@
       "description": "Basic build using Ninja generator",
       "generator": "Ninja",
       "hidden": true,
+      "cacheVariables": {
+        "HDF_BUILD_C": "ON"
+      },
       "binaryDir": "${sourceParentDir}/build/${presetName}",
       "installDir": "${sourceParentDir}/install/${presetName}"
     },
@@ -36,8 +39,7 @@
     {
       "name": "ci-Release",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
-        "HDF4_BUILD_DOC": "ON"
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
       },
       "hidden": true
     },
@@ -100,7 +102,7 @@
       "name": "ci-Java",
       "hidden": true,
       "cacheVariables": {
-        "HDF4_BUILD_JAVA": "ON"
+        "HDF_BUILD_JAVA": "ON"
       },
       "toolset": {
         "value": "host=x64",

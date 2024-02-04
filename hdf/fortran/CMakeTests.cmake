@@ -12,12 +12,18 @@ set (FORTRAN_SRC_DIR ${HDF4_HDF_TEST_SOURCE_DIR})
 #-----------------------------------------------------------------------------
 if (NOT BUILD_SHARED_LIBS)
   add_library (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} STATIC ${HDF4_HDF_TESTSOURCE_DIR}/forsupf.c)
+  target_include_directories (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET}
+      PRIVATE "${HDF4_HDF_BINARY_DIR};${HDF4_BINARY_DIR}"
+  )
   set_target_properties (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} PROPERTIES LINKER_LANGUAGE C)
   TARGET_C_PROPERTIES (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} STATIC)
   target_link_libraries (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} PUBLIC ${HDF4_SRC_LIB_TARGET})
   H4_SET_LIB_OPTIONS (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} ${HDF4_HDF_TEST_FCSTUB_LIB_NAME} STATIC)
 else ()
   add_library (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} SHARED ${HDF4_HDF_TESTSOURCE_DIR}/forsupf.c)
+  target_include_directories (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET}
+      PRIVATE "${HDF4_HDF_BINARY_DIR};${HDF4_BINARY_DIR}"
+  )
   set_target_properties (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} PROPERTIES LINKER_LANGUAGE C)
   TARGET_C_PROPERTIES (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} SHARED)
   target_link_libraries (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} PUBLIC ${HDF4_SRC_LIBSH_TARGET})
@@ -26,6 +32,7 @@ endif ()
 
 #-- Adding test for fortest
 add_executable (fortest ${HDF4_HDF_TESTSOURCE_DIR}/fortest.c)
+target_include_directories (fortest PRIVATE "${HDF4_HDF_BINARY_DIR};${HDF4_BINARY_DIR}")
 if (NOT BUILD_SHARED_LIBS)
   TARGET_C_PROPERTIES (fortest STATIC)
   target_link_libraries (fortest PRIVATE ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_LIB_TARGET})
@@ -63,7 +70,7 @@ set (FORTEST_FSRCS
 
 add_executable (fortestF ${FORTEST_FSRCS} )
 target_include_directories (fortestF
-    PRIVATE "${CMAKE_Fortran_MODULE_DIRECTORY};${HDF4_HDF_BINARY_DIR};${HDF4_HDFSOURCE_DIR}"
+    PRIVATE "${CMAKE_Fortran_MODULE_DIRECTORY};${HDF4_HDF_BINARY_DIR};${HDF4_HDFSOURCE_DIR};${HDF4_BINARY_DIR}"
 )
 target_compile_options(fortestF
     PRIVATE $<$<STREQUAL:"x${CMAKE_Fortran_SIMULATE_ID}","xMSVC">:${WIN_COMPILE_FLAGS}>

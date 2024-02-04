@@ -33,9 +33,6 @@ hdftest_SOURCES = hdftest.c tutils.c tchunk.c tcomp.c tcoordvar.c	\
 		  tszip.c tattdatainfo.c tdatainfo.c tdatasizes.c
 hdftest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@
 
-xdrtest_SOURCES = xdrtest.c
-xdrtest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@
-
 #############################################################################
 ##                          And the cleanup                                ##
 #############################################################################

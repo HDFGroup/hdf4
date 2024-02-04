@@ -9,7 +9,7 @@ hdfimport_INCLUDES=-I$(top_srcdir)/hdf/src   \
          -I$(top_srcdir)/mfhdf/libsrc        \
          -I$(top_builddir)/mfhdf/libsrc
 DEFINES=-DHDF
-AM_CPPFLAGS=$(hdfimport_INCLUDES) $(XDRINC) $(DEFINES)
+AM_CPPFLAGS=$(hdfimport_INCLUDES) $(DEFINES)
 
 ## Add hdfimport specific linker flags here
 hdfimport_LDFLAGS = $(LT_STATIC_EXEC) $(AM_LDFLAGS)
@@ -18,7 +18,7 @@ hdfimport_LDFLAGS = $(LT_STATIC_EXEC) $(AM_LDFLAGS)
 ##                      Libraries to link against                          ##
 #############################################################################
 
-LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB) @LIBS@
+LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@
 
 #############################################################################
 ##                          Programs to build                              ##

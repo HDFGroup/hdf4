@@ -56,7 +56,7 @@ foreach (example_name ${examples})
             -D "TEST_SKIP_COMPARE=TRUE"
             -D "TEST_OUTPUT=${testname}.out"
             -D "TEST_LIBRARY_DIRECTORY=${CMAKE_TEST_LIB_DIRECTORY}"
-            -P "${HDF4EX_RESOURCES_DIR}/runTest.cmake"
+            -P "${H4EX_RESOURCES_DIR}/runTest.cmake"
     )
     if (NOT "${last_test}" STREQUAL "")
       set_tests_properties (${EXAMPLE_VARNAME}_f_mf_sd_${example_name} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})

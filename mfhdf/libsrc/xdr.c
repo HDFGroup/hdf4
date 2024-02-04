@@ -626,15 +626,20 @@ static bool_t
 xdrposix_getlong(XDR *xdrs, long *lp)
 {
     unsigned char *up = (unsigned char *)lp;
-#if (defined AIX5L64 || defined __powerpc64__)
+
+#if H4_SIZEOF_LONG > 4 && defined(H4_WORDS_BIGENDIAN)
+    /* Need to move the pointer on BE systems w/ 64-bit longs */
     *lp = 0;
     up += (sizeof(long) - 4);
 #endif
+
     if (bioread((biobuf *)xdrs->x_private, up, 4) < 4)
         return FALSE;
+
 #ifndef H4_WORDS_BIGENDIAN
     *lp = ntohl(*lp);
 #endif
+
     return TRUE;
 }
 
@@ -643,11 +648,14 @@ xdrposix_putlong(XDR *xdrs, const long *lp)
 {
 
     unsigned char *up = (unsigned char *)lp;
+
 #ifndef H4_WORDS_BIGENDIAN
     int32_t mycopy = htonl(*lp);
     up             = (unsigned char *)&mycopy;
 #endif
-#if (defined AIX5L64 || defined __powerpc64__)
+
+#if H4_SIZEOF_LONG > 4 && defined(H4_WORDS_BIGENDIAN)
+    /* Need to move the pointer on BE systems w/ 64-bit longs */
     up += (sizeof(long) - 4);
 #endif
 
