@@ -162,10 +162,6 @@ check_fann_rewrite(const char *fname)
     ret = ANfileinfo(an_handle, &nflabs, &nfdescs, &nolabs, &nodescs);
     RESULT("Anfileinfo");
 
-#ifdef AN_DEBUG
-    printf("There Are Nflabs=%d, Nfdescs=%d, Nolabs=%d, Nodescs=%d \n", nflabs, nfdescs, nolabs, nodescs);
-#endif
-
     /* get first label */
     ann_handle = ret = ANselect(an_handle, 0, AN_FILE_LABEL);
     RESULT("ANselect");
@@ -268,10 +264,6 @@ check_fann_rewrite(const char *fname)
         num_errs++;
     }
 
-#ifdef AN_DEBUG
-    printf("found ann_len=%d, file label=%s\n", strlen(ann_label), ann_label);
-#endif
-
     /* Clean up */
     free(ann_label);
     ann_label = NULL;
@@ -324,10 +316,6 @@ check_fann(const char *fname)
     /* Get Info On Annotations In File */
     ret = ANfileinfo(an_handle, &nflabs, &nfdescs, &nolabs, &nodescs);
     RESULT("Anfileinfo");
-
-#ifdef AN_DEBUG
-    printf("There Are Nflabs=%d, Nfdescs=%d, Nolabs=%d, Nodescs=%d \n", nflabs, nfdescs, nolabs, nodescs);
-#endif
 
     /* read file labels */
     for (i = 0; i < nflabs; i++) { /* select file label */
@@ -391,10 +379,6 @@ check_fann(const char *fname)
             num_errs++;
         }
 
-#ifdef AN_DEBUG
-        printf("found ann_len=%d, file label=%s\n", strlen(ann_label), ann_label);
-#endif
-
         free(ann_label);
         ann_label = NULL;
     } /* end for nflabs */
@@ -438,10 +422,6 @@ check_fann(const char *fname)
             printf("\t>>>BAD FILE DESC. \n\t       IS: %s; \n\tSHOULD BE: %s<<<\n", ann_desc, file_desc[i]);
             num_errs++;
         }
-
-#ifdef AN_DEBUG
-        printf("found ann_len=%d, file desc=%s\n", strlen(ann_desc), ann_desc);
-#endif
 
         free(ann_desc);
         ann_desc = NULL;
@@ -494,23 +474,14 @@ check_lab_desc(const char *fname, uint16 tag, uint16 ref, const char *label[], c
     /* Get Info On Annotations In File */
     ret = ANfileinfo(an_handle, &nflabs, &nfdescs, &nolabs, &nodescs);
     RESULT("Anfileinfo");
-#ifdef AN_DEBUG
-    printf("There Are Nflabs=%d, Nfdescs=%d, Nolabs=%d, Nodescs=%d \n", nflabs, nfdescs, nolabs, nodescs);
-#endif
 
     /* Get number of label annotations with this tag/ref */
     num_dlabels = ret = ANnumann(an_handle, AN_DATA_LABEL, tag, ref);
     RESULT("ANnumann");
-#ifdef AN_DEBUG
-    printf("there are %d data labels for tag=%d, ref=%d \n", num_dlabels, tag, ref);
-#endif
 
     /* Get number of label descs with this tag/ref */
     num_ddescs = ret = ANnumann(an_handle, AN_DATA_DESC, tag, ref);
     RESULT("ANnumann");
-#ifdef AN_DEBUG
-    printf("There Are %d Data Descriptions For Tag=%d, Ref=%d \n", num_ddescs, tag, ref);
-#endif
 
     /* allocate space for list of label annotation id's with this tag/ref */
     if (num_dlabels == 0) {
@@ -584,10 +555,6 @@ check_lab_desc(const char *fname, uint16 tag, uint16 ref, const char *label[], c
             num_errs++;
         }
 
-#ifdef AN_DEBUG
-        printf("found data_len=%d, data label=%s\n", strlen(ann_label), ann_label);
-#endif
-
         free(ann_label);
         ann_label = NULL;
     } /* end for labels */
@@ -627,10 +594,6 @@ check_lab_desc(const char *fname, uint16 tag, uint16 ref, const char *label[], c
             printf("\t>>>BAD DATA DESC. \n\t       IS: %s; \n\tSHOULD BE: %s<<<\n", ann_desc, desc[i]);
             num_errs++;
         }
-
-#ifdef AN_DEBUG
-        printf("found data desclen=%d, desc=%s\n", strlen(ann_desc), ann_desc);
-#endif
 
         free(ann_desc);
         ann_desc = NULL;

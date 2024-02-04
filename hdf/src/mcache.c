@@ -47,10 +47,6 @@
  *    -georgev
  */
 
-/* for debugging */
-/*
-#define MCACHE_DEBUG
-*/
 /*
 #define STATISTICS
 */
@@ -258,19 +254,11 @@ done:
                 free(lp);
             }
         } /* end for entry */
-#ifdef MCACHE_DEBUG
-        (void)fprintf(stderr, "mcache_open: ERROR \n");
-#endif
+
         mp = NULL; /* return value */
-    }              /* end error cleanup */
-#ifdef MCACHE_DEBUG
-    (void)fprintf(stderr, "mcache_open: mp->pagesize=%lu\n", mp->pagesize);
-    (void)fprintf(stderr, "mcache_open: mp->maxcache=%u\n", mp->maxcache);
-    (void)fprintf(stderr, "mcache_open: mp->npages=%u\n", mp->npages);
-    (void)fprintf(stderr, "mcache_open: flags=%u\n", flags);
+    }
 #ifdef STATISTICS
-    (void)fprintf(stderr, "mcache_open: mp->listalloc=%lu\n", mp->listalloc);
-#endif
+    fprintf(stderr, "mcache_open: mp->listalloc=%lu\n", mp->listalloc);
 #endif
 
     return mp;
@@ -326,9 +314,6 @@ mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
 
     (void)flags;
 
-#ifdef MCACHE_DEBUG
-    (void)fprintf(stderr, "mcache_get: entering \n");
-#endif
     /* check inputs */
     if (mp == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -344,12 +329,6 @@ mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
 
     /* Check for a page that is cached. */
     if ((bp = mcache_look(mp, pgno)) != NULL) {
-#ifdef MCACHE_DEBUG
-        if (bp->flags & MCACHE_PINNED) {
-            (void)fprintf(stderr, "mcache_get: page %d already pinned\n", bp->pgno);
-            abort();
-        }
-#endif
         /*
          * Move the page to the head of the hash chain and the tail
          * of the lru chain.
@@ -362,9 +341,6 @@ mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
         /* Return a pinned page. */
         bp->flags |= MCACHE_PINNED;
 
-#ifdef MCACHE_DEBUG
-        (void)fprintf(stderr, "mcache_get: getting cached bp->pgno=%d,npages=%d\n", bp->pgno, mp->npages);
-#endif
         /* update this page reference */
         lhead = &mp->lhqh[HASHKEY(bp->pgno)];
         for (lp = lhead->cqh_first; lp != (void *)lhead; lp = lp->hl.cqe_next)
@@ -380,10 +356,6 @@ mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
         ret_value = RET_SUCCESS;
         goto done;
     } /* end if bp */
-
-#ifdef MCACHE_DEBUG
-    (void)fprintf(stderr, "mcache_get: NOT cached page\n");
-#endif
 
     /* Page not cached so
      * Get a page from the cache to use or create one. */
@@ -417,12 +389,9 @@ mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
         lp->elemhit = 1;
 #endif
         H4_CIRCLEQ_INSERT_HEAD(lhead, lp, hl); /* add to list */
-#ifdef MCACHE_DEBUG
-        (void)fprintf(stderr, "mcache_get: skipping reading in page=%u\n", pgno);
-#endif
-    }                           /*end if !list_hit */
-    else {                      /* list hit, need to read page */
-        lp->eflags = ELEM_READ; /* Indicate we are reading this page */
+    }                                          /*end if !list_hit */
+    else {                                     /* list hit, need to read page */
+        lp->eflags = ELEM_READ;                /* Indicate we are reading this page */
 
 #ifdef STATISTICS
         ++mp->pageread;
@@ -461,15 +430,9 @@ mcache_get(MCACHE *mp,   /* IN: MCACHE cookie */
 
 done:
     if (ret_value == RET_ERROR) { /* error cleanup */
-#ifdef MCACHE_DEBUG
-        fprintf(stderr, "mcache_get: Error exiting \n");
-#endif
         free(lp);
         return NULL;
     }
-#ifdef MCACHE_DEBUG
-    fprintf(stderr, "mcache_get: Exiting \n");
-#endif
     return bp->page;
 } /* mcache_get() */
 
@@ -503,13 +466,7 @@ mcache_put(MCACHE *mp,   /* IN: MCACHE cookie */
 #endif
     /* get pointer to bucket element */
     bp = (BKT *)((char *)page - sizeof(BKT));
-#ifdef MCACHE_DEBUG
-    (void)fprintf(stderr, "mcache_put: putting page=%d\n", bp->pgno);
-    if (!(bp->flags & MCACHE_PINNED)) {
-        (void)fprintf(stderr, "mcache_put: page %d not pinned\n", bp->pgno);
-        abort();
-    }
-#endif
+
     /* Unpin the page and mark it appropriately */
     bp->flags &= ~MCACHE_PINNED;
     bp->flags |= flags & MCACHE_DIRTY;
@@ -551,9 +508,6 @@ mcache_close(MCACHE *mp /* IN: MCACHE cookie */)
     intn    ret_value = RET_SUCCESS;
     intn    entry; /* index into hash table */
 
-#ifdef MCACHE_DEBUG
-    (void)fprintf(stderr, "mcache_close: entered \n");
-#endif
     /* check inputs */
     if (mp == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -581,9 +535,6 @@ done:
     /* Free the MCACHE cookie. */
     free(mp);
 
-#ifdef MCACHE_DEBUG
-    fprintf(stderr, "mcache_close: freed %d list elements\n\n", nelem);
-#endif
     return ret_value;
 } /* mcache_close() */
 
@@ -603,9 +554,6 @@ mcache_sync(MCACHE *mp /* IN: MCACHE cookie */)
     BKT *bp        = NULL; /* bucket element */
     intn ret_value = RET_SUCCESS;
 
-#ifdef MCACHE_DEBUG
-    (void)fprintf(stderr, "MCACHE_sync: entering \n");
-#endif
     /* check inputs */
     if (mp == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -620,10 +568,6 @@ done:
     if (ret_value == RET_ERROR) { /* error cleanup */
         return ret_value;
     }
-
-#ifdef MCACHE_DEBUG
-    (void)fprintf(stderr, "mcache_sync: exiting \n");
-#endif
 
     return ret_value;
 } /* mcache_sync() */
@@ -676,14 +620,7 @@ mcache_bkt(MCACHE *mp /* IN: MCACHE cookie */)
             head = &mp->hqh[HASHKEY(bp->pgno)];
             H4_CIRCLEQ_REMOVE(head, bp, hq);
             H4_CIRCLEQ_REMOVE(&mp->lqh, bp, q);
-#ifdef MCACHE_DEBUG
-            {
-                void *spage;
-                spage = bp->page;
-                memset(bp, 0xff, sizeof(BKT) + mp->pagesize);
-                bp->page = spage;
-            }
-#endif
+
             /* done */
             ret_value = RET_SUCCESS;
             goto done;
@@ -694,10 +631,6 @@ mcache_bkt(MCACHE *mp /* IN: MCACHE cookie */)
 
 #ifdef STATISTICS
     ++mp->pagealloc;
-#endif
-
-#if defined(MCACHE_DEBUG) || defined(PURIFY)
-    memset(bp, 0xff, sizeof(BKT) + mp->pagesize);
 #endif
 
     /* set page ptr past bucket element section */
@@ -730,9 +663,7 @@ mcache_write(MCACHE *mp, /* IN: MCACHE cookie */
     struct _lhqh *lhead     = NULL; /* head of an entry in list hash chain */
     L_ELEM       *lp        = NULL;
     intn          ret_value = RET_SUCCESS;
-#ifdef MCACHE_DEBUG
-    (void)fprintf(stderr, "mcache_write: entering \n");
-#endif
+
     /* check inputs */
     if (mp == NULL || bp == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -769,24 +700,14 @@ mcache_write(MCACHE *mp, /* IN: MCACHE cookie */
         goto done;
     }
 
-#ifdef MCACHE_DEBUG
-    (void)fprintf(stderr, "mcache_write: npages=%u\n", mp->npages);
-#endif
-
     /* mark page as clean */
     bp->flags &= ~MCACHE_DIRTY;
 
 done:
     if (ret_value == RET_ERROR) { /* error cleanup */
-#ifdef MCACHE_DEBUG
-        (void)fprintf(stderr, "mcache_write: error exiting\n");
-#endif
         return ret_value;
     }
 
-#ifdef MCACHE_DEBUG
-    (void)fprintf(stderr, "mcache_write: exiting\n");
-#endif
     return ret_value;
 } /* mcache_write() */
 

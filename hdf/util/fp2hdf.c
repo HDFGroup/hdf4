@@ -526,19 +526,6 @@ gdata(char *infile, struct Input *in, FILE *strm, int *is_maxmin)
         *is_maxmin = TRUE;
     }
 
-#ifdef DEBUG
-    (void)printf("\tdata:");
-    for (k = 0, fp32 = in->data; k < in->dims[2]; k++) {
-        (void)printf("\n");
-        for (j = 0; j < in->dims[1]; j++) {
-            (void)printf("\n\t");
-            for (i = 0; i < in->dims[0]; i++, fp32++)
-                (void)printf("%E ", *fp32);
-        }
-    }
-    (void)printf("\n\n\n");
-#endif /* DEBUG */
-
     return (0);
 
 err:
@@ -628,13 +615,6 @@ gdimen(char *infile, struct Input *inp, FILE *strm)
         (void)fprintf(stderr, err3, infile);
         goto err;
     }
-
-#ifdef DEBUG
-    (void)printf("\nInput Information ...\n\n");
-    (void)printf("\trank:\n\n\t%d\n\n", inp->rank);
-    (void)printf("\tdimensions (nplanes,nrows,ncols):\n\n");
-    (void)printf("\t%d %d %d\n\n", inp->dims[2], inp->dims[1], inp->dims[0]);
-#endif /* DEBUG */
 
     return (0);
 
@@ -758,11 +738,6 @@ gmaxmin(char *infile, struct Input *in, FILE *strm, int *is_maxmin)
             *is_maxmin = TRUE;
     }
 
-#ifdef DEBUG
-    (void)printf("\tinput maximum/minimum values:\n\n");
-    (void)printf("\t%E %E\n\n", in->max, in->min);
-#endif /* DEBUG */
-
     return (0);
 
 err:
@@ -875,29 +850,6 @@ gscale(char *infile, struct Input *in, FILE *strm, int *is_scale)
             in->hscale[i] = in->hscale[i - 1];
         }
     }
-
-#ifdef DEBUG
-    if (in->rank == 2) {
-        (void)printf("\tscales of the axes (vert,horiz):\n\n\t");
-        for (i = 0; i < hdfdims[0]; i++)
-            (void)printf("%E ", in->vscale[i]);
-        (void)printf("\n\t");
-        for (i = 0; i < hdfdims[1]; i++)
-            (void)printf("%E ", in->hscale[i]);
-    }
-    else {
-        (void)printf("\tscales of the axes (depth,vert,horiz):\n\n\t");
-        for (i = 0; i < hdfdims[0]; i++)
-            (void)printf("%E ", in->dscale[i]);
-        (void)printf("\n\t");
-        for (i = 0; i < hdfdims[1]; i++)
-            (void)printf("%E ", in->vscale[i]);
-        (void)printf("\n\t");
-        for (i = 0; i < hdfdims[2]; i++)
-            (void)printf("%E ", in->hscale[i]);
-    }
-    (void)printf("\n\n\n");
-#endif /* DEBUG */
 
     return (0);
 
@@ -1761,9 +1713,6 @@ process(struct Options *opt)
     int32          len;
     FILE          *strm;
     int32          hdf;
-#ifdef DEBUG
-    int h, v, d;
-#endif /* DEBUG */
 
     const char *err1  = "Error creating HDF output file: %s.\n";
     const char *err2  = "Unable to dynamically allocate memory.\n";
@@ -1976,29 +1925,6 @@ process(struct Options *opt)
                     goto err;
                 }
             }
-
-#ifdef DEBUG
-            (void)printf("Output Raster Information ...\n\n");
-            (void)printf("\tresolution (horiz,vert,[depth]):\n\n");
-            if (in.rank == 2)
-                (void)printf("\t%d %d\n\n", im.hres, im.vres);
-            else
-                (void)printf("\t%d %d %d\n\n", im.hres, im.vres, im.dres);
-            if (opt->mean == TRUE) {
-                (void)printf("\tadjusted max/min values:\n\n");
-                (void)printf("\t%f %f\n\n", in.max, in.min);
-            }
-            (void)printf("\tcolor index values:");
-            for (d = 0, ip = im.image; d < im.dres; d++) {
-                (void)printf("\n");
-                for (v = 0; v < im.vres; v++) {
-                    (void)printf("\n");
-                    for (h = 0; h < im.hres; h++, ip++)
-                        (void)printf("\t%d", *ip);
-                }
-            }
-            (void)printf("\n");
-#endif /* DEBUG */
         }
 
         /*

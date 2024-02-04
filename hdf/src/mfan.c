@@ -921,9 +921,7 @@ ANIreadann(int32 ann_id, /* IN: annotation id (handle) */
     /* first four bytes were tag/ref if data annotation, so they don't count */
     if (ann_tag == DFTAG_DIL || ann_tag == DFTAG_DIA)
         ann_len -= 4;
-#ifdef AN_DEBUG
-    printf("ANIreadann: from Hinquire, ann_len=%d, maxlen=%d\n", ann_len, maxlen);
-#endif
+
     /* Check length of space provided
      * if not enough space, truncate annotation
      * Labels need space for null terminator, Descriptions don't */
@@ -949,9 +947,7 @@ ANIreadann(int32 ann_id, /* IN: annotation id (handle) */
     /* If Label need to NULL terminate string */
     if (ann_tag == DFTAG_FID || ann_tag == DFTAG_DIL)
         ann[ann_len] = '\0';
-#ifdef AN_DEBUG
-    printf("ANIreadann: ann_len=%d, ann=%s\n", ann_len, ann);
-#endif
+
     /* Close access to annotation object */
     if (FAIL != aid) {
         if (FAIL == Hendaccess(aid))
@@ -1084,9 +1080,6 @@ ANIwriteann(int32       ann_id, /* IN: annotation id */
         if ((int32)FAIL == Hwrite(aid, (int32)4, datadi))
             HE_REPORT_GOTO("Failed to write tag/ref of annotation", FAIL);
 
-#ifdef AN_DEBUG
-        printf("ANIwriteann: ann_len=%d, ann=%s\n", ann_len, ann);
-#endif
         /* then write the annotation itself */
         if ((int32)FAIL == Hwrite(aid, ann_len, ann))
             HE_REPORT_GOTO("Failed to write annotation", FAIL);
@@ -1100,9 +1093,6 @@ ANIwriteann(int32       ann_id, /* IN: annotation id */
         /* write out file label/description */
         if (FAIL == Hputelement(file_id, ann_tag, ann_ref, (const uint8 *)ann, ann_len))
             HE_REPORT_GOTO("Failed to write file annotation", FAIL);
-#ifdef AN_DEBUG
-        printf("ANIwriteann: fann_len=%d, fann=%s\n", ann_len, ann);
-#endif
     }
 
 done:
