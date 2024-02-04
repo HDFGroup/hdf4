@@ -109,8 +109,6 @@ Source Distribution Layout
    mfhdf  -- The netCDF(mfhdf) part of the HDF/mfhdf distribution and
              additional HDF utilities, such as hdp, hrepack, hdfimport, etc.
 
-   man    -- An incomplete set of man page(s) for HDF.
-
    release\_notes -- 
              Installation instructions for UNIX and Windows.
              Descriptions of new features and bug fixes in this release.

@@ -38,6 +38,14 @@ New features and changes
 ========================
     Configuration:
     -------------
+    - Man pages were removed
+
+      The few man pages in the HDF4 library are woefully incomplete and/or
+      outdated.  We have no resources to properly update those and to add the
+      missing ones. Instead, we will try to create better man pages from Doxygen.
+
+      (BMR - 2024/02/04)
+
     - Incorporated HDF4 examples repository into HDF4 library.
 
       The HDF4Examples folder is equivalent to the repository hdf4-examples.

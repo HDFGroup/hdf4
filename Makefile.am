@@ -13,7 +13,7 @@ else
    JAVA_DIR=
 endif
 
-SUBDIRS = hdf mfhdf $(JAVA_DIR) man
+SUBDIRS = hdf mfhdf $(JAVA_DIR)
 # install libhdf4.settings in lib directory
 settingsdir = $(libdir)
 settings_DATA = libhdf4.settings
