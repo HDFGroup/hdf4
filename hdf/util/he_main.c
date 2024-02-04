@@ -664,8 +664,7 @@ putElement(char *file, uint16 tag, uint16 ref, char *data, int32 len)
 int
 writeGrp(char *file)
 {
-    int    i;
-    uint16 ref;
+    uint16 ref = DFREF_NONE;
     int    grp;
     int    elt;
     int    ret;
@@ -676,14 +675,16 @@ writeGrp(char *file)
 
     grp = currGrpNo;
     gid = DFdisetup(he_grp[grp].size);
-    for (i = 0; i < he_grp[grp].size; i++) {
+    for (int i = 0; i < he_grp[grp].size; i++) {
         elt = findDesc(he_grp[grp].ddList + i);
         if (elt >= 0)
             writeElt(file, ref, elt);
-        /* update the group dd list */
+
+        /* Update the group dd list */
         DFdiput(gid, he_grp[grp].ddList[i].tag, ref);
     }
-    /* do the group now */
+
+    /* Do the group now */
 
     if ((fid = Hopen(file, DFACC_READ | DFACC_WRITE, 0)) == FAIL) {
         HEprint(stderr, 0);
@@ -701,12 +702,14 @@ getNewRef(char *file, uint16 *pRef)
 {
     int32 fid;
 
-    if ((fid = Hopen(file, DFACC_READ | DFACC_WRITE, 0)) == FAIL)
+    if ((fid = Hopen(file, DFACC_READ | DFACC_WRITE, 0)) == FAIL) {
         /* a little tricky here */
         if (HEvalue(0) != DFE_FNF || (fid = Hopen(file, DFACC_ALL, 0)) == FAIL) {
             HEprint(stderr, 0);
             return FAIL;
         }
+    }
+
     *pRef = Hnewref(fid);
     return Hclose(fid);
 }

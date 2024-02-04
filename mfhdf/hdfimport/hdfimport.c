@@ -2501,7 +2501,7 @@ err:
 static int32
 create_SDS(int32 sd_id, int32 nt, struct Input *in)
 {
-    int32 sds_id;
+    int32 sds_id = FAIL;
 
     if (in->rank == 2) {
         int32 edges[2];
@@ -2712,7 +2712,8 @@ process(struct Options *opt)
     int32          len;
     FILE          *strm = NULL;
     int32          hdf;
-    int32          sd_id, sds_id;
+    int32          sd_id  = FAIL;
+    int32          sds_id = FAIL;
 
 #ifdef DEBUG
     int h, v, d;

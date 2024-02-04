@@ -88,7 +88,8 @@ test_dim1_SDS1(void)
     float32        sds1_data[] = {0.1, 2.3, 4.5, 6.7, 8.9};
     float32        out_data[5];
     int32          dimsize[1];
-    int32          sds_id, file_id, dim_id, index;
+    int32          sds_id, file_id, dim_id;
+    int32          index = FAIL;
     int32          start = 0, stride = 1;
     int32          num_type, count;
     int32          n_datasets, n_file_attrs, n_vars = 0;
