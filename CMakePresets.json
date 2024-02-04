@@ -178,7 +178,6 @@
     },
     {
       "name": "ci-StdShar-win-Intel",
-      "hidden": true,
       "configurePreset": "ci-StdShar-Intel",
       "inherits": [
         "ci-x64-Release-Intel"
