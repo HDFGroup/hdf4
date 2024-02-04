@@ -14,9 +14,7 @@
  */
 
 #include <stdlib.h>
-#ifdef HDF
 #include "mfhdf.h"
-#endif
 #define ___      0              /* marker for structure place-holder */
 #define BAD_TYPE NC_UNSPECIFIED /* must be distinct from valid types */
 

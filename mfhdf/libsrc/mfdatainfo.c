@@ -43,8 +43,6 @@ LOCAL ROUTINES
 
 #include "local_nc.h"
 
-#ifdef HDF
-
 #ifndef DATAINFO_MASTER
 #define DATAINFO_MASTER
 #endif
@@ -855,5 +853,3 @@ done:
 
     return ret_value;
 } /* SDgetanndatainfo */
-
-#endif /* HDF */

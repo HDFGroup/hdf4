@@ -13,8 +13,6 @@
 
 #include "mfhdf.h"
 
-#ifdef HDF
-
 #include "hdftest.h"
 
 #define NETCDF_READ_TEST
@@ -242,5 +240,3 @@ test_netcdf_reading()
     return num_errs;
 } /* test_netcdf_reading() */
 #endif /* NETCDF_READ_TEST */
-
-#endif /* HDF */

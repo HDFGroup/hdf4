@@ -29,8 +29,6 @@
 
 #include "mfhdf.h"
 
-#ifdef HDF
-
 #include "hdftest.h"
 
 #define FILE_NAME "datasizes.hdf" /* data file to test empty SDSs */
@@ -634,5 +632,3 @@ test_datasizes()
         PASSED();
     return num_errs;
 }
-
-#endif /* HDF */

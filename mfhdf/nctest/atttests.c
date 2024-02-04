@@ -19,9 +19,7 @@
 #include "emalloc.h"
 #include "tests.h"
 #include "val.h"
-#ifdef HDF
 #include "hdf.h"
-#endif
 
 #define LEN_OF(array) ((sizeof array) / (sizeof array[0]))
 

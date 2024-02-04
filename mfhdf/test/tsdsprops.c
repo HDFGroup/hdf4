@@ -30,8 +30,6 @@
 
 #include "mfhdf.h"
 
-#ifdef HDF
-
 #include "hdftest.h"
 
 /***************************************************************************
@@ -763,5 +761,3 @@ test_SDSprops()
         PASSED();
     return num_errs;
 }
-
-#endif /* HDF */

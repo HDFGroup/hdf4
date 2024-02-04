@@ -13,8 +13,6 @@
 
 #include "mfhdf.h"
 
-#ifdef HDF
-
 #include "hdftest.h"
 
 #define UFOFILE   "file.UFO" /* non-existing file */
@@ -1345,5 +1343,3 @@ main(void)
         return EXIT_FAILURE;
     }
 }
-
-#endif /* HDF */

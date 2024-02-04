@@ -30,8 +30,6 @@
 
 #include "mfhdf.h"
 
-#ifdef HDF
-
 #include "hdftest.h"
 
 #define FILE_NAME "emptySDSs.hdf" /* data file to test empty SDSs */
@@ -565,5 +563,3 @@ test_checkempty()
         PASSED();
     return num_errs;
 }
-
-#endif /* HDF */

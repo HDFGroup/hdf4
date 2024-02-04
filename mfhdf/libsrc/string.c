@@ -17,7 +17,6 @@
 #include <string.h>
 #include "local_nc.h"
 
-#ifdef HDF
 static uint32
 compute_hash(unsigned count, const char *str)
 {
@@ -42,7 +41,6 @@ compute_hash(unsigned count, const char *str)
     } /* end if */
     return (ret);
 } /* end compute_hash() */
-#endif /* HDF */
 
 NC_string *
 NC_new_string(unsigned count, const char *str)
@@ -61,9 +59,7 @@ NC_new_string(unsigned count, const char *str)
         goto alloc_err;
     ret->count = count;
     ret->len   = count;
-#ifdef HDF
-    ret->hash = compute_hash(count, str);
-#endif              /* HDF */
+    ret->hash  = compute_hash(count, str);
     if (count != 0) /* allocate */
     {
         memlen      = count + 1;
@@ -71,11 +67,7 @@ NC_new_string(unsigned count, const char *str)
         if (ret->values == NULL)
             goto alloc_err;
         if (str != NULL) {
-#ifdef HDF
             memcpy(ret->values, str, (size_t)count);
-#else
-            (void)strncpy(ret->values, str, count);
-#endif
             ret->values[count] = 0;
         }
     }
@@ -120,10 +112,8 @@ NC_re_string(NC_string *old, unsigned count, const char *str)
     (void)memset(old->values + count, 0, (int)old->count - (int)count + 1);
 
     /* make sure len is always == to the string length */
-    old->len = count;
-#ifdef HDF
+    old->len  = count;
     old->hash = compute_hash(count, str);
-#endif /* HDF */
 
     return (old);
 }

@@ -17,22 +17,6 @@
 #include <string.h>
 #include "local_nc.h"
 
-#ifdef NO_MEM_FUNCTS
-/*
- * internal replacement for memset
- */
-char *
-NCmemset(char *s, int c, int n)
-{
-    char *cp;
-
-    for (cp = s; cp < &s[n]; *cp++ = c)
-        /* nada */;
-
-    return s;
-}
-#endif
-
 /*
  * for a netcdf type
  *  return the size of the on-disk representation
@@ -229,22 +213,13 @@ NC_new_array(nc_type type, unsigned count, const void *values)
     if (ret == NULL)
         goto alloc_err;
 
-    ret->type = type;
-    ret->szof = NC_typelen(type);
-#ifdef SDDEBUG
-    fprintf(stderr, "NC_new_array(): type=%u, NC_typelen(type)=%u\n", (unsigned)type, (unsigned)ret->szof);
-#endif
+    ret->type  = type;
+    ret->szof  = NC_typelen(type);
     ret->count = count;
     memlen     = count * ret->szof;
     ret->len   = count * NC_xtypelen(type);
-#ifdef SDDEBUG
-    fprintf(stderr, "NC_new_array(): count=%u, memlen=%u\n", count, memlen);
-#endif
     if (count != 0) {
         ret->values = malloc(memlen);
-#ifdef SDDEBUG
-        fprintf(stderr, "NC_new_array(): ret->values=%p, values=%p\n", ret->values, values);
-#endif
         if (ret->values == NULL)
             goto alloc_err;
         if (values == NULL) {
@@ -259,9 +234,6 @@ NC_new_array(nc_type type, unsigned count, const void *values)
         ret->values = NULL;
     }
 
-#ifdef SDDEBUG
-    fprintf(stderr, "NC_new_array(): ret=%p\n", ret);
-#endif
     return (ret);
 alloc_err:
     nc_serror("NC_new_array");

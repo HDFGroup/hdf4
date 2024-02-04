@@ -18,9 +18,7 @@
 #include "error.h"
 #include "tests.h"
 #include "emalloc.h"
-#ifdef HDF
 #include "hdf.h"
-#endif
 
 #define LEN_OF(array) ((sizeof array) / (sizeof array[0]))
 #define min(A, B)     ((A) < (B) ? (A) : (B))

@@ -17,8 +17,6 @@
 
 #include "mfhdf.h"
 
-#ifdef HDF
-
 #include "hdftest.h"
 #include "hfile.h"
 
@@ -84,4 +82,3 @@ test_sd()
         PASSED();
     return num_errs;
 } /* test_SDAPI_ids */
-#endif /* HDF */
