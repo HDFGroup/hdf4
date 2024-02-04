@@ -131,8 +131,8 @@ NC_re_string(NC_string *old, unsigned count, const char *str)
 bool_t
 xdr_NC_string(XDR *xdrs, NC_string **spp)
 {
-    unsigned long count = 0;
-    int           status;
+    unsigned count = 0;
+    int      status;
 
     switch (xdrs->x_op) {
         case XDR_FREE:
@@ -140,7 +140,7 @@ xdr_NC_string(XDR *xdrs, NC_string **spp)
             return (TRUE);
         case XDR_DECODE:
             /* need the length to pass to new */
-            if (!xdr_u_long(xdrs, &count)) {
+            if (!xdr_u_int(xdrs, &count)) {
                 return (FALSE);
             }
             if (count == 0) {
@@ -161,10 +161,10 @@ xdr_NC_string(XDR *xdrs, NC_string **spp)
             /* first deal with the length */
             if (*spp == NULL) {
                 count = 0;
-                return (xdr_u_long(xdrs, &count));
+                return (xdr_u_int(xdrs, &count));
             } /* else */
             count = (*spp)->count;
-            if (!xdr_u_long(xdrs, &count)) {
+            if (!xdr_u_int(xdrs, &count)) {
                 return (FALSE);
             }
             /* then deal with the characters */

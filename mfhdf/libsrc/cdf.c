@@ -548,7 +548,7 @@ xdr_cdf(XDR *xdrs, NC **handlep)
 static bool_t
 NC_xdr_cdf(XDR *xdrs, NC **handlep)
 {
-    unsigned long magic;
+    unsigned magic;
 
     if (xdrs->x_op == XDR_FREE) {
         NC_free_xcdf(*handlep);
@@ -563,13 +563,13 @@ NC_xdr_cdf(XDR *xdrs, NC **handlep)
     }
 
     /* magic number */
-    if (!xdr_u_long(xdrs, &magic)) {
+    if (!xdr_u_int(xdrs, &magic)) {
         if (xdrs->x_op == XDR_DECODE) {
             NCadvise(NC_ENOTNC, "Not a netcdf file (Can't read magic number)");
         }
         else {
             /* write error */
-            nc_serror("xdr_cdf: xdr_u_long");
+            nc_serror("xdr_cdf: xdr_u_int");
         }
         return (FALSE);
     }
