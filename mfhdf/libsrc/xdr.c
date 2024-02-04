@@ -627,10 +627,12 @@ xdrposix_getlong(XDR *xdrs, long *lp)
 {
     unsigned char *up = (unsigned char *)lp;
 
-#if H4_SIZEOF_LONG > 4 && defined(H4_WORDS_BIGENDIAN)
+#if defined(H4_WORDS_BIGENDIAN)
+#if H4_SIZEOF_LONG > 4
     /* Need to move the pointer on BE systems w/ 64-bit longs */
     *lp = 0;
     up += (sizeof(long) - 4);
+#endif
 #endif
 
     if (bioread((biobuf *)xdrs->x_private, up, 4) < 4)
@@ -654,9 +656,11 @@ xdrposix_putlong(XDR *xdrs, const long *lp)
     up             = (unsigned char *)&mycopy;
 #endif
 
-#if H4_SIZEOF_LONG > 4 && defined(H4_WORDS_BIGENDIAN)
+#if defined(H4_WORDS_BIGENDIAN)
+#if H4_SIZEOF_LONG > 4
     /* Need to move the pointer on BE systems w/ 64-bit longs */
     up += (sizeof(long) - 4);
+#endif
 #endif
 
     if (biowrite((biobuf *)xdrs->x_private, up, 4) < 4)
