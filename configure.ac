@@ -191,14 +191,6 @@ if test "X$host_config" != "Xnone"; then
   . $host_config
 fi
 
-## Special MinGW checks
-case "`uname`" in
-    MINGW*)
-      # Check for Winsock library
-      AC_CHECK_LIB([ws2_32]), [htonl])
-      ;;
-esac
-
 ## ======================================================================
 ## Checks for netCDF-2.3.2 support
 ## ======================================================================
@@ -855,19 +847,6 @@ AM_CONDITIONAL([BUILD_SHARED_SZIP_CONDITIONAL], [test "X$USE_COMP_SZIP" = "Xyes"
 CPPFLAGS="-D_POSIX_C_SOURCE=200809L $CPPFLAGS"
 
 ## ======================================================================
-## Checks for endianness functions
-## The htons and ntohs functions are available on most systems.
-## These functions convert betweennetwork endiannessand hostendianness.
-## Network endianness is big-endian; because the standard TCP/IP network
-## protocols use big-endian ordering. These functions come in two sizes:
-## htonl and ntohl operate on 4-byte quantities, and
-## htons and ntohs operate on 2-byte quantities.
-## The hton functions convert host endianness to network endianness.
-## The ntoh functions convert network endianness to host endianness
-## ======================================================================
-AC_CHECK_FUNCS([htonl htons ntohl ntohs])
-
-## ======================================================================
 ## Checks for headers
 ## ======================================================================
 AC_CHECK_HEADERS([fcntl.h unistd.h])
@@ -876,10 +855,15 @@ AC_CHECK_HEADERS([sys/file.h sys/resource.h sys/stat.h sys/time.h sys/wait.h])
 AC_CHECK_HEADERS([sys/types.h])
 
 AC_CHECK_HEADERS([io.h])
-AC_CHECK_HEADERS([arpa/inet.h netinet/in.h])
+AC_CHECK_HEADERS([arpa/inet.h])
 
-## MinGW (for htonl, etc.)
-AC_CHECK_HEADERS([winsock2.h])
+## Special MinGW checks
+case "`uname`" in
+    MINGW*)
+      # Check for Winsock library
+      AC_CHECK_LIB([ws2_32], [htonl])
+      ;;
+esac
 
 ## ----------------------------------------------------------------------
 ## XDR grew up in a world where long integers were 32 bits in size. Now

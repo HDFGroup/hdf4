@@ -46,17 +46,12 @@
 /* Which header files include htonl() ? */
 
 #ifdef H4_HAVE_WIN32_API
-#ifdef H4_HAVE_WINSOCK2_H
 /* Use winsock on Win32 (including MinGW) */
 #include <winsock2.h>
-#endif
 #else
 /* And normal network headers everywhere else */
 #ifdef H4_HAVE_ARPA_INET_H
 #include <arpa/inet.h>
-#endif
-#ifdef H4_HAVE_NETINET_IN_H
-#include <netinet/in.h>
 #endif
 #endif
 

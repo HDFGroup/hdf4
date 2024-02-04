@@ -451,17 +451,8 @@ CHECK_FUNCTION_EXISTS (asprintf          ${HDF_PREFIX}_HAVE_ASPRINTF)
 CHECK_FUNCTION_EXISTS (vasprintf         ${HDF_PREFIX}_HAVE_VASPRINTF)
 CHECK_FUNCTION_EXISTS (waitpid           ${HDF_PREFIX}_HAVE_WAITPID)
 
-if (NOT WINDOWS)
-  CHECK_FUNCTION_EXISTS (ntohl             ${HDF_PREFIX}_HAVE_NTOHL)
-  CHECK_FUNCTION_EXISTS (htonl             ${HDF_PREFIX}_HAVE_HTONL)
-  CHECK_FUNCTION_EXISTS (ntohs             ${HDF_PREFIX}_HAVE_NTOHS)
-  CHECK_FUNCTION_EXISTS (htons             ${HDF_PREFIX}_HAVE_HTONS)
-else ()
+if (WINDOWS)
   set (CMAKE_REQUIRED_LIBRARIES "ws2_32")
-  check_symbol_exists (ntohl "winsock2.h" ${HDF_PREFIX}_HAVE_NTOHL)
-  check_symbol_exists (htonl "winsock2.h" ${HDF_PREFIX}_HAVE_HTONL)
-  check_symbol_exists (ntohs "winsock2.h" ${HDF_PREFIX}_HAVE_NTOHS)
-  check_symbol_exists (htons "winsock2.h" ${HDF_PREFIX}_HAVE_HTONS)
 endif ()
 
 #-----------------------------------------------------------------------------
