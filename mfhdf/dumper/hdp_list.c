@@ -892,24 +892,26 @@ do_list(intn curr_arg, intn argc, char *argv[], intn help)
     int32       an_id     = FAIL; /* annotation interface handle */
     intn        ret_value = SUCCEED;
 
+    /* Do this early, to avoid uninitialized warnings in cleanup code */
+    init_list_opts(&list_opts);
+
     if (help == TRUE) {
         list_usage(argc, argv);
         goto done;
-    } /* end if */
+    }
 
-    /* incomplete command */
+    /* Incomplete command */
     if (curr_arg >= argc) {
         list_usage(argc, argv);
-        ret_value = FAIL; /* so caller can be traced in debugging */
+        ret_value = FAIL; /* So caller can be traced in debugging */
         goto done;
     }
 
-    init_list_opts(&list_opts);
     if ((status = parse_list_opts(&list_opts, curr_arg, argc, argv)) == FAIL) {
         list_usage(argc, argv);
         ret_value = FAIL;
         goto done;
-    } /* end if */
+    }
 
     curr_arg += status;
     if (curr_arg >= argc || (f_list = make_file_list(curr_arg, argc, argv)) == NULL) {
@@ -917,14 +919,14 @@ do_list(intn curr_arg, intn argc, char *argv[], intn help)
         list_usage(argc, argv);
         ret_value = FAIL;
         goto done;
-    } /* end if */
+    }
 
-    /* process each file */
+    /* Process each file */
     f_name = get_next_file(f_list, 0);
     while (f_name != NULL) {
         int label_flag, desc_flag;
-        vinit_done = FALSE; /* reset global Vset variable */
-        obj_num    = 0;     /* number of the object we are displaying */
+        vinit_done = FALSE; /* Reset global Vset variable */
+        obj_num    = 0;     /* Number of the object we are displaying */
         fid        = FAIL;
         an_id      = FAIL;
 
