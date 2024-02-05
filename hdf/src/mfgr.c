@@ -4987,9 +4987,6 @@ GRPshutdown(void)
 
 /*====================== Chunking Routines ================================*/
 
-/* Debugging */
-/* #define CHK_DEBUG */
-
 /* NOTE: the definition of the union HDF_CHUNK_DEF can be found in hproto.h */
 
 /******************************************************************************
@@ -5123,9 +5120,6 @@ GRsetchunk(int32         riid,      /* IN: raster access id */
     gr_info_t     *gr_ptr;              /* ptr to the file GR information for this image */
     intn           ret_value = SUCCEED; /* return value */
 
-#ifdef CHK_DEBUG
-    fprintf(stderr, "GRsetchunk: called  \n");
-#endif
     /* clear error stack and check validity of args */
     HEclear();
 
@@ -5153,10 +5147,6 @@ GRsetchunk(int32         riid,      /* IN: raster access id */
         ri_ptr->img_tag = DFTAG_RI;
         ri_ptr->img_ref = Htagnewref(hdf_file_id, ri_ptr->img_tag);
     } /* end if */
-
-#ifdef CHK_DEBUG
-    fprintf(stderr, "GRsetchunk: ri_ptr->img_aid=%d  \n", ri_ptr->img_aid);
-#endif
 
     /* Decide type of definition passed in  */
     switch (flags) {
@@ -5239,10 +5229,7 @@ GRsetchunk(int32         riid,      /* IN: raster access id */
             ret_value = FAIL;
             goto done;
         }
-#ifdef CHK_DEBUG
-        fprintf(stderr, "GRsetchunk: cdims[%d]=%d \n", i, cdims[i]);
-        fflush(stderr);
-#endif
+
         /* Data distribution along dimensions
          *  Check dimension length against chunk length */
         if (i == 0) /* X */
@@ -5273,12 +5260,6 @@ GRsetchunk(int32         riid,      /* IN: raster access id */
        number of components times the number type */
     chunk[0].nt_size = ri_ptr->img_dim.ncomps * DFKNTsize(ri_ptr->img_dim.nt);
 
-#ifdef CHK_DEBUG
-    fprintf(stderr, "GRsetchunk: datatype size =%d\n",
-            ri_ptr->img_dim.ncomps * DFKNTsize(ri_ptr->img_dim.nt));
-    fflush(stderr);
-#endif
-
     /* allocate space for fill pixel */
     if ((fill_pixel = malloc(pixel_disk_size)) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -5305,11 +5286,6 @@ GRsetchunk(int32         riid,      /* IN: raster access id */
             memset(fill_pixel, 0, pixel_disk_size);
     } /* end else */
 
-#ifdef CHK_DEBUG
-    fprintf(stderr, "GRsetchunk: get ready to create\n");
-    fprintf(stderr, "GRsetchunk: img_tag=%d, img_ref=%d\n", ri_ptr->img_tag, ri_ptr->img_ref);
-#endif
-
     /* check to see already special.
        Error if already special since doubly special elements are
        not yet handled. HMCcreate should catch this....*/
@@ -5322,10 +5298,6 @@ GRsetchunk(int32         riid,      /* IN: raster access id */
                           (void *)fill_pixel,      /* fill value */
                           (HCHUNK_DEF *)chunk /* chunk definition */);
 
-#ifdef CHK_DEBUG
-    fprintf(stderr, "HMCcreate: ret_value =%d \n", ret_value);
-#endif
-
     /* check return */
     if (ret_value != FAIL) { /* close old aid and set new one
                               ..hmm......this is for the doubly special hack */
@@ -5337,10 +5309,6 @@ GRsetchunk(int32         riid,      /* IN: raster access id */
         ri_ptr->img_aid = ret_value; /* set new access id */
         ret_value       = SUCCEED;   /* re-set to successful */
     }                                /* end if */
-
-#ifdef CHK_DEBUG
-    fprintf(stderr, "GRsetchunk: ri_ptr->img_aid =%d \n", ri_ptr->img_aid);
-#endif
 
 done:
     /* free fill value */
@@ -5413,10 +5381,6 @@ GRgetchunkinfo(int32          riid,      /* IN: sds access id */
     }
     else if (ri_ptr->img_aid == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
-
-#ifdef CHK_DEBUG
-    fprintf(stderr, "%s: ri_ptr->img_aid =%d \n", __func__, ri_ptr->img_aid);
-#endif
 
     /* inquire about element */
     ret_value = Hinquire(ri_ptr->img_aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
@@ -5538,9 +5502,6 @@ GRwritechunk(int32       riid,   /* IN: access aid to GR */
     else if (ri_ptr->img_aid == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-#ifdef CHK_DEBUG
-    fprintf(stderr, "%s: ri_ptr->img_aid =%d \n", __func__, ri_ptr->img_aid);
-#endif
     comp_type = COMP_CODE_NONE;
     scheme    = ri_ptr->img_dim.comp_tag;
     if (scheme == DFTAG_JPEG5 || scheme == DFTAG_GREYJPEG5 || scheme == DFTAG_JPEG ||
@@ -5732,10 +5693,6 @@ GRreadchunk(int32  riid,   /* IN: access aid to GR */
     }
     else if (ri_ptr->img_aid == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
-
-#ifdef CHK_DEBUG
-    fprintf(stderr, "%s: ri_ptr->img_aid =%d \n", __func__, ri_ptr->img_aid);
-#endif
 
     comp_type = COMP_CODE_NONE;
     scheme    = ri_ptr->img_dim.comp_tag;
@@ -5943,10 +5900,6 @@ GRsetchunkcache(int32 riid,     /* IN: access aid to mess with */
     }
     else if (ri_ptr->img_aid == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
-
-#ifdef CHK_DEBUG
-    fprintf(stderr, "%s: ri_ptr->img_aid =%d \n", __func__, ri_ptr->img_aid);
-#endif
 
     /* inquire about element */
     ret_value = Hinquire(ri_ptr->img_aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);

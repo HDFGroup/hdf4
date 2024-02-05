@@ -1237,7 +1237,7 @@ done:
     return ret_value;
 } /* end Hdeldd */
 
-#ifdef DEBUGGING
+#ifdef DD_DEBUG
 /*--------------------------------------------------------------------------
  NAME
     HTPdump_dds -- Dump out the dd information for a file
@@ -1337,7 +1337,7 @@ HTPdump_dds(int32 file_id, FILE *fout)
 done:
     return ret_value;
 } /* HTPdump_dds */
-#endif /* DEBUGGING */
+#endif /* DD_DEBUG */
 
 /* Private, static, internal routines.  Do not call from outside this module */
 
