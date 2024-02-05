@@ -218,7 +218,7 @@ jobs:
         id: run-ctest
         run: |
           cd "${{ runner.workspace }}/hdf4/hdfsrc"
-          cmake --workflow --preset=${{ inputs.preset_name }}-Clang --fresh
+          cmake --workflow --preset=${{ inputs.preset_name }}-OSX-Clang --fresh
         shell: bash
 
       - name: Publish binary (MacOS)
@@ -228,7 +228,7 @@ jobs:
           mkdir "${{ runner.workspace }}/build/hdf4"
           cp ${{ runner.workspace }}/hdf4/hdfsrc/COPYING ${{ runner.workspace }}/build/hdf4
           cp ${{ runner.workspace }}/hdf4/hdfsrc/README.md ${{ runner.workspace }}/build/hdf4
-          cp ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-Clang/*.tar.gz ${{ runner.workspace }}/build/hdf4
+          cp ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-OSX-Clang/*.tar.gz ${{ runner.workspace }}/build/hdf4
           cd "${{ runner.workspace }}/build"
           tar -zcvf ${{ steps.set-file-base.outputs.FILE_BASE }}-osx12.tar.gz hdf4
         shell: bash
@@ -302,7 +302,7 @@ jobs:
           CXX: ${{ steps.setup-fortran.outputs.cxx }}
         run: |
           cd "${{ runner.workspace }}/hdf4/hdfsrc"
-          cmake --workflow --preset=${{ inputs.preset_name }}-Intel --fresh
+          cmake --workflow --preset=${{ inputs.preset_name }}-win-Intel --fresh
         shell: pwsh
 
       - name: Publish binary (Windows_intel)
@@ -312,7 +312,7 @@ jobs:
           mkdir "${{ runner.workspace }}/build/hdf4"
           Copy-Item -Path ${{ runner.workspace }}/hdf4/hdfsrc/COPYING -Destination ${{ runner.workspace }}/build/hdf4/
           Copy-Item -Path ${{ runner.workspace }}/hdf4/hdfsrc/README.md -Destination ${{ runner.workspace }}/build/hdf4/
-          Copy-Item -Path ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-Intel/* -Destination ${{ runner.workspace }}/build/hdf4/ -Include *.zip
+          Copy-Item -Path ${{ runner.workspace }}/hdf4/build/${{ inputs.preset_name }}-win-Intel/* -Destination ${{ runner.workspace }}/build/hdf4/ -Include *.zip
           cd "${{ runner.workspace }}/build"
           7z a -tzip ${{ steps.set-file-base.outputs.FILE_BASE }}-win-vs2022_intel.zip hdf4
         shell: pwsh

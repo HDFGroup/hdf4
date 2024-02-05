@@ -208,6 +208,6 @@ jobs:
           HDF4_ROOT: ${{ steps.set-hdf4lib-name.outputs.HDF4_ROOT }}
         run: |
           cd "${{ steps.set-hdf4lib-name.outputs.HDF4_ROOT }}/share/HDF4Examples"
-          cmake --workflow --preset=ci-StdShar-Clang --fresh
+          cmake --workflow --preset=ci-StdShar-OSX-Clang --fresh
         shell: bash
 
