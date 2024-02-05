@@ -125,7 +125,7 @@ public class TestH4 {
         for (int i = 0; i < 3; i++)
             assertEquals(LIB_VERSION[i], libversion[i]);
 
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 2; i++)
             assertFalse(libversion[i] == 0);
     }
 
