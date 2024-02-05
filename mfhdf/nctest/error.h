@@ -6,9 +6,7 @@
 #ifndef NCTEST_ERROR_H
 #define NCTEST_ERROR_H
 
-#ifdef HDF
 #include "hdf.h"
-#endif
 
 #ifdef __cplusplus
 extern "C" {

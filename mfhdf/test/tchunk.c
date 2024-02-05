@@ -13,8 +13,6 @@
 
 #include "mfhdf.h"
 
-#ifdef HDF
-
 #include "hdftest.h"
 
 #define CHKFILE   "chktst.hdf"  /* Chunking test file */
@@ -1383,4 +1381,3 @@ test8:
 done:
     return num_errs;
 } /* test_chunk() */
-#endif /* HDF */

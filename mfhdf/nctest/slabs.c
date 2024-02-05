@@ -15,9 +15,7 @@
 #include "error.h"
 #include "tests.h"
 #include "emalloc.h"
-#ifdef HDF
 #include "hdf.h"
-#endif
 
 #define LEN_OF(array) ((sizeof array) / (sizeof array[0]))
 /* dimension sizes */

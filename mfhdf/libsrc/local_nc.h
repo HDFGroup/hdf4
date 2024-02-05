@@ -78,9 +78,8 @@ typedef unsigned long u_long;
 #define Void char
 
 /*
-** Include HDF stuff
-*/
-#ifdef HDF
+ * Include HDF stuff
+ */
 
 #include "hdf.h"
 #include "vg.h"
@@ -99,14 +98,11 @@ typedef unsigned long u_long;
 #define MAX_BLOCK_SIZE   65536 /* maximum size of block in linked blocks */
 #define BLOCK_COUNT      128   /* size of linked block pointer objects  */
 
-#endif /* HDF */
-
 /* from cdflib.h CDF 2.3 */
 #ifndef MAX_VXR_ENTRIES
 #define MAX_VXR_ENTRIES 10
 #endif /* MAX_VXR_ENTRIES */
 
-#ifdef HDF
 /* VIX record for CDF variable data storage */
 typedef struct vix_t_def {
     int32             nEntries;                  /* number of entries in this vix */
@@ -116,7 +112,6 @@ typedef struct vix_t_def {
     int32             offset[MAX_VXR_ENTRIES];   /* file offset of records */
     struct vix_t_def *next;                      /* next one in line */
 } vix_t;
-#endif /* HDF */
 
 /* like, a discriminated union in the sense of xdr */
 typedef struct {
@@ -136,17 +131,13 @@ typedef struct {
   count != len when a string is resized to something smaller
 
 */
-#ifdef HDF
 #define NC_compare_string(s1, s2) ((s1)->hash != (s2)->hash ? 1 : strcmp((s1)->values, (s2)->values))
-#endif /* HDF */
 
 typedef struct {
     unsigned count;
     unsigned len;
-#ifdef HDF
-    uint32 hash; /* [non-perfect] hash value for faster comparisons */
-#endif           /* HDF */
-    char *values;
+    uint32   hash; /* [non-perfect] hash value for faster comparisons */
+    char    *values;
 } NC_string;
 
 /* Counted array of ints for assoc list */
@@ -159,21 +150,17 @@ typedef struct {
 typedef struct {
     NC_string *name;
     long       size;
-#ifdef HDF
-    int32 dim00_compat; /* compatible with Dim0.0 */
-    int32 vgid;         /* id of the Vgroup representing this dimension */
-    int32 count;        /* Number of pointers to this dimension */
-#endif
+    int32      dim00_compat; /* compatible with Dim0.0 */
+    int32      vgid;         /* id of the Vgroup representing this dimension */
+    int32      count;        /* Number of pointers to this dimension */
 } NC_dim;
 
 /* NC attribute */
 typedef struct {
     NC_string *name;
     NC_array  *data;
-#ifdef HDF
-    int32 HDFtype; /* it should be in NC_array *data. However, */
-                   /* NC.dims and NC.vars are NC_array too. */
-#endif
+    int32      HDFtype; /* it should be in NC_array *data. However, */
+                        /* NC.dims and NC.vars are NC_array too. */
 } NC_attr;
 
 typedef struct {
@@ -188,29 +175,26 @@ typedef struct {
     NC_array     *dims;
     NC_array     *attrs;
     NC_array     *vars;
-#ifdef HDF
-    int32      hdf_file;
-    int        file_type;
-    int32      vgid;
-    int        hdf_mode; /* mode we are attached for */
-    hdf_file_t cdf_fp;   /* file pointer used for CDF files */
-#endif
+    int32         hdf_file;
+    int           file_type;
+    int32         vgid;
+    int           hdf_mode; /* mode we are attached for */
+    hdf_file_t    cdf_fp;   /* file pointer used for CDF files */
 } NC;
 
 /* NC variable: description and data */
 typedef struct {
-    NC_string     *name;   /* name->values shows data set's name */
-    NC_iarray     *assoc;  /* user definition */
-    unsigned long *shape;  /* compiled info (Each holds a dimension size. -BMR) */
-    unsigned long *dsizes; /* compiled info (Each element holds the amount of space
-        needed to hold values in that dimension, e.g., first dimension
-        size is 10, value type is int32=4, then dsizes[0]=4*10=40. -BMR) */
-    NC_array     *attrs;   /* list of attribute structures */
-    nc_type       type;    /* the discriminant */
-    unsigned long len;     /* the total length originally allocated */
-    size_t        szof;    /* sizeof each value */
-    long          begin;   /* seek index, often an off_t */
-#ifdef HDF
+    NC_string     *name;    /* name->values shows data set's name */
+    NC_iarray     *assoc;   /* user definition */
+    unsigned long *shape;   /* compiled info (Each holds a dimension size. -BMR) */
+    unsigned long *dsizes;  /* compiled info (Each element holds the amount of space
+         needed to hold values in that dimension, e.g., first dimension
+         size is 10, value type is int32=4, then dsizes[0]=4*10=40. -BMR) */
+    NC_array     *attrs;    /* list of attribute structures */
+    nc_type       type;     /* the discriminant */
+    unsigned long len;      /* the total length originally allocated */
+    size_t        szof;     /* sizeof each value */
+    long          begin;    /* seek index, often an off_t */
     NC           *cdf;      /* handle of the file where this var belongs to  */
     int32         vgid;     /* id of the variable's Vgroup */
     uint16        data_ref; /* ref of the variable's data storage (if exists), default 0 */
@@ -240,7 +224,6 @@ typedef struct {
     int32 *rag_list;   /* size of ragged array lines */
     int32  rag_fill;   /* last line in rag_list to be set */
     vix_t *vixHead;    /* list of VXR records for CDF data storage */
-#endif
 } NC_var;
 
 #define IS_RECVAR(vp) ((vp)->shape != NULL ? (*(vp)->shape == NC_UNLIMITED) : 0)
@@ -502,7 +485,6 @@ HDFLIBAPI int        NCxdrfile_sync(XDR *xdrs);
 
 HDFLIBAPI int NCxdrfile_create(XDR *xdrs, const char *path, int ncmode);
 
-#ifdef HDF
 /* this routine is found in 'xdrposix.c' */
 HDFLIBAPI void hdf_xdrfile_create(XDR *xdrs, int ncop);
 
@@ -581,8 +563,6 @@ HDFLIBAPI intn HDiscdf(const char *filename);
 HDFLIBAPI intn HDisnetcdf(const char *filename);
 
 HDFLIBAPI intn HDisnetcdf64(const char *filename);
-
-#endif /* HDF */
 
 #ifdef __cplusplus
 }

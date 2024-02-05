@@ -34,8 +34,6 @@
 
 #include "mfhdf.h"
 
-#ifdef HDF
-
 #include "hdftest.h"
 
 /********************************************************************
@@ -636,5 +634,3 @@ test_coordvar()
 
     return num_errs;
 }
-
-#endif /* HDF */

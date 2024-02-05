@@ -27,8 +27,6 @@
 */
 #include "mfsdf.h"
 
-#ifdef HDF
-
 FRETVAL(intf) nsfscfill(intf *id, _fcd val);
 FRETVAL(intf) nsfsfill(intf *id, void *val);
 FRETVAL(intf) nsfgfill(intf *id, void *val);
@@ -1571,7 +1569,6 @@ nsfsflmd(intf *id, intf *fillmode)
 {
     return ((intf)SDsetfillmode(*id, *fillmode));
 }
-#endif /* HDF */
 
 /*-------------------------------------------------------------------------
  * Name:    scgichnk

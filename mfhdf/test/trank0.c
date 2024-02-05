@@ -20,8 +20,6 @@
 
 #include "mfhdf.h"
 
-#ifdef HDF
-
 #include "hdftest.h"
 
 #define FILE_NAME "trank0.hdf" /* data file to test for rank=0 */
@@ -158,5 +156,3 @@ test_rank0()
         PASSED();
     return num_errs;
 }
-
-#endif /* HDF */

@@ -39,9 +39,7 @@ static char mrcsid[] = "Id: cdftest.c,v 1.11 1994/01/10 23:07:27 chouck Exp ";
 #include "hdf4_netcdf.h"
 #endif
 
-#ifdef HDF
 #include "hdf.h"
-#endif
 
 #define cdf_assert(ex)                                                                                       \
     {                                                                                                        \

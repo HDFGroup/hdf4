@@ -19,9 +19,7 @@
 #include "error.h"
 #include "tests.h"
 #include "emalloc.h"
-#ifdef HDF
 #include "hdf.h"
-#endif
 
 #define max(A, B) ((A) > (B) ? (A) : (B))
 

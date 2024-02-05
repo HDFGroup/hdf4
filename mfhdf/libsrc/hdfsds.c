@@ -72,7 +72,6 @@
 
  **************************************************************************/
 
-#ifdef HDF
 #include "local_nc.h"
 
 #define SDG_MAX_INITIAL 100
@@ -1011,9 +1010,6 @@ hdf_read_ndgs(NC *handle)
             }
 
             /* OK, now we need to get the relevant dimension structure */
-#ifdef DEBUG
-            printf("Found NDG at %d %d\n", ndgTag, ndgRef);
-#endif
 
             /* read the group into memory */
             if ((GroupID = DFdiread(handle->hdf_file, ndgTag, ndgRef)) < 0) {
@@ -1641,5 +1637,3 @@ hdf_read_sds_cdf(XDR *xdrs, NC **handlep)
 done:
     return ret_value;
 } /* hdf_read_sds_cdf */
-
-#endif /* HDF */
