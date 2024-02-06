@@ -145,14 +145,14 @@ typedef struct {
     unsigned long recsize;   /* length of 'record' */
     int           redefid;
     /* below gets xdr'd */
-    unsigned  numrecs; /* number of 'records' allocated */
-    NC_array *dims;
-    NC_array *attrs;
-    NC_array *vars;
-    int32     hdf_file;
-    int       file_type;
-    int32     vgid;
-    int       hdf_mode; /* mode we are attached for */
+    unsigned   numrecs; /* number of 'records' allocated */
+    NC_array  *dims;
+    NC_array  *attrs;
+    NC_array  *vars;
+    int32      hdf_file;
+    int        file_type;
+    int32      vgid;
+    int        hdf_mode; /* mode we are attached for */
     hdf_file_t cdf_fp;   /* file pointer used for CDF files */
 } NC;
 
