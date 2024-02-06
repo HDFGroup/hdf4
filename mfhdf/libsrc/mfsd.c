@@ -3857,9 +3857,15 @@ SDgetcompinfo(int32         sdsid,     /* IN: dataset ID */
 
     /* use lower-level routine to get the compression information */
     status = HCPgetcompinfo(handle->hdf_file, var->data_tag, var->data_ref, comp_type, c_info);
-
     if (status == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+    /* remove the szip special bit if necessary */
+    if (*comp_type == COMP_CODE_SZIP) {
+        status = HCPrm_szip_special_bit(c_info);
+        if (status == FAIL)
+            HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    }
 
 done:
     return ret_value;
@@ -5031,12 +5037,6 @@ done:
  RETURNS
         SUCCEED/FAIL
 
- AUTHOR
-        -GeorgeV
-
- MODIFICATION
-    Jun, 2009: Added compression type and compression parameters.- BMR
-
 ******************************************************************************/
 intn
 SDgetchunkinfo(int32          sdsid,     /* IN: sds access id */
@@ -5197,6 +5197,13 @@ SDgetchunkinfo(int32          sdsid,     /* IN: sds access id */
                         else {
                             memcpy(&(chunk_def->comp.cinfo), &c_info, sizeof(comp_info));
                             chunk_def->comp.comp_type = (int32)comp_type;
+
+                            /* remove the szip special bit if necessary */
+                            if (comp_type == COMP_CODE_SZIP) {
+                                ret_value = HCPrm_szip_special_bit(&chunk_def->comp.cinfo);
+                                if (ret_value == FAIL)
+                                    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+                            }
                         }
                     }      /* chunk_def != NULL */
                     break; /* default */

@@ -39,12 +39,13 @@ test_szip_SDS8bit()
     intn         status;
     int32        dim_sizes[2], array_rank, num_type, attributes;
     char         name[H4_MAX_NC_NAME];
-    comp_info    c_info;
+    comp_info    c_info;     /* Compression parameters - union */
+    comp_info    c_info_out; /* Compression parameters to retrieve into */
     int32        start[2], edges[2];
     int8         fill_value = 0; /* Fill value */
     int          i, j;
     int          num_errs = 0; /* number of errors so far */
-    comp_coder_t comp_type;    /* to retrieve compression type into */
+    comp_coder_t comp_type;    /* Compression type to retrieve into */
     int8         out_data[LENGTH][WIDTH];
     int8         in_data[LENGTH][WIDTH] = {{1, 1, 2, 2, 3, 4}, {1, 1, 2, 2, 3, 4}, {1, 1, 2, 2, 3, 4},
                                    {3, 3, 0, 4, 3, 4}, {3, 3, 0, 4, 3, 4}, {3, 3, 0, 4, 3, 4},
@@ -115,11 +116,12 @@ test_szip_SDS8bit()
 
     /* Retrieve compression informayion about the dataset */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    memset(&c_info, 0, sizeof(c_info));
+    memset(&c_info_out, 0, sizeof(c_info_out));
 
-    status = SDgetcompinfo(sds_id, &comp_type, &c_info);
+    status = SDgetcompinfo(sds_id, &comp_type, &c_info_out);
     CHECK(status, FAIL, "SDgetcompinfo");
     VERIFY(comp_type, COMP_CODE_SZIP, "SDgetcompinfo");
+    VERIFY(c_info_out.szip.options_mask, c_info.szip.options_mask, "SDgetcompinfo");
 
     /* Wipe out the output buffer */
     memset(&out_data, 0, sizeof(out_data));
@@ -650,7 +652,7 @@ test_szip_chunk()
     int32         column[CLENGTH] = {4, 4, 4};
     int32         fill_value      = 0; /* Fill value */
     comp_coder_t  comp_type;           /* to retrieve compression type into */
-    comp_info     cinfo;               /* compression information structure */
+    comp_info     cinfo_out;           /* compression information structure */
     int           num_errs = 0;        /* number of errors so far */
     int           i, j;
 
@@ -714,6 +716,7 @@ test_szip_chunk()
     CHECK(status, FAIL, "SDgetchunkinfo");
     VERIFY(c_flags_out, c_flags, "SDgetchunkinfo");
     VERIFY(c_def_out.comp.comp_type, COMP_CODE_SZIP, "SDgetchunkinfo");
+    VERIFY(c_def_out.comp.cinfo.szip.options_mask, c_def.comp.cinfo.szip.options_mask, "SDgetchunkinfo");
 
     /*
      * Write chunks using SDwritechunk function.  Chunks can be written
@@ -784,11 +787,12 @@ test_szip_chunk()
 
     /* Retrieve compression information about the dataset */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    memset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo_out, 0, sizeof(cinfo_out));
 
-    status = SDgetcompinfo(sds_id, &comp_type, &cinfo);
+    status = SDgetcompinfo(sds_id, &comp_type, &cinfo_out);
     CHECK(status, FAIL, "SDgetcompinfo");
     VERIFY(comp_type, COMP_CODE_SZIP, "SDgetcompinfo");
+    VERIFY(cinfo_out.szip.options_mask, c_def.comp.cinfo.szip.options_mask, "SDgetcompinfo");
 
     /* Retrieve compression method alone from the dataset */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
@@ -1089,8 +1093,7 @@ test_szip_unlimited()
 
     /* Initialize for SZIP */
     c_info.szip.pixels_per_block = 2;
-
-    c_info.szip.options_mask = SZ_EC_OPTION_MASK;
+    c_info.szip.options_mask     = SZ_EC_OPTION_MASK;
     c_info.szip.options_mask |= SZ_RAW_OPTION_MASK;
     c_info.szip.bits_per_pixel      = 0;
     c_info.szip.pixels              = 0;
