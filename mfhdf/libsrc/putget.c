@@ -464,7 +464,7 @@ xdr_NCv1data(XDR *xdrs, u_long where, nc_type type, Void *values)
 #ifdef H4_HAVE_LP64
             return (xdr_int(xdrs, (nclong *)values));
 #else
-            return (xdr_long(xdrs, (nclong *)values));
+            return (xdr_long(xdrs, (long *)values));
 #endif
         case NC_FLOAT:
             return (xdr_float(xdrs, (float *)values));
