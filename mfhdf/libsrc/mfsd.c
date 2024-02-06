@@ -3321,7 +3321,8 @@ done:
 /************************** Deprecated ******************************
  NAME
     SDgetexternalfile -- retrieves external file information
-    (Deprecated)
+    (Deprecated in favor of SDgetexternalinfo)
+
  USAGE
     int32 SDgetexternalfile(id, filename, offset)
         int32 id;
@@ -3741,9 +3742,10 @@ done:
 
 #ifndef H4_NO_DEPRECATED_SYMBOLS
 
-/******************************************************************************
+/****************************** Deprecated ***********************************
  NAME
     SDgetcompress -- Retrieves compression information of a dataset
+    (Deprecated in favor of SDgetcompinfo)
 
  DESCRIPTION
     This routine uses HCPgetcompress to retrieve the compression type
@@ -3751,11 +3753,6 @@ done:
 
  RETURNS
     SUCCEED/FAIL
-
- MODIFICATION
-    July 2001: Added to fix bug #307 - BMR
-    Apr 2005:  This function has incorrect behavior and is replaced by
-        SDgetcompinfo.  SDgetcompress will be removed in the future.
 
 ******************************************************************************/
 intn
@@ -3773,24 +3770,7 @@ SDgetcompress(
     /* clear error stack */
     HEclear();
 
-    if (comp_type == NULL || c_info == NULL)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    handle = SDIhandle_from_id(id, SDSTYPE);
-    if (handle == NULL || handle->file_type != HDF_FILE)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-    if (handle->vars == NULL)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    var = SDIget_var(handle, id);
-    if (var == NULL)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    if (!var->data_ref)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    /* use lower-level routine to get the compression information */
-    status = HCPgetcompress(handle->hdf_file, var->data_tag, var->data_ref, comp_type, c_info);
+    status = SDgetcompinfo(id, comp_type, c_info);
     if (status == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
@@ -3810,14 +3790,6 @@ done:
 
  RETURNS
     SUCCEED/FAIL
-
- MODIFICATION
-    July 2001: Added to fix bug #307 - BMR (from SDgetcompress)
-    Apr 2005:  This function was actually created at this time, but it is
-        almost a duplicate of SDgetcompress, which is intended to be
-        removed in the future, due to its incorrect behavior.  The
-        only difference is the call to the low-level routine,
-        HCPgetcompinfo, instead of HCPgetcompress.
 
 ******************************************************************************/
 intn
