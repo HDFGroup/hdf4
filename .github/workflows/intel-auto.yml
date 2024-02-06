@@ -60,7 +60,6 @@ jobs:
             --enable-build-mode=${{ inputs.build_mode }} \
             --enable-netcdf \
             --enable-shared \
-            --enable-hdf4-xdr \
             --disable-fortran
 
       # BUILD

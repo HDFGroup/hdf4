@@ -9,7 +9,7 @@ fort_INCLUDES=-I$(top_srcdir)/hdf/src     \
          -I$(top_srcdir)/mfhdf/libsrc     \
          -I$(top_builddir)/mfhdf/libsrc
 DEFINES=-DHDF
-AM_CPPFLAGS=$(fort_INCLUDES) $(XDRINC) $(DEFINES)
+AM_CPPFLAGS=$(fort_INCLUDES) $(DEFINES)
 
 DIST_SUBDIRS = examples
 
@@ -31,22 +31,22 @@ check_SCRIPTS = testfortran.sh
 if HDF_BUILD_NETCDF
 ftest_SOURCES = ftest.f
 ftest_LDADD = $(top_builddir)/hdf/test/forsupff.o $(top_builddir)/hdf/test/forsupf.o \
-              $(LIBMFHDF) $(LIBHDF) $(XDRLIB) @LIBS@
+              $(LIBMFHDF) $(LIBHDF) @LIBS@
 ftest_DEPENDENCIES = $(top_builddir)/hdf/test/forsupff.o $(top_builddir)/hdf/test/forsupf.o \
-                     $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
+                     $(LIBMFHDF) $(LIBHDF)
 endif
 
 hdftest_SOURCES = hdftest.f
-hdftest_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB) @LIBS@
-hdftest_DEPENDENCIES = testdir $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
+hdftest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@
+hdftest_DEPENDENCIES = testdir $(LIBMFHDF) $(LIBHDF)
 
 hdftest1_SOURCES = hdftest1.f
-hdftest1_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB) @LIBS@
-hdftest1_DEPENDENCIES = testdir $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
+hdftest1_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@
+hdftest1_DEPENDENCIES = testdir $(LIBMFHDF) $(LIBHDF)
 
 tszip_SOURCES = tszip.f
-tszip_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB) @LIBS@
-tszip_DEPENDENCIES = testdir $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
+tszip_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@
+tszip_DEPENDENCIES = testdir $(LIBMFHDF) $(LIBHDF)
 
 testdir:
 	-mkdir testdir

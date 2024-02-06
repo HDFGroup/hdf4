@@ -25,14 +25,6 @@
 /* This will only be defined if HDF4 was built with CMake */
 #if defined(H4_BUILT_AS_DYNAMIC_LIB)
 
-#if defined(xdr_shared_EXPORTS)
-#if defined(_MSC_VER) || defined(__MINGW32__) /* MSVC Compiler Case */
-#define XDRLIBAPI extern __declspec(dllexport)
-#elif (__GNUC__ >= 4) /* GCC 4.x has support for visibility options */
-#define XDRLIBAPI extern __attribute__((visibility("default")))
-#endif
-#endif /* xdr_shared_EXPORTS */
-
 #if defined(hdf_shared_EXPORTS)
 #if defined(_MSC_VER) || defined(__MINGW32__) /* MSVC Compiler Case */
 #define HDFERRPUBLIC extern __declspec(dllimport)
@@ -113,13 +105,6 @@
 #endif
 #endif /* mfhdf_hrepack_shared_EXPORTS */
 
-#if !defined(XDRLIBAPI)
-#if defined(_MSC_VER) || defined(__MINGW32__) /* MSVC Compiler Case */
-#define XDRLIBAPI extern __declspec(dllimport)
-#elif (__GNUC__ >= 4) /* GCC 4.x has support for visibility options */
-#define XDRLIBAPI extern __attribute__((visibility("default")))
-#endif
-#endif
 #if !defined(HDFERRPUBLIC)
 #if defined(_MSC_VER) || defined(__MINGW32__) /* MSVC Compiler Case */
 #define HDFERRPUBLIC extern __declspec(dllimport)
@@ -150,7 +135,6 @@
 #endif
 
 #else
-#define XDRLIBAPI    extern
 #define HDFERRPUBLIC extern
 #define HDFPUBLIC
 #define HDFLIBAPI   extern

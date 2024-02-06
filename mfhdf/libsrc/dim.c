@@ -268,14 +268,14 @@ xdr_NC_dim(XDR *xdrs, NC_dim **dpp)
 {
     if (xdrs->x_op == XDR_FREE) {
         NC_free_dim((*dpp));
-        return (TRUE);
+        return TRUE;
     }
 
     if (xdrs->x_op == XDR_DECODE) {
         *dpp = malloc(sizeof(NC_dim));
         if (*dpp == NULL) {
             nc_serror("xdr_NC_dim");
-            return (FALSE);
+            return FALSE;
         }
     }
 
@@ -284,8 +284,8 @@ xdr_NC_dim(XDR *xdrs, NC_dim **dpp)
         (*dpp)->count = 0;
 
     if (!xdr_NC_string(xdrs, &((*dpp)->name)))
-        return (FALSE);
-    return (xdr_long(xdrs, &((*dpp)->size)));
+        return FALSE;
+    return h4_xdr_int(xdrs, &((*dpp)->size));
 }
 
 /*

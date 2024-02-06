@@ -50,10 +50,8 @@ Included in this distribution are: the C source for the netCDF data
 access library, sources for the FORTRAN jacket library for various
 systems, documentation for the netCDF library and utilities in the form
 of a netCDF User's Guide, source for the netCDF utilities ncdump and
-ncgen, a directory of test programs to verify the correct implementation
-of the netCDF library in new environments, and a directory of XDR
-(eXternal Data Representation) source code for environments that do not
-support XDR.
+ncgen, and a directory of test programs to verify the correct implementation
+of the netCDF library in new environments.
 
 Other files available for anonymous FTP from the pub/netcdf/ directory of
 unidata.ucar.edu include

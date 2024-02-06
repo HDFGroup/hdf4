@@ -7,7 +7,7 @@ Please read "NOTICE.h"
 This is the minimum subset of RPCSRC 3.9 needed to build the netcdf library.
 It is included here for those systems which lack xdr support.
 If your system already has these xdr routines, by all means use them.
-Unix systems which suport the Network File System (NFS) usually have these
+Unix systems which support the Network File System (NFS) usually have these
 routines in the 'c' library, /usr/lib/libc.a,
 so you don't need to link in any additional libraries.
 Another candididate is librpclib.a in /usr/lib or /usr/local/lib.

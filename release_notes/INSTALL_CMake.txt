@@ -687,9 +687,6 @@ HDF4_BUILD_EXAMPLES        "Build HDF4 Library Examples"              OFF
 HDF4_BUILD_FORTRAN         "Build FORTRAN support"                    OFF
 HDF4_BUILD_TOOLS           "Build HDF4 Tools"                         ON
 HDF4_BUILD_UTILS           "Build HDF4 Utilities"                     OFF
-HDF4_BUILD_XDR_LIB         "Build HDF4 XDR Library"                   OFF
-if (WIN32 OR MINGW OR APPLE)
-  HDF4_BUILD_XDR_LIB       "Build HDF4 XDR Library"                   ON
 HDF4_ENABLE_NETCDF         "Build HDF4 versions of NetCDF-3 APIS"     ON
 HDF4_BUILD_JAVA            "Build Java HDF Library"                   OFF
 HDF4_BUILD_NETCDF_TOOLS    "Build HDF4 versions of ncdump and ncgen"  ON

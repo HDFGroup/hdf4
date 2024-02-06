@@ -30,34 +30,8 @@
 #define FILENAME_MAX 255
 #endif
 
-/* Do we have system XDR files */
-#ifndef H4_NO_SYS_XDR_INC
-
-#ifdef __CYGWIN__
-#ifndef __u_char_defined
-typedef unsigned char u_char;
-#define __u_char_defined
-#endif
-#ifndef __u_short_defined
-typedef unsigned short u_short;
-#define __u_short_defined
-#endif
-#ifndef __u_int_defined
-typedef unsigned int u_int;
-#define __u_int_defined
-#endif
-#ifndef __u_long_defined
-typedef unsigned long u_long;
-#define __u_long_defined
-#endif
-#endif /* __CYGWIN__ */
-
-#include <rpc/types.h>
-#include <rpc/xdr.h>
-#else /* H4_NO_SYS_XDR_INC */
-#include "types.h"
-#include "xdr.h"
-#endif /* H4_NO_SYS_XDR_INC */
+/* HDF4's stripped-down XDR implementation */
+#include "h4_xdr.h"
 
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h" /* needed for defs of nc_type, ncvoid, ... */
@@ -149,7 +123,7 @@ typedef struct {
 /* NC dimension structure */
 typedef struct {
     NC_string *name;
-    long       size;
+    int32      size;
     int32      dim00_compat; /* compatible with Dim0.0 */
     int32      vgid;         /* id of the Vgroup representing this dimension */
     int32      count;        /* Number of pointers to this dimension */
@@ -171,15 +145,15 @@ typedef struct {
     unsigned long recsize;   /* length of 'record' */
     int           redefid;
     /* below gets xdr'd */
-    unsigned long numrecs; /* number of 'records' allocated */
-    NC_array     *dims;
-    NC_array     *attrs;
-    NC_array     *vars;
-    int32         hdf_file;
-    int           file_type;
-    int32         vgid;
-    int           hdf_mode; /* mode we are attached for */
-    hdf_file_t    cdf_fp;   /* file pointer used for CDF files */
+    unsigned   numrecs; /* number of 'records' allocated */
+    NC_array  *dims;
+    NC_array  *attrs;
+    NC_array  *vars;
+    int32      hdf_file;
+    int        file_type;
+    int32      vgid;
+    int        hdf_mode; /* mode we are attached for */
+    hdf_file_t cdf_fp;   /* file pointer used for CDF files */
 } NC;
 
 /* NC variable: description and data */
@@ -257,8 +231,9 @@ extern "C" {
 #endif
 
 /* If using the real netCDF library and API (when --disable-netcdf configure flag is used)
-   need to mangle the HDF versions of netCDF API function names
-   to not conflict w/ oriinal netCDF ones */
+ * need to mangle the HDF versions of netCDF API function names
+ * to not conflict w/ oriinal netCDF ones
+ */
 #ifndef H4_HAVE_NETCDF
 #define nc_serror         HNAME(nc_serror)
 #define NCadvise          HNAME(NCadvise)
@@ -315,10 +290,8 @@ extern "C" {
 #define NC_dcpy           HNAME(NC_dcpy)
 #define NCxdrfile_sync    HNAME(NCxdrfile_sync)
 #define NCxdrfile_create  HNAME(NCxdrfile_create)
-#ifdef HDF
-#define NCgenio      HNAME(NCgenio)      /* from putgetg.c */
-#define NC_var_shape HNAME(NC_var_shape) /* from var.c */
-#endif
+#define NCgenio           HNAME(NCgenio)      /* from putgetg.c */
+#define NC_var_shape      HNAME(NC_var_shape) /* from var.c */
 #endif /* !H4_HAVE_NETCDF ie. NOT USING HDF version of netCDF ncxxx API */
 
 #define nncpopt H4_F77_FUNC(ncpopt, NCPOPT)
@@ -453,7 +426,7 @@ HDFLIBAPI bool_t NCcktype(nc_type datatype);
 HDFLIBAPI bool_t NC_indefine(int cdfid, bool_t iserr);
 HDFLIBAPI bool_t xdr_cdf(XDR *xdrs, NC **handlep);
 HDFLIBAPI bool_t xdr_numrecs(XDR *xdrs, NC *handle);
-HDFLIBAPI bool_t xdr_shorts(XDR *xdrs, short *sp, u_int cnt);
+HDFLIBAPI bool_t xdr_shorts(XDR *xdrs, short *sp, unsigned cnt);
 HDFLIBAPI bool_t xdr_NC_array(XDR *xdrs, NC_array **app);
 HDFLIBAPI bool_t xdr_NC_attr(XDR *xdrs, NC_attr **app);
 HDFLIBAPI bool_t xdr_NC_dim(XDR *xdrs, NC_dim **dpp);
@@ -484,9 +457,6 @@ HDFLIBAPI bool_t     NC_dcpy(XDR *target, XDR *source, long nbytes);
 HDFLIBAPI int        NCxdrfile_sync(XDR *xdrs);
 
 HDFLIBAPI int NCxdrfile_create(XDR *xdrs, const char *path, int ncmode);
-
-/* this routine is found in 'xdrposix.c' */
-HDFLIBAPI void hdf_xdrfile_create(XDR *xdrs, int ncop);
 
 HDFLIBAPI intn hdf_fill_array(Void *storage, int32 len, Void *value, int32 type);
 

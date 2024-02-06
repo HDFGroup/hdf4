@@ -627,10 +627,10 @@ ncredef(int cdfid)
 static void
 NC_begins(NC *handle)
 {
-    unsigned ii;
-    u_long   index = 0;
-    NC_var **vpp;
-    NC_var  *last = NULL;
+    unsigned      ii;
+    unsigned long index = 0;
+    NC_var      **vpp;
+    NC_var       *last = NULL;
 
     if (handle->vars == NULL)
         return;
@@ -675,9 +675,6 @@ NC_begins(NC *handle)
  * Copy nbytes bytes from source to target.
  * Streams target and source should be positioned before the call.
  * opaque I/O, no XDR conversion performed (or needed).
- * The Macros XDR_GETBYTES and XDR_PUTBYTES may not be
- * supported on your xdr implementation. If not, calls
- * to xdr_opaque may be used.
  */
 bool_t
 NC_dcpy(XDR *target, XDR *source, long nbytes)
@@ -687,16 +684,16 @@ NC_dcpy(XDR *target, XDR *source, long nbytes)
     char buf[NC_DCP_BUFSIZE];
 
     while (nbytes > sizeof(buf)) {
-        if (!XDR_GETBYTES(source, buf, sizeof(buf)))
+        if (!h4_xdr_getbytes(source, buf, sizeof(buf)))
             goto err;
-        if (!XDR_PUTBYTES(target, buf, sizeof(buf)))
+        if (!h4_xdr_putbytes(target, buf, sizeof(buf)))
             goto err;
         nbytes -= sizeof(buf);
     }
     /* we know nbytes <= sizeof(buf) at this point */
-    if (!XDR_GETBYTES(source, buf, nbytes))
+    if (!h4_xdr_getbytes(source, buf, nbytes))
         goto err;
-    if (!XDR_PUTBYTES(target, buf, nbytes))
+    if (!h4_xdr_putbytes(target, buf, nbytes))
         goto err;
     return (TRUE);
 err:
@@ -714,8 +711,8 @@ NC_vcpy(XDR *target, NC *old, int varid)
     vpp = (NC_var **)old->vars->values;
     vpp += varid;
 
-    if (!xdr_setpos(old->xdrs, (*vpp)->begin)) {
-        NCadvise(NC_EXDR, "NC_vcpy: xdr_setpos");
+    if (!h4_xdr_setpos(old->xdrs, (*vpp)->begin)) {
+        NCadvise(NC_EXDR, "NC_vcpy: h4_xdr_setpos");
         return (FALSE);
     }
 
@@ -732,8 +729,8 @@ NC_reccpy(XDR *target, NC *old, int varid, int recnum)
     vpp = (NC_var **)old->vars->values;
     vpp += varid;
 
-    if (!xdr_setpos(old->xdrs, (*vpp)->begin + old->recsize * recnum)) {
-        NCadvise(NC_EXDR, "NC_reccpy: xdr_setpos");
+    if (!h4_xdr_setpos(old->xdrs, (*vpp)->begin + old->recsize * recnum)) {
+        NCadvise(NC_EXDR, "NC_reccpy: h4_xdr_setpos");
         return (FALSE);
     }
 
@@ -825,7 +822,7 @@ NC_endef(int cdfid, NC *handle)
         /* close stash */
 /*                NC_free_cdf(stash) ; */
 #ifdef H4_HAVE_WIN32_API
-        xdr_destroy(handle->xdrs); /* close handle */
+        h4_xdr_destroy(handle->xdrs); /* close handle */
         if (remove(realpath) != 0)
             nc_serror("couldn't remove filename \"%s\"", realpath);
 #endif
@@ -985,4 +982,59 @@ ncsetfill(int id, int fillmode)
     }
 
     return ret;
+}
+
+int
+NCxdrfile_sync(XDR *xdrs)
+{
+    return h4_xdr_sync(xdrs);
+}
+
+int
+NCxdrfile_create(XDR *xdrs, const char *path, int ncmode)
+{
+    int         fmode;
+    int         fd;
+    enum xdr_op op;
+
+    switch (ncmode & 0x0f) {
+        case NC_NOCLOBBER:
+            fmode = O_RDWR | O_CREAT | O_EXCL;
+            break;
+        case NC_CLOBBER:
+            fmode = O_RDWR | O_CREAT | O_TRUNC;
+            break;
+        case NC_WRITE:
+            fmode = O_RDWR;
+            break;
+        case NC_NOWRITE:
+            fmode = O_RDONLY;
+            break;
+        default:
+            NCadvise(NC_EINVAL, "Bad flag %0x", ncmode & 0x0f);
+            return -1;
+    }
+
+#ifdef H4_HAVE_WIN32_API
+    /* Set default mode to binary to suppress the expansion of 0x0f into CRLF */
+    _fmode |= O_BINARY;
+#endif
+
+    fd = open(path, fmode, 0666);
+    if (fd == -1) {
+        nc_serror("filename \"%s\"", path);
+        return -1;
+    }
+
+    if (ncmode & NC_CREAT) {
+        op = XDR_ENCODE;
+    }
+    else {
+        op = XDR_DECODE;
+    }
+
+    if (h4_xdr_create(xdrs, fd, fmode, op) < 0)
+        return -1;
+    else
+        return fd;
 }
