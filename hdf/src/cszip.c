@@ -1085,7 +1085,7 @@ done:
 intn
 HCPrm_szip_special_bit(comp_info *c_info)
 {
-    int  sz_newway = 0; /* indicates the special bit presents in the options_mask */
+    int sz_newway = 0; /* indicates the special bit presents in the options_mask */
 
     if (c_info == NULL)
         HRETURN_ERROR(DFE_INTERNAL, FAIL);
