@@ -100,31 +100,31 @@ extern "C" {
 /*
  * Operations defined on an XDR handle
  */
-HDFLIBAPI bool_t xdr_getbytes(XDR *, char *, unsigned);
-HDFLIBAPI bool_t xdr_putbytes(XDR *, const char *, unsigned);
+HDFLIBAPI bool_t h4_xdr_getbytes(XDR *, char *, unsigned);
+HDFLIBAPI bool_t h4_xdr_putbytes(XDR *, const char *, unsigned);
 
-HDFLIBAPI unsigned xdr_getpos(XDR *);
-HDFLIBAPI bool_t   xdr_setpos(XDR *, unsigned);
+HDFLIBAPI unsigned h4_xdr_getpos(XDR *);
+HDFLIBAPI bool_t   h4_xdr_setpos(XDR *, unsigned);
 
 /*
  * "Data type" XDR routines that read/write/free depending on the op
  * parameter of the XDR struct
  */
-HDFLIBAPI bool_t xdr_int(XDR *, int *);
-HDFLIBAPI bool_t xdr_u_int(XDR *, unsigned *);
+HDFLIBAPI bool_t h4_xdr_int(XDR *, int *);
+HDFLIBAPI bool_t h4_xdr_u_int(XDR *, unsigned *);
 
-HDFLIBAPI bool_t xdr_bytes(XDR *, char **, unsigned *, unsigned);
-HDFLIBAPI bool_t xdr_opaque(XDR *, char *, unsigned);
+HDFLIBAPI bool_t h4_xdr_bytes(XDR *, char **, unsigned *, unsigned);
+HDFLIBAPI bool_t h4_xdr_opaque(XDR *, char *, unsigned);
 
-HDFLIBAPI bool_t xdr_float(XDR *, float *);
-HDFLIBAPI bool_t xdr_double(XDR *, double *);
+HDFLIBAPI bool_t h4_xdr_float(XDR *, float *);
+HDFLIBAPI bool_t h4_xdr_double(XDR *, double *);
 
 /* XDR file manipulation */
-HDFLIBAPI int  xdr_create(XDR *xdrs, int fd, int fmode, enum xdr_op op);
-HDFLIBAPI int  xdr_sync(XDR *xdrs);
-HDFLIBAPI void xdr_destroy(XDR *);
+HDFLIBAPI int  h4_xdr_create(XDR *xdrs, int fd, int fmode, enum xdr_op op);
+HDFLIBAPI int  h4_xdr_sync(XDR *xdrs);
+HDFLIBAPI void h4_xdr_destroy(XDR *);
 
-HDFLIBAPI void xdr_setup_nofile(XDR *xdrs, int ncop);
+HDFLIBAPI void h4_xdr_setup_nofile(XDR *xdrs, int ncop);
 
 #ifdef __cplusplus
 }

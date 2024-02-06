@@ -130,7 +130,7 @@ xdr_NC_string(XDR *xdrs, NC_string **spp)
             return (TRUE);
         case XDR_DECODE:
             /* need the length to pass to new */
-            if (!xdr_u_int(xdrs, &count)) {
+            if (!h4_xdr_u_int(xdrs, &count)) {
                 return (FALSE);
             }
             if (count == 0) {
@@ -142,7 +142,7 @@ xdr_NC_string(XDR *xdrs, NC_string **spp)
                 return (FALSE);
             (*spp)->values[count] = 0;
             /* then deal with the characters */
-            status = xdr_opaque(xdrs, (*spp)->values, (*spp)->count);
+            status = h4_xdr_opaque(xdrs, (*spp)->values, (*spp)->count);
 
             /* might be padded */
             (*spp)->len = strlen((*spp)->values);
@@ -151,14 +151,14 @@ xdr_NC_string(XDR *xdrs, NC_string **spp)
             /* first deal with the length */
             if (*spp == NULL) {
                 count = 0;
-                return (xdr_u_int(xdrs, &count));
+                return (h4_xdr_u_int(xdrs, &count));
             } /* else */
             count = (*spp)->count;
-            if (!xdr_u_int(xdrs, &count)) {
+            if (!h4_xdr_u_int(xdrs, &count)) {
                 return (FALSE);
             }
             /* then deal with the characters */
-            return (xdr_opaque(xdrs, (*spp)->values, (*spp)->count));
+            return (h4_xdr_opaque(xdrs, (*spp)->values, (*spp)->count));
     }
     return (FALSE);
 }

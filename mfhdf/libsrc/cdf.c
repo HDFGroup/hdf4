@@ -62,7 +62,7 @@ NC_free_cdf(NC *handle)
             HGOTO_FAIL(FAIL);
 
         /* destroy xdr struct */
-        xdr_destroy(handle->xdrs);
+        h4_xdr_destroy(handle->xdrs);
         free(handle->xdrs);
         handle->xdrs = NULL;
 
@@ -245,7 +245,7 @@ NC_new_cdf(const char *name, int mode)
      */
     switch (cdf->file_type) {
         case HDF_FILE:
-            xdr_setup_nofile(cdf->xdrs, mode); /* return type is 'void' */
+            h4_xdr_setup_nofile(cdf->xdrs, mode); /* return type is 'void' */
             break;
         case netCDF_FILE:
             if (NCxdrfile_create(cdf->xdrs, name, mode) < 0)
@@ -254,7 +254,7 @@ NC_new_cdf(const char *name, int mode)
         case CDF_FILE:
             /* CDF_xdrfile_create(); */
             /* try this, I bet it will be sufficient */
-            xdr_setup_nofile(cdf->xdrs, mode);
+            h4_xdr_setup_nofile(cdf->xdrs, mode);
             break;
     }
 
@@ -354,7 +354,7 @@ done:
                                   These routines only free up allocated memory. */
             NC_free_xcdf(cdf); /* no point in catching error here */
             if (cdf->xdrs != NULL) {
-                xdr_destroy(cdf->xdrs);
+                h4_xdr_destroy(cdf->xdrs);
                 free(cdf->xdrs);
             }
             free(cdf);
@@ -497,21 +497,21 @@ NC_xdr_cdf(XDR *xdrs, NC **handlep)
         return (TRUE);
     }
 
-    if (xdr_getpos(xdrs) != 0) {
-        if (!xdr_setpos(xdrs, 0)) {
+    if (h4_xdr_getpos(xdrs) != 0) {
+        if (!h4_xdr_setpos(xdrs, 0)) {
             nc_serror("Can't set position to begin");
             return (FALSE);
         }
     }
 
     /* magic number */
-    if (!xdr_u_int(xdrs, &magic)) {
+    if (!h4_xdr_u_int(xdrs, &magic)) {
         if (xdrs->x_op == XDR_DECODE) {
             NCadvise(NC_ENOTNC, "Not a netcdf file (Can't read magic number)");
         }
         else {
             /* write error */
-            nc_serror("xdr_cdf: xdr_u_int");
+            nc_serror("xdr_cdf: h4_xdr_u_int");
         }
         return (FALSE);
     }
@@ -2334,20 +2334,20 @@ xdr_numrecs(XDR *xdrs, NC *handle)
          * record so we can successfully read back the
          * entire last record.
          */
-        if (!xdr_setpos(xdrs, handle->begin_rec + handle->numrecs * handle->recsize)) {
+        if (!h4_xdr_setpos(xdrs, handle->begin_rec + handle->numrecs * handle->recsize)) {
             nc_serror("Can't set position to EOF");
-            return (FALSE);
+            return FALSE;
         }
 
-        if (!xdr_u_int(xdrs, &(handle->numrecs)))
-            return (FALSE);
+        if (!h4_xdr_u_int(xdrs, &(handle->numrecs)))
+            return FALSE;
     }
 
-    if (!xdr_setpos(xdrs, RECPOS)) {
+    if (!h4_xdr_setpos(xdrs, RECPOS)) {
         nc_serror("Can't set position to RECPOS");
-        return (FALSE);
+        return FALSE;
     }
-    return (xdr_u_int(xdrs, &(handle->numrecs)));
+    return h4_xdr_u_int(xdrs, &(handle->numrecs));
 }
 
 static bool_t
@@ -2393,7 +2393,7 @@ xdr_NC_fill(XDR *xdrs, NC_var *vp)
         case NC_BYTE:
         case NC_CHAR:
             alen /= 4;
-            xdr_NC_fnct = xdr_bytes;
+            xdr_NC_fnct = h4_xdr_bytes;
             break;
         case NC_SHORT:
             alen /= 4;
@@ -2401,15 +2401,15 @@ xdr_NC_fill(XDR *xdrs, NC_var *vp)
             break;
         case NC_LONG:
             alen /= 4;
-            xdr_NC_fnct = xdr_int;
+            xdr_NC_fnct = h4_xdr_int;
             break;
         case NC_FLOAT:
             alen /= 4;
-            xdr_NC_fnct = xdr_float;
+            xdr_NC_fnct = h4_xdr_float;
             break;
         case NC_DOUBLE:
             alen /= 8;
-            xdr_NC_fnct = xdr_double;
+            xdr_NC_fnct = h4_xdr_double;
             break;
         default:
             NCadvise(NC_EBADTYPE, "bad type %d", vp->type);

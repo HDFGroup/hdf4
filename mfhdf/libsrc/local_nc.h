@@ -230,8 +230,9 @@ extern "C" {
 #endif
 
 /* If using the real netCDF library and API (when --disable-netcdf configure flag is used)
-   need to mangle the HDF versions of netCDF API function names
-   to not conflict w/ oriinal netCDF ones */
+ * need to mangle the HDF versions of netCDF API function names
+ * to not conflict w/ oriinal netCDF ones
+ */
 #ifndef H4_HAVE_NETCDF
 #define nc_serror         HNAME(nc_serror)
 #define NCadvise          HNAME(NCadvise)
@@ -288,10 +289,8 @@ extern "C" {
 #define NC_dcpy           HNAME(NC_dcpy)
 #define NCxdrfile_sync    HNAME(NCxdrfile_sync)
 #define NCxdrfile_create  HNAME(NCxdrfile_create)
-#ifdef HDF
-#define NCgenio      HNAME(NCgenio)      /* from putgetg.c */
-#define NC_var_shape HNAME(NC_var_shape) /* from var.c */
-#endif
+#define NCgenio           HNAME(NCgenio)      /* from putgetg.c */
+#define NC_var_shape      HNAME(NC_var_shape) /* from var.c */
 #endif /* !H4_HAVE_NETCDF ie. NOT USING HDF version of netCDF ncxxx API */
 
 #define nncpopt H4_F77_FUNC(ncpopt, NCPOPT)

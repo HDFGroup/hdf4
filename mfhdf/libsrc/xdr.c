@@ -72,8 +72,8 @@
 static const char xdr_zero[BYTES_PER_XDR_UNIT] = {0, 0, 0, 0};
 
 /* Forward declarations */
-static bool_t xdr_get32(XDR *xdrs, uint32_t *up);
-static bool_t xdr_put32(XDR *xdrs, const uint32_t *up);
+static bool_t h4_xdr_get32(XDR *xdrs, uint32_t *up);
+static bool_t h4_xdr_put32(XDR *xdrs, const uint32_t *up);
 
 /******************/
 /* XDR Type Calls */
@@ -88,15 +88,15 @@ static bool_t xdr_put32(XDR *xdrs, const uint32_t *up);
  * XDR integers
  */
 bool_t
-xdr_int(XDR *xdrs, int *ip)
+h4_xdr_int(XDR *xdrs, int *ip)
 {
     switch (xdrs->x_op) {
 
         case XDR_ENCODE:
-            return xdr_put32(xdrs, (uint32_t *)ip);
+            return h4_xdr_put32(xdrs, (uint32_t *)ip);
 
         case XDR_DECODE:
-            return xdr_get32(xdrs, (uint32_t *)ip);
+            return h4_xdr_get32(xdrs, (uint32_t *)ip);
 
         case XDR_FREE:
             return TRUE;
@@ -109,15 +109,15 @@ xdr_int(XDR *xdrs, int *ip)
  * XDR unsigned integers
  */
 bool_t
-xdr_u_int(XDR *xdrs, unsigned *up)
+h4_xdr_u_int(XDR *xdrs, unsigned *up)
 {
     switch (xdrs->x_op) {
 
         case XDR_ENCODE:
-            return xdr_put32(xdrs, up);
+            return h4_xdr_put32(xdrs, up);
 
         case XDR_DECODE:
-            return xdr_get32(xdrs, up);
+            return h4_xdr_get32(xdrs, up);
 
         case XDR_FREE:
             return TRUE;
@@ -133,7 +133,7 @@ xdr_u_int(XDR *xdrs, unsigned *up)
  * cp points to the opaque object and cnt gives the byte length.
  */
 bool_t
-xdr_opaque(XDR *xdrs, char *cp, unsigned cnt)
+h4_xdr_opaque(XDR *xdrs, char *cp, unsigned cnt)
 {
     unsigned   rndup;
     static int crud[BYTES_PER_XDR_UNIT];
@@ -152,19 +152,19 @@ xdr_opaque(XDR *xdrs, char *cp, unsigned cnt)
         rndup = BYTES_PER_XDR_UNIT - rndup;
 
     if (xdrs->x_op == XDR_DECODE) {
-        if (!xdr_getbytes(xdrs, cp, cnt))
+        if (!h4_xdr_getbytes(xdrs, cp, cnt))
             return FALSE;
         if (rndup == 0)
             return TRUE;
-        return xdr_getbytes(xdrs, (char *)crud, rndup);
+        return h4_xdr_getbytes(xdrs, (char *)crud, rndup);
     }
 
     if (xdrs->x_op == XDR_ENCODE) {
-        if (!xdr_putbytes(xdrs, cp, cnt))
+        if (!h4_xdr_putbytes(xdrs, cp, cnt))
             return FALSE;
         if (rndup == 0)
             return TRUE;
-        return xdr_putbytes(xdrs, xdr_zero, rndup);
+        return h4_xdr_putbytes(xdrs, xdr_zero, rndup);
     }
 
     if (xdrs->x_op == XDR_FREE)
@@ -185,7 +185,7 @@ xdr_opaque(XDR *xdrs, char *cp, unsigned cnt)
  * If *cpp is NULL maxsize bytes are allocated
  */
 bool_t
-xdr_bytes(XDR *xdrs, char **cpp, unsigned *sizep, unsigned maxsize)
+h4_xdr_bytes(XDR *xdrs, char **cpp, unsigned *sizep, unsigned maxsize)
 {
     char    *sp = *cpp; /* sp is the actual string pointer */
     unsigned nodesize;
@@ -195,7 +195,7 @@ xdr_bytes(XDR *xdrs, char **cpp, unsigned *sizep, unsigned maxsize)
     /*
      * first deal with the length since xdr bytes are counted
      */
-    if (!xdr_u_int(xdrs, sizep))
+    if (!h4_xdr_u_int(xdrs, sizep))
         return FALSE;
     nodesize = *sizep;
     if ((nodesize > maxsize) && (xdrs->x_op != XDR_FREE))
@@ -214,13 +214,13 @@ xdr_bytes(XDR *xdrs, char **cpp, unsigned *sizep, unsigned maxsize)
                 allocated = TRUE;
             }
             if (sp == NULL) {
-                fprintf(stderr, "xdr_bytes: out of memory\n");
+                fprintf(stderr, "h4_xdr_bytes: out of memory\n");
                 return FALSE;
             }
             /* FALLTHROUGH */
 
         case XDR_ENCODE:
-            ret = xdr_opaque(xdrs, sp, nodesize);
+            ret = h4_xdr_opaque(xdrs, sp, nodesize);
             if ((xdrs->x_op == XDR_DECODE) && (ret == FALSE)) {
                 if (allocated == TRUE) {
                     free(sp);
@@ -244,15 +244,15 @@ xdr_bytes(XDR *xdrs, char **cpp, unsigned *sizep, unsigned maxsize)
  * XDR 4-byte floats
  */
 bool_t
-xdr_float(XDR *xdrs, float *fp)
+h4_xdr_float(XDR *xdrs, float *fp)
 {
     switch (xdrs->x_op) {
 
         case XDR_ENCODE:
-            return xdr_int(xdrs, (int *)fp);
+            return h4_xdr_int(xdrs, (int *)fp);
 
         case XDR_DECODE:
-            return xdr_int(xdrs, (int *)fp);
+            return h4_xdr_int(xdrs, (int *)fp);
 
         case XDR_FREE:
             return TRUE;
@@ -267,7 +267,7 @@ xdr_float(XDR *xdrs, float *fp)
  * I/O operation.
  */
 bool_t
-xdr_double(XDR *xdrs, double *dp)
+h4_xdr_double(XDR *xdrs, double *dp)
 {
     int   *ip;
     bool_t rv;
@@ -279,15 +279,15 @@ xdr_double(XDR *xdrs, double *dp)
         case XDR_ENCODE:
             ip = (int *)(void *)dp;
 #ifdef H4_WORDS_BIGENDIAN
-            rv = xdr_int(xdrs, ip);
+            rv = h4_xdr_int(xdrs, ip);
             if (!rv)
                 return rv;
-            rv = xdr_int(xdrs, ip + 1);
+            rv = h4_xdr_int(xdrs, ip + 1);
 #else
-            rv = xdr_int(xdrs, ip + 1);
+            rv = h4_xdr_int(xdrs, ip + 1);
             if (!rv)
                 return rv;
-            rv = xdr_int(xdrs, ip);
+            rv = h4_xdr_int(xdrs, ip);
 #endif
             return rv;
             break;
@@ -295,15 +295,15 @@ xdr_double(XDR *xdrs, double *dp)
         case XDR_DECODE:
             ip = (int *)(void *)dp;
 #ifdef H4_WORDS_BIGENDIAN
-            rv = xdr_int(xdrs, ip);
+            rv = h4_xdr_int(xdrs, ip);
             if (!rv)
                 return rv;
-            rv = xdr_int(xdrs, ip + 1);
+            rv = h4_xdr_int(xdrs, ip + 1);
 #else
-            rv = xdr_int(xdrs, ip + 1);
+            rv = h4_xdr_int(xdrs, ip + 1);
             if (!rv)
                 return rv;
-            rv = xdr_int(xdrs, ip);
+            rv = h4_xdr_int(xdrs, ip);
 #endif
             return rv;
             break;
@@ -527,7 +527,7 @@ bio_write(biobuf *biop, unsigned char *ptr, int nbytes)
  */
 
 static bool_t
-xdr_get32(XDR *xdrs, uint32_t *up)
+h4_xdr_get32(XDR *xdrs, uint32_t *up)
 {
     uint8_t *p = (uint8_t *)up;
 
@@ -543,7 +543,7 @@ xdr_get32(XDR *xdrs, uint32_t *up)
 }
 
 static bool_t
-xdr_put32(XDR *xdrs, const uint32_t *up)
+h4_xdr_put32(XDR *xdrs, const uint32_t *up)
 {
 
     uint8_t *p = (uint8_t *)up;
@@ -562,11 +562,11 @@ xdr_put32(XDR *xdrs, const uint32_t *up)
 /*
  * Read/Write a bunch of bytes to/from an XDR file
  *
- * NOTE: These deal with raw bytes, not "counted bytes", like xdr_bytes() does!
+ * NOTE: These deal with raw bytes, not "counted bytes", like h4_xdr_bytes() does!
  */
 
 bool_t
-xdr_getbytes(XDR *xdrs, char *addr, unsigned len)
+h4_xdr_getbytes(XDR *xdrs, char *addr, unsigned len)
 {
     if ((len != 0) && (bio_read((biobuf *)xdrs->x_private, (unsigned char *)addr, (int)len) != len))
         return FALSE;
@@ -574,7 +574,7 @@ xdr_getbytes(XDR *xdrs, char *addr, unsigned len)
 }
 
 bool_t
-xdr_putbytes(XDR *xdrs, const char *addr, unsigned len)
+h4_xdr_putbytes(XDR *xdrs, const char *addr, unsigned len)
 {
     if ((len != 0) && (bio_write((biobuf *)xdrs->x_private, (unsigned char *)addr, (int)len) != len))
         return FALSE;
@@ -586,14 +586,14 @@ xdr_putbytes(XDR *xdrs, const char *addr, unsigned len)
  */
 
 unsigned
-xdr_getpos(XDR *xdrs)
+h4_xdr_getpos(XDR *xdrs)
 {
     biobuf *biop = (biobuf *)xdrs->x_private;
     return BIOBUFSIZ * biop->page + CNT(biop);
 }
 
 bool_t
-xdr_setpos(XDR *xdrs, unsigned pos)
+h4_xdr_setpos(XDR *xdrs, unsigned pos)
 {
     biobuf *biop = (biobuf *)xdrs->x_private;
     if (biop != NULL) {
@@ -634,7 +634,7 @@ xdr_setpos(XDR *xdrs, unsigned pos)
  * up the file.
  */
 void
-xdr_setup_nofile(XDR *xdrs, int ncop)
+h4_xdr_setup_nofile(XDR *xdrs, int ncop)
 {
     biobuf *biop = bio_get_new(-1, 0);
 
@@ -654,7 +654,7 @@ xdr_setup_nofile(XDR *xdrs, int ncop)
  * Operation flag is initialized to op
  */
 int
-xdr_create(XDR *xdrs, int fd, int fmode, enum xdr_op op)
+h4_xdr_create(XDR *xdrs, int fd, int fmode, enum xdr_op op)
 {
     biobuf *biop    = bio_get_new(fd, fmode);
     xdrs->x_op      = op;
@@ -674,7 +674,7 @@ xdr_create(XDR *xdrs, int fd, int fmode, enum xdr_op op)
  * Flush the I/O buffer to the file
  */
 int
-xdr_sync(XDR *xdrs)
+h4_xdr_sync(XDR *xdrs)
 {
     biobuf *biop = (biobuf *)xdrs->x_private;
     if (biop->isdirty) {
@@ -695,10 +695,10 @@ xdr_sync(XDR *xdrs)
 /*
  * Destroy a POSIX XDR stream
  *
- * Cleans up after xdr_create()
+ * Cleans up after h4_xdr_create()
  */
 void
-xdr_destroy(XDR *xdrs)
+h4_xdr_destroy(XDR *xdrs)
 {
     /* Flush */
     biobuf *biop = (biobuf *)xdrs->x_private;

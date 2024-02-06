@@ -33,7 +33,7 @@ static const long *NCvcmaxcontig(NC *, NC_var *, const long *, const long *);
 
 int NC_fill_buffer(NC *handle, int varid, const long *edges, void *values);
 
-#define xdr_NCsetpos(xdrs, pos) xdr_setpos((xdrs), (pos))
+#define xdr_NCsetpos(xdrs, pos) h4_xdr_setpos((xdrs), (pos))
 
 /*
  * Check if an ncxxx function has called the current function
@@ -352,13 +352,13 @@ xdr_NCvbyte(XDR *xdrs, unsigned rem, unsigned count, char *values)
          * Since we only read/write multiples of four bytes,
          * We will read in the word to change one byte in it.
          */
-        origin = xdr_getpos(xdrs);
+        origin = h4_xdr_getpos(xdrs);
 
         /* Next op is a get */
         xdrs->x_op = XDR_DECODE;
     }
 
-    if (!xdr_opaque(xdrs, buf, 4)) {
+    if (!h4_xdr_opaque(xdrs, buf, 4)) {
         /* Get failed, assume we are trying to read off the end */
         memset(buf, 0, sizeof(buf));
     }
@@ -377,9 +377,9 @@ xdr_NCvbyte(XDR *xdrs, unsigned rem, unsigned count, char *values)
     }
 
     if (x_op == XDR_ENCODE) {
-        if (!xdr_setpos(xdrs, origin))
+        if (!h4_xdr_setpos(xdrs, origin))
             return (FALSE);
-        if (!xdr_opaque(xdrs, buf, 4))
+        if (!h4_xdr_opaque(xdrs, buf, 4))
             return (FALSE);
     }
 
@@ -398,13 +398,13 @@ xdr_NCvshort(XDR *xdrs, unsigned which, short *values)
     enum xdr_op   x_op   = xdrs->x_op; /* save state */
 
     if (x_op == XDR_ENCODE) {
-        origin = xdr_getpos(xdrs);
+        origin = h4_xdr_getpos(xdrs);
 
         /* Next op is a get */
         xdrs->x_op = XDR_DECODE;
     }
 
-    if (!xdr_opaque(xdrs, (char *)buf, 4)) {
+    if (!h4_xdr_opaque(xdrs, (char *)buf, 4)) {
         /* Get failed, assume we are trying to read off the end */
         memset(buf, 0, sizeof(buf));
     }
@@ -419,9 +419,9 @@ xdr_NCvshort(XDR *xdrs, unsigned which, short *values)
         buf[which + 1] = *values % 256;
         buf[which]     = (*values >> 8);
 
-        if (!xdr_setpos(xdrs, origin))
+        if (!h4_xdr_setpos(xdrs, origin))
             return (FALSE);
-        if (!xdr_opaque(xdrs, (char *)buf, 4))
+        if (!h4_xdr_opaque(xdrs, (char *)buf, 4))
             return (FALSE);
     }
     else {
@@ -463,11 +463,11 @@ xdr_NCv1data(XDR *xdrs, unsigned long where, nc_type type, Void *values)
             return (xdr_NCvshort(xdrs, (unsigned)rem / 2, (short *)values));
         case NC_LONG:
             /* nclong is defined to a 32-bit integer type in netcdf.h */
-            return (xdr_int(xdrs, (nclong *)values));
+            return (h4_xdr_int(xdrs, (nclong *)values));
         case NC_FLOAT:
-            return (xdr_float(xdrs, (float *)values));
+            return (h4_xdr_float(xdrs, (float *)values));
         case NC_DOUBLE:
-            return (xdr_double(xdrs, (double *)values));
+            return (h4_xdr_double(xdrs, (double *)values));
         default:
             break;
     }
@@ -1471,7 +1471,7 @@ xdr_NCvdata(XDR *xdrs, unsigned long where, nc_type type, unsigned count, Void *
 
             rem = count % 4; /* tail remainder */
             count -= rem;
-            if (!xdr_opaque(xdrs, values, count))
+            if (!h4_xdr_opaque(xdrs, values, count))
                 return (FALSE);
 
             if (rem != 0) {
@@ -1498,15 +1498,15 @@ xdr_NCvdata(XDR *xdrs, unsigned long where, nc_type type, unsigned count, Void *
             } /* else */
             return (TRUE);
         case NC_LONG:
-            xdr_NC_fnct = xdr_int;
+            xdr_NC_fnct = h4_xdr_int;
             szof        = sizeof(nclong);
             break;
         case NC_FLOAT:
-            xdr_NC_fnct = xdr_float;
+            xdr_NC_fnct = h4_xdr_float;
             szof        = sizeof(float);
             break;
         case NC_DOUBLE:
-            xdr_NC_fnct = xdr_double;
+            xdr_NC_fnct = h4_xdr_double;
             szof        = sizeof(double);
             break;
         default:
