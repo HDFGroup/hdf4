@@ -7,7 +7,7 @@ var searchData=
   ['tbuf_5fsz_4',['TBUF_SZ',['../hlimits_8h.html#abed8bb85c834277d6205e524ebf11eb6',1,'hlimits.h']]],
   ['test_5fstr_5',['TEST_STR',['../tutils_8h.html#a6a34912fc5493f286fedf636a498bc79',1,'tutils.h']]],
   ['testing_6',['TESTING',['../hdftest_8h.html#a3191df86c382367c9add3ef9587aae02',1,'hdftest.h']]],
-  ['true_7',['TRUE',['../hdf_8h.html#aa8cecfc5c5c054d2875c03e77b7be15d',1,'TRUE:&#160;hdf.h'],['../types_8h.html#aa8cecfc5c5c054d2875c03e77b7be15d',1,'TRUE:&#160;types.h']]],
-  ['true_8',['true',['../gif_8h.html#a41f9c5fb8b08eb5dc3edce4dcb37fee7',1,'gif.h']]],
+  ['true_7',['true',['../gif_8h.html#a41f9c5fb8b08eb5dc3edce4dcb37fee7',1,'gif.h']]],
+  ['true_8',['TRUE',['../hdf_8h.html#aa8cecfc5c5c054d2875c03e77b7be15d',1,'hdf.h']]],
   ['twicemax_9',['TWICEMAX',['../cskphuff_8h.html#a12bcd14b1bba58a814343d58130916c8',1,'cskphuff.h']]]
 ];

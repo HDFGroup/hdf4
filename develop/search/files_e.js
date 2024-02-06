@@ -5,6 +5,5 @@ var searchData=
   ['testcdf_2eh_2',['testcdf.h',['../testcdf_8h.html',1,'']]],
   ['tests_2eh_3',['tests.h',['../tests_8h.html',1,'']]],
   ['tproto_2eh_4',['tproto.h',['../tproto_8h.html',1,'']]],
-  ['tutils_2eh_5',['tutils.h',['../tutils_8h.html',1,'']]],
-  ['types_2eh_6',['types.h',['../types_8h.html',1,'']]]
+  ['tutils_2eh_5',['tutils.h',['../tutils_8h.html',1,'']]]
 ];

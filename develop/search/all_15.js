@@ -76,6 +76,5 @@ var searchData=
   ['rlist_73',['rlist',['../structvdata__desc.html#a1ab283baa22c846c58a3aeda4f71a317',1,'vdata_desc']]],
   ['rm_20page_20template_74',['Reference Manual (RM) Page Template',['../_r_m_t.html',1,'']]],
   ['rm_2dtemplate_2edox_75',['rm-template.dox',['../rm-template_8dox.html',1,'']]],
-  ['rndup_76',['RNDUP',['../xdr_8h.html#afaed57c5871d6c00bb39c02981204b78',1,'xdr.h']]],
-  ['root_77',['ROOT',['../cskphuff_8h.html#a77988da40e9a35da51ea0e8943ebbd4a',1,'cskphuff.h']]]
+  ['root_76',['ROOT',['../cskphuff_8h.html#a77988da40e9a35da51ea0e8943ebbd4a',1,'cskphuff.h']]]
 ];

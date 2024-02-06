@@ -13,6 +13,5 @@ var searchData=
   ['rle_5fmin_5fmix_10',['RLE_MIN_MIX',['../crle_8h.html#ad1ae550bb3eefb76e2d5e0f7141362c1',1,'crle.h']]],
   ['rle_5fmin_5frun_11',['RLE_MIN_RUN',['../crle_8h.html#a50e3f7d992446efe0083aee323922dd7',1,'crle.h']]],
   ['rle_5fnil_12',['RLE_NIL',['../crle_8h.html#aab31dc1d5c7e3e6af87cb7ddb06e8737',1,'crle.h']]],
-  ['rndup_13',['RNDUP',['../xdr_8h.html#afaed57c5871d6c00bb39c02981204b78',1,'xdr.h']]],
-  ['root_14',['ROOT',['../cskphuff_8h.html#a77988da40e9a35da51ea0e8943ebbd4a',1,'cskphuff.h']]]
+  ['root_13',['ROOT',['../cskphuff_8h.html#a77988da40e9a35da51ea0e8943ebbd4a',1,'cskphuff.h']]]
 ];

@@ -10,21 +10,5 @@ var searchData=
   ['irropt_7',['irrOpt',['../he_8h.html#ae65b50c561a65f7b2cdc2116427a5c9a',1,'he.h']]],
   ['is_5frecvar_8',['IS_RECVAR',['../local__nc_8h.html#ac1e74ab59bacb2bbe19a6f8dbcfd3e2c',1,'local_nc.h']]],
   ['isannot_9',['isAnnot',['../he_8h.html#a5f358a1e1ccc11b33f90f0fb8ff0fadb',1,'he.h']]],
-  ['isrig_10',['isRig',['../he_8h.html#ad833a2c3e9974e430dd0a3ce81199bd7',1,'he.h']]],
-  ['ixdr_5fget_5fbool_11',['IXDR_GET_BOOL',['../xdr_8h.html#a93f3d215256ad331c115cce4244b2229',1,'xdr.h']]],
-  ['ixdr_5fget_5fenum_12',['IXDR_GET_ENUM',['../xdr_8h.html#a324b75408aa1a7e7bf06ec42c41e80d6',1,'xdr.h']]],
-  ['ixdr_5fget_5fint32_13',['IXDR_GET_INT32',['../xdr_8h.html#aa3328420aeab2ead2bba48d3c2d90b44',1,'xdr.h']]],
-  ['ixdr_5fget_5flong_14',['IXDR_GET_LONG',['../xdr_8h.html#ab40ff8167c95ec02b332c3040d2122a3',1,'xdr.h']]],
-  ['ixdr_5fget_5fshort_15',['IXDR_GET_SHORT',['../xdr_8h.html#a949cb2515c145336188dca0fcb244623',1,'xdr.h']]],
-  ['ixdr_5fget_5fu_5fint32_16',['IXDR_GET_U_INT32',['../xdr_8h.html#a95e30adafe1f13249dc6838dd2cfb470',1,'xdr.h']]],
-  ['ixdr_5fget_5fu_5flong_17',['IXDR_GET_U_LONG',['../xdr_8h.html#a33c143b27bef695a124299ddc63e6196',1,'xdr.h']]],
-  ['ixdr_5fget_5fu_5fshort_18',['IXDR_GET_U_SHORT',['../xdr_8h.html#ada5dc5d65d8b09fbd089eac0a2315f23',1,'xdr.h']]],
-  ['ixdr_5fput_5fbool_19',['IXDR_PUT_BOOL',['../xdr_8h.html#a9059ba17e71380757cf5f502b0e66cf7',1,'xdr.h']]],
-  ['ixdr_5fput_5fenum_20',['IXDR_PUT_ENUM',['../xdr_8h.html#a1990f5b70a7760cb8ce2db0ae2b168db',1,'xdr.h']]],
-  ['ixdr_5fput_5fint32_21',['IXDR_PUT_INT32',['../xdr_8h.html#a4b559c92436dcc02486eaaead515a711',1,'xdr.h']]],
-  ['ixdr_5fput_5flong_22',['IXDR_PUT_LONG',['../xdr_8h.html#acfc7e1713bfaf680b49ffb682abffb88',1,'xdr.h']]],
-  ['ixdr_5fput_5fshort_23',['IXDR_PUT_SHORT',['../xdr_8h.html#a06c70a4e7de631ad1697fd48bdec6986',1,'xdr.h']]],
-  ['ixdr_5fput_5fu_5fint32_24',['IXDR_PUT_U_INT32',['../xdr_8h.html#af9981a0bbfa0401c38870b6a4c52d3eb',1,'xdr.h']]],
-  ['ixdr_5fput_5fu_5flong_25',['IXDR_PUT_U_LONG',['../xdr_8h.html#ace6b29c5437e85bcc501d9be8054e6ec',1,'xdr.h']]],
-  ['ixdr_5fput_5fu_5fshort_26',['IXDR_PUT_U_SHORT',['../xdr_8h.html#a9e9e65f730984e2fc28dd8f0c4b5b930',1,'xdr.h']]]
+  ['isrig_10',['isRig',['../he_8h.html#ad833a2c3e9974e430dd0a3ce81199bd7',1,'he.h']]]
 ];
