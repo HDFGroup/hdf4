@@ -365,9 +365,6 @@ HDFLIBAPI intn HXsetdir(const char *dir);
 HDFLIBAPI int32 HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type, model_info *m_info,
                          comp_coder_t coder_type, comp_info *c_info);
 
-HDFLIBAPI intn HCPgetcompress(int32 file_id, uint16 data_tag, uint16 data_ref, comp_coder_t *coder_type,
-                              comp_info *c_info);
-
 HDFLIBAPI intn HCPgetcompinfo(int32 file_id, uint16 data_tag, uint16 data_ref, comp_coder_t *coder_type,
                               comp_info *c_info);
 
@@ -393,6 +390,7 @@ HDFLIBAPI intn HCPdecode_header(uint8 *p, comp_model_t *model_type, model_info *
 
 HDFLIBAPI intn HCPsetup_szip_parms(comp_info *c_info, int32 nt, int32 ncomp, int32 ndims, int32 *dims,
                                    int32 *cdims);
+HDFLIBAPI intn HCPrm_szip_special_bit(comp_info *c_info);
 /*
  ** from hbuffer.c
  */

@@ -951,7 +951,7 @@ HCPcszip_endaccess(accrec_t *access_rec)
     HCPsetup_szip_parms -- Initialize SZIP parameters
 
  USAGE
-    intn HCPcszip_setup_parms( comp_info *c_info, int32 nt, int32 ndims, int32 *dims, int32 *cdims)
+    intn HCPsetup_szip_parms( comp_info *c_info, int32 nt, int32 ndims, int32 *dims, int32 *cdims)
     comp_info *c_info;    IN/OUT: the szip compression params
     int32 nt;             IN: the number type of the data
     int32 ncomp;          IN: components in GR, 1 for SD
@@ -969,7 +969,7 @@ HCPcszip_endaccess(accrec_t *access_rec)
        pixels_per_scanline
        bits_per_pixel
 
-    This is called from SDsetcompress, SDsetchunk, GRsetcompress, GRsetchunk
+    This is called from GRsetup_szip_parms and SDsetup_szip_parms
 
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
@@ -1058,4 +1058,43 @@ done:
 
     return FAIL;
 #endif
+}
+
+/*--------------------------------------------------------------------------
+ NAME
+    HCPrm_szip_special_bit -- Removes the special bit that signals szip revised format
+
+ USAGE
+    intn HCPrm_szip_special_bit(comp_info *c_info)
+    comp_info *c_info;    IN/OUT: the szip compression params
+
+ RETURNS
+    Returns SUCCEED
+
+ DESCRIPTION
+
+    A special bit, SZ_H4_REV_2, was introduced to indicate that the szip info
+    was stored in a new way.  This bit was set in the options_mask field
+    of the szip info struct.  As a result, the value of options_mask became
+    incorrect when the special bit was not removed from the options_mask before
+    returning to the application.
+
+    This is used in SDgetcompinfo and GRgetcompinfo.
+
+--------------------------------------------------------------------------*/
+intn
+HCPrm_szip_special_bit(comp_info *c_info)
+{
+    int sz_newway = 0; /* indicates the special bit presents in the options_mask */
+
+    if (c_info == NULL)
+        HRETURN_ERROR(DFE_INTERNAL, FAIL);
+
+    /* if the special bit presents for SZIP compression, remove it to
+       return the correct options_mask */
+    sz_newway = (int)c_info->szip.options_mask & SZ_H4_REV_2;
+    if (sz_newway)
+        c_info->szip.options_mask = c_info->szip.options_mask & ~SZ_H4_REV_2;
+
+    return SUCCEED;
 }

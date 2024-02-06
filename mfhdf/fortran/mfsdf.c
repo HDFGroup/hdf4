@@ -1572,7 +1572,7 @@ nsfsflmd(intf *id, intf *fillmode)
 
 /*-------------------------------------------------------------------------
  * Name:    scgichnk
- * Puporse: Call SDgetchunkinfo
+ * Purpose: Call SDgetchunkinfo
  * Inputs:  id: SDS access id
  * Outputs: dim_length: chunk dimensions
  *          flags:            -1 - SDS is nonchunked
@@ -1747,7 +1747,7 @@ nscscchnk(intf *id, intf *maxcache, intf *flags)
 
 /*-------------------------------------------------------------------------
  * Name:    scschnk
- * Puporse: Call SDsetchunk
+ * Purpose: Call SDsetchunk
  * Inputs:  id: SDS access id
  *          dim_length: chunk dimensions
  *          comp_type:  type of compression
@@ -1932,7 +1932,7 @@ nscwcchnk(intf *id, intf *start, _fcd char_data)
 
 /*-------------------------------------------------------------------------
  * Name:    scscompress
- * Puporse: Call SDsetcompress
+ * Purpose: Call SDsetcompress
  * Inputs:  id: SDS access id
  *          comp_type:  type of compression
  *                      COMP_CODE_NONE = 0
@@ -1998,7 +1998,7 @@ nscscompress(intf *id, intf *comp_type, intf *comp_prm)
 
 /*-------------------------------------------------------------------------
  * Name:    scgcompress
- * Puporse: Call SDgetcompress
+ * Purpose: Call SDgetcompinfo
  * Inputs:  id: SDS access id
  * Outputs: comp_type:  type of compression
  *                      COMP_CODE_NONE = 0

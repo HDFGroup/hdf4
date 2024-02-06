@@ -3321,7 +3321,8 @@ done:
 /************************** Deprecated ******************************
  NAME
     SDgetexternalfile -- retrieves external file information
-    (Deprecated)
+    (Deprecated in favor of SDgetexternalinfo)
+
  USAGE
     int32 SDgetexternalfile(id, filename, offset)
         int32 id;
@@ -3741,9 +3742,10 @@ done:
 
 #ifndef H4_NO_DEPRECATED_SYMBOLS
 
-/******************************************************************************
+/****************************** Deprecated ***********************************
  NAME
     SDgetcompress -- Retrieves compression information of a dataset
+    (Deprecated in favor of SDgetcompinfo)
 
  DESCRIPTION
     This routine uses HCPgetcompress to retrieve the compression type
@@ -3751,11 +3753,6 @@ done:
 
  RETURNS
     SUCCEED/FAIL
-
- MODIFICATION
-    July 2001: Added to fix bug #307 - BMR
-    Apr 2005:  This function has incorrect behavior and is replaced by
-        SDgetcompinfo.  SDgetcompress will be removed in the future.
 
 ******************************************************************************/
 intn
@@ -3773,24 +3770,7 @@ SDgetcompress(
     /* clear error stack */
     HEclear();
 
-    if (comp_type == NULL || c_info == NULL)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    handle = SDIhandle_from_id(id, SDSTYPE);
-    if (handle == NULL || handle->file_type != HDF_FILE)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-    if (handle->vars == NULL)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    var = SDIget_var(handle, id);
-    if (var == NULL)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    if (!var->data_ref)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    /* use lower-level routine to get the compression information */
-    status = HCPgetcompress(handle->hdf_file, var->data_tag, var->data_ref, comp_type, c_info);
+    status = SDgetcompinfo(id, comp_type, c_info);
     if (status == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
@@ -3810,14 +3790,6 @@ done:
 
  RETURNS
     SUCCEED/FAIL
-
- MODIFICATION
-    July 2001: Added to fix bug #307 - BMR (from SDgetcompress)
-    Apr 2005:  This function was actually created at this time, but it is
-        almost a duplicate of SDgetcompress, which is intended to be
-        removed in the future, due to its incorrect behavior.  The
-        only difference is the call to the low-level routine,
-        HCPgetcompinfo, instead of HCPgetcompress.
 
 ******************************************************************************/
 intn
@@ -3857,9 +3829,15 @@ SDgetcompinfo(int32         sdsid,     /* IN: dataset ID */
 
     /* use lower-level routine to get the compression information */
     status = HCPgetcompinfo(handle->hdf_file, var->data_tag, var->data_ref, comp_type, c_info);
-
     if (status == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+    /* remove the szip special bit if necessary */
+    if (*comp_type == COMP_CODE_SZIP) {
+        status = HCPrm_szip_special_bit(c_info);
+        if (status == FAIL)
+            HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    }
 
 done:
     return ret_value;
@@ -5031,12 +5009,6 @@ done:
  RETURNS
         SUCCEED/FAIL
 
- AUTHOR
-        -GeorgeV
-
- MODIFICATION
-    Jun, 2009: Added compression type and compression parameters.- BMR
-
 ******************************************************************************/
 intn
 SDgetchunkinfo(int32          sdsid,     /* IN: sds access id */
@@ -5197,6 +5169,13 @@ SDgetchunkinfo(int32          sdsid,     /* IN: sds access id */
                         else {
                             memcpy(&(chunk_def->comp.cinfo), &c_info, sizeof(comp_info));
                             chunk_def->comp.comp_type = (int32)comp_type;
+
+                            /* remove the szip special bit if necessary */
+                            if (comp_type == COMP_CODE_SZIP) {
+                                ret_value = HCPrm_szip_special_bit(&chunk_def->comp.cinfo);
+                                if (ret_value == FAIL)
+                                    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+                            }
                         }
                     }      /* chunk_def != NULL */
                     break; /* default */

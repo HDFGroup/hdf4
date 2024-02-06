@@ -1456,6 +1456,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
             if (HCPdecode_header((uint8 *)info->comp_sp_tag_header, (comp_model_t *)&info->model_type,
                                  info->minfo, (comp_coder_t *)&info->comp_type, info->cinfo) == FAIL)
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
             break;
         default:
             /* Do nothing */

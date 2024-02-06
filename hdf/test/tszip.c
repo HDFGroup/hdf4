@@ -63,10 +63,10 @@ test_szip_RI8bit()
         interlace_mode, /* interlace mode of the image */
         data_type,      /* data type of the image data */
         index;
-    int32     start[2], edges[2];
-    uint32    comp_config;
-    comp_info cinfo; /* Compression parameters - union */
-
+    int32        start[2], edges[2];
+    uint32       comp_config;
+    comp_info    cinfo;     /* Compression parameters - union */
+    comp_info    cinfo_out; /* Compression parameters read - union */
     comp_coder_t comp_type;
 
     int8 out_data[LENGTH][WIDTH][N_COMPS];
@@ -226,11 +226,13 @@ test_szip_RI8bit()
 
     /* Get and verify the image's compression information */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    memset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo_out, 0, sizeof(cinfo_out));
 
-    status = GRgetcompinfo(ri_id, &comp_type, &cinfo);
+    status = GRgetcompinfo(ri_id, &comp_type, &cinfo_out);
     CHECK_VOID(status, FAIL, "GRgetcompinfo");
     VERIFY_VOID(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
+    VERIFY_VOID(cinfo.szip.options_mask, cinfo_out.szip.options_mask, "GRgetcompinfo");
+    VERIFY_VOID(cinfo.szip.pixels_per_block, cinfo_out.szip.pixels_per_block, "GRgetcompinfo");
 
     /* Wipe out the output buffer */
     memset(&out_data, 0, sizeof(out_data));
@@ -275,8 +277,9 @@ test_szip_RI16bit()
         data_type,      /* data type of the image data */
         index;
     int32        start[2], edges[2];
-    comp_info    cinfo; /* Compression parameters - union */
     uint32       comp_config;
+    comp_info    cinfo;     /* Compression parameters - union */
+    comp_info    cinfo_out; /* Compression parameters read - union */
     comp_coder_t comp_type;
 
     int16 out_data[LENGTH][WIDTH][N_COMPS];
@@ -436,11 +439,13 @@ test_szip_RI16bit()
 
     /* Get and verify the image's compression information */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    memset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo_out, 0, sizeof(cinfo_out));
 
-    status = GRgetcompinfo(ri_id, &comp_type, &cinfo);
+    status = GRgetcompinfo(ri_id, &comp_type, &cinfo_out);
     CHECK_VOID(status, FAIL, "GRgetcompinfo");
     VERIFY_VOID(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
+    VERIFY_VOID(cinfo.szip.options_mask, cinfo_out.szip.options_mask, "GRgetcompinfo");
+    VERIFY_VOID(cinfo.szip.pixels_per_block, cinfo_out.szip.pixels_per_block, "GRgetcompinfo");
 
     /* Wipe out the output buffer */
     memset(&out_data, 0, sizeof(out_data));
@@ -485,8 +490,9 @@ test_szip_RI32bit()
         data_type,      /* data type of the image data */
         index;
     int32        start[2], edges[2];
-    comp_info    cinfo; /* Compression parameters - union */
     uint32       comp_config;
+    comp_info    cinfo;     /* Compression parameters - union */
+    comp_info    cinfo_out; /* Compression parameters read - union */
     comp_coder_t comp_type;
 
     int32 out_data[LENGTH][WIDTH][N_COMPS];
@@ -646,11 +652,13 @@ test_szip_RI32bit()
 
     /* Get and verify the image's compression information */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    memset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo_out, 0, sizeof(cinfo_out));
 
-    status = GRgetcompinfo(ri_id, &comp_type, &cinfo);
+    status = GRgetcompinfo(ri_id, &comp_type, &cinfo_out);
     CHECK_VOID(status, FAIL, "GRgetcompinfo");
     VERIFY_VOID(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
+    VERIFY_VOID(cinfo.szip.options_mask, cinfo_out.szip.options_mask, "GRgetcompinfo");
+    VERIFY_VOID(cinfo.szip.pixels_per_block, cinfo_out.szip.pixels_per_block, "GRgetcompinfo");
 
     /* Wipe out the output buffer */
     memset(&out_data, 0, sizeof(out_data));
@@ -694,10 +702,10 @@ test_szip_RIfl32bit()
         interlace_mode, /* interlace mode of the image */
         data_type,      /* data type of the image data */
         index;
-    int32     start[2], edges[2];
-    comp_info cinfo; /* Compression parameters - union */
-    uint32    comp_config;
-
+    int32        start[2], edges[2];
+    uint32       comp_config;
+    comp_info    cinfo;     /* Compression parameters - union */
+    comp_info    cinfo_out; /* Compression parameters read - union */
     comp_coder_t comp_type;
 
     float32 out_data[LENGTH][WIDTH][N_COMPS];
@@ -858,11 +866,13 @@ test_szip_RIfl32bit()
 
     /* Get and verify the image's compression information */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    memset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo_out, 0, sizeof(cinfo_out));
 
-    status = GRgetcompinfo(ri_id, &comp_type, &cinfo);
+    status = GRgetcompinfo(ri_id, &comp_type, &cinfo_out);
     CHECK_VOID(status, FAIL, "GRgetcompinfo");
     VERIFY_VOID(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
+    VERIFY_VOID(cinfo.szip.options_mask, cinfo_out.szip.options_mask, "GRgetcompinfo");
+    VERIFY_VOID(cinfo.szip.pixels_per_block, cinfo_out.szip.pixels_per_block, "GRgetcompinfo");
 
     /* Wipe out the output buffer */
     memset(&out_data, 0, sizeof(out_data));
@@ -907,8 +917,9 @@ test_szip_RIfl64bit()
         data_type,      /* data type of the image data */
         index;
     int32        start[2], edges[2];
-    comp_info    cinfo; /* Compression parameters - union */
     uint32       comp_config;
+    comp_info    cinfo;     /* Compression parameters - union */
+    comp_info    cinfo_out; /* Compression parameters read - union */
     comp_coder_t comp_type;
 
     float64 out_data[LENGTH][WIDTH][N_COMPS];
@@ -1070,11 +1081,13 @@ test_szip_RIfl64bit()
 
     /* Get and verify the image's compression information */
     comp_type = COMP_CODE_INVALID; /* reset variables before retrieving info */
-    memset(&cinfo, 0, sizeof(cinfo));
+    memset(&cinfo_out, 0, sizeof(cinfo_out));
 
-    status = GRgetcompinfo(ri_id, &comp_type, &cinfo);
+    status = GRgetcompinfo(ri_id, &comp_type, &cinfo_out);
     CHECK_VOID(status, FAIL, "GRgetcompinfo");
     VERIFY_VOID(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
+    VERIFY_VOID(cinfo.szip.options_mask, cinfo_out.szip.options_mask, "GRgetcompinfo");
+    VERIFY_VOID(cinfo.szip.pixels_per_block, cinfo_out.szip.pixels_per_block, "GRgetcompinfo");
 
     /* Wipe out the output buffer */
     memset(&out_data, 0, sizeof(out_data));
@@ -1127,7 +1140,7 @@ test_szip_chunk()
         comp_flag,      /* compression flag */
         index;
     int32         start[2], stride[2], edge[2];
-    comp_info     cinfo_out; /* Compression parameters - union */
+    comp_info     cinfo_out; /* Compression parameters read - union */
     uint32        comp_config;
     comp_coder_t  comp_type;
     int8          data_out[N_COMPS * LENGTH_CH * WIDTH_CH];
@@ -1263,6 +1276,8 @@ test_szip_chunk()
     status = GRgetcompinfo(ri_id, &comp_type, &cinfo_out);
     CHECK_VOID(status, FAIL, "GRgetcompinfo");
     VERIFY_VOID(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
+    VERIFY_VOID(chunk_def.comp.cinfo.szip.options_mask, cinfo_out.szip.options_mask, "GRgetcompinfo");
+    VERIFY_VOID(chunk_def.comp.cinfo.szip.pixels_per_block, cinfo_out.szip.pixels_per_block, "GRgetcompinfo");
 
     /* Read first chunk back and compare with input chunk. */
     origin[0] = 0;

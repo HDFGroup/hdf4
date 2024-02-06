@@ -4083,7 +4083,7 @@ done:
 
 /*--------------------------------------------------------------------------
  NAME
-    GRgetcompress
+    GRgetcompress - Deprecated in favor of GRgetcompinfo
 
  PURPOSE
     Get the compression information of a raster image's data.
@@ -4109,53 +4109,15 @@ done:
     mapped to a quantization table.  Thus, only the correct compression
     type will be returned; cinfo will only contain 0s.
 
- EXAMPLES
- REVISION LOG
-    July 2001: Added to fix bug #307 -BMR
-    Apr 2005: Replaced by GRgetcompinfo due to deficiency in handling some
-                special elements. -BMR
 --------------------------------------------------------------------------*/
 intn
 GRgetcompress(int32 riid, comp_coder_t *comp_type, comp_info *cinfo)
 {
-    ri_info_t *ri_ptr; /* ptr to the image to work with */
-    int32      file_id;
-    uint16     scheme; /* compression scheme used for JPEG images */
-    intn       ret_value = SUCCEED;
+    intn ret_value = SUCCEED;
 
-    /* clear error stack and check validity of args */
-    HEclear();
-
-    /* check the validity of the RI ID */
-    if (HAatom_group(riid) != RIIDGROUP)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    /* and check the output arguments */
-    if (comp_type == NULL || cinfo == NULL)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    /* locate RI's object in hash table */
-    if (NULL == (ri_ptr = (ri_info_t *)HAatom_object(riid)))
-        HGOTO_ERROR(DFE_BADPTR, FAIL);
-
-    file_id = ri_ptr->gr_ptr->hdf_file_id; /* temporary use */
-
-    /* If the compression scheme used was JPEG, return the compression type
-       and 0 for the 'quality' and 'force_baseline' parameters, because
-       these parameters are currently not possible to be retrieved. */
-    scheme = ri_ptr->img_dim.comp_tag;
-    if (scheme == DFTAG_JPEG5 || scheme == DFTAG_GREYJPEG5 || scheme == DFTAG_JPEG ||
-        scheme == DFTAG_GREYJPEG) {
-        *comp_type                 = COMP_CODE_JPEG;
-        cinfo->jpeg.quality        = 0;
-        cinfo->jpeg.force_baseline = 0;
-    }
-    else {
-        /* use lower-level routine to get the compression information */
-        ret_value = HCPgetcompress(file_id, ri_ptr->img_tag, ri_ptr->img_ref, comp_type, cinfo);
-        if (ret_value == FAIL)
-            HGOTO_ERROR(DFE_INTERNAL, FAIL);
-    }
+    ret_value = GRgetcompinfo(riid, comp_type, cinfo);
+    if (ret_value == FAIL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
     return ret_value;
@@ -4293,15 +4255,6 @@ done:
     mapped to a quantization table.  Thus, only the correct compression
     type will be returned; cinfo will only contain 0s.
 
- EXAMPLES
- REVISION LOG
-    July 2001: Added to fix bug #307 - BMR (from GRgetcompress)
-    Apr 2005:  This function was actually created at this time, but it is
-               almost a duplicate of GRgetcompress, which is intended to be
-               removed in the future, due to its incorrect behavior.  The
-               only difference is the call to the low-level routine,
-               HCPgetcompinfo, instead of HCPgetcompress.
-
 --------------------------------------------------------------------------*/
 intn
 GRgetcompinfo(int32 riid, comp_coder_t *comp_type, comp_info *cinfo)
@@ -4348,6 +4301,13 @@ GRgetcompinfo(int32 riid, comp_coder_t *comp_type, comp_info *cinfo)
         ret_value = HCPgetcompinfo(file_id, ri_ptr->img_tag, ri_ptr->img_ref, comp_type, cinfo);
         if (ret_value == FAIL)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+        /* remove the szip special bit if necessary */
+        if (*comp_type == COMP_CODE_SZIP) {
+            ret_value = HCPrm_szip_special_bit(cinfo);
+            if (ret_value == FAIL)
+                HGOTO_ERROR(DFE_INTERNAL, FAIL);
+        }
     }
 
 done:
