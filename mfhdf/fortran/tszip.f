@@ -277,17 +277,12 @@ C
      .                compressed dataset'
                 err_szip = err_szip + 1
                 endif
-C            write(*,*) comp_arg(1), comp_prm_out(1)
-C            write(*,*) comp_arg(2), comp_prm_out(2)
-C            write(*,*) comp_prm_out(3)
-C            write(*,*) comp_prm_out(4)
-C            write(*,*) comp_prm_out(5)
 
-C                if ((comp_arg(1) .ne. comp_prm_out(1)) .or.
-C     .              (comp_arg(2) .ne. comp_prm_out(2))) then
-C            print *, 'wrong compression parameter'
-C                err_szip = err_szip + 1
-C                endif
+        if ((comp_arg(1) .ne. comp_prm_out(1)) .or.
+     .       (comp_arg(2) .ne. comp_prm_out(2))) then
+            print *, 'wrong compression parameter'
+                err_szip = err_szip + 1
+                endif
 
 C
 C   Read part of the data back using sfrdata function
