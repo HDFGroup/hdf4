@@ -20,9 +20,7 @@
 #include "testcdf.h"
 #include "add.h"
 #include "emalloc.h"
-#ifdef HDF
 #include "hdf.h"
-#endif
 
 struct netcdf test; /*
                      * in-memory netcdf structure, kept in sync

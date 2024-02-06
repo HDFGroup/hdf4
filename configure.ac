@@ -13,9 +13,10 @@
 ## help@hdfgroup.org.
 ##
 
-## ======================================================================
+## ----------------------------------------------------------------------
 ## Initialize configure.
-## ======================================================================
+##
+
 ## AC_INIT takes the name of the package, the version number, and an
 ## email address to report bugs. AC_CONFIG_SRCDIR takes a unique file
 ## as its argument.
@@ -24,9 +25,11 @@
 ## release!!!
 ##
 AC_INIT([HDF], [4.2.17-1], [help@hdfgroup.org])
+
 AC_CONFIG_SRCDIR([hdf/src/atom.c])
-AC_CONFIG_AUX_DIR([bin])
 AC_CONFIG_HEADERS([hdf/src/h4config.h])
+
+AC_CONFIG_AUX_DIR([bin])
 AC_CONFIG_MACRO_DIR([m4])
 
 ## AM_INIT_AUTOMAKE takes a list of options that should be applied to
@@ -104,16 +107,41 @@ AC_CONFIG_COMMANDS([h4config], [
   rm -f libhdf4.settings.TMP
 ])
 
-## ======================================================================
-## Information on the package
-## ======================================================================
+## It's possible to configure for a host other than the one on which
+## configure is currently running by using the --host=foo flag.
+## For machines on which HDF4 is often configured, it can be convenient
+## to specify the name of the machine rather than its canonical type.
+##
+## There are currently no hosts, but if there were they would be
+## listed by hostname and the alias would point to a file in
+## the config directory:
+##
+##case $host_alias in
+##  <some host>)
+##    host_alias=<config file in config directory>
+##    ;;
+##esac
 
+AC_CANONICAL_HOST
+AC_SUBST([JNIFLAGS])
+AC_SUBST([AR_FLAGS])
+
+##
+##  FUTURE H4_XXFLAGS GO HERE
+##
+
+## ----------------------------------------------------------------------
 ## Dump all shell variables values.
+##
 AC_MSG_CHECKING([shell variables initial values])
 set >&AS_MESSAGE_LOG_FD
 AC_MSG_RESULT([done])
 
-AC_CANONICAL_HOST
+## ----------------------------------------------------------------------
+## Save system information for the library settings file.
+##
+AC_SUBST([UNAME_INFO])
+UNAME_INFO=`uname -a`
 
 ## ----------------------------------------------------------------------
 ## Some platforms have broken basename, and/or xargs programs. Check
@@ -136,6 +164,20 @@ if test $XARGS_TEST != "xargs_works"; then
   AC_MSG_ERROR([xargs program doesn't work])
 else
   AC_MSG_RESULT([yes])
+fi
+
+## ----------------------------------------------------------------------
+## Check that the cache file was build on the same host as what we're
+## running on now.
+##
+AC_CACHE_CHECK([for cached host], [hdf4_cv_host], [hdf4_cv_host="none"]);
+if test $hdf4_cv_host = "none"; then
+  hdf4_cv_host=$host
+elif test $hdf4_cv_host != $host; then
+  AC_MSG_ERROR([
+     The config.cache file was generated on $hdf4_cv_host but
+     this is $host.  Please remove that file and try again.
+     config.cache file is invalid])
 fi
 
 ## Source any special files that we need. These files normally aren't
@@ -195,10 +237,14 @@ fi
 ## Checks for netCDF-2.3.2 support
 ## ======================================================================
 
-# We disable Fortran netCDF APIs and their testing when --disable-netcdf is used.
-# Let's define a proper variable to be used in mfhdf/testfortran.sh.in to run
-# the netCDF Fortran APIs test program "ftest".
-AC_SUBST(TEST_FORTRAN_NETCDF) TEST_FORTRAN_NETCDF="yes"
+# NOTE!     We disable Fortran netCDF APIs and their testing when
+#           --disable-netcdf is used to avoid conflicts
+
+
+# Define a proper variable to be used in mfhdf/testfortran.sh.in to run
+# the netCDF Fortran APIs test program "ftest"
+AC_SUBST(TEST_FORTRAN_NETCDF)
+TEST_FORTRAN_NETCDF="yes"
 
 AC_ARG_ENABLE([netcdf],
               [AS_HELP_STRING([--enable-netcdf],
@@ -249,8 +295,6 @@ AC_SUBST([BUILD_NETCDF_TOOLS])
 ## Checks for programs
 ## ======================================================================
 
-AC_PROG_MAKE_SET
-
 AC_PROG_CC
 AC_PROG_CPP
 
@@ -287,7 +331,6 @@ AC_SUBST([BUILD_FORTRAN])
 ## ----------------------------------------------------------------------
 ## Check if they would like the Java native interface (JNI) compiled
 ##
-AC_SUBST([JNIFLAGS])
 AC_SUBST([H4_JAVACFLAGS])
 AC_SUBST([H4_JAVAFLAGS])
 
@@ -357,7 +400,6 @@ if test "X${enable_shared}" = "Xyes"; then
     fi
 fi
 
-AC_PROG_INSTALL
 AC_PROG_LN_S
 
 
@@ -379,6 +421,9 @@ AR_FLAGS=cr
 ## correctly.
 export AR
 
+AC_PROG_MAKE_SET
+AC_PROG_INSTALL
+
 AC_CHECK_PROG([DIFF],     [diff],     [diff -w])
 AC_CHECK_PROG([MAKEINFO], [makeinfo], [makeinfo])
 AC_CHECK_PROG([NEQN],     [neqn],     [neqn])
@@ -389,7 +434,6 @@ AC_SUBST([STATIC_SHARED])
 AC_SUBST([SHARED_EXTENSION])
 AC_SUBST([enable_shared])
 AC_SUBST([enable_static])
-AC_SUBST([UNAME_INFO]) UNAME_INFO=`uname -a`
 AC_SUBST([STATIC_EXEC]) STATIC_EXEC=no
 AC_SUBST([LT_STATIC_EXEC])
 
@@ -1170,7 +1214,6 @@ AC_CONFIG_FILES([Makefile
                  hdf/util/h4fc
                  hdf/util/h4redeploy
                  hdf/util/testutil.sh
-                 man/Makefile
                  mfhdf/fortran/ftest.f
                  mfhdf/fortran/jackets.c
                  mfhdf/fortran/netcdf.inc

@@ -56,15 +56,19 @@ are tentative.
 
 | Release | New Features |
 | ------- | ------------ |
-| 4.3.0 | Remove XDR, drop FORTRAN 77 support, stop deploying internal header files |
+| 4.3.0 | Remove XDR, Stop deploying internal header files |
+| 4.4.0 | Drop FORTRAN 77 support, Unified library |
 
-HDF4 4.3.0 will clean up some long-standing issues in the library
-* The problematic XDR library will be replaced with a thin I/O layer that correctly handles long integer data on all platforms
-* We will drop support for FORTRAN 77 so the wrappers can be built like they are in HDF5
-* We will also no longer deploy undocumented, internal header files (the public, documented HDF4 API will not be affected)
+HDF 4.3.0 (February 2024)
+* Minimum XDR functionality will be built into the library, so linking to TI-RPC, etc. will not be necessary
+* We will no longer deploy undocumented, internal header files (the public, documented HDF4 API will not be affected)
 
 The 4.2 maintenance line will be retired when 4.3.0 releases. There are no
 more planned HDF4 4.2.x releases.
+
+HDF 4.4.0 (February 2025)
+* We will drop support for FORTRAN 77 and move to modern Fortran (2003 or 2008)
+* libdf and libmfhdf will be merged into a single libhdf4 library, Fortran will be built as a separate library
 
 
 SNAPSHOTS, PREVIOUS RELEASES AND SOURCE CODE
@@ -104,8 +108,6 @@ Source Distribution Layout
 
    mfhdf  -- The netCDF(mfhdf) part of the HDF/mfhdf distribution and
              additional HDF utilities, such as hdp, hrepack, hdfimport, etc.
-
-   man    -- An incomplete set of man page(s) for HDF.
 
    release\_notes -- 
              Installation instructions for UNIX and Windows.

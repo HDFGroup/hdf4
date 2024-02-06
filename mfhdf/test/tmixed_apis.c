@@ -27,8 +27,6 @@
 
 #include "mfhdf.h"
 
-#ifdef HDF
-
 #include "hdftest.h"
 
 #define IDTYPE_FILE "idtypes.hdf" /* data file to test ID types */
@@ -556,5 +554,3 @@ test_mixed_apis()
         PASSED();
     return num_errs;
 }
-
-#endif /* HDF */

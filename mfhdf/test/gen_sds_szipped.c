@@ -29,8 +29,6 @@
 #include "szlib.h"
 #endif
 
-#ifdef HDF
-
 #include "hdftest.h"
 
 #define FILE_NAME "sds_szipped.dat"
@@ -113,5 +111,3 @@ main()
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
 } /* main */
-
-#endif /* HDF */

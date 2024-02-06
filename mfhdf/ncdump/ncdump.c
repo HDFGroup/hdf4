@@ -475,7 +475,6 @@ do_ncdump(char *path, struct fspec *specp)
              * or if it is a record variable and at least one record has
              * been written.
              */
-#ifdef HDF
             /* skip the dimension vars which have dim strings only.  */
             {
                 NC     *handle;
@@ -495,7 +494,6 @@ do_ncdump(char *path, struct fspec *specp)
                 }
             }
 
-#endif /* HDF */
             if (isempty)
                 continue;
 

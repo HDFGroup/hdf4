@@ -33,12 +33,9 @@
 /* count  - NULL => everything following start[] */
 /* stride - NULL => unity strides */
 /* imap   - NULL => same structure as netCDF variable */
-#ifndef HDF
-static
-#endif
-    int
-    NCgenio(NC *handle, int varid, const long *start, const long *count, const long *stride, const long *imap,
-            void *values)
+int
+NCgenio(NC *handle, int varid, const long *start, const long *count, const long *stride, const long *imap,
+        void *values)
 {
     int     maxidim; /* maximum dimensional index */
     NC_var *vp = NC_hlookupvar(handle, varid);

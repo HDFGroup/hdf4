@@ -13,8 +13,6 @@
 
 #include "mfhdf.h"
 
-#ifdef HDF
-
 #include "hdftest.h"
 #include "local_nc.h"
 
@@ -452,5 +450,3 @@ test_files()
         PASSED();
     return num_errs;
 }
-
-#endif /* HDF */

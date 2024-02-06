@@ -13,8 +13,6 @@
 
 #include "mfhdf.h"
 
-#ifdef HDF
-
 #include "hdftest.h"
 
 #define EXTTST   "exttst.hdf"          /* main file for external file test */
@@ -1101,4 +1099,3 @@ verify_data(int32 sd_id, int32 sds_ind)
     CHECK(status, FAIL, "SDendaccess");
 
 } /* verify_data */
-#endif /* HDF */

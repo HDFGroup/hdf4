@@ -17,9 +17,7 @@
 #include "error.h"
 #include "tests.h"
 #include "emalloc.h"
-#ifdef HDF
 #include "hdf.h"
-#endif
 
 /*
  * Test ncvargetg

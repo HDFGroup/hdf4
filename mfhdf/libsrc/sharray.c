@@ -30,9 +30,6 @@ NCxdr_shortsb(XDR *xdrs, short *sp, unsigned nshorts)
     unsigned char *cp;
     unsigned int   nbytes = nshorts * 2;
 
-    /* assert(nshorts <= NC_NSHRTS_PER) ; */
-    /* assert(nshorts > 0) ; */
-
     if (xdrs->x_op == XDR_ENCODE) {
         for (cp = buf; cp < &buf[nbytes]; sp++, cp += 2) {
             *(cp + 1) = *sp % 256;
