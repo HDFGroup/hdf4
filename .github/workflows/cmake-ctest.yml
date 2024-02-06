@@ -218,7 +218,7 @@ jobs:
         id: run-ctest
         run: |
           cd "${{ runner.workspace }}/hdf4/hdfsrc"
-          cmake --workflow --preset=${{ inputs.preset_name }}-Clang --fresh
+          cmake --workflow --preset=${{ inputs.preset_name }}-OSX-Clang --fresh
         shell: bash
 
       - name: Publish binary (MacOS)
@@ -302,7 +302,7 @@ jobs:
           CXX: ${{ steps.setup-fortran.outputs.cxx }}
         run: |
           cd "${{ runner.workspace }}/hdf4/hdfsrc"
-          cmake --workflow --preset=${{ inputs.preset_name }}-Intel --fresh
+          cmake --workflow --preset=${{ inputs.preset_name }}-win-Intel --fresh
         shell: pwsh
 
       - name: Publish binary (Windows_intel)
