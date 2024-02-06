@@ -30,7 +30,8 @@
 #define FILENAME_MAX 255
 #endif
 
-#include "xdr.h"
+/* HDF4's stripped-down XDR implementation */
+#include "h4_xdr.h"
 
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h" /* needed for defs of nc_type, ncvoid, ... */

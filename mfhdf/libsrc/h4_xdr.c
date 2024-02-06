@@ -59,7 +59,7 @@
 #endif
 
 #include "mfhdf.h"
-#include "xdr.h"
+#include "h4_xdr.h"
 
 /*
  * This is the number of bytes per unit of external data.
