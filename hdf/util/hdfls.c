@@ -65,7 +65,6 @@ print_item(int32 fid, dd_t *desc_list, intn n)
     intn  status;
     int32 len;
     char *name, *label_str;
-    intn  i; /* loop variable*/
 
     printf("\tRef no %6d\t%8d bytes\n", (int)desc_list[n].ref, (int)desc_list[n].length);
 
@@ -138,7 +137,7 @@ print_item(int32 fid, dd_t *desc_list, intn n)
                 printf("\tChunked Element: \n \tlogical size: %ld\n \tnumber of dimensions: %ld \n",
                        (long)info.chunk_size, (long)info.ndims);
                 printf("\tarray of chunk lengths for each dimension:");
-                for (i = 0; i < info.ndims; i++)
+                for (int i = 0; i < info.ndims; i++)
                     printf("\t %ld", (long)info.cdims[i]);
                 printf("\n");
                 free(info.cdims);
@@ -176,7 +175,6 @@ print_item(int32 fid, dd_t *desc_list, intn n)
             int32  ntagrefs;
             int32  vkey;
             int32 *tag_arr, *ref_arr;
-            intn   i;
 
             if (v_init_done == FALSE) { /* init the V routines */
                 v_init_done = TRUE;
@@ -194,7 +192,7 @@ print_item(int32 fid, dd_t *desc_list, intn n)
                     }
                     else {
                         if (Vgettagrefs(vkey, tag_arr, ref_arr, ntagrefs) != FAIL) {
-                            for (i = 0; i < ntagrefs; i++) {
+                            for (int i = 0; i < ntagrefs; i++) {
                                 name = (char *)HDgettagsname((uint16)tag_arr[i]);
                                 if (!name)
                                     printf("\t\t%-30s: (tag=%6d) ref=%d\n", "Unknown Tag", (int)tag_arr[i],
