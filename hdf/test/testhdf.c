@@ -51,7 +51,9 @@ struct TestStruct {
     int  SkipFlag;
     char Name[16];
     void (*Call)(void);
-} Test[MAXNUMOFTESTS];
+};
+
+struct TestStruct *Test = NULL;
 
 static void InitTest(const char *TheName, void (*TheCall)(void), const char *TheDescr);
 static void usage(void);
@@ -62,7 +64,8 @@ InitTest(const char *TheName, void (*TheCall)(void), const char *TheDescr)
     if (Index >= MAXNUMOFTESTS) {
         printf("Uh-oh, too many tests added, increase MAXNUMOFTEST!\n");
         exit(0);
-    } /* end if */
+    }
+
     strcpy(Test[Index].Description, TheDescr);
     strcpy(Test[Index].Name, TheName);
     Test[Index].Call      = TheCall;
@@ -115,6 +118,11 @@ main(int argc, char *argv[])
 
     /* Un-buffer stdout */
     setbuf(stdout, NULL);
+
+    if (NULL == (Test = (struct TestStruct *)calloc(MAXNUMOFTESTS, sizeof(struct TestStruct)))) {
+        printf("Could not allocate memory for tests!\n");
+        exit(0);
+    }
 
     /* Tests are generally arranged from least to most complexity... */
 #if !defined _WIN32
@@ -263,9 +271,13 @@ main(int argc, char *argv[])
     if (CleanUp) {
         MESSAGE(2, printf("\nCleaning Up...\n\n"););
 #ifndef H4_HAVE_WIN32_API
-        system("rm -f *.hdf *.tmp");
+        if (system("rm -f *.hdf *.tmp") != 0) {
+            MESSAGE(2, printf("\n!!! Unable to clean files !!!\n\n"););
+        }   
 #endif
     }
-    exit(num_errs);
+
+    free(Test);
+
     return num_errs;
 } /* end main() */
