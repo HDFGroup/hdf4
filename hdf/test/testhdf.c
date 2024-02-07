@@ -273,7 +273,7 @@ main(int argc, char *argv[])
 #ifndef H4_HAVE_WIN32_API
         if (system("rm -f *.hdf *.tmp") != 0) {
             MESSAGE(2, printf("\n!!! Unable to clean files !!!\n\n"););
-        }   
+        }
 #endif
     }
 
