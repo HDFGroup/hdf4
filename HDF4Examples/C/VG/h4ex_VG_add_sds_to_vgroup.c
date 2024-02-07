@@ -11,9 +11,7 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    intn  status_n;   /* returned status for functions returning an intn  */
-    int32 status_32,  /* returned status for functions returning an int32 */
-        sd_id,        /* SD interface identifier */
+    int32 sd_id,      /* SD interface identifier */
         sds_id,       /* data set identifier */
         sds_ref,      /* reference number of the data set */
         dim_sizes[1], /* dimension of the data set - only one */
@@ -26,12 +24,14 @@ main()
     /*
      * Create the HDF file.
      */
-    file_id = Hopen(FILE_NAME, DFACC_CREATE, 0);
+    if ((file_id = Hopen(FILE_NAME, DFACC_CREATE, 0)) == FAIL)
+        printf("*** ERROR from Hopen\n");
 
     /*
      * Initialize the V interface.
      */
-    status_n = Vstart(file_id);
+    if (Vstart(file_id) == FAIL)
+        printf("*** ERROR from Vstart\n");
 
     /*
      * Initialize the SD interface.
@@ -52,8 +52,10 @@ main()
      * Create a vgroup and set its name and class.
      */
     vgroup_id = Vattach(file_id, -1, "w");
-    status_32 = Vsetname(vgroup_id, VG_NAME);
-    status_32 = Vsetclass(vgroup_id, VG_CLASS);
+    if (Vsetname(vgroup_id, VG_NAME) == FAIL)
+        printf("*** ERROR from Vsetname\n");
+    if (Vsetclass(vgroup_id, VG_CLASS) == FAIL)
+        printf("*** ERROR from Vsetclass\n");
 
     /*
      * Obtain the reference number of the SDS using its identifier.
@@ -64,20 +66,27 @@ main()
      * Add the SDS to the vgroup.  Note: the tag DFTAG_NDG is used
      * when adding an SDS.  Refer to Appendix A for the entire list of tags.
      */
-    status_32 = Vaddtagref(vgroup_id, DFTAG_NDG, sds_ref);
+    if (Vaddtagref(vgroup_id, DFTAG_NDG, sds_ref) == FAIL)
+        printf("*** ERROR from Vaddtagref\n");
 
     /*
      * Terminate access to the SDS and to the SD interface.
      */
-    status_n = SDendaccess(sds_id);
-    status_n = SDend(sd_id);
+    if (SDendaccess(sds_id) == FAIL)
+        printf("*** ERROR from SDendaccess\n");
+    if (SDend(sd_id) == FAIL)
+        printf("*** ERROR from SDend\n");
 
     /*
      * Terminate access to the vgroup and to the V interface, and
      * close the HDF file.
      */
-    status_32 = Vdetach(vgroup_id);
-    status_n  = Vend(file_id);
-    status_n  = Hclose(file_id);
+    if (Vdetach(vgroup_id) == FAIL)
+        printf("*** ERROR from Vdetach\n");
+    if (Vend(file_id) == FAIL)
+        printf("*** ERROR from Vend\n");
+    if (Hclose(file_id) == FAIL)
+        printf("*** ERROR from Hclose\n");
+
     return 0;
 }

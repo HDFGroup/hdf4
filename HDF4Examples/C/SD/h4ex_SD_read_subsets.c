@@ -12,7 +12,6 @@ main()
     /************************* Variable declaration **************************/
 
     int32 sd_id, sds_id, sds_index;
-    intn  status;
     int32 start[2], edges[2], stride[2];
     int32 sub1_data[SUB1_LENGTH];
     int32 sub2_data[SUB2_LENGTH];
@@ -24,7 +23,8 @@ main()
     /*
      * Open the file for reading and initialize the SD interface.
      */
-    sd_id = SDstart(FILE_NAME, DFACC_READ);
+    if ((sd_id = SDstart(FILE_NAME, DFACC_READ)) == FAIL)
+        printf("*** ERROR from SDstart\n");
 
     /*
      * Select the first data set.
@@ -47,7 +47,8 @@ main()
     /*
      * Read the data from the file into sub1_data array.
      */
-    status = SDreaddata(sds_id, start, stride, edges, (VOIDP)sub1_data);
+    if (SDreaddata(sds_id, start, stride, edges, (void *)sub1_data) == FAIL)
+        printf("*** ERROR from SDreaddata\n");
 
     /*
      * Print what we have just read; the following numbers should be displayed:
@@ -73,7 +74,8 @@ main()
      * Read data from the file into sub2_data array. Note that the third
      * parameter is set to NULL for contiguous reading.
      */
-    status = SDreaddata(sds_id, start, NULL, edges, (VOIDP)sub2_data);
+    if (SDreaddata(sds_id, start, NULL, edges, (void *)sub2_data) == FAIL)
+        printf("*** ERROR from SDreaddata\n");
 
     /*
      * Print what we have just read; the following numbers should be displayed:
@@ -103,7 +105,8 @@ main()
     /*
      * Read the data from the file into sub3_data array.
      */
-    status = SDreaddata(sds_id, start, stride, edges, (VOIDP)sub3_data);
+    if (SDreaddata(sds_id, start, stride, edges, (void *)sub3_data) == FAIL)
+        printf("*** ERROR from SDreaddata\n");
 
     /*
      * Print what we have just read; the following numbers should be displayed:
@@ -120,12 +123,14 @@ main()
     /*
      * Terminate access to the data set.
      */
-    status = SDendaccess(sds_id);
+    if (SDendaccess(sds_id) == FAIL)
+        printf("*** ERROR from SDendaccess\n");
 
     /*
      * Terminate access to the SD interface and close the file.
      */
-    status = SDend(sd_id);
+    if (SDend(sd_id) == FAIL)
+        printf("*** ERROR from SDend\n");
 
     return 0;
 }

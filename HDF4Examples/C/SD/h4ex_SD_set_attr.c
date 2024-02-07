@@ -11,7 +11,6 @@ main()
     /************************* Variable declaration **************************/
 
     int32 sd_id, sds_id, sds_index;
-    intn  status;
     int32 dim_id, dim_index;
     int32 n_values; /* number of values of the file, SDS or
                        dimension attribute         */
@@ -27,13 +26,15 @@ main()
     /*
      * Open the file and initialize the SD interface.
      */
-    sd_id = SDstart(FILE_NAME, DFACC_WRITE);
+    if ((sd_id = SDstart(FILE_NAME, DFACC_WRITE)) == FAIL)
+        printf("*** ERROR from SDstart\n");
 
     /*
      * Set an attribute that describes the file contents.
      */
     n_values = 16;
-    status   = SDsetattr(sd_id, FILE_ATTR_NAME, DFNT_CHAR8, n_values, (VOIDP)file_values);
+    if (SDsetattr(sd_id, FILE_ATTR_NAME, DFNT_CHAR, n_values, (void *)file_values) == FAIL)
+        printf("*** ERROR from SDsetattr\n");
 
     /*
      * Select the first data set.
@@ -46,7 +47,8 @@ main()
      * may have different data type than SDS data.
      */
     n_values = 2;
-    status   = SDsetattr(sds_id, SDS_ATTR_NAME, DFNT_FLOAT32, n_values, (VOIDP)sds_values);
+    if (SDsetattr(sds_id, SDS_ATTR_NAME, DFNT_FLOAT32, n_values, (void *)sds_values) == FAIL)
+        printf("*** ERROR from SDsetattr\n");
 
     /*
      * Get the the second dimension identifier of the SDS.
@@ -58,17 +60,20 @@ main()
      * Set an attribute of the dimension that specifies the dimension metric.
      */
     n_values = 7;
-    status   = SDsetattr(dim_id, DIM_ATTR_NAME, DFNT_CHAR8, n_values, (VOIDP)dim_values);
+    if (SDsetattr(dim_id, DIM_ATTR_NAME, DFNT_CHAR, n_values, (void *)dim_values) == FAIL)
+        printf("*** ERROR from SDsetattr\n");
 
     /*
      * Terminate access to the data set.
      */
-    status = SDendaccess(sds_id);
+    if (SDendaccess(sds_id) == FAIL)
+        printf("*** ERROR from SDendaccess\n");
 
     /*
      * Terminate access to the SD interface and close the file.
      */
-    status = SDend(sd_id);
+    if (SDend(sd_id) == FAIL)
+        printf("*** ERROR from SDend\n");
 
     return 0;
 }

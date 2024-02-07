@@ -12,7 +12,6 @@ main()
     /************************* Variable declaration **************************/
 
     int32     sd_id, sds_id;
-    intn      status;
     int32     comp_type; /* Compression flag */
     comp_info c_info;    /* Compression structure */
     int32     start[2], edges[2], dim_sizes[2];
@@ -34,7 +33,8 @@ main()
     /*
      * Create the file and initialize the SD interface.
      */
-    sd_id = SDstart(FILE_NAME, DFACC_CREATE);
+    if ((sd_id = SDstart(FILE_NAME, DFACC_CREATE)) == FAIL)
+        printf("*** ERROR from SDstart\n");
 
     /*
      * Create the data set with the name defined in SDS_NAME.
@@ -55,7 +55,8 @@ main()
      */
     comp_type            = COMP_CODE_DEFLATE;
     c_info.deflate.level = 6;
-    status               = SDsetcompress(sds_id, comp_type, &c_info);
+    if (SDsetcompress(sds_id, comp_type, &c_info) == FAIL)
+        printf("*** ERROR from SDsetcompress\n");
 
     /*
      * Define the location and size of the data set
@@ -71,17 +72,20 @@ main()
      * must be explicitly cast to a generic pointer since SDwritedata
      * is designed to write generic data.
      */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)data);
+    if (SDwritedata(sds_id, start, NULL, edges, (void *)data) == FAIL)
+        printf("*** ERROR from SDwritedata\n");
 
     /*
      * Terminate access to the data set.
      */
-    status = SDendaccess(sds_id);
+    if (SDendaccess(sds_id) == FAIL)
+        printf("*** ERROR from SDendaccess\n");
 
     /*
      * Terminate access to the SD interface and close the file.
      */
-    status = SDend(sd_id);
+    if (SDend(sd_id) == FAIL)
+        printf("*** ERROR from SDend\n");
 
     return 0;
 }

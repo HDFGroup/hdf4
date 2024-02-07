@@ -20,10 +20,8 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    intn  status_n;                              /* returned status for functions returning an intn  */
-    int32 status_32,                             /* returned status for functions returning an int32 */
-        file_id, vdata_id, vdata_ref = -1,       /* ref number of a vdata, set to -1 to create  */
-        num_of_records;                          /* number of records actually written to vdata */
+    int32   file_id, vdata_id;
+    int32   vdata_ref = -1;                      /* ref number of a vdata, set to -1 to create  */
     int16   rec_num;                             /* current record number */
     float32 data_buf[N_RECORDS][N_VALS_PER_REC]; /* buffer for vdata values */
 
@@ -32,12 +30,14 @@ main()
     /*
      * Open the HDF file for writing.
      */
-    file_id = Hopen(FILE_NAME, DFACC_WRITE, 0);
+    if ((file_id = Hopen(FILE_NAME, DFACC_WRITE, 0)) == FAIL)
+        printf("*** ERROR from Hopen\n");
 
     /*
      * Initialize the VS interface.
      */
-    status_n = Vstart(file_id);
+    if (Vstart(file_id) == FAIL)
+        printf("*** ERROR from Vstart\n");
 
     /*
      * Create a new vdata.
@@ -47,21 +47,27 @@ main()
     /*
      * Set name and class name of the vdata.
      */
-    status_32 = VSsetname(vdata_id, VDATA_NAME);
-    status_32 = VSsetclass(vdata_id, CLASS_NAME);
+    if (VSsetname(vdata_id, VDATA_NAME) == FAIL)
+        printf("*** ERROR from VSsetname\n");
+    if (VSsetclass(vdata_id, CLASS_NAME) == FAIL)
+        printf("*** ERROR from VSsetclass\n");
 
     /*
      * Introduce each field's name, data type, and order.  This is the first
      * part in defining a field.
      */
-    status_n = VSfdefine(vdata_id, FIELD1_NAME, DFNT_FLOAT32, ORDER_1);
-    status_n = VSfdefine(vdata_id, FIELD2_NAME, DFNT_FLOAT32, ORDER_2);
-    status_n = VSfdefine(vdata_id, FIELD3_NAME, DFNT_FLOAT32, ORDER_3);
+    if (VSfdefine(vdata_id, FIELD1_NAME, DFNT_FLOAT32, ORDER_1) == FAIL)
+        printf("*** ERROR from VSfdefine\n");
+    if (VSfdefine(vdata_id, FIELD2_NAME, DFNT_FLOAT32, ORDER_2) == FAIL)
+        printf("*** ERROR from VSfdefine\n");
+    if (VSfdefine(vdata_id, FIELD3_NAME, DFNT_FLOAT32, ORDER_3) == FAIL)
+        printf("*** ERROR from VSfdefine\n");
 
     /*
      * Finalize the definition of the fields.
      */
-    status_n = VSsetfields(vdata_id, FIELDNAME_LIST);
+    if (VSsetfields(vdata_id, FIELDNAME_LIST) == FAIL)
+        printf("*** ERROR from VSsetfields\n");
 
     /*
      * Buffer the data by the record for fully interlaced mode.  Note that the
@@ -70,25 +76,29 @@ main()
      * elements contain the two values of the third field.
      */
     for (rec_num = 0; rec_num < N_RECORDS; rec_num++) {
-        data_buf[rec_num][0] = (float32)(1.0 * rec_num);
-        data_buf[rec_num][1] = (float32)(2.0 * rec_num);
-        data_buf[rec_num][2] = (float32)(3.0 * rec_num);
-        data_buf[rec_num][3] = (float32)(0.1 + rec_num);
-        data_buf[rec_num][4] = (float32)(0.0);
-        data_buf[rec_num][5] = (float32)(65.0);
+        data_buf[rec_num][0] = 1.0 * rec_num;
+        data_buf[rec_num][1] = 2.0 * rec_num;
+        data_buf[rec_num][2] = 3.0 * rec_num;
+        data_buf[rec_num][3] = 0.1 + rec_num;
+        data_buf[rec_num][4] = 0.0;
+        data_buf[rec_num][5] = 65.0;
     }
 
     /*
      * Write the data from data_buf to the vdata with full interlacing mode.
      */
-    num_of_records = VSwrite(vdata_id, (uint8 *)data_buf, N_RECORDS, FULL_INTERLACE);
+    VSwrite(vdata_id, (uint8 *)data_buf, N_RECORDS, FULL_INTERLACE);
 
     /*
      * Terminate access to the vdata and to the VS interface, then close
      * the HDF file.
      */
-    status_32 = VSdetach(vdata_id);
-    status_n  = Vend(file_id);
-    status_32 = Hclose(file_id);
+    if (VSdetach(vdata_id) == FAIL)
+        printf("*** ERROR from VSdetach\n");
+    if (Vend(file_id) == FAIL)
+        printf("*** ERROR from Vend\n");
+    if (Hclose(file_id) == FAIL)
+        printf("*** ERROR from Hclose\n");
+
     return 0;
 }

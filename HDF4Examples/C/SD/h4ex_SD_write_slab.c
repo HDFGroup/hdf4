@@ -13,7 +13,6 @@ main()
     /************************* Variable declaration **************************/
 
     int32 sd_id, sds_id;
-    intn  status;
     int32 dim_sizes[3], start[3], edges[3];
     int32 data[Z_LENGTH][Y_LENGTH][X_LENGTH];
     int32 zx_data[Z_LENGTH][X_LENGTH];
@@ -32,7 +31,8 @@ main()
     /*
      * Create the file and initialize the SD interface.
      */
-    sd_id = SDstart(FILE_NAME, DFACC_CREATE);
+    if ((sd_id = SDstart(FILE_NAME, DFACC_CREATE)) == FAIL)
+        printf("*** ERROR from SDstart\n");
 
     /*
      * Define dimensions of the array to be created.
@@ -75,18 +75,21 @@ main()
          * Note that the 3rd parameter is NULL which indicates that consecutive
          * slabs in the Y direction are written.
          */
-        status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)zx_data);
+        if (SDwritedata(sds_id, start, NULL, edges, (void *)zx_data) == FAIL)
+            printf("*** ERROR from SDwritedata\n");
     }
 
     /*
      * Terminate access to the data set.
      */
-    status = SDendaccess(sds_id);
+    if (SDendaccess(sds_id) == FAIL)
+        printf("*** ERROR from SDendaccess\n");
 
     /*
      * Terminate access to the SD interface and close the file.
      */
-    status = SDend(sd_id);
+    if (SDend(sd_id) == FAIL)
+        printf("*** ERROR from SDend\n");
 
     return 0;
 }

@@ -9,8 +9,7 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    intn status, /* status for functions returning an intn */
-        i, j;
+    intn  i, j;
     int32 file_id, gr_id, ri_id, pal_id, ri_index;
     int32 data_type, n_comps, n_entries, interlace_mode;
     uint8 palette_data[N_ENTRIES][3]; /* static because of fixed size */
@@ -20,7 +19,8 @@ main()
     /*
      * Open the file.
      */
-    file_id = Hopen(FILE_NAME, DFACC_READ, 0);
+    if ((file_id = Hopen(FILE_NAME, DFACC_READ, 0)) == FAIL)
+        printf("*** ERROR from Hopen\n");
 
     /*
      * Initiate the GR interface.
@@ -45,13 +45,15 @@ main()
     /*
      * Obtain and display information about the palette.
      */
-    status = GRgetlutinfo(pal_id, &n_comps, &data_type, &interlace_mode, &n_entries);
+    if (GRgetlutinfo(pal_id, &n_comps, &data_type, &interlace_mode, &n_entries) == FAIL)
+        printf("*** ERROR from GRgetlutinfo\n");
     printf("Palette: %d components; %d entries\n", n_comps, n_entries);
 
     /*
      * Read the palette data.
      */
-    status = GRreadlut(pal_id, (VOIDP)palette_data);
+    if (GRreadlut(pal_id, (void *)palette_data) == FAIL)
+        printf("*** ERROR from GRreadlut\n");
 
     /*
      * Display the palette data.  Recall that HDF supports only 256 colors.
@@ -73,8 +75,12 @@ main()
      * Terminate access to the image and to the GR interface, and
      * close the HDF file.
      */
-    status = GRendaccess(ri_id);
-    status = GRend(gr_id);
-    status = Hclose(file_id);
+    if (GRendaccess(ri_id) == FAIL)
+        printf("*** ERROR from GRendaccess\n");
+    if (GRend(gr_id) == FAIL)
+        printf("*** ERROR from GRend\n");
+    if (Hclose(file_id) == FAIL)
+        printf("*** ERROR from Hclose\n");
+
     return 0;
 }
