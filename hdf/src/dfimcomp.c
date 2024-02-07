@@ -53,18 +53,13 @@ struct box {
     struct box *right;
 };
 
-static uint8 *new_pal; /* pointer to new palette           */
-
-static int        *hist     = (int *)NULL;        /* histogram for distinct colors    */
-static struct box *frontier = (struct box *)NULL; /* pointer to the */
-/* list of boxes */
-static struct rgb *distinct_pt = (struct rgb *)NULL; /* contains all */
-/* distinct rgb points */
-
-static struct rgb *color_pt = (struct rgb *)NULL; /*contains the hi-lo */
-/*colors for each block */
-static uint8 *image;           /* contains the compressed image            */
-static int    trans[MAXCOLOR]; /* color translation table                  */
+static uint8      *new_pal     = NULL; /* pointer to new palette */
+static int        *hist        = NULL; /* histogram for distinct colors */
+static struct box *frontier    = NULL; /* pointer to the list of boxes */
+static struct rgb *distinct_pt = NULL; /* contains all distinct rgb points */
+static struct rgb *color_pt    = NULL; /* contains the hi-lo colors for each block */
+static uint8      *image       = NULL; /* contains the compressed image */
+static int        *trans       = NULL; /* color translation table */
 
 static void        compress(unsigned char raster[], int block);
 static void        init_global(int32 xdim, int32 ydim, void *out, void *out_pal);
@@ -156,9 +151,6 @@ DFCIimcomp(int32 xdim, int32 ydim, const uint8 *in, uint8 out[], uint8 in_pal[],
 
     /* set palette */
     nmbr = cnt_color(blocks);
-    /*
-       printf("Number of colors %d \n", nmbr);
-     */
     if (nmbr <= PALSIZE)
         set_palette(blocks);
     else {
@@ -169,6 +161,8 @@ DFCIimcomp(int32 xdim, int32 ydim, const uint8 *in, uint8 out[], uint8 in_pal[],
     fillin_color(blocks);
     free(color_pt);
     color_pt = NULL;
+    free(trans);
+    trans = NULL;
 
 } /* end of DFCIimcomp */
 
@@ -273,8 +267,10 @@ init_global(int32 xdim, int32 ydim, void *out, void *out_pal)
     new_pal = (unsigned char *)out_pal;
     free(color_pt);
     color_pt = (struct rgb *)malloc((unsigned)((xdim * ydim) / 8) * sizeof(struct rgb));
+    free(trans);
+    trans = (int *)malloc(MAXCOLOR * sizeof(int));
 
-    if (image == NULL || color_pt == NULL || new_pal == NULL) {
+    if (image == NULL || color_pt == NULL || new_pal == NULL || trans == NULL) {
         return; /* punt! */
     }
 
@@ -291,35 +287,39 @@ init_global(int32 xdim, int32 ydim, void *out, void *out_pal)
 } /* end of init_global */
 
 /************************************************************************/
-/*  Function    : cnt_color                                 */
-/*  Purpose : Counts the number of distinct colors compressd image  */
-/*  Parameter   :                           */
-/*    blocks     - total number of pixel blocks             */
-/*  Returns     : Number of distinct colors                             */
+/*  Function    : cnt_color                                             */
+/*  Purpose : Counts the number of distinct colors compressd image      */
+/*  Parameter   :                                                       */
+/*    blocks     - total number of pixel blocks                         */
+/*  Returns     : Number of distinct colors, -1 on errors               */
 /*  Called by   : DFCimcomp()                                           */
-/*  Calls       : indx()                        */
+/*  Calls       : indx()                                                */
 /************************************************************************/
 
 static int
 cnt_color(int blocks)
 {
-    int temp[MAXCOLOR];
-    int i, k, count;
+    int *temp = NULL;
+    int  k, count;
 
-    for (i = 0; i < MAXCOLOR; i++)
+    if (NULL == (temp = (int *)malloc(sizeof(int) * MAXCOLOR)))
+        return -1;
+
+    for (int i = 0; i < MAXCOLOR; i++)
         temp[i] = -1;
 
-    for (i = 0; i < (2 * blocks); i++) {
+    for (int i = 0; i < (2 * blocks); i++) {
         k = indx(color_pt[i].c[RED], color_pt[i].c[GREEN], color_pt[i].c[BLUE]);
-        /*    printf("cnt_color: k is %d\n",k); */
-        if (k < MAXCOLOR) /* Fortner Fix: supplied by Peter Lawton */
+        if (k < MAXCOLOR)
             temp[k] = 0;
     }
 
     count = 0;
-    for (i = 0; i < MAXCOLOR; i++)
+    for (int i = 0; i < MAXCOLOR; i++)
         if (temp[i] == 0)
             count++;
+
+    free(temp);
 
     return count;
 } /* end of cnt_color */
@@ -598,7 +598,7 @@ static void
 init(int blocks, int distinct, struct rgb *my_color_pt)
 {
     int         i, j, k, l;
-    int         temp[MAXCOLOR];
+    int        *temp = NULL;
     struct box *first;
     struct box *dummy;
 
@@ -607,6 +607,7 @@ init(int blocks, int distinct, struct rgb *my_color_pt)
     free(distinct_pt);
     hist        = (int *)malloc((unsigned)distinct * sizeof(int));
     distinct_pt = (struct rgb *)malloc((unsigned)distinct * sizeof(struct rgb));
+    temp        = (int *)malloc(sizeof(int) * MAXCOLOR);
 
     for (i = 0; i < distinct; i++)
         hist[i] = 0;
@@ -663,6 +664,9 @@ init(int blocks, int distinct, struct rgb *my_color_pt)
 
     free(first);
     free(dummy);
+    free(temp);
+
+    return;
 } /* end of init */
 
 /************************************************************************/
