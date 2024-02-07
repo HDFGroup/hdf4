@@ -3762,10 +3762,8 @@ SDgetcompress(
     comp_info    *c_info /* OUT: ptr to compression information structure for storing the retrieved info */
 )
 {
-    NC     *handle;
-    NC_var *var       = NULL;
-    intn    status    = FAIL;
-    intn    ret_value = SUCCEED;
+    int status    = FAIL;
+    int ret_value = SUCCEED;
 
     /* clear error stack */
     HEclear();
