@@ -156,14 +156,14 @@ typedef struct he_group {
     tag_ref_ptr ddList;
 } HE_GROUP;
 
-extern int      he_status;
-extern int      he_numDesc;
-extern int      he_currDesc;
-extern int      he_numGrp;
-extern int      he_remote;
-extern char    *he_file;
-extern DFdesc   he_desc[];
-extern HE_GROUP he_grp[];
+extern int       he_status;
+extern int       he_numDesc;
+extern int       he_currDesc;
+extern int       he_numGrp;
+extern int       he_remote;
+extern char     *he_file;
+extern DFdesc   *he_desc;
+extern HE_GROUP *he_grp;
 
 /*
  *  ----------------- Convenient Macros ---------------------
