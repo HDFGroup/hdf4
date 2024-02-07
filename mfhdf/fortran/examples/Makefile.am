@@ -24,7 +24,7 @@ INSTALL_FILES=SD_create_sds.f SD_write_to_sds.f SD_write_slab.f SD_alter_sds_val
 	SD_set_attr.f SD_get_attr.f SD_compress_sds.f SD_chunking_example.f
 
 # Where to install example files
-EXAMPLEDIR=${DESTDIR}$(exec_prefix)/share/hdf4_examples/fortran
+EXAMPLEDIR=$(docdir)/examples/fortran
 
 # How to build Fortran programs using h4fc
 $(EXTRA_PROG): $(H4FC)
