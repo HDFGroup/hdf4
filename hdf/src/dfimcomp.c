@@ -780,14 +780,14 @@ find_box(void)
 }
 
 /************************************************************************/
-/*  Function    : split_box                     */
-/*  Purpose : Splits a selected box into 2 and reinserts the 2 sub- */
-/*        boxes into the frontier list              */
-/*  Parameter   :                           */
-/*    ptr    - pointer to box to be split               */
-/*  Returns     : none                          */
-/*  Called by   : sel_palette()                     */
-/*  Calls       : find_med(), select_dim(), classify()          */
+/*  Function    : split_box                                             */
+/*  Purpose     : Splits a selected box into 2 and reinserts the 2 sub- */
+/*                boxes into the frontier list                          */
+/*  Parameter   :                                                       */
+/*      ptr    - pointer to box to be split                             */
+/*  Returns     : none                                                  */
+/*  Called by   : sel_palette()                                         */
+/*  Calls       : find_med(), select_dim(), classify()                  */
 /************************************************************************/
 
 static void
@@ -796,6 +796,12 @@ split_box(struct box *ptr)
     int         dim, j, i;
     float       median;
     struct box *l_child, *r_child;
+
+    /* This function should really return an error code, but for now
+     * we'll at least guard against NULL pointer dereferences
+     */
+    if (NULL == ptr)
+        return;
 
     dim    = select_dim(ptr);
     median = find_med(ptr, dim);
