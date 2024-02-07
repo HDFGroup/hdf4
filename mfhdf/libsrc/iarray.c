@@ -67,9 +67,9 @@ NC_free_iarray(NC_iarray *iarray)
 bool_t
 xdr_NC_iarray(XDR *xdrs, NC_iarray **ipp)
 {
-    int   *ip;
-    u_long count = 0;
-    bool_t stat  = TRUE;
+    int     *ip;
+    unsigned count = 0;
+    bool_t   stat  = TRUE;
 
     switch (xdrs->x_op) {
         case XDR_FREE:
@@ -77,7 +77,7 @@ xdr_NC_iarray(XDR *xdrs, NC_iarray **ipp)
             return (TRUE);
         case XDR_DECODE:
             /* need the length to pass to new */
-            if (!xdr_u_long(xdrs, &count)) {
+            if (!h4_xdr_u_int(xdrs, &count)) {
                 return (FALSE);
             }
             (*ipp) = NC_new_iarray((unsigned)count, (int *)NULL);
@@ -85,17 +85,17 @@ xdr_NC_iarray(XDR *xdrs, NC_iarray **ipp)
                 return (FALSE);
             /* then deal with the array */
             for (ip = (*ipp)->values; (count > 0) && stat; count--)
-                stat = xdr_int(xdrs, ip++);
+                stat = h4_xdr_int(xdrs, ip++);
             return (stat);
         case XDR_ENCODE:
             /* first deal with the length */
             count = (*ipp)->count;
-            if (!xdr_u_long(xdrs, &count)) {
+            if (!h4_xdr_u_int(xdrs, &count)) {
                 return (FALSE);
             }
             /* then deal with the array */
             for (ip = (*ipp)->values; (count > 0) && stat; count--)
-                stat = xdr_int(xdrs, ip++);
+                stat = h4_xdr_int(xdrs, ip++);
             return (stat);
     }
     return (FALSE);

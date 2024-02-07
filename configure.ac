@@ -880,92 +880,6 @@ AC_SUBST([SZIP_HAS_ENCODER])
 
 AM_CONDITIONAL([BUILD_SHARED_SZIP_CONDITIONAL], [test "X$USE_COMP_SZIP" = "Xyes" && test "X$LL_PATH" != "X"])
 
-## ----------------------------------------------------------------------
-## Is XDR support present? The TRY_LINK info was gotten from the
-## mfhdf/libsrc/local_nc.c file.
-AC_MSG_CHECKING([for xdr library support])
-
-AC_ARG_ENABLE([hdf4-xdr],
-              [AS_HELP_STRING([--enable-hdf4-xdr],
-                              [Build xdr library from code in HDF4 source.
-                               Not supported for 64 bit mode. [default="no"]])],
-              [enableval="yes"],[enableval="no"])
-
-case "$enableval" in
-  yes)
-    BUILD_XDR="yes"
-    AC_MSG_RESULT([using HDF4 XDR]);
-    ;;
-  no)
-    BUILD_XDR="no"
-    AC_MSG_RESULT([using system XDR]);
-    ;;
-esac
-
-
-## Check headers and add libraries for XDR if the HDF4 XDR library is not used.
-if test "X$BUILD_XDR" != "Xyes"; then
-  ## For Solaris systems, add the -nsl for XDR support
-  ##
-  ## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
-  ## ======================================================================
-  ## Checks for header files
-  ## ======================================================================
-  HAVE_RPC="yes"
-  HAVE_OLDRPC="yes"
-  HAVE_TIRPC="yes"
-  ## save current settings
-  SYSCPPFLAGS="$CPPFLAGS"
-  SYSCFLAGS="$CFLAGS"
-  case "$host" in
-    *-solaris*)
-      LIBS="$LIBS -lnsl"
-      ;;
-    *-pc-cygwin* | *-linux*)
-      AC_CHECK_HEADER([rpc/rpc.h],[:], [unset HAVE_OLDRPC])
-      AC_CHECK_HEADER([tirpc/netconfig.h],[:], [unset HAVE_TIRPC])
-      if test -z "$HAVE_OLDRPC" ; then
-        LIBS="$LIBS -ltirpc"
-        CFLAGS="$SYSCFLAGS -I/usr/include/tirpc"
-        CPPFLAGS="$SYSCPPFLAGS -I/usr/include/tirpc"
-        if test -z "$HAVE_TIRPC" ; then
-          CFLAGS="$SYSCFLAGS"
-          CPPFLAGS="$SYSCPPFLAGS"
-          AC_MSG_ERROR([couldn't find rpc headers])
-        fi
-      else
-          HAVE_TIRPC=""
-      fi
-      ;;
-    *) ;;
-  esac
-
-  ## ----------------------------------------------------------------------
-  ## We're trying to link against the rpc library when building on Cygwin,
-  ## but we need to make sure that it is present on the system. Do that here,
-  ## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
-  case "$host" in
-    *-pc-cygwin* | *-linux*)
-      if test -n "$HAVE_TIRPC"; then
-        AC_CHECK_LIB([tirpc], [xdr_opaque],[:], [unset HAVE_RPC])
-        if test -z "$HAVE_RPC"; then
-          AC_MSG_ERROR([couldn't find rpc library])
-        fi
-      fi
-      ;;
-  esac
-
-  AC_LINK_IFELSE([AC_LANG_PROGRAM([[
-  #include <rpc/types.h>
-  #include <rpc/xdr.h>]], [[xdr_int]])],[BUILD_XDR="no"],[BUILD_XDR="yes"])
-fi
-
-if test "X$BUILD_XDR" != "Xno"; then
-  AC_DEFINE([NO_SYS_XDR_INC], [1], [Not using system xdr])
-fi
-
-AM_CONDITIONAL([HDF_BUILD_XDR], [test "X$BUILD_XDR" = "Xyes"])
-
 ## ======================================================================
 ## Set POSIX level
 ## ======================================================================
@@ -977,19 +891,6 @@ AM_CONDITIONAL([HDF_BUILD_XDR], [test "X$BUILD_XDR" = "Xyes"])
 CPPFLAGS="-D_POSIX_C_SOURCE=200809L $CPPFLAGS"
 
 ## ======================================================================
-## Checks for endianness functions
-## The htons and ntohs functions are available on most systems.
-## These functions convert betweennetwork endiannessand hostendianness.
-## Network endianness is big-endian; because the standard TCP/IP network
-## protocols use big-endian ordering. These functions come in two sizes:
-## htonl and ntohl operate on 4-byte quantities, and
-## htons and ntohs operate on 2-byte quantities.
-## The hton functions convert host endianness to network endianness.
-## The ntoh functions convert network endianness to host endianness
-## ======================================================================
-AC_CHECK_FUNCS([htonl htons ntohl ntohs])
-
-## ======================================================================
 ## Checks for headers
 ## ======================================================================
 AC_CHECK_HEADERS([fcntl.h unistd.h])
@@ -999,6 +900,24 @@ AC_CHECK_HEADERS([sys/types.h])
 
 AC_CHECK_HEADERS([io.h])
 AC_CHECK_HEADERS([arpa/inet.h netinet/in.h])
+
+## Special MinGW checks
+case "`uname`" in
+    MINGW*)
+      # Check for Winsock library
+      AC_CHECK_LIB([ws2_32], [htonl])
+      ;;
+esac
+
+## ----------------------------------------------------------------------
+## XDR grew up in a world where long integers were 32 bits in size. Now
+## that many platforms have 64-bit longs, we need some hacks to paper
+## over the differences in sizes, particularly on big-endian machines.
+##
+
+AC_CHECK_SIZEOF([long])
+
+## ----------------------------------------------------------------------
 
 AC_PROG_CC_C_O
 
@@ -1322,7 +1241,6 @@ AC_CONFIG_FILES([Makefile
                  mfhdf/nctest/Makefile
                  mfhdf/test/Makefile
                  mfhdf/test/testmfhdf.sh
-                 mfhdf/xdr/Makefile
                  java/Makefile
                  java/src/Makefile
                  java/src/jni/Makefile

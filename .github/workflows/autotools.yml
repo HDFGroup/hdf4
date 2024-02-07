@@ -11,29 +11,10 @@ permissions:
 # in parallel. We just have one job, but the matrix items defined below will
 # run in parallel.
 jobs:
-    call-workflow-xdr-autotools:
-      name: "Autotools XDR Workflows"
-      uses: ./.github/workflows/main-auto.yml
-      with:
-            xdr: enable
-            netcdf: enable
-            shared: enable
-            build_mode: "production"
-
-    call-system-xdr-autotools:
-      name: "Autotools System XDR Workflows"
-      uses: ./.github/workflows/main-auto.yml
-      with:
-            xdr: disable
-            netcdf: enable
-            shared: enable
-            build_mode: "production"
-
     call-debug-netcdf-autotools:
       name: "Autotools Debug NetCDF Workflows"
       uses: ./.github/workflows/main-auto.yml
       with:
-            xdr: enable
             netcdf: enable
             shared: enable
             build_mode: "debug"
@@ -42,7 +23,6 @@ jobs:
       name: "Autotools Release NetCDF Workflows"
       uses: ./.github/workflows/main-auto.yml
       with:
-            xdr: enable
             netcdf: enable
             shared: enable
             build_mode: "production"
@@ -52,7 +32,6 @@ jobs:
       uses: ./.github/workflows/main-auto.yml
       with:
             netcdf: disable
-            xdr: enable
             shared: disable
             build_mode: "debug"
 
@@ -61,7 +40,6 @@ jobs:
       uses: ./.github/workflows/main-auto.yml
       with:
             netcdf: disable
-            xdr: enable
             shared: disable
             build_mode: "production"
 

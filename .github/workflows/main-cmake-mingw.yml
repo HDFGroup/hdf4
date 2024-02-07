@@ -69,7 +69,6 @@ jobs:
             -DBUILD_SHARED_LIBS:BOOL=${{ inputs.shared }} \
             -DHDF4_BUILD_EXAMPLES:BOOL=ON \
             -DBUILD_JPEG_WITH_PIC:BOOL=ON \
-            -DHDF4_BUILD_XDR_LIB:BOOL=ON \
             -DHDF4_ENABLE_NETCDF:BOOL=${{ inputs.netcdf }} \
             -DHDF4_BUILD_FORTRAN:BOOL=OFF \
             -DHDF4_BUILD_JAVA:BOOL=OFF \

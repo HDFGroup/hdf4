@@ -1,15 +1,5 @@
 include $(top_srcdir)/config/commence.am
 
-if HDF_BUILD_XDR
-XDR_DIR = xdr
-export XDRLIB = $(abs_top_builddir)/mfhdf/xdr/libxdr.la
-export XDRINC = -I$(abs_top_srcdir)/mfhdf/xdr
-else
-XDR_DIR =
-XDRLIB =
-XDRINC =
-endif
-
 if HDF_BUILD_FORTRAN
 FORTRAN_DIR = fortran
 else
@@ -23,9 +13,9 @@ NETCDF_DIRS = nctest
 endif
 
 # src folder in root Makefile, build other folders now
-SUBDIRS = $(XDR_DIR) libsrc $(FORTRAN_DIR) test $(NETCDF_DIRS) dumper hdfimport hdiff hrepack
+SUBDIRS = libsrc $(FORTRAN_DIR) test $(NETCDF_DIRS) dumper hdfimport hdiff hrepack
 
-DIST_SUBDIRS = xdr libsrc fortran test $(NETCDF_DIRS)  dumper hdfimport hdiff hrepack examples
+DIST_SUBDIRS = libsrc fortran test $(NETCDF_DIRS)  dumper hdfimport hdiff hrepack examples
 
 installcheck-local:
 	@(cd examples && $(MAKE) $(AM_MAKEFLAGS) $@) || exit 1;

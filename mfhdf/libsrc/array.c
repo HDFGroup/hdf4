@@ -472,13 +472,13 @@ xdr_NC_array(XDR *xdrs, NC_array **app)
             break;
     }
 
-    if (!xdr_int(xdrs, &type)) {
-        NCadvise(NC_EXDR, "xdr_NC_array:xdr_int (enum)");
+    if (!h4_xdr_int(xdrs, &type)) {
+        NCadvise(NC_EXDR, "xdr_NC_array:h4_xdr_int (enum)");
         return (FALSE);
     }
 
-    if (!xdr_u_int(xdrs, &temp_count)) {
-        NCadvise(NC_EXDR, "xdr_NC_array:xdr_u_long");
+    if (!h4_xdr_u_int(xdrs, &temp_count)) {
+        NCadvise(NC_EXDR, "xdr_NC_array:h4_xdr_u_int");
         return (FALSE);
     }
     *countp = temp_count;
@@ -501,19 +501,19 @@ xdr_NC_array(XDR *xdrs, NC_array **app)
         case NC_UNSPECIFIED:
         case NC_BYTE:
         case NC_CHAR:
-            xdr_NC_fnct = xdr_opaque;
+            xdr_NC_fnct = h4_xdr_opaque;
             goto func;
         case NC_SHORT:
             xdr_NC_fnct = xdr_shorts;
             goto func;
         case NC_LONG:
-            xdr_NC_fnct = xdr_int;
+            xdr_NC_fnct = h4_xdr_int;
             goto loop;
         case NC_FLOAT:
-            xdr_NC_fnct = xdr_float;
+            xdr_NC_fnct = h4_xdr_float;
             goto loop;
         case NC_DOUBLE:
-            xdr_NC_fnct = xdr_double;
+            xdr_NC_fnct = h4_xdr_double;
             goto loop;
             /* private types */
         case NC_STRING:

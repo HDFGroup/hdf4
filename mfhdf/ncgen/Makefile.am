@@ -16,7 +16,7 @@ ncgen_INCLUDES=-I$(top_srcdir)/hdf/src   \
          -I$(top_srcdir)/mfhdf/util      \
          -I$(top_builddir)/mfhdf/libsrc
 DEFINES=-DHDF
-AM_CPPFLAGS=$(ncgen_INCLUDES) $(XDRINC) $(DEFINES)
+AM_CPPFLAGS=$(ncgen_INCLUDES) $(DEFINES)
 
 ## Add ncgen specific linker flags here
 ncgen_LDFLAGS = $(LT_STATIC_EXEC) $(AM_LDFLAGS)
@@ -40,12 +40,12 @@ endif
 ## Information for building the "ncgen" program
 ncgen_SOURCES = close.c escapes.c generate.c genlib.c getfill.c init.c      \
                 load.c main.c ncgentab.c $(top_srcdir)/mfhdf/util/h4getopt.c
-ncgen_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
-ncgen_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
+ncgen_LDADD = $(LIBMFHDF) $(LIBHDF)
+ncgen_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
 
 ctest0_SOURCES=
-ctest0_LDADD = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
-ctest0_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF) $(XDRLIB)
+ctest0_LDADD = $(LIBMFHDF) $(LIBHDF)
+ctest0_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
 
 ftest0_SOURCES=
 

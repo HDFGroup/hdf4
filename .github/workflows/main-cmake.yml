@@ -52,7 +52,6 @@ jobs:
           - name: "Windows MSVC"
             os: windows-latest
             toolchain: ""
-            xdr: ON
             fortran: OFF
             java: ON
             docs: ON
@@ -69,7 +68,6 @@ jobs:
           # so it's not critical
           - name: "Ubuntu gcc"
             os: ubuntu-latest
-            xdr: ON
             fortran: OFF
             java: ON
             docs: ON
@@ -88,7 +86,6 @@ jobs:
           # but that seems unnecessary
           - name: "MacOS Clang"
             os: macos-13
-            xdr: ON
             fortran: OFF
             java: ON
             docs: ON
@@ -168,7 +165,6 @@ jobs:
             -DBUILD_SHARED_LIBS:BOOL=${{ inputs.shared }} \
             -DHDF4_BUILD_EXAMPLES:BOOL=ON \
             -DBUILD_JPEG_WITH_PIC:BOOL=ON \
-            -DHDF4_BUILD_XDR_LIB:BOOL=${{ matrix.xdr }} \
             -DHDF4_ENABLE_NETCDF:BOOL=${{ inputs.netcdf }} \
             -DHDF4_BUILD_FORTRAN:BOOL=${{ matrix.fortran }} \
             -DHDF4_BUILD_JAVA:BOOL=${{ env.useJava }} \
