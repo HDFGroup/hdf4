@@ -414,19 +414,19 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
         } break;
 
         case 'x': {
-            intn *idata;
-            intn  sizeintn;
+            int   *idata;
+            size_t sizeint;
 
-            sizeintn = sizeof(intn);
-            idata    = (intn *)malloc((size_t)(length / 4 * sizeintn));
+            sizeint = sizeof(int);
+            idata   = (int *)malloc((size_t)(length / 4 * sizeint));
             DFKconvert((void *)(data + offset), (void *)idata, DFNT_NINT32 | raw_flag, length / 4, DFACC_READ,
                        0, 0);
             printf("%8d: ", offset);
-            for (i = 0; i < length / sizeintn; i++) {
+            for (i = 0; i < length / sizeint; i++) {
                 printf("%10x ", idata[i]);
                 if (++len > 5) {
                     len = 0;
-                    printf("\n%8d: ", (int)(offset + (i + 1) * sizeintn));
+                    printf("\n%8d: ", (int)(offset + (i + 1) * sizeint));
                 }
             }
             printf("\n");
@@ -434,19 +434,19 @@ HEIdump(int32 length, int offset, char *format, int raw_flag)
         } break;
 
         case 'o': {
-            intn *idata;
-            intn  sizeintn;
+            int   *idata;
+            size_t sizeint;
 
-            sizeintn = sizeof(intn);
-            idata    = (intn *)malloc((size_t)(length / 4 * sizeintn));
+            sizeint = sizeof(int);
+            idata   = (int *)malloc((size_t)(length / 4 * sizeint));
             DFKconvert((void *)(data + offset), (void *)idata, DFNT_NINT32 | raw_flag, length / 4, DFACC_READ,
                        0, 0);
             printf("%8d: ", offset);
-            for (i = 0; i < length / sizeintn; i++) {
+            for (i = 0; i < length / sizeint; i++) {
                 printf("%10o ", idata[i]);
                 if (++len > 4) {
                     len = 0;
-                    printf("\n%8d: ", (int)(offset + (i + 1) * sizeintn));
+                    printf("\n%8d: ", (int)(offset + (i + 1) * sizeint));
                 }
             }
             printf("\n");
@@ -579,14 +579,13 @@ info(int all, int longout, int group, int label)
     int  start, end;
     int  d;
     int *mark;
-    int  i, j;
 
     if (!fileOpen()) {
         noFile();
         return HE_OK;
     }
 
-    if (!group || (!isGrp(currTag) && !all)) {
+    if (!group || ((!isGrp(currTag) && !all))) {
         if (all) {
             start = 0;
             end   = he_numDesc - 1;
@@ -594,7 +593,12 @@ info(int all, int longout, int group, int label)
         else
             start = end = he_currDesc;
 
-        for (i = start; i <= end; i++)
+        /* The gcc optimizer thinks it can optimize away the conditional here,
+         * which raises a strict-overflow warning. The volatile keyword
+         * prevents optimization (possibly unrolling the for loop) and
+         * squashes the warning.
+         */
+        for (volatile int i = start; i <= end; i++)
             if (he_desc[i].tag == DFTAG_NULL)
                 empty++;
             else {
@@ -623,14 +627,14 @@ info(int all, int longout, int group, int label)
             }
             start = end = currGrpNo;
         }
-        for (i = start; i <= end; i++) {
+        for (int i = start; i <= end; i++) {
             printf("**Group %d:\n", i + 1); /* 1 based */
             idx = he_grp[i].desc;
             infoDesc(idx, longout, label);
 
             mark[idx] = YES;
 
-            for (j = 0; j < he_grp[i].size; j++)
+            for (int j = 0; j < he_grp[i].size; j++)
                 if ((d = findDesc(he_grp[i].ddList + j)) >= 0) {
                     mark[d] = 1;
                     infoDesc(d, longout, 0);
@@ -641,7 +645,7 @@ info(int all, int longout, int group, int label)
         }
         if (all) {
             puts("\n**These do not belong to any group:");
-            for (i = 0; i < he_numDesc; i++)
+            for (int i = 0; i < he_numDesc; i++)
                 if (!mark[i]) {
                     if (he_desc[i].tag == DFTAG_NULL)
                         empty++;
@@ -821,11 +825,10 @@ findFunc(char *fword)
 {
     unsigned len;
     int      found = -1;
-    uintn    i;
 
     len = strlen((const char *)fword);
 
-    for (i = 0; i < sizeof(he_funcTab) / sizeof(he_funcTab[0]); i++)
+    for (int i = 0; i < sizeof(he_funcTab) / sizeof(he_funcTab[0]); i++)
         if (!strncmp(he_funcTab[i].str, (const char *)fword, len)) {
             /* check for exact match */
             if (strlen(he_funcTab[i].str) == len)
@@ -1132,13 +1135,11 @@ findAlias(char *str)
 int
 HEunalias(HE_CMD *cmd)
 {
-    int a, i, j;
-
-    for (a = 1; a < cmd->argc; a++)
-        for (i = 0; i < he_numAlias; i++)
+    for (int a = 1; a < cmd->argc; a++)
+        for (int i = 0; i < he_numAlias; i++)
             if (!strcmp(cmd->argv[a], he_aliasTab[i].str)) {
                 he_numAlias--;
-                for (j = i; j < he_numAlias; j++) {
+                for (int j = i; j < he_numAlias; j++) {
                     he_aliasTab[j].str = he_aliasTab[j + 1].str;
                     he_aliasTab[j].cmd = he_aliasTab[j + 1].cmd;
                 }
@@ -1150,12 +1151,10 @@ HEunalias(HE_CMD *cmd)
 void
 printAlias(char *word, HE_CMD *cmd)
 {
-    int j;
-
     printf("%s:", word);
     for (; cmd; cmd = cmd->next) {
         printf("\t");
-        for (j = 0; j < cmd->argc; j++)
+        for (int j = 0; j < cmd->argc; j++)
             printf("%s ", cmd->argv[j]);
         puts("");
     }
@@ -1225,13 +1224,12 @@ struct {
 int
 findKey(char *word)
 {
-    uintn    i;
     unsigned len;
     int      found = -1;
 
     len = strlen(word);
 
-    for (i = 0; i < sizeof(he_keyTab) / sizeof(he_keyTab[0]); i++)
+    for (int i = 0; i < sizeof(he_keyTab) / sizeof(he_keyTab[0]); i++)
         if (!strncmp(he_keyTab[i].str, word, len)) {
             /* if this is an exact match, just return */
             if (strlen(he_keyTab[i].str) == len)
