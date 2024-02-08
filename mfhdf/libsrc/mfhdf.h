@@ -416,13 +416,15 @@ HDFLIBAPI intn SDsetchunkcache(int32 sdsid,    /* IN: sds access id */
  ** Public functions for getting raw data information - from mfdatainfo.c
  */
 
-HDFLIBAPI intn SDgetdatainfo(int32 sdsid, int32 *chk_coord, uintn start_block, uintn info_count, int32 *offsetarray, int32 *lengtharray);
+HDFLIBAPI intn SDgetdatainfo(int32 sdsid, int32 *chk_coord, uintn start_block, uintn info_count,
+                             int32 *offsetarray, int32 *lengtharray);
 
 HDFLIBAPI intn SDgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length);
 
 HDFLIBAPI intn SDgetoldattdatainfo(int32 dimid, int32 sdsid, char *attr_name, int32 *offset, int32 *length);
 
-HDFLIBAPI intn SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32 *offsetarray, int32 *lengtharray);
+HDFLIBAPI intn SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32 *offsetarray,
+                                int32 *lengtharray);
 
 #ifdef __cplusplus
 }
