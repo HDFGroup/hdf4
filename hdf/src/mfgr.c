@@ -4884,7 +4884,7 @@ GRIgetaid(ri_info_t *ri_ptr, intn acc_perm)
 
                 pixel_size = (uintn)(ri_ptr->img_dim.ncomps * DFKNTsize(ri_ptr->img_dim.nt));
 
-                /* BMR: HRPconvert made access_rec->special = SPECIAL_COMPRAS */
+                /* Wraps an existing compressed raster image with the special element*/
                 if ((ri_ptr->img_aid = HRPconvert(hdf_file_id, ri_ptr->img_tag, ri_ptr->img_ref,
                                                   ri_ptr->img_dim.xdim, ri_ptr->img_dim.ydim,
                                                   ri_ptr->img_dim.comp_tag, &(ri_ptr->cinfo), pixel_size)) ==
