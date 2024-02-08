@@ -184,17 +184,28 @@ vdata_cmp(int32 vs1, int32 vs2, char *gname, char *cname, diff_opt_t *opt)
     uint32          err_cnt;
     int32           nv1, interlace1, vsize1;
     int32           vsotag1;
-    char            fields1[VSFIELDMAX * FIELDNAMELENMAX];
     char            vsclass1[VSNAMELENMAX], vsname1[VSNAMELENMAX];
     int32           nv2, interlace2, vsize2;
     int32           vsotag2;
-    char            fields2[VSFIELDMAX * FIELDNAMELENMAX];
     char            vsclass2[VSNAMELENMAX], vsname2[VSNAMELENMAX];
-    uint8          *buf1, *buf2, *b1, *b2;
+    uint8          *b1, *b2;
     int32           off1[60], off2[60];
     DYN_VWRITELIST *w1, *w2;
     uint32          nfound      = 0;
     uint32          max_err_cnt = opt->max_err_cnt;
+
+    uint8 *buf1    = NULL;
+    uint8 *buf2    = NULL;
+    char  *fields1 = NULL;
+    char  *fields2 = NULL;
+
+    fields1 = (char *)calloc((VSFIELDMAX * FIELDNAMELENMAX), sizeof(char));
+    fields2 = (char *)calloc((VSFIELDMAX * FIELDNAMELENMAX), sizeof(char));
+    if (fields1 == NULL || fields2 == NULL) {
+        printf("Out of memory!");
+        opt->err_stat = 1;
+        goto out;
+    }
 
     VSinquire(vs1, &nv1, &interlace1, fields1, &vsize1, vsname1);
     VSinquire(vs2, &nv2, &interlace2, fields2, &vsize2, vsname2);
@@ -213,17 +224,17 @@ vdata_cmp(int32 vs1, int32 vs2, char *gname, char *cname, diff_opt_t *opt)
                fields1, vsize1, vsclass1);
         printf("< <%d> nrec=%d interlace=%d fld=[%s] vsize=%d class={%s})\n", vsotag2, nv2, interlace2,
                fields2, vsize2, vsclass2);
-        return 0;
+        goto out;
     }
 
     /* compare the data */
 
     buf1 = (uint8 *)malloc((unsigned)(nv1 * vsize1));
     buf2 = (uint8 *)malloc((unsigned)(nv2 * vsize2));
-    if (!buf1 || !buf2) {
+    if (buf1 == NULL || buf2 == NULL) {
         printf("Out of memory!");
         opt->err_stat = 1;
-        return 0;
+        goto out;
     }
 
     VSsetfields(vs1, fields1);
@@ -327,8 +338,12 @@ vdata_cmp(int32 vs1, int32 vs2, char *gname, char *cname, diff_opt_t *opt)
         }
     }
 
+out:
     free(buf1);
     free(buf2);
+
+    free(fields1);
+    free(fields2);
 
     return nfound;
 }
@@ -377,7 +392,7 @@ fmt_print(uint8 *x, int32 type)
 
         case DFNT_FLOAT32:
             memcpy(&f, x, sizeof(float32));
-            printf("%f", f);
+            printf("%f", (double)f);
             break;
 
         case DFNT_FLOAT64:
