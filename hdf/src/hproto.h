@@ -441,6 +441,38 @@ HDFLIBAPI int32 Hendbitaccess(int32 bitfile_id, intn flushbit);
 HDFLIBAPI intn HPbitshutdown(void);
 
 /*
+ ** from hdatainfo.c
+ */
+
+/* Structure that holds a data descriptor */
+typedef struct hdf_ddinfo_t {
+    uint16 tag;
+    uint16 ref;
+    int32  offset;
+    int32  length;
+} hdf_ddinfo_t;
+
+/*
+ ** Public functions for getting raw data information - from hdatainfo.c
+ */
+HDFLIBAPI intn ANgetdatainfo(int32 ann_id, int32 *offset, int32 *length);
+
+HDFLIBAPI intn HDgetdatainfo(int32 file_id, uint16 data_tag, uint16 data_ref, int32 *chk_coord, uintn start_block, uintn info_count, int32 *offsetarray, int32 *lengtharray);
+
+HDFLIBAPI intn VSgetdatainfo(int32 vsid, uintn start_block, uintn info_count, int32 *offsetarray, int32 *lengtharray);
+
+HDFLIBAPI intn VSgetattdatainfo(int32 vsid, int32 findex, intn attrindex, int32 *offset, int32 *length);
+
+HDFLIBAPI intn Vgetattdatainfo(int32 vgid, intn attrindex, int32 *offset, int32 *length);
+
+HDFLIBAPI intn GRgetdatainfo(int32 riid, uintn start_block, uintn info_count, int32 *offsetarray, int32 *lengtharray);
+
+HDFLIBAPI intn GRgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length);
+
+HDFLIBAPI intn GRgetpalinfo(int32 gr_id, uintn pal_count, hdf_ddinfo_t *palinfo_array);
+
+
+/*
  ** from dfutil.c
  */
 HDFLIBAPI uint16 DFfindnextref(int32 file_id, uint16 tag, uint16 lref);
@@ -808,7 +840,9 @@ HDFLIBAPI intn DFKsb4b(void *s, void *d, uint32 num_elm, uint32 source_stride, u
 
 HDFLIBAPI intn DFKsb8b(void *s, void *d, uint32 num_elm, uint32 source_stride, uint32 dest_stride);
 
-/* Multi-file Annotation C-routines found in mfan.c */
+/*
+ ** Multi-file Annotation - from mfan.c
+ */
 HDFLIBAPI int32 ANstart(int32 file_id);
 
 HDFLIBAPI intn ANfileinfo(int32 an_id, int32 *n_file_label, int32 *n_file_desc, int32 *n_obj_label,
@@ -844,10 +878,9 @@ HDFLIBAPI uint16 ANatype2tag(ann_type atype);
 
 HDFLIBAPI ann_type ANtag2atype(uint16 atag);
 
-/* BMR: Removed because this function is meant to be private.
-HDFLIBAPI intn ANdestroy(void); */
-
-/* Multi-file Raster C-routines found in mfgr.c */
+/*
+ ** Multi-file General Raster - from mfgr.c
+ */
 HDFLIBAPI intn rigcompare(void *k1, void *k2, intn cmparg);
 
 HDFLIBAPI int32 GRstart(int32 hdf_file_id);
