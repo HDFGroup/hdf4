@@ -457,20 +457,22 @@ typedef struct hdf_ddinfo_t {
  */
 HDFLIBAPI intn ANgetdatainfo(int32 ann_id, int32 *offset, int32 *length);
 
-HDFLIBAPI intn HDgetdatainfo(int32 file_id, uint16 data_tag, uint16 data_ref, int32 *chk_coord, uintn start_block, uintn info_count, int32 *offsetarray, int32 *lengtharray);
+HDFLIBAPI intn HDgetdatainfo(int32 file_id, uint16 data_tag, uint16 data_ref, int32 *chk_coord,
+                             uintn start_block, uintn info_count, int32 *offsetarray, int32 *lengtharray);
 
-HDFLIBAPI intn VSgetdatainfo(int32 vsid, uintn start_block, uintn info_count, int32 *offsetarray, int32 *lengtharray);
+HDFLIBAPI intn VSgetdatainfo(int32 vsid, uintn start_block, uintn info_count, int32 *offsetarray,
+                             int32 *lengtharray);
 
 HDFLIBAPI intn VSgetattdatainfo(int32 vsid, int32 findex, intn attrindex, int32 *offset, int32 *length);
 
 HDFLIBAPI intn Vgetattdatainfo(int32 vgid, intn attrindex, int32 *offset, int32 *length);
 
-HDFLIBAPI intn GRgetdatainfo(int32 riid, uintn start_block, uintn info_count, int32 *offsetarray, int32 *lengtharray);
+HDFLIBAPI intn GRgetdatainfo(int32 riid, uintn start_block, uintn info_count, int32 *offsetarray,
+                             int32 *lengtharray);
 
 HDFLIBAPI intn GRgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length);
 
 HDFLIBAPI intn GRgetpalinfo(int32 gr_id, uintn pal_count, hdf_ddinfo_t *palinfo_array);
-
 
 /*
  ** from dfutil.c
