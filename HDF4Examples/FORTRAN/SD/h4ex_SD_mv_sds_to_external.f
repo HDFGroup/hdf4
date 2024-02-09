@@ -1,5 +1,5 @@
       program  write_extfile
-      implicit none 
+      implicit none
 C
 C     Parameter declaration.
 C
@@ -39,11 +39,11 @@ C     into it, starting at byte location OFFSET.
 C
       status = sfsextf(sds_id, EXT_FILE_NAME, OFFSET)
 C
-C     Terminate access to the data set. 
+C     Terminate access to the data set.
 C
       status = sfendacc(sds_id)
 C
-C     Terminate access to the SD interface and close the file. 
+C     Terminate access to the SD interface and close the file.
 C
       status = sfend(sd_id)
 

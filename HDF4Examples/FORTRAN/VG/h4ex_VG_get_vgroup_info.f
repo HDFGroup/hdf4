@@ -46,7 +46,7 @@ C
 C
 C     Get and print the name and class name of all lone vgroups.
 C     First, call vflone with num_of_lones set to 0 to get the number of
-C     lone vgroups in the file and check whether size of ref_array is 
+C     lone vgroups in the file and check whether size of ref_array is
 C     big enough to hold reference numbers of ALL lone groups.
 C     If ref_array is not big enough, exit the program after displaying an
 C     informative message.
@@ -75,7 +75,7 @@ C
       do 20 lone_vg_number = 1, num_of_lones
 C
 C     Attach to the current vgroup, then get and display its name and class.
-C     Note: the current vgroup must be detached before moving to the next.  
+C     Note: the current vgroup must be detached before moving to the next.
 C
       vgroup_name = ' '
       vgroup_class = ' '

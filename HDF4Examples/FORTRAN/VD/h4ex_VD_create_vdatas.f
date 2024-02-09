@@ -18,14 +18,14 @@ C
 C     Function declaration
 C
       integer hopen, hclose
-      integer vfstart, vsfatch, vsfsnam, vsfscls, vsfdtch, vfend 
+      integer vfstart, vsfatch, vsfsnam, vsfscls, vsfdtch, vfend
 
 C
 C**** Variable declaration *******************************************
 C
       integer status
       integer file1_id, file2_id
-      integer vdata_id, vdata1_id, vdata2_id 
+      integer vdata_id, vdata1_id, vdata2_id
       integer vdata_ref
 C
 C**** End of variable declaration ************************************
@@ -37,7 +37,7 @@ C
 C
 C     Initialize the VS interface associated with the first HDF file.
 C
-      status = vfstart(file1_id) 
+      status = vfstart(file1_id)
 C
 C     Create a vdata in the first HDF file.
 C
@@ -53,11 +53,11 @@ C     starting from this point.
 C
 C     Create the second HDF file.
 C
-      file2_id = hopen(FILE2_NAME, DFACC_CREATE, 0) 
+      file2_id = hopen(FILE2_NAME, DFACC_CREATE, 0)
 C
 C     Initialize the VS interface associated with the second HDF file.
 C
-      status = vfstart(file2_id) 
+      status = vfstart(file2_id)
 C
 C     Create the first vdata in the second HDF file.
 C

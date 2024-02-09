@@ -21,8 +21,8 @@ C
       integer status
       integer file_id
       integer vgroup_id, vgroup_ref,  vgroup_pos
-      integer obj_index, num_of_pairs 
-      integer obj_tag, obj_ref 
+      integer obj_index, num_of_pairs
+      integer obj_tag, obj_ref
 C
 C**** End of variable declaration ************************************
 C
@@ -64,7 +64,7 @@ C
          write(*,*) 'Vgroup # ', vgroup_pos, ' contains:'
          do 20 obj_index = 1, num_of_pairs
 C
-C     Get the tag/ref number pair of the object specified by its index 
+C     Get the tag/ref number pair of the object specified by its index
 C     and display them.
 C
          status = vfgttr(vgroup_id, obj_index-1, obj_tag, obj_ref)
@@ -88,8 +88,8 @@ C
       endif
       write(*,*)
       vgroup_pos = vgroup_pos + 1
-      goto 10 
-100   continue      
+      goto 10
+100   continue
 C
 C     Terminate access to the vgroup.
 C

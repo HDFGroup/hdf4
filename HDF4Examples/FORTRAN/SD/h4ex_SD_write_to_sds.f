@@ -31,7 +31,7 @@ C**** End of variable declaration ************************************
 C
 
 C
-C     Data set data initialization. 
+C     Data set data initialization.
 C
       do 20 j = 1, Y_LENGTH
          do 10 i = 1, X_LENGTH
@@ -63,7 +63,7 @@ C
       stride(2) = 1
 C
 C     Write the stored data to the data set named in SDS_NAME.
-C     Note that the routine sfwdata is used instead of sfwcdata 
+C     Note that the routine sfwdata is used instead of sfwcdata
 C     to write the numeric data.
 C
       status = sfwdata(sds_id, start, stride, edges, data)

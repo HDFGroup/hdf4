@@ -18,9 +18,9 @@ C
       parameter    (COMP_CODE_DEFLATE = 4)
       integer       DEFLATE_LEVEL
       parameter    (DEFLATE_LEVEL = 6)
-C     To use Skipping Huffman compression method, declare 
+C     To use Skipping Huffman compression method, declare
 C            integer   COMP_CODE_SKPHUFF
-C            parameter(COMP_CODE_SKPHUFF = 3) 
+C            parameter(COMP_CODE_SKPHUFF = 3)
 C     To use RLE compression method, declare
 C            integer   COMP_CODE_RLE
 C            parameter(COMP_CODE_RLE = 1)
@@ -43,7 +43,7 @@ C
 C**** End of variable declaration ************************************
 C
 C
-C     Buffer array data and define array dimensions. 
+C     Buffer array data and define array dimensions.
 C
       do 20 j = 1, Y_LENGTH
          do 10 i = 1, X_LENGTH
@@ -57,15 +57,15 @@ C     Open the file and initialize the SD interface.
 C
       sd_id = sfstart(FILE_NAME, DFACC_CREATE)
 C
-C     Create the data set with the name SDS_NAME.  
+C     Create the data set with the name SDS_NAME.
 C
-      sds_id = sfcreate(sd_id, SDS_NAME, DFNT_INT32, RANK, dim_sizes) 
+      sds_id = sfcreate(sd_id, SDS_NAME, DFNT_INT32, RANK, dim_sizes)
 C
 C     Initialize compression parameter (deflate level)
 C     and call sfscompress function
 C     For Skipping Huffman compression, comp_prm(1) should be set
 C     to skipping sizes value (skp_size).
-C 
+C
       comp_type   = COMP_CODE_DEFLATE
       comp_prm(1) = deflate_level
       status      = sfscompress(sds_id, comp_type, comp_prm(1))

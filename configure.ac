@@ -1205,7 +1205,6 @@ AC_CONFIG_FILES([Makefile
                  libhdf4.settings
                  hdf/Makefile
                  hdf/fortran/Makefile
-                 hdf/fortran/examples/Makefile
                  hdf/src/Makefile
                  hdf/test/Makefile
                  hdf/util/Makefile
@@ -1221,7 +1220,6 @@ AC_CONFIG_FILES([Makefile
                  mfhdf/dumper/Makefile
                  mfhdf/dumper/testhdp.sh
                  mfhdf/fortran/Makefile
-                 mfhdf/fortran/examples/Makefile
                  mfhdf/fortran/testfortran.sh
                  mfhdf/hdfimport/Makefile
                  mfhdf/hdfimport/testutil.sh

@@ -13,8 +13,8 @@ C
       integer VSET_NEW_VERSION, VSET_VERSION, VSET_OLD_VERSION
       parameter (VSET_NEW_VERSION = 4,
      +           VSET_VERSION     = 3,
-     +           VSET_OLD_VERSION = 2)  
-      integer DFACC_WRITE 
+     +           VSET_OLD_VERSION = 2)
+      integer DFACC_WRITE
       parameter (DFACC_WRITE = 2)
       integer DFNT_CHAR
       parameter (DFNT_CHAR = 4)
@@ -33,7 +33,7 @@ C
       integer file_id
       integer vgroup_id, vgroup_ref, vg_version
       integer attr_index, i
-      integer data_type, n_values, size 
+      integer data_type, n_values, size
       character vg_attr(N_ATT_VALUES)
       character vgattr_buf(N_ATT_VALUES), attr_name(30)
       data vg_attr /'v','g','r','o','u','p'/
@@ -68,7 +68,7 @@ C
      +   VGROUP_NAME, ' is of version before 3.2'
       if ((vg_version .ne. VSET_NEW_VERSION) .and.
      +    (vg_version .ne. VSET_VERSION)     .and.
-     +    (vg_version .ne. VSET_OLD_VERSION)) write(*,*)   
+     +    (vg_version .ne. VSET_OLD_VERSION)) write(*,*)
      +    'Unknown version'
 C
 C     Add the attribute named VGATTR_NAME to the vgroup.
@@ -84,6 +84,7 @@ C
 C     Get and display the name and the number of values of each attribute.
 C
       do 10 attr_index=1, n_attrs
+         attr_name = ' '
          status = vfainfo(vgroup_id, attr_index-1, attr_name, data_type,
      +                    n_values, size)
       write(*,*) 'Attribute #', attr_index-1, ' is named ', attr_name

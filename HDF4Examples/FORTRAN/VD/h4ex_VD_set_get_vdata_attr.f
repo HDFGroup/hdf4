@@ -1,4 +1,4 @@
-      program vdata_attributes 
+      program vdata_attributes
       implicit none
 C
 C     Parameter declaration
@@ -8,7 +8,7 @@ C
       character*4  FIELD_NAME
       character*10 VATTR_NAME
       character*6  FATTR_NAME
-      integer      VATTR_N_VALUES, FATTR_N_VALUES 
+      integer      VATTR_N_VALUES, FATTR_N_VALUES
 C
       parameter (FILE_NAME    = 'General_Vdatas.hdf',
      +           VDATA_NAME   = 'Solid Particle',
@@ -17,7 +17,7 @@ C
      +           FATTR_NAME   = 'Scales')
       parameter (VATTR_N_VALUES = 3,
      +           FATTR_N_VALUES = 4)
-   
+
       integer DFACC_WRITE, FULL_INTERLACE, HDF_VDATA
       integer DFNT_INT32, DFNT_CHAR8
       parameter (DFACC_WRITE    =  2,
@@ -29,9 +29,9 @@ C
 C     Function declaration
 C
       integer hopen, hclose
-      integer vfstart, vsffnd, vsfatch, vsfscat, vsfsnat, 
+      integer vfstart, vsffnd, vsfatch, vsfscat, vsfsnat,
      +        vsffnas, vsffidx, vsfnats, vsfainf, vsfgcat, vsfgnat,
-     +        vsfdtch, vfend 
+     +        vsfdtch, vfend
 
 C
 C**** Variable declaration *******************************************
@@ -40,7 +40,7 @@ C
       integer   file_id, vdata_id, vdata_ref
       integer   field_index, n_vdattrs, n_fldattrs
       integer   vdata_type, vdata_n_values, vdata_size
-      integer   field_type, field_n_values, field_size 
+      integer   field_type, field_n_values, field_size
       character vd_attr(VATTR_N_VALUES)
       integer   fld_attr(FATTR_N_VALUES)
       character vattr_buf(VATTR_N_VALUES)
@@ -58,15 +58,15 @@ C
 C
 C     Initialize the VS interface.
 C
-      status = vfstart(file_id) 
+      status = vfstart(file_id)
 C
 C     Get the reference number of the vdata named VDATA_NAME.
-C     
+C
       vdata_ref = vsffnd(file_id, VDATA_NAME)
 C
-C     Attach to the vdata for writing. 
+C     Attach to the vdata for writing.
 C
-      vdata_id = vsfatch(file_id, vdata_ref, 'w') 
+      vdata_id = vsfatch(file_id, vdata_ref, 'w')
 C
 C     Attach an attribute to the vdata, as it is indicated by second parameter.
 C
@@ -81,13 +81,13 @@ C     Attach an attribute to the field with the index field_index.
 C
       status = vsfsnat(vdata_id, field_index, FATTR_NAME, DFNT_INT32,
      +                  FATTR_N_VALUES, fld_attr)
-      
+
 C
 C     Get the number of attributes attached to the vdata's first
 C     field - should be 0.
 C
       n_fldattrs = vsffnas(vdata_id, 0)
-      write(*,*) 'Number of attributes of the first field' 
+      write(*,*) 'Number of attributes of the first field'
       write(*,*) ' of the vdata: ', n_fldattrs
 C
 C     Get the number of the attributes attached to the field specified by
@@ -103,7 +103,7 @@ C
       write(*,*) 'Number of attributes of the vdata and its fields: ',
      +           n_vdattrs
 C
-C     Get information about the vdata's first attribute, indicated by 
+C     Get information about the vdata's first attribute, indicated by
 C     the third parameter, which is the index of the attribute.
 C
       status = vsfainf(vdata_id, HDF_VDATA, 0, vattr_name_out,
@@ -112,7 +112,7 @@ C
 C     Get information about the first attribute of the field specified by
 C     field_index.
 C
-      status = vsfainf(vdata_id, field_index, 0, fattr_name_out, 
+      status = vsfainf(vdata_id, field_index, 0, fattr_name_out,
      +                 field_type, field_n_values, field_size)
 C
 C     Get the vdata's first attribute.
@@ -124,7 +124,7 @@ C     Get the first attribute of the field specified by field_index.
 C
       status = vsfgnat(vdata_id, field_index, 0, fattr_buf)
       write(*,*)  'Values of the field attribute = ', fattr_buf
-C       
+C
 C     Terminate access to the vdata and to the VS interface, and
 C     close the HDF file.
 C

@@ -17,15 +17,15 @@ C     Function declaration
 C
       integer hopen, hclose
       integer mgstart, mgfinfo, mgatinf, mggcatt, mggnatt , mgfndat,
-     +        mgselct, mgendac, mgend 
+     +        mgselct, mgendac, mgend
 
 C
 C**** Variable declaration *******************************************
 C
       integer      status
       integer      file_id, gr_id, ri_id
-      integer      f_att_index, ri_att_index, data_type, n_values 
-      integer      n_rimages, n_file_attrs 
+      integer      f_att_index, ri_att_index, data_type, n_values
+      integer      n_rimages, n_file_attrs
       integer*2    int_buf(10)
       character*17 attr_name
       character*80 char_buf
@@ -42,7 +42,7 @@ C     Initialize the GR interface.
 C
       gr_id = mgstart(file_id)
 C
-C     Determine the number of attributes in the file. 
+C     Determine the number of attributes in the file.
 C
       status = mgfinfo(gr_id, n_rimages, n_file_attrs)
       if ((status .NE. -1) .AND. (n_file_attrs .GT. 0)) then
@@ -50,21 +50,22 @@ C
          do 10 f_att_index = 0, n_file_attrs-1
 C
 C        Get information about the current file attribute.
-C 
+C
+         attr_name = ' '
          status = mgatinf(gr_id, f_att_index, attr_name, data_type,
      +                    n_values)
 C
 C        Check whether data type is DFNT_CHAR8 in order to use allocated buffer.
 C
          if(data_type .NE. DFNT_CHAR8) then
-            write(*,*) 
+            write(*,*)
      +      'Unable to determine data type to use allocated buffer'
          else
 C
 C           Read and display the attribute values.
 C
             status = mggcatt(gr_id, f_att_index, char_buf)
-            write(*,*) 'Attribute ', attr_name, ' : ', 
+            write(*,*) 'Attribute ', attr_name, ' : ',
      +                 char_buf(1:n_values)
          endif
 10       continue
@@ -73,10 +74,10 @@ C
 
 C
 C     Select the second image in the file.
-C 
-      ri_id = mgselct(gr_id, 1) 
 C
-C     Find the image attribute named RI_ATTR_NAME. 
+      ri_id = mgselct(gr_id, 1)
+C
+C     Find the image attribute named RI_ATTR_NAME.
 C
       ri_att_index = mgfndat(ri_id, RI_ATTR_NAME)
 C
@@ -84,7 +85,7 @@ C     Get information about the attribute.
 C
       status = mgatinf(ri_id, ri_att_index, attr_name, data_type,
      +                 n_values)
-C      
+C
 C     Read and display attribute values.
 C
       status = mggnatt(ri_id, ri_att_index, int_buf)
