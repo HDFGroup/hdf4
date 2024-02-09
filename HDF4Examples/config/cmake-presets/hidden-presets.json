@@ -99,17 +99,6 @@
       }
     },
     {
-      "name": "ci-Java",
-      "hidden": true,
-      "cacheVariables": {
-        "HDF_BUILD_JAVA": "ON"
-      },
-      "toolset": {
-        "value": "host=x64",
-        "strategy": "external"
-      }
-    },
-    {
       "name": "ci-x64-Debug-MSVC",
       "description": "MSVC for x64 (Debug)",
       "hidden": true,
