@@ -36,7 +36,7 @@ C
       do 30 k = 1, Z_LENGTH
          do 20 j = 1, Y_LENGTH
             do 10 i = 1, X_LENGTH
-               data(i, j, k) = i + j + k 
+               data(i, j, k) = i + j + k
 10            continue
 20         continue
 30    continue
@@ -45,35 +45,35 @@ C     Create the file and initialize the SD interface.
 C
       sd_id = sfstart(FILE_NAME, DFACC_CREATE)
 C
-C     Define dimensions of the array to be created. 
+C     Define dimensions of the array to be created.
 C
-      dim_sizes(1) = X_LENGTH   
-      dim_sizes(2) = Y_LENGTH   
-      dim_sizes(3) = Z_LENGTH   
+      dim_sizes(1) = X_LENGTH
+      dim_sizes(2) = Y_LENGTH
+      dim_sizes(3) = Z_LENGTH
 C
-C     Create the data set with the name defined in SDS_NAME. 
+C     Create the data set with the name defined in SDS_NAME.
 C
-      sds_id = sfcreate(sd_id, SDS_NAME, DFNT_INT32, RANK, 
+      sds_id = sfcreate(sd_id, SDS_NAME, DFNT_INT32, RANK,
      .                  dim_sizes)
 C
-C     Set the parameters start and edges to write 
+C     Set the parameters start and edges to write
 C     a 4x6 element slab of data to the data set;
 C     note that edges(2) is set to 1 to define a 2 dimensional slab
 C     parallel to the XZ plane;
 C     start(2) (slab position in the array) is initialized inside the
 C     for loop.
-C 
+C
       edges(1) = X_LENGTH
       edges(2) = 1
       edges(3) = Z_LENGTH
-      start(1) = 0 
+      start(1) = 0
       start(3) = 0
       stride(1) = 1
       stride(2) = 1
       stride(3) = 1
 
       do 60 j = 1, Y_LENGTH
-       start(2) = j - 1 
+       start(2) = j - 1
 C
 C     Initialize the buffer xz_data (data slab).
 C
@@ -83,18 +83,18 @@ C
 40      continue
 50     continue
 C
-C     Write the data slab into SDS array defined in SDS_NAME. 
+C     Write the data slab into SDS array defined in SDS_NAME.
 C     Note that the elements of array stride are set to 1 to
 C     specify that the consecutive slabs in the Y direction are written.
 C
          status = sfwdata(sds_id, start, stride, edges, xz_data)
 60    continue
 C
-C     Terminate access to the data set. 
+C     Terminate access to the data set.
 C
       status = sfendacc(sds_id)
 C
-C     Terminate access to the SD interface and close the file. 
+C     Terminate access to the SD interface and close the file.
 C
       status = sfend(sd_id)
 

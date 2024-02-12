@@ -1,4 +1,4 @@
-      program write_to_vdata 
+      program write_to_vdata
       implicit none
 C
 C     Parameter declaration
@@ -25,8 +25,8 @@ C
      +           ORDER_1   = 3,
      +           ORDER_2   = 1,
      +           ORDER_3   = 2,
-     +           N_VALS_PER_REC = ORDER_1 + ORDER_2 + ORDER_3)               
-   
+     +           N_VALS_PER_REC = ORDER_1 + ORDER_2 + ORDER_3)
+
       integer DFACC_WRITE, DFNT_FLOAT32, FULL_INTERLACE
       parameter (DFACC_WRITE    = 2,
      +           DFNT_FLOAT32   = 5,
@@ -36,7 +36,7 @@ C     Function declaration
 C
       integer hopen, hclose
       integer vfstart, vsfatch, vsfsnam, vsfscls, vsffdef, vsfsfld,
-     +        vsfwrt, vsfdtch, vfend 
+     +        vsfwrt, vsfdtch, vfend
 
 C
 C**** Variable declaration *******************************************
@@ -55,12 +55,12 @@ C
 C
 C     Initialize the VS interface.
 C
-      status = vfstart(file_id) 
+      status = vfstart(file_id)
 C
 C     Create a new vdata.
-C     
+C
       vdata_ref = -1
-      vdata_id = vsfatch(file_id, vdata_ref, 'w') 
+      vdata_id = vsfatch(file_id, vdata_ref, 'w')
 C
 C     Set name and class name of the vdata.
 C

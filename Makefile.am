@@ -23,21 +23,12 @@ if BUILD_DOXYGEN_CONDITIONAL
 doxygen: doxygen-doc
 endif
 
-# 'make install' will now install examples, the same as 'make install-all'.
 # 'make-install-all' will be redundant but will still work.
-install: install-recursive install-examples
-uninstall: uninstall-recursive uninstall-examples
+install: install-recursive
+uninstall: uninstall-recursive
 
-# 'make install-all' also installs examples
+# 'make install-all'
 install-all:
 	@$(MAKE) $(AM_MAKEFLAGS) install
-	@$(MAKE) $(AM_MAKEFLAGS) install-examples
 uninstall-all:
 	@$(MAKE) $(AM_MAKEFLAGS) uninstall
-	@$(MAKE) $(AM_MAKEFLAGS) uninstall-examples
-
-# Install examples recursively
-install-examples uninstall-examples:
-	@@SETX@; for d in hdf mfhdf; do \
-	    (cd $$d && $(MAKE) $(AM_MAKEFLAGS) $@) || exit 1; \
-	done

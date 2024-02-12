@@ -39,7 +39,7 @@ C     Function declaration
 C
       integer hopen, hclose
       integer mgstart, mgscatt, mgsnatt , mgn2ndx,
-     +        mgselct, mgendac, mgend 
+     +        mgselct, mgendac, mgend
 
 C
 C**** Variable declaration *******************************************
@@ -51,7 +51,7 @@ C
 
       do 10 i = 1, RI_ATT2_N_VALUES
          ri_attr_2(i) = i
-10    continue 
+10    continue
 C
 C**** End of variable declaration ************************************
 C
@@ -67,25 +67,25 @@ C
 C     Set two file attributes to the file with names, data type, numbers of
 C     values, and values of attributes specified.
 C
-      status = mgscatt(gr_id, F_ATT1_NAME, DFNT_CHAR8, 
+      status = mgscatt(gr_id, F_ATT1_NAME, DFNT_CHAR8,
      +                 F_ATT1_N_VALUES, F_ATT1_VAL)
-      status = mgscatt(gr_id, F_ATT2_NAME, DFNT_CHAR8, 
+      status = mgscatt(gr_id, F_ATT2_NAME, DFNT_CHAR8,
      +                 F_ATT2_N_VALUES, F_ATT2_VAL)
 C
 C     Obtain the index of the image named IMAGE_NAMR.
 C
       ri_index = mgn2ndx(gr_id, IMAGE_NAME)
 C
-C     Obtain the identifier of this image. 
+C     Obtain the identifier of this image.
 C
       ri_id = mgselct(gr_id, ri_index)
 C
 C     Set two attributes of the image with names, data types, number of
-C     values, and values of the attributes specified. 
+C     values, and values of the attributes specified.
 C
-      status = mgscatt(ri_id, RI_ATT1_NAME, DFNT_CHAR8, 
-     +                 RI_ATT1_N_VALUES, RI_ATT1_VAL) 
-      status = mgsnatt(ri_id, RI_ATT2_NAME, DFNT_INT16, 
+      status = mgscatt(ri_id, RI_ATT1_NAME, DFNT_CHAR8,
+     +                 RI_ATT1_N_VALUES, RI_ATT1_VAL)
+      status = mgsnatt(ri_id, RI_ATT2_NAME, DFNT_INT16,
      +                 RI_ATT2_N_VALUES, ri_attr_2)
 C
 C     Terminate access to the image and to the GR interface,

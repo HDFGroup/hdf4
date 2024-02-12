@@ -1,4 +1,4 @@
-      program  create_SDS 
+      program  create_SDS
       implicit none
 C
 C     Parameter declaration.
@@ -38,9 +38,9 @@ C
 C
 C     Create the array with the name defined in SDS_NAME.
 C     Note that DFNT_INT32 indicates that the SDS data is of type
-C     integer. Refer to Tables 2E and 2I for the definition of other types.  
+C     integer. Refer to Tables 2E and 2I for the definition of other types.
 C
-      sds_id = sfcreate(sd_id, SDS_NAME, DFNT_INT32, RANK, 
+      sds_id = sfcreate(sd_id, SDS_NAME, DFNT_INT32, RANK,
      .                  dim_sizes)
 C
 C     Terminate access to the data set.

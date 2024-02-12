@@ -1,4 +1,4 @@
-      program get_data_set_info 
+      program get_data_set_info
       implicit none
 C
 C     Parameter declaration.
@@ -34,8 +34,8 @@ C     Open the file and initialize the SD interface.
 C
       sd_id = sfstart(FILE_NAME, DFACC_READ)
 C
-C     Determine the number of data sets in the file and the number of 
-C     file attributes. 
+C     Determine the number of data sets in the file and the number of
+C     file attributes.
 C
       status = sffinfo(sd_id, n_datasets, n_file_attrs)
 C
@@ -43,7 +43,7 @@ C     Access every data set in the file and print its name, rank,
 C     dimension sizes, data type, and number of attributes.
 C     The following information should be displayed:
 C
-C                name = SDStemplate    
+C                name = SDStemplate
 C                rank =   2
 C                dimension sizes are :   5  16
 C                data type is   24
@@ -51,13 +51,13 @@ C                number of attributes is   0
 C
       do 10 index = 0, n_datasets - 1
          sds_id = sfselect(sd_id, index)
-         status = sfginfo(sds_id, name, rank, dim_sizes, data_type, 
+         status = sfginfo(sds_id, name, rank, dim_sizes, data_type,
      .                    n_attrs)
          write(*,*)  "name = ", name(1:15)
          write(*,*)  "rank = ", rank
          write(*,*)  "dimension sizes are : ", (dim_sizes(i), i=1, rank)
          write(*,*)  "data type is ", data_type
-         write(*,*)  "number of attributes is ", n_attrs   
+         write(*,*)  "number of attributes is ", n_attrs
 C
 C     Terminate access to the current data set.
 C

@@ -5,5 +5,3 @@ reference number= 1
 Annotation type of DFTAG_FID (file label) is AN_FILE_LABEL
 
 Annotation tag of AN_DATA_LABEL is DFTAG_DIL (data label)
-
-Successful!

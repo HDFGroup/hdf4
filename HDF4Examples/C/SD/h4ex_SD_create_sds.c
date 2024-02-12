@@ -13,15 +13,14 @@ main()
 
     int32 sd_id, sds_id; /* SD interface and data set identifiers */
     int32 dim_sizes[2];  /* sizes of the SDS dimensions */
-    intn  status;        /* status returned by some routines; has value
-                            SUCCEED or FAIL */
 
     /********************* End of variable declaration ***********************/
 
     /*
      * Create the file and initialize the SD interface.
      */
-    sd_id = SDstart(FILE_NAME, DFACC_CREATE);
+    if ((sd_id = SDstart(FILE_NAME, DFACC_CREATE)) == FAIL)
+        printf("*** ERROR from SDstart\n");
 
     /*
      * Define the dimensions of the array to be created.
@@ -40,12 +39,14 @@ main()
     /*
      * Terminate access to the data set.
      */
-    status = SDendaccess(sds_id);
+    if (SDendaccess(sds_id) == FAIL)
+        printf("*** ERROR from SDendaccess\n");
 
     /*
      * Terminate access to the SD interface and close the file.
      */
-    status = SDend(sd_id);
+    if (SDend(sd_id) == FAIL)
+        printf("*** ERROR from SDend\n");
 
     return 0;
 }

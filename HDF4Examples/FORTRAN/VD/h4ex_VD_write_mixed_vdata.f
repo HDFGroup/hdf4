@@ -1,4 +1,4 @@
-      program write_mixed_vdata 
+      program write_mixed_vdata
       implicit none
 C
 C     Parameter declaration
@@ -12,7 +12,7 @@ C
       character*5  FIELD4_NAME
       character*23 FIELDNAME_LIST
       integer      N_RECORDS, N_FIELDS, ORDER
-      integer      BUF_SIZE 
+      integer      BUF_SIZE
 C
       parameter (FILE_NAME       = 'Packed_Vdata.hdf',
      +           CLASS_NAME      = 'General Data Class',
@@ -23,12 +23,12 @@ C
      +           FIELD4_NAME     = 'Ident',
      +           FIELDNAME_LIST = 'Temp,Height,Speed,Ident')
       parameter (N_RECORDS = 20,
-     +           N_FIELDS  = 4, 
+     +           N_FIELDS  = 4,
      +           ORDER     = 1,
-     +           BUF_SIZE = (4 + 2 + 4 + 1)*N_RECORDS)               
-   
+     +           BUF_SIZE = (4 + 2 + 4 + 1)*N_RECORDS)
+
       integer DFACC_WRITE, DFNT_FLOAT32, DFNT_INT16, DFNT_CHAR8,
-     +        FULL_INTERLACE, HDF_VSPACK  
+     +        FULL_INTERLACE, HDF_VSPACK
       parameter (DFACC_WRITE    = 2,
      +           DFNT_FLOAT32   = 5,
      +           DFNT_INT16     = 22,
@@ -40,7 +40,7 @@ C     Function declaration
 C
       integer hopen, hclose
       integer vfstart, vsfatch, vsfsnam, vsfscls, vsffdef, vsfsfld,
-     +        vsfnpak, vsfcpak, vsfwrit, vsfdtch, vfend 
+     +        vsfnpak, vsfcpak, vsfwrit, vsfdtch, vfend
 
 C
 C**** Variable declaration *******************************************
@@ -51,7 +51,7 @@ C
       real      temp(N_RECORDS)
       integer*2 height(N_RECORDS)
       real      speed(N_RECORDS)
-      character ident(N_RECORDS) 
+      character ident(N_RECORDS)
       integer   i
 C
 C     Buffer for packed data should be big enough to hold N_RECORDS.
@@ -67,12 +67,12 @@ C
 C
 C     Initialize the VS interface.
 C
-      status = vfstart(file_id) 
+      status = vfstart(file_id)
 C
 C     Create a new vdata.
-C     
+C
       vdata_ref = -1
-      vdata_id = vsfatch(file_id, vdata_ref, 'w') 
+      vdata_id = vsfatch(file_id, vdata_ref, 'w')
 C
 C     Set name and class name of the vdata.
 C
@@ -100,17 +100,17 @@ C
          ident(i)  = char(64+i)
 10    continue
 C
-C     Pack N_RECORDS of data into databuf. In Fortran, each field is packed 
+C     Pack N_RECORDS of data into databuf. In Fortran, each field is packed
 C     using separate calls to vsfnpak or vsfcpak.
 C
       status = vsfnpak(vdata_id, HDF_VSPACK, ' ', databuf, BUF_SIZE,
-     +                 N_RECORDS, FIELD1_NAME, temp) 
+     +                 N_RECORDS, FIELD1_NAME, temp)
       status = vsfnpak(vdata_id, HDF_VSPACK, ' ', databuf, BUF_SIZE,
-     +                 N_RECORDS, FIELD2_NAME, height) 
+     +                 N_RECORDS, FIELD2_NAME, height)
       status = vsfnpak(vdata_id, HDF_VSPACK, ' ', databuf, BUF_SIZE,
-     +                 N_RECORDS, FIELD3_NAME, speed) 
+     +                 N_RECORDS, FIELD3_NAME, speed)
       status = vsfcpak(vdata_id, HDF_VSPACK, ' ', databuf, BUF_SIZE,
-     +                 N_RECORDS, FIELD4_NAME, ident) 
+     +                 N_RECORDS, FIELD4_NAME, ident)
 C
 C     Write all the records of the packed data to the vdata.
 C

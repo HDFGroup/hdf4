@@ -150,8 +150,6 @@ jobs:
       #
       # CMAKE CONFIGURE
       #
-      - name: Get Java setting
-        run: echo "useJava=${{ inputs.shared=='true' }}" >> $GITHUB_ENV
 
       - name: CMake Configure
         run: |
@@ -167,7 +165,7 @@ jobs:
             -DBUILD_JPEG_WITH_PIC:BOOL=ON \
             -DHDF4_ENABLE_NETCDF:BOOL=${{ inputs.netcdf }} \
             -DHDF4_BUILD_FORTRAN:BOOL=${{ matrix.fortran }} \
-            -DHDF4_BUILD_JAVA:BOOL=${{ env.useJava }} \
+            -DHDF4_BUILD_JAVA:BOOL=${{ inputs.shared }} \
             -DHDF4_BUILD_DOC:BOOL=${{ matrix.docs }} \
             -DJPEG_USE_LOCALCONTENT:BOOL=${{ matrix.localjpeg }} \
             -DLIBAEC_USE_LOCALCONTENT:BOOL=${{ matrix.locallibaec }} \

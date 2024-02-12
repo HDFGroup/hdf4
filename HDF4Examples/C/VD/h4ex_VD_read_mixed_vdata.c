@@ -14,14 +14,13 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    intn  status_n;                        /* returned status for functions returning an intn  */
-    int32 status_32,                       /* returned status for functions returning an int32 */
-        file_id, vdata_id, num_of_records, /* number of records actually read */
-        vdata_ref;                         /* number of bytes the vdata can hold       */
-    float32 itemp[N_RECORDS];              /* buffer to hold values of first field     */
-    char    idents[N_RECORDS];             /* buffer to hold values of fourth field    */
-    uint8   databuf[BUFFER_SIZE];          /* buffer to hold read data, still packed   */
-    VOIDP   fldbufptrs[N_FIELDS];          /*pointers to be pointing to the field buffers*/
+    int32   file_id, vdata_id;
+    int32   num_of_records;       /* number of records actually read */
+    int32   vdata_ref;            /* reference number of the vdata to be read */
+    float32 itemp[N_RECORDS];     /* buffer to hold values of first field     */
+    char    idents[N_RECORDS];    /* buffer to hold values of fourth field    */
+    uint8   databuf[BUFFER_SIZE]; /* buffer to hold read data, still packed   */
+    void   *fldbufptrs[N_FIELDS]; /*pointers to be pointing to the field buffers*/
     int     i;
 
     /********************** End of variable declaration **********************/
@@ -29,12 +28,14 @@ main()
     /*
      * Open the HDF file for reading.
      */
-    file_id = Hopen(FILE_NAME, DFACC_READ, 0);
+    if ((file_id = Hopen(FILE_NAME, DFACC_READ, 0)) == FAIL)
+        printf("*** ERROR from Hopen\n");
 
     /*
      * Initialize the VS interface.
      */
-    status_n = Vstart(file_id);
+    if (Vstart(file_id) == FAIL)
+        printf("*** ERROR from Vstart\n");
 
     /*
      * Get the reference number of the vdata, whose name is specified in
@@ -50,7 +51,8 @@ main()
     /*
      * Specify the fields that will be read.
      */
-    status_n = VSsetfields(vdata_id, FIELDNAME_LIST);
+    if (VSsetfields(vdata_id, FIELDNAME_LIST) == FAIL)
+        printf("*** ERROR from VSsetfields\n");
 
     /*
      * Read N_RECORDS records of the vdata and store the values into the
@@ -71,8 +73,9 @@ main()
      * Note that the second parameter is _HDF_VSUNPACK for unpacking and the
      * number of records is the one returned by VSread.
      */
-    status_n = VSfpack(vdata_id, _HDF_VSUNPACK, FIELDNAME_LIST, (VOIDP)databuf, BUFFER_SIZE, num_of_records,
-                       NULL, (VOIDP)fldbufptrs);
+    if (VSfpack(vdata_id, _HDF_VSUNPACK, FIELDNAME_LIST, (void *)databuf, BUFFER_SIZE, num_of_records, NULL,
+                (void *)fldbufptrs) == FAIL)
+        printf("*** ERROR from VSfpack\n");
 
     /*
      * Display the read data being stored in the field buffers.
@@ -85,8 +88,12 @@ main()
      * Terminate access to the vdata and the VS interface, then close
      * the HDF file.
      */
-    status_32 = VSdetach(vdata_id);
-    status_n  = Vend(file_id);
-    status_32 = Hclose(file_id);
+    if (VSdetach(vdata_id) == FAIL)
+        printf("*** ERROR from VSdetach\n");
+    if (Vend(file_id) == FAIL)
+        printf("*** ERROR from Vend\n");
+    if (Hclose(file_id) == FAIL)
+        printf("*** ERROR from Hclose\n");
+
     return 0;
 }

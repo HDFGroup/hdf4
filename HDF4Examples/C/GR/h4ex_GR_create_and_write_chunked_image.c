@@ -9,7 +9,6 @@ int
 main()
 {
     /************************* Variable declaration **************************/
-    intn  status;            /* status for functions returning an intn */
     int32 file_id,           /* HDF file identifier */
         gr_id,               /* GR interface identifier */
         ri_id,               /* raster image identifier */
@@ -23,14 +22,19 @@ main()
     int32         chunk14[] = {1010, 1011, 1012, 1020, 1021, 1022, 1030, 1031, 1032,
                        1040, 1041, 1042, 1050, 1051, 1052, 1060, 1061, 1062};
     /********************** End of variable declaration **********************/
+
     /*
      * Create and open the file.
      */
-    file_id = Hopen(FILE_NAME, DFACC_CREATE, 0);
+    if ((file_id = Hopen(FILE_NAME, DFACC_CREATE, 0)) == FAIL)
+        printf("*** ERROR from Hopen\n");
+
     /*
      * Initialize the GR interface.
      */
-    gr_id = GRstart(file_id);
+    if ((gr_id = GRstart(file_id)) == FAIL)
+        printf("*** ERROR from GRstart\n");
+
     /*
      * Set dimensions of the image.
      */
@@ -39,7 +43,9 @@ main()
     /*
      * Create the raster image array.
      */
-    ri_id = GRcreate(gr_id, IMAGE_NAME, NCOMPS, DFNT_INT32, MFGR_INTERLACE_PIXEL, dims);
+    if ((ri_id = GRcreate(gr_id, IMAGE_NAME, NCOMPS, DFNT_INT32, MFGR_INTERLACE_PIXEL, dims)) == FAIL)
+        printf("*** ERROR from GRcreate\n");
+
     /*
      * Define chunked image.
      */
@@ -47,30 +53,38 @@ main()
     chunk_def.comp.cinfo.deflate.level = 6;
     chunk_def.comp.chunk_lengths[0]    = 3;
     chunk_def.comp.chunk_lengths[1]    = 2;
-    status                             = GRsetchunk(ri_id, chunk_def, HDF_CHUNK | HDF_COMP);
+    if (GRsetchunk(ri_id, chunk_def, HDF_CHUNK | HDF_COMP) == FAIL)
+        printf("*** ERROR from GRsetchunk\n");
     /*
      * Write first chunk (0,0).
      */
     start[0] = 0;
     start[1] = 0;
-    status   = GRwritechunk(ri_id, start, (VOIDP)chunk00);
+    if (GRwritechunk(ri_id, start, (void *)chunk00) == FAIL)
+        printf("*** ERROR from GRwritechunk\n");
     /*
      * Write second chunk (0,1).
      */
     start[0] = 0;
     start[1] = 1;
-    status   = GRwritechunk(ri_id, start, (VOIDP)chunk01);
+    if (GRwritechunk(ri_id, start, (void *)chunk01) == FAIL)
+        printf("*** ERROR from GRwritechunk\n");
     /*
      * Write third chunk (1,4).
      */
     start[0] = 1;
     start[1] = 4;
-    status   = GRwritechunk(ri_id, start, (VOIDP)chunk14);
+    if (GRwritechunk(ri_id, start, (void *)chunk14) == FAIL)
+        printf("*** ERROR from GRwritechunk\n");
     /*
      * Terminate access to the raster image and to the GR interface and,
      * close the HDF file.
      */
-    status = GRendaccess(ri_id);
-    status = GRend(gr_id);
-    status = Hclose(file_id);
+    if (GRendaccess(ri_id) == FAIL)
+        printf("*** ERROR from GRendaccess\n");
+    if (GRend(gr_id) == FAIL)
+        printf("*** ERROR from GRend\n");
+    if (Hclose(file_id) == FAIL)
+        printf("*** ERROR from Hclose\n");
+    return 0;
 }

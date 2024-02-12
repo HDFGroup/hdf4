@@ -1204,9 +1204,7 @@ AC_CONFIG_FILES([Makefile
                  doxygen/Doxyfile
                  libhdf4.settings
                  hdf/Makefile
-                 hdf/examples/Makefile
                  hdf/fortran/Makefile
-                 hdf/fortran/examples/Makefile
                  hdf/src/Makefile
                  hdf/test/Makefile
                  hdf/util/Makefile
@@ -1221,10 +1219,7 @@ AC_CONFIG_FILES([Makefile
                  mfhdf/Makefile
                  mfhdf/dumper/Makefile
                  mfhdf/dumper/testhdp.sh
-                 mfhdf/examples/Makefile
-                 mfhdf/examples/testexamples.sh
                  mfhdf/fortran/Makefile
-                 mfhdf/fortran/examples/Makefile
                  mfhdf/fortran/testfortran.sh
                  mfhdf/hdfimport/Makefile
                  mfhdf/hdfimport/testutil.sh

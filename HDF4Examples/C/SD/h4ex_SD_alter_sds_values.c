@@ -8,7 +8,6 @@ main()
     /************************* Variable declaration **************************/
 
     int32 sd_id, sds_id, sds_index;
-    intn  status;
     int32 start[2], edges[2];
     int32 new_data[2];
 
@@ -16,7 +15,8 @@ main()
     /*
      * Open the file and initialize the SD interface with write access.
      */
-    sd_id = SDstart(FILE_NAME, DFACC_WRITE);
+    if ((sd_id = SDstart(FILE_NAME, DFACC_WRITE)) == FAIL)
+        printf("*** ERROR from SDstart\n");
 
     /*
      * Select the first data set.
@@ -41,17 +41,20 @@ main()
     /*
      * Write the new values.
      */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)new_data);
+    if (SDwritedata(sds_id, start, NULL, edges, (void *)new_data) == FAIL)
+        printf("*** ERROR from SDwritedata\n");
 
     /*
      * Terminate access to the data set.
      */
-    status = SDendaccess(sds_id);
+    if (SDendaccess(sds_id) == FAIL)
+        printf("*** ERROR from SDendaccess\n");
 
     /*
      * Terminate access to the SD interface and close the file.
      */
-    status = SDend(sd_id);
+    if (SDend(sd_id) == FAIL)
+        printf("*** ERROR from SDend\n");
 
     return 0;
 }

@@ -1,10 +1,10 @@
-      program locate_vdata 
+      program locate_vdata
       implicit none
 C
 C     Parameter declaration
 C
       character*18 FILE_NAME
-      character*20 SEARCHED_FIELDS 
+      character*20 SEARCHED_FIELDS
 C
       parameter (FILE_NAME       = 'General_Vdatas.hdf',
      +           SEARCHED_FIELDS = 'Position,Temperature')
@@ -14,15 +14,15 @@ C
 C     Function declaration
 C
       integer hopen, hclose
-      integer vfstart, vsfatch, vsfgid, vsfex, vsfdtch, vfend 
+      integer vfstart, vsfatch, vsfgid, vsfex, vsfdtch, vfend
 
 C
 C**** Variable declaration *******************************************
 C
       integer status
       integer file_id, vdata_id, vdata_ref
-      integer index 
-      logical found_fields 
+      integer index
+      logical found_fields
 C
 C**** End of variable declaration ************************************
 C
@@ -33,12 +33,12 @@ C
 C
 C     Initialize the VS interface.
 C
-      status = vfstart(file_id) 
+      status = vfstart(file_id)
       index = 0
 C
 C     Set the reference number to -1 to start the search from the beginning
-C     of the file. 
-C     
+C     of the file.
+C
       vdata_ref = -1
 C
 C     Assume that the specified fields are not found in the current vdata.
@@ -60,7 +60,7 @@ C
           goto 100
       endif
       status = vsfdtch(vdata_id)
-      index = index + 1 
+      index = index + 1
       goto 10
 100   continue
 C
@@ -77,7 +77,7 @@ C
 C        Terminate access to the vdata
 C
          status = vsfdtch(vdata_id)
-      endif  
+      endif
 C
 C     Terminate access to the VS interface and close the HDF file.
 C

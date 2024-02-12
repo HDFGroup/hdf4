@@ -2,9 +2,9 @@
 
 #define FILE_NAME      "h4ex_GR_write_palette.hdf"
 #define NEW_IMAGE_NAME "Image with Palette"
-#define N_COMPS_IMG    2 /* number of image components */
-#define X_LENGTH       5
-#define Y_LENGTH       5
+#define N_COMPS_IMG    2   /* number of image components */
+#define X_LENGTH       5   /* number of rows in the image */
+#define Y_LENGTH       5   /* number of columns in the image */
 #define N_ENTRIES      256 /* number of entries in the palette */
 #define N_COMPS_PAL    3   /* number of palette's components */
 
@@ -13,8 +13,7 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    intn status, /* status for functions returning an intn */
-        i, j;
+    intn  i, j;
     int32 file_id, gr_id, ri_id, pal_id, interlace_mode,
         start[2],                                     /* holds where to start to write for each dimension  */
         edges[2],                                     /* holds how long to write for each dimension */
@@ -27,7 +26,8 @@ main()
     /*
      * Open the HDF file.
      */
-    file_id = Hopen(FILE_NAME, DFACC_CREATE, 0);
+    if ((file_id = Hopen(FILE_NAME, DFACC_CREATE, 0)) == FAIL)
+        printf("*** ERROR from Hopen\n");
 
     /*
      * Initialize the GR interface.
@@ -67,7 +67,8 @@ main()
     /*
      * Write the data in the buffer into the image array.
      */
-    status = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)image_buf);
+    if (GRwriteimage(ri_id, start, NULL, edges, (void *)image_buf) == FAIL)
+        printf("*** ERROR from GRwriteimage\n");
 
     /*
      * Initialize the palette to grayscale.
@@ -91,14 +92,19 @@ main()
     /*
      * Write data to the palette.
      */
-    status = GRwritelut(pal_id, N_COMPS_PAL, DFNT_UINT8, interlace_mode, N_ENTRIES, (VOIDP)palette_buf);
+    if (GRwritelut(pal_id, N_COMPS_PAL, DFNT_UINT8, interlace_mode, N_ENTRIES, (void *)palette_buf) == FAIL)
+        printf("*** ERROR from GRwritelut\n");
 
     /*
      * Terminate access to the image and to the GR interface, and
      * close the HDF file.
      */
-    status = GRendaccess(ri_id);
-    status = GRend(gr_id);
-    status = Hclose(file_id);
+    if (GRendaccess(ri_id) == FAIL)
+        printf("*** ERROR from GRendaccess\n");
+    if (GRend(gr_id) == FAIL)
+        printf("*** ERROR from GRend\n");
+    if (Hclose(file_id) == FAIL)
+        printf("*** ERROR from Hclose\n");
+
     return 0;
 }

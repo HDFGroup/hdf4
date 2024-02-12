@@ -12,7 +12,6 @@ main()
     /************************* Variable declaration **************************/
 
     int32 sd_id, sds_id, sds_index;
-    intn  status;
     int32 dim_sizes[2];
     int32 data[Y_LENGTH][X_LENGTH], append_data[X_LENGTH];
     int32 start[2], edges[2];
@@ -31,7 +30,8 @@ main()
     /*
      * Create the file and initialize the SD interface.
      */
-    sd_id = SDstart(FILE_NAME, DFACC_CREATE);
+    if ((sd_id = SDstart(FILE_NAME, DFACC_CREATE)) == FAIL)
+        printf("*** ERROR from SDstart\n");
 
     /*
      * Define dimensions of the array. Make the first dimension
@@ -56,14 +56,17 @@ main()
     /*
      * Write the data.
      */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)data);
+    if (SDwritedata(sds_id, start, NULL, edges, (void *)data) == FAIL)
+        printf("*** ERROR from SDwritedata\n");
 
     /*
      * Terminate access to the array data set, terminate access
      * to the SD interface, and close the file.
      */
-    status = SDendaccess(sds_id);
-    status = SDend(sd_id);
+    if (SDendaccess(sds_id) == FAIL)
+        printf("*** ERROR from SDendaccess\n");
+    if (SDend(sd_id) == FAIL)
+        printf("*** ERROR from SDend\n");
 
     /*
      * Store the array values to be appended to the data set.
@@ -101,18 +104,21 @@ main()
         /*
          * Append data to the data set.
          */
-        status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)append_data);
+        if (SDwritedata(sds_id, start, NULL, edges, (void *)append_data) == FAIL)
+            printf("*** ERROR from SDwritedata\n");
     }
 
     /*
      * Terminate access to the data set.
      */
-    status = SDendaccess(sds_id);
+    if (SDendaccess(sds_id) == FAIL)
+        printf("*** ERROR from SDendaccess\n");
 
     /*
      * Terminate access to the SD interface and close the file.
      */
-    status = SDend(sd_id);
+    if (SDend(sd_id) == FAIL)
+        printf("*** ERROR from SDend\n");
 
     return 0;
 }

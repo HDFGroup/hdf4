@@ -10,7 +10,6 @@ main()
     /************************* Variable declaration **************************/
 
     int32 sd_id, sds_id, sds_index;
-    intn  status;
     int32 start[2], edges[2];
     int32 data[Y_LENGTH][X_LENGTH];
     int   i, j;
@@ -28,7 +27,8 @@ main()
     /*
      * Open the file and initialize the SD interface.
      */
-    sd_id = SDstart(FILE_NAME, DFACC_WRITE);
+    if ((sd_id = SDstart(FILE_NAME, DFACC_WRITE)) == FAIL)
+        printf("*** ERROR from SDstart\n");
 
     /*
      * Attach to the first data set.
@@ -50,17 +50,20 @@ main()
      * be explicitly cast to a generic pointer since SDwritedata is designed
      * to write generic data.
      */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)data);
+    if (SDwritedata(sds_id, start, NULL, edges, (void *)data) == FAIL)
+        printf("*** ERROR from SDwritedata\n");
 
     /*
      * Terminate access to the data set.
      */
-    status = SDendaccess(sds_id);
+    if (SDendaccess(sds_id) == FAIL)
+        printf("*** ERROR from SDendaccess\n");
 
     /*
      * Terminate access to the SD interface and close the file.
      */
-    status = SDend(sd_id);
+    if (SDend(sd_id) == FAIL)
+        printf("*** ERROR from SDend\n");
 
     return 0;
 }

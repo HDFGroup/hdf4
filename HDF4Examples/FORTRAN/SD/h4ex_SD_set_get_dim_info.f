@@ -1,4 +1,4 @@
-      program  dimension_info 
+      program  dimension_info
       implicit none
 C
 C     Parameter declaration.
@@ -44,19 +44,19 @@ C
 C
 C     Initialize dimension scales.
 C
-      do 10 i = 1, X_LENGTH  
+      do 10 i = 1, X_LENGTH
          data_X(i) = i - 1
 10     continue
 
-      do 20 i = 1, Y_LENGTH  
+      do 20 i = 1, Y_LENGTH
          data_Y(i) = 0.1 * (i - 1)
 20     continue
 C
 C     Open the file and initialize SD interface.
-C 
+C
       sd_id = sfstart(FILE_NAME, DFACC_WRITE)
 C
-C     Get the index of the data set with the name specified in SDS_NAME. 
+C     Get the index of the data set with the name specified in SDS_NAME.
 C
       sds_index = sfn2index(sd_id, SDS_NAME)
 C
@@ -69,16 +69,16 @@ C     get its dimension identifier and set dimension name
 C     and dimension scales. Note that data type of dimension scale can
 C     be different between dimensions and can be different from SDS data type.
 C
-      do 30 dim_index = 0, RANK - 1 
+      do 30 dim_index = 0, RANK - 1
 C
 C        Select the dimension at position dim_index.
 C
          dim_id = sfdimid(sds_id, dim_index)
 C
-C        Assign name and dimension scale to the dimension. 
+C        Assign name and dimension scale to the dimension.
 C
          if (dim_index .eq. 0) then
-            status = sfsdmname(dim_id, DIM_NAME_X) 
+            status = sfsdmname(dim_id, DIM_NAME_X)
             n_values = X_LENGTH
             status = sfsdscale(dim_id, n_values, DFNT_INT16, data_X)
          end if
@@ -119,22 +119,22 @@ C
        write(*,*) "number of scale values is", n_values
        if (data_type. eq. 22) then
            write(*,*) "dimension scale data type is int16"
-       endif 
+       endif
        if (data_type. eq. 6) then
            write(*,*) "dimension scale data type is float64"
-       endif 
+       endif
        write(*,*) "number of dimension attributes is ", n_attrs
 C
        write(*,*) "Scale values are:"
        if (dim_index .eq. 0) then
           status = sfgdscale(dim_id, data_X_out)
           write(*,*) (data_X_out(i), i= 1, X_LENGTH)
-       endif 
+       endif
        if (dim_index .eq. 1)  then
-          status = sfgdscale(dim_id, data_Y_out) 
+          status = sfgdscale(dim_id, data_Y_out)
           write(*,100) (data_Y_out(i), i= 1, Y_LENGTH)
 100       format(4(1x,f10.3)/)
-       endif 
+       endif
 30      continue
 C
 C     Terminate access to the data set.

@@ -10,9 +10,7 @@ main()
 {
     /************************* Variable declaration **************************/
 
-    intn  status_n;  /* returned status for functions returning an intn  */
-    int32 status_32, /* returned status for functions returning an int32 */
-        file1_id, file2_id, vdata_id, vdata1_id, vdata2_id,
+    int32 file1_id, file2_id, vdata_id, vdata1_id, vdata2_id,
         vdata_ref = -1; /* ref number of a vdata, set to -1 to create  */
 
     /********************** End of variable declaration **********************/
@@ -20,12 +18,14 @@ main()
     /*
      * Create the first HDF file.
      */
-    file1_id = Hopen(FILE1_NAME, DFACC_CREATE, 0);
+    if ((file1_id = Hopen(FILE1_NAME, DFACC_CREATE, 0)) == FAIL)
+        printf("*** ERROR from Hopen\n");
 
     /*
      * Initialize the VS interface associated with the first HDF file.
      */
-    status_n = Vstart(file1_id);
+    if (Vstart(file1_id) == FAIL)
+        printf("*** ERROR from Vstart\n");
 
     /*
      * Create a vdata in the first HDF file.
@@ -35,7 +35,8 @@ main()
     /*
      * Assign a name to the vdata.
      */
-    status_32 = VSsetname(vdata_id, VDATA_NAME);
+    if (VSsetname(vdata_id, VDATA_NAME) == FAIL)
+        printf("*** ERROR from VSsetname\n");
 
     /*
      * Other operations on the vdata identified by vdata_id can be carried
@@ -45,12 +46,14 @@ main()
     /*
      * Create the second HDF file.
      */
-    file2_id = Hopen(FILE2_NAME, DFACC_CREATE, 0);
+    if ((file2_id = Hopen(FILE2_NAME, DFACC_CREATE, 0)) == FAIL)
+        printf("*** ERROR from Hopen\n");
 
     /*
      * Initialize the VS interface associated with the second HDF file.
      */
-    status_n = Vstart(file2_id);
+    if (Vstart(file2_id) == FAIL)
+        printf("*** ERROR from Vstart\n");
 
     /*
      * Create the first vdata in the second HDF file.
@@ -65,8 +68,10 @@ main()
     /*
      * Assign a class name to these vdatas.
      */
-    status_32 = VSsetclass(vdata1_id, VDATA_CLASS);
-    status_32 = VSsetclass(vdata2_id, VDATA_CLASS);
+    if (VSsetclass(vdata1_id, VDATA_CLASS) == FAIL)
+        printf("*** ERROR from VSsetclass\n");
+    if (VSsetclass(vdata2_id, VDATA_CLASS) == FAIL)
+        printf("*** ERROR from VSsetclass\n");
 
     /*
      * Other operations on the vdatas identified by vdata1_id and vdata2_id
@@ -76,12 +81,14 @@ main()
     /*
      * Terminate access to the first vdata in the second HDF file.
      */
-    status_32 = VSdetach(vdata1_id);
+    if (VSdetach(vdata1_id) == FAIL)
+        printf("*** ERROR from VSdetach\n");
 
     /*
      * Terminate access to the second vdata in the second HDF file.
      */
-    status_32 = VSdetach(vdata2_id);
+    if (VSdetach(vdata2_id) == FAIL)
+        printf("*** ERROR from VSdetach\n");
 
     /*
     * From this point on, any operations on the vdatas identified by vdata1_id
@@ -91,26 +98,24 @@ main()
     /*
      * Terminate access to the VS interface associated with the second HDF file.
      */
-    status_n = Vend(file2_id);
-
-    /*
-     * Close the second HDF file.
-     */
-    status_n = Hclose(file2_id);
+    if (Vend(file2_id) == FAIL)
+        printf("*** ERROR from Vend\n");
+    if (Hclose(file2_id) == FAIL)
+        printf("*** ERROR from Hclose\n");
 
     /*
      * Terminate access to the vdata in the first HDF file.
      */
-    status_32 = VSdetach(vdata_id);
+    if (VSdetach(vdata_id) == FAIL)
+        printf("*** ERROR from VSdetach\n");
 
     /*
      * Terminate access to the VS interface associated with the first HDF file.
      */
-    status_n = Vend(file1_id);
+    if (Vend(file1_id) == FAIL)
+        printf("*** ERROR from Vend\n");
+    if (Hclose(file1_id) == FAIL)
+        printf("*** ERROR from Hclose\n");
 
-    /*
-     * Close the first HDF file.
-     */
-    status_n = Hclose(file1_id);
     return 0;
 }

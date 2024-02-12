@@ -11,7 +11,7 @@ fort_INCLUDES=-I$(top_srcdir)/hdf/src     \
 DEFINES=-DHDF
 AM_CPPFLAGS=$(fort_INCLUDES) $(DEFINES)
 
-DIST_SUBDIRS = examples
+DIST_SUBDIRS =
 
 #############################################################################
 ##                   Testing -- Here there be dragons.                     ##
@@ -55,23 +55,11 @@ SUFFIXES = .inc .f90
 .inc.f90:
 	sed -e 's/^[cC]/!/' -e 's/^     [^ ]/     \&/' < $< > $*.f90
 
-# Recurse into examples directory for examples tests.
-installcheck-local:
-	@(cd examples && $(MAKE) $(AM_MAKEFLAGS) $@) || exit 1;
-
-# 'make install-all' also installs examples
+# 'make install-all'
 install-all:
 	@$(MAKE) $(AM_MAKEFLAGS) install
-	@$(MAKE) $(AM_MAKEFLAGS) install-examples
 uninstall-all:
 	@$(MAKE) $(AM_MAKEFLAGS) uninstall
-	@$(MAKE) $(AM_MAKEFLAGS) uninstall-examples
-	
-# Install examples recursively
-install-examples uninstall-examples:
-	@@SETX@; for d in examples; do \
-	    (cd $$d && $(MAKE) $(AM_MAKEFLAGS) $@) || exit 1; \
-	done
 
 #############################################################################
 ##                          And the cleanup                                ##
