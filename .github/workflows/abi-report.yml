@@ -48,7 +48,7 @@ jobs:
       - name: Get published binary (Linux)
         uses: actions/download-artifact@f44cd7b40bfd40b6aa1cc1b9b5b7bf03d3c67110 # v4.1.0
         with:
-            name: tgz-ubuntu-2204_gcc-binary
+            name: tgz-ubuntu-2204-binary
             path: ${{ github.workspace }}
 
       - name: List files for the space (Linux)
@@ -56,7 +56,7 @@ jobs:
           ls -l ${{ github.workspace }}
 
       - name: Uncompress gh binary (Linux)
-        run: tar -zxvf ${{ github.workspace }}/${{ inputs.file_base }}-ubuntu-2204_gcc.tar.gz
+        run: tar -zxvf ${{ github.workspace }}/${{ inputs.file_base }}-ubuntu-2204.tar.gz
 
       - name: Uncompress hdf4 binary (Linux)
         run:  |
