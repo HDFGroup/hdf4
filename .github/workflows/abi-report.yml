@@ -91,7 +91,7 @@ jobs:
       - name: Uncompress hdf4 reference binary (Linux)
         run:  |
           cd "${{ github.workspace }}/hdf4R"
-          tar -zxvf ${{ github.workspace }}/hdf4R/hdf4/hdf-${{ inputs.file_ref }}-Linux.tar.gz --strip-components 1
+          tar -zxvf ${{ github.workspace }}/hdf4R/hdf4/HDF-${{ steps.convert-hdf4lib-refname.outputs.HDF4R_DOTS }}-Linux.tar.gz --strip-components 1
 
       - name: List files for the HDFR space (Linux)
         run: |
