@@ -3345,27 +3345,27 @@ test_vsets(void)
 
     /* test Vdatas with no fields defined */
     /*  test_emptyvdata();
- */ 
+     */
 
     /* test Vgroups with name and class that have more than 64 characters */
     /*  test_vglongnames();
- */ 
+     */
 
     /* test functionality about set/get linked-block information */
     /*  test_blockinfo();
- */ 
+     */
 
     /* test Vgetgroups - getting user-created vgroups */
     /*  test_getvgroups();
- */ 
+     */
 
     /* test VSgetvdatas - getting user-created vdatas */
     /*  test_getvdatas();
- */ 
+     */
 
     /* test_extfile - getting external file information */
     /*  test_extfile();
- */ 
+     */
 } /* test_vsets */
 
 /* TODO:
