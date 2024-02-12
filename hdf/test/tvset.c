@@ -2783,7 +2783,7 @@ test_extfile(void)
 
         /* Prepare buffer for external file name in the following test */
         extfile_name = (char *)malloc(sizeof(char) * (name_len - 1));
-        memset(extfile_name, '\0', name_len-1);
+        memset(extfile_name, '\0', name_len - 1);
 
         /* Call VSgetexternalinfo again with smaller buffer size and make sure
            VSgetexternalinfo reads the name truncated to the given buffer size*/
