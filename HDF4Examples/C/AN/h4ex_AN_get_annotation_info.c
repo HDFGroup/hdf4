@@ -20,7 +20,7 @@ main()
     /********************** End of variable declaration **********************/
 
     /*
-     * Create the HDF file.
+     * Open the HDF file.
      */
     if ((file_id = Hopen(FILE_NAME, DFACC_READ, 0)) == FAIL)
         printf("*** ERROR from Hopen\n");
