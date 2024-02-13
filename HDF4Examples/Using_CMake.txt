@@ -29,7 +29,7 @@ I. Preconditions
 ========================================================================
 
    1. We suggest you obtain the latest CMake for windows from the Kitware
-      web site. The HDF 4.2.x product requires a minimum CMake version
+      web site. The HDF 4.3.x product requires a minimum CMake version
       of 3.12.
 
    2. You have installed the HDF4 library built with CMake, by executing
@@ -40,7 +40,7 @@ I. Preconditions
 
    3. Set the environment variable HDF4_DIR to the installed location of
       the config files for HDF4. On Windows:
-            HDF4_ROOT=C:/Program Files/HDF_Group/HDF/4.2.x/
+            HDF4_ROOT=C:/Program Files/HDF_Group/HDF/4.3.x/
 
       (Note there are no quote characters used on Windows and all platforms
       use forward slashes)
@@ -180,11 +180,11 @@ III. Using HDF4 Libraries with Visual Studio 2008 (no longer supported)
           and select "x64".
 
       1.2 Find the box "Show directories for", choose "Include files", add the
-          header path (i.e. c:\Program Files\HDF Group\HDF4\hdf4.2.x\include)
+          header path (i.e. c:\Program Files\HDF Group\HDF4\hdf4.3.x\include)
           to the included directories.
 
       1.3 Find the box "Show directories for", choose "Library files", add the
-          library path (i.e. c:\Program Files\HDF Group\HDF4\hdf4.2.x\lib)
+          library path (i.e. c:\Program Files\HDF Group\HDF4\hdf4.3.x\lib)
           to the library directories.
 
       1.4 If using Fortran libraries, you will also need to setup the path
