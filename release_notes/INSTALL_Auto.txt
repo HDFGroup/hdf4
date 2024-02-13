@@ -1,0 +1,147 @@
+*************************************************************************
+*          Installation Instructions for HDF4 using Autotools           *
+*************************************************************************
+
+                     Table of Contents
+
+Section I.    Preconditions
+Section II:   Unix and Mac OSX Configuration and Build
+Section III:  Using HDF/MFHDF Libraries with the netCDF Library
+Section IV:   Windows Configuration and Build
+
+************************************************************************
+
+For help with installing, questions can be posted to the HDF Forum or sent to the HDF Helpdesk:
+
+   HDF Forum:     https://forum.hdfgroup.org/
+   HDF Helpdesk:  https://hdfgroup.atlassian.net/servicedesk/customer/portals
+
+
+========================================================================
+I. Preconditions
+========================================================================
+Obtaining HDF4 source code
+   1. Create a directory for your development; for example, "myhdfstuff".
+
+   2. Obtain HDF4 source from Github
+         development branch:  https://github.com/HDFGroup/hdf4
+         last release:        https://github.com/HDFGroup/hdf4/releases/latest
+             hdf-4_3_"X".tar.gz or hdf-4_3_"X".zip
+
+      and put it in "myhdfstuff".
+      Uncompress the file. There should be a hdf-4.3."X" folder.
+
+
+========================================================================
+II. Unix and Mac OSX Configuration and Build
+========================================================================
+
+See RELEASE.txt in the release_notes/ directory for the list of platforms
+tested for this release.
+
+Before You Start:
+
+   1)  Make sure that the ZLIB and JPEG libraries are installed on your
+       system.
+
+   2)  Optional: Install the Szip version 2.1 library (you may use
+       Szip 2.0 binaries). 
+
+   3)  Extract the source from the hdf-X.Y.Z.tar file and change
+       directory to hdf-X.Y.Z.
+
+   4)  Fortran Notes:
+         4.a)  g77 may require compiler flag, FFLAGS, "-fno-second-underscore"
+
+To Configure:
+
+   4)  Use the configure command in the top level HDF4 directory hdf-X.Y.Z:
+
+       ./configure --with-zlib=/path_to_ZLIB_install_directory
+                   --with-jpeg=/path_to_JPEG_install_directory
+                   [--with-szlib=/path_to_SZIP_install_directory]
+                   --prefix=/path_to_HDF4_install_directory
+
+       * Please note that when the szlib option is not used, the Szip
+         library will not be configured in and Szip compression will not
+         be enabled.
+       * If your system has the ZLIB and/or JPEG libraries installed under a
+         system library directory (such as /usr/lib), configure will
+         automatically find the library. In this case, the corresponding
+         configure flag may be omitted.
+       * Note that --prefix defines where the installation path is.
+         The default is set as <hdf4_build_directory>/hdf4.
+
+To Build and Test:
+
+   5)  To build the library:
+
+       gmake >& gmake.out
+
+   6)  To build and run the tests:
+
+       gmake check >& check.out
+
+To Install:
+
+   7)  To install the HDF4 library and tools:
+
+       gmake install
+
+   8)  To install C and Fortran examples:
+    
+       gmake install-examples
+
+   9)  To test the installation:
+
+       gmake installcheck
+
+   10) By default, the current configuration uses vendor compilers; to use
+       another compiler, run the following commands before running configure:
+
+       setenv CC   "foo -flags"
+       setenv F77  "fffoo -flags"
+
+       See the configure help page (configure --help) for a list of
+       environment variables that have an affect on building the library.
+
+   11) You may build HDF4 in a directory other than hdf-X.Y.Z by using
+       the "srcdir" option. Simply create a build directory and type:
+
+       <path_to_hdf-X.Y.Z>/configure ...
+
+       where "..." are your configuration options.
+
+
+========================================================================
+III. Using HDF/MFHDF Libraries with the netCDF Library
+========================================================================
+   To use the HDF/MFHDF libraries (libdf.a, libmfhdf.a) with the
+   netCDF library (libnetcdf.a), the HDF4 distribution must be configured
+   with the --disable-netcdf configuration flag.
+
+   When this flag is used, the HDF versions of the C netCDF functions
+   (as of netCDF version 2.3.2) are renamed from ncxxx to sd_ncxxx,
+   and HDF Fortran netCDF wrappers are disabled to avoid name clashes with
+   the netCDF C and Fortran functions from libnetcdf.a.
+
+   Please report all problems to help@hdfgroup.org.
+
+
+========================================================================
+IV. Windows Configuration and Build
+========================================================================
+See RELEASE.txt in the release_notes/ directory for the list of platforms
+tested for this release.
+
+We now recommend that users build, test, and install HDF4 using CMake.
+
+Instructions for building and testing HDF4 using CMake can be found in the
+INSTALL_CMake.txt file found in this folder.
+
+For instructions on building and testing an application with HDF4, see the
+USING_HDF4_CMake.txt file found in this folder.
+
+Users who want to build and run an application with HDF4 in Visual Studio
+without using CMake should consult the USING_HDF4_VS.txt file.
+

@@ -21,7 +21,7 @@ I. Preconditions
 ========================================================================
 
    1. We suggest you obtain the latest CMake for your platform from the Kitware
-      web site. The HDF 4.2.x product requires a minimum CMake version
+      web site. The HDF 4.3.x product requires a minimum CMake version
       of 3.12. If you are using VS2019, the minimum version is 3.15. If you are
       using VS2022, the minimum version is 3.21.
 
@@ -71,7 +71,7 @@ Default installation process:
 
     When executed, the ctest script will save the results to the log file, test.log, as
     indicated by the ctest command. If you wish to see more build and test information,
-    add "-VV" to the ctest command. The output should show
+    add "-VV" to the ctest command. The output should show;
           100% tests passed, 0 tests failed out of 49.
 
 
