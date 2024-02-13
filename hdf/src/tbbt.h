@@ -19,6 +19,8 @@
 
 #include "H4api_adpt.h"
 
+#include "hdf.h"
+
 typedef struct tbbt_node TBBT_NODE;
 
 /* Threaded node structure */
