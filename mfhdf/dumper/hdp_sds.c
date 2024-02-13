@@ -640,7 +640,7 @@ intn
 option_mask_string(int32 options_mask, char *opt_mask_strg)
 {
     intn ret_value = SUCCEED;
-    char numval[10];
+    char numval[16];
 
     strcpy(opt_mask_strg, ""); /* init string to empty string */
 
@@ -707,8 +707,6 @@ option_mask_string(int32 options_mask, char *opt_mask_strg)
 
     return (ret_value);
 } /* option_mask_string */
-  /* #endif
-   */
 
 /*
  * Prints compression method and compression information of a data set.
