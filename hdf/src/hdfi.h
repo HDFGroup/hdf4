@@ -110,43 +110,6 @@
 #endif
 
 /*-------------------------------------------------------------------------
- * Pre-C99 platform-independent type scheme
- *
- * These types were added long before C99 was widely supported (or even
- * existed). They were formerly mapped to native C types on a machine-specific
- * basis, but they are now mapped to their equivalent C99 types.
- *-------------------------------------------------------------------------*/
-
-/* Floating-point types */
-typedef float  float32;
-typedef double float64;
-
-/* Characters */
-typedef char          char8;
-typedef unsigned char uchar8;
-typedef char         *_fcd;
-#define _fcdtocp(desc) (desc)
-
-/* Fixed-width integer types */
-typedef int8_t   int8;
-typedef uint8_t  uint8;
-typedef int16_t  int16;
-typedef uint16_t uint16;
-typedef int32_t  int32;
-typedef uint32_t uint32;
-
-/* Native integer types */
-typedef int          intn;
-typedef unsigned int uintn;
-
-/* These are no longer used in the library, but other software uses them */
-#ifndef VOID
-/* winnt.h defines VOID to `void` via a macro */
-typedef void VOID;
-#endif
-typedef void *VOIDP;
-
-/*-------------------------------------------------------------------------
  * Is this an LP64 system?
  *-------------------------------------------------------------------------*/
 #if LONG_MAX == INT64_MAX
@@ -156,9 +119,6 @@ typedef void *VOIDP;
 /*-------------------------------------------------------------------------
  * Fortran definitions
  *-------------------------------------------------------------------------*/
-
-/* size of INTEGERs in Fortran compiler */
-typedef int intf;
 
 /* Integer that is the same size as a pointer */
 typedef intptr_t hdf_pint_t;
@@ -278,39 +238,6 @@ typedef intptr_t hdf_pint_t;
 #ifndef MAX
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
 #endif
-
-/**************************************************************************
- *  Memory and string functions
- **************************************************************************/
-
-/* DO NOT USE THESE MACROS */
-
-/* These will be removed from a future version of the library and are
- * only kept here to avoid breakage in programs that unwisely used
- * them.
- */
-
-#define HDmalloc(s)     malloc(s)
-#define HDcalloc(a, b)  calloc(a, b)
-#define HDfree(p)       free(p)
-#define HDrealloc(p, s) realloc(p, s)
-
-/* Macro to free space and clear pointer to NULL */
-#define HDfreenclear(p)                                                                                      \
-    {                                                                                                        \
-        free(p);                                                                                             \
-        (p) = NULL;                                                                                          \
-    }
-
-#define HDstrcat(s1, s2)     (strcat((s1), (s2)))
-#define HDstrcmp(s, t)       (strcmp((s), (t)))
-#define HDstrcpy(s, d)       (strcpy((s), (d)))
-#define HDstrlen(s)          (strlen((const char *)(s)))
-#define HDstrncmp(s1, s2, n) (strncmp((s1), (s2), (n)))
-#define HDstrncpy(s1, s2, n) (strncpy((s1), (s2), (n)))
-#define HDstrchr(s, c)       (strchr((s), (c)))
-#define HDstrrchr(s, c)      (strrchr((s), (c)))
-#define HDstrtol(s, e, b)    (strtol((s), (e), (b)))
 
 /**************************************************************************
  *  JPEG #define's - Look in the JPEG docs before changing - (Q)
