@@ -87,7 +87,7 @@ var searchData=
   ['dfgrigetdims_84',['DFGRIgetdims',['../hproto_8h.html#a9ceab8198671dbb8678313ddfe978837',1,'hproto.h']]],
   ['dfgrigetimlut_85',['DFGRIgetimlut',['../hproto_8h.html#a170dae7aa6824fd5766830ab0adb4130',1,'hproto.h']]],
   ['dfgrilastref_86',['DFGRIlastref',['../hproto_8h.html#a65ae2b10d48f622ce68bef0429d2b423',1,'hproto.h']]],
-  ['dfgriopen_87',['DFGRIopen',['../dfgr_8h.html#a690a4aec5de28556f7171c607c8a994d',1,'dfgr.h']]],
+  ['dfgriopen_87',['DFGRIopen',['../dfgr_8h.html#a582005bf0bcd0e81a5c0c05087af7bfa',1,'dfgr.h']]],
   ['dfgrireqil_88',['DFGRIreqil',['../hproto_8h.html#a3368bdbc869b949d4b0fefda042a2d66',1,'hproto.h']]],
   ['dfgrirestart_89',['DFGRIrestart',['../hproto_8h.html#af7be65c12d6d0487d344ec31e068c8ec',1,'hproto.h']]],
   ['dfgrisetdims_90',['DFGRIsetdims',['../hproto_8h.html#a312e67bbaedcf3681e21b09db1d8725c',1,'hproto.h']]],

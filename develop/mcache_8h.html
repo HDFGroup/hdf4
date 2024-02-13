@@ -38,7 +38,7 @@
   <td id="projectlogo"><img alt="Logo" src="HDFG-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname"><a href="https://www.hdfgroup.org">HDF</a>
-   &#160;<span id="projectnumber">4.3.0-be9b9c9</span>
+   &#160;<span id="projectnumber">4.3.0-1</span>
    </div>
    <div id="projectbrief">API Reference</div>
   </td>
@@ -111,8 +111,8 @@ $(function(){initNavTree('mcache_8h.html',''); initResizable(); });
   <div class="headertitle"><div class="title">mcache.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &quot;<a class="el" href="hqueue_8h.html">hqueue.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="_h4api__adpt_8h.html">H4api_adpt.h</a>&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="hdfi_8h.html">hdfi.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="hqueue_8h.html">hqueue.h</a>&quot;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
@@ -131,9 +131,9 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:aa0dec624244ce7f5492ec5de65797fa6" id="r_aa0dec624244ce7f5492ec5de65797fa6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa0dec624244ce7f5492ec5de65797fa6">RET_SUCCESS</a>&#160;&#160;&#160;0</td></tr>
+<tr class="memitem:aa0dec624244ce7f5492ec5de65797fa6" id="r_aa0dec624244ce7f5492ec5de65797fa6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa0dec624244ce7f5492ec5de65797fa6">RET_SUCCESS</a>&#160;&#160;&#160;<a class="el" href="hdf_8h.html#a82bc06cf44e2201df39aa76de6019980">SUCCEED</a></td></tr>
 <tr class="separator:aa0dec624244ce7f5492ec5de65797fa6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac85ec14a8569291eb4e79a1d4cb32e41" id="r_ac85ec14a8569291eb4e79a1d4cb32e41"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac85ec14a8569291eb4e79a1d4cb32e41">RET_ERROR</a>&#160;&#160;&#160;-1</td></tr>
+<tr class="memitem:ac85ec14a8569291eb4e79a1d4cb32e41" id="r_ac85ec14a8569291eb4e79a1d4cb32e41"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac85ec14a8569291eb4e79a1d4cb32e41">RET_ERROR</a>&#160;&#160;&#160;<a class="el" href="hdf_8h.html#abb508ea8227673f419e9fe3a86c30d8e">FAIL</a></td></tr>
 <tr class="separator:ac85ec14a8569291eb4e79a1d4cb32e41"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2b4054af9a8f1ec4104846747ded1675" id="r_a2b4054af9a8f1ec4104846747ded1675"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2b4054af9a8f1ec4104846747ded1675">HASHSIZE</a>&#160;&#160;&#160;128</td></tr>
 <tr class="separator:a2b4054af9a8f1ec4104846747ded1675"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -160,27 +160,27 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a3658e15cb0526de0dc82e8e6ef719fbe" id="r_a3658e15cb0526de0dc82e8e6ef719fbe"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_m_c_a_c_h_e.html">MCACHE</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3658e15cb0526de0dc82e8e6ef719fbe">mcache_open</a> (void *key, <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> object_id, <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> pagesize, <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> <a class="el" href="hproto__fortran_8h.html#a8363508019c65a01e2d1fae0e2f7016b">maxcache</a>, <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> npages, <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> <a class="el" href="hproto__fortran_8h.html#af834166f5dbac5747fd1c7e3d018b7ca">flags</a>)</td></tr>
+<tr class="memitem:a3658e15cb0526de0dc82e8e6ef719fbe" id="r_a3658e15cb0526de0dc82e8e6ef719fbe"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_m_c_a_c_h_e.html">MCACHE</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3658e15cb0526de0dc82e8e6ef719fbe">mcache_open</a> (void *key, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> object_id, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> pagesize, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> <a class="el" href="hproto__fortran_8h.html#a8363508019c65a01e2d1fae0e2f7016b">maxcache</a>, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> npages, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> <a class="el" href="hproto__fortran_8h.html#ae306b1a858b5b16256dc71efd96cc935">flags</a>)</td></tr>
 <tr class="separator:a3658e15cb0526de0dc82e8e6ef719fbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa4f0a4f2f0656b1d462e9446c20e8808" id="r_aa4f0a4f2f0656b1d462e9446c20e8808"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa4f0a4f2f0656b1d462e9446c20e8808">mcache_filter</a> (<a class="el" href="struct_m_c_a_c_h_e.html">MCACHE</a> *mp, <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>(*pgin)(void *cookie, <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> pgno, void *page), <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>(*pgout)(void *cookie, <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> pgno, const void *page), void *pgcookie)</td></tr>
+<tr class="memitem:aa4f0a4f2f0656b1d462e9446c20e8808" id="r_aa4f0a4f2f0656b1d462e9446c20e8808"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa4f0a4f2f0656b1d462e9446c20e8808">mcache_filter</a> (<a class="el" href="struct_m_c_a_c_h_e.html">MCACHE</a> *mp, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>(*pgin)(void *cookie, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> pgno, void *page), <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>(*pgout)(void *cookie, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> pgno, const void *page), void *pgcookie)</td></tr>
 <tr class="separator:aa4f0a4f2f0656b1d462e9446c20e8808"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8e2d50ebaf2f2093018165144d95f656" id="r_a8e2d50ebaf2f2093018165144d95f656"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8e2d50ebaf2f2093018165144d95f656">mcache_new</a> (<a class="el" href="struct_m_c_a_c_h_e.html">MCACHE</a> *mp, <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> *pgnoaddr, <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> <a class="el" href="hproto__fortran_8h.html#af834166f5dbac5747fd1c7e3d018b7ca">flags</a>)</td></tr>
+<tr class="memitem:a8e2d50ebaf2f2093018165144d95f656" id="r_a8e2d50ebaf2f2093018165144d95f656"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8e2d50ebaf2f2093018165144d95f656">mcache_new</a> (<a class="el" href="struct_m_c_a_c_h_e.html">MCACHE</a> *mp, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> *pgnoaddr, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> <a class="el" href="hproto__fortran_8h.html#ae306b1a858b5b16256dc71efd96cc935">flags</a>)</td></tr>
 <tr class="separator:a8e2d50ebaf2f2093018165144d95f656"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a301d391a311c6c9d9f2f50783bca6223" id="r_a301d391a311c6c9d9f2f50783bca6223"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a301d391a311c6c9d9f2f50783bca6223">mcache_get</a> (<a class="el" href="struct_m_c_a_c_h_e.html">MCACHE</a> *mp, <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> pgno, <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> <a class="el" href="hproto__fortran_8h.html#af834166f5dbac5747fd1c7e3d018b7ca">flags</a>)</td></tr>
+<tr class="memitem:a301d391a311c6c9d9f2f50783bca6223" id="r_a301d391a311c6c9d9f2f50783bca6223"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a301d391a311c6c9d9f2f50783bca6223">mcache_get</a> (<a class="el" href="struct_m_c_a_c_h_e.html">MCACHE</a> *mp, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> pgno, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> <a class="el" href="hproto__fortran_8h.html#ae306b1a858b5b16256dc71efd96cc935">flags</a>)</td></tr>
 <tr class="separator:a301d391a311c6c9d9f2f50783bca6223"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afd77c4a687e1f75e8d537f7fd5eed28b" id="r_afd77c4a687e1f75e8d537f7fd5eed28b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdfi_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afd77c4a687e1f75e8d537f7fd5eed28b">mcache_put</a> (<a class="el" href="struct_m_c_a_c_h_e.html">MCACHE</a> *mp, void *page, <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> <a class="el" href="hproto__fortran_8h.html#af834166f5dbac5747fd1c7e3d018b7ca">flags</a>)</td></tr>
+<tr class="memitem:afd77c4a687e1f75e8d537f7fd5eed28b" id="r_afd77c4a687e1f75e8d537f7fd5eed28b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afd77c4a687e1f75e8d537f7fd5eed28b">mcache_put</a> (<a class="el" href="struct_m_c_a_c_h_e.html">MCACHE</a> *mp, void *page, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> <a class="el" href="hproto__fortran_8h.html#ae306b1a858b5b16256dc71efd96cc935">flags</a>)</td></tr>
 <tr class="separator:afd77c4a687e1f75e8d537f7fd5eed28b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0661dd405bc0dc46e6ba4f1b2ba21712" id="r_a0661dd405bc0dc46e6ba4f1b2ba21712"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdfi_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0661dd405bc0dc46e6ba4f1b2ba21712">mcache_sync</a> (<a class="el" href="struct_m_c_a_c_h_e.html">MCACHE</a> *mp)</td></tr>
+<tr class="memitem:a0661dd405bc0dc46e6ba4f1b2ba21712" id="r_a0661dd405bc0dc46e6ba4f1b2ba21712"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0661dd405bc0dc46e6ba4f1b2ba21712">mcache_sync</a> (<a class="el" href="struct_m_c_a_c_h_e.html">MCACHE</a> *mp)</td></tr>
 <tr class="separator:a0661dd405bc0dc46e6ba4f1b2ba21712"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a229281e8c96aed166f7539c5b5de8b84" id="r_a229281e8c96aed166f7539c5b5de8b84"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdfi_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a229281e8c96aed166f7539c5b5de8b84">mcache_close</a> (<a class="el" href="struct_m_c_a_c_h_e.html">MCACHE</a> *mp)</td></tr>
+<tr class="memitem:a229281e8c96aed166f7539c5b5de8b84" id="r_a229281e8c96aed166f7539c5b5de8b84"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a229281e8c96aed166f7539c5b5de8b84">mcache_close</a> (<a class="el" href="struct_m_c_a_c_h_e.html">MCACHE</a> *mp)</td></tr>
 <tr class="separator:a229281e8c96aed166f7539c5b5de8b84"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6b9637a115cd6befc0f69146aa5801a1" id="r_a6b9637a115cd6befc0f69146aa5801a1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6b9637a115cd6befc0f69146aa5801a1">mcache_get_pagesize</a> (<a class="el" href="struct_m_c_a_c_h_e.html">MCACHE</a> *mp)</td></tr>
+<tr class="memitem:a6b9637a115cd6befc0f69146aa5801a1" id="r_a6b9637a115cd6befc0f69146aa5801a1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6b9637a115cd6befc0f69146aa5801a1">mcache_get_pagesize</a> (<a class="el" href="struct_m_c_a_c_h_e.html">MCACHE</a> *mp)</td></tr>
 <tr class="separator:a6b9637a115cd6befc0f69146aa5801a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5914bc6ba8ab19f066d6f48904d773d8" id="r_a5914bc6ba8ab19f066d6f48904d773d8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5914bc6ba8ab19f066d6f48904d773d8">mcache_get_maxcache</a> (<a class="el" href="struct_m_c_a_c_h_e.html">MCACHE</a> *mp)</td></tr>
+<tr class="memitem:a5914bc6ba8ab19f066d6f48904d773d8" id="r_a5914bc6ba8ab19f066d6f48904d773d8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5914bc6ba8ab19f066d6f48904d773d8">mcache_get_maxcache</a> (<a class="el" href="struct_m_c_a_c_h_e.html">MCACHE</a> *mp)</td></tr>
 <tr class="separator:a5914bc6ba8ab19f066d6f48904d773d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a18a5b24e1958484e7db3922d95f233eb" id="r_a18a5b24e1958484e7db3922d95f233eb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a18a5b24e1958484e7db3922d95f233eb">mcache_set_maxcache</a> (<a class="el" href="struct_m_c_a_c_h_e.html">MCACHE</a> *mp, <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> <a class="el" href="hproto__fortran_8h.html#a8363508019c65a01e2d1fae0e2f7016b">maxcache</a>)</td></tr>
+<tr class="memitem:a18a5b24e1958484e7db3922d95f233eb" id="r_a18a5b24e1958484e7db3922d95f233eb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a18a5b24e1958484e7db3922d95f233eb">mcache_set_maxcache</a> (<a class="el" href="struct_m_c_a_c_h_e.html">MCACHE</a> *mp, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> <a class="el" href="hproto__fortran_8h.html#a8363508019c65a01e2d1fae0e2f7016b">maxcache</a>)</td></tr>
 <tr class="separator:a18a5b24e1958484e7db3922d95f233eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab1794f5a57ce97f8e345b8013e4791b3" id="r_ab1794f5a57ce97f8e345b8013e4791b3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab1794f5a57ce97f8e345b8013e4791b3">mcache_get_npages</a> (<a class="el" href="struct_m_c_a_c_h_e.html">MCACHE</a> *mp)</td></tr>
+<tr class="memitem:ab1794f5a57ce97f8e345b8013e4791b3" id="r_ab1794f5a57ce97f8e345b8013e4791b3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab1794f5a57ce97f8e345b8013e4791b3">mcache_get_npages</a> (<a class="el" href="struct_m_c_a_c_h_e.html">MCACHE</a> *mp)</td></tr>
 <tr class="separator:ab1794f5a57ce97f8e345b8013e4791b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
@@ -350,7 +350,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define RET_ERROR&#160;&#160;&#160;-1</td>
+          <td class="memname">#define RET_ERROR&#160;&#160;&#160;<a class="el" href="hdf_8h.html#abb508ea8227673f419e9fe3a86c30d8e">FAIL</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -364,7 +364,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define RET_SUCCESS&#160;&#160;&#160;0</td>
+          <td class="memname">#define RET_SUCCESS&#160;&#160;&#160;<a class="el" href="hdf_8h.html#a82bc06cf44e2201df39aa76de6019980">SUCCEED</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -382,7 +382,7 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="hdfi_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a> mcache_close </td>
+          <td class="memname"><a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a> mcache_close </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="struct_m_c_a_c_h_e.html">MCACHE</a> *</td>          <td class="paramname"><span class="paramname"><em>mp</em></span></td><td>)</td>
           <td></td>
@@ -414,12 +414,12 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>(*)(void *cookie, <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> pgno, void *page)</td>          <td class="paramname"><span class="paramname"><em>pgin</em>, </span></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>(*)(void *cookie, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> pgno, void *page)</td>          <td class="paramname"><span class="paramname"><em>pgin</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>(*)(void *cookie, <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> pgno, const void *page)</td>          <td class="paramname"><span class="paramname"><em>pgout</em>, </span></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>(*)(void *cookie, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> pgno, const void *page)</td>          <td class="paramname"><span class="paramname"><em>pgout</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -453,12 +453,12 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>pgno</em>, </span></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>pgno</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>flags</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>flags</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -480,7 +480,7 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> mcache_get_maxcache </td>
+          <td class="memname"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> mcache_get_maxcache </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="struct_m_c_a_c_h_e.html">MCACHE</a> *</td>          <td class="paramname"><span class="paramname"><em>mp</em></span></td><td>)</td>
           <td></td>
@@ -505,7 +505,7 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> mcache_get_npages </td>
+          <td class="memname"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> mcache_get_npages </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="struct_m_c_a_c_h_e.html">MCACHE</a> *</td>          <td class="paramname"><span class="paramname"><em>mp</em></span></td><td>)</td>
           <td></td>
@@ -530,7 +530,7 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> mcache_get_pagesize </td>
+          <td class="memname"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> mcache_get_pagesize </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="struct_m_c_a_c_h_e.html">MCACHE</a> *</td>          <td class="paramname"><span class="paramname"><em>mp</em></span></td><td>)</td>
           <td></td>
@@ -562,12 +562,12 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> *</td>          <td class="paramname"><span class="paramname"><em>pgnoaddr</em>, </span></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> *</td>          <td class="paramname"><span class="paramname"><em>pgnoaddr</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>flags</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>flags</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -596,27 +596,27 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>object_id</em>, </span></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>object_id</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>pagesize</em>, </span></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>pagesize</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>maxcache</em>, </span></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>maxcache</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>npages</em>, </span></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>npages</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>flags</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>flags</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -638,7 +638,7 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="hdfi_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a> mcache_put </td>
+          <td class="memname"><a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a> mcache_put </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="struct_m_c_a_c_h_e.html">MCACHE</a> *</td>          <td class="paramname"><span class="paramname"><em>mp</em>, </span></td>
         </tr>
@@ -650,7 +650,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>flags</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>flags</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -672,14 +672,14 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> mcache_set_maxcache </td>
+          <td class="memname"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> mcache_set_maxcache </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="struct_m_c_a_c_h_e.html">MCACHE</a> *</td>          <td class="paramname"><span class="paramname"><em>mp</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>maxcache</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>maxcache</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -701,7 +701,7 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="hdfi_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a> mcache_sync </td>
+          <td class="memname"><a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a> mcache_sync </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="struct_m_c_a_c_h_e.html">MCACHE</a> *</td>          <td class="paramname"><span class="paramname"><em>mp</em></span></td><td>)</td>
           <td></td>

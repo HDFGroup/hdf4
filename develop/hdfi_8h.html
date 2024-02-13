@@ -38,7 +38,7 @@
   <td id="projectlogo"><img alt="Logo" src="HDFG-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname"><a href="https://www.hdfgroup.org">HDF</a>
-   &#160;<span id="projectnumber">4.3.0-be9b9c9</span>
+   &#160;<span id="projectnumber">4.3.0-1</span>
    </div>
    <div id="projectbrief">API Reference</div>
   </td>
@@ -110,10 +110,9 @@ $(function(){initNavTree('hdfi_8h.html',''); initResizable(); });
   <div class="headertitle"><div class="title">hdfi.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &quot;<a class="el" href="_h4api__adpt_8h.html">H4api_adpt.h</a>&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="hdf_8h.html">hdf.h</a>&quot;</code><br />
 <code>#include &lt;assert.h&gt;</code><br />
 <code>#include &lt;ctype.h&gt;</code><br />
-<code>#include &lt;inttypes.h&gt;</code><br />
 <code>#include &lt;limits.h&gt;</code><br />
 <code>#include &lt;stddef.h&gt;</code><br />
 <code>#include &lt;stdio.h&gt;</code><br />
@@ -123,24 +122,20 @@ $(function(){initNavTree('hdfi_8h.html',''); initResizable(); });
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:aaa6b889a15f4ecfb9a5d14e746013f99" id="r_aaa6b889a15f4ecfb9a5d14e746013f99"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaa6b889a15f4ecfb9a5d14e746013f99">DFMT_LE</a>&#160;&#160;&#160;0x4441 /* Little-endian, IEEE-754 architectures */</td></tr>
-<tr class="separator:aaa6b889a15f4ecfb9a5d14e746013f99"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a78dc30341791d4fb9ed7aa5826529b58" id="r_a78dc30341791d4fb9ed7aa5826529b58"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a78dc30341791d4fb9ed7aa5826529b58">DFMT_BE</a>&#160;&#160;&#160;0x1111 /* Big-endian, IEEE-754 architectures */</td></tr>
-<tr class="separator:a78dc30341791d4fb9ed7aa5826529b58"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a965c0ab383d13e7fd429bfd7f1c75a7c" id="r_a965c0ab383d13e7fd429bfd7f1c75a7c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a965c0ab383d13e7fd429bfd7f1c75a7c">DF_MT</a>&#160;&#160;&#160;<a class="el" href="#aaa6b889a15f4ecfb9a5d14e746013f99">DFMT_LE</a></td></tr>
-<tr class="separator:a965c0ab383d13e7fd429bfd7f1c75a7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a35efaa4dc6b72d3aaf0bbd43f6dae419" id="r_a35efaa4dc6b72d3aaf0bbd43f6dae419"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a35efaa4dc6b72d3aaf0bbd43f6dae419">UNIXUNBUFIO</a>&#160;&#160;&#160;1</td></tr>
 <tr class="separator:a35efaa4dc6b72d3aaf0bbd43f6dae419"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3710572954c9c0aa4f386fb3aaf88c39" id="r_a3710572954c9c0aa4f386fb3aaf88c39"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3710572954c9c0aa4f386fb3aaf88c39">UNIXBUFIO</a>&#160;&#160;&#160;2</td></tr>
 <tr class="separator:a3710572954c9c0aa4f386fb3aaf88c39"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac8bc40836288493f689969e628d58a2a" id="r_ac8bc40836288493f689969e628d58a2a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac8bc40836288493f689969e628d58a2a">FILELIB</a>&#160;&#160;&#160;<a class="el" href="#a3710572954c9c0aa4f386fb3aaf88c39">UNIXBUFIO</a></td></tr>
 <tr class="separator:ac8bc40836288493f689969e628d58a2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a61a57e3b8ac7e54ffe9c4a174f752553" id="r_a61a57e3b8ac7e54ffe9c4a174f752553"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a61a57e3b8ac7e54ffe9c4a174f752553">_fcdtocp</a>(<a class="el" href="hproto__fortran_8h.html#a12ff46cce4369f82c508f38632e4cf3c">desc</a>)&#160;&#160;&#160;(<a class="el" href="hproto__fortran_8h.html#a12ff46cce4369f82c508f38632e4cf3c">desc</a>)</td></tr>
-<tr class="separator:a61a57e3b8ac7e54ffe9c4a174f752553"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa6b889a15f4ecfb9a5d14e746013f99" id="r_aaa6b889a15f4ecfb9a5d14e746013f99"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaa6b889a15f4ecfb9a5d14e746013f99">DFMT_LE</a>&#160;&#160;&#160;0x4441 /* Little-endian, IEEE-754 architectures */</td></tr>
+<tr class="separator:aaa6b889a15f4ecfb9a5d14e746013f99"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a78dc30341791d4fb9ed7aa5826529b58" id="r_a78dc30341791d4fb9ed7aa5826529b58"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a78dc30341791d4fb9ed7aa5826529b58">DFMT_BE</a>&#160;&#160;&#160;0x1111 /* Big-endian, IEEE-754 architectures */</td></tr>
+<tr class="separator:a78dc30341791d4fb9ed7aa5826529b58"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a965c0ab383d13e7fd429bfd7f1c75a7c" id="r_a965c0ab383d13e7fd429bfd7f1c75a7c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a965c0ab383d13e7fd429bfd7f1c75a7c">DF_MT</a>&#160;&#160;&#160;<a class="el" href="#aaa6b889a15f4ecfb9a5d14e746013f99">DFMT_LE</a></td></tr>
+<tr class="separator:a965c0ab383d13e7fd429bfd7f1c75a7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a54be61f074e84655b3b8a12d4006bc1d" id="r_a54be61f074e84655b3b8a12d4006bc1d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a54be61f074e84655b3b8a12d4006bc1d">H4_HAVE_LP64</a></td></tr>
 <tr class="separator:a54be61f074e84655b3b8a12d4006bc1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac18744495d9131a21aa9f3490f0cfa31" id="r_ac18744495d9131a21aa9f3490f0cfa31"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac18744495d9131a21aa9f3490f0cfa31">FNAME_POST_UNDERSCORE</a></td></tr>
-<tr class="separator:ac18744495d9131a21aa9f3490f0cfa31"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad350a0ba99d08c4f5045d53c43c25a6e" id="r_ad350a0ba99d08c4f5045d53c43c25a6e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad350a0ba99d08c4f5045d53c43c25a6e">INT16ENCODE</a>(p,  i)</td></tr>
 <tr class="separator:ad350a0ba99d08c4f5045d53c43c25a6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6aa223dcae836049e0805efd90228448" id="r_a6aa223dcae836049e0805efd90228448"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6aa223dcae836049e0805efd90228448">UINT16ENCODE</a>(p,  i)</td></tr>
@@ -161,102 +156,15 @@ Macros</h2></td></tr>
 <tr class="separator:a4f5c56706d39d41be2da92df5f98f43a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a540645d536ad45771cc27d881db87f77" id="r_a540645d536ad45771cc27d881db87f77"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a540645d536ad45771cc27d881db87f77">NBYTEDECODE</a>(s,  d,  <a class="el" href="hproto__fortran_8h.html#a2f098e9ee14a2371dd279a2af958ea3c">n</a>)</td></tr>
 <tr class="separator:a540645d536ad45771cc27d881db87f77"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a71244b6b564742a3b93b204d8f18bc73" id="r_a71244b6b564742a3b93b204d8f18bc73"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a71244b6b564742a3b93b204d8f18bc73">FCALLKEYW</a>&#160;&#160;&#160;/*NONE*/</td></tr>
-<tr class="separator:a71244b6b564742a3b93b204d8f18bc73"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae52a40fb91b027496499b6e76802c010" id="r_ae52a40fb91b027496499b6e76802c010"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae52a40fb91b027496499b6e76802c010">FRETVAL</a>(x)&#160;&#160;&#160;x</td></tr>
-<tr class="separator:ae52a40fb91b027496499b6e76802c010"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a46d41e71dd0b745dfbd87fb3de8cdc84" id="r_a46d41e71dd0b745dfbd87fb3de8cdc84"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a46d41e71dd0b745dfbd87fb3de8cdc84">FNAME</a>(x)&#160;&#160;&#160;x##_</td></tr>
-<tr class="separator:a46d41e71dd0b745dfbd87fb3de8cdc84"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3acffbd305ee72dcd4593c0d8af64a4f" id="r_a3acffbd305ee72dcd4593c0d8af64a4f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3acffbd305ee72dcd4593c0d8af64a4f">MIN</a>(a,  b)&#160;&#160;&#160;(((a) &lt; (b)) ? (a) : (b))</td></tr>
-<tr class="separator:a3acffbd305ee72dcd4593c0d8af64a4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afa99ec4acc4ecb2dc3c2d05da15d0e3f" id="r_afa99ec4acc4ecb2dc3c2d05da15d0e3f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afa99ec4acc4ecb2dc3c2d05da15d0e3f">MAX</a>(a,  b)&#160;&#160;&#160;(((a) &gt; (b)) ? (a) : (b))</td></tr>
-<tr class="separator:afa99ec4acc4ecb2dc3c2d05da15d0e3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a153ed72941fd5d337de5a9c16dea1f8b" id="r_a153ed72941fd5d337de5a9c16dea1f8b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a153ed72941fd5d337de5a9c16dea1f8b">HDmalloc</a>(s)&#160;&#160;&#160;malloc(s)</td></tr>
-<tr class="separator:a153ed72941fd5d337de5a9c16dea1f8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac4f19c646bcf6a6611f45b0f30ce3089" id="r_ac4f19c646bcf6a6611f45b0f30ce3089"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac4f19c646bcf6a6611f45b0f30ce3089">HDcalloc</a>(a,  b)&#160;&#160;&#160;calloc(a, b)</td></tr>
-<tr class="separator:ac4f19c646bcf6a6611f45b0f30ce3089"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aff09504fb4d9aa9d74c74c3eaae6457c" id="r_aff09504fb4d9aa9d74c74c3eaae6457c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aff09504fb4d9aa9d74c74c3eaae6457c">HDfree</a>(p)&#160;&#160;&#160;free(p)</td></tr>
-<tr class="separator:aff09504fb4d9aa9d74c74c3eaae6457c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a483cdad25d80a90d203fa7befc78e474" id="r_a483cdad25d80a90d203fa7befc78e474"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a483cdad25d80a90d203fa7befc78e474">HDrealloc</a>(p,  s)&#160;&#160;&#160;realloc(p, s)</td></tr>
-<tr class="separator:a483cdad25d80a90d203fa7befc78e474"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a01c67dfc0a4abdbeb23c1289b97a8ee0" id="r_a01c67dfc0a4abdbeb23c1289b97a8ee0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a01c67dfc0a4abdbeb23c1289b97a8ee0">HDfreenclear</a>(p)</td></tr>
-<tr class="separator:a01c67dfc0a4abdbeb23c1289b97a8ee0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a854a80738ff31fa0b78770ca65c2030d" id="r_a854a80738ff31fa0b78770ca65c2030d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a854a80738ff31fa0b78770ca65c2030d">HDstrcat</a>(s1,  s2)&#160;&#160;&#160;(strcat((s1), (s2)))</td></tr>
-<tr class="separator:a854a80738ff31fa0b78770ca65c2030d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac5eab79d179220dd57ca97cd92415854" id="r_ac5eab79d179220dd57ca97cd92415854"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac5eab79d179220dd57ca97cd92415854">HDstrcmp</a>(s,  t)&#160;&#160;&#160;(strcmp((s), (t)))</td></tr>
-<tr class="separator:ac5eab79d179220dd57ca97cd92415854"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac9a301ad7913cf6655ae8835a25ae83c" id="r_ac9a301ad7913cf6655ae8835a25ae83c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac9a301ad7913cf6655ae8835a25ae83c">HDstrcpy</a>(s,  d)&#160;&#160;&#160;(strcpy((s), (d)))</td></tr>
-<tr class="separator:ac9a301ad7913cf6655ae8835a25ae83c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a25b2dc617997774311d9a9e41d7ee495" id="r_a25b2dc617997774311d9a9e41d7ee495"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a25b2dc617997774311d9a9e41d7ee495">HDstrlen</a>(s)&#160;&#160;&#160;(strlen((const char *)(s)))</td></tr>
-<tr class="separator:a25b2dc617997774311d9a9e41d7ee495"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a10e39bb269cd0609b59b21dc51d78e0d" id="r_a10e39bb269cd0609b59b21dc51d78e0d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a10e39bb269cd0609b59b21dc51d78e0d">HDstrncmp</a>(s1,  s2,  <a class="el" href="hproto__fortran_8h.html#a2f098e9ee14a2371dd279a2af958ea3c">n</a>)&#160;&#160;&#160;(strncmp((s1), (s2), (<a class="el" href="hproto__fortran_8h.html#a2f098e9ee14a2371dd279a2af958ea3c">n</a>)))</td></tr>
-<tr class="separator:a10e39bb269cd0609b59b21dc51d78e0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1d10aba6ef38c55c3bce9163945fc3d8" id="r_a1d10aba6ef38c55c3bce9163945fc3d8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1d10aba6ef38c55c3bce9163945fc3d8">HDstrncpy</a>(s1,  s2,  <a class="el" href="hproto__fortran_8h.html#a2f098e9ee14a2371dd279a2af958ea3c">n</a>)&#160;&#160;&#160;(strncpy((s1), (s2), (<a class="el" href="hproto__fortran_8h.html#a2f098e9ee14a2371dd279a2af958ea3c">n</a>)))</td></tr>
-<tr class="separator:a1d10aba6ef38c55c3bce9163945fc3d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a218a62222cab78057365e81b086c655f" id="r_a218a62222cab78057365e81b086c655f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a218a62222cab78057365e81b086c655f">HDstrchr</a>(s,  c)&#160;&#160;&#160;(strchr((s), (c)))</td></tr>
-<tr class="separator:a218a62222cab78057365e81b086c655f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abaadaa6d942024dd9b3da159a2cbc720" id="r_abaadaa6d942024dd9b3da159a2cbc720"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abaadaa6d942024dd9b3da159a2cbc720">HDstrrchr</a>(s,  c)&#160;&#160;&#160;(strrchr((s), (c)))</td></tr>
-<tr class="separator:abaadaa6d942024dd9b3da159a2cbc720"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac3e19975dee66a1c4401729381bedb44" id="r_ac3e19975dee66a1c4401729381bedb44"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac3e19975dee66a1c4401729381bedb44">HDstrtol</a>(s,  e,  b)&#160;&#160;&#160;(strtol((s), (e), (b)))</td></tr>
-<tr class="separator:ac3e19975dee66a1c4401729381bedb44"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3f5f927e31100b4e2ad0f29936874cfd" id="r_a3f5f927e31100b4e2ad0f29936874cfd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3f5f927e31100b4e2ad0f29936874cfd">JMEMSYS</a>&#160;&#160;&#160;MEM_ANSI</td></tr>
 <tr class="separator:a3f5f927e31100b4e2ad0f29936874cfd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:aacdc525d6f7bddb3ae95d5c311bd06a1" id="r_aacdc525d6f7bddb3ae95d5c311bd06a1"><td class="memItemLeft" align="right" valign="top">typedef float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aacdc525d6f7bddb3ae95d5c311bd06a1">float32</a></td></tr>
-<tr class="separator:aacdc525d6f7bddb3ae95d5c311bd06a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a232fad1b0d6dcc7c16aabde98b2e2a80" id="r_a232fad1b0d6dcc7c16aabde98b2e2a80"><td class="memItemLeft" align="right" valign="top">typedef double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a232fad1b0d6dcc7c16aabde98b2e2a80">float64</a></td></tr>
-<tr class="separator:a232fad1b0d6dcc7c16aabde98b2e2a80"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac9e1c0f508ae0f5f8a2b704a91e1ae86" id="r_ac9e1c0f508ae0f5f8a2b704a91e1ae86"><td class="memItemLeft" align="right" valign="top">typedef char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac9e1c0f508ae0f5f8a2b704a91e1ae86">char8</a></td></tr>
-<tr class="separator:ac9e1c0f508ae0f5f8a2b704a91e1ae86"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afc14fa8aaf9acf8c92f2c6f5a99c589d" id="r_afc14fa8aaf9acf8c92f2c6f5a99c589d"><td class="memItemLeft" align="right" valign="top">typedef unsigned char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afc14fa8aaf9acf8c92f2c6f5a99c589d">uchar8</a></td></tr>
-<tr class="separator:afc14fa8aaf9acf8c92f2c6f5a99c589d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a508c750c0c4fdaf757f94f5dc5b22cbd" id="r_a508c750c0c4fdaf757f94f5dc5b22cbd"><td class="memItemLeft" align="right" valign="top">typedef char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a508c750c0c4fdaf757f94f5dc5b22cbd">_fcd</a></td></tr>
-<tr class="separator:a508c750c0c4fdaf757f94f5dc5b22cbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa79c2d3de4fcd200458c406f40b2ae64" id="r_aa79c2d3de4fcd200458c406f40b2ae64"><td class="memItemLeft" align="right" valign="top">typedef int8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa79c2d3de4fcd200458c406f40b2ae64">int8</a></td></tr>
-<tr class="separator:aa79c2d3de4fcd200458c406f40b2ae64"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a33a5e996e7a90acefb8b1c0bea47e365" id="r_a33a5e996e7a90acefb8b1c0bea47e365"><td class="memItemLeft" align="right" valign="top">typedef uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a></td></tr>
-<tr class="separator:a33a5e996e7a90acefb8b1c0bea47e365"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa0d0fdc87fd135ef2bedb030901cdb9c" id="r_aa0d0fdc87fd135ef2bedb030901cdb9c"><td class="memItemLeft" align="right" valign="top">typedef int16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa0d0fdc87fd135ef2bedb030901cdb9c">int16</a></td></tr>
-<tr class="separator:aa0d0fdc87fd135ef2bedb030901cdb9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac2a9e79eb120216f855626495b7bd18a" id="r_ac2a9e79eb120216f855626495b7bd18a"><td class="memItemLeft" align="right" valign="top">typedef uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac2a9e79eb120216f855626495b7bd18a">uint16</a></td></tr>
-<tr class="separator:ac2a9e79eb120216f855626495b7bd18a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab7903878916593daecbeb95b98115ab0" id="r_ab7903878916593daecbeb95b98115ab0"><td class="memItemLeft" align="right" valign="top">typedef int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab7903878916593daecbeb95b98115ab0">int32</a></td></tr>
-<tr class="separator:ab7903878916593daecbeb95b98115ab0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acbd4acd0d29e2d6c43104827f77d9cd2" id="r_acbd4acd0d29e2d6c43104827f77d9cd2"><td class="memItemLeft" align="right" valign="top">typedef uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acbd4acd0d29e2d6c43104827f77d9cd2">uint32</a></td></tr>
-<tr class="separator:acbd4acd0d29e2d6c43104827f77d9cd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a03ba81f55b7c394eb8e1e5d1fcab1dfa" id="r_a03ba81f55b7c394eb8e1e5d1fcab1dfa"><td class="memItemLeft" align="right" valign="top">typedef int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a></td></tr>
-<tr class="separator:a03ba81f55b7c394eb8e1e5d1fcab1dfa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f0189616483670e42751f89a02501b5" id="r_a8f0189616483670e42751f89a02501b5"><td class="memItemLeft" align="right" valign="top">typedef unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8f0189616483670e42751f89a02501b5">uintn</a></td></tr>
-<tr class="separator:a8f0189616483670e42751f89a02501b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7927e087749615dae3114cc27b91c86d" id="r_a7927e087749615dae3114cc27b91c86d"><td class="memItemLeft" align="right" valign="top">typedef void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7927e087749615dae3114cc27b91c86d">VOID</a></td></tr>
-<tr class="separator:a7927e087749615dae3114cc27b91c86d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab88227ecb274485a440c4020114cc464" id="r_ab88227ecb274485a440c4020114cc464"><td class="memItemLeft" align="right" valign="top">typedef void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab88227ecb274485a440c4020114cc464">VOIDP</a></td></tr>
-<tr class="separator:ab88227ecb274485a440c4020114cc464"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7c2da1a4711ea1e7cbf3174d4f5dda9b" id="r_a7c2da1a4711ea1e7cbf3174d4f5dda9b"><td class="memItemLeft" align="right" valign="top">typedef int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7c2da1a4711ea1e7cbf3174d4f5dda9b">intf</a></td></tr>
-<tr class="separator:a7c2da1a4711ea1e7cbf3174d4f5dda9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7e8e20a36ce32a101de6814cf4bea91e" id="r_a7e8e20a36ce32a101de6814cf4bea91e"><td class="memItemLeft" align="right" valign="top">typedef intptr_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7e8e20a36ce32a101de6814cf4bea91e">hdf_pint_t</a></td></tr>
 <tr class="separator:a7e8e20a36ce32a101de6814cf4bea91e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
-<a id="a61a57e3b8ac7e54ffe9c4a174f752553" name="a61a57e3b8ac7e54ffe9c4a174f752553"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a61a57e3b8ac7e54ffe9c4a174f752553">&#9670;&#160;</a></span>_fcdtocp</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define _fcdtocp</td>
-          <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><a class="el" href="hproto__fortran_8h.html#a12ff46cce4369f82c508f38632e4cf3c">desc</a></span></td><td>)</td>
-          <td>&#160;&#160;&#160;(<a class="el" href="hproto__fortran_8h.html#a12ff46cce4369f82c508f38632e4cf3c">desc</a>)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a965c0ab383d13e7fd429bfd7f1c75a7c" name="a965c0ab383d13e7fd429bfd7f1c75a7c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a965c0ab383d13e7fd429bfd7f1c75a7c">&#9670;&#160;</a></span>DF_MT</h2>
 
@@ -299,20 +207,6 @@ Typedefs</h2></td></tr>
 
 </div>
 </div>
-<a id="a71244b6b564742a3b93b204d8f18bc73" name="a71244b6b564742a3b93b204d8f18bc73"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a71244b6b564742a3b93b204d8f18bc73">&#9670;&#160;</a></span>FCALLKEYW</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define FCALLKEYW&#160;&#160;&#160;/*NONE*/</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="ac8bc40836288493f689969e628d58a2a" name="ac8bc40836288493f689969e628d58a2a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac8bc40836288493f689969e628d58a2a">&#9670;&#160;</a></span>FILELIB</h2>
 
@@ -327,54 +221,6 @@ Typedefs</h2></td></tr>
 
 </div>
 </div>
-<a id="a46d41e71dd0b745dfbd87fb3de8cdc84" name="a46d41e71dd0b745dfbd87fb3de8cdc84"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a46d41e71dd0b745dfbd87fb3de8cdc84">&#9670;&#160;</a></span>FNAME</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define FNAME</td>
-          <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">x</span></td><td>)</td>
-          <td>&#160;&#160;&#160;x##_</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ac18744495d9131a21aa9f3490f0cfa31" name="ac18744495d9131a21aa9f3490f0cfa31"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac18744495d9131a21aa9f3490f0cfa31">&#9670;&#160;</a></span>FNAME_POST_UNDERSCORE</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define FNAME_POST_UNDERSCORE</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ae52a40fb91b027496499b6e76802c010" name="ae52a40fb91b027496499b6e76802c010"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae52a40fb91b027496499b6e76802c010">&#9670;&#160;</a></span>FRETVAL</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define FRETVAL</td>
-          <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">x</span></td><td>)</td>
-          <td>&#160;&#160;&#160;x</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a54be61f074e84655b3b8a12d4006bc1d" name="a54be61f074e84655b3b8a12d4006bc1d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a54be61f074e84655b3b8a12d4006bc1d">&#9670;&#160;</a></span>H4_HAVE_LP64</h2>
 
@@ -383,303 +229,6 @@ Typedefs</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">#define H4_HAVE_LP64</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ac4f19c646bcf6a6611f45b0f30ce3089" name="ac4f19c646bcf6a6611f45b0f30ce3089"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac4f19c646bcf6a6611f45b0f30ce3089">&#9670;&#160;</a></span>HDcalloc</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define HDcalloc</td>
-          <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">a, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">b</span>&#160;)&#160;&#160;&#160;calloc(a, b)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aff09504fb4d9aa9d74c74c3eaae6457c" name="aff09504fb4d9aa9d74c74c3eaae6457c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aff09504fb4d9aa9d74c74c3eaae6457c">&#9670;&#160;</a></span>HDfree</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define HDfree</td>
-          <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">p</span></td><td>)</td>
-          <td>&#160;&#160;&#160;free(p)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a01c67dfc0a4abdbeb23c1289b97a8ee0" name="a01c67dfc0a4abdbeb23c1289b97a8ee0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a01c67dfc0a4abdbeb23c1289b97a8ee0">&#9670;&#160;</a></span>HDfreenclear</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define HDfreenclear</td>
-          <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">p</span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">    {                                                                                                        \</div>
-<div class="line">        free(p);                                                                                             \</div>
-<div class="line">        (p) = NULL;                                                                                          \</div>
-<div class="line">    }</div>
-</div><!-- fragment -->
-</div>
-</div>
-<a id="a153ed72941fd5d337de5a9c16dea1f8b" name="a153ed72941fd5d337de5a9c16dea1f8b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a153ed72941fd5d337de5a9c16dea1f8b">&#9670;&#160;</a></span>HDmalloc</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define HDmalloc</td>
-          <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">s</span></td><td>)</td>
-          <td>&#160;&#160;&#160;malloc(s)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a483cdad25d80a90d203fa7befc78e474" name="a483cdad25d80a90d203fa7befc78e474"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a483cdad25d80a90d203fa7befc78e474">&#9670;&#160;</a></span>HDrealloc</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define HDrealloc</td>
-          <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">p, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">s</span>&#160;)&#160;&#160;&#160;realloc(p, s)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a854a80738ff31fa0b78770ca65c2030d" name="a854a80738ff31fa0b78770ca65c2030d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a854a80738ff31fa0b78770ca65c2030d">&#9670;&#160;</a></span>HDstrcat</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define HDstrcat</td>
-          <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">s1, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">s2</span>&#160;)&#160;&#160;&#160;(strcat((s1), (s2)))</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a218a62222cab78057365e81b086c655f" name="a218a62222cab78057365e81b086c655f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a218a62222cab78057365e81b086c655f">&#9670;&#160;</a></span>HDstrchr</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define HDstrchr</td>
-          <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">s, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">c</span>&#160;)&#160;&#160;&#160;(strchr((s), (c)))</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ac5eab79d179220dd57ca97cd92415854" name="ac5eab79d179220dd57ca97cd92415854"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac5eab79d179220dd57ca97cd92415854">&#9670;&#160;</a></span>HDstrcmp</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define HDstrcmp</td>
-          <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">s, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">t</span>&#160;)&#160;&#160;&#160;(strcmp((s), (t)))</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ac9a301ad7913cf6655ae8835a25ae83c" name="ac9a301ad7913cf6655ae8835a25ae83c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac9a301ad7913cf6655ae8835a25ae83c">&#9670;&#160;</a></span>HDstrcpy</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define HDstrcpy</td>
-          <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">s, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">d</span>&#160;)&#160;&#160;&#160;(strcpy((s), (d)))</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a25b2dc617997774311d9a9e41d7ee495" name="a25b2dc617997774311d9a9e41d7ee495"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a25b2dc617997774311d9a9e41d7ee495">&#9670;&#160;</a></span>HDstrlen</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define HDstrlen</td>
-          <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">s</span></td><td>)</td>
-          <td>&#160;&#160;&#160;(strlen((const char *)(s)))</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a10e39bb269cd0609b59b21dc51d78e0d" name="a10e39bb269cd0609b59b21dc51d78e0d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a10e39bb269cd0609b59b21dc51d78e0d">&#9670;&#160;</a></span>HDstrncmp</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define HDstrncmp</td>
-          <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">s1, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">s2, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><a class="el" href="hproto__fortran_8h.html#a2f098e9ee14a2371dd279a2af958ea3c">n</a></span>&#160;)&#160;&#160;&#160;(strncmp((s1), (s2), (<a class="el" href="hproto__fortran_8h.html#a2f098e9ee14a2371dd279a2af958ea3c">n</a>)))</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a1d10aba6ef38c55c3bce9163945fc3d8" name="a1d10aba6ef38c55c3bce9163945fc3d8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1d10aba6ef38c55c3bce9163945fc3d8">&#9670;&#160;</a></span>HDstrncpy</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define HDstrncpy</td>
-          <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">s1, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">s2, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><a class="el" href="hproto__fortran_8h.html#a2f098e9ee14a2371dd279a2af958ea3c">n</a></span>&#160;)&#160;&#160;&#160;(strncpy((s1), (s2), (<a class="el" href="hproto__fortran_8h.html#a2f098e9ee14a2371dd279a2af958ea3c">n</a>)))</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="abaadaa6d942024dd9b3da159a2cbc720" name="abaadaa6d942024dd9b3da159a2cbc720"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abaadaa6d942024dd9b3da159a2cbc720">&#9670;&#160;</a></span>HDstrrchr</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define HDstrrchr</td>
-          <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">s, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">c</span>&#160;)&#160;&#160;&#160;(strrchr((s), (c)))</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ac3e19975dee66a1c4401729381bedb44" name="ac3e19975dee66a1c4401729381bedb44"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac3e19975dee66a1c4401729381bedb44">&#9670;&#160;</a></span>HDstrtol</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define HDstrtol</td>
-          <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">s, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">e, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">b</span>&#160;)&#160;&#160;&#160;(strtol((s), (e), (b)))</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -705,12 +254,12 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">    {                                                                                                        \</div>
-<div class="line">        (i) = (<a class="code hl_typedef" href="#aa0d0fdc87fd135ef2bedb030901cdb9c">int16</a>)((*(p)&amp;0x80) ? ~0xffff : 0x00) | ((<a class="code hl_typedef" href="#aa0d0fdc87fd135ef2bedb030901cdb9c">int16</a>)(*(p)&amp;0xff) &lt;&lt; 8);                             \</div>
+<div class="line">        (i) = (<a class="code hl_typedef" href="hdf_8h.html#aa0d0fdc87fd135ef2bedb030901cdb9c">int16</a>)((*(p)&amp;0x80) ? ~0xffff : 0x00) | ((<a class="code hl_typedef" href="hdf_8h.html#aa0d0fdc87fd135ef2bedb030901cdb9c">int16</a>)(*(p)&amp;0xff) &lt;&lt; 8);                             \</div>
 <div class="line">        (p)++;                                                                                               \</div>
-<div class="line">        (i) |= (<a class="code hl_typedef" href="#aa0d0fdc87fd135ef2bedb030901cdb9c">int16</a>)((*(p)&amp;0xff));                                                                         \</div>
+<div class="line">        (i) |= (<a class="code hl_typedef" href="hdf_8h.html#aa0d0fdc87fd135ef2bedb030901cdb9c">int16</a>)((*(p)&amp;0xff));                                                                         \</div>
 <div class="line">        (p)++;                                                                                               \</div>
 <div class="line">    }</div>
-<div class="ttc" id="ahdfi_8h_html_aa0d0fdc87fd135ef2bedb030901cdb9c"><div class="ttname"><a href="#aa0d0fdc87fd135ef2bedb030901cdb9c">int16</a></div><div class="ttdeci">int16_t int16</div><div class="ttdef"><b>Definition</b> hdfi.h:133</div></div>
+<div class="ttc" id="ahdf_8h_html_aa0d0fdc87fd135ef2bedb030901cdb9c"><div class="ttname"><a href="hdf_8h.html#aa0d0fdc87fd135ef2bedb030901cdb9c">int16</a></div><div class="ttdeci">int16_t int16</div><div class="ttdef"><b>Definition</b> hdf.h:48</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -733,13 +282,13 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">    {                                                                                                        \</div>
-<div class="line">        *(p) = (<a class="code hl_typedef" href="#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)(((<a class="code hl_typedef" href="#a8f0189616483670e42751f89a02501b5">uintn</a>)(i) &gt;&gt; 8) &amp; 0xff);                                                            \</div>
+<div class="line">        *(p) = (<a class="code hl_typedef" href="hdf_8h.html#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)(((<a class="code hl_typedef" href="hdf_8h.html#a8f0189616483670e42751f89a02501b5">uintn</a>)(i) &gt;&gt; 8) &amp; 0xff);                                                            \</div>
 <div class="line">        (p)++;                                                                                               \</div>
-<div class="line">        *(p) = (<a class="code hl_typedef" href="#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)((<a class="code hl_typedef" href="#a8f0189616483670e42751f89a02501b5">uintn</a>)(i)&amp;0xff);                                                                     \</div>
+<div class="line">        *(p) = (<a class="code hl_typedef" href="hdf_8h.html#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)((<a class="code hl_typedef" href="hdf_8h.html#a8f0189616483670e42751f89a02501b5">uintn</a>)(i)&amp;0xff);                                                                     \</div>
 <div class="line">        (p)++;                                                                                               \</div>
 <div class="line">    }</div>
-<div class="ttc" id="ahdfi_8h_html_a33a5e996e7a90acefb8b1c0bea47e365"><div class="ttname"><a href="#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a></div><div class="ttdeci">uint8_t uint8</div><div class="ttdef"><b>Definition</b> hdfi.h:132</div></div>
-<div class="ttc" id="ahdfi_8h_html_a8f0189616483670e42751f89a02501b5"><div class="ttname"><a href="#a8f0189616483670e42751f89a02501b5">uintn</a></div><div class="ttdeci">unsigned int uintn</div><div class="ttdef"><b>Definition</b> hdfi.h:140</div></div>
+<div class="ttc" id="ahdf_8h_html_a33a5e996e7a90acefb8b1c0bea47e365"><div class="ttname"><a href="hdf_8h.html#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a></div><div class="ttdeci">uint8_t uint8</div><div class="ttdef"><b>Definition</b> hdf.h:47</div></div>
+<div class="ttc" id="ahdf_8h_html_a8f0189616483670e42751f89a02501b5"><div class="ttname"><a href="hdf_8h.html#a8f0189616483670e42751f89a02501b5">uintn</a></div><div class="ttdeci">unsigned int uintn</div><div class="ttdef"><b>Definition</b> hdf.h:55</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -762,16 +311,16 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">    {                                                                                                        \</div>
-<div class="line">        (i) = ((<a class="code hl_typedef" href="#ab7903878916593daecbeb95b98115ab0">int32</a>)(((*(p)&amp;0x80) ? ~0xffffffffULL : 0x0ULL)) | ((*(p) &amp; (<span class="keywordtype">unsigned</span>)0xff) &lt;&lt; 24));          \</div>
+<div class="line">        (i) = ((<a class="code hl_typedef" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>)(((*(p)&amp;0x80) ? ~0xffffffffULL : 0x0ULL)) | ((*(p) &amp; (<span class="keywordtype">unsigned</span>)0xff) &lt;&lt; 24));          \</div>
 <div class="line">        (p)++;                                                                                               \</div>
-<div class="line">        (i) |= ((<a class="code hl_typedef" href="#ab7903878916593daecbeb95b98115ab0">int32</a>)(*(p)&amp;0xff) &lt;&lt; 16);                                                                   \</div>
+<div class="line">        (i) |= ((<a class="code hl_typedef" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>)(*(p)&amp;0xff) &lt;&lt; 16);                                                                   \</div>
 <div class="line">        (p)++;                                                                                               \</div>
-<div class="line">        (i) |= ((<a class="code hl_typedef" href="#ab7903878916593daecbeb95b98115ab0">int32</a>)(*(p)&amp;0xff) &lt;&lt; 8);                                                                    \</div>
+<div class="line">        (i) |= ((<a class="code hl_typedef" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>)(*(p)&amp;0xff) &lt;&lt; 8);                                                                    \</div>
 <div class="line">        (p)++;                                                                                               \</div>
 <div class="line">        (i) |= (*(p)&amp;0xff);                                                                                  \</div>
 <div class="line">        (p)++;                                                                                               \</div>
 <div class="line">    }</div>
-<div class="ttc" id="ahdfi_8h_html_ab7903878916593daecbeb95b98115ab0"><div class="ttname"><a href="#ab7903878916593daecbeb95b98115ab0">int32</a></div><div class="ttdeci">int32_t int32</div><div class="ttdef"><b>Definition</b> hdfi.h:135</div></div>
+<div class="ttc" id="ahdf_8h_html_ab7903878916593daecbeb95b98115ab0"><div class="ttname"><a href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></div><div class="ttdeci">int32_t int32</div><div class="ttdef"><b>Definition</b> hdf.h:50</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -794,16 +343,16 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">    {                                                                                                        \</div>
-<div class="line">        *(p) = (<a class="code hl_typedef" href="#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)(((<a class="code hl_typedef" href="#acbd4acd0d29e2d6c43104827f77d9cd2">uint32</a>)(i) &gt;&gt; 24) &amp; 0xff);                                                          \</div>
+<div class="line">        *(p) = (<a class="code hl_typedef" href="hdf_8h.html#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)(((<a class="code hl_typedef" href="hdf_8h.html#acbd4acd0d29e2d6c43104827f77d9cd2">uint32</a>)(i) &gt;&gt; 24) &amp; 0xff);                                                          \</div>
 <div class="line">        (p)++;                                                                                               \</div>
-<div class="line">        *(p) = (<a class="code hl_typedef" href="#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)(((<a class="code hl_typedef" href="#acbd4acd0d29e2d6c43104827f77d9cd2">uint32</a>)(i) &gt;&gt; 16) &amp; 0xff);                                                          \</div>
+<div class="line">        *(p) = (<a class="code hl_typedef" href="hdf_8h.html#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)(((<a class="code hl_typedef" href="hdf_8h.html#acbd4acd0d29e2d6c43104827f77d9cd2">uint32</a>)(i) &gt;&gt; 16) &amp; 0xff);                                                          \</div>
 <div class="line">        (p)++;                                                                                               \</div>
-<div class="line">        *(p) = (<a class="code hl_typedef" href="#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)(((<a class="code hl_typedef" href="#acbd4acd0d29e2d6c43104827f77d9cd2">uint32</a>)(i) &gt;&gt; 8) &amp; 0xff);                                                           \</div>
+<div class="line">        *(p) = (<a class="code hl_typedef" href="hdf_8h.html#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)(((<a class="code hl_typedef" href="hdf_8h.html#acbd4acd0d29e2d6c43104827f77d9cd2">uint32</a>)(i) &gt;&gt; 8) &amp; 0xff);                                                           \</div>
 <div class="line">        (p)++;                                                                                               \</div>
-<div class="line">        *(p) = (<a class="code hl_typedef" href="#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)((<a class="code hl_typedef" href="#acbd4acd0d29e2d6c43104827f77d9cd2">uint32</a>)(i)&amp;0xff);                                                                    \</div>
+<div class="line">        *(p) = (<a class="code hl_typedef" href="hdf_8h.html#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)((<a class="code hl_typedef" href="hdf_8h.html#acbd4acd0d29e2d6c43104827f77d9cd2">uint32</a>)(i)&amp;0xff);                                                                    \</div>
 <div class="line">        (p)++;                                                                                               \</div>
 <div class="line">    }</div>
-<div class="ttc" id="ahdfi_8h_html_acbd4acd0d29e2d6c43104827f77d9cd2"><div class="ttname"><a href="#acbd4acd0d29e2d6c43104827f77d9cd2">uint32</a></div><div class="ttdeci">uint32_t uint32</div><div class="ttdef"><b>Definition</b> hdfi.h:136</div></div>
+<div class="ttc" id="ahdf_8h_html_acbd4acd0d29e2d6c43104827f77d9cd2"><div class="ttname"><a href="hdf_8h.html#acbd4acd0d29e2d6c43104827f77d9cd2">uint32</a></div><div class="ttdeci">uint32_t uint32</div><div class="ttdef"><b>Definition</b> hdf.h:51</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -815,48 +364,6 @@ Typedefs</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">#define JMEMSYS&#160;&#160;&#160;MEM_ANSI</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="afa99ec4acc4ecb2dc3c2d05da15d0e3f" name="afa99ec4acc4ecb2dc3c2d05da15d0e3f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afa99ec4acc4ecb2dc3c2d05da15d0e3f">&#9670;&#160;</a></span>MAX</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define MAX</td>
-          <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">a, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">b</span>&#160;)&#160;&#160;&#160;(((a) &gt; (b)) ? (a) : (b))</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a3acffbd305ee72dcd4593c0d8af64a4f" name="a3acffbd305ee72dcd4593c0d8af64a4f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3acffbd305ee72dcd4593c0d8af64a4f">&#9670;&#160;</a></span>MIN</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define MIN</td>
-          <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">a, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">b</span>&#160;)&#160;&#160;&#160;(((a) &lt; (b)) ? (a) : (b))</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -890,7 +397,7 @@ Typedefs</h2></td></tr>
 <div class="line">        memcpy(d, s, <a class="code hl_variable" href="hproto__fortran_8h.html#a2f098e9ee14a2371dd279a2af958ea3c">n</a>);                                                                                     \</div>
 <div class="line">        p += <a class="code hl_variable" href="hproto__fortran_8h.html#a2f098e9ee14a2371dd279a2af958ea3c">n</a>                                                                                               \</div>
 <div class="line">    }</div>
-<div class="ttc" id="ahproto__fortran_8h_html_a2f098e9ee14a2371dd279a2af958ea3c"><div class="ttname"><a href="hproto__fortran_8h.html#a2f098e9ee14a2371dd279a2af958ea3c">n</a></div><div class="ttdeci">intf _fcd _fcd intf * n</div><div class="ttdef"><b>Definition</b> hproto_fortran.h:1064</div></div>
+<div class="ttc" id="ahproto__fortran_8h_html_a2f098e9ee14a2371dd279a2af958ea3c"><div class="ttname"><a href="hproto__fortran_8h.html#a2f098e9ee14a2371dd279a2af958ea3c">n</a></div><div class="ttdeci">intf _fcd _fcd intf * n</div><div class="ttdef"><b>Definition</b> hproto_fortran.h:1056</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -943,12 +450,12 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">    {                                                                                                        \</div>
-<div class="line">        (i) = (<a class="code hl_typedef" href="#ac2a9e79eb120216f855626495b7bd18a">uint16</a>)((*(p)&amp;0xff) &lt;&lt; 8);                                                                    \</div>
+<div class="line">        (i) = (<a class="code hl_typedef" href="hdf_8h.html#ac2a9e79eb120216f855626495b7bd18a">uint16</a>)((*(p)&amp;0xff) &lt;&lt; 8);                                                                    \</div>
 <div class="line">        (p)++;                                                                                               \</div>
-<div class="line">        (i) |= (<a class="code hl_typedef" href="#ac2a9e79eb120216f855626495b7bd18a">uint16</a>)(*(p)&amp;0xff);                                                                          \</div>
+<div class="line">        (i) |= (<a class="code hl_typedef" href="hdf_8h.html#ac2a9e79eb120216f855626495b7bd18a">uint16</a>)(*(p)&amp;0xff);                                                                          \</div>
 <div class="line">        (p)++;                                                                                               \</div>
 <div class="line">    }</div>
-<div class="ttc" id="ahdfi_8h_html_ac2a9e79eb120216f855626495b7bd18a"><div class="ttname"><a href="#ac2a9e79eb120216f855626495b7bd18a">uint16</a></div><div class="ttdeci">uint16_t uint16</div><div class="ttdef"><b>Definition</b> hdfi.h:134</div></div>
+<div class="ttc" id="ahdf_8h_html_ac2a9e79eb120216f855626495b7bd18a"><div class="ttname"><a href="hdf_8h.html#ac2a9e79eb120216f855626495b7bd18a">uint16</a></div><div class="ttdeci">uint16_t uint16</div><div class="ttdef"><b>Definition</b> hdf.h:49</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -971,9 +478,9 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">    {                                                                                                        \</div>
-<div class="line">        *(p) = (<a class="code hl_typedef" href="#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)(((<a class="code hl_typedef" href="#a8f0189616483670e42751f89a02501b5">uintn</a>)(i) &gt;&gt; 8) &amp; 0xff);                                                            \</div>
+<div class="line">        *(p) = (<a class="code hl_typedef" href="hdf_8h.html#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)(((<a class="code hl_typedef" href="hdf_8h.html#a8f0189616483670e42751f89a02501b5">uintn</a>)(i) &gt;&gt; 8) &amp; 0xff);                                                            \</div>
 <div class="line">        (p)++;                                                                                               \</div>
-<div class="line">        *(p) = (<a class="code hl_typedef" href="#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)((i)&amp;0xff);                                                                            \</div>
+<div class="line">        *(p) = (<a class="code hl_typedef" href="hdf_8h.html#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)((i)&amp;0xff);                                                                            \</div>
 <div class="line">        (p)++;                                                                                               \</div>
 <div class="line">    }</div>
 </div><!-- fragment -->
@@ -998,13 +505,13 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">    {                                                                                                        \</div>
-<div class="line">        (i) = ((<a class="code hl_typedef" href="#acbd4acd0d29e2d6c43104827f77d9cd2">uint32</a>)(*(p)&amp;0xff) &lt;&lt; 24);                                                                   \</div>
+<div class="line">        (i) = ((<a class="code hl_typedef" href="hdf_8h.html#acbd4acd0d29e2d6c43104827f77d9cd2">uint32</a>)(*(p)&amp;0xff) &lt;&lt; 24);                                                                   \</div>
 <div class="line">        (p)++;                                                                                               \</div>
-<div class="line">        (i) |= ((<a class="code hl_typedef" href="#acbd4acd0d29e2d6c43104827f77d9cd2">uint32</a>)(*(p)&amp;0xff) &lt;&lt; 16);                                                                  \</div>
+<div class="line">        (i) |= ((<a class="code hl_typedef" href="hdf_8h.html#acbd4acd0d29e2d6c43104827f77d9cd2">uint32</a>)(*(p)&amp;0xff) &lt;&lt; 16);                                                                  \</div>
 <div class="line">        (p)++;                                                                                               \</div>
-<div class="line">        (i) |= ((<a class="code hl_typedef" href="#acbd4acd0d29e2d6c43104827f77d9cd2">uint32</a>)(*(p)&amp;0xff) &lt;&lt; 8);                                                                   \</div>
+<div class="line">        (i) |= ((<a class="code hl_typedef" href="hdf_8h.html#acbd4acd0d29e2d6c43104827f77d9cd2">uint32</a>)(*(p)&amp;0xff) &lt;&lt; 8);                                                                   \</div>
 <div class="line">        (p)++;                                                                                               \</div>
-<div class="line">        (i) |= (<a class="code hl_typedef" href="#acbd4acd0d29e2d6c43104827f77d9cd2">uint32</a>)(*(p)&amp;0xff);                                                                          \</div>
+<div class="line">        (i) |= (<a class="code hl_typedef" href="hdf_8h.html#acbd4acd0d29e2d6c43104827f77d9cd2">uint32</a>)(*(p)&amp;0xff);                                                                          \</div>
 <div class="line">        (p)++;                                                                                               \</div>
 <div class="line">    }</div>
 </div><!-- fragment -->
@@ -1029,13 +536,13 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">    {                                                                                                        \</div>
-<div class="line">        *(p) = (<a class="code hl_typedef" href="#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)(((i) &gt;&gt; 24) &amp; 0xff);                                                                  \</div>
+<div class="line">        *(p) = (<a class="code hl_typedef" href="hdf_8h.html#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)(((i) &gt;&gt; 24) &amp; 0xff);                                                                  \</div>
 <div class="line">        (p)++;                                                                                               \</div>
-<div class="line">        *(p) = (<a class="code hl_typedef" href="#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)(((i) &gt;&gt; 16) &amp; 0xff);                                                                  \</div>
+<div class="line">        *(p) = (<a class="code hl_typedef" href="hdf_8h.html#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)(((i) &gt;&gt; 16) &amp; 0xff);                                                                  \</div>
 <div class="line">        (p)++;                                                                                               \</div>
-<div class="line">        *(p) = (<a class="code hl_typedef" href="#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)(((i) &gt;&gt; 8) &amp; 0xff);                                                                   \</div>
+<div class="line">        *(p) = (<a class="code hl_typedef" href="hdf_8h.html#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)(((i) &gt;&gt; 8) &amp; 0xff);                                                                   \</div>
 <div class="line">        (p)++;                                                                                               \</div>
-<div class="line">        *(p) = (<a class="code hl_typedef" href="#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)((i)&amp;0xff);                                                                            \</div>
+<div class="line">        *(p) = (<a class="code hl_typedef" href="hdf_8h.html#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a>)((i)&amp;0xff);                                                                            \</div>
 <div class="line">        (p)++;                                                                                               \</div>
 <div class="line">    }</div>
 </div><!-- fragment -->
@@ -1070,62 +577,6 @@ Typedefs</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Typedef Documentation</h2>
-<a id="a508c750c0c4fdaf757f94f5dc5b22cbd" name="a508c750c0c4fdaf757f94f5dc5b22cbd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a508c750c0c4fdaf757f94f5dc5b22cbd">&#9670;&#160;</a></span>_fcd</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef char* <a class="el" href="#a508c750c0c4fdaf757f94f5dc5b22cbd">_fcd</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ac9e1c0f508ae0f5f8a2b704a91e1ae86" name="ac9e1c0f508ae0f5f8a2b704a91e1ae86"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac9e1c0f508ae0f5f8a2b704a91e1ae86">&#9670;&#160;</a></span>char8</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef char <a class="el" href="#ac9e1c0f508ae0f5f8a2b704a91e1ae86">char8</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aacdc525d6f7bddb3ae95d5c311bd06a1" name="aacdc525d6f7bddb3ae95d5c311bd06a1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aacdc525d6f7bddb3ae95d5c311bd06a1">&#9670;&#160;</a></span>float32</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef float <a class="el" href="#aacdc525d6f7bddb3ae95d5c311bd06a1">float32</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a232fad1b0d6dcc7c16aabde98b2e2a80" name="a232fad1b0d6dcc7c16aabde98b2e2a80"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a232fad1b0d6dcc7c16aabde98b2e2a80">&#9670;&#160;</a></span>float64</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef double <a class="el" href="#a232fad1b0d6dcc7c16aabde98b2e2a80">float64</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a7e8e20a36ce32a101de6814cf4bea91e" name="a7e8e20a36ce32a101de6814cf4bea91e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7e8e20a36ce32a101de6814cf4bea91e">&#9670;&#160;</a></span>hdf_pint_t</h2>
 
@@ -1134,174 +585,6 @@ Typedefs</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">typedef intptr_t <a class="el" href="#a7e8e20a36ce32a101de6814cf4bea91e">hdf_pint_t</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aa0d0fdc87fd135ef2bedb030901cdb9c" name="aa0d0fdc87fd135ef2bedb030901cdb9c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa0d0fdc87fd135ef2bedb030901cdb9c">&#9670;&#160;</a></span>int16</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef int16_t <a class="el" href="#aa0d0fdc87fd135ef2bedb030901cdb9c">int16</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ab7903878916593daecbeb95b98115ab0" name="ab7903878916593daecbeb95b98115ab0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab7903878916593daecbeb95b98115ab0">&#9670;&#160;</a></span>int32</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef int32_t <a class="el" href="#ab7903878916593daecbeb95b98115ab0">int32</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aa79c2d3de4fcd200458c406f40b2ae64" name="aa79c2d3de4fcd200458c406f40b2ae64"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa79c2d3de4fcd200458c406f40b2ae64">&#9670;&#160;</a></span>int8</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef int8_t <a class="el" href="#aa79c2d3de4fcd200458c406f40b2ae64">int8</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a7c2da1a4711ea1e7cbf3174d4f5dda9b" name="a7c2da1a4711ea1e7cbf3174d4f5dda9b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7c2da1a4711ea1e7cbf3174d4f5dda9b">&#9670;&#160;</a></span>intf</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef int <a class="el" href="#a7c2da1a4711ea1e7cbf3174d4f5dda9b">intf</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a03ba81f55b7c394eb8e1e5d1fcab1dfa" name="a03ba81f55b7c394eb8e1e5d1fcab1dfa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a03ba81f55b7c394eb8e1e5d1fcab1dfa">&#9670;&#160;</a></span>intn</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef int <a class="el" href="#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="afc14fa8aaf9acf8c92f2c6f5a99c589d" name="afc14fa8aaf9acf8c92f2c6f5a99c589d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afc14fa8aaf9acf8c92f2c6f5a99c589d">&#9670;&#160;</a></span>uchar8</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef unsigned char <a class="el" href="#afc14fa8aaf9acf8c92f2c6f5a99c589d">uchar8</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ac2a9e79eb120216f855626495b7bd18a" name="ac2a9e79eb120216f855626495b7bd18a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac2a9e79eb120216f855626495b7bd18a">&#9670;&#160;</a></span>uint16</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef uint16_t <a class="el" href="#ac2a9e79eb120216f855626495b7bd18a">uint16</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="acbd4acd0d29e2d6c43104827f77d9cd2" name="acbd4acd0d29e2d6c43104827f77d9cd2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acbd4acd0d29e2d6c43104827f77d9cd2">&#9670;&#160;</a></span>uint32</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef uint32_t <a class="el" href="#acbd4acd0d29e2d6c43104827f77d9cd2">uint32</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a33a5e996e7a90acefb8b1c0bea47e365" name="a33a5e996e7a90acefb8b1c0bea47e365"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a33a5e996e7a90acefb8b1c0bea47e365">&#9670;&#160;</a></span>uint8</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef uint8_t <a class="el" href="#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a8f0189616483670e42751f89a02501b5" name="a8f0189616483670e42751f89a02501b5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8f0189616483670e42751f89a02501b5">&#9670;&#160;</a></span>uintn</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef unsigned int <a class="el" href="#a8f0189616483670e42751f89a02501b5">uintn</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a7927e087749615dae3114cc27b91c86d" name="a7927e087749615dae3114cc27b91c86d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7927e087749615dae3114cc27b91c86d">&#9670;&#160;</a></span>VOID</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef void <a class="el" href="#a7927e087749615dae3114cc27b91c86d">VOID</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ab88227ecb274485a440c4020114cc464" name="ab88227ecb274485a440c4020114cc464"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab88227ecb274485a440c4020114cc464">&#9670;&#160;</a></span>VOIDP</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef void* <a class="el" href="#ab88227ecb274485a440c4020114cc464">VOIDP</a></td>
         </tr>
       </table>
 </div><div class="memdoc">

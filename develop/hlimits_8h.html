@@ -38,7 +38,7 @@
   <td id="projectlogo"><img alt="Logo" src="HDFG-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname"><a href="https://www.hdfgroup.org">HDF</a>
-   &#160;<span id="projectnumber">4.3.0-be9b9c9</span>
+   &#160;<span id="projectnumber">4.3.0-1</span>
    </div>
    <div id="projectbrief">API Reference</div>
   </td>
@@ -109,26 +109,21 @@ $(function(){initNavTree('hlimits_8h.html',''); initResizable(); });
   <div class="headertitle"><div class="title">hlimits.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<table class="memberdecls">
+<div class="textblock"><code>#include &quot;<a class="el" href="hdf_8h.html">hdf.h</a>&quot;</code><br />
+</div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:a595ffb7d8023b9bf8b08da5589e5897b" id="r_a595ffb7d8023b9bf8b08da5589e5897b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a595ffb7d8023b9bf8b08da5589e5897b">HDsetvbuf</a>(F,  S,  M,  Z)&#160;&#160;&#160;setvbuf(F, S, M, Z)</td></tr>
 <tr class="separator:a595ffb7d8023b9bf8b08da5589e5897b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3acffbd305ee72dcd4593c0d8af64a4f" id="r_a3acffbd305ee72dcd4593c0d8af64a4f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3acffbd305ee72dcd4593c0d8af64a4f">MIN</a>(a,  b)&#160;&#160;&#160;(((a) &lt; (b)) ? (a) : (b))</td></tr>
-<tr class="separator:a3acffbd305ee72dcd4593c0d8af64a4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afa99ec4acc4ecb2dc3c2d05da15d0e3f" id="r_afa99ec4acc4ecb2dc3c2d05da15d0e3f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afa99ec4acc4ecb2dc3c2d05da15d0e3f">MAX</a>(a,  b)&#160;&#160;&#160;(((a) &gt; (b)) ? (a) : (b))</td></tr>
-<tr class="separator:afa99ec4acc4ecb2dc3c2d05da15d0e3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abed8bb85c834277d6205e524ebf11eb6" id="r_abed8bb85c834277d6205e524ebf11eb6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abed8bb85c834277d6205e524ebf11eb6">TBUF_SZ</a>&#160;&#160;&#160;1024</td></tr>
-<tr class="separator:abed8bb85c834277d6205e524ebf11eb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afe4755eb824d7bf1b90f6d3670b3ffdf" id="r_afe4755eb824d7bf1b90f6d3670b3ffdf"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afe4755eb824d7bf1b90f6d3670b3ffdf">DF_MAXFNLEN</a>&#160;&#160;&#160;256</td></tr>
 <tr class="separator:afe4755eb824d7bf1b90f6d3670b3ffdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aebcfa6496e6542b0dca33891d479b016" id="r_aebcfa6496e6542b0dca33891d479b016"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aebcfa6496e6542b0dca33891d479b016">FIELDNAMELENMAX</a>&#160;&#160;&#160;128 /* fieldname   : 128 chars <a class="el" href="hproto__fortran_8h.html#a161f3d8632ea8f201b903c771ecf8bbb">max</a> */</td></tr>
+<tr class="memitem:aebcfa6496e6542b0dca33891d479b016" id="r_aebcfa6496e6542b0dca33891d479b016"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aebcfa6496e6542b0dca33891d479b016">FIELDNAMELENMAX</a>&#160;&#160;&#160;128 /* fieldname   : 128 chars <a class="el" href="hproto__fortran_8h.html#a4b5745658bf542c7612fe283f980b1de">max</a> */</td></tr>
 <tr class="separator:aebcfa6496e6542b0dca33891d479b016"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a70a8a2ab7cf8e184e74904fbce390f08" id="r_a70a8a2ab7cf8e184e74904fbce390f08"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a70a8a2ab7cf8e184e74904fbce390f08">VSFIELDMAX</a>&#160;&#160;&#160;256 /* <a class="el" href="hproto__fortran_8h.html#a161f3d8632ea8f201b903c771ecf8bbb">max</a> no of <a class="el" href="hproto__fortran_8h.html#a8dda73f57f98ca43eda53bd0abd73bbb">fields</a> per vdata */</td></tr>
+<tr class="memitem:a70a8a2ab7cf8e184e74904fbce390f08" id="r_a70a8a2ab7cf8e184e74904fbce390f08"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a70a8a2ab7cf8e184e74904fbce390f08">VSFIELDMAX</a>&#160;&#160;&#160;256 /* <a class="el" href="hproto__fortran_8h.html#a4b5745658bf542c7612fe283f980b1de">max</a> no of <a class="el" href="hproto__fortran_8h.html#a8dda73f57f98ca43eda53bd0abd73bbb">fields</a> per vdata */</td></tr>
 <tr class="separator:a70a8a2ab7cf8e184e74904fbce390f08"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac033a3d40c4a99a15ebdad0b199b422b" id="r_ac033a3d40c4a99a15ebdad0b199b422b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac033a3d40c4a99a15ebdad0b199b422b">VSNAMELENMAX</a>&#160;&#160;&#160;64  /* vdata <a class="el" href="hproto__fortran_8h.html#aba2997cce2f7db03c51cfaa3237048ab">name</a>  : 64 chars <a class="el" href="hproto__fortran_8h.html#a161f3d8632ea8f201b903c771ecf8bbb">max</a> */</td></tr>
+<tr class="memitem:ac033a3d40c4a99a15ebdad0b199b422b" id="r_ac033a3d40c4a99a15ebdad0b199b422b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac033a3d40c4a99a15ebdad0b199b422b">VSNAMELENMAX</a>&#160;&#160;&#160;64  /* vdata <a class="el" href="hproto__fortran_8h.html#aa8d94aae61783d3a49a151f3e5ab02cf">name</a>  : 64 chars <a class="el" href="hproto__fortran_8h.html#a4b5745658bf542c7612fe283f980b1de">max</a> */</td></tr>
 <tr class="separator:ac033a3d40c4a99a15ebdad0b199b422b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae98c1904bd9722e08e154a12a30142f0" id="r_ae98c1904bd9722e08e154a12a30142f0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae98c1904bd9722e08e154a12a30142f0">VGNAMELENMAX</a>&#160;&#160;&#160;64  /* vgroup <a class="el" href="hproto__fortran_8h.html#aba2997cce2f7db03c51cfaa3237048ab">name</a> : 64 chars <a class="el" href="hproto__fortran_8h.html#a161f3d8632ea8f201b903c771ecf8bbb">max</a> */</td></tr>
+<tr class="memitem:ae98c1904bd9722e08e154a12a30142f0" id="r_ae98c1904bd9722e08e154a12a30142f0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae98c1904bd9722e08e154a12a30142f0">VGNAMELENMAX</a>&#160;&#160;&#160;64  /* vgroup <a class="el" href="hproto__fortran_8h.html#aa8d94aae61783d3a49a151f3e5ab02cf">name</a> : 64 chars <a class="el" href="hproto__fortran_8h.html#a4b5745658bf542c7612fe283f980b1de">max</a> */</td></tr>
 <tr class="separator:ae98c1904bd9722e08e154a12a30142f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a66e7d002c880741cac01df94bc7a6da1" id="r_a66e7d002c880741cac01df94bc7a6da1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a66e7d002c880741cac01df94bc7a6da1">MAXNVELT</a>&#160;&#160;&#160;64</td></tr>
 <tr class="separator:a66e7d002c880741cac01df94bc7a6da1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -140,15 +135,7 @@ Macros</h2></td></tr>
 <tr class="separator:ab08dffec08ac450d78d4c062b571939e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5bb74f89a7ccccb5b72cb10e21b6a2f9" id="r_a5bb74f89a7ccccb5b72cb10e21b6a2f9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5bb74f89a7ccccb5b72cb10e21b6a2f9">MAX_FIELD_SIZE</a>&#160;&#160;&#160;65535</td></tr>
 <tr class="separator:a5bb74f89a7ccccb5b72cb10e21b6a2f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a19d34ae55fb2e29df830c11df2219da8" id="r_a19d34ae55fb2e29df830c11df2219da8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a19d34ae55fb2e29df830c11df2219da8">MAX_FILE</a>&#160;&#160;&#160;32</td></tr>
-<tr class="separator:a19d34ae55fb2e29df830c11df2219da8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abdd33f362ae3bbdacb5de76473aa8a2f" id="r_abdd33f362ae3bbdacb5de76473aa8a2f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abdd33f362ae3bbdacb5de76473aa8a2f">MAX_PATH_LEN</a>&#160;&#160;&#160;1024</td></tr>
-<tr class="separator:abdd33f362ae3bbdacb5de76473aa8a2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aad810ca0bf55f109827aec10e33fc914" id="r_aad810ca0bf55f109827aec10e33fc914"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aad810ca0bf55f109827aec10e33fc914">DEF_NDDS</a>&#160;&#160;&#160;16</td></tr>
-<tr class="separator:aad810ca0bf55f109827aec10e33fc914"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acee570c332b26748436ba8c75690d497" id="r_acee570c332b26748436ba8c75690d497"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acee570c332b26748436ba8c75690d497">MIN_NDDS</a>&#160;&#160;&#160;4</td></tr>
-<tr class="separator:acee570c332b26748436ba8c75690d497"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6f931885fb233742f38eff99d953475b" id="r_a6f931885fb233742f38eff99d953475b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6f931885fb233742f38eff99d953475b">MAX_REF</a>&#160;&#160;&#160;((<a class="el" href="hdfi_8h.html#ac2a9e79eb120216f855626495b7bd18a">uint16</a>)65535)</td></tr>
+<tr class="memitem:a6f931885fb233742f38eff99d953475b" id="r_a6f931885fb233742f38eff99d953475b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6f931885fb233742f38eff99d953475b">MAX_REF</a>&#160;&#160;&#160;((<a class="el" href="hdf_8h.html#ac2a9e79eb120216f855626495b7bd18a">uint16</a>)65535)</td></tr>
 <tr class="separator:a6f931885fb233742f38eff99d953475b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac53c48169219120cf374166b73b2b9e0" id="r_ac53c48169219120cf374166b73b2b9e0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac53c48169219120cf374166b73b2b9e0">HDF_APPENDABLE_BLOCK_LEN</a>&#160;&#160;&#160;4096</td></tr>
 <tr class="separator:ac53c48169219120cf374166b73b2b9e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -160,9 +147,9 @@ Macros</h2></td></tr>
 <tr class="separator:a7b65d39b4e3e3b991ad75149530595a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa1cb74fc961741f2ca510d1bd8b4be33" id="r_aa1cb74fc961741f2ca510d1bd8b4be33"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa1cb74fc961741f2ca510d1bd8b4be33">VDATA_BUFFER_MAX</a>&#160;&#160;&#160;1000000</td></tr>
 <tr class="separator:aa1cb74fc961741f2ca510d1bd8b4be33"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a72b242ee7f78ada609561bff89fe43dd" id="r_a72b242ee7f78ada609561bff89fe43dd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a72b242ee7f78ada609561bff89fe43dd">DFS_MAXLEN</a>&#160;&#160;&#160;255 /*  <a class="el" href="tbbt_8h.html#a4886a8f966a69949cefc46a6a3468006">Max</a> length of <a class="el" href="hproto__fortran_8h.html#a4364ac58395492cc7eabe6c86f60912d">label</a>/<a class="el" href="hproto__fortran_8h.html#acda23bf6132ea8d120ebe387708b9a55">unit</a>/<a class="el" href="hproto__fortran_8h.html#ae12e277dbd3341a1d3baf0a436670015">format</a> strings */</td></tr>
+<tr class="memitem:a72b242ee7f78ada609561bff89fe43dd" id="r_a72b242ee7f78ada609561bff89fe43dd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a72b242ee7f78ada609561bff89fe43dd">DFS_MAXLEN</a>&#160;&#160;&#160;255 /*  <a class="el" href="tbbt_8h.html#a4886a8f966a69949cefc46a6a3468006">Max</a> length of <a class="el" href="hproto__fortran_8h.html#af837a2d808cadd5b244f1e1cf47ecd2b">label</a>/<a class="el" href="hproto__fortran_8h.html#ae126434dcd92291f98760f2656d9e9dd">unit</a>/<a class="el" href="hproto__fortran_8h.html#a7fb118c06baac8e404a8bb78c3c450fd">format</a> strings */</td></tr>
 <tr class="separator:a72b242ee7f78ada609561bff89fe43dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2e56aae46f8be39e534829f9cd756fd6" id="r_a2e56aae46f8be39e534829f9cd756fd6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2e56aae46f8be39e534829f9cd756fd6">DFSD_MAXFILL_LEN</a>&#160;&#160;&#160;16  /* Current <a class="el" href="hproto__fortran_8h.html#a161f3d8632ea8f201b903c771ecf8bbb">max</a> length for fill_value space */</td></tr>
+<tr class="memitem:a2e56aae46f8be39e534829f9cd756fd6" id="r_a2e56aae46f8be39e534829f9cd756fd6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2e56aae46f8be39e534829f9cd756fd6">DFSD_MAXFILL_LEN</a>&#160;&#160;&#160;16  /* Current <a class="el" href="hproto__fortran_8h.html#a4b5745658bf542c7612fe283f980b1de">max</a> length for fill_value space */</td></tr>
 <tr class="separator:a2e56aae46f8be39e534829f9cd756fd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8e499fd1aa7f269384ad22964267323e" id="r_a8e499fd1aa7f269384ad22964267323e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8e499fd1aa7f269384ad22964267323e">COMP_MAX_COMP</a>&#160;&#160;&#160;12</td></tr>
 <tr class="separator:a8e499fd1aa7f269384ad22964267323e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -172,27 +159,23 @@ Macros</h2></td></tr>
 <tr class="separator:a36d20ba74425036fd66f863bb89adeda"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeee2f76ed9d3fd9bef9f492ce44325e9" id="r_aeee2f76ed9d3fd9bef9f492ce44325e9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeee2f76ed9d3fd9bef9f492ce44325e9">FUNC_NAME_LEN</a>&#160;&#160;&#160;32</td></tr>
 <tr class="separator:aeee2f76ed9d3fd9bef9f492ce44325e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac6de60b6c2d4de3460952e7669f22d60" id="r_ac6de60b6c2d4de3460952e7669f22d60"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac6de60b6c2d4de3460952e7669f22d60">ERR_STACK_SZ</a>&#160;&#160;&#160;10</td></tr>
-<tr class="separator:ac6de60b6c2d4de3460952e7669f22d60"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad339e626a3cf29b0551e03159bf59090" id="r_ad339e626a3cf29b0551e03159bf59090"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad339e626a3cf29b0551e03159bf59090">ERR_STRING_SIZE</a>&#160;&#160;&#160;512</td></tr>
-<tr class="separator:ad339e626a3cf29b0551e03159bf59090"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afb3f15f649d57c11a8f2695bbebb1db7" id="r_afb3f15f649d57c11a8f2695bbebb1db7"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afb3f15f649d57c11a8f2695bbebb1db7">H4_MAX_NC_OPEN</a>&#160;&#160;&#160;<a class="el" href="#a19d34ae55fb2e29df830c11df2219da8">MAX_FILE</a></td></tr>
+<tr class="memitem:afb3f15f649d57c11a8f2695bbebb1db7" id="r_afb3f15f649d57c11a8f2695bbebb1db7"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afb3f15f649d57c11a8f2695bbebb1db7">H4_MAX_NC_OPEN</a>&#160;&#160;&#160;MAX_FILE</td></tr>
 <tr class="separator:afb3f15f649d57c11a8f2695bbebb1db7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5ceb11ae48760c6904f1cdec4d5f0cd8" id="r_a5ceb11ae48760c6904f1cdec4d5f0cd8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5ceb11ae48760c6904f1cdec4d5f0cd8">H4_MAX_NC_DIMS</a>&#160;&#160;&#160;5000 /* <a class="el" href="hproto__fortran_8h.html#a161f3d8632ea8f201b903c771ecf8bbb">max</a> dimensions per file */</td></tr>
+<tr class="memitem:a5ceb11ae48760c6904f1cdec4d5f0cd8" id="r_a5ceb11ae48760c6904f1cdec4d5f0cd8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5ceb11ae48760c6904f1cdec4d5f0cd8">H4_MAX_NC_DIMS</a>&#160;&#160;&#160;5000 /* <a class="el" href="hproto__fortran_8h.html#a4b5745658bf542c7612fe283f980b1de">max</a> dimensions per file */</td></tr>
 <tr class="separator:a5ceb11ae48760c6904f1cdec4d5f0cd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1b094a6d152d30a6a7f5d72e8db74326" id="r_a1b094a6d152d30a6a7f5d72e8db74326"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1b094a6d152d30a6a7f5d72e8db74326">H4_MAX_NC_ATTRS</a>&#160;&#160;&#160;3000 /* <a class="el" href="hproto__fortran_8h.html#a161f3d8632ea8f201b903c771ecf8bbb">max</a> global or per variable attributes */</td></tr>
+<tr class="memitem:a1b094a6d152d30a6a7f5d72e8db74326" id="r_a1b094a6d152d30a6a7f5d72e8db74326"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1b094a6d152d30a6a7f5d72e8db74326">H4_MAX_NC_ATTRS</a>&#160;&#160;&#160;3000 /* <a class="el" href="hproto__fortran_8h.html#a4b5745658bf542c7612fe283f980b1de">max</a> global or per variable attributes */</td></tr>
 <tr class="separator:a1b094a6d152d30a6a7f5d72e8db74326"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a67ef75dcfe255e57843fdcf53335f244" id="r_a67ef75dcfe255e57843fdcf53335f244"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a67ef75dcfe255e57843fdcf53335f244">H4_MAX_NC_VARS</a>&#160;&#160;&#160;5000 /* <a class="el" href="hproto__fortran_8h.html#a161f3d8632ea8f201b903c771ecf8bbb">max</a> variables per file */</td></tr>
+<tr class="memitem:a67ef75dcfe255e57843fdcf53335f244" id="r_a67ef75dcfe255e57843fdcf53335f244"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a67ef75dcfe255e57843fdcf53335f244">H4_MAX_NC_VARS</a>&#160;&#160;&#160;5000 /* <a class="el" href="hproto__fortran_8h.html#a4b5745658bf542c7612fe283f980b1de">max</a> variables per file */</td></tr>
 <tr class="separator:a67ef75dcfe255e57843fdcf53335f244"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a49f787049308fe5eccbfe9d03395a18a" id="r_a49f787049308fe5eccbfe9d03395a18a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a49f787049308fe5eccbfe9d03395a18a">H4_MAX_NC_NAME</a>&#160;&#160;&#160;256 /* <a class="el" href="hproto__fortran_8h.html#a161f3d8632ea8f201b903c771ecf8bbb">max</a> length of a <a class="el" href="hproto__fortran_8h.html#aba2997cce2f7db03c51cfaa3237048ab">name</a> */</td></tr>
+<tr class="memitem:a49f787049308fe5eccbfe9d03395a18a" id="r_a49f787049308fe5eccbfe9d03395a18a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a49f787049308fe5eccbfe9d03395a18a">H4_MAX_NC_NAME</a>&#160;&#160;&#160;256 /* <a class="el" href="hproto__fortran_8h.html#a4b5745658bf542c7612fe283f980b1de">max</a> length of a <a class="el" href="hproto__fortran_8h.html#aa8d94aae61783d3a49a151f3e5ab02cf">name</a> */</td></tr>
 <tr class="separator:a49f787049308fe5eccbfe9d03395a18a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1d38d03d5da26d36b775a8f32d8209b6" id="r_a1d38d03d5da26d36b775a8f32d8209b6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1d38d03d5da26d36b775a8f32d8209b6">H4_MAX_NC_CLASS</a></td></tr>
 <tr class="separator:a1d38d03d5da26d36b775a8f32d8209b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8ed3f89a304258f5d4505817b8ea552b" id="r_a8ed3f89a304258f5d4505817b8ea552b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8ed3f89a304258f5d4505817b8ea552b">H4_MAX_VAR_DIMS</a>&#160;&#160;&#160;32 /* <a class="el" href="hproto__fortran_8h.html#a161f3d8632ea8f201b903c771ecf8bbb">max</a> per variable dimensions */</td></tr>
+<tr class="memitem:a8ed3f89a304258f5d4505817b8ea552b" id="r_a8ed3f89a304258f5d4505817b8ea552b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8ed3f89a304258f5d4505817b8ea552b">H4_MAX_VAR_DIMS</a>&#160;&#160;&#160;32 /* <a class="el" href="hproto__fortran_8h.html#a4b5745658bf542c7612fe283f980b1de">max</a> per variable dimensions */</td></tr>
 <tr class="separator:a8ed3f89a304258f5d4505817b8ea552b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9fbbe3abe2be3f8a02e1224e9c8756dd" id="r_a9fbbe3abe2be3f8a02e1224e9c8756dd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9fbbe3abe2be3f8a02e1224e9c8756dd">H4_MAX_GR_NAME</a>&#160;&#160;&#160;256 /* <a class="el" href="hproto__fortran_8h.html#a161f3d8632ea8f201b903c771ecf8bbb">max</a> length of a <a class="el" href="hproto__fortran_8h.html#aba2997cce2f7db03c51cfaa3237048ab">name</a> */</td></tr>
+<tr class="memitem:a9fbbe3abe2be3f8a02e1224e9c8756dd" id="r_a9fbbe3abe2be3f8a02e1224e9c8756dd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9fbbe3abe2be3f8a02e1224e9c8756dd">H4_MAX_GR_NAME</a>&#160;&#160;&#160;256 /* <a class="el" href="hproto__fortran_8h.html#a4b5745658bf542c7612fe283f980b1de">max</a> length of a <a class="el" href="hproto__fortran_8h.html#aa8d94aae61783d3a49a151f3e5ab02cf">name</a> */</td></tr>
 <tr class="separator:a9fbbe3abe2be3f8a02e1224e9c8756dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a62c6a69a41af36aae1de2f1996b95931" id="r_a62c6a69a41af36aae1de2f1996b95931"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a62c6a69a41af36aae1de2f1996b95931">GR_NAME</a>&#160;&#160;&#160;&quot;RIG0.0&quot; /* <a class="el" href="hproto__fortran_8h.html#aba2997cce2f7db03c51cfaa3237048ab">name</a> of the Vgroup containing all the images */</td></tr>
+<tr class="memitem:a62c6a69a41af36aae1de2f1996b95931" id="r_a62c6a69a41af36aae1de2f1996b95931"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a62c6a69a41af36aae1de2f1996b95931">GR_NAME</a>&#160;&#160;&#160;&quot;RIG0.0&quot; /* <a class="el" href="hproto__fortran_8h.html#aa8d94aae61783d3a49a151f3e5ab02cf">name</a> of the Vgroup containing all the images */</td></tr>
 <tr class="separator:a62c6a69a41af36aae1de2f1996b95931"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5208801aee7f1ae313ba13d5746c9828" id="r_a5208801aee7f1ae313ba13d5746c9828"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5208801aee7f1ae313ba13d5746c9828">RI_NAME</a></td></tr>
 <tr class="separator:a5208801aee7f1ae313ba13d5746c9828"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -224,31 +207,31 @@ Macros</h2></td></tr>
 <tr class="separator:a822a5e316dfdaed70aec7d9ec432b6c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a17891600528eacac02f79f71de5d4eff" id="r_a17891600528eacac02f79f71de5d4eff"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a17891600528eacac02f79f71de5d4eff">_HDF_CHK_TBL_CLASS</a>&#160;&#160;&#160;&quot;_HDF_CHK_TBL_&quot; /* 13 bytes */</td></tr>
 <tr class="separator:a17891600528eacac02f79f71de5d4eff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6fb6ec058be029953c9193ac37d0d774" id="r_a6fb6ec058be029953c9193ac37d0d774"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6fb6ec058be029953c9193ac37d0d774">_HDF_CHK_TBL_CLASS_VER</a>&#160;&#160;&#160;0               /* zero version number for class */</td></tr>
+<tr class="memitem:a6fb6ec058be029953c9193ac37d0d774" id="r_a6fb6ec058be029953c9193ac37d0d774"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6fb6ec058be029953c9193ac37d0d774">_HDF_CHK_TBL_CLASS_VER</a>&#160;&#160;&#160;0               /* zero version <a class="el" href="mfsdf_8h.html#a8524afcb8ec55f5ea4a7ed5f41b54614">number</a> for class */</td></tr>
 <tr class="separator:a6fb6ec058be029953c9193ac37d0d774"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2935d9071bcf066902dd537b35f1e564" id="r_a2935d9071bcf066902dd537b35f1e564"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2935d9071bcf066902dd537b35f1e564">FILL_ATTR</a>&#160;&#160;&#160;&quot;FillValue&quot;</td></tr>
 <tr class="separator:a2935d9071bcf066902dd537b35f1e564"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abddddc82a0c08d2e90aa4e164a68b6ae" id="r_abddddc82a0c08d2e90aa4e164a68b6ae"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abddddc82a0c08d2e90aa4e164a68b6ae">_FillValue</a>&#160;&#160;&#160;&quot;_FillValue&quot;</td></tr>
 <tr class="separator:abddddc82a0c08d2e90aa4e164a68b6ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abcc5702c276bd47141008b6b63b83448" id="r_abcc5702c276bd47141008b6b63b83448"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abcc5702c276bd47141008b6b63b83448">_HDF_LongName</a>&#160;&#160;&#160;&quot;long_name&quot;        /* <a class="el" href="hproto__fortran_8h.html#a8be029b749788c79b9e7849a2a51fa78">data</a>/dimension <a class="el" href="hproto__fortran_8h.html#a4364ac58395492cc7eabe6c86f60912d">label</a> <a class="el" href="hkit_8h.html#a079a99f3e75ab1e576e91c70ea0e35fe">string</a>  */</td></tr>
+<tr class="memitem:abcc5702c276bd47141008b6b63b83448" id="r_abcc5702c276bd47141008b6b63b83448"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abcc5702c276bd47141008b6b63b83448">_HDF_LongName</a>&#160;&#160;&#160;&quot;long_name&quot;        /* <a class="el" href="hproto__fortran_8h.html#a78bc5f9af96036c710819341987e9543">data</a>/dimension <a class="el" href="hproto__fortran_8h.html#af837a2d808cadd5b244f1e1cf47ecd2b">label</a> <a class="el" href="hkit_8h.html#a079a99f3e75ab1e576e91c70ea0e35fe">string</a>  */</td></tr>
 <tr class="separator:abcc5702c276bd47141008b6b63b83448"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2c27deab517df9dcad97e331ab39590e" id="r_a2c27deab517df9dcad97e331ab39590e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2c27deab517df9dcad97e331ab39590e">_HDF_Units</a>&#160;&#160;&#160;&quot;units&quot;            /* <a class="el" href="hproto__fortran_8h.html#a8be029b749788c79b9e7849a2a51fa78">data</a>/dimension <a class="el" href="hproto__fortran_8h.html#acda23bf6132ea8d120ebe387708b9a55">unit</a> <a class="el" href="hkit_8h.html#a079a99f3e75ab1e576e91c70ea0e35fe">string</a>   */</td></tr>
+<tr class="memitem:a2c27deab517df9dcad97e331ab39590e" id="r_a2c27deab517df9dcad97e331ab39590e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2c27deab517df9dcad97e331ab39590e">_HDF_Units</a>&#160;&#160;&#160;&quot;units&quot;            /* <a class="el" href="hproto__fortran_8h.html#a78bc5f9af96036c710819341987e9543">data</a>/dimension <a class="el" href="hproto__fortran_8h.html#ae126434dcd92291f98760f2656d9e9dd">unit</a> <a class="el" href="hkit_8h.html#a079a99f3e75ab1e576e91c70ea0e35fe">string</a>   */</td></tr>
 <tr class="separator:a2c27deab517df9dcad97e331ab39590e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4836f5b9ffc38e877e2e2e83d2f2b7c6" id="r_a4836f5b9ffc38e877e2e2e83d2f2b7c6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4836f5b9ffc38e877e2e2e83d2f2b7c6">_HDF_Format</a>&#160;&#160;&#160;&quot;format&quot;           /* <a class="el" href="hproto__fortran_8h.html#a8be029b749788c79b9e7849a2a51fa78">data</a>/dimension <a class="el" href="hproto__fortran_8h.html#ae12e277dbd3341a1d3baf0a436670015">format</a> <a class="el" href="hkit_8h.html#a079a99f3e75ab1e576e91c70ea0e35fe">string</a> */</td></tr>
+<tr class="memitem:a4836f5b9ffc38e877e2e2e83d2f2b7c6" id="r_a4836f5b9ffc38e877e2e2e83d2f2b7c6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4836f5b9ffc38e877e2e2e83d2f2b7c6">_HDF_Format</a>&#160;&#160;&#160;&quot;format&quot;           /* <a class="el" href="hproto__fortran_8h.html#a78bc5f9af96036c710819341987e9543">data</a>/dimension <a class="el" href="hproto__fortran_8h.html#a7fb118c06baac8e404a8bb78c3c450fd">format</a> <a class="el" href="hkit_8h.html#a079a99f3e75ab1e576e91c70ea0e35fe">string</a> */</td></tr>
 <tr class="separator:a4836f5b9ffc38e877e2e2e83d2f2b7c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a513107514518508e2c67497f21bcd846" id="r_a513107514518508e2c67497f21bcd846"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a513107514518508e2c67497f21bcd846">_HDF_CoordSys</a>&#160;&#160;&#160;&quot;coordsys&quot;         /* <a class="el" href="hproto__fortran_8h.html#a8be029b749788c79b9e7849a2a51fa78">data</a> <a class="el" href="hproto__fortran_8h.html#a445759f3e197e0c78fcdf4db7e38c368">coordsys</a> <a class="el" href="hkit_8h.html#a079a99f3e75ab1e576e91c70ea0e35fe">string</a>         */</td></tr>
+<tr class="memitem:a513107514518508e2c67497f21bcd846" id="r_a513107514518508e2c67497f21bcd846"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a513107514518508e2c67497f21bcd846">_HDF_CoordSys</a>&#160;&#160;&#160;&quot;coordsys&quot;         /* <a class="el" href="hproto__fortran_8h.html#a78bc5f9af96036c710819341987e9543">data</a> <a class="el" href="hproto__fortran_8h.html#a445759f3e197e0c78fcdf4db7e38c368">coordsys</a> <a class="el" href="hkit_8h.html#a079a99f3e75ab1e576e91c70ea0e35fe">string</a>         */</td></tr>
 <tr class="separator:a513107514518508e2c67497f21bcd846"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a278e1da2324e46718ea96a4f6137a1a4" id="r_a278e1da2324e46718ea96a4f6137a1a4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a278e1da2324e46718ea96a4f6137a1a4">_HDF_ValidRange</a>&#160;&#160;&#160;&quot;valid_range&quot;      /* valid range of <a class="el" href="hproto__fortran_8h.html#a8be029b749788c79b9e7849a2a51fa78">data</a> <a class="el" href="hproto__fortran_8h.html#aa213837add851f30918771e166dc194a">values</a>  */</td></tr>
+<tr class="memitem:a278e1da2324e46718ea96a4f6137a1a4" id="r_a278e1da2324e46718ea96a4f6137a1a4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a278e1da2324e46718ea96a4f6137a1a4">_HDF_ValidRange</a>&#160;&#160;&#160;&quot;valid_range&quot;      /* valid range of <a class="el" href="hproto__fortran_8h.html#a78bc5f9af96036c710819341987e9543">data</a> <a class="el" href="hproto__fortran_8h.html#a092dbeec29b076ad57e3825183381f38">values</a>  */</td></tr>
 <tr class="separator:a278e1da2324e46718ea96a4f6137a1a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab2a6f6c05e9c6c4e2362c579d73cec7c" id="r_ab2a6f6c05e9c6c4e2362c579d73cec7c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab2a6f6c05e9c6c4e2362c579d73cec7c">_HDF_ScaleFactor</a>&#160;&#160;&#160;&quot;scale_factor&quot;     /* <a class="el" href="hproto__fortran_8h.html#a8be029b749788c79b9e7849a2a51fa78">data</a> calibration factor    */</td></tr>
+<tr class="memitem:ab2a6f6c05e9c6c4e2362c579d73cec7c" id="r_ab2a6f6c05e9c6c4e2362c579d73cec7c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab2a6f6c05e9c6c4e2362c579d73cec7c">_HDF_ScaleFactor</a>&#160;&#160;&#160;&quot;scale_factor&quot;     /* <a class="el" href="hproto__fortran_8h.html#a78bc5f9af96036c710819341987e9543">data</a> calibration factor    */</td></tr>
 <tr class="separator:ab2a6f6c05e9c6c4e2362c579d73cec7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae5ae7327259fc37c2d0de53befbe29ff" id="r_ae5ae7327259fc37c2d0de53befbe29ff"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae5ae7327259fc37c2d0de53befbe29ff">_HDF_ScaleFactorErr</a>&#160;&#160;&#160;&quot;scale_factor_err&quot; /* <a class="el" href="hproto__fortran_8h.html#a8be029b749788c79b9e7849a2a51fa78">data</a> calibration factor <a class="el" href="dumplib_8h.html#ac33c8a42a58a6379397850b60be22028">error</a> */</td></tr>
+<tr class="memitem:ae5ae7327259fc37c2d0de53befbe29ff" id="r_ae5ae7327259fc37c2d0de53befbe29ff"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae5ae7327259fc37c2d0de53befbe29ff">_HDF_ScaleFactorErr</a>&#160;&#160;&#160;&quot;scale_factor_err&quot; /* <a class="el" href="hproto__fortran_8h.html#a78bc5f9af96036c710819341987e9543">data</a> calibration factor <a class="el" href="dumplib_8h.html#ac33c8a42a58a6379397850b60be22028">error</a> */</td></tr>
 <tr class="separator:ae5ae7327259fc37c2d0de53befbe29ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a57d66ee5bbb7cf1dcb881746b26e2b66" id="r_a57d66ee5bbb7cf1dcb881746b26e2b66"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a57d66ee5bbb7cf1dcb881746b26e2b66">_HDF_AddOffset</a>&#160;&#160;&#160;&quot;add_offset&quot;       /* calibration <a class="el" href="hproto__fortran_8h.html#a871536eaa547f1b6cab2d6095ae19653">offset</a>           */</td></tr>
 <tr class="separator:a57d66ee5bbb7cf1dcb881746b26e2b66"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a03d8f9a216c65f490ebeb04e3d976ced" id="r_a03d8f9a216c65f490ebeb04e3d976ced"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a03d8f9a216c65f490ebeb04e3d976ced">_HDF_AddOffsetErr</a>&#160;&#160;&#160;&quot;add_offset_err&quot;   /*  calibration <a class="el" href="hproto__fortran_8h.html#a871536eaa547f1b6cab2d6095ae19653">offset</a> <a class="el" href="dumplib_8h.html#ac33c8a42a58a6379397850b60be22028">error</a> */</td></tr>
 <tr class="separator:a03d8f9a216c65f490ebeb04e3d976ced"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa527a22815549fbb23a74f19c64d3f67" id="r_aa527a22815549fbb23a74f19c64d3f67"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa527a22815549fbb23a74f19c64d3f67">_HDF_CalibratedNt</a>&#160;&#160;&#160;&quot;calibrated_nt&quot;    /* <a class="el" href="hproto__fortran_8h.html#a8be029b749788c79b9e7849a2a51fa78">data</a> <a class="el" href="hproto__fortran_8h.html#a67eb17a567a8fa132650fcee33ca50e9">type</a> of uncalibrated <a class="el" href="hproto__fortran_8h.html#a8be029b749788c79b9e7849a2a51fa78">data</a> */</td></tr>
+<tr class="memitem:aa527a22815549fbb23a74f19c64d3f67" id="r_aa527a22815549fbb23a74f19c64d3f67"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa527a22815549fbb23a74f19c64d3f67">_HDF_CalibratedNt</a>&#160;&#160;&#160;&quot;calibrated_nt&quot;    /* <a class="el" href="hproto__fortran_8h.html#a78bc5f9af96036c710819341987e9543">data</a> <a class="el" href="hproto__fortran_8h.html#a67eb17a567a8fa132650fcee33ca50e9">type</a> of uncalibrated <a class="el" href="hproto__fortran_8h.html#a78bc5f9af96036c710819341987e9543">data</a> */</td></tr>
 <tr class="separator:aa527a22815549fbb23a74f19c64d3f67"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa8bf34d403552fc5388a4bb454f9b5b8" id="r_aa8bf34d403552fc5388a4bb454f9b5b8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa8bf34d403552fc5388a4bb454f9b5b8">_HDF_ValidMax</a>&#160;&#160;&#160;&quot;valid_max&quot;</td></tr>
 <tr class="separator:aa8bf34d403552fc5388a4bb454f9b5b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -256,7 +239,7 @@ Macros</h2></td></tr>
 <tr class="separator:ab7fc4698064d710ae1cb2f5d0f4a10f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9224459fe699f5b19a0846e5d980bebe" id="r_a9224459fe699f5b19a0846e5d980bebe"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9224459fe699f5b19a0846e5d980bebe">_HDF_Remarks</a>&#160;&#160;&#160;&quot;remarks&quot;    /* <a class="el" href="hproto__fortran_8h.html#a8338f0d056768bed7cbb3f2185078d14">annotation</a>, by DFAN */</td></tr>
 <tr class="separator:a9224459fe699f5b19a0846e5d980bebe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa90b59cb5c2995cc4ac92d4b1903d8dc" id="r_aa90b59cb5c2995cc4ac92d4b1903d8dc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa90b59cb5c2995cc4ac92d4b1903d8dc">_HDF_AnnoLabel</a>&#160;&#160;&#160;&quot;anno_label&quot; /* <a class="el" href="hproto__fortran_8h.html#a8338f0d056768bed7cbb3f2185078d14">annotation</a> <a class="el" href="hproto__fortran_8h.html#a4364ac58395492cc7eabe6c86f60912d">label</a>, by DFAN */</td></tr>
+<tr class="memitem:aa90b59cb5c2995cc4ac92d4b1903d8dc" id="r_aa90b59cb5c2995cc4ac92d4b1903d8dc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa90b59cb5c2995cc4ac92d4b1903d8dc">_HDF_AnnoLabel</a>&#160;&#160;&#160;&quot;anno_label&quot; /* <a class="el" href="hproto__fortran_8h.html#a8338f0d056768bed7cbb3f2185078d14">annotation</a> <a class="el" href="hproto__fortran_8h.html#af837a2d808cadd5b244f1e1cf47ecd2b">label</a>, by DFAN */</td></tr>
 <tr class="separator:aa90b59cb5c2995cc4ac92d4b1903d8dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
@@ -309,7 +292,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define _HDF_AnnoLabel&#160;&#160;&#160;&quot;anno_label&quot; /* <a class="el" href="hproto__fortran_8h.html#a8338f0d056768bed7cbb3f2185078d14">annotation</a> <a class="el" href="hproto__fortran_8h.html#a4364ac58395492cc7eabe6c86f60912d">label</a>, by DFAN */</td>
+          <td class="memname">#define _HDF_AnnoLabel&#160;&#160;&#160;&quot;anno_label&quot; /* <a class="el" href="hproto__fortran_8h.html#a8338f0d056768bed7cbb3f2185078d14">annotation</a> <a class="el" href="hproto__fortran_8h.html#af837a2d808cadd5b244f1e1cf47ecd2b">label</a>, by DFAN */</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -337,7 +320,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define _HDF_CalibratedNt&#160;&#160;&#160;&quot;calibrated_nt&quot;    /* <a class="el" href="hproto__fortran_8h.html#a8be029b749788c79b9e7849a2a51fa78">data</a> <a class="el" href="hproto__fortran_8h.html#a67eb17a567a8fa132650fcee33ca50e9">type</a> of uncalibrated <a class="el" href="hproto__fortran_8h.html#a8be029b749788c79b9e7849a2a51fa78">data</a> */</td>
+          <td class="memname">#define _HDF_CalibratedNt&#160;&#160;&#160;&quot;calibrated_nt&quot;    /* <a class="el" href="hproto__fortran_8h.html#a78bc5f9af96036c710819341987e9543">data</a> <a class="el" href="hproto__fortran_8h.html#a67eb17a567a8fa132650fcee33ca50e9">type</a> of uncalibrated <a class="el" href="hproto__fortran_8h.html#a78bc5f9af96036c710819341987e9543">data</a> */</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -379,7 +362,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define _HDF_CHK_TBL_CLASS_VER&#160;&#160;&#160;0               /* zero version number for class */</td>
+          <td class="memname">#define _HDF_CHK_TBL_CLASS_VER&#160;&#160;&#160;0               /* zero version <a class="el" href="mfsdf_8h.html#a8524afcb8ec55f5ea4a7ed5f41b54614">number</a> for class */</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -393,7 +376,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define _HDF_CoordSys&#160;&#160;&#160;&quot;coordsys&quot;         /* <a class="el" href="hproto__fortran_8h.html#a8be029b749788c79b9e7849a2a51fa78">data</a> <a class="el" href="hproto__fortran_8h.html#a445759f3e197e0c78fcdf4db7e38c368">coordsys</a> <a class="el" href="hkit_8h.html#a079a99f3e75ab1e576e91c70ea0e35fe">string</a>         */</td>
+          <td class="memname">#define _HDF_CoordSys&#160;&#160;&#160;&quot;coordsys&quot;         /* <a class="el" href="hproto__fortran_8h.html#a78bc5f9af96036c710819341987e9543">data</a> <a class="el" href="hproto__fortran_8h.html#a445759f3e197e0c78fcdf4db7e38c368">coordsys</a> <a class="el" href="hkit_8h.html#a079a99f3e75ab1e576e91c70ea0e35fe">string</a>         */</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -435,7 +418,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define _HDF_Format&#160;&#160;&#160;&quot;format&quot;           /* <a class="el" href="hproto__fortran_8h.html#a8be029b749788c79b9e7849a2a51fa78">data</a>/dimension <a class="el" href="hproto__fortran_8h.html#ae12e277dbd3341a1d3baf0a436670015">format</a> <a class="el" href="hkit_8h.html#a079a99f3e75ab1e576e91c70ea0e35fe">string</a> */</td>
+          <td class="memname">#define _HDF_Format&#160;&#160;&#160;&quot;format&quot;           /* <a class="el" href="hproto__fortran_8h.html#a78bc5f9af96036c710819341987e9543">data</a>/dimension <a class="el" href="hproto__fortran_8h.html#a7fb118c06baac8e404a8bb78c3c450fd">format</a> <a class="el" href="hkit_8h.html#a079a99f3e75ab1e576e91c70ea0e35fe">string</a> */</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -449,7 +432,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define _HDF_LongName&#160;&#160;&#160;&quot;long_name&quot;        /* <a class="el" href="hproto__fortran_8h.html#a8be029b749788c79b9e7849a2a51fa78">data</a>/dimension <a class="el" href="hproto__fortran_8h.html#a4364ac58395492cc7eabe6c86f60912d">label</a> <a class="el" href="hkit_8h.html#a079a99f3e75ab1e576e91c70ea0e35fe">string</a>  */</td>
+          <td class="memname">#define _HDF_LongName&#160;&#160;&#160;&quot;long_name&quot;        /* <a class="el" href="hproto__fortran_8h.html#a78bc5f9af96036c710819341987e9543">data</a>/dimension <a class="el" href="hproto__fortran_8h.html#af837a2d808cadd5b244f1e1cf47ecd2b">label</a> <a class="el" href="hkit_8h.html#a079a99f3e75ab1e576e91c70ea0e35fe">string</a>  */</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -477,7 +460,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define _HDF_ScaleFactor&#160;&#160;&#160;&quot;scale_factor&quot;     /* <a class="el" href="hproto__fortran_8h.html#a8be029b749788c79b9e7849a2a51fa78">data</a> calibration factor    */</td>
+          <td class="memname">#define _HDF_ScaleFactor&#160;&#160;&#160;&quot;scale_factor&quot;     /* <a class="el" href="hproto__fortran_8h.html#a78bc5f9af96036c710819341987e9543">data</a> calibration factor    */</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -491,7 +474,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define _HDF_ScaleFactorErr&#160;&#160;&#160;&quot;scale_factor_err&quot; /* <a class="el" href="hproto__fortran_8h.html#a8be029b749788c79b9e7849a2a51fa78">data</a> calibration factor <a class="el" href="dumplib_8h.html#ac33c8a42a58a6379397850b60be22028">error</a> */</td>
+          <td class="memname">#define _HDF_ScaleFactorErr&#160;&#160;&#160;&quot;scale_factor_err&quot; /* <a class="el" href="hproto__fortran_8h.html#a78bc5f9af96036c710819341987e9543">data</a> calibration factor <a class="el" href="dumplib_8h.html#ac33c8a42a58a6379397850b60be22028">error</a> */</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -533,7 +516,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define _HDF_Units&#160;&#160;&#160;&quot;units&quot;            /* <a class="el" href="hproto__fortran_8h.html#a8be029b749788c79b9e7849a2a51fa78">data</a>/dimension <a class="el" href="hproto__fortran_8h.html#acda23bf6132ea8d120ebe387708b9a55">unit</a> <a class="el" href="hkit_8h.html#a079a99f3e75ab1e576e91c70ea0e35fe">string</a>   */</td>
+          <td class="memname">#define _HDF_Units&#160;&#160;&#160;&quot;units&quot;            /* <a class="el" href="hproto__fortran_8h.html#a78bc5f9af96036c710819341987e9543">data</a>/dimension <a class="el" href="hproto__fortran_8h.html#ae126434dcd92291f98760f2656d9e9dd">unit</a> <a class="el" href="hkit_8h.html#a079a99f3e75ab1e576e91c70ea0e35fe">string</a>   */</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -575,7 +558,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define _HDF_ValidRange&#160;&#160;&#160;&quot;valid_range&quot;      /* valid range of <a class="el" href="hproto__fortran_8h.html#a8be029b749788c79b9e7849a2a51fa78">data</a> <a class="el" href="hproto__fortran_8h.html#aa213837add851f30918771e166dc194a">values</a>  */</td>
+          <td class="memname">#define _HDF_ValidRange&#160;&#160;&#160;&quot;valid_range&quot;      /* valid range of <a class="el" href="hproto__fortran_8h.html#a78bc5f9af96036c710819341987e9543">data</a> <a class="el" href="hproto__fortran_8h.html#a092dbeec29b076ad57e3825183381f38">values</a>  */</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -652,20 +635,6 @@ Macros</h2></td></tr>
 
 </div>
 </div>
-<a id="aad810ca0bf55f109827aec10e33fc914" name="aad810ca0bf55f109827aec10e33fc914"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aad810ca0bf55f109827aec10e33fc914">&#9670;&#160;</a></span>DEF_NDDS</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define DEF_NDDS&#160;&#160;&#160;16</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="afe4755eb824d7bf1b90f6d3670b3ffdf" name="afe4755eb824d7bf1b90f6d3670b3ffdf"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afe4755eb824d7bf1b90f6d3670b3ffdf">&#9670;&#160;</a></span>DF_MAXFNLEN</h2>
 
@@ -687,7 +656,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define DFS_MAXLEN&#160;&#160;&#160;255 /*  <a class="el" href="tbbt_8h.html#a4886a8f966a69949cefc46a6a3468006">Max</a> length of <a class="el" href="hproto__fortran_8h.html#a4364ac58395492cc7eabe6c86f60912d">label</a>/<a class="el" href="hproto__fortran_8h.html#acda23bf6132ea8d120ebe387708b9a55">unit</a>/<a class="el" href="hproto__fortran_8h.html#ae12e277dbd3341a1d3baf0a436670015">format</a> strings */</td>
+          <td class="memname">#define DFS_MAXLEN&#160;&#160;&#160;255 /*  <a class="el" href="tbbt_8h.html#a4886a8f966a69949cefc46a6a3468006">Max</a> length of <a class="el" href="hproto__fortran_8h.html#af837a2d808cadd5b244f1e1cf47ecd2b">label</a>/<a class="el" href="hproto__fortran_8h.html#ae126434dcd92291f98760f2656d9e9dd">unit</a>/<a class="el" href="hproto__fortran_8h.html#a7fb118c06baac8e404a8bb78c3c450fd">format</a> strings */</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -701,7 +670,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define DFSD_MAXFILL_LEN&#160;&#160;&#160;16  /* Current <a class="el" href="hproto__fortran_8h.html#a161f3d8632ea8f201b903c771ecf8bbb">max</a> length for fill_value space */</td>
+          <td class="memname">#define DFSD_MAXFILL_LEN&#160;&#160;&#160;16  /* Current <a class="el" href="hproto__fortran_8h.html#a4b5745658bf542c7612fe283f980b1de">max</a> length for fill_value space */</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -736,34 +705,6 @@ Macros</h2></td></tr>
 
 </div>
 </div>
-<a id="ac6de60b6c2d4de3460952e7669f22d60" name="ac6de60b6c2d4de3460952e7669f22d60"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac6de60b6c2d4de3460952e7669f22d60">&#9670;&#160;</a></span>ERR_STACK_SZ</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define ERR_STACK_SZ&#160;&#160;&#160;10</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ad339e626a3cf29b0551e03159bf59090" name="ad339e626a3cf29b0551e03159bf59090"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad339e626a3cf29b0551e03159bf59090">&#9670;&#160;</a></span>ERR_STRING_SIZE</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define ERR_STRING_SIZE&#160;&#160;&#160;512</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="aebcfa6496e6542b0dca33891d479b016" name="aebcfa6496e6542b0dca33891d479b016"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aebcfa6496e6542b0dca33891d479b016">&#9670;&#160;</a></span>FIELDNAMELENMAX</h2>
 
@@ -771,7 +712,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define FIELDNAMELENMAX&#160;&#160;&#160;128 /* fieldname   : 128 chars <a class="el" href="hproto__fortran_8h.html#a161f3d8632ea8f201b903c771ecf8bbb">max</a> */</td>
+          <td class="memname">#define FIELDNAMELENMAX&#160;&#160;&#160;128 /* fieldname   : 128 chars <a class="el" href="hproto__fortran_8h.html#a4b5745658bf542c7612fe283f980b1de">max</a> */</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -813,7 +754,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define GR_NAME&#160;&#160;&#160;&quot;RIG0.0&quot; /* <a class="el" href="hproto__fortran_8h.html#aba2997cce2f7db03c51cfaa3237048ab">name</a> of the Vgroup containing all the images */</td>
+          <td class="memname">#define GR_NAME&#160;&#160;&#160;&quot;RIG0.0&quot; /* <a class="el" href="hproto__fortran_8h.html#aa8d94aae61783d3a49a151f3e5ab02cf">name</a> of the Vgroup containing all the images */</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -827,7 +768,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define H4_MAX_GR_NAME&#160;&#160;&#160;256 /* <a class="el" href="hproto__fortran_8h.html#a161f3d8632ea8f201b903c771ecf8bbb">max</a> length of a <a class="el" href="hproto__fortran_8h.html#aba2997cce2f7db03c51cfaa3237048ab">name</a> */</td>
+          <td class="memname">#define H4_MAX_GR_NAME&#160;&#160;&#160;256 /* <a class="el" href="hproto__fortran_8h.html#a4b5745658bf542c7612fe283f980b1de">max</a> length of a <a class="el" href="hproto__fortran_8h.html#aa8d94aae61783d3a49a151f3e5ab02cf">name</a> */</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -841,7 +782,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define H4_MAX_NC_ATTRS&#160;&#160;&#160;3000 /* <a class="el" href="hproto__fortran_8h.html#a161f3d8632ea8f201b903c771ecf8bbb">max</a> global or per variable attributes */</td>
+          <td class="memname">#define H4_MAX_NC_ATTRS&#160;&#160;&#160;3000 /* <a class="el" href="hproto__fortran_8h.html#a4b5745658bf542c7612fe283f980b1de">max</a> global or per variable attributes */</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -872,7 +813,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define H4_MAX_NC_DIMS&#160;&#160;&#160;5000 /* <a class="el" href="hproto__fortran_8h.html#a161f3d8632ea8f201b903c771ecf8bbb">max</a> dimensions per file */</td>
+          <td class="memname">#define H4_MAX_NC_DIMS&#160;&#160;&#160;5000 /* <a class="el" href="hproto__fortran_8h.html#a4b5745658bf542c7612fe283f980b1de">max</a> dimensions per file */</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -886,7 +827,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define H4_MAX_NC_NAME&#160;&#160;&#160;256 /* <a class="el" href="hproto__fortran_8h.html#a161f3d8632ea8f201b903c771ecf8bbb">max</a> length of a <a class="el" href="hproto__fortran_8h.html#aba2997cce2f7db03c51cfaa3237048ab">name</a> */</td>
+          <td class="memname">#define H4_MAX_NC_NAME&#160;&#160;&#160;256 /* <a class="el" href="hproto__fortran_8h.html#a4b5745658bf542c7612fe283f980b1de">max</a> length of a <a class="el" href="hproto__fortran_8h.html#aa8d94aae61783d3a49a151f3e5ab02cf">name</a> */</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -900,7 +841,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define H4_MAX_NC_OPEN&#160;&#160;&#160;<a class="el" href="#a19d34ae55fb2e29df830c11df2219da8">MAX_FILE</a></td>
+          <td class="memname">#define H4_MAX_NC_OPEN&#160;&#160;&#160;MAX_FILE</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -914,7 +855,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define H4_MAX_NC_VARS&#160;&#160;&#160;5000 /* <a class="el" href="hproto__fortran_8h.html#a161f3d8632ea8f201b903c771ecf8bbb">max</a> variables per file */</td>
+          <td class="memname">#define H4_MAX_NC_VARS&#160;&#160;&#160;5000 /* <a class="el" href="hproto__fortran_8h.html#a4b5745658bf542c7612fe283f980b1de">max</a> variables per file */</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -928,7 +869,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define H4_MAX_VAR_DIMS&#160;&#160;&#160;32 /* <a class="el" href="hproto__fortran_8h.html#a161f3d8632ea8f201b903c771ecf8bbb">max</a> per variable dimensions */</td>
+          <td class="memname">#define H4_MAX_VAR_DIMS&#160;&#160;&#160;32 /* <a class="el" href="hproto__fortran_8h.html#a4b5745658bf542c7612fe283f980b1de">max</a> per variable dimensions */</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1022,27 +963,6 @@ Macros</h2></td></tr>
 
 </div>
 </div>
-<a id="afa99ec4acc4ecb2dc3c2d05da15d0e3f" name="afa99ec4acc4ecb2dc3c2d05da15d0e3f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afa99ec4acc4ecb2dc3c2d05da15d0e3f">&#9670;&#160;</a></span>MAX</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define MAX</td>
-          <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">a, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">b</span>&#160;)&#160;&#160;&#160;(((a) &gt; (b)) ? (a) : (b))</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a5bb74f89a7ccccb5b72cb10e21b6a2f9" name="a5bb74f89a7ccccb5b72cb10e21b6a2f9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5bb74f89a7ccccb5b72cb10e21b6a2f9">&#9670;&#160;</a></span>MAX_FIELD_SIZE</h2>
 
@@ -1051,20 +971,6 @@ Macros</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">#define MAX_FIELD_SIZE&#160;&#160;&#160;65535</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a19d34ae55fb2e29df830c11df2219da8" name="a19d34ae55fb2e29df830c11df2219da8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a19d34ae55fb2e29df830c11df2219da8">&#9670;&#160;</a></span>MAX_FILE</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define MAX_FILE&#160;&#160;&#160;32</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1099,20 +1005,6 @@ Macros</h2></td></tr>
 
 </div>
 </div>
-<a id="abdd33f362ae3bbdacb5de76473aa8a2f" name="abdd33f362ae3bbdacb5de76473aa8a2f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abdd33f362ae3bbdacb5de76473aa8a2f">&#9670;&#160;</a></span>MAX_PATH_LEN</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define MAX_PATH_LEN&#160;&#160;&#160;1024</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a6f931885fb233742f38eff99d953475b" name="a6f931885fb233742f38eff99d953475b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6f931885fb233742f38eff99d953475b">&#9670;&#160;</a></span>MAX_REF</h2>
 
@@ -1120,7 +1012,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define MAX_REF&#160;&#160;&#160;((<a class="el" href="hdfi_8h.html#ac2a9e79eb120216f855626495b7bd18a">uint16</a>)65535)</td>
+          <td class="memname">#define MAX_REF&#160;&#160;&#160;((<a class="el" href="hdf_8h.html#ac2a9e79eb120216f855626495b7bd18a">uint16</a>)65535)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1135,41 +1027,6 @@ Macros</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">#define MAXNVELT&#160;&#160;&#160;64</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a3acffbd305ee72dcd4593c0d8af64a4f" name="a3acffbd305ee72dcd4593c0d8af64a4f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3acffbd305ee72dcd4593c0d8af64a4f">&#9670;&#160;</a></span>MIN</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define MIN</td>
-          <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">a, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">b</span>&#160;)&#160;&#160;&#160;(((a) &lt; (b)) ? (a) : (b))</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="acee570c332b26748436ba8c75690d497" name="acee570c332b26748436ba8c75690d497"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acee570c332b26748436ba8c75690d497">&#9670;&#160;</a></span>MIN_NDDS</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define MIN_NDDS&#160;&#160;&#160;4</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1224,20 +1081,6 @@ Macros</h2></td></tr>
 </div><!-- fragment -->
 </div>
 </div>
-<a id="abed8bb85c834277d6205e524ebf11eb6" name="abed8bb85c834277d6205e524ebf11eb6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abed8bb85c834277d6205e524ebf11eb6">&#9670;&#160;</a></span>TBUF_SZ</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define TBUF_SZ&#160;&#160;&#160;1024</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="aa1cb74fc961741f2ca510d1bd8b4be33" name="aa1cb74fc961741f2ca510d1bd8b4be33"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa1cb74fc961741f2ca510d1bd8b4be33">&#9670;&#160;</a></span>VDATA_BUFFER_MAX</h2>
 
@@ -1287,7 +1130,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define VGNAMELENMAX&#160;&#160;&#160;64  /* vgroup <a class="el" href="hproto__fortran_8h.html#aba2997cce2f7db03c51cfaa3237048ab">name</a> : 64 chars <a class="el" href="hproto__fortran_8h.html#a161f3d8632ea8f201b903c771ecf8bbb">max</a> */</td>
+          <td class="memname">#define VGNAMELENMAX&#160;&#160;&#160;64  /* vgroup <a class="el" href="hproto__fortran_8h.html#aa8d94aae61783d3a49a151f3e5ab02cf">name</a> : 64 chars <a class="el" href="hproto__fortran_8h.html#a4b5745658bf542c7612fe283f980b1de">max</a> */</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1301,7 +1144,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define VSFIELDMAX&#160;&#160;&#160;256 /* <a class="el" href="hproto__fortran_8h.html#a161f3d8632ea8f201b903c771ecf8bbb">max</a> no of <a class="el" href="hproto__fortran_8h.html#a8dda73f57f98ca43eda53bd0abd73bbb">fields</a> per vdata */</td>
+          <td class="memname">#define VSFIELDMAX&#160;&#160;&#160;256 /* <a class="el" href="hproto__fortran_8h.html#a4b5745658bf542c7612fe283f980b1de">max</a> no of <a class="el" href="hproto__fortran_8h.html#a8dda73f57f98ca43eda53bd0abd73bbb">fields</a> per vdata */</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1315,7 +1158,7 @@ Macros</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define VSNAMELENMAX&#160;&#160;&#160;64  /* vdata <a class="el" href="hproto__fortran_8h.html#aba2997cce2f7db03c51cfaa3237048ab">name</a>  : 64 chars <a class="el" href="hproto__fortran_8h.html#a161f3d8632ea8f201b903c771ecf8bbb">max</a> */</td>
+          <td class="memname">#define VSNAMELENMAX&#160;&#160;&#160;64  /* vdata <a class="el" href="hproto__fortran_8h.html#aa8d94aae61783d3a49a151f3e5ab02cf">name</a>  : 64 chars <a class="el" href="hproto__fortran_8h.html#a4b5745658bf542c7612fe283f980b1de">max</a> */</td>
         </tr>
       </table>
 </div><div class="memdoc">

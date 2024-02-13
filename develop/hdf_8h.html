@@ -38,7 +38,7 @@
   <td id="projectlogo"><img alt="Logo" src="HDFG-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname"><a href="https://www.hdfgroup.org">HDF</a>
-   &#160;<span id="projectnumber">4.3.0-be9b9c9</span>
+   &#160;<span id="projectnumber">4.3.0-1</span>
    </div>
    <div id="projectbrief">API Reference</div>
   </td>
@@ -112,10 +112,12 @@ $(function(){initNavTree('hdf_8h.html',''); initResizable(); });
   <div class="headertitle"><div class="title">hdf.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &quot;<a class="el" href="hdfi_8h.html">hdfi.h</a>&quot;</code><br />
+<div class="textblock"><code>#include &quot;h4config.h&quot;</code><br />
+<code>#include &lt;inttypes.h&gt;</code><br />
 <code>#include &quot;<a class="el" href="hlimits_8h.html">hlimits.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="hntdefs_8h.html">hntdefs.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="htags_8h.html">htags.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="_h4api__adpt_8h.html">H4api_adpt.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="hbitio_8h.html">hbitio.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="hcomp_8h.html">hcomp.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="herr_8h.html">herr.h</a>&quot;</code><br />
@@ -133,6 +135,8 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
+<tr class="memitem:a61a57e3b8ac7e54ffe9c4a174f752553" id="r_a61a57e3b8ac7e54ffe9c4a174f752553"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a61a57e3b8ac7e54ffe9c4a174f752553">_fcdtocp</a>(<a class="el" href="hproto__fortran_8h.html#a12ff46cce4369f82c508f38632e4cf3c">desc</a>)&#160;&#160;&#160;(<a class="el" href="hproto__fortran_8h.html#a12ff46cce4369f82c508f38632e4cf3c">desc</a>)</td></tr>
+<tr class="separator:a61a57e3b8ac7e54ffe9c4a174f752553"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7c3124bae5bdee5aa994cd77116d5983" id="r_a7c3124bae5bdee5aa994cd77116d5983"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7c3124bae5bdee5aa994cd77116d5983">DFACC_READ</a>&#160;&#160;&#160;1</td></tr>
 <tr class="separator:a7c3124bae5bdee5aa994cd77116d5983"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9ad485c46cae9899e1d8a1ebe96b4582" id="r_a9ad485c46cae9899e1d8a1ebe96b4582"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9ad485c46cae9899e1d8a1ebe96b4582">DFACC_WRITE</a>&#160;&#160;&#160;2</td></tr>
@@ -147,11 +151,11 @@ Macros</h2></td></tr>
 <tr class="separator:ab98ed45b0da3b75546509cc430867e8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a50cac3b428c865f2726e87f3b4a76b9f" id="r_a50cac3b428c865f2726e87f3b4a76b9f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a50cac3b428c865f2726e87f3b4a76b9f">DFACC_CLOBBER</a>&#160;&#160;&#160;4</td></tr>
 <tr class="separator:a50cac3b428c865f2726e87f3b4a76b9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2d6f94bcc69194cbd7c657f66f29f414" id="r_a2d6f94bcc69194cbd7c657f66f29f414"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2d6f94bcc69194cbd7c657f66f29f414">DFACC_BUFFER</a>&#160;&#160;&#160;8    /* <a class="el" href="hproto__fortran_8h.html#a73d29f95cc1f772c77b9d7a41678fa60">buffer</a> the access to this AID */</td></tr>
+<tr class="memitem:a2d6f94bcc69194cbd7c657f66f29f414" id="r_a2d6f94bcc69194cbd7c657f66f29f414"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2d6f94bcc69194cbd7c657f66f29f414">DFACC_BUFFER</a>&#160;&#160;&#160;8    /* <a class="el" href="hproto__fortran_8h.html#a73d29f95cc1f772c77b9d7a41678fa60">buffer</a> the <a class="el" href="mfsdf_8h.html#aedf15f010f7f8c1d8b90545482c65e1c">access</a> to this AID */</td></tr>
 <tr class="separator:a2d6f94bcc69194cbd7c657f66f29f414"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0c3f67794dab09dddf681f01e4a76acc" id="r_a0c3f67794dab09dddf681f01e4a76acc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0c3f67794dab09dddf681f01e4a76acc">DFACC_APPENDABLE</a>&#160;&#160;&#160;0x10 /* make this AID appendable */</td></tr>
 <tr class="separator:a0c3f67794dab09dddf681f01e4a76acc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0979def918370e491b4e4c9b48665491" id="r_a0979def918370e491b4e4c9b48665491"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0979def918370e491b4e4c9b48665491">DFACC_CURRENT</a>&#160;&#160;&#160;0x20 /* <a class="el" href="hproto__fortran_8h.html#a75888c8279a6aed7c8297b7ee51e0d10">start</a> looking for a <a class="el" href="hproto__fortran_8h.html#a0ee1a1789812882b33edab7c2665a1ac">tag</a>/<a class="el" href="hproto__fortran_8h.html#ac13b2a11794996d86af14155abac963e">ref</a> from the current */</td></tr>
+<tr class="memitem:a0979def918370e491b4e4c9b48665491" id="r_a0979def918370e491b4e4c9b48665491"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0979def918370e491b4e4c9b48665491">DFACC_CURRENT</a>&#160;&#160;&#160;0x20 /* <a class="el" href="hproto__fortran_8h.html#a9b5a1e76b086e1f02f877026d9ae40a4">start</a> looking for a <a class="el" href="hproto__fortran_8h.html#a0ee1a1789812882b33edab7c2665a1ac">tag</a>/<a class="el" href="hproto__fortran_8h.html#ac13b2a11794996d86af14155abac963e">ref</a> from the current */</td></tr>
 <tr class="separator:a0979def918370e491b4e4c9b48665491"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afa35fd69f359d90551ef8a0397ecdf60" id="r_afa35fd69f359d90551ef8a0397ecdf60"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afa35fd69f359d90551ef8a0397ecdf60">DFACC_OLD</a>&#160;&#160;&#160;1 /* for accessing existing ext. element file */</td></tr>
 <tr class="separator:afa35fd69f359d90551ef8a0397ecdf60"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -177,10 +181,6 @@ Macros</h2></td></tr>
 <tr class="separator:a82bc06cf44e2201df39aa76de6019980"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abb508ea8227673f419e9fe3a86c30d8e" id="r_abb508ea8227673f419e9fe3a86c30d8e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abb508ea8227673f419e9fe3a86c30d8e">FAIL</a>&#160;&#160;&#160;(-1)</td></tr>
 <tr class="separator:abb508ea8227673f419e9fe3a86c30d8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa93f0eb578d23995850d61f7d61c55c1" id="r_aa93f0eb578d23995850d61f7d61c55c1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa93f0eb578d23995850d61f7d61c55c1">FALSE</a>&#160;&#160;&#160;0</td></tr>
-<tr class="separator:aa93f0eb578d23995850d61f7d61c55c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa8cecfc5c5c054d2875c03e77b7be15d" id="r_aa8cecfc5c5c054d2875c03e77b7be15d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa8cecfc5c5c054d2875c03e77b7be15d">TRUE</a>&#160;&#160;&#160;(!<a class="el" href="#aa93f0eb578d23995850d61f7d61c55c1">FALSE</a>)</td></tr>
-<tr class="separator:aa8cecfc5c5c054d2875c03e77b7be15d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6bb7d572651c0e55a1899dbbee9b1dde" id="r_a6bb7d572651c0e55a1899dbbee9b1dde"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6bb7d572651c0e55a1899dbbee9b1dde">STREQ</a>(s,  t)&#160;&#160;&#160;(strcmp((s), (t)) == 0)</td></tr>
 <tr class="separator:a6bb7d572651c0e55a1899dbbee9b1dde"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a47bf88f4430e2244a929fbb84b1665a6" id="r_a47bf88f4430e2244a929fbb84b1665a6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a47bf88f4430e2244a929fbb84b1665a6">NSTREQ</a>(s,  t,  <a class="el" href="hproto__fortran_8h.html#a2f098e9ee14a2371dd279a2af958ea3c">n</a>)&#160;&#160;&#160;(strncmp((s), (t), (<a class="el" href="hproto__fortran_8h.html#a2f098e9ee14a2371dd279a2af958ea3c">n</a>)) == 0)</td></tr>
@@ -189,24 +189,84 @@ Macros</h2></td></tr>
 <tr class="separator:aab05b5d2ecaa6cf5581cd061733947a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a31fd9dd897536fb99062df569c1a4feb" id="r_a31fd9dd897536fb99062df569c1a4feb"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a31fd9dd897536fb99062df569c1a4feb">NO_INTERLACE</a>&#160;&#160;&#160;1</td></tr>
 <tr class="separator:a31fd9dd897536fb99062df569c1a4feb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7a3aee6b556710ebd3b3ee817b469670" id="r_a7a3aee6b556710ebd3b3ee817b469670"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7a3aee6b556710ebd3b3ee817b469670">HDFopen</a>(f,  a,  d)&#160;&#160;&#160;<a class="el" href="hproto_8h.html#af2763cc5548945d2c6f2f26eeb0f5a9a">Hopen</a>((f), (a), (d))</td></tr>
+<tr class="memitem:a7a3aee6b556710ebd3b3ee817b469670" id="r_a7a3aee6b556710ebd3b3ee817b469670"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7a3aee6b556710ebd3b3ee817b469670">HDFopen</a>(<a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a>,  a,  d)&#160;&#160;&#160;<a class="el" href="hproto_8h.html#af2763cc5548945d2c6f2f26eeb0f5a9a">Hopen</a>((<a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a>), (a), (d))</td></tr>
 <tr class="separator:a7a3aee6b556710ebd3b3ee817b469670"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8bc27e82077a165e36cb900970f4a123" id="r_a8bc27e82077a165e36cb900970f4a123"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8bc27e82077a165e36cb900970f4a123">HDFclose</a>(f)&#160;&#160;&#160;<a class="el" href="hproto_8h.html#a13c72fce23eb6b9f280a6e85c8c7b523">Hclose</a>((f))</td></tr>
+<tr class="memitem:a8bc27e82077a165e36cb900970f4a123" id="r_a8bc27e82077a165e36cb900970f4a123"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8bc27e82077a165e36cb900970f4a123">HDFclose</a>(<a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a>)&#160;&#160;&#160;<a class="el" href="hproto_8h.html#a13c72fce23eb6b9f280a6e85c8c7b523">Hclose</a>((<a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a>))</td></tr>
 <tr class="separator:a8bc27e82077a165e36cb900970f4a123"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c4f884a689f1302fe3e90f5798e5e71" id="r_a3c4f884a689f1302fe3e90f5798e5e71"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3c4f884a689f1302fe3e90f5798e5e71">Vstart</a>(f)&#160;&#160;&#160;<a class="el" href="hproto_8h.html#acdabad050e0cbf878457df47dabd69cb">Vinitialize</a>((f))</td></tr>
+<tr class="memitem:a3c4f884a689f1302fe3e90f5798e5e71" id="r_a3c4f884a689f1302fe3e90f5798e5e71"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3c4f884a689f1302fe3e90f5798e5e71">Vstart</a>(<a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a>)&#160;&#160;&#160;<a class="el" href="hproto_8h.html#acdabad050e0cbf878457df47dabd69cb">Vinitialize</a>((<a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a>))</td></tr>
 <tr class="separator:a3c4f884a689f1302fe3e90f5798e5e71"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afb091a4a9652b391869686311ff23e6f" id="r_afb091a4a9652b391869686311ff23e6f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afb091a4a9652b391869686311ff23e6f">Vend</a>(f)&#160;&#160;&#160;<a class="el" href="hproto_8h.html#ae63b6f2451180fb004b61c0abd5a59e9">Vfinish</a>((f))</td></tr>
+<tr class="memitem:afb091a4a9652b391869686311ff23e6f" id="r_afb091a4a9652b391869686311ff23e6f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afb091a4a9652b391869686311ff23e6f">Vend</a>(<a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a>)&#160;&#160;&#160;<a class="el" href="hproto_8h.html#ae63b6f2451180fb004b61c0abd5a59e9">Vfinish</a>((<a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a>))</td></tr>
 <tr class="separator:afb091a4a9652b391869686311ff23e6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a967f059d55b5c771993cd7b3d42242de" id="r_a967f059d55b5c771993cd7b3d42242de"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a967f059d55b5c771993cd7b3d42242de">HDgettagname</a>(<a class="el" href="hproto__fortran_8h.html#a0ee1a1789812882b33edab7c2665a1ac">tag</a>)&#160;&#160;&#160;<a class="el" href="hproto_8h.html#a25fcf34bb61194498df83568ab7c7bd0">HDgettagdesc</a>(<a class="el" href="hproto__fortran_8h.html#a0ee1a1789812882b33edab7c2665a1ac">tag</a>)</td></tr>
 <tr class="separator:a967f059d55b5c771993cd7b3d42242de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8f4dd272632fb3ac27feff62424ae609" id="r_a8f4dd272632fb3ac27feff62424ae609"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8f4dd272632fb3ac27feff62424ae609">MP_PAGEALL</a>&#160;&#160;&#160;0x01 /* page the whole file i.e. no limit on '<a class="el" href="hproto__fortran_8h.html#a8363508019c65a01e2d1fae0e2f7016b">maxcache</a>'*/</td></tr>
 <tr class="separator:a8f4dd272632fb3ac27feff62424ae609"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a153ed72941fd5d337de5a9c16dea1f8b" id="r_a153ed72941fd5d337de5a9c16dea1f8b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a153ed72941fd5d337de5a9c16dea1f8b">HDmalloc</a>(s)&#160;&#160;&#160;malloc(s)</td></tr>
+<tr class="separator:a153ed72941fd5d337de5a9c16dea1f8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac4f19c646bcf6a6611f45b0f30ce3089" id="r_ac4f19c646bcf6a6611f45b0f30ce3089"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac4f19c646bcf6a6611f45b0f30ce3089">HDcalloc</a>(a,  b)&#160;&#160;&#160;calloc(a, b)</td></tr>
+<tr class="separator:ac4f19c646bcf6a6611f45b0f30ce3089"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aff09504fb4d9aa9d74c74c3eaae6457c" id="r_aff09504fb4d9aa9d74c74c3eaae6457c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aff09504fb4d9aa9d74c74c3eaae6457c">HDfree</a>(p)&#160;&#160;&#160;free(p)</td></tr>
+<tr class="separator:aff09504fb4d9aa9d74c74c3eaae6457c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a483cdad25d80a90d203fa7befc78e474" id="r_a483cdad25d80a90d203fa7befc78e474"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a483cdad25d80a90d203fa7befc78e474">HDrealloc</a>(p,  s)&#160;&#160;&#160;realloc(p, s)</td></tr>
+<tr class="separator:a483cdad25d80a90d203fa7befc78e474"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01c67dfc0a4abdbeb23c1289b97a8ee0" id="r_a01c67dfc0a4abdbeb23c1289b97a8ee0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a01c67dfc0a4abdbeb23c1289b97a8ee0">HDfreenclear</a>(p)</td></tr>
+<tr class="separator:a01c67dfc0a4abdbeb23c1289b97a8ee0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a854a80738ff31fa0b78770ca65c2030d" id="r_a854a80738ff31fa0b78770ca65c2030d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a854a80738ff31fa0b78770ca65c2030d">HDstrcat</a>(s1,  s2)&#160;&#160;&#160;(strcat((s1), (s2)))</td></tr>
+<tr class="separator:a854a80738ff31fa0b78770ca65c2030d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac5eab79d179220dd57ca97cd92415854" id="r_ac5eab79d179220dd57ca97cd92415854"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac5eab79d179220dd57ca97cd92415854">HDstrcmp</a>(s,  t)&#160;&#160;&#160;(strcmp((s), (t)))</td></tr>
+<tr class="separator:ac5eab79d179220dd57ca97cd92415854"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac9a301ad7913cf6655ae8835a25ae83c" id="r_ac9a301ad7913cf6655ae8835a25ae83c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac9a301ad7913cf6655ae8835a25ae83c">HDstrcpy</a>(s,  d)&#160;&#160;&#160;(strcpy((s), (d)))</td></tr>
+<tr class="separator:ac9a301ad7913cf6655ae8835a25ae83c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a25b2dc617997774311d9a9e41d7ee495" id="r_a25b2dc617997774311d9a9e41d7ee495"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a25b2dc617997774311d9a9e41d7ee495">HDstrlen</a>(s)&#160;&#160;&#160;(strlen((const char *)(s)))</td></tr>
+<tr class="separator:a25b2dc617997774311d9a9e41d7ee495"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10e39bb269cd0609b59b21dc51d78e0d" id="r_a10e39bb269cd0609b59b21dc51d78e0d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a10e39bb269cd0609b59b21dc51d78e0d">HDstrncmp</a>(s1,  s2,  <a class="el" href="hproto__fortran_8h.html#a2f098e9ee14a2371dd279a2af958ea3c">n</a>)&#160;&#160;&#160;(strncmp((s1), (s2), (<a class="el" href="hproto__fortran_8h.html#a2f098e9ee14a2371dd279a2af958ea3c">n</a>)))</td></tr>
+<tr class="separator:a10e39bb269cd0609b59b21dc51d78e0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d10aba6ef38c55c3bce9163945fc3d8" id="r_a1d10aba6ef38c55c3bce9163945fc3d8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1d10aba6ef38c55c3bce9163945fc3d8">HDstrncpy</a>(s1,  s2,  <a class="el" href="hproto__fortran_8h.html#a2f098e9ee14a2371dd279a2af958ea3c">n</a>)&#160;&#160;&#160;(strncpy((s1), (s2), (<a class="el" href="hproto__fortran_8h.html#a2f098e9ee14a2371dd279a2af958ea3c">n</a>)))</td></tr>
+<tr class="separator:a1d10aba6ef38c55c3bce9163945fc3d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a218a62222cab78057365e81b086c655f" id="r_a218a62222cab78057365e81b086c655f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a218a62222cab78057365e81b086c655f">HDstrchr</a>(s,  <a class="el" href="mfsdf_8h.html#ab654f40a0fdb23ac74d21a10ad575e78">c</a>)&#160;&#160;&#160;(strchr((s), (<a class="el" href="mfsdf_8h.html#ab654f40a0fdb23ac74d21a10ad575e78">c</a>)))</td></tr>
+<tr class="separator:a218a62222cab78057365e81b086c655f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abaadaa6d942024dd9b3da159a2cbc720" id="r_abaadaa6d942024dd9b3da159a2cbc720"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abaadaa6d942024dd9b3da159a2cbc720">HDstrrchr</a>(s,  <a class="el" href="mfsdf_8h.html#ab654f40a0fdb23ac74d21a10ad575e78">c</a>)&#160;&#160;&#160;(strrchr((s), (<a class="el" href="mfsdf_8h.html#ab654f40a0fdb23ac74d21a10ad575e78">c</a>)))</td></tr>
+<tr class="separator:abaadaa6d942024dd9b3da159a2cbc720"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac3e19975dee66a1c4401729381bedb44" id="r_ac3e19975dee66a1c4401729381bedb44"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac3e19975dee66a1c4401729381bedb44">HDstrtol</a>(s,  e,  b)&#160;&#160;&#160;(strtol((s), (e), (b)))</td></tr>
+<tr class="separator:ac3e19975dee66a1c4401729381bedb44"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:ab3d0180f57eaaabe3661d979eea4b3c5" id="r_ab3d0180f57eaaabe3661d979eea4b3c5"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab3d0180f57eaaabe3661d979eea4b3c5">HFILEID</a></td></tr>
+<tr class="memitem:aacdc525d6f7bddb3ae95d5c311bd06a1" id="r_aacdc525d6f7bddb3ae95d5c311bd06a1"><td class="memItemLeft" align="right" valign="top">typedef float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aacdc525d6f7bddb3ae95d5c311bd06a1">float32</a></td></tr>
+<tr class="separator:aacdc525d6f7bddb3ae95d5c311bd06a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a232fad1b0d6dcc7c16aabde98b2e2a80" id="r_a232fad1b0d6dcc7c16aabde98b2e2a80"><td class="memItemLeft" align="right" valign="top">typedef double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a232fad1b0d6dcc7c16aabde98b2e2a80">float64</a></td></tr>
+<tr class="separator:a232fad1b0d6dcc7c16aabde98b2e2a80"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac9e1c0f508ae0f5f8a2b704a91e1ae86" id="r_ac9e1c0f508ae0f5f8a2b704a91e1ae86"><td class="memItemLeft" align="right" valign="top">typedef char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac9e1c0f508ae0f5f8a2b704a91e1ae86">char8</a></td></tr>
+<tr class="separator:ac9e1c0f508ae0f5f8a2b704a91e1ae86"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc14fa8aaf9acf8c92f2c6f5a99c589d" id="r_afc14fa8aaf9acf8c92f2c6f5a99c589d"><td class="memItemLeft" align="right" valign="top">typedef unsigned char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afc14fa8aaf9acf8c92f2c6f5a99c589d">uchar8</a></td></tr>
+<tr class="separator:afc14fa8aaf9acf8c92f2c6f5a99c589d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a508c750c0c4fdaf757f94f5dc5b22cbd" id="r_a508c750c0c4fdaf757f94f5dc5b22cbd"><td class="memItemLeft" align="right" valign="top">typedef char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a508c750c0c4fdaf757f94f5dc5b22cbd">_fcd</a></td></tr>
+<tr class="separator:a508c750c0c4fdaf757f94f5dc5b22cbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa79c2d3de4fcd200458c406f40b2ae64" id="r_aa79c2d3de4fcd200458c406f40b2ae64"><td class="memItemLeft" align="right" valign="top">typedef int8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa79c2d3de4fcd200458c406f40b2ae64">int8</a></td></tr>
+<tr class="separator:aa79c2d3de4fcd200458c406f40b2ae64"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a33a5e996e7a90acefb8b1c0bea47e365" id="r_a33a5e996e7a90acefb8b1c0bea47e365"><td class="memItemLeft" align="right" valign="top">typedef uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a></td></tr>
+<tr class="separator:a33a5e996e7a90acefb8b1c0bea47e365"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa0d0fdc87fd135ef2bedb030901cdb9c" id="r_aa0d0fdc87fd135ef2bedb030901cdb9c"><td class="memItemLeft" align="right" valign="top">typedef int16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa0d0fdc87fd135ef2bedb030901cdb9c">int16</a></td></tr>
+<tr class="separator:aa0d0fdc87fd135ef2bedb030901cdb9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac2a9e79eb120216f855626495b7bd18a" id="r_ac2a9e79eb120216f855626495b7bd18a"><td class="memItemLeft" align="right" valign="top">typedef uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac2a9e79eb120216f855626495b7bd18a">uint16</a></td></tr>
+<tr class="separator:ac2a9e79eb120216f855626495b7bd18a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7903878916593daecbeb95b98115ab0" id="r_ab7903878916593daecbeb95b98115ab0"><td class="memItemLeft" align="right" valign="top">typedef int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab7903878916593daecbeb95b98115ab0">int32</a></td></tr>
+<tr class="separator:ab7903878916593daecbeb95b98115ab0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acbd4acd0d29e2d6c43104827f77d9cd2" id="r_acbd4acd0d29e2d6c43104827f77d9cd2"><td class="memItemLeft" align="right" valign="top">typedef uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acbd4acd0d29e2d6c43104827f77d9cd2">uint32</a></td></tr>
+<tr class="separator:acbd4acd0d29e2d6c43104827f77d9cd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a03ba81f55b7c394eb8e1e5d1fcab1dfa" id="r_a03ba81f55b7c394eb8e1e5d1fcab1dfa"><td class="memItemLeft" align="right" valign="top">typedef int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a></td></tr>
+<tr class="separator:a03ba81f55b7c394eb8e1e5d1fcab1dfa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f0189616483670e42751f89a02501b5" id="r_a8f0189616483670e42751f89a02501b5"><td class="memItemLeft" align="right" valign="top">typedef unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8f0189616483670e42751f89a02501b5">uintn</a></td></tr>
+<tr class="separator:a8f0189616483670e42751f89a02501b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7927e087749615dae3114cc27b91c86d" id="r_a7927e087749615dae3114cc27b91c86d"><td class="memItemLeft" align="right" valign="top">typedef void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7927e087749615dae3114cc27b91c86d">VOID</a></td></tr>
+<tr class="separator:a7927e087749615dae3114cc27b91c86d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab88227ecb274485a440c4020114cc464" id="r_ab88227ecb274485a440c4020114cc464"><td class="memItemLeft" align="right" valign="top">typedef void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab88227ecb274485a440c4020114cc464">VOIDP</a></td></tr>
+<tr class="separator:ab88227ecb274485a440c4020114cc464"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c2da1a4711ea1e7cbf3174d4f5dda9b" id="r_a7c2da1a4711ea1e7cbf3174d4f5dda9b"><td class="memItemLeft" align="right" valign="top">typedef int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7c2da1a4711ea1e7cbf3174d4f5dda9b">intf</a></td></tr>
+<tr class="separator:a7c2da1a4711ea1e7cbf3174d4f5dda9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3d0180f57eaaabe3661d979eea4b3c5" id="r_ab3d0180f57eaaabe3661d979eea4b3c5"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="#ab7903878916593daecbeb95b98115ab0">int32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab3d0180f57eaaabe3661d979eea4b3c5">HFILEID</a></td></tr>
 <tr class="separator:ab3d0180f57eaaabe3661d979eea4b3c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a23c72e6fa7078f2f9769f22423bdad46" id="r_a23c72e6fa7078f2f9769f22423bdad46"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="hdfi_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a23c72e6fa7078f2f9769f22423bdad46">hdf_termfunc_t</a>) (void)</td></tr>
+<tr class="memitem:a23c72e6fa7078f2f9769f22423bdad46" id="r_a23c72e6fa7078f2f9769f22423bdad46"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a23c72e6fa7078f2f9769f22423bdad46">hdf_termfunc_t</a>) (void)</td></tr>
 <tr class="separator:a23c72e6fa7078f2f9769f22423bdad46"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
@@ -223,6 +283,23 @@ Enumerations</h2></td></tr>
 <tr class="separator:a61be56a5726b8df43b8f9839bcee9975"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="a61a57e3b8ac7e54ffe9c4a174f752553" name="a61a57e3b8ac7e54ffe9c4a174f752553"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a61a57e3b8ac7e54ffe9c4a174f752553">&#9670;&#160;</a></span>_fcdtocp</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define _fcdtocp</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><a class="el" href="hproto__fortran_8h.html#a12ff46cce4369f82c508f38632e4cf3c">desc</a></span></td><td>)</td>
+          <td>&#160;&#160;&#160;(<a class="el" href="hproto__fortran_8h.html#a12ff46cce4369f82c508f38632e4cf3c">desc</a>)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aa8c0920aa7f31307450c1001c1ba1264" name="aa8c0920aa7f31307450c1001c1ba1264"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa8c0920aa7f31307450c1001c1ba1264">&#9670;&#160;</a></span>CACHE_ALL_FILES</h2>
 
@@ -342,7 +419,7 @@ Enumerations</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define DFACC_BUFFER&#160;&#160;&#160;8    /* <a class="el" href="hproto__fortran_8h.html#a73d29f95cc1f772c77b9d7a41678fa60">buffer</a> the access to this AID */</td>
+          <td class="memname">#define DFACC_BUFFER&#160;&#160;&#160;8    /* <a class="el" href="hproto__fortran_8h.html#a73d29f95cc1f772c77b9d7a41678fa60">buffer</a> the <a class="el" href="mfsdf_8h.html#aedf15f010f7f8c1d8b90545482c65e1c">access</a> to this AID */</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -384,7 +461,7 @@ Enumerations</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define DFACC_CURRENT&#160;&#160;&#160;0x20 /* <a class="el" href="hproto__fortran_8h.html#a75888c8279a6aed7c8297b7ee51e0d10">start</a> looking for a <a class="el" href="hproto__fortran_8h.html#a0ee1a1789812882b33edab7c2665a1ac">tag</a>/<a class="el" href="hproto__fortran_8h.html#ac13b2a11794996d86af14155abac963e">ref</a> from the current */</td>
+          <td class="memname">#define DFACC_CURRENT&#160;&#160;&#160;0x20 /* <a class="el" href="hproto__fortran_8h.html#a9b5a1e76b086e1f02f877026d9ae40a4">start</a> looking for a <a class="el" href="hproto__fortran_8h.html#a0ee1a1789812882b33edab7c2665a1ac">tag</a>/<a class="el" href="hproto__fortran_8h.html#ac13b2a11794996d86af14155abac963e">ref</a> from the current */</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -517,20 +594,6 @@ Enumerations</h2></td></tr>
 
 </div>
 </div>
-<a id="aa93f0eb578d23995850d61f7d61c55c1" name="aa93f0eb578d23995850d61f7d61c55c1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa93f0eb578d23995850d61f7d61c55c1">&#9670;&#160;</a></span>FALSE</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define FALSE&#160;&#160;&#160;0</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="aab05b5d2ecaa6cf5581cd061733947a8" name="aab05b5d2ecaa6cf5581cd061733947a8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aab05b5d2ecaa6cf5581cd061733947a8">&#9670;&#160;</a></span>FULL_INTERLACE</h2>
 
@@ -539,6 +602,27 @@ Enumerations</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">#define FULL_INTERLACE&#160;&#160;&#160;0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac4f19c646bcf6a6611f45b0f30ce3089" name="ac4f19c646bcf6a6611f45b0f30ce3089"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac4f19c646bcf6a6611f45b0f30ce3089">&#9670;&#160;</a></span>HDcalloc</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define HDcalloc</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">a, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">b</span>&#160;)&#160;&#160;&#160;calloc(a, b)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -554,8 +638,8 @@ Enumerations</h2></td></tr>
         <tr>
           <td class="memname">#define HDFclose</td>
           <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">f</span></td><td>)</td>
-          <td>&#160;&#160;&#160;<a class="el" href="hproto_8h.html#a13c72fce23eb6b9f280a6e85c8c7b523">Hclose</a>((f))</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a></span></td><td>)</td>
+          <td>&#160;&#160;&#160;<a class="el" href="hproto_8h.html#a13c72fce23eb6b9f280a6e85c8c7b523">Hclose</a>((<a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a>))</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -571,7 +655,7 @@ Enumerations</h2></td></tr>
         <tr>
           <td class="memname">#define HDFopen</td>
           <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">f, </span></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -581,11 +665,49 @@ Enumerations</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">d</span>&#160;)&#160;&#160;&#160;<a class="el" href="hproto_8h.html#af2763cc5548945d2c6f2f26eeb0f5a9a">Hopen</a>((f), (a), (d))</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">d</span>&#160;)&#160;&#160;&#160;<a class="el" href="hproto_8h.html#af2763cc5548945d2c6f2f26eeb0f5a9a">Hopen</a>((<a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a>), (a), (d))</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
+</div>
+</div>
+<a id="aff09504fb4d9aa9d74c74c3eaae6457c" name="aff09504fb4d9aa9d74c74c3eaae6457c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aff09504fb4d9aa9d74c74c3eaae6457c">&#9670;&#160;</a></span>HDfree</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define HDfree</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">p</span></td><td>)</td>
+          <td>&#160;&#160;&#160;free(p)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a01c67dfc0a4abdbeb23c1289b97a8ee0" name="a01c67dfc0a4abdbeb23c1289b97a8ee0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a01c67dfc0a4abdbeb23c1289b97a8ee0">&#9670;&#160;</a></span>HDfreenclear</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define HDfreenclear</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">p</span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">    {                                                                                                        \</div>
+<div class="line">        free(p);                                                                                             \</div>
+<div class="line">        (p) = NULL;                                                                                          \</div>
+<div class="line">    }</div>
+</div><!-- fragment -->
 </div>
 </div>
 <a id="a967f059d55b5c771993cd7b3d42242de" name="a967f059d55b5c771993cd7b3d42242de"></a>
@@ -599,6 +721,244 @@ Enumerations</h2></td></tr>
           <td>(</td>
           <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><a class="el" href="hproto__fortran_8h.html#a0ee1a1789812882b33edab7c2665a1ac">tag</a></span></td><td>)</td>
           <td>&#160;&#160;&#160;<a class="el" href="hproto_8h.html#a25fcf34bb61194498df83568ab7c7bd0">HDgettagdesc</a>(<a class="el" href="hproto__fortran_8h.html#a0ee1a1789812882b33edab7c2665a1ac">tag</a>)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a153ed72941fd5d337de5a9c16dea1f8b" name="a153ed72941fd5d337de5a9c16dea1f8b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a153ed72941fd5d337de5a9c16dea1f8b">&#9670;&#160;</a></span>HDmalloc</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define HDmalloc</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">s</span></td><td>)</td>
+          <td>&#160;&#160;&#160;malloc(s)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a483cdad25d80a90d203fa7befc78e474" name="a483cdad25d80a90d203fa7befc78e474"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a483cdad25d80a90d203fa7befc78e474">&#9670;&#160;</a></span>HDrealloc</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define HDrealloc</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">p, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">s</span>&#160;)&#160;&#160;&#160;realloc(p, s)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a854a80738ff31fa0b78770ca65c2030d" name="a854a80738ff31fa0b78770ca65c2030d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a854a80738ff31fa0b78770ca65c2030d">&#9670;&#160;</a></span>HDstrcat</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define HDstrcat</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">s1, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">s2</span>&#160;)&#160;&#160;&#160;(strcat((s1), (s2)))</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a218a62222cab78057365e81b086c655f" name="a218a62222cab78057365e81b086c655f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a218a62222cab78057365e81b086c655f">&#9670;&#160;</a></span>HDstrchr</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define HDstrchr</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">s, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><a class="el" href="mfsdf_8h.html#ab654f40a0fdb23ac74d21a10ad575e78">c</a></span>&#160;)&#160;&#160;&#160;(strchr((s), (<a class="el" href="mfsdf_8h.html#ab654f40a0fdb23ac74d21a10ad575e78">c</a>)))</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac5eab79d179220dd57ca97cd92415854" name="ac5eab79d179220dd57ca97cd92415854"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac5eab79d179220dd57ca97cd92415854">&#9670;&#160;</a></span>HDstrcmp</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define HDstrcmp</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">s, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">t</span>&#160;)&#160;&#160;&#160;(strcmp((s), (t)))</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac9a301ad7913cf6655ae8835a25ae83c" name="ac9a301ad7913cf6655ae8835a25ae83c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac9a301ad7913cf6655ae8835a25ae83c">&#9670;&#160;</a></span>HDstrcpy</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define HDstrcpy</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">s, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">d</span>&#160;)&#160;&#160;&#160;(strcpy((s), (d)))</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a25b2dc617997774311d9a9e41d7ee495" name="a25b2dc617997774311d9a9e41d7ee495"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a25b2dc617997774311d9a9e41d7ee495">&#9670;&#160;</a></span>HDstrlen</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define HDstrlen</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">s</span></td><td>)</td>
+          <td>&#160;&#160;&#160;(strlen((const char *)(s)))</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a10e39bb269cd0609b59b21dc51d78e0d" name="a10e39bb269cd0609b59b21dc51d78e0d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a10e39bb269cd0609b59b21dc51d78e0d">&#9670;&#160;</a></span>HDstrncmp</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define HDstrncmp</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">s1, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">s2, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><a class="el" href="hproto__fortran_8h.html#a2f098e9ee14a2371dd279a2af958ea3c">n</a></span>&#160;)&#160;&#160;&#160;(strncmp((s1), (s2), (<a class="el" href="hproto__fortran_8h.html#a2f098e9ee14a2371dd279a2af958ea3c">n</a>)))</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a1d10aba6ef38c55c3bce9163945fc3d8" name="a1d10aba6ef38c55c3bce9163945fc3d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1d10aba6ef38c55c3bce9163945fc3d8">&#9670;&#160;</a></span>HDstrncpy</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define HDstrncpy</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">s1, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">s2, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><a class="el" href="hproto__fortran_8h.html#a2f098e9ee14a2371dd279a2af958ea3c">n</a></span>&#160;)&#160;&#160;&#160;(strncpy((s1), (s2), (<a class="el" href="hproto__fortran_8h.html#a2f098e9ee14a2371dd279a2af958ea3c">n</a>)))</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="abaadaa6d942024dd9b3da159a2cbc720" name="abaadaa6d942024dd9b3da159a2cbc720"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abaadaa6d942024dd9b3da159a2cbc720">&#9670;&#160;</a></span>HDstrrchr</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define HDstrrchr</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">s, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><a class="el" href="mfsdf_8h.html#ab654f40a0fdb23ac74d21a10ad575e78">c</a></span>&#160;)&#160;&#160;&#160;(strrchr((s), (<a class="el" href="mfsdf_8h.html#ab654f40a0fdb23ac74d21a10ad575e78">c</a>)))</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac3e19975dee66a1c4401729381bedb44" name="ac3e19975dee66a1c4401729381bedb44"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac3e19975dee66a1c4401729381bedb44">&#9670;&#160;</a></span>HDstrtol</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define HDstrtol</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">s, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">e, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">b</span>&#160;)&#160;&#160;&#160;(strtol((s), (e), (b)))</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -694,20 +1054,6 @@ Enumerations</h2></td></tr>
 
 </div>
 </div>
-<a id="aa8cecfc5c5c054d2875c03e77b7be15d" name="aa8cecfc5c5c054d2875c03e77b7be15d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa8cecfc5c5c054d2875c03e77b7be15d">&#9670;&#160;</a></span>TRUE</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define TRUE&#160;&#160;&#160;(!<a class="el" href="#aa93f0eb578d23995850d61f7d61c55c1">FALSE</a>)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="afb091a4a9652b391869686311ff23e6f" name="afb091a4a9652b391869686311ff23e6f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afb091a4a9652b391869686311ff23e6f">&#9670;&#160;</a></span>Vend</h2>
 
@@ -717,8 +1063,8 @@ Enumerations</h2></td></tr>
         <tr>
           <td class="memname">#define Vend</td>
           <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">f</span></td><td>)</td>
-          <td>&#160;&#160;&#160;<a class="el" href="hproto_8h.html#ae63b6f2451180fb004b61c0abd5a59e9">Vfinish</a>((f))</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a></span></td><td>)</td>
+          <td>&#160;&#160;&#160;<a class="el" href="hproto_8h.html#ae63b6f2451180fb004b61c0abd5a59e9">Vfinish</a>((<a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a>))</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -734,8 +1080,8 @@ Enumerations</h2></td></tr>
         <tr>
           <td class="memname">#define Vstart</td>
           <td>(</td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">f</span></td><td>)</td>
-          <td>&#160;&#160;&#160;<a class="el" href="hproto_8h.html#acdabad050e0cbf878457df47dabd69cb">Vinitialize</a>((f))</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a></span></td><td>)</td>
+          <td>&#160;&#160;&#160;<a class="el" href="hproto_8h.html#acdabad050e0cbf878457df47dabd69cb">Vinitialize</a>((<a class="el" href="mfsdf_8h.html#aaa881d18a13ef58b0843b43b964fb13a">f</a>))</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -743,6 +1089,62 @@ Enumerations</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Typedef Documentation</h2>
+<a id="a508c750c0c4fdaf757f94f5dc5b22cbd" name="a508c750c0c4fdaf757f94f5dc5b22cbd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a508c750c0c4fdaf757f94f5dc5b22cbd">&#9670;&#160;</a></span>_fcd</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef char* <a class="el" href="#a508c750c0c4fdaf757f94f5dc5b22cbd">_fcd</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac9e1c0f508ae0f5f8a2b704a91e1ae86" name="ac9e1c0f508ae0f5f8a2b704a91e1ae86"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac9e1c0f508ae0f5f8a2b704a91e1ae86">&#9670;&#160;</a></span>char8</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef char <a class="el" href="#ac9e1c0f508ae0f5f8a2b704a91e1ae86">char8</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aacdc525d6f7bddb3ae95d5c311bd06a1" name="aacdc525d6f7bddb3ae95d5c311bd06a1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aacdc525d6f7bddb3ae95d5c311bd06a1">&#9670;&#160;</a></span>float32</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef float <a class="el" href="#aacdc525d6f7bddb3ae95d5c311bd06a1">float32</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a232fad1b0d6dcc7c16aabde98b2e2a80" name="a232fad1b0d6dcc7c16aabde98b2e2a80"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a232fad1b0d6dcc7c16aabde98b2e2a80">&#9670;&#160;</a></span>float64</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef double <a class="el" href="#a232fad1b0d6dcc7c16aabde98b2e2a80">float64</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a23c72e6fa7078f2f9769f22423bdad46" name="a23c72e6fa7078f2f9769f22423bdad46"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a23c72e6fa7078f2f9769f22423bdad46">&#9670;&#160;</a></span>hdf_termfunc_t</h2>
 
@@ -750,7 +1152,7 @@ Enumerations</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="hdfi_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>(* hdf_termfunc_t) (void)</td>
+          <td class="memname">typedef <a class="el" href="#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>(* hdf_termfunc_t) (void)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -764,7 +1166,175 @@ Enumerations</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> <a class="el" href="#ab3d0180f57eaaabe3661d979eea4b3c5">HFILEID</a></td>
+          <td class="memname">typedef <a class="el" href="#ab7903878916593daecbeb95b98115ab0">int32</a> <a class="el" href="#ab3d0180f57eaaabe3661d979eea4b3c5">HFILEID</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aa0d0fdc87fd135ef2bedb030901cdb9c" name="aa0d0fdc87fd135ef2bedb030901cdb9c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa0d0fdc87fd135ef2bedb030901cdb9c">&#9670;&#160;</a></span>int16</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef int16_t <a class="el" href="#aa0d0fdc87fd135ef2bedb030901cdb9c">int16</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ab7903878916593daecbeb95b98115ab0" name="ab7903878916593daecbeb95b98115ab0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab7903878916593daecbeb95b98115ab0">&#9670;&#160;</a></span>int32</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef int32_t <a class="el" href="#ab7903878916593daecbeb95b98115ab0">int32</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aa79c2d3de4fcd200458c406f40b2ae64" name="aa79c2d3de4fcd200458c406f40b2ae64"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa79c2d3de4fcd200458c406f40b2ae64">&#9670;&#160;</a></span>int8</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef int8_t <a class="el" href="#aa79c2d3de4fcd200458c406f40b2ae64">int8</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a7c2da1a4711ea1e7cbf3174d4f5dda9b" name="a7c2da1a4711ea1e7cbf3174d4f5dda9b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7c2da1a4711ea1e7cbf3174d4f5dda9b">&#9670;&#160;</a></span>intf</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef int <a class="el" href="#a7c2da1a4711ea1e7cbf3174d4f5dda9b">intf</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a03ba81f55b7c394eb8e1e5d1fcab1dfa" name="a03ba81f55b7c394eb8e1e5d1fcab1dfa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a03ba81f55b7c394eb8e1e5d1fcab1dfa">&#9670;&#160;</a></span>intn</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef int <a class="el" href="#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="afc14fa8aaf9acf8c92f2c6f5a99c589d" name="afc14fa8aaf9acf8c92f2c6f5a99c589d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afc14fa8aaf9acf8c92f2c6f5a99c589d">&#9670;&#160;</a></span>uchar8</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef unsigned char <a class="el" href="#afc14fa8aaf9acf8c92f2c6f5a99c589d">uchar8</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac2a9e79eb120216f855626495b7bd18a" name="ac2a9e79eb120216f855626495b7bd18a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac2a9e79eb120216f855626495b7bd18a">&#9670;&#160;</a></span>uint16</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef uint16_t <a class="el" href="#ac2a9e79eb120216f855626495b7bd18a">uint16</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="acbd4acd0d29e2d6c43104827f77d9cd2" name="acbd4acd0d29e2d6c43104827f77d9cd2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acbd4acd0d29e2d6c43104827f77d9cd2">&#9670;&#160;</a></span>uint32</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef uint32_t <a class="el" href="#acbd4acd0d29e2d6c43104827f77d9cd2">uint32</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a33a5e996e7a90acefb8b1c0bea47e365" name="a33a5e996e7a90acefb8b1c0bea47e365"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a33a5e996e7a90acefb8b1c0bea47e365">&#9670;&#160;</a></span>uint8</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef uint8_t <a class="el" href="#a33a5e996e7a90acefb8b1c0bea47e365">uint8</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a8f0189616483670e42751f89a02501b5" name="a8f0189616483670e42751f89a02501b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f0189616483670e42751f89a02501b5">&#9670;&#160;</a></span>uintn</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef unsigned int <a class="el" href="#a8f0189616483670e42751f89a02501b5">uintn</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a7927e087749615dae3114cc27b91c86d" name="a7927e087749615dae3114cc27b91c86d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7927e087749615dae3114cc27b91c86d">&#9670;&#160;</a></span>VOID</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void <a class="el" href="#a7927e087749615dae3114cc27b91c86d">VOID</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ab88227ecb274485a440c4020114cc464" name="ab88227ecb274485a440c4020114cc464"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab88227ecb274485a440c4020114cc464">&#9670;&#160;</a></span>VOIDP</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void* <a class="el" href="#ab88227ecb274485a440c4020114cc464">VOIDP</a></td>
         </tr>
       </table>
 </div><div class="memdoc">

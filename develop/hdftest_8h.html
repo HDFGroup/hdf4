@@ -38,7 +38,7 @@
   <td id="projectlogo"><img alt="Logo" src="HDFG-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname"><a href="https://www.hdfgroup.org">HDF</a>
-   &#160;<span id="projectnumber">4.3.0-be9b9c9</span>
+   &#160;<span id="projectnumber">4.3.0-1</span>
    </div>
    <div id="projectbrief">API Reference</div>
   </td>
@@ -110,7 +110,8 @@ $(function(){initNavTree('hdftest_8h.html',''); initResizable(); });
   <div class="headertitle"><div class="title">hdftest.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<table class="memberdecls">
+<div class="textblock"><code>#include &lt;stdio.h&gt;</code><br />
+</div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:a3191df86c382367c9add3ef9587aae02" id="r_a3191df86c382367c9add3ef9587aae02"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3191df86c382367c9add3ef9587aae02">TESTING</a>(WHAT)</td></tr>
@@ -123,9 +124,9 @@ Macros</h2></td></tr>
 <tr class="separator:a1d31f36672ae1653a65b520d0694c4e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a42b1ed5baa81c375eaf4078e30277ffa" id="r_a42b1ed5baa81c375eaf4078e30277ffa"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a42b1ed5baa81c375eaf4078e30277ffa">SKIPPED</a>()</td></tr>
 <tr class="separator:a42b1ed5baa81c375eaf4078e30277ffa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aee6a0360c2722886ffb2e661c418cbda" id="r_aee6a0360c2722886ffb2e661c418cbda"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aee6a0360c2722886ffb2e661c418cbda">CHECK</a>(status,  fail_value,  <a class="el" href="hproto__fortran_8h.html#aba2997cce2f7db03c51cfaa3237048ab">name</a>)</td></tr>
+<tr class="memitem:aee6a0360c2722886ffb2e661c418cbda" id="r_aee6a0360c2722886ffb2e661c418cbda"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aee6a0360c2722886ffb2e661c418cbda">CHECK</a>(status,  fail_value,  <a class="el" href="hproto__fortran_8h.html#aa8d94aae61783d3a49a151f3e5ab02cf">name</a>)</td></tr>
 <tr class="separator:aee6a0360c2722886ffb2e661c418cbda"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a97260c77fe0fc4fecb9fcf1820fa9c3c" id="r_a97260c77fe0fc4fecb9fcf1820fa9c3c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a97260c77fe0fc4fecb9fcf1820fa9c3c">CHECK_IND</a>(status,  fail_value,  <a class="el" href="hproto__fortran_8h.html#aba2997cce2f7db03c51cfaa3237048ab">name</a>,  index)</td></tr>
+<tr class="memitem:a97260c77fe0fc4fecb9fcf1820fa9c3c" id="r_a97260c77fe0fc4fecb9fcf1820fa9c3c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a97260c77fe0fc4fecb9fcf1820fa9c3c">CHECK_IND</a>(status,  fail_value,  <a class="el" href="hproto__fortran_8h.html#aa8d94aae61783d3a49a151f3e5ab02cf">name</a>,  <a class="el" href="mfsdf_8h.html#aac510741dc2b4848ca5d040237b5e6d2">index</a>)</td></tr>
 <tr class="separator:a97260c77fe0fc4fecb9fcf1820fa9c3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad925328fea29215cea31c14795f9fa2a" id="r_ad925328fea29215cea31c14795f9fa2a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad925328fea29215cea31c14795f9fa2a">VERIFY</a>(item,  value,  test_name)</td></tr>
 <tr class="separator:ad925328fea29215cea31c14795f9fa2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -136,23 +137,23 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a86b90b1e3167c4e6dd802993f56b1ade" id="r_a86b90b1e3167c4e6dd802993f56b1ade"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdfi_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a86b90b1e3167c4e6dd802993f56b1ade">make_sourcepath</a> (char *src_path, unsigned int <a class="el" href="hproto__fortran_8h.html#a0063d28fb02fdef07a24ae30b790cf57">size</a>)</td></tr>
+<tr class="memitem:a86b90b1e3167c4e6dd802993f56b1ade" id="r_a86b90b1e3167c4e6dd802993f56b1ade"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a86b90b1e3167c4e6dd802993f56b1ade">make_sourcepath</a> (char *src_path, unsigned int <a class="el" href="hproto__fortran_8h.html#a0063d28fb02fdef07a24ae30b790cf57">size</a>)</td></tr>
 <tr class="separator:a86b90b1e3167c4e6dd802993f56b1ade"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3daaa6c4623e6148e9bcb2ee1042d775" id="r_a3daaa6c4623e6148e9bcb2ee1042d775"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdfi_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3daaa6c4623e6148e9bcb2ee1042d775">make_datafilename</a> (const char *basename, char *testfile, unsigned int <a class="el" href="hproto__fortran_8h.html#a0063d28fb02fdef07a24ae30b790cf57">size</a>)</td></tr>
+<tr class="memitem:a3daaa6c4623e6148e9bcb2ee1042d775" id="r_a3daaa6c4623e6148e9bcb2ee1042d775"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3daaa6c4623e6148e9bcb2ee1042d775">make_datafilename</a> (const char *basename, char *testfile, unsigned int <a class="el" href="hproto__fortran_8h.html#a0063d28fb02fdef07a24ae30b790cf57">size</a>)</td></tr>
 <tr class="separator:a3daaa6c4623e6148e9bcb2ee1042d775"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6664045f94655d5d5e73ace81ca4c963" id="r_a6664045f94655d5d5e73ace81ca4c963"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6664045f94655d5d5e73ace81ca4c963">make_SDS</a> (<a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> sd_id, char *sds_name, <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> <a class="el" href="hproto__fortran_8h.html#a67eb17a567a8fa132650fcee33ca50e9">type</a>, <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> <a class="el" href="hproto__fortran_8h.html#a4e7dd844ea4abffa4734776addd4abfc">rank</a>, <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> *dim_sizes, <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> unlim_dim, void *written_data)</td></tr>
+<tr class="memitem:a6664045f94655d5d5e73ace81ca4c963" id="r_a6664045f94655d5d5e73ace81ca4c963"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6664045f94655d5d5e73ace81ca4c963">make_SDS</a> (<a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> sd_id, char *sds_name, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> <a class="el" href="hproto__fortran_8h.html#a67eb17a567a8fa132650fcee33ca50e9">type</a>, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> <a class="el" href="hproto__fortran_8h.html#a843609513f0f645e4412eab22bb8f484">rank</a>, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> *dim_sizes, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> unlim_dim, void *written_data)</td></tr>
 <tr class="separator:a6664045f94655d5d5e73ace81ca4c963"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afe736b4b9dfcf889629d4bc7cfb1c23d" id="r_afe736b4b9dfcf889629d4bc7cfb1c23d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afe736b4b9dfcf889629d4bc7cfb1c23d">make_CompSDS</a> (<a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> sd_id, char *sds_name, <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> <a class="el" href="hproto__fortran_8h.html#a67eb17a567a8fa132650fcee33ca50e9">type</a>, <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> <a class="el" href="hproto__fortran_8h.html#a4e7dd844ea4abffa4734776addd4abfc">rank</a>, <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> *dim_sizes, void *written_data)</td></tr>
+<tr class="memitem:afe736b4b9dfcf889629d4bc7cfb1c23d" id="r_afe736b4b9dfcf889629d4bc7cfb1c23d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afe736b4b9dfcf889629d4bc7cfb1c23d">make_CompSDS</a> (<a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> sd_id, char *sds_name, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> <a class="el" href="hproto__fortran_8h.html#a67eb17a567a8fa132650fcee33ca50e9">type</a>, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> <a class="el" href="hproto__fortran_8h.html#a843609513f0f645e4412eab22bb8f484">rank</a>, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> *dim_sizes, void *written_data)</td></tr>
 <tr class="separator:afe736b4b9dfcf889629d4bc7cfb1c23d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a21bc0315913079c526229e5e78077c1a" id="r_a21bc0315913079c526229e5e78077c1a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a21bc0315913079c526229e5e78077c1a">make_Ext3D_SDS</a> (<a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> sd_id, char *sds_name, <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> <a class="el" href="hproto__fortran_8h.html#a67eb17a567a8fa132650fcee33ca50e9">type</a>, <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> <a class="el" href="hproto__fortran_8h.html#a4e7dd844ea4abffa4734776addd4abfc">rank</a>, <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> *dim_sizes, void *written_data, <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> <a class="el" href="hproto__fortran_8h.html#a871536eaa547f1b6cab2d6095ae19653">offset</a>, char *ext_file_name)</td></tr>
+<tr class="memitem:a21bc0315913079c526229e5e78077c1a" id="r_a21bc0315913079c526229e5e78077c1a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a21bc0315913079c526229e5e78077c1a">make_Ext3D_SDS</a> (<a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> sd_id, char *sds_name, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> <a class="el" href="hproto__fortran_8h.html#a67eb17a567a8fa132650fcee33ca50e9">type</a>, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> <a class="el" href="hproto__fortran_8h.html#a843609513f0f645e4412eab22bb8f484">rank</a>, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> *dim_sizes, void *written_data, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> <a class="el" href="hproto__fortran_8h.html#a871536eaa547f1b6cab2d6095ae19653">offset</a>, char *ext_file_name)</td></tr>
 <tr class="separator:a21bc0315913079c526229e5e78077c1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a388d98f55d98fd15ae66d601dc1cd202" id="r_a388d98f55d98fd15ae66d601dc1cd202"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a388d98f55d98fd15ae66d601dc1cd202">append_Data2SDS</a> (<a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> sd_id, char *sds_name, <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> *<a class="el" href="hproto__fortran_8h.html#a75888c8279a6aed7c8297b7ee51e0d10">start</a>, <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> *edges, void *ap_data)</td></tr>
+<tr class="memitem:a388d98f55d98fd15ae66d601dc1cd202" id="r_a388d98f55d98fd15ae66d601dc1cd202"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a388d98f55d98fd15ae66d601dc1cd202">append_Data2SDS</a> (<a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> sd_id, char *sds_name, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> *<a class="el" href="hproto__fortran_8h.html#a9b5a1e76b086e1f02f877026d9ae40a4">start</a>, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> *edges, void *ap_data)</td></tr>
 <tr class="separator:a388d98f55d98fd15ae66d601dc1cd202"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a38fb2c460447f22730f77d835f100cb3" id="r_a38fb2c460447f22730f77d835f100cb3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a38fb2c460447f22730f77d835f100cb3">verify_datasize</a> (<a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> sds_id, <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> data_size, char *sds_name)</td></tr>
+<tr class="memitem:a38fb2c460447f22730f77d835f100cb3" id="r_a38fb2c460447f22730f77d835f100cb3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a38fb2c460447f22730f77d835f100cb3">verify_datasize</a> (<a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> sds_id, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> data_size, char *sds_name)</td></tr>
 <tr class="separator:a38fb2c460447f22730f77d835f100cb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1847d7673525d96fedf9d5260f90bf22" id="r_a1847d7673525d96fedf9d5260f90bf22"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1847d7673525d96fedf9d5260f90bf22">verify_info_data</a> (<a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> sds_id, <a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> expected_dimsize, <a class="el" href="hdfi_8h.html#aa0d0fdc87fd135ef2bedb030901cdb9c">int16</a> *result)</td></tr>
+<tr class="memitem:a1847d7673525d96fedf9d5260f90bf22" id="r_a1847d7673525d96fedf9d5260f90bf22"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1847d7673525d96fedf9d5260f90bf22">verify_info_data</a> (<a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> sds_id, <a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> expected_dimsize, <a class="el" href="hdf_8h.html#aa0d0fdc87fd135ef2bedb030901cdb9c">int16</a> *result)</td></tr>
 <tr class="separator:a1847d7673525d96fedf9d5260f90bf22"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3f2da95646f43da7fa2fa893f731144f" id="r_a3f2da95646f43da7fa2fa893f731144f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3f2da95646f43da7fa2fa893f731144f">get_SDSbyName</a> (<a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> sd_id, const char *sds_name)</td></tr>
+<tr class="memitem:a3f2da95646f43da7fa2fa893f731144f" id="r_a3f2da95646f43da7fa2fa893f731144f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3f2da95646f43da7fa2fa893f731144f">get_SDSbyName</a> (<a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> sd_id, const char *sds_name)</td></tr>
 <tr class="separator:a3f2da95646f43da7fa2fa893f731144f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
@@ -175,17 +176,17 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><a class="el" href="hproto__fortran_8h.html#aba2997cce2f7db03c51cfaa3237048ab">name</a></span>&#160;)</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><a class="el" href="hproto__fortran_8h.html#aa8d94aae61783d3a49a151f3e5ab02cf">name</a></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">    {                                                                                                        \</div>
 <div class="line">        if (status == fail_value) {                                                                          \</div>
-<div class="line">            fprintf(stderr, <span class="stringliteral">&quot;*** Routine %s FAILED at line %d ***\n&quot;</span>, <a class="code hl_variable" href="hproto__fortran_8h.html#aba2997cce2f7db03c51cfaa3237048ab">name</a>, __LINE__);                       \</div>
+<div class="line">            fprintf(stderr, <span class="stringliteral">&quot;*** Routine %s FAILED at line %d ***\n&quot;</span>, <a class="code hl_variable" href="hproto__fortran_8h.html#aa8d94aae61783d3a49a151f3e5ab02cf">name</a>, __LINE__);                       \</div>
 <div class="line">            <a class="code hl_variable" href="tutils_8h.html#aed4fdd79a91ca60813c50b229984953c">num_errs</a>++;                                                                                      \</div>
 <div class="line">        }                                                                                                    \</div>
 <div class="line">    }</div>
-<div class="ttc" id="ahproto__fortran_8h_html_aba2997cce2f7db03c51cfaa3237048ab"><div class="ttname"><a href="hproto__fortran_8h.html#aba2997cce2f7db03c51cfaa3237048ab">name</a></div><div class="ttdeci">intf _fcd name</div><div class="ttdef"><b>Definition</b> hproto_fortran.h:771</div></div>
+<div class="ttc" id="ahproto__fortran_8h_html_aa8d94aae61783d3a49a151f3e5ab02cf"><div class="ttname"><a href="hproto__fortran_8h.html#aa8d94aae61783d3a49a151f3e5ab02cf">name</a></div><div class="ttdeci">intf _fcd name</div><div class="ttdef"><b>Definition</b> hproto_fortran.h:762</div></div>
 <div class="ttc" id="atutils_8h_html_aed4fdd79a91ca60813c50b229984953c"><div class="ttname"><a href="tutils_8h.html#aed4fdd79a91ca60813c50b229984953c">num_errs</a></div><div class="ttdeci">int num_errs</div></div>
 </div><!-- fragment -->
 </div>
@@ -219,7 +220,7 @@ Functions</h2></td></tr>
 <div class="line">            exit(1);                                                                                         \</div>
 <div class="line">        }                                                                                                    \</div>
 <div class="line">    }</div>
-<div class="ttc" id="ahproto__fortran_8h_html_a73d29f95cc1f772c77b9d7a41678fa60"><div class="ttname"><a href="hproto__fortran_8h.html#a73d29f95cc1f772c77b9d7a41678fa60">buffer</a></div><div class="ttdeci">intf intf intf intf intf void * buffer</div><div class="ttdef"><b>Definition</b> hproto_fortran.h:320</div></div>
+<div class="ttc" id="ahproto__fortran_8h_html_a73d29f95cc1f772c77b9d7a41678fa60"><div class="ttname"><a href="hproto__fortran_8h.html#a73d29f95cc1f772c77b9d7a41678fa60">buffer</a></div><div class="ttdeci">intf intf intf intf intf void * buffer</div><div class="ttdef"><b>Definition</b> hproto_fortran.h:314</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -242,22 +243,23 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><a class="el" href="hproto__fortran_8h.html#aba2997cce2f7db03c51cfaa3237048ab">name</a>, </span></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><a class="el" href="hproto__fortran_8h.html#aa8d94aae61783d3a49a151f3e5ab02cf">name</a>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname">index</span>&#160;)</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><a class="el" href="mfsdf_8h.html#aac510741dc2b4848ca5d040237b5e6d2">index</a></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">    {                                                                                                        \</div>
 <div class="line">        if (status == fail_value) {                                                                          \</div>
-<div class="line">            fprintf(stderr, <span class="stringliteral">&quot;*** Routine %s FAILED at line %d for SDS index %d ***\n&quot;</span>, <a class="code hl_variable" href="hproto__fortran_8h.html#aba2997cce2f7db03c51cfaa3237048ab">name</a>, __LINE__,       \</div>
-<div class="line">                    index);                                                                                  \</div>
+<div class="line">            fprintf(stderr, <span class="stringliteral">&quot;*** Routine %s FAILED at line %d for SDS index %d ***\n&quot;</span>, <a class="code hl_variable" href="hproto__fortran_8h.html#aa8d94aae61783d3a49a151f3e5ab02cf">name</a>, __LINE__,       \</div>
+<div class="line">                    <a class="code hl_variable" href="mfsdf_8h.html#aac510741dc2b4848ca5d040237b5e6d2">index</a>);                                                                                  \</div>
 <div class="line">            <a class="code hl_variable" href="tutils_8h.html#aed4fdd79a91ca60813c50b229984953c">num_errs</a>++;                                                                                      \</div>
 <div class="line">        }                                                                                                    \</div>
 <div class="line">    }</div>
+<div class="ttc" id="amfsdf_8h_html_aac510741dc2b4848ca5d040237b5e6d2"><div class="ttname"><a href="mfsdf_8h.html#aac510741dc2b4848ca5d040237b5e6d2">index</a></div><div class="ttdeci">HDFFCLIBAPI intf intf * index</div><div class="ttdef"><b>Definition</b> mfsdf.h:136</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -440,9 +442,9 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> append_Data2SDS </td>
+          <td class="memname"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> append_Data2SDS </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>sd_id</em>, </span></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>sd_id</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -452,12 +454,12 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> *</td>          <td class="paramname"><span class="paramname"><em>start</em>, </span></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> *</td>          <td class="paramname"><span class="paramname"><em>start</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> *</td>          <td class="paramname"><span class="paramname"><em>edges</em>, </span></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> *</td>          <td class="paramname"><span class="paramname"><em>edges</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -476,9 +478,9 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> get_SDSbyName </td>
+          <td class="memname"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> get_SDSbyName </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>sd_id</em>, </span></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>sd_id</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -497,9 +499,9 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> make_CompSDS </td>
+          <td class="memname"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> make_CompSDS </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>sd_id</em>, </span></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>sd_id</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -509,17 +511,17 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>type</em>, </span></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>type</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>rank</em>, </span></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>rank</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> *</td>          <td class="paramname"><span class="paramname"><em>dim_sizes</em>, </span></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> *</td>          <td class="paramname"><span class="paramname"><em>dim_sizes</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -538,7 +540,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="hdfi_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a> make_datafilename </td>
+          <td class="memname"><a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a> make_datafilename </td>
           <td>(</td>
           <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>basename</em>, </span></td>
         </tr>
@@ -564,9 +566,9 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> make_Ext3D_SDS </td>
+          <td class="memname"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> make_Ext3D_SDS </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>sd_id</em>, </span></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>sd_id</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -576,17 +578,17 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>type</em>, </span></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>type</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>rank</em>, </span></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>rank</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> *</td>          <td class="paramname"><span class="paramname"><em>dim_sizes</em>, </span></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> *</td>          <td class="paramname"><span class="paramname"><em>dim_sizes</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -596,7 +598,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>offset</em>, </span></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>offset</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -615,9 +617,9 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> make_SDS </td>
+          <td class="memname"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> make_SDS </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>sd_id</em>, </span></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>sd_id</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -627,22 +629,22 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>type</em>, </span></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>type</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>rank</em>, </span></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>rank</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> *</td>          <td class="paramname"><span class="paramname"><em>dim_sizes</em>, </span></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a> *</td>          <td class="paramname"><span class="paramname"><em>dim_sizes</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>unlim_dim</em>, </span></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>unlim_dim</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -661,7 +663,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="hdfi_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a> make_sourcepath </td>
+          <td class="memname"><a class="el" href="hdf_8h.html#a03ba81f55b7c394eb8e1e5d1fcab1dfa">intn</a> make_sourcepath </td>
           <td>(</td>
           <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>src_path</em>, </span></td>
         </tr>
@@ -684,12 +686,12 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void verify_datasize </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>sds_id</em>, </span></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>sds_id</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>data_size</em>, </span></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>data_size</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -710,17 +712,17 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">int verify_info_data </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>sds_id</em>, </span></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>sds_id</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>expected_dimsize</em>, </span></td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#ab7903878916593daecbeb95b98115ab0">int32</a></td>          <td class="paramname"><span class="paramname"><em>expected_dimsize</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="hdfi_8h.html#aa0d0fdc87fd135ef2bedb030901cdb9c">int16</a> *</td>          <td class="paramname"><span class="paramname"><em>result</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="hdf_8h.html#aa0d0fdc87fd135ef2bedb030901cdb9c">int16</a> *</td>          <td class="paramname"><span class="paramname"><em>result</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
