@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "mfhdf.h"
 
 #define FILE_NAME     "SDS.hdf"

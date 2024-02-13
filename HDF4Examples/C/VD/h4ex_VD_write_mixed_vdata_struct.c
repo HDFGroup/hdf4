@@ -19,6 +19,8 @@ N_RECORDS.  This difference is the result of using an array of
 structs in this example to hold the field values instead of
 individual arrays as in Example 4.  */
 
+#include <stdio.h>
+
 #include "hdf.h"
 
 #define FILE_NAME      "h4ex_VD_write_mixed_vdata_struct.hdf"

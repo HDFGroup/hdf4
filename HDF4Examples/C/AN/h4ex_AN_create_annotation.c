@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <string.h>
+
 #include "hdf.h"
 
 #define FILE_NAME      "h4ex_AN_create_annotation.hdf"

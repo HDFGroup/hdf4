@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "hdf.h"   /* Note: in this example, hdf.h can be omitted...*/
 #include "mfhdf.h" /* ...since mfhdf.h already includes hdf.h */
 

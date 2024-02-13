@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "hdf.h"
 
 #define FILE_NAME  "h4ex_GR_create_and_write_image.hdf"
