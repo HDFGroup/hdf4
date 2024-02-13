@@ -44,7 +44,7 @@
  * Invokes: DFR8setpalette
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nd8spal(_fcd pal)
 {
     return DFR8setpalette((uint8 *)_fcdtocp(pal));
@@ -59,7 +59,7 @@ nd8spal(_fcd pal)
  * Invokes: DFR8restart
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nd8first(void)
 {
     return DFR8restart();
@@ -77,7 +77,7 @@ nd8first(void)
  * Invokes: DFR8getdims
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nd8igdim(_fcd filename, intf *xdim, intf *ydim, intf *ispal, intf *lenfn)
 {
     char *fn;
@@ -111,7 +111,7 @@ nd8igdim(_fcd filename, intf *xdim, intf *ydim, intf *ispal, intf *lenfn)
  * Invokes: DFR8getimage
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nd8igimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, _fcd pal, intf *lenfn)
 {
     char *fn;
@@ -138,7 +138,7 @@ nd8igimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, _fcd pal, intf *lenf
  * Invokes: DFR8putimage
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nd8ipimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *compress, intf *lenfn)
 {
     char *fn;
@@ -165,7 +165,7 @@ nd8ipimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *compress, intf
  * Invokes: DFR8addimage
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nd8iaimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *compress, intf *lenfn)
 {
     char *fn;
@@ -190,7 +190,7 @@ nd8iaimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *compress, intf
  * Remarks: checks if image with this ref exists
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nd8irref(_fcd filename, intf *ref, intf *fnlen)
 {
     char  *fn;
@@ -218,7 +218,7 @@ nd8irref(_fcd filename, intf *ref, intf *fnlen)
  * Remarks:
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nd8iwref(_fcd filename, intf *ref, intf *fnlen)
 {
     char  *fn;
@@ -246,7 +246,7 @@ nd8iwref(_fcd filename, intf *ref, intf *fnlen)
  * Remarks:
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nd8inims(_fcd filename, intf *fnlen)
 {
     char *fn;
@@ -269,7 +269,7 @@ nd8inims(_fcd filename, intf *fnlen)
  * Invokes: DFR8lastref
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nd8lref(void)
 {
     return (intf)DFR8lastref();
@@ -288,7 +288,7 @@ nd8lref(void)
  *          must be called.
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nd8scomp(intf *scheme)
 {
     comp_info cinfo; /* Structure containing compression parameters */
@@ -312,7 +312,7 @@ nd8scomp(intf *scheme)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nd8sjpeg(intf *quality, intf *force_baseline)
 {
     comp_info cinfo; /* Structure containing compression parameters */
@@ -332,7 +332,7 @@ nd8sjpeg(intf *quality, intf *force_baseline)
  * Remarks:
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 ndfr8lastref(void)
 {
     return (intf)DFR8lastref();
@@ -347,7 +347,7 @@ ndfr8lastref(void)
  * Invokes: DFR8setpalette
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 ndfr8setpalette(_fcd pal)
 {
     return DFR8setpalette((uint8 *)_fcdtocp(pal));
@@ -362,7 +362,7 @@ ndfr8setpalette(_fcd pal)
  * Invokes: DFR8restart
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 ndfr8restart(void)
 {
     return DFR8restart();
@@ -381,7 +381,7 @@ ndfr8restart(void)
  *          must be called.
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 ndfr8scompress(intf *scheme)
 {
     comp_info cinfo; /* Structure containing compression parameters */
@@ -405,7 +405,7 @@ ndfr8scompress(intf *scheme)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 ndfr8sjpeg(intf *quality, intf *force_baseline)
 {
     comp_info cinfo; /* Structure containing compression parameters */

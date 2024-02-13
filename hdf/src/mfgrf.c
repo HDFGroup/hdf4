@@ -71,7 +71,7 @@
  * Invokes: GRstart
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nmgstart(intf *fid)
 {
     return (intf)GRstart((int32)*fid);
@@ -88,7 +88,7 @@ nmgstart(intf *fid)
  * Invokes: GRfileinfo
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nmgfinfo(intf *grid, intf *n_datasets, intf *n_attrs)
 {
     int32 n_data, n_attr;
@@ -109,7 +109,7 @@ nmgfinfo(intf *grid, intf *n_datasets, intf *n_attrs)
  * Invokes: GRend
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nmgend(intf *grid)
 {
     return (intf)GRend((int32)*grid);
@@ -131,7 +131,7 @@ nmgend(intf *grid)
  * Invokes: GRcreate
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nmgicreat(intf *grid, _fcd name, intf *ncomp, intf *nt, intf *il, intf dimsizes[2], intf *nlen)
 {
     char *fn;
@@ -163,7 +163,7 @@ nmgicreat(intf *grid, _fcd name, intf *ncomp, intf *nt, intf *il, intf dimsizes[
  * Invokes: GRselect
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nmgselct(intf *grid, intf *index)
 {
     return (intf)GRselect((int32)*grid, (int32)*index);
@@ -181,7 +181,7 @@ nmgselct(intf *grid, intf *index)
  * Invokes: GRnametoindex
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nmgin2ndx(intf *grid, _fcd name, intf *nlen)
 {
     char *fn;
@@ -215,7 +215,7 @@ nmgin2ndx(intf *grid, _fcd name, intf *nlen)
  * Invokes: GRgetiminfo
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nmggiinf(intf *riid, _fcd name, intf *ncomp, intf *nt, intf *il, intf *dimsizes, intf *nattr)
 {
     int32 t_ncomp, t_nt, t_il, t_dimsizes[2], t_nattr;
@@ -248,7 +248,7 @@ nmggiinf(intf *riid, _fcd name, intf *ncomp, intf *nt, intf *il, intf *dimsizes,
  * Invokes: GRwriteimage
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nmgwcimg(intf *riid, intf *start, intf *stride, intf *count, _fcd data)
 {
     return nmgwrimg(riid, start, stride, count, (void *)_fcdtocp(data));
@@ -268,7 +268,7 @@ nmgwcimg(intf *riid, intf *start, intf *stride, intf *count, _fcd data)
  * Invokes: GRwriteimage
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nmgwrimg(intf *riid, intf *start, intf *stride, intf *count, void *data)
 {
     int32 t_start[2], t_stride[2], t_count[2];
@@ -298,7 +298,7 @@ nmgwrimg(intf *riid, intf *start, intf *stride, intf *count, void *data)
  * Invokes: GRreadimage
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nmgrcimg(intf *riid, intf *start, intf *stride, intf *count, _fcd data)
 {
     return nmgrdimg(riid, start, stride, count, (void *)_fcdtocp(data));
@@ -318,7 +318,7 @@ nmgrcimg(intf *riid, intf *start, intf *stride, intf *count, _fcd data)
  * Invokes: GRreadimage
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nmgrdimg(intf *riid, intf *start, intf *stride, intf *count, void *data)
 {
     int32 t_start[2], t_stride[2], t_count[2];
@@ -344,7 +344,7 @@ nmgrdimg(intf *riid, intf *start, intf *stride, intf *count, void *data)
  * Invokes: GRendaccess
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nmgendac(intf *riid)
 {
     return (intf)GRendaccess((int32)*riid);
@@ -360,7 +360,7 @@ nmgendac(intf *riid)
  * Invokes: GRidtoref
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nmgid2rf(intf *riid)
 {
     return (intf)GRidtoref((int32)*riid);
@@ -377,7 +377,7 @@ nmgid2rf(intf *riid)
  * Invokes: GRreftoindex
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nmgr2idx(intf *grid, intf *ref)
 {
     return (intf)GRreftoindex((int32)*grid, (uint16)*ref);
@@ -394,7 +394,7 @@ nmgr2idx(intf *grid, intf *ref)
  * Invokes: GRreqlutil
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nmgrltil(intf *riid, intf *il)
 {
     return (intf)GRreqlutil((int32)*riid, (intn)*il);
@@ -411,7 +411,7 @@ nmgrltil(intf *riid, intf *il)
  * Invokes: GRreqimageil
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nmgrimil(intf *riid, intf *il)
 {
     return (intf)GRreqimageil((int32)*riid, (intn)*il);
@@ -428,7 +428,7 @@ nmgrimil(intf *riid, intf *il)
  * Invokes: GRgetlutid
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nmggltid(intf *riid, intf *lut_index)
 {
     return (intf)GRgetlutid((int32)*riid, (intn)*lut_index);
@@ -448,7 +448,7 @@ nmggltid(intf *riid, intf *lut_index)
  * Invokes: GRgetlutinfo
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nmgglinf(intf *lutid, intf *ncomp, intf *nt, intf *il, intf *nentries)
 {
     int32 t_ncomp, t_nt, t_il, t_nentries;
@@ -477,7 +477,7 @@ nmgglinf(intf *lutid, intf *ncomp, intf *nt, intf *il, intf *nentries)
  * Invokes: GRwritelut
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nmgwclut(intf *lutid, intf *ncomp, intf *nt, intf *il, intf *nentries, _fcd data)
 {
     return (intf)GRwritelut((int32)*lutid, (int32)*ncomp, (int32)*nt, (int32)*il, (int32)*nentries,
@@ -499,7 +499,7 @@ nmgwclut(intf *lutid, intf *ncomp, intf *nt, intf *il, intf *nentries, _fcd data
  * Invokes: GRwritelut
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nmgwrlut(intf *lutid, intf *ncomp, intf *nt, intf *il, intf *nentries, void *data)
 {
     return (intf)GRwritelut((int32)*lutid, (int32)*ncomp, (int32)*nt, (int32)*il, (int32)*nentries, data);
@@ -516,7 +516,7 @@ nmgwrlut(intf *lutid, intf *ncomp, intf *nt, intf *il, intf *nentries, void *dat
  * Invokes: GRreadlut
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nmgrclut(intf *lutid, _fcd data)
 {
     return (intf)GRreadlut((int32)*lutid, (void *)_fcdtocp(data));
@@ -533,7 +533,7 @@ nmgrclut(intf *lutid, _fcd data)
  * Invokes: GRreadlut
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nmgrdlut(intf *lutid, void *data)
 {
     return (intf)GRreadlut((int32)*lutid, data);
@@ -552,7 +552,7 @@ nmgrdlut(intf *lutid, void *data)
  * Invokes: GRsetexternalfile
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nmgisxfil(intf *riid, _fcd filename, intf *offset, intf *nlen)
 {
     char *fn;
@@ -580,7 +580,7 @@ nmgisxfil(intf *riid, _fcd filename, intf *offset, intf *nlen)
  * Invokes: GRsetaccesstype
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nmgsactp(intf *riid, intf *accesstype)
 {
     return (intf)GRsetaccesstype((int32)*riid, (uintn)*accesstype);
@@ -600,7 +600,7 @@ nmgsactp(intf *riid, intf *accesstype)
  * Users:   HDF Fortran programmers
  * Invokes: GRsetattr
  *---------------------------------------------------------------------------*/
-FRETVAL(intf)
+intf
 nmgiscatt(intf *riid, _fcd name, intf *nt, intf *count, _fcd data, intf *nlen)
 {
     return nmgisattr(riid, name, nt, count, (void *)_fcdtocp(data), nlen);
@@ -620,7 +620,7 @@ nmgiscatt(intf *riid, _fcd name, intf *nt, intf *count, _fcd data, intf *nlen)
  * Invokes: GRsetattr
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nmgisattr(intf *riid, _fcd name, intf *nt, intf *count, void *data, intf *nlen)
 {
     char *fn;
@@ -651,7 +651,7 @@ nmgisattr(intf *riid, _fcd name, intf *nt, intf *count, void *data, intf *nlen)
  * Invokes: GRattrinfo
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nmgatinf(intf *riid, intf *index, _fcd name, intf *nt, intf *count)
 {
     int32 t_nt, t_count;
@@ -676,7 +676,7 @@ nmgatinf(intf *riid, intf *index, _fcd name, intf *nt, intf *count)
  * Invokes: GRgetattr
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nmggcatt(intf *riid, intf *index, _fcd data)
 {
     return nmggnatt(riid, index, (void *)_fcdtocp(data));
@@ -694,7 +694,7 @@ nmggcatt(intf *riid, intf *index, _fcd data)
  * Invokes: GRgetattr
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nmggnatt(intf *riid, intf *index, void *data)
 {
     return (intf)GRgetattr((int32)*riid, (int32)*index, data);
@@ -713,7 +713,7 @@ nmggnatt(intf *riid, intf *index, void *data)
  * Remarks: This routine is replaced by mggcatt and mggmatt
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nmggattr(intf *riid, intf *index, void *data)
 {
     return (intf)GRgetattr((int32)*riid, (int32)*index, data);
@@ -731,7 +731,7 @@ nmggattr(intf *riid, intf *index, void *data)
  * Invokes: GRfindattr
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nmgifndat(intf *riid, _fcd name, intf *nlen)
 {
     char *fn;
@@ -759,7 +759,7 @@ nmgifndat(intf *riid, _fcd name, intf *nlen)
  * Returns: 0 on success, -1 on failure with error set
  * Users:   HDF Fortran programmers
  *-------------------------------------------------------------------------*/
-FRETVAL(intf)
+intf
 nmgcgichnk(intf *id, intf *dim_length, intf *flags)
 {
 
@@ -818,7 +818,7 @@ nmgcgichnk(intf *id, intf *dim_length, intf *flags)
  * Reamrks:  dimensions will be flipped in scrchnk function
  * Returns:  0 on success, -1 on failure with error set
  *----------------------------------------------------------------------------*/
-FRETVAL(intf)
+intf
 nmgcrcchnk(intf *id, intf *start, _fcd char_data)
 {
     intf ret;
@@ -840,7 +840,7 @@ nmgcrcchnk(intf *id, intf *start, _fcd char_data)
  *           If performance becomes an issue, use static cstart
  * Returns:  0 on success, -1 on failure with error set
  *----------------------------------------------------------------------------*/
-FRETVAL(intf)
+intf
 nmgcrchnk(intf *id, intf *start, void *num_data)
 {
     intf   ret;
@@ -880,7 +880,7 @@ nmgcrchnk(intf *id, intf *start, void *num_data)
  * Calls:    GRsetchunkcache
  * Returns:  0 on success, -1 on failure with error set
  *----------------------------------------------------------------------------*/
-FRETVAL(intf)
+intf
 nmgcscchnk(intf *id, intf *maxcache, intf *flags)
 {
     intf ret;
@@ -908,7 +908,7 @@ nmgcscchnk(intf *id, intf *maxcache, intf *flags)
  * Returns: 0 on success, -1 on failure with error set
  * Users:   HDF Fortran programmers
  *-------------------------------------------------------------------------*/
-FRETVAL(intf)
+intf
 nmgcschnk(intf *id, intf *dim_length, intf *comp_type, intf *comp_prm)
 {
 
@@ -992,7 +992,7 @@ nmgcschnk(intf *id, intf *dim_length, intf *comp_type, intf *comp_prm)
  * Reamrks:  dimensions will be flipped in scrchnk function
  * Returns:  0 on success, -1 on failure with error set
  *----------------------------------------------------------------------------*/
-FRETVAL(intf)
+intf
 nmgcwcchnk(intf *id, intf *start, _fcd char_data)
 {
     intf ret;
@@ -1014,7 +1014,7 @@ nmgcwcchnk(intf *id, intf *start, _fcd char_data)
  *           If performance becomes an issue, use static cstart
  * Returns:  0 on success, -1 on failure with error set
  *----------------------------------------------------------------------------*/
-FRETVAL(intf)
+intf
 nmgcwchnk(intf *id, intf *start, void *num_data)
 {
     intf   ret;
@@ -1063,7 +1063,7 @@ nmgcwchnk(intf *id, intf *start, void *num_data)
  * Returns: 0 on success, -1 on failure with error set
  * Users:   HDF Fortran programmers
  *-------------------------------------------------------------------------*/
-FRETVAL(intf)
+intf
 nmgcscompress(intf *id, intf *comp_type, intf *comp_prm)
 {
     int32        riid;   /*  GR id               */
@@ -1126,7 +1126,7 @@ nmgcscompress(intf *id, intf *comp_type, intf *comp_prm)
  * Returns: 0 on success, -1 on failure with error set
  * Users:   HDF Fortran programmers
  *-------------------------------------------------------------------------*/
-FRETVAL(intf)
+intf
 nmgcgcompress(intf *id, intf *comp_type, intf *comp_prm)
 {
     comp_info    c_info; /* compression info     */
@@ -1185,7 +1185,7 @@ nmgcgcompress(intf *id, intf *comp_type, intf *comp_prm)
  *          if one doesn't / FAIL
  * Users:   HDF Fortran programmers
  *-------------------------------------------------------------------------*/
-FRETVAL(intf)
+intf
 nmglt2rf(intf *id)
 {
     intf ret;
@@ -1200,7 +1200,7 @@ nmglt2rf(intf *id)
  * Returns: number of palettes on success and -1 if fails.
  * Users:   HDF Fortran programmers
  *-------------------------------------------------------------------------*/
-FRETVAL(intf)
+intf
 nmgcgnluts(intf *id)
 {
     intf ret = -1;

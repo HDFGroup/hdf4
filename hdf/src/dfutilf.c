@@ -33,7 +33,7 @@
  * Invokes: DFfindnextref
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 ndfindnr(intf *dfile, intf *tag, intf *lref)
 {
     return (intf)DFfindnextref(*dfile, (uint16)*tag, (uint16)*lref);
@@ -55,7 +55,7 @@ ndfindnr(intf *dfile, intf *tag, intf *lref)
  * Invokes: DFfindnextref
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 ndffindnextref(intf *dfile, intf *tag, intf *lref)
 {
     return (intf)DFfindnextref(*dfile, (uint16)*tag, (uint16)*lref);
