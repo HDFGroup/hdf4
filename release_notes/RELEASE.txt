@@ -63,8 +63,6 @@ New features and changes
       outdated.  We have no resources to properly update those and to add the
       missing ones. Instead, we will try to create better man pages from Doxygen.
 
-      (BMR - 2024/02/04)
-
     - Incorporated HDF4 examples repository into HDF4 library.
 
       The HDF4Examples folder is equivalent to the repository hdf4-examples.
@@ -79,8 +77,6 @@ New features and changes
             <example option> = <library option>
             HDF_BUILD_JAVA = ${HDF4_BUILD_JAVA}
 
-      (ADB - 2023/12/13)
-
     - Autotools and CMake target added to produce doxygen generated documentation
 
       The default is OFF or disabled.
@@ -89,8 +85,6 @@ New features and changes
       CMake configure option is 'HDF4_BUILD_DOC'.
         CMake target is 'doxygen' for all available doxygen targets
         CMake target is 'hdf4lib_doc' for the src subdirectory
-
-      (ADB - 2023/12/03)
 
     - Added support for CMake presets file.
 
