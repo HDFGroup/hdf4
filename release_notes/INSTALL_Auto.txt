@@ -11,6 +11,11 @@ Section IV:   Windows Configuration and Build
 
 ************************************************************************
 
+For help with installing, questions can be posted to the HDF Forum or sent to the HDF Helpdesk:
+
+   HDF Forum:     https://forum.hdfgroup.org/
+   HDF Helpdesk:  https://hdfgroup.atlassian.net/servicedesk/customer/portals
+
 
 ========================================================================
 I. Preconditions
