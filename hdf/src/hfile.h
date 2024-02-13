@@ -90,7 +90,6 @@ typedef FILE *hdf_file_t;
 #endif /* FILELIB == UNIXBUFIO */
 
 #if (FILELIB == UNIXUNBUFIO)
-#error "WHAT THE FUCK"
 /* using UNIX unbuffered file I/O routines to access files */
 typedef int hdf_file_t;
 #define HI_OPEN(p, a)     (((a)&DFACC_WRITE) ? open((p), O_RDWR) : open((p), O_RDONLY))
