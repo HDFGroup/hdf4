@@ -10,9 +10,10 @@ char errstr[100];        /* for short error messages */
 extern long strtol();
 void expand_escapes();
 
-#include <string.h>
 #include <ctype.h>
 #include <limits.h>
+#include <stdlib.h>
+#include <string.h>
 #include "ncgentab.h"
 %}
 

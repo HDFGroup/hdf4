@@ -3,11 +3,11 @@
  *   See netcdf/README file for copying and redistribution conditions.
  *********************************************************************/
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
-#include <stdlib.h>
+
 #include "local_nc.h"
 #include "ncdump.h"
 

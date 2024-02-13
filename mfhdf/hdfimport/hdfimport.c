@@ -170,13 +170,15 @@
  *
  */
 
+#include <ctype.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "hdf.h"
 #include "hfile.h"
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-#include <ctype.h>
-#include <mfhdf.h>
+#include "mfhdf.h"
 
 #ifdef H4_HAVE_SYS_STAT_H
 #include <sys/stat.h>
