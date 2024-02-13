@@ -19,14 +19,6 @@
   the Vxxx interfaces.
 
   The basic routines called by fortran will be of the form vfxxx.
-
-  If only a C stub is needed it will be named nvfxxx and have the FNAME()
-  function applied to it. There are a few exceptions where C stub is
-  named for example ndfixxx or ndfxxx, oh well.
-
-  If a Fortran stub is also required the fortran stub will be called
-  vfxxx(vgff.f) and the one in here will be nvfxxxc and again be FNAME()ed
-
 -----------------------------------------------------------------------------*/
 
 /*
