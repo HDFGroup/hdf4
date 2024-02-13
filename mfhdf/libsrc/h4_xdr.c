@@ -41,8 +41,11 @@
 /* Which header files include htonl() ? */
 
 #ifdef H4_HAVE_WIN32_API
-/* Use winsock on Win32 (including MinGW) */
-#include <winsock2.h>
+/* Use winsock on Win32 (including MinGW)
+ *
+ * This is included in hdfi.h to ensure winsock2.h is included before
+ * windows.h.
+ */
 #else
 /* And normal network headers everywhere else */
 #ifdef H4_HAVE_ARPA_INET_H

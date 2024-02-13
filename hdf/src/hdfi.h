@@ -106,6 +106,9 @@
 
 /* Windows headers */
 #ifdef H4_HAVE_WIN32_API
+/* Needed for XDR. Must come BEFORE windows.h!!! */
+#include <winsock2.h>
+
 #include <windows.h>
 #include <direct.h>
 #include <io.h>
