@@ -29,7 +29,7 @@
 #include "hdftest.h"
 
 #ifdef H4_HAVE_SYS_TYPES_H
-#include <sys/types.h>  /* Windows off_t */
+#include <sys/types.h> /* Windows off_t */
 #endif
 
 static intn test_attrs();
