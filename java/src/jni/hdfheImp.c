@@ -25,7 +25,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 #include <jni.h>
-#include "hdf.h"
+#include "hdfi.h"
 #include "hfile.h"
 #include "h4jni.h"
 #include "hdfheImp.h"
