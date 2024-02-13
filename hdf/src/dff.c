@@ -37,9 +37,11 @@
  *  dfstat:    call DFstat to get status info on file
  *  dfiishdf:  call DFishdf to get HDF string
  *---------------------------------------------------------------------------*/
-#include "df.h"
 
+#include "hdfi.h"
+#include "df.h"
 #include "hproto_fortran.h"
+
 /*-----------------------------------------------------------------------------
  * Name:    dfiopen
  * Purpose: call DFopen to open HDF file

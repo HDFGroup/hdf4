@@ -22,7 +22,7 @@
 /*        DFCunimcomp(), sqr()                                          */
 /************************************************************************/
 
-#include "hdf.h"
+#include "hdfi.h"
 
 #define PALSIZE  256
 #define BIT8     0

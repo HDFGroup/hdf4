@@ -102,7 +102,7 @@ EXPORTED ROUTINES
 *************************************************************************/
 
 #define VSET_INTERFACE
-#include "hdf.h"
+#include "hdfi.h"
 
 /* These are used to determine whether a vgroup had been created by the
    library internally, that is, not created by user's application */

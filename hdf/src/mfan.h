@@ -19,9 +19,7 @@
 #ifndef H4_MFAN_H
 #define H4_MFAN_H
 
-#include "H4api_adpt.h"
-
-#include "hdf.h"
+#include "hdfi.h"
 
 #ifdef __cplusplus
 extern "C" {

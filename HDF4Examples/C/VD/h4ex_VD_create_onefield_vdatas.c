@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "hdf.h"
 
 #define FILE_NAME   "h4ex_VD_create_onefield_vdatas.hdf"

@@ -8,7 +8,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "h4config.h"
+#include "hdf.h"
+
 #ifdef H4_HAVE_NETCDF
 #include <netcdf.h>
 #else
@@ -27,7 +28,7 @@ extern char *sanitize_string(char *str, bool fix_str);
 
 static void annotate(struct ncvar *vp, struct fspec *fsp, long cor[], long iel);
 
-#define STREQ(a, b) (*(a) == *(b) && strcmp((a), (b)) == 0)
+#define VD_STREQ(a, b) (*(a) == *(b) && strcmp((a), (b)) == 0)
 
 /*
  * Print a row of variable values.  Makes sure output lines aren't too long
@@ -83,7 +84,7 @@ pr_vals(struct ncvar *vp, long len, char *fmt, bool more, bool lastrow, void *va
             break;
         case NC_CHAR:
             gp.cp = (char *)vals;
-            if (fmt == 0 || STREQ(fmt, "%s") || STREQ(fmt, "")) { /* as string */
+            if (fmt == 0 || VD_STREQ(fmt, "%s") || VD_STREQ(fmt, "")) { /* as string */
                 Printf("\"");
                 /* adjust len so trailing nulls don't get printed */
                 sp = gp.cp + len;
@@ -322,7 +323,7 @@ pr_cvals(struct ncvar *vp, long len, char *fmt, bool more, bool lastrow, void *v
             break;
         case NC_CHAR:
             gp.cp = (char *)vals;
-            if (fmt == 0 || STREQ(fmt, "%s") || STREQ(fmt, "")) { /* as string */
+            if (fmt == 0 || VD_STREQ(fmt, "%s") || VD_STREQ(fmt, "")) { /* as string */
                 Printf("\"");
                 /* adjust len so trailing nulls don't get printed */
                 sp = gp.cp + len;

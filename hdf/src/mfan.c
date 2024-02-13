@@ -13,7 +13,6 @@
 
 /*-----------------------------------------------------------------------------
  * File:     mfan.c
- * Author:   GeorgeV
  * Purpose:  Multi-file read and write annotations: labels and descriptions
  *           of data items and file
  * Invokes:
@@ -28,8 +27,6 @@
  *
  *           NOTE2: Note that any mention of file ID's except in ANStart()
  *                  should now refer to annotation interface ID.
- *
- * Contents:
  *
  *  Private Routines:
  *  -----------------
@@ -80,6 +77,8 @@
  *  ANtag2atype - annotation TAG to corresponding annotation type
  *
  *---------------------------------------------------------------------------*/
+
+#include "hdfi.h"
 
 #include "mfani.h"
 #include "mfan.h"

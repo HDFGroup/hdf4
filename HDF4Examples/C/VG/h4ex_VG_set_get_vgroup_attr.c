@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "hdf.h"
 
 #define FILE_NAME    "General_Vgroups2.hdf"

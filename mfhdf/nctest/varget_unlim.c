@@ -5,8 +5,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-#include "h4config.h"
+#include "hdf.h"
+
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h"
 #else
@@ -17,7 +19,6 @@
 #include "error.h"
 #include "tests.h"
 #include "emalloc.h"
-#include "hdf.h"
 
 float a_val[2][3]   = {{1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}};
 int   date_val[12]  = {840116, 840214, 840316, 840415, 840516, 840615,

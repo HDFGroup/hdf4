@@ -145,11 +145,13 @@
  *
  */
 
-#include "hdf.h"
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
 #include <ctype.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "hdf.h"
 
 #ifdef H4_HAVE_SYS_STAT_H
 #include <sys/stat.h>

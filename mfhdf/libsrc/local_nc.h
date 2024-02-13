@@ -17,14 +17,11 @@
 #ifndef MFH4_LOCAL_NC_H
 #define MFH4_LOCAL_NC_H
 
-#include "H4api_adpt.h"
+#include "hdfi.h"
 
 /*
  *    netcdf library 'private' data structures, objects and interfaces
  */
-
-#include <stddef.h> /* size_t */
-#include <stdio.h>  /* FILENAME_MAX */
 
 #ifndef FILENAME_MAX
 #define FILENAME_MAX 255
@@ -55,7 +52,6 @@
  * Include HDF stuff
  */
 
-#include "hdf.h"
 #include "vg.h"
 #include "hfile.h"
 #include "mfhdfi.h"

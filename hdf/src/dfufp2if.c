@@ -11,7 +11,7 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "hdf.h"
+#include "hdfi.h"
 #include "dfufp2i.h"
 #include "dfsd.h"
 #include "hproto_fortran.h"

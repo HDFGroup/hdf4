@@ -36,8 +36,6 @@
  * compatible with the original Berkeley version.
  *
  * This version uses HDF number types.
- *
- * AUTHOR - George V.- 1996/08/22
  *****************************************************************************/
 
 /*
@@ -51,10 +49,8 @@
 #ifndef H4_MCACHE_H
 #define H4_MCACHE_H
 
-/* Required include */
+#include "hdfi.h"
 #include "hqueue.h" /* Circular queue functions(Macros) */
-
-#include "H4api_adpt.h"
 
 /* Set return/succeed values */
 #ifdef SUCCEED

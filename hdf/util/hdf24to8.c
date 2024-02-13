@@ -41,6 +41,7 @@ typedef unsigned int  UINT;
 #define COMPRESSION 0 /* no compression */
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "hdf.h"
 

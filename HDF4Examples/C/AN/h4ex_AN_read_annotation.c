@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "hdf.h"
 
 #define FILE_NAME "General_HDFobjects.hdf"

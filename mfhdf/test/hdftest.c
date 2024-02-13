@@ -11,6 +11,9 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "mfhdf.h"
 
 #include "hdftest.h"
@@ -78,7 +81,6 @@ main(void)
     int32   sdid;   /* another SDS handle */
     int32   rank;   /* rank of SDS */
     intn    status; /* status flag */
-    intn    i;      /* loop variables */
     intn    nattrs; /* Number of attributes again? */
     char    name[90];
     char    text[256];
@@ -216,7 +218,7 @@ main(void)
     CHECK(status, FAIL, "SDreaddata");
 
     /* compare retrieved values for scale */
-    for (i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) {
         if (idata[i] != scale[i]) {
             fprintf(stderr, "SDreaddata() returned %ld not %ld in location %d\n", (long)idata[i],
                     (long)scale[i], i);
@@ -349,7 +351,7 @@ main(void)
     CHECK(status, FAIL, "SDsetfillvalue");
 
     /* initialize array to write out */
-    for (i = 0; i < 10; i++)
+    for (int i = 0; i < 10; i++)
         data[i] = (float32)i;
 
     /* write out (1,1)->(3,3) array out */
@@ -460,7 +462,7 @@ main(void)
         num_errs++;
     }
 
-    for (i = 0; i < 50; i++)
+    for (int i = 0; i < 50; i++)
         sdata[i] = i;
 
     /* Write data to dataset 'DataSetBeta' in file 'test2.hdf' */
@@ -499,7 +501,7 @@ main(void)
         num_errs++;
     }
 
-    for (i = 0; i < 50; i++)
+    for (int i = 0; i < 50; i++)
         outdata[i] = 0;
 
     /* read data back in from 'DataSetBeta' from file 'test2.hdf' */
@@ -514,14 +516,14 @@ main(void)
     {              /* verify read values; should be
                  7 9 11 19 21 23 31 33 35 */
         int i, j;  /* indexing the two dimensions */
-        int k, l;  /* counters = number of elements read on each dimension */
-        int m = 0; /* indexing the outdata array */
-        for (i = 1, l = 0; l < 3; i = i + 2, l++)
-            for (j = (i * 6) + 1, k = 0; k < 3; j = j + 2, k++, m++) {
-                if (m < 10) /* number of elements read is 9 */
-                    if (outdata[m] != sdata[j]) {
+        int k, m;  /* counters = number of elements read on each dimension */
+        int n = 0; /* indexing the outdata array */
+        for (i = 1, m = 0; m < 3; i = i + 2, m++)
+            for (j = (i * 6) + 1, k = 0; k < 3; j = j + 2, k++, n++) {
+                if (n < 10) /* number of elements read is 9 */
+                    if (outdata[n] != sdata[j]) {
                         fprintf(stderr, "line %d, wrong value: should be %d, got %d\n", __LINE__, sdata[j],
-                                outdata[m]);
+                                outdata[n]);
                         num_errs++;
                     }
             }
@@ -606,7 +608,7 @@ main(void)
     sdid       = SDcreate(f1, "FIXED1", DFNT_INT32, 2, dimsize);
     CHECK(sdid, FAIL, "SDcreate:Fail to create data set 'FIXED1' in 'test1.hdf'");
 
-    for (i = 0; i < 30; i++)
+    for (int i = 0; i < 30; i++)
         idata[i] = i + 100;
 
     /* Set fill value attribute for data set 'FIXED1' using SDsetattr().
@@ -673,7 +675,7 @@ main(void)
     sdid = SDcreate(f1, "FIXED", DFNT_INT32, 2, dimsize);
     CHECK(sdid, FAIL, "SDcreate:Failed to create data set 'FIXED' in file 'test1.hdf'");
 
-    for (i = 0; i < 30; i++)
+    for (int i = 0; i < 30; i++)
         idata[i] = i + 100;
 
     /* Set fill value for data set 'FIXED' using SDsetfillvalue() */
@@ -761,7 +763,7 @@ main(void)
     CHECK(status, FAIL, "SDreaddata(FIXED)");
 
     /* verify the data */
-    for (i = 12; i < 18; i++) {
+    for (int i = 12; i < 18; i++) {
         if ((idata[i] != 100 + (i - 12)) || (idata[i + 12] != 100 + (i - 12))) {
             fprintf(stderr, "line %d, wrong value: should be %d, got %d %d\n", __LINE__, 100 + i - 12,
                     (int)idata[i], (int)idata[i + 12]);
@@ -769,7 +771,7 @@ main(void)
         }
     }
 
-    for (i = 18; i < 24; i++) {
+    for (int i = 18; i < 24; i++) {
         if (idata[i] == fillval) {
             fprintf(stderr, "line %d, wrong value: should not be %d, got %d\n", __LINE__, (int)fillval,
                     (int)idata[i]);
@@ -800,7 +802,7 @@ main(void)
     CHECK(status, FAIL, "SDreaddata(FIXED)");
 
     /* verify the data */
-    for (i = 12; i < 18; i++) {
+    for (int i = 12; i < 18; i++) {
         if (idata[i] != (100 + (i - 12))) {
             fprintf(stderr, "line %d, wrong value: should be %d, got %d \n", __LINE__, 100 + i - 12,
                     (int)idata[i]);
@@ -808,7 +810,7 @@ main(void)
         }
     }
 
-    for (i = 18; i < 24; i++) {
+    for (int i = 18; i < 24; i++) {
         if (idata[i] != fillval) {
             fprintf(stderr, "line %d, wrong value: should be %d, got %d\n", __LINE__, (int)fillval,
                     (int)idata[i]);
@@ -843,7 +845,7 @@ main(void)
     sdid       = SDcreate(f1, "UNLIMITED_SDS", DFNT_INT32, 2, dimsize);
     CHECK(sdid, FAIL, "SDcreate:Failed to create data set 'UNLIMITED_SDS' in file 'test1.hdf'");
 
-    for (i = 0; i < 24; i++)
+    for (int i = 0; i < 24; i++)
         idata[i] = i;
 
     /* Set fill value for data set 'UNLIMITED_SDS' */
@@ -924,7 +926,7 @@ main(void)
     CHECK(status, FAIL, "SDwritedata(NO_FILL)");
 
     /* verify the data */
-    for (i = 12; i < 18; i++) {
+    for (int i = 12; i < 18; i++) {
         if ((idata[i] != (i - 12)) || (idata[i + 12] != (i - 12))) {
             fprintf(stderr, "line %d, wrong value for %d: should be %d, got %d\n", __LINE__, i - 12,
                     (int)idata[i], (int)idata[i + 12]);
@@ -932,7 +934,7 @@ main(void)
         }
     }
 
-    for (i = 18; i < 24; i++) {
+    for (int i = 18; i < 24; i++) {
         if (idata[i] != fillval) {
             fprintf(stderr, "line %d, wrong value: should be %d, got %d\n", __LINE__, (int)fillval,
                     (int)idata[i]);
@@ -976,14 +978,14 @@ main(void)
     status = SDsetdimval_comp(dimid1, SD_DIMVAL_BW_COMP);
     CHECK(status, FAIL, "SDsetdimval_comp");
 
-    for (i = 0; i < 6; i++)
+    for (int i = 0; i < 6; i++)
         scale[i] = i * 5;
 
     /* set the scale for the second dimension */
     status = SDsetdimscale(dimid1, 6, DFNT_INT32, scale);
     CHECK(status, FAIL, "SDsetdimscale");
 
-    for (i = 0; i < 24; i++)
+    for (int i = 0; i < 24; i++)
         idata[i] = i;
 
     /* write data to data set 'dimval_1_compat' in file 'test1.hdf' */
@@ -1069,7 +1071,7 @@ main(void)
     CHECK(status, FAIL, "SDwritedata");
 
     /* verify data */
-    for (i = 0; i < 24; i++) {
+    for (int i = 0; i < 24; i++) {
         if (idata[i] != i) {
             fprintf(stderr, "line %d, wrong value: should be %d, got %d\n", __LINE__, i, (int)idata[i]);
             num_errs++;
@@ -1194,7 +1196,7 @@ main(void)
     CHECK(newsds, FAIL, "SDcreate:Failed to create a new data set('NBitDataSet') for n-bit testing");
 
     /* Initialize data to write out */
-    for (i = 0; i < 25; i++)
+    for (int i = 0; i < 25; i++)
         idata[i] = i * 10;
 
     /* Promote the data set 'NBitDataSet' to an NBIT data set */
@@ -1231,7 +1233,7 @@ main(void)
     CHECK(status, FAIL, "SDreaddata");
 
     /* verify the data */
-    for (i = 0; i < 25; i++) {
+    for (int i = 0; i < 25; i++) {
         if ((idata[i] & 0x7f) != rdata[i]) {
             fprintf(stderr, "Bogus val in loc %d in n-bit dset want %ld got %ld\n", i, (long)idata[i],
                     (long)rdata[i]);

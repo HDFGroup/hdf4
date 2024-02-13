@@ -27,6 +27,8 @@
  *	and SDgetdatasize.
  ****************************************************************************/
 
+#include <string.h>
+
 #include "mfhdf.h"
 
 #include "hdftest.h"

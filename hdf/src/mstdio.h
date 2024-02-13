@@ -15,15 +15,14 @@
  * File:    mstdio.h
  * Purpose: Header file for stdio-like modeling information.
  * Dependencies: should be included after hdf.h
- * Invokes:
  * Contents: Structures & definitions for stdio modeling.  This header
  *              should only be included in hcomp.c and mstdio.c.
- * Structure definitions:
- * Constant definitions:
  *---------------------------------------------------------------------------*/
 
 #ifndef H4_MSTDIO_H
 #define H4_MSTDIO_H
+
+#include "hdfi.h"
 
 /* model information about stdio model */
 typedef struct {

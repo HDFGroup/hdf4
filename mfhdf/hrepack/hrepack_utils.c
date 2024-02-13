@@ -11,6 +11,9 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <string.h>
+#include <stdlib.h>
+
 #include "hdf.h"
 #include "mfhdf.h"
 #include "hrepack_utils.h"

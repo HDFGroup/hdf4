@@ -14,15 +14,10 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include <string.h>
 #include <errno.h>
-#include "h4config.h"
+
 #include "local_nc.h"
 #include "herr.h"
-
-#ifdef H4_HAVE_UNISTD_H
-#include <unistd.h> /* getpid(), access(), F_OK */
-#endif
 
 #if defined H4_HAVE_WIN32_API && !defined __MINGW32__
 typedef int                               pid_t;

@@ -18,6 +18,8 @@
 #ifndef H4_DFCONVRT_H
 #define H4_DFCONVRT_H
 
+#include "hdfi.h"
+
 #ifndef FUNC_CONV
 /* This is the default */
 /* using the DFconvert macro instead of function */

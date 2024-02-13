@@ -11,7 +11,7 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include <hdf.h>
+#include "hdf.h"
 #include "gif.h"
 #include <string.h>
 #include <stdlib.h>

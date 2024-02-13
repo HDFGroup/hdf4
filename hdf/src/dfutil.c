@@ -17,21 +17,14 @@
  * Purpose:
  *    General purpose utility routines, and callable versions of hdf utilities
  *
- * Invokes:
- *    latest libdf.a
- *
  * Public functions:
  *    DFUfindnextref - For this tag, find the ref after given ref
- *
- * Lower level functions:
- *
- * Private functions:
  *
  * Remarks:
  *    This version assumes that all the values are floating point.
  *--------------------------------------------------------------------------*/
 
-#include "hdf.h"
+#include "hdfi.h"
 
 /*-----------------------------------------------------------------------------
  * Name:    DFfindnextref

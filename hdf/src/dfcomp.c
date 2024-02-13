@@ -23,10 +23,10 @@
  * Remarks: DFgetcomp and DFputcomp constitute a general compression interface
  *---------------------------------------------------------------------------*/
 
-/* This module (dfcomp.c) used to be in */
-/* charge of the general compression information */
-/* but hcomp.c now supersedes it. */
-#include "hdf.h"
+/* This module (dfcomp.c) used to be in charge of the general compression
+ * information but hcomp.c now supersedes it
+ */
+#include "hdfi.h"
 
 #define R8_MAX_BLOCKS 32
 #define R8_MAX_LENGTH 512

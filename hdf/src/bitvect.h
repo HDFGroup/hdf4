@@ -19,9 +19,7 @@
 #ifndef H4_BITVECT_H
 #define H4_BITVECT_H
 
-#include "H4api_adpt.h"
-
-#include "hdf.h"
+#include "hdfi.h"
 
 /* Boolean values used */
 typedef enum { BV_FALSE = 0, BV_TRUE = 1 } bv_bool;

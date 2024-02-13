@@ -14,7 +14,7 @@
 /*
  *  SZIP support eliminated for HDF4.2R1
  */
-#include <hdf.h>
+#include "hdf.h"
 #include "tutils.h"
 
 #ifdef H4_HAVE_LIBSZ

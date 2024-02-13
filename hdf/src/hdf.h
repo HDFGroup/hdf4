@@ -14,7 +14,14 @@
 #ifndef H4_HDF_H
 #define H4_HDF_H
 
-#include "hdfi.h"
+/* NOTE: This header is not protected by include guards, so don't include
+ *       it outside of hdf.h
+ */
+#include "h4config.h"
+
+#include <inttypes.h>
+
+/* Library limits */
 #include "hlimits.h"
 
 /*-------------------------------------------------------------------------
@@ -166,16 +173,20 @@ typedef intn (*hdf_termfunc_t)(void); /* termination function typedef */
 
 /* .................................................................. */
 
+/* API adapter header (defines HDFPUBLIC, etc.) */
+#include "H4api_adpt.h"
+
 /* Publicly accessible functions declarations.  This includes all the
-   functions that are used by application programs.  */
+ * functions that are used by application programs.
+ */
 
 #include "hbitio.h"
 #include "hcomp.h"
 #include "herr.h"
 #include "hproto.h"
-#include "hdatainfo.h" /* Add the data info header */
-#include "vg.h"        /* Add the Vgroup/Vdata header so the users don't have to */
-#include "mfgr.h"      /* Add the GR header so the users don't have to */
+#include "hdatainfo.h" /* data info header */
+#include "vg.h"        /* Vgroup/Vdata header */
+#include "mfgr.h"      /* GR header */
 
 /* these may eventually evolve into real-life functions but not yet */
 #define HDFopen(f, a, d) Hopen((f), (a), (d))

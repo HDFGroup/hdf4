@@ -14,6 +14,8 @@
 #ifndef HDFTEST_H
 #define HDFTEST_H
 
+#include <stdio.h>
+
 /*
  * The name of the test is printed by saying TESTING("something") which will
  * result in the string `Testing something' being flushed to standard output.

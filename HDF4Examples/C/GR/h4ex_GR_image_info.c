@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "hdf.h"
 
 #define FILE_NAME "General_RImages3.hdf"

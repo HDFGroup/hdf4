@@ -20,6 +20,9 @@
 /* Sept. 23, 1991                                               */
 
 /*   USAGE: ristosds infile{ infile} -o outfile                 */
+
+#include <stdlib.h>
+
 #include "hdf.h"
 
 #define r_imgae 2;

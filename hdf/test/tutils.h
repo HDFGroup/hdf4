@@ -14,6 +14,8 @@
 #ifndef H4_TUTILS_H
 #define H4_TUTILS_H
 
+#include "hdfi.h"
+
 /* Define these for use in all the tests */
 #ifndef TESTMASTER
 extern

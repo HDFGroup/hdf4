@@ -16,6 +16,9 @@
  * Extract images from HDF file to raster files
  */
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "hdf.h"
 
 #define PALETTE_SIZE 768 /* size of palette array */

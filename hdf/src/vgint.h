@@ -28,8 +28,7 @@
 #ifndef H4_VGINT_H
 #define H4_VGINT_H
 
-#include "H4api_adpt.h"
-
+#include "hdfi.h"
 #include "hfile.h"
 
 /* Include file for Threaded, Balanced Binary Tree implementation */

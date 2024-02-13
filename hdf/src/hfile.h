@@ -18,7 +18,7 @@
 #ifndef H4_HFILE_H
 #define H4_HFILE_H
 
-#include "H4api_adpt.h"
+#include "hdfi.h"
 
 #include "tbbt.h"
 #include "bitvect.h"

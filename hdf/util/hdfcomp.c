@@ -15,6 +15,9 @@
  *  hdfcomp.c
  *  Re-compress Raster-8 HDF file
  */
+
+#include <stdlib.h>
+
 #include "hdf.h"
 
 uint8 *space;

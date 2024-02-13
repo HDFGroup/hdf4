@@ -23,17 +23,10 @@
    EXPORTED ROUTINES
    None of these routines are designed to be called by other users except
    for the modeling layer of the compression routines.
-
-   AUTHOR
-   Quincey Koziol
-
-   MODIFICATION HISTORY
-   9/28/93     Starting writing specs & coding prototype.
-   10/09/93    Finished testing.  First version done.
  */
 
 /* General HDF includes */
-#include "hdf.h"
+#include "hdfi.h"
 
 /* HDF compression includes */
 #include "hcompi.h" /* Internal definitions for compression */

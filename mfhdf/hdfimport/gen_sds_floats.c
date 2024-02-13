@@ -11,6 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <stdlib.h>
+
 #include "mfhdf.h"
 
 #define FILE2_NAME "SDSfloat2.hdf"

@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "mfhdf.h"
 
 #define FILE1_NAME "hdifftst1.hdf"

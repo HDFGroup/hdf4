@@ -26,6 +26,7 @@
 
 #include "hdf.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #ifdef H4_HAVE_SYS_TYPES_H

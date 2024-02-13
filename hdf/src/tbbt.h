@@ -17,9 +17,7 @@
 #ifndef H4_TBBT_H
 #define H4_TBBT_H
 
-#include "H4api_adpt.h"
-
-#include "hdf.h"
+#include "hdfi.h"
 
 typedef struct tbbt_node TBBT_NODE;
 

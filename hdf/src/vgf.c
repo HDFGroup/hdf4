@@ -32,7 +32,7 @@
  *********************************************************************** */
 
 #define VSET_INTERFACE
-#include "hdf.h"
+#include "hdfi.h"
 #include "hproto_fortran.h"
 
 /*

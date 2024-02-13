@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "hdf.h"
 
 #define N_RECORDS      20 /* number of records to be read */

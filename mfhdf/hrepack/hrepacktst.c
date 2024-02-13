@@ -11,6 +11,9 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "hdf.h"
 #include "mfhdf.h"
 #include "hcomp.h"

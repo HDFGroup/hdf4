@@ -6,7 +6,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "h4config.h"
+#include "hdf.h"
+
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h"
 #else
@@ -19,7 +20,6 @@
 #include "emalloc.h"
 #include "tests.h"
 #include "val.h"
-#include "hdf.h"
 
 #define LEN_OF(array) ((sizeof array) / (sizeof array[0]))
 

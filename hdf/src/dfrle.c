@@ -21,7 +21,7 @@
  * Remarks: DFCIrle() and DFCIunrle() compress and decompress RLE encoded info
  *---------------------------------------------------------------------------*/
 
-#include "hdf.h"
+#include "hdfi.h"
 
 /*-----------------------------------------------------------------------------
  * Name:    DFCIrle

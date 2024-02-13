@@ -19,8 +19,9 @@
  *  dfindnr_:       For a given tag, find the next ref after the given ref
  *---------------------------------------------------------------------------*/
 
-#include "hdf.h"
+#include "hdfi.h"
 #include "hproto_fortran.h"
+
 /*-----------------------------------------------------------------------------
  * Name:    dfindnr
  * Purpose: For this tag, find the ref after lref

@@ -14,14 +14,12 @@
 /*-----------------------------------------------------------------------------
  * File:    hconv.h
  * Purpose: header file for data conversion information & structures
- * Invokes:
- * Contents:
- * Structure definitions:
- * Constant definitions: lots...
  *---------------------------------------------------------------------------*/
 
 #ifndef H4_HCONV_H
 #define H4_HCONV_H
+
+#include "hdfi.h"
 
 /* This looks redundant because previously, VMS platform would undefine DUFF. */
 /* Don't know why. -AKC 2014/1/18 */

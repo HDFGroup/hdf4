@@ -25,6 +25,9 @@
  *  This program is in the public domain
  *
  */
+
+#include <stdlib.h>
+
 #include "hdf.h"
 
 int main(int argc, char *argv[]);

@@ -13,7 +13,6 @@
 
 /*-----------------------------------------------------------------------------
  * File:     mfanf.c
- * Author:   GeorgeV.
  * Purpose:  C-stubs for multi-file Fortran annotation routines
  * Invokes:  C-Routines in "mfan.c"
  * Contents: SEE annotation source/header files "mfan.c" and "mfan.h"
@@ -48,7 +47,7 @@
  *    aftagatype  - annotation TAG to corresponding annotation type
  *---------------------------------------------------------------------------*/
 
-#include "hdf.h"
+#include "hdfi.h"
 #include "hproto_fortran.h"
 
 /*-----------------------------------------------------------------------------

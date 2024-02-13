@@ -14,7 +14,10 @@
 #ifndef H4_H_PROTO
 #define H4_H_PROTO
 
+#include <stdio.h> /* for FILE */
+
 #include "H4api_adpt.h"
+#include "hdf.h"
 
 /* Useful macros, which someday might become actual functions */
 /* Wrappers for Hinquire. feb-2-92 */

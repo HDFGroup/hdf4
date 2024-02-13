@@ -19,10 +19,10 @@
 #ifndef H4_MFGRI_H
 #define H4_MFGRI_H
 
-#include "H4api_adpt.h"
+#include "hdfi.h"
 
 #include "hfile.h"
-#include "tbbt.h" /* Get tbbt routines */
+#include "tbbt.h"
 
 /* This is the size of the hash tables used for GR & RI IDs */
 #define GRATOM_HASH_SIZE 32

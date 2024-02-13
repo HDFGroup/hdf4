@@ -21,6 +21,8 @@
 #ifndef H4_HBITIO_H
 #define H4_HBITIO_H
 
+#include "hdf.h"
+
 /* Define the number of elements in the buffered array */
 #define BITBUF_SIZE 4096
 /* Macro to define the number of bits cached in the 'bits' variable */

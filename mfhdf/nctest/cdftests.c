@@ -7,18 +7,19 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "h4config.h"
+#include "hdf.h"
+
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h"
 #else
 #include "hdf4_netcdf.h"
 #endif
+
 #include "testcdf.h" /* defines in-memory test netcdf structure */
 #include "add.h"     /* functions to update in-memory netcdf */
 #include "error.h"
 #include "tests.h"
 #include "emalloc.h"
-#include "hdf.h"
 
 #define LEN_OF(array) ((sizeof array) / (sizeof array[0]))
 

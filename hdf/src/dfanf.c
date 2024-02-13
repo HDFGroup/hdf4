@@ -38,6 +38,8 @@
  *
  *  daiafid_       : add file id (intermediate routine)
  *---------------------------------------------------------------------------*/
+
+#include "hdfi.h"
 #include "dfan.h"
 #include "df.h"
 #include "hproto_fortran.h"

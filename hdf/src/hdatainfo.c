@@ -44,7 +44,7 @@ LOW-LEVEL ROUTINES
 
 **********************************************************************/
 
-#include "hdf.h"
+#include "hdfi.h"
 #include "hlimits.h"
 #include "vgint.h"
 #include "mfani.h"

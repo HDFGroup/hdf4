@@ -14,8 +14,6 @@
 #ifndef MFH4_MFDATAINFO_H
 #define MFH4_MFDATAINFO_H
 
-#include "H4api_adpt.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif

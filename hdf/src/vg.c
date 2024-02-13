@@ -62,7 +62,7 @@ PRIVATE data structures in here pertain to vdata in vsdir only.
  */
 
 #define VSET_INTERFACE
-#include "hdf.h"
+#include "hdfi.h"
 
 /* These are used to determine whether a vdata had been created by the
    library internally, that is, not created by user's application */

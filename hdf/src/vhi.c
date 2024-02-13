@@ -23,7 +23,7 @@
  */
 
 #define VSET_INTERFACE
-#include "hdf.h"
+#include "hdfi.h"
 
 /* ------------------------ VHstoredata -------------------------------
    NAME

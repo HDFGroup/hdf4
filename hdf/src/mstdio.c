@@ -36,17 +36,10 @@ EXPORTED ROUTINES
     HCPmstdio_inquire   -- Inquire information about the access record
                             and data element.
     HCPmstdio_endaccess -- Close the compressed data element
-
-AUTHOR
-   Quincey Koziol
-
-MODIFICATION HISTORY
-   9/28/93     Starting writing specs & coding prototype
-   10/09/93    Finished testing.  First version done.
  */
 
 /* General HDF includes */
-#include "hdf.h"
+#include "hdfi.h"
 #include "hfile.h"
 
 /* HDF compression includes */

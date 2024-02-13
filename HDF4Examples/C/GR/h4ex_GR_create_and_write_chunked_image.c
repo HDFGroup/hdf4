@@ -1,4 +1,7 @@
+#include <stdio.h>
+
 #include "hdf.h"
+
 #define FILE_NAME  "h4ex_GR_create_and_write_chunked_image.hdf"
 #define IMAGE_NAME "gzip_comp_data"
 #define X_LENGTH   6  /* number of rows in the image */

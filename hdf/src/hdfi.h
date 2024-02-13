@@ -14,7 +14,18 @@
 #ifndef H4_HDFI_H
 #define H4_HDFI_H
 
-#include "H4api_adpt.h"
+/* Define the I/O scheme before hdf.h to avoid an ordering mess in the
+ * vconv.c code
+ */
+
+/* I/O library constants */
+#define UNIXUNBUFIO 1
+#define UNIXBUFIO   2
+
+/* The library always uses UNIXBUFIO */
+#define FILELIB UNIXBUFIO
+
+#include "hdf.h"
 
 /*--------------------------------------------------------------------------*/
 /*                              MT/NT constants                             */
@@ -59,17 +70,9 @@
 #define DF_MT DFMT_LE
 #endif
 
-/* I/O library constants */
-#define UNIXUNBUFIO 1
-#define UNIXBUFIO   2
-
-/* The library always uses UNIXBUFIO */
-#define FILELIB UNIXBUFIO
-
 /* Standard C library headers */
 #include <assert.h>
 #include <ctype.h>
-#include <inttypes.h>
 #include <limits.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -103,6 +106,9 @@
 
 /* Windows headers */
 #ifdef H4_HAVE_WIN32_API
+/* Needed for XDR. Must come BEFORE windows.h!!! */
+#include <winsock2.h>
+
 #include <windows.h>
 #include <direct.h>
 #include <io.h>

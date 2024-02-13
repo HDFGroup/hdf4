@@ -20,6 +20,8 @@
 #ifndef H4_CNBIT_H
 #define H4_CNBIT_H
 
+#include "hdfi.h"
+
 /* size of the N-bit buffer */
 #define NBIT_BUF_SIZE (MAX_NT_SIZE * 64)
 

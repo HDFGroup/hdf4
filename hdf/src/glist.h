@@ -15,15 +15,12 @@
   Credits:
          Original code is part of the public domain 'Generic List Library'
          by Keith Pomakis(kppomaki@jeeves.uwaterloo.ca)-Spring, 1994
-         It has been modified to adhere to HDF coding standards.
-
-  1996/05/29 - George V.
  ************************************************************************/
 
 #ifndef H4_GLIST_H
 #define H4_GLIST_H
 
-#include "hdf.h" /* needed for data types */
+#include "hdfi.h"
 
 /* Structure for each element in the list */
 typedef struct GLE_struct {

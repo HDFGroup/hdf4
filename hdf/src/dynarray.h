@@ -19,7 +19,7 @@
 #ifndef H4_DYNARRAY_H
 #define H4_DYNARRAY_H
 
-#include "hdf.h"
+#include "hdfi.h"
 
 /*
     Define the pointer to the dynarray without giving outside routines access

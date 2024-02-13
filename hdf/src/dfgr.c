@@ -43,7 +43,7 @@
  *          dimension, compression, color compensation etc.
  *---------------------------------------------------------------------------*/
 
-#include "hdf.h"
+#include "hdfi.h"
 #include "dfgr.h"
 
 static char     *Grlastfile = NULL;

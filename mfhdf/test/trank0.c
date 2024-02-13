@@ -18,6 +18,8 @@
  *    test_rank0 - test routine, called in hdftest.c
  ****************************************************************************/
 
+#include <string.h>
+
 #include "mfhdf.h"
 
 #include "hdftest.h"

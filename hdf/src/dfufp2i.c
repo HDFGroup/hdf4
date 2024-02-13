@@ -22,11 +22,6 @@
  *       floating point data   ---> | fp_to_hdf |   and/or
  *         (in an array)            |           | ----------> SDS
  *                                   -----------
- *
- * Invokes:  libdf.a
- *
- * Includes: stdio.h, ctype.h, "df.h"
- *
  * Public function:
  *      DFUfptoimage: sets up structs with input params, calls process()
  *
@@ -63,7 +58,7 @@
  *
  *--------------------------------------------------------------------------*/
 
-#include "hdf.h"
+#include "hdfi.h"
 #include "dfufp2i.h"
 #include "dfsd.h"
 

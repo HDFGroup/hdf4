@@ -24,6 +24,7 @@ CONTENTS
 
 - New features and changes
   -- Configuration
+  -- C Library
 - Support for new platforms and compilers
 - Bugs fixed since HDF 4.2.16
   -- Configuration
@@ -62,8 +63,6 @@ New features and changes
       outdated.  We have no resources to properly update those and to add the
       missing ones. Instead, we will try to create better man pages from Doxygen.
 
-      (BMR - 2024/02/04)
-
     - Incorporated HDF4 examples repository into HDF4 library.
 
       The HDF4Examples folder is equivalent to the repository hdf4-examples.
@@ -78,8 +77,6 @@ New features and changes
             <example option> = <library option>
             HDF_BUILD_JAVA = ${HDF4_BUILD_JAVA}
 
-      (ADB - 2023/12/13)
-
     - Autotools and CMake target added to produce doxygen generated documentation
 
       The default is OFF or disabled.
@@ -88,8 +85,6 @@ New features and changes
       CMake configure option is 'HDF4_BUILD_DOC'.
         CMake target is 'doxygen' for all available doxygen targets
         CMake target is 'hdf4lib_doc' for the src subdirectory
-
-      (ADB - 2023/12/03)
 
     - Added support for CMake presets file.
 
@@ -126,6 +121,33 @@ New features and changes
       This change will have *NO IMPACT* on modern Macs. Files created using
       MacFS in the 90s and early 2000s can be accessed using C standard
       library I/O.
+
+    C Library:
+    ----------
+      hdfi.h is no longer included by hdf.h
+
+      In the past, hdfi.h (an internal header file) was included in the
+      public hdf.h header. This is no longer the case. Anything that
+      should be public has been moved from hdfi.h to hdf.h, including:
+
+        * The C99-like types (e.g., float32)
+        * The archaic VOID/VOIDP macros
+        * The intf Fortran integer type
+        * The HD library macros (e.g., HDmalloc)
+
+      All of these things are considered obsolete and we only maintain
+      them in the public header so that old code does not have to be
+      modified. It is unwise to use them in new code.
+
+      NOTE: hdfi.h included many POSIX, Windows, and C standard library
+            headers.
+
+        *** THESE WILL NO LONGER BE BROUGHT IN BY INCLUDING HDF.H!!! ***
+
+            If you have been relying on hdf.h to bring in headers like
+            stdlib.h, windows.h, or unistd.h, you will need to update your
+            code when you move to HDF 4.3.0.
+
 
 Support for new platforms and compilers
 =======================================

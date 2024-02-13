@@ -44,19 +44,10 @@ EXPORTED ROUTINES
   HAdestroy_group   - Destroy an atomic group
  Atom Group Cleanup:
   HAshutdown        - Terminate various static buffers.
-
-AUTHOR
-   Quincey Koziol
-
-MODIFICATION HISTORY
-   1/3/96  - Starting writing specs & coding prototype
-   1/7/96  - Finished coding prototype
 */
 
-#include "hdf.h"
+#include "hdfi.h"
 #include "atom.h"
-
-#include <assert.h>
 
 /* # of bits to use for Group ID in each atom (change if MAXGROUP>16) */
 #define GROUP_BITS 4
