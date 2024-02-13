@@ -3677,10 +3677,9 @@ done:
 intn
 DFSDIgetslice(const char *filename, int32 winst[], int32 windims[], void *data, int32 dims[], intn isfortran)
 {
-    intn  rank;        /* number of dimensions in data[] */
-    int32 leastsig;    /* fastest varying subscript in the array */
-    int32 error;       /* flag if an error occurred, */
-                       /*  used by DFconvert macro */
+    intn   rank;       /* number of dimensions in data[] */
+    int32  leastsig;   /* fastest varying subscript in the array */
+    int32  error;      /* flag if an error occurred, */
     int32  convert;    /* true if machine NT != NT to be read */
     int32  transposed; /* true if we must transpose the data before writing */
     int32  done;       /* true if we are at the end of the slice */
@@ -4673,7 +4672,6 @@ DFSDwriteslab(int32 start[], int32 stride[], int32 count[], void *data)
     int32 *filedims;   /* tmp array containing the dimensions */
                        /*   of the dataset in the file */
     int32 r_error;     /* flag if an error occurred, */
-                       /*   used by DFconvert macro */
     int32 aid;
 
     uint8  platnumsubclass; /* class of this NT for this platform */
