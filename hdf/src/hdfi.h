@@ -269,24 +269,6 @@ typedef intptr_t hdf_pint_t;
         p += n                                                                                               \
     }
 
-/*----------------------------------------------------------------
-** MACRO FCALLKEYW for any special fortran-C stub keyword
-**
-** Microsoft C and Fortran need __fortran for Fortran callable C
-**  routines.
-**
-** MACRO FRETVAL for any return value from a fortran-C stub function
-**  Replaces the older FCALLKEYW macro.
-**---------------------------------------------------------------*/
-#ifdef FRETVAL
-#undef FRETVAL
-#endif
-
-#ifndef FRETVAL    /* !MAC */
-#define FCALLKEYW  /*NONE*/
-#define FRETVAL(x) x
-#endif
-
 /**************************************************************************
  *  Generally useful macro definitions
  **************************************************************************/

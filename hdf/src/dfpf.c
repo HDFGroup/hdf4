@@ -41,7 +41,7 @@
  * Invokes: DFPgetpal
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 ndpigpal(_fcd filename, _fcd pal, intf *fnlen)
 {
     char *fn;
@@ -72,7 +72,7 @@ ndpigpal(_fcd filename, _fcd pal, intf *fnlen)
  *          call
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 ndpippal(_fcd filename, _fcd pal, intf *overwrite, _fcd filemode, intf *fnlen)
 {
     char *fn;
@@ -95,7 +95,7 @@ ndpippal(_fcd filename, _fcd pal, intf *overwrite, _fcd filemode, intf *fnlen)
  * Invokes: DFPnpals
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 ndpinpal(_fcd filename, intf *fnlen)
 {
     char *fn;
@@ -120,7 +120,7 @@ ndpinpal(_fcd filename, intf *fnlen)
  * Remarks: checks if palette with this ref exists
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 ndpirref(_fcd filename, intf *ref, intf *fnlen)
 {
     char *fn;
@@ -145,7 +145,7 @@ ndpirref(_fcd filename, intf *ref, intf *fnlen)
  * Invokes: DFPwriteref
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 ndpiwref(_fcd filename, intf *ref, intf *fnlen)
 {
 
@@ -169,7 +169,7 @@ ndpiwref(_fcd filename, intf *ref, intf *fnlen)
  * Remarks: Invokes DFPrestart
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 ndprest(void)
 {
     return DFPrestart();
@@ -186,7 +186,7 @@ ndprest(void)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 ndplref(void)
 {
     return (intf)DFPlastref();
@@ -201,7 +201,7 @@ ndplref(void)
  * Remarks: Invokes DFPrestart
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 ndfprestart(void)
 {
     return DFPrestart();
@@ -218,7 +218,7 @@ ndfprestart(void)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 ndfplastref(void)
 {
     return (intf)DFPlastref();

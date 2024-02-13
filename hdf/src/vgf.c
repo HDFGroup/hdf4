@@ -73,7 +73,7 @@ trimendblanks(char *ss)
  * Method:  Convert filename to C string, call Hopen
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 ndfivopn(_fcd name, intf *acc_mode, intf *defdds, intf *namelen)
 {
     char *fn;
@@ -96,7 +96,7 @@ ndfivopn(_fcd name, intf *acc_mode, intf *defdds, intf *namelen)
  * Invokes: Hclose
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 ndfvclos(intf *file_id)
 {
     return Vclose((int32)*file_id);
@@ -107,7 +107,7 @@ ndfvclos(intf *file_id)
  **  related: Vattach--vatchc--VFATCH
  */
 
-FRETVAL(intf)
+intf
 nvatchc(intf *f, intf *vgid, _fcd accesstype)
 {
     int32 vkey;
@@ -130,7 +130,7 @@ nvatchc(intf *f, intf *vgid, _fcd accesstype)
  **  related: Vdetach--vdtchc--VFDTCH
  */
 
-FRETVAL(intf)
+intf
 nvdtchc(intf *vkey)
 {
     return Vdetach(*vkey);
@@ -142,7 +142,7 @@ nvdtchc(intf *vkey)
  **  related: Vgetname--vgnamc--VFGNAM
  */
 
-FRETVAL(intf)
+intf
 nvgnamc(intf *vkey, _fcd vgname)
 {
     return Vgetname(*vkey, _fcdtocp(vgname));
@@ -154,7 +154,7 @@ nvgnamc(intf *vkey, _fcd vgname)
  **  related: Vgetclass--vgclsc--VFGCLS
  */
 
-FRETVAL(intf)
+intf
 nvgclsc(intf *vkey, _fcd vgclass)
 {
     return Vgetclass(*vkey, _fcdtocp(vgclass));
@@ -166,7 +166,7 @@ nvgclsc(intf *vkey, _fcd vgclass)
  **  related: Vinquire--vinqc--VFINQ
  */
 
-FRETVAL(intf)
+intf
 nvinqc(intf *vkey, intf *nentries, _fcd vgname)
 {
     return (intf)Vinquire(*vkey, (int32 *)nentries, _fcdtocp(vgname));
@@ -178,7 +178,7 @@ nvinqc(intf *vkey, intf *nentries, _fcd vgname)
  **  related: Vdelete--vdelete--
  */
 
-FRETVAL(intf)
+intf
 nvdelete(intf *f, intf *vkey)
 {
     return (intf)Vdelete((int32)*f, (int32)*vkey);
@@ -190,7 +190,7 @@ nvdelete(intf *f, intf *vkey)
  **  related: Vgetid--vgidc--VFGID
  */
 
-FRETVAL(intf)
+intf
 nvgidc(intf *f, intf *vgid)
 {
     return (intf)Vgetid((int32)*f, *vgid);
@@ -202,7 +202,7 @@ nvgidc(intf *f, intf *vgid)
  **  related: Vgetnext--vgnxtc--VFGNXT
  */
 
-FRETVAL(intf)
+intf
 nvgnxtc(intf *vkey, intf *id)
 {
     return Vgetnext(*vkey, *id);
@@ -214,7 +214,7 @@ nvgnxtc(intf *vkey, intf *id)
  **  related: Vsetname--vsnamc--VFSNAM
  */
 
-FRETVAL(intf)
+intf
 nvsnamc(intf *vkey, _fcd vgname, intf *vgnamelen)
 {
     char *name;
@@ -236,7 +236,7 @@ nvsnamc(intf *vkey, _fcd vgname, intf *vgnamelen)
  **  related: Vsetclass--vsclsc--VFSCLS
  */
 
-FRETVAL(intf)
+intf
 nvsclsc(intf *vkey, _fcd vgclass, intf *vgclasslen)
 {
     char *tclass;
@@ -258,7 +258,7 @@ nvsclsc(intf *vkey, _fcd vgclass, intf *vgclasslen)
  **  related: Vinsert--vinsrtc--VFINSRT
  */
 
-FRETVAL(intf)
+intf
 nvinsrtc(intf *vkey, intf *vobjptr)
 {
     return (intf)Vinsert(*vkey, *vobjptr);
@@ -270,7 +270,7 @@ nvinsrtc(intf *vkey, intf *vobjptr)
  **  related: Visvg--visvgc--VFISVG
  */
 
-FRETVAL(intf)
+intf
 nvisvgc(intf *vkey, intf *id)
 {
     return (intf)Visvg(*vkey, *id);
@@ -281,7 +281,7 @@ nvisvgc(intf *vkey, intf *id)
  **  wrapper for Vstart
  */
 
-FRETVAL(intf)
+intf
 nvfstart(intf *f)
 {
     return Vstart((int32)*f);
@@ -292,7 +292,7 @@ nvfstart(intf *f)
  **  wrapper for Vend
  */
 
-FRETVAL(intf)
+intf
 nvfend(intf *f)
 {
     return (intf)Vend((int32)*f);
@@ -304,7 +304,7 @@ nvfend(intf *f)
  **  related: Visvs--visvsc--VFISVS
  */
 
-FRETVAL(intf)
+intf
 nvisvsc(intf *vkey, intf *id)
 {
     return (intf)Visvs(*vkey, *id);
@@ -319,7 +319,7 @@ nvisvsc(intf *vkey, intf *id)
  **  related: VSattach--vsatchc--VFATCH
  */
 
-FRETVAL(intf)
+intf
 nvsatchc(intf *f, intf *vsid, _fcd accesstype)
 {
     /* need not HDf2cstring since only first char is accessed. */
@@ -332,7 +332,7 @@ nvsatchc(intf *f, intf *vsid, _fcd accesstype)
  **  related: VSdetach--vsdtchc--VFDTCH
  */
 
-FRETVAL(intf)
+intf
 nvsdtchc(intf *vkey)
 {
     return VSdetach(*vkey);
@@ -344,7 +344,7 @@ nvsdtchc(intf *vkey)
  **  related: VSQueryref--vsqref--
  */
 
-FRETVAL(intf)
+intf
 nvsqref(intf *vkey)
 {
     return (intf)VSQueryref((int32)*vkey);
@@ -356,7 +356,7 @@ nvsqref(intf *vkey)
  **  related: VSQuerytag--vsqtag--
  */
 
-FRETVAL(intf)
+intf
 nvsqtag(intf *vkey)
 {
     return (intf)VSQuerytag((int32)*vkey);
@@ -368,7 +368,7 @@ nvsqtag(intf *vkey)
  **  related: VSgetversion--vsgver--
  */
 
-FRETVAL(intf)
+intf
 nvsgver(intf *vkey)
 {
     return (intf)VSgetversion((int32)*vkey);
@@ -380,7 +380,7 @@ nvsgver(intf *vkey)
  **  related: VSseek--vsseekc--VSFSEEK
  */
 
-FRETVAL(intf)
+intf
 nvsseekc(intf *vkey, intf *eltpos)
 {
     return (intf)VSseek(*vkey, *eltpos);
@@ -392,7 +392,7 @@ nvsseekc(intf *vkey, intf *eltpos)
  **  related: VSgetname--vsgnamc--VSFGNAM
  */
 
-FRETVAL(intf)
+intf
 nvsgnamc(intf *vkey, _fcd vsname, intf *vsnamelen)
 {
     char *tvsname = NULL;
@@ -418,7 +418,7 @@ nvsgnamc(intf *vkey, _fcd vsname, intf *vsnamelen)
  **  related: VSgetclass--vsgclsc--VSFGCLS
  */
 
-FRETVAL(intf)
+intf
 nvsgclsc(intf *vkey, _fcd vsclass, intf *vsclasslen)
 {
     char *tvsclass = NULL;
@@ -444,7 +444,7 @@ nvsgclsc(intf *vkey, _fcd vsclass, intf *vsclasslen)
  **  related: VSinquire--vsinqc--VSFINQ
  */
 
-FRETVAL(intf)
+intf
 nvsinqc(intf *vkey, intf *nelt, intf *interlace, _fcd fields, intf *eltsize, _fcd vsname, intf *fieldslen,
         intf *vsnamelen)
 {
@@ -486,7 +486,7 @@ nvsinqc(intf *vkey, intf *nelt, intf *interlace, _fcd fields, intf *eltsize, _fc
  **  related: VSfexist--vsfexc--VSFEX
  */
 
-FRETVAL(intf)
+intf
 nvsfexc(intf *vkey, _fcd fields, intf *fieldslen)
 {
     intf  ret;
@@ -508,7 +508,7 @@ nvsfexc(intf *vkey, _fcd fields, intf *fieldslen)
  **  related: VSfind--vsfndc--VSFFND
  */
 
-FRETVAL(intf)
+intf
 nvsfndc(intf *f, _fcd name, intf *namelen)
 {
     intf  ret;
@@ -530,7 +530,7 @@ nvsfndc(intf *f, _fcd name, intf *namelen)
  **  related: VSgetid--vsgidc--VSFGID
  */
 
-FRETVAL(intf)
+intf
 nvsgidc(intf *f, intf *vsid)
 {
     return (intf)VSgetid(*f, *vsid);
@@ -542,7 +542,7 @@ nvsgidc(intf *f, intf *vsid)
  **  related: VSdelete--vsdltc--VSFDLTE
  */
 
-FRETVAL(intf)
+intf
 nvsdltc(intf *f, intf *vsid)
 {
     return (intf)VSdelete(*f, *vsid);
@@ -554,7 +554,7 @@ nvsdltc(intf *f, intf *vsid)
  **  related: VSappendable--vsapp--
  */
 
-FRETVAL(intf)
+intf
 nvsapp(intf *vkey, intf *blk)
 {
     return (intf)VSappendable((int32)*vkey, (int32)*blk);
@@ -566,7 +566,7 @@ nvsapp(intf *vkey, intf *blk)
  **  related: VSsetname--vssnamc--VSFSNAM
  */
 
-FRETVAL(intf)
+intf
 nvssnamc(intf *vkey, _fcd vsname, intf *vsnamelen)
 {
     char *name;
@@ -588,7 +588,7 @@ nvssnamc(intf *vkey, _fcd vsname, intf *vsnamelen)
  **  related: VSsetclass--vssclsc--VSFSCLS
  */
 
-FRETVAL(intf)
+intf
 nvssclsc(intf *vkey, _fcd vsclass, intf *vsclasslen)
 {
     char *tclass;
@@ -610,7 +610,7 @@ nvssclsc(intf *vkey, _fcd vsclass, intf *vsclasslen)
  **  related: VSsetfields--vssfldc--VSFSFLD
  */
 
-FRETVAL(intf)
+intf
 nvssfldc(intf *vkey, _fcd fields, intf *fieldslen)
 {
     char *flds;
@@ -632,7 +632,7 @@ nvssfldc(intf *vkey, _fcd fields, intf *fieldslen)
  **  related: VSsetinterlace--vssintc--VSFSINT
  */
 
-FRETVAL(intf)
+intf
 nvssintc(intf *vkey, intf *interlace)
 {
     return (intf)VSsetinterlace(*vkey, *interlace);
@@ -644,7 +644,7 @@ nvssintc(intf *vkey, intf *interlace)
  **  related: VSfdefine--vsfdefc--VSFFDEF
  */
 
-FRETVAL(intf)
+intf
 nvsfdefc(intf *vkey, _fcd field, intf *localtype, intf *order, intf *fieldlen)
 {
     intf  ret;
@@ -670,7 +670,7 @@ nvsfdefc(intf *vkey, _fcd field, intf *localtype, intf *order, intf *fieldlen)
  * Returns: 0 on success, -1 on failure with error set
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nvssextfc(intf *id, _fcd name, intf *offset, intf *namelen)
 {
     char *fn;
@@ -690,7 +690,7 @@ nvssextfc(intf *id, _fcd name, intf *offset, intf *namelen)
  **  related: VFnfields--vfnflds--
  */
 
-FRETVAL(intf)
+intf
 nvfnflds(intf *vkey)
 {
     return (intf)VFnfields((int32)*vkey);
@@ -702,7 +702,7 @@ nvfnflds(intf *vkey)
  **  related: VFfieldname--vffname--vffnamec
  */
 
-FRETVAL(intf)
+intf
 nvffnamec(intf *vkey, intf *index, _fcd fname, intf *len)
 {
     char *fieldname = NULL;
@@ -723,7 +723,7 @@ nvffnamec(intf *vkey, intf *index, _fcd fname, intf *len)
  **  related: VFfieldtype--vfftype--
  */
 
-FRETVAL(intf)
+intf
 nvfftype(intf *vkey, intf *index)
 {
     return (intf)VFfieldtype((int32)*vkey, (int32)*index);
@@ -735,7 +735,7 @@ nvfftype(intf *vkey, intf *index)
  **  related: VFfieldisize--vffisiz--
  */
 
-FRETVAL(intf)
+intf
 nvffisiz(intf *vkey, intf *index)
 {
     return (intf)VFfieldisize((int32)*vkey, (int32)*index);
@@ -747,7 +747,7 @@ nvffisiz(intf *vkey, intf *index)
  **  related: VFfieldesize--vffesiz--
  */
 
-FRETVAL(intf)
+intf
 nvffesiz(intf *vkey, intf *index)
 {
     return (intf)VFfieldesize((int32)*vkey, (int32)*index);
@@ -759,7 +759,7 @@ nvffesiz(intf *vkey, intf *index)
  **  related: VFfieldorder--vffordr--
  */
 
-FRETVAL(intf)
+intf
 nvffordr(intf *vkey, intf *index)
 {
     return (intf)VFfieldorder((int32)*vkey, (int32)*index);
@@ -771,7 +771,7 @@ nvffordr(intf *vkey, intf *index)
  **  related: VSread--vsfrdc
  */
 
-FRETVAL(intf)
+intf
 nvsfrdc(intf *vkey, _fcd cbuf, intf *nelt, intf *interlace)
 {
     return (intf)VSread(*vkey, (uint8 *)_fcdtocp(cbuf), *nelt, *interlace);
@@ -782,7 +782,7 @@ nvsfrdc(intf *vkey, _fcd cbuf, intf *nelt, intf *interlace)
  **  related: VSread--vsfrd
  */
 
-FRETVAL(intf)
+intf
 nvsfrd(intf *vkey, intf *buf, intf *nelt, intf *interlace)
 {
     return (intf)VSread(*vkey, (uint8 *)buf, *nelt, *interlace);
@@ -794,7 +794,7 @@ nvsfrd(intf *vkey, intf *buf, intf *nelt, intf *interlace)
  **  related: VSread--vsreadc--VSFREAD
  */
 
-FRETVAL(intf)
+intf
 nvsreadc(intf *vkey, uint8 *buf, intf *nelt, intf *interlace)
 {
     return (intf)VSread(*vkey, buf, *nelt, *interlace);
@@ -806,7 +806,7 @@ nvsreadc(intf *vkey, uint8 *buf, intf *nelt, intf *interlace)
  **  related: VSwrite--vsfwrtc
  */
 
-FRETVAL(intf)
+intf
 nvsfwrtc(intf *vkey, _fcd cbuf, intf *nelt, intf *interlace)
 {
     return (intf)VSwrite(*vkey, (uint8 *)_fcdtocp(cbuf), *nelt, *interlace);
@@ -818,7 +818,7 @@ nvsfwrtc(intf *vkey, _fcd cbuf, intf *nelt, intf *interlace)
  **  related: VSwrite--vsfwrt
  */
 
-FRETVAL(intf)
+intf
 nvsfwrt(intf *vkey, intf *buf, intf *nelt, intf *interlace)
 {
     return (intf)VSwrite(*vkey, (uint8 *)buf, *nelt, *interlace);
@@ -830,7 +830,7 @@ nvsfwrt(intf *vkey, intf *buf, intf *nelt, intf *interlace)
  **  related: VSwrite--vswritc--VSFWRIT
  */
 
-FRETVAL(intf)
+intf
 nvswritc(intf *vkey, uint8 *buf, intf *nelt, intf *interlace)
 {
     return (intf)VSwrite(*vkey, buf, *nelt, *interlace);
@@ -847,7 +847,7 @@ nvswritc(intf *vkey, uint8 *buf, intf *nelt, intf *interlace)
  **  related: VSgetinterlace--vsgintc--VSFGINT
  */
 
-FRETVAL(intf)
+intf
 nvsgintc(intf *vkey)
 {
     return (intf)VSgetinterlace(*vkey);
@@ -859,7 +859,7 @@ nvsgintc(intf *vkey)
  **  related: VSelts--vseltsc--VSFELTS
  */
 
-FRETVAL(intf)
+intf
 nvseltsc(intf *vkey)
 {
     return (intf)VSelts(*vkey);
@@ -871,7 +871,7 @@ nvseltsc(intf *vkey)
  **  related: VSgetfields--vsgfldc--VSFGFLD
  */
 
-FRETVAL(intf)
+intf
 nvsgfldc(intf *vkey, _fcd fields)
 {
     return (intf)VSgetfields(*vkey, _fcdtocp(fields));
@@ -883,7 +883,7 @@ nvsgfldc(intf *vkey, _fcd fields)
  **  related: VSsizeof--vssizc--VSFSIZ
  */
 
-FRETVAL(intf)
+intf
 nvssizc(intf *vkey, _fcd fields, intf *fieldslen)
 {
     char *flds;
@@ -904,7 +904,7 @@ nvssizc(intf *vkey, _fcd fields, intf *fieldslen)
  **  related: Ventries--ventsc--VFENTS
  */
 
-FRETVAL(intf)
+intf
 nventsc(intf *f, intf *vgid)
 {
     return (intf)Ventries(*f, *vgid);
@@ -916,7 +916,7 @@ nventsc(intf *f, intf *vgid)
  **  related: Vlone--vlonec--VFLONE
  */
 
-FRETVAL(intf)
+intf
 nvlonec(intf *f, intf *idarray, intf *asize)
 {
     return (intf)Vlone(*f, (int32 *)idarray, (int32)*asize);
@@ -928,7 +928,7 @@ nvlonec(intf *f, intf *idarray, intf *asize)
  **  related: VSlone--vslonec--VSFLONE
  */
 
-FRETVAL(intf)
+intf
 nvslonec(intf *f, intf *idarray, intf *asize)
 {
     return VSlone(*f, (int32 *)idarray, (int32)*asize);
@@ -940,7 +940,7 @@ nvslonec(intf *f, intf *idarray, intf *asize)
  **  related: Vfind--vfindc--VFIND
  */
 
-FRETVAL(intf)
+intf
 nvfindc(intf *f, _fcd name, intf *namelen)
 {
     char *tmp_name;
@@ -962,7 +962,7 @@ nvfindc(intf *f, _fcd name, intf *namelen)
  **  related: Vfindclass--vfclassc--VFNDCLS
  */
 
-FRETVAL(intf)
+intf
 nvfndclsc(intf *f, _fcd vgclass, intf *classlen)
 {
     char *t_class;
@@ -989,7 +989,7 @@ nvfndclsc(intf *f, _fcd vgclass, intf *classlen)
  **  related: VHstoredata--vhsdc--vhfsd
  */
 
-FRETVAL(intf)
+intf
 nvhsdc(intf *f, _fcd field, uint8 *buf, intf *n, intf *datatype, _fcd vsname, _fcd vsclass, intf *fieldlen,
        intf *vsnamelen, intf *vsclasslen)
 {
@@ -1024,7 +1024,7 @@ nvhsdc(intf *f, _fcd field, uint8 *buf, intf *n, intf *datatype, _fcd vsname, _f
  **  related: VHstoredata--vhscdc--vhfscd
  */
 
-FRETVAL(intf)
+intf
 nvhscdc(intf *f, _fcd field, _fcd cbuf, intf *n, intf *datatype, _fcd vsname, _fcd vsclass, intf *fieldlen,
         intf *vsnamelen, intf *vsclasslen)
 {
@@ -1040,7 +1040,7 @@ nvhscdc(intf *f, _fcd field, _fcd cbuf, intf *n, intf *datatype, _fcd vsname, _f
  **  related: VHstoredatam--vhscdmc--vhfscdm
  */
 
-FRETVAL(intf)
+intf
 nvhscdmc(intf *f, _fcd field, _fcd cbuf, intf *n, intf *datatype, _fcd vsname, _fcd vsclass, intf *order,
          intf *fieldlen, intf *vsnamelen, intf *vsclasslen)
 {
@@ -1056,7 +1056,7 @@ nvhscdmc(intf *f, _fcd field, _fcd cbuf, intf *n, intf *datatype, _fcd vsname, _
  **  related: VHstoredatam--vhsdmc--vhfsdm
  */
 
-FRETVAL(intf)
+intf
 nvhsdmc(intf *f, _fcd field, uint8 *buf, intf *n, intf *datatype, _fcd vsname, _fcd vsclass, intf *order,
         intf *fieldlen, intf *vsnamelen, intf *vsclasslen)
 {
@@ -1092,7 +1092,7 @@ nvhsdmc(intf *f, _fcd field, uint8 *buf, intf *n, intf *datatype, _fcd vsname, _
  **  related: VHmakegroup--vhmkgpc--vhfmkgp
  */
 
-FRETVAL(intf)
+intf
 nvhmkgpc(intf *f, intf *tagarray, intf *refarray, intf *n, _fcd vgname, _fcd vgclass, intf *vgnamelen,
          intf *vgclasslen)
 {
@@ -1121,7 +1121,7 @@ nvhmkgpc(intf *f, intf *tagarray, intf *refarray, intf *n, _fcd vgname, _fcd vgc
  **  related: Vflocate--vffloc--vflocc
  */
 
-FRETVAL(intf)
+intf
 nvflocc(intf *vkey, _fcd field, intf *fieldlen)
 {
     char *fld;
@@ -1143,7 +1143,7 @@ nvflocc(intf *vkey, _fcd field, intf *fieldlen)
  **  related: Vinqtagref--vinqtrc--vfinqtr
  */
 
-FRETVAL(intf)
+intf
 nvinqtrc(intf *vkey, intf *tag, intf *ref)
 {
     return (intf)Vinqtagref(*vkey, *tag, *ref);
@@ -1154,7 +1154,7 @@ nvinqtrc(intf *vkey, intf *tag, intf *ref)
  **  related: Vntagrefs--vntrc--VFNTR
  */
 
-FRETVAL(intf)
+intf
 nvntrc(intf *vkey)
 {
     return (intf)Vntagrefs(*vkey);
@@ -1166,7 +1166,7 @@ nvntrc(intf *vkey)
  **  related: Vnrefs--vnrefs--
  */
 
-FRETVAL(intf)
+intf
 nvnrefs(intf *vkey, intf *tag)
 {
     return (intf)Vnrefs((int32)*vkey, (int32)*tag);
@@ -1178,7 +1178,7 @@ nvnrefs(intf *vkey, intf *tag)
  **  related: VQueryref--vqref--
  */
 
-FRETVAL(intf)
+intf
 nvqref(intf *vkey)
 {
     return (intf)VQueryref((int32)*vkey);
@@ -1190,7 +1190,7 @@ nvqref(intf *vkey)
  **  related: VQuerytag--vqtag--
  */
 
-FRETVAL(intf)
+intf
 nvqtag(intf *vkey)
 {
     return (intf)VQuerytag((int32)*vkey);
@@ -1203,7 +1203,7 @@ nvqtag(intf *vkey)
  **  related: Vgettagrefs--vgttrsc--vfgttrs
  */
 
-FRETVAL(intf)
+intf
 nvgttrsc(intf *vkey, intf *tagarray, intf *refarray, intf *n)
 {
     return (intf)Vgettagrefs(*vkey, (int32 *)tagarray, (int32 *)refarray, *n);
@@ -1215,7 +1215,7 @@ nvgttrsc(intf *vkey, intf *tagarray, intf *refarray, intf *n)
  **  related: Vgettagref--vgttrc--vfgttr
  */
 
-FRETVAL(intf)
+intf
 nvgttrc(intf *vkey, intf *which, intf *tag, intf *ref)
 {
     return (intf)Vgettagref(*vkey, *which, (int32 *)tag, (int32 *)ref);
@@ -1227,7 +1227,7 @@ nvgttrc(intf *vkey, intf *which, intf *tag, intf *ref)
  **  related: Vinqtagref--vinqtrc--vfinqtr
  */
 
-FRETVAL(intf)
+intf
 nvadtrc(intf *vkey, intf *tag, intf *ref)
 {
     return (intf)Vaddtagref(*vkey, *tag, *ref);
@@ -1239,7 +1239,7 @@ nvadtrc(intf *vkey, intf *tag, intf *ref)
  **  related: VSQuerycount--vsqfnelt
  */
 
-FRETVAL(intf)
+intf
 nvsqfnelt(intf *vkey, intf *nelt)
 {
     int32 ret_nelt = 0;
@@ -1257,7 +1257,7 @@ nvsqfnelt(intf *vkey, intf *nelt)
  **  related: VSQueryinterlace--vsqfintr
  */
 
-FRETVAL(intf)
+intf
 nvsqfintr(intf *vkey, intf *interlace)
 {
     int32 ret_inter = 0;
@@ -1275,7 +1275,7 @@ nvsqfintr(intf *vkey, intf *interlace)
  **  related: VSQueryfields--vsqfflds
  */
 
-FRETVAL(intf)
+intf
 nvsqfldsc(intf *vkey, _fcd fields, intf *fieldslen)
 {
     char *fld;
@@ -1296,7 +1296,7 @@ nvsqfldsc(intf *vkey, _fcd fields, intf *fieldslen)
  **  related: VSQueryvsize--vsqfvsiz
  */
 
-FRETVAL(intf)
+intf
 nvsqfvsiz(intf *vkey, intf *size)
 {
     int32 ret_size = 0;
@@ -1314,7 +1314,7 @@ nvsqfvsiz(intf *vkey, intf *size)
  **  related: VSQueryname--vsqfname
  */
 
-FRETVAL(intf)
+intf
 nvsqnamec(intf *vkey, _fcd name, intf *namelen)
 {
     char *nam;
@@ -1330,7 +1330,7 @@ nvsqnamec(intf *vkey, _fcd name, intf *namelen)
 }
 
 /* ------------------------------------------------------------------ */
-FRETVAL(intf)
+intf
 nvsfccpk(intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz, intf *nrecs, _fcd pckfld, _fcd fldbuf,
          intf *buflds_len, intf *fld_len)
 {
@@ -1367,7 +1367,7 @@ nvsfccpk(intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz, intf *nr
 }
 
 /* ------------------------------------------------------------------ */
-FRETVAL(intf)
+intf
 nvsfncpk(intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz, intf *nrecs, _fcd pckfld,
          intf *fldbuf, intf *buflds_len, intf *fld_len)
 {
@@ -1409,7 +1409,7 @@ nvsfncpk(intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz, intf *nr
  **
  */
 
-FRETVAL(intf)
+intf
 nvdtrc(intf *vkey, intf *tag, intf *ref)
 {
     return (intf)Vdeletetagref(*vkey, *tag, *ref);
@@ -1425,7 +1425,7 @@ nvdtrc(intf *vkey, intf *tag, intf *ref)
  *       Related functions: vffcls, VSfindclass
  *       Users:     HDF Fortran programmers
  ---------------------------------------------------------------------*/
-FRETVAL(intf)
+intf
 nvscfcls(intf *id, _fcd name, intf *namelen)
 {
     intf  fi_id;
@@ -1449,7 +1449,7 @@ nvscfcls(intf *id, _fcd name, intf *namelen)
  *       Returns:   0 if succeeds, -1 if fails
  *       Users:     HDF Fortran programmers
  ---------------------------------------------------------------------*/
-FRETVAL(intf)
+intf
 nvscsetblsz(intf *id, intf *block_size)
 {
     intf ret = -1;
@@ -1468,7 +1468,7 @@ nvscsetblsz(intf *id, intf *block_size)
  *       Returns:   0 if succeeds, -1 if fails
  *       Users:     HDF Fortran programmers
  ---------------------------------------------------------------------*/
-FRETVAL(intf)
+intf
 nvscsetnmbl(intf *id, intf *num_blocks)
 {
     intf ret;
@@ -1488,7 +1488,7 @@ nvscsetnmbl(intf *id, intf *num_blocks)
  *       Returns:   0 if succeeds, -1 if fails
  *       Users:     HDF Fortran programmers
  ---------------------------------------------------------------------*/
-FRETVAL(intf)
+intf
 nvscgblinfo(intf *id, intf *block_size, intf *num_blocks)
 {
     intf  ret = -1;
@@ -1515,7 +1515,7 @@ nvscgblinfo(intf *id, intf *block_size, intf *num_blocks)
  *       Returns:   0 if succeeds, -1 if fails
  *       Users:     HDF Fortran programmers
  ---------------------------------------------------------------------*/
-FRETVAL(intf)
+intf
 nvcgvgrp(intf *id, intf *start_vg, intf *vg_count, intf *refarray)
 {
     intf    ret = -1;
@@ -1549,7 +1549,7 @@ nvcgvgrp(intf *id, intf *start_vg, intf *vg_count, intf *refarray)
  *       Returns:   0 if succeeds, -1 if fails
  *       Users:     HDF Fortran programmers
  ---------------------------------------------------------------------*/
-FRETVAL(intf)
+intf
 nvscgvdatas(intf *id, intf *start_vd, intf *vd_count, intf *refarray)
 {
     intf    ret = -1;

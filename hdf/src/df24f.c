@@ -56,7 +56,7 @@ static int dimsset = 0;
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nd2reqil(intf *il)
 {
     return DFGRIreqil((intn)*il, (intn)IMAGE);
@@ -73,7 +73,7 @@ nd2reqil(intf *il)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nd2sdims(intf *xdim, intf *ydim)
 {
     dimsset = 1;
@@ -94,7 +94,7 @@ nd2sdims(intf *xdim, intf *ydim)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nd2igdim(_fcd filename, intf *pxdim, intf *pydim, intf *pil, intf *fnlen)
 {
     char *fn;
@@ -121,7 +121,7 @@ nd2igdim(_fcd filename, intf *pxdim, intf *pydim, intf *pil, intf *fnlen)
  * Remarks: space is assumed to be xdim * ydim * 3 bytes
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nd2igimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *fnlen)
 {
     char *fn;
@@ -148,7 +148,7 @@ nd2igimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *fnlen)
  * Remarks: array image is assumed to be xdim * ydim * ncomps bytes
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nd2iaimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *fnlen, intf *newfile)
 {
     char *fn;
@@ -176,7 +176,7 @@ nd2iaimg(_fcd filename, _fcd image, intf *xdim, intf *ydim, intf *fnlen, intf *n
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nd2setil(intf *il)
 {
     return DFGRIsetil((intn)*il, IMAGE);
@@ -192,7 +192,7 @@ nd2setil(intf *il)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nd2first(void)
 {
     return DFGRIrestart();
@@ -208,7 +208,7 @@ nd2first(void)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nd2lref(void)
 {
     return (intf)DFGRIlastref();
@@ -227,7 +227,7 @@ nd2lref(void)
  *          must be called.
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nd2scomp(intf *scheme)
 {
     comp_info cinfo; /* Structure containing compression parameters */
@@ -251,7 +251,7 @@ nd2scomp(intf *scheme)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nd2sjpeg(intf *quality, intf *force_baseline)
 {
     comp_info cinfo; /* Structure containing compression parameters */
@@ -271,7 +271,7 @@ nd2sjpeg(intf *quality, intf *force_baseline)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 ndf24reqil(intf *il)
 {
     return DFGRIreqil((intn)*il, IMAGE);
@@ -288,7 +288,7 @@ ndf24reqil(intf *il)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 ndf24setdims(intf *xdim, intf *ydim)
 {
     dimsset = 1;
@@ -305,7 +305,7 @@ ndf24setdims(intf *xdim, intf *ydim)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 ndf24setil(intf *il)
 {
     return DFGRIsetil((intn)*il, IMAGE);
@@ -321,7 +321,7 @@ ndf24setil(intf *il)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 ndf24restart(void)
 {
     return DFGRIrestart();
@@ -340,7 +340,7 @@ ndf24restart(void)
  *          must be called.
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 ndf24scompress(intf *scheme)
 {
     comp_info cinfo; /* Structure containing compression parameters */
@@ -364,7 +364,7 @@ ndf24scompress(intf *scheme)
  * Remarks: none
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 ndf24sjpeg(intf *quality, intf *force_baseline)
 {
     comp_info cinfo; /* Structure containing compression parameters */
@@ -386,7 +386,7 @@ ndf24sjpeg(intf *quality, intf *force_baseline)
  * Remarks:
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nd2irref(_fcd filename, intf *ref, intf *fnlen)
 {
     char *fn;
@@ -411,7 +411,7 @@ nd2irref(_fcd filename, intf *ref, intf *fnlen)
  * Remarks:
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nd2inimg(_fcd filename, intf *fnlen)
 {
     char *fn;

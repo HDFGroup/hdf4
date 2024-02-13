@@ -26,8 +26,8 @@
 
 /* FORTRAN support C-stubs for FORTRAN interface tests */
 
-HDFFCLIBAPI FRETVAL(intf) ngetverb(void);
-HDFFCLIBAPI FRETVAL(intf) nhisystem(_fcd cmd, intf *cmdlen);
-HDFFCLIBAPI FRETVAL(intf) nfixnamec(_fcd name, intf *name_len, _fcd name_out, intf *name_len_out);
+HDFFCLIBAPI intf ngetverb(void);
+HDFFCLIBAPI intf nhisystem(_fcd cmd, intf *cmdlen);
+HDFFCLIBAPI intf nfixnamec(_fcd name, intf *name_len, _fcd name_out, intf *name_len_out);
 
 #endif /* H4_FORTEST_H */

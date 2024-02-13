@@ -35,7 +35,7 @@
  *          Instead it prints automatically to stdout.
  *---------------------------------------------------------------------------*/
 
-FRETVAL(VOID)
+void
 nheprnt(intf *print_levels)
 {
     HEprint(stderr, *print_levels);
@@ -52,7 +52,7 @@ nheprnt(intf *print_levels)
  *          Instead it prints automatically to stdout.
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nheprntc(_fcd filename, intf *print_levels, intf *namelen)
 {
     FILE *err_file;
@@ -82,7 +82,7 @@ nheprntc(_fcd filename, intf *print_levels, intf *namelen)
  * Outputs: error_message - error message assocoated with the error code
  * Returns: SUCCEED (0) if successful and FAIL(-1) otherwise
  *----------------------------------------------------------------------------*/
-FRETVAL(intf)
+intf
 nhestringc(intf *error_code, _fcd error_message, intf *len)
 {
     char *cstring = NULL;

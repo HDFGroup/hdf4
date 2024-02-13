@@ -36,7 +36,7 @@
  * Method:  Convert filename to C string, call Hopen
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nhiopen(_fcd name, intf *acc_mode, intf *defdds, intf *namelen)
 {
     char *fn;
@@ -59,7 +59,7 @@ nhiopen(_fcd name, intf *acc_mode, intf *defdds, intf *namelen)
  * Invokes: Hclose
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nhclose(intf *file_id)
 {
     return Hclose(*file_id);
@@ -74,7 +74,7 @@ nhclose(intf *file_id)
  * Invokes: Hnumber
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nhnumber(intf *file_id, intf *tag)
 {
     return Hnumber((int32)*file_id, (uint16)*tag);
@@ -90,7 +90,7 @@ nhnumber(intf *file_id, intf *tag)
  * Method:  Convert dir to C string, call HXsetdir
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nhxisdir(_fcd dir, intf *dirlen)
 {
     char *fn;
@@ -114,7 +114,7 @@ nhxisdir(_fcd dir, intf *dirlen)
  * Method:  Convert dir to C string, call HXsetcdir
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nhxiscdir(_fcd dir, intf *dirlen)
 {
     char *fn;
@@ -137,7 +137,7 @@ nhxiscdir(_fcd dir, intf *dirlen)
  * Invokes: HDdont_atexit
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nhddontatexit(void)
 {
     return (intf)(HDdont_atexit());
@@ -152,7 +152,7 @@ nhddontatexit(void)
  *          string  - version number text string
  * Returns: SUCCEED (0) if successful and FAIL(-1) otherwise
  *----------------------------------------------------------------------------*/
-FRETVAL(intf)
+intf
 nhglibverc(intf *major_v, intf *minor_v, intf *release, _fcd string, intf *len)
 {
     char  *cstring;
@@ -186,7 +186,7 @@ nhglibverc(intf *major_v, intf *minor_v, intf *release, _fcd string, intf *len)
  *          string  - version number text string
  * Returns: SUCCEED (0) if successful and FAIL(-1) otherwise
  *----------------------------------------------------------------------------*/
-FRETVAL(intf)
+intf
 nhgfilverc(intf *file_id, intf *major_v, intf *minor_v, intf *release, _fcd string, intf *len)
 {
     char  *cstring;
@@ -220,7 +220,7 @@ nhgfilverc(intf *file_id, intf *major_v, intf *minor_v, intf *release, _fcd stri
  * Method:  Convert filename to C string, call Hishdf
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nhiishdf(_fcd name, intf *namelen)
 {
     char *fn;
@@ -244,7 +244,7 @@ nhiishdf(_fcd name, intf *namelen)
  * Returns: SUCCEED (0)  on success, FALSE (-1) on failure
  *---------------------------------------------------------------------------*/
 
-FRETVAL(intf)
+intf
 nhconfinfc(intf *coder_type, intf *info)
 {
     comp_coder_t coder_type_c;
