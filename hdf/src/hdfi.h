@@ -163,8 +163,6 @@ typedef int intf;
 /* Integer that is the same size as a pointer */
 typedef intptr_t hdf_pint_t;
 
-#define FNAME_POST_UNDERSCORE
-
 /*-----------------------------------------------------*/
 /*              encode and decode macros               */
 /*-----------------------------------------------------*/
@@ -287,27 +285,6 @@ typedef intptr_t hdf_pint_t;
 #ifndef FRETVAL    /* !MAC */
 #define FCALLKEYW  /*NONE*/
 #define FRETVAL(x) x
-#endif
-
-/*----------------------------------------------------------------
-** MACRO FNAME for any fortran callable routine name.
-**
-**  This macro prepends, appends, or does not modify a name
-**  passed as a macro parameter to it based on the FNAME_PRE_UNDERSCORE,
-**  FNAME_POST_UNDERSCORE macros set for a specific system.
-**
-**---------------------------------------------------------------*/
-#if defined(FNAME_PRE_UNDERSCORE) && defined(FNAME_POST_UNDERSCORE)
-#define FNAME(x) _##x##_
-#endif
-#if defined(FNAME_PRE_UNDERSCORE) && !defined(FNAME_POST_UNDERSCORE)
-#define FNAME(x) _##x
-#endif
-#if !defined(FNAME_PRE_UNDERSCORE) && defined(FNAME_POST_UNDERSCORE)
-#define FNAME(x) x##_
-#endif
-#if !defined(FNAME_PRE_UNDERSCORE) && !defined(FNAME_POST_UNDERSCORE)
-#define FNAME(x) x
 #endif
 
 /**************************************************************************

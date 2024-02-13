@@ -17,13 +17,6 @@
   interface.
 
   The basic routines called by fortran will be of the form sfxxxx
-
-  If only a C stub is needed it will be named nsfxxxx have the FNAME()
-  function applied to it.
-
-  If a Fortran stub is also required the fortran stub will be called
-  sfxxxx and the one in here will be nscxxx and again be FNAME()ed
-
 */
 #include "mfsdf.h"
 

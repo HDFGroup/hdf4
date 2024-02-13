@@ -58,13 +58,6 @@
   interface. They call the corresponding C-functions in "mfan.c"
 
   The basic routines called by fortran will be of the form afxxxx
-
-  If only a C stub is needed it will be named nafxxxx have the FNAME()
-  function applied to it.
-
-  If a Fortran stub is also required the fortran stub will be called
-  afxxxx(mfanff.f) and the one in here will be nacxxx and again be FNAME()ed
-
 -----------------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
