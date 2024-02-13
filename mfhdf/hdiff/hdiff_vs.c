@@ -44,11 +44,20 @@ diff_vs(int32 file1_id, int32 file2_id, int32 ref1, int32 ref2, diff_opt_t *opt)
         vdata2_size, interlace2_mode;
     char   vdata1_name[VSNAMELENMAX];
     char   vdata1_class[VSNAMELENMAX];
-    char   fieldname1_list[VSFIELDMAX * FIELDNAMELENMAX];
+    char  *fieldname1_list = NULL;
     char   vdata2_name[VSNAMELENMAX];
     char   vdata2_class[VSNAMELENMAX];
-    char   fieldname2_list[VSFIELDMAX * FIELDNAMELENMAX];
-    uint32 nfound = 0;
+    char  *fieldname2_list = NULL;
+    uint32 nfound          = 0;
+
+    if (NULL == (fieldname1_list = (char *)calloc(VSFIELDMAX * FIELDNAMELENMAX, sizeof(char)))) {
+        printf("Error: Could not allocate memory\n");
+        goto out;
+    }
+    if (NULL == (fieldname2_list = (char *)calloc(VSFIELDMAX * FIELDNAMELENMAX, sizeof(char)))) {
+        printf("Error: Could not allocate memory\n");
+        goto out;
+    }
 
     /*-------------------------------------------------------------------------
      * object 1
@@ -161,9 +170,14 @@ do_nothing:
         }
     }
 
+    free(fieldname1_list);
+    free(fieldname2_list);
+
     return nfound;
 
 out:
+    free(fieldname1_list);
+    free(fieldname2_list);
 
     opt->err_stat = 1;
     return 0;
