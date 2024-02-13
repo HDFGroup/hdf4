@@ -126,6 +126,12 @@ jobs:
               name: tgz-ubuntu-2204_intel-binary
               path: ${{ github.workspace }}
 
+#      - name: Get published abi reports (Linux)
+#        uses: actions/download-artifact@f44cd7b40bfd40b6aa1cc1b9b5b7bf03d3c67110 # v4.1.0
+#        with:
+#              name: abi-reports
+#              path: ${{ github.workspace }}
+
       - name: Store snapshot name
         run: |
           echo "${{ steps.get-file-base.outputs.FILE_BASE }}" > ./last-file.txt
@@ -148,6 +154,9 @@ jobs:
               ${{ steps.get-file-base.outputs.FILE_BASE }}-ubuntu-2204_intel.tar.gz
               ${{ steps.get-file-base.outputs.FILE_BASE }}-win-vs2022_intel.zip
               if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
+#              ${{ steps.get-file-base.outputs.FILE_BASE }}-hdf_compat_report.html
+#              ${{ steps.get-file-base.outputs.FILE_BASE }}-mfhdf_compat_report.html
+#              ${{ steps.get-file-base.outputs.FILE_BASE }}-java_compat_report.html
 
       - name: Release tag
         id: create_release
@@ -167,6 +176,9 @@ jobs:
               ${{ steps.get-file-base.outputs.FILE_BASE }}-ubuntu-2204_intel.tar.gz
               ${{ steps.get-file-base.outputs.FILE_BASE }}-win-vs2022_intel.zip
               if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
+#              ${{ steps.get-file-base.outputs.FILE_BASE }}-hdf_compat_report.html
+#              ${{ steps.get-file-base.outputs.FILE_BASE }}-mfhdf_compat_report.html
+#              ${{ steps.get-file-base.outputs.FILE_BASE }}-java_compat_report.html
 
       - name: List files for the space (Linux)
         run: |
