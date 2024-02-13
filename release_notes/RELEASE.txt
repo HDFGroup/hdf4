@@ -139,6 +139,15 @@ New features and changes
       them in the public header so that old code does not have to be
       modified. It is unwise to use them in new code.
 
+      NOTE: hdfi.h included many POSIX, Windows, and C standard library
+            headers.
+
+        *** THESE WILL NO LONGER BE BROUGHT IN BY INCLUDING HDF.H!!! ***
+
+            If you have been relying on hdf.h to bring in headers like
+            stdlib.h, windows.h, or unistd.h, you will need to update your
+            code when you move to HDF 4.3.0.
+
 
 Support for new platforms and compilers
 =======================================
