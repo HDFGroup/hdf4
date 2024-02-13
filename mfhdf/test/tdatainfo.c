@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "hdfi.h"
 #include "mfhdf.h"
 
 #ifdef H4_HAVE_FCNTL_H
