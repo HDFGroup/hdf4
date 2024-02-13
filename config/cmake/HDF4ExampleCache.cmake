@@ -10,7 +10,7 @@ set (H4EX_BUILD_EXAMPLES ${HDF4_BUILD_EXAMPLES} CACHE BOOL "Build Examples" FORC
 set (HDF_BUILD_C ON CACHE BOOL "Build examples C support" FORCE)
 set (HDF_BUILD_FORTRAN ${HDF4_BUILD_FORTRAN} CACHE BOOL "Build examples FORTRAN support" FORCE)
 set (HDF_BUILD_JAVA ${HDF4_BUILD_JAVA} CACHE BOOL "Build examples JAVA support" FORCE)
-set (H4EX_USE_GNU_DIRS ${HDF4_USE_GNU_DIRS} CACHE BOOL "TRUE to use GNU Coding Standard install directory variables, FALSE to use historical settings" FORCE)
+set (H4EX_USE_GNU_DIRS ${HDF4_USE_GNU_DIRS} CACHE BOOL "ON to use GNU Coding Standard install directory variables, OFF to use historical settings" FORCE)
 
 #preset HDF4 cache vars to this projects libraries instead of searching
 set (H4EX_HDF4_HEADER "H4config.h" CACHE STRING "Name of HDF4 header" FORCE)
