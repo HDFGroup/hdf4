@@ -36,12 +36,7 @@
  * xdr.
  */
 
-#include "h4config.h"
-
-#include <inttypes.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "local_nc.h"
 
 /* Which header files include htonl() ? */
 
@@ -58,7 +53,6 @@
 #endif
 #endif
 
-#include "mfhdf.h"
 #include "h4_xdr.h"
 
 /*

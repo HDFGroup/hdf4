@@ -45,9 +45,8 @@ EXPORTED ROUTINES
 
 ------------------------------------------------------------------------- */
 
-#include "hdf.h"
+#include "hdfi.h"
 #include "hfile.h"
-#include <assert.h>
 
 /* extinfo_t -- external elt information structure */
 

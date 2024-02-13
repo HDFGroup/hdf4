@@ -152,16 +152,9 @@ LOCAL ROUTINES
 intn GRIil_convert(const void * inbuf,gr_interlace_t inil,void * outbuf,
         gr_interlace_t outil,int32 dims[2],int32 ncomp,int32 nt);
     - Copy a pixel buffer from one interlace to another.
-
-AUTHOR
-   Quincey Koziol
-
-MODIFICATION HISTORY
-   10/20/95  - Starting writing specs & coding prototype
-    3/ 8/96  - Modifications to remove compiled limits on the # of files
  */
 
-#include "hdf.h"
+#include "hdfi.h"
 #include "hlimits.h"
 #include "mfgri.h"
 

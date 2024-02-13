@@ -14,7 +14,7 @@
 #ifndef H4_TPROTO_H
 #define H4_TPROTO_H
 
-#include "hdf.h"
+#include "hdfi.h"
 #include "tutils.h"
 
 void test_an(void);

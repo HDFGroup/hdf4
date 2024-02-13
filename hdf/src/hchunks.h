@@ -15,19 +15,14 @@
  * File:         hchunks.h
  * Purpose:      Header file for Chunked elements
  * Dependencies: tbbt.c mcache.c
- * Invokes:      none
  * Contents:     Structures & definitions for chunked elements
  * Structure definitions: DIM_DEF, HCHUNK_DEF
- * Constant definitions:
- * Author: -GeorgeV -  9/3/96
  *---------------------------------------------------------------------------*/
 
 #ifndef H4_HCHUNKS_H
 #define H4_HCHUNKS_H
 
-#include "H4api_adpt.h"
-
-/* required includes */
+#include "hdfi.h"
 #include "hfile.h" /* special info stuff */
 
 /* Public structures */

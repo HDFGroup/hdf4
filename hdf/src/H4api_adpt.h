@@ -14,8 +14,6 @@
 #ifndef H4_API_ADPT_H
 #define H4_API_ADPT_H
 
-#include "h4config.h"
-
 /**
  * Provide the macros to adapt the HDF public functions to
  * dll entry points.

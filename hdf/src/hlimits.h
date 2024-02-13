@@ -20,6 +20,8 @@
 #ifndef H4_HLIMITS_H
 #define H4_HLIMITS_H
 
+#include "hdf.h"
+
 #if defined H4_HAVE_WIN32_API
 #define HDsetvbuf(F, S, M, Z) (((Z) > 1) ? setvbuf(F, S, M, Z) : setvbuf(F, S, M, 2))
 #else

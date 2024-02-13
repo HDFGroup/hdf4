@@ -19,6 +19,9 @@
 /* The intrepretation of arguments has changed a little.  A -p introduces a
    palette which will be used for subsequent images, till another -p.
    -i and -c introduce a series of images/compressed images */
+
+#include <stdlib.h>
+
 #include "hdf.h"
 
 int32 xdim, ydim;

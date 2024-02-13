@@ -34,13 +34,9 @@ LOCAL ROUTINES
    HIget_bitfile_rec  - get a free bitfile record
    HIread2write       - switch from reading bits to writing them
    HIwrite2read       - switch from writing bits to reading them
-AUTHOR
-   Quincey Koziol
-MODIFICATION HISTORY
-   3/15/92     Starting writing
 */
 
-#include "hdf.h"
+#include "hdfi.h"
 #include "hfile.h"
 
 /* Local Variables */

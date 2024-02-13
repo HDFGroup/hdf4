@@ -27,19 +27,36 @@ static char mrcsid[] = "Id: cdftest.c,v 1.11 1994/01/10 23:07:27 chouck Exp ";
  * complete spec test.
  */
 
+#include "hdf.h"
+
 #define REDEF
+
 /* #define SYNCDEBUG */
 /* #define NOBUF */
+
+#include <errno.h>
 #include <stdio.h>
-#include "h4config.h"
-#include "H4api_adpt.h"
+#include <stdlib.h>
+#include <string.h>
+
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h"
 #else
 #include "hdf4_netcdf.h"
 #endif
 
-#include "hdf.h"
+#define CDFMAXSHORT 32767
+#define CDFMAXLONG  2147483647
+#define CDFMAXBYTE  127
+
+#define FILENAME  "test.cdf"
+#define NUM_DIMS  3
+#define DONT_CARE -1
+
+/* make these numbers big when you want to give this a real workout */
+#define NUM_RECS 8
+#define SIZE_1   7
+#define SIZE_2   8
 
 #define cdf_assert(ex)                                                                                       \
     {                                                                                                        \
@@ -48,20 +65,6 @@ static char mrcsid[] = "Id: cdftest.c,v 1.11 1994/01/10 23:07:27 chouck Exp ";
             exit(EXIT_FAILURE);                                                                              \
         }                                                                                                    \
     }
-
-#define CDFMAXSHORT 32767
-#define CDFMAXLONG  2147483647
-#define CDFMAXBYTE  127
-
-#include <errno.h>
-
-#define FILENAME  "test.cdf"
-#define NUM_DIMS  3
-#define DONT_CARE -1
-/* make these numbers big when you want to give this a real workout */
-#define NUM_RECS 8
-#define SIZE_1   7
-#define SIZE_2   8
 
 struct {
     int num_dims;
@@ -116,9 +119,9 @@ chkgot(nc_type type, union getret got, double check)
 
 const char *fname = FILENAME;
 
-int         num_dims    = NUM_DIMS;
-long        sizes[]     = {NC_UNLIMITED, SIZE_1, SIZE_2};
-const char *dim_names[] = {"record", "ixx", "iyy"};
+int         num_dims_g    = NUM_DIMS;
+long        sizes_g[]     = {NC_UNLIMITED, SIZE_1, SIZE_2};
+const char *dim_names_g[] = {"record", "ixx", "iyy"};
 
 static void
 createtestdims(int cdfid, int num_dims, long *sizes, const char *dim_names[])
@@ -158,7 +161,7 @@ struct tcdfvar {
     const char *units;
     int         ndims;
     int         dims[NUM_DIMS];
-} testvars[] = {
+} testvars_g[] = {
 #define Byte_id 0
     {"Byte",
      NC_BYTE,
@@ -252,19 +255,19 @@ fill_seq(int id)
     float val;
     int   ii = 0;
 
-    sizes[0] = NUM_RECS;
+    sizes_g[0] = NUM_RECS;
     /* zero the indices */
 
     cc = vindices;
-    while (cc <= &vindices[num_dims - 1])
+    while (cc <= &vindices[num_dims_g - 1])
         *cc++ = 0;
 
     /* ripple counter */
     cc = vindices;
-    mm = sizes;
-    while (*vindices < *sizes) {
+    mm = sizes_g;
+    while (*vindices < *sizes_g) {
         while (*cc < *mm) {
-            if (mm == &sizes[num_dims - 1]) {
+            if (mm == &sizes_g[num_dims_g - 1]) {
                 val = ii;
 #ifdef VDEBUG
                 parray("indices", NUM_DIMS, vindices);
@@ -296,17 +299,17 @@ check_fill_seq(int id)
     int          ii = 0;
     float        val;
 
-    sizes[0] = NUM_RECS;
-    cc       = vindices;
-    while (cc <= &vindices[num_dims - 1])
+    sizes_g[0] = NUM_RECS;
+    cc         = vindices;
+    while (cc <= &vindices[num_dims_g - 1])
         *cc++ = 0;
 
     /* ripple counter */
     cc = vindices;
-    mm = sizes;
-    while (*vindices < *sizes) {
+    mm = sizes_g;
+    while (*vindices < *sizes_g) {
         while (*cc < *mm) {
-            if (mm == &sizes[num_dims - 1]) {
+            if (mm == &sizes_g[num_dims_g - 1]) {
                 if (ncvarget1(id, Float_id, vindices, (ncvoid *)&got) == -1)
                     goto bad_ret;
                 val = ii;
@@ -359,7 +362,7 @@ main(void)
 #endif
     int             ii;
     long            iilong;
-    struct tcdfvar *tvp = testvars;
+    struct tcdfvar *tvp = testvars_g;
     union getret    got;
 
     ncopts = NC_VERBOSE; /* errors non fatal */
@@ -386,10 +389,10 @@ main(void)
     cdf_assert(strcmp(fname, new) == 0);
     cdf_assert(ncattput(id, NC_GLOBAL, "RCSID", NC_CHAR, strlen(mrcsid), (ncvoid *)mrcsid) != -1);
 
-    createtestdims(id, NUM_DIMS, sizes, dim_names);
-    testdims(id, NUM_DIMS, sizes, dim_names);
+    createtestdims(id, NUM_DIMS, sizes_g, dim_names_g);
+    testdims(id, NUM_DIMS, sizes_g, dim_names_g);
 
-    createtestvars(id, testvars, NUM_TESTVARS);
+    createtestvars(id, testvars_g, NUM_TESTVARS);
 
     {
         long   lfill = -1;
@@ -408,7 +411,7 @@ main(void)
     cdf_assert(ncdimrename(id, 1, "IXX") >= 0);
     cdf_assert(ncdiminq(id, 1, new, &iilong) >= 0);
     printf("dimrename: %s\n", new);
-    cdf_assert(ncdimrename(id, 1, dim_names[1]) >= 0);
+    cdf_assert(ncdimrename(id, 1, dim_names_g[1]) >= 0);
 
 #ifdef ATTRX
     cdf_assert(ncattrename(id, 1, "UNITS", "units") != -1);
@@ -462,8 +465,8 @@ main(void)
     printf("NC ");
     cdf_assert(
         ncinquire(id, &(cdesc->num_dims), &(cdesc->num_vars), &(cdesc->num_attrs), &(cdesc->xtendim)) == id);
-    if (cdesc->num_dims != num_dims) {
-        printf(" num_dims  : %d != %d\n", (int)cdesc->num_dims, (int)num_dims);
+    if (cdesc->num_dims != num_dims_g) {
+        printf(" num_dims  : %d != %d\n", cdesc->num_dims, num_dims_g);
         exit(1);
     }
     cdf_assert(cdesc->num_vars == NUM_TESTVARS);

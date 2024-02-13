@@ -15,13 +15,9 @@
   Credits:
           Original code is part of the public domain 'Generic List Library'
           by Keith Pomakis(kppomaki@jeeves.uwaterloo.ca)-Spring, 1994
-          I modified it to adhere to HDF coding standards.
-
-  1996/06/04 - George V.
  ************************************************************************/
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "hdfi.h"
 #include "glist.h"
 
 /*+

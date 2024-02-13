@@ -20,6 +20,8 @@
 #ifndef H4_CSKPHUFF_H
 #define H4_CSKPHUFF_H
 
+#include "hdfi.h"
+
 /* The maximum source character code: */
 #define SKPHUFF_MAX_CHAR 255
 

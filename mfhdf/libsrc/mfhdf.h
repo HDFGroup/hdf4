@@ -14,13 +14,15 @@
 #ifndef MFH4_MFHDF_H
 #define MFH4_MFHDF_H
 
+/* Formerly used to divide up the HDF and netCDF code. The symbol is retained
+ * since it's technically in the public API.
+ */
 #ifndef HDF
 #define HDF 1
 #endif
 
-#include "H4api_adpt.h"
-
 #include "hdf.h"
+
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h"
 #else

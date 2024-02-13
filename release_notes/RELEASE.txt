@@ -24,6 +24,7 @@ CONTENTS
 
 - New features and changes
   -- Configuration
+  -- C Library
 - Support for new platforms and compilers
 - Bugs fixed since HDF 4.2.16
   -- Configuration
@@ -126,6 +127,24 @@ New features and changes
       This change will have *NO IMPACT* on modern Macs. Files created using
       MacFS in the 90s and early 2000s can be accessed using C standard
       library I/O.
+
+    C Library:
+    ----------
+      hdfi.h is no longer included by hdf.h
+
+      In the past, hdfi.h (an internal header file) was included in the
+      public hdf.h header. This is no longer the case. Anything that
+      should be public has been moved from hdfi.h to hdf.h, including:
+
+        * The C99-like types (e.g., float32)
+        * The archaic VOID/VOIDP macros
+        * The intf Fortran integer type
+        * The HD library macros (e.g., HDmalloc)
+
+      All of these things are considered obsolete and we only maintain
+      them in the public header so that old code does not have to be
+      modified. It is unwise to use them in new code.
+
 
 Support for new platforms and compilers
 =======================================

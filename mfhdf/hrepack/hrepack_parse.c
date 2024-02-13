@@ -11,9 +11,10 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include <string.h>
+#include <ctype.h>
 #include <stdio.h>
-#include <ctype.h> /*isdigit*/
+#include <stdlib.h>
+#include <string.h>
 
 #include "hrepack.h"
 #include "hrepack_parse.h"

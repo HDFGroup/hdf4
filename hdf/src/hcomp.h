@@ -24,6 +24,8 @@
 #ifndef H4_HCOMP_H
 #define H4_HCOMP_H
 
+#include "hdf.h"
+
 /* For determining which type of modeling is being done */
 typedef enum {
     COMP_MODEL_STDIO = 0 /* for Standard C I/O model */

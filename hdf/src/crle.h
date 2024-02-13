@@ -25,6 +25,8 @@
 #ifndef H4_CRLE_H
 #define H4_CRLE_H
 
+#include "hdfi.h"
+
 /* size of the RLE buffer */
 #define RLE_BUF_SIZE 128
 

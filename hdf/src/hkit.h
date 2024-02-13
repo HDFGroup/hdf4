@@ -18,7 +18,7 @@
 #ifndef H4_HKIT_H
 #define H4_HKIT_H
 
-#include "hdf.h"
+#include "hdfi.h"
 #include "hfile.h"
 
 /* tag_messages is the list of tag descriptions in the system, kept as

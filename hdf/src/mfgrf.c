@@ -52,10 +52,9 @@
  *  mgfndat:    Call GRfindattr to get the index of an attribute for a name
  *  mglut2ref:  Call GRluttoref to get reference number for a palette specified
  *                   by palette identifier
- * Remarks:
  *---------------------------------------------------------------------------*/
 
-#include "hdf.h"
+#include "hdfi.h"
 #include "hproto_fortran.h"
 
 /* Local pre-processor macros */

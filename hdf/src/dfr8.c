@@ -40,7 +40,7 @@
  *          The palette is arranged as RGBRGB...
  *---------------------------------------------------------------------------*/
 
-#include "hdf.h"
+#include "hdfi.h"
 #include "dfrig.h"
 
 /* Private Variables */

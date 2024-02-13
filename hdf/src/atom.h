@@ -24,7 +24,7 @@
 #ifndef H4_ATOM_H
 #define H4_ATOM_H
 
-#include "H4api_adpt.h"
+#include "hdfi.h"
 
 /* Do swap using XOR operator. Ugly but fast... -QAK */
 #define HAIswap_cache(i, j)                                                                                  \

@@ -44,15 +44,9 @@ EXPORTED ROUTINES
      DAcreate_array - Create a dynarray
      DAdestroy_array - Destroy a dynarray
      DAsize_array    - Get the current dynarray size
-
-AUTHOR
-   Quincey Koziol
-
-MODIFICATION HISTORY
-   1/7/96  - Starting writing specs & coding prototype
 */
 
-#include "hdf.h"
+#include "hdfi.h"
 #include "dynarray.h"
 
 typedef struct dynarray_tag {

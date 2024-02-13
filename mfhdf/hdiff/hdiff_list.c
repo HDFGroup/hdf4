@@ -12,6 +12,8 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include <assert.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "hdf.h"
 #include "mfhdf.h"

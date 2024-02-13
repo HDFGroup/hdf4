@@ -60,15 +60,10 @@ BUGS/LIMITATIONS
 
 EXPORTED ROUTINES
    HCcreate - create or modify an existing data element to be compressed
-LOCAL ROUTINES
-
-AUTHOR
-   Quincey Koziol
-
 */
 
 /* General HDF includes */
-#include "hdf.h"
+#include "hdfi.h"
 
 #ifdef H4_HAVE_LIBSZ
 #include "szlib.h"

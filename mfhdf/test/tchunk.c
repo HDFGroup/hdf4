@@ -11,6 +11,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <string.h>
+
 #include "mfhdf.h"
 
 #include "hdftest.h"

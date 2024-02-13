@@ -87,7 +87,7 @@ gen_c(char *filename)
     int                ntypes   = (sizeof ctypes) / (sizeof ctypes[0]);
 
     /* wrap in main program */
-    cline("#include \"h4config.h\"");
+    cline("#include \"hdf.h\"");
     cline("#ifdef H4_HAVE_NETCDF");
     cline("#include \"netcdf.h\"");
     cline("#else");

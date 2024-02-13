@@ -25,6 +25,8 @@ file - mfprivate.h
 #ifndef MFH4_MFPRIVATE_H
 #define MFH4_MFPRIVATE_H
 
+#include "local_nc.h"
+
 /* Get the dimension record */
 NC_dim *SDIget_dim(NC *handle, int32 id);
 

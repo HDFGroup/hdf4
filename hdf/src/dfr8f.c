@@ -29,10 +29,9 @@
  *  dfr8lastref:    Call DFR8lastref to get ref of last image read/written
  *  dfr8setpalette: Set palette to write out with subsequent images
  *  dfr8restart:    Call DFR8restart to reset sequencing to first image
- * Remarks: none
  *---------------------------------------------------------------------------*/
 
-#include "hdf.h"
+#include "hdfi.h"
 #include "hproto_fortran.h"
 
 /*-----------------------------------------------------------------------------

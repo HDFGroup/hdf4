@@ -26,13 +26,10 @@
 
    AUTHOR
    Quincey Koziol
-
-   MODIFICATION HISTORY
-   10/24/95     Starting coding
  */
 
 /* General HDF includes */
-#include "hdf.h"
+#include "hdfi.h"
 
 /* HDF compression includes */
 #include "hcompi.h" /* Internal definitions for compression */

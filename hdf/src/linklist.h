@@ -19,7 +19,7 @@
 #ifndef H4_LINKLIST_H
 #define H4_LINKLIST_H
 
-#include "hdf.h"
+#include "hdfi.h"
 
 /* Definitions for linked-list creation flags */
 #define HUL_UNSORTED_LIST 0x0000

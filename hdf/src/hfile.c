@@ -110,11 +110,10 @@
    HIread_version       -- reads a version tag from a file
    + */
 
-#include <string.h>
-
-#include "hdf.h"
-#include "hfile.h"
 #include <errno.h>
+
+#include "hdfi.h"
+#include "hfile.h"
 #include "glist.h" /* for double-linked lists, stacks and queues */
 
 /*--------------------- Locally defined Globals -----------------------------*/

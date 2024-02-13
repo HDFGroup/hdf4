@@ -253,14 +253,14 @@ LOCAL ROUTINES
 #define STATISTICS
 */
 
-#include "hdf.h"
+#include "hdfi.h"
 #include "hfile.h"
-#include "mcache.h" /* cache */
+#include "mcache.h"
 #include "hchunks.h"
 
-#include "tbbt.h"   /* TBBT stuff */
-#include "mcache.h" /* caching routines */
-#include "hcomp.h"  /* For Compression */
+#include "tbbt.h"
+#include "mcache.h"
+#include "hcomp.h"
 
 /* Define class, class version and name(partial) for chunk table i.e. Vdata */
 #define _HDF_CHK_TBL_NAME "_HDF_CHK_TBL_" /* 13 bytes */

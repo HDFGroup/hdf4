@@ -35,17 +35,7 @@
 #ifndef H4_XDR_H
 #define H4_XDR_H
 
-#include "H4api_adpt.h"
-
-#include <stddef.h>
-#include <stdint.h>
-#include <stdio.h>
-
-#ifdef H4_HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-
-#include "mfhdf.h"
+#include "local_nc.h"
 
 /* NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE
  *

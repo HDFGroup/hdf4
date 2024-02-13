@@ -19,7 +19,7 @@
 #ifndef H4_MFANI_H
 #define H4_MFANI_H
 
-#include "hdf.h"
+#include "hdfi.h"
 
 /* This structure is used to find which file the annotation belongs to
  * and use the subsequent file specific annotation 'key' to find the

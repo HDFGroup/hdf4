@@ -61,6 +61,7 @@
  *****************************************************************************/
 /* ------ he.c ------- main() main HDF interfacing routines */
 
+#include "hdfi.h"
 #include "he.h"
 
 #include <stdio.h>

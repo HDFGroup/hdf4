@@ -23,9 +23,11 @@
  * -BMR, Jul 2010
  ****************************************************************************/
 
-#include "mfhdf.h"
-
 #include <math.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "mfhdf.h"
 
 #ifdef H4_HAVE_FCNTL_H
 #include <fcntl.h>
@@ -162,7 +164,6 @@ test_nonspecial_SDSs()
     t_hdf_datainfo_t sds1_info, sds2_info, sds3_info;
     uintn            info_count = 0;
     intn             status;
-    int              ii, jj;
     intn             num_errs = 0; /* number of errors so far */
 
     /* Create the file and initialize the SD interface */
@@ -202,7 +203,7 @@ test_nonspecial_SDSs()
     sds_id      = SDcreate(sd_id, SDS1_NAME, DFNT_INT32, RANK1, dimsizes);
     CHECK(sds_id, FAIL, "test_nonspecial_SDSs: SDcreate");
 
-    for (ii = 0; ii < LENGTH1_X; ii++)
+    for (int ii = 0; ii < LENGTH1_X; ii++)
         data1[ii] = 1000 * ii;
 
     starts[0] = 0;
@@ -222,8 +223,8 @@ test_nonspecial_SDSs()
     sds_id      = SDcreate(sd_id, SDS2_NAME, DFNT_FLOAT32, RANK2, dimsizes);
     CHECK(sds_id, FAIL, "test_nonspecial_SDSs: SDcreate");
 
-    for (ii = 0; ii < LENGTH2_X; ii++)
-        for (jj = 0; jj < LENGTH2_Y; jj++)
+    for (int ii = 0; ii < LENGTH2_X; ii++)
+        for (int jj = 0; jj < LENGTH2_Y; jj++)
             data2[ii][jj] = 500.50 * (ii + jj);
 
     starts[0] = 0;
@@ -364,7 +365,7 @@ test_nonspecial_SDSs()
         ssize_t readlen = 0; /* for read */
         int32  *readibuf, *readibuf_swapped;
         float  *readfbuf, *readfbuf_swapped;
-        int     ii, jj, kk;
+        int     kk;
 
         /* Open the file for reading without SD API */
         fd = open(SIMPLE_FILE, O_RDONLY);
@@ -394,7 +395,7 @@ test_nonspecial_SDSs()
 
         if (ret32 > 0) {
             /* Compare data read without SD API against the original buffer */
-            for (ii = 0; ii < sds1_info.n_values; ii++) {
+            for (int ii = 0; ii < sds1_info.n_values; ii++) {
                 if (readibuf_swapped[ii] != data1[ii])
                     fprintf(stderr, "At value# %d: written = %d read = %d\n", ii, data1[ii],
                             readibuf_swapped[ii]);
@@ -423,8 +424,8 @@ test_nonspecial_SDSs()
 
         /* Compare data read without SD API against the original buffer */
         kk = 0;
-        for (jj = 0; jj < sds2_info.dimsizes[0]; jj++)
-            for (ii = 0; ii < sds2_info.dimsizes[1]; ii++) {
+        for (int jj = 0; jj < sds2_info.dimsizes[0]; jj++)
+            for (int ii = 0; ii < sds2_info.dimsizes[1]; ii++) {
                 /* Flag if the two numbers are not close enough */
                 if (fabs(readfbuf_swapped[kk] - data2[jj][ii]) > 0.00001)
                     fprintf(stderr, "At value# %d: written = %f read = %f\n", ii, (double)data2[jj][ii],
@@ -455,7 +456,7 @@ test_nonspecial_SDSs()
 
         if (ret32 > 0) {
             /* Compare data read without SD API against the original buffer */
-            for (ii = 0; ii < sds3_info.n_values; ii++) {
+            for (int ii = 0; ii < sds3_info.n_values; ii++) {
                 if (readibuf_swapped[ii] != data3[ii])
                     fprintf(stderr, "At value# %d: written = %d read = %d\n", ii, data3[ii],
                             readibuf_swapped[ii]);
@@ -954,7 +955,7 @@ test_chunked_partial()
     t_hdf_datainfo_t sds_info;
     int32            data[Y_LENGTH][X_LENGTH];
     int              fd; /* for open */
-    int              ii, jj, chk_num;
+    int              chk_num;
     int              num_errs = 0; /* number of errors so far */
     intn             status;
 
@@ -1013,8 +1014,8 @@ test_chunked_partial()
     CHECK(sds_id, FAIL, "test_chunked_partial: SDcreate");
 
     /* Initialize data for the dataset */
-    for (jj = 0; jj < Y_LENGTH; jj++) {
-        for (ii = 0; ii < X_LENGTH; ii++)
+    for (int jj = 0; jj < Y_LENGTH; jj++) {
+        for (int ii = 0; ii < X_LENGTH; ii++)
             data[jj][ii] = (ii + jj) + 1;
     }
 
@@ -1080,7 +1081,6 @@ test_chunked_partial()
         int32   ret32;       /* for DFKconvert */
         ssize_t readlen = 0; /* for read */
         int32  *readibuf, *readibuf_swapped;
-        int     ii;
 
         /* Forward to the position of the data of the SDS */
         if (lseek(fd, (off_t)sds_info.offsets[chk_num], SEEK_SET) == -1) {
@@ -1106,7 +1106,7 @@ test_chunked_partial()
         CHECK(ret32, FAIL, "test_chunked_partial: DFKconvert");
 
         /* Compare data read without SD API against the original buffer */
-        for (ii = 0; ii < sds_info.n_values; ii++) {
+        for (int ii = 0; ii < sds_info.n_values; ii++) {
             if (readibuf_swapped[ii] != chunk_1dim[ii])
                 fprintf(stderr, "At value# %d: written = %d read = %d\n", ii, chunk_1dim[ii],
                         readibuf_swapped[ii]);

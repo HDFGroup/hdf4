@@ -22,6 +22,9 @@
  *
  ****************************************************************************/
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "mfhdf.h"
 #include "hdftest.h"
 

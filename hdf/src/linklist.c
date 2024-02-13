@@ -42,16 +42,9 @@ EXPORTED ROUTINES
     HULnext_node    - Get the next object in a linked-list
     HULremove_node  - Removes an object from a linked-list
     HULshutdown     - Close down the HUL interface
-
-AUTHOR
-   Quincey Koziol
-
-MODIFICATION HISTORY
-   2/5/96  - Starting writing specs & coding prototype
-   2/12/96  - Finished writing specs & coding prototype, start testing
 */
 
-#include "hdf.h"
+#include "hdfi.h"
 #include "linklist.h"
 
 /* Pointer to the list node free list */

@@ -35,8 +35,6 @@
  * compatible with the original Berkeley version.
  *
  * NOTE: references to pages here is the same as chunks
- *
- * AUTHOR - George V.- 1996/08/22
  *****************************************************************************/
 
 /*
@@ -51,8 +49,8 @@
 #define STATISTICS
 */
 
-#include "hdf.h"    /* number types ..etc */
-#include "hqueue.h" /* Circular queue functions(Macros) */
+#include "hdfi.h"
+#include "hqueue.h"
 #include "mcache.h"
 
 /* Private routines */

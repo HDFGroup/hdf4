@@ -20,7 +20,7 @@
 #ifndef H4_CDEFLATE_H
 #define H4_CDEFLATE_H
 
-#include "H4api_adpt.h"
+#include "hdfi.h"
 
 /* Get the gzip 'deflate' header */
 #define intf zintf

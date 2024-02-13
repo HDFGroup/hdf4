@@ -11,6 +11,9 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "hdiff.h"
 #include "hdiff_list.h"
 #include "hdiff_mattbl.h"

@@ -13,10 +13,10 @@
 
 /* he.h -- header file for HDFedit */
 #include "hdf.h"
+
 #include <ctype.h>
 #include <stdio.h>
-/* #include <sys/wait.h> */
-
+#include <stdlib.h>
 #include <string.h>
 
 /*

@@ -18,12 +18,12 @@
  * Invokes: none
  * Contents: Structures & definitions for szip encoding.  This header
  *              should only be included in hcomp.c and cszip.c.
- * Structure definitions:
- * Constant definitions:
  *---------------------------------------------------------------------------*/
 
 #ifndef H4_CSZIP_H
 #define H4_CSZIP_H
+
+#include "hdfi.h"
 
 /* Special parameters for szip compression */
 /* [These are aliases for the similar definitions in ricehdf.h header file] */

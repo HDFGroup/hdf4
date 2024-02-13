@@ -19,6 +19,8 @@
 #ifndef H4_MFGR_H
 #define H4_MFGR_H
 
+#include "hdf.h"
+
 /* Interlace types available */
 typedef int16 gr_interlace_t;
 #define MFGR_INTERLACE_PIXEL     0 /* pixel interlacing scheme */

@@ -11,7 +11,18 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <stdlib.h>
+#include <string.h>
+
+/* Need to pick up H4_HAVE_SYS_STAT_H from mfhdf.h */
 #include "mfhdf.h"
+
+#ifdef H4_HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+#ifdef H4_HAVE_SYS_STAT_H
+#include <sys/stat.h>
+#endif
 
 #include "hdftest.h"
 

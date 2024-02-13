@@ -18,12 +18,12 @@
  * Invokes: none
  * Contents: Structures & definitions for "none" encoding.  This header
  *              should only be included in hcomp.c and cnone.c.
- * Structure definitions:
- * Constant definitions:
  *---------------------------------------------------------------------------*/
 
 #ifndef H4_CNONE_H
 #define H4_CNONE_H
+
+#include "hdfi.h"
 
 /* "none" [en|de]coding information */
 typedef struct {

@@ -11,6 +11,10 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <limits.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "hdf.h"
 #include "mfhdf.h"
 #include "hrepack.h"

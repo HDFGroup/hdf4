@@ -24,8 +24,6 @@
 #ifndef H4GETOPT_H_
 #define H4GETOPT_H_
 
-#include "h4config.h"
-
 /* Instead of relying on the system getopt(), HDF4 includes its own, with all
  * symbols prefixed with 'h4'. Be careful replacing this! Getting the ifdefs
  * correct for Windows-y POSIX platforms like MinGW and Cygwin is tricky.

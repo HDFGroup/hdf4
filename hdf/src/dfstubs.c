@@ -40,6 +40,7 @@
  **   Doug Ilg
  */
 
+#include "hdfi.h"
 #include "df.h"
 
 #define DFACC_APPEND  8

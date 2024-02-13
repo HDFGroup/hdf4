@@ -36,6 +36,8 @@
 \****************************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
 #include "gif.h"
 
 /* External global variables */

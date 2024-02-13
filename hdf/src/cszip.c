@@ -13,8 +13,7 @@
 
 /* General HDF includes */
 
-#include "hdf.h"
-#include <assert.h>
+#include "hdfi.h"
 
 #ifdef H4_HAVE_LIBSZ
 #include "szlib.h"

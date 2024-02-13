@@ -14,9 +14,8 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include <string.h>
 #include "local_nc.h"
-#include "hfile.h" /* Ugh!  We need the defs for HI_READ and HI_SEEK */
+#include "hfile.h"
 
 /* Local function prototypes */
 static bool_t nssdc_xdr_NCvdata(NC *handle, NC_var *vp, unsigned long where, nc_type type, uint32 count,

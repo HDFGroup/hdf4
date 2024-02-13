@@ -11,10 +11,11 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "hdf.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+#include "hdfi.h"
 
 /* Size of the file buffer to copy through */
 #define MAX_FILE_BUF 16384

@@ -19,6 +19,8 @@
 #ifndef H4_HERR_H
 #define H4_HERR_H
 
+#include "hdf.h"
+
 /* HERROR macro, used to facilitate error reporting */
 #define HERROR(e) HEpush(e, __func__, __FILE__, __LINE__)
 

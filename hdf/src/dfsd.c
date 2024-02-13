@@ -89,7 +89,7 @@ Fortran stub functions:
     This version assumes that all the values are floating point.
  *---------------------------------------------------------------------------*/
 
-#include "hdf.h"
+#include "hdfi.h"
 #include "dfsd.h"
 
 /* MMM: make this definition correct and move to hfile.h, or wherever. */

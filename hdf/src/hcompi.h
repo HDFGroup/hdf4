@@ -24,6 +24,7 @@
 #ifndef H4_HCOMPI_H
 #define H4_HCOMPI_H
 
+#include "hdfi.h"
 #include "hfile.h"
 
 /* Modeling information */

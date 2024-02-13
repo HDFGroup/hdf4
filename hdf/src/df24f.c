@@ -37,7 +37,7 @@
  *          dimension, compression, color compensation etc.
  *---------------------------------------------------------------------------*/
 
-#include "hdf.h"
+#include "hdfi.h"
 #include "dfgr.h"
 #include "hproto_fortran.h"
 

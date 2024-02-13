@@ -23,6 +23,8 @@
 #ifndef H4_DFRIG_H
 #define H4_DFRIG_H
 
+#include "hdfi.h"
+
 /* description record: used to describe image data, palette data etc. */
 typedef struct {
     int16 ncomponents; /* Number of components */
