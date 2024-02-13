@@ -15,10 +15,6 @@
 
 #include "gif.h"
 
-#define HDFNAME     "laser.hdf"
-#define VGROUPCLASS "RIG0.0"
-#define GIFNAME     "temp.gif"
-
 extern int hdfWriteGIF(FILE *fp, BYTE *pic, int ptype, int w, int h, BYTE *rmap, BYTE *gmap, BYTE *bmap,
                        BYTE *pc2ncmap, int numcols, int colorstyle, int BitsPerPixel);
 
