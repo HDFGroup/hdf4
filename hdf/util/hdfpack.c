@@ -271,15 +271,15 @@ main(int argc, char *argv[])
                     case SPECIAL_EXT:
                         if (external) {
                             sp_info_block_t info;
-                            int32           aid1, new_aid;
+                            int32           _aid, new_aid;
                             char           *name;
 
                             /* get file name and offset */
-                            aid1 = Hstartread(infile, dlist[i].tag, dlist[i].ref);
-                            if (aid1 == FAIL)
+                            _aid = Hstartread(infile, dlist[i].tag, dlist[i].ref);
+                            if (_aid == FAIL)
                                 continue;
 
-                            ret = HDget_special_info(aid1, &info);
+                            ret = HDget_special_info(_aid, &info);
                             if ((ret == FAIL) || (info.key != SPECIAL_EXT))
                                 continue;
 
@@ -294,7 +294,7 @@ main(int argc, char *argv[])
                                                info.offset, dlist[i].length);
 
                             /* close the elements */
-                            Hendaccess(aid1);
+                            Hendaccess(_aid);
                             Hendaccess(new_aid);
                         }
                         else {
@@ -305,22 +305,22 @@ main(int argc, char *argv[])
                     case SPECIAL_COMP: /* This code assumes that you'd like to leave the compressed data that
                                           way and not expand it */
                     {
-                        int32  aid, len;
+                        int32  _aid, len;
                         void **buf;
 
                         /* Read in old compressed data description */
-                        if ((aid = Hstartaccess(infile, dlist[i].tag, dlist[i].ref, DFACC_READ)) == FAIL)
+                        if ((_aid = Hstartaccess(infile, dlist[i].tag, dlist[i].ref, DFACC_READ)) == FAIL)
                             continue;
                         HQuerylength(aid, &len);
                         buf = malloc(len);
-                        Hread(aid, len, buf);
-                        Hendaccess(aid);
+                        Hread(_aid, len, buf);
+                        Hendaccess(_aid);
 
                         /* Write compressed data description into new file */
-                        if ((aid = Hstartaccess(outfile, dlist[i].tag, dlist[i].ref, DFACC_WRITE)) == FAIL)
+                        if ((_aid = Hstartaccess(outfile, dlist[i].tag, dlist[i].ref, DFACC_WRITE)) == FAIL)
                             continue;
-                        Hwrite(aid, len, buf);
-                        Hendaccess(aid);
+                        Hwrite(_aid, len, buf);
+                        Hendaccess(_aid);
                         free(buf);
                     } break;
                     default:

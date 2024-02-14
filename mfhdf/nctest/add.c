@@ -22,11 +22,6 @@
 #include "add.h"
 #include "emalloc.h"
 
-struct netcdf test; /*
-                     * in-memory netcdf structure, kept in sync
-                     * with disk netcdf
-                     */
-
 /* add the dimension idim to the netcdf test */
 void
 add_dim(struct netcdf *test, struct cdfdim *idim)

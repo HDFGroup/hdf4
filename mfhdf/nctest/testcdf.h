@@ -54,9 +54,7 @@ struct netcdf {
     struct cdfatt atts[MAX_TEST_ATTS]; /* attributes */
 };
 
-extern struct netcdf test; /*
-                            * in-memory netcdf structure, kept in sync
-                            * with disk netcdf
-                            */
+/* In-memory netcdf structure, kept in sync with disk netcdf */
+extern struct netcdf *test_g;
 
 #endif /* NCTEST_TESTCDF_H */
