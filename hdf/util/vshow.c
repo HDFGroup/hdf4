@@ -485,7 +485,7 @@ vsdumpfull(int32 vs)
 static intn
 dumpattr(int32 vid, intn full, intn isvs)
 {
-    intn          i, j, k, cn = 0;
+    int           i, j, k, _cn = 0;
     VDATA        *vs;
     vsinstance_t *vs_inst;
     VGROUP       *vg;
@@ -603,19 +603,19 @@ dumpattr(int32 vid, intn full, intn isvs)
                 off = DFKNTsize(i_type | DFNT_NATIVE);
                 ptr = (alloc_flag) ? buf : attrbuf;
                 putchar('\t');
-                cn = 0;
+                _cn = 0;
                 for (k = 0; k < i_count; k++) {
                     fmtfn((char *)ptr);
                     ptr += off;
                     putchar(' ');
-                    cn++;
-                    if (cn > 55) {
+                    _cn++;
+                    if (_cn > 55) {
                         putchar('\n');
                         putchar('\t');
-                        cn = 0;
+                        _cn = 0;
                     }
                 }
-                if (cn)
+                if (_cn)
                     putchar('\n');
                 if (alloc_flag) {
                     free(buf);
@@ -712,19 +712,19 @@ dumpattr(int32 vid, intn full, intn isvs)
             off = DFKNTsize(i_type | DFNT_NATIVE);
             ptr = (alloc_flag) ? buf : attrbuf;
             putchar('\t');
-            cn = 0;
+            _cn = 0;
             for (k = 0; k < i_count; k++) {
                 fmtfn((char *)ptr);
                 ptr += off;
                 putchar(' ');
-                cn++;
-                if (cn > 55) {
+                _cn++;
+                if (_cn > 55) {
                     putchar('\n');
                     putchar('\t');
-                    cn = 0;
+                    _cn = 0;
                 }
             }
-            if (cn)
+            if (_cn)
                 putchar('\n');
             if (alloc_flag) {
                 free(buf);

@@ -149,7 +149,7 @@ static unsigned short codetab[HSIZE];
 #define HashTabOf(i) htab[i]
 #define CodeTabOf(i) codetab[i]
 
-static int hsize = HSIZE; /* for dynamic table sizing */
+static int hsize_g = HSIZE; /* for dynamic table sizing */
 
 /*
  * To save much memory, we overlay the table used by compress() with those
@@ -221,7 +221,7 @@ compress(int init_bits, FILE *outfile, byte *data, int len)
     maxmaxcode = 1 << XV_BITS;
     memset(htab, 0, sizeof(htab));
     memset(codetab, 0, sizeof(codetab));
-    hsize     = HSIZE;
+    hsize_g   = HSIZE;
     free_ent  = 0;
     clear_flg = 0;
     in_count  = 1;
@@ -246,11 +246,11 @@ compress(int init_bits, FILE *outfile, byte *data, int len)
     len--;
 
     hshift = 0;
-    for (fcode = (long)hsize; fcode < 65536L; fcode *= 2L)
+    for (fcode = (long)hsize_g; fcode < 65536L; fcode *= 2L)
         hshift++;
     hshift = 8 - hshift; /* set hash code range bound */
 
-    hsize_reg = hsize;
+    hsize_reg = hsize_g;
     cl_hash((count_int)hsize_reg); /* clear hash table */
 
     output(ClearCode);
@@ -384,7 +384,7 @@ cl_block(void) /* table clear for block compress */
 {
     /* Clear out the hash table */
 
-    cl_hash((count_int)hsize);
+    cl_hash((count_int)hsize_g);
     free_ent  = ClearCode + 2;
     clear_flg = 1;
 
@@ -401,7 +401,7 @@ cl_hash(count_int hsize)
     long       m1 = -1;
 
     i = hsize - 16;
-    do { /* might use Sys V memset(3) here */
+    do {
         *(htab_p - 16) = m1;
         *(htab_p - 15) = m1;
         *(htab_p - 14) = m1;

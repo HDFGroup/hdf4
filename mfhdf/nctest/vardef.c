@@ -85,7 +85,7 @@ test_ncvardef(char *path)
             ncclose(cdfid);
             return;
         }
-        add_dim(&test, &di[id]); /* keep in-memory netcdf in sync */
+        add_dim(test_g, &di[id]); /* keep in-memory netcdf in sync */
     }
 
     tmp.dims = (int *)emalloc(sizeof(int) * H4_MAX_VAR_DIMS);
@@ -99,21 +99,21 @@ test_ncvardef(char *path)
             va[iv].dims[id] = di_id[id];
         if ((va_id[iv] = ncvardef(cdfid, va[iv].name, va[iv].type, va[iv].ndims, va[iv].dims)) == -1) {
             error("%s: ncvardef failed", pname);
-            errvar(&test, &va[iv]); /* prints details about variable */
+            errvar(test_g, &va[iv]); /* prints details about variable */
             ncclose(cdfid);
             return;
         }
-        add_var(&test, &va[iv]); /* keep in-memory netcdf in sync */
+        add_var(test_g, &va[iv]); /* keep in-memory netcdf in sync */
         /* check that var id returned is one more than previous var id */
-        if (va_id[iv] != test.nvars - 1) {
-            error("%s: ncvardef returned %d for var id, expected %d", pname, va_id[iv], test.nvars - 1);
+        if (va_id[iv] != test_g->nvars - 1) {
+            error("%s: ncvardef returned %d for var id, expected %d", pname, va_id[iv], test_g->nvars - 1);
             ncclose(cdfid);
             return;
         }
         /* use ncvarinq to get values just set and compare values */
         if (ncvarinq(cdfid, va_id[iv], tmp.name, &tmp.type, &tmp.ndims, tmp.dims, &tmp.natts) == -1) {
             error("%s: ncvarinq failed", pname);
-            errvar(&test, &va[iv]); /* prints details about variable */
+            errvar(test_g, &va[iv]); /* prints details about variable */
             ncclose(cdfid);
             return;
         }
@@ -121,15 +121,15 @@ test_ncvardef(char *path)
             tmp.natts != va[iv].natts) {
             error("%s: ncvardef and ncvarinq don't agree for %s", pname, va[iv].name);
             nerrs++;
-            errvar(&test, &va[iv]);
-            errvar(&test, &tmp);
+            errvar(test_g, &va[iv]);
+            errvar(test_g, &tmp);
         }
         for (id = 0; id < va[iv].ndims; id++) {
             if (tmp.dims[id] != va[iv].dims[id]) {
                 error("%s: ncvardef and ncvarinq don't agree on shape of %s", pname, va[iv].name);
                 nerrs++;
-                errvar(&test, &va[iv]);
-                errvar(&test, &tmp);
+                errvar(test_g, &va[iv]);
+                errvar(test_g, &tmp);
             }
         }
     }

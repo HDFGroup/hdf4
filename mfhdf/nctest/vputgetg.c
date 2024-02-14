@@ -55,7 +55,7 @@ test_varputgetg(int cdfid)
     long basis[H4_MAX_VAR_DIMS];    /* internal array, element-access
                                basis vector */
 
-    for (iv = 0; iv < test.nvars; iv++) { /* for each var in netcdf */
+    for (iv = 0; iv < test_g->nvars; iv++) { /* for each var in netcdf */
         long tmpbasis;
 
         for (ie = 0; ie < ne; ie++)
@@ -67,12 +67,13 @@ test_varputgetg(int cdfid)
              * dimension.
              */
 #define EXTNPTS(varid, idim)                                                                                 \
-    (test.dims[test.vars[varid].dims[id]].size == NC_UNLIMITED ? 5                                           \
-                                                               : test.dims[test.vars[varid].dims[id]].size)
+    (test_g->dims[test_g->vars[varid].dims[id]].size == NC_UNLIMITED                                         \
+         ? 5                                                                                                 \
+         : test_g->dims[test_g->vars[varid].dims[id]].size)
 #define STRIDE(idim)           (idim + 2)
 #define INTNPTS(extnpts, idim) (1 + (extnpts - 1) / STRIDE(idim))
 
-        for (id = 0; id < test.vars[iv].ndims; id++) { /* set cubes */
+        for (id = 0; id < test_g->vars[iv].ndims; id++) { /* set cubes */
             strides[id] = STRIDE(id);
 
             /* start at "lower-left" corner, do whole variable */
@@ -91,67 +92,68 @@ test_varputgetg(int cdfid)
             nel[2] *= hc[2].edg[id];
         }
         for (ie = 0; ie < ne; ie++) { /* for each of ne points */
-            int nelms = nel[ie] * nctypelen(test.vars[iv].type) + 8;
+            int nelms = nel[ie] * nctypelen(test_g->vars[iv].type) + 8;
             /* allocate space for the cube of values */
             hc[ie].vals = emalloc(nelms);
             tmp.vals    = emalloc(nelms);
 
             /* fill allocated space with different values of right type */
-            val_fill(test.vars[iv].type, nel[ie], hc[ie].vals);
+            val_fill(test_g->vars[iv].type, nel[ie], hc[ie].vals);
 
             /*
              * Set internal-array element-access basis vector to be negative
              * of natural storage so as to access the elements of the array
              * backwards.
              */
-            tmpbasis = nctypelen(test.vars[iv].type);
-            for (id = test.vars[iv].ndims - 1; id >= 0; --id) {
+            tmpbasis = nctypelen(test_g->vars[iv].type);
+            for (id = test_g->vars[iv].ndims - 1; id >= 0; --id) {
                 basis[id] = -tmpbasis;
                 tmpbasis *= hc[ie].edg[id];
             }
 
             if (ncvarputg(cdfid, iv, hc[ie].cor, hc[ie].edg, strides, basis,
-                          (char *)hc[ie].vals + (nel[ie] - 1) * nctypelen(test.vars[iv].type)) == -1) {
-                error("%s: ncvarputg failed for point %d, variable %s", pname, ie, test.vars[iv].name);
+                          (char *)hc[ie].vals + (nel[ie] - 1) * nctypelen(test_g->vars[iv].type)) == -1) {
+                error("%s: ncvarputg failed for point %d, variable %s", pname, ie, test_g->vars[iv].name);
                 nerrs++;
-                errvar(&test, &test.vars[iv]);
+                errvar(test_g, &test_g->vars[iv]);
                 (void)fprintf(stderr, "  corner = (");
-                for (id = 0; id < test.vars[iv].ndims; id++)
+                for (id = 0; id < test_g->vars[iv].ndims; id++)
                     (void)fprintf(stderr, "%d%s", (int)hc[ie].cor[id],
-                                  (id < test.vars[iv].ndims - 1) ? ", " : "");
+                                  (id < test_g->vars[iv].ndims - 1) ? ", " : "");
                 (void)fprintf(stderr, ")\n");
                 (void)fprintf(stderr, "  edge = (");
-                for (id = 0; id < test.vars[iv].ndims; id++)
+                for (id = 0; id < test_g->vars[iv].ndims; id++)
                     (void)fprintf(stderr, "%d%s", (int)hc[ie].edg[id],
-                                  (id < test.vars[iv].ndims - 1) ? ", " : "");
+                                  (id < test_g->vars[iv].ndims - 1) ? ", " : "");
                 (void)fprintf(stderr, ")\n");
                 (void)fprintf(stderr, "  external strides = (");
-                for (id = 0; id < test.vars[iv].ndims; id++)
+                for (id = 0; id < test_g->vars[iv].ndims; id++)
                     (void)fprintf(stderr, "%d%s", (int)strides[id],
-                                  (id < test.vars[iv].ndims - 1) ? ", " : "");
+                                  (id < test_g->vars[iv].ndims - 1) ? ", " : "");
                 (void)fprintf(stderr, ")\n");
                 (void)fprintf(stderr, "  internal basis vector = (");
-                for (id = 0; id < test.vars[iv].ndims; id++)
-                    (void)fprintf(stderr, "%d%s", (int)basis[id], (id < test.vars[iv].ndims - 1) ? ", " : "");
+                for (id = 0; id < test_g->vars[iv].ndims; id++)
+                    (void)fprintf(stderr, "%d%s", (int)basis[id],
+                                  (id < test_g->vars[iv].ndims - 1) ? ", " : "");
                 (void)fprintf(stderr, ")\n");
             }
             else {
                 long dsize[H4_MAX_VAR_DIMS];
 
-                for (id = 0; id < test.vars[iv].ndims; id++)
+                for (id = 0; id < test_g->vars[iv].ndims; id++)
                     dsize[id] = EXTNPTS(iv, id);
-                add_data(&test, iv, hc[ie].cor, dsize);
+                add_data(test_g, iv, hc[ie].cor, dsize);
                 /* keep test in sync */
                 if (ncvargetg(cdfid, iv, hc[ie].cor, hc[ie].edg, strides, basis,
-                              (char *)tmp.vals + (nel[ie] - 1) * nctypelen(test.vars[iv].type)) == -1) {
-                    error("%s: ncvargetg failed for point %d, variable %s", pname, ie, test.vars[iv].name);
+                              (char *)tmp.vals + (nel[ie] - 1) * nctypelen(test_g->vars[iv].type)) == -1) {
+                    error("%s: ncvargetg failed for point %d, variable %s", pname, ie, test_g->vars[iv].name);
                     nerrs++;
                 }
                 else {
-                    if (val_cmp(test.vars[iv].type, nel[ie], hc[ie].vals, tmp.vals) != 0) {
+                    if (val_cmp(test_g->vars[iv].type, nel[ie], hc[ie].vals, tmp.vals) != 0) {
                         error("%s: bad values returned from ncvargetg", pname);
                         nerrs++;
-                        errvar(&test, &test.vars[iv]); /* describe var */
+                        errvar(test_g, &test_g->vars[iv]); /* describe var */
                     }
                 }
             }

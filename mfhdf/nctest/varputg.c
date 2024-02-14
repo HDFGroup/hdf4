@@ -60,24 +60,24 @@ test_ncvarputg(char *path)
 
     /* find a variable with at least one dimension */
     iv = 0;
-    while (test.vars[iv].ndims <= 0 && iv < test.nvars)
+    while (test_g->vars[iv].ndims <= 0 && iv < test_g->nvars)
         iv++;
-    if (iv < test.nvars) { /* iv is first varid of var with dimensions */
+    if (iv < test_g->nvars) { /* iv is first varid of var with dimensions */
 
         /* set coords and strides */
-        for (id = 0; id < test.vars[iv].ndims; id++) {
+        for (id = 0; id < test_g->vars[iv].ndims; id++) {
             hc.cor[id]  = 0;
             hc.edg[id]  = 1;
             strides[id] = 1;
         }
 
         /* fill in vals with value of appropriate type */
-        hc.vals = emalloc(nctypelen(test.vars[iv].type));
-        val_fill(test.vars[iv].type, 1, hc.vals);
+        hc.vals = emalloc(nctypelen(test_g->vars[iv].type));
+        val_fill(test_g->vars[iv].type, 1, hc.vals);
 
 #define TEST_FAILS(varid) (ncvarputg(cdfid, varid, hc.cor, hc.edg, strides, (long *)NULL, hc.vals) != -1)
 
-        id         = test.vars[iv].ndims - 1;
+        id         = test_g->vars[iv].ndims - 1;
         tmp        = hc.cor[id];
         hc.cor[id] = -1; /* try negative coordinate, should fail */
         if (TEST_FAILS(iv)) {
@@ -95,7 +95,7 @@ test_ncvarputg(char *path)
         }
         hc.edg[id] = tmp;
         tmp        = hc.cor[id];
-        hc.cor[id] = test.dims[id].size; /* try big coordinate, should fail */
+        hc.cor[id] = test_g->dims[id].size; /* try big coordinate, should fail */
         if (TEST_FAILS(iv)) {
             error("%s: ncvarputg should fail for too-high coordinate", pname);
             ncclose(cdfid);
@@ -103,7 +103,7 @@ test_ncvarputg(char *path)
         }
         hc.cor[id] = tmp;
         tmp        = hc.edg[id];
-        hc.edg[id] = test.dims[id].size + 1; /* try big edge, should fail */
+        hc.edg[id] = test_g->dims[id].size + 1; /* try big edge, should fail */
         if (TEST_FAILS(iv)) {
             error("%s: ncvarputg should fail for too-high edge", pname);
             ncclose(cdfid);
