@@ -18,7 +18,8 @@
 
 #define HLCONVERT_TAG 1500
 
-static uint8 outbuf[BUFSIZE], inbuf[BUFSIZE];
+static uint8 *outbuf = NULL;
+static uint8 *inbuf  = NULL;
 
 void
 test_hblocks(void)
@@ -31,6 +32,12 @@ test_hblocks(void)
     int    i;
     int32  ret;
     intn   errors = 0;
+
+    outbuf = (uint8 *)calloc(BUFSIZE, sizeof(uint8));
+    inbuf  = (uint8 *)calloc(BUFSIZE, sizeof(uint8));
+
+    CHECK_ALLOC(outbuf, "outbuf", "test_hblocks");
+    CHECK_ALLOC(inbuf, "outbuf", "test_hblocks");
 
     for (i = 0; i < BUFSIZE; i++)
         outbuf[i] = (uint8)(i % 256);
@@ -266,6 +273,9 @@ test_hblocks(void)
         fprintf(stderr, "Error when reading data from HLconvert buffer\n");
         errors++;
     }
+
+    free(outbuf);
+    free(inbuf);
 
     num_errs += errors; /* increment global error count */
 }

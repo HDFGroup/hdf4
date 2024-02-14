@@ -107,10 +107,6 @@
  *   HMCsetMaxCache()
  *   HMCwriteChunk()
  *   HMCreadChunk()
- *
- *
- * Author -GeorgeV
- *
  */
 
 #include "tproto.h"
@@ -120,8 +116,8 @@
 #define BUFSIZE       12288
 
 /* Some static data buffers */
-static uint8 outbuf[BUFSIZE], /* output data buffer */
-    inbuf[BUFSIZE];           /* input data buffer */
+static uint8 *outbuf = NULL;
+static uint8 *inbuf  = NULL;
 
 /* used to verify data in Test 2. */
 static uint8 outbuf_2[16] = {0, 0, 2, 3, 0, 0, 6, 7, 8, 9, 0, 0, 12, 13, 0, 0};
@@ -163,8 +159,6 @@ static uint8 u8_data[2][3][4] = {{{0, 1, 2, 3}, {10, 11, 12, 13}, {20, 21, 22, 2
 
 /*
  * main entry point to tests the Special Chunking layer...
- *
- * -GeorgeV
  */
 void
 test_chunks(void)
@@ -193,6 +187,12 @@ test_chunks(void)
     comp_info       cinfo;
     model_info      minfo;
     intn            errors = 0;
+
+    outbuf = (uint8 *)calloc(BUFSIZE, sizeof(uint8));
+    inbuf  = (uint8 *)calloc(BUFSIZE, sizeof(uint8));
+
+    CHECK_ALLOC(outbuf, "outbuf", "test_chunks");
+    CHECK_ALLOC(inbuf, "outbuf", "test_chunks");
 
     /* initialize out buffer */
     for (i = 0; i < BUFSIZE; i++)
@@ -2196,6 +2196,9 @@ test_chunks(void)
 done:
     /* Don't forget to free dimensions allocate for chunk definition */
     free(chunk[0].pdims);
+
+    free(outbuf);
+    free(inbuf);
 
     num_errs += errors; /* increment global error count */
 } /* test_chunks() */

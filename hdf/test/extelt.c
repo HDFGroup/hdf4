@@ -24,7 +24,8 @@
 
 #define BUF_SIZE 4096
 
-static uint8 outbuf[BUF_SIZE], inbuf[BUF_SIZE];
+static uint8 *outbuf = NULL;
+static uint8 *inbuf  = NULL;
 
 void
 test_hextelt(void)
@@ -38,6 +39,12 @@ test_hextelt(void)
     int32  ret;
     intn   errflag = 0;
     intn   errors  = 0;
+
+    outbuf = (uint8 *)calloc(BUF_SIZE, sizeof(uint8));
+    inbuf  = (uint8 *)calloc(BUF_SIZE, sizeof(uint8));
+
+    CHECK_ALLOC(outbuf, "outbuf", "test_hextelt");
+    CHECK_ALLOC(inbuf, "outbuf", "test_hextelt");
 
     /* Initialize buffer */
     for (i = 0; i < BUF_SIZE; i++)
@@ -389,6 +396,9 @@ test_hextelt(void)
     CHECK_VOID(ret, FAIL, "HXsetcreatedir");
     ret = HXsetdir(NULL);
     CHECK_VOID(ret, FAIL, "HXsetdir");
+
+    free(outbuf);
+    free(inbuf);
 
     num_errs += errors; /* increment global error count */
 }
