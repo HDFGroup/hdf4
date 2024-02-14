@@ -2291,7 +2291,7 @@ Vgetid(HFILEID f, /* IN: file handle */
         if (vf->vgtree == NULL)
             HGOTO_DONE(FAIL); /* just return FAIL, no error */
 
-        if (NULL == (t = (void **)tbbtfirst((TBBT_NODE *)*(vf->vgtree))))
+        if (NULL == (t = (void **)tbbtfirst(vf->vgtree->root)))
             HGOTO_DONE(FAIL); /* just return FAIL, no error */
 
         /* t is assumed to valid at this point */
@@ -2305,8 +2305,8 @@ Vgetid(HFILEID f, /* IN: file handle */
         key = (int32)vgid;
         t   = (void **)tbbtdfind(vf->vgtree, (void *)&key, NULL);
 
-        if (t == NULL || t == (void **)tbbtlast((TBBT_NODE *)*(
-                                  vf->vgtree))) { /* couldn't find the old vgid or at the end */
+        if (t == NULL || t == (void **)tbbtlast(vf->vgtree->root)) {
+            /* couldn't find the old vgid or at the end */
             ret_value = (FAIL);
         }
         else if (NULL == (t = (void **)tbbtnext((TBBT_NODE *)t))) /* get the next node in the tree */

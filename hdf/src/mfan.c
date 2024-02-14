@@ -683,7 +683,7 @@ ANInumann(int32    an_id,  /* IN: annotation interface id */
     }
 
     /* Traverse the list looking for a match */
-    for (entry = tbbtfirst((TBBT_NODE *)*(file_rec->an_tree[type])); entry != NULL; entry = tbbtnext(entry)) {
+    for (entry = tbbtfirst(file_rec->an_tree[type]->root); entry != NULL; entry = tbbtnext(entry)) {
         ann_entry = (ANentry *)entry->data; /* get annotation entry from node */
         if ((ann_entry->elmref == elem_ref) && (ann_entry->elmtag == elem_tag)) {
             nanns++; /* increment ref counter if match */
@@ -744,7 +744,7 @@ ANIannlist(int32    an_id,  /* IN: annotation interface id */
     }
 
     /* Traverse the list looking for a match */
-    for (entry = tbbtfirst((TBBT_NODE *)*(file_rec->an_tree[type])); entry != NULL; entry = tbbtnext(entry)) {
+    for (entry = tbbtfirst(file_rec->an_tree[type]->root); entry != NULL; entry = tbbtnext(entry)) {
         ann_entry = (ANentry *)entry->data; /* get annotation entry from node */
         if ((ann_entry->elmref == elem_ref) &&
             (ann_entry->elmtag == elem_tag)) { /* save ref of ann match in list */
@@ -1329,7 +1329,7 @@ ANend(int32 an_id /* IN: Annotation ID of file to close */)
     /* free file label annotation rb tree */
     if (file_rec->an_tree[AN_FILE_LABEL] !=
         NULL) { /* Traverse tree puling ann_id's to delete from annotation atom group */
-        for (aentry = tbbtfirst((TBBT_NODE *)*(file_rec->an_tree[AN_FILE_LABEL])); aentry != NULL;
+        for (aentry = tbbtfirst(file_rec->an_tree[AN_FILE_LABEL]->root); aentry != NULL;
              aentry = tbbtnext(aentry)) { /* get annotation entry from node */
             ann_entry = (ANentry *)aentry->data;
 
@@ -1346,7 +1346,7 @@ ANend(int32 an_id /* IN: Annotation ID of file to close */)
     /* free file desc annotation rb tree */
     if (file_rec->an_tree[AN_FILE_DESC] !=
         NULL) { /* Traverse tree puling ann_id's to delete from annotation atom group */
-        for (aentry = tbbtfirst((TBBT_NODE *)*(file_rec->an_tree[AN_FILE_DESC])); aentry != NULL;
+        for (aentry = tbbtfirst(file_rec->an_tree[AN_FILE_DESC]->root); aentry != NULL;
              aentry = tbbtnext(aentry)) { /* get annotation entry from node */
             ann_entry = (ANentry *)aentry->data;
 
@@ -1364,7 +1364,7 @@ ANend(int32 an_id /* IN: Annotation ID of file to close */)
     /* free label annotation rb tree */
     if (file_rec->an_tree[AN_DATA_LABEL] !=
         NULL) { /* Traverse tree puling ann_id's to delete from annotation atom group */
-        for (aentry = tbbtfirst((TBBT_NODE *)*(file_rec->an_tree[AN_DATA_LABEL])); aentry != NULL;
+        for (aentry = tbbtfirst(file_rec->an_tree[AN_DATA_LABEL]->root); aentry != NULL;
              aentry = tbbtnext(aentry)) { /* get annotation entry from node */
             ann_entry = (ANentry *)aentry->data;
 
@@ -1381,7 +1381,7 @@ ANend(int32 an_id /* IN: Annotation ID of file to close */)
     /* free desc annotation rb tree */
     if (file_rec->an_tree[AN_DATA_DESC] !=
         NULL) { /* Traverse tree pulling ann_id's to delete from annotation atom group */
-        for (aentry = tbbtfirst((TBBT_NODE *)*(file_rec->an_tree[AN_DATA_DESC])); aentry != NULL;
+        for (aentry = tbbtfirst(file_rec->an_tree[AN_DATA_DESC]->root); aentry != NULL;
              aentry = tbbtnext(aentry)) { /* get annotation entry from node */
             ann_entry = (ANentry *)aentry->data;
 
@@ -1534,7 +1534,7 @@ ANselect(int32    an_id, /* IN: annotation interface ID */
         HE_REPORT_GOTO("bad index", FAIL);
 
     /* find 'index' entry */
-    if ((entry = tbbtindx((TBBT_NODE *)*(file_rec->an_tree[type]), index)) == NULL)
+    if ((entry = tbbtindx(file_rec->an_tree[type]->root, index)) == NULL)
         HE_REPORT_GOTO("failed to find 'index' entry", FAIL);
 
     ann_entry = (ANentry *)entry->data;
@@ -1774,7 +1774,7 @@ ANget_tagref(int32    an_id, /* IN: annotation interface ID */
         HE_REPORT_GOTO("bad index", FAIL);
 
     /* find 'index' entry */
-    if ((entry = tbbtindx((TBBT_NODE *)*(file_rec->an_tree[type]), index)) == NULL)
+    if ((entry = tbbtindx(file_rec->an_tree[type]->root, index)) == NULL)
         HE_REPORT_GOTO("failed to find 'index' entry", FAIL);
 
     ann_entry = (ANentry *)entry->data;
