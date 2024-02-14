@@ -1995,7 +1995,7 @@ GRend(int32 grid)
             void     **t2;
             ri_info_t *img_ptr; /* ptr to the image */
 
-            if (NULL == (t2 = (void **)tbbtfirst((TBBT_NODE *)*(gr_ptr->grtree)))) {
+            if (NULL == (t2 = (void **)tbbtfirst(gr_ptr->grtree->root))) {
                 HGOTO_ERROR(DFE_NOTINTABLE, FAIL);
             } /* end if */
             else
@@ -2029,7 +2029,7 @@ GRend(int32 grid)
                     void     **t3;
                     at_info_t *attr_ptr; /* ptr to the attribute */
 
-                    if (NULL == (t3 = (void **)tbbtfirst((TBBT_NODE *)*(img_ptr->lattree)))) {
+                    if (NULL == (t3 = (void **)tbbtfirst(img_ptr->lattree->root))) {
                         HGOTO_ERROR(DFE_NOTINTABLE, FAIL);
                     } /* end if */
                     else
@@ -2082,7 +2082,7 @@ GRend(int32 grid)
             void     **t2;
             at_info_t *attr_ptr; /* ptr to the attribute */
 
-            if (NULL == (t2 = (void **)tbbtfirst((TBBT_NODE *)*(gr_ptr->gattree)))) {
+            if (NULL == (t2 = (void **)tbbtfirst(gr_ptr->gattree->root))) {
                 HGOTO_ERROR(DFE_NOTINTABLE, FAIL);
             } /* end if */
             else
@@ -2358,7 +2358,7 @@ GRnametoindex(int32 grid, const char *name)
     if (NULL == (gr_ptr = (gr_info_t *)HAatom_object(grid)))
         HGOTO_ERROR(DFE_GRNOTFOUND, FAIL);
 
-    if ((t = (void **)tbbtfirst((TBBT_NODE *)*(gr_ptr->grtree))) == NULL)
+    if ((t = (void **)tbbtfirst(gr_ptr->grtree->root)) == NULL)
         HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
     do {
         ri_ptr = (ri_info_t *)*t;
@@ -3352,7 +3352,7 @@ GRreftoindex(int32 grid, uint16 ref)
     if (NULL == (gr_ptr = (gr_info_t *)HAatom_object(grid)))
         HGOTO_ERROR(DFE_GRNOTFOUND, FAIL);
 
-    if ((t = (void **)tbbtfirst((TBBT_NODE *)*(gr_ptr->grtree))) == NULL)
+    if ((t = (void **)tbbtfirst(gr_ptr->grtree->root)) == NULL)
         HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
     do {
         ri_ptr = (ri_info_t *)*t;
@@ -4392,7 +4392,7 @@ GRsetattr(int32 id, const char *name, int32 attr_nt, int32 count, const void *da
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Search for an attribute with the same name */
-    if ((t = (void **)tbbtfirst((TBBT_NODE *)*search_tree)) != NULL) {
+    if ((t = (void **)tbbtfirst(search_tree->root)) != NULL) {
         do {
             at_ptr = (at_info_t *)*t;
             if (at_ptr != NULL && strcmp(at_ptr->name, name) == 0) /* ie. the name matches */
@@ -4755,7 +4755,7 @@ GRfindattr(int32 id, const char *name)
     else /* shouldn't get here, but what the heck... */
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    if ((t = (void **)tbbtfirst((TBBT_NODE *)*search_tree)) == NULL)
+    if ((t = (void **)tbbtfirst(search_tree->root)) == NULL)
         HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
     do {
         at_ptr = (at_info_t *)*t;

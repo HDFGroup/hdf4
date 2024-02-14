@@ -726,7 +726,7 @@ GRgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Search for an attribute with the same index */
-    aentry = (void **)tbbtfirst((TBBT_NODE *)*search_tree);
+    aentry = (void **)tbbtfirst(search_tree->root);
     found  = FALSE;
     while (!found && (aentry != NULL)) {
         at_ptr = (at_info_t *)*aentry;
