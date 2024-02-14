@@ -34,3 +34,8 @@ jobs:
     uses: ./.github/workflows/cmake.yml
     if: "!contains(github.event.head_commit.message, 'skip-ci')"
 
+  workflow-msys2:
+    name: "CMake msys2 Workflows"
+    uses: ./.github/workflows/msys2-cmake.yml
+    with:
+        build_mode: "Release"
