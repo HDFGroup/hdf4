@@ -44,6 +44,7 @@ jobs:
            ninja:p
 
       - name: CMake Configure
+        shell: pwsh
         run: |
           mkdir "${{ runner.workspace }}/build"
           cd "${{ runner.workspace }}/build"
@@ -57,12 +58,14 @@ jobs:
 
       # BUILD
       - name: CMake Build
+        shell: pwsh
         run: |
           cmake --build . --parallel 3 --config ${{ inputs.build_mode }}
         working-directory: ${{ runner.workspace }}/build
 
       # RUN TESTS
       - name: CMake Run Tests
+        shell: pwsh
         run: |
           ctest . --parallel 2 -C ${{ inputs.build_mode }} -V
 #          ctest . --parallel 2 -C ${{ inputs.build_mode }} -V -E "HDP-dumpv|h4ex_GR_create|h4ex_GR_write|h4ex_VG_add"
