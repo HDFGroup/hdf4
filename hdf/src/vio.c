@@ -58,8 +58,8 @@ EXPORTED ROUTINES
 
 *************************************************************************/
 
-#define VSET_INTERFACE
 #include "hdfi.h"
+#include "vgint.h"
 
 /* Private Function Prototypes */
 static intn vunpackvs(VDATA *vs, uint8 buf[], int32 len);

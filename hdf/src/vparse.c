@@ -22,8 +22,8 @@
 
 ************************************************************************/
 
-#define VSET_INTERFACE
 #include "hdfi.h"
+#include "vgint.h"
 
 #define ISCOMMA(c) ((c == ',') ? 1 : 0)
 

@@ -11,9 +11,9 @@
  * help@hdfgroup.org.                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#define VSET_INTERFACE
 #include "hdp.h"
-#include "local_nc.h" /* to use some definitions */
+#include "local_nc.h"
+#include "vgint.h"
 
 /********************/
 /* Global Variables */

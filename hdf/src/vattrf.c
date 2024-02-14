@@ -20,8 +20,8 @@
  *
  ******************************************************/
 
-#define VSET_INTERFACE
 #include "hdfi.h"
+#include "vgint.h"
 #include "hproto_fortran.h"
 
 /* ----------------- vsfcfdx ----------------------

@@ -13,8 +13,8 @@
 
 /* Modified from vshow.c by Eric Tsui, 12/25/1994. */
 
-#define VSET_INTERFACE
 #include "hdp.h"
+#include "vgint.h"
 
 #define BUFFER 1000000
 
