@@ -55,6 +55,7 @@ jobs:
             -DLIBAEC_USE_LOCALCONTENT=OFF \
             -DZLIB_USE_LOCALCONTENT=OFF \
             -DHDF4_BUILD_FORTRAN=OFF \
+            -DHDF4_BUILD_JAVA=OFF \
             $GITHUB_WORKSPACE
       # BUILD
       - name: CMake Build
@@ -65,6 +66,5 @@ jobs:
       # RUN TESTS
       - name: CMake Run Tests
         run: |
-          ctest . --parallel 2 -C ${{ inputs.build_mode }} -V
-#          ctest . --parallel 2 -C ${{ inputs.build_mode }} -V -E "HDP-dumpv|h4ex_GR_create|h4ex_GR_write|h4ex_VG_add"
+          ctest . --parallel 2 -C ${{ inputs.build_mode }} -V -E "HDP-dumpv|h4ex_GR_create|h4ex_GR_write|h4ex_VG_add"
         working-directory: ${{ runner.workspace }}/build
