@@ -23,7 +23,7 @@
 #define JPEGFILE        "tjpeg.hdf"
 #define NONHDF_JPEGFILE "tnonhdf_jpeg.hdf"
 
-static const uint8 jpeg_8bit_orig[JPEGY][JPEGX] = {
+static uint8 jpeg_8bit_orig[JPEGY][JPEGX] = {
     {200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200,
      200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200,
      200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200},
@@ -92,7 +92,7 @@ static const uint8 jpeg_8bit_orig[JPEGY][JPEGX] = {
      200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200,
      200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200}};
 
-static const uint8 jpeg_8bit_j80[JPEGY][JPEGX] = {
+static uint8 jpeg_8bit_j80[JPEGY][JPEGX] = {
     {200, 200, 200, 200, 200, 200, 200, 200, 202, 202, 201, 201, 201, 200, 200, 200,
      201, 201, 200, 200, 200, 201, 202, 202, 202, 202, 201, 200, 200, 200, 200, 201,
      200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200},
@@ -161,7 +161,7 @@ static const uint8 jpeg_8bit_j80[JPEGY][JPEGX] = {
      201, 201, 202, 202, 202, 202, 201, 201, 200, 200, 200, 200, 200, 200, 200, 200,
      200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200}};
 
-static const uint8 jpeg_8bit_j30[JPEGY][JPEGX] = {
+static uint8 jpeg_8bit_j30[JPEGY][JPEGX] = {
     {199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199,
      199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199,
      199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199},
@@ -230,7 +230,7 @@ static const uint8 jpeg_8bit_j30[JPEGY][JPEGX] = {
      199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199,
      199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199, 199}};
 
-static const uint8 jpeg_8bit_j75[JPEGY][JPEGX] = {
+static uint8 jpeg_8bit_j75[JPEGY][JPEGX] = {
     {200, 200, 200, 200, 200, 200, 200, 200, 198, 198, 198, 199, 199, 200, 200, 200,
      202, 202, 200, 199, 199, 199, 199, 200, 199, 199, 200, 201, 201, 201, 200, 200,
      200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200},
@@ -299,9 +299,7 @@ static const uint8 jpeg_8bit_j75[JPEGY][JPEGX] = {
      201, 201, 202, 202, 202, 202, 201, 201, 200, 200, 200, 200, 200, 200, 200, 200,
      200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200}};
 
-/* const uint8  jpeg_24bit_orig[JPEGY][JPEGX][3] =
- */
-const uint8 jpeg_24bit_orig[JPEGY * JPEGX * 3] = {
+static uint8 jpeg_24bit_orig[JPEGY * JPEGX * 3] = {
     255, 103, 0,   255, 103, 0,   255, 103, 0,   255, 103, 0,   255, 103, 0,   255, 103, 0,   255, 103, 0,
     255, 103, 0,   255, 103, 0,   255, 103, 0,   255, 103, 0,   255, 103, 0,   255, 103, 0,   255, 103, 0,
     255, 103, 0,   255, 103, 0,   255, 103, 0,   255, 103, 0,   255, 103, 0,   255, 103, 0,   255, 103, 0,
@@ -463,9 +461,9 @@ static void check_im_pal(int32 oldx, int32 oldy, int32 newx, int32 newy, uint8 *
 /* These two functions are in tusejpegfuncs.c.  They use JPEG functions directly
    to compress and decompress the same data as in test_r24_jpeg, to verify that
    the DFR24 API work correctly regardless which JPEG library is used */
-intn comp_using_jpeglib(const char *filename, long *file_offset, int im_height, int im_width, int im_ncomps,
-                        int quality, const uint8 *written_buffer);
-intn decomp_using_jpeglib(const char *filename, long file_offset, int im_height, int im_width, int im_ncomps,
+int  comp_using_jpeglib(const char *filename, long *file_offset, int im_height, int im_width, int im_ncomps,
+                        int quality, uint8 *written_buffer);
+int  decomp_using_jpeglib(const char *filename, long file_offset, int im_height, int im_width, int im_ncomps,
                           uint8 *read_buffer);
 void test_r24_jpeg(void);
 
